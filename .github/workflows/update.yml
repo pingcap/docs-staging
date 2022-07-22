@@ -43,11 +43,15 @@ jobs:
 
       - name: Update target folder by event input
         if: ${{ !inputs.full }}
+        env:
+          GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
 
       - name: Update all folder
         if: ${{ inputs.full }}
+        env:
+          GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           sudo rm -fr ./markdown-pages/*
           yarn download:tidb:en:all
