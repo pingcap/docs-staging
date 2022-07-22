@@ -1,0 +1,33 @@
+{
+  "name": "docs-staging",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:pingcap/docs-staging.git",
+  "author": "czhen <56986964+shczhen@users.noreply.github.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "download": "pingcap-docs-download dl",
+    "download:tidb:en": "pingcap-docs-download dl pingcap/docs",
+    "download:tidb:en:all": "./scripts/download-tidb-en.sh",
+    "download:tidb:zh": "pingcap-docs-download dl pingcap/docs-cn",
+    "download:tidb:zh:all": "./scripts/download-tidb-zh.sh",
+    "filter:tidb-cloud:en": "pingcap-docs-download cloud pingcap/docs",
+    "download:tidb:ja": "pingcap-docs-download dl pingcap/docs",
+    "download:tidb:ja:all": "./scripts/download-tidb-ja.sh",
+    "filter:tidb-cloud:ja": "pingcap-docs-download cloud pingcap/docs --lang ja",
+    "download:dm": "pingcap-docs-download dl pingcap/docs-dm",
+    "download:dm:all": "./scripts/download-dm.sh",
+    "download:dm:en:all": "./scripts/download-dm-en.sh",
+    "download:dm:zh:all": "./scripts/download-dm-zh.sh",
+    "download:tidb-operator": "pingcap-docs-download dl pingcap/docs-tidb-operator",
+    "download:tidb-operator:all": "./scripts/download-tidb-operator.sh",
+    "download:tidb-operator:en:all": "./scripts/download-tidb-operator-en.sh",
+    "download:tidb-operator:zh:all": "./scripts/download-tidb-operator-zh.sh",
+    "clean:docs": "pingcap-docs-download cl",
+    "sync": "pingcap-docs-download sync"
+  }
+}
