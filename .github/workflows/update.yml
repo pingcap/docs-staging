@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: "Source Repo"
+        required: true
+        type: choice
+        options:
+          - pingcap/docs
+          - pingcap/docs-cn
+          - pingcap/docs-dm
+          - pingcap/docs-tidb-operator
+      branch:
+        description: "Source branch"
+        type: string
+        required: true
+      full:
+        description: "Full update"
+        type: boolean
+        default: false
+        required: false
+
+jobs:
+  build:
+    concurrency: update-${{ inputs.repo }}-${{ inputs.branch }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "yarn"
+
+      - run: yarn
+      - name: Init git info
+        run: |
+          git status
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Update target folder by event input
+        if: ${{ !inputs.full }}
+        run: |
+          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+
+      - name: Update all folder
+        if: ${{ inputs.full }}
+        run: |
+          sudo rm -fr ./markdown-pages/*
+          yarn download:tidb:en:all
+          yarn download:tidb:zh:all
+          yarn download:tidb:ja:all
+          yarn download:dm:all
+          yarn download:tidb-operator:all
+
+      - name: Filter cloud doc from target branch
+        run: |
+          yarn filter:tidb-cloud:en --ref release-6.1
+          yarn filter:tidb-cloud:ja --ref release-6.1
+
+      - name: Remove unexpected folder
+        run: |
+          sudo rm -fr ./markdown-pages/en/tidb/master/tidb-cloud
+          sudo rm -fr ./markdown-pages/en/tidb/release-5.4/tidb-cloud
+          sudo rm -fr ./markdown-pages/ja/tidb/release-5.4/tidb-cloud
+
+      - name: Git commit and push
+        run: |
+          git add markdown-pages
+          git fetch
+          git pull
+          git commit -m "update MD by dispatch event ${{ inputs.repo }} ${{ inputs.branch }}"
+          git push
