@@ -222,6 +222,83 @@ export async function retrieveTiDBMDsFromZip(
   }
 }
 
+export async function retrieveCloudMDsFromZip(
+  metaInfo,
+  destDir,
+  options,
+  retry = 5
+) {
+  const { repo, ref } = metaInfo;
+  const { ignore = [], pipelines = [] } = options;
+
+  const archiveFileName = `archive-${ref}-${new Date().getTime()}.zip`;
+  // Download archive
+  await getArchiveFile(repo, ref, archiveFileName);
+  sig.success("download archive file", archiveFileName);
+
+  sig.start("unzip and filter files", archiveFileName);
+  try {
+    // Unzip archive
+    const zip = new AdmZip(archiveFileName);
+    const zipEntries = zip.getEntries();
+
+    const cloudTocZipEntry = zipEntries.find((entry) =>
+      entry.entryName.endsWith(`/TOC-tidb-cloud.md`)
+    );
+
+    const cloudFileList = getFileListFromToc(cloudTocZipEntry.getData());
+
+    // console.log(cloudFileList);
+
+    zipEntries.forEach(function (zipEntry) {
+      // console.log(zipEntry.toString()) // outputs zip entries information
+      const { entryName } = zipEntry;
+      sig.info("unzip file(entryName):", entryName);
+      // Ignore if not markdown file
+      if (!entryName.endsWith(".md")) {
+        return;
+      }
+      const relativePathNameList = entryName.split("/");
+      relativePathNameList.shift();
+      const relativePathInZip = relativePathNameList.join("/");
+      // Ignore if not in cloud filelist
+      if (
+        !(
+          relativePathInZip.startsWith(`tidb-cloud/`) ||
+          cloudFileList.includes(`/${relativePathInZip}`) ||
+          relativePathInZip === `TOC-tidb-cloud.md`
+        )
+      ) {
+        return;
+      }
+      const filteredArray = ignore.filter((value) =>
+        relativePathNameList.includes(value)
+      );
+      // Ignore if file path contains any ignore words
+      if (filteredArray?.length > 0) {
+        return;
+      }
+      if (relativePathInZip === `TOC-tidb-cloud.md`) {
+        writeFile(`${destDir}/TOC.md`, zipEntry.getData(), pipelines);
+      } else {
+        writeFile(
+          `${destDir}/${relativePathNameList.join("/")}`,
+          zipEntry.getData(),
+          pipelines
+        );
+      }
+    });
+  } catch (error) {
+    sig.error(`unzip ${archiveFileName} error`, error);
+    if (retry <= 0) {
+      throw error;
+    }
+    sig.info(`retry retrieve`, ref);
+    sig.info(`retry times left: ${retry - 1}`);
+    return retrieveCloudMDsFromZip(metaInfo, destDir, options, retry - 1);
+  }
+}
+
 export const copySingleFileSync = (srcPath, destPath) => {
   try {
     const dir = path.dirname(destPath);
@@ -316,4 +393,12 @@ export const copyFilesFromToc = (srcFilePath = "", destPath = "") => {
 
   extractFilefromList(filteredLinkList, srcDir, destPath);
   copySingleFileSync(srcFilePath, `${destPath}/TOC.md`);
+};
+
+const getFileListFromToc = (tocFile = "") => {
+  const mdAst = generateMdAstFromFile(tocFile);
+  const linkList = extractLinkNodeFromAst(mdAst);
+  const filteredLinkList = filterLink(linkList);
+
+  return filteredLinkList;
 };
