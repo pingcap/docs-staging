@@ -190,6 +190,14 @@ export async function retrieveTiDBMDsFromZip(
       }
       const relativePathNameList = entryName.split("/");
       relativePathNameList.shift();
+      const relativePathInZip = relativePathNameList.join("/");
+      // Ignore if cloud file
+      if (
+        relativePathInZip.startsWith(`tidb-cloud/`) ||
+        relativePathInZip === `TOC-tidb-cloud.md`
+      ) {
+        return;
+      }
       const filteredArray = ignore.filter((value) =>
         relativePathNameList.includes(value)
       );
