@@ -2,7 +2,7 @@ import {
   genDest,
   imageCDNs,
   retrieveAllMDs,
-  retrieveAllMDsFromZip,
+  retrieveTiDBMDsFromZip,
   copyFilesFromToc,
   copyDirectorySync,
 } from "./utils.js";
@@ -64,7 +64,7 @@ export function download(argv) {
         nPath.resolve(dest, `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${ref}`)
       );
       rimraf.sync(docsCnDestPath);
-      retrieveAllMDsFromZip(
+      retrieveTiDBMDsFromZip(
         {
           repo,
           path,
@@ -86,7 +86,7 @@ export function download(argv) {
           nPath.resolve(dest, `${refLang}/tidb/${refVer}`)
         );
         rimraf.sync(docsDestPath);
-        retrieveAllMDsFromZip(
+        retrieveTiDBMDsFromZip(
           {
             repo,
             path,
@@ -105,7 +105,7 @@ export function download(argv) {
           )
         );
         rimraf.sync(docsDestPath);
-        retrieveAllMDsFromZip(
+        retrieveTiDBMDsFromZip(
           {
             repo,
             path,
@@ -147,7 +147,7 @@ export function download(argv) {
       break;
     default:
       // ! TO REMOVE
-      retrieveAllMDsFromZip(
+      retrieveTiDBMDsFromZip(
         {
           repo,
           path,

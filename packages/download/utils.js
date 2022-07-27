@@ -1,27 +1,27 @@
-import { getContent, http, getArchiveFile } from './http.js'
-import stream, { pipeline } from 'stream'
+import { getContent, http, getArchiveFile } from "./http.js";
+import stream, { pipeline } from "stream";
 
-import fs from 'fs'
-import path from 'path'
-import sig from 'signale'
-import AdmZip from 'adm-zip'
+import fs from "fs";
+import path from "path";
+import sig from "signale";
+import AdmZip from "adm-zip";
 
-import { fromMarkdown } from 'mdast-util-from-markdown'
-import { frontmatter } from 'micromark-extension-frontmatter'
-import { frontmatterFromMarkdown } from 'mdast-util-frontmatter'
-import { gfm } from 'micromark-extension-gfm'
-import { mdxFromMarkdown } from 'mdast-util-mdx'
-import { gfmFromMarkdown } from 'mdast-util-gfm'
-import { visit } from 'unist-util-visit'
+import { fromMarkdown } from "mdast-util-from-markdown";
+import { frontmatter } from "micromark-extension-frontmatter";
+import { frontmatterFromMarkdown } from "mdast-util-frontmatter";
+import { gfm } from "micromark-extension-gfm";
+import { mdxFromMarkdown } from "mdast-util-mdx";
+import { gfmFromMarkdown } from "mdast-util-gfm";
+import { visit } from "unist-util-visit";
 
-const IMAGE_CDN_PREFIX = 'https://download.pingcap.com/images'
+const IMAGE_CDN_PREFIX = "https://download.pingcap.com/images";
 export const imageCDNs = {
-  docs: IMAGE_CDN_PREFIX + '/docs',
-  'docs-cn': IMAGE_CDN_PREFIX + '/docs-cn',
-  'docs-dm': IMAGE_CDN_PREFIX + '/tidb-data-migration',
-  'docs-tidb-operator': IMAGE_CDN_PREFIX + '/tidb-in-kubernetes',
-  'dbaas-docs': IMAGE_CDN_PREFIX + '/tidbcloud',
-}
+  docs: IMAGE_CDN_PREFIX + "/docs",
+  "docs-cn": IMAGE_CDN_PREFIX + "/docs-cn",
+  "docs-dm": IMAGE_CDN_PREFIX + "/tidb-data-migration",
+  "docs-tidb-operator": IMAGE_CDN_PREFIX + "/tidb-in-kubernetes",
+  "dbaas-docs": IMAGE_CDN_PREFIX + "/tidbcloud",
+};
 
 /**
  * Retrieve all MDs recursively.
@@ -37,21 +37,21 @@ export const imageCDNs = {
  * @param {Array} [options.pipelines]
  */
 export async function retrieveAllMDs(metaInfo, destDir, options) {
-  const { repo, ref, path = '' } = metaInfo
-  const { ignore = [], pipelines = [] } = options
+  const { repo, ref, path = "" } = metaInfo;
+  const { ignore = [], pipelines = [] } = options;
 
-  const data = (await getContent(repo, ref, path)).data
+  const data = (await getContent(repo, ref, path)).data;
 
   if (Array.isArray(data)) {
-    data.forEach(d => {
-      const { type, name, download_url } = d
-      const nextDest = `${destDir}/${name}`
+    data.forEach((d) => {
+      const { type, name, download_url } = d;
+      const nextDest = `${destDir}/${name}`;
 
       if (ignore.includes(name)) {
-        return
+        return;
       }
 
-      if (type === 'dir') {
+      if (type === "dir") {
         retrieveAllMDs(
           {
             repo,
@@ -60,20 +60,20 @@ export async function retrieveAllMDs(metaInfo, destDir, options) {
           },
           nextDest,
           options
-        )
+        );
       } else {
-        if (name.endsWith('.md')) {
-          writeContent(download_url, nextDest, pipelines)
+        if (name.endsWith(".md")) {
+          writeContent(download_url, nextDest, pipelines);
         }
       }
-    })
+    });
   } else {
-    if (data.name.endsWith('.md')) {
+    if (data.name.endsWith(".md")) {
       writeContent(
         data.download_url,
-        destDir.endsWith('.md') ? destDir : `${destDir}/${data.name}`,
+        destDir.endsWith(".md") ? destDir : `${destDir}/${data.name}`,
         pipelines
-      )
+      );
     }
   }
 }
@@ -87,19 +87,19 @@ export async function retrieveAllMDs(metaInfo, destDir, options) {
  * @param {string} destDir
  */
 export function genDest(repo, path, destDir, sync) {
-  if (['pingcap/docs-dm', 'pingcap/docs-tidb-operator'].includes(repo)) {
-    const pathArr = path.split('/')
-    const lang = pathArr[0]
-    const pathWithoutLang = pathArr.slice(1).join('/')
+  if (["pingcap/docs-dm", "pingcap/docs-tidb-operator"].includes(repo)) {
+    const pathArr = path.split("/");
+    const lang = pathArr[0];
+    const pathWithoutLang = pathArr.slice(1).join("/");
 
     if (sync) {
-      destDir = destDir.replace('en', lang)
+      destDir = destDir.replace("en", lang);
     }
 
-    return `${destDir}${pathWithoutLang ? '/' + pathWithoutLang : ''}`
+    return `${destDir}${pathWithoutLang ? "/" + pathWithoutLang : ""}`;
   }
 
-  return path ? `${destDir}/${path}` : destDir
+  return path ? `${destDir}/${path}` : destDir;
 }
 
 /**
@@ -111,28 +111,28 @@ export function genDest(repo, path, destDir, sync) {
  * @param {Array} [pipelines=[]]
  */
 export async function writeContent(download_url, destPath, pipelines = []) {
-  const dir = path.dirname(destPath)
+  const dir = path.dirname(destPath);
 
   if (!fs.existsSync(dir)) {
-    sig.info(`Create empty dir: ${dir}`)
-    fs.mkdirSync(dir, { recursive: true })
+    sig.info(`Create empty dir: ${dir}`);
+    fs.mkdirSync(dir, { recursive: true });
   }
 
   const readableStream = stream.Readable.from(
     (await http.get(download_url)).data
-  )
-  const writeStream = fs.createWriteStream(destPath)
-  writeStream.on('close', () => sig.success('Downloaded:', download_url))
+  );
+  const writeStream = fs.createWriteStream(destPath);
+  writeStream.on("close", () => sig.success("Downloaded:", download_url));
 
-  pipeline(readableStream, ...pipelines.map(p => p()), writeStream, err => {
+  pipeline(readableStream, ...pipelines.map((p) => p()), writeStream, (err) => {
     if (err) {
-      sig.error('Pipeline failed:', err)
+      sig.error("Pipeline failed:", err);
     }
-  })
+  });
 }
 
 /**
- * Similar to writeContent for retrieveAllMDs, writeFile is used for retrieveAllMDsFromZip.
+ * Similar to writeContent for retrieveAllMDs, writeFile is used for retrieveTiDBMDsFromZip.
  * @param {string} targetPath
  * @param {iterable: Iterable<any> | AsyncIterable<any>} contents
  * @param {any[]} pipelines
@@ -140,167 +140,172 @@ export async function writeContent(download_url, destPath, pipelines = []) {
 function writeFile(targetPath, contents, pipelines) {
   fs.mkdir(path.dirname(targetPath), { recursive: true }, function (err) {
     if (err) {
-      sig.error('write file error', entryName, `${err}`)
+      sig.error("write file error", entryName, `${err}`);
     }
 
-    const readableStream = stream.Readable.from(contents)
-    const writeStream = fs.createWriteStream(targetPath)
-    writeStream.on('close', () => sig.success('writeStream:', targetPath))
+    const readableStream = stream.Readable.from(contents);
+    const writeStream = fs.createWriteStream(targetPath);
+    writeStream.on("close", () => sig.success("writeStream:", targetPath));
 
-    pipeline(readableStream, ...pipelines.map(p => p()), writeStream, err => {
-      if (err) {
-        sig.error('Pipeline failed:', err)
+    pipeline(
+      readableStream,
+      ...pipelines.map((p) => p()),
+      writeStream,
+      (err) => {
+        if (err) {
+          sig.error("Pipeline failed:", err);
+        }
       }
-    })
-  })
+    );
+  });
 }
 
-export async function retrieveAllMDsFromZip(
+export async function retrieveTiDBMDsFromZip(
   metaInfo,
   destDir,
   options,
   retry = 5
 ) {
-  const { repo, ref } = metaInfo
-  const { ignore = [], pipelines = [] } = options
+  const { repo, ref } = metaInfo;
+  const { ignore = [], pipelines = [] } = options;
 
-  const archiveFileName = `archive-${ref}-${new Date().getTime()}.zip`
+  const archiveFileName = `archive-${ref}-${new Date().getTime()}.zip`;
   // Download archive
-  await getArchiveFile(repo, ref, archiveFileName)
-  sig.success('download archive file', archiveFileName)
+  await getArchiveFile(repo, ref, archiveFileName);
+  sig.success("download archive file", archiveFileName);
 
-  sig.start('unzip and filter files', archiveFileName)
+  sig.start("unzip and filter files", archiveFileName);
   try {
     // Unzip archive
-    const zip = new AdmZip(archiveFileName)
-    const zipEntries = zip.getEntries()
+    const zip = new AdmZip(archiveFileName);
+    const zipEntries = zip.getEntries();
 
     zipEntries.forEach(function (zipEntry) {
       // console.log(zipEntry.toString()) // outputs zip entries information
-      const { entryName } = zipEntry
-      sig.info('unzip file(entryName):', entryName)
+      const { entryName } = zipEntry;
+      sig.info("unzip file(entryName):", entryName);
       // Ignore if not markdown file
-      if (!entryName.endsWith('.md')) {
-        return
+      if (!entryName.endsWith(".md")) {
+        return;
       }
-      const relativePathNameList = entryName.split('/')
-      relativePathNameList.shift()
-      const filteredArray = ignore.filter(value =>
+      const relativePathNameList = entryName.split("/");
+      relativePathNameList.shift();
+      const filteredArray = ignore.filter((value) =>
         relativePathNameList.includes(value)
-      )
+      );
       // Ignore if file path contains any ignore words
       if (filteredArray?.length > 0) {
-        return
+        return;
       }
       writeFile(
-        `${destDir}/${relativePathNameList.join('/')}`,
+        `${destDir}/${relativePathNameList.join("/")}`,
         zipEntry.getData(),
         pipelines
-      )
-    })
+      );
+    });
   } catch (error) {
-    sig.error(`unzip ${archiveFileName} error`, error)
+    sig.error(`unzip ${archiveFileName} error`, error);
     if (retry <= 0) {
-      throw error
+      throw error;
     }
-    sig.info(`retry retrieve`, ref)
-    sig.info(`retry times left: ${retry - 1}`)
-    return retrieveAllMDsFromZip(metaInfo, destDir, options, retry - 1)
+    sig.info(`retry retrieve`, ref);
+    sig.info(`retry times left: ${retry - 1}`);
+    return retrieveTiDBMDsFromZip(metaInfo, destDir, options, retry - 1);
   }
 }
 
 export const copySingleFileSync = (srcPath, destPath) => {
   try {
-    const dir = path.dirname(destPath)
+    const dir = path.dirname(destPath);
 
     if (!fs.existsSync(dir)) {
       // console.info(`Create empty dir: ${dir}`);
-      fs.mkdirSync(dir, { recursive: true })
+      fs.mkdirSync(dir, { recursive: true });
     }
 
-    fs.copyFileSync(srcPath, destPath)
+    fs.copyFileSync(srcPath, destPath);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 const getAllFiles = (dirPath, arrayOfFiles) => {
-  const files = fs.readdirSync(dirPath)
+  const files = fs.readdirSync(dirPath);
 
-  arrayOfFiles = arrayOfFiles || []
+  arrayOfFiles = arrayOfFiles || [];
 
-  files.forEach(file => {
-    if (fs.statSync(dirPath + '/' + file).isDirectory()) {
-      arrayOfFiles = getAllFiles(dirPath + '/' + file, arrayOfFiles)
+  files.forEach((file) => {
+    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+      arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles);
     } else {
-      arrayOfFiles.push(path.join(dirPath, '/', file))
+      arrayOfFiles.push(path.join(dirPath, "/", file));
     }
-  })
+  });
 
-  return arrayOfFiles
-}
+  return arrayOfFiles;
+};
 
 export const copyDirectorySync = (srcPath, destPath) => {
   try {
-    const allFiles = getAllFiles(srcPath)
-    allFiles.forEach(filePath => {
-      const relativePath = path.relative(srcPath, filePath)
-      copySingleFileSync(filePath, destPath + relativePath)
-    })
+    const allFiles = getAllFiles(srcPath);
+    allFiles.forEach((filePath) => {
+      const relativePath = path.relative(srcPath, filePath);
+      copySingleFileSync(filePath, destPath + relativePath);
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
-const generateMdAstFromFile = fileContent => {
+const generateMdAstFromFile = (fileContent) => {
   const mdAst = fromMarkdown(fileContent, {
-    extensions: [frontmatter(['yaml', 'toml']), gfm()],
+    extensions: [frontmatter(["yaml", "toml"]), gfm()],
     mdastExtensions: [
       mdxFromMarkdown(),
-      frontmatterFromMarkdown(['yaml', 'toml']),
+      frontmatterFromMarkdown(["yaml", "toml"]),
       gfmFromMarkdown(),
     ],
-  })
-  return mdAst
-}
+  });
+  return mdAst;
+};
 
-const extractLinkNodeFromAst = mdAst => {
-  const linkList = []
-  visit(mdAst, node => {
-    if (node.type === 'link') {
-      linkList.push(node.url)
+const extractLinkNodeFromAst = (mdAst) => {
+  const linkList = [];
+  visit(mdAst, (node) => {
+    if (node.type === "link") {
+      linkList.push(node.url);
     }
-  })
-  return linkList
-}
+  });
+  return linkList;
+};
 
 const filterLink = (srcList = []) => {
-  const result = srcList.filter(item => {
-    const url = item.trim()
-    if (url.endsWith('.md') || url.endsWith('.mdx')) return true
-    return false
-  })
-  return result
-}
+  const result = srcList.filter((item) => {
+    const url = item.trim();
+    if (url.endsWith(".md") || url.endsWith(".mdx")) return true;
+    return false;
+  });
+  return result;
+};
 
 const extractFilefromList = (
   fileList = [],
-  inputPath = '',
-  outputPath = ''
+  inputPath = "",
+  outputPath = ""
 ) => {
-  fileList.forEach(filePath => {
-    copySingleFileSync(`${inputPath}/${filePath}`, `${outputPath}/${filePath}`)
-  })
-}
+  fileList.forEach((filePath) => {
+    copySingleFileSync(`${inputPath}/${filePath}`, `${outputPath}/${filePath}`);
+  });
+};
 
-export const copyFilesFromToc = (srcFilePath = '', destPath = '') => {
-  const tocFile = fs.readFileSync(srcFilePath)
-  const mdAst = generateMdAstFromFile(tocFile)
-  const linkList = extractLinkNodeFromAst(mdAst)
-  const filteredLinkList = filterLink(linkList)
+export const copyFilesFromToc = (srcFilePath = "", destPath = "") => {
+  const tocFile = fs.readFileSync(srcFilePath);
+  const mdAst = generateMdAstFromFile(tocFile);
+  const linkList = extractLinkNodeFromAst(mdAst);
+  const filteredLinkList = filterLink(linkList);
 
-  const srcDir = path.dirname(srcFilePath)
+  const srcDir = path.dirname(srcFilePath);
 
-  extractFilefromList(filteredLinkList, srcDir, destPath)
-  copySingleFileSync(srcFilePath, `${destPath}/TOC.md`)
-}
+  extractFilefromList(filteredLinkList, srcDir, destPath);
+  copySingleFileSync(srcFilePath, `${destPath}/TOC.md`);
+};
