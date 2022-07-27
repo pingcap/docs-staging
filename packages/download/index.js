@@ -2,7 +2,8 @@ import {
   genDest,
   imageCDNs,
   retrieveAllMDs,
-  retrieveAllMDsFromZip,
+  retrieveTiDBMDsFromZip,
+  retrieveCloudMDsFromZip,
   copyFilesFromToc,
   copyDirectorySync,
 } from "./utils.js";
@@ -64,7 +65,7 @@ export function download(argv) {
         nPath.resolve(dest, `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${ref}`)
       );
       rimraf.sync(docsCnDestPath);
-      retrieveAllMDsFromZip(
+      retrieveTiDBMDsFromZip(
         {
           repo,
           path,
@@ -86,7 +87,7 @@ export function download(argv) {
           nPath.resolve(dest, `${refLang}/tidb/${refVer}`)
         );
         rimraf.sync(docsDestPath);
-        retrieveAllMDsFromZip(
+        retrieveTiDBMDsFromZip(
           {
             repo,
             path,
@@ -105,7 +106,7 @@ export function download(argv) {
           )
         );
         rimraf.sync(docsDestPath);
-        retrieveAllMDsFromZip(
+        retrieveTiDBMDsFromZip(
           {
             repo,
             path,
@@ -147,7 +148,7 @@ export function download(argv) {
       break;
     default:
       // ! TO REMOVE
-      retrieveAllMDsFromZip(
+      retrieveTiDBMDsFromZip(
         {
           repo,
           path,
@@ -254,17 +255,45 @@ export function gen(argv) {
   genContentFromOutline(repo, from, output);
 }
 
+// export function filterCloud(argv) {
+//   const { repo, path, ref, destination, lang } = argv;
+//   const dest = nPath.resolve(destination);
+//   const srcPath = genDest(
+//     repo,
+//     path,
+//     nPath.resolve(dest, `${lang}/tidb/${ref}`)
+//   );
+//   const destPath = nPath.resolve(dest, `${lang}/tidbcloud/master`);
+//   copyFilesFromToc(`${srcPath}/TOC-tidb-cloud.md`, `${destPath}`);
+//   copyDirectorySync(`${srcPath}/tidb-cloud`, `${destPath}/tidb-cloud/`);
+//   fs.existsSync(`${srcPath}/tidb-cloud`) &&
+//     fs.rmSync(`${srcPath}/tidb-cloud`, { recursive: true });
+// }
 export function filterCloud(argv) {
-  const { repo, path, ref, destination, lang } = argv;
+  const {
+    repo = "pingcap/docs",
+    path,
+    ref,
+    destination,
+    lang,
+    config,
+    dryRun,
+  } = argv;
   const dest = nPath.resolve(destination);
-  const srcPath = genDest(
+  const options = genOptions(repo, config, dryRun);
+  const docsDestPath = genDest(
     repo,
     path,
-    nPath.resolve(dest, `${lang}/tidb/${ref}`)
+    nPath.resolve(dest, `${lang}/tidbcloud/master`)
   );
-  const destPath = nPath.resolve(dest, `${lang}/tidbcloud/master`);
-  copyFilesFromToc(`${srcPath}/TOC-tidb-cloud.md`, `${destPath}`);
-  copyDirectorySync(`${srcPath}/tidb-cloud`, `${destPath}/tidb-cloud/`);
-  fs.existsSync(`${srcPath}/tidb-cloud`) &&
-    fs.rmSync(`${srcPath}/tidb-cloud`, { recursive: true });
+  rimraf.sync(docsDestPath);
+  retrieveCloudMDsFromZip(
+    {
+      repo,
+      path,
+      ref,
+    },
+    docsDestPath,
+    options
+  );
 }
