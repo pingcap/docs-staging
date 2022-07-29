@@ -24,7 +24,7 @@ tiup cluster display tidb-test
 
 ### TiDBダッシュボードを使用する {#use-tidb-dashboard}
 
-1.  `${pd-ip}:${pd-port}/dashboard`でTiDBダッシュボードにログインします。ユーザー名とパスワードは、 `root`ユーザーのものと同じです。 `root`パスワードを変更した場合は、変更したパスワードを入力します。パスワードはデフォルトでは空です。
+1.  `${pd-ip}:${pd-port}/dashboard`でTiDBダッシュボードにログインします。ユーザー名とパスワードは、 `root`ユーザーのものと同じです。 `root`パスワードを変更した場合は、変更したパスワードを入力します。デフォルトでは、パスワードは空です。
 
     ![TiDB-Dashboard](https://download.pingcap.com/images/docs/tiup/tidb-dashboard.png)
 
@@ -152,7 +152,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
     Query OK, 1 row affected (0.03 sec)
     ```
 
--   `tab_tidb`のエントリをビューします。
+-   `tab_tidb`のエントリをビューします：
 
     
     ```sql

@@ -7,7 +7,7 @@ summary: Learn how to migrate data from MySQL-compatible databases to TiDB Cloud
 
 TiDBはMySQLと高い互換性があります。データがセルフホストのMySQLインスタンスからのものであるか、パブリッククラウドによって提供されるRDSサービスからのものであるかに関係なく、MySQL互換データベースからTiDBにデータをスムーズに移行できます。
 
-このドキュメントでは、 [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)を使用してMySQL互換データベースからデータをエクスポートし、 [TiDB Lightning](https://docs.pingcap.com/tidb/stable/tidb-lightning-overview)バックエンドを使用してデータをTiDB Cloudにインポートする方法について説明します。
+このドキュメントでは、 [Dumpling](/dumpling-overview.md)を使用してMySQL互換データベースからデータをエクスポートし、 [TiDB Lightning](https://docs.pingcap.com/tidb/stable/tidb-lightning-overview)論理インポートモードを使用してデータをTiDB Cloudにインポートする方法について説明します。
 
 > **ノート：**
 >
@@ -15,14 +15,23 @@ TiDBはMySQLと高い互換性があります。データがセルフホスト�
 
 ## 前提条件 {#prerequisites}
 
-TiDBは現在、次のCI照合のみをサポートしています。 MySQL互換データベースからTiDBにデータを移行する前に、サポートされている照合が要件を満たしていることを確認してください。
+MySQL互換データベースからTiDBにデータを移行する前に、サポートされているTiDB Cloudの照合が要件を満たしていることを確認してください。
 
+デフォルトでは、 TiDB Cloudは次のCI照合をサポートします。
+
+-   ascii_bin
+-   バイナリ
+-   latin1_bin
+-   utf8_bin
 -   utf8_general_ci
+-   utf8_unicode_ci
+-   utf8mb4_bin
 -   utf8mb4_general_ci
+-   utf8mb4_unicode_ci
 
 ## 手順1.TiUPをインストールします {#step-1-install-tiup}
 
-TiUPは、TiDBエコシステムのパッケージマネージャーであり、1行のコマンドで任意のTiDBクラスタコンポーネントを実行するのに役立ちます。このドキュメントでは、TiUPを使用して、 DumplingとTiDB Lightningのインストールと実行を支援します。
+TiUPは、TiDBエコシステムのパッケージマネージャーであり、1行のコマンドで任意のTiDBクラスタコンポーネントを実行するのに役立ちます。このドキュメントでは、TiUPを使用してDumplingとTiDB Lightningをインストールして実行します。
 
 1.  TiUPをダウンロードしてインストールします。
 
@@ -35,7 +44,7 @@ TiUPは、TiDBエコシステムのパッケージマネージャーであり、
 
     > **ノート：**
     >
-    > インストール後、TiUPは対応する`profile`のファイルの絶対パスを表示します。次のコマンドでは、 `.bash_profile`を`profile`ファイルのパスに変更する必要があります。
+    > インストール後、TiUPは対応する`profile`ファイルの絶対パスを表示します。次のコマンドでは、 `.bash_profile`を`profile`ファイルのパスに変更する必要があります。
 
     
     ```shell
@@ -44,9 +53,9 @@ TiUPは、TiDBエコシステムのパッケージマネージャーであり、
 
 ## ステップ2.MySQL互換データベースからデータをエクスポートする {#step-2-export-data-from-mysql-compatible-databases}
 
-`mysqldump`または`mydumper`を使用するなど、MySQLからデータをダンプする方法はいくつかあります。パフォーマンスとTiDBとの互換性を高めるために、 [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)を使用することをお勧めします。TiDBは、PingCAPによって作成されたオープンソースツールの1つでもあります。
+`mysqldump`または`mydumper`を使用するなど、MySQLからデータをダンプする方法はいくつかあります。 PingCAPによって作成されたオープンソースツールの1つでもあるTiDBとのパフォーマンスと互換性を高めるために、 [Dumpling](/dumpling-overview.md)を使用することをお勧めします。
 
-1.  Dumplingをインストールします：
+1.  Dumplingをインストールします。
 
     
     ```shell
@@ -55,7 +64,7 @@ TiUPは、TiDBエコシステムのパッケージマネージャーであり、
 
 2.  Dumplingを使用してMySQLデータベースをエクスポートします。
 
-    -   データをAmazonS3クラウドストレージにエクスポートするには、 [AmazonS3クラウドストレージにデータをエクスポートする](https://docs.pingcap.com/tidb/stable/dumpling-overview#export-data-to-amazon-s3-cloud-storage)を参照してください。
+    -   データをAmazonS3クラウドストレージにエクスポートするには、 [AmazonS3クラウドストレージにデータをエクスポートする](/dumpling-overview.md#export-data-to-amazon-s3-cloud-storage)を参照してください。
     -   データをローカルデータファイルにエクスポートするには、次のコマンドを使用します。
 
         
@@ -78,15 +87,15 @@ TiUPは、TiDBエコシステムのパッケージマネージャーであり、
 
 -   ソースデータがAmazonS3クラウドストレージにある場合は、次の手順を実行します。
 
-    1.  TiDBクラウドがAmazonS3バケット内のソースデータにアクセスできるようにAmazonS3アクセスを設定します。詳細については、 [AmazonS3アクセスを設定する](/tidb-cloud/migrate-from-amazon-s3-or-gcs.md#step-2-configure-amazon-s3-access)を参照してください。
+    1.  TiDBクラウドがAmazonS3バケット内のソースデータにアクセスできるようにAmazonS3アクセスを設定します。詳細については、 [AmazonS3アクセスを設定する](/tidb-cloud/config-s3-and-gcs-access.md#configure-amazon-s3-access)を参照してください。
     2.  TiDB Cloudコンソールから、[TiDBクラスター]ページに移動し、ターゲットクラスタの名前をクリックして、独自の概要ページに移動します。左側のクラスタ情報ペインで、[**インポート**]をクリックし、[<strong>データインポートタスク</strong>]ページでインポート関連情報を入力します。
 
 -   ソースデータがローカルファイルにある場合は、次のいずれかを実行します。
 
     -   データが1TBを超える場合は、データをTiDB Cloudにインポートまたは移行するためのステージング領域としてAmazonS3またはGCSを使用することをお勧めします。詳細については、 [AmazonS3またはGCSからTiDB Cloudにインポートまたは移行します](/tidb-cloud/migrate-from-amazon-s3-or-gcs.md)を参照してください。
-    -   データが1TB未満の場合は、このドキュメントの次の手順に従ってTiDB Lightningバックエンドを使用できます。
+    -   データが1TB未満の場合は、このドキュメントの次の手順に従って、 TiDB Lightningの論理インポートモードを使用できます。
 
-次の手順は、 TiDB Lightningバックエンドを使用してデータをTiDB Cloudにインポートする方法を示しています。
+次の手順は、 TiDB Lightningの論理インポートモードを使用してローカルデータをTiDB Cloudにインポートする方法を示しています。
 
 1.  TiDB Lightningをインストールします：
 
@@ -139,7 +148,7 @@ TiUPは、TiDBエコシステムのパッケージマネージャーであり、
 
         ターゲットTiDBクラスタでTLSを構成する場合、またはさらに構成を行う場合は、 [TiDB LightningConfiguration / コンフィグレーション](https://docs.pingcap.com/tidb/stable/tidb-lightning-configuration)を参照してください。
 
-3.  TiDB Lightningを使用してデータをTiDBにインポートします：
+3.  TiDB Lightningを使用してTiDBにデータをインポートします：
 
     
     ```shell
@@ -149,4 +158,4 @@ TiUPは、TiDBエコシステムのパッケージマネージャーであり、
     インポートタスクが開始された後、次のいずれかの方法でインポートの進行状況を表示できます。
 
     -   コマンドラインを使用して進行状況を取得するには、ログのキーワード`progress`を`grep`にします。これは、デフォルトで5分ごとに更新されます。
-    -   TiDB監視フレームワークを使用してより多くの監視メトリックを取得するには、 [TiDB Lightning Monitoring](https://docs.pingcap.com/tidb/stable/monitor-tidb-lightning)を参照してください。
+    -   TiDB監視フレームワークを使用してより多くの監視メトリックを取得するには、 [TiDB Lightning監視](https://docs.pingcap.com/tidb/stable/monitor-tidb-lightning)を参照してください。

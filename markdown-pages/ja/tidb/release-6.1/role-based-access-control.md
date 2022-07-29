@@ -7,14 +7,14 @@ summary: This document introduces TiDB RBAC operations and implementation.
 
 TiDBの役割ベースのアクセス制御（RBAC）システムの実装は、MySQL8.0の実装と似ています。 TiDBは、MySQLのほとんどのRBAC構文と互換性があります。
 
-このドキュメントでは、TiDBRBAC関連の操作と実装を紹介します。
+このドキュメントでは、TiDB RBAC 関連の操作と実装について紹介します。
 
 ## RBAC操作 {#rbac-operations}
 
 ロールは、一連の特権のコレクションです。次の操作を実行できます。
 
 -   役割を作成します。
--   ロールを削除します。
+-   役割を削除します。
 -   ロールに特権を付与します。
 -   別のユーザーに役割を付与します。そのユーザーは、ロールを有効にした後、ロールに関連する特権を取得できます。
 
@@ -31,13 +31,13 @@ CREATE ROLE 'app_developer', 'app_read', 'app_write';
 
 ロールは`mysql.user`テーブルに格納され、ロール名のホスト名部分（省略されている場合）のデフォルトは`'%'`です。作成しようとしているロールの名前は一意である必要があります。それ以外の場合は、エラーが報告されます。
 
-ロールを作成するには、 `CREATE ROLE`または`CREATE USER`の特権が必要です。
+役割を作成するには、 `CREATE ROLE`つまたは`CREATE USER`の特権が必要です。
 
-### ロールに特権を付与する {#grant-a-privilege-to-a-role}
+### 役割に特権を付与する {#grant-a-privilege-to-a-role}
 
 ロールに特権を付与する操作は、ユーザーに特権を付与する操作と同じです。詳細については、 [TiDB権限管理](/privilege-management.md)を参照してください。
 
-たとえば、次のステートメントを使用して、 `app_read`のロールに`app_db`のデータベースを読み取る権限を付与できます。
+たとえば、次のステートメントを使用して、 `app_read`のロールに`app_db`のデータベースを読み取る特権を付与できます。
 
 
 ```sql
@@ -97,7 +97,7 @@ GRANT 'r2' TO 'u2';
 GRANT 'u2' TO 'r2';
 ```
 
-TiDBは、このマルチレベルの認証関係をサポートしています。これを使用して、特権の継承を実装できます。
+TiDBは、このマルチレベルの承認関係をサポートしています。これを使用して、特権の継承を実装できます。
 
 ### ロールの権限を確認してください {#check-a-role-s-privileges}
 
@@ -119,7 +119,7 @@ SHOW GRANTS FOR 'dev1'@'localhost';
 +-------------------------------------------------+
 ```
 
-`SHOW GRANTS`の`USING`オプションを使用して、役割の特権を確認できます。
+`SHOW GRANTS`のうち`USING`のオプションを使用して、役割の特権を確認できます。
 
 
 ```sql
@@ -173,7 +173,7 @@ SHOW GRANTS FOR 'read_user1'@'localhost' USING 'app_read';
 
 ### デフォルトの役割を設定する {#set-the-default-role}
 
-ロールがユーザーに付与された後、すぐには有効になりません。ユーザーがこのロールを有効にした後でのみ、ユーザーはロールが所有する特権を使用できます。
+ロールがユーザーに付与された後、すぐには有効になりません。ユーザーがこのロールを有効にした後でのみ、ロールが所有する特権を使用できます。
 
 ユーザーのデフォルトの役割を設定できます。ユーザーがログインすると、デフォルトの役割が自動的に有効になります。
 
@@ -244,14 +244,14 @@ SET ROLE DEFAULT
 SET ROLE ALL
 ```
 
-次のステートメントを使用して、すべてのロールを無効にすることができます。
+次のステートメントを使用して、すべての役割を無効にすることができます。
 
 
 ```sql
 SET ROLE NONE
 ```
 
-次のステートメントを使用して、 `app_read`以外のロールを有効にすることができます。
+次のステートメントを使用して、 `app_read`以外のロールを有効にできます。
 
 
 ```sql
@@ -262,9 +262,9 @@ SET ROLE ALL EXCEPT 'app_read'
 >
 > `SET ROLE`を使用してロールを有効にする場合、このロールは現在のセッションでのみ有効です。
 
-### 現在有効な役割を確認してください {#check-the-current-enabled-role}
+### 現在有効な役割を確認する {#check-the-current-enabled-role}
 
-現在のユーザーは、 `CURRENT_ROLE()`機能を使用して、現在のユーザーによって有効にされている役割を確認できます。
+現在のユーザーは、 `CURRENT_ROLE()`関数を使用して、現在のユーザーによって有効にされている役割を確認できます。
 
 たとえば、デフォルトの役割を`rw_user1'@'localhost`に付与できます。
 
@@ -273,7 +273,7 @@ SET ROLE ALL EXCEPT 'app_read'
 SET DEFAULT ROLE ALL TO 'rw_user1'@'localhost';
 ```
 
-`rw_user1@localhost`ログインした後、次のステートメントを実行できます。
+`rw_user1@localhost`ログイン後、次のステートメントを実行できます。
 
 
 ```sql
@@ -303,7 +303,7 @@ SET ROLE 'app_read'; SELECT CURRENT_ROLE();
 
 ### 役割を取り消す {#revoke-a-role}
 
-次のステートメントを使用して、ユーザー`read_user1@localhost`および`read_user2@localhost`に付与された`app_read`のロールを取り消すことができます。
+次のステートメントを使用して、ユーザー`read_user1@localhost`および`read_user2@localhost`に付与された`app_read`の役割を取り消すことができます。
 
 
 ```sql
@@ -339,7 +339,7 @@ REVOKE INSERT, UPDATE, DELETE ON app_db.* FROM 'app_write';
 DROP ROLE 'app_read', 'app_write';
 ```
 
-この操作により、 `mysql.user`テーブルの`app_read`と`app_write`のロール・レコードおよび許可テーブルの関連レコードが削除され、2つの役割に関連する許可が終了します。
+この操作により、 `mysql.user`テーブルの`app_read`と`app_write`のロールレコードと許可テーブルの関連レコードが削除され、2つのロールに関連する許可が終了します。
 
 ロールを削除するには、 `DROP ROLE`または`DROP USER`の権限が必要です。
 
