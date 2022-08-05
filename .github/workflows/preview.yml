@@ -25,6 +25,7 @@ jobs:
 
       - name: Init git info
         run: |
+          cd preview
           git status
           git config user.name github-actions
           git config user.email github-actions@github.com
