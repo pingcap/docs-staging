@@ -1,4 +1,4 @@
-name: CI
+name: Update preview branch
 
 on:
   push:
