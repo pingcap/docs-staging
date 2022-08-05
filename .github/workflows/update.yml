@@ -46,7 +46,16 @@ jobs:
         env:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          # docs-dm and docs-tidb-operator need specify language
+          if [ ${{ inputs.repo }} = "pingcap/docs-dm" ] || [ ${{ inputs.repo }} = "pingcap/docs-tidb-operator" ] 
+          then
+          yarn download ${{ inputs.repo }} en --ref ${{ inputs.branch }}
+          yarn download ${{ inputs.repo }} zh --ref ${{ inputs.branch }}
+          else
           yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+          fi
+
+          # handle tidb-cloud doc based on specified en/ja doc branch
           if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "release-6.1" ]
           then
           yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
