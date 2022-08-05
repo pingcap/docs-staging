@@ -6,6 +6,7 @@ on:
       - main
     paths-ignore:
       - ".github/**"
+  workflow_dispatch:
 
 concurrency: update-preview-branch
 
@@ -31,12 +32,21 @@ jobs:
       - name: Update preview branch files
         run: |
           sudo rm -fr ./preview/markdown-pages/*
+
           mkdir -p ./preview/markdown-pages/en/tidb
+          mkdir -p ./preview/markdown-pages/ja/tidb
           mkdir -p ./preview/markdown-pages/en/tidbcloud
           mkdir -p ./preview/markdown-pages/zh/tidb
+
+          cp -rip ./main/markdown-pages/en/tidb/master ./preview/markdown-pages/en/tidb/master
           cp -rip ./main/markdown-pages/en/tidb/release-6.1 ./preview/markdown-pages/en/tidb/release-6.1
           cp -rip ./main/markdown-pages/en/tidbcloud ./preview/markdown-pages/en/tidbcloud
+
           cp -rip ./main/markdown-pages/zh/tidb/release-6.1 ./preview/markdown-pages/zh/tidb/release-6.1
+          cp -rip ./main/markdown-pages/zh/tidb/master ./preview/markdown-pages/zh/tidb/master
+
+          cp -rip ./main/markdown-pages/ja/tidb/release-6.1 ./preview/markdown-pages/ja/tidb/release-6.1
+          cp -rip ./main/markdown-pages/ja/tidbcloud ./preview/markdown-pages/ja/tidbcloud
 
       - name: Git commit and push
         run: |
