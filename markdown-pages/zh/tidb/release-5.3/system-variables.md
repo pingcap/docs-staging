@@ -298,7 +298,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
 - 默认值：`2`
 - 范围：`[1, 2]`
 - 这个变量用于控制 TiDB 收集统计信息的行为。
-- 在 v5.3.0 及之后的版本中，该变量的默认值为 `2`，作为实验特性启用，具体可参照[统计信息简介](/statistics.md)文档。如果从 v5.3.0 之前版本的集群升级至 v5.3.0 及之后的版本，`tidb_analyze_version` 的默认值不发生变化。
+- 在 v5.3.0 及之后的版本中，该变量的默认值为 `2`，具体可参照[统计信息简介](/statistics.md)文档。如果从 v5.3.0 之前版本的集群升级至 v5.3.0 及之后的版本，`tidb_analyze_version` 的默认值不发生变化。
 
 ### `tidb_auto_analyze_end_time`
 
@@ -566,6 +566,21 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
 - 作用域：SESSION | GLOBAL
 - 默认值：`OFF`
 - 这个变量用于控制是否允许在创建生成列或者表达式索引时引用自增列。
+
+### `tidb_enable_change_multi_schema`
+
+> **警告：**
+>
+> TiDB 未来会支持更多种类的多模式对象变更，该系统变量将在后续版本中移除。
+
+- 作用域：GLOBAL
+- 是否持久化到集群：是
+- 默认值：`OFF`
+- 这个变量用于控制是否允许在一个 `ALTER TABLE` 语句中变更多个列或者索引。该变量值为 `ON` 时，仅支持以下多模式对象变更：
+    - 添加多列，例如 `ATLER TABLE t ADD COLUMN c1 INT, ADD COLUMN c2 INT;`。
+    - 删除多列，例如 `ATLER TABLE t DROP COLUMN c1, DROP COLUMN c2;`。
+    - 删除多个索引，例如 `ATLER TABLE t DROP INDEX i1, DROP INDEX i2;`。
+    - 删除被单列索引所覆盖的列，例如 `ALTER TABLE t DROP COLUMN c1`, 表结构中包含 `INDEX idx(c1)`。
 
 ### `tidb_enable_cascades_planner`
 
