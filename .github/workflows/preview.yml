@@ -54,5 +54,19 @@ jobs:
           git add markdown-pages
           git fetch
           git pull
-          git commit -m "update MDs by main branch"
+          if [[ -z $(git status -s) ]]
+          then
+            git status
+          else
+            git commit -m "update MDs by main branch"
+          fi
           git push
+
+      # - name: Trigger website-docs-preview
+      #   run: |
+      #     curl \
+      #     -X POST \
+      #     -H "Accept: application/vnd.github+json" \
+      #     -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+      #     https://api.github.com/repos/pingcap/website-docs/actions/workflows/preview.yml/dispatches \
+      #     -d '{"ref":"master","inputs":{}'
