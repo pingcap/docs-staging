@@ -83,5 +83,10 @@ jobs:
           git add markdown-pages
           git fetch
           git pull
-          git commit -m "update MD by dispatch event ${{ inputs.repo }} ${{ inputs.branch }}"
+          if [[ -z $(git status -s) ]]
+          then
+            git status
+          else
+            git commit -m "update MD by dispatch event ${{ inputs.repo }} ${{ inputs.branch }}"
+          fi
           git push
