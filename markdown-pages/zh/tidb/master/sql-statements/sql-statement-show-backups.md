@@ -27,7 +27,7 @@ ShowLikeOrWhere ::=
 
 
 ```sql
-BACKUP DATABASE `test` TO 's3://example-bucket/backup-01/?region=us-west-1';
+BACKUP DATABASE `test` TO 's3://example-bucket/backup-01/';
 ```
 
 在备份完成之前，在新的连接中执行 `SHOW BACKUPS`：

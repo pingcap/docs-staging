@@ -32,14 +32,14 @@ TiDB 的备份恢复功能 Backup & Restore (BR) 支持将 Amazon S3 或支持 S
 
     
     ```shell
-    br backup full --pd "${PDIP}:2379" --storage "s3://${Bucket}/${Folder}" --s3.region "${region}"
+    br backup full --pd "${PDIP}:2379" --storage "s3://${Bucket}/${Folder}"
     ```
 
 - 通过 `br` 命令行参数设置访问 S3 的 `access-key` 和 `secret-access-key`, 同时设置 `--send-credentials-to-tikv=true` 将 access key 从 BR 传递到每个 TiKV 上。
 
     
     ```shell
-    br backup full --pd "${PDIP}:2379" --storage "s3://${Bucket}/${Folder}?access-key=${accessKey}&secret-access-key=${secretAccessKey}" --s3.region "${region}" --send-credentials-to-tikv=true
+    br backup full --pd "${PDIP}:2379" --storage "s3://${Bucket}/${Folder}?access-key=${accessKey}&secret-access-key=${secretAccessKey}" --send-credentials-to-tikv=true
     ```
 
 在通常情况下，为了避免 `access-key` 等密钥信息记录在命令行中被泄漏，推荐使用为 EC2 实例关联 IAM role 的方法。
@@ -51,7 +51,6 @@ TiDB 的备份恢复功能 Backup & Restore (BR) 支持将 Amazon S3 或支持 S
 br backup full \
     --pd "${PDIP}:2379" \
     --storage "s3://${Bucket}/${Folder}?access-key=${accessKey}&secret-access-key=${secretAccessKey}" \
-    --s3.region "${region}" \
     --send-credentials-to-tikv=true \
     --ratelimit 128 \
     --log-file backuptable.log
@@ -59,7 +58,6 @@ br backup full \
 
 上述命令中，
 
-- `--s3.region`：表示 S3 存储所在的区域。
 - `--send-credentials-to-tikv`：表示将 S3 的访问权限传递给 TiKV 节点。
 
 ## 从 S3 恢复集群数据
@@ -69,7 +67,6 @@ br backup full \
 br restore full \
     --pd "${PDIP}:2379" \
     --storage "s3://${Bucket}/${Folder}?access-key=${accessKey}&secret-access-key=${secretAccessKey}" \
-    --s3.region "${region}" \
     --ratelimit 128 \
     --send-credentials-to-tikv=true \
     --log-file restorefull.log
