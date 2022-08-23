@@ -25,15 +25,15 @@ summary: 介绍 TiDB 中的乐观事务和悲观事务，乐观事务的重试�
 
 下面代码以悲观事务的方式，用两个线程模拟了两个用户并发买同一本书的过程，书店剩余 10 本，Bob 购买了 6 本，Alice 购买了 4 本。两个人几乎同一时间完成订单，最终，这本书的剩余库存为零。
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Java">
+<div label="Java" value="java">
 
 当使用多个线程模拟多用户同时插入的情况时，需要使用一个线程安全的连接对象，这里使用 Java 当前较流行的连接池 [HikariCP](https://github.com/brettwooldridge/HikariCP) 。
 
 </div>
 
-<div label="Golang">
+<div label="Golang" value="golang">
 
 Golang 的 `sql.DB` 是并发安全的，无需引入外部包。
 
@@ -96,9 +96,9 @@ func (tx *TiDBSqlTx) Rollback() error {
 
 ### 1. 编写悲观事务示例
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Java">
+<div label="Java" value="java">
 
 **配置文件**
 
@@ -329,7 +329,7 @@ public class TxnExample {
 
 </div>
 
-<div label="Golang">
+<div label="Golang" value="golang">
 
 首先编写一个封装了所需的数据库操作的 `helper.go` 文件：
 
@@ -657,9 +657,9 @@ Golang 的例子中，已经包含乐观事务。
 
 运行示例程序：
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Java">
+<div label="Java" value="java">
 
 在 Java 中运行示例程序：
 
@@ -670,7 +670,7 @@ java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_
 
 </div>
 
-<div label="Golang">
+<div label="Golang" value="golang">
 
 在 Golang 中运行示例程序：
 
@@ -737,9 +737,9 @@ mysql> SELECT * FROM users;
 
 运行示例程序：
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Java">
+<div label="Java" value="java">
 
 在 Java 中运行示例程序：
 
@@ -750,7 +750,7 @@ java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_
 
 </div>
 
-<div label="Golang">
+<div label="Golang" value="golang">
 
 在 Golang 中运行示例程序：
 
@@ -814,9 +814,9 @@ mysql> SELECT * FROM users;
 
 ### 1. 编写乐观事务示例
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Java">
+<div label="Java" value="java">
 
 使用 Java 编写乐观事务示例：
 
@@ -999,7 +999,7 @@ public class TxnExample {
 
 </div>
 
-<div label="Golang">
+<div label="Golang" value="golang">
 
 Golang 在[编写悲观事务示例](#1-编写悲观事务示例)章节中的例子已经支持了乐观事务，无需更改，可直接使用。
 
@@ -1011,9 +1011,9 @@ Golang 在[编写悲观事务示例](#1-编写悲观事务示例)章节中的例
 
 运行示例程序：
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Java">
+<div label="Java" value="java">
 
 在 Java 中运行示例程序：
 
@@ -1024,7 +1024,7 @@ java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_
 
 </div>
 
-<div label="Golang">
+<div label="Golang" value="golang">
 
 在 Golang 中运行示例程序：
 
@@ -1099,9 +1099,9 @@ mysql> SELECT * FROM users;
 
 运行示例程序：
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Java">
+<div label="Java" value="java">
 
 在 Java 中运行示例程序：
 
@@ -1112,7 +1112,7 @@ java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_
 
 </div>
 
-<div label="Golang">
+<div label="Golang" value="golang">
 
 在 Golang 中运行示例程序：
 

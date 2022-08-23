@@ -81,6 +81,7 @@
     - [Gitpod](/develop/dev-guide-playground-gitpod.md)
   - 第三方软件支持
     - [PingCAP 维护的三方库](/develop/dev-guide-third-party-support.md)
+    - [TiDB 与 ProxySQL 集成](/develop/dev-guide-proxysql-integration.md)
 - 部署标准集群
   - [软硬件环境需求](/hardware-and-software-requirements.md)
   - [环境与系统配置检查](/check-before-deployment.md)
@@ -120,7 +121,7 @@
 - 数据集成
   - [数据集成概述](/integration-overview.md)
   - 数据集成场景
-    - [与 Confluent Cloud 进行数据集成](/ticdc/integrate-confluent-using-ticdc.md)
+    - [与 Confluent Cloud 和 Snowflake 进行数据集成](/ticdc/integrate-confluent-using-ticdc.md)
     - [与 Apache Kafka 和 Apache Flink 进行数据集成](/replicate-data-to-kafka.md)
 - 运维操作
   - 升级 TiDB 版本
@@ -130,9 +131,9 @@
     - [使用 TiUP（推荐）](/scale-tidb-using-tiup.md)
     - [使用 TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/scale-a-tidb-cluster)
   - 备份与恢复
-    - [使用 BR 备份集群](/br/br-usage-backup.md)
-    - [使用 BR 恢复集群](/br/br-usage-restore.md)
-    - [BR 备份恢复场景示例](/br/backup-and-restore-use-cases.md)
+    - [使用 BR 备份集群](/br-usage-backup-for-maintain.md)
+    - [使用 BR 恢复集群](/br-usage-restore-for-maintain.md)
+    - [BR 备份恢复场景示例](/backup-and-restore-use-cases-for-maintain.md)
   - [修改时区](/configure-time-zone.md)
   - [日常巡检](/daily-check.md)
   - [TiFlash 常用运维操作](/tiflash/maintain-tiflash.md)
@@ -356,13 +357,13 @@
     - Physical 导入模式
       - [概述](/tidb-lightning/tidb-lightning-physical-import-mode.md)
       - [必要条件及限制](/tidb-lightning/tidb-lightning-physical-import-mode.md#必要条件及限制)
-      - [配置及使用](/tidb-lightning/tidb-lightning-physical-import-mode-usage.md#配置及使用)
+      - [配置及使用](/tidb-lightning/tidb-lightning-physical-import-mode-usage.md)
       - [冲突检测](/tidb-lightning/tidb-lightning-physical-import-mode-usage.md#冲突数据检测)
       - [性能调优](/tidb-lightning/tidb-lightning-physical-import-mode-usage.md#性能调优)
     - Logical 导入模式
       - [概述](/tidb-lightning/tidb-lightning-logical-import-mode.md)
       - [必要条件及限制](/tidb-lightning/tidb-lightning-logical-import-mode.md#必要条件及限制)
-      - [配置及使用](/tidb-lightning/tidb-lightning-logical-import-mode-usage.md#配置及使用)
+      - [配置及使用](/tidb-lightning/tidb-lightning-logical-import-mode-usage.md)
       - [冲突检测](/tidb-lightning/tidb-lightning-logical-import-mode-usage.md#冲突数据检测)
       - [性能调优](/tidb-lightning/tidb-lightning-logical-import-mode-usage.md#性能调优)
     - [前置检查](/tidb-lightning/tidb-lightning-prechecks.md)
@@ -871,7 +872,13 @@
       - [Titan 配置说明](/storage-engine/titan-configuration.md)
     - TiFlash
       - [TiFlash 简介](/tiflash/tiflash-overview.md)
-      - [使用 TiFlash](/tiflash/use-tiflash.md)
+      - [构建 TiFlash 副本](/tiflash/create-tiflash-replicas.md)
+      - [使用 TiDB 读取 TiFlash](/tiflash/use-tidb-to-read-tiflash.md)
+      - [使用 TiSpark 读取 TiFlash](/tiflash/use-tispark-to-read-tiflash.md)
+      - [使用 MPP 模式](/tiflash/use-tiflash-mpp-mode.md)
+      - [TiFlash 支持的计算下推](/tiflash/tiflash-supported-pushdown-calculations.md)
+      - [TiFlash 数据校验](/tiflash/tiflash-data-validation.md)
+      - [TiFlash 兼容性说明](/tiflash/tiflash-compatibility.md)
   - [遥测](/telemetry.md)
   - [错误码](/error-codes.md)
   - [通过拓扑 label 进行副本调度](/schedule-replicas-by-topology-labels.md)
