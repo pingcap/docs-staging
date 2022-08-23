@@ -1,7 +1,6 @@
 ---
 title: LOAD DATA
 summary: TiDB 数据库中 LOAD DATA 的使用概况。
-aliases: ['/docs-cn/dev/sql-statements/sql-statement-load-data/','/docs-cn/dev/reference/sql/statements/load-data/']
 ---
 
 # LOAD DATA
@@ -71,7 +70,7 @@ Query OK, 0 rows affected (0.14 sec)
 
 如果此时遇到 `ERROR 1148 (42000): the used command is not allowed with this TiDB version` 报错信息。可以参考以下文档解决：
 
-[ERROR 1148 (42000): the used command is not allowed with this TiDB version 问题的处理方法](/faq/tidb-faq.md#323-error-1148-42000-the-used-command-is-not-allowed-with-this-tidb-version-问题的处理方法)
+[ERROR 1148 (42000): the used command is not allowed with this TiDB version 问题的处理方法](/error-codes.md#mysql-原生报错汇总)
 
 
 ```sql

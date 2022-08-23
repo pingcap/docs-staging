@@ -1,6 +1,5 @@
 ---
 title: 系统变量
-aliases: ['/docs-cn/dev/system-variables/','/docs-cn/dev/reference/configuration/tidb-server/mysql-variables/','/docs-cn/dev/tidb-specific-system-variables/','/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables/','/zh/tidb/dev/tidb-specific-system-variables/']
 ---
 
 # 系统变量
@@ -234,6 +233,38 @@ mysql> SELECT * FROM t1;
 > **注意：**
 >
 > `max_execution_time` 目前对所有类型的语句生效，并非只对 `SELECT` 语句生效，与 MySQL 不同（只对`SELECT` 语句生效）。实际精度在 100ms 级别，而非更准确的毫秒级别。
+
+### `max_prepared_stmt_count`
+
+- 作用域：GLOBAL
+- 是否持久化到集群：是
+- 类型：整数
+- 默认值：`-1`
+- 范围：`[-1, 1048576]`
+- 指定一个会话中 [`PREPARE`](/sql-statements/sql-statement-prepare.md) 语句的最大数量。
+- 值为 `-1` 时表示不对会话中的 `PREPARE` 语句数量进行限制。
+- 如果将变量值设为超过上限 `1048576`，则使用上限值 `1048576`：
+
+```sql
+mysql> SET GLOBAL max_prepared_stmt_count = 1048577;
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+mysql> SHOW WARNINGS;
++---------+------+--------------------------------------------------------------+
+| Level   | Code | Message                                                      |
++---------+------+--------------------------------------------------------------+
+| Warning | 1292 | Truncated incorrect max_prepared_stmt_count value: '1048577' |
++---------+------+--------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
++-------------------------+---------+
+| Variable_name           | Value   |
++-------------------------+---------+
+| max_prepared_stmt_count | 1048576 |
++-------------------------+---------+
+1 row in set (0.00 sec)
+```
 
 ### `plugin_dir`
 
@@ -885,9 +916,17 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
 
 - 作用域：SESSION | GLOBAL
 - 是否持久化到集群：是
-- 默认值：`ON`
-- 自 v6.1.0 起，TiDB 的 [Join Reorder 算法](/join-reorder.md) 开始支持 Outer Join。该变量用于控制这个支持行为，默认开启。
-- 对于从旧版本升级上来的集群，该变量的默认值也会是 `TRUE`。
+- 默认值：在 v6.1.0 中为 `ON`，即默认开启。在 v6.1.0 之后的版本中为 `OFF`，即默认关闭。
+- 自 v6.1.0 起，TiDB 的 [Join Reorder 算法](/join-reorder.md) 开始支持 Outer Join。该变量用于控制这个支持行为。默认关闭，即不启用 Outer Join 的 Join Reorder。
+- 对于从 v6.1.0 之前版本升级到 v6.1.0 及之后的版本，该变量的默认值为 `OFF`。对于从 v6.1.0 版本升级到之后的版本，该变量默认值为 `ON`。
+
+### `tidb_enable_ordered_result_mode`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 默认值：`OFF`
+- 指定是否对最终的输出结果进行自动排序。
+- 例如，开启该变量后，TiDB 会将 `SELECT a, MAX(b) FROM t GROUP BY a` 处理为 `SELECT a, MAX(b) FROM t GROUP BY a ORDER BY a, MAX(b)`。
 
 ### `tidb_enable_paging` <span class="version-mark">从 v5.4.0 版本开始引入</span>
 
@@ -1115,7 +1154,7 @@ v5.0 后，用户仍可以单独修改以上系统变量（会有废弃警告）
 - 是否持久化到集群：否，仅作用于当前连接的 TiDB 实例
 - 默认值：`NO_PRIORITY`
 - 这个变量用于改变 TiDB server 上执行的语句的默认优先级。例如，你可以通过设置该变量来确保正在执行 OLAP 查询的用户优先级低于正在执行 OLTP 查询的用户。
-- 可设置为 `NO_PRIORITY`、`LOW_PRIORITY`、`DELAYED` 或 `HIGH_PRIORITY`。
+- 默认值 `NO_PRIORITY` 表示不强制改变执行语句的优先级，其它优先级从低到高可设置为 `LOW_PRIORITY`、`DELAYED` 或 `HIGH_PRIORITY`。
 
 ### `tidb_generate_binary_plan` <span class="version-mark">从 v6.2.0 版本开始引入</span>
 
@@ -1203,6 +1242,16 @@ v5.0 后，用户仍可以单独修改以上系统变量（会有废弃警告）
     - `current_db`：当前数据库名
     - `txn_mode`：事务模式。可选值：`OPTIMISTIC`（乐观事务模式），或 `PESSIMISTIC`（悲观事务模式）
     - `sql`：当前查询对应的 SQL 语句
+
+### `tidb_guarantee_linearizability` <span class="version-mark">从 v5.0 版本开始引入</span>
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：布尔值
+- 默认值：`OFF`
+- 此变量控制异步提交 (Async Commit) 中提交时间戳的计算方式。默认情况下（使用 `OFF` 值），两阶段提交从 PD 服务器请求一个新的时间戳，并使用该时间戳计算最终提交的时间戳，这样可保证所有并发事务可线性化。
+- 如果将该变量值设为 `ON`，从 PD 获取的时间戳的操作会被省掉，这种情况下只保证因果一致性但不保证线性一致性。详情请参考 PingCAP 博文 [Async Commit 原理介绍](https://pingcap.com/zh/blog/async-commit-principle)。
+- 对于需要只保证因果一致性的场景，可将此变量设为 `ON` 以提升性能。
 
 ### `tidb_hash_join_concurrency`
 
@@ -1314,6 +1363,18 @@ v5.0 后，用户仍可以单独修改以上系统变量（会有废弃警告）
 - 作用域：SESSION
 - 默认值：`tikv,tiflash,tidb`
 - 这个变量用于设置 TiDB 在读取数据时可以使用的存储引擎列表。
+
+### `tidb_last_txn_info` <span class="version-mark">从 v4.0.9 版本开始引入</span>
+
+- 作用域：SESSION
+- 是否持久化到集群：否
+- 类型：字符串
+- 此变量用于获取当前会话中最后一个事务的信息。这是一个只读变量。事务信息包括：
+    - 事务的范围
+    - 开始时间戳和提交时间戳
+    - 事务的提交模式，可能是两阶段提交，一阶段提交，或者异步提交
+    - 事务从异步提交或一阶段提交到两阶段提交的回退信息
+    - 遇到的错误
 
 ### `tidb_log_file_max_days` <span class="version-mark">从 v5.3.0 版本开始引入</span>
 
@@ -1503,6 +1564,35 @@ v5.0 后，用户仍可以单独修改以上系统变量（会有废弃警告）
 - 默认值：`OFF`
 - 这个变量用来设置优化器是否执行聚合函数下推到 Join，Projection 和 UnionAll 之前的优化操作。当查询中聚合操作执行很慢时，可以尝试设置该变量为 ON。
 
+### `tidb_opt_cartesian_bcj`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：整数
+- 默认值：`1`
+- 范围：`[0, 2]`
+- 表示是否允许 Broadcast Cartesian Join 算法。
+- 值为 `0` 时表示不允许使用 Broadcast Cartesian Join 算法。值为 `1` 时表示根据 [`tidb_broadcast_join_threshold_count`](#tidb_broadcast_join_threshold_count-从-v50-版本开始引入) 的行数阈值确定是否允许使用 Broadcast Cartesian Join 算法。值为 `2` 时表示总是允许 Broadcast Cartesian Join 算法，即使表的大小超过了该阈值。
+- 该变量是 TiDB 内部使用的变量，**不推荐**修改该变量的值。
+
+### `tidb_opt_concurrency_factor`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：浮点数
+- 范围：`[0, 2147483647]`
+- 默认值：`3.0`
+- 表示在 TiDB 中开启一个 Golang goroutine 的 CPU 开销。该变量是[代价模型](/cost-model.md)内部使用的变量，**不建议**修改该变量的值。
+
+### `tidb_opt_cop_cpu_factor`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：浮点数
+- 范围：`[0, 2147483647]`
+- 默认值：`3.0`
+- 表示 TiKV 协处理器处理一行数据的 CPU 开销。该变量是[代价模型](/cost-model.md)内部使用的变量，**不建议**修改该变量的值。
+
 ### `tidb_opt_correlation_exp_factor`
 
 - 作用域：SESSION | GLOBAL
@@ -1518,6 +1608,33 @@ v5.0 后，用户仍可以单独修改以上系统变量（会有废弃警告）
 - 默认值：`0.9`
 - 这个变量用来设置优化器启用交叉估算 row count 方法的阈值。如果列和 handle 列之间的顺序相关性超过这个阈值，就会启用交叉估算方法。
 - 交叉估算方法可以简单理解为，利用这个列的直方图来估算 handle 列需要扫的行数。
+
+### `tidb_opt_cpu_factor`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：浮点数
+- 范围：`[0, 2147483647]`
+- 默认值：`3.0`
+- 表示 TiDB 处理一行数据的 CPU 开销。该变量是[代价模型](/cost-model.md)内部使用的变量，不建议修改该变量的值。
+
+### `tidb_opt_desc_scan_factor`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：浮点数
+- 范围：`[0, 2147483647]`
+- 默认值：`3.0`
+- 表示降序扫描时，TiKV 在磁盘上扫描一行数据的开销。该变量是[代价模型](/cost-model.md)内部使用的变量，**不建议**修改该变量的值。
+
+### `tidb_opt_disk_factor`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：浮点数
+- 范围：`[0, 2147483647]`
+- 默认值：`1.5`
+- 表示 TiDB 往临时磁盘读写一个字节数据的 I/O 开销。该变量是[代价模型](/cost-model.md)内部使用的变量，**不建议**修改该变量的值。
 
 ### `tidb_opt_distinct_agg_push_down`
 
@@ -1597,6 +1714,32 @@ mysql> desc select count(distinct a) from test.t;
 - 这个变量用来设置将 Limit 和 TopN 算子下推到 TiKV 的阈值。
 - 如果 Limit 或者 TopN 的取值小于等于这个阈值，则 Limit 和 TopN 算子会被强制下推到 TiKV。该变量可以解决部分由于估算误差导致 Limit 或者 TopN 无法被下推的问题。
 
+### `tidb_opt_memory_factor`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：浮点数
+- 范围：`[0, 2147483647]`
+- 默认值：`0.001`
+- 表示 TiDB 存储一行数据的内存开销。该变量是[代价模型](/cost-model.md)内部使用的变量，**不建议**修改该变量的值。
+
+### `tidb_opt_mpp_outer_join_fixed_build_side` <span class="version-mark">从 v5.1.0 版本开始引入</span>
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：布尔值
+- 默认值：`ON`
+- 当该变量值为 `ON` 时，左连接始终使用内表作为构建端，右连接始终使用外表作为构建端。将该变量值设为 `OFF` 后，外连接可以灵活选择任意一边表作为构建端。
+
+### `tidb_opt_network_factor`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化
+- 类型：浮点数
+- 范围：`[0, 2147483647]`
+- 默认值：`1.0`
+- 表示传输 1 比特数据的网络净开销。该变量是[代价模型](/cost-model.md)内部使用的变量，**不建议**修改该变量的值。
+
 ### `tidb_opt_prefer_range_scan` <span class="version-mark">从 v5.0 版本开始引入</span>
 
 - 作用域：SESSION | GLOBAL
@@ -1628,6 +1771,32 @@ explain select * from t where age=5;
 +-------------------------------+------------+-----------+-----------------------------+-------------------------------+
 3 rows in set (0.00 sec)
 ```
+
+### `tidb_opt_projection_push_down` <span class="version-mark">从 v6.1.0 版本开始引入</span>
+
+- 作用域：SESSION
+- 是否持久化到集群：否
+- 类型：布尔值
+- 默认值：`OFF`
+- 指定是否允许优化器将 `Projection` 算子下推到 TiKV 或者 TiFlash。
+
+### `tidb_opt_scan_factor`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：浮点数
+- 范围：`[0, 2147483647]`
+- 默认值：`1.5`
+- 表示升序扫描时，TiKV 在磁盘上扫描一行数据的开销。该变量是[代价模型](/cost-model.md)内部使用的变量，**不建议**修改该变量的值。
+
+### `tidb_opt_seek_factor`
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：浮点数
+- 范围：`[0, 2147483647]`
+- 默认值：`20`
+- 表示 TiDB 从 TiKV 请求数据的初始开销。该变量是[代价模型](/cost-model.md)内部使用的变量，**不建议**修改该变量的值。
 
 ### `tidb_opt_skew_distinct_agg` <span class="version-mark">从 v6.2.0 版本开始引入</span>
 
@@ -1731,6 +1900,16 @@ explain select * from t where age=5;
 - 该变量用于优化时间戳的获取，适用于悲观事务 `READ-COMMITTED` 隔离级别下读写冲突较少的场景，开启此变量可以避免获取全局 timestamp 带来的延迟和开销，并优化事务内读语句延迟。
 - 如果读写冲突较为严重，开启此功能会增加额外开销和延迟，造成性能回退。更详细的说明，请参考[读已提交隔离级别 (Read Committed) 文档](/transaction-isolation-levels.md#读已提交隔离级别-read-committed)。
 
+### `tidb_read_consistency` <span class="version-mark">New in v5.4.0</span>
+
+- 作用域：SESSION
+- 是否持久化到集群：否
+- 类型：字符串
+- 默认值：`strict`
+- 此变量用于控制自动提交的读语句的读一致性。
+- 如果将变量值设置为 `weak`，则直接跳过读语句遇到的锁，读的执行可能会更快，这就是弱一致性读模式。但在该模式下，事务语义（例如原子性）和分布式一致性（线性一致性）并不能得到保证。
+- 如果用户场景中需要快速返回自动提交的读语句，并且可接受弱一致性的读取结果，则可以使用弱一致性读取模式。
+
 ### `tidb_read_staleness` <span class="version-mark">从 v5.4.0 版本开始引入</span>
 
 - 作用域：SESSION
@@ -1761,9 +1940,17 @@ explain select * from t where age=5;
 - 这个变量用来控制优化器是否可以将包含 null 的等值条件作为前缀条件来访问索引。
 - 该变量默认开启。开启后，该变量可以使优化器减少需要访问的索引数据量，从而提高查询的执行速度。例如，在有多列索引 `index(a, b)` 且查询条件为 `a<=>null and b=1` 的情况下，优化器可以同时使用查询条件中的 `a<=>null` 和 `b=1` 进行索引访问。如果关闭该变量，因为 `a<=>null and b=1` 包含 null 的等值条件，优化器不会使用 `b=1` 进行索引访问。
 
+### `tidb_remove_orderby_in_subquery` <span class="version-mark">从 v6.1.0 版本开始引入</span>
+
+- 作用域：SESSION | GLOBAL
+- 是否持久化到集群：是
+- 类型：布尔值
+- 默认值：`OFF`
+- 指定是否在子查询中移除 `ORDER BY` 子句。
+
 ### `tidb_replica_read` <span class="version-mark">从 v4.0 版本开始引入</span>
 
-- 作用域：SESSION
+- 作用域：SESSION | GLOBAL
 - 是否持久化到集群：是
 - 默认值：`leader`
 - 可选值：`leader`，`follower`，`leader-and-follower`
@@ -1997,6 +2184,18 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 单位：字节
 - 这个变量用于限制单个[临时表](/temporary-tables.md)的最大大小，临时表超出该大小后报错。
 
+### `tidb_track_aggregate_memory_usage`
+
+- 作用域：SESSION ｜ GLOBAL
+- 是否持久化到集群：是
+- 类型：布尔值
+- 默认值：`ON`
+- 本变量控制 TiDB 是否跟踪聚合函数的内存使用情况。
+
+> **警告：**
+>
+> 如果禁用该变量，TiDB 可能无法准确跟踪内存使用情况，并且无法控制对应 SQL 语句的内存使用。
+
 ### `tidb_tso_client_batch_max_wait_time` <span class="version-mark">从 v5.3.0 版本开始引入</span>
 
 - 作用域：GLOBAL
@@ -2028,6 +2227,15 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
     - `OFF`: 关闭该检查。
     - `FAST`: 开启大多数检查项，对性能几乎无影响。
     - `STRICT`: 开启全部检查项，当系统负载较高时，对悲观事务的性能有较小影响。
+
+### `tidb_txn_commit_batch_size` <span class="version-mark">从 v6.2.0 版本开始引入</span>
+
+- 作用域：GLOBAL
+- 是否持久化到集群：是
+- 默认值：`16384`
+- 范围：`[1, 1073741824]`
+- 单位：字节
+- 这个变量用于控制 TiDB 向 TiKV 发送的事务提交请求的批量大小。如果业务负载的大部分事务都有大量的写操作，适当调大该变量可以提高批处理的效果。但需要注意的是，设置过大将会超过 TiKV 的 [`raft-entry-max-size`](/tikv-configuration-file.md#raft-entry-max-size) 限制，导致提交失败。
 
 ### `tidb_txn_mode`
 

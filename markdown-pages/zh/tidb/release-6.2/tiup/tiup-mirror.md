@@ -1,6 +1,5 @@
 ---
 title: 搭建私有镜像
-aliases: ['/docs-cn/dev/tiup/tiup-mirror/','/docs-cn/dev/tiup/tiup-mirrors/','/docs-cn/dev/reference/tools/tiup/mirror/','/docs-cn/dev/reference/tools/tiup/mirrors/']
 ---
 
 # 搭建私有镜像
@@ -79,9 +78,9 @@ tiup mirror clone <target-dir> [global-version] [flags]
 
     如果只想克隆某个组件的某一个版本而不是所有版本，则使用 `--<component>=<version>` 来限定，例如：
 
-    - 只想克隆 TiDB 的 v6.1.0 版本，则执行 `tiup mirror clone <target-dir> --tidb v6.1.0`
-    - 只想克隆 TiDB 的 v6.1.0 版本，以及 TiKV 的所有版本，则执行 `tiup mirror clone <target-dir> --tidb v6.1.0 --tikv all`
-    - 克隆一个集群的所有组件的 v6.1.0 版本，则执行 `tiup mirror clone <target-dir> v6.1.0`
+    - 只想克隆 TiDB 的 v6.2.0 版本，则执行 `tiup mirror clone <target-dir> --tidb v6.2.0`
+    - 只想克隆 TiDB 的 v6.2.0 版本，以及 TiKV 的所有版本，则执行 `tiup mirror clone <target-dir> --tidb v6.2.0 --tikv all`
+    - 克隆一个集群的所有组件的 v6.2.0 版本，则执行 `tiup mirror clone <target-dir> v6.2.0`
 
 ## 使用示例
 

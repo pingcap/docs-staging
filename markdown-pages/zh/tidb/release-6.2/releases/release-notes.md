@@ -1,11 +1,14 @@
 ---
 title: TiDB 版本发布历史
-aliases: ['/docs-cn/dev/releases/release-notes/','/docs-cn/dev/releases/rn/']
 ---
 
 # TiDB 版本发布历史
 
 TiDB 历史版本发布声明如下：
+
+## 6.2
+
+- [6.2.0](/releases/release-6.2.0.md)
 
 ## 6.1
 
