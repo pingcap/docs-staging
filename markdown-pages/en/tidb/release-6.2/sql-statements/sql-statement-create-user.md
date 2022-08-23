@@ -1,7 +1,6 @@
 ---
 title: CREATE USER | TiDB SQL Statement Reference
 summary: An overview of the usage of CREATE USER for the TiDB database.
-aliases: ['/docs/dev/sql-statements/sql-statement-create-user/','/docs/dev/reference/sql/statements/create-user/']
 ---
 
 # CREATE USER
@@ -72,8 +71,13 @@ The following `CREATE USER` options are not yet supported by TiDB, and will be p
 
 ## See also
 
+<CustomContent platform="tidb">
+
 * [Security Compatibility with MySQL](/security-compatibility-with-mysql.md)
+* [Privilege Management](/privilege-management.md)
+
+</CustomContent>
+
 * [DROP USER](/sql-statements/sql-statement-drop-user.md)
 * [SHOW CREATE USER](/sql-statements/sql-statement-show-create-user.md)
 * [ALTER USER](/sql-statements/sql-statement-alter-user.md)
-* [Privilege Management](/privilege-management.md)

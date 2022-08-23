@@ -1,7 +1,6 @@
 ---
 title: Migrate Data from SQL Files to TiDB
 summary: Learn how to migrate data from SQL files to TiDB.
-aliases: ['/docs/dev/migrate-from-mysql-mydumper-files/','/tidb/dev/migrate-from-mysql-mydumper-files/','/tidb/dev/migrate-from-mysql-dumpling-files']
 ---
 
 # Migrate Data from SQL Files to TiDB
@@ -88,7 +87,7 @@ After the import is started, you can check the progress in one of the following 
 - Use the Grafana dashboard. For details, see [TiDB Lightning Monitoring](/tidb-lightning/monitor-tidb-lightning.md).
 - Use web interface. For details, see [TiDB Lightning Web Interface](/tidb-lightning/tidb-lightning-web-interface.md).
 
-After the import is completed, TiDB Lightning automatically exits. If `the whole procedure completed` is in the last 5 lines of the log, it means that the import is successfully completed.
+After the import is completed, TiDB Lightning automatically exits. Check whether `tidb-lightning.log` contains `the whole procedure completed` in the last lines. If yes, the import is successful. If no, the import encounters an error. Address the error as instructed in the error message.
 
 > **Note:**
 >

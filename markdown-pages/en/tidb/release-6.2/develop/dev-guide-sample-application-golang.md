@@ -1,7 +1,6 @@
 ---
 title: Build a Simple CRUD App with TiDB and Golang
 summary: Learn how to build a simple CRUD application with TiDB and Golang.
-aliases: ['/tidb/dev/dev-guide-outdated-for-go-sql-driver-mysql','/tidb/dev/dev-guide-outdated-for-gorm']
 ---
 
 <!-- markdownlint-disable MD024 -->
@@ -34,9 +33,9 @@ For detailed steps, see [Deploy a local test cluster](/quick-start-with-tidb.md#
 git clone https://github.com/pingcap-inc/tidb-example-golang.git
 ```
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Using go-sql-driver/mysql">
+<div label="Using go-sql-driver/mysql" value="sqldriver">
 
 Change to the `sqldriver` directory:
 
@@ -480,7 +479,7 @@ const (
 
 </div>
 
-<div label="Using GORM (Recommended)">
+<div label="Using GORM (Recommended)" value="gorm">
 
 Compared with GORM, the go-sql-driver/mysql implementation might be not a best practice, because you need to write error handling logic, close `*sql.Rows` manually and cannot reuse code easily, which makes your code slightly redundant.
 
@@ -725,9 +724,9 @@ The following content introduces how to run the code step by step.
 
 ### Step 3.1 Table initialization
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Using go-sql-driver/mysql">
+<div label="Using go-sql-driver/mysql" value="sqldriver">
 
 When using go-sql-driver/mysql, you need to initialize the database tables manually. If you are using a local cluster, and MySQL client has been installed locally, you can run it directly in the `sqldriver` directory:
 
@@ -747,7 +746,7 @@ If you are using a non-local cluster or MySQL client has not been installed, con
 
 </div>
 
-<div label="Using GORM (Recommended)">
+<div label="Using GORM (Recommended)" value="gorm">
 
 No need to initialize tables manually.
 
@@ -757,9 +756,9 @@ No need to initialize tables manually.
 
 ### Step 3.2 Modify parameters for TiDB Cloud
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Using go-sql-driver/mysql">
+<div label="Using go-sql-driver/mysql" value="sqldriver">
 
 If you are using a non-local default cluster, such as TiDB Cloud or other remote clusters, modify the value of the `dsn` in `sqldriver.go`:
 
@@ -783,7 +782,7 @@ dsn := "root:123456@tcp(xxx.tidbcloud.com:4000)/test?charset=utf8mb4"
 
 </div>
 
-<div label="Using GORM (Recommended)">
+<div label="Using GORM (Recommended)" value="gorm">
 
 If you are using a non-local default cluster, such as TiDB Cloud or other remote clusters, modify the value of the `dsn` in `gorm.go`:
 
@@ -811,9 +810,9 @@ dsn := "root:123456@tcp(xxx.tidbcloud.com:4000)/test?charset=utf8mb4"
 
 ### Step 3.3 Run
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Using go-sql-driver/mysql">
+<div label="Using go-sql-driver/mysql" value="sqldriver">
 
 To run the code, you can run `make mysql`, `make build` and `make run` respectively:
 
@@ -837,7 +836,7 @@ Or run the `make all` command directly, which is a combination of `make mysql`, 
 
 </div>
 
-<div label="Using GORM (Recommended)">
+<div label="Using GORM (Recommended)" value="gorm">
 
 To run the code, you can run `make build` and `make run` respectively:
 
@@ -863,15 +862,15 @@ Or run the `make` command directly, which is a combination of `make build` and `
 
 ## Step 4. Expected output
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Using go-sql-driver/mysql">
+<div label="Using go-sql-driver/mysql" value="sqldriver">
 
 [go-sql-driver/mysql Expected Output](https://github.com/pingcap-inc/tidb-example-golang/blob/main/Expected-Output.md#sqldriver)
 
 </div>
 
-<div label="Using GORM (Recommended)">
+<div label="Using GORM (Recommended)" value="gorm">
 
 [GORM Expected Output](https://github.com/pingcap-inc/tidb-example-golang/blob/main/Expected-Output.md#gorm)
 

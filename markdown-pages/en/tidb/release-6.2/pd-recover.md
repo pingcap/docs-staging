@@ -1,7 +1,6 @@
 ---
 title: PD Recover User Guide
 summary: Use PD Recover to recover a PD cluster which cannot start or provide services normally.
-aliases: ['/docs/dev/pd-recover/','/docs/dev/reference/tools/pd-recover/']
 ---
 
 # PD Recover User Guide
@@ -10,7 +9,7 @@ PD Recover is a disaster recovery tool of PD, used to recover the PD cluster whi
 
 ## Compile from source code
 
-+ [Go](https://golang.org/) Version 1.13 or later is required because the Go modules are used.
++ [Go](https://golang.org/) Version 1.16 or later is required because the Go modules are used.
 + In the root directory of the [PD project](https://github.com/pingcap/pd), use the `make pd-recover` command to compile and generate `bin/pd-recover`.
 
 > **Note:**

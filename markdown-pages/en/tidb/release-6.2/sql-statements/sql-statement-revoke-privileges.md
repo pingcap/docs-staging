@@ -1,7 +1,6 @@
 ---
 title: REVOKE <privileges> | TiDB SQL Statement Reference
 summary: An overview of the usage of REVOKE <privileges> for the TiDB database.
-aliases: ['/docs/dev/sql-statements/sql-statement-revoke-privileges/','/docs/dev/reference/sql/statements/revoke-privileges/']
 ---
 
 # `REVOKE <privileges>`
@@ -101,4 +100,9 @@ This statement is understood to be fully compatible with MySQL. Any compatibilit
 
 * [`GRANT <privileges>`](/sql-statements/sql-statement-grant-privileges.md)
 * [SHOW GRANTS](/sql-statements/sql-statement-show-grants.md)
+
+<CustomContent platform="tidb">
+
 * [Privilege Management](/privilege-management.md)
+
+</CustomContent>

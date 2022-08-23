@@ -1,7 +1,6 @@
 ---
 title: Enable TLS Between TiDB Components
 summary: Learn how to enable TLS authentication between TiDB components.
-aliases: ['/docs/dev/enable-tls-between-components/','/docs/dev/how-to/secure/enable-tls-between-components/']
 ---
 
 # Enable TLS Between TiDB Components
@@ -23,7 +22,17 @@ Currently, it is not supported to only enable encrypted transmission of some spe
 
     You can use tools like `openssl`, `easy-rsa` and `cfssl` to generate self-signed certificates.
 
+    <CustomContent platform="tidb">
+
     If you choose `openssl`, you can refer to [generating self-signed certificates](/generate-self-signed-certificates.md).
+
+    </CustomContent>
+
+    <CustomContent platform="tidb-cloud">
+
+    If you choose `openssl`, you can refer to [generating self-signed certificates](https://docs.pingcap.com/tidb/stable/generate-self-signed-certificates).
+
+    </CustomContent>
 
 2. Configure certificates.
 

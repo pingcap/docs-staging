@@ -1,7 +1,6 @@
 ---
 title: DROP USER | TiDB SQL Statement Reference
 summary: An overview of the usage of DROP USER for the TiDB database.
-aliases: ['/docs/dev/sql-statements/sql-statement-drop-user/','/docs/dev/reference/sql/statements/drop-user/']
 ---
 
 # DROP USER
@@ -69,4 +68,9 @@ ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%
 * [CREATE USER](/sql-statements/sql-statement-create-user.md)
 * [ALTER USER](/sql-statements/sql-statement-alter-user.md)
 * [SHOW CREATE USER](/sql-statements/sql-statement-show-create-user.md)
+
+<CustomContent platform="tidb">
+
 * [Privilege Management](/privilege-management.md)
+
+</CustomContent>

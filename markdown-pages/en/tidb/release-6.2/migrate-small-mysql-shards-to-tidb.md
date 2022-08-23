@@ -1,7 +1,6 @@
 ---
 title: Migrate and Merge MySQL Shards of Small Datasets to TiDB
 summary: Learn how to migrate and merge small datasets of shards from MySQL to TiDB.
-aliases: ['/tidb/dev/usage-scenario-shard-merge/', '/tidb/dev/usage-scenario-simple-migration/']
 ---
 
 # Migrate and Merge MySQL Shards of Small Datasets to TiDB
@@ -94,8 +93,8 @@ The parameters are described as follows.
 
 |Parameter      | Description |
 |-              |-            |
-|--master-addr         | {advertise-addr} of any DM-master node in the cluster that dmctl connects to. For example: 172.16.10.71:8261|
-|operate-source create | Load data sources to the DM clusters. |
+|`--master-addr`         | `{advertise-addr}` of any DM-master node in the cluster that dmctl connects to. For example: 172.16.10.71:8261|
+|`operate-source create` | Load data sources to the DM clusters. |
 
 Repeat the above steps until all data sources are added to the DM cluster.
 
@@ -189,8 +188,8 @@ tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
 
 | Parameter | Description|
 |-|-|
-|--master-addr| {advertise-addr} of any DM-master node in the cluster that dmctl connects to. For example: 172.16.10.71:8261 |
-|start-task   | Starts the data migration task. |
+|`--master-addr`| `{advertise-addr}` of any DM-master node in the cluster that dmctl connects to. For example: 172.16.10.71:8261 |
+|`start-task`   | Starts the data migration task. |
 
 If the migration task fails to start, modify the configuration information according to the error information, and then run `start-task task.yaml` again to start the migration task. If you encounter problems, see [Handle Errors](/dm/dm-error-handling.md) and [FAQ](/dm/dm-faq.md).
 
@@ -203,7 +202,7 @@ After starting the migration task, you can use `dmtcl tiup` to run `query-status
 tiup dmctl --master-addr ${advertise-addr} query-status ${task-name}
 ```
 
-If you encounter errors, use `query-status <name of the error task>` to view more detailed information. For details about the query results, task status and sub task status of the `query-status` command, see [TiDB Data Migration Query Status](/dm/dm-query-status.md).
+If you encounter errors, use `query-status ${task-name}` to view more detailed information. For details about the query results, task status and sub task status of the `query-status` command, see [TiDB Data Migration Query Status](/dm/dm-query-status.md).
 
 ## Step 5. Monitor tasks and check logs (optional)
 

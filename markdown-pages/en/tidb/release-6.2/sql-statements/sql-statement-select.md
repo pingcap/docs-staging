@@ -1,7 +1,6 @@
 ---
 title: SELECT | TiDB SQL Statement Reference
 summary: An overview of the usage of SELECT for the TiDB database.
-aliases: ['/docs/dev/sql-statements/sql-statement-select/','/docs/dev/reference/sql/statements/select/']
 ---
 
 # SELECT
@@ -13,6 +12,14 @@ The `SELECT` statement is used to read data from TiDB.
 **SelectStmt:**
 
 ![SelectStmt](https://download.pingcap.com/images/docs/sqlgram/SelectStmt.png)
+
+<CustomContent platform="tidb-cloud">
+
+> **Note:**
+>
+> The `SELECT ... INTO OUTFILE` statement is not supported by TiDB Cloud.
+
+</CustomContent>
 
 **FromDual:**
 

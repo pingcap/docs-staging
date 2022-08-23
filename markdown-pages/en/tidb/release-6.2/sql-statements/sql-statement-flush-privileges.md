@@ -1,7 +1,6 @@
 ---
 title: FLUSH PRIVILEGES | TiDB SQL Statement Reference
 summary: An overview of the usage of FLUSH PRIVILEGES for the TiDB database.
-aliases: ['/docs/dev/sql-statements/sql-statement-flush-privileges/','/docs/dev/reference/sql/statements/flush-privileges/']
 ---
 
 # FLUSH PRIVILEGES
@@ -39,4 +38,10 @@ This statement is understood to be fully compatible with MySQL. Any compatibilit
 
 ## See also
 
+* [SHOW GRANTS](/sql-statements/sql-statement-show-grants.md)
+
+<CustomContent platform="tidb">
+
 * [Privilege Management](/privilege-management.md)
+
+</CustomContent>

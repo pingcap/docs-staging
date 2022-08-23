@@ -1,7 +1,6 @@
 ---
 title: Deploy a TiDB Cluster Using TiUP
 summary: Learn how to easily deploy a TiDB cluster using TiUP.
-aliases: ['/docs/dev/production-deployment-using-tiup/','/docs/dev/how-to/deploy/orchestrated/tiup/','/docs/dev/tiflash/deploy-tiflash/','/docs/dev/reference/tiflash/deploy/','/tidb/dev/deploy-tidb-from-dbdeployer/','/docs/dev/deploy-tidb-from-dbdeployer/','/docs/dev/how-to/get-started/deploy-tidb-from-dbdeployer/','/tidb/dev/deploy-tidb-from-homebrew/','/docs/dev/deploy-tidb-from-homebrew/','/docs/dev/how-to/get-started/deploy-tidb-from-homebrew/','/tidb/dev/production-offline-deployment-using-tiup','/docs/dev/production-offline-deployment-using-tiup/','/tidb/dev/deploy-tidb-from-binary','/tidb/dev/production-deployment-from-binary-tarball','/tidb/dev/test-deployment-from-binary-tarball','/tidb/dev/deploy-test-cluster-using-docker-compose','/tidb/dev/test-deployment-using-docker']
 ---
 
 # Deploy a TiDB Cluster Using TiUP
@@ -130,11 +129,11 @@ To prepare the TiUP offline component package, you can manually pack an offline 
 
     If you want to adjust an existing offline mirror (such as adding a new version of a component), take the following steps:
 
-    1. When pulling an offline mirror, you can get an incomplete offline mirror by specifying specific information via parameters, such as the component and version information. For example, you can pull an offline mirror that includes only the offline mirror of TiUP v1.10.0 and TiUP Cluster v1.10.0 by running the following command:
+    1. When pulling an offline mirror, you can get an incomplete offline mirror by specifying specific information via parameters, such as the component and version information. For example, you can pull an offline mirror that includes only the offline mirror of TiUP v1.10.3 and TiUP Cluster v1.10.3 by running the following command:
 
         
         ```bash
-        tiup mirror clone tiup-custom-mirror-v1.10.0 --tiup v1.10.0 --cluster v1.10.0
+        tiup mirror clone tiup-custom-mirror-v1.10.3 --tiup v1.10.3 --cluster v1.10.3
         ```
 
         If you only need the components for a particular platform, you can specify them using the `--os`  or `--arch` parameters.
@@ -163,10 +162,10 @@ To prepare the TiUP offline component package, you can manually pack an offline 
 
         
         ```bash
-        tiup mirror merge tiup-custom-mirror-v1.10.0
+        tiup mirror merge tiup-custom-mirror-v1.10.3
         ```
 
-    5. When the above steps are completed, check the result by running the `tiup list` command. In this document's example, the outputs of both `tiup list tiup` and `tiup list cluster` show that the corresponding components of `v1.10.0` are available.
+    5. When the above steps are completed, check the result by running the `tiup list` command. In this document's example, the outputs of both `tiup list tiup` and `tiup list cluster` show that the corresponding components of `v1.10.3` are available.
 
 #### Deploy the offline TiUP component
 
@@ -299,13 +298,13 @@ Before you run the `deploy` command, use the `check` and `check --apply` command
 
     
     ```shell
-    tiup cluster deploy tidb-test v6.0.0 ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
+    tiup cluster deploy tidb-test v6.2.0 ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
     ```
 
 In the `tiup cluster deploy` command above:
 
 - `tidb-test` is the name of the TiDB cluster to be deployed.
-- `v6.1.0` is the version of the TiDB cluster to be deployed. You can see the latest supported versions by running `tiup list tidb`.
+- `v6.2.0` is the version of the TiDB cluster to be deployed. You can see the latest supported versions by running `tiup list tidb`.
 - `topology.yaml` is the initialization configuration file.
 - `--user root` indicates logging into the target machine as the `root` user to complete the cluster deployment. The `root` user is expected to have `ssh` and `sudo` privileges to the target machine. Alternatively, you can use other users with `ssh` and `sudo` privileges to complete the deployment.
 - `[-i]` and `[-p]` are optional. If you have configured login to the target machine without password, these parameters are not required. If not, choose one of the two parameters. `[-i]` is the private key of the root user (or other users specified by `--user`) that has access to the target machine. `[-p]` is used to input the user password interactively.

@@ -1,7 +1,6 @@
 ---
 title: SET PASSWORD | TiDB SQL Statement Reference
 summary: An overview of the usage of SET PASSWORD for the TiDB database.
-aliases: ['/docs/dev/sql-statements/sql-statement-set-password/','/docs/dev/reference/sql/statements/set-password/']
 ---
 
 # SET PASSWORD
@@ -61,4 +60,9 @@ This statement is understood to be fully compatible with MySQL. Any compatibilit
 ## See also
 
 * [CREATE USER](/sql-statements/sql-statement-create-user.md)
+
+<CustomContent platform="tidb">
+
 * [Privilege Management](/privilege-management.md)
+
+</CustomContent>

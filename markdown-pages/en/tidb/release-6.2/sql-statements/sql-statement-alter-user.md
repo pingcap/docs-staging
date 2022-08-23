@@ -1,7 +1,6 @@
 ---
 title: ALTER USER | TiDB SQL Statement Reference
 summary: An overview of the usage of ALTER USER for the TiDB database.
-aliases: ['/docs/dev/sql-statements/sql-statement-alter-user/','/docs/dev/reference/sql/statements/alter-user/']
 ---
 
 # ALTER USER
@@ -59,7 +58,12 @@ mysql> SHOW CREATE USER 'newuser';
 
 ## See also
 
+<CustomContent platform="tidb">
+
 * [Security Compatibility with MySQL](/security-compatibility-with-mysql.md)
+
+</CustomContent>
+
 * [CREATE USER](/sql-statements/sql-statement-create-user.md)
 * [DROP USER](/sql-statements/sql-statement-drop-user.md)
 * [SHOW CREATE USER](/sql-statements/sql-statement-show-create-user.md)

@@ -1,7 +1,6 @@
 ---
 title: Build a Simple CRUD App with TiDB and Java
 summary: Learn how to build a simple CRUD application with TiDB and Java.
-aliases: ['/tidb/dev/dev-guide-outdated-for-hibernate-orm']
 ---
 
 <!-- markdownlint-disable MD024 -->
@@ -36,9 +35,9 @@ For detailed steps, see [Deploy a local test cluster](/quick-start-with-tidb.md#
 git clone https://github.com/pingcap-inc/tidb-example-java.git
 ```
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Using JDBC">
+<div label="Using JDBC" value="jdbc">
 
 Change to the `plain-java-jdbc` directory:
 
@@ -511,7 +510,7 @@ public class JDBCExample
 
 </div>
 
-<div label="Using Mybatis (Recommended)">
+<div label="Using Mybatis (Recommended)" value="mybatis">
 
 Compared with [Mybatis](https://mybatis.org/mybatis-3/index.html), the JDBC implementation might be not a best practice, because you need to write error handling logic manually and cannot reuse code easily, which makes your code slightly redundant.
 
@@ -1089,7 +1088,7 @@ public class MybatisExample {
 
 </div>
 
-<div label="Using Hibernate (Recommended)">
+<div label="Using Hibernate (Recommended)" value="hibernate">
 
 Compared with Hibernate, the JDBC implementation might be not a best practice, because you need to write error handling logic manually and cannot reuse code easily, which makes your code slightly redundant.
 
@@ -1393,9 +1392,9 @@ The following content introduces how to run the code step by step.
 
 ### Step 3.1 Table initialization
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Using JDBC">
+<div label="Using JDBC" value="jdbc">
 
 When using JDBC, you need to initialize the database tables manually. If you are using a local cluster, and MySQL client has been installed locally, you can run it directly in the `plain-java-jdbc` directory:
 
@@ -1415,7 +1414,7 @@ If you are using a non-local cluster or MySQL client has not been installed, con
 
 </div>
 
-<div label="Using Mybatis (Recommended)">
+<div label="Using Mybatis (Recommended)" value="mybatis">
 
 When using Mybatis, you need to initialize the database tables manually. If you are using a local cluster, and MySQL client has been installed locally, you can run it directly in the `plain-java-mybatis` directory:
 
@@ -1435,7 +1434,7 @@ If you are using a non-local cluster or MySQL client has not been installed, con
 
 </div>
 
-<div label="Using Hibernate (Recommended)">
+<div label="Using Hibernate (Recommended)" value="hibernate">
 
 No need to initialize tables manually.
 
@@ -1445,9 +1444,9 @@ No need to initialize tables manually.
 
 ### Step 3.2 Modify parameters for TiDB Cloud
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Using JDBC">
+<div label="Using JDBC" value="jdbc">
 
 If you are using a non-local default cluster, such as TiDB Cloud or other remote clusters, modify the parameters of the host, port, user, and password in `JDBCExample.java`:
 
@@ -1479,7 +1478,7 @@ mysqlDataSource.setPassword("123456");
 
 </div>
 
-<div label="Using Mybatis (Recommended)">
+<div label="Using Mybatis (Recommended)" value="mybatis">
 
 If you are using a non-local default cluster, such as TiDB Cloud or other remote cluster, modify the `dataSource.url`, `dataSource.username`, `dataSource.password` in `mybatis-config.xml`.
 
@@ -1557,7 +1556,7 @@ In this case, you can modify the parameters in `dataSource` node as follows:
 
 </div>
 
-<div label="Using Hibernate (Recommended)">
+<div label="Using Hibernate (Recommended)" value="hibernate">
 
 If you are using a non-local default cluster, such as TiDB Cloud or other remote cluster, modify the `hibernate.connection.url`, `hibernate.connection.username`, `hibernate.connection.password` in `hibernate.cfg.xml`.
 
@@ -1630,9 +1629,9 @@ In this case, you can modify the parameters as follows:
 
 ### Step 3.3 Run
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Using JDBC">
+<div label="Using JDBC" value="jdbc">
 
 To run the code, you can run `make build` and `make run` respectively:
 
@@ -1654,7 +1653,7 @@ Or run the `make` command directly, which is a combination of `make build` and `
 
 </div>
 
-<div label="Using Mybatis (Recommended)">
+<div label="Using Mybatis (Recommended)" value="mybatis">
 
 To run the code, you can run `make prepare`, `make gen`, `make build` and `make run` respectively:
 
@@ -1694,7 +1693,7 @@ Or run the `make` command directly, which is a combination of `make prepare`, `m
 
 </div>
 
-<div label="Using Hibernate (Recommended)">
+<div label="Using Hibernate (Recommended)" value="hibernate">
 
 To run the code, you can run `make build` and `make run` respectively:
 
@@ -1720,21 +1719,21 @@ Or run the `make` command directly, which is a combination of `make build` and `
 
 ## Step 4. Expected output
 
-<SimpleTab>
+<SimpleTab groupId="language">
 
-<div label="Using JDBC">
+<div label="Using JDBC" value="jdbc">
 
 [JDBC Expected Output](https://github.com/pingcap-inc/tidb-example-java/blob/main/Expected-Output.md#plain-java-jdbc)
 
 </div>
 
-<div label="Using Mybatis (Recommended)">
+<div label="Using Mybatis (Recommended)" value="mybatis">
 
 [Mybatis Expected Output](https://github.com/pingcap-inc/tidb-example-java/blob/main/Expected-Output.md#plain-java-mybatis)
 
 </div>
 
-<div label="Using Hibernate (Recommended)">
+<div label="Using Hibernate (Recommended)" value="hibernate">
 
 [Hibernate Expected Output](https://github.com/pingcap-inc/tidb-example-java/blob/main/Expected-Output.md#plain-java-hibernate)
 

@@ -1,7 +1,6 @@
 ---
 title: SHOW TABLE REGIONS
 summary: Learn how to use SHOW TABLE REGIONS in TiDB.
-aliases: ['/docs/dev/sql-statements/sql-statement-show-table-regions/','/docs/dev/reference/sql/statements/show-table-regions/']
 ---
 
 # SHOW TABLE REGIONS
@@ -50,7 +49,19 @@ Executing `SHOW TABLE REGIONS` returns the following columns:
 * `READ_BYTES`: The estimated amount of data read from the Region within one heartbeat cycle. The unit is byte.
 * `APPROXIMATE_SIZE(MB)`: The estimated amount of data in the Region. The unit is megabytes (MB).
 * `APPROXIMATE_KEYS`: The estimated number of Keys in the Region.
-* `SCHEDULING_CONSTRAINTS`: The [placement policy settings](/placement-rules-in-sql.md) associated with the table or partition to which a Region belongs. 
+
+<CustomContent platform="tidb">
+
+* `SCHEDULING_CONSTRAINTS`: The [placement policy settings](/placement-rules-in-sql.md) associated with the table or partition to which a Region belongs.
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+* `SCHEDULING_CONSTRAINTS`: The placement policy settings associated with the table or partition to which a Region belongs.
+
+</CustomContent>
+
 * `SCHEDULING_STATE`: The scheduling state of the Region which has a placement policy.
 
 > **Note:**
