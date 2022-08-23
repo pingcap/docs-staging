@@ -31,7 +31,7 @@ In one connection, execute the following statement:
 
 
 ```sql
-BACKUP DATABASE `test` TO 's3://example-bucket/backup-01/?region=us-west-1';
+BACKUP DATABASE `test` TO 's3://example-bucket/backup-01';
 ```
 
 Before the backup completes, run `SHOW BACKUPS` in a new connection:
