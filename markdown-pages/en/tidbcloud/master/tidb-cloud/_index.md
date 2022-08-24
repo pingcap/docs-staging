@@ -47,9 +47,9 @@ hide_commit: true
 
 [Scale a Cluster](https://docs.pingcap.com/tidbcloud/scale-tidb-cluster)
 
-[Upgrade a Cluster](https://docs.pingcap.com/tidbcloud/upgrade-tidb-cluster)
+[Upgrade a TiDB Cluster](https://docs.pingcap.com/tidbcloud/upgrade-tidb-cluster)
 
-[Delete a Cluster](https://docs.pingcap.com/tidbcloud/delete-tidb-cluster)
+[Use API (beta)](https://docs.pingcap.com/tidbcloud/api/v1beta)
 
 </LearningPath>
 
@@ -113,7 +113,7 @@ hide_commit: true
 
 <LearningPath label="Billing" icon="cloud2">
 
-[Costs](https://docs.pingcap.com/tidbcloud/tidb-cloud-billing)
+[Pricing](https://en.pingcap.com/tidb-cloud-pricing/)
 
 [Invoices](https://docs.pingcap.com/tidbcloud/tidb-cloud-billing#invoices)
 

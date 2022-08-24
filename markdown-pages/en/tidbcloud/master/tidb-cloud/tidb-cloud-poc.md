@@ -181,7 +181,7 @@ Now the workload testing is finished, you can explore more features, for example
 
 You have completed the full cycle of a PoC after you test TiDB Cloud using real workloads and get the testing results. These results help you determine if TiDB Cloud meets your expectations. Meanwhile, you have accumulated best practices for using TiDB Cloud.
 
-If you want to try TiDB Cloud on a larger scale, for a new round of deployments and tests, such as deploying with other storage sizes offered by TiDB Cloud, get full access to TiDB Cloud by creating a [Dedicated Tier](/tidb-cloud/select-cluster-tier.md#dedicated-tier).
+If you want to try TiDB Cloud on a larger scale, for a new round of deployments and tests, such as deploying with other node storage sizes offered by TiDB Cloud, get full access to TiDB Cloud by creating a [Dedicated Tier](/tidb-cloud/select-cluster-tier.md#dedicated-tier).
 
 If your credits are running out and you want to continue with the PoC, contact the [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md) for consultation.
 
@@ -212,7 +212,7 @@ You can scale out clusters on the console by yourself. If you need to scale in a
 
 Once your application for the PoC is approved, you will receive credits in your account. Generally, the credits are sufficient for a 14-day PoC. The credits are charged by the type of nodes and the number of nodes, on an hourly basis. For more information, see [TiDB Cloud Billing](/tidb-cloud/tidb-cloud-billing.md#credits).
 
-To check the credits left for your PoC, go to the **Active Clusters** page, as shown in the following screenshot.
+To check the credits left for your PoC, go to the **Clusters** page, as shown in the following screenshot.
 
 ![TiDB Cloud PoC Credits](https://download.pingcap.com/images/docs/tidb-cloud/poc-points.png)
 
