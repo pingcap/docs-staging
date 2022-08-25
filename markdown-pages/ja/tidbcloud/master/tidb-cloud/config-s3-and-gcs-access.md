@@ -12,17 +12,17 @@ summary: Learn how to configure Amazon Simple Storage Service (Amazon S3) access
 
 ## Amazon S3 アクセスの構成 {#configure-amazon-s3-access}
 
-TiDB Cloudが Amazon S3 バケットのソース データにアクセスできるようにするには、次の手順TiDB Cloudのバケット アクセスを設定し、Role-ARN を取得します。プロジェクト内の 1 つの TiDBクラスタの設定が完了すると、そのプロジェクト内のすべての TiDB クラスターが同じ Role-ARN を使用して Amazon S3 バケットにアクセスできるようになります。
+TiDB Cloudが Amazon S3 バケットのソース データにアクセスできるようにするには、次の手順を実行してTiDB Cloudのバケット アクセスを設定し、Role-ARN を取得します。プロジェクト内の 1 つの TiDBクラスタの設定が完了すると、そのプロジェクト内のすべての TiDB クラスターが同じ Role-ARN を使用して Amazon S3 バケットにアクセスできるようになります。
 
 1.  TiDB Cloudコンソールで、ターゲットの TiDBクラスタのTiDB Cloudアカウント ID と外部 ID を取得します。
 
-    1.  TiDB Cloudコンソールで、ターゲット プロジェクトを選択し、[**アクティブなクラスター**] ページに移動します。
+    1.  TiDB Cloudコンソールで、ターゲット プロジェクトを選択し、[**クラスター**] ページに移動します。
 
     2.  ターゲットクラスタの領域を見つけて、領域の右上隅にある [**データのインポート**] をクリックします。 [<strong>データ インポート タスク]</strong>ページが表示されます。
 
         > **ヒント：**
         >
-        > または、[**アクティブなクラスター**] ページでクラスタの名前をクリックし、右上隅にある [<strong>データのインポート</strong>] をクリックすることもできます。
+        > または、[**クラスター**] ページでクラスタの名前をクリックし、右上隅にある [<strong>データのインポート</strong>] をクリックすることもできます。
 
     3.  [**データ インポート タスク**] ページで、[ <strong>AWS IAMポリシー設定を表示</strong>] をクリックして、 TiDB Cloudアカウント ID とTiDB Cloud外部 ID を取得します。後で使用するために、これらの ID をメモしておいてください。
 
@@ -117,7 +117,7 @@ TiDB クラウドが GCS バケット内のソース データにアクセスで
 
     -   storage.buckets.get
     -   storage.objects.get
-    -   ストレージ.オブジェクト。リスト
+    -   storage.objects.list
 
     はいの場合は、次の手順でターゲット TiDBクラスタに一致するロールを使用できます。そうでない場合は、[ **IAM &amp; Admin** ] &gt; [ <strong>Roles</strong> ] &gt; [ <strong>CREATE ROLE</strong> ] に移動して、ターゲットの TiDBクラスタの役割を定義します。
 
