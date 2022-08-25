@@ -102,7 +102,7 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下部署操作具�
 
     
     ```bash
-    echo 'export PATH=/app/haproxy:$PATH' >> /etc/profile
+    echo 'export PATH=/app/haproxy/bin:$PATH' >> /etc/profile
     ```
 
 5. 检查 HAProxy 是否安装成功：
