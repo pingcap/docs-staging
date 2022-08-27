@@ -103,7 +103,7 @@ You can easily use HAProxy to configure and set up a load-balanced database envi
 
     
     ```bash
-    echo 'export PATH=/app/haproxy:$PATH' >> /etc/profile
+    echo 'export PATH=/app/haproxy/bin:$PATH' >> /etc/profile
     ```
 
 5. Check whether the installation is successful:
