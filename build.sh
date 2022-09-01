@@ -1,9 +1,15 @@
 #!/bin/bash
-REPO=$(pwd)
-git clone https://github.com/pingcap/website-docs /tmp/website-docs
-cd /tmp/website-docs
-rmdir docs
-cp -a $REPO docs
-yarn
-yarn build
-mv public $REPO/public
+
+set -e
+
+if [ ! -e website-docs/.git ]; then
+  git clone https://github.com/pingcap/website-docs
+fi
+
+if [ ! -e website-docs/docs/markdown-pages ]; then
+  ln -s ../../markdown-pages website-docs/docs/markdown-pages
+fi
+
+(
+  cd website-docs && yarn && yarn build
+)
