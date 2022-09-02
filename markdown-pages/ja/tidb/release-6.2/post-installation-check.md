@@ -3,24 +3,24 @@ title: Check Cluster Status
 summary: Learn how to check the running status of the TiDB cluster.
 ---
 
-# クラスタ ステータスの確認 {#check-cluster-status}
+# クラスタステータスの確認 {#check-cluster-status}
 
-TiDBクラスタをデプロイしたら、クラスタが正常に動作するかどうかを確認する必要があります。このドキュメントでは、TiUP コマンド[TiDB ダッシュボード](/dashboard/dashboard-intro.md)と Grafana を使用してクラスタの状態を確認する方法と、TiDB データベースにログインして簡単な SQL 操作を実行する方法を紹介します。
+TiDB クラスターをデプロイしたら、クラスターが正常に動作するかどうかを確認する必要があります。このドキュメントでは、TiUP コマンド[TiDB ダッシュボード](/dashboard/dashboard-intro.md)と Grafana を使用してクラスターの状態を確認する方法と、TiDB データベースにログインして簡単な SQL 操作を実行する方法を紹介します。
 
-## TiDBクラスタのステータスを確認する {#check-the-tidb-cluster-status}
+## TiDB クラスターのステータスを確認する {#check-the-tidb-cluster-status}
 
-このセクションでは、TiUP コマンド[TiDB ダッシュボード](/dashboard/dashboard-intro.md) 、および Grafana を使用して TiDBクラスタのステータスを確認する方法について説明します。
+このセクションでは、TiUP コマンド[TiDB ダッシュボード](/dashboard/dashboard-intro.md) 、および Grafana を使用して TiDB クラスターのステータスを確認する方法について説明します。
 
 ### TiUPを利用する {#use-tiup}
 
-`tiup cluster display <cluster-name>`コマンドを使用して、クラスタのステータスを確認します。例えば：
+`tiup cluster display <cluster-name>`コマンドを使用して、クラスターのステータスを確認します。例えば：
 
 
 ```shell
 tiup cluster display tidb-test
 ```
 
-期待される出力: 各ノードの`Status`情報が`Up`の場合、クラスタは正常に実行されます。
+期待される出力: 各ノードの`Status`情報が`Up`の場合、クラスターは正常に実行されます。
 
 ### TiDB ダッシュボードを使用する {#use-tidb-dashboard}
 
@@ -28,7 +28,7 @@ tiup cluster display tidb-test
 
     ![TiDB-Dashboard](https://download.pingcap.com/images/docs/tiup/tidb-dashboard.png)
 
-2.  ホームページには、TiDBクラスタのノード情報が表示されます。
+2.  ホームページには、TiDB クラスター内のノード情報が表示されます。
 
     ![TiDB-Dashboard-status](https://download.pingcap.com/images/docs/tiup/tidb-dashboard-status.png)
 
@@ -53,7 +53,7 @@ tiup cluster display tidb-test
 mysql -u root -h ${tidb_server_host_IP_address} -P 4000
 ```
 
-`${tidb_server_host_IP_address}`は、 `10.0.1.7`などの[クラスタトポロジ ファイルを初期化する](/production-deployment-using-tiup.md#step-3-initialize-cluster-topology-file)のときに`tidb_servers`に設定された IP アドレスの 1 つです。
+`${tidb_server_host_IP_address}`は、 `10.0.1.7`などの[クラスタ トポロジ ファイルを初期化する](/production-deployment-using-tiup.md#step-3-initialize-cluster-topology-file)のときに`tidb_servers`に設定された IP アドレスの 1 つです。
 
 次の情報は、ログインが成功したことを示します。
 
