@@ -3,13 +3,13 @@ title: TiDB Data Migration Quick Start
 summary: Learn how to quickly deploy a DM cluster using binary packages.
 ---
 
-# TiDBデータ移行のクイックスタートガイド {#quick-start-guide-for-tidb-data-migration}
+# TiDB データ移行のクイック スタート ガイド {#quick-start-guide-for-tidb-data-migration}
 
-このドキュメントでは、 [TiDBデータ移行](https://github.com/pingcap/dm) （DM）を使用してMySQLからTiDBにデータを移行する方法について説明します。このガイドはDM機能の簡単なデモであり、本番環境にはお勧めしません。
+このドキュメントでは、 [TiDB データ移行](https://github.com/pingcap/dm) (DM) を使用して MySQL から TiDB にデータを移行する方法について説明します。このガイドは、DM 機能の簡単なデモであり、実稼働環境には推奨されません。
 
-## ステップ1：DMクラスタをデプロイする {#step-1-deploy-a-dm-cluster}
+## ステップ 1: DM クラスターをデプロイする {#step-1-deploy-a-dm-cluster}
 
-1.  TiUPをインストールし、TiUPを使用して[`dmctl`](/dm/dmctl-introduction.md)をインストールします。
+1.  TiUP をインストールし、TiUP を使用して[`dmctl`](/dm/dmctl-introduction.md)をインストールします。
 
     
     ```shell
@@ -17,25 +17,25 @@ summary: Learn how to quickly deploy a DM cluster using binary packages.
     tiup install dm dmctl
     ```
 
-2.  DMクラスタの最小限のデプロイメントトポロジファイルを生成します。
+2.  DM クラスターの最小限のデプロイ トポロジ ファイルを生成します。
 
     
     ```
     tiup dm template
     ```
 
-3.  出力の構成情報をコピーし、変更されたIPアドレスを持つ`topology.yaml`ファイルとして保存します。 TiUPを使用して、 `topology.yaml`のファイルでDMクラスタをデプロイします。
+3.  出力の構成情報をコピーし、変更された IP アドレスを持つ`topology.yaml`のファイルとして保存します。 TiUP を使用して`topology.yaml`のファイルで DM クラスターをデプロイします。
 
     
     ```shell
     tiup dm deploy dm-test 6.0.0 topology.yaml -p
     ```
 
-## ステップ2：データソースを準備する {#step-2-prepare-the-data-source}
+## ステップ 2: データ ソースを準備する {#step-2-prepare-the-data-source}
 
-1つまたは複数のMySQLインスタンスをアップストリームデータソースとして使用できます。
+1 つまたは複数の MySQL インスタンスをアップストリーム データ ソースとして使用できます。
 
-1.  次のように、各データソースの構成ファイルを作成します。
+1.  次のように、各データ ソースの構成ファイルを作成します。
 
     
     ```yaml
@@ -47,16 +47,16 @@ summary: Learn how to quickly deploy a DM cluster using binary packages.
       port: 3306
     ```
 
-2.  次のコマンドを実行して、ソースをDMクラスタに追加します。 `mysql-01.yaml`は、前の手順で作成した構成ファイルです。
+2.  次のコマンドを実行して、ソースを DM クラスターに追加します。 `mysql-01.yaml`は、前のステップで作成された構成ファイルです。
 
     
     ```bash
     tiup dmctl --master-addr=127.0.0.1:8261 operate-source create mysql-01.yaml # use one of master_servers as the argument of --master-addr
     ```
 
-テスト用のMySQLインスタンスがない場合は、次の手順を実行してDockerでMySQLインスタンスを作成できます。
+テスト用の MySQL インスタンスがない場合は、次の手順に従って Docker で MySQL インスタンスを作成できます。
 
-1.  MySQL構成ファイルを作成します。
+1.  MySQL 構成ファイルを作成します。
 
     
     ```shell
@@ -76,38 +76,38 @@ summary: Learn how to quickly deploy a DM cluster using binary packages.
     EOF
     ```
 
-2.  Dockerを使用してMySQLインスタンスを起動します。
+2.  Docker を使用して MySQL インスタンスを開始します。
 
     
     ```shell
     docker run --name mysql-01 -v /tmp/mysqltest:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=my-secret-pw -d -p 3306:3306 mysql:5.7
     ```
 
-3.  MySQLインスタンスが開始されたら、インスタンスにアクセスします。
+3.  MySQL インスタンスが起動したら、インスタンスにアクセスします。
 
     > **ノート：**
     >
-    > このコマンドは、データ移行の試行にのみ適しており、実稼働環境やストレステストでは使用できません。
+    > このコマンドは、データ移行の試行にのみ適しており、本番環境やストレス テストでは使用できません。
 
     
     ```shell
     mysql -uroot -p -h 127.0.0.1 -P 3306
     ```
 
-## ステップ3：ダウンストリームデータベースを準備する {#step-3-prepare-a-downstream-database}
+## ステップ 3: ダウンストリーム データベースを準備する {#step-3-prepare-a-downstream-database}
 
-データ移行のターゲットとして既存のTiDBクラスタを選択できます。
+データ移行のターゲットとして、既存の TiDB クラスターを選択できます。
 
-テスト用のTiDBクラスタがない場合は、次のコマンドを実行して、デモ環境をすばやく構築できます。
+テスト用の TiDB クラスターがない場合は、次のコマンドを実行してデモ環境をすばやく構築できます。
 
 
 ```shell
 tiup playground
 ```
 
-## ステップ4：テストデータを準備する {#step-4-prepare-test-data}
+## ステップ 4: テスト データを準備する {#step-4-prepare-test-data}
 
-1つまたは複数のデータソースにテストテーブルとデータを作成します。既存のMySQLデータベースを使用していて、データベースに使用可能なデータが含まれている場合は、この手順をスキップできます。
+1 つまたは複数のデータ ソースにテスト テーブルとデータを作成します。既存の MySQL データベースを使用していて、データベースに利用可能なデータが含まれている場合は、この手順を省略できます。
 
 
 ```sql
@@ -120,9 +120,9 @@ insert into t1 (id, uid, name) values (1, 10001, 'Gabriel García Márquez'), (2
 insert into t2 (id, uid, name) values (3, 20001, 'José Arcadio Buendía'), (4, 20002, 'Úrsula Iguarán'), (5, 20003, 'José Arcadio');
 ```
 
-## ステップ5：データ移行タスクを作成する {#step-5-create-a-data-migration-task}
+## ステップ 5: データ移行タスクを作成する {#step-5-create-a-data-migration-task}
 
-1.  タスク構成ファイルを作成する`testdm-task.yaml` ：
+1.  タスク構成ファイルを作成します`testdm-task.yaml` :
 
     
     ```yaml
@@ -145,16 +145,16 @@ insert into t2 (id, uid, name) values (3, 20001, 'José Arcadio Buendía'), (4, 
         do-dbs: ["testdm"]
     ```
 
-2.  dmctlを使用してタスクを作成します。
+2.  dmctl を使用してタスクを作成します。
 
     
     ```bash
     tiup dmctl --master-addr 127.0.0.1:8261 start-task testdm-task.yaml
     ```
 
-これで、 `mysql-01`のデータベースからTiDBにデータを移行するタスクが正常に作成されました。
+`mysql-01`データベースから TiDB にデータを移行するタスクが正常に作成されました。
 
-## 手順6：タスクのステータスを確認する {#step-6-check-the-status-of-the-task}
+## ステップ 6: タスクのステータスを確認する {#step-6-check-the-status-of-the-task}
 
 タスクが作成されたら、 `dmctl query-status`コマンドを使用してタスクのステータスを確認できます。
 
