@@ -328,6 +328,7 @@ kind: TidbMonitor
 metadata:
   name: basic
 spec:
+  clusterScoped: true
   clusters:
     - name: ns1
       namespace: ns1
