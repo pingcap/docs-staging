@@ -242,6 +242,7 @@ SHOW BUILTINS;
 | sign                        |
 | sin                         |
 | sleep                       |
+| sm3                         |
 | space                       |
 | sqrt                        |
 | str_to_date                 |
