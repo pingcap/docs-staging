@@ -2208,7 +2208,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 ### tidb_opt_cartesian_bcj
 
 - Scope: SESSION | GLOBAL
-- Persists to cluster: YES
+- Persists to cluster: Yes
 - Type: Integer
 - Default value: `1`
 - Range: `[0, 2]`
@@ -2219,7 +2219,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 ### tidb_opt_concurrency_factor
 
 - Scope: SESSION | GLOBAL
-- Persists to cluster: YES
+- Persists to cluster: Yes
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `3.0`
@@ -2228,7 +2228,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 ### tidb_opt_cop_cpu_factor
 
 - Scope: SESSION | GLOBAL
-- Persists to cluster: YES
+- Persists to cluster: Yes
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `3.0`
@@ -2259,7 +2259,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 ### tidb_opt_cpu_factor
 
 - Scope: SESSION | GLOBAL
-- Persists to cluster: YES
+- Persists to cluster: Yes
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `3.0`
@@ -2268,7 +2268,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 ### tidb_opt_desc_scan_factor
 
 - Scope: SESSION | GLOBAL
-- Persists to cluster: YES
+- Persists to cluster: Yes
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `3.0`
@@ -2277,7 +2277,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 ### tidb_opt_disk_factor
 
 - Scope: SESSION | GLOBAL
-- Persists to cluster: YES
+- Persists to cluster: Yes
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `1.5`
@@ -2365,7 +2365,7 @@ mysql> desc select count(distinct a) from test.t;
 ### tidb_opt_memory_factor
 
 - Scope: SESSION | GLOBAL
-- Persists to cluster: YES
+- Persists to cluster: Yes
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `0.001`
@@ -2382,7 +2382,7 @@ mysql> desc select count(distinct a) from test.t;
 ### tidb_opt_network_factor
 
 - Scope: SESSION | GLOBAL
-- Persists to cluster: YES
+- Persists to cluster: Yes
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `1.0`
@@ -2432,7 +2432,7 @@ explain select * from t where age=5;
 ### tidb_opt_scan_factor
 
 - Scope: SESSION | GLOBAL
-- Persists to cluster: YES
+- Persists to cluster: Yes
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `1.5`
@@ -2441,7 +2441,7 @@ explain select * from t where age=5;
 ### tidb_opt_seek_factor
 
 - Scope: SESSION | GLOBAL
-- Persists to cluster: YES
+- Persists to cluster: Yes
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `20`
@@ -2458,6 +2458,15 @@ explain select * from t where age=5;
 - Type: Boolean
 - Default value: `OFF`
 - This variable sets whether the optimizer rewrites the aggregate functions with `DISTINCT` to the two-level aggregate functions, such as rewriting `SELECT b, COUNT(DISTINCT a) FROM t GROUP BY b` to `SELECT b, COUNT(a) FROM (SELECT b, a FROM t GROUP BY b, a) t GROUP BY b`. When the aggregation column has serious skew and the `DISTINCT` column has many different values, this rewriting can avoid the data skew in the query execution and improve the query performance.
+
+### tidb_opt_three_stage_distinct_agg <span class="version-mark">New in v6.3.0</span>
+
+- Scope: SESSION | GLOBAL
+- Persists to cluster: Yes
+- Type: Boolean
+- Default value: `ON`
+- This variable specifies whether to rewrite a `COUNT(DISTINCT)` aggregation into a three-stage aggregation in MPP mode.
+- This variable currently applies to an aggregation that only contains one `COUNT(DISTINCT)`.
 
 ### tidb_opt_write_row_id
 
