@@ -124,7 +124,7 @@ mountOptions:
 
     
     ```shell
-    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.8/manifests/gke/local-ssd-provision/local-ssd-provision.yaml
+    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.9/manifests/gke/local-ssd-provision/local-ssd-provision.yaml
     ```
 
 3. 使用本地存储。
