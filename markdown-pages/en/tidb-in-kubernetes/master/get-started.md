@@ -243,7 +243,7 @@ This section describes how to install TiDB Operator using [Helm 3](https://helm.
 
     
     ```shell
-    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.3.8
+    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.3.9
     ```
 
     <details>
