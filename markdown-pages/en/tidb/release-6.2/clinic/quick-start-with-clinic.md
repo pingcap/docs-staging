@@ -153,5 +153,5 @@ Before using PingCAP Clinic, you need to install Diag and prepare an environment
 ## What's next
 
 - [PingCAP Clinic Overview](/clinic/clinic-introduction.md)
-- [Troubleshoot TiDB Cluster Using PingCAP Clinic](/clinic/clinic-user-guide-for-tiup.md)
+- [Troubleshoot Clusters Using PingCAP Clinic](/clinic/clinic-user-guide-for-tiup.md)
 - [PingCAP Clinic Diagnostic Data](/clinic/clinic-data-instruction-for-tiup.md)
