@@ -56,7 +56,7 @@ aliases: ['/docs-cn/tidb-in-kubernetes/dev/restore-from-aws-s3-using-br/']
 
     
     ```shell
-    kubectl apply -f resotre-aws-s3.yaml
+    kubectl apply -f restore-aws-s3.yaml
     ```
 
     `restore-aws-s3.yaml` 文件内容如下：
