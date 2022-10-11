@@ -56,7 +56,7 @@ Depending on which method you choose to grant permissions to the remote storage 
 
     
     ```shell
-    kubectl apply -f resotre-aws-s3.yaml
+    kubectl apply -f restore-aws-s3.yaml
     ```
 
     The content of `restore-aws-s3.yaml` is as follows:
