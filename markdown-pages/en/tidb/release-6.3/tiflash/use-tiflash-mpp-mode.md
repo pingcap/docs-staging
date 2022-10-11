@@ -24,8 +24,7 @@ For example, if you do not want to use the MPP mode, you can execute the followi
 
 
 ```sql
-set @@session.tidb_allow_mpp=1;
-set @@session.tidb_enforce_mpp=0;
+set @@session.tidb_allow_mpp=0;
 ```
 
 If you want TiDB's cost-based optimizer to automatically decide whether to use the MPP mode (by default), you can execute the following statements:
