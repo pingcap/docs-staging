@@ -65,14 +65,14 @@ When using the `set config` statement, you can modify the configuration of a sin
 
 
 ```sql
-set config tikv `split.qps-threshold`=1000
+set config tikv `split.qps-threshold`=1000;
 ```
 
 - Modify the configuration of a single TiKV instance:
 
     
     ```sql
-    set config "127.0.0.1:20180" `split.qps-threshold`=1000
+    set config "127.0.0.1:20180" `split.qps-threshold`=1000;
     ```
 
 If the modification is successful, `Query OK` is returned:
@@ -232,7 +232,7 @@ You can modify the PD configurations using the following statement:
 
 
 ```sql
-set config pd `log.level`='info'
+set config pd `log.level`='info';
 ```
 
 If the modification is successful, `Query OK` is returned:
