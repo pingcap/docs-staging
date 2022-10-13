@@ -55,6 +55,7 @@ jobs:
         run: |
           cd preview
           git add markdown-pages
+          git add docs.json
           git fetch
           git pull
           if [[ -z $(git status -s) ]]
