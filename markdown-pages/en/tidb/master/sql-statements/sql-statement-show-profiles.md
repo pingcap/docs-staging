@@ -18,7 +18,7 @@ The `SHOW PROFILES` statement currently only returns an empty result.
 
 
 ```sql
-SHOW PROFILES
+SHOW PROFILES;
 ```
 
 ```

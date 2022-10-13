@@ -12,12 +12,12 @@ aliases: ['/docs/dev/sql-statements/sql-statement-recover-table/','/docs/dev/ref
 
 
 ```sql
-RECOVER TABLE table_name
+RECOVER TABLE table_name;
 ```
 
 
 ```sql
-RECOVER TABLE BY JOB ddl_job_id
+RECOVER TABLE BY JOB ddl_job_id;
 ```
 
 ## Synopsis
