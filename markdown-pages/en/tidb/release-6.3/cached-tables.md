@@ -200,7 +200,7 @@ To revert a cached table to a normal table, use `ALTER TABLE t NOCACHE`:
 
 
 ```sql
-ALTER TABLE users NOCACHE
+ALTER TABLE users NOCACHE;
 ```
 
 ```sql
