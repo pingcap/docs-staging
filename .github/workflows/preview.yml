@@ -32,6 +32,9 @@ jobs:
       - name: Update preview branch files
         run: |
           sudo rm -fr ./preview/markdown-pages/*
+          sudo rm -fr ./preview/docs.json
+
+          cp -rip ./main/docs.json ./preview/docs.json
 
           mkdir -p ./preview/markdown-pages/en/tidb
           mkdir -p ./preview/markdown-pages/ja/tidb
