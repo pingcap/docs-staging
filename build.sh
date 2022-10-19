@@ -47,6 +47,8 @@ if [ ! -e website-docs/docs/markdown-pages ]; then
   ln -s ../../markdown-pages website-docs/docs/markdown-pages
 fi
 
+cp docs.json website-docs/docs/docs.json
+
 if [ "$CMD" == "start" ]; then
   (cd website-docs && yarn && yarn start)
 fi
