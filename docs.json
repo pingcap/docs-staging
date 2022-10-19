@@ -7,6 +7,7 @@
           "repo": "pingcap/docs",
           "versions": [
             "master",
+            "release-6.3",
             "release-6.2",
             "release-6.1",
             "release-6.0",
@@ -25,6 +26,7 @@
           "repo": "pingcap/docs-cn",
           "versions": [
             "master",
+            "release-6.3",
             "release-6.2",
             "release-6.1",
             "release-6.0",
@@ -41,7 +43,12 @@
         },
         "ja": {
           "repo": "pingcap/docs",
-          "versions": ["release-6.2", "release-6.1", "release-5.4"]
+          "versions": [
+            "release-6.3",
+            "release-6.2",
+            "release-6.1",
+            "release-5.4"
+          ]
         }
       },
       "deprecated": [
@@ -55,7 +62,7 @@
         "v5.3",
         "v5.4"
       ],
-      "dmr": ["v6.2", "v6.0"]
+      "dmr": ["v6.3", "v6.2", "v6.0"]
     },
     "tidb-data-migration": {
       "languages": {
@@ -80,6 +87,7 @@
           "path": "en",
           "versions": [
             "master",
+            "release-1.4",
             "release-1.3",
             "release-1.2",
             "release-1.1",
@@ -91,6 +99,7 @@
           "path": "zh",
           "versions": [
             "master",
+            "release-1.4",
             "release-1.3",
             "release-1.2",
             "release-1.1",
