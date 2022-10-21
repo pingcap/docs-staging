@@ -170,10 +170,19 @@ PD 下发恢复计划后，会等待 TiKV 上报执行的结果。如上述输�
 <SimpleTab>
 <div label="通过 TiUP 部署的节点">
 
+1. 缩容无法恢复的节点：
+   
+    
+    ```bash
+    tiup cluster scale-in <cluster-name> -N <host> --force
+    ```
 
-```bash
-tiup cluster prune <cluster-name>
-```
+2. 清理 Tombstone 节点：
+
+    
+    ```bash
+    tiup cluster prune <cluster-name>
+    ```
 
 </div>
 <div label="通过 TiDB Operator 部署的节点">
