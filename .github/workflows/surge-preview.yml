@@ -16,28 +16,25 @@ jobs:
         with:
           repository: "pingcap/website-docs"
           ref: "master"
-          path: "website"
-      - name: Clone This Repo
-        uses: actions/checkout@v3
-        with:
-          path: "docs"
       - uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: "yarn"
-
-      - name: Replace docs in website with this PR
-        id: replace
+      - name: Remove origin docs
         run: |
-          sudo rm -fr website/docs
-          sudo cp -r docs website/docs
+          sudo rm -fr docs
+
+      - name: Clone This Repo
+        uses: actions/checkout@v3
+        with:
+          path: "docs"
 
       - uses: afc163/surge-preview@v1
         id: preview_step
         with:
           surge_token: ${{ secrets.SURGE_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          dist: website/public
+          dist: public
           build: |
             yarn
             yarn build
