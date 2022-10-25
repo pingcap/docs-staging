@@ -24,3 +24,27 @@ This repo stores all preprocessed md files from source repos. For the [`website-
 #### 2. Trigger by event manually
 
 ![image](https://user-images.githubusercontent.com/56986964/183847213-bc18a345-f17b-473f-84a9-ca05215be3b7.png)
+
+## Config Actions Secrets
+
+### 1. Install `Surge.sh` CLI
+
+```bash
+npm install --global surge
+```
+
+### 2. Login `Surge.sh`
+
+```bash
+surge login
+```
+
+### 3. Create `Surge.sh` Token
+
+```bash
+surge token
+```
+
+### 4. Config `Surge.sh` Token
+
+Visit `<Your Repo URL>/settings/secrets/actions` and add `SURGE_TOKEN` with the token you just created.
