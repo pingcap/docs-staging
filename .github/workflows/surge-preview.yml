@@ -1,0 +1,44 @@
+name: 🔂 Surge PR Preview
+
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - ".github/**"
+  pull_request:
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Docs Website Code
+        uses: actions/checkout@v3
+        with:
+          ref: "master"
+          path: "website"
+      - name: Clone This Repo
+        uses: actions/checkout@v3
+        with:
+          path: "docs"
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "yarn"
+
+      - name: Replace docs in website with this PR
+        id: replace
+        run: |
+          sudo rm -fr website/docs
+          sudo cp -r docs website/docs
+
+      - uses: afc163/surge-preview@v1
+        id: preview_step
+        with:
+          surge_token: ${{ secrets.SURGE_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dist: website/public
+          build: |
+            yarn
+            yarn build
+      - name: Get the preview_url
+        run: echo "url => ${{ steps.preview_step.outputs.preview_url }}"
