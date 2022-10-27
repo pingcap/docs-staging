@@ -57,9 +57,8 @@ The following table lists the connection parameters. You can change their defaul
 
 For example, if you want to connect to a database on TiDB Cloud, you can specify the connection information as follows:
 
-
 ```shell
-tiup demo bookshop prepare -U root -H tidb.xxx.yyy.ap-northeast-1.prod.aws.tidbcloud.com -P 4000 -p
+tiup demo bookshop prepare -U <username> -H <endpoint> -P 4000 -p <password>
 ```
 
 #### Set the data volume
@@ -82,7 +81,6 @@ For example, the following command is executed to generate:
 - 1,000,000 rows of rating records via the `--ratings` parameter
 - 1,000,000 rows of order records via the `--orders` parameter
 
-
 ```shell
 tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --ratings=1000000 --orders=1000000 --drop-tables
 ```
@@ -91,23 +89,26 @@ You can delete the original table structure through the `--drop-tables` paramete
 
 ### Method 2: Via TiDB Cloud Import
 
-On the database details page of TiDB Cloud, click the **Import** button to enter the **Data Import Task** page. On this page, perform the following steps to import the Bookshop sample data from AWS S3 to TiDB Cloud.
+On the cluster detail page of TiDB Cloud, click **Import Data** in the **Import** area to enter the **Data Import** page. On this page, perform the following steps to import the Bookshop sample data from AWS S3 to TiDB Cloud.
 
-1. Copy the following **Bucket URI** and **Role-ARN** to the corresponding input boxes:
+1. Select **SQL File** for **Data Format**.
+2. Copy the following **Bucket URI** and **Role ARN** to the corresponding input boxes:
 
     **Bucket URI**:
 
-    
     ```
     s3://developer.pingcap.com/bookshop/
     ```
 
-   **Role-ARN**:
+   **Role ARN**:
 
-    
     ```
     arn:aws:iam::494090988690:role/s3-tidb-cloud-developer-access
     ```
+
+3. Click **Next** to go to the **File and filter** step to confirm the information of the files to be imported.
+
+4. Click **Next** again to go to the **Preview** step to confirm the preview of the data to be imported.
 
     In this example, the following data is generated in advance:
 
@@ -117,27 +118,13 @@ On the database details page of TiDB Cloud, click the **Import** button to enter
     - 1,000,000 rows of rating records
     - 1,000,000 rows of order records
 
-2. Select **US West (Oregon)** for **Bucket Region**.
-3. Select **SQL File** for **Data Format**.
+5. Click **Start Import** to start the import process and wait for TiDB Cloud to complete the import.
 
-    ![Import Bookshop data in TiDB Cloud](https://download.pingcap.com/images/docs/develop/tidb_cloud_import_bookshop_data.png)
-
-4. Enter database login information.
-5. Click the **Import** button to confirm the import.
-6. Wait for TiDB Cloud to complete the import.
-
-    ![Bookshop data importing](https://download.pingcap.com/images/docs/develop/importing_bookshop_data.png)
-
-    If the following error message appears during the import process, run the `DROP DATABASE bookshop;` command to clear the previously created sample database and then import data again.
-
-    > table(s) [`bookshop`.`authors`, `bookshop`.`book_authors`, `bookshop`.`books`, `bookshop`.`orders`, `bookshop`.`ratings`, `bookshop`.`users`] are not empty.
-
-For more information about TiDB Cloud, see [TiDB Cloud Documentation](https://docs.pingcap.com/tidbcloud).
+For more information about how to import or migrate data to TiDB Cloud, see [TiDB Cloud Migration Overview](https://docs.pingcap.com/tidbcloud/tidb-cloud-migration-overview).
 
 ### View data import status
 
 After the import is completed, you can view the data volume information of each table by executing the following SQL statement:
-
 
 ```sql
 SELECT
@@ -241,7 +228,6 @@ This table stores user purchase information.
 ## Database initialization script `dbinit.sql`
 
 If you want to manually create database table structures in the Bookshop application, run the following SQL statements:
-
 
 ```sql
 CREATE DATABASE IF NOT EXISTS `bookshop`;
