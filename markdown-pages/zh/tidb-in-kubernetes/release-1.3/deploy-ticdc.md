@@ -44,7 +44,7 @@ summary: 了解如何在 Kubernetes 上部署 TiCDC。
     kubectl exec -it ${pod_name} -n ${namespace} -- sh
     ```
 
-5. 然后通过 `cdc cli` 进行[管理集群和同步任务](https://pingcap.com/docs-cn/stable/ticdc/manage-ticdc/)。
+5. 然后通过 `cdc cli` 进行[管理集群和同步任务](https://docs.pingcap.com/zh/tidb/stable/manage-ticdc)。
 
     
     ```shell
