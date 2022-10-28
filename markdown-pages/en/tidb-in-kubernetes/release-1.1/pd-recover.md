@@ -104,11 +104,11 @@ When you use `pd-recover` to recover the PD cluster, you need to specify `alloc-
     kubectl edit sts ${cluster_name}-pd -n ${namespace}
     ```
 
-    Execute the following command to confirm that the PD Pod is started:
+    Execute the following command to confirm that the PD cluster is started:
 
     
     ```shell
-    kubectl get pod -n ${namespace}
+    kubectl logs -f ${cluster_name}-pd-0 -n ${namespace} | grep "Welcome to Placement Driver (PD)"
     ```
 
 ### Recover the cluster
