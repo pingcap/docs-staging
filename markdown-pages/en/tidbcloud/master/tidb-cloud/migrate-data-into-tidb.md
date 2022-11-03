@@ -110,7 +110,7 @@ The following steps show how to import local data to TiDB Cloud using the logica
 
         
         ```shell
-        vim tidb-lighting.toml
+        vim tidb-lightning.toml
         ```
 
     2. Configure the importing information.
