@@ -202,9 +202,6 @@ Assume that it is acceptable in the actual production environment that this DDL 
                         "result": null,
                         "unresolvedDDLLockID": "",
                         "sync": {
-                            "totalEvents": "4",
-                            "totalTps": "0",
-                            "recentTps": "0",
                             "masterBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
                             "masterBinlogGtid": "143bdef3-dd4a-11ea-8b00-00155de45f57:1-10",
                             "syncerBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
@@ -214,7 +211,10 @@ Assume that it is acceptable in the actual production environment that this DDL 
                             "unresolvedGroups": [
                             ],
                             "synced": true,
-                            "binlogType": "remote"
+                            "binlogType": "remote",
+                            "totalRows": "4",
+                            "totalRps": "0",
+                            "recentRps": "0"
                         }
                     }
                 ]
@@ -380,9 +380,6 @@ Assume that it is acceptable in the actual production environment that this DDL 
                         "result": null,
                         "unresolvedDDLLockID": "",
                         "sync": {
-                            "totalEvents": "4",
-                            "totalTps": "0",
-                            "recentTps": "0",
                             "masterBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
                             "masterBinlogGtid": "143bdef3-dd4a-11ea-8b00-00155de45f57:1-10",
                             "syncerBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
@@ -392,7 +389,10 @@ Assume that it is acceptable in the actual production environment that this DDL 
                             "unresolvedGroups": [
                             ],
                             "synced": true,
-                            "binlogType": "remote"
+                            "binlogType": "remote",
+                            "totalRows": "4",
+                            "totalRps": "0",
+                            "recentRps": "0"
                         }
                     }
                 ]
@@ -414,9 +414,6 @@ Assume that it is acceptable in the actual production environment that this DDL 
                         "result": null,
                         "unresolvedDDLLockID": "",
                         "sync": {
-                            "totalEvents": "4",
-                            "totalTps": "0",
-                            "recentTps": "0",
                             "masterBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
                             "masterBinlogGtid": "143bdef3-dd4a-11ea-8b00-00155de45f57:1-10",
                             "syncerBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
@@ -426,7 +423,10 @@ Assume that it is acceptable in the actual production environment that this DDL 
                             "unresolvedGroups": [
                             ],
                             "synced": true,
-                            "binlogType": "remote"
+                            "binlogType": "remote",
+                            "totalRows": "4",
+                            "totalRps": "0",
+                            "recentRps": "0"
                         }
                     }
                 ]
@@ -552,9 +552,6 @@ You can replace this DDL statement with two equivalent DDL statements. The steps
                         "result": null,
                         "unresolvedDDLLockID": "",
                         "sync": {
-                            "totalEvents": "4",
-                            "totalTps": "0",
-                            "recentTps": "0",
                             "masterBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
                             "masterBinlogGtid": "143bdef3-dd4a-11ea-8b00-00155de45f57:1-10",
                             "syncerBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
@@ -564,7 +561,10 @@ You can replace this DDL statement with two equivalent DDL statements. The steps
                             "unresolvedGroups": [
                             ],
                             "synced": true,
-                            "binlogType": "remote"
+                            "binlogType": "remote",
+                            "totalRows": "4",
+                            "totalRps": "0",
+                            "recentRps": "0"
                         }
                     }
                 ]
@@ -756,9 +756,6 @@ You can replace this DDL statement with two equivalent DDL statements. The steps
                         "result": null,
                         "unresolvedDDLLockID": "",
                         "sync": {
-                            "totalEvents": "4",
-                            "totalTps": "0",
-                            "recentTps": "0",
                             "masterBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
                             "masterBinlogGtid": "143bdef3-dd4a-11ea-8b00-00155de45f57:1-10",
                             "syncerBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
@@ -770,7 +767,10 @@ You can replace this DDL statement with two equivalent DDL statements. The steps
                             "unresolvedGroups": [
                             ],
                             "synced": true,
-                            "binlogType": "remote"
+                            "binlogType": "remote",
+                            "totalRows": "4",
+                            "totalRps": "0",
+                            "recentRps": "0"
                         }
                     }
                 ]
@@ -792,9 +792,6 @@ You can replace this DDL statement with two equivalent DDL statements. The steps
                         "result": null,
                         "unresolvedDDLLockID": "",
                         "sync": {
-                            "totalEvents": "4",
-                            "totalTps": "0",
-                            "recentTps": "0",
                             "masterBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
                             "masterBinlogGtid": "143bdef3-dd4a-11ea-8b00-00155de45f57:1-10",
                             "syncerBinlog": "(DESKTOP-T561TSO-bin.000001, 2388)",
@@ -806,7 +803,10 @@ You can replace this DDL statement with two equivalent DDL statements. The steps
                             "unresolvedGroups": [
                             ],
                             "synced": try,
-                            "binlogType": "remote"
+                            "binlogType": "remote",
+                            "totalRows": "4",
+                            "totalRps": "0",
+                            "recentRps": "0"
                         }
                     }
                 ]
