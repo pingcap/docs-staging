@@ -107,7 +107,7 @@ The TiDB configuration file supports more options than command-line parameters. 
 
 - Enables or disables the new collation support.
 - Default value: `true`
-- Note: This configuration takes effect only for the TiDB cluster that is first initialized. After the initialization, you cannot use this configuration item to enable or disable the new collation support. When a TiDB cluster is upgraded to v4.0 or later, because the cluster has been initialized before, both `true` and `false` values of this configuration item are taken as `false`.
+- Note: This configuration takes effect only for the TiDB cluster that is first initialized. After the initialization, you cannot use this configuration item to enable or disable the new collation support.
 
 ### `max-server-connections`
 
@@ -495,16 +495,16 @@ Configuration items related to opentracing.sampler.
 
 ### `type`
 
-+ Specifies the type of the opentracing sampler.
++ Specifies the type of the opentracing sampler. The string value is case-insensitive.
 + Default value: `"const"`
-+ Value options: `"const"`, `"probabilistic"`, `"rateLimiting"`, `"remote"`
++ Value options: `"const"`, `"probabilistic"`, `"ratelimiting"`, `"remote"`
 
 ### `param`
 
 + The parameter of the opentracing sampler.
     - For the `const` type, the value can be `0` or `1`, which indicates whether to enable the `const` sampler.
     - For the `probabilistic` type, the parameter specifies the sampling probability, which can be a float number between `0` and `1`.
-    - For the `rateLimiting` type, the parameter specifies the number of spans sampled per second.
+    - For the `ratelimiting` type, the parameter specifies the number of spans sampled per second.
     - For the `remote` type, the parameter specifies the sampling probability, which can be a float number between `0` and `1`.
 + Default value: `1.0`
 
