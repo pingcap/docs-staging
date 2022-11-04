@@ -760,7 +760,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
         ```
 
         ```
-        ERROR 1062 : Duplicate entry '1' for key 'PRIMARY'
+        ERROR 1062 : Duplicate entry '1' for key 't.PRIMARY'
         ```
 
     - 乐观事务模型下将 `tidb_constraint_check_in_place` 设置为 `ON`：
@@ -773,7 +773,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
         ```
 
         ```
-        ERROR 1062 : Duplicate entry '1' for key 'PRIMARY'
+        ERROR 1062 : Duplicate entry '1' for key 't.PRIMARY'
         ```
 
 ### `tidb_constraint_check_in_place_pessimistic` <span class="version-mark">从 v6.3.0 版本开始引入</span>
@@ -807,7 +807,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
         ```
 
         ```
-        ERROR 1062 : Duplicate entry '1' for key 'PRIMARY'
+        ERROR 1062 : Duplicate entry '1' for key 't.PRIMARY'
         ```
 
     - 悲观事务模型下将 `tidb_constraint_check_in_place_pessimistic` 设置为 `ON`：
@@ -819,7 +819,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
         ```
 
         ```
-        ERROR 1062 : Duplicate entry '1' for key 'PRIMARY'
+        ERROR 1062 : Duplicate entry '1' for key 't.PRIMARY'
         ```
 
 ### `tidb_cost_model_version` <span class="version-mark">从 v6.2.0 版本开始引入</span>
