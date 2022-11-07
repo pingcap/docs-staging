@@ -590,7 +590,7 @@ Before TiUP is released, you can control the cluster using `tidb-ctl`, `tikv-ctl
 
 ```bash
 Usage:
-  tiup ctl {tidb/pd/tikv/binlog/etcd} [flags]
+  tiup ctl:<cluster-version> {tidb/pd/tikv/binlog/etcd} [flags]
 
 Flags:
   -h, --help   help for tiup
@@ -610,7 +610,7 @@ For example, if you previously view the store by running `pd-ctl -u http://127.0
 
 
 ```bash
-tiup ctl pd -u http://127.0.0.1:2379 store
+tiup ctl:<cluster-version> pd -u http://127.0.0.1:2379 store
 ```
 
 ## Environment checks for target machines
