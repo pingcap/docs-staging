@@ -582,7 +582,7 @@ etcdctl [args] = tiup ctl etcd [args]
 
 
 ```bash
-tiup ctl pd -u http://127.0.0.1:2379 store
+tiup ctl:<cluster-version> pd -u http://127.0.0.1:2379 store
 ```
 
 ## 部署机环境检查
