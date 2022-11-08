@@ -1468,7 +1468,7 @@ When using JDBC, you need to connect to your cluster and run the statement in th
 
 <div label="Using Mybatis (Recommended)" value="mybatis">
 
-If you are using a non-local default cluster, such as TiDB Cloud or other remote cluster, modify the `dataSource.url`, `dataSource.username`, `dataSource.password` in `mybatis-config.xml`.
+If you are using a TiDB Cloud Serverless Tier cluster, modify the `dataSource.url`, `dataSource.username`, `dataSource.password` in `mybatis-config.xml`.
 
 
 ```xml
@@ -1512,12 +1512,11 @@ If you are using a non-local default cluster, such as TiDB Cloud or other remote
 </configuration>
 ```
 
-Suppose that the password you set is `123456` and the connection string you get from TiDB Cloud is the following:
+Suppose that the password you set is `123456`, and the connection parameters you get from the cluster details page are the following:
 
-
-```shell
-mysql --connect-timeout 15 -u root -h xxx.tidbcloud.com -P 4000 -p
-```
+- Endpoint: `xxx.tidbcloud.com`
+- Port: `4000`
+- User: `2aEp24QWEDLqRFs.root`
 
 In this case, you can modify the parameters in `dataSource` node as follows:
 
@@ -1533,8 +1532,8 @@ In this case, you can modify the parameters in `dataSource` node as follows:
             <!-- Database pool -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://xxx.tidbcloud.com:4000/test"/>
-                <property name="username" value="root"/>
+                <property name="url" value="jdbc:mysql://xxx.tidbcloud.com:4000/test?sslMode=VERIFY_IDENTITY&amp;enabledTLSProtocols=TLSv1.2,TLSv1.3"/>
+                <property name="username" value="2aEp24QWEDLqRFs.root"/>
                 <property name="password" value="123456"/>
             </dataSource>
         ...
@@ -1546,7 +1545,7 @@ In this case, you can modify the parameters in `dataSource` node as follows:
 
 <div label="Using Hibernate (Recommended)" value="hibernate">
 
-If you are using a non-local default cluster, such as TiDB Cloud or other remote cluster, modify the `hibernate.connection.url`, `hibernate.connection.username`, `hibernate.connection.password` in `hibernate.cfg.xml`.
+If you are using a TiDB Cloud Serverless Tier cluster, modify the `hibernate.connection.url`, `hibernate.connection.username`, `hibernate.connection.password` in `hibernate.cfg.xml`.
 
 
 ```xml
@@ -1575,12 +1574,11 @@ If you are using a non-local default cluster, such as TiDB Cloud or other remote
 </hibernate-configuration>
 ```
 
-Suppose that the password you set is `123456` and the connection string you get from TiDB Cloud is the following:
+Suppose that the password you set is `123456`, and the connection parameters you get from the cluster details page are the following:
 
-
-```shell
-mysql --connect-timeout 15 -u root -h xxx.tidbcloud.com -P 4000 -p
-```
+- Endpoint: `xxx.tidbcloud.com`
+- Port: `4000`
+- User: `2aEp24QWEDLqRFs.root`
 
 In this case, you can modify the parameters as follows:
 
@@ -1596,8 +1594,8 @@ In this case, you can modify the parameters as follows:
         <!-- Database connection settings -->
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="hibernate.dialect">org.hibernate.dialect.TiDBDialect</property>
-        <property name="hibernate.connection.url">jdbc:mysql://xxx.tidbcloud.com:4000/test</property>
-        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.url">jdbc:mysql://xxx.tidbcloud.com:4000/test?sslMode=VERIFY_IDENTITY&amp;enabledTLSProtocols=TLSv1.2,TLSv1.3</property>
+        <property name="hibernate.connection.username">2aEp24QWEDLqRFs.root</property>
         <property name="hibernate.connection.password">123456</property>
         <property name="hibernate.connection.autocommit">false</property>
 
@@ -1615,7 +1613,7 @@ In this case, you can modify the parameters as follows:
 
 <div label="Using JDBC" value="jdbc">
 
-If you are using a non-local default cluster, such as TiDB Cloud or other remote clusters, modify the parameters of the host, port, user, and password in `JDBCExample.java`:
+If you are using a TiDB Cloud Serverless Tier cluster, modify the parameters of the host, port, user, and password in `JDBCExample.java`:
 
 
 ```java
@@ -1626,11 +1624,11 @@ mysqlDataSource.setUser("root");
 mysqlDataSource.setPassword("");
 ```
 
-Suppose that the password you set is `123456` and the connection string you get from TiDB Cloud is the following:
+Suppose that the password you set is `123456`, and the connection parameters you get from the cluster details page are the following:
 
-```
-mysql --connect-timeout 15 -u root -h xxx.tidbcloud.com -P 4000 -p
-```
+- Endpoint: `xxx.tidbcloud.com`
+- Port: `4000`
+- User: `2aEp24QWEDLqRFs.root`
 
 In this case, you can modify the parameters as follows:
 
@@ -1639,8 +1637,10 @@ In this case, you can modify the parameters as follows:
 mysqlDataSource.setServerName("xxx.tidbcloud.com");
 mysqlDataSource.setPortNumber(4000);
 mysqlDataSource.setDatabaseName("test");
-mysqlDataSource.setUser("root");
+mysqlDataSource.setUser("2aEp24QWEDLqRFs.root");
 mysqlDataSource.setPassword("123456");
+mysqlDataSource.setSslMode(PropertyDefinitions.SslMode.VERIFY_IDENTITY.name());
+mysqlDataSource.setEnabledTLSProtocols("TLSv1.2,TLSv1.3");
 ```
 
 </div>
