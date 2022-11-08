@@ -65,7 +65,7 @@ tiup ctl cdc changefeed create --pd="http://127.0.0.1:2379" --sink-uri="kafka://
 
 
 ```shell
-tiup ctl cdc changefeed list --pd="http://127.0.0.1:2379"
+tiup ctl:<cluster-version> cdc changefeed list --pd="http://127.0.0.1:2379"
 ```
 
 你可以参考 [TiCDC 运维操作及任务管理](/ticdc/manage-ticdc.md#管理同步任务-changefeed)，对 changefeed 状态进行管理。
