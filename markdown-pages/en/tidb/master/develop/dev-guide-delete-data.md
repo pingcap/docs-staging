@@ -58,7 +58,7 @@ Suppose you find an application error within a specific time period and you need
 
 
 ```sql
-SELECT COUNT(*) FROM `ratings` WHERE `rated_at` >= "2022-04-15 00:00:00" AND  `rated_at` <= "2022-04-15 00:15:00";
+SELECT COUNT(*) FROM `ratings` WHERE `rated_at` >= "2022-04-15 00:00:00" AND `rated_at` <= "2022-04-15 00:15:00";
 ```
 
 If more than 10,000 records are returned, use [Bulk-Delete](#bulk-delete) to delete them.
@@ -71,7 +71,7 @@ If fewer than 10,000 records are returned, use the following example to delete t
 In SQL, the example is as follows:
 
 ```sql
-DELETE FROM `ratings` WHERE `rated_at` >= "2022-04-15 00:00:00" AND  `rated_at` <= "2022-04-15 00:15:00";
+DELETE FROM `ratings` WHERE `rated_at` >= "2022-04-15 00:00:00" AND `rated_at` <= "2022-04-15 00:15:00";
 ```
 
 </div>
@@ -84,7 +84,7 @@ In Java, the example is as follows:
 // ds is an entity of com.mysql.cj.jdbc.MysqlDataSource
 
 try (Connection connection = ds.getConnection()) {
-    String sql = "DELETE FROM `bookshop`.`ratings` WHERE `rated_at` >= ? AND  `rated_at` <= ?";
+    String sql = "DELETE FROM `bookshop`.`ratings` WHERE `rated_at` >= ? AND `rated_at` <= ?";
     PreparedStatement preparedStatement = connection.prepareStatement(sql);
     Calendar calendar = Calendar.getInstance();
     calendar.set(Calendar.MILLISECOND, 0);
@@ -128,7 +128,7 @@ func main() {
     startTime := time.Date(2022, 04, 15, 0, 0, 0, 0, time.UTC)
     endTime := time.Date(2022, 04, 15, 0, 15, 0, 0, time.UTC)
 
-    bulkUpdateSql := fmt.Sprintf("DELETE FROM `bookshop`.`ratings` WHERE `rated_at` >= ? AND  `rated_at` <= ?")
+    bulkUpdateSql := fmt.Sprintf("DELETE FROM `bookshop`.`ratings` WHERE `rated_at` >= ? AND `rated_at` <= ?")
     result, err := db.Exec(bulkUpdateSql, startTime, endTime)
     if err != nil {
         panic(err)
@@ -238,7 +238,7 @@ public class BatchDeleteExample
 
     public static void batchDelete (MysqlDataSource ds) {
         try (Connection connection = ds.getConnection()) {
-            String sql = "DELETE FROM `bookshop`.`ratings` WHERE `rated_at` >= ? AND  `rated_at` <= ? LIMIT 1000";
+            String sql = "DELETE FROM `bookshop`.`ratings` WHERE `rated_at` >= ? AND `rated_at` <= ? LIMIT 1000";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.MILLISECOND, 0);
@@ -299,7 +299,7 @@ func main() {
 
 // deleteBatch delete at most 1000 lines per batch
 func deleteBatch(db *sql.DB, startTime, endTime time.Time) (int64, error) {
-    bulkUpdateSql := fmt.Sprintf("DELETE FROM `bookshop`.`ratings` WHERE `rated_at` >= ? AND  `rated_at` <= ? LIMIT 1000")
+    bulkUpdateSql := fmt.Sprintf("DELETE FROM `bookshop`.`ratings` WHERE `rated_at` >= ? AND `rated_at` <= ? LIMIT 1000")
     result, err := db.Exec(bulkUpdateSql, startTime, endTime)
     if err != nil {
         return -1, err
