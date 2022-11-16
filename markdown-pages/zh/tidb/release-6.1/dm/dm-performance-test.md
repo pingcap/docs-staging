@@ -82,7 +82,7 @@ sysbench --test=oltp_insert --tables=4 --mysql-host=172.16.4.40 --mysql-port=330
       threads: 32
   ```
 
-创建数据迁移任务的详细操作参考[创建数据迁移任务](/dm/dm-create-task.md#创建数据迁移任务)。
+创建数据迁移任务的详细操作参考[创建数据迁移任务](/dm/dm-create-task.md)。
 
 > **注意：**
 >
@@ -140,7 +140,7 @@ sysbench --test=oltp_insert --tables=4 --mysql-host=172.16.4.40 --mysql-port=330
       batch: 100
   ```
 
-创建数据迁移任务的详细操作参考[创建数据迁移任务](/dm/dm-create-task.md#创建数据迁移任务)。
+创建数据迁移任务的详细操作参考[创建数据迁移任务](/dm/dm-create-task.md)。
 
 > **注意：**
 >
