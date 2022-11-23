@@ -5,7 +5,7 @@ hide_commit: true
 hide_leftNav: true
 ---
 
-<DocHomeContainer title="PingCAP Archived Documentation" subTitle="Access the archived documentation of the TiDB database in this website">
+<DocHomeContainer title="PingCAP Archived Documentation" subTitle="Access the archived documentation of the TiDB database in this website" archive>
 
 <DocHomeSection label="TiDB" anchor="tidb" id="tidb">
 
