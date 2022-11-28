@@ -69,7 +69,7 @@ TiDB Grafana パネルで、 **KV Errors**の下にある次のモニタリン�
 
 
 ```shell
-tiup ctl pd -u https://127.0.0.1:2379 tso {TIMESTAMP}
+tiup ctl:<cluster-version> pd -u https://127.0.0.1:2379 tso {TIMESTAMP}
 ```
 
 `tableID`を使用して、関連するテーブルの名前を見つけることができます。
