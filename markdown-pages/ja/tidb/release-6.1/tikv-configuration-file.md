@@ -1,6 +1,7 @@
 ---
 title: TiKV Configuration File
 summary: Learn the TiKV configuration file.
+aliases: ['/docs/stable/reference/configuration/tikv-server/configuration-file/']
 ---
 
 # TiKVConfiguration / コンフィグレーションファイル {#tikv-configuration-file}
@@ -1238,7 +1239,7 @@ Titan関連のConfiguration / コンフィグレーション項目。
 
 ### <code>target-file-size-base</code> {#code-target-file-size-base-code}
 
--   ベース レベルでのターゲット ファイルのサイズ。 `enable-compaction-guard`の値が`true`の場合、この値は`compaction-guard-max-output-file-size`で上書きされます。
+-   ベース レベルでのターゲット ファイルのサイズ。 `enable-compaction-guard`の値が`true`の場合、この値は`compaction-guard-max-output-file-size`でオーバーライドされます。
 -   デフォルト値: `"8MB"`
 -   最小値: `0`
 -   単位: KB|MB|GB
@@ -1589,6 +1590,16 @@ BRバックアップに関するConfiguration / コンフィグレーション�
 
 -   クラスタ リソースの使用率が高い場合に、バックアップ タスクで使用されるリソースを制限してクラスタへの影響を軽減するかどうかを制御します。詳細については、 [BR オートチューン](/br/br-auto-tune.md)を参照してください。
 -   デフォルト値: `true`
+
+### <code>s3-multi-part-size</code> <span class="version-mark">v5.3.2 の新機能</span> {#code-s3-multi-part-size-code-span-class-version-mark-new-in-v5-3-2-span}
+
+> **ノート：**
+>
+> この構成は、S3 レート制限によって引き起こされるバックアップの失敗に対処するために導入されました。この問題は[バックアップ データ ストレージ構造の改善](/br/backup-and-restore-design.md#backup-file-structure)で修正されました。したがって、この構成は v6.1.1 から廃止され、推奨されなくなりました。
+
+-   バックアップ中に S3 へのマルチパート アップロードを実行するときに使用されるパート サイズ。この設定の値を調整して、S3 に送信されるリクエストの数を制御できます。
+-   データが S3 にバックアップされ、バックアップ ファイルがこの構成項目の値よりも大きい場合、 [マルチパートアップロード](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html)が自動的に有効になります。圧縮率に基づくと、96 MiBリージョンによって生成されるバックアップ ファイルは、約 10 MiB から 30 MiB です。
+-   デフォルト値: 5MiB
 
 ## CDC {#cdc}
 

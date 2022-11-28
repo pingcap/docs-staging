@@ -76,10 +76,10 @@ summary: Learn how to quickly get started with the TiDB platform and see if TiDB
 
         
         ```shell
-        tiup playground v6.1.0 --db 2 --pd 3 --kv 3
+        tiup playground v6.1.2 --db 2 --pd 3 --kv 3
         ```
 
-        このコマンドは、v6.1.0 などのバージョン クラスターをローカル マシンにダウンロードして起動します。最新バージョンを表示するには、 `tiup list tidb`を実行します。
+        このコマンドは、v6.1.2 などのバージョン クラスターをローカル マシンにダウンロードして起動します。最新バージョンを表示するには、 `tiup list tidb`を実行します。
 
         このコマンドは、クラスターのアクセス方法を返します。
 
@@ -190,10 +190,10 @@ summary: Learn how to quickly get started with the TiDB platform and see if TiDB
 
         
         ```shell
-        tiup playground v6.1.0 --db 2 --pd 3 --kv 3
+        tiup playground v6.1.2 --db 2 --pd 3 --kv 3
         ```
 
-        このコマンドは、v6.1.0 などのバージョン クラスターをローカル マシンにダウンロードして起動します。最新バージョンを表示するには、 `tiup list tidb`を実行します。
+        このコマンドは、v6.1.2 などのバージョン クラスターをローカル マシンにダウンロードして起動します。最新バージョンを表示するには、 `tiup list tidb`を実行します。
 
         このコマンドは、クラスターのアクセス方法を返します。
 
