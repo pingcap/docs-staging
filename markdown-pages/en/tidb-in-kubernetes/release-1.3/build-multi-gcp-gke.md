@@ -82,7 +82,7 @@ Create three GKE clusters, and each cluster uses one of the subnets created in S
         --region ${region_1} --num-nodes 1 \
         --network ${network_name} --subnetwork ${subnet_1} \
         --cluster-dns clouddns --cluster-dns-scope vpc \
-        --cluster-dns-domain ${cluster_domain_1}
+        --cluster-dns-domain ${cluster_domain_1} \
         --enable-ip-alias \
         --cluster-secondary-range-name=pods --services-secondary-range-name=services
     ```
@@ -93,7 +93,7 @@ Create three GKE clusters, and each cluster uses one of the subnets created in S
         --region ${region_2} --num-nodes 1 \
         --network ${network_name} --subnetwork ${subnet_2} \
         --cluster-dns clouddns --cluster-dns-scope vpc \
-        --cluster-dns-domain ${cluster_domain_2}
+        --cluster-dns-domain ${cluster_domain_2} \
         --enable-ip-alias \
         --cluster-secondary-range-name=pods --services-secondary-range-name=services
     ```
@@ -104,7 +104,7 @@ Create three GKE clusters, and each cluster uses one of the subnets created in S
         --region ${region_3} --num-nodes 1 \
         --network ${network_name} --subnetwork ${subnet_3} \
         --cluster-dns clouddns --cluster-dns-scope vpc \
-        --cluster-dns-domain ${cluster_domain_3}
+        --cluster-dns-domain ${cluster_domain_3} \
         --enable-ip-alias \
         --cluster-secondary-range-name=pods --services-secondary-range-name=services
     ```
