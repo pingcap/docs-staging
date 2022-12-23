@@ -9,7 +9,10 @@ hide_leftNav: true
 
 <DocHomeSection label="TiDB" anchor="tidb" id="tidb">
   
-This website provides archived TiDB documentation in legacy TiDB versions, including TiDB Long Term Support (LTS) versions that are after End of Life (EOL) and TiDB Development Milestone Release (DMR) versions that are not the most recent two.  
+This website provides archived TiDB documentation for the following legacy TiDB versions:
+
+- TiDB Long Term Support (LTS) versions that are after End of Life (EOL) dates
+- TiDB Development Milestone Release (DMR) versions that are not rencently published
 
 PingCAP encourages you to use [the latest LTS version](https://docs.pingcap.com/tidb/stable/) of the TiDB database. Archived documentation no longer receives updates.
 
