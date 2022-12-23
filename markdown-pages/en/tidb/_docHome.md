@@ -16,7 +16,7 @@ This website provides archived TiDB documentation for the following legacy TiDB 
 
 PingCAP encourages you to use [the latest LTS version](https://docs.pingcap.com/tidb/stable/) of the TiDB database. Archived documentation no longer receives updates.
 
-| Release    | Documentation                                                  |
+| Release    | Archived documentation                                                  |
 | ---------- | -------------------------------------------------------------- |
 | v6.2 (DMR) | [TiDB v6.2 documentation](https://docs.pingcap.com/tidb/v6.2/) |
 | v6.0 (DMR) | [TiDB v6.0 documentation](https://docs.pingcap.com/tidb/v6.0/) |
