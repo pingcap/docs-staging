@@ -23,7 +23,7 @@ hide_leftNav: true
 | v3.1       | [TiDB v3.1 documentation](https://docs.pingcap.com/tidb/v3.1/) |
 | v2.1       | [TiDB v2.1 documentation](https://docs.pingcap.com/tidb/v2.1/) |
 
-[了解 TiDB 版本周期支持策略详情](https://www.pingcap.com/tidb-release-support-policy/?from=en)
+[了解 TiDB 版本周期支持策略详情](https://cn.pingcap.com/tidb-release-support-policy)
   
 </DocHomeSection>
 
