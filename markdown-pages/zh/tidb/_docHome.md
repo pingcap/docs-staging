@@ -18,10 +18,10 @@ hide_leftNav: true
 
 | 版本    | 归档文档链接                                                  |
 | ---------- | -------------------------------------------------------------- |
-| v6.2 (DMR) | [TiDB v6.2 documentation](https://docs.pingcap.com/tidb/v6.2/) |
-| v6.0 (DMR) | [TiDB v6.0 documentation](https://docs.pingcap.com/tidb/v6.0/) |
-| v3.1       | [TiDB v3.1 documentation](https://docs.pingcap.com/tidb/v3.1/) |
-| v2.1       | [TiDB v2.1 documentation](https://docs.pingcap.com/tidb/v2.1/) |
+| v6.2 (DMR) | [TiDB v6.2 文档](https://docs.pingcap.com/zh/tidb/v6.2) |
+| v6.0 (DMR) | [TiDB v6.0 文档](https://docs.pingcap.com/zh/tidb/v6.0) |
+| v3.1       | [TiDB v3.1 文档](https://docs.pingcap.com/zh/tidb/v3.1) |
+| v2.1       | [TiDB v2.1 文档](https://docs.pingcap.com/zh/tidb/v2.1 |
 
 [了解 TiDB 版本周期支持策略详情](https://cn.pingcap.com/tidb-release-support-policy)
   
