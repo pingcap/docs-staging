@@ -12,7 +12,7 @@ hide_leftNav: true
 本网站提供以下 TiDB 版本的归档文档：
 
 - 已结束生命周期的 TiDB 长期支持版本 (LTS)
-- 非最近最新发布的 TiDB 开发里程碑版本 (DMR)
+- 非最近新发布的 TiDB 开发里程碑版本 (DMR)
 
 如无特殊需求，建议使用 TiDB 数据库的[最新 LTS 版本](https://docs.pingcap.com/tidb/stable/)。已归档的文档不再提供任何更新。
 
