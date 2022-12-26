@@ -16,12 +16,12 @@ hide_leftNav: true
 
 如无特殊需求，建议使用 TiDB 数据库的[最新 LTS 版本](https://docs.pingcap.com/tidb/stable/)。已归档的文档不再提供任何更新。
 
-| 版本    | 归档文档链接                                                  |
-| ---------- | -------------------------------------------------------------- |
-| v6.2 (DMR) | [TiDB v6.2 文档](https://docs.pingcap.com/zh/tidb/v6.2) |
-| v6.0 (DMR) | [TiDB v6.0 文档](https://docs.pingcap.com/zh/tidb/v6.0) |
-| v3.1       | [TiDB v3.1 文档](https://docs.pingcap.com/zh/tidb/v3.1) |
-| v2.1       | [TiDB v2.1 文档](https://docs.pingcap.com/zh/tidb/v2.1) |
+| 版本        | 归档文档链接                                             | 归档日期 |
+| ---------- | ------------------------------------------------------ | ----------------- |
+| v6.2 (DMR) | [TiDB v6.2 文档](https://docs.pingcap.com/zh/tidb/v6.2) | 2023 年 1 月 xx 日 |
+| v6.0 (DMR) | [TiDB v6.0 文档](https://docs.pingcap.com/zh/tidb/v6.0) | 2023 年 1 月 xx 日 |
+| v3.1       | [TiDB v3.1 文档](https://docs.pingcap.com/zh/tidb/v3.1) | 2023 年 1 月 xx 日 |
+| v2.1       | [TiDB v2.1 文档](https://docs.pingcap.com/zh/tidb/v2.1) | 2023 年 1 月 xx 日 |
 
 了解 [TiDB 版本周期支持策略详情](https://cn.pingcap.com/tidb-release-support-policy)。
   
