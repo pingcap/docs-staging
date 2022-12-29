@@ -1,7 +1,7 @@
 {
   "docs": {
     "tidb": {
-      "stable": "release-6.1",
+      "stable": "release-6.5",
       "languages": {
         "en": {
           "repo": "pingcap/docs",
