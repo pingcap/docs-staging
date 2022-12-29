@@ -7,7 +7,7 @@
           "repo": "pingcap/docs",
           "versions": [
             "master",
-            "release-6.5"
+            "release-6.5",
             "release-6.4",
             "release-6.3",
             "release-6.2",
