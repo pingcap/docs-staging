@@ -86,7 +86,7 @@
       "deprecated": ["v1.0"]
     },
     "tidb-in-kubernetes": {
-      "stable": "release-1.3",
+      "stable": "release-1.4",
       "languages": {
         "en": {
           "repo": "pingcap/docs-tidb-operator",
