@@ -16,7 +16,6 @@ This tutorial shows you how to build a simple Python application based on TiDB a
 
 Start a pseudo TiDB cluster on your local storage:
 
-
 ```bash
 docker run -p 127.0.0.1:$LOCAL_PORT:4000 pingcap/tidb:v5.1.0
 ```
@@ -89,7 +88,6 @@ The code performs the following operations:
 4. Updates `orders` by `oid`.
 5. Joins the `users` and `orders` tables.
 6. Queries the `users` and `orders` tables using the same `uid`.
-
 
 ```python
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine, Enum
@@ -187,7 +185,6 @@ print(
 
 In the `main.py` file above, replace the string passed to `create_engine()` with the connection string you have obtained when creating the database.
 
-
 ```python
 engine = create_engine(
     'tidb://{username}:{password}@{hostname}:{port}/test_sqlalchemy?charset=utf8mb4',
@@ -195,7 +192,6 @@ engine = create_engine(
 ```
 
 By default, you can set the string as follows:
-
 
 ```python
 engine = create_engine(
@@ -206,7 +202,6 @@ engine = create_engine(
 ### Step 2. Run the application code
 
 After the connection string is correctly set, run the application code:
-
 
 ```bash
 python3 main.py
