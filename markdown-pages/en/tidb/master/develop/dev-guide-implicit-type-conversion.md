@@ -32,7 +32,6 @@ Implicit type conversions increase the usability of human-computer interaction. 
 
 In the following case, `account_id` is the primary key and its data type is `varchar`. In the execution plan, this SQL statement has an implicit type conversion and cannot use the index.
 
-
 ```sql
 DESC SELECT * FROM `account` WHERE `account_id`=6010000000009801;
 +-------------------------+----------------+-----------+---------------+------------------------------------------------------------+
@@ -51,7 +50,6 @@ DESC SELECT * FROM `account` WHERE `account_id`=6010000000009801;
 
 In the following case, the data type of the `a` field is `decimal(32,0)`. In the execution plan, an implicit type conversion occurs, and both the decimal field and the string constant are converted to the double type. Because the precision of the double type is not as high as decimal, there is a loss of precision. In this case, the SQL statement incorrectly filters the result set out of range.
 
-
 ```sql
 DESC SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000';
 +-------------------------+---------+-----------+---------------+-------------------------------------------------------------------------------------+
@@ -65,7 +63,6 @@ DESC SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000
 ```
 
 **Brief description of run results**: From the above execution plan, the `Cast` operator is visible.
-
 
 ```sql
 SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000';
