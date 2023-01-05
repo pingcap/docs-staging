@@ -15,7 +15,6 @@ This section describes the best practices involved when you use DML with TiDB.
 
 When you need to modify multiple rows of table, it is recommended to use multi-row statements:
 
-
 ```sql
 INSERT INTO t VALUES (1, 'a'), (2, 'b'), (3, 'c');
 
@@ -23,7 +22,6 @@ DELETE FROM t WHERE id IN (1, 2, 3);
 ```
 
 It is not recommended to use multiple single-row statements:
-
 
 ```sql
 INSERT INTO t VALUES (1, 'a');
@@ -41,7 +39,6 @@ When you need to execute a SQL statement for multiple times, it is recommended t
 
 <SimpleTab>
 <div label="Golang">
-
 
 ```go
 func BatchInsert(db *sql.DB) error {
@@ -63,7 +60,6 @@ func BatchInsert(db *sql.DB) error {
 </div>
 
 <div label="Java">
-
 
 ```java
 public void batchInsert(Connection connection) throws SQLException {
@@ -88,13 +84,11 @@ Do not execute the `PREPARE` statement repeatedly. Otherwise, the execution effi
 
 If you do not need data from all columns, do not use `SELECT *` to return all columns data. The following query is inefficient:
 
-
 ```sql
 SELECT * FROM books WHERE title = 'Marian Yost';
 ```
 
 You should only query the columns you need. For example:
-
 
 ```sql
 SELECT title, price FROM books WHERE title = 'Marian Yost';
@@ -112,13 +106,11 @@ When you update a large amount of data, it is recommended to use [bulk update](/
 
 When you need to delete all data from a table, it is recommended to use the `TRUNCATE` statement:
 
-
 ```sql
 TRUNCATE TABLE t;
 ```
 
 It is not recommended to use `DELETE` for full table data:
-
 
 ```sql
 DELETE FROM t;
@@ -145,14 +137,12 @@ TiDB supports the online index add operation. You can use [ADD INDEX](/sql-state
 
 To reduce the impact on the online application, the default speed of add index operation is slow. When the target column of add index operation only involves read load or is not directly related to online workload, you can appropriately increase the value of the above variables to speed up the add index operation:
 
-
 ```sql
 SET @@global.tidb_ddl_reorg_worker_cnt = 16;
 SET @@global.tidb_ddl_reorg_batch_size = 4096;
 ```
 
 When the target column of the add index operation is updated frequently (including `UPDATE`, `INSERT` and `DELETE`), increasing the above variables causes more write conflicts, which impacts the online workload. Accordingly, the add index operation might take a long time to complete due to constant retries. In this case, it is recommended to decrease the value of the above variables to avoid write conflicts with the online application:
-
 
 ```sql
 SET @@global.tidb_ddl_reorg_worker_cnt = 4;

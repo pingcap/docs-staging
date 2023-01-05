@@ -23,7 +23,6 @@ Common Table Expressions can be classified into two types: non-recursive CTE and
 
 Non-recursive CTE can be defined using the following syntax:
 
-
 ```sql
 WITH <query_name> AS (
     <query_definition>
@@ -37,7 +36,6 @@ For example, if you want to know how many books each of the 50 oldest authors ha
 <div label="SQL" value="sql">
 
 Change the statement in [temporary tables](/develop/dev-guide-use-temporary-tables.md) to the following:
-
 
 ```sql
 WITH top_50_eldest_authors_cte AS (
@@ -73,7 +71,6 @@ The result is as follows:
 
 </div>
 <div label="Java" value = "java">
-
 
 ```java
 public List<Author> getTop50EldestAuthorInfoByCTE() throws SQLException {
@@ -113,7 +110,6 @@ public List<Author> getTop50EldestAuthorInfoByCTE() throws SQLException {
 </SimpleTab>
 
 It can be found that the author "Ray Macejkovic" wrote 4 books. With the CTE query, you can further get the order and rating information of these 4 books as follows:
-
 
 ```sql
 WITH books_authored_by_rm AS (
@@ -180,7 +176,6 @@ SELECT ... FROM <query_name>;
 ```
 
 A classic example is to generate a set of [Fibonacci numbers](https://en.wikipedia.org/wiki/Fibonacci_number) with recursive CTE:
-
 
 ```sql
 WITH RECURSIVE fibonacci (n, fib_n, next_fib_n) AS
