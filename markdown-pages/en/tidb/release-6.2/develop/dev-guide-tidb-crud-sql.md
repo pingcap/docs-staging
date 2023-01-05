@@ -43,13 +43,11 @@ Common DML features are adding, modifying, and deleting table records. The corre
 
 To insert data into a table, use the `INSERT` statement:
 
-
 ```sql
 INSERT INTO person VALUES(1,'tom','20170912');
 ```
 
 To insert a record containing data of some fields into a table, use the `INSERT` statement:
-
 
 ```sql
 INSERT INTO person(id,name) VALUES('2','bob');
@@ -57,13 +55,11 @@ INSERT INTO person(id,name) VALUES('2','bob');
 
 To update some fields of a record in a table, use the `UPDATE` statement:
 
-
 ```sql
 UPDATE person SET birthday='20180808' WHERE id=2;
 ```
 
 To delete the data in a table, use the `DELETE` statement:
-
 
 ```sql
 DELETE FROM person WHERE id=2;
@@ -79,13 +75,11 @@ DQL is used to retrieve the desired data rows from a table or multiple tables.
 
 To view the data in a table, use the `SELECT` statement:
 
-
 ```sql
 SELECT * FROM person;
 ```
 
 To query a specific column, add the column name after the `SELECT` keyword:
-
 
 ```sql
 SELECT name FROM person;
@@ -103,7 +97,6 @@ The result is as follows:
 ```
 
 Use the `WHERE` clause to filter all records that match the conditions and then return the result:
-
 
 ```sql
 SELECT * FROM person WHERE id < 5;

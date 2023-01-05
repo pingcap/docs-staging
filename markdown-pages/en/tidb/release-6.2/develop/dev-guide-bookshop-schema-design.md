@@ -36,7 +36,6 @@ If your TiDB cluster is deployed using [TiUP](https://docs.pingcap.com/tidb/stab
 
 </CustomContent>
 
-
 ```shell
 tiup demo bookshop prepare
 ```

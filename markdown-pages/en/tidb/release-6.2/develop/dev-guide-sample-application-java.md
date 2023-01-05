@@ -40,7 +40,6 @@ See [Create a Serverless Tier cluster](/develop/dev-guide-build-cluster-in-cloud
 
 ## Step 2. Get the code
 
-
 ```shell
 git clone https://github.com/pingcap-inc/tidb-example-java.git
 ```
@@ -54,7 +53,6 @@ Compared with [Mybatis](https://mybatis.org/mybatis-3/index.html), the JDBC impl
 Mybatis is a popular open-source Java class persistence framework. The following uses [MyBatis Generator](https://mybatis.org/generator/quickstart.html) as a Maven plugin to generate the persistence layer code.
 
 Change to the `plain-java-mybatis` directory:
-
 
 ```shell
 cd plain-java-mybatis
@@ -95,7 +93,6 @@ The automatically generated files are:
 - `src/main/resources/mapper/PlayerMapper.xml`: The XML mapping of `Player`. Mybatis uses this configuration to automatically generate the implementation class of the `PlayerMapper` interface.
 
 The strategy for generating these files is written in `mybatis-generator.xml`, which is the configuration file for [Mybatis Generator](https://mybatis.org/generator/quickstart.html). There are comments in the following configuration file to describe how to use it.
-
 
 ```xml
 <!DOCTYPE generatorConfiguration PUBLIC
@@ -211,7 +208,6 @@ Once included in the Maven plugin, you can delete the old generated files and ma
 
 `Player.java` is a data entity class file generated using Mybatis Generator, which is a mapping of database tables in the application. Each property of the `Player` class corresponds to a field in the `player` table.
 
-
 ```java
 package com.pingcap.model;
 
@@ -260,7 +256,6 @@ public class Player {
 
 `PlayerMapper.java` is a mapping interface file generated using Mybatis Generator. This file only defines the interface, and the implementation classes of interface are automatically generated using XML or annotations.
 
-
 ```java
 package com.pingcap.model;
 
@@ -282,7 +277,6 @@ public interface PlayerMapper {
 ```
 
 `PlayerMapper.xml` is a mapping XML file generated using Mybatis Generator. Mybatis uses this to automatically generate the implementation class of the `PlayerMapper` interface.
-
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -362,7 +356,6 @@ public interface PlayerMapper {
 
 Since Mybatis Generator needs to generate the source code from the table definition, the table needs to be created first. To create the table, you can use `dbinit.sql`.
 
-
 ```sql
 USE test;
 DROP TABLE IF EXISTS player;
@@ -379,7 +372,6 @@ Split the interface `PlayerMapperEx` additionally to extend from `PlayerMapper` 
 
 Define the added interface in `PlayerMapperEx.java`:
 
-
 ```java
 package com.pingcap.model;
 
@@ -395,7 +387,6 @@ public interface PlayerMapperEx extends PlayerMapper {
 ```
 
 Define the mapping rules in `PlayerMapperEx.xml`:
-
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -435,7 +426,6 @@ Define the mapping rules in `PlayerMapperEx.xml`:
 ```
 
 `PlayerDAO.java` is a class used to manage data, in which `DAO` means [Data Access Object](https://en.wikipedia.org/wiki/Data_access_object). The class defines a set of data manipulation methods for writing data. In it, Mybatis encapsulates a large number of operations such as object mapping and CRUD of basic objects, which greatly simplifies the code.
-
 
 ```java
 package com.pingcap.dao;
@@ -633,7 +623,6 @@ Hibernate is a popular open-source Java ORM, and it supports TiDB dialect starti
 
 Change to the `plain-java-hibernate` directory:
 
-
 ```shell
 cd plain-java-hibernate
 ```
@@ -656,7 +645,6 @@ The structure of this directory is as follows:
 ```
 
 `hibernate.cfg.xml` is the Hibernate configuration file:
-
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
@@ -689,7 +677,6 @@ The structure of this directory is as follows:
 `PlayerDAO` is a class used to manage data, in which `DAO` means [Data Access Object](https://en.wikipedia.org/wiki/Data_access_object). The class defines a set of data manipulation methods for writing data. Compared with JDBC, Hibernate encapsulates a large number of operations such as object mapping and CRUD of basic objects, which greatly simplifies the code.
 
 `PlayerBean` is a data entity class that is a mapping for tables. Each property of a `PlayerBean` corresponds to a field in the `player` table. Compared with JDBC, `PlayerBean` in Hibernate adds annotations to indicate mapping relationships for more information.
-
 
 ```java
 package com.pingcap;
@@ -925,7 +912,6 @@ public class HibernateExample
 
 Change to the `plain-java-jdbc` directory:
 
-
 ```shell
 cd plain-java-jdbc
 ```
@@ -949,7 +935,6 @@ The structure of this directory is as follows:
 
 You can find initialization statements for the table creation in `dbinit.sql`:
 
-
 ```sql
 USE test;
 DROP TABLE IF EXISTS player;
@@ -967,7 +952,6 @@ CREATE TABLE player (
 `PlayerDAO` is a class used to manage data, in which `DAO` means [Data Access Object](https://en.wikipedia.org/wiki/Data_access_object). The class defines a set of data manipulation methods to provide the ability to write data.
 
 `PlayerBean` is a data entity class that is a mapping for tables. Each property of a `PlayerBean` corresponds to a field in the `player` table.
-
 
 ```java
 package com.pingcap;
@@ -1408,13 +1392,11 @@ The following content introduces how to run the code step by step.
 
 When using Mybatis, you need to initialize the database tables manually. If you are using a local cluster, and MySQL client has been installed locally, you can run it directly in the `plain-java-mybatis` directory:
 
-
 ```shell
 make prepare
 ```
 
 Or you can execute the following command:
-
 
 ```shell
 mysql --host 127.0.0.1 --port 4000 -u root < src/main/resources/dbinit.sql
@@ -1436,13 +1418,11 @@ No need to initialize tables manually.
 
 When using JDBC, you need to initialize the database tables manually. If you are using a local cluster, and MySQL client has been installed locally, you can run it directly in the `plain-java-jdbc` directory:
 
-
 ```shell
 make mysql
 ```
 
 Or you can execute the following command:
-
 
 ```shell
 mysql --host 127.0.0.1 --port 4000 -u root<src/main/resources/dbinit.sql
@@ -1469,7 +1449,6 @@ When using JDBC, you need to connect to your cluster and run the statement in th
 <div label="Using Mybatis (Recommended)" value="mybatis">
 
 If you are using a TiDB Cloud Serverless Tier cluster, modify the `dataSource.url`, `dataSource.username`, `dataSource.password` in `mybatis-config.xml`.
-
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -1520,7 +1499,6 @@ Suppose that the password you set is `123456`, and the connection parameters you
 
 In this case, you can modify the parameters in `dataSource` node as follows:
 
-
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -1546,7 +1524,6 @@ In this case, you can modify the parameters in `dataSource` node as follows:
 <div label="Using Hibernate (Recommended)" value="hibernate">
 
 If you are using a TiDB Cloud Serverless Tier cluster, modify the `hibernate.connection.url`, `hibernate.connection.username`, `hibernate.connection.password` in `hibernate.cfg.xml`.
-
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
@@ -1582,7 +1559,6 @@ Suppose that the password you set is `123456`, and the connection parameters you
 
 In this case, you can modify the parameters as follows:
 
-
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-configuration PUBLIC
@@ -1615,7 +1591,6 @@ In this case, you can modify the parameters as follows:
 
 If you are using a TiDB Cloud Serverless Tier cluster, modify the parameters of the host, port, user, and password in `JDBCExample.java`:
 
-
 ```java
 mysqlDataSource.setServerName("localhost");
 mysqlDataSource.setPortNumber(4000);
@@ -1631,7 +1606,6 @@ Suppose that the password you set is `123456`, and the connection parameters you
 - User: `2aEp24QWEDLqRFs.root`
 
 In this case, you can modify the parameters as follows:
-
 
 ```java
 mysqlDataSource.setServerName("xxx.tidbcloud.com");
@@ -1655,7 +1629,6 @@ mysqlDataSource.setEnabledTLSProtocols("TLSv1.2,TLSv1.3");
 
 To run the code, you can run `make prepare`, `make gen`, `make build` and `make run` respectively:
 
-
 ```shell
 make prepare
 # this command executes :
@@ -1674,7 +1647,6 @@ make run # this command executes `java -jar target/plain-java-mybatis-0.0.1-jar-
 ```
 
 Or you can use the native commands:
-
 
 ```shell
 mysql --host 127.0.0.1 --port 4000 -u root < src/main/resources/dbinit.sql
@@ -1695,14 +1667,12 @@ Or run the `make` command directly, which is a combination of `make prepare`, `m
 
 To run the code, you can run `make build` and `make run` respectively:
 
-
 ```shell
 make build # this command executes `mvn clean package`
 make run # this command executes `java -jar target/plain-java-jdbc-0.0.1-jar-with-dependencies.jar`
 ```
 
 Or you can use the native commands:
-
 
 ```shell
 mvn clean package
@@ -1717,14 +1687,12 @@ Or run the `make` command directly, which is a combination of `make build` and `
 
 To run the code, you can run `make build` and `make run` respectively:
 
-
 ```shell
 make build # this command executes `mvn clean package`
 make run # this command executes `java -jar target/plain-java-jdbc-0.0.1-jar-with-dependencies.jar`
 ```
 
 Or you can use the native commands:
-
 
 ```shell
 mvn clean package
