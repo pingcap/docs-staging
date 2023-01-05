@@ -11,7 +11,6 @@ To page through a large query result, you can get your desired part in a "pagina
 
 In TiDB, you can paginate query results using the `LIMIT` statement. For example:
 
-
 ```sql
 SELECT * FROM table_a t ORDER BY gmt_modified DESC LIMIT offset, row_count;
 ```
@@ -25,7 +24,6 @@ When pagination is used, it is recommended that you sort query results with the 
 
 For example, to let users of the [Bookshop](/develop/dev-guide-bookshop-schema-design.md) application view the latest published books in a paginated manner, you can use the `LIMIT 0, 10` statement, which returns the first page of the result list, with a maximum of 10 records per page. To get the second page, you can change the statement to `LIMIT 10, 10`.
 
-
 ```sql
 SELECT *
 FROM books
@@ -37,7 +35,6 @@ LIMIT 0, 10;
 <div label="Java" value="java">
 
 In application development, the backend program receives the `page_number` parameter (which means the number of the page being requested) and the `page_size` parameter (which controls how many records per page) from the frontend instead of the `offset` parameter. Therefore, some conversions needed to be done before querying.
-
 
 ```java
 public List<Book> getLatestBooksPage(Long pageNumber, Long pageSize) throws SQLException {
@@ -82,7 +79,6 @@ The following introduces a more efficient paging batching method:
 
 First, sort the data by primary key and call the window function `row_number()` to generate a row number for each row. Then, call the aggregation function to group row numbers by the specified page size and calculate the minimum and maximum values of each page.
 
-
 ```sql
 SELECT
     floor((t.row_num - 1) / 1000) + 1 AS page_num,
@@ -118,7 +114,6 @@ Next, use the `WHERE id BETWEEN start_key AND end_key` statement to query the da
 
 To delete the basic information of all books on page 1, replace the `start_key` and `end_key` with values of page 1 in the above result:
 
-
 ```sql
 DELETE FROM books
 WHERE
@@ -130,7 +125,6 @@ ORDER BY id;
 <div label="Java" value="java">
 
 In Java, define a `PageMeta` class to store page meta information.
-
 
 ```java
 public class PageMeta<K> {
@@ -145,7 +139,6 @@ public class PageMeta<K> {
 ```
 
 Define a `getPageMetaList()` method to get the page meta information list, and then define a `deleteBooksByPageMeta()` method to delete data in batches according to the page meta information.
-
 
 ```java
 public class BookDAO {
@@ -191,7 +184,6 @@ public class BookDAO {
 
 The following statement is to delete the data on page 1:
 
-
 ```java
 List<PageMeta<Long>> pageMetaList = bookDAO.getPageMetaList();
 if (pageMetaList.size() > 0) {
@@ -200,7 +192,6 @@ if (pageMetaList.size() > 0) {
 ```
 
 The following statement is to delete all book data in batches by paging:
-
 
 ```java
 List<PageMeta<Long>> pageMetaList = bookDAO.getPageMetaList();
@@ -229,7 +220,6 @@ For non-clustered index tables (also known as "non-index-organized tables"), the
 > You can use the `SHOW CREATE TABLE users;` statement to check whether the table primary key uses [clustered index](/clustered-indexes.md).
 
 For example:
-
 
 ```sql
 SELECT
@@ -275,7 +265,6 @@ For example, you can implement a paging batch for the data in the `ratings` tabl
 
 Create the meta information table by using the following statement. As the key concatenated by `book_id` and `user_id`, which are `bigint` types, is unable to convert to the same length, the `LPAD` function is used to pad the length with `0` according to the maximum bits 19 of `bigint`.
 
-
 ```sql
 SELECT
     floor((t1.row_num - 1) / 10000) + 1 AS page_num,
@@ -315,7 +304,6 @@ The result is as follows:
 ```
 
 To delete all rating records on page 1, replace the `start_key` and `end_key` with values of page 1 in the above result:
-
 
 ```sql
 SELECT * FROM ratings

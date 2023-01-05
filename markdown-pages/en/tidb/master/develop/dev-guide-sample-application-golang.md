@@ -39,7 +39,6 @@ See [Create a Serverless Tier cluster](/develop/dev-guide-build-cluster-in-cloud
 
 ## Step 2. Get the code
 
-
 ```shell
 git clone https://github.com/pingcap-inc/tidb-example-golang.git
 ```
@@ -53,7 +52,6 @@ Compared with GORM, the go-sql-driver/mysql implementation might be not a best p
 GORM is a popular open-source ORM library for Golang. The following instructions take `v1.23.5` as an example.
 
 To adapt TiDB transactions, write a toolkit [util](https://github.com/pingcap-inc/tidb-example-golang/tree/main/util) according to the following code:
-
 
 ```go
 package util
@@ -107,7 +105,6 @@ func (tx *TiDBSqlTx) Rollback() error {
 
 Change to the `gorm` directory:
 
-
 ```shell
 cd gorm
 ```
@@ -125,7 +122,6 @@ The structure of this directory is as follows:
 `gorm.go` is the main body of the `gorm`. Compared with go-sql-driver/mysql, GORM avoids differences in database creation between different databases. It also implements a lot of operations, such as AutoMigrate and CRUD of objects, which greatly simplifies the code.
 
 `Player` is a data entity struct that is a mapping for tables. Each property of a `Player` corresponds to a field in the `player` table. Compared with go-sql-driver/mysql, `Player` in GORM adds struct tags to indicate mapping relationships for more information, such as `gorm:"primaryKey;type:VARCHAR(36);column:id"`.
-
 
 ```go
 
@@ -287,7 +283,6 @@ func buyGoods(db *gorm.DB, sellID, buyID string, amount, price int) error {
 
 Change to the `sqldriver` directory:
 
-
 ```shell
 cd sqldriver
 ```
@@ -308,7 +303,6 @@ The structure of this directory is as follows:
 
 You can find initialization statements for the table creation in `dbinit.sql`:
 
-
 ```sql
 USE test;
 DROP TABLE IF EXISTS player;
@@ -322,7 +316,6 @@ CREATE TABLE player (
 ```
 
 `sqldriver.go` is the main body of the `sqldriver`. TiDB is highly compatible with the MySQL protocol, so you need to initialize a MySQL source instance `db, err := sql.Open("mysql", dsn)` to connect to TiDB. Then, you can use `dao.go` to read, edit, add, and delete data.
-
 
 ```go
 package main
@@ -425,7 +418,6 @@ func openDB(driverName, dataSourceName string, runnable func(db *sql.DB)) {
 
 To adapt TiDB transactions, write a toolkit [util](https://github.com/pingcap-inc/tidb-example-golang/tree/main/util) according to the following code:
 
-
 ```go
 package util
 
@@ -477,7 +469,6 @@ func (tx *TiDBSqlTx) Rollback() error {
 ```
 
 `dao.go` defines a set of data manipulation methods to provide the ability to write data. This is also the core part of this example.
-
 
 ```go
 package main
@@ -711,7 +702,6 @@ func randomPlayers(amount int) []Player {
 
 `sql.go` defines SQL statements as constants:
 
-
 ```go
 package main
 
@@ -749,13 +739,11 @@ No need to initialize tables manually.
 
 When using go-sql-driver/mysql, you need to initialize the database tables manually. If you are using a local cluster, and MySQL client has been installed locally, you can run it directly in the `sqldriver` directory:
 
-
 ```shell
 make mysql
 ```
 
 Or you can execute the following command:
-
 
 ```shell
 mysql --host 127.0.0.1 --port 4000 -u root<sql/dbinit.sql
@@ -783,7 +771,6 @@ When using go-sql-driver/mysql, you need to connect to your cluster and run the 
 
 If you are using a TiDB Cloud Serverless Tier cluster, modify the value of the `dsn` in `gorm.go`:
 
-
 ```go
 dsn := "root:@tcp(127.0.0.1:4000)/test?charset=utf8mb4"
 ```
@@ -795,7 +782,6 @@ Suppose that the password you set is `123456`, and the connection parameters you
 - User: `2aEp24QWEDLqRFs.root`
 
 In this case, you can modify the `mysql.RegisterTLSConfig` and `dsn` as follows:
-
 
 ```go
 mysql.RegisterTLSConfig("register-tidb-tls", &tls.Config {
@@ -824,7 +810,6 @@ Suppose that the password you set is `123456`, and the connection parameters you
 
 In this case, you can modify the `mysql.RegisterTLSConfig` and `dsn` as follows:
 
-
 ```go
 mysql.RegisterTLSConfig("register-tidb-tls", &tls.Config {
     MinVersion: tls.VersionTLS12,
@@ -846,14 +831,12 @@ dsn := "2aEp24QWEDLqRFs.root:123456@tcp(xxx.tidbcloud.com:4000)/test?charset=utf
 
 To run the code, you can run `make build` and `make run` respectively:
 
-
 ```shell
 make build # this command executes `go build -o bin/gorm-example`
 make run # this command executes `./bin/gorm-example`
 ```
 
 Or you can use the native commands:
-
 
 ```shell
 go build -o bin/gorm-example
@@ -868,7 +851,6 @@ Or run the `make` command directly, which is a combination of `make build` and `
 
 To run the code, you can run `make mysql`, `make build` and `make run` respectively:
 
-
 ```shell
 make mysql # this command executes `mysql --host 127.0.0.1 --port 4000 -u root<sql/dbinit.sql`
 make build # this command executes `go build -o bin/sql-driver-example`
@@ -876,7 +858,6 @@ make run # this command executes `./bin/sql-driver-example`
 ```
 
 Or you can use the native commands:
-
 
 ```shell
 mysql --host 127.0.0.1 --port 4000 -u root<sql/dbinit.sql
