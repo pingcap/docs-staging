@@ -9,19 +9,17 @@ hide_leftNav: true
 
 <DocHomeSection label="TiDB" anchor="tidb" id="tidb">
   
-本网站提供以下 TiDB 版本的归档文档：
+本网站提供以下 TiDB 版本的归档文档。如无特殊需求，建议使用 TiDB 数据库的[最新 LTS 版本](https://docs.pingcap.com/tidb/stable/)。已归档的文档不再提供任何更新。
 
 - 已结束生命周期的 TiDB 长期支持版本 (LTS)
 - 非最近新发布的 TiDB 开发里程碑版本 (DMR)
 
-如无特殊需求，建议使用 TiDB 数据库的[最新 LTS 版本](https://docs.pingcap.com/tidb/stable/)。已归档的文档不再提供任何更新。
-
 | 版本        | 归档文档链接                                             | 归档日期 |
 | ---------- | ------------------------------------------------------ | ----------------- |
-| v6.2 (DMR) | [TiDB v6.2 文档](https://docs.pingcap.com/zh/tidb/v6.2) | 2023 年 1 月 xx 日 |
-| v6.0 (DMR) | [TiDB v6.0 文档](https://docs.pingcap.com/zh/tidb/v6.0) | 2023 年 1 月 xx 日 |
-| v3.1       | [TiDB v3.1 文档](https://docs.pingcap.com/zh/tidb/v3.1) | 2023 年 1 月 xx 日 |
-| v2.1       | [TiDB v2.1 文档](https://docs.pingcap.com/zh/tidb/v2.1) | 2023 年 1 月 xx 日 |
+| v6.2 (DMR) | [TiDB v6.2 文档](https://docs-archive.pingcap.com/zh/tidb/v6.2) | 2023 年 1 月 xx 日 |
+| v6.0 (DMR) | [TiDB v6.0 文档](https://docs-archive.pingcap.com/zh/tidb/v6.0) | 2023 年 1 月 xx 日 |
+| v3.1       | [TiDB v3.1 文档](https://docs-archive.pingcap.com/zh/tidb/v3.1) | 2023 年 1 月 xx 日 |
+| v2.1       | [TiDB v2.1 文档](https://docs-archive.pingcap.com/zh/tidb/v2.1) | 2023 年 1 月 xx 日 |
 
 了解 [TiDB 版本周期支持策略详情](https://cn.pingcap.com/tidb-release-support-policy)。
   
