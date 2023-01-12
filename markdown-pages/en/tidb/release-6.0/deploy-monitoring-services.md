@@ -29,7 +29,7 @@ Assume that the TiDB cluster topology is as follows:
 # Downloads the package.
 wget https://download.pingcap.org/prometheus-2.27.1.linux-amd64.tar.gz
 wget https://download.pingcap.org/node_exporter-0.17.0.linux-amd64.tar.gz
-wget https://download.pingcap.org/grafana-6.1.6.linux-amd64.tar.gz
+wget https://download.pingcap.org/grafana-7.5.11.linux-amd64.tar.gz
 ```
 
 
@@ -37,7 +37,7 @@ wget https://download.pingcap.org/grafana-6.1.6.linux-amd64.tar.gz
 # Extracts the package.
 tar -xzf prometheus-2.27.1.linux-amd64.tar.gz
 tar -xzf node_exporter-0.17.0.linux-amd64.tar.gz
-tar -xzf grafana-6.1.6.linux-amd64.tar.gz
+tar -xzf grafana-7.5.11.linux-amd64.tar.gz
 ```
 
 ### Step 2: Start `node_exporter` on Node1, Node2, Node3, and Node4
@@ -129,7 +129,7 @@ Edit the Grafana configuration file:
 
 
 ```ini
-cd grafana-6.1.6 &&
+cd grafana-7.5.11 &&
 vi conf/grafana.ini
 
 ...
