@@ -208,6 +208,7 @@
       - TiUP Cluster 命令
         - [TiUP Cluster 命令概览](/tiup/tiup-component-cluster.md)
         - [tiup cluster audit](/tiup/tiup-component-cluster-audit.md)
+        - [tiup cluster audit cleanup](/tiup/tiup-component-cluster-audit-cleanup.md)
         - [tiup cluster check](/tiup/tiup-component-cluster-check.md)
         - [tiup cluster clean](/tiup/tiup-component-cluster-clean.md)
         - [tiup cluster deploy](/tiup/tiup-component-cluster-deploy.md)
@@ -786,6 +787,7 @@
     - [5.4.1](/releases/release-5.4.1.md)
     - [5.4.0](/releases/release-5.4.0.md)
   - v5.3
+    - [5.3.4](/releases/release-5.3.4.md)
     - [5.3.3](/releases/release-5.3.3.md)
     - [5.3.2](/releases/release-5.3.2.md)
     - [5.3.1](/releases/release-5.3.1.md)
@@ -797,6 +799,7 @@
     - [5.2.1](/releases/release-5.2.1.md)
     - [5.2.0](/releases/release-5.2.0.md)
   - v5.1
+    - [5.1.5](/releases/release-5.1.5.md)
     - [5.1.4](/releases/release-5.1.4.md)
     - [5.1.3](/releases/release-5.1.3.md)
     - [5.1.2](/releases/release-5.1.2.md)
