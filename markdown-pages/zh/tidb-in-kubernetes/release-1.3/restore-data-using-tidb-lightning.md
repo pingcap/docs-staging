@@ -261,7 +261,7 @@ dataSource:
 
         
         ```shell
-        kubectl annotate sa ${servieaccount} -n eks.amazonaws.com/role-arn=arn:aws:iam::123456789012:role/user
+        kubectl annotate sa ${servieaccount} -n ${namespace} eks.amazonaws.com/role-arn=arn:aws:iam::123456789012:role/user
         ```
 
     4. 部署 Tidb-Lightning：
