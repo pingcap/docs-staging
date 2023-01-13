@@ -5,14 +5,18 @@ hide_commit: true
 hide_leftNav: true
 ---
 
-<DocHomeContainer title="PingCAP 归档文档" subTitle="访问 TiDB 数据库的归档文档" archive>
+<DocHomeContainer title="PingCAP 归档文档中心" subTitle="访问 TiDB 数据库的归档文档" archive>
 
-<DocHomeSection label="TiDB" anchor="tidb" id="tidb">
-  
-本网站提供以下 TiDB 版本的归档文档。如无特殊需求，建议使用 TiDB 数据库的[最新 LTS 版本](https://docs.pingcap.com/tidb/stable/)。已归档的文档不再提供任何更新。
+<p> </p>
 
-- 已结束生命周期的 TiDB 长期支持版本 (LTS)
-- 非最近新发布的 TiDB 开发里程碑版本 (DMR)
+<p>本网站提供以下 TiDB 版本的归档文档:</p>
+
+<ul>
+<li>已结束生命周期的 TiDB 长期支持版本 (LTS)</li>
+<li>非最近新发布的 TiDB 开发里程碑版本 (DMR)</li>
+</ul>
+
+<p>已归档的文档不再提供任何更新。如无特殊需求，建议使用 TiDB 数据库的<a href="https://docs.pingcap.com/zh/tidb/stable">最新 LTS 版本</a>。</p>
 
 | 版本        | 归档文档链接                                             | 归档日期 |
 | ---------- | ------------------------------------------------------ | ----------------- |
@@ -21,8 +25,6 @@ hide_leftNav: true
 | v3.1       | [TiDB v3.1 文档](https://docs-archive.pingcap.com/zh/tidb/v3.1) | 2023 年 1 月 xx 日 |
 | v2.1       | [TiDB v2.1 文档](https://docs-archive.pingcap.com/zh/tidb/v2.1) | 2023 年 1 月 xx 日 |
 
-了解 [TiDB 版本周期支持策略详情](https://cn.pingcap.com/tidb-release-support-policy)。
-  
-</DocHomeSection>
+<p>了解 <a href="https://www.pingcap.com/tidb-release-support-policy/?from=en">TiDB 版本周期支持策略详情</a>。</p>
 
 </DocHomeContainer>
