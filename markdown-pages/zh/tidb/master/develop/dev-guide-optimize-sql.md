@@ -12,7 +12,6 @@ aliases: ['/zh/tidb/dev/optimize-sql']
 
 在开始之前，你可以[通过 `tiup demo` 命令导入](/develop/dev-guide-bookshop-schema-design.md#方法一通过-tiup-demo-命令行)示例数据：
 
-
 ```shell
 tiup demo bookshop prepare --books 1000000 --host 127.0.0.1 --port 4000
 ```
@@ -24,7 +23,6 @@ tiup demo bookshop prepare --books 1000000 --host 127.0.0.1 --port 4000
 慢查询最常见的原因就是 `SELECT` 语句执行是全表扫描，或者是用了不合适的索引。
 
 当基于不在主键或任何二级索引中的列从大表中检索少量行时，通常会获得较差的性能：
-
 
 ```sql
 SELECT * FROM books WHERE title = 'Marian Yost';
@@ -45,7 +43,6 @@ Time: 0.582s
 ```
 
 可以使用 `EXPLAIN` 来查看这个查询的执行计划，看看为什么查询这么慢：
-
 
 ```sql
 EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
@@ -69,13 +66,11 @@ EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
 
 为了加速上面的查询，可以在 `books.title` 列创建一个索引：
 
-
 ```sql
 CREATE INDEX title_idx ON books (title);
 ```
 
 现在再执行这个查询将会快很多：
-
 
 ```sql
 SELECT * FROM books WHERE title = 'Marian Yost';
@@ -96,7 +91,6 @@ Time: 0.007s
 ```
 
 可以使用 `EXPLAIN` 来查看这个查询的执行计划，看看为什么查询变快了：
-
 
 ```sql
 EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
@@ -124,7 +118,6 @@ EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
 
 例如下面查询中，仅需要根据 `title` 查询对应的 `price`：
 
-
 ```sql
 SELECT title, price FROM books WHERE title = 'Marian Yost';
 ```
@@ -145,7 +138,6 @@ Time: 0.007s
 
 由于索引 `title_idx` 仅包含 `title` 列的信息，所以 TiDB 还是需要扫描索引数据，然后回表查询 `price` 数据：
 
-
 ```sql
 EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
 ```
@@ -162,18 +154,15 @@ EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
 
 删除 `title_idx` 索引，并新建一个 `title_price_idx` 索引：
 
-
 ```sql
 ALTER TABLE books DROP INDEX title_idx;
 ```
-
 
 ```sql
 CREATE INDEX title_price_idx ON books (title, price);
 ```
 
 现在，`price` 数据已经存储在索引 `title_price_idx` 中了，所以下面查询仅需扫描索引数据，无需回表查询了。这种索引通常被叫做覆盖索引：
-
 
 ```sql
 EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
@@ -189,7 +178,6 @@ EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
 ```
 
 现在这条查询的速度将会更快：
-
 
 ```sql
 SELECT title, price FROM books WHERE title = 'Marian Yost';
@@ -211,7 +199,6 @@ Time: 0.004s
 
 由于后面的示例还会用到这个库，删除 `title_price_idx` 索引。
 
-
 ```sql
 ALTER TABLE books DROP INDEX title_price_idx;
 ```
@@ -219,7 +206,6 @@ ALTER TABLE books DROP INDEX title_price_idx;
 ### 解决方案：使用主键查询数据
 
 如果查询中使用主键过滤数据，这条查询的执行速度会非常快，例如表 `books` 的主键是列 `id`，使用列 `id` 来查询数据：
-
 
 ```sql
 SELECT * FROM books WHERE id = 896;
@@ -237,11 +223,9 @@ Time: 0.004s
 
 使用 `EXPLAIN` 查看执行计划:
 
-
 ```sql
 EXPLAIN SELECT * FROM books WHERE id = 896;
 ```
-
 
 ```sql
 +-------------+---------+------+---------------+---------------+
