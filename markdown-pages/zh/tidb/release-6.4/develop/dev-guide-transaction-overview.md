@@ -24,7 +24,6 @@ Bob 要给 Alice 转账 20 元钱，当中至少包括两个操作：
 
 使用 [bookshop](/develop/dev-guide-bookshop-schema-design.md) 数据库中的 `users` 表，在表中插入一些示例数据：
 
-
 ```sql
 INSERT INTO users (id, nickname, balance)
   VALUES (2, 'Bob', 200);
@@ -33,7 +32,6 @@ INSERT INTO users (id, nickname, balance)
 ```
 
 现在，运行以下事务并解释每个语句的含义：
-
 
 ```sql
 BEGIN;
@@ -58,11 +56,9 @@ COMMIT;
 
 要显式地开启一个新事务，既可以使用 `BEGIN` 语句，也可以使用 `START TRANSACTION` 语句，两者效果相同。语法：
 
-
 ```sql
 BEGIN;
 ```
-
 
 ```sql
 START TRANSACTION;
@@ -70,13 +66,11 @@ START TRANSACTION;
 
 TiDB 的默认事务模式是悲观事务，你也可以明确指定开启[乐观事务](/develop/dev-guide-optimistic-and-pessimistic-transaction.md)：
 
-
 ```sql
 BEGIN OPTIMISTIC;
 ```
 
 开启[悲观事务](/develop/dev-guide-optimistic-and-pessimistic-transaction.md)：
-
 
 ```sql
 BEGIN PESSIMISTIC;
@@ -88,7 +82,6 @@ BEGIN PESSIMISTIC;
 
 `COMMIT` 语句用于提交 TiDB 在当前事务中进行的所有修改。语法：
 
-
 ```sql
 COMMIT;
 ```
@@ -99,13 +92,11 @@ COMMIT;
 
 `ROLLBACK` 语句用于回滚并撤销当前事务的所有修改。语法：
 
-
 ```sql
 ROLLBACK;
 ```
 
 回到之前转账示例，使用 `ROLLBACK` 回滚整个事务之后，Alice 和 Bob 的余额都未发生改变，当前事务的所有修改一起被取消。
-
 
 ```sql
 TRUNCATE TABLE `users`;
@@ -150,7 +141,6 @@ SQL-92 标准定义了 4 种隔离级别：读未提交 (`READ UNCOMMITTED`)、�
 | SERIALIZABLE     | Not Possible | Not possible | Not possible | Not possible |
 
 TiDB 语法上支持设置 `READ COMMITTED` 和 `REPEATABLE READ` 两种隔离级别：
-
 
 ```sql
 mysql> SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
