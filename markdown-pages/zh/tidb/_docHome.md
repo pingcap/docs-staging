@@ -9,7 +9,7 @@ hide_leftNav: true
 
 <DocHomeSection label="TiDB" anchor="tidb" id="tidb">
   
-本网站提供以下 TiDB 版本的归档文档。如无特殊需求，建议使用 TiDB 数据库的[最新 LTS 版本](https://docs.pingcap.com/tidb/stable/)。已归档的文档不再提供任何更新。
+本网站提供以下 TiDB 版本的归档文档。如无特殊需求，建议使用 TiDB 数据库的<a href="https://docs.pingcap.com/zh/tidb/stable">最新 LTS 版本</a>。已归档的文档不再提供任何更新。
 
 - 已结束生命周期的 TiDB 长期支持版本 (LTS)
 - 非最近新发布的 TiDB 开发里程碑版本 (DMR)
