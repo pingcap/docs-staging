@@ -100,7 +100,6 @@ aliases: ['/zh/tidb/dev/sample-application-java']
 
 ## 第 2 步：获取代码
 
-
 ```shell
 git clone https://github.com/pingcap-inc/tidb-example-java.git
 ```
@@ -112,7 +111,6 @@ git clone https://github.com/pingcap-inc/tidb-example-java.git
 [Mybatis](https://mybatis.org/mybatis-3/index.html) 是当前比较流行的开源 Java 应用持久层框架，本文将以 Maven 插件的方式使用 [MyBatis Generator](https://mybatis.org/generator/quickstart.html) 生成部分持久层代码。
 
 进入目录 `plain-java-mybatis`：
-
 
 ```shell
 cd plain-java-mybatis
@@ -153,7 +151,6 @@ cd plain-java-mybatis
 - `src/main/resources/mapper/PlayerMapper.xml`：Player Mapper 的 XML 映射，它是 Mybatis 用于生成 Player Mapper 接口的实现类的配置
 
 这些文件的生成策略被写在了 `mybatis-generator.xml` 配置文件内，它是 [Mybatis Generator](https://mybatis.org/generator/quickstart.html) 的配置文件，下面配置文件中添加了使用方法的说明：
-
 
 ```xml
 <!DOCTYPE generatorConfiguration PUBLIC
@@ -269,7 +266,6 @@ cd plain-java-mybatis
 
 `Player.java` 是使用 Mybatis Generator 生成出的数据实体类文件，为数据库表在程序内的映射。`Player` 类的每个属性都对应着 `player` 表的一个字段。
 
-
 ```java
 package com.pingcap.model;
 
@@ -318,7 +314,6 @@ public class Player {
 
 `PlayerMapper.java` 是使用 Mybatis Generator 生成出的映射接口文件，它仅规定了接口，接口的实现类是由 Mybatis 来通过 XML 或注解自动生成的：
 
-
 ```java
 package com.pingcap.model;
 
@@ -340,7 +335,6 @@ public interface PlayerMapper {
 ```
 
 `PlayerMapper.xml` 是使用 Mybatis Generator 生成出的映射 XML 文件，Mybatis 将使用这个文件自动生成 `PlayerMapper` 接口的实现类：
-
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -420,7 +414,6 @@ public interface PlayerMapper {
 
 由于 Mybatis Generator 需要逆向生成源码，因此，数据库中需先行有此表结构，可使用 `dbinit.sql` 生成表结构：
 
-
 ```sql
 USE test;
 DROP TABLE IF EXISTS player;
@@ -437,7 +430,6 @@ CREATE TABLE player (
 
 在 `PlayerMapperEx.java` 中定义自行增加的接口：
 
-
 ```java
 package com.pingcap.model;
 
@@ -453,7 +445,6 @@ public interface PlayerMapperEx extends PlayerMapper {
 ```
 
 在 `PlayerMapperEx.xml` 中定义映射规则：
-
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -493,7 +484,6 @@ public interface PlayerMapperEx extends PlayerMapper {
 ```
 
 `PlayerDAO.java` 是程序用来管理数据对象的类。其中 `DAO` 是 [Data Access Object](https://en.wikipedia.org/wiki/Data_access_object) 的缩写。在其中定义了一系列数据的操作方法，用于数据的写入。
-
 
 ```java
 package com.pingcap.dao;
@@ -689,7 +679,6 @@ public class MybatisExample {
 
 进入目录 `plain-java-hibernate` ：
 
-
 ```shell
 cd plain-java-hibernate
 ```
@@ -712,7 +701,6 @@ cd plain-java-hibernate
 ```
 
 其中，`hibernate.cfg.xml` 为 Hibernate 配置文件，定义了：
-
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
@@ -745,7 +733,6 @@ cd plain-java-hibernate
 `PlayerDAO` 是程序用来管理数据对象的类。其中 `DAO` 是 [Data Access Object](https://en.wikipedia.org/wiki/Data_access_object) 的缩写。其中定义了一系列数据的操作方法，用来提供数据的写入能力。相较于 JDBC，Hibernate 封装了大量的操作，如对象映射、基本对象的 CRUD 等，极大的简化了代码量。
 
 `PlayerBean` 是数据实体类，为数据库表在程序内的映射。`PlayerBean` 的每个属性都对应着 `player` 表的一个字段。相较于 JDBC，Hibernate 的 `PlayerBean` 实体类为了给 Hibernate 提供更多的信息，加入了注解，用来指示映射关系。
-
 
 ```java
 package com.pingcap;
@@ -981,7 +968,6 @@ public class HibernateExample
 
 进入目录 `plain-java-jdbc`：
 
-
 ```shell
 cd plain-java-jdbc
 ```
@@ -1005,7 +991,6 @@ cd plain-java-jdbc
 
 其中，`dbinit.sql` 为数据表初始化语句：
 
-
 ```sql
 USE test;
 DROP TABLE IF EXISTS player;
@@ -1023,7 +1008,6 @@ CREATE TABLE player (
 `PlayerDAO` 是程序用来管理数据对象的类。其中 `DAO` 是 [Data Access Object](https://en.wikipedia.org/wiki/Data_access_object) 的缩写。在其中定义了一系列数据的操作方法，用来对提供数据的写入能力。
 
 `PlayerBean` 是数据实体类，为数据库表在程序内的映射。`PlayerBean` 的每个属性都对应着 `player` 表的一个字段。
-
 
 ```java
 package com.pingcap;
@@ -1468,13 +1452,11 @@ public class JDBCExample
 
 使用 Mybatis 时，需手动初始化数据库表。若你本地已经安装了 `mysql-client`，且使用本地集群，可直接在 `plain-java-mybatis` 目录下通过 `make prepare` 运行：
 
-
 ```shell
 make prepare
 ```
 
 或直接执行：
-
 
 ```shell
 mysql --host 127.0.0.1 --port 4000 -u root < src/main/resources/dbinit.sql
@@ -1502,13 +1484,11 @@ mysql --host 127.0.0.1 --port 4000 -u root < src/main/resources/dbinit.sql
 
 使用 JDBC 时，需手动初始化数据库表，若你本地已经安装了 `mysql-client`，且使用本地集群，可直接在 `plain-java-jdbc` 目录下运行：
 
-
 ```shell
 make mysql
 ```
 
 或直接执行：
-
 
 ```shell
 mysql --host 127.0.0.1 --port 4000 -u root<src/main/resources/dbinit.sql
@@ -1527,7 +1507,6 @@ mysql --host 127.0.0.1 --port 4000 -u root<src/main/resources/dbinit.sql
 <div label="使用 Mybatis（推荐）" value="mybatis">
 
 若你使用 TiDB Cloud Serverless Tier 集群，更改 `mybatis-config.xml` 内关于 `dataSource.url`、`dataSource.username`、`dataSource.password` 的参数：
-
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -1578,7 +1557,6 @@ mysql --host 127.0.0.1 --port 4000 -u root<src/main/resources/dbinit.sql
 
 那么此处应将配置文件中 `dataSource` 节点内更改为：
 
-
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -1604,7 +1582,6 @@ mysql --host 127.0.0.1 --port 4000 -u root<src/main/resources/dbinit.sql
 <div label="使用 Hibernate（推荐）" value="hibernate">
 
 若你使用 TiDB Cloud Serverless Tier 集群，更改 `hibernate.cfg.xml` 内关于 `hibernate.connection.url`、`hibernate.connection.username`、`hibernate.connection.password` 的参数：
-
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
@@ -1640,7 +1617,6 @@ mysql --host 127.0.0.1 --port 4000 -u root<src/main/resources/dbinit.sql
 
 那么此处应将配置文件更改为：
 
-
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-configuration PUBLIC
@@ -1673,7 +1649,6 @@ mysql --host 127.0.0.1 --port 4000 -u root<src/main/resources/dbinit.sql
 
 若你使用 TiDB Cloud Serverless Tier 集群，更改 `JDBCExample.java` 内关于 Host、Port、User、Password 的参数：
 
-
 ```java
 mysqlDataSource.setServerName("localhost");
 mysqlDataSource.setPortNumber(4000);
@@ -1689,7 +1664,6 @@ mysqlDataSource.setPassword("");
 - User: `2aEp24QWEDLqRFs.root`
 
 那么此处应将参数更改为：
-
 
 ```java
 mysqlDataSource.setServerName("xxx.tidbcloud.com");
