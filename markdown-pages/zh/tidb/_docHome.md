@@ -25,6 +25,6 @@ hide_leftNav: true
 | v3.1       | [TiDB v3.1 文档](https://docs-archive.pingcap.com/zh/tidb/v3.1) | 2023 年 1 月 xx 日 |
 | v2.1       | [TiDB v2.1 文档](https://docs-archive.pingcap.com/zh/tidb/v2.1) | 2023 年 1 月 xx 日 |
 
-<p>了解 <a href="https://www.pingcap.com/tidb-release-support-policy/?from=en">TiDB 版本周期支持策略详情</a>。</p>
+<p>了解 <a href="https://cn.pingcap.com/tidb-release-support-policy/">TiDB 版本周期支持策略详情</a>。</p>
 
 </DocHomeContainer>
