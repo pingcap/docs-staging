@@ -116,7 +116,7 @@
       "deprecated": ["v1.0"]
     },
     "tidbcloud": {
-      "target": "release-6.1",
+      "target": "release-6.5",
       "languages": {
         "en": {
           "repo": "pingcap/docs",
