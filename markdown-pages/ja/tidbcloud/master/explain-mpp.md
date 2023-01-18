@@ -5,7 +5,7 @@ summary: Learn about the execution plan information returned by the EXPLAIN stat
 
 # MPP モードの Explain ステートメント {#explain-statements-in-the-mpp-mode}
 
-TiDB は、 [MPP モード](/tiflash/use-tiflash-mpp-mode.md)を使用してクエリを実行することをサポートしています。 MPP モードでは、TiDB オプティマイザーが MPP の実行計画を生成します。 MPP モードは、レプリカが[ティフラッシュ](/tiflash/tiflash-overview.md)にあるテーブルでのみ使用できることに注意してください。
+TiDB は、 [MPP モード](/tiflash/use-tiflash-mpp-mode.md)を使用してクエリを実行することをサポートしています。 MPP モードでは、TiDB オプティマイザーが MPP の実行計画を生成します。 MPP モードは、レプリカが[TiFlash](/tiflash/tiflash-overview.md)にあるテーブルでのみ使用できることに注意してください。
 
 このドキュメントの例は、次のサンプル データに基づいています。
 
@@ -149,18 +149,18 @@ EXPLAIN ANALYZE SELECT COUNT(*) FROM t1 GROUP BY id;
 ```
 
 ```sql
-+------------------------------------+---------+---------+-------------------+---------------+---------------------------------------------------------------------------------------------+----------------------------------------------------------------+--------+------+
-| id                                 | estRows | actRows | task              | access object | execution info                                                                              | operator info                                                  | memory | disk |
-+------------------------------------+---------+---------+-------------------+---------------+---------------------------------------------------------------------------------------------+----------------------------------------------------------------+--------+------+
-| TableReader_31                     | 4.00    | 2       | root              |               | time:44.5ms, loops:2, cop_task: {num: 1, max: 0s, proc_keys: 0, copr_cache_hit_ratio: 0.00} | data:ExchangeSender_30                                         | N/A    | N/A  |
-| └─ExchangeSender_30                | 4.00    | 2       | batchCop[tiflash] |               | tiflash_task:{time:16.5ms, loops:1, threads:1}                                              | ExchangeType: PassThrough, tasks: [2, 3, 4]                    | N/A    | N/A  |
-|   └─Projection_26                  | 4.00    | 2       | batchCop[tiflash] |               | tiflash_task:{time:16.5ms, loops:1, threads:1}                                              | Column#4                                                       | N/A    | N/A  |
-|     └─HashAgg_27                   | 4.00    | 2       | batchCop[tiflash] |               | tiflash_task:{time:16.5ms, loops:1, threads:1}                                              | group by:test.t1.id, funcs:sum(Column#7)->Column#4             | N/A    | N/A  |
-|       └─ExchangeReceiver_29        | 4.00    | 2       | batchCop[tiflash] |               | tiflash_task:{time:14.5ms, loops:1, threads:20}                                             |                                                                | N/A    | N/A  |
-|         └─ExchangeSender_28        | 4.00    | 0       | batchCop[tiflash] |               | tiflash_task:{time:9.49ms, loops:0, threads:0}                                              | ExchangeType: HashPartition, Hash Cols: test.t1.id, tasks: [1] | N/A    | N/A  |
-|           └─HashAgg_9              | 4.00    | 0       | batchCop[tiflash] |               | tiflash_task:{time:9.49ms, loops:0, threads:0}                                              | group by:test.t1.id, funcs:count(1)->Column#7                  | N/A    | N/A  |
-|             └─TableFullScan_25     | 6.00    | 0       | batchCop[tiflash] | table:t1      | tiflash_task:{time:9.49ms, loops:0, threads:0}                                              | keep order:false                                               | N/A    | N/A  |
-+------------------------------------+---------+---------+-------------------+---------------+---------------------------------------------------------------------------------------------+----------------------------------------------------------------+--------+------+
++------------------------------------+---------+---------+-------------------+---------------+---------------------------------------------------------------------------------------------------+----------------------------------------------------------------+--------+------+
+| id                                 | estRows | actRows | task              | access object | execution info                                                                                    | operator info                                                  | memory | disk |
++------------------------------------+---------+---------+-------------------+---------------+---------------------------------------------------------------------------------------------------+----------------------------------------------------------------+--------+------+
+| TableReader_31                     | 4.00    | 2       | root              |               | time:44.5ms, loops:2, cop_task: {num: 1, max: 0s, proc_keys: 0, copr_cache_hit_ratio: 0.00}       | data:ExchangeSender_30                                         | N/A    | N/A  |
+| └─ExchangeSender_30                | 4.00    | 2       | batchCop[tiflash] |               | tiflash_task:{time:16.5ms, loops:1, threads:1}                                                    | ExchangeType: PassThrough, tasks: [2, 3, 4]                    | N/A    | N/A  |
+|   └─Projection_26                  | 4.00    | 2       | batchCop[tiflash] |               | tiflash_task:{time:16.5ms, loops:1, threads:1}                                                    | Column#4                                                       | N/A    | N/A  |
+|     └─HashAgg_27                   | 4.00    | 2       | batchCop[tiflash] |               | tiflash_task:{time:16.5ms, loops:1, threads:1}                                                    | group by:test.t1.id, funcs:sum(Column#7)->Column#4             | N/A    | N/A  |
+|       └─ExchangeReceiver_29        | 4.00    | 2       | batchCop[tiflash] |               | tiflash_task:{time:14.5ms, loops:1, threads:20}                                                   |                                                                | N/A    | N/A  |
+|         └─ExchangeSender_28        | 4.00    | 0       | batchCop[tiflash] |               | tiflash_task:{time:9.49ms, loops:0, threads:0}                                                    | ExchangeType: HashPartition, Hash Cols: test.t1.id, tasks: [1] | N/A    | N/A  |
+|           └─HashAgg_9              | 4.00    | 0       | batchCop[tiflash] |               | tiflash_task:{time:9.49ms, loops:0, threads:0}                                                    | group by:test.t1.id, funcs:count(1)->Column#7                  | N/A    | N/A  |
+|             └─TableFullScan_25     | 6.00    | 0       | batchCop[tiflash] | table:t1      | tiflash_task:{time:9.49ms, loops:0, threads:0}, tiflash_scan:{dtfile:{total_scanned_packs:1,...}} | keep order:false                                               | N/A    | N/A  |
++------------------------------------+---------+---------+-------------------+---------------+---------------------------------------------------------------------------------------------------+----------------------------------------------------------------+--------+------+
 ```
 
 `EXPLAIN`の出力と比較すると、演算子`ExchangeSender`の`operator info`列にも`tasks`が表示されます。これは、クエリ フラグメントがインスタンス化される MPP タスクの ID を記録します。さらに、各 MPP オペレーターには`execution info`列に`threads`フィールドがあり、TiDB がこのオペレーターを実行するときの操作の並行性を記録します。クラスターが複数のノードで構成されている場合、この同時実行数は、すべてのノードの同時実行数を合計した結果です。

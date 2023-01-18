@@ -85,7 +85,6 @@ mysql> SELECT * FROM t1;
 
 ## MySQL の互換性 {#mysql-compatibility}
 
--   ステートメントで同時に複数の列を追加することは、現在サポートされていません。
 -   新しい列を追加して`PRIMARY KEY`に設定することはサポートされていません。
 -   新しい列を追加して`AUTO_INCREMENT`に設定することはサポートされていません。
 -   生成された列の追加には制限があります。次を参照してください: [生成された列の制限](/generated-columns.md#limitations) .

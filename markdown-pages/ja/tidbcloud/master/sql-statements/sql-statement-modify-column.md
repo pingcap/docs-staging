@@ -160,13 +160,6 @@ CREATE TABLE `t1` (
 
 ## MySQL の互換性 {#mysql-compatibility}
 
--   単一の`ALTER TABLE`ステートメントを使用した複数の列の変更はサポートされていません。例えば：
-
-    ```sql
-    ALTER TABLE t1 MODIFY col1 BIGINT, MODIFY id BIGINT NOT NULL;
-    ERROR 1105 (HY000): Unsupported multi schema change
-    ```
-
 -   主キー列の Reorg-Data タイプの変更はサポートしていませんが、Meta-Only タイプの変更はサポートしています。例えば：
 
     ```sql

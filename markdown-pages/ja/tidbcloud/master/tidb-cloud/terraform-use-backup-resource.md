@@ -10,7 +10,7 @@ summary: Learn how to create a backup of a TiDB Cloud cluster using the backup r
 ## 前提条件 {#prerequisites}
 
 -   [TiDB Cloud Terraform プロバイダーを入手する](/tidb-cloud/terraform-get-tidbcloud-provider.md) .
--   バックアップと復元の機能は、サーバーレス層クラスターでは使用できません。バックアップ リソースを使用するには、Dedicated Tier クラスターが作成されていることを確認してください。
+-   バックアップと復元の機能は、Serverless Tierクラスターでは使用できません。バックアップ リソースを使用するには、 Dedicated Tierクラスターが作成されていることを確認してください。
 
 ## バックアップ リソースを使用してバックアップを作成する {#create-a-backup-with-the-backup-resource}
 

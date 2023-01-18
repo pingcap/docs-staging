@@ -28,7 +28,7 @@ summary: Learn how to monitor your TiDB cluster.
 
 > **ノート：**
 >
-> TiDB ノードのステータスは、Dedicated Tier クラスターでのみ使用できます。
+> TiDB ノードのステータスは、 Dedicated Tierクラスターでのみ使用できます。
 
 | TiDB ノードのステータス | 説明                  |
 | :------------- | :------------------ |
@@ -41,7 +41,7 @@ summary: Learn how to monitor your TiDB cluster.
 
 > **ノート：**
 >
-> TiKV ノードのステータスは、Dedicated Tier クラスターでのみ使用できます。
+> TiKV ノードのステータスは、 Dedicated Tierクラスターでのみ使用できます。
 
 | TiKV ノードのステータス | 説明                  |
 | :------------- | :------------------ |
@@ -59,17 +59,17 @@ TiDB Cloudでは、次のページからクラスターの一般的に使用さ�
 
 ### クラスタの概要ページの指標 {#metrics-on-the-cluster-overview-page}
 
-クラスターの概要ページには、合計 QPS、クエリ期間、アクティブな接続、TiDB CPU、TiKV CPU、TiFlash CPU、TiDB メモリ、TiKV メモリ、TiFlash メモリ、TiKV 使用ストレージ サイズ、TiFlash 使用ストレージ サイズなど、クラスタの一般的なメトリックが表示されます。
+クラスターの概要ページには、合計 QPS、クエリ期間、アクティブな接続、TiDB CPU、TiKV CPU、 TiFlash CPU、TiDB メモリ、TiKV メモリ、 TiFlashメモリ、TiKV 使用ストレージ サイズ、 TiFlash使用ストレージ サイズなど、クラスタの一般的なメトリックが表示されます。
 
 > **ノート：**
 >
-> これらのメトリックの一部は、Dedicated Tier クラスターでのみ使用できる場合があります。
+> これらのメトリックの一部は、 Dedicated Tierクラスターでのみ使用できる場合があります。
 
 クラスターの概要ページでメトリックを表示するには、次の手順を実行します。
 
-1.  [**クラスター]**ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
-2.  クラスターの名前をクリックして、そのクラスターの概要ページに移動します。
+2.  ターゲット プロジェクトを選択し、クラスターの名前をクリックして、そのクラスターの概要ページに移動します。
 
 ### クラスター監視ページの指標 {#metrics-on-the-cluster-monitoring-page}
 
@@ -77,12 +77,11 @@ TiDB Cloudでは、次のページからクラスターの一般的に使用さ�
 
 > **ノート：**
 >
-> 現在、クラスター監視ページは[サーバーレス階層クラスター](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta)で利用できません。
+> 現在、クラスター監視ページは[Serverless Tierクラスター](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta)で利用できません。
 
 クラスター監視ページでメトリックを表示するには、次の手順を実行します。
 
-1.  クラスターの [**診断**] タブに移動します。
-
-2.  [**監視**] タブをクリックします。
+1.  ターゲット プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページで、ターゲット クラスタの名前をクリックします。クラスタの概要ページが表示されます。
+2.  左側のナビゲーション ペインで [**監視]**をクリックします。
 
 詳細については、 [ビルトインモニタリング](/tidb-cloud/built-in-monitoring.md)を参照してください。

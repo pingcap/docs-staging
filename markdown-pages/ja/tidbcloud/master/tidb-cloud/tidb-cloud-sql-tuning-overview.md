@@ -17,13 +17,13 @@ SQL ステートメントのパフォーマンスを向上させるには、次�
 -   スキャンしたデータの範囲を最小限に抑えます。最小限の範囲のデータのみをスキャンし、すべてのデータをスキャンしないようにすることが常にベスト プラクティスです。
 -   適切な索引を使用してください。 SQL ステートメントの`WHERE`句の各列について、対応するインデックスがあることを確認してください。そうしないと、 `WHERE`句がテーブル全体をスキャンし、パフォーマンスが低下します。
 -   適切な結合タイプを使用してください。クエリ内の各テーブルのサイズと相関関係に応じて、適切な結合タイプを選択することが非常に重要です。一般に、TiDB のコストベースのオプティマイザは、最適な Join タイプを自動的に選択します。ただし、場合によっては、結合タイプを手動で指定する必要があります。詳細については、 [テーブル結合を使用するステートメントの説明](/explain-joins.md)を参照してください。
--   適切なストレージ エンジンを使用します。 Hybrid Transactional and Analytical Processing (HTAP) ワークロードには、TiFlash ストレージ エンジンを使用することをお勧めします。 [HTAP クエリ](/develop/dev-guide-hybrid-oltp-and-olap-queries.md)を参照してください。
+-   適切なストレージ エンジンを使用します。 Hybrid Transactional and Analytical Processing (HTAP) ワークロードには、 TiFlashストレージ エンジンを使用することをお勧めします。 [HTAP クエリ](/develop/dev-guide-hybrid-oltp-and-olap-queries.md)を参照してください。
 
 TiDB Cloudは、クラスター上の低速クエリを分析するのに役立ついくつかのツールを提供します。次のセクションでは、スロー クエリを最適化するためのいくつかのアプローチについて説明します。
 
 ### [診断] タブでステートメントを使用する {#use-statement-on-the-diagnosis-tab}
 
-TiDB Cloudコンソールには、[**診断**] タブに [<strong><a href="/tidb-cloud/tune-performance.md#statement-analysis">ステートメント</a></strong>] サブタブがあります。クラスター上のすべてのデータベースの SQL ステートメントの実行統計を収集します。これを使用して、合計または 1 回の実行で長い時間を消費する SQL ステートメントを特定して分析できます。
+TiDB Cloudコンソールは、 **SQL 診断**タブに<strong><a href="/tidb-cloud/tune-performance.md#statement-analysis">SQL ステートメント</a></strong>サブタブを提供します。クラスター上のすべてのデータベースの SQL ステートメントの実行統計を収集します。これを使用して、合計または 1 回の実行で長い時間を消費する SQL ステートメントを特定して分析できます。
 
 このサブタブでは、(クエリ パラメータが一致しない場合でも) 同じ構造を持つ SQL クエリが同じ SQL ステートメントにグループ化されることに注意してください。たとえば、 `SELECT * FROM employee WHERE id IN (1, 2, 3)`と`select * from EMPLOYEE where ID in (4, 5)`はどちらも同じ SQL ステートメント`select * from employee where id in (...)`の一部です。
 

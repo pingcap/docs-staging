@@ -15,6 +15,7 @@ summary: Learn about the TiDB system tables.
 -   `db` : データベース レベルの権限
 -   `tables_priv` : テーブルレベルの権限
 -   `columns_priv` : 列レベルの権限
+-   `password_history` : パスワード変更履歴
 
 ## サーバー側のヘルプ システム テーブル {#server-side-help-system-tables}
 
@@ -30,6 +31,10 @@ summary: Learn about the TiDB system tables.
 ## GC ワーカー システム テーブル {#gc-worker-system-tables}
 
 -   `gc_delete_range` : 削除するデータを記録する
+
+## キャッシュされたテーブルに関連するシステム テーブル {#system-tables-related-to-cached-tables}
+
+-   `table_cache_meta`は、キャッシュされたテーブルのメタデータを格納します。
 
 ## その他のシステム テーブル {#miscellaneous-system-tables}
 

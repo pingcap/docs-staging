@@ -17,7 +17,7 @@ TiDB 4.0 以降、すべての TiDB 移行ツールは共通のフィルター�
 
 <CustomContent platform="tidb">
 
--   [ブラジル](/br/backup-and-restore-overview.md) :
+-   [BR](/br/backup-and-restore-overview.md) :
 
     ```shell
     ./br backup full -f 'foo*.*' -f 'bar*.*' -s 'local:///tmp/backup'

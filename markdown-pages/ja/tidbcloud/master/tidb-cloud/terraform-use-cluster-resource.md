@@ -286,7 +286,7 @@ summary: Learn how to use the cluster resource to create and modify a TiDB Cloud
 
 `tidbcloud_cluster`リソースを使用してクラスターを作成できます。
 
-次の例は、Dedicated Tier クラスターを作成する方法を示しています。
+次の例は、 Dedicated Tierクラスターを作成する方法を示しています。
 
 1.  クラスタ用のディレクトリを作成して入力します。
 
@@ -486,15 +486,15 @@ summary: Learn how to use the cluster resource to create and modify a TiDB Cloud
 
 ステータスが`AVAILABLE`の場合、TiDB クラスターが作成され、使用できる状態になっていることを示します。
 
-## Dedicated Tier クラスターを変更する {#modify-a-dedicated-tier-cluster}
+## Dedicated Tierクラスターを変更する {#modify-a-dedicated-tier-cluster}
 
-Dedicated Tier クラスターの場合、Terraform を使用してクラスター リソースを次のように管理できます。
+Dedicated Tierクラスターの場合、Terraform を使用してクラスター リソースを次のように管理できます。
 
--   TiFlash コンポーネントをクラスターに追加します。
+-   TiFlashコンポーネントをクラスターに追加します。
 -   クラスターをスケーリングします。
 -   クラスターを一時停止または再開します。
 
-### TiFlash コンポーネントを追加する {#add-a-tiflash-component}
+### TiFlashコンポーネントを追加する {#add-a-tiflash-component}
 
 1.  [クラスターを作成する](#create-a-cluster-using-the-cluster-resource)のときに使用される`cluster.tf`ファイルで、 `tiflash`の構成を`components`フィールドに追加します。
 
@@ -560,7 +560,7 @@ Dedicated Tier クラスターの場合、Terraform を使用してクラスタ�
 
     ```
 
-    上記の実行計画のように、TiFlash が追加され、1 つのリソースが変更されます。
+    上記の実行計画のように、 TiFlashが追加され、1 つのリソースが変更されます。
 
 3.  計画に問題がなければ、 `yes`と入力して続行します。
 
@@ -621,7 +621,7 @@ Dedicated Tier クラスターの場合、Terraform を使用してクラスタ�
 
 1.  [クラスターを作成する](#create-a-cluster-using-the-cluster-resource)で使用する`cluster.tf`ファイルで、 `components`の構成を編集します。
 
-    たとえば、TiDB 用にもう 1 つのノードを追加するには、TiKV 用にさらに 3 つのノードを追加します (TiKV ノードの数は、そのステップが 3 であるために 3 の倍数である必要があります[クラスタ仕様からこの情報を取得します](#get-cluster-specification-information-using-the-tidbcloud_cluster_specs-data-source)を追加できます)、および TiFlash 用にもう 1 つのノードを編集できます。構成は次のとおりです。
+    たとえば、TiDB 用にもう 1 つのノードを追加するには、TiKV 用にさらに 3 つのノードを追加します (TiKV ノードの数は、そのステップが 3 であるために 3 の倍数である必要があります[クラスタ仕様からこの情報を取得します](#get-cluster-specification-information-using-the-tidbcloud_cluster_specs-data-source)を追加できます)、およびTiFlash用にもう 1 つのノードを編集できます。構成は次のとおりです。
 
     ```
         components = {
@@ -844,7 +844,7 @@ Dedicated Tier クラスターの場合、Terraform を使用してクラスタ�
 
 6.  しばらく待ってから、 `terraform refersh`コマンドを使用して状態を更新します。ステータスは最終的に`AVAILABLE`に変更されます。
 
-これで、Terraform を使用して Dedicated Tier クラスターを作成および管理できました。次に、 [バックアップ リソース](/tidb-cloud/terraform-use-backup-resource.md)でクラスターのバックアップを作成してみてください。
+これで、Terraform を使用してDedicated Tierクラスターを作成および管理できました。次に、 [バックアップ リソース](/tidb-cloud/terraform-use-backup-resource.md)でクラスターのバックアップを作成してみてください。
 
 ## クラスターをインポートする {#import-a-cluster}
 

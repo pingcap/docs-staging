@@ -39,11 +39,16 @@ Empty set (0.01 sec)
 
 ## MySQL の互換性 {#mysql-compatibility}
 
--   TiDB は、セーブポイントまたは構文`ROLLBACK TO SAVEPOINT`をサポートしていません。
 -   TiDB は構文を解析しますが、構文`ROLLBACK AND [NO] RELEASE`を無視します。この機能は MySQL で使用され、トランザクションをロールバックした直後にクライアント セッションを切断します。 TiDB では、代わりにクライアント ドライバーの`mysql_close()`の機能を使用することをお勧めします。
 -   TiDB は構文を解析しますが、構文`ROLLBACK AND [NO] CHAIN`を無視します。この機能は MySQL で使用され、現在のトランザクションがロールバックされている間に、同じ分離レベルで新しいトランザクションをすぐに開始します。 TiDB では、代わりに新しいトランザクションを開始することをお勧めします。
 
 ## こちらもご覧ください {#see-also}
+
+<CustomContent platform="tidb">
+
+-   [セーブポイント](/sql-statements/sql-statement-savepoint.md)
+
+</CustomContent>
 
 -   [専念](/sql-statements/sql-statement-commit.md)
 -   [始める](/sql-statements/sql-statement-begin.md)

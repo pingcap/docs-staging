@@ -11,7 +11,7 @@ summary: Learn steps, rules, and examples to create a database.
 
 データベースを作成する前に、次のことを行います。
 
--   [TiDB Cloud(サーバーレス層) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) .
+-   [TiDB Cloud(Serverless Tier) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) .
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md)を読んでください。
 
 ## データベースとは {#what-is-database}
@@ -24,7 +24,6 @@ TiDB の[データベース](/develop/dev-guide-schema-design-overview.md)個の
 
 たとえば、存在しない場合に`bookshop`という名前のデータベースを作成するには、次のステートメントを使用します。
 
-
 ```sql
 CREATE DATABASE IF NOT EXISTS `bookshop`;
 ```
@@ -32,7 +31,6 @@ CREATE DATABASE IF NOT EXISTS `bookshop`;
 `CREATE DATABASE`ステートメントの詳細と例については、 [`CREATE DATABASE`](/sql-statements/sql-statement-create-database.md)ドキュメントを参照してください。
 
 `root`人のユーザーとしてライブラリ ビルド ステートメントを実行するには、次のコマンドを実行します。
-
 
 ```shell
 mysql
@@ -48,7 +46,6 @@ mysql
 クラスター内のデータベースを表示するには、 [`SHOW DATABASES`](/sql-statements/sql-statement-show-databases.md)ステートメントを使用します。
 
 例えば：
-
 
 ```shell
 mysql

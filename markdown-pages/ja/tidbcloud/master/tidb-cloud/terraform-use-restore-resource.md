@@ -10,7 +10,7 @@ summary: Learn how to use restore resource.
 ## 前提条件 {#prerequisites}
 
 -   [TiDB Cloud Terraform プロバイダーを入手する](/tidb-cloud/terraform-get-tidbcloud-provider.md) .
--   バックアップと復元の機能は、サーバーレス層クラスターでは使用できません。復元リソースを使用するには、Dedicated Tier クラスターを作成済みであることを確認してください。
+-   バックアップと復元の機能は、Serverless Tierクラスターでは使用できません。復元リソースを使用するには、 Dedicated Tierクラスターを作成済みであることを確認してください。
 
 ## 復元リソースを使用して復元タスクを作成する {#create-a-restore-task-with-the-restore-resource}
 

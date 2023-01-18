@@ -11,7 +11,7 @@ TiDB はデータをロックしません。 TiDB から他のデータ プラ�
 
 ツール[Dumpling](/dumpling-overview.md)を使用してデータをエクスポートできます。
 
-1.  TiUP をダウンロードしてインストールします。
+1.  TiUPをダウンロードしてインストールします。
 
     
     ```shell
@@ -22,7 +22,7 @@ TiDB はデータをロックしません。 TiDB から他のデータ プラ�
 
     > **ノート：**
     >
-    > インストール後、TiUP は対応する`profile`ファイルの絶対パスを表示します。次のコマンドの`.bash_profile`を`profile`ファイルのパスに変更する必要があります。
+    > インストール後、 TiUPは対応する`profile`ファイルの絶対パスを表示します。次のコマンドの`.bash_profile`を`profile`ファイルのパスに変更する必要があります。
 
     
     ```shell
@@ -33,26 +33,26 @@ TiDB はデータをロックしません。 TiDB から他のデータ プラ�
 
     
     ```shell
-    tiup install dumpling:v6.1.1
+    tiup install dumpling:v6.5.0
     ```
 
 4.  TiDB からDumplingを使用してデータをエクスポートします。
 
-    [**クラスター]**ページの [<strong>接続]</strong>セクションから、次の接続パラメーター`${tidb_endpoint}` 、 `${port}` 、および`${user}`を取得できます。
+    [**接続**](/tidb-cloud/connect-via-standard-connection.md)ダイアログの接続文字列から、次の接続パラメーター`${tidb_endpoint}` 、 `${port}` 、および`${user}`を取得できます。
 
     <SimpleTab>
 
     <div label="Serverless Tier">
 
     ```shell
-    tiup dumpling:v6.1.1 -h ${tidb_endpoint} -P 4000 -u ${user} -p ${password} --ca=${ca_path} -F 67108864MiB -t 4 -o ${export_dir} --filetype sql
+    tiup dumpling:v6.5.0 -h ${tidb_endpoint} -P 4000 -u ${user} -p ${password} --ca=${ca_path} -F 67108864MiB -t 4 -o ${export_dir} --filetype sql
     ```
 
     </div>
      <div label="Dedicated Tier">
 
     ```shell
-    tiup dumpling:v6.1.1 -h ${tidb_endpoint} -P ${port} -u ${user} -p ${password} -F 67108864MiB -t 4 -o ${export_dir} --filetype sql
+    tiup dumpling:v6.5.0 -h ${tidb_endpoint} -P ${port} -u ${user} -p ${password} -F 67108864MiB -t 4 -o ${export_dir} --filetype sql
     ```
 
     </div>
@@ -65,7 +65,7 @@ TiDB はデータをロックしません。 TiDB から他のデータ プラ�
     -   `-u` : TiDB クラスター ユーザー。
     -   `-p` : TiDB クラスターのパスワード。
     -   `-F` : 1 つのファイルの最大サイズ。
-    -   `--ca` : CA ルート パス。 [サーバーレス層クラスターへのセキュリティ接続](/tidb-cloud/secure-connections-to-serverless-tier-clusters.md#where-is-the-ca-root-path-on-my-system)を参照してください。
+    -   `--ca` : CA ルート パス。 [Serverless Tierへの TLS 接続](/tidb-cloud/secure-connections-to-serverless-tier-clusters.md#root-certificate-default-path)を参照してください。
     -   `-o` : エクスポート ディレクトリ。
     -   `--filetype` : エクスポートされたファイルの種類。デフォルト値は`sql`です。 `sql`と`csv`から選択できます。
 

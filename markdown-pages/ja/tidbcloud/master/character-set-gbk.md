@@ -104,7 +104,7 @@ SHOW COLLATION WHERE CHARSET = 'gbk';
 
 ## コンポーネントの互換性 {#component-compatibility}
 
--   現在、TiFlash は GBK 文字セットをサポートしていません。
+-   現在、 TiFlashは GBK 文字セットをサポートしていません。
 
 -   TiDB データ移行 (DM) は、v5.4.0 より前の TiDB クラスターへの`charset=GBK`テーブルの移行をサポートしていません。
 
@@ -112,4 +112,4 @@ SHOW COLLATION WHERE CHARSET = 'gbk';
 
 -   v6.1.0 より前の TiCDC バージョンは、 `charset=GBK`テーブルの複製をサポートしていません。 v6.1.0 より前の TiDB クラスターへの`charset=GBK`のテーブルのレプリケートをサポートする TiCDC のバージョンはありません。
 
--   v5.4.0 より前のバージョンのバックアップと復元 (BR) は、 `charset=GBK`テーブルの復元をサポートしていません。 v5.4.0 より前の TiDB クラスターへの`charset=GBK`のテーブルの復元をサポートする BR のバージョンはありません。
+-   v5.4.0 より前のバージョンのバックアップと復元 (BR) は、 `charset=GBK`テーブルの復元をサポートしていません。 v5.4.0 より前の TiDB クラスターへの`charset=GBK`のテーブルの復元をサポートするBRのバージョンはありません。

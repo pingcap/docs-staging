@@ -13,6 +13,10 @@ SQL バインディングは SPM の基礎です。 [オプティマイザーの
 
 ### バインディングを作成する {#create-a-binding}
 
+SQL ステートメントまたは履歴実行計画に従って、SQL ステートメントのバインドを作成できます。
+
+#### SQL文に従ってバインディングを作成する {#create-a-binding-according-to-a-sql-statement}
+
 
 ```sql
 CREATE [GLOBAL | SESSION] BINDING FOR BindableStmt USING BindableStmt
@@ -160,7 +164,101 @@ explain SELECT * FROM t1, t2 WHERE t1.id = t2.id;
 >
 > `PREPARE` / `EXECUTE`ステートメントおよびバイナリ プロトコルで実行されるクエリの場合、 `PREPARE` / `EXECUTE`ステートメントではなく、実際のクエリ ステートメントに対して実行プラン バインディングを作成する必要があります。
 
-### バインディングを削除 {#remove-binding}
+#### 過去の実行計画に従ってバインディングを作成する {#create-a-binding-according-to-a-historical-execution-plan}
+
+SQL ステートメントの実行計画を履歴実行計画に固定するには、 `plan_digest`を使用してその履歴実行計画を SQL ステートメントにバインドできます。これは、SQL ステートメントに従ってバインドするよりも便利です。
+
+> **警告：**
+>
+> 現在、過去の実行計画に従ってバインディングを作成することは、リスクが不明実験的機能です。本番環境では使用しないでください。
+
+現在、この機能には次の制限があります。
+
+-   この機能は、過去の実行計画に従ってヒントを生成し、生成されたヒントをバインドに使用します。過去の実行計画は[ステートメント要約表](/statement-summary-tables.md)に保存されるため、この機能を使用する前に、最初に[`tidb_enable_stmt_summary`](/system-variables.md#tidb_enable_stmt_summary-new-in-v304)システム変数を有効にする必要があります。
+-   現在、この機能は、現在の TiDB ノードの`statements_summary`および`statements_summary_history`のテーブル内の過去の実行計画のバインドのみをサポートしています。 `can't find any plans`エラーが発生した場合は、クラスター内の別の TiDB ノードに接続して、バインドを再試行できます。
+-   現在、この機能は、サブクエリを含むクエリ、 TiFlashにアクセスするクエリ、または 3 つ以上のテーブルを結合するクエリでは機能しません。
+
+このバインディング メソッドの SQL ステートメントは次のとおりです。
+
+```sql
+CREATE [GLOBAL | SESSION] BINDING FROM HISTORY USING PLAN DIGEST 'plan_digest';
+```
+
+このステートメントは、 `plan_digest`を使用して実行計画を SQL ステートメントにバインドします。デフォルトのスコープは SESSION です。作成したバインディングの適用可能なSQL文、優先度、スコープ、有効条件は[SQL ステートメントに従って作成されたバインディング](#create-a-binding-according-to-a-sql-statement)と同じです。
+
+このバインド方法を使用するには、最初に`statements_summary`でターゲットの履歴実行計画に対応する`plan_digest`を取得し、次に`plan_digest`を使用してバインドを作成する必要があります。詳細な手順は次のとおりです。
+
+1.  `statements_summary`で対象の実行計画に対応する`plan_digest`を取得します。
+
+    例えば：
+
+    ```sql
+    CREATE TABLE t(id INT PRIMARY KEY , a INT, KEY(a));
+    SELECT /*+ IGNORE_INDEX(t, a) */ * FROM t WHERE a = 1;
+    SELECT * FROM INFORMATION_SCHEMA.STATEMENTS_SUMMARY WHERE QUERY_SAMPLE_TEXT = 'SELECT /*+ IGNORE_INDEX(t, a) */ * FROM t WHERE a = 1'\G;
+    ```
+
+    以下は、 `statements_summary`のクエリ結果の例の一部です。
+
+    ```
+    SUMMARY_BEGIN_TIME: 2022-12-01 19:00:00
+    ...........
+          DIGEST_TEXT: select * from `t` where `a` = ?
+    ...........
+          PLAN_DIGEST: 4e3159169cc63c14b139a4e7d72eae1759875c9a9581f94bb2079aae961189cb
+                 PLAN:  id                  task        estRows operator info                           actRows execution info                                                                                                                                             memory      disk
+                        TableReader_7       root        10      data:Selection_6                        0       time:4.05ms, loops:1, cop_task: {num: 1, max: 598.6µs, proc_keys: 0, rpc_num: 2, rpc_time: 609.8µs, copr_cache_hit_ratio: 0.00, distsql_concurrency: 15}   176 Bytes   N/A
+                        └─Selection_6       cop[tikv]   10      eq(test.t.a, 1)                         0       tikv_task:{time:560.8µs, loops:0}                                                                                                                          N/A         N/A
+                          └─TableFullScan_5 cop[tikv]   10000   table:t, keep order:false, stats:pseudo 0       tikv_task:{time:560.8µs, loops:0}                                                                                                                          N/A         N/A
+          BINARY_PLAN: 6QOYCuQDCg1UYWJsZVJlYWRlcl83Ev8BCgtTZWxlY3Rpb25fNhKOAQoPBSJQRnVsbFNjYW5fNSEBAAAAOA0/QSkAAQHwW4jDQDgCQAJKCwoJCgR0ZXN0EgF0Uh5rZWVwIG9yZGVyOmZhbHNlLCBzdGF0czpwc2V1ZG9qInRpa3ZfdGFzazp7dGltZTo1NjAuOMK1cywgbG9vcHM6MH1w////CQMEAXgJCBD///8BIQFzCDhVQw19BAAkBX0QUg9lcSgBfCAudC5hLCAxKWrmYQAYHOi0gc6hBB1hJAFAAVIQZGF0YTo9GgRaFAW4HDQuMDVtcywgCbYcMWKEAWNvcF8F2agge251bTogMSwgbWF4OiA1OTguNsK1cywgcHJvY19rZXlzOiAwLCBycGNfBSkAMgkMBVcQIDYwOS4pEPBDY29wcl9jYWNoZV9oaXRfcmF0aW86IDAuMDAsIGRpc3RzcWxfY29uY3VycmVuY3k6IDE1fXCwAXj///////////8BGAE=
+    ```
+
+    この例では、 `plan_digest`に対応する実行計画が`4e3159169cc63c14b139a4e7d72eae1759875c9a9581f94bb2079aae961189cb`であることがわかります。
+
+2.  `plan_digest`を使用してバインディングを作成します。
+
+    ```sql
+    CREATE BINDING FROM HISTORY USING PLAN DIGEST '4e3159169cc63c14b139a4e7d72eae1759875c9a9581f94bb2079aae961189cb';
+    ```
+
+作成したバインディングが有効かどうかを確認するには、次のことができます[バインディングを表示](#view-bindings) :
+
+```sql
+SHOW BINDINGS\G;
+```
+
+```
+*************************** 1. row ***************************
+Original_sql: select * from `test` . `t` where `a` = ?
+    Bind_sql: SELECT /*+ use_index(@`sel_1` `test`.`t` ) ignore_index(`t` `a`)*/ * FROM `test`.`t` WHERE `a` = 1
+       ...........
+  Sql_digest: 6909a1bbce5f64ade0a532d7058dd77b6ad5d5068aee22a531304280de48349f
+ Plan_digest:
+1 row in set (0.01 sec)
+
+ERROR:
+No query specified
+```
+
+```sql
+SELECT * FROM t WHERE a = 1;
+SELECT @@LAST_PLAN_FROM_BINDING;
+```
+
+```
++--------------------------+
+| @@LAST_PLAN_FROM_BINDING |
++--------------------------+
+|                        1 |
++--------------------------+
+1 row in set (0.00 sec)
+```
+
+### バインディングを削除する {#remove-a-binding}
+
+SQL ステートメントまたは`sql_digest`に従ってバインディングを削除できます。
+
+#### SQL ステートメントに従ってバインディングを削除する {#remove-a-binding-according-to-a-sql-statement}
 
 
 ```sql
@@ -183,11 +281,21 @@ explain SELECT * FROM t1,t2 WHERE t1.id = t2.id;
 
 上記の例では、SESSION スコープで削除されたバインドにより、GLOBAL スコープの対応するバインドがシールドされます。オプティマイザーは、ステートメントに`sm_join(t1, t2)`ヒントを追加しません。 `explain`結果の実行計画の最上位ノードは、このヒントによって MergeJoin に固定されません。代わりに、最上位ノードは、コスト見積もりに従って最適化プログラムによって個別に選択されます。
 
+#### <code>sql_digest</code>に従ってバインディングを削除する {#remove-a-binding-according-to-code-sql-digest-code}
+
+SQL ステートメントに従ってバインドを削除するだけでなく、 `sql_digest`に従ってバインドを削除することもできます。
+
+```sql
+DROP [GLOBAL | SESSION] BINDING FOR SQL DIGEST 'sql_digest';
+```
+
+このステートメントは、GLOBAL または SESSION レベルで`sql_digest`に対応する実行計画バインディングを削除します。デフォルトのスコープは SESSION です。 `sql_digest` by [バインディングの表示](#view-bindings)を取得できます。
+
 > **ノート：**
 >
 > `DROP GLOBAL BINDING`を実行すると、現在の tidb-server インスタンス キャッシュ内のバインディングが削除され、システム テーブル内の対応する行のステータスが「削除済み」に変更されます。このステートメントは、システム テーブル内のレコードを直接削除しません。他の tidb-server インスタンスは、キャッシュ内の対応するバインディングを削除するために「削除済み」ステータスを読み取る必要があるためです。これらのシステム テーブル内のステータスが「削除済み」のレコードの場合、100 `bind-info-lease` (デフォルト値は`3s`で、合計で`300s` ) の間隔ごとに、バックグラウンド スレッドは 10 より前に`update_time`のバインディングで回収およびクリアの操作をトリガーします。 `bind-info-lease` (すべての tidb-server インスタンスが「削除済み」ステータスを読み取り、キャッシュを更新したことを確認するため)。
 
-## バインディング ステータスの変更 {#change-binding-status}
+### バインディング ステータスの変更 {#change-binding-status}
 
 
 ```sql
@@ -205,19 +313,21 @@ SET BINDING [ENABLED | DISABLED] FOR BindableStmt;
 SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhere]
 ```
 
-このステートメントは、バインディングの更新時刻が新しいものから古いものへの順序に従って、GLOBAL または SESSION レベルで実行計画バインディングを出力します。デフォルトのスコープは SESSION です。現在、以下に示すように、 `SHOW BINDINGS`は 8 つの列を出力します。
+このステートメントは、バインディングの更新時刻が新しいものから古いものへの順序に従って、GLOBAL または SESSION レベルで実行計画バインディングを出力します。デフォルトのスコープは SESSION です。以下に示すように、現在`SHOW BINDINGS`は 11 列を出力します。
 
-| カラム名         | ノート                                                                                                                                               |
-| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
-| original_sql | パラメータ化後の元の SQL ステートメント                                                                                                                            |
-| bind_sql     | ヒント付きのバインドされた SQL ステートメント                                                                                                                         |
-| default_db   | デフォルトのデータベース                                                                                                                                      |
-| 状態           | 有効 (v6.0 の使用中ステータスを置き換える)、無効、削除済み、無効、拒否済み、および検証保留中を含むステータス                                                                                        |
-| create_time  | 時を創る                                                                                                                                              |
-| update_time  | 更新時間                                                                                                                                              |
-| 文字コード        | キャラクターセット                                                                                                                                         |
-| 照合順序         | 注文規則                                                                                                                                              |
-| ソース          | `manual` ( `create [global] binding` SQL ステートメントによって作成される)、 `capture` (TiDB によって自動的にキャプチャされる)、および`evolve` (TiDB によって自動的に展開される) を含むバインディングが作成される方法 |
+| カラム名         | ノート                                                                                                                                    |
+| :----------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| original_sql | パラメータ化後の元の SQL ステートメント                                                                                                                 |
+| bind_sql     | ヒント付きのバインドされた SQL ステートメント                                                                                                              |
+| default_db   | デフォルトのデータベース                                                                                                                           |
+| スターテス        | 有効 (v6.0 の使用中ステータスを置き換える)、無効、削除済み、無効、拒否済み、および検証保留中を含むステータス                                                                             |
+| create_time  | 時を創る                                                                                                                                   |
+| update_time  | 更新時間                                                                                                                                   |
+| 文字コード        | キャラクターセット                                                                                                                              |
+| 照合順序         | 注文規則                                                                                                                                   |
+| ソース          | `manual` (SQL ステートメントに従って作成)、 `history` (過去の実行計画に従って作成)、 `capture` (TiDB によって自動的に取得)、および`evolve` (TiDB によって自動的に進化) を含む、バインディングが作成される方法 |
+| sql_digest   | 正規化された SQL ステートメントのダイジェスト                                                                                                              |
+| plan_digest  | 実行計画のダイジェスト                                                                                                                            |
 
 ### バインディングのトラブルシューティング {#troubleshoot-a-binding}
 
@@ -470,10 +580,10 @@ CREATE GLOBAL BINDING for SELECT * FROM t WHERE a < 100 AND b < 100 using SELECT
     | `use_toja`                | オプティマイザーがサブクエリを Join に変換するかどうか。                      |
     | `use_cascades`            | カスケード オプティマイザを使用するかどうか。                              |
     | `no_index_merge`          | オプティマイザーがテーブルを読み取るためのオプションとして Index Merge を使用するかどうか。 |
-    | `read_consistent_replica` | テーブルの読み取り時に強制的にフォロワー読み取りを有効にするかどうか。                  |
+    | `read_consistent_replica` | テーブルの読み取り時に強制的にFollower Readを有効にするかどうか。              |
     | `max_execution_time`      | クエリの最長期間。                                            |
 
--   `read_from_storage`は、テーブルを読み取るときに TiKV からデータを読み取るか、TiFlash からデータを読み取るかを指定するという点で、特別なヒントです。 TiDB は分離読み取りを提供するため、分離条件が変更された場合、このヒントは進化した実行計画に大きな影響を与えます。したがって、このヒントが最初に作成されたバインディングに存在する場合、TiDB はすべての進化したバインディングを無視します。
+-   `read_from_storage`は、テーブルを読み取るときにTiFlashからデータを読み取るか、TiFlash からデータを読み取るかを指定するという点で、特別なヒントです。 TiDB は分離読み取りを提供するため、分離条件が変更された場合、このヒントは進化した実行計画に大きな影響を与えます。したがって、このヒントが最初に作成されたバインディングに存在する場合、TiDB はすべての進化したバインディングを無視します。
 
 ## アップグレードのチェックリスト {#upgrade-checklist}
 

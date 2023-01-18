@@ -13,19 +13,19 @@ summary: Learn about the blocklist to control the optimization rules and the beh
 
 ### 重要な最適化ルール {#important-optimization-rules}
 
-| **最適化ルール**      | **ルール名**             | **説明**                                                                              |
-| :-------------- | :------------------- | :---------------------------------------------------------------------------------- |
-| カラムの剪定          | column_prune         | 上位エグゼキューターが列を必要としない場合、1 人のオペレーターが列を整理します。                                           |
-| サブクエリの関連付けを解除する | 関連付けを解除する            | 相関サブクエリを非相関結合または集約に書き換えようとします。                                                      |
-| 集計除去            | アグリゲーション_エリミネート      | 実行計画から不要な集計演算子を削除しようとします。                                                           |
-| 突起除去            | プロジェクション_エリミネート      | 実行計画から不要な射影演算子を削除します。                                                               |
-| 最大/最小除去         | max_min_eliminate    | 集計の一部の max/min関数を`order by` + `limit 1`形式に書き換えます。                                   |
-| 述語のプッシュダウン      | predicate_push_down  | データ ソースに近い演算子に述語を押し下げようとします。                                                        |
-| 外部結合の削除         | outer_join_eliminate | 不要な左結合または右結合を実行計画から削除しようとします。                                                       |
-| パーティションの剪定      | partition_processor  | 述語によって拒否されたパーティションを削除し、パーティション テーブル クエリを`UnionAll + Partition Datasource`形式に書き換えます。 |
-| 集計プッシュダウン       | アグリゲーション_プッシュ_ダウン    | 集計を子にプッシュしようとします。                                                                   |
-| TopN プッシュダウン    | topn_push_down       | TopN オペレーターをデータ ソースに近い場所にプッシュしようとします。                                               |
-| 再注文に参加          | join_reorder         | 複数テーブルの結合の順序を決定します。                                                                 |
+| **最適化ルール**      | **ルール名**             | **説明**                                                                            |
+| :-------------- | :------------------- | :-------------------------------------------------------------------------------- |
+| カラムの剪定          | column_prune         | 上位エグゼキューターが列を必要としない場合、1 人のオペレーターが列を整理します。                                         |
+| サブクエリの関連付けを解除する | 関連付けを解除する            | 相関サブクエリを非相関結合または集約に書き換えようとします。                                                    |
+| 集計除去            | アグリゲーション_エリミネート      | 実行計画から不要な集計演算子を削除しようとします。                                                         |
+| 突起除去            | プロジェクション_エリミネート      | 実行計画から不要な射影演算子を削除します。                                                             |
+| 最大/最小除去         | max_min_eliminate    | 集計の一部の max/min関数を`order by` + `limit 1`形式に書き換えます。                                 |
+| 述語のプッシュダウン      | predicate_push_down  | データ ソースに近い演算子に述語を押し下げようとします。                                                      |
+| 外部結合の削除         | outer_join_eliminate | 不要な左結合または右結合を実行計画から削除しようとします。                                                     |
+| パーティションの剪定      | partition_processor  | 述語によって拒否されたパーティションを削除し、パーティションテーブルクエリを`UnionAll + Partition Datasource`形式に書き換えます。 |
+| 集計プッシュダウン       | アグリゲーション_プッシュ_ダウン    | 集計を子にプッシュしようとします。                                                                 |
+| TopN プッシュダウン    | topn_push_down       | TopN オペレーターをデータ ソースに近い場所にプッシュしようとします。                                             |
+| 再注文に参加          | join_reorder         | 複数テーブルの結合の順序を決定します。                                                               |
 
 ### 最適化ルールを無効にする {#disable-optimization-rules}
 
@@ -79,7 +79,7 @@ summary: Learn about the blocklist to control the optimization rules and the beh
 | [比較関数と演算子](/functions-and-operators/operators.md#comparison-functions-and-operators) | &lt;、&lt;=、=、!= ( `<>` )、&gt;、&gt;=、 [`&#x3C;=>`](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_equal-to) 、IS NULL、LIKE、IS TRUE、IS [`COALESCE()`](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#function_coalesce) 、 [`IN()`](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#function_in)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | [数値関数と演算子](/functions-and-operators/numeric-functions-and-operators.md)              | +, -, *, /, [`ABS()`](https://dev.mysql.com/doc/refman/5.7/en/mathematical-functions.html#function_abs) , [`CEIL()`](https://dev.mysql.com/doc/refman/5.7/en/mathematical-functions.html#function_ceil) , [`CEILING()`](https://dev.mysql.com/doc/refman/5.7/en/mathematical-functions.html#function_ceiling) , [`FLOOR()`](https://dev.mysql.com/doc/refman/5.7/en/mathematical-functions.html#function_floor)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | [制御フロー関数](/functions-and-operators/control-flow-functions.md)                        | [`CASE`](https://dev.mysql.com/doc/refman/5.7/en/flow-control-functions.html#operator_case) 、 [`IF()`](https://dev.mysql.com/doc/refman/5.7/en/flow-control-functions.html#function_if) 、 [`IFNULL()`](https://dev.mysql.com/doc/refman/5.7/en/flow-control-functions.html#function_ifnull)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| [JSON関数](/functions-and-operators/json-functions.md)                                 | [JSON_TYPE(json_val)](https://dev.mysql.com/doc/refman/5.7/en/json-attribute-functions.html#function_json-type) 、<br/> [JSON_EXTRACT(json_doc, パス[, パス] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-search-functions.html#function_json-extract) 、<br/> [JSON_UNQUOTE(json_val)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-unquote) ,<br/> [JSON_OBJECT(key, val[, key, val] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-creation-functions.html#function_json-object) 、<br/> [JSON_ARRAY([値[, 値] ...])](https://dev.mysql.com/doc/refman/5.7/en/json-creation-functions.html#function_json-array) ,<br/> [JSON_MERGE(json_doc, json_doc[, json_doc] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-merge) ,<br/> [JSON_SET(json_doc, パス, val[, パス, val] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-set) ,<br/> [JSON_INSERT(json_doc, パス, val[, パス, val] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-insert) ,<br/> [JSON_REPLACE(json_doc, パス, val[, パス, val] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-replace) 、<br/> [JSON_REMOVE(json_doc, パス[, パス] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-remove) |
+| [JSON関数](/functions-and-operators/json-functions.md)                                 | [JSON_TYPE(json_val)](https://dev.mysql.com/doc/refman/5.7/en/json-attribute-functions.html#function_json-type) ,<br/> [JSON_EXTRACT(json_doc, パス[, パス] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-search-functions.html#function_json-extract) 、<br/> [JSON_UNQUOTE(json_val)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-unquote) ,<br/> [JSON_OBJECT(key, val[, key, val] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-creation-functions.html#function_json-object) 、<br/> [JSON_ARRAY([値[, 値] ...])](https://dev.mysql.com/doc/refman/5.7/en/json-creation-functions.html#function_json-array) ,<br/> [JSON_MERGE(json_doc, json_doc[, json_doc] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-merge) ,<br/> [JSON_SET(json_doc, パス, val[, パス, val] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-set) ,<br/> [JSON_INSERT(json_doc, パス, val[, パス, val] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-insert) ,<br/> [JSON_REPLACE(json_doc, パス, val[, パス, val] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-replace) 、<br/> [JSON_REMOVE(json_doc, パス[, パス] ...)](https://dev.mysql.com/doc/refman/5.7/en/json-modification-functions.html#function_json-remove) |
 | [日付と時刻関数](/functions-and-operators/date-and-time-functions.md)                       | [`DATE_FORMAT()`](https://dev.mysql.com/doc/refman/5.7/en/date-and-time-functions.html#function_date-format)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ### 特定の式のプッシュダウンを無効にする {#disable-the-pushdown-of-specific-expressions}
@@ -109,8 +109,8 @@ DESC mysql.expr_pushdown_blacklist;
 -   `name` : プッシュダウンが無効になっている関数の名前。
 -   `store_type` : 関数が計算のためにプッシュダウンされないようにするコンポーネントを指定します。使用可能なコンポーネントは`tidb` 、 `tikv` 、および`tiflash`です。 `store_type`は大文字と小文字を区別しません。複数のコンポーネントを指定する必要がある場合は、コンマを使用して各コンポーネントを区切ります。
     -   `store_type`が`tidb`の場合、TiDB メモリ テーブルの読み取り中に他の TiDB サーバーで関数を実行できるかどうかを示します。
-    -   `store_type`が`tikv`の場合、関数が TiKV サーバーのコプロセッサ コンポーネントで実行できるかどうかを示します。
-    -   `store_type`が`tiflash`の場合、関数が TiFlash サーバーのコプロセッサ コンポーネントで実行できるかどうかを示します。
+    -   `store_type`が`tikv`の場合、機能が TiKV サーバーのコプロセッサーコンポーネントで実行できるかどうかを示します。
+    -   `store_type`が`tiflash`の場合、関数がTiFlashサーバーのコプロセッサーコンポーネントで実行できるかどうかを示します。
 -   `reason` : この関数がブロックリストに追加された理由を記録します。
 
 ### 使用法 {#usage}
@@ -182,7 +182,7 @@ DESC mysql.expr_pushdown_blacklist;
     Query OK, 0 rows affected (0.00 sec)
     ```
 
-3.  実行計画を再度観察すると、 `<`番目と`>`番目の演算子の両方が TiKV Coprocessor にプッシュされていないことがわかります。
+3.  実行計画をもう一度観察すると、 `<`番目と`>`番目の演算子の両方が TiKV コプロセッサーにプッシュされていないことがわかります。
 
     
     ```sql
@@ -220,7 +220,7 @@ DESC mysql.expr_pushdown_blacklist;
     Query OK, 0 rows affected (0.00 sec)
     ```
 
-5.  実行計画を再度観察すると、 `<`はプッシュ ダウンされていませんが、 `>`は TiKV コプロセッサにプッシュ ダウンされていることがわかります。
+5.  実行計画を再度観察すると、 `<`はプッシュ ダウンされていませんが、 `>`は TiKV コプロセッサーにプッシュ ダウンされていることがわかります。
 
     
     ```sql

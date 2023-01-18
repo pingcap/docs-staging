@@ -25,6 +25,7 @@ TiDB で同時書き込み負荷の高いワークロードを処理する方法
 CREATE TABLE t (a BIGINT AUTO_RANDOM, b VARCHAR(255), PRIMARY KEY (a));
 CREATE TABLE t (a BIGINT PRIMARY KEY AUTO_RANDOM, b VARCHAR(255));
 CREATE TABLE t (a BIGINT AUTO_RANDOM(6), b VARCHAR(255), PRIMARY KEY (a));
+CREATE TABLE t (a BIGINT AUTO_RANDOM(5, 54), b VARCHAR(255), PRIMARY KEY (a));
 ```
 
 実行可能なコメントでキーワード`AUTO_RANDOM`をラップできます。詳細については、 [TiDB 固有のコメント構文](/comment-syntax.md#tidb-specific-comment-syntax)を参照してください。
@@ -33,6 +34,7 @@ CREATE TABLE t (a BIGINT AUTO_RANDOM(6), b VARCHAR(255), PRIMARY KEY (a));
 CREATE TABLE t (a bigint /*T![auto_rand] AUTO_RANDOM */, b VARCHAR(255), PRIMARY KEY (a));
 CREATE TABLE t (a bigint PRIMARY KEY /*T![auto_rand] AUTO_RANDOM */, b VARCHAR(255));
 CREATE TABLE t (a BIGINT /*T![auto_rand] AUTO_RANDOM(6) */, b VARCHAR(255), PRIMARY KEY (a));
+CREATE TABLE t (a BIGINT  /*T![auto_rand] AUTO_RANDOM(5, 54) */, b VARCHAR(255), PRIMARY KEY (a));
 ```
 
 `INSERT`ステートメントを実行すると、次のようになります。
@@ -72,15 +74,19 @@ tidb> SELECT * FROM t;
 3 rows in set (0.00 sec)
 ```
 
-TiDB によって自動的に割り当てられる`AUTO_RANDOM(S)`列の値は、合計 64 ビットです。 `S`はシャード ビットの数です。値の範囲は`1` ～ `15`です。デフォルト値は`5`です。
+TiDB によって自動的に割り当てられる`AUTO_RANDOM(S, R)`列の値は、合計 64 ビットです。
+
+-   `S`はシャード ビットの数です。値の範囲は`1`から`15`です。デフォルト値は`5`です。
+-   `R`は自動割り当て範囲の全長です。値の範囲は`32`から`64`です。デフォルト値は`64`です。
 
 `AUTO_RANDOM`値の構造は次のとおりです。
 
-| 総ビット数 | 符号ビット   | シャードビット | 自動インクリメント ビット |
-| ----- | ------- | ------- | ------------- |
-| 64ビット | 0/1 ビット | S ビット   | (64-1-S) ビット  |
+| 総ビット数 | 符号ビット   | 予約ビット      | シャードビット | 自動インクリメント ビット |
+| ----- | ------- | ---------- | ------- | ------------- |
+| 64ビット | 0/1 ビット | (64-R) ビット | S ビット   | (R-1-S) ビット   |
 
 -   符号ビットの長さは、 `UNSIGNED`属性の存在によって決まります。 `UNSIGNED`属性がある場合、長さは`0`です。それ以外の場合、長さは`1`です。
+-   予約ビットの長さは`64-R`です。予約ビットは常に`0`です。
 -   シャード ビットの内容は、現在のトランザクションの開始時刻のハッシュ値を計算することによって取得されます。別の長さのシャード ビット (10 など) を使用するには、テーブルの作成時に`AUTO_RANDOM(10)`を指定します。
 -   自動インクリメント ビットの値は、ストレージ エンジンに格納され、順番に割り当てられます。新しい値が割り当てられるたびに、値は 1 ずつインクリメントされます。自動インクリメント ビットは、 `AUTO_RANDOM`の値がグローバルに一意であることを保証します。自動インクリメント ビットが使い果たされると、値が再度割り当てられるときにエラー`Failed to read auto-increment value from storage engine`が報告されます。
 
@@ -90,6 +96,11 @@ TiDB によって自動的に割り当てられる`AUTO_RANDOM(S)`列の値は�
 >
 > -   合計 64 の使用可能なビットがあるため、シャード ビット長は自動インクリメント ビット長に影響します。つまり、シャード ビットの長さが増加すると、自動インクリメント ビットの長さが減少し、逆もまた同様です。したがって、割り当てられた値のランダム性と使用可能なスペースのバランスを取る必要があります。
 > -   ベスト プラクティスは、シャード ビットを`log(2, x)`に設定することです。ここで、 `x`はストレージ エンジンの現在の数です。たとえば、TiDB クラスターに 16 個の TiKV ノードがある場合、シャード ビットを`log(2, 16)` 、つまり`4`に設定できます。すべてのリージョンが各 TiKV ノードに均等にスケジュールされた後、バルク書き込みの負荷を異なる TiKV ノードに均等に分散して、リソースの使用率を最大化できます。
+>
+> 範囲の選択 ( `R` ):
+>
+> -   通常、アプリケーションの数値型が完全な 64 ビット整数を表すことができない場合は、 `R`パラメータを設定する必要があります。
+> -   たとえば、JSON 番号の範囲は`[-2^53+1, 2^53-1]`です。 TiDB は、この範囲外の整数を`AUTO_RANDOM(5)`の列に簡単に割り当てることができ、アプリケーションが列を読み取るときに予期しない動作を引き起こします。この場合、 `AUTO_RANDOM(5)`を`AUTO_RANDOM(5, 54)`に置き換えることができ、TiDB は列に`9007199254740991` (2^53-1) より大きい整数を割り当てません。
 
 `AUTO_RANDOM`列に暗黙的に割り当てられた値は`last_insert_id()`に影響します。 TiDB が最後に暗黙的に割り当てた ID を取得するには、 `SELECT last_insert_id ()`ステートメントを使用できます。
 

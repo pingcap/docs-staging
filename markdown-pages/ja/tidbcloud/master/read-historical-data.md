@@ -45,7 +45,7 @@ TiDB では、ガベージ コレクション (GC) が定期的に実行され�
 次の点に特に注意してください。
 
 -   [`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50) : このシステム変数は、以前の変更の保持時間を構成するために使用されます (デフォルト: `10m0s` )。
--   `SELECT * FROM mysql.tidb WHERE variable_name = 'tikv_gc_safe_point'`の出力。これまでの履歴データを読み取ることができる現在の`safePoint`です。ガベージ コレクション プロセスが実行されるたびに更新されます。
+-   `SELECT * FROM mysql.tidb WHERE variable_name = 'tikv_gc_safe_point'`の出力。これまでの履歴データを読み取ることができる現在の`safePoint`です。ガベージコレクションプロセスが実行されるたびに更新されます。
 
 ## 例 {#example}
 
@@ -174,4 +174,4 @@ SET GLOBAL tidb_gc_life_time="60m";
 
 -   単純なケースでは、変数`tidb_snapshot`を設定した後に`SELECT`を使用して出力をコピー アンド ペーストするか、 `SELECT ... INTO LOCAL OUTFLE`を使用して`LOAD DATA`を使用して後でデータをインポートします。
 
--   履歴スナップショットをエクスポートするには、 [Dumpling](/dumpling-overview.md#export-historical-data-snapshot-of-tidb)を使用します。 Dumplingは、より大きなデータ セットのエクスポートに適しています。
+-   履歴スナップショットをエクスポートするには、 [Dumpling](/dumpling-overview.md#export-historical-data-snapshots-of-tidb)を使用します。 Dumplingは、より大きなデータ セットのエクスポートに適しています。

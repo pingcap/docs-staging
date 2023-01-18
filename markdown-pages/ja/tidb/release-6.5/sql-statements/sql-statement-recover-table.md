@@ -16,7 +16,7 @@ RECOVER TABLE table_name;
 
 
 ```sql
-RECOVER TABLE BY JOB ddl_job_id;
+RECOVER TABLE BY JOB JOB_ID;
 ```
 
 ## あらすじ {#synopsis}

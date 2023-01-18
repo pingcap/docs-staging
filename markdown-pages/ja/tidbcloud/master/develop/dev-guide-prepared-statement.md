@@ -18,7 +18,6 @@ summary: Learn about how to use the TiDB prepared statements.
 
 ### プリペアドステートメントを作成する {#create-a-prepared-statement}
 
-
 ```sql
 PREPARE {prepared_statement_name} FROM '{prepared_statement_sql}';
 ```
@@ -34,7 +33,6 @@ PREPARE {prepared_statement_name} FROM '{prepared_statement_sql}';
 
 プリペアドステートメントは**ユーザー変数**のみをパラメーターとして使用できるため、 [`EXECUTE`ステートメント](/sql-statements/sql-statement-execute.md)がプリペアドステートメントを呼び出す前に、 [`SET`ステートメント](/sql-statements/sql-statement-set-variable.md)を使用して変数を設定します。
 
-
 ```sql
 SET @{parameter_name} = {parameter_value};
 EXECUTE {prepared_statement_name} USING @{parameter_name};
@@ -49,7 +47,6 @@ EXECUTE {prepared_statement_name} USING @{parameter_name};
 詳細については、 [`EXECUTE`ステートメント](/sql-statements/sql-statement-execute.md)を参照してください。
 
 ### プリペアドステートメントを削除する {#delete-the-prepared-statement}
-
 
 ```sql
 DEALLOCATE PREPARE {prepared_statement_name};
@@ -73,7 +70,6 @@ DEALLOCATE PREPARE {prepared_statement_name};
 
 <div label="SQL" value="sql">
 
-
 ```sql
 PREPARE `books_query` FROM 'SELECT * FROM `books` WHERE `id` = ?';
 ```
@@ -84,7 +80,6 @@ PREPARE `books_query` FROM 'SELECT * FROM `books` WHERE `id` = ?';
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-
 ```sql
 SET @id = 1;
 ```
@@ -94,7 +89,6 @@ SET @id = 1;
 ```
 Query OK, 0 rows affected (0.04 sec)
 ```
-
 
 ```sql
 EXECUTE `books_query` USING @id;
@@ -114,7 +108,6 @@ EXECUTE `books_query` USING @id;
 </div>
 
 <div label="Java" value="java">
-
 
 ```java
 // ds is an entity of com.mysql.cj.jdbc.MysqlDataSource
@@ -148,7 +141,6 @@ try (Connection connection = ds.getConnection()) {
 
 <div label="SQL" value="sql">
 
-
 ```sql
 PREPARE `books_insert` FROM 'INSERT INTO `books` (`title`, `type`, `stock`, `price`, `published_at`) VALUES (?, ?, ?, ?, ?);';
 ```
@@ -158,7 +150,6 @@ PREPARE `books_insert` FROM 'INSERT INTO `books` (`title`, `type`, `stock`, `pri
 ```
 Query OK, 0 rows affected (0.03 sec)
 ```
-
 
 ```sql
 SET @title = 'TiDB Developer Guide';
@@ -174,7 +165,6 @@ SET @published_at = NOW();
 Query OK, 0 rows affected (0.04 sec)
 ```
 
-
 ```sql
 EXECUTE `books_insert` USING @title, @type, @stock, @price, @published_at;
 ```
@@ -188,7 +178,6 @@ Query OK, 1 row affected (0.03 sec)
 </div>
 
 <div label="Java" value="java">
-
 
 ```java
 try (Connection connection = ds.getConnection()) {
@@ -226,10 +215,10 @@ jdbc:mysql://127.0.0.1:4000/test?user=root&useConfigs=maxPerformance&useServerPr
 
 データを挿入するときに他の JDBC パラメータを変更する必要がある場合は、第[行を挿入する](/develop/dev-guide-insert-data.md#insert-rows)章も参照してください。
 
-Java での完全な例については、以下を参照してください。
+Javaでの完全な例については、以下を参照してください。
 
--   [TiDB と Java を使用して単純な CRUD アプリを構築する - JDBC を使用する](/develop/dev-guide-sample-application-java.md#step-2-get-the-code)
--   [TiDB と Java を使用して単純な CRUD アプリを構築する - Hibernate を使用する](/develop/dev-guide-sample-application-java.md#step-2-get-the-code)
+-   [TiDB とJavaを使用して単純な CRUD アプリを構築する - JDBC を使用する](/develop/dev-guide-sample-application-java.md#step-2-get-the-code)
+-   [TiDB とJavaを使用して単純な CRUD アプリを構築する - Hibernate を使用する](/develop/dev-guide-sample-application-java.md#step-2-get-the-code)
 -   [Spring Boot を使用して TiDB アプリケーションをビルドする](/develop/dev-guide-sample-application-spring-boot.md)
 
 </div>

@@ -5,40 +5,39 @@ summary: Learn about optimistic and pessimistic transactions in TiDB.
 
 # 楽観的な取引と悲観的な取引 {#optimistic-transactions-and-pessimistic-transactions}
 
-[楽観的な取引](/optimistic-transaction.md)モデルはトランザクションを直接コミットし、競合が発生するとロールバックします。対照的に、モデル[悲観的な取引](/pessimistic-transaction.md)は、実際にトランザクションをコミットする前に変更が必要なリソースをロックしようとし、トランザクションが正常に実行されることを確認してからコミットを開始します。
+[楽観的取引](/optimistic-transaction.md)モデルはトランザクションを直接コミットし、競合が発生するとロールバックします。対照的に、モデル[悲観的取引](/pessimistic-transaction.md)は、実際にトランザクションをコミットする前に変更が必要なリソースをロックしようとし、トランザクションが正常に実行されることを確認してからコミットを開始します。
 
-オプティミスティック トランザクション モデルは、直接コミットが成功する可能性が高いため、競合率が低いシナリオに適しています。ただし、トランザクションの競合が発生すると、ロールバックのコストが比較的高くなります。
+楽観的トランザクション モデルは、直接コミットが成功する可能性が高いため、競合率が低いシナリオに適しています。ただし、トランザクションの競合が発生すると、ロールバックのコストが比較的高くなります。
 
-悲観的トランザクション モデルの利点は、競合率が高いシナリオでは、先にロックするコストが後でロールバックするコストよりも少ないことです。さらに、複数の同時トランザクションが競合のためにコミットに失敗するという問題を解決できます。ただし、競合率が低いシナリオでは、悲観的なトランザクション モデルは楽観的なトランザクション モデルほど効率的ではありません。
+悲観的トランザクション モデルの利点は、競合率が高いシナリオでは、先にロックするコストが後でロールバックするコストよりも少ないことです。さらに、複数の同時トランザクションが競合のためにコミットに失敗するという問題を解決できます。ただし、競合率が低いシナリオでは、悲観的トランザクション モデルは楽観的トランザクション モデルほど効率的ではありません。
 
-悲観的なトランザクション モデルは、アプリケーション側での実装がより直感的で簡単です。楽観的なトランザクション モデルには、複雑なアプリケーション側の再試行メカニズムが必要です。
+悲観的トランザクション モデルは、アプリケーション側での実装がより直感的で簡単です。楽観的トランザクション モデルには、複雑なアプリケーション側の再試行メカニズムが必要です。
 
-以下は[書店](/develop/dev-guide-bookshop-schema-design.md)の例です。本の購入を例に、楽観的な取引と悲観的な取引の長所と短所を示します。本を購入するプロセスは、主に次のとおりです。
+以下は[書店](/develop/dev-guide-bookshop-schema-design.md)の例です。本の購入を例に、楽観的な取引と悲観的取引の長所と短所を示します。本を購入するプロセスは、主に次のとおりです。
 
 1.  在庫数を更新する
 2.  注文を作成する
-3.  支払いをする
+3.  支払いを行う
 
 これらの操作は、すべて成功するか、すべて失敗する必要があります。同時トランザクションの場合に過剰販売が発生しないようにする必要があります。
 
 ## 悲観的な取引 {#pessimistic-transactions}
 
-次のコードは、2 つのスレッドを使用して、2 人のユーザーが悲観的なトランザクション モードで同じ本を購入するプロセスをシミュレートします。書店に10冊残っています。ボブは 6 冊の本を購入し、アリスは 4 冊の本を購入します。彼らはほぼ同時に注文を完了します。その結果、在庫の本はすべて売り切れました。
+次のコードは、2 つのスレッドを使用して、2 人のユーザーが悲観的トランザクション モードで同じ本を購入するプロセスをシミュレートします。書店に10冊残っています。ボブは 6 冊の本を購入し、アリスは 4 冊の本を購入します。彼らはほぼ同時に注文を完了します。その結果、在庫の本はすべて売り切れました。
 
 <SimpleTab groupId="language">
 
 <div label="Java" value="java">
 
-複数のスレッドを使用して複数のユーザーが同時にデータを挿入する状況をシミュレートするため、安全なスレッドで接続オブジェクトを使用する必要があります。ここでは、Java の一般的な接続プール[光CP](https://github.com/brettwooldridge/HikariCP)をデモに使用します。
+複数のスレッドを使用して複数のユーザーが同時にデータを挿入する状況をシミュレートするため、安全なスレッドで接続オブジェクトを使用する必要があります。ここでは、Java の一般的な接続プール[HikariCP](https://github.com/brettwooldridge/HikariCP)をデモに使用します。
 
 </div>
 
 <div label="Golang" value="golang">
 
-Golang の`sql.DB`は同時実行セーフであるため、サードパーティのパッケージをインポートする必要はありません。
+Golangの`sql.DB`は同時実行セーフであるため、サードパーティのパッケージをインポートする必要はありません。
 
 TiDB トランザクションを適応させるには、次のコードに従ってツールキット[ユーティリティ](https://github.com/pingcap-inc/tidb-example-golang/tree/main/util)を作成します。
-
 
 ```go
 package util
@@ -94,7 +93,7 @@ func (tx *TiDBSqlTx) Rollback() error {
 
 </SimpleTab>
 
-### 悲観的なトランザクションの例を書く {#write-a-pessimistic-transaction-example}
+### 悲観的トランザクションの例を書く {#write-a-pessimistic-transaction-example}
 
 <SimpleTab groupId="language">
 
@@ -103,7 +102,6 @@ func (tx *TiDBSqlTx) Rollback() error {
 **Configuration / コンフィグレーションファイル**
 
 パッケージの管理に Maven を使用する場合は、 `<dependencies>`ノードの`pom.xml`で、以下の依存関係を import `HikariCP`に追加し、パッケージング ターゲットと、JAR パッケージ起動のメイン クラスを設定します。以下は`pom.xml`の例です。
-
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -182,7 +180,6 @@ func (tx *TiDBSqlTx) Rollback() error {
 **コーディング**
 
 次に、コードを記述します。
-
 
 ```java
 package com.pingcap.txn;
@@ -332,7 +329,6 @@ public class TxnExample {
 <div label="Golang" value="golang">
 
 必要なデータベース操作を含む`helper.go`のファイルを作成します。
-
 
 ```go
 package main
@@ -582,7 +578,6 @@ func createUser(txn *util.TiDBSqlTx, id int, nickname string, balance decimal.De
 
 次に、 `main`関数で`txn.go`を書き込んで`helper.go`を呼び出し、着信コマンド ライン引数を処理します。
 
-
 ```go
 package main
 
@@ -647,7 +642,7 @@ func parseParams() (optimistic bool, alice, bob int) {
 }
 ```
 
-Golang の例には、楽観的トランザクションが既に含まれています。
+Golangの例には、楽観的トランザクションが既に含まれています。
 
 </div>
 
@@ -661,7 +656,6 @@ Golang の例には、楽観的トランザクションが既に含まれてい�
 
 <div label="Java" value="java">
 
-
 ```shell
 mvn clean package
 java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_NUM=6
@@ -670,7 +664,6 @@ java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_
 </div>
 
 <div label="Golang" value="golang">
-
 
 ```shell
 go build -o bin/txn
@@ -682,7 +675,6 @@ go build -o bin/txn
 </SimpleTab>
 
 SQL ログ:
-
 
 ```sql
 /* txn 1 */ BEGIN PESSIMISTIC
@@ -739,7 +731,6 @@ mysql> SELECT * FROM users;
 
 <div label="Java" value="java">
 
-
 ```shell
 mvn clean package
 java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_NUM=7
@@ -749,7 +740,6 @@ java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_
 
 <div label="Golang" value="golang">
 
-
 ```shell
 go build -o bin/txn
 ./bin/txn -a 4 -b 7
@@ -758,7 +748,6 @@ go build -o bin/txn
 </div>
 
 </SimpleTab>
-
 
 ```sql
 /* txn 1 */ BEGIN PESSIMISTIC
@@ -806,16 +795,15 @@ mysql> SELECT * FROM users;
 
 ## 楽観的な取引 {#optimistic-transactions}
 
-次のコードは、2 つのスレッドを使用して、悲観的なトランザクションの例と同様に、楽観的なトランザクションで 2 人のユーザーが同じ本を購入するプロセスをシミュレートします。在庫は残り10冊です。 Bob は 6 を購入し、Alice は 4 を購入します。2 人はほぼ同時に注文を完了します。結局、本は在庫に残っていません。
+次のコードは、2 つのスレッドを使用して、悲観的トランザクションの例と同様に、楽観的トランザクションで 2 人のユーザーが同じ本を購入するプロセスをシミュレートします。在庫は残り10冊です。 Bob は 6 を購入し、Alice は 4 を購入します。2 人はほぼ同時に注文を完了します。結局、本は在庫に残っていません。
 
-### 楽観的なトランザクションの例を書く {#write-an-optimistic-transaction-example}
+### 楽観的トランザクションの例を書く {#write-an-optimistic-transaction-example}
 
 <SimpleTab groupId="language">
 
 <div label="Java" value="java">
 
 **コーディング**
-
 
 ```java
 package com.pingcap.txn.optimistic;
@@ -977,13 +965,11 @@ public class TxnExample {
 
 `pom.xml`のスタートアップ クラスを変更します。
 
-
 ```xml
 <mainClass>com.pingcap.txn.TxnExample</mainClass>
 ```
 
-オプティミスティック トランザクションの例を指すように、次のように変更します。
-
+楽観的トランザクションの例を指すように、次のように変更します。
 
 ```xml
 <mainClass>com.pingcap.txn.optimistic.TxnExample</mainClass>
@@ -993,7 +979,7 @@ public class TxnExample {
 
 <div label="Golang" value="golang">
 
-[悲観的なトランザクションの例を書く](#write-a-pessimistic-transaction-example)節の Golang の例は、すでに楽観的トランザクションをサポートしており、変更なしで直接使用できます。
+[悲観的トランザクションの例を書く](#write-a-pessimistic-transaction-example)節のGolangの例は、すでに楽観的トランザクションをサポートしており、変更なしで直接使用できます。
 
 </div>
 
@@ -1007,7 +993,6 @@ public class TxnExample {
 
 <div label="Java" value="java">
 
-
 ```shell
 mvn clean package
 java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_NUM=6
@@ -1016,7 +1001,6 @@ java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_
 </div>
 
 <div label="Golang" value="golang">
-
 
 ```shell
 go build -o bin/txn
@@ -1028,7 +1012,6 @@ go build -o bin/txn
 </SimpleTab>
 
 SQL ステートメントの実行プロセス:
-
 
 ```sql
     /* txn 2 */ BEGIN OPTIMISTIC
@@ -1053,7 +1036,7 @@ retry 1 times for 9007 Write conflict, txnStartTS=432618733006225412, conflictSt
 
 楽観的トランザクションモードでは、中間状態が必ずしも正しいとは限らないため、悲観的トランザクションモードのように`affected_rows`を通じてステートメントが正常に実行されたかどうかを判断することはできません。トランザクション全体を考慮し、最後の`COMMIT`のステートメントが例外を返すかどうかをチェックして、現在のトランザクションに書き込み競合があるかどうかを判断する必要があります。
 
-上記のSQLログからわかるように、2つのトランザクションが同時に実行され、同じレコードが変更されるため、 `txn 1`のCOMMITの後に`9007 Write conflict`の例外がスローされます。オプティミスティック トランザクション モードでの書き込み競合については、アプリケーション側で安全に再試行できます。 1 回再試行すると、データは正常にコミットされます。最終的な実行結果は期待どおりです。
+上記のSQLログからわかるように、2つのトランザクションが同時に実行され、同じレコードが変更されるため、 `txn 1`のCOMMITの後に`9007 Write conflict`の例外がスローされます。楽観的トランザクション モードでの書き込み競合については、アプリケーション側で安全に再試行できます。 1 回再試行すると、データは正常にコミットされます。最終的な実行結果は期待どおりです。
 
 ```sql
 mysql> SELECT * FROM books;
@@ -1085,14 +1068,13 @@ mysql> SELECT * FROM users;
 
 ### 売り過ぎ防止の例 {#an-example-that-prevents-overselling}
 
-このセクションでは、過剰販売を防止する楽観的なトランザクションの例について説明します。在庫に10冊の本が残っているとします。ボブは本を 7 冊購入し、アリスは本を 4 冊購入します。彼らはほぼ同時に注文を出します。何が起こるか？オプティミスティック トランザクションの例のコードを再利用して、この要件に対処できます。ボブの購入数を 6 から 7 に変更します。
+このセクションでは、過剰販売を防止する楽観的トランザクションの例について説明します。在庫に10冊の本が残っているとします。ボブは本を 7 冊購入し、アリスは本を 4 冊購入します。彼らはほぼ同時に注文を出します。何が起こるか？楽観的トランザクションの例のコードを再利用して、この要件に対処できます。ボブの購入数を 6 から 7 に変更します。
 
 サンプル プログラムを実行します。
 
 <SimpleTab groupId="language">
 
 <div label="Java" value="java">
-
 
 ```shell
 mvn clean package
@@ -1103,7 +1085,6 @@ java -jar target/plain-java-txn-0.0.1-jar-with-dependencies.jar ALICE_NUM=4 BOB_
 
 <div label="Golang" value="golang">
 
-
 ```shell
 go build -o bin/txn
 ./bin/txn -a 4 -b 7 -o true
@@ -1112,7 +1093,6 @@ go build -o bin/txn
 </div>
 
 </SimpleTab>
-
 
 ```sql
 /* txn 1 */ BEGIN OPTIMISTIC

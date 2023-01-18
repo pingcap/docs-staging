@@ -28,7 +28,6 @@ CREATE VIEW view_name AS query;
 
 後続のクエリの便宜上、次のステートメントを使用してクエリをビューとして定義できます。
 
-
 ```sql
 CREATE VIEW book_with_ratings AS
 SELECT b.id AS book_id, ANY_VALUE(b.title) AS book_title, AVG(r.score) AS average_score
@@ -40,7 +39,6 @@ GROUP BY b.id;
 ## クエリ ビュー {#query-views}
 
 ビューが作成されると、 `SELECT`ステートメントを使用して、通常のテーブルと同じようにビューをクエリできます。
-
 
 ```sql
 SELECT * FROM book_with_ratings LIMIT 10;
@@ -55,7 +53,6 @@ TiDB がビューにクエリを実行すると、ビューに関連付けられ
 -   `DROP VIEW view_name;`ステートメントで古いビューを削除してから、 `CREATE VIEW view_name AS query;`ステートメントで新しいビューを作成してビューを更新します。
 -   `CREATE OR REPLACE VIEW view_name AS query;`ステートメントを使用して、既存のビューを同じ名前で上書きします。
 
-
 ```sql
 CREATE OR REPLACE VIEW book_with_ratings AS
 SELECT b.id AS book_id, ANY_VALUE(b.title), ANY_VALUE(b.published_at) AS book_title, AVG(r.score) AS average_score
@@ -67,7 +64,6 @@ GROUP BY b.id;
 ## ビュー関連の情報を取得する {#get-view-related-information}
 
 ### <code>SHOW CREATE TABLE|VIEW view_name</code>ステートメントの使用 {#using-the-code-show-create-table-view-view-name-code-statement}
-
 
 ```sql
 SHOW CREATE VIEW book_with_ratings\G
@@ -85,7 +81,6 @@ collation_connection: utf8mb4_general_ci
 ```
 
 ### <code>INFORMATION_SCHEMA.VIEWS</code>テーブルをクエリします。 {#query-the-code-information-schema-views-code-table}
-
 
 ```sql
 SELECT * FROM information_schema.views WHERE TABLE_NAME = 'book_with_ratings'\G
@@ -111,7 +106,6 @@ COLLATION_CONNECTION: utf8mb4_general_ci
 ## ビューを削除 {#drop-views}
 
 ビューをドロップするには、 `DROP VIEW view_name;`ステートメントを使用します。
-
 
 ```sql
 DROP VIEW book_with_ratings;

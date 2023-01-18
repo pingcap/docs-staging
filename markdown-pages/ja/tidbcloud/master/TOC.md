@@ -16,12 +16,12 @@
 -   アプリケーションの開発
     -   [概要](/develop/dev-guide-overview.md)
     -   クイックスタート
-        -   [TiDB Cloud(サーバーレス層) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
+        -   [TiDB Cloud(Serverless Tier) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
         -   [TiDB の CRUD SQL](/develop/dev-guide-tidb-crud-sql.md)
     -   応用例
-        -   [ジャワ](/develop/dev-guide-sample-application-java.md)
+        -   [Java](/develop/dev-guide-sample-application-java.md)
         -   [Java (スプリング ブート)](/develop/dev-guide-sample-application-spring-boot.md)
-        -   [ゴラン](/develop/dev-guide-sample-application-golang.md)
+        -   [Golang](/develop/dev-guide-sample-application-golang.md)
     -   TiDB に接続する
         -   [Driverまたは ORM を選択](/develop/dev-guide-choose-driver-or-orm.md)
         -   [接続プールと接続パラメータ](/develop/dev-guide-connection-parameters.md)
@@ -34,6 +34,7 @@
         -   [データの挿入](/develop/dev-guide-insert-data.md)
         -   [データの更新](/develop/dev-guide-update-data.md)
         -   [データの削除](/develop/dev-guide-delete-data.md)
+        -   [TTL (Time to Live) を使用して期限切れのデータを定期的に削除する](/time-to-live.md)
         -   [準備されたステートメント](/develop/dev-guide-prepared-statement.md)
     -   データの読み取り
         -   [単一のテーブルからのデータのクエリ](/develop/dev-guide-get-data-from-single-table.md)
@@ -44,7 +45,7 @@
         -   [一時テーブル](/develop/dev-guide-use-temporary-tables.md)
         -   [共通テーブル式](/develop/dev-guide-use-common-table-expression.md)
         -   レプリカ データの読み取り
-            -   [フォロワー読み取り](/develop/dev-guide-use-follower-read.md)
+            -   [Follower Read](/develop/dev-guide-use-follower-read.md)
             -   [ステイル読み取り](/develop/dev-guide-use-stale-read.md)
         -   [HTAP クエリ](/develop/dev-guide-hybrid-oltp-and-olap-queries.md)
     -   取引
@@ -76,44 +77,53 @@
         -   [サードパーティ製ツールとの既知の非互換性の問題](/develop/dev-guide-third-party-tools-compatibility.md)
 -   クラスタの管理
     -   クラスタを計画する
-        -   [クラスタ層を選択する](/tidb-cloud/select-cluster-tier.md)
+        -   [Cluster Tierを選択する](/tidb-cloud/select-cluster-tier.md)
         -   [TiDB のサイズを決定する](/tidb-cloud/size-your-cluster.md)
         -   [TiDB Cloudパフォーマンス リファレンス](/tidb-cloud/tidb-cloud-performance-reference.md)
     -   [TiDBクラスタを作成する](/tidb-cloud/create-tidb-cluster.md)
     -   TiDBクラスタに接続する
-        -   [SQL クライアント経由で接続する](/tidb-cloud/connect-to-tidb-cluster.md)
-        -   [SQL シェル経由で接続](/tidb-cloud/connect-to-tidb-cluster.md#connect-via-sql-shell)
-    -   [プライベート エンドポイント接続のセットアップ](/tidb-cloud/set-up-private-endpoint-connections.md)
-    -   [VPC ピアリング接続のセットアップ](/tidb-cloud/set-up-vpc-peering-connections.md)
-    -   TiFlash で HTAPクラスタを使用する
+        -   [接続方法の概要](/tidb-cloud/connect-to-tidb-cluster.md)
+        -   [標準接続で接続する](/tidb-cloud/connect-via-standard-connection.md)
+        -   [プライベート エンドポイント経由で接続する](/tidb-cloud/set-up-private-endpoint-connections.md)
+        -   [VPC ピアリング経由で接続](/tidb-cloud/set-up-vpc-peering-connections.md)
+        -   [SQL シェル経由で接続](/tidb-cloud/connect-via-sql-shell.md)
+    -   TiFlashで HTAPクラスタを使用する
         -   [TiFlash の概要](/tiflash/tiflash-overview.md)
-        -   [TiFlash レプリカの作成](/tiflash/create-tiflash-replicas.md)
-        -   [TiFlash からのデータの読み取り](/tiflash/use-tidb-to-read-tiflash.md)
+        -   [TiFlashレプリカの作成](/tiflash/create-tiflash-replicas.md)
+        -   [TiFlashからのデータの読み取り](/tiflash/use-tidb-to-read-tiflash.md)
         -   [MPP モードを使用する](/tiflash/use-tiflash-mpp-mode.md)
         -   [サポートされているプッシュダウン計算](/tiflash/tiflash-supported-pushdown-calculations.md)
+        -   [TiFlashクエリ結果の実体化](/tiflash/tiflash-results-materialization.md)
         -   [互換性](/tiflash/tiflash-compatibility.md)
     -   [TiDBクラスタのスケーリング](/tidb-cloud/scale-tidb-cluster.md)
     -   [TiDBクラスタを一時停止または再開する](/tidb-cloud/pause-or-resume-tidb-cluster.md)
     -   [TiDBクラスタをアップグレードする](/tidb-cloud/upgrade-tidb-cluster.md)
     -   [TiDBクラスタを削除する](/tidb-cloud/delete-tidb-cluster.md)
--   データの移行
-    -   [サンプル データのインポート](/tidb-cloud/import-sample-data.md)
-    -   データを TiDB に移行する
-        -   [概要](/tidb-cloud/tidb-cloud-migration-overview.md)
+-   データの移行またはインポート
+    -   [概要](/tidb-cloud/tidb-cloud-migration-overview.md)
+    -   データをTiDB Cloudに移行する
+        -   [データ移行を使用して MySQL 互換データベースから移行する](/tidb-cloud/migrate-from-mysql-using-data-migration.md)
+        -   [大規模なデータセットの MySQL シャードを移行およびマージする](/tidb-cloud/migrate-sql-shards.md)
+        -   [オンプレミス TiDB からTiDB Cloudへの移行](/tidb-cloud/migrate-from-op-tidb.md)
+        -   [AWS DMS を使用して MySQL 互換データベースから移行する](/tidb-cloud/migrate-from-mysql-using-aws-dms.md)
+        -   [AWS DMS を使用して Amazon RDS for Oracle から移行する](/tidb-cloud/migrate-from-oracle-using-aws-dms.md)
+    -   TiDB Cloudへのデータのインポート
+        -   [ローカル ファイルのインポート](/tidb-cloud/tidb-cloud-import-local-files.md)
+        -   [サンプルデータのインポート (SQL ファイル)](/tidb-cloud/import-sample-data.md)
+        -   [Amazon S3 または GCS から CSV ファイルをインポートする](/tidb-cloud/import-csv-files.md)
+        -   [Amazon S3 または GCS から Apache Parquet ファイルをインポートする](/tidb-cloud/import-parquet-files.md)
+    -   [TiDB からのデータのエクスポート](/tidb-cloud/export-data-from-tidb-cloud.md)
+    -   参照
         -   [Amazon S3 アクセスと GCS アクセスの設定](/tidb-cloud/config-s3-and-gcs-access.md)
         -   [データ インポートの命名規則](/tidb-cloud/naming-conventions-for-data-import.md)
-        -   [データ移行を使用して MySQL 互換データベースから移行する](/tidb-cloud/migrate-from-mysql-using-data-migration.md)
-        -   データ インポートを使用して MySQL 互換のオンプレミス データベースから移行する
-            -   [MySQL 互換データベースからの移行](/tidb-cloud/migrate-data-into-tidb.md)
-            -   [MySQL 互換データベースからの増分データの移行](/tidb-cloud/migrate-incremental-data-from-mysql.md)
-            -   [大規模なデータセットの MySQL シャードを移行およびマージする](/tidb-cloud/migrate-sql-shards.md)
-        -   パブリック クラウド ストレージからの移行
-            -   [Amazon Aurora MySQL から一括で移行する](/tidb-cloud/migrate-from-aurora-bulk-import.md)
-            -   [Amazon S3 または GCS からTiDB Cloudへのインポートまたは移行](/tidb-cloud/migrate-from-amazon-s3-or-gcs.md)
-            -   [Amazon S3 または GCS からTiDB Cloudに CSV ファイルをインポートする](/tidb-cloud/import-csv-files.md)
-            -   [Amazon S3 または GCS からTiDB Cloudに Apache Parquet ファイルをインポートする](/tidb-cloud/import-parquet-files.md)
+        -   [データをインポートするための CSV 構成](/tidb-cloud/csv-config-for-import-data.md)
         -   [Amazon S3 からのデータ インポート中のアクセス拒否エラーのトラブルシューティング](/tidb-cloud/troubleshoot-import-access-denied-error.md)
-    -   [TiDB からのデータのエクスポート](/tidb-cloud/export-data-from-tidb-cloud.md)
+-   データを調べる
+    -   [Chat2Query (ベータ)](/tidb-cloud/explore-data-with-chat2query.md)
+-   ストリーム データ
+    -   [チェンジフィードの概要](/tidb-cloud/changefeed-overview.md)
+    -   [MySQL シンクへ](/tidb-cloud/changefeed-sink-to-mysql.md)
+    -   [カフカシンクへ](/tidb-cloud/changefeed-sink-to-apache-kafka.md)
 -   バックアップと復元
     -   [自動バックアップ](/tidb-cloud/backup-and-restore.md)
     -   [手動バックアップ](/tidb-cloud/backup-and-restore.md#manual-backup)
@@ -166,29 +176,46 @@
             -   [SQL計画管理](/sql-plan-management.md)
             -   [最適化ルールのブロックリストと式のプッシュダウン](/blocklist-control-plan.md)
     -   [TiKV Follower Readの調整](/follower-read.md)
-    -   [コプロセッサ キャッシュ](/coprocessor-cache.md)
+    -   [コプロセッサーキャッシュ](/coprocessor-cache.md)
     -   ガベージ コレクション (GC)
         -   [概要](/garbage-collection-overview.md)
         -   [Configuration / コンフィグレーション](/garbage-collection-configuration.md)
-    -   [TiFlash のパフォーマンスを調整する](/tiflash/tune-tiflash-performance.md)
+    -   [TiFlashパフォーマンスの調整](/tiflash/tune-tiflash-performance.md)
 -   安全
-    -   [コンソール ユーザー アクセスの管理](/tidb-cloud/manage-user-access.md)
-    -   [クラスタセキュリティ設定の構成](/tidb-cloud/configure-security-settings.md)
-    -   [データベース監査ログ](/tidb-cloud/tidb-cloud-auditing.md)
-    -   [サーバーレス層クラスターへのセキュリティ接続](/tidb-cloud/secure-connections-to-serverless-tier-clusters.md)
+    -   ID アクセス制御
+        -   [パスワード認証](/tidb-cloud/tidb-cloud-password-authentication.md)
+        -   [SSO 認証](/tidb-cloud/tidb-cloud-sso-authentication.md)
+        -   [ID アクセス管理](/tidb-cloud/manage-user-access.md)
+    -   ネットワーク アクセス制御
+        -   [IP アクセス リストの構成](/tidb-cloud/configure-ip-access-list.md)
+        -   [プライベート エンドポイント経由で接続する](/tidb-cloud/set-up-private-endpoint-connections.md)
+        -   [VPC ピアリング経由で接続](/tidb-cloud/set-up-vpc-peering-connections.md)
+        -   [Serverless Tierへの TLS 接続](/tidb-cloud/secure-connections-to-serverless-tier-clusters.md)
+    -   データベースのアクセス制御
+        -   [クラスタセキュリティ設定の構成](/tidb-cloud/configure-security-settings.md)
+    -   監査管理
+        -   [データベース監査ログ](/tidb-cloud/tidb-cloud-auditing.md)
 -   請求する
     -   [請求書](/tidb-cloud/tidb-cloud-billing.md#invoices)
     -   [支払明細](/tidb-cloud/tidb-cloud-billing.md#billing-details)
     -   [クレジット](/tidb-cloud/tidb-cloud-billing.md#credits)
     -   [お支払い方法の設定](/tidb-cloud/tidb-cloud-billing.md#payment-method)
+    -   [AWS または GCP Marketplace からの請求](/tidb-cloud/tidb-cloud-billing.md#billing-from-aws-marketplace-or-google-cloud-marketplace)
+    -   [Changefeed の請求](/tidb-cloud/tidb-cloud-billing-ticdc-rcu.md)
+    -   [データ移行の課金](/tidb-cloud/tidb-cloud-billing-dm.md)
 -   API
     -   [API の概要](/tidb-cloud/api-overview.md)
     -   [API リファレンス](https://docs.pingcap.com/tidbcloud/api/v1beta)
 -   統合
     -   [エアバイト](/tidb-cloud/integrate-tidbcloud-with-airbyte.md)
+    -   [Amazon AppFlow](/develop/dev-guide-aws-appflow-integration.md)
+    -   [クラウドフレア](/tidb-cloud/integrate-tidbcloud-with-cloudflare.md)
     -   [データドッグ](/tidb-cloud/monitor-datadog-integration.md)
     -   [dbt](/tidb-cloud/integrate-tidbcloud-with-dbt.md)
+    -   [n8n](/tidb-cloud/integrate-tidbcloud-with-n8n.md)
+    -   [ネットリファイ](/tidb-cloud/integrate-tidbcloud-with-netlify.md)
     -   [プロメテウスとグラファナ](/tidb-cloud/monitor-prometheus-and-grafana-integration.md)
+    -   [プロキシSQL](/develop/dev-guide-proxysql-integration.md)
     -   テラフォーム
         -   [Terraform 統合の概要](/tidb-cloud/terraform-tidbcloud-provider-overview.md)
         -   [TiDB Cloud Terraform プロバイダーを入手する](/tidb-cloud/terraform-get-tidbcloud-provider.md)
@@ -196,6 +223,7 @@
         -   [バックアップ リソースを使用する](/tidb-cloud/terraform-use-backup-resource.md)
         -   [復元リソースを使用](/tidb-cloud/terraform-use-restore-resource.md)
     -   [ヴェルセル](/tidb-cloud/integrate-tidbcloud-with-vercel.md)
+    -   [ザピア](/tidb-cloud/integrate-tidbcloud-with-zapier.md)
 -   参照
     -   TiDBクラスタのアーキテクチャ
         -   [概要](/tidb-architecture.md)
@@ -224,7 +252,7 @@
             -   [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md)
             -   [`ADMIN CHECKSUM TABLE`](/sql-statements/sql-statement-admin-checksum-table.md)
             -   [`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md)
-            -   [`ADMIN SHOW DDL [JOBS|QUERIES]`](/sql-statements/sql-statement-admin-show-ddl.md)
+            -   [`ADMIN SHOW DDL [JOBS|JOB QUERIES]`](/sql-statements/sql-statement-admin-show-ddl.md)
             -   [`ALTER DATABASE`](/sql-statements/sql-statement-alter-database.md)
             -   [`ALTER INDEX`](/sql-statements/sql-statement-alter-index.md)
             -   [`ALTER TABLE`](/sql-statements/sql-statement-alter-table.md)
@@ -281,6 +309,7 @@
             -   [`REVOKE &#x3C;privileges>`](/sql-statements/sql-statement-revoke-privileges.md)
             -   [`REVOKE &#x3C;role>`](/sql-statements/sql-statement-revoke-role.md)
             -   [`ROLLBACK`](/sql-statements/sql-statement-rollback.md)
+            -   [`SAVEPOINT`](/sql-statements/sql-statement-savepoint.md)
             -   [`SELECT`](/sql-statements/sql-statement-select.md)
             -   [`SET DEFAULT ROLE`](/sql-statements/sql-statement-set-default-role.md)
             -   [`SET [NAMES|CHARACTER SET]`](/sql-statements/sql-statement-set-names.md)
@@ -423,21 +452,23 @@
                 -   [`TIKV_STORE_STATUS`](/information-schema/information-schema-tikv-store-status.md)
                 -   [`USER_PRIVILEGES`](/information-schema/information-schema-user-privileges.md)
                 -   [`VIEWS`](/information-schema/information-schema-views.md)
+        -   [メタデータ ロック](/metadata-lock.md)
     -   [システム変数](/system-variables.md)
     -   ストレージ エンジン
         -   TiKV
             -   [TiKVの概要](/tikv-overview.md)
             -   [RocksDB の概要](/storage-engine/rocksdb-overview.md)
-        -   ティフラッシュ
+        -   TiFlash
             -   [TiFlash の概要](/tiflash/tiflash-overview.md)
     -   [Dumpling](/dumpling-overview.md)
     -   [テーブル フィルター](/table-filter.md)
     -   [データとインデックス間の不一致のトラブルシューティング](/troubleshoot-data-inconsistency-errors.md)
-    -   [サーバーレス層の制限](/tidb-cloud/serverless-tier-limitations.md)
+    -   [Serverless Tierの制限](/tidb-cloud/serverless-tier-limitations.md)
 -   よくある質問
     -   [TiDB Cloudに関するよくある質問](/tidb-cloud/tidb-cloud-faq.md)
-    -   [サーバーレス層に関するよくある質問](/tidb-cloud/serverless-tier-faqs.md)
+    -   [Serverless Tierに関するよくある質問](/tidb-cloud/serverless-tier-faqs.md)
 -   リリースノート
+    -   [2023年](/tidb-cloud/tidb-cloud-release-notes.md)
     -   [2022年](/tidb-cloud/release-notes-2022.md)
     -   [2021年](/tidb-cloud/release-notes-2021.md)
     -   [2020年](/tidb-cloud/release-notes-2020.md)

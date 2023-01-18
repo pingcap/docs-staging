@@ -122,11 +122,32 @@ MySQL [test]> select @@last_plan_from_cache;
 
 ## プリペアドプランキャッシュのメモリ管理 {#memory-management-of-prepared-plan-cache}
 
+<CustomContent platform="tidb">
+
+プリペアドプランキャッシュを使用すると、メモリ オーバーヘッドが発生します。各 TiDB インスタンスのすべてのセッションのキャッシュされた実行プランによる合計メモリ消費量を表示するには、Grafana で[**Plan Cache Memory Usage**監視パネル](/grafana-tidb-dashboard.md)を使用できます。
+
+> **ノート：**
+>
+> Golangのメモリ再利用メカニズムといくつかのカウントされないメモリ構造のため、Grafana に表示されるメモリは実際のヒープ メモリ使用量と等しくありません。 Grafana で表示されるメモリと実際のヒープメモリ使用量との間に±20% 程度の偏差があることがテストされています。
+
+各 TiDB インスタンスにキャッシュされた実行プランの総数を表示するには、Grafana で[**Plan Cache Plan Num**パネル](/grafana-tidb-dashboard.md)を使用できます。
+
+以下は、Grafana の**Plan Cache Memory Usage**および<strong>Plan Cache Plan Num</strong>パネルの例です。
+
+![grafana\_panels](https://download.pingcap.com/images/docs/planCache-memoryUsage-planNum-panels.png)
+
+システム変数`tidb_prepared_plan_cache_size`を構成することにより、各セッションでキャッシュできるプランの最大数を制御できます。さまざまな環境での推奨値は次のとおりであり、監視パネルに従って調整できます。
+
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
 プリペアドプランキャッシュを使用すると、メモリ オーバーヘッドが発生します。内部テストでは、キャッシュされた各プランは平均 100 KiB のメモリを消費します。 Plan Cache は現在`SESSION`レベルであるため、合計メモリ消費量は約`the number of sessions * the average number of cached plans in a session * 100 KiB`です。
 
 たとえば、現在の TiDB インスタンスには 50 の同時実行セッションがあり、各セッションには約 100 のキャッシュされたプランがあります。合計メモリ消費量は約`50 * 100 * 100 KiB` = `512 MB`です。
 
 システム変数`tidb_prepared_plan_cache_size`を構成することにより、各セッションでキャッシュできるプランの最大数を制御できます。さまざまな環境での推奨値は次のとおりです。
+
+</CustomContent>
 
 -   TiDBサーバーインスタンスのメモリしきい値が &lt;= 64 GiB の場合、 `tidb_prepared_plan_cache_size`から`50`を設定します。
 -   TiDBサーバーインスタンスのメモリしきい値が &gt; 64 GiB の場合は、 `tidb_prepared_plan_cache_size`を`100`に設定します。

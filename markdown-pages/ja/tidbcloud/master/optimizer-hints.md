@@ -125,6 +125,135 @@ select /*+ HASH_JOIN(t1, t2) */ * from t1, t2 where t1.id = t2.id;
 >
 > `TIDB_HJ`は、TiDB 3.0.x 以前のバージョンでは`HASH_JOIN`のエイリアスです。これらのバージョンのいずれかを使用している場合は、ヒントに`TIDB_HJ(t1_name [, tl_name ...])`構文を適用する必要があります。それ以降のバージョンの TiDB では、 `TIDB_HJ`と`HASH_JOIN`の両方がヒントの有効な名前ですが、 `HASH_JOIN`をお勧めします。
 
+### HASH_JOIN_BUILD(t1_name [, tl_name ...]) {#hash-join-build-t1-name-tl-name}
+
+`HASH_JOIN_BUILD(t1_name [, tl_name ...])`ヒントは、指定されたテーブルでハッシュ結合アルゴリズムを使用し、これらのテーブルがビルド側として機能するようオプティマイザに指示します。このようにして、特定のテーブルを使用してハッシュ テーブルを構築できます。例えば：
+
+```sql
+SELECT /*+ HASH_JOIN_BUILD(t1) */ * FROM t1, t2 WHERE t1.id = t2.id;
+```
+
+### HASH_JOIN_PROBE(t1_name [, tl_name ...]) {#hash-join-probe-t1-name-tl-name}
+
+`HASH_JOIN_PROBE(t1_name [, tl_name ...])`ヒントは、指定されたテーブルでハッシュ結合アルゴリズムを使用し、これらのテーブルがプローブ側として機能するようオプティマイザに指示します。このようにして、特定のテーブルをプローブ側としてハッシュ結合アルゴリズムを実行できます。例えば：
+
+```sql
+SELECT /*+ HASH_JOIN_PROBE(t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
+```
+
+### SEMI_JOIN_REWRITE() {#semi-join-rewrite}
+
+`SEMI_JOIN_REWRITE()`ヒントは、セミ結合クエリを通常の結合クエリに書き換えるようオプティマイザに指示します。現在、このヒントは`EXISTS`のサブクエリに対してのみ機能します。
+
+このヒントを使用してクエリを書き直さない場合、実行プランでハッシュ結合が選択されている場合、セミ結合クエリはサブクエリを使用してハッシュ テーブルを構築することしかできません。この場合、サブクエリの結果が外側のクエリの結果よりも大きい場合、実行速度が予想よりも遅くなる可能性があります。
+
+同様に、実行計画でインデックス結合が選択されている場合、セミ結合クエリは外部クエリのみを駆動テーブルとして使用できます。この場合、サブクエリの結果が外側のクエリの結果よりも小さい場合、実行速度が予想よりも遅くなる可能性があります。
+
+`SEMI_JOIN_REWRITE()`を使用してクエリを書き換えると、オプティマイザーは選択範囲を拡張して、より適切な実行プランを選択できます。
+
+
+```sql
+-- Does not use SEMI_JOIN_REWRITE() to rewrite the query.
+EXPLAIN SELECT * FROM t WHERE EXISTS (SELECT 1 FROM t1 WHERE t1.a = t.a);
+```
+
+```sql
++-----------------------------+---------+-----------+------------------------+---------------------------------------------------+
+| id                          | estRows | task      | access object          | operator info                                     |
++-----------------------------+---------+-----------+------------------------+---------------------------------------------------+
+| MergeJoin_9                 | 7992.00 | root      |                        | semi join, left key:test.t.a, right key:test.t1.a |
+| ├─IndexReader_25(Build)     | 9990.00 | root      |                        | index:IndexFullScan_24                            |
+| │ └─IndexFullScan_24        | 9990.00 | cop[tikv] | table:t1, index:idx(a) | keep order:true, stats:pseudo                     |
+| └─IndexReader_23(Probe)     | 9990.00 | root      |                        | index:IndexFullScan_22                            |
+|   └─IndexFullScan_22        | 9990.00 | cop[tikv] | table:t, index:idx(a)  | keep order:true, stats:pseudo                     |
++-----------------------------+---------+-----------+------------------------+---------------------------------------------------+
+```
+
+
+```sql
+-- Uses SEMI_JOIN_REWRITE() to rewrite the query.
+EXPLAIN SELECT * FROM t WHERE EXISTS (SELECT /*+ SEMI_JOIN_REWRITE() */ 1 FROM t1 WHERE t1.a = t.a);
+```
+
+```sql
++------------------------------+---------+-----------+------------------------+---------------------------------------------------------------------------------------------------------------+
+| id                           | estRows | task      | access object          | operator info                                                                                                 |
++------------------------------+---------+-----------+------------------------+---------------------------------------------------------------------------------------------------------------+
+| IndexJoin_16                 | 1.25    | root      |                        | inner join, inner:IndexReader_15, outer key:test.t1.a, inner key:test.t.a, equal cond:eq(test.t1.a, test.t.a) |
+| ├─StreamAgg_39(Build)        | 1.00    | root      |                        | group by:test.t1.a, funcs:firstrow(test.t1.a)->test.t1.a                                                      |
+| │ └─IndexReader_34           | 1.00    | root      |                        | index:IndexFullScan_33                                                                                        |
+| │   └─IndexFullScan_33       | 1.00    | cop[tikv] | table:t1, index:idx(a) | keep order:true                                                                                               |
+| └─IndexReader_15(Probe)      | 1.25    | root      |                        | index:Selection_14                                                                                            |
+|   └─Selection_14             | 1.25    | cop[tikv] |                        | not(isnull(test.t.a))                                                                                         |
+|     └─IndexRangeScan_13      | 1.25    | cop[tikv] | table:t, index:idx(a)  | range: decided by [eq(test.t.a, test.t1.a)], keep order:false, stats:pseudo                                   |
++------------------------------+---------+-----------+------------------------+---------------------------------------------------------------------------------------------------------------+
+```
+
+前の例から、ヒント`SEMI_JOIN_REWRITE()`を使用すると、TiDB は駆動テーブルに基づいて IndexJoin の実行方法を選択できることがわかります`t1` 。
+
+### NO_DECORRELATE() {#no-decorrelate}
+
+`NO_DECORRELATE()`ヒントは、オプティマイザに、指定されたクエリ ブロック内の相関サブクエリの非相関を実行しないように指示します。このヒントは、相関列を含む`EXISTS` 、 `IN` 、 `ANY` 、 `ALL` 、 `SOME`サブクエリおよびスカラー サブクエリ (つまり、相関サブクエリ) に適用されます。
+
+このヒントがクエリ ブロックで使用されると、オプティマイザは、サブクエリとその外側のクエリ ブロックの間の相関列に対して非相関を実行しようとはしませんが、常に Apply 演算子を使用してクエリを実行します。
+
+デフォルトでは、TiDB は、より高い実行効率を達成するために、相関サブクエリに対して[無相関化を行う](/correlated-subquery-optimization.md)を試みます。ただし、 [いくつかのシナリオ](/correlated-subquery-optimization.md#restrictions)では、逆相関によって実際に実行効率が低下する可能性があります。この場合、このヒントを使用して、オプティマイザに非相関を実行しないように手動で指示できます。例えば：
+
+
+```sql
+create table t1(a int, b int);
+create table t2(a int, b int, index idx(b));
+```
+
+
+```sql
+-- Not using NO_DECORRELATE().
+explain select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.b);
+```
+
+```sql
++----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------------------+
+| id                               | estRows  | task      | access object | operator info                                                                                                |
++----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------------------+
+| HashJoin_11                      | 9990.00  | root      |               | inner join, equal:[eq(test.t1.b, test.t2.b)], other cond:lt(cast(test.t1.a, decimal(10,0) BINARY), Column#7) |
+| ├─HashAgg_23(Build)              | 7992.00  | root      |               | group by:test.t2.b, funcs:sum(Column#8)->Column#7, funcs:firstrow(test.t2.b)->test.t2.b                      |
+| │ └─TableReader_24               | 7992.00  | root      |               | data:HashAgg_16                                                                                              |
+| │   └─HashAgg_16                 | 7992.00  | cop[tikv] |               | group by:test.t2.b, funcs:sum(test.t2.a)->Column#8                                                           |
+| │     └─Selection_22             | 9990.00  | cop[tikv] |               | not(isnull(test.t2.b))                                                                                       |
+| │       └─TableFullScan_21       | 10000.00 | cop[tikv] | table:t2      | keep order:false, stats:pseudo                                                                               |
+| └─TableReader_15(Probe)          | 9990.00  | root      |               | data:Selection_14                                                                                            |
+|   └─Selection_14                 | 9990.00  | cop[tikv] |               | not(isnull(test.t1.b))                                                                                       |
+|     └─TableFullScan_13           | 10000.00 | cop[tikv] | table:t1      | keep order:false, stats:pseudo                                                                               |
++----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------------------+
+```
+
+前の実行計画から、オプティマイザが自動的に非相関化を実行したことがわかります。非相関実行計画には Apply 演算子がありません。代わりに、プランには、サブクエリと外部クエリ ブロック間の結合操作があります。相関列を持つ元のフィルター条件 ( `t2.b = t1.b` ) は、通常の結合条件になります。
+
+
+```sql
+-- Using NO_DECORRELATE().
+explain select * from t1 where t1.a < (select /*+ NO_DECORRELATE() */ sum(t2.a) from t2 where t2.b = t1.b);
+```
+
+```sql
++------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
+| id                                       | estRows   | task      | access object          | operator info                                                                        |
++------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
+| Projection_10                            | 10000.00  | root      |                        | test.t1.a, test.t1.b                                                                 |
+| └─Apply_12                               | 10000.00  | root      |                        | CARTESIAN inner join, other cond:lt(cast(test.t1.a, decimal(10,0) BINARY), Column#7) |
+|   ├─TableReader_14(Build)                | 10000.00  | root      |                        | data:TableFullScan_13                                                                |
+|   │ └─TableFullScan_13                   | 10000.00  | cop[tikv] | table:t1               | keep order:false, stats:pseudo                                                       |
+|   └─MaxOneRow_15(Probe)                  | 10000.00  | root      |                        |                                                                                      |
+|     └─StreamAgg_20                       | 10000.00  | root      |                        | funcs:sum(Column#14)->Column#7                                                       |
+|       └─Projection_45                    | 100000.00 | root      |                        | cast(test.t2.a, decimal(10,0) BINARY)->Column#14                                     |
+|         └─IndexLookUp_44                 | 100000.00 | root      |                        |                                                                                      |
+|           ├─IndexRangeScan_42(Build)     | 100000.00 | cop[tikv] | table:t2, index:idx(b) | range: decided by [eq(test.t2.b, test.t1.b)], keep order:false, stats:pseudo         |
+|           └─TableRowIDScan_43(Probe)     | 100000.00 | cop[tikv] | table:t2               | keep order:false, stats:pseudo                                                       |
++------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
+```
+
+前の実行計画から、オプティマイザーが非相関を実行しないことがわかります。実行計画にはまだ Apply 演算子が含まれています。相関列を持つフィルター条件 ( `t2.b = t1.b` ) は、 `t2`テーブルにアクセスするときのフィルター条件のままです。
+
 ### HASH_AGG() {#hash-agg}
 
 `HASH_AGG()`ヒントは、指定されたクエリ ブロックのすべての集計関数でハッシュ集計アルゴリズムを使用するようオプティマイザに指示します。このアルゴリズムを使用すると、クエリを複数のスレッドで同時に実行できます。これにより、処理速度は向上しますが、より多くのメモリを消費します。例えば：
@@ -218,7 +347,21 @@ select /*+ READ_FROM_STORAGE(TIFLASH[t1], TIKV[t2]) */ t1.a from t t1, t t2 wher
 
 ### USE_INDEX_MERGE(t1_name, idx1_name [, idx2_name ...]) {#use-index-merge-t1-name-idx1-name-idx2-name}
 
-`USE_INDEX_MERGE(t1_name, idx1_name [, idx2_name ...])`ヒントは、インデックス マージ メソッドを使用して特定のテーブルにアクセスするようオプティマイザに指示します。指定されたインデックスのリストはオプションのパラメーターです。リストを明示的に指定すると、TiDB はリストからインデックスを選択してインデックス マージを構築します。インデックスのリストを指定しない場合、TiDB は利用可能なすべてのインデックスからインデックスを選択して、インデックス マージを構築します。例えば：
+<CustomContent platform="tidb">
+
+`USE_INDEX_MERGE(t1_name, idx1_name [, idx2_name ...])`ヒントは、インデックス マージ メソッドを使用して特定のテーブルにアクセスするようオプティマイザに指示します。インデックス マージには、交差型と共用体型の 2 種類があります。詳細については、 [インデックス マージを使用したステートメントの説明](/explain-index-merge.md)を参照してください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+`USE_INDEX_MERGE(t1_name, idx1_name [, idx2_name ...])`ヒントは、インデックス マージ メソッドを使用して特定のテーブルにアクセスするようオプティマイザに指示します。インデックス マージには、交差型と共用体型の 2 種類があります。
+
+</CustomContent>
+
+インデックスのリストを明示的に指定すると、TiDB はリストからインデックスを選択してインデックス マージを構築します。インデックスのリストを指定しない場合、TiDB は利用可能なすべてのインデックスからインデックスを選択して、インデックス マージを構築します。
+
+交差タイプのインデックス マージの場合、指定されたインデックスのリストはヒントの必須パラメーターです。ユニオン タイプのインデックス マージの場合、指定されたインデックスのリストはヒントのオプション パラメータです。次の例を参照してください。
 
 
 ```sql
@@ -230,10 +373,6 @@ SELECT /*+ USE_INDEX_MERGE(t1, idx_a, idx_b, idx_c) */ * FROM t1 WHERE t1.a > 10
 > **ノート：**
 >
 > `USE_INDEX_MERGE`のパラメーターは、列名ではなくインデックス名を参照します。主キーのインデックス名は`primary`です。
-
-このヒントは、次のような厳密な条件で有効になります。
-
--   クエリが全テーブル スキャンに加えて単一インデックス スキャンを選択できる場合、オプティマイザはインデックス マージを選択しません。
 
 ### LEADING(t1_name [, tl_name ...]) {#leading-t1-name-tl-name}
 
@@ -253,7 +392,7 @@ SELECT /*+ LEADING(t1, t2) */ * FROM t1, t2, t3 WHERE t1.id = t2.id and t2.id = 
 -   `LEADING`のヒントに重複したテーブル名が指定されています。
 -   オプティマイザーは、 `LEADING`ヒントで指定された順序に従って結合操作を実行できません。
 -   `straight_join()`ヒントは既に存在します。
--   クエリに外部結合が含まれています。
+-   クエリには、デカルト積と一緒に外部結合が含まれています。
 -   `MERGE_JOIN` 、 `INL_JOIN` 、 `INL_HASH_JOIN` 、および`HASH_JOIN`ヒントのいずれかが同時に使用されます。
 
 上記の状況では、警告が生成されます。
@@ -273,6 +412,130 @@ SHOW WARNINGS;
 | Warning | 1815 | We can only use one leading hint at most, when multiple leading hints are used, all leading hints will be invalid |
 +---------+------+-------------------------------------------------------------------------------------------------------------------+
 ```
+
+> **ノート：**
+>
+> クエリ ステートメントに外部結合が含まれている場合、ヒントでは、結合順序を入れ替えることができるテーブルのみを指定できます。結合順序を入れ替えることができないテーブルがヒントに含まれている場合、ヒントは無効になります。たとえば、 `SELECT * FROM t1 LEFT JOIN (t2 JOIN t3 JOIN t4) ON t1.a = t2.a;`で`t2` 、 `t3` 、および`t4`テーブルの結合順序を制御する場合、 `LEADING`ヒントで`t1`を指定することはできません。
+
+### マージ（） {#merge}
+
+共通テーブル式 (CTE) を含むクエリで`MERGE()`ヒントを使用すると、サブクエリの実体化が無効になり、サブクエリ インラインが CTE に展開されます。このヒントは、非再帰 CTE にのみ適用されます。一部のシナリオでは、 `MERGE()`を使用すると、一時領域を割り当てる既定の動作よりも実行効率が高くなります。たとえば、クエリ条件を押し下げたり、CTE クエリをネストしたりします。
+
+```sql
+-- Uses the hint to push down the predicate of the outer query.
+WITH CTE AS (SELECT /*+ MERGE() */ * FROM tc WHERE tc.a < 60) SELECT * FROM CTE WHERE CTE.a < 18;
+
+-- Uses the hint in a nested CTE query to expand a CTE inline into the outer query.
+WITH CTE1 AS (SELECT * FROM t1), CTE2 AS (WITH CTE3 AS (SELECT /*+ MERGE() */ * FROM t2), CTE4 AS (SELECT * FROM t3) SELECT * FROM CTE3, CTE4) SELECT * FROM CTE1, CTE2;
+```
+
+> **ノート：**
+>
+> `MERGE()`は単純な CTE クエリにのみ適用されます。次の場合には適用されません。
+>
+> -   [再帰的 CTE](https://docs.pingcap.com/tidb/stable/dev-guide-use-common-table-expression#recursive-cte)
+> -   集約演算子、ウィンドウ関数、および`DISTINCT`など、展開できないインラインを含むサブクエリ。
+>
+> CTE 参照の数が多すぎると、クエリのパフォーマンスが既定の実体化動作よりも低くなる可能性があります。
+
+## グローバルに有効なヒント {#hints-that-take-effect-globally}
+
+グローバルヒントは[ビュー](/views.md)で機能します。グローバル ヒントとして指定すると、クエリで定義されたヒントがビュー内で有効になります。グローバル ヒントを指定するには、まず`QB_NAME`ヒントを使用してクエリ ブロック名を定義し、次にターゲット ヒントを`ViewName@QueryBlockName`の形式で追加します。
+
+### ステップ 1: <code>QB_NAME</code>ヒントを使用してビューのクエリ ブロック名を定義する {#step-1-define-the-query-block-name-of-the-view-using-the-code-qb-name-code-hint}
+
+[`QB_NAME`ヒント](#qb_name)を使用して、ビューの各クエリ ブロックに新しい名前を定義します。ビューの`QB_NAME`ヒントの定義は[クエリ ブロック](#qb_name)の定義と同じですが、構文は`QB_NAME(QB)`から`QB_NAME(QB, ViewName@QueryBlockName [.ViewName@QueryBlockName .ViewName@QueryBlockName ...])`に拡張されています。
+
+> **ノート：**
+>
+> `@QueryBlockName`と直後の`.ViewName@QueryBlockName`の間に空白があります。それ以外の場合、 `.ViewName@QueryBlockName`は`QueryBlockName`の一部として扱われます。たとえば、 `QB_NAME(v2_1, v2@SEL_1 .@SEL_1)`は有効ですが、 `QB_NAME(v2_1, v2@SEL_1.@SEL_1)`は正しく解析できません。
+
+-   単一のビューを持ち、サブクエリを持たない単純なステートメントの場合、次の例では、ビュー`v`の最初のクエリ ブロック名を指定します。
+
+    ```sql
+    SELECT /* Comment: The name of the current query block is the default @SEL_1 */ * FROM v;
+    ```
+
+    ビュー`v`の場合、クエリ ステートメントから始まるリスト ( `ViewName@QueryBlockName [.ViewName@QueryBlockName .ViewName@QueryBlockName ...]` ) の最初のビュー名は`v@SEL_1`です。ビュー`v`の最初のクエリ ブロックは、 `QB_NAME(v_1, v@SEL_1 .@SEL_1)`として宣言するか、単に`QB_NAME(v_1, v)`として記述し、 `@SEL_1`を省略できます。
+
+    ```sql
+    CREATE VIEW v AS SELECT /* Comment: The name of the current query block is the default @SEL_1 */ * FROM t;
+
+    -- Specifies the global hint
+    SELECT /*+ QB_NAME(v_1, v) USE_INDEX(t@v_1, idx) */ * FROM v;
+    ```
+
+-   ネストされたビューとサブクエリを含む複雑なステートメントの場合、次の例では、ビュー`v1`と`v2`の 2 つのクエリ ブロックのそれぞれに名前を指定します。
+
+    ```sql
+    SELECT /* Comment: The name of the current query block is the default @SEL_1 */ * FROM v2 JOIN (
+        SELECT /* Comment: The name of the current query block is the default @SEL_2 */ * FROM v2) vv;
+    ```
+
+    最初のビュー`v2`の場合、最初のクエリ ステートメントから始まるリスト内の最初のビュー名は`v2@SEL_1`です。 2 番目のビュー`v2`の場合、最初のビュー名は`v2@SEL_2`です。次の例では、最初のビュー`v2`のみを考慮しています。
+
+    ビュー`v2`の最初のクエリ ブロックは`QB_NAME(v2_1, v2@SEL_1 .@SEL_1)`として宣言でき、ビュー`v2`の 2 番目のクエリ ブロックは`QB_NAME(v2_2, v2@SEL_1 .@SEL_2)`として宣言できます。
+
+    ```sql
+    CREATE VIEW v2 AS
+        SELECT * FROM t JOIN /* Comment: For view v2, the name of the current query block is the default @SEL_1. So, the current query block view list is v2@SEL_1 .@SEL_1 */
+        (
+            SELECT COUNT(*) FROM t1 JOIN v1 /* Comment: For view v2, the name of the current query block is the default @SEL_2. So, the current query block view list is v2@SEL_1 .@SEL_2 */
+        ) tt;
+    ```
+
+    ビュー`v1`の場合、前のステートメントから始まるリスト内の最初のビュー名は`v2@SEL_1 .v1@SEL_2`です。ビュー`v1`の最初のクエリ ブロックは`QB_NAME(v1_1, v2@SEL_1 .v1@SEL_2 .@SEL_1)`として宣言でき、ビュー`v1`の 2 番目のクエリ ブロックは`QB_NAME(v1_2, v2@SEL_1 .v1@SEL_2 .@SEL_2)`として宣言できます。
+
+    ```sql
+    CREATE VIEW v1 AS SELECT * FROM t JOIN /* Comment: For view `v1`, the name of the current query block is the default @SEL_1. So, the current query block view list is v2@SEL_1 .@SEL_2 .v1@SEL_1 */
+        (
+            SELECT COUNT(*) FROM t1 JOIN t2 /* Comment: For view `v1`, the name of the current query block is the default @SEL_2. So, the current query block view list is v2@SEL_1 .@SEL_2 .v1@SEL_2 */
+        ) tt;
+    ```
+
+> **ノート：**
+>
+> -   ビューでグローバル ヒントを使用するには、対応する`QB_NAME`ヒントをビューで定義する必要があります。そうしないと、グローバル ヒントが有効になりません。
+>
+> -   ヒントを使用してビューで複数のテーブル名を指定する場合、同じヒントに表示されるテーブル名が同じビューの同じクエリ ブロックにあることを確認する必要があります。
+>
+> -   最も外側のクエリ ブロックのビューで`QB_NAME`ヒントを定義すると、次のようになります。
+>
+>     -   `QB_NAME`のビュー リストの最初の項目について、 `@SEL_`が明示的に宣言されていない場合、デフォルトは`QB_NAME`が定義されているクエリ ブロックの位置と一致します。つまり、クエリ`SELECT /*+ QB_NAME(qb1, v2) */ * FROM v2 JOIN (SELECT /*+ QB_NAME(qb2, v2) */ * FROM v2) vv;`は`SELECT /*+ QB_NAME(qb1, v2@SEL_1) */ * FROM v2 JOIN (SELECT /*+ QB_NAME(qb2, v2@SEL_2) */ * FROM v2) vv;`に相当します。
+>     -   `QB_NAME`のビュー リストの最初の項目以外の項目は、 `@SEL_1`だけ省略できます。つまり、現在のビューの最初のクエリ ブロックで`@SEL_1`が宣言されている場合、 `@SEL_1`は省略できます。それ以外の場合、 `@SEL_`は省略できません。前の例の場合:
+>
+>         -   ビュー`v2`の最初のクエリ ブロックは`QB_NAME(v2_1, v2)`として宣言できます。
+>         -   ビュー`v2`の 2 番目のクエリ ブロックは`QB_NAME(v2_2, v2.@SEL_2)`として宣言できます。
+>         -   ビュー`v1`の最初のクエリ ブロックは`QB_NAME(v1_1, v2.v1@SEL_2)`として宣言できます。
+>         -   ビュー`v1`の 2 番目のクエリ ブロックは`QB_NAME(v1_2, v2.v1@SEL_2 .@SEL_2)`として宣言できます。
+
+### ステップ 2: ターゲット ヒントを追加する {#step-2-add-the-target-hints}
+
+ビューのクエリ ブロックの`QB_NAME`のヒントを定義した後、必要な[クエリ ブロックで有効になるヒント](#hints-that-take-effect-in-query-blocks)を`ViewName@QueryBlockName`の形式で追加して、ビュー内で有効にすることができます。例えば：
+
+-   ビュー`v2`の最初のクエリ ブロックに`MERGE_JOIN()`ヒントを指定します。
+
+    ```sql
+    SELECT /*+ QB_NAME(v2_1, v2) merge_join(t@v2_1) */ * FROM v2;
+    ```
+
+-   ビュー`v2`の 2 番目のクエリ ブロックに`MERGE_JOIN()`と`STREAM_AGG()`のヒントを指定します。
+
+    ```sql
+    SELECT /*+ QB_NAME(v2_2, v2.@SEL_2) merge_join(t1@v2_2) stream_agg(@v2_2) */ * FROM v2;
+    ```
+
+-   ビュー`v1`の最初のクエリ ブロックに`HASH_JOIN()`ヒントを指定します。
+
+    ```sql
+    SELECT /*+ QB_NAME(v1_1, v2.v1@SEL_2) hash_join(t@v1_1) */ * FROM v2;
+    ```
+
+-   ビュー`v1`の 2 番目のクエリ ブロックに`HASH_JOIN()`と`HASH_AGG()`のヒントを指定します。
+
+    ```sql
+    SELECT /*+ QB_NAME(v1_2, v2.v1@SEL_2 .@SEL_2) hash_join(t1@v1_2) hash_agg(@v1_2) */ * FROM v2;
+    ```
 
 ## クエリ全体で有効なヒント {#hints-that-take-effect-in-the-whole-query}
 

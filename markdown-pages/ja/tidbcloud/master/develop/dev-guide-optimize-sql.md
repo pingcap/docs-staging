@@ -11,7 +11,6 @@ summary: Introduces TiDB's SQL performance tuning scheme and analysis approach.
 
 [`tiup demo`のインポート](/develop/dev-guide-bookshop-schema-design.md#method-1-via-tiup-demo)を使用してデータを準備できます。
 
-
 ```shell
 tiup demo bookshop prepare --host 127.0.0.1 --port 4000 --books 1000000
 ```
@@ -23,7 +22,6 @@ tiup demo bookshop prepare --host 127.0.0.1 --port 4000 --books 1000000
 SQL クエリが遅くなる最も一般的な理由は、 `SELECT`ステートメントが全テーブル スキャンを実行するか、不適切なインデックスを使用することです。
 
 TiDB が、プライマリ キーまたはセカンダリ インデックスではない列に基づいて大きなテーブルから少数の行を取得する場合、通常はパフォーマンスが低下します。
-
 
 ```sql
 SELECT * FROM books WHERE title = 'Marian Yost';
@@ -44,7 +42,6 @@ Time: 0.582s
 ```
 
 このクエリが遅い理由を理解するには、 `EXPLAIN`を使用して実行計画を確認します。
-
 
 ```sql
 EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
@@ -68,13 +65,11 @@ EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
 
 上記のクエリを高速化するには、 `books.title`列にセカンダリ インデックスを追加します。
 
-
 ```sql
 CREATE INDEX title_idx ON books (title);
 ```
 
 クエリの実行ははるかに高速です。
-
 
 ```sql
 SELECT * FROM books WHERE title = 'Marian Yost';
@@ -95,7 +90,6 @@ Time: 0.007s
 ```
 
 パフォーマンスが向上した理由を理解するには、 `EXPLAIN`を使用して新しい実行計画を表示します。
-
 
 ```sql
 EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
@@ -123,7 +117,6 @@ TiDB 実行計画の詳細については、 [TiDB クエリ実行計画の概�
 
 たとえば、次のクエリでは、 `title`に基づいて対応する`price`をクエリするだけで済みます。
 
-
 ```sql
 SELECT title, price FROM books WHERE title = 'Marian Yost';
 ```
@@ -144,7 +137,6 @@ Time: 0.007s
 
 `title_idx`番目のインデックスには`title`列のデータしか含まれていないため、TiDB は最初にインデックス データをスキャンしてから、テーブルの`price`列をクエリする必要があります。
 
-
 ```sql
 EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
 ```
@@ -161,18 +153,15 @@ EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
 
 パフォーマンスを最適化するには、 `title_idx`インデックスを削除して、新しいカバリング インデックス`title_price_idx`を作成します。
 
-
 ```sql
 ALTER TABLE books DROP INDEX title_idx;
 ```
-
 
 ```sql
 CREATE INDEX title_price_idx ON books (title, price);
 ```
 
 `price`番目のデータは`title_price_idx`番目のインデックスに格納されているため、次のクエリではインデックス データをスキャンするだけで済みます。
-
 
 ```sql
 EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
@@ -188,7 +177,6 @@ EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
 ```
 
 このクエリはより高速に実行されるようになりました。
-
 
 ```sql
 SELECT title, price FROM books WHERE title = 'Marian Yost';
@@ -210,7 +198,6 @@ Time: 0.004s
 
 `books`テーブルは後の例で使用されるため、 `title_price_idx`インデックスを削除します。
 
-
 ```sql
 ALTER TABLE books DROP INDEX title_price_idx;
 ```
@@ -218,7 +205,6 @@ ALTER TABLE books DROP INDEX title_price_idx;
 ### 解決策: プライマリ インデックスを使用する {#solution-use-primary-index}
 
 クエリが主キーを使用してデータをフィルター処理する場合、クエリは高速に実行されます。たとえば、 `books`テーブルの主キーは`id`列なので、 `id`列を使用してデータをクエリできます。
-
 
 ```sql
 SELECT * FROM books WHERE id = 896;
@@ -235,7 +221,6 @@ Time: 0.004s
 ```
 
 実行計画を表示するには、 `EXPLAIN`を使用します。
-
 
 ```sql
 EXPLAIN SELECT * FROM books WHERE id = 896;

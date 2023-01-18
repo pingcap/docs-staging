@@ -78,7 +78,7 @@ SELECT id, name FROM authors;
 </div>
 <div label="Java" value="java">
 
-Java では、作成者の基本情報を格納するために、クラス`Author`を宣言できます。データベースの[データ型](/data-type-overview.md)と[値の範囲](/data-type-numeric.md)に従って、適切な Java データ型を選択する必要があります。例えば：
+Javaでは、作成者の基本情報を格納するために、クラス`Author`を宣言できます。データベースの[データ型](/data-type-overview.md)と[値の範囲](/data-type-numeric.md)に従って、適切なJavaデータ型を選択する必要があります。例えば：
 
 -   タイプ`Int`の変数を使用して、タイプ`int`のデータを格納します。
 -   タイプ`Long`の変数を使用して、タイプ`bigint`のデータを格納します。
@@ -158,7 +158,7 @@ SELECT * FROM authors WHERE birth_year = 1998;
 </div>
 <div label="Java" value="java">
 
-Java では、同じ SQL を使用して、動的パラメーターを使用したデータ クエリ要求を処理できます。
+Javaでは、同じ SQL を使用して、動的パラメーターを持つデータ クエリ要求を処理できます。
 
 これは、パラメーターを SQL ステートメントに連結することによって実行できます。ただし、この方法は、アプリケーションのセキュリティに[SQL インジェクション](https://en.wikipedia.org/wiki/SQL_injection)のリスクをもたらす可能性があります。
 

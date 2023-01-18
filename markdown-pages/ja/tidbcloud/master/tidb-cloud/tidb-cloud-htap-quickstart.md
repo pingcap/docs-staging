@@ -6,21 +6,21 @@ aliases: ['/tidbcloud/use-htap-cluster']
 
 # TiDB CloudHTAP クイック スタート {#tidb-cloud-htap-quick-start}
 
-[HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing)はハイブリッド トランザクションおよび分析処理を意味します。 TiDB Cloudの HTAP クラスターは、トランザクション処理用に設計された行ベースのストレージ エンジン[TiKV](https://tikv.org)と、分析処理用に設計された列型ストレージ エンジン[ティフラッシュ](https://docs.pingcap.com/tidb/stable/tiflash-overview)で構成されます。アプリケーション データはまず TiKV に保存され、次にRaftコンセンサス アルゴリズムを介して TiFlash に複製されます。つまり、行ストレージから列ストレージへのリアルタイム レプリケーションです。
+[HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing)はハイブリッド トランザクションおよび分析処理を意味します。 TiDB Cloudの HTAP クラスターは、トランザクション処理用に設計された行ベースのストレージ エンジン[TiKV](https://tikv.org)と、分析処理用に設計された列型ストレージ エンジン[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)で構成されます。アプリケーション データはまず TiKV に保存され、次にRaftコンセンサス アルゴリズムを介してTiFlashに複製されます。つまり、行ストレージから列ストレージへのリアルタイム レプリケーションです。
 
-このチュートリアルでは、 TiDB Cloudの Hybrid Transactional and Analytical Processing (HTAP) 機能を体験する簡単な方法について説明します。このコンテンツには、テーブルを TiFlash にレプリケートする方法、TiFlash でクエリを実行する方法、およびパフォーマンスの向上を体験する方法が含まれています。
+このチュートリアルでは、 TiDB Cloudの Hybrid Transactional and Analytical Processing (HTAP) 機能を体験する簡単な方法について説明します。このコンテンツには、テーブルをTiFlashにレプリケートする方法、 TiFlashでクエリを実行する方法、およびパフォーマンスの向上を体験する方法が含まれています。
 
 ## あなたが始める前に {#before-you-begin}
 
-HTAP 機能を体験する前に、 [TiDB Cloudクイック スタート](/tidb-cloud/tidb-cloud-quickstart.md)に従って TiFlash ノードを含むクラスターを作成し、TiDB クラスターに接続して、Capital Bikeshare サンプル データをクラスターにインポートします。
+HTAP 機能を体験する前に、 [TiDB Cloudクイック スタート](/tidb-cloud/tidb-cloud-quickstart.md)に従ってTiFlashノードを含むクラスターを作成し、TiDB クラスターに接続して、Capital Bikeshare サンプル データをクラスターにインポートします。
 
 ## 手順 {#steps}
 
 ### 手順 1. サンプル データを列指向ストレージ エンジンにレプリケートする {#step-1-replicate-the-sample-data-to-the-columnar-storage-engine}
 
-TiFlash ノードを持つクラスターが作成された後、TiKV はデフォルトでデータを TiFlash に複製しません。レプリケートするテーブルを指定するには、TiDB の MySQL クライアントで DDL ステートメントを実行する必要があります。その後、TiDB はそれに応じて指定されたテーブルのレプリカを TiFlash に作成します。
+TiFlashノードを持つクラスターが作成された後、TiKV はデフォルトでデータをTiFlashに複製しません。レプリケートするテーブルを指定するには、TiDB の MySQL クライアントで DDL ステートメントを実行する必要があります。その後、TiDB はそれに応じて指定されたテーブルのレプリカをTiFlashに作成します。
 
-たとえば、 `trips`のテーブル (Capital Bikeshare サンプル データ内) を TiFlash に複製するには、次のステートメントを実行します。
+たとえば、 `trips`のテーブル (Capital Bikeshare サンプル データ内) をTiFlashにレプリケートするには、次のステートメントを実行します。
 
 ```sql
 USE bikeshare;
@@ -47,7 +47,7 @@ SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'bikeshare
 
 前述のステートメントの結果:
 
--   `AVAILABLE`は、特定のテーブルの TiFlash レプリカが使用可能かどうかを示します。 `1`は利用可能であることを意味し、 `0`は利用できないことを意味します。レプリカが使用可能になると、このステータスは変更されなくなります。
+-   `AVAILABLE`は、特定のテーブルのTiFlashレプリカが使用可能かどうかを示します。 `1`は利用可能であることを意味し、 `0`は利用できないことを意味します。レプリカが使用可能になると、このステータスは変更されなくなります。
 -   `PROGRESS`は、レプリケーションの進行状況を意味します。値は`0` ～ `1`です。 `1`は、少なくとも 1 つのレプリカが複製されていることを意味します。
 
 ### ステップ 2. HTAP を使用してデータを照会する {#step-2-query-data-using-htap}
@@ -64,7 +64,7 @@ ORDER BY count ASC;
 
 ### ステップ 3. 行ベースのストレージと列指向のストレージのクエリ パフォーマンスを比較する {#step-3-compare-the-query-performance-between-row-based-storage-and-columnar-storage}
 
-このステップでは、TiKV (行ベースのストレージ) と TiFlash (列型ストレージ) の実行統計を比較できます。
+このステップでは、TiKV (行ベースのストレージ) とTiFlash (列型ストレージ) の実行統計を比較できます。
 
 -   TiKV を使用してこのクエリの実行統計を取得するには、次のステートメントを実行します。
 
@@ -74,7 +74,7 @@ ORDER BY count ASC;
     ORDER BY count ASC;
     ```
 
-    TiFlash レプリカを含むテーブルの場合、TiDB オプティマイザーは、コストの見積もりに基づいて、TiKV または TiFlash レプリカのどちらを使用するかを自動的に決定します。上記の`EXPLAIN ANALYZE`ステートメントでは、TiKV の実行統計を確認できるように、オプティマイザーに強制的に TiKV を選択させるために`HINT /*+ READ_FROM_STORAGE(TIKV[trips]) */`が使用されています。
+    TiFlashレプリカを含むテーブルの場合、TiDB オプティマイザーは、コストの見積もりに基づいて、TiKV またはTiFlashレプリカのどちらを使用するかを自動的に決定します。上記の`EXPLAIN ANALYZE`ステートメントでは、TiKV の実行統計を確認できるように、オプティマイザーに強制的に TiKV を選択させるために`HINT /*+ READ_FROM_STORAGE(TIKV[trips]) */`が使用されています。
 
     > **ノート：**
     >
@@ -94,7 +94,7 @@ ORDER BY count ASC;
     (6 rows)
     ```
 
--   TiFlash を使用してこのクエリの実行統計を取得するには、次のステートメントを実行します。
+-   TiFlashを使用してこのクエリの実行統計を取得するには、次のステートメントを実行します。
 
     ```sql
     EXPLAIN ANALYZE SELECT start_station_name, end_station_name, COUNT(ride_id) as count from `trips`
@@ -127,7 +127,7 @@ ORDER BY count ASC;
 ## もっと詳しく知る {#learn-more}
 
 -   [TiFlash の概要](/tiflash/tiflash-overview.md)
--   [TiFlash レプリカの作成](/tiflash/create-tiflash-replicas.md)
--   [TiFlash からのデータの読み取り](/tiflash/use-tidb-to-read-tiflash.md)
+-   [TiFlashレプリカの作成](/tiflash/create-tiflash-replicas.md)
+-   [TiFlashからのデータの読み取り](/tiflash/use-tidb-to-read-tiflash.md)
 -   [MPP モードを使用する](/tiflash/use-tiflash-mpp-mode.md)
 -   [サポートされているプッシュダウン計算](/tiflash/tiflash-supported-pushdown-calculations.md)

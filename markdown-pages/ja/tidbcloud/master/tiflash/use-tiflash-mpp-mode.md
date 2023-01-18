@@ -5,13 +5,13 @@ summary: Learn the MPP mode of TiFlash and how to use it.
 
 # TiFlash MPP モードを使用する {#use-tiflash-mpp-mode}
 
-このドキュメントでは、TiFlash の MPP モードとその使用方法を紹介します。
+このドキュメントでは、 TiFlashの MPP モードとその使用方法を紹介します。
 
-TiFlash は、MPP モードを使用してクエリを実行することをサポートしています。これにより、クロスノード データ交換 (データ シャッフル プロセス) が計算に導入されます。 TiDB は、オプティマイザのコスト見積もりを使用して、MPP モードを選択するかどうかを自動的に決定します。 [`tidb_allow_mpp`](/system-variables.md#tidb_allow_mpp-new-in-v50)と[`tidb_enforce_mpp`](/system-variables.md#tidb_enforce_mpp-new-in-v51)の値を変更することで、選択戦略を変更できます。
+TiFlashは、MPP モードを使用してクエリを実行することをサポートしています。これにより、クロスノード データ交換 (データ シャッフル プロセス) が計算に導入されます。 TiDB は、オプティマイザのコスト見積もりを使用して、MPP モードを選択するかどうかを自動的に決定します。 [`tidb_allow_mpp`](/system-variables.md#tidb_allow_mpp-new-in-v50)と[`tidb_enforce_mpp`](/system-variables.md#tidb_enforce_mpp-new-in-v51)の値を変更することで、選択戦略を変更できます。
 
 ## MPP モードを選択するかどうかを制御します {#control-whether-to-select-the-mpp-mode}
 
-`tidb_allow_mpp`変数は、TiDB が MPP モードを選択してクエリを実行できるかどうかを制御します。 `tidb_enforce_mpp`変数は、オプティマイザーのコスト見積もりを無視し、TiFlash の MPP モードを強制的に使用してクエリを実行するかどうかを制御します。
+`tidb_allow_mpp`変数は、TiDB が MPP モードを選択してクエリを実行できるかどうかを制御します。 `tidb_enforce_mpp`変数は、オプティマイザーのコスト見積もりを無視し、 TiFlashの MPP モードを強制的に使用してクエリを実行するかどうかを制御します。
 
 これら 2 つの変数のすべての値に対応する結果は次のとおりです。
 
@@ -51,7 +51,7 @@ set @@session.tidb_enforce_mpp=1;
 
 > **ノート：**
 >
-> `tidb_enforce_mpp=1`が有効になると、TiDB オプティマイザーはコスト見積もりを無視して MPP モードを選択します。ただし、他の要因が MPP モードをブロックする場合、TiDB は MPP モードを選択しません。これらの要因には、TiFlash レプリカの不在、TiFlash レプリカの未完成の複製、および MPP モードでサポートされていない演算子または関数を含むステートメントが含まれます。
+> `tidb_enforce_mpp=1`が有効になると、TiDB オプティマイザーはコスト見積もりを無視して MPP モードを選択します。ただし、他の要因が MPP モードをブロックする場合、TiDB は MPP モードを選択しません。これらの要因には、 TiFlashレプリカの不在、 TiFlashレプリカの未完成の複製、および MPP モードでサポートされていない演算子または関数を含むステートメントが含まれます。
 >
 > コスト見積もり以外の理由で TiDB オプティマイザーが MPP モードを選択できない場合、 `EXPLAIN`ステートメントを使用して実行計画をチェックアウトすると、その理由を説明する警告が返されます。例えば：
 >
@@ -96,7 +96,7 @@ explain select count(*) from customer c join nation n on c.c_nationkey=n.n_natio
 
 実行計画の例では、 `ExchangeReceiver`と`ExchangeSender`の演算子が含まれています。実行計画は、 `nation`テーブルが読み取られた後、 `ExchangeSender`オペレーターがテーブルを各ノードにブロードキャストし、 `nation`テーブルと`customer`テーブルに対して`HashJoin`と`HashAgg`の操作が実行され、結果が TiDB に返されることを示しています。
 
-TiFlash は、ブロードキャスト ハッシュ結合を使用するかどうかを制御するために、次の 2 つのグローバル/セッション変数を提供します。
+TiFlashは、ブロードキャスト ハッシュ結合を使用するかどうかを制御するために、次の 2 つのグローバル/セッション変数を提供します。
 
 -   [`tidb_broadcast_join_threshold_size`](/system-variables.md#tidb_broadcast_join_threshold_count-new-in-v50) : 値の単位はバイトです。テーブル サイズ (バイト単位) が変数の値より小さい場合は、ブロードキャスト ハッシュ結合アルゴリズムが使用されます。それ以外の場合は、Shuffled Hash Join アルゴリズムが使用されます。
 -   [`tidb_broadcast_join_threshold_count`](/system-variables.md#tidb_broadcast_join_threshold_count-new-in-v50) : 値の単位は行です。結合操作のオブジェクトがサブクエリに属している場合、オプティマイザはサブクエリの結果セットのサイズを見積もることができないため、サイズは結果セットの行数によって決定されます。サブクエリの推定行数がこの変数の値より少ない場合、ブロードキャスト ハッシュ結合アルゴリズムが使用されます。それ以外の場合は、Shuffled Hash Join アルゴリズムが使用されます。

@@ -116,7 +116,6 @@ implementation group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.67
 
 **Maven**を使用している場合は、次を`<dependencies></dependencies>`に追加します。
 
-
 ```xml
 <dependency>
     <groupId>org.hibernate.orm</groupId>

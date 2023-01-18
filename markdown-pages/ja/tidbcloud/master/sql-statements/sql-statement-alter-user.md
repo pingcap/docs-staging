@@ -11,7 +11,7 @@ summary: An overview of the usage of ALTER USER for the TiDB database.
 
 ```ebnf+diagram
 AlterUserStmt ::=
-    'ALTER' 'USER' IfExists (UserSpecList RequireClauseOpt ConnectionOptions PasswordOrLockOptions | 'USER' '(' ')' 'IDENTIFIED' 'BY' AuthString)
+    'ALTER' 'USER' IfExists (UserSpecList RequireClauseOpt ConnectionOptions PasswordOption LockOption AttributeOption | 'USER' '(' ')' 'IDENTIFIED' 'BY' AuthString)
 
 UserSpecList ::=
     UserSpec ( ',' UserSpec )*
@@ -24,6 +24,12 @@ Username ::=
 
 AuthOption ::=
     ( 'IDENTIFIED' ( 'BY' ( AuthString | 'PASSWORD' HashString ) | 'WITH' StringName ( 'BY' AuthString | 'AS' HashString )? ) )?
+
+PasswordOption ::= ( 'PASSWORD' 'EXPIRE' ( 'DEFAULT' | 'NEVER' | 'INTERVAL' N 'DAY' )? | 'PASSWORD' 'HISTORY' ( 'DEFAULT' | N ) | 'PASSWORD' 'REUSE' 'INTERVAL' ( 'DEFAULT' | N 'DAY' ) | 'FAILED_LOGIN_ATTEMPTS' N | 'PASSWORD_LOCK_TIME' ( N | 'UNBOUNDED' ) )*
+
+LockOption ::= ( 'ACCOUNT' 'LOCK' | 'ACCOUNT' 'UNLOCK' )?
+
+AttributeOption ::= ( 'COMMENT' CommentString | 'ATTRIBUTE' AttributeString )?
 ```
 
 ## 例 {#examples}
@@ -52,9 +58,81 @@ mysql> SHOW CREATE USER 'newuser';
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+```sql
+ALTER USER 'newuser' ACCOUNT LOCK;
+```
 
--   MySQL では、このステートメントは、パスワードの期限切れなどの属性を変更するために使用されます。この機能は、TiDB ではまだサポートされていません。
+```
+Query OK, 0 rows affected (0.02 sec)
+```
+
+`newuser`の属性を変更します。
+
+```sql
+ALTER USER 'newuser' ATTRIBUTE '{"newAttr": "value", "deprecatedAttr": null}';
+SELECT * FROM information_schema.user_attributes;
+```
+
+```sql
++-----------+------+--------------------------+
+| USER      | HOST | ATTRIBUTE                |
++-----------+------+--------------------------+
+| newuser   | %    | {"newAttr": "value"}     |
++-----------+------+--------------------------+
+1 rows in set (0.00 sec)
+```
+
+`ALTER USER ... COMMENT`を使用して`newuser`のコメントを変更します。
+
+```sql
+ALTER USER 'newuser' COMMENT 'Here is the comment';
+SELECT * FROM information_schema.user_attributes;
+```
+
+```sql
++-----------+------+--------------------------------------------------------+
+| USER      | HOST | ATTRIBUTE                                              |
++-----------+------+--------------------------------------------------------+
+| newuser   | %    | {"comment": "Here is the comment", "newAttr": "value"} |
++-----------+------+--------------------------------------------------------+
+1 rows in set (0.00 sec)
+```
+
+`ALTER USER ... ATTRIBUTE`を使用して`newuser`のコメントを削除します。
+
+```sql
+ALTER USER 'newuser' ATTRIBUTE '{"comment": null}';
+SELECT * FROM information_schema.user_attributes;
+```
+
+```sql
++-----------+------+---------------------------+
+| USER      | HOST | ATTRIBUTE                 |
++-----------+------+---------------------------+
+| newuser   | %    | {"newAttr": "value"}      |
++-----------+------+---------------------------+
+1 rows in set (0.00 sec)
+```
+
+`newuser`の自動パスワード有効期限ポリシーを`ALTER USER ... PASSWORD EXPIRE NEVER`経由で期限切れにならないように変更します。
+
+```sql
+ALTER USER 'newuser' PASSWORD EXPIRE NEVER;
+```
+
+```
+Query OK, 0 rows affected (0.02 sec)
+```
+
+`newuser`のパスワード再利用ポリシーを変更して、 `ALTER USER ... PASSWORD REUSE INTERVAL ... DAY`を使用して過去 90 日間に使用されたパスワードの再利用を禁止します。
+
+```sql
+ALTER USER 'newuser' PASSWORD REUSE INTERVAL 90 DAY;
+```
+
+```
+Query OK, 0 rows affected (0.02 sec)
+```
 
 ## こちらもご覧ください {#see-also}
 

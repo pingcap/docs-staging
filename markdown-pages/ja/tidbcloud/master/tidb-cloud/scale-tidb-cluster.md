@@ -8,14 +8,14 @@ aliases: ['/tidbcloud/beta/scale-tidb-cluter']
 
 > **ノート：**
 >
-> -   [サーバーレス階層クラスター](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta)をスケーリングすることはできません。
+> -   [Serverless Tierクラスター](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta)をスケーリングすることはできません。
 > -   クラスターが**MODIFYING**ステータスにある場合、そのクラスターに対して新しいスケーリング操作を実行することはできません。
 
 次のディメンションで TiDB クラスターをスケーリングできます。
 
--   TiDB、TiKV、TiFlash のノード番号
+-   TiDB、TiKV、 TiFlashのノード番号
 -   TiKVとTiFlashのノードストレージ
--   TiDB、TiKV、TiFlash のノード サイズ (vCPU とメモリを含む)
+-   TiDB、TiKV、 TiFlashのノード サイズ (vCPU とメモリを含む)
 
 TiDB クラスターのサイズを決定する方法については、 [TiDB のサイズを決定する](/tidb-cloud/size-your-cluster.md)を参照してください。
 
@@ -26,19 +26,19 @@ TiDB クラスターのサイズを決定する方法については、 [TiDB �
 > -   TiDB のノード数は 1 または 2 にのみ設定でき、TiKV のノード数は 3 に固定されています。
 > -   2 vCPU TiDB は 2 vCPU TiKV でのみ使用でき、2 vCPU TiKV は 2 vCPU TiDB でのみ使用できます。
 > -   4 vCPU TiDB は 4 vCPU TiKV でのみ使用でき、4 vCPU TiKV は 4 vCPU TiDB でのみ使用できます。
-> -   TiFlash は利用できません。
+> -   TiFlashは利用できません。
 
 ## ノード番号の変更 {#change-node-number}
 
-TiDB、TiKV、または TiFlash ノードの数を変更できます。
+TiDB、TiKV、またはTiFlashノードの数を変更できます。
 
 ### ノード数を増やす {#increase-node-number}
 
-TiDB、TiKV、または TiFlash ノードの数を増やすには、次の手順を実行します。
+TiDB、TiKV、またはTiFlashノードの数を増やすには、次の手順を実行します。
 
-1.  TiDB Cloudコンソールで、プロジェクトの [**クラスター**] ページに移動します。
+1.  TiDB Cloudコンソールで、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
-2.  スケーリングするクラスターを見つけて、クラスター領域の右上隅にある [ **...** ] をクリックします。
+2.  スケーリングするクラスターの行で、[ **...** ] をクリックします。
 
     > **ヒント：**
     >
@@ -46,19 +46,19 @@ TiDB、TiKV、または TiFlash ノードの数を増やすには、次の手順
 
 3.  ドロップダウン メニューで [**変更**] をクリックします。 <strong>[クラスタ</strong>の変更] ページが表示されます。
 
-4.  **[クラスタ**の変更] ページで、TiDB、TiKV、または TiFlash ノードの数を増やします。
+4.  **[クラスタ**の変更] ページで、TiDB、TiKV、またはTiFlashノードの数を増やします。
 
 5.  [**確認]**をクリックします。
 
-[Dedicated Tier クラスターを変更する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)のエンドポイントを介してTiDB Cloud API を使用して、TiDB、TiKV、または TiFlash ノードの数を増やすこともできます。現在、 TiDB Cloud API はまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)を参照してください。
+[Dedicated Tierクラスターを変更する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)のエンドポイントを介してTiDB Cloud API を使用して、TiDB、TiKV、またはTiFlashノードの数を増やすこともできます。現在、 TiDB Cloud API はまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)を参照してください。
 
 ### ノード番号を減らす {#decrease-node-number}
 
 TiDB ノードの数を減らすには、次の手順を実行します。
 
-1.  TiDB Cloudコンソールで、プロジェクトの [**クラスター**] ページに移動します。
+1.  TiDB Cloudコンソールで、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
-2.  スケーリングするクラスターを見つけて、クラスター領域の右上隅にある [ **...** ] をクリックします。
+2.  スケーリングするクラスターの行で、[ **...** ] をクリックします。
 
     > **ヒント：**
     >
@@ -70,31 +70,35 @@ TiDB ノードの数を減らすには、次の手順を実行します。
 
 5.  [**確認]**をクリックします。
 
-TiKV または TiFlash ノードの数を減らすには、サポート チケットを送信する必要があります。 PingCAP サポート チームがお客様に連絡し、合意された時間内にスケーリングを完了します。
+TiKV またはTiFlashノードの数を減らすには、サポート チケットを送信する必要があります。 PingCAP サポート チームがお客様に連絡し、合意された時間内にスケーリングを完了します。
 
 > **警告：**
 >
-> TiKV または TiFlash ノード番号を減らすことは危険であり、ストレージ容量が不足したり、CPU 使用率が過剰になったり、残りのノードでメモリ使用率が過剰になったりする可能性があります。
+> TiKV またはTiFlashノード番号を減らすことは危険であり、ストレージ容量が不足したり、CPU 使用率が過剰になったり、残りのノードでメモリ使用率が過剰になったりする可能性があります。
 
 サポート チケットを送信するには、 [TiDB Cloudのサポート](/tidb-cloud/tidb-cloud-support.md)の手順を実行します。スケーリングするノードごとに、[**説明**] ボックスに次の情報を入力します。
 
 -   クラスタ名: xxx
 -   クラウド プロバイダー: GCP または AWS
--   ノードタイプ: TiKV または TiFlash
+-   ノードタイプ: TiKV またはTiFlash
 -   現在のノード番号: xxx
 -   予想されるノード番号: xxx
 
 ## ノード ストレージの変更 {#change-node-storage}
 
-TiKVまたはTiFlashのノードストレージを変更できます。
+TiKV またはTiFlashのノード ストレージを変更できます。
 
 ### ノード ストレージを増やす {#increase-node-storage}
 
-TiKV または TiFlash のノード ストレージを増やすには、次の手順を実行します。
+> **ノート：**
+>
+> AWS には、ノード ストレージの変更のクールダウン期間があります。 TiDB クラスターが AWS でホストされている場合、TiKV またはTiFlashのノード ストレージまたはノード サイズを変更した後、再度変更するには、少なくとも 6 時間待つ必要があります。
 
-1.  TiDB Cloudコンソールで、プロジェクトの [**クラスター**] ページに移動します。
+TiKV またはTiFlashのノード ストレージを増やすには、次の手順を実行します。
 
-2.  スケーリングするクラスターを見つけて、クラスター領域の右上隅にある [ **...** ] をクリックします。
+1.  TiDB Cloudコンソールで、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
+
+2.  スケーリングするクラスターの行で、[ **...** ] をクリックします。
 
     > **ヒント：**
     >
@@ -102,15 +106,11 @@ TiKV または TiFlash のノード ストレージを増やすには、次の�
 
 3.  ドロップダウン メニューで [**変更**] をクリックします。 <strong>[クラスタ</strong>の変更] ページが表示されます。
 
-4.  **[クラスタ**の変更] ページで、TiKV または TiFlash のノード ストレージを増やします。
+4.  **[クラスタ**の変更] ページで、TiKV またはTiFlashのノード ストレージを増やします。
 
 5.  [**確認]**をクリックします。
 
-[Dedicated Tier クラスターを変更する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)エンドポイントを介してTiDB Cloud API を使用して、TiKV または TiFlash ノードのストレージを増やすこともできます。現在、 TiDB Cloud API はまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)を参照してください。
-
-> **ノート：**
->
-> AWS には、ノード ストレージの変更のクールダウン期間があります。 TiDB クラスターが AWS によってホストされている場合、TiKV または TiFlash のノード ストレージを変更した後、再度変更するには、少なくとも 6 時間待つ必要があります。
+[Dedicated Tierクラスターを変更する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)エンドポイントを介してTiDB Cloud API を使用して、TiKV またはTiFlashノードのストレージを増やすこともできます。現在、 TiDB Cloud API はまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)を参照してください。
 
 ### ノード ストレージを減らす {#decrease-node-storage}
 
@@ -118,9 +118,17 @@ TiKV または TiFlash のノード ストレージを増やすには、次の�
 
 ## ノードサイズを大きくする {#increase-node-size}
 
-現在、クラスターの実行中は、そのノード サイズを増やすことはできません。バックアップと復元によってのみノード サイズを増やすことができます。
+> **ノート：**
+>
+> -   ノード サイズの増加は、AWS でホストされ、2022/12/31 以降に作成されたクラスターでのみ利用できます。
+> -   AWS には、ノード サイズの変更のクールダウン期間があります。 TiDB クラスターが AWS でホストされている場合、TiKV またはTiFlashのノード ストレージまたはノード サイズを変更した後、再度変更するには、少なくとも 6 時間待つ必要があります。
 
-[クラスターの最新のバックアップを作成する](/tidb-cloud/backup-and-restore.md#manual-backup) 、そして[クラスタを削除します](/tidb-cloud/delete-tidb-cluster.md)のときにノード サイズを増やす必要があり[削除されたクラスターを復元する](/tidb-cloud/backup-and-restore.md#restore-a-deleted-cluster) 。この方法を実行する前に、次の影響が許容できることを確認してください。
+TiDB、TiKV、およびTiFlashのノード サイズを増やすことができます。ノード サイズの縮小はサポートされていません。
 
--   バックアップ中またはバックアップ後のデータ損失を回避するには、バックアップを作成する前に、SQL クライアントを介したクラスターへの接続を停止する必要があります。
--   クラスターへの接続を停止すると、復元プロセスが完了するまで、このクラスターで実行されているアプリケーションは正常にサービスを提供できません。
+ノード サイズを増やすには、次の手順を実行します。
+
+1.  TiDB Cloudコンソールで、プロジェクトの [**クラスター**] ページに移動します。
+2.  スケーリングするクラスターの行で、[ **...** ] をクリックします。
+3.  ドロップダウン メニューで [**変更**] をクリックします。 <strong>[クラスタ</strong>の変更] ページが表示されます。
+4.  **[クラスタ**の変更] ページで、必要に応じてノード サイズを増やします。
+5.  [**確認]**をクリックします。

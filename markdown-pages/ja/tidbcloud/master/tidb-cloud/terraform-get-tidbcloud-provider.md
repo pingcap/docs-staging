@@ -15,9 +15,9 @@ summary: Learn how to get TiDB Cloud Terraform Provider.
 
 TiDB Cloud Terraform Provider が[Terraform レジストリ](https://registry.terraform.io/)にリリースされました。 Terraform (&gt;=1.0) をインストールするだけです。
 
-macOS の場合、次の手順に従って、Homebrew で Terraform をインストールできます。
+macOS の場合、次の手順に従って、 Homebrewで Terraform をインストールできます。
 
-1.  必要なすべての Homebrew パッケージを含むリポジトリである HashiCorp タップをインストールします。
+1.  必要なすべてのHomebrewパッケージを含むリポジトリである HashiCorp タップをインストールします。
 
     ```shell
     brew tap hashicorp/tap

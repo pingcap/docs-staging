@@ -15,13 +15,11 @@ TiDB は[MySQL クライアント/サーバー プロトコル](https://dev.mysq
 
 TiDB のコマンドライン ツールとして使用できる MySQL クライアントを使用して TiDB に接続できます。 MySQL クライアントをインストールするには、以下の YUM ベースの Linux ディストリビューションの手順に従ってください。
 
-
 ```shell
 sudo yum install mysql
 ```
 
 インストール後、次のコマンドを使用して TiDB に接続できます。
-
 
 ```shell
 mysql --host <tidb_server_host> --port 4000 -u root -p --comments
@@ -30,7 +28,6 @@ mysql --host <tidb_server_host> --port 4000 -u root -p --comments
 ## MySQL シェル {#mysql-shell}
 
 TiDB のコマンドライン ツールとして使用できる MySQL Shell を使用して TiDB に接続できます。 MySQL Shell をインストールするには、 [MySQL シェルのドキュメント](https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-install.html)の手順に従います。インストール後、次のコマンドを使用して TiDB に接続できます。
-
 
 ```shell
 mysqlsh --sql mysql://root@<tidb_server_host>:4000
@@ -41,7 +38,6 @@ mysqlsh --sql mysql://root@<tidb_server_host>:4000
 [JDBC](https://dev.mysql.com/doc/connector-j/8.0/en/)ドライバーを使用して TiDB に接続できます。これを行うには、 `MysqlDataSource`または`MysqlConnectionPoolDataSource`オブジェクトを作成し (どちらのオブジェクトも`DataSource`インターフェイスをサポートします)、 `setURL`関数を使用して接続文字列を設定する必要があります。
 
 例えば：
-
 
 ```java
 MysqlDataSource mysqlDataSource = new MysqlDataSource();
@@ -78,7 +74,6 @@ TiDB SQLユーザーの詳細については、 [TiDB ユーザー アカウン�
 
 たとえば、 `hibernate.cfg.xml`の構成ファイルを使用する場合は、次のように`hibernate.connection.url`を設定します。
 
-
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-configuration PUBLIC
@@ -94,7 +89,6 @@ TiDB SQLユーザーの詳細については、 [TiDB ユーザー アカウン�
 ```
 
 構成が完了したら、次のコマンドを使用して構成ファイルを読み取り、 `SessionFactory`のオブジェクトを取得できます。
-
 
 ```java
 SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();

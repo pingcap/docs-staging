@@ -143,7 +143,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   繋がり
 -   一貫性のある
 -   制約 (R)
--   コンテクスト
+-   環境
 -   変換 (R)
 -   CPU
 -   クリエイト(R)
@@ -216,7 +216,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   列挙型
 -   エラー
 -   エラー
--   エスケープ
+-   逃れる
 -   エスケープ (R)
 -   イベント
 -   イベント
@@ -237,7 +237,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   故障
 -   田畑
 -   ファイル
--   初め
+-   最初
 -   FIRST_VALUE (R ウィンドウ)
 -   修繕
 -   フロート(R)
@@ -391,7 +391,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   一度もない
 -   次
 -   ネクストヴァル
--   いいえ
+-   番号
 -   ノカシェ
 -   ノサイクル
 -   ノードグループ
@@ -399,7 +399,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   NODE_STATE (R)
 -   NOMAXVALUE
 -   名目値
--   なし
+-   無し
 -   ない (R)
 -   今すぐ
 -   NO_WRITE_TO_BINLOG (R)
@@ -471,7 +471,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   読み取り (R)
 -   リアル(R)
 -   再構築
--   回復します
+-   回復する
 -   冗長
 -   参考文献 (R)
 -   REGEXP (R)
@@ -489,11 +489,11 @@ Query OK, 0 rows affected (0.08 sec)
 -   レプリカ
 -   複製
 -   要求する (R)
--   尊敬
+-   尊敬する
 -   戻す
 -   復元する
 -   制限 (R)
--   逆行する
+-   逆行
 -   REVOKE(R)
 -   右 (R)
 -   RLIKE(R)
@@ -567,8 +567,8 @@ Query OK, 0 rows affected (0.08 sec)
 -   STATS_META (R)
 -   STATS_PERSISTENT
 -   STATS_SAMPLE_PAGES
--   状態
--   ストレージ
+-   スターテス
+-   保管所
 -   ストアド (R)
 -   STRAIGHT_JOIN (R)
 -   STRICT_FORMAT

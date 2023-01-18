@@ -11,7 +11,7 @@ summary: Learn the definitions, rules, and guidelines in table creation.
 
 このドキュメントを読む前に、次のタスクが完了していることを確認してください。
 
--   [TiDB Cloud(サーバーレス層) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) .
+-   [TiDB Cloud(Serverless Tier) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) .
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md)を読んでください。
 -   [データベースを作成する](/develop/dev-guide-create-database.md) .
 
@@ -25,7 +25,6 @@ summary: Learn the definitions, rules, and guidelines in table creation.
 
 `CREATE TABLE`ステートメントは通常、次の形式を取ります。
 
-
 ```sql
 CREATE TABLE {table_name} ( {elements} );
 ```
@@ -38,7 +37,6 @@ CREATE TABLE {table_name} ( {elements} );
 `bookshop`データベースにユーザー情報を格納するためのテーブルを作成する必要があるとします。
 
 列が 1 つも追加されていないため、次の SQL ステートメントはまだ実行できないことに注意してください。
-
 
 ```sql
 CREATE TABLE `bookshop`.`users` (
@@ -63,7 +61,6 @@ CREATE TABLE `bookshop`.`users` (
 
 一意の識別子`id` 、 `balance` 、および`nickname`など、いくつかの列を`users`テーブルに追加できます。
 
-
 ```sql
 CREATE TABLE `bookshop`.`users` (
   `id` bigint,
@@ -81,7 +78,6 @@ CREATE TABLE `bookshop`.`users` (
 TiDB は、 [整数型](/data-type-numeric.md#integer-types) 、 [浮動小数点型](/data-type-numeric.md#floating-point-types) 、 [固定小数点型](/data-type-numeric.md#fixed-point-types) 、 [日付と時刻の種類](/data-type-date-and-time.md) 、および[列挙型](/data-type-string.md#enum-type)を含む、他の多くの列データ型をサポートしています。サポートされている列[データ型](/data-type-overview.md)を参照して、データベースに保存するデータに一致する**データ型**を使用できます。
 
 もう少し複雑にするために、 `bookshop`のデータのコアとなる`books`のテーブルを定義できます。 `books`テーブルには、書籍の ID、タイトル、種類 (雑誌、小説、人生、芸術など)、在庫、価格、出版日のフィールドが含まれています。
-
 
 ```sql
 CREATE TABLE `bookshop`.`books` (
@@ -126,7 +122,6 @@ CREATE TABLE `bookshop`.`books` (
 
 [主キーを選択するためのガイドライン](#guidelines-to-follow-when-selecting-primary-key)に続いて、次の例は`AUTO_RANDOM`主キーが`users`テーブルでどのように定義されるかを示しています。
 
-
 ```sql
 CREATE TABLE `bookshop`.`users` (
   `id` bigint AUTO_RANDOM,
@@ -158,7 +153,6 @@ TiDB は v5.0 以降、 [クラスター化インデックス](/clustered-indexe
 
 [クラスタ化インデックスを選択するためのガイドライン](#guidelines-to-follow-when-selecting-clustered-index)に続いて、次の例では、 `books`と`users`の間の関連付けを持つテーブルを作成します。これは、 `book` x `users`の`ratings`を表します。この例では、テーブルを作成し、 `book_id`と`user_id`を使用して複合主キーを作成し、その**主キー**に<strong>クラスター化インデックス</strong>を作成します。
 
-
 ```sql
 CREATE TABLE `bookshop`.`ratings` (
   `book_id` bigint,
@@ -179,7 +173,6 @@ CREATE TABLE `bookshop`.`ratings` (
 
 `DEFAULT`と[サポートされている SQL関数](/functions-and-operators/functions-and-operators-overview.md)を一緒に使用して、デフォルトの計算をアプリケーションレイヤーの外に移動し、アプリケーションレイヤーのリソースを節約できます。計算によって消費されたリソースは消えず、TiDB クラスターに移動されます。通常、デフォルトの時間でデータを挿入できます。以下は、 `ratings`テーブルにデフォルト値を設定する例です。
 
-
 ```sql
 CREATE TABLE `bookshop`.`ratings` (
   `book_id` bigint,
@@ -191,7 +184,6 @@ CREATE TABLE `bookshop`.`ratings` (
 ```
 
 さらに、データの更新時にデフォルトで現在時刻も入力される場合は、次のステートメントを使用できます (ただし、 `ON UPDATE`の後に入力できるのは[現在時刻関連のステートメント](https://pingcap.github.io/sqlgram/#NowSymOptionFraction)のみであり、 `DEFAULT`の後には[より多くのオプション](https://pingcap.github.io/sqlgram/#DefaultValueExpr)がサポートされています)。
-
 
 ```sql
 CREATE TABLE `bookshop`.`ratings` (
@@ -209,7 +201,6 @@ CREATE TABLE `bookshop`.`ratings` (
 
 たとえば、ユーザーのニックネームが一意であることを確認するには、次のように`users`テーブルのテーブル作成 SQL ステートメントを書き直すことができます。
 
-
 ```sql
 CREATE TABLE `bookshop`.`users` (
   `id` bigint AUTO_RANDOM,
@@ -226,7 +217,6 @@ CREATE TABLE `bookshop`.`users` (
 列の null 値を防ぐ必要がある場合は、 `NOT NULL`制約を使用できます。
 
 例として、ユーザーのニックネームを取り上げます。ニックネームが固有であるだけでなく、ヌルでもないことを確認するには、 `users`表を作成するための SQL ステートメントを次のように書き直すことができます。
-
 
 ```sql
 CREATE TABLE `bookshop`.`users` (
@@ -251,7 +241,7 @@ CREATE TABLE `bookshop`.`users` (
 
 > **ノート：**
 >
-> このガイドに記載されている手順は、***クイック***スタート専用です。詳細については、 [TiFlash で HTAPクラスタを使用する](/tiflash/tiflash-overview.md)を参照してください。
+> このガイドに記載されている手順は、***クイック***スタート専用です。詳細については、 [TiFlashで HTAPクラスタを使用する](/tiflash/tiflash-overview.md)を参照してください。
 
 </CustomContent>
 
@@ -271,14 +261,13 @@ TiDB HTAP機能の詳細については、次のドキュメントを参照し�
 
 <CustomContent platform="tidb-cloud">
 
-TiDB HTAP機能の詳細については、 [TiDB CloudHTAP クイック スタート](/tidb-cloud/tidb-cloud-htap-quickstart.md)および[TiFlash で HTAPクラスタを使用する](/tiflash/tiflash-overview.md)を参照してください。
+TiDB HTAP機能の詳細については、 [TiDB CloudHTAP クイック スタート](/tidb-cloud/tidb-cloud-htap-quickstart.md)および[TiFlashで HTAPクラスタを使用する](/tiflash/tiflash-overview.md)を参照してください。
 
 </CustomContent>
 
-この例では、 `bookshop`データベースのデータ分析エンジンとして[ティフラッシュ](https://docs.pingcap.com/tidb/stable/tiflash-overview)が選択されています。
+この例では、 `bookshop`データベースのデータ分析エンジンとして[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)が選択されています。
 
-TiFlash は、展開後にデータを自動的に複製しません。したがって、レプリケートするテーブルを手動で指定する必要があります。
-
+TiFlashは、展開後にデータを自動的に複製しません。したがって、レプリケートするテーブルを手動で指定する必要があります。
 
 ```sql
 ALTER TABLE {table_name} SET TIFLASH REPLICA {count};
@@ -289,12 +278,11 @@ ALTER TABLE {table_name} SET TIFLASH REPLICA {count};
 -   `{table_name}` : テーブル名。
 -   `{count}` : レプリケートされたレプリカの数。 0 の場合、複製されたレプリカは削除されます。
 
-その後、 **TiFlash**はテーブルを複製します。クエリが実行されると、TiDB はコストの最適化に基づいて、クエリに対して TiKV (行ベース) または TiFlash (列ベース) を自動的に選択します。または、クエリで<strong>TiFlash</strong>レプリカを使用するかどうかを手動で指定することもできます。指定方法については、 [TiDB を使用して TiFlash レプリカを読み取る](/tiflash/use-tidb-to-read-tiflash.md)を参照してください。
+その後、 **TiFlash**はテーブルを複製します。クエリが実行されると、TiDB はコストの最適化に基づいて、クエリに対して TiKV (行ベース) またはTiFlash (列ベース) を自動的に選択します。または、クエリで<strong>TiFlash</strong>レプリカを使用するかどうかを手動で指定することもできます。指定方法については、 [TiDB を使用してTiFlashレプリカを読み取る](/tiflash/use-tidb-to-read-tiflash.md)を参照してください。
 
 ### HTAP 機能の使用例 {#an-example-of-using-htap-capabilities}
 
-`ratings`のテーブルは、TiFlash の`1`のレプリカを開きます。
-
+`ratings`のテーブルは、 TiFlashの`1`のレプリカを開きます。
 
 ```sql
 ALTER TABLE `bookshop`.`ratings` SET TIFLASH REPLICA 1;
@@ -302,17 +290,15 @@ ALTER TABLE `bookshop`.`ratings` SET TIFLASH REPLICA 1;
 
 > **ノート：**
 >
-> クラスターに**TiFlash**ノードが含まれていない場合、この SQL ステートメントはエラーを報告します: `1105 - the tiflash replica count: 1 should be less than the total tiflash server count: 0` 。 [TiDB Cloud(サーバーレス層) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-serverless-tier-cluster)を使用して、 <strong>TiFlash</strong>を含むサーバーレス層クラスターを作成できます。
+> クラスターに**TiFlash**ノードが含まれていない場合、この SQL ステートメントはエラーを報告します: `1105 - the tiflash replica count: 1 should be less than the total tiflash server count: 0` 。 [TiDB Cloud(Serverless Tier) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-serverless-tier-cluster)を使用して、 <strong>TiFlash</strong>を含むServerless Tierクラスターを作成できます。
 
 次に、次のクエリを実行できます。
-
 
 ```sql
 SELECT HOUR(`rated_at`), AVG(`score`) FROM `bookshop`.`ratings` GROUP BY HOUR(`rated_at`);
 ```
 
 [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md)ステートメントを実行して、このステートメントが**TiFlash**を使用しているかどうかを確認することもできます。
-
 
 ```sql
 EXPLAIN ANALYZE SELECT HOUR(`rated_at`), AVG(`score`) FROM `bookshop`.`ratings` GROUP BY HOUR(`rated_at`);
@@ -328,7 +314,7 @@ EXPLAIN ANALYZE SELECT HOUR(`rated_at`), AVG(`score`) FROM `bookshop`.`ratings` 
 | └─HashAgg_5                 | 299821.99 | 24      | root         |               | time:60.7ms, loops:6, partial_worker:{wall_time:60.660079ms, concurrency:5, task_num:293, tot_wait:262.536669ms, tot_exec:40.171833ms, tot_time:302.827753ms, max:60.636886ms, p95:60.636886ms}, final_worker:{wall_time:60.701437ms, concurrency:5, task_num:25, tot_wait:303.114278ms, tot_exec:176.564µs, tot_time:303.297475ms, max:60.69326ms, p95:60.69326ms}  | group by:Column#10, funcs:avg(Column#8)->Column#5, funcs:firstrow(Column#9)->bookshop.ratings.rated_at                                         | 714.0 KB | N/A  |
 |   └─Projection_15           | 300000.00 | 300000  | root         |               | time:58.5ms, loops:294, Concurrency:5                                                                                                                                                                                                                                                                                                                                | cast(bookshop.ratings.score, decimal(8,4) BINARY)->Column#8, bookshop.ratings.rated_at, hour(cast(bookshop.ratings.rated_at, time))->Column#10 | 366.2 KB | N/A  |
 |     └─TableReader_10        | 300000.00 | 300000  | root         |               | time:43.5ms, loops:294, cop_task: {num: 1, max: 43.1ms, proc_keys: 0, rpc_num: 1, rpc_time: 43ms, copr_cache_hit_ratio: 0.00}                                                                                                                                                                                                                                        | data:TableFullScan_9                                                                                                                           | 4.58 MB  | N/A  |
-|       └─TableFullScan_9     | 300000.00 | 300000  | cop[tiflash] | table:ratings | tiflash_task:{time:5.98ms, loops:8, threads:1}                                                                                                                                                                                                                                                                                                                       | keep order:false                                                                                                                               | N/A      | N/A  |
+|       └─TableFullScan_9     | 300000.00 | 300000  | cop[tiflash] | table:ratings | tiflash_task:{time:5.98ms, loops:8, threads:1}, tiflash_scan:{dtfile:{total_scanned_packs:45, total_skipped_packs:1, total_scanned_rows:368640, total_skipped_rows:8192, total_rs_index_load_time: 1ms, total_read_time: 1ms},total_create_snapshot_time:1ms}                                                                                                        | keep order:false                                                                                                                               | N/A      | N/A  |
 +-----------------------------+-----------+---------+--------------+---------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+----------+------+
 ```
 
@@ -340,7 +326,6 @@ EXPLAIN ANALYZE SELECT HOUR(`rated_at`), AVG(`score`) FROM `bookshop`.`ratings` 
 
 データベース初期化スクリプトに`init.sql`という名前を付けて保存するには、次のステートメントを実行してデータベースを初期化します。
 
-
 ```shell
 mysql
     -u root \
@@ -351,7 +336,6 @@ mysql
 ```
 
 `bookshop`データベースの下にあるすべてのテーブルを表示するには、 [`SHOW TABLES`](/sql-statements/sql-statement-show-tables.md#show-full-tables)ステートメントを使用します。
-
 
 ```sql
 SHOW TABLES IN `bookshop`;

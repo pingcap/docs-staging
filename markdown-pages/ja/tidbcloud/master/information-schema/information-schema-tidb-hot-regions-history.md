@@ -99,7 +99,7 @@ DESC tidb_hot_regions_history;
     SELECT count(region_id) cnt, store_id FROM INFORMATION_SCHEMA.TIDB_HOT_REGIONS_HISTORY WHERE update_time >'2021-08-18 21:40:00' and update_time <'2021-09-19 00:00:00' and table_name = 'table_name' GROUP BY STORE_ID ORDER BY cnt DESC;
     ```
 
--   特定の期間内のホット リーダー リージョンの分布を照会します。 `update_time`と`table_name`を実際の値に置き換えます。
+-   特定の期間内のホットLeaderリージョンの分布を照会します。 `update_time`と`table_name`を実際の値に置き換えます。
 
     
     ```sql
@@ -113,7 +113,7 @@ DESC tidb_hot_regions_history;
     SELECT count(region_id) cnt, index_name, store_id FROM INFORMATION_SCHEMA.TIDB_HOT_REGIONS_HISTORY WHERE update_time >'2021-08-18 21:40:00' and update_time <'2021-09-19 00:00:00' and table_name = 'table_name' group by index_name, store_id order by index_name,cnt desc;
     ```
 
--   特定の期間内のホット インデックス リーダー リージョンの分布を照会します。 `update_time`と`table_name`を実際の値に置き換えます。
+-   特定の期間内のホット インデックスLeaderリージョンの分布を照会します。 `update_time`と`table_name`を実際の値に置き換えます。
 
     
     ```sql

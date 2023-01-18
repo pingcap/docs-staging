@@ -20,11 +20,11 @@ summary: The key architecture components of the TiDB platform
 
 分散データベースとして、TiDB は複数のコンポーネントで構成されるように設計されています。これらのコンポーネントは相互に通信し、完全な TiDB システムを形成します。アーキテクチャは次のとおりです。
 
-![TiDB Architecture](https://download.pingcap.com/images/docs/tidb-architecture-v3.1.png)
+![TiDB Architecture](https://download.pingcap.com/images/docs/tidb-architecture-v6.png)
 
 ## TiDBサーバー {#tidb-server}
 
-[TiDBサーバー](/tidb-computing.md)は、MySQL プロトコルの接続エンドポイントを外部に公開するステートレス SQLレイヤーです。 TiDBサーバーは SQL 要求を受け取り、SQL の解析と最適化を実行し、最終的に分散実行計画を生成します。水平方向にスケーラブルであり、Linux Virtual Server (LVS)、HAProxy、F5 などの負荷分散コンポーネントを介して、外部への統合インターフェイスを提供します。データを保存せず、計算と SQL 分析のみを行い、実際のデータ読み取り要求を TiKV ノード (または TiFlash ノード) に送信します。
+[TiDBサーバー](/tidb-computing.md)は、MySQL プロトコルの接続エンドポイントを外部に公開するステートレス SQLレイヤーです。 TiDBサーバーは SQL 要求を受け取り、SQL の解析と最適化を実行し、最終的に分散実行計画を生成します。水平方向にスケーラブルであり、Linux Virtual Server (LVS)、HAProxy、F5 などの負荷分散コンポーネントを介して、外部への統合インターフェイスを提供します。データを保存せず、計算と SQL 分析のみを行い、実際のデータ読み取り要求を TiKV ノード (またはTiFlashノード) に送信します。
 
 ## 配置Driver(PD)サーバー {#placement-driver-pd-server}
 
@@ -52,4 +52,4 @@ summary: The key architecture components of the TiDB platform
 
 ### TiFlashサーバー {#tiflash-server}
 
-[TiFlashサーバー](/tiflash/tiflash-overview.md)は特殊なタイプのストレージサーバーです。通常の TiKV ノードとは異なり、TiFlash は主に分析処理を高速化するように設計された列ごとにデータを保存します。
+[TiFlashサーバー](/tiflash/tiflash-overview.md)は特殊なタイプのストレージサーバーです。通常の TiKV ノードとは異なり、 TiFlashは主に分析処理を高速化するように設計された列ごとにデータを保存します。
