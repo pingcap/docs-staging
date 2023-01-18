@@ -137,7 +137,7 @@ GBK 文字セットの TiDB サポートの詳細については、 [GBK](/chara
 
 MySQL では、文字セット`utf8`は最大 3 バイトに制限されています。これは、Basic Multilingual Plane (BMP) に文字を格納するには十分ですが、絵文字などの文字を格納するには十分ではありません。このため、代わりに文字セット`utf8mb4`を使用することをお勧めします。
 
-デフォルトでは、TiDB は`utf8`に同じ 3 バイト制限を提供し、TiDB で作成されたデータを MySQL で安全に復元できるようにします。これは、TiDB 構成ファイルの値を`check-mb4-value-in-utf8`から`FALSE`に変更することで無効にすることができます。
+デフォルトでは、TiDB は文字セット`utf8`を最大 3 バイトに制限し、TiDB で作成されたデータを MySQL で安全に復元できるようにします。システム変数[`tidb_check_mb4_value_in_utf8`](/system-variables.md#tidb_check_mb4_value_in_utf8)の値を`OFF`に変更することで無効にできます。
 
 以下は、4 バイトの絵文字を表に挿入するときのデフォルトの動作を示しています。 `INSERT`ステートメントは`utf8`文字セットでは失敗しますが、 `utf8mb4`では成功します。
 
@@ -525,7 +525,7 @@ INSERT INTO t VALUES ('a');
 ```
 
 ```sql
-ERROR 1062 (23000): Duplicate entry 'a' for key 'PRIMARY' # TiDB is compatible with the case-insensitive collation of MySQL.
+ERROR 1062 (23000): Duplicate entry 'a' for key 't.PRIMARY' # TiDB is compatible with the case-insensitive collation of MySQL.
 ```
 
 ```sql
@@ -533,7 +533,7 @@ INSERT INTO t VALUES ('a ');
 ```
 
 ```sql
-ERROR 1062 (23000): Duplicate entry 'a ' for key 'PRIMARY' # TiDB modifies the `PADDING` behavior to be compatible with MySQL.
+ERROR 1062 (23000): Duplicate entry 'a ' for key 't.PRIMARY' # TiDB modifies the `PADDING` behavior to be compatible with MySQL.
 ```
 
 > **ノート：**

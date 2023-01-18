@@ -5,22 +5,22 @@ summary: Learn how to use HTAP cluster in TiDB Cloud.
 
 # HTAPクラスタを使用する {#use-an-htap-cluster}
 
-[HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing)はハイブリッド トランザクション/分析処理を意味します。 TiDB Cloudの HTAP クラスターは、トランザクション処理用に設計された行ベースのストレージ エンジン[TiKV](https://tikv.org)と、分析処理用に設計された列型ストレージ エンジン[ティフラッシュ](https://docs.pingcap.com/tidb/stable/tiflash-overview)で構成されます。アプリケーション データはまず TiKV に保存され、次にRaftコンセンサス アルゴリズムを介して TiFlash に複製されます。つまり、行ストアから列ストアへのリアルタイム レプリケーションです。
+[HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing)はハイブリッド トランザクション/分析処理を意味します。 TiDB Cloudの HTAP クラスターは、トランザクション処理用に設計された行ベースのストレージ エンジン[TiKV](https://tikv.org)と、分析処理用に設計された列型ストレージ エンジン[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)で構成されます。アプリケーション データはまず TiKV に保存され、次にRaftコンセンサス アルゴリズムを介してTiFlashに複製されます。つまり、行ストアから列ストアへのリアルタイム レプリケーションです。
 
-TiDB Cloudを使用すると、HTAP ワークロードに応じて 1 つ以上の TiFlash ノードを指定することで、HTAP クラスターを簡単に作成できます。クラスターの作成時に TiFlash ノード数が指定されていない場合、またはさらに TiFlash ノードを追加する場合は、ノード数を[クラスターのスケーリング](/tidb-cloud/scale-tidb-cluster.md)ずつ変更できます。
+TiDB Cloudを使用すると、HTAP ワークロードに応じて 1 つ以上のTiFlashノードを指定することで、HTAP クラスターを簡単に作成できます。クラスターの作成時にTiFlashノード数が指定されていない場合、またはさらにTiFlashノードを追加する場合は、ノード数を[クラスターのスケーリング](/tidb-cloud/scale-tidb-cluster.md)ずつ変更できます。
 
 > **ノート：**
 >
-> サーバーレス層クラスターでは、TiFlash は常に有効になっています。無効にすることはできません。
+> Serverless Tierクラスターでは、 TiFlashは常に有効になっています。無効にすることはできません。
 
-デフォルトでは、TiKV データは TiFlash に複製されません。次の SQL ステートメントを使用して、TiFlash にレプリケートするテーブルを選択できます。
+デフォルトでは、TiKV データはTiFlashに複製されません。次の SQL ステートメントを使用して、 TiFlashにレプリケートするテーブルを選択できます。
 
 
 ```sql
 ALTER TABLE table_name SET TIFLASH REPLICA 1;
 ```
 
-レプリカ カウントの数は、TiFlash ノードの数を超えてはなりません。レプリカの数を`0`に設定すると、TiFlash 内のレプリカが削除されます。
+レプリカ カウントの数は、 TiFlashノードの数を超えてはなりません。レプリカの数を`0`に設定すると、 TiFlash内のレプリカが削除されます。
 
 レプリケーションの進行状況を確認するには、次のコマンドを使用します。
 
@@ -29,13 +29,13 @@ ALTER TABLE table_name SET TIFLASH REPLICA 1;
 SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = '<db_name>' and TABLE_NAME = '<table_name>';
 ```
 
-## TiDB を使用して TiFlash レプリカを読み取る {#use-tidb-to-read-tiflash-replicas}
+## TiDB を使用してTiFlashレプリカを読み取る {#use-tidb-to-read-tiflash-replicas}
 
-データが TiFlash にレプリケートされた後、次の 3 つの方法のいずれかを使用して TiFlash レプリカを読み取り、分析コンピューティングを高速化できます。
+データがTiFlashにレプリケートされた後、次の 3 つの方法のいずれかを使用してTiFlashレプリカを読み取り、分析コンピューティングを高速化できます。
 
 ### スマートセレクション {#smart-selection}
 
-TiFlash レプリカを含むテーブルの場合、TiDB オプティマイザは、コストの見積もりに基づいて TiFlash レプリカを使用するかどうかを自動的に決定します。例えば：
+TiFlashレプリカを含むテーブルの場合、TiDB オプティマイザは、コストの見積もりに基づいてTiFlashレプリカを使用するかどうかを自動的に決定します。例えば：
 
 
 ```sql
@@ -52,7 +52,7 @@ explain analyze select count(*) from test.t;
 +--------------------------+---------+---------+--------------+---------------+----------------------------------------------------------------------+--------------------------------+-----------+------+
 ```
 
-`cop[tiflash]`は、タスクが処理のために TiFlash に送信されることを意味します。クエリで TiFlash レプリカが選択されていない場合は、 `analyze table`ステートメントを使用して統計を更新してから、 `explain analyze`ステートメントを使用して結果を確認してください。
+`cop[tiflash]`は、タスクが処理のためにTiFlashに送信されることを意味します。クエリでTiFlashレプリカが選択されていない場合は、 `analyze table`ステートメントを使用して統計を更新してから、 `explain analyze`ステートメントを使用して結果を確認してください。
 
 ### エンジンの分離 {#engine-isolation}
 
@@ -72,4 +72,4 @@ set @@session.tidb_isolation_read_engines = "engine list separated by commas";
 select /*+ read_from_storage(tiflash[table_name]) */ ... from table_name;
 ```
 
-TiFlash の詳細については、ドキュメント[ここ](https://docs.pingcap.com/tidb/stable/tiflash-overview/)を参照してください。
+TiFlashの詳細については、ドキュメントを参照してください[ここ](https://docs.pingcap.com/tidb/stable/tiflash-overview/) 。

@@ -26,7 +26,7 @@ Gitpod は、コードを直接作成する開発環境向けのオープンソ�
 
 [クイックスタート](#quick-start)のステップを完了した後、Gitpod がワークスペースをセットアップするのにしばらく時間がかかります。
 
-例として[スプリング ブート Web](/develop/dev-guide-sample-application-spring-boot.md)のアプリケーションを取り上げます。 `https://gitpod.io/#targetFile=spring-jpa-hibernate_Makefile,targetMode=spring-jpa-hibernate/https://github.com/pingcap-inc/tidb-example-java` URL で新しいワークスペースを作成できます。
+例として[スプリング ブート ウェブ](/develop/dev-guide-sample-application-spring-boot.md)のアプリケーションを取り上げます。 `https://gitpod.io/#targetFile=spring-jpa-hibernate_Makefile,targetMode=spring-jpa-hibernate/https://github.com/pingcap-inc/tidb-example-java` URL で新しいワークスペースを作成できます。
 
 その後、次のようなページが表示されます。
 
@@ -36,7 +36,7 @@ Gitpod は、コードを直接作成する開発環境向けのオープンソ�
 
 TiDB Playground の準備が整うと、別の`Spring JPA Hibernate`つのタスクが実行されます。ターミナルエリアの右側で進行状況を確認できます。
 
-これらのタスクがすべて完了すると、次のようなページが表示されます。このページで、左側のナビゲーション ペインの`REMOTE EXPLORER`エリアを確認し (Gitpod は URL ベースのポート転送をサポートしています)、ポート`8080`の URL を見つけます。
+これらのタスクがすべて完了すると、次のようなページが表示されます。このページで、左側のナビゲーション ペインの`REMOTE EXPLORER`領域を確認し (Gitpod は URL ベースのポート転送をサポートしています)、ポート`8080`の URL を見つけます。
 
 ![playground gitpod workspace ready](https://download.pingcap.com/images/docs/develop/playground-gitpod-workspace-ready.png)
 
@@ -94,7 +94,7 @@ ports:
 
 ### Gitpod Docker イメージをカスタマイズする {#customize-gitpod-docker-images}
 
-デフォルトでは、Gitpod は Workspace-Full という名前の標準の Docker イメージをワークスペースのベースとして使用します。このデフォルト イメージから起動されたワークスペースには、Docker、Go、Java、Node.js、C/C++、Python、Ruby、Rust、PHP、および Homebrew、Tailscale、Nginx などのツールがプリインストールされています。
+デフォルトでは、Gitpod は Workspace-Full という名前の標準の Docker イメージをワークスペースのベースとして使用します。このデフォルト イメージから起動されたワークスペースには、Docker、Go、 Java、Node.js、C/C++、Python、Ruby、Rust、PHP、およびHomebrew、Tailscale、Nginx などのツールがプリインストールされています。
 
 パブリック Docker イメージまたは Dockerfile を使用して、プロジェクトに必要な依存関係をインストールすることもできます。
 

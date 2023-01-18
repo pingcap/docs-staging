@@ -171,6 +171,22 @@ SELECT * FROM users;
 >
 > キャッシュ テーブル機能は、キャッシュごとにリースを設定する必要がある複雑なメカニズムで実装されているため、キャッシュ テーブルの書き込みレイテンシーは高くなります。複数の TiDB インスタンスがある場合、1 つのインスタンスは、他のインスタンスがデータをキャッシュしているかどうかを認識しません。インスタンスがテーブル データを直接変更すると、他のインスタンスは古いキャッシュ データを読み取ります。正確性を確保するために、キャッシュ テーブルの実装では、リース メカニズムを使用して、リースが期限切れになる前にデータが変更されないようにします。そのため、書き込みレイテンシーが高くなります。
 
+キャッシュされたテーブルのメタデータは`mysql.table_cache_meta`テーブルに格納されます。このテーブルは、キャッシュされたすべてのテーブルの ID、現在のロック ステータス ( `lock_type` )、およびロック リース情報 ( `lease` ) を記録します。このテーブルは TiDB の内部でのみ使用されるため、変更することはお勧めしません。そうしないと、予期しないエラーが発生する可能性があります。
+
+```sql
+SHOW CREATE TABLE mysql.table_cache_meta\G
+*************************** 1. row ***************************
+       Table: table_cache_meta
+Create Table: CREATE TABLE `table_cache_meta` (
+  `tid` bigint(11) NOT NULL DEFAULT '0',
+  `lock_type` enum('NONE','READ','INTEND','WRITE') NOT NULL DEFAULT 'NONE',
+  `lease` bigint(20) NOT NULL DEFAULT '0',
+  `oldReadLease` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`tid`) /*T![clustered_index] CLUSTERED */
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+1 row in set (0.00 sec)
+```
+
 ### キャッシュされたテーブルを通常のテーブルに戻す {#revert-a-cached-table-to-a-normal-table}
 
 > **ノート：**

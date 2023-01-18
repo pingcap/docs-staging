@@ -90,7 +90,7 @@ cd jaffle_shop
            password: "your_password"                                   # The password to use for authenticating to the TiDB Cloud clusters
     ```
 
-    TiDB Cloudコンソールの**接続**カードから`server` 、 `port` 、および`username`の値を取得できます。
+    TiDB Cloudコンソールの[**接続**](/tidb-cloud/connect-via-standard-connection.md)ダイアログから`server` 、 `port` 、および`username`の値を取得できます。
 
 2.  プロジェクト構成を完了します。
 

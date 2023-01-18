@@ -14,7 +14,7 @@ summary: Learn about how to update data and batch update data.
 
 このドキュメントを読む前に、次の準備が必要です。
 
--   [TiDB Cloud(サーバーレス層) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) .
+-   [TiDB Cloud(Serverless Tier) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) .
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) 、 [データベースを作成する](/develop/dev-guide-create-database.md) 、 [テーブルを作成する](/develop/dev-guide-create-table.md) 、および[セカンダリ インデックスの作成](/develop/dev-guide-create-secondary-indexes.md)を読んでください。
 -   データを`UPDATE`つにしたい場合は、まず[データを挿入する](/develop/dev-guide-insert-data.md)にする必要があります。
 
@@ -29,7 +29,6 @@ summary: Learn about how to update data and batch update data.
 ### <code>UPDATE</code> SQL 構文 {#code-update-code-sql-syntax}
 
 SQL では、 `UPDATE`ステートメントは通常、次の形式になります。
-
 
 ```sql
 UPDATE {table} SET {update_column} = {update_value} WHERE {filter_column} = {filter_value}
@@ -53,13 +52,13 @@ UPDATE {table} SET {update_column} = {update_value} WHERE {filter_column} = {fil
 
 <CustomContent platform="tidb">
 
--   多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、 [一括更新](#bulk-update)を使用します。 TiDB は 1 つのトランザクションのサイズを制限しているため (デフォルトでは[txn-合計サイズ制限](/tidb-configuration-file.md#txn-total-size-limit) MB)、一度に多くのデータを更新すると、ロックが長時間保持されたり ( [悲観的な取引](/pessimistic-transaction.md) )、競合が発生したりします ( [楽観的な取引](/optimistic-transaction.md) )。
+-   多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、 [一括更新](#bulk-update)を使用します。 TiDB は 1 つのトランザクションのサイズを制限しているため (デフォルトでは[txn-合計サイズ制限](/tidb-configuration-file.md#txn-total-size-limit) MB)、一度に多くのデータを更新すると、ロックが長時間保持されたり ( [悲観的取引](/pessimistic-transaction.md) )、競合が発生したりします ( [楽観的取引](/optimistic-transaction.md) )。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
--   多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、 [一括更新](#bulk-update)を使用します。 TiDB はデフォルトで 1 つのトランザクションのサイズを 100 MB に制限しているため、一度に多くのデータ更新を行うと、ロックが長時間保持されたり ( [悲観的な取引](/pessimistic-transaction.md) )、競合が発生したりします ( [楽観的な取引](/optimistic-transaction.md) )。
+-   多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、 [一括更新](#bulk-update)を使用します。 TiDB はデフォルトで 1 つのトランザクションのサイズを 100 MB に制限しているため、一度に多くのデータ更新を行うと、ロックが長時間保持されたり ( [悲観的取引](/pessimistic-transaction.md) )、競合が発生したりします ( [楽観的取引](/optimistic-transaction.md) )。
 
 </CustomContent>
 
@@ -70,7 +69,6 @@ UPDATE {table} SET {update_column} = {update_value} WHERE {filter_column} = {fil
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-
 ```sql
 UPDATE `authors` SET `name` = "Helen Haruki" WHERE `id` = 1;
 ```
@@ -78,7 +76,6 @@ UPDATE `authors` SET `name` = "Helen Haruki" WHERE `id` = 1;
 </div>
 
 <div label="Java" value="java">
-
 
 ```java
 // ds is an entity of com.mysql.cj.jdbc.MysqlDataSource
@@ -102,7 +99,6 @@ try (Connection connection = ds.getConnection()) {
 ### <code>INSERT ON DUPLICATE KEY UPDATE</code> SQL 構文 {#code-insert-on-duplicate-key-update-code-sql-syntax}
 
 SQL では、 `INSERT ... ON DUPLICATE KEY UPDATE ...`ステートメントは通常、次の形式になります。
-
 
 ```sql
 INSERT INTO {table} ({columns}) VALUES ({values})
@@ -131,7 +127,6 @@ INSERT INTO {table} ({columns}) VALUES ({values})
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-
 ```sql
 INSERT INTO `ratings`
     (`book_id`, `user_id`, `score`, `rated_at`)
@@ -143,7 +138,6 @@ ON DUPLICATE KEY UPDATE `score` = 5, `rated_at` = NOW();
 </div>
 
 <div label="Java" value="java">
-
 
 ```java
 // ds is an entity of com.mysql.cj.jdbc.MysqlDataSource
@@ -170,13 +164,13 @@ VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `score` = ?, `rated_at` = NOW()"
 
 <CustomContent platform="tidb">
 
-ただし、多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、データを繰り返し更新することをお勧めします。つまり、更新が完了するまで、各繰り返しでデータの一部のみを更新します。 .これは、TiDB が[txn-合計サイズ制限](/tidb-configuration-file.md#txn-total-size-limit)つのトランザクションのサイズを制限しているためです (デフォルトでは 1、100 MB)。一度に多くのデータを更新すると、ロックが長時間保持される ( [悲観的な取引](/pessimistic-transaction.md) 、または競合が発生する ( [楽観的な取引](/optimistic-transaction.md) ) ) ことになります。プログラムまたはスクリプトでループを使用して、操作を完了することができます。
+ただし、多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、データを繰り返し更新することをお勧めします。つまり、更新が完了するまで、各繰り返しでデータの一部のみを更新します。 .これは、TiDB が[txn-合計サイズ制限](/tidb-configuration-file.md#txn-total-size-limit)つのトランザクションのサイズを制限しているためです (デフォルトでは 1、100 MB)。一度に多くのデータを更新すると、ロックが長時間保持される ( [悲観的取引](/pessimistic-transaction.md) 、または競合が発生する ( [楽観的取引](/optimistic-transaction.md) ) ) ことになります。プログラムまたはスクリプトでループを使用して、操作を完了することができます。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-ただし、多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、データを繰り返し更新することをお勧めします。つまり、更新が完了するまで、各繰り返しでデータの一部のみを更新します。 .これは、TiDB がデフォルトで 1 つのトランザクションのサイズを 100 MB に制限しているためです。一度に多くのデータを更新すると、ロックが長時間保持される ( [悲観的な取引](/pessimistic-transaction.md) 、または競合が発生する ( [楽観的な取引](/optimistic-transaction.md) ) ) ことになります。プログラムまたはスクリプトでループを使用して、操作を完了することができます。
+ただし、多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、データを繰り返し更新することをお勧めします。つまり、更新が完了するまで、各繰り返しでデータの一部のみを更新します。 .これは、TiDB がデフォルトで 1 つのトランザクションのサイズを 100 MB に制限しているためです。一度に多くのデータを更新すると、ロックが長時間保持される ( [悲観的取引](/pessimistic-transaction.md) 、または競合が発生する ( [楽観的取引](/optimistic-transaction.md) ) ) ことになります。プログラムまたはスクリプトでループを使用して、操作を完了することができます。
 
 </CustomContent>
 
@@ -194,7 +188,6 @@ VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `score` = ?, `rated_at` = NOW()"
 
 たとえば、10 ポイント スケールかどうかの識別子としてデータ型[ブール](/data-type-numeric.md#boolean-type)を使用して、 `ten_point`という名前の列を作成します。
 
-
 ```sql
 ALTER TABLE `bookshop`.`ratings` ADD COLUMN `ten_point` BOOL NOT NULL DEFAULT FALSE;
 ```
@@ -206,7 +199,7 @@ ALTER TABLE `bookshop`.`ratings` ADD COLUMN `ten_point` BOOL NOT NULL DEFAULT FA
 <SimpleTab groupId="language">
 <div label="Golang" value="golang">
 
-Golang では、一括更新アプリケーションは次のようになります。
+Golangでは、一括更新アプリケーションは次のようになります。
 
 ```go
 package main
@@ -291,7 +284,6 @@ func placeHolder(n int) string {
 Java (JDBC) では、一括更新アプリケーションは次のようになります。
 
 **コード：**
-
 
 ```java
 package com.pingcap.bulkUpdate;
@@ -424,7 +416,6 @@ public class BatchUpdateExample {
 ```
 
 -   `hibernate.cfg.xml`構成:
-
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>

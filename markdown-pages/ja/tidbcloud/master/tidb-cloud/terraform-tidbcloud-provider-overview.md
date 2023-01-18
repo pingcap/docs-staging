@@ -25,7 +25,7 @@ summary: Create, manage, and update your TiDB Cloud resources through Terraform.
 
 ## サポートされているリソースとデータ ソース {#supported-resources-and-data-sources}
 
-[資力](https://www.terraform.io/language/resources)と[データソース](https://www.terraform.io/language/data-sources)は、Terraform 言語で最も重要な 2 つの要素です。
+[資力](https://www.terraform.io/language/resources)と[データ ソース](https://www.terraform.io/language/data-sources)は、Terraform 言語で最も重要な 2 つの要素です。
 
 TiDB Cloudは、次のリソースとデータ ソースをサポートしています。
 

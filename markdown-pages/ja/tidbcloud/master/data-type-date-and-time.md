@@ -175,7 +175,7 @@ CREATE TABLE t1 (
 
 ## 時間値の小数部分 {#decimal-part-of-time-value}
 
-`DATETIME`および`TIMESTAMP`の値には、最大 6 桁の小数部分を含めることができます。これはミリ秒単位の精度です。 `DATETIME`種類または`TIMESTAMP`種類のいずれかの列で、端数部分は破棄されずに格納されます。小数部分の場合、値は「YYYY-MM-DD HH:MM:SS[.fraction]」の形式で、小数の範囲は 000000 ～ 999999 です。休み。
+`DATETIME`および`TIMESTAMP`の値には、最大 6 桁の小数部分を含めることができます。これはミリ秒単位の精度です。 `DATETIME`種類または`TIMESTAMP`種類のいずれかの列で、端数部分は破棄されずに格納されます。小数部分の場合、値は「YYYY-MM-DD HH:MM:SS[.fraction]」の形式で、小数の範囲は 000000 ～ 999999 です。残り。
 
 -   `type_name(fsp)`を使用して、小数精度をサポートする列を定義します`type_name`は`TIME` 、 `DATETIME`または`TIMESTAMP`です。例えば、
 

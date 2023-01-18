@@ -11,7 +11,7 @@ summary: An overview of the usage of CREATE USER for the TiDB database.
 
 ```ebnf+diagram
 CreateUserStmt ::=
-    'CREATE' 'USER' IfNotExists UserSpecList RequireClauseOpt ConnectionOptions PasswordOrLockOptions
+    'CREATE' 'USER' IfNotExists UserSpecList RequireClauseOpt ConnectionOptions PasswordOption LockOption AttributeOption
 
 IfNotExists ::=
     ('IF' 'NOT' 'EXISTS')?
@@ -28,6 +28,12 @@ AuthOption ::=
 StringName ::=
     stringLit
 |   Identifier
+
+PasswordOption ::= ( 'PASSWORD' 'EXPIRE' ( 'DEFAULT' | 'NEVER' | 'INTERVAL' N 'DAY' )? | 'PASSWORD' 'HISTORY' ( 'DEFAULT' | N ) | 'PASSWORD' 'REUSE' 'INTERVAL' ( 'DEFAULT' | N 'DAY' ) | 'FAILED_LOGIN_ATTEMPTS' N | 'PASSWORD_LOCK_TIME' ( N | 'UNBOUNDED' ) )*
+
+LockOption ::= ( 'ACCOUNT' 'LOCK' | 'ACCOUNT' 'UNLOCK' )?
+
+AttributeOption ::= ( 'COMMENT' CommentString | 'ATTRIBUTE' AttributeString )?
 ```
 
 ## 例 {#examples}
@@ -49,14 +55,76 @@ Query OK, 1 row affected (0.02 sec)
 TLS 接続を使用してログインすることが強制されるユーザーを作成します。
 
 ```sql
-CREATE USER 'newuser3'@'%' REQUIRE SSL IDENTIFIED BY 'newuserpassword';
+CREATE USER 'newuser3'@'%' IDENTIFIED BY 'newuserpassword' REQUIRE SSL;
 Query OK, 1 row affected (0.02 sec)
 ```
 
 ログイン時に X.509 証明書を使用する必要があるユーザーを作成します。
 
 ```sql
-CREATE USER 'newuser4'@'%' REQUIRE ISSUER '/C=US/ST=California/L=San Francisco/O=PingCAP' IDENTIFIED BY 'newuserpassword';
+CREATE USER 'newuser4'@'%' IDENTIFIED BY 'newuserpassword' REQUIRE ISSUER '/C=US/ST=California/L=San Francisco/O=PingCAP';
+Query OK, 1 row affected (0.02 sec)
+```
+
+作成時にロックされるユーザーを作成します。
+
+```sql
+CREATE USER 'newuser5'@'%' ACCOUNT LOCK;
+```
+
+```
+Query OK, 1 row affected (0.02 sec)
+```
+
+コメント付きのユーザーを作成します。
+
+```sql
+CREATE USER 'newuser6'@'%' COMMENT 'This user is created only for test';
+SELECT * FROM information_schema.user_attributes;
+```
+
+```
++-----------+------+---------------------------------------------------+
+| USER      | HOST | ATTRIBUTE                                         |
++-----------+------+---------------------------------------------------+
+| newuser6  | %    | {"comment": "This user is created only for test"} |
++-----------+------+---------------------------------------------------+
+1 rows in set (0.00 sec)
+```
+
+属性が`email`のユーザーを作成します。
+
+```sql
+CREATE USER 'newuser7'@'%' ATTRIBUTE '{"email": "user@pingcap.com"}';
+SELECT * FROM information_schema.user_attributes;
+```
+
+```sql
++-----------+------+---------------------------------------------------+
+| USER      | HOST | ATTRIBUTE                                         |
++-----------+------+---------------------------------------------------+
+| newuser7  | %    | {"email": "user@pingcap.com"} |
++-----------+------+---------------------------------------------------+
+1 rows in set (0.00 sec)
+```
+
+過去 5 回のパスワードの再利用を許可しないユーザーを作成します。
+
+```sql
+CREATE USER 'newuser8'@'%' PASSWORD HISTORY 5;
+```
+
+```
+Query OK, 1 row affected (0.02 sec)
+```
+
+パスワードが手動で期限切れになったユーザーを作成します。
+
+```sql
+CREATE USER 'newuser9'@'%' PASSWORD EXPIRE;
+```
+
+```
 Query OK, 1 row affected (0.02 sec)
 ```
 
@@ -67,7 +135,6 @@ Query OK, 1 row affected (0.02 sec)
 -   TiDB は、 `WITH MAX_QUERIES_PER_HOUR` 、 `WITH MAX_UPDATES_PER_HOUR` 、および`WITH MAX_USER_CONNECTIONS`のオプションをサポートしていません。
 -   TiDB は`DEFAULT ROLE`オプションをサポートしていません。
 -   TiDB は、パスワードに関連する`PASSWORD EXPIRE` 、 `PASSWORD HISTORY`またはその他のオプションをサポートしていません。
--   TiDB は`ACCOUNT LOCK`と`ACCOUNT UNLOCK`のオプションをサポートしていません。
 
 ## こちらもご覧ください {#see-also}
 

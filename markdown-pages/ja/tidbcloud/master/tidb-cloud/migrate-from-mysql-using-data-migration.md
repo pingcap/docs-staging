@@ -7,15 +7,23 @@ summary: Learn how to migrate data from MySQL-compatible databases hosted in Ama
 
 このドキュメントでは、 TiDB Cloudコンソールのデータ移行機能を使用して、クラウド プロバイダー (Amazon Aurora MySQL または Amazon Relational Database Service (RDS)) またはオンプレミスの MySQL 互換データベースからTiDB Cloudにデータを移行する方法について説明します。
 
-この機能は、データベースとその進行中の変更をTiDB Cloudに移行するのに役立ちます (同じリージョンまたは複数のリージョンで)。 DumplingやTiDB Lightningなどのツールを必要とする[MySQL 互換データベースからの移行](/tidb-cloud/migrate-data-into-tidb.md)および[MySQL 互換データベースからの増分データの移行](/tidb-cloud/migrate-incremental-data-from-mysql.md)で紹介したソリューションと比較して、この機能は使いやすくなっています。ソース データベースからデータを手動でダンプしてからTiDB Cloudにインポートする必要はありません。代わりに、ソース データベースから直接TiDB Cloudに一度にデータを移行できます。
+この機能は、データベースとその進行中の変更をTiDB Cloudに移行するのに役立ちます (同じリージョンまたは複数のリージョンで)。 DumplingやTiDB Lightningなどのツールを必要とするソリューションと比較して、この機能は使いやすいです。ソース データベースからデータを手動でダンプしてからTiDB Cloudにインポートする必要はありません。代わりに、ソース データベースから直接TiDB Cloudに一度にデータを移行できます。
 
 ## 制限事項 {#limitations}
 
 -   データ移行機能は、 **Dedicated Tier**クラスターでのみ使用できます。
 
--   データ移行機能は、2022 年 11 月 9 日以降に AWS オレゴン (us-west-2) および AWS シンガポール (ap-southeast-1) リージョンで作成されたクラスターでのみ利用できます。が別のリージョンにある場合、この機能はクラスターでは利用できず、**データ移行**タブはTiDB Cloudコンソールのクラスター概要ページに表示されません。
+-   データ移行機能は、2022 年 11 月 9 日以降に次のリージョンで作成されたプロジェクトのクラスターでのみ使用できます。**プロジェクト**がその日付より前に作成された場合、またはクラスターが別のリージョンにある場合、この機能はクラスターで使用できません。<strong>データ移行</strong>タブは、 TiDB Cloudコンソールのクラスター概要ページに表示されません。
 
--   現在、データ移行機能はベータ版であり、組織ごとに移行ジョブ**を 1 つだけ無料**で作成できます。さらに移行ジョブを作成するには、 [サポート チケットを提出する](/tidb-cloud/tidb-cloud-support.md) .
+    -   AWS オレゴン (us-west-2)
+    -   AWS 北バージニア (us-east-1)
+    -   AWS ムンバイ (ap-south-1)
+    -   AWS シンガポール (ap-southeast-1)
+    -   AWS 東京 (ap-northeast-1)
+    -   AWS フランクフルト (eu-central-1)
+    -   AWS ソウル (ap-northeast-2)
+
+-   組織ごとに最大 200 の移行ジョブを作成できます。さらに移行ジョブを作成するには、次のことを行う必要があり[サポート チケットを提出する](/tidb-cloud/tidb-cloud-support.md) 。
 
 -   移行するすべてのデータベースを選択した場合でも、システム データベースは除外され、 TiDB Cloudに移行されません。つまり、 `mysql` 、 `information_schema` 、 `information_schema` 、および`sys`は、この機能を使用して移行されません。
 
@@ -60,7 +68,7 @@ summary: Learn how to migrate data from MySQL-compatible databases hosted in Ama
 たとえば、次の`GRANT`のステートメントを使用して、対応する権限を付与できます。
 
 ```sql
-GRANT SELECT,LOCK TABLES,REPLICATION SLAVE,REPLICATION CLIENT, ON *.* TO 'your_user'@'your_IP_address_of_host'
+GRANT SELECT,LOCK TABLES,REPLICATION SLAVE,REPLICATION CLIENT ON *.* TO 'your_user'@'your_IP_address_of_host'
 ```
 
 ### 下流のTiDB Cloudクラスターに必要な権限を付与する {#grant-required-privileges-to-the-downstream-tidb-cloud-cluster}
@@ -91,7 +99,7 @@ GRANT CREATE,SELECT,INSERT,UPDATE,DELETE,ALTER,TRUNCATE,DROP,INDEX ON *.* TO 'yo
 
 移行ジョブを作成する前に、接続方法に従ってネットワーク接続をセットアップします。 [TiDBクラスタに接続する](/tidb-cloud/connect-to-tidb-cluster.md)を参照してください。
 
--   ネットワーク接続にパブリック IP (これが標準接続) を使用する場合は、上流および下流のデータベースがパブリック ネットワークを介して接続できることを確認してください。
+-   ネットワーク接続にパブリック IP (これは標準接続) を使用する場合は、上流のデータベースがパブリック ネットワーク経由で接続できることを確認してください。
 
 -   VPC ピアリングを使用する場合は、 [VPC ピアリング リクエストを追加する](/tidb-cloud/set-up-vpc-peering-connections.md#step-1-add-vpc-peering-requests)に従って設定します。
 
@@ -103,11 +111,15 @@ GRANT CREATE,SELECT,INSERT,UPDATE,DELETE,ALTER,TRUNCATE,DROP,INDEX ON *.* TO 'yo
 
 ## ステップ 1:<strong>データ移行</strong>ページに移動します {#step-1-go-to-the-strong-data-migration-strong-page}
 
-1.  [TiDB Cloudコンソール](https://tidbcloud.com/console/clusters)にログインします。プロジェクトの [**クラスター]**ページに移動します。
+1.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
-2.  [**クラスター**] ページで、クラスターの名前をクリックし、[<strong>データ移行</strong>] タブをクリックします。<strong>データ移行</strong>ページが表示されます。
+    > **ヒント：**
+    >
+    > 複数のプロジェクトがある場合は、[**クラスター]**ページの左側のナビゲーション ペインでターゲット プロジェクトに切り替えることができます。
 
-3.  [**データ移行**] ページで、[<strong>移行ジョブの作成</strong>] をクリックします。<strong>移行ジョブの作成</strong>ページが表示されます。
+2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで [**データの移行**] をクリックします。
+
+3.  [**データ移行**] ページで、右上隅にある [<strong>移行ジョブの作成</strong>] をクリックします。<strong>移行ジョブの作成</strong>ページが表示されます。
 
 ## ステップ 2: ソースとターゲットの接続を構成する {#step-2-configure-the-source-and-target-connection}
 
@@ -125,7 +137,10 @@ GRANT CREATE,SELECT,INSERT,UPDATE,DELETE,ALTER,TRUNCATE,DROP,INDEX ON *.* TO 'yo
     -   **Port** : データ ソースのポート。
     -   **Username** : データ ソースのユーザー名。
     -   **パスワード**: ユーザー名のパスワード。
-    -   **SSL/TLS** : データ ソースに SSL/TLS 接続を使用するかどうか。 SSL/TLS を有効にする場合は、CA 証明書、クライアント証明書、クライアント キーなど、データ ソースの証明書をアップロードする必要があります。
+    -   **SSL/TLS** : SSL/TLS を有効にする場合は、次のいずれかを含むデータ ソースの証明書をアップロードする必要があります。
+        -   CA証明書のみ
+        -   クライアント証明書とクライアント キー
+        -   CA 証明書、クライアント証明書、およびクライアント キー
 
 3.  ターゲット接続プロファイルを入力します。
 
@@ -137,7 +152,7 @@ GRANT CREATE,SELECT,INSERT,UPDATE,DELETE,ALTER,TRUNCATE,DROP,INDEX ON *.* TO 'yo
 5.  表示されるメッセージに従って対処してください。
 
     -   パブリック IP または VPC ピアリングを使用する場合は、データ移行サービスの IP アドレスをソース データベースとファイアウォール (存在する場合) の IP アクセス リストに追加する必要があります。
-    -   Private Link を使用する場合、アカウントでエンドポイント要求を受け入れるように求められます。
+    -   Private Link を使用する場合、エンドポイント要求を受け入れるように求められます。 [AWS VPC コンソール](https://us-west-2.console.aws.amazon.com/vpc/home)に移動し、[**エンドポイント サービス**] をクリックしてエンドポイント要求を受け入れます。
 
 ## ステップ 3: 移行するオブジェクトを選択する {#step-3-choose-the-objects-to-be-migrated}
 
@@ -146,27 +161,27 @@ GRANT CREATE,SELECT,INSERT,UPDATE,DELETE,ALTER,TRUNCATE,DROP,INDEX ON *.* TO 'yo
     > **ヒント：**
     >
     > -   データをTiDB Cloudに完全に移行するには、**完全なデータの移行**と<strong>増分データの</strong>移行の両方を選択します。これにより、ソース データベースとターゲット データベース間のデータの一貫性が保証されます。
-    > -   ソース データベースの既存のデータのみをTiDB Cloudに移行するには、[**完全なデータ移行**] チェックボックスを選択します。
+    > -   ソース データベースの既存のデータのみをTiDB Cloudに移行するには、[**完全なデータの移行**] チェックボックスのみを選択します。
 
 2.  [移行するオブジェクトの**選択] ページで、移行**するオブジェクトを選択します。 [<strong>すべて</strong>] をクリックしてすべてのオブジェクトを選択するか、[<strong>カスタマイズ</strong>] をクリックしてからオブジェクト名の横にあるチェックボックスをクリックしてオブジェクトを選択します。
 
     -   **All**をクリックすると、移行ジョブは既存のデータをソース データベース インスタンス全体からTiDB Cloudに移行し、完全な移行後に進行中の変更をレプリケートします。前の手順で [<strong>完全なデータの</strong>移行] チェックボックスと [<strong>増分データの移行</strong>] チェックボックスを選択した場合にのみ発生することに注意してください。
 
-    ![Select All Objects](https://download.pingcap.com/images/docs/tidb-cloud/migration-job-select-all.png)
+        <img src="https://download.pingcap.com/images/docs/tidb-cloud/migration-job-select-all.png" width="60%" />
 
     -   [**カスタマイズ**] をクリックしていくつかのデータベースを選択すると、移行ジョブは既存のデータを移行し、選択したデータベースの進行中の変更をTiDB Cloudにレプリケートします。前の手順で [<strong>完全なデータの</strong>移行] チェックボックスと [<strong>増分データの移行</strong>] チェックボックスを選択した場合にのみ発生することに注意してください。
 
-    ![Select Databases](https://download.pingcap.com/images/docs/tidb-cloud/migration-job-select-db.png)
+        <img src="https://download.pingcap.com/images/docs/tidb-cloud/migration-job-select-db.png" width="60%" />
 
     -   [**カスタマイズ**] をクリックしてデータセット名の下にあるいくつかのテーブルを選択すると、移行ジョブは既存のデータのみを移行し、選択したテーブルの進行中の変更をレプリケートします。後で同じデータベースに作成されたテーブルは移行されません。
 
-    ![Select Tables](https://download.pingcap.com/images/docs/tidb-cloud/migration-job-select-tables.png)
+        <img src="https://download.pingcap.com/images/docs/tidb-cloud/migration-job-select-tables.png" width="60%" />
 
-    -   [**カスタマイズ**] をクリックしていくつかのデータベースを選択し、[選択した<strong>オブジェクト</strong>] 領域でいくつかのテーブルを選択して [<strong>ソース データベース</strong>] 領域に戻すと (たとえば、次のスクリーンショットの`username`テーブル)、テーブルは次のように扱われます。ブロックリスト。移行ジョブは既存のデータを移行しますが、除外されたテーブル (スクリーンショットの`username`テーブルなど) を除外し、選択したデータベースの進行中の変更を、除外されたテーブルを除いてTiDB Cloudにレプリケートします。
-
-    ![Select Databases and Deselect Some Tables](https://download.pingcap.com/images/docs/tidb-cloud/migration-job-select-db-blacklist1.png)
-
-    ![Select Databases and Deselect Some Tables](https://download.pingcap.com/images/docs/tidb-cloud/migration-job-select-db-blacklist2.png)
+    <!--
+     - If you click **Customize** and select some databases, and then select some tables in the **Selected Objects** area to move them back to the **Source Database** area, (for example the `username` table in the following screenshots), then the tables will be treated as in a blocklist. The migration job will migrate the existing data but filter out the excluded tables (such as the `username` table in the screenshots), and will replicate ongoing changes of the selected databases to TiDB Cloud except the filtered-out tables.
+         ![Select Databases and Deselect Some Tables](https://download.pingcap.com/images/docs/tidb-cloud/migration-job-select-db-blacklist1.png)
+         ![Select Databases and Deselect Some Tables](https://download.pingcap.com/images/docs/tidb-cloud/migration-job-select-db-blacklist2.png)
+     -->
 
 3.  [**次へ**] をクリックします。
 
@@ -182,7 +197,7 @@ GRANT CREATE,SELECT,INSERT,UPDATE,DELETE,ALTER,TRUNCATE,DROP,INDEX ON *.* TO 'yo
 
 ## ステップ 5: 仕様を選択して移行を開始する {#step-5-choose-a-spec-and-start-migration}
 
-[仕様を選択して移行**を開始]**ページで、移行仕様を選択します。パブリック ベータ期間中、無料の移行ジョブは 4 つの RCU (レプリケーション キャパシティ ユニット) に制限されています。
+[**仕様を選択して移行を開始]**ページで、パフォーマンス要件に応じて適切な移行仕様を選択します。仕様の詳細については、 [データ移行の仕様](/tidb-cloud/tidb-cloud-billing-dm.md#specifications-for-data-migration)を参照してください。
 
 スペックを選択したら、[ **Create Job and Start** ] をクリックして移行を開始します。
 
@@ -195,3 +210,33 @@ GRANT CREATE,SELECT,INSERT,UPDATE,DELETE,ALTER,TRUNCATE,DROP,INDEX ON *.* TO 'yo
 移行ジョブが失敗した場合は、問題を解決してから再開できます。
 
 どのステータスの移行ジョブも削除できます。
+
+## トラブルシューティング {#troubleshooting}
+
+移行中に問題が発生した場合は、次の解決策を参照できます。
+
+-   エラー メッセージ:「移行に必要なバイナリ ログがソース データベースに存在しません。移行が成功するまで、バイナリ ログ ファイルが十分な時間保持されていることを確認してください。」
+
+    このエラーは、移行するバイナリログがクリーンアップされており、新しいタスクを作成することによってのみ復元できることを意味します。
+
+    増分移行に必要なバイナリログが存在することを確認してください。 binlog の期間を延長するには、 `expire_logs_days`を構成することをお勧めします。一部の移行ジョブで必要な場合は、バイナリログのクリーンアップに`purge binary log`を使用しないでください。
+
+-   エラー メッセージ:「指定されたパラメーターを使用してソース データベースに接続できませんでした。ソース データベースが起動しており、指定されたパラメーターを使用して接続できることを確認してください。」
+
+    このエラーは、ソース データベースへの接続が失敗したことを意味します。ソース・データベースが開始されており、指定されたパラメーターを使用して接続できるかどうかを確認してください。ソース データベースが使用可能であることを確認したら、[**再起動**] をクリックしてタスクの回復を試みることができます。
+
+-   移行タスクが中断され、「ドライバー: 接続が正しくありません」または「接続が無効です」というエラーが表示される
+
+    このエラーは、下流の TiDB クラスターへの接続が失敗したことを意味します。ダウンストリームの TiDB クラスターが`normal`の状態であり、ジョブで指定されたユーザー名とパスワードで接続できるかどうかを確認します。ダウンストリームの TiDB クラスターが使用可能であることを確認したら、[**再起動**] をクリックしてタスクの再開を試みることができます。
+
+-   エラー メッセージ:「指定されたユーザーとパスワードを使用して TiDB クラスターに接続できませんでした。TiDBクラスタが起動しており、指定されたユーザーとパスワードを使用して接続できることを確認してください。」
+
+    TiDB クラスターへの接続に失敗しました。 TiDB クラスターが`normal`の状態であり、ジョブで指定されたユーザー名とパスワードで接続できるかどうかを確認することをお勧めします。 TiDB クラスターが使用可能であることを確認したら、[**再起動**] をクリックしてタスクの再開を試みることができます。
+
+-   エラー メッセージ:「TiDB クラスター ストレージが不足しています。TiKV のノード ストレージを増やしてください。」
+
+    TiDB クラスター ストレージが不足しています。 [TiKV ノード ストレージを増やす](/tidb-cloud/scale-tidb-cluster.md#increase-node-storage)にしてから、[**再起動**] をクリックしてタスクを再開することをお勧めします。
+
+-   エラー メッセージ:「ソース データベースに接続できませんでした。データベースが使用可能かどうか、または最大接続数に達しているかどうかを確認してください。」
+
+    ソース データベースへの接続に失敗しました。ソースデータベースが起動しているか、データベース接続数が上限に達していないか、ジョブで指定されたパラメーターを使用して接続できるかを確認することをお勧めします。ソース データベースが使用可能であることを確認したら、[**再起動**] をクリックしてジョブの再開を試みることができます。

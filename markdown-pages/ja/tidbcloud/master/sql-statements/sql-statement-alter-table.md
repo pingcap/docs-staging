@@ -1,7 +1,6 @@
 ---
 title: ALTER TABLE | TiDB SQL Statement Reference
 summary: An overview of the usage of ALTER TABLE for the TiDB database.
-aliases: ['/docs/dev/sql-statements/sql-statement-alter-table/','/docs/dev/reference/sql/statements/alter-table/']
 ---
 
 # 他の机 {#alter-table}
@@ -19,7 +18,7 @@ AlterTableStmt ::=
     'ALTER' IgnoreOptional 'TABLE' TableName (
         AlterTableSpecListOpt AlterTablePartitionOpt |
         'ANALYZE' 'PARTITION' PartitionNameList ( 'INDEX' IndexNameList )? AnalyzeOptionListOpt |
-        'COMPACT' 'TIFLASH' 'REPLICA'
+        'COMPACT' ( 'PARTITION' PartitionNameList )? 'TIFLASH' 'REPLICA'
     )
 
 TableName ::=
@@ -49,6 +48,11 @@ AlterTableSpec ::=
 |   'SECONDARY_UNLOAD'
 |   ( 'AUTO_INCREMENT' | 'AUTO_ID_CACHE' | 'AUTO_RANDOM_BASE' | 'SHARD_ROW_ID_BITS' ) EqOpt LengthNum
 |   ( 'CACHE' | 'NOCACHE' )
+|   (
+        'TTL' EqOpt TimeColumnName '+' 'INTERVAL' Expression TimeUnit (TTLEnable EqOpt ( 'ON' | 'OFF' ))?
+        | 'REMOVE' 'TTL'
+        | TTLEnable EqOpt ( 'ON' | 'OFF' )
+    )
 |   PlacementPolicyOption
 
 PlacementPolicyOption ::=
@@ -156,7 +160,11 @@ Query OK, 0 rows affected, 1 warning (0.25 sec)
 
 次の主要な制限が TiDB の`ALTER TABLE`に適用されます。
 
--   単一の`ALTER TABLE`ステートメントで複数の変更を行うことは、現在サポートされていません。
+-   単一の`ALTER TABLE`ステートメントで複数のスキーマ オブジェクトを変更する場合:
+
+    -   複数の変更で同じオブジェクトを変更することはサポートされていません。
+    -   TiDB は、**実行前**にテーブル スキーマに従ってステートメントを検証します。たとえば、インデックス`i`がテーブルに存在しないため、 `ALTER TABLE ADD INDEX i(b), DROP INDEX i;`を実行するとエラーが返されます。
+    -   `ALTER TABLE`ステートメントの場合、TiDB での実行順序は左から右に次々と変更されます。これは、場合によっては MySQL と互換性がありません。
 
 -   主キー列の[再編成データ](/sql-statements/sql-statement-modify-column.md#reorg-data-change)型の変更はサポートされていません。
 

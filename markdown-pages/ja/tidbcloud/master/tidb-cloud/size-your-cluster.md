@@ -5,11 +5,11 @@ summary: Learn how to determine the size of your TiDB Cloud cluster.
 
 # TiDB のサイズを決定する {#determine-your-tidb-size}
 
-このドキュメントでは、Dedicated Tier クラスターのサイズを決定する方法について説明します。
+このドキュメントでは、 Dedicated Tierクラスターのサイズを決定する方法について説明します。
 
 > **ノート：**
 >
-> [サーバーレス層](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta)クラスターのサイズは変更できません。
+> [Serverless Tier](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta)クラスターのサイズは変更できません。
 
 ## サイズ TiDB {#size-tidb}
 
@@ -34,7 +34,7 @@ TiDB のノード サイズとノード数の両方を構成できます。
 >
 > -   TiDB のノード数は 1 または 2 にのみ設定でき、TiKV のノード数は 3 に固定されています。
 > -   2 vCPU TiDB は 2 vCPU TiKV でのみ使用できます。 4 vCPU TiDB は 4 vCPU TiKV でのみ使用できます。
-> -   TiFlash は利用できません。
+> -   TiFlashは利用できません。
 
 ### TiDB ノード数 {#tidb-node-quantity}
 
@@ -64,7 +64,7 @@ TiKV のノード サイズ、ノード数、およびノード ストレージ�
 >
 > -   TiDB のノード数は 1 または 2 にのみ設定でき、TiKV のノード数は 3 に固定されています。
 > -   2 vCPU TiKV は 2 vCPU TiDB でのみ使用できます。 4 vCPU TiKV は 4 vCPU TiDB でのみ使用できます。
-> -   TiFlash は利用できません。
+> -   TiFlashは利用できません。
 
 ### TiKV ノード数 {#tikv-node-quantity}
 
@@ -101,36 +101,36 @@ TiKV ノードの最小数: `ceil(2048 ÷ 0.8 ÷ 1024) × 3 = 9`
 >
 > クラスターの作成後に TiKV ノード ストレージを減らすことはできません。
 
-## サイズ TiFlash {#size-tiflash}
+## サイズTiFlash {#size-tiflash}
 
-TiFlash は TiKV からのデータをリアルタイムで同期し、すぐにリアルタイム分析ワークロードをサポートします。水平方向にスケーラブルです。
+TiFlashは TiKV からのデータをリアルタイムで同期し、すぐにリアルタイム分析ワークロードをサポートします。水平方向にスケーラブルです。
 
-TiFlash のノード サイズ、ノード数、およびノード ストレージを構成できます。
+TiFlashのノード サイズ、ノード数、およびノード ストレージを設定できます。
 
-### TiFlash ノードサイズ {#tiflash-node-size}
+### TiFlashノードサイズ {#tiflash-node-size}
 
 サポートされているノード サイズは次のとおりです。
 
 -   8 vCPU、64 GiB
 -   16 vCPU、128 GiB
 
-TiDB または TiKV の vCPU サイズが**2 vCPU、8 GiB (ベータ)**または<strong>4 vCPU、16 GiB</strong>に設定されている場合、TiFlash は使用できないことに注意してください。
+TiDB または TiKV の vCPU サイズが**2 vCPU、8 GiB (ベータ)**または<strong>4 vCPU、16 GiB</strong>に設定されている場合、 TiFlashは使用できないことに注意してください。
 
-### TiFlash ノード数 {#tiflash-node-quantity}
+### TiFlashノード数 {#tiflash-node-quantity}
 
-TiDB Cloudは、リージョン内の異なるアベイラビリティ ゾーンに TiFlash ノードを均等にデプロイします。各TiDB Cloudクラスターで少なくとも 2 つの TiFlash ノードを構成し、実稼働環境での高可用性のためにデータの少なくとも 2 つのレプリカを作成することをお勧めします。
+TiDB Cloudは、リージョン内の異なるアベイラビリティ ゾーンにTiFlashノードを均等にデプロイします。各TiDB Cloudクラスターで少なくとも 2 つのTiFlashノードを構成し、本番環境での高可用性のためにデータの少なくとも 2 つのレプリカを作成することをお勧めします。
 
-TiFlash ノードの最小数は、特定のテーブルの TiFlash レプリカ数によって異なります。
+TiFlashノードの最小数は、特定のテーブルのTiFlashレプリカ数によって異なります。
 
-TiFlash ノードの最小数: `min((compressed size of table A * replicas for table A + compressed size of table B * replicas for table B) / size of each TiFlash capacity, max(replicas for table A, replicas for table B))`
+TiFlashノードの最小数: `min((compressed size of table A * replicas for table A + compressed size of table B * replicas for table B) / size of each TiFlash capacity, max(replicas for table A, replicas for table B))`
 
-たとえば、AWS 上の各 TiFlash ノードのノード ストレージを 1024 GiB として構成し、テーブル A に 2 つのレプリカ (圧縮サイズは 800 GiB)、テーブル B に 1 つのレプリカ (圧縮サイズは 100 GiB) を設定すると、必要な TiFlash ノードの数は次のとおりです。
+たとえば、AWS 上の各TiFlashノードのノード ストレージを 1024 GiB として構成し、テーブル A に 2 つのレプリカ (圧縮サイズは 800 GiB)、テーブル B に 1 つのレプリカ (圧縮サイズは 100 GiB) を設定すると、必要なTiFlashノードの数は次のとおりです。
 
-TiFlash ノードの最小数: `min((800 GiB * 2 + 100 GiB * 1) / 1024 GiB, max(2, 1)) ≈ 2`
+TiFlashノードの最小数: `min((800 GiB * 2 + 100 GiB * 1) / 1024 GiB, max(2, 1)) ≈ 2`
 
-### TiFlash ノード ストレージ {#tiflash-node-storage}
+### TiFlashノード ストレージ {#tiflash-node-storage}
 
-さまざまな TiFlash ノード サイズでサポートされているノード ストレージは次のとおりです。
+さまざまなTiFlashノード サイズでサポートされているノード ストレージは次のとおりです。
 
 |  ノードサイズ | 最小ノード ストレージ | 最大ノード ストレージ | デフォルトのノード ストレージ |
 | :-----: | :---------: | :---------: | :-------------: |
@@ -139,4 +139,4 @@ TiFlash ノードの最小数: `min((800 GiB * 2 + 100 GiB * 1) / 1024 GiB, max(
 
 > **ノート：**
 >
-> クラスターの作成後に TiFlash ノード ストレージを減らすことはできません。
+> クラスターの作成後にTiFlashノード ストレージを減らすことはできません。

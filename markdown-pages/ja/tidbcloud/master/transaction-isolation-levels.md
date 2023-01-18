@@ -32,7 +32,7 @@ TiDB は Snapshot Isolation (SI) 整合性を実装しており、MySQL との�
 >
 > TiDB v3.0 以降、トランザクションの自動再試行はデフォルトで無効になっています。自動再試行を有効にすることは**、トランザクション分離レベルを壊す**可能性があるためお勧めしません。詳細は[トランザクションの再試行](/optimistic-transaction.md#automatic-retry)を参照してください。
 >
-> TiDB v3.0.8 以降、新しく作成された TiDB クラスターはデフォルトで[ペシミスティック トランザクション モード](/pessimistic-transaction.md)を使用します。現在の読み取り ( `for update`の読み取り) は**繰り返し不可の読み取り**です。詳細は[ペシミスティック トランザクション モード](/pessimistic-transaction.md)を参照してください。
+> TiDB v3.0.8 以降、新しく作成された TiDB クラスターはデフォルトで[悲観的トランザクション モード](/pessimistic-transaction.md)を使用します。現在の読み取り ( `for update`の読み取り) は**繰り返し不可の読み取り**です。詳細は[悲観的トランザクション モード](/pessimistic-transaction.md)を参照してください。
 
 ## 反復可能読み取り分離レベル {#repeatable-read-isolation-level}
 
@@ -59,17 +59,17 @@ TiDB の Repeatable Read 分離レベルは ANSI Repeatable Read 分離レベル
 
 ### TiDB と MySQL の反復可能読み取りの違い {#difference-between-tidb-and-mysql-repeatable-read}
 
-TiDB の Repeatable Read 分離レベルは、MySQL とは異なります。 MySQL Repeatable Read 分離レベルは、更新時に現在のバージョンが表示されるかどうかをチェックしません。つまり、トランザクションの開始後に行が更新されていても、更新を続行できます。対照的に、トランザクションの開始後に行が更新された場合、TiDB オプティミスティック トランザクションはロールバックされ、再試行されます。 TiDB の楽観的同時実行制御でのトランザクションの再試行は失敗し、トランザクションの最終的な失敗につながる可能性がありますが、TiDB の悲観的同時実行制御と MySQL では、更新トランザクションが成功する可能性があります。
+TiDB の Repeatable Read 分離レベルは、MySQL とは異なります。 MySQL Repeatable Read 分離レベルは、更新時に現在のバージョンが表示されるかどうかをチェックしません。つまり、トランザクションの開始後に行が更新されていても、更新を続行できます。対照的に、トランザクションの開始後に行が更新された場合、TiDB楽観的トランザクションはロールバックされ、再試行されます。 TiDB の楽観的同時実行制御でのトランザクションの再試行は失敗し、トランザクションの最終的な失敗につながる可能性がありますが、TiDB の悲観的同時実行制御と MySQL では、更新トランザクションが成功する可能性があります。
 
 ## 読み取りコミット分離レベル {#read-committed-isolation-level}
 
 TiDB v4.0.0-beta 以降、TiDB は Read Committed 分離レベルをサポートしています。
 
-歴史的な理由から、現在のメインストリーム データベースの Read Committed 分離レベルは基本的に[Oracle によって定義された一貫性のある読み取り分離レベル](https://docs.oracle.com/cd/B19306_01/server.102/b14220/consist.htm)です。この状況に適応するために、TiDB 悲観的トランザクションの Read Committed 分離レベルも本質的に一貫した読み取り動作です。
+歴史的な理由から、現在のメインストリーム データベースの Read Committed 分離レベルは基本的に[Oracle によって定義された一貫性のある読み取り分離レベル](https://docs.oracle.com/cd/B19306_01/server.102/b14220/consist.htm)です。この状況に適応するために、TiDB悲観的トランザクションの Read Committed 分離レベルも本質的に一貫した読み取り動作です。
 
 > **ノート：**
 >
-> Read Committed 分離レベルは[ペシミスティック トランザクション モード](/pessimistic-transaction.md)でのみ有効です。 [楽観的なトランザクション モード](/optimistic-transaction.md)では、トランザクション分離レベルを`Read Committed`に設定しても効果がなく、トランザクションは引き続き Repeatable Read 分離レベルを使用します。
+> Read Committed 分離レベルは[悲観的トランザクション モード](/pessimistic-transaction.md)でのみ有効です。 [楽観的トランザクション モード](/optimistic-transaction.md)では、トランザクション分離レベルを`Read Committed`に設定しても効果がなく、トランザクションは引き続き Repeatable Read 分離レベルを使用します。
 
 v6.0.0 以降、TiDB は[`tidb_rc_read_check_ts`](/system-variables.md#tidb_rc_read_check_ts-new-in-v600)システム変数を使用して、読み取りと書き込みの競合がまれなシナリオでタイムスタンプの取得を最適化することをサポートしています。この変数を有効にした後、TiDB は`SELECT`が実行されたときに以前の有効なタイムスタンプを使用してデータを読み取ろうとします。この変数の初期値はトランザクションの`start_ts`です。
 
@@ -79,6 +79,17 @@ v6.0.0 以降、TiDB は[`tidb_rc_read_check_ts`](/system-variables.md#tidb_rc_r
     -   TiDB がすでに部分的なデータをクライアントに送信している場合、TiDB はクライアントにエラーを報告します。毎回クライアントに送信されるデータの量は、 `tidb_init_chunk_size`と`tidb_max_chunk_size`によって制御されます。
 
 `READ-COMMITTED`分離レベルが使用され、 `SELECT`のステートメントが多く、読み取りと書き込みの競合がまれなシナリオでは、この変数を有効にすると、グローバル タイムスタンプを取得するためのレイテンシーとコストを回避できます。
+
+v6.3.0 以降、TiDB は、ポイント書き込み競合がほとんどないシナリオでシステム変数[`tidb_rc_write_check_ts`](/system-variables.md#tidb_rc_write_check_ts-new-in-v630)を有効にすることにより、タイムスタンプの取得の最適化をサポートします。この変数を有効にした後、ポイント書き込みステートメントの実行中に、TiDB は現在のトランザクションの有効なタイムスタンプを使用してデータの読み取りとロックを試みます。 [`tidb_rc_read_check_ts`](/system-variables.md#tidb_rc_read_check_ts-new-in-v600)が有効な場合、TiDB は同じ方法でデータを読み取ります。
+
+現在、適用可能なポイント書き込みステートメントのタイプには、 `UPDATE` 、 `DELETE` 、および`SELECT ...... FOR UPDATE`が含まれます。ポイント書き込みステートメントとは、主キーまたは一意キーをフィルター条件として使用し、最終実行演算子に`POINT-GET`を含む書き込みステートメントを指します。現在、3 種類のポイント書き込みステートメントには共通点があります。まず、キー値に基づいてポイント クエリを実行します。キーが存在する場合は、キーをロックします。キーが存在しない場合、空のセットを返します。
+
+-   ポイントライト ステートメントの読み取りプロセス全体で更新されたデータ バージョンが検出されない場合、TiDB は引き続き現在のトランザクションのタイムスタンプを使用してデータをロックします。
+    -   ロック取得プロセス中に古いタイムスタンプが原因で書き込み競合が発生した場合、TiDB は最新のグローバル タイムスタンプを取得してロック取得プロセスを再試行します。
+    -   ロック取得プロセス中に書き込み競合やその他のエラーが発生しなければ、ロックは正常に取得されます。
+-   読み取りプロセス中に更新されたデータ バージョンが検出された場合、TiDB は新しいタイムスタンプの取得を試み、このステートメントを再試行します。
+
+多くのポイント書き込みステートメントがあり、分離レベル`READ-COMMITTED`でポイント書き込み競合がいくつかあるトランザクションでは、この変数を有効にすると、グローバル タイムスタンプを取得する際のレイテンシーとオーバーヘッドを回避できます。
 
 ## TiDB と MySQL Read Committed の違い {#difference-between-tidb-and-mysql-read-committed}
 

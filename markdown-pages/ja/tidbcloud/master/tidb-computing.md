@@ -7,7 +7,7 @@ summary: Understand the computing layer of the TiDB database.
 
 TiKV が提供する分散ストレージに基づいて、TiDB はトランザクション処理の優れた機能とデータ分析の機能を組み合わせたコンピューティング エンジンを構築します。このドキュメントでは、まず TiDB データベース テーブルのデータを TiKV の (キー、値) キーと値のペアにマッピングするデータ マッピング アルゴリズムを紹介し、次に TiDB がメタデータを管理する方法を紹介し、最後にTiDB SQLレイヤーのアーキテクチャを示します。
 
-コンピューティングレイヤーが依存するストレージ ソリューションについては、このドキュメントでは TiKV の行ベースのストレージ構造のみを紹介します。 OLAP サービスの場合、TiDB は列ベースのストレージ ソリューション[ティフラッシュ](/tiflash/tiflash-overview.md)を TiKV 拡張機能として導入します。
+コンピューティングレイヤーが依存するストレージ ソリューションについては、このドキュメントでは TiKV の行ベースのストレージ構造のみを紹介します。 OLAP サービスの場合、TiDB は列ベースのストレージ ソリューション[TiFlash](/tiflash/tiflash-overview.md)を TiKV 拡張機能として導入します。
 
 ## テーブル データを Key-Value にマッピングする {#mapping-table-data-to-key-value}
 

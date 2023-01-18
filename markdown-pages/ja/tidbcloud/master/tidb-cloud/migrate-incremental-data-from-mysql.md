@@ -13,7 +13,7 @@ summary: Learn how to migrate incremental data from MySQL-compatible databases t
 
 ## ステップ 1.DM クラスターをデプロイする {#step-1-deploy-a-dm-cluster}
 
-TiDB Cloudコンソールは、増分データ移行機能をまだ提供していません。 TiDB Cloudへの増分移行を実行するには、手動で[TiDB データ移行](https://docs.pingcap.com/tidb/stable/dm-overview) (DM) をデプロイする必要があります。インストール手順については、 [TiUP を使用して DMクラスタをデプロイする](https://docs.pingcap.com/tidb/stable/deploy-a-dm-cluster-using-tiup)を参照してください。
+TiDB Cloudコンソールは、増分データ移行機能をまだ提供していません。 TiDB Cloudへの増分移行を実行するには、手動で[TiDB データ移行](https://docs.pingcap.com/tidb/stable/dm-overview) (DM) をデプロイする必要があります。インストール手順については、 [TiUPを使用して DMクラスタをデプロイする](https://docs.pingcap.com/tidb/stable/deploy-a-dm-cluster-using-tiup)を参照してください。
 
 ## 手順 2. データ ソース構成ファイルを作成する {#step-2-create-a-data-source-configuration-file}
 

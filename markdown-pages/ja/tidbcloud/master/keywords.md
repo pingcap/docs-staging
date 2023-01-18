@@ -64,7 +64,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   アドバイス
 -   後
 -   に対して
--   前に
+-   前
 -   アルゴリズム
 -   すべて (R)
 -   アルター(R)
@@ -110,7 +110,7 @@ Query OK, 0 rows affected (0.08 sec)
 
 -   キャッシュ
 -   キャンセル (R)
--   捕獲
+-   キャプチャー
 -   カスケード(R)
 -   カスケード
 -   ケース(R)
@@ -216,7 +216,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   列挙型
 -   エラー
 -   エラー
--   エスケープ
+-   逃れる
 -   エスケープ (R)
 -   イベント
 -   イベント
@@ -391,7 +391,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   一度もない
 -   次
 -   ネクストヴァル
--   いいえ
+-   番号
 -   ノカシェ
 -   ノサイクル
 -   ノードグループ
@@ -399,7 +399,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   NODE_STATE (R)
 -   NOMAXVALUE
 -   名目値
--   なし
+-   無し
 -   ない (R)
 -   今すぐ
 -   NO_WRITE_TO_BINLOG (R)
@@ -453,7 +453,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   処理する
 -   プロセスリスト
 -   プロフィール
--   プロフィール
+-   プロファイル
 -   ポンプ(R)
 
 <a id="Q" class="letter" href="#Q">Q</a>
@@ -471,7 +471,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   読み取り (R)
 -   リアル(R)
 -   再構築
--   回復します
+-   回復する
 -   冗長
 -   参考文献 (R)
 -   REGEXP (R)
@@ -493,7 +493,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   戻す
 -   復元する
 -   制限 (R)
--   逆行する
+-   逆行
 -   REVOKE(R)
 -   右 (R)
 -   RLIKE(R)
@@ -526,7 +526,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   セット(R)
 -   セットヴァル
 -   SHARD_ROW_ID_BITS
--   シェア
+-   共有
 -   共有
 -   ショー(R)
 -   シャットダウン
@@ -537,7 +537,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   スロー
 -   SMALLINT(R)
 -   スナップショット
--   いくつか
+-   いくつかの
 -   ソース
 -   空間(R)
 -   スプリット(R)
@@ -567,7 +567,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   STATS_META (R)
 -   STATS_PERSISTENT
 -   STATS_SAMPLE_PAGES
--   状態
+-   スターテス
 -   保管所
 -   ストアド (R)
 -   STRAIGHT_JOIN (R)
@@ -589,7 +589,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   一時的
 -   誘惑的
 -   終了 (R)
--   文章
+-   TEXT
 -   よりも
 -   それから (R)
 -   TIDB(R)
@@ -601,6 +601,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   TINYINT(R)
 -   タイニーテキスト(R)
 -   に (R)
+-   TOKEN_ISSUER
 -   トップン(R)
 -   痕跡
 -   伝統的
@@ -664,7 +665,7 @@ Query OK, 0 rows affected (0.08 sec)
 -   X509
 -   XOR (R)
 
-<a id="Y" class="letter" href="#Y">よ</a>
+<a id="Y" class="letter" href="#Y">Y</a>
 
 -   年
 -   YEAR_MONTH (右)

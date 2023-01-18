@@ -14,7 +14,7 @@ TiDB は、 MySQL 5.7プロトコルおよびMySQL 5.7 5.7 の一般的な機能
 さらに、TiDB は MySQL レプリケーション プロトコルをサポートしていませんが、MySQL でデータをレプリケートするための特定のツールを提供します。
 
 -   MySQL からのデータの複製: [TiDB データ移行 (DM)](/dm/dm-overview.md)は、MySQL/MariaDB から TiDB への完全なデータ移行と増分データ複製をサポートするツールです。
--   レプリケート データを MySQL に: [TiCDC](/ticdc/ticdc-overview.md)は、TiKV 変更ログをプルして、TiDB の増分データをレプリケートするためのツールです。 TiCDC は[MySQL シンク](/ticdc/ticdc-overview.md#sink-support)を使用して、TiDB の増分データを MySQL に複製します。
+-   レプリケート データを MySQL に: [TiCDC](/ticdc/ticdc-overview.md)は、TiKV 変更ログをプルして、TiDB の増分データをレプリケートするためのツールです。 TiCDC は[MySQL シンク](/ticdc/ticdc-overview.md#replication-consistency)を使用して、TiDB の増分データを MySQL に複製します。
 
 </CustomContent>
 
@@ -48,7 +48,6 @@ TiDB は、 MySQL 5.7プロトコルおよびMySQL 5.7 5.7 の一般的な機能
 -   オプティマイザ トレース
 -   XML 関数
 -   X-プロトコル[#1109](https://github.com/pingcap/tidb/issues/1109)
--   セーブポイント[#6840](https://github.com/pingcap/tidb/issues/6840)
 -   列レベルの権限[#9766](https://github.com/pingcap/tidb/issues/9766)
 -   `XA`構文 (TiDB は内部で 2 フェーズ コミットを使用しますが、これは SQL インターフェイス経由で公開されません)
 -   `CREATE TABLE tblName AS SELECT stmt`構文[#4754](https://github.com/pingcap/tidb/issues/4754)
@@ -64,7 +63,7 @@ TiDB は、 MySQL 5.7プロトコルおよびMySQL 5.7 5.7 の一般的な機能
 
 ### 自動インクリメント ID {#auto-increment-id}
 
--   TiDB では、自動増分列はグローバルに一意です。それらは単一の TiDBサーバー上では増分ですが*、必ずしも*複数の TiDB サーバー間で増分されたり、順次割り当てられるとは限りません。デフォルト値とカスタム値を混在させないことをお勧めします。そうしないと、 `Duplicated Error`のエラー メッセージが表示される場合があります。
+-   TiDB では、自動増分列の値 (ID) はグローバルに一意です。これらは、単一の TiDBサーバー上でインクリメンタルです。 ID を複数の TiDB サーバー間でインクリメンタルにしたい場合は、 [`AUTO_INCREMENT` MySQL 互換モード](/auto-increment.md#mysql-compatibility-mode)を使用できます。ただし、ID は必ずしも順番に割り当てられるとは限りません。デフォルト値とカスタム値を混在させないことをお勧めします。そうしないと、 `Duplicated Error`のエラー メッセージが表示される場合があります。
 
 -   `tidb_allow_remove_auto_inc`システム変数を使用して、 `AUTO_INCREMENT`列属性の削除を許可または禁止できます。 column 属性を削除する構文は`ALTER TABLE MODIFY`または`ALTER TABLE CHANGE`です。
 
@@ -99,7 +98,7 @@ mysql> SELECT _tidb_rowid, id FROM t;
 
 > **ノート：**
 >
-> `AUTO_INCREMENT`属性は、実稼働環境でホットスポットを引き起こす可能性があります。詳細は[ホットスポットの問題のトラブルシューティング](/troubleshoot-hot-spot-issues.md)を参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)を使用することをお勧めします。
+> `AUTO_INCREMENT`属性は、本番環境でホットスポットを引き起こす可能性があります。詳細は[ホットスポットの問題のトラブルシューティング](/troubleshoot-hot-spot-issues.md)を参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)を使用することをお勧めします。
 
 </CustomContent>
 
@@ -107,7 +106,7 @@ mysql> SELECT _tidb_rowid, id FROM t;
 
 > **ノート：**
 >
-> `AUTO_INCREMENT`属性は、実稼働環境でホットスポットを引き起こす可能性があります。詳細は[ホットスポットの問題のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#handle-auto-increment-primary-key-hotspot-tables-using-auto_random)を参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)を使用することをお勧めします。
+> `AUTO_INCREMENT`属性は、本番環境でホットスポットを引き起こす可能性があります。詳細は[ホットスポットの問題のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#handle-auto-increment-primary-key-hotspot-tables-using-auto_random)を参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)を使用することをお勧めします。
 
 </CustomContent>
 
@@ -143,7 +142,8 @@ TiDB は MySQL 組み込み関数のほとんどをサポートしています�
 
 TiDB では、サポートされているすべての DDL 変更がオンラインで実行されます。 MySQL での DDL 操作と比較して、TiDB での DDL 操作には次の主な制限があります。
 
--   `ALTER TABLE`のステートメントで複数の操作を完了することはできません。たとえば、1 つのステートメントに複数の列またはインデックスを追加することはできません。 `Unsupported multi schema change`エラーが出力される場合があります。
+-   単一の`ALTER TABLE`ステートメントを使用してテーブルの複数のスキーマ オブジェクト (列やインデックスなど) を変更する場合、複数の変更で同じオブジェクトを指定することはサポートされていません。たとえば、 `ALTER TABLE t1 MODIFY COLUMN c1 INT, DROP COLUMN c1`コマンドを実行すると、 `Unsupported operate same column/index`エラーが出力されます。
+-   `TIFLASH REPLICA` 、 `SHARD_ROW_ID_BITS` 、および`AUTO_ID_CACHE`など、単一の`ALTER TABLE`ステートメントを使用して複数の TiDB 固有のスキーマ オブジェクトを変更することはサポートされていません。
 -   TiDB の`ALTER TABLE`は、一部のデータ型の変更をサポートしていません。たとえば、TiDB は`DECIMAL`型から`DATE`型への変更をサポートしていません。データ型の変更がサポートされていない場合、TiDB は`Unsupported modify column: type %d not match origin %d`エラーを報告します。詳細については、 [`ALTER TABLE`](/sql-statements/sql-statement-modify-column.md)を参照してください。
 -   `ALGORITHM={INSTANT,INPLACE,COPY}`構文は、TiDB でのアサーションとしてのみ関数し、 `ALTER`アルゴリズムを変更しません。詳細については、 [`ALTER TABLE`](/sql-statements/sql-statement-alter-table.md)を参照してください。
 -   `CLUSTERED`タイプの主キーの追加/削除はサポートされていません。 `CLUSTERED`タイプの主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
@@ -152,6 +152,7 @@ TiDB では、サポートされているすべての DDL 変更がオンライ�
 -   テーブル パーティショニングは、 `ADD` 、 `DROP` 、および`TRUNCATE`操作もサポートします。他のパーティション操作は無視されます。次のテーブル パーティション構文はサポートされていません。
 
     -   `PARTITION BY KEY`
+    -   `PARTITION BY LINEAR KEY`
     -   `SUBPARTITION`
     -   `{CHECK|TRUNCATE|OPTIMIZE|REPAIR|IMPORT|DISCARD|REBUILD|REORGANIZE|COALESCE} PARTITION`
 
@@ -230,9 +231,9 @@ TiDB はほとんどの[SQL モード](/sql-mode.md)をサポートしていま�
 -   デフォルト値`lower_case_table_names` :
     -   TiDB のデフォルト値は`2`で、現在 TiDB は`2`のみをサポートしています。
     -   MySQL のデフォルト値:
-        -   Linux の場合: `0`
-        -   Windows の場合: `1`
-        -   macOS の場合: `2`
+        -   Linux の場合: `0` .これは、テーブル名とデータベース名が`CREATE TABLE`または`CREATE DATABASE`ステートメントで指定された大文字と小文字を使用してディスクに格納されることを意味します。名前の比較では大文字と小文字が区別されます。
+        -   Windows の場合: `1` .これは、テーブル名がディスクに小文字で保存され、名前の比較で大文字と小文字が区別されないことを意味します。 MySQL は、ストレージとルックアップですべてのテーブル名を小文字に変換します。この動作は、データベース名とテーブルのエイリアスにも適用されます。
+        -   macOS の場合: `2` .これは、テーブル名とデータベース名が`CREATE TABLE`または`CREATE DATABASE`ステートメントで指定された大文字を使用してディスクに格納されることを意味しますが、MySQL は検索時にそれらを小文字に変換します。名前の比較では、大文字と小文字が区別されません。
 -   デフォルト値`explicit_defaults_for_timestamp` :
     -   TiDB のデフォルト値は`ON`で、現在 TiDB は`ON`のみをサポートしています。
     -   MySQL のデフォルト値:

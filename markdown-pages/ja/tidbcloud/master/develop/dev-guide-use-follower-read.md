@@ -3,17 +3,19 @@ title: Follower Read
 summary: Learn how to use Follower Read to optimize query performance.
 ---
 
-# フォロワー読み取り {#follower-read}
+# Follower Read {#follower-read}
 
-このドキュメントでは、Follower Read を使用してクエリのパフォーマンスを最適化する方法を紹介します。
+このドキュメントでは、 Follower Readを使用してクエリのパフォーマンスを最適化する方法を紹介します。
 
 ## 序章 {#introduction}
 
 TiDB は、クラスター内のすべてのノードにデータを分散するための基本単位として[リージョン](/tidb-storage.md#region)を使用します。リージョンは複数のレプリカを持つことができ、レプリカはリーダーと複数のフォロワーに分割されます。リーダーのデータが変更されると、TiDB はフォロワーのデータを同期的に更新します。
 
-デフォルトでは、TiDB は同じリージョンのリーダーでのみデータの読み取りと書き込みを行います。 リージョンリージョンがシステム全体の読み取りボトルネックになる可能性があります。このような状況では、フォロワー読み取り機能を有効にすると、リーダーの負荷が大幅に軽減され、複数のフォロワー間で負荷が分散されるため、システム全体のスループットが向上します。
+デフォルトでは、TiDB は同じリージョンのリーダーでのみデータの読み取りと書き込みを行います。 リージョンリージョンがシステム全体の読み取りボトルネックになる可能性があります。このような状況では、Follower Read機能を有効にすると、リーダーの負荷が大幅に軽減され、複数のフォロワー間で負荷が分散されるため、システム全体のスループットが向上します。
 
 ## いつ使用するか {#when-to-use}
+
+### 読み取りホットスポットを減らす {#reduce-read-hotspots}
 
 <CustomContent platform="tidb">
 
@@ -31,33 +33,37 @@ TiDB は、クラスター内のすべてのノードにデータを分散する
 
 </CustomContent>
 
-読み取りホットスポットが避けられない場合、または変更コストが非常に高い場合は、フォロワー読み取り機能を使用して、フォロワーリージョンへの読み取り要求のバランスを改善することができます。
+読み取りホットスポットが避けられない場合、または変更コストが非常に高い場合は、Follower Read機能を使用して、フォロワーリージョンへの読み取り要求のバランスを改善することができます。
 
-## フォロワー読み取りを有効にする {#enable-follower-read}
+### 地理的に分散した展開のレイテンシーを短縮 {#reduce-latency-for-geo-distributed-deployments}
+
+TiDB クラスターが複数の地区またはデータ センターにデプロイされている場合、リージョンの異なるレプリカが異なる地区またはデータ センターに分散されます。この場合、 Follower Readを`closest-adaptive`または`closest-replicas`として構成して、TiDB が現在のデータ センターからの読み取りを優先できるようにすることができます。これにより、読み取り操作のレイテンシーとトラフィック オーバーヘッドを大幅に削減できます。実装の詳細については、 [Follower Read](/follower-read.md)を参照してください。
+
+## Follower Readを有効にする {#enable-follower-read}
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-Follower Read を有効にするには、変数`tidb_replica_read` (デフォルト値は`leader` ) を`follower`または`leader-and-follower`に設定します。
-
+Follower Readを有効にするには、変数`tidb_replica_read` (デフォルト値は`leader` ) を`follower` 、 `leader-and-follower` 、 `closest-replicas` 、または`closest-adaptive`に設定します。
 
 ```sql
 SET [GLOBAL] tidb_replica_read = 'follower';
 ```
 
-この変数の詳細については、 [フォロワーの読み取りの使用](/follower-read.md#usage)を参照してください。
+この変数の詳細については、 [Follower Readの使用](/follower-read.md#usage)を参照してください。
 
 </div>
 <div label="Java" value="java">
 
-Java で Follower Read を有効にするには、 `FollowerReadHelper`クラスを定義します。
-
+JavaでFollower Readを有効にするには、 `FollowerReadHelper`クラスを定義します。
 
 ```java
 public enum FollowReadMode {
     LEADER("leader"),
     FOLLOWER("follower"),
-    LEADER_AND_FOLLOWER("leader-and-follower");
+    LEADER_AND_FOLLOWER("leader-and-follower"),
+    CLOSEST_REPLICA("closest-replica"),
+    CLOSEST_ADAPTIVE("closest-adaptive");
 
     private final String mode;
 
@@ -93,8 +99,7 @@ public class FollowerReadHelper {
 }
 ```
 
-フォロワー ノードからデータを読み取る場合は、 `setSessionReplicaRead(conn, FollowReadMode.LEADER_AND_FOLLOWER)`メソッドを使用してフォロワー読み取り機能を有効にします。これにより、現在のセッションでリーダー ノードとフォロワー ノード間の負荷を分散できます。接続が切断されると、元のモードに戻ります。
-
+Followerノードからデータを読み取る場合は、 `setSessionReplicaRead(conn, FollowReadMode.LEADER_AND_FOLLOWER)`メソッドを使用してFollower Read機能を有効にします。これにより、現在のセッションでLeaderノードとFollowerノード間の負荷を分散できます。接続が切断されると、元のモードに戻ります。
 
 ```java
 public static class AuthorDAO {
@@ -139,7 +144,7 @@ public static class AuthorDAO {
 
 ## 続きを読む {#read-more}
 
--   [フォロワー読み取り](/follower-read.md)
+-   [Follower Read](/follower-read.md)
 
 <CustomContent platform="tidb">
 

@@ -82,6 +82,7 @@ TableOption ::=
 |   'SECONDARY_ENGINE' EqOpt ( 'NULL' | StringName )
 |   'UNION' EqOpt '(' TableNameListOpt ')'
 |   'ENCRYPTION' EqOpt EncryptionOpt
+| 'TTL' EqOpt TimeColumnName '+' 'INTERVAL' Expression TimeUnit (TTLEnable EqOpt ( 'ON' | 'OFF' ))?
 |   PlacementPolicyOption
 
 OnCommitOpt ::=
@@ -220,7 +221,7 @@ mysql> DESC t1;
 -   `index_col_name`の`[ASC | DESC]`は現在解析されていますが、無視されます (MySQL 5.7互換の動作)。
 -   `COMMENT`属性は`WITH PARSER`オプションをサポートしません。
 -   TiDB は、1 つのテーブルで最大 512 列をサポートします。 InnoDB での対応する数の制限は 1017 で、MySQL でのハード リミットは 4096 です。詳細については、 [TiDB の制限事項](/tidb-limitations.md)を参照してください。
--   分割されたテーブルでは、範囲、ハッシュ、および範囲列 (単一列) のみがサポートされます。詳細については、 [分割されたテーブル](/partitioned-table.md)を参照してください。
+-   分割されたテーブルでは、範囲、ハッシュ、および範囲列 (単一列) のみがサポートされます。詳細については、 [パーティションテーブル](/partitioned-table.md)を参照してください。
 -   `CHECK`制約は解析されますが無視されます (MySQL 5.7互換の動作)。詳細については、 [制約](/constraints.md)を参照してください。
 -   `FOREIGN KEY`制約は解析および保存されますが、DML ステートメントによって適用されません。詳細については、 [制約](/constraints.md)を参照してください。
 

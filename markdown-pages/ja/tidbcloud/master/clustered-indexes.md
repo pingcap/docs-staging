@@ -67,7 +67,7 @@ CREATE TABLE t (a BIGINT, b VARCHAR(255), PRIMARY KEY(a, b) /*T![clustered_index
 -   `ON`は、主キーが既定でクラスター化インデックスとして作成されることを示します。
 -   `INT_ONLY`は、動作が構成アイテム`alter-primary-key`によって制御されることを示します。 `alter-primary-key`が`true`に設定されている場合、主キーはデフォルトで非クラスター化インデックスとして作成されます。 `false`に設定すると、整数列で構成される主キーのみがクラスター化インデックスとして作成されます。
 
-`@@global.tidb_enable_clustered_index`のデフォルト値は`INT_ONLY`です。
+`@@global.tidb_enable_clustered_index`のデフォルト値は`ON`です。
 
 ### クラスター化インデックスを追加または削除する {#add-or-drop-clustered-indexes}
 
@@ -189,7 +189,7 @@ TiDB 固有のコメント構文は、キーワード`CLUSTERED`と`NONCLUSTERED
 -   バックアップおよび復元ツール: BR、 Dumpling、およびTiDB Lightning。
 -   データ移行および複製ツール: DM および TiCDC。
 
-ただし、v5.0 BR ツールを使用してテーブルをバックアップおよび復元しても、非クラスター化インデックスを含むテーブルをクラスター化インデックスを含むテーブルに変換することはできません。
+ただし、v5.0 BRツールを使用してテーブルをバックアップおよび復元しても、非クラスター化インデックスを含むテーブルをクラスター化インデックスを含むテーブルに変換することはできません。
 
 ### 他の TiDB 機能との互換性 {#compatibility-with-other-tidb-features}
 

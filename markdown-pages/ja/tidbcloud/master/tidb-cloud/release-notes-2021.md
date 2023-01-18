@@ -22,7 +22,7 @@ summary: Learn about the release notes of TiDB Cloud in 2021.
 
 一般的な変更:
 
--   TiDB Cloudを Developer Tier 用に[TiDB v5.3.0](https://docs.pingcap.com/tidb/stable/release-5.3.0)にアップグレードする
+-   TiDB CloudをDeveloper Tier用に[TiDB v5.3.0](https://docs.pingcap.com/tidb/stable/release-5.3.0)にアップグレードする
 
 新機能：
 
@@ -30,23 +30,23 @@ summary: Learn about the release notes of TiDB Cloud in 2021.
 
 改良点:
 
--   開発者層の監視能力を向上させる
--   開発者層クラスターの作成時間と同じ自動バックアップ時間の設定をサポート
+-   Developer Tierの監視能力を向上させる
+-   Developer Tierクラスターの作成時間と同じ自動バックアップ時間の設定をサポート
 
 バグの修正：
 
--   開発者層でディスクがいっぱいになることによる TiKV クラッシュの問題を修正
+-   Developer Tierでディスクがいっぱいになることによる TiKV クラッシュの問題を修正
 -   HTML インジェクションの脆弱性を修正
 
 ## 2021 年 11 月 8 日 {#november-8-2021}
 
--   Launch [開発者層](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta) TiDB Cloudの 1 年間の無料トライアルを提供します。
+-   Launch [Developer Tier](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta) TiDB Cloudの 1 年間の無料トライアルを提供します。
 
-    各 Developer Tier クラスターはフル機能の TiDB クラスターであり、以下が付属しています。
+    各Developer Tierクラスターはフル機能の TiDB クラスターであり、以下が付属しています。
 
     -   1 つの TiDB 共有ノード
     -   1 つの TiKV 共有ノード (500 MiB の OLTP ストレージを使用)
-    -   1 つの TiFlash 共有ノード (500 MiB の OLAP ストレージを使用)
+    -   1 つのTiFlash共有ノード (500 MiB の OLAP ストレージを使用)
 
     始めましょう[ここ](/tidb-cloud/tidb-cloud-quickstart.md) .
 

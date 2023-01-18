@@ -17,7 +17,7 @@ TiDB がこの書き換えを行う必要がある理由は、サブクエリが
 
 この書き換えの欠点は、相関が解除されない場合、オプティマイザーが相関列のインデックスを使用できることです。つまり、このサブクエリは何度も繰り返される可能性がありますが、インデックスを使用して毎回データをフィルター処理できます。書き換えルールを使用した後、通常、相関列の位置が変更されます。サブクエリは 1 回しか実行されませんが、1 回の実行時間は非相関の場合よりも長くなります。
 
-したがって、外部値が少ない場合は、実行パフォーマンスが向上する可能性があるため、非相関を実行しないでください。現在、この最適化は[最適化ルールのブロックリストと式のプッシュダウン](/blocklist-control-plan.md)で`subquery decorrelation`最適化ルールを設定することで無効にすることができます。
+したがって、外部値が少ない場合は、非相関化を実行しないでください。実行パフォーマンスが向上する可能性があります。この場合、 [`NO_DECORRELATE`](/optimizer-hints.md#no_decorrelate)オプティマイザー ヒントを使用するか、 [最適化ルールのブロックリストと式のプッシュダウン](/blocklist-control-plan.md)の「サブクエリ非相関」最適化ルールを無効にすることで、この最適化を無効にすることができます。ほとんどの場合、非相関を無効にするために、オプティマイザ ヒントを[SQL計画管理](/sql-plan-management.md)と共に使用することをお勧めします。
 
 ## 例 {#example}
 
@@ -47,7 +47,31 @@ explain select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.
 
 上記は、最適化が有効になる例です。 `HashJoin_11`は通常の`inner join`です。
 
-次に、サブクエリの非相関ルールをオフにします。
+次に、 `NO_DECORRELATE`オプティマイザー ヒントを使用して、オプティマイザーにサブクエリの非相関を実行しないように指示できます。
+
+
+```sql
+explain select * from t1 where t1.a < (select /*+ NO_DECORRELATE() */ sum(t2.a) from t2 where t2.b = t1.b);
+```
+
+```sql
++------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
+| id                                       | estRows   | task      | access object          | operator info                                                                        |
++------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
+| Projection_10                            | 10000.00  | root      |                        | test.t1.a, test.t1.b                                                                 |
+| └─Apply_12                               | 10000.00  | root      |                        | CARTESIAN inner join, other cond:lt(cast(test.t1.a, decimal(10,0) BINARY), Column#7) |
+|   ├─TableReader_14(Build)                | 10000.00  | root      |                        | data:TableFullScan_13                                                                |
+|   │ └─TableFullScan_13                   | 10000.00  | cop[tikv] | table:t1               | keep order:false, stats:pseudo                                                       |
+|   └─MaxOneRow_15(Probe)                  | 10000.00  | root      |                        |                                                                                      |
+|     └─StreamAgg_20                       | 10000.00  | root      |                        | funcs:sum(Column#14)->Column#7                                                       |
+|       └─Projection_45                    | 100000.00 | root      |                        | cast(test.t2.a, decimal(10,0) BINARY)->Column#14                                     |
+|         └─IndexLookUp_44                 | 100000.00 | root      |                        |                                                                                      |
+|           ├─IndexRangeScan_42(Build)     | 100000.00 | cop[tikv] | table:t2, index:idx(b) | range: decided by [eq(test.t2.b, test.t1.b)], keep order:false, stats:pseudo         |
+|           └─TableRowIDScan_43(Probe)     | 100000.00 | cop[tikv] | table:t2               | keep order:false, stats:pseudo                                                       |
++------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
+```
+
+非相関ルールを無効にしても、同じ効果が得られます。
 
 
 ```sql
@@ -57,20 +81,20 @@ explain select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.
 ```
 
 ```sql
-+----------------------------------------+----------+-----------+------------------------+------------------------------------------------------------------------------+
-| id                                     | estRows  | task      | access object          | operator info                                                                |
-+----------------------------------------+----------+-----------+------------------------+------------------------------------------------------------------------------+
-| Projection_10                          | 10000.00 | root      |                        | test.t1.a, test.t1.b                                                         |
-| └─Apply_12                             | 10000.00 | root      |                        | CARTESIAN inner join, other cond:lt(cast(test.t1.a), Column#7)               |
-|   ├─TableReader_14(Build)              | 10000.00 | root      |                        | data:TableFullScan_13                                                        |
-|   │ └─TableFullScan_13                 | 10000.00 | cop[tikv] | table:t1               | keep order:false, stats:pseudo                                               |
-|   └─MaxOneRow_15(Probe)                | 1.00     | root      |                        |                                                                              |
-|     └─HashAgg_27                       | 1.00     | root      |                        | funcs:sum(Column#10)->Column#7                                               |
-|       └─IndexLookUp_28                 | 1.00     | root      |                        |                                                                              |
-|         ├─IndexRangeScan_25(Build)     | 10.00    | cop[tikv] | table:t2, index:idx(b) | range: decided by [eq(test.t2.b, test.t1.b)], keep order:false, stats:pseudo |
-|         └─HashAgg_17(Probe)            | 1.00     | cop[tikv] |                        | funcs:sum(test.t2.a)->Column#10                                              |
-|           └─TableRowIDScan_26          | 10.00    | cop[tikv] | table:t2               | keep order:false, stats:pseudo                                               |
-+----------------------------------------+----------+-----------+------------------------+------------------------------------------------------------------------------+
++------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
+| id                                       | estRows   | task      | access object          | operator info                                                                        |
++------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
+| Projection_10                            | 10000.00  | root      |                        | test.t1.a, test.t1.b                                                                 |
+| └─Apply_12                               | 10000.00  | root      |                        | CARTESIAN inner join, other cond:lt(cast(test.t1.a, decimal(10,0) BINARY), Column#7) |
+|   ├─TableReader_14(Build)                | 10000.00  | root      |                        | data:TableFullScan_13                                                                |
+|   │ └─TableFullScan_13                   | 10000.00  | cop[tikv] | table:t1               | keep order:false, stats:pseudo                                                       |
+|   └─MaxOneRow_15(Probe)                  | 10000.00  | root      |                        |                                                                                      |
+|     └─StreamAgg_20                       | 10000.00  | root      |                        | funcs:sum(Column#14)->Column#7                                                       |
+|       └─Projection_45                    | 100000.00 | root      |                        | cast(test.t2.a, decimal(10,0) BINARY)->Column#14                                     |
+|         └─IndexLookUp_44                 | 100000.00 | root      |                        |                                                                                      |
+|           ├─IndexRangeScan_42(Build)     | 100000.00 | cop[tikv] | table:t2, index:idx(b) | range: decided by [eq(test.t2.b, test.t1.b)], keep order:false, stats:pseudo         |
+|           └─TableRowIDScan_43(Probe)     | 100000.00 | cop[tikv] | table:t2               | keep order:false, stats:pseudo                                                       |
++------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
 ```
 
 サブクエリ非相関ルールを無効にすると、 `range: decided by [eq(test.t2.b, test.t1.b)]` in `operator info` of `IndexRangeScan_25(Build)`が表示されます。これは、相関サブクエリの非相関が実行されず、TiDB がインデックス レンジ クエリを使用することを意味します。

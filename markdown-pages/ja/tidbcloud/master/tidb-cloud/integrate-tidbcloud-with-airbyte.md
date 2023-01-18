@@ -46,7 +46,7 @@ airbyte-server      | --------------------------------------
 
 1.  サイドバーの [**ソース**] または [<strong>宛先]</strong>をクリックし、TiDB タイプを選択して新しい TiDB コネクタを作成します。
 
-2.  次のパラメータを入力します。接続情報を取得するには、 [標準接続で接続](/tidb-cloud/connect-to-tidb-cluster.md#connect-via-standard-connection)を参照してください。
+2.  次のパラメータを入力します。接続文字列から接続情報を取得するには、 [標準接続で接続](/tidb-cloud/connect-via-standard-connection.md)を参照してください。
 
     -   ホスト: TiDB Cloudクラスターのエンドポイント
     -   ポート: データベースのポート
@@ -60,7 +60,7 @@ airbyte-server      | --------------------------------------
     >
     > -   TiDB Cloudは TLS 接続をサポートしています。 **TLSv1.2**および<strong>TLSv1.3</strong>で TLS プロトコルを選択できます (例: `enabledTLSProtocols=TLSv1.2` )。
     > -   JDBC 経由でTiDB Cloudへの TLS 接続を無効にする場合は、特に JDBC URL Params で useSSL を`false`に設定し、SSL 接続を閉じる必要があります (例: `useSSL=false` )。
-    > -   TiDB サーバーレス層は TLS 接続のみをサポートします。
+    > -   TiDBServerless Tierは TLS 接続のみをサポートします。
 
 4.  [ソースまたは**宛先**の<strong>セットアップ] を</strong>クリックして、コネクタの作成を完了します。次のスクリーンショットは、ソースとしての TiDB の構成を示しています。
 

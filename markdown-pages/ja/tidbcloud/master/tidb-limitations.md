@@ -16,7 +16,7 @@ summary: Learn the usage limitations of TiDB.
 | カラム    | 64             |
 | 索引     | 64             |
 | ビュー    | 64             |
-| 順序     | 64             |
+| シーケンス  | 64             |
 
 ## データベース、テーブル、ビュー、および接続の合計数に関する制限 {#limitations-on-the-total-number-of-databases-tables-views-and-connections}
 
@@ -82,7 +82,7 @@ summary: Learn the usage limitations of TiDB.
 | バイナリ      | 256文字                          |
 | VARBINARY | 65535 文字                       |
 | VARCHAR   | 16383 文字                       |
-| 文章        | デフォルトは 6 MiB で、120 MiB に調整できます |
+| TEXT      | デフォルトは 6 MiB で、120 MiB に調整できます |
 | BLOB      | デフォルトは 6 MiB で、120 MiB に調整できます |
 
 ## SQL ステートメントの制限 {#limitations-on-sql-statements}
@@ -96,3 +96,7 @@ summary: Learn the usage limitations of TiDB.
 [`stmt-count-limit`](/tidb-configuration-file.md#stmt-count-limit)構成アイテムで制限を変更できます。
 
 </CustomContent>
+
+## TiKV版の制限事項 {#limitations-on-tikv-version}
+
+クラスターで、TiDBコンポーネントのバージョンが v6.2.0 以降の場合、TiKV のバージョンは v6.2.0 以降である必要があります。

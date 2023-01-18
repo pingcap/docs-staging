@@ -5,7 +5,7 @@ summary: Learn transactions in TiDB.
 
 # 取引 {#transactions}
 
-TiDB は、 [悲観的](/pessimistic-transaction.md)または[楽観的](/optimistic-transaction.md)トランザクション モードを使用する分散トランザクションをサポートします。 TiDB 3.0.8 以降、TiDB はデフォルトでペシミスティック トランザクション モードを使用します。
+TiDB は、 [悲観的](/pessimistic-transaction.md)または[楽観的](/optimistic-transaction.md)トランザクション モードを使用する分散トランザクションをサポートします。 TiDB 3.0.8 以降、TiDB はデフォルトで悲観的トランザクション モードを使用します。
 
 このドキュメントでは、一般的に使用されるトランザクション関連のステートメント、明示的および暗黙的なトランザクション、分離レベル、制約の遅延チェック、およびトランザクション サイズについて説明します。
 
@@ -13,7 +13,7 @@ TiDB は、 [悲観的](/pessimistic-transaction.md)または[楽観的](/optimi
 
 > **ノート：**
 >
-> [`tidb_disable_txn_auto_retry`](/system-variables.md#tidb_disable_txn_auto_retry)と[`tidb_retry_limit`](/system-variables.md#tidb_retry_limit)の変数は楽観的なトランザクションにのみ適用され、悲観的なトランザクションには適用されません。
+> [`tidb_disable_txn_auto_retry`](/system-variables.md#tidb_disable_txn_auto_retry)と[`tidb_retry_limit`](/system-variables.md#tidb_retry_limit)の変数は楽観的トランザクションにのみ適用され、悲観的なトランザクションには適用されません。
 
 ## 一般的なステートメント {#common-statements}
 
@@ -62,7 +62,7 @@ COMMIT;
 
 > **ヒント：**
 >
-> [楽観的な取引](/optimistic-transaction.md)を有効にする前に、 `COMMIT`ステートメントがエラーを返す可能性があることをアプリケーションが正しく処理していることを確認してください。アプリケーションがこれをどのように処理するかわからない場合は、代わりにデフォルトの[悲観的な取引](/pessimistic-transaction.md)を使用することをお勧めします。
+> [楽観的取引](/optimistic-transaction.md)を有効にする前に、 `COMMIT`ステートメントがエラーを返す可能性があることをアプリケーションが正しく処理していることを確認してください。アプリケーションがこれをどのように処理するかわからない場合は、代わりにデフォルトの[悲観的取引](/pessimistic-transaction.md)を使用することをお勧めします。
 
 ### トランザクションのロールバック {#rolling-back-a-transaction}
 
@@ -179,7 +179,7 @@ DDL ステートメントの場合、トランザクションは自動的にコ�
 
 ## 制約の遅延チェック {#lazy-check-of-constraints}
 
-デフォルトでは、オプティミスティック トランザクションは、DML ステートメントの実行時に[主キー](/constraints.md#primary-key)または[一意の制約](/constraints.md#unique-key)をチェックしません。これらのチェックは、代わりにトランザクション`COMMIT`で実行されます。
+デフォルトでは、楽観的トランザクションは、DML ステートメントの実行時に[主キー](/constraints.md#primary-key)または[一意の制約](/constraints.md#unique-key)をチェックしません。これらのチェックは、代わりにトランザクション`COMMIT`で実行されます。
 
 例えば：
 
@@ -211,7 +211,7 @@ mysql> INSERT INTO t1 VALUES (2);
 Query OK, 1 row affected (0.00 sec)
 
 mysql> COMMIT; -- It is successfully committed in MySQL; TiDB returns an error and the transaction rolls back.
-ERROR 1062 (23000): Duplicate entry '1' for key 'PRIMARY'
+ERROR 1062 (23000): Duplicate entry '1' for key 't1.PRIMARY'
 mysql> SELECT * FROM t1; -- MySQL returns 1 2; TiDB returns 1.
 +----+
 | id |
@@ -221,11 +221,11 @@ mysql> SELECT * FROM t1; -- MySQL returns 1 2; TiDB returns 1.
 1 row in set (0.01 sec)
 ```
 
-遅延チェックの最適化は、制約チェックをバッチ処理し、ネットワーク通信を削減することでパフォーマンスを向上させます。 [`tidb_constraint_check_in_place=TRUE`](/system-variables.md#tidb_constraint_check_in_place)を設定すると、この動作を無効にすることができます。
+遅延チェックの最適化は、制約チェックをバッチ処理し、ネットワーク通信を削減することでパフォーマンスを向上させます。 [`tidb_constraint_check_in_place=ON`](/system-variables.md#tidb_constraint_check_in_place)を設定すると、この動作を無効にすることができます。
 
 > **ノート：**
 >
-> -   この最適化は楽観的なトランザクションにのみ適用されます。
+> -   この最適化は楽観的トランザクションにのみ適用されます。
 > -   この最適化は、 `INSERT IGNORE`および`INSERT ON DUPLICATE KEY UPDATE`に対しては有効ではなく、通常の`INSERT`ステートメントに対してのみ有効です。
 
 ## ステートメントのロールバック {#statement-rollback}
@@ -257,7 +257,7 @@ Query OK, 1 row affected (0.02 sec)
 mysql> INSERT INTO tset VALUES (2);  -- Statement does not take effect because "test" is misspelled as "tset".
 ERROR 1146 (42S02): Table 'test.tset' doesn't exist
 mysql> INSERT INTO test VALUES (1),(2);  -- Entire statement does not take effect because it violates a PRIMARY KEY constraint
-ERROR 1062 (23000): Duplicate entry '1' for key 'PRIMARY'
+ERROR 1062 (23000): Duplicate entry '1' for key 'test.PRIMARY'
 mysql> INSERT INTO test VALUES (3);
 Query OK, 1 row affected (0.00 sec)
 
@@ -280,7 +280,7 @@ mysql> SELECT * FROM test;
 
 基盤となるストレージ エンジンの制限により、TiDB では 1 行が 6 MB を超えないようにする必要があります。行のすべての列は、データ型に従ってバイトに変換され、合計されて 1 つの行のサイズが推定されます。
 
-TiDB は楽観的トランザクションと悲観的トランザクションの両方をサポートしており、楽観的トランザクションは悲観的トランザクションの基礎です。オプティミスティック トランザクションは最初に変更をプライベート メモリにキャッシュするため、TiDB は 1 つのトランザクションのサイズを制限します。
+TiDB は楽観的的トランザクションと悲観的トランザクションの両方をサポートしており、楽観的トランザクションは悲観的トランザクションの基礎です。楽観的トランザクションは最初に変更をプライベート メモリにキャッシュするため、TiDB は 1 つのトランザクションのサイズを制限します。
 
 デフォルトでは、TiDB は 1 つのトランザクションの合計サイズを 100 MB 以下に設定します。このデフォルト値は、構成ファイルの`txn-total-size-limit`で変更できます。 `txn-total-size-limit`の最大値は 1 TB です。個々のトランザクション サイズの制限は、サーバーで使用可能な残りのメモリのサイズにも依存します。これは、トランザクションが実行されると、TiDB プロセスのメモリ使用量がトランザクション サイズと比較して、最大でトランザクション サイズの 2 ～ 3 倍以上になるためです。
 

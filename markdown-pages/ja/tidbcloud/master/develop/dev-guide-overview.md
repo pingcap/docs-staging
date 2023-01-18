@@ -1,7 +1,6 @@
 ---
 title: Developer Guide Overview
 summary: Introduce the overview of the developer guide.
-aliases: ['/appdev/dev/app-dev-overview','/tidb/stable/dev-guide-outdated-for-laravel']
 ---
 
 # 開発者ガイドの概要 {#developer-guide-overview}
@@ -32,7 +31,7 @@ TiDB を使い始める前に、TiDB がどのように機能するかのいく�
 
 ## TiDB トランザクション メカニズム {#tidb-transaction-mechanisms}
 
-TiDB は分散トランザクションをサポートし、 [楽観的な取引](/optimistic-transaction.md)と[悲観的な取引](/pessimistic-transaction.md)の両方のモードを提供します。 TiDB の現在のバージョンでは、デフォルトで**ペシミスティック トランザクション**モードが使用されます。これにより、従来のモノリシック データベース (MySQL など) と同じように TiDB でトランザクションを行うことができます。
+TiDB は分散トランザクションをサポートし、 [楽観的取引](/optimistic-transaction.md)と[悲観的取引](/pessimistic-transaction.md)の両方のモードを提供します。 TiDB の現在のバージョンでは、デフォルトで**悲観的トランザクション**モードが使用されます。これにより、従来のモノリシック データベース (MySQL など) と同じように TiDB でトランザクションを行うことができます。
 
 [`BEGIN`](/sql-statements/sql-statement-begin.md)を使用してトランザクションを開始するか、 `BEGIN PESSIMISTIC`を使用して**悲観的トランザクション**を明示的に指定するか、または`BEGIN OPTIMISTIC`を使用して<strong>楽観的トランザクション</strong>を明示的に指定できます。その後、トランザクションをコミット ( [`COMMIT`](/sql-statements/sql-statement-commit.md) ) またはロールバック ( [`ROLLBACK`](/sql-statements/sql-statement-rollback.md) ) できます。
 
@@ -40,13 +39,13 @@ TiDB は、 `BEGIN`の開始と`COMMIT`または`ROLLBACK`の終了の間のす�
 
 <CustomContent platform="tidb">
 
-**楽観的トランザクション**が何であるかわから*<strong>ない</strong>*場合は、まだ使用しないでください。<strong>オプティミスティック トランザクション</strong>では、アプリケーションが`COMMIT`ステートメントによって返される[すべてのエラー](/error-codes.md)を正しく処理できる必要があるためです。アプリケーションがそれらをどのように処理するかわからない場合は、代わりに<strong>ペシミスティック トランザクション</strong>を使用してください。
+**楽観的トランザクション**が何であるかわから*<strong>ない</strong>*場合は、まだ使用しないでください。<strong>楽観的トランザクション</strong>では、アプリケーションが`COMMIT`ステートメントによって返される[すべてのエラー](/error-codes.md)を正しく処理できる必要があるためです。アプリケーションがそれらをどのように処理するかわからない場合は、代わりに<strong>悲観的トランザクション</strong>を使用してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-**楽観的トランザクション**が何であるかわから*<strong>ない</strong>*場合は、まだ使用しないでください。<strong>オプティミスティック トランザクション</strong>では、アプリケーションが`COMMIT`ステートメントによって返される[すべてのエラー](https://docs.pingcap.com/tidb/stable/error-codes)を正しく処理できる必要があるためです。アプリケーションがそれらをどのように処理するかわからない場合は、代わりに<strong>ペシミスティック トランザクション</strong>を使用してください。
+**楽観的トランザクション**が何であるかわから*<strong>ない</strong>*場合は、まだ使用しないでください。<strong>楽観的トランザクション</strong>では、アプリケーションが`COMMIT`ステートメントによって返される[すべてのエラー](https://docs.pingcap.com/tidb/stable/error-codes)を正しく処理できる必要があるためです。アプリケーションがそれらをどのように処理するかわからない場合は、代わりに<strong>悲観的トランザクション</strong>を使用してください。
 
 </CustomContent>
 

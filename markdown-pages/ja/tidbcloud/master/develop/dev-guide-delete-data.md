@@ -5,20 +5,19 @@ summary: Learn about the SQL syntax, best practices, and examples for deleting d
 
 # データの削除 {#delete-data}
 
-このドキュメントでは、 [消去](/sql-statements/sql-statement-delete.md) SQL ステートメントを使用して TiDB 内のデータを削除する方法について説明します。
+このドキュメントでは、 [消去](/sql-statements/sql-statement-delete.md) SQL ステートメントを使用して TiDB 内のデータを削除する方法について説明します。期限切れのデータを定期的に削除する必要がある場合は、 [有効期間](/time-to-live.md)機能を使用します。
 
 ## 始める前に {#before-you-start}
 
 このドキュメントを読む前に、次の準備が必要です。
 
--   [TiDB Cloud(サーバーレス層) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
+-   [TiDB Cloud(Serverless Tier) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) 、 [データベースを作成する](/develop/dev-guide-create-database.md) 、 [テーブルを作成する](/develop/dev-guide-create-table.md) 、および[セカンダリ インデックスの作成](/develop/dev-guide-create-secondary-indexes.md)を読み取る
 -   [データの挿入](/develop/dev-guide-insert-data.md)
 
 ## SQL 構文 {#sql-syntax}
 
 `DELETE`ステートメントは通常、次の形式です。
-
 
 ```sql
 DELETE FROM {table} WHERE {filter}
@@ -51,11 +50,11 @@ DELETE FROM {table} WHERE {filter}
 
 -   テーブル内のすべてのデータを削除する場合は、 `DELETE`ステートメントを使用しないでください。代わりに、 [`TRUNCATE`](/sql-statements/sql-statement-truncate.md)ステートメントを使用してください。
 -   パフォーマンスに関する考慮事項については、 [パフォーマンスに関する考慮事項](#performance-considerations)を参照してください。
+-   大量のデータ バッチを削除する必要があるシナリオでは、 [非トランザクションの一括削除](#non-transactional-bulk-delete)を使用するとパフォーマンスが大幅に向上します。ただし、これにより削除のトランザクションが失われるため、ロールバックでき**ません**。正しい操作を選択していることを確認してください。
 
 ## 例 {#example}
 
 特定の期間内にアプリケーション エラーが見つかり、この期間内の[評価](/develop/dev-guide-bookshop-schema-design.md#ratings-table)のすべてのデータ (たとえば、 `2022-04-15 00:00:00`から`2022-04-15 00:15:00`まで) を削除する必要があるとします。この場合、 `SELECT`ステートメントを使用して、削除するレコードの数を確認できます。
-
 
 ```sql
 SELECT COUNT(*) FROM `ratings` WHERE `rated_at` >= "2022-04-15 00:00:00" AND `rated_at` <= "2022-04-15 00:15:00";
@@ -78,7 +77,7 @@ DELETE FROM `ratings` WHERE `rated_at` >= "2022-04-15 00:00:00" AND `rated_at` <
 
 <div label="Java" value="java">
 
-Java では、例は次のとおりです。
+Javaでは、例は次のとおりです。
 
 ```java
 // ds is an entity of com.mysql.cj.jdbc.MysqlDataSource
@@ -105,7 +104,7 @@ try (Connection connection = ds.getConnection()) {
 
 <div label="Golang" value="golang">
 
-Golang では、例は次のとおりです。
+Golangでは、例は次のとおりです。
 
 ```go
 package main
@@ -203,8 +202,7 @@ TiDB は[統計情報](/statistics.md)を使用してインデックスの選択
 <SimpleTab groupId="language">
 <div label="Java" value="java">
 
-Java での一括削除の例は次のとおりです。
-
+Javaでは、一括削除の例は次のとおりです。
 
 ```java
 package com.pingcap.bulkDelete;
@@ -264,8 +262,7 @@ public class BatchDeleteExample
 
 <div label="Golang" value="golang">
 
-Golang での一括削除の例は次のとおりです。
-
+Golangでは、一括削除の例は次のとおりです。
 
 ```go
 package main
@@ -319,3 +316,39 @@ func deleteBatch(db *sql.DB, startTime, endTime time.Time) (int64, error) {
 </div>
 
 </SimpleTab>
+
+## 非トランザクションの一括削除 {#non-transactional-bulk-delete}
+
+> **ノート：**
+>
+> v6.1.0 以降、TiDB は[非トランザクション DML ステートメント](/non-transactional-dml.md)をサポートしています。この機能は、TiDB v6.1.0 より前のバージョンでは使用できません。
+
+### 非トランザクション一括削除の前提条件 {#prerequisites-of-non-transactional-bulk-delete}
+
+非トランザクションの一括削除を使用する前に、最初に[非トランザクション DML ステートメントのドキュメント](/non-transactional-dml.md)を読んでいることを確認してください。非トランザクションの一括削除は、バッチ データ処理シナリオでのパフォーマンスと使いやすさを向上させますが、トランザクションの原子性と分離を犠牲にします。
+
+したがって、誤った取り扱いによる重大な結果 (データ損失など) を避けるために、慎重に使用する必要があります。
+
+### 非トランザクション一括削除の SQL 構文 {#sql-syntax-for-non-transactional-bulk-delete}
+
+非トランザクション一括削除ステートメントの SQL 構文は次のとおりです。
+
+```sql
+BATCH ON {shard_column} LIMIT {batch_size} {delete_statement};
+```
+
+|        パラメータ名        |         説明         |
+| :------------------: | :----------------: |
+|   `{shard_column}`   | バッチを分割するために使用される列。 |
+|    `{batch_size}`    |   各バッチのサイズを制御します。  |
+| `{delete_statement}` |  `DELETE`ステートメント。  |
+
+前の例は、非トランザクションの一括削除ステートメントの単純な使用例のみを示しています。詳細については、 [非トランザクション DML ステートメント](/non-transactional-dml.md)を参照してください。
+
+### 非トランザクション一括削除の例 {#example-of-non-transactional-bulk-delete}
+
+[一括削除の例](#bulk-delete-example)と同じシナリオで、次の SQL ステートメントは非トランザクションの一括削除を実行する方法を示しています。
+
+```sql
+BATCH ON `rated_at` LIMIT 1000 DELETE FROM `ratings` WHERE `rated_at` >= "2022-04-15 00:00:00" AND  `rated_at` <= "2022-04-15 00:15:00";
+```

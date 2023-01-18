@@ -143,7 +143,7 @@ tidb> explain select * from t where a < 2 and a > 2;
 | *          | ムル     |
 | /          | 分周     |
 | DIV        | intdiv |
-| 無効です       | 無効です   |
+| 無効である      | 無効である  |
 | 真です        | 正しい    |
 | 偽です        | 偽です    |
 

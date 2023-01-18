@@ -23,7 +23,6 @@ TiDB v5.1 以降、TiDB は ANSI SQL99 標準の CTE と再帰をサポートし
 
 非再帰 CTE は、次の構文を使用して定義できます。
 
-
 ```sql
 WITH <query_name> AS (
     <query_definition>
@@ -37,7 +36,6 @@ SELECT ... FROM <query_name>;
 <div label="SQL" value="sql">
 
 [一時テーブル](/develop/dev-guide-use-temporary-tables.md)のステートメントを次のように変更します。
-
 
 ```sql
 WITH top_50_eldest_authors_cte AS (
@@ -73,7 +71,6 @@ GROUP BY ta.id;
 
 </div>
 <div label="Java" value = "java">
-
 
 ```java
 public List<Author> getTop50EldestAuthorInfoByCTE() throws SQLException {
@@ -113,7 +110,6 @@ public List<Author> getTop50EldestAuthorInfoByCTE() throws SQLException {
 </SimpleTab>
 
 著者「Ray Macejkovic」が 4 冊の本を書いたことがわかります。 CTE クエリを使用すると、次のように、これら 4 冊の書籍の注文と評価の情報をさらに取得できます。
-
 
 ```sql
 WITH books_authored_by_rm AS (
@@ -168,6 +164,10 @@ FROM
 
 1 のクエリは`books_authored_by_rm`回だけ実行され、TiDB はその結果をキャッシュするための一時スペースを作成することに注意してください。 `books_with_average_ratings`と`books_with_orders`のクエリが`books_authored_by_rm`を参照する場合、TiDB はこの一時スペースから直接結果を取得します。
 
+> **ヒント：**
+>
+> デフォルトの CTE クエリの効率が良くない場合は、 [`MERGE()`](/optimizer-hints.md#merge)ヒントを使用して CTE サブクエリを外側のクエリに拡張し、効率を向上させることができます。
+
 ### 再帰的 CTE {#recursive-cte}
 
 再帰 CTE は、次の構文を使用して定義できます。
@@ -180,7 +180,6 @@ SELECT ... FROM <query_name>;
 ```
 
 古典的な例は、再帰的な CTE を使用して[フィボナッチ数](https://en.wikipedia.org/wiki/Fibonacci_number)のセットを生成することです。
-
 
 ```sql
 WITH RECURSIVE fibonacci (n, fib_n, next_fib_n) AS

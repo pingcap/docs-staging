@@ -76,7 +76,6 @@ mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 
 -   `FULLTEXT` 、 `HASH`および`SPATIAL`のインデックスはサポートされていません。
 -   降順のインデックスはサポートされていません ( MySQL 5.7と同様)。
--   複数のインデックスを同時に追加することは現在サポートされていません。
 -   `CLUSTERED`タイプの主キーをテーブルに追加することはサポートされていません。 `CLUSTERED`タイプの主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
 
 ## こちらもご覧ください {#see-also}

@@ -11,7 +11,7 @@ summary: Learn the `AUTO_INCREMENT` column attribute of TiDB.
 
 > **ノート：**
 >
-> `AUTO_INCREMENT`属性は、実稼働環境でホットスポットを引き起こす可能性があります。詳細は[ホットスポットの問題のトラブルシューティング](/troubleshoot-hot-spot-issues.md)を参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)を使用することをお勧めします。
+> `AUTO_INCREMENT`属性は、本番環境でホットスポットを引き起こす可能性があります。詳細は[ホットスポットの問題のトラブルシューティング](/troubleshoot-hot-spot-issues.md)を参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)を使用することをお勧めします。
 
 </CustomContent>
 
@@ -19,7 +19,7 @@ summary: Learn the `AUTO_INCREMENT` column attribute of TiDB.
 
 > **ノート：**
 >
-> `AUTO_INCREMENT`属性は、実稼働環境でホットスポットを引き起こす可能性があります。詳細は[ホットスポットの問題のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#handle-auto-increment-primary-key-hotspot-tables-using-auto_random)を参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)を使用することをお勧めします。
+> `AUTO_INCREMENT`属性は、本番環境でホットスポットを引き起こす可能性があります。詳細は[ホットスポットの問題のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#handle-auto-increment-primary-key-hotspot-tables-using-auto_random)を参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)を使用することをお勧めします。
 
 </CustomContent>
 
@@ -28,6 +28,10 @@ summary: Learn the `AUTO_INCREMENT` column attribute of TiDB.
 `AUTO_INCREMENT`は、デフォルトの列値を自動的に入力するために使用される列属性です。 `INSERT`ステートメントで`AUTO_INCREMENT`列の値が指定されていない場合、システムは自動的にこの列に値を割り当てます。
 
 パフォーマンス上の理由から、値のバッチで`AUTO_INCREMENT`の数値 (デフォルトでは 30,000) が各 TiDBサーバーに割り当てられます。これは、 `AUTO_INCREMENT`の数値が一意であることが保証されている一方で、 `INSERT`のステートメントに割り当てられた値は、TiDBサーバーごとに単調にしかならないことを意味します。
+
+> **ノート：**
+>
+> すべての TiDB サーバーで`AUTO_INCREMENT`の数字を単調にしたい場合で、TiDB のバージョンが v6.5.0 以降の場合は、 [MySQL 互換モード](#mysql-compatibility-mode)を有効にすることをお勧めします。
 
 以下は`AUTO_INCREMENT`の基本的な例です。
 
@@ -339,6 +343,27 @@ v3.0.9 および v4.0.0-rc.1 以降、MySQL の動作と同様に、自動イン
 自動インクリメント列に暗黙的に割り当てられる値 (ID) は、次の式を満たします。
 
 `(ID - auto_increment_offset) % auto_increment_increment == 0`
+
+## MySQL 互換モード {#mysql-compatibility-mode}
+
+TiDB v6.4.0 では、集中自動インクリメント ID 割り当てサービスが導入されています。各リクエストでは、TiDB インスタンスにデータをキャッシュする代わりに、このサービスから自動インクリメント ID が割り当てられます。
+
+現在、集中割り当てサービスは TiDB プロセスにあり、DDL 所有者のように機能します。 1 つの TiDB インスタンスがプライマリ ノードとして ID を割り当て、他の TiDB インスタンスはセカンダリ ノードとして機能します。高可用性を確保するために、プライマリ インスタンスに障害が発生すると、TiDB は自動フェイルオーバーを開始します。
+
+MySQL 互換モードを使用するには、テーブルの作成時に`AUTO_ID_CACHE`から`1`を設定できます。
+
+```sql
+CREATE TABLE t(a int AUTO_INCREMENT key) AUTO_ID_CACHE 1;
+```
+
+> **ノート：**
+>
+> TiDB では、 `AUTO_ID_CACHE`から`1`に設定すると、TiDB が ID をキャッシュしないことを意味します。ただし、実装は TiDB のバージョンによって異なります。
+>
+> -   TiDB v6.4.0 より前では、ID を割り当てるには TiKV トランザクションが要求ごとに`AUTO_INCREMENT`の値を保持する必要があるため、 `AUTO_ID_CACHE`から`1`に設定するとパフォーマンスが低下します。
+> -   TiDB v6.4.0 以降、集中割り当てサービスが導入されたため、 `AUTO_INCREMENT`値の変更は TiDB プロセスでのインメモリ操作にすぎないため、より高速になりました。
+
+MySQL 互換モードを有効にすると、割り当てられた ID は**一意**で<strong>単調に増加</strong>し、動作は MySQL とほぼ同じになります。 TiDB インスタンス間でアクセスしても、ID は単調に保たれます。一元化されたサービスのプライマリ インスタンスがクラッシュした場合にのみ、いくつかの ID が連続していない可能性があります。これは、ID の一意性を確保するために、フェールオーバー中にプライマリ インスタンスによって割り当てられたはずの一部の ID がセカンダリ インスタンスによって破棄されるためです。
 
 ## 制限 {#restrictions}
 

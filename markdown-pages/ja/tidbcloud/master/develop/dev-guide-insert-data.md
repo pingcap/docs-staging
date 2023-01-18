@@ -13,7 +13,7 @@ summary: Learn about how to insert data.
 
 このドキュメントを読む前に、次の準備が必要です。
 
--   [TiDB Cloud(サーバーレス層) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) .
+-   [TiDB Cloud(Serverless Tier) で TiDBクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) .
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) 、 [データベースを作成する](/develop/dev-guide-create-database.md) 、 [テーブルを作成する](/develop/dev-guide-create-table.md) 、および[セカンダリ インデックスの作成](/develop/dev-guide-create-secondary-indexes.md)を読み取る
 
 ## 行を挿入する {#insert-rows}
@@ -41,7 +41,6 @@ summary: Learn about how to insert data.
 <SimpleTab>
 <div label="SQL">
 
-
 ```sql
 CREATE TABLE `player` (`id` INT, `coins` INT, `goods` INT);
 INSERT INTO `player` (`id`, `coins`, `goods`) VALUES (1, 1000, 1), (2, 230, 2);
@@ -52,7 +51,6 @@ INSERT INTO `player` (`id`, `coins`, `goods`) VALUES (1, 1000, 1), (2, 230, 2);
 </div>
 
 <div label="Java">
-
 
 ```java
 // ds is an entity of com.mysql.cj.jdbc.MysqlDataSource
@@ -93,7 +91,6 @@ try (Connection connection = ds.getConnection()) {
 
 MySQL JDBCDriverは、統合された構成も提供し`useConfigs` 。 `maxPerformance`で構成されている場合は、一連の構成を構成することと同じです。 `mysql:mysql-connector-java:8.0.28`を例にとると、 `useConfigs=maxPerformance`には以下が含まれます。
 
-
 ```properties
 cachePrepStmts=true
 cacheCallableStmts=true
@@ -110,15 +107,14 @@ useInformationSchema=true
 
 以下は、JDBC 接続文字列構成の一般的なシナリオです。この例では、ホスト: `127.0.0.1` 、ポート: `4000` 、ユーザー名: `root` 、パスワード: null、デフォルト データベース: `test` :
 
-
 ```
 jdbc:mysql://127.0.0.1:4000/test?user=root&useConfigs=maxPerformance&useServerPrepStmts=true&prepStmtCacheSqlLimit=2048&prepStmtCacheSize=256&rewriteBatchedStatements=true&allowMultiQueries=true
 ```
 
-Java での完全な例については、以下を参照してください。
+Javaでの完全な例については、以下を参照してください。
 
--   [TiDB と Java を使用して単純な CRUD アプリを構築する - JDBC を使用する](/develop/dev-guide-sample-application-java.md#step-2-get-the-code)
--   [TiDB と Java を使用して単純な CRUD アプリを構築する - Hibernate を使用する](/develop/dev-guide-sample-application-java.md#step-2-get-the-code)
+-   [TiDB とJavaを使用して単純な CRUD アプリを構築する - JDBC を使用する](/develop/dev-guide-sample-application-java.md#step-2-get-the-code)
+-   [TiDB とJavaを使用して単純な CRUD アプリを構築する - Hibernate を使用する](/develop/dev-guide-sample-application-java.md#step-2-get-the-code)
 -   [Spring Boot を使用して TiDB アプリケーションをビルドする](/develop/dev-guide-sample-application-spring-boot.md)
 
 </div>
@@ -191,10 +187,10 @@ func buildBulkInsertSQL(amount int) string {
 }
 ```
 
-Golang での完全な例については、以下を参照してください。
+Golangでの完全な例については、以下を参照してください。
 
--   [go-sql-driver/mysql を使用して、TiDB と Golang で単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-golang.md#step-2-get-the-code)
--   [GORM を使用して、TiDB と Golang で単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-java.md#step-2-get-the-code)
+-   [go-sql-driver/mysql を使用して、TiDB とGolangで単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-golang.md#step-2-get-the-code)
+-   [GORM を使用して、TiDB とGolangで単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-java.md#step-2-get-the-code)
 
 </div>
 
@@ -239,7 +235,6 @@ Golang での完全な例については、以下を参照してください。
 挿入するテーブルの主キーが`AUTO_RANDOM`属性の場合、デフォルトでは主キーを指定できません。たとえば、 [`bookshop`](/develop/dev-guide-bookshop-schema-design.md)データベースでは、 [`users`テーブル](/develop/dev-guide-bookshop-schema-design.md#users-table)の`id`フィールドに`AUTO_RANDOM`属性が含まれていることがわかります。
 
 この場合、次のような SQL を使用して挿入する**ことはできません**。
-
 
 ```sql
 INSERT INTO `bookshop`.`users` (`id`, `balance`, `nickname`) VALUES (1, 0.00, 'nicky');

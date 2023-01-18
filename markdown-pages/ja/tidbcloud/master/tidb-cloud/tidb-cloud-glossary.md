@@ -21,11 +21,11 @@ ACIDは、トランザクションの 4 つの主要なプロパティである�
 
 -   **永続性**とは、トランザクションがコミットされると、システム障害が発生した場合でもコミットされたままになることを意味します。 TiKV は永続ストレージを使用して耐久性を確保します。
 
-## C {#c}
+## ハ {#c}
 
 ### クラスター層 {#cluster-tier}
 
-クラスターの機能と容量を決定します。クラスター層が異なれば、クラスター内の TiDB、TiKV、および TiFlash ノードの数も異なります。
+クラスターの機能と容量を決定します。クラスター層が異なれば、クラスター内の TiDB、TiKV、およびTiFlashノードの数も異なります。
 
 ## クレジット {#credit}
 
@@ -57,9 +57,9 @@ TiDB Cloudは、概念実証 (PoC) ユーザーに一定数のクレジットを
 
 ### 遊び場 {#playground}
 
-Playground には、事前に読み込まれた GitHub イベントのデータセットが含まれています。これにより、サーバーレス層のユーザーは、データをインポートしたり、クライアントに接続したりすることなく、即座にクエリを実行してTiDB Cloudを使い始めることができます。
+Playground には、事前に読み込まれた GitHub イベントのデータセットが含まれています。これにより、Serverless Tierのユーザーは、データをインポートしたり、クライアントに接続したりすることなく、即座にクエリを実行してTiDB Cloudを使い始めることができます。
 
-[サーバーレス層クラスターの作成](/tidb-cloud/tidb-cloud-quickstart.md#step-1-create-a-tidb-cluster)の後に Playground にアクセスできます。
+[Serverless Tierクラスターの作成](/tidb-cloud/tidb-cloud-quickstart.md#step-1-create-a-tidb-cluster)の後に Playground にアクセスできます。
 
 ### ポリシー {#policy}
 
@@ -93,17 +93,21 @@ Playground には、事前に読み込まれた GitHub イベントのデータ�
 
 同じまたは異なるリージョンに配置でき、同じデータを含む別のデータベース。レプリカは、多くの場合、災害復旧やパフォーマンスの向上のために使用されます。
 
+### レプリケーション キャパシティ ユニット {#replication-capacity-unit}
+
+changefeed のレプリケーションは、TiCDC のレプリケーション容量単位であるコンピューティング リソースに応じて課金されます。
+
 ## T {#t}
 
 ### TiDB クラスター {#tidb-cluster}
 
-機能的な作業データベースを形成する[TiDB](https://docs.pingcap.com/tidb/stable/tidb-computing) 、 [TiKV](https://docs.pingcap.com/tidb/stable/tidb-storage) 、 [配置Driver](https://docs.pingcap.com/tidb/stable/tidb-scheduling) (PD) 、および[ティフラッシュ](https://docs.pingcap.com/tidb/stable/tiflash-overview)ノードのコレクション。
+機能的な作業データベースを形成する[TiDB](https://docs.pingcap.com/tidb/stable/tidb-computing) 、 [TiKV](https://docs.pingcap.com/tidb/stable/tidb-storage) 、 [配置Driver](https://docs.pingcap.com/tidb/stable/tidb-scheduling) (PD) 、および[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)ノードのコレクション。
 
 ### TiDB ノード {#tidb-node}
 
 トランザクション ストアまたは分析ストアから返されたクエリからのデータを集約するコンピューティング ノード。 TiDB ノードの数を増やすと、クラスターが処理できる同時クエリの数が増えます。
 
-### TiFlash ノード {#tiflash-node}
+### TiFlashノード {#tiflash-node}
 
 TiKV からのデータをリアルタイムでレプリケートし、リアルタイムの分析ワークロードをサポートする分析ストレージ ノード。
 

@@ -148,12 +148,6 @@ from tbl_name
 group by id, val;
 ```
 
-## サポートされていない集計関数 {#unsupported-aggregate-functions}
-
-次の集計関数は現在、TiDB ではサポートされていません。 [TiDB #7623](https://github.com/pingcap/tidb/issues/7623)で進行状況を追跡できます。
-
--   `JSON_ARRAYAGG`
-
 ## 関連するシステム変数 {#related-system-variables}
 
 `group_concat_max_len`変数は、 `GROUP_CONCAT()`関数の項目の最大数を設定します。

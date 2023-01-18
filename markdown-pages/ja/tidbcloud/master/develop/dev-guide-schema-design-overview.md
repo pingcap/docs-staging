@@ -49,7 +49,7 @@ TiDB には`test`という名前のデフォルト データベースが付属�
 
 さまざまなユーザー シナリオのクエリ パフォーマンスを向上させるために、TiDB はいくつかの特殊なタイプのインデックスを提供します。各タイプの詳細については、次のリンクを参照してください。
 
--   [発現インデックス](/sql-statements/sql-statement-create-index.md#expression-index) (実験的)
+-   [発現インデックス](/sql-statements/sql-statement-create-index.md#expression-index) (Experimental)
 -   [カラム型ストレージ (TiFlash)](/tiflash/tiflash-overview.md)
 -   [RocksDB エンジン](/storage-engine/rocksdb-overview.md)
 
@@ -70,7 +70,7 @@ TiDB には`test`という名前のデフォルト データベースが付属�
 TiDB は、 **table**と同じレベルで次の論理オブジェクトをサポートします。
 
 -   [ビュー](/views.md) : ビューは仮想テーブルとして機能し、そのスキーマはビューを作成する`SELECT`ステートメントによって定義されます。
--   [順序](/sql-statements/sql-statement-create-sequence.md) : シーケンスはシーケンシャル データを生成して格納します。
+-   [シーケンス](/sql-statements/sql-statement-create-sequence.md) : シーケンスはシーケンシャル データを生成して格納します。
 -   [一時テーブル](/temporary-tables.md) : データが永続的でないテーブル。
 
 ## アクセス制御 {#access-control}
@@ -104,7 +104,7 @@ TiDB は、ユーザーベースとロールベースの両方のアクセス制
 | カラム    | 64             |
 | 索引     | 64             |
 | ビュー    | 64             |
-| 順序     | 64             |
+| シーケンス  | 64             |
 
 ### 単一テーブルの制限 {#limitations-on-a-single-table}
 
@@ -130,7 +130,7 @@ TiDB は、ユーザーベースとロールベースの両方のアクセス制
 | バイナリ      | 256文字    |
 | VARBINARY | 65535 文字 |
 | VARCHAR   | 16383 文字 |
-| 文章        | 6MB      |
+| TEXT      | 6MB      |
 | BLOB      | 6MB      |
 
 ### 行の数 {#number-of-rows}

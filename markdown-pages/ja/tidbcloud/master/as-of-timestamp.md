@@ -9,9 +9,9 @@ summary: Learn how to read historical data using the `AS OF TIMESTAMP` statement
 
 > **警告：**
 >
-> 現在、Stale ステイル読み取りを TiFlash と一緒に使用することはできません。 SQL クエリに`AS OF TIMESTAMP`句が含まれており、TiDB が TiFlash レプリカからデータを読み取る可能性がある場合、 `ERROR 1105 (HY000): stale requests require tikv backend`のようなメッセージでエラーが発生する可能性があります。
+> 現在、 Stale ステイル読み取りをTiFlashと一緒に使用することはできません。 SQL クエリに`AS OF TIMESTAMP`句が含まれており、TiDB がTiFlashレプリカからデータを読み取る可能性がある場合、 `ERROR 1105 (HY000): stale requests require tikv backend`のようなメッセージでエラーが発生する可能性があります。
 >
-> この問題を解決するには、Stale ステイル読み取りクエリの TiFlash レプリカを無効にします。これを行うには、次の操作のいずれかを実行します。
+> この問題を解決するには、Stale ステイル読み取りクエリのTiFlashレプリカを無効にします。これを行うには、次の操作のいずれかを実行します。
 >
 > -   `set session tidb_isolation_read_engines='tidb,tikv'`変数を使用します。
 > -   [ヒント](/optimizer-hints.md#read_from_storagetiflasht1_name--tl_name--tikvt2_name--tl_name-)を使用して、TiDB に TiKV からのデータの読み取りを強制します。

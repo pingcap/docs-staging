@@ -1,16 +1,15 @@
 ---
 title: Build a Simple CRUD App with TiDB and Golang
 summary: Learn how to build a simple CRUD application with TiDB and Golang.
-aliases: ['/tidb/stable/dev-guide-outdated-for-go-sql-driver-mysql','/tidb/stable/dev-guide-outdated-for-gorm','/appdev/dev/for-go-sql-driver-mysql','/appdev/dev/for-gorm']
 ---
 
 <!-- markdownlint-disable MD024 -->
 
 <!-- markdownlint-disable MD029 -->
 
-# TiDB と Golang を使用して単純な CRUD アプリを構築する {#build-a-simple-crud-app-with-tidb-and-golang}
+# TiDB とGolangを使用して単純な CRUD アプリを構築する {#build-a-simple-crud-app-with-tidb-and-golang}
 
-このドキュメントでは、TiDB と Golang を使用して単純な CRUD アプリケーションを構築する方法について説明します。
+このドキュメントでは、TiDB とGolangを使用して単純な CRUD アプリケーションを構築する方法について説明します。
 
 > **ノート：**
 >
@@ -22,24 +21,23 @@ aliases: ['/tidb/stable/dev-guide-outdated-for-go-sql-driver-mysql','/tidb/stabl
 
 以下にTiDBクラスターの起動方法を紹介します。
 
-**TiDB Cloud Tier クラスターを使用する**
+**TiDB Cloud Serverless Tierクラスターを使用する**
 
-詳細な手順については、 [サーバーレス層クラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-serverless-tier-cluster)を参照してください。
+詳細な手順については、 [Serverless Tierクラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-serverless-tier-cluster)を参照してください。
 
 **ローカル クラスターを使用する**
 
-詳細な手順については、 [ローカル テスト クラスターをデプロイする](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[TiUP を使用して TiDBクラスタをデプロイする](/production-deployment-using-tiup.md)を参照してください。
+詳細な手順については、 [ローカル テスト クラスターをデプロイする](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[TiUP を使用してTiUPクラスタをデプロイする](/production-deployment-using-tiup.md)を参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[サーバーレス層クラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-serverless-tier-cluster)を参照してください。
+[Serverless Tierクラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-serverless-tier-cluster)を参照してください。
 
 </CustomContent>
 
 ## ステップ 2. コードを取得する {#step-2-get-the-code}
-
 
 ```shell
 git clone https://github.com/pingcap-inc/tidb-example-golang.git
@@ -51,10 +49,9 @@ git clone https://github.com/pingcap-inc/tidb-example-golang.git
 
 GORM と比較すると、go-sql-driver/mysql の実装はベスト プラクティスではない可能性があります。これは、エラー処理ロジックを記述し、 `*sql.Rows`を手動で閉じる必要があり、コードを簡単に再利用できないため、コードがわずかに冗長になるためです。
 
-GORM は、Golang 向けの人気のあるオープンソース ORM ライブラリです。次の手順では、例として`v1.23.5`を取り上げます。
+GORM は、 Golang向けの人気のあるオープンソース ORM ライブラリです。次の手順では、例として`v1.23.5`を取り上げます。
 
 TiDB トランザクションを適応させるには、次のコードに従ってツールキット[ユーティリティ](https://github.com/pingcap-inc/tidb-example-golang/tree/main/util)を作成します。
-
 
 ```go
 package util
@@ -108,7 +105,6 @@ func (tx *TiDBSqlTx) Rollback() error {
 
 `gorm`ディレクトリに移動します。
 
-
 ```shell
 cd gorm
 ```
@@ -126,7 +122,6 @@ cd gorm
 `gorm.go`は`gorm`の本体です。 go-sql-driver/mysql と比較して、GORM は異なるデータベース間のデータベース作成の違いを回避します。また、AutoMigrate やオブジェクトの CRUD などの多くの操作を実装しているため、コードが大幅に簡素化されます。
 
 `Player`は、テーブルのマッピングであるデータ エンティティ構造体です。 `Player`の各プロパティは、 `player`テーブルのフィールドに対応します。 go-sql-driver/mysql と比較して、GORM の`Player`は`gorm:"primaryKey;type:VARCHAR(36);column:id"`などの詳細情報のマッピング関係を示す構造タグを追加します。
-
 
 ```go
 
@@ -288,7 +283,6 @@ func buyGoods(db *gorm.DB, sellID, buyID string, amount, price int) error {
 
 `sqldriver`ディレクトリに移動します。
 
-
 ```shell
 cd sqldriver
 ```
@@ -309,7 +303,6 @@ cd sqldriver
 
 テーブル作成の初期化ステートメントは`dbinit.sql`にあります。
 
-
 ```sql
 USE test;
 DROP TABLE IF EXISTS player;
@@ -323,7 +316,6 @@ CREATE TABLE player (
 ```
 
 `sqldriver.go`は`sqldriver`の本体です。 TiDB は MySQL プロトコルとの互換性が高いため、MySQL ソース インスタンス`db, err := sql.Open("mysql", dsn)`を初期化して TiDB に接続する必要があります。その後、 `dao.go`を使用して、データの読み取り、編集、追加、および削除を行うことができます。
-
 
 ```go
 package main
@@ -426,7 +418,6 @@ func openDB(driverName, dataSourceName string, runnable func(db *sql.DB)) {
 
 TiDB トランザクションを適応させるには、次のコードに従ってツールキット[ユーティリティ](https://github.com/pingcap-inc/tidb-example-golang/tree/main/util)を作成します。
 
-
 ```go
 package util
 
@@ -478,7 +469,6 @@ func (tx *TiDBSqlTx) Rollback() error {
 ```
 
 `dao.go`は、データを書き込む機能を提供する一連のデータ操作メソッドを定義します。これは、この例の核心部分でもあります。
-
 
 ```go
 package main
@@ -712,7 +702,6 @@ func randomPlayers(amount int) []Player {
 
 `sql.go`は、SQL ステートメントを定数として定義します。
 
-
 ```go
 package main
 
@@ -750,13 +739,11 @@ const (
 
 go-sql-driver/mysql を使用する場合、データベース テーブルを手動で初期化する必要があります。ローカル クラスタを使用していて、MySQL クライアントがローカルにインストールされている場合は、 `sqldriver`ディレクトリで直接実行できます。
 
-
 ```shell
 make mysql
 ```
 
 または、次のコマンドを実行できます。
-
 
 ```shell
 mysql --host 127.0.0.1 --port 4000 -u root<sql/dbinit.sql
@@ -782,8 +769,7 @@ go-sql-driver/mysql を使用する場合、クラスターに接続し、 `sql/
 
 <div label="Using GORM (Recommended)" value="gorm">
 
-TiDB Cloud Tier クラスターを使用している場合は、 `dsn` in `gorm.go`の値を変更します。
-
+TiDB Cloud Serverless Tierクラスターを使用している場合は、 `dsn` in `gorm.go`の値を変更します。
 
 ```go
 dsn := "root:@tcp(127.0.0.1:4000)/test?charset=utf8mb4"
@@ -796,7 +782,6 @@ dsn := "root:@tcp(127.0.0.1:4000)/test?charset=utf8mb4"
 -   ユーザー: `2aEp24QWEDLqRFs.root`
 
 この場合、次のように`mysql.RegisterTLSConfig`と`dsn`を変更できます。
-
 
 ```go
 mysql.RegisterTLSConfig("register-tidb-tls", &tls.Config {
@@ -811,7 +796,7 @@ dsn := "2aEp24QWEDLqRFs.root:123456@tcp(xxx.tidbcloud.com:4000)/test?charset=utf
 
 <div label="Using go-sql-driver/mysql" value="sqldriver">
 
-TiDB Cloud Tier クラスターを使用している場合は、 `dsn` in `sqldriver.go`の値を変更します。
+TiDB Cloud Serverless Tierクラスターを使用している場合は、 `dsn` in `sqldriver.go`の値を変更します。
 
 ```go
 dsn := "root:@tcp(127.0.0.1:4000)/test?charset=utf8mb4"
@@ -824,7 +809,6 @@ dsn := "root:@tcp(127.0.0.1:4000)/test?charset=utf8mb4"
 -   ユーザー: `2aEp24QWEDLqRFs.root`
 
 この場合、次のように`mysql.RegisterTLSConfig`と`dsn`を変更できます。
-
 
 ```go
 mysql.RegisterTLSConfig("register-tidb-tls", &tls.Config {
@@ -847,14 +831,12 @@ dsn := "2aEp24QWEDLqRFs.root:123456@tcp(xxx.tidbcloud.com:4000)/test?charset=utf
 
 コードを実行するには、それぞれ`make build`と`make run`を実行します。
 
-
 ```shell
 make build # this command executes `go build -o bin/gorm-example`
 make run # this command executes `./bin/gorm-example`
 ```
 
 または、ネイティブ コマンドを使用できます。
-
 
 ```shell
 go build -o bin/gorm-example
@@ -869,7 +851,6 @@ go build -o bin/gorm-example
 
 コードを実行するには、それぞれ`make mysql` 、 `make build` 、および`make run`を実行します。
 
-
 ```shell
 make mysql # this command executes `mysql --host 127.0.0.1 --port 4000 -u root<sql/dbinit.sql`
 make build # this command executes `go build -o bin/sql-driver-example`
@@ -877,7 +858,6 @@ make run # this command executes `./bin/sql-driver-example`
 ```
 
 または、ネイティブ コマンドを使用できます。
-
 
 ```shell
 mysql --host 127.0.0.1 --port 4000 -u root<sql/dbinit.sql

@@ -29,7 +29,7 @@ summary: Describes TiDB compatibility issues with third-party tools found during
 
 **回避方法**
 
-TiDB アプリケーションでは、データのオーバーフローを回避するために、64 ビット整数型または文字列型を使用して`SELECT CONNECTION_ID()`の結果を格納する必要があります。たとえば、Java では`Long`または`String`を使用し、JavaScript または TypeScript では`string`を使用できます。
+TiDB アプリケーションでは、データのオーバーフローを回避するために、64 ビット整数型または文字列型を使用して`SELECT CONNECTION_ID()`の結果を格納する必要があります。たとえば、 Java`Long`または`String`を使用し、JavaScript または TypeScript では`string`を使用できます。
 
 ### TiDB は<code>Com_*</code>カウンターを維持しない {#tidb-does-not-maintain-code-com-code-counters}
 

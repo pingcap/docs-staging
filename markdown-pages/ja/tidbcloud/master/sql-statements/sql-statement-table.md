@@ -16,25 +16,19 @@ TableStmt ::=
 
 ## 例 {#examples}
 
+テーブル`t1`を作成します。
 
 ```sql
 CREATE TABLE t1(id INT PRIMARY KEY);
 ```
 
-```sql
-Query OK, 0 rows affected (0.31 sec)
-```
-
+`t1`にいくつかのデータを挿入します。
 
 ```sql
 INSERT INTO t1 VALUES (1),(2),(3);
 ```
 
-```sql
-Query OK, 3 rows affected (0.06 sec)
-Records: 3  Duplicates: 0  Warnings: 0
-```
-
+表`t1`のデータをビューします。
 
 ```sql
 TABLE t1;
@@ -51,6 +45,7 @@ TABLE t1;
 3 rows in set (0.01 sec)
 ```
 
+`t1`をクエリし、結果を`id`フィールドで降順に並べ替えます。
 
 ```sql
 TABLE t1 ORDER BY id DESC;
@@ -67,6 +62,7 @@ TABLE t1 ORDER BY id DESC;
 3 rows in set (0.01 sec)
 ```
 
+`t1`の最初のレコードをクエリします。
 
 ```sql
 TABLE t1 LIMIT 1;
@@ -87,5 +83,5 @@ TABLE t1 LIMIT 1;
 
 ## こちらもご覧ください {#see-also}
 
--   [選択する](/sql-statements/sql-statement-select.md)
--   [MySQL の TABLE ステートメント](https://dev.mysql.com/doc/refman/8.0/en/table.html)
+-   [`SELECT`](/sql-statements/sql-statement-select.md)
+-   [MySQL の`TABLE`ステートメント](https://dev.mysql.com/doc/refman/8.0/en/table.html)

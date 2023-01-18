@@ -139,7 +139,6 @@ ERROR 8200 (HY000): Unsupported modify column: change from original type decimal
 
 ## MySQL の互換性 {#mysql-compatibility}
 
--   単一の`ALTER TABLE`ステートメントで複数の変更を行うことは、現在サポートされていません。
 -   主キー列での[再編成データ](/sql-statements/sql-statement-modify-column.md#reorg-data-change)型の変更はサポートされていません。
 -   分割されたテーブルでの列の型の変更はサポートされていません。
 -   生成された列の列タイプの変更はサポートされていません。

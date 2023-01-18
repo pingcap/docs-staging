@@ -3,11 +3,11 @@ title: FLASHBACK TABLE
 summary: Learn how to recover tables using the `FLASHBACK TABLE` statement.
 ---
 
-# フラッシュバック テーブル {#flashback-table}
+# フラッシュバック表 {#flashback-table}
 
 `FLASHBACK TABLE`構文は TiDB 4.0 以降で導入されました。 `FLASHBACK TABLE`ステートメントを使用して、ガベージ コレクション (GC) の有効期間内に`DROP`または`TRUNCATE`操作によって削除されたテーブルとデータを復元できます。
 
-システム変数[`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50) (デフォルト: `10m0s` ) は、以前のバージョンの行の保持時間を定義します。ガベージ コレクションが実行された現在の`safePoint`の場所は、次のクエリで取得できます。
+システム変数[`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50) (デフォルト: `10m0s` ) は、以前のバージョンの行の保持時間を定義します。ガベージコレクションが実行された現在の`safePoint`の場所は、次のクエリで取得できます。
 
 
 ```sql

@@ -123,7 +123,7 @@ cop_task: {num: 6, max: 1.07587ms, min: 844.312µs, avg: 919.601µs, p95: 1.0758
     -   `max` 、 `min` 、 `avg` 、 `p95` : cop タスクの実行にかかった実行時間の最大値、最小値、平均値、および P95 値。
     -   `max_proc_keys`および`p95_proc_keys` : すべての警官タスクで TiKV によってスキャンされた最大および P95 キー値。最大値と P95 値の差が大きい場合、データ分布が偏っている可能性があります。
     -   `rpc_num` , `rpc_time` : TiKV に送信された`Cop`の RPC リクエストの合計数と合計時間。
-    -   `copr_cache_hit_ratio` : `cop`タスク要求に対するコプロセッサ キャッシュのヒット率。
+    -   `copr_cache_hit_ratio` : `cop`タスク要求に対するコプロセッサーキャッシュのヒット率。
 -   `backoff` : さまざまなタイプのバックオフとバックオフの合計待機時間が含まれます。
 
 ### 入れる {#insert}
@@ -218,6 +218,33 @@ build_hash_table:{total:146.071334ms, fetch:110.338509ms, build:35.732825ms}, pr
     -   `probe` : 外部表の行とハッシュ表の結合にかかった合計時間。
     -   `fetch` : 結合ワーカーが外部テーブルの行データを読み取るために待機する合計時間。
 
+### テーブルフルスキャン (TiFlash) {#tablefullscan-tiflash}
+
+TiFlashノードで実行される`TableFullScan`オペレーターには、次の実行情報が含まれます。
+
+```sql
+tiflash_scan: {
+  dtfile: {
+    total_scanned_packs: 2, 
+    total_skipped_packs: 1, 
+    total_scanned_rows: 16000, 
+    total_skipped_rows: 8192, 
+    total_rough_set_index_load_time: 2ms, 
+    total_read_time: 20ms
+  }, 
+  total_create_snapshot_time: 1ms
+}
+```
+
+-   `dtfile` : テーブル スキャン中の DTFile (DeltaTree ファイル) 関連情報TiFlash Stableレイヤーのデータ スキャン ステータスを反映します。
+    -   `total_scanned_packs` : DTFile でスキャンされたパックの総数。パックは、 TiFlash DTFile で読み取ることができる最小単位です。デフォルトでは、8192 行ごとに 1 つのパックが構成されます。
+    -   `total_skipped_packs` : DTFile でスキャンによってスキップされたパックの総数。 `WHERE`句がラフ セット インデックスにヒットするか、主キーの範囲フィルタリングに一致する場合、無関係なパックはスキップされます。
+    -   `total_scanned_rows` : DTFile でスキャンされた行の総数。 MVCC のために複数のバージョンの更新または削除がある場合、各バージョンは個別にカウントされます。
+    -   `total_skipped_rows` : DTFile でスキャンによってスキップされた行の総数。
+    -   `total_rs_index_load_time` : DTFile ラフ セット インデックスの読み取りに使用された合計時間。
+    -   `total_read_time` : DTFile データの読み取りに使用された合計時間。
+-   `total_create_snapshot_time` : テーブル スキャン中にスナップショットの作成に使用された合計時間。
+
 ### lock_keys 実行情報 {#lock-keys-execution-information}
 
 悲観的トランザクションで DML ステートメントが実行されると、オペレーターの実行情報にも`lock_keys`の実行情報が含まれる場合があります。例えば：
@@ -249,7 +276,7 @@ commit_txn: {prewrite:48.564544ms, wait_prewrite_binlog:47.821579, get_commit_ts
 
 ### その他共通実行情報 {#other-common-execution-information}
 
-通常、Coprocessor オペレーターには、実行時間情報の 2 つの部分 ( `cop_task`と`tikv_task` ) が含まれています。 `cop_task`は TiDB によって記録された時間であり、リクエストがサーバーに送信された瞬間から応答が受信される瞬間までです。 `tikv_task`は TiKV Coprocessor 自体によって記録された時間です。この 2 つに大きな違いがある場合は、応答の待機に費やされた時間が長すぎるか、gRPC またはネットワークに費やされた時間が長すぎることを示している可能性があります。
+通常、 コプロセッサーオペレーターには、実行時間情報の 2 つの部分 ( `cop_task`と`tikv_task` ) が含まれています。 `cop_task`は TiDB によって記録された時間であり、リクエストがサーバーに送信された瞬間から応答が受信される瞬間までです。 `tikv_task`は TiKV コプロセッサー自体によって記録された時間です。この 2 つに大きな違いがある場合は、応答の待機に費やされた時間が長すぎるか、gRPC またはネットワークに費やされた時間が長すぎることを示している可能性があります。
 
 ## MySQL の互換性 {#mysql-compatibility}
 

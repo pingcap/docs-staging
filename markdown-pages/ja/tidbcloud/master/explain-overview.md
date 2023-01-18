@@ -55,6 +55,79 @@ Records: 2  Duplicates: 0  Warnings: 0
 -   `access object`は、アクセスされているテーブル、パーティション、およびインデックスを示します。上記の場合のように、インデックスの列`a`が使用された場合のように、インデックスの部分も表示されます。これは、複合インデックスがある場合に役立ちます。
 -   `operator info`は、アクセスに関する追加の詳細を示します。詳細については、 [オペレーター情報概要](#operator-info-overview)を参照してください。
 
+> **ノート：**
+>
+> 返される実行計画では、 `IndexJoin`および`Apply`演算子のすべてのプローブ側の子ノードについて、v6.4.0 以降の`estRows`の意味は v6.4.0 より前のものとは異なります。
+>
+> v6.4.0 より前では、 `estRows`はビルド側オペレーターからの行ごとにプローブ側オペレーターによって処理される推定行数を意味します。 v6.4.0 以降、 `estRows`は、プローブ側のオペレーターによって処理される推定行**数の合計**を意味します。 `EXPLAIN ANALYZE`の結果に表示される実際の行数 ( `actRows`列で示される) は、合計行数を意味するため、v6.4.0 以降、 `IndexJoin`および`Apply`演算子のプローブ側の子ノードの`estRows`および`actRows`の意味は一貫しています。
+>
+> 例えば：
+>
+> ```sql
+> CREATE TABLE t1(a INT, b INT);
+> CREATE TABLE t2(a INT, b INT, INDEX ia(a));
+> EXPLAIN SELECT /*+ INL_JOIN(t2) */ * FROM t1 JOIN t2 ON t1.a = t2.a;
+> EXPLAIN SELECT (SELECT a FROM t2 WHERE t2.a = t1.b LIMIT 1) FROM t1;
+> ```
+>
+> ```sql
+> -- Before v6.4.0:
+> +---------------------------------+----------+-----------+-----------------------+-----------------------------------------------------------------------------------------------------------------+
+> | id                              | estRows  | task      | access object         | operator info                                                                                                   |
+> +---------------------------------+----------+-----------+-----------------------+-----------------------------------------------------------------------------------------------------------------+
+> | IndexJoin_12                    | 12487.50 | root      |                       | inner join, inner:IndexLookUp_11, outer key:test.t1.a, inner key:test.t2.a, equal cond:eq(test.t1.a, test.t2.a) |
+> | ├─TableReader_24(Build)         | 9990.00  | root      |                       | data:Selection_23                                                                                               |
+> | │ └─Selection_23                | 9990.00  | cop[tikv] |                       | not(isnull(test.t1.a))                                                                                          |
+> | │   └─TableFullScan_22          | 10000.00 | cop[tikv] | table:t1              | keep order:false, stats:pseudo                                                                                  |
+> | └─IndexLookUp_11(Probe)         | 1.25     | root      |                       |                                                                                                                 |
+> |   ├─Selection_10(Build)         | 1.25     | cop[tikv] |                       | not(isnull(test.t2.a))                                                                                          |
+> |   │ └─IndexRangeScan_8          | 1.25     | cop[tikv] | table:t2, index:ia(a) | range: decided by [eq(test.t2.a, test.t1.a)], keep order:false, stats:pseudo                                    |
+> |   └─TableRowIDScan_9(Probe)     | 1.25     | cop[tikv] | table:t2              | keep order:false, stats:pseudo                                                                                  |
+> +---------------------------------+----------+-----------+-----------------------+-----------------------------------------------------------------------------------------------------------------+
+> +---------------------------------+----------+-----------+-----------------------+------------------------------------------------------------------------------+
+> | id                              | estRows  | task      | access object         | operator info                                                                |
+> +---------------------------------+----------+-----------+-----------------------+------------------------------------------------------------------------------+
+> | Projection_12                   | 10000.00 | root      |                       | test.t2.a                                                                    |
+> | └─Apply_14                      | 10000.00 | root      |                       | CARTESIAN left outer join                                                    |
+> |   ├─TableReader_16(Build)       | 10000.00 | root      |                       | data:TableFullScan_15                                                        |
+> |   │ └─TableFullScan_15          | 10000.00 | cop[tikv] | table:t1              | keep order:false, stats:pseudo                                               |
+> |   └─Limit_17(Probe)             | 1.00     | root      |                       | offset:0, count:1                                                            |
+> |     └─IndexReader_21            | 1.00     | root      |                       | index:Limit_20                                                               |
+> |       └─Limit_20                | 1.00     | cop[tikv] |                       | offset:0, count:1                                                            |
+> |         └─IndexRangeScan_19     | 1.00     | cop[tikv] | table:t2, index:ia(a) | range: decided by [eq(test.t2.a, test.t1.b)], keep order:false, stats:pseudo |
+> +---------------------------------+----------+-----------+-----------------------+------------------------------------------------------------------------------+
+>
+> -- Since v6.4.0:
+>
+> -- You can find that the `estRows` column values for `IndexLookUp_11`, `Selection_10`, `IndexRangeScan_8`, and `TableRowIDScan_9` since v6.4.0 are different from that before v6.4.0.
+> +---------------------------------+----------+-----------+-----------------------+-----------------------------------------------------------------------------------------------------------------+
+> | id                              | estRows  | task      | access object         | operator info                                                                                                   |
+> +---------------------------------+----------+-----------+-----------------------+-----------------------------------------------------------------------------------------------------------------+
+> | IndexJoin_12                    | 12487.50 | root      |                       | inner join, inner:IndexLookUp_11, outer key:test.t1.a, inner key:test.t2.a, equal cond:eq(test.t1.a, test.t2.a) |
+> | ├─TableReader_24(Build)         | 9990.00  | root      |                       | data:Selection_23                                                                                               |
+> | │ └─Selection_23                | 9990.00  | cop[tikv] |                       | not(isnull(test.t1.a))                                                                                          |
+> | │   └─TableFullScan_22          | 10000.00 | cop[tikv] | table:t1              | keep order:false, stats:pseudo                                                                                  |
+> | └─IndexLookUp_11(Probe)         | 12487.50 | root      |                       |                                                                                                                 |
+> |   ├─Selection_10(Build)         | 12487.50 | cop[tikv] |                       | not(isnull(test.t2.a))                                                                                          |
+> |   │ └─IndexRangeScan_8          | 12500.00 | cop[tikv] | table:t2, index:ia(a) | range: decided by [eq(test.t2.a, test.t1.a)], keep order:false, stats:pseudo                                    |
+> |   └─TableRowIDScan_9(Probe)     | 12487.50 | cop[tikv] | table:t2              | keep order:false, stats:pseudo                                                                                  |
+> +---------------------------------+----------+-----------+-----------------------+-----------------------------------------------------------------------------------------------------------------+
+>
+> -- You can find that the `estRows` column values for `Limit_17`, `IndexReader_21`, `Limit_20`, and `IndexRangeScan_19` since v6.4.0 are different from that before v6.4.0.
+> +---------------------------------+----------+-----------+-----------------------+------------------------------------------------------------------------------+
+> | id                              | estRows  | task      | access object         | operator info                                                                |
+> +---------------------------------+----------+-----------+-----------------------+------------------------------------------------------------------------------+
+> | Projection_12                   | 10000.00 | root      |                       | test.t2.a                                                                    |
+> | └─Apply_14                      | 10000.00 | root      |                       | CARTESIAN left outer join                                                    |
+> |   ├─TableReader_16(Build)       | 10000.00 | root      |                       | data:TableFullScan_15                                                        |
+> |   │ └─TableFullScan_15          | 10000.00 | cop[tikv] | table:t1              | keep order:false, stats:pseudo                                               |
+> |   └─Limit_17(Probe)             | 10000.00 | root      |                       | offset:0, count:1                                                            |
+> |     └─IndexReader_21            | 10000.00 | root      |                       | index:Limit_20                                                               |
+> |       └─Limit_20                | 10000.00 | cop[tikv] |                       | offset:0, count:1                                                            |
+> |         └─IndexRangeScan_19     | 10000.00 | cop[tikv] | table:t2, index:ia(a) | range: decided by [eq(test.t2.a, test.t1.b)], keep order:false, stats:pseudo |
+> +---------------------------------+----------+-----------+-----------------------+------------------------------------------------------------------------------+
+> ```
+
 ### オペレーター概要 {#operator-overview}
 
 演算子は、クエリ結果を返す際に実行される特定のステップです。 (ディスクまたは TiKV ブロック キャッシュの) テーブル スキャンを実行するオペレーターは、次のとおりです。
@@ -65,7 +138,7 @@ Records: 2  Duplicates: 0  Warnings: 0
 -   **IndexFullScan** : 「フル テーブル スキャン」に似ていますが、テーブル データではなくインデックスがスキャンされる点が異なります。
 -   **IndexRangeScan** : 指定された範囲のインデックス スキャン。
 
-TiDB は、TiKV/TiFlash からスキャンされたデータまたは計算結果を集約します。データ集計演算子は、次のカテゴリに分類できます。
+TiDB は、TiKV/ TiFlashからスキャンされたデータまたは計算結果を集約します。データ集計演算子は、次のカテゴリに分類できます。
 
 -   **TableReader** : TiKV の`TableFullScan`や`TableRangeScan`などの基になる演算子によって取得されたデータを集計します。
 -   **IndexReader** : TiKV の`IndexFullScan`や`IndexRangeScan`などの基になる演算子によって取得されたデータを集計します。

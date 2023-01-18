@@ -57,8 +57,8 @@ explain select * from t1 where t1.a in (select t2.a from t2);
 | ├─HashAgg_21(Build)          | 7992.00 | root      |                        | group by:test.t2.a, funcs:firstrow(test.t2.a)->test.t2.a                   |
 | │ └─IndexReader_28           | 9990.00 | root      |                        | index:IndexFullScan_27                                                     |
 | │   └─IndexFullScan_27       | 9990.00 | cop[tikv] | table:t2, index:idx(a) | keep order:false, stats:pseudo                                             |
-| └─TableReader_11(Probe)      | 1.00    | root      |                        | data:TableRangeScan_10                                                     |
-|   └─TableRangeScan_10        | 1.00    | cop[tikv] | table:t1               | range: decided by [test.t2.a], keep order:false, stats:pseudo              |
+| └─TableReader_11(Probe)      | 7992.00 | root      |                        | data:TableRangeScan_10                                                     |
+|   └─TableRangeScan_10        | 7992.00 | cop[tikv] | table:t1               | range: decided by [test.t2.a], keep order:false, stats:pseudo              |
 +------------------------------+---------+-----------+------------------------+----------------------------------------------------------------------------+
 ```
 
@@ -81,6 +81,14 @@ explain select * from t where exists (select * from t2);
 | id                     | estRows  | task      | access object | operator info                  |
 +------------------------+----------+-----------+---------------+--------------------------------+
 | TableReader_12         | 10000.00 | root      |               | data:TableFullScan_11          |
-| └─TableFullScan_11     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo |
+| └─TableFullScan_11     | 10000.00 | cop[tikv] | table:t1      | keep order:false, stats:pseudo |
 +------------------------+----------+-----------+---------------+--------------------------------+
 ```
+
+前述の最適化では、オプティマイザは文の実行を自動的に最適化します。さらに、ステートメントをさらに書き直すために[`SEMI_JOIN_REWRITE`](/optimizer-hints.md#semi_join_rewrite)ヒントを追加することもできます。
+
+このヒントを使用してクエリを書き直さない場合、実行プランでハッシュ結合が選択されている場合、セミ結合クエリはサブクエリを使用してハッシュ テーブルを構築することしかできません。この場合、サブクエリの結果が外側のクエリの結果よりも大きい場合、実行速度が予想よりも遅くなる可能性があります。
+
+同様に、実行計画でインデックス結合が選択されている場合、セミ結合クエリは外部クエリのみを駆動テーブルとして使用できます。この場合、サブクエリの結果が外側のクエリの結果よりも小さい場合、実行速度が予想よりも遅くなる可能性があります。
+
+`SEMI_JOIN_REWRITE()`を使用してクエリを書き換えると、オプティマイザーは選択範囲を拡張して、より適切な実行プランを選択できます。

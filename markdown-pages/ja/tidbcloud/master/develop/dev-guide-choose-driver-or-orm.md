@@ -12,11 +12,7 @@ summary: Learn how to choose a driver or ORM framework to connect to TiDB.
 > -   **完全**: このドライバーまたは ORM を使用しても、既知の問題がないことを示します。
 > -   **検証済み**: TiDB と MySQL の互換性の違いにより、このドライバーまたは ORM を使用するとエラーが発生する可能性があることを示します。
 >
-> <CustomContent platform="tidb">
->
 > 詳細については、 [TiDB がサポートするサードパーティ ツール](/develop/dev-guide-third-party-support.md)を参照してください。
->
-> </CustomContent>
 
 TiDB は MySQL プロトコルと高い互換性がありますが、一部の機能は MySQL と互換性がありません。
 
@@ -34,22 +30,22 @@ TiDB は MySQL プロトコルと高い互換性がありますが、一部の�
 
 互換性の相違点の完全なリストについては、 [MySQL の互換性](/mysql-compatibility.md)を参照してください。
 
-## ジャワ {#java}
+## Java {#java}
 
-このセクションでは、Java でドライバーと ORM フレームワークを使用する方法について説明します。
+このセクションでは、 Javaでドライバーと ORM フレームワークを使用する方法について説明します。
 
-### Java ドライバー {#java-drivers}
+### Javaドライバー {#java-drivers}
 
 <SimpleTab>
 <div label="MySQL-JDBC">
 
 サポートレベル:**フル**
 
-[MySQL ドキュメント](https://dev.mysql.com/doc/connector-j/5.1/en/)に従って、Java JDBC ドライバーをダウンロードして構成できます。
+[MySQL ドキュメント](https://dev.mysql.com/doc/connector-j/8.0/en/)に従って、 Java JDBC ドライバーをダウンロードして構成できます。 TiDB v6.3.0 以降では、MySQL Connector/J 8.0.29 以降を使用することをお勧めします。
 
-> **ノート：**
+> **ヒント：**
 >
-> JDBC 5.1 の最新バージョンであるバージョン 5.1.49 を使用することを強くお勧めします。現在のバージョン 8.0.29 には[未解決のバグ](https://bugs.mysql.com/bug.php?id=106252)があるため、TiDB の使用時にスレッドがハングする可能性があります。 MySQL JDBC 8.0 がこの修正をマージするまで、バージョン 8.0 にアップグレードしないことをお勧めします。
+> 現在のバージョン 8.0.30 には[未解決のバグ](https://bugs.mysql.com/bug.php?id=106252)があるため、v6.3.0 より前のバージョンの TiDB を使用すると、スレッドがハングする可能性があります。 TiDB v6.3.0 以降のバージョンをまだ使用していない場合は、MySQL Connector/J 8.0 でこのバグが修正されるまでバージョン 8.0 にアップグレードしないか、これに対処する MySQL Connector/J の TiDB バージョンを使用することをお勧めします。バグ ( *TiDB-JDBC*タブを参照)。
 
 完全なアプリケーションを構築する方法の例については、 [TiDB と JDBC を使用して単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-java.md)を参照してください。
 
@@ -58,7 +54,7 @@ TiDB は MySQL プロトコルと高い互換性がありますが、一部の�
 
 サポートレベル:**フル**
 
-[TiDB-JDBC](https://github.com/pingcap/mysql-connector-j)は、MySQL 8.0.29 に基づくカスタマイズされた Java ドライバーです。 MySQL 公式バージョン 8.0.29 に基づいてコンパイルされた TiDB-JDBC は、元の JDBC の準備モードでのマルチパラメータおよびマルチフィールド EOF のバグを修正し、自動 TiCDC スナップショット メンテナンスおよび SM3 認証プラグインなどの機能を追加します。
+[TiDB-JDBC](https://github.com/pingcap/mysql-connector-j)は、MySQL 8.0.29 に基づくカスタマイズされたJavaドライバーです。 MySQL 公式バージョン 8.0.29 に基づいてコンパイルされた TiDB-JDBC は、元の JDBC の準備モードでのマルチパラメータおよびマルチフィールド EOF のバグを修正し、自動 TiCDC スナップショット メンテナンスおよび SM3 認証プラグインなどの機能を追加します。
 
 SM3 ベースの認証の使用は、MySQL Connector/J の TiDB バージョンでのみサポートされています。
 
@@ -109,11 +105,7 @@ implementation group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.67
 >
 > -   現在、Hibernate は[ネストされたトランザクションをサポートしない](https://stackoverflow.com/questions/37927208/nested-transaction-in-spring-app-with-jpa-postgres)を実行します。
 >
-> <CustomContent platform="tidb">
->
-> -   v6.2.0 以降、TiDB は[セーブポイント](https://docs.pingcap.com/tidb/v6.2/sql-statement-savepoint)をサポートしています。 `@Transactional`で`Propagation.NESTED`トランザクション伝播オプションを使用する、つまり`@Transactional(propagation = Propagation.NESTED)`を設定するには、TiDB が v6.2.0 以降であることを確認してください。
->
-> </CustomContent>
+> -   v6.2.0 以降、TiDB は[セーブポイント](/sql-statements/sql-statement-savepoint.md)をサポートしています。 `@Transactional`で`Propagation.NESTED`トランザクション伝播オプションを使用する、つまり`@Transactional(propagation = Propagation.NESTED)`を設定するには、TiDB が v6.2.0 以降であることを確認してください。
 
 <SimpleTab>
 <div label="Hibernate">
@@ -123,7 +115,6 @@ implementation group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.67
 アプリケーションの異なる依存関係間の複雑な関係を手動で管理することを避けるために、 [グラドル](https://gradle.org/install)または[メイヴン](https://maven.apache.org/install.html)を使用して、間接的なものを含むアプリケーションのすべての依存関係を取得できます。 Hibernate `6.0.0.Beta2`以降のみが TiDB ダイアレクトをサポートすることに注意してください。
 
 **Maven**を使用している場合は、次を`<dependencies></dependencies>`に追加します。
-
 
 ```xml
 <dependency>
@@ -146,7 +137,7 @@ implementation 'org.hibernate:hibernate-core:6.0.0.CR2'
 implementation 'mysql:mysql-connector-java:5.1.49'
 ```
 
--   Hibernate を使用してネイティブ Java で TiDB アプリケーションを構築する例については、 [TiDB と Java を使用して単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-java.md)を参照してください。
+-   Hibernate を使用してネイティブJavaで TiDB アプリケーションを構築する例については、 [TiDB とJavaを使用して単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-java.md)を参照してください。
 -   Spring Data JPA または Hibernate を使用して Spring で TiDB アプリケーションを構築する例については、 [Spring Boot を使用して TiDB アプリケーションを構築する](/develop/dev-guide-sample-application-spring-boot.md)を参照してください。
 
 さらに、 [ハイバネート構成ファイル](https://www.tutorialspoint.com/hibernate/hibernate_configuration.htm) : `org.hibernate.dialect.TiDBDialect`で TiDB ダイアレクトを指定する必要があります。これは、Hibernate `6.0.0.Beta2`以降でのみサポートされています。 `Hibernate`バージョンが`6.0.0.Beta2`より前の場合は、最初にアップグレードしてください。
@@ -186,13 +177,13 @@ implementation 'org.mybatis:mybatis:3.5.9'
 implementation 'mysql:mysql-connector-java:5.1.49'
 ```
 
-MyBatis を使用して TiDB アプリケーションを構築する例については、 [TiDB と Java を使用して単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-java.md)を参照してください。
+MyBatis を使用して TiDB アプリケーションを構築する例については、 [TiDB とJavaを使用して単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-java.md)を参照してください。
 
 </div>
 
 </SimpleTab>
 
-### Java クライアントの負荷分散 {#java-client-load-balancing}
+### Javaクライアントの負荷分散 {#java-client-load-balancing}
 
 **tidb-loadbalance**
 
@@ -228,19 +219,19 @@ implementation group: 'io.github.lastincisor', name: 'mysql-connector-java', ver
 implementation group: 'io.github.lastincisor', name: 'tidb-loadbalance', version: '0.0.5'
 ```
 
-## ゴラン {#golang}
+## Golang {#golang}
 
-このセクションでは、Golang でドライバーと ORM フレームワークを使用する方法について説明します。
+このセクションでは、 Golangでドライバーと ORM フレームワークを使用する方法について説明します。
 
-### Golang ドライバー {#golang-drivers}
+### Golangドライバー {#golang-drivers}
 
 **go-sql-driver/mysql**
 
 サポートレベル:**フル**
 
-Golang ドライバーをダウンロードして構成するには、 [go-sql-driver/mysql ドキュメント](https://github.com/go-sql-driver/mysql)を参照してください。
+Golangドライバーをダウンロードして構成するには、 [go-sql-driver/mysql ドキュメント](https://github.com/go-sql-driver/mysql)を参照してください。
 
-完全なアプリケーションを構築する方法の例については、 [TiDB と Golang を使用して単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-golang.md)を参照してください。
+完全なアプリケーションを構築する方法の例については、 [TiDB とGolangを使用して単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-golang.md)を参照してください。
 
 ### Golang ORM フレームワーク {#golang-orm-frameworks}
 
@@ -248,17 +239,11 @@ Golang ドライバーをダウンロードして構成するには、 [go-sql-d
 
 サポートレベル:**フル**
 
-GORM は、Golang の一般的な ORM フレームワークです。アプリケーションのすべての依存関係を取得するには、 `go get`コマンドを使用できます。
+GORM はGolangの一般的な ORM フレームワークです。アプリケーションのすべての依存関係を取得するには、 `go get`コマンドを使用できます。
 
 ```shell
 go get -u gorm.io/gorm
 go get -u gorm.io/driver/mysql
 ```
 
-GORM を使用して TiDB アプリケーションを構築する例については、 [TiDB と Golang を使用して単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-golang.md)を参照してください。
-
-<CustomContent platform="tidb-cloud">
-
-ドライバーまたは ORM を決定したら、次のことができ[TiDB クラスターに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster) 。
-
-</CustomContent>
+GORM を使用して TiDB アプリケーションを構築する例については、 [TiDB とGolangを使用して単純な CRUD アプリを構築する](/develop/dev-guide-sample-application-golang.md)を参照してください。

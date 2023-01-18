@@ -5,10 +5,6 @@ summary: Learn about JSON functions.
 
 # JSON 関数 {#json-functions}
 
-> **警告：**
->
-> これはまだ実験的機能です。本番環境で使用することはお勧めし**ません**。
-
 TiDB は、 MySQL 5.7の GA リリースに同梱された JSON関数のほとんどをサポートしています。
 
 ## JSON 値を作成する関数 {#functions-that-create-json-values}
@@ -21,15 +17,15 @@ TiDB は、 MySQL 5.7の GA リリースに同梱された JSON関数のほと�
 
 ## JSON 値を検索する関数 {#functions-that-search-json-values}
 
-| 関数名                                                                                     | 説明                                                                                    |
-| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| [JSON\_CONTAINS(target, candidate\[, path\])][json_contains]                            | 指定された候補 JSON ドキュメントがターゲット JSON ドキュメント内に含まれているかどうかを 1 または 0 を返すことによって示します              |
-| [JSON\_CONTAINS\_PATH(json\_doc, one\_or\_all, path\[, path\] ...)][json_contains_path] | JSON ドキュメントに特定のパスにデータが含まれているかどうかを示すために、0 または 1 を返します。                                 |
-| [JSON\_EXTRACT(json\_doc, path\[, path\] ...)][json_extract]                            | `path`の引数に一致するドキュメントの部分から選択された JSON ドキュメントからデータを返します                                  |
-| [->][json_short_extract]                                                                | 評価パスの後に JSON 列から値を返します。 `JSON_EXTRACT(doc, path_literal)`の別名                          |
-| [->>][json_short_extract_unquote]                                                       | パスを評価し、結果の引用符を外した後、JSON 列から値を返します。 `JSON_UNQUOTE(JSON_EXTRACT(doc, path_literal))`の別名 |
-| [JSON\_KEYS(json\_doc\[, path\])][json_keys]                                            | JSON オブジェクトの最上位の値からキーを JSON 配列として返すか、パス引数が指定されている場合は、選択したパスから最上位のキーを返します              |
-| [JSON\_SEARCH(json\_doc, one\_or\_all, search\_string)][json_search]                    | 文字列の 1 つまたはすべての一致について JSON ドキュメントを検索します                                               |
+| 関数名                                                                                     | 説明                                                                                       |
+| --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [JSON\_CONTAINS(target, candidate\[, path\])][json_contains]                            | 指定された候補 JSON ドキュメントがターゲット JSON ドキュメント内に含まれているかどうかを 1 または 0 を返すことによって示します                 |
+| [JSON\_CONTAINS\_PATH(json\_doc, one\_or\_all, path\[, path\] ...)][json_contains_path] | JSON ドキュメントに特定のパスにデータが含まれているかどうかを示すために、0 または 1 を返します。                                    |
+| [JSON\_EXTRACT(json\_doc, path\[, path\] ...)][json_extract]                            | `path`の引数に一致するドキュメントの部分から選択された JSON ドキュメントからデータを返します                                     |
+| [->][json_short_extract]                                                                | 評価パスの後に JSON 列から値を返します。 `JSON_EXTRACT(doc, path_literal)`の別名                             |
+| [->>][json_short_extract_unquote]                                                       | パスを評価し、結果の引用符を外した後、JSON 列から値を返します。 `JSON_UNQUOTE(JSON_EXTRACT(doc, path_literal))`のエイリアス |
+| [JSON\_KEYS(json\_doc\[, path\])][json_keys]                                            | JSON オブジェクトの最上位の値からキーを JSON 配列として返すか、パス引数が指定されている場合は、選択したパスから最上位のキーを返します                 |
+| [JSON\_SEARCH(json\_doc, one\_or\_all, search\_string)][json_search]                    | 文字列の 1 つまたはすべての一致について JSON ドキュメントを検索します                                                  |
 
 ## JSON 値を変更する関数 {#functions-that-modify-json-values}
 
@@ -60,10 +56,11 @@ TiDB は、 MySQL 5.7の GA リリースに同梱された JSON関数のほと�
 
 ## ユーティリティ機能 {#utility-functions}
 
-| 関数名                                                 | 説明                                                                                         |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| [JSON\_PRETTY(json\_doc)][json_pretty]              | JSON ドキュメントの整形                                                                             |
-| [JSON\_STORAGE\_SIZE(json\_doc)][json_storage_size] | json 値を格納するために必要な概算サイズのバイトを返します。サイズは圧縮を使用する TiKV を考慮していないため、この関数の出力は MySQL と厳密には互換性がありません。 |
+| 関数名                                                 | 説明                                                                                                                                          |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| [JSON\_PRETTY(json\_doc)][json_pretty]              | JSON ドキュメントの整形                                                                                                                              |
+| [JSON\_STORAGE\_FREE(json\_doc)][json_storage_free] | その場で更新された後、JSON 値のバイナリ表現で解放されたストレージ容量を返します。 TiDB は MySQL とは異なるストレージアーキテクチャを持っているため、この関数は有効な JSON 値に対して常に 0 を返し、MySQL 8.0 との互換性のために実装されています。 |
+| [JSON\_STORAGE\_SIZE(json\_doc)][json_storage_size] | json 値を格納するために必要な概算サイズのバイトを返します。サイズは圧縮を使用する TiKV を考慮していないため、この関数の出力は MySQL と厳密には互換性がありません。                                                  |
 
 ## 集計関数 {#aggregate-functions}
 
@@ -134,5 +131,7 @@ TiDB は、 MySQL 5.7の GA リリースに同梱された JSON関数のほと�
 [json_objectagg]: https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_json-objectagg
 
 [json_pretty]: https://dev.mysql.com/doc/refman/5.7/en/json-utility-functions.html#function_json-pretty
+
+[json_storage_free]: https://dev.mysql.com/doc/refman/8.0/en/json-utility-functions.html#function_json-storage-free
 
 [json_storage_size]: https://dev.mysql.com/doc/refman/5.7/en/json-utility-functions.html#function_json-storage-size

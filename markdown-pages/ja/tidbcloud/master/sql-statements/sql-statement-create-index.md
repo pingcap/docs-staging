@@ -137,20 +137,13 @@ CREATE TABLE t1(col1 char(10), col2 char(10), index((lower(col1))));
 DROP INDEX idx1 ON t1;
 ```
 
-表現インデックスには、さまざまな種類の表現が含まれます。正確性を確保するために、完全にテストされた一部の関数のみが式インデックスの作成に使用できます。これは、これらの関数のみが本番環境の式で許可されることを意味します。これらの関数は、 `tidb_allow_function_for_expression_index`の変数をクエリすることで取得できます。
+表現インデックスには、さまざまな種類の表現が含まれます。正確性を確保するために、完全にテストされた一部の関数のみが式インデックスの作成に使用できます。これは、これらの関数のみが本番環境の式で許可されることを意味します。これらの関数は、 `tidb_allow_function_for_expression_index`変数をクエリすることで取得できます。現在、許可されている関数は次のとおりです。
 
-
-```sql
-mysql> select @@tidb_allow_function_for_expression_index;
-+--------------------------------------------+
-| @@tidb_allow_function_for_expression_index |
-+--------------------------------------------+
-| lower, md5, reverse, upper, vitess_hash    |
-+--------------------------------------------+
-1 row in set (0.00 sec)
+```
+json_array, json_array_append, json_array_insert, json_contains, json_contains_path, json_depth, json_extract, json_insert, json_keys, json_length, json_merge_patch, json_merge_preserve, json_object, json_pretty, json_quote, json_remove, json_replace, json_search, json_set, json_storage_size, json_type, json_unquote, json_valid, lower, md5, reverse, tidb_shard, upper, vitess_hash
 ```
 
-上記の返された結果に含まれていない関数については、これらの関数は完全にはテストされておらず、実稼働環境には推奨されません。これは実験的ものと見なすことができます。演算子、 `cast` 、および`case when`などの他の式も実験的ものと見なされ、本番環境には推奨されません。
+上記のリストに含まれていない関数については、それらの関数は完全にはテストされておらず、本番環境には推奨されません。これは実験的ものと見なすことができます。演算子、 `cast` 、および`case when`などの他の式も実験的ものと見なされ、本番環境では推奨されません。
 
 <CustomContent platform="tidb">
 
@@ -242,7 +235,7 @@ CREATE UNIQUE INDEX c1 ON t1 (c1) INVISIBLE;
 
 ## 関連するシステム変数 {#associated-system-variables}
 
-`CREATE INDEX`ステートメントに関連付けられているシステム変数は、 `tidb_ddl_reorg_worker_cnt` 、 `tidb_ddl_reorg_batch_size` 、 `tidb_enable_auto_increment_in_generated` 、および`tidb_ddl_reorg_priority`です。詳細は[システム変数](/system-variables.md#tidb_ddl_reorg_worker_cnt)を参照。
+`CREATE INDEX`ステートメントに関連付けられているシステム変数は、 `tidb_ddl_enable_fast_reorg` 、 `tidb_ddl_reorg_worker_cnt` 、 `tidb_ddl_reorg_batch_size` 、 `tidb_enable_auto_increment_in_generated` 、および`tidb_ddl_reorg_priority`です。詳細は[システム変数](/system-variables.md#tidb_ddl_reorg_worker_cnt)を参照。
 
 ## MySQL の互換性 {#mysql-compatibility}
 
