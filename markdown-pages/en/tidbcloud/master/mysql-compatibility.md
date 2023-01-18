@@ -14,7 +14,7 @@ However, some features of MySQL are not supported. This could be because there i
 In addition, TiDB does not support the MySQL replication protocol, but provides specific tools to replicate data with MySQL:
 
 - Replicate data from MySQL: [TiDB Data Migration (DM)](/dm/dm-overview.md) is a tool that supports the full data migration and the incremental data replication from MySQL/MariaDB into TiDB.
-- Replicate data to MySQL: [TiCDC](/ticdc/ticdc-overview.md) is a tool for replicating the incremental data of TiDB by pulling TiKV change logs. TiCDC uses the [MySQL sink](/ticdc/ticdc-overview.md#sink-support) to replicate the incremental data of TiDB to MySQL.
+- Replicate data to MySQL: [TiCDC](/ticdc/ticdc-overview.md) is a tool for replicating the incremental data of TiDB by pulling TiKV change logs. TiCDC uses the [MySQL sink](/ticdc/ticdc-overview.md#replication-consistency) to replicate the incremental data of TiDB to MySQL.
 
 </CustomContent>
 
@@ -48,7 +48,6 @@ In addition, TiDB does not support the MySQL replication protocol, but provides 
 + Optimizer trace
 + XML Functions
 + X-Protocol [#1109](https://github.com/pingcap/tidb/issues/1109)
-+ Savepoints [#6840](https://github.com/pingcap/tidb/issues/6840)
 + Column-level privileges [#9766](https://github.com/pingcap/tidb/issues/9766)
 + `XA` syntax (TiDB uses a two-phase commit internally, but this is not exposed via an SQL interface)
 + `CREATE TABLE tblName AS SELECT stmt` syntax [#4754](https://github.com/pingcap/tidb/issues/4754)
@@ -64,7 +63,7 @@ In addition, TiDB does not support the MySQL replication protocol, but provides 
 
 ### Auto-increment ID
 
-+ In TiDB, auto-incremental columns are globally unique. They are incremental on a single TiDB server, but *not* necessarily incremental among multiple TiDB servers or allocated sequentially. It is recommended that you do not mix default values and custom values. Otherwise, you might encounter the `Duplicated Error` error message.
++ In TiDB, the values (IDs) of an auto-incremental column are globally unique. They are incremental on a single TiDB server. If you want the IDs to be incremental among multiple TiDB servers, you can use the [`AUTO_INCREMENT` MySQL compatibility mode](/auto-increment.md#mysql-compatibility-mode). But the IDs are not necessarily allocated sequentially. It is recommended that you do not mix default values and custom values. Otherwise, you might encounter the `Duplicated Error` error message.
 
 + You can use the `tidb_allow_remove_auto_inc` system variable to allow or forbid removing the `AUTO_INCREMENT` column attribute. The syntax of removing the column attribute is `ALTER TABLE MODIFY` or `ALTER TABLE CHANGE`.
 
@@ -121,7 +120,7 @@ TiDB uses a combination of [Prometheus and Grafana](/tidb-monitoring-api.md) to 
 
 <CustomContent platform="tidb-cloud">
 
-To check performance metrics in TiDB Cloud, you can either check the cluster overview page in the TiDB Cloud console or use [third-party monitoring integrations](/tidb-cloud/third-party-monitoring-integrations.md). Performance schema tables return empty results in TiDB.
+To check performance metrics in TiDB Cloud, you can either check the cluster overview page on the TiDB Cloud console or use [third-party monitoring integrations](/tidb-cloud/third-party-monitoring-integrations.md). Performance schema tables return empty results in TiDB.
 
 </CustomContent>
 
@@ -143,7 +142,8 @@ See also: [TiDB SQL Grammar](https://pingcap.github.io/sqlgram/#functioncallkeyw
 
 In TiDB, all supported DDL changes are performed online. Compared with DDL operations in MySQL, the DDL operations in TiDB have the following major restrictions:
 
-* Multiple operations cannot be completed in a single `ALTER TABLE` statement. For example, it is not possible to add multiple columns or indexes in a single statement. Otherwise, the `Unsupported multi schema change` error might be output.
+* When you use a single `ALTER TABLE` statement to alter multiple schema objects (such as columns or indexes) of a table, specifying the same object in multiple changes is not supported. For example, if you execute the `ALTER TABLE t1 MODIFY COLUMN c1 INT, DROP COLUMN c1` command, the `Unsupported operate same column/index` error is output.
+* It is not supported to modify multiple TiDB-specific schema objects using a single `ALTER TABLE` statement, such as `TIFLASH REPLICA`, `SHARD_ROW_ID_BITS`, and `AUTO_ID_CACHE`.
 * `ALTER TABLE` in TiDB does not support the changes of some data types. For example, TiDB does not support the change from the `DECIMAL` type to the `DATE` type. If a data type change is unsupported, TiDB reports the `Unsupported modify column: type %d not match origin %d` error. Refer to [`ALTER TABLE`](/sql-statements/sql-statement-modify-column.md) for more details.
 * The `ALGORITHM={INSTANT,INPLACE,COPY}` syntax functions only as an assertion in TiDB, and does not modify the `ALTER` algorithm. See [`ALTER TABLE`](/sql-statements/sql-statement-alter-table.md) for further details.
 * Adding/Dropping the primary key of the `CLUSTERED` type is unsupported. For more details about the primary key of the `CLUSTERED` type, refer to [clustered index](/clustered-indexes.md).
@@ -151,6 +151,7 @@ In TiDB, all supported DDL changes are performed online. Compared with DDL opera
 * Table Partitioning supports `HASH`, `RANGE`, and `LIST` partitioning types. For the unsupported partition type, the `Warning: Unsupported partition type %s, treat as normal table` error might be output, where `%s` is a specific partition type.
 * Table Partitioning also supports `ADD`, `DROP`, and `TRUNCATE` operations. Other partition operations are ignored. The following Table Partition syntaxes are not supported:
     - `PARTITION BY KEY`
+    - `PARTITION BY LINEAR KEY`
     - `SUBPARTITION`
     - `{CHECK|TRUNCATE|OPTIMIZE|REPAIR|IMPORT|DISCARD|REBUILD|REORGANIZE|COALESCE} PARTITION`
 
@@ -229,9 +230,9 @@ TiDB supports most [SQL modes](/sql-mode.md):
 - Default value of `lower_case_table_names`:
     - The default value in TiDB is `2` and currently TiDB only supports `2`.
     - The default value in MySQL:
-        - On Linux: `0`
-        - On Windows: `1`
-        - On macOS: `2`
+        - On Linux: `0`. It means that table and database names are stored on disk using the lettercase specified in the `CREATE TABLE` or `CREATE DATABASE` statement. Name comparisons are case-sensitive.
+        - On Windows: `1`. It means that table names are stored in lowercase on disk and name comparisons are not case-sensitive. MySQL converts all table names to lowercase on storage and lookup. This behavior also applies to database names and table aliases.
+        - On macOS: `2`. It means that table and database names are stored on disk using the lettercase specified in the `CREATE TABLE` or `CREATE DATABASE` statement, but MySQL converts them to lowercase on lookup. Name comparisons are not case-sensitive.
 - Default value of `explicit_defaults_for_timestamp`:
     - The default value in TiDB is `ON` and currently TiDB only supports `ON`.
     - The default value in MySQL:

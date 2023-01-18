@@ -33,6 +33,7 @@
     - [Insert Data](/develop/dev-guide-insert-data.md)
     - [Update Data](/develop/dev-guide-update-data.md)
     - [Delete Data](/develop/dev-guide-delete-data.md)
+    - [Periodically Delete Expired Data Using TTL (Time to Live)](/time-to-live.md)
     - [Prepared Statements](/develop/dev-guide-prepared-statement.md)
   - Read Data
     - [Query Data from a Single Table](/develop/dev-guide-get-data-from-single-table.md)
@@ -91,6 +92,7 @@
     - [Read Data from TiFlash](/tiflash/use-tidb-to-read-tiflash.md)
     - [Use MPP Mode](/tiflash/use-tiflash-mpp-mode.md)
     - [Supported Push-down Calculations](/tiflash/tiflash-supported-pushdown-calculations.md)
+    - [TiFlash Query Result Materialization](/tiflash/tiflash-results-materialization.md)
     - [Compatibility](/tiflash/tiflash-compatibility.md)
   - [Scale a TiDB Cluster](/tidb-cloud/scale-tidb-cluster.md)
   - [Pause or Resume a TiDB Cluster](/tidb-cloud/pause-or-resume-tidb-cluster.md)
@@ -306,6 +308,7 @@
       - [`REVOKE <privileges>`](/sql-statements/sql-statement-revoke-privileges.md)
       - [`REVOKE <role>`](/sql-statements/sql-statement-revoke-role.md)
       - [`ROLLBACK`](/sql-statements/sql-statement-rollback.md)
+      - [`SAVEPOINT`](/sql-statements/sql-statement-savepoint.md)
       - [`SELECT`](/sql-statements/sql-statement-select.md)
       - [`SET DEFAULT ROLE`](/sql-statements/sql-statement-set-default-role.md)
       - [`SET [NAMES|CHARACTER SET]`](/sql-statements/sql-statement-set-names.md)
@@ -448,6 +451,7 @@
         - [`TIKV_STORE_STATUS`](/information-schema/information-schema-tikv-store-status.md)
         - [`USER_PRIVILEGES`](/information-schema/information-schema-user-privileges.md)
         - [`VIEWS`](/information-schema/information-schema-views.md)
+    - [Metadata Lock](/metadata-lock.md)
   - [System Variables](/system-variables.md)
   - Storage Engines
     - TiKV

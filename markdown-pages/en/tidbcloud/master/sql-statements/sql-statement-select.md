@@ -82,7 +82,7 @@ AsOfClause ::=
 **SelectLockOpt:**
 
 ```ebnf+diagram
-SelectLockOpt ::=
+SelectLockOpt ::= 
     ( ( 'FOR' 'UPDATE' ( 'OF' TableList )? 'NOWAIT'? )
 |   ( 'LOCK' 'IN' 'SHARE' 'MODE' ) )?
 

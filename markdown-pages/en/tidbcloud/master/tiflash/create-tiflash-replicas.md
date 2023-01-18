@@ -133,24 +133,15 @@ SELECT TABLE_NAME FROM information_schema.tables where TABLE_SCHEMA = "<db_name>
 
 Before TiFlash replicas are added, each TiKV instance performs a full table scan and sends the scanned data to TiFlash as a "snapshot" to create replicas. By default, TiFlash replicas are added slowly with fewer resources usage in order to minimize the impact on the online service. If there are spare CPU and disk IO resources in your TiKV and TiFlash nodes, you can accelerate TiFlash replication by performing the following steps.
 
-1. Temporarily increase the snapshot write speed limit for each TiKV and TiFlash instance by adjusting the TiFlash Proxy and TiKV configuration. For example, when using TiUP to manage configurations, the configuration is as below:
-
-   ```yaml
-   tikv:
-     server.snap-max-write-bytes-per-sec: 300MiB  # Default to 100MiB.
-   tiflash-learner:
-     raftstore.snap-handle-pool-size: 10          # Default to 2. Can be adjusted to >= node's CPU num * 0.6.
-     raftstore.apply-low-priority-pool-size: 10   # Default to 1. Can be adjusted to >= node's CPU num * 0.6.
-     server.snap-max-write-bytes-per-sec: 300MiB  # Default to 100MiB.
-   ```
-
-   The configuration change takes effect after restarting the TiFlash and TiKV instances. The TiKV configuration can be also changed online by using the [Dynamic Config SQL statement](https://docs.pingcap.com/tidb/stable/dynamic-config), which takes effect immediately without restarting TiKV instances:
+1. Temporarily increase the snapshot write speed limit for each TiKV and TiFlash instance by using the [Dynamic Config SQL statement](https://docs.pingcap.com/tidb/stable/dynamic-config):
 
    ```sql
+   -- The default value for both configurations are 100MiB, i.e. the maximum disk bandwidth used for writing snapshots is no more than 100MiB/s.
    SET CONFIG tikv `server.snap-max-write-bytes-per-sec` = '300MiB';
+   SET CONFIG tiflash `raftstore-proxy.server.snap-max-write-bytes-per-sec` = '300MiB';
    ```
 
-   After adjusting the preceding configurations, you cannot observe the acceleration for now, as the replication speed is still restricted by the PD limit globally.
+   After executing these SQL statements, the configuration changes take effect immediately without restarting the cluster. However, since the replication speed is still restricted by the PD limit globally, you cannot observe the acceleration for now.
 
 2. Use [PD Control](https://docs.pingcap.com/tidb/stable/pd-control) to progressively ease the new replica speed limit.
 
@@ -163,7 +154,7 @@ Before TiFlash replicas are added, each TiKV instance performs a full table scan
    > In the preceding command, you need to replace `<CLUSTER_VERSION>` with the actual cluster version and `<PD_ADDRESS>:2379` with the address of any PD node. For example:
    >
    > ```shell
-   > tiup ctl:v6.1.3 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
+   > tiup ctl:v6.1.1 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
    > ```
 
    Within a few minutes, you will observe a significant increase in CPU and disk IO resource usage of the TiFlash nodes, and TiFlash should create replicas faster. At the same time, the TiKV nodes' CPU and disk IO resource usage increases as well.
@@ -182,15 +173,11 @@ Before TiFlash replicas are added, each TiKV instance performs a full table scan
    tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 30 add-peer
    ```
 
-   Comment out the changed configuration in TiUP to restore the default snapshot write speed limit:
+   Execute the following SQL statements to restore the default snapshot write speed limit:
 
-   ```yaml
-   # tikv:
-   #   server.snap-max-write-bytes-per-sec: 300MiB
-   # tiflash-learner:
-   #   raftstore.snap-handle-pool-size: 10
-   #   raftstore.apply-low-priority-pool-size: 10
-   #   server.snap-max-write-bytes-per-sec: 300MiB
+   ```sql
+   SET CONFIG tikv `server.snap-max-write-bytes-per-sec` = '100MiB';
+   SET CONFIG tiflash `raftstore-proxy.server.snap-max-write-bytes-per-sec` = '100MiB';
    ```
 
 ## Set available zones
