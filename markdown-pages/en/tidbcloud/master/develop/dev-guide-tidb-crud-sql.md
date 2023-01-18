@@ -19,23 +19,7 @@ Please make sure you are connected to a TiDB cluster. If not, refer to [Build a 
 
 TiDB is compatible with MySQL, you can use MySQL statements directly in most cases. For unsupported features, see [Compatibility with MySQL](/mysql-compatibility.md#unsupported-features).
 
-To experiment with SQL and test out TiDB compatibility with MySQL queries, you can try Chat2Query (beta) in your [TiDB Cloud console](https://tidbcloud.com/). To access Chat2Query, go to the [**Clusters**](https://tidbcloud.com/console/clusters) page of your project, click your cluster name, and then click **Chat2Query** in the left navigation pane. In Chat2Query, you can either let AI generate SQL queries automatically or write SQL queries manually, and run SQL queries against databases without a terminal.
-
-> **Note:**
->
-> Chat2Query currently has limited support on SQL statements. DDLs such as `CREATE TABLE` or `DROP TABLE` are not supported yet.
->
-> <CustomContent platform="tidb">
->
-> If you want to explore all SQL statements with TiDB, you can deploy a TiDB cluster and then run SQL statements in it.
->
-> </CustomContent>
->
-> <CustomContent platform="tidb-cloud">
->
-> If you want to explore all SQL statements with TiDB, you can [connect to your TiDB Cloud cluster](/tidb-cloud/connect-to-tidb-cluster.md) and then run SQL statements from a SQL client.
->
-> </CustomContent>
+To experiment with SQL and test out TiDB compatibility with MySQL queries, you can [run TiDB directly in your web browser without installing it](https://tour.tidb.io/). You can also first deploy a TiDB cluster and then run SQL statements in it.
 
 This page walks you through the basic TiDB SQL statements such as DDL, DML, and CRUD operations. For a complete list of TiDB statements, see [TiDB SQL Syntax Diagram](https://pingcap.github.io/sqlgram/).
 

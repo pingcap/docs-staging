@@ -1,7 +1,6 @@
 ---
 title: Build a Simple CRUD App with TiDB and Golang
 summary: Learn how to build a simple CRUD application with TiDB and Golang.
-aliases: ['/tidb/stable/dev-guide-outdated-for-go-sql-driver-mysql','/tidb/stable/dev-guide-outdated-for-gorm','/appdev/dev/for-go-sql-driver-mysql','/appdev/dev/for-gorm']
 ---
 
 <!-- markdownlint-disable MD024 -->

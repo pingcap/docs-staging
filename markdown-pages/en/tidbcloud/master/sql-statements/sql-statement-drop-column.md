@@ -74,7 +74,6 @@ mysql> SELECT * FROM t1;
 
 ## MySQL compatibility
 
-* Dropping multiple columns in the same statement is not supported.
 * Dropping primary key columns or columns covered by the composite index is not supported.
 
 ## See also

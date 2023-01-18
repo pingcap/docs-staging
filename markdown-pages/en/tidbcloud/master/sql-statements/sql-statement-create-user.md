@@ -11,7 +11,7 @@ This statement creates a new user, specified with a password. In the MySQL privi
 
 ```ebnf+diagram
 CreateUserStmt ::=
-    'CREATE' 'USER' IfNotExists UserSpecList RequireClauseOpt ConnectionOptions PasswordOrLockOptions
+    'CREATE' 'USER' IfNotExists UserSpecList RequireClauseOpt ConnectionOptions PasswordOption LockOption AttributeOption
 
 IfNotExists ::=
     ('IF' 'NOT' 'EXISTS')?
@@ -28,6 +28,12 @@ AuthOption ::=
 StringName ::=
     stringLit
 |   Identifier
+
+PasswordOption ::= ( 'PASSWORD' 'EXPIRE' ( 'DEFAULT' | 'NEVER' | 'INTERVAL' N 'DAY' )? | 'PASSWORD' 'HISTORY' ( 'DEFAULT' | N ) | 'PASSWORD' 'REUSE' 'INTERVAL' ( 'DEFAULT' | N 'DAY' ) | 'FAILED_LOGIN_ATTEMPTS' N | 'PASSWORD_LOCK_TIME' ( N | 'UNBOUNDED' ) )*
+
+LockOption ::= ( 'ACCOUNT' 'LOCK' | 'ACCOUNT' 'UNLOCK' )?
+
+AttributeOption ::= ( 'COMMENT' CommentString | 'ATTRIBUTE' AttributeString )?
 ```
 
 ## Examples
@@ -60,6 +66,68 @@ CREATE USER 'newuser4'@'%' IDENTIFIED BY 'newuserpassword' REQUIRE ISSUER '/C=US
 Query OK, 1 row affected (0.02 sec)
 ```
 
+Create a user who is locked upon creation.
+
+```sql
+CREATE USER 'newuser5'@'%' ACCOUNT LOCK;
+```
+
+```
+Query OK, 1 row affected (0.02 sec)
+```
+
+Create a user with a comment.
+
+```sql
+CREATE USER 'newuser6'@'%' COMMENT 'This user is created only for test';
+SELECT * FROM information_schema.user_attributes;
+```
+
+```
++-----------+------+---------------------------------------------------+
+| USER      | HOST | ATTRIBUTE                                         |
++-----------+------+---------------------------------------------------+
+| newuser6  | %    | {"comment": "This user is created only for test"} |
++-----------+------+---------------------------------------------------+
+1 rows in set (0.00 sec)
+```
+
+Create a user with an `email` attribute.
+
+```sql
+CREATE USER 'newuser7'@'%' ATTRIBUTE '{"email": "user@pingcap.com"}';
+SELECT * FROM information_schema.user_attributes;
+```
+
+```sql
++-----------+------+---------------------------------------------------+
+| USER      | HOST | ATTRIBUTE                                         |
++-----------+------+---------------------------------------------------+
+| newuser7  | %    | {"email": "user@pingcap.com"} |
++-----------+------+---------------------------------------------------+
+1 rows in set (0.00 sec)
+```
+
+Create a user who is not allowed to reuse the last 5 passwords:
+
+```sql
+CREATE USER 'newuser8'@'%' PASSWORD HISTORY 5;
+```
+
+```
+Query OK, 1 row affected (0.02 sec)
+```
+
+Create a user whose password is manually expired:
+
+```sql
+CREATE USER 'newuser9'@'%' PASSWORD EXPIRE;
+```
+
+```
+Query OK, 1 row affected (0.02 sec)
+```
+
 ## MySQL compatibility
 
 The following `CREATE USER` options are not yet supported by TiDB, and will be parsed but ignored:
@@ -67,7 +135,6 @@ The following `CREATE USER` options are not yet supported by TiDB, and will be p
 * TiDB does not support `WITH MAX_QUERIES_PER_HOUR`, `WITH MAX_UPDATES_PER_HOUR`, and `WITH MAX_USER_CONNECTIONS` options.
 * TiDB does not support the `DEFAULT ROLE` option.
 * TiDB does not support `PASSWORD EXPIRE`, `PASSWORD HISTORY` or other options related to password.
-* TiDB does not support the `ACCOUNT LOCK` and `ACCOUNT UNLOCK` options.
 
 ## See also
 
