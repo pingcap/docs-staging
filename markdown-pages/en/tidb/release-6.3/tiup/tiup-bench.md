@@ -7,7 +7,6 @@ summary: Learns how to stress test TiDB with TPC-C and TPC-H workloads using TiU
 
 When you test the performance of a database, it is often required to stress test the database. To facilitate this, TiUP has integrated the bench component, which provides two workloads for stress testing: [TPC-C](http://www.tpc.org/tpcc/) and [TPC-H](http://www.tpc.org/tpch/). The commands and flags are as follows. For more information, see the [TPC official website](http://www.tpc.org).
 
-
 ```bash
 tiup bench
 ```
@@ -70,42 +69,36 @@ Flags:
 
 1. Create 4 warehouses using 4 partitions via hash:
 
-    
     ```shell
     tiup bench tpcc --warehouses 4 --parts 4 prepare
     ```
 
 2. Run the TPC-C test:
 
-    
     ```shell
     tiup bench tpcc --warehouses 4 run
     ```
 
 3. Clean up data:
 
-    
     ```shell
     tiup bench tpcc --warehouses 4 cleanup
     ```
 
 4. Check the consistency:
 
-    
     ```shell
     tiup bench tpcc --warehouses 4 check
     ```
 
 5. Generate the CSV file:
 
-    
     ```shell
     tiup bench tpcc --warehouses 4 prepare --output-dir data --output-type=csv
     ```
 
 6. Generate the CSV file for the specified table:
 
-    
     ```shell
     tiup bench tpcc --warehouses 4 prepare --output-dir data --output-type=csv --tables history,orders
     ```
@@ -131,7 +124,6 @@ Flags:
 
 1. Prepare data:
 
-    
     ```shell
     tiup bench tpch --sf=1 prepare
     ```
@@ -140,21 +132,34 @@ Flags:
 
     - If you check the result, run this command:
 
-        
         ```shell
         tiup bench tpch --sf=1 --check=true run
         ```
 
     - If you do not check the result, run this command:
 
-        
         ```shell
         tiup bench tpch --sf=1 run
         ```
 
 3. Clean up data:
 
-    
     ```shell
     tiup bench tpch cleanup
+    ```
+
+## Test TiKV using YCSB
+
+1. Prepare data:
+
+    ```shell
+    # -c indicates the number of records to insert, which is mandatory
+    tiup bench ycsb prepare -c 10000
+    ```
+
+2. Run the YCSB test:
+
+    ```shell
+    # -c indicates the number of operations, which is mandatory. The default READ workload is 95% and the UPDATE workload is 5%.
+    tiup bench ycsb prepare -c 10000
     ```
