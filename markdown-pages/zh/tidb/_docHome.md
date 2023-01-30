@@ -5,7 +5,7 @@ hide_commit: true
 hide_leftNav: true
 ---
 
-<DocHomeContainer title="PingCAP 归档文档中心" subTitle="访问 TiDB 数据库的归档文档" archive>
+<DocHomeContainer title="PingCAP 归档文档中心" subTitle="访问 TiDB 数据库的归档文档。" archive>
 
 <p> </p>
 
