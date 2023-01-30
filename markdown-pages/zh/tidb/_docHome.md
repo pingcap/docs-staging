@@ -20,10 +20,10 @@ hide_leftNav: true
 
 | 版本        | 归档文档链接                                             | 归档日期 |
 | ---------- | ------------------------------------------------------ | ----------------- |
-| v6.2 (DMR) | [TiDB v6.2 文档](https://docs-archive.pingcap.com/zh/tidb/v6.2) | 2023 年 1 月 xx 日 |
-| v6.0 (DMR) | [TiDB v6.0 文档](https://docs-archive.pingcap.com/zh/tidb/v6.0) | 2023 年 1 月 xx 日 |
-| v3.1       | [TiDB v3.1 文档](https://docs-archive.pingcap.com/zh/tidb/v3.1) | 2023 年 1 月 xx 日 |
-| v2.1       | [TiDB v2.1 文档](https://docs-archive.pingcap.com/zh/tidb/v2.1) | 2023 年 1 月 xx 日 |
+| v6.2 (DMR) | [TiDB v6.2 文档](https://docs-archive.pingcap.com/zh/tidb/v6.2) | 2023 年 1 月 31 日 |
+| v6.0 (DMR) | [TiDB v6.0 文档](https://docs-archive.pingcap.com/zh/tidb/v6.0) | 2023 年 1 月 31 日 |
+| v3.1       | [TiDB v3.1 文档](https://docs-archive.pingcap.com/zh/tidb/v3.1) | 2023 年 1 月 31 日 |
+| v2.1       | [TiDB v2.1 文档](https://docs-archive.pingcap.com/zh/tidb/v2.1) | 2023 年 1 月 31 日 |
 
 <p>了解 <a href="https://cn.pingcap.com/tidb-release-support-policy/">TiDB 版本周期支持策略详情</a>。</p>
 
