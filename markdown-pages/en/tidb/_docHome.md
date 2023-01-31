@@ -5,7 +5,7 @@ hide_commit: true
 hide_leftNav: true
 ---
 
-<DocHomeContainer title="PingCAP Archived Docs" subTitle="Access the archived documentation of the TiDB database on this website" archive>
+<DocHomeContainer title="PingCAP Archived Docs" subTitle="Access the archived documentation of the TiDB database on this website." archive>
 
 <p> </p>
 
@@ -20,10 +20,10 @@ hide_leftNav: true
 
 | Release    | Archived documentation                                         | Archive date     |
 | ---------- | -------------------------------------------------------------- | ---------------- |
-| v6.2 (DMR) | [TiDB v6.2 documentation](https://docs-archive.pingcap.com/tidb/v6.2/) | January xx, 2023 |
-| v6.0 (DMR) | [TiDB v6.0 documentation](https://docs-archive.pingcap.com/tidb/v6.0/) | January xx, 2023 |
-| v3.1       | [TiDB v3.1 documentation](https://docs-archive.pingcap.com/tidb/v3.1/) | January xx, 2023 |
-| v2.1       | [TiDB v2.1 documentation](https://docs-archive.pingcap.com/tidb/v2.1) | January xx, 2023 |
+| v6.2 (DMR) | [TiDB v6.2 documentation](https://docs-archive.pingcap.com/tidb/v6.2/) | January 31, 2023 |
+| v6.0 (DMR) | [TiDB v6.0 documentation](https://docs-archive.pingcap.com/tidb/v6.0/) | January 31, 2023 |
+| v3.1       | [TiDB v3.1 documentation](https://docs-archive.pingcap.com/tidb/v3.1/) | January 31, 2023 |
+| v2.1       | [TiDB v2.1 documentation](https://docs-archive.pingcap.com/tidb/v2.1) | January 31, 2023 |
 
 <p>Learn more about <a href="https://www.pingcap.com/tidb-release-support-policy/?from=en">TiDB Release Support Policy</a>.</p>
 
