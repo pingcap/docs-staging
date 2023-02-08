@@ -150,11 +150,11 @@ tiup cluster check <cluster-name> --cluster
 tiup cluster upgrade <cluster-name> <version>
 ```
 
-以升级到 6.1.3 版本为例：
+以升级到 6.1.4 版本为例：
 
 
 ```
-tiup cluster upgrade <cluster-name> v6.1.3
+tiup cluster upgrade <cluster-name> v6.1.4
 ```
 
 > **注意：**
@@ -202,7 +202,7 @@ tiup cluster display <cluster-name>
 ```
 Cluster type:       tidb
 Cluster name:       <cluster-name>
-Cluster version:    v6.1.3
+Cluster version:    v6.1.4
 ```
 
 > **注意：**
@@ -248,7 +248,7 @@ tiup cluster upgrade <cluster-name> <version> --force
 
 
 ```
-tiup install ctl:v6.1.3
+tiup install ctl:v6.1.4
 ```
 
 ## 5. TiDB 6.1.0 兼容性变化
