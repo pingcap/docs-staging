@@ -120,7 +120,7 @@ title: 为 TiDB 组件间通信开启加密传输
 
     
     ```bash
-    tiup ctl:<cluster-version> pd -u https://127.0.0.1:2379 --cacert /path/to/ca.pem --cert /path/to/client.pem --key /path/to/client-key.pem
+    tiup ctl:v<CLUSTER_VERSION> pd -u https://127.0.0.1:2379 --cacert /path/to/ca.pem --cert /path/to/client.pem --key /path/to/client-key.pem
     ```
 
     

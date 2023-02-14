@@ -14,7 +14,7 @@ PD Control 是 PD 的命令行工具，用于获取集群状态信息和调整�
 
 ### 使用 TiUP
 
-可直接通过 `tiup ctl:<cluster-version> pd -u http://<pd_ip>:<pd_port> [-i]` 使用。
+可直接通过 `tiup ctl:v<CLUSTER_VERSION> pd -u http://<pd_ip>:<pd_port> [-i]` 使用。
 
 ### 下载安装包
 
@@ -40,14 +40,14 @@ PD Control 是 PD 的命令行工具，用于获取集群状态信息和调整�
 
 
 ```bash
-tiup ctl:<cluster-version> pd store -u http://127.0.0.1:2379
+tiup ctl:v<CLUSTER_VERSION> pd store -u http://127.0.0.1:2379
 ```
 
 交互模式：
 
 
 ```bash
-tiup ctl:<cluster-version> pd -i -u http://127.0.0.1:2379
+tiup ctl:v<CLUSTER_VERSION> pd -i -u http://127.0.0.1:2379
 ```
 
 使用环境变量：
@@ -55,14 +55,14 @@ tiup ctl:<cluster-version> pd -i -u http://127.0.0.1:2379
 
 ```bash
 export PD_ADDR=http://127.0.0.1:2379 &&
-tiup ctl:<cluster-version> pd
+tiup ctl:v<CLUSTER_VERSION> pd
 ```
 
 使用 TLS 加密：
 
 
 ```bash
-tiup ctl:<cluster-version> pd -u https://127.0.0.1:2379 --cacert="path/to/ca" --cert="path/to/cert" --key="path/to/key"
+tiup ctl:v<CLUSTER_VERSION> pd -u https://127.0.0.1:2379 --cacert="path/to/ca" --cert="path/to/cert" --key="path/to/key"
 ```
 
 ## 命令行参数 (flags)
