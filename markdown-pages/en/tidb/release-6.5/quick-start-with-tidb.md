@@ -411,11 +411,11 @@ Other requirements for the target machine:
 
     
     ```shell
-    tiup cluster deploy <cluster-name> <tidb-version> ./topo.yaml --user root -p
+    tiup cluster deploy <cluster-name> <version> ./topo.yaml --user root -p
     ```
 
     - `<cluster-name>`: Set the cluster name
-    - `<tidb-version>`: Set the TiDB cluster version. You can see all the supported TiDB versions by running the `tiup list tidb` command
+    - `<version>`: Set the TiDB cluster version, such as `v6.5.0`. You can see all the supported TiDB versions by running the `tiup list tidb` command
     - `-p`: Specify the password used to connect to the target machine.
 
         > **Note:**
