@@ -95,7 +95,7 @@ tiup cluster upgrade <cluster-name> <version> --transfer-timeout 600
 
 > **Note:**
 >
-> In the preceding command, you need to replace `<cluster-name>` and `<version>` with the actual cluster name and cluster version. For example, the version can be `v6.5.0`.
+> In the preceding command, you need to replace `<cluster-name>` and `<version>` with the actual cluster name and cluster version. For example, the version can be v6.6.0.
 
 ### Upgrade cautions
 
@@ -106,7 +106,7 @@ When you upgrade a TiCDC cluster, you need to pay attention to the following:
 - Since v6.3.0, TiCDC supports rolling upgrade. During the upgrade, the replication latency is stable and does not fluctuate significantly. Rolling upgrade takes effect automatically if the following conditions are met:
 
 - TiCDC is v6.3.0 or later.
-    - TiUP is v1.11.0 or later.
+    - TiUP is v1.11.3 or later.
     - At least two TiCDC instances are running in the cluster.
 
 ## Modify TiCDC cluster configurations using TiUP
