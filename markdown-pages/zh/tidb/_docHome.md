@@ -20,6 +20,7 @@ hide_leftNav: true
 
 | 版本        | 归档文档链接                                             | 归档日期 |
 | ---------- | ------------------------------------------------------ | ----------------- |
+| v6.3 (DMR) | [TiDB v6.3 文档](https://docs-archive.pingcap.com/zh/tidb/v6.3) | 2023 年 2 月 24 日 |
 | v6.2 (DMR) | [TiDB v6.2 文档](https://docs-archive.pingcap.com/zh/tidb/v6.2) | 2023 年 1 月 31 日 |
 | v6.0 (DMR) | [TiDB v6.0 文档](https://docs-archive.pingcap.com/zh/tidb/v6.0) | 2023 年 1 月 31 日 |
 | v3.1       | [TiDB v3.1 文档](https://docs-archive.pingcap.com/zh/tidb/v3.1) | 2023 年 1 月 31 日 |
