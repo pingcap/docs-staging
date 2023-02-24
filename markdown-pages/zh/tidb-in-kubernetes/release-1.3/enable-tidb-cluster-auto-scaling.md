@@ -125,17 +125,17 @@ TiDB Operator 会根据 `TidbClusterAutoScaler` CR 的配置，向 PD 发起请�
 
     
     ```shell
-    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.9/examples/auto-scale/tidb-cluster.yaml -n ${namespace}
+    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.10/examples/auto-scale/tidb-cluster.yaml -n ${namespace}
     ```
 
     
     ```shell
-    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.9/examples/auto-scale/tidb-monitor.yaml -n ${namespace}
+    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.10/examples/auto-scale/tidb-monitor.yaml -n ${namespace}
     ```
 
     
     ```shell
-    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.9/examples/auto-scale/tidb-cluster-auto-scaler.yaml  -n ${namespace}
+    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.10/examples/auto-scale/tidb-cluster-auto-scaler.yaml  -n ${namespace}
     ```
 
 2. 使用 [sysbench](https://github.com/akopytov/sysbench) 工具准备数据。

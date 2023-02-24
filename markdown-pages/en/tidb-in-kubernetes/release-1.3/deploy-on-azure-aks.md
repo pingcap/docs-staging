@@ -225,8 +225,8 @@ First, download the sample `TidbCluster` and `TidbMonitor` configuration files:
 
 
 ```shell
-curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.9/examples/aks/tidb-cluster.yaml && \
-curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.9/examples/aks/tidb-monitor.yaml
+curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.10/examples/aks/tidb-cluster.yaml && \
+curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.10/examples/aks/tidb-monitor.yaml
 ```
 
 Refer to [configure the TiDB cluster](configure-a-tidb-cluster.md) to further customize and configure the CR before applying.
@@ -582,7 +582,7 @@ For instance types that provide local disks, refer to [Lsv2-series](https://docs
 
     
     ```shell
-    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.9/manifests/eks/local-volume-provisioner.yaml
+    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.10/manifests/eks/local-volume-provisioner.yaml
     ```
 
 3. Use local storage.

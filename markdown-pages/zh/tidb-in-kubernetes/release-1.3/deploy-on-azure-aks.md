@@ -220,8 +220,8 @@ kubectl create namespace tidb-cluster
 
 
 ```shell
-curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.9/examples/aks/tidb-cluster.yaml && \
-curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.9/examples/aks/tidb-monitor.yaml
+curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.10/examples/aks/tidb-cluster.yaml && \
+curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.10/examples/aks/tidb-monitor.yaml
 ```
 
 如需了解更详细的配置信息或者进行自定义配置，请参考[配置 TiDB 集群](configure-a-tidb-cluster.md)
@@ -569,7 +569,7 @@ Azure Disk 支持多种磁盘类型。若需要低延迟、高吞吐，可以选
 
     
     ```shell
-    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.9/manifests/eks/local-volume-provisioner.yaml
+    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.3.10/manifests/eks/local-volume-provisioner.yaml
     ```
 
 3. 使用本地存储。
