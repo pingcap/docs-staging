@@ -117,11 +117,6 @@ The support for TLS authentication is configured differently. For detailed infor
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-The support for TLS authentication is configured differently. For detailed information, see [Enable TLS between TiDB Clients and Servers](https://docs.pingcap.com/tidb/stable/enable-tls-between-clients-and-servers).
-
-</CustomContent>
 
 | Authentication Method    | Supported        |
 | :------------------------| :--------------- |

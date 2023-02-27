@@ -19,11 +19,6 @@ When you are using Stale Read, TiDB will randomly select a replica for data read
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-If a transaction only involves read operations and is tolerant of data staleness to some extent, you can use Stale Read to get historical data. Using Stale Read, TiDB makes the query requests sent to any replica at the expense of some real-time performance, and thus increases the throughput of query executions. Especially in some scenarios where small tables are queried, if strongly consistent reads are used, leader might be concentrated on a certain storage node, causing the query pressure to be concentrated on that node as well. Therefore, that node might become a bottleneck for the whole query. Stale Read, however, can improve the overall query throughput and significantly improve the query performance.
-
-</CustomContent>
 
 ## Usages
 

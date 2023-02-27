@@ -16,11 +16,6 @@ You can import Bookshop table structures and data either [via TiUP](#method-1-vi
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-For TiDB Cloud, you can skip [Method 1: Via `tiup demo`](#method-1-via-tiup-demo) and import Bookshop table structures [via the import feature of TiDB Cloud](#method-2-via-tidb-cloud-import).
-
-</CustomContent>
 
 ### Method 1: Via `tiup demo`
 
@@ -30,11 +25,6 @@ If your TiDB cluster is deployed using [TiUP](/tiup/tiup-reference.md#tiup-refer
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-If your TiDB cluster is deployed using [TiUP](https://docs.pingcap.com/tidb/stable/tiup-reference) or you can connect to your TiDB server, you can quickly generate and import sample data for the Bookshop application by running the following command:
-
-</CustomContent>
 
 ```shell
 tiup demo bookshop prepare

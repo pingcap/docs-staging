@@ -13,11 +13,6 @@ From the [bikeshare example database](/import-example-data.md), you can see that
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-From the [bikeshare example database](/tidb-cloud/import-sample-data.md), you can see that the following two queries are executed in a similar manner:
-
-</CustomContent>
 
 
 ```sql

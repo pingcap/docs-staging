@@ -72,11 +72,6 @@ For more information about TiDB SQL users, see [TiDB User Account Management](/u
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-For more information about TiDB SQL users, see [TiDB User Account Management](https://docs.pingcap.com/tidb/stable/user-account-management).
-
-</CustomContent>
 
 ## Hibernate
 

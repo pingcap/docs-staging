@@ -30,12 +30,6 @@ After [tuning SQL performance](#sql-performance-tuning), if your application sti
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-* Transaction contention. For how to diagnose and resolve transaction contention, see [Troubleshoot Lock Conflicts](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts).
-* Hot spots. For how to diagnose and resolve hot spots, see [Troubleshoot Hotspot Issues](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues).
-
-</CustomContent>
 
 ### See also
 
@@ -45,8 +39,3 @@ After [tuning SQL performance](#sql-performance-tuning), if your application sti
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-* [SQL Performance Tuning](/tidb-cloud/tidb-cloud-sql-tuning-overview.md)
-
-</CustomContent>

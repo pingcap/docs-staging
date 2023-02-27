@@ -57,11 +57,6 @@ The following are some best practices for updating data:
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- Use [bulk-update](#bulk-update) when you need to update a large number of rows (for example, more than ten thousand). Because TiDB limits the size of a single transaction to 100 MB by default, too many data updates at once will result in holding locks for too long ([pessimistic transactions](/pessimistic-transaction.md)) or cause conflicts ([optimistic transactions](/optimistic-transaction.md)).
-
-</CustomContent>
 
 ### `UPDATE` example
 
@@ -169,11 +164,6 @@ However, if you need to update a large number of rows (for example, more than te
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-However, if you need to update a large number of rows (for example, more than ten thousand), it is recommended that you update the data iteratively, that is, updating only a portion of the data at each iteration until the update is complete. This is because TiDB limits the size of a single transaction to 100 MB by default. Too many data updates at once will result in holding locks for too long ([pessimistic transactions](/pessimistic-transaction.md), or causing conflicts ([optimistic transactions](/optimistic-transaction.md)). You can use a loop in your program or script to complete the operation.
-
-</CustomContent>
 
 This section provides examples of writing scripts to handle iterative updates. This example shows how a combination of `SELECT` and `UPDATE` should be done to complete a bulk-update.
 

@@ -28,12 +28,7 @@ Currently, it is not supported to only enable encrypted transmission of some spe
 
     </CustomContent>
 
-    <CustomContent platform="tidb-cloud">
-
-    If you choose `openssl`, you can refer to [generating self-signed certificates](https://docs.pingcap.com/tidb/stable/generate-self-signed-certificates).
-
-    </CustomContent>
-
+    
 2. Configure certificates.
 
     To enable mutual authentication among TiDB components, configure the certificates of TiDB, TiKV, and PD as follows.

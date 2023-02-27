@@ -11,11 +11,6 @@ Transaction isolation is one of the foundations of database transaction processi
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-Transaction isolation is one of the foundations of database transaction processing. Isolation is one of the four key properties of a transaction (commonly referred as [ACID](/tidb-cloud/tidb-cloud-glossary.md#acid)).
-
-</CustomContent>
 
 The SQL-92 standard defines four levels of transaction isolation: Read Uncommitted, Read Committed, Repeatable Read, and Serializable. See the following table for details:
 

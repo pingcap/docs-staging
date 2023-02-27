@@ -24,11 +24,6 @@ It is recommended that you use [OpenSSL](https://www.openssl.org/) to create key
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-It is recommended that you use [OpenSSL](https://www.openssl.org/) to create keys and certificates. The certificate generation process is similar to the process described in [Enable TLS Between TiDB Clients and Servers](https://docs.pingcap.com/tidb/stable/enable-tls-between-clients-and-servers). The following paragraphs demonstrate how to configure more attribute fields that need to be verified in the certificate.
-
-</CustomContent>
 
 ### Generate CA key and certificate
 

@@ -32,11 +32,6 @@ For detailed steps, see [Deploy a local test cluster](/quick-start-with-tidb.md#
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-See [Create a Serverless Tier cluster](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-serverless-tier-cluster).
-
-</CustomContent>
 
 ## Step 2. Get the code
 
@@ -1432,11 +1427,6 @@ If you are using a non-local cluster or MySQL client has not been installed, con
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-When using JDBC, you need to connect to your cluster and run the statement in the `src/main/resources/dbinit.sql` file to initialize the database tables manually.
-
-</CustomContent>
 
 </div>
 

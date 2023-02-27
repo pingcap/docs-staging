@@ -89,21 +89,6 @@ The final engine configuration is the session-level configuration, that is, the 
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-You can specify the engines using the following statement:
-
-```sql
-set @@session.tidb_isolation_read_engines = "engine list separated by commas";
-```
-
-or
-
-```sql
-set SESSION tidb_isolation_read_engines = "engine list separated by commas";
-```
-
-</CustomContent>
 
 If the queried table does not have a replica of the specified engine (for example, the engine is configured as "tiflash" but the table does not have a TiFlash replica), the query returns an error.
 

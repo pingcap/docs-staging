@@ -39,11 +39,6 @@ To make TiDB compatible with the collations of MySQL GBK character set, when you
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-To make TiDB compatible with the collations of MySQL GBK character set, when you first initialize the TiDB cluster, TiDB Cloud enables the [new framework for collations](/character-set-and-collation.md#new-framework-for-collations) by default.
-
-</CustomContent>
 
 After enabling the new framework for collations, if you check the collations corresponding to the GBK character set, you can see that the TiDB GBK default collation is changed to `gbk_chinese_ci`.
 

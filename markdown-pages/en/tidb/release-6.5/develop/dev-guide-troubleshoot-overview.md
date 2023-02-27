@@ -22,11 +22,6 @@ If you have questions about SQL operations, see [SQL FAQs](/faq/sql-faq.md).
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-If you have questions about SQL operations, see [SQL FAQs](https://docs.pingcap.com/tidb/stable/sql-faq).
-
-</CustomContent>
 
 ## Troubleshoot transaction issues
 

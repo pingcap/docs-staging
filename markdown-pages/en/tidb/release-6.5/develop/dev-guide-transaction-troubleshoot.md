@@ -97,11 +97,6 @@ For more information about error codes, see [Error Codes and Troubleshooting](/e
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-For more information about error codes, see [Error Codes and Troubleshooting](https://docs.pingcap.com/tidb/stable/error-codes).
-
-</CustomContent>
 
 ```python
 while True:
@@ -135,11 +130,6 @@ For information about how to troubleshoot and resolve transaction conflicts, see
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-For information about how to troubleshoot and resolve transaction conflicts, see [Troubleshoot Lock Conflicts](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts).
-
-</CustomContent>
 
 ## See also
 

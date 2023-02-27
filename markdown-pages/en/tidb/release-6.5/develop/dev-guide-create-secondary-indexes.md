@@ -26,11 +26,6 @@ For more information about secondary indexes, see [Secondary Indexes](/best-prac
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-For more information about secondary indexes, see [Secondary Indexes](https://docs.pingcap.com/tidb/stable/tidb-best-practices#secondary-index).
-
-</CustomContent>
 
 In TiDB, you can either [add a secondary index to an existing table](#add-a-secondary-index-to-an-existing-table) or [create a secondary index when creating a new table](#create-a-secondary-index-when-creating-a-new-table).
 
@@ -152,11 +147,6 @@ The execution plan does not return the same operator every time. This is because
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-The execution plan does not return the same operator every time. This is because TiDB uses a **Cost-Based Optimization (CBO)** approach, in which an execution plan depends on both rules and data distribution. For more information about TiDB SQL performance, see [SQL Tuning Overview](/tidb-cloud/tidb-cloud-sql-tuning-overview.md).
-
-</CustomContent>
 
 > **Note:**
 >

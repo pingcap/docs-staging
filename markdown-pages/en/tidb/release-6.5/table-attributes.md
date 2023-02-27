@@ -13,11 +13,6 @@ Currently, TiDB only supports adding the `merge_option` attribute to a table or 
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-Currently, TiDB only supports adding the `merge_option` attribute to a table or partition to control the Region merge behavior. The `merge_option` attribute is only part of how to deal with hotspots.
-
-</CustomContent>
 
 > **Note:**
 >
