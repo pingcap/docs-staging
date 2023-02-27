@@ -294,7 +294,7 @@ export function filterCloud(argv) {
     nPath.resolve(dest, `${lang}/tidbcloud/master`)
   );
   rimraf.sync(docsDestPath);
-  options.pipelines.push(() => replaceCustomContentStream("tidb-cloud"));
+  options.pipelines.push(() => replaceCustomContentStream("tidb"));
   retrieveCloudMDsFromZip(
     {
       repo,
