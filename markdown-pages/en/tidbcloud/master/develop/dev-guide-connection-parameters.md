@@ -12,11 +12,6 @@ If you are interested in more tips about Java application development, see [Best
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-If you are interested in more tips about Java application development, see [Best Practices for Developing Java Applications with TiDB](https://docs.pingcap.com/tidb/stable/java-app-best-practices)
-
-</CustomContent>
 
 ## Connection pool
 

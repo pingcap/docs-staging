@@ -157,11 +157,6 @@ For how to locate and resolve transaction conflicts, see [Troubleshoot Lock Conf
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-For how to locate and resolve transaction conflicts, see [Troubleshoot Lock Conflicts](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts).
-
-</CustomContent>
 
 ## Best practices for developing Java applications with TiDB
 
@@ -171,11 +166,6 @@ See [Best Practices for Developing Java Applications with TiDB](/best-practices/
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-See [Best Practices for Developing Java Applications with TiDB](https://docs.pingcap.com/tidb/stable/java-app-best-practices).
-
-</CustomContent>
 
 ### See also
 
@@ -185,8 +175,3 @@ See [Best Practices for Developing Java Applications with TiDB](https://docs.pin
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- [Highly Concurrent Write Best Practices](https://docs.pingcap.com/tidb/stable/high-concurrency-best-practices)
-
-</CustomContent>

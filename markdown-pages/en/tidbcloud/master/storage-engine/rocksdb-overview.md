@@ -47,13 +47,6 @@ Generally speaking, users do not need to change this configuration. If the user 
 
 ## WriteStall
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This section is for TiDB and not applicable to TiDB Cloud.
-
-</CustomContent>
 
 The L0 of RocksDB is different from other levels. The SSTs of L0 are arranged in the order of generation. The key ranges between the SSTs can overlap. Therefore, each SST in L0 must be queried in turn when a query is performed. In order not to affect query performance, WriteStall is triggered to block writing when there are too many files in L0.
 

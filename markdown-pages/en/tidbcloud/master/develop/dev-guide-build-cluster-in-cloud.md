@@ -15,11 +15,6 @@ If you need to run TiDB on your local machine, see [Starting TiDB Locally](/quic
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-This document walks you through the quickest way to get started with TiDB Cloud. You will create a TiDB cluster, connect to it, and run a sample application on it.
-
-</CustomContent>
 
 ## Step 1. Create a Serverless Tier cluster
 
@@ -50,13 +45,6 @@ This document walks you through the quickest way to get started with TiDB Cloud.
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> For [Serverless Tier clusters](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta), when you connect to your cluster, you must include the prefix for your cluster in the user name and wrap the name with quotation marks. For more information, see [User name prefix](/tidb-cloud/select-cluster-tier.md#user-name-prefix).
-
-</CustomContent>
 
 ## Step 2. Connect to a cluster
 
@@ -147,14 +135,6 @@ mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> - When you connect to a Serverless Tier cluster, you must [use the TLS connection](/tidb-cloud/secure-connections-to-serverless-tier-clusters.md).
-> - If you encounter problems when connecting to a Serverless Tier cluster, you can read [Secure Connections to Serverless Tier Clusters](/tidb-cloud/secure-connections-to-serverless-tier-clusters.md) for more information.
-
-</CustomContent>
 
 3. Fill in the password to sign in.
 

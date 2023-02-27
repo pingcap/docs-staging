@@ -183,11 +183,6 @@ set config tikv pessimistic-txn.pipelined='false';
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-If the application logic relies on the locking or lock waiting mechanisms, or if you want to guarantee as much as possible the success rate of transaction commits even in the case of TiKV cluster anomalies, you can [contact TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md) to disable the pipelined locking feature.
-
-</CustomContent>
 
 ## In-memory pessimistic lock
 

@@ -15,11 +15,6 @@ You can configure Coprocessor Cache via the `tikv-client.copr-cache` configurati
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-The Coprocessor Cache feature is enabled by default. The maximum size of the data that can be cached is 1000 MB.
-
-</CustomContent>
 
 ## Feature description
 

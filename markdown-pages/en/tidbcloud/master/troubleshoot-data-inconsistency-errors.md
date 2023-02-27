@@ -13,11 +13,6 @@ This document describes the meanings of data inconsistency errors and provides s
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-This document describes the meanings of data inconsistency errors and provides some methods to bypass the consistency check. If a data consistency error occurs, you can [contact TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md).
-
-</CustomContent>
 
 ## Error explanation
 
@@ -90,11 +85,6 @@ If you encounter a data inconsistency error, [get support](/support.md) from Pin
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-If you encounter a data inconsistency error, [contact TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md) for troubleshooting immediately instead of dealing with the error by yourself. If your application needs to skip such errors urgently, you can use the following methods to bypass the check.
-
-</CustomContent>
 
 ### Rewrite SQL
 

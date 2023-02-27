@@ -187,13 +187,6 @@ mysql> SELECT * FROM t1;
 
 ### ddl_slow_threshold
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -251,11 +244,6 @@ For more possible values of this variable, see [Authentication plugin status](/s
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- If you need to change the default behavior of the client connection for the expired password, contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md).
-
-</CustomContent>
 
 ### error_count
 
@@ -511,11 +499,6 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable ensures that all connections to TiDB are either on a local socket, or using TLS.
-
-</CustomContent>
 
 - Setting this variable to `ON` requires you to connect to TiDB from a session that has TLS enabled. This helps prevent lock-out scenarios when TLS is not configured correctly.
 - This setting was previously a `tidb.toml` option (`security.require-secure-transport`), but changed to a system variable starting from TiDB v6.1.0.
@@ -594,13 +577,6 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- Scope: NONE
-- Default value: ""
-- The location of the certificate authority file (if there is one). The value of this variable is defined by the TiDB configuration item [`ssl-ca`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#ssl-ca).
-
-</CustomContent>
 
 ### ssl_cert
 
@@ -612,13 +588,6 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- Scope: NONE
-- Default value: ""
-- The location of the certificate file (if there is a file) that is used for SSL/TLS connections. The value of this variable is defined by the TiDB configuration item [`ssl-cert`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#ssl-cert).
-
-</CustomContent>
 
 ### ssl_key
 
@@ -630,13 +599,6 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- Scope: NONE
-- Default value: ""
-- The location of the private key file (if there is one) that is used for SSL/TLS connections. The value of this variable is defined by TiDB configuration item [`ssl-key`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#ssl-key).
-
-</CustomContent>
 
 ### system_time_zone
 
@@ -692,13 +654,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 ### tidb_allow_remove_auto_inc <span class="version-mark">New in v2.1.18 and v3.0.4</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION
 - Type: Boolean
@@ -731,11 +686,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- For detailed introduction of this variable, see [Introduction to Statistics](/statistics.md).
-
-</CustomContent>
 
 ### tidb_auto_analyze_end_time
 
@@ -900,13 +850,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 ### tidb_check_mb4_value_in_utf8
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -938,13 +881,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 ### tidb_config
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -992,11 +928,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- Default value: `ON`
-
-</CustomContent>
 
 - This variable only applies to pessimistic transactions. For optimistic transactions, use [`tidb_constraint_check_in_place`](#tidb_constraint_check_in_place) instead.
 - When this variable is set to `OFF`, TiDB defers the unique constraint check of a unique index (to the next time when executing a statement that requires a lock to the index or to the time when committing the transaction). This helps improve performance but might be an unexpected behavior for some applications. See [Constraints](/constraints.md#pessimistic-transactions) for details.
@@ -1065,13 +996,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 ### tidb_ddl_disk_quota <span class="version-mark">New in v6.3.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud. Do not change the default value of this variable for TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -1083,13 +1007,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 ### tidb_ddl_enable_fast_reorg <span class="version-mark">New in v6.3.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> To improve the speed for index creation using this variable, make sure that your TiDB cluster is hosted on AWS and your TiDB node size is at least 8 vCPU. For [Serverless Tier](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta) clusters, this feature is unavailable.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -1112,19 +1029,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-> **Warning:**
->
-> Currently, this feature is not fully compatible with [altering multiple columns or indexes in a single `ALTER TABLE` statement](/sql-statements/sql-statement-alter-table.md). When adding a unique index with the index acceleration, you need to avoid altering other columns or indexes in the same statement.
->
-> When [PITR (Point-in-time recovery)](/tidb-cloud/backup-and-restore.md) is disabled, the speed of adding indexes is expected to be about 10 times that in v6.1.0. However, there is no performance improvement when both PITR and index acceleration are enabled. To optimize performance, it is recommended that you disable PITR, add indexes in a quick way, then enable PITR and perform a full backup. Otherwise, the following expected behaviors might occur:
->
-> - When PITR starts working first, the index adding job automatically falls back to the legacy mode by default, even if the configuration is set to `ON`. The index is added slowly.
-> - When the index adding job starts first, it prevents the log backup job of PITR from starting by throwing an error, which does not affect the index adding job in progress. After the index adding job is completed, you need to restart the log backup job and perform a full backup manually.
-> - When a log backup job of PITR and an index adding job start at the same time, no error is prompted because the two jobs are unable to detect each other. PITR does not back up the newly added index. After the index adding job is completed, you still need to restart the log backup job and perform a full backup manually.
-
-</CustomContent>
 
 ### tidb_ddl_error_count_limit
 
@@ -1208,12 +1112,7 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
     </CustomContent>
 
-    <CustomContent platform="tidb-cloud">
-
-    This variable only applies to optimistic transactions, not to pessimistic transactions. The number of retries for pessimistic transactions is 256.
-
-    </CustomContent>
-
+    
 ### tidb_distsql_scan_concurrency
 
 - Scope: SESSION | GLOBAL
@@ -1374,13 +1273,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 ### tidb_enable_collect_execution_info
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -1424,12 +1316,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- Default value: `ON`
-- This variable is read-only. For TiDB Cloud, the Security Enhanced Mode (SEM) is enabled by default.
-
-</CustomContent>
 
 - SEM is inspired by the design of systems such as [Security-Enhanced Linux](https://en.wikipedia.org/wiki/Security-Enhanced_Linux). It reduces the abilities of users with the MySQL `SUPER` privilege and instead requires `RESTRICTED` fine-grained privileges to be granted as a replacement. These fine-grained privileges include:
     - `RESTRICTED_TABLES_ADMIN`: The ability to write data to system tables in the `mysql` schema and to see sensitive columns on `information_schema` tables.
@@ -1754,11 +1640,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- The optimizer determines whether the statistics of a table is outdated in this way: since the last time `ANALYZE` is executed on a table to get the statistics, if 80% of the table rows are modified (the modified row count divided by the total row count), the optimizer determines that the statistics of this table is outdated.
-
-</CustomContent>
 
 - By default (with the variable value `OFF`), when the statistics of a table is outdated, the optimizer still keeps using the statistics of the table. If you set the variable value to `ON`, the optimizer determines that the statistics of the table is no longer reliable except for the total row count. Then, the optimizer uses the pseudo statistics.
 - If the data on a table is frequently modified without executing `ANALYZE` on this table in time, to keep the execution plan stable, it is recommended to set the variable value to `OFF`.
@@ -1778,11 +1659,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- When the operator that reads data has only one thread left and the memory usage of a single SQL statement continues to exceed [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query), this SQL statement triggers other memory control behaviors, such as spilling data to disk.
-
-</CustomContent>
 
 ### tidb_enable_reuse_chunk <span class="version-mark">New in v6.4.0</span>
 
@@ -1794,13 +1670,6 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 ### tidb_enable_slow_log
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -1865,13 +1734,6 @@ Query OK, 0 rows affected (0.09 sec)
 
 ### tidb_enable_telemetry <span class="version-mark">New in v4.0.2</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -1884,11 +1746,6 @@ Query OK, 0 rows affected (0.09 sec)
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable is used to dynamically control whether the telemetry collection in TiDB is enabled.
-
-</CustomContent>
 
 ### `tidb_enable_tiflash_read_for_write_stmt` <span class="version-mark">New in v6.3.0</span>
 
@@ -1907,13 +1764,6 @@ Query OK, 0 rows affected (0.09 sec)
 
 ### tidb_enable_top_sql <span class="version-mark">New in v5.4.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 > **Warning:**
 >
@@ -1930,11 +1780,6 @@ Query OK, 0 rows affected (0.09 sec)
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable is used to control whether to enable the [Top SQL](https://docs.pingcap.com/tidb/stable/top-sql) feature.
-
-</CustomContent>
 
 ### tidb_enable_tso_follower_proxy <span class="version-mark">New in v5.3.0</span>
 
@@ -2064,13 +1909,6 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_expensive_query_time_threshold
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -2084,13 +1922,6 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_force_priority
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -2173,32 +2004,15 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable specifies the way of scanning locks in the Resolve Locks step of GC. When the variable value is set to `LEGACY`, TiDB scans locks by Regions. When the value `PHYSICAL` is used, it enables each TiKV node to bypass the Raft layer and directly scan data, which can effectively mitigate the impact of GC wakening up all Regions, thus improving the execution speed in the Resolve Locks step.
-
-</CustomContent>
 
 ### tidb_general_log
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
 - Type: Boolean
 - Default value: `OFF`
 
-<CustomContent platform="tidb-cloud">
-
-- This variable is used to set whether to record all SQL statements in the log. This feature is disabled by default. If you need to trace all SQL statements when locating issues, enable this feature.
-
-</CustomContent>
 
 <CustomContent platform="tidb">
 
@@ -2462,11 +2276,6 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable is used to set the maximum days that the log is retained on the current TiDB instance.
-
-</CustomContent>
 
 ### tidb_low_resolution_tso
 
@@ -2539,11 +2348,6 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- Specifies what operation TiDB performs when a single SQL statement exceeds the memory quota specified by [`tidb_mem_quota_query`](#tidb_mem_quota_query) and cannot be spilled over to disk.
-
-</CustomContent>
 
 - The default value is `CANCEL`, but in TiDB v4.0.2 and earlier versions, the default value is `LOG`.
 - This setting was previously a `tidb.toml` option (`oom-action`), but changed to a system variable starting from TiDB v6.1.0.
@@ -2606,14 +2410,6 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- For versions earlier than TiDB v6.1.0, this is a session scope variable. Starting from v6.1.0, `tidb_mem_quota_query` is a `SESSION | GLOBAL` scope variable.
-- For versions earlier than TiDB v6.5.0, this variable is used to set the threshold value of memory quota for **a query**. If the memory quota of a query during execution exceeds the threshold value, TiDB performs the operation defined by [`tidb_mem_oom_action`](#tidb_mem_oom_action-new-in-v610).
-- For TiDB v6.5.0 and later versions, this variable is used to set the threshold value of memory quota for **a session**. If the memory quota of a session during execution exceeds the threshold value, TiDB performs the operation defined by [`tidb_mem_oom_action`](#tidb_mem_oom_action-new-in-v610). Note that starting from TiDB v6.5.0, the memory usage of a session contains the memory consumed by the transactions in the session.
-- When you set the variable value to `0` or `-1`, the memory threshold is positive infinity. When you set a value smaller than 128, the value will be defaulted to `128`.
-
-</CustomContent>
 
 ### tidb_memory_debug_mode_alarm_ratio
 
@@ -2633,13 +2429,6 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_memory_usage_alarm_ratio
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2658,23 +2447,9 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable sets the memory usage ratio that triggers the [tidb-server memory alarm](https://docs.pingcap.com/tidb/stable/configure-memory-usage#trigger-the-alarm-of-excessive-memory-usage).
-- When this variable is configured to `0` or `1`, it means the memory threshold alarm feature is disabled.
-- When this variable is configured to a value greater than `0` and less than `1`, it means that the memory threshold alarm feature is enabled.
-
-</CustomContent>
 
 ### `tidb_memory_usage_alarm_keep_record_num` <span class="version-mark">New in v6.4.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2705,13 +2480,6 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_metric_query_range_duration <span class="version-mark">New in v4.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION
 - Type: Integer
@@ -2722,13 +2490,6 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_metric_query_step <span class="version-mark">New in v4.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION
 - Type: Integer
@@ -3289,13 +3050,6 @@ SHOW WARNINGS;
 
 ### tidb_opt_write_row_id
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION
 - Type: Boolean
@@ -3329,13 +3083,6 @@ SHOW WARNINGS;
 
 ### tidb_placement_mode <span class="version-mark">New in v6.0.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -3349,23 +3096,11 @@ SHOW WARNINGS;
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable controls whether DDL statements ignore the [placement rules specified in SQL](https://docs.pingcap.com/tidb/stable/placement-rules-in-sql). When the variable value is `IGNORE`, all placement rule options are ignored.
-
-</CustomContent>
 
 - It is intended to be used by logical dump/restore tools to ensure that tables can always be created even if invalid placement rules are assigned. This is similar to how mysqldump writes `SET FOREIGN_KEY_CHECKS=0;` to the start of every dump file.
 
 ### tidb_pprof_sql_cpu <span class="version-mark">New in v4.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -3466,13 +3201,6 @@ SHOW WARNINGS;
 
 ### tidb_record_plan_in_slow_log
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -3482,13 +3210,6 @@ SHOW WARNINGS;
 
 ### tidb_redact_log
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -3526,13 +3247,6 @@ SHOW WARNINGS;
 
 ### tidb_restricted_read_only <span class="version-mark">New in v5.2.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3565,13 +3279,6 @@ SHOW WARNINGS;
 
 ### tidb_row_format_version
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -3678,13 +3385,6 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 ### tidb_slow_log_threshold
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -3696,13 +3396,6 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 ### tidb_slow_query_file
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION
 - Default value: ""
@@ -3734,11 +3427,6 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable is used to configure the different cluster IDs in a [bi-directional replication](https://docs.pingcap.com/tidb/stable/ticdc-bidirectional-replication) cluster.
-
-</CustomContent>
 
 ### tidb_stats_cache_mem_quota <span class="version-mark">New in v6.1.0</span>
 
@@ -3904,13 +3592,6 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_top_sql_max_meta_count <span class="version-mark">New in v6.0.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3924,21 +3605,9 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable is used to control the maximum number of SQL statement types collected by [Top SQL](https://docs.pingcap.com/tidb/stable/top-sql) per minute.
-
-</CustomContent>
 
 ### tidb_top_sql_max_time_series_count <span class="version-mark">New in v6.0.0</span>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 > **Note:**
 >
@@ -3956,11 +3625,6 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable is used to control how many SQL statements that contribute the most to the load (that is, top N) can be recorded by [Top SQL](https://docs.pingcap.com/tidb/stable/top-sql) per minute.
-
-</CustomContent>
 
 ### tidb_track_aggregate_memory_usage
 
@@ -4133,11 +3797,6 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-- This variable is used to control the batch size of transaction commit requests that TiDB sends to TiKV. If most of the transactions in the application workload have a large number of write operations, adjusting this variable to a larger value can improve the performance of batch processing. However, if this variable is set to too large a value and exceeds the limit of TiKV's maximum size of a single log (which is 8 MB by default), the commits might fail.
-
-</CustomContent>
 
 ### tidb_txn_mode
 

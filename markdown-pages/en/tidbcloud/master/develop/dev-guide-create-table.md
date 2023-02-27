@@ -237,13 +237,6 @@ CREATE TABLE `bookshop`.`users` (
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> The steps provided in this guide is **_ONLY_** for quick start. For more instructions, refer to [Use an HTAP Cluster with TiFlash](/tiflash/tiflash-overview.md).
-
-</CustomContent>
 
 Suppose that you want to perform OLAP analysis on the `ratings` table using the `bookshop` application, for example, to query **whether the rating of a book has a significant correlation with the time of the rating**, which is to analyze whether the user's rating of the book is objective or not. Then you need to query the `score` and `rated_at` fields of the entire `ratings` table. This operation is resource-intensive for an OLTP-only database. Or you can use some ETL or other data synchronization tools to export the data from the OLTP database to a dedicated OLAP database for analysis.
 
@@ -259,11 +252,6 @@ To learn more about TiDB HTAP capabilities, refer to the following documents: [Q
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-To learn more about TiDB HTAP capabilities, see [TiDB Cloud HTAP Quick Start](/tidb-cloud/tidb-cloud-htap-quickstart.md) and [Use an HTAP Cluster with TiFlash](/tiflash/tiflash-overview.md).
-
-</CustomContent>
 
 In this example, [TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview) has been chosen as the data analysis engine for the `bookshop` database.
 

@@ -13,13 +13,6 @@ The `SELECT` statement is used to read data from TiDB.
 
 ![SelectStmt](https://download.pingcap.com/images/docs/sqlgram/SelectStmt.png)
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> The `SELECT ... INTO OUTFILE` statement is not supported by TiDB Cloud.
-
-</CustomContent>
 
 **FromDual:**
 

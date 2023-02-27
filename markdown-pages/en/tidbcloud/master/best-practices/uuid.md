@@ -29,11 +29,6 @@ It is recommended to not set the `swap_flag` with TiDB to avoid [hotspots](/best
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-It is recommended to not set the `swap_flag` with TiDB to avoid hotspots.
-
-</CustomContent>
 
 You can also explicitly set the [`CLUSTERED` option](/clustered-indexes.md) for UUID based primary keys to avoid hotspots.
 
@@ -45,11 +40,6 @@ In the screenshot of the [Key Visualizer](/dashboard/dashboard-key-visualizer.md
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-In the screenshot of the [Key Visualizer](/tidb-cloud/tune-performance.md#key-visualizer) below, you can see that writes are concentrated in a single region of the `uuid_demo_2` table that has the order of the fields swapped in the binary format.
-
-</CustomContent>
 
 ![Key Visualizer](https://download.pingcap.com/images/docs/best-practices/uuid_keyviz.png)
 

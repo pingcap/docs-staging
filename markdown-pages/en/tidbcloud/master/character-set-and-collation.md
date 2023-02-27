@@ -493,11 +493,6 @@ SELECT VARIABLE_VALUE FROM mysql.tidb WHERE VARIABLE_NAME='new_collation_enabled
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-This new framework supports semantically parsing collations. TiDB enables the new framework by default when a cluster is first initialized.
-
-</CustomContent>
 
 Under the new framework, TiDB supports the `utf8_general_ci`, `utf8mb4_general_ci`, `utf8_unicode_ci`, `utf8mb4_unicode_ci`, `gbk_chinese_ci`, and `gbk_bin` collations, which is compatible with MySQL.
 

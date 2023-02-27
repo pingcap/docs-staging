@@ -49,11 +49,6 @@ To adjust the maximum number of deadlock events that can be recorded in the `DEA
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-The information of the recent 10 deadlock events is recorded in the `DEADLOCKS` table.
-
-</CustomContent>
 
 > **Warning:**
 >
@@ -87,13 +82,6 @@ In the above fields, if the information of a field is not applicable or currentl
 
 ## Retryable deadlock errors
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This section is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 <CustomContent platform="tidb">
 

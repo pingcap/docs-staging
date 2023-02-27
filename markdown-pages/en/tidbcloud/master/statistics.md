@@ -127,13 +127,6 @@ The current sampling rate is calculated based on an adaptive algorithm. When you
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> Normally, `STATS_META` is more credible than `TABLE_KEYS`. However, after importing data through TiDB Cloud console (see [Import Sample Data](/tidb-cloud/import-sample-data.md)), the result of `STATS_META` is `0`. To handle this situation, you can use `TABLE_KEYS` to calculate the sampling rate when the result of `STATS_META` is much smaller than the result of `TABLE_KEYS`.
-
-</CustomContent>
 
 ##### Collect statistics on some columns
 
@@ -172,12 +165,7 @@ If a table has many columns, collecting statistics on all the columns can cause 
 
         </CustomContent>
 
-        <CustomContent platform="tidb-cloud">
-
-        After the setting, TiDB writes the `PREDICATE COLUMNS` information to the `mysql.column_stats_usage` system table every 300 seconds.
-
-        </CustomContent>
-
+        
     2. After the query pattern of your business is relatively stable, collect statistics on `PREDICATE COLUMNS` by using the following syntax:
 
         
@@ -381,12 +369,7 @@ Since TiDB v6.0, TiDB supports using the `KILL` statement to terminate an `ANALY
 
     </CustomContent>
 
-    <CustomContent platform="tidb-cloud">
-
-    To terminate the `ANALYZE` task, you can execute the `KILL TIDB ${id};` statement, where `${id}` is the `ID` of the background `ANALYZE` task obtained from the previous step.
-
-    </CustomContent>
-
+    
 For more information on the `KILL` statement, see [`KILL`](/sql-statements/sql-statement-kill.md).
 
 ### Control `ANALYZE` concurrency
@@ -428,11 +411,6 @@ The `ANALYZE` configuration persistence feature is enabled by default (the syste
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-The `ANALYZE` configuration persistence feature is disabled by default. To enable the feature, ensure that the system variable `tidb_persist_analyze_options` is `ON` and set the system variable `tidb_analyze_version` to `2`.
-
-</CustomContent>
 
 You can use this feature to record the persistence configurations specified in the `ANALYZE` statement when executing the statement manually. Once recorded, the next time TiDB automatically updates statistics or you manually collect statistics without specifying these configuration, TiDB will collect statistics according to the recorded configurations.
 
@@ -675,13 +653,6 @@ The preceding statement only deletes GlobalStats generated in dynamic pruning mo
 
 ## Load statistics
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This section is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 By default, depending on the size of column statistics, TiDB loads statistics differently as follows:
 
@@ -704,13 +675,6 @@ After enabling the synchronously loading statistics feature, you can further con
 
 ## Import and export statistics
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> This section is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 ### Export statistics
 

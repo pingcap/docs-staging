@@ -56,11 +56,6 @@ Executing `SHOW TABLE REGIONS` returns the following columns:
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-* `SCHEDULING_CONSTRAINTS`: The placement policy settings associated with the table or partition to which a Region belongs.
-
-</CustomContent>
 
 * `SCHEDULING_STATE`: The scheduling state of the Region which has a placement policy.
 

@@ -13,11 +13,6 @@ You can specify the record interval by configuring [`hot-regions-write-interval`
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-By default, the record interval is 10 minutes, and the period for reserving history information about hot Regions is 7 days.
-
-</CustomContent>
 
 
 ```sql

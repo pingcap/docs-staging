@@ -9,11 +9,6 @@ summary: Learn the architecture and key features of TiFlash.
 
 In TiFlash, the columnar replicas are asynchronously replicated according to the Raft Learner consensus algorithm. When these replicas are read, the Snapshot Isolation level of consistency is achieved by validating Raft index and multi-version concurrency control (MVCC).
 
-<CustomContent platform="tidb-cloud">
-
-With TiDB Cloud, you can create an HTAP cluster easily by specifying one or more TiFlash nodes according to your HTAP workload. If the TiFlash node count is not specified when you create the cluster or you want to add more TiFlash nodes, you can change the node count by [scaling the cluster](/tidb-cloud/scale-tidb-cluster.md).
-
-</CustomContent>
 
 ## Architecture
 
@@ -90,11 +85,6 @@ You can either use TiDB to read TiFlash replicas for medium-scale analytical pro
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-You can use TiDB to read TiFlash replicas for analytical processing. See the following sections for details:
-
-</CustomContent>
 
 - [Create TiFlash Replicas](/tiflash/create-tiflash-replicas.md)
 - [Use TiDB to Read TiFlash Replicas](/tiflash/use-tidb-to-read-tiflash.md)

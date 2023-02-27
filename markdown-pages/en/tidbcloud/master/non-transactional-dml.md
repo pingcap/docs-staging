@@ -338,11 +338,6 @@ If the error occurs when the selected shard column is not one of these unsupport
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-If the error occurs when the selected shard column is not one of these unsupported types, [contact TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md).
-
-</CustomContent>
 
 ### Non-transactional `DELETE` has "exceptional" behavior that is not equivalent to ordinary `DELETE`
 

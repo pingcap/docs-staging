@@ -31,11 +31,6 @@ For detailed steps, see [Deploy a local test cluster](/quick-start-with-tidb.md#
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-See [Create a Serverless Tier cluster](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-serverless-tier-cluster).
-
-</CustomContent>
 
 ## Step 2: Install JDK
 

@@ -26,13 +26,6 @@ In addition, TiDB does not support the MySQL replication protocol, but provides 
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> For information about transaction differences between MySQL and TiDB, see [Pessimistic Transaction Mode](/pessimistic-transaction.md#difference-with-mysql-innodb).
-
-</CustomContent>
 
 ## Unsupported features
 
@@ -102,13 +95,6 @@ mysql> SELECT _tidb_rowid, id FROM t;
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-> **Note:**
->
-> The `AUTO_INCREMENT` attribute might cause hotspot in production environments. See [Troubleshoot HotSpot Issues](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#handle-auto-increment-primary-key-hotspot-tables-using-auto_random) for details. It is recommended to use [`AUTO_RANDOM`](/auto-random.md) instead.
-
-</CustomContent>
 
 ### Performance schema
 
@@ -118,11 +104,6 @@ TiDB uses a combination of [Prometheus and Grafana](/tidb-monitoring-api.md) to 
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-To check performance metrics in TiDB Cloud, you can either check the cluster overview page on the TiDB Cloud console or use [third-party monitoring integrations](/tidb-cloud/third-party-monitoring-integrations.md). Performance schema tables return empty results in TiDB.
-
-</CustomContent>
 
 ### Query Execution Plan
 

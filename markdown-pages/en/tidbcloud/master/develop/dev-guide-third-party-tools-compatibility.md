@@ -45,11 +45,6 @@ Do not use these variables. One common scenario is monitoring. TiDB is well obse
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-Do not use these variables. One common scenario is monitoring. TiDB Cloud is well observable and does not require querying from server status variables. For more information about TiDB Cloud monitoring services, refer to [Monitor a TiDB Cluster](/tidb-cloud/monitor-tidb-cluster.md).
-
-</CustomContent>
 
 ### TiDB distinguishes between `TIMESTAMP` and `DATETIME` in error messages
 
@@ -65,11 +60,6 @@ Do not use the error messages for string matching. Instead, use [Error Codes](/e
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-Do not use the error messages for string matching. Instead, use [Error Codes](https://docs.pingcap.com/tidb/stable/error-codes) for troubleshooting.
-
-</CustomContent>
 
 ### TiDB does not support the `CHECK TABLE` statement
 

@@ -53,11 +53,6 @@ To improve query performance of various user scenarios, TiDB provides you with s
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-To improve query performance of various user scenarios, TiDB provides you with some specialized types of indexes. For details of each type, see [Indexing and constraints](https://docs.pingcap.com/tidb/stable/basic-features#indexing-and-constraints).
-
-</CustomContent>
 
 ### Other supported logical objects
 
@@ -75,11 +70,6 @@ TiDB supports both user-based and role-based access control. To allow users to v
 
 </CustomContent>
 
-<CustomContent platform="tidb-cloud">
-
-TiDB supports both user-based and role-based access control. To allow users to view, modify, or delete data objects and data schemas, you can either grant [privileges](https://docs.pingcap.com/tidb/stable/privilege-management) to [users](https://docs.pingcap.com/tidb/stable/user-account-management) directly or grant [privileges](https://docs.pingcap.com/tidb/stable/privilege-management) to users through [roles](https://docs.pingcap.com/tidb/stable/role-based-access-control).
-
-</CustomContent>
 
 ## Database schema changes
 
