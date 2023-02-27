@@ -9,11 +9,6 @@ summary: Learn the AUTO_RANDOM attribute.
 
 Since the value of `AUTO_RANDOM` is random and unique, `AUTO_RANDOM` is often used in place of [`AUTO_INCREMENT`](/auto-increment.md) to avoid write hotspot in a single storage node caused by TiDB assigning consecutive IDs. If the current `AUTO_INCREMENT` column is a primary key and the type is `BIGINT`, you can execute the `ALTER TABLE t MODIFY COLUMN id BIGINT AUTO_RANDOM(5);` statement to switch from `AUTO_INCREMENT` to `AUTO_RANDOM`.
 
-<CustomContent platform="tidb">
-
-For more information about how to handle highly concurrent write-heavy workloads in TiDB, see [Highly concurrent write best practices](/best-practices/high-concurrency-best-practices.md).
-
-</CustomContent>
 
 ## Basic concepts
 

@@ -7,28 +7,25 @@ summary: Use the Dumpling tool to export data from TiDB.
 
 This document introduces the data export tool - [Dumpling](https://github.com/pingcap/tidb/tree/master/dumpling). Dumpling exports data stored in TiDB/MySQL as SQL or CSV data files and can be used to make a logical full backup or export. Dumpling also supports exporting data to Amazon S3.
 
-<CustomContent platform="tidb">
 
-You can get Dumpling using [TiUP](/tiup/tiup-overview.md) by running `tiup install dumpling`. Afterwards, you can use `tiup dumpling ...` to run Dumpling.
+<CustomContent platform="tidb-cloud">
 
-The Dumpling installation package is included in the TiDB Toolkit. To download the TiDB Toolkit, see [Download TiDB Tools](/download-ecosystem-tools.md).
+You can install Dumpling using the following commands:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
+source ~/.bash_profile
+tiup install dumpling
+```
+
+In the above commands, you need to modify `~/.bash_profile` to the path of your profile file.
 
 </CustomContent>
-
 
 For detailed usage of Dumpling, use the `--help` option or refer to [Option list of Dumpling](#option-list-of-dumpling).
 
 When using Dumpling, you need to execute the export command on a running cluster.
 
-<CustomContent platform="tidb">
-
-TiDB also provides other tools that you can choose to use as needed.
-
-- For backups of SST files (key-value pairs) or backups of incremental data that are not sensitive to latency, refer to [BR](/br/backup-and-restore-overview.md).
-- For real-time backups of incremental data, refer to [TiCDC](/ticdc/ticdc-overview.md).
-- All exported data can be imported back to TiDB using [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md).
-
-</CustomContent>
 
 > **Note:**
 >
@@ -89,12 +86,12 @@ In the command above:
 
 + The `-h`, `-P`, and `-u` option respectively mean the address, the port, and the user. If a password is required for authentication, you can use `-p $YOUR_SECRET_PASSWORD` to pass the password to Dumpling.
 
-<CustomContent platform="tidb">
 
-+ The `-o` (or `--output`) option specifies the export directory of the storage, which supports a local file path or an [external storage URL](/br/backup-and-restore-storages.md#url-format).
+<CustomContent platform="tidb-cloud">
+
++ The `-o` (or `--output`) option specifies the export directory of the storage, which supports a local file path or an [external storage URL](https://docs.pingcap.com/tidb/stable/backup-and-restore-storages#url-format).
 
 </CustomContent>
-
 
 + The `-t` option specifies the number of threads for the export. Increasing the number of threads improves the concurrency of Dumpling and the export speed, and also increases the database's memory consumption. Therefore, it is not recommended to set the number too large. Usually, it's less than 64.
 + The `-r` option specifies the maximum number of rows in a single file. With this option specified, Dumpling enables the in-table concurrency to speed up the export and reduce the memory usage. When the upstream database is TiDB v3.0 or later versions, a value of this parameter greater than 0 indicates that the TiDB region information is used for splitting and the value specified here will no longer take effect.
@@ -127,12 +124,12 @@ In the command above:
 
 - The `--sql` option can be used only for exporting to CSV files. The command above executes the `SELECT * FROM <table-name> WHERE id <100` statement on all tables to be exported. If a table does not have the specified field, the export fails.
 
-<CustomContent platform="tidb">
 
-- When you use the `--sql` option, Dumpling cannot obtain the exported table and schema information. You can specify the file name format of the CSV files using the `--output-filename-template` option, which facilitates the subsequent use of [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) to import the data file. For example, `--output-filename-template='test.sbtest1.{{.Index}}'` specifies that the exported CSV files are named as `test.sbtest1.000000000` or `test.sbtest1.000000001`.
+<CustomContent platform="tidb-cloud">
+
+- When you use the `--sql` option, Dumpling cannot obtain the exported table and schema information. You can specify the file name format of the CSV files using the `--output-filename-template` option. For example, `--output-filename-template='test.sbtest1.{{.Index}}'` specifies that the exported CSV files are named as `test.sbtest1.000000000` or `test.sbtest1.000000001`.
 
 </CustomContent>
-
 
 - You can use options like `--csv-separator` and `--csv-delimiter` to configure the CSV file format. For details, refer to the [Dumpling option list](#option-list-of-dumpling).
 
@@ -218,12 +215,12 @@ export AWS_ACCESS_KEY_ID=${AccessKey}
 export AWS_SECRET_ACCESS_KEY=${SecretKey}
 ```
 
-<CustomContent platform="tidb">
 
-Dumpling also supports reading credential files from `~/.aws/credentials`. For more Dumpling configuration, see the configuration of [External storages](/br/backup-and-restore-storages.md).
+<CustomContent platform="tidb-cloud">
+
+Dumpling also supports reading credential files from `~/.aws/credentials`. Parameters for exporting data to Amazon S3 using Dumpling are the same as the parameters used in BR. For more parameter descriptions, see [external storage URL](https://docs.pingcap.com/tidb/stable/backup-and-restore-storages#url-format).
 
 </CustomContent>
-
 
 
 ```shell

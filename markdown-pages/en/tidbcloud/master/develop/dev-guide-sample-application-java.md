@@ -18,20 +18,12 @@ This document describes how to use TiDB and Java to build a simple CRUD applicat
 
 ## Step 1. Launch your TiDB cluster
 
-<CustomContent platform="tidb">
 
-The following introduces how to start a TiDB cluster.
+<CustomContent platform="tidb-cloud">
 
-**Use a TiDB Cloud Serverless Tier cluster**
-
-For detailed steps, see [Create a Serverless Tier cluster](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-serverless-tier-cluster).
-
-**Use a local cluster**
-
-For detailed steps, see [Deploy a local test cluster](/quick-start-with-tidb.md#deploy-a-local-test-cluster) or [Deploy a TiDB Cluster Using TiUP](/production-deployment-using-tiup.md).
+See [Create a Serverless Tier cluster](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-serverless-tier-cluster).
 
 </CustomContent>
-
 
 ## Step 2. Get the code
 
@@ -1409,24 +1401,12 @@ No need to initialize tables manually.
 
 <div label="Using JDBC" value="jdbc">
 
-<CustomContent platform="tidb">
 
-When using JDBC, you need to initialize the database tables manually. If you are using a local cluster, and MySQL client has been installed locally, you can run it directly in the `plain-java-jdbc` directory:
+<CustomContent platform="tidb-cloud">
 
-```shell
-make mysql
-```
-
-Or you can execute the following command:
-
-```shell
-mysql --host 127.0.0.1 --port 4000 -u root<src/main/resources/dbinit.sql
-```
-
-If you are using a non-local cluster or MySQL client has not been installed, connect to your cluster and run the statement in the `src/main/resources/dbinit.sql` file.
+When using JDBC, you need to connect to your cluster and run the statement in the `src/main/resources/dbinit.sql` file to initialize the database tables manually.
 
 </CustomContent>
-
 
 </div>
 

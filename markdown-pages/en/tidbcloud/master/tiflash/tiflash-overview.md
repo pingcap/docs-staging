@@ -9,6 +9,11 @@ summary: Learn the architecture and key features of TiFlash.
 
 In TiFlash, the columnar replicas are asynchronously replicated according to the Raft Learner consensus algorithm. When these replicas are read, the Snapshot Isolation level of consistency is achieved by validating Raft index and multi-version concurrency control (MVCC).
 
+<CustomContent platform="tidb-cloud">
+
+With TiDB Cloud, you can create an HTAP cluster easily by specifying one or more TiFlash nodes according to your HTAP workload. If the TiFlash node count is not specified when you create the cluster or you want to add more TiFlash nodes, you can change the node count by [scaling the cluster](/tidb-cloud/scale-tidb-cluster.md).
+
+</CustomContent>
 
 ## Architecture
 
@@ -22,11 +27,6 @@ TiFlash conducts real-time replication of data in the TiKV nodes at a low cost t
 
 To deploy TiFlash under the Linux AMD64 architecture, the CPU must support the AVX2 instruction set. Ensure that `cat /proc/cpuinfo | grep avx2` has output. To deploy TiFlash under the Linux ARM64 architecture, the CPU must support the ARMv8 instruction set architecture. Ensure that `cat /proc/cpuinfo | grep 'crc32' | grep 'asimd'` has output. By using the instruction set extensions, TiFlash's vectorization engine can deliver better performance.
 
-<CustomContent platform="tidb">
-
-TiFlash is compatible with both TiDB and TiSpark, which enables you to freely choose between these two computing engines.
-
-</CustomContent>
 
 It is recommended that you deploy TiFlash in different nodes from TiKV to ensure workload isolation. It is also acceptable to deploy TiFlash and TiKV in the same node if no business isolation is required.
 
@@ -79,47 +79,22 @@ TiFlash shares the computing workload in the same way as the TiKV Coprocessor do
 
 After TiFlash is deployed, data replication does not automatically begin. You need to manually specify the tables to be replicated.
 
-<CustomContent platform="tidb">
 
-You can either use TiDB to read TiFlash replicas for medium-scale analytical processing, or use TiSpark to read TiFlash replicas for large-scale analytical processing, which is based on your own needs. See the following sections for details:
+<CustomContent platform="tidb-cloud">
+
+You can use TiDB to read TiFlash replicas for analytical processing. See the following sections for details:
 
 </CustomContent>
-
 
 - [Create TiFlash Replicas](/tiflash/create-tiflash-replicas.md)
 - [Use TiDB to Read TiFlash Replicas](/tiflash/use-tidb-to-read-tiflash.md)
 
-<CustomContent platform="tidb">
-
-- [Use TiSpark to Read TiFlash Replicas](/tiflash/use-tispark-to-read-tiflash.md)
-
-</CustomContent>
 
 - [Use MPP Mode](/tiflash/use-tiflash-mpp-mode.md)
 
-<CustomContent platform="tidb">
-
-To experience the whole process from importing data to querying in a TPC-H dataset, refer to [Quick Start Guide for TiDB HTAP](/quick-start-with-htap.md).
-
-</CustomContent>
 
 ## See also
 
-<CustomContent platform="tidb">
-
-- To deploy a new cluster with TiFlash nodes, see [Deploy a TiDB cluster using TiUP](/production-deployment-using-tiup.md).
-- To add a TiFlash node in a deployed cluster, see [Scale out a TiFlash cluster](/scale-tidb-using-tiup.md#scale-out-a-tiflash-cluster).
-- [Maintain a TiFlash cluster](/tiflash/maintain-tiflash.md).
-- [Tune TiFlash performance](/tiflash/tune-tiflash-performance.md).
-- [Configure TiFlash](/tiflash/tiflash-configuration.md).
-- [Monitor the TiFlash cluster](/tiflash/monitor-tiflash.md).
-- Learn [TiFlash alert rules](/tiflash/tiflash-alert-rules.md).
-- [Troubleshoot a TiFlash cluster](/tiflash/troubleshoot-tiflash.md).
-- [Supported push-down calculations in TiFlash](/tiflash/tiflash-supported-pushdown-calculations.md)
-- [Data validation in TiFlash](/tiflash/tiflash-data-validation.md)
-- [TiFlash compatibility](/tiflash/tiflash-compatibility.md)
-
-</CustomContent>
 
 <CustomContent platform="tidb-cloud">
 

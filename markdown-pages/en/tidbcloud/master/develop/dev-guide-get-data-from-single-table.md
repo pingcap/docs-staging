@@ -15,21 +15,21 @@ The following content takes the [Bookshop](/develop/dev-guide-bookshop-schema-de
 
 Before querying data, make sure that you have completed the following steps:
 
-<CustomContent platform="tidb">
 
-1. Build a TiDB cluster (using [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md) or [TiUP](/production-deployment-using-tiup.md) is recommended).
+<CustomContent platform="tidb-cloud">
+
+1. Build a TiDB cluster using [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md).
 
 </CustomContent>
-
 
 2. [Import table schema and sample data of the Bookshop application](/develop/dev-guide-bookshop-schema-design.md#import-table-structures-and-data).
 
-<CustomContent platform="tidb">
 
-3. [Connect to TiDB](/develop/dev-guide-connect-to-tidb.md).
+<CustomContent platform="tidb-cloud">
+
+3. [Connect to TiDB](/tidb-cloud/connect-to-tidb-cluster.md).
 
 </CustomContent>
-
 
 ## Execute a simple query
 
@@ -112,12 +112,12 @@ public class AuthorDAO {
 }
 ```
 
-<CustomContent platform="tidb">
 
-- After [connecting to TiDB using the JDBC driver](/develop/dev-guide-connect-to-tidb.md#jdbc), you can create a `Statement` object with `conn.createStatus()`.
+<CustomContent platform="tidb-cloud">
+
+- After [connecting to TiDB using the JDBC driver](/develop/dev-guide-choose-driver-or-orm.md#java-drivers), you can create a `Statement` object with `conn.createStatus()`.
 
 </CustomContent>
-
 
 - Then call `stmt.executeQuery("query_sql")` to initiate a database query request to TiDB.
 - The query results are stored in a `ResultSet` object. By traversing `ResultSet`, the returned results can be mapped to the `Author` object.

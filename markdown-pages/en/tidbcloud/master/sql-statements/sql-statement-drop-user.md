@@ -69,8 +69,3 @@ ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%
 * [ALTER USER](/sql-statements/sql-statement-alter-user.md)
 * [SHOW CREATE USER](/sql-statements/sql-statement-show-create-user.md)
 
-<CustomContent platform="tidb">
-
-* [Privilege Management](/privilege-management.md)
-
-</CustomContent>

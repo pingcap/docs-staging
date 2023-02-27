@@ -43,12 +43,6 @@ This document describes the common usage limitations of TiDB, including the maxi
 | Size      | unlimited |
 | Partitions | 8192     |
 
-<CustomContent platform="tidb">
-
-* The upper limit of `Columns` can be modified via [`table-column-count-limit`](/tidb-configuration-file.md#table-column-count-limit-new-in-v50).
-* The upper limit of `Indexes` can be modified via [`index-limit`](/tidb-configuration-file.md#index-limit-new-in-v50).
-
-</CustomContent>
 
 ## Limitation on a single row
 
@@ -56,11 +50,6 @@ This document describes the common usage limitations of TiDB, including the maxi
 |:----------|:----------|
 | Size       | Defaults to 6 MiB and can be adjusted to 120 MiB  |
 
-<CustomContent platform="tidb">
-
-You can adjust the size limit via the [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v50) configuration item.
-
-</CustomContent>
 
 ## Limitation on a single column
 
@@ -68,11 +57,6 @@ You can adjust the size limit via the [`txn-entry-size-limit`](/tidb-configurati
 |:----------|:----------|
 | Size       | Defaults to 6 MiB and can be adjusted to 120 MiB  |
 
-<CustomContent platform="tidb">
-
-You can adjust the size limit via the [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v50) configuration item.
-
-</CustomContent>
 
 ## Limitations on data types
 

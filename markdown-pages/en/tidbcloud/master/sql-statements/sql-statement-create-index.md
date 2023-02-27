@@ -145,16 +145,6 @@ json_array, json_array_append, json_array_insert, json_contains, json_contains_p
 
 For the functions that are not included in the above list, those functions are not fully tested and not recommended for a production environment, which can be seen as experimental. Other expressions such as operators, `cast`, and `case when` are also seen as experimental and not recommended for production.
 
-<CustomContent platform="tidb">
-
-If you still want to use those expressions, you can make the following configuration in the [TiDB configuration file](/tidb-configuration-file.md#allow-expression-index-new-in-v400):
-
-
-```sql
-allow-expression-index = true
-```
-
-</CustomContent>
 
 > **Note:**
 >

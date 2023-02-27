@@ -7,14 +7,12 @@ summary: Learn how to build a TiDB cluster in TiDB Cloud (Serverless Tier) and c
 
 # Build a TiDB Cluster in TiDB Cloud (Serverless Tier)
 
-<CustomContent platform="tidb">
 
-This document walks you through the quickest way to get started with TiDB. You will use [TiDB Cloud](https://en.pingcap.com/tidb-cloud) to create a Serverless Tier cluster, connect to it, and run a sample application on it.
+<CustomContent platform="tidb-cloud">
 
-If you need to run TiDB on your local machine, see [Starting TiDB Locally](/quick-start-with-tidb.md).
+This document walks you through the quickest way to get started with TiDB Cloud. You will create a TiDB cluster, connect to it, and run a sample application on it.
 
 </CustomContent>
-
 
 ## Step 1. Create a Serverless Tier cluster
 
@@ -37,14 +35,14 @@ If you need to run TiDB on your local machine, see [Starting TiDB Locally](/quic
 
 6. Click **Create password** to generate a random password. The generated password will not show again, so save your password in a secure location. If you do not set a root password, you cannot connect to the cluster.
 
-<CustomContent platform="tidb">
+
+<CustomContent platform="tidb-cloud">
 
 > **Note:**
 >
-> For [Serverless Tier clusters](https://docs.pingcap.com/tidbcloud/select-cluster-tier#serverless-tier), when you connect to your cluster, you must include the prefix for your cluster in the user name and wrap the name with quotation marks. For more information, see [User name prefix](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix).
+> For [Serverless Tier clusters](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta), when you connect to your cluster, you must include the prefix for your cluster in the user name and wrap the name with quotation marks. For more information, see [User name prefix](/tidb-cloud/select-cluster-tier.md#user-name-prefix).
 
 </CustomContent>
-
 
 ## Step 2. Connect to a cluster
 
@@ -126,15 +124,15 @@ mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
     mysql --connect-timeout 15 -u '<prefix>.root' -h <host> -P 4000 -D test --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/cert.pem -p
     ```
 
-<CustomContent platform="tidb">
+
+<CustomContent platform="tidb-cloud">
 
 > **Note:**
 >
-> - When you connect to a Serverless Tier cluster, you must [use the TLS connection](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-tier-clusters).
-> - If you encounter problems when connecting to a Serverless Tier cluster, you can read [Secure Connections to Serverless Tier Clusters](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-tier-clusters) for more information.
+> - When you connect to a Serverless Tier cluster, you must [use the TLS connection](/tidb-cloud/secure-connections-to-serverless-tier-clusters.md).
+> - If you encounter problems when connecting to a Serverless Tier cluster, you can read [Secure Connections to Serverless Tier Clusters](/tidb-cloud/secure-connections-to-serverless-tier-clusters.md) for more information.
 
 </CustomContent>
-
 
 3. Fill in the password to sign in.
 

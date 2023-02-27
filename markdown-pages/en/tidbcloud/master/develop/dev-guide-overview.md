@@ -7,14 +7,12 @@ summary: Introduce the overview of the developer guide.
 
 This guide is written for application developers, but if you are interested in the inner workings of TiDB or want to get involved in TiDB development, read the [TiDB Kernel Development Guide](https://pingcap.github.io/tidb-dev-guide/) for more information about TiDB.
 
-<CustomContent platform="tidb">
 
-This tutorial shows how to quickly build an application using TiDB, the possible use cases of TiDB and how to handle common problems.
+<CustomContent platform="tidb-cloud">
 
-Before reading this page, it is recommended that you read the [Quick Start Guide for the TiDB Database Platform](/quick-start-with-tidb.md).
+This tutorial shows how to quickly build an application using TiDB Cloud, the possible use cases of TiDB Cloud and how to handle common problems.
 
 </CustomContent>
-
 
 ## TiDB basics
 
@@ -32,12 +30,12 @@ You can start a transaction using [`BEGIN`](/sql-statements/sql-statement-begin.
 
 TiDB guarantees atomicity for all statements between the start of `BEGIN` and the end of `COMMIT` or `ROLLBACK`, that is, all statements that are executed during this period either succeed or fail as a whole. This is used to ensure data consistency you need for application development.
 
-<CustomContent platform="tidb">
 
-If you are not sure what an **optimistic transaction** is, do ***NOT*** use it yet. Because **optimistic transactions** require that the application can correctly handle [all errors](/error-codes.md) returned by the `COMMIT` statement. If you are not sure how your application handles them, use a **pessimistic transaction** instead.
+<CustomContent platform="tidb-cloud">
+
+If you are not sure what an **optimistic transaction** is, do ***NOT*** use it yet. Because **optimistic transactions** require that the application can correctly handle [all errors](https://docs.pingcap.com/tidb/stable/error-codes) returned by the `COMMIT` statement. If you are not sure how your application handles them, use a **pessimistic transaction** instead.
 
 </CustomContent>
-
 
 ## The way applications interact with TiDB
 
@@ -47,19 +45,6 @@ Since TiDB is compatible with the MySQL protocol and MySQL syntax, most of the O
 
 ## Read more
 
-<CustomContent platform="tidb">
-
-- [Quick Start](/develop/dev-guide-build-cluster-in-cloud.md)
-- [Choose Driver or ORM](/develop/dev-guide-choose-driver-or-orm.md)
-- [Connect to TiDB](/develop/dev-guide-connect-to-tidb.md)
-- [Database Schema Design](/develop/dev-guide-schema-design-overview.md)
-- [Write Data](/develop/dev-guide-insert-data.md)
-- [Read Data](/develop/dev-guide-get-data-from-single-table.md)
-- [Transaction](/develop/dev-guide-transaction-overview.md)
-- [Optimize](/develop/dev-guide-optimize-sql-overview.md)
-- [Example Applications](/develop/dev-guide-sample-application-spring-boot.md)
-
-</CustomContent>
 
 <CustomContent platform="tidb-cloud">
 

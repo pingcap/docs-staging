@@ -91,12 +91,12 @@ Your retry logic must follow the following rules:
     - `Error 9007: Write conflict`: Write conflict error, usually caused by multiple transactions modifying the same row of data when the optimistic transaction mode is used.
 - `COMMIT` the transaction at the end of the try block.
 
-<CustomContent platform="tidb">
 
-For more information about error codes, see [Error Codes and Troubleshooting](/error-codes.md).
+<CustomContent platform="tidb-cloud">
+
+For more information about error codes, see [Error Codes and Troubleshooting](https://docs.pingcap.com/tidb/stable/error-codes).
 
 </CustomContent>
-
 
 ```python
 while True:
@@ -124,12 +124,12 @@ while True:
 >
 > If you frequently encounter `Error 9007: Write conflict`, you may need to check your schema design and the data access patterns of your workload to find the root cause of the conflict and try to avoid conflicts by a better design.
 
-<CustomContent platform="tidb">
 
-For information about how to troubleshoot and resolve transaction conflicts, see [Troubleshoot Lock Conflicts](/troubleshoot-lock-conflicts.md).
+<CustomContent platform="tidb-cloud">
+
+For information about how to troubleshoot and resolve transaction conflicts, see [Troubleshoot Lock Conflicts](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts).
 
 </CustomContent>
-
 
 ## See also
 

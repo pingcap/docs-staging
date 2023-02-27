@@ -87,8 +87,3 @@ mysql> SHOW GRANTS FOR 'newuser';
 * [`REVOKE <privileges>`](/sql-statements/sql-statement-revoke-privileges.md)
 * [SHOW GRANTS](/sql-statements/sql-statement-show-grants.md)
 
-<CustomContent platform="tidb">
-
-* [Privilege Management](/privilege-management.md)
-
-</CustomContent>

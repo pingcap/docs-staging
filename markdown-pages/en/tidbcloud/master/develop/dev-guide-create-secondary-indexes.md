@@ -20,12 +20,12 @@ Before creating a secondary index, do the following:
 
 A secondary index is a logical object in a TiDB cluster. You can simply regard it as a sorting type of data that TiDB uses to improve the query performance. In TiDB, creating a secondary index is an online operation, which does not block any data read and write operations on a table. For each index, TiDB creates references for each row in a table and sorts the references by selected columns instead of by data directly.
 
-<CustomContent platform="tidb">
 
-For more information about secondary indexes, see [Secondary Indexes](/best-practices/tidb-best-practices.md#secondary-index).
+<CustomContent platform="tidb-cloud">
+
+For more information about secondary indexes, see [Secondary Indexes](https://docs.pingcap.com/tidb/stable/tidb-best-practices#secondary-index).
 
 </CustomContent>
-
 
 In TiDB, you can either [add a secondary index to an existing table](#add-a-secondary-index-to-an-existing-table) or [create a secondary index when creating a new table](#create-a-secondary-index-when-creating-a-new-table).
 
@@ -141,12 +141,12 @@ In the output, **IndexRangeScan** is displayed instead of **TableFullScan**, whi
 
 The words such as **TableFullScan** and **IndexRangeScan** in the execution plan are [operators](/explain-overview.md#operator-overview) in TiDB. For more information about execution plans and operators, see [TiDB Query Execution Plan Overview](/explain-overview.md).
 
-<CustomContent platform="tidb">
 
-The execution plan does not return the same operator every time. This is because TiDB uses a **Cost-Based Optimization (CBO)** approach, in which an execution plan depends on both rules and data distribution. For more information about TiDB SQL performance, see [SQL Tuning Overview](/sql-tuning-overview.md).
+<CustomContent platform="tidb-cloud">
+
+The execution plan does not return the same operator every time. This is because TiDB uses a **Cost-Based Optimization (CBO)** approach, in which an execution plan depends on both rules and data distribution. For more information about TiDB SQL performance, see [SQL Tuning Overview](/tidb-cloud/tidb-cloud-sql-tuning-overview.md).
 
 </CustomContent>
-
 
 > **Note:**
 >

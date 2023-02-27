@@ -40,8 +40,3 @@ This statement is understood to be fully compatible with MySQL. Any compatibilit
 
 * [SHOW GRANTS](/sql-statements/sql-statement-show-grants.md)
 
-<CustomContent platform="tidb">
-
-* [Privilege Management](/privilege-management.md)
-
-</CustomContent>

@@ -151,21 +151,21 @@ SET @@global.tidb_ddl_reorg_batch_size = 128;
 
 ## Transaction conflicts
 
-<CustomContent platform="tidb">
 
-For how to locate and resolve transaction conflicts, see [Troubleshoot Lock Conflicts](/troubleshoot-lock-conflicts.md).
+<CustomContent platform="tidb-cloud">
+
+For how to locate and resolve transaction conflicts, see [Troubleshoot Lock Conflicts](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts).
 
 </CustomContent>
-
 
 ## Best practices for developing Java applications with TiDB
 
-<CustomContent platform="tidb">
 
-See [Best Practices for Developing Java Applications with TiDB](/best-practices/java-app-best-practices.md).
+<CustomContent platform="tidb-cloud">
+
+See [Best Practices for Developing Java Applications with TiDB](https://docs.pingcap.com/tidb/stable/java-app-best-practices).
 
 </CustomContent>
-
 
 ### See also
 
@@ -175,3 +175,8 @@ See [Best Practices for Developing Java Applications with TiDB](/best-practices/
 
 </CustomContent>
 
+<CustomContent platform="tidb-cloud">
+
+- [Highly Concurrent Write Best Practices](https://docs.pingcap.com/tidb/stable/high-concurrency-best-practices)
+
+</CustomContent>

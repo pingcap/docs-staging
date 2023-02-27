@@ -161,28 +161,12 @@ To reduce the overhead of locking, TiKV implements the pipelined locking process
 
 * There is a low probability that the transaction commit fails, but it does not affect the correctness of the transactions.
 
-<CustomContent platform="tidb">
 
-If the application logic relies on the locking or lock waiting mechanisms, or if you want to guarantee as much as possible the success rate of transaction commits even in the case of TiKV cluster anomalies, you should disable the pipelined locking feature.
+<CustomContent platform="tidb-cloud">
 
-![Pipelined pessimistic lock](https://download.pingcap.com/images/docs/pessimistic-transaction-pipelining.png)
-
-This feature is enabled by default. To disable it, modify the TiKV configuration:
-
-```toml
-[pessimistic-txn]
-pipelined = false
-```
-
-If the TiKV cluster is v4.0.9 or later, you can also dynamically disable this feature by [modifying TiKV configuration dynamically](/dynamic-config.md#modify-tikv-configuration-dynamically):
-
-
-```sql
-set config tikv pessimistic-txn.pipelined='false';
-```
+If the application logic relies on the locking or lock waiting mechanisms, or if you want to guarantee as much as possible the success rate of transaction commits even in the case of TiKV cluster anomalies, you can [contact TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md) to disable the pipelined locking feature.
 
 </CustomContent>
-
 
 ## In-memory pessimistic lock
 

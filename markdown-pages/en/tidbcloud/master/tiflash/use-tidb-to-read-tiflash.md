@@ -52,43 +52,22 @@ Note that if a table has only a single TiFlash replica and the related node cann
 
 Engine isolation is to specify that all queries use a replica of the specified engine by configuring the corresponding variable. The optional engines are "tikv", "tidb" (indicates the internal memory table area of TiDB, which stores some TiDB system tables and cannot be actively used by users), and "tiflash".
 
-<CustomContent platform="tidb">
 
-You can specify the engines at the following two configuration levels:
+<CustomContent platform="tidb-cloud">
 
-* TiDB instance-level, namely, INSTANCE level. Add the following configuration item in the TiDB configuration file:
+You can specify the engines using the following statement:
 
-    ```
-    [isolation-read]
-    engines = ["tikv", "tidb", "tiflash"]
-    ```
+```sql
+set @@session.tidb_isolation_read_engines = "engine list separated by commas";
+```
 
-    **The INSTANCE-level default configuration is `["tikv", "tidb", "tiflash"]`.**
+or
 
-* SESSION level. Use the following statement to configure:
-
-    
-    ```sql
-    set @@session.tidb_isolation_read_engines = "engine list separated by commas";
-    ```
-
-    or
-
-    
-    ```sql
-    set SESSION tidb_isolation_read_engines = "engine list separated by commas";
-    ```
-
-    The default configuration of the SESSION level inherits from the configuration of the TiDB INSTANCE level.
-
-The final engine configuration is the session-level configuration, that is, the session-level configuration overrides the instance-level configuration. For example, if you have configured "tikv" in the INSTANCE level and "tiflash" in the SESSION level, then the TiFlash replicas are read. If the final engine configuration is "tikv" and "tiflash", then the TiKV and TiFlash replicas are both read, and the optimizer automatically selects a better engine to execute.
-
-> **Note:**
->
-> Because [TiDB Dashboard](/dashboard/dashboard-intro.md) and other components need to read some system tables stored in the TiDB memory table area, it is recommended to always add the "tidb" engine to the instance-level engine configuration.
+```sql
+set SESSION tidb_isolation_read_engines = "engine list separated by commas";
+```
 
 </CustomContent>
-
 
 If the queried table does not have a replica of the specified engine (for example, the engine is configured as "tiflash" but the table does not have a TiFlash replica), the query returns an error.
 

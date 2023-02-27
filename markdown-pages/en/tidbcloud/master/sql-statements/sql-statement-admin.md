@@ -15,8 +15,7 @@ This statement is a TiDB extension syntax, used to view the status of TiDB and c
 
 ## DDL related statement
 
-
-<CustomContent platform="tidb">
+<CustomContent platform="tidb-cloud">
 
 | Statement                                                                                | Description                 |
 |------------------------------------------------------------------------------------------|-----------------------------|
@@ -24,9 +23,9 @@ This statement is a TiDB extension syntax, used to view the status of TiDB and c
 | [`ADMIN CHECKSUM TABLE`](/sql-statements/sql-statement-admin-checksum-table.md)          | Calculates the CRC64 of all rows + indexes of a table. |
 | [<code>ADMIN CHECK [TABLE\|INDEX]</code>](/sql-statements/sql-statement-admin-check-table-index.md) | Checks for consistency of a table or index. |
 | [<code>ADMIN SHOW DDL [JOBS\|QUERIES]</code>](/sql-statements/sql-statement-admin-show-ddl.md)      | Shows details about currently running or recently completed DDL jobs. |
-| [`ADMIN SHOW TELEMETRY`](/sql-statements/sql-statement-admin-show-telemetry.md)      | Shows information that will be reported back to PingCAP as part of the telemetry feature. |
 
 </CustomContent>
+
 
 ## `ADMIN RELOAD` statement
 
@@ -92,6 +91,13 @@ The above statement is used to reload SQL Plan binding information.
 
 ## `ADMIN REPAIR` statement
 
+<CustomContent platform="tidb-cloud">
+
+> **Note:**
+>
+> This TiDB statement is not applicable to TiDB Cloud.
+
+</CustomContent>
 
 To overwrite the metadata of the stored table in an untrusted way in extreme cases, use `ADMIN REPAIR TABLE`:
 
@@ -100,11 +106,6 @@ To overwrite the metadata of the stored table in an untrusted way in extreme cas
 ADMIN REPAIR TABLE tbl_name CREATE TABLE STATEMENT;
 ```
 
-<CustomContent platform="tidb">
-
-Here "untrusted" means that you need to manually ensure that the metadata of the original table can be covered by the `CREATE TABLE STATEMENT` operation. To use this `REPAIR` statement, enable the [`repair-mode`](/tidb-configuration-file.md#repair-mode) configuration item, and make sure that the tables to be repaired are listed in the [`repair-table-list`](/tidb-configuration-file.md#repair-table-list).
-
-</CustomContent>
 
 ## `ADMIN SHOW SLOW` statement
 
@@ -118,11 +119,6 @@ ADMIN SHOW SLOW RECENT N;
 ADMIN SHOW SLOW TOP [INTERNAL | ALL] N;
 ```
 
-<CustomContent platform="tidb">
-
-For details, refer to [admin show slow statement](/identify-slow-queries.md#admin-show-slow-command)
-
-</CustomContent>
 
 ## Synopsis
 

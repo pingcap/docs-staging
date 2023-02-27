@@ -45,21 +45,6 @@ NUM ::= intLit
 >     - TiDB 3.0 is used both in the upstream cluster and the downstream cluster.
 >     - The GC life time of the secondary cluster must be longer than that of the primary cluster. However, as latency occurs during data replication between upstream and downstream databases, data recovery might fail in the downstream.
 
-<CustomContent platform="tidb">
-
-**Troubleshoot errors during TiDB Binlog replication**
-
-When you use `RECOVER TABLE` in the upstream TiDB during TiDB Binlog replication, TiDB Binlog might be interrupted in the following three situations:
-
-+ The downstream database does not support the `RECOVER TABLE` statement. An error instance: `check the manual that corresponds to your MySQL server version for the right syntax to use near 'RECOVER TABLE table_name'`.
-
-+ The GC life time is not consistent between the upstream database and the downstream database. An error instance: `snapshot is older than GC safe point 2019-07-10 13:45:57 +0800 CST`.
-
-+ Latency occurs during replication between upstream and downstream databases. An error instance: `snapshot is older than GC safe point 2019-07-10 13:45:57 +0800 CST`.
-
-For the above three situations, you can resume data replication from TiDB Binlog with a [full import of the deleted table](/ecosystem-tool-user-guide.md#backup-and-restore---backup--restore-br).
-
-</CustomContent>
 
 ## Examples
 

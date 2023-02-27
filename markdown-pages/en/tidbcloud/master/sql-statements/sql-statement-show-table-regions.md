@@ -50,12 +50,12 @@ Executing `SHOW TABLE REGIONS` returns the following columns:
 * `APPROXIMATE_SIZE(MB)`: The estimated amount of data in the Region. The unit is megabytes (MB).
 * `APPROXIMATE_KEYS`: The estimated number of Keys in the Region.
 
-<CustomContent platform="tidb">
 
-* `SCHEDULING_CONSTRAINTS`: The [placement policy settings](/placement-rules-in-sql.md) associated with the table or partition to which a Region belongs.
+<CustomContent platform="tidb-cloud">
+
+* `SCHEDULING_CONSTRAINTS`: The placement policy settings associated with the table or partition to which a Region belongs.
 
 </CustomContent>
-
 
 * `SCHEDULING_STATE`: The scheduling state of the Region which has a placement policy.
 
