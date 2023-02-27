@@ -230,6 +230,7 @@ export function sync(argv) {
     case "pingcap/docs-dm":
     case "pingcap/docs-tidb-operator":
       const name = renameDoc(repo);
+      options.pipelines.push(() => replaceCustomContentStream("tidb-cloud"));
 
       handleSync(
         {
