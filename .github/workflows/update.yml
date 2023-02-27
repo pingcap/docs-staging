@@ -56,14 +56,14 @@ jobs:
           elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "release-6.5" ]
           then
           # Remove TiDB Cloud CustomContent from TiDB doc
-          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }} --rm-custom-content tidb
+          # yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }} --rm-custom-content tidb
           yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
           # Re-download TiDB doc and remove TiDB Cloud CustomContent
           yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }} --rm-custom-content tidb-cloud
           # Update ja TiDB Cloud doc based on specified doc branch
           elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "i18n-ja-release-6.5" ]
           then
-          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }} --rm-custom-content tidb
+          # yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }} --rm-custom-content tidb
           yarn download:tidb-cloud:ja --ref ${{ inputs.branch }}
           # Re-download TiDB doc and remove TiDB Cloud CustomContent
           yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }} --rm-custom-content tidb-cloud
