@@ -33,7 +33,7 @@ You can use the tool [Dumpling](/dumpling-overview.md) for data export.
 
     
     ```shell
-    tiup install dumpling:v6.5.0
+    tiup install dumpling:v6.5.1
     ```
 
 4. Export your data using Dumpling from TiDB.
@@ -45,14 +45,14 @@ You can use the tool [Dumpling](/dumpling-overview.md) for data export.
     <div label="Serverless Tier">
 
     ```shell
-    tiup dumpling:v6.5.0 -h ${tidb_endpoint} -P 4000 -u ${user} -p ${password} --ca=${ca_path} -F 67108864MiB -t 4 -o ${export_dir} --filetype sql
+    tiup dumpling:v6.5.1 -h ${tidb_endpoint} -P 4000 -u ${user} -p ${password} --ca=${ca_path} -F 67108864MiB -t 4 -o ${export_dir} --filetype sql
     ```
 
     </div>
     <div label="Dedicated Tier">
 
     ```shell
-    tiup dumpling:v6.5.0 -h ${tidb_endpoint} -P ${port} -u ${user} -p ${password} -F 67108864MiB -t 4 -o ${export_dir} --filetype sql
+    tiup dumpling:v6.5.1 -h ${tidb_endpoint} -P ${port} -u ${user} -p ${password} -F 67108864MiB -t 4 -o ${export_dir} --filetype sql
     ```
 
     </div>
