@@ -1,17 +1,18 @@
 ---
 title: COLUMNS
-summary: 了解 information_schema 表 `COLUMNS`。
+summary: 了解 INFORMATION_SCHEMA 表 `COLUMNS`。
 ---
 
 # COLUMNS
 
 `COLUMNS` 表提供了表的所有列的信息。
 
-
 ```sql
-USE information_schema;
-DESC columns;
+USE INFORMATION_SCHEMA;
+DESC COLUMNS;
 ```
+
+输出结果如下：
 
 ```sql
 +--------------------------+---------------+------+------+---------+-------+
@@ -42,11 +43,14 @@ DESC columns;
 21 rows in set (0.00 sec)
 ```
 
+创建表 `test.t1`，并查询 `COLUMNS` 表的信息：
 
 ```sql
 CREATE TABLE test.t1 (a int);
-SELECT * FROM columns WHERE table_schema='test' AND TABLE_NAME='t1'\G
+SELECT * FROM COLUMNS WHERE table_schema='test' AND TABLE_NAME='t1'\G
 ```
+
+输出结果如下：
 
 ```sql
 *************************** 1. row ***************************
@@ -66,11 +70,11 @@ CHARACTER_MAXIMUM_LENGTH: NULL
       CHARACTER_SET_NAME: NULL
           COLLATION_NAME: NULL
              COLUMN_TYPE: int(11)
-              COLUMN_KEY: 
-                   EXTRA: 
+              COLUMN_KEY:
+                   EXTRA:
               PRIVILEGES: select,insert,update,references
-          COLUMN_COMMENT: 
-   GENERATION_EXPRESSION: 
+          COLUMN_COMMENT:
+   GENERATION_EXPRESSION:
 1 row in set (0.02 sec)
 ```
 
@@ -104,10 +108,11 @@ CHARACTER_MAXIMUM_LENGTH: NULL
 
 对应的 `SHOW` 语句如下：
 
-
 ```sql
 SHOW COLUMNS FROM t1 FROM test;
 ```
+
+输出结果如下：
 
 ```sql
 +-------+---------+------+------+---------+-------+
