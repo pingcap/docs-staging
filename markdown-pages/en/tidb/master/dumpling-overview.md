@@ -213,7 +213,7 @@ You can use the `--compress <format>` option to compress the CSV and SQL data an
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
     ```
 
-- `{schema}.{table}.{0001}.{sql|csv`}: The date source file
+- `{schema}.{table}.{0001}.{sql|csv}`: The date source file
 
     
     ```shell
@@ -226,7 +226,7 @@ You can use the `--compress <format>` option to compress the CSV and SQL data an
     (1);
     ```
 
-- `*-schema-view.sql`、`*-schema-trigger.sql`、`*-schema-post.sql`: Other exported files
+- `*-schema-view.sql`, `*-schema-trigger.sql`, `*-schema-post.sql`: Other exported files
 
 ### Export data to Amazon S3 cloud storage
 
