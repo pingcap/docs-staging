@@ -14,8 +14,8 @@ aliases: ['/zh/tidb/dev/build-cluster-in-cloud']
 
 ## 第 1 步：创建 Serverless Tier 集群
 
-1. 如果你还未拥有 TiDB Cloud 帐号，请先在此[注册](https://tidbcloud.com/free-trial)。
-2. 使用你的 TiDB Cloud 帐号[登录](https://tidbcloud.com/)。
+1. 如果你还未拥有 TiDB Cloud 账号，请先在此[注册](https://tidbcloud.com/free-trial)。
+2. 使用你的 TiDB Cloud 账号[登录](https://tidbcloud.com/)。
 
     登录后，默认进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面。
 
@@ -46,7 +46,6 @@ aliases: ['/zh/tidb/dev/build-cluster-in-cloud']
 
     对于 macOS 操作系统，如果你没有安装 Homebrew，请参考 [Homebrew 官网](https://brew.sh/index_zh-cn)进行安装。
 
-    
     ```shell
     brew install mysql-client
     ```
@@ -67,14 +66,12 @@ aliases: ['/zh/tidb/dev/build-cluster-in-cloud']
 
     请运行其中的此行（命令行输出若与此处文档不一致，请以命令行输出为准）：
 
-    
     ```shell
     echo 'export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"' >> ~/.zshrc
     ```
 
     完成后，生效该配置文件（例如 `~/.zshrc`），并验证 MySQL 客户端是否安装成功：
 
-    
     ```shell
     source ~/.zshrc
     mysql --version
@@ -92,14 +89,12 @@ aliases: ['/zh/tidb/dev/build-cluster-in-cloud']
 
     对于 Linux 操作系统，下面以 CentOS 7 为例：
 
-    
     ```shell
     yum install mysql
     ```
 
     完成后，请验证 MySQL 客户端是否安装成功：
 
-    
     ```shell
     mysql --version
     ```
@@ -116,7 +111,6 @@ aliases: ['/zh/tidb/dev/build-cluster-in-cloud']
 
 2. 运行第 1 步中得到的连接字符串。
 
-    
     ```shell
     mysql --connect-timeout 15 -u '<prefix>.root' -h <host> -P 4000 -D test --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/cert.pem -p
     ```
