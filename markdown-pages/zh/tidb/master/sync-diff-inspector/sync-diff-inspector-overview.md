@@ -23,7 +23,7 @@ aliases: ['/docs-cn/dev/sync-diff-inspector/sync-diff-inspector-overview/','/doc
 
     
     ```shell
-    docker pull pingcap/tidb-enterprise-tools:nightly
+    docker pull pingcap/tidb-tools:latest
     ```
 
 ## sync-diff-inspector 的使用限制
