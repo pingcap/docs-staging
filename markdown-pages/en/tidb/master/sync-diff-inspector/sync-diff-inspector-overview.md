@@ -15,7 +15,7 @@ This guide introduces the key features of sync-diff-inspector and describes how 
 
     
     ```shell
-    docker pull pingcap/tidb-enterprise-tools:nightly
+    docker pull pingcap/tidb-tools:latest
     ```
 
 ## Key features
