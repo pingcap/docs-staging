@@ -9,7 +9,7 @@ TiDB は MySQL と互換性があり、ほとんどの場合、MySQL ステー�
 
 <CustomContent platform="tidb">
 
-SQL を試して、TiDB と MySQL クエリとの互換性をテストするには、次のことができ[TiDB をインストールせずに Web ブラウザーで直接実行する](https://tour.tidb.io/) 。最初に TiDB クラスターをデプロイしてから、そこで SQL ステートメントを実行することもできます。
+SQL を試して、TiDB と MySQL クエリとの互換性をテストするには、 [TiDB をインストールせずに Web ブラウザーで直接実行する](https://tour.tidb.io/)ことができます。最初に TiDB クラスターをデプロイしてから、そこで SQL ステートメントを実行することもできます。
 
 </CustomContent>
 
@@ -33,7 +33,7 @@ SQL は、その関数によって次の 4 つのタイプに分けられます�
 
 TiDB のデータベースは、テーブルやインデックスなどのオブジェクトのコレクションと見なすことができます。
 
-データベースのリストを表示するには、次の`SHOW DATABASES`ステートメントを使用します。
+データベースのリストを表示するには、次`SHOW DATABASES`ステートメントを使用します。
 
 
 ```sql
@@ -47,14 +47,14 @@ SHOW DATABASES;
 USE mysql;
 ```
 
-データベース内のすべてのテーブルを表示するには、次の`SHOW TABLES`ステートメントを使用します。
+データベース内のすべてのテーブルを表示するには、 `SHOW TABLES`ステートメントを使用します。
 
 
 ```sql
 SHOW TABLES FROM mysql;
 ```
 
-データベースを作成するには、次の`CREATE DATABASE`ステートメントを使用します。
+データベースを作成するには、 `CREATE DATABASE`ステートメントを使用します。
 
 
 ```sql
@@ -70,7 +70,7 @@ CREATE DATABASE IF NOT EXISTS samp_db;
 
 データベースが存在する場合、エラーを防ぐために`IF NOT EXISTS`を追加します。
 
-データベースを削除するには、次の`DROP DATABASE`ステートメントを使用します。
+データベースを削除するには、 `DROP DATABASE`ステートメントを使用します。
 
 
 ```sql
@@ -113,14 +113,14 @@ DROP TABLE person;
 
 ## インデックスの作成、表示、削除 {#create-show-and-drop-an-index}
 
-インデックスは、インデックス付きの列に対するクエリを高速化するために使用されます。値が一意でない列のインデックスを作成するには、次の`CREATE INDEX`ステートメントを使用します。
+インデックスは、インデックス付きの列に対するクエリを高速化するために使用されます。値が一意でない列のインデックスを作成するには、 `CREATE INDEX`ステートメントを使用します。
 
 
 ```sql
 CREATE INDEX person_id ON person (id);
 ```
 
-または、次の`ALTER TABLE`のステートメントを使用します。
+または、 `ALTER TABLE`ステートメントを使用します。
 
 
 ```sql
@@ -134,21 +134,21 @@ ALTER TABLE person ADD INDEX person_id (id);
 CREATE UNIQUE INDEX person_unique_id ON person (id);
 ```
 
-または、次の`ALTER TABLE`のステートメントを使用します。
+または、 `ALTER TABLE`ステートメントを使用します。
 
 
 ```sql
 ALTER TABLE person ADD UNIQUE person_unique_id (id);
 ```
 
-テーブル内のすべてのインデックスを表示するには、次の`SHOW INDEX`ステートメントを使用します。
+テーブル内のすべてのインデックスを表示するには、 `SHOW INDEX`ステートメントを使用します。
 
 
 ```sql
 SHOW INDEX FROM person;
 ```
 
-インデックスを削除するには、 `DROP INDEX`または`ALTER TABLE`ステートメントを使用します。 `DROP INDEX`は`ALTER TABLE`にネストできます。
+インデックスを削除するには、 `DROP INDEX`または`ALTER TABLE`ステートメントを使用します。 `DROP INDEX` `ALTER TABLE`にネストできます。
 
 
 ```sql
@@ -168,7 +168,7 @@ ALTER TABLE person DROP INDEX person_unique_id;
 
 一般的な DML 機能は、テーブル レコードの追加、変更、および削除です。対応するコマンドは`INSERT` 、 `UPDATE` 、および`DELETE`です。
 
-テーブルにデータを挿入するには、次の`INSERT`ステートメントを使用します。
+テーブルにデータを挿入するには、 `INSERT`ステートメントを使用します。
 
 
 ```sql
@@ -189,7 +189,7 @@ INSERT INTO person(id,name) VALUES('2','bob');
 UPDATE person SET birthday='20180808' WHERE id=2;
 ```
 
-テーブル内のデータを削除するには、次の`DELETE`ステートメントを使用します。
+テーブル内のデータを削除するには、 `DELETE`ステートメントを使用します。
 
 
 ```sql
@@ -245,7 +245,7 @@ DCL は通常、ユーザーの作成または削除、およびユーザー権�
 CREATE USER 'tiuser'@'localhost' IDENTIFIED BY '123456';
 ```
 
-`samp_db`データベース内のテーブルを取得する権限を`tiuser`に付与するには、次のようにします。
+`samp_db`データベース内のテーブルを取得する権限を`tiuser`付与するには、次のようにします。
 
 
 ```sql
