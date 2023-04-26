@@ -57,7 +57,7 @@ Global Flags:
 
 ### 使用例 {#usage-example}
 
-次の`operate-source`のコマンドを使用して、ソース構成ファイルを作成します。
+次の`operate-source`コマンドを使用して、ソース構成ファイルを作成します。
 
 
 ```bash
@@ -112,7 +112,7 @@ config source mysql-replica-01
 }
 ```
 
-`source-id`がわからない場合は、最初に`dmctl --master-addr <master-addr> operate-source show`を実行してすべてのデータ ソースを一覧表示できます。
+`source-id`わからない場合は、最初に`dmctl --master-addr <master-addr> operate-source show`を実行してすべてのデータ ソースを一覧表示できます。
 
 
 ```bash
@@ -159,7 +159,7 @@ Global Flags:
   -s, --source strings   MySQL Source ID.
 ```
 
-転送する前に、DM はバインドを解除するワーカーがまだ実行中のタスクを持っているかどうかを確認します。ワーカーに実行中のタスクがある場合は、最初に[タスクを一時停止する](/dm/dm-pause-task.md)を実行し、バインディングを変更してから[タスクを再開する](/dm/dm-resume-task.md)を実行する必要があります。
+転送する前に、DM はバインドを解除するワーカーがまだ実行中のタスクを持っているかどうかを確認します。ワーカーに実行中のタスクがある場合は、最初に[タスクを一時停止する](/dm/dm-pause-task.md)実行し、バインディングを変更してから[タスクを再開する](/dm/dm-resume-task.md)実行する必要があります。
 
 ### 使用例 {#usage-example}
 
