@@ -30,7 +30,7 @@ kind: TidbCluster
 metadata:
   name: basic
 spec:
-  version: v6.5.0
+  version: v7.1.0
   timezone: UTC
   pvReclaimPolicy: Delete
   pd:
