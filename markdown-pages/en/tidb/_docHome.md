@@ -20,6 +20,7 @@ hide_leftNav: true
 
 | Release    | Archived documentation                                         | Archive date     |
 | ---------- | -------------------------------------------------------------- | ---------------- |
+| v6.6 (DMR) | [TiDB v6.6 documentation](https://docs-archive.pingcap.com/tidb/v6.6/) | July 7, 2023 |
 | v6.4 (DMR) | [TiDB v6.4 documentation](https://docs-archive.pingcap.com/tidb/v6.4/) | April 6, 2023 |
 | v6.3 (DMR) | [TiDB v6.3 documentation](https://docs-archive.pingcap.com/tidb/v6.3/) | February 24, 2023 |
 | v6.2 (DMR) | [TiDB v6.2 documentation](https://docs-archive.pingcap.com/tidb/v6.2/) | January 31, 2023 |
