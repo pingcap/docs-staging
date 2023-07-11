@@ -42,10 +42,11 @@ export async function handleSync(metaInfo, destDir, options) {
 
       if (
         ignore.includes(filename) ||
-        ignore.some(i => filename.startsWith(i)) ||
-        !filename.endsWith('.md')
+        ignore.some((i) => filename.startsWith(i)) ||
+        !filename.endsWith('.md') ||
+        !filename.endsWith('.template.md')
       ) {
-        return
+        return;
       }
 
       const dest = genDest(repo, filename, destDir, true)
