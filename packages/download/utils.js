@@ -185,7 +185,7 @@ export async function retrieveTiDBMDsFromZip(
       const { entryName } = zipEntry;
       sig.info("unzip file(entryName):", entryName);
       // Ignore if not markdown file
-      if (!entryName.endsWith(".md")) {
+      if (!entryName.endsWith('.md') || entryName.endsWith('.template.md')) {
         return;
       }
       const relativePathNameList = entryName.split("/");
