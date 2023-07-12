@@ -154,11 +154,11 @@ tiup cluster check <cluster-name> --cluster
 tiup cluster upgrade <cluster-name> <version>
 ```
 
-以升级到 v6.1.6 为例：
+以升级到 v6.1.7 为例：
 
 
 ```
-tiup cluster upgrade <cluster-name> v6.1.6
+tiup cluster upgrade <cluster-name> v6.1.7
 ```
 
 > **注意：**
@@ -207,7 +207,7 @@ tiup cluster display <cluster-name>
 ```
 Cluster type:       tidb
 Cluster name:       <cluster-name>
-Cluster version:    v6.1.6
+Cluster version:    v6.1.7
 ```
 
 ## 4. 升级 FAQ
@@ -249,5 +249,5 @@ tiup cluster upgrade <cluster-name> <version> --force
 
 
 ```
-tiup install ctl:v6.1.6
+tiup install ctl:v6.1.7
 ```
