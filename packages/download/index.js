@@ -10,6 +10,7 @@ import {
 import {
   replaceCopyableStream,
   replaceImagePathStream,
+  replaceCustomContentStream,
 } from "@pingcap/docs-content";
 
 import { execSync } from "child_process";
@@ -53,7 +54,8 @@ function renameDoc(repo) {
 }
 
 export function download(argv) {
-  const { repo, path, ref, destination, config, dryRun } = argv;
+  const { repo, path, ref, destination, config, dryRun, rmCustomContent } =
+    argv;
   const dest = nPath.resolve(destination);
   const options = genOptions(repo, config, dryRun);
 
@@ -76,6 +78,11 @@ export function download(argv) {
       );
       break;
     case "pingcap/docs":
+      if (rmCustomContent) {
+        options.pipelines.push(() =>
+          replaceCustomContentStream(rmCustomContent)
+        );
+      }
       if (ref.startsWith("i18n-")) {
         const refDataList = ref.split("-");
         refDataList.shift();
@@ -223,6 +230,7 @@ export function sync(argv) {
     case "pingcap/docs-dm":
     case "pingcap/docs-tidb-operator":
       const name = renameDoc(repo);
+      options.pipelines.push(() => replaceCustomContentStream("tidb-cloud"));
 
       handleSync(
         {
@@ -287,6 +295,7 @@ export function filterCloud(argv) {
     nPath.resolve(dest, `${lang}/tidbcloud/master`)
   );
   rimraf.sync(docsDestPath);
+  options.pipelines.push(() => replaceCustomContentStream("tidb"));
   retrieveCloudMDsFromZip(
     {
       repo,
