@@ -188,7 +188,7 @@ TiDB Operator 包含许多实现 TiDB 集群不同组件的自定义资源类型
 
 
 ```shell
-kubectl create -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.6/manifests/crd.yaml
+kubectl create -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.7/manifests/crd.yaml
 ```
 
 <details>
@@ -250,16 +250,16 @@ customresourcedefinition.apiextensions.k8s.io/tidbclusterautoscalers.pingcap.com
 
     
     ```shell
-    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.4.6
+    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.4.7
     ```
 
     如果访问 Docker Hub 网速较慢，可以使用阿里云上的镜像：
 
     
     ```
-    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.4.6 \
-        --set operatorImage=registry.cn-beijing.aliyuncs.com/tidb/tidb-operator:v1.4.6 \
-        --set tidbBackupManagerImage=registry.cn-beijing.aliyuncs.com/tidb/tidb-backup-manager:v1.4.6 \
+    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.4.7 \
+        --set operatorImage=registry.cn-beijing.aliyuncs.com/tidb/tidb-operator:v1.4.7 \
+        --set tidbBackupManagerImage=registry.cn-beijing.aliyuncs.com/tidb/tidb-backup-manager:v1.4.7 \
         --set scheduler.kubeSchedulerImageName=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler
     ```
 
@@ -310,7 +310,7 @@ tidb-scheduler-644d59b46f-4f6sb            2/2     Running   0          2m22s
 
 ``` shell
 kubectl create namespace tidb-cluster && \
-    kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.6/examples/basic/tidb-cluster.yaml
+    kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.7/examples/basic/tidb-cluster.yaml
 ```
 
 如果访问 Docker Hub 网速较慢，可以使用 UCloud 上的镜像：
@@ -318,7 +318,7 @@ kubectl create namespace tidb-cluster && \
 
 ```
 kubectl create namespace tidb-cluster && \
-    kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.6/examples/basic-cn/tidb-cluster.yaml
+    kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.7/examples/basic-cn/tidb-cluster.yaml
 ```
 
 <details>
@@ -337,14 +337,14 @@ tidbcluster.pingcap.com/basic created
 
 
 ``` shell
-kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.6/examples/basic/tidb-dashboard.yaml
+kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.7/examples/basic/tidb-dashboard.yaml
 ```
 
 如果访问 Docker Hub 网速较慢，可以使用 UCloud 上的镜像：
 
 
 ```
-kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.6/examples/basic-cn/tidb-dashboard.yaml
+kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.7/examples/basic-cn/tidb-dashboard.yaml
 ```
 
 <details>
@@ -360,14 +360,14 @@ tidbdashboard.pingcap.com/basic created
 
 
 ``` shell
-kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.6/examples/basic/tidb-monitor.yaml
+kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.7/examples/basic/tidb-monitor.yaml
 ```
 
 如果访问 Docker Hub 网速较慢，可以使用 UCloud 上的镜像：
 
 
 ```
-kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.6/examples/basic-cn/tidb-monitor.yaml
+kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.4.7/examples/basic-cn/tidb-monitor.yaml
 ```
 
 <details>
