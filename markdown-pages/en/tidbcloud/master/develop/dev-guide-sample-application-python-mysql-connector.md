@@ -1,7 +1,6 @@
 ---
 title: Build a Simple CRUD App with TiDB and MySQL Connector/Python
 summary: Learn how to build a simple CRUD application with TiDB and MySQL Connector/Python.
-aliases: ['/tidb/v6.5/dev-guide-sample-application-python','/tidb/stable/dev-guide-sample-application-python','/tidbcloud/dev-guide-sample-application-python','/tidb/v6.5/dev-guide-outdated-for-python-mysql-connector']
 ---
 
 <!-- markdownlint-disable MD024 -->
@@ -151,9 +150,11 @@ def simple_example() -> None:
 
             # create players with bulk inserts.
             # insert 1919 players totally, with 114 players per batch.
-            # each player has a random UUID
+            # all players have random uuid
+            print(f'start to insert one by one, it will take a long time')
             player_list = random_player(1919)
             for idx in range(0, len(player_list), 114):
+                print(f'inserted {idx} players')
                 bulk_create_player(cur, player_list[idx:idx + 114])
 
             # print the number of players
@@ -233,7 +234,7 @@ If you are not using a local cluster, or have not installed a MySQL client, conn
 
 ### Step 3.2 Modify parameters for TiDB Cloud
 
-If you are using a TiDB Serverless cluster, you need to provide your CA root path and replace `<ca_path>` in the following examples with your CA path. To get the CA root path on your system, refer to [Root certificate management](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters#root-certificate-management).
+If you are using a TiDB Serverless cluster, you need to provide your CA root path and replace `<ca_path>` in the following examples with your CA path. To get the CA root path on your system, refer to [Where is the CA root path on my system?](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-tier-clusters#where-is-the-ca-root-path-on-my-system).>
 
 If you are using a TiDB Serverless cluster, change the `get_connection` function in `mysql_connector_python_example.py`:
 

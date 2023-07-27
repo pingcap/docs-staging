@@ -129,7 +129,7 @@ Before TiFlash replicas are added, each TiKV instance performs a full table scan
 
    ```sql
    -- The default value for both configurations are 100MiB, i.e. the maximum disk bandwidth used for writing snapshots is no more than 100MiB/s.
-   SET CONFIG tikv `server.snap-max-write-bytes-per-sec` = '300MiB';
+   SET CONFIG tikv `server.snap-io-max-bytes-per-sec` = '300MiB';
    SET CONFIG tiflash `raftstore-proxy.server.snap-max-write-bytes-per-sec` = '300MiB';
    ```
 
@@ -143,10 +143,10 @@ Before TiFlash replicas are added, each TiKV instance performs a full table scan
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 60 add-peer
     ```
 
-    > In the preceding command, you need to replace `v<CLUSTER_VERSION>` with the actual cluster version, such as `v6.5.3` and `<PD_ADDRESS>:2379` with the address of any PD node. For example:
+    > In the preceding command, you need to replace `v<CLUSTER_VERSION>` with the actual cluster version, such as `v7.1.1` and `<PD_ADDRESS>:2379` with the address of any PD node. For example:
     >
     > ```shell
-    > tiup ctl:v6.1.1 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
+    > tiup ctl:v7.1.1 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
     > ```
 
     Within a few minutes, you will observe a significant increase in CPU and disk IO resource usage of the TiFlash nodes, and TiFlash should create replicas faster. At the same time, the TiKV nodes' CPU and disk IO resource usage increases as well.
@@ -168,7 +168,7 @@ Before TiFlash replicas are added, each TiKV instance performs a full table scan
    Execute the following SQL statements to restore the default snapshot write speed limit:
 
    ```sql
-   SET CONFIG tikv `server.snap-max-write-bytes-per-sec` = '100MiB';
+   SET CONFIG tikv `server.snap-io-max-bytes-per-sec` = '100MiB';
    SET CONFIG tiflash `raftstore-proxy.server.snap-max-write-bytes-per-sec` = '100MiB';
    ```
 

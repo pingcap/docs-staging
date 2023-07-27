@@ -23,6 +23,8 @@ This document introduces the `AUTO_INCREMENT` column attribute, including its co
 
 </CustomContent>
 
+You can also use the `AUTO_INCREMENT` parameter in the [`CREATE TABLE`](/sql-statements/sql-statement-create-table.md) statement to specify the initial value of the increment field.
+
 ## Concept
 
 `AUTO_INCREMENT` is a column attribute that is used to automatically fill in default column values. When the `INSERT` statement does not specify values for the `AUTO_INCREMENT` column, the system automatically assigns values to this column.
@@ -370,7 +372,7 @@ After you enable the MySQL compatibility mode, the allocated IDs are **unique** 
 
 Currently, `AUTO_INCREMENT` has the following restrictions when used in TiDB:
 
-- It must be defined on the first column of the primary key or the first column of an index.
+- For TiDB v6.6.0 and earlier versions, the defined column must be either primary key or index prefixes.
 - It must be defined on the column of `INTEGER`, `FLOAT`, or `DOUBLE` type.
 - It cannot be specified on the same column with the `DEFAULT` column value.
 - `ALTER TABLE` cannot be used to add the `AUTO_INCREMENT` attribute.
