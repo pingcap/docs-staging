@@ -57,10 +57,10 @@ jobs:
           fi
 
           # handle tidb-cloud doc based on specified en/ja doc branch
-          if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "release-6.5" ]
+          if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "release-7.1" ]
           then
           yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
-          elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "i18n-ja-release-6.5" ]
+          elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "i18n-ja-release-7.1" ]
           then
           yarn download:tidb-cloud:ja --ref ${{ inputs.branch }}
           fi
