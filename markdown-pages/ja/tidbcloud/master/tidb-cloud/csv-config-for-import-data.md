@@ -22,12 +22,6 @@ summary: Learn how to use CSV configurations for the Import Data service on TiDB
 
 -   デフォルト: `,`
 
-## ヘッダ {#header}
-
--   定義:*すべての*CSV ファイルにヘッダー行が含まれているかどうか。 **Header**が`True`の場合、最初の行が列名として使用されます。 **Header**が`False`の場合、最初の行は通常のデータ行として扱われます。
-
--   デフォルト: `True`
-
 ## デリミタ {#delimiter}
 
 -   定義: 引用符で使用する区切り文字を定義します。 **Delimiter**が空の場合、すべてのフィールドは引用符で囲まれません。
@@ -38,6 +32,12 @@ summary: Learn how to use CSV configurations for the Import Data service on TiDB
     -   `''`引用を無効にします。
 
 -   デフォルト: `"`
+
+## ヘッダー付き {#with-header}
+
+-   定義:*すべての*CSV ファイルにヘッダー行が含まれているかどうか。 **With header**が`True`の場合、最初の行が列名として使用されます。 **With header**が`False`の場合、最初の行は通常のデータ行として扱われます。
+
+-   デフォルト: `True`
 
 ## バックスラッシュのエスケープ {#backslash-escape}
 
@@ -72,18 +72,3 @@ summary: Learn how to use CSV configurations for the Import Data service on TiDB
     `"{\"key1\": \"val1\", \"key2\":\"val2\" }"`
 
 -   デフォルト: `True`
-
-## 最後の区切り文字をトリム {#trim-last-separator}
-
--   定義: `Separator`行末記号として扱い、末尾の区切り記号をすべてトリミングするかどうか。
-
-    たとえば、次の CSV ファイルでは:
-
-    ```csv
-    A,,B,,
-    ```
-
-    -   `Trim last separator = False`の場合、これは 5 つのフィールドの行として解釈されます`('A', '', 'B', '', '')` 。
-    -   `Trim last separator = True`の場合、これは 3 つのフィールドの行として解釈されます`('A', '', 'B')` 。
-
--   デフォルト: `False`

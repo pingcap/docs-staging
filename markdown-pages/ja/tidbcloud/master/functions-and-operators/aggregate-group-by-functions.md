@@ -11,31 +11,31 @@ summary: Learn about the supported aggregate functions in TiDB.
 
 このセクションでは、TiDB でサポートされている MySQL `GROUP BY`集計関数について説明します。
 
-| 名前                                                                                                                                         | 説明                                     |
-| :----------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------- |
-| [`COUNT()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_count)                                               | 返された行数のカウントを返します                       |
-| [`COUNT(DISTINCT)`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_count-distinct)                              | 多数の異なる値のカウントを返します                      |
-| [`SUM()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_sum)                                                   | 合計を返す                                  |
-| [`AVG()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_avg)                                                   | 引数の平均値を返します                            |
-| [`MAX()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_max)                                                   | 最大値を返す                                 |
-| [`MIN()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_min)                                                   | 最小値を返す                                 |
-| [`GROUP_CONCAT()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_group-concat)                                 | 連結された文字列を返す                            |
-| [`VARIANCE()` , <code>VAR_POP()</code>](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_var-pop)                 | 母標準分散を返します                             |
-| [`STD()` 、 <code>STDDEV()</code> 、 <code>STDDEV_POP</code>](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_std) | 母集団の標準偏差を返します                          |
-| [`VAR_SAMP()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_var-samp)                                         | 標本分散を返す                                |
-| [`STDDEV_SAMP()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_stddev-samp)                                   | サンプル標準偏差を返します                          |
-| [`JSON_OBJECTAGG(key, value)`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_json-objectagg)                   | キーと値のペアを含む単一の JSON オブジェクトとして結果セットを返します |
+| 名前                                                                                                                       | 説明                                      |
+| :----------------------------------------------------------------------------------------------------------------------- | :-------------------------------------- |
+| [`COUNT()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_count)                             | 返された行数を返します。                            |
+| [`COUNT(DISTINCT)`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_count-distinct)            | さまざまな値の数を返します。                          |
+| [`SUM()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_sum)                                 | 合計を返します                                 |
+| [`AVG()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_avg)                                 | 引数の平均値を返します                             |
+| [`MAX()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_max)                                 | 最大値を返す                                  |
+| [`MIN()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_min)                                 | 最小値を返す                                  |
+| [`GROUP_CONCAT()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_group-concat)               | 連結された文字列を返す                             |
+| [`VARIANCE()` 、 `VAR_POP()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_var-pop)          | 母集団の標準分散を返します                           |
+| [`STD()` 、 `STDDEV()` 、 `STDDEV_POP`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_std)     | 母集団の標準偏差を返します                           |
+| [`VAR_SAMP()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_var-samp)                       | 標本分散を返す                                 |
+| [`STDDEV_SAMP()`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_stddev-samp)                 | サンプルの標準偏差を返します                          |
+| [`JSON_OBJECTAGG(key, value)`](https://dev.mysql.com/doc/refman/5.7/en/aggregate-functions.html#function_json-objectagg) | 結果セットをキーと値のペアを含む単一の JSON オブジェクトとして返します。 |
 
--   特に明記しない限り、グループ関数は`NULL`値を無視します。
+-   特に明記されていない限り、グループ関数は`NULL`値を無視します。
 -   `GROUP BY`句を含まないステートメントでグループ関数を使用すると、すべての行をグループ化することと同じになります。
 
 さらに、TiDB は次の集計関数も提供します。
 
 -   `APPROX_PERCENTILE(expr, constant_integer_expr)`
 
-    この関数は`expr`のパーセンタイルを返します。 `constant_integer_expr`引数は、 `[1,100]`の範囲の定数整数であるパーセンテージ値を示します。パーセンタイル P <sub>k</sub> ( `k`パーセンテージを表す) は、データ セット内に P <sub>k</sub>以下の値が少なくとも`k%`あることを示します。
+    この関数は`expr`のパーセンタイルを返します。 `constant_integer_expr`引数は、 `[1,100]`の範囲の定数整数であるパー​​センテージ値を示します。パーセンタイル P <sub>k</sub> ( `k`パーセンテージを表す) は、データ セット内に P <sub>k</sub>以下の値が少なくとも`k%`あることを示します。
 
-    この関数は、返される`expr`の型として[数値型](/data-type-numeric.md)と[日時型](/data-type-date-and-time.md)のみをサポートします。他の返される型の場合、 `APPROX_PERCENTILE` `NULL`のみを返します。
+    この関数は、 `expr`の戻り値の型として[数値型](/data-type-numeric.md)と[日付と時刻のタイプ](/data-type-date-and-time.md)のみをサポートします。他の返される型の場合、 `APPROX_PERCENTILE` `NULL`のみを返します。
 
     次の例は、 `INT`列の 50 パーセンタイルを計算する方法を示しています。
 
@@ -60,15 +60,15 @@ summary: Learn about the supported aggregate functions in TiDB.
     1 row in set (0.00 sec)
     ```
 
-`GROUP_CONCAT()`と`APPROX_PERCENTILE()`関数を除いて、先行するすべての関数は[ウィンドウ関数](/functions-and-operators/window-functions.md)として機能します。
+`GROUP_CONCAT()`と`APPROX_PERCENTILE()`関数を除き、前述のすべての関数が[ウィンドウ関数](/functions-and-operators/window-functions.md)として機能します。
 
 ## GROUP BY 修飾子 {#group-by-modifiers}
 
-TiDB は現在、 `WITH ROLLUP`などの`GROUP BY`修飾子をサポートしていません。将来的にサポートを追加する予定です。 [TiDB #4250](https://github.com/pingcap/tidb/issues/4250)を参照してください。
+TiDB は現在、 `WITH ROLLUP`などの`GROUP BY`修飾子をサポートしていません。将来的にはサポートを追加する予定です。 [ティDB #4250](https://github.com/pingcap/tidb/issues/4250)を参照してください。
 
-## SQL モードのサポート {#sql-mode-support}
+## SQLモードのサポート {#sql-mode-support}
 
-TiDB は SQL モード`ONLY_FULL_GROUP_BY`をサポートし、有効にすると、TiDB はあいまいな非集計列を含むクエリを拒否します。たとえば、次のクエリは`ONLY_FULL_GROUP_BY`有効な場合は無効です。これは、 `SELECT`リストの集計されていない列 &quot;b&quot; が`GROUP BY`ステートメントに表示されないためです。
+TiDB は SQL モード`ONLY_FULL_GROUP_BY`をサポートしており、有効にすると、TiDB はあいまいな非集計列を含むクエリを拒否します。たとえば、リスト`SELECT`の非集計列 &quot;b&quot; が`GROUP BY`ステートメントに現れないため、このクエリは`ONLY_FULL_GROUP_BY`有効になっていると不正になります。
 
 ```sql
 drop table if exists t;
@@ -94,9 +94,9 @@ ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUP BY clause and c
 
 TiDB は現在、デフォルトで[`ONLY_FULL_GROUP_BY`](/mysql-compatibility.md#default-differences)モードを有効にしています。
 
-### MySQL との違い {#differences-from-mysql}
+### MySQLとの違い {#differences-from-mysql}
 
-`ONLY_FULL_GROUP_BY`の現在の実装は、 MySQL 5.7よりも厳密ではありません。たとえば、次のクエリを実行し、結果が &quot;c&quot; で並べられると想定するとします。
+`ONLY_FULL_GROUP_BY`の現在の実装は、 MySQL 5.7の実装よりも厳密ではありません。たとえば、結果が「c」順に並べられることを期待して次のクエリを実行するとします。
 
 ```sql
 drop table if exists t;
@@ -105,16 +105,16 @@ insert into t values(1, 2, 1), (1, 2, 2), (1, 3, 1), (1, 3, 2);
 select distinct a, b from t order by c;
 ```
 
-結果を順序付けるには、最初に重複を排除する必要があります。しかし、そうするには、どの行を保持する必要がありますか?この選択は、保持される &quot;c&quot; の値に影響を与えます。これは順番に影響を与え、同様に任意にします。
+結果を順序付けするには、最初に重複を削除する必要があります。しかし、そのためにはどの行を保持すればよいでしょうか?この選択は「c」の保持値に影響を与え、その結果、順序付けに影響を与え、任意になります。
 
-MySQL では、 `ORDER BY`式が次の条件の少なくとも 1 つを満たさない場合、 `DISTINCT`と`ORDER BY`持つクエリは無効として拒否されます。
+MySQL では、 `ORDER BY`の式が次の条件の少なくとも 1 つを満たさない場合、 `DISTINCT`と`ORDER BY`を含むクエリは無効として拒否されます。
 
--   式は`SELECT`リストの 1 つと等しい
--   式によって参照され、クエリの選択されたテーブルに属するすべての列は、 `SELECT`リストの要素です
+-   式はリスト`SELECT`の 1 に等しい
+-   式によって参照され、クエリの選択されたテーブルに属するすべての列は、 `SELECT`リストの要素です。
 
-しかし、TiDB では、上記のクエリは合法です。詳細については、 [#4254](https://github.com/pingcap/tidb/issues/4254)を参照してください。
+ただし、TiDB では、上記のクエリは有効です。詳細については、 [#4254](https://github.com/pingcap/tidb/issues/4254)を参照してください。
 
-標準 SQL に対する TiDB のもう 1 つの拡張機能では、 `HAVING`句で`SELECT`リストのエイリアスされた式を参照できます。たとえば、次のクエリは、テーブル「orders」で 1 回だけ出現する「name」値を返します。
+標準 SQL への別の TiDB 拡張機能では、 `HAVING`節で`SELECT`リストのエイリアス化された式への参照が許可されます。たとえば、次のクエリは、テーブル &quot;orders&quot; に 1 回だけ出現する &quot;name&quot; 値を返します。
 
 ```sql
 select name, count(name) from orders
@@ -122,7 +122,7 @@ group by name
 having count(name) = 1;
 ```
 
-TiDB 拡張機能では、集計列の`HAVING`句でエイリアスを使用できます。
+TiDB 拡張機能では、集計列の`HAVING`句でエイリアスの使用が許可されています。
 
 ```sql
 select name, count(name) as c from orders
@@ -130,7 +130,7 @@ group by name
 having c = 1;
 ```
 
-標準 SQL では`GROUP BY`句で列式のみが許可されるため、「FLOOR(value/100)」は非列式であるため、次のようなステートメントは無効です。
+標準 SQL では`GROUP BY`句内の列式のみが許可されるため、「FLOOR(value/100)」は非列式であるため、次のようなステートメントは無効です。
 
 ```sql
 select id, floor(value/100)
@@ -138,9 +138,9 @@ from tbl_name
 group by id, floor(value/100);
 ```
 
-TiDB は、標準 SQL を拡張して`GROUP BY`句で非列式を許可し、前のステートメントを有効と見なします。
+TiDB は標準 SQL を拡張して、 `GROUP BY`節で非列式を許可し、前述のステートメントが有効であるとみなします。
 
-標準 SQL では、 `GROUP BY`節で別名を使用することもできません。 TiDB は標準 SQL を拡張してエイリアスを許可するため、クエリを記述する別の方法は次のとおりです。
+標準 SQL では、 `GROUP BY`句でのエイリアスも許可されません。 TiDB は標準 SQL を拡張してエイリアスを許可するため、クエリを記述する別の方法は次のようになります。
 
 ```sql
 select id, floor(value/100) as val
@@ -150,4 +150,4 @@ group by id, val;
 
 ## 関連するシステム変数 {#related-system-variables}
 
-`group_concat_max_len`変数は、 `GROUP_CONCAT()`関数の項目の最大数を設定します。
+`group_concat_max_len`変数は、 `GROUP_CONCAT()`関数の最大項目数を設定します。

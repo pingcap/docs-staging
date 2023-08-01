@@ -47,7 +47,7 @@ Summary: Learn how to create a changefeed to stream data from a TiDB Dedicated c
     SET GLOBAL tidb_gc_life_time = '720h';
     ```
 
-2.  [データのエクスポート](/tidb-cloud/export-data-from-tidb-cloud.md)を TiDB 専用クラスターからロードし、 [マイダンパー/マイローダー](https://centminmod.com/mydumper.html)などのコミュニティ ツールを使用して宛先 TiDB サーバーレス クラスターにデータをロードします。
+2.  [バックアップデータ](/tidb-cloud/backup-and-restore.md#backup)を TiDB 専用クラスターからロードし、 [マイダンパー/マイローダー](https://centminmod.com/mydumper.html)などのコミュニティ ツールを使用して宛先 TiDB サーバーレス クラスターにデータをロードします。
 
 3.  [Dumplingのエクスポートされたファイル](https://docs.pingcap.com/tidb/stable/dumpling-overview#format-of-exported-files)から、メタデータ ファイルからTiDB Cloudシンクの開始位置を取得します。
 

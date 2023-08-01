@@ -11,7 +11,7 @@ summary: Learn how to migrate data from MySQL-compatible databases to TiDB Cloud
 
 TiDB は MySQL と高い互換性があります。データがセルフホスト型 MySQL インスタンスからのものであっても、パブリック クラウドによって提供される RDS サービスからのものであっても、MySQL 互換データベースから TiDB にスムーズにデータを移行できます。
 
-このドキュメントでは[Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)使用して MySQL 互換データベースからデータをエクスポートし、 [TiDB Lightning](https://docs.pingcap.com/tidb/stable/tidb-lightning-overview)論理インポート モードを使用してデータをTiDB Cloudにインポートする方法について説明します。
+このドキュメントでは[TiDB Lightning](https://docs.pingcap.com/tidb/stable/tidb-lightning-overview)論理インポート モードを使用してデータをTiDB Cloudにインポートする方法について説明します。
 
 > **ノート：**
 >
@@ -57,7 +57,7 @@ TiUPは TiDB エコシステムのパッケージ マネージャーであり、
 
 ## ステップ 2. MySQL 互換データベースからデータをエクスポートする {#step-2-export-data-from-mysql-compatible-databases}
 
-MySQL からデータをダンプするには、 `mysqldump`や`mydumper`などのいくつかの方法を使用できます。より高いパフォーマンスと、PingCAP によって作成されたオープン ソース ツールの 1 つである TiDB との互換性を確保するには、 [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)を使用することをお勧めします。
+MySQL からデータをダンプするには、 `mysqldump`や`mydumper`などのいくつかの方法を使用できます。より高いパフォーマンスと、PingCAP によって作成されたオープン ソース ツールの 1 つである TiDB との互換性を確保するには、 [Dumpling](/dumpling-overview.md)を使用することをお勧めします。
 
 1.  Dumplingをインストールします。
 
@@ -68,7 +68,7 @@ MySQL からデータをダンプするには、 `mysqldump`や`mydumper`など�
 
 2.  Dumplingを使用して MySQL データベースをエクスポートします。
 
-    -   データを Amazon S3 クラウドstorageにエクスポートするには、 [データを Amazon S3 クラウドstorageにエクスポートする](https://docs.pingcap.com/tidb/stable/dumpling-overview#export-data-to-amazon-s3-cloud-storage)を参照してください。
+    -   データを Amazon S3 クラウドstorageにエクスポートするには、 [データを Amazon S3 クラウドstorageにエクスポートする](/dumpling-overview.md#export-data-to-amazon-s3-cloud-storage)を参照してください。
     -   データをローカル データ ファイルにエクスポートするには、次のコマンドを使用します。
 
         
@@ -93,11 +93,11 @@ MySQL からデータをダンプするには、 `mysqldump`や`mydumper`など�
 
     1.  Amazon S3 アクセスを設定して、TiDB クラウドが Amazon S3 バケット内のソース データにアクセスできるようにします。詳細については、 [Amazon S3 アクセスを設定する](/tidb-cloud/config-s3-and-gcs-access.md#configure-amazon-s3-access)を参照してください。
 
-    2.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
+    2.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
         > **ヒント：**
         >
-        > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅の をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
+        > 複数のプロジェクトがある場合は、 **「クラスター」**ページの左側のナビゲーション・ペインでターゲット・プロジェクトに切り替えることができます。
 
     3.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート]**をクリックします。
 

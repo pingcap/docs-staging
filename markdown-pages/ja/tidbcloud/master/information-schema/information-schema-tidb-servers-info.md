@@ -5,7 +5,7 @@ summary: Learn the `TIDB_SERVERS_INFO` INFORMATION_SCHEMA table.
 
 # TIDB_SERVERS_INFO {#tidb-servers-info}
 
-`TIDB_SERVERS_INFO`テーブルは、TiDBクラスタ内の TiDB サーバー (つまり、tidb-server プロセス) に関する情報を提供します。
+表`TIDB_SERVERS_INFO`は、TiDBクラスタ内の TiDB サーバー (つまり、tidb-server プロセス) に関する情報を提供します。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -46,7 +46,7 @@ SELECT * FROM TIDB_SERVERS_INFO\G
          PORT: 4000
   STATUS_PORT: 10080
         LEASE: 45s
-      VERSION: 5.7.25-TiDB-v6.5.0
+      VERSION: 5.7.25-TiDB-v7.1.1
      GIT_HASH: 827d8ff2d22ac4c93ae1b841b79d468211e1d393
 BINLOG_STATUS: Off
        LABELS:

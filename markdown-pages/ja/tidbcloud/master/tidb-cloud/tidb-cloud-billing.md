@@ -16,7 +16,7 @@ TiDB Cloud は、消費したリソースに応じて料金が発生します。
 
 ## 請求書 {#invoices}
 
-組織の所有者または請求管理者は、 TiDB Cloudの請求書情報を管理できます。それ以外の場合は、このセクションをスキップしてください。
+組織の`Organization Owner`または`Organization Billing Admin`役割に属している場合は、 TiDB Cloudの請求書情報を管理できます。それ以外の場合は、このセクションをスキップしてください。
 
 支払い方法を設定した後、コストが割り当て (デフォルトでは 500 ドル) に達すると、 TiDB Cloud は請求書を生成します。割り当てを引き上げたい場合、または月に 1 つの請求書を受け取りたい場合は、 [弊社営業担当までお問い合わせください](https://www.pingcap.com/contact-us/)を実行できます。
 
@@ -50,7 +50,7 @@ TiDB Cloud は、消費したリソースに応じて料金が発生します。
 
 ## 支払明細 {#billing-details}
 
-組織の所有者または請求管理者の場合は、 TiDB Cloudの請求の詳細を表示およびエクスポートできます。それ以外の場合は、このセクションをスキップしてください。
+組織の`Organization Owner`または`Organization Billing Admin`役割に属している場合は、 TiDB Cloudの請求詳細を表示およびエクスポートできます。それ以外の場合は、このセクションをスキップしてください。
 
 支払い方法を設定すると、 TiDB Cloud は過去の月の請求書と請求の詳細を生成し、各月の初めに当月の請求の詳細を生成します。請求の詳細には、組織の TiDB クラスター使用量、割引、バックアップstorageコスト、データ転送コスト、サポート サービス コスト、クレジット消費量、およびプロジェクト分割情報が含まれます。
 
@@ -115,7 +115,7 @@ TiDB Cloud は、概念実証 (PoC) ユーザーに一定数のクレジット�
 
 ## 割引 {#discounts}
 
-組織の所有者または請求管理者の場合は、 **「割引」**ページでTiDB Cloudの割引情報を表示できます。それ以外の場合は、このセクションをスキップしてください。
+組織の`Organization Owner`または`Organization Billing Admin`役割に属している場合は、 **「割引」**ページでTiDB Cloudの割引情報を表示できます。それ以外の場合は、このセクションをスキップしてください。
 
 割引情報には、受け取ったすべての割引、ステータス、割引率、割引の開始日と終了日が含まれます。
 
@@ -133,7 +133,7 @@ TiDB Cloud は、概念実証 (PoC) ユーザーに一定数のクレジット�
 
 ## 支払方法 {#payment-method}
 
-組織の所有者または請求管理者は、 TiDB Cloudの支払い情報を管理できます。それ以外の場合は、このセクションをスキップしてください。
+組織の`Organization Owner`または`Organization Billing Admin`役割に属している場合は、 TiDB Cloudの支払い情報を管理できます。それ以外の場合は、このセクションをスキップしてください。
 
 > **ノート：**
 >
@@ -203,7 +203,7 @@ TiDB Cloud は、概念実証 (PoC) ユーザーに一定数のクレジット�
 
 ## 契約 {#contract}
 
-あなたが組織の所有者または請求管理者である場合は、コンプライアンス要件を満たすために、 TiDB CloudコンソールでカスタマイズされたTiDB Cloudサブスクリプションを管理できます。それ以外の場合は、このセクションをスキップしてください。
+組織の`Organization Owner`または`Organization Billing Admin`役割に属している場合は、コンプライアンス要件を満たすために、 TiDB CloudコンソールでカスタマイズされたTiDB Cloudサブスクリプションを管理できます。それ以外の場合は、このセクションをスキップしてください。
 
 当社の販売契約に同意し、オンラインで契約を確認して同意するための電子メールを受け取った場合は、次の操作を行うことができます。
 
@@ -223,7 +223,7 @@ TiDB Cloud は、概念実証 (PoC) ユーザーに一定数のクレジット�
 
 ## AWS Marketplace または Google Cloud Marketplace からの請求 {#billing-from-aws-marketplace-or-google-cloud-marketplace}
 
-あなたが組織の所有者または請求管理者である場合は、 TiDB Cloudアカウントを AWS 請求先アカウントまたは Google Cloud 請求先アカウントにリンクできます。それ以外の場合は、このセクションをスキップしてください。
+組織の`Organization Owner`または`Organization Billing Admin`役割に属している場合は、 TiDB Cloudアカウントを AWS 請求先アカウントまたは Google Cloud 請求先アカウントにリンクできます。それ以外の場合は、このセクションをスキップしてください。
 
 TiDB Cloudを初めて使用し、 TiDB Cloudアカウントをお持ちでない場合は、 [AWSマーケットプレイス](https://aws.amazon.com/marketplace)または[Google Cloud マーケットプレイス](https://console.cloud.google.com/marketplace)を通じてTiDB Cloudアカウントにサインアップし、AWS または GCP 請求先アカウントを介して使用料金を支払うことができます。
 

@@ -5,17 +5,17 @@ summary: Learn about the execution plan information returned by the `EXPLAIN` st
 
 # ビューを使用したEXPLAINステートメント {#explain-statements-using-views}
 
-`EXPLAIN`ビュー自体の名前ではなく、 [意見](/views.md)が参照するテーブルとインデックスを表示します。これは、ビューが単なる仮想テーブルであり、データ自体を保存しないためです。ビューの定義とステートメントの残りの部分は、SQL の最適化中にマージされます。
+`EXPLAIN`ビュー自体の名前ではなく、 [意見](/views.md)が参照するテーブルとインデックスを表示します。これは、ビューは単なる仮想テーブルであり、それ自体にはデータが格納されないためです。ビューの定義とステートメントの残りの部分は、SQL の最適化中にマージされます。
 
 <CustomContent platform="tidb">
 
-[バイクシェア サンプル データベース](/import-example-data.md)から、次の 2 つのクエリが同様の方法で実行されることがわかります。
+[自転車シェアのサンプル データベース](/import-example-data.md)から、次の 2 つのクエリが同様の方法で実行されることがわかります。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[バイクシェア サンプル データベース](/tidb-cloud/import-sample-data.md)から、次の 2 つのクエリが同様の方法で実行されることがわかります。
+[自転車シェアのサンプル データベース](/tidb-cloud/import-sample-data.md)から、次の 2 つのクエリが同様の方法で実行されることがわかります。
 
 </CustomContent>
 
@@ -51,7 +51,7 @@ Query OK, 0 rows affected (0.13 sec)
 3 rows in set (0.00 sec)
 ```
 
-同様に、ビューからの述語はベース テーブルにプッシュ ダウンされます。
+同様に、ビューの述語がベーステーブルにプッシュダウンされます。
 
 
 ```sql
@@ -80,9 +80,9 @@ EXPLAIN SELECT * FROM trips WHERE bike_number = 'W00950';
 3 rows in set (0.00 sec)
 ```
 
-上記の最初のステートメントでは、ビュー定義を満たすためにインデックスが使用され、TiDB がテーブル行を読み取るときに`bike_number = 'W00950'`が適用されることがわかります。 2 番目のステートメントでは、ステートメントを満たすインデックスがなく、 `TableFullScan`が使用されています。
+上記の最初のステートメントでは、ビュー定義を満たすためにインデックスが使用され、TiDB がテーブル行を読み取るときに`bike_number = 'W00950'`が適用されることがわかります。 2 番目のステートメントでは、ステートメントを満たすインデックスがないため、 `TableFullScan`が使用されます。
 
-TiDB は、ビュー定義とステートメント自体の両方を満たすインデックスを利用します。次の複合インデックスを検討してください。
+TiDB は、ビュー定義とステートメント自体の両方を満たすインデックスを使用します。次の複合インデックスを考えてみましょう。
 
 
 ```sql
@@ -113,4 +113,4 @@ Query OK, 0 rows affected (2 min 31.20 sec)
 3 rows in set (0.00 sec)
 ```
 
-最初のステートメントでは、TiDB は複合インデックスの両方の部分を使用できます`(bike_number, duration)` 。 2 番目のステートメントでは、インデックス`(bike_number, duration)`の`bike_number`である最初の部分のみが使用されます。
+最初のステートメントでは、TiDB は複合インデックス`(bike_number, duration)`の両方の部分を使用できます。 2 番目のステートメントでは、インデックス`(bike_number, duration)`の最初の部分`bike_number`のみが使用されます。

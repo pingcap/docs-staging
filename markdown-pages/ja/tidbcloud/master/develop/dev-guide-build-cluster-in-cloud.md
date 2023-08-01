@@ -1,52 +1,51 @@
 ---
-title: Build a TiDB Cluster in TiDB Cloud (Serverless Tier)
-summary: Learn how to build a TiDB cluster in TiDB Cloud (Serverless Tier) and connect to a TiDB Cloud cluster.
+title: Build a TiDB Serverless Cluster
+summary: Learn how to build a TiDB Serverless cluster in TiDB Cloud and connect to it.
 ---
 
 <!-- markdownlint-disable MD029 -->
 
-# TiDB Cloud(Serverless Tier) で TiDBクラスタを構築する {#build-a-tidb-cluster-in-tidb-cloud-serverless-tier}
+# TiDB サーバーレスクラスタを構築する {#build-a-tidb-serverless-cluster}
 
 <CustomContent platform="tidb">
 
-このドキュメントでは、TiDB を使い始める最も簡単な方法について説明します。 [TiDB Cloud](https://en.pingcap.com/tidb-cloud)を使用してServerless Tierクラスターを作成し、それに接続して、サンプル アプリケーションを実行します。
+このドキュメントでは、TiDB を始める最も簡単な方法を説明します。 [TiDB Cloud](https://en.pingcap.com/tidb-cloud)を使用して TiDB サーバーレス クラスターを作成し、それに接続し、サンプル アプリケーションを実行します。
 
-ローカル マシンで TiDB を実行する必要がある場合は、 [TiDB をローカルで起動する](/quick-start-with-tidb.md)を参照してください。
+ローカル マシンで TiDB を実行する必要がある場合は、 [TiDB をローカルで開始する](/quick-start-with-tidb.md)を参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-このドキュメントでは、 TiDB Cloudを開始するための最も簡単な方法について説明します。 TiDB クラスターを作成して接続し、サンプル アプリケーションを実行します。
+このドキュメントでは、 TiDB Cloudを開始するための最も簡単な方法を説明します。 TiDB クラスターを作成し、それに接続し、その上でサンプル アプリケーションを実行します。
 
 </CustomContent>
 
-## ステップ 1.Serverless Tierクラスターを作成する {#step-1-create-a-serverless-tier-cluster}
+## ステップ 1. TiDB サーバーレスクラスターを作成する {#step-1-create-a-tidb-serverless-cluster}
 
-1.  TiDB Cloudアカウントを持っていない場合は、 [ここ](https://tidbcloud.com/free-trial)クリックしてアカウントにサインアップします。
+1.  TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidbcloud.com/free-trial)をクリックしてアカウントにサインアップしてください。
 
-2.  [ログイン](https://tidbcloud.com/)をTiDB Cloudアカウントに追加します。
+2.  TiDB Cloudアカウントに[ログイン](https://tidbcloud.com/) 。
 
-    デフォルトでは[**クラスター**](https://tidbcloud.com/console/clusters)リスト ページが表示されます。
+3.  [**クラスター**](https://tidbcloud.com/console/clusters)ページで、 **「クラスタの作成」**をクリックします。
 
-3.  新しいサインアップ ユーザーの場合、 TiDB Cloud はデフォルトのServerless Tierクラスター`Cluster0`を自動的に作成します。以降の手順でこのデフォルト クラスタを使用するか、独自に新しいServerless Tierクラスタを作成することができます。
+4.  **「クラスタの作成」**ページでは、デフォルトで**サーバーレス**が選択されています。必要に応じてデフォルトのクラスター名を更新し、クラスターを作成するリージョンを選択します。
 
-    自分で新しいServerless Tierクラスターを作成するには、次の操作を行います。
+5.  **「作成」を**クリックして、TiDB サーバーレスクラスターを作成します。
 
-    1.  **[クラスタの作成]**をクリックします。
-    2.  **[クラスタの作成]**ページでは、<strong>サーバーレスが</strong>デフォルトで選択されています。クラスターのターゲット リージョンを選択し、必要に応じて既定のクラスター名を更新して、 <strong>[作成]</strong>をクリックします。 Serverless Tierクラスタは約 30 秒で作成されます。
+    TiDB Cloudクラスターは約 30 秒で作成されます。
 
-4.  クラスターの概要ページで、右上隅にある**[接続]**をクリックします。接続ダイアログボックスが表示されます。
+6.  TiDB Cloudクラスターが作成されたら、クラスター名をクリックしてクラスターの概要ページに移動し、右上隅にある**[接続]**をクリックします。接続ダイアログボックスが表示されます。
 
-5.  ダイアログで、希望する接続方法とオペレーティング システムを選択して、対応する接続文字列を取得します。このドキュメントでは、MySQL クライアントを例として使用します。
+7.  ダイアログで、希望の接続方法とオペレーティング システムを選択して、対応する接続​​文字列を取得します。このドキュメントでは、例として MySQL クライアントを使用します。
 
-6.  **[パスワードの作成]**をクリックして、ランダムなパスワードを生成します。生成されたパスワードは二度と表示されないため、パスワードを安全な場所に保存してください。 root パスワードを設定しないと、クラスターに接続できません。
+8.  **「パスワードの作成」**をクリックして、ランダムなパスワードを生成します。生成されたパスワードは再度表示されないため、パスワードを安全な場所に保存してください。 root パスワードを設定しないと、クラスターに接続できません。
 
 <CustomContent platform="tidb">
 
 > **ノート：**
 >
-> [Serverless Tierクラスター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#serverless-tier)の場合、クラスターに接続するときに、ユーザー名にクラスターのプレフィックスを含め、名前を引用符で囲む必要があります。詳細については、 [ユーザー名のプレフィックス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix)を参照してください。
+> [TiDB サーバーレスクラスター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)の場合、クラスターに接続するときに、ユーザー名にクラスターのプレフィックスを含め、名前を引用符で囲む必要があります。詳細については、 [ユーザー名のプレフィックス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix)を参照してください。
 
 </CustomContent>
 
@@ -54,7 +53,7 @@ summary: Learn how to build a TiDB cluster in TiDB Cloud (Serverless Tier) and c
 
 > **ノート：**
 >
-> [Serverless Tierクラスター](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta)の場合、クラスターに接続するときに、ユーザー名にクラスターのプレフィックスを含め、名前を引用符で囲む必要があります。詳細については、 [ユーザー名のプレフィックス](/tidb-cloud/select-cluster-tier.md#user-name-prefix)を参照してください。
+> [TiDB サーバーレスクラスター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)の場合、クラスターに接続するときに、ユーザー名にクラスターのプレフィックスを含め、名前を引用符で囲む必要があります。詳細については、 [ユーザー名のプレフィックス](/tidb-cloud/select-cluster-tier.md#user-name-prefix)を参照してください。
 
 </CustomContent>
 
@@ -66,7 +65,7 @@ summary: Learn how to build a TiDB cluster in TiDB Cloud (Serverless Tier) and c
 
 <div label="macOS">
 
-macOS の場合、 [Homebrew](https://brew.sh/index)がない場合はインストールしてから、次のコマンドを実行して MySQL クライアントをインストールします。
+macOS の場合、 [Homebrew](https://brew.sh/index)がない場合はインストールし、次のコマンドを実行して MySQL クライアントをインストールします。
 
 ```shell
 brew install mysql-client
@@ -86,7 +85,7 @@ For compilers to find mysql-client you may need to set:
   export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
 ```
 
-MySQL クライアントを PATH に追加するには、上記の出力で次のコマンドを見つけて (出力がドキュメントの上記の出力と一致しない場合は、代わりに出力で対応するコマンドを使用してください)、それを実行します。
+MySQL クライアントを PATH に追加するには、上記の出力内で次のコマンドを見つけて (出力がドキュメント内の上記の出力と一致しない場合は、代わりに出力内の対応するコマンドを使用してください)、それを実行します。
 
 ```shell
 echo 'export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"' >> ~/.zshrc
@@ -109,13 +108,13 @@ mysql  Ver 8.0.28 for macos12.0 on arm64 (Homebrew)
 
 <div label="Linux">
 
-Linux の場合、次の例では CentOS 7 を使用しています。
+Linux の場合、次の例では CentOS 7 を使用します。
 
 ```shell
 yum install mysql
 ```
 
-次に、MySQL クライアントが正常にインストールされたことを確認します。
+次に、MySQL クライアントが正常にインストールされていることを確認します。
 
 ```shell
 mysql --version
@@ -131,7 +130,7 @@ mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
 
 </SimpleTab>
 
-2.  [ステップ1](#step-1-create-a-serverless-tier-cluster)で取得した接続文字列を実行します。
+2.  [ステップ1](#step-1-create-a-tidb-serverless-cluster)で取得した接続文字列を実行します。
 
     
     ```shell
@@ -142,8 +141,8 @@ mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
 
 > **ノート：**
 >
-> -   Serverless Tierクラスターに接続する場合は、 [TLS 接続を使用する](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-tier-clusters) .
-> -   Serverless Tierクラスターへの接続時に問題が発生した場合は、詳細について[Serverless Tierクラスターへのセキュリティ接続](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-tier-clusters)を参照してください。
+> -   TiDB サーバーレス クラスターに接続する場合は、 [TLS接続を使用する](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)を行う必要があります。
+> -   TiDB サーバーレス クラスターに接続するときに問題が発生した場合は、 [TiDB サーバーレスクラスターへのセキュリティ接続](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)を読んで詳細を確認してください。
 
 </CustomContent>
 
@@ -151,8 +150,8 @@ mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
 
 > **ノート：**
 >
-> -   Serverless Tierクラスターに接続する場合は、 [TLS 接続を使用する](/tidb-cloud/secure-connections-to-serverless-tier-clusters.md) .
-> -   Serverless Tierクラスターへの接続時に問題が発生した場合は、詳細について[Serverless Tierクラスターへのセキュリティ接続](/tidb-cloud/secure-connections-to-serverless-tier-clusters.md)を参照してください。
+> -   TiDB サーバーレス クラスターに接続する場合は、 [TLS接続を使用する](/tidb-cloud/secure-connections-to-serverless-clusters.md)を行う必要があります。
+> -   TiDB サーバーレス クラスターに接続するときに問題が発生した場合は、 [TiDB サーバーレスクラスターへのセキュリティ接続](/tidb-cloud/secure-connections-to-serverless-clusters.md)を読んで詳細を確認してください。
 
 </CustomContent>
 
@@ -176,4 +175,4 @@ SELECT 'Hello TiDB Cloud!';
 +-------------------+
 ```
 
-実際の出力が予想される出力と似ている場合は、おめでとう、 TiDB Cloudで SQL ステートメントを正常に実行したことになります。
+実際の出力が予想される出力と類似している場合、おめでとうございます。TiDB TiDB Cloudで SQL ステートメントが正常に実行されました。

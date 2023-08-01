@@ -3,7 +3,7 @@ title: DROP COLUMN | TiDB SQL Statement Reference
 summary: An overview of the usage of DROP COLUMN for the TiDB database.
 ---
 
-# ドロップ カラム {#drop-column}
+# ドロップカラム {#drop-column}
 
 このステートメントは、指定されたテーブルから列を削除します。 `DROP COLUMN`は TiDB でオンラインです。これは、読み取りまたは書き込み操作をブロックしないことを意味します。
 
@@ -72,12 +72,12 @@ mysql> SELECT * FROM t1;
 5 rows in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 -   主キー列または複合インデックスの対象となる列の削除はサポートされていません。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [列を追加](/sql-statements/sql-statement-add-column.md)
+-   [列の追加](/sql-statements/sql-statement-add-column.md)
 -   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
--   [テーブルを作成](/sql-statements/sql-statement-create-table.md)
+-   [テーブルの作成](/sql-statements/sql-statement-create-table.md)

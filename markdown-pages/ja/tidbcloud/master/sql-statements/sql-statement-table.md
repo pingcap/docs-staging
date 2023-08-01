@@ -5,7 +5,7 @@ summary: An overview of the usage of TABLE for the TiDB database.
 
 # テーブル {#table}
 
-集計や複雑なフィルタリングが不要な場合は、 `SELECT * FROM`ステートメントの代わりに`TABLE`ステートメントを使用できます。
+集計や複雑なフィルタリングが必要ない場合は、 `SELECT * FROM`の代わりに`TABLE`ステートメントを使用できます。
 
 ## あらすじ {#synopsis}
 
@@ -22,7 +22,7 @@ TableStmt ::=
 CREATE TABLE t1(id INT PRIMARY KEY);
 ```
 
-`t1`にいくつかのデータを挿入します。
+`t1`にデータを挿入します。
 
 ```sql
 INSERT INTO t1 VALUES (1),(2),(3);
@@ -77,11 +77,11 @@ TABLE t1 LIMIT 1;
 1 row in set (0.01 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 `TABLE`ステートメントは MySQL 8.0.19 で導入されました。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [`SELECT`](/sql-statements/sql-statement-select.md)
 -   [MySQL の`TABLE`ステートメント](https://dev.mysql.com/doc/refman/8.0/en/table.html)

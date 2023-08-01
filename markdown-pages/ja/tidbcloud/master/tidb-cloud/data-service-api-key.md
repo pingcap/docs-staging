@@ -19,7 +19,12 @@ TiDB Cloudデータ API は[HTTPダイジェスト認証](https://en.wikipedia.o
 
 ## レート制限 {#rate-limiting}
 
-各 Chat2Query データ アプリには、1 日あたり 100 リクエストのレート制限があります。他のデータ アプリには、API キーごとに 1 分あたり 100 リクエストのレート制限があります。レート制限を超えると、API は`429`エラーを返します。さらに割り当てが必要な場合は、サポート チームに[リクエストを送信する](https://support.pingcap.com/hc/en-us/requests/new?ticket_form_id=7800003722519)お問い合わせください。
+リクエスト クォータは次のようにレート制限されます。
+
+-   API キーあたり 1 分あたり 100 リクエスト (rpm)
+-   Chat2Query データ アプリごとに 1 日あたり 100 リクエスト
+
+レート制限を超えると、API は`429`エラーを返します。割り当てを増やすには、サポート チームに[リクエストを送信する](https://support.pingcap.com/hc/en-us/requests/new?ticket_form_id=7800003722519)連絡してください。
 
 ## APIキーを管理する {#manage-api-keys}
 

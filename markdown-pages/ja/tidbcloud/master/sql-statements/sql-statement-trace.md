@@ -5,15 +5,15 @@ summary: An overview of the usage of TRACE for the TiDB database.
 
 # 痕跡 {#trace}
 
-`TRACE`ステートメントは、クエリの実行に関する詳細情報を提供します。これは、TiDB サーバーのステータス ポートによって公開されるグラフィカル インターフェイスを介して表示されることを目的としています。
+`TRACE`ステートメントは、クエリの実行に関する詳細情報を提供します。これは、TiDB サーバーのステータス ポートによって公開されるグラフィカル インターフェイスを通じて表示されることを目的としています。
 
 ## あらすじ {#synopsis}
 
-**TraceStmt:**
+**トレーススタック:**
 
 ![TraceStmt](https://download.pingcap.com/images/docs/sqlgram/TraceStmt.png)
 
-**TraceableStmt:**
+**追跡可能なシステム:**
 
 ![TraceableStmt](https://download.pingcap.com/images/docs/sqlgram/TraceableStmt.png)
 
@@ -50,16 +50,16 @@ trace format='row' select * from mysql.user;
 trace format='json' select * from mysql.user;
 ```
 
-JSON 形式のトレースは、TiDB ステータス ポート経由でアクセスされるトレース ビューアーに貼り付けることができます。
+JSON 形式のトレースは、TiDB ステータス ポート経由でアクセスされるトレース ビューアに貼り付けることができます。
 
 ![TiDB Trace Viewer-1](https://download.pingcap.com/images/docs/trace-paste.png)
 
 ![TiDB Trace Viewer-2](https://download.pingcap.com/images/docs/trace-view.png)
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [EXPLAIN分析する](/sql-statements/sql-statement-explain-analyze.md)
+-   [EXPLAINの説明](/sql-statements/sql-statement-explain-analyze.md)

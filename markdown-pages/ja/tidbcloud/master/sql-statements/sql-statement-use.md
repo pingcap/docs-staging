@@ -9,7 +9,7 @@ summary: An overview of the usage of USE for the TiDB database.
 
 ## あらすじ {#synopsis}
 
-**用途:**
+**使用方法:**
 
 ![UseStmt](https://download.pingcap.com/images/docs/sqlgram/UseStmt.png)
 
@@ -72,11 +72,11 @@ mysql> SHOW TABLES;
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL と完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`USE`ステートメントは MySQL と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [データベースの作成](/sql-statements/sql-statement-create-database.md)
 -   [テーブルを表示](/sql-statements/sql-statement-show-tables.md)

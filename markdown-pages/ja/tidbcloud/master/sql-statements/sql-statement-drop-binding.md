@@ -3,18 +3,18 @@ title: DROP [GLOBAL|SESSION] BINDING
 summary: Use of DROP BINDING in TiDB database.
 ---
 
-# ドロップ [グローバル|セッション] バインディング {#drop-global-session-binding}
+# [グローバル|セッション] バインディングを削除 {#drop-global-session-binding}
 
-このステートメントは、特定の SQL ステートメントからバインディングを削除します。バインディングを使用して、基になるクエリを変更することなく、ステートメントにヒントを挿入できます。
+このステートメントは、特定の SQL ステートメントからバインディングを削除します。バインディングを使用すると、基になるクエリを変更することなく、ステートメントにヒントを挿入できます。
 
-`BINDING`は`GLOBAL`または`SESSION`ベースのいずれかになります。デフォルトは`SESSION`です。
+`BINDING`は`GLOBAL`または`SESSION`いずれかに基づいて指定できます。デフォルトは`SESSION`です。
 
 ## あらすじ {#synopsis}
 
 ```ebnf+diagram
 DropBindingStmt ::=
-    'DROP' GlobalScope 'BINDING' 'FOR' ( BindableStmt ( 'USING' BindableStmt )? )
-|   ('SQL' 'DIGEST' SqlDigest)
+    'DROP' GlobalScope 'BINDING' 'FOR' ( BindableStmt ( 'USING' BindableStmt )?
+|   'SQL' 'DIGEST' SqlDigest)
 
 GlobalScope ::=
     ( 'GLOBAL' | 'SESSION' )?
@@ -27,16 +27,16 @@ BindableStmt ::=
 
 SQL ステートメントまたは`sql_digest`に従ってバインディングを削除できます。
 
-次の例は、SQL ステートメントに従ってバインドを削除する方法を示しています。
+次の例は、SQL ステートメントに従ってバインディングを削除する方法を示しています。
 
 
 ```sql
 mysql> CREATE TABLE t1 (
-    ->  id INT NOT NULL PRIMARY KEY auto_increment,
-    ->  b INT NOT NULL,
-    ->  pad VARBINARY(255),
-    ->  INDEX(b)
-    -> );
+         id INT NOT NULL PRIMARY KEY auto_increment,
+         b INT NOT NULL,
+         pad VARBINARY(255),
+         INDEX(b)
+        );
 Query OK, 0 rows affected (0.07 sec)
 
 mysql> INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM dual;
@@ -89,9 +89,9 @@ mysql> EXPLAIN ANALYZE SELECT * FROM t1 WHERE b = 123;
 3 rows in set (0.02 sec)
 
 mysql> CREATE SESSION BINDING FOR
-    ->  SELECT * FROM t1 WHERE b = 123
-    -> USING
-    ->  SELECT * FROM t1 IGNORE INDEX (b) WHERE b = 123;
+         SELECT * FROM t1 WHERE b = 123
+        USING
+         SELECT * FROM t1 IGNORE INDEX (b) WHERE b = 123;
 Query OK, 0 rows affected (0.00 sec)
 
 mysql> EXPLAIN ANALYZE SELECT * FROM t1 WHERE b = 123;
@@ -133,7 +133,7 @@ mysql> SHOW SESSION BINDINGS\G
 Empty set (0.00 sec)
 ```
 
-次の例は、 `sql_digest`に従ってバインドを削除する方法を示しています。
+次の例は、 `sql_digest`に従ってバインディングを削除する方法を示しています。
 
 ```sql
 mysql> CREATE TABLE t(id INT PRIMARY KEY , a INT, KEY(a));
@@ -192,14 +192,14 @@ ERROR:
 No query specified
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [[グローバル|セッション]バインディングを作成](/sql-statements/sql-statement-create-binding.md)
--   [[グローバル|セッション]バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
--   [テーブルを分析](/sql-statements/sql-statement-analyze-table.md)
+-   [[グローバル|セッション] バインディングの作成](/sql-statements/sql-statement-create-binding.md)
+-   [[グローバル|セッション] バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
+-   [分析テーブル](/sql-statements/sql-statement-analyze-table.md)
 -   [オプティマイザーのヒント](/optimizer-hints.md)
 -   [SQL計画管理](/sql-plan-management.md)

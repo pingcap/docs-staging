@@ -3,20 +3,20 @@ title: CREATE [GLOBAL|SESSION] BINDING
 summary: Use of CREATE BINDING in TiDB database.
 ---
 
-# [グローバル|セッション]バインディングを作成 {#create-global-session-binding}
+# [グローバル|セッション] バインディングの作成 {#create-global-session-binding}
 
-このステートメントは、TiDB に新しい実行計画バインディングを作成します。バインドを使用すると、基になるクエリを変更することなく、ステートメントにヒントを挿入できます。
+このステートメントは、TiDB に新しい実行プラン バインディングを作成します。バインディングを使用すると、基になるクエリを変更することなく、ステートメントにヒントを挿入できます。
 
-`BINDING`は`GLOBAL`または`SESSION`ベースのいずれかになります。デフォルトは`SESSION`です。
+`BINDING`は`GLOBAL`または`SESSION`いずれかに基づいて指定できます。デフォルトは`SESSION`です。
 
-バインドされた SQL ステートメントはパラメーター化され、システム テーブルに格納されます。 SQL クエリが処理されるとき、パラメーター化された SQL ステートメントとシステム テーブル内のバインドされた SQL ステートメントが一貫しており、システム変数`tidb_use_plan_baselines`が`ON` (既定) に設定されている限り、対応するオプティマイザー ヒントを使用できます。複数の実行計画が利用可能な場合、オプティマイザは最小コストで計画をバインドすることを選択します。詳細については、 [バインディングを作成する](/sql-plan-management.md#create-a-binding)を参照してください。
+バインドされた SQL ステートメントはパラメータ化され、システム テーブルに保存されます。 SQL クエリが処理されるとき、パラメーター化された SQL ステートメントとシステム テーブル内のバインドされた SQL ステートメントが一貫していて、システム変数`tidb_use_plan_baselines`が`ON` (デフォルト) に設定されている限り、対応するオプティマイザー ヒントが使用可能です。複数の実行プランが利用可能な場合、オプティマイザは最小のコストでプランをバインドすることを選択します。詳細については、 [バインディングを作成する](/sql-plan-management.md#create-a-binding)を参照してください。
 
 ## あらすじ {#synopsis}
 
 ```ebnf+diagram
 CreateBindingStmt ::=
-    'CREATE' GlobalScope 'BINDING' ( 'FOR' BindableStmt 'USING' BindableStmt ) 
-|   ( 'FROM' 'HISTORY' 'USING' 'PLAN' 'DIGEST' PlanDigest )
+    'CREATE' GlobalScope 'BINDING' ( 'FOR' BindableStmt 'USING' BindableStmt
+|   'FROM' 'HISTORY' 'USING' 'PLAN' 'DIGEST' PlanDigest )
 
 GlobalScope ::=
     ( 'GLOBAL' | 'SESSION' )?
@@ -29,18 +29,18 @@ BindableStmt ::=
 
 ## 例 {#examples}
 
-SQL ステートメントまたは過去の実行計画に従ってバインディングを作成できます。
+SQL ステートメントまたは履歴実行計画に従ってバインディングを作成できます。
 
 次の例は、SQL ステートメントに従ってバインディングを作成する方法を示しています。
 
 
 ```sql
 mysql> CREATE TABLE t1 (
-    ->  id INT NOT NULL PRIMARY KEY auto_increment,
-    ->  b INT NOT NULL,
-    ->  pad VARBINARY(255),
-    ->  INDEX(b)
-    -> );
+     id INT NOT NULL PRIMARY KEY auto_increment,
+     b INT NOT NULL,
+     pad VARBINARY(255),
+     INDEX(b)
+    );
 Query OK, 0 rows affected (0.07 sec)
 
 mysql> INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM dual;
@@ -93,9 +93,9 @@ mysql> EXPLAIN ANALYZE SELECT * FROM t1 WHERE b = 123;
 3 rows in set (0.02 sec)
 
 mysql> CREATE SESSION BINDING FOR
-    ->  SELECT * FROM t1 WHERE b = 123
-    -> USING
-    ->  SELECT * FROM t1 IGNORE INDEX (b) WHERE b = 123;
+         SELECT * FROM t1 WHERE b = 123
+        USING
+         SELECT * FROM t1 IGNORE INDEX (b) WHERE b = 123;
 Query OK, 0 rows affected (0.00 sec)
 
 mysql> EXPLAIN ANALYZE SELECT * FROM t1 WHERE b = 123;
@@ -167,14 +167,14 @@ mysql> SELECT @@LAST_PLAN_FROM_BINDING;
 
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [ドロップ [グローバル|セッション] バインディング](/sql-statements/sql-statement-drop-binding.md)
--   [[グローバル|セッション]バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
--   [テーブルを分析](/sql-statements/sql-statement-analyze-table.md)
+-   [[グローバル|セッション] バインディングを削除](/sql-statements/sql-statement-drop-binding.md)
+-   [[グローバル|セッション] バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
+-   [分析テーブル](/sql-statements/sql-statement-analyze-table.md)
 -   [オプティマイザーのヒント](/optimizer-hints.md)
 -   [SQL計画管理](/sql-plan-management.md)

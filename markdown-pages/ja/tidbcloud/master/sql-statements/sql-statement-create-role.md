@@ -3,9 +3,9 @@ title: CREATE ROLE | TiDB SQL Statement Reference
 summary: An overview of the usage of CREATE ROLE for the TiDB database.
 ---
 
-# 役割を作成 {#create-role}
+# ロールの作成 {#create-role}
 
-このステートメントは、ロールベースのアクセス制御の一部としてユーザーに割り当てることができる新しいロールを作成します。
+このステートメントは新しいロールを作成し、ロールベースのアクセス制御の一環としてユーザーに割り当てることができます。
 
 ## あらすじ {#synopsis}
 
@@ -22,7 +22,7 @@ RoleSpec ::=
 
 ## 例 {#examples}
 
-`root`人のユーザーとして TiDB に接続します。
+`root`ユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
@@ -44,13 +44,13 @@ GRANT analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-`jennifer`人のユーザーとして TiDB に接続します。
+`jennifer`ユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-`analyticsteam`ロールに関連付けられた権限を使用できるようにするには、デフォルトで`jennifer` `SET ROLE analyticsteam`実行する必要があることに注意してください。
+デフォルトでは、 `analyticsteam`ロールに関連付けられた権限を使用できるようにするには、 `jennifer` `SET ROLE analyticsteam`実行する必要があることに注意してください。
 
 ```sql
 SHOW GRANTS;
@@ -86,7 +86,7 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-`root`人のユーザーとして TiDB に接続します。
+`root`ユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
@@ -99,13 +99,13 @@ SET DEFAULT ROLE analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.02 sec)
 ```
 
-`jennifer`人のユーザーとして TiDB に接続します。
+`jennifer`ユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-この後、ユーザー`jennifer`ロール`analyticsteam`に関連付けられた権限を持ち、 `jennifer`ステートメント`SET ROLE`を実行する必要はありません。
+この後、ユーザー`jennifer`はロール`analyticsteam`に関連付けられた権限を持ち、ユーザー`jennifer`ステートメント`SET ROLE`を実行する必要がなくなります。
 
 ```sql
 SHOW GRANTS;
@@ -127,11 +127,11 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 8.0 の機能であるロールと完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`CREATE ROLE`ステートメントは、MySQL 8.0 のロール機能と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [`DROP ROLE`](/sql-statements/sql-statement-drop-role.md)
 -   [`GRANT &#x3C;role>`](/sql-statements/sql-statement-grant-role.md)

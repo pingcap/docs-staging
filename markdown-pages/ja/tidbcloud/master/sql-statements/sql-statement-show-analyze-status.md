@@ -3,13 +3,13 @@ title: SHOW ANALYZE STATUS
 summary: An overview of the usage of SHOW ANALYZE STATUS for the TiDB database.
 ---
 
-# 分析ステータスを表示 {#show-analyze-status}
+# 分析ステータスの表示 {#show-analyze-status}
 
-`SHOW ANALYZE STATUS`ステートメントは、TiDB によって実行されている統計収集タスクと、限られた数の履歴タスク レコードを示しています。
+`SHOW ANALYZE STATUS`ステートメントは、TiDB によって実行されている統計収集タスクと、限られた数の履歴タスク レコードを示します。
 
-TiDB v6.1.0 以降、 `SHOW ANALYZE STATUS`ステートメントはクラスターレベルのタスクの表示をサポートしています。 TiDB の再起動後でも、このステートメントを使用して再起動前のタスク レコードを表示できます。 TiDB v6.1.0 より前では、 `SHOW ANALYZE STATUS`ステートメントはインスタンス レベルのタスクのみを表示でき、タスク レコードは TiDB の再起動後にクリアされます。
+TiDB v6.1.0 以降、 `SHOW ANALYZE STATUS`ステートメントはクラスターレベルのタスクの表示をサポートします。 TiDB の再起動後でも、このステートメントを使用して再起動前のタスク レコードを表示できます。 TiDB v6.1.0 より前では、 `SHOW ANALYZE STATUS`ステートメントはインスタンス レベルのタスクのみを表示でき、TiDB の再起動後にタスク レコードはクリアされます。
 
-TiDB v6.1.0 から、システム テーブルを介して過去 7 日間の履歴タスクを表示できます`mysql.analyze_jobs` 。
+TiDB v6.1.0 以降、システム テーブル`mysql.analyze_jobs`を通じて過去 7 日間の履歴タスクを表示できるようになりました。
 
 ## あらすじ {#synopsis}
 
@@ -63,10 +63,10 @@ mysql> show analyze status;
 6 rows in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [ANALYZE_STATUS テーブル](/information-schema/information-schema-analyze-status.md)

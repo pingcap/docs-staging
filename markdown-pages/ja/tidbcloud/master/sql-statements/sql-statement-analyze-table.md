@@ -5,11 +5,11 @@ summary: An overview of the usage of ANALYZE for the TiDB database.
 
 # 分析する {#analyze}
 
-このステートメントは、TiDB がテーブルとインデックスで構築する統計を更新します。大規模なバッチ更新またはレコードのインポートを実行した後、またはクエリ実行プランが最適ではないことに気付いた場合は、 `ANALYZE`実行することをお勧めします。
+このステートメントは、TiDB がテーブルとインデックスに基づいて構築する統計を更新します。大規模なバッチ更新またはレコードのインポートを実行した後、またはクエリ実行プランが最適ではないことに気づいた場合は、 `ANALYZE`実行することをお勧めします。
 
-また、TiDB は、統計が独自の見積もりと矛盾していることを発見すると、時間の経過とともに統計を自動的に更新します。
+TiDB はまた、統計が独自の推定値と矛盾していることを発見すると、時間の経過とともに自動的に統計を更新します。
 
-現在、TiDB は 2 つの方法で統計情報を収集します。完全収集 ( `ANALYZE TABLE`ステートメントを使用して実装) と増分収集 ( `ANALYZE INCREMENTAL TABLE`ステートメントを使用して実装) です。これら 2 つのステートメントの詳細な使用方法については、 [統計入門](/statistics.md)を参照してください。
+現在、TiDB は、完全収集 ( `ANALYZE TABLE`ステートメントを使用して実装) と増分収集 ( `ANALYZE INCREMENTAL TABLE`ステートメントを使用して実装) の 2 つの方法で統計情報を収集します。これら 2 つのステートメントの詳細な使用法については、 [統計学の入門](/statistics.md)を参照してください。
 
 ## あらすじ {#synopsis}
 
@@ -80,16 +80,16 @@ mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 2 rows in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB は、収集する統計と、クエリ実行中に統計を利用する方法の**両方**で、MySQL とは異なります。このステートメントは構文的に MySQL と似ていますが、次の違いがあります。
+TiDB は、収集する統計とクエリ実行中の統計の利用方法の**両方**において MySQL とは異なります。このステートメントは構文的には MySQL と似ていますが、次の違いが適用されます。
 
-1.  TiDB は、実行時に最近コミットされた変更を含まない場合があります`ANALYZE TABLE` 。行のバッチ更新の後、これらの変更を統計の更新に反映させるために、 `ANALYZE TABLE`実行する前に`sleep(1)`が必要になる場合があります。 [#16570](https://github.com/pingcap/tidb/issues/16570) .
-2.  `ANALYZE TABLE` MySQL よりも TiDB での実行にかなり時間がかかります。このパフォーマンスの違いは、 `SET GLOBAL tidb_enable_fast_analyze=1`で高速分析を有効にすることで部分的に軽減できます。高速分析ではサンプリングが使用されるため、統計の精度が低下します。その使用法はまだ実験的と考えられています。
+1.  TiDB には、 `ANALYZE TABLE`の実行時に最近コミットされた変更が含まれていない可能性があります。行のバッチ更新後、統計の更新にこれらの変更を反映するには、 `ANALYZE TABLE`実行する前に`sleep(1)`が必要になる場合があります。 [#16570](https://github.com/pingcap/tidb/issues/16570) ．
+2.  `ANALYZE TABLE` TiDB での実行に MySQL よりも大幅に時間がかかります。このパフォーマンスの違いは、 `SET GLOBAL tidb_enable_fast_analyze=1`で高速分析を有効にすることで部分的に軽減できます。高速分析ではサンプリングが利用されるため、統計の精度が低くなります。その使用法はまだ実験的であると考えられています。
 
-MySQL は`ANALYZE INCREMENTAL TABLE`ステートメントをサポートしていません。 TiDB は、統計の増分収集をサポートしています。詳しい使い方は[増分コレクション](/statistics.md#incremental-collection)を参照してください。
+MySQL は`ANALYZE INCREMENTAL TABLE`ステートメントをサポートしていません。 TiDB は統計の増分収集をサポートしています。詳しい使い方は[増分コレクション](/statistics.md#incremental-collection)を参照してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [EXPLAIN](/sql-statements/sql-statement-explain.md)
--   [EXPLAIN分析する](/sql-statements/sql-statement-explain-analyze.md)
+-   [EXPLAINの説明](/sql-statements/sql-statement-explain-analyze.md)

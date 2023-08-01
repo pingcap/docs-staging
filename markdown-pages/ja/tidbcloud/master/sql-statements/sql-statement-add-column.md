@@ -3,9 +3,9 @@ title: ADD COLUMN | TiDB SQL Statement Reference
 summary: An overview of the usage of ADD COLUMN for the TiDB database.
 ---
 
-# 列を追加 {#add-column}
+# 列の追加 {#add-column}
 
-`ALTER TABLE.. ADD COLUMN`ステートメントは、既存のテーブルに列を追加します。この操作は TiDB ではオンラインです。つまり、列を追加しても、テーブルへの読み取りも書き込みもブロックされません。
+`ALTER TABLE.. ADD COLUMN`ステートメントは、既存のテーブルに列を追加します。この操作は TiDB ではオンラインです。つまり、テーブルへの読み取りも書き込みも列の追加によってブロックされません。
 
 ## あらすじ {#synopsis}
 
@@ -83,13 +83,13 @@ mysql> SELECT * FROM t1;
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 -   新しい列を追加して`PRIMARY KEY`に設定することはサポートされていません。
 -   新しい列を追加して`AUTO_INCREMENT`に設定することはサポートされていません。
--   生成された列の追加には制限があります。次を参照してください: [生成された列の制限](/generated-columns.md#limitations) .
+-   生成された列の追加には制限があります[生成される列の制限事項](/generated-columns.md#limitations)を参照してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [インデックスを追加](/sql-statements/sql-statement-add-index.md)
--   [テーブルを作成](/sql-statements/sql-statement-create-table.md)
+-   [インデックスの追加](/sql-statements/sql-statement-add-index.md)
+-   [テーブルの作成](/sql-statements/sql-statement-create-table.md)

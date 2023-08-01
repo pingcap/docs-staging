@@ -3,11 +3,11 @@ title: TRUNCATE | TiDB SQL Statement Reference
 summary: An overview of the usage of TRUNCATE for the TiDB database.
 ---
 
-# トランケート {#truncate}
+# 切り詰める {#truncate}
 
-`TRUNCATE`ステートメントは、非トランザクションの方法でテーブルからすべてのデータを削除します。 `TRUNCATE`前の定義の`DROP TABLE` + `CREATE TABLE`と意味的に同じと考えることができます。
+`TRUNCATE`ステートメントは、非トランザクション的な方法でテーブルからすべてのデータを削除します。 `TRUNCATE`前の定義の`DROP TABLE` + `CREATE TABLE`と意味的に同じと考えることができます。
 
-`TRUNCATE TABLE tableName`と`TRUNCATE tableName`の両方が有効な構文です。
+`TRUNCATE TABLE tableName`と`TRUNCATE tableName`はどちらも有効な構文です。
 
 ## あらすじ {#synopsis}
 
@@ -15,7 +15,7 @@ summary: An overview of the usage of TRUNCATE for the TiDB database.
 
 ![TruncateTableStmt](https://download.pingcap.com/images/docs/sqlgram/TruncateTableStmt.png)
 
-**オプション テーブル:**
+**オプトテーブル:**
 
 ![OptTable](https://download.pingcap.com/images/docs/sqlgram/OptTable.png)
 
@@ -59,13 +59,13 @@ mysql> TRUNCATE TABLE t1;
 Query OK, 0 rows affected (0.11 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL と完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`TRUNCATE`ステートメントは MySQL と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [ドロップテーブル](/sql-statements/sql-statement-drop-table.md)
 -   [消去](/sql-statements/sql-statement-delete.md)
--   [テーブルを作成](/sql-statements/sql-statement-create-table.md)
+-   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)

@@ -3,7 +3,7 @@ title: RENAME USER
 summary: An overview of the usage of RENAME USER for the TiDB database.
 ---
 
-# ユーザー名の変更 {#rename-user}
+# ユーザーの名前を変更 {#rename-user}
 
 `RANAME USER`は、既存のユーザーの名前を変更するために使用されます。
 
@@ -70,12 +70,12 @@ SHOW GRANTS FOR 'newuser';
 ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%'
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-`RENAME USER`は、MySQL と完全に互換性があると予想されます。互換性の違いが見つかった場合は、GitHub [問題](https://github.com/pingcap/tidb/issues/new/choose)を提出してください。
+`RENAME USER`は MySQL と完全な互換性があることが期待されています。互換性の違いを見つけた場合は、 GitHub [問題](https://github.com/pingcap/tidb/issues/new/choose)を送信してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [ユーザーを作成](/sql-statements/sql-statement-create-user.md)
--   [助成金を表示](/sql-statements/sql-statement-show-grants.md)
--   [ユーザーをドロップ](/sql-statements/sql-statement-drop-user.md)
+-   [助成金を表示する](/sql-statements/sql-statement-show-grants.md)
+-   [ユーザーを削除する](/sql-statements/sql-statement-drop-user.md)

@@ -13,11 +13,11 @@ summary: Learn how to migrate data from Amazon Aurora MySQL to TiDB Cloud in bul
 
 1.  ターゲットクラスターの**インポート**ページを開きます。
 
-    1.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
+    1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
         > **ヒント：**
         >
-        > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅の をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
+        > 複数のプロジェクトがある場合は、 **「クラスター」**ページの左側のナビゲーション・ペインでターゲット・プロジェクトに切り替えることができます。
 
     2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート]**をクリックします。
 
@@ -55,7 +55,7 @@ summary: Learn how to migrate data from Amazon Aurora MySQL to TiDB Cloud in bul
 
 -   [オプション 1: Dumplingを使用してソース データ ファイルを準備する](#option-1-prepare-source-data-files-using-dumpling)
 
-    EC2 で[Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)起動し、データを Amazon S3 にエクスポートする必要があります。エクスポートするデータは、ソース データベースの現在の最新データです。これはオンライン サービスに影響を与える可能性があります。 Dumpling は、データをエクスポートするときにテーブルをロックします。
+    EC2 で[Dumpling](/dumpling-overview.md)起動し、データを Amazon S3 にエクスポートする必要があります。エクスポートするデータは、ソース データベースの現在の最新データです。これはオンライン サービスに影響を与える可能性があります。 Dumpling は、データをエクスポートするときにテーブルをロックします。
 
 -   [オプション 2: Amazon Auroraスナップショットを使用してソース データ ファイルを準備する](#option-2-prepare-source-data-files-using-amazon-aurora-snapshots)
 

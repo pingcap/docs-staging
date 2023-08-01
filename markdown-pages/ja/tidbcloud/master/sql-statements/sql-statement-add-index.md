@@ -3,14 +3,14 @@ title: ADD INDEX | TiDB SQL Statement Reference
 summary: An overview of the usage of ADD INDEX for the TiDB database.
 ---
 
-# インデックスを追加 {#add-index}
+# インデックスの追加 {#add-index}
 
-`ALTER TABLE.. ADD INDEX`ステートメントは、既存のテーブルにインデックスを追加します。この操作は TiDB ではオンラインです。つまり、インデックスを追加してもテーブルへの読み取りも書き込みもブロックされません。
+`ALTER TABLE.. ADD INDEX`ステートメントは、既存のテーブルにインデックスを追加します。この操作は TiDB でオンラインです。つまり、インデックスの追加によってテーブルへの読み取りも書き込みもブロックされません。
 
 > **警告：**
 >
-> -   DDL ステートメントがクラスターで実行されているときは、TiDB クラスターをアップグレード**しないでください**(通常、 `ADD INDEX`のような時間のかかる DDL ステートメントや列の型の変更のため)。
-> -   アップグレードの前に、 [`ADMIN SHOW DDL`](/sql-statements/sql-statement-admin-show-ddl.md)コマンドを使用して、TiDB クラスターに進行中の DDL ジョブがあるかどうかを確認することをお勧めします。クラスターに DDL ジョブがある場合、クラスターをアップグレードするには、DDL の実行が完了するまで待つか、 [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md)コマンドを使用して DDL ジョブをキャンセルしてからクラスターをアップグレードします。
+> -   DDL ステートメントがクラスター内で実行されているときは、TiDB クラスターをアップグレードし**ないでください**(通常は、 `ADD INDEX`や列タイプの変更などの時間のかかる DDL ステートメントの場合)。
+> -   アップグレードの前に、 [`ADMIN SHOW DDL`](/sql-statements/sql-statement-admin-show-ddl.md)コマンドを使用して、TiDB クラスターに進行中の DDL ジョブがあるかどうかを確認することをお勧めします。クラスターに DDL ジョブがある場合、クラスターをアップグレードするには、DDL の実行が完了するまで待つか、クラスターをアップグレードする前に[`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md)コマンドを使用して DDL ジョブをキャンセルします。
 > -   また、クラスターのアップグレード中は、DDL ステートメントを実行し**ないでください**。そうしないと、未定義の動作の問題が発生する可能性があります。
 
 ## あらすじ {#synopsis}
@@ -72,20 +72,20 @@ mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 2 rows in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   `FULLTEXT` 、 `HASH`および`SPATIAL`インデックスはサポートされていません。
--   降順のインデックスはサポートされていません ( MySQL 5.7と同様)。
--   `CLUSTERED`タイプの主キーをテーブルに追加することはサポートされていません。 `CLUSTERED`タイプの主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
+-   `FULLTEXT` `HASH`および`SPATIAL`インデックスはサポートされていません。
+-   降順インデックスはサポートされていません ( MySQL 5.7と同様)。
+-   `CLUSTERED`タイプの主キーのテーブルへの追加はサポートされていません。 `CLUSTERED`種類の主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [インデックスの選択](/choose-index.md)
 -   [インデックス問題の解決方法](/wrong-index-solution.md)
--   [インデックスを作成](/sql-statements/sql-statement-create-index.md)
+-   [インデックスの作成](/sql-statements/sql-statement-create-index.md)
 -   [ドロップインデックス](/sql-statements/sql-statement-drop-index.md)
 -   [インデックスの名前を変更](/sql-statements/sql-statement-rename-index.md)
 -   [インデックスの変更](/sql-statements/sql-statement-alter-index.md)
--   [列を追加](/sql-statements/sql-statement-add-column.md)
--   [テーブルを作成](/sql-statements/sql-statement-create-table.md)
+-   [列の追加](/sql-statements/sql-statement-add-column.md)
+-   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [EXPLAIN](/sql-statements/sql-statement-explain.md)

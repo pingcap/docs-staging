@@ -5,11 +5,11 @@ summary: An overview of the usage of EXPLAIN for the TiDB database.
 
 # <code>EXPLAIN</code> {#code-explain-code}
 
-`EXPLAIN`ステートメントは、クエリを実行せずにクエリの実行プランを示します。クエリを実行する`EXPLAIN ANALYZE`によって補完されます。 `EXPLAIN`の出力が期待される結果と一致しない場合は、クエリ内の各テーブルで`ANALYZE TABLE`を実行することを検討してください。
+`EXPLAIN`ステートメントは、クエリを実行せずにクエリの実行計画を示します。これに`EXPLAIN ANALYZE`付加すると、クエリが実行されます。 `EXPLAIN`の出力が予期した結果と一致しない場合は、クエリ内の各テーブルに対して`ANALYZE TABLE`を実行することを検討してください。
 
-ステートメント`DESC`と`DESCRIBE`は、このステートメントの別名です。 `EXPLAIN <tableName>`の代替使用法は[`SHOW [FULL] COLUMNS FROM`](/sql-statements/sql-statement-show-columns-from.md)の下に文書化されています。
+ステートメント`DESC`と`DESCRIBE`は、このステートメントの別名です。 `EXPLAIN <tableName>`の別の使用法は[`SHOW [FULL] COLUMNS FROM`](/sql-statements/sql-statement-show-columns-from.md)に記載されています。
 
-TiDB は`EXPLAIN [options] FOR CONNECTION connection_id`ステートメントをサポートしています。ただし、このステートメントは MySQL の`EXPLAIN FOR`ステートメントとは異なります。詳細については、 [`EXPLAIN FOR CONNECTION`](#explain-for-connection)を参照してください。
+TiDB は`EXPLAIN [options] FOR CONNECTION connection_id`ステートメントをサポートします。ただし、このステートメントは MySQL の`EXPLAIN FOR`ステートメントとは異なります。詳細については、 [`EXPLAIN FOR CONNECTION`](#explain-for-connection)を参照してください。
 
 ## あらすじ {#synopsis}
 
@@ -31,25 +31,25 @@ ExplainableStmt ::=
 |   UnionStmt
 ```
 
-## <code>EXPLAIN</code>出力フォーマット {#code-explain-code-output-format}
+## <code>EXPLAIN</code>出力形式 {#code-explain-code-output-format}
 
 > **ノート：**
 >
-> MySQL クライアントを使用して TiDB に接続する場合、出力結果を改行なしでより明確に読み取るには、 `pager less -S`コマンドを使用できます。次に、 `EXPLAIN`の結果が出力されたら、キーボードの右矢印<kbd>→</kbd>ボタンを押して、出力を水平方向にスクロールできます。
+> MySQL クライアントを使用して TiDB に接続する場合、行の折り返しを行わずに出力結果をより明確に読み取るには、 `pager less -S`コマンドを使用できます。次に、 `EXPLAIN`結果が出力された後、キーボードの右矢印<kbd>→</kbd>ボタンを押して出力を水平方向にスクロールします。
 
 > **ノート：**
 >
-> 返される実行計画では、 `IndexJoin`および`Apply`演算子のすべてのプローブ側の子ノードについて、v6.4.0 以降の`estRows`の意味は v6.4.0 より前のものとは異なります。詳細は[TiDB クエリ実行計画の概要](/explain-overview.md#understand-explain-output)を参照してください。
+> 返された実行プランでは、 `IndexJoin`および`Apply`演算子のすべてのプローブ側子ノードについて、v6.4.0 以降の`estRows`の意味は v6.4.0 以前とは異なります。詳細については[TiDB クエリ実行計画の概要](/explain-overview.md#understand-explain-output)を参照してください。
 
-現在、TiDB の`EXPLAIN`は`id` 、 `estRows` 、 `task` 、 `access object` 、 `operator info`の 5 つの列を出力します。実行計画の各演算子はこれらの属性によって記述され、 `EXPLAIN`の出力の各行は演算子を記述します。各属性の説明は次のとおりです。
+現在、TiDB の`EXPLAIN`は`id` 、 `estRows` 、 `task` 、 `access object` 、 `operator info`の 5 つの列を出力します。実行プラン内の各演算子はこれらの属性によって記述され、 `EXPLAIN`の出力の各行が演算子を記述します。各属性の説明は次のとおりです。
 
-| 属性名         | 説明                                                                                                                                                                                                                                                                                                                         |
-| :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ID          | オペレーター ID は、実行計画全体におけるオペレーターの固有 ID です。 TiDB 2.1 では、ID はオペレーターのツリー構造を表示するようにフォーマットされます。子ノードから親ノードにデータが流れます。オペレーターごとに 1 つだけの親ノード。                                                                                                                                                                                            |
-| estRows     | オペレーターが出力すると予想される行数。この数は、統計とオペレーターのロジックに従って推定されます。 `estRows`は、以前のバージョンの TiDB 4.0 では`count`と呼ばれていました。                                                                                                                                                                                                                       |
-| タスク         | オペレーターが属するタスクのタイプ。現在、実行計画は 2 つのタスクに分割されています。**ルート**タスクは tidb-server で実行され、 <strong>cop</strong>タスクは TiKV またはTiFlashで並行して実行されます。タスク レベルでの実行計画のトポロジは、ルート タスクの後に多数の警官タスクが続くというものです。 root タスクは、cop タスクの出力を入力として使用します。 cop タスクは、TiDB が TiKV またはTiFlashにプッシュするタスクを指します。各警官タスクは TiKV クラスターまたはTiFlashクラスターに分散され、複数のプロセスによって実行されます。 |
-| アクセス オブジェクト | オペレーターがアクセスしたデータ項目情報。この情報には、 `table` 、 `partition` 、および`index` (存在する場合) が含まれます。データに直接アクセスするオペレーターだけがそのような情報を持っています。                                                                                                                                                                                                        |
-| オペレーター情報    | オペレーターに関するその他の情報。各オペレーターの`operator info`は異なります。以下の例を参照できます。                                                                                                                                                                                                                                                                |
+| 属性名        | 説明                                                                                                                                                                                                                                                                                                                           |
+| :--------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ID         | オペレーター ID は、実行プラン全体におけるオペレーターの一意の識別子です。 TiDB 2.1 では、ID はオペレーターのツリー構造を表示する形式になっています。データは子ノードから親ノードに流れます。各オペレーターに 1 つだけの親ノード。                                                                                                                                                                                                  |
+| estRows    | オペレーターが出力すると予想される行数。この数値は、統計とオペレーターのロジックに従って推定されます。 `estRows`は、TiDB 4.0 の以前のバージョンでは`count`と呼ばれていました。                                                                                                                                                                                                                         |
+| タスク        | オペレーターが属するタスクのタイプ。現在、実行計画は 2 つのタスクに分割されています。1 つは tidb-server 上で実行される**root**タスク、もう 1 つは TiKV またはTiFlash上で並行して実行される**cop**タスクです。タスク レベルでの実行計画のトポロジは、ルート タスクの後に多くのcop タスクが続くというものです。 root タスクは、cop タスクの出力を入力として使用します。 cop タスクは、TiDB が TiKV またはTiFlashにプッシュダウンするタスクを指します。各copタスクはTiKVクラスタまたはTiFlashクラスタに分散され、複数のプロセスによって実行されます。 |
+| アクセスオブジェクト | オペレータがアクセスするデータ項目の情報。情報には、 `table` 、 `partition` 、および`index` (存在する場合) が含まれます。このような情報を持っているのは、データに直接アクセスするオペレーターだけです。                                                                                                                                                                                                         |
+| オペレーター情報   | オペレーターに関するその他の情報。各演算子の`operator info`は異なります。次の例を参照してください。                                                                                                                                                                                                                                                                    |
 
 ## 例 {#examples}
 
@@ -179,19 +179,19 @@ EXPLAIN DELETE FROM t1 WHERE c1=3;
 
 `EXPLAIN`出力の形式を指定するには、 `FORMAT = xxx`構文を使用できます。現在、TiDB は次の形式をサポートしています。
 
-| フォーマット      | 説明                                                                                                 |
-| ----------- | -------------------------------------------------------------------------------------------------- |
-| 指定されていない    | フォーマットが指定されていない場合、 `EXPLAIN`デフォルトのフォーマット`row`を使用します。                                               |
-| `row`       | `EXPLAIN`ステートメントは結果を表形式で出力します。詳細については、 [クエリ実行計画を理解する](/explain-overview.md)参照してください。               |
-| `brief`     | `EXPLAIN`ステートメントの出力のオペレーター ID は、 `FORMAT`指定されていない場合に比べて単純化されています。                                  |
-| `dot`       | `EXPLAIN`ステートメントは DOT 実行プランを出力します。これは、 `dot`プログラム ( `graphviz`パッケージ内) を介して PNG ファイルを生成するために使用できます。 |
-| `tidb_json` | `EXPLAIN`ステートメントは、実行計画を JSON で出力し、オペレーター情報を JSON 配列に格納します。                                         |
+| フォーマット      | 説明                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------- |
+| 指定されていない    | 形式が指定されていない場合、 `EXPLAIN`​​デフォルトの形式`row`を使用します。                                                    |
+| `row`       | `EXPLAIN`ステートメントは結果を表形式で出力します。詳細については、 [クエリ実行計画を理解する](/explain-overview.md)参照してください。              |
+| `brief`     | `EXPLAIN`ステートメントの出力のオペレーター ID は、 `FORMAT`指定しない場合に比べて簡略化されます。                                      |
+| `dot`       | `EXPLAIN`ステートメントは DOT 実行プランを出力します。これは、( `graphviz`パッケージ内の) `dot`プログラムを通じて PNG ファイルを生成するために使用できます。 |
+| `tidb_json` | `EXPLAIN`ステートメントは、実行プランを JSON で出力し、オペレーター情報を JSON 配列に保存します。                                       |
 
 <SimpleTab>
 
 <div label="brief">
 
-以下は、 `FORMAT`が`"brief"` in `EXPLAIN`の場合の例です。
+以下は`FORMAT` `EXPLAIN`の`"brief"`である場合の例です。
 
 
 ```sql
@@ -214,7 +214,7 @@ EXPLAIN FORMAT = "brief" DELETE FROM t1 WHERE c1 = 3;
 
 <div label="DotGraph">
 
-MySQL 標準の結果形式に加えて、TiDB は DotGraph もサポートしており、次の例のように`FORMAT = "dot"`を指定する必要があります。
+MySQL の標準結果形式に加えて、TiDB は DotGraph もサポートしており、次の例のように`FORMAT = "dot"`を指定する必要があります。
 
 
 ```sql
@@ -257,7 +257,7 @@ label = "cop"
 1 row in set (0.00 sec)
 ```
 
-コンピュータに`dot`プログラムがある場合、次の方法を使用して PNG ファイルを生成できます。
+コンピュータに`dot`プログラムがある場合は、次の方法を使用して PNG ファイルを生成できます。
 
 ```bash
 dot xx.dot -T png -O
@@ -265,7 +265,7 @@ dot xx.dot -T png -O
 The xx.dot is the result returned by the above statement.
 ```
 
-コンピューターに`dot`プログラムがない場合は、結果を[このウェブサイト](http://www.webgraphviz.com/)にコピーしてツリー図を取得します。
+コンピュータに`dot`プログラムがない場合は、結果を[このウェブサイト](http://www.webgraphviz.com/)にコピーして樹形図を取得します。
 
 ![Explain Dot](https://download.pingcap.com/images/docs/explain_dot.png)
 
@@ -273,7 +273,7 @@ The xx.dot is the result returned by the above statement.
 
 <div label="JSON">
 
-JSON で出力を取得するには、 `EXPLAIN`ステートメントで`FORMAT = "tidb_json"`を指定します。次に例を示します。
+JSON で出力を取得するには、 `EXPLAIN`ステートメントに`FORMAT = "tidb_json"`を指定します。以下は例です。
 
 ```sql
 CREATE TABLE t(id int primary key, a int, b int, key(a));
@@ -314,29 +314,29 @@ EXPLAIN FORMAT = "tidb_json" SELECT id FROM t WHERE a = 1;
 1 row in set (0.01 sec)
 ```
 
-出力では、 `id` 、 `estRows` 、 `taskType` 、 `accessObject` 、および`operatorInfo`は、デフォルト形式の列と同じ意味を持ちます。 `subOperators`サブノードを格納する配列である。サブノードのフィールドと意味は、親ノードと同じです。フィールドが欠落している場合、それはフィールドが空であることを意味します。
+出力では、 `id` 、 `estRows` 、 `taskType` 、 `accessObject` 、および`operatorInfo`は、デフォルト形式の列と同じ意味を持ちます。 `subOperators`はサブノードを格納する配列です。サブノードのフィールドと意味は親ノードと同じです。フィールドが欠落している場合は、そのフィールドが空であることを意味します。
 
 </div>
 
 </SimpleTab>
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   `EXPLAIN`の形式と TiDB での潜在的な実行計画の両方が、MySQL とはかなり異なります。
+-   `EXPLAIN`の形式と TiDB の潜在的な実行プランは両方とも MySQL とは大幅に異なります。
 -   TiDB は`FORMAT=JSON`または`FORMAT=TREE`オプションをサポートしていません。
--   TiDB の`FORMAT=tidb_json`は、デフォルトの`EXPLAIN`結果の JSON 形式の出力です。形式とフィールドは、MySQL の`FORMAT=JSON`の出力とは異なります。
+-   TiDB の`FORMAT=tidb_json`は、デフォルトの`EXPLAIN`の結果の JSON 形式の出力です。形式とフィールドは、MySQL の`FORMAT=JSON`出力とは異なります。
 
 ### <code>EXPLAIN FOR CONNECTION</code> {#code-explain-for-connection-code}
 
-`EXPLAIN FOR CONNECTION` 、接続で現在実行されている SQL クエリまたは最後に実行された SQL クエリの実行計画を取得するために使用されます。出力形式は`EXPLAIN`と同じです。ただし、TiDB での`EXPLAIN FOR CONNECTION`の実装は、MySQL での実装とは異なります。それらの違い (出力形式を除く) は次のとおりです。
+`EXPLAIN FOR CONNECTION` 、接続内で現在実行されている SQL クエリまたは最後に実行された SQL クエリの実行プランを取得するために使用されます。出力形式は`EXPLAIN`と同じです。ただし、TiDB での`EXPLAIN FOR CONNECTION`の実装は MySQL での実装とは異なります。それらの違い (出力形式を除く) を以下に示します。
 
 -   接続がスリープ状態の場合、MySQL は空の結果を返しますが、TiDB は最後に実行されたクエリ プランを返します。
--   現在のセッションの実行計画を取得しようとすると、MySQL はエラーを返しますが、TiDB は正常に結果を返します。
--   MySQL では、ログイン ユーザーがクエリ対象の接続と同じである必要があります。そうでない場合、ログイン ユーザーは**`PROCESS`**権限を持っています。一方、TiDB では、ログイン ユーザーがクエリ対象の接続と同じである必要があります。そうでない場合、ログイン ユーザーは<strong><code>SUPER</code></strong>権限を持っています。
+-   現在のセッションの実行プランを取得しようとすると、MySQL はエラーを返しますが、TiDB は通常どおり結果を返します。
+-   MySQL では、ログイン ユーザーがクエリ対象の接続と同じであるか、ログイン ユーザーが**`PROCESS`**権限を持っている必要があります。一方、TiDB では、ログイン ユーザーがクエリ対象の接続と同じであるか、ログイン ユーザーが**`SUPER`**権限を持っている必要があります。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [クエリ実行プランについて](/explain-overview.md)
--   [EXPLAIN分析する](/sql-statements/sql-statement-explain-analyze.md)
--   [テーブルを分析](/sql-statements/sql-statement-analyze-table.md)
+-   [クエリ実行プランを理解する](/explain-overview.md)
+-   [EXPLAINの説明](/sql-statements/sql-statement-explain-analyze.md)
+-   [分析テーブル](/sql-statements/sql-statement-analyze-table.md)
 -   [痕跡](/sql-statements/sql-statement-trace.md)

@@ -3,7 +3,7 @@ title: DROP STATS
 summary: An overview of the usage of DROP STATS for the TiDB database.
 ---
 
-# ドロップ統計 {#drop-stats}
+# 統計を削除 {#drop-stats}
 
 `DROP STATS`ステートメントは、選択したデータベースから選択したテーブルの統計を削除するために使用されます。
 
@@ -63,10 +63,10 @@ SHOW STATS_META WHERE db_name='test' and table_name='t';
 Empty set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [統計入門](/statistics.md)

@@ -5,7 +5,7 @@ summary: Learn the `VIEWS` INFORMATION_SCHEMA table.
 
 # ビュー {#views}
 
-`VIEWS`テーブルは、SQL ビューに関する情報を提供します。
+`VIEWS`表は、SQL ビューに関する情報を提供します。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -32,7 +32,7 @@ DESC VIEWS;
 10 rows in set (0.00 sec)
 ```
 
-ビューを作成し、 `VIEWS`テーブルに対してクエリを実行します。
+ビューを作成し、 `VIEWS`テーブルをクエリします。
 
 ```sql
 CREATE VIEW test.v1 AS SELECT 1;
@@ -56,15 +56,15 @@ COLLATION_CONNECTION: utf8mb4_0900_ai_ci
 1 row in set (0.00 sec)
 ```
 
-`VIEWS`テーブルのフィールドは次のとおりです。
+`VIEWS`テーブルのフィールドは次のように説明されています。
 
 -   `TABLE_CATALOG` : ビューが属するカタログの名前。この値は常に`def`です。
 -   `TABLE_SCHEMA` : ビューが属するスキーマの名前。
 -   `TABLE_NAME` : ビュー名。
--   `VIEW_DEFINITION` : ビューの作成時に`SELECT`ステートメントで作成されるビューの定義。
+-   `VIEW_DEFINITION` : ビューの定義。ビューの作成時に`SELECT`ステートメントによって作成されます。
 -   `CHECK_OPTION` : `CHECK_OPTION`の値。値のオプションは`NONE` 、 `CASCADE` 、および`LOCAL`です。
 -   `IS_UPDATABLE` : `UPDATE` / `INSERT` / `DELETE`がビューに適用されるかどうか。 TiDB では、値は常に`NO`です。
--   `DEFINER` : ビューを作成したユーザーの名前で、形式は`'user_name'@'host_name'`です。
--   `SECURITY_TYPE` : `SQL SECURITY`の値。値のオプションは`DEFINER`と`INVOKER`です。
--   `CHARACTER_SET_CLIENT` : ビューが作成されたときの`character_set_client`セッション変数の値。
--   `COLLATION_CONNECTION` : ビューが作成されたときの`collation_connection`セッション変数の値。
+-   `DEFINER` : ビューを作成するユーザーの名前。形式は`'user_name'@'host_name'`です。
+-   `SECURITY_TYPE` : `SQL SECURITY`の値。値のオプションは`DEFINER`および`INVOKER`です。
+-   `CHARACTER_SET_CLIENT` : ビュー作成時の`character_set_client`セッション変数の値。
+-   `COLLATION_CONNECTION` : ビュー作成時の`collation_connection`セッション変数の値。

@@ -63,11 +63,11 @@ TiDB Cloud がAmazon S3 バケット内のソース データにアクセスで�
 
 1.  ターゲットクラスターの**インポート**ページを開きます。
 
-    1.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
+    1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
         > **ヒント：**
         >
-        > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅の をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
+        > 複数のプロジェクトがある場合は、 **「クラスター」**ページの左側のナビゲーション・ペインでターゲット・プロジェクトに切り替えることができます。
 
     2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート]**をクリックします。
 
@@ -108,7 +108,7 @@ TiDB Cloud がAmazon S3 バケット内のソース データにアクセスで�
 
 2.  アップストリーム データベースからデータを移行する場合は、最初にソース データをエクスポートする必要があります。
 
-    詳細については、 [TiUPをインストールする](/tidb-cloud/migrate-data-into-tidb.md#step-1-install-tiup)および[MySQL互換データベースからデータをエクスポート](/tidb-cloud/migrate-data-into-tidb.md#step-2-export-data-from-mysql-compatible-databases)を参照してください。
+    詳細については、 [MySQL互換データベースからデータをエクスポート](/tidb-cloud/migrate-data-into-tidb.md#step-2-export-data-from-mysql-compatible-databases)を参照してください。
 
 > **ノート：**
 >
@@ -138,11 +138,11 @@ TiDB クラウドが GCS バケット内のソース データにアクセスで
         gsutil rsync -r ./tidbcloud-samples-us-west-2/ gs://target-url-in-gcs
         ```
 
-2.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
+2.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
     > **ヒント：**
     >
-    > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅の をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
+    > 複数のプロジェクトがある場合は、 **「クラスター」**ページの左側のナビゲーション・ペインでターゲット・プロジェクトに切り替えることができます。
 
 3.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート]**をクリックします。
 

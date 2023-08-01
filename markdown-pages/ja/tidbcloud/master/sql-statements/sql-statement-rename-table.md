@@ -3,7 +3,7 @@ title: RENAME TABLE | TiDB SQL Statement Reference
 summary: An overview of the usage of RENAME TABLE for the TiDB database.
 ---
 
-# テーブル名の変更 {#rename-table}
+# テーブルの名前を変更 {#rename-table}
 
 このステートメントは、既存のテーブルの名前を新しい名前に変更します。
 
@@ -43,12 +43,12 @@ mysql> SHOW TABLES;
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL と完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`RENAME TABLE`ステートメントは MySQL と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [テーブルを作成](/sql-statements/sql-statement-create-table.md)
+-   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [テーブルを表示](/sql-statements/sql-statement-show-tables.md)
 -   [他の机](/sql-statements/sql-statement-alter-table.md)

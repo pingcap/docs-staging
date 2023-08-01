@@ -5,7 +5,7 @@ summary: Learn the `SCHEMATA` information_schema table.
 
 # スキーマ {#schemata}
 
-`SCHEMATA`テーブルは、データベースに関する情報を提供します。テーブル データは、 `SHOW DATABASES`ステートメントの結果と同等です。
+表`SCHEMATA`には、データベースに関する情報が示されています。テーブル データは`SHOW DATABASES`ステートメントの結果に相当します。
 
 
 ```sql
@@ -44,7 +44,7 @@ SELECT * FROM SCHEMATA;
 5 rows in set (0.00 sec)
 ```
 
-`SCHEMATA`テーブルのフィールドは次のとおりです。
+`SCHEMATA`テーブルのフィールドは次のように説明されています。
 
 -   `CATALOG_NAME` : データベースが属するカタログ。
 -   `SCHEMA_NAME` : データベース名。

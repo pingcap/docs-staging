@@ -5,13 +5,13 @@ summary: An overview of the usage of DO for the TiDB database.
 
 # する {#do}
 
-`DO`式を実行しますが、結果を返しません。ほとんどの場合、 `DO`結果を返さない`SELECT expr, ...`に相当します。
+`DO`式を実行しますが、結果は返しません。ほとんどの場合、 `DO`結果を返さない`SELECT expr, ...`と同等です。
 
 > **ノート：**
 >
-> `DO`は式のみを実行します。 `SELECT`使用できるすべての場合に使用できるわけではありません。たとえば、 `DO id FROM t1`はテーブルを参照しているため無効です。
+> `DO`は式のみを実行します。 `SELECT`使える全ての場合に使えるわけではありません。たとえば、 `DO id FROM t1`はテーブルを参照しているため無効です。
 
-MySQL での一般的な使用例は、ストアド プロシージャまたはトリガーを実行することです。 TiDB はストアド プロシージャまたはトリガーを提供しないため、この関数の用途は限られています。
+MySQL では、ストアド プロシージャまたはトリガーを実行することが一般的な使用例です。 TiDB はストアド プロシージャやトリガーを提供していないため、この機能の使用は限定されています。
 
 ## あらすじ {#synopsis}
 
@@ -51,10 +51,10 @@ mysql> DO SLEEP(1), SLEEP(1.5);
 Query OK, 0 rows affected (2.50 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL と完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`DO`ステートメントは MySQL と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [選択する](/sql-statements/sql-statement-select.md)

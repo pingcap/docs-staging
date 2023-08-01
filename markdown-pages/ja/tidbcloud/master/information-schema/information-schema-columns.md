@@ -3,9 +3,9 @@ title: COLUMNS
 summary: Learn the `COLUMNS` INFORMATION_SCHEMA table.
 ---
 
-# 列 {#columns}
+# コラム {#columns}
 
-`COLUMNS`テーブルは、テーブル内の列に関する詳細情報を提供します。
+`COLUMNS`表には、表内の列に関する詳細情報が記載されています。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -43,14 +43,14 @@ DESC COLUMNS;
 21 rows in set (0.00 sec)
 ```
 
-テーブル`test.t1`を作成し、テーブル`COLUMNS`の情報を照会します。
+テーブル`test.t1`を作成し、テーブル`COLUMNS`の情報をクエリします。
 
 ```sql
 CREATE TABLE test.t1 (a int);
 SELECT * FROM COLUMNS WHERE table_schema='test' AND TABLE_NAME='t1'\G
 ```
 
-输出結果は以下の通り：
+出力結果は以下の通り：
 
 ```sql
 *************************** 1. row ***************************
@@ -78,33 +78,33 @@ CHARACTER_MAXIMUM_LENGTH: NULL
 1 row in set (0.02 sec)
 ```
 
-`COLUMNS`テーブルの列の説明は次のとおりです。
+`COLUMNS`のテーブルの列の説明は次のとおりです。
 
--   `TABLE_CATALOG` : 列を持つテーブルが属するカタログの名前。値は常に`def`です。
--   `TABLE_SCHEMA` : 列を持つテーブルが配置されているスキーマの名前。
--   `TABLE_NAME` : 列を持つテーブルの名前。
+-   `TABLE_CATALOG` : 列を含むテーブルが属するカタログの名前。値は常に`def`です。
+-   `TABLE_SCHEMA` : 列を含むテーブルが存在するスキーマの名前。
+-   `TABLE_NAME` : 列を含むテーブルの名前。
 -   `COLUMN_NAME` : 列の名前。
 -   `ORDINAL_POSITION` : テーブル内の列の位置。
 -   `COLUMN_DEFAULT` : 列のデフォルト値。明示的なデフォルト値が`NULL`である場合、または列定義に`default`句が含まれていない場合、この値は`NULL`です。
--   `IS_NULLABLE` : 列が null 許容かどうか。列が null 値を格納できる場合、この値は`YES`です。それ以外の場合は`NO`です。
+-   `IS_NULLABLE` : 列が NULL 可能かどうか。列に null 値を格納できる場合、この値は`YES`です。それ以外の場合は`NO`です。
 -   `DATA_TYPE` : 列のデータのタイプ。
--   `CHARACTER_MAXIMUM_LENGTH` : 文字列列の場合、最大文字数。
+-   `CHARACTER_MAXIMUM_LENGTH` : 文字列列の場合、文字数の最大長。
 -   `CHARACTER_OCTET_LENGTH` : 文字列列の最大長 (バイト単位)。
--   `NUMERIC_PRECISION` : 数値型の列の数値精度。
--   `NUMERIC_SCALE` : 数値型列の数値スケール。
--   `DATETIME_PRECISION` : 時間型の列の場合、小数秒の精度。
+-   `NUMERIC_PRECISION` : 数値型列の数値精度。
+-   `NUMERIC_SCALE` : 数値型の列の数値スケール。
+-   `DATETIME_PRECISION` : 時間型の列の場合、小数点以下の秒の精度。
 -   `CHARACTER_SET_NAME` : 文字列列の文字セットの名前。
 -   `COLLATION_NAME` : 文字列列の照合順序の名前。
 -   `COLUMN_TYPE` : 列のタイプ。
--   `COLUMN_KEY` : この列が索引付けされているかどうか。このフィールドには、次の値が含まれる場合があります。
-    -   空: この列にインデックスが付けられていないか、この列にインデックスが付けられていて、複数列の一意でないインデックスの 2 番目の列になっています。
-    -   `PRI` : この列は、主キーまたは複数の主キーの 1 つです。
-    -   `UNI` : この列は、一意のインデックスの最初の列です。
-    -   `MUL` : 列は一意でないインデックスの最初の列であり、特定の値が複数回発生することが許可されています。
+-   `COLUMN_KEY` : この列にインデックスが付けられているかどうか。このフィールドには次の値が含まれる場合があります。
+    -   空: この列にはインデックスが作成されていないか、この列はインデックスが作成されており、複数列の一意でないインデックスの 2 番目の列です。
+    -   `PRI` : この列は主キーまたは複数の主キーの 1 つです。
+    -   `UNI` : この列は一意のインデックスの最初の列です。
+    -   `MUL` : この列は、特定の値が複数回出現することが許可される、一意でないインデックスの最初の列です。
 -   `EXTRA` : 指定された列の追加情報。
--   `PRIVILEGES` : 現在のユーザーがこの列に対して持っている権限。現在、この値は TiDB で固定されており、常に`select,insert,update,references`です。
+-   `PRIVILEGES` : 現在のユーザーがこの列に対して持つ権限。現在、この値は TiDB で固定されており、常に`select,insert,update,references`です。
 -   `COLUMN_COMMENT` : 列定義に含まれるコメント。
--   `GENERATION_EXPRESSION` : 生成された列の場合、この値は列値の計算に使用される式を表示します。生成されていない列の場合、値は空です。
+-   `GENERATION_EXPRESSION` : 生成された列の場合、この値は列値の計算に使用される式を表示します。非生成列の場合、値は空です。
 
 対応する`SHOW`ステートメントは次のとおりです。
 

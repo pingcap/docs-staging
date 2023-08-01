@@ -5,17 +5,17 @@ summary: Learn about the `CLIENT_ERRORS_SUMMARY_GLOBAL` INFORMATION_SCHEMA table
 
 # CLIENT_ERRORS_SUMMARY_GLOBAL {#client-errors-summary-global}
 
-表`CLIENT_ERRORS_SUMMARY_GLOBAL`は、TiDBサーバーに接続するクライアントに返されたすべての SQL エラーと警告の全体的な概要を示しています。これらには以下が含まれます：
+表`CLIENT_ERRORS_SUMMARY_GLOBAL`は、TiDBサーバーに接続するクライアントに返されたすべての SQL エラーと警告の全体的な概要を示しています。これらには次のものが含まれます。
 
--   不正な SQL ステートメント。
--   ゼロ エラーによる除算。
--   範囲外の重複キー値を挿入しようとしています。
+-   不正な形式の SQL ステートメント。
+-   ゼロ除算エラー。
+-   範囲外の重複キー値を挿入しようとしました。
 -   許可エラー。
 -   テーブルが存在しません。
 
-クライアント エラーは、MySQLサーバープロトコルを介してクライアントに返され、そこでアプリケーションは適切なアクションを実行することが期待されます。 `INFORMATION_SCHEMA.CLIENT_ERRORS_SUMMARY_GLOBAL`表は高レベルの概要を提供し、アプリケーションが TiDBサーバーによって返されたエラーを正しく処理 (またはログ記録) していないシナリオで役立ちます。
+クライアント エラーは MySQLサーバープロトコル経由でクライアントに返され、アプリケーションは適切なアクションを実行することが期待されます。表`INFORMATION_SCHEMA.CLIENT_ERRORS_SUMMARY_GLOBAL`は高レベルの概要を示しており、アプリケーションが TiDBサーバーから返されたエラーを正しく処理 (またはログ記録) していないシナリオに役立ちます。
 
-集計されたカウントは、ステートメント`FLUSH CLIENT_ERRORS_SUMMARY`でリセットできます。要約は各 TiDBサーバーにローカルであり、メモリにのみ保持されます。 TiDBサーバーが再起動すると、サマリーは失われます。
+要約されたカウントはステートメント`FLUSH CLIENT_ERRORS_SUMMARY`でリセットできます。概要は各 TiDBサーバーに対してローカルであり、メモリ内にのみ保持されます。 TiDBサーバーが再起動すると、サマリーは失われます。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -41,13 +41,13 @@ DESC CLIENT_ERRORS_SUMMARY_GLOBAL;
 フィールドの説明:
 
 -   `ERROR_NUMBER` : 返された MySQL 互換のエラー番号。
--   `ERROR_MESSAGE` : エラー番号に一致するエラー メッセージ (プリペアドステートメント形式)。
+-   `ERROR_MESSAGE` : エラー番号と一致するエラー メッセージ (プリペアドステートメント形式)。
 -   `ERROR_COUNT` : このエラーが返された回数。
 -   `WARNING_COUNT` : この警告が返された回数。
--   `FIRST_SEEN` : このエラー (または警告) が初めて送信された時刻。
+-   `FIRST_SEEN` : このエラー (または警告) が初めて送信されたとき。
 -   `LAST_SEEN` : このエラー (または警告) が最後に送信された時刻。
 
-次の例は、ローカル TiDBサーバーに接続するときに生成される警告を示しています。サマリーは`FLUSH CLIENT_ERRORS_SUMMARY`を実行した後にリセットされます:
+次の例は、ローカル TiDBサーバーに接続するときに生成される警告を示しています。 `FLUSH CLIENT_ERRORS_SUMMARY`を実行するとサマリーがリセットされます。
 
 ```sql
 SELECT 0/0;

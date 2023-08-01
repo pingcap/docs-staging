@@ -30,13 +30,13 @@ ALTER DATABASE test DEFAULT CHARACTER SET = utf8mb4;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-現在、TiDB は一部の文字セットと照合のみをサポートしています。詳細は[文字セットと照合のサポート](/character-set-and-collation.md)を参照してください。
+現在、TiDB は一部の文字セットと照合順序のみをサポートしています。詳細については[文字セットと照合順序のサポート](/character-set-and-collation.md)を参照してください。
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL と完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`ALTER DATABASE`ステートメントは MySQL と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [データベースの作成](/sql-statements/sql-statement-create-database.md)
--   [データベースを表示](/sql-statements/sql-statement-show-databases.md)
+-   [データベースを表示する](/sql-statements/sql-statement-show-databases.md)

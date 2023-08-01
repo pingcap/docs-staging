@@ -21,7 +21,7 @@ TiDB サーバーレス クラスターがTiDB Cloud上に作成されたら、�
 
     標準接続では、トラフィック フィルターを備えたパブリック エンドポイントが公開されるため、ラップトップから SQL クライアント経由で TiDB クラスターに接続できます。
 
-    TiDB サーバーレスは[TLS接続](/tidb-cloud/secure-connections-to-serverless-clusters.md)をサポートしており、アプリケーションから TiDB クラスターへのデータ送信のセキュリティを確保します。
+    TiDB サーバーレスは[TLS接続](/tidb-cloud/secure-connections-to-serverless-clusters.md)サポートしており、アプリケーションから TiDB クラスターへのデータ送信のセキュリティを確保します。
 
 -   [Chat2Query 経由で接続する (ベータ版)](/tidb-cloud/explore-data-with-chat2query.md)
 

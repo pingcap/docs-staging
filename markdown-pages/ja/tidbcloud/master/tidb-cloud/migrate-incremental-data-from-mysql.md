@@ -13,7 +13,7 @@ summary: Learn how to migrate incremental data from MySQL-compatible databases t
 
 ## ステップ 1. DM クラスターをデプロイ {#step-1-deploy-a-dm-cluster}
 
-TiDB Cloudコンソールには、増分データ移行機能がまだ提供されていません。 TiDB Cloudへの増分移行を実行するには、 [TiDB データ移行](https://docs.pingcap.com/tidb/stable/dm-overview) (DM) を手動でデプロイする必要があります。インストール手順については、 [TiUPを使用した DMクラスタのデプロイ](https://docs.pingcap.com/tidb/stable/deploy-a-dm-cluster-using-tiup)を参照してください。
+TiDB Cloudコンソールには、増分データ移行機能がまだ提供されていません。 TiDB Cloudへの増分移行を実行するには、 [TiUPを使用した DMクラスタのデプロイ](https://docs.pingcap.com/tidb/stable/deploy-a-dm-cluster-using-tiup)を参照してください。
 
 ## ステップ 2. データソース構成ファイルを作成する {#step-2-create-a-data-source-configuration-file}
 
@@ -79,7 +79,7 @@ Starting component `dmctl`: /root/.tiup/components/dmctl/v6.0.0/dmctl/dmctl /roo
 
 移行用のファイルを`dm-task1.yaml`作成します。ファイル内の増分移行モードとデータ ソースの開始点を構成します。
 
-[Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)によってエクスポートされたメタデータ ファイルで開始点を見つけることができます。例えば：
+[Dumpling](/dumpling-overview.md)によってエクスポートされたメタデータ ファイルで開始点を見つけることができます。例えば：
 
 ```toml
 # Get the contents of the metadata in the file exported by Dumpling
@@ -205,7 +205,7 @@ Starting component `dmctl`: /root/.tiup/components/dmctl/v6.0.0/dmctl/dmctl /roo
 
 タスクの開始に失敗した場合は、プロンプト メッセージを確認して構成を修正します。その後、上記のコマンドを再実行してタスクを開始できます。
 
-何か問題が発生した場合は、 [DMエラー処理](https://docs.pingcap.com/tidb/stable/dm-error-handling)と[DMに関するFAQ](https://docs.pingcap.com/tidb/stable/dm-faq)を参照してください。
+何か問題が発生した場合は、 [DMに関するFAQ](https://docs.pingcap.com/tidb/stable/dm-faq)を参照してください。
 
 ## ステップ 5. 移行タスクのステータスを確認する {#step-5-check-the-migration-task-status}
 

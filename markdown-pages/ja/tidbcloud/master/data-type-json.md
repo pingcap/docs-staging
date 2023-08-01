@@ -3,14 +3,14 @@ title: TiDB Data Type
 summary: Learn about the JSON data type in TiDB.
 ---
 
-# JSON タイプ {#json-type}
+# JSONタイプ {#json-type}
 
-TiDB は、半構造化データの格納に役立つ`JSON` (JavaScript Object Notation) データ型をサポートしています。 `JSON`データ型には、文字列列に`JSON`形式の文字列を格納する場合と比較して、次の利点があります。
+TiDB は、半構造化データの保存に役立つ`JSON` (JavaScript Object Notation) データ型をサポートしています。 `JSON`データ型には、文字列列に`JSON`形式の文字列を格納する場合に比べて次の利点があります。
 
--   シリアル化には Binary 形式を使用します。内部フォーマットにより、 `JSON`ドキュメント要素への迅速な読み取りアクセスが可能になります。
--   `JSON`列に格納された JSON ドキュメントの自動検証。有効なドキュメントのみを保存できます。
+-   シリアル化にはバイナリ形式を使用します。内部形式により、 `JSON`文書要素への素早い読み取りアクセスが可能になります。
+-   `JSON`列に保存された JSON ドキュメントの自動検証。有効な文書のみを保管できます。
 
-`JSON`列は、他のバイナリ型の列と同様に直接インデックス付けされませんが、生成された列の形式で`JSON`ドキュメントのフィールドにインデックスを付けることができます。
+`JSON`列は、他のバイナリ型の列と同様に、直接インデックス付けされませんが、生成された列の形式で`JSON`ドキュメント内のフィールドにインデックスを付けることができます。
 
 ```sql
 CREATE TABLE city (
@@ -23,17 +23,17 @@ INSERT INTO city (id,detail) VALUES (1, '{"name": "Beijing", "population": 100}'
 SELECT id FROM city WHERE population >= 100;
 ```
 
-詳細については、 [JSON 関数](/functions-and-operators/json-functions.md)および[生成された列](/generated-columns.md)を参照してください。
+詳細については、 [JSON関数](/functions-and-operators/json-functions.md)および[生成された列](/generated-columns.md)を参照してください。
 
 ## 制限 {#restrictions}
 
--   現在、TiDB は`JSON`関数のTiFlashへのプッシュ ダウンをサポートしていません。
--   v6.3.0 より前の TiDB Backup &amp; Restore (BR) バージョンは、JSON 列を含むデータの回復をサポートしていません。 v6.3.0 より前の TiDB クラスターへの JSON 列を含むデータの回復をサポートするBRのバージョンはありません。
--   `DATE` 、 `DATETIME` 、および`TIME`などの非標準の`JSON`データ型を含むデータを複製するために複製ツールを使用しないでください。
+-   現在、TiDB は、限られた`JSON`関数のTiFlashへのプッシュダウンのみをサポートしています。詳細については、 [プッシュダウン式](/tiflash/tiflash-supported-pushdown-calculations.md#push-down-expressions)を参照してください。
+-   v6.3.0 より前の TiDB バックアップ &amp; リストア (BR) バージョンは、JSON 列を含むデータのリカバリをサポートしていません。 BRのどのバージョンも、JSON 列を含むデータを v6.3.0 より前の TiDB クラスターにリカバリすることをサポートしていません。
+-   `DATE` 、 `DATETIME` 、 `TIME`などの非標準の`JSON`データ型を含むデータをレプリケートするためにレプリケーション ツールを使用しないでください。
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   `BINARY`型のデータを含む JSON 列を作成すると、MySQL は現在、データを`STRING`型として誤ってラベル付けしますが、TiDB はそれを`BINARY`型として正しく処理します。
+-   `BINARY`タイプのデータを含む JSON カラムを作成すると、現在、MySQL はデータを`STRING`タイプとして誤ってラベル付けしますが、TiDB はデータを`BINARY`タイプとして正しく処理します。
 
     ```sql
     CREATE TABLE test(a json);
@@ -51,7 +51,7 @@ SELECT id FROM city WHERE population >= 100;
 
     詳細については、問題[#37443](https://github.com/pingcap/tidb/issues/37443)を参照してください。
 
--   データ型を`ENUM`または`SET`から`JSON`に変換するとき、TiDB はデータ形式の正確性をチェックします。たとえば、TiDB で次の SQL ステートメントを実行すると、エラーが返されます。
+-   データ型を`ENUM`または`SET`から`JSON`に変換するときに、TiDB はデータ形式の正しさをチェックします。たとえば、TiDB で次の SQL ステートメントを実行すると、エラーが返されます。
 
     ```sql
     CREATE TABLE t(e ENUM('a'));
@@ -62,9 +62,9 @@ SELECT id FROM city WHERE population >= 100;
 
     詳細については、問題[#9999](https://github.com/pingcap/tidb/issues/9999)を参照してください。
 
--   TiDB では、 `ORDER BY`を使用して JSON 配列または JSON オブジェクトをソートできます。
+-   TiDB では、 `ORDER BY`を使用して JSON 配列または JSON オブジェクトを並べ替えることができます。
 
-    MySQL で`ORDER BY`を使用して JSON 配列または JSON オブジェクトを並べ替えると、MySQL は警告を返し、並べ替えの結果は比較操作の結果と一致しません。
+    MySQL では、 `ORDER BY`を使用して JSON 配列または JSON オブジェクトをソートすると、MySQL は警告を返し、ソート結果は比較演算の結果と一致しません。
 
     ```sql
     CREATE TABLE t(j JSON);
@@ -92,7 +92,7 @@ SELECT id FROM city WHERE population >= 100;
 
     詳細については、問題[#37506](https://github.com/pingcap/tidb/issues/37506)を参照してください。
 
--   データを JSON 列に挿入すると、TiDB は暗黙的にデータの値を`JSON`型に変換します。
+-   データを JSON 列に挿入すると、TiDB はデータの値を暗黙的に`JSON`型に変換します。
 
     ```sql
     CREATE TABLE t(col JSON);

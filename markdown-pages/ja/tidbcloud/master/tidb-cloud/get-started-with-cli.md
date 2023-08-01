@@ -152,7 +152,7 @@ ticloud cluster create
 クラスターが作成されたら、クラスターに接続できます。
 
 ```shell
-ticloud cluster connect
+ticloud connect
 ```
 
 デフォルトのユーザーを使用するかどうかを尋ねるプロンプトが表示されたら、 `Y`を選択し、クラスターの作成時に設定したパスワードを入力します。

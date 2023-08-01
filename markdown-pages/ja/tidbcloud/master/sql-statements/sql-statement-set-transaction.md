@@ -3,9 +3,9 @@ title: SET TRANSACTION | TiDB SQL Statement Reference
 summary: An overview of the usage of SET TRANSACTION for the TiDB database.
 ---
 
-# 取引を設定する {#set-transaction}
+# トランザクションの設定 {#set-transaction}
 
-`SET TRANSACTION`ステートメントを使用して、現在の分離レベルを`GLOBAL`または`SESSION`ベースで変更できます。この構文は`SET transaction_isolation='new-value'`の代替であり、MySQL と SQL 標準の両方との互換性のために含まれています。
+`SET TRANSACTION`ステートメントを使用すると、現在の分離レベルを`GLOBAL`または`SESSION`に基づいて変更できます。この構文は`SET transaction_isolation='new-value'`の代替であり、MySQL と SQL 標準の両方との互換性のために組み込まれています。
 
 ## あらすじ {#synopsis}
 
@@ -60,14 +60,14 @@ mysql> SHOW SESSION VARIABLES LIKE 'transaction_isolation';
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 -   TiDB は、構文のみでトランザクションを読み取り専用として設定する機能をサポートしています。
--   分離レベル`READ-UNCOMMITTED`および`SERIALIZABLE`はサポートされていません。
--   `REPEATABLE-READ`分離レベルは、MySQL と部分的に互換性のあるスナップショット分離テクノロジを使用して実現されます。
--   悲観的トランザクションでは、TiDB は MySQL と互換性のある 2 つの分離レベル`REPEATABLE-READ`と`READ-COMMITTED`をサポートします。詳細な説明については、 [分離レベル](/transaction-isolation-levels.md)を参照してください。
+-   分離レベル`READ-UNCOMMITTED`と`SERIALIZABLE`はサポートされていません。
+-   分離レベル`REPEATABLE-READ` 、MySQL と部分的に互換性のあるスナップショット分離テクノロジーを使用することで実現されます。
+-   悲観的トランザクションでは、TiDB は MySQL と互換性のある 2 つの分離レベル ( `REPEATABLE-READ`と`READ-COMMITTED`をサポートします。詳細については、 [分離レベル](/transaction-isolation-levels.md)を参照してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [`SET [GLOBAL|SESSION] &#x3C;variable>`](/sql-statements/sql-statement-set-variable.md)
 -   [分離レベル](/transaction-isolation-levels.md)

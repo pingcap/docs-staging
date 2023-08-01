@@ -40,7 +40,7 @@ TiDB サーバーレス ブランチングを GitHub リポジトリと統合す
     -   GitHub にログインしていない場合は、まず GitHub にログインするように求められます。
     -   初めて統合を使用する場合は、 **TiDB Cloud Branching**アプリを承認するように求められます。
 
-    ![github-authorize.png](https://download.pingcap.com/images/docs/tidb-cloud/branch/github-authorize.png)
+    <img src="https://download.pingcap.com/images/docs/tidb-cloud/branch/github-authorize.png" width="80%" />
 
 4.  **「GitHub に接続」**ダイアログで、「 **GitHub アカウント」**ドロップダウン リストから GitHub アカウントを選択します。
 
@@ -50,7 +50,7 @@ TiDB サーバーレス ブランチングを GitHub リポジトリと統合す
 
 6.  **[接続]**をクリックして、TiDB サーバーレス クラスターと GitHub リポジトリの間に接続します。
 
-    ![github-connect.png](https://download.pingcap.com/images/docs/tidb-cloud/branch/github-connect.png)
+    <img src="https://download.pingcap.com/images/docs/tidb-cloud/branch/github-connect.png" width="40%" />
 
 ## TiDB Cloud Branching アプリの動作 {#tidb-cloud-branching-app-behaviors}
 

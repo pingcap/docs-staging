@@ -100,7 +100,7 @@ SQL パフォーマンス チューニングの詳細については、 [SQLチ�
 
 #### 規格外 {#scale-out}
 
-クラスター[概要](/tidb-cloud/monitor-tidb-cluster.md)ページで、storage容量、CPU 使用率、TiKV IO レートのメトリックを確認します。いずれかのクラスタが長期間にわたって上限に達している場合は、現在のクラスタ サイズがビジネス要件を満たすことができない可能性があります。クラスターをスケールアウトする必要があるかどうかを確認するには、 [PingCAP サポート チーム](/tidb-cloud/tidb-cloud-support.md)に問い合わせることをお勧めします。
+クラスター[概要](/tidb-cloud/monitor-tidb-cluster.md)ページで、storage容量、CPU 使用率、TiKV IO レートのメトリックを確認します。いずれかのクラスターが長期間にわたって上限に達している場合は、現在のクラスター サイズではビジネス要件を満たせない可能性があります。クラスターをスケールアウトする必要があるかどうかを確認するには、 [PingCAP サポート チーム](/tidb-cloud/tidb-cloud-support.md)に問い合わせることをお勧めします。
 
 #### その他の問題 {#other-issues}
 

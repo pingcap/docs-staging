@@ -3,13 +3,13 @@ title: Explain Statements That Use Indexes
 summary: Learn about the execution plan information returned by the EXPLAIN statement in TiDB.
 ---
 
-# インデックスを使用するステートメントの説明 {#explain-statements-that-use-indexes}
+# インデックスを使用する Explain ステートメント {#explain-statements-that-use-indexes}
 
 TiDB は、インデックスを使用してクエリの実行を高速化するいくつかの演算子をサポートしています。
 
 -   [`IndexLookup`](#indexlookup)
 -   [`IndexReader`](#indexreader)
--   [`Point_Get`および<code>Batch_Point_Get</code>](#point_get-and-batch_point_get)
+-   [`Point_Get`と`Batch_Point_Get`](#point_get-and-batch_point_get)
 -   [`IndexFullScan`](#indexfullscan)
 
 このドキュメントの例は、次のサンプル データに基づいています。
@@ -31,7 +31,7 @@ INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1024), RANDOM_BYTES(1024) FROM t1 a JOI
 
 ## インデックスルックアップ {#indexlookup}
 
-TiDB は、セカンダリ インデックスからデータを取得するときに`IndexLookup`演算子を使用します。この場合、次のクエリはすべて`intkey`インデックスで`IndexLookup`演算子を使用します。
+TiDB は、セカンダリ インデックスからデータを取得するときに`IndexLookup`演算子を使用します。この場合、次のクエリはすべて、 `intkey`インデックスに対して`IndexLookup`演算子を使用します。
 
 
 ```sql
@@ -91,10 +91,10 @@ EXPLAIN SELECT * FROM t1 WHERE intkey >= 99 AND intkey <= 103;
 
 `IndexLookup`演算子には 2 つの子ノードがあります。
 
--   `├─IndexRangeScan_8(Build)`演算子は`intkey`インデックスで範囲スキャンを実行し、内部`RowID`の値 (このテーブルでは主キー) を取得します。
--   `└─TableRowIDScan_9(Probe)`演算子は、テーブル データから行全体を取得します。
+-   `├─IndexRangeScan_8(Build)`演算子は、 `intkey`インデックスに対して範囲スキャンを実行し、内部の`RowID` (このテーブルでは主キー) の値を取得します。
+-   次に、 `└─TableRowIDScan_9(Probe)`演算子はテーブル データから行全体を取得します。
 
-`IndexLookup`タスクには 2 つのステップが必要なため、多数の行が一致するシナリオでは、SQL オプティマイザーは[統計](/statistics.md)に基づいて`TableFullScan`演算子を選択する場合があります。次の例では、多数の行が`intkey > 100`の条件に一致し、 `TableFullScan`が選択されています。
+`IndexLookup`タスクには 2 つのステップが必要なため、多数の行が一致するシナリオでは、SQL オプティマイザーは[統計](/statistics.md)に基づいて`TableFullScan`演算子を選択する可能性があります。次の例では、多数の行が`intkey > 100`の条件に一致し、 `TableFullScan`が選択されます。
 
 
 ```sql
@@ -112,7 +112,7 @@ EXPLAIN SELECT * FROM t1 WHERE intkey > 100;
 3 rows in set (0.00 sec)
 ```
 
-`IndexLookup`演算子を使用して、インデックス付きの列で`LIMIT`効率的に最適化することもできます。
+`IndexLookup`演算子を使用して、インデックス付き列の`LIMIT`効率的に最適化することもできます。
 
 
 ```sql
@@ -134,9 +134,9 @@ EXPLAIN SELECT * FROM t1 ORDER BY intkey DESC LIMIT 10;
 
 上記の例では、最後の 10 行がインデックス`intkey`から読み取られます。次に、これら`RowID`の値がテーブル データから取得されます。
 
-## 索引リーダー {#indexreader}
+## インデックスリーダー {#indexreader}
 
-TiDB は、*カバリング インデックスの最適化*をサポートしています。インデックスからすべての行を取得できる場合、TiDB は`IndexLookup`で通常必要とされる 2 番目のステップをスキップします。次の 2 つの例を考えてみましょう。
+TiDB は、*カバーインデックスの最適化*をサポートしています。すべての行をインデックスから取得できる場合、TiDB は通常`IndexLookup`で必要となる 2 番目のステップをスキップします。次の 2 つの例を考えてみましょう。
 
 
 ```sql
@@ -164,11 +164,11 @@ EXPLAIN SELECT id FROM t1 WHERE intkey = 123;
 3 rows in set (0.00 sec)
 ```
 
-`id`は内部`RowID`でもあるため、 `intkey`インデックスに格納されます。 `intkey`インデックスを`└─IndexRangeScan_5`の一部として使用した後、 `RowID`の値を直接返すことができます。
+`id`は内部の`RowID`でもあるため、 `intkey`インデックスに格納されます。 `intkey`インデックスを`└─IndexRangeScan_5`の一部として使用した後、 `RowID`の値を直接返すことができます。
 
-## Point_Get および Batch_Point_Get {#point-get-and-batch-point-get}
+## Point_Get と Batch_Point_Get {#point-get-and-batch-point-get}
 
-TiDB は、主キーまたは一意のキーから直接データを取得するときに、 `Point_Get`または`Batch_Point_Get`演算子を使用します。これらの演算子は`IndexLookup`よりも効率的です。例えば：
+TiDB は、主キーまたは一意キーからデータを直接取得するときに`Point_Get`または`Batch_Point_Get`演算子を使用します。これらの演算子は`IndexLookup`よりも効率的です。例えば：
 
 
 ```sql
@@ -222,7 +222,7 @@ Query OK, 0 rows affected (0.37 sec)
 
 ## インデックスフルスキャン {#indexfullscan}
 
-インデックスは順序付けられているため、 `IndexFullScan`演算子を使用して、インデックス付きの値の`MIN`または`MAX`値などの一般的なクエリを最適化できます。
+インデックスは順序付けされているため、 `IndexFullScan`演算子を使用して、インデックス付きの値に対する`MIN`または`MAX`値などの一般的なクエリを最適化できます。
 
 
 ```sql
@@ -254,9 +254,9 @@ EXPLAIN SELECT MAX(intkey) FROM t1;
 5 rows in set (0.00 sec)
 ```
 
-上記のステートメントでは、各 TiKV リージョンで`IndexFullScan`タスクが実行されます。 `FullScan`名前にもかかわらず、最初の行のみを読み取る必要があります ( `└─Limit_28` )。各 TiKVリージョンは、その`MIN`または`MAX`値を TiDB に返します。TiDB は、Stream 集計を実行して単一の行をフィルタリングします。集計関数`MAX`または`MIN`を使用したストリーム集計では、テーブルが空の場合に`NULL`が返されることも保証されます。
+上記のステートメントでは、各 TiKVリージョンで`IndexFullScan`タスクが実行されます。名前`FullScan`にもかかわらず、読み取る必要があるのは最初の行 ( `└─Limit_28` ) だけです。各 TiKVリージョンは、その`MIN`または`MAX`値を TiDB に返します。その後、TiDB はストリーム集計を実行して単一行をフィルターします。集約関数`MAX`または`MIN`を使用したスト​​リーム集計では、テーブルが空の場合にも`NULL`が返されます。
 
-対照的に、インデックスのない値に対して`MIN`関数を実行すると、結果は`TableFullScan`になります。クエリでは、TiKV ですべての行をスキャンする必要がありますが、各 TiKVリージョンがTiDB に 1 つの行のみを返すように`TopN`計算が実行されます。 `TopN` TiKV と TiDB の間で過剰な行が転送されるのを防ぎますが、このステートメントは、 `MIN`インデックスを利用できる上記の例よりもはるかに効率が悪いと考えられています。
+対照的に、インデックスのない値に対して`MIN`関数を実行すると、結果は`TableFullScan`になります。クエリでは TiKV ですべての行をスキャンする必要がありますが、各 TiKVリージョンがTiDB に 1 行のみを返すようにするために`TopN`計算が実行されます。 `TopN`は、TiKV と TiDB の間で過剰な行が転送されるのを防ぎますが、このステートメントは、 `MIN`インデックスを利用できる上記の例よりも効率がはるかに低いと考えられます。
 
 
 ```sql
@@ -277,7 +277,7 @@ EXPLAIN SELECT MIN(pad1) FROM t1;
 6 rows in set (0.00 sec)
 ```
 
-次のステートメントは、 `IndexFullScan`演算子を使用して、インデックス内のすべての行をスキャンします。
+次のステートメントでは、 `IndexFullScan`演算子を使用してインデックス内のすべての行をスキャンします。
 
 
 ```sql
@@ -307,9 +307,9 @@ EXPLAIN SELECT AVG(intkey) FROM t1;
 4 rows in set (0.00 sec)
 ```
 
-上記の例では、 `(intkey + RowID)`インデックスの値の幅が行全体の幅よりも小さいため、 `IndexFullScan`は`TableFullScan`よりも効率的です。
+上記の例では、 `(intkey + RowID)`インデックスの値の幅が行全体の幅より小さいため、 `IndexFullScan`方が`TableFullScan`より効率的です。
 
-次のステートメントは、テーブルから追加の列が必要なため、 `IndexFullScan`演算子の使用をサポートしていません。
+次のステートメントでは、テーブルに追加の列が必要なため、 `IndexFullScan`演算子の使用はサポートされていません。
 
 
 ```sql

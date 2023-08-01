@@ -3,9 +3,9 @@ title: SET ROLE | TiDB SQL Statement Reference
 summary: An overview of the usage of SET ROLE for the TiDB database.
 ---
 
-# ロールを設定 {#set-role}
+# 役割を設定する {#set-role}
 
-`SET ROLE`ステートメントは、現在のセッションでロールを有効にするために使用されます。ロールを有効にすると、ユーザーはロールの権限を使用できます。
+`SET ROLE`ステートメントは、現在のセッションでロールを有効にするために使用されます。ロールを有効にすると、ユーザーはロールの権限を使用できるようになります。
 
 ## あらすじ {#synopsis}
 
@@ -50,7 +50,7 @@ SELECT CURRENT_ROLE();
 1 row in set (0.000 sec)
 ```
 
-`'r2'`と`'r3'`を有効にするには、次の`SET ROLE`ステートメントを実行します。
+次の`SET ROLE`ステートメントを実行して、 `'r2'`と`'r3'`を有効にします。
 
 
 ```sql
@@ -67,7 +67,7 @@ SELECT CURRENT_ROLE();
 1 row in set (0.000 sec)
 ```
 
-次の`SET ROLE`ステートメントを実行して、デフォルトの役割を有効にします。
+次の`SET ROLE`ステートメントを実行して、デフォルトのロールを有効にします。
 
 
 ```sql
@@ -84,7 +84,7 @@ SELECT CURRENT_ROLE();
 1 row in set (0.000 sec)
 ```
 
-次の`SET ROLE`ステートメントを実行して、有効なすべてのロールをキャンセルします。
+次の`SET ROLE`ステートメントを実行して、有効なロールをすべてキャンセルします。
 
 
 ```sql
@@ -101,14 +101,14 @@ SELECT CURRENT_ROLE();
 1 row in set (0.000 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 8.0 の機能であるロールと完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`SET ROLE`ステートメントは、MySQL 8.0 のロール機能と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [役割を作成](/sql-statements/sql-statement-create-role.md)
--   [ロールを削除](/sql-statements/sql-statement-drop-role.md)
+-   [ロールの作成](/sql-statements/sql-statement-create-role.md)
+-   [役割を削除する](/sql-statements/sql-statement-drop-role.md)
 -   [`GRANT &#x3C;role>`](/sql-statements/sql-statement-grant-role.md)
 -   [`REVOKE &#x3C;role>`](/sql-statements/sql-statement-revoke-role.md)
 -   [デフォルトの役割を設定](/sql-statements/sql-statement-set-default-role.md)

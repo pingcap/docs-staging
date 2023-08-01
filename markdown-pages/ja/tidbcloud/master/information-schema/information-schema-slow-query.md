@@ -5,19 +5,19 @@ summary: Learn the `SLOW_QUERY` INFORMATION_SCHEMA table.
 
 # SLOW_QUERY {#slow-query}
 
-`SLOW_QUERY`のテーブルは、現在のノードのスロー クエリ情報を提供します。これは、TiDB スロー ログ ファイルの解析結果です。表の列名は、スロー ログのフィールド名に対応しています。
+`SLOW_QUERY`テーブルは、TiDB スロー ログ ファイルの解析結果である、現在のノードのスロー クエリ情報を提供します。テーブル内の列名は、スロー ログ内のフィールド名に対応しています。
 
 <CustomContent platform="tidb-cloud">
 
 > **ノート：**
 >
-> `SLOW_QUERY`テーブルは[Serverless Tierクラスター](/tidb-cloud/select-cluster-tier.md#serverless-tier-beta)では使用できません。
+> `SLOW_QUERY`テーブルは[TiDB サーバーレスクラスター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)では使用できません。
 
 </CustomContent>
 
 <CustomContent platform="tidb">
 
-このテーブルを使用して問題のあるステートメントを特定し、クエリのパフォーマンスを向上させる方法については、 [スロー クエリ ログ ドキュメント](/identify-slow-queries.md)を参照してください。
+このテーブルを使用して問題のあるステートメントを特定し、クエリのパフォーマンスを向上させる方法については、 [スロークエリログドキュメント](/identify-slow-queries.md)を参照してください。
 
 </CustomContent>
 
@@ -28,7 +28,7 @@ DESC SLOW_QUERY;
 
 出力は次のとおりです。
 
-```sql
+```sqlsql
 +-------------------------------+---------------------+------+------+---------+-------+
 | Field                         | Type                | Null | Key  | Default | Extra |
 +-------------------------------+---------------------+------+------+---------+-------+
@@ -92,6 +92,7 @@ DESC SLOW_QUERY;
 | Backoff_total                 | double              | YES  |      | NULL    |       |
 | Write_sql_response_total      | double              | YES  |      | NULL    |       |
 | Result_rows                   | bigint(22)          | YES  |      | NULL    |       |
+| Warnings                      | longtext            | YES  |      | NULL    |       |
 | Backoff_Detail                | varchar(4096)       | YES  |      | NULL    |       |
 | Prepared                      | tinyint(1)          | YES  |      | NULL    |       |
 | Succ                          | tinyint(1)          | YES  |      | NULL    |       |
@@ -106,16 +107,16 @@ DESC SLOW_QUERY;
 | Prev_stmt                     | longtext            | YES  |      | NULL    |       |
 | Query                         | longtext            | YES  |      | NULL    |       |
 +-------------------------------+---------------------+------+------+---------+-------+
-73 rows in set (0.000 sec)
+74 rows in set (0.001 sec)
 ```
 
 ## CLUSTER_SLOW_QUERY テーブル {#cluster-slow-query-table}
 
-`CLUSTER_SLOW_QUERY`のテーブルは、クラスター内のすべてのノードのスロー クエリ情報を提供します。これは、TiDB スロー ログ ファイルの解析結果です。 `SLOW_QUERY`と同じように`CLUSTER_SLOW_QUERY`テーブルを使用できます。 `CLUSTER_SLOW_QUERY`のテーブル スキーマは、 `INSTANCE`カラムが`CLUSTER_SLOW_QUERY`に追加されているという点で、 `SLOW_QUERY`テーブルのテーブル スキーマとは異なります。 `INSTANCE`列目はスロークエリの行情報のTiDBノードアドレスを表しています。
+`CLUSTER_SLOW_QUERY`テーブルは、クラスター内のすべてのノードのスロー クエリ情報を提供します。これは、TiDB スロー ログ ファイルの解析結果です。 `CLUSTER_SLOW_QUERY`テーブルは`SLOW_QUERY`と同じように使用できます。 `CLUSTER_SLOW_QUERY`テーブルのテーブル スキーマは、 `INSTANCE`列が`CLUSTER_SLOW_QUERY`に追加されるという点で`SLOW_QUERY`テーブルのテーブル スキーマと異なります。 `INSTANCE`列は、スロー クエリの行情報の TiDB ノード アドレスを表します。
 
 <CustomContent platform="tidb">
 
-このテーブルを使用して問題のあるステートメントを特定し、クエリのパフォーマンスを向上させる方法については、 [スロー クエリ ログ ドキュメント](/identify-slow-queries.md)を参照してください。
+このテーブルを使用して問題のあるステートメントを特定し、クエリのパフォーマンスを向上させる方法については、 [スロークエリログドキュメント](/identify-slow-queries.md)を参照してください。
 
 </CustomContent>
 
@@ -190,6 +191,7 @@ DESC CLUSTER_SLOW_QUERY;
 | Backoff_total                 | double              | YES  |      | NULL    |       |
 | Write_sql_response_total      | double              | YES  |      | NULL    |       |
 | Result_rows                   | bigint(22)          | YES  |      | NULL    |       |
+| Warnings                      | longtext            | YES  |      | NULL    |       |
 | Backoff_Detail                | varchar(4096)       | YES  |      | NULL    |       |
 | Prepared                      | tinyint(1)          | YES  |      | NULL    |       |
 | Succ                          | tinyint(1)          | YES  |      | NULL    |       |
@@ -204,7 +206,7 @@ DESC CLUSTER_SLOW_QUERY;
 | Prev_stmt                     | longtext            | YES  |      | NULL    |       |
 | Query                         | longtext            | YES  |      | NULL    |       |
 +-------------------------------+---------------------+------+------+---------+-------+
-74 rows in set (0.000 sec)
+75 rows in set (0.001 sec)
 ```
 
 クラスター システム テーブルがクエリされると、TiDB はすべてのノードからデータを取得するのではなく、関連する計算を他のノードにプッシュ ダウンします。実行計画は次のとおりです。
@@ -227,9 +229,9 @@ DESC SELECT COUNT(*) FROM CLUSTER_SLOW_QUERY WHERE user = 'u1';
 4 rows in set (0.00 sec)
 ```
 
-前の実行計画では、 `user = u1`条件が他の ( `cop` ) TiDB ノードにプッシュ ダウンされ、集計演算子もプッシュ ダウンされます (グラフの`StreamAgg`演算子)。
+前述の実行プランでは、条件`user = u1`が他の ( `cop` ) TiDB ノードにプッシュダウンされ、集計演算子もプッシュダウンされます (グラフの`StreamAgg`演算子)。
 
-現在、システム テーブルの統計が収集されていないため、一部の集計演算子をプッシュ ダウンできず、実行が遅くなることがあります。この場合、SQL HINT を手動で指定して集計演算子をプッシュダウンできます。例えば：
+現在、システム テーブルの統計が収集されないため、一部の集計演算子をプッシュダウンできない場合があり、その結果、実行が遅くなります。この場合、SQL HINT を手動で指定して集計演算子をプッシュダウンできます。例えば：
 
 ```sql
 SELECT /*+ AGG_TO_COP() */ COUNT(*) FROM CLUSTER_SLOW_QUERY GROUP BY user;

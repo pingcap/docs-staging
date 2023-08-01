@@ -3,13 +3,13 @@ title: ANALYZE_STATUS
 summary: Learn the `ANALYZE_STATUS` information_schema table.
 ---
 
-# ANALYZE_STATUS {#analyze-status}
+# 分析ステータス {#analyze-status}
 
-`ANALYZE_STATUS`テーブルは、統計を収集する実行中のタスクと限られた数の履歴タスクに関する情報を提供します。
+`ANALYZE_STATUS`表には、統計を収集する実行中のタスクと限られた数の履歴タスクに関する情報が表示されます。
 
-TiDB v6.1.0 以降、 `ANALYZE_STATUS`テーブルはクラスターレベルのタスクの表示をサポートしています。 TiDB の再起動後でも、このテーブルを使用して再起動前のタスク レコードを表示できます。 TiDB v6.1.0 より前では、 `ANALYZE_STATUS`テーブルはインスタンス レベルのタスクのみを表示でき、タスク レコードは TiDB の再起動後にクリアされます。
+TiDB v6.1.0 以降、 `ANALYZE_STATUS`テーブルはクラスターレベルのタスクの表示をサポートします。 TiDB の再起動後でも、このテーブルを使用して再起動前のタスク レコードを表示できます。 TiDB v6.1.0 より前では、 `ANALYZE_STATUS`テーブルにはインスタンス レベルのタスクのみが表示され、タスク レコードは TiDB の再起動後にクリアされます。
 
-TiDB v6.1.0 から、システム テーブルを介して過去 7 日間の履歴タスクを表示できます`mysql.analyze_jobs` 。
+TiDB v6.1.0 以降、システム テーブル`mysql.analyze_jobs`を通じて過去 7 日間の履歴タスクを表示できるようになりました。
 
 
 ```sql
@@ -55,16 +55,16 @@ SELECT * FROM information_schema.analyze_status;
 6 rows in set (0.00 sec)
 ```
 
-`ANALYZE_STATUS`テーブルのフィールドは次のとおりです。
+`ANALYZE_STATUS`テーブルのフィールドは次のように説明されています。
 
 -   `TABLE_SCHEMA` : テーブルが属するデータベースの名前。
 -   `TABLE_NAME` : テーブルの名前。
 -   `PARTITION_NAME` :パーティションテーブルの名前。
--   `JOB_INFO` : `ANALYZE`タスクの情報。インデックスが分析される場合、この情報にはインデックス名が含まれます。 `tidb_analyze_version =2`の場合、この情報にはサンプルレートなどの構成項目が含まれます。
+-   `JOB_INFO` : `ANALYZE`のタスクの情報。インデックスが分析される場合、この情報にはインデックス名が含まれます。 `tidb_analyze_version =2`の場合、この情報にはサンプル レートなどの設定項目が含まれます。
 -   `PROCESSED_ROWS` : 処理された行数。
 -   `START_TIME` : `ANALYZE`タスクの開始時刻。
 -   `END_TIME` : `ANALYZE`タスクの終了時刻。
 -   `STATE` : `ANALYZE`タスクの実行ステータス。その値は`pending` 、 `running` 、 `finished`または`failed`です。
--   `FAIL_REASON` : タスクが失敗した理由。実行が成功した場合、値は`NULL`です。
+-   `FAIL_REASON` : タスクが失敗した理由。実行が成功した場合、値は`NULL`になります。
 -   `INSTANCE` : タスクを実行する TiDB インスタンス。
--   `PROCESS_ID` : タスクを実行するプロセス ID。
+-   `PROCESS_ID` : タスクを実行するプロセスID。

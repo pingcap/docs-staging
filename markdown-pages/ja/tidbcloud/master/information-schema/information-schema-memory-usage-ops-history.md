@@ -5,7 +5,7 @@ summary: Learn the `MEMORY_USAGE_OPS_HISTORY` information_schema system table.
 
 # MEMORY_USAGE_OPS_HISTORY {#memory-usage-ops-history}
 
-`MEMORY_USAGE_OPS_HISTORY`のテーブルは、メモリ関連の操作の履歴と、現在の TiDB インスタンスの実行ベースを示しています。
+表`MEMORY_USAGE_OPS_HISTORY`は、メモリ関連の操作の履歴と現在の TiDB インスタンスの実行基盤を示しています。
 
 ```sql
 USE information_schema;
@@ -46,17 +46,17 @@ SELECT * FROM information_schema.memory_usage_ops_history;
 2 rows in set (0.002 sec)
 ```
 
-`MEMORY_USAGE_OPS_HISTORY`表の列は、次のように説明されています。
+`MEMORY_USAGE_OPS_HISTORY`のテーブルの列は次のように説明されます。
 
 -   `TIME` : セッションが終了したときのタイムスタンプ。
--   `OPS` : &quot;セッションキル&quot;
--   `MEMORY_LIMIT` : 終了時の TiDB のメモリ使用制限 (バイト単位)。その値は、システム変数`tidb_server_memory_limit` ](/system-variables.md#tidb_server_memory_limit-new-in-v640) の値と同じです。
+-   `OPS` ：「セッションキル」
+-   `MEMORY_LIMIT` : 終了時の TiDB のメモリ使用量制限 (バイト単位)。その値は、システム変数`tidb_server_memory_limit` ](/system-variables.md#tidb_server_memory_limit-new-in-v640) の値と同じです。
 -   `MEMORY_CURRENT` : TiDB の現在のメモリ使用量 (バイト単位)。
 -   `PROCESSID` : 終了したセッションの接続 ID。
 -   `MEM` : 終了したセッションのメモリ使用量 (バイト単位)。
 -   `DISK` : 終了したセッションのディスク使用量 (バイト単位)。
 -   `CLIENT` : 終了したセッションのクライアント接続アドレス。
--   `DB` : 終了したセッションに接続されたデータベースの名前。
+-   `DB` : 終了したセッションに接続されているデータベースの名前。
 -   `USER` : 終了したセッションのユーザー名。
 -   `SQL_DIGEST` : 終了したセッションで実行中の SQL ステートメントのダイジェスト。
 -   `SQL_TEXT` : 終了したセッションで実行中の SQL ステートメント。

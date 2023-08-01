@@ -24,10 +24,10 @@ SHUTDOWN;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 > **ノート：**
 >
 > TiDB は分散データベースであるため、TiDB でのシャットダウン操作は、TiDB クラスター全体ではなく、クライアントに接続された TiDB インスタンスを停止します。
 
-`SHUTDOWN`ステートメントは MySQL と部分的に互換性があります。互換性の問題が発生した場合は、問題を報告できます[GitHubで](https://github.com/pingcap/tidb/issues/new/choose) 。
+`SHUTDOWN`ステートメントは部分的に MySQL と互換性があります。互換性の問題が発生した場合は、問題を報告できます[GitHub 上で](https://github.com/pingcap/tidb/issues/new/choose) 。

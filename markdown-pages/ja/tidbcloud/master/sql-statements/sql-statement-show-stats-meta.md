@@ -5,26 +5,26 @@ summary: An overview of the usage of SHOW STATS_META for TiDB database.
 
 # 統計_メタを表示 {#show-stats-meta}
 
-`SHOW STATS_META`を使用して、テーブル内の行数と、そのテーブル内で変更された行数を表示できます。このステートメントを使用すると、必要な情報を`ShowLikeOrWhere`句でフィルター処理できます。
+`SHOW STATS_META`を使用すると、テーブル内の行数とそのテーブル内で変更された行数を表示できます。このステートメントを使用する場合、 `ShowLikeOrWhere`節で必要な情報をフィルタリングできます。
 
 現在、 `SHOW STATS_META`ステートメントは 6 列を出力します。
 
-| カラム名        | 説明       |
-| ----------- | -------- |
-| データベース名     | データベース名  |
-| テーブル名       | テーブル名    |
-| パーティション名    | パーティション名 |
-| update_time | 最終更新時刻   |
-| 変更回数        | 変更された行数  |
-| 行数          | 合計行数     |
+| カラム名     | 説明       |
+| -------- | -------- |
+| データベース名  | データベース名  |
+| テーブル名    | テーブル名    |
+| パーティション名 | パーティション名 |
+| 更新時間     | 最終更新時間   |
+| 修正数      | 変更された行数  |
+| 行数       | 合計行数     |
 
 > **ノート：**
 >
-> TiDB が DML ステートメントに従って`modify_count`フィールドと`row_count`フィールドを更新すると、 `update_time`が更新されます。したがって`update_time` `ANALYZE`ステートメントの最後の実行時間ではありません。
+> TiDB が DML ステートメントに従って`modify_count`フィールドと`row_count`フィールドを更新すると、 `update_time`が更新されます。したがって`update_time` `ANALYZE`ステートメントの最後の実行時刻ではありません。
 
 ## あらすじ {#synopsis}
 
-**ShowStmt**
+**ショースタンド**
 
 ![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
 
@@ -70,11 +70,11 @@ show stats_meta where table_name = 't2';
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [分析する](/sql-statements/sql-statement-analyze-table.md)
 -   [統計入門](/statistics.md)

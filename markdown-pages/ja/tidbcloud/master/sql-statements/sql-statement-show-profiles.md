@@ -9,7 +9,7 @@ summary: An overview of the usage of SHOW PROFILES for the TiDB database.
 
 ## あらすじ {#synopsis}
 
-**表示ステートメント:**
+**表示手順:**
 
 ![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
 
@@ -24,6 +24,6 @@ SHOW PROFILES;
 Empty set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL との互換性のためにのみ含まれています。 `SHOW PROFILES`を実行すると、常に空の結果が返されます。
+このステートメントは、MySQL との互換性のためだけに含まれています。 `SHOW PROFILES`を実行すると、常に空の結果が返されます。

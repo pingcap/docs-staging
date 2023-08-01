@@ -3,13 +3,13 @@ title: CHANGE DRAINER
 summary: An overview of the usage of CHANGE DRAINER for the TiDB database.
 ---
 
-# ドレイナーの交換 {#change-drainer}
+# チェンジドレイナー {#change-drainer}
 
 `CHANGE DRAINER`ステートメントは、クラスター内のDrainerのステータス情報を変更します。
 
 > **ヒント：**
 >
-> Drainer の状態は、実行中に PD に自動的に報告されます。 Drainerが異常な状況にあり、その状態が PD に格納されている状態情報と一致しない場合にのみ、 `CHANGE DRAINER`ステートメントを使用して PD に格納されている状態情報を変更できます。
+> 実行中、Drainer の状態が自動的に PD に報告されます。 Drainerが異常な状況にあり、その状態が PD に格納されている状態情報と一致しない場合にのみ、 `CHANGE DRAINER`ステートメントを使用して PD に格納されている状態情報を変更できます。
 
 ## 例 {#examples}
 
@@ -29,7 +29,7 @@ SHOW DRAINER STATUS;
 2 rows in set (0.00 sec)
 ```
 
-Drainer1 の状態が 1 日以上更新されていないことがわかります。Drainerは異常な状態ですが、 `State` `Online`のままです。 `CHANGE DRAINER`使用した後、Drainer の`State` 「一時停止」に変更されます。
+Drainer1 の状態が 1 日以上更新されていないことがわかります。Drainerは異常な状態にありますが、 `State`は`Online`のままです。 `CHANGE DRAINER`使用した後、Drainer の`State` 「一時停止」に変更されます。
 
 
 ```sql
@@ -56,12 +56,12 @@ SHOW DRAINER STATUS;
 2 rows in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [ポンプの状態を表示](/sql-statements/sql-statement-show-pump-status.md)
--   [ドレイナーのステータスを表示](/sql-statements/sql-statement-show-drainer-status.md)
+-   [ポンプのステータスを表示](/sql-statements/sql-statement-show-pump-status.md)
+-   [ドレイナーステータスを表示](/sql-statements/sql-statement-show-drainer-status.md)
 -   [ポンプステータスの変更](/sql-statements/sql-statement-change-pump.md)
