@@ -5,11 +5,11 @@ summary: An overview of the usage of WITH (Common Table Expression) for the TiDB
 
 # と {#with}
 
-共通テーブル式 (CTE) は、ステートメントの読みやすさと実行効率を向上させるために、SQL ステートメント内で複数回参照できる一時的な結果セットです。 `WITH`ステートメントを適用して、共通テーブル式を使用できます。
+共通テーブル式 (CTE) は、SQL ステートメント内で複数回参照できる一時的な結果セットで、ステートメントの可読性と実行効率を向上させます。 `WITH`ステートメントを適用して共通テーブル式を使用できます。
 
 ## あらすじ {#synopsis}
 
-**With句:**
+**句あり:**
 
 ```ebnf+diagram
 WithClause ::=
@@ -41,7 +41,7 @@ IdentListWithParenOpt ::=
 
 ## 例 {#examples}
 
-非再帰 CTE:
+非再帰的 CTE:
 
 
 ```sql
@@ -77,14 +77,14 @@ WITH RECURSIVE cte(a) AS (SELECT 1 UNION SELECT a+1 FROM cte WHERE a < 5) SELECT
 5 rows in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   厳密モードでは、再帰的に計算されたデータ長がシード部分のデータ長を超えると、TiDB は警告を返しますが、MySQL はエラーを返します。非厳密モードでは、TiDB の動作は MySQL の動作と一致します。
--   再帰 CTE のデータ型は、シード部分によって決まります。シード部分のデータ型は、MySQL と完全に一致しない場合があります (関数など)。
--   複数の`UNION` / `UNION ALL`演算子の場合、MySQL は`UNION`後に`UNION ALL`が続くことを許可しませんが、TiDB は許可します。
--   CTE の定義に問題がある場合、TiDB はエラーを報告しますが、CTE が参照されていない場合、MySQL はエラーを報告しません。
+-   strict モードでは、再帰的に計算されたデータ長がシード部分のデータ長を超えると、TiDB は警告を返しますが、MySQL はエラーを返します。非厳密モードでは、TiDB の動作は MySQL の動作と一致します。
+-   再帰的 CTE のデータ型はシード部分によって決定されます。シード部分のデータ型は、MySQL と完全に一致していない場合があります (関数など)。
+-   複数の`UNION` / `UNION ALL`演算子の場合、MySQL では`UNION`後に`UNION ALL`を続けることは許可されませんが、TiDB では許可されます。
+-   CTE の定義に問題がある場合、TiDB はエラーを報告しますが、MySQL は CTE が参照されていない場合はエラーを報告しません。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [選択する](/sql-statements/sql-statement-select.md)
 -   [入れる](/sql-statements/sql-statement-insert.md)

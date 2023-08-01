@@ -3,9 +3,9 @@ title: ADMIN SHOW DDL [JOBS|JOB QUERIES] | TiDB SQL Statement Reference
 summary: An overview of the usage of ADMIN for the TiDB database.
 ---
 
-# ADMIN SHOW DDL [JOBS|JOB QUERIES] {#admin-show-ddl-jobs-job-queries}
+# 管理者表示 DDL [ジョブ|ジョブ クエリ] {#admin-show-ddl-jobs-job-queries}
 
-`ADMIN SHOW DDL [JOBS|JOB QUERIES]`ステートメントは、実行中および最近完了した DDL ジョブに関する情報を示します。
+`ADMIN SHOW DDL [JOBS|JOB QUERIES]`ステートメントは、実行中の DDL ジョブと最近完了した DDL ジョブに関する情報を表示します。
 
 ## あらすじ {#synopsis}
 
@@ -43,29 +43,32 @@ mysql> ADMIN SHOW DDL;
 
 ### <code>ADMIN SHOW DDL JOBS</code> {#code-admin-show-ddl-jobs-code}
 
-`ADMIN SHOW DDL JOBS`ステートメントは、現在の DDL ジョブ キュー内のすべての結果 (実行中およびキューイング中のタスクを含む) と、完了した DDL ジョブ キュー内の最新の 10 個の結果を表示するために使用されます。返される結果フィールドは次のとおりです。
+`ADMIN SHOW DDL JOBS`ステートメントは、実行中およびキューイング中のタスクを含む現在の DDL ジョブ キュー内のすべての結果と、完了した DDL ジョブ キュー内の最新の 10 件の結果を表示するために使用されます。返される結果フィールドは次のように説明されます。
 
 <CustomContent platform="tidb">
 
 -   `JOB_ID` : 各 DDL 操作は DDL ジョブに対応します。 `JOB_ID`世界的にユニークです。
 -   `DB_NAME` : DDL 操作が実行されるデータベースの名前。
 -   `TABLE_NAME` : DDL 操作が実行されるテーブルの名前。
--   `JOB_TYPE` : DDL 操作のタイプ。
--   `SCHEMA_STATE` : DDL が操作するスキーマ オブジェクトの現在の状態。 `JOB_TYPE`が`ADD INDEX`の場合、それはインデックスの状態です。 `JOB_TYPE`が`ADD COLUMN`の場合、それは列の状態です。 `JOB_TYPE`が`CREATE TABLE`の場合、それはテーブルの状態です。一般的な状態には次のものがあります。
-    -   `none` : 存在しないことを示します。通常、 `DROP`操作の後、または`CREATE`操作が失敗してロールバックした後、 `none`状態になります。
-    -   `delete only` 、 `write only` 、 `delete reorganization` 、 `write reorganization` : これら 4 つの状態は中間状態です。具体的な意味については、 [オンライン DDL 非同期変更が TiDB でどのように機能するか](/ddl-introduction.md#how-the-online-ddl-asynchronous-change-works-in-tidb)を参照してください。中間状態の変換は高速であるため、これらの状態は通常、操作中には表示されません。 `ADD INDEX`操作を実行した場合にのみ`write reorganization`状態が表示され、インデックス データが追加されていることを示します。
-    -   `public` : 存在し、ユーザーが使用できることを示します。通常、 `CREATE TABLE`および`ADD INDEX` (または`ADD COLUMN` ) の操作が完了すると、 `public`の状態になり、新しく作成されたテーブル、列、およびインデックスが正常に読み書きできることを示します。
+-   `JOB_TYPE` : DDL 操作のタイプ。一般的なジョブ タイプには次のものがあります。
+    -   `ingest` : [`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630)で構成された加速されたインデックス バックフィルを使用した取り込み。
+    -   `txn` : 基本的なトランザクション バックフィル。
+    -   `txn-merge` : バックフィルの終了時に元のインデックスとマージされる一時インデックスによるトランザクション バックフィル。
+-   `SCHEMA_STATE` : DDL が操作するスキーマ オブジェクトの現在の状態。 `JOB_TYPE`が`ADD INDEX`の場合、それはインデックスの状態です。 `JOB_TYPE`が`ADD COLUMN`の場合、それは列の状態です。 `JOB_TYPE`が`CREATE TABLE`の場合、それはテーブルの状態です。一般的な状態には次のようなものがあります。
+    -   `none` : 存在しないことを示します。通常、 `DROP`操作後、または`CREATE`操作が失敗してロールバックした後、 `none`状態になります。
+    -   `delete only` 、 `write only` 、 `delete reorganization` 、 `write reorganization` : これら 4 つの状態は中間状態です。それぞれの具体的な意味については、 [TiDB でのオンライン DDL 非同期変更の仕組み](/ddl-introduction.md#how-the-online-ddl-asynchronous-change-works-in-tidb)を参照してください。中間状態の変換は高速であるため、これらの状態は通常、動作中に表示されません。 `ADD INDEX`操作を実行した場合にのみ、インデックス データが追加されていることを示す`write reorganization`状態が表示されます。
+    -   `public` : 存在し、ユーザーが使用できることを示します。通常、 `CREATE TABLE`と`ADD INDEX` (または`ADD COLUMN` ) の操作が完了すると、 `public`の状態になり、新しく作成されたテーブル、カラム、インデックスが正常に読み書きできることを示します。
 -   `SCHEMA_ID` : DDL 操作が実行されるデータベースの ID。
 -   `TABLE_ID` : DDL 操作が実行されるテーブルの ID。
 -   `ROW_COUNT` : `ADD INDEX`操作を実行する場合、追加されたデータ行の数です。
 -   `START_TIME` : DDL 操作の開始時刻。
--   `STATE` : DDL 操作の状態。一般的な状態には次のものがあります。
-    -   `queueing` : 操作ジョブが DDL ジョブ キューに入ったが、以前の DDL ジョブが完了するのをまだ待機しているため、実行されていないことを示します。もう 1 つの理由として、 `DROP`操作を実行すると`none`状態になるが、すぐに`synced`状態に更新され、すべての TiDB インスタンスがその状態に同期されたことを示している可能性があります。
+-   `STATE` : DDL 操作の状態。一般的な状態には次のようなものがあります。
+    -   `queueing` : 操作ジョブが DDL ジョブ キューに入ったが、前の DDL ジョブが完了するのをまだ待っているため実行されていないことを示します。もう 1 つの理由は、 `DROP`操作を実行した後は`none`状態になるが、すぐに`synced`状態に更新され、すべての TiDB インスタンスがその状態に同期されたことを示すためである可能性があります。
     -   `running` : 操作が実行中であることを示します。
     -   `synced` : 操作が正常に実行され、すべての TiDB インスタンスがこの状態に同期されたことを示します。
     -   `rollback done` : 操作が失敗し、ロールバックが完了したことを示します。
-    -   `rollingback` : 操作が失敗し、ロールバックしていることを示します。
-    -   `cancelling` : 操作がキャンセル中であることを示します。この状態は、 `ADMIN CANCEL DDL JOBS`コマンドを使用して DDL ジョブをキャンセルした場合にのみ表示されます。
+    -   `rollingback` : 操作が失敗し、ロールバック中であることを示します。
+    -   `cancelling` : 操作がキャンセルされていることを示します。この状態は、 `ADMIN CANCEL DDL JOBS`コマンドを使用して DDL ジョブをキャンセルした場合にのみ表示されます。
 
 </CustomContent>
 
@@ -75,21 +78,21 @@ mysql> ADMIN SHOW DDL;
 -   `DB_NAME` : DDL 操作が実行されるデータベースの名前。
 -   `TABLE_NAME` : DDL 操作が実行されるテーブルの名前。
 -   `JOB_TYPE` : DDL 操作のタイプ。
--   `SCHEMA_STATE` : DDL が操作するスキーマ オブジェクトの現在の状態。 `JOB_TYPE`が`ADD INDEX`の場合、それはインデックスの状態です。 `JOB_TYPE`が`ADD COLUMN`の場合、それは列の状態です。 `JOB_TYPE`が`CREATE TABLE`の場合、それはテーブルの状態です。一般的な状態には次のものがあります。
-    -   `none` : 存在しないことを示します。通常、 `DROP`操作の後、または`CREATE`操作が失敗してロールバックした後、 `none`状態になります。
-    -   `delete only` 、 `write only` 、 `delete reorganization` 、 `write reorganization` : これら 4 つの状態は中間状態です。具体的な意味については、 [オンライン DDL 非同期変更が TiDB でどのように機能するか](https://docs.pingcap.com/tidb/stable/ddl-introduction#how-the-online-ddl-asynchronous-change-works-in-tidb)を参照してください。中間状態の変換は高速であるため、これらの状態は通常、操作中には表示されません。 `ADD INDEX`操作を実行した場合にのみ`write reorganization`状態が表示され、インデックス データが追加されていることを示します。
-    -   `public` : 存在し、ユーザーが使用できることを示します。通常、 `CREATE TABLE`および`ADD INDEX` (または`ADD COLUMN` ) の操作が完了すると、 `public`の状態になり、新しく作成されたテーブル、列、およびインデックスが正常に読み書きできることを示します。
+-   `SCHEMA_STATE` : DDL が操作するスキーマ オブジェクトの現在の状態。 `JOB_TYPE`が`ADD INDEX`の場合、それはインデックスの状態です。 `JOB_TYPE`が`ADD COLUMN`の場合、それは列の状態です。 `JOB_TYPE`が`CREATE TABLE`の場合、それはテーブルの状態です。一般的な状態には次のようなものがあります。
+    -   `none` : 存在しないことを示します。通常、 `DROP`操作後、または`CREATE`操作が失敗してロールバックした後、 `none`状態になります。
+    -   `delete only` 、 `write only` 、 `delete reorganization` 、 `write reorganization` : これら 4 つの状態は中間状態です。それぞれの具体的な意味については、 [TiDB でのオンライン DDL 非同期変更の仕組み](https://docs.pingcap.com/tidb/stable/ddl-introduction#how-the-online-ddl-asynchronous-change-works-in-tidb)を参照してください。中間状態の変換は高速であるため、これらの状態は通常、動作中に表示されません。 `ADD INDEX`操作を実行した場合にのみ、インデックス データが追加されていることを示す`write reorganization`状態が表示されます。
+    -   `public` : 存在し、ユーザーが使用できることを示します。通常、 `CREATE TABLE`と`ADD INDEX` (または`ADD COLUMN` ) の操作が完了すると、 `public`の状態になり、新しく作成されたテーブル、カラム、インデックスが正常に読み書きできることを示します。
 -   `SCHEMA_ID` : DDL 操作が実行されるデータベースの ID。
 -   `TABLE_ID` : DDL 操作が実行されるテーブルの ID。
 -   `ROW_COUNT` : `ADD INDEX`操作を実行する場合、追加されたデータ行の数です。
 -   `START_TIME` : DDL 操作の開始時刻。
--   `STATE` : DDL 操作の状態。一般的な状態には次のものがあります。
-    -   `queueing` : 操作ジョブが DDL ジョブ キューに入ったが、以前の DDL ジョブが完了するのをまだ待機しているため、実行されていないことを示します。もう 1 つの理由として、 `DROP`操作を実行すると`none`状態になるが、すぐに`synced`状態に更新され、すべての TiDB インスタンスがその状態に同期されたことを示している可能性があります。
+-   `STATE` : DDL 操作の状態。一般的な状態には次のようなものがあります。
+    -   `queueing` : 操作ジョブが DDL ジョブ キューに入ったが、前の DDL ジョブが完了するのをまだ待っているため実行されていないことを示します。もう 1 つの理由は、 `DROP`操作を実行した後は`none`状態になるが、すぐに`synced`状態に更新され、すべての TiDB インスタンスがその状態に同期されたことを示すためである可能性があります。
     -   `running` : 操作が実行中であることを示します。
     -   `synced` : 操作が正常に実行され、すべての TiDB インスタンスがこの状態に同期されたことを示します。
     -   `rollback done` : 操作が失敗し、ロールバックが完了したことを示します。
-    -   `rollingback` : 操作が失敗し、ロールバックしていることを示します。
-    -   `cancelling` : 操作がキャンセル中であることを示します。この状態は、 `ADMIN CANCEL DDL JOBS`コマンドを使用して DDL ジョブをキャンセルした場合にのみ表示されます。
+    -   `rollingback` : 操作が失敗し、ロールバック中であることを示します。
+    -   `cancelling` : 操作がキャンセルされていることを示します。この状態は、 `ADMIN CANCEL DDL JOBS`コマンドを使用して DDL ジョブをキャンセルした場合にのみ表示されます。
 
 </CustomContent>
 
@@ -123,11 +126,11 @@ mysql> ADMIN SHOW DDL JOBS;
 
 上記の出力から:
 
--   ジョブ 59 `running`現在進行中です ( `STATE` )。スキーマの状態は現在`write reorganization`ですが、タスクが完了すると`public`に切り替わり、ユーザー セッションによって変更が公開されていることに注意してください。 `end_time`列も`NULL`あり、ジョブの完了時刻が現在不明であることを示しています。
+-   ジョブ 59 `running`現在進行中です ( `STATE` )。スキーマの状態は現在`write reorganization`ですが、タスクが完了すると`public`に切り替わり、ユーザー セッションによって変更が公的に観察される可能性があることに注意してください。 `end_time`列も`NULL`あり、ジョブの完了時間が現在不明であることを示しています。
 
--   ジョブ 60 は`add index`ジョブであり、ジョブ 59 が完了するのを待って現在キューに入れられています。ジョブ 59 が完了すると、ジョブ 60 の`STATE`が`running`に切り替わります。
+-   ジョブ 60 は`add index`ジョブで、現在キューに入れられ、ジョブ 59 が完了するのを待っています。ジョブ 59 が完了すると、ジョブ 60 の`STATE`が`running`に切り替わります。
 
--   インデックスの削除やテーブルの削除などの破壊的な変更の場合、ジョブが完了すると`SCHEMA_STATE` `none`に変わります。追加の変更の場合、 `SCHEMA_STATE` `public`に変更されます。
+-   インデックスの削除やテーブルの削除などの破壊的な変更の場合、ジョブが完了すると`SCHEMA_STATE` `none`に変わります。追加的な変更の場合、 `SCHEMA_STATE` `public`に変わります。
 
 表示される行数を制限するには、数値と where 条件を指定します。
 
@@ -135,8 +138,8 @@ mysql> ADMIN SHOW DDL JOBS;
 ADMIN SHOW DDL JOBS [NUM] [WHERE where_condition];
 ```
 
--   `NUM` : 完了した DDL ジョブ キューの最後の`NUM`の結果を表示します。指定しない場合、 `NUM`デフォルトで 10 です。
--   `WHERE` : フィルター条件を追加します。
+-   `NUM` : 完了した DDL ジョブ キュー内の最後の`NUM`の結果を表示します。指定しない場合、デフォルトでは`NUM` 10 になります。
+-   `WHERE` : フィルタ条件を追加します。
 
 ### <code>ADMIN SHOW DDL JOB QUERIES</code> {#code-admin-show-ddl-job-queries-code}
 
@@ -158,7 +161,7 @@ mysql> ADMIN SHOW DDL JOB QUERIES 51;
 1 row in set (0.02 sec)
 ```
 
-DDL 履歴ジョブ キューの最後の 10 件の結果のうち、 `job_id`に対応する実行中の DDL ジョブのみを検索できます。
+DDL 履歴ジョブ キュー内の最後の 10 件の結果のうち、 `job_id`に対応する実行中の DDL ジョブのみを検索できます。
 
 ### <code>ADMIN SHOW DDL JOB QUERIES LIMIT m OFFSET n</code> {#code-admin-show-ddl-job-queries-limit-m-offset-n-code}
 
@@ -208,12 +211,12 @@ ADMIN SHOW DDL JOB QUERIES LIMIT 3 OFFSET 4;  # Retrieve rows 5-7
 3 rows in set (0.00 sec)
 ```
 
-DDL履歴ジョブキューで任意に指定した結果の範囲内で、 `job_id`に対応する実行中のDDLジョブを検索できます。この構文には、 `ADMIN SHOW DDL JOB QUERIES`の最後の 10 件の結果の制限はありません。
+DDL履歴ジョブキュー内の任意に指定した結果範囲内で、 `job_id`に該当する実行中のDDLジョブを検索できます。この構文には、 `ADMIN SHOW DDL JOB QUERIES`の最後の 10 件の結果の制限はありません。
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [管理者キャンセル DDL](/sql-statements/sql-statement-admin-cancel-ddl.md)
+-   [管理者が DDL をキャンセル](/sql-statements/sql-statement-admin-cancel-ddl.md)

@@ -15,12 +15,12 @@ RELEASE SAVEPOINT identifier
 
 > **警告：**
 >
-> -   TiDB Binlogが有効な状態で`SAVEPOINT`を使用することはできません。
+> -   TiDB Binlogが有効な場合は`SAVEPOINT`を使用できません。
 > -   [`tidb_constraint_check_in_place_pessimistic`](/system-variables.md#tidb_constraint_check_in_place_pessimistic-new-in-v630)が無効になっている場合、悲観的トランザクションで`SAVEPOINT`を使用することはできません。
 
--   `SAVEPOINT`は、現在のトランザクションで指定された名前のセーブポイントを設定するために使用されます。同名のセーブポイントが既に存在する場合は、そのセーブポイントを削除し、同名のセーブポイントを新たに設定します。
+-   `SAVEPOINT`は、現在のトランザクションに指定された名前のセーブポイントを設定するために使用されます。同名のセーブポイントがすでに存在する場合は削除され、新たに同名のセーブポイントが設定されます。
 
--   `ROLLBACK TO SAVEPOINT` 、指定された名前のセーブポイントまでトランザクションをロールバックし、トランザクションを終了しません。セーブポイント以降にテーブル データに加えられたデータ変更はロールバックで元に戻され、セーブポイント以降のすべてのセーブポイントが削除されます。悲観的トランザクションでは、トランザクションが保持するロックはロールバックされません。代わりに、トランザクションが終了するとロックが解放されます。
+-   `ROLLBACK TO SAVEPOINT` 、トランザクションを指定された名前のセーブポイントにロールバックしますが、トランザクションは終了しません。セーブポイントの後にテーブル データに加えられたデータ変更はロールバックで元に戻され、セーブポイント以降のセーブポイントはすべて削除されます。悲観的トランザクションでは、トランザクションによって保持されているロックはロールバックされません。代わりに、トランザクションが終了するとロックが解放されます。
 
     `ROLLBACK TO SAVEPOINT`ステートメントで指定されたセーブポイントが存在しない場合、ステートメントは次のエラーを返します。
 
@@ -28,7 +28,7 @@ RELEASE SAVEPOINT identifier
     ERROR 1305 (42000): SAVEPOINT identifier does not exist
     ```
 
--   `RELEASE SAVEPOINT`ステートメントは、現在のトランザクションをコミットまたはロールバックせずに、指定されたセーブポイントとこのセーブポイントより後の**すべてのセーブポイントを**現在のトランザクションから削除します。指定した名前のセーブポイントが存在しない場合、次のエラーが返されます。
+-   `RELEASE SAVEPOINT`ステートメントは、現在のトランザクションをコミットまたはロールバックせずに、指定されたセーブポイントとこのセーブポイント以降の**すべてのセーブポイントを**現在のトランザクションから削除します。指定された名前のセーブポイントが存在しない場合は、次のエラーが返されます。
 
     ```
     ERROR 1305 (42000): SAVEPOINT identifier does not exist
@@ -38,7 +38,7 @@ RELEASE SAVEPOINT identifier
 
 ## 例 {#examples}
 
-テーブルを作成します`t1` :
+テーブル`t1`を作成します。
 
 ```sql
 CREATE TABLE t1 (a INT NOT NULL PRIMARY KEY);
@@ -114,7 +114,7 @@ ROLLBACK TO SAVEPOINT sp1;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-トランザクションをコミットし、テーブルをクエリします。 `sp1`の前に挿入されたデータのみが返されます。
+トランザクションをコミットし、テーブルをクエリします。 `sp1`より前に挿入されたデータのみが返されます。
 
 ```sql
 COMMIT;
@@ -137,14 +137,14 @@ SELECT * FROM t1;
 1 row in set
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-トランザクションを指定されたセーブポイントにロールバックするために`ROLLBACK TO SAVEPOINT`が使用される場合、MySQL は指定されたセーブポイントの後にのみ保持されたロックを解放しますが、TiDB悲観的トランザクションでは、TiDB は指定されたセーブポイントの後に保持されたロックをすぐには解放しません。代わりに、トランザクションがコミットまたはロールバックされると、TiDB はすべてのロックを解放します。
+トランザクションを指定されたセーブポイントにロールバックするために`ROLLBACK TO SAVEPOINT`が使用される場合、MySQL は指定されたセーブポイントの後にのみ保持されているロックを解放しますが、TiDB悲観的トランザクションでは、TiDB は指定されたセーブポイントの後に保持されているロックをすぐには解放しません。代わりに、TiDB はトランザクションがコミットまたはロールバックされるときにすべてのロックを解放します。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [専念](/sql-statements/sql-statement-commit.md)
 -   [ロールバック](/sql-statements/sql-statement-rollback.md)
--   [取引開始](/sql-statements/sql-statement-start-transaction.md)
+-   [取引を開始する](/sql-statements/sql-statement-start-transaction.md)
 -   [TiDB オプティミスティックトランザクションモード](/optimistic-transaction.md)
 -   [TiDB ペシミスティックトランザクションモード](/pessimistic-transaction.md)

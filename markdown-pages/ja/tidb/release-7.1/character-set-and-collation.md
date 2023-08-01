@@ -143,8 +143,8 @@ MySQL では、文字セット`utf8`は最大 3 バイトに制限されてい�
 
 ```sql
 CREATE TABLE utf8_test (
-    ->  c char(1) NOT NULL
-    -> ) CHARACTER SET utf8;
+     c char(1) NOT NULL
+    ) CHARACTER SET utf8;
 ```
 
 ```sql
@@ -153,8 +153,8 @@ Query OK, 0 rows affected (0.09 sec)
 
 ```sql
 CREATE TABLE utf8m4_test (
-    ->  c char(1) NOT NULL
-    -> ) CHARACTER SET utf8mb4;
+     c char(1) NOT NULL
+    ) CHARACTER SET utf8mb4;
 ```
 
 ```sql
@@ -495,7 +495,7 @@ SELECT VARIABLE_VALUE FROM mysql.tidb WHERE VARIABLE_NAME='new_collation_enabled
 
 <CustomContent platform="tidb-cloud">
 
-この新しいフレームワークは、意味論的な照合順序の解析をサポートしています。 TiDB は、クラスターが最初に初期化されるときに、デフォルトで新しいフレームワークを有効にします。
+この新しいフレームワークは、意味論的な照合順序の解析をサポートします。 TiDB は、クラスターが最初に初期化されるときに、デフォルトで新しいフレームワークを有効にします。
 
 </CustomContent>
 

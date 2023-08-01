@@ -5,11 +5,11 @@ summary: An overview of the usage of SHOW PLUGINS for the TiDB database.
 
 # プラグインを表示 {#show-plugins}
 
-`SHOW PLUGINS` 、各プラグインのステータスとバージョン情報を含め、TiDB にインストールされているすべてのプラグインを表示します。
+`SHOW PLUGINS` 、各プラグインのステータスとバージョン情報を含む、TiDB にインストールされているすべてのプラグインを表示します。
 
 ## あらすじ {#synopsis}
 
-**表示ステートメント:**
+**表示手順:**
 
 ![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
 
@@ -47,6 +47,6 @@ SHOW PLUGINS LIKE 'a%';
 1 row in set (0.000 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL と完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`SHOW PLUGINS`ステートメントは MySQL と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。

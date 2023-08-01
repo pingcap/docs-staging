@@ -11,13 +11,26 @@ summary: This document describes the response and HTTP status codes of Data Serv
 
 ## 応答 {#response}
 
-Data Service は、JSON 本文を含む HTTP 応答を返します。応答本文には次のフィールドが含まれます。
+Data Service は、JSON 本文を含む HTTP 応答を返します。
+
+> **ノート：**
+>
+> 複数の SQL ステートメントを使用してエンドポイントを呼び出すと、Data Service はステートメントを 1 つずつ実行しますが、HTTP 応答の最後のステートメントの実行結果のみを返します。
+
+応答本文には次のフィールドが含まれます。
 
 -   `type` :*文字列*。このエンドポイントのタイプ。値は`"sql_endpoint"`または`"chat2data_endpoint"`である可能性があります。エンドポイントが異なれば、返される応答の種類も異なります。
 -   `data` :*オブジェクト*。実行結果には次の 3 つの部分が含まれます。
 
     -   `columns` :*配列*。返されたフィールドのスキーマ情報。
+
     -   `rows` :*配列*。返される結果は`key:value`形式です。
+
+        エンドポイントに対して**バッチ操作が**有効であり、エンドポイントの最後の SQL ステートメントが`INSERT` 、 `UPDATE` 、または`DELETE`操作である場合は、次の点に注意してください。
+
+        -   エンドポイントから返される結果には、応答とステータスを示す各行の`"message"`フィールドと`"success"`フィールドも含まれます。
+        -   ターゲットテーブルの主キー列が`auto_increment`として構成されている場合、エンドポイントから返される結果には各行の`"auto_increment_id"`フィールドも含まれます。このフィールドの値は、 `INSERT`操作の自動インクリメント ID であり、 `UPDATE`や`DELETE`などの他の操作の場合は`null`です。
+
     -   `result` :*オブジェクト*。 SQL ステートメントの実行関連情報 (成功/失敗ステータス、実行時間、返された行数、ユーザー構成など)。
 
 応答の例は次のとおりです。
@@ -27,37 +40,34 @@ Data Service は、JSON 本文を含む HTTP 応答を返します。応答本�
 
 ```json
 {
-  "type": "sql_endpoint",
-  "data": {
-    "columns": [
-      {
-        "col": "id",
-        "data_type": "BIGINT",
-        "nullable": false
-      },
-      {
-        "col": "type",
-        "data_type": "VARCHAR",
-        "nullable": false
-      }
-    ],
-    "rows": [
-      {
-        "id": "20008295419",
-        "type": "CreateEvent"
-      }
-    ],
-    "result": {
-      "code": 200,
-      "message": "Query OK!",
-      "start_ms": 1678965476709,
-      "end_ms": 1678965476839,
-      "latency": "130ms",
-      "row_count": 1,
-      "row_affect": 0,
-      "limit": 50
+    "type": "sql_endpoint",
+    "data": {
+        "columns": [],
+        "rows": [
+            {
+                "auto_increment_id": "270001",
+                "index": "0",
+                "message": "Row insert successfully",
+                "success": "true"
+            },
+            {
+                "auto_increment_id": "270002",
+                "index": "1",
+                "message": "Row insert successfully",
+                "success": "true"
+            }
+        ],
+        "result": {
+            "code": 200,
+            "message": "Query OK, 2 rows affected (8.359 sec)",
+            "start_ms": 1689593360560,
+            "end_ms": 1689593368919,
+            "latency": "8.359s",
+            "row_count": 2,
+            "row_affect": 2,
+            "limit": 500
+        }
     }
-  }
 }
 ```
 

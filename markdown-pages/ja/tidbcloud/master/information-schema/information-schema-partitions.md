@@ -5,7 +5,7 @@ summary: Learn the `PARTITIONS` INFORMATION_SCHEMA table.
 
 # パーティション {#partitions}
 
-`PARTITIONS`テーブルは、分割されたテーブルに関する情報を提供します。
+`PARTITIONS`テーブルは、パーティション化されたテーブルに関する情報を提供します。
 
 ```sql
 USE INFORMATION_SCHEMA;

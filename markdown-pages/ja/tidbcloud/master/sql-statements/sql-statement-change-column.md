@@ -3,15 +3,15 @@ title: CHANGE COLUMN | TiDB SQL Statement Reference
 summary: An overview of the usage of CHANGE COLUMN for the TiDB database.
 ---
 
-# 列を変更 {#change-column}
+# 列の変更 {#change-column}
 
 `ALTER TABLE.. CHANGE COLUMN`ステートメントは、既存のテーブルの列を変更します。変更には、列の名前変更とデータ型の互換性のある型への変更の両方が含まれる場合があります。
 
-v5.1.0 以降、TiDB は Reorg データ型の変更をサポートしています。これには以下が含まれますが、これらに限定されません。
+v5.1.0 以降、TiDB は、以下を含む (ただしこれらに限定されない) Reorg データ型の変更をサポートしています。
 
--   `VARCHAR`から`BIGINT`への変更
--   `DECIMAL`精度の変更
--   `VARCHAR(10)` ～ `VARCHAR(5)`の長さの圧縮
+-   `VARCHAR`を`BIGINT`に変更する
+-   `DECIMAL`精度を変更する
+-   `VARCHAR(10)` ～ `VARCHAR(5)`の長さを圧縮する
 
 ## あらすじ {#synopsis}
 
@@ -137,17 +137,17 @@ ALTER TABLE t CHANGE COLUMN a a DATETIME;
 ERROR 8200 (HY000): Unsupported modify column: change from original type decimal(13,7) to datetime is currently unsupported yet
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   主キー列での[再編成データ](/sql-statements/sql-statement-modify-column.md#reorg-data-change)型の変更はサポートされていません。
--   分割されたテーブルでの列の型の変更はサポートされていません。
+-   主キー列の[データの再編成](/sql-statements/sql-statement-modify-column.md#reorg-data-change)タイプの変更はサポートされていません。
+-   パーティション化されたテーブルの列タイプの変更はサポートされていません。
 -   生成された列の列タイプの変更はサポートされていません。
--   TiDB と MySQL 間の`CAST`関数の動作の互換性の問題により、一部のデータ型 (たとえば、一部の TIME、Bit、Set、Enum、および JSON 型) の変更はサポートされていません。
+-   一部のデータ型 (たとえば、一部の TIME、Bit、Set、Enum、および JSON 型) の変更は、TiDB と MySQL の間の`CAST`の動作の互換性の問題によりサポートされません。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [テーブルを作成](/sql-statements/sql-statement-create-table.md)
+-   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
--   [列を追加](/sql-statements/sql-statement-add-column.md)
--   [ドロップ カラム](/sql-statements/sql-statement-drop-column.md)
+-   [列の追加](/sql-statements/sql-statement-add-column.md)
+-   [ドロップカラム](/sql-statements/sql-statement-drop-column.md)
 -   [列の変更](/sql-statements/sql-statement-modify-column.md)

@@ -24,7 +24,7 @@ S3 バケットとTiDB Cloudクラスターを同じリージョンに配置す�
 
 -   管理者アクセス権を持つ[AWSアカウント](https://docs.aws.amazon.com/AmazonS3/latest/userguide/setting-up-s3.html#sign-up-for-aws-gsg)
 -   [AWS S3バケット](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html)
--   [管理者アクセス権を持つTiDB CloudアカウントとTiDB Cloud(AWS) クラスター](/tidb-cloud/tidb-cloud-quickstart.md)
+-   [TiDB Cloudアカウント](/tidb-cloud/tidb-cloud-quickstart.md)と AWS でホストされているターゲットTiDB Cloudクラスターへのアクセスが少なくとも[`Project Data Access Read-Write`](/tidb-cloud/manage-user-access.md#user-roles)
 
 ## 道具を準備する {#prepare-tools}
 
@@ -77,7 +77,7 @@ tiup update --self && tiup update dumpling
 
 ### TiCDCのデプロイ {#deploy-ticdc}
 
-増分データを上流の TiDB クラスターからTiDB Cloudにレプリケートするには、 [TiCDC を導入する](https://docs.pingcap.com/tidb/dev/deploy-ticdc)を実行する必要があります。
+増分データを上流の TiDB クラスターからTiDB Cloudに複製するには、 [TiCDC を導入する](https://docs.pingcap.com/tidb/dev/deploy-ticdc)を実行する必要があります。
 
 1.  現在の TiDB バージョンが TiCDC をサポートしているかどうかを確認します。 TiDB v4.0.8.rc.1 以降のバージョンは TiCDC をサポートします。 TiDB クラスターで`select tidb_version();`を実行すると、TiDB のバージョンを確認できます。アップグレードする必要がある場合は、 [TiUPを使用して TiDB をアップグレードする](https://docs.pingcap.com/tidb/dev/deploy-ticdc#upgrade-ticdc-using-tiup)を参照してください。
 
@@ -269,7 +269,7 @@ TiDB セルフホストクラスターから Amazon S3 にデータをエクス�
 
 5.  ロール ARN を取得します。 [AWS コンソール &gt; IAM &gt; アクセス管理 &gt; ロール](https://console.aws.amazon.com/iamv2/home#/roles)に進みます。お住まいの地域に切り替えてください。作成したロールをクリックし、ARN をメモします。これは、データをTiDB Cloudにインポートするときに使用します。
 
-6.  データをTiDB Cloudにインポートします。 [ステップ 3. データをTiDB Cloudにインポートする](/tidb-cloud/migrate-from-amazon-s3-or-gcs.md#step-3-import-data-into-tidb-cloud)を参照してください。
+6.  データをTiDB Cloudにインポートします。 [Amazon S3 または GCS からTiDB Cloudに CSV ファイルをインポート](/tidb-cloud/import-csv-files.md)を参照してください。
 
 ## 増分データをレプリケートする {#replicate-incremental-data}
 

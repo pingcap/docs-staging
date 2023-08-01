@@ -5,7 +5,7 @@ summary: Learn the `TABLE_CONSTRAINTS` information_schema table.
 
 # TABLE_CONSTRAINTS {#table-constraints}
 
-`TABLE_CONSTRAINTS`表は、どの表に制約があるかを示しています。
+`TABLE_CONSTRAINTS`表は、どのテーブルに制約があるかを示しています。
 
 
 ```sql
@@ -47,7 +47,7 @@ SELECT * FROM table_constraints WHERE constraint_type='UNIQUE';
 7 rows in set (0.01 sec)
 ```
 
-`TABLE_CONSTRAINTS`テーブルのフィールドは次のとおりです。
+`TABLE_CONSTRAINTS`テーブルのフィールドは次のように説明されています。
 
 -   `CONSTRAINT_CATALOG` : 制約が属するカタログの名前。この値は常に`def`です。
 -   `CONSTRAINT_SCHEMA` : 制約が属するデータベースの名前。

@@ -3,11 +3,11 @@ title: SHOW DATABASES | TiDB SQL Statement Reference
 summary: An overview of the usage of SHOW DATABASES for the TiDB database.
 ---
 
-# データベースを表示 {#show-databases}
+# データベースを表示する {#show-databases}
 
-このステートメントは、現在のユーザーが権限を持つデータベースのリストを表示します。現在のユーザーがアクセスできないデータベースは、リストに表示されません。 `information_schema`データベースは、常にデータベースのリストの最初に表示されます。
+このステートメントは、現在のユーザーが権限を持つデータベースのリストを表示します。現在のユーザーがアクセスできないデータベースは、リストに表示されません。 `information_schema`データベースは常にデータベースのリストの最初に表示されます。
 
-`SHOW SCHEMAS`は、このステートメントの別名です。
+`SHOW SCHEMAS`はこのステートメントの別名です。
 
 ## あらすじ {#synopsis}
 
@@ -49,12 +49,12 @@ mysql> SHOW DATABASES;
 5 rows in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL と完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`SHOW DATABASES`ステートメントは MySQL と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [スキーマを表示](/sql-statements/sql-statement-show-schemas.md)
--   [データベースをドロップ](/sql-statements/sql-statement-drop-database.md)
+-   [スキーマの表示](/sql-statements/sql-statement-show-schemas.md)
+-   [データベースを削除](/sql-statements/sql-statement-drop-database.md)
 -   [データベースの作成](/sql-statements/sql-statement-create-database.md)

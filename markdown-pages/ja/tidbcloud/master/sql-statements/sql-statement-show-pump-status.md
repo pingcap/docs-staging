@@ -3,7 +3,7 @@ title: SHOW PUMP STATUS
 summary: An overview of the usage of SHOW PUMP STATUS for the TiDB database.
 ---
 
-# ポンプの状態を表示 {#show-pump-status}
+# ポンプのステータスを表示 {#show-pump-status}
 
 `SHOW PUMP STATUS`ステートメントは、クラスター内のすべてのPumpノードのステータス情報を表示します。
 
@@ -25,12 +25,12 @@ SHOW PUMP STATUS;
 2 rows in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [ドレイナーのステータスを表示](/sql-statements/sql-statement-show-drainer-status.md)
+-   [ドレイナーステータスを表示](/sql-statements/sql-statement-show-drainer-status.md)
 -   [ポンプステータスの変更](/sql-statements/sql-statement-change-pump.md)
 -   [ドレイナーステータスの変更](/sql-statements/sql-statement-change-drainer.md)

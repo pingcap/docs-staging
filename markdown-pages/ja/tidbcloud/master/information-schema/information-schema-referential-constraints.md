@@ -5,7 +5,7 @@ summary: Learn the `REFERENTIAL_CONSTRAINTS` INFORMATION_SCHEMA table.
 
 # REFERENTIAL_CONSTRAINTS {#referential-constraints}
 
-`REFERENTIAL_CONSTRAINTS`テーブルは、テーブル間の`FOREIGN KEY`関係に関する情報を提供します。現在、TiDB は`FOREIGN KEY`制約を強制したり、 `ON DELETE CASCADE`などのアクションを実行したりしないことに注意してください。
+`REFERENTIAL_CONSTRAINTS`テーブルは、テーブル間の`FOREIGN KEY`関係に関する情報を提供します。
 
 ```sql
 USE INFORMATION_SCHEMA;

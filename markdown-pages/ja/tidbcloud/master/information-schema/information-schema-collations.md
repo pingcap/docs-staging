@@ -3,9 +3,9 @@ title: COLLATIONS
 summary: Learn the `COLLATIONS` information_schema table.
 ---
 
-# 照合 {#collations}
+# 照合順序 {#collations}
 
-表`COLLATIONS`は、表`CHARACTER_SETS`の文字セットに対応する照合順序のリストを提供します。現在、このテーブルは MySQL との互換性のためにのみ含まれています。
+`COLLATIONS`表は、 `CHARACTER_SETS`表の文字セットに対応する照合順序のリストを提供します。現在、このテーブルは MySQL との互換性のためにのみ含まれています。
 
 
 ```sql
@@ -43,7 +43,7 @@ SELECT * FROM collations WHERE character_set_name='utf8mb4';
 3 rows in set (0.001 sec)
 ```
 
-`COLLATIONS`テーブルの列の説明は次のとおりです。
+`COLLATIONS`のテーブルの列の説明は次のとおりです。
 
 -   `COLLATION_NAME` :照合順序の名前。
 -   `CHARACTER_SET_NAME` :照合順序が属する文字セットの名前。

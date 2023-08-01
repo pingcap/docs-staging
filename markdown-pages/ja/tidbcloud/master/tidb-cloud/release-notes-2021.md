@@ -53,7 +53,7 @@ summary: Learn about the release notes of TiDB Cloud in 2021.
 ## 2021年10月21日 {#october-21-2021}
 
 -   個人メールアカウントへのユーザー登録を開く
--   サポート[Amazon S3 または GCS からTiDB Cloudへのインポートまたは移行](/tidb-cloud/migrate-from-amazon-s3-or-gcs.md)
+-   サポート[Amazon S3 または GCS からTiDB Cloudへのインポートまたは移行](/tidb-cloud/import-csv-files.md)
 
 ## 2021年10月11日 {#october-11-2021}
 

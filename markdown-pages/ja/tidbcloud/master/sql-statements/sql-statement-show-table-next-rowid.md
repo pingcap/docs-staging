@@ -3,14 +3,14 @@ title: SHOW TABLE NEXT_ROW_ID
 summary: Learn the usage of `SHOW TABLE NEXT_ROW_ID` in TiDB.
 ---
 
-# テーブルの NEXT_ROW_ID を表示 {#show-table-next-row-id}
+# テーブルのNEXT_ROW_IDを表示 {#show-table-next-row-id}
 
-`SHOW TABLE NEXT_ROW_ID`は、次のようなテーブルのいくつかの特別な列の詳細を表示するために使用されます。
+`SHOW TABLE NEXT_ROW_ID`は、テーブルのいくつかの特別な列の詳細を示すために使用されます。次のようなものがあります。
 
 -   TiDB によって自動的に作成される`AUTO_INCREMENT`列、つまり`_tidb_rowid`列。
--   ユーザーが作成した`AUTO_INCREMENT`列。
--   ユーザーが作成した[`AUTO_RANDOM`](/auto-random.md)列。
--   [`SEQUENCE`](/sql-statements/sql-statement-create-sequence.md)ユーザーによって作成されました。
+-   ユーザーが作成した列は`AUTO_INCREMENT` 。
+-   ユーザーが作成した列は[`AUTO_RANDOM`](/auto-random.md) 。
+-   ユーザーが作成したものは[`SEQUENCE`](/sql-statements/sql-statement-create-sequence.md)ます。
 
 ## あらすじ {#synopsis}
 
@@ -24,7 +24,7 @@ summary: Learn the usage of `SHOW TABLE NEXT_ROW_ID` in TiDB.
 
 ## 例 {#examples}
 
-新しく作成されたテーブルの場合、Row ID が割り当てられていないため、 `NEXT_GLOBAL_ROW_ID`は`1`です。
+新しく作成されたテーブルの場合、ロウ ID が割り当てられていないため、 `NEXT_GLOBAL_ROW_ID`は`1`になります。
 
 
 ```sql
@@ -42,7 +42,7 @@ show table t next_row_id;
 1 row in set (0.00 sec)
 ```
 
-テーブルにデータが書き込まれました。データを挿入する TiDBサーバーは、一度に 30000 個の ID を割り当ててキャッシュします。したがって、NEXT_GLOBAL_ROW_ID は現在 30001 です。
+データがテーブルに書き込まれました。データを挿入する TiDBサーバーは、一度に 30,000 の ID を割り当ててキャッシュします。したがって、NEXT_GLOBAL_ROW_ID は現在 30001 です。
 
 ```sql
 insert into t values (), (), ();
@@ -60,12 +60,12 @@ show table t next_row_id;
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [テーブルを作成](/sql-statements/sql-statement-create-table.md)
+-   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [自動ランダム](/auto-random.md)
 -   [CREATE_SEQUENCE](/sql-statements/sql-statement-create-sequence.md)

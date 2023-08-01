@@ -8,6 +8,71 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
 このページには 2023 年[TiDB Cloud](https://www.pingcap.com/tidb-cloud/)のリリースノートが記載されています。
 
+## 2023 年 7 月 26 日 {#july-26-2023}
+
+**一般的な変更点**
+
+-   TiDB Cloud [データサービス](https://tidbcloud.com/console/data-service)の強力な機能、つまり自動エンドポイント生成を紹介します。
+
+    開発者は、最小限のクリックと構成で HTTP エンドポイントを簡単に作成できるようになりました。反復的な定型コードを排除し、エンドポイントの作成を簡素化および高速化して、潜在的なエラーを削減します。
+
+    この機能の使用方法の詳細については、 [エンドポイントを自動的に生成する](/tidb-cloud/data-service-manage-endpoint.md#generate-an-endpoint-automatically)を参照してください。
+
+-   TiDB Cloud [データサービス](https://tidbcloud.com/console/data-service)のエンドポイントに対して`PUT`および`DELETE`リクエスト メソッドをサポートします。
+
+    -   データを更新または変更するには、 `UPDATE`ステートメントと同様に`PUT`メソッドを使用します。
+    -   データを削除するには、 `DELETE`ステートメントと同様に`DELETE`メソッドを使用します。
+
+    詳細については、 [プロパティの構成](/tidb-cloud/data-service-manage-endpoint.md#configure-properties)を参照してください。
+
+-   TiDB Cloud [データサービス](https://tidbcloud.com/console/data-service)の`POST` 、 `PUT` 、および`DELETE`リクエスト メソッドの**バッチ操作**をサポートします。
+
+    エンドポイントに対して**バッチ操作が**有効になっている場合、単一のリクエストで複数の行に対して操作を実行できるようになります。たとえば、単一の`POST`リクエストを使用して複数行のデータを挿入できます。
+
+    詳細については、 [高度なプロパティ](/tidb-cloud/data-service-manage-endpoint.md#advanced-properties)を参照してください。
+
+## 2023 年 7 月 25 日 {#july-25-2023}
+
+**一般的な変更点**
+
+-   新しい[TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターのデフォルトの TiDB バージョンを[v6.5.3](https://docs.pingcap.com/tidb/v6.5/release-6.5.3)から[v7.1.1](https://docs.pingcap.com/tidb/v7.1/release-7.1.1)にアップグレードします。
+
+**コンソールの変更**
+
+-   サポート エントリを最適化することで、 TiDB Cloudユーザーの PingCAP サポートへのアクセスを簡素化します。改善内容は次のとおりです。
+
+    -   に**サポート**の入り口を追加します。<mdsvgicon name="icon-top-organization">左下隅にあります。</mdsvgicon>
+    -   **?**のメニューを刷新。 [TiDB Cloudコンソール](https://tidbcloud.com/)の右下隅にある アイコンを使用すると、より直感的に操作できるようになります。
+
+    詳細については、 [TiDB Cloudのサポート](/tidb-cloud/tidb-cloud-support.md)を参照してください。
+
+## 2023 年 7 月 18 日 {#july-18-2023}
+
+**一般的な変更点**
+
+-   組織レベルとプロジェクト レベルの両方でロールベースのアクセス制御を洗練することで、セキュリティ、コンプライアンス、生産性を向上させるために、最小限の権限を持つロールをユーザーに付与できます。
+
+    -   組織の役割には、 `Organization Owner` 、 `Organization Billing Admin` 、 `Organization Console Audit Admin` 、および`Organization Member`が含まれます。
+    -   プロジェクトの役割には、 `Project Owner` 、 `Project Data Access Read-Write` 、および`Project Data Access Read-Only`が含まれます。
+    -   プロジェクト内のクラスターを管理 (クラスターの作成、変更、削除など) するには、 `Organization Owner`または`Project Owner`ロールに属する必要があります。
+
+    さまざまな役割の権限の詳細については、 [ユーザーの役割](/tidb-cloud/manage-user-access.md#user-roles)を参照してください。
+
+-   AWS でホストされる[TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターに対して顧客管理の暗号化キー (CMEK) 機能 (ベータ版) をサポートします。
+
+    AWS KMS に基づいて CMEK を作成し、EBS および S3 に保存されているデータをTiDB Cloudコンソールから直接暗号化できます。これにより、顧客データは顧客が管理するキーで暗号化され、セキュリティが強化されます。
+
+    この機能には依然として制限があり、リクエストがあった場合にのみ利用できることに注意してください。この機能を申請するには、 [TiDB Cloudのサポート](/tidb-cloud/tidb-cloud-support.md)にお問い合わせください。
+
+-   データ インポート エクスペリエンスの向上を目的として、 TiDB Cloudのインポート機能を最適化します。次の改善が行われました。
+
+    -   TiDB サーバーレスの統合インポート エントリ: データをインポートするためのエントリを統合し、ローカル ファイルのインポートと Amazon S3 からのファイルのインポートをシームレスに切り替えることができます。
+    -   合理化された構成: Amazon S3 からのデータのインポートには 1 つのステップのみが必要となり、時間と労力を節約できます。
+    -   CSV 構成の強化: CSV 構成設定がファイル タイプ オプションの下に配置されるようになり、必要なパラメーターをすばやく簡単に構成できるようになりました。
+    -   強化されたターゲット テーブルの選択: チェックボックスをクリックして、データ インポートに必要なターゲット テーブルの選択をサポートします。この改善により、複雑な式が不要になり、ターゲット テーブルの選択が簡素化されました。
+    -   表示情報の改良: インポート プロセス中に表示される不正確な情報に関連する問題を解決します。さらに、不完全なデータ表示を防ぎ、誤解を招く情報を避けるために、プレビュー機能が削除されました。
+    -   ソース ファイル マッピングの改善: ソース ファイルとターゲット テーブルの間のマッピング関係の定義をサポートします。これは、特定の命名要件を満たすためにソース ファイル名を変更するという課題に対処します。
+
 ## 2023 年 7 月 11 日 {#july-11-2023}
 
 **一般的な変更点**

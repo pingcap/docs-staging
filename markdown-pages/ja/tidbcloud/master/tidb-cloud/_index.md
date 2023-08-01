@@ -101,13 +101,13 @@ hide_commit: true
 
 [パスワード認証](https://docs.pingcap.com/tidbcloud/tidb-cloud-password-authentication)
 
+[ユーザーの役割](https://docs.pingcap.com/tidbcloud/manage-user-access#user-roles)
+
 [ユーザープロファイルの管理](https://docs.pingcap.com/tidbcloud/manage-user-access#manage-user-profiles)
 
 [組織のアクセスを管理する](https://docs.pingcap.com/tidbcloud/manage-user-access#manage-organization-access)
 
 [プロジェクトへのアクセスを管理する](https://docs.pingcap.com/tidbcloud/manage-user-access#manage-project-access)
-
-[役割の構成](https://docs.pingcap.com/tidbcloud/manage-user-access#manage-role-access)
 
 [Security設定を構成する](https://docs.pingcap.com/tidbcloud/configure-security-settings)
 

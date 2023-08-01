@@ -3,9 +3,9 @@ title: VARIABLES_INFO
 summary: Learn the `VARIABLES_INFO` information_schema table.
 ---
 
-# VARIABLES_INFO {#variables-info}
+# 変数情報 {#variables-info}
 
-`VARIABLES_INFO`テーブルは、現在の TiDB インスタンスまたは TiDB クラスターのシステム変数のデフォルト値、現在の値、およびスコープに関する情報を提供します。
+表`VARIABLES_INFO`は、現在の TiDB インスタンスまたは TiDB クラスター内のシステム変数のデフォルト値、現在の値、およびスコープに関する情報を提供します。
 
 ```sql
 USE information_schema;
@@ -43,13 +43,13 @@ SELECT * FROM variables_info ORDER BY variable_name LIMIT 3;
 3 rows in set (0.01 sec)
 ```
 
-`VARIABLES_INFO`テーブルのフィールドは次のとおりです。
+`VARIABLES_INFO`テーブルのフィールドは次のように説明されています。
 
 -   `VARIABLE_NAME` : システム変数の名前。
 -   `VARIABLE_SCOPE` : システム変数のスコープ。 `SESSION` 、システム変数が現在のセッションでのみ有効であることを意味します。 `INSTANCE` 、システム変数が TiDB インスタンスで有効であることを意味します。 `GLOBAL` 、システム変数が TiDB クラスターで有効であることを意味します。
 -   `DEFAULT_VALUE` : システム変数のデフォルト値。
--   `CURRENT_VALUE` : システム変数の現在の値。スコープに`SESSION`含まれている場合、 `CURRENT_VALUE`は現在のセッションの値です。
--   `MIN_VALUE` : システム変数に許可される最小値。システム変数が数値でない場合、 `MIN_VALUE`は NULL です。
--   `MAX_VALUE` : システム変数に許可される最大値。システム変数が数値でない場合、 `MAX_VALUE`は NULL です。
--   `POSSIBLE_VALUES` : システム変数の可能な値。システム変数が列挙型でない場合、 `POSSIBLE_VALUES`は NULL です。
--   `IS_NOOP` : システム変数が`noop`システム変数かどうか。
+-   `CURRENT_VALUE` : システム変数の現在値。スコープに`SESSION`含まれる場合、 `CURRENT_VALUE`現在のセッションの値になります。
+-   `MIN_VALUE` : システム変数に許可される最小値。システム変数が数値でない場合、 `MIN_VALUE`は NULL になります。
+-   `MAX_VALUE` : システム変数に許可される最大値。システム変数が数値でない場合、 `MAX_VALUE`は NULL になります。
+-   `POSSIBLE_VALUES` : システム変数の可能な値。システム変数が列挙型ではない場合、 `POSSIBLE_VALUES`は NULL になります。
+-   `IS_NOOP` : システム変数が`noop`システム変数であるかどうか。

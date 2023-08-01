@@ -3,19 +3,19 @@ title: SHOW [FULL] COLUMNS FROM | TiDB SQL Statement Reference
 summary: An overview of the usage of SHOW [FULL] COLUMNS FROM for the TiDB database.
 ---
 
-# 次の [FULL] 列を表示 {#show-full-columns-from}
+# からの [完全な] 列を表示 {#show-full-columns-from}
 
-ステートメント`SHOW [FULL] COLUMNS FROM <table_name>`は、テーブルまたはビューの列を便利な表形式で記述します。オプションのキーワード`FULL`現在のユーザーがその列に対して持っている権限と、テーブル定義からの`comment`を表示します。
+ステートメント`SHOW [FULL] COLUMNS FROM <table_name>`は、テーブルまたはビューの列を便利な表形式で記述します。オプションのキーワード`FULL`その列に対して現在のユーザーが持つ権限を表示し、テーブル定義の`comment`を表示します。
 
 ステートメント`SHOW [FULL] FIELDS FROM <table_name>` 、 `DESC <table_name>` 、 `DESCRIBE <table_name>` 、および`EXPLAIN <table_name>` 、このステートメントの別名です。
 
 > **ノート：**
 >
-> `DESC TABLE <table_name>` 、 `DESCRIBE TABLE <table_name>` 、および`EXPLAIN TABLE <table_name>` 、上記のステートメントと同等ではありません。それらは[`DESC SELECT * FROM &#x3C;table_name>`](/sql-statements/sql-statement-explain.md)の別名です。
+> `DESC TABLE <table_name>` 、 `DESCRIBE TABLE <table_name>` 、および`EXPLAIN TABLE <table_name>` 、上記のステートメントと同等ではありません。これらは[`DESC SELECT * FROM &#x3C;table_name>`](/sql-statements/sql-statement-explain.md)の別名です。
 
 ## あらすじ {#synopsis}
 
-**表示ステートメント:**
+**表示手順:**
 
 ![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
 
@@ -23,7 +23,7 @@ summary: An overview of the usage of SHOW [FULL] COLUMNS FROM for the TiDB datab
 
 ![ShowColumnsFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowColumnsFilterable.png)
 
-**OptFull:**
+**オプトフル:**
 
 ![OptFull](https://download.pingcap.com/images/docs/sqlgram/OptFull.png)
 
@@ -35,7 +35,7 @@ summary: An overview of the usage of SHOW [FULL] COLUMNS FROM for the TiDB datab
 
 ![ShowTableAliasOpt](https://download.pingcap.com/images/docs/sqlgram/ShowTableAliasOpt.png)
 
-**FromOrIn:**
+**送信者または受信者:**
 
 ![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
 
@@ -155,10 +155,10 @@ mysql> show full columns from mysql.user;
 38 rows in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL と完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`SHOW [FULL] COLUMNS FROM`ステートメントは MySQL と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)

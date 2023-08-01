@@ -21,7 +21,7 @@ TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidb
 
 ## ステップ {#steps}
 
-TiDB サーバーレス クラスターを作成するには、次の手順を実行します。
+`Organization Owner`または`Project Owner`ロールに属している場合は、次のように TiDB サーバーレス クラスターを作成できます。
 
 1.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、 [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 

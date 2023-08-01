@@ -23,13 +23,13 @@ SHOW MASTER STATUS;
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-`SHOW MASTER STATUS`の出力は、MySQL と一致するように設計されています。ただし、実行結果は、MySQL の結果がbinlog の場所情報であり、TiDB の結果が最新の TSO 情報であるという点で異なります。
+`SHOW MASTER STATUS`の出力は MySQL と一致するように設計されています。ただし、MySQL の結果はbinlogの場所情報であり、TiDB の結果は最新の TSO 情報であるという点で、実行結果は異なります。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [ポンプの状態を表示](/sql-statements/sql-statement-show-pump-status.md)
--   [ドレイナーのステータスを表示](/sql-statements/sql-statement-show-drainer-status.md)
+-   [ポンプのステータスを表示](/sql-statements/sql-statement-show-pump-status.md)
+-   [ドレイナーステータスを表示](/sql-statements/sql-statement-show-drainer-status.md)
 -   [ポンプステータスの変更](/sql-statements/sql-statement-change-pump.md)
 -   [ドレイナーステータスの変更](/sql-statements/sql-statement-change-drainer.md)

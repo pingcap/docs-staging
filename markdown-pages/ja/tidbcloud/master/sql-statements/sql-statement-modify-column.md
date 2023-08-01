@@ -7,11 +7,11 @@ summary: An overview of the usage of MODIFY COLUMN for the TiDB database.
 
 `ALTER TABLE.. MODIFY COLUMN`ステートメントは、既存のテーブルの列を変更します。変更には、データ型と属性の変更が含まれる場合があります。同時に名前を変更するには、代わりに[`CHANGE COLUMN`](/sql-statements/sql-statement-change-column.md)ステートメントを使用します。
 
-v5.1.0 以降、TiDB は Reorg データのデータ型の変更をサポートしてきました。
+v5.1.0 以降、TiDB は、以下を含む (ただしこれらに限定されない) Reorg データのデータ型の変更をサポートしています。
 
--   `VARCHAR`から`BIGINT`への変更
--   `DECIMAL`精度の変更
--   `VARCHAR(10)` ～ `VARCHAR(5)`の長さの圧縮
+-   `VARCHAR`を`BIGINT`に変更する
+-   `DECIMAL`精度を変更する
+-   `VARCHAR(10)` ～ `VARCHAR(5)`の長さを圧縮する
 
 ## あらすじ {#synopsis}
 
@@ -152,15 +152,15 @@ CREATE TABLE `t1` (
 >     ERROR 1406 (22001): Data Too Long, field len 4, data len 5
 >     ```
 >
-> -   Async Commit 機能との互換性により、DDL ステートメントは、Reorg Data への処理を開始する前に一定時間 (約 2.5 秒) 待機します。
+> -   Async Commit 機能との互換性のため、DDL ステートメントは、Reorg Data への処理を開始する前に一定時間 (約 2.5 秒) 待機します。
 >
 >     ```
 >     Query OK, 0 rows affected (2.52 sec)
 >     ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   主キー列の Reorg-Data タイプの変更はサポートしていませんが、Meta-Only タイプの変更はサポートしています。例えば：
+-   主キー列の Reorg-Data タイプの変更はサポートされていませんが、Meta-Only タイプの変更はサポートされています。例えば：
 
     ```sql
     CREATE TABLE t (a int primary key);
@@ -188,7 +188,7 @@ CREATE TABLE `t1` (
     ERROR 8200 (HY000): Unsupported modify column: column is generated
     ```
 
--   分割されたテーブルの列の種類の変更はサポートされていません。例えば：
+-   パーティション化されたテーブルの列タイプの変更はサポートされていません。例えば：
 
     ```sql
     CREATE TABLE t (c1 INT, c2 INT, c3 INT) partition by range columns(c1) ( partition p0 values less than (10), partition p1 values less than (maxvalue));
@@ -196,7 +196,7 @@ CREATE TABLE `t1` (
     ERROR 8200 (HY000): Unsupported modify column: table is partition table
     ```
 
--   TiDB と MySQL 間の`cast`関数の動作の互換性の問題により、一部のデータ型 (たとえば、一部の TIME 型、Bit、Set、Enum、JSON) の変更はサポートされていません。
+-   一部のデータ型 (たとえば、一部の TIME 型、Bit、Set、Enum、JSON) の変更はサポートされていません。これは、TiDB と MySQL の間の`cast`の動作の互換性の問題によりサポートされていません。
 
     ```sql
     CREATE TABLE t (a DECIMAL(13, 7));
@@ -204,10 +204,10 @@ CREATE TABLE `t1` (
     ERROR 8200 (HY000): Unsupported modify column: change from original type decimal(13,7) to datetime is currently unsupported yet
     ```
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
--   [テーブルを作成](/sql-statements/sql-statement-create-table.md)
+-   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
--   [列を追加](/sql-statements/sql-statement-add-column.md)
--   [ドロップ カラム](/sql-statements/sql-statement-drop-column.md)
--   [列を変更](/sql-statements/sql-statement-change-column.md)
+-   [列の追加](/sql-statements/sql-statement-add-column.md)
+-   [ドロップカラム](/sql-statements/sql-statement-drop-column.md)
+-   [列の変更](/sql-statements/sql-statement-change-column.md)

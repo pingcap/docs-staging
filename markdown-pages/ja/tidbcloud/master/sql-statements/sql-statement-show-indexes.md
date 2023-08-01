@@ -5,7 +5,7 @@ summary: An overview of the usage of SHOW INDEXES [FROM|IN] for the TiDB databas
 
 # インデックスを表示 [From|IN] {#show-indexes-from-in}
 
-ステートメント`SHOW INDEXES [FROM|IN]`は、指定されたテーブルのインデックスを一覧表示します。ステートメント`SHOW INDEX [FROM|IN]` 、 `SHOW KEYS [FROM|IN]`はこのステートメントのエイリアスであり、MySQL との互換性のために含まれています。
+ステートメント`SHOW INDEXES [FROM|IN]`は、指定されたテーブルのインデックスをリストします。ステートメント`SHOW INDEX [FROM|IN]` 、 `SHOW KEYS [FROM|IN]`はこのステートメントのエイリアスであり、MySQL との互換性のために含まれています。
 
 ## あらすじ {#synopsis}
 
@@ -17,7 +17,7 @@ summary: An overview of the usage of SHOW INDEXES [FROM|IN] for the TiDB databas
 
 ![ShowIndexKwd](https://download.pingcap.com/images/docs/sqlgram/ShowIndexKwd.png)
 
-**FromOrIn:**
+**送信者または受信者:**
 
 ![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
 
@@ -69,12 +69,12 @@ mysql> SHOW KEYS FROM t1;
 2 rows in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-MySQL の`Cardinality`列は、インデックスの異なる値の数を示します。 TiDB では、 `Cardinality`列には常に`0`が表示されます。
+TiDB の`SHOW INDEXES [FROM|IN]`ステートメントは MySQL と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
 -   [ドロップインデックス](/sql-statements/sql-statement-drop-index.md)
--   [インデックスを作成](/sql-statements/sql-statement-create-index.md)
+-   [インデックスの作成](/sql-statements/sql-statement-create-index.md)

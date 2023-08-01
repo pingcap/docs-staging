@@ -5,14 +5,14 @@ summary: Learn the TiDB features that are incompatible with TiFlash.
 
 # TiFlash互換性に関する注意事項 {#tiflash-compatibility-notes}
 
-次の状況では、 TiFlash はTiDB と互換性がありません。
+TiFlash は、次の状況では TiDB と互換性がありません。
 
--   TiFlash計算レイヤーでは:
-    -   オーバーフローした数値のチェックはサポートされていません。たとえば、 `BIGINT`タイプ`9223372036854775807 + 9223372036854775807`の 2 つの最大値を加算します。 TiDB でのこの計算の予想される動作は、 `ERROR 1690 (22003): BIGINT value is out of range`エラーを返すことです。ただし、この計算をTiFlashで実行すると、オーバーフロー値`-2`がエラーなしで返されます。
-    -   ウィンドウ関数はサポートされていません。
+-   TiFlash計算レイヤー内:
+    -   オーバーフローした数値のチェックはサポートされていません。たとえば、 `BIGINT`の 2 つの最大値を加算すると、 `9223372036854775807 + 9223372036854775807` 。 TiDB でのこの計算の予期される動作は、 `ERROR 1690 (22003): BIGINT value is out of range`エラーを返すことです。ただし、この計算がTiFlashで実行される場合、エラーなしでオーバーフロー値`-2`が返されます。
+    -   ウィンドウ機能はサポートされていません。
     -   TiKV からのデータの読み取りはサポートされていません。
-    -   現在、 TiFlashの`sum`関数は文字列型の引数をサポートしていません。しかし、TiDB は、コンパイル中に文字列型の引数が`sum`関数に渡されたかどうかを識別できません。したがって、 `select sum(string_col) from t`のようなステートメントを実行すると、 TiFlash は`[FLASH:Coprocessor:Unimplemented] CastStringAsReal is not supported.`エラーを返します。このようなエラーを回避するには、この SQL ステートメントを`select sum(cast(string_col as double)) from t`に変更する必要があります。
-    -   現在、TiFlash の 10 進数除算の計算は TiDB のそれと互換性がありません。たとえば、10 進数を除算する場合、 TiFlash は常にコンパイルから推測された型を使用して計算を実行します。ただし、TiDB は、コンパイルから推測される型よりも正確な型を使用して、この計算を実行します。そのため、一部の 10 進数除算を含む SQL ステートメントは、TiDB + TiKV と TiDB + TiFlashで実行すると、異なる実行結果を返します。例えば：
+    -   現在、 TiFlashの`sum`関数は文字列型の引数をサポートしていません。ただし、TiDB はコンパイル中に文字列型の引数が`sum`関数に渡されたかどうかを識別できません。したがって、 `select sum(string_col) from t`のようなステートメントを実行すると、 TiFlash は`[FLASH:Coprocessor:Unimplemented] CastStringAsReal is not supported.`エラーを返します。この場合にこのようなエラーを回避するには、この SQL ステートメントを`select sum(cast(string_col as double)) from t`に変更する必要があります。
+    -   現在、TiFlash の小数除算計算は TiDB のものと互換性がありません。たとえば、10 進数を除算する場合、 TiFlash は常にコンパイルから推測される型を使用して計算を実行します。ただし、TiDB は、コンパイルから推測される型よりも正確な型を使用してこの計算を実行します。したがって、小数除算を含む一部の SQL ステートメントは、 TiDB + TiKV と TiDB + TiFlashで実行すると異なる実行結果を返します。例えば：
 
         ```sql
         mysql> create table t (a decimal(3,0), b decimal(10, 0));
@@ -36,4 +36,4 @@ summary: Learn the TiDB features that are incompatible with TiFlash.
         Empty set (0.01 sec)
         ```
 
-        上記の例では、コンパイルから推測される`a/b`の型は、TiDB とTiFlashの両方で`Decimal(7,4)`です。 `Decimal(7,4)`によって制約され、 `a/b`の返される型は`0.0000`である必要があります。 TiDB では、 `a/b`の実行時の精度が`Decimal(7,4)`よりも高いため、元のテーブル データは`where a/b`条件によってフィルター処理されません。ただし、 TiFlashでは、 `a/b`の計算は`Decimal(7,4)`結果の型として使用するため、元のテーブル データは`where a/b`条件でフィルター処理されます。
+        上の例では、コンパイルから推測される`a/b`の型は、 TiDB とTiFlashの両方で`Decimal(7,4)`です。 `Decimal(7,4)`による制約により、 `a/b`の戻り値の型は`0.0000`になる必要があります。 TiDB では、 `a/b`の実行時精度は`Decimal(7,4)`よりも高いため、元のテーブル データは`where a/b`条件によってフィルターされません。ただし、 TiFlashでは、 `a/b`の計算では結果のタイプとして`Decimal(7,4)`が使用されるため、元のテーブル データは`where a/b`条件によってフィルターされます。

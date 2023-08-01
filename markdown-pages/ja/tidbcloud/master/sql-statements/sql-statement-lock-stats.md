@@ -9,7 +9,7 @@ summary: An overview of the usage of LOCK STATS for the TiDB database.
 
 > **警告：**
 >
-> 統計のロックは、現在のバージョンの実験的機能です。本番環境で使用することはお勧めしません。
+> 統計のロックは、現在のバージョンの実験的機能です。本番環境での使用はお勧めしません。
 
 ## あらすじ {#synopsis}
 
@@ -26,7 +26,7 @@ TableName ::=
 
 ## 例 {#examples}
 
-テーブル`t`を作成し、そこにデータを挿入します。テーブル`t`の統計がロックされていない場合、 `ANALYZE`ステートメントを正常に実行できます。
+table `t`を作成し、そこにデータを挿入します。テーブル`t`の統計がロックされていない場合、 `ANALYZE`ステートメントは正常に実行できます。
 
 ```sql
 mysql> create table t(a int, b int);
@@ -48,7 +48,7 @@ mysql> show warnings;
 1 row in set (0.00 sec)
 ```
 
-テーブル`t`の統計をロックし、 `ANALYZE`を実行します。 `SHOW STATS_LOCKED`の出力から、表`t`の統計がロックされていることがわかります。警告メッセージは、 `ANALYZE`ステートメントがテーブル`t`をスキップしたことを示しています。
+テーブル`t`の統計をロックし、 `ANALYZE`を実行します。 `SHOW STATS_LOCKED`の出力から、テーブル`t`の統計がロックされていることがわかります。警告メッセージは、 `ANALYZE`ステートメントがテーブル`t`をスキップしたことを示しています。
 
 ```sql
 mysql> lock stats t;
@@ -75,7 +75,7 @@ mysql> show warnings;
 2 rows in set (0.00 sec)
 ```
 
-テーブル`t`と`ANALYZE`の統計のロックを解除すると、再び正常に実行できます。
+テーブル`t`と`ANALYZE`の統計のロックを解除すると、再度正常に実行できるようになります。
 
 ```sql
 mysql> unlock stats t;
@@ -93,12 +93,12 @@ mysql> show warnings;
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張です。
+このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [統計](/statistics.md#lock-statistics)
--   [統計のロックを解除](/sql-statements/sql-statement-unlock-stats.md)
--   [SHOW STATS_LOCKED](/sql-statements/sql-statement-show-stats-locked.md)
+-   [ステータスのロックを解除する](/sql-statements/sql-statement-unlock-stats.md)
+-   [STATS_LOCKEDを表示](/sql-statements/sql-statement-show-stats-locked.md)

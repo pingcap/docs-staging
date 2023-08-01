@@ -5,19 +5,19 @@ summary: This document describes how to query data from a single table in a data
 
 <!-- markdownlint-disable MD029 -->
 
-# 単一のテーブルからのデータのクエリ {#query-data-from-a-single-table}
+# 単一のテーブルからデータをクエリする {#query-data-from-a-single-table}
 
-このドキュメントでは、SQL とさまざまなプログラミング言語を使用して、データベース内の 1 つのテーブルからデータをクエリする方法について説明します。
+このドキュメントでは、SQL およびさまざまなプログラミング言語を使用して、データベース内の単一テーブルのデータをクエリする方法について説明します。
 
 ## あなたが始める前に {#before-you-begin}
 
-次のコンテンツでは、 [書店](/develop/dev-guide-bookshop-schema-design.md)アプリケーションを例として、TiDB の単一のテーブルからデータをクエリする方法を示します。
+次のコンテンツでは、 [書店](/develop/dev-guide-bookshop-schema-design.md)アプリケーションを例として、TiDB の単一テーブルのデータをクエリする方法を示します。
 
-データのクエリを実行する前に、次の手順を完了していることを確認してください。
+データをクエリする前に、次の手順を完了していることを確認してください。
 
 <CustomContent platform="tidb">
 
-1.  TiDB クラスターを構築します ( [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md)または[TiUP](/production-deployment-using-tiup.md)を使用することをお勧めします)。
+1.  TiDB クラスターを構築します ( [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md)または[TiUP](/production-deployment-using-tiup.md)の使用を推奨)。
 
 </CustomContent>
 
@@ -27,23 +27,23 @@ summary: This document describes how to query data from a single table in a data
 
 </CustomContent>
 
-2.  [Bookshop アプリケーションのテーブル スキーマとサンプル データをインポートする](/develop/dev-guide-bookshop-schema-design.md#import-table-structures-and-data) .
+2.  [Bookshop アプリケーションのテーブル スキーマとサンプル データをインポートします](/develop/dev-guide-bookshop-schema-design.md#import-table-structures-and-data) 。
 
 <CustomContent platform="tidb">
 
-3.  [TiDB に接続する](/develop/dev-guide-connect-to-tidb.md) .
+3.  [TiDB に接続する](/develop/dev-guide-connect-to-tidb.md) 。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-3.  [TiDB に接続する](/tidb-cloud/connect-to-tidb-cluster.md) .
+3.  [TiDB に接続する](/tidb-cloud/connect-to-tidb-cluster.md) 。
 
 </CustomContent>
 
-## 簡単なクエリを実行する {#execute-a-simple-query}
+## 単純なクエリを実行する {#execute-a-simple-query}
 
-Bookshop アプリケーションのデータベースでは、 `authors`テーブルに著者の基本情報が格納されます。 `SELECT ... FROM ...`ステートメントを使用して、データベースからデータを照会できます。
+Bookshop アプリケーションのデータベースには、著者の基本情報が`authors`テーブルに格納されています。 `SELECT ... FROM ...`ステートメントを使用して、データベースのデータをクエリできます。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -78,12 +78,12 @@ SELECT id, name FROM authors;
 </div>
 <div label="Java" value="java">
 
-Javaでは、作成者の基本情報を格納するために、クラス`Author`を宣言できます。データベースの[データ型](/data-type-overview.md)と[値の範囲](/data-type-numeric.md)に従って、適切なJavaデータ型を選択する必要があります。例えば：
+Javaでは、作成者の基本情報を保存するために、クラス`Author`を宣言できます。データベースの[データ型](/data-type-overview.md)と[値の範囲](/data-type-numeric.md)に従って、適切なJavaデータ型を選択する必要があります。例えば：
 
--   タイプ`Int`の変数を使用して、タイプ`int`のデータを格納します。
--   タイプ`Long`の変数を使用して、タイプ`bigint`のデータを格納します。
--   タイプ`Short`の変数を使用して、タイプ`tinyint`のデータを格納します。
--   タイプ`String`の変数を使用して、タイプ`varchar`のデータを格納します。
+-   タイプ`int`のデータを格納するには、タイプ`Int`の変数を使用します。
+-   タイプ`bigint`のデータを格納するには、タイプ`Long`の変数を使用します。
+-   タイプ`tinyint`のデータを格納するには、タイプ`Short`の変数を使用します。
+-   タイプ`varchar`のデータを格納するには、タイプ`String`の変数を使用します。
 
 ```java
 public class Author {
@@ -124,27 +124,27 @@ public class AuthorDAO {
 
 <CustomContent platform="tidb">
 
--   [JDBC ドライバーを使用して TiDB に接続する](/develop/dev-guide-connect-to-tidb.md#jdbc)の後、 `conn.createStatus()`で`Statement`オブジェクトを作成できます。
+-   [JDBC ドライバーを使用して TiDB に接続する](/develop/dev-guide-connect-to-tidb.md#jdbc)の後に、 `conn.createStatus()`を使用して`Statement`オブジェクトを作成できます。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
--   [JDBC ドライバーを使用して TiDB に接続する](/develop/dev-guide-choose-driver-or-orm.md#java-drivers)の後、 `conn.createStatus()`で`Statement`オブジェクトを作成できます。
+-   [JDBC ドライバーを使用して TiDB に接続する](/develop/dev-guide-choose-driver-or-orm.md#java-drivers)の後に、 `conn.createStatus()`を使用して`Statement`オブジェクトを作成できます。
 
 </CustomContent>
 
--   次に`stmt.executeQuery("query_sql")`を呼び出して、TiDB へのデータベース クエリ要求を開始します。
--   クエリ結果は`ResultSet`のオブジェクトに格納されます。 `ResultSet`トラバースすることで、返された結果を`Author`オブジェクトにマップできます。
+-   次に、 `stmt.executeQuery("query_sql")`を呼び出して、TiDB へのデータベース クエリ リクエストを開始します。
+-   クエリ結果は`ResultSet`オブジェクトに保存されます。 `ResultSet`トラバースすることで、返された結果を`Author`オブジェクトにマッピングできます。
 
 </div>
 </SimpleTab>
 
-## 結果のフィルタリング {#filter-results}
+## フィルタ結果 {#filter-results}
 
-クエリ結果をフィルタリングするには、 `WHERE`ステートメントを使用できます。
+クエリ結果をフィルターするには、 `WHERE`ステートメントを使用できます。
 
-たとえば、次のコマンドは、すべての著者の中で 1998 年生まれの著者を照会します。
+たとえば、次のコマンドは、すべての著者のうち 1998 年生まれの著者をクエリします。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -158,11 +158,11 @@ SELECT * FROM authors WHERE birth_year = 1998;
 </div>
 <div label="Java" value="java">
 
-Javaでは、同じ SQL を使用して、動的パラメーターを持つデータ クエリ要求を処理できます。
+Javaでは、同じ SQL を使用して、動的パラメータを使用したデータ クエリ リクエストを処理できます。
 
-これは、パラメーターを SQL ステートメントに連結することによって実行できます。ただし、この方法は、アプリケーションのセキュリティに[SQL インジェクション](https://en.wikipedia.org/wiki/SQL_injection)リスクをもたらす可能性があります。
+これは、パラメータを SQL ステートメントに連結することで実行できます。ただし、この方法はアプリケーションのセキュリティに[SQLインジェクション](https://en.wikipedia.org/wiki/SQL_injection)的なリスクをもたらします。
 
-このようなクエリを処理するには、通常のステートメントの代わりに[作成済みステートメント](/develop/dev-guide-prepared-statement.md)を使用します。
+このようなクエリを処理するには、通常のステートメントの代わりに[作成済みのステートメント](/develop/dev-guide-prepared-statement.md)を使用します。
 
 ```java
 public List<Author> getAuthorsByBirthYear(Short birthYear) throws SQLException {
@@ -191,7 +191,7 @@ public List<Author> getAuthorsByBirthYear(Short birthYear) throws SQLException {
 
 クエリ結果を並べ替えるには、 `ORDER BY`ステートメントを使用できます。
 
-たとえば、次の SQL ステートメントは、 `birth_year`列に従って`authors`テーブルを降順 ( `DESC` ) に並べ替えることで、最年少の著者のリストを取得します。
+たとえば、次の SQL ステートメントは、 `authors`テーブルを`birth_year`列に従って降順 ( `DESC` ) にソートすることにより、最年少の著者のリストを取得します。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -254,7 +254,7 @@ public List<Author> getAuthorsSortByBirthYear() throws SQLException {
 
 ## クエリ結果の数を制限する {#limit-the-number-of-query-results}
 
-クエリ結果の数を制限するには、 `LIMIT`ステートメントを使用できます。
+クエリ結果の数を制限するには、 `LIMIT`ステートメントを使用します。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -317,13 +317,13 @@ public List<Author> getAuthorsWithLimit(Integer limit) throws SQLException {
 10 rows in set (0.11 sec)
 ```
 
-`LIMIT`ステートメントを使用すると、この例ではクエリ時間が`0.23 sec`から`0.11 sec`に大幅に短縮されます。詳細については、 [TopN と制限](/topn-limit-push-down.md)を参照してください。
+この例では、ステートメント`LIMIT`を使用すると、クエリ時間が`0.23 sec`から`0.11 sec`に大幅に短縮されます。詳細については、 [トップNとリミット](/topn-limit-push-down.md)を参照してください。
 
 ## 集計クエリ {#aggregate-queries}
 
-全体的なデータ状況をよりよく理解するために、 `GROUP BY`ステートメントを使用してクエリ結果を集計できます。
+データ全体の状況をより深く理解するには、 `GROUP BY`ステートメントを使用してクエリ結果を集計します。
 
-たとえば、より多くの著者が生まれた年を知りたい場合は、 `authors`テーブルを`birth_year`列でグループ化し、各年をカウントできます。
+たとえば、より多くの著者が生まれた年を知りたい場合は、 `authors`テーブルを`birth_year`列でグループ化し、年ごとにカウントします。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">

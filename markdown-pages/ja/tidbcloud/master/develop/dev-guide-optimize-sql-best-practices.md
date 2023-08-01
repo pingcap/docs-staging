@@ -3,15 +3,15 @@ title: Performance Tuning Best Practices
 summary: Introduces the best practices for tuning TiDB performance.
 ---
 
-# 性能チューニングのベスト プラクティス {#performance-tuning-best-practices}
+# 性能チューニングのベストプラクティス {#performance-tuning-best-practices}
 
-このドキュメントでは、TiDB データベースを使用するためのいくつかのベスト プラクティスを紹介します。
+このドキュメントでは、TiDB データベースを使用するためのベスト プラクティスをいくつか紹介します。
 
 ## DML のベスト プラクティス {#dml-best-practices}
 
-このセクションでは、TiDB で DML を使用する際のベスト プラクティスについて説明します。
+このセクションでは、TiDB で DML を使用する場合のベスト プラクティスについて説明します。
 
-### 複数行ステートメントを使用する {#use-multi-row-statements}
+### 複数行のステートメントを使用する {#use-multi-row-statements}
 
 テーブルの複数の行を変更する必要がある場合は、複数行のステートメントを使用することをお勧めします。
 
@@ -21,7 +21,7 @@ INSERT INTO t VALUES (1, 'a'), (2, 'b'), (3, 'c');
 DELETE FROM t WHERE id IN (1, 2, 3);
 ```
 
-複数の単一行ステートメントを使用することはお勧めしません。
+複数の単一行ステートメントを使用することはお勧めできません。
 
 ```sql
 INSERT INTO t VALUES (1, 'a');
@@ -35,7 +35,7 @@ DELETE FROM t WHERE id = 3;
 
 ### <code>PREPARE</code>を使用する {#use-code-prepare-code}
 
-SQL ステートメントを複数回実行する必要がある場合は、SQL 構文を繰り返し解析するオーバーヘッドを回避するために、 `PREPARE`ステートメントを使用することをお勧めします。
+SQL ステートメントを複数回実行する必要がある場合は、SQL 構文を繰り返し解析するオーバーヘッドを避けるために`PREPARE`ステートメントを使用することをお勧めします。
 
 <SimpleTab>
 <div label="Golang">
@@ -78,11 +78,11 @@ public void batchInsert(Connection connection) throws SQLException {
 </div>
 </SimpleTab>
 
-`PREPARE`ステートメントを繰り返し実行しないでください。そうしないと、実行効率を向上させることができません。
+`PREPARE`ステートメントを繰り返し実行しないでください。そうしないと実行効率が向上しません。
 
-### 必要な列のみをクエリする {#only-query-the-columns-you-need}
+### 必要な列のみをクエリします {#only-query-the-columns-you-need}
 
-すべての列のデータが必要ない場合は、 `SELECT *`を使用してすべての列のデータを返さないでください。次のクエリは非効率的です。
+すべての列のデータが必要ない場合は、すべての列のデータを返すために`SELECT *`を使用しないでください。次のクエリは非効率的です。
 
 ```sql
 SELECT * FROM books WHERE title = 'Marian Yost';
@@ -102,7 +102,7 @@ SELECT title, price FROM books WHERE title = 'Marian Yost';
 
 大量のデータを更新する場合は、 [一括更新](/develop/dev-guide-update-data.md#bulk-update)を使用することをお勧めします。
 
-### 完全なテーブル データには、 <code>DELETE</code>の代わりに<code>TRUNCATE</code>使用します {#use-code-truncate-code-instead-of-code-delete-code-for-full-table-data}
+### テーブル全体のデータには<code>DELETE</code>ではなく<code>TRUNCATE</code>使用してください {#use-code-truncate-code-instead-of-code-delete-code-for-full-table-data}
 
 テーブルからすべてのデータを削除する必要がある場合は、 `TRUNCATE`ステートメントを使用することをお勧めします。
 
@@ -110,7 +110,7 @@ SELECT title, price FROM books WHERE title = 'Marian Yost';
 TRUNCATE TABLE t;
 ```
 
-完全なテーブル データに`DELETE`を使用することはお勧めしません。
+完全なテーブル データに`DELETE`を使用することはお勧めできません。
 
 ```sql
 DELETE FROM t;
@@ -122,27 +122,27 @@ DELETE FROM t;
 
 ### 主キーのベスト プラクティス {#primary-key-best-practices}
 
-[主キーを選択するときに従う規則](/develop/dev-guide-create-table.md#guidelines-to-follow-when-selecting-primary-key)を参照してください。
+[主キーを選択するときに従うべきルール](/develop/dev-guide-create-table.md#guidelines-to-follow-when-selecting-primary-key)を参照してください。
 
-## インデックスのベスト プラクティス {#index-best-practices}
+## インデックスのベストプラクティス {#index-best-practices}
 
-[インデックスのベスト プラクティス](/develop/dev-guide-index-best-practice.md)を参照してください。
+[インデックスのベストプラクティス](/develop/dev-guide-index-best-practice.md)を参照してください。
 
 ### インデックスのベスト プラクティスを追加する {#add-index-best-practices}
 
-TiDB は、オンラインのインデックス追加操作をサポートしています。 [インデックスを追加](/sql-statements/sql-statement-add-index.md)つまたは[インデックスを作成](/sql-statements/sql-statement-create-index.md)ステートメントを使用してインデックスを追加できます。テーブルでのデータの読み取りと書き込みはブロックされません。次のシステム変数を変更することで、インデックス追加操作の`re-organize`フェーズ中に同時実行数とバッチ サイズを調整できます。
+TiDB は、オンラインのインデックス追加操作をサポートしています。 [インデックスの追加](/sql-statements/sql-statement-add-index.md)または[インデックスの作成](/sql-statements/sql-statement-create-index.md)ステートメントを使用してインデックスを追加できます。テーブル内のデータの読み取りと書き込みはブロックされません。次のシステム変数を変更することで、インデックス追加操作の`re-organize`フェーズ中に同時実行性とバッチ サイズを調整できます。
 
 -   [`tidb_ddl_reorg_worker_cnt`](/system-variables.md#tidb_ddl_reorg_worker_cnt)
 -   [`tidb_ddl_reorg_batch_size`](/system-variables.md#tidb_ddl_reorg_batch_size)
 
-オンライン アプリケーションへの影響を軽減するために、インデックスの追加操作の既定の速度は低速です。インデックスの追加操作のターゲット列が読み取り負荷のみを含むか、オンライン ワークロードに直接関係しない場合、上記の変数の値を適切に増やして、インデックスの追加操作を高速化できます。
+オンライン アプリケーションへの影響を軽減するために、インデックス追加操作のデフォルトの速度は遅くなります。インデックス追加操作のターゲット列が読み取り負荷のみを伴う場合、またはオンライン ワークロードに直接関係しない場合は、上記の変数の値を適切に増やしてインデックス追加操作を高速化できます。
 
 ```sql
 SET @@global.tidb_ddl_reorg_worker_cnt = 16;
 SET @@global.tidb_ddl_reorg_batch_size = 4096;
 ```
 
-インデックスの追加操作のターゲット列が頻繁に更新される場合 ( `UPDATE` 、 `INSERT` 、および`DELETE`を含む)、上記の変数を増やすと、より多くの書き込み競合が発生し、オンライン ワークロードに影響します。したがって、インデックスの追加操作は、一定の再試行により完了するまでに長い時間がかかる場合があります。この場合、上記の変数の値を減らして、オンライン アプリケーションとの書き込み競合を回避することをお勧めします。
+インデックス追加操作のターゲット列が頻繁に更新される場合 ( `UPDATE` 、 `INSERT` 、 `DELETE`を含む)、上記の変数を増やすと書き込み競合が増加し、オンライン ワークロードに影響します。したがって、再試行が繰り返されるため、インデックスの追加操作が完了するまでに時間がかかる可能性があります。この場合、オンライン アプリケーションとの書き込み競合を避けるために、上記の変数の値を減らすことをお勧めします。
 
 ```sql
 SET @@global.tidb_ddl_reorg_worker_cnt = 4;
@@ -153,31 +153,31 @@ SET @@global.tidb_ddl_reorg_batch_size = 128;
 
 <CustomContent platform="tidb">
 
-トランザクションの競合を特定して解決する方法については、 [ロック競合のトラブルシューティング](/troubleshoot-lock-conflicts.md)を参照してください。
+トランザクションの競合を特定して解決する方法については、 [ロックの競合のトラブルシューティング](/troubleshoot-lock-conflicts.md)を参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-トランザクションの競合を特定して解決する方法については、 [ロック競合のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts)を参照してください。
+トランザクションの競合を特定して解決する方法については、 [ロックの競合のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts)を参照してください。
 
 </CustomContent>
 
-## TiDB でJavaアプリケーションを開発するためのベスト プラクティス {#best-practices-for-developing-java-applications-with-tidb}
+## TiDB を使用したJavaアプリケーション開発のベスト プラクティス {#best-practices-for-developing-java-applications-with-tidb}
 
 <CustomContent platform="tidb">
 
-[TiDB でJavaアプリケーションを開発するためのベスト プラクティス](/best-practices/java-app-best-practices.md)を参照してください。
+[TiDB を使用したJavaアプリケーション開発のベスト プラクティス](/best-practices/java-app-best-practices.md)を参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[TiDB でJavaアプリケーションを開発するためのベスト プラクティス](https://docs.pingcap.com/tidb/stable/java-app-best-practices)を参照してください。
+[TiDB を使用したJavaアプリケーション開発のベスト プラクティス](https://docs.pingcap.com/tidb/stable/java-app-best-practices)を参照してください。
 
 </CustomContent>
 
-### こちらもご覧ください {#see-also}
+### こちらも参照 {#see-also}
 
 <CustomContent platform="tidb">
 

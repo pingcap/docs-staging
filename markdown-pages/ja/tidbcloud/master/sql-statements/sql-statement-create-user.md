@@ -5,13 +5,13 @@ summary: An overview of the usage of CREATE USER for the TiDB database.
 
 # ユーザーを作成 {#create-user}
 
-このステートメントは、パスワードで指定された新しいユーザーを作成します。 MySQL 特権システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。これにより、ＩＰアドレス`192.168.1.1`からしか接続できないユーザ`'newuser2'@'192.168.1.1'`を作成することができる。 2 人のユーザーが同じユーザー部分を持ち、異なるホストからログインするときに異なる権限を持つことも可能です。
+このステートメントは、パスワードを指定して新しいユーザーを作成します。 MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。これにより、ＩＰアドレス`192.168.1.1`からのみ接続可能なユーザ`'newuser2'@'192.168.1.1'`を作成することができる。 2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
 
 ## あらすじ {#synopsis}
 
 ```ebnf+diagram
 CreateUserStmt ::=
-    'CREATE' 'USER' IfNotExists UserSpecList RequireClauseOpt ConnectionOptions PasswordOption LockOption AttributeOption
+    'CREATE' 'USER' IfNotExists UserSpecList RequireClauseOpt ConnectionOptions PasswordOption LockOption AttributeOption ResourceGroupNameOption
 
 IfNotExists ::=
     ('IF' 'NOT' 'EXISTS')?
@@ -34,11 +34,13 @@ PasswordOption ::= ( 'PASSWORD' 'EXPIRE' ( 'DEFAULT' | 'NEVER' | 'INTERVAL' N 'D
 LockOption ::= ( 'ACCOUNT' 'LOCK' | 'ACCOUNT' 'UNLOCK' )?
 
 AttributeOption ::= ( 'COMMENT' CommentString | 'ATTRIBUTE' AttributeString )?
+
+ResourceGroupNameOption::= ( 'RESOURCE' 'GROUP' Identifier)?
 ```
 
 ## 例 {#examples}
 
-`newuserpassword`パスワードでユーザーを作成します。
+`newuserpassword`パスワードを使用してユーザーを作成します。
 
 ```sql
 mysql> CREATE USER 'newuser' IDENTIFIED BY 'newuserpassword';
@@ -76,7 +78,7 @@ CREATE USER 'newuser5'@'%' ACCOUNT LOCK;
 Query OK, 1 row affected (0.02 sec)
 ```
 
-コメント付きのユーザーを作成します。
+コメントを含むユーザーを作成します。
 
 ```sql
 CREATE USER 'newuser6'@'%' COMMENT 'This user is created only for test';
@@ -92,7 +94,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-属性が`email`のユーザーを作成します。
+`email`属性のユーザーを作成します。
 
 ```sql
 CREATE USER 'newuser7'@'%' ATTRIBUTE '{"email": "user@pingcap.com"}';
@@ -108,7 +110,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-過去 5 回のパスワードの再利用を許可しないユーザーを作成します。
+最新の 5 つのパスワードの再利用を許可しないユーザーを作成します。
 
 ```sql
 CREATE USER 'newuser8'@'%' PASSWORD HISTORY 5;
@@ -128,23 +130,39 @@ CREATE USER 'newuser9'@'%' PASSWORD EXPIRE;
 Query OK, 1 row affected (0.02 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+リソース グループ`rg1`を使用するユーザーを作成します。
 
-次の`CREATE USER`オプションは TiDB ではまだサポートされておらず、解析されますが無視されます。
+```sql
+CREATE USER 'newuser7'@'%' RESOURCE GROUP rg1;
+SELECT USER, HOST, USER_ATTRIBUTES FROM MYSQL.USER WHERE USER='newuser7';
+```
 
--   TiDB は、 `WITH MAX_QUERIES_PER_HOUR` 、 `WITH MAX_UPDATES_PER_HOUR` 、および`WITH MAX_USER_CONNECTIONS`オプションをサポートしていません。
+```sql
++----------+------+---------------------------+
+| USER     | HOST | USER_ATTRIBUTES           |
++----------+------+---------------------------+
+| newuser7 | %    | {"resource_group": "rg1"} |
++----------+------+---------------------------+
+1 rows in set (0.00 sec)
+```
+
+## MySQLの互換性 {#mysql-compatibility}
+
+次の`CREATE USER`オプションは TiDB ではまだサポートされていないため、解析されますが無視されます。
+
+-   TiDB は、 `WITH MAX_QUERIES_PER_HOUR` 、 `WITH MAX_UPDATES_PER_HOUR` 、および`WITH MAX_USER_CONNECTIONS`オプションをサポートしません。
 -   TiDB は`DEFAULT ROLE`オプションをサポートしていません。
--   TiDB は、パスワードに関連する`PASSWORD EXPIRE` 、 `PASSWORD HISTORY`またはその他のオプションをサポートしていません。
+-   TiDB は、パスワードに関連する`PASSWORD EXPIRE` 、 `PASSWORD HISTORY`またはその他のオプションをサポートしません。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 <CustomContent platform="tidb">
 
--   [MySQL とのSecurityの互換性](/security-compatibility-with-mysql.md)
+-   [MySQL とのSecurity互換性](/security-compatibility-with-mysql.md)
 -   [権限管理](/privilege-management.md)
 
 </CustomContent>
 
--   [ユーザーをドロップ](/sql-statements/sql-statement-drop-user.md)
+-   [ユーザーを削除する](/sql-statements/sql-statement-drop-user.md)
 -   [ユーザーの作成を表示](/sql-statements/sql-statement-show-create-user.md)
 -   [ユーザーの変更](/sql-statements/sql-statement-alter-user.md)

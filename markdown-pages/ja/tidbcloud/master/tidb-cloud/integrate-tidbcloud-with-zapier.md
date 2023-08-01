@@ -29,7 +29,7 @@ Zapier で[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
 -   回答[GitHub アカウント](https://github.com/login) ．
 -   A [TiDB Cloudアカウント](https://tidbcloud.com/signup)と TiDBTiDB Cloud上の TiDB サーバーレス クラスター。詳細については、 [TiDB Cloudクイック スタート](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart#step-1-create-a-tidb-cluster)を参照してください。
 
-### ステップ 1: テンプレートを入手する {#step-1-get-the-template}
+### ステップ 1: テンプレートを取得する {#step-1-get-the-template}
 
 [Zapier 上のTiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)に進みます。 **[Add new Github global events to TiDB rows]**テンプレートを選択し、 **[Try it]**をクリックします。次に、エディターページに入ります。
 

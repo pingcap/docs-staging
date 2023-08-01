@@ -51,7 +51,7 @@ EMPTY_REGION_COUNT: 1
 1 row in set (0.00 sec)
 ```
 
-`TABLE_STORAGE_STATS`テーブルのフィールドは次のとおりです。
+`TABLE_STORAGE_STATS`テーブルのフィールドは次のように説明されています。
 
 -   `TABLE_SCHEMA` : テーブルが属するスキーマの名前。
 -   `TABLE_NAME` : テーブルの名前。

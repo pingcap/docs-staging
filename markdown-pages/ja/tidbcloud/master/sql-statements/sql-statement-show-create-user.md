@@ -37,12 +37,12 @@ mysql> SHOW GRANTS FOR 'root';
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   `SHOW CREATE USER`の出力は MySQL と一致するように設計されていますが、 `CREATE`のオプションのいくつかはまだ TiDB でサポートされていません。まだサポートされていないオプションは解析されますが無視されます。詳細については、[セキュリティの互換性] を参照してください。
+-   `SHOW CREATE USER`の出力は MySQL と一致するように設計されていますが、 `CREATE`オプションのうちのいくつかは TiDB でまだサポートされていません。まだサポートされていないオプションは解析されますが、無視されます。詳細については、「セキュリティ互換性」を参照してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [ユーザーを作成](/sql-statements/sql-statement-create-user.md)
--   [助成金を表示](/sql-statements/sql-statement-show-grants.md)
--   [ユーザーをドロップ](/sql-statements/sql-statement-drop-user.md)
+-   [助成金を表示する](/sql-statements/sql-statement-show-grants.md)
+-   [ユーザーを削除する](/sql-statements/sql-statement-drop-user.md)

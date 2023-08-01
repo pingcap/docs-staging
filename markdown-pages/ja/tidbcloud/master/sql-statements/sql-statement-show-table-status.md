@@ -3,9 +3,9 @@ title: SHOW TABLE STATUS | TiDB SQL Statement Reference
 summary: An overview of the usage of SHOW TABLE STATUS for the TiDB database.
 ---
 
-# テーブルの状態を表示 {#show-table-status}
+# テーブルステータスを表示 {#show-table-status}
 
-このステートメントは、TiDB 内のテーブルに関するさまざまな統計を表示します。統計が古くなっているように見える場合は、 [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)を実行することをお勧めします。
+このステートメントは、TiDB 内のテーブルに関するさまざまな統計を示します。統計が古いと思われる場合は、 [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)を実行することをお勧めします。
 
 ## あらすじ {#synopsis}
 
@@ -13,11 +13,11 @@ summary: An overview of the usage of SHOW TABLE STATUS for the TiDB database.
 
 ![ShowTableStatusStmt](https://download.pingcap.com/images/docs/sqlgram/ShowTableStatusStmt.png)
 
-**FromOrIn:**
+**送信者または受信者:**
 
 ![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
 
-**ステータス テーブル名:**
+**ステータステーブル名:**
 
 ![StatusTableName](https://download.pingcap.com/images/docs/sqlgram/StatusTableName.png)
 
@@ -79,13 +79,13 @@ Max_data_length: 0
 1 row in set (0.00 sec)
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL と完全に互換性があると理解されています。互換性の違いは、GitHub で[問題を介して報告された](https://github.com/pingcap/tidb/issues/new/choose)にする必要があります。
+TiDB の`SHOW TABLE STATUS`ステートメントは MySQL と完全な互換性があります。互換性の違いを見つけた場合は、 [GitHub の問題](https://github.com/pingcap/tidb/issues/new/choose)を介して報告してください。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [テーブルを表示](/sql-statements/sql-statement-show-tables.md)
--   [テーブルを作成](/sql-statements/sql-statement-create-table.md)
+-   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [ドロップテーブル](/sql-statements/sql-statement-drop-table.md)
 -   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)

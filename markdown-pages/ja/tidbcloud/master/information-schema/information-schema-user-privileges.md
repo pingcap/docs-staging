@@ -5,7 +5,7 @@ summary: Learn the `USER_PRIVILEGES` information_schema table.
 
 # USER_PRIVILEGES {#user-privileges}
 
-表`USER_PRIVILEGES`は、グローバル権限に関する情報を提供します。この情報は、 `mysql.user`システム テーブルから取得されます。
+表`USER_PRIVILEGES`は、グローバル権限に関する情報を示します。この情報は`mysql.user`システム テーブルから取得されます。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -26,7 +26,7 @@ DESC USER_PRIVILEGES;
 4 rows in set (0.00 sec)
 ```
 
-`USER_PRIVILEGES`テーブルの情報をビュー。
+`USER_PRIVILEGES`の表の情報をビュー。
 
 ```sql
 SELECT * FROM USER_PRIVILEGES;
@@ -79,7 +79,7 @@ SELECT * FROM USER_PRIVILEGES;
 
 <CustomContent platform="tidb-cloud">
 
-<!--Compared with on-premises TiDB, the root user in TiDB Cloud does not have the SHUTDOWN and CONFIG privileges.-->
+<!--Compared with TiDB Self-Hosted, the root user in TiDB Cloud does not have the SHUTDOWN and CONFIG privileges.-->
 
 ```sql
 +------------+---------------+-------------------------+--------------+
@@ -120,9 +120,9 @@ SELECT * FROM USER_PRIVILEGES;
 
 </CustomContent>
 
-`USER_PRIVILEGES`テーブルのフィールドは次のとおりです。
+`USER_PRIVILEGES`テーブルのフィールドは次のように説明されています。
 
--   `GRANTEE` : 付与されたユーザーの名前。形式は`'user_name'@'host_name'`です。
+-   `GRANTEE` : 許可されたユーザーの名前。形式は`'user_name'@'host_name'`です。
 -   `TABLE_CATALOG` : テーブルが属するカタログの名前。この値は常に`def`です。
--   `PRIVILEGE_TYPE` : 付与される権限タイプ。各行には 1 つの特権タイプのみが表示されます。
--   `IS_GRANTABLE` : `GRANT OPTION`権限を持っている場合、値は`YES`です。それ以外の場合、値は`NO`です。
+-   `PRIVILEGE_TYPE` : 付与される権限のタイプ。各行には 1 つの権限タイプのみが表示されます。
+-   `IS_GRANTABLE` : `GRANT OPTION`権限がある場合、値は`YES`です。それ以外の場合、値は`NO`です。

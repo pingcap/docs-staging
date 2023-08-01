@@ -56,11 +56,15 @@ TiDB Cloudは99.99% の SLA を提供します。詳細は[TiDB Cloudサービ�
 
 ### TiDB Cloudについてさらに詳しく知るにはどうすればよいですか? {#how-can-i-learn-more-about-tidb-cloud}
 
-TiDB Cloudについて学ぶ最良の方法は、ステップバイステップのチュートリアルに従うことです。開始するには、次のトピックを確認してください。
+TiDB Cloudについて学ぶ最善の方法は、ステップバイステップのチュートリアルに従うことです。開始するには、次のトピックを確認してください。
 
 -   [TiDB Cloudの紹介](/tidb-cloud/tidb-cloud-intro.md)
 -   [始めましょう](/tidb-cloud/tidb-cloud-quickstart.md)
 -   [TiDB サーバーレスクラスタの作成](/tidb-cloud/create-tidb-cluster-serverless.md)
+
+### クラスターを削除する場合、 <code>XXX&#39;s Org/default project/Cluster0</code>は何を参照しますか? {#what-does-code-xxx-s-org-default-project-cluster0-code-refer-to-when-deleting-a-cluster}
+
+TiDB Cloudでは、クラスターは組織名、プロジェクト名、クラスター名の組み合わせによって一意に識別されます。目的のクラスターを確実に削除するには、そのクラスターの完全修飾名 ( `XXX's Org/default project/Cluster0`など) を指定する必要があります。
 
 ## アーキテクチャに関するよくある質問 {#architecture-faqs}
 
@@ -94,7 +98,7 @@ Software as a Service (SaaS) プロバイダーとして、当社はデータの
 
 ### 別の RDBMS からTiDB Cloudへの簡単な移行パスはありますか? {#is-there-an-easy-migration-path-from-another-rdbms-to-tidb-cloud}
 
-TiDB は MySQL と高い互換性があります。データがセルフホスト型 MySQL インスタンスからのものであっても、パブリック クラウドによって提供される RDS サービスからのものであっても、MySQL 互換データベースから TiDB にスムーズにデータを移行できます。詳細については、 [MySQL 互換データベースからのデータの移行](/tidb-cloud/migrate-data-into-tidb.md)を参照してください。
+TiDB は MySQL と高い互換性があります。データがセルフホスト型 MySQL インスタンスからのものであっても、パブリック クラウドによって提供される RDS サービスからのものであっても、MySQL 互換データベースから TiDB にスムーズにデータを移行できます。詳細については、 [データ移行を使用して MySQL 互換データベースをTiDB Cloudに移行する](/tidb-cloud/migrate-from-mysql-using-data-migration.md)を参照してください。
 
 ## バックアップと復元に関するFAQ {#backup-and-restore-faq}
 

@@ -7,6 +7,13 @@ summary: Learn How to manage TiDB Serverless branches.
 
 このドキュメントでは、 [TiDB Cloudコンソール](https://tidbcloud.com)を使用して TiDB サーバーレス ブランチを管理する方法について説明します。 TiDB Cloud CLI を使用して管理するには、 [`ticloud branch`](/tidb-cloud/ticloud-branch-create.md)を参照してください。
 
+## 必要なアクセス {#required-access}
+
+-   [ブランチを作成する](#create-a-branch)または[ブランチに接続する](#connect-to-a-branch)を行うには、組織の`Organization Owner`役割、または対象プロジェクトの`Project Owner`役割に属している必要があります。
+-   プロジェクト内のクラスターの[ブランチを表示する](#create-a-branch)は、そのプロジェクトに属している必要があります。
+
+権限の詳細については、 [ユーザーの役割](/tidb-cloud/manage-user-access.md#user-roles)を参照してください。
+
 ## ブランチを作成する {#create-a-branch}
 
 > **ノート：**

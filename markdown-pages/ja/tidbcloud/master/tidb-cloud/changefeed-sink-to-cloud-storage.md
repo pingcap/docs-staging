@@ -28,7 +28,7 @@ Summary: Learn how to create a changefeed to stream data from a TiDB Dedicated c
 
     ![create changefeed to sink to s3](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-s3-01-create-changefeed.jpg)
 
-4.  **[次へ]**をクリックして、TiDB 専用クラスターから Amazon S3 への接続を確立します。 TiDB Cloud は、接続が成功したかどうかを自動的にテストして検証します。
+4.  **「次へ」**をクリックして、TiDB 専用クラスターから Amazon S3 への接続を確立します。 TiDB Cloud は、接続が成功したかどうかを自動的にテストして検証します。
 
     -   「はい」の場合、次の構成ステップに進みます。
     -   そうでない場合は、接続エラーが表示されるため、エラーを処理する必要があります。エラーが解決したら、 **「次へ」**をクリックして接続を再試行します。

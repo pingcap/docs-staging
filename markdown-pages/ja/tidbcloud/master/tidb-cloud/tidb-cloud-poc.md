@@ -63,7 +63,7 @@ PoC 用に[TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラ�
 1.  次のいずれかの方法で PoC 申請フォームに記入します。
 
     -   PingCAP Web サイトの[PoC に応募する](https://pingcap.com/apply-for-poc/)ページに移動して、申請フォームに記入します。
-    -   [TiDB Cloudコンソール](https://tidbcloud.com/)で、 **「?」**をクリックします。右下隅にある**[サポートのリクエスト]**をクリックし、 **[PoC に申請] を**選択して申請フォームに記入します。
+    -   [TiDB Cloudコンソール](https://tidbcloud.com/)で、 **「?」**をクリックします。右下隅にある**[Contact Sales]**をクリックし、 **[PoC に申請] を**選択して申請フォームに記入します。
 
     フォームを送信すると、 TiDB Cloudサポート チームが申請を審査し、連絡し、申請が承認されたらアカウントにクレジットを転送します。 PingCAP サポート エンジニアに連絡して、PoC 手順を支援して、PoC ができるだけスムーズに実行されるようにすることもできます。
 
@@ -71,7 +71,7 @@ PoC 用に[TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラ�
 
 クラスターを作成する前に、クラスターのサイジングについてキャパシティ プランニングを行うことをお勧めします。 TiDB、TiKV、またはTiFlashノードの推定数から開始し、パフォーマンス要件を満たすために後でクラスターをスケールアウトできます。詳細については、次のドキュメントを参照するか、サポート チームにお問い合わせください。
 
--   推定方法の詳細については、 [TiDB のサイズを設定する](/tidb-cloud/size-your-cluster.md)を参照してください。
+-   推定方法の詳細については、 [TiDB のサイズを調整する](/tidb-cloud/size-your-cluster.md)を参照してください。
 -   TiDB 専用クラスターの構成については、 [TiDB 専用クラスタの作成](/tidb-cloud/create-tidb-cluster.md)を参照してください。 TiDB、TiKV、 TiFlash (オプション) のクラスター サイズをそれぞれ構成します。
 -   PoC クレジットの消費を効果的に計画および最適化する方法については、このドキュメントの[FAQ](#faq)を参照してください。
 -   スケーリングの詳細については、 [TiDBクラスタを拡張する](/tidb-cloud/scale-tidb-cluster.md)を参照してください。
@@ -116,15 +116,15 @@ SQL ステートメントの場合は、データ ソースの TiDB との互換
 
 さまざまな形式のデータをTiDB Cloudにインポートできます。
 
+-   [データ移行を使用して MySQL 互換データベースをTiDB Cloudに移行する](/tidb-cloud/migrate-from-mysql-using-data-migration.md)
+-   [ローカル ファイルをTiDB Cloudにインポートする](/tidb-cloud/tidb-cloud-import-local-files.md)
 -   [SQLファイル形式でサンプルデータをインポートする](/tidb-cloud/import-sample-data.md)
--   [Amazon Aurora MySQL からの移行](/tidb-cloud/migrate-from-aurora-bulk-import.md)
 -   [Amazon S3 または GCS から CSV ファイルをインポートする](/tidb-cloud/import-csv-files.md)
 -   [Apache Parquet ファイルをインポートする](/tidb-cloud/import-parquet-files.md)
 
 > **ノート：**
 >
-> -   TiDB Cloudでサポートされる文字照合順序については、 [MySQL 互換データベースからの移行](/tidb-cloud/migrate-data-into-tidb.md)を参照してください。データが元々どのように保存されているかを理解することは非常に役立ちます。
-> -   **データ インポート**ページでのデータ インポートでは、追加の請求料金は発生しません。
+> **[インポート]**ページでのデータのインポートでは、追加の請求料金は発生しません。
 
 ## ステップ 6. ワークロードを実行して結果を評価する {#step-6-run-your-workload-and-evaluate-results}
 
@@ -175,7 +175,7 @@ SQL ステートメントの場合は、データ ソースの TiDB との互換
 
 -   バックアップ
 
-    ベンダー ロックインを回避するには、毎日の完全バックアップを使用してデータを新しいクラスターに移行し、 [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)を使用してデータをエクスポートします。詳細については、 [TiDB からデータをエクスポート](/tidb-cloud/export-data-from-tidb-cloud.md)を参照してください。
+    ベンダー ロックインを回避するには、毎日の完全バックアップを使用してデータを新しいクラスターに移行し、 [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)を使用してデータをエクスポートします。詳細については、 [TiDB 専用データのバックアップと復元](/tidb-cloud/backup-and-restore.md#backup)および[TiDB 専用データのバックアップと復元](/tidb-cloud/backup-and-restore-serverless.md#backup)参照してください。
 
 ## ステップ 8. 環境をクリーンアップして PoC を終了する {#step-8-clean-up-the-environment-and-finish-the-poc}
 
@@ -185,7 +185,7 @@ TiDB Cloudが提供する他のノードstorageサイズでの展開など、新
 
 クレジットが残り少なくなり、PoC を続行したい場合は、 [TiDB Cloudのサポート](/tidb-cloud/tidb-cloud-support.md)に連絡して相談してください。
 
-PoC をいつでも終了してテスト環境を削除できます。詳細については、 [TiDBクラスタの削除](/tidb-cloud/delete-tidb-cluster.md)を参照してください。
+PoC はいつでも終了してテスト環境を削除できます。詳細については、 [TiDBクラスタの削除](/tidb-cloud/delete-tidb-cluster.md)を参照してください。
 
 PoC プロセス、機能リクエスト、製品の改善方法など、サポート チームへのフィードバックは[TiDB Cloudフィードバック フォーム](https://www.surveymonkey.com/r/L3VVW8R)に記入していただければ幸いです。
 

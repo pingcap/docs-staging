@@ -25,14 +25,14 @@ TiDB Cloud は、 TiDB がサポートするほぼすべてのワークロード
 
 ### リソースグループ {#resource-groups}
 
-| 声明                           | TiDB専用     | TiDB サーバーレス     |
-| :--------------------------- | :--------- | :-------------- |
-| `ALTER RESOURCE GROUP`       | サポートされています | サポートされていません[^2] |
-| `CALIBRATE RESOURCE`         | サポートされています | サポートされていません[^2] |
-| `CREATE RESOURCE GROUP`      | サポートされています | サポートされていません[^2] |
-| `DROP RESOURCE GROUP`        | サポートされています | サポートされていません[^2] |
-| `SET RESOURCE GROUP`         | サポートされています | サポートされていません[^2] |
-| `SHOW CREATE RESOURCE GROUP` | サポートされています | サポートされていません[^2] |
+| 声明                           | TiDB専用      | TiDB サーバーレス     |
+| :--------------------------- | :---------- | :-------------- |
+| `ALTER RESOURCE GROUP`       | サポートされています  | サポートされていません[^2] |
+| `CALIBRATE RESOURCE`         | サポートされていません | サポートされていません[^2] |
+| `CREATE RESOURCE GROUP`      | サポートされています  | サポートされていません[^2] |
+| `DROP RESOURCE GROUP`        | サポートされています  | サポートされていません[^2] |
+| `SET RESOURCE GROUP`         | サポートされています  | サポートされていません[^2] |
+| `SHOW CREATE RESOURCE GROUP` | サポートされています  | サポートされていません[^2] |
 
 ### その他 {#others}
 
@@ -53,6 +53,7 @@ TiDB Cloud は、 TiDB がサポートするほぼすべてのワークロード
 | `CHANGE PUMP`                    | サポートされていません[^7]                | サポートされていません[^7]                  |
 | `FLASHBACK CLUSTER TO TIMESTAMP` | サポートされています                     | サポートされていません[^3]                  |
 | `LOAD STATS`                     | サポートされています                     | サポートされていません                      |
+| `SELECT ... INTO OUTFILE`        | サポートされていません[^4]                | サポートされていません[^4]                  |
 | `SET CONFIG`                     | サポートされていません[^4]                | サポートされていません[^4]                  |
 | `SHOW CONFIG`                    | サポートされていません[^4]                | サポートされていません[^4]                  |
 | `SHOW DRAINER STATUS`            | サポートされていません[^7]                | サポートされていません[^7]                  |
@@ -191,11 +192,6 @@ TiDB Cloud は、 TiDB がサポートするほぼすべてのワークロード
 | `tidb_slow_log_threshold`                 | サポートされていません[^4] | サポートされていません[^4]                   |
 | `tidb_slow_txn_log_threshold`             | サポートされていません[^4] | サポートされていません[^4]                   |
 | `tidb_stats_load_sync_wait`               | 制限なし            | 読み取り専用[^11]                       |
-| `tidb_stmt_summary_enable_persistent`     | 制限なし            | 読み取り専用[^11]                       |
-| `tidb_stmt_summary_file_max_backups`      | 制限なし            | 読み取り専用[^11]                       |
-| `tidb_stmt_summary_file_max_days`         | 制限なし            | 読み取り専用[^11]                       |
-| `tidb_stmt_summary_file_max_size`         | 制限なし            | 読み取り専用[^11]                       |
-| `tidb_stmt_summary_filename`              | 制限なし            | 読み取り専用[^11]                       |
 | `tidb_stmt_summary_history_size`          | 制限なし            | 読み取り専用[^11]                       |
 | `tidb_stmt_summary_internal_query`        | 制限なし            | 読み取り専用[^11]                       |
 | `tidb_stmt_summary_max_sql_length`        | 制限なし            | 読み取り専用[^11]                       |

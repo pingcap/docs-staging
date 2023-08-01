@@ -5,7 +5,7 @@ summary: An overview of the usage of FLUSH TABLES for the TiDB database.
 
 # フラッシュテーブル {#flush-tables}
 
-このステートメントは、MySQL との互換性のために含まれています。 TiDB では有効な使い方がありません。
+このステートメントは、MySQL との互換性のために組み込まれています。 TiDB では効果的な使用法がありません。
 
 ## あらすじ {#synopsis}
 
@@ -48,11 +48,11 @@ mysql> FLUSH TABLES WITH READ LOCK;
 ERROR 1105 (HY000): FLUSH TABLES WITH READ LOCK is not supported.  Please use @@tidb_snapshot
 ```
 
-## MySQL の互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   TiDB には、MySQL のようなテーブル キャッシュの概念がありません。したがって、 `FLUSH TABLES`は解析されますが、互換性のために TiDB では無視されます。
--   TiDB は現在テーブルのロックをサポートしていないため、ステートメント`FLUSH TABLES WITH READ LOCK`エラーを生成します。代わりに、この目的のために[過去の読み取り](/read-historical-data.md)を使用することをお勧めします。
+-   TiDB には、MySQL のようなテーブル キャッシュの概念がありません。したがって、 `FLUSH TABLES`は解析されますが、TiDB では互換性のために無視されます。
+-   TiDB は現在テーブルのロックをサポートしていないため、ステートメント`FLUSH TABLES WITH READ LOCK`ではエラーが発生します。この目的には代わりに[履歴読み取り](/read-historical-data.md)を使用することをお勧めします。
 
-## こちらもご覧ください {#see-also}
+## こちらも参照 {#see-also}
 
 -   [履歴データの読み取り](/read-historical-data.md)
