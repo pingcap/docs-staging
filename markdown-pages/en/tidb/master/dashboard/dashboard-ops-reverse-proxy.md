@@ -185,9 +185,9 @@ For a deployed cluster:
 3. Perform a rolling restart to all PD instances for the modified configuration to take effect (replace `CLUSTER_NAME` with your cluster name):
 
     
-   ```shell
-   tiup cluster reload CLUSTER_NAME -R pd
-   ```
+    ```shell
+    tiup cluster reload CLUSTER_NAME -R pd
+    ```
 
 See [Common TiUP Operations - Modify the configuration](/maintain-tidb-using-tiup.md#modify-the-configuration) for details.
 
