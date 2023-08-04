@@ -89,7 +89,7 @@ kind: TidbCluster
 metadata:
   name: asts
 spec:
-  version: v7.1.0
+  version: v7.1.1
   timezone: UTC
   pvReclaimPolicy: Delete
   pd:
@@ -139,7 +139,7 @@ metadata:
     tikv.tidb.pingcap.com/delete-slots: '[1]'
   name: asts
 spec:
-  version: v7.1.0
+  version: v7.1.1
   timezone: UTC
   pvReclaimPolicy: Delete
   pd:
@@ -192,7 +192,7 @@ metadata:
     tikv.tidb.pingcap.com/delete-slots: '[]'
   name: asts
 spec:
-  version: v7.1.0
+  version: v7.1.1
   timezone: UTC
   pvReclaimPolicy: Delete
   pd:
