@@ -83,7 +83,7 @@
       "archived": ["v2.0", "v1.0"]
     },
     "tidb-in-kubernetes": {
-      "stable": "release-1.4",
+      "stable": "release-1.5",
       "languages": {
         "en": {
           "repo": "pingcap/docs-tidb-operator",
@@ -96,7 +96,7 @@
           "versions": ["master", "release-1.5", "release-1.4", "release-1.3", "release-1.2"]
         }
       },
-      "deprecated": ["v1.3", "v1.2"],
+      "deprecated": ["1.4", "v1.3", "v1.2"],
       "archived": ["v1.1", "v1.0"]
     },
     "tidbcloud": {
