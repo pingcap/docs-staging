@@ -44,6 +44,7 @@
         "ja": {
           "repo": "pingcap/docs",
           "versions": [
+            "release-7.3",
             "release-7.2",
             "release-7.1",
             "release-7.0",
