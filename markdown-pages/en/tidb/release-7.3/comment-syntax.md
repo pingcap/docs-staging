@@ -11,7 +11,6 @@ TiDB supports three comment styles:
 
 - Use `#` to comment a line:
 
-    
     ```sql
     SELECT 1+1;     # comments
     ```
