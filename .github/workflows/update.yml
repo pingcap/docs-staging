@@ -22,6 +22,8 @@ on:
         default: false
         required: false
 
+concurrency: ${{ github.workflow }}
+
 jobs:
   build:
     concurrency: update-${{ inputs.repo }}-${{ inputs.branch }}
