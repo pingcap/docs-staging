@@ -28,7 +28,7 @@ jobs:
   build:
     concurrency: update-${{ inputs.repo }}-${{ inputs.branch }}
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v3
