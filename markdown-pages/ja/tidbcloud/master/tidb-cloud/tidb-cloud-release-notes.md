@@ -8,6 +8,65 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
 このページには 2023 年[TiDB Cloud](https://www.pingcap.com/tidb-cloud/)のリリースノートが記載されています。
 
+## 2023 年 9 月 5 日 {#september-5-2023}
+
+**一般的な変更点**
+
+-   [データサービス（ベータ版）](https://tidbcloud.com/console/data-service) 、さまざまな状況での特定のレート制限要件を満たすために、各 API キーのレート制限をカスタマイズすることをサポートします。
+
+    API キーを[作成する](/tidb-cloud/data-service-api-key.md#create-an-api-key)または[編集](/tidb-cloud/data-service-api-key.md#edit-an-api-key)にすると、そのレート制限を調整できます。
+
+    詳細については、 [レート制限](/tidb-cloud/data-service-api-key.md#rate-limiting)を参照してください。
+
+-   [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターの新しい AWS リージョンをサポートします: サンパウロ (sa-east-1)。
+
+-   [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)つのクラスターごとに、IP アクセス リストへの最大 100 個の IP アドレスの追加をサポートします。
+
+    詳細については、 [IPアクセスリストを設定する](/tidb-cloud/configure-ip-access-list.md)を参照してください。
+
+**コンソールの変更**
+
+-   [TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless)クラスターの**「イベント」**ページを導入します。このページには、クラスターに対する主な変更の記録が表示されます。
+
+    このページでは、過去 7 日間のイベント履歴を表示し、トリガー時間やアクションを開始したユーザーなどの重要な詳細を追跡できます。
+
+    詳細については、 [TiDB Cloudクラスター イベント](/tidb-cloud/tidb-cloud-events.md)を参照してください。
+
+**APIの変更**
+
+-   [AWS プライベートリンク](https://aws.amazon.com/privatelink/?privatelink-blogs.sort-by=item.additionalFields.createdDate&#x26;privatelink-blogs.sort-order=desc)または[Google Cloud プライベート サービス コネクト](https://cloud.google.com/vpc/docs/private-service-connect) for [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターを管理するためのいくつかのTiDB CloudAPI エンドポイントをリリースします。
+
+    -   クラスターのプライベート エンドポイント サービスを作成する
+    -   クラスターのプライベート エンドポイント サービス情報を取得する
+    -   クラスターのプライベート エンドポイントを作成する
+    -   クラスターのすべてのプライベート エンドポイントを一覧表示する
+    -   プロジェクト内のすべてのプライベート エンドポイントを一覧表示する
+    -   クラスターのプライベート エンドポイントを削除する
+
+    詳細については、 [APIドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster)を参照してください。
+
+## 2023 年 8 月 23 日 {#august-23-2023}
+
+**一般的な変更点**
+
+-   [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターの Google Cloud [プライベートサービス接続](https://cloud.google.com/vpc/docs/private-service-connect)をサポートします。
+
+    プライベート エンドポイントを作成し、Google Cloud でホストされている TiDB 専用クラスタへの安全な接続を確立できるようになりました。
+
+    主な利点：
+
+    -   直感的な操作: わずか数ステップでプライベート エンドポイントを作成できます。
+    -   セキュリティの強化: 安全な接続を確立してデータを保護します。
+    -   パフォーマンスの向上: 低遅延で高帯域幅の接続を提供します。
+
+    詳細については、 [プライベート エンドポイント経由で Google Cloud に接続する](/tidb-cloud/set-up-private-endpoint-connections-on-google-cloud.md)を参照してください。
+
+-   チェンジフィードを使用した[TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターから[Google クラウド ストレージ (GCS)](https://cloud.google.com/storage)へのデータのストリーミングをサポートします。
+
+    自分のアカウントのバケットを使用し、正確に調整された権限を提供することで、 TiDB Cloudから GCS にデータをストリーミングできるようになりました。データを GCS にレプリケートした後、必要に応じてデータの変更を分析できます。
+
+    詳細については、 [クラウドストレージにシンクする](/tidb-cloud/changefeed-sink-to-cloud-storage.md)を参照してください。
+
 ## 2023 年 8 月 15 日 {#august-15-2023}
 
 **一般的な変更点**
@@ -62,7 +121,7 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
     詳細については、 [OpenAPI仕様を使用する](/tidb-cloud/data-service-manage-data-app.md#use-the-openapi-specification)および[Next.js で OpenAPI 仕様を使用する](/tidb-cloud/data-service-oas-with-nextjs.md)を参照してください。
 
--   Postman でのデータ アプリの実行をサポートします。
+-   [郵便屋さん](https://www.postman.com/)でデータ アプリの実行をサポートします。
 
     Postman の統合により、データ アプリのエンドポイントをコレクションとして好みのワークスペースにインポートできるようになります。これにより、Postman Web アプリとデスクトップ アプリの両方をサポートする強化されたコラボレーションとシームレスな API テストの恩恵を受けることができます。
 
@@ -215,7 +274,7 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
     この機能強化により、TiDB 専用クラスターのデータstorage容量が増加し、ワークロードのスケーリング効率が向上し、増大するデータ要件に対応できます。
 
-    詳細については、 [クラスターのサイズを設定する](/tidb-cloud/size-your-cluster.md)を参照してください。
+    詳細については、 [クラスターのサイズを調整する](/tidb-cloud/size-your-cluster.md)を参照してください。
 
 -   [モニタリングメトリクスの保持期間](/tidb-cloud/built-in-monitoring.md#metrics-retention-policy) for [TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless)クラスターを 3 日間から 7 日間に延長します。
 
@@ -289,7 +348,7 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
 -   TiDB Cloudのデータ移行機能の増分データ移行のサポートを強化します。
 
-    binlog位置またはグローバル トランザクション識別子 (GTID) を指定して、指定された位置の後に生成された増分データのみをTiDB Cloudに複製できるようになりました。この機能強化により、特定の要件に合わせて、必要なデータをより柔軟に選択して複製できるようになります。
+    binlog位置またはグローバル トランザクション識別子 (GTID) を指定して、指定された位置以降に生成された増分データのみをTiDB Cloudに複製できるようになりました。この機能強化により、特定の要件に合わせて、必要なデータをより柔軟に選択して複製できるようになります。
 
     詳細は[データ移行を使用して、MySQL 互換データベースからTiDB Cloudに増分データのみを移行する](/tidb-cloud/migrate-incremental-data-from-mysql-using-data-migration.md)を参照してください。
 
@@ -465,11 +524,11 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
 **コンソールの変更**
 
--   [Dedicated Tier](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターの[監視](/tidb-cloud/built-in-monitoring.md#view-the-metrics-page)ページを[ノードレベルのリソースメトリック](/tidb-cloud/built-in-monitoring.md#server)を使用するように更新します。
+-   [Dedicated Tier](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターの[監視](/tidb-cloud/built-in-monitoring.md#view-the-metrics-page)ページを更新して、 [ノードレベルのリソースメトリック](/tidb-cloud/built-in-monitoring.md#server)を使用します。
 
     ノードレベルのリソースメトリクスを使用すると、リソース消費をより正確に表示して、購入したサービスの実際の使用状況をより深く理解できます。
 
-    これらのメトリックにアクセスするには、クラスターの[監視](/tidb-cloud/built-in-monitoring.md#view-the-metrics-page)ページに移動し、 **[メトリック]**タブの**[サーバー]**カテゴリを確認します。
+    これらのメトリックにアクセスするには、クラスターの[監視](/tidb-cloud/built-in-monitoring.md#view-the-metrics-page)ページに移動し、 **[メトリック]**タブの [**サーバー]**カテゴリを確認します。
 
 -   **「プロジェクト別集計」**と**「サービス別集計」**の請求項目を再整理し、請求内容をよりわかりやすく[請求する](/tidb-cloud/tidb-cloud-billing.md#billing-details)ページを最適化しました。
 
