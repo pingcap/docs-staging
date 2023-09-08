@@ -18,7 +18,7 @@ TiDB Cloudロードマップには、近い将来に何が提供されるかが�
 <table>
   <thead>
     <tr>
-      ドメイン</th><th>特徴</th><th>説明
+      <th>ドメイン</th><th>特徴</th><th>説明</th>
     </tr>
   </thead>
 
