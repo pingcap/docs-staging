@@ -30,17 +30,21 @@ TiDB は MySQL 互換データベース、 [AWSラムダ関数](https://aws.amaz
 -   [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
 
 <CustomContent platform="tidb">
-  **TiDB クラスターがない場合は、次のように作成できます。**
 
-  -   (推奨) [TiDB サーバーレスクラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
-  -   [ローカル テスト TiDB クラスターをデプロイ](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[本番TiDB クラスターをデプロイ](/production-deployment-using-tiup.md)に従ってローカル クラスターを作成します。
+**TiDB クラスターがない場合は、次のように作成できます。**
+
+-   (推奨) [TiDB サーバーレスクラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   [ローカル テスト TiDB クラスターをデプロイ](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[本番TiDB クラスターをデプロイ](/production-deployment-using-tiup.md)に従ってローカル クラスターを作成します。
+
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
-  **TiDB クラスターがない場合は、次のように作成できます。**
 
-  -   (推奨) [TiDB サーバーレスクラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
-  -   [ローカル テスト TiDB クラスターをデプロイ](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)または[本番TiDB クラスターをデプロイ](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)に従ってローカル クラスターを作成します。
+**TiDB クラスターがない場合は、次のように作成できます。**
+
+-   (推奨) [TiDB サーバーレスクラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   [ローカル テスト TiDB クラスターをデプロイ](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)または[本番TiDB クラスターをデプロイ](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)に従ってローカル クラスターを作成します。
+
 </CustomContent>
 
 AWS アカウントまたはユーザーをお持ちでない場合は、 [Lambda の入門](https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html)ガイドの手順に従って作成できます。
@@ -75,61 +79,65 @@ npm install
 選択した TiDB デプロイメント オプションに応じて、TiDB クラスターに接続します。
 
 <SimpleTab>
-  <div label="TiDB Serverless">
-    1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして、その概要ページに移動します。
+<div label="TiDB Serverless">
 
-    2.  右上隅にある**「接続」**をクリックします。接続ダイアログが表示されます。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして、その概要ページに移動します。
 
-    3.  接続ダイアログの設定が動作環境と一致していることを確認してください。
+2.  右上隅にある**「接続」**をクリックします。接続ダイアログが表示されます。
 
-        -   **エンドポイント タイプは**`Public`に設定されます
+3.  接続ダイアログの設定が動作環境と一致していることを確認してください。
 
-        -   **[接続先] は**`General`に設定されています
+    -   **エンドポイント タイプは**`Public`に設定されます
 
-        -   **オペレーティング システムが**環境に一致します。
+    -   **[接続先] は**`General`に設定されています
 
-        > **注記**
-        >
-        > Node.js アプリケーションでは、TLS (SSL) 接続を確立するときにデフォルトで組み込みの[Mozilla CA 証明書](https://wiki.mozilla.org/CA/Included_Certificates)を使用するため、SSL CA 証明書を提供する必要はありません。
+    -   **オペレーティング システムが**環境に一致します。
 
-    4.  **「パスワードの作成」**をクリックしてランダムなパスワードを作成します。
+    > **注記**
+    >
+    > Node.js アプリケーションでは、TLS (SSL) 接続を確立するときにデフォルトで組み込みの[Mozilla CA 証明書](https://wiki.mozilla.org/CA/Included_Certificates)を使用するため、SSL CA 証明書を提供する必要はありません。
 
-        > **ヒント**
-        >
-        > 以前にパスワードを生成したことがある場合は、元のパスワードを使用するか、 **「パスワードのリセット」**をクリックして新しいパスワードを生成できます。
+4.  **「パスワードの作成」**をクリックしてランダムなパスワードを作成します。
 
-    5.  対応する接続​​文字列をコピーして`env.json`に貼り付けます。以下は例です。
+    > **ヒント**
+    >
+    > 以前にパスワードを生成したことがある場合は、元のパスワードを使用するか、 **「パスワードのリセット」**をクリックして新しいパスワードを生成できます。
 
-        ```json
-        {
-          "Parameters": {
-            "TIDB_HOST": "{gateway-region}.aws.tidbcloud.com",
-            "TIDB_PORT": "4000",
-            "TIDB_USER": "{prefix}.root",
-            "TIDB_PASSWORD": "{password}"
-          }
-        }
-        ```
-
-        `{}`のプレースホルダーを、接続ダイアログで取得した値に置き換えます。
-  </div>
-
-  <div label="TiDB Self-Hosted">
-    対応する接続​​文字列をコピーして`env.json`に貼り付けます。以下は例です。
+5.  対応する接続​​文字列をコピーして`env.json`に貼り付けます。以下は例です。
 
     ```json
     {
       "Parameters": {
-        "TIDB_HOST": "{tidb_server_host}",
+        "TIDB_HOST": "{gateway-region}.aws.tidbcloud.com",
         "TIDB_PORT": "4000",
-        "TIDB_USER": "root",
+        "TIDB_USER": "{prefix}.root",
         "TIDB_PASSWORD": "{password}"
       }
     }
     ```
 
-    `{}`のプレースホルダーを、 **「接続」**ウィンドウで取得した値に置き換えます。
-  </div>
+    `{}`のプレースホルダーを、接続ダイアログで取得した値に置き換えます。
+
+</div>
+
+<div label="TiDB Self-Hosted">
+
+対応する接続​​文字列をコピーして`env.json`に貼り付けます。以下は例です。
+
+```json
+{
+  "Parameters": {
+    "TIDB_HOST": "{tidb_server_host}",
+    "TIDB_PORT": "4000",
+    "TIDB_USER": "root",
+    "TIDB_PASSWORD": "{password}"
+  }
+}
+```
+
+`{}`のプレースホルダーを、 **「接続」**ウィンドウで取得した値に置き換えます。
+
+</div>
 </SimpleTab>
 
 ### ステップ 4: コードを実行して結果を確認する {#step-4-run-the-code-and-check-the-result}
@@ -204,20 +212,20 @@ npm install
     #        Setting default arguments for 'sam deploy'
     #        =========================================
     #        Stack Name [sam-app]: tidb-aws-lambda-quickstart
-    #        AWS Region [us-east-1]: 
+    #        AWS Region [us-east-1]:
     #        #Shows you resources changes to be deployed and require a 'Y' to initiate deploy
-    #        Confirm changes before deploy [y/N]: 
+    #        Confirm changes before deploy [y/N]:
     #        #SAM needs permission to be able to create roles to connect to the resources in your template
-    #        Allow SAM CLI IAM role creation [Y/n]: 
+    #        Allow SAM CLI IAM role creation [Y/n]:
     #        #Preserves the state of previously provisioned resources when an operation fails
-    #        Disable rollback [y/N]: 
+    #        Disable rollback [y/N]:
     #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
     #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
     #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
     #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
-    #        Save arguments to configuration file [Y/n]: 
-    #        SAM configuration file [samconfig.toml]: 
-    #        SAM configuration environment [default]: 
+    #        Save arguments to configuration file [Y/n]:
+    #        SAM configuration file [samconfig.toml]:
+    #        SAM configuration environment [default]:
 
     #        Looking for resources needed for deployment:
     #        Creating the required resources...
