@@ -113,6 +113,7 @@ pip install -r requirements.txt
     プレースホルダー`{}` 、接続ダイアログから取得した接続パラメーターに必ず置き換えてください。
 
 7.  `.env`ファイルを保存します。
+
 </div>
 
 <div label="TiDB Dedicated">

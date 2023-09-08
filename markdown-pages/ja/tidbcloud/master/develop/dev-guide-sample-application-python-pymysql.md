@@ -146,6 +146,7 @@ pip install -r requirements.txt
     必ずプレースホルダー`{}`接続ダイアログから取得した接続パラメーターに置き換え、 `CA_PATH`前の手順でダウンロードした証明書パスで構成してください。
 
 6.  `.env`ファイルを保存します。
+
 </div>
 
 <div label="TiDB Self-Hosted">
