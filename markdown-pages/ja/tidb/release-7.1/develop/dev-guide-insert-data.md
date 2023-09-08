@@ -36,16 +36,18 @@ summary: Learn about how to insert data.
 
 <SimpleTab>
 <div label="SQL">
-      
+
 ```sql
 CREATE TABLE `player` (`id` INT, `coins` INT, `goods` INT);
 INSERT INTO `player` (`id`, `coins`, `goods`) VALUES (1, 1000, 1), (2, 230, 2);
 ```
 
 この SQL の使用方法の詳細については、 [TiDBクラスタへの接続](/develop/dev-guide-build-cluster-in-cloud.md#step-2-connect-to-a-cluster)を参照し、クライアントを使用して TiDB クラスターに接続した後、手順に従って SQL ステートメントを入力します。
+
 </div>
 
 <div label="Java">
+
 ```java
 // ds is an entity of com.mysql.cj.jdbc.MysqlDataSource
 try (Connection connection = ds.getConnection()) {
@@ -110,9 +112,11 @@ Javaの完全な例については、以下を参照してください。
 -   [TiDB と JDBC を使用してシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-java-jdbc.md#step-2-get-the-code)
 -   [TiDB と Hibernate を使用してシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-java-hibernate.md#step-2-get-the-code)
 -   [Spring Boot を使用して TiDB アプリを構築する](/develop/dev-guide-sample-application-java-spring-boot.md)
+
 </div>
 
 <div label="Golang">
+
 ```go
 package main
 
@@ -181,11 +185,13 @@ func buildBulkInsertSQL(amount int) string {
 
 Golangの完全な例については、以下を参照してください。
 
--   [Go-MySQL-Driver を使用して TiDB とGolangでシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-golang-sql-driver.md#step-2-get-the-code)
--   [GORM を使用して TiDB とGolangでシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-golang-gorm.md#step-2-get-the-code)
+- [Go-MySQL-Driver を使用して TiDB とGolangでシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-golang-sql-driver.md#step-2-get-the-code)
+- [GORM を使用して TiDB とGolangでシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-golang-gorm.md#step-2-get-the-code)
+
 </div>
 
 <div label="Python">
+
 ```python
 import MySQLdb
 connection = MySQLdb.connect(
@@ -211,6 +217,7 @@ Python の完全な例については、以下を参照してください。
 -   [MySQL コネクタ/Python を使用して TiDB に接続する](/develop/dev-guide-sample-application-python-mysql-connector.md)
 -   [SQLAlchemy を使用して TiDB に接続する](/develop/dev-guide-sample-application-python-sqlalchemy.md)
 -   [peewee を使用して TiDB と Python でシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-python-peewee.md#step-2-get-the-code)
+
 </div>
 </SimpleTab>
 
@@ -223,15 +230,19 @@ Python の完全な例については、以下を参照してください。
 -   データのエクスポート: [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview) . MySQL または TiDB データをローカルまたは Amazon S3 にエクスポートできます。
 
 <CustomContent platform="tidb">
+
   -   データインポート: [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) . **Dumpling の**エクスポート データ、 **CSV**ファイル、または[Amazon Auroraから TiDB へのデータの移行](/migrate-aurora-to-tidb.md)をインポートできます。ローカル ディスクまたは Amazon S3 クラウド ディスクからのデータの読み取りもサポートします。
   -   データ複製: [TiDB データ移行](/dm/dm-overview.md) 。 MySQL、MariaDB、Amazon Auroraデータベースを TiDB にレプリケートできます。また、ソース データベースからのシャード化されたインスタンスとテーブルのマージと移行もサポートします。
   -   データのバックアップと復元: [バックアップと復元 (BR)](/br/backup-and-restore-overview.md) . **Dumpling**と比較して、 **BR は*****ビッグデータの***シナリオにより適しています。
+
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
-  -   データインポート: [TiDB Cloudコンソール](https://tidbcloud.com/)の[インポートの作成](/tidb-cloud/import-sample-data.md)ページ。 **Dumpling の**エクスポート データをインポートしたり、ローカルの**CSV**ファイルをインポートしたり、 [Amazon S3 または GCS からTiDB Cloudに CSV ファイルをインポート](/tidb-cloud/import-csv-files.md)実行したりできます。ローカル ディスク、Amazon S3 クラウド ディスク、または GCS クラウド ディスクからのデータの読み取りもサポートします。
-  -   データ複製: [TiDB データ移行](https://docs.pingcap.com/tidb/stable/dm-overview) 。 MySQL、MariaDB、Amazon Auroraデータベースを TiDB にレプリケートできます。また、ソース データベースからのシャード化されたインスタンスとテーブルのマージと移行もサポートします。
-  -   データのバックアップと復元: TiDB Cloudコンソールの[バックアップ](/tidb-cloud/backup-and-restore.md)ページ。 **Dumpling**と比較して、バックアップと復元は***ビッグ データの***シナリオにより適しています。
+
+-   データインポート: [TiDB Cloudコンソール](https://tidbcloud.com/)の[インポートの作成](/tidb-cloud/import-sample-data.md)ページ。 **Dumpling の**エクスポート データをインポートしたり、ローカルの**CSV**ファイルをインポートしたり、 [Amazon S3 または GCS からTiDB Cloudに CSV ファイルをインポート](/tidb-cloud/import-csv-files.md)実行したりできます。ローカル ディスク、Amazon S3 クラウド ディスク、または GCS クラウド ディスクからのデータの読み取りもサポートします。
+-   データ複製: [TiDB データ移行](https://docs.pingcap.com/tidb/stable/dm-overview) 。 MySQL、MariaDB、Amazon Auroraデータベースを TiDB にレプリケートできます。また、ソース データベースからのシャード化されたインスタンスとテーブルのマージと移行もサポートします。
+-   データのバックアップと復元: TiDB Cloudコンソールの[バックアップ](/tidb-cloud/backup-and-restore.md)ページ。 **Dumpling**と比較して、バックアップと復元は***ビッグ データの***シナリオにより適しています。
+
 </CustomContent>
 
 ## ホットスポットを避ける {#avoid-hotspots}
