@@ -188,7 +188,7 @@ SQLAlchemy は、複数のデータベースで動作する ORM ライブラリ�
     python sqlalchemy_example.py
     ```
 
-2.  [予想される出力.txt](https://github.com/tidb-samples/tidb-python-sqlalchemy-quickstart/blob/main/Expected-Output.txt)チェックして、出力が一致するかどうかを確認します。
+2.  [予想される出力.txt](https://github.com/tidb-samples/tidb-python-sqlalchemy-quickstart/blob/main/Expectegd-Output.txt)チェックして、出力が一致するかどうかを確認します。
 
 ## サンプルコードスニペット {#sample-code-snippets}
 
