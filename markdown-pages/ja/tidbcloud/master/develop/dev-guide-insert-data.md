@@ -36,7 +36,6 @@ summary: Learn about how to insert data.
 
 <SimpleTab>
   <div label="SQL">
-
     ```sql
     CREATE TABLE `player` (`id` INT, `coins` INT, `goods` INT);
     INSERT INTO `player` (`id`, `coins`, `goods`) VALUES (1, 1000, 1), (2, 230, 2);
@@ -46,7 +45,6 @@ summary: Learn about how to insert data.
   </div>
 
   <div label="Java">
-
     ```java
     // ds is an entity of com.mysql.cj.jdbc.MysqlDataSource
     try (Connection connection = ds.getConnection()) {
@@ -82,7 +80,7 @@ summary: Learn about how to insert data.
     |   `prepStmtCacheSqlLimit`  | プリペアドステートメントの最大サイズ (デフォルトでは 256 文字) |                                                      プリペアドステートメントが 256 文字を超える場合                                                      | プリペアドステートメントの実際のサイズに応じて構成されます |
     |     `prepStmtCacheSize`    |  プリペアドステートメントキャッシュの最大数 (デフォルトでは 25) |                                                       準備されたステートメントの数が 25 を超える場合                                                      |   実際の準備済みステートメントの数に応じて構成されます  |
     | `rewriteBatchedStatements` |     **Batched**ステートメントを書き換えるかどうか    |                                                              バッチ操作が必要な場合                                                             |             `true`            |
-    |     `allowMultiQueries`    |              バッチ操作を開始する             | `rewriteBatchedStatements = true`と`useServerPrepStmts = true`の場合、 [クライアントのバグ](https://bugs.mysql.com/bug.php?id=96623)これを設定する必要があるため |             `true`            |
+    |     `allowMultiQueries`    |              バッチ操作を開始する             | [クライアントのバグ](https://bugs.mysql.com/bug.php?id=96623)は`rewriteBatchedStatements = true`と`useServerPrepStmts = true`のときにこれを設定する必要があるため |             `true`            |
 
     MySQL JDBC Driver は、 `useConfigs`統合構成も提供します。 `maxPerformance`で構成すると、一連の構成を構成することと同じになります。 `mysql:mysql-connector-java:8.0.28`例にとると、 `useConfigs=maxPerformance`には次のものが含まれます。
 
@@ -108,14 +106,12 @@ summary: Learn about how to insert data.
 
     Javaの完全な例については、以下を参照してください。
 
-    -   [TiDB と JDBC を使用してシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-java-jdbc.md#step-2-get-the-code)
-    -   [TiDB と Hibernate を使用してシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-java-hibernate.md#step-2-get-the-code)
-    -   [Spring Boot を使用して TiDB アプリを構築する](/develop/dev-guide-sample-application-java-spring-boot.md)
-
+    -   [JDBC を使用して TiDB に接続する](/develop/dev-guide-sample-application-java-jdbc.md)
+    -   [Hibernate で TiDB に接続する](/develop/dev-guide-sample-application-java-hibernate.md)
+    -   [Spring Boot を使用して TiDB に接続する](/develop/dev-guide-sample-application-java-spring-boot.md)
   </div>
 
   <div label="Golang">
-
     ```go
     package main
 
@@ -189,7 +185,6 @@ summary: Learn about how to insert data.
   </div>
 
   <div label="Python">
-
     ```python
     import MySQLdb
     connection = MySQLdb.connect(
@@ -215,7 +210,6 @@ summary: Learn about how to insert data.
     -   [MySQL コネクタ/Python を使用して TiDB に接続する](/develop/dev-guide-sample-application-python-mysql-connector.md)
     -   [SQLAlchemy を使用して TiDB に接続する](/develop/dev-guide-sample-application-python-sqlalchemy.md)
     -   [peewee を使用して TiDB と Python でシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-python-peewee.md#step-2-get-the-code)
-
   </div>
 </SimpleTab>
 
@@ -228,19 +222,15 @@ summary: Learn about how to insert data.
 -   データのエクスポート: [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview) . MySQL または TiDB データをローカルまたは Amazon S3 にエクスポートできます。
 
 <CustomContent platform="tidb">
-
-- データインポート: [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) . **Dumpling の**エクスポート データ、 **CSV**ファイル、または[Amazon Auroraから TiDB へのデータの移行](/migrate-aurora-to-tidb.md)をインポートできます。ローカル ディスクまたは Amazon S3 クラウド ディスクからのデータの読み取りもサポートします。
-- データ複製: [TiDB データ移行](/dm/dm-overview.md) 。 MySQL、MariaDB、Amazon Auroraデータベースを TiDB にレプリケートできます。また、ソース データベースからのシャード化されたインスタンスとテーブルのマージと移行もサポートします。
-- データのバックアップと復元: [バックアップと復元 (BR)](/br/backup-and-restore-overview.md) . **Dumpling**と比較して、 **BR は*****ビッグデータの***シナリオにより適しています。
-
+  -   データインポート: [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) . **Dumpling の**エクスポート データ、 **CSV**ファイル、または[Amazon Auroraから TiDB へのデータの移行](/migrate-aurora-to-tidb.md)をインポートできます。ローカル ディスクまたは Amazon S3 クラウド ディスクからのデータの読み取りもサポートします。
+  -   データ複製: [TiDB データ移行](/dm/dm-overview.md) 。 MySQL、MariaDB、Amazon Auroraデータベースを TiDB にレプリケートできます。また、ソース データベースからのシャード化されたインスタンスとテーブルのマージと移行もサポートします。
+  -   データのバックアップと復元: [バックアップと復元 (BR)](/br/backup-and-restore-overview.md) . **Dumpling**と比較して、 **BR は*****ビッグデータの***シナリオにより適しています。
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
-
--   データインポート: [TiDB Cloudコンソール](https://tidbcloud.com/)の[インポートの作成](/tidb-cloud/import-sample-data.md)ページ。 **Dumpling の**エクスポート データをインポートしたり、ローカルの**CSV**ファイルをインポートしたり、 [Amazon S3 または GCS からTiDB Cloudに CSV ファイルをインポート](/tidb-cloud/import-csv-files.md)実行したりできます。ローカル ディスク、Amazon S3 クラウド ディスク、または GCS クラウド ディスクからのデータの読み取りもサポートします。
--   データ複製: [TiDB データ移行](https://docs.pingcap.com/tidb/stable/dm-overview) 。 MySQL、MariaDB、Amazon Auroraデータベースを TiDB にレプリケートできます。また、ソース データベースからのシャード化されたインスタンスとテーブルのマージと移行もサポートします。
--   データのバックアップと復元: TiDB Cloudコンソールの[バックアップ](/tidb-cloud/backup-and-restore.md)ページ。 **Dumpling**と比較して、バックアップと復元は***ビッグ データの***シナリオにより適しています。
-
+  -   データインポート: [TiDB Cloudコンソール](https://tidbcloud.com/)の[インポートの作成](/tidb-cloud/import-sample-data.md)ページ。 **Dumpling の**エクスポート データをインポートしたり、ローカルの**CSV**ファイルをインポートしたり、 [Amazon S3 または GCS からTiDB Cloudに CSV ファイルをインポート](/tidb-cloud/import-csv-files.md)実行したりできます。ローカル ディスク、Amazon S3 クラウド ディスク、または GCS クラウド ディスクからのデータの読み取りもサポートします。
+  -   データ複製: [TiDB データ移行](https://docs.pingcap.com/tidb/stable/dm-overview) 。 MySQL、MariaDB、Amazon Auroraデータベースを TiDB にレプリケートできます。また、ソース データベースからのシャード化されたインスタンスとテーブルのマージと移行もサポートします。
+  -   データのバックアップと復元: TiDB Cloudコンソールの[バックアップ](/tidb-cloud/backup-and-restore.md)ページ。 **Dumpling**と比較して、バックアップと復元は***ビッグ データの***シナリオにより適しています。
 </CustomContent>
 
 ## ホットスポットを避ける {#avoid-hotspots}
@@ -248,9 +238,7 @@ summary: Learn about how to insert data.
 テーブルを設計するときは、多数の挿入操作があるかどうかを考慮する必要があります。その場合、テーブルの設計中にホットスポットを回避する必要があります。 [主キーを選択](/develop/dev-guide-create-table.md#select-primary-key)セクションを参照し、 [主キーを選択する際のルール](/develop/dev-guide-create-table.md#guidelines-to-follow-when-selecting-primary-key)に従ってください。
 
 <CustomContent platform="tidb">
-
   ホットスポットの問題の処理方法の詳細については、 [ホットスポットの問題のトラブルシューティング](/troubleshoot-hot-spot-issues.md)を参照してください。
-
 </CustomContent>
 
 ## <code>AUTO_RANDOM</code>主キーを使用してテーブルにデータを挿入する {#insert-data-to-a-table-with-the-code-auto-random-code-primary-key}
