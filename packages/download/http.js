@@ -69,7 +69,7 @@ export function downloadFile(reqUrl, fileName = '') {
             resolve()
           })
 
-          res.data.on('error', () => {
+          res.data.on('error', (err) => {
             sig.error('Failed to save file: ', err)
             reject()
           })
