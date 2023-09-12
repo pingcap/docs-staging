@@ -68,6 +68,11 @@ export function downloadFile(reqUrl, fileName = '') {
             sig.success('download completed')
             resolve()
           })
+
+          res.data.on('error', () => {
+            sig.error('Failed to save file: ', err)
+            reject()
+          })
         })
       } else {
         sig.error(`ERROR >> ${res.status}`)
