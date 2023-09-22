@@ -3,6 +3,8 @@ title: Insert Data
 summary: Learn about how to insert data.
 ---
 
+<!-- markdownlint-disable MD029 -->
+
 # データの挿入 {#insert-data}
 
 このドキュメントでは、SQL 言語とさまざまなプログラミング言語を使用して TiDB にデータを挿入する方法について説明します。
@@ -103,15 +105,13 @@ useInformationSchema=true
 
 以下は、JDBC 接続文字列構成の一般的なシナリオです。この例では、ホスト: `127.0.0.1` 、ポート: `4000` 、ユーザー名: `root` 、パスワード: null、デフォルトのデータベース: `test` :
 
-```
-jdbc:mysql://127.0.0.1:4000/test?user=root&useConfigs=maxPerformance&useServerPrepStmts=true&prepStmtCacheSqlLimit=2048&prepStmtCacheSize=256&rewriteBatchedStatements=true&allowMultiQueries=true
-```
+    jdbc:mysql://127.0.0.1:4000/test?user=root&useConfigs=maxPerformance&useServerPrepStmts=true&prepStmtCacheSqlLimit=2048&prepStmtCacheSize=256&rewriteBatchedStatements=true&allowMultiQueries=true
 
 Javaの完全な例については、以下を参照してください。
 
--   [TiDB と JDBC を使用してシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-java-jdbc.md#step-2-get-the-code)
--   [TiDB と Hibernate を使用してシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-java-hibernate.md#step-2-get-the-code)
--   [Spring Boot を使用して TiDB アプリを構築する](/develop/dev-guide-sample-application-java-spring-boot.md)
+-   [JDBC を使用して TiDB に接続する](/develop/dev-guide-sample-application-java-jdbc.md)
+-   [Hibernate で TiDB に接続する](/develop/dev-guide-sample-application-java-hibernate.md)
+-   [Spring Boot を使用して TiDB に接続する](/develop/dev-guide-sample-application-java-spring-boot.md)
 
 </div>
 
@@ -185,8 +185,8 @@ func buildBulkInsertSQL(amount int) string {
 
 Golangの完全な例については、以下を参照してください。
 
-- [Go-MySQL-Driver を使用して TiDB とGolangでシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-golang-sql-driver.md#step-2-get-the-code)
-- [GORM を使用して TiDB とGolangでシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-golang-gorm.md#step-2-get-the-code)
+-   [Go-MySQL-Driver を使用して TiDB に接続する](/develop/dev-guide-sample-application-golang-sql-driver.md)
+-   [GORM を使用して TiDB に接続する](/develop/dev-guide-sample-application-golang-gorm.md)
 
 </div>
 
@@ -219,6 +219,7 @@ Python の完全な例については、以下を参照してください。
 -   [peewee を使用して TiDB と Python でシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-python-peewee.md#step-2-get-the-code)
 
 </div>
+
 </SimpleTab>
 
 ## 一括挿入 {#bulk-insert}
@@ -231,9 +232,9 @@ Python の完全な例については、以下を参照してください。
 
 <CustomContent platform="tidb">
 
-  -   データインポート: [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) . **Dumpling の**エクスポート データ、 **CSV**ファイル、または[Amazon Auroraから TiDB へのデータの移行](/migrate-aurora-to-tidb.md)をインポートできます。ローカル ディスクまたは Amazon S3 クラウド ディスクからのデータの読み取りもサポートします。
-  -   データ複製: [TiDB データ移行](/dm/dm-overview.md) 。 MySQL、MariaDB、Amazon Auroraデータベースを TiDB にレプリケートできます。また、ソース データベースからのシャード化されたインスタンスとテーブルのマージと移行もサポートします。
-  -   データのバックアップと復元: [バックアップと復元 (BR)](/br/backup-and-restore-overview.md) . **Dumpling**と比較して、 **BR は*****ビッグデータの***シナリオにより適しています。
+-   データインポート: [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) . **Dumpling の**エクスポート データ、 **CSV**ファイル、または[Amazon Auroraから TiDB へのデータの移行](/migrate-aurora-to-tidb.md)をインポートできます。ローカル ディスクまたは Amazon S3 クラウド ディスクからのデータの読み取りもサポートします。
+-   データ複製: [TiDB データ移行](/dm/dm-overview.md) 。 MySQL、MariaDB、Amazon Auroraデータベースを TiDB にレプリケートできます。また、ソース データベースからのシャード化されたインスタンスとテーブルのマージと移行もサポートします。
+-   データのバックアップと復元: [バックアップと復元 (BR)](/br/backup-and-restore-overview.md) . **Dumpling**と比較して、 **BR は*****ビッグデータの***シナリオにより適しています。
 
 </CustomContent>
 
@@ -250,7 +251,9 @@ Python の完全な例については、以下を参照してください。
 テーブルを設計するときは、多数の挿入操作があるかどうかを考慮する必要があります。その場合、テーブルの設計中にホットスポットを回避する必要があります。 [主キーを選択](/develop/dev-guide-create-table.md#select-primary-key)セクションを参照し、 [主キーを選択する際のルール](/develop/dev-guide-create-table.md#guidelines-to-follow-when-selecting-primary-key)に従ってください。
 
 <CustomContent platform="tidb">
-  ホットスポットの問題の処理方法の詳細については、 [ホットスポットの問題のトラブルシューティング](/troubleshoot-hot-spot-issues.md)を参照してください。
+
+ホットスポットの問題の処理方法の詳細については、 [ホットスポットの問題のトラブルシューティング](/troubleshoot-hot-spot-issues.md)を参照してください。
+
 </CustomContent>
 
 ## <code>AUTO_RANDOM</code>主キーを使用してテーブルにデータを挿入する {#insert-data-to-a-table-with-the-code-auto-random-code-primary-key}
@@ -265,9 +268,7 @@ INSERT INTO `bookshop`.`users` (`id`, `balance`, `nickname`) VALUES (1, 0.00, 'n
 
 エラーが発生します:
 
-```
-ERROR 8216 (HY000): Invalid auto random: Explicit insertion on auto_random column is disabled. Try to set @@allow_auto_random_explicit_insert = true.
-```
+    ERROR 8216 (HY000): Invalid auto random: Explicit insertion on auto_random column is disabled. Try to set @@allow_auto_random_explicit_insert = true.
 
 挿入時に`AUTO_RANDOM`列を手動で指定することはお勧めできません。
 

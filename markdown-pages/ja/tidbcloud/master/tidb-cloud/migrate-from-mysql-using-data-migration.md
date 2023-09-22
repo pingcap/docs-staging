@@ -106,38 +106,34 @@ GRANT CREATE,SELECT,INSERT,UPDATE,DELETE,ALTER,TRUNCATE,DROP,INDEX ON *.* TO 'yo
 -   AWS VPC ピアリングまたは Google Cloud VPC ネットワーク ピアリングを使用する場合は、次の手順を参照してネットワークを構成してください。
 
 <details>
+  AWS VPC ピアリングを設定する
 
-AWS VPC ピアリングを設定する
+  MySQL サービスが AWS VPC 内にある場合は、次の手順を実行します。
 
-MySQL サービスが AWS VPC 内にある場合は、次の手順を実行します。
+  1.  MySQL サービスの VPC と TiDB クラスターの間は[VPC ピアリング接続をセットアップする](/tidb-cloud/set-up-vpc-peering-connections.md) 。
 
-1.  MySQL サービスの VPC と TiDB クラスターの間は[VPC ピアリング接続をセットアップする](/tidb-cloud/set-up-vpc-peering-connections.md) 。
+  2.  MySQL サービスが関連付けられているセキュリティ グループの受信ルールを変更します。
 
-2.  MySQL サービスが関連付けられているセキュリティ グループの受信ルールを変更します。
+      受信ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-project-cidr)を追加する必要があります。これにより、トラフィックが TiDB クラスターから MySQL インスタンスに流れるようになります。
 
-    受信ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-project-cidr)を追加する必要があります。これにより、トラフィックが TiDB クラスターから MySQL インスタンスに流れるようになります。
+  3.  MySQL URL に DNS ホスト名が含まれている場合は、 TiDB Cloud がMySQL サービスのホスト名を解決できるようにする必要があります。
 
-3.  MySQL URL に DNS ホスト名が含まれている場合は、 TiDB Cloud がMySQL サービスのホスト名を解決できるようにする必要があります。
-
-    1.  [VPC ピアリング接続の DNS 解決を有効にする](https://docs.aws.amazon.com/vpc/latest/peering/modify-peering-connections.html#vpc-peering-dns)の手順に従います。
-    2.  **アクセプター DNS 解決**オプションを有効にします。
-
+      1.  [VPC ピアリング接続の DNS 解決を有効にする](https://docs.aws.amazon.com/vpc/latest/peering/modify-peering-connections.html#vpc-peering-dns)の手順に従います。
+      2.  **アクセプター DNS 解決**オプションを有効にします。
 </details>
 
 <details>
+  Google Cloud VPC ネットワーク ピアリングを設定する
 
-Google Cloud VPC ネットワーク ピアリングを設定する
+  MySQL サービスが Google Cloud VPC 内にある場合は、次の手順を実行します。
 
-MySQL サービスが Google Cloud VPC 内にある場合は、次の手順を実行します。
+  1.  セルフホスト型 MySQL の場合は、この手順をスキップして次の手順に進むことができます。 MySQL サービスが Google Cloud SQL の場合は、Google Cloud SQL インスタンスの関連する VPC で MySQL エンドポイントを公開する必要があります。 Google が開発した[Cloud SQL 認証プロキシ](https://cloud.google.com/sql/docs/mysql/sql-proxy)使用する必要がある場合があります。
 
-1.  セルフホスト型 MySQL の場合は、この手順をスキップして次の手順に進むことができます。 MySQL サービスが Google Cloud SQL の場合は、Google Cloud SQL インスタンスの関連する VPC で MySQL エンドポイントを公開する必要があります。 Google が開発した[Cloud SQL 認証プロキシ](https://cloud.google.com/sql/docs/mysql/sql-proxy)使用する必要がある場合があります。
+  2.  MySQL サービスの VPC と TiDB クラスターの間の[VPC ピアリング接続をセットアップする](/tidb-cloud/set-up-vpc-peering-connections.md) 。
 
-2.  MySQL サービスの VPC と TiDB クラスターの間の[VPC ピアリング接続をセットアップする](/tidb-cloud/set-up-vpc-peering-connections.md) 。
+  3.  MySQL が配置されている VPC のイングレス ファイアウォール ルールを変更します。
 
-3.  MySQL が配置されている VPC のイングレス ファイアウォール ルールを変更します。
-
-    受信ファイアウォール ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-project-cidr)を追加する必要があります。これにより、トラフィックが TiDB クラスターから MySQL エンドポイントに流れることが可能になります。
-
+      受信ファイアウォール ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-project-cidr)を追加する必要があります。これにより、トラフィックが TiDB クラスターから MySQL エンドポイントに流れることが可能になります。
 </details>
 
 ### バイナリログを有効にする {#enable-binary-logs}
