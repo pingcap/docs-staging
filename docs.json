@@ -119,6 +119,12 @@
             "pathname": "v1beta",
             "production": "https://download.pingcap.org/tidbcloud-oas.json",
             "preview": "https://download.pingcap.org/tidbcloud-oas-preview.json"
+          },
+          {
+            "id": "v1beta1",
+            "pathname": "v1beta1",
+            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-billing.swagger.json",
+            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-billing.swagger.json"
           }
         ]
       }
