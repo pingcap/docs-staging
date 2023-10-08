@@ -390,6 +390,10 @@ mysql> SELECT * FROM t1;
 
 ### datadir
 
+> **Note:**
+>
+> This variable is not supported on [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 <CustomContent platform="tidb">
 
 - Scope: NONE
@@ -578,6 +582,10 @@ This variable is an alias for [`last_insert_id`](#last_insert_id).
 
 ### interactive_timeout
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -636,6 +644,10 @@ This variable is an alias for [`last_insert_id`](#last_insert_id).
 - This variable indicates whether [TiDB Binlog](https://docs.pingcap.com/tidb/stable/tidb-binlog-overview) is used.
 
 ### max_allowed_packet <span class="version-mark">New in v6.1.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -764,6 +776,10 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 
 ### plugin_dir
 
+> **Note:**
+>
+> This variable is not supported on [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -771,6 +787,10 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 - Indicates the directory to load plugins as specified by a command-line flag.
 
 ### plugin_load
+
+> **Note:**
+>
+> This variable is not supported on [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -832,6 +852,10 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 
 ### skip_name_resolve <span class="version-mark">New in v5.2.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -858,6 +882,10 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 - The local unix socket file that the `tidb-server` is listening on when speaking the MySQL protocol.
 
 ### sql_log_bin
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -1295,6 +1323,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_cdc_write_source <span class="version-mark">New in v6.5.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: SESSION
 - Persists to cluster: No
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -1305,13 +1337,9 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_check_mb4_value_in_utf8
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -1346,13 +1374,9 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_config
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -1478,13 +1502,9 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_ddl_disk_quota <span class="version-mark">New in v6.3.0</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
-> This TiDB variable is not applicable to TiDB Cloud. Do not change the default value of this variable for TiDB Cloud.
-
-</CustomContent>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -1497,13 +1517,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_ddl_enable_fast_reorg <span class="version-mark">New in v6.3.0</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
-> To improve the speed for index creation using this variable, make sure that your TiDB cluster is hosted on AWS and your TiDB node size is at least 8 vCPU. For [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless) clusters, this feature is unavailable.
-
-</CustomContent>
+> - If you are using a [TiDB Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-dedicated) cluster, to improve the speed for index creation using this variable, make sure that your TiDB cluster is hosted on AWS and your TiDB node size is at least 8 vCPU.
+> - For [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless) clusters, this variable is read-only.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -1555,6 +1572,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_ddl_error_count_limit
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -1565,6 +1586,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_ddl_flashback_concurrency <span class="version-mark">New in v6.3.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -1574,6 +1599,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 - This variable controls the concurrency of [`FLASHBACK CLUSTER TO TIMESTAMP`](/sql-statements/sql-statement-flashback-to-timestamp.md).
 
 ### tidb_ddl_reorg_batch_size
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -1588,6 +1617,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_ddl_reorg_priority
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Enumeration
@@ -1597,6 +1630,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 - You can set the value of this variable to `PRIORITY_LOW`, `PRIORITY_NORMAL` or `PRIORITY_HIGH`.
 
 ### tidb_ddl_reorg_worker_cnt
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -1685,6 +1722,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_enable_1pc <span class="version-mark">New in v5.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -1714,6 +1755,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_enable_async_commit <span class="version-mark">New in v5.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -1728,6 +1773,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 > - Enabling this parameter only means that Async Commit becomes an optional mode of transaction commit. In fact, the most suitable mode of transaction commit is determined by TiDB.
 
 ### tidb_enable_auto_analyze <span class="version-mark">New in v6.1.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -1804,6 +1853,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_enable_ddl <span class="version-mark">New in v6.3.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -1813,13 +1866,9 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_enable_collect_execution_info
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -1947,6 +1996,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 >
 > This variable is an internal variable for debugging in TiDB. It might be removed in a future release. **Do not** set this variable.
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -1978,6 +2031,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 - This variable controls whether to enable the [Non-prepared plan cache](/sql-non-prepared-plan-cache.md) feature for DML statements.
 
 ### tidb_enable_gogc_tuner <span class="version-mark">New in v6.4.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2055,6 +2112,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 - This variable is used to set whether to enable the `LIST (COLUMNS) TABLE PARTITION` feature.
 
 ### tidb_enable_local_txn
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2367,13 +2428,9 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_enable_slow_log
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -2393,6 +2450,10 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 - Before v6.3.0, you can enable or disable this feature by using the TiDB configuration item `oom-use-tmp-storage`. After upgrading the cluster to v6.3.0 or a later version, the TiDB cluster will initialize this variable using the value of `oom-use-tmp-storage` automatically. After that, changing the value of `oom-use-tmp-storage` **does not** take effect anymore.
 
 ### tidb_enable_stmt_summary <span class="version-mark">New in v3.0.4</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2443,13 +2504,9 @@ Query OK, 0 rows affected (0.09 sec)
 
 ### tidb_enable_telemetry <span class="version-mark">New in v4.0.2</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2484,13 +2541,9 @@ Query OK, 0 rows affected (0.09 sec)
 
 ### tidb_enable_top_sql <span class="version-mark">New in v5.4.0</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2511,6 +2564,10 @@ Query OK, 0 rows affected (0.09 sec)
 </CustomContent>
 
 ### tidb_enable_tso_follower_proxy <span class="version-mark">New in v5.3.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2668,13 +2725,9 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_expensive_query_time_threshold
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -2708,13 +2761,9 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_force_priority
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -2727,6 +2776,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_gc_concurrency <span class="version-mark">New in v5.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -2738,6 +2791,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_gc_enable <span class="version-mark">New in v5.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -2746,6 +2803,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 - Enables garbage collection for TiKV. Disabling garbage collection will reduce system performance, as old versions of rows will no longer be purged.
 
 ### tidb_gc_life_time <span class="version-mark">New in v5.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2764,6 +2825,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_gc_max_wait_time <span class="version-mark">New in v6.1.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -2774,6 +2839,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 - This variable is used to set the maximum time that active transactions block the GC safe point. During each time of GC, the safe point does not exceed the start time of the ongoing transactions by default. If the runtime of active transactions does not exceed this variable value, the GC safe point will be blocked until the runtime exceeds this value.
 
 ### tidb_gc_run_interval <span class="version-mark">New in v5.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2788,6 +2857,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 > **Warning:**
 >
 > Currently, Green GC is an experimental feature. It is not recommended that you use it in production environments.
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2812,13 +2885,9 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_general_log
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -2865,6 +2934,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_generate_binary_plan <span class="version-mark">New in v6.2.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -2876,6 +2949,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_gogc_tuner_threshold <span class="version-mark">New in v6.4.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -2884,6 +2961,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 - This variable specifies the maximum memory threshold for tuning GOGC. When the memory exceeds this threshold, GOGC Tuner stops working.
 
 ### tidb_guarantee_linearizability <span class="version-mark">New in v5.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -3077,6 +3158,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_isolation_read_engines <span class="version-mark">New in v4.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Default value: `tikv,tiflash,tidb`
@@ -3161,6 +3246,10 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 - To maintain the consistency and rationality of the transaction, it is not recommended to change this value. If upgrading TiDB causes severe performance issues due to these two fixes, and the behavior without locks is acceptable (see the preceding issues), you can set this variable to `OFF`.
 
 ### tidb_log_file_max_days <span class="version-mark">New in v5.3.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -3443,13 +3532,9 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_memory_usage_alarm_ratio
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3519,13 +3604,9 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_metric_query_range_duration <span class="version-mark">New in v4.0</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -3537,13 +3618,9 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 ### tidb_metric_query_step <span class="version-mark">New in v4.0</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -4281,13 +4358,9 @@ SHOW WARNINGS;
 
 ### tidb_opt_write_row_id
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
@@ -4341,13 +4414,9 @@ SHOW WARNINGS;
 
 ### tidb_placement_mode <span class="version-mark">New in v6.0.0</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
-> This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -4355,19 +4424,7 @@ SHOW WARNINGS;
 - Type: Enumeration
 - Default value: `STRICT`
 - Possible values: `STRICT`, `IGNORE`
-
-<CustomContent platform="tidb">
-
 - This variable controls whether DDL statements ignore the [placement rules specified in SQL](/placement-rules-in-sql.md). When the variable value is `IGNORE`, all placement rule options are ignored.
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-- This variable controls whether DDL statements ignore the [placement rules specified in SQL](https://docs.pingcap.com/tidb/stable/placement-rules-in-sql). When the variable value is `IGNORE`, all placement rule options are ignored.
-
-</CustomContent>
-
 - It is intended to be used by logical dump/restore tools to ensure that tables can always be created even if invalid placement rules are assigned. This is similar to how mysqldump writes `SET FOREIGN_KEY_CHECKS=0;` to the start of every dump file.
 
 ### `tidb_plan_cache_invalidation_on_fresh_stats` <span class="version-mark">New in v7.1.0</span>
@@ -4394,13 +4451,9 @@ SHOW WARNINGS;
 
 ### tidb_pprof_sql_cpu <span class="version-mark">New in v4.0</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -4524,13 +4577,9 @@ SHOW WARNINGS;
 
 ### tidb_record_plan_in_slow_log
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -4541,13 +4590,9 @@ SHOW WARNINGS;
 
 ### tidb_redact_log
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -4589,13 +4634,9 @@ SHOW WARNINGS;
 
 ### tidb_restricted_read_only <span class="version-mark">New in v5.2.0</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -4630,13 +4671,9 @@ SHOW WARNINGS;
 
 ### tidb_row_format_version
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -4670,6 +4707,10 @@ SHOW WARNINGS;
 
 ### tidb_scatter_region
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -4679,6 +4720,10 @@ SHOW WARNINGS;
 - Note that if `SHARD_ROW_ID_BITS` and `PRE_SPLIT_REGIONS` have been set when a table is created, the specified number of Regions are evenly split after the table creation.
 
 ### tidb_server_memory_limit <span class="version-mark">New in v6.4.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -4694,6 +4739,10 @@ SHOW WARNINGS;
 
 ### tidb_server_memory_limit_gc_trigger <span class="version-mark">New in v6.4.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -4702,6 +4751,10 @@ SHOW WARNINGS;
 - The threshold at which TiDB tries to trigger GC. When the memory usage of TiDB reaches the value of `tidb_server_memory_limit` \* the value of `tidb_server_memory_limit_gc_trigger`, TiDB will actively trigger a Golang GC operation. Only one GC operation will be triggered in one minute.
 
 ### tidb_server_memory_limit_sess_min_size <span class="version-mark">New in v6.4.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -4781,6 +4834,10 @@ SHOW WARNINGS;
 
 ### tidb_simplified_metrics
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -4845,13 +4902,9 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 ### tidb_slow_log_threshold
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -4864,13 +4917,9 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 ### tidb_slow_query_file
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -4931,6 +4980,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 - This variable controls how TiDB behaves when the waiting time of SQL optimization reaches the timeout to synchronously load complete column statistics. The default value `ON` means that the SQL optimization gets back to using pseudo statistics after the timeout. If this variable to `OFF`, SQL execution fails after the timeout.
 
 ### tidb_stats_load_sync_wait <span class="version-mark">New in v5.4.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -5075,6 +5128,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_stmt_summary_history_size <span class="version-mark">New in v4.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5085,6 +5142,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_stmt_summary_internal_query <span class="version-mark">New in v4.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5093,6 +5154,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 - This variable is used to control whether to include the SQL information of TiDB in [statement summary tables](/statement-summary-tables.md).
 
 ### tidb_stmt_summary_max_sql_length <span class="version-mark">New in v4.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -5104,6 +5169,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_stmt_summary_max_stmt_count <span class="version-mark">New in v4.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5113,6 +5182,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 - This variable is used to set the maximum number of statements that [statement summary tables](/statement-summary-tables.md) store in memory.
 
 ### tidb_stmt_summary_refresh_interval <span class="version-mark">New in v4.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -5183,6 +5256,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_sysproc_scan_concurrency <span class="version-mark">New in v6.5.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5215,13 +5292,9 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_top_sql_max_meta_count <span class="version-mark">New in v6.0.0</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -5244,13 +5317,9 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_top_sql_max_time_series_count <span class="version-mark">New in v6.0.0</span>
 
-<CustomContent platform="tidb-cloud">
-
 > **Note:**
 >
 > This TiDB variable is not applicable to TiDB Cloud.
-
-</CustomContent>
 
 > **Note:**
 >
@@ -5290,6 +5359,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_tso_client_batch_max_wait_time <span class="version-mark">New in v5.3.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5311,6 +5384,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_ttl_delete_rate_limit <span class="version-mark">New in v6.5.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5319,6 +5396,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 - This variable is used to limit the rate of `DELETE` statements in TTL jobs on each TiDB node. The value represents the maximum number of `DELETE` statements allowed per second in a single node in a TTL job. When this variable is set to `0`, no limit is applied. For more information, refer to [Time to Live](/time-to-live.md).
 
 ### tidb_ttl_delete_batch_size <span class="version-mark">New in v6.5.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -5329,6 +5410,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_ttl_delete_worker_count <span class="version-mark">New in v6.5.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5337,6 +5422,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 - This variable is used to set the maximum concurrency of TTL jobs on each TiDB node. For more information, refer to [Time to Live](/time-to-live.md).
 
 ### tidb_ttl_job_enable <span class="version-mark">New in v6.5.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -5347,6 +5436,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_ttl_scan_batch_size <span class="version-mark">New in v6.5.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5355,6 +5448,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 - This variable is used to set the `LIMIT` value of each `SELECT` statement used to scan expired data in a TTL job. For more information, refer to [Time to Live](/time-to-live.md).
 
 ### tidb_ttl_scan_worker_count <span class="version-mark">New in v6.5.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -5365,6 +5462,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_ttl_job_schedule_window_start_time <span class="version-mark">New in v6.5.0</span>
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Time
@@ -5373,6 +5474,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 - This variable is used to control the start time of the scheduling window of TTL jobs in the background. When you modify the value of this variable, be cautious that a small window might cause the cleanup of expired data to fail. For more information, refer to [Time to Live](/time-to-live.md).
 
 ### tidb_ttl_job_schedule_window_end_time <span class="version-mark">New in v6.5.0</span>
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: GLOBAL
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5435,6 +5540,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_txn_mode
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5456,6 +5565,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 ### tidb_wait_split_region_finish
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Boolean
@@ -5466,6 +5579,10 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 - Note that when scattering Regions, the write and read performances for the Region that is being scattered might be affected. In batch-write or data importing scenarios, it is recommended to import data after Regions scattering is finished.
 
 ### tidb_wait_split_region_timeout
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5643,6 +5760,10 @@ Internally, the TiDB parser transforms the `SET TRANSACTION ISOLATION LEVEL [REA
 
 ### txn_scope
 
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Default value: `global`
@@ -5674,6 +5795,10 @@ Internally, the TiDB parser transforms the `SET TRANSACTION ISOLATION LEVEL [REA
 
 ### validate_password.enable <span class="version-mark">New in v6.5.0</span>
 
+> **Note:**
+>
+> This variable is always enabled for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
+
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -5688,7 +5813,7 @@ Internally, the TiDB parser transforms the `SET TRANSACTION ISOLATION LEVEL [REA
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Integer
 - Default value: `8`
-- Range: `[0, 2147483647]`
+- Range: `[0, 2147483647]` for TiDB Self-Hosted and [TiDB Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-dedicated), `[8, 2147483647]` for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)
 - This variable is a check item in the password complexity check. It checks whether the password length is sufficient. By default, the minimum password length is `8`. This variable takes effect only when [`validate_password.enable`](#validate_passwordenable-new-in-v650) is enabled.
 - The value of this variable must not be smaller than the expression: `validate_password.number_count + validate_password.special_char_count + (2 * validate_password.mixed_case_count)`.
 - If you change the value of `validate_password.number_count`, `validate_password.special_char_count`, or `validate_password.mixed_case_count` such that the expression value is larger than `validate_password.length`, the value of `validate_password.length` is automatically changed to match the expression value.
@@ -5700,7 +5825,7 @@ Internally, the TiDB parser transforms the `SET TRANSACTION ISOLATION LEVEL [REA
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Integer
 - Default value: `1`
-- Range: `[0, 2147483647]`
+- Range: `[0, 2147483647]` for TiDB Self-Hosted and [TiDB Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-dedicated), `[1, 2147483647]` for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)
 - This variable is a check item in the password complexity check. It checks whether the password contains sufficient uppercase and lowercase letters. This variable takes effect only when [`validate_password.enable`](#validate_passwordenable-new-in-v650) is enabled and [`validate_password.policy`](#validate_passwordpolicy-new-in-v650) is set to `1` (MEDIUM) or larger.
 - Neither the number of uppercase letters nor the number of lowercase letters in the password can be fewer than the value of `validate_password.mixed_case_count`. For example, when the variable is set to `1`, the password must contain at least one uppercase letter and one lowercase letter.
 
@@ -5711,7 +5836,7 @@ Internally, the TiDB parser transforms the `SET TRANSACTION ISOLATION LEVEL [REA
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Integer
 - Default value: `1`
-- Range: `[0, 2147483647]`
+- Range: `[0, 2147483647]` for TiDB Self-Hosted and [TiDB Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-dedicated), `[1, 2147483647]` for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)
 - This variable is a check item in the password complexity check. It checks whether the password contains sufficient numbers. This variable takes effect only when [`validate_password.enable`](#password_reuse_interval-new-in-v650) is enabled and [`validate_password.policy`](#validate_passwordpolicy-new-in-v650) is set to `1` (MEDIUM) or larger.
 
 ### validate_password.policy <span class="version-mark">New in v6.5.0</span>
@@ -5721,7 +5846,7 @@ Internally, the TiDB parser transforms the `SET TRANSACTION ISOLATION LEVEL [REA
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Enumeration
 - Default value: `1`
-- Value options: `0`, `1`, `2`
+- Value options: `0`, `1`, and `2` for TiDB Self-Hosted and [TiDB Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-dedicated); `1` and `2` for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)
 - This variable controls the policy for the password complexity check. This variable takes effect only when [`validate_password.enable`](#password_reuse_interval-new-in-v650) is enabled. The value of this variable determines whether other `validate-password` variables take effect in the password complexity check, except for `validate_password.check_user_name`.
 - This value of this variable can be `0`, `1`, or `2` (corresponds to LOW, MEDIUM, or STRONG). Different policy levels have different checks:
     - 0 or LOW: password length.
@@ -5735,7 +5860,7 @@ Internally, the TiDB parser transforms the `SET TRANSACTION ISOLATION LEVEL [REA
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Integer
 - Default value: `1`
-- Range: `[0, 2147483647]`
+- Range: `[0, 2147483647]` for TiDB Self-Hosted and [TiDB Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-dedicated), `[1, 2147483647]` for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)
 - This variable is a check item in the password complexity check. It checks whether the password contains sufficient special characters. This variable takes effect only when [`validate_password.enable`](#password_reuse_interval-new-in-v650) is enabled and [`validate_password.policy`](#validate_passwordpolicy-new-in-v650) is set to `1` (MEDIUM) or larger.
 
 ### version
@@ -5767,6 +5892,10 @@ Internally, the TiDB parser transforms the `SET TRANSACTION ISOLATION LEVEL [REA
 - This variable returns the name of the OS on which TiDB is running.
 
 ### wait_timeout
+
+> **Note:**
+>
+> This variable is read-only for [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless).
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
