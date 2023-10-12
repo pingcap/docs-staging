@@ -7,6 +7,7 @@
           "repo": "pingcap/docs",
           "versions": [
             "master",
+            "release-7.4",
             "release-7.3",
             "release-7.2",
             "release-7.1",
@@ -25,6 +26,7 @@
           "repo": "pingcap/docs-cn",
           "versions": [
             "master",
+            "release-7.4",
             "release-7.3",
             "release-7.2",
             "release-7.1",
@@ -42,6 +44,7 @@
         "ja": {
           "repo": "pingcap/docs",
           "versions": [
+            "release-7.4",
             "release-7.3",
             "release-7.2",
             "release-7.1",
@@ -62,7 +65,7 @@
         "v5.3",
         "v5.4"
       ],
-      "dmr": ["v7.3", "v7.2", "v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0"],
+      "dmr": ["v7.4", "v7.3", "v7.2", "v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0"],
       "archived": ["v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0", "v3.1", "v2.1"],
       "searchIndex": ["v7.1", "v6.5", "v6.1", "v5.4", "v5.1"]
     },
