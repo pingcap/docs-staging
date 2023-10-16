@@ -680,6 +680,7 @@ Query OK, 0 rows affected (0.08 sec)
 - TOKEN_ISSUER
 - TOPN (R)
 - TPCC
+- TPCH_10
 - TRACE
 - TRADITIONAL
 - TRAILING (R)
