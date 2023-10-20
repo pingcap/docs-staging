@@ -20,6 +20,7 @@ hide_leftNav: true
 
 | Release    | Archived documentation                                         | Archive date     |
 | ---------- | -------------------------------------------------------------- | ---------------- |
+| v7.2 (DMR) | [TiDB v7.2 documentation](https://docs-archive.pingcap.com/tidb/v7.2/) | October 20, 2023 |
 | v7.0 (DMR) | [TiDB v7.0 documentation](https://docs-archive.pingcap.com/tidb/v7.0/) | August 24, 2023 |
 | v6.6 (DMR) | [TiDB v6.6 documentation](https://docs-archive.pingcap.com/tidb/v6.6/) | July 7, 2023 |
 | v6.4 (DMR) | [TiDB v6.4 documentation](https://docs-archive.pingcap.com/tidb/v6.4/) | April 6, 2023 |
@@ -27,7 +28,8 @@ hide_leftNav: true
 | v6.2 (DMR) | [TiDB v6.2 documentation](https://docs-archive.pingcap.com/tidb/v6.2/) | January 31, 2023 |
 | v6.0 (DMR) | [TiDB v6.0 documentation](https://docs-archive.pingcap.com/tidb/v6.0/) | January 31, 2023 |
 | v3.1       | [TiDB v3.1 documentation](https://docs-archive.pingcap.com/tidb/v3.1/) | January 31, 2023 |
-| v2.1       | [TiDB v2.1 documentation](https://docs-archive.pingcap.com/tidb/v2.1) | January 31, 2023 |
+| v3.0       | [TiDB v3.0 documentation](https://docs-archive.pingcap.com/tidb/v3.0/) | October 20, 2023 |
+| v2.1       | [TiDB v2.1 documentation](https://docs-archive.pingcap.com/tidb/v2.1)  | January 31, 2023 |
 
 <p>Learn more about <a href="https://www.pingcap.com/tidb-release-support-policy/?from=en">TiDB Release Support Policy</a>.</p>
 

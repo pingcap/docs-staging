@@ -7,8 +7,8 @@
           "repo": "pingcap/docs",
           "versions": [
             "master",
+            "release-7.4",
             "release-7.3",
-            "release-7.2",
             "release-7.1",
             "release-6.5",
             "release-6.1",
@@ -17,16 +17,15 @@
             "release-5.2",
             "release-5.1",
             "release-5.0",
-            "release-4.0",
-            "release-3.0"
+            "release-4.0"
           ]
         },
         "zh": {
           "repo": "pingcap/docs-cn",
           "versions": [
             "master",
+            "release-7.4",
             "release-7.3",
-            "release-7.2",
             "release-7.1",
             "release-6.5",
             "release-6.1",
@@ -35,15 +34,14 @@
             "release-5.2",
             "release-5.1",
             "release-5.0",
-            "release-4.0",
-            "release-3.0"
+            "release-4.0"
           ]
         },
         "ja": {
           "repo": "pingcap/docs",
           "versions": [
+            "release-7.4",
             "release-7.3",
-            "release-7.2",
             "release-7.1",
             "release-6.5",
             "release-6.1",
@@ -62,8 +60,8 @@
         "v5.3",
         "v5.4"
       ],
-      "dmr": ["v7.3", "v7.2", "v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0"],
-      "archived": ["v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0", "v3.1", "v2.1"],
+      "dmr": ["v7.4", "v7.3", "v7.2", "v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0"],
+      "archived": ["v7.2", "v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0", "v3.1", "v3.0", "v2.1"],
       "searchIndex": ["v7.1", "v6.5", "v6.1", "v5.4", "v5.1"]
     },
     "tidb-data-migration": {
@@ -119,6 +117,12 @@
             "pathname": "v1beta",
             "production": "https://download.pingcap.org/tidbcloud-oas.json",
             "preview": "https://download.pingcap.org/tidbcloud-oas-preview.json"
+          },
+          {
+            "id": "v1beta1",
+            "pathname": "v1beta1",
+            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-billing.swagger.json",
+            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-billing.swagger.json"
           }
         ]
       }
