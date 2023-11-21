@@ -81,7 +81,7 @@ jobs:
           yarn download:dm:all
           yarn download:tidb-operator:all
 
-      - name: Git commit and push
+      - name: Git commit
         run: |
           git add markdown-pages
           git fetch
@@ -92,7 +92,16 @@ jobs:
           else
             git commit -m "update MD by dispatch event ${{ inputs.repo }} ${{ inputs.branch }}"
           fi
-          git push
+
+      - name: Git push
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 3
+          max_attempts: 3
+          retry_on: error
+          command: |
+            git pull --rebase
+            git push
 
       - name: Trigger preview
         run: |
