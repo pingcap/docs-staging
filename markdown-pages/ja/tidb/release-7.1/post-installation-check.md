@@ -15,7 +15,6 @@ TiDB クラスターをデプロイした後、クラスターが正常に実行
 
 `tiup cluster display <cluster-name>`コマンドを使用してクラスターのステータスを確認します。例えば：
 
-
 ```shell
 tiup cluster display tidb-test
 ```
@@ -42,12 +41,11 @@ tiup cluster display tidb-test
 
 ## データベースにログインして簡単な操作を行う {#log-in-to-the-database-and-perform-simple-operations}
 
-> **ノート：**
+> **注記：**
 >
 > データベースにログインする前に、MySQL クライアントをインストールします。
 
 次のコマンドを実行してデータベースにログインします。
-
 
 ```shell
 mysql -u root -h ${tidb_server_host_IP_address} -P 4000
@@ -60,7 +58,7 @@ mysql -u root -h ${tidb_server_host_IP_address} -P 4000
 ```sql
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 3
-Server version: 5.7.25-TiDB-v7.1.1 TiDB Server (Apache License 2.0) Community Edition, MySQL 5.7 compatible
+Server version: 5.7.25-TiDB-v7.1.2 TiDB Server (Apache License 2.0) Community Edition, MySQL 5.7 compatible
 Copyright (c) 2000, 2015, Oracle and/or its affiliates. All rights reserved.
 Oracle is a registered trademark of Oracle Corporation and/or its
 affiliates. Other names may be trademarks of their respective
@@ -73,7 +71,6 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   TiDB のバージョンを確認します。
 
-    
     ```sql
     select tidb_version()\G
     ```
@@ -96,7 +93,6 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   `pingcap`という名前のデータベースを作成します。
 
-    
     ```sql
     create database pingcap;
     ```
@@ -109,7 +105,6 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
     `pingcap`データベースに切り替えます。
 
-    
     ```sql
     use pingcap;
     ```
@@ -122,7 +117,6 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   `tab_tidb`という名前のテーブルを作成します。
 
-    
     ```sql
     CREATE TABLE `tab_tidb` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -141,7 +135,6 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   データを挿入します:
 
-    
     ```sql
     insert into `tab_tidb` values (1,'TiDB',5,'TiDB-v5.0.0');
     ```
@@ -154,7 +147,6 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   `tab_tidb`のエントリをビュー。
 
-    
     ```sql
     select * from tab_tidb;
     ```
@@ -172,7 +164,6 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   TiKV のストアの状態、 `store_id` 、容量、稼働時間をビュー。
 
-    
     ```sql
     select STORE_ID,ADDRESS,STORE_STATE,STORE_STATE_NAME,CAPACITY,AVAILABLE,UPTIME from INFORMATION_SCHEMA.TIKV_STORE_STATUS;
     ```
@@ -192,7 +183,6 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   TiDB を終了します。
 
-    
     ```sql
     exit
     ```
