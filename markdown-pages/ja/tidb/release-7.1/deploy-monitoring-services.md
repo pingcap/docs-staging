@@ -24,14 +24,12 @@ TiDB クラスターのトポロジーが次のとおりであると仮定しま
 
 ### ステップ 1: バイナリ パッケージをダウンロードする {#step-1-download-the-binary-package}
 
-
 ```bash
 # Downloads the package.
 wget https://download.pingcap.org/prometheus-2.27.1.linux-amd64.tar.gz
 wget https://download.pingcap.org/node_exporter-v1.3.1-linux-amd64.tar.gz
 wget https://download.pingcap.org/grafana-7.5.11.linux-amd64.tar.gz
 ```
-
 
 ```bash
 # Extracts the package.
@@ -41,7 +39,6 @@ tar -xzf grafana-7.5.11.linux-amd64.tar.gz
 ```
 
 ### ステップ2: Node1、Node2、Node3、およびNode4で<code>node_exporter</code>起動します。 {#step-2-start-code-node-exporter-code-on-node1-node2-node3-and-node4}
-
 
 ```bash
 cd node_exporter-v1.3.1-linux-amd64
@@ -54,7 +51,6 @@ $ ./node_exporter --web.listen-address=":9100" \
 ### ステップ 3: Node1 で Prometheus を起動する {#step-3-start-prometheus-on-node1}
 
 Prometheus 構成ファイルを編集します。
-
 
 ```bash
 cd prometheus-2.27.1.linux-amd64 &&
@@ -127,7 +123,6 @@ $ ./prometheus \
 
 Grafana 構成ファイルを編集します。
 
-
 ```ini
 cd grafana-7.5.11 &&
 vi conf/grafana.ini
@@ -176,7 +171,6 @@ url = https://grafana.net
 
 Grafana サービスを開始します。
 
-
 ```bash
 ./bin/grafana-server \
     --config="./conf/grafana.ini" &
@@ -196,7 +190,7 @@ Grafana サービスを開始します。
 
     -   デフォルトのパスワード: 管理者
 
-    > **ノート：**
+    > **注記：**
     >
     > **[パスワードの変更]**ステップでは、 **[スキップ]**を選択できます。
 
@@ -221,9 +215,9 @@ PDサーバー、TiKVサーバー、および TiDBサーバーの Grafana ダッ
 
 2.  サイドバー メニューで、 **[ダッシュボード**] -&gt; **[インポート]**をクリックして、 **[ダッシュボードのインポート]**ウィンドウを開きます。
 
-3.  **「.json ファイルのアップロード」**をクリックして JSON ファイルをアップロードします (TiDB Grafana 構成ファイルを[pingcap/tidb](https://github.com/pingcap/tidb/tree/master/metrics/grafana) 、 [ティクブ/ティクブ](https://github.com/tikv/tikv/tree/master/metrics/grafana) 、および[tikv/pd](https://github.com/tikv/pd/tree/master/metrics/grafana)からダウンロードします)。
+3.  **「.json ファイルのアップロード」**をクリックして JSON ファイルをアップロードします (TiDB Grafana 構成ファイルを[pingcap/tidb](https://github.com/pingcap/tidb/tree/release-7.1/metrics/grafana) 、 [ティクブ/ティクブ](https://github.com/tikv/tikv/tree/master/metrics/grafana) 、および[tikv/pd](https://github.com/tikv/pd/tree/master/metrics/grafana)からダウンロードします)。
 
-    > **ノート：**
+    > **注記：**
     >
     > TiKV、PD、および TiDB ダッシュボードの場合、対応する JSON ファイルは`tikv_summary.json` 、 `tikv_details.json` 、 `tikv_trouble_shooting.json` 、 `pd.json` 、 `tidb.json` 、および`tidb_summary.json`です。
 

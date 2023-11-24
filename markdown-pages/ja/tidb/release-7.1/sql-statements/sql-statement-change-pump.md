@@ -7,12 +7,15 @@ summary: An overview of the usage of CHANGE PUMP for the TiDB database.
 
 `CHANGE PUMP`ステートメントは、クラスター内のPumpのステータス情報を変更します。
 
+> **注記：**
+>
+> この機能は TiDB セルフホスト型にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では利用できません。
+
 > **ヒント：**
 >
 > ポンプの状態は運転中に自動的に PD に報告されます。 Pumpが異常な状況にあり、その状態が PD に保存されている状態情報と一致しない場合にのみ、 `CHANGE PUMP`ステートメントを使用して PD に保存されている状態情報を変更できます。
 
 ## 例 {#examples}
-
 
 ```sql
 SHOW PUMP STATUS;
@@ -29,8 +32,7 @@ SHOW PUMP STATUS;
 2 rows in set (0.00 sec)
 ```
 
-Pump1 の状態が 1 日以上更新されていないことがわかります。Pumpは異常な状態にありますが、 `State` `Online`のままです。 `CHANGE PUMP`使用した後、ポンプの`State` 「一時停止」に変更されます。
-
+ポンプ 1 の状態が 1 日以上更新されていないことがわかります。Pumpは異常な状態にありますが、 `State`は`Online`のままです。 `CHANGE PUMP`使用した後、ポンプの`State` 「一時停止」に変更されます。
 
 ```sql
 CHANGE PUMP TO NODE_STATE ='paused' FOR NODE_ID 'pump1';
@@ -39,7 +41,6 @@ CHANGE PUMP TO NODE_STATE ='paused' FOR NODE_ID 'pump1';
 ```sql
 Query OK, 0 rows affected (0.01 sec)
 ```
-
 
 ```sql
 SHOW PUMP STATUS;
@@ -63,5 +64,5 @@ SHOW PUMP STATUS;
 ## こちらも参照 {#see-also}
 
 -   [ポンプのステータスを表示](/sql-statements/sql-statement-show-pump-status.md)
--   [ドレイナーステータスを表示](/sql-statements/sql-statement-show-drainer-status.md)
+-   [ドレイナーのステータスを表示](/sql-statements/sql-statement-show-drainer-status.md)
 -   [ドレイナーステータスの変更](/sql-statements/sql-statement-change-drainer.md)
