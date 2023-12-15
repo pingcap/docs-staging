@@ -792,7 +792,7 @@ curl -X 'POST' \
         "compress-kv-pairs": "",
         "pd_addr": "",
         "on_duplicate_logical": "error",
-        "on_duplicate_physical": "manual"
+        "on_duplicate_physical": "none"
       },
       "incr_migrate_conf": {
         "repl_threads": 16,
@@ -892,7 +892,7 @@ curl -X 'POST' \
       "compress-kv-pairs": "",
       "pd_addr": "",
       "on_duplicate_logical": "error",
-      "on_duplicate_physical": "manual"
+      "on_duplicate_physical": "none"
     },
     "incr_migrate_conf": {
       "repl_threads": 16,
@@ -1008,7 +1008,7 @@ curl -X 'GET' \
       "compress-kv-pairs": "",
       "pd_addr": "",
       "on_duplicate_logical": "error",
-      "on_duplicate_physical": "manual"
+      "on_duplicate_physical": "none"
     },
     "incr_migrate_conf": {
       "repl_threads": 16,
@@ -1144,7 +1144,7 @@ curl -X 'PUT' \
         "compress-kv-pairs": "",
         "pd_addr": "",
         "on_duplicate_logical": "error",
-        "on_duplicate_physical": "manual"
+        "on_duplicate_physical": "none"
       },
       "incr_migrate_conf": {
         "repl_threads": 16,
@@ -1244,7 +1244,7 @@ curl -X 'PUT' \
       "compress-kv-pairs": "",
       "pd_addr": "",
       "on_duplicate_logical": "error",
-      "on_duplicate_physical": "manual"
+      "on_duplicate_physical": "none"
     },
     "incr_migrate_conf": {
       "repl_threads": 16,
@@ -1467,7 +1467,7 @@ curl -X 'GET' \
           "compress-kv-pairs": "",
           "pd_addr": "",
           "on_duplicate_logical": "error",
-          "on_duplicate_physical": "manual"
+          "on_duplicate_physical": "none"
         },
         "incr_migrate_conf": {
           "repl_threads": 16,
