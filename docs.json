@@ -101,7 +101,7 @@
       "archived": ["v1.1", "v1.0"]
     },
     "tidbcloud": {
-      "target": "release-7.1",
+      "target": "release-7.5",
       "languages": {
         "en": {
           "repo": "pingcap/docs",
