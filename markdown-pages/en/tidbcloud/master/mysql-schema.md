@@ -69,25 +69,56 @@ Currently, the `help_topic` is NULL.
 ## TTL related system tables
 
 > **Note:**
->
+
 > The TTL related system tables are not available on [TiDB Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless) clusters.
 
-* `mysql.tidb_ttl_table_status` the previously executed TTL job and ongoing TTL job for all TTL tables
-* `mysql.tidb_ttl_task` the current ongoing TTL subtasks
-* `mysql.tidb_ttl_job_history` the execution history of TTL tasks in the last 90 days
+* `tidb_ttl_table_status`: the previously executed TTL job and ongoing TTL job for all TTL tables
+* `tidb_ttl_task`: the current ongoing TTL subtasks
+* `tidb_ttl_job_history`: the execution history of TTL tasks in the last 90 days
+
+## System tables related to runaway queries
+
+* `tidb_runaway_queries`: the history records of all identified runaway queries in the past 7 days
+* `tidb_runaway_watch`: the watch list of runaway queries
+* `tidb_runaway_watch_done`: a watch list of deleted or expired runaway queries
 
 ## System tables related to metadata locks
 
-* `tidb_mdl_view`：a view of metadata locks. You can use it to view information about the currently blocked DDL statements
-* `tidb_mdl_info`：used internally by TiDB to synchronize metadata locks across nodes
+* `tidb_mdl_view`: a view of metadata locks. You can use it to view information about the currently blocked DDL statements
+* `tidb_mdl_info`: used internally by TiDB to synchronize metadata locks across nodes
+
+## System tables related to DDL statements
+
+* `tidb_ddl_history`: the history records of DDL statements
+* `tidb_ddl_jobs`: the metadata of DDL statements that are currently being executed by TiDB
+* `tidb_ddl_reorg`: the metadata of physical DDL statements (such as adding indexes) that are currently being executed by TiDB
+
+## System tables related to TiDB Distributed eXecution Framework (DXF)
+
+* `dist_framework_meta`: the metadata of the Distributed eXecution Framework (DXF) task scheduler
+* `tidb_global_task`: the metadata of the current DXF task
+* `tidb_global_task_history`: the metadata of the historical DXF tasks, including both succeeded and failed tasks
+* `tidb_background_subtask`: the metadata of the current DXF subtask
+* `tidb_background_subtask_history`: the metadata of the historical DXF subtasks
 
 ## Miscellaneous system tables
 
+<CustomContent platform="tidb">
+
 > **Note:**
 >
-> The `tidb`, `expr_pushdown_blacklist`, `opt_rule_blacklist`, and `table_cache_meta` system tables are only applicable to TiDB Self-Hosted and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
+> The `tidb`, `expr_pushdown_blacklist`, `opt_rule_blacklist`, `table_cache_meta`, `tidb_import_jobs`, and `tidb_timers` system tables are only applicable to TiDB Self-Hosted and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
 
 - `GLOBAL_VARIABLES`: global system variable table
 - `expr_pushdown_blacklist`: the blocklist for expression pushdown
 - `opt_rule_blacklist`: the blocklist for logical optimization rules
+- `tidb_import_jobs`: the job information of [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)
 - `tidb_timers`: the metadata of internal timers
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+- `GLOBAL_VARIABLES`: global system variable table
+
+</CustomContent>

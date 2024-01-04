@@ -189,7 +189,7 @@ npm start
 If the connection is successful, the console will output the version of the TiDB cluster as follows:
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 5.7.25-TiDB-v7.1.3)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v7.5.0)
 ⏳ Loading sample game data...
 ✅ Loaded sample game data.
 
@@ -309,4 +309,14 @@ For more information, refer to [Delete data](/develop/dev-guide-delete-data.md).
 
 ## Need help?
 
-Ask questions on the [Discord](https://discord.gg/vYU9h56kAX), or [create a support ticket](https://support.pingcap.com/).
+<CustomContent platform="tidb">
+
+Ask questions on the [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc), or [create a support ticket](/support.md).
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+Ask questions on the [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc), or [create a support ticket](https://support.pingcap.com/).
+
+</CustomContent>

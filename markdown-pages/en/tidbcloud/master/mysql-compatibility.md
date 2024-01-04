@@ -5,7 +5,17 @@ summary: Learn about the compatibility of TiDB with MySQL, and the unsupported a
 
 # MySQL Compatibility
 
-TiDB is highly compatible with the MySQL 5.7 protocol and supports the common features and syntax of MySQL 5.7. This means that ecosystem tools such as PHPMyAdmin, Navicat, MySQL Workbench, mysqldump, and Mydumper/myloader, as well as the MySQL client, can be used for TiDB.
+<CustomContent platform="tidb">
+
+TiDB is highly compatible with the MySQL protocol and the common features and syntax of MySQL 5.7 and MySQL 8.0. The ecosystem tools for MySQL (PHPMyAdmin, Navicat, MySQL Workbench, DBeaver and [more](/develop/dev-guide-third-party-support.md#gui)) and the MySQL client can be used for TiDB.
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+TiDB is highly compatible with the MySQL protocol and the common features and syntax of MySQL 5.7 and MySQL 8.0. The ecosystem tools for MySQL (PHPMyAdmin, Navicat, MySQL Workbench, DBeaver and [more](https://docs.pingcap.com/tidb/v7.2/dev-guide-third-party-support#gui)) and the MySQL client can be used for TiDB.
+
+</CustomContent>
 
 However, some features of MySQL are not supported in TiDB. This could be because there is now a better way to solve the problem (such as the use of JSON instead of XML functions) or a lack of current demand versus effort required (such as stored procedures and functions). Additionally, some features might be difficult to implement in a distributed system.
 
@@ -59,6 +69,9 @@ You can try out TiDB features on [TiDB Playground](https://play.tidbcloud.com/?u
 + `HANDLER` statement
 + `CREATE TABLESPACE` statement
 + "Session Tracker: Add GTIDs context to the OK packet"
++ Descending Index [#2519](https://github.com/pingcap/tidb/issues/2519)
++ `SKIP LOCKED` syntax [#18207](https://github.com/pingcap/tidb/issues/18207)
++ Lateral derived tables [#40328](https://github.com/pingcap/tidb/issues/40328)
 
 ## Differences from MySQL
 
@@ -179,7 +192,6 @@ For more information, refer to [`ANALYZE TABLE`](/sql-statements/sql-statement-a
 TiDB does not support the following `SELECT` syntax:
 
 - `SELECT ... INTO @variable`
-- `SELECT ... GROUP BY ... WITH ROLLUP`
 - `SELECT .. GROUP BY expr` does not imply `GROUP BY expr ORDER BY expr` as it does in MySQL 5.7.
 
 For more details, see the [`SELECT`](/sql-statements/sql-statement-select.md) statement reference.
@@ -256,13 +268,12 @@ TiDB has default differences when compared with MySQL 5.7 and MySQL 8.0:
 TiDB supports named timezones with the following considerations:
 
 + TiDB uses all the timezone rules presently installed in the system for calculation, typically the `tzdata` package. This makes it possible to use all timezone names without needing to import timezone table data. Importing timezone table data will not change the calculation rules.
-+ Currently, MySQL uses the local timezone by default, then relies on the current timezone rules built into the system (for example, when daylight savings time begins) for calculation. Without [importing timezone table data](https://dev.mysql.com/doc/refman/5.7/en/time-zone-support.html#time-zone-installation), MySQL cannot specify the timezone by name.
++ Currently, MySQL uses the local timezone by default, then relies on the current timezone rules built into the system (for example, when daylight savings time begins) for calculation. Without [importing timezone table data](https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-installation), MySQL cannot specify the timezone by name.
 
 ### Type system differences
 
 The following column types are supported by MySQL but **not** by TiDB:
 
-- FLOAT4/FLOAT8
 - `SQL_TSI_*` (includes SQL_TSI_MONTH, SQL_TSI_WEEK, SQL_TSI_DAY, SQL_TSI_HOUR, SQL_TSI_MINUTE, and SQL_TSI_SECOND, but excludes SQL_TSI_YEAR)
 
 ### Incompatibility due to deprecated features
