@@ -5,7 +5,7 @@ summary: Learn about the precision math in TiDB.
 
 # Precision Math
 
-The precision math support in TiDB is consistent with MySQL. For more information, see [Precision Math in MySQL](https://dev.mysql.com/doc/refman/5.7/en/precision-math.html).
+The precision math support in TiDB is consistent with MySQL. For more information, see [Precision Math in MySQL](https://dev.mysql.com/doc/refman/8.0/en/precision-math.html).
 
 ## Numeric types
 
@@ -50,7 +50,7 @@ DECIMAL columns do not store a leading `+` character or `-` character or leading
 
 DECIMAL columns do not permit values larger than the range implied by the column definition. For example, a `DECIMAL(3,0)` column supports a range of `-999` to `999`. A `DECIMAL(M,D)` column permits at most `M - D` digits to the left of the decimal point.
 
-For more information about the internal format of the DECIMAL values, see [`mydecimal.go`](https://github.com/pingcap/tidb/blob/release-7.1/types/mydecimal.go) in TiDB souce code.
+For more information about the internal format of the DECIMAL values, see [`mydecimal.go`](https://github.com/pingcap/tidb/blob/release-7.5/pkg/types/mydecimal.go) in TiDB souce code.
 
 ## Expression handling
 

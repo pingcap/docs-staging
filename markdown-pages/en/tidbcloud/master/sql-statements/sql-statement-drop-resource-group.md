@@ -22,6 +22,7 @@ IfExists ::=
 
 ResourceGroupName ::=
     Identifier
+|   "DEFAULT"
 ```
 
 > **Note:**
@@ -54,11 +55,11 @@ SELECT * FROM information_schema.resource_groups WHERE NAME ='rg1';
 ```
 
 ```sql
-+------+------------+----------+-----------+
-| NAME | RU_PER_SEC | PRIORITY | BURSTABLE |
-+------+------------+----------+-----------+
-| rg1  |       500  | MEDIUM   | YES       |
-+------+------------+----------+-----------+
++------+------------+----------+-----------+-------------+
+| NAME | RU_PER_SEC | PRIORITY | BURSTABLE | QUERY_LIMIT |
++------+------------+----------+-----------+-------------+
+| rg1  | 500        | MEDIUM   | YES       | NULL        |
++------+------------+----------+-----------+-------------+
 1 row in set (0.01 sec)
 ```
 

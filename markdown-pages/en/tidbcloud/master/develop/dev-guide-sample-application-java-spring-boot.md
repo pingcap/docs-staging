@@ -1,7 +1,6 @@
 ---
 title: Connect to TiDB with Spring Boot
 summary: Learn how to connect to TiDB using Spring Boot. This tutorial gives Java sample code snippets that work with TiDB using Spring Boot.
-aliases: ['/tidb/v7.1/dev-guide-sample-application-spring-boot']
 ---
 
 # Connect to TiDB with Spring Boot
@@ -270,4 +269,14 @@ For more information, refer to [Delete data](/develop/dev-guide-delete-data.md).
 
 ## Need help?
 
-Ask questions on the [Discord](https://discord.gg/vYU9h56kAX), or [create a support ticket](https://support.pingcap.com/).
+<CustomContent platform="tidb">
+
+Ask questions on the [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc), or [create a support ticket](/support.md).
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+Ask questions on the [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc), or [create a support ticket](https://support.pingcap.com/).
+
+</CustomContent>
