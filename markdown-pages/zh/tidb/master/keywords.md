@@ -391,7 +391,6 @@ TiDB 从 v7.6.0 开始提供 [`INFORMATION_SCHEMA.KEYWORDS`](/information-schema
 - LIST
 - LOAD (R)
 - LOCAL
-- LOCAL_ONLY
 - LOCALTIME (R)
 - LOCALTIMESTAMP (R)
 - LOCATION
@@ -730,6 +729,7 @@ TiDB 从 v7.6.0 开始提供 [`INFORMATION_SCHEMA.KEYWORDS`](/information-schema
 - UNIQUE (R)
 - UNKNOWN
 - UNLOCK (R)
+- UNSET
 - UNSIGNED (R)
 - UNTIL (R)
 - UPDATE (R)
