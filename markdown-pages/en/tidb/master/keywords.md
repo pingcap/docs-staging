@@ -391,7 +391,6 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - LIST
 - LOAD (R)
 - LOCAL
-- LOCAL_ONLY
 - LOCALTIME (R)
 - LOCALTIMESTAMP (R)
 - LOCATION
@@ -730,6 +729,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - UNIQUE (R)
 - UNKNOWN
 - UNLOCK (R)
+- UNSET
 - UNSIGNED (R)
 - UNTIL (R)
 - UPDATE (R)
