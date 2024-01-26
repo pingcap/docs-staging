@@ -139,8 +139,8 @@
           {
             "id": "msp",
             "pathname": "msp/v1beta1",
-            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta-msp.json",
-            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta-msp.json"
+            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-msp.json",
+            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-msp.json"
           }
         ]
       }
