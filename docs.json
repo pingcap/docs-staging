@@ -1,14 +1,15 @@
 {
   "docs": {
     "tidb": {
-      "stable": "release-7.1",
+      "stable": "release-7.5",
       "languages": {
         "en": {
           "repo": "pingcap/docs",
           "versions": [
             "master",
+            "release-7.6",
+            "release-7.5",
             "release-7.4",
-            "release-7.3",
             "release-7.1",
             "release-6.5",
             "release-6.1",
@@ -24,8 +25,9 @@
           "repo": "pingcap/docs-cn",
           "versions": [
             "master",
+            "release-7.6",
+            "release-7.5",
             "release-7.4",
-            "release-7.3",
             "release-7.1",
             "release-6.5",
             "release-6.1",
@@ -40,8 +42,9 @@
         "ja": {
           "repo": "pingcap/docs",
           "versions": [
+            "release-7.6",
+            "release-7.5",
             "release-7.4",
-            "release-7.3",
             "release-7.1",
             "release-6.5",
             "release-6.1",
@@ -60,9 +63,9 @@
         "v5.3",
         "v5.4"
       ],
-      "dmr": ["v7.4", "v7.3", "v7.2", "v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0"],
-      "archived": ["v7.2", "v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0", "v3.1", "v3.0", "v2.1"],
-      "searchIndex": ["v7.1", "v6.5", "v6.1", "v5.4", "v5.1"]
+      "dmr": ["v7.6", "v7.4", "v7.3", "v7.2", "v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0"],
+      "archived": ["v7.3", "v7.2", "v7.0", "v6.6", "v6.4", "v6.3", "v6.2", "v6.0", "v3.1", "v3.0", "v2.1"],
+      "searchIndex": ["v7.5", "v7.1", "v6.5", "v6.1", "v5.4", "v5.1"]
     },
     "tidb-data-migration": {
       "languages": {
@@ -98,7 +101,7 @@
       "archived": ["v1.1", "v1.0"]
     },
     "tidbcloud": {
-      "target": "release-7.1",
+      "target": "release-7.5",
       "languages": {
         "en": {
           "repo": "pingcap/docs",
@@ -120,9 +123,21 @@
           },
           {
             "id": "v1beta1",
-            "pathname": "v1beta1",
+            "pathname": "v1beta1/billing",
             "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-billing.swagger.json",
             "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-billing.swagger.json"
+          },
+          {
+            "id": "v1beta1",
+            "pathname": "v1beta1/apikey",
+            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-apikey.swagger.json",
+            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-apikey.swagger.json"
+          },
+          {
+            "id": "msp",
+            "pathname": "msp/v1beta1",
+            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-msp.json",
+            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-msp.json"
           }
         ]
       }
