@@ -5,7 +5,7 @@ summary: Understand the computing layer of the TiDB database.
 
 # TiDB コンピューティング {#tidb-computing}
 
-TiKV が提供する分散storageに基づいて、TiDB はトランザクション処理の優れた機能とデータ分析の機能を組み合わせたコンピューティング エンジンを構築します。このドキュメントは、TiDB データベース テーブルのデータを TiKV の (Key, Value) キーと値のペアにマッピングするデータ マッピング アルゴリズムを紹介することから始まり、次に TiDB がメタデータを管理する方法を紹介し、最後にTiDB SQLレイヤーのアーキテクチャを説明します。
+TiKV が提供する分散storageに基づいて、TiDB は、トランザクション処理の優れた機能とデータ分析の機能を組み合わせたコンピューティング エンジンを構築します。このドキュメントは、TiDB データベース テーブルのデータを TiKV の (Key, Value) キーと値のペアにマッピングするデータ マッピング アルゴリズムを紹介することから始まり、次に TiDB がメタデータを管理する方法を紹介し、最後にTiDB SQLレイヤーのアーキテクチャを説明します。
 
 コンピューティングレイヤーが依存するstorageソリューションについては、このドキュメントでは TiKV の行ベースのstorage構造のみを紹介します。 OLAP サービスの場合、TiDB は TiKV 拡張機能として列ベースのstorageソリューション[TiFlash](/tiflash/tiflash-overview.md)を導入します。
 
@@ -27,10 +27,8 @@ TiKV が提供する分散storageに基づいて、TiDB はトランザクショ
 
 データの各行は、次のルールに従って (Key, Value) キーと値のペアとしてエンコードされます。
 
-```
-Key:   tablePrefix{TableID}_recordPrefixSep{RowID}
-Value: [col1, col2, col3, col4]
-```
+    Key:   tablePrefix{TableID}_recordPrefixSep{RowID}
+    Value: [col1, col2, col3, col4]
 
 `tablePrefix`と`recordPrefixSep`両方とも、キー空間内の他のデータを区別するために使用される特別な文字列定数です。文字列定数の正確な値は[マッピング関係の概要](#summary-of-mapping-relationships)で紹介されています。
 
@@ -40,29 +38,23 @@ TiDB は、主キーと副次インデックス (一意のインデックスと�
 
 主キーと一意のインデックスの場合、キーと値のペアに基づいて対応する`RowID`すばやく見つける必要があるため、そのようなキーと値のペアは次のようにエンコードされます。
 
-```
-Key:   tablePrefix{tableID}_indexPrefixSep{indexID}_indexedColumnsValue
-Value: RowID
-```
+    Key:   tablePrefix{tableID}_indexPrefixSep{indexID}_indexedColumnsValue
+    Value: RowID
 
 一意性制約を満たす必要のない通常のセカンダリ インデックスの場合、1 つのキーが複数の行に対応する可能性があります。キーの範囲に応じて、対応する`RowID`クエリする必要があります。したがって、キーと値のペアは次の規則に従ってエンコードする必要があります。
 
-```
-Key:   tablePrefix{TableID}_indexPrefixSep{IndexID}_indexedColumnsValue_{RowID}
-Value: null
-```
+    Key:   tablePrefix{TableID}_indexPrefixSep{IndexID}_indexedColumnsValue_{RowID}
+    Value: null
 
 ### マッピング関係の概要 {#summary-of-mapping-relationships}
 
 上記のすべてのエンコード規則の`tablePrefix` 、 `recordPrefixSep` 、および`indexPrefixSep`は、KV をキー空間内の他のデータから区別するために使用される文字列定数であり、次のように定義されます。
 
-```
-tablePrefix     = []byte{'t'}
-recordPrefixSep = []byte{'r'}
-indexPrefixSep  = []byte{'i'}
-```
+    tablePrefix     = []byte{'t'}
+    recordPrefixSep = []byte{'r'}
+    indexPrefixSep  = []byte{'i'}
 
-また、上記のエンコード スキームでは、テーブル データまたはインデックス データ キーのエンコード スキームに関係なく、テーブル内のすべての行が同じキー プレフィックスを持ち、インデックスのすべてのデータも同じプレフィックスを持つことに注意してください。このようにして、同じプレフィックスを持つデータが TiKV のキー空間にまとめて配置されます。したがって、エンコード前とエンコード後の比較が同じになるようにサフィックス部分のエンコード方式を慎重に設計することで、テーブル データまたはインデックス データを順序どおりに TiKV に保存できます。このエンコーディング スキームを使用すると、テーブル内のすべての行データが TiKV のキー空間に`RowID`順番に配置され、特定のインデックスのデータもインデックス データの特定の値に従ってキー空間に順番に配置されます ( `indexedColumnsValue` )。
+また、上記のエンコード スキームでは、テーブル データまたはインデックス データ キーのエンコード スキームに関係なく、テーブル内のすべての行が同じキー プレフィックスを持ち、インデックスのすべてのデータも同じプレフィックスを持つことに注意してください。このようにして、同じプレフィックスを持つデータが TiKV のキー空間にまとめて配置されます。したがって、エンコード前とエンコード後の比較が同じになるようにサフィックス部分のエンコード方式を慎重に設計することで、テーブル データまたはインデックス データを順序どおりに TiKV に保存できます。このエンコーディング スキームを使用すると、テーブル内のすべての行データが TiKV のキー空間に`RowID`ずつ順番に配置され、特定のインデックスのデータもインデックス データの特定の値に従ってキー空間に順番に配置されます ( `indexedColumnsValue` )。
 
 ### Key-Value マッピング関係の例 {#example-of-key-value-mapping-relationship}
 
@@ -81,27 +73,21 @@ CREATE TABLE User (
 
 テーブルに 3 行のデータがあるとします。
 
-```
-1, "TiDB", "SQL Layer", 10
-2, "TiKV", "KV Engine", 20
-3, "PD", "Manager", 30
-```
+    1, "TiDB", "SQL Layer", 10
+    2, "TiKV", "KV Engine", 20
+    3, "PD", "Manager", 30
 
 データの各行は (Key, Value) キーと値のペアにマップされ、テーブルには`int`種類の主キーがあるため、値`RowID`がこの主キーの値になります。テーブルの`TableID` `10`で、TiKV に保存されるテーブル データは次のようになるとします。
 
-```
-t10_r1 --> ["TiDB", "SQL  Layer", 10]
-t10_r2 --> ["TiKV", "KV  Engine", 20]
-t10_r3 --> ["PD", " Manager", 30]
-```
+    t10_r1 --> ["TiDB", "SQL  Layer", 10]
+    t10_r2 --> ["TiKV", "KV  Engine", 20]
+    t10_r3 --> ["PD", " Manager", 30]
 
 主キーに加えて、テーブルには非一意の通常の副次インデックス`idxAge`があります。 `IndexID`が`1`であると仮定すると、TiKV に保存されるインデックス データは次のようになります。
 
-```
-t10_i1_10_1 --> null
-t10_i1_20_2 --> null
-t10_i1_30_3 --> null
-```
+    t10_i1_10_1 --> null
+    t10_i1_20_2 --> null
+    t10_i1_30_3 --> null
 
 上の例は、TiDB におけるリレーショナル モデルから Key-Value モデルへのマッピング ルールと、このマッピング スキームの背後にある考慮事項を示しています。
 
@@ -115,7 +101,7 @@ TiDB の各データベースとテーブルには、その定義とさまざま
 
 ## SQLレイヤーの概要 {#sql-layer-overview}
 
-TiDB の SQLレイヤーである TiDB サーバーは、SQL ステートメントを Key-Value オペレーションに変換し、そのオペレーションを分散 Key-Valuestorageレイヤーである TiKV に転送し、TiKV から返された結果を組み立てて、最後にクエリ結果をクライアントに返します。
+TiDB の SQLレイヤーTiDB サーバーは、SQL ステートメントを Key-Value オペレーションに変換し、そのオペレーションを分散 Key-Valuestorageレイヤーである TiKV に転送し、TiKV から返された結果を組み立てて、最後にクエリ結果をクライアントに返します。
 
 このレイヤーのノードはステートレスです。これらのノード自体はデータを保存せず、完全に同等です。
 

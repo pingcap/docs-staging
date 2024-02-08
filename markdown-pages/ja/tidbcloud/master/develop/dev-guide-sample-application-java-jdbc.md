@@ -36,6 +36,10 @@ TiDB は MySQL 互換データベースであり、JDBC (Java Database Connectiv
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
+> **注記：**
+>
+> セキュリティを考慮して、インターネット経由で接続する場合は、 `VERIFY_IDENTITY`を使用して TiDB クラスターへの TLS 接続を確立することをお勧めします。 TiDB サーバーレスと TiDB 専用はどちらもサブジェクト代替名 (SAN) 証明書を使用します。これには、MySQL Connector/J バージョンが[8.0.22](https://dev.mysql.com/doc/relnotes/connector-j/8.0/en/news-8-0-22.html)以上である必要があります。
+
 **TiDB クラスターがない場合は、次のように作成できます。**
 
 -   (推奨) [TiDB サーバーレスクラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
@@ -302,4 +306,14 @@ Javaドライバーはデータベースへの低レベルのアクセスを提�
 
 ## 助けが必要？ {#need-help}
 
-[不和](https://discord.gg/vYU9h56kAX)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+<CustomContent platform="tidb">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](/support.md)について質問してください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+
+</CustomContent>

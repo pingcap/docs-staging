@@ -9,7 +9,7 @@ TiDB は、UNION、EXCEPT、INTERSECT 演算子を使用した 3 つの集合演
 
 ## UNION 演算子 {#union-operator}
 
-数学では、2 つの集合 A と B の和集合は、A または B にあるすべての要素で構成されます。次に例を示します。
+数学では、2 つのセット A と B の和集合は、A または B にあるすべての要素で構成されます。次に例を示します。
 
 ```sql
 SELECT 1 UNION SELECT 2;
@@ -22,7 +22,7 @@ SELECT 1 UNION SELECT 2;
 2 rows in set (0.00 sec)
 ```
 
-TiDB は`UNION DISTINCT`と`UNION ALL`の両方の演算子をサポートします。 `UNION DISTINCT`結果セットから重複レコードを削除しますが、 `UNION ALL`重複を含むすべてのレコードを保持します。 TiDB ではデフォルトで`UNION DISTINCT`が使用されます。
+TiDB は`UNION DISTINCT`と`UNION ALL`演算子の両方をサポートします。 `UNION DISTINCT`結果セットから重複レコードを削除しますが、 `UNION ALL`重複を含むすべてのレコードを保持します。 TiDB ではデフォルトで`UNION DISTINCT`が使用されます。
 
 ```sql
 CREATE TABLE t1 (a int);
@@ -58,7 +58,7 @@ SELECT * FROM t1 UNION ALL SELECT * FROM t2;
 
 ## EXCEPT 演算子 {#except-operator}
 
-A と B が 2 つのセットの場合、EXCEPT は、A にはあるが B にはない要素で構成される A と B の差分セットを返します。
+A と B が 2 つのセットである場合、EXCEPT は、A にはあるが B にはない要素で構成される A と B の差分セットを返します。
 
 ```sql
 SELECT * FROM t1 EXCEPT SELECT * FROM t2;
@@ -74,7 +74,7 @@ SELECT * FROM t1 EXCEPT SELECT * FROM t2;
 
 ## INTERSECT 演算子 {#intersect-operator}
 
-数学では、2 つの集合 A と B の共通部分は、A と B の両方に含まれるすべての要素で構成され、他の要素は構成されません。
+数学では、2 つのセット A と B の共通部分は、A と B の両方に含まれるすべての要素で構成され、他の要素は含まれません。
 
 ```sql
 SELECT * FROM t1 INTERSECT SELECT * FROM t2;

@@ -7,7 +7,6 @@ summary: Learn the `COLLATIONS` information_schema table.
 
 `COLLATIONS`表は、 `CHARACTER_SETS`表の文字セットに対応する照合順序のリストを提供します。現在、このテーブルは MySQL との互換性のためにのみ含まれています。
 
-
 ```sql
 USE information_schema;
 DESC collations;
@@ -26,7 +25,6 @@ DESC collations;
 +--------------------+-------------+------+------+---------+-------+
 6 rows in set (0.00 sec)
 ```
-
 
 ```sql
 SELECT * FROM collations WHERE character_set_name='utf8mb4';

@@ -45,21 +45,91 @@ INSERT INTO users (id,age,last_login) VALUES (NULL,123,NULL);
 
 ## チェック {#check}
 
-TiDB は解析しますが、制約`CHECK`無視します。この動作は、 MySQL 5.7と構文互換性があるだけであり、サポートされていません。
+> **注記：**
+>
+> `CHECK`制約機能はデフォルトでは無効になっています。これを有効にするには、変数[`tidb_enable_check_constraint`](/system-variables.md#tidb_enable_check_constraint-new-in-v720)を`ON`に設定する必要があります。
 
-例えば：
+`CHECK`制約は、指定した条件を満たすようにテーブル内の列の値を制限します。 `CHECK`制約がテーブルに追加されると、TiDB はテーブルへのデータの挿入または更新中に制約が満たされているかどうかをチェックします。制約が満たされない場合は、エラーが返されます。
+
+TiDB の`CHECK`制約の構文は MySQL の構文と同じです。
 
 ```sql
-DROP TABLE IF EXISTS users;
-CREATE TABLE users (
- id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
- username VARCHAR(60) NOT NULL,
- UNIQUE KEY (username),
- CONSTRAINT min_username_length CHECK (CHARACTER_LENGTH(username) >=4)
-);
-INSERT INTO users (username) VALUES ('a');
-SELECT * FROM users;
+[CONSTRAINT [symbol]] CHECK (expr) [[NOT] ENFORCED]
 ```
+
+構文の説明:
+
+-   `[]` : `[]`以内の内容は任意です。
+-   `CONSTRAINT [symbol]` : `CHECK`制約の名前を指定します。
+-   `CHECK (expr)` : 制約条件を指定します。2 `expr`ブール式である必要があります。テーブル内の各行について、この式の計算結果は`TRUE` 、 `FALSE` 、または`UNKNOWN` (値が`NULL`個の場合) のいずれかである必要があります。計算結果が行ごとに`FALSE`の場合、制約に違反していることを示します。
+-   `[NOT] ENFORCED` : 制約チェックを実装するかどうかを指定します。これを使用して、 `CHECK`制約を有効または無効にすることができます。
+
+### <code>CHECK</code>制約を追加する {#add-code-check-code-constraints}
+
+TiDB では、 [`CREATE TABLE`](/sql-statements/sql-statement-create-table.md)または[`ALTER TABLE`](/sql-statements/sql-statement-modify-column.md)ステートメントを使用してテーブルに`CHECK`制約を追加できます。
+
+-   `CREATE TABLE`ステートメントを使用して`CHECK`制約を追加する例:
+
+    ```sql
+    CREATE TABLE t(a INT CHECK(a > 10) NOT ENFORCED, b INT, c INT, CONSTRAINT c1 CHECK (b > c));
+    ```
+
+-   `ALTER TABLE`ステートメントを使用して`CHECK`制約を追加する例:
+
+    ```sql
+    ALTER TABLE t ADD CONSTRAINT CHECK (1 < c);
+    ```
+
+`CHECK`制約を追加または有効にすると、TiDB はテーブル内の既存のデータをチェックします。データが制約に違反している場合、 `CHECK`制約を追加する操作は失敗し、エラーが返されます。
+
+`CHECK`制約を追加する場合、制約名を指定することも、名前を指定しないままにすることもできます。制約名が指定されていない場合、TiDB は`<tableName>_chk_<1, 2, 3...>`形式で制約名を自動的に生成します。
+
+### <code>CHECK</code>制約のビュー {#view-code-check-code-constraints}
+
+[`SHOW CREATE TABLE`](/sql-statements/sql-statement-show-create-table.md)ステートメントを使用すると、テーブル内の制約情報を表示できます。例えば：
+
+```sql
+SHOW CREATE TABLE t;
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                                                                                                                                                     |
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| t     | CREATE TABLE `t` (
+  `a` int(11) DEFAULT NULL,
+  `b` int(11) DEFAULT NULL,
+  `c` int(11) DEFAULT NULL,
+CONSTRAINT `c1` CHECK ((`b` > `c`)),
+CONSTRAINT `t_chk_1` CHECK ((`a` > 10)) /*!80016 NOT ENFORCED */,
+CONSTRAINT `t_chk_2` CHECK ((1 < `c`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin |
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+```
+
+### <code>CHECK</code>制約の削除 {#delete-code-check-code-constraints}
+
+`CHECK`制約を削除する場合は、削除する制約の名前を指定する必要があります。例えば：
+
+```sql
+ALTER TABLE t DROP CONSTRAINT t_chk_1;
+```
+
+### <code>CHECK</code>制約を有効または無効にする {#enable-or-disable-code-check-code-constraints}
+
+テーブルに[`CHECK`制約の追加](#add-check-constraints)を設定すると、TiDB がデータの挿入または更新中に制約チェックを実装する必要があるかどうかを指定できます。
+
+-   `NOT ENFORCED`を指定した場合、TiDB はデータの挿入または更新時に制約条件をチェックしません。
+-   `NOT ENFORCED`が指定されない場合、または`ENFORCED`が指定された場合、TiDB はデータの挿入または更新時に制約条件をチェックします。
+
+制約を追加するときに`[NOT] ENFORCED`を指定するだけでなく、 `ALTER TABLE`ステートメントを使用して`CHECK`制約を有効または無効にすることもできます。例えば：
+
+```sql
+ALTER TABLE t ALTER CONSTRAINT c1 NOT ENFORCED;
+```
+
+### MySQLの互換性 {#mysql-compatibility}
+
+-   列 (たとえば、 `ALTER TABLE t ADD COLUMN a CHECK(a > 0)` ) を追加するときに`CHECK`制約を追加することはサポートされていません。この場合、列のみが正常に追加され、TiDB はエラーを報告せずに`CHECK`制約を無視します。
+-   `ALTER TABLE t CHANGE a b int CHECK(b > 0)`を使用して`CHECK`制約を追加することはサポートされていません。このステートメントが実行されると、TiDB はエラーを報告します。
 
 ## 固有のキー {#unique-key}
 

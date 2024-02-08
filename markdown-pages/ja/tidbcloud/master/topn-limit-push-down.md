@@ -19,28 +19,24 @@ TiDB 実行プラン ツリーでは、SQL の`LIMIT`句が Limit 演算子ノ�
 
 ### 例 1:storageレイヤーのコプロセッサにプッシュダウンする {#example-1-push-down-to-the-coprocessors-in-the-storage-layer}
 
-
 ```sql
 create table t(id int primary key, a int not null);
 explain select * from t order by a limit 10;
 ```
 
-```
-+----------------------------+----------+-----------+---------------+--------------------------------+
-| id                         | estRows  | task      | access object | operator info                  |
-+----------------------------+----------+-----------+---------------+--------------------------------+
-| TopN_7                     | 10.00    | root      |               | test.t.a, offset:0, count:10   |
-| └─TableReader_15           | 10.00    | root      |               | data:TopN_14                   |
-|   └─TopN_14                | 10.00    | cop[tikv] |               | test.t.a, offset:0, count:10   |
-|     └─TableFullScan_13     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo |
-+----------------------------+----------+-----------+---------------+--------------------------------+
-4 rows in set (0.00 sec)
-```
+    +----------------------------+----------+-----------+---------------+--------------------------------+
+    | id                         | estRows  | task      | access object | operator info                  |
+    +----------------------------+----------+-----------+---------------+--------------------------------+
+    | TopN_7                     | 10.00    | root      |               | test.t.a, offset:0, count:10   |
+    | └─TableReader_15           | 10.00    | root      |               | data:TopN_14                   |
+    |   └─TopN_14                | 10.00    | cop[tikv] |               | test.t.a, offset:0, count:10   |
+    |     └─TableFullScan_13     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo |
+    +----------------------------+----------+-----------+---------------+--------------------------------+
+    4 rows in set (0.00 sec)
 
 このクエリでは、TopN オペレータ ノードがデータ フィルタリングのために TiKV にプッシュダウンされ、各コプロセッサーは 10 レコードのみを TiDB に返します。 TiDB がデータを集約した後、最終的なフィルタリングが実行されます。
 
 ### 例 2: TopN を結合にプッシュダウンできます (ソート ルールは外部テーブルの列のみに依存します)。 {#example-2-topn-can-be-pushed-down-into-join-the-sorting-rule-only-depends-on-the-columns-in-the-outer-table}
-
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -48,26 +44,23 @@ create table s(id int primary key, a int not null);
 explain select * from t left join s on t.a = s.a order by t.a limit 10;
 ```
 
-```
-+----------------------------------+----------+-----------+---------------+-------------------------------------------------+
-| id                               | estRows  | task      | access object | operator info                                   |
-+----------------------------------+----------+-----------+---------------+-------------------------------------------------+
-| TopN_12                          | 10.00    | root      |               | test.t.a, offset:0, count:10                    |
-| └─HashJoin_17                    | 12.50    | root      |               | left outer join, equal:[eq(test.t.a, test.s.a)] |
-|   ├─TopN_18(Build)               | 10.00    | root      |               | test.t.a, offset:0, count:10                    |
-|   │ └─TableReader_26             | 10.00    | root      |               | data:TopN_25                                    |
-|   │   └─TopN_25                  | 10.00    | cop[tikv] |               | test.t.a, offset:0, count:10                    |
-|   │     └─TableFullScan_24       | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                  |
-|   └─TableReader_30(Probe)        | 10000.00 | root      |               | data:TableFullScan_29                           |
-|     └─TableFullScan_29           | 10000.00 | cop[tikv] | table:s       | keep order:false, stats:pseudo                  |
-+----------------------------------+----------+-----------+---------------+-------------------------------------------------+
-8 rows in set (0.01 sec)
-```
+    +----------------------------------+----------+-----------+---------------+-------------------------------------------------+
+    | id                               | estRows  | task      | access object | operator info                                   |
+    +----------------------------------+----------+-----------+---------------+-------------------------------------------------+
+    | TopN_12                          | 10.00    | root      |               | test.t.a, offset:0, count:10                    |
+    | └─HashJoin_17                    | 12.50    | root      |               | left outer join, equal:[eq(test.t.a, test.s.a)] |
+    |   ├─TopN_18(Build)               | 10.00    | root      |               | test.t.a, offset:0, count:10                    |
+    |   │ └─TableReader_26             | 10.00    | root      |               | data:TopN_25                                    |
+    |   │   └─TopN_25                  | 10.00    | cop[tikv] |               | test.t.a, offset:0, count:10                    |
+    |   │     └─TableFullScan_24       | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                  |
+    |   └─TableReader_30(Probe)        | 10000.00 | root      |               | data:TableFullScan_29                           |
+    |     └─TableFullScan_29           | 10000.00 | cop[tikv] | table:s       | keep order:false, stats:pseudo                  |
+    +----------------------------------+----------+-----------+---------------+-------------------------------------------------+
+    8 rows in set (0.01 sec)
 
-このクエリでは、TopN 演算子のソート ルールは外部テーブル`t`の列にのみ依存するため、TopN を Join にプッシュダウンする前に計算を実行して、Join 演算の計算コストを削減できます。さらに、TiDB は TopN をstorageレイヤーまでプッシュします。
+このクエリでは、TopN 演算子のソート ルールは外部テーブル`t`の列のみに依存するため、TopN を Join にプッシュダウンする前に計算を実行して、Join 演算の計算コストを削減できます。さらに、TiDB は TopN をstorageレイヤーまでプッシュします。
 
 ### 例 3: 参加前に TopN をプッシュダウンすることはできません {#example-3-topn-cannot-be-pushed-down-before-join}
-
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -75,26 +68,23 @@ create table s(id int primary key, a int not null);
 explain select * from t join s on t.a = s.a order by t.id limit 10;
 ```
 
-```
-+-------------------------------+----------+-----------+---------------+--------------------------------------------+
-| id                            | estRows  | task      | access object | operator info                              |
-+-------------------------------+----------+-----------+---------------+--------------------------------------------+
-| TopN_12                       | 10.00    | root      |               | test.t.id, offset:0, count:10              |
-| └─HashJoin_16                 | 12500.00 | root      |               | inner join, equal:[eq(test.t.a, test.s.a)] |
-|   ├─TableReader_21(Build)     | 10000.00 | root      |               | data:TableFullScan_20                      |
-|   │ └─TableFullScan_20        | 10000.00 | cop[tikv] | table:s       | keep order:false, stats:pseudo             |
-|   └─TableReader_19(Probe)     | 10000.00 | root      |               | data:TableFullScan_18                      |
-|     └─TableFullScan_18        | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo             |
-+-------------------------------+----------+-----------+---------------+--------------------------------------------+
-6 rows in set (0.00 sec)
-```
+    +-------------------------------+----------+-----------+---------------+--------------------------------------------+
+    | id                            | estRows  | task      | access object | operator info                              |
+    +-------------------------------+----------+-----------+---------------+--------------------------------------------+
+    | TopN_12                       | 10.00    | root      |               | test.t.id, offset:0, count:10              |
+    | └─HashJoin_16                 | 12500.00 | root      |               | inner join, equal:[eq(test.t.a, test.s.a)] |
+    |   ├─TableReader_21(Build)     | 10000.00 | root      |               | data:TableFullScan_20                      |
+    |   │ └─TableFullScan_20        | 10000.00 | cop[tikv] | table:s       | keep order:false, stats:pseudo             |
+    |   └─TableReader_19(Probe)     | 10000.00 | root      |               | data:TableFullScan_18                      |
+    |     └─TableFullScan_18        | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo             |
+    +-------------------------------+----------+-----------+---------------+--------------------------------------------+
+    6 rows in set (0.00 sec)
 
 TopN を`Inner Join`より前にプッシュダウンすることはできません。上記のクエリを例にとると、Join 後に 100 レコードを取得した場合、TopN 後には 10 レコードが残ることになります。ただし、最初に TopN を実行して 10 レコードを取得した場合、結合後には 5 レコードのみが残ります。このような場合、プッシュダウンの結果は異なります。
 
 同様に、 TopN は外部結合の内部テーブルにプッシュダウンすることも、ソート ルールが複数のテーブルの列 ( `t.a+s.a`など) に関連している場合もプッシュダウンすることはできません。 TopN のソート ルールが外部テーブルの列に排他的に依存する場合にのみ、TopN をプッシュダウンできます。
 
 ### 例 4: TopN を Limit に変換する {#example-4-convert-topn-to-limit}
-
 
 ```sql
 create table t(id int primary key, a int not null);

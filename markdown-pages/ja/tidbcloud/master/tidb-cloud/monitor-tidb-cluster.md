@@ -28,7 +28,7 @@ summary: Learn how to monitor your TiDB cluster.
 
 ### TiDB ノードのステータス {#tidb-node-status}
 
-> **ノート：**
+> **注記：**
 >
 > TiDB ノードのステータスは、TiDB 専用クラスターでのみ使用できます。
 
@@ -41,7 +41,7 @@ summary: Learn how to monitor your TiDB cluster.
 
 ### TiKV ノードのステータス {#tikv-node-status}
 
-> **ノート：**
+> **注記：**
 >
 > TiKV ノードのステータスは、TiDB 専用クラスターでのみ使用できます。
 
@@ -61,9 +61,9 @@ TiDB Cloudでは、次のページからクラスターの一般的に使用さ�
 
 ### クラスターの概要ページのメトリック {#metrics-on-the-cluster-overview-page}
 
-クラスターの概要ページには、合計 QPS、クエリ期間、アクティブな接続、TiDB CPU、TiKV CPU、 TiFlash CPU、TiDBメモリ、TiKV メモリ、 TiFlashメモリ、 TiKV 使用storageサイズ、 TiFlash使用storageサイズなど、クラスタの一般的なメトリックが表示されます。
+クラスターの概要ページには、合計 QPS、クエリ期間、アクティブな接続、TiDB CPU、TiKV CPU、 TiFlash CPU、TiDB メモリ、TiKVメモリ、 TiFlashメモリ、 TiKV 使用storageサイズ、 TiFlash使用storageサイズなど、クラスタの一般的なメトリックが表示されます。
 
-> **ノート：**
+> **注記：**
 >
 > これらのメトリックの一部は、TiDB 専用クラスターでのみ使用できる場合があります。
 
@@ -77,7 +77,7 @@ TiDB Cloudでは、次のページからクラスターの一般的に使用さ�
 
 クラスター監視ページには、クラスターの標準メトリックの完全なセットが提供されます。これらのメトリクスを表示することで、パフォーマンスの問題を簡単に特定し、現在のデータベース展開が要件を満たしているかどうかを判断できます。
 
-> **ノート：**
+> **注記：**
 >
 > 現在、クラスター監視ページは[TiDB サーバーレスクラスター](/tidb-cloud/select-cluster-tier.md#tidb-serverless)では利用できません。
 

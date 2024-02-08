@@ -81,7 +81,7 @@ TiDB Cloudを使用している場合、 `LOAD DATA`ステートメントを使�
 
 -   MySQL の動作と一致して、 `ESCAPED BY`が null でない場合、たとえばデフォルト値`\`が使用されている場合、 `\N` NULL 値とみなされます。
 -   `DEFINED NULL BY 'my-null'`などの`DEFINED NULL BY`使用する場合、 `my-null`は NULL 値とみなされます。
--   `DEFINED NULL BY 'my-null' OPTIONALLY ENCLOSED`などの`DEFINED NULL BY ... OPTIONALLY ENCLOSED`を使用する場合、 `my-null`および`"my-null"` ( `ENCLOSED BY '"`と仮定) は NULL 値とみなされます。
+-   `DEFINED NULL BY 'my-null' OPTIONALLY ENCLOSED`などの`DEFINED NULL BY ... OPTIONALLY ENCLOSED`を使用する場合、 `my-null`および`"my-null"` ( `ENCLOSED BY '"`仮定) は NULL 値とみなされます。
 -   `DEFINED NULL BY`や`DEFINED NULL BY ... OPTIONALLY ENCLOSED`使用せず、 `ENCLOSED BY '"'`などの`ENCLOSED BY`使用する場合、 `NULL`は NULL 値とみなされます。この動作は MySQL と一致しています。
 -   それ以外の場合は、NULL 値とは見なされません。
 
@@ -146,10 +146,9 @@ LOAD DATA LOCAL INFILE '/mnt/evo970/data-sets/bikeshare-data/2017Q4-capitalbikes
 
 > **注記：**
 >
-> -   TiDB v4.0.0 より前のバージョンでは、20000 行ごとに`LOAD DATA`コミットされますが、これは構成できません。
-> -   TiDB v4.0.0 から v6.6.0 までのバージョンの場合、TiDB はデフォルトで 1 つのトランザクションですべての行をコミットします。ただし、固定行数ごとに`LOAD DATA`ステートメントをコミットする必要がある場合は、目的の行数に[`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size)を設定できます。
-> -   TiDB v7.0.0 以降、 `tidb_dml_batch_size` `LOAD DATA`に対して有効ではなくなり、TiDB は 1 つのトランザクションですべての行をコミットします。
-> -   TiDB v4.0.0 以前のバージョンからアップグレードした後、 `ERROR 8004 (HY000) at line 1: Transaction is too large, size: 100000058`が発生する可能性があります。このエラーを解決する推奨方法は、 `tidb.toml`ファイルの[`txn-total-size-limit`](/tidb-configuration-file.md#txn-total-size-limit)値を増やすことです。
+> -   TiDB v4.0.0 より前のバージョンでは、20000 行ごとに`LOAD DATA`コミットされます。
+> -   TiDB v4.0.0 から v6.6.0 までのバージョンの場合、TiDB はデフォルトで 1 つのトランザクションですべての行をコミットします。
+> -   TiDB v4.0.0 以前のバージョンからアップグレードした後、 `ERROR 8004 (HY000) at line 1: Transaction is too large, size: 100000058`が発生する可能性があります。このエラーを解決する推奨方法は、 `tidb.toml`ファイルの[`txn-total-size-limit`](/tidb-configuration-file.md#txn-total-size-limit)値を増やすことです。この制限を増やすことができない場合は、 [`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size)から`20000`に設定することで、アップグレード前の動作を復元することもできます。 v7.0.0 以降、 `tidb_dml_batch_size` `LOAD DATA`ステートメントに影響しなくなることに注意してください。
 > -   トランザクションでコミットされた行の数に関係なく、明示的なトランザクションの[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)ステートメントによって`LOAD DATA`ロールバックされません。
 > -   `LOAD DATA`ステートメントは、TiDB トランザクション モードの構成に関係なく、常に楽観的トランザクション モードで実行されます。
 
@@ -159,10 +158,10 @@ LOAD DATA LOCAL INFILE '/mnt/evo970/data-sets/bikeshare-data/2017Q4-capitalbikes
 
 > **注記：**
 >
-> -   TiDB v4.0.0 より前のバージョンでは、20000 行ごとに`LOAD DATA`コミットされますが、これは構成できません。
-> -   TiDB v4.0.0 から v6.6.0 までのバージョンの場合、TiDB はデフォルトで 1 つのトランザクションですべての行をコミットします。ただし、固定行数ごとに`LOAD DATA`ステートメントをコミットする必要がある場合は、目的の行数に[`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size)を設定できます。
-> -   v7.0.0 以降、 `tidb_dml_batch_size` `LOAD DATA`に対して有効ではなくなり、TiDB は 1 つのトランザクションですべての行をコミットします。
-> -   TiDB v4.0.0 以前のバージョンからアップグレードした後、 `ERROR 8004 (HY000) at line 1: Transaction is too large, size: 100000058`が発生する可能性があります。このエラーを解決するには、 [TiDB Cloudのサポート](https://docs.pingcap.com/tidbcloud/tidb-cloud-support)に連絡して[`txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit)値を増やしてください。
+> -   TiDB v4.0.0 より前のバージョンでは、20000 行ごとに`LOAD DATA`コミットされます。
+> -   TiDB v4.0.0 から v6.6.0 までのバージョンの場合、TiDB はデフォルトで 1 つのトランザクションですべての行をコミットします。
+> -   TiDB v7.0.0 以降、バッチでコミットされる行数は`LOAD DATA`ステートメントの`WITH batch_size=<number>`パラメーターによって制御され、デフォルトではコミットあたり 1000 行になります。
+> -   TiDB v4.0.0 以前のバージョンからアップグレードした後、 `ERROR 8004 (HY000) at line 1: Transaction is too large, size: 100000058`が発生する可能性があります。このエラーを解決するには、 [`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size)を`20000`に設定することで、アップグレード前の動作を復元できます。
 > -   トランザクションでコミットされた行の数に関係なく、明示的なトランザクションの[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)ステートメントによって`LOAD DATA`ロールバックされません。
 > -   `LOAD DATA`ステートメントは、TiDB トランザクション モードの構成に関係なく、常に楽観的トランザクション モードで実行されます。
 

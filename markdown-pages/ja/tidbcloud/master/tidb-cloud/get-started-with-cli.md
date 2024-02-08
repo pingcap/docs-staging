@@ -40,7 +40,7 @@ macOS または Linux の場合は、次のいずれかの方法を使用して`
 
 -   GitHub アクションにインストールする
 
-    GitHub Action で`ticloud`を設定するには、 [`setup-tidbcloud-cli`](https://github.com/tidbcloud/setup-tidbcloud-cli)を使用します。
+    GitHub Action で`ticloud`を設定するには、 [`setup-tidbcloud-cli`](https://github.com/tidbcloud/setup-tidbcloud-cli)使用します。
 
 MySQL コマンドライン クライアントがない場合は、インストールします。パッケージマネージャー経由でインストールできます。
 

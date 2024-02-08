@@ -50,7 +50,7 @@ CREATE TABLE test.t1 (a int);
 SELECT * FROM COLUMNS WHERE table_schema='test' AND TABLE_NAME='t1'\G
 ```
 
-出力結果は以下の通り：
+出射結果は以下の通り：
 
 ```sql
 *************************** 1. row ***************************

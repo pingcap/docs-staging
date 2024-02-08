@@ -34,36 +34,32 @@ summary: Learn about the blocklist to control the optimization rules and the beh
 
 #### 使用法 {#usage}
 
-> **ノート：**
+> **注記：**
 >
 > 以下のすべての操作には、データベースの`super privilege`権限が必要です。各最適化ルールには名前があります。たとえば、列枝刈りの名前は`column_prune`です。すべての最適化ルールの名前は、表[重要な最適化ルール](#important-optimization-rules)の 2 番目の列にあります。
 
 -   一部のルールを無効にしたい場合は、その名前を`mysql.opt_rule_blacklist`テーブルに書き込みます。例えば：
 
-    
     ```sql
     INSERT INTO mysql.opt_rule_blacklist VALUES("join_reorder"), ("topn_push_down");
     ```
 
     次の SQL ステートメントを実行すると、上記の操作がすぐに有効になります。有効範囲には、対応する TiDBサーバーの古い接続がすべて含まれます。
 
-    
     ```sql
     admin reload opt_rule_blacklist;
     ```
 
-    > **ノート：**
+    > **注記：**
     >
     > `admin reload opt_rule_blacklist`上記のステートメントが実行された TiDBサーバーでのみ有効です。クラスターのすべての TiDB サーバーを有効にする場合は、各 TiDBサーバーでこのコマンドを実行します。
 
 -   ルールを再度有効にする場合は、テーブル内の対応するデータを削除してから、 `admin reload`ステートメントを実行します。
 
-    
     ```sql
     DELETE FROM mysql.opt_rule_blacklist WHERE name IN ("join_reorder", "topn_push_down");
     ```
 
-    
     ```sql
     admin reload opt_rule_blacklist;
     ```
@@ -81,7 +77,6 @@ summary: Learn about the blocklist to control the optimization rules and the beh
 式のプッシュダウンにより間違った結果が得られた場合、ブロックリストを使用してアプリケーションを迅速に回復できます。具体的には、サポートされている関数または演算子の一部を`mysql.expr_pushdown_blacklist`テーブルに追加して、特定の式のプッシュダウンを無効にすることができます。
 
 `mysql.expr_pushdown_blacklist`のスキーマは次のように示されます。
-
 
 ```sql
 DESC mysql.expr_pushdown_blacklist;
@@ -127,7 +122,7 @@ DESC mysql.expr_pushdown_blacklist;
 
 2.  `admin reload expr_pushdown_blacklist`を実行します。
 
-> **ノート：**
+> **注記：**
 >
 > `admin reload expr_pushdown_blacklist`は、このステートメントが実行される TiDBサーバーでのみ有効です。クラスターのすべての TiDB サーバーを有効にする場合は、各 TiDBサーバーでこのコマンドを実行します。
 
@@ -139,7 +134,6 @@ DESC mysql.expr_pushdown_blacklist;
 
 1.  次の SQL ステートメントの`WHERE`句の述語`a < 2`と`a > 2`を TiKV にプッシュダウンできます。
 
-    
     ```sql
     EXPLAIN SELECT * FROM t WHERE a < 2 AND a > 2;
     ```
@@ -157,7 +151,6 @@ DESC mysql.expr_pushdown_blacklist;
 
 2.  `mysql.expr_pushdown_blacklist`テーブルに式を挿入し、 `admin reload expr_pushdown_blacklist`を実行します。
 
-    
     ```sql
     INSERT INTO mysql.expr_pushdown_blacklist VALUES('<','tikv',''), ('>','tikv','');
     ```
@@ -167,7 +160,6 @@ DESC mysql.expr_pushdown_blacklist;
     Records: 2  Duplicates: 0  Warnings: 0
     ```
 
-    
     ```sql
     admin reload expr_pushdown_blacklist;
     ```
@@ -178,7 +170,6 @@ DESC mysql.expr_pushdown_blacklist;
 
 3.  実行プランをもう一度観察すると、 `<`と`>`演算子が両方とも TiKVコプロセッサーにプッシュダウンされていないことがわかります。
 
-    
     ```sql
     EXPLAIN SELECT * FROM t WHERE a < 2 and a > 2;
     ```
@@ -196,7 +187,6 @@ DESC mysql.expr_pushdown_blacklist;
 
 4.  ブロックリストから 1 つの式 (ここでは`>` ) を削除し、 `admin reload expr_pushdown_blacklist`を実行します。
 
-    
     ```sql
     DELETE FROM mysql.expr_pushdown_blacklist WHERE name = '>';
     ```
@@ -205,7 +195,6 @@ DESC mysql.expr_pushdown_blacklist;
     Query OK, 1 row affected (0.01 sec)
     ```
 
-    
     ```sql
     admin reload expr_pushdown_blacklist;
     ```
@@ -216,7 +205,6 @@ DESC mysql.expr_pushdown_blacklist;
 
 5.  実行プランをもう一度観察すると、 `<`はプッシュダウンされていないが、 `>`は TiKVコプロセッサーにプッシュダウンされていることがわかります。
 
-    
     ```sql
     EXPLAIN SELECT * FROM t WHERE a < 2 AND a > 2;
     ```

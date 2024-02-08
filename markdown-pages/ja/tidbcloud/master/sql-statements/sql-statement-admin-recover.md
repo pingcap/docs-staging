@@ -51,7 +51,24 @@ ADMIN CHECK INDEX tbl idx;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-> **ノート：**
+<CustomContent platform="tidb">
+
+> **注記：**
+>
+> レプリカの損失によりデータとインデックスが不整合になった場合:
+>
+> -   行データとインデックス データの両方が失われる可能性があります。この問題に対処するには、 [`ADMIN CLEANUP INDEX`](/sql-statements/sql-statement-admin-cleanup.md)と`ADMIN RECOVER INDEX`ステートメントを一緒に使用して、行データとインデックス データの整合性を回復します。
+> -   `ADMIN RECOVER INDEX`ステートメントは常に単一スレッドで実行されます。テーブルデータが大きい場合は、インデックスを再構築してインデックスデータを回復することをお勧めします。
+> -   `ADMIN RECOVER INDEX`ステートメントを実行すると、対応するテーブルまたはインデックスはロックされず、TiDB は他のセッションがテーブル レコードを同時に変更できるようになります。ただし、この場合、 `ADMIN RECOVER INDEX`すべてのテーブル レコードを正しく処理できない可能性があります。したがって、 `ADMIN RECOVER INDEX`を実行するときは、テーブルのデータを同時に変更しないようにしてください。
+> -   TiDB のエンタープライズ エディションを使用している場合は、サポート エンジニアに[リクエストを送信する](/support.md)して支援を求めることができます。
+>
+> `ADMIN RECOVER INDEX`ステートメントはアトミックではありません。ステートメントが実行中に中断された場合は、成功するまで再実行することをお勧めします。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **注記：**
 >
 > レプリカの損失によりデータとインデックスが不整合になった場合:
 >
@@ -61,6 +78,8 @@ Query OK, 0 rows affected (0.01 sec)
 > -   TiDB のエンタープライズ エディションを使用している場合は、サポート エンジニアに[リクエストを送信する](https://support.pingcap.com/hc/en-us)して支援を求めることができます。
 >
 > `ADMIN RECOVER INDEX`ステートメントはアトミックではありません。ステートメントが実行中に中断された場合は、成功するまで再実行することをお勧めします。
+
+</CustomContent>
 
 ## MySQLの互換性 {#mysql-compatibility}
 

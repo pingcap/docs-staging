@@ -18,7 +18,7 @@ summary: An overview of the usage of SHOW STATS_META for TiDB database.
 | 修正数      | 変更された行数  |
 | 行数       | 合計行数     |
 
-> **ノート：**
+> **注記：**
 >
 > TiDB が DML ステートメントに従って`modify_count`フィールドと`row_count`フィールドを更新すると、 `update_time`が更新されます。したがって`update_time` `ANALYZE`ステートメントの最後の実行時刻ではありません。
 
@@ -38,7 +38,6 @@ summary: An overview of the usage of SHOW STATS_META for TiDB database.
 
 ## 例 {#examples}
 
-
 ```sql
 show stats_meta;
 ```
@@ -55,7 +54,6 @@ show stats_meta;
 +---------+------------+----------------+---------------------+--------------+-----------+
 5 rows in set (0.00 sec)
 ```
-
 
 ```sql
 show stats_meta where table_name = 't2';

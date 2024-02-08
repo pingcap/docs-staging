@@ -90,7 +90,7 @@ Query OK, 0 rows affected (0.00 sec)
 SHOW BACKUPS LIKE 's3://%';
 ```
 
-列でフィルターするには`WHERE`句を使用します。
+`WHERE`句を使用して列でフィルタリングします。
 
 ```sql
 SHOW BACKUPS WHERE `Progress` < 25.0;

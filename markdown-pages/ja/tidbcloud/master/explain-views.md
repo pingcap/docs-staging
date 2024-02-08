@@ -5,7 +5,7 @@ summary: Learn about the execution plan information returned by the `EXPLAIN` st
 
 # ビューを使用したEXPLAINステートメント {#explain-statements-using-views}
 
-`EXPLAIN`ビュー自体の名前ではなく、 [意見](/views.md)が参照するテーブルとインデックスを表示します。これは、ビューは単なる仮想テーブルであり、それ自体にはデータが格納されないためです。ビューの定義とステートメントの残りの部分は、SQL の最適化中にマージされます。
+`EXPLAIN`ビュー自体の名前ではなく、 [ビュー](/views.md)が参照するテーブルとインデックスを表示します。これは、ビューは単なる仮想テーブルであり、それ自体にはデータが格納されないためです。ビューの定義とステートメントの残りの部分は、SQL の最適化中にマージされます。
 
 <CustomContent platform="tidb">
 
@@ -18,7 +18,6 @@ summary: Learn about the execution plan information returned by the `EXPLAIN` st
 [自転車シェアのサンプル データベース](/tidb-cloud/import-sample-data.md)から、次の 2 つのクエリが同様の方法で実行されることがわかります。
 
 </CustomContent>
-
 
 ```sql
 ALTER TABLE trips ADD INDEX (duration);
@@ -53,7 +52,6 @@ Query OK, 0 rows affected (0.13 sec)
 
 同様に、ビューの述語がベーステーブルにプッシュダウンされます。
 
-
 ```sql
 EXPLAIN SELECT * FROM long_trips WHERE bike_number = 'W00950';
 EXPLAIN SELECT * FROM trips WHERE bike_number = 'W00950';
@@ -83,7 +81,6 @@ EXPLAIN SELECT * FROM trips WHERE bike_number = 'W00950';
 上記の最初のステートメントでは、ビュー定義を満たすためにインデックスが使用され、TiDB がテーブル行を読み取るときに`bike_number = 'W00950'`が適用されることがわかります。 2 番目のステートメントでは、ステートメントを満たすインデックスがないため、 `TableFullScan`が使用されます。
 
 TiDB は、ビュー定義とステートメント自体の両方を満たすインデックスを使用します。次の複合インデックスを考えてみましょう。
-
 
 ```sql
 ALTER TABLE trips ADD INDEX (bike_number, duration);

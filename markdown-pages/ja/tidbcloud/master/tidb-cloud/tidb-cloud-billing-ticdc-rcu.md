@@ -1,7 +1,6 @@
 ---
 title: Changefeed Billing
 summary: Learn about billing for changefeeds in TiDB Cloud.
-aliases: ['/tidbcloud/tidb-cloud-billing-tcu']
 ---
 
 # 変更フィード請求 {#changefeed-billing}
@@ -22,7 +21,7 @@ TiDB Cloudは、 TiCDC レプリケーション キャパシティ ユニット 
 | 32 RCU | 80,000行/秒          |
 | 40 RCU | 100,000行/秒         |
 
-> **ノート：**
+> **注記：**
 >
 > 上記のパフォーマンス データは参照のみを目的としており、シナリオによって異なる場合があります。
 

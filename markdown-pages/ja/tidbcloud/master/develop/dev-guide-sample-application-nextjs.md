@@ -286,4 +286,14 @@ console.log(rsh.affectedRows);
 
 ## 助けが必要？ {#need-help}
 
-[不和](https://discord.gg/vYU9h56kAX)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+<CustomContent platform="tidb">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](/support.md)について質問してください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+
+</CustomContent>

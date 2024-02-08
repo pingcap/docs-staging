@@ -40,7 +40,7 @@ TiDB クラスターがない場合は、 [TiDB サーバーレス](https://tidb
 
 ### コードのクローンを作成する {#clone-the-code}
 
-TiDB と Amazon AppFlow の[統合サンプルコードリポジトリ](https://github.com/pingcap-inc/tidb-appflow-integration)クローンを作成します。
+TiDB と Amazon AppFlow 用に[統合サンプルコードリポジトリ](https://github.com/pingcap-inc/tidb-appflow-integration)クローンを作成します。
 
 ```bash
 git clone https://github.com/pingcap-inc/tidb-appflow-integration
@@ -67,7 +67,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
     sam deploy --guided
     ```
 
-    > **ノート：**
+    > **注記：**
     >
     > -   `--guided`オプションでは、プロンプトを使用して展開をガイドします。入力は構成ファイルに保存されます。デフォルトでは`samconfig.toml`です。
     > -   `stack_name`デプロイする AWS Lambda の名前を指定します。
@@ -76,9 +76,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
     次のような出力が表示された場合、この Lambda は正常にデプロイされています。
 
-    ```
-    Successfully created/updated stack - <stack_name> in <region>
-    ```
+        Successfully created/updated stack - <stack_name> in <region>
 
 4.  [AWS Lambda コンソール](https://console.aws.amazon.com/lambda/home)に移動すると、アップロードしたばかりの Lambda が表示されます。ウィンドウの右上隅で正しい領域を選択する必要があることに注意してください。
 
@@ -130,7 +128,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
         ![allow salesforce](https://download.pingcap.com/images/docs/develop/aws-appflow-step-allow-salesforce.png)
 
-    > **ノート：**
+    > **注記：**
     >
     > 会社がすでに Salesforce の Professional Edition を使用している場合、REST API はデフォルトでは有効になっていません。 REST API を使用するには、新しい Developer Edition の登録が必要になる場合があります。詳細については、 [Salesforce フォーラムのトピック](https://developer.salesforce.com/forums/?id=906F0000000D9Y2IAK)を参照してください。
 

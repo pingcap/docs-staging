@@ -3,7 +3,7 @@ title: DROP [GLOBAL|SESSION] BINDING
 summary: Use of DROP BINDING in TiDB database.
 ---
 
-# [グローバル|セッション] バインディングを削除 {#drop-global-session-binding}
+# [グローバル|セッション] バインディングを削除します {#drop-global-session-binding}
 
 このステートメントは、特定の SQL ステートメントからバインディングを削除します。バインディングを使用すると、基になるクエリを変更することなく、ステートメントにヒントを挿入できます。
 
@@ -28,7 +28,6 @@ BindableStmt ::=
 SQL ステートメントまたは`sql_digest`に従ってバインディングを削除できます。
 
 次の例は、SQL ステートメントに従ってバインディングを削除する方法を示しています。
-
 
 ```sql
 mysql> CREATE TABLE t1 (

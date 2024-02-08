@@ -176,6 +176,14 @@ TiDB がインデックスを追加しているとき、データのバックフ
 
     完了した DDL タスクがキャンセルされた場合、 `RESULT`列に`DDL Job:90 not found`エラーが表示されます。これは、タスクが DDL 待機キューから削除されたことを意味します。
 
+-   `ADMIN PAUSE DDL JOBS job_id [, job_id]` : 実行中の DDL ジョブを一時停止するために使用されます。コマンドの実行後、DDL ジョブを実行する SQL ステートメントは実行中として表示されますが、バックグラウンド ジョブは一時停止されています。詳細は[`ADMIN PAUSE DDL JOBS`](/sql-statements/sql-statement-admin-pause-ddl.md)を参照してください。
+
+    一時停止できるのは、進行中の DDL タスクまたはキュー内にある DDL タスクのみです。それ以外の場合は、 `Job 3 can't be paused now`エラーが`RESULT`列に表示されます。
+
+-   `ADMIN RESUME DDL JOBS job_id [, job_id]` : 一時停止された DDL タスクを再開するために使用されます。コマンドの実行後、DDL タスクを実行する SQL ステートメントが実行中として表示され、バックグラウンド タスクが再開されます。詳細は[`ADMIN RESUME DDL JOBS`](/sql-statements/sql-statement-admin-resume-ddl.md)を参照してください。
+
+    再開できるのは、一時停止された DDL タスクのみです。それ以外の場合は、 `Job 3 can't be resumed`エラーが`RESULT`列に表示されます。
+
 ## よくある質問 {#common-questions}
 
 DDL の実行に関するよくある質問については、 [SQL FAQ - DDL の実行](https://docs.pingcap.com/tidb/stable/sql-faq)を参照してください。

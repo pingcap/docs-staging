@@ -11,7 +11,7 @@ TiDB は、 [悲観的](/pessimistic-transaction.md)または[楽観的](/optimi
 
 共通変数には、 [`autocommit`](#autocommit) 、 [`tidb_disable_txn_auto_retry`](/system-variables.md#tidb_disable_txn_auto_retry) 、 [`tidb_retry_limit`](/system-variables.md#tidb_retry_limit) 、および[`tidb_txn_mode`](/system-variables.md#tidb_txn_mode)が含まれます。
 
-> **ノート：**
+> **注記：**
 >
 > 変数[`tidb_disable_txn_auto_retry`](/system-variables.md#tidb_disable_txn_auto_retry)と[`tidb_retry_limit`](/system-variables.md#tidb_retry_limit)は楽観的トランザクションにのみ適用され、悲観的トランザクションには適用されません。
 
@@ -23,21 +23,17 @@ TiDB は、 [悲観的](/pessimistic-transaction.md)または[楽観的](/optimi
 
 構文：
 
-
 ```sql
 BEGIN;
 ```
-
 
 ```sql
 START TRANSACTION;
 ```
 
-
 ```sql
 START TRANSACTION WITH CONSISTENT SNAPSHOT;
 ```
-
 
 ```sql
 START TRANSACTION WITH CAUSAL CONSISTENCY ONLY;
@@ -45,7 +41,7 @@ START TRANSACTION WITH CAUSAL CONSISTENCY ONLY;
 
 これらのステートメントのいずれかが実行されるときに現在のセッションがトランザクションの処理中にある場合、TiDB は新しいトランザクションを開始する前に現在のトランザクションを自動的にコミットします。
 
-> **ノート：**
+> **注記：**
 >
 > MySQL とは異なり、TiDB は上記のステートメントを実行した後に現在のデータベースのスナップショットを取得します。 MySQL の`BEGIN`と`START TRANSACTION` 、トランザクションの開始後に InnoDB からデータを読み取る最初の`SELECT`ステートメント ( `SELECT FOR UPDATE`ではありません) を実行した後にスナップショットを取得します。 `START TRANSACTION WITH CONSISTENT SNAPSHOT`ステートメントの実行中にスナップショットを取得します。結果として、 `BEGIN` 、 `START TRANSACTION` 、および`START TRANSACTION WITH CONSISTENT SNAPSHOT` 、MySQL の`START TRANSACTION WITH CONSISTENT SNAPSHOT`に相当します。
 
@@ -54,7 +50,6 @@ START TRANSACTION WITH CAUSAL CONSISTENCY ONLY;
 ステートメント[`COMMIT`](/sql-statements/sql-statement-commit.md)は、現在のトランザクションで行われたすべての変更を適用するように TiDB に指示します。
 
 構文：
-
 
 ```sql
 COMMIT;
@@ -69,7 +64,6 @@ COMMIT;
 ステートメント[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)は、現在のトランザクションのすべての変更をロールバックしてキャンセルします。
 
 構文：
-
 
 ```sql
 ROLLBACK;
@@ -155,11 +149,9 @@ Empty set (0.00 sec)
 
 例えば：
 
-
 ```sql
 SET autocommit = 0;
 ```
-
 
 ```sql
 SET GLOBAL autocommit = 0;
@@ -167,7 +159,7 @@ SET GLOBAL autocommit = 0;
 
 ## 明示的および暗黙的なトランザクション {#explicit-and-implicit-transaction}
 
-> **ノート：**
+> **注記：**
 >
 > 一部のステートメントは暗黙的にコミットされます。たとえば、 `[BEGIN|START TRANSACTION]`を実行すると、最後のトランザクションが暗黙的にコミットされ、新しいトランザクションが開始されます。この動作は、MySQL との互換性のために必要です。詳細については[暗黙的なコミット](https://dev.mysql.com/doc/refman/8.0/en/implicit-commit.html)を参照してください。
 
@@ -182,7 +174,6 @@ DDL ステートメントの場合、トランザクションは自動的にコ�
 デフォルトでは、楽観的トランザクションは、DML ステートメントの実行時に[主キー](/constraints.md#primary-key)または[固有の制約](/constraints.md#unique-key)をチェックしません。これらのチェックは、代わりにトランザクション`COMMIT`で実行されます。
 
 例えば：
-
 
 ```sql
 CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY);
@@ -223,7 +214,7 @@ mysql> SELECT * FROM t1; -- MySQL returns 1 2; TiDB returns 1.
 
 遅延チェックの最適化は、制約チェックをバッチ処理し、ネットワーク通信を削減することでパフォーマンスを向上させます。この動作は[`tidb_constraint_check_in_place=ON`](/system-variables.md#tidb_constraint_check_in_place)に設定することで無効にできます。
 
-> **ノート：**
+> **注記：**
 >
 > -   この最適化は、楽観的トランザクションにのみ適用されます。
 > -   この最適化は`INSERT IGNORE`と`INSERT ON DUPLICATE KEY UPDATE`には有効ではなく、通常の`INSERT`ステートメントにのみ有効です。
@@ -231,7 +222,6 @@ mysql> SELECT * FROM t1; -- MySQL returns 1 2; TiDB returns 1.
 ## ステートメントのロールバック {#statement-rollback}
 
 TiDB はステートメント実行失敗後のアトミックロールバックをサポートしています。ステートメントでエラーが発生した場合、ステートメントによる変更は有効になりません。トランザクションは開いたままになり、 `COMMIT`または`ROLLBACK`ステートメントを発行する前に追加の変更を加えることができます。
-
 
 ```sql
 CREATE TABLE test (id INT NOT NULL PRIMARY KEY);
@@ -286,7 +276,7 @@ TiDB は楽観的トランザクションと悲観的トランザクションの
 
 TiDB は以前、単一トランザクションのキーと値のペアの総数を 300,000 に制限していました。この制限は TiDB v4.0 で削除されました。
 
-> **ノート：**
+> **注記：**
 >
 > 通常、TiDB Binlog はデータをダウンストリームにレプリケートするために有効になっています。一部のシナリオでは、Kafka などのメッセージ ミドルウェアを使用して、ダウンストリームにレプリケートされるバイナリログが使用されます。
 >
@@ -294,12 +284,11 @@ TiDB は以前、単一トランザクションのキーと値のペアの総数
 
 ## 因果関係の一貫性 {#causal-consistency}
 
-> **ノート：**
+> **注記：**
 >
-> 因果的一貫性のあるトランザクションは、非同期コミット機能と 1 フェーズ コミット機能が有効になっている場合にのみ有効になります。 2つの機能の詳細については、 [`tidb_enable_async_commit`](/system-variables.md#tidb_enable_async_commit-new-in-v50)と[`tidb_enable_1pc`](/system-variables.md#tidb_enable_1pc-new-in-v50)を参照してください。
+> 因果的一貫性のあるトランザクションは、非同期コミット機能と 1 フェーズ コミット機能が有効になっている場合にのみ有効になります。 2つの機能の詳細については、 [`tidb_enable_async_commit`](/system-variables.md#tidb_enable_async_commit-new-in-v50)および[`tidb_enable_1pc`](/system-variables.md#tidb_enable_1pc-new-in-v50)を参照してください。
 
-TiDB は、トランザクションの因果関係の一貫性の有効化をサポートします。因果的一貫性のあるトランザクションは、コミット時に PD からタイムスタンプを取得する必要がなく、コミットのレイテンシーが短くなります。因果関係の一貫性を有効にする構文は次のとおりです。
-
+TiDB は、トランザクションの因果関係の一貫性の有効化をサポートしています。因果的一貫性のあるトランザクションは、コミット時に PD からタイムスタンプを取得する必要がなく、コミットのレイテンシーが短くなります。因果関係の一貫性を有効にする構文は次のとおりです。
 
 ```sql
 START TRANSACTION WITH CAUSAL CONSISTENCY ONLY;
@@ -344,7 +333,7 @@ START TRANSACTION WITH CAUSAL CONSISTENCY ONLY;
 
 上の例では、トランザクション 1 は`id = 1`レコードを読み取らないため、トランザクション 1 とトランザクション 2 にはデータベースに認識される因果関係がありません。トランザクションの因果的一貫性が有効になっている場合、物理的な時間順序でトランザクション 1 がコミットされた後にトランザクション 2 がコミットされた場合でも、TiDB はトランザクション 2 が論理的にトランザクション 1 の後に発生することを保証しません。
 
-トランザクション 1 がコミットされる前にトランザクション 3 が開始され、トランザクション 2 がコミットされた後にトランザクション 3 が`id = 1`と`id = 2`レコードを読み取る場合、トランザクション 3 は`id = 1`の値を`2`として読み取る可能性がありますが、 `id = 2`の値は`0`として読み取られます。
+トランザクション 1 がコミットされる前にトランザクション 3 が開始され、トランザクション 2 がコミットされた後にトランザクション 3 が`id = 1`と`id = 2`のレコードを読み取る場合、トランザクション 3 は`id = 1`の値を`2`として読み取る可能性がありますが、 `id = 2`の値は`0`として読み取られます。
 
 ### ロックなしの読み取りでは因果関係が作成されません {#reads-without-lock-do-not-create-causal-relationship}
 

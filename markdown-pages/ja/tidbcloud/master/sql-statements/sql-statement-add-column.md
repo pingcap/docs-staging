@@ -5,7 +5,7 @@ summary: An overview of the usage of ADD COLUMN for the TiDB database.
 
 # 列の追加 {#add-column}
 
-`ALTER TABLE.. ADD COLUMN`ステートメントは、既存のテーブルに列を追加します。この操作は TiDB ではオンラインです。つまり、テーブルへの読み取りも書き込みも列の追加によってブロックされません。
+`ALTER TABLE.. ADD COLUMN`ステートメントは、既存のテーブルに列を追加します。この操作は TiDB ではオンラインです。つまり、列の追加によってテーブルへの読み取りも書き込みもブロックされません。
 
 ## あらすじ {#synopsis}
 
@@ -87,7 +87,7 @@ mysql> SELECT * FROM t1;
 
 -   新しい列を追加して`PRIMARY KEY`に設定することはサポートされていません。
 -   新しい列を追加して`AUTO_INCREMENT`に設定することはサポートされていません。
--   生成された列の追加には制限があります[生成される列の制限事項](/generated-columns.md#limitations)を参照してください。
+-   生成された列の追加には制限があります。以下を参照してください。 [生成される列の制限事項](/generated-columns.md#limitations) 。
 
 ## こちらも参照 {#see-also}
 

@@ -24,16 +24,14 @@ summary: Learn about the SQL development specifications for TiDB.
 
     推奨されません:
 
-    
     ```sql
     SELECT gmt_create
     FROM ...
     WHERE DATE_FORMAT(gmt_create, '%Y%m%d %H:%i:%s') = '20090101 00:00:00'
     ```
 
-    おすすめされた：
+    推奨：
 
-    
     ```sql
     SELECT DATE_FORMAT(gmt_create, '%Y%m%d %H:%i:%s')
     FROM ...
@@ -47,6 +45,6 @@ summary: Learn about the SQL development specifications for TiDB.
 -   ファジープレフィックスクエリには`%`プレフィックスを使用しないでください。
 -   アプリケーションが SQL を実行するために**マルチ ステートメント**を使用する場合、つまり、複数の SQL がセミコロンで結合され、一度に実行するためにクライアントに送信される場合、TiDB は最初の SQL 実行の結果のみを返します。
 -   式を使用する場合は、その式がstorageレイヤー(TiKV またはTiFlash) へのコンピューティング プッシュダウンをサポートしているかどうかを確認してください。そうでない場合は、より多くのメモリ消費が発生し、さらには TiDBレイヤーでの OOM が発生することが予想されます。storageレイヤーにプッシュできるコンピューティングは次のとおりです。
-    -   [TiFlashによるプッシュダウン計算のサポート](/tiflash/tiflash-supported-pushdown-calculations.md) 。
+    -   [TiFlashがサポートするプッシュダウン計算](/tiflash/tiflash-supported-pushdown-calculations.md) 。
     -   [TiKV - プッシュダウンの式のリスト](/functions-and-operators/expressions-pushed-down.md) 。
     -   [述語のプッシュダウン](/predicate-push-down.md) 。

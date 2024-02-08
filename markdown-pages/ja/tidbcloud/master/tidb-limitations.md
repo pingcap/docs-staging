@@ -45,7 +45,7 @@ summary: Learn the usage limitations of TiDB.
 
 <CustomContent platform="tidb">
 
--   上限`Columns`は[`table-column-count-limit`](/tidb-configuration-file.md#table-column-count-limit-new-in-v50)によって変更できます。
+-   `Columns`の上限は[`table-column-count-limit`](/tidb-configuration-file.md#table-column-count-limit-new-in-v50)によって変更できます。
 -   上限`Indexes`は[`index-limit`](/tidb-configuration-file.md#index-limit-new-in-v50)によって変更できます。
 
 </CustomContent>
@@ -87,4 +87,4 @@ summary: Learn the usage limitations of TiDB.
 
 ## TiKV バージョンの制限事項 {#limitations-on-tikv-version}
 
-クラスター内で、TiDBコンポーネントのバージョンが v6.2.0 以降の場合、TiKV のバージョンは v6.2.0 以降である必要があります。
+クラスター内で、TiDBコンポーネントのバージョンが v6.2.0 以降である場合、TiKV のバージョンは v6.2.0 以降である必要があります。

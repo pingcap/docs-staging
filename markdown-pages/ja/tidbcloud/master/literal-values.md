@@ -13,18 +13,14 @@ TiDB リテラル値には、文字リテラル、数値リテラル、時刻お
 
 文字列は、一重引用符`'`または二重引用符`"`の文字で囲まれた一連のバイトまたは文字です。例えば：
 
-```
-'example string'
-"example string"
-```
+    'example string'
+    "example string"
 
-隣り合って配置された引用符で囲まれた文字列は 1 つの文字列に連結されます。次の行は同等です。
+引用符で囲まれた文字列が隣り合って配置されると、単一の文字列に連結されます。次の行は同等です。
 
-```
-'a string'
-'a' ' ' 'string'
-"a" ' ' "string"
-```
+    'a string'
+    'a' ' ' 'string'
+    "a" ' ' "string"
 
 `ANSI_QUOTES` SQL MODE が有効な場合、二重引用符で囲まれた文字列は識別子として解釈されるため、文字列リテラルは一重引用符内でのみ引用できます。
 
@@ -35,25 +31,19 @@ TiDB リテラル値には、文字リテラル、数値リテラル、時刻お
 
 文字列リテラルには、特定の文字セットと照合順序を使用する文字列として指定するために、オプションの`character set introducer`と`COLLATE clause`を指定できます。
 
-```
-[_charset_name]'string' [COLLATE collation_name]
-```
+    [_charset_name]'string' [COLLATE collation_name]
 
 例えば：
 
-```
-SELECT _latin1'string';
-SELECT _binary'string';
-SELECT _utf8'string' COLLATE utf8_bin;
-```
+    SELECT _latin1'string';
+    SELECT _binary'string';
+    SELECT _utf8'string' COLLATE utf8_bin;
 
 N&#39;literal&#39; (または n&#39;literal&#39;) を使用して、各国語文字セットの文字列を作成できます。次のステートメントは同等です。
 
-```
-SELECT N'some text';
-SELECT n'some text';
-SELECT _utf8'some text';
-```
+    SELECT N'some text';
+    SELECT n'some text';
+    SELECT _utf8'some text';
 
 文字列内の一部の特殊文字を表すには、エスケープ文字を使用してエスケープできます。
 
@@ -73,7 +63,7 @@ SELECT _utf8'some text';
 
 `'`で囲まれた文字列で`"`を表したい場合、または`"`で囲まれた文字列で`'`表したい場合は、エスケープ文字を使用する必要はありません。
 
-詳細については、 [MySQL の文字列リテラル](https://dev.mysql.com/doc/refman/5.7/en/string-literals.html)を参照してください。
+詳細については、 [MySQL の文字列リテラル](https://dev.mysql.com/doc/refman/8.0/en/string-literals.html)を参照してください。
 
 ## 数値リテラル {#numeric-literals}
 
@@ -85,11 +75,11 @@ SELECT _utf8'some text';
 
 数値リテラルは、 `1.2E3, 1.2E-3, -1.2E3, -1.2E-3`などの科学的表記法で表すこともできます。
 
-詳細については、 [MySQL の数値リテラル](https://dev.mysql.com/doc/refman/5.7/en/number-literals.html)を参照してください。
+詳細については、 [MySQL の数値リテラル](https://dev.mysql.com/doc/refman/8.0/en/number-literals.html)を参照してください。
 
 ## 日付と時刻のリテラル {#date-and-time-literals}
 
-日付と時刻のリテラル値は、引用符で囲まれた文字列や数値など、いくつかの形式で表すことができます。 TiDB が日付を期待する場合、 `'2017-08-24'` 、 `'20170824'` 、および`20170824`のいずれかを日付として解釈します。
+日付と時刻のリテラル値は、引用符で囲まれた文字列や数値など、いくつかの形式で表すことができます。 TiDB が日付を予期する場合、 `'2017-08-24'` 、 `'20170824'` 、および`20170824`のいずれかを日付として解釈します。
 
 TiDB は次の日付形式をサポートしています。
 
@@ -121,25 +111,22 @@ TiDB は、時間値の次の形式をサポートしています。
 
 Time 型の小数点も`.`で、小数点以下最大 6 桁の精度です。
 
-詳細については[MySQL の日付と時刻のリテラル](https://dev.mysql.com/doc/refman/5.7/en/date-and-time-literals.html)参照してください。
+詳細については[MySQL の日付と時刻のリテラル](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-literals.html)参照してください。
 
 ## ブールリテラル {#boolean-literals}
 
 定数`TRUE`と`FALSE`はそれぞれ 1 と 0 に等しく、大文字と小文字は区別されません。
 
-
 ```sql
 SELECT TRUE, true, tRuE, FALSE, FaLsE, false;
 ```
 
-```
-+------+------+------+-------+-------+-------+
-| TRUE | true | tRuE | FALSE | FaLsE | false |
-+------+------+------+-------+-------+-------+
-|    1 |    1 |    1 |     0 |     0 |     0 |
-+------+------+------+-------+-------+-------+
-1 row in set (0.00 sec)
-```
+    +------+------+------+-------+-------+-------+
+    | TRUE | true | tRuE | FALSE | FaLsE | false |
+    +------+------+------+-------+-------+-------+
+    |    1 |    1 |    1 |     0 |     0 |     0 |
+    +------+------+------+-------+-------+-------+
+    1 row in set (0.00 sec)
 
 ## 16 進リテラル {#hexadecimal-literals}
 
@@ -147,21 +134,17 @@ SELECT TRUE, true, tRuE, FALSE, FaLsE, false;
 
 有効な 16 進リテラル:
 
-```
-X'ac12'
-X'12AC'
-x'ac12'
-x'12AC'
-0xac12
-0x12AC
-```
+    X'ac12'
+    X'12AC'
+    x'ac12'
+    x'12AC'
+    0xac12
+    0x12AC
 
 不正な 16 進リテラル:
 
-```
-X'1z' (z is not a hexadecimal legal digit)
-0X12AC (0X must be written as 0x)
-```
+    X'1z' (z is not a hexadecimal legal digit)
+    0X12AC (0X must be written as 0x)
 
 `X'val'`表記法を使用して記述された 16 進リテラルには、偶数の桁が含まれている必要があります。 `val`の長さが奇数の場合 (たとえば、 `X'A'`や`X'11A'` )、構文エラーを避けるために、値の先頭にゼロを埋め込みます。
 
@@ -205,18 +188,14 @@ mysql> SELECT X'54694442';
 
 有効なビット値リテラル:
 
-```
-b'01'
-B'01'
-0b01
-```
+    b'01'
+    B'01'
+    0b01
 
 不正なビット値リテラル:
 
-```
-b'2' (2 is not a binary digit; it must be 0 or 1)
-0B01 (0B must be written as 0b)
-```
+    b'2' (2 is not a binary digit; it must be 0 or 1)
+    0B01 (0B must be written as 0b)
 
 デフォルトでは、ビット値リテラルはバイナリ文字列です。
 
@@ -243,6 +222,6 @@ mysql> SELECT b+0, BIN(b), HEX(b) FROM t;
 
 `NULL`データが空であることを意味し、大文字と小文字が区別されません`\N` (大文字と小文字が区別される) と同義です。
 
-> **ノート：**
+> **注記：**
 >
 > `NULL`は`0`や空の文字列`''`とは異なります。

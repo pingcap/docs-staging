@@ -108,7 +108,7 @@ summary: Learn about the release notes of TiDB Cloud in 2021.
 
 ## 2021年5月10日 {#may-10-2021}
 
-全般的
+一般的な
 
 -   TiDB Cloud は現在パブリック プレビュー段階にあります。 [サインアップ](https://tidbcloud.com/signup)試用オプションのいずれかを選択できます。
 

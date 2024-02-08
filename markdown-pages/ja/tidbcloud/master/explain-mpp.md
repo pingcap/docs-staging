@@ -9,7 +9,6 @@ TiDB は、 [MPPモード](/tiflash/use-tiflash-mpp-mode.md)を使用したク�
 
 このドキュメントの例は、次のサンプル データに基づいています。
 
-
 ```sql
 CREATE TABLE t1 (id int, value int);
 INSERT INTO t1 values(1,2),(2,3),(1,3);
@@ -22,7 +21,6 @@ SET tidb_allow_mpp = 1;
 
 MPP モードでは、クエリは論理的に複数のクエリ フラグメントにスライスされます。次のステートメントを例として取り上げます。
 
-
 ```sql
 EXPLAIN SELECT COUNT(*) FROM t1 GROUP BY id;
 ```
@@ -34,7 +32,6 @@ EXPLAIN SELECT COUNT(*) FROM t1 GROUP BY id;
 `ExchangeReceiver`と`ExchangeSender` 、MPP 実行プランに固有の 2 つの交換演算子です。 `ExchangeReceiver`演算子は下流クエリ フラグメントからデータを読み取り、 `ExchangeSender`演算子は下流クエリ フラグメントから上流クエリ フラグメントにデータを送信します。 MPP モードでは、各 MPP クエリ フラグメントのルート演算子は`ExchangeSender`です。これは、クエリ フラグメントが`ExchangeSender`子で区切られることを意味します。
 
 以下は、単純な MPP 実行プランです。
-
 
 ```sql
 EXPLAIN SELECT COUNT(*) FROM t1 GROUP BY id;
@@ -75,7 +72,6 @@ MPP は結合操作にもよく適用されます。 TiDB の MPP モードは�
 
 以下は、シャッフル ハッシュ結合の一般的な実行プランです。
 
-
 ```sql
 SET tidb_broadcast_join_threshold_count=0;
 SET tidb_broadcast_join_threshold_size=0;
@@ -110,7 +106,6 @@ EXPLAIN SELECT COUNT(*) FROM t1 a JOIN t1 b ON a.id = b.id;
 
 ブロードキャスト結合の一般的な実行計画は次のとおりです。
 
-
 ```sql
 EXPLAIN SELECT COUNT(*) FROM t1 a JOIN t1 b ON a.id = b.id;
 ```
@@ -143,7 +138,6 @@ EXPLAIN SELECT COUNT(*) FROM t1 a JOIN t1 b ON a.id = b.id;
 
 以下は、単純な`EXPLAIN ANALYZE`例の出力です。
 
-
 ```sql
 EXPLAIN ANALYZE SELECT COUNT(*) FROM t1 GROUP BY id;
 ```
@@ -163,7 +157,7 @@ EXPLAIN ANALYZE SELECT COUNT(*) FROM t1 GROUP BY id;
 +------------------------------------+---------+---------+-------------------+---------------+---------------------------------------------------------------------------------------------------+----------------------------------------------------------------+--------+------+
 ```
 
-`EXPLAIN`の出力と比較すると、演算子`ExchangeSender`の`operator info`列には`tasks`表示されます。これは、クエリ フラグメントがインスタンス化される MPP タスクの ID を記録します。さらに、各 MPP オペレーターには`execution info`列に`threads`フィールドがあり、TiDB がこのオペレーターを実行するときの操作の同時実行性が記録されます。クラスターが複数のノードで構成されている場合、この同時実行数は、すべてのノードの同時実行数を合計した結果になります。
+`EXPLAIN`の出力と比較して、演算子`ExchangeSender`の`operator info`列には`tasks`表示されます。これは、クエリ フラグメントがインスタンス化される MPP タスクの ID を記録します。さらに、各 MPP オペレーターには`execution info`列に`threads`フィールドがあり、TiDB がこのオペレーターを実行するときの操作の同時実行性が記録されます。クラスターが複数のノードで構成されている場合、この同時実行数は、すべてのノードの同時実行数を合計した結果になります。
 
 ## MPP バージョンと交換データ圧縮 {#mpp-version-and-exchange-data-compression}
 

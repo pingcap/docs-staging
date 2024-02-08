@@ -9,7 +9,7 @@ summary: Learn the optimistic transaction model in TiDB.
 
 楽観的トランザクションを有効にする前に、 `COMMIT`ステートメントがエラーを返す可能性があることをアプリケーションが正しく処理していることを確認してください。アプリケーションがこれをどのように処理するかわからない場合は、代わりに悲観的トランザクションを使用することをお勧めします。
 
-> **ノート：**
+> **注記：**
 >
 > v3.0.8 以降、TiDB はデフォルトで[悲観的トランザクション モード](/pessimistic-transaction.md)を使用します。ただし、既存のクラスターを v3.0.7 以前から v3.0.8 以降にアップグレードする場合、これは影響しません。つまり、**新しく作成されたクラスターのみがデフォルトで悲観的トランザクション モードを使用します**。
 
@@ -82,35 +82,31 @@ tidb_retry_limit = 10
 
 1.  セッションレベル:
 
-    
     ```sql
     SET tidb_disable_txn_auto_retry = OFF;
     ```
 
-    
     ```sql
     SET tidb_retry_limit = 10;
     ```
 
 2.  グローバルレベル:
 
-    
     ```sql
     SET GLOBAL tidb_disable_txn_auto_retry = OFF;
     ```
 
-    
     ```sql
     SET GLOBAL tidb_retry_limit = 10;
     ```
 
-> **ノート：**
+> **注記：**
 >
 > `tidb_retry_limit`変数は最大再試行回数を決定します。この変数が`0`に設定されている場合、自動的にコミットされる暗黙的な単一ステートメントのトランザクションを含め、どのトランザクションも自動的に再試行されません。これは、TiDB の自動再試行メカニズムを完全に無効にする方法です。自動再試行が無効になった後は、競合するすべてのトランザクションが最速の方法で失敗 ( `try again later`メッセージを含む) をアプリケーションレイヤーに報告します。
 
 ### 再試行の制限 {#limits-of-retry}
 
-デフォルトでは、TiDB はトランザクションを再試行しません。これにより、更新が失われ、破損する可能性があります[`REPEATABLE READ`分離](/transaction-isolation-levels.md) 。
+デフォルトでは、TiDB はトランザクションを再試行しません。これは、更新が失われ、破損する可能性があるためです[`REPEATABLE READ`分離](/transaction-isolation-levels.md) 。
 
 その理由は、再試行の手順から確認できます。
 

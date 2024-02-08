@@ -26,7 +26,6 @@ summary: Learn the usage of `SHOW TABLE NEXT_ROW_ID` in TiDB.
 
 新しく作成されたテーブルの場合、ロウ ID が割り当てられていないため、 `NEXT_GLOBAL_ROW_ID`は`1`になります。
 
-
 ```sql
 create table t(a int);
 Query OK, 0 rows affected (0.06 sec)
@@ -42,7 +41,7 @@ show table t next_row_id;
 1 row in set (0.00 sec)
 ```
 
-データがテーブルに書き込まれました。データを挿入する TiDBサーバーは、一度に 30,000 の ID を割り当ててキャッシュします。したがって、NEXT_GLOBAL_ROW_ID は現在 30001 です。
+データがテーブルに書き込まれました。データを挿入する TiDBサーバーは、一度に 30,000 ID を割り当ててキャッシュします。したがって、NEXT_GLOBAL_ROW_ID は現在 30001 です。
 
 ```sql
 insert into t values (), (), ();

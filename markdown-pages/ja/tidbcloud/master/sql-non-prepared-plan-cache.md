@@ -5,11 +5,9 @@ summary: Learn about the principle, usage, and examples of the SQL non-prepared 
 
 # SQL の未準備実行プラン キャッシュ {#sql-non-prepared-execution-plan-cache}
 
-> **警告：**
->
-> 準備されていない実行プラン キャッシュは実験的機能です。本番環境で使用することはお勧めできません。この機能は予告なく変更または削除される場合があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告できます。
-
 TiDB は、 [ステートメントの`Prepare` / `Execute`](/sql-prepared-plan-cache.md)と同様、一部の非`PREPARE`ステートメントの実行プラン キャッシュをサポートします。この機能により、これらのステートメントは最適化フェーズをスキップし、パフォーマンスを向上させることができます。
+
+準備されていないプラン キャッシュを有効にすると、追加のメモリと CPU オーバーヘッドが発生する可能性があり、すべての状況に適しているとは限りません。シナリオでこの機能を有効にするかどうかを決定するには、 [パフォーマンス上の利点](#performance-benefits)セクションと[メモリ監視](#monitoring)セクションを参照してください。
 
 ## 原理 {#principle}
 
@@ -88,7 +86,7 @@ TiDB は、パラメーター化されたクエリに対して 1 つのプラン
 -   `ORDER BY 1`や`GROUP BY a+1`など、 `ORDER BY`または`GROUP BY`直後に数値または式を含むクエリはサポートされていません。 `ORDER BY column_name`と`GROUP BY column_name`のみがサポートされます。
 -   `JSON` 、 `ENUM` 、 `SET` 、または`BIT`タイプの列でフィルター処理するクエリ ( `SELECT * FROM t WHERE json_col = '{}'`など) はサポートされていません。
 -   `SELECT * FROM t WHERE a is NULL`など、 `NULL`の値でフィルタリングするクエリはサポートされていません。
--   パラメータ化後のパラメータが 200 を超えるクエリ ( `SELECT * FROM t WHERE a in (1, 2, 3, ... 201)`など) は、デフォルトではサポートされていません。 v7.1.1 以降、 [`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-new-in-v710)システム変数を使用してこの制限を変更できます。
+-   パラメータ化後のパラメータが 200 を超えるクエリ ( `SELECT * FROM t WHERE a in (1, 2, 3, ... 201)`など) は、デフォルトではサポートされていません。 v7.3.0 以降、 [`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-new-in-v710)システム変数に[`44823`](/optimizer-fix-controls.md#44823-new-in-v730) fix を設定することで、この制限を変更できます。
 -   パーティション化されたテーブル、仮想列、一時テーブル、ビュー、またはメモリテーブルにアクセスするクエリ ( `SELECT * FROM INFORMATION_SCHEMA.COLUMNS`など) はサポートされていません。ここで、 `COLUMNS`は TiDBメモリテーブルです。
 -   ヒントまたはバインディングを含むクエリはサポートされていません。
 -   DML ステートメントまたは`FOR UPDATE`句を含む`SELECT`ステートメントは、デフォルトではサポートされていません。この制限を解除するには、 `SET tidb_enable_non_prepared_plan_cache_for_dml = ON`を実行します。
@@ -97,7 +95,9 @@ TiDB は、パラメーター化されたクエリに対して 1 つのプラン
 
 ## パフォーマンス上の利点 {#performance-benefits}
 
-内部テストでは、準備されていないプラン キャッシュ機能を有効にすると、ほとんどの TP シナリオでパフォーマンスが大幅に向上します。ただし、クエリがサポートされているかどうかの判断やクエリのパラメータ化など、追加のパフォーマンス オーバーヘッドも発生します。この機能がワークロード内のクエリの大部分をサポートできない場合、この機能を有効にすると実際にパフォーマンスに悪影響を及ぼす可能性があります。
+内部テストでは、準備されていないプラン キャッシュ機能を有効にすると、ほとんどの TP シナリオでパフォーマンスが大幅に向上します。たとえば、TPC-C テストでは約 4%、一部の銀行ワークロードでは 10% 以上、Sysbench RangeScan では 15% のパフォーマンス向上がありました。
+
+ただし、この機能では、クエリがサポートされているかどうかの判断、クエリのパラメータ化、キャッシュ内のプランの検索など、追加のメモリと CPU のオーバーヘッドも発生します。キャッシュがワークロード内のクエリの大部分にヒットできない場合、キャッシュを有効にすると実際にパフォーマンスに悪影響を及ぼす可能性があります。
 
 この場合、Grafana の**[プラン キャッシュ OPS を使用したクエリ]**パネルの`non-prepared`メトリックと、 **[プラン キャッシュ ミス OPS]**パネルの`non-prepared-unsupported`メトリックを観察する必要があります。ほとんどのクエリがサポートされておらず、プラン キャッシュにヒットできるクエリが少数しかない場合は、この機能を無効にすることができます。
 
@@ -112,7 +112,7 @@ TiDB は、パラメーター化されたクエリに対して 1 つのプラン
 クエリがキャッシュにヒットするかどうかを確認するには、次の`EXPLAIN FORMAT='plan_cache'`ステートメントを実行します。
 
 ```sql
-EXPLAIN FORMAT='plan_cache' SELECT * FROM (SELECT a+1 FROM t) t;
+EXPLAIN FORMAT='plan_cache' SELECT * FROM (SELECT a+1 FROM t1) t;
 ```
 
 出力は次のとおりです。

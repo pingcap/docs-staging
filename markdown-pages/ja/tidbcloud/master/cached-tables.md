@@ -9,13 +9,13 @@ v6.0.0 では、TiDB は頻繁にアクセスされるがめったに更新さ�
 
 このドキュメントでは、キャッシュされたテーブルの使用シナリオ、例、および他の TiDB 機能との互換性制限について説明します。
 
-## 使用シナリオ {#usage-scenarios}
+## 利用シーン {#usage-scenarios}
 
 キャッシュされたテーブル機能は、次の特性を持つテーブルに適しています。
 
--   テーブルのデータ量は少ないです。
--   テーブルは読み取り専用であるか、ほとんど更新されません。
--   テーブルは頻繁にアクセスされるため、読み取りパフォーマンスの向上が期待されます。
+-   テーブルのデータ量は小さく、たとえば 4 MiB 未満です。
+-   テーブルは読み取り専用であるか、ほとんど更新されません。たとえば、書き込み QPS (1 秒あたりのクエリ数) が 1 分あたり 10 回未満です。
+-   テーブルは頻繁にアクセスされるため、TiKV からの直接読み取り中に小さなテーブルでホットスポットが発生した場合など、読み取りパフォーマンスの向上が期待されます。
 
 テーブルのデータ量が少ないにもかかわらず、データへのアクセスが頻繁に行われる場合、TiKV 内のリージョンにデータが集中し、ホットスポットリージョンとなり、パフォーマンスに影響を与えます。したがって、キャッシュされたテーブルの一般的な使用シナリオは次のとおりです。
 
@@ -33,7 +33,6 @@ v6.0.0 では、TiDB は頻繁にアクセスされるがめったに更新さ�
 
 テーブル`users`があるとします。
 
-
 ```sql
 CREATE TABLE users (
     id BIGINT,
@@ -43,7 +42,6 @@ CREATE TABLE users (
 ```
 
 このテーブルをキャッシュされたテーブルに設定するには、 `ALTER TABLE`ステートメントを使用します。
-
 
 ```sql
 ALTER TABLE users CACHE;
@@ -56,7 +54,6 @@ Query OK, 0 rows affected (0.01 sec)
 ### キャッシュされたテーブルを検証する {#verify-a-cached-table}
 
 キャッシュされたテーブルを検証するには、 `SHOW CREATE TABLE`ステートメントを使用します。テーブルがキャッシュされている場合、返される結果には`CACHED ON`属性が含まれます。
-
 
 ```sql
 SHOW CREATE TABLE users;
@@ -76,7 +73,6 @@ SHOW CREATE TABLE users;
 ```
 
 キャッシュされたテーブルからデータを読み取った後、TiDB はデータをメモリにロードします。 `trace`ステートメントを使用すると、データがメモリにロードされているかどうかを確認できます。キャッシュがロードされていない場合、返される結果には`regionRequest.SendReqCtx`属性が含まれます。これは、TiDB が TiKV からデータを読み取ることを示します。
-
 
 ```sql
 TRACE SELECT * FROM users;
@@ -104,7 +100,6 @@ TRACE SELECT * FROM users;
 
 `trace`を再度実行すると、返された結果には`regionRequest.SendReqCtx`属性が含まれなくなりました。これは、TiDB が TiKV からデータを読み取るのではなく、代わりにメモリからデータを読み取ることを示します。
 
-
 ```sql
 +----------------------------------------+-----------------+------------+
 | operation                              | startTS         | duration   |
@@ -122,7 +117,6 @@ TRACE SELECT * FROM users;
 
 `UnionScan`演算子はキャッシュされたテーブルの読み取りに使用されるため、キャッシュされたテーブルの実行計画に`UnionScan`から`explain`が表示されることに注意してください。
 
-
 ```sql
 +-------------------------+---------+-----------+---------------+--------------------------------+
 | id                      | estRows | task      | access object | operator info                  |
@@ -138,7 +132,6 @@ TRACE SELECT * FROM users;
 
 キャッシュされたテーブルはデータの書き込みをサポートします。たとえば、レコードを`users`テーブルに挿入できます。
 
-
 ```sql
 INSERT INTO users(id, name) VALUES(1001, 'Davis');
 ```
@@ -146,7 +139,6 @@ INSERT INTO users(id, name) VALUES(1001, 'Davis');
 ```sql
 Query OK, 1 row affected (0.00 sec)
 ```
-
 
 ```sql
 SELECT * FROM users;
@@ -161,7 +153,7 @@ SELECT * FROM users;
 1 row in set (0.00 sec)
 ```
 
-> **ノート：**
+> **注記：**
 >
 > キャッシュされたテーブルにデータを挿入すると、第 2 レベルの書き込みレイテンシーが発生する可能性があります。レイテンシーはグローバル環境変数[`tidb_table_cache_lease`](/system-variables.md#tidb_table_cache_lease-new-in-v600)によって制御されます。アプリケーションに基づいてレイテンシーが許容できるかどうかを確認することで、キャッシュされたテーブル機能を使用するかどうかを決定できます。たとえば、読み取り専用のシナリオでは、 `tidb_table_cache_lease`の値を増やすことができます。
 >
@@ -189,10 +181,9 @@ Create Table: CREATE TABLE `table_cache_meta` (
 
 ### キャッシュされたテーブルを通常のテーブルに戻す {#revert-a-cached-table-to-a-normal-table}
 
-> **ノート：**
+> **注記：**
 >
 > キャッシュされたテーブルで DDL ステートメントを実行すると失敗します。キャッシュされたテーブルに対して DDL ステートメントを実行する前に、まずキャッシュ属性を削除し、キャッシュされたテーブルを通常のテーブルに戻す必要があります。
-
 
 ```sql
 TRUNCATE TABLE users;
@@ -201,7 +192,6 @@ TRUNCATE TABLE users;
 ```sql
 ERROR 8242 (HY000): 'Truncate Table' is unsupported on cache tables.
 ```
-
 
 ```sql
 mysql> ALTER TABLE users ADD INDEX k_id(id);
@@ -212,7 +202,6 @@ ERROR 8242 (HY000): 'Alter Table' is unsupported on cache tables.
 ```
 
 キャッシュされたテーブルを通常のテーブルに戻すには、 `ALTER TABLE t NOCACHE`を使用します。
-
 
 ```sql
 ALTER TABLE users NOCACHE;
@@ -245,9 +234,9 @@ TiDB はテーブル全体のデータをメモリにロードし、キャッシ
 
 ## TiDB 移行ツールとの互換性 {#compatibility-with-tidb-migration-tools}
 
-キャッシュされたテーブルは、MySQL 構文の TiDB 拡張機能です。 TiDB だけが`ALTER TABLE ... CACHE`ステートメントを認識できます。 TiDB 移行ツールは、バックアップ &amp; リストア (BR)、TiCDC、およびDumplingなどのキャッシュされたテーブルをサポート**しません**。これらのツールは、キャッシュされたテーブルを通常のテーブルとして扱います。
+キャッシュされたテーブルは、MySQL 構文の TiDB 拡張機能です。 TiDB だけが`ALTER TABLE ... CACHE`ステートメントを認識できます。 TiDB 移行ツールは、バックアップ &amp; リストア (BR)、TiCDC、およびDumplingのキャッシュされたテーブルをサポート**しません**。これらのツールは、キャッシュされたテーブルを通常のテーブルとして扱います。
 
-つまり、キャッシュされたテーブルをバックアップして復元すると、通常のテーブルになります。ダウンストリーム クラスターが別の TiDB クラスターであり、キャッシュ テーブル機能を引き続き使用したい場合は、ダウンストリーム テーブルで`ALTER TABLE ... CACHE`を実行することで、ダウンストリーム クラスターでキャッシュ テーブルを手動で有効にすることができます。
+つまり、キャッシュされたテーブルをバックアップおよび復元すると、通常のテーブルになります。ダウンストリーム クラスターが別の TiDB クラスターであり、キャッシュ テーブル機能を引き続き使用したい場合は、ダウンストリーム テーブルで`ALTER TABLE ... CACHE`を実行することで、ダウンストリーム クラスターでキャッシュ テーブルを手動で有効にすることができます。
 
 ## こちらも参照 {#see-also}
 

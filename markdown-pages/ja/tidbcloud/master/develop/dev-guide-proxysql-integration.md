@@ -27,11 +27,11 @@ ProxySQL は、高速かつ効率的で使いやすいように最初から設�
 
 ## 導入アーキテクチャ {#deployment-architecture}
 
-ProxySQL を TiDB とともにデプロイする最も明白な方法は、アプリケーションレイヤーと TiDB の間にスタンドアロンの仲介者として ProxySQL を追加することです。ただし、スケーラビリティと耐障害性は保証されておらず、ネットワーク ホップによるレイテンシーも追加されます。これらの問題を回避するための代替デプロイメントアーキテクチャは、次のように ProxySQL をサイドカーとしてデプロイすることです。
+TiDB で ProxySQL をデプロイする最も明白な方法は、アプリケーションレイヤーと TiDB の間にスタンドアロンの仲介者として ProxySQL を追加することです。ただし、スケーラビリティと耐障害性は保証されておらず、ネットワーク ホップによるレイテンシーも追加されます。これらの問題を回避するための代替デプロイメントアーキテクチャは、次のように ProxySQL をサイドカーとしてデプロイすることです。
 
 ![proxysql-client-side-tidb-cloud](https://download.pingcap.com/images/docs/develop/proxysql-client-side-tidb-cloud.png)
 
-> **ノート：**
+> **注記：**
 >
 > 前述の図は参考用です。実際の展開アーキテクチャに応じてこれを調整する必要があります。
 
@@ -89,7 +89,7 @@ systemctl start docker
 
 -   MySQL シェルをダウンロードしてインストールします。
 
-    1.  MySQL インストーラーの ZIP ファイルを[MySQL コミュニティ サーバーのダウンロード](https://dev.mysql.com/downloads/mysql/)ページからダウンロードします。
+    1.  [MySQL コミュニティ サーバーのダウンロード](https://dev.mysql.com/downloads/mysql/)ページからMySQLインストーラーのZIPファイルをダウンロードします。
     2.  ファイルを解凍し、 `bin`フォルダー内の`mysql.exe`を見つけます。 `bin`フォルダーのパスをシステム変数に追加し、それを Git Bash の`PATH`変数に設定する必要があります。
 
         ```bash
@@ -225,13 +225,11 @@ systemctl start docker
 
     以下は出力例です。現在の`tidb-cloud-connect`フォルダーの下に 3 つの構成ファイルが生成されていることがわかります。
 
-    ```
-    [Begin] generating configuration files..
-    tidb-cloud-connect.cnf generated successfully.
-    proxysql-prepare.sql generated successfully.
-    proxysql-connect.py generated successfully.
-    [End] all files generated successfully and placed in the current folder.
-    ```
+        [Begin] generating configuration files..
+        tidb-cloud-connect.cnf generated successfully.
+        proxysql-prepare.sql generated successfully.
+        proxysql-connect.py generated successfully.
+        [End] all files generated successfully and placed in the current folder.
 
 #### ステップ 3. ProxySQL を構成する {#step-3-configure-proxysql}
 
@@ -321,7 +319,7 @@ systemctl start docker
 
     </SimpleTab>
 
-    > **ノート：**
+    > **注記：**
     >
     > `proxysql-prepare.sql`スクリプトは次のことを行います。
     >
@@ -334,21 +332,19 @@ systemctl start docker
 
     以下は出力例です。クラスターのホスト名が出力に表示されていることがわかります。これは、ProxySQL と TiDB サーバーレス クラスター間の接続が確立されていることを意味します。
 
-    ```
-    *************************** 1. row ***************************
-        hostgroup_id: 0
-            hostname: gateway01.us-west-2.prod.aws.tidbcloud.com
-                port: 4000
-            gtid_port: 0
-                status: ONLINE
-                weight: 1
-            compression: 0
-        max_connections: 1000
-    max_replication_lag: 0
-                use_ssl: 1
-        max_latency_ms: 0
-                comment:
-    ```
+        *************************** 1. row ***************************
+            hostgroup_id: 0
+                hostname: gateway01.us-west-2.prod.aws.tidbcloud.com
+                    port: 4000
+                gtid_port: 0
+                    status: ONLINE
+                    weight: 1
+                compression: 0
+            max_connections: 1000
+        max_replication_lag: 0
+                    use_ssl: 1
+            max_latency_ms: 0
+                    comment:
 
 #### ステップ 4. ProxySQL を介して TiDB クラスターに接続する {#step-4-connect-to-your-tidb-cluster-through-proxysql}
 
@@ -390,7 +386,7 @@ systemctl start docker
 
     TiDB バージョンが表示されたら、ProxySQL を介して TiDB サーバーレス クラスターに正常に接続されています。 MySQL クライアントをいつでも終了するには、 `quit`入力して<kbd>Enter</kbd>を押します。
 
-    > **ノート：**
+    > **注記：**
     >
     > ***デバッグの場合:***クラスターに接続できない場合は、ファイル`tidb-cloud-connect.cnf` 、 `proxysql-prepare.sql` 、および`proxysql-connect.py`を確認してください。指定したサーバー情報が利用可能であり、正しいことを確認してください。
 
@@ -429,7 +425,7 @@ systemctl start docker
 
 ### オプション 2: TiDB (セルフホスト型) を ProxySQL と統合する {#option-2-integrate-tidb-self-hosted-with-proxysql}
 
-この統合では、 Docker イメージ[TiDB](https://hub.docker.com/r/pingcap/tidb)と[プロキシSQL](https://hub.docker.com/r/proxysql/proxysql)を使用して環境をセットアップします。自分の興味に合わせて[TiDB をインストールする他の方法 (セルフホスト型)](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb)を試してみることをお勧めします。
+この統合では、 [TiDB](https://hub.docker.com/r/pingcap/tidb)と[プロキシSQL](https://hub.docker.com/r/proxysql/proxysql)の Docker イメージを使用して環境をセットアップします。ご自身の興味に合わせて[TiDB をインストールするその他の方法 (セルフホスト型)](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb)を試してみることをお勧めします。
 
 次の手順では、ProxySQL と TiDB をポート`6033`と`4000`にそれぞれセットアップするため、これらのポートが使用可能であることを確認してください。
 
@@ -672,7 +668,7 @@ ProxySQL のサポートされているプラ​​ットフォームとその�
 
 ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構成する必要があります。これを行うには、 [ProxySQL 管理インターフェイス内で SQL ステートメントを実行する](#option-1-configure-proxysql-using-the-admin-interface) (推奨) または[設定ファイル](#option-2-configure-proxysql-using-a-configuration-file)を使用します。
 
-> **ノート：**
+> **注記：**
 >
 > 次のセクションでは、ProxySQL の必要な構成項目のみをリストします。構成の包括的なリストについては、 [ProxySQL ドキュメント](https://proxysql.com/documentation/proxysql-configuration/)を参照してください。
 
@@ -700,7 +696,7 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
     SAVE mysql servers TO DISK;
     ```
 
-    > **ノート：**
+    > **注記：**
     >
     > -   `hostgroup_id` : ホストグループのIDを指定します。 ProxySQL はホストグループを使用してクラスターを管理します。 SQL トラフィックをこれらのクラスターに均等に分散するには、同じホストグループへの負荷分散が必要な複数のクラスターを構成できます。読み取りおよび書き込み目的などでクラスターを区別するには、異なるホストグループを使用するようにクラスターを構成できます。
     > -   `hostname` : TiDB クラスターのエンドポイント。
@@ -723,7 +719,7 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
     SAVE mysql users TO DISK;
     ```
 
-    > **ノート：**
+    > **注記：**
     >
     > -   `username` : TiDB ユーザー名。
     > -   `password` : TiDB パスワード。
@@ -747,32 +743,30 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
 
 2.  必要に応じて構成ファイル`/etc/proxysql.cnf`を変更します。例えば：
 
-    ```
-    mysql_servers:
-    (
-        {
-            address="<tidb cloud dedicated cluster host>"
-            port=<tidb cloud dedicated cluster port>
-            hostgroup=0
-            max_connections=2000
-        }
-    )
+        mysql_servers:
+        (
+            {
+                address="<tidb cloud dedicated cluster host>"
+                port=<tidb cloud dedicated cluster port>
+                hostgroup=0
+                max_connections=2000
+            }
+        )
 
-    mysql_users:
-    (
-        {
-            username = "<tidb cloud dedicated cluster username>"
-            password = "<tidb cloud dedicated cluster password>"
-            default_hostgroup = 0
-            max_connections = 1000
-            default_schema = "test"
-            active = 1
-            transaction_persistent = 1
-        }
-    )
-    ```
+        mysql_users:
+        (
+            {
+                username = "<tidb cloud dedicated cluster username>"
+                password = "<tidb cloud dedicated cluster password>"
+                default_hostgroup = 0
+                max_connections = 1000
+                default_schema = "test"
+                active = 1
+                transaction_persistent = 1
+            }
+        )
 
-    前の例では次のようになります。
+    前述の例では次のようになります。
 
     -   `address`および`port` : TiDB Cloudクラスターのエンドポイントとポートを指定します。
     -   `username`および`password` : TiDB Cloudクラスターのユーザー名とパスワードを指定します。
@@ -799,7 +793,7 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
 
 ![proxysql-client-side-rules](https://download.pingcap.com/images/docs/develop/proxysql-client-side-rules.png)
 
-> **ノート：**
+> **注記：**
 >
 > 次の手順では、TiDB と ProxySQL のコンテナ イメージを使用してクエリ ルールを構成します。まだ引いていない場合は、 [統合セクション](#option-2-integrate-tidb-self-hosted-with-proxysql)参照して詳細な手順を確認してください。
 
@@ -988,7 +982,7 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
 
     </SimpleTab>
 
-    > **ノート：**
+    > **注記：**
     >
     > `proxysql-prepare.sql`は次のことを行います。
     >
@@ -1067,7 +1061,7 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
             ROLLBACK;
             ```
 
-            このトランザクションでは、 `BEGIN`ステートメントはどのルールにも一致しません。デフォルトのホストグループ (この例では`hostgroup 0` ) が使用されます。 ProxySQL はデフォルトでユーザーtransaction_persistent を有効にし、同じホストグループ内の同じトランザクション内のすべてのステートメントを実行するため、 `INSERT`と`SELECT * FROM test.tidb_server;`ステートメントも TiDB クラスター`hostgroup 0`に転送されます。
+            このトランザクションでは、 `BEGIN`ステートメントはどのルールにも一致しません。デフォルトのホストグループ (この例では`hostgroup 0` ) が使用されます。 ProxySQL はデフォルトでユーザーtransaction_persistent を有効にし、同じホストグループ内の同じトランザクション内のすべてのステートメントを実行するため、 `INSERT`および`SELECT * FROM test.tidb_server;`ステートメントも TiDB クラスター`hostgroup 0`に転送されます。
 
         以下は出力例です。同様の出力が得られた場合は、ProxySQL を使用してクエリ ルールが正常に構成されています。
 

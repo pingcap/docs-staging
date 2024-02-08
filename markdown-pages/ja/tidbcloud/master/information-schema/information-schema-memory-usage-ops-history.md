@@ -32,7 +32,6 @@ DESC memory_usage_ops_history;
 12 rows in set (0.000 sec)
 ```
 
-
 ```sql
 SELECT * FROM information_schema.memory_usage_ops_history;
 ```

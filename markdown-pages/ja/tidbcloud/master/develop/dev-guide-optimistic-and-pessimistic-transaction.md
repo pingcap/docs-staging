@@ -582,7 +582,7 @@ func createUser(txn *util.TiDBSqlTx, id int, nickname string, balance decimal.De
 }
 ```
 
-次に、 `helper.go`を呼び出して受信コマンド ライン引数を処理する`main`関数を含む`txn.go`記述します。
+次に、 `helper.go`を呼び出して受信コマンド ライン引数を処理する`main`関数を含む`txn.go`を記述します。
 
 ```go
 package main
@@ -1188,7 +1188,7 @@ public class TxnExample {
 
 <div label="Python" value="python">
 
-[悲観的トランザクションの例を書く](#write-a-pessimistic-transaction-example)セクションの Python の例はすでに楽観的トランザクションをサポートしているため、変更せずに直接使用できます。
+[悲観的トランザクションの例を書く](#write-a-pessimistic-transaction-example)セクションの Python の例はすでに楽観的トランザクションをサポートしており、変更せずに直接使用できます。
 
 </div>
 
@@ -1285,7 +1285,7 @@ mysql> SELECT * FROM users;
 
 ### 過剰販売を防ぐ例 {#an-example-that-prevents-overselling}
 
-このセクションでは、売り過ぎを防ぐ楽観的取引の例について説明します。在庫に 10 冊の本が残っているとします。ボブは 7​​ 冊の本を購入し、アリスは 4 冊の本を購入します。彼らはほぼ同時に注文を出します。何が起こるか？楽観的トランザクションの例のコードを再利用して、この要件に対処できます。ボブの購入数を 6 から 7 に変更します。
+このセクションでは、売り過ぎを防ぐ楽観的取引の例について説明します。在庫に 10 冊の本が残っているとします。ボブは 7​​ 冊の本を買い、アリスは 4 冊の本を買います。彼らはほぼ同時に注文を出します。何が起こるか？楽観的トランザクションの例のコードを再利用して、この要件に対処できます。ボブの購入数を 6 から 7 に変更します。
 
 サンプル プログラムを実行します。
 

@@ -15,7 +15,7 @@ summary: Learn about how to handle transaction errors, such as deadlocks and app
 ERROR 1213: Deadlock found when trying to get lock; try restarting transaction
 ```
 
-デッドロックは、2 つ以上のトランザクションがすでに保持しているロックを解放するのをお互いに待っている場合、またはロック順序が矛盾しているため、ロック リソースを待機するループが発生する場合に発生します。
+デッドロックは、2 つ以上のトランザクションが、すでに保持しているロックを解放するのをお互いに待っている場合、またはロック順序が矛盾しているため、ロック リソースを待機するループが発生する場合に発生します。
 
 以下は、データベース[`bookshop`](/develop/dev-guide-bookshop-schema-design.md)のテーブル`books`を使用したデッドロックの例です。
 
@@ -125,7 +125,7 @@ while True:
             sleep(sleep_ms) # make sure your sleep() takes milliseconds
 ```
 
-> **ノート：**
+> **注記：**
 >
 > `Error 9007: Write conflict`頻繁に発生する場合は、スキーマ設計とワークロードのデータ アクセス パターンをチェックして競合の根本原因を特定し、より適切な設計によって競合を回避する必要がある場合があります。
 

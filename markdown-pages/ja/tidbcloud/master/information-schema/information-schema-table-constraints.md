@@ -7,7 +7,6 @@ summary: Learn the `TABLE_CONSTRAINTS` information_schema table.
 
 `TABLE_CONSTRAINTS`表は、どのテーブルに制約があるかを示しています。
 
-
 ```sql
 USE information_schema;
 DESC table_constraints;
@@ -26,7 +25,6 @@ DESC table_constraints;
 +--------------------+--------------+------+------+---------+-------+
 6 rows in set (0.00 sec)
 ```
-
 
 ```sql
 SELECT * FROM table_constraints WHERE constraint_type='UNIQUE';

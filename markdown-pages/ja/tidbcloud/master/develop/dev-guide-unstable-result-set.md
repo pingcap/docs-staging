@@ -179,7 +179,6 @@ TiDB はstorageレイヤーから並行してデータを読み取るため、�
 
     最初のクエリ:
 
-    
     ```sql
     mysql>  select GROUP_CONCAT( customer_id SEPARATOR ',' ) FROM customer where customer_id like '200002%';
     +-------------------------------------------------------------------------+
@@ -191,7 +190,6 @@ TiDB はstorageレイヤーから並行してデータを読み取るため、�
 
     2 番目のクエリ:
 
-    
     ```sql
     mysql>  select GROUP_CONCAT( customer_id SEPARATOR ',' ) FROM customer where customer_id like '200002%';
     +-------------------------------------------------------------------------+
@@ -205,7 +203,6 @@ TiDB はstorageレイヤーから並行してデータを読み取るため、�
 
     最初のクエリ:
 
-    
     ```sql
     mysql>  select GROUP_CONCAT( customer_id order by customer_id SEPARATOR ',' ) FROM customer where customer_id like '200002%';
     +-------------------------------------------------------------------------+
@@ -217,7 +214,6 @@ TiDB はstorageレイヤーから並行してデータを読み取るため、�
 
     2 番目のクエリ:
 
-    
     ```sql
     mysql>  select GROUP_CONCAT( customer_id order by customer_id SEPARATOR ',' ) FROM customer where customer_id like '200002%';
     +-------------------------------------------------------------------------+
@@ -229,4 +225,4 @@ TiDB はstorageレイヤーから並行してデータを読み取るため、�
 
 ## <code>SELECT * FROM T LIMIT N</code>の結果が不安定になる {#unstable-results-in-code-select-from-t-limit-n-code}
 
-返される結果は、storageノード (TiKV) 上のデータの分散に関連しています。複数のクエリが実行される場合、storageノード (TiKV) の異なるstorageユニット (リージョン) が異なる速度で結果を返すため、結果が不安定になる可能性があります。
+返された結果は、storageノード (TiKV) 上のデータの分散に関連しています。複数のクエリが実行される場合、storageノード (TiKV) の異なるstorageユニット (リージョン) が異なる速度で結果を返すため、結果が不安定になる可能性があります。

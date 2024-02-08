@@ -122,7 +122,7 @@ DELETE FROM t;
 
 ### 主キーのベスト プラクティス {#primary-key-best-practices}
 
-[主キーを選択するときに従うべきルール](/develop/dev-guide-create-table.md#guidelines-to-follow-when-selecting-primary-key)を参照してください。
+[主キーを選択するときに従うべきルール](/develop/dev-guide-create-table.md#guidelines-to-follow-when-selecting-primary-key)参照してください。
 
 ## インデックスのベストプラクティス {#index-best-practices}
 

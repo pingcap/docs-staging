@@ -63,7 +63,7 @@ summary: Learn about the details of the TiDB Cloud Console maintenance on August
         -   タスクを延期する
     -   ごみ箱
         -   クラスターの削除
-        -   バックアップを削除する
+        -   バックアップの削除
         -   クラスターの復元
 
 ### 影響を受けるTiDB Cloud API の機能 {#affected-features-of-tidb-cloud-api}

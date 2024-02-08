@@ -7,7 +7,6 @@ summary: Learn about the execution plan information returned by the `EXPLAIN` st
 
 データを集約するとき、SQL オプティマイザーはハッシュ集計またはストリーム集計演算子のいずれかを選択します。クエリの効率を向上させるために、集約はコプロセッサ層と TiDB 層の両方で実行されます。次の例を考えてみましょう。
 
-
 ```sql
 CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY auto_increment, pad1 BLOB, pad2 BLOB, pad3 BLOB);
 INSERT INTO t1 SELECT NULL, RANDOM_BYTES(1024), RANDOM_BYTES(1024), RANDOM_BYTES(1024) FROM dual;
@@ -32,7 +31,6 @@ ANALYZE TABLE t1;
 
 [`SHOW TABLE REGIONS`](/sql-statements/sql-statement-show-table-regions.md)の出力から、このテーブルが複数のリージョンに分割されていることがわかります。
 
-
 ```sql
 SHOW TABLE t1 REGIONS;
 ```
@@ -50,7 +48,6 @@ SHOW TABLE t1 REGIONS;
 ```
 
 次の集計ステートメントで`EXPLAIN`を使用すると、TiKV 内の各リージョンで最初に`└─StreamAgg_8`が実行されることがわかります。次に、各 TiKVリージョンは1 行を TiDB に送り返し、各リージョンからのデータを`StreamAgg_16`に集約します。
-
 
 ```sql
 EXPLAIN SELECT COUNT(*) FROM t1;
@@ -92,7 +89,6 @@ EXPLAIN ANALYZE SELECT COUNT(*) FROM t1;
 
 以下は`HashAgg`演算子の例です。
 
-
 ```sql
 EXPLAIN SELECT /*+ HASH_AGG() */ count(*) FROM t1;
 ```
@@ -116,7 +112,6 @@ EXPLAIN SELECT /*+ HASH_AGG() */ count(*) FROM t1;
 ストリーム集計アルゴリズムは、通常、ハッシュ集計よりもメモリ消費量が少なくなります。ただし、この演算子では、値が到着したときに*ストリーミング*して集計を適用できるように、データが順序付けられて送信される必要があります。
 
 次の例を考えてみましょう。
-
 
 ```sql
 CREATE TABLE t2 (id INT NOT NULL PRIMARY KEY, col1 INT NOT NULL);
@@ -144,7 +139,6 @@ Records: 5  Duplicates: 0  Warnings: 0
 
 この例では、 `col1`にインデックスを追加することで`└─Sort_13`演算子を削除できます。インデックスが追加されると、データを順番に読み取ることができ、 `└─Sort_13`演算子が削除されます。
 
-
 ```sql
 ALTER TABLE t2 ADD INDEX (col1);
 EXPLAIN SELECT /*+ STREAM_AGG() */ col1, count(*) FROM t2 GROUP BY col1;
@@ -164,3 +158,36 @@ Query OK, 0 rows affected (0.28 sec)
 +------------------------------+---------+-----------+----------------------------+----------------------------------------------------------------------------------------------------+
 5 rows in set (0.00 sec)
 ```
+
+## ROLLUP を使用した多次元データ集約 {#multidimensional-data-aggregation-with-rollup}
+
+v7.4.0 以降、TiDB の`GROUP BY`句は`WITH ROLLUP`修飾子をサポートします。
+
+`GROUP BY`句では、1 つ以上の列をグループ リストとして指定し、リストの後に`WITH ROLLUP`修飾子を追加できます。次に、TiDB は、グループ リストの列に基づいて多次元の降順グループ化を実行し、出力で各グループの概要結果を提供します。
+
+> **注記：**
+>
+> 現在、TiDB は Cube 構文をサポートしておらず、TiDB はTiFlash MPP モードでのみ`WITH ROLLUP`構文の有効な実行プランの生成をサポートしています。
+
+```sql
+explain SELECT year, month, grouping(year), grouping(month), SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP;
++----------------------------------------+---------+--------------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| id                                     | estRows | task         | access object | operator info                                                                                                                                                                                                                        |
++----------------------------------------+---------+--------------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| TableReader_44                         | 2.40    | root         |               | MppVersion: 2, data:ExchangeSender_43                                                                                                                                                                                                |
+| └─ExchangeSender_43                    | 2.40    | mpp[tiflash] |               | ExchangeType: PassThrough                                                                                                                                                                                                            |
+|   └─Projection_8                       | 2.40    | mpp[tiflash] |               | Column#6->Column#12, Column#7->Column#13, grouping(gid)->Column#14, grouping(gid)->Column#15, Column#9->Column#16                                                                                                                    |
+|     └─Projection_38                    | 2.40    | mpp[tiflash] |               | Column#9, Column#6, Column#7, gid                                                                                                                                                                                                    |
+|       └─HashAgg_36                     | 2.40    | mpp[tiflash] |               | group by:Column#6, Column#7, gid, funcs:sum(test.bank.profit)->Column#9, funcs:firstrow(Column#6)->Column#6, funcs:firstrow(Column#7)->Column#7, funcs:firstrow(gid)->gid, stream_count: 8                                           |
+|         └─ExchangeReceiver_22          | 3.00    | mpp[tiflash] |               | stream_count: 8                                                                                                                                                                                                                      |
+|           └─ExchangeSender_21          | 3.00    | mpp[tiflash] |               | ExchangeType: HashPartition, Compression: FAST, Hash Cols: [name: Column#6, collate: binary], [name: Column#7, collate: utf8mb4_bin], [name: gid, collate: binary], stream_count: 8                                                  |
+|             └─Expand_20                | 3.00    | mpp[tiflash] |               | level-projection:[test.bank.profit, <nil>->Column#6, <nil>->Column#7, 0->gid],[test.bank.profit, Column#6, <nil>->Column#7, 1->gid],[test.bank.profit, Column#6, Column#7, 3->gid]; schema: [test.bank.profit,Column#6,Column#7,gid] |
+|               └─Projection_16          | 3.00    | mpp[tiflash] |               | test.bank.profit, test.bank.year->Column#6, test.bank.month->Column#7                                                                                                                                                                |
+|                 └─TableFullScan_17     | 3.00    | mpp[tiflash] | table:bank    | keep order:false, stats:pseudo                                                                                                                                                                                                       |
++----------------------------------------+---------+--------------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+10 rows in set (0.05 sec)
+```
+
+前述のステートメントの`GROUP BY year, month WITH ROLLUP`構文に従って、このステートメントの SQL 集計結果を計算し、3 つのグループ、 `{year, month}` 、 `{year}` 、および`{}`に連結できます。
+
+詳細については、 [GROUP BY 修飾子](/functions-and-operators/group-by-modifier.md)を参照してください。

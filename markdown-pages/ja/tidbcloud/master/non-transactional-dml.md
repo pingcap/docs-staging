@@ -20,7 +20,7 @@ summary: Learn the non-transactional DML statements in TiDB. At the expense of a
 
 詳細な構文については、 [`BATCH`](/sql-statements/sql-statement-batch.md)を参照してください。
 
-> **ノート：**
+> **注記：**
 >
 > -   非トランザクション DML ステートメントは、ステートメントの原子性と分離性を保証せず、元の DML ステートメントと同等ではありません。
 > -   DML ステートメントが非トランザクション DML ステートメントに書き換えられた後は、その動作が元のステートメントの動作と一貫していると仮定することはできません。
@@ -83,7 +83,6 @@ summary: Learn the non-transactional DML statements in TiDB. At the expense of a
 
 次のスキーマを使用してテーブル`t`を作成します。
 
-
 ```sql
 CREATE TABLE t (id INT, v INT, KEY(id));
 ```
@@ -94,7 +93,6 @@ Query OK, 0 rows affected
 
 テーブル`t`にデータを挿入します。
 
-
 ```sql
 INSERT INTO t VALUES (1, 2), (2, 3), (3, 4), (4, 5), (5, 6);
 ```
@@ -104,7 +102,6 @@ Query OK, 5 rows affected
 ```
 
 次の操作では、非トランザクション DML ステートメントを使用して、テーブル`t`の列`v`にある整数 6 より小さい値を持つ行を削除します。このステートメントは、バッチ サイズ 2 の 2 つの SQL ステートメントに分割され、 `id`列でシャーディングされて実行されます。
-
 
 ```sql
 BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6;
@@ -120,7 +117,6 @@ BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6;
 ```
 
 上記の非トランザクション DML ステートメントの削除結果を確認します。
-
 
 ```sql
 SELECT * FROM t;
@@ -168,7 +164,6 @@ SELECT * FROM t2;
 
 非トランザクション DML ステートメントの実行中に、 `SHOW PROCESSLIST`を使用して進行状況を表示できます。返された結果の`Time`フィールドは、現在のバッチ実行の消費時間を示します。ログとスロー ログには、非トランザクション DML 実行中の各分割ステートメントの進行状況も記録されます。例えば：
 
-
 ```sql
 SHOW PROCESSLIST;
 ```
@@ -194,7 +189,6 @@ SHOW PROCESSLIST;
 
 次のステートメントは、 `BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6`の実行中にバッチ分割ステートメントをクエリします。
 
-
 ```sql
 BATCH ON id LIMIT 2 DRY RUN QUERY DELETE FROM t WHERE v < 6;
 ```
@@ -211,7 +205,6 @@ BATCH ON id LIMIT 2 DRY RUN QUERY DELETE FROM t WHERE v < 6;
 ### 最初と最後のバッチに対応するステートメントをクエリします。 {#query-the-statements-corresponding-to-the-first-and-the-last-batches}
 
 非トランザクション DML ステートメントの最初と最後のバッチに対応する実際の DML ステートメントをクエリするには、この非トランザクション DML ステートメントに`DRY RUN`を追加します。そして、TiDB はバッチを分割するだけで、これらの SQL ステートメントは実行しません。多数のバッチが存在する可能性があるため、すべてのバッチが表示されるわけではなく、最初と最後のバッチのみが表示されます。
-
 
 ```sql
 BATCH ON id LIMIT 2 DRY RUN DELETE FROM t WHERE v < 6;
@@ -230,7 +223,6 @@ BATCH ON id LIMIT 2 DRY RUN DELETE FROM t WHERE v < 6;
 ### オプティマイザーのヒントを使用する {#use-the-optimizer-hint}
 
 オプティマイザ ヒントが元々 `DELETE`ステートメントでサポートされている場合、オプティマイザ ヒントは非トランザクション`DELETE`ステートメントでもサポートされます。ヒントの位置は通常の`DELETE`ステートメントと同じです。
-
 
 ```sql
 BATCH ON id LIMIT 2 DELETE /*+ USE_INDEX(t)*/ FROM t WHERE v < 6;
@@ -263,7 +255,7 @@ BATCH ON id LIMIT 2 DELETE /*+ USE_INDEX(t)*/ FROM t WHERE v < 6;
 
 ### シャード列の選択方法 {#how-to-select-a-shard-column}
 
-非トランザクション DML ステートメントは、データ バッチ処理の基礎として列 (シャード列) を使用します。実行効率を高めるには、インデックスを使用するためにシャード列が必要です。インデックスとシャード列が異なると、実行効率が数十倍も異なる場合があります。シャード列を選択するときは、次の提案を考慮してください。
+非トランザクション DML ステートメントは、データ バッチ処理の基礎として列 (シャード列) を使用します。実行効率を高めるには、インデックスを使用するためにシャード列が必要です。インデックスとシャード列が異なると実行効率が数十倍も異なる場合があります。シャード列を選択するときは、次の提案を考慮してください。
 
 -   アプリケーションのデータ分布がわかっている場合は、 `WHERE`条件に従って、バッチ処理後にデータをより小さい範囲で分割する列を選択します。
     -   理想的には、 `WHERE`条件ではシャード列のインデックスを利用して、バッチごとにスキャンされるデータの量を減らすことができます。たとえば、各トランザクションの開始時刻と終了時刻を記録するトランザクション テーブルがあり、終了時刻が 1 か月より前のすべてのトランザクション レコードを削除するとします。トランザクションの開始時刻に関するインデックスがあり、トランザクションの開始時刻と終了時刻が比較的近い場合は、開始時刻列をシャード列として選択できます。
@@ -288,7 +280,7 @@ BATCH ON id LIMIT 2 DELETE /*+ USE_INDEX(t)*/ FROM t WHERE v < 6;
 -   シャード列にはインデックスを付ける必要があります。インデックスは、単一列インデックス、または結合インデックスの最初の列にすることができます。
 -   [`autocommit`](/system-variables.md#autocommit)モードで使用する必要があります。
 -   バッチdmlが有効な場合は使用できません。
--   [ `tidb_snapshot` ](/read-historyal-data.md#操作フロー)が設定されている場合は使用できません。
+-   [`tidb_snapshot`](/read-historical-data.md)を設定した場合は使用できません。
 -   `prepare`ステートメントと一緒に使用することはできません。
 -   `ENUM` 、 `BIT` 、 `SET` 、 `JSON`タイプはシャード列としてサポートされていません。
 -   [一時テーブル](/temporary-tables.md)ではサポートされていません。
@@ -315,7 +307,7 @@ BATCH ON id LIMIT 2 DELETE /*+ USE_INDEX(t)*/ FROM t WHERE v < 6;
 
 バッチ dml は、DML ステートメントの実行中にトランザクションを複数のトランザクション コミットに分割するメカニズムです。
 
-> **ノート：**
+> **注記：**
 >
 > 非推奨となったバッチ dml の使用は推奨されません。 Batch-DML 機能が適切に使用されていない場合、データ インデックスの不整合が発生するリスクがあります。
 
@@ -326,6 +318,42 @@ BATCH ON id LIMIT 2 DELETE /*+ USE_INDEX(t)*/ FROM t WHERE v < 6;
 -   安定性: バッチ DML は、不適切な使用によりデータ インデックスの不整合が発生する傾向があります。非トランザクション DML ステートメントは、データ インデックスの不整合を引き起こしません。ただし、不適切に使用すると、非トランザクション DML ステートメントは元のステートメントと同等ではなくなり、アプリケーションで予期しない動作が発生する可能性があります。詳細は[一般的な問題セクション](#non-transactional-delete-has-exceptional-behavior-that-is-not-equivalent-to-ordinary-delete)を参照してください。
 
 ## よくある問題 {#common-issues}
+
+### 複数のテーブル結合ステートメントを実行すると、 <code>Unknown column xxx in &#39;where clause&#39;</code>エラーが発生します {#executing-a-multiple-table-joins-statement-results-in-the-code-unknown-column-xxx-in-where-clause-code-error}
+
+このエラーは、クエリ内で連結された`WHERE`句に[シャード列](#parameter-description)が定義されているテーブル以外のテーブルが含まれる場合に発生します。たとえば、次の SQL ステートメントでは、シャード列は`t2.id`で、 table `t2`に定義されていますが、 `WHERE`句には table `t2`と`t3`が含まれています。
+
+```sql
+BATCH ON test.t2.id LIMIT 1 
+INSERT INTO t 
+SELECT t2.id, t2.v, t3. FROM t2, t3 WHERE t2.id = t3.id
+```
+
+```sql
+(1054, "Unknown column 't3.id' in 'where clause'")
+```
+
+エラーが発生した場合は、 `DRY RUN QUERY`使用して確認のためにクエリ ステートメントを出力できます。例えば：
+
+```sql
+BATCH ON test.t2.id LIMIT 1 
+DRY RUN QUERY INSERT INTO t 
+SELECT t2.id, t2.v, t3. FROM t2, t3 WHERE t2.id = t3.id
+```
+
+このエラーを回避するには、 `WHERE`句の他のテーブルに関連する条件を`JOIN`句の`ON`条件に移動します。例えば：
+
+```sql
+BATCH ON test.t2.id LIMIT 1 
+INSERT INTO t 
+SELECT t2.id, t2.v, t3. FROM t2 JOIN t3 ON t2.id=t3.id
+```
+
+    +----------------+---------------+
+    | number of jobs | job status    |
+    +----------------+---------------+
+    | 0              | all succeeded |
+    +----------------+---------------+
 
 ### 実際のバッチ サイズが指定されたバッチ サイズと同じではありません {#the-actual-batch-size-is-not-the-same-as-the-specified-batch-size}
 

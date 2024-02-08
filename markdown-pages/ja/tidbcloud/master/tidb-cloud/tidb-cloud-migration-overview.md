@@ -1,7 +1,6 @@
 ---
 title: Migration and Import Overview
 summary: Learn an overview of data migration and import scenarios for TiDB Cloud.
-aliases: ['/tidbcloud/export-data-from-tidb-cloud']
 ---
 
 # 移行とインポートの概要 {#migration-and-import-overview}
@@ -41,7 +40,7 @@ SQL、CSV、Parquet、またはAuroraスナップショット形式のデータ 
 
 -   サンプルデータ(SQLファイル)をTiDB Cloudにインポート
 
-    サンプル データ (SQL ファイル) をTiDB Cloudにインポートして、TiDB Cloudインターフェイスとインポート プロセスにすぐに慣れることができます。詳細については、 [サンプル データをTiDB Cloudにインポートする](/tidb-cloud/import-sample-data.md)を参照してください。
+    サンプル データ (SQL ファイル) をTiDB Cloudにインポートして、 TiDB Cloudインターフェイスとインポート プロセスにすぐに慣れることができます。詳細については、 [サンプル データをTiDB Cloudにインポートする](/tidb-cloud/import-sample-data.md)を参照してください。
 
 -   CSV ファイルを Amazon S3 または GCS からTiDB Cloudにインポートする
 

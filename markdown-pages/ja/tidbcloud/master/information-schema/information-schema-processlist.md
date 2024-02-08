@@ -15,7 +15,6 @@ summary: Learn the `PROCESSLIST` information_schema table.
 -   トランザクションの開始時間を示す`TxnStart`列。
 -   `RESOURCE_GROUP`列にはリソース グループ名が表示されます。
 
-
 ```sql
 USE information_schema;
 DESC processlist;
@@ -41,7 +40,6 @@ DESC processlist;
 +---------------------+---------------------+------+------+---------+-------+
 13 rows in set (0.00 sec)
 ```
-
 
 ```sql
 SELECT * FROM processlist\G
@@ -84,7 +82,6 @@ SELECT * FROM processlist\G
 ## CLUSTER_PROCESSLIST {#cluster-processlist}
 
 `CLUSTER_PROCESSLIST`は`PROCESSLIST`に対応するクラスタシステムテーブルです。これは、クラスター内の`PROCESSLIST`の TiDB ノードの情報を照会するために使用されます。 `CLUSTER_PROCESSLIST`のテーブル スキーマには`PROCESSLIST`よりも 1 列多い`INSTANCE`列があり、この列のデータの元の TiDB ノードのアドレスが格納されます。
-
 
 ```sql
 SELECT * FROM information_schema.cluster_processlist;

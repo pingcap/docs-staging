@@ -19,8 +19,7 @@ summary: Learn how to use generated columns.
 
 生成された列の主な用途の 1 つは、JSON データ型からデータを抽出し、データにインデックスを付けることです。
 
-MySQL 5.7と TiDB の両方で、JSON 型の列に直接インデックスを付けることはできません。つまり、次のテーブル スキーマは**サポートされていません**。
-
+MySQL 8.0 と TiDB の両方で、JSON 型の列に直接インデックスを付けることはできません。つまり、次のテーブル スキーマは**サポートされていません**。
 
 ```sql
 CREATE TABLE person (
@@ -34,7 +33,6 @@ CREATE TABLE person (
 JSON 列にインデックスを付けるには、まず生成された列として抽出する必要があります。
 
 例として`address_info`の`city`フィールドを使用すると、仮想生成列を作成し、その列にインデックスを追加できます。
-
 
 ```sql
 CREATE TABLE person (
@@ -50,11 +48,9 @@ CREATE TABLE person (
 
 このテーブルの`city`列は**仮想生成列**であり、インデックスがあります。次のクエリでは、インデックスを使用して実行を高速化できます。
 
-
 ```sql
 SELECT name, id FROM person WHERE city = 'Beijing';
 ```
-
 
 ```sql
 EXPLAIN SELECT name, id FROM person WHERE city = 'Beijing';
@@ -75,7 +71,6 @@ EXPLAIN SELECT name, id FROM person WHERE city = 'Beijing';
 
 パス`$.city`にデータが存在しない場合、 `JSON_EXTRACT` `NULL`を返します。 `city`が`NOT NULL`でなければならないという制約を強制する場合は、次のように仮想生成列を定義できます。
 
-
 ```sql
 CREATE TABLE person (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -89,7 +84,6 @@ CREATE TABLE person (
 ## 生成された列の検証 {#validation-of-generated-columns}
 
 `INSERT`と`UPDATE`ステートメントは両方とも仮想列定義をチェックします。検証に合格しない行はエラーを返します。
-
 
 ```sql
 mysql> INSERT INTO person (name, address_info) VALUES ('Morgan', JSON_OBJECT('Country', 'Canada'));
@@ -135,7 +129,7 @@ desc select a+1 from t where a+1=3;
 2 rows in set (0.01 sec)
 ```
 
-> **ノート：**
+> **注記：**
 >
 > 置換される式と生成される列が両方とも文字列型であるが長さが異なる場合でも、システム変数[`tidb_enable_unsafe_substitute`](/system-variables.md#tidb_enable_unsafe_substitute-new-in-v630)から`ON`を設定することで式を置換できます。このシステム変数を構成するときは、生成された列によって計算された値が生成された列の定義を厳密に満たしていることを確認してください。そうしないと、長さの違いによりデータが切り捨てられ、不正確な結果が生じる可能性があります。 GitHub の問題[#35490](https://github.com/pingcap/tidb/issues/35490#issuecomment-1211658886)を参照してください。
 

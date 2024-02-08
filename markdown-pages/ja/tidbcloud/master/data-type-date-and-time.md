@@ -5,9 +5,9 @@ summary: Learn about the supported date and time types.
 
 # 日付と時刻のタイプ {#date-and-time-types}
 
-TiDB は、時間値を格納するためにすべての MySQL 日付と時刻のデータ型 ( [`DATE`](#date-type) 、 [`TIME`](#time-type) 、 [`DATETIME`](#datetime-type) 、 [`TIMESTAMP`](#timestamp-type) 、および[`YEAR`](#year-type)をサポートします。詳細については、 [MySQL の日付と時刻のデータ型](https://dev.mysql.com/doc/refman/5.7/en/date-and-time-types.html)を参照してください。
+TiDB は、時間値を格納するためにすべての MySQL 日付と時刻のデータ型 ( [`DATE`](#date-type) 、 [`TIME`](#time-type) 、 [`DATETIME`](#datetime-type) 、 [`TIMESTAMP`](#timestamp-type) 、および[`YEAR`](#year-type)をサポートします。詳細については、 [MySQL の日付と時刻のデータ型](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-types.html)を参照してください。
 
-これらの型にはそれぞれ有効な値の範囲があり、無効な値であることを示すためにゼロ値を使用します。さらに、タイプ`TIMESTAMP`とタイプ`DATETIME`は、変更時に新しい時間値を自動的に生成できます。
+これらの型にはそれぞれ有効な値の範囲があり、無効な値であることを示すためにゼロ値を使用します。さらに、タイプ`TIMESTAMP`と`DATETIME`は、変更時に新しい時間値を自動的に生成できます。
 
 日付と時刻の値の型を扱うときは、次の点に注意してください。
 
@@ -73,7 +73,7 @@ TiDB は、時間値を格納するためにすべての MySQL 日付と時刻�
 
 | 日付の種類   | 「ゼロ」値                 |
 | :------ | :-------------------- |
-| 日にち     | 「0000-00-00」          |
+| 日付      | 「0000-00-00」          |
 | 時間      | 「00:00:00」            |
 | 日付時刻    | 「0000-00-00 00:00:00」 |
 | タイムスタンプ | 「0000-00-00 00:00:00」 |
@@ -99,7 +99,7 @@ DATE
 TIME[(fsp)]
 ```
 
-> **ノート：**
+> **注記：**
 >
 > `TIME`の省略形に注意してください。たとえば、「11:12」は「00:11:12」ではなく「11:12:00」を意味します。ただし、「1112」は「00:11:12」を意味します。これらの違いは`:`の文字の有無によって生じます。
 
@@ -139,7 +139,7 @@ TIMESTAMP[(fsp)]
 YEAR[(4)]
 ```
 
-`YEAR`次の形式ルールに従います。
+`YEAR`次の形式規則に従います。
 
 -   4 桁の数字の範囲は 1901 から 2155 までです
 -   4 桁の文字列の範囲は「1901」から「2155」です
@@ -175,7 +175,7 @@ CREATE TABLE t1 (
 
 ## 時間値の小数部分 {#decimal-part-of-time-value}
 
-`DATETIME`と`TIMESTAMP`値には、マイクロ秒単位の精度で最大 6 桁の小数部分を含めることができます。 `DATETIME`型または`TIMESTAMP`型の列では、小数部分は破棄されずに格納されます。小数部分の場合、値は「YYYY-MM-DD HH:MM:SS[.fraction]」の形式で、小数の範囲は 000000 ～ 999999 です。小数点と小数点を区切るには、小数点を使用する必要があります。休み。
+`DATETIME`と`TIMESTAMP`値には、マイクロ秒単位の精度で最大 6 桁の小数部分を含めることができます。 `DATETIME`型または`TIMESTAMP`型の列では、小数部分は破棄されずに格納されます。小数部分の場合、値は「YYYY-MM-DD HH:MM:SS[.fraction]」の形式で、小数の範囲は 000000 ～ 999999 です。小数点と小数点を区切るには、小数点を使用する必要があります。休む。
 
 -   小数精度をサポートする列を定義するには`type_name(fsp)`を使用します。ここで、 `type_name`は`TIME` 、 `DATETIME` 、または`TIMESTAMP`です。例えば、
 

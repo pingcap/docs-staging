@@ -74,6 +74,38 @@ SELECT /*+ QB_NAME(QB1) */ * FROM (SELECT * FROM t) t1, (SELECT * FROM t) t2;
 >
 > 上記の例では、ヒントで`QB_NAME` ～ `sel_2`が指定され、元の 2 番目の`SELECT`クエリ ブロックに新しい`QB_NAME`が指定されていない場合、 `sel_2` 2 番目の`SELECT`クエリ ブロックに対して無効な名前になります。
 
+### SET_VAR(VAR_NAME=VAR_VALUE) {#set-var-var-name-var-value}
+
+`SET_VAR(VAR_NAME=VAR_VALUE)`ヒントを使用すると、ステートメントの実行中にシステム変数の値を一時的に変更できます。ステートメントの実行後、現在のセッションのシステム変数の値は自動的に元の値に復元されます。このヒントは、オプティマイザーとエグゼキューターに関連する一部のシステム変数を変更するために使用できます。このヒントを使用して変更できるシステム変数のリストについては、 [システム変数](/system-variables.md)を参照してください。
+
+> **警告：**
+>
+> 明示的にサポートされていない変数を変更すると、予期しない動作が発生する可能性があるため、変更しないことを強くお勧めします。
+
+以下は例です。
+
+```sql
+SELECT /*+ SET_VAR(MAX_EXECUTION_TIME=1234) */ @@MAX_EXECUTION_TIME;
+SELECT @@MAX_EXECUTION_TIME;
+```
+
+前述の SQL ステートメントを実行した後、最初のクエリは、デフォルト値`MAX_EXECUTION_TIME`の代わりに、ヒントに設定された値`1234`を返します。 2 番目のクエリは変数のデフォルト値を返します。
+
+```sql
++----------------------+
+| @@MAX_EXECUTION_TIME |
++----------------------+
+|                 1234 |
++----------------------+
+1 row in set (0.00 sec)
++----------------------+
+| @@MAX_EXECUTION_TIME |
++----------------------+
+|                    0 |
++----------------------+
+1 row in set (0.00 sec)
+```
+
 ### MERGE_JOIN(t1_name [, tl_name ...]) {#merge-join-t1-name-tl-name}
 
 `MERGE_JOIN(t1_name [, tl_name ...])`ヒントは、指定されたテーブルに対してソート/マージ結合アルゴリズムを使用するようにオプティマイザーに指示します。一般に、このアルゴリズムはメモリ消費量は少なくなりますが、処理時間は長くなります。データ量が非常に大きい場合、またはシステムメモリが不足している場合は、このヒントを使用することをお勧めします。例えば：
@@ -99,8 +131,10 @@ SELECT /*+ NO_MERGE_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 `INL_JOIN(t1_name [, tl_name ...])`ヒントは、指定されたテーブルに対してインデックスのネストされたループ結合アルゴリズムを使用するようにオプティマイザーに指示します。このアルゴリズムは、一部のシナリオでは消費するシステム リソースが少なくなり、処理時間が短縮される可能性がありますが、他のシナリオでは逆の結果が生じる可能性があります。外部テーブルが条件`WHERE`でフィルターされた後の結果セットが 10,000 行未満の場合は、このヒントを使用することをお勧めします。例えば：
 
 ```sql
-select /*+ INL_JOIN(t1, t2) */ * from t1, t2 where t1.id = t2.id;
+SELECT /*+ INL_JOIN(t1, t2) */ * FROM t1, t2, t3 WHERE t1.id = t2.id AND t2.id = t3.id;
 ```
+
+前述の SQL ステートメントでは、 `INL_JOIN(t1, t2)`ヒントは、 `t1`と`t2`に対してインデックスのネストされたループ結合アルゴリズムを使用するようにオプティマイザーに指示します。これは、インデックスのネストされたループ結合アルゴリズムが`t1`と`t2`の間で使用されることを意味するものではないことに注意してください。代わりに、ヒントは`t1`と`t2`がそれぞれ別のテーブル ( `t3` ) とのインデックス ネスト ループ結合アルゴリズムを使用することを示しています。
 
 `INL_JOIN()`で指定したパラメータは、クエリ プランを作成するときの内部テーブルの候補テーブルです。たとえば、 `INL_JOIN(t1)` 、TiDB がクエリ プランを作成するための内部テーブルとして`t1`使用のみを考慮することを意味します。候補テーブルに別名がある場合は、その別名を`INL_JOIN()`のパラメータとして使用する必要があります。別名がない場合は、テーブルの元の名前をパラメータとして使用します。たとえば、 `select /*+ INL_JOIN(t1) */ * from t t1, t t2 where t1.a = t2.b;`クエリでは、 `INL_JOIN()`のパラメータとして`t`ではなく、 `t`テーブルのエイリアス`t1`または`t2`を使用する必要があります。
 
@@ -494,7 +528,6 @@ SELECT /*+ LEADING(t1, t2) */ * FROM t1, t2, t3 WHERE t1.id = t2.id and t2.id = 
 -   オプティマイザは、 `LEADING`ヒントで指定された順序に従って結合操作を実行できません。
 -   `straight_join()`ヒントはすでに存在します。
 -   クエリには、デカルト積を伴う外部結合が含まれています。
--   `MERGE_JOIN` 、 `INL_JOIN` 、 `INL_HASH_JOIN` 、 `HASH_JOIN`のヒントのいずれかが同時に使用されます。
 
 上記の状況では、警告が生成されます。
 
@@ -929,7 +962,7 @@ EXPLAIN SELECT /*+ NO_HASH_JOIN(t1), NO_MERGE_JOIN(t1) */ * FROM t1, t2 WHERE t1
 ERROR 1815 (HY000): Internal : Can't find a proper physical plan for this query
 ```
 
--   システム変数[`tidb_opt_enable_hash_join`](/system-variables.md#tidb_opt_enable_hash_join-new-in-v656-and-v712) `OFF`に設定され、他のすべての結合タイプも除外されます。
+-   システム変数[`tidb_opt_enable_hash_join`](/system-variables.md#tidb_opt_enable_hash_join-new-in-v656-v712-and-v740) `OFF`に設定され、他のすべての結合タイプも除外されます。
 
 ```sql
 CREATE TABLE t1 (a INT);

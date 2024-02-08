@@ -13,7 +13,7 @@ TiDB は、以下を含むすべての MySQL 数値型をサポートします�
 
 ## 整数型 {#integer-types}
 
-TiDB は、 `INTEGER` / `INT` 、 `TINYINT` 、 `SMALLINT` 、 `MEDIUMINT` 、 `BIGINT`を含むすべての MySQL 整数型をサポートします。詳細については、 [MySQL の整数データ型の構文](https://dev.mysql.com/doc/refman/5.7/en/integer-types.html)参照してください。
+TiDB は、 `INTEGER` / `INT` 、 `TINYINT` 、 `SMALLINT` 、 `MEDIUMINT` 、 `BIGINT`を含むすべての MySQL 整数型をサポートします。詳細については、 [MySQL の整数データ型の構文](https://dev.mysql.com/doc/refman/8.0/en/integer-types.html)参照してください。
 
 次の表にフィールドの説明をまとめます。
 
@@ -97,7 +97,7 @@ BIGINT[(M)] [UNSIGNED] [ZEROFILL]
 
 ## 浮動小数点型 {#floating-point-types}
 
-TiDB は、 `FLOAT`および`DOUBLE`を含むすべての MySQL 浮動小数点型をサポートします。詳細については、 [浮動小数点型 (近似値) - MySQL の FLOAT、DOUBLE](https://dev.mysql.com/doc/refman/5.7/en/floating-point-types.html)を参照してください。
+TiDB は、 `FLOAT`および`DOUBLE`を含むすべての MySQL 浮動小数点型をサポートします。詳細については、 [浮動小数点型 (近似値) - MySQL の FLOAT、DOUBLE](https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html)を参照してください。
 
 次の表にフィールドの説明をまとめます。
 
@@ -127,7 +127,7 @@ FLOAT[(M,D)] [UNSIGNED] [ZEROFILL]
 FLOAT(p) [UNSIGNED] [ZEROFILL]
 ```
 
-> **ノート：**
+> **注記：**
 >
 > MySQL と同様に、 `FLOAT`データ型には近似値が格納されます。通貨などの値の場合は、代わりに`DECIMAL`タイプを使用することをお勧めします。
 >
@@ -146,13 +146,13 @@ DOUBLE PRECISION [(M,D)] [UNSIGNED] [ZEROFILL], REAL[(M,D)] [UNSIGNED] [ZEROFILL
 >
 > MySQL と同様に、 `DOUBLE`データ型には近似値が格納されます。通貨などの値の場合は、代わりに`DECIMAL`タイプを使用することをお勧めします。
 
-> **ノート：**
+> **注記：**
 >
-> TiDB が科学表記法で表現された倍精度浮動小数点数を`CHAR`型に変換すると、結果が MySQL の結果と矛盾して表示されます。詳細は[キャスト関数と演算子](/functions-and-operators/cast-functions-and-operators.md)参照してください。
+> TiDB が科学表記法で表された倍精度浮動小数点数を`CHAR`型に変換すると、結果が MySQL の結果と矛盾して表示されます。詳細は[キャスト関数と演算子](/functions-and-operators/cast-functions-and-operators.md)参照してください。
 
 ## 固定小数点型 {#fixed-point-types}
 
-TiDB は、DECIMAL や NUMERIC を含むすべての MySQL 浮動小数点型をサポートします。詳細については、 [固定小数点型 (正確な値) - MySQL の DECIMAL、NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html)参照してください。
+TiDB は、DECIMAL や NUMERIC を含むすべての MySQL 浮動小数点型をサポートします。詳細については、 [固定小数点型 (正確な値) - MySQL の DECIMAL、NUMERIC](https://dev.mysql.com/doc/refman/8.0/en/fixed-point-types.html)参照してください。
 
 フィールドの意味:
 
@@ -165,7 +165,7 @@ TiDB は、DECIMAL や NUMERIC を含むすべての MySQL 浮動小数点型を
 
 ### <code>DECIMAL</code>型 {#code-decimal-code-type}
 
-`DECIMAL`とそのエイリアス`NUMERIC` 、パックされた「正確な」固定小数点数を格納します。 M は小数点以下の合計桁数 (精度)、D は小数点以下の桁数 (スケール) です。小数点と (負の数の場合) - 符号は M ではカウントされません。D が 0 の場合、値には小数点も小数部もありません。 DECIMAL の最大桁数 (M) は 65 です。サポートされる 10 進数 (D) の最大数は 30 です。D が省略された場合、デフォルトは 0 です。M が省略された場合、デフォルトは 10 です。
+`DECIMAL`とそのエイリアス`NUMERIC`パックされた「正確な」固定小数点数を格納します。 M は小数点以下の合計桁数 (精度)、D は小数点以下の桁数 (スケール) です。小数点と (負の数の場合) - 符号は M ではカウントされません。D が 0 の場合、値には小数点も小数部もありません。 DECIMAL の最大桁数 (M) は 65 です。サポートされる 10 進数 (D) の最大数は 30 です。D が省略された場合、デフォルトは 0 です。M が省略された場合、デフォルトは 10 です。
 
 ```sql
 DECIMAL[(M[,D])] [UNSIGNED] [ZEROFILL]

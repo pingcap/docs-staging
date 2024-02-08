@@ -1,7 +1,6 @@
 ---
 title: Select Your Cluster Tier
 summary: Learn how to select your cluster tier on TiDB Cloud.
-aliases: ['/tidbcloud/developer-tier-cluster']
 ---
 
 # Cluster Tierを選択してください {#select-your-cluster-tier}
@@ -23,7 +22,7 @@ TiDB Serverless は、フルマネージドのマルチテナント TiDB 製品�
 
 TiDB Cloudの組織ごとに、デフォルトで最大 5 つの TiDB サーバーレス クラスターを作成できます。さらに TiDB サーバーレス クラスターを作成するには、クレジット カードを追加し、使用量を[支出制限](/tidb-cloud/tidb-cloud-glossary.md#spending-limit)に設定する必要があります。
 
-組織内の最初の 5 つの TiDB サーバーレス クラスターに対して、 TiDB Cloud は各クラスターに次のように無料の使用量割り当てを提供します。
+組織内の最初の 5 つの TiDB サーバーレス クラスターに対して、 TiDB Cloud は各クラスターに次のように無料の使用量クォータを提供します。
 
 -   行ベースのstorage: 5 GiB
 -   [リクエストユニット (RU)](/tidb-cloud/tidb-cloud-glossary.md#request-unit) : 月あたり 5,000 万 RU
@@ -48,7 +47,7 @@ TiDB サーバーレス クラスターごとに、 TiDB Cloudは他のクラス
     mysql -u '3pTAoNNegb47Uc8.root' -h <host> -P 4000 -D test --ssl-mode=VERIFY_IDENTITY --ssl-ca=<CA_root_path> -p
     ```
 
-    > **ノート：**
+    > **注記：**
     >
     > TiDB サーバーレスには TLS 接続が必要です。システム上の CA ルート パスを見つけるには、 [ルート証明書のデフォルトのパス](/tidb-cloud/secure-connections-to-serverless-clusters.md#root-certificate-default-path)を参照してください。
 
@@ -76,6 +75,6 @@ TiDB 専用クラスターの場合、ビジネス ニーズに応じて TiDB、
 
 TiDB 専用クラスターを作成するには、 [支払い方法を追加する](/tidb-cloud/tidb-cloud-billing.md#payment-method)または[概念実証 (PoC) トライアルに申し込む](/tidb-cloud/tidb-cloud-poc.md)を行う必要があります。
 
-> **ノート：**
+> **注記：**
 >
 > クラスターの作成後にノードstorageを減らすことはできません。

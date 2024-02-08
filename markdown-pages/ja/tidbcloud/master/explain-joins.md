@@ -252,6 +252,10 @@ Query OK, 0 rows affected (0.00 sec)
 -   [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) (デフォルト値: 1GB) - クエリのメモリ割り当てを超過した場合、TiDB はメモリを節約するためにハッシュ結合の`Build`演算子をディスクにスピルしようとします。
 -   [`tidb_hash_join_concurrency`](/system-variables.md#tidb_hash_join_concurrency) (デフォルト値: `5` ) - 同時ハッシュ結合タスクの数。
 
+### 関連する最適化 {#related-optimizations}
+
+TiDB は、ハッシュ結合のパフォーマンスを最適化し、実行速度を大幅に向上させるランタイム フィルター機能を提供します。最適化の具体的な使用方法については、 [ランタイムフィルター](/runtime-filter.md)を参照してください。
+
 ## マージ結合 {#merge-join}
 
 マージ結合は、結合の両側がソートされた順序で読み取られる場合に適用される特別な種類の結合です。これは*効率的なジッパー マージ*に似ていると言えます。結合の`Build`と`Probe`側の両方でデータが読み取られるため、結合操作はストリーミング操作のように機能します。マージ結合はハッシュ結合よりもはるかに少ないメモリを必要としますが、並列実行されません。

@@ -35,23 +35,21 @@ LIMIT 10;
 
 クエリ結果は次のとおりです。
 
-```
-+------------+----------------+-------+
-| author_id  | author_name    | books |
-+------------+----------------+-------+
-|  431192671 | Emilie Cassin  |     7 |
-|  865305676 | Nola Howell    |     7 |
-|  572207928 | Lamar Koch     |     6 |
-| 3894029860 | Elijah Howe    |     6 |
-| 1150614082 | Cristal Stehr  |     6 |
-| 4158341032 | Roslyn Rippin  |     6 |
-| 2430691560 | Francisca Hahn |     6 |
-| 3346415350 | Leta Weimann   |     6 |
-| 1395124973 | Albin Cole     |     6 |
-| 2768150724 | Caleb Wyman    |     6 |
-+------------+----------------+-------+
-10 rows in set (0.01 sec)
-```
+    +------------+----------------+-------+
+    | author_id  | author_name    | books |
+    +------------+----------------+-------+
+    |  431192671 | Emilie Cassin  |     7 |
+    |  865305676 | Nola Howell    |     7 |
+    |  572207928 | Lamar Koch     |     6 |
+    | 3894029860 | Elijah Howe    |     6 |
+    | 1150614082 | Cristal Stehr  |     6 |
+    | 4158341032 | Roslyn Rippin  |     6 |
+    | 2430691560 | Francisca Hahn |     6 |
+    | 3346415350 | Leta Weimann   |     6 |
+    | 1395124973 | Albin Cole     |     6 |
+    | 2768150724 | Caleb Wyman    |     6 |
+    +------------+----------------+-------+
+    10 rows in set (0.01 sec)
 
 </div>
 <div label="Java" value="java">
@@ -97,7 +95,7 @@ public List<Author> getTop10AuthorsOrderByBooks() throws SQLException {
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-次の SQL ステートメントでは、 `LEFT JOIN`キーワードを使用して、左のテーブル`books`左外部結合で右のテーブル`ratings`に結合されることを宣言し、これによりテーブル`books`のすべての行が返されるようにします。
+次の SQL ステートメントでは、 `LEFT JOIN`キーワードを使用して、左のテーブル`books`左外部結合で右のテーブル`ratings`に結合されることを宣言します。これにより、テーブル`books`のすべての行が返されるようになります。
 
 ```sql
 SELECT b.id AS book_id, ANY_VALUE(b.title) AS book_title, AVG(r.score) AS average_score
@@ -110,23 +108,21 @@ LIMIT 10;
 
 クエリ結果は次のとおりです。
 
-```
-+------------+---------------------------------+---------------+
-| book_id    | book_title                      | average_score |
-+------------+---------------------------------+---------------+
-| 3438991610 | The Documentary of lion         |        2.7619 |
-| 3897175886 | Torey Kuhn                      |        3.0000 |
-| 1256171496 | Elmo Vandervort                 |        2.5500 |
-| 1036915727 | The Story of Munchkin           |        2.0000 |
-|  270254583 | Tate Kovacek                    |        2.5000 |
-| 1280950719 | Carson Damore                   |        3.2105 |
-| 1098041838 | The Documentary of grasshopper  |        2.8462 |
-| 1476566306 | The Adventures of Vince Sanford |        2.3529 |
-| 4036300890 | The Documentary of turtle       |        2.4545 |
-| 1299849448 | Antwan Olson                    |        3.0000 |
-+------------+---------------------------------+---------------+
-10 rows in set (0.30 sec)
-```
+    +------------+---------------------------------+---------------+
+    | book_id    | book_title                      | average_score |
+    +------------+---------------------------------+---------------+
+    | 3438991610 | The Documentary of lion         |        2.7619 |
+    | 3897175886 | Torey Kuhn                      |        3.0000 |
+    | 1256171496 | Elmo Vandervort                 |        2.5500 |
+    | 1036915727 | The Story of Munchkin           |        2.0000 |
+    |  270254583 | Tate Kovacek                    |        2.5000 |
+    | 1280950719 | Carson Damore                   |        3.2105 |
+    | 1098041838 | The Documentary of grasshopper  |        2.8462 |
+    | 1476566306 | The Adventures of Vince Sanford |        2.3529 |
+    | 4036300890 | The Documentary of turtle       |        2.4545 |
+    | 1299849448 | Antwan Olson                    |        3.0000 |
+    +------------+---------------------------------+---------------+
+    10 rows in set (0.30 sec)
 
 最新刊はすでにかなりの評価を得ているようです。上記の方法を検証するために、SQL ステートメントを使用して書籍*「The Documentary of lion* 」のすべての評価を削除してみましょう。
 
@@ -136,23 +132,21 @@ DELETE FROM ratings WHERE book_id = 3438991610;
 
 もう一度問い合わせてください。 *「The Documentary of lion」*という本は引き続き結果セットに表示されますが、右側のテーブル`ratings`の`score`から計算された`average_score`列には`NULL`が入力されます。
 
-```
-+------------+---------------------------------+---------------+
-| book_id    | book_title                      | average_score |
-+------------+---------------------------------+---------------+
-| 3438991610 | The Documentary of lion         |          NULL |
-| 3897175886 | Torey Kuhn                      |        3.0000 |
-| 1256171496 | Elmo Vandervort                 |        2.5500 |
-| 1036915727 | The Story of Munchkin           |        2.0000 |
-|  270254583 | Tate Kovacek                    |        2.5000 |
-| 1280950719 | Carson Damore                   |        3.2105 |
-| 1098041838 | The Documentary of grasshopper  |        2.8462 |
-| 1476566306 | The Adventures of Vince Sanford |        2.3529 |
-| 4036300890 | The Documentary of turtle       |        2.4545 |
-| 1299849448 | Antwan Olson                    |        3.0000 |
-+------------+---------------------------------+---------------+
-10 rows in set (0.30 sec)
-```
+    +------------+---------------------------------+---------------+
+    | book_id    | book_title                      | average_score |
+    +------------+---------------------------------+---------------+
+    | 3438991610 | The Documentary of lion         |          NULL |
+    | 3897175886 | Torey Kuhn                      |        3.0000 |
+    | 1256171496 | Elmo Vandervort                 |        2.5500 |
+    | 1036915727 | The Story of Munchkin           |        2.0000 |
+    |  270254583 | Tate Kovacek                    |        2.5000 |
+    | 1280950719 | Carson Damore                   |        3.2105 |
+    | 1098041838 | The Documentary of grasshopper  |        2.8462 |
+    | 1476566306 | The Adventures of Vince Sanford |        2.3529 |
+    | 4036300890 | The Documentary of turtle       |        2.4545 |
+    | 1299849448 | Antwan Olson                    |        3.0000 |
+    +------------+---------------------------------+---------------+
+    10 rows in set (0.30 sec)
 
 `INNER JOIN`を使用するとどうなりますか?試してみるかどうかはあなた次第です。
 
@@ -199,7 +193,7 @@ public List<Book> getLatestBooksWithAverageScore() throws SQLException {
 
 ### 左セミ結合 {#left-semi-join}
 
-TiDB は SQL 構文レベルで`LEFT SEMI JOIN table_name`サポートしません。ただし、実行計画レベルでは、 [サブクエリ関連の最適化](/subquery-optimization.md)書き換えられた同等の JOIN クエリのデフォルトの結合方法として`semi join`を使用します。
+TiDB は SQL 構文レベルで`LEFT SEMI JOIN table_name`をサポートしません。ただし、実行計画レベルでは、 [サブクエリ関連の最適化](/subquery-optimization.md)書き換えられた同等の JOIN クエリのデフォルトの結合方法として`semi join`を使用します。
 
 ## 暗黙的な結合 {#implicit-join}
 
@@ -217,7 +211,7 @@ TiDB は、次の一般的なテーブル結合アルゴリズムをサポート
 
 TiDB のオプティマイザが最適な結合アルゴリズムに従って実行されない場合は、 [オプティマイザーのヒント](/optimizer-hints.md)を使用して TiDB により適切な結合アルゴリズムを使用させることができます。
 
-たとえば、上記の左結合クエリの例が、オプティマイザによって選択されていないハッシュ結合アルゴリズムを使用すると高速に実行されると仮定すると、キーワード`SELECT`の後にヒント`/*+ HASH_JOIN(b, r) */`追加できます。テーブルに別名がある場合は、ヒントでその別名を使用することに注意してください。
+たとえば、オプティマイザによって選択されていないハッシュ結合アルゴリズムを使用すると、上記の左結合クエリの例がより高速に実行されると仮定すると、キーワード`SELECT`の後にヒント`/*+ HASH_JOIN(b, r) */`追加できます。テーブルに別名がある場合は、ヒントでその別名を使用することに注意してください。
 
 ```sql
 EXPLAIN SELECT /*+ HASH_JOIN(b, r) */ b.id AS book_id, ANY_VALUE(b.title) AS book_title, AVG(r.score) AS average_score

@@ -29,7 +29,7 @@ TiDB Cloudをサードパーティのメトリクス サービスと統合して
 
 ### Datadog の統合 (ベータ版) {#datadog-integration-beta}
 
-Datadog の統合を使用すると、TiDB クラスターに関するメトリクス データを[データドッグ](https://www.datadoghq.com/)に送信し、これらのメトリクスを Datadog ダッシュボードに表示するようにTiDB Cloudを構成できます。
+Datadog 統合を使用すると、TiDB クラスターに関するメトリクス データを[データドッグ](https://www.datadoghq.com/)に送信し、Datadog ダッシュボードでこれらのメトリクスを表示するようにTiDB Cloudを構成できます。
 
 詳細な統合手順と Datadog が追跡するメトリクスのリストについては、 [TiDB Cloudと Datadog を統合する](/tidb-cloud/monitor-datadog-integration.md)を参照してください。
 

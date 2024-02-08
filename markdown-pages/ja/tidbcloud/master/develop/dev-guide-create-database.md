@@ -16,7 +16,7 @@ summary: Learn steps, rules, and examples to create a database.
 
 ## データベースとは {#what-is-database}
 
-TiDB のオブジェクトには、**テーブル**、**ビュー**、**シーケンス**[データベース](/develop/dev-guide-schema-design-overview.md)およびその他のオブジェクトが含まれます。
+TiDB のオブジェクトには[データベース](/develop/dev-guide-schema-design-overview.md)**テーブル**、**ビュー**、**シーケンス**、およびその他のオブジェクトが含まれます。
 
 ## データベースの作成 {#create-databases}
 
@@ -58,17 +58,15 @@ mysql
 
 以下は出力例です。
 
-```
-+--------------------+
-| Database           |
-+--------------------+
-| INFORMATION_SCHEMA |
-| PERFORMANCE_SCHEMA |
-| bookshop           |
-| mysql              |
-| test               |
-+--------------------+
-```
+    +--------------------+
+    | Database           |
+    +--------------------+
+    | INFORMATION_SCHEMA |
+    | PERFORMANCE_SCHEMA |
+    | bookshop           |
+    | mysql              |
+    | test               |
+    +--------------------+
 
 ## データベース作成時のルール {#rules-in-database-creation}
 
@@ -79,4 +77,4 @@ mysql
 
 ## 次のステップ {#next-step}
 
-データベースを作成した後、そこに**テーブル**を追加できます。詳細については、 [テーブルを作成する](/develop/dev-guide-create-table.md)を参照してください。
+データベースを作成したら、そこに**テーブル**を追加できます。詳細については、 [テーブルを作成する](/develop/dev-guide-create-table.md)を参照してください。

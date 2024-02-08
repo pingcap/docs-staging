@@ -9,7 +9,7 @@ summary: An overview of the usage of EXPLAIN for the TiDB database.
 
 ステートメント`DESC`と`DESCRIBE`は、このステートメントの別名です。 `EXPLAIN <tableName>`の別の使用法は[`SHOW [FULL] COLUMNS FROM`](/sql-statements/sql-statement-show-columns-from.md)に記載されています。
 
-TiDB は`EXPLAIN [options] FOR CONNECTION connection_id`ステートメントをサポートします。ただし、このステートメントは MySQL の`EXPLAIN FOR`ステートメントとは異なります。詳細については、 [`EXPLAIN FOR CONNECTION`](#explain-for-connection)を参照してください。
+TiDB は`EXPLAIN [options] FOR CONNECTION connection_id`ステートメントをサポートしています。ただし、このステートメントは MySQL の`EXPLAIN FOR`ステートメントとは異なります。詳細については、 [`EXPLAIN FOR CONNECTION`](#explain-for-connection)を参照してください。
 
 ## あらすじ {#synopsis}
 
@@ -170,15 +170,13 @@ EXPLAIN DELETE FROM t1 WHERE c1=3;
 
 `EXPLAIN`出力の形式を指定するには、 `FORMAT = xxx`構文を使用できます。現在、TiDB は次の形式をサポートしています。
 
-| フォーマット       | 説明                                                                                                                                |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| 指定されていない     | 形式が指定されていない場合、 `EXPLAIN`​​デフォルトの形式`row`を使用します。                                                                                    |
-| `brief`      | `EXPLAIN`ステートメントの出力のオペレーター ID は、 `FORMAT`指定しない場合に比べて簡略化されます。                                                                      |
-| `dot`        | `EXPLAIN`ステートメントは DOT 実行プランを出力します。これは、( `graphviz`パッケージ内の) `dot`プログラムを通じて PNG ファイルを生成するために使用できます。                                 |
-| `row`        | `EXPLAIN`ステートメントは結果を表形式で出力します。詳細については、 [クエリ実行計画を理解する](/explain-overview.md)参照してください。                                              |
-| `tidb_json`  | `EXPLAIN`ステートメントは、実行プランを JSON で出力し、オペレーター情報を JSON 配列に保存します。                                                                       |
-| `verbose`    | `EXPLAIN`ステートメントは結果を`row`形式で出力し、結果にはクエリの推定コストを表す`estCost`列が追加されます。この形式の使用方法の詳細については、 [SQL計画管理](/sql-plan-management.md)を参照してください。 |
-| `plan_cache` | `EXPLAIN`ステートメントは、 [プランキャッシュ](/sql-non-prepared-plan-cache.md#diagnostics)情報を警告として含む`row`形式で結果を出力します。                             |
+| フォーマット      | 説明                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------- |
+| 指定されていない    | 形式が指定されていない場合、 `EXPLAIN`​​デフォルトの形式`row`を使用します。                                                    |
+| `row`       | `EXPLAIN`ステートメントは結果を表形式で出力します。詳細については、 [クエリ実行計画を理解する](/explain-overview.md)参照してください。              |
+| `brief`     | `EXPLAIN`ステートメントの出力のオペレーター ID は、 `FORMAT`指定しない場合に比べて簡略化されます。                                      |
+| `dot`       | `EXPLAIN`ステートメントは DOT 実行プランを出力します。これは、( `graphviz`パッケージ内の) `dot`プログラムを通じて PNG ファイルを生成するために使用できます。 |
+| `tidb_json` | `EXPLAIN`ステートメントは、実行プランを JSON で出力し、オペレーター情報を JSON 配列に保存します。                                       |
 
 <SimpleTab>
 

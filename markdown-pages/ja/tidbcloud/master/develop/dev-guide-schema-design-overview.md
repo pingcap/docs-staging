@@ -15,7 +15,7 @@ summary: Learn the basics on TiDB database schema design.
 
 -   一般用語[データベース](https://en.wikipedia.org/wiki/Database)との混同を避けるため、このドキュメントでは**データベースは**論理オブジェクトを指し、 **TiDB**は TiDB 自体を指し、**クラスターは**TiDB のデプロイされたインスタンスを指します。
 
--   TiDB は MySQL 互換の構文を使用します。**スキーマ**とは、データベース内の論理オブジェクトではなく、一般的な用語[スキーマ](https://en.wiktionary.org/wiki/schema)を意味します。詳細については、 [MySQL ドキュメント](https://dev.mysql.com/doc/refman/8.0/en/create-database.html)を参照してください。スキーマを論理オブジェクトとして持つデータベース ( [PostgreSQL](https://www.postgresql.org/docs/current/ddl-schemas.html) 、 [オラクル](https://docs.oracle.com/en/database/oracle/oracle-database/21/tdddg/creating-managing-schema-objects.html) 、 [Microsoft SQLサーバー](https://docs.microsoft.com/en-us/sql/relational-databases/security/authentication-access/create-a-database-schema?view=sql-server-ver15)など) から移行する場合は、この違いに必ず注意してください。
+-   TiDB は MySQL 互換の構文を使用します。この**構文**では、スキーマとはデータベース内の論理オブジェクトの代わりに一般的な用語[スキーマ](https://en.wiktionary.org/wiki/schema)を意味します。詳細については、 [MySQL ドキュメント](https://dev.mysql.com/doc/refman/8.0/en/create-database.html)を参照してください。スキーマを論理オブジェクトとして持つデータベース ( [PostgreSQL](https://www.postgresql.org/docs/current/ddl-schemas.html) 、 [オラクル](https://docs.oracle.com/en/database/oracle/oracle-database/21/tdddg/creating-managing-schema-objects.html) 、 [Microsoft SQLサーバー](https://docs.microsoft.com/en-us/sql/relational-databases/security/authentication-access/create-a-database-schema?view=sql-server-ver15)など) から移行する場合は、この違いに必ず注意してください。
 
 ### データベース {#database}
 
@@ -25,7 +25,7 @@ TiDB には、 `test`という名前のデフォルトのデータベースが�
 
 ### テーブル {#table}
 
-テーブルは、 [データベース](#database)内の関連データのコレクションです。
+テーブルは、関連するデータを[データベース](#database)にまとめたものです。
 
 各テーブルは**行**と**列**で構成されます。行内の各値は特定の**列**に属します。各列では 1 つのデータ型のみが許可されます。列をさらに修飾するには、 [制約](/constraints.md)を追加します。計算を高速化するには、 [生成された列](/generated-columns.md)を追加します。
 
@@ -38,7 +38,7 @@ TiDB には、 `test`という名前のデフォルトのデータベースが�
 -   **主キー**: 主キー列のインデックス。
 -   **セカンダリ インデックス**: 非主キー列のインデックス。
 
-> **ノート：**
+> **注記：**
 >
 > TiDB では、**主キー**のデフォルトの定義が[InnoDB](https://dev.mysql.com/doc/refman/8.0/en/innodb-storage-engine.html) (MySQL の共通storageエンジン) とは異なります。
 >

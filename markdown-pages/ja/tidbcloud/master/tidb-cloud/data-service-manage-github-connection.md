@@ -20,7 +20,7 @@ GitHub 接続で**自動同期とデプロイ**が有効になっている場合
 -   GitHub アカウント。
 -   ターゲット ブランチを含む GitHub リポジトリ。
 
-> **ノート：**
+> **注記：**
 >
 > GitHub リポジトリは、データ アプリを接続した後に[データアプリ構成ファイル](/tidb-cloud/data-service-app-config-files.md)を保存するために使用されます。構成ファイル内の情報 (クラスター ID やエンドポイント URL など) が機密である場合は、パブリック リポジトリではなくプライベート リポジトリを必ず使用してください。
 
@@ -44,7 +44,7 @@ GitHub 接続で**自動同期とデプロイ**が有効になっている場合
 
     3.  データ アプリの構成ファイルを保存するターゲット リポジトリ、ブランチ、ディレクトリを指定します。
 
-        > **ノート：**
+        > **注記：**
         >
         > -   ディレクトリはスラッシュ ( `/` ) で始まる必要があります。たとえば、 `/mydata` 。指定したディレクトリがターゲット リポジトリおよびブランチに存在しない場合は、自動的に作成されます。
         > -   リポジトリ、ブランチ、ディレクトリの組み合わせによって構成ファイルのパスが識別されます。このパスはデータ アプリ間で一意である必要があります。指定したパスがすでに別のデータ アプリで使用されている場合は、代わりに新しいパスを指定する必要があります。そうしないと、現在のデータ アプリのTiDB Cloudコンソールで構成されたエンドポイントによって、指定したパス内のファイルが上書きされます。
@@ -65,18 +65,16 @@ GitHub 接続で**自動同期とデプロイ**が有効になっている場合
 
 デプロイメント操作後、指定した GitHub ディレクトリを確認してください。データ アプリ構成ファイルが`tidb-cloud-data-service`によってディレクトリにコミットされたことがわかります。これは、データ アプリが GitHub に正常に接続されていることを意味します。ディレクトリ構造は次のとおりです。
 
-```
-├── <Your Data App directory on GitHub>
-│   ├── data_sources
-│   │   └── cluster.json  # specifies the linked clusters.
-│   ├── dataapp_config.json # specifies the Data APP ID, name, type, version, and description.
-│   ├── http_endpoints
-│   │   ├── config.json # specifies the endpoints.
-│   │   └── sql # contains SQL files of the endpoints.
-│   │       ├── <method>-<endpoint-path1>.sql
-│   │       ├── <method>-<endpoint-path2>.sql
-│   │       └── <method>-<endpoint-path3>.sql
-```
+    ├── <Your Data App directory on GitHub>
+    │   ├── data_sources
+    │   │   └── cluster.json  # specifies the linked clusters.
+    │   ├── dataapp_config.json # specifies the Data APP ID, name, type, version, and description.
+    │   ├── http_endpoints
+    │   │   ├── config.json # specifies the endpoints.
+    │   │   └── sql # contains SQL files of the endpoints.
+    │   │       ├── <method>-<endpoint-path1>.sql
+    │   │       ├── <method>-<endpoint-path2>.sql
+    │   │       └── <method>-<endpoint-path3>.sql
 
 ## ステップ 3. データ アプリを変更する {#step-3-modify-your-data-app}
 
@@ -85,7 +83,7 @@ GitHub 接続で**自動同期とデプロイ**が有効になっている場合
 -   [オプション 1: GitHub 上のファイルを更新してデータ アプリを変更する](#option-1-modify-your-data-app-by-updating-files-on-github)
 -   [オプション 2: TiDB Cloudコンソールでデータ アプリを変更する](#option-2-modify-your-data-app-in-the-tidb-cloud-console)
 
-> **ノート：**
+> **注記：**
 >
 > GitHub とTiDB Cloudコンソールでデータ アプリを同時に変更した場合、競合を解決するには、コンソールで加えた変更を破棄するか、コンソールの変更で GitHub の変更を上書きするかを選択できます。
 
@@ -149,7 +147,7 @@ TiDB Cloudコンソールで[Data App エンドポイントの変更](/tidb-clou
 
 4.  ダイアログ ボックスで、データ アプリのリポジトリ、ブランチ、ディレクトリを変更します。
 
-    > **ノート：**
+    > **注記：**
     >
     > -   ディレクトリはスラッシュ ( `/` ) で始まる必要があります。たとえば、 `/mydata` 。指定したディレクトリがターゲット リポジトリおよびブランチに存在しない場合は、自動的に作成されます。
     > -   リポジトリ、ブランチ、ディレクトリの組み合わせによって構成ファイルのパスが識別されます。このパスはデータ アプリ間で一意である必要があります。指定したパスがすでに別のデータ アプリで使用されている場合は、代わりに新しいパスを指定する必要があります。そうしないと、現在のデータ アプリのTiDB Cloudコンソールで構成されたエンドポイントによって、指定したパス内のファイルが上書きされます。
@@ -157,7 +155,7 @@ TiDB Cloudコンソールで[Data App エンドポイントの変更](/tidb-clou
 
 5.  TiDB Cloudコンソールまたは GitHub で行われたデータ アプリの変更が相互に同期されるようにするには、 **[自動同期とデプロイメントの構成]**を有効にします。
 
-    -   これを有効にすると、指定した GitHub ディレクトリで行われた変更をTiDB Cloudに自動的にデプロイでき、 TiDB Cloudコンソールで行われた変更も同様に GitHub にプッシュできます。データ アプリのデプロイ履歴で、対応するデプロイとコミットの情報を見つけることができます。
+    -   これを有効にすると、指定した GitHub ディレクトリで行われた変更を自動的にTiDB Cloudにデプロイでき、 TiDB Cloudコンソールで行われた変更も同様に GitHub にプッシュできます。データ アプリのデプロイ履歴で、対応するデプロイとコミットの情報を見つけることができます。
     -   これを無効にすると、指定した GitHub ディレクトリで行われた変更はTiDB Cloudにデプロイされ**ず**、 TiDB Cloudコンソールで行われた変更も GitHub に**プッシュ**されません。
 
 6.  **[接続の確認]**をクリックします。

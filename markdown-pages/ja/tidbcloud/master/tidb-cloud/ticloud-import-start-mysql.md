@@ -11,11 +11,11 @@ MySQL 互換データベースから[TiDB サーバーレス](/tidb-cloud/select
 ticloud import start mysql [flags]
 ```
 
-> **ノート：**
+> **注記：**
 >
 > -   このコマンドを実行する前に、まず MySQL コマンドライン ツールがインストールされていることを確認してください。詳細については、 [インストール](/tidb-cloud/get-started-with-cli.md#installation)を参照してください。
 > -   ターゲット テーブルがターゲット データベースにすでに存在する場合、テーブルのインポートにこのコマンドを使用するには、ターゲット テーブル名がソース テーブル名と同じであることを確認し、コマンドに`skip-create-table`フラグを追加します。
-> -   ターゲット テーブルがターゲット データベースに存在しない場合、このコマンドを実行すると、ソース テーブルと同じ名前のテーブルがターゲット データベースに自動的に作成されます。
+> -   ターゲットテーブルがターゲットデータベースに存在しない場合、このコマンドを実行すると、ソーステーブルと同じ名前のテーブルがターゲットデータベースに自動的に作成されます。
 
 ## 例 {#examples}
 
@@ -43,7 +43,7 @@ ticloud import start mysql [flags]
     ticloud import start mysql --project-id <project-id> --cluster-id <cluster-id> --source-host <source-host> --source-port <source-port> --source-user <source-user> --source-password <source-password> --source-database <source-database> --source-table <source-table> --target-database <target-database> --target-password <target-password> --skip-create-table
     ```
 
-> **ノート：**
+> **注記：**
 >
 > MySQL 8.0 はデフォルトの照合順序として`utf8mb4_0900_ai_ci`を使用しますが、これは現在 TiDB でサポートされていません。ソース テーブルで`utf8mb4_0900_ai_ci`照合順序が使用されている場合、インポート前にソース テーブルの照合順序を[TiDB の照合順序をサポート](/character-set-and-collation.md#character-sets-and-collations-supported-by-tidb)に変更するか、TiDB にターゲット テーブルを手動で作成する必要があります。
 
@@ -51,7 +51,7 @@ ticloud import start mysql [flags]
 
 非対話型モードでは、必要なフラグを手動で入力する必要があります。対話型モードでは、CLI プロンプトに従って入力するだけです。
 
-| 国旗                  | 説明                                                       | 必要  | ノート                      |
+| フラグ                 | 説明                                                       | 必須  | 注記                       |
 | ------------------- | -------------------------------------------------------- | --- | ------------------------ |
 | -c、--cluster-id 文字列 | クラスターIDを指定します。                                           | はい  | 非対話モードでのみ動作します。          |
 | -h, --help          | このコマンドのヘルプ情報を表示します。                                      | いいえ | 非対話型モードと対話型モードの両方で動作します。 |
@@ -69,7 +69,7 @@ ticloud import start mysql [flags]
 
 ## 継承されたフラグ {#inherited-flags}
 
-| 国旗             | 説明                                                                               | 必要  | ノート                                                               |
+| フラグ            | 説明                                                                               | 必須  | 注記                                                                |
 | -------------- | -------------------------------------------------------------------------------- | --- | ----------------------------------------------------------------- |
 | --色なし          | 出力のカラーを無効にします。                                                                   | いいえ | 非対話モードでのみ動作します。インタラクティブ モードでは、一部の UI コンポーネントで色の無効化が機能しない可能性があります。 |
 | -P、--プロファイル文字列 | このコマンドで使用されるアクティブな[ユーザープロフィール](/tidb-cloud/cli-reference.md#user-profile)を指定します。 | いいえ | 非対話型モードと対話型モードの両方で動作します。                                          |

@@ -22,7 +22,7 @@ Next.js で OpenAPI 仕様を使用する前に、次のものが揃っている
 
 まず、TiDB クラスターにテーブル`test.repository`を作成し、そこにサンプル データを挿入します。次の例では、PingCAP によって開発されたいくつかのオープン ソース プロジェクトをデモンストレーション目的のデータとして挿入します。
 
-SQL ステートメントを実行するには、 [TiDB Cloudコンソール](https://tidbcloud.com)の[チャット2クエリ](/tidb-cloud/explore-data-with-chat2query.md)使用できます。
+SQL ステートメントを実行するには、 [TiDB Cloudコンソール](https://tidbcloud.com)の[チャット2クエリ](/tidb-cloud/explore-data-with-chat2query.md)を使用できます。
 
 ```sql
 -- Select the database

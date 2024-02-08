@@ -9,7 +9,6 @@ summary: Learn about the usage of column pruning in TiDB.
 
 テーブル t に 4 つの列 (a、b、c、および d) があるとします。次のステートメントを実行できます。
 
-
 ```sql
 select a from t where b> 5
 ```

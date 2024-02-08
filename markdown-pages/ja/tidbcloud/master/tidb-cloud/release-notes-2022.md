@@ -92,7 +92,7 @@ summary: Learn about the release notes of TiDB Cloud in 2022.
     -   画面の使用効率を最大化するために、左側のナビゲーション バーを導入します。
     -   よりフラットなナビゲーション階層を採用します。
 
--   Serverless Tierユーザーの[**接続**](/tidb-cloud/connect-to-tidb-cluster-serverless.md)を向上します。
+-   Serverless Tierユーザーの[**接続する**](/tidb-cloud/connect-to-tidb-cluster-serverless.md)を向上します。
 
     開発者は、コンテキストを切り替えることなく、数回クリックするだけで SQL エディターまたは好みのツールに接続できるようになりました。
 
@@ -280,7 +280,7 @@ summary: Learn about the release notes of TiDB Cloud in 2022.
 
     費用が割り当てに達すると、 TiDB Cloudは請求書を生成します。割り当てを引き上げる場合、または毎月の請求書を受け取る場合は、 [私たちの販売](https://www.pingcap.com/contact-us/)にお問い合わせください。
 
--   データバックアップコストからstorage運用料を免除します。最新の価格情報については、 [TiDB Cloudの料金詳細](https://www.pingcap.com/tidb-cloud-pricing-details/)参照してください。
+-   データバックアップコストからstorage運用料を免除します。最新の価格情報については[TiDB Cloudの料金詳細](https://www.pingcap.com/tidb-cloud-pricing-details/)参照してください。
 
 **コンソールの変更**
 
@@ -300,7 +300,7 @@ summary: Learn about the release notes of TiDB Cloud in 2022.
 
 -   TLS 経由のTiDB Cloud [Dedicated Tier](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターへの接続をサポートします。
 
-    Dedicated Tierクラスターの場合、 [接続](/tidb-cloud/connect-via-standard-connection.md)ダイアログの**「標準接続」**タブに、TiDB クラスター CA をダウンロードするためのリンクが提供されるようになりました。また、TLS 接続の接続文字列とサンプル コードも提供されます。サードパーティの MySQL クライアント、MyCLI、および JDBC、Python、Go、Node.js などのアプリケーションの複数の接続方法を使用でき[TLS 経由でDedicated Tierクラスターに接続する](/tidb-cloud/connect-via-standard-connection.md) 。この機能により、アプリケーションから TiDB クラスターへのデータ送信のセキュリティが確保されます。
+    Dedicated Tierクラスターの場合、 [接続する](/tidb-cloud/connect-via-standard-connection.md)ダイアログの**「標準接続」**タブに、TiDB クラスター CA をダウンロードするためのリンクが提供されるようになりました。また、TLS 接続の接続文字列とサンプル コードも提供されます。サードパーティの MySQL クライアント、MyCLI、および JDBC、Python、Go、Node.js などのアプリケーションの複数の接続方法を使用でき[TLS 経由でDedicated Tierクラスターに接続する](/tidb-cloud/connect-via-standard-connection.md) 。この機能により、アプリケーションから TiDB クラスターへのデータ送信のセキュリティが確保されます。
 
 ## 2022 年 9 月 14 日 {#september-14-2022}
 
@@ -358,7 +358,7 @@ summary: Learn about the release notes of TiDB Cloud in 2022.
 
 **コンソールの変更**
 
--   [Dedicated Tier](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターの[接続](/tidb-cloud/connect-to-tidb-cluster.md)ダイアログの**[VPC ピアリング]**タブと**[プライベート エンドポイント]**タブで、MySQL、MyCLI、JDBC、Python、Go、および Node.js のサンプル接続文字列を提供します。
+-   [Dedicated Tier](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターの[接続する](/tidb-cloud/connect-to-tidb-cluster.md)ダイアログの**[VPC ピアリング]**タブと**[プライベート エンドポイント]**タブで、MySQL、MyCLI、JDBC、Python、Go、および Node.js のサンプル接続文字列を提供します。
 
     接続コードをコピーしてアプリに貼り付けるだけで、Dedicated Tierクラスターに簡単に接続できます。
 
@@ -521,12 +521,12 @@ summary: Learn about the release notes of TiDB Cloud in 2022.
 ## 2022 年 6 月 7 日 {#june-7-2022}
 
 -   TiDB Cloudにすぐにサインアップするには、 [無料でお試しください](https://tidbcloud.com/free-trial)登録ページを追加します。
--   プラン選択ページから**概念実証プラン**オプションを削除します。 14 日間の PoC トライアルを無料で申し込みたい場合は、 [PoC に応募する](https://en.pingcap.com/apply-for-poc/)ページに進んでください。詳細については、 [TiDB Cloudを使用して概念実証 (PoC) を実行する](/tidb-cloud/tidb-cloud-poc.md)を参照してください。
+-   プラン選択ページから**概念実証プラン**オプションを削除します。 14 日間の PoC トライアルを無料で申し込む場合は、 [PoC に応募する](https://en.pingcap.com/apply-for-poc/)ページに進んでください。詳細については、 [TiDB Cloudを使用して概念実証 (PoC) を実行する](/tidb-cloud/tidb-cloud-poc.md)を参照してください。
 -   電子メールとパスワードを使用してTiDB Cloudにサインアップするユーザーに、90 日ごとにパスワードをリセットするよう求めることで、システムのセキュリティを向上させます。詳細については、 [パスワード認証](/tidb-cloud/tidb-cloud-password-authentication.md)を参照してください。
 
 ## 2022 年 5 月 24 日 {#may-24-2022}
 
--   Dedicated Tierクラスターを[作成](/tidb-cloud/create-tidb-cluster.md)または[戻す](/tidb-cloud/backup-and-restore.md#restore)にする場合の TiDB ポート番号のカスタマイズをサポートします。
+-   Dedicated Tierクラスターを[作成する](/tidb-cloud/create-tidb-cluster.md)または[復元する](/tidb-cloud/backup-and-restore.md#restore)にする場合の TiDB ポート番号のカスタマイズをサポートします。
 
 ## 2022 年 5 月 19 日 {#may-19-2022}
 
@@ -542,7 +542,7 @@ summary: Learn about the release notes of TiDB Cloud in 2022.
 
 ## 2022 年 5 月 1 日 {#may-1-2022}
 
--   [作成](/tidb-cloud/create-tidb-cluster.md)または[戻す](/tidb-cloud/backup-and-restore.md#restore) a [Dedicated Tier](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターの場合、TiDB、TiKV、およびTiFlashの vCPU サイズの構成をサポートします。
+-   [作成する](/tidb-cloud/create-tidb-cluster.md)または[復元する](/tidb-cloud/backup-and-restore.md#restore) a [Dedicated Tier](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターの場合、TiDB、TiKV、およびTiFlashの vCPU サイズの構成をサポートします。
 -   クラスター作成のための AWS リージョン`Mumbai`のサポートを追加します。
 -   [TiDB Cloudの請求](/tidb-cloud/tidb-cloud-billing.md)のコンピューティング、storage、およびデータ転送のコストを更新します。
 
@@ -576,7 +576,7 @@ TiDB Cloudは現在一般提供されています。 [サインアップ](https:
 -   新しいパブリック領域を導入します。 `eu-central-1` .
 -   8 vCPU TiFlashを廃止し、16 vCPU TiFlashを提供します。
 -   CPU とstorageの価格は別になります (どちらも 30% のパブリック プレビュー割引があります)。
--   [課金情報](/tidb-cloud/tidb-cloud-billing.md)と[価格表](https://en.pingcap.com/tidb-cloud/#pricing)を更新します。
+-   [請求情報](/tidb-cloud/tidb-cloud-billing.md)と[価格表](https://en.pingcap.com/tidb-cloud/#pricing)を更新します。
 
 新機能:
 
@@ -614,7 +614,7 @@ TiDB Cloudは現在一般提供されています。 [サインアップ](https:
 
 改善：
 
--   提案されたオプション`--connect-timeout 15` [**接続**](/tidb-cloud/connect-via-standard-connection.md)ページの MySQL クライアントに追加します。
+-   提案されたオプション`--connect-timeout 15` [**接続する**](/tidb-cloud/connect-via-standard-connection.md)ページの MySQL クライアントに追加します。
 
 バグの修正：
 

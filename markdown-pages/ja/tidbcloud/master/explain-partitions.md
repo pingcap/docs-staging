@@ -9,7 +9,6 @@ summary: Learn about the execution plan information returned by the EXPLAIN stat
 
 このドキュメントで使用されるサンプル データ:
 
-
 ```sql
 CREATE TABLE t1 (
  id BIGINT NOT NULL auto_increment,
@@ -54,7 +53,6 @@ ANALYZE TABLE t1;
 
 次の例は、新しく作成されたパーティションテーブルに対するステートメントを示しています。
 
-
 ```sql
 EXPLAIN SELECT COUNT(*) FROM t1 WHERE d = '2017-06-01';
 ```
@@ -77,10 +75,9 @@ EXPLAIN SELECT COUNT(*) FROM t1 WHERE d = '2017-06-01';
 -   TiDB は、1 つのパーティション ( `p2017` ) のみにアクセスする必要があることを正常に識別しました。これについては`access object`に記載されています。
 -   パーティション自体は演算子`└─TableFullScan_19`でスキャンされ、開始日が`2017-06-01 00:00:00.000000`である行をフィルターするために`└─Selection_20`適用されました。
 -   `└─Selection_20`に一致する行は、コプロセッサでストリーム集約され、コプロセッサは`count`関数をネイティブに理解します。
--   次に、各コプロセッサ リクエストは 1 行を TiDB 内の`└─TableReader_22`に送り返します。その後、それは`StreamAgg_21`の下にストリーム集約され、1 行がクライアントに返されます。
+-   次に、各コプロセッサー要求は 1 行を TiDB 内の`└─TableReader_22`に送り返し、それが`StreamAgg_21`の下にストリーム集約され、1 行がクライアントに返されます。
 
 次の例では、パーティションのプルーニングによってパーティションは削除されません。
-
 
 ```sql
 EXPLAIN SELECT COUNT(*) FROM t1 WHERE YEAR(d) = 2017;

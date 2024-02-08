@@ -7,7 +7,7 @@ summary: Learn how to connect to your TiDB cluster via SQL Shell.
 
 TiDB Cloud SQL Shell では、 TiDB SQL を試し、TiDB と MySQL の互換性をすばやくテストし、データベース ユーザー権限を管理できます。
 
-> **ノート：**
+> **注記：**
 >
 > SQL Shell を使用して[TiDB サーバーレスクラスター](/tidb-cloud/select-cluster-tier.md#tidb-serverless)に接続することはできません。 TiDB サーバーレス クラスターに接続するには、 [TiDB サーバーレスクラスターに接続する](/tidb-cloud/connect-to-tidb-cluster-serverless.md)を参照してください。
 

@@ -19,7 +19,7 @@ TableNameList ::=
 
 ## 例 {#examples}
 
-データベース内の`tbl`テーブルに、何らかの理由 (たとえば、ディザスター リカバリー シナリオでクラスター内の一部の行データが失われるなど) により一貫性のないデータとインデックスがあるとします。
+何らかの理由により、データベース内の`tbl`テーブルにデータとインデックスの不整合があるとします (たとえば、災害復旧シナリオでクラスター内の一部の行データが失われます)。
 
 ```sql
 SELECT * FROM tbl;
@@ -53,7 +53,24 @@ ADMIN CHECK INDEX tbl idx;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-> **ノート：**
+<CustomContent platform="tidb">
+
+> **注記：**
+>
+> レプリカの損失によりデータとインデックスが不整合になった場合:
+>
+> -   行データとインデックス データの両方が失われる可能性があります。一貫性を復元するには、 `ADMIN CLEANUP INDEX`と[`ADMIN RECOVER INDEX`](/sql-statements/sql-statement-admin-recover.md)ステートメントを一緒に使用します。
+> -   `ADMIN CLEANUP INDEX`ステートメントは常に単一スレッドで実行されます。テーブルデータが大きい場合は、インデックスを再構築してインデックスデータを回復することをお勧めします。
+> -   `ADMIN CLEANUP INDEX`ステートメントを実行すると、対応するテーブルまたはインデックスはロックされず、TiDB は他のセッションがテーブル レコードを同時に変更できるようになります。ただし、この場合、 `ADMIN CLEANUP INDEX`すべてのテーブル レコードを正しく処理できない可能性があります。したがって、 `ADMIN CLEANUP INDEX`を実行するときは、テーブルのデータを同時に変更しないようにしてください。
+> -   TiDB のエンタープライズ エディションを使用している場合は、サポート エンジニアに[リクエストを送信する](/support.md)して支援を求めることができます。
+>
+> `ADMIN CLEANUP INDEX`ステートメントはアトミックではありません。ステートメントの実行中に中断された場合は、成功するまで再実行することをお勧めします。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **注記：**
 >
 > レプリカの損失によりデータとインデックスが不整合になった場合:
 >
@@ -63,6 +80,8 @@ Query OK, 0 rows affected (0.01 sec)
 > -   TiDB のエンタープライズ エディションを使用している場合は、サポート エンジニアに[リクエストを送信する](https://support.pingcap.com/hc/en-us)して支援を求めることができます。
 >
 > `ADMIN CLEANUP INDEX`ステートメントはアトミックではありません。ステートメントが実行中に中断された場合は、成功するまで再実行することをお勧めします。
+
+</CustomContent>
 
 ## MySQLの互換性 {#mysql-compatibility}
 

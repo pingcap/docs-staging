@@ -13,7 +13,7 @@ TiDB クラスターに接続していることを確認してください。そ
 
 ## TiDB で SQL を探索する {#explore-sql-with-tidb}
 
-> **ノート：**
+> **注記：**
 >
 > このドキュメントでは[TiDB で SQL を探索する](/basic-sql-operations.md)を参照し、簡略化しています。詳細については、 [TiDB で SQL を探索する](/basic-sql-operations.md)を参照してください。
 
@@ -65,7 +65,7 @@ UPDATE person SET birthday='20180808' WHERE id=2;
 DELETE FROM person WHERE id=2;
 ```
 
-> **ノート：**
+> **注記：**
 >
 > `WHERE`句をフィルタとして使用しない`UPDATE`および`DELETE`ステートメントは、テーブル全体に作用します。
 
@@ -87,14 +87,12 @@ SELECT name FROM person;
 
 結果は次のとおりです。
 
-```
-+------+
-| name |
-+------+
-| tom  |
-+------+
-1 rows in set (0.00 sec)
-```
+    +------+
+    | name |
+    +------+
+    | tom  |
+    +------+
+    1 rows in set (0.00 sec)
 
 `WHERE`句を使用して、条件に一致するすべてのレコードをフィルターし、結果を返します。
 

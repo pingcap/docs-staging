@@ -7,7 +7,7 @@ summary: Learn how to connect your TiDB Cloud clusters to Netlify projects.
 
 [ネットリファイ](https://netlify.com/)は、最新の Web プロジェクトを自動化するためのオールインワン プラットフォームです。ホスティング インフラストラクチャ、継続的インテグレーション、デプロイ パイプラインを単一のワークフローに置き換え、プロジェクトの成長に合わせてサーバーレス関数、ユーザー認証、フォーム処理などの動的な機能を統合します。
 
-このドキュメントでは、 TiDB Cloud をデータベース バックエンドとして使用して Netlify にフルスタック アプリをデプロイする方法について説明します。 TiDB Cloudサーバーレス ドライバーで Netlify エッジ機能を使用する方法も学習できます。
+このドキュメントでは、 TiDB Cloud をデータベース バックエンドとして使用して Netlify にフルスタック アプリをデプロイする方法について説明します。
 
 ## 前提条件 {#prerequisites}
 
@@ -80,12 +80,10 @@ TiDB 専用クラスターの場合、接続文字列はTiDB Cloudコンソー�
 
     出力は次のとおりです。値`url`に Prisma の接続文字列が含まれています。
 
-    ```shell
-    datasource db {
-    provider = "mysql"
-    url      = "mysql://<User>:<Password>@<Endpoint>:<Port>/<Database>?sslaccept=strict"
-    }
-    ```
+        datasource db {
+        provider = "mysql"
+        url      = "mysql://<User>:<Password>@<Endpoint>:<Port>/<Database>?sslaccept=strict"
+        }
 
     > **注記：**
     >
@@ -106,9 +104,7 @@ TiDB 専用クラスターの場合、接続文字列はTiDB Cloudコンソー�
 
 2.  次の接続文字列に接続パラメータを入力します。
 
-    ```shell
-    mysql://<User>:<Password>@<Host>:<Port>/<Database>?sslaccept=strict
-    ```
+        mysql://<User>:<Password>@<Host>:<Port>/<Database>?sslaccept=strict
 
     > **注記：**
     >
@@ -221,39 +217,3 @@ TiDB 専用クラスターの場合、接続文字列はTiDB Cloudコンソー�
     ```
 
     Netlify コンソールに移動して、デプロイメントの状態を確認します。デプロイメントが完了すると、アプリのサイトには Netlify によって提供されるパブリック IP アドレスが設定され、誰もがアクセスできるようになります。
-
-## エッジ機能を使う {#use-the-edge-function}
-
-上のセクションで説明したサンプル アプリは、Netlify サーバーレス機能で実行されます。このセクションでは、 [TiDB Cloudサーバーレス ドライバー](/tidb-cloud/serverless-driver.md)でエッジ関数を使用する方法を示します。エッジ機能は Netlify が提供する機能で、Netlify CDN のエッジでサーバーレス関数を実行できるようになります。
-
-エッジ機能を使用するには、次の手順を実行します。
-
-1.  プロジェクトのルート ディレクトリに`netlify/edge-functions`という名前のディレクトリを作成します。
-
-2.  ディレクトリに`hello.ts`という名前のファイルを作成し、次のコードを追加します。
-
-    ```typescript
-    import { connect } from 'https://esm.sh/@tidbcloud/serverless'
-
-    export default async () => {
-      const conn = connect({url: Netlify.env.get('DATABASE_URL')})
-      const result = await conn.execute('show databases')
-      return new Response(JSON.stringify(result));
-    }
-
-    export const config = { path: "/api/hello" };
-    ```
-
-3.  `DATABASE_URL`環境変数を設定します。接続情報は[TiDB Cloudコンソール](https://tidbcloud.com/)から取得できます。
-
-    ```shell
-    netlify env:set DATABASE_URL 'mysql://<username>:<password>@<host>/<database>'
-    ```
-
-4.  Netlifyにエッジ機能をデプロイ。
-
-    ```shell
-    netlify deploy --prod --trigger
-    ```
-
-次に、Netlify コンソールに移動して、デプロイメントの状態を確認できます。デプロイが完了すると、 `https://<netlify-host>/api/hello` URL を介してエッジ機能にアクセスできるようになります。

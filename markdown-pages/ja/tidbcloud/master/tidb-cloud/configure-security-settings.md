@@ -7,7 +7,7 @@ summary: Learn how to configure the root password and allowed IP addresses to co
 
 TiDB 専用クラスターの場合、root パスワードとクラスターへの接続を許可する IP アドレスを構成できます。
 
-> **ノート：**
+> **注記：**
 >
 > TiDB サーバーレス クラスターの場合、このドキュメントは適用されないため、代わりに[TiDB サーバーレスへの TLS 接続](/tidb-cloud/secure-connections-to-serverless-clusters.md)を参照してください。
 

@@ -31,7 +31,6 @@ DESC memory_usage;
 11 rows in set (0.000 sec)
 ```
 
-
 ```sql
 SELECT * FROM information_schema.memory_usage;
 ```
@@ -57,4 +56,4 @@ SELECT * FROM information_schema.memory_usage;
 -   GC_LAST:メモリ使用量によってGolang GC が最後にトリガーされたときのタイムスタンプ。
 -   GC_TOTAL: TiDB の開始時から現在までに、メモリ使用量によってGolang GC がトリガーされた回数。
 -   DISK_USAGE: 現在のデータ流出操作のディスク使用量 (バイト単位)。
--   QUERY_FORCE_DISK: TiDB の開始時から現在までにデータがディスクに流出した回数。
+-   QUERY_FORCE_DISK: TiDB の開始時から現在までに、データがディスクに流出した回数。

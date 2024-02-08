@@ -5,7 +5,7 @@ summary: Learn about the string types supported in TiDB.
 
 # 文字列型 {#string-types}
 
-TiDB は、 `CHAR` 、 `VARCHAR` 、 `BINARY` 、 `VARBINARY` 、 `BLOB` 、 `TEXT` 、 `ENUM` 、 `SET`を含むすべての MySQL 文字列タイプをサポートします。詳細については、 [MySQL の文字列型](https://dev.mysql.com/doc/refman/5.7/en/string-types.html)参照してください。
+TiDB は、 `CHAR` 、 `VARCHAR` 、 `BINARY` 、 `VARBINARY` 、 `BLOB` 、 `TEXT` 、 `ENUM` 、 `SET`を含むすべての MySQL 文字列タイプをサポートします。詳細については、 [MySQL の文字列型](https://dev.mysql.com/doc/refman/8.0/en/string-types.html)参照してください。
 
 ## サポートされているタイプ {#supported-types}
 
@@ -172,7 +172,7 @@ ENUM('apple', 'orange', 'pear')
 | &#39;オレンジ&#39; | 2  |
 | &#39;梨&#39;    | 3  |
 
-詳細については、 [MySQL の ENUM 型](https://dev.mysql.com/doc/refman/5.7/en/enum.html)を参照してください。
+詳細については、 [MySQL の ENUM タイプ](https://dev.mysql.com/doc/refman/8.0/en/enum.html)を参照してください。
 
 ### <code>SET</code>タイプ {#code-set-code-type}
 
@@ -187,12 +187,10 @@ SET('1', '2') NOT NULL
 
 この例では、次のいずれかの値が有効です。
 
-```
-''
-'1'
-'2'
-'1,2'
-```
+    ''
+    '1'
+    '2'
+    '1,2'
 
 TiDB では、 `SET`型の値は内部で`Int64`に変換されます。各要素の存在は、0 または 1 のバイナリを使用して表されます。 `SET('a','b','c','d')`として指定された列の場合、メンバーは次の 10 進値とバイナリ値を持ちます。
 
@@ -205,4 +203,4 @@ TiDB では、 `SET`型の値は内部で`Int64`に変換されます。各要�
 
 この場合、要素が`('a', 'c')`の場合、2 進数では`0101`になります。
 
-詳細については、 [MySQL の SET タイプ](https://dev.mysql.com/doc/refman/5.7/en/set.html)を参照してください。
+詳細については、 [MySQL の SET タイプ](https://dev.mysql.com/doc/refman/8.0/en/set.html)を参照してください。

@@ -9,7 +9,6 @@ summary: Learn about the usage scenarios of TiDB partition pruning.
 
 以下は例です。
 
-
 ```sql
 CREATE TABLE t1 (
  id INT NOT NULL PRIMARY KEY,
@@ -42,14 +41,13 @@ EXPLAIN SELECT * FROM t1 WHERE id BETWEEN 80 AND 120;
 
 パーティション プルーニングの使用シナリオは、レンジ パーティション テーブルとハッシュ パーティション テーブルの 2 種類のパーティション テーブルで異なります。
 
-### ハッシュパーティションテーブルでパーティションプルーニングを使用する {#use-partition-pruning-in-hash-partitioned-tables}
+### ハッシュ パーティション テーブルでパーティション プルーニングを使用する {#use-partition-pruning-in-hash-partitioned-tables}
 
 このセクションでは、ハッシュ パーティション テーブルでのパーティション プルーニングの適用可能な使用シナリオと適用できない使用シナリオについて説明します。
 
 #### ハッシュ パーティション テーブルに適用されるシナリオ {#applicable-scenario-in-hash-partitioned-tables}
 
 パーティション プルーニングは、ハッシュ パーティション テーブルの等価比較のクエリ条件にのみ適用されます。
-
 
 ```sql
 create table t (x int) partition by hash(x) partitions 4;
@@ -75,7 +73,6 @@ explain select * from t where x = 1;
 ##### シナリオ 1 {#scenario-one}
 
 クエリ結果が 1 つのパーティション ( `in` 、 `between` 、 `>` 、 `<` 、 `>=` 、 `<=`など) にのみ該当するという条件を確認できない場合は、パーティション プルーニングの最適化を使用できません。例えば：
-
 
 ```sql
 create table t (x int) partition by hash(x) partitions 4;
@@ -108,7 +105,6 @@ explain select * from t where x > 2;
 
 パーティション プルーニングのルールの最適化はクエリ プランの生成フェーズ中に実行されるため、パーティション プルーニングは、フィルター条件が実行フェーズ中にのみ取得できるシナリオには適していません。例えば：
 
-
 ```sql
 create table t (x int) partition by hash(x) partitions 4;
 explain select * from t2 where x = (select * from t1 where t2.x = t1.x and t2.x < 2);
@@ -135,7 +131,7 @@ explain select * from t2 where x = (select * from t1 where t2.x = t1.x and t2.x 
 +--------------------------------------+----------+-----------+------------------------+----------------------------------------------+
 ```
 
-このクエリは`t2`から行を読み取るたびに、 `t1`パーティションにパーティションテーブルに対してクエリを実行します。理論的には、この時点でフィルター条件`t1.x = val`が満たされますが、実際には、パーティション プルーニングはクエリ プランの生成フェーズでのみ有効になり、実行フェーズでは有効になりません。
+このクエリは`t2`から行を読み取るたびに、 `t1`のパーティションにパーティションテーブルに対してクエリを実行します。理論的には、この時点でフィルター条件`t1.x = val`が満たされますが、実際には、パーティション プルーニングはクエリ プランの生成フェーズでのみ有効になり、実行フェーズでは有効になりません。
 
 ### レンジパーティションテーブルでパーティションプルーニングを使用する {#use-partition-pruning-in-range-partitioned-tables}
 
@@ -148,7 +144,6 @@ explain select * from t2 where x = (select * from t1 where t2.x = t1.x and t2.x 
 ##### シナリオ 1 {#scenario-one}
 
 パーティション プルーニングは、レンジ パーティション テーブルの等価比較のクエリ条件に適用されます。例えば：
-
 
 ```sql
 create table t (x int) partition by range (x) (
@@ -170,7 +165,6 @@ explain select * from t where x = 3;
 ```
 
 パーティション プルーニングは、 `in`クエリ条件を使用する等価比較にも適用されます。例えば：
-
 
 ```sql
 create table t (x int) partition by range (x) (
@@ -200,7 +194,6 @@ explain select * from t where x in(1,13);
 ##### シナリオ 2 {#scenario-two}
 
 パーティション プルーニングは`between` 、 `>` 、 `<` 、 `=` 、 `>=` 、 `<=`などの間隔比較のクエリ条件に適用されます。例えば：
-
 
 ```sql
 create table t (x int) partition by range (x) (
@@ -236,7 +229,6 @@ explain select * from t where x between 7 and 14;
 
 たとえば、パーティション プルーニングは、パーティション式が`fn(col)`の形式であり、 `fn`が単調関数`to_days`である場合に有効になります。
 
-
 ```sql
 create table t (id datetime) partition by range (to_days(id)) (
     partition p0 values less than (to_days('2020-04-01')),
@@ -257,7 +249,6 @@ explain select * from t where id > '2020-04-18';
 #### レンジパーティションテーブルに適用できないシナリオ {#inapplicable-scenario-in-range-partitioned-tables}
 
 パーティション プルーニングのルールの最適化はクエリ プランの生成フェーズ中に実行されるため、パーティション プルーニングは、フィルター条件が実行フェーズ中にのみ取得できるシナリオには適していません。例えば：
-
 
 ```sql
 create table t1 (x int) partition by range (x) (
@@ -289,4 +280,4 @@ explain select * from t2 where x < (select * from t1 where t2.x < t1.x and t2.x 
 14 rows in set (0.00 sec)
 ```
 
-このクエリは`t2`から行を読み取るたびに、 `t1`パーティションにパーティションテーブルに対してクエリを実行します。理論的には、この時点で`t1.x> val`フィルター条件が満たされていますが、実際には、パーティション プルーニングはクエリ プランの生成フェーズでのみ有効になり、実行フェーズでは有効になりません。
+このクエリは`t2`から行を読み取るたびに、 `t1`のパーティションにパーティションテーブルに対してクエリを実行します。理論的には、この時点で`t1.x> val`フィルター条件が満たされていますが、実際には、パーティション プルーニングはクエリ プランの生成フェーズでのみ有効になり、実行フェーズでは有効になりません。

@@ -11,7 +11,7 @@ summary: Learn how to use Stale Read to accelerate queries under certain conditi
 
 TiDB は、ステートメント レベル、トランザクション レベル、セッション レベルの 3 つのレベルのステイル読み取りを提供します。
 
-## 序章 {#introduction}
+## 導入 {#introduction}
 
 [書店](/develop/dev-guide-bookshop-schema-design.md)アプリケーションでは、次の SQL ステートメントを使用して、最新の出版された書籍とその価格をクエリできます。
 
@@ -21,18 +21,16 @@ SELECT id, title, type, price FROM books ORDER BY published_at DESC LIMIT 5;
 
 結果は次のとおりです。
 
-```
-+------------+------------------------------+-----------------------+--------+
-| id         | title                        | type                  | price  |
-+------------+------------------------------+-----------------------+--------+
-| 3181093216 | The Story of Droolius Caesar | Novel                 | 100.00 |
-| 1064253862 | Collin Rolfson               | Education & Reference |  92.85 |
-| 1748583991 | The Documentary of cat       | Magazine              | 159.75 |
-|  893930596 | Myrl Hills                   | Education & Reference | 356.85 |
-| 3062833277 | Keven Wyman                  | Life                  | 477.91 |
-+------------+------------------------------+-----------------------+--------+
-5 rows in set (0.02 sec)
-```
+    +------------+------------------------------+-----------------------+--------+
+    | id         | title                        | type                  | price  |
+    +------------+------------------------------+-----------------------+--------+
+    | 3181093216 | The Story of Droolius Caesar | Novel                 | 100.00 |
+    | 1064253862 | Collin Rolfson               | Education & Reference |  92.85 |
+    | 1748583991 | The Documentary of cat       | Magazine              | 159.75 |
+    |  893930596 | Myrl Hills                   | Education & Reference | 356.85 |
+    | 3062833277 | Keven Wyman                  | Life                  | 477.91 |
+    +------------+------------------------------+-----------------------+--------+
+    5 rows in set (0.02 sec)
 
 現時点(2022-04-20 15:20:00)のリストでは、*ドロリウス・シーザー物語*の価格は100.0です。
 
@@ -44,25 +42,21 @@ UPDATE books SET price = 150 WHERE id = 3181093216;
 
 結果は次のとおりです。
 
-```
-Query OK, 1 row affected (0.00 sec)
-Rows matched: 1  Changed: 1  Warnings: 0
-```
+    Query OK, 1 row affected (0.00 sec)
+    Rows matched: 1  Changed: 1  Warnings: 0
 
 最新の書籍リストをクエリすると、この書籍の価格が上昇していることがわかります。
 
-```
-+------------+------------------------------+-----------------------+--------+
-| id         | title                        | type                  | price  |
-+------------+------------------------------+-----------------------+--------+
-| 3181093216 | The Story of Droolius Caesar | Novel                 | 150.00 |
-| 1064253862 | Collin Rolfson               | Education & Reference |  92.85 |
-| 1748583991 | The Documentary of cat       | Magazine              | 159.75 |
-|  893930596 | Myrl Hills                   | Education & Reference | 356.85 |
-| 3062833277 | Keven Wyman                  | Life                  | 477.91 |
-+------------+------------------------------+-----------------------+--------+
-5 rows in set (0.01 sec)
-```
+    +------------+------------------------------+-----------------------+--------+
+    | id         | title                        | type                  | price  |
+    +------------+------------------------------+-----------------------+--------+
+    | 3181093216 | The Story of Droolius Caesar | Novel                 | 150.00 |
+    | 1064253862 | Collin Rolfson               | Education & Reference |  92.85 |
+    | 1748583991 | The Documentary of cat       | Magazine              | 159.75 |
+    |  893930596 | Myrl Hills                   | Education & Reference | 356.85 |
+    | 3062833277 | Keven Wyman                  | Life                  | 477.91 |
+    +------------+------------------------------+-----------------------+--------+
+    5 rows in set (0.01 sec)
 
 最新のデータを使用する必要がない場合は、 ステイル読み取り を使用してクエリを実行すると、古いデータが返される可能性があり、強整合性読み取り中のデータ レプリケーションによって発生するレイテンシーを回避できます。
 
@@ -81,18 +75,16 @@ SELECT id, title, type, price FROM books AS OF TIMESTAMP '2022-04-20 15:20:00' O
 
 結果は次のとおりです。
 
-```
-+------------+------------------------------+-----------------------+--------+
-| id         | title                        | type                  | price  |
-+------------+------------------------------+-----------------------+--------+
-| 3181093216 | The Story of Droolius Caesar | Novel                 | 100.00 |
-| 1064253862 | Collin Rolfson               | Education & Reference |  92.85 |
-| 1748583991 | The Documentary of cat       | Magazine              | 159.75 |
-|  893930596 | Myrl Hills                   | Education & Reference | 356.85 |
-| 3062833277 | Keven Wyman                  | Life                  | 477.91 |
-+------------+------------------------------+-----------------------+--------+
-5 rows in set (0.01 sec)
-```
+    +------------+------------------------------+-----------------------+--------+
+    | id         | title                        | type                  | price  |
+    +------------+------------------------------+-----------------------+--------+
+    | 3181093216 | The Story of Droolius Caesar | Novel                 | 100.00 |
+    | 1064253862 | Collin Rolfson               | Education & Reference |  92.85 |
+    | 1748583991 | The Documentary of cat       | Magazine              | 159.75 |
+    |  893930596 | Myrl Hills                   | Education & Reference | 356.85 |
+    | 3062833277 | Keven Wyman                  | Life                  | 477.91 |
+    +------------+------------------------------+-----------------------+--------+
+    5 rows in set (0.01 sec)
 
 正確な時刻を指定するだけでなく、次のことも指定できます。
 
@@ -100,19 +92,15 @@ SELECT id, title, type, price FROM books AS OF TIMESTAMP '2022-04-20 15:20:00' O
 -   `AS OF TIMESTAMP TIDB_BOUNDED_STALENESS('2016-10-08 16:45:26', '2016-10-08 16:45:29')` `2016-10-08 16:45:26`から`2016-10-08 16:45:29`までの最新のデータをクエリします。
 -   `AS OF TIMESTAMP TIDB_BOUNDED_STALENESS(NOW() -INTERVAL 20 SECOND, NOW())` 20 秒以内の最新データをクエリします。
 
-指定するタイムスタンプまたは間隔は、現在時刻より早すぎたり遅すぎたりすることはできないことに注意してください。さらに、秒精度のデフォルトは`NOW()`です。より高い精度を実現するには、ミリ秒の精度に`NOW(3)`使用するなど、パラメーターを追加できます。詳細については、 [MySQL ドキュメント](https://dev.mysql.com/doc/refman/5.7/en/date-and-time-functions.html#function_now)を参照してください。
+指定するタイムスタンプまたは間隔は、現在時刻より早すぎたり遅すぎたりすることはできないことに注意してください。さらに、デフォルトの`NOW()`秒精度になります。より高い精度を実現するには、ミリ秒の精度に`NOW(3)`使用するなど、パラメーターを追加できます。詳細については、 [MySQL ドキュメント](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_now)を参照してください。
 
 期限切れのデータは TiDB で[ガベージコレクション](/garbage-collection-overview.md)によってリサイクルされ、データは消去されるまで短期間保持されます。この期間を[GC ライフタイム (デフォルトは 10 分)](/system-variables.md#tidb_gc_life_time-new-in-v50)と呼びます。 GC が開始されると、現在時刻から期間を引いた時間が**GC セーフ ポイント**として使用されます。 GC セーフ ポイントの前にデータを読み取ろうとすると、TiDB は次のエラーを報告します。
 
-```
-ERROR 9006 (HY000): GC life time is shorter than transaction duration...
-```
+    ERROR 9006 (HY000): GC life time is shorter than transaction duration...
 
 指定されたタイムスタンプが将来の時刻である場合、TiDB は次のエラーを報告します。
 
-```
-ERROR 9006 (HY000): cannot set read timestamp to a future time.
-```
+    ERROR 9006 (HY000): cannot set read timestamp to a future time.
 
 </div>
 <div label="Java" value="java">
@@ -211,13 +199,11 @@ if (top5LatestBooks.size() > 0) {
 
 次の結果は、 ステイル読み取りによって返される価格が 100.00 (更新前の値) であることを示しています。
 
-```
-The latest book price (before update): 100.00
-The latest book price (after update): 150.00
-The latest book price (maybe stale): 100.00
-WARN: cannot set read timestamp to a future time.
-WARN: GC life time is shorter than transaction duration.
-```
+    The latest book price (before update): 100.00
+    The latest book price (after update): 150.00
+    The latest book price (maybe stale): 100.00
+    WARN: cannot set read timestamp to a future time.
+    WARN: GC life time is shorter than transaction duration.
 
 </div>
 </SimpleTab>
@@ -243,33 +229,29 @@ SELECT id, title, type, price FROM books ORDER BY published_at DESC LIMIT 5;
 
 結果は次のとおりです。
 
-```
-+------------+------------------------------+-----------------------+--------+
-| id         | title                        | type                  | price  |
-+------------+------------------------------+-----------------------+--------+
-| 3181093216 | The Story of Droolius Caesar | Novel                 | 100.00 |
-| 1064253862 | Collin Rolfson               | Education & Reference |  92.85 |
-| 1748583991 | The Documentary of cat       | Magazine              | 159.75 |
-|  893930596 | Myrl Hills                   | Education & Reference | 356.85 |
-| 3062833277 | Keven Wyman                  | Life                  | 477.91 |
-+------------+------------------------------+-----------------------+--------+
-5 rows in set (0.01 sec)
-```
+    +------------+------------------------------+-----------------------+--------+
+    | id         | title                        | type                  | price  |
+    +------------+------------------------------+-----------------------+--------+
+    | 3181093216 | The Story of Droolius Caesar | Novel                 | 100.00 |
+    | 1064253862 | Collin Rolfson               | Education & Reference |  92.85 |
+    | 1748583991 | The Documentary of cat       | Magazine              | 159.75 |
+    |  893930596 | Myrl Hills                   | Education & Reference | 356.85 |
+    | 3062833277 | Keven Wyman                  | Life                  | 477.91 |
+    +------------+------------------------------+-----------------------+--------+
+    5 rows in set (0.01 sec)
 
 `COMMIT;`ステートメントのトランザクションがコミットされた後、最新のデータを読み取ることができます。
 
-```
-+------------+------------------------------+-----------------------+--------+
-| id         | title                        | type                  | price  |
-+------------+------------------------------+-----------------------+--------+
-| 3181093216 | The Story of Droolius Caesar | Novel                 | 150.00 |
-| 1064253862 | Collin Rolfson               | Education & Reference |  92.85 |
-| 1748583991 | The Documentary of cat       | Magazine              | 159.75 |
-|  893930596 | Myrl Hills                   | Education & Reference | 356.85 |
-| 3062833277 | Keven Wyman                  | Life                  | 477.91 |
-+------------+------------------------------+-----------------------+--------+
-5 rows in set (0.01 sec)
-```
+    +------------+------------------------------+-----------------------+--------+
+    | id         | title                        | type                  | price  |
+    +------------+------------------------------+-----------------------+--------+
+    | 3181093216 | The Story of Droolius Caesar | Novel                 | 150.00 |
+    | 1064253862 | Collin Rolfson               | Education & Reference |  92.85 |
+    | 1748583991 | The Documentary of cat       | Magazine              | 159.75 |
+    |  893930596 | Myrl Hills                   | Education & Reference | 356.85 |
+    | 3062833277 | Keven Wyman                  | Life                  | 477.91 |
+    +------------+------------------------------+-----------------------+--------+
+    5 rows in set (0.01 sec)
 
 </div>
 <div label="Java" value="java">
@@ -357,12 +339,10 @@ if (top5LatestBooks.size() > 0) {
 
 結果は次のとおりです。
 
-```
-The latest book price (before update): 100.00
-The latest book price (after update): 150.00
-The latest book price (maybe stale): 100.00
-The latest book price (after the transaction commit): 150
-```
+    The latest book price (before update): 100.00
+    The latest book price (after update): 150.00
+    The latest book price (maybe stale): 100.00
+    The latest book price (after the transaction commit): 150
 
 </div>
 </SimpleTab>
@@ -397,7 +377,7 @@ public static class TxnHelper {
 }
 ```
 
-次に、 `BookDAO`クラスのトランザクションを通じてステイル読み取り機能を有効にするメソッドを定義します。クエリ ステートメントに`AS OF TIMESTAMP`を追加する代わりに、メソッドを使用してクエリを実行します。
+次に、 `BookDAO`クラスのトランザクションを通じてステイル読み取り機能を有効にするメソッドを定義します。クエリ ステートメントに`AS OF TIMESTAMP`追加する代わりに、メソッドを使用してクエリを実行します。
 
 ```java
 public class BookDAO {
@@ -457,7 +437,7 @@ public class BookDAO {
 SET @@tidb_read_staleness="-5";
 ```
 
-たとえば、値が`-5`に設定され、TiKV またはTiFlashに対応する履歴データがある場合、TiDB は 5 秒の時間範囲内でできるだけ新しいタイムスタンプを選択します。
+たとえば、値が`-5`に設定されており、TiKV またはTiFlashに対応する履歴データがある場合、TiDB は 5 秒の時間範囲内でできるだけ新しいタイムスタンプを選択します。
 
 セッションでステイル読み取りを無効にします。
 

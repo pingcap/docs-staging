@@ -1,11 +1,10 @@
 ---
 title: TiDB Cloud Documentation
-aliases: ['/tidbcloud/privacy-policy', '/tidbcloud/terms-of-service', '/tidbcloud/service-level-agreement']
 hide_sidebar: true
 hide_commit: true
 ---
 
-<LearningPathContainer platform="tidb-cloud" title="TiDBクラウド" subTitle="TiDB Cloud is a fully-managed Database-as-a-Service (DBaaS) that brings everything great about TiDB to your cloud. Find the guide, samples, and references you need to use TiDB Cloud.">
+<LearningPathContainer platform="tidb-cloud" title="TiDB Cloud" subTitle="TiDB Cloud is a fully-managed Database-as-a-Service (DBaaS) that brings everything great about TiDB to your cloud. Find the guide, samples, and references you need to use TiDB Cloud.">
 
 <LearningPath label="Learn" icon="cloud1">
 
@@ -72,8 +71,6 @@ hide_commit: true
 [CSVファイルから](https://docs.pingcap.com/tidbcloud/import-csv-files)
 
 [Apache Parquet ファイルから](https://docs.pingcap.com/tidbcloud/import-csv-files)
-
-[MySQL CLIを使用する場合](https://docs.pingcap.com/tidbcloud/import-with-mysql-cli)
 
 </LearningPath>
 

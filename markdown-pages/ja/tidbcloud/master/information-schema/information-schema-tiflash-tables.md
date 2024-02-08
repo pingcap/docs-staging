@@ -89,7 +89,7 @@ DESC tiflash_tables;
 -   `TIDB_DATABASE` : TiDB 内でテーブルが属するデータベースの名前。
 -   `TIDB_TABLE` : TiDB 内のテーブルの名前。
 -   `TABLE_ID` : テーブルの内部 ID。TiDB クラスター内で一意です。
--   `IS_TOMBSTONE` : テーブルをリサイクルできるかどうかを示します。 `1`テーブルが再利用できることを示し、 `0`はテーブルが正常な状態であることを示します。
+-   `IS_TOMBSTONE` : テーブルをリサイクルできるかどうかを示します。 `1`はテーブルが再利用できることを示し、 `0`はテーブルが正常な状態であることを示します。
 -   `SEGMENT_COUNT` : テーブル内のセグメントの数。セグメントは、 TiFlashにおけるデータ管理単位です。
 -   `TOTAL_ROWS` : テーブル内の行の総数。
 -   `TOTAL_SIZE` : テーブルの合計サイズ (バイト単位)。
@@ -113,7 +113,7 @@ DESC tiflash_tables;
 -   `TOTAL_STABLE_ROWS` : すべての安定層の行の合計数。
 -   `TOTAL_STABLE_SIZE` : すべての安定層のデータの合計サイズ (バイト単位)。
 -   `TOTAL_STABLE_SIZE_ON_DISK` : すべての安定層のデータが占めるディスク容量 (バイト単位)。
--   `AVG_STABLE_ROWS` : すべての安定層のデータの平均行数。
+-   `AVG_STABLE_ROWS` : すべての安定層のデータ行の平均数。
 -   `AVG_STABLE_SIZE` : すべての安定層のデータの平均サイズ (バイト単位)。
 -   `TOTAL_PACK_COUNT_IN_DELTA` : すべてのデルタ レイヤー内のカラムファイルの合計数。
 -   `MAX_PACK_COUNT_IN_DELTA` : 単一デルタレイヤー内のカラムファイルの最大数。

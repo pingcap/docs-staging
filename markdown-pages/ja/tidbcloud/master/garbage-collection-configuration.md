@@ -20,18 +20,17 @@ summary: Learn about GC configuration parameters.
 
 <CustomContent platform="tidb-cloud">
 
-> **ノート：**
+> **注記：**
 >
 > このセクションは、TiDB セルフホスト型にのみ適用されます。 TiDB Cloud には、デフォルトでは GC I/O 制限がありません。
 
 </CustomContent>
 
-TiKV は GC I/O 制限をサポートしています。 `gc.max-write-bytes-per-sec`秒あたりの GC ワーカーの書き込みを制限し、通常のリクエストへの影響を軽減できます。
+TiKV は GC I/O 制限をサポートしています。 1 を構成すると、 `gc.max-write-bytes-per-sec`秒あたりの GC ワーカーの書き込みを制限し、通常のリクエストへの影響を軽減できます。
 
 `0` 、この機能を無効にすることを示します。
 
 tikv-ctl を使用してこの構成を動的に変更できます。
-
 
 ```bash
 tikv-ctl --host=ip:port modify-tikv-config -n gc.max-write-bytes-per-sec -v 10MB
@@ -47,7 +46,7 @@ TiDB の以前のリリースでは、ガベージコレクションは`mysql.ti
 
 ## TiDB 6.1.0 の変更点 {#changes-in-tidb-6-1-0}
 
-TiDB v6.1.0 より前では、TiDB 内のトランザクションは GC セーフ ポイントに影響しません。 v6.1.0 以降、TiDB は GC セーフ ポイントを計算する際にトランザクションの startTS を考慮し、アクセス対象のデータがクリアされているという問題を解決します。トランザクションが長すぎると、安全なポイントが長時間ブロックされ、アプリケーションのパフォーマンスに影響します。
+TiDB v6.1.0 より前では、TiDB のトランザクションは GC セーフ ポイントに影響しません。 v6.1.0 以降、TiDB は GC セーフ ポイントを計算するときにトランザクションの startTS を考慮し、アクセス対象のデータがクリアされているという問題を解決します。トランザクションが長すぎると、安全なポイントが長時間ブロックされ、アプリケーションのパフォーマンスに影響します。
 
 TiDB v6.1.0 では、アクティブなトランザクションが GC セーフ ポイントをブロックする最大時間を制御するためにシステム変数[`tidb_gc_max_wait_time`](/system-variables.md#tidb_gc_max_wait_time-new-in-v610)が導入されました。この値を超えると、GC セーフ ポイントが強制的に転送されます。
 
@@ -57,7 +56,7 @@ TiDB v6.1.0 では、アクティブなトランザクションが GC セーフ 
 
 <CustomContent platform="tidb-cloud">
 
-> **ノート：**
+> **注記：**
 >
 > TiKV 構成を変更する次の例は、TiDB セルフホストにのみ適用されます。 TiDB Cloudの場合、コンパクション フィルターの GC メカニズムはデフォルトで有効になっています。
 
@@ -65,14 +64,12 @@ TiDB v6.1.0 では、アクティブなトランザクションが GC セーフ 
 
 次の例は、TiKV 構成ファイルでメカニズムを有効にする方法を示しています。
 
-
 ```toml
 [gc]
 enable-compaction-filter = true
 ```
 
 構成を動的に変更することで、この GC メカニズムを有効にすることもできます。次の例を参照してください。
-
 
 ```sql
 show config where type = 'tikv' and name like '%enable-compaction-filter%';
@@ -87,7 +84,6 @@ show config where type = 'tikv' and name like '%enable-compaction-filter%';
 | tikv | 172.16.5.35:20163 | gc.enable-compaction-filter | false |
 +------+-------------------+-----------------------------+-------+
 ```
-
 
 ```sql
 set config tikv gc.enable-compaction-filter = true;

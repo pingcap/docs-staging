@@ -1,5 +1,6 @@
 ---
 title: Bookshop Example Application
+summary: Bookshop is an online bookstore app for buying and rating books. You can import table structures and data via TiUP or TiDB Cloud. Method 1 uses TiUP to quickly generate and import sample data, while Method 2 imports data from AWS S3 to TiDB Cloud. The database tables include books, authors, users, ratings, book_authors, and orders. The database initialization script `dbinit.sql` creates the table structures for the Bookshop application.
 ---
 
 # 書店のアプリケーション例 {#bookshop-example-application}
@@ -96,15 +97,11 @@ TiDB Cloudのクラスター詳細ページで、「**インポート」**領域
 
     **バケット URI** :
 
-    ```
-    s3://developer.pingcap.com/bookshop/
-    ```
+        s3://developer.pingcap.com/bookshop/
 
     **役割 ARN** :
 
-    ```
-    arn:aws:iam::494090988690:role/s3-tidb-cloud-developer-access
-    ```
+        arn:aws:iam::494090988690:role/s3-tidb-cloud-developer-access
 
 3.  **「次へ」**をクリックして**「ファイルとフィルター」**ステップに進み、インポートするファイルの情報を確認します。
 
@@ -140,19 +137,17 @@ WHERE table_schema LIKE 'bookshop';
 
 結果は次のとおりです。
 
-```
-+-----------------------+----------------+-----------+------------+---------+
-| Table Name            | Number of Rows | Data Size | Index Size | Total   |
-+-----------------------+----------------+-----------+------------+---------+
-| bookshop.orders       |        1000000 | 0.0373G   | 0.0075G    | 0.0447G |
-| bookshop.book_authors |        1000000 | 0.0149G   | 0.0149G    | 0.0298G |
-| bookshop.ratings      |        4000000 | 0.1192G   | 0.1192G    | 0.2384G |
-| bookshop.authors      |         100000 | 0.0043G   | 0.0000G    | 0.0043G |
-| bookshop.users        |         195348 | 0.0048G   | 0.0021G    | 0.0069G |
-| bookshop.books        |        1000000 | 0.0546G   | 0.0000G    | 0.0546G |
-+-----------------------+----------------+-----------+------------+---------+
-6 rows in set (0.03 sec)
-```
+    +-----------------------+----------------+-----------+------------+---------+
+    | Table Name            | Number of Rows | Data Size | Index Size | Total   |
+    +-----------------------+----------------+-----------+------------+---------+
+    | bookshop.orders       |        1000000 | 0.0373G   | 0.0075G    | 0.0447G |
+    | bookshop.book_authors |        1000000 | 0.0149G   | 0.0149G    | 0.0298G |
+    | bookshop.ratings      |        4000000 | 0.1192G   | 0.1192G    | 0.2384G |
+    | bookshop.authors      |         100000 | 0.0043G   | 0.0000G    | 0.0043G |
+    | bookshop.users        |         195348 | 0.0048G   | 0.0021G    | 0.0069G |
+    | bookshop.books        |        1000000 | 0.0546G   | 0.0000G    | 0.0546G |
+    +-----------------------+----------------+-----------+------------+---------+
+    6 rows in set (0.03 sec)
 
 ## テーブルの説明 {#description-of-the-tables}
 
@@ -206,7 +201,7 @@ WHERE table_schema LIKE 'bookshop';
 
 ### <code>book_authors</code>テーブル {#code-book-authors-code-table}
 
-著者は複数の本を執筆する場合があり、また、1 つの本に複数の著者が関与する場合もあります。このテーブルには、書籍と著者間の対応関係が格納されます。
+著者は複数の本を書く場合があり、1 つの本に複数の著者が関与する場合があります。このテーブルには、書籍と著者間の対応関係が格納されます。
 
 | フィールド名  | タイプ        | 説明                                 |
 | ------- | ---------- | ---------------------------------- |

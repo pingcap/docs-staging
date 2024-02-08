@@ -7,7 +7,6 @@ summary: Learn the `ENGINES` information_schema table.
 
 表`ENGINES`は、storageエンジンに関する情報を示します。互換性のために、TiDB は常に InnoDB をサポートされる唯一のエンジンとして説明します。また、 `ENGINES`テーブルの他の列の値も固定値です。
 
-
 ```sql
 USE information_schema;
 DESC engines;
@@ -27,19 +26,16 @@ DESC engines;
 6 rows in set (0.00 sec)
 ```
 
-
 ```sql
 SELECT * FROM engines;
 ```
 
-```
-+--------+---------+------------------------------------------------------------+--------------+------+------------+
-| ENGINE | SUPPORT | COMMENT                                                    | TRANSACTIONS | XA   | SAVEPOINTS |
-+--------+---------+------------------------------------------------------------+--------------+------+------------+
-| InnoDB | DEFAULT | Supports transactions, row-level locking, and foreign keys | YES          | YES  | YES        |
-+--------+---------+------------------------------------------------------------+--------------+------+------------+
-1 row in set (0.01 sec)
-```
+    +--------+---------+------------------------------------------------------------+--------------+------+------------+
+    | ENGINE | SUPPORT | COMMENT                                                    | TRANSACTIONS | XA   | SAVEPOINTS |
+    +--------+---------+------------------------------------------------------------+--------------+------+------------+
+    | InnoDB | DEFAULT | Supports transactions, row-level locking, and foreign keys | YES          | YES  | YES        |
+    +--------+---------+------------------------------------------------------------+--------------+------+------------+
+    1 row in set (0.01 sec)
 
 `ENGINES`のテーブルの列の説明は次のとおりです。
 

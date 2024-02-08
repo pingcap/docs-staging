@@ -1,5 +1,6 @@
 ---
 title: Connection Pools and Connection Parameters
+summary: This document explains how to configure connection pools and parameters for TiDB. It covers connection pool size, probe configuration, and formulas for optimal throughput. It also discusses JDBC API usage and MySQL Connector/J parameter configurations for performance optimization.
 ---
 
 # 接続プールと接続パラメータ {#connection-pools-and-connection-parameters}
@@ -43,7 +44,7 @@ Javaアプリケーションで次のエラーが頻繁に表示される場合:
 
 `n milliseconds ago`の`n`が`0`または非常に小さい値の場合、通常は、実行された SQL 操作によって TiDB が異常終了することが原因です。原因を見つけるには、TiDB stderr ログを確認することをお勧めします。
 
-`n`が非常に大きな値 (上記の例の`3600000`など) の場合、この接続は長時間アイドル状態であり、その後プロキシによって閉じられた可能性があります。通常の解決策は、プロキシのアイドル構成の値を増やし、接続プールが次のことを行えるようにすることです。
+`n`が非常に大きな値 (上記の例の`3600000`など) である場合、この接続は長時間アイドル状態であり、その後プロキシによって閉じられた可能性があります。通常の解決策は、プロキシのアイドル構成の値を増やし、接続プールが次のことを行えるようにすることです。
 
 -   接続を使用する前に、毎回接続が利用可能かどうかを確認してください。
 -   別のスレッドを使用して接続が利用可能かどうかを定期的に確認してください。
@@ -137,13 +138,13 @@ OLTP (オンライン トランザクション処理) シナリオの場合、�
 
     クライアントが読み取りを完了するか、 `resultset`閉じる前にクエリでこのようなエラーが発生するのを回避するには、URL に`clobberStreamingResults=true`パラメータを追加します。その後、 `resultset`は自動的に閉じられますが、前のストリーミング クエリで読み取られる結果セットは失われます。
 
--   カーソルフェッチを使用するには、まず正の整数として[`FetchSize`を設定する](http://makejavafaster.blogspot.com/2015/06/jdbc-fetch-size-performance.html)を設定し、JDBC URL で`useCursorFetch=true`を設定します。
+-   カーソルフェッチを使用するには、まず正の整数として[`FetchSize`を設定する](http://makejavafaster.blogspot.com/2015/06/jdbc-fetch-size-performance.html)を指定し、JDBC URL で`useCursorFetch=true`を設定します。
 
 TiDB は両方の方法をサポートしていますが、最初の方法を使用することをお勧めします。これは、実装が単純で実行効率が高いためです。
 
 ### MySQL JDBC パラメータ {#mysql-jdbc-parameters}
 
-JDBC は通常、実装関連の設定を JDBC URL パラメーターの形式で提供します。このセクションでは[MySQL Connector/J のパラメータ設定](https://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html)を紹介します (MariaDB を使用する場合は[MariaDBのパラメータ設定](https://mariadb.com/kb/en/library/about-mariadb-connector-j/#optional-url-parameters)を参照してください)。このドキュメントではすべての構成項目をカバーすることはできないため、パフォーマンスに影響を与える可能性のあるいくつかのパラメーターに主に焦点を当てています。
+JDBC は通常、実装関連の設定を JDBC URL パラメータの形式で提供します。このセクションでは[MySQL Connector/J のパラメータ設定](https://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html)を紹介します (MariaDB を使用する場合は[MariaDBのパラメータ設定](https://mariadb.com/kb/en/library/about-mariadb-connector-j/#optional-url-parameters)を参照してください)。このドキュメントではすべての構成項目をカバーすることはできないため、パフォーマンスに影響を与える可能性のあるいくつかのパラメーターに主に焦点を当てています。
 
 #### 関連パラメータの準備 {#prepare-related-parameters}
 
@@ -158,7 +159,7 @@ JDBC は通常、実装関連の設定を JDBC URL パラメーターの形式�
     -   TiDB モニタリング ダッシュボードに移動し、 **[Query Summary]** &gt; **[CPS By Instance]**からリクエスト コマンド タイプを表示します。
     -   リクエスト内で`COM_QUERY` `COM_STMT_EXECUTE`または`COM_STMT_PREPARE`に置き換えられている場合は、この設定がすでに有効になっていることを意味します。
 
--   **キャッシュ準備Stmts**
+-   **キャッシュPrepStmts**
 
     `useServerPrepStmts=true`を指定すると、サーバーはプリペアド ステートメントを実行できますが、デフォルトでは、クライアントは各実行後にプリペアド ステートメントを閉じ、再利用しません。これは、「準備」操作がテキスト ファイルの実行ほど効率的ではないことを意味します。これを解決するには、 `useServerPrepStmts=true`設定した後、 `cachePrepStmts=true`も設定することをお勧めします。これにより、クライアントは Prepared Statement をキャッシュできるようになります。
 
@@ -178,9 +179,9 @@ JDBC は通常、実装関連の設定を JDBC URL パラメーターの形式�
     次の場合は、この設定が小さすぎるかどうかを確認する必要があります。
 
     -   TiDB モニタリング ダッシュボードに移動し、 **[Query Summary]** &gt; **[CPS By Instance]**からリクエスト コマンド タイプを表示します。
-    -   そして`cachePrepStmts=true`は設定されていますが、 `COM_STMT_PREPARE`は依然として`COM_STMT_EXECUTE`とほぼ同じであり、 `COM_STMT_CLOSE`存在することがわかります。
+    -   そして`cachePrepStmts=true`設定されていますが、 `COM_STMT_PREPARE`は依然として`COM_STMT_EXECUTE`とほぼ同じであり、 `COM_STMT_CLOSE`存在することがわかります。
 
--   **prepStmtキャッシュサイズ**
+-   **prepStmtCacheSize**
 
     **prepStmtCacheSize は、**キャッシュされる Prepared Statement の数を制御します (デフォルト値は`25` )。アプリケーションで多くの種類の SQL ステートメントを「準備」する必要があり、準備されたステートメントを再利用したい場合は、この値を増やすことができます。
 
@@ -251,7 +252,7 @@ UPDATE `t` SET `a` = 10 WHERE `id` = 1; UPDATE `t` SET `a` = 11 WHERE `id` = 2; 
 
 モニタリングを通じて、アプリケーションは TiDB クラスターに対して`INSERT`操作のみを実行しますが、冗長な`SELECT`のステートメントが多数あることに気づくかもしれません。通常、これは、JDBC が設定をクエリするためにいくつかの SQL ステートメント (例: `select @@session.transaction_read_only`を送信するために発生します。これらの SQL ステートメントは TiDB では役に立たないため、余分なオーバーヘッドを避けるために`useConfigs=maxPerformance`を構成することをお勧めします。
 
-`useConfigs=maxPerformance`には構成のグループが含まれます。 MySQL Connector/J 8.0 および MySQL Connector/J 5.1 の詳細な設定を取得するには、それぞれ[mysql-コネクタ-j 8.0](https://github.com/mysql/mysql-connector-j/blob/release/8.0/src/main/resources/com/mysql/cj/configurations/maxPerformance.properties)と[mysql-コネクタ-j 5.1](https://github.com/mysql/mysql-connector-j/blob/release/5.1/src/com/mysql/jdbc/configs/maxPerformance.properties)を参照してください。
+`useConfigs=maxPerformance`には構成のグループが含まれます。 MySQL Connector/J 8.0 の詳細な設定と MySQL Connector/J 5.1 の詳細な設定を取得するには、それぞれ[mysql-コネクタ-j 8.0](https://github.com/mysql/mysql-connector-j/blob/release/8.0/src/main/resources/com/mysql/cj/configurations/maxPerformance.properties)と[mysql-コネクタ-j 5.1](https://github.com/mysql/mysql-connector-j/blob/release/5.1/src/com/mysql/jdbc/configs/maxPerformance.properties)を参照してください。
 
 構成後、モニタリングをチェックして、 `SELECT`ステートメントの数が減少していることを確認できます。
 

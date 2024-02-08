@@ -63,7 +63,7 @@ npm install
 
 <details><summary><b>依存関係を既存のプロジェクトにインストールする</b></summary>
 
-既存のプロジェクトの場合は、次のコマンドを実行してパッケージをインストールします。
+既存のプロジェクトの場合、次のコマンドを実行してパッケージをインストールします。
 
 -   `typeorm` : Node.js の ORM フレームワーク。
 -   `mysql2` : Node.js 用の MySQL ドライバー。 `mysql`ドライバーも使えます。
@@ -228,7 +228,7 @@ npm start
 
 接続が成功すると、ターミナルは次のように TiDB クラスターのバージョンを出力します。
 
-    🔌 Connected to TiDB cluster! (TiDB version: 5.7.25-TiDB-v7.1.3)
+    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v7.5.0)
     🆕 Created a new player with ID 2.
     ℹ️ Got Player 2: Player { id: 2, coins: 100, goods: 100 }
     🔢 Added 50 coins and 50 goods to player 2, now player 2 has 100 coins and 150 goods.
@@ -338,7 +338,7 @@ console.log(rows[0]['tidb_version']);
 
 ### 外部キー制約 {#foreign-key-constraints}
 
-[外部キー制約](https://docs.pingcap.com/tidb/stable/foreign-key) (実験的) を使用すると、データベース側でチェックを追加することでデータの[参照整合性](https://en.wikipedia.org/wiki/Referential_integrity)が保証されます。ただし、これにより、データ量が大きいシナリオでは、パフォーマンスに重大な問題が発生する可能性があります。
+[外部キー制約](https://docs.pingcap.com/tidb/stable/foreign-key) (実験的) を使用すると、データベース側でチェックを追加することでデータの[参照整合性](https://en.wikipedia.org/wiki/Referential_integrity)が保証されます。ただし、これにより、データ量が大きいシナリオでは重大なパフォーマンスの問題が発生する可能性があります。
 
 `createForeignKeyConstraints`オプション (デフォルト値は`true` ) を使用して、エンティティ間の関係を構築するときに外部キー制約を作成するかどうかを制御できます。
 
@@ -361,8 +361,18 @@ export class ActionLog {
 
 -   TypeORM の詳しい使い方は[TypeORM のドキュメント](https://typeorm.io/)からご覧ください。
 -   [開発者ガイド](/develop/dev-guide-overview.md)の章 ( [データの挿入](/develop/dev-guide-insert-data.md)など) で TiDB [取引](/develop/dev-guide-transaction-overview.md) [SQLパフォーマンスの最適化](/develop/dev-guide-optimize-sql-overview.md) [データを更新する](/develop/dev-guide-update-data.md)ベスト プラクティス[クエリデータ](/develop/dev-guide-get-data-from-single-table.md)学習[データの削除](/develop/dev-guide-delete-data.md)ます。
--   プロフェッショナルを通じて[TiDB 開発者コース](https://www.pingcap.com/education/)を学び、試験合格後に[TiDB 認定](https://www.pingcap.com/education/certification/)獲得します。
+-   プロフェッショナルとして[TiDB 開発者コース](https://www.pingcap.com/education/)を学び、試験合格後に[TiDB 認定](https://www.pingcap.com/education/certification/)獲得します。
 
 ## 助けが必要？ {#need-help}
 
-[不和](https://discord.gg/vYU9h56kAX)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+<CustomContent platform="tidb">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](/support.md)について質問してください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+
+</CustomContent>
