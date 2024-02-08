@@ -45,7 +45,6 @@ ALTER TABLE employees SET TIFLASH REPLICA 2;
 
 次のステートメントを実行すると、 `employees`テーブル内のすべてのパーティションの 2 つのTiFlashレプリカの圧縮をすぐに開始できます。
 
-
 ```sql
 ALTER TABLE employees COMPACT TIFLASH REPLICA;
 ```
@@ -188,7 +187,7 @@ SELECT PARTITION_NAME, TOTAL_DELTA_ROWS, TOTAL_STABLE_ROWS
 
 </details>
 
-> **ノート：**
+> **注記：**
 >
 > -   圧縮中にデータが更新された場合、圧縮が完了した後も`TOTAL_DELTA_ROWS`ゼロ以外の値になる可能性があります。これは正常であり、これらの更新が圧縮されていないことを示します。これらの更新を圧縮するには、 `ALTER TABLE ... COMPACT`ステートメントを再度実行します。
 >

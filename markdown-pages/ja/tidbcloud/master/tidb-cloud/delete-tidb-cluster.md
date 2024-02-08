@@ -23,7 +23,7 @@ summary: Learn how to delete a TiDB cluster.
 
     将来クラスターを復元する場合は、クラスターのバックアップがあることを確認してください。そうしないと、もう復元できません。 TiDB 専用クラスターをバックアップする方法の詳細については、 [TiDB 専用データのバックアップと復元](/tidb-cloud/backup-and-restore.md)を参照してください。
 
-    > **ノート：**
+    > **注記：**
     >
     > [TiDB サーバーレスクラスター](/tidb-cloud/select-cluster-tier.md#tidb-serverless) [バックアップからのインプレース復元](/tidb-cloud/backup-and-restore-serverless.md#restore)のみをサポートし、削除後のデータの復元をサポートしません。将来、TiDB サーバーレス クラスターを削除し、そのデータを復元したい場合は、 [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)使用してデータをバックアップとしてエクスポートできます。
 

@@ -66,7 +66,7 @@ TiDB のデフォルトのトランザクション モードは悲観的です�
 BEGIN OPTIMISTIC;
 ```
 
-[悲観的トランザクション モード](/develop/dev-guide-optimistic-and-pessimistic-transaction.md)を有効にします。
+[悲観的トランザクションモード](/develop/dev-guide-optimistic-and-pessimistic-transaction.md)を有効にします。
 
 ```sql
 BEGIN PESSIMISTIC;
@@ -92,7 +92,7 @@ COMMIT;
 ROLLBACK;
 ```
 
-前の転送の例では、トランザクション全体をロールバックすると、アリスとボブの残高は変更されず、現在のトランザクションの変更はすべてキャンセルされます。
+前の転送の例では、トランザクション全体をロールバックすると、アリスとボブの残高は変更されず、現在のトランザクションのすべての変更がキャンセルされます。
 
 ```sql
 TRUNCATE TABLE `users`;

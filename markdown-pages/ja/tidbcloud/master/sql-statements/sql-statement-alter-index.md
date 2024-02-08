@@ -21,7 +21,6 @@ AlterIndexSpec
 
 `ALTER TABLE ... ALTER INDEX ...`ステートメントを使用してインデックスの可視性を変更できます。
 
-
 ```sql
 CREATE TABLE t1 (c1 INT, UNIQUE(c1));
 ALTER TABLE t1 ALTER INDEX c1 INVISIBLE;
@@ -30,7 +29,6 @@ ALTER TABLE t1 ALTER INDEX c1 INVISIBLE;
 ```sql
 Query OK, 0 rows affected (0.02 sec)
 ```
-
 
 ```sql
 SHOW CREATE TABLE t1;
@@ -51,7 +49,6 @@ SHOW CREATE TABLE t1;
 
 オプティマイザは、**非表示のインデックス**`c1`を使用できません。
 
-
 ```sql
 EXPLAIN SELECT c1 FROM t1 ORDER BY c1;
 ```
@@ -69,7 +66,6 @@ EXPLAIN SELECT c1 FROM t1 ORDER BY c1;
 
 比較すると、 `c2`は**可視インデックス**であり、オプティマイザで使用できます。
 
-
 ```sql
 EXPLAIN SELECT c2 FROM t1 ORDER BY c2;
 ```
@@ -86,7 +82,6 @@ EXPLAIN SELECT c2 FROM t1 ORDER BY c2;
 
 `USE INDEX` SQL ヒントを使用してインデックスを強制的に使用したとしても、オプティマイザは依然として非表示のインデックスを使用できません。それ以外の場合は、エラーが返されます。
 
-
 ```sql
 SELECT * FROM t1 USE INDEX(c1);
 ```
@@ -95,10 +90,9 @@ SELECT * FROM t1 USE INDEX(c1);
 ERROR 1176 (42000): Key 'c1' doesn't exist in table 't1'
 ```
 
-> **ノート：**
+> **注記：**
 >
 > ここでの「不可視」とは、オプティマイザのみに不可視であることを意味します。非表示のインデックスを変更または削除することもできます。
-
 
 ```sql
 ALTER TABLE t1 DROP INDEX c1;

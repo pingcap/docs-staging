@@ -20,22 +20,20 @@ LIMIT 50;
 
 結果は次のとおりです。
 
-```
-+------------+---------------------+------+
-| id         | name                | age  |
-+------------+---------------------+------+
-| 4053452056 | Dessie Thompson     |   80 |
-| 2773958689 | Pedro Hansen        |   80 |
-| 4005636688 | Wyatt Keeling       |   80 |
-| 3621155838 | Colby Parker        |   80 |
-| 2738876051 | Friedrich Hagenes   |   80 |
-| 2299112019 | Ray Macejkovic      |   80 |
-| 3953661843 | Brandi Williamson   |   80 |
-...
-| 4100546410 | Maida Walsh         |   80 |
-+------------+---------------------+------+
-50 rows in set (0.01 sec)
-```
+    +------------+---------------------+------+
+    | id         | name                | age  |
+    +------------+---------------------+------+
+    | 4053452056 | Dessie Thompson     |   80 |
+    | 2773958689 | Pedro Hansen        |   80 |
+    | 4005636688 | Wyatt Keeling       |   80 |
+    | 3621155838 | Colby Parker        |   80 |
+    | 2738876051 | Friedrich Hagenes   |   80 |
+    | 2299112019 | Ray Macejkovic      |   80 |
+    | 3953661843 | Brandi Williamson   |   80 |
+    ...
+    | 4100546410 | Maida Walsh         |   80 |
+    +------------+---------------------+------+
+    50 rows in set (0.01 sec)
 
 後続のクエリの便宜のために、このクエリの結果をキャッシュする必要があります。storageに一般的なテーブルを使用する場合は、バッチ クエリの後にこれらのテーブルが使用されない可能性があるため、異なるセッション間でのテーブル名の重複の問題を回避する方法と、中間結果を時間内にクリーンアップする必要性に注意する必要があります。
 
@@ -80,10 +78,8 @@ LIMIT 50;
 
 結果は次のとおりです。
 
-```
-Query OK, 50 rows affected (0.03 sec)
-Records: 50  Duplicates: 0  Warnings: 0
-```
+    Query OK, 50 rows affected (0.03 sec)
+    Records: 50  Duplicates: 0  Warnings: 0
 
 </div>
 <div label="Java" value="java">
@@ -200,20 +196,18 @@ public List<Author> getTop50EldestAuthorInfo() throws SQLException {
 
 たとえば、テーブル リストにはグローバル一時テーブル`top_50_eldest_authors_global`が表示されますが、テーブル`top_50_eldest_authors`は表示されません。
 
-```
-+-------------------------------+------------+
-| Tables_in_bookshop            | Table_type |
-+-------------------------------+------------+
-| authors                       | BASE TABLE |
-| book_authors                  | BASE TABLE |
-| books                         | BASE TABLE |
-| orders                        | BASE TABLE |
-| ratings                       | BASE TABLE |
-| top_50_eldest_authors_global  | BASE TABLE |
-| users                         | BASE TABLE |
-+-------------------------------+------------+
-9 rows in set (0.00 sec)
-```
+    +-------------------------------+------------+
+    | Tables_in_bookshop            | Table_type |
+    +-------------------------------+------------+
+    | authors                       | BASE TABLE |
+    | book_authors                  | BASE TABLE |
+    | books                         | BASE TABLE |
+    | orders                        | BASE TABLE |
+    | ratings                       | BASE TABLE |
+    | top_50_eldest_authors_global  | BASE TABLE |
+    | users                         | BASE TABLE |
+    +-------------------------------+------------+
+    9 rows in set (0.00 sec)
 
 ## 一時テーブルにクエリを実行する {#query-a-temporary-table}
 
@@ -232,7 +226,7 @@ LEFT JOIN book_authors ba ON ta.id = ba.author_id
 GROUP BY ta.id;
 ```
 
-[意見](/develop/dev-guide-use-views.md)とは異なり、一時テーブルをクエリすると、データの挿入で使用された元のクエリを実行するのではなく、一時テーブルからデータが直接取得されます。場合によっては、これによりクエリのパフォーマンスが向上することがあります。
+[ビュー](/develop/dev-guide-use-views.md)とは異なり、一時テーブルをクエリすると、データの挿入で使用された元のクエリを実行するのではなく、一時テーブルからデータが直接取得されます。場合によっては、これによりクエリのパフォーマンスが向上することがあります。
 
 ## 一時テーブルを削除する {#drop-a-temporary-table}
 

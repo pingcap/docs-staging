@@ -215,20 +215,20 @@ npm install
     #        Setting default arguments for 'sam deploy'
     #        =========================================
     #        Stack Name [sam-app]: tidb-aws-lambda-quickstart
-    #        AWS Region [us-east-1]: 
+    #        AWS Region [us-east-1]:
     #        #Shows you resources changes to be deployed and require a 'Y' to initiate deploy
-    #        Confirm changes before deploy [y/N]: 
+    #        Confirm changes before deploy [y/N]:
     #        #SAM needs permission to be able to create roles to connect to the resources in your template
-    #        Allow SAM CLI IAM role creation [Y/n]: 
+    #        Allow SAM CLI IAM role creation [Y/n]:
     #        #Preserves the state of previously provisioned resources when an operation fails
-    #        Disable rollback [y/N]: 
+    #        Disable rollback [y/N]:
     #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
     #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
     #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
     #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
-    #        Save arguments to configuration file [Y/n]: 
-    #        SAM configuration file [samconfig.toml]: 
-    #        SAM configuration environment [default]: 
+    #        Save arguments to configuration file [Y/n]:
+    #        SAM configuration file [samconfig.toml]:
+    #        SAM configuration environment [default]:
 
     #        Looking for resources needed for deployment:
     #        Creating the required resources...
@@ -365,9 +365,19 @@ console.log(rsh.affectedRows);
 -   AWS Lambda 関数で TiDB を使用する方法の詳細については、 [TiDB-Lambda-integration/aws-lambda-bookstore デモ](https://github.com/pingcap/TiDB-Lambda-integration/blob/main/aws-lambda-bookstore/README.md)を参照してください。 AWS API Gateway を使用して、アプリケーション用の RESTful API を構築することもできます。
 -   `mysql2`から[`mysql2`のドキュメント](https://github.com/sidorares/node-mysql2/tree/master/documentation/en)の使用法をさらに学習します。
 -   AWS Lambdaの使い方を[`Lambda`の AWS 開発者ガイド](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)から詳しく学びましょう。
--   TiDB アプリケーション開発[単一テーブルの読み取り](/develop/dev-guide-get-data-from-single-table.md)ベスト プラクティスについて[取引](/develop/dev-guide-transaction-overview.md) 、 [開発者ガイド](/develop/dev-guide-overview.md)の章 ( [データの挿入](/develop/dev-guide-insert-data.md)など) [データを更新する](/develop/dev-guide-update-data.md)参照[データの削除](/develop/dev-guide-delete-data.md) [SQLパフォーマンスの最適化](/develop/dev-guide-optimize-sql-overview.md)ください。
--   プロフェッショナルを通じて[TiDB 開発者コース](https://www.pingcap.com/education/)を学び、試験合格後に[TiDB 認定](https://www.pingcap.com/education/certification/)獲得します。
+-   TiDB アプリケーション開発の[SQLパフォーマンスの最適化](/develop/dev-guide-optimize-sql-overview.md)プラクティスについて[取引](/develop/dev-guide-transaction-overview.md) 、 [開発者ガイド](/develop/dev-guide-overview.md)の章 ( [データの挿入](/develop/dev-guide-insert-data.md)など) [データを更新する](/develop/dev-guide-update-data.md)参照[データの削除](/develop/dev-guide-delete-data.md) [単一テーブルの読み取り](/develop/dev-guide-get-data-from-single-table.md)ください。
+-   プロフェッショナルとして[TiDB 開発者コース](https://www.pingcap.com/education/)を学び、試験合格後に[TiDB 認定](https://www.pingcap.com/education/certification/)獲得します。
 
 ## 助けが必要？ {#need-help}
 
-[不和](https://discord.gg/vYU9h56kAX)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+<CustomContent platform="tidb">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](/support.md)について質問してください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+
+</CustomContent>

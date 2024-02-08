@@ -43,39 +43,33 @@ IdentListWithParenOpt ::=
 
 非再帰的 CTE:
 
-
 ```sql
 WITH CTE AS (SELECT 1, 2) SELECT * FROM cte t1, cte t2;
 ```
 
-```
-+---+---+---+---+
-| 1 | 2 | 1 | 2 |
-+---+---+---+---+
-| 1 | 2 | 1 | 2 |
-+---+---+---+---+
-1 row in set (0.00 sec)
-```
+    +---+---+---+---+
+    | 1 | 2 | 1 | 2 |
+    +---+---+---+---+
+    | 1 | 2 | 1 | 2 |
+    +---+---+---+---+
+    1 row in set (0.00 sec)
 
 再帰的 CTE:
-
 
 ```sql
 WITH RECURSIVE cte(a) AS (SELECT 1 UNION SELECT a+1 FROM cte WHERE a < 5) SELECT * FROM cte;
 ```
 
-```
-+---+
-| a |
-+---+
-| 1 |
-| 2 |
-| 3 |
-| 4 |
-| 5 |
-+---+
-5 rows in set (0.00 sec)
-```
+    +---+
+    | a |
+    +---+
+    | 1 |
+    | 2 |
+    | 3 |
+    | 4 |
+    | 5 |
+    +---+
+    5 rows in set (0.00 sec)
 
 ## MySQLの互換性 {#mysql-compatibility}
 
@@ -90,4 +84,4 @@ WITH RECURSIVE cte(a) AS (SELECT 1 UNION SELECT a+1 FROM cte WHERE a < 5) SELECT
 -   [入れる](/sql-statements/sql-statement-insert.md)
 -   [消去](/sql-statements/sql-statement-delete.md)
 -   [アップデート](/sql-statements/sql-statement-update.md)
--   [交換](/sql-statements/sql-statement-replace.md)
+-   [交換する](/sql-statements/sql-statement-replace.md)

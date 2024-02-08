@@ -1,7 +1,6 @@
 ---
 title: TLS Connections to TiDB Dedicated
 summary: Introduce TLS connections in TiDB Dedicated.
-aliases: ['/tidbcloud/tidb-cloud-tls-connect-to-dedicated-tier']
 ---
 
 # TiDB 専用の TLS 接続 {#tls-connections-to-tidb-dedicated}
@@ -28,17 +27,16 @@ TiDB Cloudでは、TLS 接続の確立は、TiDB 専用クラスターに接続�
 
 3.  このダイアログの**「標準接続」**タブで、3 つの手順に従って TLS 接続を設定します。
     -   ステップ 1：トラフィックフィルターを作成する
-    -   ステップ 2：CA 証明書をダウンロードする
+    -   ステップ 2：TiDB クラスター CA をダウンロードする
     -   ステップ 3：SQL クライアントに接続する
 
 4.  ダイアログの**「ステップ 1: トラフィック フィルターを作成する」**で、クラスターへのアクセスを許可する IP アドレスを構成します。詳細については、 [標準接続でのIPアクセスリストの設定](/tidb-cloud/configure-ip-access-list.md#configure-an-ip-access-list-in-standard-connection)を参照してください。
 
-5.  **[ステップ 2: CA 証明書のダウンロード] で**、 **[CA 証明書のダウンロード**] をクリックして、クライアント TLS 構成用にローカルにダウンロードします。 CA 証明書により、TLS 接続の安全性と信頼性が保証されます。
+5.  **[ステップ 2: TiDB クラスター CA をダウンロードする] で**、 **[TiDB クラスター CA をダウンロード**] をクリックして、クライアント TLS 構成用にローカルにダウンロードします。 TiDB クラスター CA は、TLS 接続が安全で信頼できることを保証します。
 
     > **注記：**
     >
-    > -   ダウンロードした CA 証明書は、オペレーティング システムのデフォルトのstorageパスに保存することも、別のstorageパスを指定することもできます。後続の手順では、コード例の CA 証明書パスを独自の CA 証明書パスに置き換える必要があります。
-    > -   TiDB D dedicated は、クライアントに TLS 接続の使用を強制しません。また、 [`require_secure_transport`](/system-variables.md#require_secure_transport-new-in-v610)変数のユーザー定義構成は現在、TiDB Dended ではサポートされていません。
+    > TiDB 専用クラスター CA をダウンロードした後、それをオペレーティング システムのデフォルトのstorageパスに保存することも、別のstorageパスを指定することもできます。後続の手順では、コード例の CA パスを独自のクラスター CA パスに置き換える必要があります。
 
 6.  ダイアログの**「ステップ 3: SQL クライアントに接続する」**で、希望する接続方法のタブをクリックし、タブ上の接続文字列とサンプル コードを参照してクラスターに接続します。
 
@@ -80,7 +78,7 @@ mycli --ssl-ca=ca.pem --ssl-verify-server-cert -u root -h tidb.eqlfbdgthh8.clust
 
 ここでは例として[MySQLコネクタ/J](https://dev.mysql.com/doc/connector-j/en/)の TLS 接続構成が使用されています。
 
-TiDB クラスター CA をダウンロードした後、オペレーティング システムにインポートする場合は、 `keytool -importcert -alias TiDBCACert -file ca.pem -keystore <your_custom_truststore_path> -storepass <your_truststore_password>`コマンドを使用できます。
+TiDB クラスター CA をダウンロードした後、それをオペレーティング システムにインポートする場合は、 `keytool -importcert -alias TiDBCACert -file ca.pem -keystore <your_custom_truststore_path> -storepass <your_truststore_password>`コマンドを使用できます。
 
 ```shell
 /* Be sure to replace the parameters in the following connection string. */

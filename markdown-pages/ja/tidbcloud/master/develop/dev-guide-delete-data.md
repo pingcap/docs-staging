@@ -182,7 +182,7 @@ with connection:
 
 </CustomContent>
 
-> **ノート：**
+> **注記：**
 >
 > MySQL と同様に、 `TIMESTAMP`データ型は[2038年問題](https://en.wikipedia.org/wiki/Year_2038_problem)の影響を受けます。 2038 より大きい値を保存する場合は、 `DATETIME`タイプを使用することをお勧めします。
 
@@ -378,7 +378,7 @@ with connection:
 
 ## 非トランザクション一括削除 {#non-transactional-bulk-delete}
 
-> **ノート：**
+> **注記：**
 >
 > v6.1.0 以降、TiDB は[非トランザクション DML ステートメント](/non-transactional-dml.md)をサポートします。この機能は、TiDB v6.1.0 より前のバージョンでは使用できません。
 

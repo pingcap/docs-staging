@@ -9,7 +9,7 @@ TiDB は MySQL と互換性があり、ほとんどの場合、MySQL ステー�
 
 <CustomContent platform="tidb">
 
-SQL を試して、MySQL クエリと TiDB の互換性をテストするには、 [TiDB プレイグラウンド](https://play.tidbcloud.com/?utm_source=docs&#x26;utm_medium=basic-sql-operations)を試してください。最初に TiDB クラスターをデプロイしてから、その中で SQL ステートメントを実行することもできます。
+SQL を試して、MySQL クエリと TiDB の互換性をテストするには、 [TiDB プレイグラウンド](https://play.tidbcloud.com/?utm_source=docs&#x26;utm_medium=basic-sql-operations)を試してください。最初に TiDB クラスターをデプロイしてから、そこで SQL ステートメントを実行することもできます。
 
 </CustomContent>
 
@@ -35,13 +35,11 @@ TiDB のデータベースは、テーブルやインデックスなどのオブ
 
 データベースのリストを表示するには、 `SHOW DATABASES`ステートメントを使用します。
 
-
 ```sql
 SHOW DATABASES;
 ```
 
 `mysql`という名前のデータベースを使用するには、次のステートメントを使用します。
-
 
 ```sql
 USE mysql;
@@ -49,20 +47,17 @@ USE mysql;
 
 データベース内のすべてのテーブルを表示するには、 `SHOW TABLES`ステートメントを使用します。
 
-
 ```sql
 SHOW TABLES FROM mysql;
 ```
 
 データベースを作成するには、 `CREATE DATABASE`ステートメントを使用します。
 
-
 ```sql
 CREATE DATABASE db_name [options];
 ```
 
 `samp_db`という名前のデータベースを作成するには、次のステートメントを使用します。
-
 
 ```sql
 CREATE DATABASE IF NOT EXISTS samp_db;
@@ -72,7 +67,6 @@ CREATE DATABASE IF NOT EXISTS samp_db;
 
 データベースを削除するには、 `DROP DATABASE`ステートメントを使用します。
 
-
 ```sql
 DROP DATABASE samp_db;
 ```
@@ -81,13 +75,11 @@ DROP DATABASE samp_db;
 
 テーブルを作成するには、 `CREATE TABLE`ステートメントを使用します。
 
-
 ```sql
 CREATE TABLE table_name column_name data_type constraint;
 ```
 
 たとえば、番号、名前、誕生日などのフィールドを含む`person`という名前のテーブルを作成するには、次のステートメントを使用します。
-
 
 ```sql
 CREATE TABLE person (
@@ -99,13 +91,11 @@ CREATE TABLE person (
 
 テーブル (DDL) を作成するステートメントを表示するには、 `SHOW CREATE`ステートメントを使用します。
 
-
 ```sql
 SHOW CREATE table person;
 ```
 
 テーブルを削除するには、 `DROP TABLE`ステートメントを使用します。
-
 
 ```sql
 DROP TABLE person;
@@ -115,13 +105,11 @@ DROP TABLE person;
 
 インデックスは、インデックス付き列に対するクエリを高速化するために使用されます。値が一意ではない列のインデックスを作成するには、 `CREATE INDEX`ステートメントを使用します。
 
-
 ```sql
 CREATE INDEX person_id ON person (id);
 ```
 
 または、 `ALTER TABLE`ステートメントを使用します。
-
 
 ```sql
 ALTER TABLE person ADD INDEX person_id (id);
@@ -129,13 +117,11 @@ ALTER TABLE person ADD INDEX person_id (id);
 
 値が一意である列の一意のインデックスを作成するには、 `CREATE UNIQUE INDEX`ステートメントを使用します。
 
-
 ```sql
 CREATE UNIQUE INDEX person_unique_id ON person (id);
 ```
 
 または、 `ALTER TABLE`ステートメントを使用します。
-
 
 ```sql
 ALTER TABLE person ADD UNIQUE person_unique_id (id);
@@ -143,24 +129,21 @@ ALTER TABLE person ADD UNIQUE person_unique_id (id);
 
 テーブル内のすべてのインデックスを表示するには、 `SHOW INDEX`ステートメントを使用します。
 
-
 ```sql
 SHOW INDEX FROM person;
 ```
 
 インデックスを削除するには、 `DROP INDEX`または`ALTER TABLE`ステートメントを使用します。 `DROP INDEX` `ALTER TABLE`にネストできます。
 
-
 ```sql
 DROP INDEX person_id ON person;
 ```
-
 
 ```sql
 ALTER TABLE person DROP INDEX person_unique_id;
 ```
 
-> **ノート：**
+> **注記：**
 >
 > DDL 操作はトランザクションではありません。 DDL 操作を実行するときに`COMMIT`ステートメントを実行する必要はありません。
 
@@ -170,13 +153,11 @@ ALTER TABLE person DROP INDEX person_unique_id;
 
 テーブルにデータを挿入するには、 `INSERT`ステートメントを使用します。
 
-
 ```sql
 INSERT INTO person VALUES(1,'tom','20170912');
 ```
 
 いくつかのフィールドのデータを含むレコードをテーブルに挿入するには、 `INSERT`ステートメントを使用します。
-
 
 ```sql
 INSERT INTO person(id,name) VALUES('2','bob');
@@ -184,19 +165,17 @@ INSERT INTO person(id,name) VALUES('2','bob');
 
 テーブル内のレコードの一部のフィールドを更新するには、 `UPDATE`ステートメントを使用します。
 
-
 ```sql
 UPDATE person SET birthday='20180808' WHERE id=2;
 ```
 
 テーブル内のデータを削除するには、 `DELETE`ステートメントを使用します。
 
-
 ```sql
 DELETE FROM person WHERE id=2;
 ```
 
-> **ノート：**
+> **注記：**
 >
 > `WHERE`句をフィルタとして使用しない`UPDATE`および`DELETE`ステートメントは、テーブル全体に作用します。
 
@@ -206,13 +185,11 @@ DQL は、1 つまたは複数のテーブルから目的のデータ行を取�
 
 テーブル内のデータを表示するには、 `SELECT`ステートメントを使用します。
 
-
 ```sql
 SELECT * FROM person;
 ```
 
 特定の列をクエリするには、 `SELECT`キーワードの後に​​列名を追加します。
-
 
 ```sql
 SELECT name FROM person;
@@ -229,7 +206,6 @@ SELECT name FROM person;
 
 `WHERE`句を使用して、条件に一致するすべてのレコードをフィルターし、結果を返します。
 
-
 ```sql
 SELECT * FROM person where id<5;
 ```
@@ -240,13 +216,11 @@ DCL は通常、ユーザーの作成または削除、およびユーザー権�
 
 ユーザーを作成するには、 `CREATE USER`ステートメントを使用します。次の例では、 `tiuser`という名前のユーザーとパスワード`123456`を作成します。
 
-
 ```sql
 CREATE USER 'tiuser'@'localhost' IDENTIFIED BY '123456';
 ```
 
 `samp_db`データベース内のテーブルを取得する権限を`tiuser`付与するには、次のようにします。
-
 
 ```sql
 GRANT SELECT ON samp_db.* TO 'tiuser'@'localhost';
@@ -254,13 +228,11 @@ GRANT SELECT ON samp_db.* TO 'tiuser'@'localhost';
 
 `tiuser`の権限を確認するには:
 
-
 ```sql
 SHOW GRANTS for tiuser@localhost;
 ```
 
 `tiuser`を削除するには:
-
 
 ```sql
 DROP USER 'tiuser'@'localhost';

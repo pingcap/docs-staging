@@ -7,7 +7,7 @@ summary: Learn how to analyze and tune performance of your TiDB Cloud cluster.
 
 TiDB Cloud は、パフォーマンスを分析するために[遅いクエリ](#slow-query) 、 [ステートメント分析](#statement-analysis) 、 [キービジュアライザー](#key-visualizer) 、および[インデックスインサイト（ベータ版）](#index-insight-beta)を提供します。
 
--   スロー クエリを使用すると、TiDB クラスター内のすべてのスロー クエリを検索して表示し、実行プラン、SQL 実行情報、その他の詳細を表示して、各スロー クエリのボトルネックを調査できます。
+-   スロー クエリを使用すると、TiDB クラスター内のすべてのスロー クエリを検索して表示し、実行プラン、SQL 実行情報、およびその他の詳細を表示して、各スロー クエリのボトルネックを調査できます。
 
 -   ステートメント分析を使用すると、ページ上の SQL 実行を直接観察し、システム テーブルをクエリせずにパフォーマンスの問題を簡単に特定できます。
 
@@ -15,7 +15,7 @@ TiDB Cloud は、パフォーマンスを分析するために[遅いクエリ](
 
 -   Index Insight は、有意義で実用的なインデックスの推奨事項を提供します。
 
-> **ノート：**
+> **注記：**
 >
 > 現在、 **Key Visualizer**と**Index Insight (ベータ版)**は[TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless)のクラスターでは使用できません。
 
@@ -55,7 +55,7 @@ TiDB Cloud は、パフォーマンスを分析するために[遅いクエリ](
 
 ## キービジュアライザー {#key-visualizer}
 
-> **ノート：**
+> **注記：**
 >
 > Key Visualizer は[TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターでのみ使用できます。
 
@@ -73,7 +73,7 @@ TiDB Cloud は、パフォーマンスを分析するために[遅いクエリ](
 
 TiDB Cloudの Index Insight 機能は、インデックスを効果的に利用していない遅いクエリに対して推奨インデックスを提供することで、クエリのパフォーマンスを最適化する強力な機能を提供します。
 
-> **ノート：**
+> **注記：**
 >
 > Index Insight は現在ベータ版であり、 [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターでのみ使用できます。
 

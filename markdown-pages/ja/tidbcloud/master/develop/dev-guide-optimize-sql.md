@@ -15,7 +15,7 @@ summary: Introduces TiDB's SQL performance tuning scheme and analysis approach.
 tiup demo bookshop prepare --host 127.0.0.1 --port 4000 --books 1000000
 ```
 
-または、 [TiDB Cloudのインポート機能を使用する](/develop/dev-guide-bookshop-schema-design.md#method-2-via-tidb-cloud-import)を選択して、事前に準備されたサンプル データをインポートします。
+または、 [TiDB Cloudのインポート機能を使用する](/develop/dev-guide-bookshop-schema-design.md#method-2-via-tidb-cloud-import)を使用して、事前に準備されたサンプル データをインポートします。
 
 ## 問題: フルテーブルスキャン {#issue-full-table-scan}
 
@@ -41,7 +41,7 @@ SELECT * FROM books WHERE title = 'Marian Yost';
 Time: 0.582s
 ```
 
-このクエリが遅い理由を理解するには、 `EXPLAIN`を使用して実行計画を確認します。
+このクエリが遅い理由を理解するには、 `EXPLAIN`使用して実行計画を確認します。
 
 ```sql
 EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';

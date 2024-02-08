@@ -5,7 +5,7 @@ summary: An overview of the usage of ALTER TABLE for the TiDB database.
 
 # 他の机 {#alter-table}
 
-このステートメントは、新しいテーブル構造に適合するように既存のテーブルを変更します。ステートメント`ALTER TABLE`は次の目的で使用できます。
+このステートメントは、新しいテーブル構造に適合するように既存のテーブルを変更します。ステートメント`ALTER TABLE`次の目的で使用できます。
 
 -   [`ADD`](/sql-statements/sql-statement-add-index.md) 、 [`DROP`](/sql-statements/sql-statement-drop-index.md) 、または[`RENAME`](/sql-statements/sql-statement-rename-index.md)インデックス
 -   [`ADD`](/sql-statements/sql-statement-add-column.md) 、 [`DROP`](/sql-statements/sql-statement-drop-column.md) 、 [`MODIFY`](/sql-statements/sql-statement-modify-column.md)または[`CHANGE`](/sql-statements/sql-statement-change-column.md)列
@@ -65,7 +65,6 @@ PlacementPolicyOption ::=
 
 いくつかの初期データを含むテーブルを作成します。
 
-
 ```sql
 CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
 INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
@@ -79,7 +78,6 @@ Records: 5  Duplicates: 0  Warnings: 0
 ```
 
 次のクエリでは、列 c1 にインデックスが作成されていないため、テーブル全体のスキャンが必要です。
-
 
 ```sql
 EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
@@ -97,7 +95,6 @@ EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 ```
 
 ステートメント[`ALTER TABLE .. ADD INDEX`](/sql-statements/sql-statement-add-index.md)は、テーブル t1 にインデックスを追加するために使用できます。 `EXPLAIN` 、元のクエリがより効率的なインデックス範囲スキャンを使用していることを確認します。
-
 
 ```sql
 ALTER TABLE t1 ADD INDEX (c1);
@@ -118,7 +115,6 @@ Query OK, 0 rows affected (0.30 sec)
 
 TiDB は、DDL 変更で`ALTER`のアルゴリズムが使用されることをアサートする機能をサポートしています。これは単なるアサーションであり、テーブルの変更に使用される実際のアルゴリズムは変更されません。これは、クラスターのピーク時間中にのみ DDL の即時変更を許可したい場合に便利です。
 
-
 ```sql
 ALTER TABLE t1 DROP INDEX c1, ALGORITHM=INSTANT;
 ```
@@ -129,7 +125,6 @@ Query OK, 0 rows affected (0.24 sec)
 
 `INPLACE`アルゴリズムを必要とする操作で`ALGORITHM=INSTANT`アサーションを使用すると、ステートメント エラーが発生します。
 
-
 ```sql
 ALTER TABLE t1 ADD INDEX (c1), ALGORITHM=INSTANT;
 ```
@@ -139,7 +134,6 @@ ERROR 1846 (0A000): ALGORITHM=INSTANT is not supported. Reason: Cannot alter tab
 ```
 
 ただし、 `INPLACE`操作に`ALGORITHM=COPY`アサーションを使用すると、エラーではなく警告が生成されます。これは、TiDB がアサーションを*このアルゴリズム以上のもの*として解釈するためです。 TiDB が使用するアルゴリズムは MySQL とは異なる可能性があるため、この動作の違いは MySQL の互換性にとって役立ちます。
-
 
 ```sql
 ALTER TABLE t1 ADD INDEX (c1), ALGORITHM=COPY;

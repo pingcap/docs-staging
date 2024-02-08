@@ -91,4 +91,4 @@ TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidb
 
 ## 次は何ですか {#what-s-next}
 
-クラスターがTiDB Cloud上に作成されたら、 [TiDB 専用クラスタに接続する](/tidb-cloud/connect-via-standard-connection-serverless.md)で提供される方法でクラスターに接続できます。
+クラスターがTiDB Cloud上に作成されたら、 [TiDB 専用クラスタに接続する](/tidb-cloud/connect-via-standard-connection-serverless.md)で提供される方法を介してクラスターに接続できます。

@@ -49,9 +49,7 @@ CREATE TABLE `bookshop`.`users` (
 
 カラム定義は通常、次の形式を取ります。
 
-```
-{column_name} {data_type} {column_qualification}
-```
+    {column_name} {data_type} {column_qualification}
 
 **パラメータの説明**
 
@@ -92,7 +90,7 @@ CREATE TABLE `bookshop`.`books` (
 
 このテーブルには、 `users`テーブルよりも多くのデータ型が含まれています。
 
--   [整数](/data-type-numeric.md#integer-types) : ディスクの使用量が多すぎたり、パフォーマンスへの影響 (型範囲が大きすぎる) やデータ オーバーフロー (データ型範囲が小さすぎる) を避けるために、適切なサイズの型を使用することをお勧めします。
+-   [整数](/data-type-numeric.md#integer-types) : ディスクの使用量が多すぎたり、パフォーマンスへの影響 (型の範囲が大きすぎる) やデータのオーバーフロー (データ型の範囲が小さすぎる) を避けるために、適切なサイズの型を使用することをお勧めします。
 -   [日付時刻](/data-type-date-and-time.md) : **datetime**型を使用して時刻値を保存できます。
 -   [列挙型](/data-type-string.md#enum-type) : enum 型は、限られた値の選択を保存するために使用できます。
 
@@ -100,7 +98,7 @@ CREATE TABLE `bookshop`.`books` (
 
 [主キー](/constraints.md#primary-key)は、値がテーブル内の行を一意に識別するテーブル内の列または列のセットです。
 
-> **ノート：**
+> **注記：**
 >
 > TiDB の**主キー**のデフォルト定義は、 [InnoDB](https://dev.mysql.com/doc/refman/8.0/en/innodb-storage-engine.html) (MySQL の共通storageエンジン) とは異なります。
 >
@@ -147,9 +145,9 @@ TiDB は v5.0 以降[クラスター化インデックス](/clustered-indexes.md
 
 [主キーを選択](#select-primary-key)で説明したように、TiDB では**クラスター化インデックスは**キーワード`CLUSTERED`と`NONCLUSTERED`を使用して制御されます。
 
-> **ノート：**
+> **注記：**
 >
-> TiDB は、テーブルの`PRIMARY KEY`によるクラスタリングのみをサポートします。クラスター化インデックスが有効になっている場合、 *5*と*クラスター化インデックス*という用語は同じ意味で使用される`PRIMARY KEY`があります。 `PRIMARY KEY`は制約 (論理プロパティ) を指し、クラスター化インデックスはデータの格納方法の物理的な実装を示します。
+> TiDB は、テーブルの`PRIMARY KEY`によるクラスタリングのみをサポートします。クラスター化インデックスが有効になっている場合、 *5*と*クラスター化インデックス*`PRIMARY KEY`用語は同じ意味で使用される場合があります。 `PRIMARY KEY`は制約 (論理プロパティ) を指し、クラスター化インデックスはデータの格納方法の物理的な実装を示します。
 
 次の例では、 [クラスター化インデックスを選択するためのガイドライン](#guidelines-to-follow-when-selecting-clustered-index)に続いて、 `book` x `users`の`ratings`を表す`books`と`users`を関連付けたテーブルを作成します。この例では、テーブルを作成し、 `book_id`と`user_id`を使用して複合主キーを構築し、その**主キー**に**クラスター化インデックス**を作成します。
 
@@ -231,7 +229,7 @@ CREATE TABLE `bookshop`.`users` (
 
 <CustomContent platform="tidb">
 
-> **ノート：**
+> **注記：**
 >
 > このガイドに記載されている手順は、テスト環境でのクイック スタート***のみ***を目的としています。本番環境については、 [HTAP を探索する](/explore-htap.md)を参照してください。
 
@@ -239,7 +237,7 @@ CREATE TABLE `bookshop`.`users` (
 
 <CustomContent platform="tidb-cloud">
 
-> **ノート：**
+> **注記：**
 >
 > このガイドに記載されている手順は、クイックスタート***のみ***を目的としています。詳細な手順については、 [TiFlashで HTAPクラスタを使用する](/tiflash/tiflash-overview.md)を参照してください。
 
@@ -253,7 +251,7 @@ CREATE TABLE `bookshop`.`users` (
 
 <CustomContent platform="tidb">
 
-現在、TiDB は、 **TiFlash**と**TiSpark という**2 つのデータ分析エンジンをサポートしています。大規模データ シナリオ (100 T) の場合、 **TiFlash MPP が**HTAP の主要なソリューションとして推奨され、 **TiSpark が**補完的なソリューションとして推奨されます。
+現在、TiDB は、 **TiFlash**と**TiSpark という**2 つのデータ分析エンジンをサポートしています。大規模データ シナリオ (100 T) の場合、 **TiFlash MPP が**HTAP の主要ソリューションとして推奨され、 **TiSpark が**補完ソリューションとして推奨されます。
 
 TiDB HTAP機能の詳細については、ドキュメント[TiDB HTAPのクイック スタート ガイド](/quick-start-with-htap.md)および[HTAP を探索する](/explore-htap.md)を参照してください。
 
@@ -288,7 +286,7 @@ ALTER TABLE {table_name} SET TIFLASH REPLICA {count};
 ALTER TABLE `bookshop`.`ratings` SET TIFLASH REPLICA 1;
 ```
 
-> **ノート：**
+> **注記：**
 >
 > クラスターに**TiFlash**ノードが含まれていない場合、この SQL ステートメントはエラー`1105 - the tiflash replica count: 1 should be less than the total tiflash server count: 0`を報告します。 [TiDB サーバーレスクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-serverless-cluster)を使用すると、 **TiFlash**を含む TiDB サーバーレス クラスターを作成できます。
 
@@ -343,18 +341,16 @@ SHOW TABLES IN `bookshop`;
 
 実行結果:
 
-```
-+--------------------+
-| Tables_in_bookshop |
-+--------------------+
-| authors            |
-| book_authors       |
-| books              |
-| orders             |
-| ratings            |
-| users              |
-+--------------------+
-```
+    +--------------------+
+    | Tables_in_bookshop |
+    +--------------------+
+    | authors            |
+    | book_authors       |
+    | books              |
+    | orders             |
+    | ratings            |
+    | users              |
+    +--------------------+
 
 ## テーブルを作成するときに従うべきガイドライン {#guidelines-to-follow-when-creating-a-table}
 
@@ -383,7 +379,7 @@ SHOW TABLES IN `bookshop`;
 -   複雑なデータ型を使用することはお勧めできません。
 -   結合するフィールドについては、データ型が一貫していることを確認し、暗黙的な変換を避けてください。
 -   単一の単調データ列に**主キー**を定義することは避けてください。単一の単調データ列 (たとえば、 `AUTO_INCREMENT`属性を持つ列) を使用して**主キー**を定義すると、書き込みパフォーマンスに影響を与える可能性があります。可能であれば、 `AUTO_INCREMENT`の代わりに`AUTO_RANDOM`使用してください。これにより、主キーの継続的および増分属性が破棄されます。
--   書き込み集中型のシナリオで単一の単調データ列にインデックスを作成する必要がある場合は、この単調データ列を**主キー**として定義する代わりに、 `AUTO_RANDOM`使用してそのテーブルの**主キー**を作成するか、 [`SHARD_ROW_ID_BITS`](/shard-row-id-bits.md)と[`PRE_SPLIT_REGIONS`](/sql-statements/sql-statement-split-region.md#pre_split_regions)を使用できます。シャードへ`_tidb_rowid` 。
+-   書き込みが集中するシナリオで単一の単調データ列にインデックスを作成する必要がある場合は、この単調データ列を**主キー**として定義する代わりに、 `AUTO_RANDOM`使用してそのテーブルの**主キー**を作成するか、 [`SHARD_ROW_ID_BITS`](/shard-row-id-bits.md)と[`PRE_SPLIT_REGIONS`](/sql-statements/sql-statement-split-region.md#pre_split_regions)を使用できます。シャードへ`_tidb_rowid` 。
 
 ### クラスター化インデックスを選択する際に従うべきガイドライン {#guidelines-to-follow-when-selecting-clustered-index}
 

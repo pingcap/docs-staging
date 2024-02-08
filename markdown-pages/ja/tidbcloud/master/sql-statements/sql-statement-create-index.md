@@ -107,13 +107,11 @@ Query OK, 0 rows affected (0.31 sec)
 
 たとえば、 `lower(col1)`に基づいてインデックスを作成する場合は、次の SQL ステートメントを実行します。
 
-
 ```sql
 CREATE INDEX idx1 ON t1 ((lower(col1)));
 ```
 
 または、次の同等のステートメントを実行することもできます。
-
 
 ```sql
 ALTER TABLE t1 ADD INDEX idx1((lower(col1)));
@@ -121,17 +119,15 @@ ALTER TABLE t1 ADD INDEX idx1((lower(col1)));
 
 テーブルの作成時に式インデックスを指定することもできます。
 
-
 ```sql
 CREATE TABLE t1(col1 char(10), col2 char(10), index((lower(col1))));
 ```
 
-> **ノート：**
+> **注記：**
 >
 > 式インデックス内の式は、 `(`と`)`で囲む必要があります。それ以外の場合は、構文エラーが報告されます。
 
 式インデックスは、通常のインデックスを削除するのと同じ方法で削除できます。
-
 
 ```sql
 DROP INDEX idx1 ON t1;
@@ -139,9 +135,7 @@ DROP INDEX idx1 ON t1;
 
 表現インデックスにはさまざまな種類の表現が含まれます。正確性を確保するために、完全にテストされた一部の関数のみが式インデックスの作成に使用できます。これは、本番環境の式ではこれらの関数のみが許可されることを意味します。これらの関数は、 `tidb_allow_function_for_expression_index`変数をクエリすることで取得できます。現在、許可されている関数は次のとおりです。
 
-```
-json_array, json_array_append, json_array_insert, json_contains, json_contains_path, json_depth, json_extract, json_insert, json_keys, json_length, json_merge_patch, json_merge_preserve, json_object, json_pretty, json_quote, json_remove, json_replace, json_search, json_set, json_storage_size, json_type, json_unquote, json_valid, lower, md5, reverse, tidb_shard, upper, vitess_hash
-```
+    json_array, json_array_append, json_array_insert, json_contains, json_contains_path, json_depth, json_extract, json_insert, json_keys, json_length, json_merge_patch, json_merge_preserve, json_object, json_pretty, json_quote, json_remove, json_replace, json_search, json_set, json_storage_size, json_type, json_unquote, json_valid, lower, md5, reverse, tidb_shard, upper, vitess_hash
 
 上記のリストに含まれていない関数については、完全にはテストされて関数ず、実験的とみなされるため、本番環境では推奨されません。演算子、 `cast` 、 `case when`などの他の式も実験的ものとみなされ、本番では推奨されません。
 
@@ -149,14 +143,13 @@ json_array, json_array_append, json_array_insert, json_contains, json_contains_p
 
 これらの式を引き続き使用したい場合は、 [TiDB 設定ファイル](/tidb-configuration-file.md#allow-expression-index-new-in-v400)で次の構成を行うことができます。
 
-
 ```sql
 allow-expression-index = true
 ```
 
 </CustomContent>
 
-> **ノート：**
+> **注記：**
 >
 > 式インデックスは主キーに作成できません。
 >
@@ -182,13 +175,11 @@ allow-expression-index = true
 
 クエリ ステートメントの結果が同じ式である場合、式インデックスが適用されます。次のステートメントを例として取り上げます。
 
-
 ```sql
 SELECT lower(col1) FROM t;
 ```
 
 フィルタ条件に同じ式が含まれる場合、式インデックスが適用されます。次のステートメントを例として取り上げます。
-
 
 ```sql
 SELECT * FROM t WHERE lower(col1) = "a";
@@ -201,13 +192,11 @@ SELECT * FROM t WHERE lower(col1) > "b" OR lower(col1) < "a";
 
 クエリが同じ式で並べ替えられる場合、式インデックスが適用されます。次のステートメントを例として取り上げます。
 
-
 ```sql
 SELECT * FROM t ORDER BY lower(col1);
 ```
 
 同じ式が集計 ( `GROUP BY` )関数に含まれている場合、式インデックスが適用されます。次のステートメントを例として取り上げます。
-
 
 ```sql
 SELECT max(lower(col1)) FROM t;

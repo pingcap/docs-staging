@@ -18,10 +18,11 @@ TiDB は MySQL と互換性のあるデータベースであり、 [Visual Studi
 
 このチュートリアルを完了するには、次のものが必要です。
 
--   [Visual Studio コード](https://code.visualstudio.com/#alt-downloads) **1.72.0**以降のバージョン。
+-   [Visual Studioコード](https://code.visualstudio.com/#alt-downloads) **1.72.0**以降のバージョン。
 -   Visual Studio Code の[SQLツールMySQL/MariaDB/TiDB](https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools-driver-mysql)拡張機能。インストールするには、次のいずれかの方法を使用できます。
     -   <a href="vscode:extension/mtxr.sqltools-driver-mysql">このリンク</a>をクリックして VS Code を起動し、拡張機能を直接インストールします。
     -   [VS コード マーケットプレイス](https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools-driver-mysql)に移動し、 **「インストール」を**クリックします。
+    -   VS Code の**[拡張機能]**タブで`mtxr.sqltools-driver-mysql`を検索して**SQLTools MySQL/MariaDB/TiDB**拡張機能を取得し、 **[インストール]**をクリックします。
 -   TiDB クラスター。
 
 <CustomContent platform="tidb">
@@ -196,10 +197,20 @@ TiDB は MySQL と互換性のあるデータベースであり、 [Visual Studi
 ## 次のステップ {#next-steps}
 
 -   Visual Studio Code の詳しい使い方を[Visual Studio Code のドキュメント](https://code.visualstudio.com/docs)から学びましょう。
--   VS Code SQLTools 拡張機能の使用法については、SQLTools の[文書](https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools)と[GitHub リポジトリ](https://github.com/mtxr/vscode-sqltools)から学びましょう。
--   TiDB アプリケーション開発[単一テーブルの読み取り](/develop/dev-guide-get-data-from-single-table.md)ベスト プラクティスについて[取引](/develop/dev-guide-transaction-overview.md) 、 [開発者ガイド](/develop/dev-guide-overview.md)の章 ( [データの挿入](/develop/dev-guide-insert-data.md)など) [データを更新する](/develop/dev-guide-update-data.md)参照[データの削除](/develop/dev-guide-delete-data.md) [SQLパフォーマンスの最適化](/develop/dev-guide-optimize-sql-overview.md)ください。
+-   VS Code SQLTools 拡張機能の使用法については、SQLTools の[文書](https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools)と[GitHubリポジトリ](https://github.com/mtxr/vscode-sqltools)から学びましょう。
+-   TiDB アプリケーション開発の[SQLパフォーマンスの最適化](/develop/dev-guide-optimize-sql-overview.md)プラクティスについて[取引](/develop/dev-guide-transaction-overview.md) 、 [開発者ガイド](/develop/dev-guide-overview.md)の章 ( [データの挿入](/develop/dev-guide-insert-data.md)など) [データを更新する](/develop/dev-guide-update-data.md)参照[データの削除](/develop/dev-guide-delete-data.md) [単一テーブルの読み取り](/develop/dev-guide-get-data-from-single-table.md)ください。
 -   プロフェッショナルとして[TiDB 開発者コース](https://www.pingcap.com/education/)を学び、試験合格後に[TiDB 認定](https://www.pingcap.com/education/certification/)獲得します。
 
 ## 助けが必要？ {#need-help}
 
-[不和](https://discord.gg/vYU9h56kAX)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+<CustomContent platform="tidb">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](/support.md)について質問してください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+
+</CustomContent>

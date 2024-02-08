@@ -79,7 +79,9 @@ SQL スクリプトの実行が終了したら、Oracle のデータを確認し
 
 4.  右上隅にある**[接続]**をクリックします。
 
-5.  **「パスワードの生成」**をクリックしてパスワードを生成し、生成されたパスワードをコピーします。
+5.  **「パスワードの作成」**をクリックしてパスワードを生成し、生成されたパスワードをコピーします。
+
+6.  希望の接続方法とオペレーティング システムを選択し、表示された接続文字列を使用してクラスターに接続します。
 
 ## ステップ 5. AWS DMS レプリケーションインスタンスを作成する {#step-5-create-an-aws-dms-replication-instance}
 
@@ -88,10 +90,6 @@ SQL スクリプトの実行が終了したら、Oracle のデータを確認し
 2.  VPC 内に`dms.t3.large`を使用して AWS DMS レプリケーション インスタンスを作成します。
 
     ![Create AWS DMS Instance](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-8.png)
-
-> **注記：**
->
-> TiDB サーバーレスで動作する AWS DMS レプリケーション インスタンスを作成する詳細な手順については、 [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)を参照してください。
 
 ## ステップ 6. DMS エンドポイントを作成する {#step-6-create-dms-endpoints}
 
@@ -106,10 +104,6 @@ SQL スクリプトの実行が終了したら、Oracle のデータを確認し
     次のスクリーンショットは、ターゲット エンドポイントの構成を示しています。
 
     ![Create AWS DMS Target endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-10.png)
-
-> **注記：**
->
-> TiDB サーバーレス DMS エンドポイントを作成する詳細な手順については、 [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)を参照してください。
 
 ## ステップ 7. スキーマを移行する {#step-7-migrate-the-schema}
 
@@ -154,4 +148,3 @@ AWS DMS を使用すると、このドキュメントの例に従って、アッ
 ## こちらも参照 {#see-also}
 
 -   [AWS DMS を使用した MySQL 互換データベースからの移行](/tidb-cloud/migrate-from-mysql-using-aws-dms.md)
--   [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)

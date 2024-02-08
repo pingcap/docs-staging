@@ -11,7 +11,7 @@ summary: Learn how to migrate incremental data from MySQL-compatible databases h
 
 ## 制限事項 {#limitations}
 
-> **注**:
+> **注記**：
 >
 > このセクションには、増分データ移行に関する制限のみが含まれています。一般的な制限事項も読むことをお勧めします。 [制限事項](/tidb-cloud/migrate-from-mysql-using-data-migration.md#limitations)を参照してください。
 
@@ -36,7 +36,7 @@ summary: Learn how to migrate incremental data from MySQL-compatible databases h
 
 ## 前提条件 {#prerequisites}
 
-> **注**:
+> **注記**：
 >
 > このセクションには、増分データ移行に関する前提条件のみが含まれています。 [一般的な前提条件](/tidb-cloud/migrate-from-mysql-using-data-migration.md#prerequisites)も併せて読むことをお勧めします。
 
@@ -71,7 +71,7 @@ SHOW VARIABLES LIKE 'gtid_mode';
 
 ### セルフホスト型 MySQL インスタンスの場合 {#for-a-self-hosted-mysql-instance}
 
-> **注**:
+> **注記**：
 >
 > 正確な手順とコマンドは、MySQL のバージョンと構成によって異なる場合があります。このアクションを実行する前に、GTID を有効にすることによる影響を理解し、非運用環境で GTID を適切にテストおよび検証していることを確認してください。
 

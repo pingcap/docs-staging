@@ -6,7 +6,7 @@ category: intro
 
 # TiDB Cloudの紹介 {#tidb-cloud-introduction}
 
-[TiDB Cloud](https://www.pingcap.com/tidb-cloud/)は、オープンソースのハイブリッド トランザクションおよび分析処理 (HTAP) データベースである[TiDB](https://docs.pingcap.com/tidb/stable/overview)クラウドに提供する、フルマネージドの Database-as-a-Service (DBaaS) です。 TiDB Cloudは、データベースの導入と管理を簡単に行う方法を提供し、データベースの複雑さではなく、アプリケーションに集中できるようにします。 TiDB Cloudクラスターを作成して、Google Cloud およびアマゾン ウェブ サービス (AWS) 上でミッションクリティカルなアプリケーションを迅速に構築できます。
+[TiDB Cloud](https://www.pingcap.com/tidb-cloud/)は、オープンソースのハイブリッド トランザクションおよび分析処理 (HTAP) データベースである[TiDB](https://docs.pingcap.com/tidb/stable/overview)クラウドに提供する、フルマネージドの Database-as-a-Service (DBaaS) です。 TiDB Cloudは、データベースの導入と管理を簡単に行う方法を提供し、データベースの複雑さではなく、アプリケーションに集中できるようにします。 TiDB Cloudクラスターを作成して、Google Cloud およびアマゾン ウェブ サービス (AWS) 上にミッションクリティカルなアプリケーションを迅速に構築できます。
 
 ![TiDB Cloud Overview](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-overview.png)
 
@@ -34,7 +34,7 @@ TiDB Cloudを使用すると、次の主要な機能を利用できます。
 
 -   **高可用性と信頼性**
 
-    当然のことながら、設計により可用性が高くなります。複数のアベイラビリティーゾーンにわたるデータのレプリケーション、毎日のバックアップ、および自動フェイルオーバーにより、ハードウェア障害、ネットワークの分断、またはデータセンターの損失に関係なく、ビジネスの継続性が確保されます。
+    当然のことながら、設計により可用性が高くなります。複数のアベイラビリティーゾーンにわたるデータのレプリケーション、毎日のバックアップ、および自動フェイルオーバーにより、ハードウェア障害、ネットワークの分断、またはデータセンターの損失に関係なく、ビジネスの継続性が保証されます。
 
 -   **リアルタイム分析**
 

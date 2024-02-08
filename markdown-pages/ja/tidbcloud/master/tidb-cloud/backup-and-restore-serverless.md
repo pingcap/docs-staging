@@ -1,7 +1,6 @@
 ---
 title: Back Up and Restore TiDB Serverless Data
 summary: Learn how to back up and restore your TiDB Serverless cluster.
-aliases: ['/tidbcloud/restore-deleted-tidb-cluster']
 ---
 
 # TiDB サーバーレス データのバックアップと復元 {#back-up-and-restore-tidb-serverless-data}
@@ -49,7 +48,7 @@ aliases: ['/tidbcloud/restore-deleted-tidb-cluster']
 
 2.  削除するバックアップ ファイルの**[削除]**をクリックします。
 
-## 戻す {#restore}
+## 復元する {#restore}
 
 TiDB サーバーレスはインプレース復元のみをサポートします。 TiDB サーバーレス クラスターをバックアップから復元するには、次の手順に従います。
 
@@ -72,7 +71,7 @@ TiDB サーバーレスはインプレース復元のみをサポートします
 
     この機能を使用すると、過去 90 日以内の任意の時点からクラスターを特定の状態に復元できます。
 
-    > **ノート：**
+    > **注記：**
     >
     > **ポイントインタイム復元**機能は現在ベータ版です。
 

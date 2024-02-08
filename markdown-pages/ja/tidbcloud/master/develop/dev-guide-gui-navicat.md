@@ -5,12 +5,12 @@ summary: Learn how to connect to TiDB using Navicat.
 
 # Navicat を使用して TiDB に接続する {#connect-to-tidb-with-navicat}
 
-TiDB は MySQL 互換データベースであり、 [ナビキャット](https://www.navicat.com)はデータベース ユーザー向けの GUI ツール セットです。このチュートリアルでは、 [MySQL 用 Navicat](https://www.navicat.com/en/products/navicat-for-mysql)ツールを使用して TiDB に接続します。
+TiDB は MySQL と互換性のあるデータベースであり、 [ナビキャット](https://www.navicat.com)はデータベース ユーザー向けの GUI ツール セットです。このチュートリアルでは、 [MySQL 用 Navicat](https://www.navicat.com/en/products/navicat-for-mysql)ツールを使用して TiDB に接続します。
 
 > **警告：**
 >
 > -   Navicat は MySQL と互換性があるため、Navicat を使用して TiDB に接続できますが、Navicat は TiDB を完全にはサポートしません。 TiDB を MySQL として扱うため、使用中に問題が発生する可能性があります。 [Navicat ユーザー管理の互換性](https://github.com/pingcap/tidb/issues/45154)に関する既知の問題があります。 Navicat と TiDB の間の互換性の問題の詳細については、「 [TiDB GitHub の問題ページ](https://github.com/pingcap/tidb/issues?q=is%3Aissue+navicat+is%3Aopen)を参照してください。
-> -   TiDB を正式にサポートする他の GUI ツール ( [データグリップ](/develop/dev-guide-gui-datagrip.md) 、 [Dビーバー](/develop/dev-guide-gui-dbeaver.md) 、 [VS コードの SQL ツール](/develop/dev-guide-gui-vscode-sqltools.md)など) を使用することをお勧めします。 TiDB で完全にサポートされている GUI ツールの完全なリストについては、 [TiDB がサポートするサードパーティ ツール](/develop/dev-guide-third-party-support.md#gui)を参照してください。
+> -   TiDB を正式にサポートする他の GUI ツール ( [データグリップ](/develop/dev-guide-gui-datagrip.md) 、 [Dビーバー](/develop/dev-guide-gui-dbeaver.md) 、 [VS コード SQL ツール](/develop/dev-guide-gui-vscode-sqltools.md)など) を使用することをお勧めします。 TiDB で完全にサポートされている GUI ツールの完全なリストについては、 [TiDB がサポートするサードパーティ ツール](/develop/dev-guide-third-party-support.md#gui)を参照してください。
 
 このチュートリアルでは、Navicat を使用して TiDB クラスターに接続する方法を学習できます。
 
@@ -109,9 +109,9 @@ TiDB は MySQL 互換データベースであり、 [ナビキャット](https:/
 6.  **[新しい接続 (MySQL)]**ダイアログで、次の接続パラメータを構成します。
 
     -   **接続名**: この接続に意味のある名前を付けます。
-    -   **ホスト**: TiDB Cloud接続ダイアログから`host`パラメータを入力します。
-    -   **ポート**: TiDB Cloud接続ダイアログから`port`パラメータを入力します。
-    -   **ユーザー名**: TiDB Cloud接続ダイアログから`user`パラメータを入力します。
+    -   **ホスト**: TiDB Cloud接続ダイアログから`HOST`パラメータを入力します。
+    -   **ポート**: TiDB Cloud接続ダイアログから`PORT`パラメータを入力します。
+    -   **ユーザー名**: TiDB Cloud接続ダイアログから`USERNAME`パラメータを入力します。
     -   **パスワード**: TiDB 専用クラスターのパスワードを入力します。
 
     ![Navicat: configure connection general panel for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/navicat-connection-config-dedicated-general.png)
@@ -150,7 +150,7 @@ TiDB は MySQL 互換データベースであり、 [ナビキャット](https:/
 
 ## 次のステップ {#next-steps}
 
--   TiDB アプリケーション開発[単一テーブルの読み取り](/develop/dev-guide-get-data-from-single-table.md)ベスト プラクティスについて[取引](/develop/dev-guide-transaction-overview.md) 、 [開発者ガイド](/develop/dev-guide-overview.md)の章 ( [データの挿入](/develop/dev-guide-insert-data.md)など) [データを更新する](/develop/dev-guide-update-data.md)参照[データの削除](/develop/dev-guide-delete-data.md) [SQLパフォーマンスの最適化](/develop/dev-guide-optimize-sql-overview.md)ください。
+-   TiDB アプリケーション開発の[SQLパフォーマンスの最適化](/develop/dev-guide-optimize-sql-overview.md)プラクティスについて[取引](/develop/dev-guide-transaction-overview.md) 、 [開発者ガイド](/develop/dev-guide-overview.md)の章 ( [データの挿入](/develop/dev-guide-insert-data.md)など) [データを更新する](/develop/dev-guide-update-data.md)参照[データの削除](/develop/dev-guide-delete-data.md) [単一テーブルの読み取り](/develop/dev-guide-get-data-from-single-table.md)ください。
 -   プロフェッショナルとして[TiDB 開発者コース](https://www.pingcap.com/education/)を学び、試験合格後に[TiDB 認定](https://www.pingcap.com/education/certification/)獲得します。
 
 ## 助けが必要？ {#need-help}

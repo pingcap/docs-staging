@@ -11,14 +11,13 @@ summary: This document describes the use and implementation of Follower Read.
 
 Follower Read機能とは、リージョンのフォロワー レプリカを使用して、強力な一貫性のある読み取りを前提として読み取りリクエストを処理することを指します。この機能により、TiDB クラスターのスループットが向上し、リーダーの負荷が軽減されます。これには、リージョン内のリーダー レプリカからフォロワー レプリカに TiKV 読み取り負荷をオフロードする一連の負荷分散メカニズムが含まれています。 TiKV のFollower Read実装は、ユーザーに強力な一貫性のある読み取りを提供します。
 
-> **ノート：**
+> **注記：**
 >
 > 強力な一貫性のある読み取りを実現するには、現在、フォロワー ノードはリーダー ノード (つまり`ReadIndex` ) から現在の実行の進行状況をリクエストする必要があり、これにより追加のネットワーク リクエストのオーバーヘッドが発生します。したがって、Follower Readの主な利点は、クラスター内で読み取りリクエストを書き込みリクエストから分離し、全体の読み取りスループットを向上させることです。
 
 ## 使用法 {#usage}
 
 TiDB のFollower Read機能を有効にするには、変数`tidb_replica_read`の値を次のように変更します。
-
 
 ```sql
 set [session | global] tidb_replica_read = '<target value>';
@@ -42,16 +41,16 @@ set [session | global] tidb_replica_read = '<target value>';
 
 -   `tidb_replica_read`の値を`closest-adaptive`に設定した場合:
 
-    -   読み取りリクエストの推定結果が値[`tidb_adaptive_closest_read_threshold`](/system-variables.md#tidb_adaptive_closest_read_threshold-new-in-v630)以上の場合、TiDB は読み取り操作のために同じアベイラビリティ ゾーン内のレプリカを選択することを優先します。アベイラビリティ ゾーン間での読み取りトラフィックの不均衡な分散を回避するために、TiDB はすべてのオンライン TiDB および TiKV ノードのアベイラビリティ ゾーンの分散を動的に検出します。各アベイラビリティーゾーンでは、構成が有効になる TiDB ノードの数は制限されており、これは常に TiDB ノードが最も少ないアベイラビリティーゾーン内の TiDB ノードの数と同じであり、他の TiDB ノードはリーダーレプリカから`closest-adaptive`に読み取られます。 。たとえば、TiDB ノードが 3 つのアベイラビリティ ゾーン (A、B、および C) に分散されており、A と B にはそれぞれ 3 つの TiDB ノードが含まれ、C には 2 つの TiDB ノードのみが含まれる場合、 `closest-adaptive`構成を持つ TiDB ノードの数が各ゾーンで有効になります。可用性ゾーンは 2 であり、A および B の各可用性ゾーンにある他の TiDB ノードは、読み取り操作用のリーダー レプリカを自動的に選択します。
+    -   読み取りリクエストの推定結果が値[`tidb_adaptive_closest_read_threshold`](/system-variables.md#tidb_adaptive_closest_read_threshold-new-in-v630)以上の場合、TiDB は読み取り操作のために同じアベイラビリティ ゾーン内のレプリカを選択することを優先します。アベイラビリティ ゾーン間での読み取りトラフィックの不均衡な分散を回避するために、TiDB はすべてのオンライン TiDB および TiKV ノードのアベイラビリティ ゾーンの分散を動的に検出します。各アベイラビリティーゾーンでは、 `closest-adaptive`が有効になる TiDB ノードの数は制限されており、これは常に TiDB ノードが最も少ないアベイラビリティーゾーン内の TiDB ノードの数と同じであり、他の TiDB ノードはリーダーレプリカから自動的に読み取られます。 。たとえば、TiDB ノードが 3 つのアベイラビリティ ゾーン (A、B、および C) に分散されており、A と B にはそれぞれ 3 つの TiDB ノードが含まれ、C には 2 つの TiDB ノードのみが含まれる場合、 `closest-adaptive`構成を持つ TiDB ノードの数が各ゾーンで有効になります。可用性ゾーンは 2 であり、A および B の各可用性ゾーンにある他の TiDB ノードは、読み取り操作用のリーダー レプリカを自動的に選択します。
     -   読み取りリクエストの推定結果が[`tidb_adaptive_closest_read_threshold`](/system-variables.md#tidb_adaptive_closest_read_threshold-new-in-v630)の値より小さい場合、TiDB は読み取り操作用にリーダー レプリカのみを選択できます。
 
 -   `tidb_replica_read`の値が`learner`に設定されると、TiDB は学習者レプリカからデータを読み取ります。リージョンに学習者レプリカがない場合、TiDB はエラーを返します。
 
 <CustomContent platform="tidb">
 
-> **ノート：**
+> **注記：**
 >
-> `tidb_replica_read`の値が`closest-replicas`または`closest-adaptive`に設定されている場合は、指定された構成に従ってレプリカが可用性ゾーン全体に分散されるようにクラスターを構成する必要があります。 PD に`location-labels`設定し、TiDB および TiKV に正しい`labels`を設定するには、 [トポロジ ラベルごとにレプリカをスケジュールする](/schedule-replicas-by-topology-labels.md)を参照してください。 TiDB は、同じアベイラビリティ ゾーン内の TiKV ノードと一致するために`zone`ラベルに依存するため、 `zone`ラベルが PD の`location-labels`に含まれ、 `zone`が各 TiDB および TiKV ノードの構成に含まれていることを確認する必要があります。クラスターがTiDB Operatorを使用してデプロイされている場合は、 [データの高可用性](https://docs.pingcap.com/tidb-in-kubernetes/v1.4/configure-a-tidb-cluster#high-availability-of-data)を参照してください。
+> `tidb_replica_read`の値が`closest-replicas`または`closest-adaptive`に設定されている場合は、指定された構成に従ってレプリカが可用性ゾーン全体に分散されるようにクラスターを構成する必要があります。 PD に`location-labels`設定し、TiDB および TiKV に正しい`labels`を設定するには、 [トポロジ ラベルごとにレプリカをスケジュールする](/schedule-replicas-by-topology-labels.md)を参照してください。 TiDB は、同じアベイラビリティーゾーン内の TiKV ノードと一致するために`zone`ラベルに依存するため、 `zone`ラベルが PD の`location-labels`に含まれ、 `zone`各 TiDB および TiKV ノードの構成に含まれていることを確認する必要があります。クラスターがTiDB Operatorを使用してデプロイされている場合は、 [データの高可用性](https://docs.pingcap.com/tidb-in-kubernetes/v1.4/configure-a-tidb-cluster#high-availability-of-data)を参照してください。
 
 </CustomContent>
 
@@ -69,4 +68,4 @@ Follower Read機能が導入される前は、TiDB は強力なリーダー原�
 
 Follower Read機能は TiDB のスナップショット分離トランザクション分離レベルに影響を与えないため、TiDB はラウンドロビン戦略を採用してフォロワー レプリカを選択します。現在、コプロセッサー要求の場合、Follower Read負荷分散ポリシーの粒度は接続レベルです。特定のリージョンに接続されている TiDB クライアントの場合、選択されたフォロワーは固定されており、失敗した場合またはスケジューリング ポリシーが調整された場合にのみ切り替えられます。
 
-ただし、ポイント クエリなどの非コプロセッサ リクエストの場合、Follower Readバランシング ポリシーの粒度はトランザクション レベルになります。特定のリージョンの TiDB トランザクションの場合、選択されたフォロワーは固定されており、失敗した場合またはスケジューリング ポリシーが調整された場合にのみ切り替えられます。
+ただし、ポイント クエリなどの非コプロセッサ リクエストの場合、Follower Readバランシング ポリシーの粒度はトランザクション レベルになります。特定のリージョンの TiDB トランザクションの場合、選択されたフォロワーは固定されており、失敗した場合またはスケジューリング ポリシーが調整された場合にのみ切り替えられます。トランザクションにポイント クエリとコプロセッサ リクエストの両方が含まれる場合、前述のスケジューリング ポリシーに従って、2 種類のリクエストが別々に読み取られるようにスケジュールされます。この場合、コプロセッサ リクエストとポイント クエリが同じリージョンに対するものであっても、TiDB はそれらを独立したイベントとして処理します。

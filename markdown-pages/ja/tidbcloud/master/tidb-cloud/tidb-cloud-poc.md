@@ -81,7 +81,7 @@ PoC 用に[TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラ�
 新しく作成されたクラスターの場合は、次の構成に注意してください。
 
 -   デフォルトのタイムゾーン (ダッシュボードの**「作成時刻」**列) は UTC です。次の手順[ローカルタイムゾーンを設定する](/tidb-cloud/manage-user-access.md#set-the-time-zone-for-your-organization)でローカルタイムゾーンに変更できます。
--   新しいクラスターのデフォルトのバックアップ設定は、毎日のデータベースの完全バックアップです。希望のバックアップ時間を指定したり、データを手動でバックアップしたりできます。デフォルトのバックアップ時間と詳細については、 [TiDBクラスタデータのバックアップと復元](/tidb-cloud/backup-and-restore.md#turn-on-auto-backup)を参照してください。
+-   新しいクラスターのデフォルトのバックアップ設定は、毎日のデータベースの完全バックアップです。希望のバックアップ時間を指定したり、データを手動でバックアップしたりできます。デフォルトのバックアップ時間と詳細については、 [TiDBクラスタデータのバックアップと復元](/tidb-cloud/backup-and-restore.md#backup)を参照してください。
 
 ## ステップ 4. スキーマと SQL を調整する {#step-4-adapt-your-schemas-and-sql}
 
@@ -130,7 +130,7 @@ SQL ステートメントの場合は、データ ソースの TiDB との互換
 
 これで、環境を作成し、スキーマを調整し、データをインポートしました。ワークロードをテストする時期が来ました。
 
-ワークロードをテストする前に、必要に応じてデータベースを元の状態に復元できるように、手動バックアップの実行を検討してください。詳細については、 [TiDBクラスタデータのバックアップと復元](/tidb-cloud/backup-and-restore.md#turn-on-auto-backup)を参照してください。
+ワークロードをテストする前に、必要に応じてデータベースを元の状態に復元できるように、手動バックアップの実行を検討してください。詳細については、 [TiDBクラスタデータのバックアップと復元](/tidb-cloud/backup-and-restore.md#backup)を参照してください。
 
 ワークロードを開始した後、次の方法を使用してシステムを観察できます。
 
@@ -175,13 +175,13 @@ SQL ステートメントの場合は、データ ソースの TiDB との互換
 
 -   バックアップ
 
-    ベンダー ロックインを回避するには、毎日の完全バックアップを使用してデータを新しいクラスターに移行し、 [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)を使用してデータをエクスポートします。詳細については、 [TiDB 専用データのバックアップと復元](/tidb-cloud/backup-and-restore.md#turn-on-auto-backup)および[TiDB 専用データのバックアップと復元](/tidb-cloud/backup-and-restore-serverless.md#backup)参照してください。
+    ベンダー ロックインを回避するには、毎日の完全バックアップを使用してデータを新しいクラスターに移行し、 [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)を使用してデータをエクスポートします。詳細については、 [TiDB 専用データのバックアップと復元](/tidb-cloud/backup-and-restore.md#backup)および[TiDB 専用データのバックアップと復元](/tidb-cloud/backup-and-restore-serverless.md#backup)参照してください。
 
 ## ステップ 8. 環境をクリーンアップして PoC を終了する {#step-8-clean-up-the-environment-and-finish-the-poc}
 
 実際のワークロードを使用してTiDB Cloudをテストし、テスト結果を取得すると、PoC の全サイクルが完了しました。これらの結果は、 TiDB Cloud が期待を満たしているかどうかを判断するのに役立ちます。その一方で、 TiDB Cloudを使用するためのベスト プラクティスを蓄積してきました。
 
-TiDB Cloudをより大規模に試したい場合は、新しいラウンドの展開とテスト ( TiDB Cloudが提供する他のノードstorageサイズでの展開など) を行うために、 [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターを作成してTiDB Cloudへのフル アクセスを取得します。
+TiDB Cloudが提供する他のノードstorageサイズでの展開など、新しい展開やテストのために TiDB TiDB Cloudを大規模に試したい場合は、 [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターを作成してTiDB Cloudへのフル アクセスを取得します。
 
 クレジットが残り少なくなり、PoC を続行したい場合は、 [TiDB Cloudのサポート](/tidb-cloud/tidb-cloud-support.md)に連絡して相談してください。
 

@@ -226,7 +226,6 @@ Query OK, 3 rows affected (0.00 sec)
 ## MySQLの互換性 {#mysql-compatibility}
 
 -   構文`SELECT ... INTO @variable`はサポートされていません。
--   構文`SELECT ... GROUP BY ... WITH ROLLUP`はサポートされていません。
 -   構文`SELECT ... INTO DUMPFILE`はサポートされていません。
 -   MySQL 5.7のように、構文`SELECT .. GROUP BY expr` `GROUP BY expr ORDER BY expr`を意味しません。 TiDB は MySQL 8.0 の動作に一致し、デフォルトの順序を意味しません。
 -   構文`SELECT ... TABLESAMPLE ...`は、他のデータベース システムおよび[ISO/IEC 9075-2](https://standards.iso.org/iso-iec/9075/-2/ed-6/en/)標準との互換性を目的として設計された TiDB 拡張機能ですが、現在 MySQL ではサポートされていません。

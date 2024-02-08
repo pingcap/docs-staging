@@ -22,7 +22,6 @@ TableName ::=
 
 ## 例 {#examples}
 
-
 ```sql
 CREATE TABLE t(a INT);
 ```
@@ -30,7 +29,6 @@ CREATE TABLE t(a INT);
 ```sql
 Query OK, 0 rows affected (0.01 sec)
 ```
-
 
 ```sql
 SHOW STATS_META WHERE db_name='test' and table_name='t';
@@ -45,7 +43,6 @@ SHOW STATS_META WHERE db_name='test' and table_name='t';
 1 row in set (0.00 sec)
 ```
 
-
 ```sql
 DROP STATS t;
 ```
@@ -53,7 +50,6 @@ DROP STATS t;
 ```sql
 Query OK, 0 rows affected (0.00 sec)
 ```
-
 
 ```sql
 SHOW STATS_META WHERE db_name='test' and table_name='t';

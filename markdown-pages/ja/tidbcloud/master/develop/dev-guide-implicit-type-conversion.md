@@ -9,7 +9,7 @@ summary: Introduces the possible consequences of implicit type conversions in Ti
 
 ## 変換ルール {#conversion-rules}
 
-SQL ステートメント内の述語の両側のデータ型が一致しない場合、TiDB は一方または両方のデータ型を述語操作用の互換性のあるデータ型に暗黙的に変換します。
+SQL ステートメント内の述語の両側のデータ型が一致しない場合、TiDB は片側または両側のデータ型を述語操作用の互換性のあるデータ型に暗黙的に変換します。
 
 TiDB における暗黙的な型変換のルールは次のとおりです。
 
@@ -44,7 +44,7 @@ DESC SELECT * FROM `account` WHERE `account_id`=6010000000009801;
 3 rows in set (0.00 sec)
 ```
 
-**実行結果の簡単な説明**: 上記の実行計画から、 `Cast`演算子が表示されます。
+**実行結果の簡単な説明**: 上記の実行計画から、 `Cast`の演算子が表示されます。
 
 ### 精度の低下 {#loss-of-precision}
 
@@ -62,7 +62,7 @@ DESC SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000
 3 rows in set (0.00 sec)
 ```
 
-**実行結果の簡単な説明**: 上記の実行計画から、 `Cast`演算子が表示されます。
+**実行結果の簡単な説明**: 上記の実行計画から、 `Cast`の演算子が表示されます。
 
 ```sql
 SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000';

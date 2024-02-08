@@ -169,7 +169,7 @@ mysql> explain analyze select count(*) from t1 join t2 where t1.a = t2.b group b
 
 TiFlash は、 `Sum`などの`Distinct`列を受け入れる一部の集計関数をサポートしていません。デフォルトでは、集計関数全体が TiDB で計算されます。 `Distinct`最適化を有効にすると、一部の操作をTiFlashにプッシュダウンできるため、クエリのパフォーマンスが向上します。
 
-クエリ内で`distinct`演算を行う集計関数が遅い場合は、 [`tidb_opt_distinct_agg_push_down`](/system-variables.md#tidb_opt_distinct_agg_push_down)変数の値を`ON`に設定することで、 `Distinct`の演算を行う集計関数 ( `select sum(distinct a) from t`など) をコプロセッサーにプッシュ ダウンする最適化演算を有効にすることができます。
+クエリ内で`distinct`演算を行う集計関数が遅い場合は、 [`tidb_opt_distinct_agg_push_down`](/system-variables.md#tidb_opt_distinct_agg_push_down)変数の値を`ON`に設定することで、 `Distinct`演算を行う集計関数 ( `select sum(distinct a) from t`など) をコプロセッサーにプッシュ ダウンする最適化演算を有効にすることができます。
 
 ```sql
 set @@tidb_opt_distinct_agg_push_down = ON;

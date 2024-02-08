@@ -7,7 +7,7 @@ summary: Learn how to manage identity access in TiDB Cloud.
 
 このドキュメントでは、 TiDB Cloudで組織、プロジェクト、ロール、およびユーザー プロファイルへのアクセスを管理する方法について説明します。
 
-TiDB Cloudにアクセスする前に、 [TiDB Cloudアカウントを作成する](https://tidbcloud.com/free-trial) . [TiDB Cloudを使用してパスワードを管理する](/tidb-cloud/tidb-cloud-password-authentication.md)できるように電子メールとパスワードでサインアップすることも、 TiDB Cloudへのシングル サインオン (SSO) 用に Google、GitHub、または Microsoft アカウントを選択することもできます。
+TiDB Cloudにアクセスする前に、 [TiDB クラウド アカウントを作成する](https://tidbcloud.com/free-trial) . [TiDB Cloudを使用してパスワードを管理する](/tidb-cloud/tidb-cloud-password-authentication.md)できるように電子メールとパスワードでサインアップすることも、 TiDB Cloudへのシングル サインオン (SSO) 用に Google、GitHub、または Microsoft アカウントを選択することもできます。
 
 ## 組織とプロジェクト {#organizations-and-projects}
 
@@ -82,7 +82,7 @@ TiDB Cloud は、組織、プロジェクト、またはその両方における
 
 > **注記：**
 >
-> `Organization Console Audit Admin`ロールは、データベース監査ログの代わりに、 TiDB Cloudコンソールで監査ログを管理するために使用されます。データベース監査を管理するには、プロジェクト レベルで`Project Owner`役割を使用します。
+> `Organization Console Audit Admin`役割は、リクエストがあった場合にのみ表示されます。 [コンソール監査ログ](/tidb-cloud/tidb-cloud-console-auditing.md)に対して`Organization Owner`役割を使用することをお勧めします。 `Organization Console Audit Admin`役割を使用する必要がある場合は、 **「?」**をクリックします。 [TiDB Cloudコンソール](https://tidbcloud.com)の右下隅にある**[サポートをリクエスト]**をクリックします。次に、「**説明」**フィールドに「組織コンソール監査管理者の役割に応募する」と入力し、 **「送信」**をクリックします。
 
 ### プロジェクトの役割 {#project-roles}
 
@@ -322,7 +322,7 @@ TiDB Cloud は、組織、プロジェクト、またはその両方における
 
 4.  削除するユーザー行の**「削除」**をクリックします。
 
-## ユーザープロファイルの管理 {#manage-user-profiles}
+## ユーザープロファイルを管理する {#manage-user-profiles}
 
 TiDB Cloudでは、姓、名、電話番号などのプロフィールを簡単に管理できます。
 

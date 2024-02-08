@@ -71,7 +71,7 @@ explain analyze select count(*) from test.t;
 
     SESSION レベルのデフォルト構成は、TiDB INSTANCE レベルの構成を継承します。
 
-最終的なエンジン設定はセッション レベルの設定です。つまり、セッション レベルの設定はインスタンス レベルの設定をオーバーライドします。たとえば、INSTANCE レベルで「tikv」を設定し、SESSION レベルで「tiflash」を設定した場合、 TiFlashレプリカが読み取られます。最終的なエンジン構成が「tikv」と「tiflash」の場合、TiKV とTiFlashレプリカの両方が読み取られ、オプティマイザは実行するより適切なエンジンを自動的に選択します。
+最終的なエンジン設定はセッション レベルの設定です。つまり、セッション レベルの設定はインスタンス レベルの設定をオーバーライドします。たとえば、INSTANCE レベルで「tikv」を設定し、SESSION レベルで「tiflash」を設定した場合、 TiFlashレプリカが読み取られます。最終的なエンジン構成が「tikv」と「tiflash」の場合、TiKV とTiFlash のレプリカが両方とも読み取られ、オプティマイザーは実行するより適切なエンジンを自動的に選択します。
 
 > **注記：**
 >
@@ -125,7 +125,4 @@ TiFlashレプリカを読み取る上記の 3 つの方法では、エンジン�
 
 > **注記：**
 >
-> -   v4.0.3 より前では、読み取り専用以外の SQL ステートメント (たとえば、 `INSERT INTO ... SELECT` 、 `SELECT ... FOR UPDATE` 、 `UPDATE ...` 、 `DELETE ...` ) でTiFlashレプリカから読み取る動作は未定義です。
-> -   v4.0.3 から v6.2.0 のバージョンでは、TiDB はデータの正確性を保証するために、非読み取り専用 SQL ステートメントのTiFlashレプリカを内部的に無視します。つまり、 [賢い選択](#smart-selection)の場合、TiDB は非TiFlashレプリカを自動的に選択します。 TiFlashレプリカ**のみ**を指定する[エンジンの隔離](#engine-isolation)場合、TiDB はエラーを報告します。 [手動ヒント](#manual-hint)の場合、TiDB はヒントを無視します。
-> -   v6.3.0 から v7.0.0 のバージョンでは、 TiFlashレプリカが有効になっている場合、 [`tidb_enable_tiflash_read_for_write_stmt`](/system-variables.md#tidb_enable_tiflash_read_for_write_stmt-new-in-v630)変数を使用して、TiDB が読み取り専用以外の SQL ステートメントにTiFlashレプリカを使用するかどうかを制御できます。
-> -   v7.1.0 以降、 TiFlashレプリカが有効で、現在のセッションの[SQLモード](/sql-mode.md)厳密でない場合 (つまり、 `sql_mode`値に`STRICT_TRANS_TABLES`または`STRICT_ALL_TABLES`が含まれない)、TiDB は非読み取りにTiFlashレプリカを使用するかどうかを自動的に決定します。 -コスト見積もりに基づく SQL ステートメントのみ。
+> v4.0.3 より前では、読み取り専用以外の SQL ステートメント (たとえば、 `INSERT INTO ... SELECT` 、 `SELECT ... FOR UPDATE` 、 `UPDATE ...` 、 `DELETE ...` ) でTiFlashレプリカから読み取る動作は未定義です。 v4.0.3 以降のバージョンでは、データの正確性を保証するために、TiDB は内部的に読み取り専用以外の SQL ステートメントのTiFlashレプリカを無視します。つまり、 [賢い選択](#smart-selection)場合、TiDB は非TiFlashレプリカを自動的に選択します。 TiFlashレプリカ**のみ**を指定する[エンジンの隔離](#engine-isolation)の場合、TiDB はエラーを報告します。 [手動ヒント](#manual-hint)の場合、TiDB はヒントを無視します。

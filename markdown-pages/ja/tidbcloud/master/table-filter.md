@@ -87,11 +87,9 @@ TOML ファイルのテーブル フィルターは[文字列の配列](https://
 
 各テーブル フィルター ルールは、ドット ( `.` ) で区切られた「スキーマ パターン」と「テーブル パターン」で構成されます。完全修飾名がルールに一致するテーブルが受け入れられます。
 
-```
-db1.tbl1
-db2.tbl2
-db3.tbl3
-```
+    db1.tbl1
+    db2.tbl2
+    db3.tbl3
 
 プレーン名は、次のように有効な[識別文字](/schema-object-names.md)のみで構成されている必要があります。
 
@@ -112,11 +110,11 @@ db3.tbl3
 -   `[a-z]` — 「a」と「z」の間の 1 文字を包括的に一致させます。
 -   `[!a-z]` — 「a」から「z」を除く 1 つの文字と一致します。
 
-```
-db[0-9].tbl[0-9a-f][0-9a-f]
-data.*
-*.backup_*
-```
+<!---->
+
+    db[0-9].tbl[0-9a-f][0-9a-f]
+    data.*
+    *.backup_*
 
 ここでの「文字」とは、次のような Unicode コード ポイントを意味します。
 
@@ -130,10 +128,8 @@ data.*
 
 たとえば、ファイル`config/filter.txt`に次の内容があるとします。
 
-```
-employees.*
-*.WorkOrder
-```
+    employees.*
+    *.WorkOrder
 
 次の 2 つの呼び出しは同等です。
 
@@ -150,29 +146,23 @@ employees.*
 
 先頭の`#`コメントをマークし、無視されます。行の先頭にない`#`構文エラーとみなされます。
 
-```
-# this line is a comment
-db.table   # but this part is not comment and may cause error
-```
+    # this line is a comment
+    db.table   # but this part is not comment and may cause error
 
 ### 除外 {#exclusion}
 
 ルールの先頭の`!`テーブルを処理から除外するために使用されるパターンを意味します。これにより、フィルターが効果的にブロック リストに変わります。
 
-```
-*.*
-#^ note: must add the *.* to include all tables first
-!*.Password
-!employees.salaries
-```
+    *.*
+    #^ note: must add the *.* to include all tables first
+    !*.Password
+    !employees.salaries
 
 ### エスケープ文字 {#escape-character}
 
 特殊文字を識別子文字に変えるには、その前にバックスラッシュ`\`を付けます。
 
-```
-db\.with\.dots.*
-```
+    db\.with\.dots.*
 
 簡素化と将来の互換性のために、次のシーケンスは禁止されています。
 
@@ -183,38 +173,30 @@ db\.with\.dots.*
 
 `\`のほかに、 `"`または`` ` ``を使用して引用符で特殊文字を抑制することもできます。
 
-```
-"db.with.dots"."tbl\1"
-`db.with.dots`.`tbl\2`
-```
+    "db.with.dots"."tbl\1"
+    `db.with.dots`.`tbl\2`
 
 引用符は、それ自体を二重化することで識別子の中に含めることができます。
 
-```
-"foo""bar".`foo``bar`
-# equivalent to:
-foo\"bar.foo\`bar
-```
+    "foo""bar".`foo``bar`
+    # equivalent to:
+    foo\"bar.foo\`bar
 
 引用符で囲まれた識別子は複数行にまたがることはできません。
 
 識別子の一部を引用することは無効です。
 
-```
-"this is "invalid*.*
-```
+    "this is "invalid*.*
 
 ### 正規表現 {#regular-expression}
 
 非常に複雑なルールが必要な場合は、各パターンを`/`で区切った正規表現として記述することができます。
 
-```
-/^db\d{2,}$/./^tbl\d{2,}$/
-```
+    /^db\d{2,}$/./^tbl\d{2,}$/
 
-これらの正規表現では[囲碁方言](https://pkg.go.dev/regexp/syntax?tab=doc)使用されます。識別子に正規表現と一致する部分文字列が含まれている場合、パターンは一致します。たとえば、 `/b/` `db01`と一致します。
+これらの正規表現では[囲碁方言](https://pkg.go.dev/regexp/syntax?tab=doc)を使用します。識別子に正規表現と一致する部分文字列が含まれている場合、パターンは一致します。たとえば、 `/b/` `db01`と一致します。
 
-> **ノート：**
+> **注記：**
 >
 > 正規表現内のすべての`/` `[…]`の内側も含めて`\/`としてエスケープする必要があります。エスケープされていない`/` `\Q…\E`の間に置くことはできません。
 
@@ -222,7 +204,7 @@ foo\"bar.foo\`bar
 
 <CustomContent platform="tidb-cloud">
 
-> **ノート：**
+> **注記：**
 >
 > このセクションはTiDB Cloudには適用されません。現在、 TiDB Cloud は1 つのテーブル フィルター ルールのみをサポートしています。
 
@@ -242,14 +224,12 @@ foo\"bar.foo\`bar
 
 フィルター リストでは、テーブル名が複数のパターンに一致する場合、最後の一致によって結果が決まります。例えば：
 
-```
-# rule 1
-employees.*
-# rule 2
-!*.dep*
-# rule 3
-*.departments
-```
+    # rule 1
+    employees.*
+    # rule 2
+    !*.dep*
+    # rule 3
+    *.departments
 
 フィルタリングされた結果は次のようになります。
 
@@ -261,7 +241,7 @@ employees.*
 | 従業員.部門       | ✓    | ✓    | ✓    | ルール 3 (受け入れる) |
 | その他の部門       |      | ✓    | ✓    | ルール 3 (受け入れる) |
 
-> **ノート：**
+> **注記：**
 >
 > TiDB ツールでは、システム スキーマはデフォルト構成で常に除外されます。システム スキーマは次のとおりです。
 >

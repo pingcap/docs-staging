@@ -69,25 +69,56 @@ summary: Learn about the TiDB system tables.
 ## TTL関連のシステムテーブル {#ttl-related-system-tables}
 
 > **注記：**
->
+
 > TTL 関連のシステム テーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
--   `mysql.tidb_ttl_table_status`すべての TTL テーブルに対して以前に実行された TTL ジョブと進行中の TTL ジョブ
--   `mysql.tidb_ttl_task`現在進行中の TTL サブタスク
--   `mysql.tidb_ttl_job_history`過去 90 日間の TTL タスクの実行履歴
+-   `tidb_ttl_table_status` : すべての TTL テーブルに対して以前に実行された TTL ジョブと進行中の TTL ジョブ
+-   `tidb_ttl_task` : 現在進行中の TTL サブタスク
+-   `tidb_ttl_job_history` : 過去 90 日間の TTL タスクの実行履歴
+
+## 暴走クエリに関連するシステム テーブル {#system-tables-related-to-runaway-queries}
+
+-   `tidb_runaway_queries` : 過去 7 日間に特定されたすべての暴走クエリの履歴レコード
+-   `tidb_runaway_watch` : 暴走クエリの監視リスト
+-   `tidb_runaway_watch_done` : 削除または期限切れの暴走クエリの監視リスト
 
 ## メタデータ ロックに関連するシステム テーブル {#system-tables-related-to-metadata-locks}
 
--   `tidb_mdl_view` ：メタデータロックのビュー。これを使用して、現在ブロックされている DDL ステートメントに関する情報を表示できます。
--   `tidb_mdl_info` ：ノード間でメタデータ ロックを同期するために TiDB によって内部的に使用されます。
+-   `tidb_mdl_view` : メタデータ ロックのビュー。これを使用して、現在ブロックされている DDL ステートメントに関する情報を表示できます。
+-   `tidb_mdl_info` : ノード間でメタデータ ロックを同期するために TiDB によって内部的に使用されます。
+
+## DDL ステートメントに関連するシステム テーブル {#system-tables-related-to-ddl-statements}
+
+-   `tidb_ddl_history` : DDL ステートメントの履歴レコード
+-   `tidb_ddl_jobs` : TiDB によって現在実行されている DDL ステートメントのメタデータ
+-   `tidb_ddl_reorg` : TiDB によって現在実行されている物理 DDL ステートメント (インデックスの追加など) のメタデータ
+
+## TiDB Distributed eXecution Framework (DXF) に関連するシステム テーブル {#system-tables-related-to-tidb-distributed-execution-framework-dxf}
+
+-   `dist_framework_meta` : Distributed eXecution Framework (DXF) タスク スケジューラのメタデータ
+-   `tidb_global_task` : 現在の DXF タスクのメタデータ
+-   `tidb_global_task_history` : 成功したタスクと失敗したタスクの両方を含む、履歴 DXF タスクのメタデータ
+-   `tidb_background_subtask` : 現在の DXF サブタスクのメタデータ
+-   `tidb_background_subtask_history` : 過去の DXF サブタスクのメタデータ
 
 ## その他のシステムテーブル {#miscellaneous-system-tables}
 
+<CustomContent platform="tidb">
+
 > **注記：**
 >
-> `tidb` 、 `expr_pushdown_blacklist` 、 `opt_rule_blacklist` 、および`table_cache_meta`システム テーブルは、TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> `tidb` 、 `expr_pushdown_blacklist` 、 `opt_rule_blacklist` 、 `table_cache_meta` 、 `tidb_import_jobs` 、および`tidb_timers`システム テーブルは TiDB セルフホストにのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 -   `GLOBAL_VARIABLES` : グローバル システム変数テーブル
 -   `expr_pushdown_blacklist` : 式プッシュダウンのブロックリスト
 -   `opt_rule_blacklist` : 論理最適化ルールのブロックリスト
+-   `tidb_import_jobs` : [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)のジョブ情報
 -   `tidb_timers` : 内部タイマーのメタデータ
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+-   `GLOBAL_VARIABLES` : グローバル システム変数テーブル
+
+</CustomContent>

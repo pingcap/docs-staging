@@ -57,9 +57,9 @@ summary: Learn how to use the cluster resource to create and modify a TiDB Cloud
 
     -   `output`ブロックを使用して、出力に表示されるデータ ソース情報を定義し、他の Terraform 構成で使用する情報を公開します。
 
-        `output`ブロックは、プログラミング言語の戻り値と同様に機能します。詳細については、 [Terraform ドキュメント](https://www.terraform.io/language/values/outputs)参照してください。
+        `output`ブロックは、プログラミング言語の戻り値と同様に機能します。詳細については[Terraform ドキュメント](https://www.terraform.io/language/values/outputs)参照してください。
 
-    リソースとデータ ソースで使用可能なすべての構成を取得するには、この[設定ドキュメント](https://registry.terraform.io/providers/tidbcloud/tidbcloud/latest/docs)参照してください。
+    リソースとデータ ソースで使用可能なすべての構成を取得するには、この[設定ドキュメント](https://registry.terraform.io/providers/tidbcloud/tidbcloud/latest/docs)を参照してください。
 
 2.  `terraform apply`コマンドを実行して構成を適用します。続行するには、確認プロンプトで`yes`入力する必要があります。
 
@@ -155,6 +155,13 @@ summary: Learn how to use the cluster resource to create and modify a TiDB Cloud
                   "min" = 1
                   "step" = 1
                 }
+                "node_size" = "2C8G"
+              },
+              {
+                "node_quantity_range" = {
+                  "min" = 1
+                  "step" = 1
+                }
                 "node_size" = "4C16G"
               },
               {
@@ -197,6 +204,17 @@ summary: Learn how to use the cluster resource to create and modify a TiDB Cloud
               },
             ])
             "tikv" = tolist([
+              {
+                "node_quantity_range" = {
+                  "min" = 3
+                  "step" = 3
+                }
+                "node_size" = "2C8G"
+                "storage_size_gib_range" = {
+                  "max" = 500
+                  "min" = 200
+                }
+              },
               {
                 "node_quantity_range" = {
                   "min" = 3
@@ -585,7 +603,7 @@ TiDB クラスターのステータスが`AVAILABLE`の場合、TiDB クラス�
 
 1.  [クラスターを作成する](#create-a-cluster-using-the-cluster-resource)のときに使用する`cluster.tf`ファイルで、 `components`構成を編集します。
 
-    たとえば、TiDB にノードを 1 つ追加し、TiKV にノードを 3 つ追加するには (ステップが 3 であるため、TiKV ノードの数は 3 の倍数である必要があります。 [この情報はクラスター仕様から取得します。](#get-cluster-specification-information-using-the-tidbcloud_cluster_specs-data-source)することができます)、 TiFlashにノードをもう 1 つ追加するには、編集できます。構成は次のとおりです。
+    たとえば、TiDB にノードを 1 つ追加し、TiKV にノードを 3 つ追加するには (ステップが 3 であるため、TiKV ノードの数は 3 の倍数である必要があります。 [この情報はクラスター仕様から取得します。](#get-cluster-specification-information-using-the-tidbcloud_cluster_specs-data-source)にすることができます)、 TiFlashにノードをもう 1 つ追加するには、編集できます。構成は次のとおりです。
 
             components = {
               tidb = {

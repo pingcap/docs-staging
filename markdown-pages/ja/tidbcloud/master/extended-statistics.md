@@ -150,7 +150,7 @@ ALTER TABLE t ADD STATS_EXTENDED s1 correlation(col1, col2);
 
 TiDB が相関に関する拡張統計を取得すると、オプティマイザーはスキャンする行数をより正確に推定できるようになります。
 
-このとき、 [ステージ 2. 拡張統計を使用せずにクエリ例を実行する](#step-2-execute-an-example-query-without-extended-statistics)のクエリでは、 `col1` 、 `col2`が順に厳密に対応付けられます。 TiDB が`col2`のインデックスを使用してテーブル`t`にアクセスし、 `col1 > 1`を満たす最初の行を検索すると、TiDB オプティマイザーは行数の推定を次のクエリに変換します。
+このとき、 [ステージ 2. 拡張統計を使用せずにクエリ例を実行する](#step-2-execute-an-example-query-without-extended-statistics)のクエリでは、 `col1` 、 `col2`順に厳密に対応付けられます。 TiDB が`col2`のインデックスを使用してテーブル`t`にアクセスし、 `col1 > 1`を満たす最初の行を検索すると、TiDB オプティマイザーは行数の推定を次のクエリに変換します。
 
 ```sql
 SELECT * FROM t WHERE col1 <= 1 OR col1 IS NULL;

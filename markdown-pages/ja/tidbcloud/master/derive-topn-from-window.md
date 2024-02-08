@@ -49,19 +49,17 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER () AS rownumber FROM t) dt WHERE
 
 結果は次のとおりです。
 
-```
-+----------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------+
-| id                               | estRows | task      | access object | operator info                                                         |
-+----------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------+
-| Projection_9                     | 2.40    | root      |               | Column#5                                                              |
-| └─Selection_10                   | 2.40    | root      |               | le(Column#5, 3)                                                       |
-|   └─Window_11                    | 3.00    | root      |               | row_number()->Column#5 over(rows between current row and current row) |
-|     └─Limit_15                   | 3.00    | root      |               | offset:0, count:3                                                     |
-|       └─TableReader_26           | 3.00    | root      |               | data:Limit_25                                                         |
-|         └─Limit_25               | 3.00    | cop[tikv] |               | offset:0, count:3                                                     |
-|           └─TableFullScan_24     | 3.00    | cop[tikv] | table:t       | keep order:false, stats:pseudo                                        |
-+----------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------+
-```
+    +----------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------+
+    | id                               | estRows | task      | access object | operator info                                                         |
+    +----------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------+
+    | Projection_9                     | 2.40    | root      |               | Column#5                                                              |
+    | └─Selection_10                   | 2.40    | root      |               | le(Column#5, 3)                                                       |
+    |   └─Window_11                    | 3.00    | root      |               | row_number()->Column#5 over(rows between current row and current row) |
+    |     └─Limit_15                   | 3.00    | root      |               | offset:0, count:3                                                     |
+    |       └─TableReader_26           | 3.00    | root      |               | data:Limit_25                                                         |
+    |         └─Limit_25               | 3.00    | cop[tikv] |               | offset:0, count:3                                                     |
+    |           └─TableFullScan_24     | 3.00    | cop[tikv] | table:t       | keep order:false, stats:pseudo                                        |
+    +----------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------+
 
 このクエリでは、オプティマイザはウィンドウ関数から Limit 演算子を導出し、それを TiKV にプッシュダウンします。
 
@@ -75,25 +73,23 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY value) AS rownumber FR
 
 結果は次のとおりです。
 
-```
-+----------------------------------+----------+-----------+---------------+---------------------------------------------------------------------------------------------+
-| id                               | estRows  | task      | access object | operator info                                                                               |
-+----------------------------------+----------+-----------+---------------+---------------------------------------------------------------------------------------------+
-| Projection_10                    | 2.40     | root      |               | Column#5                                                                                    |
-| └─Selection_11                   | 2.40     | root      |               | le(Column#5, 3)                                                                             |
-|   └─Window_12                    | 3.00     | root      |               | row_number()->Column#5 over(order by test.t.value rows between current row and current row) |
-|     └─TopN_13                    | 3.00     | root      |               | test.t.value, offset:0, count:3                                                             |
-|       └─TableReader_25           | 3.00     | root      |               | data:TopN_24                                                                                |
-|         └─TopN_24                | 3.00     | cop[tikv] |               | test.t.value, offset:0, count:3                                                             |
-|           └─TableFullScan_23     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                              |
-+----------------------------------+----------+-----------+---------------+---------------------------------------------------------------------------------------------+
-```
+    +----------------------------------+----------+-----------+---------------+---------------------------------------------------------------------------------------------+
+    | id                               | estRows  | task      | access object | operator info                                                                               |
+    +----------------------------------+----------+-----------+---------------+---------------------------------------------------------------------------------------------+
+    | Projection_10                    | 2.40     | root      |               | Column#5                                                                                    |
+    | └─Selection_11                   | 2.40     | root      |               | le(Column#5, 3)                                                                             |
+    |   └─Window_12                    | 3.00     | root      |               | row_number()->Column#5 over(order by test.t.value rows between current row and current row) |
+    |     └─TopN_13                    | 3.00     | root      |               | test.t.value, offset:0, count:3                                                             |
+    |       └─TableReader_25           | 3.00     | root      |               | data:TopN_24                                                                                |
+    |         └─TopN_24                | 3.00     | cop[tikv] |               | test.t.value, offset:0, count:3                                                             |
+    |           └─TableFullScan_23     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                              |
+    +----------------------------------+----------+-----------+---------------+---------------------------------------------------------------------------------------------+
 
 このクエリでは、オプティマイザはウィンドウ関数から TopN 演算子を導出し、それを TiKV にプッシュダウンします。
 
 ### PARTITION BYを使用したウィンドウ関数 {#window-functions-with-partition-by}
 
-> **ノート：**
+> **注記：**
 >
 > `PARTITION BY`を含むウィンドウ関数の場合、最適化ルールは、パーティション列が主キーの接頭辞であり、主キーがクラスター化インデックスである場合にのみ有効になります。
 
@@ -107,20 +103,18 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY id1) AS rownumber 
 
 結果は次のとおりです。
 
-```
-+------------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------------------------------+
-| id                                 | estRows | task      | access object | operator info                                                                                 |
-+------------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------------------------------+
-| Projection_10                      | 2.40    | root      |               | Column#6                                                                                      |
-| └─Selection_11                     | 2.40    | root      |               | le(Column#6, 3)                                                                               |
-|   └─Shuffle_26                     | 3.00    | root      |               | execution info: concurrency:2, data sources:[TableReader_24]                                  |
-|     └─Window_12                    | 3.00    | root      |               | row_number()->Column#6 over(partition by test.t.id1 rows between current row and current row) |
-|       └─Sort_25                    | 3.00    | root      |               | test.t.id1                                                                                    |
-|         └─TableReader_24           | 3.00    | root      |               | data:Limit_23                                                                                 |
-|           └─Limit_23               | 3.00    | cop[tikv] |               | partition by test.t.id1, offset:0, count:3                                                    |
-|             └─TableFullScan_22     | 3.00    | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                                |
-+------------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------------------------------+
-```
+    +------------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------------------------------+
+    | id                                 | estRows | task      | access object | operator info                                                                                 |
+    +------------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------------------------------+
+    | Projection_10                      | 2.40    | root      |               | Column#6                                                                                      |
+    | └─Selection_11                     | 2.40    | root      |               | le(Column#6, 3)                                                                               |
+    |   └─Shuffle_26                     | 3.00    | root      |               | execution info: concurrency:2, data sources:[TableReader_24]                                  |
+    |     └─Window_12                    | 3.00    | root      |               | row_number()->Column#6 over(partition by test.t.id1 rows between current row and current row) |
+    |       └─Sort_25                    | 3.00    | root      |               | test.t.id1                                                                                    |
+    |         └─TableReader_24           | 3.00    | root      |               | data:Limit_23                                                                                 |
+    |           └─Limit_23               | 3.00    | cop[tikv] |               | partition by test.t.id1, offset:0, count:3                                                    |
+    |             └─TableFullScan_22     | 3.00    | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                                |
+    +------------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------------------------------+
 
 このクエリでは、オプティマイザはウィンドウ関数から Limit 演算子を導出し、それを TiKV にプッシュダウンします。この制限は実際にはパーティション制限であることに注意してください。これは、制限が同じ値`id1`を持つデータの各グループに適用されることを意味します。
 
@@ -134,20 +128,18 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY id1 ORDER BY value
 
 結果は次のとおりです。
 
-```
-+------------------------------------+----------+-----------+---------------+----------------------------------------------------------------------------------------------------------------------+
-| id                                 | estRows  | task      | access object | operator info                                                                                                        |
-+------------------------------------+----------+-----------+---------------+----------------------------------------------------------------------------------------------------------------------+
-| Projection_10                      | 2.40     | root      |               | Column#6                                                                                                             |
-| └─Selection_11                     | 2.40     | root      |               | le(Column#6, 3)                                                                                                      |
-|   └─Shuffle_23                     | 3.00     | root      |               | execution info: concurrency:3, data sources:[TableReader_21]                                                         |
-|     └─Window_12                    | 3.00     | root      |               | row_number()->Column#6 over(partition by test.t.id1 order by test.t.value1 rows between current row and current row) |
-|       └─Sort_22                    | 3.00     | root      |               | test.t.id1, test.t.value1                                                                                            |
-|         └─TableReader_21           | 3.00     | root      |               | data:TopN_19                                                                                                         |
-|           └─TopN_19                | 3.00     | cop[tikv] |               | partition by test.t.id1 order by test.t.value1, offset:0, count:3                                                    |
-|             └─TableFullScan_18     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                                                       |
-+------------------------------------+----------+-----------+---------------+----------------------------------------------------------------------------------------------------------------------+
-```
+    +------------------------------------+----------+-----------+---------------+----------------------------------------------------------------------------------------------------------------------+
+    | id                                 | estRows  | task      | access object | operator info                                                                                                        |
+    +------------------------------------+----------+-----------+---------------+----------------------------------------------------------------------------------------------------------------------+
+    | Projection_10                      | 2.40     | root      |               | Column#6                                                                                                             |
+    | └─Selection_11                     | 2.40     | root      |               | le(Column#6, 3)                                                                                                      |
+    |   └─Shuffle_23                     | 3.00     | root      |               | execution info: concurrency:3, data sources:[TableReader_21]                                                         |
+    |     └─Window_12                    | 3.00     | root      |               | row_number()->Column#6 over(partition by test.t.id1 order by test.t.value1 rows between current row and current row) |
+    |       └─Sort_22                    | 3.00     | root      |               | test.t.id1, test.t.value1                                                                                            |
+    |         └─TableReader_21           | 3.00     | root      |               | data:TopN_19                                                                                                         |
+    |           └─TopN_19                | 3.00     | cop[tikv] |               | partition by test.t.id1 order by test.t.value1, offset:0, count:3                                                    |
+    |             └─TableFullScan_18     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                                                       |
+    +------------------------------------+----------+-----------+---------------+----------------------------------------------------------------------------------------------------------------------+
 
 このクエリでは、オプティマイザはウィンドウ関数から TopN 演算子を導出し、それを TiKV にプッシュダウンします。この TopN は実際にはパーティション TopN であることに注意してください。これは、TopN が同じ`id1`値を持つデータの各グループに適用されることを意味します。
 
@@ -161,19 +153,17 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY value1) AS rownumb
 
 結果は次のとおりです。
 
-```
-+----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------+
-| id                               | estRows  | task      | access object | operator info                                                                                    |
-+----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------+
-| Projection_9                     | 8000.00  | root      |               | Column#6                                                                                         |
-| └─Selection_10                   | 8000.00  | root      |               | le(Column#6, 3)                                                                                  |
-|   └─Shuffle_15                   | 10000.00 | root      |               | execution info: concurrency:5, data sources:[TableReader_13]                                     |
-|     └─Window_11                  | 10000.00 | root      |               | row_number()->Column#6 over(partition by test.t.value1 rows between current row and current row) |
-|       └─Sort_14                  | 10000.00 | root      |               | test.t.value1                                                                                    |
-|         └─TableReader_13         | 10000.00 | root      |               | data:TableFullScan_12                                                                            |
-|           └─TableFullScan_12     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                                   |
-+----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------+
-```
+    +----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------+
+    | id                               | estRows  | task      | access object | operator info                                                                                    |
+    +----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------+
+    | Projection_9                     | 8000.00  | root      |               | Column#6                                                                                         |
+    | └─Selection_10                   | 8000.00  | root      |               | le(Column#6, 3)                                                                                  |
+    |   └─Shuffle_15                   | 10000.00 | root      |               | execution info: concurrency:5, data sources:[TableReader_13]                                     |
+    |     └─Window_11                  | 10000.00 | root      |               | row_number()->Column#6 over(partition by test.t.value1 rows between current row and current row) |
+    |       └─Sort_14                  | 10000.00 | root      |               | test.t.value1                                                                                    |
+    |         └─TableReader_13         | 10000.00 | root      |               | data:TableFullScan_12                                                                            |
+    |           └─TableFullScan_12     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                                   |
+    +----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------+
 
 このクエリでは、 `PARTITION BY`列が主キーのプレフィックスではないため、SQL は書き換えられません。
 
@@ -187,18 +177,16 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY id1) AS rownumber 
 
 結果は次のとおりです。
 
-```
-+----------------------------------+----------+-----------+---------------+-----------------------------------------------------------------------------------------------+
-| id                               | estRows  | task      | access object | operator info                                                                                 |
-+----------------------------------+----------+-----------+---------------+-----------------------------------------------------------------------------------------------+
-| Projection_9                     | 8000.00  | root      |               | Column#7                                                                                      |
-| └─Selection_10                   | 8000.00  | root      |               | le(Column#7, 3)                                                                               |
-|   └─Shuffle_15                   | 10000.00 | root      |               | execution info: concurrency:5, data sources:[TableReader_13]                                  |
-|     └─Window_11                  | 10000.00 | root      |               | row_number()->Column#7 over(partition by test.t.id1 rows between current row and current row) |
-|       └─Sort_14                  | 10000.00 | root      |               | test.t.id1                                                                                    |
-|         └─TableReader_13         | 10000.00 | root      |               | data:TableFullScan_12                                                                         |
-|           └─TableFullScan_12     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                                |
-+----------------------------------+----------+-----------+---------------+-----------------------------------------------------------------------------------------------+
-```
+    +----------------------------------+----------+-----------+---------------+-----------------------------------------------------------------------------------------------+
+    | id                               | estRows  | task      | access object | operator info                                                                                 |
+    +----------------------------------+----------+-----------+---------------+-----------------------------------------------------------------------------------------------+
+    | Projection_9                     | 8000.00  | root      |               | Column#7                                                                                      |
+    | └─Selection_10                   | 8000.00  | root      |               | le(Column#7, 3)                                                                               |
+    |   └─Shuffle_15                   | 10000.00 | root      |               | execution info: concurrency:5, data sources:[TableReader_13]                                  |
+    |     └─Window_11                  | 10000.00 | root      |               | row_number()->Column#7 over(partition by test.t.id1 rows between current row and current row) |
+    |       └─Sort_14                  | 10000.00 | root      |               | test.t.id1                                                                                    |
+    |         └─TableReader_13         | 10000.00 | root      |               | data:TableFullScan_12                                                                         |
+    |           └─TableFullScan_12     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                                |
+    +----------------------------------+----------+-----------+---------------+-----------------------------------------------------------------------------------------------+
 
 このクエリでは、 `PARTITION BY`列は主キーのプレフィックスですが、主キーがクラスター化インデックスではないため、SQL は書き換えられません。

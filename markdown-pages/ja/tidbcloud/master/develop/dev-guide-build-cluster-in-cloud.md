@@ -35,7 +35,7 @@ summary: Learn how to build a TiDB Serverless cluster in TiDB Cloud and connect 
 
     TiDB Cloudクラスターは約 30 秒で作成されます。
 
-6.  TiDB Cloudクラスターが作成されたら、クラスター名をクリックしてクラスターの概要ページに移動し、右上隅にある**[接続]**をクリックします。接続ダイアログボックスが表示されます。
+6.  TiDB Cloudクラスターが作成されたら、クラスター名をクリックしてクラスターの概要ページに移動し、右上隅の**[接続]**をクリックします。接続ダイアログボックスが表示されます。
 
 7.  ダイアログで、希望の接続方法とオペレーティング システムを選択して、対応する接続​​文字列を取得します。このドキュメントでは、例として MySQL クライアントを使用します。
 
@@ -83,7 +83,7 @@ brew install mysql-client
       export LDFLAGS="-L/opt/homebrew/opt/mysql-client/lib"
       export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
 
-MySQL クライアントを PATH に追加するには、上記の出力内で次のコマンドを見つけて (出力がドキュメント内の上記の出力と一致しない場合は、代わりに出力内の対応するコマンドを使用してください)、それを実行します。
+MySQL クライアントを PATH に追加するには、上記の出力内で次のコマンドを見つけて実行します (出力がドキュメント内の上記の出力と一致しない場合は、代わりに出力内の対応するコマンドを使用してください)。
 
 ```shell
 echo 'export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"' >> ~/.zshrc

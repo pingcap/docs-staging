@@ -5,10 +5,6 @@ summary: Learn the use cases, limitations, usage, and implementation principles 
 
 # TiDB バックエンド タスク分散実行フレームワーク {#tidb-backend-task-distributed-execution-framework}
 
-> **警告：**
->
-> この機能は実験的機能です。本番環境での使用はお勧めできません。
-
 <CustomContent platform="tidb-cloud">
 
 > **注記：**
@@ -25,9 +21,19 @@ TiDB は、優れた拡張性と弾力性を備えたコンピューティング
 >
 > このフレームワークは、SQL クエリの分散実行をサポートしていません。
 
-## 使用例と制限事項 {#use-cases-and-limitations}
+## ユースケースと制限事項 {#use-cases-and-limitations}
 
-データベース管理システムには、コアのトランザクション処理 (TP) および分析処理 (AP) ワークロードに加えて、DDL 操作、データのロード、TTL、分析、バックアップ/復元などの他の重要なタスクがあります。**バックエンドタスク**。これらのバックエンド タスクはデータベース オブジェクト (テーブル) 内の大量のデータを処理する必要があるため、通常は次のような特性があります。
+<CustomContent platform="tidb">
+
+データベース管理システムには、コアのトランザクション処理 (TP) および分析処理 (AP) ワークロードに加えて、DDL 操作、IMPORT INTO、TTL、分析、バックアップ/復元などの他の重要なタスクがあります。**バックエンドタスク**。これらのバックエンド タスクはデータベース オブジェクト (テーブル) 内の大量のデータを処理する必要があるため、通常は次のような特性があります。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+データベース管理システムには、コアのトランザクション処理 (TP) および分析処理 (AP) ワークロードに加えて、DDL 操作、TTL、分析、バックアップ/復元など、**バックエンド タスク**と呼ばれる他の重要なタスクがあります。これらのバックエンド タスクはデータベース オブジェクト (テーブル) 内の大量のデータを処理する必要があるため、通常は次のような特性があります。
+
+</CustomContent>
 
 -   スキーマまたはデータベース オブジェクト (テーブル) 内のすべてのデータを処理する必要があります。
 -   定期的に実行する必要がある場合がありますが、頻度は低くなります。
@@ -39,14 +45,7 @@ TiDB バックエンド タスク分散実行フレームワークを有効に�
 -   このフレームワークはバックエンド タスクの分散実行をサポートしており、TiDB クラスター全体の利用可能なコンピューティング リソースを柔軟にスケジュールできるため、TiDB クラスター内のコンピューティング リソースをより有効に活用できます。
 -   このフレームワークは、バックエンド タスク全体と個別の両方に対して、統合されたリソースの使用と管理機能を提供します。
 
-現在、TiDB バックエンド タスク分散実行フレームワークは、 `ADD INDEX`ステートメント、つまりインデックスを作成するための DDL ステートメントの分散実行のみをサポートしています。たとえば、次の SQL ステートメントがサポートされています。
-
-```sql
-ALTER TABLE t1 ADD INDEX idx1(c1);
-CREATE INDEX idx1 ON table t1(c1);
-```
-
-現在、TiDB セルフホストの場合、DXF は`ADD INDEX`ステートメントの分散実行をサポートしています。
+現在、TiDB セルフホストの場合、TiDB バックエンド タスク分散実行フレームワークは`ADD INDEX`および`IMPORT INTO`ステートメントの分散実行をサポートしています。 TiDB Cloudの場合、 `IMPORT INTO`ステートメントは適用されません。
 
 -   `ADD INDEX`はインデックスの作成に使用される DDL ステートメントです。例えば：
 
@@ -55,10 +54,7 @@ CREATE INDEX idx1 ON table t1(c1);
     CREATE INDEX idx1 ON table t1(c1);
     ```
 
-## 制限 {#limitation}
-
--   DXF は、一度に`ADD INDEX`のタスクの分散実行のみをスケジュールできます。現在の`ADD INDEX`分散タスクが終了する前に新しい`ADD INDEX`タスクが送信された場合、その新しいタスクはトランザクションを通じて実行されます。
--   DXF を使用して`TIMESTAMP`データ型の列にインデックスを追加することは、インデックスとデータの間で不整合が生じる可能性があるため、サポートされていません。
+-   `IMPORT INTO` `CSV` 、 `SQL` 、 `PARQUET`などの形式のデータを空のテーブルにインポートするために使用されます。詳細については、 [`IMPORT INTO`](https://docs.pingcap.com/tidb/v7.2/sql-statement-import-into)を参照してください。
 
 ## 前提条件 {#prerequisites}
 
@@ -98,7 +94,17 @@ Fast Online DDL に関連する次のシステム変数を調整します。
     SET GLOBAL tidb_enable_dist_task = ON;
     ```
 
-    バックエンド タスクの実行中、フレームワークによってサポートされる DDL ステートメントは分散方式で実行されます。
+    <CustomContent platform="tidb">
+
+    バックグラウンド タスクが実行されている場合、フレームワークによってサポートされているステートメント ( [`ADD INDEX`](/sql-statements/sql-statement-add-index.md)や[`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)など) が分散方式で実行されます。すべての TiDB ノードはデフォルトでバックグラウンド タスクを実行します。
+
+    </CustomContent>
+
+    <CustomContent platform="tidb-cloud">
+
+    バックグラウンド タスクが実行されている場合、フレームワークによってサポートされているステートメント ( [`ADD INDEX`](/sql-statements/sql-statement-add-index.md)など) が分散方式で実行されます。すべての TiDB ノードはデフォルトでバックグラウンド タスクを実行します。
+
+    </CustomContent>
 
 2.  必要に応じて、DDL タスクの分散実行に影響を与える可能性がある次のシステム変数を調整します。
 
@@ -106,6 +112,12 @@ Fast Online DDL に関連する次のシステム変数を調整します。
     -   [`tidb_ddl_reorg_priority`](/system-variables.md#tidb_ddl_reorg_priority)
     -   [`tidb_ddl_error_count_limit`](/system-variables.md#tidb_ddl_error_count_limit)
     -   [`tidb_ddl_reorg_batch_size`](/system-variables.md#tidb_ddl_reorg_batch_size) : デフォルト値を使用します。推奨される最大値は`1024`です。
+
+3.  v7.4.0 以降、実際のニーズに応じてバックグラウンド タスクを実行する TiDB ノードの数を調整できます。 TiDB クラスターをデプロイした後、クラスター内の各 TiDB ノードにインスタンス レベルのシステム変数[`tidb_service_scope`](/system-variables.md#tidb_service_scope-new-in-v740)を設定できます。 TiDB ノードの`tidb_service_scope` `background`に設定されている場合、TiDB ノードはバックグラウンド タスクを実行できます。 TiDB ノードの`tidb_service_scope`デフォルト値「」に設定されている場合、TiDB ノードはバックグラウンド タスクを実行できません。クラスター内のどの TiDB ノードにも`tidb_service_scope`設定されていない場合、TiDB 分散実行フレームワークは、デフォルトですべての TiDB ノードがバックグラウンド タスクを実行するようにスケジュールします。
+    > **注記：**
+    >
+    > -   分散タスクの実行中に、一部の TiDB ノードがオフラインの場合、分散タスクは`tidb_service_scope`に従ってサブタスクを動的に割り当てるのではなく、サブタスクを使用可能な TiDB ノードにランダムに割り当てます。
+    > -   分散タスクの実行中、 `tidb_service_scope`構成への変更は現在のタスクには有効になりませんが、次のタスクから有効になります。
 
 > **ヒント：**
 >

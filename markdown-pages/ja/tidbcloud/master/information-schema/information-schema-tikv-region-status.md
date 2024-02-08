@@ -5,7 +5,7 @@ summary: Learn the `TIKV_REGION_STATUS` information_schema table.
 
 # TIKV_REGION_STATUS {#tikv-region-status}
 
-`TIKV_REGION_STATUS`表は、リージョンID、開始および終了の Key-Value、読み取りおよび書き込みトラフィックなど、PD の API を介した TiKV リージョンの基本情報を示しています。
+`TIKV_REGION_STATUS`の表は、リージョンID、開始および終了の Key-Value、読み取りおよび書き込みトラフィックなど、PD の API を介した TiKV リージョンの基本情報を示しています。
 
 > **注記：**
 >

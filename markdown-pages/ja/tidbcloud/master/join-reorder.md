@@ -9,7 +9,6 @@ summary: Use the Join Reorder algorithm to join multiple tables in TiDB.
 
 例えば：
 
-
 ```sql
 SELECT * FROM t1, t2, t3 WHERE t1.a=t2.a AND t3.a=t2.a;
 ```

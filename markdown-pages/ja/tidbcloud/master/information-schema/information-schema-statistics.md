@@ -7,7 +7,6 @@ summary: Learn the `STATISTICS` information_schema table.
 
 `STATISTICS`表は、テーブルのインデックスに関する情報を提供します。
 
-
 ```sql
 USE information_schema;
 DESC statistics;

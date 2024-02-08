@@ -7,7 +7,7 @@ summary: An overview of the usage of SET [GLOBAL|SESSION] <variable> for the TiD
 
 ステートメント`SET [GLOBAL|SESSION]` 、スコープ`SESSION`または`GLOBAL`の TiDB の組み込み変数の 1 つを変更します。
 
-> **ノート：**
+> **注記：**
 >
 > MySQL と同様に、 `GLOBAL`変数への変更は既存の接続にもローカル接続にも適用されません。新しいセッションのみが値の変更を反映します。
 

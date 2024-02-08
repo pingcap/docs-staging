@@ -26,7 +26,6 @@ WhereClauseOptional ::=
 
 現在実行中の DDL ジョブのステータスを表示するには、 `ADMIN SHOW DDL`を使用します。出力には、現在のスキーマ バージョン、所有者の DDL ID とアドレス、実行中の DDL ジョブと SQL ステートメント、および現在の TiDB インスタンスの DDL ID が含まれます。
 
-
 ```sql
 ADMIN SHOW DDL;
 ```
@@ -68,7 +67,8 @@ mysql> ADMIN SHOW DDL;
     -   `synced` : 操作が正常に実行され、すべての TiDB インスタンスがこの状態に同期されたことを示します。
     -   `rollback done` : 操作が失敗し、ロールバックが完了したことを示します。
     -   `rollingback` : 操作が失敗し、ロールバック中であることを示します。
-    -   `cancelling` : 操作がキャンセルされていることを示します。この状態は、 `ADMIN CANCEL DDL JOBS`コマンドを使用して DDL ジョブをキャンセルした場合にのみ表示されます。
+    -   `cancelling` : 操作がキャンセルされていることを示します。この状態は、 [`ADMIN CANCEL DDL JOBS`](/sql-statements/sql-statement-admin-cancel-ddl.md)コマンドを使用して DDL ジョブをキャンセルした場合にのみ表示されます。
+    -   `paused` : 操作が一時停止されていることを示します。この状態は、 [`ADMIN PAUSED DDL JOBS`](/sql-statements/sql-statement-admin-pause-ddl.md)コマンドを使用して DDL ジョブを一時停止した場合にのみ表示されます。 [`ADMIN RESUME DDL JOBS`](/sql-statements/sql-statement-admin-resume-ddl.md)コマンドを使用して DDL ジョブを再開できます。
 
 </CustomContent>
 
@@ -92,12 +92,12 @@ mysql> ADMIN SHOW DDL;
     -   `synced` : 操作が正常に実行され、すべての TiDB インスタンスがこの状態に同期されたことを示します。
     -   `rollback done` : 操作が失敗し、ロールバックが完了したことを示します。
     -   `rollingback` : 操作が失敗し、ロールバック中であることを示します。
-    -   `cancelling` : 操作がキャンセルされていることを示します。この状態は、 `ADMIN CANCEL DDL JOBS`コマンドを使用して DDL ジョブをキャンセルした場合にのみ表示されます。
+    -   `cancelling` : 操作がキャンセルされていることを示します。この状態は、 [`ADMIN CANCEL DDL JOBS`](/sql-statements/sql-statement-admin-cancel-ddl.md)コマンドを使用して DDL ジョブをキャンセルした場合にのみ表示されます。
+    -   `paused` : 操作が一時停止されていることを示します。この状態は、 [`ADMIN PAUSED DDL JOBS`](/sql-statements/sql-statement-admin-pause-ddl.md)コマンドを使用して DDL ジョブを一時停止した場合にのみ表示されます。 [`ADMIN RESUME DDL JOBS`](/sql-statements/sql-statement-admin-resume-ddl.md)コマンドを使用して DDL ジョブを再開できます。
 
 </CustomContent>
 
 次の例は、 `ADMIN SHOW DDL JOBS`の結果を示しています。
-
 
 ```sql
 ADMIN SHOW DDL JOBS;
@@ -126,7 +126,7 @@ mysql> ADMIN SHOW DDL JOBS;
 
 上記の出力から:
 
--   ジョブ 59 `running`現在進行中です ( `STATE` )。スキーマの状態は現在`write reorganization`ですが、タスクが完了すると`public`に切り替わり、ユーザー セッションによって変更が公的に観察される可能性があることに注意してください。 `end_time`列も`NULL`あり、ジョブの完了時間が現在不明であることを示しています。
+-   ジョブ`running`は現在進行中です ( `STATE` )。スキーマの状態は現在`write reorganization`ですが、タスクが完了すると`public`に切り替わり、ユーザー セッションによって変更が公的に観察される可能性があることに注意してください。 `end_time`列も`NULL`あり、ジョブの完了時間が現在不明であることを示しています。
 
 -   ジョブ 60 は`add index`ジョブで、現在キューに入れられ、ジョブ 59 が完了するのを待っています。ジョブ 59 が完了すると、ジョブ 60 の`STATE`が`running`に切り替わります。
 
@@ -144,7 +144,6 @@ ADMIN SHOW DDL JOBS [NUM] [WHERE where_condition];
 ### <code>ADMIN SHOW DDL JOB QUERIES</code> {#code-admin-show-ddl-job-queries-code}
 
 `job_id`に対応する DDL ジョブの元の SQL ステートメントを表示するには、 `ADMIN SHOW DDL JOB QUERIES`使用します。
-
 
 ```sql
 ADMIN SHOW DDL JOBS;
@@ -166,7 +165,6 @@ DDL 履歴ジョブ キュー内の最後の 10 件の結果のうち、 `job_id
 ### <code>ADMIN SHOW DDL JOB QUERIES LIMIT m OFFSET n</code> {#code-admin-show-ddl-job-queries-limit-m-offset-n-code}
 
 `job_id`に対応する指定範囲`[n+1, n+m]`内の DDL ジョブの元の SQL ステートメントを表示するには、 `ADMIN SHOW DDL JOB QUERIES LIMIT m OFFSET n`使用します。
-
 
 ```sql
  ADMIN SHOW DDL JOB QUERIES LIMIT m;  # Retrieve first m rows
@@ -220,3 +218,5 @@ DDL履歴ジョブキュー内の任意に指定した結果範囲内で、 `job
 ## こちらも参照 {#see-also}
 
 -   [管理者が DDL をキャンセル](/sql-statements/sql-statement-admin-cancel-ddl.md)
+-   [管理者一時停止 DDL](/sql-statements/sql-statement-admin-pause-ddl.md)
+-   [管理者の履歴書 DDL](/sql-statements/sql-statement-admin-resume-ddl.md)

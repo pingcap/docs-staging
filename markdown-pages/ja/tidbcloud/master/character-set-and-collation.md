@@ -11,7 +11,7 @@ summary: Learn about the supported character sets and collations in TiDB.
 
 文字セットは、記号とエンコーディングのセットです。 TiDB のデフォルトの文字セットは utf8mb4 で、MySQL 8.0 以降のデフォルトと一致します。
 
-照合順序は、文字セット内の文字と文字の並べ替え順序を比較するための一連のルールです。たとえば、バイナリ照合順序では、 `A`と`a`は同等として比較されません。
+照合順序は、文字セット内の文字と文字の並べ替え順序を比較するための一連の規則です。たとえば、バイナリ照合順序では、 `A`と`a`は同等として比較されません。
 
 ```sql
 SET NAMES utf8mb4 COLLATE utf8mb4_bin;
@@ -54,8 +54,6 @@ SELECT 'A' = 'a';
 1 row in set (0.00 sec)
 ```
 
-TiDB はデフォルトでバイナリ照合順序を使用します。これは、デフォルトで大文字と小文字を区別しない照合順序を使用する MySQL とは異なります。
-
 ## TiDB でサポートされる文字セットと照合順序 {#character-sets-and-collations-supported-by-tidb}
 
 現在、TiDB は次の文字セットをサポートしています。
@@ -96,11 +94,13 @@ SHOW COLLATION;
 | utf8_bin           | utf8    |   83 | Yes     | Yes      |       1 |
 | utf8_general_ci    | utf8    |   33 |         | Yes      |       1 |
 | utf8_unicode_ci    | utf8    |  192 |         | Yes      |       1 |
+| utf8mb4_0900_ai_ci | utf8mb4 |  255 |         | Yes      |       1 |
+| utf8mb4_0900_bin   | utf8mb4 |  309 |         | Yes      |       1 |
 | utf8mb4_bin        | utf8mb4 |   46 | Yes     | Yes      |       1 |
 | utf8mb4_general_ci | utf8mb4 |   45 |         | Yes      |       1 |
 | utf8mb4_unicode_ci | utf8mb4 |  224 |         | Yes      |       1 |
 +--------------------+---------+------+---------+----------+---------+
-11 rows in set (0.00 sec)
+13 rows in set (0.00 sec)
 ```
 
 > **警告：**
@@ -111,7 +111,12 @@ SHOW COLLATION;
 
 > **注記：**
 >
-> TiDB のデフォルトの照合順序 (サフィックス`_bin`が付くバイナリ照合順序) は、 [MySQL のデフォルトの照合順序](https://dev.mysql.com/doc/refman/8.0/en/charset-charsets.html) (通常はサフィックス`_general_ci`が付く一般照合順序) とは異なります。これにより、明示的な文字セットを指定しているが、暗黙的なデフォルト照合順序の選択に依存している場合、互換性のない動作が発生する可能性があります。
+> TiDB のデフォルトの照合順序 (サフィックス`_bin`が付くバイナリ照合順序) は、 [MySQL のデフォルトの照合順序](https://dev.mysql.com/doc/refman/8.0/en/charset-charsets.html) (通常はサフィックス`_general_ci`または`_ai_ci`が付く一般的な照合順序) とは異なります。これにより、明示的な文字セットを指定しているが、暗黙的なデフォルト照合順序の選択に依存している場合、互換性のない動作が発生する可能性があります。
+>
+> ただし、TiDB のデフォルトの照合順序は、 [接続照合順序](https://dev.mysql.com/doc/refman/8.0/en/charset-connection.html#charset-connection-system-variables)の設定にも影響されます。たとえば、MySQL 8.x クライアントは、 `utf8mb4`文字セットの接続照合順序としてデフォルトで`utf8mb4_0900_ai_ci`を設定します。
+>
+> -   TiDB v7.4.0 より前では、クライアントが[接続照合順序](https://dev.mysql.com/doc/refman/8.0/en/charset-connection.html#charset-connection-system-variables)として`utf8mb4_0900_ai_ci`を使用する場合、TiDB は TiDBサーバーのデフォルトの照合照合順序`utf8mb4_bin`を使用するようにフォールバックします。これは、TiDB が`utf8mb4_0900_ai_ci`照合順序をサポートしていないためです。
+> -   v7.4.0 以降、クライアントが[接続照合順序](https://dev.mysql.com/doc/refman/8.0/en/charset-connection.html#charset-connection-system-variables)として`utf8mb4_0900_ai_ci`を使用する場合、TiDB はクライアントの設定に従い、デフォルトの照合順序として`utf8mb4_0900_ai_ci`を使用します。
 
 次のステートメントを使用すると、文字セットに対応する照合順序 ( [照合順序の新しいフレームワーク](#new-framework-for-collations)の下) を表示できます。
 
@@ -123,11 +128,13 @@ SHOW COLLATION WHERE Charset = 'utf8mb4';
 +--------------------+---------+------+---------+----------+---------+
 | Collation          | Charset | Id   | Default | Compiled | Sortlen |
 +--------------------+---------+------+---------+----------+---------+
+| utf8mb4_0900_ai_ci | utf8mb4 |  255 |         | Yes      |       1 |
+| utf8mb4_0900_bin   | utf8mb4 |  309 |         | Yes      |       1 |
 | utf8mb4_bin        | utf8mb4 |   46 | Yes     | Yes      |       1 |
 | utf8mb4_general_ci | utf8mb4 |   45 |         | Yes      |       1 |
 | utf8mb4_unicode_ci | utf8mb4 |  224 |         | Yes      |       1 |
 +--------------------+---------+------+---------+----------+---------+
-3 rows in set (0.00 sec)
+5 rows in set (0.00 sec)
 ```
 
 TiDB による GBK 文字セットのサポートの詳細については、 [GBK](/character-set-gbk.md)を参照してください。
@@ -308,7 +315,7 @@ CREATE TABLE t1(a int) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 Query OK, 0 rows affected (0.08 sec)
 ```
 
-テーブルの文字セットと照合順序が指定されていない場合は、データベースの文字セットと照合順序がデフォルト値として使用されます。
+テーブルの文字セットと照合順序が指定されていない場合は、データベースの文字セットと照合順序がデフォルト値として使用されます。照合順序を指定せずに文字セットを`utf8mb4`にのみ指定した場合、照合順序はシステム変数[`default_collation_for_utf8mb4`](/system-variables.md#default_collation_for_utf8mb4-new-in-v740)の値によって決まります。
 
 ### カラムの文字セットと照合順序 {#column-character-set-and-collation}
 
@@ -324,7 +331,7 @@ col_name {ENUM | SET} (val_list)
     [COLLATE collation_name]
 ```
 
-列の文字セットと照合順序が指定されていない場合は、テーブルの文字セットと照合順序がデフォルト値として使用されます。
+列の文字セットと照合順序が指定されていない場合は、テーブルの文字セットと照合順序がデフォルト値として使用されます。照合順序を指定せずに文字セットを`utf8mb4`にのみ指定した場合、照合順序はシステム変数[`default_collation_for_utf8mb4`](/system-variables.md#default_collation_for_utf8mb4-new-in-v740)の値によって決まります。
 
 ### 文字列の文字セットと照合順序 {#string-character-sets-and-collation}
 
@@ -488,13 +495,13 @@ SELECT VARIABLE_VALUE FROM mysql.tidb WHERE VARIABLE_NAME='new_collation_enabled
 
 <CustomContent platform="tidb-cloud">
 
-この新しいフレームワークは、意味論的な照合順序の解析をサポートします。 TiDB は、クラスターが最初に初期化されるときに、デフォルトで新しいフレームワークを有効にします。
+この新しいフレームワークは、意味論的な照合順序の解析をサポートしています。 TiDB は、クラスターが最初に初期化されるときに、デフォルトで新しいフレームワークを有効にします。
 
 </CustomContent>
 
-新しいフレームワークでは、TiDB は MySQL と互換性のある`utf8_general_ci` 、 `utf8mb4_general_ci` 、 `utf8_unicode_ci` 、 `utf8mb4_unicode_ci` 、 `gbk_chinese_ci` 、および`gbk_bin`照合順序をサポートします。
+新しいフレームワークの下で、TiDB は、MySQL と互換性のある`utf8_general_ci` 、 `utf8mb4_general_ci` 、 `utf8_unicode_ci` 、 `utf8mb4_unicode_ci` 、 `utf8mb4_0900_bin` 、 `utf8mb4_0900_ai_ci` 、 `gbk_chinese_ci` 、および`gbk_bin`照合順序をサポートします。
 
-`utf8_general_ci` 、 `utf8mb4_general_ci` 、 `utf8_unicode_ci` 、 `utf8mb4_unicode_ci` 、および`gbk_chinese_ci`のいずれかを使用する場合、文字列比較では大文字と小文字とアクセントは区別されません。同時に、TiDB は照合順序`PADDING`動作も修正します。
+`utf8_general_ci` 、 `utf8mb4_general_ci` 、 `utf8_unicode_ci` 、 `utf8mb4_unicode_ci` 、 `utf8mb4_0900_ai_ci`および`gbk_chinese_ci`のいずれかを使用する場合、文字列比較では大文字と小文字とアクセントは区別されません。同時に、TiDB は照合順序`PADDING`動作も修正します。
 
 ```sql
 CREATE TABLE t(a varchar(20) charset utf8mb4 collate utf8mb4_general_ci PRIMARY KEY);
@@ -570,4 +577,4 @@ SELECT 'a' = _utf8mb4 'A' collate utf8mb4_general_ci;
 1 row in set (0.00 sec)
 ```
 
-詳細については、 [接続文字セットと照合順序](https://dev.mysql.com/doc/refman/5.7/en/charset-connection.html)を参照してください。
+詳細については、 [接続文字セットと照合順序](https://dev.mysql.com/doc/refman/8.0/en/charset-connection.html)を参照してください。

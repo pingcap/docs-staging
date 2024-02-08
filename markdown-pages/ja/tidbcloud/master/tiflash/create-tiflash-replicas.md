@@ -19,7 +19,7 @@ ALTER TABLE table_name SET TIFLASH REPLICA count;
 
 -   `count`レプリカの数を示します。値が`0`の場合、レプリカは削除されます。
 
-同じテーブルに対して複数の DDL ステートメントを実行すると、最後のステートメントのみが有効になります。次の例では、テーブル`tpch50`に対して 2 つの DDL ステートメントが実行されますが、有効になるのは 2 番目のステートメント (レプリカを削除する) のみです。
+同じテーブルに対して複数の DDL ステートメントを実行すると、最後のステートメントのみが有効になります。次の例では、テーブル`tpch50`に対して 2 つの DDL ステートメントが実行されますが、有効になるのは 2 番目のステートメント (レプリカを削除する) だけです。
 
 テーブルの 2 つのレプリカを作成します。
 
@@ -43,7 +43,7 @@ ALTER TABLE `tpch50`.`lineitem` SET TIFLASH REPLICA 0;
 
 -   v4.0.6 より前のバージョンの場合、 TiDB Lightning を使用してデータをインポートする前にTiFlashレプリカを作成すると、データのインポートは失敗します。テーブルのTiFlashレプリカを作成する前に、テーブルにデータをインポートする必要があります。
 
--   TiDB とTiDB Lightning が両方とも v4.0.6 以降の場合、テーブルにTiFlashレプリカがあるかどうかに関係なく、 TiDB Lightningを使用してそのテーブルにデータをインポートできます。これにより、 TiDB Lightningの手順が遅くなる可能性があることに注意してください。これは、Lightning ホストの NIC 帯域幅、 TiFlashノードの CPU とディスクの負荷、 TiFlashレプリカの数によって異なります。
+-   TiDB とTiDB Lightning が両方とも v4.0.6 以降の場合、テーブルにTiFlashレプリカがあるかどうかに関係なく、 TiDB Lightningを使用してそのテーブルにデータをインポートできます。これにより、 TiDB Lightning の手順が遅くなる可能性があることに注意してください。これは、Lightning ホストの NIC 帯域幅、 TiFlashノードの CPU とディスクの負荷、 TiFlashレプリカの数によって異なります。
 
 -   PD スケジュールのパフォーマンスが低下するため、1,000 を超えるテーブルを複製しないことをお勧めします。この制限は、後のバージョンでは削除される予定です。
 
@@ -143,10 +143,10 @@ TiFlashレプリカが追加される前に、各 TiKV インスタンスはフ�
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 60 add-peer
     ```
 
-    > 前述のコマンドでは、 `v<CLUSTER_VERSION>`実際のクラスターのバージョンに置き換える必要があります。たとえば、 `v7.1.3`と`<PD_ADDRESS>:2379`任意の PD ノードのアドレスに置き換えます。例えば：
+    > 前述のコマンドでは、 `v<CLUSTER_VERSION>`実際のクラスターのバージョンに置き換える必要があります。たとえば、 `v7.5.0`と`<PD_ADDRESS>:2379`任意の PD ノードのアドレスに置き換えます。例えば：
     >
     > ```shell
-    > tiup ctl:v7.1.3 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
+    > tiup ctl:v7.5.0 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
     > ```
 
     数分以内に、 TiFlashノードの CPU およびディスク IO リソースの使用量が大幅に増加することがわかり、 TiFlash はレプリカをより速く作成するはずです。同時に、TiKV ノードの CPU およびディスク IO リソースの使用量も増加します。
@@ -252,6 +252,8 @@ TiFlashレプリカが追加される前に、各 TiKV インスタンスはフ�
 
 <CustomContent platform="tidb">
 
-ラベルを使用したレプリカのスケジュール設定の詳細については、 [トポロジーラベルごとにレプリカをスケジュールする](/schedule-replicas-by-topology-labels.md) 、 [1 つの地域展開における複数のデータセンター](/multi-data-centers-in-one-city-deployment.md) 、および[2 つの地域に配置された 3 つのデータ センター](/three-data-centers-in-two-cities-deployment.md)を参照してください。
+ラベルを使用したレプリカのスケジュール設定の詳細については、 [トポロジ ラベルごとにレプリカをスケジュールする](/schedule-replicas-by-topology-labels.md) 、 [1 つの地域展開における複数のデータセンター](/multi-data-centers-in-one-city-deployment.md) 、および[2 つの地域に配置された 3 つのデータ センター](/three-data-centers-in-two-cities-deployment.md)を参照してください。
+
+TiFlash は、さまざまなゾーンのレプリカ選択戦略の構成をサポートしています。詳細については、 [`tiflash_replica_read`](/system-variables.md#tiflash_replica_read-new-in-v730)を参照してください。
 
 </CustomContent>

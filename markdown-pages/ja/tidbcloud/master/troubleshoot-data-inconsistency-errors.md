@@ -9,7 +9,7 @@ TiDB は、トランザクション[`ADMIN CHECK [TABLE|INDEX]`](/sql-statements
 
 <CustomContent platform="tidb">
 
-このドキュメントでは、データ不整合エラーの意味について説明し、整合性チェックをバイパスするいくつかの方法を提供します。データ整合性エラーが発生した場合は、PingCAP またはコミュニティから[支持を得ます](/support.md)のことができます。
+このドキュメントでは、データ不整合エラーの意味について説明し、整合性チェックをバイパスするいくつかの方法を提供します。データ整合性エラーが発生した場合は、PingCAP またはコミュニティから[支持を得ます](/support.md)できます。
 
 </CustomContent>
 
@@ -92,7 +92,7 @@ TiDB は、トランザクション[`ADMIN CHECK [TABLE|INDEX]`](/sql-statements
 
 <CustomContent platform="tidb-cloud">
 
-データの不[TiDB Cloudサポートにお問い合わせください](/tidb-cloud/tidb-cloud-support.md)エラーが発生した場合は、自分でエラーに対処するのではなく、すぐにトラブルシューティングを行ってください。アプリケーションでこのようなエラーを緊急にスキップする必要がある場合は、次の方法を使用してチェックをバイパスできます。
+データの不整合エラーが発生した場合は、自分でエラーに対処するのではなく[TiDB Cloudサポートにお問い合わせください](/tidb-cloud/tidb-cloud-support.md)すぐにトラブルシューティングを行ってください。アプリケーションでこのようなエラーを緊急にスキップする必要がある場合は、次の方法を使用してチェックをバイパスできます。
 
 </CustomContent>
 
@@ -107,7 +107,7 @@ TiDB は、トランザクション[`ADMIN CHECK [TABLE|INDEX]`](/sql-statements
 -   エラー 8138、8139、および 8140 のチェックをバイパスするには、 `set @@tidb_enable_mutation_checker=0`を設定します。
 -   エラー 8141 のチェックをバイパスするには、 `set @@tidb_txn_assertion_level=OFF`を構成します。
 
-> **ノート：**
+> **注記：**
 >
 > `tidb_enable_mutation_checker`と`tidb_txn_assertion_level`を無効にすると、すべての SQL ステートメントの対応するチェックがバイパスされます。
 

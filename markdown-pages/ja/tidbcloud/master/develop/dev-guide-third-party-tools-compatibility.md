@@ -36,7 +36,7 @@ TiDB アプリケーションでは、データのオーバーフローを避け
 
 **説明**
 
-MySQL は、データベースに対して実行された操作の合計数を追跡するために、一連の[`Com_`で始まるサーバーステータス変数](https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Com_xxx)維持します。たとえば、 `Com_select` 、(ステートメントが正常にクエリされなかった場合でも) MySQL が最後に起動されてから開始された`SELECT`のステートメントの合計数を記録します。 TiDB はこれらの変数を管理しません。ステートメント[`SHOW GLOBAL STATUS LIKE 'Com_%'`](/sql-statements/sql-statement-show-status.md)を使用すると、TiDB と MySQL の違いを確認できます。
+MySQL は、データベースに対して実行された操作の合計数を追跡するために、一連の[`Com_`で始まるサーバーステータス変数](https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Com_xxx)維持します。たとえば、 `Com_select` 、(ステートメントが正常にクエリされなかった場合でも) MySQL が最後に起動されてから開始された`SELECT`のステートメントの合計数を記録します。 TiDB はこれらの変数を維持しません。ステートメント[`SHOW GLOBAL STATUS LIKE 'Com_%'`](/sql-statements/sql-statement-show-status.md)を使用すると、TiDB と MySQL の違いを確認できます。
 
 **回避方法**
 
@@ -167,7 +167,7 @@ TiDB は`UpdatableResultSet`をサポートしていません。 `ResultSet.CONC
 
 **説明**
 
-MySQLサーバー&lt; 5.7.5 プロトコルを使用するデータベース (v6.3.0 より前の TiDB など) を使用する場合、特定の条件下でデータベース接続がハングする場合があります。詳細については、 [バグレポート](https://bugs.mysql.com/bug.php?id=106252)参照してください。
+MySQL サーバー &lt; 5.7.5 で MySQL Connector/J 8.0.29 を使用する場合、または MySQLサーバー&lt; 5.7.5 プロトコルを使用するデータベース (v6.3.0 より前の TiDB など) を使用する場合、特定の条件下でサーバー接続がハングする場合があります。詳細については、 [バグレポート](https://bugs.mysql.com/bug.php?id=106252)を参照してください。
 
 **回避方法**
 

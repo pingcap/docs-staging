@@ -20,7 +20,6 @@ summary: Learn how to use partitioning in TiDB.
 
 次のように、人事レコードを含むテーブルを作成する必要があるとします。
 
-
 ```sql
 CREATE TABLE employees (
     id INT NOT NULL,
@@ -34,7 +33,6 @@ CREATE TABLE employees (
 ```
 
 必要に応じて、さまざまな方法で範囲ごとにテーブルを分割できます。たとえば、 `store_id`列を使用してパーティション化できます。
-
 
 ```sql
 CREATE TABLE employees (
@@ -59,7 +57,6 @@ PARTITION BY RANGE (store_id) (
 
 データ`(72, 'Tom', 'John', '2015-06-25', NULL, NULL, 15)`の行を挿入すると、それは`p2`パーティションに分類されます。ただし、 `store_id`が 20 より大きいレコードを挿入すると、TiDB はこのレコードがどのパーティションに挿入されるべきかを認識できないため、エラーが報告されます。この場合、テーブルを作成するときに`MAXVALUE`を使用できます。
 
-
 ```sql
 CREATE TABLE employees (
     id INT NOT NULL,
@@ -83,7 +80,6 @@ PARTITION BY RANGE (store_id) (
 
 また、 `job_code`列の値である従業員の職種コードによってテーブルを分割することもできます。 2 桁の職務コードは一般従業員を表し、3 桁のコードはオフィスおよびカスタマー サポート担当者を表し、4 桁のコードは管理職を表すと仮定します。次に、次のようにパーティションテーブルを作成できます。
 
-
 ```sql
 CREATE TABLE employees (
     id INT NOT NULL,
@@ -106,7 +102,6 @@ PARTITION BY RANGE (job_code) (
 
 テーブルを`store_id`で分割するだけでなく、日付でテーブルを分割することもできます。たとえば、従業員の離職年ごとに分割できます。
 
-
 ```sql
 CREATE TABLE employees (
     id INT NOT NULL,
@@ -127,7 +122,6 @@ PARTITION BY RANGE ( YEAR(separated) ) (
 ```
 
 範囲パーティショニングでは、 `timestamp`列の値に基づいてパーティショニングし、 `unix_timestamp()`関数を使用できます。次に例を示します。
-
 
 ```sql
 CREATE TABLE quarterly_report_status (
@@ -248,20 +242,18 @@ INTERVAL (1 MONTH) FIRST PARTITION LESS THAN ('2000-01-01') LAST PARTITION LESS 
 
 次のテーブルを作成します。
 
-```
-CREATE TABLE `monthly_report_status` (
-  `report_id` int(11) NOT NULL,
-  `report_status` varchar(20) NOT NULL,
-  `report_date` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
-PARTITION BY RANGE COLUMNS(`report_date`)
-(PARTITION `P_LT_2000-01-01` VALUES LESS THAN ('2000-01-01'),
- PARTITION `P_LT_2000-02-01` VALUES LESS THAN ('2000-02-01'),
-...
- PARTITION `P_LT_2024-11-01` VALUES LESS THAN ('2024-11-01'),
- PARTITION `P_LT_2024-12-01` VALUES LESS THAN ('2024-12-01'),
- PARTITION `P_LT_2025-01-01` VALUES LESS THAN ('2025-01-01'))
-```
+    CREATE TABLE `monthly_report_status` (
+      `report_id` int(11) NOT NULL,
+      `report_status` varchar(20) NOT NULL,
+      `report_date` date NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+    PARTITION BY RANGE COLUMNS(`report_date`)
+    (PARTITION `P_LT_2000-01-01` VALUES LESS THAN ('2000-01-01'),
+     PARTITION `P_LT_2000-02-01` VALUES LESS THAN ('2000-02-01'),
+    ...
+     PARTITION `P_LT_2024-11-01` VALUES LESS THAN ('2024-11-01'),
+     PARTITION `P_LT_2024-12-01` VALUES LESS THAN ('2024-12-01'),
+     PARTITION `P_LT_2025-01-01` VALUES LESS THAN ('2025-01-01'))
 
 オプションのパラメーター`NULL PARTITION`は、定義が`PARTITION P_NULL VALUES LESS THAN (<minimum value of the column type>)`であるパー​​ティションを作成し、パーティション式が`NULL`と評価される場合にのみ一致します。 `NULL`が他の値より小さいとみなされることを説明する[範囲パーティショニングによる NULL の処理](#handling-of-null-with-range-partitioning)を参照してください。
 
@@ -273,38 +265,29 @@ INTERVAL パーティショニングでは、パーティションの追加と�
 
 次のステートメントは、最初のパーティションを変更します。値が指定された式より小さいパーティションをすべて削除し、一致したパーティションを新しい最初のパーティションにします。 NULL PARTITION には影響しません。
 
-```
-ALTER TABLE table_name FIRST PARTITION LESS THAN (<expression>)
-```
+    ALTER TABLE table_name FIRST PARTITION LESS THAN (<expression>)
 
 次のステートメントは最後のパーティションを変更します。これは、より高い範囲と新しいデータ用の余地を持つパーティションをさらに追加することを意味します。指定された式までの現在の間隔で新しいパーティションが追加されます。 `MAXVALUE PARTITION`存在する場合、データの再編成が必要になるため機能しません。
 
-```
-ALTER TABLE table_name LAST PARTITION LESS THAN (<expression>)
-```
+    ALTER TABLE table_name LAST PARTITION LESS THAN (<expression>)
 
 #### INTERVAL パーティショニングの詳細と制限事項 {#interval-partitioning-details-and-limitations}
 
 -   INTERVAL パーティショニング機能には、 `CREATE/ALTER TABLE`構文のみが含まれます。メタデータに変更はないため、新しい構文で作成または変更されたテーブルは引き続き MySQL と互換性があります。
 -   MySQL の互換性を維持するために、 `SHOW CREATE TABLE`の出力形式に変更はありません。
 -   新しい`ALTER`構文は、INTERVAL に準拠する既存のテーブルに適用されます。これらのテーブルを`INTERVAL`構文で作成する必要はありません。
--   `RANGE COLUMNS`の場合、整数、日付、および日時の列タイプのみがサポートされます。
+-   `RANGE COLUMNS`パーティション化に`INTERVAL`構文を使用するには、パーティション化キーとして`INTEGER` 、 `DATE` 、または`DATETIME`タイプの 1 つの列のみを指定できます。
 
 ### List パーティショニング {#list-partitioning}
 
-リストパーティションテーブルを作成する前に、セッション変数の値を`tidb_enable_list_partition`から`ON`に設定する必要があります。
+リストパーティションテーブルを作成する前に、次のシステム変数がデフォルト値の`ON`に設定されていることを確認してください。
 
-
-```sql
-set @@session.tidb_enable_list_partition = ON
-```
-
-また、 `tidb_enable_table_partition`がデフォルト設定である`ON`に設定されていることを確認してください。
+-   [`tidb_enable_list_partition`](/system-variables.md#tidb_enable_list_partition-new-in-v50)
+-   [`tidb_enable_table_partition`](/system-variables.md#tidb_enable_table_partition)
 
 List パーティショニングはレンジ パーティショニングと似ています。レンジ パーティション化とは異なり、List パーティショニングでは、各パーティション内のすべての行のパーティション式の値は、指定された値セット内にあります。各パーティションに定義されたこの値セットには、任意の数の値を含めることができますが、重複した値を含めることはできません。 `PARTITION ... VALUES IN (...)`句を使用して値セットを定義できます。
 
 人事記録テーブルを作成するとします。次のようにテーブルを作成できます。
-
 
 ```sql
 CREATE TABLE employees (
@@ -316,17 +299,14 @@ CREATE TABLE employees (
 
 次の表に示すように、20 店舗が 4 つの地区に分散していると仮定します。
 
-```
-| Region  | Store ID Numbers     |
-| ------- | -------------------- |
-| North   | 1, 2, 3, 4, 5        |
-| East    | 6, 7, 8, 9, 10       |
-| West    | 11, 12, 13, 14, 15   |
-| Central | 16, 17, 18, 19, 20   |
-```
+    | Region  | Store ID Numbers     |
+    | ------- | -------------------- |
+    | North   | 1, 2, 3, 4, 5        |
+    | East    | 6, 7, 8, 9, 10       |
+    | West    | 11, 12, 13, 14, 15   |
+    | Central | 16, 17, 18, 19, 20   |
 
 同じ地域の従業員の人事データを同じパーティションに保存する場合は、 `store_id`に基づいてリストパーティションテーブルを作成できます。
-
 
 ```sql
 CREATE TABLE employees (
@@ -346,24 +326,82 @@ PARTITION BY LIST (store_id) (
 
 `ALTER TABLE employees DROP PARTITION pEast`を実行して関連する行をすべて削除することもできますが、このステートメントではテーブル定義から`pEast`パーティションも削除されます。この状況では、 `ALTER TABLE ... ADD PARTITION`ステートメントを実行して、テーブルの元のパーティション スキームを回復する必要があります。
 
-レンジ パーティショニングとは異なり、List パーティショニングには、他のパーティションに属さないすべての値を格納するための同様の`MAXVALUE`パーティションがありません。代わりに、パーティション式のすべての期待値を`PARTITION ... VALUES IN (...)`句に含める必要があります。 `INSERT`ステートメントに挿入される値がパーティションの列値セットと一致しない場合、ステートメントは実行に失敗し、エラーが報告されます。次の例を参照してください。
+#### デフォルトのリストパーティション {#default-list-partition}
+
+v7.3.0 以降、リストまたはリスト COLUMNSパーティションテーブルにデフォルト パーティションを追加できるようになりました。デフォルトのパーティションはフォールバック パーティションとして機能し、どのパーティションの値セットにも一致しない行を配置できます。
+
+> **注記：**
+>
+> この機能は、MySQL 構文に対する TiDB 拡張機能です。デフォルトのパーティションを持つ List または List COLUMNSパーティションテーブルの場合、テーブル内のデータを MySQL に直接レプリケートすることはできません。
+
+次のリストパーティションテーブルを例として取り上げます。
 
 ```sql
-test> CREATE TABLE t (
-      a INT,
-      b INT
-    )
-    PARTITION BY LIST (a) (
-      PARTITION p0 VALUES IN (1, 2, 3),
-      PARTITION p1 VALUES IN (4, 5, 6)
-    );
+CREATE TABLE t (
+  a INT,
+  b INT
+)
+PARTITION BY LIST (a) (
+  PARTITION p0 VALUES IN (1, 2, 3),
+  PARTITION p1 VALUES IN (4, 5, 6)
+);
+Query OK, 0 rows affected (0.11 sec)
+```
+
+次のように、 `pDef`という名前のデフォルトのリスト パーティションをテーブルに追加できます。
+
+```sql
+ALTER TABLE t ADD PARTITION (PARTITION pDef DEFAULT);
+```
+
+または
+
+```sql
+ALTER TABLE t ADD PARTITION (PARTITION pDef VALUES IN (DEFAULT));
+```
+
+このようにして、どのパーティションの値セットにも一致しない新しく挿入された値を、自動的にデフォルトのパーティションに入れることができます。
+
+```sql
+INSERT INTO t VALUES (7, 7);
+Query OK, 1 row affected (0.01 sec)
+```
+
+List または List COLUMNSパーティションテーブルを作成するときに、デフォルトのパーティションを追加することもできます。例えば：
+
+```sql
+CREATE TABLE employees (
+    id INT NOT NULL,
+    hired DATE NOT NULL DEFAULT '1970-01-01',
+    store_id INT
+)
+PARTITION BY LIST (store_id) (
+    PARTITION pNorth VALUES IN (1, 2, 3, 4, 5),
+    PARTITION pEast VALUES IN (6, 7, 8, 9, 10),
+    PARTITION pWest VALUES IN (11, 12, 13, 14, 15),
+    PARTITION pCentral VALUES IN (16, 17, 18, 19, 20),
+    PARTITION pDefault DEFAULT
+);
+```
+
+デフォルト パーティションのない List または List COLUMNSパーティションテーブルの場合、 `INSERT`ステートメントを使用して挿入される値は、テーブルの`PARTITION ... VALUES IN (...)`句で定義された値セットと一致する必要があります。挿入される値がどのパーティションの値セットとも一致しない場合、次の例に示すように、ステートメントは失敗し、エラーが返されます。
+
+```sql
+CREATE TABLE t (
+  a INT,
+  b INT
+)
+PARTITION BY LIST (a) (
+  PARTITION p0 VALUES IN (1, 2, 3),
+  PARTITION p1 VALUES IN (4, 5, 6)
+);
 Query OK, 0 rows affected (0.11 sec)
 
-test> INSERT INTO t VALUES (7, 7);
+INSERT INTO t VALUES (7, 7);
 ERROR 1525 (HY000): Table has no partition for value 7
 ```
 
-上記のエラー タイプを無視するには、 `IGNORE`キーワードを使用できます。このキーワードを使用した後、どのパーティションの列値セットにも一致しない値が行に含まれている場合、この行は挿入されません。代わりに、一致する値を持つ行が挿入され、エラーは報告されません。
+前述のエラーを無視するには、 `INSERT`ステートメントに`IGNORE`キーワードを追加します。このキーワードを追加すると、 `INSERT`ステートメントはパーティション値セットに一致する行のみを挿入し、一致しない行は挿入せず、エラーは返されません。
 
 ```sql
 test> TRUNCATE t;
@@ -390,17 +428,14 @@ List COLUMNS パーティショニングは、List パーティショニング�
 
 次の表に示すように、次の 12 都市の店舗従業員を 4 つの地域に分割するとします。
 
-```
-| Region | Cities                         |
-| :----- | ------------------------------ |
-| 1      | LosAngeles,Seattle, Houston    |
-| 2      | Chicago, Columbus, Boston      |
-| 3      | NewYork, LongIsland, Baltimore |
-| 4      | Atlanta, Raleigh, Cincinnati   |
-```
+    | Region | Cities                         |
+    | :----- | ------------------------------ |
+    | 1      | LosAngeles,Seattle, Houston    |
+    | 2      | Chicago, Columbus, Boston      |
+    | 3      | NewYork, LongIsland, Baltimore |
+    | 4      | Atlanta, Raleigh, Cincinnati   |
 
 以下に示すように、 List COLUMNS パーティショニングを使用してテーブルを作成し、従業員の都市に対応するパーティションに各行を格納できます。
-
 
 ```sql
 CREATE TABLE employees_1 (
@@ -424,7 +459,6 @@ PARTITION BY LIST COLUMNS(city) (
 List パーティショニングとは異なり、List COLUMNS パーティショニングでは、列値を整数に変換するために`COLUMNS()`句の式を使用する必要はありません。
 
 次の例に示すように、List COLUMNS パーティショニングは、タイプ`DATE`および`DATETIME`の列を使用して実装することもできます。この例では、前の`employees_1`テーブルと同じ名前と列を使用しますが、 `hired`列に基づいてList COLUMNS パーティショニングを使用します。
-
 
 ```sql
 CREATE TABLE employees_2 (
@@ -451,7 +485,6 @@ PARTITION BY LIST COLUMNS(hired) (
 
 さらに、 `COLUMNS()`句に複数の列を追加することもできます。例えば：
 
-
 ```sql
 CREATE TABLE t (
     id int,
@@ -472,7 +505,6 @@ PARTITION BY LIST COLUMNS(id,name) (
 
 次の操作では、 `store_id`ずつ 4 つのパーティションに分割されたハッシュパーティションテーブルが作成されます。
 
-
 ```sql
 CREATE TABLE employees (
     id INT NOT NULL,
@@ -491,7 +523,6 @@ PARTITIONS 4;
 `PARTITIONS num`が指定されていない場合、デフォルトのパーティション数は 1 です。
 
 `expr`の整数を返す SQL 式を使用することもできます。たとえば、テーブルを雇用年ごとにパーティション化できます。
-
 
 ```sql
 CREATE TABLE employees (
@@ -520,7 +551,6 @@ PARTITIONS 4;
 
 `PARTITION BY HASH`を使用する場合、TiDB は式の結果の係数に基づいてデータがどのパーティションに分類されるかを決定します。つまり、パーティショニング式が`expr`で、パーティション数が`num`の場合、データが格納されるパーティションは`MOD(expr, num)`によって決まります。 `t1`が次のように定義されているとします。
 
-
 ```sql
 CREATE TABLE t1 (col1 INT, col2 CHAR(5), col3 DATE)
     PARTITION BY HASH( YEAR(col3) )
@@ -529,11 +559,9 @@ CREATE TABLE t1 (col1 INT, col2 CHAR(5), col3 DATE)
 
 データ行を`t1`に挿入し、 `col3`の値が「2005-09-15」である場合、この行はパーティション 1 に挿入されます。
 
-```
-MOD(YEAR('2005-09-01'),4)
-=  MOD(2005,4)
-=  1
-```
+    MOD(YEAR('2005-09-01'),4)
+    =  MOD(2005,4)
+    =  1
 
 ### キーの分割 {#key-partitioning}
 
@@ -615,13 +643,13 @@ PARTITIONS 4;
 
 #### TiDB がリニア ハッシュ パーティションを処理する方法 {#how-tidb-handles-linear-hash-partitions}
 
-v6.4.0 より前では、TiDB で[MySQL 線形ハッシュ](https://dev.mysql.com/doc/refman/5.7/en/partitioning-linear-hash.html)パーティションの DDL ステートメントを実行すると、TiDB は非パーティションテーブルのみを作成できました。この場合、TiDB でパーティション化されたテーブルを引き続き使用したい場合は、DDL ステートメントを変更する必要があります。
+v6.4.0 より前では、TiDB で[MySQL 線形ハッシュ](https://dev.mysql.com/doc/refman/8.0/en/partitioning-linear-hash.html)パーティションの DDL ステートメントを実行すると、TiDB は非パーティションテーブルのみを作成できました。この場合、TiDB でパーティション化されたテーブルを引き続き使用したい場合は、DDL ステートメントを変更する必要があります。
 
 v6.4.0 以降、TiDB は MySQL `PARTITION BY LINEAR HASH`構文の解析をサポートしますが、その中の`LINEAR`キーワードは無視されます。 MySQL Linear Hash パーティションの既存の DDL および DML ステートメントがある場合は、それらを変更せずに TiDB で実行できます。
 
--   MySQL リニア ハッシュ パーティションの`CREATE`ステートメントの場合、TiDB は非リニア ハッシュパーティションテーブルを作成します (TiDB にはリニア ハッシュパーティションテーブルがないことに注意してください)。パーティション数が 2 の累乗の場合、TiDB ハッシュパーティションテーブルの行は、MySQL Linear Hashパーティションテーブルの行と同じように分散されます。それ以外の場合、TiDB でのこれらの行の分散は MySQL とは異なります。これは、非線形パーティション テーブルでは単純な「パーティションの剰余数」が使用されるのに対し、線形パーティション テーブルでは「2 の次の累乗を法とし、パーティション数と次の 2 の累乗の間で値を折り畳む」が使用されるためです。詳細は[#38450](https://github.com/pingcap/tidb/issues/38450)を参照してください。
+-   MySQL リニア ハッシュ パーティションの`CREATE`ステートメントの場合、TiDB は非リニア ハッシュパーティションテーブルを作成します (TiDB にはリニア ハッシュパーティションテーブルがないことに注意してください)。パーティション数が 2 の累乗の場合、TiDB ハッシュパーティションテーブル内の行は、MySQL Linear Hashパーティションテーブル内の行と同じように分散されます。それ以外の場合、TiDB でのこれらの行の分散は MySQL とは異なります。これは、非線形パーティション テーブルでは単純な「パーティションの剰余数」が使用されるのに対し、線形パーティション テーブルでは「2 の次の累乗を剰余とし、パーティション数と次の 2 の累乗の間で値を折り畳む」が使用されるためです。詳細は[#38450](https://github.com/pingcap/tidb/issues/38450)を参照してください。
 
--   MySQL Linear Hash パーティションの他のすべてのステートメントは、TiDB でも MySQL と同じように機能します。ただし、パーティションの数が 2 のべき乗ではない場合、行の分散方法が異なります。これにより、 [パーティションの選択](#partition-selection) 、 `TRUNCATE PARTITION` 、および`EXCHANGE PARTITION` 。
+-   MySQL Linear Hash パーティションの他のすべてのステートメントは、TiDB で MySQL と同じように機能します。ただし、パーティションの数が 2 の累乗でない場合、行の分散方法が異なります。これにより、 [パーティションの選択](#partition-selection) 、 `TRUNCATE PARTITION` 、および`EXCHANGE PARTITION` 。
 
 ### TiDB がリニア キー パーティションを処理する方法 {#how-tidb-handles-linear-key-partitions}
 
@@ -641,7 +669,6 @@ TiDB では、パーティショニング式の計算結果として`NULL`を使
 
 Range でパーティション分割されたテーブルに行を挿入し、パーティションの決定に使用される列の値が`NULL`である場合、この行は最下位のパーティションに挿入されます。
 
-
 ```sql
 CREATE TABLE t1 (
     c1 INT,
@@ -655,66 +682,48 @@ PARTITION BY RANGE(c1) (
 );
 ```
 
-```
-Query OK, 0 rows affected (0.09 sec)
-```
-
+    Query OK, 0 rows affected (0.09 sec)
 
 ```sql
 select * from t1 partition(p0);
 ```
 
-```
-+------|--------+
-| c1   | c2     |
-+------|--------+
-| NULL | mothra |
-+------|--------+
-1 row in set (0.00 sec)
-```
-
+    +------|--------+
+    | c1   | c2     |
+    +------|--------+
+    | NULL | mothra |
+    +------|--------+
+    1 row in set (0.00 sec)
 
 ```sql
 select * from t1 partition(p1);
 ```
 
-```
-Empty set (0.00 sec)
-```
-
+    Empty set (0.00 sec)
 
 ```sql
 select * from t1 partition(p2);
 ```
 
-```
-Empty set (0.00 sec)
-```
+    Empty set (0.00 sec)
 
 `p0`パーティションを削除し、結果を確認します。
-
 
 ```sql
 alter table t1 drop partition p0;
 ```
 
-```
-Query OK, 0 rows affected (0.08 sec)
-```
-
+    Query OK, 0 rows affected (0.08 sec)
 
 ```sql
 select * from t1;
 ```
 
-```
-Empty set (0.00 sec)
-```
+    Empty set (0.00 sec)
 
 #### ハッシュ分割による NULL の処理 {#handling-of-null-with-hash-partitioning}
 
 ハッシュによってテーブルをパーティション分割する場合、 `NULL`値を処理する別の方法があります。パーティション式の計算結果が`NULL`の場合、それは`0`とみなされます。
-
 
 ```sql
 CREATE TABLE th (
@@ -726,42 +735,31 @@ PARTITION BY HASH(c1)
 PARTITIONS 2;
 ```
 
-```
-Query OK, 0 rows affected (0.00 sec)
-```
-
+    Query OK, 0 rows affected (0.00 sec)
 
 ```sql
 INSERT INTO th VALUES (NULL, 'mothra'), (0, 'gigan');
 ```
 
-```
-Query OK, 2 rows affected (0.04 sec)
-```
-
+    Query OK, 2 rows affected (0.04 sec)
 
 ```sql
 select * from th partition (p0);
 ```
 
-```
-+------|--------+
-| c1   | c2     |
-+------|--------+
-| NULL | mothra |
-|    0 | gigan  |
-+------|--------+
-2 rows in set (0.00 sec)
-```
-
+    +------|--------+
+    | c1   | c2     |
+    +------|--------+
+    | NULL | mothra |
+    |    0 | gigan  |
+    +------|--------+
+    2 rows in set (0.00 sec)
 
 ```sql
 select * from th partition (p1);
 ```
 
-```
-Empty set (0.00 sec)
-```
+    Empty set (0.00 sec)
 
 挿入されたレコード`(NULL, 'mothra')` `(0, 'gigan')`と同じパーティションに分類されることがわかります。
 
@@ -876,9 +874,7 @@ ALTER TABLE member_level ADD PARTITION (PARTITION l5_6 VALUES IN (5,6));
 ALTER TABLE members ADD PARTITION (PARTITION p1990 VALUES LESS THAN (2000));
 ```
 
-```
-ERROR 1493 (HY000): VALUES LESS THAN value must be strictly increasing for each partition
-```
+    ERROR 1493 (HY000): VALUES LESS THAN value must be strictly increasing for each partition
 
 #### パーティションを再編成する {#reorganize-partitions}
 
@@ -928,9 +924,7 @@ ALTER TABLE member_level REORGANIZE PARTITION l1_2,l3,l4,l5,l6 INTO
     ALTER TABLE members REORGANIZE PARTITION p1800,p2000 INTO (PARTITION p2000 VALUES LESS THAN (2100));
     ```
 
-    ```
-    ERROR 8200 (HY000): Unsupported REORGANIZE PARTITION of RANGE; not adjacent partitions
-    ```
+        ERROR 8200 (HY000): Unsupported REORGANIZE PARTITION of RANGE; not adjacent partitions
 
 -   レンジパーティションテーブルの場合、範囲の末尾を変更するには、 `VALUES LESS THAN`で定義した新しい末尾が最後のパーティションの既存の行をカバーする必要があります。それ以外の場合は、既存の行が適合しなくなり、エラーが報告されます。
 
@@ -940,9 +934,7 @@ ALTER TABLE member_level REORGANIZE PARTITION l1_2,l3,l4,l5,l6 INTO
     ALTER TABLE members REORGANIZE PARTITION p2000 INTO (PARTITION p2000 VALUES LESS THAN (2020)); -- This statement will fail with an error, because 2022 does not fit in the new range.
     ```
 
-    ```
-    ERROR 1526 (HY000): Table has no partition for value 2022
-    ```
+        ERROR 1526 (HY000): Table has no partition for value 2022
 
 -   リストパーティションテーブルの場合、パーティションに定義された値のセットを変更するには、新しい定義がそのパーティション内の既存の値をカバーする必要があります。それ以外の場合は、エラーが報告されます。
 
@@ -951,9 +943,7 @@ ALTER TABLE member_level REORGANIZE PARTITION l1_2,l3,l4,l5,l6 INTO
     ALTER TABLE member_level REORGANIZE PARTITION lEven INTO (PARTITION lEven VALUES IN (2,4));
     ```
 
-    ```
-    ERROR 1526 (HY000): Table has no partition for value 6
-    ```
+        ERROR 1526 (HY000): Table has no partition for value 6
 
 -   パーティションが再編成されると、対応するパーティションの統計が古くなるため、次の警告が表示されます。この場合、 [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)ステートメントを使用して統計を更新できます。
 
@@ -1024,21 +1014,19 @@ ALTER TABLE example COALESCE PARTITION 1;
 SHOW CREATE TABLE\G
 ```
 
-```
-*************************** 1. row ***************************
-       Table: example
-Create Table: CREATE TABLE `example` (
-  `id` int(11) NOT NULL,
-  `data` varchar(1024) DEFAULT NULL,
-  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
-PARTITION BY HASH (`id`)
-(PARTITION `p0`,
- PARTITION `p1`,
- PARTITION `p2`,
- PARTITION `pExample4` COMMENT 'not p3, but pExample4 instead')
-1 row in set (0.01 sec)
-```
+    *************************** 1. row ***************************
+           Table: example
+    Create Table: CREATE TABLE `example` (
+      `id` int(11) NOT NULL,
+      `data` varchar(1024) DEFAULT NULL,
+      PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
+    PARTITION BY HASH (`id`)
+    (PARTITION `p0`,
+     PARTITION `p1`,
+     PARTITION `p2`,
+     PARTITION `pExample4` COMMENT 'not p3, but pExample4 instead')
+    1 row in set (0.01 sec)
 
 #### パーティションの切り詰め {#truncate-partitions}
 
@@ -1048,8 +1036,46 @@ PARTITION BY HASH (`id`)
 ALTER TABLE example TRUNCATE PARTITION p0;
 ```
 
+    Query OK, 0 rows affected (0.03 sec)
+
+### パーティションテーブルを非パーティションテーブルに変換する {#convert-a-partitioned-table-to-a-non-partitioned-table}
+
+パーティションテーブルを非パーティションテーブルに変換するには、次のステートメントを使用します。これにより、パーティション化が削除され、テーブルのすべての行がコピーされ、テーブルのインデックスがオンラインで再作成されます。
+
+```sql
+ALTER TABLE <table_name> REMOVE PARTITIONING
 ```
-Query OK, 0 rows affected (0.03 sec)
+
+たとえば、 `members`のパーティションテーブルを非パーティションテーブルに変換するには、次のステートメントを実行できます。
+
+```sql
+ALTER TABLE members REMOVE PARTITIONING
+```
+
+### 既存のテーブルをパーティション化する {#partition-an-existing-table}
+
+既存のパーティションテーブルをパーティション化するか、既存のパーティションテーブルのパーティション タイプを変更するには、次のステートメントを使用します。これにより、すべての行がコピーされ、新しいパーティション定義に従ってオンラインでインデックスが再作成されます。
+
+```sql
+ALTER TABLE <table_name> PARTITION BY <new partition type and definitions>
+```
+
+例:
+
+既存の`members`テーブルを 10 のパーティションを持つ HASHパーティションテーブルに変換するには、次のステートメントを実行します。
+
+```sql
+ALTER TABLE members PARTITION BY HASH(id) PARTITIONS 10;
+```
+
+既存の`member_level`テーブルを RANGEパーティションテーブルに変換するには、次のステートメントを実行します。
+
+```sql
+ALTER TABLE member_level PARTITION BY RANGE(level)
+(PARTITION pLow VALUES LESS THAN (1),
+ PARTITION pMid VALUES LESS THAN (3),
+ PARTITION pHigh VALUES LESS THAN (7)
+ PARTITION pMax VALUES LESS THAN (MAXVALUE));
 ```
 
 ## パーティションのプルーニング {#partition-pruning}
@@ -1057,7 +1083,6 @@ Query OK, 0 rows affected (0.03 sec)
 [パーティションのプルーニング](/partition-pruning.md)は、一致しないパーティションをスキャンしないという非常に単純なアイデアに基づいた最適化です。
 
 パーティションテーブル`t1`を作成するとします。
-
 
 ```sql
 CREATE TABLE t1 (
@@ -1076,7 +1101,6 @@ PARTITION BY RANGE( region_code ) (
 ```
 
 この`SELECT`ステートメントの結果を取得したい場合:
-
 
 ```sql
 SELECT fname, lname, region_code, dob
@@ -1099,7 +1123,6 @@ SELECT fname, lname, region_code, dob
 
     例えば：
 
-    
     ```sql
     create table t1 (x int) partition by range (x) (
             partition p0 values less than (5),
@@ -1107,7 +1130,6 @@ SELECT fname, lname, region_code, dob
     create table t2 (x int);
     ```
 
-    
     ```sql
     explain select * from t1 left join t2 on t1.x = t2.x where t2.x > 5;
     ```
@@ -1124,14 +1146,12 @@ SELECT fname, lname, region_code, dob
 
     例えば：
 
-    
     ```sql
     create table t1 (x int) partition by range (x) (
             partition p0 values less than (5),
             partition p1 values less than (10));
     ```
 
-    
     ```sql
     explain select * from t2 where x < (select * from t1 where t2.x < t1.x and t2.x < 2);
     ```
@@ -1140,7 +1160,7 @@ SELECT fname, lname, region_code, dob
 
 3.  現在の実装の制限により、クエリ条件を TiKV にプッシュダウンできない場合、そのクエリ条件をパーティション プルーニングで使用することはできません。
 
-    `fn(col)`式を例に挙げます。 TiKV コプロセッサーがこの`fn`機能をサポートしている場合、プランの最適化フェーズ中に述語プッシュダウン ルールに従って`fn(col)`リーフ ノード (つまり、パーティションテーブル) にプッシュダウンでき、パーティション プルーニングでそれを使用できます。
+    `fn(col)`式を例に挙げます。 TiKV コプロセッサーがこの`fn`機能をサポートしている場合、プランの最適化フェーズ中に述語プッシュダウン ルールに従って`fn(col)`リーフ ノード (つまり、パーティションパーティションテーブル) にプッシュダウンでき、パーティション プルーニングでそれを使用できます。
 
     TiKV コプロセッサーがこの`fn`機能をサポートしていない場合、 `fn(col)`リーフ ノードにプッシュダウンされません。代わりに、リーフ ノードの`Selection`上のノードになります。現在のパーティション プルーニングの実装では、この種のプラン ツリーはサポートされていません。
 
@@ -1157,7 +1177,6 @@ SELECT fname, lname, region_code, dob
 
     たとえば、パーティション式は単純な列です。
 
-    
     ```sql
     create table t (id int) partition by range (id) (
             partition p0 values less than (5),
@@ -1167,7 +1186,6 @@ SELECT fname, lname, region_code, dob
 
     または、パーティション式は`fn(col)` where `fn` is `to_days`の形式になります。
 
-    
     ```sql
     create table t (dt datetime) partition by range (to_days(id)) (
             partition p0 values less than (to_days('2020-04-01')),
@@ -1177,7 +1195,6 @@ SELECT fname, lname, region_code, dob
 
     例外は、パーティション式としての`floor(unix_timestamp())`です。 TiDB はケースバイケースで最適化を行うため、パーティション プルーニングによってサポートされます。
 
-    
     ```sql
     create table t (ts timestamp(3) not null default current_timestamp(3))
     partition by range (floor(unix_timestamp(ts))) (
@@ -1189,7 +1206,6 @@ SELECT fname, lname, region_code, dob
 ## パーティションの選択 {#partition-selection}
 
 `SELECT`ステートメントは、 `PARTITION`オプションを使用して実装されるパーティション選択をサポートします。
-
 
 ```sql
 SET @@sql_mode = '';
@@ -1223,62 +1239,52 @@ INSERT INTO employees VALUES
 
 `p1`パーティションに保存されている行を表示できます。
 
-
 ```sql
 SELECT * FROM employees PARTITION (p1);
 ```
 
-```
-+----|-------|--------|----------|---------------+
-| id | fname | lname  | store_id | department_id |
-+----|-------|--------|----------|---------------+
-|  5 | Mary  | Jones  |        1 |             1 |
-|  6 | Linda | Black  |        2 |             3 |
-|  7 | Ed    | Jones  |        2 |             1 |
-|  8 | June  | Wilson |        3 |             1 |
-|  9 | Andy  | Smith  |        1 |             3 |
-+----|-------|--------|----------|---------------+
-5 rows in set (0.00 sec)
-```
+    +----|-------|--------|----------|---------------+
+    | id | fname | lname  | store_id | department_id |
+    +----|-------|--------|----------|---------------+
+    |  5 | Mary  | Jones  |        1 |             1 |
+    |  6 | Linda | Black  |        2 |             3 |
+    |  7 | Ed    | Jones  |        2 |             1 |
+    |  8 | June  | Wilson |        3 |             1 |
+    |  9 | Andy  | Smith  |        1 |             3 |
+    +----|-------|--------|----------|---------------+
+    5 rows in set (0.00 sec)
 
 複数のパーティションの行を取得する場合は、カンマで区切られたパーティション名のリストを使用できます。たとえば、 `SELECT * FROM employees PARTITION (p1, p2)` `p1`と`p2`パーティション内のすべての行を返します。
 
 パーティション選択を使用する場合でも、 `WHERE`条件と`ORDER BY`や`LIMIT`などのオプションを使用できます。 `HAVING`や`GROUP BY`などの集計オプションの使用もサポートされています。
-
 
 ```sql
 SELECT * FROM employees PARTITION (p0, p2)
     WHERE lname LIKE 'S%';
 ```
 
-```
-+----|-------|-------|----------|---------------+
-| id | fname | lname | store_id | department_id |
-+----|-------|-------|----------|---------------+
-|  4 | Jim   | Smith |        2 |             4 |
-| 11 | Jill  | Stone |        1 |             4 |
-+----|-------|-------|----------|---------------+
-2 rows in set (0.00 sec)
-```
-
+    +----|-------|-------|----------|---------------+
+    | id | fname | lname | store_id | department_id |
+    +----|-------|-------|----------|---------------+
+    |  4 | Jim   | Smith |        2 |             4 |
+    | 11 | Jill  | Stone |        1 |             4 |
+    +----|-------|-------|----------|---------------+
+    2 rows in set (0.00 sec)
 
 ```sql
 SELECT id, CONCAT(fname, ' ', lname) AS name
     FROM employees PARTITION (p0) ORDER BY lname;
 ```
 
-```
-+----|----------------+
-| id | name           |
-+----|----------------+
-|  3 | Ellen Johnson  |
-|  4 | Jim Smith      |
-|  1 | Bob Taylor     |
-|  2 | Frank Williams |
-+----|----------------+
-4 rows in set (0.06 sec)
-```
-
+    +----|----------------+
+    | id | name           |
+    +----|----------------+
+    |  3 | Ellen Johnson  |
+    |  4 | Jim Smith      |
+    |  1 | Bob Taylor     |
+    |  2 | Frank Williams |
+    +----|----------------+
+    4 rows in set (0.06 sec)
 
 ```sql
 SELECT store_id, COUNT(department_id) AS c
@@ -1286,15 +1292,13 @@ SELECT store_id, COUNT(department_id) AS c
     GROUP BY store_id HAVING c > 4;
 ```
 
-```
-+---|----------+
-| c | store_id |
-+---|----------+
-| 5 |        2 |
-| 5 |        3 |
-+---|----------+
-2 rows in set (0.00 sec)
-```
+    +---|----------+
+    | c | store_id |
+    +---|----------+
+    | 5 |        2 |
+    | 5 |        3 |
+    +---|----------+
+    2 rows in set (0.00 sec)
 
 パーティションの選択は、レンジ パーティション化やハッシュ パーティション化を含む、すべてのタイプのテーブル パーティション化でサポートされています。ハッシュ パーティションの場合、パーティション名が指定されていない場合は、 `p0` 、 `p1` 、 `p2` 、...、または`pN-1`がパーティション名として自動的に使用されます。
 
@@ -1309,7 +1313,6 @@ SELECT store_id, COUNT(department_id) AS c
 このセクションでは、パーティション化キーと主キーおよび一意キーとの関係について説明します。この関係を管理するルールは、次のように表すことができます。**テーブル上のすべての一意のキーは、テーブルのパーティション式のすべての列を使用する必要があります**。テーブルの主キーは定義上一意のキーであるため、これにはテーブルの主キーも含まれます。
 
 たとえば、次のテーブル作成ステートメントは無効です。
-
 
 ```sql
 CREATE TABLE t1 (
@@ -1340,7 +1343,6 @@ PARTITIONS 4;
 
 有効なステートメントは次のとおりです。
 
-
 ```sql
 CREATE TABLE t1 (
     col1 INT NOT NULL,
@@ -1367,7 +1369,6 @@ PARTITIONS 4;
 
 次の例ではエラーが表示されます。
 
-
 ```sql
 CREATE TABLE t3 (
     col1 INT NOT NULL,
@@ -1382,12 +1383,9 @@ PARTITION BY HASH(col1 + col3)
 PARTITIONS 4;
 ```
 
-```
-ERROR 1491 (HY000): A PRIMARY KEY must include all columns in the table's partitioning function
-```
+    ERROR 1491 (HY000): A PRIMARY KEY must include all columns in the table's partitioning function
 
 提案されたパーティション化キーには`col1`と`col3`の両方が含まれていますが、これらの列のいずれもテーブル上の両方の一意のキーの一部ではないため、ステートメント`CREATE TABLE`失敗します。次の変更を行うと、 `CREATE TABLE`ステートメントが有効になります。
-
 
 ```sql
 CREATE TABLE t3 (
@@ -1404,7 +1402,6 @@ PARTITION BY HASH(col1 + col3)
 
 両方の一意のキーに属する列をパーティション化キーに含める方法がないため、次のテーブルはパーティション化できません。
 
-
 ```sql
 CREATE TABLE t4 (
     col1 INT NOT NULL,
@@ -1417,7 +1414,6 @@ CREATE TABLE t4 (
 ```
 
 すべての主キーは定義上一意のキーであるため、次の 2 つのステートメントは無効です。
-
 
 ```sql
 CREATE TABLE t5 (
@@ -1446,7 +1442,6 @@ PARTITIONS 4;
 
 上記の例では、主キーにはパーティショニング式で参照されるすべての列が含まれているわけではありません。主キーに欠落している列を追加すると、 `CREATE TABLE`ステートメントが有効になります。
 
-
 ```sql
 CREATE TABLE t5 (
     col1 INT NOT NULL,
@@ -1473,7 +1468,6 @@ PARTITIONS 4;
 
 DDL ステートメントを使用してテーブルを変更する場合、一意のインデックスを追加するときにこの制限も考慮する必要があります。たとえば、次のようにパーティションテーブルを作成するとします。
 
-
 ```sql
 CREATE TABLE t_no_pk (c1 INT, c2 INT)
     PARTITION BY RANGE(c1) (
@@ -1484,14 +1478,11 @@ CREATE TABLE t_no_pk (c1 INT, c2 INT)
     );
 ```
 
-```
-Query OK, 0 rows affected (0.12 sec)
-```
+    Query OK, 0 rows affected (0.12 sec)
 
 `ALTER TABLE`ステートメントを使用して、一意でないインデックスを追加できます。ただし、一意のインデックスを追加する場合は、 `c1`番目の列を一意のインデックスに含める必要があります。
 
 パーティションテーブルを使用する場合、プレフィックス インデックスを一意の属性として指定することはできません。
-
 
 ```sql
 CREATE TABLE t (a varchar(20), b blob,
@@ -1506,35 +1497,33 @@ CREATE TABLE t (a varchar(20), b blob,
 ERROR 1503 (HY000): A UNIQUE INDEX must include all columns in the table's partitioning function
 ```
 
-### 関数に関するパーティショニングの制限事項 {#partitioning-limitations-relating-to-functions}
+### 関数に関するパーティショニングの制限 {#partitioning-limitations-relating-to-functions}
 
 次のリストに示されている関数のみがパーティショニング式で使用できます。
 
-```
-ABS()
-CEILING()
-DATEDIFF()
-DAY()
-DAYOFMONTH()
-DAYOFWEEK()
-DAYOFYEAR()
-EXTRACT() (see EXTRACT() function with WEEK specifier)
-FLOOR()
-HOUR()
-MICROSECOND()
-MINUTE()
-MOD()
-MONTH()
-QUARTER()
-SECOND()
-TIME_TO_SEC()
-TO_DAYS()
-TO_SECONDS()
-UNIX_TIMESTAMP() (with TIMESTAMP columns)
-WEEKDAY()
-YEAR()
-YEARWEEK()
-```
+    ABS()
+    CEILING()
+    DATEDIFF()
+    DAY()
+    DAYOFMONTH()
+    DAYOFWEEK()
+    DAYOFYEAR()
+    EXTRACT() (see EXTRACT() function with WEEK specifier)
+    FLOOR()
+    HOUR()
+    MICROSECOND()
+    MINUTE()
+    MOD()
+    MONTH()
+    QUARTER()
+    SECOND()
+    TIME_TO_SEC()
+    TO_DAYS()
+    TO_SECONDS()
+    UNIX_TIMESTAMP() (with TIMESTAMP columns)
+    WEEKDAY()
+    YEAR()
+    YEARWEEK()
 
 ### MySQLとの互換性 {#compatibility-with-mysql}
 
@@ -1548,13 +1537,11 @@ YEARWEEK()
 
 `LOAD DATA`構文は、現在 TiDB のパーティション選択をサポートしていません。
 
-
 ```sql
 create table t (id int, val int) partition by hash(id) partitions 4;
 ```
 
 通常の`LOAD DATA`操作がサポートされています。
-
 
 ```sql
 load local data infile "xxx" into t ...
@@ -1562,13 +1549,11 @@ load local data infile "xxx" into t ...
 
 ただし、 `Load Data`はパーティションの選択をサポートしていません。
 
-
 ```sql
 load local data infile "xxx" into t partition (p1)...
 ```
 
 パーティションテーブルの場合、 `select * from t`によって返される結果はパーティション間で順序付けされていません。これは、パーティション間では順序付けされていますが、パーティション内では順序付けされていない MySQL の結果とは異なります。
-
 
 ```sql
 create table t (id int, val int) partition by range (id) (
@@ -1577,59 +1562,48 @@ create table t (id int, val int) partition by range (id) (
     partition p2 values less than (11));
 ```
 
-```
-Query OK, 0 rows affected (0.10 sec)
-```
-
+    Query OK, 0 rows affected (0.10 sec)
 
 ```sql
 insert into t values (1, 2), (3, 4),(5, 6),(7,8),(9,10);
 ```
 
-```
-Query OK, 5 rows affected (0.01 sec)
-Records: 5  Duplicates: 0  Warnings: 0
-```
+    Query OK, 5 rows affected (0.01 sec)
+    Records: 5  Duplicates: 0  Warnings: 0
 
 TiDB は毎回異なる結果を返します。次に例を示します。
 
-
 ```sql
 select * from t;
 ```
 
-```
-+------|------+
-| id   | val  |
-+------|------+
-|    7 |    8 |
-|    9 |   10 |
-|    1 |    2 |
-|    3 |    4 |
-|    5 |    6 |
-+------|------+
-5 rows in set (0.00 sec)
-```
+    +------|------+
+    | id   | val  |
+    +------|------+
+    |    7 |    8 |
+    |    9 |   10 |
+    |    1 |    2 |
+    |    3 |    4 |
+    |    5 |    6 |
+    +------|------+
+    5 rows in set (0.00 sec)
 
 MySQL で返される結果は次のとおりです。
 
-
 ```sql
 select * from t;
 ```
 
-```
-+------|------+
-| id   | val  |
-+------|------+
-|    1 |    2 |
-|    3 |    4 |
-|    5 |    6 |
-|    7 |    8 |
-|    9 |   10 |
-+------|------+
-5 rows in set (0.00 sec)
-```
+    +------|------+
+    | id   | val  |
+    +------|------+
+    |    1 |    2 |
+    |    3 |    4 |
+    |    5 |    6 |
+    |    7 |    8 |
+    |    9 |   10 |
+    +------|------+
+    5 rows in set (0.00 sec)
 
 `tidb_enable_list_partition`環境変数は、パーティションテーブル機能を有効にするかどうかを制御します。この変数を`OFF`に設定すると、テーブルの作成時にパーティション情報が無視され、このテーブルは通常のテーブルとして作成されます。
 
@@ -1638,7 +1612,6 @@ select * from t;
 ### 動的プルーニングモード {#dynamic-pruning-mode}
 
 TiDB は、 `dynamic`または`static`モードのいずれかでパーティション化されたテーブルにアクセスします。 v6.3.0 以降、 `dynamic`モードがデフォルトで使用されます。ただし、動的パーティショニングは、完全なテーブル レベルの統計 (GlobalStats) が収集された後にのみ有効になります。 GlobalStats が収集される前に、TiDB は代わりに`static`モードを使用します。 GlobalStats の詳細については、 [動的プルーニング モードでパーティション テーブルの統計を収集する](/statistics.md#collect-statistics-of-partitioned-tables-in-dynamic-pruning-mode)を参照してください。
-
 
 ```sql
 set @@session.tidb_partition_prune_mode = 'dynamic'
@@ -1650,60 +1623,50 @@ set @@session.tidb_partition_prune_mode = 'dynamic'
 
 `static`モードから`dynamic`モードに切り替える場合は、統計を手動で確認して収集する必要があります。これは、 `dynamic`モードに切り替えた後、パーティション テーブルにはパーティション レベルの統計のみが含まれ、テーブル レベルの統計が含まれないためです。 GlobalStats は、次の`auto-analyze`操作時にのみ収集されます。
 
-
 ```sql
 set session tidb_partition_prune_mode = 'dynamic';
 show stats_meta where table_name like "t";
 ```
 
-```
-+---------+------------+----------------+---------------------+--------------+-----------+
-| Db_name | Table_name | Partition_name | Update_time         | Modify_count | Row_count |
-+---------+------------+----------------+---------------------+--------------+-----------+
-| test    | t          | p0             | 2022-05-27 20:23:34 |            1 |         2 |
-| test    | t          | p1             | 2022-05-27 20:23:34 |            2 |         4 |
-| test    | t          | p2             | 2022-05-27 20:23:34 |            2 |         4 |
-+---------+------------+----------------+---------------------+--------------+-----------+
-3 rows in set (0.01 sec)
-```
+    +---------+------------+----------------+---------------------+--------------+-----------+
+    | Db_name | Table_name | Partition_name | Update_time         | Modify_count | Row_count |
+    +---------+------------+----------------+---------------------+--------------+-----------+
+    | test    | t          | p0             | 2022-05-27 20:23:34 |            1 |         2 |
+    | test    | t          | p1             | 2022-05-27 20:23:34 |            2 |         4 |
+    | test    | t          | p2             | 2022-05-27 20:23:34 |            2 |         4 |
+    +---------+------------+----------------+---------------------+--------------+-----------+
+    3 rows in set (0.01 sec)
 
 グローバル`dynamic`プルーニング モードを有効にした後、SQL ステートメントで使用される統計が正しいことを確認するには、テーブルまたはテーブルのパーティションで`analyze`手動でトリガーして GlobalStats を取得する必要があります。
-
 
 ```sql
 analyze table t partition p1;
 show stats_meta where table_name like "t";
 ```
 
-```
-+---------+------------+----------------+---------------------+--------------+-----------+
-| Db_name | Table_name | Partition_name | Update_time         | Modify_count | Row_count |
-+---------+------------+----------------+---------------------+--------------+-----------+
-| test    | t          | global         | 2022-05-27 20:50:53 |            0 |         5 |
-| test    | t          | p0             | 2022-05-27 20:23:34 |            1 |         2 |
-| test    | t          | p1             | 2022-05-27 20:50:52 |            0 |         2 |
-| test    | t          | p2             | 2022-05-27 20:50:08 |            0 |         2 |
-+---------+------------+----------------+---------------------+--------------+-----------+
-4 rows in set (0.00 sec)
-```
+    +---------+------------+----------------+---------------------+--------------+-----------+
+    | Db_name | Table_name | Partition_name | Update_time         | Modify_count | Row_count |
+    +---------+------------+----------------+---------------------+--------------+-----------+
+    | test    | t          | global         | 2022-05-27 20:50:53 |            0 |         5 |
+    | test    | t          | p0             | 2022-05-27 20:23:34 |            1 |         2 |
+    | test    | t          | p1             | 2022-05-27 20:50:52 |            0 |         2 |
+    | test    | t          | p2             | 2022-05-27 20:50:08 |            0 |         2 |
+    +---------+------------+----------------+---------------------+--------------+-----------+
+    4 rows in set (0.00 sec)
 
 `analyze`処理中に次の警告が表示された場合は、パーティションの統計が矛盾しているため、これらのパーティションまたはテーブル全体の統計を再度収集する必要があります。
 
-```
-| Warning | 8244 | Build table: `t` column: `a` global-level stats failed due to missing partition-level column stats, please run analyze table to refresh columns of all partitions
-```
+    | Warning | 8244 | Build table: `t` column: `a` global-level stats failed due to missing partition-level column stats, please run analyze table to refresh columns of all partitions
 
 スクリプトを使用して、すべてのパーティション化されたテーブルの統計を更新することもできます。詳細は[動的プルーニング モードでパーティション テーブルの統計を更新する](#update-statistics-of-partitioned-tables-in-dynamic-pruning-mode)を参照してください。
 
 テーブルレベルの統計の準備ができたら、すべての SQL ステートメントと`auto-analyze`操作に有効なグローバル動的プルーニング モードを有効にできます。
-
 
 ```sql
 set global tidb_partition_prune_mode = dynamic
 ```
 
 `static`モードでは、TiDB は複数の演算子を使用して各パーティションに個別にアクセスし、 `Union`使用して結果をマージします。次の例は、 TiDB が`Union`を使用して 2 つの対応するパーティションの結果をマージする単純な読み取り操作です。
-
 
 ```sql
 mysql> create table t1(id int, age int, key(id)) partition by range(id) (
@@ -1716,23 +1679,20 @@ Query OK, 0 rows affected (0.01 sec)
 mysql> explain select * from t1 where id < 150;
 ```
 
-```
-+------------------------------+----------+-----------+------------------------+--------------------------------+
-| id                           | estRows  | task      | access object          | operator info                  |
-+------------------------------+----------+-----------+------------------------+--------------------------------+
-| PartitionUnion_9             | 6646.67  | root      |                        |                                |
-| ├─TableReader_12             | 3323.33  | root      |                        | data:Selection_11              |
-| │ └─Selection_11             | 3323.33  | cop[tikv] |                        | lt(test.t1.id, 150)            |
-| │   └─TableFullScan_10       | 10000.00 | cop[tikv] | table:t1, partition:p0 | keep order:false, stats:pseudo |
-| └─TableReader_18             | 3323.33  | root      |                        | data:Selection_17              |
-|   └─Selection_17             | 3323.33  | cop[tikv] |                        | lt(test.t1.id, 150)            |
-|     └─TableFullScan_16       | 10000.00 | cop[tikv] | table:t1, partition:p1 | keep order:false, stats:pseudo |
-+------------------------------+----------+-----------+------------------------+--------------------------------+
-7 rows in set (0.00 sec)
-```
+    +------------------------------+----------+-----------+------------------------+--------------------------------+
+    | id                           | estRows  | task      | access object          | operator info                  |
+    +------------------------------+----------+-----------+------------------------+--------------------------------+
+    | PartitionUnion_9             | 6646.67  | root      |                        |                                |
+    | ├─TableReader_12             | 3323.33  | root      |                        | data:Selection_11              |
+    | │ └─Selection_11             | 3323.33  | cop[tikv] |                        | lt(test.t1.id, 150)            |
+    | │   └─TableFullScan_10       | 10000.00 | cop[tikv] | table:t1, partition:p0 | keep order:false, stats:pseudo |
+    | └─TableReader_18             | 3323.33  | root      |                        | data:Selection_17              |
+    |   └─Selection_17             | 3323.33  | cop[tikv] |                        | lt(test.t1.id, 150)            |
+    |     └─TableFullScan_16       | 10000.00 | cop[tikv] | table:t1, partition:p1 | keep order:false, stats:pseudo |
+    +------------------------------+----------+-----------+------------------------+--------------------------------+
+    7 rows in set (0.00 sec)
 
-`dynamic`モードでは、各オペレーターは複数のパーティションへの直接アクセスをサポートするため、TiDB は`Union`使用しなくなりました。
-
+`dynamic`モードでは、各オペレーターは複数のパーティションへの直接アクセスをサポートするため、TiDB は`Union`を使用しなくなりました。
 
 ```sql
 mysql> set @@session.tidb_partition_prune_mode = 'dynamic';
@@ -1754,7 +1714,6 @@ mysql> explain select * from t1 where id < 150;
 `dynamic`モードでは、実行計画がよりシンプルかつ明確になります。 Union 操作を省略すると、実行効率が向上し、Union の同時実行の問題を回避できます。さらに、 `dynamic`モードでは、 `static`モードでは使用できない IndexJoin を使用した実行プランも可能になります。 (以下の例を参照してください)
 
 **例 1** : 次の例では、IndexJoin を使用した実行プランを使用して、クエリが`static`モードで実行されます。
-
 
 ```sql
 mysql> create table t1 (id int, age int, key(id)) partition by range(id)
@@ -1807,7 +1766,6 @@ mysql> show warnings;
 
 **例 2** : 次の例では、クエリは IndexJoin を使用した実行プランを使用して`dynamic`モードで実行されます。
 
-
 ```sql
 mysql> set @@tidb_partition_prune_mode = 'dynamic';
 Query OK, 0 rows affected (0.00 sec)
@@ -1836,7 +1794,6 @@ mysql> explain select /*+ TIDB_INLJ(t1, t2) */ t1.* from t1, t2 where t2.code = 
 
 1.  すべてのパーティション化されたテーブルを見つけます。
 
-    
     ```sql
     SELECT DISTINCT CONCAT(TABLE_SCHEMA,'.', TABLE_NAME)
         FROM information_schema.PARTITIONS
@@ -1844,14 +1801,12 @@ mysql> explain select /*+ TIDB_INLJ(t1, t2) */ t1.* from t1, t2 where t2.code = 
         AND TABLE_SCHEMA NOT IN ('INFORMATION_SCHEMA', 'mysql', 'sys', 'PERFORMANCE_SCHEMA', 'METRICS_SCHEMA');
     ```
 
-    ```
-    +-------------------------------------+
-    | concat(TABLE_SCHEMA,'.',TABLE_NAME) |
-    +-------------------------------------+
-    | test.t                              |
-    +-------------------------------------+
-    1 row in set (0.02 sec)
-    ```
+        +-------------------------------------+
+        | concat(TABLE_SCHEMA,'.',TABLE_NAME) |
+        +-------------------------------------+
+        | test.t                              |
+        +-------------------------------------+
+        1 row in set (0.02 sec)
 
 2.  すべてのパーティションテーブルの統計を更新するためのステートメントを生成します。
 
@@ -1862,14 +1817,12 @@ mysql> explain select /*+ TIDB_INLJ(t1, t2) */ t1.* from t1, t2 where t2.code = 
         AND TABLE_SCHEMA NOT IN ('INFORMATION_SCHEMA','mysql','sys','PERFORMANCE_SCHEMA','METRICS_SCHEMA');
     ```
 
-    ```
-    +----------------------------------------------------------------------+
-    | concat('ANALYZE TABLE ',TABLE_SCHEMA,'.',TABLE_NAME,' ALL COLUMNS;') |
-    +----------------------------------------------------------------------+
-    | ANALYZE TABLE test.t ALL COLUMNS;                                    |
-    +----------------------------------------------------------------------+
-    1 row in set (0.01 sec)
-    ```
+        +----------------------------------------------------------------------+
+        | concat('ANALYZE TABLE ',TABLE_SCHEMA,'.',TABLE_NAME,' ALL COLUMNS;') |
+        +----------------------------------------------------------------------+
+        | ANALYZE TABLE test.t ALL COLUMNS;                                    |
+        +----------------------------------------------------------------------+
+        1 row in set (0.01 sec)
 
     `ALL COLUMNS`を必要な列に変更できます。
 
@@ -1886,12 +1839,9 @@ mysql> explain select /*+ TIDB_INLJ(t1, t2) */ t1.* from t1, t2 where t2.code = 
 
     `source`コマンドを実行する前に SQL ステートメントを処理します。
 
-    ```
-    sed -i "" '1d' gatherGlobalStats.sql --- mac
-    sed -i '1d' gatherGlobalStats.sql --- linux
-    ```
+        sed -i "" '1d' gatherGlobalStats.sql --- mac
+        sed -i '1d' gatherGlobalStats.sql --- linux
 
-    
     ```sql
     SET session tidb_partition_prune_mode = dynamic;
     source gatherGlobalStats.sql

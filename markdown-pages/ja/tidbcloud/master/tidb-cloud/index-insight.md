@@ -7,11 +7,11 @@ summary: Learn how to use the Index Insight feature in TiDB Cloud and obtain ind
 
 TiDB Cloudの Index Insight (ベータ) 機能は、インデックスを効果的に使用していない遅いクエリに対してインデックスの推奨を提供することで、クエリのパフォーマンスを最適化する強力な機能を提供します。このドキュメントでは、Index Insight 機能を有効にして効果的に利用する手順について説明します。
 
-> **ノート：**
+> **注記：**
 >
 > Index Insight は現在ベータ版であり、 [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターでのみ使用できます。
 
-## 序章 {#introduction}
+## 導入 {#introduction}
 
 Index Insight 機能には次の利点があります。
 
@@ -44,7 +44,7 @@ Index Insight 機能を有効にする前に、TiDB 専用クラスターを作�
     FLUSH PRIVILEGES;
     ```
 
-    > **ノート：**
+    > **注記：**
     >
     > TiDB 専用クラスターに接続するには、 [TiDB 専用クラスターに接続する](/tidb-cloud/connect-to-tidb-cluster.md)を参照してください。
 

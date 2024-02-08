@@ -7,7 +7,7 @@ summary: Learn how to use Follower Read to optimize query performance.
 
 このドキュメントでは、 Follower Read を使用してクエリのパフォーマンスを最適化する方法を紹介します。
 
-## 序章 {#introduction}
+## 導入 {#introduction}
 
 TiDB は、クラスター内のすべてのノードにデータを分散するための基本単位として[リージョン](/tidb-storage.md#region)を使用します。リージョンには複数のレプリカを含めることができ、レプリカはリーダーと複数のフォロワーに分割されます。リーダー上のデータが変更されると、TiDB は同期的にデータをフォロワーに更新します。
 

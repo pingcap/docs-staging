@@ -22,7 +22,7 @@ summary: Learn about how to update data and batch update data.
 
 テーブル内の既存の行を更新するには、 [`UPDATE`ステートメント](/sql-statements/sql-statement-update.md)と`WHERE`句を使用して、更新する列をフィルタリングする必要があります。
 
-> **ノート：**
+> **注記：**
 >
 > 大量の行 (たとえば、1 万行を超える行) を更新する必要がある場合は、一度に完全な更新を実行せ***ず***、すべての行が更新されるまで一度に一部を繰り返し更新することをお勧めします。この操作をループするスクリプトまたはプログラムを作成できます。詳細は[一括更新](#bulk-update)参照してください。
 
@@ -52,7 +52,7 @@ UPDATE {table} SET {update_column} = {update_value} WHERE {filter_column} = {fil
 
 <CustomContent platform="tidb">
 
--   多数の行 (たとえば、1 万行を超える) を更新する必要がある場合は、 [一括更新](#bulk-update)使用します。 TiDB は 1 つのトランザクションのサイズを制限しているため (デフォルトでは[txn 合計サイズ制限](/tidb-configuration-file.md#txn-total-size-limit) MB)、一度に更新するデータが多すぎると、ロックが長時間保持されすぎたり ( [悲観的取引](/pessimistic-transaction.md) )、競合が発生したり ( [楽観的取引](/optimistic-transaction.md) ) することがあります。
+-   多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、 [一括更新](#bulk-update)使用します。 TiDB は 1 つのトランザクションのサイズを制限しているため (デフォルトでは[txn 合計サイズ制限](/tidb-configuration-file.md#txn-total-size-limit) MB)、一度に更新するデータが多すぎると、ロックが長時間保持されすぎたり ( [悲観的取引](/pessimistic-transaction.md) )、競合が発生したり ( [楽観的取引](/optimistic-transaction.md) ) することがあります。
 
 </CustomContent>
 
@@ -115,7 +115,7 @@ INSERT INTO {table} ({columns}) VALUES ({values})
 
 ### <code>INSERT ON DUPLICATE KEY UPDATE</code>ベスト プラクティス {#code-insert-on-duplicate-key-update-code-best-practices}
 
--   `INSERT ON DUPLICATE KEY UPDATE`一意のキーが 1 つあるテーブルにのみ使用します。このステートメントは、 ***UNIQUE KEY*** (主キーを含む) の競合が検出された場合にデータを更新します。競合する行が複数ある場合は、1 行のみが更新されます。したがって、競合する行が 1 行だけであることが保証できない限り、複数の一意のキーを持つテーブルで`INSERT ON DUPLICATE KEY UPDATE`ステートメントを使用することはお勧めできません。
+-   `INSERT ON DUPLICATE KEY UPDATE`一意のキーが 1 つあるテーブルにのみ使用します。このステートメントは、 ***UNIQUE KEY*** (主キーを含む) の競合が検出された場合にデータを更新します。競合する行が複数ある場合は、1 行のみが更新されます。したがって、競合する行が 1 行だけであることが保証できない限り、複数の一意キーを持つテーブルで`INSERT ON DUPLICATE KEY UPDATE`ステートメントを使用することはお勧めできません。
 -   このステートメントは、データを作成または更新するときに使用します。
 
 ### <code>INSERT ON DUPLICATE KEY UPDATE</code>例 {#code-insert-on-duplicate-key-update-code-example}
@@ -160,7 +160,7 @@ VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `score` = ?, `rated_at` = NOW()"
 
 ## 一括更新 {#bulk-update}
 
-テーブル内の複数行のデータを更新する必要がある場合は、 `WHERE`句を使用[`INSERT ON DUPLICATE KEY UPDATE`使用する](#use-insert-on-duplicate-key-update)て、更新する必要があるデータをフィルタリングできます。
+テーブル内の複数行のデータを更新する必要がある場合は、 `WHERE`句を[`INSERT ON DUPLICATE KEY UPDATE`使用する](#use-insert-on-duplicate-key-update)して、更新する必要があるデータをフィルタリングできます。
 
 <CustomContent platform="tidb">
 
@@ -170,7 +170,7 @@ VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `score` = ?, `rated_at` = NOW()"
 
 <CustomContent platform="tidb-cloud">
 
-ただし、多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、データを繰り返し更新することをお勧めします。つまり、更新が完了するまで、各繰り返しでデータの一部のみを更新します。 。これは、TiDB がデフォルトで 1 つのトランザクションのサイズを 100 MB に制限しているためです。一度にあまりに多くのデータ更新を行うと、ロックが長時間保持されすぎたり ( [悲観的取引](/pessimistic-transaction.md) )、競合が発生したり ( [楽観的取引](/optimistic-transaction.md) ) します。プログラムまたはスクリプトでループを使用して操作を完了できます。
+ただし、多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、データを繰り返し更新することをお勧めします。つまり、更新が完了するまで、各繰り返しでデータの一部のみを更新します。 。これは、TiDB がデフォルトで 1 つのトランザクションのサイズを 100 MB に制限しているためです。一度にあまりに多くのデータ更新を行うと、ロックが長時間保持されすぎたり ( [悲観的取引](/pessimistic-transaction.md) )、競合が発生したり ( [楽観的取引](/optimistic-transaction.md) ) します。プログラムまたはスクリプトでループを使用すると、操作を完了できます。
 
 </CustomContent>
 
@@ -192,7 +192,7 @@ VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `score` = ?, `rated_at` = NOW()"
 ALTER TABLE `bookshop`.`ratings` ADD COLUMN `ten_point` BOOL NOT NULL DEFAULT FALSE;
 ```
 
-> **ノート：**
+> **注記：**
 >
 > この一括更新アプリケーションは、 **DDL**ステートメントを使用してデータ テーブルにスキーマ変更を加えます。 TiDB のすべての DDL 変更操作はオンラインで実行されます。詳細については、 [列の追加](/sql-statements/sql-statement-add-column.md)を参照してください。
 

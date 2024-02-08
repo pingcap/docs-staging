@@ -5,7 +5,7 @@ summary: Learn how to create your TiDB Serverless cluster.
 
 # TiDB サーバーレスクラスタの作成 {#create-a-tidb-serverless-cluster}
 
-このドキュメントでは、 [TiDB Cloudコンソール](https://tidbcloud.com/)サーバーレス クラスターを作成する方法について説明します。
+この[TiDB Cloudコンソール](https://tidbcloud.com/)では、TiDB サーバーレス クラスターを作成する方法について説明します。
 
 > **ヒント：**
 >
@@ -33,7 +33,7 @@ TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidb
 
 5.  (オプション) [無料割り当て](/tidb-cloud/select-cluster-tier.md#usage-quota)よりも多くのstorageとコンピューティング リソースを使用する予定がある場合は、使用量制限を変更します。支払い方法を追加していない場合は、限度額を編集した後にクレジット カードを追加する必要があります。
 
-    > **ノート：**
+    > **注記：**
     >
     > TiDB Cloudの組織ごとに、デフォルトで最大 5 つの TiDB サーバーレス クラスターを作成できます。さらに TiDB サーバーレス クラスターを作成するには、クレジット カードを追加し、使用量を[支出制限](/tidb-cloud/tidb-cloud-glossary.md#spending-limit)に設定する必要があります。
 
@@ -45,6 +45,6 @@ TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidb
 
 クラスターが作成されたら、 [パブリックエンドポイント経由で TiDB サーバーレスに接続する](/tidb-cloud/connect-via-standard-connection-serverless.md)の手順に従ってクラスターのパスワードを作成します。
 
-> **ノート：**
+> **注記：**
 >
 > パスワードを設定しないと、クラスターに接続できません。

@@ -27,7 +27,6 @@ summary: Use of SHOW BINDINGS binding in TiDB database.
 
 ## 構文の説明 {#syntax-description}
 
-
 ```sql
 SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhereOpt];
 ```
@@ -39,7 +38,7 @@ SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhereOpt];
 | オリジナル_SQL    | パラメータ化後の元の SQL ステートメント                                                                                                                  |
 | バインドSQL      | ヒントを含むバインドされた SQL ステートメント                                                                                                               |
 | デフォルト_データベース | デフォルトのデータベース                                                                                                                            |
-| スターテス        | 「使用中」、「削除」、「無効」、「拒否」、「検証保留」などのステータス                                                                                                     |
+| 状態           | 「使用中」、「削除」、「無効」、「拒否」、「検証保留」などのステータス                                                                                                     |
 | 作成時間         | 作成時間                                                                                                                                    |
 | 更新時間         | 更新時間                                                                                                                                    |
 | 文字コード        | キャラクターセット                                                                                                                               |
@@ -47,7 +46,6 @@ SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhereOpt];
 | ソース          | バインディングの作成方法`manual` ( `create [global] binding` SQL ステートメントによって作成)、 `capture` (TiDB によって自動的にキャプチャ)、 `evolve` (TiDB によって自動的に展開) が含まれます。 |
 
 ## 例 {#examples}
-
 
 ```sql
 mysql> CREATE TABLE t1 (
@@ -143,7 +141,7 @@ Original_sql: select * from t1 where b = ?
 ## こちらも参照 {#see-also}
 
 -   [[グローバル|セッション] バインディングの作成](/sql-statements/sql-statement-create-binding.md)
--   [[グローバル|セッション] バインディングを削除](/sql-statements/sql-statement-drop-binding.md)
+-   [[グローバル|セッション] バインディングを削除します](/sql-statements/sql-statement-drop-binding.md)
 -   [分析テーブル](/sql-statements/sql-statement-analyze-table.md)
 -   [オプティマイザーのヒント](/optimizer-hints.md)
 -   [SQL計画管理](/sql-plan-management.md)

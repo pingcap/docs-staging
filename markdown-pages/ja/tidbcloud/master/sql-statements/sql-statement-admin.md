@@ -21,6 +21,8 @@ summary: An overview of the usage of ADMIN for the TiDB database.
 | 声明                                                                                      | 説明                                 |
 | --------------------------------------------------------------------------------------- | ---------------------------------- |
 | [`ADMIN CANCEL DDL JOBS`](/sql-statements/sql-statement-admin-cancel-ddl.md)            | 現在実行中の DDL ジョブをキャンセルします。           |
+| [`ADMIN PAUSE DDL JOBS`](/sql-statements/sql-statement-admin-pause-ddl.md)              | 現在実行中の DDL ジョブを一時停止します。            |
+| [`ADMIN RESUME DDL JOBS`](/sql-statements/sql-statement-admin-resume-ddl.md)            | 一時停止した DDL ジョブを再開します。              |
 | [`ADMIN CHECKSUM TABLE`](/sql-statements/sql-statement-admin-checksum-table.md)         | テーブルのすべての行 + インデックスの CRC64 を計算します。 |
 | [`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md) | テーブルまたはインデックスの整合性をチェックします。         |
 | [`ADMIN SHOW DDL [JOBS|QUERIES]`](/sql-statements/sql-statement-admin-show-ddl.md)      | 現在実行中または最近完了した DDL ジョブの詳細を表示します。   |
@@ -156,7 +158,7 @@ AdminStmt ::=
 
 ## 例 {#examples}
 
-次のコマンドを実行して、現在実行中の DDL ジョブ キュー内の完了した最後の 10 個の DDL ジョブを表示します。 `NUM`が指定されていない場合、デフォルトでは、最後に完了した 10 個の DDL ジョブのみが表示されます。
+次のコマンドを実行して、現在実行中の DDL ジョブ キュー内の完了した最後の 10 件の DDL ジョブを表示します。 `NUM`が指定されていない場合、デフォルトでは、最後に完了した 10 個の DDL ジョブのみが表示されます。
 
 ```sql
 ADMIN SHOW DDL JOBS;
@@ -228,22 +230,23 @@ ADMIN SHOW DDL JOBS 5 WHERE state != 'synced' AND db_name = 'test';
 -   `DB_NAME` : DDL 操作が実行されるデータベースの名前。
 -   `TABLE_NAME` : DDL 操作が実行されるテーブルの名前。
 -   `JOB_TYPE` : DDL 操作のタイプ。
--   `SCHEMA_STATE` : スキーマの現在の状態。 `JOB_TYPE`が`add index`の場合、それはインデックスの状態です。 `JOB_TYPE`が`add column`の場合、それは列の状態です。 `JOB_TYPE`が`create table`の場合、それがテーブルの状態です。一般的な状態には次のようなものがあります。
+-   `SCHEMA_STATE` : スキーマの現在の状態。 `JOB_TYPE`が`add index`の場合、それはインデックスの状態です。 `JOB_TYPE`が`add column`の場合、それは列の状態です。 `JOB_TYPE`が`create table`の場合、それがテーブルの状態です。一般的な状態には次のものがあります。
     -   `none` : 存在しないことを示します。 `drop`または`create`操作が失敗してロールバックすると、通常は`none`状態になります。
-    -   `delete only` 、 `write only` 、 `delete reorganization` 、 `write reorganization` : これら 4 つの状態は中間状態です。中間状態からの変換は非常に速いため、これらの状態は一般的な操作では表示されません。 `add index`の操作でのみ`write reorganization`状態が表示されます。これは、インデックス データが追加されていることを意味します。
+    -   `delete only` 、 `write only` 、 `delete reorganization` 、 `write reorganization` : これら 4 つの状態は中間状態です。中間状態からの変換は非常に速いため、これらの状態は一般的な操作では表示されません。 `add index`操作でのみ`write reorganization`状態が表示されます。これは、インデックス データが追加されていることを意味します。
     -   `public` : 存在し、使用可能であることを示します。 `create table`や`add index/column`の操作が完了すると、通常は`public`状態になります。これは、作成されたテーブル/カラム/インデックスが正常に読み書きできるようになることを意味します。
 -   `SCHEMA_ID` : DDL 操作が実行されるデータベースの ID。
 -   `TABLE_ID` : DDL 操作が実行されるテーブルの ID。
 -   `ROW_COUNT` : `add index`操作の実行時に追加されたデータ行の数。
 -   `START_TIME` : DDL 操作の開始時刻。
 -   `END_TIME` : DDL 操作の終了時刻。
--   `STATE` : DDL 操作の状態。一般的な状態には次のものがあります。
+-   `STATE` : DDL 操作の状態。一般的な状態には次のようなものがあります。
     -   `none` : 操作タスクは DDL ジョブ キューに入れられていますが、前のタスクが完了するのを待っているため、まだ実行されていないことを示します。もう 1 つの理由は、ドロップ操作の実行後に`none`状態になるが、すぐに`synced`状態に更新されることです。これは、すべての TiDB インスタンスがこの状態に同期されていることを意味します。
     -   `running` : 操作が実行中であることを示します。
     -   `synced` : 操作が正常に実行され、すべての TiDB インスタンスがこの状態に同期されたことを示します。
     -   `rollback done` : 操作が失敗し、ロールバックが終了したことを示します。
     -   `rollingback` : 操作が失敗し、ロールバック中であることを示します。
-    -   `cancelling` : 操作がキャンセルされていることを示します。この状態は、 `ADMIN CANCEL DDL JOBS`コマンドを使用して DDL ジョブをキャンセルした場合にのみ発生します。
+    -   `cancelling` : 操作がキャンセルされていることを示します。この状態は、 [`ADMIN CANCEL DDL JOBS`](/sql-statements/sql-statement-admin-cancel-ddl.md)コマンドを使用して DDL ジョブをキャンセルした場合にのみ発生します。
+    -   `paused` : 操作が一時停止されていることを示します。この状態は、 [`ADMIN PAUSED DDL JOBS`](/sql-statements/sql-statement-admin-pause-ddl.md)コマンドを使用して DDL ジョブを一時停止した場合にのみ表示されます。 [`ADMIN RESUME DDL JOBS`](/sql-statements/sql-statement-admin-resume-ddl.md)コマンドを使用して DDL ジョブを再開できます。
 
 ## MySQLの互換性 {#mysql-compatibility}
 

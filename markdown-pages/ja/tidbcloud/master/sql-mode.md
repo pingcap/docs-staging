@@ -9,9 +9,9 @@ TiDB サーバーはさまざまな SQL モードで動作し、これらのモ�
 
 TiDB が開始されたら、 `SET [ SESSION | GLOBAL ] sql_mode='modes'`を変更して SQL モードを設定します。
 
-SQL モードを`GLOBAL`レベルに設定する場合は、 `SUPER`権限があることを確認してください。このレベルでの設定は、その後に確立される接続にのみ影響します。 `SESSION`レベルの SQL モードへの変更は、現在のクライアントにのみ影響します。
+SQL モードを`GLOBAL`レベルに設定する場合は、 `SUPER`権限を持っていることを確認してください。このレベルでの設定は、その後に確立される接続にのみ影響します。 `SESSION`レベルの SQL モードへの変更は、現在のクライアントにのみ影響します。
 
-`Modes`カンマ (「,」) で区切られた一連の異なるモードです。 `SELECT @@sql_mode`ステートメントを使用して、現在の SQL モードを確認できます。 SQL モードのデフォルト値: `ONLY_FULL_GROUP_BY, STRICT_TRANS_TABLES, NO_ZERO_IN_DATE, NO_ZERO_DATE, ERROR_FOR_DIVISION_BY_ZERO, NO_AUTO_CREATE_USER, NO_ENGINE_SUBSTITUTION` 。
+`Modes`は、カンマ (「,」) で区切られた一連の異なるモードです。 `SELECT @@sql_mode`ステートメントを使用して、現在の SQL モードを確認できます。 SQL モードのデフォルト値: `ONLY_FULL_GROUP_BY, STRICT_TRANS_TABLES, NO_ZERO_IN_DATE, NO_ZERO_DATE, ERROR_FOR_DIVISION_BY_ZERO, NO_AUTO_CREATE_USER, NO_ENGINE_SUBSTITUTION` 。
 
 ## 重要な<code>sql_mode</code>値 {#important-code-sql-mode-code-values}
 

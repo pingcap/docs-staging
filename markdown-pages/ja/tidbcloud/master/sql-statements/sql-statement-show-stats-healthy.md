@@ -5,9 +5,9 @@ summary: An overview of the usage of SHOW STATS_HEALTHY for TiDB database.
 
 # 統計_健康を表示 {#show-stats-healthy}
 
-`SHOW STATS_HEALTHY`ステートメントは、統計がどの程度正確であると考えられるかの推定を示します。健全性の割合が低いテーブルでは、最適ではないクエリ実行プランが生成される可能性があります。
+`SHOW STATS_HEALTHY`ステートメントは、統計がどの程度正確であると考えられるかの推定を示します。正常性の割合が低いテーブルでは、最適ではないクエリ実行プランが生成される可能性があります。
 
-`ANALYZE` table コマンドを実行すると、テーブルの健全性を改善できます。 `ANALYZE`ヘルスが[`tidb_auto_analyze_ratio`](/system-variables.md#tidb_auto_analyze_ratio)しきい値を下回ると自動的に実行されます。
+`ANALYZE` table コマンドを実行すると、テーブルの状態を改善できます。 `ANALYZE`ヘルスが[`tidb_auto_analyze_ratio`](/system-variables.md#tidb_auto_analyze_ratio)しきい値を下回ると自動的に実行されます。
 
 ## あらすじ {#synopsis}
 
@@ -26,7 +26,6 @@ summary: An overview of the usage of SHOW STATS_HEALTHY for TiDB database.
 ## 例 {#examples}
 
 サンプルデータをロードして`ANALYZE`を実行します。
-
 
 ```sql
 CREATE TABLE t1 (
@@ -60,7 +59,6 @@ mysql> SHOW STATS_HEALTHY;
 ```
 
 一括更新を実行して、レコードの約 30% を削除します。統計の健全性を確認します。
-
 
 ```sql
 DELETE FROM t1 WHERE id BETWEEN 101010 AND 201010; # delete about 30% of records

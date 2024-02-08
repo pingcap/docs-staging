@@ -72,8 +72,8 @@ Count-Min Sketch はハッシュ構造です。等価性クエリに`a = 1`ま�
 
 Count-Min Sketch はハッシュ構造であるため、ハッシュの衝突が発生する可能性があります。 `EXPLAIN`のステートメントで、同等のクエリの推定値が実際の値から大きく乖離している場合、大きい値と小さい値が一緒にハッシュ化されていると考えることができます。この場合、次のいずれかの方法でハッシュの衝突を回避できます。
 
--   `WITH NUM TOPN`パラメータを変更します。 TiDB は、高頻度 (上位 x) データを個別に保存し、他のデータは Count-Min Sketch に保存されます。したがって、より大きな値とより小さな値が一緒にハッシュされるのを防ぐために、 `WITH NUM TOPN`の値を増やすことができます。 TiDB では、デフォルト値は 20 です。最大値は 1024 です。このパラメータの詳細については、 [フルコレクション](#full-collection)を参照してください。
--   2 つのパラメータ`WITH NUM CMSKETCH DEPTH`と`WITH NUM CMSKETCH WIDTH`を変更します。どちらもハッシュ バケットの数と衝突確率に影響します。実際のシナリオに応じて 2 つのパラメーターの値を適切に増やしてハッシュ衝突の可能性を減らすことができますが、その代わりに統計のメモリ使用量が増加します。 TiDB では、デフォルト値`WITH NUM CMSKETCH DEPTH`は 5、デフォルト値`WITH NUM CMSKETCH WIDTH`は 2048 です。2 つのパラメータの詳細については、 [フルコレクション](#full-collection)を参照してください。
+-   `WITH NUM TOPN`パラメータを変更します。 TiDB は、高頻度 (上位 x) データを個別に保存し、他のデータは Count-Min Sketch に保存されます。したがって、より大きな値とより小さな値が一緒にハッシュされるのを防ぐために、 `WITH NUM TOPN`の値を増やすことができます。 TiDB では、デフォルト値は 20 です。最大値は 1024 です。このパラメータの詳細については、 [手動収集](#manual-collection)を参照してください。
+-   2 つのパラメータ`WITH NUM CMSKETCH DEPTH`と`WITH NUM CMSKETCH WIDTH`を変更します。どちらもハッシュ バケットの数と衝突確率に影響します。実際のシナリオに応じて 2 つのパラメーターの値を適切に増やしてハッシュ衝突の可能性を減らすことができますが、その代わりに統計のメモリ使用量が増加します。 TiDB では、デフォルト値`WITH NUM CMSKETCH DEPTH`は 5、デフォルト値`WITH NUM CMSKETCH WIDTH`は 2048 です。2 つのパラメータの詳細については、 [手動収集](#manual-collection)を参照してください。
 
 ## 上位 N の値 {#top-n-values}
 
@@ -83,19 +83,12 @@ Count-Min Sketch はハッシュ構造であるため、ハッシュの衝突が
 
 ### 手動収集 {#manual-collection}
 
-`ANALYZE`ステートメントを実行して統計を収集できます。
+現在、TiDB は統計情報を完全なコレクションとして収集します。 `ANALYZE TABLE`ステートメントを実行して統計を収集できます。
 
 > **注記：**
 >
-> TiDB の`ANALYZE TABLE`の実行時間は、MySQL や InnoDB よりも長くなります。 InnoDB では、少数のページのみがサンプリングされますが、TiDB では、包括的な統計セットが完全に再構築されます。 MySQL 用に作成されたスクリプトは、単純に`ANALYZE TABLE`短期間の操作であると予想する可能性があります。
->
-> 分析を迅速に行うには、 `tidb_enable_fast_analyze` ～ `1`を設定してクイック分析機能を有効にします。このパラメータのデフォルト値は`0`です。
->
-> クイック分析を有効にすると、TiDB は約 10,000 行のデータをランダムにサンプリングして統計を作成します。したがって、データの分布が不均一であったり、データ量が比較的少ない場合には、統計情報の精度は比較的低くなります。間違ったインデックスを選択するなど、実行計画が不適切になる可能性があります。通常の`ANALYZE`ステートメントの実行時間が許容できる場合は、クイック分析機能を無効にすることをお勧めします。
->
-> `tidb_enable_fast_analyze`は実験的機能であり、現時点では`tidb_analyze_version=2`の統計情報と**正確には一致しません**。したがって、 `tidb_enable_fast_analyze`が有効な場合は、 `tidb_analyze_version`から`1`の値を設定する必要があります。
-
-#### フルコレクション {#full-collection}
+> -   TiDB の`ANALYZE TABLE`の実行時間は、MySQL や InnoDB よりも長くなります。 InnoDB では、少数のページのみがサンプリングされますが、TiDB では、包括的な統計セットが完全に再構築されます。 MySQL 用に作成されたスクリプトは、 `ANALYZE TABLE`短期間の操作であると誤って予期する可能性があります。
+> -   v7.5.0 以降、統計の[高速分析機能 ( `tidb_enable_fast_analyze` )](/system-variables.md#tidb_enable_fast_analyze)と[増分収集機能](https://docs.pingcap.com/tidb/v7.4/statistics#incremental-collection)非推奨になりました。
 
 次の構文を使用して完全な収集を実行できます。
 
@@ -122,7 +115,7 @@ Count-Min Sketch はハッシュ構造であるため、ハッシュの衝突が
 -   `WITH NUM SAMPLES` 、TiDB の貯留層サンプリング方法で実装されるサンプリング セットのサイズを指定します。テーブルが大きい場合、この方法を使用して統計を収集することはお勧めできません。貯留層サンプリングの中間結果セットには冗長な結果が含まれるため、メモリなどのリソースにさらなる負荷がかかります。
 -   `WITH FLOAT_NUM SAMPLERATE` v5.3.0 で導入されたサンプリング方法です。値範囲`(0, 1]`では、このパラメータはサンプリング レートを指定します。これは、TiDB のベルヌーイ サンプリングの方法で実装されており、大規模なテーブルのサンプリングに適しており、収集効率とリソース使用率が向上します。
 
-v5.3.0 より前では、TiDB はリザーバー サンプリング方式を使用して統計を収集します。 v5.3.0 以降、TiDB バージョン 2 統計では、デフォルトでベルヌーイ サンプリング法を使用して統計が収集されます。貯留層サンプリング方法を再利用するには、 `WITH NUM SAMPLES`ステートメントを使用できます。
+v5.3.0 より前では、TiDB はリザーバー サンプリング方式を使用して統計を収集します。 v5.3.0 以降、TiDB バージョン 2 統計では、デフォルトでベルヌーイ サンプリング法を使用して統計が収集されます。貯留層サンプリング方法を再利用するには、 `WITH NUM SAMPLES`ステートメントを使用します。
 
 現在のサンプリング レートは、適応アルゴリズムに基づいて計算されます。 [`SHOW STATS_META`](/sql-statements/sql-statement-show-stats-meta.md)を使用してテーブル内の行数を確認できる場合、この行数を使用して 100,000 行に対応するサンプリング レートを計算できます。この数値を確認できない場合は、 [`TABLE_STORAGE_STATS`](/information-schema/information-schema-table-storage-stats.md)表の`TABLE_KEYS`列を別の参照として使用して、サンプリング レートを計算できます。
 
@@ -138,11 +131,11 @@ v5.3.0 より前では、TiDB はリザーバー サンプリング方式を使�
 
 > **注記：**
 >
-> 通常、 `STATS_META`は`TABLE_KEYS`よりも信頼性が高くなります。ただし、 TiDB Cloudコンソールを介してデータをインポートした後 ( [サンプルデータのインポート](/tidb-cloud/import-sample-data.md)参照)、 `STATS_META`の結果は`0`になります。この状況に対処するには、 `STATS_META`の結果が`TABLE_KEYS`の結果よりはるかに小さい場合、 `TABLE_KEYS`使用してサンプリング レートを計算します。
+> 通常、 `STATS_META`は`TABLE_KEYS`よりも信頼性が高くなります。ただし、 TiDB Cloudコンソールを介してデータをインポートした後 ( [サンプルデータのインポート](/tidb-cloud/import-sample-data.md)参照)、 `STATS_META`の結果は`0`になります。この状況に対処するには、 `STATS_META`の結果が`TABLE_KEYS`の結果よりはるかに小さい場合に、 `TABLE_KEYS`使用してサンプリング レートを計算します。
 
 </CustomContent>
 
-##### いくつかの列の統計を収集する {#collect-statistics-on-some-columns}
+#### いくつかの列の統計を収集する {#collect-statistics-on-some-columns}
 
 ほとんどの場合、SQL ステートメントを実行するとき、オプティマイザーは一部の列 ( `WHERE` 、 `JOIN` 、 `ORDER BY` 、および`GROUP BY`ステートメントの列など) の統計のみを使用します。これらの列は`PREDICATE COLUMNS`と呼ばれます。
 
@@ -150,7 +143,8 @@ v5.3.0 より前では、TiDB はリザーバー サンプリング方式を使�
 
 > **注記：**
 >
-> 一部の列に関する統計の収集は`tidb_analyze_version = 2`にのみ適用されます。
+> -   一部の列に関する統計の収集は[`tidb_analyze_version = 2`](/system-variables.md#tidb_analyze_version-new-in-v510)にのみ適用されます。
+> -   TiDB v7.2.0 以降、TiDB には[`tidb_analyze_skip_column_types`](/system-variables.md#tidb_analyze_skip_column_types-new-in-v720)システム変数が導入され、統計を収集する`ANALYZE`コマンドを実行するときに統計収集のためにスキップされる列のタイプを示します。システム変数は`tidb_analyze_version = 2`にのみ適用されます。
 
 -   特定の列の統計を収集するには、次の構文を使用します。
 
@@ -263,7 +257,7 @@ SHOW COLUMN_STATS_USAGE WHERE db_name = 'test' AND table_name = 't' AND last_ana
 3 rows in set (0.00 sec)
 ```
 
-##### インデックスに関する統計を収集する {#collect-statistics-on-indexes}
+#### インデックスに関する統計を収集する {#collect-statistics-on-indexes}
 
 `IndexNameList` in `TableName`のすべてのインデックスの統計を収集するには、次の構文を使用します。
 
@@ -277,7 +271,7 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
 >
 > 収集前後の統計情報の一貫性を確保するために、 `tidb_analyze_version`が`2`の場合、この構文はインデックスのみではなくテーブル全体 (すべての列とインデックスを含む) の統計を収集します。
 
-##### パーティションに関する統計を収集する {#collect-statistics-on-partitions}
+#### パーティションに関する統計を収集する {#collect-statistics-on-partitions}
 
 -   `PartitionNameList` in `TableName`のすべてのパーティションの統計を収集するには、次の構文を使用します。
 
@@ -301,40 +295,22 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
     ANALYZE TABLE TableName PARTITION PartitionNameList [COLUMNS ColumnNameList|PREDICATE COLUMNS|ALL COLUMNS] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
 
-##### 動的プルーニング モードでパーティション テーブルの統計を収集する {#collect-statistics-of-partitioned-tables-in-dynamic-pruning-mode}
+#### 動的プルーニング モードでパーティション テーブルの統計を収集する {#collect-statistics-of-partitioned-tables-in-dynamic-pruning-mode}
 
 [動的プルーニングモード](/partitioned-table.md#dynamic-pruning-mode)でパーティション化されたテーブルにアクセスすると、TiDB は GlobalStats と呼ばれるテーブル レベルの統計を収集します。現在、GlobalStats はすべてのパーティションの統計から集計されています。動的プルーニング モードでは、パーティションテーブルの統計の更新により、GlobalStats の更新がトリガーされる可能性があります。
 
 > **注記：**
 >
-> -   GlobalStats 更新がトリガーされると、次のようになります。
+> -   GlobalStats 更新がトリガーされ、 [`tidb_skip_missing_partition_stats`](/system-variables.md#tidb_skip_missing_partition_stats-new-in-v730)が`OFF`の場合:
 >
->     -   一部のパーティションに統計がない場合 (未分析の新しいパーティションなど)、GlobalStats の生成は中断され、パーティションで利用可能な統計がないことを示す警告メッセージが表示されます。
+>     -   一部のパーティションに統計がない場合 (分析されていない新しいパーティションなど)、GlobalStats の生成は中断され、パーティションで利用可能な統計がないことを示す警告メッセージが表示されます。
 >     -   一部の列の統計が特定のパーティションに存在しない場合 (これらのパーティションでの分析に別の列が指定されている)、これらの列の統計が集計されるときに GlobalStats の生成が中断され、特定のパーティションに一部の列の統計が存在しないことを示す警告メッセージが表示されます。パーティション。
-> -   動的プルーニング モードでは、パーティションとテーブルの分析構成が同じである必要があります。したがって、 `ANALYZE TABLE TableName PARTITION PartitionNameList`ステートメントの後に`COLUMNS`構成を指定するか、 `WITH`後に`OPTIONS`構成を指定すると、TiDB はそれらを無視して警告を返します。
-
-#### 増分コレクション {#incremental-collection}
-
-完全収集後の分析速度を向上させるために、増分収集を使用して、時間列などの単調非減少列に新しく追加されたセクションを分析できます。
-
-> **注記：**
 >
-> -   現在、増分コレクションはインデックスに対してのみ提供されています。
-> -   増分コレクションを使用する場合は、テーブルに操作が`INSERT`だけ存在すること、およびインデックス列に新しく挿入された値が単調非減少であることを確認する必要があります。そうしないと、統計情報が不正確になる可能性があり、TiDB オプティマイザーによる適切な実行プランの選択に影響します。
-
-次の構文を使用して増分収集を実行できます。
-
--   all `IndexNameLists` in `TableName`のインデックス列の統計を増分収集するには、次のようにします。
-
-    ```sql
-    ANALYZE INCREMENTAL TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
-    ```
-
--   all `PartitionNameLists` in `TableName`のパーティションのインデックス列に関する統計を増分収集するには、次のようにします。
-
-    ```sql
-    ANALYZE INCREMENTAL TABLE TableName PARTITION PartitionNameList INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
-    ```
+> -   GlobalStats 更新がトリガーされ、 [`tidb_skip_missing_partition_stats`](/system-variables.md#tidb_skip_missing_partition_stats-new-in-v730)が`ON`の場合:
+>
+>     一部のパーティションですべてまたは一部の列の統計が欠落している場合、TiDB は GlobalStats の生成時にこれらの欠落しているパーティション統計をスキップするため、GlobalStats の生成は影響を受けません。
+>
+> -   動的プルーニング モードでは、パーティションとテーブルの分析構成が同じである必要があります。したがって、 `ANALYZE TABLE TableName PARTITION PartitionNameList`ステートメントの後に`COLUMNS`構成を指定するか、 `WITH`後に`OPTIONS`構成を指定すると、TiDB はそれらを無視して警告を返します。
 
 ### 自動更新 {#automatic-update}
 
@@ -404,19 +380,33 @@ TiDB v6.0 以降、TiDB は、 `KILL`ステートメントを使用してバッ�
 
 ### <code>ANALYZE</code>同時実行性の制御 {#control-code-analyze-code-concurrency}
 
-`ANALYZE`ステートメントを実行するとき、次のパラメーターを使用して同時実行性を調整し、システムへの影響を制御できます。
+`ANALYZE`ステートメントを実行するときに、システム変数を使用して同時実行性を調整し、システムへの影響を制御できます。
+
+関連するシステム変数の関係を以下に示します。
+
+![analyze\_concurrency](https://download.pingcap.com/images/docs/analyze_concurrency.png)
+
+上の図に示すように、 `tidb_build_stats_concurrency` 、 `tidb_build_sampling_stats_concurrency` 、および`tidb_analyze_partition_concurrency`は上流と下流の関係にあります。実際の合計同時実行数は`tidb_build_stats_concurrency` * ( `tidb_build_sampling_stats_concurrency` + `tidb_analyze_partition_concurrency` ) です。これらの変数を変更するときは、それぞれの値を同時に考慮する必要があります。 `tidb_analyze_partition_concurrency` 、 `tidb_build_sampling_stats_concurrency` 、 `tidb_build_stats_concurrency`の順に 1 つずつ調整し、システムへの影響を観察することをお勧めします。これら 3 つの変数の値が大きいほど、システム上のリソースのオーバーヘッドが大きくなります。
 
 #### <code>tidb_build_stats_concurrency</code> {#code-tidb-build-stats-concurrency-code}
 
-現在、 `ANALYZE`ステートメントを実行すると、タスクは複数の小さなタスクに分割されます。各タスクは 1 つの列またはインデックスに対してのみ機能します。 `tidb_build_stats_concurrency`パラメータを使用して、同時タスクの数を制御できます。デフォルト値は`4`です。
+`ANALYZE`ステートメントを実行すると、タスクは複数の小さなタスクに分割されます。各タスクは、1 つの列またはインデックスの統計に対してのみ機能します。 [`tidb_build_stats_concurrency`](/system-variables.md#tidb_build_stats_concurrency)変数を使用して、同時に行う小さなタスクの数を制御できます。デフォルト値は`2`です。 v7.4.0 以前のバージョンのデフォルト値は`4`です。
+
+#### <code>tidb_build_sampling_stats_concurrency</code> {#code-tidb-build-sampling-stats-concurrency-code}
+
+通常の列を分析する場合、 [`tidb_build_sampling_stats_concurrency`](/system-variables.md#tidb_build_sampling_stats_concurrency-new-in-v750)使用してサンプリング タスクの実行の同時実行性を制御できます。デフォルト値は`2`です。
+
+#### <code>tidb_analyze_partition_concurrency</code> {#code-tidb-analyze-partition-concurrency-code}
+
+`ANALYZE`ステートメントを実行する場合、 [`tidb_analyze_partition_concurrency`](/system-variables.md#tidb_analyze_partition_concurrency)を使用して、パーティションテーブルの統計の読み取りおよび書き込みの同時実行性を制御できます。デフォルト値は`2`です。 v7.4.0 以前のバージョンのデフォルト値は`1`です。
 
 #### <code>tidb_distsql_scan_concurrency</code> {#code-tidb-distsql-scan-concurrency-code}
 
-通常の列を分析する場合、 `tidb_distsql_scan_concurrency`パラメーターを使用して、一度に読み取られるリージョンの数を制御できます。デフォルト値は`15`です。
+通常の列を分析する場合、 [`tidb_distsql_scan_concurrency`](/system-variables.md#tidb_distsql_scan_concurrency)変数を使用して、一度に読み取られるリージョンの数を制御できます。デフォルト値は`15`です。値を変更するとクエリのパフォーマンスに影響することに注意してください。値は慎重に調整してください。
 
 #### <code>tidb_index_serial_scan_concurrency</code> {#code-tidb-index-serial-scan-concurrency-code}
 
-インデックス列を分析する場合、 `tidb_index_serial_scan_concurrency`パラメーターを使用して、一度に読み取られるリージョンの数を制御できます。デフォルト値は`1`です。
+インデックス列を分析する場合、 [`tidb_index_serial_scan_concurrency`](/system-variables.md#tidb_index_serial_scan_concurrency)変数を使用して、一度に読み取られるリージョンの数を制御できます。デフォルト値は`1`です。値を変更するとクエリのパフォーマンスに影響することに注意してください。値は慎重に調整してください。
 
 ### ANALYZE 構成を保持する {#persist-analyze-configurations}
 
@@ -449,13 +439,7 @@ v5.4.0 以降、TiDB は一部の`ANALYZE`構成の永続化をサポートし�
 
 この機能を使用すると、ステートメントを手動で実行するときに`ANALYZE`ステートメントで指定された永続性構成を記録できます。一度記録されると、次回 TiDB が自動的に統計を更新するか、これらの構成を指定せずに統計を手動で収集するときに、TiDB は記録された構成に従って統計を収集します。
 
-auto analyze操作に使用される特定のテーブルに保持されている構成をクエリするには、次の SQL ステートメントを使用できます。
-
-```sql
-SELECT sample_num, sample_rate, buckets, topn, column_choice, column_ids FROM mysql.analyze_options opt JOIN information_schema.tables tbl ON opt.table_id = tbl.tidb_table_id WHERE tbl.table_schema = '{db_name}' AND tbl.table_name = '{table_name}';
-```
-
-TiDB は、最新の`ANALYZE`ステートメントで指定された新しい構成を使用して、以前に記録された永続構成を上書きします。たとえば、 `ANALYZE TABLE t WITH 200 TOPN;`を実行すると、上位 200 の値が`ANALYZE`ステートメントに設定されます。続いて`ANALYZE TABLE t WITH 0.1 SAMPLERATE;`を実行すると、 `ANALYZE TABLE t WITH 200 TOPN, 0.1 SAMPLERATE;`と同様に、自動`ANALYZE`ステートメントの上位 200 個の値とサンプリング レート 0.1 が設定されます。
+永続構成を指定して`ANALYZE`ステートメントを手動で複数回実行すると、TiDB は、最新の`ANALYZE`ステートメントで指定された新しい構成を使用して、以前に記録された永続構成を上書きします。
 
 #### ANALYZE 構成の永続性を無効にする {#disable-analyze-configuration-persistence}
 
@@ -706,18 +690,14 @@ v5.4.0 以降、TiDB には統計の同期ロード機能が導入されまし�
 -   統計の同期ロード機能が同時に処理できる列の最大数を指定するには、TiDB 構成ファイルの[`stats-load-concurrency`](/tidb-configuration-file.md#stats-load-concurrency-new-in-v540)オプションの値を変更します。デフォルト値は`5`です。
 -   同期ロード統計機能がキャッシュできる列リクエストの最大数を指定するには、TiDB 構成ファイルの[`stats-load-queue-size`](/tidb-configuration-file.md#stats-load-queue-size-new-in-v540)オプションの値を変更します。デフォルト値は`1000`です。
 
-TiDB の起動中、初期統計が完全にロードされる前に実行される SQL ステートメントには最適ではない実行プランが含まれる可能性があり、そのためパフォーマンスの問題が発生します。このような問題を回避するために、TiDB v7.1.0 では構成パラメーター[`force-init-stats`](/tidb-configuration-file.md#force-init-stats-new-in-v710)が導入されています。このオプションを使用すると、起動時に統計の初期化が完了した後にのみ TiDB がサービスを提供するかどうかを制御できます。このパラメータはデフォルトでは無効になっています。
-
-> **警告：**
->
-> 軽量統計の初期化は実験的機能です。本番環境で使用することはお勧めできません。この機能は予告なく変更または削除される場合があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告できます。
+TiDB の起動中、初期統計が完全にロードされる前に実行される SQL ステートメントには最適ではない実行プランが含まれる可能性があり、そのためパフォーマンスの問題が発生します。このような問題を回避するために、TiDB v7.1.0 では構成パラメーター[`force-init-stats`](/tidb-configuration-file.md#force-init-stats-new-in-v710)が導入されています。このオプションを使用すると、起動時に統計の初期化が完了した後にのみ TiDB がサービスを提供するかどうかを制御できます。 v7.2.0 以降、このパラメータはデフォルトで有効になっています。
 
 v7.1.0 以降、TiDB では軽量統計初期化のために[`lite-init-stats`](/tidb-configuration-file.md#lite-init-stats-new-in-v710)が導入されています。
 
 -   `lite-init-stats`の値が`true`の場合、統計の初期化では、インデックスまたは列のヒストグラム、TopN、または Count-Min スケッチがメモリにロードされません。
 -   `lite-init-stats`の値が`false`の場合、統計の初期化では、インデックスと主キーのヒストグラム、TopN、および Count-Min スケッチがメモリにロードされますが、非主キー列のヒストグラム、TopN、または Count-Min スケッチはメモリにロードされません。オプティマイザーが特定のインデックスまたは列のヒストグラム、TopN、および Count-Min スケッチを必要とする場合、必要な統計が同期または非同期でメモリにロードされます。
 
-デフォルト値の`lite-init-stats`は`false`で、これは軽量統計の初期化を無効にすることを意味します。 `lite-init-stats`から`true`設定すると、不必要な統計のロードが回避されるため、統計の初期化が高速化され、TiDBメモリの使用量が削減されます。
+デフォルト値の`lite-init-stats`は`true`で、これは軽量統計の初期化を有効にすることを意味します。 `lite-init-stats`から`true`設定すると、不必要な統計のロードが回避されるため、統計の初期化が高速化され、TiDBメモリの使用量が削減されます。
 
 </CustomContent>
 
@@ -773,37 +753,37 @@ v7.1.0 以降、TiDB では軽量統計初期化のために[`lite-init-stats`](
 >
 > 統計のロックは、現在のバージョンの実験的機能です。本番環境での使用はお勧めしません。
 
-v6.5.0 以降、TiDB はロック統計をサポートしています。テーブルの統計がロックされると、テーブルの統計を変更できなくなり、そのテーブルに対して`ANALYZE`ステートメントを実行できなくなります。例えば：
+v6.5.0 以降、TiDB はロック統計をサポートします。テーブルまたはパーティションの統計がロックされると、テーブルの統計を変更できなくなり、そのテーブルに対して`ANALYZE`ステートメントを実行できなくなります。例えば：
 
 table `t`を作成し、そこにデータを挿入します。テーブル`t`の統計がロックされていない場合、 `ANALYZE`ステートメントは正常に実行できます。
 
 ```sql
-mysql> create table t(a int, b int);
+mysql> CREATE TABLE t(a INT, b INT);
 Query OK, 0 rows affected (0.03 sec)
 
-mysql> insert into t values (1,2), (3,4), (5,6), (7,8);
+mysql> INSERT INTO t VALUES (1,2), (3,4), (5,6), (7,8);
 Query OK, 4 rows affected (0.00 sec)
 Records: 4  Duplicates: 0  Warnings: 0
 
-mysql> analyze table t;
+mysql> ANALYZE TABLE t;
 Query OK, 0 rows affected, 1 warning (0.02 sec)
 
-mysql> show warnings;
-+-------+------+-----------------------------------------------------------------+
-| Level | Code | Message                                                         |
-+-------+------+-----------------------------------------------------------------+
-| Note  | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t |
-+-------+------+-----------------------------------------------------------------+
+mysql> SHOW WARNINGS;
++-------+------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Level | Code | Message                                                                                                                                                                                                               |
++-------+------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Note  | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t, reason to use this rate is "Row count in stats_meta is much smaller compared with the row count got by PD, use min(1, 15000/4) as the sample-rate=1" |
++-------+------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 1 row in set (0.00 sec)
 ```
 
-テーブル`t`の統計をロックし、 `ANALYZE`を実行します。 `SHOW STATS_LOCKED`の出力から、テーブル`t`の統計がロックされていることがわかります。警告メッセージは、 `ANALYZE`ステートメントがテーブル`t`をスキップしたことを示しています。
+テーブル`t`の統計をロックし、 `ANALYZE`を実行します。警告メッセージは、 `ANALYZE`ステートメントがテーブル`t`をスキップしたことを示しています。
 
 ```sql
-mysql> lock stats t;
+mysql> LOCK STATS t;
 Query OK, 0 rows affected (0.00 sec)
 
-mysql> show stats_locked;
+mysql> SHOW STATS_LOCKED;
 +---------+------------+----------------+--------+
 | Db_name | Table_name | Partition_name | Status |
 +---------+------------+----------------+--------+
@@ -811,36 +791,123 @@ mysql> show stats_locked;
 +---------+------------+----------------+--------+
 1 row in set (0.01 sec)
 
-mysql> analyze table t;
+mysql> ANALYZE TABLE t;
 Query OK, 0 rows affected, 2 warnings (0.00 sec)
 
-mysql> show warnings;
-+---------+------+-----------------------------------------------------------------+
-| Level   | Code | Message                                                         |
-+---------+------+-----------------------------------------------------------------+
-| Note    | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t |
-| Warning | 1105 | skip analyze locked table: t                                    |
-+---------+------+-----------------------------------------------------------------+
+mysql> SHOW WARNINGS;
++---------+------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| Level   | Code | Message                                                                                                                                 |
++---------+------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| Note    | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t, reason to use this rate is "use min(1, 110000/8) as the sample-rate=1" |
+| Warning | 1105 | skip analyze locked table: test.t                                                                                                       |
++---------+------+-----------------------------------------------------------------------------------------------------------------------------------------+
 2 rows in set (0.00 sec)
 ```
 
 テーブル`t`と`ANALYZE`の統計のロックを解除すると、再度正常に実行できるようになります。
 
 ```sql
-mysql> unlock stats t;
+mysql> UNLOCK STATS t;
 Query OK, 0 rows affected (0.01 sec)
 
-mysql> analyze table t;
+mysql> ANALYZE TABLE t;
 Query OK, 0 rows affected, 1 warning (0.03 sec)
 
-mysql> show warnings;
-+-------+------+-----------------------------------------------------------------+
-| Level | Code | Message                                                         |
-+-------+------+-----------------------------------------------------------------+
-| Note  | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t |
-+-------+------+-----------------------------------------------------------------+
+mysql> SHOW WARNINGS;
++-------+------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| Level | Code | Message                                                                                                                                 |
++-------+------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| Note  | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t, reason to use this rate is "use min(1, 110000/8) as the sample-rate=1" |
++-------+------+-----------------------------------------------------------------------------------------------------------------------------------------+
 1 row in set (0.00 sec)
 ```
+
+さらに、 `LOCK STATS`を使用してパーティションの統計をロックすることもできます。例えば：
+
+パーティション テーブル`t`を作成し、そこにデータを挿入します。パーティション`p1`の統計がロックされていない場合、 `ANALYZE`ステートメントは正常に実行できます。
+
+```sql
+mysql> CREATE TABLE t(a INT, b INT) PARTITION BY RANGE (a) (PARTITION p0 VALUES LESS THAN (10), PARTITION p1 VALUES LESS THAN (20), PARTITION p2 VALUES LESS THAN (30));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> INSERT INTO t VALUES (1,2), (3,4), (5,6), (7,8);
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> ANALYZE TABLE t;
+Query OK, 0 rows affected, 6 warning (0.02 sec)
+
+mysql> SHOW WARNINGS;
++---------+------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Level   | Code | Message                                                                                                                                                                                                                              |
++---------+------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Warning | 1105 | disable dynamic pruning due to t has no global stats                                                                                                                                                                                 |
+| Note    | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t's partition p0, reason to use this rate is "Row count in stats_meta is much smaller compared with the row count got by PD, use min(1, 15000/4) as the sample-rate=1" |
+| Warning | 1105 | disable dynamic pruning due to t has no global stats                                                                                                                                                                                 |
+| Note    | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t's partition p1, reason to use this rate is "TiDB assumes that the table is empty, use sample-rate=1"                                                                 |
+| Warning | 1105 | disable dynamic pruning due to t has no global stats                                                                                                                                                                                 |
+| Note    | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t's partition p2, reason to use this rate is "TiDB assumes that the table is empty, use sample-rate=1"                                                                 |
++---------+------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+6 rows in set (0.01 sec)
+```
+
+パーティション`p1`の統計をロックし、 `ANALYZE`を実行します。警告メッセージは、 `ANALYZE`ステートメントがパーティション`p1`をスキップしたことを示しています。
+
+```sql
+mysql> LOCK STATS t PARTITION p1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SHOW STATS_LOCKED;
++---------+------------+----------------+--------+
+| Db_name | Table_name | Partition_name | Status |
++---------+------------+----------------+--------+
+| test    | t          | p1             | locked |
++---------+------------+----------------+--------+
+1 row in set (0.00 sec)
+
+mysql> ANALYZE TABLE t PARTITION p1;
+Query OK, 0 rows affected, 2 warnings (0.01 sec)
+
+mysql> SHOW WARNINGS;
++---------+------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Level   | Code | Message                                                                                                                                                              |
++---------+------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Note    | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t's partition p1, reason to use this rate is "TiDB assumes that the table is empty, use sample-rate=1" |
+| Warning | 1105 | skip analyze locked table: test.t partition (p1)                                                                                                                     |
++---------+------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.00 sec)
+```
+
+パーティション`p1`と`ANALYZE`の統計のロックを解除すると、再度正常に実行できるようになります。
+
+```sql
+mysql> UNLOCK STATS t PARTITION p1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> ANALYZE TABLE t PARTITION p1;
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+mysql> SHOW WARNINGS;
++-------+------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Level | Code | Message                                                                                                                                                              |
++-------+------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Note  | 1105 | Analyze use auto adjusted sample rate 1.000000 for table test.t's partition p1, reason to use this rate is "TiDB assumes that the table is empty, use sample-rate=1" |
++-------+------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+```
+
+### ロック統計の動作 {#behaviors-of-locking-statistics}
+
+-   パーティションテーブルの統計をロックすると、パーティションテーブルのすべてのパーティションの統計がロックされます。
+-   テーブルまたはパーティションを切り詰めると、テーブルまたはパーティションの統計ロックが解放されます。
+
+次の表では、ロック統計の動作を説明します。
+
+|                                   | テーブル全体を削除する | テーブル全体を切り詰める                                | パーティションを切り詰める                                | 新しいパーティションを作成する        | パーティションを削除する                                     | パーティションを再編成する                                    | パーティションを交換する                             |
+| --------------------------------- | ----------- | ------------------------------------------- | -------------------------------------------- | ---------------------- | ------------------------------------------------ | ------------------------------------------------ | ---------------------------------------- |
+| パーティションテーブルがロックされている              | ロックが無効です    | TiDB が古いテーブルを削除するため、ロックは無効になり、ロック情報も削除されます。 | /                                            | /                      | /                                                | /                                                | /                                        |
+| パーティションテーブルとテーブル全体がロックされている       | ロックが無効です    | TiDB が古いテーブルを削除するため、ロックは無効になり、ロック情報も削除されます。 | 古いパーティションのロック情報は無効であり、新しいパーティションは自動的にロックされます | 新しいパーティションは自動的にロックされます | 削除されたパーティションのロック情報はクリアされ、テーブル全体のロックは引き続き有効になります。 | 削除されたパーティションのロック情報がクリアされ、新しいパーティションが自動的にロックされます。 | ロック情報は交換テーブルに転送され、新しいパーティションは自動的にロックされます |
+| パーティションテーブルと一部のパーティションのみがロックされている | ロックが無効です    | TiDB が古いテーブルを削除するため、ロックは無効になり、ロック情報も削除されます。 | TiDB が古いテーブルを削除するため、ロックは無効になり、ロック情報も削除されます。  | /                      | 削除されたパーティションのロック情報がクリアされます                       | 削除されたパーティションのロック情報がクリアされます                       | ロック情報が交換テーブルに転送されます                      |
 
 ## こちらも参照 {#see-also}
 

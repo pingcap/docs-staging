@@ -23,7 +23,6 @@ summary: An overview of the usage of SHOW HISTOGRAMS for TiDB database.
 
 ## 例 {#examples}
 
-
 ```sql
 show stats_histograms;
 ```
@@ -38,7 +37,6 @@ show stats_histograms;
 +---------+------------+----------------+-------------+----------+---------------------+----------------+------------+--------------+-------------+
 3 rows in set (0.00 sec)
 ```
-
 
 ```sql
 show stats_histograms where table_name = 't2';

@@ -7,7 +7,7 @@ summary: Learn how to scale your TiDB Cloud cluster.
 
 > **注記：**
 >
-> -   [TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless) 、アプリケーションのワークロードの変化に基づいて自動的にスケーリングします。ただし、TiDB サーバーレス クラスターを手動でスケールすることはできません。
+> -   [TiDB サーバーレスクラスター](/tidb-cloud/select-cluster-tier.md#tidb-serverless)をスケールすることはできません。
 > -   クラスターが**MODIFYING**ステータスにある場合、クラスターに対して新しいスケーリング操作を実行することはできません。
 
 TiDB クラスターは次の次元でスケールできます。
@@ -20,9 +20,10 @@ TiDB クラスターのサイズを決定する方法については、 [TiDB �
 
 > **注記：**
 >
-> TiDB または TiKV の vCPU および RAM サイズが**4 vCPU、16 GiB**に設定されている場合は、次の制限に注意してください。これらの制限を回避するには、まず[vCPU と RAM を増やす](#change-vcpu-and-ram)を実行します。
+> TiDB または TiKV の vCPU および RAM サイズが**2 vCPU、8 GiB (ベータ)**または**4 vCPU、16 GiB**に設定されている場合は、次の制限に注意してください。これらの制限を回避するには、まず[vCPU と RAM を増やす](#change-vcpu-and-ram)を実行します。
 >
 > -   TiDB のノード番号は 1 または 2 のみに設定でき、TiKV のノード番号は 3 に固定されます。
+> -   2 vCPU TiDB は 2 vCPU TiKV でのみ使用でき、2 vCPU TiKV は 2 vCPU TiDB でのみ使用できます。
 > -   4 vCPU TiDB は 4 vCPU TiKV でのみ使用でき、4 vCPU TiKV は 4 vCPU TiDB でのみ使用できます。
 > -   TiFlashは使用できません。
 

@@ -19,7 +19,7 @@ Zapier で[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
 
 [ザップテンプレート](https://platform.zapier.com/partners/zap-templates)は、公開されている Zapier 統合用に、事前に選択されたアプリとコア フィールドを備えた既製の統合または Zaps です。
 
-このセクションでは、例として**「新しい Github グローバル イベントを TiDB 行に追加」**テンプレートを使用してワークフローを作成します。このワークフローでは、GitHub アカウントから新しいグローバル イベント (任意のリポジトリ上で、ユーザーから、またはユーザーに発生する[GitHubイベント](https://docs.github.com/en/developers/webhooks-and-events/events/github-event-types)つのイベント) が作成されるたびに、Zapier は新しい行をTiDB Cloudクラスターに追加します。
+このセクションでは、例として**「新しい Github グローバル イベントを TiDB 行に追加」**テンプレートを使用してワークフローを作成します。このワークフローでは、GitHub アカウントから新しいグローバル イベント (任意のリポジトリ上で、あなたから、またはあなたへの[GitHubイベント](https://docs.github.com/en/developers/webhooks-and-events/events/github-event-types)のイベントが発生する) が作成されるたびに、Zapier は新しい行をTiDB Cloudクラスターに追加します。
 
 ### 前提条件 {#prerequisites}
 
@@ -62,7 +62,7 @@ Zapier で[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
 2.  アカウントを選択してください
 
     1.  **「サインイン」**ボタンをクリックすると、新しいログインページにリダイレクトされます。
-    2.  ログイン ページで、公開キーと秘密キーを入力します。 TiDB CloudAPI キーを取得するには、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management)の手順に従います。
+    2.  ログイン ページで、公開キーと秘密キーを入力します。 TiDB CloudAPI キーを取得するには、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management)の手順に従ってください。
     3.  **[続行]**をクリックします。
 
     ![Account](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-tidbcloud-account.png)
@@ -197,7 +197,7 @@ Zapier トリガーは、ポーリング API 呼び出しと連携して、新�
 
 TiDB Cloudトリガーは、多くの結果を返すポーリング API 呼び出しを提供します。ただし、結果のほとんどは以前に Zapier によって確認されたものであり、結果のほとんどが重複しています。
 
-API 内のアイテムが複数の個別のポーリングに存在する場合、アクションを複数回トリガーしたくないため、 TiDB Cloudトリガーは`id`フィールドでデータの重複を排除します。
+API 内の項目が複数の異なるポーリングに存在する場合、アクションを複数回トリガーしたくないため、 TiDB Cloudトリガーは`id`フィールドでデータの重複を排除します。
 
 `New Cluster`および`New Table`トリガーは、単に`cluster_id`または`table_id` `id`フィールドとして使用して重複排除を実行します。 2 つのトリガーに対しては何もする必要はありません。
 

@@ -187,7 +187,7 @@ npm start
 
 接続が成功すると、コンソールには次のように TiDB クラスターのバージョンが出力されます。
 
-    🔌 Connected to TiDB cluster! (TiDB version: 5.7.25-TiDB-v7.1.3)
+    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v7.5.0)
     ⏳ Loading sample game data...
     ✅ Loaded sample game data.
 
@@ -331,4 +331,14 @@ conn.query('DELETE FROM players WHERE id = ?;', [1], (err, ok) => {
 
 ## 助けが必要？ {#need-help}
 
-[不和](https://discord.gg/vYU9h56kAX)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+<CustomContent platform="tidb">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](/support.md)について質問してください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+
+</CustomContent>

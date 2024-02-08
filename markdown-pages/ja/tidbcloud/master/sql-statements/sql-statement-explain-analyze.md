@@ -7,7 +7,7 @@ summary: An overview of the usage of EXPLAIN ANALYZE for the TiDB database.
 
 `EXPLAIN ANALYZE`ステートメントは`EXPLAIN`と同様に機能しますが、主な違いはステートメントを実際に実行することです。これにより、クエリ計画の一部として使用される推定値と、実行中に発生した実際の値を比較できます。推定値が実際の値と大きく異なる場合は、影響を受けるテーブルで`ANALYZE TABLE`を実行することを検討する必要があります。
 
-> **ノート：**
+> **注記：**
 >
 > `EXPLAIN ANALYZE`を使用して DML ステートメントを実行すると、通常、データの変更が実行されます。現在、DML ステートメントの実行計画はまだ表示**できません**。
 
@@ -44,7 +44,6 @@ ExplainableStmt ::=
 
 ## 例 {#examples}
 
-
 ```sql
 CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
 ```
@@ -52,7 +51,6 @@ CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
 ```sql
 Query OK, 0 rows affected (0.12 sec)
 ```
-
 
 ```sql
 INSERT INTO t1 (c1) VALUES (1), (2), (3);
@@ -62,7 +60,6 @@ INSERT INTO t1 (c1) VALUES (1), (2), (3);
 Query OK, 3 rows affected (0.02 sec)
 Records: 3  Duplicates: 0  Warnings: 0
 ```
-
 
 ```sql
 EXPLAIN ANALYZE SELECT * FROM t1 WHERE id = 1;
@@ -76,7 +73,6 @@ EXPLAIN ANALYZE SELECT * FROM t1 WHERE id = 1;
 +-------------+---------+---------+------+---------------+----------------------------------------------------------------+---------------+--------+------+
 1 row in set (0.01 sec)
 ```
-
 
 ```sql
 EXPLAIN ANALYZE SELECT * FROM t1;
@@ -114,9 +110,7 @@ EXPLAIN ANALYZE SELECT * FROM t1;
 
 `TableReader`オペレーターの実行情報は通常次のとおりです。
 
-```
-cop_task: {num: 6, max: 1.07587ms, min: 844.312µs, avg: 919.601µs, p95: 1.07587ms, max_proc_keys: 16, p95_proc_keys: 16, tot_proc: 1ms, tot_wait: 1ms, rpc_num: 6, rpc_time: 5.313996 ms, copr_cache_hit_ratio: 0.00}
-```
+    cop_task: {num: 6, max: 1.07587ms, min: 844.312µs, avg: 919.601µs, p95: 1.07587ms, max_proc_keys: 16, p95_proc_keys: 16, tot_proc: 1ms, tot_wait: 1ms, rpc_num: 6, rpc_time: 5.313996 ms, copr_cache_hit_ratio: 0.00}
 
 -   `cop_task` : `cop`のタスクの実行情報が含まれます。例えば：
     -   `num` : 警官タスクの数。
@@ -130,9 +124,7 @@ cop_task: {num: 6, max: 1.07587ms, min: 844.312µs, avg: 919.601µs, p95: 1.0758
 
 `Insert`オペレーターの実行情報は通常次のとおりです。
 
-```
-prepare:109.616µs, check_insert:{total_time:1.431678ms, mem_insert_time:667.878µs, prefetch:763.8µs, rpc:{BatchGet:{num_rpc:1, total_time:699.166µs},Get:{num_rpc:1, total_time:378.276µs }}}
-```
+    prepare:109.616µs, check_insert:{total_time:1.431678ms, mem_insert_time:667.878µs, prefetch:763.8µs, rpc:{BatchGet:{num_rpc:1, total_time:699.166µs},Get:{num_rpc:1, total_time:378.276µs }}}
 
 -   `prepare` : 式、デフォルト値、および自動インクリメント値の計算を含む、書き込みの準備にかかる時間。
 -   `check_insert` : この情報は通常、競合チェックや TiDB トランザクション キャッシュへのデータの書き込みにかかる時間を含む、 `insert ignore`および`insert on duplicate`ステートメントに表示されます。この所要時間には、トランザクションのコミットにかかる時間は含まれないことに注意してください。これには次の情報が含まれます。
@@ -155,9 +147,7 @@ prepare:109.616µs, check_insert:{total_time:1.431678ms, mem_insert_time:667.878
 
 `IndexJoin`演算子には次の実行情報が含まれます。
 
-```
-inner:{total:4.297515932s, concurrency:5, task:17, construct:97.96291ms, fetch:4.164310088s, build:35.219574ms}, probe:53.574945ms
-```
+    inner:{total:4.297515932s, concurrency:5, task:17, construct:97.96291ms, fetch:4.164310088s, build:35.219574ms}, probe:53.574945ms
 
 -   `Inner` : 内部ワーカーの実行情報:
     -   `total` : 内部ワーカーによって消費された合計時間。
@@ -203,9 +193,7 @@ inner:{total:4.429220003s, concurrency:5, task:17, construct:96.207725ms, fetch:
 
 `HashJoin`演算子には次の実行情報が含まれます。
 
-```
-build_hash_table:{total:146.071334ms, fetch:110.338509ms, build:35.732825ms}, probe:{concurrency:5, total:857.162518ms, max:171.48271ms, probe:125.341665ms, fetch:731.820853ms}
-```
+    build_hash_table:{total:146.071334ms, fetch:110.338509ms, build:35.732825ms}, probe:{concurrency:5, total:857.162518ms, max:171.48271ms, probe:125.341665ms, fetch:731.820853ms}
 
 -   `build_hash_table` : 内部テーブルのデータを読み取り、ハッシュ テーブルの実行情報を構築します。
     -   `total` : 合計の消費時間。
@@ -249,9 +237,7 @@ tiflash_scan: {
 
 DML ステートメントが悲観的トランザクションで実行される場合、演算子の実行情報には`lock_keys`の実行情報も含まれる場合があります。例えば：
 
-```
-lock_keys: {time:94.096168ms, region:6, keys:8, lock_rpc:274.503214ms, rpc_count:6}
-```
+    lock_keys: {time:94.096168ms, region:6, keys:8, lock_rpc:274.503214ms, rpc_count:6}
 
 -   `time` : `lock_keys`操作を実行する合計時間。
 -   `region` : `lock_keys`操作の実行に関係するリージョンの数。
@@ -263,9 +249,7 @@ lock_keys: {time:94.096168ms, region:6, keys:8, lock_rpc:274.503214ms, rpc_count
 
 `autocommit=1`のトランザクションで書き込み型の DML ステートメントが実行される場合、書き込み演算子の実行情報には、トランザクション コミットの期間情報も含まれます。例えば：
 
-```
-commit_txn: {prewrite:48.564544ms, wait_prewrite_binlog:47.821579, get_commit_ts:4.277455ms, commit:50.431774ms, region_num:7, write_keys:16, write_byte:536}
-```
+    commit_txn: {prewrite:48.564544ms, wait_prewrite_binlog:47.821579, get_commit_ts:4.277455ms, commit:50.431774ms, region_num:7, write_keys:16, write_byte:536}
 
 -   `prewrite` : トランザクションの 2PC コミットの`prewrite`フェーズに費やされた時間。
 -   `wait_prewrite_binlog:` : 事前書き込みBinlogの書き込みを待機するために費やされる時間。
@@ -276,15 +260,56 @@ commit_txn: {prewrite:48.564544ms, wait_prewrite_binlog:47.821579, get_commit_ts
 
 ### RU（リクエストユニット）の消費量 {#ru-request-unit-consumption}
 
-[リクエストユニット (RU)](/tidb-resource-control.md#what-is-request-unit-ru)は、TiDB リソース制御で定義されるシステム リソースの統一抽象化単位です。最上位演算子の`execution info` 、この特定の SQL ステートメントの全体的な RU 消費量を示します。
+[リクエストユニット(RU)](/tidb-resource-control.md#what-is-request-unit-ru)は、TiDB リソース制御で定義されるシステム リソースの統一抽象化単位です。最上位演算子の`execution info`この特定の SQL ステートメントの全体的な RU 消費量を示します。
 
-```
-RU:273.842670
-```
+    RU:273.842670
 
-> **ノート：**
+> **注記：**
 >
 > この値は、この実行によって消費された実際の RU を示します。同じ SQL ステートメントは、キャッシュの影響により、実行されるたびに異なる量の RU を消費する可能性があります (たとえば、 [コプロセッサキャッシュ](/coprocessor-cache.md) )。
+
+`EXPLAIN ANALYZE`の他の値、特に`execution info`列から RU を計算できます。例えば：
+
+```json
+'executeInfo':
+   time:2.55ms, 
+   loops:2, 
+   RU:0.329460, 
+   Get:{
+       num_rpc:1,
+       total_time:2.13ms
+   }, 
+   total_process_time: 231.5µs,
+   total_wait_time: 732.9µs, 
+   tikv_wall_time: 995.8µs,
+   scan_detail: {
+      total_process_keys: 1, 
+      total_process_keys_size: 150, 
+      total_keys: 1, 
+      get_snapshot_time: 691.7µs,
+      rocksdb: {
+          block: {
+              cache_hit_count: 2,
+              read_count: 1,
+              read_byte: 8.19 KB,
+              read_time: 10.3µs
+          }
+      }
+  },
+```
+
+基本コストは[`tikv/pd`ソースコード](https://github.com/tikv/pd/blob/aeb259335644d65a97285d7e62b38e7e43c6ddca/client/resource_group/controller/config.go#L58C19-L67)で定義され、計算は[`model.go`](https://github.com/tikv/pd/blob/54219d649fb4c8834cd94362a63988f3c074d33e/client/resource_group/controller/model.go#L107)ファイルで実行されます。
+
+TiDB v7.1 を使用している場合、計算は`pd/pd-client/model.go`の`BeforeKVRequest()`と`AfterKVRequest()`の合計です。つまり、次のようになります。
+
+    before key/value request is processed:
+          consumption.RRU += float64(kc.ReadBaseCost) -> kv.ReadBaseCost * rpc_nums
+
+    after key/value request is processed:
+          consumption.RRU += float64(kc.ReadBytesCost) * readBytes -> kc.ReadBytesCost * total_process_keys_size
+          consumption.RRU += float64(kc.CPUMsCost) * kvCPUMs -> kc.CPUMsCost * total_process_time
+
+書き込みとバッチ取得の場合、計算は同様ですが、基本コストは異なります。
 
 ### その他の一般的な実行情報 {#other-common-execution-information}
 

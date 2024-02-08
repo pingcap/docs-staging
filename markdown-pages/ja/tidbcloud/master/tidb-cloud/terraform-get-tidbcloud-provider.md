@@ -43,69 +43,61 @@ TiDB CloudAPI は HTTP ダイジェスト認証を使用します。秘密キー
 
 1.  `main.tf`ファイルを作成します。
 
-    ```
-    terraform {
-      required_providers {
-        tidbcloud = {
-          source = "tidbcloud/tidbcloud"
-          version = "~> 0.1.0"
+        terraform {
+          required_providers {
+            tidbcloud = {
+              source = "tidbcloud/tidbcloud"
+              version = "~> 0.1.0"
+            }
+          }
+          required_version = ">= 1.0.0"
         }
-      }
-      required_version = ">= 1.0.0"
-    }
-    ```
 
-    -   `source`属性は、ダウンロード[Terraform レジストリ](https://registry.terraform.io/)のターゲット Terraform プロバイダーを指定します。
+    -   `source`属性は、ダウンロード元のターゲット Terraform プロバイダーを指定します。 [Terraform レジストリ](https://registry.terraform.io/) 。
     -   `version`属性はオプションで、Terraform プロバイダーのバージョンを指定します。指定しない場合は、最新のプロバイダーのバージョンがデフォルトで使用されます。
     -   `required_version`はオプションで、Terraform のバージョンを指定します。指定しない場合は、デフォルトで最新の Terraform バージョンが使用されます。
 
 2.  `terraform init`コマンドを実行して、Terraform レジストリからTiDB Cloud Terraform Provider をダウンロードします。
 
-    ```
-    $ terraform init
+        $ terraform init
 
-    Initializing the backend...
+        Initializing the backend...
 
-    Initializing provider plugins...
-    - Reusing previous version of tidbcloud/tidbcloud from the dependency lock file
-    - Using previously-installed tidbcloud/tidbcloud v0.1.0
+        Initializing provider plugins...
+        - Reusing previous version of tidbcloud/tidbcloud from the dependency lock file
+        - Using previously-installed tidbcloud/tidbcloud v0.1.0
 
-    Terraform has been successfully initialized!
+        Terraform has been successfully initialized!
 
-    You may now begin working with Terraform. Try running "terraform plan" to see
-    any changes that are required for your infrastructure. All Terraform commands
-    should now work.
+        You may now begin working with Terraform. Try running "terraform plan" to see
+        any changes that are required for your infrastructure. All Terraform commands
+        should now work.
 
-    If you ever set or change modules or backend configuration for Terraform,
-    rerun this command to reinitialize your working directory. If you forget, other
-    commands will detect it and remind you to do so if necessary.
-    ```
+        If you ever set or change modules or backend configuration for Terraform,
+        rerun this command to reinitialize your working directory. If you forget, other
+        commands will detect it and remind you to do so if necessary.
 
 ## ステップ 4. API キーを使用してTiDB Cloud Terraform プロバイダーを構成する {#step-4-configure-tidb-cloud-terraform-provider-with-the-api-key}
 
 `main.tf`ファイルは次のように設定できます。
 
-```
-terraform {
-  required_providers {
-    tidbcloud = {
-      source = "tidbcloud/tidbcloud"
+    terraform {
+      required_providers {
+        tidbcloud = {
+          source = "tidbcloud/tidbcloud"
+        }
+      }
     }
-  }
-}
 
-provider "tidbcloud" {
-  public_key = "your_public_key"
-  private_key = "your_private_key"
-}
-```
+    provider "tidbcloud" {
+      public_key = "your_public_key"
+      private_key = "your_private_key"
+    }
 
 `public_key`と`private_key`は API キーの公開キーと秘密キーです。環境変数を介して渡すこともできます。
 
-```
-export TIDBCLOUD_PUBLIC_KEY = ${public_key}
-export TIDBCLOUD_PRIVATE_KEY = ${private_key}
-```
+    export TIDBCLOUD_PUBLIC_KEY = ${public_key}
+    export TIDBCLOUD_PRIVATE_KEY = ${private_key}
 
 これで、 TiDB Cloud Terraform プロバイダーを使用できるようになりました。
 

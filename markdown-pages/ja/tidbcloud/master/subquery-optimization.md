@@ -44,7 +44,6 @@ summary: Understand optimizations related to subqueries.
 
 たとえば、 `select * from t1 where t1.a in (select t2.a from t2)`は`select t1.* from t1, (select distinct(a) a from t2) t2 where t1.a = t2. The form of a`に書き換えられます。ここでの`DISTINCT`属性は、 `t2.a`に`UNIQUE`属性があれば自動的に削除できます。
 
-
 ```sql
 explain select * from t1 where t1.a in (select t2.a from t2);
 ```
@@ -62,12 +61,11 @@ explain select * from t1 where t1.a in (select t2.a from t2);
 +------------------------------+---------+-----------+------------------------+----------------------------------------------------------------------------+
 ```
 
-この書き換えは、サブクエリ`IN`が比較的小さく、外部クエリが比較的大きい場合にパフォーマンスが向上します。これは、書き換えなしでは`index join`と t2 を駆動テーブルとして使用することが不可能であるためです。ただし、リライト中に集計を自動的に削除できず、 `t2`が比較的大きい場合、このリライトがクエリのパフォーマンスに影響を与えるという欠点があります。現在、変数[tidb_opt_insubq_to_join_and_agg](/system-variables.md#tidb_opt_insubq_to_join_and_agg)はこの最適化を制御するために使用されます。この最適化が適切でない場合は、手動で無効にすることができます。
+この書き換えは、サブクエリ`IN`が比較的小さく、外部クエリが比較的大きい場合にパフォーマンスが向上します。これは、書き換えなしでは、駆動テーブルとして`index join`と t2 を使用することが不可能であるためです。ただし、リライト中に集計を自動的に削除できず、 `t2`が比較的大きい場合、このリライトがクエリのパフォーマンスに影響を与えるという欠点があります。現在、変数[tidb_opt_insubq_to_join_and_agg](/system-variables.md#tidb_opt_insubq_to_join_and_agg)はこの最適化を制御するために使用されます。この最適化が適切でない場合は、手動で無効にすることができます。
 
 ## <code>EXISTS</code>サブクエリと<code>... &gt;/&gt;=/&lt;/&lt;=/=/!= (SELECT ... FROM ...)</code> {#code-exists-code-subquery-and-code-x3c-x3c-select-from-code}
 
 現時点では、このようなシナリオのサブクエリの場合、サブクエリが相関サブクエリでない場合、TiDB は最適化段階で事前にサブクエリを評価し、結果セットに直接置き換えます。下図のように、 `EXISTS`サブクエリはあらかじめ最適化段階で`TRUE`と評価されているため、最終的な実行結果には反映されません。
-
 
 ```sql
 create table t1(a int);

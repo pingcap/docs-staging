@@ -53,34 +53,24 @@ ColumnName ::=
 
 ### メタのみの変更 {#meta-only-change}
 
-
 ```sql
 CREATE TABLE t1 (id int not null primary key AUTO_INCREMENT, col1 INT);
 ```
 
-```
-Query OK, 0 rows affected (0.11 sec)
-```
-
+    Query OK, 0 rows affected (0.11 sec)
 
 ```sql
 INSERT INTO t1 (col1) VALUES (1),(2),(3),(4),(5);
 ```
 
-```
-Query OK, 5 rows affected (0.02 sec)
-Records: 5  Duplicates: 0  Warnings: 0
-```
-
+    Query OK, 5 rows affected (0.02 sec)
+    Records: 5  Duplicates: 0  Warnings: 0
 
 ```sql
 ALTER TABLE t1 MODIFY col1 BIGINT;
 ```
 
-```
-Query OK, 0 rows affected (0.09 sec)
-```
-
+    Query OK, 0 rows affected (0.09 sec)
 
 ```sql
 SHOW CREATE TABLE t1\G;
@@ -99,34 +89,24 @@ Create Table: CREATE TABLE `t1` (
 
 ### 再編成データの変更 {#reorg-data-change}
 
-
 ```sql
 CREATE TABLE t1 (id int not null primary key AUTO_INCREMENT, col1 INT);
 ```
 
-```
-Query OK, 0 rows affected (0.11 sec)
-```
-
+    Query OK, 0 rows affected (0.11 sec)
 
 ```sql
 INSERT INTO t1 (col1) VALUES (12345),(67890);
 ```
 
-```
-Query OK, 2 rows affected (0.00 sec)
-Records: 2  Duplicates: 0  Warnings: 0
-```
-
+    Query OK, 2 rows affected (0.00 sec)
+    Records: 2  Duplicates: 0  Warnings: 0
 
 ```sql
 ALTER TABLE t1 MODIFY col1 VARCHAR(5);
 ```
 
-```
-Query OK, 0 rows affected (2.52 sec)
-```
-
+    Query OK, 0 rows affected (2.52 sec)
 
 ```sql
 SHOW CREATE TABLE t1\G;
@@ -143,20 +123,16 @@ CREATE TABLE `t1` (
 1 row in set (0.00 sec)
 ```
 
-> **ノート：**
+> **注記：**
 >
 > -   変更されたデータ型が既存のデータ行と競合する場合、TiDB はエラーを返します。上記の例では、TiDB は次のエラーを返します。
 >
->     ```
->     alter table t1 modify column col1 varchar(4);
->     ERROR 1406 (22001): Data Too Long, field len 4, data len 5
->     ```
+>         alter table t1 modify column col1 varchar(4);
+>         ERROR 1406 (22001): Data Too Long, field len 4, data len 5
 >
 > -   Async Commit 機能との互換性のため、DDL ステートメントは、Reorg Data への処理を開始する前に一定時間 (約 2.5 秒) 待機します。
 >
->     ```
->     Query OK, 0 rows affected (2.52 sec)
->     ```
+>         Query OK, 0 rows affected (2.52 sec)
 
 ## MySQLの互換性 {#mysql-compatibility}
 

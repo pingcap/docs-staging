@@ -11,7 +11,7 @@ summary: Learn how to build a simple CRUD application with TiDB and Java.
 
 このドキュメントでは、TiDB とJavaを使用して単純な CRUD アプリケーションを構築する方法について説明します。
 
-> **ノート：**
+> **注記：**
 >
 > Java 8 以降のJavaバージョンを使用することをお勧めします。
 >
@@ -49,7 +49,7 @@ git clone https://github.com/pingcap-inc/tidb-example-java.git
 
 <div label="Using Mybatis (Recommended)" value="mybatis">
 
-[マイバティス](https://mybatis.org/mybatis-3/index.html)と比較すると、JDBC 実装はベスト プラクティスではない可能性があります。これは、エラー処理ロジックを手動で記述する必要があり、コードを簡単に再利用できないため、コードが若干冗長になるためです。
+[マイバティス](https://mybatis.org/mybatis-3/index.html)と比較すると、JDBC 実装はベスト プラクティスではない可能性があります。エラー処理ロジックを手動で記述する必要があり、コードを簡単に再利用できないため、コードが若干冗長になります。
 
 Mybatis は、人気のあるオープンソースのJavaクラス永続フレームワークです。以下では[MyBatis ジェネレーター](https://mybatis.org/generator/quickstart.html) Maven プラグインとして使用して永続化レイヤーコードを生成します。
 
@@ -61,31 +61,29 @@ cd plain-java-mybatis
 
 このディレクトリの構造は次のとおりです。
 
-```
-.
-├── Makefile
-├── pom.xml
-└── src
-    └── main
-        ├── java
-        │   └── com
-        │       └── pingcap
-        │           ├── MybatisExample.java
-        │           ├── dao
-        │           │   └── PlayerDAO.java
-        │           └── model
-        │               ├── Player.java
-        │               ├── PlayerMapper.java
-        │               └── PlayerMapperEx.java
-        └── resources
-            ├── dbinit.sql
-            ├── log4j.properties
-            ├── mapper
-            │   ├── PlayerMapper.xml
-            │   └── PlayerMapperEx.xml
-            ├── mybatis-config.xml
-            └── mybatis-generator.xml
-```
+    .
+    ├── Makefile
+    ├── pom.xml
+    └── src
+        └── main
+            ├── java
+            │   └── com
+            │       └── pingcap
+            │           ├── MybatisExample.java
+            │           ├── dao
+            │           │   └── PlayerDAO.java
+            │           └── model
+            │               ├── Player.java
+            │               ├── PlayerMapper.java
+            │               └── PlayerMapperEx.java
+            └── resources
+                ├── dbinit.sql
+                ├── log4j.properties
+                ├── mapper
+                │   ├── PlayerMapper.xml
+                │   └── PlayerMapperEx.xml
+                ├── mybatis-config.xml
+                └── mybatis-generator.xml
 
 自動生成されるファイルは次のとおりです。
 
@@ -201,9 +199,9 @@ cd plain-java-mybatis
 </plugin>
 ```
 
-Maven プラグインに組み込むと、古い生成ファイルを削除し、 `mvn mybatis-generate`使用して新しいファイルを作成できます。または、 `make gen`使用して古いファイルを削除し、同時に新しいファイルを生成することもできます。
+Maven プラグインに組み込むと、古い生成ファイルを削除し、 `mvn mybatis-generate`を使用して新しいファイルを作成できます。または、 `make gen`使用して古いファイルを削除し、同時に新しいファイルを生成することもできます。
 
-> **ノート：**
+> **注記：**
 >
 > プロパティ`configuration.overwrite` `mybatis-generator.xml` 、生成されたJavaコード ファイルが上書きされることを保証するだけです。ただし、XML マッピング ファイルは追加されたまま書き込まれます。したがって、Mybaits Generator が新しいファイルを生成する前に、古いファイルを削除することをお勧めします。
 
@@ -630,20 +628,18 @@ cd plain-java-hibernate
 
 このディレクトリの構造は次のとおりです。
 
-```
-.
-├── Makefile
-├── plain-java-hibernate.iml
-├── pom.xml
-└── src
-    └── main
-        ├── java
-        │   └── com
-        │       └── pingcap
-        │           └── HibernateExample.java
-        └── resources
-            └── hibernate.cfg.xml
-```
+    .
+    ├── Makefile
+    ├── plain-java-hibernate.iml
+    ├── pom.xml
+    └── src
+        └── main
+            ├── java
+            │   └── com
+            │       └── pingcap
+            │           └── HibernateExample.java
+            └── resources
+                └── hibernate.cfg.xml
 
 `hibernate.cfg.xml`は Hibernate 構成ファイルです。
 
@@ -919,20 +915,18 @@ cd plain-java-jdbc
 
 このディレクトリの構造は次のとおりです。
 
-```
-.
-├── Makefile
-├── plain-java-jdbc.iml
-├── pom.xml
-└── src
-    └── main
-        ├── java
-        │   └── com
-        │       └── pingcap
-        │            └── JDBCExample.java
-        └── resources
-            └── dbinit.sql
-```
+    .
+    ├── Makefile
+    ├── plain-java-jdbc.iml
+    ├── pom.xml
+    └── src
+        └── main
+            ├── java
+            │   └── com
+            │       └── pingcap
+            │            └── JDBCExample.java
+            └── resources
+                └── dbinit.sql
 
 テーブル作成の初期化ステートメントは`dbinit.sql`にあります。
 

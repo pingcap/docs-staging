@@ -53,18 +53,16 @@ mysql> SHOW CREATE USER 'newuser';
 
 ユーザー`newuser`のパスワードを変更します。
 
-```
-mysql> ALTER USER 'newuser' IDENTIFIED BY 'newnewpassword';
-Query OK, 0 rows affected (0.02 sec)
+    mysql> ALTER USER 'newuser' IDENTIFIED BY 'newnewpassword';
+    Query OK, 0 rows affected (0.02 sec)
 
-mysql> SHOW CREATE USER 'newuser';
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| CREATE USER for newuser@%                                                                                                                                            |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| CREATE USER 'newuser'@'%' IDENTIFIED WITH 'mysql_native_password' AS '*FB8A1EA1353E8775CA836233E367FBDFCB37BE73' REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-1 row in set (0.00 sec)
-```
+    mysql> SHOW CREATE USER 'newuser';
+    +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+    | CREATE USER for newuser@%                                                                                                                                            |
+    +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+    | CREATE USER 'newuser'@'%' IDENTIFIED WITH 'mysql_native_password' AS '*FB8A1EA1353E8775CA836233E367FBDFCB37BE73' REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK |
+    +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+    1 row in set (0.00 sec)
 
 ユーザーをロック`newuser` :
 
@@ -72,9 +70,7 @@ mysql> SHOW CREATE USER 'newuser';
 ALTER USER 'newuser' ACCOUNT LOCK;
 ```
 
-```
-Query OK, 0 rows affected (0.02 sec)
-```
+    Query OK, 0 rows affected (0.02 sec)
 
 `newuser`の属性を変更します。
 
@@ -130,9 +126,7 @@ SELECT * FROM information_schema.user_attributes;
 ALTER USER 'newuser' PASSWORD EXPIRE NEVER;
 ```
 
-```
-Query OK, 0 rows affected (0.02 sec)
-```
+    Query OK, 0 rows affected (0.02 sec)
 
 `newuser`のパスワード再利用ポリシーを変更し、 `ALTER USER ... PASSWORD REUSE INTERVAL ... DAY`使用して過去 90 日以内に使用されたパスワードの再利用を禁止します。
 
@@ -140,9 +134,7 @@ Query OK, 0 rows affected (0.02 sec)
 ALTER USER 'newuser' PASSWORD REUSE INTERVAL 90 DAY;
 ```
 
-```
-Query OK, 0 rows affected (0.02 sec)
-```
+    Query OK, 0 rows affected (0.02 sec)
 
 ### ユーザーにバインドされているリソース グループを変更する {#modify-the-resource-group-bound-to-the-user}
 
@@ -152,9 +144,7 @@ Query OK, 0 rows affected (0.02 sec)
 ALTER USER 'newuser' RESOURCE GROUP rg1;
 ```
 
-```
-Query OK, 0 rows affected (0.02 sec)
-```
+    Query OK, 0 rows affected (0.02 sec)
 
 現在のユーザーにバインドされているリソース グループをビュー。
 
@@ -162,14 +152,12 @@ Query OK, 0 rows affected (0.02 sec)
 SELECT USER, JSON_EXTRACT(User_attributes, "$.resource_group") FROM mysql.user WHERE user = "newuser";
 ```
 
-```
-+---------+---------------------------------------------------+
-| USER    | JSON_EXTRACT(User_attributes, "$.resource_group") |
-+---------+---------------------------------------------------+
-| newuser | "rg1"                                             |
-+---------+---------------------------------------------------+
-1 row in set (0.02 sec)
-```
+    +---------+---------------------------------------------------+
+    | USER    | JSON_EXTRACT(User_attributes, "$.resource_group") |
+    +---------+---------------------------------------------------+
+    | newuser | "rg1"                                             |
+    +---------+---------------------------------------------------+
+    1 row in set (0.02 sec)
 
 ユーザーをリソース グループにバインド解除します。つまり、ユーザーを`default`リソース グループにバインドします。
 
@@ -178,14 +166,12 @@ ALTER USER 'newuser' RESOURCE GROUP `default`;
 SELECT USER, JSON_EXTRACT(User_attributes, "$.resource_group") FROM mysql.user WHERE user = "newuser";
 ```
 
-```
-+---------+---------------------------------------------------+
-| USER    | JSON_EXTRACT(User_attributes, "$.resource_group") |
-+---------+---------------------------------------------------+
-| newuser | "default"                                         |
-+---------+---------------------------------------------------+
-1 row in set (0.02 sec)
-```
+    +---------+---------------------------------------------------+
+    | USER    | JSON_EXTRACT(User_attributes, "$.resource_group") |
+    +---------+---------------------------------------------------+
+    | newuser | "default"                                         |
+    +---------+---------------------------------------------------+
+    1 row in set (0.02 sec)
 
 ## こちらも参照 {#see-also}
 

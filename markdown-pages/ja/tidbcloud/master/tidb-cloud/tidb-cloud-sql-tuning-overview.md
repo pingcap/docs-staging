@@ -39,7 +39,7 @@ TiDB Cloudコンソールには、 **[診断]**タブに**<a href="/tidb-cloud/t
 
 ### 実行計画を確認する {#check-the-execution-plan}
 
-[`EXPLAIN`](/explain-overview.md)を使用すると、コンパイル中にステートメントに対して TiDB によって計算された実行計画を確認できます。言い換えれば、TiDB は数百または数千の可能な実行計画を推定し、リソースの消費が最小限で最も高速に実行される最適な実行計画を選択します。
+[`EXPLAIN`](/explain-overview.md)を使用すると、コンパイル中にステートメントに対して TiDB によって計算された実行計画を確認できます。言い換えれば、TiDB は、数百または数千の可能な実行プランを推定し、リソースの消費が最小限で最も高速に実行される最適な実行プランを選択します。
 
 TiDB によって選択された実行計画が最適でない場合は、 EXPLAINまたは[`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md)を使用して診断できます。
 
@@ -99,7 +99,7 @@ SQL パフォーマンス チューニングに基づいてもパフォーマン
 
 Key Visualizer を使用すると、TiDB クラスターの使用パターンを分析し、トラフィック ホットスポットのトラブルシューティングを行うことができます。このページには、TiDB クラスターのトラフィックの経時的な視覚的表現が表示されます。
 
-Key Visualizer では次の情報を確認できます。最初に[基本概念](https://docs.pingcap.com/tidb/stable/dashboard-key-visualizer#basic-concepts)いくつかを理解する必要があるかもしれません。
+Key Visualizer では次の情報を確認できます。最初に[基本概念](https://docs.pingcap.com/tidb/stable/dashboard-key-visualizer#basic-concepts)を理解する必要があるかもしれません。
 
 -   全体的なトラフィックを時間の経過とともに示す大きなヒート マップ
 -   ヒートマップの座標に関する詳細情報

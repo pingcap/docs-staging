@@ -56,31 +56,29 @@ SELECT id, name FROM authors;
 
 出力は次のとおりです。
 
-```
-+------------+--------------------------+
-| id         | name                     |
-+------------+--------------------------+
-|       6357 | Adelle Bosco             |
-|     345397 | Chanelle Koepp           |
-|     807584 | Clementina Ryan          |
-|     839921 | Gage Huel                |
-|     850070 | Ray Armstrong            |
-|     850362 | Ford Waelchi             |
-|     881210 | Jayme Gutkowski          |
-|    1165261 | Allison Kuvalis          |
-|    1282036 | Adela Funk               |
-...
-| 4294957408 | Lyla Nitzsche            |
-+------------+--------------------------+
-20000 rows in set (0.05 sec)
-```
+    +------------+--------------------------+
+    | id         | name                     |
+    +------------+--------------------------+
+    |       6357 | Adelle Bosco             |
+    |     345397 | Chanelle Koepp           |
+    |     807584 | Clementina Ryan          |
+    |     839921 | Gage Huel                |
+    |     850070 | Ray Armstrong            |
+    |     850362 | Ford Waelchi             |
+    |     881210 | Jayme Gutkowski          |
+    |    1165261 | Allison Kuvalis          |
+    |    1282036 | Adela Funk               |
+    ...
+    | 4294957408 | Lyla Nitzsche            |
+    +------------+--------------------------+
+    20000 rows in set (0.05 sec)
 
 </div>
 <div label="Java" value="java">
 
 Javaでは、作成者の基本情報を保存するために、クラス`Author`を宣言できます。データベースの[データ型](/data-type-overview.md)と[値の範囲](/data-type-numeric.md)に従って、適切なJavaデータ型を選択する必要があります。例えば：
 
--   タイプ`int`のデータを格納するには、タイプ`Int`の変数を使用します。
+-   タイプ`Int`の変数を使用して、タイプ`int`のデータを格納します。
 -   タイプ`bigint`のデータを格納するには、タイプ`Long`の変数を使用します。
 -   タイプ`tinyint`のデータを格納するには、タイプ`Short`の変数を使用します。
 -   タイプ`varchar`のデータを格納するには、タイプ`String`の変数を使用します。
@@ -234,27 +232,25 @@ public List<Author> getAuthorsSortByBirthYear() throws SQLException {
 
 結果は次のとおりです。
 
-```
-+-----------+------------------------+------------+
-| id        | name                   | birth_year |
-+-----------+------------------------+------------+
-| 83420726  | Terrance Dach          | 2000       |
-| 57938667  | Margarita Christiansen | 2000       |
-| 77441404  | Otto Dibbert           | 2000       |
-| 61338414  | Danial Cormier         | 2000       |
-| 49680887  | Alivia Lemke           | 2000       |
-| 45460101  | Itzel Cummings         | 2000       |
-| 38009380  | Percy Hodkiewicz       | 2000       |
-| 12943560  | Hulda Hackett          | 2000       |
-| 1294029   | Stanford Herman        | 2000       |
-| 111453184 | Jeffrey Brekke         | 2000       |
-...
-300000 rows in set (0.23 sec)
-```
+    +-----------+------------------------+------------+
+    | id        | name                   | birth_year |
+    +-----------+------------------------+------------+
+    | 83420726  | Terrance Dach          | 2000       |
+    | 57938667  | Margarita Christiansen | 2000       |
+    | 77441404  | Otto Dibbert           | 2000       |
+    | 61338414  | Danial Cormier         | 2000       |
+    | 49680887  | Alivia Lemke           | 2000       |
+    | 45460101  | Itzel Cummings         | 2000       |
+    | 38009380  | Percy Hodkiewicz       | 2000       |
+    | 12943560  | Hulda Hackett          | 2000       |
+    | 1294029   | Stanford Herman        | 2000       |
+    | 111453184 | Jeffrey Brekke         | 2000       |
+    ...
+    300000 rows in set (0.23 sec)
 
 ## クエリ結果の数を制限する {#limit-the-number-of-query-results}
 
-クエリ結果の数を制限するには、 `LIMIT`ステートメントを使用します。
+クエリ結果の数を制限するには、 `LIMIT`ステートメントを使用できます。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -299,23 +295,21 @@ public List<Author> getAuthorsWithLimit(Integer limit) throws SQLException {
 
 結果は次のとおりです。
 
-```
-+-----------+------------------------+------------+
-| id        | name                   | birth_year |
-+-----------+------------------------+------------+
-| 83420726  | Terrance Dach          | 2000       |
-| 57938667  | Margarita Christiansen | 2000       |
-| 77441404  | Otto Dibbert           | 2000       |
-| 61338414  | Danial Cormier         | 2000       |
-| 49680887  | Alivia Lemke           | 2000       |
-| 45460101  | Itzel Cummings         | 2000       |
-| 38009380  | Percy Hodkiewicz       | 2000       |
-| 12943560  | Hulda Hackett          | 2000       |
-| 1294029   | Stanford Herman        | 2000       |
-| 111453184 | Jeffrey Brekke         | 2000       |
-+-----------+------------------------+------------+
-10 rows in set (0.11 sec)
-```
+    +-----------+------------------------+------------+
+    | id        | name                   | birth_year |
+    +-----------+------------------------+------------+
+    | 83420726  | Terrance Dach          | 2000       |
+    | 57938667  | Margarita Christiansen | 2000       |
+    | 77441404  | Otto Dibbert           | 2000       |
+    | 61338414  | Danial Cormier         | 2000       |
+    | 49680887  | Alivia Lemke           | 2000       |
+    | 45460101  | Itzel Cummings         | 2000       |
+    | 38009380  | Percy Hodkiewicz       | 2000       |
+    | 12943560  | Hulda Hackett          | 2000       |
+    | 1294029   | Stanford Herman        | 2000       |
+    | 111453184 | Jeffrey Brekke         | 2000       |
+    +-----------+------------------------+------------+
+    10 rows in set (0.11 sec)
 
 この例では、ステートメント`LIMIT`を使用すると、クエリ時間が`0.23 sec`から`0.11 sec`に大幅に短縮されます。詳細については、 [トップNとリミット](/topn-limit-push-down.md)を参照してください。
 
@@ -376,23 +370,21 @@ public List<AuthorCount> getAuthorCountsByBirthYear() throws SQLException {
 
 結果は次のとおりです。
 
-```
-+------------+--------------+
-| birth_year | author_count |
-+------------+--------------+
-|       1932 |          317 |
-|       1947 |          290 |
-|       1939 |          282 |
-|       1935 |          289 |
-|       1968 |          291 |
-|       1962 |          261 |
-|       1961 |          283 |
-|       1986 |          289 |
-|       1994 |          280 |
-...
-|       1972 |          306 |
-+------------+--------------+
-71 rows in set (0.00 sec)
-```
+    +------------+--------------+
+    | birth_year | author_count |
+    +------------+--------------+
+    |       1932 |          317 |
+    |       1947 |          290 |
+    |       1939 |          282 |
+    |       1935 |          289 |
+    |       1968 |          291 |
+    |       1962 |          261 |
+    |       1961 |          283 |
+    |       1986 |          289 |
+    |       1994 |          280 |
+    ...
+    |       1972 |          306 |
+    +------------+--------------+
+    71 rows in set (0.00 sec)
 
 `COUNT`関数に加えて、TiDB は他の集計関数もサポートしています。詳細については、 [集計 (GROUP BY) 関数](/functions-and-operators/aggregate-group-by-functions.md)を参照してください。

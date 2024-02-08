@@ -1,12 +1,11 @@
 ---
 title: TiDB Cloud HTAP Quick Start
 summary: Learn how to get started with HTAP in TiDB Cloud.
-aliases: ['/tidbcloud/use-htap-cluster']
 ---
 
 # TiDB CloudHTAP クイック スタート {#tidb-cloud-htap-quick-start}
 
-[HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing)ハイブリッド トランザクション処理と分析処理を意味します。 TiDB Cloudの HTAP クラスターは、トランザクション処理用に設計された行ベースのstorageエンジン[TiKV](https://tikv.org)と、分析処理用に設計されたカラム型storage[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)で構成されます。アプリケーション データはまず TiKV に保存され、次にRaftコンセンサス アルゴリズムを介してTiFlashにレプリケートされます。したがって、これは行ベースのstorageから列指向のstorageへのリアルタイム レプリケーションです。
+[HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing)ハイブリッド トランザクション処理と分析処理を意味します。 TiDB Cloudの HTAP クラスターは、トランザクション処理用に設計された行ベースのstorageエンジン[TiKV](https://tikv.org)と、分析処理用に設計されたカラム型storage[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)で構成されます。アプリケーション データは最初に TiKV に保存され、次にRaftコンセンサス アルゴリズムを介してTiFlashにレプリケートされます。つまり、行ベースのstorageから列型storageへのリアルタイム レプリケーションとなります。
 
 このチュートリアルでは、 TiDB Cloudのハイブリッド トランザクションおよび分析処理 (HTAP) 機能を体験する簡単な方法を説明します。コンテンツには、テーブルをTiFlashにレプリケートする方法、 TiFlashでクエリを実行する方法、およびパフォーマンスの向上を体験する方法が含まれます。
 
@@ -76,7 +75,7 @@ ORDER BY count ASC;
 
     TiFlashレプリカを含むテーブルの場合、TiDB オプティマイザーはコスト見積もりに基づいて TiKV レプリカとTiFlashレプリカのどちらを使用するかを自動的に決定します。前の`EXPLAIN ANALYZE`ステートメントでは、 `HINT /*+ READ_FROM_STORAGE(TIKV[trips]) */`を使用してオプティマイザに TiKV を強制的に選択させ、TiKV の実行統計を確認できるようにしています。
 
-    > **ノート：**
+    > **注記：**
     >
     > 5.7.7 より前の MySQL コマンドライン クライアントは、デフォルトでオプティマイザー ヒントを削除します。これらの以前のバージョンで`Hint`構文を使用している場合は、クライアントの起動時に`--comments`オプションを追加します。例: `mysql -h 127.0.0.1 -P 4000 -uroot --comments` 。
 
@@ -120,9 +119,9 @@ ORDER BY count ASC;
     (10 rows)
     ```
 
-> **ノート：**
+> **注記：**
 >
-> サンプル データのサイズが小さく、このドキュメントのクエリは非常に単純であるため、すでにオプティマイザにこのクエリに対して TiKV を選択させて同じクエリを再度実行している場合、TiKV はそのキャッシュを再利用するため、クエリの実行時間が長くなる可能性があります。もっと早く。データが頻繁に更新されると、キャッシュが失われます。
+> サンプル データのサイズが小さく、このドキュメントのクエリは非常に単純であるため、すでにオプティマイザにこのクエリに対して TiKV を選択させ、同じクエリを再度実行するように強制している場合、TiKV はそのキャッシュを再利用するため、クエリは大幅に長くなる可能性があります。もっと早く。データが頻繁に更新されると、キャッシュが失われます。
 
 ## もっと詳しく知る {#learn-more}
 

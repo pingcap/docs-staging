@@ -9,7 +9,7 @@ summary: Use of CREATE BINDING in TiDB database.
 
 `BINDING`は`GLOBAL`または`SESSION`いずれかに基づいて指定できます。デフォルトは`SESSION`です。
 
-バインドされた SQL ステートメントはパラメータ化され、システム テーブルに保存されます。 SQL クエリが処理されるとき、パラメーター化された SQL ステートメントとシステム テーブル内のバインドされた SQL ステートメントが一貫していて、システム変数`tidb_use_plan_baselines`が`ON` (デフォルト) に設定されている限り、対応するオプティマイザー ヒントが使用可能です。複数の実行プランが利用可能な場合、オプティマイザは最小のコストでプランをバインドすることを選択します。詳細については、 [バインディングを作成する](/sql-plan-management.md#create-a-binding)を参照してください。
+バインドされた SQL ステートメントはパラメータ化され、システム テーブルに保存されます。 SQL クエリが処理されるとき、パラメーター化された SQL ステートメントとシステム テーブル内のバインドされた SQL ステートメントが一貫しており、システム変数`tidb_use_plan_baselines`が`ON` (デフォルト) に設定されている限り、対応するオプティマイザー ヒントが使用可能です。複数の実行プランが利用可能な場合、オプティマイザは最小のコストでプランをバインドすることを選択します。詳細については、 [バインディングを作成する](/sql-plan-management.md#create-a-binding)を参照してください。
 
 ## あらすじ {#synopsis}
 
@@ -32,7 +32,6 @@ BindableStmt ::=
 SQL ステートメントまたは履歴実行計画に従ってバインディングを作成できます。
 
 次の例は、SQL ステートメントに従ってバインディングを作成する方法を示しています。
-
 
 ```sql
 mysql> CREATE TABLE t1 (
@@ -173,7 +172,7 @@ mysql> SELECT @@LAST_PLAN_FROM_BINDING;
 
 ## こちらも参照 {#see-also}
 
--   [[グローバル|セッション] バインディングを削除](/sql-statements/sql-statement-drop-binding.md)
+-   [[グローバル|セッション] バインディングを削除します](/sql-statements/sql-statement-drop-binding.md)
 -   [[グローバル|セッション] バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
 -   [分析テーブル](/sql-statements/sql-statement-analyze-table.md)
 -   [オプティマイザーのヒント](/optimizer-hints.md)

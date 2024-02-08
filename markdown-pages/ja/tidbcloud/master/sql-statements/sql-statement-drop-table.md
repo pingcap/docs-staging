@@ -5,7 +5,7 @@ summary: An overview of the usage of DROP TABLE for the TiDB database.
 
 # ドロップテーブル {#drop-table}
 
-このステートメントは、現在選択されているデータベースからテーブルを削除します。 `IF EXISTS`修飾子が使用されていない場合、テーブルが存在しない場合はエラーが返されます。
+このステートメントは、現在選択されているデータベースからテーブルを削除します。 `IF EXISTS`修飾子が使用されない限り、テーブルが存在しない場合はエラーが返されます。
 
 ## あらすじ {#synopsis}
 

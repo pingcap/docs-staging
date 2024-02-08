@@ -91,7 +91,7 @@ ERROR 1105 (HY000): insert into view v1 is not supported now.
 
 -   現在、TiDB 内のビューは挿入または更新できません (つまり、 `INSERT VIEW`と`UPDATE VIEW`はサポートされていません)。 `WITH CHECK OPTION`は構文的に互換性があるだけで、有効になりません。
 -   現在、TiDB のビューは`ALTER VIEW`サポートしていませんが、代わりに`CREATE OR REPLACE`使用できます。
--   現在、 `ALGORITHM`フィールドは TiDB で構文的にのみ互換性がありますが、有効にはなりません。 TiDB は現在、MERGE アルゴリズムのみをサポートしています。
+-   現在、 `ALGORITHM`フィールドは TiDB で構文的にのみ互換性がありますが、有効になりません。 TiDB は現在、MERGE アルゴリズムのみをサポートしています。
 
 ## こちらも参照 {#see-also}
 

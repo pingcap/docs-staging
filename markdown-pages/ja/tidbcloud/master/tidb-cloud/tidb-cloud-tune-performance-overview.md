@@ -28,9 +28,7 @@ summary: Learn about how to analyze and tune SQL performance in TiDB Cloud.
 
 ユーザー応答時間は、サービス時間、キュー時間、およびユーザー要求を完了するまでの同時待機時間で構成されます。
 
-```
-User Response time = Service time + Queuing delay + Coherency delay
-```
+    User Response time = Service time + Queuing delay + Coherency delay
 
 -   サービス時間: リクエストの処理時にシステムが特定のリソースで消費する時間。たとえば、SQL リクエストを完了するためにデータベースが消費する CPU 時間。
 -   キュー遅延: リクエストを処理するときに、システムが特定のリソースのサービスをキューで待機する時間。
@@ -62,9 +60,7 @@ TiDB Cloudコンソールには、ユーザーの応答時間のトラブルシ�
 2.  必要に応じて、TiDB トークンの制限を増やしてスループットを向上させることができます。
 3.  準備されたプランのキャッシュ機能が有効であり、ユーザー側で JDBC を使用する場合は、次の構成を使用することをお勧めします。
 
-    ```
-    useServerPrepStmts=true&cachePrepStmts=true& prepStmtCacheSize=1000&prepStmtCacheSqlLimit=20480&useConfigs=maxPerformance
-    ```
+        useServerPrepStmts=true&cachePrepStmts=true& prepStmtCacheSize=1000&prepStmtCacheSqlLimit=20480&useConfigs=maxPerformance
 
     JDBC を使用せず、現在の TiDB クラスターのプリペアド プラン キャッシュ機能を最大限に活用したい場合は、クライアント側でプリペアドステートメントオブジェクトをキャッシュする必要があります。 StmtPrepare および StmtClose の呼び出しをリセットする必要はありません。各クエリで呼び出されるコマンドの数を 3 から 1 に減らします。パフォーマンス要件とクライアント側の変更の量に応じて、ある程度の開発作業が必要になります。 [PingCAP サポート チーム](/tidb-cloud/tidb-cloud-support.md)に相談してください。
 
@@ -90,7 +86,7 @@ SQL パフォーマンス チューニングの詳細については、 [SQLチ�
 
 ![Write hotspot](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-troubleshoot-write-hotspot.png)
 
-次のスクリーンショットに示すように、読み取りホットスポットは通常、ヒート マップ内で明るい水平線として表され、通常は多数のクエリを含む小さなテーブルになります。
+読み取りホットスポットは通常、次のスクリーンショットに示すように、ヒート マップでは明るい水平線として表され、通常は多数のクエリを含む小さなテーブルになります。
 
 ![Read hotspot](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-troubleshoot-read-hotspot-new.png)
 

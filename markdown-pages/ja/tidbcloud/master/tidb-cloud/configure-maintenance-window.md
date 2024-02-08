@@ -11,7 +11,7 @@ summary: Learn how to configure maintenance window for your cluster.
 
 メンテナンス ウィンドウを構成することにより、メンテナンス タスクを簡単にスケジュールおよび管理して、メンテナンスの影響を最小限に抑えることができます。たとえば、アプリケーションのワークロードのピーク時間を回避するために、メンテナンス時間枠の開始時間を設定できます。
 
-> **ノート：**
+> **注記：**
 >
 > メンテナンスウィンドウ機能は[TiDB 専用クラスター](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)でのみ使用できます。
 

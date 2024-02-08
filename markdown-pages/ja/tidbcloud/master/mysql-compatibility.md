@@ -5,7 +5,17 @@ summary: Learn about the compatibility of TiDB with MySQL, and the unsupported a
 
 # MySQL の互換性 {#mysql-compatibility}
 
-TiDB はMySQL 5.7プロトコルと高い互換性があり、 MySQL 5.7の共通機能と構文をサポートします。これは、MySQL クライアントだけでなく、PHPMyAdmin、Navicat、MySQL Workbench、mysqldump、Mydumper/myloader などのエコシステム ツールを TiDB に使用できることを意味します。
+<CustomContent platform="tidb">
+
+TiDB は、MySQL プロトコル、およびMySQL 5.7および MySQL 8.0 の共通機能および構文と高い互換性があります。 MySQL のエコシステム ツール (PHPMyAdmin、Navicat、MySQL Workbench、DBeaver、および[もっと](/develop/dev-guide-third-party-support.md#gui) ) および MySQL クライアントを TiDB に使用できます。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+TiDB は、MySQL プロトコル、およびMySQL 5.7および MySQL 8.0 の共通機能および構文と高い互換性があります。 MySQL のエコシステム ツール (PHPMyAdmin、Navicat、MySQL Workbench、DBeaver、および[もっと](https://docs.pingcap.com/tidb/v7.2/dev-guide-third-party-support#gui) ) および MySQL クライアントを TiDB に使用できます。
+
+</CustomContent>
 
 ただし、MySQL の一部の機能は TiDB ではサポートされていません。これは、問題を解決するためのより良い方法 (XML関数の代わりに JSON を使用するなど) が存在するか、必要な労力に対して現在の需要が不足している (ストアド プロシージャや関数など) ことが考えられます。さらに、一部の機能は分散システムで実装するのが難しい場合があります。
 
@@ -14,13 +24,13 @@ TiDB はMySQL 5.7プロトコルと高い互換性があり、 MySQL 5.7の共�
 TiDB は MySQL レプリケーション プロトコルをサポートしていないことに注意することが重要です。代わりに、MySQL でデータを複製するための特定のツールが提供されています。
 
 -   MySQL からのデータの複製: [TiDB データ移行 (DM)](/dm/dm-overview.md)は、MySQL または MariaDB から TiDB への完全なデータ移行および増分データ複製をサポートするツールです。
--   MySQL へのデータの複製: [TiCDC](/ticdc/ticdc-overview.md) TiKV 変更ログをプルすることで TiDB の増分データを複製するためのツールです。 TiCDC は[MySQLシンク](/ticdc/ticdc-overview.md#replication-consistency)使用して、TiDB の増分データを MySQL にレプリケートします。
+-   MySQL へのデータの複製: [TiCDC](/ticdc/ticdc-overview.md) 、TiKV 変更ログを取得して TiDB の増分データを複製するためのツールです。 TiCDC は[MySQLシンク](/ticdc/ticdc-overview.md#replication-consistency)使用して、TiDB の増分データを MySQL にレプリケートします。
 
 </CustomContent>
 
 <CustomContent platform="tidb">
 
-> **ノート：**
+> **注記：**
 >
 > このページでは、MySQL と TiDB の一般的な違いについて説明します。セキュリティおよび悲観的トランザクション モードの分野における MySQL との互換性の詳細については、 [Security](/security-compatibility-with-mysql.md)および[悲観的トランザクションモード](/pessimistic-transaction.md#difference-with-mysql-innodb)の専用ページを参照してください。
 
@@ -28,7 +38,7 @@ TiDB は MySQL レプリケーション プロトコルをサポートしてい�
 
 <CustomContent platform="tidb-cloud">
 
-> **ノート：**
+> **注記：**
 >
 > MySQL と TiDB のトランザクションの違いについては、 [悲観的トランザクションモード](/pessimistic-transaction.md#difference-with-mysql-innodb)を参照してください。
 
@@ -59,6 +69,9 @@ TiDB は MySQL レプリケーション プロトコルをサポートしてい�
 -   `HANDLER`ステートメント
 -   `CREATE TABLESPACE`ステートメント
 -   「セッション トラッカー: GTID コンテキストを OK パケットに追加」
+-   降順インデックス[#2519](https://github.com/pingcap/tidb/issues/2519)
+-   `SKIP LOCKED`構文[#18207](https://github.com/pingcap/tidb/issues/18207)
+-   ラテラル派生テーブル[#40328](https://github.com/pingcap/tidb/issues/40328)
 
 ## MySQLとの違い {#differences-from-mysql}
 
@@ -74,7 +87,7 @@ TiDB は MySQL レプリケーション プロトコルをサポートしてい�
 
 詳細については、 [`AUTO_INCREMENT`](/auto-increment.md)を参照してください。
 
-> **ノート：**
+> **注記：**
 >
 > -   テーブルの作成時に主キーを指定しない場合、TiDB は`_tidb_rowid`を使用して行を識別します。この値の割り当ては、自動インクリメント列 (そのような列が存在する場合) とアロケーターを共有します。自動インクリメント列を主キーとして指定すると、TiDB はこの列を使用して行を識別します。この状況では、次の状況が発生する可能性があります。
 
@@ -106,7 +119,7 @@ mysql> SELECT _tidb_rowid, id FROM t;
 
 <CustomContent platform="tidb">
 
-> **ノート：**
+> **注記：**
 >
 > `AUTO_INCREMENT`属性は、本番環境でホットスポットを引き起こす可能性があります。詳細は[ホットスポットの問題のトラブルシューティング](/troubleshoot-hot-spot-issues.md)参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)を使用することをお勧めします。
 
@@ -114,7 +127,7 @@ mysql> SELECT _tidb_rowid, id FROM t;
 
 <CustomContent platform="tidb-cloud">
 
-> **ノート：**
+> **注記：**
 >
 > `AUTO_INCREMENT`属性は、本番環境でホットスポットを引き起こす可能性があります。詳細は[ホットスポットの問題のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#handle-auto-increment-primary-key-hotspot-tables-using-auto_random)参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)を使用することをお勧めします。
 
@@ -179,7 +192,6 @@ TiDB では、 [統計収集](/statistics.md#manual-collection)テーブルの�
 TiDB は次の`SELECT`構文をサポートしていません。
 
 -   `SELECT ... INTO @variable`
--   `SELECT ... GROUP BY ... WITH ROLLUP`
 -   MySQL 5.7のように`SELECT .. GROUP BY expr` `GROUP BY expr ORDER BY expr`を意味しません。
 
 詳細については、 [`SELECT`](/sql-statements/sql-statement-select.md)ステートメントのリファレンスを参照してください。
@@ -256,13 +268,12 @@ TiDB は、 MySQL 5.7および MySQL 8.0 と比較するとデフォルトの違
 TiDB は、次の点を考慮して名前付きタイムゾーンをサポートします。
 
 -   TiDB は、計算のためにシステムに現在インストールされているすべてのタイムゾーン ルール (通常は`tzdata`パッケージ) を使用します。これにより、タイムゾーン テーブル データをインポートすることなく、すべてのタイムゾーン名を使用できるようになります。タイムゾーン テーブル データをインポートしても、計算ルールは変更されません。
--   現在、MySQL はデフォルトでローカル タイムゾーンを使用し、システムに組み込まれている現在のタイムゾーン ルール (夏時間の開始時など) に基づいて計算します。 [タイムゾーン テーブル データのインポート](https://dev.mysql.com/doc/refman/5.7/en/time-zone-support.html#time-zone-installation)を指定しないと、MySQL はタイムゾーンを名前で指定できません。
+-   現在、MySQL はデフォルトでローカル タイムゾーンを使用し、計算にはシステムに組み込まれている現在のタイムゾーン ルール (夏時間の開始時など) に依存します。 [タイムゾーン テーブル データのインポート](https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-installation)を指定しないと、MySQL はタイムゾーンを名前で指定できません。
 
 ### 型システムの違い {#type-system-differences}
 
 次の列タイプは MySQL ではサポートされていますが、TiDB ではサポート**されていません**。
 
--   FLOAT4/FLOAT8
 -   `SQL_TSI_*` (SQL_TSI_MONTH、SQL_TSI_WEEK、SQL_TSI_DAY、SQL_TSI_HOUR、SQL_TSI_MINUTE、および SQL_TSI_SECOND を含みますが、SQL_TSI_YEAR は除きます)
 
 ### 非推奨の機能による非互換性 {#incompatibility-due-to-deprecated-features}

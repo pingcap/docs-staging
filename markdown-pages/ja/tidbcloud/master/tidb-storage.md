@@ -20,7 +20,7 @@ summary: Understand the storage layer of a TiDB database.
 
 ## ローカルstorage(RocksDB) {#local-storage-rocksdb}
 
-どの永続storageエンジンでも、データは最終的にディスクに保存されますが、TiKV も例外ではありません。 TiKV はデータをディスクに直接書き込みませんが、データstorageを担当する RocksDB にデータを保存します。その理由は、スタンドアロンstorageエンジン、特に慎重な最適化が必要な高性能スタンドアロン エンジンの開発には多額の費用がかかるためです。
+どの永続storageエンジンでも、データは最終的にディスクに保存されますが、TiKV も例外ではありません。 TiKV はデータをディスクに直接書き込みませんが、データstorageを担当する RocksDB にデータを保存します。その理由は、スタンドアロンstorageエンジン、特に慎重な最適化が必要な高性能スタンドアロン エンジンの開発には多額のコストがかかるためです。
 
 RocksDB は、Facebook によってオープンソース化された優れたスタンドアロンstorageエンジンです。このエンジンは、TiKV のさまざまな要件を 1 つのエンジンで満たすことができます。ここでは、RocksDB を単一の永続的な Key-Value マップとして単純に考えることができます。
 
@@ -76,32 +76,28 @@ TiKV は、Key-Value 空間全体を一連の連続するキー セグメント�
 
 多くのデータベースはマルチバージョン同時実行制御 (MVCC) を実装しており、TiKV も例外ではありません。 2 つのクライアントが同時にキーの値を変更する状況を想像してください。 MVCC を使用しない場合、データをロックする必要があります。分散シナリオでは、パフォーマンスとデッドロックの問題が発生する可能性があります。 TiKV の MVCC 実装は、Key にバージョン番号を追加することで実現されます。つまり、MVCC を使用しない場合、TiKV のデータ レイアウトは次のようになります。
 
-```
-Key1 -> Value
-Key2 -> Value
-……
-KeyN -> Value
-```
+    Key1 -> Value
+    Key2 -> Value
+    ……
+    KeyN -> Value
 
 MVCC の場合、TiKV のキー配列は次のようになります。
 
-```
-Key1_Version3 -> Value
-Key1_Version2 -> Value
-Key1_Version1 -> Value
-……
-Key2_Version4 -> Value
-Key2_Version3 -> Value
-Key2_Version2 -> Value
-Key2_Version1 -> Value
-……
-KeyN_Version2 -> Value
-KeyN_Version1 -> Value
-……
-```
+    Key1_Version3 -> Value
+    Key1_Version2 -> Value
+    Key1_Version1 -> Value
+    ……
+    Key2_Version4 -> Value
+    Key2_Version3 -> Value
+    Key2_Version2 -> Value
+    Key2_Version1 -> Value
+    ……
+    KeyN_Version2 -> Value
+    KeyN_Version1 -> Value
+    ……
 
-同じキーの複数のバージョンの場合、番号の大きいバージョンが最初に配置されることに注意してください (キーの順序についてのセクション[キーと値](#key-value-pairs)を参照)。そのため、キー + バージョンを通じて値を取得する場合、MVCC のキーはキーで構築できます。バージョンは`Key_Version`です。次に、RocksDB の`SeekPrefix(Key_Version)` API を使用して、この`Key_Version`以上の最初の位置を直接見つけることができます。
+同じキーの複数のバージョンの場合、番号が大きいバージョンが最初に配置されることに注意してください (キーの順序についてのセクション[キーと値](#key-value-pairs)を参照)。そのため、キー + バージョンを通じて値を取得する場合、MVCC のキーはキーで構築できます。バージョンは`Key_Version`です。次に、RocksDB の`SeekPrefix(Key_Version)` API を使用して、この`Key_Version`以上の最初の位置を直接見つけることができます。
 
 ## 分散ACIDトランザクション {#distributed-acid-transaction}
 
-TiKV のトランザクションは、 Google が[パーコレーター](https://research.google.com/pubs/pub36726.html)で使用するモデルを採用しています。 TiKV の実装はこの論文からインスピレーションを受けており、多くの最適化が施されています。詳細は[取引概要](/transaction-overview.md)参照してください。
+TiKV のトランザクションは、 Google が[パーコレーター](https://research.google.com/pubs/pub36726.html)で使用しているモデルを採用しています。 TiKV の実装はこの論文からインスピレーションを受けており、多くの最適化が施されています。詳細は[取引概要](/transaction-overview.md)参照してください。

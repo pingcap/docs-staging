@@ -1,6 +1,6 @@
 ---
 title: UUID Best Practices
-summary: Learn best practice and strategy for using UUIDs with TiDB.
+summary: UUIDs, when used as primary keys, offer benefits such as reduced network trips, support in most programming languages and databases, and protection against enumeration attacks. Storing UUIDs as binary in a `BINARY(16)` column is recommended. It's also advised to avoid setting the `swap_flag` with TiDB to prevent hotspots. MySQL compatibility is available for UUIDs.
 ---
 
 # UUIDのベストプラクティス {#uuid-best-practices}
@@ -41,13 +41,13 @@ summary: Learn best practice and strategy for using UUIDs with TiDB.
 
 <CustomContent platform="tidb">
 
-以下の[キービジュアライザー](/dashboard/dashboard-key-visualizer.md)のスクリーンショットでは、フィールドの順序がバイナリ形式で交換された`uuid_demo_2`テーブルの 1 つの領域に書き込みが集中していることがわかります。
+以下の[キービジュアライザー](/dashboard/dashboard-key-visualizer.md)のスクリーンショットでは、バイナリ形式でフィールドの順序が交換された`uuid_demo_2`テーブルの 1 つの領域に書き込みが集中していることがわかります。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-以下の[キービジュアライザー](/tidb-cloud/tune-performance.md#key-visualizer)のスクリーンショットでは、フィールドの順序がバイナリ形式で交換された`uuid_demo_2`テーブルの 1 つの領域に書き込みが集中していることがわかります。
+以下の[キービジュアライザー](/tidb-cloud/tune-performance.md#key-visualizer)のスクリーンショットでは、バイナリ形式でフィールドの順序が交換された`uuid_demo_2`テーブルの 1 つの領域に書き込みが集中していることがわかります。
 
 </CustomContent>
 

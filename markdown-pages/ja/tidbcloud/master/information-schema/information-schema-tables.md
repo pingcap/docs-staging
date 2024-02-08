@@ -7,7 +7,6 @@ summary: Learn the `TABLES` information_schema table.
 
 `TABLES`表は、データベース内のテーブルに関する情報を提供します。
 
-
 ```sql
 USE information_schema;
 DESC tables;
@@ -43,7 +42,6 @@ DESC tables;
 +---------------------------+---------------+------+------+----------+-------+
 23 rows in set (0.00 sec)
 ```
-
 
 ```sql
 SELECT * FROM tables WHERE table_schema='mysql' AND table_name='user'\G

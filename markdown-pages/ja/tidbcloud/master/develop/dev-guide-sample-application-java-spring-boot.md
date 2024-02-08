@@ -1,7 +1,6 @@
 ---
 title: Connect to TiDB with Spring Boot
 summary: Learn how to connect to TiDB using Spring Boot. This tutorial gives Java sample code snippets that work with TiDB using Spring Boot.
-aliases: ['/tidb/v7.1/dev-guide-sample-application-spring-boot']
 ---
 
 # Spring Boot を使用して TiDB に接続する {#connect-to-tidb-with-spring-boot}
@@ -259,9 +258,7 @@ playerRepository.deleteById(id);
 
 ## 次のステップ {#next-steps}
 
--   Hibernate の詳しい使い方を[Hibernate のドキュメント](https://hibernate.org/orm/documentation)から学びましょう。
-
--   このドキュメントで使用されているサードパーティのライブラリとフレームワークの使用方法の詳細については、その公式ドキュメントを参照してください。
+-   このドキュメントで使用されているサードパーティのライブラリとフレームワークの使用方法の詳細については、公式ドキュメントを参照してください。
 
     -   [Spring Frameworkのドキュメント](https://spring.io/projects/spring-framework)
     -   [Spring Boot のドキュメント](https://spring.io/projects/spring-boot)
@@ -276,4 +273,14 @@ playerRepository.deleteById(id);
 
 ## 助けが必要？ {#need-help}
 
-[不和](https://discord.gg/vYU9h56kAX)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+<CustomContent platform="tidb">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](/support.md)について質問してください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[サポートチケットを作成する](https://support.pingcap.com/)について質問してください。
+
+</CustomContent>

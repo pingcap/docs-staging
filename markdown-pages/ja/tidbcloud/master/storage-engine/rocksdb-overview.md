@@ -49,7 +49,7 @@ RocksDB では、 MemTableの SST ファイルへの変換や、さまざまな�
 
 <CustomContent platform="tidb-cloud">
 
-> **ノート：**
+> **注記：**
 >
 > このセクションは TiDB に関するものであり、 TiDB Cloudには適用されません。
 
@@ -59,11 +59,9 @@ RocksDB の L0 は他のレベルとは異なります。 L0のSSTは世代順�
 
 書き込み遅延が突然急激に増加した場合は、まず Grafana RocksDB KV パネルで**WriteStall Reason**メトリックを確認します。 L0 ファイルが多すぎることが原因で WriteStall が発生した場合は、次の設定を 64 に調整できます。
 
-```
-rocksdb.defaultcf.level0-slowdown-writes-trigger
-rocksdb.writecf.level0-slowdown-writes-trigger
-rocksdb.lockcf.level0-slowdown-writes-trigger
-rocksdb.defaultcf.level0-stop-writes-trigger
-rocksdb.writecf.level0-stop-writes-trigger
-rocksdb.lockcf.level0-stop-writes-trigger
-```
+    rocksdb.defaultcf.level0-slowdown-writes-trigger
+    rocksdb.writecf.level0-slowdown-writes-trigger
+    rocksdb.lockcf.level0-slowdown-writes-trigger
+    rocksdb.defaultcf.level0-stop-writes-trigger
+    rocksdb.writecf.level0-stop-writes-trigger
+    rocksdb.lockcf.level0-stop-writes-trigger

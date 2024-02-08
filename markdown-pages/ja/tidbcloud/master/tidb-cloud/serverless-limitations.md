@@ -1,7 +1,6 @@
 ---
 title: TiDB Serverless Limitations and Quotas
 summary: Learn about the limitations of TiDB Serverless.
-aliases: ['/tidbcloud/serverless-tier-limitations']
 ---
 
 # TiDB サーバーレスの制限とクォータ {#tidb-serverless-limitations-and-quotas}
@@ -38,6 +37,7 @@ TiDB サーバーレスは、TiDB がサポートするほぼすべてのワー�
 -   [組み込みのアラート](/tidb-cloud/monitor-built-in-alerting.md)は現在利用できません。
 -   [キービジュアライザー](/tidb-cloud/tune-performance.md#key-visualizer)は現在利用できません。
 -   [インデックスの洞察](/tidb-cloud/tune-performance.md#index-insight-beta)は現在利用できません。
+-   [クラスタイベント](/tidb-cloud/tidb-cloud-events.md)は現在利用できません。
 
 ### セルフサービスアップグレード {#self-service-upgrades}
 

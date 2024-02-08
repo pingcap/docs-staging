@@ -37,7 +37,6 @@ SequenceOption ::=
 
 ## 構文 {#syntax}
 
-
 ```sql
 CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name
     [ INCREMENT [ BY | = ] increment ]
@@ -77,7 +76,7 @@ CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name
 
     この関数は、シーケンスの現在値の進行を設定します。この関数の最初のパラメータはシーケンスの`identifier`です。 2 番目のパラメータは`num`です。
 
-> **ノート：**
+> **注記：**
 >
 > TiDB でのシーケンスの実装では、 `SETVAL`関数はこのシーケンスの初期進行またはサイクル進行を変更できません。この関数は、この進行に基づいて次の有効な値のみを返します。
 
@@ -85,200 +84,158 @@ CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name
 
 -   デフォルトのパラメータを使用してシーケンス オブジェクトを作成します。
 
-    
     ```sql
     CREATE SEQUENCE seq;
     ```
 
-    ```
-    Query OK, 0 rows affected (0.06 sec)
-    ```
+        Query OK, 0 rows affected (0.06 sec)
 
 -   `nextval()`関数を使用して、シーケンス オブジェクトの次の値を取得します。
 
-    
     ```sql
     SELECT nextval(seq);
     ```
 
-    ```
-    +--------------+
-    | nextval(seq) |
-    +--------------+
-    |            1 |
-    +--------------+
-    1 row in set (0.02 sec)
-    ```
+        +--------------+
+        | nextval(seq) |
+        +--------------+
+        |            1 |
+        +--------------+
+        1 row in set (0.02 sec)
 
 -   `lastval()`関数を使用して、このセッションのシーケンス オブジェクトへの最後の呼び出しによって生成された値を取得します。
 
-    
     ```sql
     SELECT lastval(seq);
     ```
 
-    ```
-    +--------------+
-    | lastval(seq) |
-    +--------------+
-    |            1 |
-    +--------------+
-    1 row in set (0.02 sec)
-    ```
+        +--------------+
+        | lastval(seq) |
+        +--------------+
+        |            1 |
+        +--------------+
+        1 row in set (0.02 sec)
 
 -   `setval()`関数を使用して、シーケンス オブジェクトの現在値 (または現在位置) を設定します。
 
-    
     ```sql
     SELECT setval(seq, 10);
     ```
 
-    ```
-    +-----------------+
-    | setval(seq, 10) |
-    +-----------------+
-    |              10 |
-    +-----------------+
-    1 row in set (0.01 sec)
-    ```
+        +-----------------+
+        | setval(seq, 10) |
+        +-----------------+
+        |              10 |
+        +-----------------+
+        1 row in set (0.01 sec)
 
 -   `next value for`構文を使用してシーケンスの次の値を取得することもできます。
 
-    
     ```sql
     SELECT next value for seq;
     ```
 
-    ```
-    +--------------------+
-    | next value for seq |
-    +--------------------+
-    |                 11 |
-    +--------------------+
-    1 row in set (0.00 sec)
-    ```
+        +--------------------+
+        | next value for seq |
+        +--------------------+
+        |                 11 |
+        +--------------------+
+        1 row in set (0.00 sec)
 
 -   デフォルトのカスタムパラメータを使用してシーケンスオブジェクトを作成します。
 
-    
     ```sql
     CREATE SEQUENCE seq2 start 3 increment 2 minvalue 1 maxvalue 10 cache 3;
     ```
 
-    ```
-    Query OK, 0 rows affected (0.01 sec)
-    ```
+        Query OK, 0 rows affected (0.01 sec)
 
 -   シーケンス オブジェクトがこのセッションで使用されていない場合、 `lastval()`関数は値`NULL`を返します。
 
-    
     ```sql
     SELECT lastval(seq2);
     ```
 
-    ```
-    +---------------+
-    | lastval(seq2) |
-    +---------------+
-    |          NULL |
-    +---------------+
-    1 row in set (0.01 sec)
-    ```
+        +---------------+
+        | lastval(seq2) |
+        +---------------+
+        |          NULL |
+        +---------------+
+        1 row in set (0.01 sec)
 
 -   シーケンス オブジェクトの`nextval()`関数の最初の有効な値は、 `START`パラメータの値です。
 
-    
     ```sql
     SELECT nextval(seq2);
     ```
 
-    ```
-    +---------------+
-    | nextval(seq2) |
-    +---------------+
-    |             3 |
-    +---------------+
-    1 row in set (0.00 sec)
-    ```
+        +---------------+
+        | nextval(seq2) |
+        +---------------+
+        |             3 |
+        +---------------+
+        1 row in set (0.00 sec)
 
 -   `setval()`関数はシーケンス オブジェクトの現在の値を変更できますが、次の値の等差数列規則を変更することはできません。
 
-    
     ```sql
     SELECT setval(seq2, 6);
     ```
 
-    ```
-    +-----------------+
-    | setval(seq2, 6) |
-    +-----------------+
-    |               6 |
-    +-----------------+
-    1 row in set (0.00 sec)
-    ```
+        +-----------------+
+        | setval(seq2, 6) |
+        +-----------------+
+        |               6 |
+        +-----------------+
+        1 row in set (0.00 sec)
 
 -   `nextval()`を使用して次の値を取得すると、次の値はシーケンスで定義された等差数列規則に従います。
 
-    
     ```sql
     SELECT next value for seq2;
     ```
 
-    ```
-    +---------------------+
-    | next value for seq2 |
-    +---------------------+
-    |                   7 |
-    +---------------------+
-    1 row in set (0.00 sec)
-    ```
+        +---------------------+
+        | next value for seq2 |
+        +---------------------+
+        |                   7 |
+        +---------------------+
+        1 row in set (0.00 sec)
 
 -   次の例のように、シーケンスの次の値を列のデフォルト値として使用できます。
 
-    
     ```sql
     CREATE table t(a int default next value for seq2);
     ```
 
-    ```
-    Query OK, 0 rows affected (0.02 sec)
-    ```
+        Query OK, 0 rows affected (0.02 sec)
 
 -   次の例では、値が指定されていないため、デフォルト値の`seq2`が使用されます。
 
-    
     ```sql
     INSERT into t values();
     ```
 
-    ```
-    Query OK, 1 row affected (0.00 sec)
-    ```
+        Query OK, 1 row affected (0.00 sec)
 
-    
     ```sql
     SELECT * from t;
     ```
 
-    ```
-    +------+
-    | a    |
-    +------+
-    |    9 |
-    +------+
-    1 row in set (0.00 sec)
-    ```
+        +------+
+        | a    |
+        +------+
+        |    9 |
+        +------+
+        1 row in set (0.00 sec)
 
 -   次の例では、値が指定されていないため、デフォルト値の`seq2`が使用されます。ただし、次の値`seq2`上記の例 ( `CREATE SEQUENCE seq2 start 3 increment 2 minvalue 1 maxvalue 10 cache 3;` ) で定義された範囲内にないため、エラーが返されます。
 
-    
     ```sql
     INSERT into t values();
     ```
 
-    ```
-    ERROR 4135 (HY000): Sequence 'test.seq2' has run out
-    ```
+        ERROR 4135 (HY000): Sequence 'test.seq2' has run out
 
 ## MySQLの互換性 {#mysql-compatibility}
 
@@ -288,11 +245,9 @@ CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name
 
 例えば：
 
-```
-1, 3, 5, ...            // The sequence starts from 1 and increments by 2.
-select setval(seq, 6)   // Sets the current value of a sequence to 6.
-7, 9, 11, ...           // Subsequent values still follow the progression rule.
-```
+    1, 3, 5, ...            // The sequence starts from 1 and increments by 2.
+    select setval(seq, 6)   // Sets the current value of a sequence to 6.
+    7, 9, 11, ...           // Subsequent values still follow the progression rule.
 
 `CYCLE`モードでは、最初のラウンドのシーケンスの初期値は`START`パラメーターの値であり、後続のラウンドの初期値は`MinValue` ( `INCREMENT` &gt; 0) または`MaxValue` ( `INCREMENT` &lt; 0) の値です。
 
