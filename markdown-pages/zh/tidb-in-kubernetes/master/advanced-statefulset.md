@@ -16,19 +16,10 @@ Kubernetes 内置 [StatefulSet](https://kubernetes.io/docs/concepts/workloads/co
 
 1. 载入 Advanced StatefulSet 的 CRD 文件：
 
-    * Kubernetes 1.16 之前版本：
-
-        
-        ```shell
-        kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/master/manifests/advanced-statefulset-crd.v1beta1.yaml
-        ```
-
-    * Kubernetes 1.16 及之后版本:
-
-        
-        ```shell
-        kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/master/manifests/advanced-statefulset-crd.v1.yaml
-        ```
+    
+    ```shell
+    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/master/manifests/advanced-statefulset-crd.v1.yaml
+    ```
 
 2. 在 TiDB Operator chart 的 `values.yaml` 中启用 `AdvancedStatefulSet` 特性：
 
@@ -87,7 +78,7 @@ kind: TidbCluster
 metadata:
   name: asts
 spec:
-  version: v7.5.0
+  version: v8.0.0
   timezone: UTC
   pvReclaimPolicy: Delete
   pd:
@@ -137,7 +128,7 @@ metadata:
     tikv.tidb.pingcap.com/delete-slots: '[1]'
   name: asts
 spec:
-  version: v7.5.0
+  version: v8.0.0
   timezone: UTC
   pvReclaimPolicy: Delete
   pd:
@@ -190,7 +181,7 @@ metadata:
     tikv.tidb.pingcap.com/delete-slots: '[]'
   name: asts
 spec:
-  version: v7.5.0
+  version: v8.0.0
   timezone: UTC
   pvReclaimPolicy: Delete
   pd:

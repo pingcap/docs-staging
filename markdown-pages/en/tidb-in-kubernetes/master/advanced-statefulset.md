@@ -16,19 +16,10 @@ The [advanced StatefulSet controller](https://github.com/pingcap/advanced-statef
 
 1. Load the Advanced StatefulSet CRD file:
 
-    * For Kubernetes versions < 1.16:
-
-        
-        ```shell
-        kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/master/manifests/advanced-statefulset-crd.v1beta1.yaml
-        ```
-
-    * For Kubernetes versions >= 1.16:
-
-        
-        ```
-        kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/master/manifests/advanced-statefulset-crd.v1.yaml
-        ```
+    
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/master/manifests/advanced-statefulset-crd.v1.yaml
+    ```
 
 2. Enable the `AdvancedStatefulSet` feature in `values.yaml` of the TiDB Operator chart:
 
@@ -89,7 +80,7 @@ kind: TidbCluster
 metadata:
   name: asts
 spec:
-  version: v7.5.0
+  version: v8.0.0
   timezone: UTC
   pvReclaimPolicy: Delete
   pd:
@@ -139,7 +130,7 @@ metadata:
     tikv.tidb.pingcap.com/delete-slots: '[1]'
   name: asts
 spec:
-  version: v7.5.0
+  version: v8.0.0
   timezone: UTC
   pvReclaimPolicy: Delete
   pd:
@@ -192,7 +183,7 @@ metadata:
     tikv.tidb.pingcap.com/delete-slots: '[]'
   name: asts
 spec:
-  version: v7.5.0
+  version: v8.0.0
   timezone: UTC
   pvReclaimPolicy: Delete
   pd:
