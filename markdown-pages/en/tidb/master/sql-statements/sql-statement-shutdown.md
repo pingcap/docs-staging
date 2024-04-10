@@ -14,12 +14,12 @@ The `SHUTDOWN` statement is used to perform a shutdown operation in TiDB. Execut
 
 ## Synopsis
 
-**Statement:**
-
-![Statement](https://download.pingcap.com/images/docs/sqlgram/ShutdownStmt.png)
+```ebnf+diagram
+ShutdownStmt ::=
+    "SHUTDOWN"
+```
 
 ## Examples
-
 
 ```sql
 SHUTDOWN;
