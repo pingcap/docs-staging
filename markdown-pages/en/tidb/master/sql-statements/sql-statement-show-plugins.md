@@ -14,16 +14,12 @@ aliases: ['/docs/dev/sql-statements/sql-statement-show-plugins/']
 
 ## Synopsis
 
-**ShowStmt:**
-
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
-
-**ShowTargetFilterable:**
-
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
+```ebnf+diagram
+ShowPluginsStmt ::=
+    "SHOW" "PLUGINS" ShowLikeOrWhere?
+```
 
 ## Examples
-
 
 ```sql
 SHOW PLUGINS;
@@ -37,7 +33,6 @@ SHOW PLUGINS;
 +-------+--------------+-------+-----------------------------+---------+---------+
 1 row in set (0.000 sec)
 ```
-
 
 ```sql
 SHOW PLUGINS LIKE 'a%';
@@ -55,3 +50,7 @@ SHOW PLUGINS LIKE 'a%';
 ## MySQL compatibility
 
 The `SHOW PLUGINS` statement in TiDB is fully compatible with MySQL. If you find any compatibility differences, [report a bug](https://docs.pingcap.com/tidb/stable/support).
+
+## See also
+
+- [`ADMIN PLUGINS`](/sql-statements/sql-statement-admin.md#admin-plugins-related-statement)
