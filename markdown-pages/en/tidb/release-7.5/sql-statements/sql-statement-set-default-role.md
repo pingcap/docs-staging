@@ -9,21 +9,10 @@ This statement sets a specific role to be applied to a user by default. Thus, th
 
 ## Synopsis
 
-**SetDefaultRoleStmt:**
-
-![SetDefaultRoleStmt](https://download.pingcap.com/images/docs/sqlgram/SetDefaultRoleStmt.png)
-
-**SetDefaultRoleOpt:**
-
-![SetDefaultRoleOpt](https://download.pingcap.com/images/docs/sqlgram/SetDefaultRoleOpt.png)
-
-**RolenameList:**
-
-![RolenameList](https://download.pingcap.com/images/docs/sqlgram/RolenameList.png)
-
-**UsernameList:**
-
-![UsernameList](https://download.pingcap.com/images/docs/sqlgram/UsernameList.png)
+```ebnf+diagram
+SetDefaultRoleStmt ::=
+    "SET" "DEFAULT" "ROLE" ( "NONE" | "ALL" | Rolename ("," Rolename)* ) "TO" Username ("," Username)*
+```
 
 ## Examples
 
