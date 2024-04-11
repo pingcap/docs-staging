@@ -24,23 +24,19 @@ Currently, the `SHOW STATS_META` statement outputs 6 columns:
 
 ## Synopsis
 
-**ShowStmt**
+```ebnf+diagram
+ShowStatsMetaStmt ::=
+    "SHOW" "STATS_META" ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
-
-**ShowTargetFiltertable**
-
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
-
-**ShowLikeOrWhereOpt**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## Examples
 
-
 ```sql
-show stats_meta;
+SHOW STATS_META;
 ```
 
 ```sql
@@ -56,9 +52,8 @@ show stats_meta;
 5 rows in set (0.00 sec)
 ```
 
-
 ```sql
-show stats_meta where table_name = 't2';
+SHOW STATS_META WHERE table_name = 't2';
 ```
 
 ```sql
