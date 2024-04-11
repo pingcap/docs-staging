@@ -11,9 +11,14 @@ The behavior of which statements generate errors vs. warnings is highly influenc
 
 ## Synopsis
 
-**ShowErrorsStmt:**
+```ebnf+diagram
+ShowErrorsStmt ::=
+    "SHOW" "ERRORS" ShowLikeOrWhere?
 
-![ShowErrorsStmt](https://download.pingcap.com/images/docs/sqlgram/ShowErrorsStmt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## Examples
 
