@@ -9,28 +9,16 @@ The `SHOW BINDINGS` statement is used to display information about created SQL b
 
 ## Synopsis
 
-**ShowStmt:**
+```ebnf+diagram
+ShowBindingsStmt ::=
+    "SHOW" ("GLOBAL" | "SESSION")? "BINDINGS" ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
-
-**ShowTargetFilterable:**
-
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
-
-**GlobalScope:**
-
-![GlobalScope](https://download.pingcap.com/images/docs/sqlgram/GlobalScope.png)
-
-**ShowLikeOrWhereOpt**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## Syntax description
-
-
-```sql
-SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhereOpt];
-```
 
 This statement outputs the execution plan bindings at the GLOBAL or SESSION level. The default scope is SESSION. Currently `SHOW BINDINGS` outputs eight columns, as shown below:
 
@@ -47,7 +35,6 @@ This statement outputs the execution plan bindings at the GLOBAL or SESSION leve
 | source | The way in which a binding is created, including `manual` (created by the `create [global] binding` SQL statement), `capture` (captured automatically by TiDB), and `evolve` (evolved automatically by TiDB) |
 
 ## Examples
-
 
 ```sql
 mysql> CREATE TABLE t1 (
