@@ -13,18 +13,18 @@ The `SHOW CONFIG` statement is used to show the current configuration of various
 
 ## Synopsis
 
-**ShowStmt:**
+```ebnf+diagram
+ShowConfigStmt ::=
+    "SHOW" "CONFIG" ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
-
-**ShowTargetFilterable:**
-
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## Examples
 
 Show all configurations:
-
 
 ```sql
 SHOW CONFIG;
@@ -43,7 +43,6 @@ SHOW CONFIG;
 
 Show the configuration where the `type` is `tidb`:
 
-
 ```sql
 SHOW CONFIG WHERE type = 'tidb' AND name = 'advertise-address';
 ```
@@ -58,7 +57,6 @@ SHOW CONFIG WHERE type = 'tidb' AND name = 'advertise-address';
 ```
 
 You can also use the `LIKE` clause to show the configuration where the `type` is `tidb`:
-
 
 ```sql
 SHOW CONFIG LIKE 'tidb';
