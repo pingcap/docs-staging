@@ -9,9 +9,10 @@ summary: TiDB 数据库中 SHOW WARNINGS 的使用概况。
 
 ## 语法图
 
-**ShowWarningsStmt:**
-
-![ShowWarningsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowWarningsStmt.png)
+```ebnf+diagram
+ShowWarningsStmt ::=
+    "SHOW" "WARNINGS"
+```
 
 ## 示例
 
