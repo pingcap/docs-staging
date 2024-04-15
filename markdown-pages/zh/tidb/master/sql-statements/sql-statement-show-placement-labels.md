@@ -11,11 +11,10 @@ summary: TiDB 数据库中 SHOW PLACEMENT LABELS 的使用概况。
 
 ```ebnf+diagram
 ShowStmt ::=
-    "PLACEMENT" "LABELS"
+    "SHOW" "PLACEMENT" "LABELS" ShowLikeOrWhere?
 ```
 
 ## 示例
-
 
 ```sql
 SHOW PLACEMENT LABELS;
