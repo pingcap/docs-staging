@@ -47,7 +47,7 @@ Normally, when a TiKV Pod is in a healthy state (`Running`), the corresponding T
 
         
         ```shell
-        kubectl patch $(kubectl get pv -l app.kubernetes.io/instance=${release_name},tidb.pingcap.com/store-id=${store_id} -o name) -p '{"spec":{"persistentVolumeReclaimPolicy":"Delete"}}
+        kubectl patch $(kubectl get pv -l app.kubernetes.io/instance=${release_name},tidb.pingcap.com/store-id=${store_id} -o name) -p '{"spec":{"persistentVolumeReclaimPolicy":"Delete"}}'
         ```
 
     2. Remove the PVC used by the Pod:

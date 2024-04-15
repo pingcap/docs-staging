@@ -47,7 +47,7 @@ summary: 介绍 TiDB 集群运行过程中常见异常以及处理办法。
 
         
         ```shell
-        kubectl patch $(kubectl get pv -l app.kubernetes.io/instance=${cluster_name},tidb.pingcap.com/store-id=${store_id} -o name) -p '{"spec":{"persistentVolumeReclaimPolicy":"Delete"}}
+        kubectl patch $(kubectl get pv -l app.kubernetes.io/instance=${cluster_name},tidb.pingcap.com/store-id=${store_id} -o name) -p '{"spec":{"persistentVolumeReclaimPolicy":"Delete"}}'
         ```
 
     2. 删除 Pod 使用的 PVC：
