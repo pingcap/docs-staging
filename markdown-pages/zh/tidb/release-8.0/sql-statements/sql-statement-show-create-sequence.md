@@ -9,16 +9,12 @@ summary: TiDB 数据库中 SHOW CREATE SEQUENCE 的使用概况。
 
 ## 语法图
 
-**ShowCreateSequenceStmt:**
-
-![ShowCreateSequenceStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowCreateSequenceStmt.png)
-
-**TableName:**
-
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+```ebnf+diagram
+ShowCreateSequenceStmt ::=
+    "SHOW" "CREATE" "SEQUENCE" ( SchemaName "." )? TableName
+```
 
 ## 示例
-
 
 ```sql
 CREATE SEQUENCE seq;
@@ -27,7 +23,6 @@ CREATE SEQUENCE seq;
 ```
 Query OK, 0 rows affected (0.03 sec)
 ```
-
 
 ```sql
 SHOW CREATE SEQUENCE seq;

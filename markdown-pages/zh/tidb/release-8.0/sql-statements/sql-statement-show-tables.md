@@ -5,27 +5,20 @@ summary: TiDB 数据库中 SHOW [FULL] TABLES 的使用概况。
 
 # SHOW [FULL] TABLES
 
-`SHOW [FULL] TABLES` 语句用于显示当前所选数据库中表和视图的列表。可选关键字 `FULL` 说明表的类型是 `BASE TABLE` 还是 `VIEW`。
+`SHOW [FULL] TABLES` 语句用于显示当前所选数据库中表和视图的列表。可选关键字 `FULL` 说明表的类型是 `BASE TABLE`、`SEQUENCE` 还是 `VIEW`。
 
 若要在不同的数据库中显示表，可使用 `SHOW TABLES IN DatabaseName` 语句。
 
 ## 语法图
 
-**ShowTablesStmt:**
+```ebnf+diagram
+ShowTableStmt ::=
+    "SHOW" "FULL"? "TABLES" ("FROM" Identifier | "IN" Identifier )? ShowLikeOrWhere?
 
-![ShowTablesStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTablesStmt.png)
-
-**OptFull:**
-
-![OptFull](https://download.pingcap.com/images/docs-cn/sqlgram/OptFull.png)
-
-**ShowDatabaseNameOpt:**
-
-![ShowDatabaseNameOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowDatabaseNameOpt.png)
-
-**ShowLikeOrWhereOpt:**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## 示例
 
@@ -91,3 +84,4 @@ mysql> SHOW TABLES IN mysql;
 * [CREATE TABLE](/sql-statements/sql-statement-create-table.md)
 * [DROP TABLE](/sql-statements/sql-statement-drop-table.md)
 * [SHOW CREATE TABLE](/sql-statements/sql-statement-show-create-table.md)
+* [`information_schema.tables`](/information-schema/information-schema-tables.md)

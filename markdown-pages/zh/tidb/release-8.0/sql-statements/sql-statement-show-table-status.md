@@ -9,20 +9,16 @@ summary: TiDB 数据库中 SHOW TABLE STATUS 的使用概况。
 
 ## 语法图
 
-**ShowTableStatusStmt:**
+```ebnf+diagram
+ShowTableStmt ::=
+    "SHOW" "FULL"? "TABLES" ("FROM" Identifier | "IN" Identifier )? ShowLikeOrWhere?
 
-![ShowTableStatusStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTableStatusStmt.png)
-
-**FromOrIn:**
-
-![FromOrIn](https://download.pingcap.com/images/docs-cn/sqlgram/FromOrIn.png)
-
-**StatusTableName:**
-
-![StatusTableName](https://download.pingcap.com/images/docs-cn/sqlgram/StatusTableName.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## 示例
-
 
 ```sql
 CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
@@ -32,7 +28,6 @@ CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
 Query OK, 0 rows affected (0.11 sec)
 ```
 
-
 ```sql
 INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
 ```
@@ -41,7 +36,6 @@ INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
 Query OK, 5 rows affected (0.02 sec)
 Records: 5  Duplicates: 0  Warnings: 0
 ```
-
 
 ```sql
 SHOW TABLE STATUS LIKE 't1';
@@ -70,15 +64,13 @@ Max_data_length: 0
 1 row in set (0.00 sec)
 ```
 
-
 ```sql
-analyze table t1;
+ANALYZE TABLE t1;
 ```
 
 ```
 Query OK, 0 rows affected (0.12 sec)
 ```
-
 
 ```sql
 SHOW TABLE STATUS LIKE 't1';
