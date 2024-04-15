@@ -10,16 +10,12 @@ The `SHOW CREATE SEQUENCE` shows the detailed information of a sequence, which i
 
 ## Synopsis
 
-**ShowCreateSequenceStmt:**
-
-![ShowCreateSequenceStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCreateSequenceStmt.png)
-
-**TableName:**
-
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+```ebnf+diagram
+ShowCreateSequenceStmt ::=
+    "SHOW" "CREATE" "SEQUENCE" ( SchemaName "." )? TableName
+```
 
 ## Examples
-
 
 ```sql
 CREATE SEQUENCE seq;
@@ -28,7 +24,6 @@ CREATE SEQUENCE seq;
 ```
 Query OK, 0 rows affected (0.03 sec)
 ```
-
 
 ```sql
 SHOW CREATE SEQUENCE seq;
