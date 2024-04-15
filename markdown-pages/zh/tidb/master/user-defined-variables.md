@@ -18,13 +18,11 @@ aliases: ['/docs-cn/dev/user-defined-variables/','/docs-cn/dev/reference/sql/lan
 
 ## 设置用户自定义变量
 
-用 `SET` 语句可以设置用户自定义变量，语法为 `SET @var_name = expr [, @var_name = expr] ...;`。例如：
-
+用 [`SET` 语句](/sql-statements/sql-statement-set-variable.md)可以设置用户自定义变量，语法为 `SET @var_name = expr [, @var_name = expr] ...;`。例如：
 
 ```sql
 SET @favorite_db = 'TiDB';
 ```
-
 
 ```sql
 SET @a = 'a', @b = 'b', @c = 'c';
@@ -32,18 +30,15 @@ SET @a = 'a', @b = 'b', @c = 'c';
 
 其中赋值符号还可以使用 `:=`。例如：
 
-
 ```sql
 SET @favorite_db := 'TiDB';
 ```
 
 赋值符号右边的内容可以是任意合法的表达式。例如：
 
-
 ```sql
 SET @c = @a + @b;
 ```
-
 
 ```sql
 SET @c = b'1000001' + b'1000001';
@@ -52,7 +47,6 @@ SET @c = b'1000001' + b'1000001';
 ## 读取用户自定义变量
 
 要读取一个用户自定义变量，可以使用 `SELECT` 语句查询：
-
 
 ```sql
 SELECT @a1, @a2, @a3
@@ -84,13 +78,11 @@ SELECT @a1, @a2, @a3, @a4 := @a1+@a2+@a3;
 
 如果设置用户变量时用了十六进制字面量或者二进制字面量，TiDB 会把它当成二进制字符串。如果要将其设置成数字，那么可以手动加上 `CAST` 转换，或者在表达式中使用数字的运算符：
 
-
 ```sql
 SET @v1 = b'1000001';
 SET @v2 = b'1000001'+0;
 SET @v3 = CAST(b'1000001' AS UNSIGNED);
 ```
-
 
 ```sql
 SELECT @v1, @v2, @v3;
@@ -106,7 +98,6 @@ SELECT @v1, @v2, @v3;
 
 如果获取一个没有设置过的变量，会返回一个 NULL：
 
-
 ```sql
 SELECT @not_exist;
 ```
@@ -120,7 +111,6 @@ SELECT @not_exist;
 ```
 
 除了 `SELECT` 读取用户自定义变量以外，常见的用法还有 `PREPARE` 语句，例如：
-
 
 ```sql
 SET @s = 'SELECT SQRT(POW(?,2) + POW(?,2)) AS hypotenuse';
@@ -140,7 +130,6 @@ EXECUTE stmt USING @a, @b;
 
 用户自定义变量的内容不会在 SQL 语句中被当成标识符，例如：
 
-
 ```sql
 SELECT * FROM t;
 ```
@@ -152,7 +141,6 @@ SELECT * FROM t;
 | 1 |
 +---+
 ```
-
 
 ```sql
 SET @col = "`a`";

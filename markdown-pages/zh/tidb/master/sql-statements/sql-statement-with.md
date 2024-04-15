@@ -14,7 +14,7 @@ summary: TiDB 数据库中 WITH (公共表表达式) 的使用概况。
 ```ebnf+diagram
 WithClause ::=
         "WITH" WithList
-|       "WITH" recursive WithList
+|       "WITH" "RECURSIVE" WithList
 ```
 
 **WithList:**
@@ -43,9 +43,8 @@ IdentListWithParenOpt ::=
 
 非递归的 CTE：
 
-
 ```sql
-WITH CTE AS (SELECT 1, 2) SELECT * FROM cte t1, cte t2;
+WITH cte AS (SELECT 1, 2) SELECT * FROM cte t1, cte t2;
 ```
 
 ```
@@ -58,7 +57,6 @@ WITH CTE AS (SELECT 1, 2) SELECT * FROM cte t1, cte t2;
 ```
 
 递归的 CTE：
-
 
 ```sql
 WITH RECURSIVE cte(a) AS (SELECT 1 UNION SELECT a+1 FROM cte WHERE a < 5) SELECT * FROM cte;
