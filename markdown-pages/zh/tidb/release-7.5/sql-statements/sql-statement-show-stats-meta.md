@@ -24,23 +24,19 @@ summary: TiDB 数据库中 SHOW STATS_META 语句的简单说明。
 
 ## 语法图
 
-**ShowStmt**
+```ebnf+diagram
+ShowStatsMetaStmt ::=
+    "SHOW" "STATS_META" ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
-
-**ShowTargetFiltertable**
-
-![ShowTargetFilterable](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTargetFilterable.png)
-
-**ShowLikeOrWhereOpt**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## 示例
 
-
 ```sql
-show stats_meta;
+SHOW STATS_META;
 ```
 
 ```sql
@@ -56,9 +52,8 @@ show stats_meta;
 5 rows in set (0.00 sec)
 ```
 
-
 ```sql
-show stats_meta where table_name = 't2';
+SHOW STATS_META WHERE table_name = 't2';
 ```
 
 ```sql
