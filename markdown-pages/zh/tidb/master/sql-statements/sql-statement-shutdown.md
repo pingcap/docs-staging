@@ -10,12 +10,12 @@ aliases: ['/docs-cn/dev/sql-statements/sql-statement-shutdown/']
 
 ## 语法图
 
-**Statement:**
-
-![Statement](https://download.pingcap.com/images/docs-cn/sqlgram/ShutdownStmt.png)
+```ebnf+diagram
+ShutdownStmt ::=
+    "SHUTDOWN"
+```
 
 ## 示例
-
 
 ```sql
 SHUTDOWN;
