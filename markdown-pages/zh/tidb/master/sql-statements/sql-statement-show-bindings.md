@@ -10,28 +10,16 @@ aliases: ['/docs-cn/dev/sql-statements/sql-statement-show-bindings/']
 
 ## 语法图
 
-**ShowStmt:**
+```ebnf+diagram
+ShowBindingsStmt ::=
+    "SHOW" ("GLOBAL" | "SESSION")? "BINDINGS" ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
-
-**ShowTargetFilterable:**
-
-![ShowTargetFilterable](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTargetFilterable.png)
-
-**GlobalScope:**
-
-![GlobalScope](https://download.pingcap.com/images/docs-cn/sqlgram/GlobalScope.png)
-
-**ShowLikeOrWhereOpt**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## 语法说明
-
-
-```sql
-SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhereOpt];
-```
 
 该语句会输出 GLOBAL 或者 SESSION 作用域内的执行计划绑定，在不指定作用域时默认作用域为 SESSION。目前 `SHOW BINDINGS` 会输出 8 列，具体如下：
 
@@ -48,7 +36,6 @@ SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhereOpt];
 | source | 创建方式，包括 manual （由 `create [global] binding` 生成）、capture（由 tidb 自动创建生成）和 evolve （由 tidb 自动演进生成） |
 
 ## 示例
-
 
 ```sql
 CREATE TABLE t1 (

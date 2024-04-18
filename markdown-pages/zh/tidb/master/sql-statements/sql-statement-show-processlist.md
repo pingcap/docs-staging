@@ -10,16 +10,12 @@ aliases: ['/docs-cn/dev/sql-statements/sql-statement-show-processlist/','/docs-c
 
 ## 语法图
 
-**ShowProcesslistStmt:**
-
-![ShowProcesslistStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowProcesslistStmt.png)
-
-**OptFull:**
-
-![OptFull](https://download.pingcap.com/images/docs-cn/sqlgram/OptFull.png)
+```ebnf+diagram
+ShowProcesslistStmt ::=
+    "SHOW" "FULL"? "PROCESSLIST"
+```
 
 ## 示例
-
 
 ```sql
 SHOW PROCESSLIST;
@@ -48,3 +44,4 @@ SHOW PROCESSLIST;
 ## 另请参阅
 
 * [KILL \[TIDB\]](/sql-statements/sql-statement-kill.md)
+* [`INFORMATION_SCHEMA.PROCESSLIST`](/information-schema/information-schema-processlist.md)

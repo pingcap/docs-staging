@@ -10,12 +10,12 @@ aliases: ['/docs-cn/dev/sql-statements/sql-statement-show-builtins/']
 
 ## 语法图
 
-**ShowBuiltinsStmt:**
-
-![ShowBuiltinsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowBuiltinsStmt.png)
+```ebnf+diagram
+ShowBuiltinsStmt ::=
+    "SHOW" "BUILTINS"
+```
 
 ## 示例
-
 
 ```sql
 SHOW BUILTINS;
