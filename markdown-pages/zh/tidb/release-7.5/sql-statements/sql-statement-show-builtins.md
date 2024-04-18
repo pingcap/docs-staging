@@ -9,12 +9,12 @@ summary: TiDB 数据库中 SHOW BUILTINS 的使用概况。
 
 ## 语法图
 
-**ShowBuiltinsStmt:**
-
-![ShowBuiltinsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowBuiltinsStmt.png)
+```ebnf+diagram
+ShowBuiltinsStmt ::=
+    "SHOW" "BUILTINS"
+```
 
 ## 示例
-
 
 ```sql
 SHOW BUILTINS;
