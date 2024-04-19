@@ -15,53 +15,25 @@ The statements `SHOW [FULL] FIELDS FROM <table_name>`, `DESC <table_name>`, `DES
 
 ## Synopsis
 
-**ShowStmt:**
+```ebnf+diagram
+ShowColumnsFromStmt ::=
+    "SHOW" "FULL"? ("COLUMNS" | "FIELDS") ("FROM" | "IN") TableName ( ("FROM" | "IN") SchemaName)? ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+TableName ::=
+    (Identifier ".")? Identifier
 
-**ShowColumnsFilterable:**
-
-![ShowColumnsFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowColumnsFilterable.png)
-
-**OptFull:**
-
-![OptFull](https://download.pingcap.com/images/docs/sqlgram/OptFull.png)
-
-**FieldsOrColumns:**
-
-![FieldsOrColumns](https://download.pingcap.com/images/docs/sqlgram/FieldsOrColumns.png)
-
-**ShowTableAliasOpt:**
-
-![ShowTableAliasOpt](https://download.pingcap.com/images/docs/sqlgram/ShowTableAliasOpt.png)
-
-**FromOrIn:**
-
-![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
-
-**TableName:**
-
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
-
-**ShowDatabaseNameOpt:**
-
-![ShowDatabaseNameOpt](https://download.pingcap.com/images/docs/sqlgram/ShowDatabaseNameOpt.png)
-
-**DBName:**
-
-![DBName](https://download.pingcap.com/images/docs/sqlgram/DBName.png)
-
-**ShowLikeOrWhereOpt:**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## Examples
 
 ```sql
-mysql> create view v1 as select 1;
+mysql> CREATE VIEW v1 AS SELECT 1;
 Query OK, 0 rows affected (0.11 sec)
 
-mysql> show columns from v1;
+mysql> SHOW COLUMNS FROM v1;
 +-------+-----------+------+------+---------+-------+
 | Field | Type      | Null | Key  | Default | Extra |
 +-------+-----------+------+------+---------+-------+
@@ -69,7 +41,7 @@ mysql> show columns from v1;
 +-------+-----------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
-mysql> desc v1;
+mysql> DESC v1;
 +-------+-----------+------+------+---------+-------+
 | Field | Type      | Null | Key  | Default | Extra |
 +-------+-----------+------+------+---------+-------+
@@ -77,7 +49,7 @@ mysql> desc v1;
 +-------+-----------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
-mysql> describe v1;
+mysql> DESCRIBE v1;
 +-------+-----------+------+------+---------+-------+
 | Field | Type      | Null | Key  | Default | Extra |
 +-------+-----------+------+------+---------+-------+
@@ -85,7 +57,7 @@ mysql> describe v1;
 +-------+-----------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
-mysql> explain v1;
+mysql> EXPLAIN v1;
 +-------+-----------+------+------+---------+-------+
 | Field | Type      | Null | Key  | Default | Extra |
 +-------+-----------+------+------+---------+-------+
@@ -93,7 +65,7 @@ mysql> explain v1;
 +-------+-----------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
-mysql> show fields from v1;
+mysql> SHOW FIELDS FROM v1;
 +-------+-----------+------+------+---------+-------+
 | Field | Type      | Null | Key  | Default | Extra |
 +-------+-----------+------+------+---------+-------+
@@ -101,7 +73,7 @@ mysql> show fields from v1;
 +-------+-----------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
-mysql> show full columns from v1;
+mysql> SHOW FULL COLUMNS FROM v1;
 +-------+-----------+-----------+------+------+---------+-------+---------------------------------+---------+
 | Field | Type      | Collation | Null | Key  | Default | Extra | Privileges                      | Comment |
 +-------+-----------+-----------+------+------+---------+-------+---------------------------------+---------+
@@ -109,7 +81,7 @@ mysql> show full columns from v1;
 +-------+-----------+-----------+------+------+---------+-------+---------------------------------+---------+
 1 row in set (0.00 sec)
 
-mysql> show full columns from mysql.user;
+mysql> SHOW FULL COLUMNS FROM mysql.user;
 +------------------------+---------------+-------------+------+------+---------+-------+---------------------------------+---------+
 | Field                  | Type          | Collation   | Null | Key  | Default | Extra | Privileges                      | Comment |
 +------------------------+---------------+-------------+------+------+---------+-------+---------------------------------+---------+

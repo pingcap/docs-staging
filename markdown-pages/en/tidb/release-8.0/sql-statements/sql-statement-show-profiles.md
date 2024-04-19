@@ -9,12 +9,16 @@ The `SHOW PROFILES` statement currently only returns an empty result.
 
 ## Synopsis
 
-**ShowStmt:**
+```ebnf+diagram
+ShowProfilesStmt ::=
+    "SHOW" "PROFILES" ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## Examples
-
 
 ```sql
 SHOW PROFILES;
