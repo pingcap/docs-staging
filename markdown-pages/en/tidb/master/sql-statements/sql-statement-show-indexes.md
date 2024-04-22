@@ -10,25 +10,14 @@ The statement `SHOW INDEXES [FROM|IN]` lists the indexes on a specified table. T
 
 ## Synopsis
 
-**ShowIndexStmt:**
+```ebnf+diagram
+ShowIndexStmt ::=
+    "SHOW" ( "INDEX" | "INDEXES" | "KEYS" ) ("FROM" | "IN" ) TableName (("FROM" | "IN") SchemaName )? ShowLikeOrWhereOpt?
 
-![ShowIndexStmt](https://download.pingcap.com/images/docs/sqlgram/ShowIndexStmt.png)
-
-**ShowIndexKwd:**
-
-![ShowIndexKwd](https://download.pingcap.com/images/docs/sqlgram/ShowIndexKwd.png)
-
-**FromOrIn:**
-
-![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
-
-**TableName:**
-
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
-
-**ShowLikeOrWhereOpt:**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## Examples
 
@@ -73,3 +62,7 @@ The `SHOW INDEXES [FROM|IN]` statement in TiDB is fully compatible with MySQL. I
 * [SHOW CREATE TABLE](/sql-statements/sql-statement-show-create-table.md)
 * [DROP INDEX](/sql-statements/sql-statement-drop-index.md)
 * [CREATE INDEX](/sql-statements/sql-statement-create-index.md)
+* [`information_schema.TIDB_INDEXES`](/information-schema/information-schema-tidb-indexes.md)
+* [`information_schema.TIDB_INDEX_USAGE`](/information-schema/information-schema-tidb-index-usage.md)
+* [`information_schema.KEY_COLUMN_USAGE`](/information-schema/information-schema-key-column-usage.md)
+* [`sys.schema_unused_indexes`](/sys-schema/sys-schema-unused-indexes.md)
