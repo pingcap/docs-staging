@@ -125,13 +125,13 @@
           },
           {
             "id": "v1beta1",
-            "pathname": "v1beta1/apikey",
-            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-apikey.swagger.json",
-            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-apikey.swagger.json"
+            "pathname": "v1beta1/iam",
+            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-iam.swagger.json",
+            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-iam.swagger.json"
           },
           {
             "id": "msp",
-            "pathname": "msp/v1beta1",
+            "pathname": "v1beta1/msp",
             "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-msp.json",
             "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-msp.json"
           }
