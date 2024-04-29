@@ -10,36 +10,12 @@ aliases: ['/docs-cn/dev/sql-statements/sql-statement-set-names/','/docs-cn/dev/r
 
 ## 语法图
 
-**SetNamesStmt:**
-
-![SetNamesStmt](https://download.pingcap.com/images/docs-cn/sqlgram/SetNamesStmt.png)
-
-**VariableAssignmentList:**
-
-![VariableAssignmentList](https://download.pingcap.com/images/docs-cn/sqlgram/VariableAssignmentList.png)
-
-**VariableAssignment:**
-
-![VariableAssignment](https://download.pingcap.com/images/docs-cn/sqlgram/VariableAssignment.png)
-
-**CharsetName:**
-
-![CharsetName](https://download.pingcap.com/images/docs-cn/sqlgram/CharsetName.png)
-
-**StringName:**
-
-![StringName](https://download.pingcap.com/images/docs-cn/sqlgram/StringName.png)
-
-**CharsetKw:**
-
-![CharsetKw](https://download.pingcap.com/images/docs-cn/sqlgram/CharsetKw.png)
-
-**CharsetNameOrDefault:**
-
-![CharsetNameOrDefault](https://download.pingcap.com/images/docs-cn/sqlgram/CharsetNameOrDefault.png)
+```ebnf+diagram
+SetNamesStmt ::=
+    "SET" ("NAMES" ("DEFAULT" | CharsetName ("COLLATE" ("DEFAULT" | CollationName))?) | ("CHARSET" | ("CHAR" | "CHARACTER") "SET") ("DEFAULT" | CharsetName))
+```
 
 ## 示例
-
 
 ```sql
 SHOW VARIABLES LIKE 'character_set%';
@@ -61,7 +37,6 @@ SHOW VARIABLES LIKE 'character_set%';
 8 rows in set (0.01 sec)
 ```
 
-
 ```sql
 SET NAMES utf8;
 ```
@@ -69,7 +44,6 @@ SET NAMES utf8;
 ```
 Query OK, 0 rows affected (0.00 sec)
 ```
-
 
 ```sql
 SHOW VARIABLES LIKE 'character_set%';
@@ -91,7 +65,6 @@ SHOW VARIABLES LIKE 'character_set%';
 8 rows in set (0.00 sec)
 ```
 
-
 ```sql
 SET CHARACTER SET utf8mb4;
 ```
@@ -99,7 +72,6 @@ SET CHARACTER SET utf8mb4;
 ```
 Query OK, 0 rows affected (0.00 sec)
 ```
-
 
 ```sql
 SHOW VARIABLES LIKE 'character_set%';
