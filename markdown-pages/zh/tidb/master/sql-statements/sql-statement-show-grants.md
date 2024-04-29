@@ -10,28 +10,19 @@ aliases: ['/docs-cn/dev/sql-statements/sql-statement-show-grants/','/docs-cn/dev
 
 ## 语法图
 
-**ShowGrantsStmt:**
+```ebnf+diagram
+ShowGrantsStmt ::=
+    "SHOW" "GRANTS" ("FOR" Username ("USING" RolenameList)?)?
 
-![ShowGrantsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowGrantsStmt.png)
+Username ::=
+    "CURRENT_USER" ( "(" ")" )?
+| Username ("@" Hostname)?
 
-**Username:**
-
-![Username](https://download.pingcap.com/images/docs-cn/sqlgram/Username.png)
-
-**UsingRoles:**
-
-![UsingRoles](https://download.pingcap.com/images/docs-cn/sqlgram/UsingRoles.png)
-
-**RolenameList:**
-
-![RolenameList](https://download.pingcap.com/images/docs-cn/sqlgram/RolenameList.png)
-
-**Rolename:**
-
-![Rolename](https://download.pingcap.com/images/docs-cn/sqlgram/Rolename.png)
+RolenameList ::=
+    Rolename ("@" Hostname)? ("," Rolename ("@" Hostname)? )*
+```
 
 ## 示例
-
 
 ```sql
 SHOW GRANTS;
@@ -46,7 +37,6 @@ SHOW GRANTS;
 1 row in set (0.00 sec)
 ```
 
-
 ```sql
 SHOW GRANTS FOR 'u1';
 ```
@@ -54,7 +44,6 @@ SHOW GRANTS FOR 'u1';
 ```
 ERROR 1141 (42000): There is no such grant defined for user 'u1' on host '%'
 ```
-
 
 ```sql
 CREATE USER u1;
@@ -64,7 +53,6 @@ CREATE USER u1;
 Query OK, 1 row affected (0.04 sec)
 ```
 
-
 ```sql
 GRANT SELECT ON test.* TO u1;
 ```
@@ -72,7 +60,6 @@ GRANT SELECT ON test.* TO u1;
 ```
 Query OK, 0 rows affected (0.04 sec)
 ```
-
 
 ```sql
 SHOW GRANTS FOR u1;
