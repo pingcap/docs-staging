@@ -15,60 +15,30 @@ summary: TiDB 数据库中 SHOW [FULL] COLUMNS FROM 的使用概况。
 
 ## 语法图
 
-**ShowStmt:**
+```ebnf+diagram
+ShowColumnsFromStmt ::=
+    "SHOW" "FULL"? ("COLUMNS" | "FIELDS") ("FROM" | "IN") TableName ( ("FROM" | "IN") SchemaName)? ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
+TableName ::=
+    (Identifier ".")? Identifier
 
-**ShowColumnsFilterable:**
-
-![ShowColumnsFilterable](https://download.pingcap.com/images/docs-cn/sqlgram/ShowColumnsFilterable.png)
-
-**OptFull:**
-
-![OptFull](https://download.pingcap.com/images/docs-cn/sqlgram/OptFull.png)
-
-**FieldsOrColumns:**
-
-![FieldsOrColumns](https://download.pingcap.com/images/docs-cn/sqlgram/FieldsOrColumns.png)
-
-**ShowTableAliasOpt:**
-
-![ShowTableAliasOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTableAliasOpt.png)
-
-**FromOrIn:**
-
-![FromOrIn](https://download.pingcap.com/images/docs-cn/sqlgram/FromOrIn.png)
-
-**TableName:**
-
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
-
-**ShowDatabaseNameOpt:**
-
-![ShowDatabaseNameOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowDatabaseNameOpt.png)
-
-**DBName:**
-
-![DBName](https://download.pingcap.com/images/docs-cn/sqlgram/DBName.png)
-
-**ShowLikeOrWhereOpt:**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## 示例
 
-
 ```sql
-create view v1 as select 1;
+CREATE VIEW v1 AS SELECT 1;
 ```
 
 ```
 Query OK, 0 rows affected (0.11 sec)
 ```
 
-
 ```sql
-show columns from v1;
+SHOW COLUMNS FROM v1;
 ```
 
 ```
@@ -80,9 +50,8 @@ show columns from v1;
 1 row in set (0.00 sec)
 ```
 
-
 ```sql
-desc v1;
+DESC v1;
 ```
 
 ```
@@ -94,9 +63,8 @@ desc v1;
 1 row in set (0.00 sec)
 ```
 
-
 ```sql
-describe v1;
+DESCRIBE v1;
 ```
 
 ```
@@ -108,9 +76,8 @@ describe v1;
 1 row in set (0.00 sec)
 ```
 
-
 ```sql
-explain v1;
+EXPLAIN v1;
 ```
 
 ```
@@ -122,9 +89,8 @@ explain v1;
 1 row in set (0.00 sec)
 ```
 
-
 ```sql
-show fields from v1;
+SHOW FIELDS FROM v1;
 ```
 
 ```
@@ -136,9 +102,8 @@ show fields from v1;
 1 row in set (0.00 sec)
 ```
 
-
 ```sql
-show full columns from v1;
+SHOW FULL COLUMNS FROM v1
 ```
 
 ```
@@ -150,9 +115,8 @@ show full columns from v1;
 1 row in set (0.00 sec)
 ```
 
-
 ```sql
-show full columns from mysql.user;
+SHOW FULL COLUMNS FROM mysql.user;
 ```
 
 ```
