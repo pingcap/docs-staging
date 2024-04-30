@@ -153,16 +153,17 @@ The Common Name is used for caller verification. In general, the callee needs to
 
 To verify component caller's identity, you need to mark the certificate user identity using `Common Name` when generating the certificate, and to check the caller's identity by configuring the `Common Name` list for the callee.
 
+> **Note:**
+>
+> Currently the `cert-allowed-cn` configuration item of the PD can only be set to one value. Therefore, the `commonName` of all authentication objects must be set to the same value.
+
 - TiDB
 
     Configure in the configuration file or command-line arguments:
 
     ```toml
     [security]
-    cluster-verify-cn = [
-        "TiDB-Server",
-        "TiKV-Control",
-    ]
+    cluster-verify-cn = ["TiDB"]
     ```
 
 - TiKV
@@ -171,9 +172,7 @@ To verify component caller's identity, you need to mark the certificate user ide
 
     ```toml
     [security]
-    cert-allowed-cn = [
-        "TiDB-Server", "PD-Server", "TiKV-Control", "RawKvClient1",
-    ]
+    cert-allowed-cn = ["TiDB"]
     ```
 
 - PD
@@ -182,7 +181,7 @@ To verify component caller's identity, you need to mark the certificate user ide
 
     ```toml
     [security]
-    cert-allowed-cn = ["TiKV-Server", "TiDB-Server", "PD-Control"]
+    cert-allowed-cn = ["TiDB"]
     ```
 
 - TiFlash (New in v4.0.5)
@@ -191,14 +190,14 @@ To verify component caller's identity, you need to mark the certificate user ide
 
     ```toml
     [security]
-    cert_allowed_cn = ["TiKV-Server", "TiDB-Server"]
+    cert_allowed_cn = ["TiDB"]
     ```
 
     Configure in the `tiflash-learner.toml` file:
 
     ```toml
     [security]
-    cert-allowed-cn = ["PD-Server", "TiKV-Server", "TiFlash-Server"]
+    cert-allowed-cn = ["TiDB"]
     ```
 
 ## Reload certificates
