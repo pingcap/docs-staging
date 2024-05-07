@@ -83,7 +83,7 @@ Query OK, 0 rows affected (0.09 sec)
 
 
 ```sql
-SHOW CREATE TABLE t1\G;
+SHOW CREATE TABLE t1\G
 ```
 
 ```sql
@@ -129,7 +129,7 @@ Query OK, 0 rows affected (2.52 sec)
 
 
 ```sql
-SHOW CREATE TABLE t1\G;
+SHOW CREATE TABLE t1\G
 ```
 
 ```sql
