@@ -10,29 +10,22 @@ aliases: ['/docs-cn/dev/sql-statements/sql-statement-update/','/docs-cn/dev/refe
 
 ## 语法图
 
-**UpdateStmt:**
+```ebnf+diagram
+UpdateStmt ::=
+    "UPDATE" UpdateOption
+(   TableRef "SET" Assignment ("," Assignment)* WhereClause? OrderBy? Limit?
+|   TableRefs "SET" Assignment ("," Assignment)* WhereClause?
+)
 
-![UpdateStmt](https://download.pingcap.com/images/docs-cn/sqlgram/UpdateStmt.png)
+UpdateOption ::=
+    OptimizerHints? ("LOW_PRIORITY" | "HIGH_PRIORITY" | "DELAYED")? "IGNORE"?
 
-**PriorityOpt:**
+TableRef ::=
+    ( TableFactor | JoinTable )
 
-![PriorityOpt](https://download.pingcap.com/images/docs-cn/sqlgram/PriorityOpt.png)
-
-**TableRef:**
-
-![TableRef](https://download.pingcap.com/images/docs-cn/sqlgram/TableRef.png)
-
-**TableRefs:**
-
-![TableRefs](https://download.pingcap.com/images/docs-cn/sqlgram/TableRefs.png)
-
-**AssignmentList:**
-
-![AssignmentList](https://download.pingcap.com/images/docs-cn/sqlgram/AssignmentList.png)
-
-**WhereClauseOptional:**
-
-![WhereClauseOptional](https://download.pingcap.com/images/docs-cn/sqlgram/WhereClauseOptional.png)
+TableRefs ::=
+    EscapedTableRef ("," EscapedTableRef)*
+```
 
 ## 示例
 
