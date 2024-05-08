@@ -9,13 +9,10 @@ summary: TiDB 数据库中 SHOW CREATE TABLE 的使用概况。
 
 ## 语法图
 
-**ShowCreateTableStmt:**
-
-![ShowCreateTableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowCreateTableStmt.png)
-
-**TableName:**
-
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+```ebnf+diagram
+ShowCreateTableStmt ::=
+    "SHOW" "CREATE" "TABLE" (SchemaName ".")? TableName
+```
 
 ## 示例
 
@@ -30,17 +27,15 @@ Query OK, 0 rows affected (0.12 sec)
 
 
 ```sql
-SHOW CREATE TABLE t1;
+SHOW CREATE TABLE t1\G
 ```
 
 ```
-+-------+------------------------------------------------------------------------------------------------------------+
-| Table | Create Table                                                                                               |
-+-------+------------------------------------------------------------------------------------------------------------+
-| t1    | CREATE TABLE `t1` (
+*************************** 1. row ***************************
+       Table: t1
+Create Table: CREATE TABLE `t1` (
   `a` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin |
-+-------+------------------------------------------------------------------------------------------------------------+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
 1 row in set (0.00 sec)
 ```
 
