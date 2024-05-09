@@ -9,84 +9,48 @@ summary: TiDB 数据库中 SELECT 的使用概况。
 
 ## 语法图
 
-**SelectStmt:**
-
-![SelectStmt](https://download.pingcap.com/images/docs-cn/sqlgram/SelectStmt.png)
-
-**FromDual:**
-
-![FromDual](https://download.pingcap.com/images/docs-cn/sqlgram/FromDual.png)
-
-**WhereClauseOptional:**
-
-![WhereClauseOptional](https://download.pingcap.com/images/docs-cn/sqlgram/WhereClauseOptional.png)
-
-**SelectStmtOpts:**
-
-![SelectStmtOpts](https://download.pingcap.com/images/docs-cn/sqlgram/SelectStmtOpts.png)
-
-**SelectStmtFieldList:**
-
-![SelectStmtFieldList](https://download.pingcap.com/images/docs-cn/sqlgram/SelectStmtFieldList.png)
-
-**TableRefsClause:**
-
 ```ebnf+diagram
+SelectStmt ::=
+    ( SelectStmtBasic | SelectStmtFromDualTable | SelectStmtFromTable )
+    OrderBy? SelectStmtLimit? SelectLockOpt? SelectStmtIntoOption
+
+SelectStmtBasic ::=
+    "SELECT" SelectStmtOpts Field ("," Field)* ( "HAVING" Expression)?
+
+SelectStmtFromDualTable ::=
+    "SELECT" SelectStmtOpts Field ("," Field)* "FROM" "DUAL" WhereClause?
+
+SelectStmtFromTable ::=
+    "SELECT" SelectStmtOpts Field ("," Field)* "FROM" TableRefsClause
+    WhereClause? GroupByClause? ( "HAVING" Expression)? WindowClause?
+
+SelectStmtOpts ::=
+    TableOptimizerHints DefaultFalseDistictOpt PriorityOpt SelectStmtSQLSmallResult
+    SelectStmtSQLBigResult SelectStmtSQLBufferResult SelectStmtSQLCache SelectStmtCalcFoundRows
+    SelectStmtStraightJoin
+
 TableRefsClause ::=
     TableRef AsOfClause? ( ',' TableRef AsOfClause? )*
 
 AsOfClause ::=
     'AS' 'OF' 'TIMESTAMP' Expression
-```
 
-**SelectStmtGroup:**
+SelectStmtLimit ::=
+    ("LIMIT" LimitOption ( ("," | "OFFSET") LimitOption )?
+| "FETCH" ("FIRST" | "NEXT") LimitOption? ("ROW" | "ROWS") "ONLY" )
 
-![SelectStmtGroup](https://download.pingcap.com/images/docs-cn/sqlgram/SelectStmtGroup.png)
-
-**HavingClause:**
-
-![HavingClause](https://download.pingcap.com/images/docs-cn/sqlgram/HavingClause.png)
-
-**OrderByOptional:**
-
-![OrderByOptional](https://download.pingcap.com/images/docs-cn/sqlgram/OrderByOptional.png)
-
-**SelectStmtLimit:**
-
-![SelectStmtLimit](https://download.pingcap.com/images/docs-cn/sqlgram/SelectStmtLimit.png)
-
-**FirstOrNext:**
-
-![FirstOrNext](https://download.pingcap.com/images/docs-cn/sqlgram/FirstOrNext.png)
-
-**FetchFirstOpt:**
-
-![FetchFirstOpt](https://download.pingcap.com/images/docs-cn/sqlgram/FetchFirstOpt.png)
-
-**RowOrRows:**
-
-![RowOrRows](https://download.pingcap.com/images/docs-cn/sqlgram/RowOrRows.png)
-
-**SelectLockOpt:**
-
-```ebnf+diagram
-SelectLockOpt ::=
-    ( ( 'FOR' 'UPDATE' ( 'OF' TableList )? 'NOWAIT'? )
-|   ( 'LOCK' 'IN' 'SHARE' 'MODE' ) )?
+SelectLockOpt ::= 
+    ( 'FOR' 'UPDATE' ( 'OF' TableList )? 'NOWAIT'?
+|   'LOCK' 'IN' 'SHARE' 'MODE' )
 
 TableList ::=
     TableName ( ',' TableName )*
-```
 
-**WindowClauseOptional**
+WindowClause ::=
+    "WINDOW" WindowDefinition ("," WindowDefinition)*
 
-![WindowClauseOptional](https://download.pingcap.com/images/docs-cn/sqlgram/WindowClauseOptional.png)
-
-**TableSampleOpt**
-
-```ebnf+diagram
 TableSampleOpt ::=
-    'TABLESAMPLE' 'REGIONS()'
+    'TABLESAMPLE' 'REGIONS' '(' ')'
 ```
 
 ## 语法元素说明
