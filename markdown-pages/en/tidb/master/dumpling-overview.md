@@ -86,7 +86,7 @@ Dumpling exports data to SQL files by default. You can also export data to SQL f
 
 
 ```shell
-dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o /tmp/test -r 200000 -F 256MiB
+tiup dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o /tmp/test -r 200000 -F 256MiB
 ```
 
 In the command above:
@@ -119,7 +119,7 @@ When you export data to CSV files, you can use `--sql <SQL>` to filter the recor
 
 
 ```shell
-./dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'select * from `test`.`sbtest1` where id < 100' -F 100MiB --output-filename-template 'test.sbtest1.{{.Index}}'
+tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'select * from `test`.`sbtest1` where id < 100' -F 100MiB --output-filename-template 'test.sbtest1.{{.Index}}'
 ```
 
 In the command above:
@@ -229,7 +229,7 @@ export AWS_SECRET_ACCESS_KEY=${SecretKey}
 Dumpling also supports reading credential files from `~/.aws/credentials`. For more information about URI parameter descriptions, see [URI Formats of External Storage Services](/external-storage-uri.md).
 
 ```shell
-./dumpling -u root -P 4000 -h 127.0.0.1 -r 200000 -o "s3://${Bucket}/${Folder}"
+tiup dumpling -u root -P 4000 -h 127.0.0.1 -r 200000 -o "s3://${Bucket}/${Folder}"
 ```
 
 ### Filter the exported data
@@ -239,7 +239,7 @@ Dumpling also supports reading credential files from `~/.aws/credentials`. For m
 By default, Dumpling exports all databases except system databases (including `mysql`, `sys`, `INFORMATION_SCHEMA`, `PERFORMANCE_SCHEMA`, `METRICS_SCHEMA`, and `INSPECTION_SCHEMA`). You can use `--where <SQL where expression>` to select the records to be exported.
 
 ```shell
-./dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --where "id < 100"
+tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --where "id < 100"
 ```
 
 The above command exports the data that matches `id < 100` from each table. Note that you cannot use the `--where` parameter together with `--sql`.
@@ -250,7 +250,7 @@ Dumpling can filter specific databases or tables by specifying the table filter 
 
 
 ```shell
-./dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test -r 200000 --filter "employees.*" --filter "*.WorkOrder"
+tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test -r 200000 --filter "employees.*" --filter "*.WorkOrder"
 ```
 
 The above command exports all the tables in the `employees` database and the `WorkOrder` tables in all databases.
@@ -319,8 +319,8 @@ The `--snapshot` option can be set to a TSO (the `Position` field output by the 
 
 
 ```shell
-./dumpling --snapshot 417773951312461825
-./dumpling --snapshot "2020-07-02 17:12:45"
+tiup dumpling --snapshot 417773951312461825
+tiup dumpling --snapshot "2020-07-02 17:12:45"
 ```
 
 The TiDB historical data snapshots when the TSO is `417773951312461825` and the time is `2020-07-02 17:12:45` are exported.

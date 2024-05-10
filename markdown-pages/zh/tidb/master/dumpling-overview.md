@@ -69,7 +69,7 @@ Dumpling 默认导出数据格式为 SQL 文件。也可以通过设置 `--filet
 
 
 ```shell
-dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o /tmp/test -r 200000 -F256MiB
+tiup dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o /tmp/test -r 200000 -F 256MiB
 ```
 
 以上命令中：
@@ -102,7 +102,7 @@ dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o /tmp/test -r 200000
 
 
 ```shell
-./dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'select * from `test`.`sbtest1` where id < 100' -F 100MiB --output-filename-template 'test.sbtest1.{{.Index}}'
+tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'select * from `test`.`sbtest1` where id < 100' -F 100MiB --output-filename-template 'test.sbtest1.{{.Index}}'
 ```
 
 以上命令中：
@@ -202,7 +202,7 @@ Dumpling 同时还支持从 `~/.aws/credentials` 读取凭证文件。更多参�
 
 
 ```shell
-./dumpling -u root -P 4000 -h 127.0.0.1 -r 200000 -o "s3://${Bucket}/${Folder}"
+tiup dumpling -u root -P 4000 -h 127.0.0.1 -r 200000 -o "s3://${Bucket}/${Folder}"
 ```
 
 ### 筛选导出的数据
@@ -213,7 +213,7 @@ Dumpling 同时还支持从 `~/.aws/credentials` 读取凭证文件。更多参�
 
 
 ```shell
-./dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --where "id < 100"
+tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --where "id < 100"
 ```
 
 上述命令将会导出各个表的 id < 100 的数据。注意 `--where` 参数无法与 `--sql` 一起使用。
@@ -224,7 +224,7 @@ Dumpling 可以通过 `--filter` 指定 table-filter 来筛选特定的库表。
 
 
 ```shell
-./dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test -r 200000 --filter "employees.*" --filter "*.WorkOrder"
+tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test -r 200000 --filter "employees.*" --filter "*.WorkOrder"
 ```
 
 上述命令将会导出 `employees` 数据库的所有表，以及所有数据库中的 `WorkOrder` 表。
@@ -290,8 +290,8 @@ Dumpling 可以通过 `--snapshot` 指定导出某个 [tidb_snapshot](/read-hist
 
 
 ```shell
-./dumpling --snapshot 417773951312461825
-./dumpling --snapshot "2020-07-02 17:12:45"
+tiup dumpling --snapshot 417773951312461825
+tiup dumpling --snapshot "2020-07-02 17:12:45"
 ```
 
 即可导出 TSO 为 `417773951312461825` 或 `2020-07-02 17:12:45` 时的 TiDB 历史数据快照。
