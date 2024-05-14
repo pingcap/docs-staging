@@ -5,7 +5,7 @@ summary: 了解 information_schema 表 `PROCESSLIST`。
 
 # PROCESSLIST
 
-`PROCESSLIST` 和 `SHOW PROCESSLIST` 的功能一样，都是查看当前正在处理的请求。
+`PROCESSLIST` 和 [`SHOW PROCESSLIST`](/sql-statements/sql-statement-show-processlist.md) 的功能一样，都是查看当前正在处理的请求。
 
 `PROCESSLIST` 表比 `SHOW PROCESSLIST` 的结果多出下面几列：
 
@@ -14,7 +14,6 @@ summary: 了解 information_schema 表 `PROCESSLIST`。
 * `DISK` 列：显示磁盘空间使用情况，单位是 byte。
 * `TxnStart`列：显示事务的开始时间。
 * `RESOURCE_GROUP`列：显示对应的资源组名称。
-
 
 ```sql
 USE information_schema;
@@ -41,7 +40,6 @@ DESC processlist;
 +---------------------+---------------------+------+------+---------+-------+
 13 rows in set (0.00 sec)
 ```
-
 
 ```sql
 SELECT * FROM processlist\G
@@ -87,7 +85,7 @@ SELECT * FROM processlist\G
 
 
 ```sql
-SELECT * FROM cluster_processlist;
+SELECT * FROM information_schema.cluster_processlist;
 ```
 
 ```sql
