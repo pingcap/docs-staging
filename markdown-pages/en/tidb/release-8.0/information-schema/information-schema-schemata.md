@@ -5,8 +5,7 @@ summary: Learn the `SCHEMATA` information_schema table.
 
 # SCHEMATA
 
-The `SCHEMATA` table provides information about databases. The table data is equivalent to the result of the `SHOW DATABASES` statement.
-
+The `SCHEMATA` table provides information about databases. The table data is equivalent to the result of the [`SHOW DATABASES`](/sql-statements/sql-statement-show-databases.md) statement.
 
 ```sql
 USE information_schema;
@@ -25,7 +24,6 @@ desc SCHEMATA;
 +----------------------------+--------------+------+------+---------+-------+
 5 rows in set (0.00 sec)
 ```
-
 
 ```sql
 SELECT * FROM SCHEMATA;
