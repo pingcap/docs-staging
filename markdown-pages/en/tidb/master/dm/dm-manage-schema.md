@@ -95,7 +95,7 @@ To get the table schema, run the `binlog-schema list` command:
 help binlog-schema list
 ```
 
-```
+~~~
 show table schema structure
 
 Usage:
@@ -106,7 +106,7 @@ Flags:
 
 Global Flags:
   -s, --source strings   MySQL Source ID.
-```
+~~~
 
 If you want to get the table schema of the `` `db_single`.`t1` `` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task, run the following command:
 
@@ -139,7 +139,7 @@ To update the table schema, run the `binlog-schema update` command:
 help binlog-schema update
 ```
 
-```
+~~~
 update tables schema structure
 
 Usage:
@@ -154,7 +154,7 @@ Flags:
 
 Global Flags:
   -s, --source strings   MySQL Source ID.
-```
+~~~
 
 If you want to set the table schema of the `` `db_single`.`t1` `` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task as follows:
 
