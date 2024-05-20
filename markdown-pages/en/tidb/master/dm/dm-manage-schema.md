@@ -95,7 +95,7 @@ To get the table schema, run the `binlog-schema list` command:
 help binlog-schema list
 ```
 
-~~~
+```
 show table schema structure
 
 Usage:
@@ -106,16 +106,16 @@ Flags:
 
 Global Flags:
   -s, --source strings   MySQL Source ID.
-~~~
+```
 
-If you want to get the table schema of the `` `db_single`.`t1` `` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task, run the following command:
+If you want to get the table schema of the ``` `db_single`.`t1` ``` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task, run the following command:
 
 
 ```bash
 binlog-schema list -s mysql-replica-01 task_single db_single t1
 ```
 
-```json
+```
 {
     "result": true,
     "msg": "",
@@ -139,7 +139,7 @@ To update the table schema, run the `binlog-schema update` command:
 help binlog-schema update
 ```
 
-~~~
+```
 update tables schema structure
 
 Usage:
@@ -154,9 +154,9 @@ Flags:
 
 Global Flags:
   -s, --source strings   MySQL Source ID.
-~~~
+```
 
-If you want to set the table schema of the `` `db_single`.`t1` `` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task as follows:
+If you want to set the table schema of the ``` `db_single`.`t1` ``` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task as follows:
 
 ```sql
 CREATE TABLE `t1` (
@@ -173,7 +173,7 @@ Save the `CREATE TABLE` statement above as a file (for example, `db_single.t1-sc
 operate-schema set -s mysql-replica-01 task_single -d db_single -t t1 db_single.t1-schema.sql
 ```
 
-```json
+```
 {
     "result": true,
     "msg": "",
@@ -217,14 +217,14 @@ Global Flags:
 > * The meta information in the optimistic sharding DDL
 > * The corresponding table in the downstream TiDB
 
-If you want to delete the table schema of the `` `db_single`.`t1` `` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task, run the following command:
+If you want to delete the table schema of the ``` `db_single`.`t1` ``` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task, run the following command:
 
 
 ```bash
 binlog-schema delete -s mysql-replica-01 task_single db_single t1
 ```
 
-```json
+```
 {
     "result": true,
     "msg": "",
