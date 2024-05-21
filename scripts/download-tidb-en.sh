@@ -1,4 +1,7 @@
 yarn download:tidb:en
+yarn download:tidb:en --ref release-8.1
+yarn download:tidb:en --ref release-8.0
+yarn download:tidb:en --ref release-7.6
 yarn download:tidb:en --ref release-7.5
 yarn download:tidb:en --ref release-7.4
 yarn download:tidb:en --ref release-7.3
