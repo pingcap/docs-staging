@@ -7,8 +7,6 @@ summary: 了解 TiDB 的版本发布时间线。
 
 本文列出了所有已发布的 TiDB 版本，按发布时间倒序呈现。
 
-<EmailSubscriptionWrapper />
-
 | 版本 | 发布日期 |
 | :--- | :--- |
 | [7.1.5](/releases/release-7.1.5.md) | 2024-04-26 |
