@@ -33,7 +33,6 @@ TiDB 缓存表功能适用于以下特点的表：
 
 假设已存在普通表 `users`:
 
-
 ```sql
 CREATE TABLE users (
     id BIGINT,
@@ -43,7 +42,6 @@ CREATE TABLE users (
 ```
 
 通过 `ALTER TABLE` 语句，可以将这张表设置成缓存表：
-
 
 ```sql
 ALTER TABLE users CACHE;
@@ -56,7 +54,6 @@ Query OK, 0 rows affected (0.01 sec)
 ### 验证是否为缓存表
 
 要验证一张表是否为缓存表，使用 `SHOW CREATE TABLE` 语句。如果为缓存表，返回结果中会带有 `CACHED ON` 属性：
-
 
 ```sql
 SHOW CREATE TABLE users;
@@ -75,8 +72,7 @@ SHOW CREATE TABLE users;
 1 row in set (0.00 sec)
 ```
 
-从缓存表读取数据后，TiDB 会将数据加载到内存中。你可使用 `trace` 语句查看 TiDB 是否已将数据加载到内存中。当缓存还未加载时，语句的返回结果会出现 `regionRequest.SendReqCtx`，表示 TiDB 从 TiKV 读取了数据。
-
+从缓存表读取数据后，TiDB 会将数据加载到内存中。你可使用 [`TRACE`](/sql-statements/sql-statement-trace.md) 语句查看 TiDB 是否已将数据加载到内存中。当缓存还未加载时，语句的返回结果会出现 `regionRequest.SendReqCtx`，表示 TiDB 从 TiKV 读取了数据。
 
 ```sql
 TRACE SELECT * FROM users;
@@ -102,7 +98,7 @@ TRACE SELECT * FROM users;
 12 rows in set (0.01 sec)
 ```
 
-而再次执行 `trace`，返回结果中不再有 `regionRequest.SendReqCtx`，表示 TiDB 已经不再从 TiKV 读取数据，而是直接从内存中读取：
+而再次执行 [`TRACE`](/sql-statements/sql-statement-trace.md)，返回结果中不再有 `regionRequest.SendReqCtx`，表示 TiDB 已经不再从 TiKV 读取数据，而是直接从内存中读取：
 
 ```
 +----------------------------------------+-----------------+------------+
@@ -136,7 +132,6 @@ TRACE SELECT * FROM users;
 
 缓存表支持写入数据。例如，往 `users` 表中插入一条记录：
 
-
 ```sql
 INSERT INTO users(id, name) VALUES(1001, 'Davis');
 ```
@@ -144,7 +139,6 @@ INSERT INTO users(id, name) VALUES(1001, 'Davis');
 ```
 Query OK, 1 row affected (0.00 sec)
 ```
-
 
 ```sql
 SELECT * FROM users;
@@ -191,7 +185,6 @@ Create Table: CREATE TABLE `table_cache_meta` (
 >
 > 对缓存表执行 DDL 语句会失败。若要对缓存表执行 DDL 语句，需要先去掉缓存属性，将缓存表设回普通表后，才能对其执行 DDL 语句。
 
-
 ```sql
 TRUNCATE TABLE users;
 ```
@@ -199,7 +192,6 @@ TRUNCATE TABLE users;
 ```
 ERROR 8242 (HY000): 'Truncate Table' is unsupported on cache tables.
 ```
-
 
 ```sql
 mysql> ALTER TABLE users ADD INDEX k_id(id);
@@ -210,7 +202,6 @@ ERROR 8242 (HY000): 'Alter Table' is unsupported on cache tables.
 ```
 
 使用 `ALTER TABLE t NOCACHE` 语句可以将缓存表恢复成普通表：
-
 
 ```sql
 ALTER TABLE users NOCACHE
