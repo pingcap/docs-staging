@@ -1113,7 +1113,7 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
 ### tidb_analyze_distsql_scan_concurrency <span class="version-mark">New in v7.6.0</span>
 
-- Scope: GLOBAL
+- Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Integer
@@ -1359,7 +1359,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 ### tidb_build_sampling_stats_concurrency <span class="version-mark">New in v7.5.0</span>
 
-- Scope: GLOBAL
+- Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Integer
@@ -4273,7 +4273,7 @@ mysql> desc select count(distinct a) from test.t;
     +-----------------------------------+---------+-----------+-----------------------+---------------------------------+
     ```
 
-- The second example uses `0`, which assumes that 0% of rows will be scanned before the qualified rows are found. 
+- The second example uses `0`, which assumes that 0% of rows will be scanned before the qualified rows are found.
 
     ```sql
     > SET SESSION tidb_opt_ordering_index_selectivity_ratio = 0;
@@ -4951,6 +4951,8 @@ SHOW WARNINGS;
 - Type: Boolean
 - Default value: Before v7.2.0, the default value is `OFF`. Starting from v7.2.0, the default value is `ON`.
 - Specifies whether to remove `ORDER BY` clause in a subquery.
+- In the ISO/IEC SQL standard, `ORDER BY` is mainly used to sort the results of top-level queries. For subqueries, the standard does not require that the results be sorted by `ORDER BY`. 
+- To sort subquery results, you can usually handle it in the outer query, such as using the window function or using `ORDER BY` again in the outer query. Doing so ensures the order of the final result set.
 
 ### tidb_replica_read <span class="version-mark">New in v4.0</span>
 
