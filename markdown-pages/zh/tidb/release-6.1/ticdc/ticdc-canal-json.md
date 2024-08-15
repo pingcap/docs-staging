@@ -62,7 +62,7 @@ TiCDC 会把一个 DDL Event 编码成如下 Canal-JSON 格式：
     "data": null,
     "old": null,
     "_tidb": {     // TiDB 的扩展字段
-        "commitTs": 163963309467037594
+        "commitTs": 429918007904436226  // TiDB TSO 时间戳
     }
 }
 ```
@@ -131,7 +131,7 @@ TiCDC 会把一个 DDL Event 编码成如下 Canal-JSON 格式：
     ],
     "old": null,
     "_tidb": {     // TiDB 的扩展字段
-        "commitTs": 163963314122145239
+        "commitTs": 429918007904436226  // TiDB TSO 时间戳
     }
 }
 ```
@@ -160,7 +160,7 @@ WATERMARK Event 的示例如下：
     "data": null,
     "old": null,
     "_tidb": {     // TiDB 的扩展字段
-        "watermarkTs": 429918007904436226
+        "watermarkTs": 429918007904436226  // TiDB TSO 时间戳
     }
 }
 ```
