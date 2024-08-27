@@ -88,13 +88,7 @@ Ad-hoc 备份支持快照备份与增量备份。Ad-hoc 备份通过创建一个
       name: demo1-backup-nfs
       namespace: test1
     spec:
-      # # backupType: full
-      # # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-      # from:
-      #   host: ${tidb-host}
-      #   port: ${tidb-port}
-      #   user: ${tidb-user}
-      #   secretName: backup-demo1-tidb-secret
+      # backupType: full
       br:
         cluster: demo1
         clusterNamespace: test1
@@ -149,13 +143,7 @@ metadata:
   name: demo1-backup-nfs
   namespace: test1
 spec:
-  # # backupType: full
-  # # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-  # from:
-  #   host: ${tidb-host}
-  #   port: ${tidb-port}
-  #   user: ${tidb-user}
-  #   secretName: backup-demo1-tidb-secret
+  # backupType: full
   br:
     cluster: demo1
     clusterNamespace: test1
@@ -186,13 +174,7 @@ metadata:
   name: demo1-backup-nfs
   namespace: test1
 spec:
-  # # backupType: full
-  # # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-  # from:
-  #   host: ${tidb-host}
-  #   port: ${tidb-port}
-  #   user: ${tidb-user}
-  #   secretName: backup-demo1-tidb-secret
+  # backupType: full
   tableFilter:
   - "db1.*"
   br:
@@ -225,13 +207,7 @@ metadata:
   name: demo1-backup-nfs
   namespace: test1
 spec:
-  # # backupType: full
-  # # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-  # from:
-  #   host: ${tidb-host}
-  #   port: ${tidb-port}
-  #   user: ${tidb-user}
-  #   secretName: backup-demo1-tidb-secret
+  # backupType: full
   tableFilter:
   - "db1.table1"
   br:
@@ -264,13 +240,7 @@ metadata:
   name: demo1-backup-nfs
   namespace: test1
 spec:
-  # # backupType: full
-  # # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-  # from:
-  #   host: ${tidb-host}
-  #   port: ${tidb-port}
-  #   user: ${tidb-user}
-  #   secretName: backup-demo1-tidb-secret
+  # backupType: full
   tableFilter:
   - "db1.table1"
   - "db1.table2"
@@ -323,12 +293,6 @@ spec:
       maxReservedTime: "3h"
       schedule: "*/2 * * * *"
       backupTemplate:
-        # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-        # from:
-        #   host: ${tidb_host}
-        #   port: ${tidb_port}
-        #   user: ${tidb_user}
-        #   secretName: backup-demo1-tidb-secret
         br:
           cluster: demo1
           clusterNamespace: test1

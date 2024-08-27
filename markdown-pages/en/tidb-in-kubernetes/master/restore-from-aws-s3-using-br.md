@@ -94,12 +94,6 @@ Depending on which method you choose to grant permissions to the remote storage 
         # timeAgo: ${time}
         # checksum: true
         # sendCredToTikv: true
-      # # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-      # to:
-      #   host: ${tidb_host}
-      #   port: ${tidb_port}
-      #   user: ${tidb_user}
-      #   secretName: restore-demo2-tidb-secret
       s3:
         provider: aws
         secretName: s3-secret
@@ -137,12 +131,6 @@ Depending on which method you choose to grant permissions to the remote storage 
         # rateLimit: 0
         # timeAgo: ${time}
         # checksum: true
-      # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-      to:
-        host: ${tidb_host}
-        port: ${tidb_port}
-        user: ${tidb_user}
-        secretName: restore-demo2-tidb-secret
       s3:
         provider: aws
         region: us-west-1
@@ -178,12 +166,6 @@ Depending on which method you choose to grant permissions to the remote storage 
         # rateLimit: 0
         # timeAgo: ${time}
         # checksum: true
-      # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-      to:
-        host: ${tidb_host}
-        port: ${tidb_port}
-        user: ${tidb_user}
-        secretName: restore-demo2-tidb-secret
       s3:
         provider: aws
         region: us-west-1
