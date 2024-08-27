@@ -1453,11 +1453,6 @@ aliases: ['/docs-cn/tidb-in-kubernetes/dev/enable-tls-between-components/']
             cluster: ${cluster_name}
             clusterNamespace: ${namespace}
             sendCredToTikv: true
-          from:
-            host: ${host}
-            secretName: ${tidb_secret}
-            port: 4000
-            user: root
           s3:
             provider: aws
             region: ${my_region}
@@ -1487,11 +1482,6 @@ aliases: ['/docs-cn/tidb-in-kubernetes/dev/enable-tls-between-components/']
             cluster: ${cluster_name}
             clusterNamespace: ${namespace}
             sendCredToTikv: true
-          to:
-            host: ${host}
-            secretName: ${tidb_secret}
-            port: 4000
-            user: root
           s3:
             provider: aws
             region: ${my_region}

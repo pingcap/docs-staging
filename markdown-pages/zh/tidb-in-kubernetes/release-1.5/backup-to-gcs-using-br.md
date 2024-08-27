@@ -92,12 +92,6 @@ Ad-hoc 备份支持快照备份，也支持[启动](#启动日志备份)和[停�
       namespace: backup-test
     spec:
       # backupType: full
-      # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-      from:
-        host: ${tidb-host}
-        port: ${tidb-port}
-        user: ${tidb-user}
-        secretName: backup-demo1-tidb-secret
       br:
         cluster: demo1
         clusterNamespace: test1
@@ -351,12 +345,6 @@ metadata:
   namespace: backup-test
 spec:
   # backupType: full
-  # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-  # from:
-    # host: ${tidb-host}
-    # port: ${tidb-port}
-    # user: ${tidb-user}
-    # secretName: backup-demo1-tidb-secret
   br:
     cluster: demo1
     clusterNamespace: test1
@@ -386,12 +374,6 @@ metadata:
   namespace: backup-test
 spec:
   # backupType: full
-  # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-  # from:
-    # host: ${tidb-host}
-    # port: ${tidb-port}
-    # user: ${tidb-user}
-    # secretName: backup-demo1-tidb-secret
   tableFilter:
   - "db1.*"
   br:
@@ -423,12 +405,6 @@ metadata:
   namespace: backup-test
 spec:
   # backupType: full
-  # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-  # from:
-    # host: ${tidb-host}
-    # port: ${tidb-port}
-    # user: ${tidb-user}
-    # secretName: backup-demo1-tidb-secret
   tableFilter:
   - "db1.table1"
   br:
@@ -460,12 +436,6 @@ metadata:
   namespace: backup-test
 spec:
   # backupType: full
-  # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-  # from:
-    # host: ${tidb-host}
-    # port: ${tidb-port}
-    # user: ${tidb-user}
-    # secretName: backup-demo1-tidb-secret
   tableFilter:
   - "db1.table1"
   - "db1.table2"
@@ -518,12 +488,6 @@ spec:
       backupTemplate:
         # Clean outdated backup data based on maxBackups or maxReservedTime. If not configured, the default policy is Retain
         # cleanPolicy: Delete
-        # Only needed for TiDB Operator < v1.1.10 or TiDB < v4.0.8
-        from:
-          host: ${tidb_host}
-          port: ${tidb_port}
-          user: ${tidb_user}
-          secretName: backup-demo1-tidb-secret
         br:
           cluster: demo1
           clusterNamespace: test1
