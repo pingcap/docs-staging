@@ -1,11 +1,11 @@
 ---
-title: PingCAP 归档文档站
+title: TiDB 归档文档站
 hide_sidebar: true
 hide_commit: true
 hide_leftNav: true
 ---
 
-<DocHomeContainer title="PingCAP 归档文档中心" subTitle="访问 TiDB 数据库的归档文档。" archive>
+<DocHomeContainer title="TiDB 归档文档中心" subTitle="访问 TiDB 数据库的归档文档。" archive>
 
 <p> </p>
 
