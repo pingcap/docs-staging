@@ -1,11 +1,11 @@
 ---
-title: PingCAP Archived Documentation
+title: TiDB Archived Documentation
 hide_sidebar: true
 hide_commit: true
 hide_leftNav: true
 ---
 
-<DocHomeContainer title="PingCAP Archived Docs" subTitle="Access the archived documentation of the TiDB database on this website." archive>
+<DocHomeContainer title="TiDB Archived Docs" subTitle="Access the archived documentation of the TiDB database on this website." archive>
 
 <p> </p>
 
