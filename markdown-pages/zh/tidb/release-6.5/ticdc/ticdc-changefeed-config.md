@@ -69,6 +69,17 @@ enable-old-value = true
 # 默认值和 TiDB 的默认 SQL 模式一致
 # sql-mode = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
 
+# 默认值为 false，表示不处于 BDR 模式。
+# 如果要使用 TiCDC 搭建 BDR 集群，需要将该参数设置为 true，同时要将 TiDB 集群设置为 BDR 模式。
+# 详情请参考：https://docs.pingcap.com/zh/tidb/stable/ticdc-bidirectional-replication#ticdc-双向复制
+# bdr-mode = false
+
+# 从 v6.5.6 开始引入。changefeed 发生内部错误或异常时允许自动重试的时间，默认值为 30 分钟。
+# 若 changefeed 发生内部错误或异常，且持续时间超过该参数设置的时间，changefeed 会进入 Failed 状态。
+# 当 changefeed 处于 failed 状态时，需要手动重启 changefeed 才能恢复。
+# 配置格式为 "h m s"，例如 "1h30m30s"。
+changefeed-error-stuck-duration = "30m"
+
 [mounter]
 # mounter 解码 KV 数据的线程数，默认值为 16
 # worker-num = 16
@@ -97,7 +108,7 @@ rules = ['*.*', '!test.*']
 # 第二个事件过滤器规则
 # [[filter.event-filters]]
 # matcher = ["test.fruit"] # 该事件过滤器只应用于 test.fruit 表
-# ignore-event = ["drop table", "delete"] # 忽略 drop table 的 DDL 事件和 delete 类型的 DML 事件
+# ignore-event = ["drop table", "delete"] # 忽略 drop table 的 DDL 事件和 delete 类型的 DML 事件。需要注意的是，在更新 TiDB 中聚簇索引的列值时，TiCDC 会将一个 UPDATE 事件拆分成为 DELETE 和 INSERT 事件，TiCDC 无法将该类事件识别为 UPDATE 事件，因此无法正确地进行过滤。
 # ignore-sql = ["^drop table", "alter table"] # 忽略以 drop table 开头的，或者包含 alter table 的 DDL 语句
 # ignore-insert-value-expr = "price > 1000 and origin = 'no where'" # 忽略包含 price > 1000 和 origin = 'no where' 条件的 insert DML
 

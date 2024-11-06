@@ -1694,6 +1694,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 - This variable is used to set the batch size during the `re-organize` phase of the DDL operation. For example, when TiDB executes the `ADD INDEX` operation, the index data needs to backfilled by `tidb_ddl_reorg_worker_cnt` (the number) concurrent workers. Each worker backfills the index data in batches.
     - If `tidb_ddl_enable_fast_reorg` is set to `OFF`, `ADD INDEX` is executed as a transaction. If there are many update operations such as `UPDATE` and `REPLACE` in the target columns during the `ADD INDEX` execution, a larger batch size indicates a larger probability of transaction conflicts. In this case, it is recommended that you set the batch size to a smaller value. The minimum value is 32.
     - If the transaction conflict does not exist, or if `tidb_ddl_enable_fast_reorg` is set to `ON`, you can set the batch size to a large value. This makes data backfilling faster but also increases the write pressure on TiKV. For a proper batch size, you also need to refer to the value of `tidb_ddl_reorg_worker_cnt`. See [Interaction Test on Online Workloads and `ADD INDEX` Operations](https://docs.pingcap.com/tidb/dev/online-workloads-and-add-index-operations) for reference.
+    - Starting from v8.3.0, this parameter is supported at the SESSION level. Modifying the parameter at the GLOBAL level will not impact currently running DDL statements. It will only apply to DDLs submitted in new sessions.
 
 ### tidb_ddl_reorg_priority
 
@@ -1723,6 +1724,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 - Range: `[1, 256]`
 - Unit: Threads
 - This variable is used to set the concurrency of the DDL operation in the `re-organize` phase.
+- Starting from v8.3.0, this parameter is supported at the SESSION level. Modifying the parameter at the GLOBAL level will not impact currently running DDL statements. It will only apply to DDLs submitted in new sessions.
 
 ### `tidb_enable_fast_create_table` <span class="version-mark">New in v8.0.0</span>
 
@@ -2715,11 +2717,11 @@ Query OK, 0 rows affected (0.09 sec)
     - `AUTO` functions the same way as `ON` does.
     - `OFF` indicates disabling the `TABLE PARTITION` feature. In this case, the syntax that creates a partition table can be executed, but the table created is not a partitioned one.
 
-### tidb_enable_telemetry <span class="version-mark">New in v4.0.2</span>
+### tidb_enable_telemetry <span class="version-mark">New in v4.0.2 and deprecated in v8.1.0</span>
 
-> **Note:**
+> **Warning:**
 >
-> This TiDB variable is not applicable to TiDB Cloud.
+> Starting from v8.1.0, the telemetry feature in TiDB is removed, and this variable is no longer functional. It is retained solely for compatibility with earlier versions.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2729,13 +2731,13 @@ Query OK, 0 rows affected (0.09 sec)
 
 <CustomContent platform="tidb">
 
-- This variable is used to dynamically control whether the telemetry collection in TiDB is enabled. In the current version, the telemetry is disabled by default. If the [`enable-telemetry`](/tidb-configuration-file.md#enable-telemetry-new-in-v402) TiDB configuration item is set to `false` on all TiDB instances, the telemetry collection is always disabled and this system variable will not take effect. See [Telemetry](/telemetry.md) for details.
+- Before v8.1.0, this variable controls whether to enable the telemetry collection in TiDB.
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-- This variable is used to dynamically control whether the telemetry collection in TiDB is enabled.
+- This TiDB variable is not applicable to TiDB Cloud.
 
 </CustomContent>
 

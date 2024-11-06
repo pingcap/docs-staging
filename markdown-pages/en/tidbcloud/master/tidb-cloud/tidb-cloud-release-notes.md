@@ -8,6 +8,20 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
 This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-cloud/) in 2024.
 
+## October 29, 2024
+
+**General changes**
+
+- New metric: add `tidbcloud_changefeed_checkpoint_ts` for Prometheus integration.
+
+    This metric tracks the checkpoint timestamp of a changefeed, representing the largest TSO (Timestamp Oracle) successfully written to the downstream. For more information on available metrics, see [Integrate TiDB Cloud with Prometheus and Grafana (Beta)](/tidb-cloud/monitor-prometheus-and-grafana-integration.md#metrics-available-to-prometheus).
+
+## October 22, 2024
+
+**General changes**
+
+- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.3](https://docs.pingcap.com/tidb/v7.5/release-7.5.3) to [v7.5.4](https://docs.pingcap.com/tidb/v7.5/release-7.5.4).
+
 ## October 15, 2024
 
 **API changes**

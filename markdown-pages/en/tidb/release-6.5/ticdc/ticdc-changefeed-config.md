@@ -71,6 +71,17 @@ enable-old-value = true
 # The default value is the same as the default SQL mode of TiDB.
 # sql-mode = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
 
+# The default value is false, indicating that the cluster is not in BDR mode.
+# If you want to build a BDR cluster using TiCDC, set this parameter to true and set the TiDB cluster to BDR mode.
+# For details, see https://docs.pingcap.com/tidb/v6.5/ticdc-bidirectional-replication
+# bdr-mode = false
+
+# Introduced in v6.5.6. The duration for which the changefeed is allowed to automatically retry when internal errors or exceptions occur. The default value is 30 minutes.
+# The changefeed enters the failed state if internal errors or exceptions occur in the changefeed and persist longer than the duration set by this parameter.
+# When the changefeed is in the failed state, you need to restart the changefeed manually for recovery.
+# The format of this parameter is "h m s", for example, "1h30m30s".
+changefeed-error-stuck-duration = "30m"
+
 [mounter]
 # The number of threads with which the mounter decodes KV data. The default value is 16.
 # worker-num = 16
@@ -98,7 +109,7 @@ rules = ['*.*', '!test.*']
 
 # The second event filter rule.
 # matcher = ["test.fruit"] # matcher is an allow list, which means this rule only applies to the fruit table in the test database.
-# ignore-event = ["drop table", "delete"] # Ignore the `drop table` DDL events and the `delete` DML events.
+# ignore-event = ["drop table", "delete"] # Ignore the `drop table` DDL events and the `delete` DML events. Note that when a value in the clustered index column is updated in TiDB, TiCDC splits an `UPDATE` event into `DELETE` and `INSERT` events. TiCDC cannot identify such events as `UPDATE` events and thus cannot correctly filter out such events.
 # ignore-sql = ["^drop table", "alter table"] # Ignore DDL statements that start with `drop table` or contain `alter table`.
 # ignore-insert-value-expr = "price > 1000 and origin = 'no where'" # Ignore insert DMLs that contain the conditions "price > 1000" and "origin = 'no where'".
 
