@@ -38,6 +38,7 @@
         "ja": {
           "repo": "pingcap/docs",
           "versions": [
+            "master",
             "release-8.2",
             "release-8.1",
             "release-7.5",
