@@ -8,6 +8,32 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
 このページには、2024 年の[TiDB Cloud](https://www.pingcap.com/tidb-cloud/)のリリース ノートが記載されています。
 
+## 2024年11月12日 {#november-12-2024}
+
+**一般的な変更**
+
+-   [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターの一時停止期間制限を追加します。
+
+    TiDB Cloud Dedicated では、最大一時停止期間が 7 日間に制限されるようになりました。7 日以内にクラスターを手動で再開しない場合は、 TiDB Cloud自動的に再開されます。
+
+    この変更は**、2024 年 11 月 12 日以降に作成された組織**にのみ適用されます。この日付以前に作成された組織は、事前に通知して、新しい一時停止動作に段階的に移行します。
+
+    詳細については[TiDB Cloud専用クラスタを一時停止または再開する](/tidb-cloud/pause-or-resume-tidb-cluster.md)参照してください。
+
+-   [Datadog 統合 (ベータ版)](/tidb-cloud/monitor-datadog-integration.md) 、新しい地域`AP1` (日本) のサポートが追加されました。
+
+-   [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターに対して新しい AWS リージョンをサポートします: `Mumbai (ap-south-1)` 。
+
+-   [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターに対する AWS `São Paulo (sa-east-1)`リージョンのサポートを削除します。
+
+## 2024年10月29日 {#october-29-2024}
+
+**一般的な変更**
+
+-   新しいメトリック: Prometheus 統合に`tidbcloud_changefeed_checkpoint_ts`を追加します。
+
+    このメトリックは、変更フィードのチェックポイント タイムスタンプを追跡し、ダウンストリームに正常に書き込まれた最大の TSO (Timestamp Oracle) を表します。使用可能なメトリックの詳細については、 [TiDB Cloud をPrometheus および Grafana と統合する (ベータ版)](/tidb-cloud/monitor-prometheus-and-grafana-integration.md#metrics-available-to-prometheus)参照してください。
+
 ## 2024年10月22日 {#october-22-2024}
 
 **一般的な変更**
@@ -122,7 +148,7 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
     テーブルに[ベクトルデータ型](/tidb-cloud/vector-search-data-types.md)含まれている場合は、選択した距離関数に基づいてベクトル距離を計算するベクトル検索エンドポイントを自動的に生成できます。
 
-    この機能により、 [ディファイ](https://docs.dify.ai/guides/tools)や[GPT は](https://openai.com/blog/introducing-gpts)などの AI プラットフォームとのシームレスな統合が可能になり、高度な自然言語処理と AI 機能によってアプリケーションが強化され、より複雑なタスクやインテリジェントなソリューションが実現します。
+    この機能により、 [ディファイ](https://docs.dify.ai/guides/tools)や[GPT](https://openai.com/blog/introducing-gpts)などの AI プラットフォームとのシームレスな統合が可能になり、高度な自然言語処理と AI 機能によってアプリケーションが強化され、より複雑なタスクやインテリジェントなソリューションが実現します。
 
     詳細については[エンドポイントを自動的に生成する](/tidb-cloud/data-service-manage-endpoint.md#generate-an-endpoint-automatically)および[データアプリをサードパーティツールと統合する](/tidb-cloud/data-service-integrations.md)参照してください。
 
