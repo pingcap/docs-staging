@@ -138,7 +138,7 @@ Starting from v7.4.0, the TiFlash configuration item `enable_resource_control` i
 
 </CustomContent>
 
-For more information about the resource control mechanism and parameters, see [RFC: Global Resource Control in TiDB](https://github.com/pingcap/tidb/blob/release-7.5/docs/design/2022-11-25-global-resource-control.md) and [TiFlash Resource Control](https://github.com/pingcap/tiflash/blob/release-7.5/docs/design/2023-09-21-tiflash-resource-control.md).
+For more information about the resource control mechanism and parameters, see [RFC: Global Resource Control in TiDB](https://github.com/pingcap/tidb/blob/release-8.1/docs/design/2022-11-25-global-resource-control.md) and [TiFlash Resource Control](https://github.com/pingcap/tiflash/blob/release-8.1/docs/design/2023-09-21-tiflash-resource-control.md).
 
 ## How to use resource control
 
@@ -257,10 +257,6 @@ SELECT /*+ RESOURCE_GROUP(rg1) */ * FROM t limit 10;
 ```
 
 ### Manage queries that consume more resources than expected (Runaway Queries)
-
-> **Warning:**
->
-> This feature is experimental. It is not recommended that you use it in the production environment. This feature might be changed or removed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
 
 A runaway query is a query (`SELECT` statement only) that consumes more time or resources than expected. The term **runaway queries** is used in the following to describe the feature of managing the runaway query.
 
@@ -587,6 +583,33 @@ When you enable resource control, the system table [`INFORMATION_SCHEMA.SLOW_QUE
 
 The system table [`INFORMATION_SCHEMA.statements_summary`](/statement-summary-tables.md#statements_summary) in TiDB stores the normalized and aggregated statistics of SQL statements. You can use the system table to view and analyze the execution performance of SQL statements. It also contains statistics about resource control, including the resource group name, RU consumption, and the time spent waiting for available RUs. For more details, see [`statements_summary` fields description](/statement-summary-tables.md#statements_summary-fields-description).
 
+### View the RU consumption of resource groups
+
+Starting from v7.6.0, TiDB provides the system table [`mysql.request_unit_by_group`](/mysql-schema/mysql-schema.md#system-tables-related-to-resource-control) to store the historical records of the RU consumption of each resource group.
+
+Example:
+
+```sql
+SELECT * FROM request_unit_by_group LIMIT 5;
+```
+
+```
++----------------------------+----------------------------+----------------+----------+
+| start_time                 | end_time                   | resource_group | total_ru |
++----------------------------+----------------------------+----------------+----------+
+| 2024-01-01 00:00:00.000000 | 2024-01-02 00:00:00.000000 | default        |   334147 |
+| 2024-01-01 00:00:00.000000 | 2024-01-02 00:00:00.000000 | rg1            |     4172 |
+| 2024-01-01 00:00:00.000000 | 2024-01-02 00:00:00.000000 | rg2            |    34028 |
+| 2024-01-02 00:00:00.000000 | 2024-01-03 00:00:00.000000 | default        |   334088 |
+| 2024-01-02 00:00:00.000000 | 2024-01-03 00:00:00.000000 | rg1            |     3850 |
++----------------------------+----------------------------+----------------+----------+
+5 rows in set (0.01 sec)
+```
+
+> **Note:**
+>
+> The data of `mysql.request_unit_by_group` is automatically imported by a TiDB scheduled task at the end of each day. If the RU consumption of a resource group is 0 on a certain day, no record is generated. By default, this table stores data for the last three months (up to 92 days). Data that exceeds this period is automatically cleared.
+
 ## Monitoring metrics and charts
 
 <CustomContent platform="tidb">
@@ -634,4 +657,4 @@ The resource control feature does not impact the regular usage of data import, e
 * [CREATE RESOURCE GROUP](/sql-statements/sql-statement-create-resource-group.md)
 * [ALTER RESOURCE GROUP](/sql-statements/sql-statement-alter-resource-group.md)
 * [DROP RESOURCE GROUP](/sql-statements/sql-statement-drop-resource-group.md)
-* [RESOURCE GROUP RFC](https://github.com/pingcap/tidb/blob/release-7.5/docs/design/2022-11-25-global-resource-control.md)
+* [RESOURCE GROUP RFC](https://github.com/pingcap/tidb/blob/release-8.1/docs/design/2022-11-25-global-resource-control.md)

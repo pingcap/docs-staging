@@ -9,29 +9,22 @@ The `UPDATE` statement is used to modify data in a specified table.
 
 ## Synopsis
 
-**UpdateStmt:**
+```ebnf+diagram
+UpdateStmt ::=
+    "UPDATE" UpdateOption
+(   TableRef "SET" Assignment ("," Assignment)* WhereClause? OrderBy? Limit?
+|   TableRefs "SET" Assignment ("," Assignment)* WhereClause?
+)
 
-![UpdateStmt](https://download.pingcap.com/images/docs/sqlgram/UpdateStmt.png)
+UpdateOption ::=
+    OptimizerHints? ("LOW_PRIORITY" | "HIGH_PRIORITY" | "DELAYED")? "IGNORE"?
 
-**PriorityOpt:**
+TableRef ::=
+    ( TableFactor | JoinTable )
 
-![PriorityOpt](https://download.pingcap.com/images/docs/sqlgram/PriorityOpt.png)
-
-**TableRef:**
-
-![TableRef](https://download.pingcap.com/images/docs/sqlgram/TableRef.png)
-
-**TableRefs:**
-
-![TableRefs](https://download.pingcap.com/images/docs/sqlgram/TableRefs.png)
-
-**AssignmentList:**
-
-![AssignmentList](https://download.pingcap.com/images/docs/sqlgram/AssignmentList.png)
-
-**WhereClauseOptional:**
-
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
+TableRefs ::=
+    EscapedTableRef ("," EscapedTableRef)*
+```
 
 ## Examples
 

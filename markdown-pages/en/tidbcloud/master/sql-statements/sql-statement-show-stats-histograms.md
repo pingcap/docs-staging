@@ -1,31 +1,48 @@
 ---
 title: SHOW STATS_HISTOGRAMS
+aliases: ['/tidb/stable/sql-statement-show-histograms']
 summary: An overview of the usage of SHOW HISTOGRAMS for TiDB database.
 ---
 
 # SHOW STATS_HISTOGRAMS
 
-This statement shows the histogram information collected by the `ANALYZE` statement.
+This statement shows the histogram information collected by the [`ANALYZE` statement](/sql-statements/sql-statement-analyze-table.md) as part of database [statistics](/statistics.md).
+
+Currently, the `SHOW STATS_HISTOGRAMS` statement returns the following columns:
+
+| Column name | Description            |
+| -------- | ------------- |
+| `Db_name` | Database name |
+| `Table_name` | The table name |
+| `Partition_name` | The partition name |
+| `Column_name` | The column name (when `is_index` is `0`) or the index name (when `is_index` is `1`) |
+| `Is_index` | Whether it is an index column or not |
+| `Update_time` | The update time |
+| `Distinct_count` | The distinct count |
+| `Null_count` | NULL count |
+| `Avg_col_size` | The average col size |
+| `Correlation` | Pearson correlation coefficient between this column and the integer primary key column, indicating the degree of association between the two columns |
+| `Load_status` | Load status, such as `allEvicted` and `allLoaded` |
+| `Total_mem_usage` | The total memory usage |
+| `Hist_mem_usage` | The historical memory usage |
+| `Topn_mem_usage` | The TopN memory usage |
+| `Cms_mem_usage` | The CMS memory usage |
 
 ## Synopsis
 
-**ShowStmt**
+```ebnf+diagram
+ShowStatsHistogramsStmt ::=
+    "SHOW" "STATS_HISTOGRAMS" ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
-
-**ShowTargetFiltertable**
-
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
-
-**ShowLikeOrWhereOpt**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## Examples
 
-
 ```sql
-show stats_histograms;
+SHOW STATS_HISTOGRAMS;
 ```
 
 ```sql
@@ -39,9 +56,8 @@ show stats_histograms;
 3 rows in set (0.00 sec)
 ```
 
-
 ```sql
-show stats_histograms where table_name = 't2';
+SHOW STATS_HISTOGRAMS WHERE table_name = 't2';
 ```
 
 ```sql

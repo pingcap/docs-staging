@@ -9,33 +9,10 @@ The statements `SET NAMES`, `SET CHARACTER SET` and `SET CHARSET` modify the var
 
 ## Synopsis
 
-**SetNamesStmt:**
-
-![SetNamesStmt](https://download.pingcap.com/images/docs/sqlgram/SetNamesStmt.png)
-
-**VariableAssignmentList:**
-
-![VariableAssignmentList](https://download.pingcap.com/images/docs/sqlgram/VariableAssignmentList.png)
-
-**VariableAssignment:**
-
-![VariableAssignment](https://download.pingcap.com/images/docs/sqlgram/VariableAssignment.png)
-
-**CharsetName:**
-
-![CharsetName](https://download.pingcap.com/images/docs/sqlgram/CharsetName.png)
-
-**StringName:**
-
-![StringName](https://download.pingcap.com/images/docs/sqlgram/StringName.png)
-
-**CharsetKw:**
-
-![CharsetKw](https://download.pingcap.com/images/docs/sqlgram/CharsetKw.png)
-
-**CharsetNameOrDefault:**
-
-![CharsetNameOrDefault](https://download.pingcap.com/images/docs/sqlgram/CharsetNameOrDefault.png)
+```ebnf+diagram
+SetNamesStmt ::=
+    "SET" ("NAMES" ("DEFAULT" | CharsetName ("COLLATE" ("DEFAULT" | CollationName))?) | ("CHARSET" | ("CHAR" | "CHARACTER") "SET") ("DEFAULT" | CharsetName))
+```
 
 ## Examples
 

@@ -11,7 +11,7 @@ If you encounter a situation where hints do not take effect, see [Troubleshoot c
 
 ## Syntax
 
-Optimizer hints are case insensitive and specified within `/*+ ... */` comments following the `SELECT`, `UPDATE` or `DELETE` keyword in a SQL statement. Optimizer hints are not currently supported for `INSERT` statements.
+Optimizer hints are case insensitive and specified within `/*+ ... */` comments following the `SELECT`, `INSERT`, `UPDATE` or `DELETE` keyword in a SQL statement.
 
 Multiple hints can be specified by separating with commas. For example, the following query uses three different hints:
 
@@ -948,6 +948,27 @@ SHOW WARNINGS;
 ```
 
 As you can see from the preceding example, the `INL_JOIN` hint does not take effect. This is due to a limitation of the optimizer that prevents using the `Projection` or `Selection` operator as the probe side of `IndexJoin`.
+
+Starting from TiDB v8.0.0, you can avoid this issue by setting [`tidb_enable_inl_join_inner_multi_pattern`](/system-variables.md#tidb_enable_inl_join_inner_multi_pattern-new-in-v700) to `ON`.
+
+```sql
+SET @@tidb_enable_inl_join_inner_multi_pattern=ON;
+Query OK, 0 rows affected (0.00 sec)
+
+EXPLAIN SELECT /*+ INL_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id=t2.id AND SUBSTR(t1.tname,1,2)=SUBSTR(t2.tname,1,2);
++------------------------------+--------------+-----------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| id                           | estRows      | task      | access object | operator info                                                                                                                              |
++------------------------------+--------------+-----------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| IndexJoin_18                 | 12500.00     | root      |               | inner join, inner:Projection_14, outer key:test.t1.id, inner key:test.t2.id, equal cond:eq(Column#5, Column#6), eq(test.t1.id, test.t2.id) |
+| ├─Projection_32(Build)       | 10000.00     | root      |               | test.t1.id, test.t1.tname, substr(test.t1.tname, 1, 2)->Column#5                                                                           |
+| │ └─TableReader_34           | 10000.00     | root      |               | data:TableFullScan_33                                                                                                                      |
+| │   └─TableFullScan_33       | 10000.00     | cop[tikv] | table:t1      | keep order:false, stats:pseudo                                                                                                             |
+| └─Projection_14(Probe)       | 100000000.00 | root      |               | test.t2.id, test.t2.tname, substr(test.t2.tname, 1, 2)->Column#6                                                                           |
+|   └─TableReader_13           | 10000.00     | root      |               | data:TableRangeScan_12                                                                                                                     |
+|     └─TableRangeScan_12      | 10000.00     | cop[tikv] | table:t2      | range: decided by [eq(test.t2.id, test.t1.id)], keep order:false, stats:pseudo                                                             |
++------------------------------+--------------+-----------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+7 rows in set (0.00 sec)
+```
 
 #### `INL_JOIN`, `INL_HASH_JOIN`, and `INL_MERGE_JOIN` hints do not take effect due to collation incompatibility
 

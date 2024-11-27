@@ -33,10 +33,6 @@ You can follow the [MySQL documentation](https://dev.mysql.com/doc/connector-j/e
 >
 > There is a [bug](https://bugs.mysql.com/bug.php?id=106252) in the MySQL Connector/J 8.0 versions before 8.0.31 (see [MySQL JDBC bugs](/develop/dev-guide-third-party-tools-compatibility.md#mysql-jdbc-bugs) for details), which might cause threads to hang when using TiDB versions earlier than v6.3.0. To avoid this issue, do **NOT** use MySQL Connector/J 8.0.31 or an earlier version.
 
-> **Note:**
->
-> When you are using MySQL Connector/J 8.0 with TiDB v7.5.2 or earlier versions, it is recommended to set the TiDB configuration item [`server-version`](https://docs.pingcap.com/tidb/v7.5/tidb-configuration-file#server-version) to `"5.7.25-TiDB-v7.5.x"`. MySQL Connector/J attempts to access the [`information_schema.KEYWORDS`](/information-schema/information-schema-keywords.md) table if the TiDB server reports a version of MySQL 8.0.11 or later. However, this table is introduced starting from v7.5.3 and does not exist in earlier versions.
-
 For an example of how to build a complete application, see [Build a simple CRUD app with TiDB and JDBC](/develop/dev-guide-sample-application-java-jdbc.md).
 
 </div>
@@ -48,7 +44,7 @@ Support level: **Full**
 
 The authentication based on SM3 is only supported in TiDB's TiDB-JDBC.
 
-If you use Maven, add the following content to the `<dependencies></dependencies>` section in the `pom.xml` file:
+If you are using Maven, add the following content to the `<dependencies></dependencies>` section in the `pom.xml` file:
 
 ```xml
 <dependency>
@@ -104,7 +100,7 @@ Support level: **Full**
 
 To avoid manually managing complex relationships between different dependencies of an application, you can use [Gradle](https://gradle.org/install) or [Maven](https://maven.apache.org/install.html) to get all dependencies of your application, including those indirect ones. Note that only Hibernate `6.0.0.Beta2` or above supports the TiDB dialect.
 
-If you are using **Maven**, add the following to your `<dependencies></dependencies>`:
+If you are using Maven, add the following to your `<dependencies></dependencies>`:
 
 ```xml
 <dependency>
@@ -120,7 +116,7 @@ If you are using **Maven**, add the following to your `<dependencies></dependenc
 </dependency>
 ```
 
-If you are using **Gradle**, add the following to your `dependencies`:
+If you are using Gradle, add the following to your `dependencies`:
 
 ```gradle
 implementation 'org.hibernate:hibernate-core:6.2.3.Final'
@@ -187,7 +183,7 @@ Currently, tidb-loadbalance supports the following policies: roundrobin, random,
 >
 > tidb-loadbalance must be used with [mysql-connector-j](https://github.com/pingcap/mysql-connector-j).
 
-If you use Maven, add the following content to the element body of `<dependencies></dependencies>` in the `pom.xml` file:
+If you are using Maven, add the following content to the element body of `<dependencies></dependencies>` in the `pom.xml` file:
 
 ```xml
 <dependency>
@@ -202,7 +198,7 @@ If you use Maven, add the following content to the element body of `<dependencie
 </dependency>
 ```
 
-If you use Gradle, add the following content to `dependencies`:
+If you are using Gradle, add the following content to `dependencies`:
 
 ```gradle
 implementation group: 'io.github.lastincisor', name: 'mysql-connector-java', version: '8.0.29-tidb-1.0.0'
