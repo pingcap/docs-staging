@@ -145,7 +145,7 @@ CREATE GLOBAL TEMPORARY TABLE IF NOT EXISTS top_50_eldest_authors_global (
 </div>
 <div label="Java" value="java">
 
-グローバル一時テーブルを使用する場合は、まず自動コミット モードをオフにする必要があります。JavaJava、 `conn.setAutoCommit(false);`ステートメントでこれを行うことができ、 `conn.commit();`でトランザクションを明示的にコミットできます。トランザクション中にグローバル一時テーブルに追加されたデータは、トランザクションがコミットまたはキャンセルされた後にクリアされます。
+グローバル一時テーブルを使用する場合は、まず自動コミット モードをオフにする必要があります。Java では、`conn.setAutoCommit(false);`ステートメントでこれを行うことができ、 `conn.commit();`でトランザクションを明示的にコミットできます。トランザクション中にグローバル一時テーブルに追加されたデータは、トランザクションがコミットまたはキャンセルされた後にクリアされます。
 
 ```java
 public List<Author> getTop50EldestAuthorInfo() throws SQLException {
@@ -194,7 +194,7 @@ public List<Author> getTop50EldestAuthorInfo() throws SQLException {
 
 `SHOW [FULL] TABLES`ステートメントでは、既存のグローバル一時テーブルのリストを表示できますが、リストにローカル一時テーブルは表示されません。現時点では、TiDB には一時テーブル情報を格納するための同様の`information_schema.INNODB_TEMP_TABLE_INFO`システム テーブルはありません。
 
-たとえば、テーブル リストにはグローバル一時テーブル`top_50_eldest_authors_global`が表示されますが、テーブル`top_50_eldest_authors`は表示されません。
+たとえば、テーブル リストにはグローバル一時テーブル`top_50_eldest_authors_global`表示されますが、テーブル`top_50_eldest_authors`は表示されません。
 
     +-------------------------------+------------+
     | Tables_in_bookshop            | Table_type |
@@ -252,7 +252,7 @@ TiDB の一時テーブルの制限については、 [他の TiDB 機能との�
 
 -   [一時テーブル](/temporary-tables.md)
 
-## 助けが必要？ {#need-help}
+## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 

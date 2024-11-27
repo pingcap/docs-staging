@@ -1,6 +1,6 @@
 ---
 title: TIFLASH_SEGMENTS
-summary: TIFLASH_SEGMENTS information_schema テーブルについて学習します。
+summary: TIFLASH_SEGMENTS` information_schema テーブルについて学習します。
 ---
 
 # TIFLASH_セグメント {#tiflash-segments}
@@ -8,10 +8,6 @@ summary: TIFLASH_SEGMENTS information_schema テーブルについて学習し�
 > **警告：**
 >
 > このテーブルは不安定であり、TiDB の新しいリリースで予告なしに変更される可能性があるため、本番環境では使用しないでください。
-
-> **注記：**
->
-> このテーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 `TIFLASH_SEGMENTS`表は、 TiFlashのデータ テーブルに関する統計情報を提供します。
 
@@ -68,7 +64,7 @@ DESC tiflash_segments;
 -   `TIDB_DATABASE` : TiDB 内のデータベース名。セグメントはこのデータベース内のテーブルに属します。
 -   `TIDB_TABLE` : TiDB 内のテーブル名。セグメントはこのテーブルに属します。
 -   `TABLE_ID` : セグメントが属するテーブルの内部 ID。この ID は TiDB クラスター内で一意です。
--   `IS_TOMBSTONE` : セグメントが属するテーブルがリサイクル可能かどうかを示します`1`はテーブルがリサイクル可能であることを示します。4 `0`テーブルが通常の状態であることを示します。
+-   `IS_TOMBSTONE` : セグメントが属するテーブルがリサイクル可能かどうかを示します。2 `1`テーブルがリサイクル可能であることを示します。4 `0`テーブルが通常の状態であることを示します。
 -   `SEGMENT_ID` : テーブル内で一意のセグメント ID。
 -   `RANGE` : セグメントに含まれるデータの範囲。
 -   `EPOCH` : セグメントの更新されたバージョン。各セグメントのバージョン番号は単調に増加します。
@@ -81,7 +77,7 @@ DESC tiflash_segments;
 -   `DELTA_MEMTABLE_DELETE_RANGES` : デルタレイヤーにキャッシュされた削除範囲の数。
 -   `DELTA_PERSISTED_PAGE_ID` : デルタレイヤーのディスクに保存されているデータの ID。
 -   `DELTA_PERSISTED_ROWS` : デルタレイヤーに保存されたデータの行の合計数。
--   `DELTA_PERSISTED_SIZE` : Deltaレイヤーに保持されるデータの合計サイズ (バイト単位)。
+-   `DELTA_PERSISTED_SIZE` : デルタレイヤーに保持されるデータの合計サイズ (バイト単位)。
 -   `DELTA_PERSISTED_COLUMN_FILES` : デルタレイヤーに保持されるカラムファイルの数。
 -   `DELTA_PERSISTED_DELETE_RANGES` : デルタレイヤーに保持される削除範囲の数。
 -   `DELTA_CACHE_SIZE` : デルタレイヤーのキャッシュのサイズ (バイト単位)。

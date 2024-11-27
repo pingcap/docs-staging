@@ -7,20 +7,12 @@ summary: TiDB データベースの ADD INDEX の使用法の概要。
 
 `ALTER TABLE.. ADD INDEX`文は既存のテーブルにインデックスを追加します。この操作は TiDB ではオンラインで行われるため、インデックスを追加してもテーブルへの読み取りや書き込みはブロックされません。
 
-<CustomContent platform="tidb-cloud">
-
-> **注記：**
->
-> 4 つの vCPU を備えた[TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)のクラスターの場合、インデックス作成中にリソース制限がクラスターの安定性に影響するのを防ぐために、 [`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630)手動で無効にすることをお勧めします。この設定を無効にすると、トランザクションを使用してインデックスを作成できるようになり、クラスターへの全体的な影響が軽減されます。
-
-</CustomContent>
-
 <CustomContent platform="tidb">
 
 > **警告：**
 >
-> -   クラスター内で DDL ステートメントが実行されているときは、TiDB クラスターをアップグレードし**ないでください**(通常は、 `ADD INDEX`や列タイプの変更などの時間のかかる DDL ステートメントの場合)。
-> -   アップグレードの前に、 [`ADMIN SHOW DDL`](/sql-statements/sql-statement-admin-show-ddl.md)コマンドを使用して、TiDB クラスターに実行中の DDL ジョブがあるかどうかを確認することをお勧めします。クラスターに DDL ジョブがある場合は、クラスターをアップグレードするには、DDL の実行が完了するまで待つか、 [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md)コマンドを使用して DDL ジョブをキャンセルしてからクラスターをアップグレードします。
+> -   クラスター内で DDL ステートメントが実行されているときは、TiDB クラスターをアップグレード**しないでください**(通常は、 `ADD INDEX`や列タイプの変更などの時間のかかる DDL ステートメントの場合)。
+> -   アップグレードの前に、 [`ADMIN SHOW DDL`](/sql-statements/sql-statement-admin-show-ddl.md)コマンドを使用して、TiDB クラスターに実行中の DDL ジョブがあるかどうかを確認することをお勧めします。クラスターに DDL ジョブがある場合は、クラスターをアップグレードするには、DDL の実行が完了するまで待つか、 [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md)コマンドを使用して DDL ジョブをキャンセルしてからクラスターをアップグレードしてください。
 > -   また、クラスターのアップグレード中は、DDL ステートメントを実行し**ないでください**。そうしないと、未定義の動作の問題が発生する可能性があります。
 >
 > TiDB を v7.1.0 からそれ以降のバージョンにアップグレードする場合、前述の制限は無視できます。詳細については、 [TiDBスムーズアップグレードの制限](/smooth-upgrade-tidb.md)参照してください。
@@ -88,7 +80,7 @@ mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 
 ## MySQL 互換性 {#mysql-compatibility}
 
--   `FULLTEXT` `HASH`インデックスはサポートされて`SPATIAL`ません。
+-   `FULLTEXT` `HASH` `SPATIAL`はサポートされていません。
 -   降順インデックスはサポートされていません ( MySQL 5.7と同様)。
 -   `CLUSTERED`タイプの主キーをテーブルに追加することはサポートされていません。 `CLUSTERED`タイプの主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
 

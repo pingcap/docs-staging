@@ -5,13 +5,13 @@ summary: TiDB でサポートされている文字列型について学習しま
 
 # 文字列型 {#string-types}
 
-TiDB は、 `CHAR` 、 `VARCHAR` 、 `BINARY` 、 `VARBINARY` 、 `BLOB` 、 `TEXT` 、 `ENUM` 、 `SET`を含むすべての MySQL 文字列型をサポートしています。詳細については、 [MySQL の文字列型](https://dev.mysql.com/doc/refman/8.0/en/string-types.html)を参照してください。
+TiDB は`CHAR` 、 `VARCHAR` 、 `BINARY` 、 `VARBINARY` 、 `BLOB` 、 `TEXT` 、 `ENUM` 、 `SET`を含むすべての MySQL 文字列型をサポートしています。詳細については、 [MySQL の文字列型](https://dev.mysql.com/doc/refman/8.0/en/string-types.html)参照してください。
 
 ## サポートされているタイプ {#supported-types}
 
 ### <code>CHAR</code>型 {#code-char-code-type}
 
-`CHAR`は固定長文字列です。M は列の長さを文字数 (バイト数ではありません) で表します。M の範囲は 0 ～ 255 です。2 タイプとは異なり、 `VARCHAR` `CHAR`にデータを挿入すると、末尾のスペースは切り捨てられます。
+`CHAR`は固定長文字列です。M は列の長さを文字数 (バイト数ではありません) で表します。M の範囲は 0 ～ 255 です。2 タイプとは異なり、 `VARCHAR`列にデータを挿入すると、末尾のスペースは`CHAR`られます。
 
 ```sql
 [NATIONAL] CHAR[(M)] [CHARACTER SET charset_name] [COLLATE collation_name]
@@ -19,7 +19,7 @@ TiDB は、 `CHAR` 、 `VARCHAR` 、 `BINARY` 、 `VARBINARY` 、 `BLOB` 、 `TE
 
 ### <code>VARCHAR</code>型 {#code-varchar-code-type}
 
-`VARCHAR`は可変長の文字列です。M は文字数 (バイト数ではありません) での最大列長を表します`VARCHAR`の最大サイズは 65,535 バイトを超えることはできません。最大行長と使用されている文字セットによって`VARCHAR`さが決まります。
+`VARCHAR`可変長の文字列です。M は文字数 (バイト数ではありません) での最大列長を表します`VARCHAR`の最大サイズは 65,535 バイトを超えることはできません。最大行長と使用されている文字セットによって`VARCHAR`さが決まります。
 
 1 つの文字が占めるスペースは、文字セットによって異なる場合があります。次の表は、1 つの文字が消費するバイト数と、各文字セットの`VARCHAR`列の長さの範囲を示しています。
 
@@ -37,7 +37,7 @@ TiDB は、 `CHAR` 、 `VARCHAR` 、 `BINARY` 、 `VARBINARY` 、 `BLOB` 、 `TE
 
 ### <code>TEXT</code>タイプ {#code-text-code-type}
 
-`TEXT`は可変長の文字列です。列の最大長は 65,535 バイトです。オプションの M 引数は文字数で、 `TEXT`列の最適な型を自動的に選択するために使用されます。たとえば、 `TEXT(60)`最大 255 バイトを保持できる`TINYTEXT`データ型を生成し、これは 1 文字あたり最大 4 バイト (4×60=240) の 60 文字の UTF-8 文字列に適合します。M 引数の使用は推奨されません。
+`TEXT`可変長の文字列です。列の最大長は 65,535 バイトです。オプションの M 引数は文字数で、 `TEXT`列の最適な型を自動的に選択するために使用されます。たとえば、 `TEXT(60)`最大 255 バイトを保持できる`TINYTEXT`データ型を生成し、これは 1 文字あたり最大 4 バイト (4×60=240) の 60 文字の UTF-8 文字列に適合します。M 引数の使用は推奨されません。
 
 ```sql
 TEXT[(M)] [CHARACTER SET charset_name] [COLLATE collation_name]
@@ -72,7 +72,7 @@ MEDIUMTEXT [CHARACTER SET charset_name] [COLLATE collation_name]
 
 <CustomContent platform="tidb">
 
-`LONGTEXT`型は[`TEXT`タイプ](#text-type)型と似ています。違いは、 `LONGTEXT`の最大列長が 4,294,967,295 であることです。ただし、 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500)の制限により、TiDB の単一行の最大storageサイズはデフォルトで 6 MiB であり、構成を変更することで 120 MiB まで増やすことができます。
+`LONGTEXT`型は[`TEXT`タイプ](#text-type)と似ています。違いは、 `LONGTEXT`の最大列長が 4,294,967,295 であることです。ただし、 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500)の制限により、TiDB の単一行の最大storageサイズはデフォルトで 6 MiB であり、構成を変更することで 120 MiB まで増やすことができます。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
@@ -103,7 +103,7 @@ VARBINARY(M)
 
 ### <code>BLOB</code>型 {#code-blob-code-type}
 
-`BLOB`は大きなバイナリ ファイルです。M は、0 から 65,535 までの最大列長をバイト単位で表します。
+`BLOB`大きなバイナリ ファイルです。M は、0 から 65,535 までの最大列長をバイト単位で表します。
 
 ```sql
 BLOB[(M)]
@@ -143,7 +143,7 @@ MEDIUMBLOB
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-`LONGBLOB`型は[`BLOB`型](#blob-type)型と似ています。違いは、 `LONGBLOB`の最大列長が 4,294,967,295 であることです。ただし、 [`txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500)の制限により、TiDB の単一行の最大storageサイズはデフォルトで 6 MiB であり、構成を変更することで 120 MiB まで増やすことができます。
+`LONGBLOB`型は[`BLOB`型](#blob-type)と似ています。違いは、 `LONGBLOB`の最大列長が 4,294,967,295 であることです。ただし、 [`txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500)の制限により、TiDB の単一行の最大storageサイズはデフォルトで 6 MiB であり、構成を変更することで 120 MiB まで増やすことができます。
 
 </CustomContent>
 
@@ -153,7 +153,7 @@ LONGBLOB
 
 ### <code>ENUM</code>型 {#code-enum-code-type}
 
-`ENUM` 、テーブルの作成時に列仕様で明示的に列挙される許可された値のリストから選択された値を持つ文字列オブジェクトです。構文は次のとおりです。
+`ENUM`は、テーブルの作成時に列仕様で明示的に列挙される許可された値のリストから選択された値を持つ文字列オブジェクトです。構文は次のとおりです。
 
 ```sql
 ENUM('value1','value2',...) [CHARACTER SET charset_name] [COLLATE collation_name]

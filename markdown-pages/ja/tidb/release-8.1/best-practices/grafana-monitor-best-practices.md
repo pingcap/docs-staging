@@ -9,7 +9,7 @@ summary: Grafana を使用して TiDB を監視するためのベスト プラ�
 
 ## 監視アーキテクチャ {#monitoring-architecture}
 
-[プロメテウス](https://prometheus.io/)は、多次元データ モデルと柔軟なクエリ言語を備えた時系列データベースです。2 [グラファナ](https://grafana.com/) 、メトリックを分析および視覚化するためのオープン ソース監視システムです。
+[プロメテウス](https://prometheus.io/) 、多次元データ モデルと柔軟なクエリ言語を備えた時系列データベースです。2 [グラファナ](https://grafana.com/)メトリックを分析および視覚化するためのオープン ソース監視システムです。
 
 ![The monitoring architecture in the TiDB cluster](https://download.pingcap.com/images/docs/prometheus-in-tidb.png)
 
@@ -21,12 +21,12 @@ TiDB 2.1.3 以降のバージョンでは、TiDB モニタリングはプル方�
 
 ## 監視データのソースと表示 {#source-and-display-of-monitoring-data}
 
-TiDB の 3 つのコア コンポーネント (TiDBサーバー、TiKVサーバー、PDサーバー) は、HTTP インターフェイスを介してメトリックを取得します。これらのメトリックはプログラム コードから収集され、ポートは次のとおりです。
+TiDB の 3 つのコア コンポーネント (TiDBサーバー、TiKVサーバー、PDサーバー) は、HTTP インターフェイスを介してメトリックを取得します。これらのメトリックはプログラム コードから収集され、デフォルトのポートは次のとおりです。
 
 | 成分       | ポート   |
 | :------- | :---- |
 | TiDBサーバー | 10080 |
-| TiKVサーバー | 20181 |
+| TiKVサーバー | 20180 |
 | PDサーバー   | 2379  |
 
 HTTP インターフェイスを介して SQL ステートメントの QPS を確認するには、次のコマンドを実行します。TiDBサーバーを例に挙げます。
@@ -72,7 +72,7 @@ Prometheusは多くのクエリ式と関数をサポートしています。詳�
 
 ![Edit query expression and check all dimensions](https://download.pingcap.com/images/docs/best-practices/edit-expression-check-dimensions.jpg)
 
-次に、 `type`の後に`instance`ディメンションを追加し、 `Legend format`フィールドに`{{instance}}`追加して、クエリ式を変更できます。このようにして、各 TiDBサーバーで実行されるさまざまな種類の SQL ステートメントの QPS を確認できます。
+次に、 `type`後に`instance`ディメンションを追加し、 `Legend format`フィールドに`{{instance}}`を追加して、クエリ式を変更できます。このようにして、各 TiDBサーバーで実行されるさまざまな種類の SQL ステートメントの QPS を確認できます。
 
 ![Add an instance dimension to the query expression](https://download.pingcap.com/images/docs/best-practices/add-instance-dimension.jpeg)
 
@@ -92,7 +92,7 @@ Y 軸を線形スケールに切り替えます。
 
 > **ヒント：**
 >
-> ヒント 2 とヒント 1 を組み合わせると、 `SELECT`ステートメントと`UPDATE`のステートメントのどちらが遅いかをすぐに分析するのに役立つ`sql_type`ディメンションを見つけることができます。また、遅い SQL ステートメントのインスタンスを見つけることもできます。
+> ヒント 2 とヒント 1 を組み合わせると、 `SELECT`ステートメントと`UPDATE`ステートメントのどちらが遅いかをすぐに分析するのに役立つ`sql_type`ディメンションを見つけることができます。また、遅い SQL ステートメントのインスタンスを見つけることもできます。
 
 ### ヒント3: Y軸のベースラインを変更して変化を強調する {#tip-3-modify-the-baseline-of-the-y-axis-to-amplify-changes}
 
@@ -112,7 +112,7 @@ Y 軸を線形スケールに切り替えます。
 
 ![Graphic presentation tools](https://download.pingcap.com/images/docs/best-practices/graph-tooltip.jpeg)
 
-次の図に示すように、**共有クロスヘア**と**共有ツールチップ**をそれぞれ使用して効果をテストできます。その後、スケールがリンクして表示されるため、問題を診断するときに 2 つのメトリックの相関関係を確認するのに便利です。
+次の図に示すように、**共有クロスヘア**と**共有ツールチップを**それぞれ使用して効果をテストできます。その後、スケールがリンクして表示されるため、問題を診断するときに 2 つのメトリックの相関関係を確認するのに便利です。
 
 グラフィックプレゼンテーションツールを**共有クロスヘア**に設定します。
 
@@ -124,13 +124,13 @@ Y 軸を線形スケールに切り替えます。
 
 ### ヒント5: 履歴のメトリックを確認するには、 <code>IP address:port number</code>を入力します。 {#tip-5-enter-code-ip-address-port-number-code-to-check-the-metrics-in-history}
 
-PD のダッシュボードには、現在のリーダーの指標のみが表示されます。履歴内の PD リーダーのステータスを確認する場合、その PD リーダーが`instance`フィールドのドロップダウン リストに存在しない場合は、手動で`IP address:2379`を入力してリーダーのデータを確認できます。
+PD のダッシュボードには、現在のリーダーの指標のみが表示されます。履歴内の PD リーダーのステータスを確認する場合、その PD リーダーが`instance`フィールドのドロップダウン リストに存在しない場合は、手動で`IP address:2379`入力してリーダーのデータを確認できます。
 
 ![Check the metrics in history](https://download.pingcap.com/images/docs/best-practices/manually-input-check-metric.jpeg)
 
 ### ヒント6: <code>Avg</code>関数を使用する {#tip-6-use-the-code-avg-code-function}
 
-通常、凡例ではデフォルトで`Max`と`Current`関数のみが使用可能です。指標が大きく変動する場合は、凡例に`Avg`機能などの他のサマリー関数を追加して、一定期間の全体的な傾向を確認できます。
+通常、凡例ではデフォルトで`Max`と`Current`関数のみ使用できます。指標が大きく変動する場合は、凡例に`Avg`機能などの他のサマリー関数を追加して、一定期間の全体的な傾向を確認できます。
 
 `Avg`関数などの集計関数を追加します。
 
@@ -153,7 +153,7 @@ Prometheus の API は次のようになります。
 ![The API of Prometheus](https://download.pingcap.com/images/docs/best-practices/prometheus-api-interface.jpg)
 
 ```bash
-curl -u user:pass 'http://__grafana_ip__:3000/api/datasources/proxy/1/api/v1/query_range?query=sum(tikv_engine_size_bytes%7Binstancexxxxxxxxx20181%22%7D)%20by%20(instance)&start=1565879269&end=1565882869&step=30' |python -m json.tool
+curl -u user:pass 'http://__grafana_ip__:3000/api/datasources/proxy/1/api/v1/query_range?query=sum(tikv_engine_size_bytes%7Binstancexxxxxxxxx20180%22%7D)%20by%20(instance)&start=1565879269&end=1565882869&step=30' |python -m json.tool
 ```
 
     {
@@ -161,7 +161,7 @@ curl -u user:pass 'http://__grafana_ip__:3000/api/datasources/proxy/1/api/v1/que
             "result": [
                 {
                     "metric": {
-                        "instance": "xxxxxxxxxx:20181"
+                        "instance": "xxxxxxxxxx:20180"
                     },
                     "values": [
                         [

@@ -1,18 +1,18 @@
 ---
 title: PARTITIONS
-summary: PARTITIONSテーブルは、パーティション化されたテーブルに関する情報を提供します。テーブルカタログ、テーブルスキーマ、テーブル名、パーティション名など27行の情報が含まれています。テーブルt1はHASH(id)で2つのパーティションに分割されており、それぞれの情報も含まれています。
+summary: PARTITIONS INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # パーティション {#partitions}
 
-`PARTITIONS`テーブルは、パーティション化されたテーブルに関する情報を提供します。
+`PARTITIONS`表には[パーティションテーブル](/partitioned-table.md)に関する情報が記載されています。
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC partitions;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +-------------------------------+--------------+------+------+---------+-------+
@@ -54,7 +54,7 @@ CREATE TABLE test.t1 (id INT NOT NULL PRIMARY KEY) PARTITION BY HASH (id) PARTIT
 SELECT * FROM PARTITIONS WHERE table_schema='test' AND table_name='t1'\G
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 *************************** 1. row ***************************
@@ -115,3 +115,7 @@ SUBPARTITION_ORDINAL_POSITION: NULL
    TIDB_PLACEMENT_POLICY_NAME: NULL
 2 rows in set (0.00 sec)
 ```
+
+## 参照 {#see-also}
+
+-   [パーティションを使用してステートメントを説明する](/explain-partitions.md)

@@ -5,15 +5,7 @@ summary: TiDB データベースの CREATE INDEX の使用法の概要。
 
 # インデックスの作成 {#create-index}
 
-このステートメントは、既存のテーブルに新しいインデックスを追加します。これは`ALTER TABLE .. ADD INDEX`の代替構文であり、MySQL との互換性のために含まれています。
-
-<CustomContent platform="tidb-cloud">
-
-> **注記：**
->
-> 4 つの vCPU を備えた[TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)のクラスターの場合、インデックス作成中にリソース制限がクラスターの安定性に影響するのを防ぐために、 [`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630)手動で無効にすることをお勧めします。この設定を無効にすると、トランザクションを使用してインデックスを作成できるようになり、クラスターへの全体的な影響が軽減されます。
-
-</CustomContent>
+このステートメントは、既存のテーブルに新しいインデックスを追加します。これは[`ALTER TABLE .. ADD INDEX`](/sql-statements/sql-statement-alter-table.md)の代替構文であり、MySQL との互換性のために含まれています。
 
 ## 概要 {#synopsis}
 
@@ -113,22 +105,26 @@ Query OK, 0 rows affected (0.31 sec)
 
 一部のシナリオでは、クエリのフィルタリング条件は特定の式に基づいています。これらのシナリオでは、通常のインデックスが機能せず、テーブル全体をスキャンすることによってのみクエリを実行できるため、クエリのパフォーマンスは比較的低くなります。式インデックスは、式に作成できる特殊なインデックスの一種です。式インデックスが作成されると、TiDB は式ベースのクエリにインデックスを使用できるため、クエリのパフォーマンスが大幅に向上します。
 
-たとえば、 `lower(col1)`に基づいてインデックスを作成する場合は、次の SQL ステートメントを実行します。
+たとえば、 `LOWER(col1)`に基づいてインデックスを作成する場合は、次の SQL ステートメントを実行します。
 
 ```sql
-CREATE INDEX idx1 ON t1 ((lower(col1)));
+CREATE INDEX idx1 ON t1 ((LOWER(col1)));
 ```
 
 または、次の同等のステートメントを実行することもできます。
 
 ```sql
-ALTER TABLE t1 ADD INDEX idx1((lower(col1)));
+ALTER TABLE t1 ADD INDEX idx1((LOWER(col1)));
 ```
 
 テーブルを作成するときに、式インデックスを指定することもできます。
 
 ```sql
-CREATE TABLE t1(col1 char(10), col2 char(10), index((lower(col1))));
+CREATE TABLE t1 (
+    col1 CHAR(10), 
+    col2 CHAR(10),
+    INDEX ((LOWER(col1)))
+);
 ```
 
 > **注記：**
@@ -141,11 +137,11 @@ CREATE TABLE t1(col1 char(10), col2 char(10), index((lower(col1))));
 DROP INDEX idx1 ON t1;
 ```
 
-式インデックスには、さまざまな種類の式が含まれます。正確性を保証するために、式インデックスの作成には、完全にテストされた一部の関数のみが許可されます。つまり、実本番環境では、これらの関数のみが式で許可されます。これらの関数は、 `tidb_allow_function_for_expression_index`変数をクエリすることで取得できます。現在、許可されている関数は次のとおりです。
+式インデックスにはさまざまな種類の式が含まれます。正確性を保証するために、式インデックスの作成には、完全にテストされた一部の関数のみが許可されます。つまり、本番環境では、これらの関数のみが式で許可されます。これらの関数は、 `tidb_allow_function_for_expression_index`変数をクエリすることで取得できます。現在、許可されている関数は次のとおりです。
 
-    json_array, json_array_append, json_array_insert, json_contains, json_contains_path, json_depth, json_extract, json_insert, json_keys, json_length, json_merge_patch, json_merge_preserve, json_object, json_pretty, json_quote, json_remove, json_replace, json_search, json_set, json_storage_size, json_type, json_unquote, json_valid, lower, md5, reverse, tidb_shard, upper, vitess_hash
+    JSON_ARRAY, JSON_ARRAY_APPEND, JSON_ARRAY_INSERT, JSON_CONTAINS, JSON_CONTAINS_PATH, JSON_DEPTH, JSON_EXTRACT, JSON_INSERT, JSON_KEYS, JSON_LENGTH, JSON_MERGE_PATCH, JSON_MERGE_PRESERVE, JSON_OBJECT, JSON_PRETTY, JSON_QUOTE, JSON_REMOVE, JSON_REPLACE, JSON_SEARCH, JSON_SET, JSON_STORAGE_SIZE, JSON_TYPE, JSON_UNQUOTE, JSON_VALID, LOWER, MD5, REVERSE, TIDB_SHARD, UPPER, VITESS_HASH
 
-上記のリストに含まれていない関数は、完全にテストされておらず、本番環境では推奨されません。 `case when`関数の`cast`の式も実験的と見なしており、実稼働本番では推奨されません。
+上記のリストに含まれていない関数については、完全にテストされておらず、本番環境では推奨されません。これは、実験的なものと見なすことができます。演算子、 `CAST` `CASE WHEN`の他の式も実験的ものと見なしており、本番環境では推奨されません。
 
 <CustomContent platform="tidb">
 
@@ -163,55 +159,55 @@ allow-expression-index = true
 >
 > 式インデックス内の式には、次の内容を含めることはできません。
 >
-> -   `rand()`や`now()`などの揮発性関数。
-> -   システム変数とユーザー変数。
+> -   `RAND()`や`NOW()`などの揮発性関数。
+> -   [システム変数](/system-variables.md)と[ユーザー変数](/user-defined-variables.md) 。
 > -   サブクエリ。
-> -   `AUTO_INCREMENT`列。この制限は、 `tidb_enable_auto_increment_in_generated` (システム変数) の値を`true`に設定することで解除できます。
-> -   ウィンドウ関数。
-> -   ROW関数(例: `create table t (j json, key k (((j,j))));` 。
-> -   集計関数。
+> -   [`AUTO_INCREMENT`](/auto-increment.md)列。この制限は、 [`tidb_enable_auto_increment_in_generated`](/system-variables.md#tidb_enable_auto_increment_in_generated) (システム変数) の値を`true`に設定することで解除できます。
+> -   [ウィンドウ関数](/functions-and-operators/window-functions.md) 。
+> -   ROW関数(例: `CREATE TABLE t (j JSON, INDEX k (((j,j))));` 。
+> -   [集計関数](/functions-and-operators/aggregate-group-by-functions.md) 。
 >
 > 式インデックスは暗黙的に名前を取得します (例: `_V$_{index_name}_{index_offset}` )。列にすでにある名前で新しい式インデックスを作成しようとすると、エラーが発生します。また、同じ名前で新しい列を追加した場合も、エラーが発生します。
 >
 > 式インデックスの式内の関数パラメータの数が正しいことを確認してください。
 >
-> インデックスの式に、返される型と長さの影響を受ける文字列関連の関数が含まれている場合、式インデックスの作成に失敗する可能性があります。このような状況では、 `cast()`関数を使用して、返される型と長さを明示的に指定できます。たとえば、 `repeat(a, 3)`式に基づいて式インデックスを作成するには、この式を`cast(repeat(a, 3) as char(20))`に変更する必要があります。
+> インデックスの式に、返される型と長さの影響を受ける文字列関連の関数が含まれている場合、式インデックスの作成に失敗する可能性があります。このような状況では、 `CAST()`関数を使用して、返される型と長さを明示的に指定できます。たとえば、 `REPEAT(a, 3)`式に基づいて式インデックスを作成するには、この式を`CAST(REPEAT(a, 3) AS CHAR(20))`に変更する必要があります。
 
 クエリ ステートメント内の式が式インデックス内の式と一致する場合、オプティマイザーはクエリの式インデックスを選択できます。統計によっては、オプティマイザーが式インデックスを選択しない場合もあります。このような場合は、オプティマイザー ヒントを使用して、オプティマイザーに式インデックスを選択させることができます。
 
-次の例では、式`lower(col1)`に式インデックス`idx`作成するとします。
+次の例では、式`LOWER(col1)`に式インデックス`idx`を作成するとします。
 
 クエリ ステートメントの結果が同じ式である場合、式インデックスが適用されます。次のステートメントを例に挙げます。
 
 ```sql
-SELECT lower(col1) FROM t;
+SELECT LOWER(col1) FROM t;
 ```
 
-フィルタリング条件に同じ式が含まれている場合は、式のインデックスが適用されます。次のステートメントを例に挙げます。
+フィルタリング条件に同じ式が含まれている場合は、式インデックスが適用されます。次のステートメントを例に挙げます。
 
 ```sql
-SELECT * FROM t WHERE lower(col1) = "a";
-SELECT * FROM t WHERE lower(col1) > "a";
-SELECT * FROM t WHERE lower(col1) BETWEEN "a" AND "b";
-SELECT * FROM t WHERE lower(col1) in ("a", "b");
-SELECT * FROM t WHERE lower(col1) > "a" AND lower(col1) < "b";
-SELECT * FROM t WHERE lower(col1) > "b" OR lower(col1) < "a";
+SELECT * FROM t WHERE LOWER(col1) = "a";
+SELECT * FROM t WHERE LOWER(col1) > "a";
+SELECT * FROM t WHERE LOWER(col1) BETWEEN "a" AND "b";
+SELECT * FROM t WHERE LOWER(col1) IN ("a", "b");
+SELECT * FROM t WHERE LOWER(col1) > "a" AND LOWER(col1) < "b";
+SELECT * FROM t WHERE LOWER(col1) > "b" OR LOWER(col1) < "a";
 ```
 
 クエリが同じ式でソートされている場合は、式インデックスが適用されます。次のステートメントを例に挙げます。
 
 ```sql
-SELECT * FROM t ORDER BY lower(col1);
+SELECT * FROM t ORDER BY LOWER(col1);
 ```
 
-同じ式が集約関数（ `GROUP BY` ）に含まれている場合は、式のインデックスが適用されます。次の文を例に挙げます。
+同じ式が集約関数（ `GROUP BY` ）に含まれている場合は、式インデックスが適用されます。次の文を例に挙げます。
 
 ```sql
-SELECT max(lower(col1)) FROM t;
-SELECT min(col1) FROM t GROUP BY lower(col1);
+SELECT MAX(LOWER(col1)) FROM t;
+SELECT MIN(col1) FROM t GROUP BY LOWER(col1);
 ```
 
-式インデックスに対応する式を確認するには、 `show index`を実行するか、システム テーブル`information_schema.tidb_indexes`とテーブル`information_schema.STATISTICS`を確認します。出力の`Expression`列は対応する式を示します。式以外のインデックスの場合、列には`NULL`表示されます。
+式インデックスに対応する式を確認するには、 [`SHOW INDEX`](/sql-statements/sql-statement-show-indexes.md)実行するか、システム テーブル[`information_schema.tidb_indexes`](/information-schema/information-schema-tidb-indexes.md)とテーブル[`information_schema.STATISTICS`](/information-schema/information-schema-statistics.md)を確認します。出力の`Expression`列は対応する式を示します。式以外のインデックスの場合、列には`NULL`が表示されます。
 
 式インデックスの維持コストは、行が挿入または更新されるたびに式の値を計算する必要があるため、他のインデックスの維持コストよりも高くなります。式の値は既にインデックスに格納されているため、オプティマイザーが式インデックスを選択するときにこの値を再計算する必要はありません。
 
@@ -233,7 +229,7 @@ SELECT min(col1) FROM t GROUP BY lower(col1);
 
 ### 複数値インデックスを作成する {#create-multi-valued-indexes}
 
-式インデックスを作成する場合と同様に、インデックス定義で`CAST(... AS ... ARRAY)`式を使用して、複数値インデックスを作成できます。
+式インデックスを作成する場合と同様に、インデックス定義で[`CAST(... AS ... ARRAY)`](/functions-and-operators/cast-functions-and-operators.md#cast)関数を使用して、複数値インデックスを作成できます。
 
 ```sql
 mysql> CREATE TABLE customers (
@@ -328,18 +324,19 @@ Query OK, 1 row affected (0.00 sec)
 -   複数値インデックスによって使用される追加のstorageスペース = 行あたりの配列要素の平均数 * 通常のセカンダリ インデックスによって使用されるスペース。
 -   通常のインデックスと比較すると、DML 操作では複数値インデックスのインデックス レコードがより多く変更されるため、複数値インデックスは通常のインデックスよりもパフォーマンスに大きな影響を与えます。
 -   多値インデックスは特殊なタイプの式インデックスであるため、多値インデックスには式インデックスと同じ制限があります。
--   テーブルで複数値インデックスが使用されている場合、 BR、TiCDC、またはTiDB Lightning を使用して、v6.6.0 より前の TiDB クラスターにテーブルをバックアップ、複製、またはインポートすることはできません。
--   複数値インデックスの収集された統計が不足しているため、現在、複数値インデックスの選択率は固定された仮定に基づいています。クエリが複数の複数値インデックスにヒットすると、TiDB は最適なインデックスを選択できない可能性があります。このような場合は、 [`use_index_merge`](/optimizer-hints.md#use_index_merget1_name-idx1_name--idx2_name-)オプティマイザ ヒントを使用して固定実行プランを適用することをお勧めします。
+-   テーブルで複数値インデックスが使用されている場合、 BR、TiCDC、またはTiDB Lightningを使用して、v6.6.0 より前の TiDB クラスターにテーブルをバックアップ、複製、またはインポートすることはできません。
 -   複雑な条件を持つクエリの場合、TiDB は複数値インデックスを選択できない可能性があります。複数値インデックスでサポートされる条件パターンの詳細については、 [複数値インデックスを使用する](/choose-index.md#use-multi-valued-indexes)を参照してください。
 
 ## 目に見えないインデックス {#invisible-index}
 
-非表示のインデックスは、クエリ オプティマイザーによって無視されるインデックスです。
+デフォルトでは、非表示のインデックスはクエリ オプティマイザーによって無視されるインデックスです。
 
 ```sql
 CREATE TABLE t1 (c1 INT, c2 INT, UNIQUE(c2));
 CREATE UNIQUE INDEX c1 ON t1 (c1) INVISIBLE;
 ```
+
+TiDB v8.0.0 以降では、システム変数[`tidb_opt_use_invisible_indexes`](/system-variables.md#tidb_opt_use_invisible_indexes-new-in-v800)を変更することで、オプティマイザーが非表示のインデックスを選択するようにすることができます。
 
 詳細は[`ALTER INDEX`](/sql-statements/sql-statement-alter-index.md)参照。
 
@@ -349,11 +346,11 @@ CREATE UNIQUE INDEX c1 ON t1 (c1) INVISIBLE;
 
 ## MySQL 互換性 {#mysql-compatibility}
 
--   TiDB は`FULLTEXT`および`SPATIAL`構文の解析をサポートしていますが、 `FULLTEXT` 、 `HASH` 、および`SPATIAL`インデックスの使用はサポートしていません。
+-   TiDB は`FULLTEXT`と`SPATIAL`構文の解析をサポートしていますが、 `FULLTEXT` 、 `HASH` 、および`SPATIAL`インデックスの使用はサポートしていません。
 -   降順インデックスはサポートされていません ( MySQL 5.7と同様)。
 -   `CLUSTERED`タイプの主キーをテーブルに追加することはサポートされていません。 `CLUSTERED`タイプの主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
 -   式インデックスはビューと互換性がありません。ビューを使用してクエリを実行する場合、式インデックスを同時に使用することはできません。
--   式インデックスには、バインディングとの互換性の問題があります。式インデックスの式に定数がある場合、対応するクエリに対して作成されたバインディングのスコープが拡張されます。たとえば、式インデックスの式が`a+1`で、対応するクエリ条件が`a+1 > 2`あるとします。この場合、作成されたバインディングは`a+? > ?`です。つまり、 `a+2 > 2`などの条件を持つクエリでも式インデックスの使用が強制され、実行プランが不十分になります。さらに、これは SQL プラン管理 (SPM) のベースライン キャプチャとベースラインの進化にも影響します。
+-   式インデックスには、バインディングとの互換性の問題があります。式インデックスの式に定数がある場合、対応するクエリに対して作成されたバインディングのスコープが拡張されます。たとえば、式インデックスの式が`a+1`で、対応するクエリ条件が`a+1 > 2`であるとします。この場合、作成されたバインディングは`a+? > ?`です。つまり、 `a+2 > 2`などの条件を持つクエリでも式インデックスの使用が強制され、実行プランが不十分になります。さらに、これは SQL プラン管理 (SPM) のベースライン キャプチャとベースラインの進化にも影響します。
 -   複数値インデックスで書き込まれるデータは、定義されたデータ型と完全に一致する必要があります。一致しない場合、データの書き込みは失敗します。詳細については、 [複数値インデックスを作成する](/sql-statements/sql-statement-create-index.md#create-multi-valued-indexes)参照してください。
 
 ## 参照 {#see-also}

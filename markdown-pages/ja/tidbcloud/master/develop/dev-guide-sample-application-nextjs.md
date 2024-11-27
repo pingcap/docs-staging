@@ -11,7 +11,7 @@ TiDB は MySQL 互換のデータベースであり、 [マイSQL2](https://gith
 
 -   環境を設定します。
 -   mysql2 を使用して TiDB クラスターに接続します。
--   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)を見つけることができます。
+-   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)見つけることができます。
 
 > **注記**
 >
@@ -83,7 +83,7 @@ npm install
 
     -   **接続タイプ**は`Public`に設定されています
 
-    -   **ブランチ**は`main`に設定されています
+    -   **ブランチは**`main`に設定されています
 
     -   **接続先は**`General`に設定されています
 
@@ -93,7 +93,7 @@ npm install
     >
     > Node.js アプリケーションでは、TLS (SSL) 接続を確立するときに Node.js がデフォルトで組み込みの[Mozilla CA 証明書](https://wiki.mozilla.org/CA/Included_Certificates)使用するため、SSL CA 証明書を提供する必要はありません。
 
-4.  ランダムなパスワードを作成するには、 **「パスワードの生成」を**クリックします。
+4.  ランダムなパスワードを作成するには、 **「パスワードの生成」**をクリックします。
 
     > **ヒント**
     >
@@ -161,15 +161,15 @@ npm install
 
 ### ステップ4: コードを実行して結果を確認する {#step-4-run-the-code-and-check-the-result}
 
-1.  アプリケーションを起動します。
+1.  アプリケーションを起動します:
 
     ```bash
     npm run dev
     ```
 
-2.  ブラウザを開いて`http://localhost:3000`にアクセスします。(実際のポート番号についてはターミナルで確認してください。デフォルトは`3000`です。)
+2.  ブラウザを開いて`http://localhost:3000`アクセスします。(実際のポート番号についてはターミナルで確認してください。デフォルトは`3000`です。)
 
-3.  サンプル コードを実行するには、 **[SQL の実行] を**クリックします。
+3.  サンプル コードを実行するには、 **[SQL の実行]**をクリックします。
 
 4.  ターミナルの出力を確認します。出力が次のようになる場合、接続は成功しています。
 
@@ -248,7 +248,7 @@ console.log(rows[0]);
 
 ### データの更新 {#update-data}
 
-次のクエリは、 ID `1`の`Player`にコイン`50`と商品`50`を追加します。
+次のクエリは、 ID `1`の`Player`にコイン`50`枚と商品`50`を追加します。
 
 ```javascript
 const [rsh] = await pool.query(
@@ -262,7 +262,7 @@ console.log(rsh.affectedRows);
 
 ### データを削除する {#delete-data}
 
-次のクエリは、ID `1`の`Player`レコードを削除します。
+次のクエリは、ID `1`の`Player`のレコードを削除します。
 
 ```javascript
 const [rsh] = await pool.query('DELETE FROM players WHERE id = ?;', [1]);
@@ -273,7 +273,7 @@ console.log(rsh.affectedRows);
 
 ## 役に立つメモ {#useful-notes}
 
--   [接続プール](https://github.com/sidorares/node-mysql2#using-connection-pools)を使用してデータベース接続を管理すると、接続の確立と破棄を頻繁に行うことによって発生するパフォーマンスのオーバーヘッドを削減できます。
+-   [接続プール](https://github.com/sidorares/node-mysql2#using-connection-pools)使用してデータベース接続を管理すると、接続の確立と破棄を頻繁に行うことによって発生するパフォーマンスのオーバーヘッドを削減できます。
 -   SQL インジェクションを回避するには、 [準備されたステートメント](https://github.com/sidorares/node-mysql2#using-prepared-statements)使用することをお勧めします。
 -   複雑な SQL ステートメントがあまり含まれないシナリオでは、 [続編](https://sequelize.org/) 、 [タイプORM](https://typeorm.io/) 、 [プリズマ](https://www.prisma.io/)などの ORM フレームワークを使用すると、開発効率が大幅に向上します。
 

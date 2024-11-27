@@ -1,6 +1,6 @@
 ---
 title: DROP SEQUENCE
-summary: An overview of the usage of DROP SEQUENCE for the TiDB database.
+summary: TiDB データベースの DROP SEQUENCE の使用法の概要。
 ---
 
 # ドロップシーケンス {#drop-sequence}

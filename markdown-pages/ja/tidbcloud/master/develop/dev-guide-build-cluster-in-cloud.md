@@ -17,7 +17,7 @@ summary: TiDB CloudでTiDB Cloud Serverless クラスターを構築し、それ
 
 <CustomContent platform="tidb-cloud">
 
-このドキュメントでは、 TiDB Cloud を使い始めるための最も簡単な方法を説明します。TiDB クラスターを作成し、それに接続し、その上でサンプル アプリケーションを実行します。
+このドキュメントでは、 TiDB Cloudを使い始めるための最も簡単な方法を説明します。TiDB クラスターを作成し、それに接続し、その上でサンプル アプリケーションを実行します。
 
 </CustomContent>
 
@@ -25,13 +25,13 @@ summary: TiDB CloudでTiDB Cloud Serverless クラスターを構築し、それ
 
 1.  TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidbcloud.com/free-trial)クリックしてアカウントを登録してください。
 
-2.  [ログイン](https://tidbcloud.com/)をTiDB Cloudアカウントに追加します。
+2.  [ログイン](https://tidbcloud.com/) TiDB Cloudアカウントに追加します。
 
-3.  [**クラスター**](https://tidbcloud.com/console/clusters)ページで、 **[クラスタの作成] を**クリックします。
+3.  [**クラスター**](https://tidbcloud.com/console/clusters)ページで、 **[クラスタの作成]**をクリックします。
 
-4.  **[クラスタの作成]**ページでは、デフォルトで**Serverless**が選択されています。必要に応じてデフォルトのクラスター名を更新し、 [クラスタープラン](https://docs.pingcap.com/tidbcloud/select-cluster-tier#cluster-plans)を選択します。
+4.  **[クラスタの作成]**ページでは、デフォルトで**Serverless**が選択されています。必要に応じてデフォルトのクラスター名を更新し、クラスターを作成するリージョンを選択します。
 
-5.  **「作成」を**クリックして、 TiDB Cloud Serverless クラスターを作成します。
+5.  **「作成」**をクリックして、 TiDB Cloud Serverless クラスターを作成します。
 
     TiDB Cloudクラスターは約 30 秒で作成されます。
 
@@ -39,13 +39,13 @@ summary: TiDB CloudでTiDB Cloud Serverless クラスターを構築し、それ
 
 7.  ダイアログで、希望する接続方法とオペレーティング システムを選択して、対応する接続文字列を取得します。このドキュメントでは、例として MySQL クライアントを使用します。
 
-8.  **「パスワードの生成**」をクリックすると、ランダムなパスワードが生成されます。生成されたパスワードは再度表示されないため、パスワードは安全な場所に保存してください。ルート パスワードを設定しないと、クラスターに接続できません。
+8.  「**パスワードの生成」**をクリックすると、ランダムなパスワードが生成されます。生成されたパスワードは再度表示されないため、パスワードは安全な場所に保存してください。ルート パスワードを設定しないと、クラスターに接続できません。
 
 <CustomContent platform="tidb">
 
 > **注記：**
 >
-> [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターの場合、クラスターに接続するときは、ユーザー名にクラスターのプレフィックスを含め、名前を引用符で囲む必要があります。詳細については、 [ユーザー名プレフィックス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix)を参照してください。
+> [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターの場合、クラスターに接続するときは、ユーザー名にクラスターのプレフィックスを含め、名前を引用符で囲む必要があります。詳細については、 [ユーザー名プレフィックス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix)参照してください。
 
 </CustomContent>
 
@@ -53,7 +53,7 @@ summary: TiDB CloudでTiDB Cloud Serverless クラスターを構築し、それ
 
 > **注記：**
 >
-> [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターの場合、クラスターに接続するときは、ユーザー名にクラスターのプレフィックスを含め、名前を引用符で囲む必要があります。詳細については、 [ユーザー名プレフィックス](/tidb-cloud/select-cluster-tier.md#user-name-prefix)を参照してください。
+> [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターの場合、クラスターに接続するときは、ユーザー名にクラスターのプレフィックスを含め、名前を引用符で囲む必要があります。詳細については、 [ユーザー名プレフィックス](/tidb-cloud/select-cluster-tier.md#user-name-prefix)参照してください。
 
 </CustomContent>
 
@@ -104,7 +104,7 @@ mysql --version
 
 <div label="Linux">
 
-Linux の場合、CentOS 7 を例に挙げると次のようになります。
+Linux の場合、以下は CentOS 7 を例にしています。
 
 ```shell
 yum install mysql
@@ -135,7 +135,7 @@ mysql --version
 > **注記：**
 >
 > -   TiDB Cloud Serverless クラスターに接続する場合は、 [TLS接続を使用する](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)実行する必要があります。
-> -   TiDB Cloud Serverless クラスターへの接続時に問題が発生した場合は、詳細については[TiDB Cloudサーバーレス クラスターへのセキュリティ接続](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)を参照してください。
+> -   TiDB Cloud Serverless クラスターへの接続時に問題が発生した場合は、詳細については[TiDB Cloudサーバーレス クラスターへのセキュリティ接続](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)参照してください。
 
 </CustomContent>
 
@@ -144,7 +144,7 @@ mysql --version
 > **注記：**
 >
 > -   TiDB Cloud Serverless クラスターに接続する場合は、 [TLS接続を使用する](/tidb-cloud/secure-connections-to-serverless-clusters.md)実行する必要があります。
-> -   TiDB Cloud Serverless クラスターへの接続時に問題が発生した場合は、詳細については[TiDB Cloudサーバーレス クラスターへのセキュリティ接続](/tidb-cloud/secure-connections-to-serverless-clusters.md)を参照してください。
+> -   TiDB Cloud Serverless クラスターへの接続時に問題が発生した場合は、詳細については[TiDB Cloudサーバーレス クラスターへのセキュリティ接続](/tidb-cloud/secure-connections-to-serverless-clusters.md)参照してください。
 
 </CustomContent>
 

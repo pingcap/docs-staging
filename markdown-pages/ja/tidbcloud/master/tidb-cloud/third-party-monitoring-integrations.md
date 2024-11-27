@@ -15,13 +15,13 @@ TiDB Cloudをサードパーティのメトリクス サービスと統合して
 
 1.  [TiDB Cloudコンソール](https://tidbcloud.com)にログインします。
 2.  クリック<mdsvgicon name="icon-left-projects">左下隅で、複数のプロジェクトがある場合は対象プロジェクトに切り替えて、 **[プロジェクト設定]**をクリックします。</mdsvgicon>
-3.  プロジェクトの**プロジェクト設定**ページで、左側のナビゲーション ペインの**[統合] を**クリックします。
+3.  プロジェクトの**「プロジェクト設定」**ページで、左側のナビゲーション ペインの**「統合」を**クリックします。
 
 利用可能なサードパーティ統合が表示されます。
 
 ## 制限 {#limitation}
 
--   [TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターの場合、サードパーティのメトリック統合はサポートされていません。
+-   [TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless)クラスターの場合、サードパーティのメトリック統合はサポートされていません。
 
 -   クラスターのステータスが**CREATING** 、 **RESTORING** 、 **PAUSED** 、または**RESUMING の**場合、サードパーティのメトリクス統合は使用できません。
 
@@ -35,7 +35,7 @@ Datadog 統合を使用すると、 TiDB Cloudを構成して、TiDB クラス�
 
 ### Prometheus と Grafana の統合 (ベータ版) {#prometheus-and-grafana-integration-beta}
 
-Prometheus と Grafana の統合により、 TiDB Cloudから Prometheus 用の`scrape_config`ファイルを取得し、そのファイルの内容を使用して Prometheus を構成できます。これらのメトリックは Grafana ダッシュボードで表示できます。
+Prometheus と Grafana の統合により、 TiDB Cloudから Prometheus の scrape_config ファイルを取得し、そのファイルの内容を使用して Prometheus を構成できます。これらのメトリックは Grafana ダッシュボードで表示できます。
 
 詳細な統合手順と Prometheus が追跡するメトリックのリストについては、 [TiDB Cloud をPrometheus および Grafana と統合する](/tidb-cloud/monitor-prometheus-and-grafana-integration.md)参照してください。
 

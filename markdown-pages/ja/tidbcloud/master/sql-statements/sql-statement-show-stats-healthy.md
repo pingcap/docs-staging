@@ -1,31 +1,37 @@
 ---
 title: SHOW STATS_HEALTHY
-summary: SHOW STATS_HEALTHYステートメントは、統計の正確性を示します。テーブルの健全性が低い場合、クエリ実行プランが影響を受ける可能性があります。ANALYZEコマンドを使用してテーブルの状態を改善し、健全性を確認できます。MySQLの拡張機能であり、[分析する]と[統計入門]も参照してください。
+summary: TiDB データベースの SHOW STATS_HEALTHY の使用法の概要。
 ---
 
-# 統計_健康を表示 {#show-stats-healthy}
+# 統計を表示_健康 {#show-stats-healthy}
 
-`SHOW STATS_HEALTHY`ステートメントは、統計がどの程度正確であると考えられるかの推定を示します。正常性の割合が低いテーブルでは、最適ではないクエリ実行プランが生成される可能性があります。
+`SHOW STATS_HEALTHY`文は、統計の正確さの推定値を示しています。健全性のパーセンテージが低いテーブルでは、最適ではないクエリ実行プランが生成される場合があります。
 
-`ANALYZE` table コマンドを実行すると、テーブルの状態を改善できます。 `ANALYZE`ヘルスが[`tidb_auto_analyze_ratio`](/system-variables.md#tidb_auto_analyze_ratio)しきい値を下回ると自動的に実行されます。
+[`ANALYZE`](/sql-statements/sql-statement-analyze-table.md)ステートメントを実行すると、テーブルの健全性が向上します。健全性が[`tidb_auto_analyze_ratio`](/system-variables.md#tidb_auto_analyze_ratio)しきい値を下回ると、 `ANALYZE`自動的に実行されます。
 
-## あらすじ {#synopsis}
+現在、 `SHOW STATS_HEALTHY`ステートメントは次の列を返します。
 
-**ショースタンド**
+| カラム名             | 説明           |
+| ---------------- | ------------ |
+| `Db_name`        | データベース名      |
+| `Table_name`     | テーブル名        |
+| `Partition_name` | パーティション名     |
+| `Healthy`        | 0から100の間の健康度 |
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+## 概要 {#synopsis}
 
-**ShowTargetFiltertable**
+```ebnf+diagram
+ShowStatsHealthyStmt ::=
+    "SHOW" "STATS_HEALTHY" ShowLikeOrWhere?
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
-
-**ShowLikeOrWhereOpt**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## 例 {#examples}
 
-サンプルデータをロードして`ANALYZE`を実行します。
+サンプルデータをロードして`ANALYZE`実行します。
 
 ```sql
 CREATE TABLE t1 (
@@ -58,7 +64,7 @@ mysql> SHOW STATS_HEALTHY;
 1 row in set (0.00 sec)
 ```
 
-一括更新を実行して、レコードの約 30% を削除します。統計の健全性を確認します。
+約 30% のレコードを削除する一括更新を実行します。統計の健全性を確認します。
 
 ```sql
 DELETE FROM t1 WHERE id BETWEEN 101010 AND 201010; # delete about 30% of records
@@ -75,11 +81,11 @@ mysql> SHOW STATS_HEALTHY;
 1 row in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
+このステートメントは、MySQL 構文に対する TiDB 拡張です。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [分析する](/sql-statements/sql-statement-analyze-table.md)
 -   [統計入門](/statistics.md)

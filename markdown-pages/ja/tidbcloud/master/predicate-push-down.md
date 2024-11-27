@@ -1,19 +1,19 @@
 ---
 title: Predicates Push Down
-summary: このドキュメントは、TiDBのロジック最適化ルールの1つであるPredicate Push Down (PPD)について説明します。PPDは、データフィルタリングをできるだけ早く完了するために、選択演算子をデータソースに近づけることで、データ送信または計算のコストを大幅に削減します。例として、述語をstorageレイヤーにプッシュするケースや結合演算子の下にプッシュするケースなどが挙げられます。ただし、ユーザー変数を含む述語や外部結合上の内部テーブルの述語はプッシュダウンできません。
+summary: TiDB のロジック最適化ルールの 1 つである Predicate Push Down (PPD) を導入します。
 ---
 
 # Predicate Push Down(PPD) {#predicates-push-down-ppd}
 
-このドキュメントでは、TiDB のロジック最適化ルールの 1 つである Predicate Push Down (PPD) を紹介します。述語のプッシュダウンを理解し、その適用可能なシナリオと適用できないシナリオを知るのに役立つことを目的としています。
+このドキュメントでは、TiDB のロジック最適化ルールの 1 つである述語プッシュ ダウン (PPD) を紹介します。述語プッシュ ダウンを理解し、適用可能なシナリオと適用不可能なシナリオを把握することを目的としています。
 
-PPD は、データ フィルタリングをできるだけ早く完了するために、選択演算子をできる限りデータ ソースに近づけることで、データ送信または計算のコストを大幅に削減します。
+PPD は、選択演算子をデータ ソースにできるだけ近づけて、データのフィルタリングをできるだけ早く完了します。これにより、データ転送や計算のコストが大幅に削減されます。
 
 ## 例 {#examples}
 
-次のケースでは、PPD の最適化について説明します。 Case 1、2、および 3 は PPD が適用されるシナリオであり、Case 4、5、および 6 は PPD が適用されないシナリオです。
+以下のケースでは、PPD の最適化について説明します。ケース 1、2、3 は PPD が適用可能なシナリオであり、ケース 4、5、6 は PPD が適用できないシナリオです。
 
-### ケース 1: 述語をstorageレイヤーにプッシュする {#case-1-push-predicates-to-storage-layer}
+### ケース1: 述語をstorageレイヤーにプッシュする {#case-1-push-predicates-to-storage-layer}
 
 ```sql
 create table t(id int primary key, a int);
@@ -28,9 +28,9 @@ explain select * from t where a < 1;
 3 rows in set (0.00 sec)
 ```
 
-このクエリでは、述語`a < 1` TiKVレイヤーにプッシュダウンしてデータをフィルタリングすることで、ネットワーク送信のオーバーヘッドを削減できます。
+このクエリでは、述語`a < 1`を TiKVレイヤーにプッシュダウンしてデータをフィルタリングすることで、ネットワーク転送のオーバーヘッドを削減できます。
 
-### ケース 2: 述語をstorageレイヤーにプッシュする {#case-2-push-predicates-to-storage-layer}
+### ケース2: 述語をstorageレイヤーにプッシュする {#case-2-push-predicates-to-storage-layer}
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -44,9 +44,9 @@ explain select * from t where a < substring('123', 1, 1);
 +-------------------------+----------+-----------+---------------+--------------------------------+
 ```
 
-このクエリは、ケース 1 のクエリと同じ実行プランを持ちます。述語`a < substring('123', 1, 1)`の`substring`の入力パラメータは定数なので、事前に計算できます。次に、述語は同等の述語に簡略化されます`a < 1` 。その後、TiDB は`a < 1`を TiKV にプッシュダウンできます。
+このクエリは、述語`a < substring('123', 1, 1)`の`substring`の入力パラメータが定数であるため、事前に計算できるため、ケース 1 のクエリと同じ実行プランを持ちます。次に、述語は同等の述語`a < 1`に簡略化されます。その後、TiDB は`a < 1` TiKV にプッシュダウンできます。
 
-### ケース 3: 述語を結合演算子の下にプッシュする {#case-3-push-predicates-below-join-operator}
+### ケース3: 述語を結合演算子の下にプッシュする {#case-3-push-predicates-below-join-operator}
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -66,11 +66,11 @@ explain select * from t join s on t.a = s.a where t.a < 1;
 7 rows in set (0.00 sec)
 ```
 
-このクエリでは、述語`t.a < 1`が結合の下にプッシュされて事前にフィルタリングされており、結合の計算オーバーヘッドを削減できます。
+このクエリでは、述語`t.a < 1`を結合の下にプッシュして事前にフィルタリングすることで、結合の計算オーバーヘッドを削減できます。
 
-また、この SQL ステートメントでは内部結合が実行されており、 `ON`条件は`t.a = s.a`です。述語`s.a <1` `t.a < 1`から派生し、結合演算子の下の`s`テーブルにプッシュダウンできます。 `s`テーブルをフィルタリングすると、結合の計算オーバーヘッドをさらに削減できます。
+さらに、この SQL 文では内部結合が実行され、 `ON`条件は`t.a = s.a`です。述語`s.a <1` `t.a < 1`から派生し、結合演算子の下の`s`テーブルにプッシュダウンできます。 `s`テーブルをフィルタリングすると、結合の計算オーバーヘッドをさらに削減できます。
 
-### ケース 4:storage層でサポートされていない述語はプッシュダウンできません {#case-4-predicates-that-are-not-supported-by-storage-layers-cannot-be-pushed-down}
+### ケース4:storage層でサポートされていない述語はプッシュダウンできない {#case-4-predicates-that-are-not-supported-by-storage-layers-cannot-be-pushed-down}
 
 ```sql
 create table t(id int primary key, a varchar(10) not null);
@@ -84,11 +84,11 @@ desc select * from t where truncate(a, " ") = '1';
 +-------------------------+----------+-----------+---------------+---------------------------------------------------+
 ```
 
-このクエリには述語`truncate(a, " ") = '1'`あります。
+このクエリには述語`truncate(a, " ") = '1'`があります。
 
 `explain`結果から、述語が計算のために TiKV にプッシュダウンされていないことがわかります。これは、TiKV コプロセッサが組み込み関数`truncate`をサポートしていないためです。
 
-### ケース 5: 外部結合上の内部テーブルの述語をプッシュダウンできない {#case-5-predicates-of-inner-tables-on-the-outer-join-can-t-be-pushed-down}
+### ケース5: 外部結合の内部テーブルの述語はプッシュダウンできない {#case-5-predicates-of-inner-tables-on-the-outer-join-can-t-be-pushed-down}
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -109,9 +109,9 @@ explain select * from t left join s on t.a = s.a where s.a is null;
 
 このクエリでは、内部テーブル`s`に述語`s.a is null`があります。
 
-`explain`の結果から、述語が結合演算子の下にプッシュされていないことがわかります。これは、条件`on`が満たされない場合、外部結合によって内部テーブルに`NULL`値が入力され、結合後の結果のフィルター処理に述語`s.a is null`が使用されるためです。結合の下の内部テーブルにプッシュダウンされた場合、実行計画は元の実行計画と等価ではなくなります。
+`explain`結果から、述語が結合演算子の下にプッシュされていないことがわかります。これは、 `on`条件が満たされない場合に外部結合によって内部テーブルに`NULL`値が入力され、結合後に述語`s.a is null`が結果をフィルター処理するために使用されるためです。結合の下の内部テーブルにプッシュダウンされると、実行プランは元のプランと同等にはなりません。
 
-### ケース 6: ユーザー変数を含む述語をプッシュダウンできない {#case-6-the-predicates-which-contain-user-variables-cannot-be-pushed-down}
+### ケース6: ユーザー変数を含む述語はプッシュダウンできない {#case-6-the-predicates-which-contain-user-variables-cannot-be-pushed-down}
 
 ```sql
 create table t(id int primary key, a char);
@@ -129,9 +129,9 @@ explain select * from t where a < @a;
 
 このクエリでは、テーブル`t`に述語`a < @a`があります。述語の`@a`はユーザー変数です。
 
-`explain`の結果からわかるように、述語はケース 2 とは異なり、ケース 2 は`a < 1`に単純化され、TiKV にプッシュされます。これは、ユーザー変数`@a`の値が計算中に変更される可能性があり、TiKV はその変更を認識しないためです。したがって、TiDB は`@a` `1`に置き換えず、それを TiKV にプッシュダウンしません。
+`explain`結果からわかるように、述語はケース 2 とは異なり、 `a < 1`に簡略化されて TiKV にプッシュダウンされます。これは、ユーザー変数`@a`の値が計算中に変更される可能性があり、TiKV がその変更を認識しないためです。そのため、TiDB は`@a` `1`に置き換えず、TiKV にプッシュダウンしません。
 
-理解を助ける例は次のとおりです。
+理解を助ける例を以下に示します。
 
 ```sql
 create table t(id int primary key, a int);
@@ -147,4 +147,4 @@ select id, a, @a:=@a+1 from t where a = @a;
 2 rows in set (0.00 sec)
 ```
 
-このクエリからわかるように、 `@a`の値はクエリ中に変化します。したがって、 `a = @a` `a = 1`に置き換えて TiKV にプッシュダウンした場合、それは同等の実行プランではありません。
+このクエリからわかるように、 `@a`の値はクエリ中に変更されます。したがって、 `a = @a` `a = 1`に置き換えて TiKV にプッシュダウンすると、同等の実行プランにはなりません。

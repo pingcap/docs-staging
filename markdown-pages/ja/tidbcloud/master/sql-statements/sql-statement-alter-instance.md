@@ -1,6 +1,6 @@
 ---
 title: ALTER INSTANCE
-summary: TiDB での ALTER INSTANCE` の使用法の概要を学習します。
+summary: TiDB での `ALTER INSTANCE` の使用法の概要を学習します。
 ---
 
 # インスタンスの変更 {#alter-instance}
@@ -9,7 +9,7 @@ summary: TiDB での ALTER INSTANCE` の使用法の概要を学習します。
 
 > **注記：**
 >
-> [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)では TLS 証明書を自動的に更新できるため、この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターには適用されません。
+> [TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)では TLS 証明書を自動的に更新できるため、この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターには適用されません。
 
 ## TLSをリロード {#reload-tls}
 

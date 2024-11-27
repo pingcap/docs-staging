@@ -5,7 +5,7 @@ summary: Follower Read を使用してクエリ パフォーマンスを最適�
 
 # Follower Read {#follower-read}
 
-このドキュメントでは、Follower Read を使用してクエリ パフォーマンスを最適化する方法について説明します。
+このドキュメントでは、 Follower Read を使用してクエリ パフォーマンスを最適化する方法について説明します。
 
 ## 導入 {#introduction}
 
@@ -19,7 +19,7 @@ TiDB は[リージョン](/tidb-storage.md#region)基本単位として、クラ
 
 <CustomContent platform="tidb">
 
-アプリケーションに[TiDB ダッシュボード キー ビジュアライザー ページ](/dashboard/dashboard-key-visualizer.md)ホットスポットリージョンがあるかどうかを視覚的に分析できます。「メトリック選択ボックス」を`Read (bytes)`または`Read (keys)`に選択すると、読み取りホットスポットが発生しているかどうかを確認できます。
+アプリケーションに[TiDB ダッシュボード キー ビジュアライザー ページ](/dashboard/dashboard-key-visualizer.md)のホットスポットリージョンがあるかどうかを視覚的に分析できます。「メトリック選択ボックス」を`Read (bytes)`または`Read (keys)`に選択すると、読み取りホットスポットが発生しているかどうかを確認できます。
 
 ホットスポットの処理の詳細については、 [TiDB ホットスポット問題の処理](/troubleshoot-hot-spot-issues.md)参照してください。
 
@@ -27,7 +27,7 @@ TiDB は[リージョン](/tidb-storage.md#region)基本単位として、クラ
 
 <CustomContent platform="tidb-cloud">
 
-アプリケーションに[TiDB Cloudキー ビジュアライザー ページ](/tidb-cloud/tune-performance.md#key-visualizer)ホットスポットリージョンがあるかどうかを視覚的に分析できます。「メトリック選択ボックス」を`Read (bytes)`または`Read (keys)`に選択すると、読み取りホットスポットが発生しているかどうかを確認できます。
+アプリケーションに[TiDB Cloudキー ビジュアライザー ページ](/tidb-cloud/tune-performance.md#key-visualizer)のホットスポットリージョンがあるかどうかを視覚的に分析できます。「メトリック選択ボックス」を`Read (bytes)`または`Read (keys)`に選択すると、読み取りホットスポットが発生しているかどうかを確認できます。
 
 ホットスポットの処理の詳細については、 [TiDB ホットスポット問題の処理](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues)参照してください。
 
@@ -37,14 +37,14 @@ TiDB は[リージョン](/tidb-storage.md#region)基本単位として、クラ
 
 ### 地理的に分散した展開のレイテンシーを削減 {#reduce-latency-for-geo-distributed-deployments}
 
-TiDB クラスターが複数の地区またはデータセンターにまたがって展開されている場合、リージョンの異なるレプリカは異なる地区またはデータセンターに分散されます。この場合、 Follower Read を`closest-adaptive`または`closest-replicas`に設定して、TiDB が現在のデータセンターからの読み取りを優先できるようにすることができます。これにより、読み取り操作のレイテンシーとトラフィック オーバーヘッドが大幅に削減されます。実装の詳細については、 [Follower Read](/follower-read.md)を参照してください。
+TiDB クラスターが複数の地区またはデータセンターにまたがって展開されている場合、リージョンの異なるレプリカは異なる地区またはデータセンターに分散されます。この場合、 Follower Read を`closest-adaptive`または`closest-replicas`に設定して、TiDB が現在のデータセンターからの読み取りを優先できるようにすることができます。これにより、読み取り操作のレイテンシーとトラフィック オーバーヘッドが大幅に削減されます。実装の詳細については、 [Follower Read](/follower-read.md)参照してください。
 
 ## Follower Readを有効にする {#enable-follower-read}
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-Follower Readを有効にするには、変数`tidb_replica_read` (デフォルト値は`leader` ) を`follower` 、 `leader-and-follower` 、 `prefer-leader` 、 `closest-replicas` 、または`closest-adaptive`に設定します。
+Follower Read を有効にするには、変数`tidb_replica_read` (デフォルト値は`leader` ) を`follower` 、 `leader-and-follower` 、 `prefer-leader` 、 `closest-replicas` 、または`closest-adaptive`に設定します。
 
 ```sql
 SET [GLOBAL] tidb_replica_read = 'follower';
@@ -161,7 +161,7 @@ public static class AuthorDAO {
 
 </CustomContent>
 
-## 助けが必要？ {#need-help}
+## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 

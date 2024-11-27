@@ -19,9 +19,9 @@ TiDB Cloudを使用すると、HTAP ワークロードに応じて 1 つ以上�
 
 ![TiFlash Architecture](https://download.pingcap.com/images/docs/tidb-storage-architecture-1.png)
 
-上の図は、 TiFlashノードを含む HTAP 形式の TiDB のアーキテクチャです。
+上図は、 TiFlashノードを含む HTAP 形式の TiDB のアーキテクチャです。
 
-TiFlash は、ClickHouse によって効率的に実装されたコプロセッサのレイヤーを備えた列指向storageを提供します。TiKV と同様に、 TiFlashにも Multi-Raft システムがあり、リージョン単位でのデータの複製と配布をサポートしています (詳細については[データストレージ](https://www.pingcap.com/blog/tidb-internal-data-storage/)を参照)。
+TiFlash は、ClickHouse によって効率的に実装されたコプロセッサのレイヤーを備えた列指向storageを提供します。TiKV と同様に、 TiFlashにも Multi-Raft システムがあり、リージョン単位でのデータの複製と配布をサポートしています (詳細については[データストレージ](https://en.pingcap.com/blog/tidb-internal-data-storage/)を参照)。
 
 TiFlashは、TiKV への書き込みをブロックしない低コストで、TiKV ノードのデータのリアルタイム レプリケーションを実行します。同時に、 TiFlashと同じ読み取り一貫性を提供し、最新のデータが読み取られることを保証します。TiFlash のリージョンレプリカは、TiKV のリージョン レプリカと論理的に同一であり、TiKV のLeaderレプリカと同時に分割および結合されます。
 
@@ -67,7 +67,7 @@ TiFlash が読み取り要求を受信するたびに、リージョンレプリ
 
 ### 賢い選択 {#intelligent-choice}
 
-TiDB は、 TiFlash (列単位) または TiKV (行単位) の使用を自動的に選択するか、1 つのクエリで両方を使用して最高のパフォーマンスを確保できます。
+TiDB は、 TiFlash (列単位) または TiKV (行単位) の使用を自動的に選択するか、または 1 つのクエリで両方を使用して最高のパフォーマンスを確保できます。
 
 この選択メカニズムは、クエリを実行するために異なるインデックスを選択する TiDB のメカニズムに似ています。TiDB オプティマイザーは、読み取りコストの統計に基づいて適切な選択を行います。
 
@@ -135,6 +135,6 @@ TPC-H データセットでのデータのインポートからクエリまで�
 
 -   [TiFlash のパフォーマンスを調整する](/tiflash/tune-tiflash-performance.md) 。
 -   [TiFlashでのプッシュダウン計算をサポート](/tiflash/tiflash-supported-pushdown-calculations.md)
--   [TiFlash互換性](/tiflash/tiflash-compatibility.md)
+-   [TiFlashの互換性](/tiflash/tiflash-compatibility.md)
 
 </CustomContent>

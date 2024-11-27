@@ -17,7 +17,7 @@ TiDB Cloud はNew Relic 統合 (ベータ版) をサポートしています。T
 
 ## 制限 {#limitation}
 
-[TiDB Cloudサーバーレス クラスター](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)では New Relic 統合は使用できません。
+[TiDB サーバーレス クラスター](/tidb-cloud/select-cluster-tier.md#tidb-serverless)では New Relic 統合を使用できません。
 
 ## 手順 {#steps}
 
@@ -44,7 +44,7 @@ TiDB Cloud はNew Relic 統合 (ベータ版) をサポートしています。T
 2.  **「データの追加」**をクリックし、 `TiDB Cloud`を検索して、 **TiDB Cloud監視**ページに移動します。または、 [リンク](https://one.newrelic.com/marketplace?state=79bf274b-0c01-7960-c85c-3046ca96568e)をクリックしてページに直接アクセスすることもできます。
 3.  アカウント ID を選択し、New Relic でダッシュボードを作成します。
 
-## 事前構築されたダッシュボード {#pre-built-dashboard}
+## 事前に構築されたダッシュボード {#pre-built-dashboard}
 
 統合の**New Relic**カードの**ダッシュボード**リンクをクリックします。TiDB クラスターの事前構築されたダッシュボードが表示されます。
 

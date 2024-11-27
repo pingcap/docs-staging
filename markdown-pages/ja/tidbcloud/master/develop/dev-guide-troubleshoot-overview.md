@@ -9,7 +9,7 @@ summary: アプリケーション開発中に発生する可能性のある SQL 
 
 ## SQLクエリの問題のトラブルシューティング {#troubleshoot-sql-query-problems}
 
-SQL クエリのパフォーマンスを向上させる場合は、 [SQL性能チューニング](/develop/dev-guide-optimize-sql-overview.md)手順に従って、完全なテーブル スキャンやインデックスの欠落などのパフォーマンスの問題を解決します。
+SQL クエリのパフォーマンスを向上させる場合は、 [SQL性能チューニング](/develop/dev-guide-optimize-sql-overview.md)の手順に従って、完全なテーブル スキャンやインデックスの欠落などのパフォーマンスの問題を解決します。
 
 <CustomContent platform="tidb">
 
@@ -43,7 +43,7 @@ SQL 操作に関する質問がある場合は、 [SQLに関するよくある�
 
 </CustomContent>
 
-## 助けが必要？ {#need-help}
+## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 

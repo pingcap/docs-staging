@@ -1,34 +1,22 @@
 ---
 title: SHOW INDEXES [FROM|IN] | TiDB SQL Statement Reference
-aliases: ['/tidb/v7.5/sql-statement-show-index/', '/tidb/v7.5/sql-statement-show-keys/']
-summary: ステートメントSHOW INDEXES [FROM|IN]は、指定されたテーブルのインデックスをリストします。MySQL との互換性があり、SHOW INDEX [FROM|IN]、SHOW KEYS [FROM|IN]はこのステートメントのエイリアスです。TiDB のSHOW INDEXES [FROM|IN]ステートメントは MySQL と完全な互換性があります。
+summary: TiDB データベースに対する SHOW INDEXES [FROM|IN] の使用法の概要。
 ---
 
-# インデックスを表示 [From|IN] {#show-indexes-from-in}
+# インデックスを表示 [FROM|IN] {#show-indexes-from-in}
 
-ステートメント`SHOW INDEXES [FROM|IN]`は、指定されたテーブルのインデックスをリストします。ステートメント`SHOW INDEX [FROM|IN]` 、 `SHOW KEYS [FROM|IN]`はこのステートメントのエイリアスであり、MySQL との互換性のために含まれています。
+ステートメント`SHOW INDEXES [FROM|IN]` 、指定されたテーブルのインデックスを一覧表示します。ステートメント`SHOW INDEX [FROM|IN]` 、 `SHOW KEYS [FROM|IN]`このステートメントのエイリアスであり、MySQL との互換性のために含まれています。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**ShowIndexStmt:**
+```ebnf+diagram
+ShowIndexStmt ::=
+    "SHOW" ( "INDEX" | "INDEXES" | "KEYS" ) ("FROM" | "IN" ) TableName (("FROM" | "IN") SchemaName )? ShowLikeOrWhere?
 
-![ShowIndexStmt](https://download.pingcap.com/images/docs/sqlgram/ShowIndexStmt.png)
-
-**ShowIndexKwd:**
-
-![ShowIndexKwd](https://download.pingcap.com/images/docs/sqlgram/ShowIndexKwd.png)
-
-**送信者または受信者:**
-
-![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
-
-**テーブル名:**
-
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
-
-**ShowLikeOrWhereOpt:**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## 例 {#examples}
 
@@ -64,12 +52,16 @@ mysql> SHOW KEYS FROM t1;
 2 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SHOW INDEXES [FROM|IN]`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`SHOW INDEXES [FROM|IN]`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
--   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
--   [ドロップインデックス](/sql-statements/sql-statement-drop-index.md)
+-   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)
+-   [インデックスを削除](/sql-statements/sql-statement-drop-index.md)
 -   [インデックスの作成](/sql-statements/sql-statement-create-index.md)
+-   [`information_schema.TIDB_INDEXES`](/information-schema/information-schema-tidb-indexes.md)
+-   [`information_schema.TIDB_INDEX_USAGE`](/information-schema/information-schema-tidb-index-usage.md)
+-   [`information_schema.KEY_COLUMN_USAGE`](/information-schema/information-schema-key-column-usage.md)
+-   [`sys.schema_unused_indexes`](/sys-schema/sys-schema-unused-indexes.md)

@@ -3,14 +3,14 @@ title: Scale Your TiDB Cluster
 summary: TiDB Cloudクラスターを拡張する方法を学びます。
 ---
 
-# TiDBクラスタのスケール {#scale-your-tidb-cluster}
+# TiDBクラスタを拡張する {#scale-your-tidb-cluster}
 
 > **注記：**
 >
-> -   [TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) 、アプリケーションのワークロードの変化に基づいて自動的にスケーリングされます。ただし、 TiDB Cloud Serverless クラスターを手動でスケーリングすることはできません。
+> -   [TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless) 、アプリケーションのワークロードの変化に基づいて自動的にスケーリングされます。ただし、TiDB Serverless クラスターを手動でスケーリングすることはできません。
 > -   クラスターが**MODIFYING**ステータスにある場合、そのクラスターに対して新しいスケーリング操作を実行することはできません。
 
-TiDB クラスターは次の次元で拡張できます。
+TiDB クラスターは次の次元でスケーリングできます。
 
 -   TiDB、TiKV、 TiFlashのノード番号
 -   TiDB、TiKV、 TiFlashの vCPU と RAM
@@ -32,7 +32,7 @@ TiDB、TiKV、またはTiFlashノードの数を増減できます。
 
 > **警告：**
 >
-> TiKV またはTiFlashノードの数を減らすとリスクが生じ、残りのノードでstorage容量不足、過剰な CPU 使用率、または過剰なメモリ使用率が発生する可能性があります。
+> TiKV またはTiFlashノード数を減らすとリスクが生じ、残りのノードでstorage容量不足、過剰な CPU 使用率、または過剰なメモリ使用率が発生する可能性があります。
 
 TiDB、TiKV、またはTiFlashノードの数を変更するには、次の手順を実行します。
 
@@ -50,7 +50,7 @@ TiDB、TiKV、またはTiFlashノードの数を変更するには、次の手�
 
 5.  右側のペインでクラスター サイズを確認し、 **[確認]**をクリックします。
 
-[TiDB Cloud Dedicated クラスターを変更する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)エンドポイントを介してTiDB Cloud API を使用して、TiDB、TiKV、またはTiFlashノードの数を変更することもできます。現在、 TiDB Cloud API はまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)を参照してください。
+[TiDB専用クラスタを変更する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)エンドポイントを介してTiDB Cloud API を使用して、TiDB、TiKV、またはTiFlashノードの数を変更することもできます。現在、 TiDB Cloud API はまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)を参照してください。
 
 ## vCPUとRAMを変更する {#change-vcpu-and-ram}
 
@@ -79,7 +79,7 @@ TiDB、TiKV、またはTiFlashノードの vCPU と RAM を変更するには、
 
 5.  右側のペインでクラスター サイズを確認し、 **[確認]**をクリックします。
 
-[TiDB Cloud Dedicated クラスターを変更する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)エンドポイントを介してTiDB Cloud API を使用して、TiDB、TiKV、またはTiFlashノードの vCPU と RAM を変更することもできます。現在、 TiDB Cloud API はまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)を参照してください。
+[TiDB専用クラスタを変更する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)エンドポイントを介してTiDB Cloud API を使用して、TiDB、TiKV、またはTiFlashノードの vCPU と RAM を変更することもできます。現在、 TiDB Cloud API はまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)を参照してください。
 
 ## storageの変更 {#change-storage}
 
@@ -106,4 +106,4 @@ TiKV またはTiFlashのstorageを変更するには、次の手順を実行し�
 
 5.  右側のペインでクラスター サイズを確認し、 **[確認]**をクリックします。
 
-[TiDB Cloud Dedicated クラスターを変更する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)エンドポイントを介してTiDB Cloud API を使用して、TiKV ノードまたはTiFlashノードのstorageを変更することもできます。現在、 TiDB Cloud API はまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)を参照してください。
+[TiDB専用クラスタを変更する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)エンドポイントを介してTiDB Cloud API を使用して、TiKV ノードまたはTiFlashノードのstorageを変更することもできます。現在、 TiDB Cloud API はまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)を参照してください。

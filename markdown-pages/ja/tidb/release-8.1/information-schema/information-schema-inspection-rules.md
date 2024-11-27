@@ -1,15 +1,15 @@
 ---
 title: INSPECTION_RULES
-summary: INSPECTION_RULES information_schema テーブルについて学習します。
+summary: INSPECTION_RULES` information_schema テーブルについて学習します。
 ---
 
 # 検査ルール {#inspection-rules}
 
-`INSPECTION_RULES`表には、検査結果で実行される診断テストに関する情報が示されています。使用例については[検査結果](/information-schema/information-schema-inspection-result.md)を参照してください。
+`INSPECTION_RULES`表には、検査結果で実行される診断テストに関する情報が示されています。使用例については[検査結果](/information-schema/information-schema-inspection-result.md)参照してください。
 
 > **注記：**
 >
-> この表は TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> この表は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 ```sql
 USE information_schema;

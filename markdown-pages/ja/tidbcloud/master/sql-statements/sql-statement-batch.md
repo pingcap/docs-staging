@@ -1,25 +1,25 @@
 ---
 title: BATCH
-summary: BATCH構文は、DMLステートメントを複数のステートメントに分割して実行します。トランザクションの原子性と分離性は保証されていないため、「非トランザクション」ステートメントです。現在、INSERT、REPLACE、UPDATE、およびDELETEがBATCHでサポートされています。BATCHステートメントで複数テーブル結合を使用する場合、列のフルパスを指定する必要があります。MySQLとの互換性はありません。
+summary: TiDB データベースでの BATCH の使用法の概要。
 ---
 
 # バッチ {#batch}
 
-`BATCH`構文は、DML ステートメントを TiDB 内の複数のステートメントに分割して実行します。これは、トランザクションの原子性と分離性**が保証されていない**ことを意味します。したがって、これは「非トランザクション」ステートメントです。
+`BATCH`構文は、DML ステートメントを TiDB 内の複数のステートメントに分割して実行します。つまり、トランザクションの原子性と分離性**は保証されません**。したがって、これは「非トランザクション」ステートメントです。
 
-現在、 `INSERT` 、 `REPLACE` 、 `UPDATE` 、および`DELETE` `BATCH`でサポートされています。
+現在、 `BATCH`では`INSERT` 、 `REPLACE` 、 `UPDATE` 、 `DELETE`がサポートされています。
 
-`BATCH`構文は、列に基づいて、DML ステートメントを実行範囲の複数の範囲に分割します。各範囲で、単一の SQL ステートメントが実行されます。
+`BATCH`構文は、列に基づいて、DML ステートメントを複数の実行範囲に分割します。各範囲で、1 つの SQL ステートメントが実行されます。
 
-使用方法および制限事項の詳細については、 [非トランザクション DML ステートメント](/non-transactional-dml.md)を参照してください。
+使用方法や制限事項の詳細については[非トランザクションDMLステートメント](/non-transactional-dml.md)を参照してください。
 
-`BATCH`ステートメントで複数テーブル結合を使用する場合、あいまいさを避けるために列のフルパスを指定する必要があります。
+`BATCH`のステートメントで複数テーブルの結合を使用する場合は、あいまいさを避けるために列の完全なパスを指定する必要があります。
 
 ```sql
 BATCH ON test.t2.id LIMIT 1 INSERT INTO t SELECT t2.id, t2.v, t3.v FROM t2 JOIN t3 ON t2.k = t3.k;
 ```
 
-前述のステートメントでは、分割する列を`test.t2.id`として指定していますが、これは明確です。次のように`id`使用すると、エラーが報告されます。
+上記のステートメントでは、分割する列を`test.t2.id`として指定しており、これは明確です。次のように`id`を使用すると、エラーが報告されます。
 
 ```sql
 BATCH ON id LIMIT 1 INSERT INTO t SELECT t2.id, t2.v, t3.v FROM t2 JOIN t3 ON t2.k = t3.k;
@@ -27,7 +27,7 @@ BATCH ON id LIMIT 1 INSERT INTO t SELECT t2.id, t2.v, t3.v FROM t2 JOIN t3 ON t2
 Non-transactional DML, shard column must be fully specified
 ```
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 NonTransactionalDMLStmt ::=
@@ -43,10 +43,10 @@ ShardableStmt ::=
 |   ReplaceIntoStmt
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
 `BATCH`構文は TiDB 固有であり、MySQL とは互換性がありません。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
--   [非トランザクション DML ステートメント](/non-transactional-dml.md)
+-   [非トランザクションDMLステートメント](/non-transactional-dml.md)

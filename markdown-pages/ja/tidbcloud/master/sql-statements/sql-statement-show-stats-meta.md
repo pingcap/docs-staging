@@ -1,6 +1,6 @@
 ---
 title: SHOW STATS_META
-summary: An overview of the usage of SHOW STATS_META for TiDB database.
+summary: TiDB データベースの SHOW STATS_META の使用法の概要。
 ---
 
 # STATS_METAを表示 {#show-stats-meta}

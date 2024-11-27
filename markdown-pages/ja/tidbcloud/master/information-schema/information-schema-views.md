@@ -1,18 +1,18 @@
 ---
 title: VIEWS
-summary: ビュー表は、SQL ビューに関する情報を提供します。ビューに関する情報を提供します。ビューの定義、所有者、セキュリティタイプなどが含まれます。ビューのフィールドには、ビューが属するカタログの名前、ビューが属するスキーマの名前、ビュー名、ビューの定義、CHECK_OPTIONの値、UPDATE/INSERT/DELETEがビューに適用されるかどうかなどが含まれます。
+summary: VIEWS INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # ビュー {#views}
 
-`VIEWS`表は、SQL ビューに関する情報を提供します。
+`VIEWS`表には[SQL ビュー](/views.md)に関する情報が記載されています。
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC VIEWS;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +----------------------+--------------+------+------+---------+-------+
@@ -39,7 +39,7 @@ CREATE VIEW test.v1 AS SELECT 1;
 SELECT * FROM VIEWS\G
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 *************************** 1. row ***************************
@@ -56,15 +56,20 @@ COLLATION_CONNECTION: utf8mb4_0900_ai_ci
 1 row in set (0.00 sec)
 ```
 
-`VIEWS`テーブルのフィールドは次のように説明されています。
+`VIEWS`テーブル内のフィールドは次のように説明されます。
 
 -   `TABLE_CATALOG` : ビューが属するカタログの名前。この値は常に`def`です。
 -   `TABLE_SCHEMA` : ビューが属するスキーマの名前。
 -   `TABLE_NAME` : ビュー名。
--   `VIEW_DEFINITION` : ビューの定義。ビューの作成時に`SELECT`ステートメントによって作成されます。
--   `CHECK_OPTION` : `CHECK_OPTION`の値。値のオプションは`NONE` 、 `CASCADE` 、および`LOCAL`です。
--   `IS_UPDATABLE` : `UPDATE` / `INSERT` / `DELETE`がビューに適用されるかどうか。 TiDB では、値は常に`NO`です。
--   `DEFINER` : ビューを作成するユーザーの名前。形式は`'user_name'@'host_name'`です。
--   `SECURITY_TYPE` : `SQL SECURITY`の値。値のオプションは`DEFINER`および`INVOKER`です。
--   `CHARACTER_SET_CLIENT` : ビュー作成時の`character_set_client`セッション変数の値。
--   `COLLATION_CONNECTION` : ビュー作成時の`collation_connection`セッション変数の値。
+-   `VIEW_DEFINITION` : ビューの作成時に`SELECT`番目のステートメントによって作成されるビューの定義。
+-   `CHECK_OPTION` : `CHECK_OPTION`値。値のオプションは`NONE` 、 `CASCADE` 、および`LOCAL`です。
+-   `IS_UPDATABLE` : `UPDATE` / `INSERT` / `DELETE`がビューに適用可能かどうか。TiDB では、値は常に`NO`です。
+-   `DEFINER` : ビューを作成したユーザーの名前。形式は`'user_name'@'host_name'`です。
+-   `SECURITY_TYPE` : `SQL SECURITY`の値。値のオプションは`DEFINER`と`INVOKER`です。
+-   `CHARACTER_SET_CLIENT` : ビューが作成された際の`character_set_client`番目のセッション変数の値。
+-   `COLLATION_CONNECTION` : ビューが作成された際の`collation_connection`番目のセッション変数の値。
+
+## 参照 {#see-also}
+
+-   [`CREATE VIEW`](/sql-statements/sql-statement-create-view.md)
+-   [`DROP VIEW`](/sql-statements/sql-statement-drop-view.md)

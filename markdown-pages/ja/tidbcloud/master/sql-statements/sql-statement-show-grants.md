@@ -1,33 +1,25 @@
 ---
 title: SHOW GRANTS | TiDB SQL Statement Reference
-summary: 助成金を表示するステートメントは、ユーザーに関連付けられた権限のリストを示します。MySQLと同様に、USAGE権限はTiDBにログインできることを示します。このステートメントはMySQLと完全な互換性があります。
+summary: TiDB データベースの SHOW GRANTS の使用法の概要。
 ---
 
-# 助成金を表示する {#show-grants}
+# ショーグラント {#show-grants}
 
-このステートメントは、ユーザーに関連付けられた権限のリストを示します。 MySQL と同様に、 `USAGE`権限はTiDB にログインできることを示します。
+このステートメントは、ユーザーに関連付けられた権限のリストを表示します。MySQL と同様に、権限`USAGE` TiDB にログインできることを示します。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**ShowGrantsStmt:**
+```ebnf+diagram
+ShowGrantsStmt ::=
+    "SHOW" "GRANTS" ("FOR" Username ("USING" RolenameList)?)?
 
-![ShowGrantsStmt](https://download.pingcap.com/images/docs/sqlgram/ShowGrantsStmt.png)
+Username ::=
+    "CURRENT_USER" ( "(" ")" )?
+| Username ("@" Hostname)?
 
-**ユーザー名:**
-
-![Username](https://download.pingcap.com/images/docs/sqlgram/Username.png)
-
-**ロールの使用:**
-
-![UsingRoles](https://download.pingcap.com/images/docs/sqlgram/UsingRoles.png)
-
-**役割名リスト:**
-
-![RolenameList](https://download.pingcap.com/images/docs/sqlgram/RolenameList.png)
-
-**役割名:**
-
-![Rolename](https://download.pingcap.com/images/docs/sqlgram/Rolename.png)
+RolenameList ::=
+    Rolename ("@" Hostname)? ("," Rolename ("@" Hostname)? )*
+```
 
 ## 例 {#examples}
 
@@ -58,11 +50,11 @@ mysql> SHOW GRANTS FOR u1;
 2 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SHOW GRANTS`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`SHOW GRANTS`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [ユーザーの作成を表示](/sql-statements/sql-statement-show-create-user.md)
 -   [付与](/sql-statements/sql-statement-grant-privileges.md)

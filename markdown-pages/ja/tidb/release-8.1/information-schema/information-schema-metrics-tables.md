@@ -1,15 +1,15 @@
 ---
 title: METRICS_TABLES
-summary: METRICS_TABLES システム テーブルについて学習します。
+summary: METRICS_TABLES` システム テーブルについて学習します。
 ---
 
 # メトリクス_テーブル {#metrics-tables}
 
-`METRICS_TABLES`テーブルは、 [`METRICS_SCHEMA`](/metrics-schema.md)データベース内の各ビューの PromQL (Prometheus クエリ言語) 定義を提供します。
+`METRICS_TABLES`のテーブルは、 [`METRICS_SCHEMA`](/metrics-schema.md)データベース内の各ビューの PromQL (Prometheus クエリ言語) 定義を提供します。
 
 > **注記：**
 >
-> この表は TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> この表は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -34,7 +34,7 @@ DESC METRICS_TABLES;
 
 -   `TABLE_NAME` : `METRICS_SCHEMA`のテーブル名に対応します。
 -   `PROMQL` : 監視テーブルの動作原理は、SQL ステートメントを`PromQL`にマッピングし、Prometheus の結果を SQL クエリ結果に変換することです。このフィールドは`PromQL`の式テンプレートです。監視テーブルのデータをクエリすると、クエリ条件を使用してこのテンプレートの変数が書き換えられ、最終的なクエリ式が生成されます。
--   `LABELS` : 監視項目のラベル。各ラベルは監視テーブル内の列に対応します。SQL 文に対応する列のフィルターが含まれている場合、対応する`PromQL`もそれに応じて変化します。
+-   `LABELS` : 監視項目のラベル。各ラベルは監視テーブル内の列に対応します。SQL 文に対応する列のフィルターが含まれている場合、対応する`PromQL`がそれに応じて変化します。
 -   `QUANTILE` : パーセンタイル。ヒストグラムタイプの監視データの場合、デフォルトのパーセンタイルが指定されます。このフィールドの値が`0`の場合、監視テーブルに対応する監視項目はヒストグラムではないことを意味します。
 -   `COMMENT` : 監視テーブルに関するコメント。
 

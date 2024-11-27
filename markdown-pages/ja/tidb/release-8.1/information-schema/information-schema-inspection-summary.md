@@ -1,6 +1,6 @@
 ---
 title: INSPECTION_SUMMARY
-summary: INSPECTION_SUMMARY 検査概要テーブルについて学習します。
+summary: INSPECTION_SUMMARY` 検査概要テーブルについて学習します。
 ---
 
 # 検査概要 {#inspection-summary}
@@ -9,7 +9,7 @@ summary: INSPECTION_SUMMARY 検査概要テーブルについて学習します�
 
 > **注記：**
 >
-> この表は TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> この表は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 `information_schema.inspection_summary`検査概要表の構造は次のとおりです。
 
@@ -40,12 +40,12 @@ DESC inspection_summary;
 -   `RULE` : 要約ルール。新しいルールが継続的に追加されるため、 `select * from inspection_rules where type='summary'`ステートメントを実行して最新のルール リストを照会できます。
 -   `INSTANCE` : 監視対象インスタンス。
 -   `METRICS_NAME` : 監視メトリック名。
--   `QUANTILE` : `QUANTILE`を含む監視テーブルに有効です。述語をプッシュダウンすることで、複数のパーセンタイルを指定できます。たとえば、 `select * from inspection_summary where rule='ddl' and quantile in (0.80, 0.90, 0.99, 0.999)`を実行して DDL 関連の監視メトリックを要約し、P80/P90/P99/P999 の結果を照会できます。 `AVG_VALUE` 、 `MIN_VALUE` 、および`MAX_VALUE` 、それぞれ集計の平均値、最小値、および最大値を示します。
+-   `QUANTILE` : `QUANTILE`含む監視テーブルに有効です。述語をプッシュダウンすることで、複数のパーセンタイルを指定できます。たとえば、 `select * from inspection_summary where rule='ddl' and quantile in (0.80, 0.90, 0.99, 0.999)`実行して DDL 関連の監視メトリックを要約し、P80/P90/P99/P999 の結果を照会できます。 `AVG_VALUE` 、 `MIN_VALUE` 、および`MAX_VALUE` 、それぞれ集計の平均値、最小値、および最大値を示します。
 -   `COMMENT` : 対応する監視メトリックに関するコメント。
 
 > **注記：**
 >
-> すべての結果を要約するとオーバーヘッドが発生するため、オーバーヘッドを削減するには、SQL 述語で特定の`rule`表示することをお勧めします。たとえば、 `select * from inspection_summary where rule in ('read-link', 'ddl')`を実行すると、読み取りリンクと DDL 関連の監視メトリックが要約されます。
+> すべての結果を要約するとオーバーヘッドが発生するため、オーバーヘッドを削減するには、SQL 述語で特定の`rule`表示することをお勧めします。たとえば、 `select * from inspection_summary where rule in ('read-link', 'ddl')`実行すると、読み取りリンクと DDL 関連の監視メトリックが要約されます。
 
 使用例:
 

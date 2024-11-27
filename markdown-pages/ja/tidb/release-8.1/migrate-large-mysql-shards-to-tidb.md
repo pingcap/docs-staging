@@ -1,21 +1,21 @@
 ---
 title: Migrate and Merge MySQL Shards of Large Datasets to TiDB
-summary: DumplingとTiDB Lightningを使用して、MySQL から TiDB にシャードの大規模なデータセットを移行およびマージする方法と、さまざまな MySQL シャードから TiDB に増分データ変更を複製するように DM タスクを構成する方法について学習します。
+summary: DumplingとTiDB Lightning を使用して、MySQL から TiDB にシャードの大規模なデータセットを移行およびマージする方法と、さまざまな MySQL シャードから TiDB に増分データ変更を複製するように DM タスクを構成する方法について学習します。
 ---
 
 # 大規模データセットの MySQL シャードを TiDB に移行してマージする {#migrate-and-merge-mysql-shards-of-large-datasets-to-tidb}
 
-大規模な MySQL データセット (たとえば、1 TiB 以上) を異なるパーティションから TiDB に移行する場合、移行中に業務からすべての TiDB クラスター書き込み操作を一時停止できるときは、 TiDB Lightningを使用して移行を迅速に行うことができます。移行後は、TiDB DM を使用して業務ニーズに応じて増分レプリケーションを実行することもできます。このドキュメントの「大規模なデータセット」は通常、約 1 TiB 以上のデータを意味します。
+大規模な MySQL データセット (たとえば、1 TiB 以上) を異なるパーティションから TiDB に移行する場合、移行中に業務からすべての TiDB クラスター書き込み操作を一時停止できるときは、 TiDB Lightning を使用して移行を迅速に行うことができます。移行後は、TiDB DM を使用して業務ニーズに応じて増分レプリケーションを実行することもできます。このドキュメントの「大規模なデータセット」は通常、約 1 TiB 以上のデータを意味します。
 
 このドキュメントでは、例を使用して、このような種類の移行の手順全体を説明します。
 
 MySQL シャードのデータ サイズが 1 TiB 未満の場合は、 [小さなデータセットの MySQL シャードを TiDB に移行してマージする](/migrate-small-mysql-shards-to-tidb.md)で説明した手順に従うことができます。この手順では、完全移行と増分移行の両方がサポートされており、手順が簡単です。
 
-このドキュメントの例では、 `my_db1`と`my_db2`という 2 つのデータベースがあることを前提としています。Dumplingを使用して、 `my_db1`から 2 つのテーブル`table1`と`table2` 、 `my_db2`から 2 つのテーブル`table3`と`table4`をそれぞれエクスポートします。その後、 TiDB Lightning を使用して、エクスポートした 4 つのテーブルを、ターゲット TiDB の`mydb`から同じ`table5`にインポートしてマージします。
+このドキュメントの例では、 `my_db1`と`my_db2` 2 つのデータベースがあることを前提としています。Dumplingを使用して、 `my_db1`から 2 つのテーブル`table1`と`table2`エクスポートし、 `my_db2`から 2 つのテーブル`table3`と`table4`をそれぞれエクスポートします。その後、 TiDB Lightning を使用して、エクスポートした 4 つのテーブルを`mydb`からインポートし、ターゲット TiDB の同じ`table5`にマージします。
 
 このドキュメントでは、次の手順に従ってデータを移行できます。
 
-1.  Dumpling を使用して完全なデータをエクスポートします。この例では、2 つのアップストリーム データベースからそれぞれ 2 つのテーブルをエクスポートします。
+1.  Dumplingを使用して完全なデータをエクスポートします。この例では、2 つのアップストリーム データベースからそれぞれ 2 つのテーブルをエクスポートします。
 
     -   `my_db1`から`table1`と`table2`エクスポート
     -   `my_db2`から`table3`と`table4`エクスポート
@@ -52,7 +52,7 @@ CREATE TABLE `table1` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ```
 
-これら 4 つのテーブルでは、 `id`列目が主キーです。これは自動増分であるため、異なるシャード テーブルで重複した`id`範囲が生成され、移行中にターゲット テーブルで主キーの競合が発生します。一方、 `sid`列目はシャーディング キーであり、インデックスがグローバルに一意であることを保証します。そのため、ターゲット`table5`の`id`列目の一意制約を削除して、データ マージの競合を回避できます。
+これら 4 つのテーブルでは、 `id`列目が主キーです。これは自動増分であるため、異なるシャード テーブルで重複した`id`の範囲が生成され、移行中にターゲット テーブルで主キーの競合が発生します。一方、 `sid`列目はシャーディング キーであり、インデックスがグローバルに一意であることを保証します。そのため、ターゲット`table5`の`id`列目の一意制約を削除して、データ マージの競合を回避できます。
 
 ```sql
 CREATE TABLE `table5` (
@@ -79,7 +79,7 @@ CREATE TABLE `table5` (
 tiup dumpling -h ${ip} -P 3306 -u root -t 16 -r 200000 -F 256MB -B my_db1 -f 'my_db1.table[12]' -o ${data-path}/my_db1
 ```
 
-次の表は、上記のコマンドのパラメータについて説明しています。Dumpling パラメータの詳細については、 [Dumplingの概要](/dumpling-overview.md)を参照してください。
+次の表は、上記のコマンドのパラメータについて説明しています。Dumpling パラメータの詳細については、 [Dumplingの概要](/dumpling-overview.md)参照Dumplingてください。
 
 | パラメータ               | 説明                                                                                                                     |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -88,15 +88,15 @@ tiup dumpling -h ${ip} -P 3306 -u root -t 16 -r 200000 -F 256MB -B my_db1 -f 'my
 | `-p`または`--port`     | 使用するポートを指定します。                                                                                                         |
 | `-h`または`--host`     | データ ソースの IP アドレスを指定します。                                                                                                |
 | `-t`または`--thread`   | エクスポートのスレッド数を指定します。スレッド数を増やすと、 Dumplingの同時実行性とエクスポート速度が向上し、データベースのメモリ消費量が増加します。したがって、数値を大きくしすぎることはお勧めしません。通常は 64 未満です。 |
-| `-o`または`--output`   | storageのエクスポート ディレクトリを指定します。ローカル ファイル パスまたは[外部storageURI](/external-storage-uri.md)サポートします。                            |
+| `-o`または`--output`   | storageのエクスポート ディレクトリを指定します。ローカル ファイル パスまたは[外部storageURI](/external-storage-uri.md)をサポートします。                           |
 | `-r`または`--row`      | 1 つのファイル内の最大行数を指定します。このパラメータを使用すると、 Dumpling はテーブル内の同時実行を有効にしてエクスポートを高速化し、メモリ使用量を削減します。                                |
 | `-F`                | 1 つのファイルの最大サイズを指定します。単位は`MiB`です。値は 256 MiB に抑えることをお勧めします。                                                              |
 | `-B`または`--database` | エクスポートするデータベースを指定します。                                                                                                  |
 | `-f`または`--filter`   | フィルタ パターンに一致するテーブルをエクスポートします。フィルタ構文については、 [テーブルフィルター](/table-filter.md)参照してください。                                       |
 
-`${data-path}`に十分な空き領域があることを確認してください。テーブルのサイズが大きすぎるためにバックアップ プロセスが中断されるのを避けるため、 `-F`オプションを使用することを強くお勧めします。
+`${data-path}`に十分な空き領域があることを確認してください。単一テーブルのサイズが大きすぎるためにバックアップ プロセスが中断されるのを避けるため、 `-F`オプションを使用することを強くお勧めします。
 
-次に、次のコマンドを実行して、 Dumplingを使用して`my_db2`から`table3`と`table4`エクスポートします。パスは`${data-path}/my_db1`ではなく`${data-path}/my_db2`であることに注意してください。
+次に、次のコマンドを実行して、 Dumpling を使用して`my_db2`から`table3`と`table4`エクスポートします。パスは`${data-path}/my_db1`ではなく`${data-path}/my_db2`であることに注意してください。
 
 ```shell
 tiup dumpling -h ${ip} -P 3306 -u root -t 16 -r 200000 -F 256MB -B my_db2 -f 'my_db2.table[34]' -o ${data-path}/my_db2
@@ -104,17 +104,17 @@ tiup dumpling -h ${ip} -P 3306 -u root -t 16 -r 200000 -F 256MB -B my_db2 -f 'my
 
 以上の手順で、すべてのソース データ テーブルが`${data-path}`ディレクトリにエクスポートされました。エクスポートしたデータをすべて同じディレクトリに置くと、その後のTiDB Lightningによるインポートが便利になります。
 
-増分レプリケーションに必要な開始位置情報は、それぞれ`${data-path}`ディレクトリの`my_db1`および`my_db2`サブディレクトリの`metadata`ファイルにあります。これらは、 Dumplingによって自動的に生成されるメタ情報ファイルです。増分レプリケーションを実行するには、これらのファイルにbinlogの場所情報を記録する必要があります。
+増分レプリケーションに必要な開始位置情報は、それぞれ`${data-path}`ディレクトリの`my_db1`および`my_db2`サブディレクトリの`metadata`ファイルにあります。これらは、 Dumplingによって自動的に生成されるメタ情報ファイルです。増分レプリケーションを実行するには、これらのファイルにbinlog の場所情報を記録する必要があります。
 
 ## ステップ2. TiDB Lightningを起動してエクスポートされたデータ全体をインポートする {#step-2-start-tidb-lightning-to-import-full-exported-data}
 
-移行のためにTiDB Lightningを開始する前に、チェックポイントの処理方法を理解し、ニーズに応じて適切な方法を選択することをお勧めします。
+移行のためにTiDB Lightning を開始する前に、チェックポイントの処理方法を理解し、ニーズに応じて適切な方法を選択することをお勧めします。
 
 ### チェックポイント {#checkpoints}
 
 大量のデータの移行には通常、数時間から数日かかります。長時間実行されるプロセスが予期せず中断される可能性はあります。データの一部がすでにインポートされている場合でも、すべてを最初からやり直すのは非常に面倒です。
 
-幸いなことに、 TiDB Lightning には`checkpoints`という機能があり、これにより、 TiDB Lightning はインポートの進行状況を`checkpoints`として随時保存し、中断されたインポート タスクを再起動時に最新のチェックポイントから再開できるようになります。
+幸いなことに、 TiDB Lightning には`checkpoints`という機能があり、これにより、 TiDB Lightning はインポートの進行状況`checkpoints`として随時保存し、中断されたインポート タスクを再起動時に最新のチェックポイントから再開できるようになります。
 
 回復不可能なエラー (データ破損など) が原因でTiDB Lightningタスクがクラッシュした場合、チェックポイントから再開されず、エラーが報告されてタスクが終了します。インポートされたデータの安全性を確保するには、他の手順に進む前に、 `tidb-lightning-ctl`コマンドを使用してこれらのエラーを解決する必要があります。オプションは次のとおりです。
 
@@ -193,7 +193,7 @@ CREATE TABLE `table5` (
     pd-addr = "${ip}:${port}"
     ```
 
-2.  `tidb-lightning`を実行します。シェルでプログラム名を直接呼び出してプログラムを実行すると、SIGHUP シグナルを受け取った後にプロセスが予期せず終了することがあります。 `nohup`や`screen`や`tiup`などのツールを使用してプログラムを実行し、プロセスをシェルのバックグラウンドに置くことをお勧めします。 S3 から移行する場合は、Amazon S3 バックエンドストアにアクセスできるアカウントの SecretKey と AccessKey を環境変数として Lightning ノードに渡す必要があります。 `~/.aws/credentials`からの認証情報ファイルの読み取りもサポートされています。例:
+2.  `tidb-lightning`実行します。シェルでプログラム名を直接呼び出してプログラムを実行すると、SIGHUP シグナルを受け取った後にプロセスが予期せず終了することがあります。 `nohup`や`screen`や`tiup`などのツールを使用してプログラムを実行し、プロセスをシェルのバックグラウンドに置くことをお勧めします。 S3 から移行する場合は、Amazon S3 バックエンドストアにアクセスできるアカウントの SecretKey と AccessKey を環境変数として Lightning ノードに渡す必要があります。 `~/.aws/credentials`からの認証情報ファイルの読み取りもサポートされています。例:
 
     ```shell
     export AWS_ACCESS_KEY_ID=${access_key}
@@ -203,17 +203,17 @@ CREATE TABLE `table5` (
 
 3.  移行タスクを開始した後、次のいずれかの方法を使用して進行状況を確認できます。
 
-    -   `grep`ツールを使用して、ログ内のキーワード`progress`を検索します。デフォルトでは、進行状況を報告するメッセージが 5 分ごとにログ ファイルにフラッシュされます。
+    -   `grep`ツールを使用して、ログ内のキーワード`progress`検索します。デフォルトでは、進行状況を報告するメッセージが 5 分ごとにログ ファイルにフラッシュされます。
     -   監視ダッシュボードで進行状況をビュー。詳細については、 [TiDB Lightning監視](/tidb-lightning/monitor-tidb-lightning.md)参照してください。
-    -   進捗状況はWebページからビュー。1 [ウェブインターフェース](/tidb-lightning/tidb-lightning-web-interface.md)参照してください。
+    -   進捗状況はWebページからビュー[ウェブインターフェース](/tidb-lightning/tidb-lightning-web-interface.md)参照してください。
 
-TiDB Lightning はインポートを完了すると、自動的に終了します。最後の行の`tidb-lightning.log`に`the whole procedure completed`が含まれているかどうかを確認します。含まれている場合は、インポートは成功です。含まれていない場合は、インポートでエラーが発生します。エラー メッセージの指示に従ってエラーに対処してください。
+TiDB Lightning はインポートを完了すると、自動的に終了します。最後の行の`tidb-lightning.log`に`the whole procedure completed`含まれているかどうかを確認します。含まれている場合は、インポートは成功です。含まれていない場合は、インポートでエラーが発生します。エラー メッセージの指示に従ってエラーに対処してください。
 
 > **注記：**
 >
-> 移行が成功したかどうかに関係なく、ログの最後の行は常に`tidb lightning exit`なります。これは、 TiDB Lightning が正常に終了したことを意味するだけで、インポート タスクが正常に完了したことを保証するものではありません。
+> 移行が成功したかどうかに関係なく、ログの最後の行は常に`tidb lightning exit`になります。これは、 TiDB Lightning が正常に終了したことを意味するだけで、インポート タスクが正常に完了したことを保証するものではありません。
 
-移行中に問題が発生した場合は、 [TiDB Lightningに関するよくある質問](/tidb-lightning/tidb-lightning-faq.md)参照してください。
+移行中に問題が発生した場合は、 [TiDB Lightningよくある質問](/tidb-lightning/tidb-lightning-faq.md)参照してください。
 
 ## ステップ3. (オプション) DMを使用して増分レプリケーションを実行する {#step-3-optional-use-dm-to-perform-incremental-replication}
 
@@ -239,7 +239,7 @@ from:
   port: ${port}             # For example: 3306
 ```
 
-ターミナルで次のコマンドを実行します。1 `tiup dmctl`使用して、データ ソース構成を DM クラスターにロードします。
+ターミナルで次のコマンドを実行します`tiup dmctl`使用して、データ ソース構成を DM クラスターにロードします。
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} operate-source create source1.yaml
@@ -263,7 +263,7 @@ name: task-test               # The name of the task. Should be globally unique.
 task-mode: incremental        # The mode of the task. "incremental" means full data migration is skipped and only incremental replication is performed.
 # Required for incremental replication from sharded tables. By default, the "pessimistic" mode is used.
 # If you have a deep understanding of the principles and usage limitations of the optimistic mode, you can also use the "optimistic" mode.
-# For more information, see [Merge and Migrate Data from Sharded Tables](https://docs.pingcap.com/zh/tidb/dev/feature-shard-merge/).
+# For more information, see [Merge and Migrate Data from Sharded Tables](https://docs.pingcap.com/tidb/dev/feature-shard-merge/).
 
 shard-mode: "pessimistic"
 
@@ -329,7 +329,7 @@ mysql-instances:
 tiup dmctl --master-addr ${advertise-addr} check-task task.yaml
 ```
 
-`tiup dmctl`を使用して次のコマンドを実行し、データ移行タスクを開始します。
+`tiup dmctl`使用して次のコマンドを実行し、データ移行タスクを開始します。
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
@@ -342,7 +342,7 @@ tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
 | --マスターアドレス | dmctl が接続するクラスター内の任意の DM マスター ノードの {advertise-addr}。例: 172.16.10.71:8261 |
 | タスク開始      | データ移行タスクを開始します。                                                          |
 
-タスクの開始に失敗した場合は、返された結果のプロンプト メッセージに従って構成を変更し、 `tiup dmctl`の`start-task task.yaml`サブコマンドを実行してタスクを再起動します。問題が発生した場合は、 [エラーの処理](/dm/dm-error-handling.md)と[TiDB データ移行に関するFAQ](/dm/dm-faq.md)を参照してください。
+タスクの開始に失敗した場合は、返された結果のプロンプト メッセージに従って構成を変更し、 `tiup dmctl`の`start-task task.yaml`サブコマンドを実行してタスクを再起動します。問題が発生した場合は、 [エラーの処理](/dm/dm-error-handling.md)と[TiDB データ移行に関するFAQ](/dm/dm-faq.md)参照してください。
 
 ### 移行ステータスを確認する {#check-the-migration-status}
 
@@ -366,8 +366,8 @@ Grafana またはログを通じて、移行タスクの履歴と内部運用メ
 
     DM が実行中の場合、DM-master、DM-worker、dmctl は移行タスクに関する情報を含むログを出力します。各コンポーネントのログ ディレクトリは次のとおりです。
 
-    -   DM マスター ログ ディレクトリ: DM マスター コマンド ライン パラメータ`--log-file`で指定されます。DM がTiUPを使用して展開されている場合、ログ ディレクトリは`/dm-deploy/dm-master-8261/log/`です。
-    -   DM-worker ログ ディレクトリ: DM-worker コマンドライン パラメータ`--log-file`で指定されます。DM がTiUPを使用してデプロイされている場合、ログ ディレクトリは`/dm-deploy/dm-worker-8262/log/`です。
+    -   DM マスター ログ ディレクトリ: DM マスター コマンド ライン パラメータ`--log-file`で指定されます。DM がTiUP を使用して展開されている場合、ログ ディレクトリは`/dm-deploy/dm-master-8261/log/`です。
+    -   DM-worker ログ ディレクトリ: DM-worker コマンドライン パラメータ`--log-file`で指定されます。DM がTiUP を使用してデプロイされている場合、ログ ディレクトリは`/dm-deploy/dm-worker-8262/log/`です。
 
 ## 参照 {#see-also}
 
@@ -378,5 +378,5 @@ Grafana またはログを通じて、移行タスクの履歴と内部運用メ
 -   [データ移行タスクを再開する](/dm/dm-resume-task.md)
 -   [データ移行タスクを停止する](/dm/dm-stop-task.md)
 -   [データソースのエクスポートとインポート、およびクラスターのタスクコンフィグレーション](/dm/dm-export-import-config.md)
--   [失敗したDDLステートメントの処理](/dm/handle-failed-ddl-statements.md)
+-   [失敗したDDL文の処理](/dm/handle-failed-ddl-statements.md)
 -   [エラーの処理](/dm/dm-error-handling.md)

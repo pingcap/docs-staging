@@ -5,14 +5,14 @@ summary: データを削除するための SQL 構文、ベスト プラクテ�
 
 # データを削除 {#delete-data}
 
-このドキュメントでは、 [消去](/sql-statements/sql-statement-delete.md) SQL ステートメントを使用して TiDB 内のデータを削除する方法について説明します。期限切れのデータを定期的に削除する必要がある場合は、 [有効期間](/time-to-live.md)機能を使用してください。
+このドキュメントでは、 [消去](/sql-statements/sql-statement-delete.md) SQL ステートメントを使用して TiDB 内のデータを削除する方法について説明します。期限切れのデータを定期的に削除する必要がある場合は、 [生きる時間](/time-to-live.md)機能を使用してください。
 
 ## 始める前に {#before-you-start}
 
 このドキュメントを読む前に、次のものを準備する必要があります。
 
--   [TiDB サーバーレスクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
--   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) [データベースを作成する](/develop/dev-guide-create-database.md) [セカンダリインデックスを作成する](/develop/dev-guide-create-secondary-indexes.md) [テーブルを作成する](/develop/dev-guide-create-table.md)
+-   [TiDB Cloudサーバーレスクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
+-   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) [データベースを作成する](/develop/dev-guide-create-database.md) [セカンダリインデックスを作成する](/develop/dev-guide-create-secondary-indexes.md) [テーブルを作成する](/develop/dev-guide-create-table.md)ください
 -   [データの挿入](/develop/dev-guide-insert-data.md)
 
 ## SQL構文 {#sql-syntax}
@@ -28,13 +28,13 @@ DELETE FROM {table} WHERE {filter}
 |  `{table}` |    テーブル名   |
 | `{filter}` | フィルターの一致条件 |
 
-この例では、 `DELETE`の単純な使用例のみを示しています。詳細については、 [DELETE構文](/sql-statements/sql-statement-delete.md)を参照してください。
+この例では、 `DELETE`の単純な使用例のみを示しています。詳細については、 [DELETE構文](/sql-statements/sql-statement-delete.md)参照してください。
 
 ## ベストプラクティス {#best-practices}
 
 データを削除する際に従うべきベスト プラクティスを次に示します。
 
--   `DELETE`ステートメントでは必ず`WHERE`句を指定`WHERE`ます。5 句が指定されていない場合、TiDB はテーブル内の***すべての行***を削除します。
+-   `DELETE`ステートメントでは必ず`WHERE`句を指定します。5 句が指定`WHERE`れていない場合、TiDB はテーブル内の***すべての行***を削除します。
 
 <CustomContent platform="tidb">
 
@@ -54,7 +54,7 @@ DELETE FROM {table} WHERE {filter}
 
 ## 例 {#example}
 
-特定の期間内にアプリケーション エラーが見つかり、この期間内の[評価](/develop/dev-guide-bookshop-schema-design.md#ratings-table)データ (たとえば`2022-04-15 00:00:00`から`2022-04-15 00:15:00` ) をすべて削除する必要があるとします。この場合、 `SELECT`ステートメントを使用して、削除するレコードの数を確認できます。
+特定の期間内にアプリケーション エラーが見つかり、この期間内の[評価](/develop/dev-guide-bookshop-schema-design.md#ratings-table)のデータ (たとえば`2022-04-15 00:00:00`から`2022-04-15 00:15:00`まで) をすべて削除する必要があるとします。この場合、 `SELECT`ステートメントを使用して、削除するレコードの数を確認できます。
 
 ```sql
 SELECT COUNT(*) FROM `ratings` WHERE `rated_at` >= "2022-04-15 00:00:00" AND `rated_at` <= "2022-04-15 00:15:00";
@@ -190,7 +190,7 @@ with connection:
 
 ### TiDB GC メカニズム {#tidb-gc-mechanism}
 
-TiDB は、 `DELETE`ステートメントを実行してもすぐにデータを削除しません。代わりに、データを削除準備完了としてマークします。その後、TiDB GC (ガベージ コレクション) が古いデータをクリーンアップするまで待機します。したがって、 `DELETE`ステートメントでは、ディスク使用量はすぐには削減されませ***ん***。
+TiDB は、 `DELETE`番目のステートメントを実行してもすぐにデータを削除しません。代わりに、データを削除準備完了としてマークします。その後、TiDB GC (ガベージ コレクション) が古いデータをクリーンアップするまで待機します。したがって、 `DELETE`ステートメントでは、ディスク使用量はすぐには削減され***ません***。
 
 GC は、デフォルトでは 10 分ごとに 1 回トリガーされます。各 GC は**safe_point**と呼ばれるタイム ポイントを計算します。このタイム ポイントより前のデータは再度使用されないため、TiDB は安全にクリーンアップできます。
 
@@ -220,7 +220,7 @@ TiDB は[統計情報](/statistics.md)使用してインデックスの選択を
 
 ### 一括削除ループを書く {#write-a-bulk-delete-loop}
 
-アプリケーションまたはスクリプトのループ内に`DELETE`ステートメントを記述し、 `WHERE`句を使用してデータをフィルター処理し、 `LIMIT`を使用して 1 つのステートメントで削除する行数を制限できます。
+アプリケーションまたはスクリプトのループ内に`DELETE`ステートメントを記述し、 `WHERE`句を使用してデータをフィルター処理し、 `LIMIT`使用して単一のステートメントで削除する行数を制限できます。
 
 ### 一括削除の例 {#bulk-delete-example}
 
@@ -396,13 +396,13 @@ with connection:
 BATCH ON {shard_column} LIMIT {batch_size} {delete_statement};
 ```
 
-|        パラメータ名        |          説明         |
-| :------------------: | :-----------------: |
-|   `{shard_column}`   |  バッチを分割するために使用される列。 |
-|    `{batch_size}`    |   各バッチのサイズを制御します。   |
-| `{delete_statement}` | `DELETE`番目のステートメント。 |
+|        パラメータ名        |         説明         |
+| :------------------: | :----------------: |
+|   `{shard_column}`   | バッチを分割するために使用される列。 |
+|    `{batch_size}`    |   各バッチのサイズを制御します。  |
+| `{delete_statement}` |  `DELETE`ステートメント。  |
 
-上記の例は、非トランザクション一括削除ステートメントの単純な使用例のみを示しています。詳細については、 [非トランザクションDMLステートメント](/non-transactional-dml.md)を参照してください。
+上記の例は、非トランザクション一括削除ステートメントの単純な使用例のみを示しています。詳細については、 [非トランザクションDMLステートメント](/non-transactional-dml.md)参照してください。
 
 ### 非トランザクション一括削除の例 {#example-of-non-transactional-bulk-delete}
 
@@ -411,3 +411,17 @@ BATCH ON {shard_column} LIMIT {batch_size} {delete_statement};
 ```sql
 BATCH ON `rated_at` LIMIT 1000 DELETE FROM `ratings` WHERE `rated_at` >= "2022-04-15 00:00:00" AND  `rated_at` <= "2022-04-15 00:15:00";
 ```
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

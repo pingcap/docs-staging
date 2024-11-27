@@ -1,6 +1,6 @@
 ---
 title: COLUMNS
-summary: Learn the `COLUMNS` INFORMATION_SCHEMA table.
+summary: COLUMNS INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # コラム {#columns}
@@ -122,3 +122,7 @@ SHOW COLUMNS FROM t1 FROM test;
 +-------+---------+------+------+---------+-------+
 1 row in set (0.00 sec)
 ```
+
+## 参照 {#see-also}
+
+-   [`SHOW COLUMNS FROM`](/sql-statements/sql-statement-show-columns-from.md)

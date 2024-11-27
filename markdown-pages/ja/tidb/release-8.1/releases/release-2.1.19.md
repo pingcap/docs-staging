@@ -17,10 +17,10 @@ TiDB Ansible バージョン: 2.1.19
     -   `select max(_tidb_rowid) from t`のシナリオを最適化してテーブル全体のスキャンを回避する[＃13294](https://github.com/pingcap/tidb/pull/13294)
     -   クエリ内のユーザー変数に割り当てられた誤った値と述語のプッシュダウンによって発生する誤った結果を修正します[＃13230](https://github.com/pingcap/tidb/pull/13230)
     -   統計情報の更新時にデータ競合が発生し、統計情報が正確でない問題を修正[＃13690](https://github.com/pingcap/tidb/pull/13690)
-    -   `UPDATE`文にサブクエリと保存された生成列の`UPDATE`が含まれている場合に結果が正しくない問題を修正しました。3 文に異なるデータベースの同じ名前のテーブルが 2 つ含まれている場合に発生する文実行エラーを修正しました[＃13357](https://github.com/pingcap/tidb/pull/13357)
+    -   `UPDATE`文にサブクエリと保存された生成列の両方が含まれている場合に結果が正しくない問題を修正します。この文に異なるデータベースの同じ名前のテーブルが 2 つ含まれている場合に`UPDATE`文の実行エラーが発生する問題を修正します[＃13357](https://github.com/pingcap/tidb/pull/13357)
     -   `PhysicalUnionScan`演算子が統計[＃14134](https://github.com/pingcap/tidb/pull/14134)を誤って設定するため、クエリ プランが誤って選択される可能性がある問題を修正しました。
-    -   `minAutoAnalyzeRatio`制約を取り除き、自動`ANALYZE`をよりタイムリーに[＃14013](https://github.com/pingcap/tidb/pull/14013)にする
-    -   `WHERE`節に一意のキー[＃13385](https://github.com/pingcap/tidb/pull/13385)の等号条件が含まれている場合に、推定行数が`1`より大きくなる問題を修正しました。
+    -   `minAutoAnalyzeRatio`制約を取り除き、自動`ANALYZE`よりタイムリーに[＃14013](https://github.com/pingcap/tidb/pull/14013)にする
+    -   `WHERE`節に一意キー[＃13385](https://github.com/pingcap/tidb/pull/13385)の等号条件が含まれている場合に、推定行数が`1`より大きくなる問題を修正しました。
 -   SQL実行エンジン
     -   `ConvertJSONToInt` [＃13036](https://github.com/pingcap/tidb/pull/13036)で`unit64`の中間結果として`int64`使用する場合の精度オーバーフローを修正しました。
     -   `SLEEP`関数がクエリ内に存在する場合（たとえば`select 1 from (select sleep(1)) t;)` ）、列の整理によりクエリ内の`sleep(1)`無効になる問題を修正しました[＃13039](https://github.com/pingcap/tidb/pull/13039)
@@ -37,7 +37,7 @@ TiDB Ansible バージョン: 2.1.19
         -   `Write_size`
         -   `Prewrite_region`
         -   `Txn_retry`
-    -   `UPDATE`文に含まれるサブクエリが誤って変換される問題を修正。5 句にサブクエリ`WHERE` [＃13120](https://github.com/pingcap/tidb/pull/13120)含まれている場合に`UPDATE`実行が失敗する問題を修正。
+    -   `UPDATE`文に含まれるサブクエリが誤っ`WHERE`変換される問題を修正。5 句にサブクエリ[＃13120](https://github.com/pingcap/tidb/pull/13120)含まれている場合に`UPDATE`実行が失敗する問題を修正。
     -   パーティションテーブル[＃13143](https://github.com/pingcap/tidb/pull/13143)で`ADMIN CHECK TABLE`実行をサポート
     -   列属性として`ON UPDATE CURRENT_TIMESTAMP`を使用し、浮動小数点精度[＃12462](https://github.com/pingcap/tidb/pull/12462)を指定した場合に、 `SHOW CREATE TABLE`などのステートメントの精度が不完全になる問題を修正
     -   列[＃14162](https://github.com/pingcap/tidb/pull/14162)を削除、変更、または変更するときに外部キーがチェックされないため、 `SELECT * FROM information_schema.KEY_COLUMN_USAGE`ステートメントの実行時にpanicが発生する問題を修正しました。
@@ -45,11 +45,11 @@ TiDB Ansible バージョン: 2.1.19
     -   夏時間によるエラー`Invalid time format`を修正[＃13624](https://github.com/pingcap/tidb/pull/13624)
     -   整数を符号なし浮動小数点型または小数点型に変換すると精度が失われ、データが正しくなくなる問題を修正[＃13756](https://github.com/pingcap/tidb/pull/13756)
     -   `Quote`関数が`NULL`値[＃13681](https://github.com/pingcap/tidb/pull/13681)を処理するときに誤ったタイプの値が返される問題を修正しました
-    -   `gotime.Local` [＃13792](https://github.com/pingcap/tidb/pull/13792)を使用して文字列から日付を解析した後にタイムゾーンが正しくない問題を修正しました
+    -   `gotime.Local` [＃13792](https://github.com/pingcap/tidb/pull/13792)使用して文字列から日付を解析した後にタイムゾーンが正しくない問題を修正しました
     -   `builtinIntervalRealSig` [＃13768](https://github.com/pingcap/tidb/pull/13768)の実装で`binSearch`関数がエラーを返さないため、結果が不正確になる可能性がある問題を修正しました。
     -   `INSERT`文実行[＃14009](https://github.com/pingcap/tidb/pull/14009)で文字列型を浮動小数点型に変換するときにエラーが発生する可能性がある問題を修正
     -   `sum(distinct)`関数[＃13041](https://github.com/pingcap/tidb/pull/13041)から返される誤った結果を修正
-    -   関数`jsonUnquoteFunction`の返される型の長さに誤った値が与えられているため、同じ場所の`CAST` `union`データをマージされた型に変換するときに`data too long`返される問題を修正しました[＃13645](https://github.com/pingcap/tidb/pull/13645)
+    -   関数`jsonUnquoteFunction`の返される型の長さに誤った値が与えられているため`union` `CAST`データをマージされた型に変換するときに`data too long`が返される問題を修正しました[＃13645](https://github.com/pingcap/tidb/pull/13645)
     -   権限チェックが厳しすぎるためパスワードを設定できない問題を修正[＃13805](https://github.com/pingcap/tidb/pull/13805)
 -   サーバ
     -   `KILL CONNECTION`ゴルーチンリークを引き起こす可能性がある問題を修正[＃13252](https://github.com/pingcap/tidb/pull/13252)
@@ -58,7 +58,7 @@ TiDB Ansible バージョン: 2.1.19
     -   TiDBサーバー[＃13904](https://github.com/pingcap/tidb/pull/13904)のバージョンを制御および変更するための`server-version`構成項目を追加します。
     -   Go1.13でコンパイルされたバイナリ`plugin`正常に動作しない問題を修正[＃13527](https://github.com/pingcap/tidb/pull/13527)
 -   DDL
-    -   テーブルが作成され、テーブルに`COLLATE` [＃13190](https://github.com/pingcap/tidb/pull/13190)含まれている場合、列のシステムのデフォルトの文字セットではなく、テーブルの`COLLATE`使用します。
+    -   テーブルが作成され、テーブルに`COLLATE` [＃13190](https://github.com/pingcap/tidb/pull/13190)が含まれている場合、列のシステムのデフォルトの文字セットではなく、テーブルの`COLLATE`使用します。
     -   テーブル作成時にインデックス名の長さを制限する[＃13311](https://github.com/pingcap/tidb/pull/13311)
     -   テーブル名を変更するときにテーブル名の長さがチェックされない問題を修正[＃13345](https://github.com/pingcap/tidb/pull/13345)
     -   `BIT`列[＃13511](https://github.com/pingcap/tidb/pull/13511)の幅の範囲を確認する

@@ -12,9 +12,11 @@ summary: TIKV_REGION_STATUS` information_schema テーブルについて学習�
 > このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ```sql
-USE information_schema;
-DESC tikv_region_status;
+USE INFORMATION_SCHEMA;
+DESC TIKV_REGION_STATUS;
 ```
+
+出力は次のようになります。
 
 ```sql
 +---------------------------+-------------+------+------+---------+-------+
@@ -29,6 +31,9 @@ DESC tikv_region_status;
 | IS_INDEX                  | tinyint(1)  | NO   |      | 0       |       |
 | INDEX_ID                  | bigint(21)  | YES  |      | NULL    |       |
 | INDEX_NAME                | varchar(64) | YES  |      | NULL    |       |
+| IS_PARTITION              | tinyint(1)  | NO   |      | 0       |       |
+| PARTITION_ID              | bigint(21)  | YES  |      | NULL    |       |
+| PARTITION_NAME            | varchar(64) | YES  |      | NULL    |       |
 | EPOCH_CONF_VER            | bigint(21)  | YES  |      | NULL    |       |
 | EPOCH_VERSION             | bigint(21)  | YES  |      | NULL    |       |
 | WRITTEN_BYTES             | bigint(21)  | YES  |      | NULL    |       |
@@ -38,7 +43,7 @@ DESC tikv_region_status;
 | REPLICATIONSTATUS_STATE   | varchar(64) | YES  |      | NULL    |       |
 | REPLICATIONSTATUS_STATEID | bigint(21)  | YES  |      | NULL    |       |
 +---------------------------+-------------+------+------+---------+-------+
-17 rows in set (0.00 sec)
+20 rows in set (0.00 sec)
 ```
 
 `TIKV_REGION_STATUS`の表の列の説明は次のとおりです。
@@ -52,6 +57,9 @@ DESC tikv_region_status;
 -   `IS_INDEX` :リージョンデータがインデックスであるかどうか。0 はインデックスではないことを意味し、1 はインデックスであることを意味します。現在のリージョンにテーブル データとインデックス データの両方が含まれている場合、レコードの行が複数存在し、 `IS_INDEX`それぞれ 0 と 1 になります。
 -   `INDEX_ID` :リージョンが属するインデックスの ID。2 が`IS_INDEX`の場合、この列の値は NULL になります。
 -   `INDEX_NAME` :リージョンが属するインデックスの名前。2 が`IS_INDEX`の場合、この列の値は NULL になります。
+-   `IS_PARTITION` :リージョンが属するテーブルがパーティション化されているかどうか。
+-   `PARTITION_ID` :リージョンが属するテーブルがパーティション化されている場合、この列にはリージョンが属するパーティションの ID が表示されます。
+-   `PARTITION_NAME` :リージョンが属するテーブルがパーティション化されている場合、この列にはリージョンが属するパーティションの名前が表示されます。
 -   `EPOCH_CONF_VER` :リージョン設定のバージョン番号。ピアが追加または削除されると、バージョン番号が増加します。
 -   `EPOCH_VERSION` :リージョンの現在のバージョン番号。リージョンが分割または結合されるとバージョン番号が増加します。
 -   `WRITTEN_BYTES` :リージョンに書き込まれたデータの量 (バイト)。

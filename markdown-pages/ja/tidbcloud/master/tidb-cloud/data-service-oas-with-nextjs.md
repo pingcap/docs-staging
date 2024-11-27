@@ -7,22 +7,22 @@ summary: データ アプリの OpenAPI 仕様を使用してクライアント 
 
 このドキュメントでは、 [データアプリ](/tidb-cloud/tidb-cloud-glossary.md#data-app)の OpenAPI 仕様を使用してクライアント コードを生成し、Next.js アプリケーションを開発する方法を紹介します。
 
-## 始める前に {#before-you-begin}
+## あなたが始める前に {#before-you-begin}
 
 Next.js で OpenAPI 仕様を使用する前に、次のものを用意してください。
 
--   TiDB クラスター。詳細については、 [TiDB Cloud Serverless クラスターを作成する](/tidb-cloud/create-tidb-cluster-serverless.md)または[TiDB Cloud専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md)を参照してください。
+-   TiDB クラスター。詳細については、 [TiDB サーバーレス クラスターを作成する](/tidb-cloud/create-tidb-cluster-serverless.md)または[TiDB専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md)を参照してください。
 -   [Node.js](https://nodejs.org/en/download)
 -   [ネプ](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 -   [糸](https://yarnpkg.com/getting-started/install)
 
-このドキュメントでは、TiDB Cloud Serverless クラスターを例として使用します。
+このドキュメントでは、TiDB Serverless クラスターを例として使用します。
 
 ## ステップ1. データを準備する {#step-1-prepare-data}
 
 まず、TiDB クラスターにテーブル`test.repository`を作成し、そこにサンプル データを挿入します。次の例では、デモ用のデータとして、PingCAP によって開発されたオープン ソース プロジェクトをいくつか挿入します。
 
-SQL ステートメントを実行するには、 [TiDB Cloudコンソール](https://tidbcloud.com)の[SQL エディター](/tidb-cloud/explore-data-with-chat2query.md)使用できます。
+SQL ステートメントを実行するには、 [TiDB Cloudコンソール](https://tidbcloud.com)の[チャット2クエリ](/tidb-cloud/explore-data-with-chat2query.md)使用できます。
 
 ```sql
 -- Select the database
@@ -65,7 +65,7 @@ SELECT * FROM test.repository;
     yarn create next-app hello-repos
     ```
 
-    次のコマンドを使用して、新しく作成されたプロジェクトにディレクトリを変更します。
+    次のコマンドを使用して、新しく作成したプロジェクトにディレクトリを変更します。
 
     ```shell
     cd hello-repos

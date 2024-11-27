@@ -1,15 +1,15 @@
 ---
 title: ADMIN RESUME DDL JOBS
-summary: 管理者のDDLジョブの履歴書を再開するためには、ADMIN RESUME DDLを使用します。再開が完了した後も、DDLジョブを実行するSQLステートメントは実行中として表示され続けます。再開が失敗した場合は、失敗の具体的な理由が表示されます。このステートメントにより、複数のDDLジョブを再開できます。他のステータスのDDLジョブは再開できず、再開操作は失敗します。ジョブを複数回再開しようとすると、TiDBはエラーを報告します。
+summary: TiDB データベースの ADMIN RESUME DDL の使用法の概要。
 ---
 
-# 管理者の DDL ジョブの履歴書 {#admin-resume-ddl-jobs}
+# 管理者履歴書DDLジョブ {#admin-resume-ddl-jobs}
 
-`ADMIN RESUME DDL`指定すると、一時停止した DDL ジョブを再開できます。 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)を実行すると、 `job_id`見つけることができます。
+`ADMIN RESUME DDL`すると、一時停止された DDL ジョブを再開できます。 `job_id` [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)実行すると見つかります。
 
-このステートメントを使用して、一時停止した DDL ジョブを再開できます。再開が完了した後も、DDL ジョブを実行する SQL ステートメントは実行中として表示され続けます。すでに完了した DDL ジョブを再開しようとすると、 `RESULT`列に`DDL Job:90 not found`エラーが表示されます。これは、ジョブが DDL 待機キューから削除されたことを示します。
+このステートメントを使用して、一時停止された DDL ジョブを再開できます。再開が完了すると、DDL ジョブを実行する SQL ステートメントは引き続き実行中として表示されます。すでに完了している DDL ジョブを再開しようとすると、 `RESULT`列に`DDL Job:90 not found`エラーが表示されます。これは、ジョブが DDL 待機キューから削除されたことを示します。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 AdminStmt ::=
@@ -21,7 +21,7 @@ NumList ::=
 
 ## 例 {#examples}
 
-`ADMIN RESUME DDL JOBS` 、現在一時停止されている DDL ジョブを再開し、ジョブが正常に再開されたかどうかを返します。
+`ADMIN RESUME DDL JOBS`現在一時停止されている DDL ジョブを再開し、ジョブが正常に再開されたかどうかを返します。
 
 ```sql
 ADMIN RESUME DDL JOBS job_id [, job_id] ...;
@@ -33,9 +33,9 @@ ADMIN RESUME DDL JOBS job_id [, job_id] ...;
 
 > **注記：**
 >
-> -   クラスターのアップグレード中、進行中の DDL ジョブは一時停止され、アップグレード中に開始された DDL ジョブも一時停止されます。アップグレード後、一時停止されていたすべての DDL ジョブが再開されます。アップグレード中の一時停止および再開の操作は自動的に行われます。詳細は[TiDB のスムーズなアップグレード](/smooth-upgrade-tidb.md)を参照してください。
-> -   このステートメントにより、複数の DDL ジョブを再開できます。 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)ステートメントを使用して、DDL ジョブの`job_id`を取得できます。
-> -   他のステータス ( `paused`以外) の DDL ジョブは再開できず、再開操作は失敗します。
+> -   クラスターのアップグレード中は、進行中の DDL ジョブが一時停止され、アップグレード中に開始された DDL ジョブも一時停止されます。アップグレード後、一時停止されたすべての DDL ジョブが再開されます。アップグレード中の一時停止および再開操作は自動的に実行されます。詳細については、 [TiDB スムーズアップグレード](/smooth-upgrade-tidb.md)を参照してください。
+> -   このステートメントは複数の DDL ジョブを再開できます。 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)ステートメントを使用して、DDL ジョブの`job_id`を取得できます。
+> -   その他のステータス ( `paused`以外) の DDL ジョブは再開できず、再開操作は失敗します。
 > -   ジョブを複数回再開しようとすると、TiDB はエラー`Error Number: 8261`を報告します。
 
 </CustomContent>
@@ -43,18 +43,18 @@ ADMIN RESUME DDL JOBS job_id [, job_id] ...;
 
 > **注記：**
 >
-> -   クラスターのアップグレード中、進行中の DDL ジョブは一時停止され、アップグレード中に開始された DDL ジョブも一時停止されます。アップグレード後、一時停止されていたすべての DDL ジョブが再開されます。アップグレード中の一時停止および再開の操作は自動的に行われます。詳細は[TiDB のスムーズなアップグレード](https://docs.pingcap.com/tidb/stable/smooth-upgrade-tidb)を参照してください。
-> -   このステートメントにより、複数の DDL ジョブを再開できます。 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)ステートメントを使用して、DDL ジョブの`job_id`を取得できます。
-> -   他のステータス ( `paused`以外) の DDL ジョブは再開できず、再開操作は失敗します。
+> -   クラスターのアップグレード中は、進行中の DDL ジョブが一時停止され、アップグレード中に開始された DDL ジョブも一時停止されます。アップグレード後、一時停止されたすべての DDL ジョブが再開されます。アップグレード中の一時停止および再開操作は自動的に実行されます。詳細については、 [TiDB スムーズアップグレード](https://docs.pingcap.com/tidb/stable/smooth-upgrade-tidb)を参照してください。
+> -   このステートメントは複数の DDL ジョブを再開できます。 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)ステートメントを使用して、DDL ジョブの`job_id`を取得できます。
+> -   その他のステータス ( `paused`以外) の DDL ジョブは再開できず、再開操作は失敗します。
 > -   ジョブを複数回再開しようとすると、TiDB はエラー`Error Number: 8261`を報告します。
 
 </CustomContent>
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
+このステートメントは、MySQL 構文に対する TiDB 拡張です。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [`ADMIN SHOW DDL [JOBS|QUERIES]`](/sql-statements/sql-statement-admin-show-ddl.md)
 -   [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md)

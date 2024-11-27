@@ -1,6 +1,6 @@
 ---
 title: SHOW ERRORS | TiDB SQL Statement Reference
-summary: An overview of the usage of SHOW ERRORS for the TiDB database.
+summary: TiDB データベースの SHOW ERRORS の使用法の概要。
 ---
 
 # エラーを表示 {#show-errors}

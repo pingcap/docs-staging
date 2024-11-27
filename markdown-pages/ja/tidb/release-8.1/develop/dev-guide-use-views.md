@@ -24,7 +24,7 @@ CREATE VIEW view_name AS query;
 
 既存のビューまたはテーブルと同じ名前のビューを作成することはできないことに注意してください。
 
-たとえば、 [複数テーブル結合クエリ](/develop/dev-guide-join-tables.md)は、 `JOIN`ステートメントを介して`books`テーブルと`ratings`テーブルを結合することで、平均評価を持つ書籍のリストを取得します。
+たとえば、 [複数テーブル結合クエリ](/develop/dev-guide-join-tables.md)は、 `JOIN`ステートメントを介して`books`テーブルと`ratings`テーブルを結合し、平均評価を持つ書籍のリストを取得します。
 
 後続のクエリの便宜を図るため、次のステートメントを使用してクエリをビューとして定義できます。
 
@@ -48,7 +48,7 @@ TiDB がビューをクエリする場合、ビューに関連付けられた`SE
 
 ## ビューの更新 {#update-views}
 
-現在、TiDB のビューは`ALTER VIEW view_name AS query;`サポートしていませんが、次の 2 つの方法でビューを「更新」できます。
+現在、TiDB のビューは`ALTER VIEW view_name AS query;`をサポートしていませんが、次の 2 つの方法でビューを「更新」できます。
 
 -   `DROP VIEW view_name;`ステートメントで古いビューを削除し、 `CREATE VIEW view_name AS query;`ステートメントで新しいビューを作成してビューを更新します。
 -   同じ名前の既存のビューを上書きするには、 `CREATE OR REPLACE VIEW view_name AS query;`ステートメントを使用します。
@@ -118,3 +118,17 @@ TiDB のビューの制限については、 [ビューの制限](/views.md#limi
 -   [DROP VIEW ステートメント](/sql-statements/sql-statement-drop-view.md)
 -   [ビューを使用したEXPLAINステートメント](/explain-views.md)
 -   [TiFlink: TiKV と Flink を使用した強整合性マテリアライズド ビュー](https://github.com/tiflink/tiflink)
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

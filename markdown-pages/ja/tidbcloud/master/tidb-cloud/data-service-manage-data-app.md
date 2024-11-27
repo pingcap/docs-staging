@@ -61,6 +61,32 @@ summary: TiDB Cloudコンソールでデータ アプリを作成、表示、変
 
 詳細については[GitHubで自動的にデプロイ](/tidb-cloud/data-service-manage-github-connection.md)参照してください。
 
+### データアプリをGPTと統合する {#integrate-your-data-app-with-gpts}
+
+データ アプリを[GPT](https://openai.com/blog/introducing-gpts)と統合して、インテリジェントな機能でアプリケーションを強化できます。
+
+データ アプリを GPT と統合するには、次の手順を実行します。
+
+1.  プロジェクトの[**データサービス**](https://tidbcloud.com/console/data-service)ページに移動します。
+
+2.  左側のペインで、対象のデータ アプリを見つけて、対象のデータ アプリの名前をクリックして詳細を表示します。
+
+3.  **GPT との統合**領域で、**コンフィグレーションの取得を**クリックします。
+
+    ![Get Configuration](https://download.pingcap.com/images/docs/tidb-cloud/data-service/GPTs1.png)
+
+4.  表示されたダイアログ ボックスには、次のフィールドが表示されます。
+
+    a. **API 仕様 URL** : データ アプリの OpenAPI 仕様の URL をコピーします。詳細については、 [OpenAPI仕様を使用する](#use-the-openapi-specification)を参照してください。
+
+    b. **API キー**: データ アプリの API キーを入力します。API キーをまだお持ちでない場合は、 **「API キーの作成」**をクリックして作成します。詳細については、 [APIキーを作成する](/tidb-cloud/data-service-api-key.md#create-an-api-key)を参照してください。
+
+    c.**エンコードされた API キー**: 指定した API キーに相当する base64 でエンコードされた文字列をコピーします。
+
+    ![GPTs Dialog Box](https://download.pingcap.com/images/docs/tidb-cloud/data-service/GPTs2.png)
+
+5.  コピーした API 仕様 URL とエンコードされた API キーを GPT 構成で使用します。
+
 ### リンクされたデータソースを管理する {#manage-linked-data-sources}
 
 データ アプリのリンクされたクラスターを追加または削除できます。
@@ -88,10 +114,6 @@ summary: TiDB Cloudコンソールでデータ アプリを作成、表示、変
 ### エンドポイントを管理する {#manage-an-endpoint}
 
 詳細については[エンドポイントを管理する](/tidb-cloud/data-service-manage-endpoint.md)参照してください。
-
-### カスタムドメインを管理する {#manage-a-custom-domain}
-
-詳細については[カスタムドメインを管理する](/tidb-cloud/data-service-custom-domain.md)参照してください。
 
 ### 展開の管理 {#manage-deployments}
 
@@ -138,7 +160,7 @@ summary: TiDB Cloudコンソールでデータ アプリを作成、表示、変
 
 ### OpenAPIドキュメントをビュー {#view-the-openapi-documentation}
 
-データ サービス (ベータ版) は、各データ アプリに対して自動生成された OpenAPI ドキュメントを提供します。ドキュメントでは、エンドポイント、パラメーター、応答を表示し、エンドポイントを試すことができます。
+データ サービス (ベータ版) では、各データ アプリに対して自動生成された OpenAPI ドキュメントが提供されます。ドキュメントでは、エンドポイント、パラメーター、応答を表示し、エンドポイントを試すことができます。
 
 OpenAPI ドキュメントにアクセスするには、次の手順を実行します。
 

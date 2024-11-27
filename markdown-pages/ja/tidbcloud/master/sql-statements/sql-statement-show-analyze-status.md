@@ -1,19 +1,34 @@
 ---
 title: SHOW ANALYZE STATUS
-summary: TiDBのSHOW ANALYZE STATUSステートメントは、統計収集タスクと履歴タスクを表示します。クラスターレベルのタスク表示をサポートし、再起動後もタスクレコードを表示できます。過去7日間の履歴タスクはmysql.analyze_jobsで表示可能で、現在のANALYZEタスクの進行状況も表示できます。MySQLの互換性もあります。
+summary: TiDB データベースに対する SHOW ANALYZE STATUS の使用法の概要。
 ---
 
-# 分析ステータスの表示 {#show-analyze-status}
+# 分析ステータスを表示 {#show-analyze-status}
 
-`SHOW ANALYZE STATUS`ステートメントは、TiDB によって実行されている統計収集タスクと、限られた数の履歴タスク レコードを示します。
+`SHOW ANALYZE STATUS`ステートメントは、TiDB によって実行されている統計収集タスクと、限られた数の履歴タスク レコードを表示します。
 
-TiDB v6.1.0 以降、 `SHOW ANALYZE STATUS`ステートメントはクラスターレベルのタスクの表示をサポートします。 TiDB の再起動後でも、このステートメントを使用して再起動前のタスク レコードを表示できます。 TiDB v6.1.0 より前では、 `SHOW ANALYZE STATUS`ステートメントはインスタンス レベルのタスクのみを表示でき、タスク レコードは TiDB の再起動後にクリアされます。
+TiDB v6.1.0 以降では、 `SHOW ANALYZE STATUS`ステートメントはクラスター レベルのタスクの表示をサポートします。TiDB を再起動した後でも、このステートメントを使用して再起動前のタスク レコードを表示できます。TiDB v6.1.0 より前では、 `SHOW ANALYZE STATUS`ステートメントはインスタンス レベルのタスクのみを表示でき、タスク レコードは TiDB の再起動後にクリアされます。
 
-TiDB v6.1.0 以降、システム テーブル`mysql.analyze_jobs`を通じて過去 7 日間の履歴タスクを表示できるようになりました。
+TiDB v6.1.0 以降では、システム テーブル`mysql.analyze_jobs`を通じて過去 7 日間の履歴タスクを表示できます。
 
-TiDB v7.3.0 以降、システム テーブル`mysql.analyze_jobs`または`SHOW ANALYZE STATUS`を通じて現在の`ANALYZE`タスクの進行状況を表示できます。
+TiDB v7.3.0 以降では、システム テーブル`mysql.analyze_jobs`または`SHOW ANALYZE STATUS`を通じて現在の`ANALYZE`タスクの進行状況を表示できます。
 
-## あらすじ {#synopsis}
+現在、 `SHOW ANALYZE STATUS`ステートメントは次の列を返します。
+
+| カラム名             | 説明                                                                                                 |
+| :--------------- | :------------------------------------------------------------------------------------------------- |
+| `Table_schema`   | データベース名                                                                                            |
+| `Table_name`     | テーブル名                                                                                              |
+| `Partition_name` | パーティション名                                                                                           |
+| `Job_info`       | タスク情報。インデックスが分析される場合、この情報にはインデックス名が含まれます。 `tidb_analyze_version =2`場合、この情報にはサンプル レートなどの構成項目が含まれます。 |
+| `Processed_rows` | 分析された行数                                                                                            |
+| `Start_time`     | タスクが開始される時間                                                                                        |
+| `State`          | `failed`の状態`running` `pending`含む`finished`                                                         |
+| `Fail_reason`    | タスクが失敗した理由。実行が成功した場合、値は`NULL`なります。                                                                 |
+| `Instance`       | タスクを実行するTiDBインスタンス                                                                                 |
+| `Process_id`     | タスクを実行するプロセスID                                                                                     |
+
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 ShowAnalyzeStatusStmt ::= 'SHOW' 'ANALYZE' 'STATUS' ShowLikeOrWhereOpt
@@ -65,10 +80,10 @@ mysql> show analyze status;
 6 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
+このステートメントは、MySQL 構文に対する TiDB 拡張です。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [ANALYZE_STATUS テーブル](/information-schema/information-schema-analyze-status.md)

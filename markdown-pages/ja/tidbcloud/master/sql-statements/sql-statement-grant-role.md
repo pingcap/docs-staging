@@ -1,13 +1,13 @@
 ---
 title: GRANT <role> | TiDB SQL Statement Reference
-summary: ロールをユーザーに割り当てるためのGRANT <role>ステートメントは、TiDBのMySQL 8.0と完全に互換性があります。ユーザーはSET ROLEステートメントを使用してロールの権限を引き受けるか、SET ROLE ALLステートメントを使用して、割り当てられているすべてのロールを引き受けることができます。これにより、ユーザーは特定のロールに関連付けられた権限を持ち、SET ROLEステートメントを実行する必要がなくなります。
+summary: TiDB データベースに対する GRANT <role> の使用法の概要。
 ---
 
 # <code>GRANT &#x3C;role></code> {#code-grant-x3c-role-code}
 
-以前に作成したロールを既存のユーザーに割り当てます。ユーザーは、ステートメント`SET ROLE <rolename>`を使用してロールの権限を引き受けるか、ステートメント`SET ROLE ALL`を使用して、割り当てられているすべてのロールを引き受けることができます。
+以前に作成したロールを既存のユーザーに割り当てます。ユーザーは、ステートメント`SET ROLE <rolename>`を使用してロールの権限を引き受けるか、 `SET ROLE ALL`を使用して割り当てられているすべてのロールを引き受けることができます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 GrantRoleStmt ::=
@@ -22,7 +22,7 @@ UsernameList ::=
 
 ## 例 {#examples}
 
-`root`ユーザーとして TiDB に接続します。
+`root`人のユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
@@ -44,7 +44,7 @@ GRANT analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-`jennifer`ユーザーとして TiDB に接続します。
+`jennifer`人のユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
@@ -86,26 +86,26 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-`root`ユーザーとして TiDB に接続します。
+`root`人のユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
 ```
 
-ステートメント`SET DEFAULT ROLE`使用して、ロール`analyticsteam`を`jennifer`に関連付けることができます。
+ステートメント`SET DEFAULT ROLE` 、ロール`analyticsteam`を`jennifer`に関連付けるために使用できます。
 
 ```sql
 SET DEFAULT ROLE analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.02 sec)
 ```
 
-`jennifer`ユーザーとして TiDB に接続します。
+`jennifer`人のユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-この後、ユーザー`jennifer`はロール`analyticsteam`に関連付けられた権限を持ち、ユーザー`jennifer`ステートメント`SET ROLE`を実行する必要がなくなります。
+この後、ユーザー`jennifer`ロール`analyticsteam`に関連付けられた権限を持ち、 `jennifer`ステートメント`SET ROLE`を実行する必要がなくなります。
 
 ```sql
 SHOW GRANTS;
@@ -127,11 +127,11 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`GRANT <role>`ステートメントは、MySQL 8.0 のロール機能と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`GRANT <role>`ステートメントは、MySQL 8.0 のロール機能と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [`GRANT &#x3C;privileges>`](/sql-statements/sql-statement-grant-privileges.md)
 -   [`CREATE ROLE`](/sql-statements/sql-statement-create-role.md)
@@ -142,6 +142,6 @@ TiDB の`GRANT <role>`ステートメントは、MySQL 8.0 のロール機能と
 
 <CustomContent platform="tidb">
 
--   [役割ベースのアクセス制御](/role-based-access-control.md)
+-   [ロールベースのアクセス制御](/role-based-access-control.md)
 
 </CustomContent>

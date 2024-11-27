@@ -13,7 +13,7 @@ summary: TiDB データベースに対する SHOW [BACKUPS|RESTORES] の使用�
 
 > **注記：**
 >
-> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 `br`コマンドライン ツールで開始されたバックアップと復元は表示されません。
 
@@ -57,7 +57,7 @@ SHOW BACKUPS;
 | :--------------- | :------------------------------------------------------------------ |
 | `Destination`    | 宛先 URL (秘密鍵の漏洩を防ぐため、すべてのパラメータを削除)                                   |
 | `State`          | タスクの状態                                                              |
-| `Progress`       | 現在の状態の進捗状況の推定値（パーセンテージ）                                             |
+| `Progress`       | 現在の状態における進捗の推定値（パーセンテージ）                                            |
 | `Queue_time`     | タスクがキューに入れられたとき                                                     |
 | `Execution_time` | タスクが開始されたとき。キューイングタスクの場合は値は`0000-00-00 00:00:00`です。                 |
 | `Finish_time`    | タスクが終了したときのタイムスタンプ。キューイングおよび実行中のタスクの場合、値は`0000-00-00 00:00:00`なります。 |

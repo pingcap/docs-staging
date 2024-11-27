@@ -1,6 +1,6 @@
 ---
 title: CHECK_CONSTRAINTS
-summary: CHECK_CONSTRAINTS INFORMATION_SCHEMA テーブルについて学習します。
+summary: CHECK_CONSTRAINTS` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # 制約のチェック {#check-constraints}
@@ -29,6 +29,7 @@ DESC CHECK_CONSTRAINTS;
 次の例では、 `CREATE TABLE`ステートメントを使用して`CHECK`制約を追加します。
 
 ```sql
+SET GLOBAL tidb_enable_check_constraint = ON;
 CREATE TABLE test.t1 (id INT PRIMARY KEY, CHECK (id%2 = 0));
 SELECT * FROM CHECK_CONSTRAINTS\G
 ```
@@ -44,7 +45,7 @@ CONSTRAINT_CATALOG: def
 1 row in set (0.00 sec)
 ```
 
-`CHECK_CONSTRAINTS`テーブル内のフィールドは次のように説明されます。
+`CHECK_CONSTRAINTS`のテーブル内のフィールドは次のように説明されます。
 
 -   `CONSTRAINT_CATALOG` : 制約のカタログ。常に`def`です。
 -   `CONSTRAINT_SCHEMA` : 制約のスキーマ。

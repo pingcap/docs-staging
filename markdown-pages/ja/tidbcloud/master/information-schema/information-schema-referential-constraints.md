@@ -1,18 +1,18 @@
 ---
 title: REFERENTIAL_CONSTRAINTS
-summary: REFERENTIAL_CONSTRAINTSテーブルは、テーブル間のFOREIGN KEY関係に関する情報を提供します。テーブルには、CONSTRAINT_CATALOG、CONSTRAINT_SCHEMA、CONSTRAINT_NAME、UNIQUE_CONSTRAINT_CATALOG、UNIQUE_CONSTRAINT_SCHEMA、UNIQUE_CONSTRAINT_NAME、MATCH_OPTION、UPDATE_RULE、DELETE_RULE、TABLE_NAME、REFERENCED_TABLE_NAMEの情報が含まれます。また、親テーブルと子テーブルの関係についても情報が提供されます。
+summary: REFERENTIAL_CONSTRAINTS INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
-# REFERENTIAL_CONSTRAINTS {#referential-constraints}
+# 参照制約 {#referential-constraints}
 
-`REFERENTIAL_CONSTRAINTS`テーブルは、テーブル間の`FOREIGN KEY`関係に関する情報を提供します。
+`REFERENTIAL_CONSTRAINTS`テーブルは、テーブル間の[`FOREIGN KEY`](/foreign-key.md)の関係に関する情報を提供します。
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC REFERENTIAL_CONSTRAINTS;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +---------------------------+--------------+------+------+---------+-------+
@@ -50,7 +50,7 @@ CREATE TABLE test.child (
 SELECT * FROM REFERENTIAL_CONSTRAINTS\G
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 *************************** 1. row ***************************

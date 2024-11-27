@@ -1,13 +1,13 @@
 ---
 title: CREATE VIEW | TiDB SQL Statement Reference
-summary: ビューの作成ステートメントは、SELECTステートメントを保存し、クエリ可能なオブジェクトとしてテーブルと同様に機能します。TiDBのビューは実体化されず、クエリされると内部でクエリを書き換えてビュー定義とSQLクエリを結合します。現在、TiDB内のビューは挿入または更新できず、WITH CHECK OPTIONも有効ではありません。ALTER VIEWはサポートされず、代わりにCREATE OR REPLACEを使用できます。また、ALGORITHMフィールドは構文的にのみ互換性がありますが、有効にはなりません。
+summary: TiDB データベースの CREATE VIEW の使用法の概要。
 ---
 
-# ビューの作成 {#create-view}
+# ビューを作成 {#create-view}
 
-`CREATE VIEW`ステートメントは、テーブルと同様に、クエリ可能なオブジェクトとして`SELECT`ステートメントを保存します。 TiDB のビューは実体化されていません。これは、ビューがクエリされると、TiDB が内部でクエリを書き換えて、ビュー定義と SQL クエリを結合することを意味します。
+`CREATE VIEW`文は、テーブルと同様に、クエリ可能なオブジェクトとして`SELECT`文を保存します。TiDB のビューは非マテリアライズです。つまり、ビューがクエリされると、TiDB は内部的にクエリを書き換えて、ビュー定義と SQL クエリを組み合わせます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 CreateViewStmt ::=
@@ -87,15 +87,15 @@ mysql> INSERT INTO v1 (c1) VALUES (7);
 ERROR 1105 (HY000): insert into view v1 is not supported now.
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
--   現在、TiDB 内のビューは挿入または更新できません (つまり、 `INSERT VIEW`と`UPDATE VIEW`はサポートされていません)。 `WITH CHECK OPTION`は構文的に互換性があるだけで、有効になりません。
+-   現在、TiDB 内のどのビューも挿入または更新できません (つまり、 `INSERT VIEW`と`UPDATE VIEW`サポートされていません)。5 `WITH CHECK OPTION`構文的に互換性があるだけで、効果はありません。
 -   現在、TiDB のビューは`ALTER VIEW`サポートしていませんが、代わりに`CREATE OR REPLACE`使用できます。
--   現在、 `ALGORITHM`フィールドは TiDB で構文的にのみ互換性がありますが、有効になりません。 TiDB は現在、MERGE アルゴリズムのみをサポートしています。
+-   現在、 `ALGORITHM`フィールドは TiDB で構文的にのみ互換性がありますが、有効ではありません。TiDB は現在、MERGE アルゴリズムのみをサポートしています。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [ドロップビュー](/sql-statements/sql-statement-drop-view.md)
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
--   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
--   [ドロップテーブル](/sql-statements/sql-statement-drop-table.md)
+-   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)
+-   [テーブルを削除](/sql-statements/sql-statement-drop-table.md)

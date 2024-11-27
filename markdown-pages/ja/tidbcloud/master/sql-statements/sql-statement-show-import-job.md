@@ -9,7 +9,7 @@ summary: TiDB での SHOW IMPORT の使用法の概要。
 
 > **注記：**
 >
-> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 ## 必要な権限 {#required-privileges}
 
@@ -31,7 +31,7 @@ ShowImportJobStmt ::=
 | カラム         | 説明                                                                                  |
 | ----------- | ----------------------------------------------------------------------------------- |
 | ジョブID       | タスクのID                                                                              |
-| データソース      | データソースに関する情報                                                                        |
+| 情報元         | データソースに関する情報                                                                        |
 | ターゲットテーブル   | 対象テーブルの名前                                                                           |
 | 段階          | ジョブの現在のフェーズ`validating` `importing`含む`add-index`                                    |
 | 状態          | ジョブの現在のステータス`pending` （作成されたがまだ開始されていない） `finished` `running` `failed`れます`canceled` |
@@ -39,9 +39,9 @@ ShowImportJobStmt ::=
 | インポートされた行   | ターゲットテーブルに読み書きされたデータ行の数                                                             |
 | 結果メッセージ     | インポートが失敗した場合、このフィールドはエラー メッセージを返します。それ以外の場合は空になります。                                 |
 | 作成時間        | タスクが作成された時間                                                                         |
-| 開始時間        | タスクが開始された時間                                                                         |
+| 始まる時間       | タスクが開始された時間                                                                         |
 | 終了時間        | タスクが終了した時間                                                                          |
-| 作成者         | タスクを作成したデータベースユーザーの名前                                                               |
+| によって作成された   | タスクを作成したデータベースユーザーの名前                                                               |
 
 ## 例 {#example}
 

@@ -17,7 +17,7 @@ TiDB Cloud は、パフォーマンスを分析するために[遅いクエリ](
 
 > **注記：**
 >
-> 現在、 **Key Visualizer**と**Index Insight (ベータ版) は**[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターで利用できません。
+> 現在、 **Key Visualizer**と**Index Insight (ベータ版) は**[TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless)クラスターで利用できません。
 
 ## 遅いクエリ {#slow-query}
 
@@ -43,7 +43,7 @@ TiDB Cloud は、パフォーマンスを分析するために[遅いクエリ](
 
 1.  クラスターの**診断**ページに移動します。
 
-2.  **「SQL ステートメント」**タブをクリックします。
+2.  **[SQL ステートメント]**タブをクリックします。
 
 3.  時間間隔ボックスで分析する期間を選択します。すると、この期間内のすべてのデータベースの SQL ステートメントの実行統計を取得できます。
 
@@ -57,7 +57,7 @@ TiDB Cloud は、パフォーマンスを分析するために[遅いクエリ](
 
 > **注記：**
 >
-> Key Visualizer は[TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターでのみ使用できます。
+> Key Visualizer は[TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターでのみ使用できます。
 
 主要な分析を表示するには、次の手順を実行します。
 
@@ -75,6 +75,6 @@ TiDB Cloudの Index Insight 機能は、インデックスを効果的に使用�
 
 > **注記：**
 >
-> Index Insight は現在ベータ版であり、 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターでのみ使用できます。
+> Index Insight は現在ベータ版であり、 [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターでのみ使用できます。
 
 詳細については[インデックスインサイト](/tidb-cloud/index-insight.md)参照してください。

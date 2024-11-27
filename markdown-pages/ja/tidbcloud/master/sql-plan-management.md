@@ -1,6 +1,6 @@
 ---
 title: SQL Plan Management (SPM)
-summary: Learn about SQL Plan Management in TiDB.
+summary: TiDB での SQL プラン管理について学習します。
 ---
 
 # SQL プラン管理 (SPM) {#sql-plan-management-spm}
@@ -34,10 +34,15 @@ SQL ステートメントまたは履歴実行プランに従って、SQL ステ
 #### SQL文に従ってバインディングを作成する {#create-a-binding-according-to-a-sql-statement}
 
 ```sql
-CREATE [GLOBAL | SESSION] BINDING FOR BindableStmt USING BindableStmt
+CREATE [GLOBAL | SESSION] BINDING [FOR BindableStmt] USING BindableStmt;
 ```
 
-このステートメントは`INSERT` `DELETE` `SELECT` `UPDATE` `SELECT` `REPLACE`が含まれます。
+このステートメントは、SQL 実行プランを GLOBAL または SESSION レベルでバインドします。現在、TiDB でサポートされているバインド可能な SQL ステートメント (BindableStmt) には、 `SELECT`サブクエリを持つ`SELECT` 、 `DELETE` 、 `UPDATE` 、および`INSERT` / `REPLACE`が含まれます。次に例を示します。
+
+```sql
+CREATE GLOBAL BINDING USING SELECT * /*+ use_index(t1, a) */ FROM t1;
+CREATE GLOBAL BINDING FOR SELECT * FROM t1 USING SELECT * /*+ use_index(t1, a) */ FROM t1;
+```
 
 > **注記：**
 >
@@ -228,7 +233,7 @@ SQL ステートメントの実行プランを履歴実行プランに固定す�
 この機能を使用する場合、次の点に注意してください。
 
 -   この機能は、履歴実行プランに従ってヒントを生成し、生成されたヒントをバインディングに使用します。履歴実行プランは[ステートメント要約表](/statement-summary-tables.md)に保存されるため、この機能を使用する前に、まず[`tidb_enable_stmt_summary`](/system-variables.md#tidb_enable_stmt_summary-new-in-v304)システム変数を有効にする必要があります。
--   この機能は、 TiFlashクエリ、3 つ以上のテーブルを含む結合クエリ、およびサブクエリを含むクエリをサポートしていません。
+-   TiFlashクエリ、3 つ以上のテーブルを含む結合クエリ、およびサブクエリを含むクエリの場合、自動生成されたヒントは適切ではないため、プランが完全にバインドされない可能性があります。このような場合、バインドを作成するときに警告が発生します。
 -   履歴実行プランがヒント付きの SQL ステートメント用である場合、ヒントがバインディングに追加されます。たとえば、 `SELECT /*+ max_execution_time(1000) */ * FROM t`実行した後、その`plan_digest`で作成されたバインディングには`max_execution_time(1000)`が含まれます。
 
 このバインディング メソッドの SQL ステートメントは次のとおりです。
@@ -325,7 +330,7 @@ drop session binding for SELECT * FROM t1, t2 WHERE t1.id = t2.id;
 explain SELECT * FROM t1,t2 WHERE t1.id = t2.id;
 ```
 
-上記の例では、SESSION スコープで削除されたバインディングは、GLOBAL スコープ内の対応するバインディングをシールドします。オプティマイザーは、ステートメントに`sm_join(t1, t2)`ヒントを追加しません。3 `explain`結果の実行プランの最上位ノードは、このヒントによって MergeJoin に固定されません。代わりに、最上位ノードは、コスト見積もりに従ってオプティマイザーによって個別に選択されます。
+上記の例では、SESSION スコープで削除されたバインディングが、GLOBAL スコープ内の対応するバインディングをシールドします。オプティマイザーは、ステートメントに`sm_join(t1, t2)`ヒントを追加しません。3 `explain`結果の実行プランの最上位ノードは、このヒントによって MergeJoin に固定されません。代わりに、最上位ノードは、コスト見積もりに従ってオプティマイザーによって個別に選択されます。
 
 #### <code>sql_digest</code>に従ってバインディングを削除する {#remove-a-binding-according-to-code-sql-digest-code}
 
@@ -460,6 +465,165 @@ SHOW binding_cache status;
 1 row in set (0.00 sec)
 ```
 
+## ステートメントサマリーテーブルを利用して、バインドする必要があるクエリを取得します。 {#utilize-the-statement-summary-table-to-obtain-queries-that-need-to-be-bound}
+
+[声明の概要](/statement-summary-tables.md) 、レイテンシー、実行時間、対応するクエリ プランなどの最近の SQL 実行情報を記録します。ステートメント サマリー テーブルをクエリして、条件を満たす`plan_digest` 、次に[これらの履歴実行計画に従ってバインディングを作成する](/sql-plan-management.md#create-a-binding-according-to-a-historical-execution-plan)取得できます。
+
+次の例では、過去 2 週間に 10 回以上実行され、SQL バインディングのない複数の実行プランを持つ`SELECT`ステートメントをクエリします。クエリを実行時間で並べ替え、上位 100 件のクエリを最も高速なプランにバインドします。
+
+```sql
+WITH stmts AS (                                                -- Gets all information
+  SELECT * FROM INFORMATION_SCHEMA.CLUSTER_STATEMENTS_SUMMARY
+  UNION ALL
+  SELECT * FROM INFORMATION_SCHEMA.CLUSTER_STATEMENTS_SUMMARY_HISTORY 
+),
+best_plans AS (
+  SELECT plan_digest, `digest`, avg_latency, 
+  CONCAT('create global binding from history using plan digest "', plan_digest, '"') as binding_stmt 
+  FROM stmts t1
+  WHERE avg_latency = (SELECT min(avg_latency) FROM stmts t2   -- The plan with the lowest query latency
+                       WHERE t2.`digest` = t1.`digest`)
+)
+
+SELECT any_value(digest_text) as query, 
+       SUM(exec_count) as exec_count, 
+       plan_hint, binding_stmt
+FROM stmts, best_plans
+WHERE stmts.`digest` = best_plans.`digest`
+  AND summary_begin_time > DATE_SUB(NOW(), interval 14 day)    -- Executed in the past 2 weeks
+  AND stmt_type = 'Select'                                     -- Only consider select statements
+  AND schema_name NOT IN ('INFORMATION_SCHEMA', 'mysql')       -- Not an internal query
+  AND plan_in_binding = 0                                      -- No binding yet
+GROUP BY stmts.`digest`
+  HAVING COUNT(DISTINCT(stmts.plan_digest)) > 1                -- This query is unstable. It has more than 1 plan.
+         AND SUM(exec_count) > 10                              -- High-frequency, and has been executed more than 10 times.
+ORDER BY SUM(exec_count) DESC LIMIT 100;                       -- Top 100 high-frequency queries.
+```
+
+特定のフィルタリング条件を適用して基準を満たすクエリを取得することで、対応する`binding_stmt`列のステートメントを直接実行してバインディングを作成できます。
+
+    +---------------------------------------------+------------+-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
+    | query                                       | exec_count | plan_hint                                                                   | binding_stmt                                                                                                            |
+    +---------------------------------------------+------------+-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
+    | select * from `t` where `a` = ? and `b` = ? |        401 | use_index(@`sel_1` `test`.`t` `a`), no_order_index(@`sel_1` `test`.`t` `a`) | create global binding from history using plan digest "0d6e97fb1191bbd08dddefa7bd007ec0c422b1416b152662768f43e64a9958a6" |
+    | select * from `t` where `b` = ? and `c` = ? |        104 | use_index(@`sel_1` `test`.`t` `b`), no_order_index(@`sel_1` `test`.`t` `b`) | create global binding from history using plan digest "80c2aa0aa7e6d3205755823aa8c6165092c8521fb74c06a9204b8d35fc037dd9" |
+    +---------------------------------------------+------------+-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
+
+## データベース間のバインディング {#cross-database-binding}
+
+v7.6.0 以降では、バインディング作成構文でワイルドカード`*`を使用してデータベース名を表すことにより、TiDB でデータベース間バインディングを作成できます。データベース間バインディングを作成する前に、まず[`tidb_opt_enable_fuzzy_binding`](/system-variables.md#tidb_opt_enable_fuzzy_binding-new-in-v760)システム変数を有効にする必要があります。
+
+クロスデータベース バインディングを使用すると、データが異なるデータベース間で分類および保存され、各データベースが同一のオブジェクト定義を維持し、同様のアプリケーション ロジックを実行するシナリオで、実行プランを修正するプロセスを簡素化できます。次に、一般的な使用例をいくつか示します。
+
+-   SaaSまたはPaaSサービスをTiDBで実行すると、各テナントのデータが別々のデータベースに保存され、データの保守と管理が容易になります。
+-   単一インスタンスでデータベースシャーディングを実行し、TiDBへの移行後に元のデータベーススキーマを保持した場合、つまり、元のインスタンスのデータはデータベース別に分類され、保存されます。
+
+このようなシナリオでは、クロスデータベース バインディングにより、ユーザー データとワークロードの不均一な分散と急速な変化によって発生する SQL パフォーマンスの問題を効果的に軽減できます。SaaS プロバイダーはクロスデータベース バインディングを使用して、大量のデータを扱うアプリケーションによって検証された実行プランを修正し、少量のデータを扱うアプリケーションの急速な増加によって発生する可能性のあるパフォーマンスの問題を回避できます。
+
+データベース間のバインドを作成するには、バインドを作成するときにデータベース名を表すために`*`のみを使用する必要があります。例:
+
+```sql
+CREATE GLOBAL BINDING USING SELECT /*+ use_index(t, a) */ * FROM t; -- Create a GLOBAL scope standard binding.
+CREATE GLOBAL BINDING USING SELECT /*+ use_index(t, a) */ * FROM *.t; -- Create a GLOBAL scope cross-database binding.
+SHOW GLOBAL BINDINGS;
+```
+
+出力は次のようになります。
+
+```sql
++----------------------------+---------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+-----------------+--------+------------------------------------------------------------------+-------------+
+| Original_sql               | Bind_sql                                          | Default_db | Status  | Create_time             | Update_time             | Charset | Collation       | Source | Sql_digest                                                       | Plan_digest |
++----------------------------+---------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+-----------------+--------+------------------------------------------------------------------+-------------+
+| select * from `test` . `t` | SELECT /*+ use_index(`t` `a`)*/ * FROM `test`.`t` | test       | enabled | 2023-12-29 14:19:01.332 | 2023-12-29 14:19:01.332 | utf8    | utf8_general_ci | manual | 8b193b00413fdb910d39073e0d494c96ebf24d1e30b131ecdd553883d0e29b42 |             |
+| select * from `*` . `t`    | SELECT /*+ use_index(`t` `a`)*/ * FROM `*`.`t`    |            | enabled | 2023-12-29 14:19:02.232 | 2023-12-29 14:19:02.232 | utf8    | utf8_general_ci | manual | 8b193b00413fdb910d39073e0d494c96ebf24d1e30b131ecdd553883d0e29b42 |             |
++----------------------------+---------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+-----------------+--------+------------------------------------------------------------------+-------------+
+```
+
+`SHOW GLOBAL BINDINGS`出力では、クロスデータベース バインディングの`Default_db`フィールド値は空で、 `Original_sql`および`Bind_sql`フィールドのデータベース名は`*`として表されます。このバインディングは、特定のデータベースだけでなく、すべてのデータベースの`select * from t`クエリに適用されます。
+
+同じクエリに対して、クロスデータベース バインディングと標準バインディングの両方が共存できます。TiDB は、次の順序でバインディングを一致させます: SESSION スコープの標準バインディング &gt; SESSION スコープのクロスデータベース バインディング &gt; GLOBAL スコープの標準バインディング &gt; GLOBAL スコープのクロスデータベース バインディング。
+
+作成構文とは別に、クロスデータベース バインディングは標準バインディングと同じ削除およびステータス変更構文を共有します。次に、詳細な使用例を示します。
+
+1.  データベース`db1`と`db2`を作成し、各データベースに 2 つのテーブルを作成します。
+
+    ```sql
+    CREATE DATABASE db1;
+    CREATE TABLE db1.t1 (a INT, KEY(a));
+    CREATE TABLE db1.t2 (a INT, KEY(a));
+    CREATE DATABASE db2;
+    CREATE TABLE db2.t1 (a INT, KEY(a));
+    CREATE TABLE db2.t2 (a INT, KEY(a));
+    ```
+
+2.  クロスデータベース バインディング機能を有効にします。
+
+    ```sql
+    SET tidb_opt_enable_fuzzy_binding=1;
+    ```
+
+3.  データベース間バインディングを作成します。
+
+    ```sql
+    CREATE GLOBAL BINDING USING SELECT /*+ use_index(t1, a), use_index(t2, a) */ * FROM *.t1, *.t2;
+    ```
+
+4.  クエリを実行し、バインディングが使用されているかどうかを確認します。
+
+    ```sql
+    SELECT * FROM db1.t1, db1.t2;
+    SELECT @@LAST_PLAN_FROM_BINDING;
+    +--------------------------+
+    | @@LAST_PLAN_FROM_BINDING |
+    +--------------------------+
+    |                        1 |
+    +--------------------------+
+
+    SELECT * FROM db2.t1, db2.t2;
+    SELECT @@LAST_PLAN_FROM_BINDING;
+    +--------------------------+
+    | @@LAST_PLAN_FROM_BINDING |
+    +--------------------------+
+    |                        1 |
+    +--------------------------+
+
+    SELECT * FROM db1.t1, db2.t2;
+    SELECT @@LAST_PLAN_FROM_BINDING;
+    +--------------------------+
+    | @@LAST_PLAN_FROM_BINDING |
+    +--------------------------+
+    |                        1 |
+    +--------------------------+
+
+    USE db1;
+    SELECT * FROM t1, db2.t2;
+    SELECT @@LAST_PLAN_FROM_BINDING;
+    +--------------------------+
+    | @@LAST_PLAN_FROM_BINDING |
+    +--------------------------+
+    |                        1 |
+    +--------------------------+
+    ```
+
+5.  バインディングをビュー:
+
+    ```sql
+    SHOW GLOBAL BINDINGS;
+    +----------------------------------------------+------------------------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
+    | Original_sql                                 | Bind_sql                                                                                 | Default_db | Status  | Create_time             | Update_time             | Charset | Collation          | Source | Sql_digest                                                       | Plan_digest |
+    +----------------------------------------------+------------------------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
+    | select * from ( `*` . `t1` ) join `*` . `t2` | SELECT /*+ use_index(`t1` `a`) use_index(`t2` `a`)*/ * FROM (`*` . `t1`) JOIN `*` . `t2` |            | enabled | 2023-12-29 14:22:28.144 | 2023-12-29 14:22:28.144 | utf8    | utf8_general_ci    | manual | ea8720583e80644b58877663eafb3579700e5f918a748be222c5b741a696daf4 |             |
+    +----------------------------------------------+------------------------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
+    ```
+
+6.  データベース間のバインディングを削除します。
+
+    ```sql
+    DROP GLOBAL BINDING FOR SQL DIGEST 'ea8720583e80644b58877663eafb3579700e5f918a748be222c5b741a696daf4';
+    SHOW GLOBAL BINDINGS;
+    Empty set (0.00 sec)
+    ```
+
 ## ベースラインキャプチャ {#baseline-capturing}
 
 [アップグレード中の実行計画の回帰を防ぐ](#prevent-regression-of-execution-plans-during-an-upgrade)に使用されるこの機能は、キャプチャ条件を満たすクエリをキャプチャし、これらのクエリのバインディングを作成します。
@@ -503,17 +667,17 @@ SHOW binding_cache status;
 
 ```sql
 -- Filter by table name
- INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('table', 'test.t');
+INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('table', 'test.t');
 
 -- Filter by database name and table name through wildcards
- INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('table', 'test.table_*');
- INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('table', 'db_*.table_*');
+INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('table', 'test.table_*');
+INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('table', 'db_*.table_*');
 
 -- Filter by frequency
- INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('frequency', '2');
+INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('frequency', '2');
 
 -- Filter by user name
- INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('user', 'user1');
+INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('user', 'user1');
 ```
 
 | **ディメンション名** | **説明**                                                                                                                                                       | 備考                                                                                                                                          |
@@ -613,7 +777,7 @@ SELECT * FROM t WHERE a < 100 AND b < 100;
 上記で定義したテーブルでは、条件`a < 100`満たす行はほとんどありません。しかし、何らかの理由で、オプティマイザは、インデックス`a`を使用する最適な実行プランではなく、誤ってフル テーブル スキャンを選択します。まず、次のステートメントを使用してバインディングを作成できます。
 
 ```sql
-CREATE GLOBAL BINDING for SELECT * FROM t WHERE a < 100 AND b < 100 using SELECT * FROM t use index(a) WHERE a < 100 AND b < 100;
+CREATE GLOBAL BINDING for SELECT * FROM t WHERE a < 100 AND b < 100 USING SELECT * FROM t use index(a) WHERE a < 100 AND b < 100;
 ```
 
 上記のクエリが再度実行されると、オプティマイザーはインデックス`a` (上記で作成されたバインディングの影響を受けます) を選択して、クエリ時間を短縮します。

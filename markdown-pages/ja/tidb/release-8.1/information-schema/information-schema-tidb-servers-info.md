@@ -1,6 +1,6 @@
 ---
 title: TIDB_SERVERS_INFO
-summary: TIDB_SERVERS_INFO INFORMATION_SCHEMA テーブルについて学習します。
+summary: TIDB_SERVERS_INFO` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # TIDB_サーバー情報 {#tidb-servers-info}
@@ -9,7 +9,7 @@ summary: TIDB_SERVERS_INFO INFORMATION_SCHEMA テーブルについて学習し�
 
 > **注記：**
 >
-> このテーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -50,7 +50,7 @@ SELECT * FROM TIDB_SERVERS_INFO\G
          PORT: 4000
   STATUS_PORT: 10080
         LEASE: 45s
-      VERSION: 8.0.11-TiDB-v8.1.0
+      VERSION: 8.0.11-TiDB-v8.1.1
      GIT_HASH: 827d8ff2d22ac4c93ae1b841b79d468211e1d393
 BINLOG_STATUS: Off
        LABELS:

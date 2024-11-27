@@ -1,6 +1,6 @@
 ---
 title: INSPECTION_RESULT
-summary: INSPECTION_RESULT 診断結果テーブルを確認します。
+summary: INSPECTION_RESULT` 診断結果テーブルを確認します。
 ---
 
 # 検査結果 {#inspection-result}
@@ -11,9 +11,9 @@ TiDB には、システム内の障害や隠れた問題を検出するための
 
 > **注記：**
 >
-> この表は TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> この表は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
-`information_schema.inspection_result`診断結果表`information_schema.inspection_result`の構造は以下のとおりです。
+`information_schema.inspection_result`診断結果表`information_schema.inspection_result`の構造は以下のとおりである。
 
 ```sql
 USE information_schema;
@@ -40,9 +40,9 @@ DESC inspection_result;
 フィールドの説明:
 
 -   `RULE` : 診断ルールの名前。現在、次のルールが利用可能です。
-    -   `config` : 構成が一貫していて適切かどうかを確認します。同じ構成が異なるインスタンスで矛盾している場合は、 `warning`診断結果が生成されます。
+    -   `config` : 構成が一貫していて適切かどうかを確認します。異なるインスタンスで同じ構成が矛盾している場合は、 `warning`診断結果が生成されます。
     -   `version` : バージョンの一貫性チェック。異なるインスタンス間で同じバージョンが不一致の場合、診断結果`warning`が生成されます。
-    -   `node-load` :サーバーの負荷をチェックします。現在のシステム負荷が高すぎる場合は、対応する`warning`診断結果が生成されます。
+    -   `node-load` :サーバーの負荷をチェックします。現在のシステム負荷が高すぎる場合は、対応する`warning`の診断結果が生成されます。
     -   `critical-error` : システムの各モジュールは重大なエラーを定義します。重大なエラーが対応する時間内にしきい値を超えると、警告診断結果が生成されます。
     -   `threshold-check` : 診断システムは主要なメトリックのしきい値をチェックします。しきい値を超えると、対応する診断情報が生成されます。
 -   `ITEM` : 各ルールは異なる項目を診断します。このフィールドは、各ルールに対応する特定の診断項目を示します。
@@ -177,7 +177,7 @@ select * from information_schema.inspection_rules where type='inspection';
 
 `config`診断ルールでは、 `CLUSTER_CONFIG`システム テーブルをクエリして次の 2 つの診断ルールが実行されます。
 
--   同じコンポーネントの構成値が一貫しているかどうかを確認します。すべての構成項目にこの一貫性チェックがあるわけではありません。一貫性チェックの許可リストは次のとおりです。
+-   同じコンポーネントの構成値が一貫しているかどうかを確認します。すべての構成項目にこの整合性チェックがあるわけではありません。整合性チェックの許可リストは次のとおりです。
 
     ```go
     // The allowlist of the TiDB configuration consistency check
@@ -248,8 +248,8 @@ DETAILS   | the cluster has 2 different tidb versions, execute the sql to see mo
     | 成分   | エラー名                    | 監視テーブル                             | エラーの説明                                       |
     | ---- | ----------------------- | ---------------------------------- | -------------------------------------------- |
     | ティビ  | パニックカウント                | tidb_panic_count_合計数               | TiDB でパニックが発生します。                            |
-    | ティビ  | バイナリログエラー               | tidb_binlog_エラー合計数                 | TiDB がbinlogを書き込むときにエラーが発生します。               |
-    | ティクヴ | クリティカル・エラー              | tikv_クリティカルエラー合計回数                 | TiKV の重大なエラー。                                |
+    | ティビ  | バイナリログエラー               | tidb_binlog_エラー合計数                 | TiDB がbinlog を書き込むときにエラーが発生します。              |
+    | ティクヴ | 重大なエラー                  | tikv_クリティカルエラーの合計数                 | TiKV の重大なエラー。                                |
     | ティクヴ | スケジューラがビジー状態            | tikv_scheduler_is_busy_total_count | TiKV スケジューラがビジー状態のため、TiKV が一時的に使用できなくなっています。 |
     | ティクヴ | コプロセッサがビジー状態            | tikv_コプロセッサがビジー状態の合計数              | TiKVコプロセッサーがビジー状態です。                         |
     | ティクヴ | チャネルがいっぱいです             | tikv_チャンネル総数                       | TiKV で「チャネルがいっぱいです」というエラーが発生します。             |
@@ -267,7 +267,7 @@ DETAILS   | the cluster has 2 different tidb versions, execute the sql to see mo
 | ティビ  | トークン取得期間           | tidb_get_token_duration             | &lt; 1ミリ秒   | トークンを取得するのにかかる時間を照会します。関連する TiDB 構成項目は[`token-limit`](/command-line-flags-for-tidb-configuration.md#--token-limit)です。 |
 | ティビ  | ロードスキーマ期間          | tidb_load_schema_duration           | &lt; 1秒     | TiDB がスキーマ メタデータを更新するのにかかる時間。                                                                                         |
 | ティクヴ | スケジューラコマンド期間       | tikv_scheduler_コマンド期間               | &lt; 0.1秒   | TiKV が KV `cmd`要求を実行するのにかかる時間。                                                                                        |
-| ティクヴ | ハンドルスナップショット期間     | tikv_handle_スナップショット期間              | 30代未満       | TiKV がスナップショットを処理するのにかかる時間。                                                                                           |
+| ティクヴ | ハンドルスナップショット期間     | tikv_handle_スナップショットの継続時間           | 30代未満       | TiKV がスナップショットを処理するのにかかる時間。                                                                                           |
 | ティクヴ | ストレージ書き込み期間        | tikv_storage_async_request_duration | &lt; 0.1秒   | TiKV の書き込みレイテンシー。                                                                                                     |
 | ティクヴ | ストレージスナップショットの期間   | tikv_storage_async_request_duration | &lt; 50ミリ秒  | TiKV がスナップショットを取得するのにかかる時間。                                                                                           |
 | ティクヴ | rocksdb 書き込み時間     | tikv_engine_write_duration          | &lt; 100ミリ秒 | TiKV RocksDB の書き込みレイテンシー。                                                                                             |

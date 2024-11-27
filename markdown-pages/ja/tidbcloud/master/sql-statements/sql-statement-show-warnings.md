@@ -1,6 +1,6 @@
 ---
 title: SHOW WARNINGS | TiDB SQL Statement Reference
-summary: An overview of the usage of SHOW WARNINGS for the TiDB database.
+summary: TiDB データベースの SHOW WARNINGS の使用法の概要。
 ---
 
 # 警告を表示 {#show-warnings}

@@ -3,34 +3,34 @@ title: Troubleshoot Clusters Using PingCAP Clinic
 summary: PingCAPクリニック診断サービス (PingCAPクリニック) は、 TiUPを使用して展開された TiDB および DM クラスターのトラブルシューティングに役立ちます。Diag クライアントと Clinic Server を使用して、リモート トラブルシューティングとローカル クラスターの状態チェックを実行できます。前提条件には、Diag のインストール、アクセス トークンの設定、およびリージョンの構成が含まれます。リモートでのトラブルシューティングには、診断データの収集、表示、およびアップロードが含まれます。ローカルでのクラスターの状態のクイック チェックには、構成データの収集と診断が含まれます。データ アップロードではブレークポイント アップロードがサポートされ、アップロードされたデータは Clinic Server に最大 180 日間保持されます。
 ---
 
-# PingCAPクリニックを使用してクラスターをトラブルシューティングする {#troubleshoot-clusters-using-pingcap-clinic}
+# PingCAPクリニック を使用してクラスターをトラブルシューティングする {#troubleshoot-clusters-using-pingcap-clinic}
 
 TiUPを使用してデプロイされた TiDB クラスターおよび DM クラスターの場合、 PingCAPクリニック診断サービス (PingCAPクリニック) を使用してクラスターの問題をリモートでトラブルシューティングし、 [診断クライアント (Diag)](https://github.com/pingcap/diag)および Clinic Server を使用してローカルでクラスターの状態をすばやくチェックできます。
 
 > **注記：**
 >
-> -   このドキュメントは、セルフホスト環境でTiUPを使用してデプロイされたクラスターに**のみ**適用されます。Kubernetes 上のTiDB Operatorを使用してデプロイされたクラスターについては、 [TiDB Operator環境向けPingCAPクリニック](https://docs.pingcap.com/tidb-in-kubernetes/stable/clinic-user-guide)を参照してください。
+> -   このドキュメントは、セルフホスト環境でTiUP を使用してデプロイされたクラスターに**のみ**適用されます。Kubernetes 上のTiDB Operator を使用してデプロイされたクラスターについては、 [TiDB Operator環境向けPingCAPクリニック](https://docs.pingcap.com/tidb-in-kubernetes/stable/clinic-user-guide)参照してください。
 >
-> -   PingCAPクリニック は、 TiDB Ansible を使用してデプロイされたクラスターからのデータ収集を**サポートしていません**。
+> -   PingCAPクリニック は、 TiDB Ansible を使用してデプロイされたクラスターからのデータ収集**をサポートしていません**。
 
 ## ユーザーシナリオ {#user-scenarios}
 
 -   [クラスターの問題をリモートでトラブルシューティングする](#troubleshoot-cluster-problems-remotely)
 
-    -   クラスターに問題があり、PingCAP から[支持を得ます](/support.md)を取得する必要がある場合は、Diag を使用して診断データを収集し、収集したデータを Clinic Server にアップロードし、データ アクセス リンクをテクニカル サポート スタッフに提供するという操作を実行して、リモート トラブルシューティングを容易にすることができます。
+    -   クラスターに問題があり、PingCAP から[サポートを受ける](/support.md)を取得する必要がある場合は、Diag を使用して診断データを収集し、収集したデータを Clinic Server にアップロードし、データ アクセス リンクをテクニカル サポート スタッフに提供するという操作を実行して、リモート トラブルシューティングを容易にすることができます。
     -   クラスターに何らかの問題があり、すぐに問題を分析できない場合は、Diag を使用してデータを収集し、後で分析できるように保存できます。
 
 -   [ローカルでクラスターのステータスを素早くチェックする](#perform-a-quick-check-on-the-cluster-status-locally)
 
-    現時点ではクラスターが安定して動作している場合でも、潜在的な安定性リスクを検出するために、クラスターを定期的にチェックする必要があります。PingCAP PingCAPクリニックが提供するローカル クイック チェック機能を使用して、クラスターの潜在的なヘルス リスクを特定できます。ローカル チェックでは構成のみがチェックされます。メトリックやログなどのより多くの項目をチェックするには、診断データを Clinic Server にアップロードし、ヘルス レポート機能を使用することをお勧めします。
+    現時点ではクラスターが安定して動作している場合でも、潜在的な安定性リスクを検出するために、定期的にクラスターをチェックする必要があります。PingCAP PingCAPクリニックが提供するローカル クイック チェック機能を使用して、クラスターの潜在的なヘルス リスクを特定できます。ローカル チェックでは構成のみがチェックされます。メトリックやログなどのより多くの項目をチェックするには、診断データを Clinic Server にアップロードし、ヘルス レポート機能を使用することをお勧めします。
 
 ## 前提条件 {#prerequisites}
 
-PingCAPクリニックを使用する前に、 Diag ( PingCAPクリニックが提供するデータ収集コンポーネント) をインストールし、データをアップロードする環境を準備する必要があります。
+PingCAPクリニック を使用する前に、 Diag ( PingCAPクリニックが提供するデータ収集コンポーネント) をインストールし、データをアップロードする環境を準備する必要があります。
 
 1.  Diagをインストールします。
 
-    -   制御マシンにTiUP がインストールされている場合は、次のコマンドを実行して Diag をインストールします。
+    -   制御マシンにTiUPがインストールされている場合は、次のコマンドを実行して Diag をインストールします。
 
         ```bash
         tiup install diag
@@ -58,7 +58,7 @@ PingCAPクリニックを使用する前に、 Diag ( PingCAPクリニックが�
         <SimpleTab groupId="clinicServer">
           <div label="Clinic Server for international users" value="clinic-us">
 
-        [海外ユーザー向けクリニックサーバー](https://clinic.pingcap.com) : データは米国の AWS に保存されます。
+        [海外ユーザー向けクリニックサーバー](https://clinic.pingcap.com) : データは米国リージョンの AWS に保存されます。
 
         </div>
           <div label="Clinic Server for users in the Chinese mainland" value="clinic-cn">
@@ -69,7 +69,7 @@ PingCAPクリニックを使用する前に、 Diag ( PingCAPクリニックが�
 
         </SimpleTab>
 
-    -   クラスタページの右下隅にあるアイコンをクリックし、**診断ツールのアクセス トークンの取得を**選択して、ポップアップ ウィンドウで**+**をクリックします。表示されるトークンをコピーして保存したことを確認します。
+    -   クラスタページの右下隅にあるアイコンをクリックし、**診断ツールのアクセス トークンの取得**を選択して、ポップアップ ウィンドウで**+**をクリックします。表示されるトークンをコピーして保存したことを確認します。
 
         ![Get the Token](https://download.pingcap.com/images/docs/clinic-get-token.png)
 
@@ -87,17 +87,17 @@ PingCAPクリニックを使用する前に、 Diag ( PingCAPクリニックが�
 
 3.  Diag に`region`設定します。
 
-    `region` 、データをアップロードするときにデータのパック化に使用される暗号化証明書とターゲット サービスを決定します。例:
+    `region`データをアップロードするときにデータのパック化に使用される暗号化証明書とターゲット サービスを決定します。例:
 
     > **注記：**
     >
-    > -   Diag v0.9.0 以降のバージョンでは設定`region`サポートされます。
-    > -   Diag v0.9.0 より前のバージョンの場合、データはデフォルトで中国地域の Clinic Server にアップロードされます。これらのバージョンで`region`を設定するには、 `tiup update diag`コマンドを実行して Diag を最新バージョンにアップグレードしてから、Diag で`region`を設定します。
+    > -   Diag v0.9.0 以降のバージョンでは設定`region`がサポートされます。
+    > -   Diag v0.9.0 より前のバージョンの場合、データはデフォルトで中国地域の Clinic Server にアップロードされます。これらのバージョンで`region`設定するには、 `tiup update diag`コマンドを実行して Diag を最新バージョンにアップグレードしてから、Diag で`region`設定します。
 
     <SimpleTab groupId="clinicServer">
      <div label="Clinic Server for international users" value="clinic-us">
 
-    海外ユーザー向けに Clinic Server を使用する場合は、次のコマンドを使用して`region`から`US`に設定します。
+    海外ユーザー向けに Clinic Server を使用する場合は、次のコマンドを使用して`region`から`US`設定します。
 
     ```bash
     tiup diag config clinic.region US
@@ -106,7 +106,7 @@ PingCAPクリニックを使用する前に、 Diag ( PingCAPクリニックが�
     </div>
      <div label="Clinic Server for users in the Chinese mainland" value="clinic-cn">
 
-    中国本土のユーザー向けに Clinic Server を使用する場合は、次のコマンドを使用して`region`から`CN`に設定します。
+    中国本土のユーザー向けに Clinic Server を使用する場合は、次のコマンドを使用して`region`から`CN`設定します。
 
     ```bash
     tiup diag config clinic.region CN
@@ -128,11 +128,11 @@ Diag を使用すると、監視データや構成情報などの診断データ
 
 Diag で収集できるデータの完全なリストについては、 [PingCAPクリニック診断データ](/clinic/clinic-data-instruction-for-tiup.md)参照してください。
 
-後の診断の効率を高めるために、監視データや構成情報を含む完全な診断データを収集することをお勧めします。詳細については、 [クラスターからデータを収集する](#step-2-collect-data)を参照してください。
+後の診断の効率を高めるために、監視データや構成情報を含む完全な診断データを収集することをお勧めします。詳細については、 [クラスターからデータを収集する](#step-2-collect-data)参照してください。
 
 ### ステップ2. データを収集する {#step-2-collect-data}
 
-Diag を使用すると、 TiUPを使用してデプロイされた TiDB クラスターと DM クラスターからデータを収集できます。
+Diag を使用すると、 TiUP を使用してデプロイされた TiDB クラスターと DM クラスターからデータを収集できます。
 
 1.  Diag のデータ収集コマンドを実行します。
 
@@ -172,8 +172,8 @@ Diag を使用すると、 TiUPを使用してデプロイされた TiDB クラ�
 
     -   `-l` : ファイル転送の帯域幅制限。単位は Kbit/s、デフォルト値は`100000` (scp の`-l`のパラメータ) です。
     -   `-N/--node` : 指定されたノードからのみデータを収集します。形式は`ip:port`です。
-    -   `--include` : 特定の種類のデータのみを収集します。オプションの値は`system` 、 `monitor` 、 `log` 、 `config` 、および`db_vars`です。2 つ以上の種類を含めるには、種類間の区切りとして`,`を使用できます。
-    -   `--exclude` : 特定の種類のデータは収集しません。オプションの値は`system` 、 `monitor` 、 `log` 、 `config` 、および`db_vars`です。2 つ以上の種類を除外するには、種類間の区切りとして`,`を使用できます。
+    -   `--include` : 特定の種類のデータのみを収集します。オプションの値は`system` 、 `monitor` 、 `log` 、 `config` 、および`db_vars`です。2 つ以上の種類を含めるには、種類間の区切りとして`,`使用できます。
+    -   `--exclude` : 特定の種類のデータは収集しません。オプションの値は`system` 、 `monitor` 、 `log` 、 `config` 、および`db_vars`です。2 つ以上の種類を除外するには、種類間の区切りとして`,`使用できます。
 
     コマンドを実行しても、Diag はすぐにデータの収集を開始しません。代わりに、Diag は推定データ サイズとターゲット データstorageパスを出力に表示し、続行するかどうかを確認します。例:
 
@@ -220,7 +220,7 @@ PingCAP テクニカル サポート スタッフにクラスター診断デー�
 クラスターのネットワーク接続に応じて、次のいずれかの方法を選択してデータをアップロードできます。
 
 -   方法 1: クラスターが配置されているネットワークがインターネットにアクセスできる場合は、 [アップロードコマンドを使用してデータを直接アップロードする](#method-1-upload-directly)実行できます。
--   方法 2: クラスターが配置されているネットワークがインターネットにアクセスできない場合は、 [データをパックしてアップロードする](#method-2-pack-and-upload-data)実行する必要があります。
+-   方法 2: クラスターが配置されているネットワークがインターネットにアクセスできない場合は、 [データをパックしてアップロードする](#method-2-pack-and-upload-data)を実行する必要があります。
 
 > **注記：**
 >
@@ -234,7 +234,7 @@ PingCAP テクニカル サポート スタッフにクラスター診断デー�
 tiup diag upload
 ```
 
-アップロードが完了すると、出力に`Download URL`表示されます。3 `Download URL`リンクを開いてアップロードされたデータを確認するか、以前に連絡した PingCAP テクニカル サポート スタッフにリンクを送信することができます。
+アップロードが完了すると、出力に`Download URL`が表示されます`Download URL`のリンクを開いてアップロードされたデータを確認するか、以前に連絡した PingCAP テクニカル サポート スタッフにリンクを送信することができます。
 
 #### 方法2. データをパックしてアップロードする {#method-2-pack-and-upload-data}
 
@@ -285,7 +285,7 @@ Diag を使用すると、ローカルでクラスターの状態をすばやく
 
     設定ファイルのデータは比較的小さいです。収集後、収集されたデータはデフォルトで現在のパスに保存されます。テスト環境では、18 ノードのクラスターの場合、設定ファイルのデータ サイズは 10 KB 未満です。
 
-2.  構成データを診断します:
+2.  構成データを診断します。
 
     ```bash
     tiup diag check ${subdir-in-output-data}
@@ -321,7 +321,7 @@ Diag を使用すると、ローカルでクラスターの状態をすばやく
     The following is the details of the abnormalities.
 
     ### Diagnostic result summary
-    The configuration rules are all derived from PingCAP’s OnCall Service.
+    The configuration rules are all derived from PingCAP's OnCall Service.
 
     If the results of the configuration rules are found to be abnormal, they may cause the cluster to fail.
 

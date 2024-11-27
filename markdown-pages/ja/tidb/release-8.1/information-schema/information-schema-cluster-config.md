@@ -1,6 +1,6 @@
 ---
 title: CLUSTER_CONFIG
-summary: CLUSTER_CONFIG information_schema テーブルについて学習します。
+summary: CLUSTER_CONFIG` information_schema テーブルについて学習します。
 ---
 
 # クラスター構成 {#cluster-config}
@@ -9,7 +9,7 @@ summary: CLUSTER_CONFIG information_schema テーブルについて学習しま�
 
 > **注記：**
 >
-> この表は TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> この表は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 ```sql
 USE information_schema;

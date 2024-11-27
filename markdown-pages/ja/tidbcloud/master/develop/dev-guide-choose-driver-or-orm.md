@@ -33,10 +33,6 @@ TiDB は MySQL プロトコルと高い互換性がありますが、一部の�
 >
 > MySQL Connector/J 8.0 の 8.0.31 より前のバージョンには[バグ](https://bugs.mysql.com/bug.php?id=106252)があり (詳細は[MySQL JDBC のバグ](/develop/dev-guide-third-party-tools-compatibility.md#mysql-jdbc-bugs)を参照)、v6.3.0 より前のバージョンの TiDB を使用するとスレッドがハングする可能性があります。この問題を回避するには、MySQL Connector/J 8.0.31 以前のバージョンを使用し**ないで**ください。
 
-> **注記：**
->
-> MySQL Connector/J 8.0 を TiDB v7.5.2 以前のバージョンで使用する場合は、 TiDB 構成項目[`server-version`](https://docs.pingcap.com/tidb/v7.5/tidb-configuration-file#server-version)を`"5.7.25-TiDB-v7.5.x"`に設定することをお勧めします。MySQL Connector/J は、 TiDBサーバーがMySQL 8.0.11 以降のバージョンを報告すると、 [`information_schema.KEYWORDS`](/information-schema/information-schema-keywords.md)テーブルにアクセスしようとします。ただし、このテーブルは v7.5.3 から導入されたもので、それ以前のバージョンには存在しません。
-
 完全なアプリケーションを構築する方法の例については、 [TiDB と JDBC を使用してシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-java-jdbc.md)参照してください。
 
 </div>
@@ -48,7 +44,7 @@ TiDB は MySQL プロトコルと高い互換性がありますが、一部の�
 
 SM3 ベースの認証は、TiDB の TiDB-JDBC でのみサポートされます。
 
-Maven を使用する場合は、 `pom.xml`ファイルの`<dependencies></dependencies>`セクションに次のコンテンツを追加します。
+Maven を使用している場合は、 `pom.xml`ファイルの`<dependencies></dependencies>`セクションに次のコンテンツを追加します。
 
 ```xml
 <dependency>
@@ -104,7 +100,7 @@ implementation group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.67
 
 アプリケーションのさまざまな依存関係間の複雑な関係を手動で管理することを避けるために、 [グラドル](https://gradle.org/install)または[メイヴン](https://maven.apache.org/install.html)使用して、間接的なものも含め、アプリケーションのすべての依存関係を取得できます。TiDB 方言をサポートしているのは Hibernate `6.0.0.Beta2`以上のみであることに注意してください。
 
-**Maven を**使用している場合は、 `<dependencies></dependencies>`に以下を追加します。
+Maven を使用している場合は、 `<dependencies></dependencies>`に以下を追加します。
 
 ```xml
 <dependency>
@@ -120,7 +116,7 @@ implementation group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.67
 </dependency>
 ```
 
-**Gradle を**使用している場合は、 `dependencies`に以下を追加します。
+Gradle を使用している場合は、 `dependencies`に以下を追加します。
 
 ```gradle
 implementation 'org.hibernate:hibernate-core:6.2.3.Final'
@@ -187,7 +183,7 @@ MyBatis を使用して TiDB アプリケーションを構築する例につい
 >
 > tidb-loadbalance は[mysql-コネクタ-j](https://github.com/pingcap/mysql-connector-j)で使用する必要があります。
 
-Maven を使用する場合は、 `pom.xml`ファイルの`<dependencies></dependencies>`の要素本体に次のコンテンツを追加します。
+Maven を使用している場合は、 `pom.xml`ファイルの`<dependencies></dependencies>`の要素本体に次のコンテンツを追加します。
 
 ```xml
 <dependency>
@@ -202,7 +198,7 @@ Maven を使用する場合は、 `pom.xml`ファイルの`<dependencies></depen
 </dependency>
 ```
 
-Gradle を使用する場合は、次の内容を`dependencies`に追加します。
+Gradle を使用している場合は、次の内容を`dependencies`に追加します。
 
 ```gradle
 implementation group: 'io.github.lastincisor', name: 'mysql-connector-java', version: '8.0.29-tidb-1.0.0'

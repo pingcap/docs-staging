@@ -1,13 +1,13 @@
 ---
 title: Performance Schema
-summary: TiDBはMySQLとの互換性のためにパフォーマンススキーマテーブルを実装しています。パフォーマンススキーマにはMySQLの互換性に関するテーブルとTiDB拡張機能であるテーブルが含まれています。MySQLの互換性に関するテーブルには様々なテーブルがありますが、TiDB拡張機能であるテーブルにも複数のテーブルが含まれています。
+summary: TiDB は、システム メタデータを表示するための performance_schema を実装します。
 ---
 
 # パフォーマンススキーマ {#performance-schema}
 
-TiDB は、MySQL との互換性のためにパフォーマンス スキーマ テーブルを実装しています。
+TiDB は、MySQL との互換性のためにパフォーマンス スキーマ テーブルを実装します。
 
-## MySQL の互換性に関するテーブル {#tables-for-mysql-compatibility}
+## MySQL 互換性のためのテーブル {#tables-for-mysql-compatibility}
 
 | テーブル名                                                                                      | 説明                |
 | ------------------------------------------------------------------------------------------ | ----------------- |
@@ -31,7 +31,7 @@ TiDB は、MySQL との互換性のためにパフォーマンス スキーマ �
 | `setup_instruments`                                                                        |                   |
 | `setup_objects`                                                                            |                   |
 
-## TiDB 拡張機能であるテーブル {#tables-that-are-tidb-extensions}
+## TiDB拡張のテーブル {#tables-that-are-tidb-extensions}
 
 | テーブル名                     | 説明 |
 | ------------------------- | -- |

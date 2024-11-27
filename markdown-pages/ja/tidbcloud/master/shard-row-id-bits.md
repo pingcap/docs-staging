@@ -1,31 +1,31 @@
 ---
 title: SHARD_ROW_ID_BITS
-summary: このドキュメントは、SHARD_ROW_ID_BITS table 属性を使用して、暗黙的な_tidb_rowidがシャードされた後にシャードのビット数を設定する方法を紹介します。非クラスター化主キーを持つテーブルや主キーがないテーブルの場合、SHARD_ROW_ID_BITSを構成することでホット スポットの問題を軽減し、データを複数の異なるリージョンに書き込むことができます。詳細については、[ホットスポットの問題のトラブルシューティング ガイド](/troubleshoot-hot-spot-issues.md#use-shard_row_id_bits-to-process-hotspots)を参照してください。例として、SHARD_ROW_ID_BITS = 4を使用したテーブルの作成や変更が示されています。
+summary: SHARD_ROW_ID_BITS 属性について学習します。
 ---
 
-# SHARD_ROW_ID_BITS {#shard-row-id-bits}
+# シャード行IDビット {#shard-row-id-bits}
 
-このドキュメントでは、暗黙的な`_tidb_rowid`がシャードされた後にシャードのビット数を設定するために使用される`SHARD_ROW_ID_BITS` table 属性を紹介します。
+このドキュメントでは、暗黙の`_tidb_rowid`がシャードされた後のシャードのビット数を設定するために使用される`SHARD_ROW_ID_BITS`テーブル属性について説明します。
 
 ## コンセプト {#concept}
 
-非クラスター化主キーを持つテーブル、または主キーがないテーブルの場合、TiDB は暗黙的な自動インクリメント行 ID を使用します。多数の`INSERT`操作が実行されると、データが 1 つのリージョンに書き込まれ、書き込みホット スポットが発生します。
+クラスター化されていない主キーを持つテーブル、または主キーのないテーブルの場合、TiDB は暗黙的な自動増分行 ID を使用します。 `INSERT`操作が大量に実行されると、データは単一のリージョンに書き込まれ、書き込みホットスポットが発生します。
 
-ホット スポットの問題を軽減するには、 `SHARD_ROW_ID_BITS`を構成します。行 ID は分散されており、データは複数の異なるリージョンに書き込まれます。
+ホットスポットの問題を軽減するには、 `SHARD_ROW_ID_BITS`設定します。行 ID が分散され、データが複数の異なるリージョンに書き込まれます。
 
--   `SHARD_ROW_ID_BITS = 4` 16 個のシャードを示します
--   `SHARD_ROW_ID_BITS = 6` 64 個のシャードを示します
--   `SHARD_ROW_ID_BITS = 0`デフォルトの 1 シャードを示します
+-   `SHARD_ROW_ID_BITS = 4` 16個の破片を示す
+-   `SHARD_ROW_ID_BITS = 6` 64個の破片を示す
+-   `SHARD_ROW_ID_BITS = 0`デフォルトの1シャードを示します
 
 <CustomContent platform="tidb">
 
-使用方法の詳細については、 [ホットスポットの問題のトラブルシューティング ガイド](/troubleshoot-hot-spot-issues.md#use-shard_row_id_bits-to-process-hotspots)を参照してください。
+使用方法の詳細については[ホットスポットの問題のトラブルシューティングガイド](/troubleshoot-hot-spot-issues.md#use-shard_row_id_bits-to-process-hotspots)を参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-使用方法の詳細については、 [ホットスポットの問題のトラブルシューティング ガイド](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#use-shard_row_id_bits-to-process-hotspots)を参照してください。
+使用方法の詳細については[ホットスポットの問題のトラブルシューティングガイド](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#use-shard_row_id_bits-to-process-hotspots)を参照してください。
 
 </CustomContent>
 

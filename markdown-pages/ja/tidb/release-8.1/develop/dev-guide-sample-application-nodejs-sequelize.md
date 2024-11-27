@@ -11,11 +11,11 @@ TiDB は MySQL 互換のデータベースであり、 [続編](https://sequeliz
 
 -   環境を設定します。
 -   Sequelize を使用して TiDB クラスターに接続します。
--   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)を見つけることができます。
+-   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)見つけることができます。
 
 > **注記**
 >
-> このチュートリアルは、TiDB Serverless、TiDB Dedicated、および TiDB Self-Hosted で機能します。
+> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed で機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -29,7 +29,7 @@ TiDB は MySQL 互換のデータベースであり、 [続編](https://sequeliz
 
 **TiDB クラスターがない場合は、次のように作成できます。**
 
--   (推奨) [TiDB サーバーレス クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   (推奨) [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
 -   [ローカルテストTiDBクラスタをデプロイ](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](/production-deployment-using-tiup.md)に従ってローカル クラスターを作成します。
 
 </CustomContent>
@@ -37,7 +37,7 @@ TiDB は MySQL 互換のデータベースであり、 [続編](https://sequeliz
 
 **TiDB クラスターがない場合は、次のように作成できます。**
 
--   (推奨) [TiDB サーバーレス クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   (推奨) [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
 -   [ローカルテストTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)に従ってローカル クラスターを作成します。
 
 </CustomContent>
@@ -73,7 +73,7 @@ npm install
 
 <SimpleTab>
 
-<div label="TiDB Serverless">
+<div label="TiDB Cloud Serverless">
 
 1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
@@ -81,9 +81,9 @@ npm install
 
 3.  接続ダイアログの構成が動作環境と一致していることを確認します。
 
-    -   **エンドポイントタイプは**`Public`に設定されています
+    -   **接続タイプ**は`Public`に設定されています
 
-    -   **ブランチ**は`main`に設定されています
+    -   **ブランチは**`main`に設定されています
 
     -   **接続先は**`General`に設定されています
 
@@ -93,7 +93,7 @@ npm install
     >
     > Node.js アプリケーションでは、TLS (SSL) 接続を確立するときに Node.js がデフォルトで組み込みの[Mozilla CA 証明書](https://wiki.mozilla.org/CA/Included_Certificates)使用するため、SSL CA 証明書を提供する必要はありません。
 
-4.  ランダムなパスワードを作成するには、 **「パスワードの生成」を**クリックします。
+4.  ランダムなパスワードを作成するには、 **「パスワードの生成」**をクリックします。
 
     > **ヒント**
     >
@@ -105,7 +105,7 @@ npm install
     cp .env.example .env
     ```
 
-6.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`を接続パラメータに置き換えます。
+6.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`接続パラメータに置き換えます。
 
     ```dotenv
     TIDB_HOST='{host}'
@@ -120,15 +120,17 @@ npm install
 
 </div>
 
-<div label="TiDB Dedicated">
+<div label="TiDB Cloud Dedicated">
 
 1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
-3.  **「どこからでもアクセスを許可」**をクリックし、 **「CA 証明書のダウンロード」**をクリックして CA 証明書をダウンロードします。
+3.  接続ダイアログで、 **[接続タイプ]**ドロップダウン リストから**[パブリック]**を選択し、 **[CA 証明書]**をクリックして CA 証明書をダウンロードします。
 
-    接続文字列を取得する方法の詳細については、 [TiDB専用標準接続](https://docs.pingcap.com/tidbcloud/connect-via-standard-connection)を参照してください。
+    IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
+
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
 4.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -136,7 +138,7 @@ npm install
     cp .env.example .env
     ```
 
-5.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`を接続パラメータに置き換えます。
+5.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`接続パラメータに置き換えます。
 
     ```shell
     TIDB_HOST='{host}'
@@ -152,7 +154,7 @@ npm install
 
 </div>
 
-<div label="TiDB Self-Hosted">
+<div label="TiDB Self-Managed">
 
 1.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -160,7 +162,7 @@ npm install
     cp .env.example .env
     ```
 
-2.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`を接続パラメータに置き換えます。
+2.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`接続パラメータに置き換えます。
 
     ```shell
     TIDB_HOST='{host}'
@@ -180,7 +182,7 @@ npm install
 
 ### ステップ4: サンプルアプリを実行する {#step-4-run-the-sample-app}
 
-サンプルコードを実行するには、次のコマンドを実行します。
+サンプル コードを実行するには、次のコマンドを実行します。
 
 ```shell
 npm start
@@ -323,16 +325,16 @@ logger.info(deletedNewPlayer?.toJSON());
 -   [開発者ガイド](/develop/dev-guide-overview.md)の[データを挿入](/develop/dev-guide-insert-data.md) 、 [データの更新](/develop/dev-guide-update-data.md) 、 [データを削除する](/develop/dev-guide-delete-data.md) 、 [単一テーブル読み取り](/develop/dev-guide-get-data-from-single-table.md) 、 [取引](/develop/dev-guide-transaction-overview.md) 、 [SQLパフォーマンスの最適化](/develop/dev-guide-optimize-sql-overview.md)などの章で、 TiDB アプリケーション開発のベスト プラクティスを学習します。
 -   プロフェッショナル[TiDB 開発者コース](https://www.pingcap.com/education/)を通じて学び、試験に合格すると[TiDB 認定](https://www.pingcap.com/education/certification/)獲得します。
 
-## 助けが必要？ {#need-help}
+## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 、または[サポートチケットを作成する](/support.md)について質問します。
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
 
 </CustomContent>

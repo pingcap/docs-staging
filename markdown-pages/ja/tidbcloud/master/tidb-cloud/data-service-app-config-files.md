@@ -80,7 +80,7 @@ summary: このドキュメントでは、TiDB Cloudのデータ アプリの構
 
 ## HTTPエンドポイント構成 {#http-endpoint-configuration}
 
-データ アプリ ディレクトリでは、 `http_endpoints/config.json`にエンドポイント構成、 `http_endpoints/sql/<method>-<endpoint-name>.sql`に SQL ファイルがあります。
+データ アプリ ディレクトリでは、エンドポイント構成は`http_endpoints/config.json`に、SQL ファイルは`http_endpoints/sql/<method>-<endpoint-name>.sql`にあります。
 
     ├── <Your Data App directory>
     │   ├── http_endpoints
@@ -134,8 +134,7 @@ summary: このドキュメントでは、TiDB Cloudのデータ アプリの構
         "type": "<Parameter type>",
         "required": <0 | 1>,
         "default": "<Parameter default value>",
-        "description": "<Parameter description>",
-        "is_path_parameter": <true | false>
+        "description": "<Parameter description>"
       }
     ],
     "settings": {
@@ -170,16 +169,15 @@ summary: このドキュメントでは、TiDB Cloudのデータ アプリの構
 | `params.enum`                | 弦   | (オプション) パラメータの値オプションを指定します。このフィールドは、 `params.type`が`string` 、 `number` 、または`integer`に設定されている場合にのみ有効です。複数の値を指定するには、カンマ ( `,` ) で区切ります。                                                                                                          |
 | `params.default`             | 弦   | パラメータのデフォルト値。値が指定したパラメータの型と`ARRAY`していることを確認してください。一致しない場合、エンドポイントはエラーを返します。1 型パラメータのデフォルト値は文字列であり、複数の値を区切るにはコンマ ( `,` ) を使用できます。                                                                                                               |
 | `params.description`         | 弦   | パラメータの説明。                                                                                                                                                                                                                                      |
-| `params.is_path_parameter`   | ブール | パラメータがパスパラメータであるかどうかを指定します。 `true`に設定されている場合、 `endpoint`フィールドに対応するパラメータ プレースホルダが含まれていることを確認してください。含まれていない場合、デプロイメントが失敗します。逆に、 `endpoint`フィールドに対応するパラメータ プレースホルダが含まれていても、このフィールドが`false`に設定されている場合も、デプロイメントが失敗します。                              |
 | `settings.timeout`           | 整数  | エンドポイントのタイムアウト（ミリ秒単位）。デフォルトは`30000`です。 `1`から`60000`までの整数に設定できます。                                                                                                                                                                               |
 | `settings.row_limit`         | 整数  | エンドポイントが操作または返すことができる行の最大数。デフォルトでは`1000`です。 `batch_operation` `0`に設定すると、 `1`から`2000`までの整数に設定できます。 `batch_operation` `1`に設定すると、 `1`から`100`までの整数に設定できます。                                                                                         |
 | `settings.enable_pagination` | 整数  | リクエストによって返される結果のページ区切りを有効にするかどうかを制御します。サポートされている値は`0` (無効) と`1` (有効) です。デフォルト値は`0`です。                                                                                                                                                          |
 | `settings.cache_enabled`     | 整数  | 指定された有効期間 (TTL) 内に`GET`のリクエストによって返された応答をキャッシュするかどうかを制御します。サポートされている値は`0` (無効) と`1` (有効) です。デフォルト値は`0`です。                                                                                                                                       |
 | `settings.cache_ttl`         | 整数  | `settings.cache_enabled`を`1`に設定した場合の、キャッシュされた応答の有効期間 (TTL) の秒数。30 から 600 までの整数に設定できます。TTL 期間中に同じ`GET`つの要求を再度行うと、Data Service はターゲット データベースからデータを再度取得するのではなく、キャッシュされた応答を直接返すため、クエリのパフォーマンスが向上します。                                               |
 | `tag`                        | 弦   | エンドポイントのタグ。デフォルト値は`"Default"`です。                                                                                                                                                                                                               |
-| `batch_operation`            | 整数  | エンドポイントがバッチ モードで動作できるようにするかどうかを制御します。サポートされている値は`0` (無効) と`1` (有効) です。 `1`に設定すると、1 つのリクエストで複数の行を操作できます。このオプションを有効にするには、リクエスト メソッドが`POST`または`PUT`であることを確認してください。                                                                                |
+| `batch_operation`            | 整数  | エンドポイントがバッチ モードで動作できるようにするかどうかを制御します。サポートされている値は`0` (無効) と`1` (有効) です。 `1`に設定すると、1 回のリクエストで複数の行を操作できます。このオプションを有効にするには、リクエスト メソッドが`POST`または`PUT`であることを確認してください。                                                                                |
 | `sql_file`                   | 弦   | エンドポイントの SQL ファイル ディレクトリ。たとえば、 `"sql/GET-v1.sql"` 。                                                                                                                                                                                            |
-| `type`                       | 弦   | エンドポイントのタイプ。定義済みシステム エンドポイントの場合は値は`"system-data"` 、その他のエンドポイントの場合は`"sql_endpoint"`です。                                                                                                                                                          |
+| `type`                       | 弦   | エンドポイントのタイプ`"sql_endpoint"`のみが可能です。                                                                                                                                                                                                            |
 | `return_type`                | 弦   | エンドポイントの応答形式。1 `"json"`が可能です。                                                                                                                                                                                                                  |
 
 ### SQLファイルの構成 {#sql-file-configuration}
@@ -208,7 +206,7 @@ WHERE
 
 SQL ファイルを書き込むときは、次の点に注意してください。
 
--   SQL ファイルの先頭で、SQL ステートメントでデータベースを指定する必要があります。たとえば、 `USE database_name;` 。
+-   SQL ファイルの先頭で、SQL ステートメントにデータベースを指定する必要があります。たとえば、 `USE database_name;` 。
 
 -   エンドポイントのパラメータを定義するには、SQL ステートメントに`${variable-name}`ような変数プレースホルダとして挿入します。
 

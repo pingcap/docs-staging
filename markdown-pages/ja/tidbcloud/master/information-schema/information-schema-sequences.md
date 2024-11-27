@@ -1,6 +1,6 @@
 ---
 title: SEQUENCES
-summary: Learn the `SEQUENCES` INFORMATION_SCHEMA table.
+summary: SEQUENCES INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # シーケンス {#sequences}
@@ -75,3 +75,11 @@ SEQUENCE_SCHEMA: test
         COMMENT:
 1 row in set (0.00 sec)
 ```
+
+## 参照 {#see-also}
+
+-   [`CREATE SEQUENCE`](/sql-statements/sql-statement-create-sequence.md)
+-   [`SHOW CREATE SEQUENCE`](/sql-statements/sql-statement-show-create-sequence.md)
+-   [`ALTER SEQUENCE`](/sql-statements/sql-statement-alter-sequence.md)
+-   [`DROP SEQUENCE`](/sql-statements/sql-statement-drop-sequence.md)
+-   [シーケンス関数](/functions-and-operators/sequence-functions.md)

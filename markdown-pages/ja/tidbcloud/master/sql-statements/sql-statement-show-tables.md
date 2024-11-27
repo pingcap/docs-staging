@@ -1,31 +1,24 @@
 ---
 title: SHOW [FULL] TABLES | TiDB SQL Statement Reference
-summary: このステートメントは、データベース内のテーブルとビューのリストを表示します。オプションのキーワードFULLはテーブルのタイプを示します。別のデータベース内のテーブルを表示するには、SHOW TABLES IN DatabaseNameを使用します。MySQLの互換性があります。
+summary: TiDB データベースの SHOW [FULL] TABLES の使用法の概要。
 ---
 
-# [完全な] テーブルを表示 {#show-full-tables}
+# [全]テーブルを表示 {#show-full-tables}
 
-このステートメントは、現在選択されているデータベース内のテーブルとビューのリストを表示します。オプションのキーワード`FULL`テーブルのタイプが`BASE TABLE`か`VIEW`であるかを示します。
+このステートメントは、現在選択されているデータベース内のテーブルとビューのリストを表示します。オプションのキーワード`FULL` 、テーブルのタイプが`BASE TABLE` 、 `SEQUENCE` 、または`VIEW`であるかどうかを示します。
 
-別のデータベース内のテーブルを表示するには、 `SHOW TABLES IN DatabaseName`を使用します。
+別のデータベース内のテーブルを表示するには、 `SHOW TABLES IN DatabaseName`使用します。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**ShowTablesStmt:**
+```ebnf+diagram
+ShowTableStmt ::=
+    "SHOW" "FULL"? "TABLES" ("FROM" Identifier | "IN" Identifier )? ShowLikeOrWhere?
 
-![ShowTablesStmt](https://download.pingcap.com/images/docs/sqlgram/ShowTablesStmt.png)
-
-**オプトフル:**
-
-![OptFull](https://download.pingcap.com/images/docs/sqlgram/OptFull.png)
-
-**ShowDatabaseNameOpt:**
-
-![ShowDatabaseNameOpt](https://download.pingcap.com/images/docs/sqlgram/ShowDatabaseNameOpt.png)
-
-**ShowLikeOrWhereOpt:**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## 例 {#examples}
 
@@ -82,12 +75,13 @@ mysql> SHOW TABLES IN mysql;
 20 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SHOW [FULL] TABLES`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`SHOW [FULL] TABLES`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
--   [ドロップテーブル](/sql-statements/sql-statement-drop-table.md)
--   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
+-   [テーブルを削除](/sql-statements/sql-statement-drop-table.md)
+-   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)
+-   [`INFORMATION_SCHEMA.TABLES`](/information-schema/information-schema-tables.md)

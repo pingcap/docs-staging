@@ -13,32 +13,32 @@ TiUPを使用して TiDB クラスターをデプロイする場合、監視お�
 
 TiDB クラスター トポロジが次のようになっていると仮定します。
 
-| 名前   | ホストIP           | サービス                                    |
-| :--- | :-------------- | :-------------------------------------- |
-| ノード1 | 192.168.199.113 | PD1、TiDB、node_export、Prometheus、Grafana |
-| ノード2 | 192.168.199.114 | PD2、ノードエクスポート                           |
-| ノード3 | 192.168.199.115 | PD3、ノードエクスポート                           |
-| ノード4 | 192.168.199.116 | TiKV1、ノードエクスポート                         |
-| ノード5 | 192.168.199.117 | TiKV2、ノードエクスポート                         |
-| ノード6 | 192.168.199.118 | TiKV3、ノードエクスポート                         |
+| 名前   | ホストIP           | サービス                              |
+| :--- | :-------------- | :-------------------------------- |
+| ノード1 | 192.168.199.113 | PD1、TiDB、node_export、プロメテウス、グラファナ |
+| ノード2 | 192.168.199.114 | PD2、ノードエクスポート                     |
+| ノード3 | 192.168.199.115 | PD3、ノードエクスポート                     |
+| ノード4 | 192.168.199.116 | TiKV1、ノードエクスポート                   |
+| ノード5 | 192.168.199.117 | TiKV2、ノードエクスポート                   |
+| ノード6 | 192.168.199.118 | TiKV3、ノードエクスポート                   |
 
 ### ステップ1: バイナリパッケージをダウンロードする {#step-1-download-the-binary-package}
 
 ```bash
 # Downloads the package.
-wget https://download.pingcap.org/prometheus-2.27.1.linux-amd64.tar.gz
+wget https://github.com/prometheus/prometheus/releases/download/v2.49.1/prometheus-2.49.1.linux-amd64.tar.gz
 wget https://download.pingcap.org/node_exporter-v1.3.1-linux-amd64.tar.gz
-wget https://download.pingcap.org/grafana-7.5.11.linux-amd64.tar.gz
+wget https://download.pingcap.org/grafana-7.5.17.linux-amd64.tar.gz
 ```
 
 ```bash
 # Extracts the package.
-tar -xzf prometheus-2.27.1.linux-amd64.tar.gz
+tar -xzf prometheus-2.49.1.linux-amd64.tar.gz
 tar -xzf node_exporter-v1.3.1-linux-amd64.tar.gz
-tar -xzf grafana-7.5.11.linux-amd64.tar.gz
+tar -xzf grafana-7.5.17.linux-amd64.tar.gz
 ```
 
-### ステップ2: Node1、Node2、Node3、Node4で<code>node_exporter</code>を起動する {#step-2-start-code-node-exporter-code-on-node1-node2-node3-and-node4}
+### ステップ2: Node1、Node2、Node3、Node4で<code>node_exporter</code>起動する {#step-2-start-code-node-exporter-code-on-node1-node2-node3-and-node4}
 
 ```bash
 cd node_exporter-v1.3.1-linux-amd64
@@ -53,7 +53,7 @@ $ ./node_exporter --web.listen-address=":9100" \
 Prometheus 構成ファイルを編集します。
 
 ```bash
-cd prometheus-2.27.1.linux-amd64 &&
+cd prometheus-2.49.1.linux-amd64 &&
 vi prometheus.yml
 ```
 
@@ -103,7 +103,25 @@ scrape_configs:
       - '192.168.199.118:20180'
 
 ...
+```
 
+TiDB、PD、TiKV などのコンポーネントのアラーム ルールを有効にするには、対応するコンポーネントのアラーム ルール ファイルを個別にダウンロードし、アラーム ルール ファイルの構成を Prometheus 構成ファイルに追加します。
+
+-   ティDB: [`tidb.rules.yml`](https://github.com/pingcap/tidb/blob/master/pkg/metrics/alertmanager/tidb.rules.yml)
+-   PD: [`pd.rules.yml`](https://github.com/tikv/pd/blob/master/metrics/alertmanager/pd.rules.yml)
+-   投票数: [`tikv.rules.yml`](https://github.com/tikv/tikv/blob/master/metrics/alertmanager/tikv.rules.yml)
+-   TiFlash: [`tiflash.rules.yml`](https://github.com/pingcap/tiflash/blob/master/metrics/alertmanager/tiflash.rules.yml)
+-   ティCDC: [`ticdc.rules.yml`](https://github.com/pingcap/tiflow/blob/master/metrics/alertmanager/ticdc.rules.yml)
+-   TiDB Lightning: [`lightning.rules.yml`](https://github.com/pingcap/tidb/blob/master/br/metrics/alertmanager/lightning.rules.yml)
+
+```ini
+rule_files:
+  - 'tidb.rules.yml'
+  - 'pd.rules.yml'
+  - 'tikv.rules.yml'
+  - 'tiflash.rules.yml'
+  - 'ticdc.rules.yml'
+  - 'lightning.rules.yml'
 ```
 
 Prometheus サービスを開始します。
@@ -119,12 +137,12 @@ $ ./prometheus \
     --storage.tsdb.retention="15d" &
 ```
 
-### ステップ4: Node1でGrafanaを起動する {#step-4-start-grafana-on-node1}
+### ステップ 4: Node1 で Grafana を開始する {#step-4-start-grafana-on-node1}
 
 Grafana 構成ファイルを編集します。
 
 ```ini
-cd grafana-7.5.11 &&
+cd grafana-7.5.17 &&
 vi conf/grafana.ini
 
 ...
@@ -192,7 +210,7 @@ Grafana サービスを開始します。
 
     > **注記：**
     >
-    > **パスワードの変更**手順では、 **「スキップ」**を選択できます。
+    > **パスワードの変更**手順では、 **「スキップ」を**選択できます。
 
 2.  Grafana サイドバー メニューで、**コンフィグレーション**内の**データ ソース**をクリックします。
 
@@ -201,11 +219,11 @@ Grafana サービスを開始します。
 4.  データ ソース情報を指定します。
 
     -   データ ソースの**名前**を指定します。
-    -   **タイプ**には**Prometheus**を選択します。
+    -   **タイプ**には**Prometheus を**選択します。
     -   **URL**には、Prometheus アドレスを指定します。
     -   必要に応じて他のフィールドを指定します。
 
-5.  新しいデータ ソースを保存するには、 **[追加] を**クリックします。
+5.  新しいデータ ソースを保存するには、 **[追加]**をクリックします。
 
 ### ステップ2: Grafanaダッシュボードをインポートする {#step-2-import-a-grafana-dashboard}
 
@@ -213,19 +231,19 @@ PDサーバー、TiKVサーバー、および TiDBサーバーの Grafana ダッ
 
 1.  Grafana ロゴをクリックしてサイドバー メニューを開きます。
 
-2.  サイドバー メニューで、 **[ダッシュボード**] -&gt; **[インポート]**をクリックして、 **[ダッシュボードのインポート]**ウィンドウを開きます。
+2.  サイドバー メニューで、 **[ダッシュボード]** -&gt; **[インポート]**をクリックして、 **[ダッシュボードのインポート]**ウィンドウを開きます。
 
-3.  **「.json ファイルのアップロード」** [ティック/ティック](https://github.com/tikv/tikv/tree/release-8.1/metrics/grafana)クリックして JSON ファイルをアップロードします ( [ピンキャップ/tidb](https://github.com/pingcap/tidb/tree/release-8.1/pkg/metrics/grafana) 、および[tikv/pd](https://github.com/tikv/pd/tree/release-8.1/metrics/grafana)から TiDB Grafana 構成ファイルをダウンロードします)。
+3.  [tikv/pd](https://github.com/tikv/pd/tree/release-8.1/metrics/grafana) **.json ファイルのアップロード」**をクリックして JSON ファイルをアップロードします ( [ピンキャップ/tidb](https://github.com/pingcap/tidb/tree/release-8.1/pkg/metrics/grafana) 、および[ティック/ティック](https://github.com/tikv/tikv/tree/release-8.1/metrics/grafana)から TiDB Grafana 構成ファイルをダウンロードします)。
 
     > **注記：**
     >
     > TiKV、PD、および TiDB ダッシュボードの場合、対応する JSON ファイルは`tikv_summary.json` 、 `tikv_details.json` 、 `tikv_trouble_shooting.json` 、 `pd.json` 、 `tidb.json` 、および`tidb_summary.json`です。
 
-4.  **[ロード]を**クリックします。
+4.  **[ロード]**をクリックします。
 
 5.  Prometheus データ ソースを選択します。
 
-6.  **「インポート」を**クリックします。Prometheus ダッシュボードがインポートされます。
+6.  **「インポート」**をクリックします。Prometheus ダッシュボードがインポートされます。
 
 ## コンポーネントメトリックをビュー {#view-component-metrics}
 

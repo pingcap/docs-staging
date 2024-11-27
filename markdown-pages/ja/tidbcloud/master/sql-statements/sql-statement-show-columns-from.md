@@ -1,67 +1,39 @@
 ---
 title: SHOW [FULL] COLUMNS FROM | TiDB SQL Statement Reference
-summary: ステートメントSHOW [FULL] COLUMNS FROM <table_name>は、テーブルまたはビューの列を便利な表形式で記述します。オプションのキーワードFULLは、現在のユーザーがその列に対して持つ権限を表示し、commentはテーブル定義からの権限を表示します。このステートメントの別名には、SHOW [FULL] FIELDS FROM <table_name>、DESC <table_name>、DESCRIBE <table_name>、およびEXPLAIN <table_name>があります。MySQLの互換性があります。
+summary: TiDB データベースの SHOW [FULL] COLUMNS FROM の使用法の概要。
 ---
 
-# からの [完全な] 列を表示 {#show-full-columns-from}
+# [全]列を表示 {#show-full-columns-from}
 
-ステートメント`SHOW [FULL] COLUMNS FROM <table_name>`は、テーブルまたはビューの列を便利な表形式で記述します。オプションのキーワード`FULL`現在のユーザーがその列に対して持つ権限を表示し、 `comment`はテーブル定義からの権限を表示します。
+ステートメント`SHOW [FULL] COLUMNS FROM <table_name>` 、テーブルまたはビューの列を便利な表形式で記述します。オプションのキーワード`FULL`は、現在のユーザーがその列に対して持つ権限と、テーブル定義からの`comment`表示します。
 
-ステートメント`SHOW [FULL] FIELDS FROM <table_name>` 、 `DESC <table_name>` 、 `DESCRIBE <table_name>` 、および`EXPLAIN <table_name>`は、このステートメントの別名です。
+ステートメント`SHOW [FULL] FIELDS FROM <table_name>` 、 `DESC <table_name>` 、 `DESCRIBE <table_name>` 、および`EXPLAIN <table_name>`は、このステートメントのエイリアスです。
 
 > **注記：**
 >
-> `DESC TABLE <table_name>` 、 `DESCRIBE TABLE <table_name>` 、および`EXPLAIN TABLE <table_name>` 、上記のステートメントと同等ではありません。これらは[`DESC SELECT * FROM &#x3C;table_name>`](/sql-statements/sql-statement-explain.md)の別名です。
+> `DESC TABLE <table_name>` 、 `DESCRIBE TABLE <table_name>` 、 `EXPLAIN TABLE <table_name>`上記のステートメントと同等ではありません。これらは[`DESC SELECT * FROM &#x3C;table_name>`](/sql-statements/sql-statement-explain.md)の別名です。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**表示手順:**
+```ebnf+diagram
+ShowColumnsFromStmt ::=
+    "SHOW" "FULL"? ("COLUMNS" | "FIELDS") ("FROM" | "IN") TableName ( ("FROM" | "IN") SchemaName)? ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+TableName ::=
+    (Identifier ".")? Identifier
 
-**ShowColumnsFilterable:**
-
-![ShowColumnsFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowColumnsFilterable.png)
-
-**オプトフル:**
-
-![OptFull](https://download.pingcap.com/images/docs/sqlgram/OptFull.png)
-
-**フィールドまたは列:**
-
-![FieldsOrColumns](https://download.pingcap.com/images/docs/sqlgram/FieldsOrColumns.png)
-
-**ShowTableAliasOpt:**
-
-![ShowTableAliasOpt](https://download.pingcap.com/images/docs/sqlgram/ShowTableAliasOpt.png)
-
-**送信者または受信者:**
-
-![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
-
-**テーブル名:**
-
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
-
-**ShowDatabaseNameOpt:**
-
-![ShowDatabaseNameOpt](https://download.pingcap.com/images/docs/sqlgram/ShowDatabaseNameOpt.png)
-
-**DB名:**
-
-![DBName](https://download.pingcap.com/images/docs/sqlgram/DBName.png)
-
-**ShowLikeOrWhereOpt:**
-
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## 例 {#examples}
 
 ```sql
-mysql> create view v1 as select 1;
+mysql> CREATE VIEW v1 AS SELECT 1;
 Query OK, 0 rows affected (0.11 sec)
 
-mysql> show columns from v1;
+mysql> SHOW COLUMNS FROM v1;
 +-------+-----------+------+------+---------+-------+
 | Field | Type      | Null | Key  | Default | Extra |
 +-------+-----------+------+------+---------+-------+
@@ -69,7 +41,7 @@ mysql> show columns from v1;
 +-------+-----------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
-mysql> desc v1;
+mysql> DESC v1;
 +-------+-----------+------+------+---------+-------+
 | Field | Type      | Null | Key  | Default | Extra |
 +-------+-----------+------+------+---------+-------+
@@ -77,7 +49,7 @@ mysql> desc v1;
 +-------+-----------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
-mysql> describe v1;
+mysql> DESCRIBE v1;
 +-------+-----------+------+------+---------+-------+
 | Field | Type      | Null | Key  | Default | Extra |
 +-------+-----------+------+------+---------+-------+
@@ -85,7 +57,7 @@ mysql> describe v1;
 +-------+-----------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
-mysql> explain v1;
+mysql> EXPLAIN v1;
 +-------+-----------+------+------+---------+-------+
 | Field | Type      | Null | Key  | Default | Extra |
 +-------+-----------+------+------+---------+-------+
@@ -93,7 +65,7 @@ mysql> explain v1;
 +-------+-----------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
-mysql> show fields from v1;
+mysql> SHOW FIELDS FROM v1;
 +-------+-----------+------+------+---------+-------+
 | Field | Type      | Null | Key  | Default | Extra |
 +-------+-----------+------+------+---------+-------+
@@ -101,7 +73,7 @@ mysql> show fields from v1;
 +-------+-----------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
-mysql> show full columns from v1;
+mysql> SHOW FULL COLUMNS FROM v1;
 +-------+-----------+-----------+------+------+---------+-------+---------------------------------+---------+
 | Field | Type      | Collation | Null | Key  | Default | Extra | Privileges                      | Comment |
 +-------+-----------+-----------+------+------+---------+-------+---------------------------------+---------+
@@ -109,7 +81,7 @@ mysql> show full columns from v1;
 +-------+-----------+-----------+------+------+---------+-------+---------------------------------+---------+
 1 row in set (0.00 sec)
 
-mysql> show full columns from mysql.user;
+mysql> SHOW FULL COLUMNS FROM mysql.user;
 +------------------------+---------------+-------------+------+------+---------+-------+---------------------------------+---------+
 | Field                  | Type          | Collation   | Null | Key  | Default | Extra | Privileges                      | Comment |
 +------------------------+---------------+-------------+------+------+---------+-------+---------------------------------+---------+
@@ -155,10 +127,10 @@ mysql> show full columns from mysql.user;
 38 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SHOW [FULL] COLUMNS FROM`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`SHOW [FULL] COLUMNS FROM`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
--   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
+-   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)

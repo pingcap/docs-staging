@@ -13,11 +13,11 @@ summary: TiDB の式構文について学習します。
 
 -   述語、数値、文字列、日付式。これらのタイプのうち[リテラル値](/literal-values.md)つも式です。
 
--   関数呼び出しとウィンドウ関数。参考までに[関数と演算子の概要](/functions-and-operators/functions-and-operators-overview.md)と[ウィンドウ関数](/functions-and-operators/window-functions.md)を参照
+-   関数呼び出しとウィンドウ関数。参考までに[関数と演算子の概要](/functions-and-operators/functions-and-operators-overview.md)と[ウィンドウ関数](/functions-and-operators/window-functions.md)参照
 
 -   ParamMarker（ `?` ）、システム変数、ユーザー変数、CASE式。
 
-以下の規則は、TiDB パーサーの[`parser.y`](https://github.com/pingcap/tidb/blob/release-8.1/pkg/parser/parser.y)規則に基づいた式構文です。以下の構文図のナビゲート可能なバージョンについては、 [TiDB SQL構文図](https://pingcap.github.io/sqlgram/#Expression)を参照してください。
+以下のルールは、TiDB パーサーの[`parser.y`](https://github.com/pingcap/tidb/blob/release-8.1/pkg/parser/parser.y)ルールに基づいた式構文です。
 
 ```ebnf+diagram
 Expression ::=

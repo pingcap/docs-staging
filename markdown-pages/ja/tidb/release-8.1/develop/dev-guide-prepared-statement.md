@@ -5,7 +5,7 @@ summary: TiDB 準備済みステートメントの使用方法について学習
 
 # 準備された声明 {#prepared-statements}
 
-[プリペアドステートメント](/sql-statements/sql-statement-prepare.md) 、パラメータのみが異なる複数の SQL 文をテンプレート化します。SQL 文とパラメータを分離します。これを使用して、SQL 文の次の側面を改善できます。
+[プリペアドステートメント](/sql-statements/sql-statement-prepare.md)パラメータのみが異なる複数の SQL ステートメントをテンプレート化します。SQL ステートメントとパラメータを分離します。これを使用して、SQL ステートメントの次の側面を改善できます。
 
 -   **Security**: パラメータとステートメントが分離されているため、 [SQLインジェクション](https://en.wikipedia.org/wiki/SQL_injection)攻撃のリスクを回避できます。
 -   **パフォーマンス**: ステートメントは TiDBサーバー上で事前に解析されるため、後続の実行ではパラメータのみが渡され、SQL ステートメント全体の解析、SQL ステートメント文字列の結合、およびネットワーク転送のコストが節約されます。
@@ -31,7 +31,7 @@ PREPARE {prepared_statement_name} FROM '{prepared_statement_sql}';
 
 ### プリペアドステートメントを使用する {#use-the-prepared-statement}
 
-プリペアドステートメントは、**ユーザー変数**のみをパラメーターとして使用できるため、 [`EXECUTE`ステートメント](/sql-statements/sql-statement-execute.md)プリペアドステートメントを呼び出す前に、 [`SET`ステートメント](/sql-statements/sql-statement-set-variable.md)を使用して変数を設定します。
+プリペアドステートメントは、**ユーザー変数**のみをパラメーターとして使用できるため、 [`EXECUTE`ステートメント](/sql-statements/sql-statement-execute.md)がプリペアドステートメントを呼び出す前に、 [`SET`ステートメント](/sql-statements/sql-statement-set-variable.md)を使用して変数を設定します。
 
 ```sql
 SET @{parameter_name} = {parameter_value};
@@ -129,7 +129,7 @@ try (Connection connection = ds.getConnection()) {
 
 ### <code>INSERT</code>例 {#code-insert-code-example}
 
-[`books`](/develop/dev-guide-bookshop-schema-design.md#books-table)例にすると、 `title = TiDB Developer Guide` 、 `type = Science & Technology` 、 `stock = 100` 、 `price = 0.0` 、 `published_at = NOW()` (挿入時の現在時刻) を含む本を挿入する必要があります。 `books`テーブルの**主キー**に`AUTO_RANDOM`属性を指定する必要がないことに注意してください。データの挿入の詳細については、 [データの挿入](/develop/dev-guide-insert-data.md)を参照してください。
+[`books`](/develop/dev-guide-bookshop-schema-design.md#books-table)例にすると、 `title = TiDB Developer Guide` 、 `type = Science & Technology` 、 `stock = 100` 、 `price = 0.0` 、 `published_at = NOW()` (挿入時の現在時刻) を含む本を挿入する必要があります。 `books`テーブルの**主キー**に`AUTO_RANDOM`属性を指定する必要がないことに注意してください。データの挿入の詳細については、 [データの挿入](/develop/dev-guide-insert-data.md)参照してください。
 
 <SimpleTab groupId="language">
 
@@ -184,7 +184,7 @@ try (Connection connection = ds.getConnection()) {
 }
 ```
 
-ご覧のとおり、JDBC を使用すると準備済みステートメントのライフ サイクルを制御でき、アプリケーションで準備済みステートメントを手動で作成、使用、または削除する必要がありません。ただし、TiDB は MySQL と互換性があるため、クライアント側で MySQL JDBCDriverを使用するためのデフォルト構成では、***サーバー側の***プリペアドステートメントオプションを有効にするのではなく、クライアント側のプリペアドステートメントを使用することに注意してください。
+ご覧のとおり、JDBC を使用すると準備済みステートメントのライフ サイクルを制御できるため、アプリケーションで準備済みステートメントを手動で作成、使用、または削除する必要はありません。ただし、TiDB は MySQL と互換性があるため、クライアント側で MySQL JDBCDriverを使用するためのデフォルト構成では、***サーバー側の***プリペアドステートメントオプションを有効にするのではなく、クライアント側のプリペアドステートメントを使用することに注意してください。
 
 次の構成は、JDBC で TiDB サーバー側の準備済みステートメントを使用するのに役立ちます。
 
@@ -199,9 +199,9 @@ try (Connection connection = ds.getConnection()) {
 
     jdbc:mysql://127.0.0.1:4000/test?user=root&useConfigs=maxPerformance&useServerPrepStmts=true&prepStmtCacheSqlLimit=2048&prepStmtCacheSize=256&rewriteBatchedStatements=true&allowMultiQueries=true
 
-データを挿入するときに他の JDBC パラメータを変更する必要がある場合は、 [行を挿入する](/develop/dev-guide-insert-data.md#insert-rows)章も参照してください。
+データを挿入するときに他の JDBC パラメータを変更する必要がある場合は、第[行を挿入する](/develop/dev-guide-insert-data.md#insert-rows)章も参照してください。
 
-Javaの完全な例については、以下を参照してください。
+Javaでの完全な例については、以下を参照してください。
 
 -   [JDBC で TiDB に接続する](/develop/dev-guide-sample-application-java-jdbc.md)
 -   [Hibernate で TiDB に接続する](/develop/dev-guide-sample-application-java-hibernate.md)
@@ -210,3 +210,17 @@ Javaの完全な例については、以下を参照してください。
 </div>
 
 </SimpleTab>
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

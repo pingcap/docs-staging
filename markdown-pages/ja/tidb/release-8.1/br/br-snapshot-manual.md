@@ -1,6 +1,6 @@
 ---
 title: TiDB Snapshot Backup and Restore Command Manual
-summary: TiDB スナップショット バックアップおよび復元コマンド マニュアルでは、クラスター スナップショット、データベース、およびテーブルをバックアップおよび復元するためのコマンドについて説明しています。また、バックアップ データの暗号化と暗号化されたスナップショットの復元についても説明しています。BR ツールは GC への自己適応をサポートし、統計のバックアップと復元のための --ignore-stats パラメータを導入しています。また、バックアップ データの暗号化と、指定されたデータベースまたはテーブルの部分的なデータの復元もサポートしています。
+summary: TiDB スナップショット バックアップおよび復元コマンド マニュアルでは、クラスター スナップショット、データベース、およびテーブルをバックアップおよび復元するためのコマンドについて説明しています。また、バックアップ データの暗号化と暗号化されたスナップショットの復元についても説明しています。BR ツールはGC への自己適応をサポートし、統計のバックアップと復元のための --ignore-stats パラメータを導入しています。また、バックアップ データの暗号化と、指定されたデータベースまたはテーブルの部分的なデータの復元もサポートしています。
 ---
 
 # TiDB スナップショットのバックアップと復元コマンド マニュアル {#tidb-snapshot-backup-and-restore-command-manual}
@@ -34,7 +34,7 @@ summary: TiDB スナップショット バックアップおよび復元コマ�
 ```shell
 tiup br backup full \
     --pd "${PD_IP}:2379" \
-    --backupts '2022-09-08 13:30:00' \
+    --backupts '2024-06-28 13:30:00 +08:00' \
     --storage "s3://${backup_collection_addr}/snapshot-${date}?access-key=${access-key}&secret-access-key=${secret-access-key}" \
     --ratelimit 128 \
     --log-file backupfull.log
@@ -42,7 +42,7 @@ tiup br backup full \
 
 上記のコマンドでは、
 
--   `--backupts` : スナップショットの時点。形式は[TSO](/glossary.md#tso)または`400036290571534337`や`2018-05-11 01:42:23`などのタイムスタンプです。このスナップショットのデータがガベージ コレクションされた場合、 `tiup br backup`コマンドはエラーを返し、&#39;br&#39; は終了します。このパラメータを指定しない場合、 `br`バックアップ開始時刻に対応するスナップショットを選択します。
+-   `--backupts` : スナップショットの時点。形式は[TSO](/glossary.md#tso)または`400036290571534337`や`2024-06-28 13:30:00 +08:00`などのタイムスタンプです。このスナップショットのデータがガベージ コレクションされた場合、 `tiup br backup`コマンドはエラーを返し、&#39;br&#39; は終了します。このパラメータを指定しない場合、 `br`バックアップ開始時刻に対応するスナップショットを選択します。
 -   `--ratelimit` : バックアップ タスクを実行する**TiKV あたりの**最大速度。単位は MiB/s です。
 -   `--log-file` : `br`ログが書き込まれる対象ファイル。
 
@@ -75,7 +75,7 @@ tiup br backup db \
     --log-file backuptable.log
 ```
 
-上記のコマンドでは、 `--db`​​データベース名を指定し、その他のパラメータは[TiDB クラスターのスナップショットをバックアップする](#back-up-cluster-snapshots)と同じです。
+上記のコマンドでは、 `--db`データベース名を指定し、その他のパラメータは[TiDB クラスターのスナップショットをバックアップする](#back-up-cluster-snapshots)と同じです。
 
 ### テーブルをバックアップする {#back-up-a-table}
 
@@ -97,7 +97,7 @@ tiup br backup table \
 
 ### テーブルフィルターを使用して複数のテーブルをバックアップする {#back-up-multiple-tables-with-table-filter}
 
-より多くの条件で複数のテーブルをバックアップするには、 `tiup br backup full`コマンドを実行し、 [テーブルフィルター](/table-filter.md)を`--filter`または`-f`で指定します。
+より多くの条件で複数のテーブルをバックアップするには、 `tiup br backup full`コマンドを実行し、 [テーブルフィルター](/table-filter.md) `--filter`または`-f`で指定します。
 
 次の例では、 `db*.tbl*`フィルター ルールに一致するテーブルを Amazon S3 にバックアップします。
 
@@ -114,7 +114,7 @@ tiup br backup full \
 
 TiDB v7.5.0 以降、 `br`コマンドライン ツールに`--ignore-stats`パラメータが導入されました。このパラメータを`false`に設定すると、 `br`コマンドライン ツールは列、インデックス、およびテーブルの統計のバックアップをサポートします。この場合、バックアップから復元された TiDB データベースの統計収集タスクを手動で実行したり、自動収集タスクの完了を待ったりする必要はありません。この機能により、データベースのメンテナンス作業が簡素化され、クエリのパフォーマンスが向上します。
 
-このパラメータを`false`に設定しない場合、 `br`コマンドライン ツールはデフォルト設定の`--ignore-stats=true`を使用します。つまり、データのバックアップ中に統計はバックアップされません。
+このパラメータを`false`に設定しない場合、 `br`コマンドライン ツールはデフォルト設定の`--ignore-stats=true`使用します。つまり、データのバックアップ中に統計はバックアップされません。
 
 以下は、クラスター スナップショット データをバックアップし、テーブル統計を`--ignore-stats=false`でバックアップする例です。
 
@@ -131,7 +131,7 @@ tiup br restore full \
 --storage local:///br_data/ --pd "${PD_IP}:2379" --log-file restore.log
 ```
 
-バックアップと復元機能では、データをバックアップするときに、統計情報を JSON 形式で`backupmeta`​​ファイル内に保存します。データを復元するときに、統計情報を JSON 形式でクラスターに読み込みます。詳細については、 [ロード統計](/sql-statements/sql-statement-load-stats.md)を参照してください。
+バックアップと復元機能では、データをバックアップするときに、統計情報を JSON 形式で`backupmeta`ファイル内に保存します。データを復元するときに、統計情報を JSON 形式でクラスターに読み込みます。詳細については、 [ロード統計](/sql-statements/sql-statement-load-stats.md)参照してください。
 
 ## バックアップデータを暗号化する {#encrypt-the-backup-data}
 
@@ -145,7 +145,7 @@ TiDB v5.3.0 以降では、次のパラメータを設定することでバッ�
 
 -   `--crypter.method` : 暗号化アルゴリズム。 `aes128-ctr` 、 `aes192-ctr` 、または`aes256-ctr`になります。デフォルト値は`plaintext`で、データが暗号化されていないことを示します。
 -   `--crypter.key` : 16 進文字列形式の暗号化キー。アルゴリズム`aes128-ctr`の場合は 128 ビット (16 バイト) のキー、アルゴリズム`aes192-ctr`の場合は 24 バイトのキー、アルゴリズム`aes256-ctr`の場合は 32 バイトのキーです。
--   `--crypter.key-file` : キー ファイル。2 `crypter.key`渡さずに、キーが保存されているファイル パスをパラメーターとして直接渡すことができます。
+-   `--crypter.key-file` : キー ファイル`crypter.key`を渡さずに、キーが保存されているファイル パスをパラメーターとして直接渡すことができます。
 
 次に例を示します。
 
@@ -177,9 +177,9 @@ tiup br restore full \
 
 上記のコマンドでは、
 
--   `--with-sys-table` : BR は、アカウント権限データ、SQL バインディング、統計情報など、**一部のシステム テーブルのデータ**を復元します ( [統計のバックアップ](/br/br-snapshot-manual.md#back-up-statistics)を参照)。ただし、統計テーブル ( `mysql.stat_*` ) とシステム変数テーブル ( `mysql.tidb`と`mysql.global_variables` ) は復元されません。詳細については、 [`mysql`スキーマ内のテーブルを復元する](/br/br-snapshot-guide.md#restore-tables-in-the-mysql-schema)を参照してください。
--   `--ratelimit` : バックアップ タスクを実行する**TiKV あたりの**最大速度。単位は MiB/s です。
--   `--log-file` : `br`のログが書き込まれる対象ファイル。
+-   `--with-sys-table` : BR は、アカウント権限データ、SQL バインディング、統計情報など、**一部のシステム テーブルのデータを**復元します ( [統計のバックアップ](/br/br-snapshot-manual.md#back-up-statistics)を参照)。ただし、統計テーブル ( `mysql.stat_*` ) とシステム変数テーブル ( `mysql.tidb`と`mysql.global_variables` ) は復元されません。詳細については、 [`mysql`スキーマ内のテーブルを復元する](/br/br-snapshot-guide.md#restore-tables-in-the-mysql-schema)参照してください。
+-   `--ratelimit` : 復元タスクを実行する**TiKV あたりの**最大速度。単位は MiB/s です。
+-   `--log-file` : `br`ログが書き込まれる対象ファイル。
 
 復元中は、以下のようにターミナルに進行状況バーが表示されます。進行状況バーが 100% に進むと、復元タスクは完了です。 `br` 、復元されたデータを検証して、データのセキュリティを確保します。
 
@@ -206,7 +206,7 @@ tiup br restore db \
     --log-file restore_db.log
 ```
 
-上記のコマンドでは、 `--db`​​復元するデータベースの名前を指定し、その他のパラメータは[TiDB クラスターのスナップショットを復元する](#restore-cluster-snapshots)と同じです。
+上記のコマンドでは、 `--db`復元するデータベースの名前を指定し、その他のパラメータは[TiDB クラスターのスナップショットを復元する](#restore-cluster-snapshots)と同じです。
 
 > **注記：**
 >
@@ -228,11 +228,11 @@ tiup br restore table \
     --log-file restore_table.log
 ```
 
-上記のコマンドでは、 `--table`​​復元するテーブルの名前を指定し、その他のパラメータは[データベースを復元する](#restore-a-database)と同じです。
+上記のコマンドでは、 `--table`復元するテーブルの名前を指定し、その他のパラメータは[データベースを復元する](#restore-a-database)と同じです。
 
 ### テーブルフィルターを使用して複数のテーブルを復元する {#restore-multiple-tables-with-table-filter}
 
-より複雑なフィルター ルールを使用して複数のテーブルを復元するには、 `tiup br restore full`コマンドを実行し、 [テーブルフィルター](/table-filter.md)を`--filter`または`-f`で指定します。
+より複雑なフィルター ルールを使用して複数のテーブルを復元するには、 `tiup br restore full`コマンドを実行し、 [テーブルフィルター](/table-filter.md) `--filter`または`-f`で指定します。
 
 次の例では、 `db*.tbl*`フィルター ルールに一致するテーブルを Amazon S3 からターゲット クラスターに復元します。
 
@@ -266,7 +266,7 @@ tiup br restore full \
 SHOW GLOBAL BINDINGS;
 ```
 
-復元後の実行プラン バインディングの動的読み込みは、まだ最適化中です (関連する問題は[＃46527](https://github.com/pingcap/tidb/issues/46527)と[＃46528](https://github.com/pingcap/tidb/issues/46528)です)。復元後に実行プラン バインディングを手動で再読み込みする必要があります。
+復元後の実行プラン バインディングの動的読み込みはまだ最適化中です (関連する問題は[＃46527](https://github.com/pingcap/tidb/issues/46527)と[＃46528](https://github.com/pingcap/tidb/issues/46528)です)。復元後に実行プラン バインディングを手動で再読み込みする必要があります。
 
 ```sql
 -- Ensure that the mysql.bind_info table has only one record for builtin_pseudo_sql_for_bind_lock. If there are more records, you need to manually delete them.

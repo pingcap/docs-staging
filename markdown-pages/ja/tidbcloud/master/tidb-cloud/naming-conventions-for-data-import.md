@@ -121,5 +121,5 @@ SQL ファイルがデフォルト設定で TiDB Dumplingを介してエクス�
 
 CSV または Parquet のソース データ ファイルが命名規則に準拠していない場合は、ファイル パターン機能を使用して、ソース データ ファイルとターゲット テーブル間の名前マッピング関係を確立できます。この機能は、 Auroraスナップショットおよび SQL データ ファイルをサポートしていません。
 
--   CSVファイルについては、 [ステップ4. CSVファイルをTiDB Cloudにインポートする](/tidb-cloud/import-csv-files.md#step-4-import-csv-files-to-tidb-cloud)の**詳細設定**&gt;**マッピング設定**を参照してください。
--   Parquetファイルについては、 [ステップ4. ParquetファイルをTiDB Cloudにインポートする](/tidb-cloud/import-parquet-files.md#step-4-import-parquet-files-to-tidb-cloud)の**詳細設定**&gt;**マッピング設定**を参照してください。
+-   CSVファイルについては、 [ステップ4. CSVファイルをTiDB Cloudにインポートする](/tidb-cloud/import-csv-files.md#step-4-import-csv-files-to-tidb-cloud)の**ファイルパターン**を参照してください。
+-   Parquetファイルについては、 [ステップ4. ParquetファイルをTiDB Cloudにインポートする](/tidb-cloud/import-parquet-files.md#step-4-import-parquet-files-to-tidb-cloud)の**ファイルパターン**を参照してください。

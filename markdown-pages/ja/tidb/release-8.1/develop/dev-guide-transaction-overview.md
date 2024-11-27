@@ -27,7 +27,7 @@ INSERT INTO users (id, nickname, balance)
   VALUES (1, 'Alice', 100);
 ```
 
-次のトランザクションを実行し、各ステートメントの意味を説明してください。
+次のトランザクションを実行し、各ステートメントの意味を説明します。
 
 ```sql
 BEGIN;
@@ -125,7 +125,7 @@ SELECT * FROM `users`;
 
 ## トランザクション分離レベル {#transaction-isolation-levels}
 
-トランザクション分離レベルは**、**データベース トランザクション処理の基礎となります。ACID の「I」(Isolation) は、トランザクションの分離を意味します。
+トランザクション分離レベルは、データベース トランザクション処理の基礎となります。ACID の「I」(Isolation) は**、**トランザクションの分離を意味します。
 
 SQL-92 標準では、次の 4 つの分離レベルが定義されています。
 
@@ -138,12 +138,12 @@ SQL-92 標準では、次の 4 つの分離レベルが定義されています�
 
 | 分離レベル            | ダーティライト | ダーティリード | ファジーリード | ファントム |
 | ---------------- | ------- | ------- | ------- | ----- |
-| READ UNCOMMITTED | ありえない   | 可能      | 可能      | 可能    |
-| READ COMMITTED   | ありえない   | ありえない   | 可能      | 可能    |
-| REPEATABLE READ  | ありえない   | ありえない   | ありえない   | 可能    |
-| SERIALIZABLE     | ありえない   | ありえない   | ありえない   | ありえない |
+| READ UNCOMMITTED | 不可能     | 可能      | 可能      | 可能    |
+| READ COMMITTED   | 不可能     | 不可能     | 可能      | 可能    |
+| REPEATABLE READ  | 不可能     | 不可能     | 不可能     | 可能    |
+| SERIALIZABLE     | 不可能     | 不可能     | 不可能     | 不可能   |
 
-TiDB は次の分離レベルをサポートしています: `READ COMMITTED`および`REPEATABLE READ` :
+TiDB は次の分離レベル`READ COMMITTED`と`REPEATABLE READ`サポートしています。
 
 ```sql
 mysql> SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
@@ -159,3 +159,17 @@ ERROR 8048 (HY000): The isolation level 'SERIALIZABLE' is not supported. Set tid
 ```
 
 TiDB は、MySQL との一貫性を保つために、スナップショット分離 (SI) レベルの一貫性 (「繰り返し読み取り」とも呼ばれる) を実装しています。この分離レベルは、 [ANSI 繰り返し読み取り分離レベル](/transaction-isolation-levels.md#difference-between-tidb-and-ansi-repeatable-read)および[MySQL 繰り返し読み取り分離レベル](/transaction-isolation-levels.md#difference-between-tidb-and-mysql-repeatable-read)とは異なります。詳細については、 [TiDBトランザクション分離レベル](/transaction-isolation-levels.md)参照してください。
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

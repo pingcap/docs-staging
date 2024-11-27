@@ -38,7 +38,7 @@ DESC placement_policies;
 
 ## 例 {#examples}
 
-`PLACEMENT_POLICIES`テーブルには、すべての配置ポリシーのみが表示されます。配置ルールの標準バージョン (すべての配置ポリシーと配置ポリシーが割り当てられたオブジェクトを含む) を表示するには、代わりにステートメント`SHOW PLACEMENT`を使用します。
+`PLACEMENT_POLICIES`テーブルには、すべての配置ポリシーのみが表示されます。配置ルールの標準バージョン (すべての配置ポリシーと配置ポリシーが割り当てられたオブジェクトを含む) を表示するには、代わりにステートメント`SHOW PLACEMENT`使用します。
 
 ```sql
 CREATE TABLE t1 (a INT); 

@@ -24,16 +24,16 @@ Netlify アカウントと CLI が必要です。お持ちでない場合は、�
 
 TiDB Cloudにアカウントとクラスターがあることが前提となります。アカウントとクラスターがない場合は、以下を参照して作成してください。
 
--   [TiDB Cloud Serverless クラスターを作成する](/tidb-cloud/create-tidb-cluster-serverless.md)
--   [TiDB Cloud専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md)
+-   [TiDB サーバーレス クラスターを作成する](/tidb-cloud/create-tidb-cluster-serverless.md)
+-   [TiDB専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md)
 
 1 つのTiDB Cloudクラスターは複数の Netlify サイトに接続できます。
 
 ### TiDB Cloudのトラフィック フィルターで許可されるすべての IP アドレス {#all-ip-addresses-allowed-for-traffic-filter-in-tidb-cloud}
 
-TiDB Cloud Dedicated クラスターの場合、クラスターのトラフィック フィルターですべての IP アドレス ( `0.0.0.0/0`に設定) が接続に許可されていることを確認します。これは、Netlify デプロイメントで動的 IP アドレスが使用されるためです。
+TiDB 専用クラスターの場合、クラスターのトラフィック フィルターが接続にすべての IP アドレス ( `0.0.0.0/0`に設定) を許可していることを確認します。これは、Netlify デプロイメントが動的 IP アドレスを使用するためです。
 
-TiDB Cloud Serverless クラスターは、デフォルトですべての IP アドレスの接続を許可するため、トラフィック フィルターを構成する必要はありません。
+TiDB Serverless クラスターはデフォルトですべての IP アドレスの接続を許可するため、トラフィック フィルターを構成する必要はありません。
 
 ## ステップ1. サンプルプロジェクトと接続文字列を取得する {#step-1-get-the-example-project-and-the-connection-string}
 
@@ -52,9 +52,9 @@ TiDB Cloud Serverless クラスターは、デフォルトですべての IP ア
 
 ### TiDB Cloud接続文字列を取得する {#get-the-tidb-cloud-connection-string}
 
-TiDB Cloud Serverless クラスターの場合、接続文字列は[TiDB CloudCLI](/tidb-cloud/cli-reference.md)または[TiDB Cloudコンソール](https://tidbcloud.com/)から取得できます。
+TiDB Serverless クラスターの場合、接続文字列は[TiDB CloudCLI](/tidb-cloud/cli-reference.md)または[TiDB Cloudコンソール](https://tidbcloud.com/)から取得できます。
 
-TiDB Cloud Dedicated クラスターの場合、接続文字列はTiDB Cloudコンソールからのみ取得できます。
+TiDB 専用クラスターの場合、接続文字列はTiDB Cloudコンソールからのみ取得できます。
 
 <SimpleTab>
 <div label="TiDB Cloud CLI">
@@ -197,7 +197,7 @@ TiDB Cloud Dedicated クラスターの場合、接続文字列はTiDB Cloudコ�
 
 4.  アプリをローカルでビルドし、スキーマをTiDB Cloudクラスターに移行します。
 
-    > **ヒント:**
+    > **チップ：**
     >
     > ローカルデプロイをスキップしてアプリを Netlify に直接デプロイする場合は、手順 6 に進んでください。
 
@@ -212,7 +212,7 @@ TiDB Cloud Dedicated クラスターの場合、接続文字列はTiDB Cloudコ�
     netlify dev
     ```
 
-    次に、ブラウザで`http://localhost:3000/`に移動して、その UI を調べます。
+    次に、ブラウザで`http://localhost:3000/`に移動して、UI を調べます。
 
 6.  アプリを Netlify にデプロイ。ローカル プレビューに満足したら、次のコマンドを使用してサイトを Netlify にデプロイできます。1 `--trigger` 、ローカル ファイルをアップロードせずにデプロイすることを意味します。ローカルで変更を加えた場合は、必ず GitHub リポジトリにコミットしてください。
 

@@ -26,9 +26,9 @@ summary: DB スナップショットを使用して Amazon Auroraから TiDB に
 
 #### 1.1 Amazon Auroraからスキーマファイルをエクスポートする {#1-1-export-the-schema-file-from-amazon-aurora}
 
-Amazon Auroraのスナップショットファイルには DDL ステートメントが含まれていないため、 Dumplingを使用してスキーマをエクスポートし、 TiDB Lightningを使用してターゲットデータベースにスキーマを作成する必要があります。
+Amazon Auroraのスナップショットファイルには DDL ステートメントが含まれていないため、 Dumpling を使用してスキーマをエクスポートし、 TiDB Lightning を使用してターゲットデータベースにスキーマを作成する必要があります。
 
-次のコマンドを実行して、 Dumplingを使用してスキーマをエクスポートします。コマンドには、目的のテーブル スキーマのみをエクスポートするための`--filter`パラメータが含まれています。パラメータの詳細については、 [Dumplingのオプションリスト](/dumpling-overview.md#option-list-of-dumpling)を参照してください。
+次のコマンドを実行して、 Dumpling を使用してスキーマをエクスポートします。コマンドには、目的のテーブル スキーマのみをエクスポートするための`--filter`パラメータが含まれています。パラメータの詳細については、 [Dumplingのオプションリスト](/dumpling-overview.md#option-list-of-dumpling)を参照してください。
 
 ```shell
 export AWS_ACCESS_KEY_ID=${access_key}
@@ -50,7 +50,7 @@ Amazon S3 にアクセスするには、この Amazon S3storageパスにアク�
 # The target TiDB cluster information.
 host = ${host}
 port = ${port}
-user = "${user_name}
+user = "${user_name}"
 password = "${password}"
 status-port = ${status-port}  # The TiDB status port. Usually the port is 10080.
 pd-addr = "${ip}:${port}"     # The cluster PD address. Usually the port is 2379.
@@ -76,7 +76,7 @@ TiDB クラスターで TLS を有効にする必要がある場合は、 [TiDB 
 
 #### 1.3 スキーマファイルをTiDBにインポートする {#1-3-import-the-schema-file-to-tidb}
 
-TiDB Lightningを使用して、スキーマ ファイルをダウンストリーム TiDB にインポートします。
+TiDB Lightning を使用して、スキーマ ファイルをダウンストリーム TiDB にインポートします。
 
 ```shell
 export AWS_ACCESS_KEY_ID=${access_key}
@@ -117,7 +117,7 @@ nohup tiup tidb-lightning -config tidb-lightning-schema.toml > nohup.out 2>&1 &
 # The target TiDB cluster information.
 host = ${host}
 port = ${port}
-user = "${user_name}
+user = "${user_name}"
 password = "${password}"
 status-port = ${status-port}  # The TiDB status port. Usually the port is 10080.
 pd-addr = "${ip}:${port}"     # The cluster PD address. Usually the port is 2379.
@@ -164,11 +164,11 @@ TiDB クラスターで TLS を有効にする必要がある場合は、 [TiDB 
     -   [監視ダッシュボード](/tidb-lightning/monitor-tidb-lightning.md)の進捗状況を確認します。
     -   [TiDB Lightningウェブインターフェース](/tidb-lightning/tidb-lightning-web-interface.md)の進捗状況を確認します。
 
-3.  TiDB Lightning はインポートを完了すると、自動的に終了します。最後の行の`tidb-lightning.log`に`the whole procedure completed`が含まれているかどうかを確認します。含まれている場合は、インポートは成功です。含まれていない場合は、インポートでエラーが発生します。エラー メッセージの指示に従ってエラーに対処してください。
+3.  TiDB Lightning はインポートを完了すると、自動的に終了します。最後の行の`tidb-lightning.log`に`the whole procedure completed`含まれているかどうかを確認します。含まれている場合は、インポートは成功です。含まれていない場合は、インポートでエラーが発生します。エラー メッセージの指示に従ってエラーに対処してください。
 
 > **注記：**
 >
-> インポートが成功したかどうかに関係なく、ログの最後の行には`tidb lightning exit`が表示されます。これは、 TiDB Lightning が正常に終了したことを意味しますが、必ずしもインポートが成功したことを意味するわけではありません。
+> インポートが成功したかどうかに関係なく、ログの最後の行には`tidb lightning exit`表示されます。これは、 TiDB Lightning が正常に終了したことを意味しますが、必ずしもインポートが成功したことを意味するわけではありません。
 
 インポート中に問題が発生した場合は、トラブルシューティングについては[TiDB LightningFAQ](/tidb-lightning/tidb-lightning-faq.md)を参照してください。
 
@@ -196,7 +196,7 @@ TiDB クラスターで TLS を有効にする必要がある場合は、 [TiDB 
       port: 3306
     ```
 
-2.  次のコマンドを実行して、 `tiup dmctl`を使用してデータ ソース構成を DM クラスターにロードします。
+2.  次のコマンドを実行して、 `tiup dmctl`使用してデータ ソース構成を DM クラスターにロードします。
 
     ```shell
     tiup dmctl --master-addr ${advertise-addr} operate-source create source1.yaml
@@ -277,7 +277,7 @@ tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
 
 タスクの開始に失敗した場合は、プロンプト メッセージを確認し、構成を修正してください。その後、上記のコマンドを再実行してタスクを開始できます。
 
-問題が発生した場合は、 [DM エラー処理](/dm/dm-error-handling.md)と[DMFAQ](/dm/dm-faq.md)を参照してください。
+問題が発生した場合は、 [DM エラー処理](/dm/dm-error-handling.md)と[DMに関するFAQ](/dm/dm-faq.md)を参照してください。
 
 ### ステップ4. 移行タスクのステータスを確認する {#step-4-check-the-migration-task-status}
 
@@ -298,12 +298,12 @@ TiUPを使用して DM をデプロイしたときに Prometheus、Alertmanager�
 DM が実行中の場合、DM-worker、DM-master、dmctl は関連情報をログに出力します。これらのコンポーネントのログ ディレクトリは次のとおりです。
 
 -   DM-master: DM-master プロセス パラメータ`--log-file`で指定されます。TiUPを使用して DM を展開する場合、ログ ディレクトリはデフォルトで`/dm-deploy/dm-master-8261/log/`なります。
--   DM-worker: DM-worker プロセス パラメータ`--log-file`で指定されます。TiUPを使用して DM をデプロイする場合、ログ ディレクトリはデフォルトで`/dm-deploy/dm-worker-8262/log/`になります。
+-   DM-worker: DM-worker プロセス パラメータ`--log-file`で指定されます。TiUPを使用して DM をデプロイする場合、ログ ディレクトリはデフォルトで`/dm-deploy/dm-worker-8262/log/`なります。
 
-## 次は何ですか {#what-s-next}
+## 次は何か {#what-s-next}
 
 -   [移行タスクを一時停止する](/dm/dm-pause-task.md) 。
 -   [移行タスクを再開する](/dm/dm-resume-task.md) 。
 -   [移行タスクを停止する](/dm/dm-stop-task.md) 。
--   [クラスターデータソースとタスク構成をエ​​クスポートおよびインポートする](/dm/dm-export-import-config.md) 。
+-   [クラスターデータソースとタスク構成をエクスポートおよびインポートする](/dm/dm-export-import-config.md) 。
 -   [失敗したDDLステートメントを処理する](/dm/handle-failed-ddl-statements.md) 。

@@ -1,13 +1,13 @@
 ---
 title: FLUSH STATUS | TiDB SQL Statement Reference
-summary: MySQLのFLUSH STATUSステートメントは、TiDBに影響を与えず、集中メトリクス収集にはPrometheusとGrafanaを使用します。このステートメントはMySQLとの互換性のために含まれています。
+summary: TiDB データベースの FLUSH STATUS の使用法の概要。
 ---
 
 # フラッシュステータス {#flush-status}
 
-このステートメントは、MySQL との互換性のために組み込まれています。 TiDB には影響しません。TiDB は、集中メトリクス収集に`SHOW STATUS`の代わりに Prometheus と Grafana を使用します。
+このステートメントは、MySQL との互換性のために含まれています。1 `SHOW STATUS`代わりに Prometheus と Grafana を使用して集中的なメトリック収集を行う TiDB には影響しません。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 FlushStmt ::=
@@ -71,10 +71,11 @@ mysql> show status;
 6 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
--   このステートメントは、MySQL との互換性のためだけに含まれています。
+-   このステートメントは MySQL と互換性があります。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [[グローバル|セッション]ステータスを表示](/sql-statements/sql-statement-show-status.md)
+-   [サーバーステータス変数](/status-variables.md)

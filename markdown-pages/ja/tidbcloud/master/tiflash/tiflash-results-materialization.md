@@ -47,7 +47,7 @@ SELECT app_name, country FROM t1;
 
 -   TiFlashによるオンライン アプリケーションの提供
 
-    TiFlashでサポートされる同時リクエストの数は、データの量とクエリの複雑さによって異なりますが、通常は 100 QPS を超えることはありません。1 `INSERT INTO SELECT`使用してTiFlashクエリ結果を保存し、クエリ結果テーブルを使用して同時オンライン リクエストを高度にサポートできます。結果テーブル内のデータは、バックグラウンドで低い頻度 (たとえば、0.5 秒間隔) で更新できます。これは、 TiFlash の同時実行制限を大幅に下回りますが、データの鮮度は高いレベルに維持されます。
+    TiFlashでサポートされる同時リクエストの数は、データの量とクエリの複雑さによって異なりますが、通常は 100 QPS を超えることはありません。1 `INSERT INTO SELECT`使用してTiFlashクエリ結果を保存し、クエリ結果テーブルを使用して同時オンライン リクエストをサポートできます。結果テーブル内のデータは、 TiFlash の同時実行制限を大幅に下回る低頻度 (たとえば、0.5 秒間隔) でバックグラウンドで更新できますが、データの鮮度は高いレベルに維持されます。
 
 ## 実行プロセス {#execution-process}
 
@@ -93,8 +93,8 @@ CREATE TABLE daily_data (
     customer_id VARCHAR(20),    -- Customer ID
     daily_fee DECIMAL(20,2));   -- Amount of fee for per day
 
-ALTER TABLE detail_data SET TIFLASH REPLICA 2;
-ALTER TABLE daily_data SET TIFLASH REPLICA 2;
+ALTER TABLE detail_data SET TIFLASH REPLICA 1;
+ALTER TABLE daily_data SET TIFLASH REPLICA 1;
 
 -- ... (detail_data table continues updating)
 INSERT INTO detail_data(ts,customer_id,detail_fee) VALUES

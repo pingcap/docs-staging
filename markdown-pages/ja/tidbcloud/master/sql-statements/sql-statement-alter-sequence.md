@@ -1,6 +1,6 @@
 ---
 title: ALTER SEQUENCE
-summary: An overview of the usage of ALTER SEQUENCE for the TiDB database.
+summary: TiDB データベースの ALTER SEQUENCE の使用法の概要。
 ---
 
 # シーケンスの変更 {#alter-sequence}
@@ -76,7 +76,7 @@ ALTER SEQUENCE sequence_name
 
 -   `SETVAL`
 
-    この関数は、シーケンスの現在の値の進行を設定します。この関数の最初のパラメーターはシーケンスの`identifier`で、2 番目のパラメーターは`num`です。
+    この関数は、シーケンスの現在の値の進行を設定します。この関数の最初のパラメータはシーケンスの`identifier`で、2 番目のパラメータは`num`です。
 
 > **注記：**
 >

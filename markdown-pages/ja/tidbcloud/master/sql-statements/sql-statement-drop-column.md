@@ -1,13 +1,13 @@
 ---
 title: DROP COLUMN | TiDB SQL Statement Reference
-summary: テーブルから列を削除するDROP COLUMNステートメントは、TiDBでオンラインで実行されます。これにより、読み取りまたは書き込み操作がブロックされることはありません。ただし、主キー列または複合インデックスの対象となる列の削除はサポートされていません。
+summary: TiDB データベースの DROP COLUMN の使用法の概要。
 ---
 
-# ドロップカラム {#drop-column}
+# ドロップコラム {#drop-column}
 
-このステートメントは、指定されたテーブルから列を削除します。 `DROP COLUMN`は TiDB でオンラインです。これは、読み取りまたは書き込み操作をブロックしないことを意味します。
+このステートメントは、指定されたテーブルから列を削除します。1 `DROP COLUMN` TiDB でオンラインであるため、読み取りまたは書き込み操作はブロックされません。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 AlterTableStmt
@@ -72,12 +72,12 @@ mysql> SELECT * FROM t1;
 5 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
--   主キー列または複合インデックスの対象となる列の削除はサポートされていません。
+-   主キー列または複合インデックスによってカバーされる列の削除はサポートされていません。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
--   [列の追加](/sql-statements/sql-statement-add-column.md)
--   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
+-   [列を追加](/sql-statements/sql-statement-add-column.md)
+-   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)

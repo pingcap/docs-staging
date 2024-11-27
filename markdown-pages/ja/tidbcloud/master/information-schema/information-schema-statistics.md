@@ -1,11 +1,11 @@
 ---
 title: STATISTICS
-summary: STATISTICS表は、テーブルのインデックスに関する情報を提供します。TABLE_CATALOGは常にdefで、TABLE_SCHEMAはデータベースの名前を示します。TABLE_NAMEはテーブルの名前で、NON_UNIQUEは重複を許すかどうかを示します。INDEX_SCHEMAはインデックスが属するデータベースの名前で、INDEX_NAMEはインデックスの名前です。SEQ_IN_INDEXは列番号を示し、COLUMN_NAMEは列名です。COLLATIONはソート方法を示し、CARDINALITYとSUB_PARTはTiDBでは使用されません。PACKEDは常にNULLで、NULLABLEは列に値NULLが含まれるかを示します。INDEX_TYPEはインデックスのタイプで、COMMENTはその他の情報を提供します。
+summary: STATISTICS information_schema テーブルについて学習します。
 ---
 
 # 統計 {#statistics}
 
-`STATISTICS`表は、テーブルのインデックスに関する情報を提供します。
+`STATISTICS`テーブルはテーブル インデックスに関する情報を提供します。
 
 ```sql
 USE information_schema;
@@ -38,28 +38,28 @@ DESC statistics;
 18 rows in set (0.00 sec)
 ```
 
-`STATISTICS`テーブルのフィールドは次のように説明されています。
+`STATISTICS`テーブル内のフィールドは次のように説明されます。
 
 -   `TABLE_CATALOG` : インデックスを含むテーブルが属するカタログの名前。この値は常に`def`です。
 -   `TABLE_SCHEMA` : インデックスを含むテーブルが属するデータベースの名前。
 -   `TABLE_NAME` : インデックスを含むテーブルの名前。
--   `NON_UNIQUE` : インデックスに重複した値を含めてはいけない場合、値は`0`です。インデックス内で重複した値が許可されている場合、値は`1`です。
+-   `NON_UNIQUE` : インデックスに重複する値を含めてはならない場合、値は`0`になります。インデックスで重複する値が許可されている場合、値は`1`になります。
 -   `INDEX_SCHEMA` : インデックスが属するデータベースの名前。
--   `INDEX_NAME` : インデックスの名前。インデックスが主キーの場合、値は常に`PRIMARY`になります。
--   `SEQ_IN_INDEX` : `1`から始まるインデックス内の列番号。
--   `COLUMN_NAME` : 列名。 `Expression`列の説明を参照してください。
--   `COLLATION` : インデックス内の列のソート方法。値は`A` (昇順)、 `D` (降順)、または`NULL` (未ソート) です。
+-   `INDEX_NAME` : インデックスの名前。インデックスが主キーの場合、値は常に`PRIMARY`なります。
+-   `SEQ_IN_INDEX` : インデックス内の列番号`1`から始まります。
+-   `COLUMN_NAME` `Expression`列名。2 列の説明を参照してください。
+-   `COLLATION` : インデックス内の列のソート方法。値は`A` (昇順)、 `D` (降順)、または`NULL` (ソートなし) になります。
 -   `CARDINALITY` : TiDB はこのフィールドを使用しません。フィールド値は常に`0`です。
--   `SUB_PART` : インデックスのプレフィックス。列のプレフィックスの一部のみがインデックス付けされている場合、値はインデックス付けされた文字の数になります。列全体にインデックスが付けられている場合、値は`NULL`です。
+-   `SUB_PART` : インデックスのプレフィックス。列のプレフィックスの一部のみがインデックス化されている場合、値はインデックス化された文字数になります。列全体がインデックス化されている場合、値は`NULL`になります。
 -   `PACKED` : TiDB はこのフィールドを使用しません。この値は常に`NULL`です。
--   `NULLABLE` : 列に値`NULL`が含まれる可能性がある場合、値は`YES`です。そうでない場合、値は`''`です。
+-   `NULLABLE` : 列に`NULL`値が含まれる可能性がある場合、値は`YES`になります。含まれない場合、値は`''`になります。
 -   `INDEX_TYPE` : インデックスのタイプ。
 -   `COMMENT` : インデックスに関連するその他の情報。
--   `INDEX_COMMENT` : インデックス作成時にインデックスに指定されたコメント属性を持つコメント。
+-   `INDEX_COMMENT` : インデックスの作成時にインデックスに指定されたコメント属性を持つコメント。
 -   `IS_VISIBLE` : オプティマイザーがこのインデックスを使用できるかどうか。
--   `Expression`非式部分のインデックス キーの場合、この値は`NULL`です。式部分のインデックス キーの場合、この値は式そのものです。 [式インデックス](/sql-statements/sql-statement-create-index.md#expression-index)を参照してください。
+-   `Expression`非式部分のインデックスキーの場合、この値は`NULL`です。式部分のインデックスキーの場合、この値は式そのものです。 [表現インデックス](/sql-statements/sql-statement-create-index.md#expression-index)を参照してください。
 
-次のステートメントは同等です。
+次の文は同等です。
 
 ```sql
 SELECT * FROM INFORMATION_SCHEMA.STATISTICS

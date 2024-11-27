@@ -1,6 +1,6 @@
 ---
 title: FOREIGN KEY Constraints
-summary: An overview of the usage of FOREIGN KEY constraints for the TiDB database.
+summary: TiDB データベースの FOREIGN KEY 制約の使用法の概要。
 ---
 
 # 外部キー制約 {#foreign-key-constraints}

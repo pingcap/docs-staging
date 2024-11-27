@@ -5,7 +5,17 @@ summary: SLOW_QUERY` INFORMATION_SCHEMA テーブルについて学習します�
 
 # 遅いクエリ {#slow-query}
 
-`SLOW_QUERY`テーブルは、TiDB スロー ログ ファイルの解析結果である現在のノードのスロー クエリ情報を提供します。テーブル内の列名は、スロー ログ内のフィールド名に対応しています。
+<CustomContent platform="tidb">
+
+`SLOW_QUERY`テーブルは、TiDB [遅いログファイル](/tidb-configuration-file.md#slow-query-file)の解析結果である現在のノードのスロークエリ情報を提供します。テーブル内の列名は、スローログ内のフィールド名に対応しています。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+`SLOW_QUERY`テーブルは、TiDB [遅いログファイル](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#slow-query-file)の解析結果である現在のノードのスロークエリ情報を提供します。テーブル内の列名は、スローログ内のフィールド名に対応しています。
+
+</CustomContent>
 
 > **注記：**
 >
@@ -13,7 +23,7 @@ summary: SLOW_QUERY` INFORMATION_SCHEMA テーブルについて学習します�
 
 <CustomContent platform="tidb">
 
-この表を使用して問題のあるステートメントを識別し、クエリのパフォーマンスを向上させる方法については、 [スロークエリログドキュメント](/identify-slow-queries.md)を参照してください。
+この表を使用して問題のあるステートメントを識別し、クエリのパフォーマンスを向上させる方法については、 [スロークエリログドキュメント](/identify-slow-queries.md)参照してください。
 
 </CustomContent>
 
@@ -121,7 +131,7 @@ DESC SLOW_QUERY;
 
 <CustomContent platform="tidb">
 
-この表を使用して問題のあるステートメントを識別し、クエリのパフォーマンスを向上させる方法については、 [スロークエリログドキュメント](/identify-slow-queries.md)を参照してください。
+この表を使用して問題のあるステートメントを識別し、クエリのパフォーマンスを向上させる方法については、 [スロークエリログドキュメント](/identify-slow-queries.md)参照してください。
 
 </CustomContent>
 
@@ -219,7 +229,7 @@ DESC CLUSTER_SLOW_QUERY;
 80 rows in set (0.00 sec)
 ```
 
-クラスタ システム テーブルをクエリすると、TiDB はすべてのノードからデータを取得するのではなく、関連する計算を他のノードにプッシュダウンします。実行プランは次のようになります。
+クラスター システム テーブルを照会すると、TiDB はすべてのノードからデータを取得するのではなく、関連する計算を他のノードにプッシュダウンします。実行プランは次のようになります。
 
 ```sql
 DESC SELECT COUNT(*) FROM CLUSTER_SLOW_QUERY WHERE user = 'u1';

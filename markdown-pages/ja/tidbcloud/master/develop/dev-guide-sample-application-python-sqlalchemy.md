@@ -78,7 +78,7 @@ SQLAlchemy は、複数のデータベースで動作する ORM ライブラリ�
 
 > **注記：**
 >
-> 現在、 TiDB Cloud Serverless クラスターには制限があります。5 分間アクティブな接続がない場合、クラスターはシャットダウンし、すべての接続が閉じられます。そのため、 TiDB Cloud Serverless クラスターで SQLAlchemy を使用すると、プールされた接続で`Lost connection to MySQL server during query`や`MySQL Connection not available`などの`OperationalError`発生する可能性があります。このエラーを回避するには、 `pool_recycle`パラメータを`300`に設定できます。詳細については、SQLAlchemy ドキュメントの[切断への対処](https://docs.sqlalchemy.org/en/20/core/pooling.html#dealing-with-disconnects)を参照してください。
+> 現在、 TiDB Cloud Serverless クラスターには制限があります。5 分間アクティブな接続がない場合、クラスターはシャットダウンし、すべての接続が閉じられます。そのため、 TiDB Cloud Serverless クラスターで SQLAlchemy を使用すると、プールされた接続で`Lost connection to MySQL server during query`や`MySQL Connection not available`などの`OperationalError`発生する可能性があります。このエラーを回避するには、 `pool_recycle`パラメータを`300`に設定できます。詳細については、SQLAlchemy ドキュメントの[切断への対処](https://docs.sqlalchemy.org/en/20/core/pooling.html#dealing-with-disconnects)参照してください。
 
 1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
@@ -88,7 +88,7 @@ SQLAlchemy は、複数のデータベースで動作する ORM ライブラリ�
 
     -   **接続タイプ**は`Public`に設定されています
 
-    -   **ブランチ**は`main`に設定されています
+    -   **ブランチは**`main`に設定されています
 
     -   **接続先は**`General`に設定されています
 
@@ -98,7 +98,7 @@ SQLAlchemy は、複数のデータベースで動作する ORM ライブラリ�
     >
     > プログラムが Windows Subsystem for Linux (WSL) で実行されている場合は、対応する Linux ディストリビューションに切り替えます。
 
-4.  ランダムなパスワードを作成するには、 **「パスワードの生成」を**クリックします。
+4.  ランダムなパスワードを作成するには、 **「パスワードの生成」**をクリックします。
 
     > **ヒント：**
     >
@@ -121,7 +121,7 @@ SQLAlchemy は、複数のデータベースで動作する ORM ライブラリ�
     CA_PATH='{ssl_ca}'  # e.g. /etc/ssl/certs/ca-certificates.crt (Debian / Ubuntu / Arch)
     ```
 
-    プレースホルダー`{}`を、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
+    プレースホルダー`{}` 、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
 
 7.  `.env`ファイルを保存します。
 
@@ -136,7 +136,7 @@ SQLAlchemy は、複数のデータベースで動作する ORM ライブラリ�
 
     IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
 
-    TiDB Dedicated は、**パブリック**接続タイプに加えて、**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
 4.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -155,7 +155,7 @@ SQLAlchemy は、複数のデータベースで動作する ORM ライブラリ�
     CA_PATH='{your-downloaded-ca-path}'
     ```
 
-    プレースホルダー`{}`を接続ダイアログから取得した接続パラメータに置き換え、 `CA_PATH`前の手順でダウンロードした証明書パスで構成してください。
+    プレースホルダー`{}`接続ダイアログから取得した接続パラメータに置き換え、 `CA_PATH`前の手順でダウンロードした証明書パスで構成してください。
 
 6.  `.env`ファイルを保存します。
 
@@ -178,7 +178,7 @@ SQLAlchemy は、複数のデータベースで動作する ORM ライブラリ�
     TIDB_DB_NAME='test'
     ```
 
-    プレースホルダー`{}`を接続パラメータに置き換え、 `CA_PATH`行を削除してください。TiDB をローカルで実行している場合、デフォルトのホスト アドレスは`127.0.0.1`で、パスワードは空です。
+    プレースホルダー`{}`接続パラメータに置き換え、 `CA_PATH`行を削除してください。TiDB をローカルで実行している場合、デフォルトのホスト アドレスは`127.0.0.1`で、パスワードは空です。
 
 3.  `.env`ファイルを保存します。
 

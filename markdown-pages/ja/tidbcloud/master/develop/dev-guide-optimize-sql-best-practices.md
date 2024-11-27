@@ -102,7 +102,7 @@ SELECT title, price FROM books WHERE title = 'Marian Yost';
 
 大量のデータを更新する場合は[一括更新](/develop/dev-guide-update-data.md#bulk-update)使用することをお勧めします。
 
-### テーブルデータ全体に対しては、 <code>DELETE</code>ではなく<code>TRUNCATE</code>を使用します。 {#use-code-truncate-code-instead-of-code-delete-code-for-full-table-data}
+### テーブルデータ全体に対しては<code>DELETE</code>ではなく<code>TRUNCATE</code>使用します。 {#use-code-truncate-code-instead-of-code-delete-code-for-full-table-data}
 
 テーブルからすべてのデータを削除する必要がある場合は、 `TRUNCATE`ステートメントを使用することをお勧めします。
 
@@ -142,7 +142,7 @@ SET @@global.tidb_ddl_reorg_worker_cnt = 16;
 SET @@global.tidb_ddl_reorg_batch_size = 4096;
 ```
 
-インデックス追加操作のターゲット列が頻繁に更新される場合 ( `UPDATE` 、 `INSERT` 、 `DELETE`を含む)、上記の変数を増やすと書き込み競合が増加し、オンライン ワークロードに影響します。したがって、再試行が頻繁に行われるため、インデックス追加操作の完了に時間がかかる場合があります。この場合、オンライン アプリケーションとの書き込み競合を回避するために、上記の変数の値を減らすことをお勧めします。
+インデックス追加操作のターゲット列が頻繁に更新される場合 ( `UPDATE` 、 `INSERT` 、 `DELETE`を含む)、上記の変数を増やすと書き込み競合が増え、オンライン ワークロードに影響します。したがって、再試行が頻繁に行われるため、インデックス追加操作の完了に時間がかかる場合があります。この場合、オンライン アプリケーションとの書き込み競合を回避するために、上記の変数の値を減らすことをお勧めします。
 
 ```sql
 SET @@global.tidb_ddl_reorg_worker_cnt = 4;
@@ -191,7 +191,7 @@ SET @@global.tidb_ddl_reorg_batch_size = 128;
 
 </CustomContent>
 
-## 助けが必要？ {#need-help}
+## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 

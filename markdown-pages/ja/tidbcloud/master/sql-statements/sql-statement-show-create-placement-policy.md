@@ -9,7 +9,7 @@ summary: TiDB での SHOW CREATE PLACEMENT POLICY の使用法。
 
 > **注記：**
 >
-> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 ## 概要 {#synopsis}
 

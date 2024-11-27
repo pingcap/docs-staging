@@ -7,7 +7,7 @@ summary: TiDB の SQL パフォーマンス チューニング スキームと�
 
 このドキュメントでは、SQL ステートメントが遅くなる一般的な理由と、SQL パフォーマンスをチューニングする手法について説明します。
 
-## あなたが始める前に {#before-you-begin}
+## 始める前に {#before-you-begin}
 
 [`tiup demo`インポート](/develop/dev-guide-bookshop-schema-design.md#method-1-via-tiup-demo)使用してデータを準備できます。
 
@@ -57,9 +57,9 @@ EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
 +---------------------+------------+-----------+---------------+-----------------------------------------+
 ```
 
-実行プランの`TableFullScan_5`からわかるように、TiDB は`books`テーブルの全テーブル スキャンを実行し、各行の`title`条件を満たしているかどうかを確認します。 `TableFullScan_5`の`estRows`値は`1000000.00`であり、これはオプティマイザがこの全テーブル スキャンで`1000000.00`行のデータが必要になると見積もっていることを意味します。
+実行プランの`TableFullScan_5`からわかるように、TiDB は`books`テーブルの全テーブル スキャンを実行し、各行の`title`条件を満たしているかどうかを確認します。 `TableFullScan_5`の`estRows`の値は`1000000.00`であり、これはオプティマイザがこの全テーブル スキャンで`1000000.00`行のデータが必要になると見積もっていることを意味します。
 
-`EXPLAIN`の使用方法の詳細については、 [`EXPLAIN`ウォークスルー](/explain-walkthrough.md)を参照してください。
+`EXPLAIN`の使用方法の詳細については、 [`EXPLAIN`ウォークスルー](/explain-walkthrough.md)参照してください。
 
 ### 解決策: セカンダリインデックスを使用する {#solution-use-secondary-index}
 
@@ -161,7 +161,7 @@ ALTER TABLE books DROP INDEX title_idx;
 CREATE INDEX title_price_idx ON books (title, price);
 ```
 
-`price`データは`title_price_idx`インデックスに格納されているため、次のクエリではインデックス データをスキャンするだけで済みます。
+`price`データは`title_price_idx`インデックスに格納されているため、次のクエリではインデックス データのスキャンのみが必要です。
 
 ```sql
 EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
@@ -238,14 +238,14 @@ EXPLAIN SELECT * FROM books WHERE id = 896;
 
 ## 適切な結合タイプを使用する {#use-the-right-join-type}
 
-[JOIN 実行プラン](/explain-joins.md)参照。
+[JOIN実行プラン](/explain-joins.md)参照。
 
 ### 参照 {#see-also}
 
 -   [EXPLAIN コマンド](/explain-walkthrough.md)
 -   [インデックスを使用するステートメントを説明する](/explain-indexes.md)
 
-## 助けが必要？ {#need-help}
+## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 

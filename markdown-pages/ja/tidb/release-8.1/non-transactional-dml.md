@@ -9,7 +9,7 @@ summary: TiDB の非トランザクション DML ステートメントについ�
 
 非トランザクション DML ステートメントは、複数の SQL ステートメント (つまり、複数のバッチ) に分割され、順番に実行される DML ステートメントです。トランザクションの原子性と分離性を犠牲にして、バッチ データ処理のパフォーマンスと使いやすさを向上させます。
 
-通常、メモリを消費するトランザクションは、トランザクション サイズの制限を回避するために複数の SQL ステートメントに分割する必要があります。非トランザクション DML ステートメントは、このプロセスを TiDB カーネルに統合して、同じ効果を実現します。SQL ステートメントを分割することで、非トランザクション DML ステートメントの効果を理解するのに役立ちます。1 構文を使用して`DRY RUN`分割されたステートメントをプレビューできます。
+通常、メモリを消費するトランザクションは、トランザクション サイズの制限を回避するために複数の SQL ステートメントに分割する必要があります。非トランザクション DML ステートメントは、このプロセスを TiDB カーネルに統合して、同じ効果を実現します。SQL ステートメントを分割することで、非トランザクション DML ステートメントの効果を理解するのに役立ちます。1 `DRY RUN`を使用して、分割されたステートメントをプレビューできます。
 
 非トランザクション DML ステートメントには次のものがあります。
 
@@ -23,7 +23,7 @@ summary: TiDB の非トランザクション DML ステートメントについ�
 > **注記：**
 >
 > -   非トランザクション DML ステートメントは、ステートメントの原子性と分離性を保証せず、元の DML ステートメントと同等ではありません。
-> -   DML ステートメントが非トランザクション DML ステートメントに書き換えられた後、その動作が元のステートメントの動作と一致しているとは想定できません。
+> -   DML ステートメントが非トランザクション DML ステートメントに書き換えられた後、その動作が元のステートメントの動作と一致していると想定することはできません。
 > -   非トランザクション DML を使用する前に、分割されたステートメントが相互に影響するかどうかを分析する必要があります。
 
 ## 使用シナリオ {#usage-scenarios}
@@ -181,11 +181,11 @@ SHOW PROCESSLIST;
 
 非トランザクション DML ステートメントを終了するには、 `KILL TIDB <processlist_id>`使用します。すると、TiDB は現在実行中のバッチ以降のすべてのバッチをキャンセルします。実行結果はログから取得できます。
 
-`KILL TIDB`の詳細については、参考文献[`KILL`](/sql-statements/sql-statement-kill.md)を参照してください。
+`KILL TIDB`の詳細については、参考文献[`KILL`](/sql-statements/sql-statement-kill.md)参照してください。
 
 ### バッチ分割ステートメントをクエリする {#query-the-batch-dividing-statement}
 
-非トランザクション DML ステートメントの実行中、ステートメントは内部的に使用され、DML ステートメントを複数のバッチに分割します。このバッチ分割ステートメントをクエリするには、この非トランザクション DML ステートメントに`DRY RUN QUERY`追加します。その後、TiDB はこのクエリと後続の DML 操作を実行しません。
+非トランザクション DML ステートメントの実行中、ステートメントは内部的に使用され、DML ステートメントを複数のバッチに分割します。このバッチ分割ステートメントをクエリするには、この非トランザクション DML ステートメントに`DRY RUN QUERY`を追加します。その後、TiDB はこのクエリと後続の DML 操作を実行しません。
 
 次の文は、 `BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6`の実行中にバッチ分割文を照会します。
 
@@ -204,7 +204,7 @@ BATCH ON id LIMIT 2 DRY RUN QUERY DELETE FROM t WHERE v < 6;
 
 ### 最初のバッチと最後のバッチに対応するステートメントをクエリします {#query-the-statements-corresponding-to-the-first-and-the-last-batches}
 
-非トランザクション DML ステートメント内の最初のバッチと最後のバッチに対応する実際の DML ステートメントを照会するには、この非トランザクション DML ステートメントに`DRY RUN`追加します。すると、TiDB はバッチを分割するだけで、これらの SQL ステートメントは実行しません。バッチが多数ある場合があるため、すべてのバッチが表示されるわけではなく、最初のバッチと最後のバッチのみが表示されます。
+非トランザクション DML ステートメント内の最初のバッチと最後のバッチに対応する実際の DML ステートメントを照会するには、この非トランザクション DML ステートメントに`DRY RUN`を追加します。すると、TiDB はバッチを分割するだけで、これらの SQL ステートメントは実行しません。バッチが多数ある場合があるため、すべてのバッチが表示されるわけではなく、最初のバッチと最後のバッチのみが表示されます。
 
 ```sql
 BATCH ON id LIMIT 2 DRY RUN DELETE FROM t WHERE v < 6;
@@ -232,13 +232,13 @@ BATCH ON id LIMIT 2 DELETE /*+ USE_INDEX(t)*/ FROM t WHERE v < 6;
 
 非トランザクション DML ステートメントを使用するには、次の手順をお勧めします。
 
-1.  適切な[破片の列](#parameter-description)を選択します。整数型または文字列型が推奨されます。
+1.  適切な[破片の列](#parameter-description)選択します。整数型または文字列型が推奨されます。
 
-2.  非トランザクション DML ステートメントに`DRY RUN QUERY`追加し、クエリを手動で実行して、DML ステートメントの影響を受けるデータ範囲がおおよそ正しいかどうかを確認します。
+2.  非トランザクション DML ステートメントに`DRY RUN QUERY`を追加し、クエリを手動で実行して、DML ステートメントの影響を受けるデータ範囲がおおよそ正しいかどうかを確認します。
 
-3.  非トランザクション DML ステートメントに`DRY RUN`追加し、クエリを手動で実行して、分割ステートメントと実行プランを確認します。次の点に注意する必要があります。
+3.  非トランザクション DML ステートメントに`DRY RUN`を追加し、クエリを手動で実行して、分割ステートメントと実行プランを確認します。次の点に注意する必要があります。
 
-    -   分割ステートメントが前のステートメントによって書き込まれた結果を読み取ることができるかどうか。これにより、異常が発生する可能性があります。
+    -   分割ステートメントが前のステートメントによって書き込まれた結果を読み取ることができるかどうか。これにより異常が発生する可能性があります。
     -   インデックスの選択性。
     -   TiDB によって自動的に選択されたシャード列が変更されるかどうか。
 
@@ -250,7 +250,7 @@ BATCH ON id LIMIT 2 DELETE /*+ USE_INDEX(t)*/ FROM t WHERE v < 6;
 
 | パラメータ  | 説明                                                                                                                                                                           | デフォルト値                               | 必須かどうか | 推奨値                                             |
 | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------- | :----- | :---------------------------------------------- |
-| シャード列  | 上記の非トランザクション DML ステートメント`BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6`の`id`列など、バッチをシャーディングするために使用される列。                                                                      | TiDB はシャード列を自動的に選択しようとします (推奨されません)。 | いいえ    | 最も効率的に`WHERE`条件を満たす列を選択します。                     |
+| シャード列  | 上記の非トランザクション DML ステートメント`BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6`の`id`列など、バッチをシャーディングするために使用される列。                                                                      | TiDB はシャード列を自動的に選択しようとします (推奨されません)。 | いいえ    | 最も効率的に`WHERE`の条件を満たす列を選択します。                    |
 | バッチサイズ | 各バッチのサイズを制御するために使用されます。バッチ数は、DML 操作が分割される SQL ステートメントの数です (上記の非トランザクション DML ステートメント`BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6`では`LIMIT 2`です)。バッチの数が多いほど、バッチ サイズは小さくなります。 | 該当なし                                 | はい     | 1000～1000000。バッチが小さすぎたり大きすぎたりすると、パフォーマンスが低下します。 |
 
 ### シャード列の選択方法 {#how-to-select-a-shard-column}
@@ -280,19 +280,19 @@ BATCH ON id LIMIT 2 DELETE /*+ USE_INDEX(t)*/ FROM t WHERE v < 6;
 -   シャード列にはインデックスを付ける必要があります。インデックスは単一列のインデックス、または結合インデックスの最初の列にすることができます。
 -   [`autocommit`](/system-variables.md#autocommit)モードで使用する必要があります。
 -   batch-dml が有効な場合は使用できません。
--   [`tidb_snapshot`](/read-historical-data.md)設定されている場合は使用できません。
+-   [`tidb_snapshot`](/read-historical-data.md)が設定されている場合は使用できません。
 -   `prepare`ステートメントでは使用できません。
--   `ENUM`型`JSON` `BIT` `SET`としてサポートされていません。
+-   `ENUM`型`BIT` `SET`列としてサポートされて`JSON`ません。
 -   [一時テーブル](/temporary-tables.md)にはサポートされていません。
 -   [共通テーブル式](/develop/dev-guide-use-common-table-expression.md)はサポートされていません。
 
 ## 制御バッチ実行の失敗 {#control-batch-execution-failure}
 
-非トランザクション DML ステートメントはアトミック性を満たしません。一部のバッチは成功し、一部は失敗する可能性があります。システム変数[`tidb_nontransactional_ignore_error`](/system-variables.md#tidb_nontransactional_ignore_error-new-in-v610) 、非トランザクション DML ステートメントがエラーを処理する方法を制御します。
+非トランザクション DML ステートメントはアトミック性を満たしません。一部のバッチは成功し、一部は失敗する可能性があります。システム変数[`tidb_nontransactional_ignore_error`](/system-variables.md#tidb_nontransactional_ignore_error-new-in-v610)は、非トランザクション DML ステートメントがエラーを処理する方法を制御します。
 
 例外として、最初のバッチが失敗した場合は、ステートメント自体が間違っている可能性が高くなります。この場合、非トランザクション ステートメント全体が直接エラーを返します。
 
-## 使い方 {#how-it-works}
+## 仕組み {#how-it-works}
 
 非トランザクション DML ステートメントの動作原理は、TiDB に SQL ステートメントの自動分割を組み込むことです。非トランザクション DML ステートメントがない場合、SQL ステートメントを手動で分割する必要があります。非トランザクション DML ステートメントの動作を理解するには、次のタスクを実行するユーザー スクリプトとして考えます。
 
@@ -315,18 +315,18 @@ batch-dml は、DML ステートメントの実行中にトランザクション
 
 -   パフォーマンス: [破片の列](#how-to-select-a-shard-column)が効率的な場合、非トランザクション DML ステートメントのパフォーマンスは batch-dml のパフォーマンスに近くなります。シャード列の効率が低い場合、非トランザクション DML ステートメントのパフォーマンスは batch-dml よりも大幅に低くなります。
 
--   安定性: batch-dml は、不適切な使用によりデータ インデックスの不整合が発生しやすくなります。非トランザクション DML ステートメントでは、データ インデックスの不整合は発生しません。ただし、不適切に使用すると、非トランザクション DML ステートメントは元のステートメントと同等ではなくなり、アプリケーションで予期しない動作が発生する可能性があります。詳細については、 [一般的な問題セクション](#non-transactional-delete-has-exceptional-behavior-that-is-not-equivalent-to-ordinary-delete)参照してください。
+-   安定性: batch-dml は、不適切な使用によりデータ インデックスの不整合が発生しやすくなります。非トランザクション DML ステートメントでは、データ インデックスの不整合は発生しません。ただし、不適切に使用すると、非トランザクション DML ステートメントは元のステートメントと同等ではなくなり、アプリケーションで予期しない動作が発生する可能性があります。詳細については、 [一般的な問題セクション](#non-transactional-delete-has-exceptional-behavior-that-is-not-equivalent-to-ordinary-delete)を参照してください。
 
 ## よくある問題 {#common-issues}
 
-### 複数のテーブル結合ステートメントを実行すると<code>Unknown column xxx in &#39;where clause&#39;</code>エラーが発生します。 {#executing-a-multiple-table-joins-statement-results-in-the-code-unknown-column-xxx-in-where-clause-code-error}
+### 複数のテーブル結合ステートメントを実行すると<code>Unknown column xxx in &#39;where clause&#39;</code>というエラーが発生します。 {#executing-a-multiple-table-joins-statement-results-in-the-code-unknown-column-xxx-in-where-clause-code-error}
 
-このエラーは、クエリで連結された`WHERE`句が、 [破片の列](#parameter-description)が定義されているテーブル以外のテーブルに関係する場合に発生します。たとえば、次の SQL ステートメントでは、シャード列は`t2.id`であり、テーブル`t2`で定義されていますが、 `WHERE`句にはテーブル`t2`と`t3`が関係しています。
+このエラーは、クエリで連結された`WHERE`句が、 [破片の列](#parameter-description)が定義されているテーブル以外のテーブルに関係する場合に発生します。たとえば、次の SQL ステートメントでは、シャード列は`t2.id`であり、テーブル`t2`で定義されていますが、 `WHERE`句にはテーブル`t2`と`t3`関係しています。
 
 ```sql
 BATCH ON test.t2.id LIMIT 1 
 INSERT INTO t 
-SELECT t2.id, t2.v, t3. FROM t2, t3 WHERE t2.id = t3.id
+SELECT t2.id, t2.v, t3.id FROM t2, t3 WHERE t2.id = t3.id
 ```
 
 ```sql
@@ -338,7 +338,7 @@ SELECT t2.id, t2.v, t3. FROM t2, t3 WHERE t2.id = t3.id
 ```sql
 BATCH ON test.t2.id LIMIT 1 
 DRY RUN QUERY INSERT INTO t 
-SELECT t2.id, t2.v, t3. FROM t2, t3 WHERE t2.id = t3.id
+SELECT t2.id, t2.v, t3.id FROM t2, t3 WHERE t2.id = t3.id
 ```
 
 エラーを回避するには、 `WHERE`節内の他のテーブルに関連する条件を`JOIN`節内の`ON`条件に移動します。例:
@@ -346,7 +346,7 @@ SELECT t2.id, t2.v, t3. FROM t2, t3 WHERE t2.id = t3.id
 ```sql
 BATCH ON test.t2.id LIMIT 1 
 INSERT INTO t 
-SELECT t2.id, t2.v, t3. FROM t2 JOIN t3 ON t2.id=t3.id
+SELECT t2.id, t2.v, t3.id FROM t2 JOIN t3 ON t2.id = t3.id
 ```
 
     +----------------+---------------+
@@ -363,13 +363,13 @@ SELECT t2.id, t2.v, t3. FROM t2 JOIN t3 ON t2.id=t3.id
 
 さらに、他の同時書き込みが発生すると、各バッチで処理される行数が指定されたバッチ サイズと異なる場合があります。
 
-### 実行中に<code>Failed to restore the delete statement, probably because of unsupported type of the shard column</code>エラーが発生します。 {#the-code-failed-to-restore-the-delete-statement-probably-because-of-unsupported-type-of-the-shard-column-code-error-occurs-during-execution}
+### 実行中に、 <code>Failed to restore the delete statement, probably because of unsupported type of the shard column</code>エラーが発生します。 {#the-code-failed-to-restore-the-delete-statement-probably-because-of-unsupported-type-of-the-shard-column-code-error-occurs-during-execution}
 
 シャード列は`ENUM` 、 `BIT` 、 `SET` 、 `JSON`型をサポートしていません。新しいシャード列を指定してください。整数型または文字列型の列を使用することをお勧めします。
 
 <CustomContent platform="tidb">
 
-選択したシャード列がこれらのサポートされていないタイプのいずれでもないときにエラーが発生する場合は、PingCAP またはコミュニティから[支持を得ます](/support.md)取得します。
+選択したシャード列がこれらのサポートされていないタイプのいずれでもないときにエラーが発生する場合は、PingCAP またはコミュニティから[サポートを受ける](/support.md)取得します。
 
 </CustomContent>
 
@@ -379,7 +379,7 @@ SELECT t2.id, t2.v, t3. FROM t2 JOIN t3 ON t2.id=t3.id
 
 </CustomContent>
 
-### 非トランザクション<code>DELETE</code> 、通常の<code>DELETE</code>と同等ではない「例外的な」動作があります。 {#non-transactional-code-delete-code-has-exceptional-behavior-that-is-not-equivalent-to-ordinary-code-delete-code}
+### 非トランザクション<code>DELETE</code>は、通常の<code>DELETE</code>と同等ではない「例外的な」動作があります。 {#non-transactional-code-delete-code-has-exceptional-behavior-that-is-not-equivalent-to-ordinary-code-delete-code}
 
 非トランザクション DML ステートメントは、この DML ステートメントの元の形式と同等ではありません。これには次の理由が考えられます。
 

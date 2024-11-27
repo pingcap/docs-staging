@@ -1,6 +1,6 @@
 ---
 title: EXPLAIN ANALYZE | TiDB SQL Statement Reference
-summary: An overview of the usage of EXPLAIN ANALYZE for the TiDB database.
+summary: TiDB データベースのEXPLAIN ANALYZE の使用法の概要。
 ---
 
 # EXPLAIN分析 {#explain-analyze}
@@ -229,7 +229,7 @@ tiflash_scan: {
     -   `total_skipped_packs` : DTFile 内のスキャンによってスキップされたパックの合計数`WHERE`句がラフ セット インデックスにヒットするか、主キーの範囲フィルタリングに一致すると、無関係なパックはスキップされます。
     -   `total_scanned_rows` : DTFile でスキャンされた行の合計数。MVCC が原因で更新または削除のバージョンが複数ある場合、各バージョンは個別にカウントされます。
     -   `total_skipped_rows` : DTFile 内のスキャンによってスキップされる行の合計数。
-    -   `total_rs_index_load_time` : DTFile ラフ セット インデックスの読み取りに費やされた合計時間。
+    -   `total_rs_index_load_time` : DTFile ラフ セット インデックスの読み取りにかかった合計時間。
     -   `total_read_time` : DTFile データの読み取りに費やされた合計時間。
 -   `total_create_snapshot_time` : テーブルスキャン中にスナップショットを作成するために使用された合計時間。
 

@@ -1,14 +1,14 @@
 ---
 title: ADMIN CHECKSUM TABLE | TiDB SQL Statement Reference
-summary: ADMIN CHECKSUM TABLEステートメントは、テーブルのデータとインデックスのCRC64チェックサムを計算します。このステートメントは、インポート操作が正常に完了したことを確認するために使用されます。MySQLの構文に対するTiDBの拡張機能です。
+summary: TiDB データベースの ADMIN の使用法の概要。
 category: reference
 ---
 
 # 管理者チェックサムテーブル {#admin-checksum-table}
 
-`ADMIN CHECKSUM TABLE`ステートメントは、テーブルのデータとインデックスの CRC64 チェックサムを計算します。このステートメントは、インポート操作が正常に完了したことを確認するために、 TiDB Lightningなどのプログラムによって使用されます。
+`ADMIN CHECKSUM TABLE`ステートメントは、テーブルのデータとインデックスの CRC64 チェックサムを計算します。このステートメントは、TiDB Lightningなどのプログラムによって、インポート操作が正常に完了したことを確認するために使用されます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 AdminStmt ::=
@@ -20,13 +20,13 @@ TableNameList ::=
 
 ## 例 {#examples}
 
-テーブル`t1`を作成します。
+テーブル`t1`を作成します:
 
 ```sql
 CREATE TABLE t1(id INT PRIMARY KEY);
 ```
 
-`t1`にデータを挿入します。
+`t1`にデータを挿入します:
 
 ```sql
 INSERT INTO t1 VALUES (1),(2),(3);
@@ -38,7 +38,7 @@ INSERT INTO t1 VALUES (1),(2),(3);
 ADMIN CHECKSUM TABLE t1;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +---------+------------+----------------------+-----------+-------------+
@@ -49,6 +49,6 @@ ADMIN CHECKSUM TABLE t1;
 1 row in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
+このステートメントは、MySQL 構文に対する TiDB 拡張です。

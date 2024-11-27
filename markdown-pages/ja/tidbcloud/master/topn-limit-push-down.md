@@ -1,15 +1,15 @@
 ---
 title: TopN and Limit Operator Push Down
-summary: このドキュメントは、TopNおよびLimitオペレータのプッシュダウンについて説明します。TiDB実行プランツリーでは、SQLのLIMIT句がLimit演算子ノードに対応し、ORDER BY句がSort演算子ノードに対応します。隣接するLimit演算子とSort演算子はTopN演算子ノードとして結合されます。述語のプッシュダウンと同様に、TopNとLimitは実行プランツリー内でデータソースにできるだけ近い位置にプッシュダウンされ、データ送信と計算のオーバーヘッドが大幅に削減されます。
+summary: TopN および Limit 演算子プッシュダウンの実装を学習します。
 ---
 
-# TopN およびリミット演算子のプッシュダウン {#topn-and-limit-operator-push-down}
+# TopN と Limit 演算子のプッシュダウン {#topn-and-limit-operator-push-down}
 
-このドキュメントでは、TopN および Limit オペレータ プッシュダウンの実装について説明します。
+このドキュメントでは、TopN および Limit 演算子プッシュダウンの実装について説明します。
 
-TiDB 実行プラン ツリーでは、SQL の`LIMIT`句が Limit 演算子ノードに対応し、 `ORDER BY`句が Sort 演算子ノードに対応します。隣接する Limit 演算子と Sort 演算子は、TopN 演算子ノードとして結合されます。これは、上位 N 個のレコードが特定の並べ替えルールに従って返されることを意味します。つまり、Limit 演算子は、null 並べ替えルールを持つ TopN 演算子ノードと同等です。
+TiDB 実行プラン ツリーでは、SQL の`LIMIT`節は Limit 演算子ノードに対応し、 `ORDER BY`節は Sort 演算子ノードに対応します。隣接する Limit 演算子と Sort 演算子は TopN 演算子ノードとして結合され、特定のソート ルールに従って上位 N レコードが返されることを意味します。つまり、Limit 演算子は、null ソート ルールを持つ TopN 演算子ノードと同等です。
 
-述語のプッシュダウンと同様に、TopN と Limit は実行プラン ツリー内でデータ ソースにできるだけ近い位置にプッシュダウンされ、必要なデータが早い段階でフィルタリングされます。このように、プッシュダウンにより、データ送信と計算のオーバーヘッドが大幅に削減されます。
+述語プッシュダウンと同様に、TopN と Limit は実行プラン ツリー内でデータ ソースにできるだけ近い位置にプッシュダウンされるため、必要なデータが早い段階でフィルター処理されます。このようにして、プッシュダウンはデータ転送と計算のオーバーヘッドを大幅に削減します。
 
 このルールを無効にするには、 [式プッシュダウンの最適化ルールとブロックリスト](/blocklist-control-plan.md)を参照してください。
 
@@ -17,7 +17,7 @@ TiDB 実行プラン ツリーでは、SQL の`LIMIT`句が Limit 演算子ノ�
 
 このセクションでは、いくつかの例を通して TopN プッシュダウンについて説明します。
 
-### 例 1:storageレイヤーのコプロセッサにプッシュダウンする {#example-1-push-down-to-the-coprocessors-in-the-storage-layer}
+### 例1:storageレイヤーのコプロセッサにプッシュダウンする {#example-1-push-down-to-the-coprocessors-in-the-storage-layer}
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -34,9 +34,9 @@ explain select * from t order by a limit 10;
     +----------------------------+----------+-----------+---------------+--------------------------------+
     4 rows in set (0.00 sec)
 
-このクエリでは、TopN オペレータ ノードがデータ フィルタリングのために TiKV にプッシュダウンされ、各コプロセッサーは 10 レコードのみを TiDB に返します。 TiDB がデータを集約した後、最終的なフィルタリングが実行されます。
+このクエリでは、TopN 演算子ノードがデータ フィルタリングのために TiKV にプッシュダウンされ、各コプロセッサーは10 レコードのみを TiDB に返します。TiDB がデータを集約した後、最終的なフィルタリングが実行されます。
 
-### 例 2: TopN を結合にプッシュダウンできます (ソート ルールは外部テーブルの列のみに依存します)。 {#example-2-topn-can-be-pushed-down-into-join-the-sorting-rule-only-depends-on-the-columns-in-the-outer-table}
+### 例 2: TopN を Join にプッシュダウンできます (ソート規則は外部テーブルの列のみに依存します) {#example-2-topn-can-be-pushed-down-into-join-the-sorting-rule-only-depends-on-the-columns-in-the-outer-table}
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -58,9 +58,9 @@ explain select * from t left join s on t.a = s.a order by t.a limit 10;
     +----------------------------------+----------+-----------+---------------+-------------------------------------------------+
     8 rows in set (0.01 sec)
 
-このクエリでは、TopN 演算子のソート ルールは外部テーブル`t`の列のみに依存するため、TopN を Join にプッシュダウンする前に計算を実行して、Join 演算の計算コストを削減できます。さらに、TiDB は TopN をstorageレイヤーまでプッシュします。
+このクエリでは、TopN 演算子のソート規則は外部テーブル`t`の列のみに依存するため、TopN を Join にプッシュダウンする前に計算を実行して、Join 操作の計算コストを削減できます。また、TiDB は TopN をstorageレイヤーにプッシュダウンします。
 
-### 例 3: 参加前に TopN をプッシュダウンすることはできません {#example-3-topn-cannot-be-pushed-down-before-join}
+### 例3: TopNはJoin前にプッシュダウンできない {#example-3-topn-cannot-be-pushed-down-before-join}
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -80,11 +80,11 @@ explain select * from t join s on t.a = s.a order by t.id limit 10;
     +-------------------------------+----------+-----------+---------------+--------------------------------------------+
     6 rows in set (0.00 sec)
 
-TopN を`Inner Join`より前にプッシュダウンすることはできません。上記のクエリを例にとると、Join 後に 100 レコードを取得した場合、TopN 後には 10 レコードが残ることになります。ただし、最初に TopN を実行して 10 レコードを取得した場合、結合後には 5 レコードのみが残ります。このような場合、プッシュダウンの結果は異なります。
+TopN は`Inner Join`より前にプッシュダウンできません。上記のクエリを例にとると、結合後に 100 件のレコードを取得した場合、TopN の後に 10 件のレコードが残ります。ただし、最初に TopN を実行して 10 件のレコードを取得した場合、結合後には 5 件のレコードしか残りません。このような場合、プッシュダウンの結果は異なります。
 
-同様に、 TopN は外部結合の内部テーブルにプッシュダウンすることも、ソート ルールが複数のテーブルの列 ( `t.a+s.a`など) に関連している場合もプッシュダウンすることはできません。 TopN のソート ルールが外部テーブルの列に排他的に依存する場合にのみ、TopN をプッシュダウンできます。
+同様に、 TopN は Outer Join の内部テーブルにプッシュダウンすることも、そのソート規則が`t.a+s.a`などの複数のテーブルの列に関連している場合にプッシュダウンすることもできません。 TopN のソート規則が外部テーブルの列に排他的に依存する場合にのみ、 TopN をプッシュダウンできます。
 
-### 例 4: TopN を Limit に変換する {#example-4-convert-topn-to-limit}
+### 例4: TopNをLimitに変換する {#example-4-convert-topn-to-limit}
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -109,4 +109,4 @@ explain select * from t left join s on t.a = s.a order by t.id limit 10;
 
 ```
 
-上記のクエリでは、最初に TopN が外部テーブル`t`にプッシュされます。 TopN は`t.id`でソートする必要があります。これは主キーであり、TopN で追加のソートを行わずに順序 ( `keep order: true` ) で直接読み取ることができます。したがって、TopN は Limit として簡略化されます。
+上記のクエリでは、最初に TopN が外部テーブル`t`にプッシュされます。 TopN は主キーである`t.id`でソートする必要があり、 TopN で追加のソートを行わずに順序 ( `keep order: true` ) で直接読み取ることができます。 したがって、 TopN は Limit として簡略化されます。

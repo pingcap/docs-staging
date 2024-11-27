@@ -22,7 +22,7 @@ summary: このドキュメントでは、複数テーブル結合クエリの�
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-次の SQL 文では、キーワード`JOIN`を使用して、左側のテーブル`authors`と右側のテーブル`book_authors`の行を結合条件`a.id = ba.author_id`で内部結合として結合することを宣言します。結果セットには、結合条件を満たす行のみが含まれます。著者が本を 1 冊も書いていない場合、テーブル`authors`の著者のレコードは結合条件を満たさないため、結果セットには表示されません。
+次の SQL 文では、キーワード`JOIN`使用して、左側のテーブル`authors`と右側のテーブル`book_authors`の行を結合条件`a.id = ba.author_id`で内部結合として結合することを宣言します。結果セットには、結合条件を満たす行のみが含まれます。著者が本を 1 冊も書いていない場合、テーブル`authors`のその著者のレコードは結合条件を満たさないため、結果セットには表示されません。
 
 ```sql
 SELECT ANY_VALUE(a.id) AS author_id, ANY_VALUE(a.name) AS author_name, COUNT(ba.book_id) AS books
@@ -95,7 +95,7 @@ public List<Author> getTop10AuthorsOrderByBooks() throws SQLException {
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-次の SQL ステートメントでは、キーワード`LEFT JOIN`を使用して、左側のテーブル`books`が右側のテーブル`ratings`に左外部結合で結合されることを宣言し、テーブル`books`のすべての行が返されるようにします。
+次の SQL ステートメントでは、キーワード`LEFT JOIN`を使用して、左側のテーブル`books`右側のテーブル`ratings`に左外部結合で結合されることを宣言し、テーブル`books`のすべての行が返されるようにします。
 
 ```sql
 SELECT b.id AS book_id, ANY_VALUE(b.title) AS book_title, AVG(r.score) AS average_score
@@ -130,7 +130,7 @@ LIMIT 10;
 DELETE FROM ratings WHERE book_id = 3438991610;
 ```
 
-再度クエリを実行します。結果セットには依然として*「The Documentary of lion」という*本が表示されますが、右側の表`ratings`の`score`から計算された`average_score`列目には`NULL`が入力されます。
+再度クエリを実行します。結果セットには依然として*「The Documentary of lion」*という本が表示されますが、右側の表`ratings`の`score`から計算された`average_score`列目には`NULL`が入力されます。
 
     +------------+---------------------------------+---------------+
     | book_id    | book_title                      | average_score |
@@ -193,7 +193,7 @@ public List<Book> getLatestBooksWithAverageScore() throws SQLException {
 
 ### 左セミ結合 {#left-semi-join}
 
-TiDB は、SQL 構文レベルでは`LEFT SEMI JOIN table_name`サポートしていません。ただし、実行プラン レベルでは、 [サブクエリ関連の最適化](/subquery-optimization.md) 、書き換えられた同等の JOIN クエリのデフォルトの結合方法として`semi join`を使用します。
+TiDB は、SQL 構文レベルでは`LEFT SEMI JOIN table_name`サポートしていません。ただし、実行プラン レベルでは、 [サブクエリ関連の最適化](/subquery-optimization.md)書き換えられた同等の JOIN クエリのデフォルトの結合方法として`semi join`使用します。
 
 ## 暗黙的な結合 {#implicit-join}
 
@@ -209,9 +209,9 @@ TiDB は、次の一般的なテーブル結合アルゴリズムをサポート
 
 オプティマイザーは、結合されたテーブルのデータ量などの要素に基づいて、実行する適切な結合アルゴリズムを選択します。 `EXPLAIN`ステートメントを使用すると、クエリが結合に使用するアルゴリズムを確認できます。
 
-TiDB のオプティマイザーが最適な結合アルゴリズムに従って実行されない場合は、 [オプティマイザのヒント](/optimizer-hints.md)使用して、TiDB により適切な結合アルゴリズムを使用するように強制できます。
+TiDB のオプティマイザーが最適な結合アルゴリズムに従って実行されない場合は、 [オプティマイザーのヒント](/optimizer-hints.md)使用して、TiDB により適切な結合アルゴリズムを使用するように強制できます。
 
-たとえば、上記の左結合クエリの例が、オプティマイザによって選択されていないハッシュ結合アルゴリズムを使用してより速く実行されると仮定すると、 `SELECT`キーワードの後に​​ヒント`/*+ HASH_JOIN(b, r) */`を追加できます。テーブルに別名がある場合は、ヒントで別名を使用することに注意してください。
+たとえば、上記の左結合クエリの例が、オプティマイザによって選択されていないハッシュ結合アルゴリズムを使用してより速く実行されると仮定すると、 `SELECT`キーワードの後にヒント`/*+ HASH_JOIN(b, r) */`を追加できます。テーブルに別名がある場合は、ヒントで別名を使用することに注意してください。
 
 ```sql
 EXPLAIN SELECT /*+ HASH_JOIN(b, r) */ b.id AS book_id, ANY_VALUE(b.title) AS book_title, AVG(r.score) AS average_score
@@ -241,9 +241,23 @@ FROM authors a STRAIGHT_JOIN book_authors ba STRAIGHT_JOIN books b
 WHERE b.id = ba.book_id AND ba.author_id = a.id;
 ```
 
-この結合したテーブルの再配置アルゴリズムの実装の詳細と制限の詳細については、 [結合したテーブルの再配置アルゴリズムの紹介](/join-reorder.md)を参照してください。
+この結合したテーブルの再配置アルゴリズムの実装の詳細と制限の詳細については、 [結合したテーブルの再配置アルゴリズムの紹介](/join-reorder.md)参照してください。
 
 ## 参照 {#see-also}
 
 -   [テーブル結合を使用するステートメントを説明する](/explain-joins.md)
--   [結合したテーブルの再配置の変更の概要](/join-reorder.md)
+-   [結合したテーブルの再配置の概要](/join-reorder.md)
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

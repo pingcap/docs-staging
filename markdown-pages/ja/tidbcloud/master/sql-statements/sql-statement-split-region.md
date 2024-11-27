@@ -13,37 +13,30 @@ TiDB に作成された新しいテーブルごとに、このテーブルのデ
 
 > **注記：**
 >
-> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 ## 概要 {#synopsis}
 
-**分割領域ステートメント:**
+```ebnf+diagram
+SplitRegionStmt ::=
+    "SPLIT" SplitSyntaxOption "TABLE" TableName PartitionNameList? ("INDEX" IndexName)? SplitOption
 
-![SplitRegionStmt](https://download.pingcap.com/images/docs/sqlgram/SplitRegionStmt.png)
+SplitSyntaxOption ::=
+    ("REGION" "FOR")? "PARTITION"?
 
-**分割構文オプション:**
+TableName ::=
+    (SchemaName ".")? Identifier
 
-![SplitSyntaxOption](https://download.pingcap.com/images/docs/sqlgram/SplitSyntaxOption.png)
+PartitionNameList ::=
+    "PARTITION" "(" PartitionName ("," PartitionName)* ")"
 
-**テーブル名:**
+SplitOption ::=
+    ("BETWEEN" RowValue "AND" RowValue "REGIONS" NUM
+|   "BY" RowValue ("," RowValue)* )
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
-
-**パーティション名リストオプション:**
-
-![PartitionNameListOpt](https://download.pingcap.com/images/docs/sqlgram/PartitionNameListOpt.png)
-
-**分割オプション:**
-
-![SplitOption](https://download.pingcap.com/images/docs/sqlgram/SplitOption.png)
-
-**行値:**
-
-![RowValue](https://download.pingcap.com/images/docs/sqlgram/RowValue.png)
-
-**整数64数値:**
-
-![Int64Num](https://download.pingcap.com/images/docs/sqlgram/Int64Num.png)
+RowValue ::=
+    "(" ValuesOpt ")"
+```
 
 ## 分割リージョンの使用 {#usage-of-split-region}
 
@@ -249,13 +242,13 @@ SPLIT TABLE t1 INDEX idx4 BY ("a", "2000-01-01 00:00:01"), ("b", "2019-04-17 14:
 1.  パーティションテーブル`t`を作成します。2 つのパーティションに分割されたハッシュ テーブルを作成するとします。例のステートメントは次のようになります。
 
     ```sql
-    create table t (a int,b int,index idx(a)) partition by hash(a) partitions 2;
+    CREATE TABLE t (a INT, b INT, INDEX idx(a)) PARTITION BY HASH(a) PARTITIONS 2;
     ```
 
-    テーブル`t`を作成した後、リージョンは各パーティションに分割されます。このテーブルのリージョンを表示するには、 `SHOW TABLE REGIONS`構文を使用します。
+    テーブル`t`を作成した後、各パーティションにリージョンが分割されます。このテーブルのリージョンを表示するには、 [`SHOW TABLE REGIONS`](/sql-statements/sql-statement-show-table-regions.md)構文を使用します。
 
     ```sql
-    show table t regions;
+    SHOW TABLE t REGIONS;
     ```
 
     ```sql
@@ -273,7 +266,7 @@ SPLIT TABLE t1 INDEX idx4 BY ("a", "2000-01-01 00:00:01"), ("b", "2019-04-17 14:
     split partition table t between (0) and (10000) regions 4;
     ```
 
-    上記のステートメントでは、 `0`と`10000` 、散布するホットスポット データに対応する上限と下限の`row_id`表します。
+    上記のステートメントでは、 `0`と`10000`それぞれ、散布するホットスポット データに対応する上限と下限の`row_id`表します。
 
     > **注記：**
     >
@@ -282,7 +275,7 @@ SPLIT TABLE t1 INDEX idx4 BY ("a", "2000-01-01 00:00:01"), ("b", "2019-04-17 14:
 3.  `SHOW TABLE REGIONS`構文を使用して、このテーブルのリージョンを再度表示します。このテーブルには現在 10 個のリージョンがあり、各パーティションには 5 個のリージョンがあり、そのうち 4 個は行データで、1 個はインデックス データであることがわかります。
 
     ```sql
-    show table t regions;
+    SHOW TABLE t REGIONS;
     ```
 
     ```sql
@@ -305,7 +298,7 @@ SPLIT TABLE t1 INDEX idx4 BY ("a", "2000-01-01 00:00:01"), ("b", "2019-04-17 14:
 4.  各パーティションのインデックスのリージョンを分割することもできます。たとえば、 `idx`のインデックスの`[1000,10000]`範囲を 2 つのリージョンに分割できます。例のステートメントは次のとおりです。
 
     ```sql
-    split partition table t index idx between (1000) and (10000) regions 2;
+    SPLIT PARTITION TABLE t INDEX idx BETWEEN (1000) AND (10000) REGIONS 2;
     ```
 
 #### 単一パーティションの分割リージョンの例 {#examples-of-split-region-for-a-single-partition}
@@ -315,28 +308,28 @@ SPLIT TABLE t1 INDEX idx4 BY ("a", "2000-01-01 00:00:01"), ("b", "2019-04-17 14:
 1.  パーティションテーブルを作成します。3 つのパーティションに分割された範囲パーティションテーブルを作成するとします。例のステートメントは次のようになります。
 
     ```sql
-    create table t ( a int, b int, index idx(b)) partition by range( a ) (
-        partition p1 values less than (10000),
-        partition p2 values less than (20000),
-        partition p3 values less than (MAXVALUE) );
+    CREATE TABLE t ( a INT, b INT, INDEX idx(b)) PARTITION BY RANGE( a ) (
+        PARTITION p1 VALUES LESS THAN (10000),
+        PARTITION p2 VALUES LESS THAN (20000),
+        PARTITION p3 VALUES LESS THAN (MAXVALUE) );
     ```
 
-2.  `p1`のパーティションの`[0,10000]`範囲のデータを 2 つのリージョンに分割するとします。例のステートメントは次のようになります。
+2.  `p1`パーティションの`[0,10000]`範囲のデータを 2 つのリージョンに分割するとします。例のステートメントは次のようになります。
 
     ```sql
-    split partition table t partition (p1) between (0) and (10000) regions 2;
+    SPLIT PARTITION TABLE t PARTITION (p1) BETWEEN (0) AND (10000) REGIONS 2;
     ```
 
 3.  `p2`のパーティションの`[10000,20000]`範囲のデータを 2 つのリージョンに分割するとします。例のステートメントは次のようになります。
 
     ```sql
-    split partition table t partition (p2) between (10000) and (20000) regions 2;
+    SPLIT PARTITION TABLE t PARTITION (p2) BETWEEN (10000) AND (20000) REGIONS 2;
     ```
 
 4.  `SHOW TABLE REGIONS`構文を使用して、このテーブルのリージョンを表示できます。
 
     ```sql
-    show table t regions;
+    SHOW TABLE t REGIONS;
     ```
 
     ```sql
@@ -354,23 +347,23 @@ SPLIT TABLE t1 INDEX idx4 BY ("a", "2000-01-01 00:00:01"), ("b", "2019-04-17 14:
 5.  `p1`と`p2`のパーティションの`idx`のインデックスの`[0,20000]`の範囲を 2 つのリージョンに分割するとします。例のステートメントは次のようになります。
 
     ```sql
-    split partition table t partition (p1,p2) index idx between (0) and (20000) regions 2;
+    SPLIT PARTITION TABLE t PARTITION (p1,p2) INDEX idx BETWEEN (0) AND (20000) REGIONS 2;
     ```
 
 ## 事前分割領域 {#pre-split-regions}
 
-`AUTO_RANDOM`または`SHARD_ROW_ID_BITS`属性でテーブルを作成する場合、テーブルの作成直後にテーブルを均等にリージョンに事前分割したい場合は、 `PRE_SPLIT_REGIONS`オプションを指定することもできます。テーブルの事前分割リージョンの数は`2^(PRE_SPLIT_REGIONS)`です。
+テーブルの作成時にリージョンを均等に分割するには、 `SHARD_ROW_ID_BITS`と`PRE_SPLIT_REGIONS`一緒に使用することをお勧めします。テーブルが正常に作成されると、 `PRE_SPLIT_REGIONS` `2^(PRE_SPLIT_REGIONS)`で指定された数のリージョンにテーブルを事前に分割します。
 
 > **注記：**
 >
-> `PRE_SPLIT_REGIONS`の値は`SHARD_ROW_ID_BITS`または`AUTO_RANDOM`の値以下でなければなりません。
+> `PRE_SPLIT_REGIONS`の値は`SHARD_ROW_ID_BITS`の値以下でなければなりません。
 
 `tidb_scatter_region`グローバル変数は`PRE_SPLIT_REGIONS`の動作に影響します。この変数は、テーブル作成後に結果を返す前に、リージョンが事前に分割され、分散されるまで待機するかどうかを制御します。テーブル作成後に書き込みが集中する場合は、この変数の値を`1`に設定する必要があります。そうすると、すべてのリージョンが分割され、分散されるまで、TiDB はクライアントに結果を返しません。そうしないと、分散が完了する前に TiDB がデータを書き込むため、書き込みパフォーマンスに大きな影響が出ます。
 
 ### pre_split_regions の例 {#examples-of-pre-split-regions}
 
 ```sql
-create table t (a int, b int,index idx1(a)) shard_row_id_bits = 4 pre_split_regions=2;
+CREATE TABLE t (a INT, b INT, INDEX idx1(a)) SHARD_ROW_ID_BITS = 4 PRE_SPLIT_REGIONS=2;
 ```
 
 テーブルを構築した後、このステートメントはテーブル t の`4 + 1`領域を分割します。3 `4 (2^2)`領域はテーブル行データを保存するために使用され、1 つのリージョンは`idx1`のインデックス データを保存するために使用されます。
@@ -386,7 +379,7 @@ create table t (a int, b int,index idx1(a)) shard_row_id_bits = 4 pre_split_regi
 
 > **注記：**
 >
-> Split リージョンステートメントによって分割されたリージョンは、PD の[リージョンの統合](/best-practices/pd-scheduling-best-practices.md#region-merge)スケジューラによって制御されます。PD がすぐに新しく分割されたリージョンを再マージしないようにするには、リージョンマージ機能に関連する[テーブル属性](/table-attributes.md)または[動的に変更する](/pd-control.md)構成項目を使用する必要があります。
+> Split リージョンステートメントによって分割されたリージョンは、PD の[リージョンの統合](/best-practices/pd-scheduling-best-practices.md#region-merge)スケジューラによって制御されます。PD がすぐに新しく分割されたリージョンを再マージしないようにするには、リージョンマージ機能に関連する[動的に変更する](/pd-control.md)構成項目が必要です。
 
 </CustomContent>
 

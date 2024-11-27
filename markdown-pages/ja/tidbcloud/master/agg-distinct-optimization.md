@@ -1,15 +1,15 @@
 ---
 title: Distinct Optimization
-summary: TiDBのクエリオプティマイザーには、distinct 最適化があります。SELECT DISTINCT は GROUP BY に変換され、集計関数の DISTINCT オプションはシングルスレッド実行モデルで実行されます。tidb_opt_distinct_agg_push_down を設定すると、計算オーバーヘッドが削減される可能性があります。
+summary: TiDB クエリ オプティマイザーに `distinct` 最適化を導入します。
 ---
 
 # クエリの最適化 {#distinct-optimization}
 
-このドキュメントでは、TiDB クエリ オプティマイザーの`distinct`最適化 (集計関数の`SELECT DISTINCT`と`DISTINCT`を含む) を紹介します。
+このドキュメントでは、集計関数の`SELECT DISTINCT`と`DISTINCT`を含む、TiDB クエリ オプティマイザーの`distinct`最適化について説明します。
 
 ## <code>SELECT</code>ステートメントの<code>DISTINCT</code>修飾子 {#code-distinct-code-modifier-in-code-select-code-statements}
 
-`DISTINCT`修飾子は、結果セットからの重複行の削除を指定します。たとえば、 `SELECT DISTINCT`は`GROUP BY`に変換されます。
+`DISTINCT`修飾子は、結果セットから重複行を削除することを指定します。 `SELECT DISTINCT`は`GROUP BY`に変換されます。例:
 
 ```sql
 mysql> explain SELECT DISTINCT a from t;
@@ -25,7 +25,7 @@ mysql> explain SELECT DISTINCT a from t;
 
 ## 集計関数の<code>DISTINCT</code>オプション {#code-distinct-code-option-in-aggregate-functions}
 
-通常、 `DISTINCT`オプションを指定した集約関数は、シングルスレッド実行モデルの TiDBレイヤーで実行されます。
+通常、オプション`DISTINCT`を指定した集計関数は、シングルスレッド実行モデルの TiDBレイヤーで実行されます。
 
 <CustomContent platform="tidb">
 
@@ -39,7 +39,7 @@ TiDB の[`tidb_opt_distinct_agg_push_down`](/system-variables.md#tidb_opt_distin
 
 </CustomContent>
 
-この最適化の例として、次のクエリを取り上げます。 `tidb_opt_distinct_agg_push_down`はデフォルトで無効になっています。これは、集計関数がTiDBレイヤーで実行されることを意味します。値を`1`に設定してこの最適化を有効にすると、 `count(distinct a)`の`distinct a`部分が TiKV またはTiFlashコプロセッサーにプッシュされます。TiKVコプロセッサーの列 a で重複した値を削除するための HashAgg_5 があります。これにより、TiDBレイヤーの`HashAgg_8`の計算オーバーヘッドが削減される可能性があります。
+この最適化の例として、次のクエリを取り上げます。 `tidb_opt_distinct_agg_push_down`デフォルトで無効になっており、集計関数はTiDBレイヤーで実行されます。値を`1`に設定してこの最適化を有効にすると、 `count(distinct a)`の`distinct a`の部分が TiKV またはTiFlashコプロセッサーにプッシュされます。TiKVコプロセッサーの列 a の重複値を削除する HashAgg_5 があります。これにより、 TiDBレイヤーの`HashAgg_8`の計算オーバーヘッドが削減される可能性があります。
 
 ```sql
 mysql> desc select count(distinct a) from test.t;

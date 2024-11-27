@@ -9,19 +9,20 @@ summary: TiDB グローバル ソートの使用例、制限、使用方法、�
 
 # TiDB グローバルソート {#tidb-global-sort}
 
-> **警告：**
+> **注記：**
 >
-> この機能は実験的ものです。本番環境での使用は推奨されません。この機能は予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)報告できます。
+> -   現在、グローバル ソート プロセスは、TiDB ノードのコンピューティング リソースとメモリリソースを大量に消費します。ユーザー ビジネス アプリケーションの実行中にオンラインでインデックスを追加するなどのシナリオでは、クラスターに新しい TiDB ノードを追加し、これらのノードの[`tidb_service_scope`](/system-variables.md#tidb_service_scope-new-in-v740)変数を構成し、これらのノードに接続してタスクを作成することをお勧めします。このようにして、分散フレームワークはこれらのノードにタスクをスケジュールし、他の TiDB ノードからワークロードを分離して、 `ADD INDEX`や`IMPORT INTO`などのバックエンド タスクの実行がユーザー ビジネス アプリケーションに与える影響を軽減します。
+> -   グローバル ソート機能を使用する場合は、OOM を回避するために、少なくとも 16 コアの CPU と 32 GiB のメモリを備えた TiDB ノードを使用することをお勧めします。
 
 > **注記：**
 >
-> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 ## 概要 {#overview}
 
 TiDB グローバル ソート機能は、データ インポートおよび DDL (データ定義言語) 操作の安定性と効率性を高めます。1 [TiDB 分散実行フレームワーク (DXF)](/tidb-distributed-execution-framework.md)汎用演算子として機能し、クラウド上でグローバル ソート サービスを提供します。
 
-グローバルソート機能は現在、クラウドstorageとして Amazon S3 の使用のみをサポートしています。将来のリリースでは、POSIX などの複数の共有storageインターフェースをサポートするように拡張され、さまざまなstorageシステムとのシームレスな統合が可能になります。この柔軟性により、さまざまなユースケースで効率的かつ適応性の高いデータソートが可能になります。
+現在、グローバルソート機能は、クラウドstorageとして Amazon S3 の使用をサポートしています。
 
 ## ユースケース {#use-cases}
 
@@ -37,7 +38,7 @@ TiDB グローバル ソート機能は、データ インポートおよび DDL
 
 グローバルソートを有効にするには、次の手順に従います。
 
-1.  値を[`tidb_enable_dist_task`](/system-variables.md#tidb_enable_dist_task-new-in-v710)から`ON`に設定して DXF を有効にします。
+1.  [`tidb_enable_dist_task`](/system-variables.md#tidb_enable_dist_task-new-in-v710)の値を`ON`に設定して DXF を有効にします。v8.1.0 以降では、この変数はデフォルトで有効になっています。v8.1.0 以降のバージョンで新しく作成されたクラスターの場合は、この手順をスキップできます。
 
     ```sql
     SET GLOBAL tidb_enable_dist_task = ON;

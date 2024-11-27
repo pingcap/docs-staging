@@ -1,6 +1,6 @@
 ---
 title: CLUSTER_INFO
-summary: CLUSTER_INFO クラスター トポロジ情報テーブルについて学習します。
+summary: CLUSTER_INFO` クラスター トポロジ情報テーブルについて学習します。
 ---
 
 # クラスター情報 {#cluster-info}
@@ -9,7 +9,7 @@ summary: CLUSTER_INFO クラスター トポロジ情報テーブルについて
 
 > **注記：**
 >
-> このテーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ```sql
 USE information_schema;
@@ -35,7 +35,7 @@ desc cluster_info;
 フィールドの説明:
 
 -   `TYPE` : インスタンスタイプ。オプションの値は`tidb` 、 `pd` 、 `tikv`です。
--   `INSTANCE` : インスタンス アドレス。2 `IP:PORT`形式の文字列です。
+-   `INSTANCE` : インスタンス アドレス`IP:PORT`の形式の文字列です。
 -   `STATUS_ADDRESS` : HTTP API のサービス アドレス。tikv-ctl、pd-ctl、または tidb-ctl の一部のコマンドでは、この API とこのアドレスが使用される場合があります。このアドレスを使用して、より多くのクラスター情報を取得することもできます。詳細については、 [TiDB HTTP API ドキュメント](https://github.com/pingcap/tidb/blob/release-8.1/docs/tidb_http_api.md)を参照してください。
 -   `VERSION` : 対応するインスタンスのセマンティックバージョン番号。MySQL バージョン番号との互換性を保つために、TiDB バージョンは`${mysql-version}-${tidb-version}`の形式で表示されます。
 -   `GIT_HASH` : インスタンス バージョンをコンパイルするときの Git コミット ハッシュ。2 つのインスタンスが完全に一貫したバージョンであるかどうかを識別するために使用されます。

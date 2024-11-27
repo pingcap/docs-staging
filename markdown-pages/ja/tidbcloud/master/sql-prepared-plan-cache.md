@@ -1,16 +1,9 @@
 ---
 title: SQL Prepared Execution Plan Cache
-summary: Learn about SQL Prepared Execution Plan Cache in TiDB.
+summary: TiDB の SQL 準備実行プラン キャッシュについて学習します。
 ---
 
 # SQL 準備済み実行プラン キャッシュ {#sql-prepared-execution-plan-cache}
-
-> **警告：**
->
-> キャッシュされた`UPDATE`または`DELETE`ステートメントが実行中に関連するスキーマを変更する DDL 操作に遭遇すると、テーブルとインデックス間でデータの不整合が発生する可能性があります。詳細については、 [問題 #51407](https://github.com/pingcap/tidb/issues/51407)を参照してください。この問題のステータスを監視し、この問題を解決するために[最新のLTSバージョン](https://docs.pingcap.com/tidb/stable)にアップグレードすることをお勧めします。アップグレードする前に、次の回避策を試すことができます。
->
-> -   DDL を実行する前に一時的に[準備されたプランキャッシュを無効にする](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610)設定し、DDL が完了したら再度有効にします。
-> -   業務のピーク時間帯にDDLを実行することは避けてください。DDL実行後、すぐに[`ADMIN CHECK TABLE`](/sql-statements/sql-statement-admin-check-table-index.md)実行してテーブルとインデックスの整合性をチェックしてください。エラーが見つかった場合は、関連するインデックスを再構築してください。
 
 TiDB は、 `Prepare`と`Execute`クエリの実行プラン キャッシュをサポートしています。これには、準備されたステートメントの両方の形式が含まれます。
 
@@ -26,7 +19,7 @@ TiDB は、 `Prepare` / `Execute`ステートメントと同様に、一部の`P
 TiDB の現在のバージョンでは、 `Prepare`ステートメントが次のいずれかの条件を満たす場合、クエリまたはプランはキャッシュされません。
 
 -   クエリには、 `SELECT` 、 `UPDATE` 、 `INSERT` 、 `DELETE` 、 `Union` 、 `Intersect` 、および`Except`以外の SQL ステートメントが含まれています。
--   クエリは、パーティション テーブルまたは一時テーブル、または生成された列を含むテーブルにアクセスします。
+-   クエリは一時テーブル、または生成された列を含むテーブルにアクセスします。
 -   クエリには、 `SELECT * FROM t1 WHERE t1.a > (SELECT 1 FROM t2 WHERE t2.b < 1)`などの相関のないサブクエリが含まれています。
 -   クエリには、実行プランに`SELECT * FROM t1 WHERE t1.a > (SELECT a FROM t2 WHERE t1.b > t2.b)`などの`PhysicalApply`の演算子を持つ相関サブクエリが含まれています。
 -   クエリには、 `SELECT /*+ ignore_plan_cache() */ * FROM t`や`SELECT /*+ set_var(max_execution_time=1) */ * FROM t`などの`ignore_plan_cache`または`set_var`ヒントが含まれています。
@@ -69,7 +62,7 @@ v6.1.0 以降では、実行プラン キャッシュがデフォルトで有効
 
 > **注記：**
 >
-> 実行プラン キャッシュ機能は`Prepare` `Execute`にのみ適用され、通常のクエリには効果がありません。
+> [`tidb_enable_prepared_plan_cache`](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610)システム変数は、通常のクエリではなく、 `Prepare` / `Execute`クエリの実行プラン キャッシュのみを制御します。通常のクエリの実行プラン キャッシュについては、 [SQL 未準備実行プラン キャッシュ](/sql-non-prepared-plan-cache.md)を参照してください。
 
 実行プラン キャッシュ機能を有効にすると、セッション レベルのシステム変数[`last_plan_from_cache`](/system-variables.md#last_plan_from_cache-new-in-v40)を使用して、前の`Execute`ステートメントでキャッシュされた実行プランが使用されたかどうかを確認できます。次に例を示します。
 

@@ -11,7 +11,7 @@ TiDB は MySQL 互換のデータベースであり、 [ノード-mysql2](https:
 
 -   環境を設定します。
 -   node-mysql2 を使用して TiDB クラスターに接続します。
--   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)を見つけることができます。
+-   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)見つけることができます。
 
 > **注記：**
 >
@@ -84,12 +84,12 @@ npm install mysql2 dotenv --save
 
 3.  接続ダイアログの構成が動作環境と一致していることを確認します。
 
-    -   **接続タイプ**は`Public`に設定されています。
-    -   **ブランチ**は`main`に設定されています。
+    -   **接続タイプは**`Public`に設定されています。
+    -   **ブランチは**`main`に設定されています。
     -   **Connect With は**`General`に設定されています。
     -   **オペレーティング システムは**、アプリケーションを実行するオペレーティング システムと一致します。
 
-4.  まだパスワードを設定していない場合は、 **「パスワードの生成」**をクリックしてランダムなパスワードを生成します。
+4.  まだパスワードを設定していない場合は、「**パスワードの生成」**をクリックしてランダムなパスワードを生成します。
 
 5.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -97,7 +97,7 @@ npm install mysql2 dotenv --save
     cp .env.example .env
     ```
 
-6.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`を接続パラメータに置き換えます。
+6.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`接続パラメータに置き換えます。
 
     ```dotenv
     TIDB_HOST={host}
@@ -125,7 +125,7 @@ npm install mysql2 dotenv --save
 
     IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
 
-    TiDB Dedicated は、**パブリック**接続タイプに加えて、**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
 4.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -133,7 +133,7 @@ npm install mysql2 dotenv --save
     cp .env.example .env
     ```
 
-5.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`を接続パラメータに置き換えます。
+5.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`接続パラメータに置き換えます。
 
     ```dotenv
     TIDB_HOST={host}
@@ -149,7 +149,7 @@ npm install mysql2 dotenv --save
     >
     > パブリック エンドポイントを使用してTiDB Cloud Dedicated に接続する場合は、TLS 接続を有効にすることをお勧めします。
     >
-    > TLS 接続を有効にするには、 `TIDB_ENABLE_SSL`から`true`を変更し、 `TIDB_CA_PATH`を使用して接続ダイアログからダウンロードした CA 証明書のファイル パスを指定します。
+    > TLS 接続を有効にするには、 `TIDB_ENABLE_SSL`から`true`変更し、 `TIDB_CA_PATH`使用して接続ダイアログからダウンロードした CA 証明書のファイル パスを指定します。
 
 6.  `.env`ファイルを保存します。
 
@@ -162,7 +162,7 @@ npm install mysql2 dotenv --save
     cp .env.example .env
     ```
 
-2.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`を接続パラメータに置き換えます。
+2.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`接続パラメータに置き換えます。
 
     ```dotenv
     TIDB_HOST={host}
@@ -189,7 +189,7 @@ npm start
 
 接続が成功すると、コンソールに次のように TiDB クラスターのバージョンが出力されます。
 
-    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v7.5.3)
+    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.1.1)
     ⏳ Loading sample game data...
     ✅ Loaded sample game data.
 
@@ -243,7 +243,7 @@ void main();
 
 > **注記**
 >
-> TiDB Cloud Serverless の場合、パブリック エンドポイントを使用するときは、 `TIDB_ENABLE_SSL`経由で TLS 接続を有効にする**必要があります**。ただし、Node.js はデフォルトで組み込みの[Mozilla CA 証明書](https://wiki.mozilla.org/CA/Included_Certificates)を使用し、これはTiDB Cloud Serverless によって信頼されているため、 `TIDB_CA_PATH`経由で SSL CA 証明書を指定する必要は**ありません**。
+> TiDB Cloud Serverless の場合、パブリック エンドポイントを使用するときは、 `TIDB_ENABLE_SSL`経由で TLS 接続を有効にする**必要があります**。ただし、Node.js はデフォルトで組み込みの[Mozilla CA 証明書](https://wiki.mozilla.org/CA/Included_Certificates)使用し、これはTiDB Cloud Serverless によって信頼されているため、 `TIDB_CA_PATH`経由で SSL CA 証明書を指定する必要は**ありません**。
 
 ### データを挿入 {#insert-data}
 
@@ -269,7 +269,7 @@ console.log(rows[0]);
 
 ### データの更新 {#update-data}
 
-次のクエリは、 ID `1`の`Player`にコイン`50`と商品`50`を追加します。
+次のクエリは、 ID `1`の`Player`にコイン`50`枚と商品`50`を追加します。
 
 ```javascript
 const [rsh] = await conn.query(
@@ -283,7 +283,7 @@ console.log(rsh.affectedRows);
 
 ### データを削除する {#delete-data}
 
-次のクエリは、ID `1`の`Player`レコードを削除します。
+次のクエリは、ID `1`の`Player`のレコードを削除します。
 
 ```javascript
 const [rsh] = await conn.query('DELETE FROM players WHERE id = ?;', [1]);
@@ -294,11 +294,11 @@ console.log(rsh.affectedRows);
 
 ## 役に立つメモ {#useful-notes}
 
--   [接続プール](https://github.com/sidorares/node-mysql2#using-connection-pools)を使用してデータベース接続を管理すると、接続の確立と破棄を頻繁に行うことによって発生するパフォーマンスのオーバーヘッドを削減できます。
+-   [接続プール](https://github.com/sidorares/node-mysql2#using-connection-pools)使用してデータベース接続を管理すると、接続の確立と破棄を頻繁に行うことによって発生するパフォーマンスのオーバーヘッドを削減できます。
 -   SQL インジェクションを回避するには、 [準備されたステートメント](https://github.com/sidorares/node-mysql2#using-prepared-statements)使用することをお勧めします。
 -   複雑な SQL ステートメントがあまり含まれないシナリオでは、 [続編](https://sequelize.org/) 、 [タイプORM](https://typeorm.io/) 、 [プリズマ](https://www.prisma.io/)などの ORM フレームワークを使用すると、開発効率が大幅に向上します。
 -   データベース内の大きな数値 ( `BIGINT`と`DECIMAL`列) を処理する場合は、 `supportBigNumbers: true`オプションを有効にすることをお勧めします。
--   ネットワークの問題によるソケット エラー`read ECONNRESET`を回避するには、オプション`enableKeepAlive: true`を有効にすることをお勧めします。(関連する問題: [sidorares/node-mysql2#683](https://github.com/sidorares/node-mysql2/issues/683) )
+-   ネットワークの問題によるソケット エラー`read ECONNRESET`回避するには、オプション`enableKeepAlive: true`を有効にすることをお勧めします。(関連する問題: [sidorares/node-mysql2#683](https://github.com/sidorares/node-mysql2/issues/683) )
 
 ## 次のステップ {#next-steps}
 

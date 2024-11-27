@@ -5,7 +5,7 @@ summary: KEYWORDS` INFORMATION_SCHEMA テーブルについて学習します。
 
 # キーワード {#keywords}
 
-v7.5.3 以降、TiDB は`KEYWORDS`テーブルを提供します。このテーブルを使用して、TiDB の[キーワード](/keywords.md)に関する情報を取得できます。
+v7.5.3 および v7.6.0 以降、TiDB は`KEYWORDS`テーブルを提供します。このテーブルを使用して、TiDB の[キーワード](/keywords.md)に関する情報を取得できます。
 
 ```sql
 USE INFORMATION_SCHEMA;

@@ -1,13 +1,13 @@
 ---
 title: DEALLOCATE | TiDB SQL Statement Reference
-summary: DEALLOCATEステートメントは、サーバー側のプリペアドステートメントへのSQLインターフェイスを提供します。MySQLの互換性があります。PREPAREステートメントと実行ステートメントも参照してください。
+summary: TiDB データベースの DEALLOCATE の使用法の概要。
 ---
 
-# 割り当てを解除する {#deallocate}
+# 割り当て解除 {#deallocate}
 
-`DEALLOCATE`ステートメントは、サーバー側のプリペアド ステートメントへの SQL インターフェイスを提供します。
+`DEALLOCATE`ステートメントは、サーバー側の準備済みステートメントへの SQL インターフェイスを提供します。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 DeallocateStmt ::=
@@ -45,11 +45,11 @@ mysql> DEALLOCATE PREPARE mystmt;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`DEALLOCATE`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`DEALLOCATE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [準備する](/sql-statements/sql-statement-prepare.md)
 -   [実行する](/sql-statements/sql-statement-execute.md)

@@ -1,11 +1,11 @@
 ---
 title: KEY_COLUMN_USAGE
-summary: KEY_COLUMN_USAGE表は、列のキー制約を示します。CONSTRAINT_CATALOGは常にdefです。CONSTRAINT_SCHEMAは制約が属するスキーマの名前。CONSTRAINT_NAMEは制約の名前。TABLE_CATALOGは常にdefです。TABLE_SCHEMAはテーブルが属するスキーマの名前。TABLE_NAMEは制約のあるテーブルの名前。COLUMN_NAMEは制約のある列の名前。ORDINAL_POSITIONは制約内の列の位置。POSITION_IN_UNIQUE_CONSTRAINTは一意制約と主キー制約が空。REFERENCED_TABLE_SCHEMAは制約によって参照されるスキーマの名前。REFERENCED_TABLE_NAMEは制約によって参照されるテーブルの名前。REFERENCED_COLUMN_NAMEは制約によって参照される列の名前。
+summary: KEY_COLUMN_USAGE information_schema テーブルについて学習します。
 ---
 
-# KEY_COLUMN_USAGE {#key-column-usage}
+# キー列の使用法 {#key-column-usage}
 
-`KEY_COLUMN_USAGE`表は、主キー制約などの列のキー制約を示します。
+`KEY_COLUMN_USAGE`表では、主キー制約などの列のキー制約について説明します。
 
 ```sql
 USE information_schema;
@@ -62,7 +62,7 @@ SELECT * FROM key_column_usage WHERE table_schema='mysql' and table_name='user';
            REFERENCED_COLUMN_NAME: NULL
     2 rows in set (0.00 sec)
 
-`KEY_COLUMN_USAGE`のテーブルの列の説明は次のとおりです。
+`KEY_COLUMN_USAGE`表の列の説明は次のとおりです。
 
 -   `CONSTRAINT_CATALOG` : 制約が属するカタログの名前。値は常に`def`です。
 -   `CONSTRAINT_SCHEMA` : 制約が属するスキーマの名前。
@@ -72,7 +72,7 @@ SELECT * FROM key_column_usage WHERE table_schema='mysql' and table_name='user';
 -   `TABLE_NAME` : 制約のあるテーブルの名前。
 -   `COLUMN_NAME` : 制約のある列の名前。
 -   `ORDINAL_POSITION` : テーブル内ではなく、制約内の列の位置。位置番号は`1`から始まります。
--   `POSITION_IN_UNIQUE_CONSTRAINT` : 一意制約と主キー制約が空です。外部キー制約の場合、この列は参照されるテーブルのキーの位置になります。
+-   `POSITION_IN_UNIQUE_CONSTRAINT` : 一意制約と主キー制約は空です。外部キー制約の場合、この列は参照先のテーブルのキーの位置です。
 -   `REFERENCED_TABLE_SCHEMA` : 制約によって参照されるスキーマの名前。現在、TiDB では、外部キー制約を除くすべての制約におけるこの列の値は`nil`です。
 -   `REFERENCED_TABLE_NAME` : 制約によって参照されるテーブルの名前。現在、TiDB では、外部キー制約を除くすべての制約におけるこの列の値は`nil`です。
 -   `REFERENCED_COLUMN_NAME` : 制約によって参照される列の名前。現在、TiDB では、外部キー制約を除くすべての制約におけるこの列の値は`nil`です。

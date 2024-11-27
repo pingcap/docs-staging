@@ -7,7 +7,7 @@ summary: SQL ステートメントをより効率的に記述するのに役立�
 
 一部のトランザクション シナリオでは、アプリケーションの複雑さにより、最大 2,000 行の単一の SQL ステートメントを記述する必要がある場合があります。ステートメントには、多数の集計と複数レベルのサブクエリのネストが含まれる可能性があります。このような長い SQL ステートメントを維持することは、開発者にとって悪夢になる可能性があります。
 
-このような長い SQL ステートメントを回避するには、 [ビュー](/develop/dev-guide-use-views.md)使用してクエリを簡略化するか、 [一時テーブル](/develop/dev-guide-use-temporary-tables.md)を使用して中間クエリ結果をキャッシュします。
+このような長い SQL 文を回避するには、 [ビュー](/develop/dev-guide-use-views.md)使用してクエリを簡略化するか、 [一時テーブル](/develop/dev-guide-use-temporary-tables.md)使用して中間クエリ結果をキャッシュします。
 
 このドキュメントでは、クエリ結果を再利用するためのより便利な方法である、TiDB の共通テーブル式 (CTE) 構文を紹介します。
 
@@ -208,3 +208,17 @@ SELECT * FROM fibonacci;
 ## 続きを読む {#read-more}
 
 -   [と](/sql-statements/sql-statement-with.md)
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

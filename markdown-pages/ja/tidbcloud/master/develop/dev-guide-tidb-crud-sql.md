@@ -15,13 +15,13 @@ TiDB クラスターに接続していることを確認してください。接
 
 > **注記：**
 >
-> この文書では[TiDB で SQL を探索する](/basic-sql-operations.md)参照して簡略化しています。詳細については[TiDB で SQL を探索する](/basic-sql-operations.md)を参照してください。
+> この文書では[TiDB で SQL を探索する](/basic-sql-operations.md)参照して簡略化しています。詳細については[TiDB で SQL を探索する](/basic-sql-operations.md)参照してください。
 
 TiDB は MySQL と互換性があり、ほとんどの場合 MySQL ステートメントを直接使用できます。サポートされていない機能については、 [MySQLとの互換性](/mysql-compatibility.md#unsupported-features)参照してください。
 
 SQL を試して、MySQL クエリと TiDB の互換性をテストするには、 [TiDB プレイグラウンド](https://play.tidbcloud.com/?utm_source=docs&#x26;utm_medium=basic-sql-operations)試すことができます。また、最初に TiDB クラスターをデプロイし、その中で SQL ステートメントを実行することもできます。
 
-このページでは、DDL、DML、CRUD 操作などの基本的なTiDB SQLステートメントについて説明します。TiDB ステートメントの完全なリストについては、 [TiDB SQL構文図](https://pingcap.github.io/sqlgram/)を参照してください。
+このページでは、DDL、DML、CRUD 操作などの基本的なTiDB SQLステートメントについて説明します。TiDB ステートメントの完全なリストについては、 [SQL ステートメントの概要](/sql-statements/sql-statement-overview.md)参照してください。
 
 ## カテゴリ {#category}
 
@@ -35,7 +35,7 @@ SQL は関数に応じて次の 4 つのタイプに分けられます。
 
 -   **DCL (データ制御言語)** : アクセス権限とセキュリティ レベルを定義するために使用されます。
 
-以下では主にDMLとDQLについて紹介します。DDLとDCLの詳細については[TiDB で SQL を探索する](/basic-sql-operations.md)または[TiDB SQL構文の詳細な説明](https://pingcap.github.io/sqlgram/)を参照してください。
+以下では主にDMLとDQLについて紹介します。DDLとDCLの詳細については[TiDB で SQL を探索する](/basic-sql-operations.md)または[SQL ステートメントの概要](/sql-statements/sql-statement-overview.md)参照してください。
 
 ## データ操作言語 {#data-manipulation-language}
 
@@ -47,19 +47,19 @@ SQL は関数に応じて次の 4 つのタイプに分けられます。
 INSERT INTO person VALUES(1,'tom','20170912');
 ```
 
-いくつかのフィールドのデータを含むレコードをテーブルに挿入するには、次`INSERT`ステートメントを使用します。
+いくつかのフィールドのデータを含むレコードをテーブルに挿入するには、次の`INSERT`ステートメントを使用します。
 
 ```sql
 INSERT INTO person(id,name) VALUES('2','bob');
 ```
 
-テーブル内のレコードの一部のフィールドを更新するには、次`UPDATE`ステートメントを使用します。
+テーブル内のレコードの一部のフィールドを更新するには、 `UPDATE`ステートメントを使用します。
 
 ```sql
 UPDATE person SET birthday='20180808' WHERE id=2;
 ```
 
-テーブル内のデータを削除するには、次`DELETE`ステートメントを使用します。
+テーブル内のデータを削除するには、次の`DELETE`ステートメントを使用します。
 
 ```sql
 DELETE FROM person WHERE id=2;

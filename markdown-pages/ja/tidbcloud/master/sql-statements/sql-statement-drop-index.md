@@ -1,13 +1,13 @@
 ---
 title: DROP INDEX | TiDB SQL Statement Reference
-summary: ドロップインデックスは、指定されたテーブルからインデックスを削除し、TiKV内のスペースを空きとしてマークします。MySQLの互換性では、CLUSTEREDタイプの主キーの削除はサポートされていません。
+summary: TiDB データベースの DROP INDEX の使用法の概要。
 ---
 
-# ドロップインデックス {#drop-index}
+# インデックスを削除 {#drop-index}
 
-このステートメントは、指定されたテーブルからインデックスを削除し、TiKV 内のスペースを空きとしてマークします。
+このステートメントは、指定されたテーブルからインデックスを削除し、TiKV 内の領域を空きとしてマークします。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 DropIndexStmt ::=
@@ -56,14 +56,14 @@ mysql> DROP INDEX c1 ON t1;
 Query OK, 0 rows affected (0.30 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
--   `CLUSTERED`タイプの主キーの削除はサポートされていません。 `CLUSTERED`種類の主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
+-   `CLUSTERED`タイプの主キーの削除はサポートされていません。 `CLUSTERED`タイプの主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [インデックスを表示](/sql-statements/sql-statement-show-indexes.md)
 -   [インデックスの作成](/sql-statements/sql-statement-create-index.md)
--   [インデックスの追加](/sql-statements/sql-statement-add-index.md)
--   [インデックスの名前を変更](/sql-statements/sql-statement-rename-index.md)
+-   [インデックスを追加](/sql-statements/sql-statement-add-index.md)
+-   [インデックス名の変更](/sql-statements/sql-statement-rename-index.md)
 -   [インデックスの変更](/sql-statements/sql-statement-alter-index.md)

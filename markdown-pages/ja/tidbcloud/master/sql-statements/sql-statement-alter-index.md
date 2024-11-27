@@ -1,11 +1,11 @@
 ---
 title: ALTER INDEX
-summary: An overview of the usage of ALTER INDEX for the TiDB database.
+summary: TiDB データベースの ALTER INDEX の使用法の概要。
 ---
 
 # インデックスの変更 {#alter-index}
 
-`ALTER INDEX`ステートメントは、インデックスの可視性を`Visible`または`Invisible`に変更するために使用されます。非表示のインデックスは DML ステートメントによって維持されますが、クエリ オプティマイザーでは使用されません。これは、インデックスを永続的に削除する前に再確認したい場合に役立ちます。
+`ALTER INDEX`ステートメントは、インデックスの可視性を`Visible`または`Invisible`に変更するために使用されます。非表示のインデックスは DML ステートメントによって維持されますが、クエリ オプティマイザーでは使用されません。これは、インデックスを永続的に削除する前に再確認したいシナリオで役立ちます。TiDB v8.0.0 以降では、システム変数[`tidb_opt_use_invisible_indexes`](/system-variables.md#tidb_opt_use_invisible_indexes-new-in-v800)を変更することで、オプティマイザーが非表示のインデックスを選択するようにすることができます。
 
 ## 概要 {#synopsis}
 
@@ -106,7 +106,6 @@ Query OK, 0 rows affected (0.02 sec)
 
 -   TiDB の非表示インデックスは、MySQL 8.0 の同等の機能に基づいてモデル化されています。
 -   MySQL と同様に、TiDB では`PRIMARY KEY`インデックスを非表示にすることはできません。
--   MySQL には、非表示のインデックスをすべて再び*表示できる*ようにするオプティマイザ スイッチ`use_invisible_indexes=on`が用意されています。この機能は TiDB では使用できません。
 
 ## 参照 {#see-also}
 

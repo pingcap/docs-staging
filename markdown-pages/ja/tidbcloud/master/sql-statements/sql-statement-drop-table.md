@@ -1,13 +1,13 @@
 ---
 title: DROP TABLE | TiDB SQL Statement Reference
-summary: ドロップテーブルは、データベースからテーブルを削除します。存在しない場合はエラーが返されます。一時テーブルを削除するには、DROP TEMPORARY TABLEまたはDROP GLOBAL TEMPORARY TABLEを使用します。通常のテーブルまたは一時テーブルを削除するには、DROP TABLEを使用します。MySQLの互換性では、RESTRICTとCASCADEは構文的にのみサポートされています。関連情報として、テーブルの作成や表示、およびテーブルの表示があります。
+summary: TiDB データベースの DROP TABLE の使用法の概要。
 ---
 
-# ドロップテーブル {#drop-table}
+# テーブルを削除 {#drop-table}
 
-このステートメントは、現在選択されているデータベースからテーブルを削除します。 `IF EXISTS`修飾子が使用されない限り、テーブルが存在しない場合はエラーが返されます。
+このステートメントは、現在選択されているデータベースからテーブルを削除し`IF EXISTS` 。1 修飾子が使用されていない限り、テーブルが存在しない場合はエラーが返されます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 DropTableStmt ::=
@@ -26,11 +26,11 @@ TableNameList ::=
 
 ## 一時テーブルを削除する {#drop-temporary-tables}
 
-次の構文を使用して、通常のテーブルと一時テーブルを削除できます。
+通常のテーブルと一時テーブルを削除するには、次の構文を使用できます。
 
--   ローカル一時テーブルを削除するには`DROP TEMPORARY TABLE`を使用します。
--   グローバル一時テーブルを削除するには`DROP GLOBAL TEMPORARY TABLE`を使用します。
--   通常のテーブルまたは一時テーブルを削除するには、 `DROP TABLE`を使用します。
+-   ローカル一時テーブルを削除するには`DROP TEMPORARY TABLE`使用します。
+-   グローバル一時テーブルを削除するには`DROP GLOBAL TEMPORARY TABLE`使用します。
+-   通常のテーブルまたは一時テーブルを削除するには`DROP TABLE`使用します。
 
 ## 例 {#examples}
 
@@ -62,12 +62,12 @@ mysql> DROP TABLE v1;
 Query OK, 0 rows affected (0.23 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-現在、 `RESTRICT`と`CASCADE`は構文的にのみサポートされています。
+現在、 `RESTRICT`と`CASCADE`構文的にのみサポートされています。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
--   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
+-   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)
 -   [テーブルを表示](/sql-statements/sql-statement-show-tables.md)

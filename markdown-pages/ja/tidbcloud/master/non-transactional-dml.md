@@ -202,7 +202,7 @@ BATCH ON id LIMIT 2 DRY RUN QUERY DELETE FROM t WHERE v < 6;
 1 row in set
 ```
 
-### 最初のバッチと最後のバッチに対応するステートメントをクエリする {#query-the-statements-corresponding-to-the-first-and-the-last-batches}
+### 最初のバッチと最後のバッチに対応するステートメントをクエリします {#query-the-statements-corresponding-to-the-first-and-the-last-batches}
 
 非トランザクション DML ステートメント内の最初のバッチと最後のバッチに対応する実際の DML ステートメントを照会するには、この非トランザクション DML ステートメントに`DRY RUN`を追加します。すると、TiDB はバッチを分割するだけで、これらの SQL ステートメントは実行しません。バッチが多数ある場合があるため、すべてのバッチが表示されるわけではなく、最初のバッチと最後のバッチのみが表示されます。
 
@@ -319,7 +319,7 @@ batch-dml は、DML ステートメントの実行中にトランザクション
 
 ## よくある問題 {#common-issues}
 
-### 複数のテーブル結合ステートメントを実行すると、 <code>Unknown column xxx in &#39;where clause&#39;</code>エラーが発生します。 {#executing-a-multiple-table-joins-statement-results-in-the-code-unknown-column-xxx-in-where-clause-code-error}
+### 複数のテーブル結合ステートメントを実行すると<code>Unknown column xxx in &#39;where clause&#39;</code>というエラーが発生します。 {#executing-a-multiple-table-joins-statement-results-in-the-code-unknown-column-xxx-in-where-clause-code-error}
 
 このエラーは、クエリで連結された`WHERE`句が、 [破片の列](#parameter-description)が定義されているテーブル以外のテーブルに関係する場合に発生します。たとえば、次の SQL ステートメントでは、シャード列は`t2.id`であり、テーブル`t2`で定義されていますが、 `WHERE`句にはテーブル`t2`と`t3`関係しています。
 
@@ -369,7 +369,7 @@ SELECT t2.id, t2.v, t3.id FROM t2 JOIN t3 ON t2.id = t3.id
 
 <CustomContent platform="tidb">
 
-選択したシャード列がこれらのサポートされていないタイプのいずれでもないときにエラーが発生する場合は、PingCAP またはコミュニティから[サポートを受ける](/support.md)提供されます。
+選択したシャード列がこれらのサポートされていないタイプのいずれでもないときにエラーが発生する場合は、PingCAP またはコミュニティから[サポートを受ける](/support.md)取得します。
 
 </CustomContent>
 

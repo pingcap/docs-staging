@@ -1,23 +1,17 @@
 ---
-title: Connect to TiDB Cloud Dedicated via Public Connection
-summary: パブリック接続を介してTiDB Cloudクラスターに接続する方法を学習します。
+title: Connect to TiDB Dedicated via Standard Connection
+summary: 標準接続を介してTiDB Cloudクラスターに接続する方法を学習します。
 ---
 
-# パブリック接続経由​​でTiDB Cloud Dedicatedに接続する {#connect-to-tidb-cloud-dedicated-via-public-connection}
+# 標準接続を介してTiDB専用に接続する {#connect-to-tidb-dedicated-via-standard-connection}
 
-このドキュメントでは、パブリック接続を介してTiDB Cloud Dedicated クラスターに接続する方法について説明します。パブリック接続はトラフィック フィルター付きのパブリック エンドポイントを公開するため、ラップトップから SQL クライアントを介してTiDB Cloud Dedicated クラスターに接続できます。
+このドキュメントでは、標準接続を介して TiDB 専用クラスターに接続する方法について説明します。標準接続ではトラフィック フィルター付きのパブリック エンドポイントが公開されるため、ラップトップから SQL クライアントを介して TiDB 専用クラスターに接続できます。
 
 > **ヒント：**
 >
-> パブリック接続を介してTiDB Cloud Serverless クラスターに接続する方法については、 [パブリックエンドポイント経由でTiDB Cloud Serverlessに接続する](/tidb-cloud/connect-via-standard-connection-serverless.md)を参照してください。
+> 標準接続を介して TiDB Serverless クラスターに接続する方法については、 [パブリックエンドポイント経由でTiDB Serverlessに接続する](/tidb-cloud/connect-via-standard-connection-serverless.md)参照してください。
 
-## 前提条件: IPアクセスリストを構成する {#prerequisite-configure-ip-access-list}
-
-パブリック接続の場合、 TiDB Cloud Dedicated は IP アクセス リスト内のアドレスからのクライアント接続のみを許可します。IP アクセス リストを設定していない場合は、最初の接続の前に[IPアクセスリストを構成する](/tidb-cloud/configure-ip-access-list.md)手順に従って設定してください。
-
-## クラスターに接続する {#connect-to-the-cluster}
-
-パブリック接続を介してTiDB Cloud Dedicated クラスターに接続するには、次の手順を実行します。
+標準接続を介して TiDB 専用クラスターに接続するには、次の手順を実行します。
 
 1.  ターゲット クラスターの概要ページを開きます。
 
@@ -31,14 +25,30 @@ summary: パブリック接続を介してTiDB Cloudクラスターに接続す�
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
-3.  接続ダイアログで、 **「接続タイプ」**ドロップダウンリストから**「パブリック」**を選択します。
+3.  クラスターのトラフィック フィルターを作成します。トラフィック フィルターは、SQL クライアント経由でTiDB Cloudにアクセスできる IP と CIDR アドレスのリストです。
 
-    IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](/tidb-cloud/configure-ip-access-list.md)に従って最初の接続の前に設定してください。
+    トラフィック フィルターがすでに設定されている場合、次のサブ手順をスキップします。トラフィック フィルターが空の場合は、次のサブ手順に従ってフィルターを追加します。
 
-4.  **CA 証明書**をクリックして、TiDB クラスターへの TLS 接続用の CA 証明書をダウンロードします。CA 証明書は、デフォルトで TLS 1.2 バージョンをサポートします。
+    1.  いずれかのボタンをクリックして、ルールをすばやく追加します。
 
-5.  希望する接続方法を選択し、タブの接続文字列とサンプル コードを参照してクラスターに接続します。
+        -   **現在のIPアドレスを追加**
+        -   **どこからでもアクセスを許可する**
 
-## 次は何か {#what-s-next}
+    2.  新しく追加された IP アドレスまたは CIDR 範囲の説明をオプションで入力します。
+
+    3.  変更を確認するには、 **「フィルターの作成」を**クリックします。
+
+4.  ダイアログの「**ステップ 2: CA 証明書のダウンロード**」で、「TiDB クラスターへの TLS 接続用の**CA 証明書のダウンロード**」をクリックします。CA 証明書は、デフォルトで TLS 1.2 バージョンをサポートします。
+
+    > **注記：**
+    >
+    > -   CA 証明書は TiDB 専用クラスターでのみ使用できます。
+    > -   現在、 TiDB Cloud、MySQL、MyCLI、JDBC、Python、Go、Node.js の接続方法の接続文字列とサンプル コードのみを提供しています。
+
+5.  ダイアログの**「ステップ 3: SQL クライアントを使用して接続する**」で、希望する接続方法のタブをクリックし、タブの接続文字列とサンプル コードを参照してクラスターに接続します。
+
+    接続文字列の`--ssl-ca`オプションの引数として、ダウンロードした CA ファイルのパスを使用する必要があることに注意してください。
+
+## 次は何ですか {#what-s-next}
 
 TiDB クラスターに正常に接続されたら、 [TiDBでSQL文を調べる](/basic-sql-operations.md)実行できます。

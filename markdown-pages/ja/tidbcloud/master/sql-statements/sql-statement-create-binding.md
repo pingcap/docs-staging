@@ -1,17 +1,17 @@
 ---
 title: CREATE [GLOBAL|SESSION] BINDING
-summary: TiDBでは、GLOBALまたはSESSIONを指定してバインディングを作成できます。バインディングを使用すると、クエリを変更せずにヒントを挿入できます。バインドされたSQLステートメントはパラメータ化され、システムテーブルに保存されます。オプティマイザーは最小のコストでプランをバインドし、対応するオプティマイザーヒントが使用可能です。また、バインディングを作成する方法やMySQLの互換性についても参照できます。
+summary: TiDB データベースでの CREATE BINDING の使用。
 ---
 
-# [グローバル|セッション] バインディングの作成 {#create-global-session-binding}
+# [グローバル|セッション]バインディングの作成 {#create-global-session-binding}
 
 このステートメントは、TiDB に新しい実行プラン バインディングを作成します。バインディングを使用すると、基になるクエリを変更することなく、ステートメントにヒントを挿入できます。
 
-`BINDING`は`GLOBAL`または`SESSION`いずれかに基づいて指定できます。デフォルトは`SESSION`です。
+`BINDING` `GLOBAL`または`SESSION`いずれかの基準になります。デフォルトは`SESSION`です。
 
-バインドされた SQL ステートメントはパラメータ化され、システム テーブルに保存されます。 SQL クエリが処理されるとき、パラメーター化された SQL ステートメントとシステム テーブル内のバインドされた SQL ステートメントが一貫しており、システム変数`tidb_use_plan_baselines`が`ON` (デフォルト) に設定されている限り、対応するオプティマイザー ヒントが使用可能です。複数の実行プランが利用可能な場合、オプティマイザは最小のコストでプランをバインドすることを選択します。詳細については、 [バインディングを作成する](/sql-plan-management.md#create-a-binding)を参照してください。
+バインドされた SQL 文はパラメータ化され、システム テーブルに格納されます。SQL クエリが処理されるとき、パラメータ化された SQL 文とシステム テーブル内のバインドされた文が一致し、システム変数`tidb_use_plan_baselines`が`ON` (デフォルト) に設定されていれば、対応するオプティマイザ ヒントが利用できます。複数の実行プランが利用できる場合、オプティマイザはコストが最も低いプランをバインドすることを選択します。詳細については、 [バインディングを作成する](/sql-plan-management.md#create-a-binding)を参照してください。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 CreateBindingStmt ::=
@@ -29,7 +29,7 @@ BindableStmt ::=
 
 ## 例 {#examples}
 
-SQL ステートメントまたは履歴実行計画に従ってバインディングを作成できます。
+SQL ステートメントまたは履歴実行プランに従ってバインディングを作成できます。
 
 次の例は、SQL ステートメントに従ってバインディングを作成する方法を示しています。
 
@@ -133,7 +133,7 @@ mysql> EXPLAIN ANALYZE SELECT * FROM t1 WHERE b = 123;
 3 rows in set (0.01 sec)
 ```
 
-次の例は、履歴実行計画に従ってバインディングを作成する方法を示しています。
+次の例は、履歴実行プランに従ってバインディングを作成する方法を示しています。
 
 ```sql
 mysql> CREATE TABLE t(id INT PRIMARY KEY , a INT, KEY(a));
@@ -166,14 +166,14 @@ mysql> SELECT @@LAST_PLAN_FROM_BINDING;
 
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
+このステートメントは、MySQL 構文に対する TiDB 拡張です。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
--   [[グローバル|セッション] バインディングを削除します](/sql-statements/sql-statement-drop-binding.md)
--   [[グローバル|セッション] バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
--   [分析テーブル](/sql-statements/sql-statement-analyze-table.md)
--   [オプティマイザーのヒント](/optimizer-hints.md)
--   [SQL計画管理](/sql-plan-management.md)
+-   [[グローバル|セッション]バインディングの削除](/sql-statements/sql-statement-drop-binding.md)
+-   [[グローバル|セッション]バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
+-   [テーブルを分析](/sql-statements/sql-statement-analyze-table.md)
+-   [オプティマイザーヒント](/optimizer-hints.md)
+-   [SQL プラン管理](/sql-plan-management.md)

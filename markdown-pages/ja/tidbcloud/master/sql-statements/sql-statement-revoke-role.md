@@ -1,13 +1,13 @@
 ---
 title: REVOKE <role> | TiDB SQL Statement Reference
-summary: 指定されたユーザーから以前に割り当てられたロールを削除するステートメントです。MySQL 8.0のロール機能と完全に互換性があります。必要に応じて、バグを報告してください。
+summary: TiDB データベースの REVOKE <role> の使用法の概要。
 ---
 
 # <code>REVOKE &#x3C;role></code> {#code-revoke-x3c-role-code}
 
 このステートメントは、指定されたユーザー (またはユーザーのリスト) から以前に割り当てられたロールを削除します。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 RevokeRoleStmt ::=
@@ -22,7 +22,7 @@ UsernameList ::=
 
 ## 例 {#examples}
 
-`root`ユーザーとして TiDB に接続します。
+`root`人のユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
@@ -44,7 +44,7 @@ GRANT analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-`jennifer`ユーザーとして TiDB に接続します。
+`jennifer`人のユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
@@ -86,26 +86,26 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-`root`ユーザーとして TiDB に接続します。
+`root`人のユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
 ```
 
-ステートメント`SET DEFAULT ROLE`使用して、ロール`analyticsteam`を`jennifer`に関連付けることができます。
+ステートメント`SET DEFAULT ROLE` 、ロール`analyticsteam`を`jennifer`に関連付けるために使用できます。
 
 ```sql
 SET DEFAULT ROLE analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.02 sec)
 ```
 
-`jennifer`ユーザーとして TiDB に接続します。
+`jennifer`人のユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-この後、ユーザー`jennifer`はロール`analyticsteam`に関連付けられた権限を持ち、ユーザー`jennifer`はステートメント`SET ROLE`を実行する必要がなくなります。
+この後、ユーザー`jennifer`ロール`analyticsteam`に関連付けられた権限を持ち、 `jennifer`ステートメント`SET ROLE`を実行する必要がなくなります。
 
 ```sql
 SHOW GRANTS;
@@ -127,26 +127,26 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-`root`ユーザーとして TiDB に接続します。
+`root`人のユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
 ```
 
-Analyticsteam の役割を`jennifer`から取り消します。
+`jennifer`から analyticsteam の役割を取り消します:
 
 ```sql
 REVOKE analyticsteam FROM jennifer;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-`jennifer`ユーザーとして TiDB に接続します。
+`jennifer`人のユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-`jennifer`の権限を表示します。
+`jennifer`の権限を表示します:
 
 ```sql
 SHOW GRANTS;
@@ -158,11 +158,11 @@ SHOW GRANTS;
 1 row in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`REVOKE <role>`ステートメントは、MySQL 8.0 のロール機能と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`REVOKE <role>`ステートメントは、MySQL 8.0 のロール機能と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [`CREATE ROLE`](/sql-statements/sql-statement-create-role.md)
 -   [`DROP ROLE`](/sql-statements/sql-statement-drop-role.md)
@@ -172,6 +172,6 @@ TiDB の`REVOKE <role>`ステートメントは、MySQL 8.0 のロール機能�
 
 <CustomContent platform="tidb">
 
--   [役割ベースのアクセス制御](/role-based-access-control.md)
+-   [ロールベースのアクセス制御](/role-based-access-control.md)
 
 </CustomContent>

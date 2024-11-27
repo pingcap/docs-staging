@@ -1,33 +1,32 @@
 ---
-title: Back Up and Restore TiDB Cloud Serverless Data
-summary: TiDB Cloud Serverless クラスターをバックアップおよび復元する方法を学びます。
-aliases: ['/tidbcloud/restore-deleted-tidb-cluster']
+title: Back Up and Restore TiDB Serverless Data
+summary: TiDB Serverless クラスターをバックアップおよび復元する方法を学びます。
 ---
 
-# TiDB Cloudサーバーレス データのバックアップと復元 {#back-up-and-restore-tidb-cloud-serverless-data}
+# TiDB サーバーレス データのバックアップと復元 {#back-up-and-restore-tidb-serverless-data}
 
-このドキュメントでは、TiDB Cloud上のTiDB Cloud Serverless クラスター データをバックアップおよび復元する方法について説明します。
+このドキュメントでは、TiDB Cloudで TiDB Serverless クラスター データをバックアップおよび復元する方法について説明します。
 
 > **ヒント：**
 >
-> TiDB Cloud Dedicated クラスター データをバックアップおよび復元する方法については、 [TiDB Cloud専用データのバックアップと復元](/tidb-cloud/backup-and-restore.md)参照してください。
+> TiDB 専用クラスター データをバックアップおよび復元する方法については、 [TiDB専用データのバックアップと復元](/tidb-cloud/backup-and-restore.md)参照してください。
 
 ## 制限事項 {#limitations}
 
--   TiDB Cloud Serverless クラスターは、バックアップからのインプレース復元のみをサポートしていることに注意してください。復元を実行すると、 `mysql`スキーマ内のテーブルも影響を受けます。したがって、ユーザーの資格情報や権限、システム変数に加えられた変更は、バックアップが作成された時点の状態にロールバックされます。
+-   TiDB Serverless クラスターは、バックアップからのインプレース復元のみをサポートしていることに注意してください。復元を実行すると、 `mysql`スキーマ内のテーブルも影響を受けます。したがって、ユーザーの資格情報や権限、システム変数に加えられた変更は、バックアップが作成された時点の状態にロールバックされます。
 -   手動バックアップはまだサポートされていません。
 -   復元プロセス中はクラスターは使用できなくなり、既存の接続は終了します。復元が完了すると、新しい接続を確立できます。
 -   TiFlashレプリカが有効になっている場合、データをTiFlashで再構築する必要があるため、復元後しばらくの間レプリカは使用できなくなります。
 
 ## バックアップ {#backup}
 
-バックアップ設定に従って、 TiDB Cloud Serverless クラスターの自動バックアップがスケジュールされるため、極端な災害状況での損失を軽減できます。
+バックアップ設定に従って、TiDB Serverless クラスターの自動バックアップがスケジュールされるため、極端な災害状況での損失を軽減できます。
 
 ### 自動バックアップ {#automatic-backup}
 
-自動バックアップにより、設定したバックアップ時間に毎日TiDB Cloud Serverless クラスターのデータをバックアップできます。バックアップ時間を設定するには、次の手順を実行します。
+自動バックアップにより、設定したバックアップ時間に毎日 TiDB Serverless クラスターのデータをバックアップできます。バックアップ時間を設定するには、次の手順を実行します。
 
-1.  TiDB Cloud Serverless クラスターの**バックアップ**ページに移動します。
+1.  TiDB Serverless クラスターの**バックアップ**ページに移動します。
 
 2.  **「バックアップ設定」**をクリックします。これにより、 **「バックアップ設定」**ウィンドウが開き、要件に応じて自動バックアップ設定を構成できます。
 
@@ -35,7 +34,7 @@ aliases: ['/tidbcloud/restore-deleted-tidb-cluster']
 
         優先バックアップ時間を指定しない場合、 TiDB Cloud はデフォルトのバックアップ時間 (クラスターが配置されているリージョンのタイムゾーンの午前 2 時) を割り当てます。
 
-    -   **「バックアップ保持」**で、最小バックアップ データ保持期間を構成します。
+    -   **「バックアップ保持」**で、最小バックアップ データの保持期間を構成します。
 
         バックアップの保持期間は 7 日から 90 日の範囲で設定する必要があります。
 
@@ -51,7 +50,7 @@ aliases: ['/tidbcloud/restore-deleted-tidb-cluster']
 
 ## 復元する {#restore}
 
-TiDB Cloud Serverless はインプレース復元のみをサポートしています。バックアップからTiDB Cloud Serverless クラスターを復元するには、次の手順に従います。
+TiDB Serverless はインプレース復元のみをサポートします。バックアップから TiDB Serverless クラスターを復元するには、次の手順に従います。
 
 1.  クラスターの**バックアップ**ページに移動します。
 

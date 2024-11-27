@@ -9,12 +9,12 @@ summary: 復元リソースの使用方法を学習します。
 
 `tidbcloud_restore`リソースの機能は次のとおりです。
 
--   バックアップに応じて、 TiDB Cloud Dedicated クラスターの復元タスクを作成します。
+-   バックアップに応じて、TiDB 専用クラスターの復元タスクを作成します。
 
 ## 前提条件 {#prerequisites}
 
 -   [TiDB Cloud Terraform プロバイダーを入手](/tidb-cloud/terraform-get-tidbcloud-provider.md) 。
--   バックアップと復元機能は、 TiDB Cloud Serverless クラスターでは使用できません。復元リソースを使用するには、 TiDB Cloud Dedicated クラスターを作成していることを確認してください。
+-   バックアップと復元機能は、TiDB Serverless クラスターでは使用できません。復元リソースを使用するには、TiDB 専用クラスターを作成していることを確認してください。
 
 ## 復元タスクを作成する {#create-a-restore-task}
 

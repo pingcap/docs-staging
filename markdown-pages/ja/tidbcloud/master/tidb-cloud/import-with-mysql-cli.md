@@ -11,7 +11,7 @@ summary: MySQL CLI 経由でTiDB Cloudにデータをインポートする方法
 
 MySQL CLI 経由でTiDB Cloudにデータをインポートするには、次の前提条件を満たす必要があります。
 
--   TiDB Cloudクラスターにアクセスできます。TiDB クラスターがない場合は、 [TiDB Cloudサーバーレスクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)手順に従って作成してください。
+-   TiDB Cloudクラスターにアクセスできます。TiDB クラスターがない場合は、 [TiDB サーバーレスクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)手順に従って作成してください。
 -   ローカル コンピュータに MySQL CLI をインストールします。
 
 ## ステップ1. TiDB Cloudクラスターに接続する {#step-1-connect-to-your-tidb-cloud-cluster}
@@ -19,7 +19,7 @@ MySQL CLI 経由でTiDB Cloudにデータをインポートするには、次の
 選択した TiDB デプロイメント オプションに応じて、TiDB クラスターに接続します。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Serverless">
 
 1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
@@ -27,7 +27,7 @@ MySQL CLI 経由でTiDB Cloudにデータをインポートするには、次の
 
 3.  接続ダイアログの構成が動作環境と一致していることを確認します。
 
-    -   **接続タイプ**は`Public`に設定されています。
+    -   **エンドポイント タイプは**`Public`に設定されています。
     -   **Connect With は**`MySQL CLI`に設定されています。
     -   **オペレーティング システムは**環境に適合します。
 
@@ -38,7 +38,7 @@ MySQL CLI 経由でTiDB Cloudにデータをインポートするには、次の
     > 以前にパスワードを作成したことがある場合は、元のパスワードを使用するか、 **「パスワードのリセット」**をクリックして新しいパスワードを生成します。
 
 </div>
-<div label="TiDB Cloud Dedicated">
+<div label="TiDB Dedicated">
 
 1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
@@ -46,7 +46,7 @@ MySQL CLI 経由でTiDB Cloudにデータをインポートするには、次の
 
 3.  **[どこからでもアクセスを許可] を**クリックします。
 
-    接続文字列を取得する方法の詳細については、 [パブリック接続経由​​でTiDB Cloud Dedicatedに接続する](/tidb-cloud/connect-via-standard-connection.md)参照してください。
+    接続文字列を取得する方法の詳細については、 [標準接続を介してTiDB専用に接続する](/tidb-cloud/connect-via-standard-connection.md)参照してください。
 
 </div>
 </SimpleTab>
@@ -89,7 +89,7 @@ SQL ファイルからデータをインポートするには、次の手順を�
 
 > **注記：**
 >
-> ここで使用されるデフォルトのデータベース名は`test`ですが、独自のデータベースを手動で作成するか、SQL ファイルで`CREATE DATABASE`コマンドを使用することができます。
+> ここで使用されるデフォルトのデータベース名は`test`ですが、手動で独自のデータベースを作成することも、SQL ファイルで`CREATE DATABASE`コマンドを使用することもできます。
 
 </div>
 <div label="From a CSV file">
@@ -122,7 +122,7 @@ CSV ファイルからデータをインポートするには、次の手順を�
 
 > **注記：**
 >
-> `LOAD DATA LOCAL INFILE`構文の詳細については、 [`LOAD DATA`](/sql-statements/sql-statement-load-data.md)を参照してください。
+> `LOAD DATA LOCAL INFILE`詳細な構文については、 [`LOAD DATA`](/sql-statements/sql-statement-load-data.md)を参照してください。
 
 </div>
 </SimpleTab>

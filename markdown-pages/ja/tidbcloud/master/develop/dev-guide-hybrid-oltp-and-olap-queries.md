@@ -5,11 +5,11 @@ summary: TiDB に HTAP クエリを導入します。
 
 # HTAP クエリ {#htap-queries}
 
-HTAP は、ハイブリッド トランザクションおよび分析処理の略です。従来、データベースはトランザクションまたは分析シナリオ向けに設計されることが多く、データ プラットフォームをトランザクション処理と分析処理に分割する必要があり、分析クエリにすばやく応答するために、データをトランザクション データベースから分析データベースに複製する必要があります。TiDB データベースは、トランザクション タスクと分析タスクの両方を実行できるため、データ プラットフォームの構築が大幅に簡素化され、ユーザーはより新しいデータを分析に使用できるようになります。
+HTAP は、ハイブリッド トランザクションおよび分析処理の略です。従来、データベースはトランザクションまたは分析シナリオ向けに設計されることが多く、データ プラットフォームをトランザクション処理と分析処理に分割する必要があり、分析クエリにすばやく応答するには、データをトランザクション データベースから分析データベースに複製する必要があります。TiDB データベースは、トランザクション タスクと分析タスクの両方を実行できるため、データ プラットフォームの構築が大幅に簡素化され、ユーザーはより新しいデータを分析に使用できるようになります。
 
 TiDB は、オンライン トランザクション処理 (OLTP) に行ベースのstorageエンジンである TiKV を使用し、オンライン分析処理 (OLAP) に列指向storageエンジンであるTiFlash を使用します。行ベースのstorageエンジンと列指向storageエンジンは、HTAP に共存します。両方のstorageエンジンは、データを自動的に複製し、強力な一貫性を維持できます。行ベースのstorageエンジンは OLTP パフォーマンスを最適化し、列指向storageエンジンは OLAP パフォーマンスを最適化します。
 
-セクション[テーブルを作成する](/develop/dev-guide-create-table.md#use-htap-capabilities)では、TiDB の HTAP 機能を有効にする方法について説明します。次に、HTAP を使用してデータをより速く分析する方法について説明します。
+セクション[テーブルを作成する](/develop/dev-guide-create-table.md#use-htap-capabilities)では、TiDB の HTAP 機能を有効にする方法について説明します。次に、HTAP を使用してデータをより高速に分析する方法について説明します。
 
 ## データ準備 {#data-preparation}
 
@@ -19,13 +19,13 @@ TiDB は、オンライン トランザクション処理 (OLTP) に行ベース
 tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --ratings=1000000 --orders=1000000 --host 127.0.0.1 --port 4000 --drop-tables
 ```
 
-または、 [TiDB Cloudのインポート機能を使用する](/develop/dev-guide-bookshop-schema-design.md#method-2-via-tidb-cloud-import)して、事前に準備されたサンプル データをインポートすることもできます。
+または、 [TiDB Cloudのインポート機能を使用する](/develop/dev-guide-bookshop-schema-design.md#method-2-via-tidb-cloud-import)実行して、事前に準備されたサンプル データをインポートすることもできます。
 
 ## ウィンドウ関数 {#window-functions}
 
 データベースを使用する場合、データを保存し、アプリケーション機能 (書籍の注文や評価など) を提供するだけでなく、データベース内のデータを分析して、さらに操作や決定を行う必要がある場合もあります。
 
-[単一のテーブルからデータをクエリする](/develop/dev-guide-get-data-from-single-table.md)ドキュメントでは、集計クエリを使用してデータ全体を分析する方法を紹介しています。より複雑なシナリオでは、複数の集計クエリの結果を 1 つのクエリに集計する必要がある場合があります。特定の書籍の注文金額の履歴傾向を知りたい場合は、各月のすべての注文データに対して`sum`を集計し、次に`sum`の結果をまとめて集計して履歴傾向を取得します。
+[単一のテーブルからデータをクエリする](/develop/dev-guide-get-data-from-single-table.md)ドキュメントでは、集計クエリを使用してデータ全体を分析する方法を紹介しています。より複雑なシナリオでは、複数の集計クエリの結果を 1 つのクエリに集計する必要がある場合があります。特定の書籍の注文金額の履歴傾向を知りたい場合は、各月のすべての注文データに対して`sum`集計し、次に`sum`の結果をまとめて集計して履歴傾向を取得します。
 
 このような分析を容易にするために、TiDB v3.0 以降、TiDB はウィンドウ関数をサポートしています。この関数は、データの各行に対して、複数の行にわたるデータにアクセスする機能を提供します。通常の集計クエリとは異なり、ウィンドウ関数は結果セットを 1 つの行にマージせずに行を集計します。
 
@@ -40,7 +40,7 @@ FROM
 
 ### <code>ORDER BY</code>句 {#code-order-by-code-clause}
 
-集計ウィンドウ関数`sum()`を使用すると、特定の書籍の注文量の履歴傾向を分析できます。例:
+集計ウィンドウ関数`sum()`使用すると、特定の書籍の注文量の履歴傾向を分析できます。例:
 
 ```sql
 WITH orders_group_by_month AS (
@@ -132,7 +132,7 @@ SELECT * FROM acc;
 
 ### 非集計ウィンドウ関数 {#non-aggregate-window-functions}
 
-TiDB は、より多くの分析ステートメント用に、集約されていない[ウィンドウ関数](/functions-and-operators/window-functions.md)いくつか提供します。
+TiDB は、より多くの分析ステートメント用に、集約されていない[ウィンドウ関数](/functions-and-operators/window-functions.md)もいくつか提供します。
 
 たとえば、 [ページネーションクエリ](/develop/dev-guide-paginate-results.md)ドキュメントでは、 `row_number()`機能を使用して効率的なページネーションのバッチ処理を実現する方法を紹介しています。
 
@@ -142,7 +142,7 @@ TiDB は、より多くの分析ステートメント用に、集約されてい
 
 ### TiFlashレプリカを作成する {#create-tiflash-replicas}
 
-TiDB は、デフォルトで行ベースのstorageエンジン TiKV を使用します。列指向storageエンジンTiFlashを使用するには、 [HTAP機能を有効にする](/develop/dev-guide-create-table.md#use-htap-capabilities)参照してください。 TiFlashを介してデータをクエリする前に、次のステートメントを使用して`books`および`orders`テーブルのTiFlashレプリカを作成する必要があります。
+TiDB は、デフォルトで行ベースのstorageエンジン TiKV を使用します。列指向storageエンジンTiFlash を使用するには、 [HTAP機能を有効にする](/develop/dev-guide-create-table.md#use-htap-capabilities)参照してください。 TiFlashを介してデータをクエリする前に、次のステートメントを使用して`books`および`orders`テーブルのTiFlashレプリカを作成する必要があります。
 
 ```sql
 ALTER TABLE books SET TIFLASH REPLICA 1;
@@ -156,7 +156,7 @@ SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'bookshop'
 SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'bookshop' and TABLE_NAME = 'orders';
 ```
 
-`PROGRESS`列目が 1 の場合は進行状況が 100% 完了していることを示し、 `AVAILABLE`列目が 1 の場合はレプリカが現在利用可能であることを示します。
+`PROGRESS`列目の 1 は進行状況が 100% 完了していることを示し、 `AVAILABLE`列目の 1 はレプリカが現在利用可能であることを示します。
 
     +--------------+------------+----------+---------------+-----------------+-----------+----------+
     | TABLE_SCHEMA | TABLE_NAME | TABLE_ID | REPLICA_COUNT | LOCATION_LABELS | AVAILABLE | PROGRESS |
@@ -197,11 +197,11 @@ SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'bookshop'
     +------------------------------+---------+------+
     1500 rows in set (0.79 sec)
 
-2 つの実行結果を比較すると、 TiFlashを使用するとクエリ速度が大幅に向上していることがわかります (データ量が多いほど、改善は顕著になります)。これは、ウィンドウ関数は通常、一部の列に対して完全なテーブル スキャンに依存しており、行ベースの TiKV よりも列ベースのTiFlashの方がこの種の分析タスクの処理に適しているためです。TiKV の場合、プライマリ キーまたはインデックスを使用してクエリする行数を減らすと、クエリも高速になり、 TiFlashと比較して消費するリソースが少なくなります。
+2 つの実行結果を比較すると、 TiFlash を使用するとクエリ速度が大幅に向上していることがわかります (データ量が多いほど、改善は顕著になります)。これは、ウィンドウ関数は通常、一部の列に対して完全なテーブル スキャンに依存しており、行ベースの TiKV よりも列ベースのTiFlashの方がこの種の分析タスクの処理に適しているためです。TiKV の場合、プライマリ キーまたはインデックスを使用してクエリする行数を減らすと、クエリも高速になり、 TiFlashと比較して消費するリソースが少なくなります。
 
 ### クエリエンジンを指定する {#specify-a-query-engine}
 
-TiDB はコスト ベース オプティマイザー (CBO) を使用して、コスト見積もりに基づいてTiFlashレプリカを使用するかどうかを自動的に選択します。ただし、クエリがトランザクションか分析かがわかっている場合は、 [オプティマイザのヒント](/optimizer-hints.md)で使用するクエリ エンジンを指定できます。
+TiDB はコスト ベース オプティマイザー (CBO) を使用して、コスト見積もりに基づいてTiFlashレプリカを使用するかどうかを自動的に選択します。ただし、クエリがトランザクションか分析かがわかっている場合は、 [オプティマイザーのヒント](/optimizer-hints.md)で使用するクエリ エンジンを指定できます。
 
 クエリで使用するエンジンを指定するには、次のステートメントのように`/*+ read_from_storage(engine_name[table_name]) */`ヒントを使用できます。
 
@@ -232,7 +232,7 @@ WITH orders_group_by_month AS (
 SELECT * FROM acc;
 ```
 
-`EXPLAIN`ステートメントを使用して、上記の SQL ステートメントの実行プランを確認できます。タスク列に`cop[tiflash]`と`cop[tikv]`同時に表示される場合は、 TiFlashと TiKV の両方がこのクエリを完了するようにスケジュールされていることを意味します。TiFlash と TiKV のstorageエンジンは通常、異なる TiDB ノードを使用するため、2 つのクエリ タイプは互いに影響を受けません。
+`EXPLAIN`ステートメントを使用して、上記の SQL ステートメントの実行プランを確認できます。タスク列に`cop[tiflash]`と`cop[tikv]`同時に表示される場合は、 TiFlashと TiKV の両方がこのクエリを完了するようにスケジュールされていることを意味します。TiFlash とTiFlashのstorageエンジンは通常、異なる TiDB ノードを使用するため、2 つのクエリ タイプは互いに影響を受けません。
 
 TiDBがTiFlashをどのように使用するかについての詳細は、 [TiDBを使用してTiFlashレプリカを読み取る](/tiflash/use-tidb-to-read-tiflash.md)参照してください。
 
@@ -254,7 +254,7 @@ TiDBがTiFlashをどのように使用するかについての詳細は、 [TiDB
 -   [ウィンドウ関数](/functions-and-operators/window-functions.md)
 -   [TiFlashを使用する](/tiflash/tiflash-overview.md#use-tiflash)
 
-## 助けが必要？ {#need-help}
+## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 

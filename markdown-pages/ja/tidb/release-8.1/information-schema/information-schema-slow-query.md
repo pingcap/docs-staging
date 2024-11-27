@@ -1,6 +1,6 @@
 ---
 title: SLOW_QUERY
-summary: SLOW_QUERY INFORMATION_SCHEMA テーブルについて学習します。
+summary: SLOW_QUERY` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # 遅いクエリ {#slow-query}
@@ -19,11 +19,11 @@ summary: SLOW_QUERY INFORMATION_SCHEMA テーブルについて学習します�
 
 > **注記：**
 >
-> このテーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 <CustomContent platform="tidb">
 
-この表を使用して問題のあるステートメントを識別し、クエリのパフォーマンスを向上させる方法については、 [スロークエリログドキュメント](/identify-slow-queries.md)を参照してください。
+この表を使用して問題のあるステートメントを識別し、クエリのパフォーマンスを向上させる方法については、 [スロークエリログドキュメント](/identify-slow-queries.md)参照してください。
 
 </CustomContent>
 
@@ -127,11 +127,11 @@ DESC SLOW_QUERY;
 
 > **注記：**
 >
-> このテーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 <CustomContent platform="tidb">
 
-この表を使用して問題のあるステートメントを識別し、クエリのパフォーマンスを向上させる方法については、 [スロークエリログドキュメント](/identify-slow-queries.md)を参照してください。
+この表を使用して問題のあるステートメントを識別し、クエリのパフォーマンスを向上させる方法については、 [スロークエリログドキュメント](/identify-slow-queries.md)参照してください。
 
 </CustomContent>
 

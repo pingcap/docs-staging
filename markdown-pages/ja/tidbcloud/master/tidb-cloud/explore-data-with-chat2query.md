@@ -1,29 +1,35 @@
 ---
-title: Explore Your Data with AI-Assisted SQL Editor
-summary: TiDB Cloudコンソールで AI 支援 SQL エディターを使用してデータの価値を最大化する方法を学びます。
+title: Explore Your Data with AI-Powered Chat2Query (beta)
+summary: TiDB Cloudコンソールの AI 搭載 SQL エディターである Chat2Query を使用して、データの価値を最大化する方法を学びます。
 ---
 
-# AI 支援 SQL エディターでデータを探索 {#explore-your-data-with-ai-assisted-sql-editor}
+# AI 搭載の Chat2Query (ベータ版) でデータを探索する {#explore-your-data-with-ai-powered-chat2query-beta}
 
-[TiDB Cloudコンソール](https://tidbcloud.com/)に組み込まれた AI 支援 SQL エディターを使用して、データの価値を最大化できます。
+TiDB Cloudは AI を活用しています。1 [TiDB Cloudコンソール](https://tidbcloud.com/) AI 搭載 SQL エディターである Chat2Query (ベータ版) を使用して、データの価値を最大限に高めることができます。
 
-SQL エディターでは、SQL クエリを手動で記述するか、macOS では<kbd>⌘</kbd> + <kbd>I</kbd> (Windows または Linux では<kbd>Control</kbd> + <kbd>I</kbd> ) を押して[Chat2Query (ベータ版)](/tidb-cloud/tidb-cloud-glossary.md#chat2query) SQL クエリを自動的に生成するように指示することができます。これにより、ローカル SQL クライアントを使用せずにデータベースに対して SQL クエリを実行できます。クエリ結果をテーブルやグラフで直感的に表示し、クエリ ログを簡単に確認できます。
+Chat2Query では、単に`--`と入力して指示を入力するだけで AI に SQL クエリを自動的に生成させるか、SQL クエリを手動で記述してターミナルなしでデータベースに対して SQL クエリを実行することができます。クエリ結果をテーブルで直感的に見つけ、クエリ ログを簡単に確認できます。
+
+> **注記：**
+>
+> Chat2Query は、AWS でホストされている v6.5.0 以降の TiDB クラスターでサポートされています。
+>
+> -   [TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless)クラスターの場合、Chat2Query はデフォルトで使用できます。
+> -   [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターの場合、Chat2Query はリクエストに応じてのみ利用できます。TiDB 専用クラスターで Chat2Query を使用するには、 [TiDB Cloudサポート](/tidb-cloud/tidb-cloud-support.md)にお問い合わせください。
 
 ## ユースケース {#use-cases}
 
-SQL エディターの推奨される使用例は次のとおりです。
+Chat2Query の推奨される使用例は次のとおりです。
 
--   Chat2Query の AI 機能を活用して、複雑な SQL クエリを即座に生成、デバッグ、または書き換えます。
--   TiDB の MySQL 互換性をすばやくテストします。
--   独自のデータセットを使用して、TiDB の SQL 機能を簡単に探索できます。
+-   Chat2Query の AI 機能を使用して、複雑な SQL クエリを即座に生成します。
+-   TiDB の MySQL 互換性をすぐにテストします。
+-   TiDB SQL の機能を簡単に探索します。
 
-## 制限事項 {#limitations}
+## 制限 {#limitation}
 
--   AI によって生成された SQL クエリは 100% 正確ではない可能性があり、それを改良する必要がある場合があります。
--   SQL エディターは、AWS でホストされている v6.5.0 以降の TiDB クラスターでのみサポートされます。
--   SQL エディターは、デフォルトで[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターで使用できます。SQL エディターと Chat2Query を[TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターで使用するには、 [TiDB Cloudサポート](/tidb-cloud/tidb-cloud-support.md)お問い合わせください。
+-   AI によって生成された SQL クエリは 100% 正確ではないため、さらに調整が必要になる場合があります。
+-   [チャット2クエリAPI](/tidb-cloud/use-chat2query-api.md) [TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless)クラスターで使用できます。5 [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターで Chat2Query API を使用するには、 [TiDB Cloudサポート](/tidb-cloud/tidb-cloud-support.md)にお問い合わせください。
 
-## SQL エディターにアクセスする {#access-sql-editor}
+## Chat2Queryにアクセスする {#access-chat2query}
 
 1.  プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
@@ -31,19 +37,19 @@ SQL エディターの推奨される使用例は次のとおりです。
     >
     > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅にある をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
 
-2.  クラスター名をクリックし、左側のナビゲーション ペインで**[SQL エディター]**をクリックします。
+2.  クラスター名をクリックし、左側のナビゲーション ペインで**Chat2Query**をクリックします。
 
     > **注記：**
     >
-    > 次の場合、 **SQL エディターの**エントリは灰色で表示され、クリックできません。
+    > 以下の場合、 **Chat2Query**エントリは灰色で表示され、クリックできません。
     >
-    > -   TiDB Cloud Dedicated クラスターは v6.5.0 より前のバージョンです。SQL エディターを使用するには、契約[TiDB Cloudサポート](/tidb-cloud/tidb-cloud-support.md)結んでクラスターをアップグレードする必要があります。
-    > -   TiDB Cloud Dedicated クラスターが作成されたばかりで、SQL エディターの実行環境はまだ準備中です。この場合は、数分待つと Chat2Query が利用可能になります。
-    > -   TiDB Cloud Dedicated クラスターは[一時停止](/tidb-cloud/pause-or-resume-tidb-cluster.md)です。
+    > -   TiDB 専用クラスターは v6.5.0 より前のバージョンです。Chat2Query を使用するには、契約[TiDB Cloudサポート](/tidb-cloud/tidb-cloud-support.md)結んでクラスターをアップグレードする必要があります。
+    > -   TiDB 専用クラスターが作成されたばかりで、Chat2Query の実行環境はまだ準備中です。この場合は、数分待つと Chat2Query が利用可能になります。
+    > -   TiDB 専用クラスターは[一時停止](/tidb-cloud/pause-or-resume-tidb-cluster.md)です。
 
 ## AI による SQL クエリの生成を有効または無効にする {#enable-or-disable-ai-to-generate-sql-queries}
 
-PingCAP は、ユーザーデータのプライバシーとセキュリティを最優先に考えています。SQL エディターの Chat2Query の AI 機能は、SQL クエリを生成するためにデータベース スキーマにアクセスするだけでよく、データ自体にアクセスする必要はありません。詳細については、 [Chat2Query プライバシーFAQ](https://www.pingcap.com/privacy-policy/privacy-chat2query)参照してください。
+PingCAP は、ユーザーデータのプライバシーとセキュリティを最優先に考えています。Chat2Query の AI 機能は、SQL クエリを生成するためにデータベース スキーマにアクセスするだけでよく、データ自体にアクセスする必要はありません。詳細については、 [Chat2Query プライバシーFAQ](https://www.pingcap.com/privacy-policy/privacy-chat2query)参照してください。
 
 Chat2Query に初めてアクセスすると、PingCAP と OpenAI がコード スニペットを使用してサービスを調査および改善することを許可するかどうかを尋ねるダイアログが表示されます。
 
@@ -57,35 +63,15 @@ Chat2Query に初めてアクセスすると、PingCAP と OpenAI がコード �
 
 ## SQLクエリを記述して実行する {#write-and-run-sql-queries}
 
-SQL エディターでは、独自のデータセットを使用して SQL クエリを記述および実行できます。
+Chat2Query では、独自のデータセットを使用して SQL クエリを記述および実行できます。
 
 1.  SQL クエリを記述します。
 
-    <SimpleTab>
-     <div label="macOS">
+    -   AI が有効になっている場合は、 `--`と入力して指示を入力するだけで、AI によって SQL クエリが自動的に生成されるか、SQL クエリが手動で記述されます。
 
-    macOSの場合:
-
-    -   AI が有効になっている場合は、 **⌘ + I**を押して指示に従い、 **Enter キー**を押すだけで、AI が SQL クエリを自動的に生成します。
-
-        Chat2Query によって生成された SQL クエリの場合、 **「承認」**をクリックしてクエリを承認し、編集を続行します。クエリが要件を満たしていない場合は、 **「破棄」を**クリックして拒否します。または、 **「再生成」**をクリックして Chat2Query から新しいクエリを要求します。
+        AI によって生成された SQL クエリの場合は、 <kbd>Tab キー</kbd>を押して受け入れ、必要に応じてさらに編集するか、 <kbd>Esc キー</kbd>を押して拒否することができます。
 
     -   AI が無効になっている場合は、SQL クエリを手動で記述します。
-
-    </div>
-
-    <div label="Windows/Linux">
-
-    Windows または Linux の場合:
-
-    -   AI が有効になっている場合は、 **Ctrl + I**を押して指示に従い、 **Enter キー**を押すだけで、AI が SQL クエリを自動的に生成します。
-
-        Chat2Query によって生成された SQL クエリの場合、 **「承認」**をクリックしてクエリを承認し、編集を続行します。クエリが要件を満たしていない場合は、 **「破棄」を**クリックして拒否します。または、 **「再生成」**をクリックして Chat2Query から新しいクエリを要求します。
-
-    -   AI が無効になっている場合は、SQL クエリを手動で記述します。
-
-    </div>
-     </SimpleTab>
 
 2.  SQL クエリを実行します。
 
@@ -117,46 +103,19 @@ SQL エディターでは、独自のデータセットを使用して SQL ク�
 
 クエリを実行すると、ページの下部にクエリ ログと結果がすぐに表示されます。
 
-> **注記：**
->
-> 返される結果のサイズ制限は 8 MiB です。
-
-## Chat2Query を使用して SQL クエリを書き換える {#rewrite-sql-queries-using-chat2query}
-
-SQL エディターでは、Chat2Query を使用して既存の SQL クエリを書き換え、パフォーマンスを最適化したり、エラーを修正したり、その他の特定の要件を満たしたりできます。
-
-1.  カーソルを使用して、書き換えたい SQL クエリの行を選択します。
-
-2.  オペレーティング システムのキーボード ショートカットを使用して、書き換え用の Chat2Query を呼び出します。
-
-    -   macOSでは<kbd>⌘</kbd> + <kbd>I</kbd>
-    -   Windows または Linux では<kbd>Control</kbd> + <kbd>I</kbd>
-
-    指示を入力した後、 **Enter キー**を押して、AI に書き換えを処理させます。
-
-3.  Chat2Query を呼び出すと、提案された書き換えと次のオプションが表示されます。
-
-    -   **承認**: これをクリックすると、提案された書き換えを承認して編集を続行します。
-    -   **破棄**: 提案された書き換えが期待どおりでない場合は、これをクリックします。
-    -   **再生成**: フィードバックまたは追加の指示に基づいて Chat2Query に別の書き換えを要求するには、これをクリックします。
-
-> **注記：**
->
-> Chat2Query は AI アルゴリズムを使用して最適化と修正を提案します。クエリを確定する前に、これらの提案を慎重に確認することをお勧めします。
-
 ## SQL ファイルの管理 {#manage-sql-files}
 
-SQL エディターでは、SQL クエリをさまざまな SQL ファイルに保存し、次のように SQL ファイルを管理できます。
+Chat2Query では、SQL クエリをさまざまな SQL ファイルに保存し、次のように SQL ファイルを管理できます。
 
 -   SQL ファイルを追加するには、 **「SQL ファイル」**タブで**+ を**クリックします。
 -   SQL ファイルの名前を変更するには、ファイル名の上にカーソルを移動し、ファイル名の横にある**[...]**をクリックして、 **[名前の変更]**を選択します。
--   SQL ファイルを削除するには、カーソルをファイル名の上に移動し、ファイル名の横にある**[...]**をクリックして、 **[削除**] を選択します。 **[SQL ファイル**] タブに SQL ファイルが 1 つしかない場合は、削除できないことに注意してください。
+-   SQL ファイルを削除するには、ファイル名にカーソルを移動し、ファイル名の横にある**[...]**をクリックして、 **[削除**] を選択します。 **[SQL ファイル**] タブに SQL ファイルが 1 つしかない場合は、削除できないことに注意してください。
 
 ## API経由でChat2Queryにアクセスする {#access-chat2query-via-api}
 
 UI 経由で Chat2Query にアクセスするだけでなく、API 経由で Chat2Query にアクセスすることもできます。そのためには、まず Chat2Query データ アプリを作成する必要があります。
 
-Chat2Query では、次のように Chat2Query データ アプリにアクセスしたり、作成したりできます。
+Chat2Query では、次のようにして Chat2Query データ アプリにアクセスしたり、作成したりできます。
 
 1.  右上隅の**「...」**をクリックし、 **「API 経由で Chat2Query にアクセス」**をクリックします。
 2.  表示されたダイアログで、次のいずれかを実行します。
@@ -168,7 +127,7 @@ Chat2Query では、次のように Chat2Query データ アプリにアクセ�
 
 ## SQL ファイルからエンドポイントを生成する {#generate-an-endpoint-from-a-sql-file}
 
-TiDB クラスターの場合、 TiDB Cloud は、カスタム API エンドポイントを使用して HTTPS リクエスト経由でTiDB Cloudデータにアクセスできる[データ サービス (ベータ版)](/tidb-cloud/data-service-overview.md)機能を提供します。SQL エディターでは、次の手順を実行して、SQL ファイルからデータ サービス (ベータ) のエンドポイントを生成できます。
+TiDB クラスターの場合、 TiDB Cloud は、カスタム API エンドポイントを使用して HTTPS リクエスト経由でTiDB Cloudデータにアクセスできる[データ サービス (ベータ版)](/tidb-cloud/data-service-overview.md)機能を提供します。Chat2Query では、次の手順を実行して、SQL ファイルからデータ サービス (ベータ) のエンドポイントを生成できます。
 
 1.  カーソルをファイル名の上に移動し、ファイル名の横にある**[...]**をクリックして、 **[エンドポイントの生成]**を選択します。
 2.  **[エンドポイントの生成]**ダイアログ ボックスで、エンドポイントを生成するデータ アプリを選択し、エンドポイント名を入力します。
@@ -176,15 +135,15 @@ TiDB クラスターの場合、 TiDB Cloud は、カスタム API エンドポ�
 
 詳細については[エンドポイントを管理する](/tidb-cloud/data-service-manage-endpoint.md)参照してください。
 
-## SQLエディタの設定を管理する {#manage-sql-editor-settings}
+## Chat2Query設定を管理する {#manage-chat2query-settings}
 
-SQL エディターでは、次の設定を変更できます。
+Chat2Query では、次の設定を変更できます。
 
 -   クエリ結果の最大行数
 -   **スキーマ**タブにシステムデータベーススキーマを表示するかどうか
 
 設定を変更するには、次の手順を実行します。
 
-1.  **SQL エディター**の右上隅で、 **[...]**をクリックし、 **[設定]**を選択します。
+1.  Chat2Query の右上隅で、 **[...]**をクリックし、 **[設定]**を選択します。
 2.  必要に応じて設定を変更してください。
 3.  **「保存」を**クリックします。

@@ -1,32 +1,32 @@
 ---
 title: Views
-summary: TiDBはビューをサポートしており、ビューは仮想テーブルとして機能します。ビューを使用すると、安全なフィールドとデータのみを公開し、複雑なクエリを簡単かつ便利にします。ビューのクエリは通常のテーブルのクエリと似ており、ビューのメタデータを取得する方法として、SHOW CREATE TABLEまたはSHOW CREATE VIEWステートメント、INFORMATION_SCHEMA.VIEWSテーブルのクエリ、HTTP APIを使用する方法があります。ただし、TiDBのビューには制限事項があり、マテリアライズドビューはサポートされていません。
+summary: TiDB でビューを使用する方法を学習します。
 ---
 
 # ビュー {#views}
 
-TiDB はビューをサポートしています。ビューは仮想テーブルとして機能し、そのスキーマはビューを作成する`SELECT`ステートメントによって定義されます。ビューを使用すると、次のような利点があります。
+TiDB はビューをサポートしています。ビューは仮想テーブルとして機能し、そのスキーマはビューを作成する`SELECT`ステートメントによって定義されます。ビューを使用すると、次の利点があります。
 
--   安全なフィールドとデータのみをユーザーに公開して、基になるテーブルに保存されている機密フィールドとデータのセキュリティを確保します。
--   ビューとして頻繁に表示される複雑なクエリを定義して、複雑なクエリをより簡単かつ便利にします。
+-   安全なフィールドとデータのみをユーザーに公開し、基になるテーブルに保存されている機密フィールドとデータのセキュリティを確保します。
+-   頻繁に表示される複雑なクエリをビューとして定義し、複雑なクエリをより簡単かつ便利にします。
 
 ## クエリビュー {#query-views}
 
-ビューのクエリは、通常のテーブルのクエリと似ています。ただし、TiDB がビューをクエリするとき、実際にはビューに関連付けられた`SELECT`ステートメントをクエリします。
+ビューのクエリは通常のテーブルのクエリと似ています。ただし、TiDB がビューをクエリする場合、実際にはビューに関連付けられた`SELECT`ステートメントがクエリされます。
 
-## メタデータを表示する {#show-metadata}
+## メタデータを表示 {#show-metadata}
 
 ビューのメタデータを取得するには、次のいずれかの方法を選択します。
 
 ### <code>SHOW CREATE TABLE view_name</code>または<code>SHOW CREATE VIEW view_name</code>ステートメントを使用します。 {#use-the-code-show-create-table-view-name-code-or-code-show-create-view-view-name-code-statement}
 
-使用例：
+使用例:
 
 ```sql
 show create view v;
 ```
 
-このステートメントは、このビューに対応する`CREATE VIEW`ステートメントと、ビューの作成時のシステム変数`character_set_client`および`collation_connection`の値を示します。
+このステートメントは、このビューに対応する`CREATE VIEW`ステートメントと、ビューが作成されたときの`character_set_client`と`collation_connection`のシステム変数の値を示します。
 
 ```sql
 +------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+
@@ -39,13 +39,13 @@ show create view v;
 
 ### <code>INFORMATION_SCHEMA.VIEWS</code>テーブルをクエリする {#query-the-code-information-schema-views-code-table}
 
-使用例：
+使用例:
 
 ```sql
 select * from information_schema.views;
 ```
 
-このテーブルをクエリすると、ビューの関連メタ情報 ( `TABLE_CATALOG` 、 `TABLE_SCHEMA` 、 `TABLE_NAME` 、 `VIEW_DEFINITION` 、 `CHECK_OPTION` 、 `IS_UPDATABLE` 、 `DEFINER` 、 `SECURITY_TYPE` 、 `CHARACTER_SET_CLIENT` 、 `COLLATION_CONNECTION`など) を表示できます。
+このテーブルをクエリすることで、 `TABLE_CATALOG` 、 `TABLE_SCHEMA` 、 `TABLE_NAME` 、 `VIEW_DEFINITION` 、 `CHECK_OPTION` 、 `IS_UPDATABLE` 、 `DEFINER` 、 `SECURITY_TYPE` 、 `CHARACTER_SET_CLIENT` 、 `COLLATION_CONNECTION`などのビューの関連メタ情報を表示できます。
 
 ```sql
 +---------------+--------------+------------+------------------------------------------------------------------------+--------------+--------------+----------------+---------------+----------------------+----------------------+
@@ -56,15 +56,15 @@ select * from information_schema.views;
 1 row in set (0.00 sec)
 ```
 
-### HTTP API を使用する {#use-the-http-apis}
+### HTTP APIを使用する {#use-the-http-apis}
 
-使用例：
+使用例:
 
 ```sql
 curl http://127.0.0.1:10080/schema/test/v
 ```
 
-`http://{TiDBIP}:10080/schema/{db}/{view}`にアクセスすると、ビューのすべてのメタデータを取得できます。
+`http://{TiDBIP}:10080/schema/{db}/{view}`アクセスすると、ビューのすべてのメタデータを取得できます。
 
     {
      "id": 122,
@@ -202,10 +202,10 @@ drop view v;
 現在、TiDB のビューには次の制限があります。
 
 -   マテリアライズド ビューはまだサポートされていません。
--   TiDB のビューは読み取り専用であり、 `UPDATE` 、 `INSERT` 、 `DELETE` 、 `TRUNCATE`などの書き込み操作をサポートしません。
--   作成されたビューの場合、サポートされる DDL 操作は`DROP [VIEW | TABLE]`のみです。
+-   TiDB のビューは読み取り専用であり、 `UPDATE` 、 `INSERT` 、 `DELETE` 、 `TRUNCATE`などの書き込み操作はサポートされません。
+-   作成されたビューの場合、サポートされているDDL操作は`DROP [VIEW | TABLE]`のみです。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
--   [ビューの作成](/sql-statements/sql-statement-create-view.md)
+-   [ビューを作成](/sql-statements/sql-statement-create-view.md)
 -   [ドロップビュー](/sql-statements/sql-statement-drop-view.md)

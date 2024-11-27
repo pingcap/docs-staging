@@ -9,14 +9,14 @@ summary: インポート リソースを使用してインポート タスクを
 
 `tidbcloud_import`リソースの機能は次のとおりです。
 
--   TiDB Cloud Serverless およびTiDB Cloud Dedicated クラスターのインポート タスクを作成します。
+-   TiDB Serverless および TiDB Dedicated クラスターのインポート タスクを作成します。
 -   ローカルディスクまたは Amazon S3 バケットからデータをインポートします。
 -   進行中のインポート タスクをキャンセルします。
 
 ## 前提条件 {#prerequisites}
 
 -   [TiDB Cloud Terraform プロバイダーを入手](/tidb-cloud/terraform-get-tidbcloud-provider.md) 。
--   [TiDB Cloud Serverless クラスターを作成する](/tidb-cloud/create-tidb-cluster-serverless.md)または[TiDB Cloud専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md) 。
+-   [TiDB サーバーレス クラスターを作成する](/tidb-cloud/create-tidb-cluster-serverless.md)または[TiDB専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md) 。
 
 ## インポートタスクを作成して実行する {#create-and-run-an-import-task}
 
@@ -26,7 +26,7 @@ summary: インポート リソースを使用してインポート タスクを
 
 > **注記：**
 >
-> ローカル ファイルのインポートは、 TiDB Cloud Serverless クラスターでのみサポートされ、 TiDB Cloud Dedicated クラスターではサポートされません。
+> ローカル ファイルのインポートは、TiDB サーバーレス クラスターでのみサポートされ、TiDB 専用クラスターではサポートされません。
 
 1.  インポート用の CSV ファイルを作成します。例:
 
@@ -160,7 +160,7 @@ summary: インポート リソースを使用してインポート タスクを
             type                          = "LOCAL"
         }
 
-    ステータスが`COMPLETED`に変わると、インポート タスクが完了したことを示します。
+    ステータスが`COMPLETED`になると、インポート タスクが完了したことを示します。
 
 6.  MySQL CLI でインポートされたデータを確認します。
 

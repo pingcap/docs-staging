@@ -1,6 +1,6 @@
 ---
 title: TIFLASH_TABLES
-summary: TIFLASH_TABLES information_schema テーブルについて学習します。
+summary: TIFLASH_TABLES` information_schema テーブルについて学習します。
 ---
 
 # TIFLASH_テーブル {#tiflash-tables}
@@ -8,10 +8,6 @@ summary: TIFLASH_TABLES information_schema テーブルについて学習しま�
 > **警告：**
 >
 > このテーブルは不安定であり、TiDB の新しいリリースで予告なしに変更される可能性があるため、本番環境では使用しないでください。
-
-> **注記：**
->
-> このテーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 `TIFLASH_TABLES`表は、 TiFlashのデータ テーブルに関する統計情報を提供します。
 
@@ -90,7 +86,7 @@ DESC tiflash_tables;
 -   `TIDB_TABLE` : TiDB 内のテーブルの名前。
 -   `TABLE_ID` : テーブルの内部 ID。TiDB クラスター内で一意です。
 -   `IS_TOMBSTONE` : テーブルがリサイクル可能かどうかを示します。2 `1`テーブルがリサイクル可能であることを示し、 `0`テーブルが正常な状態であることを示します。
--   `SEGMENT_COUNT` : テーブル内のセグメント数。セグメントはTiFlash内のデータ管理単位です。
+-   `SEGMENT_COUNT` : テーブル内のセグメント数。セグメントはTiFlashのデータ管理単位です。
 -   `TOTAL_ROWS` : テーブル内の行の合計数。
 -   `TOTAL_SIZE` : テーブルの合計サイズ (バイト単位)。
 -   `TOTAL_DELETE_RANGES` : テーブル内の削除範囲の合計数。
@@ -99,7 +95,7 @@ DESC tiflash_tables;
 -   `DELTA_PLACED_RATE` : デルタレイヤー内のテーブルのインデックス構築が完了した行の割合。
 -   `DELTA_CACHE_SIZE` : デルタレイヤー内のテーブルのキャッシュのサイズ (バイト単位)。
 -   `DELTA_CACHE_RATE` : デルタレイヤーにおけるテーブルのキャッシュデータの割合。
--   `DELTA_CACHE_WASTED_RATE` : デルタレイヤー内のテーブルの無効なキャッシュデータの割合。
+-   `DELTA_CACHE_WASTED_RATE` : デルタレイヤー内のテーブルの無効なキャッシュ データの割合。
 -   `DELTA_INDEX_SIZE` : Deltaレイヤー内のインデックスによって占有されるメモリのサイズ (バイト単位)。
 -   `AVG_SEGMENT_ROWS` : テーブルのすべてのセグメント内の行の平均数。
 -   `AVG_SEGMENT_SIZE` : テーブルのすべてのセグメントの平均サイズ (バイト単位)。
@@ -122,7 +118,7 @@ DESC tiflash_tables;
 -   `AVG_PACK_SIZE_IN_DELTA` : すべてのデルタ レイヤー内のすべてのカラムファイルのデータの平均サイズ (バイト単位)。
 -   `TOTAL_PACK_COUNT_IN_STABLE` : すべての安定レイヤー内のパックの合計数。
 -   `AVG_PACK_COUNT_IN_STABLE` : すべての安定レイヤー内のパックの平均数。
--   `AVG_PACK_ROWS_IN_STABLE` : すべての安定レイヤー内のすべてのパックの平均行数。
+-   `AVG_PACK_ROWS_IN_STABLE` : すべての安定レイヤー内のすべてのパックの行の平均数。
 -   `AVG_PACK_SIZE_IN_STABLE` : 安定レイヤー内のすべてのパックのデータの平均サイズ (バイト単位)。
 -   `STORAGE_STABLE_NUM_SNAPSHOTS` : 安定レイヤー内のスナップショットの数。
 -   `STORAGE_STABLE_OLDEST_SNAPSHOT_LIFETIME` : 安定レイヤー内の最も古いスナップショットの期間 (秒単位)。

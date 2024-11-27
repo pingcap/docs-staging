@@ -78,9 +78,9 @@ pip install -r requirements.txt
 
 3.  接続ダイアログの構成が動作環境と一致していることを確認します。
 
-    -   **接続タイプは**`Public`に設定されています
+    -   **接続タイプ**は`Public`に設定されています
 
-    -   **ブランチ**は`main`に設定されています
+    -   **ブランチは**`main`に設定されています
 
     -   **接続先は**`General`に設定されています
 
@@ -90,7 +90,7 @@ pip install -r requirements.txt
     >
     > プログラムが Windows Subsystem for Linux (WSL) で実行されている場合は、対応する Linux ディストリビューションに切り替えます。
 
-4.  ランダムなパスワードを作成するには、 **「パスワードの生成」を**クリックします。
+4.  ランダムなパスワードを作成するには、 **「パスワードの生成」**をクリックします。
 
     > **ヒント：**
     >
@@ -113,9 +113,9 @@ pip install -r requirements.txt
     CA_PATH=''
     ```
 
-    プレースホルダー`{}`を、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
+    プレースホルダー`{}` 、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
 
-    TiDB Cloud Serverless には安全な接続が必要です。 mysqlclient の`ssl_mode`デフォルトで`PREFERRED`になっているため、 `CA_PATH`手動で指定する必要はありません。空のままにしておきます。ただし、 `CA_PATH`手動で指定する特別な理由がある場合は、 [TiDB Cloud ServerlessへのTLS接続](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)を参照して、さまざまなオペレーティング システムの証明書パスを取得できます。
+    TiDB Cloud Serverless には安全な接続が必要です。 mysqlclient の`ssl_mode`はデフォルトで`PREFERRED`になっているため、 `CA_PATH`手動で指定する必要はありません。空のままにしておきます。ただし、特別な理由により`CA_PATH`手動で指定する必要がある場合は、 [TiDB Cloud ServerlessへのTLS接続](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)を参照して、さまざまなオペレーティング システムの証明書パスを取得できます。
 
 7.  `.env`ファイルを保存します。
 
@@ -130,7 +130,7 @@ pip install -r requirements.txt
 
     IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
 
-    TiDB Dedicated は、**パブリック**接続タイプに加えて、**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
 4.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -149,7 +149,7 @@ pip install -r requirements.txt
     CA_PATH='{your-downloaded-ca-path}'
     ```
 
-    プレースホルダー`{}`を接続ダイアログから取得した接続パラメータに置き換え、 `CA_PATH`前の手順でダウンロードした証明書パスで構成してください。
+    プレースホルダー`{}`接続ダイアログから取得した接続パラメータに置き換え、 `CA_PATH`前の手順でダウンロードした証明書パスで構成してください。
 
 6.  `.env`ファイルを保存します。
 
@@ -172,7 +172,7 @@ pip install -r requirements.txt
     TIDB_DB_NAME='test'
     ```
 
-    プレースホルダー`{}`を接続パラメータに置き換え、 `CA_PATH`行を削除してください。TiDB をローカルで実行している場合、デフォルトのホスト アドレスは`127.0.0.1`で、パスワードは空です。
+    プレースホルダー`{}`接続パラメータに置き換え、 `CA_PATH`行を削除してください。TiDB をローカルで実行している場合、デフォルトのホスト アドレスは`127.0.0.1`で、パスワードは空です。
 
 3.  `.env`ファイルを保存します。
 
@@ -193,7 +193,7 @@ pip install -r requirements.txt
 
 次のサンプル コード スニペットを参照して、独自のアプリケーション開発を完了することができます。
 
-完全なサンプル コードとその実行方法については、 [tidb サンプル/tidb-python-mysqlclient-クイックスタート](https://github.com/tidb-samples/tidb-python-mysqlclient-quickstart)リポジトリを参照してください。
+完全なサンプル コードとその実行方法については、 [tidb-samples/tidb-python-mysqlclient-クイックスタート](https://github.com/tidb-samples/tidb-python-mysqlclient-quickstart)リポジトリを参照してください。
 
 ### TiDBに接続する {#connect-to-tidb}
 
@@ -268,7 +268,7 @@ with get_mysqlclient_connection(autocommit=True) as conn:
 
 ### ドライバーまたは ORM フレームワークを使用していますか? {#using-driver-or-orm-framework}
 
-Python ドライバーはデータベースへの低レベルのアクセスを提供しますが、開発者は次の作業を行う必要があります。
+Python ドライバーはデータベースへの低レベル アクセスを提供しますが、開発者は次の作業を行う必要があります。
 
 -   データベース接続を手動で確立および解放します。
 -   データベース トランザクションを手動で管理します。

@@ -1,6 +1,6 @@
 ---
 title: SHOW CREATE SEQUENCE
-summary: An overview of the usage of SHOW CREATE SEQUENCE for the TiDB database.
+summary: TiDB データベースの SHOW CREATE SEQUENCE の使用法の概要。
 ---
 
 # 表示シーケンスの作成 {#show-create-sequence}
@@ -9,13 +9,10 @@ summary: An overview of the usage of SHOW CREATE SEQUENCE for the TiDB database.
 
 ## 概要 {#synopsis}
 
-**シーケンスステートメントを表示:**
-
-![ShowCreateSequenceStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCreateSequenceStmt.png)
-
-**テーブル名:**
-
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+```ebnf+diagram
+ShowCreateSequenceStmt ::=
+    "SHOW" "CREATE" "SEQUENCE" ( SchemaName "." )? TableName
+```
 
 ## 例 {#examples}
 

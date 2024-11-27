@@ -7,7 +7,7 @@ summary: TiDB Cloudのインポート データ サービスで CSV 構成を使
 
 このドキュメントでは、 TiDB Cloudのデータインポート サービスの CSV 構成について説明します。
 
-以下は、 TiDB Cloudのデータインポート サービスを使用して CSV ファイルをインポートする場合の CSVコンフィグレーションウィンドウです。詳細については、 [Amazon S3 または GCS から CSV ファイルをTiDB Cloudにインポートする](/tidb-cloud/import-csv-files.md)参照してください。
+以下は、 TiDB Cloudのデータインポート サービスを使用して CSV ファイルをインポートする場合の CSVコンフィグレーションウィンドウです。詳細については、 [Amazon S3 または GCS からTiDB Cloudに CSV ファイルをインポートする](/tidb-cloud/import-csv-files.md)参照してください。
 
 ![CSV Configurations](https://download.pingcap.com/images/docs/tidb-cloud/import-data-csv-config.png)
 
@@ -33,11 +33,17 @@ summary: TiDB Cloudのインポート データ サービスで CSV 構成を使
 
 -   デフォルト: `"`
 
+## ヘッダー付き {#with-header}
+
+-   定義:*すべての*CSV ファイルにヘッダー行が含まれているかどうか。**ヘッダー**が`True`の場合、最初の行は列名として使用されます。**ヘッダー**が`False`の場合、最初の行は通常のデータ行として扱われます。
+
+-   デフォルト: `True`
+
 ## バックスラッシュエスケープ {#backslash-escape}
 
 -   定義: フィールド内のバックスラッシュをエスケープ文字として解析するかどうか。**バックスラッシュ エスケープ**が`True`の場合、次のシーケンスが認識され、変換されます。
 
-    | シーケンス | 変換された                  |
+    | シーケンス | に変換                    |
     | ----- | ---------------------- |
     | `\0`  | ヌル文字 ( `U+0000` )      |
     | `\b`  | バックスペース ( `U+0008` )   |

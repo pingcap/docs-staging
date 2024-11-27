@@ -1,7 +1,6 @@
 ---
 title: Migrate MySQL-Compatible Databases to TiDB Cloud Using Data Migration
 summary: Data Migration を使用して、Amazon Aurora MySQL、Amazon Relational Database Service (RDS)、Google Cloud SQL for MySQL、またはローカル MySQL インスタンスでホストされている MySQL 互換データベースからTiDB Cloudにデータを移行する方法を学びます。
-aliases: ['/tidbcloud/migrate-data-into-tidb','/tidbcloud/migrate-incremental-data-from-mysql']
 ---
 
 # データ移行を使用してMySQL互換データベースをTiDB Cloudに移行する {#migrate-mysql-compatible-databases-to-tidb-cloud-using-data-migration}
@@ -16,7 +15,7 @@ aliases: ['/tidbcloud/migrate-data-into-tidb','/tidbcloud/migrate-incremental-da
 
 ### 可用性 {#availability}
 
--   データ移行機能は**、 TiDB Cloud Dedicated**クラスターでのみ使用できます。
+-   データ移行機能は、 **TiDB 専用**クラスターでのみ使用できます。
 
 -   データ移行機能は、2022 年 11 月 9 日以降に作成されたクラスターでのみ使用できます。**プロジェクトが**この日付より[特定の地域](https://www.pingcap.com/tidb-cloud-pricing-details/#dm-cost)に作成された場合、またはクラスターが別のリージョンにある場合、この機能はクラスターで使用できず、 TiDB Cloudコンソールのクラスター概要ページに**データ移行**タブは表示されません。
 
@@ -60,7 +59,7 @@ aliases: ['/tidbcloud/migrate-data-into-tidb','/tidbcloud/migrate-incremental-da
 -   MySQL 5.6、5.7、および 8.0 のローカル インスタンスまたはパブリック クラウド プロバイダー上。MySQL 8.0 はTiDB Cloudではまだ実験的であり、互換性の問題が発生する可能性があることに注意してください。
 -   Amazon Aurora (MySQL 5.6 および 5.7)
 -   Amazon RDS (MySQL 5.7)
--   MySQL 5.6 および 5.7 向け Google Cloud SQL
+-   MySQL 5.6 および 5.7 用の Google Cloud SQL
 
 ### アップストリームデータベースに必要な権限を付与する {#grant-required-privileges-to-the-upstream-database}
 
@@ -83,30 +82,31 @@ GRANT SELECT,LOCK TABLES,REPLICATION SLAVE,REPLICATION CLIENT ON *.* TO 'your_us
 
 ダウンストリームTiDB Cloudクラスターに使用するユーザー名には、次の権限が必要です。
 
-| 特権       | 範囲          |
-| :------- | :---------- |
-| `CREATE` | データベース、テーブル |
-| `SELECT` | テーブル        |
-| `INSERT` | テーブル        |
-| `UPDATE` | テーブル        |
-| `DELETE` | テーブル        |
-| `ALTER`  | テーブル        |
-| `DROP`   | データベース、テーブル |
-| `INDEX`  | テーブル        |
+| 特権         | 範囲          |
+| :--------- | :---------- |
+| `CREATE`   | データベース、テーブル |
+| `SELECT`   | テーブル        |
+| `INSERT`   | テーブル        |
+| `UPDATE`   | テーブル        |
+| `DELETE`   | テーブル        |
+| `ALTER`    | テーブル        |
+| `DROP`     | データベース、テーブル |
+| `INDEX`    | テーブル        |
+| `TRUNCATE` | テーブル        |
 
 たとえば、次の`GRANT`ステートメントを実行して、対応する権限を付与できます。
 
 ```sql
-GRANT CREATE,SELECT,INSERT,UPDATE,DELETE,ALTER,DROP,INDEX ON *.* TO 'your_user'@'your_IP_address_of_host'
+GRANT CREATE,SELECT,INSERT,UPDATE,DELETE,ALTER,TRUNCATE,DROP,INDEX ON *.* TO 'your_user'@'your_IP_address_of_host'
 ```
 
 移行ジョブをすばやくテストするには、 TiDB Cloudクラスターの`root`アカウントを使用できます。
 
 ### ネットワーク接続を設定する {#set-up-network-connection}
 
-移行ジョブを作成する前に、接続方法に応じてネットワーク接続を設定します。 [TiDB Cloud専用クラスタに接続する](/tidb-cloud/connect-to-tidb-cluster.md)参照してください。
+移行ジョブを作成する前に、接続方法に応じてネットワーク接続を設定します。 [TiDB専用クラスタに接続する](/tidb-cloud/connect-to-tidb-cluster.md)参照してください。
 
--   ネットワーク接続にパブリック IP (パブリック接続) を使用する場合は、アップストリーム データベースがパブリック ネットワーク経由で接続できることを確認してください。
+-   ネットワーク接続にパブリック IP (標準接続) を使用する場合は、アップストリーム データベースがパブリック ネットワーク経由で接続できることを確認してください。
 
 -   AWS VPC ピアリングまたは Google Cloud VPC ネットワーク ピアリングを使用する場合は、次の手順を参照してネットワークを構成してください。
 
@@ -118,7 +118,7 @@ MySQL サービスが AWS VPC 内にある場合は、次の手順を実行し�
 
 2.  MySQL サービスが関連付けられているセキュリティ グループの受信ルールを変更します。
 
-    受信ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-cidr-for-a-region)追加する必要があります。これにより、トラフィックが TiDB クラスターから MySQL インスタンスに流れるようになります。
+    受信ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-project-cidr)追加する必要があります。これにより、トラフィックが TiDB クラスターから MySQL インスタンスに流れるようになります。
 
 3.  MySQL URL に DNS ホスト名が含まれている場合は、 TiDB Cloud がMySQL サービスのホスト名を解決できるようにする必要があります。
 
@@ -135,9 +135,9 @@ MySQL サービスが Google Cloud VPC 内にある場合は、次の手順を�
 
 2.  MySQL サービスの VPC と TiDB クラスター間の接続は[VPCピアリング接続を設定する](/tidb-cloud/set-up-vpc-peering-connections.md) 。
 
-3.  MySQL が配置されている VPC の受信ファイアウォール ルールを変更します。
+3.  MySQL が配置されている VPC の Ingress ファイアウォール ルールを変更します。
 
-    イングレス ファイアウォール ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-cidr-for-a-region)追加する必要があります。これにより、トラフィックが TiDB クラスターから MySQL エンドポイントに流れるようになります。
+    入口ファイアウォール ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-project-cidr)追加する必要があります。これにより、トラフィックが TiDB クラスターから MySQL エンドポイントに流れるようになります。
 
 </details>
 
@@ -198,7 +198,7 @@ MySQL サービスが Google Cloud VPC 内にある場合は、次の手順を�
 
 データをTiDB Cloudに一度に移行するには、**既存のデータ移行**と**増分データ移行の**両方を選択します。これにより、ソース データベースとターゲット データベース間のデータの一貫性が確保されます。
 
-**既存のデータ**と**増分データ**を移行するには、**物理モード**または**論理モード**を使用できます。
+**既存のデータ**を移行するには、**物理​​モード**または**論理モード**を使用できます。
 
 -   デフォルトモードは**論理モード**です。このモードでは、上流データベースからデータを SQL 文としてエクスポートし、TiDB で実行します。このモードでは、移行前のターゲット テーブルは空でも空でなくてもかまいません。ただし、パフォーマンスは物理モードよりも低くなります。
 
@@ -224,7 +224,7 @@ MySQL サービスが Google Cloud VPC 内にある場合は、次の手順を�
 
 ソース データベースの既存のデータのみをTiDB Cloudに移行するには、**既存のデータの移行**を選択します。
 
-既存のデータを移行するには論理モードのみを使用できます。詳細については、 [既存データと増分データを移行する](#migrate-existing-data-and-incremental-data)を参照してください。
+既存のデータを移行するには、物理​​モードまたは論理モードを選択できます。詳細については、 [既存データと増分データを移行する](#migrate-existing-data-and-incremental-data)を参照してください。
 
 ### 増分データのみを移行する {#migrate-only-incremental-data}
 
@@ -290,7 +290,7 @@ MySQL サービスが Google Cloud VPC 内にある場合は、次の手順を�
 
 TiDB Cloud は、さまざまなシナリオでのパフォーマンスとコストの要件を満たすために、移行ジョブ仕様のスケールアップまたはスケールダウンをサポートしています。
 
-移行仕様が異なれば、パフォーマンスも異なります。また、パフォーマンス要件もステージによって異なる場合があります。たとえば、既存データの移行中は、パフォーマンスをできるだけ高速にしたいので、8 RCU などの大きな仕様の移行ジョブを選択します。既存データの移行が完了すると、増分移行ではそれほど高いパフォーマンスは必要なくなるため、ジョブ仕様をスケールダウンして、たとえば 8 RCU から 2 RUC にすることで、コストを節約できます。
+移行仕様が異なれば、パフォーマンスも異なります。また、パフォーマンス要件もステージによって異なる場合があります。たとえば、既存データの移行中は、パフォーマンスをできるだけ高速にしたいので、8 RCU などの大きな仕様の移行ジョブを選択します。既存データの移行が完了すると、増分移行ではそれほど高いパフォーマンスは必要なくなるため、ジョブ仕様をスケールダウンして、たとえば 8 RCU から 2 RUC にすることでコストを節約できます。
 
 移行ジョブ仕様をスケーリングする場合は、次の点に注意してください。
 

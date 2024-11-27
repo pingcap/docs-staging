@@ -9,16 +9,16 @@ summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス 
 
 > **注記：**
 >
-> -   このチュートリアルは、 TiDB Cloud Serverless クラスターにのみ適用されます。
+> -   このチュートリアルは、TiDB Serverless クラスターにのみ適用されます。
 > -   Cloudflare Workers、Vercel Edge Functions、Netlify Edge Functions でTiDB Cloudサーバーレス ドライバーを使用する方法については、 [自動車販売に関する洞察](https://car-sales-insight.vercel.app/)と[サンプルリポジトリ](https://github.com/tidbcloud/car-sales-insight)ご覧ください。
 
-## 始める前に {#before-you-begin}
+## あなたが始める前に {#before-you-begin}
 
 このステップバイステップのチュートリアルを完了するには、次のものが必要です。
 
 -   [Node.js](https://nodejs.org/en) &gt;= 18.0.0。
 -   [ネプ](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)またはお好みのパッケージ マネージャーを使用します。
--   TiDB Cloud Serverless クラスター。ない場合は、 [TiDB Cloud Serverless クラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md)使用できます。
+-   TiDB サーバーレス クラスター。ない場合は、 [TiDBサーバーレスクラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md)使用できます。
 
 ## ステップ1. ローカルNode.jsプロジェクトを作成する {#step-1-create-a-local-node-js-project}
 
@@ -61,7 +61,7 @@ summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス 
     ```js
     import { connect } from '@tidbcloud/serverless'
 
-    const conn = connect({url: 'mysql://[username]:[password]@[host]/[database]'}) // replace with your TiDB Cloud Serverless cluster information
+    const conn = connect({url: 'mysql://[username]:[password]@[host]/[database]'}) // replace with your TiDB Serverless cluster information
     console.log(await conn.execute("show tables"))
     ```
 
@@ -73,7 +73,7 @@ summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス 
 
 グローバル`fetch`関数を持たない Node.js 18.0.0 より前のバージョンを使用している場合は、次の手順で`fetch`を取得できます。
 
-1.  `fetch` （ `undici`など）を提供するパッケージをインストールします。
+1.  `undici`など、 `fetch`を提供するパッケージをインストールします。
 
         npm install undici
 

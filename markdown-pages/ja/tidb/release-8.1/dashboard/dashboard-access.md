@@ -9,15 +9,15 @@ TiDB ダッシュボードにアクセスするには、ブラウザから[http:
 
 > **注記：**
 >
-> TiDB v6.5.0 以降およびTiDB Operator v1.4.0 以降では、Kubernetes 上に TiDB Dashboard を独立した Pod としてデプロイできます。TiDB TiDB Operatorを使用すると、この Pod の IP アドレスにアクセスして TiDB Dashboard を起動できます。詳細については、 [TiDB ダッシュボードをTiDB Operatorに独立してデプロイ](https://docs.pingcap.com/tidb-in-kubernetes/dev/get-started#deploy-tidb-dashboard-independently)を参照してください。
+> TiDB v6.5.0 以降およびTiDB Operator v1.4.0 以降では、Kubernetes 上に TiDB Dashboard を独立した Pod としてデプロイできます。TiDB TiDB Operator を使用すると、この Pod の IP アドレスにアクセスして TiDB Dashboard を起動できます。詳細については、 [TiDB ダッシュボードをTiDB Operatorに独立してデプロイ](https://docs.pingcap.com/tidb-in-kubernetes/dev/get-started#deploy-tidb-dashboard-independently)参照してください。
 
 ## 複数のPDインスタンスがデプロイされている場合にTiDBダッシュボードにアクセスする {#access-tidb-dashboard-when-multiple-pd-instances-are-deployed}
 
-クラスターに複数の PD インスタンスがデプロイされていて、**すべての**PD インスタンスとポートに直接アクセスできる場合は、アドレス[http://127.0.0.1:2379/ダッシュボード/](http://127.0.0.1:2379/dashboard/)の`127.0.0.1:2379`を**任意の**PD インスタンス アドレスとポートに置き換えるだけです。
+クラスターに複数の PD インスタンスがデプロイされていて、**すべての**PD インスタンスとポートに直接アクセスできる場合は、アドレス[http://127.0.0.1:2379/ダッシュボード/](http://127.0.0.1:2379/dashboard/)の`127.0.0.1:2379`**任意の**PD インスタンス アドレスとポートに置き換えるだけです。
 
 > **注記：**
 >
-> ファイアウォールまたはリバース プロキシが設定されていて、すべての PD インスタンスに直接アクセスできない場合は、TiDB ダッシュボードにアクセスできない可能性があります。通常、これはファイアウォールまたはリバース プロキシが正しく設定されていないことが原因です。複数の PD インスタンスが展開されている場合にファイアウォールまたはリバース プロキシを正しく設定する方法については、 [リバースプロキシの背後でTiDBダッシュボードを使用する](/dashboard/dashboard-ops-reverse-proxy.md)と[セキュリティTiDB ダッシュボード](/dashboard/dashboard-ops-security.md)を参照してください。
+> ファイアウォールまたはリバース プロキシが設定されていて、すべての PD インスタンスに直接アクセスできない場合は、TiDB ダッシュボードにアクセスできない可能性があります。通常、これはファイアウォールまたはリバース プロキシが正しく設定されていないことが原因です。複数の PD インスタンスが展開されている場合にファイアウォールまたはリバース プロキシを正しく設定する方法については、 [リバースプロキシの背後でTiDBダッシュボードを使用する](/dashboard/dashboard-ops-reverse-proxy.md)と[セキュリティTiDB ダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。
 
 ## ブラウザの互換性 {#browser-compatibility}
 
@@ -33,12 +33,11 @@ TiDB ダッシュボードは、比較的新しいバージョンの次の一般
 
 ## サインイン {#sign-in}
 
-TiDB ダッシュボードにアクセスすると、下の画像に示すように、ユーザー ログイン インターフェイスが表示されます。
+TiDB ダッシュボードにアクセスすると、ユーザー ログイン インターフェイスに移動します。
 
 -   TiDB `root`アカウントを使用して TiDB ダッシュボードにサインインできます。
+-   シングル サインオン (SSO) 経由で TiDB ダッシュボードにサインインすることもできます。詳細については、 [TiDB ダッシュボードの SSO を構成する](/dashboard/dashboard-session-sso.md)参照してください。
 -   [ユーザー定義SQLユーザー](/dashboard/dashboard-user.md)を作成した場合は、このアカウントと対応するパスワードを使用してサインインできます。
-
-![Login interface](https://download.pingcap.com/images/docs/dashboard/dashboard-access-login.png)
 
 次のいずれかの状況が存在する場合、ログインが失敗する可能性があります。
 
@@ -62,6 +61,6 @@ TiDB ダッシュボードでは次の言語がサポートされています。
 
 ## ログアウト {#logout}
 
-ログインしたら、左側のナビゲーション バーのログイン ユーザー名をクリックして、ユーザー ページに切り替えます。ユーザー ページの**[ログアウト]**ボタンをクリックして、現在のユーザーをログアウトします。ログアウトした後は、ユーザー名とパスワードを再入力する必要があります。
+ログインしたら、左側のナビゲーション バーのログイン ユーザー名をクリックして、ユーザー ページに切り替えます。ユーザー ページの**[ログアウト]**ボタンをクリックすると、現在のユーザーがログアウトします。ログアウトした後は、ユーザー名とパスワードを再入力する必要があります。
 
 ![Logout](https://download.pingcap.com/images/docs/dashboard/dashboard-access-logout.png)

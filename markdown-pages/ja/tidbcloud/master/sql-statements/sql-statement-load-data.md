@@ -3,7 +3,7 @@ title: LOAD DATA | TiDB SQL Statement Reference
 summary: TiDB データベースの LOAD DATA の使用法の概要。
 ---
 
-# データをロード {#load-data}
+# データを読み込む {#load-data}
 
 `LOAD DATA`ステートメント バッチは、データを TiDB テーブルにロードします。
 
@@ -31,19 +31,19 @@ Fields ::=
     | 'DEFINED' 'NULL' 'BY' stringLit ('OPTIONALLY' 'ENCLOSED')?)?
 ```
 
-## パラメータ {#parameters}
+## パラメーター {#parameters}
 
 ### <code>LOCAL</code> {#code-local-code}
 
-`LOCAL`を使用して、インポートするクライアント上のデータ ファイルを指定できます。ファイル パラメーターは、クライアント上のファイル システム パスである必要があります。
+`LOCAL`使用して、インポートするクライアント上のデータ ファイルを指定できます。ファイル パラメーターは、クライアント上のファイル システム パスである必要があります。
 
-TiDB Cloud を使用している場合、 `LOAD DATA`ステートメントを使用してローカル データ ファイルをロードするには、 TiDB Cloudに接続するときに接続文字列に`--local-infile`オプションを追加する必要があります。
+TiDB Cloudを使用している場合、 `LOAD DATA`ステートメントを使用してローカル データ ファイルをロードするには、 TiDB Cloudに接続するときに接続文字列に`--local-infile`オプションを追加する必要があります。
 
--   以下は、 TiDB Cloud Serverless の接続文字列の例です。
+-   以下は、TiDB Serverless の接続文字列の例です。
 
         mysql --connect-timeout 15 -u '<user_name>' -h <host_name> -P 4000 -D test --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/cert.pem -p<your_password> --local-infile
 
--   以下は、 TiDB Cloud Dedicated の接続文字列の例です。
+-   以下は、TiDB Dedicated の接続文字列の例です。
 
         mysql --connect-timeout 15 --ssl-mode=VERIFY_IDENTITY --ssl-ca=<CA_path> --tls-version="TLSv1.2" -u root -h <host_name> -P 4000 -D test -p<your_password> --local-infile
 
@@ -51,13 +51,13 @@ TiDB Cloud を使用している場合、 `LOAD DATA`ステートメントを使
 
 <CustomContent platform="tidb">
 
-`LOCAL`指定しない場合は、ファイル パラメータは[外部storage](/br/backup-and-restore-storages.md)で詳述されているように、有効な S3 または GCS パスである必要があります。
+`LOCAL`指定しない場合は、 [外部storage](/br/backup-and-restore-storages.md)で詳述されているように、ファイル パラメータは有効な S3 または GCS パスである必要があります。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-`LOCAL`指定しない場合は、ファイル パラメータは[外部storage](https://docs.pingcap.com/tidb/stable/backup-and-restore-storages)で詳述されているように、有効な S3 または GCS パスである必要があります。
+`LOCAL`指定しない場合は、 [外部storage](https://docs.pingcap.com/tidb/stable/backup-and-restore-storages)で詳述されているように、ファイル パラメータは有効な S3 または GCS パスである必要があります。
 
 </CustomContent>
 
@@ -82,7 +82,7 @@ TiDB Cloud を使用している場合、 `LOAD DATA`ステートメントを使
 -   MySQL の動作と一致して、 `ESCAPED BY` null でない場合、たとえばデフォルト値`\`が使用されると、 `\N` NULL 値と見なされます。
 -   `DEFINED NULL BY 'my-null'`のように`DEFINED NULL BY`使用すると、 `my-null` NULL 値と見なされます。
 -   `DEFINED NULL BY ... OPTIONALLY ENCLOSED`使用する場合、 `DEFINED NULL BY 'my-null' OPTIONALLY ENCLOSED` 、 `my-null` 、 `"my-null"` ( `ENCLOSED BY '"`と想定) は NULL 値と見なされます。
--   `DEFINED NULL BY`や`DEFINED NULL BY ... OPTIONALLY ENCLOSED`使用せず、 `ENCLOSED BY '"'`などの`ENCLOSED BY`を使用する場合、 `NULL` NULL 値と見なされます。この動作は MySQL と一致しています。
+-   `DEFINED NULL BY`や`DEFINED NULL BY ... OPTIONALLY ENCLOSED`ではなく`ENCLOSED BY` （ `ENCLOSED BY '"'`など）を使用する場合、 `NULL` NULL 値と見なされます。この動作は MySQL と一致しています。
 -   それ以外の場合は、NULL 値とは見なされません。
 
 次のデータ形式を例に挙げます。
@@ -140,7 +140,7 @@ LOAD DATA LOCAL INFILE '/mnt/evo970/data-sets/bikeshare-data/2017Q4-capitalbikes
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-`LOAD DATA`ステートメントの構文は、解析されても無視される文字セット オプションを除き、MySQL の構文と互換性があります。構文の互換性に違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)実行できます。
+`LOAD DATA`ステートメントの構文は、解析されても無視される文字セット オプションを除き、MySQL の構文と互換性があります。構文の互換性に違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support)実行できます。
 
 <CustomContent platform="tidb">
 
@@ -150,8 +150,12 @@ LOAD DATA LOCAL INFILE '/mnt/evo970/data-sets/bikeshare-data/2017Q4-capitalbikes
 > -   TiDB v4.0.0 から v6.6.0 までのバージョンでは、TiDB はデフォルトで 1 つのトランザクションですべての行をコミットします。ただし、固定数の行ごとに`LOAD DATA`ステートメントでコミットする必要がある場合は、必要な行数を[`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size)に設定できます。
 > -   TiDB v7.0.0 以降では、 `tidb_dml_batch_size` `LOAD DATA`には影響しなくなり、TiDB は 1 つのトランザクションですべての行をコミットします。
 > -   TiDB v4.0.0 以前のバージョンからアップグレードすると、 `ERROR 8004 (HY000) at line 1: Transaction is too large, size: 100000058`発生する可能性があります。このエラーを解決するには、 `tidb.toml`ファイルの[`txn-total-size-limit`](/tidb-configuration-file.md#txn-total-size-limit)値を増やすことをお勧めします。
-> -   トランザクションでコミットされる行数に関係なく、明示的なトランザクションの[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)のステートメントによって`LOAD DATA`ロールバックされることはありません。
-> -   `LOAD DATA`ステートメントは、TiDB トランザクション モードの構成に関係なく、常に楽観的トランザクション モードで実行されます。
+> -   TiDB v7.6.0 より前のバージョンでは、トランザクションでコミットされる行数に関係なく、明示的なトランザクションの[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)のステートメントによって`LOAD DATA`ロールバックされることはありません。
+> -   TiDB v7.6.0 より前のバージョンでは、TiDB トランザクション モードの構成に関係なく、 `LOAD DATA`ステートメントは常に楽観的トランザクション モードで実行されます。
+> -   v7.6.0 以降、TiDB は他の DML ステートメントと同じ方法で`LOAD DATA` in トランザクションを処理します。
+>     -   `LOAD DATA`ステートメントは、現在のトランザクションをコミットせず、新しいトランザクションを開始しません。
+>     -   `LOAD DATA`ステートメントは、TiDB トランザクション モード設定 (楽観的トランザクションまたは悲観的トランザクション) の影響を受けます。
+>     -   トランザクション内の`LOAD DATA`のステートメントは、トランザクション内の[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)ステートメントによってロールバックできます。
 
 </CustomContent>
 
@@ -162,9 +166,13 @@ LOAD DATA LOCAL INFILE '/mnt/evo970/data-sets/bikeshare-data/2017Q4-capitalbikes
 > -   TiDB v4.0.0 より前のバージョンでは、20000 行ごとに`LOAD DATA`コミットが行われ、これを構成することはできません。
 > -   TiDB v4.0.0 から v6.6.0 までのバージョンでは、TiDB はデフォルトで 1 つのトランザクションですべての行をコミットします。ただし、固定数の行ごとに`LOAD DATA`ステートメントでコミットする必要がある場合は、必要な行数を[`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size)に設定できます。
 > -   v7.0.0 以降では、 `tidb_dml_batch_size` `LOAD DATA`には影響しなくなり、 TiDB は 1 つのトランザクションですべての行をコミットします。
-> -   TiDB v4.0.0 以前のバージョンからアップグレードすると、 `ERROR 8004 (HY000) at line 1: Transaction is too large, size: 100000058`発生する可能性があります。このエラーを解決するには、 [TiDB Cloudサポート](https://docs.pingcap.com/tidbcloud/tidb-cloud-support)に連絡して[`txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit)値を増やすことができます。
-> -   トランザクションでコミットされる行数に関係なく、明示的なトランザクションの[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)のステートメントによって`LOAD DATA`ロールバックされることはありません。
-> -   `LOAD DATA`ステートメントは、TiDB トランザクション モードの構成に関係なく、常に楽観的トランザクション モードで実行されます。
+> -   TiDB v4.0.0 以前のバージョンからアップグレードすると、 `ERROR 8004 (HY000) at line 1: Transaction is too large, size: 100000058`発生する可能性があります。このエラーを解決するには、 [TiDB Cloudサポート](https://docs.pingcap.com/tidbcloud/tidb-cloud-support)に連絡して[`txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit)値を増やします。
+> -   TiDB v7.6.0 より前のバージョンでは、トランザクションでコミットされる行数に関係なく、明示的なトランザクションの[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)のステートメントによって`LOAD DATA`ロールバックされることはありません。
+> -   TiDB v7.6.0 より前のバージョンでは、TiDB トランザクション モードの構成に関係なく、 `LOAD DATA`ステートメントは常に楽観的トランザクション モードで実行されます。
+> -   v7.6.0 以降、TiDB は他の DML ステートメントと同じ方法で`LOAD DATA` in トランザクションを処理します。
+>     -   `LOAD DATA`ステートメントは、現在のトランザクションをコミットせず、新しいトランザクションを開始しません。
+>     -   `LOAD DATA`ステートメントは、TiDB トランザクション モード設定 (楽観的トランザクションまたは悲観的トランザクション) の影響を受けます。
+>     -   トランザクション内の`LOAD DATA`のステートメントは、トランザクション内の[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)ステートメントによってロールバックできます。
 
 </CustomContent>
 

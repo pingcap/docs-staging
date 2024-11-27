@@ -1,6 +1,6 @@
 ---
 title: SET DEFAULT ROLE | TiDB SQL Statement Reference
-summary: An overview of the usage of SET DEFAULT ROLE for the TiDB database.
+summary: TiDB データベースの SET DEFAULT ROLE の使用法の概要。
 ---
 
 # <code>SET DEFAULT ROLE</code> {#code-set-default-role-code}

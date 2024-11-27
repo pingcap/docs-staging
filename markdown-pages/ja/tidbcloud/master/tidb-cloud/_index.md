@@ -1,16 +1,14 @@
 ---
 title: TiDB Cloud Documentation
-aliases: ['/tidbcloud/privacy-policy', '/tidbcloud/terms-of-service', '/tidbcloud/service-level-agreement']
 hide_sidebar: true
 hide_commit: true
-summary: TiDB Cloud は、 TiDB の優れた機能すべてをクラウドに提供する、完全に管理された Database-as-a-Service (DBaaS) です。学習、試用、開発、保守、移行、監視、チューニング、セキュリティ保護、課金、統合、参照のためのガイド、サンプル、リファレンスを提供します。
 ---
 
-<LearningPathContainer platform="tidb-cloud" title="TiDB Cloud" subTitle="TiDB Cloud is a fully-managed Database-as-a-Service (DBaaS) that brings everything great about TiDB to your cloud. Find the guide, samples, and references you need to use TiDB Cloud.">
+<LearningPathContainer platform="tidb-cloud" title="TiDBクラウド" subTitle="TiDB Cloud is a fully-managed Database-as-a-Service (DBaaS) that brings everything great about TiDB to your cloud. Find the guide, samples, and references you need to use TiDB Cloud.">
 
 <LearningPath label="Learn" icon="cloud1">
 
-[TiDB Cloudとは](https://docs.pingcap.com/tidbcloud/tidb-cloud-intro)
+[TiDB Cloud理由](https://docs.pingcap.com/tidbcloud/tidb-cloud-intro)
 
 [アーキテクチャ](https://docs.pingcap.com/tidbcloud/tidb-cloud-intro#architecture)
 
@@ -22,11 +20,9 @@ summary: TiDB Cloud は、 TiDB の優れた機能すべてをクラウドに提
 
 [TiDB Cloud を試してみる](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart)
 
-[TiDB + AI を試してみる](https://docs.pingcap.com/tidbcloud/vector-search-get-started-using-python)
-
 [HTAPを試してみる](https://docs.pingcap.com/tidbcloud/tidb-cloud-htap-quickstart)
 
-[概念実証](https://docs.pingcap.com/tidbcloud/tidb-cloud-poc)
+[コンセプトの証明](https://docs.pingcap.com/tidbcloud/tidb-cloud-poc)
 
 </LearningPath>
 
@@ -114,13 +110,13 @@ summary: TiDB Cloud は、 TiDB の優れた機能すべてをクラウドに提
 
 [プロジェクトアクセスの管理](https://docs.pingcap.com/tidbcloud/manage-user-access#manage-project-access)
 
-[パスワード設定を構成する](https://docs.pingcap.com/tidbcloud/configure-security-settings)
+[Security設定を構成する](https://docs.pingcap.com/tidbcloud/configure-security-settings)
 
 </LearningPath>
 
 <LearningPath label="Billing" icon="cloud2">
 
-[価格](https://www.pingcap.com/pricing/)
+[価格](https://en.pingcap.com/tidb-cloud-pricing/)
 
 [請求書](https://docs.pingcap.com/tidbcloud/tidb-cloud-billing#invoices)
 

@@ -13,7 +13,7 @@ summary: TIDB_HOT_REGIONS_HISTORY` information_schema テーブルについて�
 
 <CustomContent platform="tidb">
 
-[`hot-regions-write-interval`](/pd-configuration-file.md#hot-regions-write-interval-new-in-v540)を設定することで記録間隔を指定できます。デフォルト値は 10 分です。 [`hot-regions-reserved-days`](/pd-configuration-file.md#hot-regions-reserved-days-new-in-v540)を設定することでホットリージョンの履歴情報を保存する期間を指定できます。デフォルト値は 7 日です。詳細については[PD 構成ファイルの説明](/pd-configuration-file.md#hot-regions-write-interval-new-in-v540)を参照してください。
+[`hot-regions-write-interval`](/pd-configuration-file.md#hot-regions-write-interval-new-in-v540)設定することで記録間隔を指定できます。デフォルト値は 10 分です。 [`hot-regions-reserved-days`](/pd-configuration-file.md#hot-regions-reserved-days-new-in-v540)設定することでホットリージョンの履歴情報を保存する期間を指定できます。デフォルト値は 7 日です。詳細については[PD 構成ファイルの説明](/pd-configuration-file.md#hot-regions-write-interval-new-in-v540)参照してください。
 
 </CustomContent>
 
@@ -52,7 +52,7 @@ DESC tidb_hot_regions_history;
 16 rows in set (0.00 sec)
 ```
 
-`TIDB_HOT_REGIONS_HISTORY`テーブル内のフィールドは次のように説明されます。
+`TIDB_HOT_REGIONS_HISTORY`のテーブル内のフィールドは次のように説明されます。
 
 -   UPDATE_TIME: ホットリージョンの更新時刻。
 -   DB_NAME: ホットリージョンが配置されているオブジェクトのデータベース名。
@@ -73,7 +73,7 @@ DESC tidb_hot_regions_history;
 
 > **注記：**
 >
-> `UPDATE_TIME` 、 `REGION_ID` 、 `STORE_ID` 、 `PEER_ID` 、 `IS_LEARNER` 、 `IS_LEADER` 、および`TYPE`フィールドは、実行のために PD サーバーにプッシュダウンされます。テーブルの使用によるオーバーヘッドを削減するには、検索の時間範囲を指定し、できるだけ多くの条件を指定する必要があります。たとえば、 `select * from tidb_hot_regions_history where store_id = 11 and update_time > '2020-05-18 20:40:00' and update_time < '2020-05-18 21:40:00' and type='write'` 。
+> `UPDATE_TIME` 、 `REGION_ID` 、 `STORE_ID` 、 `PEER_ID` 、 `IS_LEARNER` 、 `IS_LEADER` 、および`TYPE`フィールドは、実行のために PD サーバーにプッシュダウンされます。テーブルの使用によるオーバーヘッドを削減するには、検索の時間範囲を指定し、できるだけ多くの条件を指定する必要があります。たとえば、 `select * from tidb_hot_regions_history where store_id = 11 and update_time > '2020-05-18 20:40:00' and update_time < '2020-05-18 21:40:00' and type='write'`です。
 
 ## 一般的なユーザーシナリオ {#common-user-scenarios}
 
@@ -85,33 +85,33 @@ DESC tidb_hot_regions_history;
 
     > **注記：**
     >
-    > `UPDATE_TIME` Unix タイムスタンプもサポートします。たとえば、 `update_time >TIMESTAMP('2021-08-18 21:40:00')`または`update_time > FROM_UNIXTIME(1629294000.000)` 。
+    > `UPDATE_TIME` Unix タイムスタンプもサポートします。たとえば、 `update_time >TIMESTAMP('2021-08-18 21:40:00')`または`update_time > FROM_UNIXTIME(1629294000.000)`です。
 
--   特定の期間内にテーブル内のホットな地域をクエリします。1 と`table_name` `update_time`の値に置き換えます。
+-   特定の期間内にテーブル内のホットな地域をクエリします。1 と`update_time` `table_name`実際の値に置き換えます。
 
     ```SQL
     SELECT * FROM INFORMATION_SCHEMA.TIDB_HOT_REGIONS_HISTORY WHERE update_time >'2021-08-18 21:40:00' and update_time <'2021-09-19 00:00:00' and TABLE_NAME = 'table_name';
     ```
 
--   特定の期間内のホットな地域の分布を照会します。1 と`table_name` `update_time`の値に置き換えます。
+-   特定の期間内のホットな地域の分布を照会します。1 と`update_time` `table_name`実際の値に置き換えます。
 
     ```sql
     SELECT count(region_id) cnt, store_id FROM INFORMATION_SCHEMA.TIDB_HOT_REGIONS_HISTORY WHERE update_time >'2021-08-18 21:40:00' and update_time <'2021-09-19 00:00:00' and table_name = 'table_name' GROUP BY STORE_ID ORDER BY cnt DESC;
     ```
 
--   特定の期間内のホットLeaderリージョンの分布を照会します。1 と`table_name` `update_time`の値に置き換えます。
+-   特定の期間内のホットLeaderリージョンの分布を照会します。1 と`update_time` `table_name`実際の値に置き換えます。
 
     ```sql
     SELECT count(region_id) cnt, store_id FROM INFORMATION_SCHEMA.TIDB_HOT_REGIONS_HISTORY WHERE update_time >'2021-08-18 21:40:00' and update_time <'2021-09-19 00:00:00' and table_name = 'table_name' and is_leader=1 GROUP BY STORE_ID ORDER BY cnt DESC;
     ```
 
--   特定の期間内のホット インデックス領域の分布を照会します。1 と`table_name` `update_time`の値に置き換えます。
+-   特定の期間内のホット インデックス領域の分布を照会します。1 と`update_time` `table_name`実際の値に置き換えます。
 
     ```sql
     SELECT count(region_id) cnt, index_name, store_id FROM INFORMATION_SCHEMA.TIDB_HOT_REGIONS_HISTORY WHERE update_time >'2021-08-18 21:40:00' and update_time <'2021-09-19 00:00:00' and table_name = 'table_name' group by index_name, store_id order by index_name,cnt desc;
     ```
 
--   特定の期間内のホットなインデックスLeader地域の分布を照会します。1 と`table_name` `update_time`の値に置き換えます。
+-   特定の期間内のホット インデックスLeaderリージョンの分布を照会します。1 と`update_time` `table_name`実際の値に置き換えます。
 
     ```sql
     SELECT count(region_id) cnt, index_name, store_id FROM INFORMATION_SCHEMA.TIDB_HOT_REGIONS_HISTORY WHERE update_time >'2021-08-18 21:40:00' and update_time <'2022-09-19 00:00:00' and table_name = 'table_name' and is_leader=1 group by index_name, store_id order by index_name,cnt desc;

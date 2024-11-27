@@ -19,10 +19,6 @@ ALTER TABLE table_name SET TIFLASH REPLICA count;
 
 -   `count`レプリカの数を示します。値が`0`の場合、レプリカは削除されます。
 
-> **注記：**
->
-> [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターの場合、 TiFlashレプリカの`count` `2`までしか設定できません。 `1`に設定すると、実行時に自動的に`2`に調整されます。 2 より大きい数値に設定すると、レプリカ数に関するエラーが発生します。
-
 同じテーブルに対して複数の DDL ステートメントを実行する場合、最後のステートメントのみが有効になります。次の例では、テーブル`tpch50`に対して 2 つの DDL ステートメントが実行されていますが、2 番目のステートメント (レプリカを削除する) のみが有効になります。
 
 テーブルのレプリカを 2 つ作成します。
@@ -37,7 +33,7 @@ ALTER TABLE `tpch50`.`lineitem` SET TIFLASH REPLICA 2;
 ALTER TABLE `tpch50`.`lineitem` SET TIFLASH REPLICA 0;
 ```
 
-**注:**
+**ノート：**
 
 -   上記の DDL ステートメントを通じてテーブル`t`がTiFlashに複製されると、次のステートメントを使用して作成されたテーブルも自動的にTiFlashに複製されます。
 
@@ -74,7 +70,7 @@ SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = '<db_name>
 ALTER DATABASE db_name SET TIFLASH REPLICA count;
 ```
 
-このステートメントでは、 `count`レプリカの数を示します。 `0`に設定すると、レプリカが削除されます。
+このステートメントでは、 `count`​​レプリカの数を示します。 `0`に設定すると、レプリカが削除されます。
 
 例:
 
@@ -134,7 +130,7 @@ TiFlashレプリカが追加される前に、各 TiKV インスタンスは完�
     ```sql
     -- The default value for both configurations are 100MiB, i.e. the maximum disk bandwidth used for writing snapshots is no more than 100MiB/s.
     SET CONFIG tikv `server.snap-io-max-bytes-per-sec` = '300MiB';
-    SET CONFIG tiflash `raftstore-proxy.server.snap-io-max-bytes-per-sec` = '300MiB';
+    SET CONFIG tiflash `raftstore-proxy.server.snap-max-write-bytes-per-sec` = '300MiB';
     ```
 
     これらの SQL 文を実行すると、クラスターを再起動せずに構成の変更がすぐに有効になります。ただし、レプリケーション速度は依然として PD 制限によってグローバルに制限されているため、現時点では高速化を確認することはできません。
@@ -147,10 +143,10 @@ TiFlashレプリカが追加される前に、各 TiKV インスタンスは完�
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 60 add-peer
     ```
 
-    > 上記のコマンドでは、 `v<CLUSTER_VERSION>`実際のクラスター バージョンに置き換える必要があります (例: `v7.5.3`と`<PD_ADDRESS>:2379`任意の PD ノードのアドレスに置き換える)。次に例を示します。
+    > 上記のコマンドでは、 `v<CLUSTER_VERSION>`実際のクラスター バージョンに置き換える必要があります (例: `v8.1.0`と`<PD_ADDRESS>:2379`任意の PD ノードのアドレスに置き換える)。次に例を示します。
     >
     > ```shell
-    > tiup ctl:v7.5.3 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
+    > tiup ctl:v8.1.0 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
     > ```
 
     数分以内に、 TiFlashノードの CPU とディスク IO リソースの使用率が大幅に増加し、 TiFlashによるレプリカの作成速度が速くなります。同時に、TiKV ノードの CPU とディスク IO リソースの使用率も増加します。
@@ -173,7 +169,7 @@ TiFlashレプリカが追加される前に、各 TiKV インスタンスは完�
 
     ```sql
     SET CONFIG tikv `server.snap-io-max-bytes-per-sec` = '100MiB';
-    SET CONFIG tiflash `raftstore-proxy.server.snap-io-max-bytes-per-sec` = '100MiB';
+    SET CONFIG tiflash `raftstore-proxy.server.snap-max-write-bytes-per-sec` = '100MiB';
     ```
 
 ## 利用可能なゾーンを設定する {#set-available-zones}

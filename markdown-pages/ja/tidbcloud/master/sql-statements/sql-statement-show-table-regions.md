@@ -9,7 +9,7 @@ summary: TiDB で SHOW TABLE REGIONS を使用する方法を学習します。
 
 > **注記：**
 >
-> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 ## 構文 {#syntax}
 
@@ -20,25 +20,13 @@ SHOW TABLE [table_name] INDEX [index_name] REGIONS [WhereClauseOptional];
 
 ## 概要 {#synopsis}
 
-**テーブル領域ステートメントを表示:**
+```ebnf+diagram
+ShowTableRegionStmt ::=
+    "SHOW" "TABLE" TableName PartitionNameList? ("INDEX" IndexName)? "REGIONS" ("WHERE" Expression)?
 
-![ShowTableRegionStmt](https://download.pingcap.com/images/docs/sqlgram/ShowTableRegionStmt.png)
-
-**テーブル名:**
-
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
-
-**パーティション名リストオプション:**
-
-![PartitionNameListOpt](https://download.pingcap.com/images/docs/sqlgram/PartitionNameListOpt.png)
-
-**WhereClauseオプション:**
-
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
-
-**Where句:**
-
-![WhereClause](https://download.pingcap.com/images/docs/sqlgram/WhereClause.png)
+TableName ::=
+    (SchemaName ".")? Identifier
+```
 
 `SHOW TABLE REGIONS`を実行すると、次の列が返されます。
 
@@ -100,7 +88,7 @@ SELECT SLEEP(5);
 SHOW TABLE t1 REGIONS;
 ```
 
-出力には`START_KEY`テーブルがリージョンに分割されていることが`END_KEY` `REGION_ID`に一致しない可能性があります。
+出力には、テーブルがリージョンに分割されていることが示されるはずです。 `REGION_ID` 、 `START_KEY` 、 `END_KEY`完全に一致しない可能性があります。
 
 ```sql
 ...
@@ -148,7 +136,7 @@ mysql> SHOW TABLE t1 REGIONS;
 より詳細な例:
 
 ```sql
-mysql> show table t regions;
+mysql> SHOW TABLE t REGIONS;
 +-----------+--------------+--------------+-----------+-----------------+---------------+------------+---------------+------------+----------------------+------------------+------------------------+------------------+
 | REGION_ID | START_KEY    | END_KEY      | LEADER_ID | LEADER_STORE_ID | PEERS         | SCATTERING | WRITTEN_BYTES | READ_BYTES | APPROXIMATE_SIZE(MB) | APPROXIMATE_KEYS | SCHEDULING_CONSTRAINTS | SCHEDULING_STATE |
 +-----------+--------------+--------------+-----------+-----------------+---------------+------------+---------------+------------+----------------------+------------------+------------------------+------------------+
@@ -172,7 +160,7 @@ mysql> show table t regions;
 ストア 1 のテーブル t に対応するリージョンを確認するには、 `WHERE`句を使用します。
 
 ```sql
-test> show table t regions where leader_store_id =1;
+test> SHOW TABLE t REGIONS WHERE leader_store_id =1;
 +-----------+-----------+---------+-----------+-----------------+--------------+------------+---------------+------------+----------------------+------------------+------------------------+------------------+
 | REGION_ID | START_KEY | END_KEY | LEADER_ID | LEADER_STORE_ID | PEERS        | SCATTERING | WRITTEN_BYTES | READ_BYTES | APPROXIMATE_SIZE(MB) | APPROXIMATE_KEYS | SCHEDULING_CONSTRAINTS | SCHEDULING_STATE |
 +-----------+-----------+---------+-----------+-----------------+--------------+------------+---------------+------------+----------------------+------------------+------------------------+------------------+
@@ -183,7 +171,7 @@ test> show table t regions where leader_store_id =1;
 `SPLIT TABLE REGION`使用してインデックス データを領域に分割します。次の例では、テーブル t のインデックス データ`name`が`[a,z]`の範囲で 2 つの領域に分割されます。
 
 ```sql
-test> split table t index name between ("a") and ("z") regions 2;
+test> SPLIT TABLE t INDEX name BETWEEN ("a") AND ("z") REGIONS 2;
 +--------------------+----------------------+
 | TOTAL_SPLIT_REGION | SCATTER_FINISH_RATIO |
 +--------------------+----------------------+
@@ -195,7 +183,7 @@ test> split table t index name between ("a") and ("z") regions 2;
 現在、テーブル t は 7 つのリージョンに`98` `3` `102` `106` `110` `114` `135` `name`保存されます。
 
 ```sql
-test> show table t regions;
+test> SHOW TABLE t REGIONS;
 +-----------+-----------------------------+-----------------------------+-----------+-----------------+---------------+------------+---------------+------------+----------------------+------------------+------------------------+------------------+
 | REGION_ID | START_KEY                   | END_KEY                     | LEADER_ID | LEADER_STORE_ID | PEERS         | SCATTERING | WRITTEN_BYTES | READ_BYTES | APPROXIMATE_SIZE(MB) | APPROXIMATE_KEYS | SCHEDULING_CONSTRAINTS | SCHEDULING_STATE |
 +-----------+-----------------------------+-----------------------------+-----------+-----------------+---------------+------------+---------------+------------+----------------------+------------------+------------------------+------------------+

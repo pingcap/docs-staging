@@ -1,17 +1,17 @@
 ---
-title: Create a TiDB Cloud Dedicated Cluster
-summary: TiDB Cloud Dedicated クラスターを作成する方法を学習します。
+title: Create a TiDB Dedicated Cluster
+summary: TiDB 専用クラスターを作成する方法を学習します。
 ---
 
-# TiDB Cloud専用クラスタを作成する {#create-a-tidb-cloud-dedicated-cluster}
+# TiDB専用クラスタを作成する {#create-a-tidb-dedicated-cluster}
 
-このチュートリアルでは、 TiDB Cloud Dedicated クラスターのサインアップと作成について説明します。
+このチュートリアルでは、TiDB 専用クラスターのサインアップと作成について説明します。
 
 > **ヒント：**
 >
-> TiDB Cloud Serverless クラスターを作成する方法については、 [TiDB Cloudサーバーレスクラスタを作成する](/tidb-cloud/create-tidb-cluster-serverless.md)参照してください。
+> TiDB Serverless クラスターを作成する方法については、 [TiDB サーバーレスクラスタを作成する](/tidb-cloud/create-tidb-cluster-serverless.md)参照してください。
 
-## 始める前に {#before-you-begin}
+## あなたが始める前に {#before-you-begin}
 
 TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidbcloud.com/signup)クリックしてアカウントを登録してください。
 
@@ -27,7 +27,9 @@ TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidb
 
 1.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、<mdsvgicon name="icon-top-organization">左下隅にあります。</mdsvgicon>
 
-2.  **「組織設定」**をクリックし、左側のナビゲーション ペインで**「プロジェクト」**タブをクリックします。 **「プロジェクト」**タブが表示されます。
+2.  **組織設定を**クリックします。
+
+    デフォルトでは**「プロジェクト」**タブが表示されます。
 
 3.  次のいずれかを実行します。
 
@@ -36,9 +38,9 @@ TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidb
 
 4.  クラスター ページに戻るには、ウィンドウの左上隅にあるTiDB Cloudロゴをクリックします。
 
-## ステップ2. TiDB Cloud Dedicatedクラスタを作成する {#step-2-create-a-tidb-cloud-dedicated-cluster}
+## ステップ2. TiDB専用クラスターを作成する {#step-2-create-a-tidb-dedicated-cluster}
 
-ロール`Organization Owner`または`Project Owner`の場合は、次のようにしてTiDB Cloud Dedicated クラスターを作成できます。
+ロール`Organization Owner`または`Project Owner`の場合は、次のように TiDB 専用クラスターを作成できます。
 
 1.  プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
@@ -61,12 +63,11 @@ TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidb
 
     3.  必要に応じて、デフォルトのクラスター名とポート番号を更新します。
 
-    4.  このリージョンに CIDR が設定されていない場合は、CIDR を設定する必要があります。**プロジェクト CIDR**フィールドが表示されない場合は、このリージョンに CIDR がすでに設定されていることを意味します。
+    4.  これが現在のプロジェクトの最初のクラスターであり、このプロジェクトに CIDR が設定されていない場合は、プロジェクト CIDR を設定する必要があります。**プロジェクト CIDR**フィールドが表示されない場合は、このプロジェクトに CIDR がすでに設定されていることを意味します。
 
         > **注記：**
         >
-        > -   TiDB Cloud は、このリージョンで最初のクラスターが作成されると、この CIDR を使用して VPC を作成します。このリージョン内の同じプロジェクトの後続のすべてのクラスターは、この VPC を使用します。
-        > -   CIDR を設定するときは、アプリケーションが配置されている VPC の CIDR との競合を避けてください。VPC の作成後は、CIDR を変更することはできません。
+        > プロジェクト CIDR を設定するときは、アプリケーションが配置されている VPC の CIDR との競合を避けてください。プロジェクト CIDR は、設定後に変更することはできません。
 
 4.  右側でクラスターと課金情報を確認します。
 
@@ -80,16 +81,14 @@ TiDB Cloudアカウントをお持ちでない場合は、 [ここ](https://tidb
 
     TiDB Cloudクラスターは約 20 ～ 30 分で作成されます。
 
-## ステップ3. ルートパスワードを設定する {#step-3-set-the-root-password}
+## ステップ3. 安全な設定を構成する {#step-3-configure-secure-settings}
 
-クラスターが作成されたら、次の手順に従ってルート パスワードを設定します。
+クラスターが作成されたら、次の手順に従ってセキュリティ設定を構成します。
 
-1.  クラスターの概要ページの右上隅で、 **[...]**をクリックし、 **[パスワード設定]**を選択します。
+1.  クラスターの概要ページの右上隅で、 **[...]**をクリックし、 **[Security設定]**を選択します。
 
-2.  クラスターに接続するためのルート パスワードを設定し、 **[保存] を**クリックします。
+2.  クラスターに接続するためのルート パスワードと許可された IP アドレスを設定し、 **[適用] を**クリックします。
 
-    **「パスワードの自動生成」**をクリックすると、ランダムなパスワードを生成できます。生成されたパスワードは再度表示されないので、パスワードは安全な場所に保存してください。
+## 次は何ですか {#what-s-next}
 
-## 次は何か {#what-s-next}
-
-TiDB Cloud上にクラスターを作成したら、 [TiDB Cloud専用クラスタに接続する](/tidb-cloud/connect-to-tidb-cluster.md)で説明した方法でクラスターに接続できます。
+TiDB Cloud上にクラスターを作成したら、 [TiDB専用クラスタに接続する](/tidb-cloud/connect-via-standard-connection-serverless.md)で説明した方法でクラスターに接続できます。
