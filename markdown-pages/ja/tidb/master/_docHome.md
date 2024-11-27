@@ -14,31 +14,31 @@ TiDB Cloud は、TiDB の優れた機能すべてをクラウドに提供する�
 
 <DocHomeCardContainer>
 
-<DocHomeCard href="/tidbcloud/tidb-cloud-intro" label="What is TiDB Cloud" icon="cloud-product-mauve">
+<DocHomeCard href="/ja/tidbcloud/tidb-cloud-intro" label="What is TiDB Cloud" icon="cloud-product-mauve">
 
 使いやすいデータベースとしてのTiDB Cloudとその主な機能について学びます。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidbcloud/tidb-cloud-quickstart" label="Get started with TiDB Cloud Serverless" icon="cloud-getstarted-mauve">
+<DocHomeCard href="/ja/tidbcloud/tidb-cloud-quickstart" label="Get started with TiDB Cloud Serverless" icon="cloud-getstarted-mauve">
 
 TiDB Cloudを簡単に使い始めるためのガイド。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidbcloud/dev-guide-overview" label="Developer Guide" icon="cloud-developer-mauve">
+<DocHomeCard href="/ja/tidbcloud/dev-guide-overview" label="Developer Guide" icon="cloud-developer-mauve">
 
 アプリケーションを好みの言語やフレームワークに接続します。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidbcloud/vector-search-overview" label="Vector Search in TiDB Cloud Serverless (Beta)" icon="cloud-vector-mauve">
+<DocHomeCard href="/ja/tidbcloud/vector-search-overview" label="Vector Search in TiDB Cloud Serverless (Beta)" icon="cloud-vector-mauve">
 
 TiDB Cloud Serverless の Vector Search のネイティブ サポートを調べて、AI アプリケーションを構築します。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidbcloud/tidb-cloud-roadmap" label="TiDB Cloud Roadmap" icon="cloud-roadmap-mauve">
+<DocHomeCard href="/ja/tidbcloud/tidb-cloud-roadmap" label="TiDB Cloud Roadmap" icon="cloud-roadmap-mauve">
 
 TiDB Cloudの計画されている機能とリリース。
 
@@ -62,37 +62,37 @@ TiDB は、ハイブリッド トランザクションおよび分析処理 (HTA
 
 <DocHomeCardContainer>
 
-<DocHomeCard href="/tidb/stable/overview" label="What is TiDB Self-Managed" icon="oss-product-blue">
+<DocHomeCard href="/ja/tidb/stable/overview" label="What is TiDB Self-Managed" icon="oss-product-blue">
 
 TiDB Self-Managed とその主な機能について学びます。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidb/stable/quick-start-with-tidb" label="Get started with TiDB Self-Managed" icon="oss-getstarted-blue">
+<DocHomeCard href="/ja/tidb/stable/quick-start-with-tidb" label="Get started with TiDB Self-Managed" icon="oss-getstarted-blue">
 
 TiDB Self-Managed を使い始めるための最も簡単な方法を説明します。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidb/stable/production-deployment-using-tiup" label="Deploy a Local TiDB Cluster" icon="oss-deploy-blue">
+<DocHomeCard href="/ja/tidb/stable/production-deployment-using-tiup" label="Deploy a Local TiDB Cluster" icon="oss-deploy-blue">
 
 本番環境で TiDB をローカルにデプロイする方法を学習します。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidb/stable/dev-guide-overview" label="Developer Guide" icon="oss-developer-blue">
+<DocHomeCard href="/ja/tidb/stable/dev-guide-overview" label="Developer Guide" icon="oss-developer-blue">
 
 TiDB Self-Managed を使用するアプリケーション開発者向け。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidb/stable/mysql-compatibility" label="MySQL Compatibility" icon="oss-mysql-blue">
+<DocHomeCard href="/ja/tidb/stable/mysql-compatibility" label="MySQL Compatibility" icon="oss-mysql-blue">
 
 TiDB は、MySQL プロトコルおよびMySQL 5.7と MySQL 8.0 の共通機能と構文と高い互換性があります。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidb/dev/tidb-roadmap" label="TiDB Self-Managed Roadmap" icon="oss-roadmap-blue">
+<DocHomeCard href="/ja/tidb/dev/tidb-roadmap" label="TiDB Self-Managed Roadmap" icon="oss-roadmap-blue">
 
 TiDB Self-Managed の計画されている機能とリリース日。
 
