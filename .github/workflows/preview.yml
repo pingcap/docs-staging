@@ -48,6 +48,7 @@ jobs:
           cp -rip ./main/markdown-pages/zh/tidb/release-8.1 ./preview/markdown-pages/zh/tidb/release-8.1
           cp -rip ./main/markdown-pages/zh/tidb/master ./preview/markdown-pages/zh/tidb/master
 
+          cp -rip ./main/markdown-pages/ja/tidb/master ./preview/markdown-pages/ja/tidb/master
           cp -rip ./main/markdown-pages/ja/tidb/release-8.1 ./preview/markdown-pages/ja/tidb/release-8.1
           cp -rip ./main/markdown-pages/ja/tidbcloud ./preview/markdown-pages/ja/
 
