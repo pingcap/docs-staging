@@ -92,7 +92,7 @@ TiDB は、MySQL プロトコルおよびMySQL 5.7と MySQL 8.0 の共通機能�
 
 </DocHomeCard>
 
-<DocHomeCard href="/ja/tidb/dev/tidb-roadmap" label="TiDB Self-Managed Roadmap" icon="oss-roadmap-blue">
+<DocHomeCard href="/tidb/dev/tidb-roadmap" label="TiDB Self-Managed Roadmap" icon="oss-roadmap-blue">
 
 TiDB Self-Managed の計画されている機能とリリース日。
 
