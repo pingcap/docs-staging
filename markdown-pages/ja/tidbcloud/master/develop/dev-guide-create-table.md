@@ -45,7 +45,7 @@ CREATE TABLE `bookshop`.`users` (
 
 ## 列を定義する {#define-columns}
 
-**列**はテーブルに従属します。各テーブルには少なくとも 1 つの列があります。列は、各行の値を単一のデータ型の小さなセルに分割することで、テーブルに構造を提供します。
+**列は**テーブルに従属します。各テーブルには少なくとも 1 つの列があります。列は、各行の値を単一のデータ型の小さなセルに分割することで、テーブルに構造を提供します。
 
 カラム定義は通常、次の形式になります。
 
@@ -75,7 +75,7 @@ CREATE TABLE `bookshop`.`users` (
 
 TiDB は、 [整数型](/data-type-numeric.md#integer-types) 、 [浮動小数点型](/data-type-numeric.md#floating-point-types) 、 [固定小数点型](/data-type-numeric.md#fixed-point-types) 、 [日付と時刻の種類](/data-type-date-and-time.md) 、 [列挙型](/data-type-string.md#enum-type)など、他の多くの列データ型をサポートしています。サポートされている列[データ型](/data-type-overview.md)を参照して、データベースに保存するデータに一致する**データ型**を使用できます。
 
-もう少し複雑にするには、 `bookshop`データの中核となる`books`テーブルを定義します。5 `books`テーブルには、本の ID、タイトル、種類 (雑誌、小説、生活、芸術など)、在庫、価格、発行日などのフィールドが含まれます。
+もう少し複雑にするには、 `bookshop`データの中核となる`books`テーブルを定義します。5 `books`のテーブルには、書籍の ID、タイトル、種類 (雑誌、小説、生活、芸術など)、在庫、価格、発行日などのフィールドが含まれます。
 
 ```sql
 CREATE TABLE `bookshop`.`books` (
@@ -149,7 +149,7 @@ TiDB は、バージョン 5.0 以降、 [クラスター化インデックス](
 >
 > TiDB は、テーブルの`PRIMARY KEY`によるクラスタリングのみをサポートします。クラスター化インデックスが`PRIMARY KEY`*と**クラスター化インデックス*という用語は同じ意味で使用できます。 `PRIMARY KEY`制約 (論理プロパティ) を指し、クラスター化インデックスはデータの格納方法の物理的な実装を表します。
 
-次の例では、 [クラスター化インデックスを選択するためのガイドライン](#guidelines-to-follow-when-selecting-clustered-index)に続いて、 `book` x `users`の`ratings`を表す`books`と`users`の関連付けを持つテーブルを作成します。 この例では、テーブルを作成し、 `book_id`と`user_id`使用して複合主キーを構築し、その**主キー**に**クラスター化インデックス**を作成します。
+[クラスター化インデックスを選択するためのガイドライン](#guidelines-to-follow-when-selecting-clustered-index)に続いて、次の例では、 `book` × `users`の`ratings`を表す`books`と`users`の関連付けを持つテーブルを作成します。 この例では、テーブルを作成し、 `book_id`と`user_id`使用して複合主キーを構築し、その**主キー**に**クラスター化インデックス**を作成します。
 
 ```sql
 CREATE TABLE `bookshop`.`ratings` (
@@ -163,7 +163,7 @@ CREATE TABLE `bookshop`.`ratings` (
 
 ## 列制約を追加する {#add-column-constraints}
 
-[主キー制約](#select-primary-key)に加えて、 TiDB は[NULLではない](/constraints.md#not-null)制約、 [ユニークキー](/constraints.md#unique-key)制約、 `DEFAULT`などの他の**列制約**もサポートしています。 完全な制約については、 [TiDB制約](/constraints.md)ドキュメントを参照してください。
+[主キー制約](#select-primary-key)に加えて、 TiDB は[NULLではない](/constraints.md#not-null)制約、 [ユニークキー](/constraints.md#unique-key)制約、 `DEFAULT`などの他の**列制約**もサポートしています。完全な制約については、 [TiDB制約](/constraints.md)ドキュメントを参照してください。
 
 ### デフォルト値を設定する {#set-default-value}
 
@@ -181,7 +181,7 @@ CREATE TABLE `bookshop`.`ratings` (
 );
 ```
 
-さらに、データの更新時に現在の時刻もデフォルトで入力される場合は、次のステートメントを使用できます (ただし、 `ON UPDATE`後には[現在の時間に関する発言](https://pingcap.github.io/sqlgram/#NowSymOptionFraction)のみが入力でき、 `DEFAULT`の後には[その他のオプション](https://pingcap.github.io/sqlgram/#DefaultValueExpr)がサポートされます)。
+さらに、データの更新時に現在の時刻もデフォルトで入力される場合は、次のステートメントを使用できます (ただし、 `ON UPDATE`後には現在の時刻に関連する式のみを入力できます)。
 
 ```sql
 CREATE TABLE `bookshop`.`ratings` (
@@ -192,6 +192,8 @@ CREATE TABLE `bookshop`.`ratings` (
   PRIMARY KEY (`book_id`,`user_id`) CLUSTERED
 );
 ```
+
+さまざまなデータ型のデフォルト値の詳細については、 [デフォルト値](/data-type-default-values.md)参照してください。
 
 ### 重複した値を防ぐ {#prevent-duplicate-values}
 
@@ -231,7 +233,7 @@ CREATE TABLE `bookshop`.`users` (
 
 > **注記：**
 >
-> このガイドで説明されている手順は、テスト環境でのクイックスタートのみを***対象と***しています。本番環境の場合は、 [HTAPを探索する](/explore-htap.md)を参照してください。
+> このガイドで説明されている手順は、テスト環境での迅速な開始のみを***目的と***しています。本番環境の場合は、 [HTAPを探索する](/explore-htap.md)を参照してください。
 
 </CustomContent>
 
@@ -265,7 +267,7 @@ TiDB HTAP機能の詳細については、 [TiDB Cloud HTAP クイックスタ�
 
 この例では、 `bookshop`データベースのデータ分析エンジンとして[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)選択されています。
 
-TiFlash はデプロイメント後にデータを自動的に複製しません。したがって、複製するテーブルを手動で指定する必要があります。
+TiFlash はデプロイメント後にデータを自動的に複製しません。そのため、複製するテーブルを手動で指定する必要があります。
 
 ```sql
 ALTER TABLE {table_name} SET TIFLASH REPLICA {count};
@@ -385,7 +387,7 @@ SHOW TABLES IN `bookshop`;
 
 -   **クラスター化インデックス**を構築するには、 [主キーを選択するためのガイドライン](#guidelines-to-follow-when-selecting-primary-key)に従ってください。
 
--   非クラスター化インデックスを持つテーブルと比較すると、クラスター化インデックスを持つテーブルでは、次のシナリオでパフォーマンスとスループットの面で大きな利点が得られます。
+-   非クラスター化インデックスを持つテーブルと比較すると、クラスター化インデックスを持つテーブルでは、次のシナリオでパフォーマンスとスループットの利点が大きくなります。
     -   データが挿入されると、クラスター化インデックスにより、ネットワークからのインデックス データの書き込みが 1 回削減されます。
     -   同等の条件を持つクエリに主キーのみが関係する場合、クラスター化インデックスにより、ネットワークからのインデックス データの読み取りが 1 回削減されます。
     -   範囲条件を持つクエリに主キーのみが関係する場合、クラスター化インデックスにより、ネットワークからのインデックス データの複数回の読み取りが削減されます。
@@ -393,7 +395,7 @@ SHOW TABLES IN `bookshop`;
 
 -   一方、クラスター化インデックスを持つテーブルでは、次のような問題が発生する可能性があります。
     -   近い値を持つ主キーを多数挿入すると、書き込みホットスポットの問題が発生する可能性があります。 [主キーを選択する際のガイドライン](#guidelines-to-follow-when-selecting-primary-key)に従ってください。
-    -   主キーのデータ型が 64 ビットより大きい場合、特に複数のセカンダリ インデックスがある場合、テーブル データはより多くのstorageスペースを占有します。
+    -   主キーのデータ型が 64 ビットより大きい場合、特に複数のセカンダリ インデックスがある場合、テーブル データはより多くのstorage領域を占有します。
 
 -   [クラスター化インデックスを使用するかどうかのデフォルトの動作](/clustered-indexes.md#create-a-table-with-clustered-indexes)を制御するには、システム変数`@@global.tidb_enable_clustered_index`と構成`alter-primary-key`を使用する代わりに、クラスター化インデックスを使用するかどうかを明示的に指定できます。
 

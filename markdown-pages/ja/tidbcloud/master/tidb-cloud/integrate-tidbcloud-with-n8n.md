@@ -7,7 +7,7 @@ summary: n8n でのTiDB Cloudノードの使用方法を学習します。
 
 [いいえ](https://n8n.io/)は拡張可能なワークフロー自動化ツールです。2 配布モデルでは、n8n は常にソース コードを表示でき、セルフホストが[フェアコード](https://faircode.io/)で、カスタム関数、ロジック、アプリを追加できます。
 
-このドキュメントでは、 TiDB Cloud Serverless クラスターを作成し、Hacker News RSS を収集して TiDB に保存し、ブリーフィング メールを送信するという自動ワークフローの構築方法を紹介します。
+このドキュメントでは、TiDB Serverless クラスターを作成し、Hacker News RSS を収集して TiDB に保存し、ブリーフィング メールを送信するという自動ワークフローの構築方法を紹介します。
 
 ## 前提条件: TiDB Cloud APIキーを取得する {#prerequisites-get-tidb-cloud-api-key}
 
@@ -76,9 +76,9 @@ TiDB Cloudノードは、npm リポジトリでは`n8n-nodes-tidb-cloud`名前�
 
 ![img](https://download.pingcap.com/images/docs/tidb-cloud/integration-n8n-workflow-rss.jpg)
 
-### (オプション) TiDB Cloud Serverless クラスターを作成する {#optional-create-a-tidb-cloud-serverless-cluster}
+### (オプション) TiDB サーバーレス クラスターを作成する {#optional-create-a-tidb-serverless-cluster}
 
-TiDB Cloud Serverless クラスターがない場合は、このノードを使用して作成できます。それ以外の場合は、この操作をスキップしてください。
+TiDB Serverless クラスターがない場合は、このノードを使用して作成できます。それ以外の場合は、この操作をスキップしてください。
 
 1.  **ワークフロー**パネルに移動し、**ワークフローの追加を**クリックします。
 2.  新しいワークフロー ワークスペースで、右上隅の**+**をクリックし、 **[すべての**フィールド] を選択します。
@@ -93,7 +93,7 @@ TiDB Cloud Serverless クラスターがない場合は、このノードを使�
 
 > **注記：**
 >
-> 新しいTiDB Cloud Serverless クラスターを作成するには数秒かかります。
+> 新しい TiDB Serverless クラスターを作成するには数秒かかります。
 
 ### ワークフローを作成する {#create-a-workflow}
 
@@ -212,7 +212,7 @@ TiDB Cloud Serverless クラスターがない場合は、このノードを使�
 
 ワークフローを構築した後、 **「ワークフローの実行」**をクリックしてテスト実行できます。
 
-ワークフローが期待どおりに実行されると、Hacker News のブリーフィング メールが届きます。これらのニュース コンテンツはTiDB Cloud Serverless クラスターに記録されるため、失われる心配はありません。
+ワークフローが期待どおりに実行されると、Hacker News のブリーフィング メールが届きます。これらのニュース コンテンツは TiDB Serverless クラスターに記録されるため、失われる心配はありません。
 
 これで、**ワークフロー**パネルでこのワークフローをアクティブ化できます。このワークフローは、Hacker News のトップページの記事を毎日取得するのに役立ちます。
 
@@ -222,13 +222,13 @@ TiDB Cloud Serverless クラスターがない場合は、このノードを使�
 
 TiDB Cloudノードは[通常のノード](https://docs.n8n.io/workflows/nodes/#regular-nodes)として機能し、次の 5 つの操作のみをサポートします。
 
--   **サーバーレスクラスタの作成**: TiDB Cloudサーバーレス クラスターを作成します。
+-   **サーバーレスクラスタの作成**: TiDB サーバーレス クラスターを作成します。
 -   **SQL の実行**: TiDB で SQL ステートメントを実行します。
 -   **削除**: TiDB 内の行を削除します。
 -   **挿入**: TiDB に行を挿入します。
 -   **更新**: TiDB 内の行を更新します。
 
-### フィールド {#fields}
+### 田畑 {#fields}
 
 異なる操作を使用するには、異なる必須フィールドに入力する必要があります。次に、対応する操作のそれぞれのフィールドの説明を示します。
 

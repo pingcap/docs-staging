@@ -1,13 +1,13 @@
 ---
 title: CREATE DATABASE | TiDB SQL Statement Reference
-summary: TiDBのCREATE DATABASEステートメントは、新しいデータベースを作成し、デフォルトのプロパティを指定します。既存のデータベースを作成する際は、IF NOT EXISTSを指定する必要があります。また、TiDBはMySQLと完全に互換性があります。
+summary: TiDB データベースの CREATE DATABASE の使用法の概要。
 ---
 
 # データベースの作成 {#create-database}
 
-このステートメントは、TiDB に新しいデータベースを作成します。 MySQL の「データベース」という用語は、SQL 標準のスキーマに最もよく対応しています。
+このステートメントは、TiDB に新しいデータベースを作成します。MySQL の「データベース」の用語は、SQL 標準のスキーマに最も近いものです。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 CreateDatabaseStmt ::=
@@ -47,9 +47,9 @@ create_specification:
   | [DEFAULT] COLLATE [=] collation_name
 ```
 
-既存のデータベースを作成し、 `IF NOT EXISTS`を指定しない場合、エラーが表示されます。
+既存のデータベースを作成し、 `IF NOT EXISTS`指定しないと、エラーが表示されます。
 
-`create_specification`オプションは、データベース内の特定の`CHARACTER SET`と`COLLATE`を指定するために使用されます。現在、TiDB は一部の文字セットと照合順序のみをサポートしています。詳細は[文字セットと照合順序のサポート](/character-set-and-collation.md)を参照してください。
+`create_specification`オプションは、データベース内の特定の`CHARACTER SET`と`COLLATE`を指定するために使用されます。現在、TiDB は一部の文字セットと照合順序のみをサポートしています。詳細については、 [文字セットと照合順序のサポート](/character-set-and-collation.md)を参照してください。
 
 ## 例 {#examples}
 
@@ -71,13 +71,13 @@ mysql> SHOW TABLES;
 1 row in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`CREATE DATABASE`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`CREATE DATABASE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [使用](/sql-statements/sql-statement-use.md)
 -   [データベースの変更](/sql-statements/sql-statement-alter-database.md)
--   [データベースを削除](/sql-statements/sql-statement-drop-database.md)
--   [データベースを表示する](/sql-statements/sql-statement-show-databases.md)
+-   [データベースの削除](/sql-statements/sql-statement-drop-database.md)
+-   [データベースを表示](/sql-statements/sql-statement-show-databases.md)

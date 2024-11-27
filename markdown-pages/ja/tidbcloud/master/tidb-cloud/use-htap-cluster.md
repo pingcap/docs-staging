@@ -7,11 +7,11 @@ summary: TiDB Cloudで HTAP クラスターを使用する方法を学習しま�
 
 [HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing)ハイブリッド トランザクション/分析処理を意味します。TiDB TiDB Cloudの HTAP クラスターは、トランザクション処理用に設計された行ベースのstorageエンジン[ティクヴ](https://tikv.org)と、分析処理用に設計された列指向storage[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)で構成されています。アプリケーション データは最初に TiKV に保存され、次にRaftコンセンサス アルゴリズムを介してTiFlashに複製されます。つまり、行ストアから列指向ストアへのリアルタイムのレプリケーションです。
 
-TiDB Cloudを使用すると、HTAP ワークロードに応じて 1 つ以上のTiFlashノードを指定して、HTAP クラスターを簡単に作成できます。クラスターの作成時にTiFlashノード数が指定されていない場合、またはTiFlashノードをさらに追加したい場合は、ノード数を[クラスターのスケーリング](/tidb-cloud/scale-tidb-cluster.md)ずつ変更できます。
+TiDB Cloudを使用すると、HTAP ワークロードに応じて 1 つ以上のTiFlashノードを指定して、HTAP クラスターを簡単に作成できます。クラスターの作成時にTiFlashノード数が指定されていない場合、またはTiFlashノードをさらに追加する場合は、ノード数を[クラスターのスケーリング](/tidb-cloud/scale-tidb-cluster.md)ずつ変更できます。
 
 > **注記：**
 >
-> TiFlash は、 TiDB Cloud Serverless クラスターでは常に有効になっています。無効にすることはできません。
+> TiFlash は、TiDB Serverless クラスターでは常に有効になっています。無効にすることはできません。
 
 TiKV データはデフォルトではTiFlashに複製されません。次の SQL ステートメントを使用して、 TiFlashに複製するテーブルを選択できます。
 
@@ -61,7 +61,7 @@ set @@session.tidb_isolation_read_engines = "engine list separated by commas";
 
 ### マニュアルのヒント {#manual-hint}
 
-手動ヒントを使用すると、エンジンの分離が満たされていることを前提として、TiDB が 1 つ以上の特定のテーブルに対して指定されたレプリカを使用するように強制できます。手動ヒントの使用例を次に示します。
+手動ヒントを使用すると、エンジン分離が満たされていることを前提として、TiDB が 1 つ以上の特定のテーブルに対して指定されたレプリカを使用するように強制できます。手動ヒントの使用例を次に示します。
 
 ```sql
 select /*+ read_from_storage(tiflash[table_name]) */ ... from table_name;

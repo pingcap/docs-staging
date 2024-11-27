@@ -9,13 +9,13 @@ summary: TiDB での SHOW PLACEMENT LABELS の使用法。
 
 > **注記：**
 >
-> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 ## 概要 {#synopsis}
 
 ```ebnf+diagram
 ShowStmt ::=
-    "PLACEMENT" "LABELS"
+    "SHOW" "PLACEMENT" "LABELS" ShowLikeOrWhere?
 ```
 
 ## 例 {#examples}

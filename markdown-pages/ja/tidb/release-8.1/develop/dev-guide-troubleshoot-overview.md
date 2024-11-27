@@ -42,3 +42,17 @@ SQL 操作に関する質問がある場合は、 [SQLに関するよくある�
 -   [TiDB に関するよくある質問](/faq/tidb-faq.md)
 
 </CustomContent>
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

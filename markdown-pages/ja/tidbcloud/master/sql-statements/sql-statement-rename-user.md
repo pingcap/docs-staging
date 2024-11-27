@@ -1,13 +1,13 @@
 ---
 title: RENAME USER
-summary: RANAME USERは、既存のユーザーの名前を変更するために使用されます。MySQLの互換性が期待されており、バグが見つかった場合は報告できます。関連する操作にはユーザーの作成、助成金の表示、ユーザーの削除があります。
+summary: TiDB データベースの RENAME USER の使用法の概要。
 ---
 
-# ユーザーの名前を変更 {#rename-user}
+# ユーザー名の変更 {#rename-user}
 
-`RANAME USER`は、既存のユーザーの名前を変更するために使用されます。
+`RENAME USER`は既存のユーザーの名前を変更するために使用されます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 RenameUserStmt ::=
@@ -70,12 +70,12 @@ SHOW GRANTS FOR 'newuser';
 ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%'
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-`RENAME USER`は MySQL と完全な互換性があることが期待されています。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support)を行うことができます。
+`RENAME USER` MySQL と完全に互換性があると予想されます。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support)実行できます。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [ユーザーを作成](/sql-statements/sql-statement-create-user.md)
--   [助成金を表示する](/sql-statements/sql-statement-show-grants.md)
--   [ユーザーを削除する](/sql-statements/sql-statement-drop-user.md)
+-   [ショーグラント](/sql-statements/sql-statement-show-grants.md)
+-   [ユーザーを削除](/sql-statements/sql-statement-drop-user.md)

@@ -7,13 +7,13 @@ summary: TiDB インストール パッケージと、そこに含まれる特�
 
 [TiUPをオフラインで展開する](/production-deployment-using-tiup.md#deploy-tiup-offline)前に、 [TiUPオフラインコンポーネントパッケージを準備する](/production-deployment-using-tiup.md#prepare-the-tiup-offline-component-package)で説明されているように TiDB のバイナリ パッケージをダウンロードする必要があります。
 
-TiDB バイナリ パッケージは、 amd64 および arm64 アーキテクチャで利用できます。どちらのアーキテクチャでも、TiDB は`TiDB-community-server`と`TiDB-community-toolkit` 2 つのバイナリ パッケージを提供します。
+TiDB バイナリ パッケージは、amd64 および arm64 アーキテクチャで利用できます。どちらのアーキテクチャでも、TiDB は`TiDB-community-server`と`TiDB-community-toolkit` 2 つのバイナリ パッケージを提供します。
 
 `TiDB-community-server`パッケージには以下の内容が入っています。
 
 | コンテンツ                                            | 変更履歴        |
 | ------------------------------------------------ | ----------- |
-| tidb-{バージョン}-linux-{アーキテクチャ}.tar.gz              |             |
+| tidb-{バージョン}-linux-{arch}.tar.gz                 |             |
 | tikv-{バージョン}-linux-{アーキテクチャ}.tar.gz              |             |
 | tiflash-{バージョン}-linux-{アーキテクチャ}.tar.gz           |             |
 | pd-{バージョン}-linux-{アーキテクチャ}.tar.gz                |             |
@@ -35,7 +35,7 @@ TiDB バイナリ パッケージは、 amd64 および arm64 アーキテクチ
 
 > **注記：**
 >
-> `{version}` 、インストールするコンポーネントまたはサーバーのバージョンによって異なります。 `{arch}`システムのアーキテクチャによって異なり、 `amd64`または`arm64`になります。
+> `{version}` 、インストールするコンポーネントまたはサーバーのバージョンによって異なります。 `{arch}`はシステムのアーキテクチャによって異なり、 `amd64`または`arm64`になります。
 
 `TiDB-community-toolkit`パッケージには以下の内容が入っています。
 
@@ -60,11 +60,10 @@ TiDB バイナリ パッケージは、 amd64 および arm64 アーキテクチ
 | dba-{バージョン}-linux-{アーキテクチャ}.tar.gz               |             |
 | PCC-{バージョン}-linux-{アーキテクチャ}.tar.gz               |             |
 | pump-{バージョン}-linux-{アーキテクチャ}.tar.gz              |             |
-| drainer-{バージョン}-linux-{アーキテクチャ}.tar.gz           |             |
+| drainer-{バージョン}-linux-{arch}.tar.gz              |             |
 | binlogctl                                        | v6.0.0 の新機能 |
 | 同期差分インスペクター                                      |             |
 | レパロ                                              |             |
-| アービタ                                             |             |
 | サーバー-{バージョン}-linux-{アーキテクチャ}.tar.gz              | v6.2.0 の新機能 |
 | grafana-{バージョン}-linux-{アーキテクチャ}.tar.gz           | v6.2.0 の新機能 |
 | alertmanager-{バージョン}-linux-{アーキテクチャ}.tar.gz      | v6.2.0 の新機能 |
@@ -74,7 +73,7 @@ TiDB バイナリ パッケージは、 amd64 および arm64 アーキテクチ
 
 > **注記：**
 >
-> `{version}`インストールするツールのバージョンによって異なります。 `{arch}`システムのアーキテクチャによって異なり、 `amd64`または`arm64`になります。
+> `{version}`インストールするツールのバージョンによって異なります。 `{arch}`はシステムのアーキテクチャによって異なり、 `amd64`または`arm64`になります。
 
 ## 参照 {#see-also}
 

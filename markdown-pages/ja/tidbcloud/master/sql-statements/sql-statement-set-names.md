@@ -1,41 +1,18 @@
 ---
 title: SET [NAMES|CHARACTER SET] |  TiDB SQL Statement Reference
-summary: SET NAMES、SET CHARACTER SET、およびSET CHARSETステートメントは、character_set_client、character_set_results、およびcharacter_set_connectionを変更します。MySQLの互換性は完全であり、互換性の違いがあればバグを報告してください。関連リンクには、グローバルセッション変数の表示、SET <variable>、文字セットと照合順序のサポートが含まれます。
+summary: TiDB データベースの SET [NAMES|CHARACTER SET] の使用法の概要。
 ---
 
 # SET [名前|文字セット] {#set-names-character-set}
 
-ステートメント`SET NAMES` 、 `SET CHARACTER SET` 、および`SET CHARSET` 、現在の接続の変数`character_set_client` 、 `character_set_results` 、および`character_set_connection`を変更します。
+ステートメント`SET NAMES` `SET CHARACTER SET`および`SET CHARSET` `character_set_results`現在の接続の変数`character_set_client` 、および`character_set_connection`変更します。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**SetNamesStmt:**
-
-![SetNamesStmt](https://download.pingcap.com/images/docs/sqlgram/SetNamesStmt.png)
-
-**変数割り当てリスト:**
-
-![VariableAssignmentList](https://download.pingcap.com/images/docs/sqlgram/VariableAssignmentList.png)
-
-**変数の割り当て:**
-
-![VariableAssignment](https://download.pingcap.com/images/docs/sqlgram/VariableAssignment.png)
-
-**文字セット名:**
-
-![CharsetName](https://download.pingcap.com/images/docs/sqlgram/CharsetName.png)
-
-**文字列名:**
-
-![StringName](https://download.pingcap.com/images/docs/sqlgram/StringName.png)
-
-**文字セットKw:**
-
-![CharsetKw](https://download.pingcap.com/images/docs/sqlgram/CharsetKw.png)
-
-**文字セット名またはデフォルト:**
-
-![CharsetNameOrDefault](https://download.pingcap.com/images/docs/sqlgram/CharsetNameOrDefault.png)
+```ebnf+diagram
+SetNamesStmt ::=
+    "SET" ("NAMES" ("DEFAULT" | CharsetName ("COLLATE" ("DEFAULT" | CollationName))?) | ("CHARSET" | ("CHAR" | "CHARACTER") "SET") ("DEFAULT" | CharsetName))
+```
 
 ## 例 {#examples}
 
@@ -92,12 +69,12 @@ mysql> SHOW VARIABLES LIKE 'character_set%';
 8 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SET [NAMES|CHARACTER SET]`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`SET [NAMES|CHARACTER SET]`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
--   [[グローバル|セッション] 変数を表示](/sql-statements/sql-statement-show-variables.md)
+-   [[グローバル|セッション]変数を表示](/sql-statements/sql-statement-show-variables.md)
 -   [`SET &#x3C;variable>`](/sql-statements/sql-statement-set-variable.md)
 -   [文字セットと照合順序のサポート](/character-set-and-collation.md)

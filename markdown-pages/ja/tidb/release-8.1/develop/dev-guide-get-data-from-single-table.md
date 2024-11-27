@@ -9,7 +9,7 @@ summary: このドキュメントでは、データベース内の単一のテ�
 
 このドキュメントでは、SQL とさまざまなプログラミング言語を使用して、データベース内の単一のテーブルからデータをクエリする方法について説明します。
 
-## あなたが始める前に {#before-you-begin}
+## 始める前に {#before-you-begin}
 
 次のコンテンツでは、 [書店](/develop/dev-guide-bookshop-schema-design.md)アプリケーションを例に、TiDB 内の単一のテーブルからデータをクエリする方法を示します。
 
@@ -17,13 +17,13 @@ summary: このドキュメントでは、データベース内の単一のテ�
 
 <CustomContent platform="tidb">
 
-1.  TiDB クラスターを構築します ( [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md)または[TiUP](/production-deployment-using-tiup.md)の使用を推奨)。
+1.  TiDB クラスターを構築します ( [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md)または[TiUP](/production-deployment-using-tiup.md)使用を推奨)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-1.  [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md)を使用して TiDB クラスターを構築します。
+1.  [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md)使用して TiDB クラスターを構築します。
 
 </CustomContent>
 
@@ -43,7 +43,7 @@ summary: このドキュメントでは、データベース内の単一のテ�
 
 ## 簡単なクエリを実行する {#execute-a-simple-query}
 
-Bookshop アプリケーションのデータベースでは、 `authors`テーブルに著者の基本情報が格納されています。3 `SELECT ... FROM ...`ステートメントを使用して、データベースからデータを照会できます。
+Bookshop アプリケーションのデータベースでは、 `authors`テーブルに著者の基本情報が格納されています。3 `SELECT ... FROM ...`を使用して、データベースからデータを照会できます。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -122,13 +122,13 @@ public class AuthorDAO {
 
 <CustomContent platform="tidb">
 
--   [JDBC ドライバーを使用して TiDB に接続する](/develop/dev-guide-connect-to-tidb.md#jdbc)の後は`conn.createStatus()`で`Statement`オブジェクトを作成できます。
+-   [JDBC ドライバーを使用して TiDB に接続する](/develop/dev-guide-connect-to-tidb.md#jdbc)後は`conn.createStatus()`で`Statement`オブジェクトを作成できます。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
--   [JDBC ドライバーを使用して TiDB に接続する](/develop/dev-guide-choose-driver-or-orm.md#java-drivers)の後は`conn.createStatus()`で`Statement`オブジェクトを作成できます。
+-   [JDBC ドライバーを使用して TiDB に接続する](/develop/dev-guide-choose-driver-or-orm.md#java-drivers)後は`conn.createStatus()`で`Statement`オブジェクトを作成できます。
 
 </CustomContent>
 
@@ -160,7 +160,7 @@ Javaでは、同じ SQL を使用して、動的パラメータを含むデー�
 
 これは、パラメータを SQL ステートメントに連結することで実行できます。ただし、この方法はアプリケーションのセキュリティに潜在的[SQLインジェクション](https://en.wikipedia.org/wiki/SQL_injection)リスクをもたらします。
 
-このようなクエリを処理するには、通常のステートメントの代わりに[準備された声明](/develop/dev-guide-prepared-statement.md)を使用します。
+このようなクエリを処理するには、通常のステートメントの代わりに[準備された声明](/develop/dev-guide-prepared-statement.md)使用します。
 
 ```java
 public List<Author> getAuthorsByBirthYear(Short birthYear) throws SQLException {
@@ -311,13 +311,13 @@ public List<Author> getAuthorsWithLimit(Integer limit) throws SQLException {
     +-----------+------------------------+------------+
     10 rows in set (0.11 sec)
 
-この例では、 `LIMIT`ステートメントにより、クエリ時間が`0.23 sec`から`0.11 sec`に大幅に短縮されます。詳細については、 [TopNと制限](/topn-limit-push-down.md)を参照してください。
+この例では、 `LIMIT`ステートメントにより、クエリ時間が`0.23 sec`から`0.11 sec`に大幅に短縮されます。詳細については、 [TopNと制限](/topn-limit-push-down.md)参照してください。
 
 ## 集計クエリ {#aggregate-queries}
 
 全体的なデータ状況をよりよく理解するために、 `GROUP BY`ステートメントを使用してクエリ結果を集計できます。
 
-たとえば、どの年に作家がより多く生まれたかを知りたい場合は、 `authors`テーブルを`birth_year`の列でグループ化し、各年をカウントします。
+たとえば、どの年に作家がより多く生まれたかを知りたい場合は、 `authors`のテーブルを`birth_year`の列でグループ化し、各年をカウントします。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -387,4 +387,18 @@ public List<AuthorCount> getAuthorCountsByBirthYear() throws SQLException {
     +------------+--------------+
     71 rows in set (0.00 sec)
 
-`COUNT`関数に加えて、TiDB は他の集計関数もサポートしています。詳細については、 [集計 (GROUP BY) 関数](/functions-and-operators/aggregate-group-by-functions.md)を参照してください。
+`COUNT`関数に加えて、TiDB は他の集計関数もサポートしています。詳細については、 [集計 (GROUP BY) 関数](/functions-and-operators/aggregate-group-by-functions.md)参照してください。
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

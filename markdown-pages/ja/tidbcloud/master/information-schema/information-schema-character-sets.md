@@ -1,18 +1,18 @@
 ---
 title: CHARACTER_SETS
-summary: CHARACTER_SETS表は文字セットに関する情報を提供します。TiDBは現在、一部の文字セットのみをサポートしています。CHARACTER_SETSテーブルの列の説明は次のとおりです。CHARACTER_SET_NAME文字セットの名前。DEFAULT_COLLATE_NAME文字セットのデフォルトの照合順序名。DESCRIPTION文字セットの説明。MAXLENこの文字セットに文字を格納するために必要な最大長。
+summary: CHARACTER_SETS INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
-# CHARACTER_SETS {#character-sets}
+# 文字セット {#character-sets}
 
-`CHARACTER_SETS`表は[文字セット](/character-set-and-collation.md)に関する情報を提供します。現在、TiDB は一部の文字セットのみをサポートしています。
+`CHARACTER_SETS`テーブルは[文字セット](/character-set-and-collation.md)に関する情報を提供します。現在、TiDB は一部の文字セットのみをサポートしています。
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC CHARACTER_SETS;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
     +----------------------+-------------+------+------+---------+-------+
     | Field                | Type        | Null | Key  | Default | Extra |
@@ -30,7 +30,7 @@ DESC CHARACTER_SETS;
 SELECT * FROM `CHARACTER_SETS`;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +--------------------+----------------------+-------------------------------------+--------+
@@ -46,9 +46,16 @@ SELECT * FROM `CHARACTER_SETS`;
 6 rows in set (0.00 sec)
 ```
 
-`CHARACTER_SETS`のテーブルの列の説明は次のとおりです。
+`CHARACTER_SETS`表の列の説明は次のとおりです。
 
 -   `CHARACTER_SET_NAME` : 文字セットの名前。
 -   `DEFAULT_COLLATE_NAME`文字セットのデフォルトの照合順序名。
 -   `DESCRIPTION`文字セットの説明。
 -   `MAXLEN`この文字セットに文字を格納するために必要な最大長。
+
+## 参照 {#see-also}
+
+-   [`SHOW CHARACTER SET`](/sql-statements/sql-statement-show-character-set.md)
+-   [`SHOW COLLATION`](/sql-statements/sql-statement-show-collation.md)
+-   [`INFORMATION_SCHEMA.COLLATIONS`](/information-schema/information-schema-collations.md)
+-   [`INFORMATION_SCHEMA.COLLATION_CHARACTER_SET_APPLICABILITY`](/information-schema/information-schema-collation-character-set-applicability.md)

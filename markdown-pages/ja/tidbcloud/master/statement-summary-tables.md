@@ -17,7 +17,7 @@ SQL パフォーマンスの問題をより適切に処理するために、MySQ
 
 > **注記：**
 >
-> 上記のテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> 上記のテーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 このドキュメントでは、これらのテーブルについて詳しく説明し、それらを使用して SQL パフォーマンスの問題をトラブルシューティングする方法を紹介します。
 
@@ -80,7 +80,7 @@ select * from employee where id in (...) and salary between ? and ?;
 > **注記：**
 >
 > -   TiDB では、ステートメント サマリー テーブル内のフィールドの時間単位はナノ秒 (ns) ですが、MySQL では時間単位はピコ秒 (ps) です。
-> -   v7.5.1 以降では、 [リソース管理](/tidb-resource-control.md)有効になっているクラスターの場合、 `statements_summary`リソース グループごとに集計されます。たとえば、異なるリソース グループで実行された同じステートメントは、異なるレコードとして収集されます。
+> -   v7.5.1 および v7.6.0 以降では、 [リソース管理](/tidb-resource-control.md)有効になっているクラスターの場合、 `statements_summary`リソース グループごとに集計されます。たとえば、異なるリソース グループで実行された同じステートメントは、異なるレコードとして収集されます。
 
 ## <code>statements_summary_history</code> {#code-statements-summary-history-code}
 
@@ -201,7 +201,7 @@ select * from information_schema.statements_summary_evicted;
 
 <CustomContent platform="tidb-cloud">
 
-このセクションは、TiDB Self-Managed にのみ適用されます。TiDB TiDB Cloudの場合、 `tidb_stmt_summary_enable_persistent`パラメータの値はデフォルトで`false`であり、動的な変更はサポートされません。
+このセクションは、TiDB Self-Hosted にのみ適用されます。TiDB TiDB Cloudの場合、 `tidb_stmt_summary_enable_persistent`パラメータの値はデフォルトで`false`であり、動的な変更はサポートされません。
 
 </CustomContent>
 
@@ -258,7 +258,7 @@ SELECT avg_latency, exec_count, query_sample_text
     WHERE digest_text LIKE 'select * from employee%';
 ```
 
-`1ms`と`0.3ms` `avg_latency`の正常範囲内であると考えられます。したがって、サーバー側が原因ではないという結論が下されます。クライアント側またはネットワーク側でトラブルシューティングを行うことができます。
+`1ms`と`0.3ms` `avg_latency`の正常範囲内であると考えられます。したがって、サーバー側が原因ではないという結論が下されます。クライアントまたはネットワークでトラブルシューティングを行うことができます。
 
 ```sql
 +-------------+------------+------------------------------------------+
@@ -352,7 +352,7 @@ TiKVコプロセッサータスクに関連するフィールド:
 -   `MAX_PROCESS_TIME` : TiKV での SQL ステートメントの最大処理時間。
 -   `AVG_WAIT_TIME` : TiKV 内の SQL ステートメントの平均待機時間。
 -   `MAX_WAIT_TIME` : TiKV での SQL ステートメントの最大待機時間。
--   `AVG_BACKOFF_TIME` : SQL ステートメントで再試行を必要とするエラーが発生した場合の再試行前の平均待機時間。
+-   `AVG_BACKOFF_TIME` : SQL ステートメントで再試行を必要とするエラーが発生した場合の再試行までの平均待機時間。
 -   `MAX_BACKOFF_TIME` : SQL ステートメントで再試行を必要とするエラーが発生した場合の再試行までの最大待機時間。
 -   `AVG_TOTAL_KEYS` :コプロセッサーがスキャンしたキーの平均数。
 -   `MAX_TOTAL_KEYS` :コプロセッサーがスキャンしたキーの最大数。
@@ -377,7 +377,7 @@ TiKVコプロセッサータスクに関連するフィールド:
 -   `MAX_WRITE_KEYS` : 書き込まれたキーの最大数。
 -   `AVG_WRITE_SIZE` : 書き込まれたデータの平均量 (バイト単位)。
 -   `MAX_WRITE_SIZE` : 書き込まれたデータの最大量（バイト単位）。
--   `AVG_PREWRITE_REGIONS` : 事前書き込みフェーズに関与する領域の平均数。
+-   `AVG_PREWRITE_REGIONS` : 事前書き込みフェーズに関与するリージョンの平均数。
 -   `MAX_PREWRITE_REGIONS` : 事前書き込みフェーズ中のリージョンの最大数。
 -   `AVG_TXN_RETRY` : トランザクションの平均再試行回数。
 -   `MAX_TXN_RETRY` : トランザクション再試行の最大回数。

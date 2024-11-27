@@ -7,13 +7,9 @@ summary: TiDB データベースの QUERY WATCH の使用法の概要。
 
 `QUERY WATCH`ステートメントは、リソース グループ内のランナウェイ クエリの監視リストを手動で管理するために使用されます。
 
-> **警告：**
->
-> この機能は実験的ものです。本番環境での使用は推奨されません。この機能は予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)報告できます。
-
 > **注記：**
 >
-> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 ## 概要 {#synopsis}
 
@@ -46,7 +42,7 @@ DropQueryWatchStmt ::=
     "QUERY" "WATCH" "REMOVE" NUM
 ```
 
-## パラメータ {#parameters}
+## パラメーター {#parameters}
 
 [`QUERY WATCH`パラメータ](/tidb-resource-control.md#query-watch-parameters)参照。
 

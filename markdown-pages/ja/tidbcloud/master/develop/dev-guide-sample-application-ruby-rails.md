@@ -11,7 +11,7 @@ TiDB は MySQL 互換のデータベース、 [レール](https://github.com/rai
 
 -   環境を設定します。
 -   Rails を使用して TiDB クラスターに接続します。
--   アプリケーションをビルドして実行します。オプションで、ActiveRecord ORM を使用した基本的な CRUD 操作の[サンプルコードスニペット](#sample-code-snippets)を見つけることができます。
+-   アプリケーションをビルドして実行します。オプションで、ActiveRecord ORM を使用して基本的な CRUD 操作の[サンプルコードスニペット](#sample-code-snippets)見つけることができます。
 
 > **注記：**
 >
@@ -85,7 +85,7 @@ bundle add mysql2 dotenv
 
 3.  接続ダイアログで、 **「接続先」**ドロップダウン リストから`Rails`選択し、**接続タイプ**のデフォルト設定を`Public`のままにします。
 
-4.  まだパスワードを設定していない場合は、 **「パスワードの生成」**をクリックしてランダムなパスワードを生成します。
+4.  まだパスワードを設定していない場合は、「**パスワードの生成」**をクリックしてランダムなパスワードを生成します。
 
 5.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -116,7 +116,7 @@ bundle add mysql2 dotenv
 
     IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
 
-    TiDB Dedicated は、**パブリック**接続タイプに加えて、**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
 4.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -134,7 +134,7 @@ bundle add mysql2 dotenv
     >
     > パブリック エンドポイントを使用してTiDB Cloud Dedicated に接続する場合は、TLS 接続を有効にすることをお勧めします。
     >
-    > TLS 接続を有効にするには、クエリ パラメータ`ssl_mode`の値を`verify_identity`に変更し、値`sslca`接続ダイアログからダウンロードした CA 証明書のファイル パスに変更します。
+    > TLS 接続を有効にするには、クエリ パラメータ`ssl_mode`の値を`verify_identity`に変更し、値`sslca`を接続ダイアログからダウンロードした CA 証明書のファイル パスに変更します。
 
 6.  `.env`ファイルを保存します。
 
@@ -147,7 +147,7 @@ bundle add mysql2 dotenv
     cp .env.example .env
     ```
 
-2.  `.env`ファイルを編集し、 `DATABASE_URL`環境変数を次のように設定し、 `{user}` 、 `{password}` 、 `{host}` 、 `{port}` 、および`{database}`を独自の TiDB 接続情報に置き換えます。
+2.  `.env`ファイルを編集し、 `DATABASE_URL`環境変数を次のように設定し、 `{user}` 、 `{password}` 、 `{host}` 、 `{port}` 、および`{database}`独自の TiDB 接続情報に置き換えます。
 
     ```dotenv
     DATABASE_URL='mysql2://{user}:{password}@{host}:{port}/{database}'
@@ -183,7 +183,7 @@ bundle add mysql2 dotenv
 
 接続が成功すると、コンソールに次のように TiDB クラスターのバージョンが出力されます。
 
-    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v7.5.3)
+    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.1.1)
     ⏳ Loading sample game data...
     ✅ Loaded sample game data.
 
@@ -222,7 +222,7 @@ production:
 
 > **注記**
 >
-> TiDB Cloud Serverless の場合、パブリック エンドポイントを使用する場合は、 `DATABASE_URL`で`ssl_mode`クエリ パラメータを`verify_identity`に設定して TLS 接続を有効にする**必要があります**が、mysql2 gem はファイルが見つかるまで特定の順序で既存の CA 証明書を検索するため、 `DATABASE_URL`で SSL CA 証明書を指定する必要は**ありません**。
+> TiDB Cloud Serverless の場合、パブリック エンドポイントを使用する場合は、 `DATABASE_URL`で`ssl_mode`クエリ パラメータを`verify_identity`に設定して TLS 接続を有効にする**必要があり**ますが、mysql2 gem はファイルが見つかるまで特定の順序で既存の CA 証明書を検索するため、 `DATABASE_URL`で SSL CA 証明書を指定する必要は**ありません**。
 
 ### データを挿入 {#insert-data}
 
@@ -273,7 +273,7 @@ player.destroy
 3.  /etc/ssl/ca-bundle.pem # OpenSUSE
 4.  /etc/ssl/cert.pem # MacOS / Alpine (docker コンテナ)
 
-CA 証明書のパスを手動で指定することも可能ですが、この方法では、マシンや環境によって CA 証明書がさまざまな場所に保存される可能性があるため、複数の環境を展開するシナリオで大きな不便が生じる可能性があります。したがって、柔軟性と異なる環境間での展開の容易さのために、 `sslca` ～ `nil`に設定することをお勧めします。
+CA 証明書のパスを手動で指定することも可能ですが、この方法では、マシンや環境によって CA 証明書がさまざまな場所に保存される可能性があるため、複数の環境を展開するシナリオで大きな不便が生じる可能性があります。したがって、柔軟性と異なる環境間での展開の容易さのために、 `sslca` ～ `nil`設定することをお勧めします。
 
 ## 次のステップ {#next-steps}
 

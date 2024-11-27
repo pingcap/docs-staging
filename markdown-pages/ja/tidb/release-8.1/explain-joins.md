@@ -37,11 +37,11 @@ ANALYZE TABLE t1, t2;
 
 ## インデックス結合 {#index-join}
 
-結合する必要があると推定される行数が少ない場合 (通常は 10000 行未満)、インデックス結合方式を使用することをお勧めします。この結合方法は、MySQL で使用される主要な結合方法と同様に機能します。次の例では、演算子`├─TableReader_29(Build)`最初にテーブル`t1`を読み取ります。一致する行ごとに、TiDB はテーブル`t2`をプローブします。
+結合する必要があると推定される行数が少ない場合 (通常は 10000 行未満)、インデックス結合方式を使用することをお勧めします。この結合方法は、MySQL で使用される主要な結合方法と同様に機能します。次の例では、演算子`├─TableReader_29(Build)`最初にテーブル`t1`読み取ります。一致する行ごとに、TiDB はテーブル`t2`をプローブします。
 
 > **注記：**
 >
-> 返される実行プランでは、 `IndexJoin`および`Apply`演算子のすべてのプローブ側子ノードについて、v6.4.0 以降の`estRows`の意味は v6.4.0 より前とは異なります。詳細については、 [TiDB クエリ実行プランの概要](/explain-overview.md#understand-explain-output)を参照してください。
+> 返される実行プランでは、 `IndexJoin`および`Apply`演算子のすべてのプローブ側子ノードについて、v6.4.0 以降の`estRows`の意味は v6.4.0 より前とは異なります。詳細については、 [TiDB クエリ実行プランの概要](/explain-overview.md#understand-explain-output)参照してください。
 
 ```sql
 EXPLAIN SELECT /*+ INL_JOIN(t1, t2) */ * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_id;
@@ -66,7 +66,7 @@ EXPLAIN SELECT /*+ INL_JOIN(t1, t2) */ * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_
 SELECT * FROM t1 INNER JOIN t2 ON t1.id=t2.t1_id WHERE t1.pad1 = 'value' and t2.pad1='value';
 ```
 
-内部結合操作では、 TiDB は結合の並べ替えを実装し、最初に`t1`または`t2`にアクセスする可能性があります。 TiDB が`build`ステップを適用する最初のテーブルとして`t1`を選択し、その後、テーブル`t2`をプローブする前に述語`t1.col = 'value'`でフィルター処理できると仮定します。 述語`t2.col='value'`のフィルターはテーブル`t2`の各プローブに適用されますが、他の結合方法よりも効率が低い可能性があります。
+内部結合操作では、 TiDB は結合の並べ替えを実装し、最初に`t1`または`t2`にアクセスする可能性があります。 TiDB が`build`ステップを適用する最初のテーブルとして`t1`選択し、その後、テーブル`t2`をプローブする前に述語`t1.pad1 = 'value'`でフィルター処理できると仮定します。 述語`t2.pad1='value'`のフィルターはテーブル`t2`の各プローブに適用されますが、他の結合方法よりも効率が低い可能性があります。
 
 インデックス結合は、ビルド側が小さく、プローブ側が事前にインデックス付けされていて大きい場合に効果的です。インデックス結合のパフォーマンスがハッシュ結合よりも悪く、SQL オプティマイザーによって選択されない次のクエリを検討してください。
 
@@ -114,7 +114,7 @@ EXPLAIN ANALYZE SELECT * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_id WHERE t1.int_
 +------------------------------+----------+---------+-----------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+---------+---------+
 ```
 
-上記の例では、インデックス結合操作で`t1.int_col`インデックスが欠落しています。このインデックスが追加されると、次の結果に示すように、操作のパフォーマンスが`0.3 sec`から`0.06 sec`に向上します。
+上記の例では、インデックス結合操作で`t1.int_col`のインデックスが欠落しています。このインデックスが追加されると、次の結果に示すように、操作のパフォーマンスが`0.3 sec`から`0.06 sec`に向上します。
 
 ```sql
 -- Re-add index
@@ -167,13 +167,13 @@ EXPLAIN ANALYZE SELECT * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_id WHERE t1.int_
 
 ### インデックス結合のバリエーション {#variations-of-index-join}
 
-ヒント[`INL_JOIN`](/optimizer-hints.md#inl_joint1_name--tl_name-)を使用したインデックス結合操作では、外部テーブルに結合する前に中間結果のハッシュ テーブルが作成されます。TiDB は、ヒント[`INL_HASH_JOIN`](/optimizer-hints.md#inl_hash_join)を使用して外部テーブルにハッシュ テーブルを作成することもサポートしています。これらのインデックス結合の各バリエーションは、SQL オプティマイザーによって自動的に選択されます。
+ヒント[`INL_JOIN`](/optimizer-hints.md#inl_joint1_name--tl_name-)使用したインデックス結合操作では、外部テーブルに結合する前に中間結果のハッシュ テーブルが作成されます。TiDB は、ヒント[`INL_HASH_JOIN`](/optimizer-hints.md#inl_hash_join)使用して外部テーブルにハッシュ テーブルを作成することもサポートしています。これらのインデックス結合の各バリエーションは、SQL オプティマイザーによって自動的に選択されます。
 
 ### コンフィグレーション {#configuration}
 
 インデックス結合のパフォーマンスは、次のシステム変数の影響を受けます。
 
--   [`tidb_index_join_batch_size`](/system-variables.md#tidb_index_join_batch_size) (デフォルト値: `25000` ) - `index lookup join`の操作のバッチ サイズ。
+-   [`tidb_index_join_batch_size`](/system-variables.md#tidb_index_join_batch_size) (デフォルト値: `25000` ) - `index lookup join`操作のバッチ サイズ。
 -   [`tidb_index_lookup_join_concurrency`](/system-variables.md#tidb_index_lookup_join_concurrency) (デフォルト値: `4` ) - 同時インデックス検索タスクの数。
 
 ## ハッシュ結合 {#hash-join}
@@ -207,11 +207,11 @@ EXPLAIN SELECT /*+ HASH_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 4.  `Probe`側のデータを使用してハッシュ テーブルを調べます。
 5.  適格なデータをユーザーに返します。
 
-`EXPLAIN`結果テーブルの`operator info`列には、クエリが内部結合か外部結合か、結合の条件は何かなど、 `HashJoin_27`に関するその他の情報も記録されます。上記の例では、クエリは内部結合であり、結合条件`equal:[eq(test.t1.id, test.t2.id)]`はクエリ条件`WHERE t1.id = t2.id`と部分的に対応しています。次の例の他の結合演算子の演算子情報もこれに似ています。
+`EXPLAIN`結果テーブルの`operator info`列には、クエリが内部結合か外部結合か、結合の条件は何かなど、 `HashJoin_27`に関するその他の情報も記録されます。上記の例では、クエリは内部結合であり、結合条件`equal:[eq(test.t1.id, test.t2.id)]`クエリ条件`WHERE t1.id = t2.id`と部分的に対応しています。次の例の他の結合演算子の演算子情報もこれに似ています。
 
 ### 実行時統計 {#runtime-statistics}
 
-[`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) (デフォルト値: 1 GB) を超え、 [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom)値が`ON` (デフォルト) の場合、 TiDB は一時storageの使用を試み、ディスク上に`Build`演算子 (ハッシュ結合の一部として使用) を作成する可能性があります。メモリ使用量などの実行時統計は、 `EXPLAIN ANALYZE`結果テーブルのうち`execution info`に記録されます。次の例は、 `tidb_mem_quota_query`に 1 GB (デフォルト) と 500 MB のクォータを使用した`EXPLAIN ANALYZE`の出力を示しています。500 MB の場合、ディスクは一時storageとして使用されます。
+[`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) (デフォルト値: 1 GB) を超え、 [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom)値が`ON` (デフォルト) の場合、 TiDB は一時storageの使用を試み、ディスク上に`Build`演算子 (ハッシュ結合の一部として使用) を作成する可能性があります。メモリ使用量などの実行時統計は、 `EXPLAIN ANALYZE`結果テーブルのうち`execution info`に記録されます。次の例は、 `tidb_mem_quota_query`に 1 GB (デフォルト) と 500 MB のクォータを指定した`EXPLAIN ANALYZE`の出力を示しています。500 MB の場合、ディスクは一時storageとして使用されます。
 
 ```sql
 EXPLAIN ANALYZE SELECT /*+ HASH_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
@@ -283,4 +283,4 @@ EXPLAIN SELECT /*+ MERGE_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
 1.  結合グループのすべてのデータを`Build`側からメモリに読み込みます。
 2.  `Probe`面のデータを読み取ります。
-3.  `Probe`側の各データ行が`Build`側の完全な結合グループと一致するかどうかを比較します。同等の条件とは別に、同等でない条件があります。ここで「一致」とは、主に同等でない条件が満たされているかどうかを確認することを指します。結合グループとは、すべての結合キーの中で同じ値を持つデータを指します。
+3.  `Probe`側の各データ行が`Build`側の完全な結合グループと一致するかどうかを比較します。同等の条件とは別に、同等でない条件があります。ここでの「一致」は、主に同等でない条件が満たされているかどうかを確認することを指します。結合グループとは、すべての結合キーの中で同じ値を持つデータを指します。

@@ -67,9 +67,9 @@ EXPLAIN SELECT name, id FROM person WHERE city = 'Beijing';
 +---------------------------------+---------+-----------+--------------------------------+-------------------------------------------------------------+
 ```
 
-クエリ実行プランからは、条件`city ='Beijing'`を満たす行の`HANDLE`読み取るために`city`インデックスが使用され、次にこの`HANDLE`を使用して行のデータを読み取ることがわかります。
+クエリ実行プランからは、条件`city ='Beijing'`満たす行の`HANDLE`読み込むために`city`インデックスが使用され、次にこの`HANDLE`使用して行のデータを読み取っていることがわかります。
 
-パス`$.city`にデータが存在しない場合、 `JSON_EXTRACT`は`NULL`を返します。 `city`が`NOT NULL`でなければならないという制約を適用する場合は、次のように仮想生成列を定義できます。
+パス`$.city`にデータが存在しない場合、 `JSON_EXTRACT` `NULL`返します。 `city` `NOT NULL`でなければならないという制約を適用する場合は、次のように仮想生成列を定義できます。
 
 ```sql
 CREATE TABLE person (
@@ -94,7 +94,7 @@ ERROR 1048 (23000): Column 'city' cannot be null
 
 クエリ内の式がインデックス付きの生成列と厳密に同等である場合、TiDB は式を対応する生成列に置き換え、オプティマイザーが実行プランの構築時にそのインデックスを考慮できるようにします。
 
-次の例では、式`a+1`に対して生成された列を作成し、インデックスを追加します。列`a`の型は int で、列`a+1`の型は bigint です。生成された列の型が int に設定されている場合、置換は行われません。型変換ルールについては、 [式評価の型変換](/functions-and-operators/type-conversion-in-expression-evaluation.md)を参照してください。
+次の例では、式`a+1`に対して生成された列を作成し、インデックスを追加します。列`a`の型は int で、列`a+1`の型は bigint です。生成された列の型が int に設定されている場合、置換は行われません。型変換ルールについては、 [式評価の型変換](/functions-and-operators/type-conversion-in-expression-evaluation.md)参照してください。
 
 ```sql
 create table t(a int);
@@ -141,4 +141,5 @@ JSON と生成された列の現在の制限は次のとおりです。
 -   `ALTER TABLE`ステートメントを使用して、保存された生成列を通常の列に変換したり、通常の列を保存された生成列に変換したりすることはできません。
 -   `ALTER TABLE`ステートメントを通じて、保存された生成列の式を変更することはできません。
 -   [JSON関数](/functions-and-operators/json-functions.md)すべてがサポートされているわけではありません。
+-   [`NULLIF()`関数](/functions-and-operators/control-flow-functions.md#nullif)サポートされていません。代わりに[`CASE`関数](/functions-and-operators/control-flow-functions.md#case)使用できます。
 -   現在、生成列インデックスの置換ルールは、生成列が仮想生成列である場合にのみ有効です。保存された生成列では有効ではありませんが、生成列自体を直接使用することでインデックスを使用することができます。

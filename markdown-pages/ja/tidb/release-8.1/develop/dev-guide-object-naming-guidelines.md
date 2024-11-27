@@ -16,7 +16,7 @@ summary: TiDB のオブジェクト命名規則について学習します。
 
 ## データベースの命名規則 {#database-naming-convention}
 
-データベース名はビジネス、製品、その他の基準ごとに区別し、データベース名には 20 文字以内を使用することをお勧めします。たとえば、一時ライブラリには`tmp_crm` 、テスト ライブラリには`test_crm`という名前を付けることができます。
+データベース名はビジネス、製品、その他の基準ごとに区別し、データベース名には 20 文字以内を使用することをお勧めします。たとえば、一時ライブラリには`tmp_crm` 、テスト ライブラリには`test_crm`名前を付けることができます。
 
 ## テーブル命名規則 {#table-naming-convention}
 
@@ -36,7 +36,7 @@ summary: TiDB のオブジェクト命名規則について学習します。
 -   列に注釈を追加し、列挙型に「0: オフライン、1: オンライン」などの名前付きの値を指定することをお勧めします。
 -   ブール列の名前は`is_{description}`にすることをお勧めします。たとえば、メンバーが有効かどうかを示す`member`テーブルの列の名前は`is_enabled`にすることができます。
 -   列の名前を 30 文字以上にすることは推奨されません。また、列の数は 60 未満にする必要があります。
--   `order` 、 `from` 、 `desc`などの TiDB 予約語を列名として使用しないでください。キーワードが予約されているかどうかを確認するには、 [TiDBキーワード](/keywords.md)を参照してください。
+-   `order` 、 `from` 、 `desc`などの TiDB 予約語を列名として使用しないでください。キーワードが予約されているかどうかを確認するには、 [TiDBキーワード](/keywords.md)参照してください。
 
 ## インデックスの命名規則 {#index-naming-convention}
 
@@ -44,3 +44,17 @@ summary: TiDB のオブジェクト命名規則について学習します。
 -   ユニークインデックス: `uk_{table_name_abbreviation}_{field_name_abbreviation}`
 -   共通インデックス: `idx_{table_name_abbreviation}_{field_name_abbreviation}`
 -   複数の単語を含むカラム名: 意味のある略語を使用してください
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

@@ -5,13 +5,13 @@ summary: DBeaver コミュニティを使用して TiDB に接続する方法を
 
 # DBeaverでTiDBに接続する {#connect-to-tidb-with-dbeaver}
 
-TiDB は MySQL 互換のデータベースであり、開発者、データベース管理者、アナリスト、およびデータを扱うすべての人にとって無料のクロスプラットフォーム データベース[DBeaver コミュニティ](https://dbeaver.io/download/)です。
+[DBeaver コミュニティ](https://dbeaver.io/download/)は MySQL 互換のデータベースであり、開発者、データベース管理者、アナリスト、およびデータを扱うすべての人にとって無料のクロスプラットフォーム データベース ツールです。
 
 このチュートリアルでは、DBeaver Community を使用して TiDB クラスターに接続する方法を学習します。
 
 > **注記：**
 >
-> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed と互換性があります。
+> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed と互換性があります。
 
 ## 前提条件 {#prerequisites}
 
@@ -51,21 +51,21 @@ TiDB は MySQL 互換のデータベースであり、開発者、データベ�
 3.  接続ダイアログの構成が動作環境と一致していることを確認します。
 
     -   **接続タイプ**は`Public`に設定されています
-    -   **ブランチ**は`main`に設定されています
+    -   **ブランチは**`main`に設定されています
     -   **接続先は**`DBeaver`に設定されています
     -   **オペレーティング システムは**環境に適合します。
 
-4.  ランダムなパスワードを作成するには、 **「パスワードの生成」を**クリックします。
+4.  ランダムなパスワードを作成するには、 **「パスワードの生成」**をクリックします。
 
     > **ヒント：**
     >
     > 以前にパスワードを作成したことがある場合は、元のパスワードを使用するか、 **「パスワードのリセット」**をクリックして新しいパスワードを生成することができます。
 
-5.  DBeaver を起動し、左上隅にある**[新しいデータベース接続]**をクリックします。 **[データベースへの接続**] ダイアログで、リストから**[TiDB]**を選択し、 **[次へ]**をクリックします。
+5.  DBeaver を起動し、左上隅にある**[新しいデータベース接続]**をクリックします。 **[データベースへの接続] ダイアログ**で、リストから**[TiDB]**を選択し、 **[次へ]**をクリックします。
 
     ![Select TiDB as the database in DBeaver](https://download.pingcap.com/images/docs/develop/dbeaver-select-database.jpg)
 
-6.  TiDB Cloud接続ダイアログから接続文字列をコピーします。DBeaver で、 **[接続方法]**に**[URL]**を選択し、接続文字列を**[URL]**フィールドに貼り付けます。
+6.  TiDB Cloud接続ダイアログから接続文字列をコピーします。DBeaver で、[**接続方法]**に**[URL]**を選択し、接続文字列を**[URL]**フィールドに貼り付けます。
 
 7.  **認証 (データベース ネイティブ)**セクションで、**ユーザー名**と**パスワード**を入力します。例は次のとおりです。
 
@@ -94,9 +94,9 @@ TiDB は MySQL 互換のデータベースであり、開発者、データベ�
 
     IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
 
-    TiDB Dedicated は、**パブリック**接続タイプに加えて、**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
-4.  DBeaver を起動し、左上隅にある**[新しいデータベース接続]**をクリックします。 **[データベースへの接続**] ダイアログで、リストから**[TiDB]**を選択し、 **[次へ]**をクリックします。
+4.  DBeaver を起動し、左上隅にある**[新しいデータベース接続]**をクリックします。 **[データベースへの接続] ダイアログ**で、リストから**[TiDB]**を選択し、 **[次へ]**をクリックします。
 
     ![Select TiDB as the database in DBeaver](https://download.pingcap.com/images/docs/develop/dbeaver-select-database.jpg)
 
@@ -128,7 +128,7 @@ TiDB は MySQL 互換のデータベースであり、開発者、データベ�
 </div>
 <div label="TiDB Self-Managed">
 
-1.  DBeaver を起動し、左上隅にある**[新しいデータベース接続]**をクリックします。 **[データベースへの接続**] ダイアログで、リストから**[TiDB]**を選択し、 **[次へ]**をクリックします。
+1.  DBeaver を起動し、左上隅にある**[新しいデータベース接続]**をクリックします。 **[データベースへの接続] ダイアログ**で、リストから**[TiDB]**を選択し、 **[次へ]**をクリックします。
 
     ![Select TiDB as the database in DBeaver](https://download.pingcap.com/images/docs/develop/dbeaver-select-database.jpg)
 
@@ -143,7 +143,7 @@ TiDB は MySQL 互換のデータベースであり、開発者、データベ�
 
     ![Configure connection settings for TiDB Self-Managed](https://download.pingcap.com/images/docs/develop/dbeaver-connection-settings-self-hosted.jpg)
 
-3.  **「接続のテスト」**をクリックして、TiDB セルフマネージド クラスターへの接続を検証します。
+3.  **「テスト接続」**をクリックして、TiDB セルフマネージド クラスターへの接続を検証します。
 
     **「ドライバー ファイルのダウンロード」**ダイアログが表示されたら、 **「ダウンロード」**をクリックしてドライバー ファイルを取得します。
 

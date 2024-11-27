@@ -1,21 +1,21 @@
 ---
 title: USE | TiDB SQL Statement Reference
-summary: USEステートメントは、ユーザー セッションの現在のデータベースを選択します。TiDB のUSEステートメントは MySQL と完全な互換性があります。データベースの作成、テーブルを表示も参照してください。
+summary: TiDB データベースでの USE の使用法の概要。
 ---
 
 # 使用 {#use}
 
 `USE`ステートメントは、ユーザー セッションの現在のデータベースを選択します。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**使用方法:**
+```ebnf+diagram
+UseStmt ::=
+    "USE" DBName
 
-![UseStmt](https://download.pingcap.com/images/docs/sqlgram/UseStmt.png)
-
-**DB名:**
-
-![DBName](https://download.pingcap.com/images/docs/sqlgram/DBName.png)
+DBName ::=
+    Identifier
+```
 
 ## 例 {#examples}
 
@@ -72,11 +72,11 @@ mysql> SHOW TABLES;
 1 row in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`USE`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`USE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [データベースの作成](/sql-statements/sql-statement-create-database.md)
 -   [テーブルを表示](/sql-statements/sql-statement-show-tables.md)

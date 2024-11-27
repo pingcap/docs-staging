@@ -1,27 +1,23 @@
 ---
 title: TRUNCATE | TiDB SQL Statement Reference
-summary: TRUNCATEステートメントは、テーブルからデータを非トランザクション的に削除します。TRUNCATE前の定義のDROP TABLE + CREATE TABLEと同じ意味があります。TRUNCATE TABLE tableNameとTRUNCATE tableNameはどちらも有効な構文です。MySQLの互換性があります。
+summary: TiDB データベースでの TRUNCATE の使用法の概要。
 ---
 
-# 切り詰める {#truncate}
+# 切り捨て {#truncate}
 
-`TRUNCATE`ステートメントは、非トランザクション的な方法でテーブルからすべてのデータを削除します。 `TRUNCATE`前の定義の`DROP TABLE` + `CREATE TABLE`と意味的に同じと考えることができます。
+`TRUNCATE`ステートメントは、非トランザクション方式でテーブルからすべてのデータを削除します。3 `TRUNCATE`前の定義の`DROP TABLE` + `CREATE TABLE`と意味的に同じであると考えることができます。
 
-`TRUNCATE TABLE tableName`と`TRUNCATE tableName`はどちらも有効な構文です。
+`TRUNCATE TABLE tableName`と`TRUNCATE tableName`どちらも有効な構文です。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**TruncateTableStmt:**
+```ebnf+diagram
+TruncateTableStmt ::=
+    "TRUNCATE" ( "TABLE" )? TableName
 
-![TruncateTableStmt](https://download.pingcap.com/images/docs/sqlgram/TruncateTableStmt.png)
-
-**オプトテーブル:**
-
-![OptTable](https://download.pingcap.com/images/docs/sqlgram/OptTable.png)
-
-**テーブル名:**
-
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+TableName ::=
+    (Identifier ".")? Identifier
+```
 
 ## 例 {#examples}
 
@@ -59,13 +55,13 @@ mysql> TRUNCATE TABLE t1;
 Query OK, 0 rows affected (0.11 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`TRUNCATE`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`TRUNCATE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
--   [ドロップテーブル](/sql-statements/sql-statement-drop-table.md)
+-   [テーブルを削除](/sql-statements/sql-statement-drop-table.md)
 -   [消去](/sql-statements/sql-statement-delete.md)
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
--   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
+-   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)

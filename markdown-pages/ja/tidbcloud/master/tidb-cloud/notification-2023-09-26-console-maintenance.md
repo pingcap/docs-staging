@@ -1,6 +1,6 @@
 ---
 title: 2023-09-26 TiDB Cloud Console Maintenance Notification
-summary: Learn about the details of the TiDB Cloud Console maintenance on Sep 26, 2023, such as the maintenance window, reason, and impact.
+summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 (メンテナンス ウィンドウ、理由、影響など) について説明します。
 ---
 
 # [2023-09-26] TiDB Cloudコンソールメンテナンス通知 {#2023-09-26-tidb-cloud-console-maintenance-notification}

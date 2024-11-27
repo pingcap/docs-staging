@@ -1,6 +1,6 @@
 ---
 title: MySQL Compatibility
-summary: Learn about the compatibility of TiDB with MySQL, and the unsupported and different features.
+summary: TiDB と MySQL の互換性、およびサポートされていない機能と異なる機能について学習します。
 ---
 
 # MySQL 互換性 {#mysql-compatibility}
@@ -23,8 +23,8 @@ TiDB は、MySQL プロトコル、およびMySQL 5.7と MySQL 8.0 の共通機�
 
 TiDB は MySQL レプリケーション プロトコルをサポートしていないことに注意してください。代わりに、MySQL でデータをレプリケートするための特別なツールが提供されています。
 
--   MySQL からデータを複製: [TiDB データ移行 (DM)](/dm/dm-overview.md) 、MySQL または MariaDB から TiDB への完全なデータ移行と増分データ複製をサポートするツールです。
--   MySQL にデータを複製: [ティCDC](/ticdc/ticdc-overview.md) 、TiKV 変更ログを取得して TiDB の増分データを複製するツールです。TiCDC は[MySQLシンク](/ticdc/ticdc-overview.md#replication-consistency)を使用して TiDB の増分データを MySQL に複製します。
+-   MySQL からデータを複製: [TiDB データ移行 (DM)](/dm/dm-overview.md)は、MySQL または MariaDB から TiDB への完全なデータ移行と増分データ複製をサポートするツールです。
+-   MySQL にデータを複製: [ティCDC](/ticdc/ticdc-overview.md) TiKV 変更ログを取得して TiDB の増分データを複製するツールです。TiCDC は[MySQLシンク](/ticdc/ticdc-overview.md#replication-consistency)使用して TiDB の増分データを MySQL に複製します。
 
 </CustomContent>
 
@@ -53,9 +53,8 @@ TiDB は MySQL レプリケーション プロトコルをサポートしてい�
 -   イベント
 -   ユーザー定義関数
 -   `FULLTEXT`構文とインデックス[＃1793](https://github.com/pingcap/tidb/issues/1793)
--   `SPATIAL` ( `GIS`とも`GEOMETRY`れる)関数、データ型、インデックス[＃6347](https://github.com/pingcap/tidb/issues/6347)
+-   `SPATIAL` ( `GIS`とも呼ばれる`GEOMETRY`関数、データ型、インデックス[＃6347](https://github.com/pingcap/tidb/issues/6347)
 -   `ascii` 、 `latin1` 、 `binary` 、 `utf8` 、 `utf8mb4` 、 `gbk`以外の文字セット。
--   SYSスキーマ
 -   オプティマイザートレース
 -   XML 関数
 -   Xプロトコル[＃1109](https://github.com/pingcap/tidb/issues/1109)
@@ -77,7 +76,7 @@ TiDB は MySQL レプリケーション プロトコルをサポートしてい�
 
 ### 自動増分ID {#auto-increment-id}
 
--   TiDB では、自動増分列の値 (ID) は、単一の TiDBサーバー内でグローバルに一意かつ増分されます。複数の TiDB サーバー間で ID を増分するには、 [`AUTO_INCREMENT` MySQL 互換モード](/auto-increment.md#mysql-compatibility-mode)使用できます。ただし、ID は必ずしも順番に割り当てられるわけではないため、 `Duplicated Error`メッセージが発生しないように、既定値とカスタム値を混在させないようにすることをお勧めします。
+-   TiDB では、自動増分列の値 (ID) は、単一の TiDBサーバー内でグローバルに一意かつ増分されます。複数の TiDB サーバー間で ID を増分するには、 [`AUTO_INCREMENT` MySQL互換モード](/auto-increment.md#mysql-compatibility-mode)を使用できます。ただし、ID は必ずしも順番に割り当てられるわけではないため、 `Duplicated Error`メッセージが発生しないように、既定値とカスタム値を混在させないようにすることをお勧めします。
 
 -   `tidb_allow_remove_auto_inc`システム変数を使用して、 `AUTO_INCREMENT`列属性の削除を許可または禁止できます。列属性を削除するには、 `ALTER TABLE MODIFY`または`ALTER TABLE CHANGE`構文を使用します。
 
@@ -115,13 +114,13 @@ mysql> SELECT _tidb_rowid, id FROM t;
 3 rows in set (0.01 sec)
 ```
 
-ご覧のとおり、共有アロケータがあるため、 `id`​​毎回 2 ずつ増加します。この動作は[MySQL互換モード](/auto-increment.md#mysql-compatibility-mode)では変わり、共有アロケータがないため、数字のスキップは行われません。
+示されているように、共有アロケータがあるため、 `id`毎回 2 ずつ増加します。この動作は[MySQL互換モード](/auto-increment.md#mysql-compatibility-mode)では変わり、共有アロケータがないため、数字のスキップは行われません。
 
 <CustomContent platform="tidb">
 
 > **注記：**
 >
-> `AUTO_INCREMENT`属性は本番環境でホットスポットを引き起こす可能性があります。詳細については[ホットスポットの問題のトラブルシューティング](/troubleshoot-hot-spot-issues.md)を参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)使用することをお勧めします。
+> `AUTO_INCREMENT`属性は本番環境でホットスポットを引き起こす可能性があります。詳細については[ホットスポットの問題のトラブルシューティング](/troubleshoot-hot-spot-issues.md)参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)使用することをお勧めします。
 
 </CustomContent>
 
@@ -129,7 +128,7 @@ mysql> SELECT _tidb_rowid, id FROM t;
 
 > **注記：**
 >
-> `AUTO_INCREMENT`属性は本番環境でホットスポットを引き起こす可能性があります。詳細については[ホットスポットの問題のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#handle-auto-increment-primary-key-hotspot-tables-using-auto_random)を参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)使用することをお勧めします。
+> `AUTO_INCREMENT`属性は本番環境でホットスポットを引き起こす可能性があります。詳細については[ホットスポットの問題のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#handle-auto-increment-primary-key-hotspot-tables-using-auto_random)参照してください。代わりに[`AUTO_RANDOM`](/auto-random.md)使用することをお勧めします。
 
 </CustomContent>
 
@@ -149,17 +148,15 @@ TiDB Cloudでパフォーマンス メトリックを確認するには、 TiDB 
 
 ### クエリ実行プラン {#query-execution-plan}
 
-TiDB のクエリ実行プラン ( `EXPLAIN` ) の出力形式、内容、権限設定は`EXPLAIN FOR` MySQL のものと大きく異なります。
+TiDB のクエリ実行プラン ( `EXPLAIN` `EXPLAIN FOR`の出力形式、内容、権限設定は、MySQL のものと大きく異なります。
 
-TiDB では、MySQL システム変数`optimizer_switch`は読み取り専用であり、クエリ プランには影響しません。オプティマイザ ヒントは MySQL と同様の構文で使用できますが、使用可能なヒントとその実装は異なる場合があります。
+TiDB では、MySQL システム変数`optimizer_switch`読み取り専用であり、クエリ プランには影響しません。オプティマイザ ヒントは MySQL と同様の構文で使用できますが、使用可能なヒントとその実装は異なる場合があります。
 
 詳細については[クエリ実行プランを理解する](/explain-overview.md)を参照してください。
 
 ### 組み込み関数 {#built-in-functions}
 
-TiDB は MySQL の組み込み関数のほとんどをサポートしていますが、すべてをサポートしているわけではありません。使用可能な関数のリストを取得するには、ステートメント`SHOW BUILTINS`を使用します。
-
-詳細については、 [TiDB SQL文法](https://pingcap.github.io/sqlgram/#functioncallkeyword)を参照してください。
+TiDB は MySQL の組み込み関数のほとんどをサポートしていますが、すべてをサポートしているわけではありません。使用可能な関数のリストを取得するには、ステートメント[`SHOW BUILTINS`](/sql-statements/sql-statement-show-builtins.md)を使用します。
 
 ### DDL操作 {#ddl-operations}
 
@@ -167,14 +164,14 @@ TiDB では、サポートされているすべての DDL 変更をオンライ�
 
 -   1 つの`ALTER TABLE`ステートメントを使用してテーブルの複数のスキーマ オブジェクト (列やインデックスなど) を変更する場合、複数の変更で同じオブジェクトを指定することはサポートされていません。たとえば、 `ALTER TABLE t1 MODIFY COLUMN c1 INT, DROP COLUMN c1`コマンドを実行すると、 `Unsupported operate same column/index`エラーが出力されます。
 -   `TIFLASH REPLICA` 、 `SHARD_ROW_ID_BITS` 、 `AUTO_ID_CACHE`など、単一の`ALTER TABLE`ステートメントを使用して複数の TiDB 固有のスキーマ オブジェクトを変更することはサポートされていません。
--   TiDB は、 `ALTER TABLE`を使用した一部のデータ型の変更をサポートしていません。たとえば、TiDB は`DECIMAL`型から`DATE`型への変更をサポートしていません。データ型の変更がサポートされていない場合、TiDB は`Unsupported modify column: type %d not match origin %d`エラーを報告します。詳細については、 [`ALTER TABLE`](/sql-statements/sql-statement-modify-column.md)を参照してください。
--   `ALGORITHM={INSTANT,INPLACE,COPY}`構文は TiDB 内のアサーションとしてのみ関数、 `ALTER`アルゴリズムを変更するものではありません。詳細については[`ALTER TABLE`](/sql-statements/sql-statement-alter-table.md)を参照してください。
+-   TiDB は、 `ALTER TABLE`使用した一部のデータ型の変更をサポートしていません。たとえば、TiDB は`DECIMAL`型から`DATE`型への変更をサポートしていません。データ型の変更がサポートされていない場合、TiDB は`Unsupported modify column: type %d not match origin %d`エラーを報告します。詳細については、 [`ALTER TABLE`](/sql-statements/sql-statement-modify-column.md)を参照してください。
+-   `ALGORITHM={INSTANT,INPLACE,COPY}`構文は TiDB 内のアサーションとしてのみ関数、 `ALTER`アルゴリズムを変更するものではありません。詳細については[`ALTER TABLE`](/sql-statements/sql-statement-alter-table.md)参照してください。
 -   `CLUSTERED`型の主キーの追加/削除はサポートされていません。 `CLUSTERED`型の主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
 -   異なるタイプのインデックス ( `HASH|BTREE|RTREE|FULLTEXT` ) はサポートされておらず、指定された場合は解析されて無視されます。
--   TiDB は、 `HASH` 、 `RANGE` 、 `LIST` 、および`KEY`パーティション タイプをサポートしています。現在、 `KEY`パーティション タイプは、空のパーティション列リストを持つパーティション ステートメントをサポートしていません。サポートされていないパーティション タイプの場合、TiDB は`Warning: Unsupported partition type %s, treat as normal table`を返します。ここで、 `%s`サポートされていない特定のパーティション タイプです。
+-   TiDB は、 `HASH` 、 `RANGE` 、 `LIST` 、および`KEY`のパーティション タイプをサポートします。サポートされていないパーティション タイプの場合、TiDB は`Warning: Unsupported partition type %s, treat as normal table`返します。ここで、 `%s`サポートされていない特定のパーティション タイプです。
 -   範囲、範囲列、リスト、およびリスト列でパーティション化されたテーブルは、 `ADD` 、 `DROP` 、 `TRUNCATE` 、および`REORGANIZE`操作をサポートします。その他のパーティション操作は無視されます。
--   ハッシュおよびキー パーティション テーブルは、 `ADD` 、 `COALESCE` 、および`TRUNCATE`操作をサポートします。その他のパーティション操作は無視されます。
--   パーティション テーブルでは次の構文はサポートされていません。
+-   ハッシュおよびキーでパーティション化されたテーブルは、 `ADD` 、 `COALESCE` 、および`TRUNCATE`操作をサポートします。その他のパーティション操作は無視されます。
+-   次の構文はパーティション テーブルではサポートされていません。
 
     -   `SUBPARTITION`
     -   `{CHECK|OPTIMIZE|REPAIR|IMPORT|DISCARD|REBUILD} PARTITION`
@@ -183,13 +180,13 @@ TiDB では、サポートされているすべての DDL 変更をオンライ�
 
 ### 表の分析 {#analyzing-tables}
 
-TiDB では、テーブルの統計情報を完全に再構築する点で MySQL と[統計収集](/statistics.md#manual-collection)異なり、より多くのリソースを消費する操作となり、完了までに時間がかかります。対照的に、MySQL/InnoDB は比較的軽量で短時間の操作を実行します。
+TiDB では、テーブルの統計情報を完全に再構築する点で[統計収集](/statistics.md#manual-collection)とは異なり、より多くのリソースを消費する操作となり、完了までに時間がかかります。対照的に、MySQL/InnoDB は比較的軽量で短時間の操作を実行します。
 
 詳細については[`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)を参照してください。
 
 ### <code>SELECT</code>構文の制限 {#limitations-of-code-select-code-syntax}
 
-TiDB は次の`SELECT`構文をサポートしていません。
+TiDB は次の`SELECT`の構文をサポートしていません。
 
 -   `SELECT ... INTO @variable`
 -   MySQL 5.7の場合のように、 `SELECT .. GROUP BY expr` `GROUP BY expr ORDER BY expr`意味するわけではありません。
@@ -231,8 +228,8 @@ TiDB では、代替storageエンジンを使用してテーブルを作成で�
 TiDB は、次のほとんどの[SQL モード](/sql-mode.md)サポートします。
 
 -   `Oracle`や`PostgreSQL`などの互換モードは解析されますが無視されます。互換モードはMySQL 5.7では非推奨となり、MySQL 8.0 では削除されました。
--   `ONLY_FULL_GROUP_BY`モードには、 MySQL 5.7からのマイナー[意味の違い](/functions-and-operators/aggregate-group-by-functions.md#differences-from-mysql)があります。
--   MySQL の SQL モード`NO_DIR_IN_CREATE`および`NO_ENGINE_SUBSTITUTION`互換性のために受け入れられますが、TiDB には適用されません。
+-   `ONLY_FULL_GROUP_BY`モードには、 MySQL 5.7からのマイナー[意味の違い](/functions-and-operators/aggregate-group-by-functions.md#differences-from-mysql)あります。
+-   MySQL の SQL モード`NO_DIR_IN_CREATE`および`NO_ENGINE_SUBSTITUTION`は互換性のために受け入れられますが、TiDB には適用されません。
 
 ### デフォルトの違い {#default-differences}
 
@@ -243,9 +240,9 @@ TiDB は、MySQL 5.7および MySQL 8.0 と比較するとデフォルトで違�
     -   MySQL 5.7のデフォルト値は`latin1`です。
     -   MySQL 8.0 のデフォルト値は`utf8mb4`です。
 -   デフォルトの照合順序:
-    -   TiDB のデフォルトの照合順序は`utf8mb4_bin`です。
-    -   MySQL 5.7のデフォルトの照合順序は`utf8mb4_general_ci`です。
-    -   MySQL 8.0 のデフォルトの照合順序は`utf8mb4_0900_ai_ci`です。
+    -   TiDB のデフォルトの照合照合順序は`utf8mb4_bin`です。
+    -   MySQL 5.7のデフォルトの照合照合順序は`utf8mb4_general_ci`です。
+    -   MySQL 8.0 のデフォルトの照合照合順序は`utf8mb4_0900_ai_ci`です。
 -   デフォルトの SQL モード:
     -   TiDB のデフォルトの SQL モードには、次のモードが含まれます: `ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION` 。
     -   MySQL のデフォルトの SQL モード:
@@ -268,7 +265,7 @@ TiDB は、MySQL 5.7および MySQL 8.0 と比較するとデフォルトで違�
 TiDB は、次の点を考慮して名前付きタイムゾーンをサポートします。
 
 -   TiDB は、計算のために現在システムにインストールされているすべてのタイムゾーン ルール (通常は`tzdata`パッケージ) を使用します。これにより、タイムゾーン テーブル データをインポートしなくても、すべてのタイムゾーン名を使用できます。タイムゾーン テーブル データをインポートしても、計算ルールは変更されません。
--   現在、MySQL はデフォルトでローカル タイムゾーンを使用し、計算にはシステムに組み込まれている現在のタイムゾーン ルール (たとえば、夏時間の開始時) に依存します。 [タイムゾーンテーブルデータのインポート](https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-installation)ないと、MySQL はタイムゾーンを名前で指定できません。
+-   現在、MySQL はデフォルトでローカル タイムゾーンを使用し、計算にはシステムに組み込まれている現在のタイムゾーン ルール (たとえば、夏時間の開始時) に依存します。 [タイムゾーンテーブルデータのインポート](https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-installation)がないと、MySQL はタイムゾーンを名前で指定できません。
 
 ### 型システムの違い {#type-system-differences}
 
@@ -278,14 +275,14 @@ TiDB は、次の点を考慮して名前付きタイムゾーンをサポート
 
 ### 正規表現 {#regular-expressions}
 
-`REGEXP_INSTR()` 、 `REGEXP_LIKE()` 、 `REGEXP_REPLACE()` 、 `REGEXP_SUBSTR()`を含む、MySQL との TiDB 正規表現の互換性については、 [MySQL との正規表現の互換性](/functions-and-operators/string-functions.md#regular-expression-compatibility-with-mysql)を参照してください。
+`REGEXP_INSTR()` 、 `REGEXP_LIKE()` 、 `REGEXP_REPLACE()` 、 `REGEXP_SUBSTR()`を含む、MySQL との TiDB 正規表現の互換性については、 [MySQL との正規表現の互換性](/functions-and-operators/string-functions.md#regular-expression-compatibility-with-mysql)参照してください。
 
 ### 非推奨の機能による非互換性 {#incompatibility-due-to-deprecated-features}
 
 TiDB は、MySQL で非推奨となった次のような特定の機能を実装していません。
 
 -   浮動小数点型の精度を指定します。MySQL 8.0 [非推奨](https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html)この機能がサポートされておらず、代わりに`DECIMAL`型を使用することをお勧めします。
--   `ZEROFILL`属性。MySQL 8.0 [非推奨](https://dev.mysql.com/doc/refman/8.0/en/numeric-type-attributes.html)ではこの機能がサポートされておらず、代わりにアプリケーションで数値を埋め込むことが推奨されます。
+-   `ZEROFILL`属性。MySQL 8.0 [非推奨](https://dev.mysql.com/doc/refman/8.0/en/numeric-type-attributes.html)この機能がサポートされておらず、代わりにアプリケーションで数値を埋め込むことが推奨されます。
 
 ### <code>CREATE RESOURCE GROUP</code> 、 <code>DROP RESOURCE GROUP</code> 、および<code>ALTER RESOURCE GROUP</code>ステートメント {#code-create-resource-group-code-code-drop-resource-group-code-and-code-alter-resource-group-code-statements}
 

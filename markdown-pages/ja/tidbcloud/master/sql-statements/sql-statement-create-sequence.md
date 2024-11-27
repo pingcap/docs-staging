@@ -1,6 +1,6 @@
 ---
 title: CREATE SEQUENCE
-summary: An overview of the usage of CREATE SEQUENCE for the TiDB database.
+summary: TiDB データベースの CREATE SEQUENCE の使用法の概要。
 ---
 
 # シーケンスを作成 {#create-sequence}

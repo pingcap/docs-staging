@@ -1,13 +1,13 @@
 ---
 title: ADD COLUMN | TiDB SQL Statement Reference
-summary: ALTER TABLE.. ADD COLUMNステートメントは、既存のテーブルに列を追加します。この操作はTiDBではオンラインで行われ、テーブルへの読み取りも書き込みもブロックされません。新しい列を追加する際の例やMySQLの互換性についても参照してください。
+summary: TiDB データベースの ADD COLUMN の使用法の概要。
 ---
 
-# 列の追加 {#add-column}
+# 列を追加 {#add-column}
 
-`ALTER TABLE.. ADD COLUMN`ステートメントは、既存のテーブルに列を追加します。この操作は TiDB ではオンラインです。つまり、列の追加によってテーブルへの読み取りも書き込みもブロックされません。
+`ALTER TABLE.. ADD COLUMN`文は既存のテーブルに列を追加します。この操作は TiDB ではオンラインで行われるため、列を追加してもテーブルへの読み取りや書き込みはブロックされません。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 AlterTableStmt
@@ -83,13 +83,13 @@ mysql> SELECT * FROM t1;
 1 row in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
 -   新しい列を追加して`PRIMARY KEY`に設定することはサポートされていません。
 -   新しい列を追加して`AUTO_INCREMENT`に設定することはサポートされていません。
--   生成された列の追加には制限があります。以下を参照してください。 [生成される列の制限事項](/generated-columns.md#limitations) 。
+-   生成された列の追加には制限があります。1 [生成された列の制限](/generated-columns.md#limitations)参照してください。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
--   [インデックスの追加](/sql-statements/sql-statement-add-index.md)
+-   [インデックスを追加](/sql-statements/sql-statement-add-index.md)
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)

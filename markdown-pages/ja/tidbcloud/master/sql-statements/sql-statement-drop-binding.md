@@ -1,6 +1,6 @@
 ---
 title: DROP [GLOBAL|SESSION] BINDING
-summary: Use of DROP BINDING in TiDB database.
+summary: TiDB データベースでの DROP BINDING の使用。
 ---
 
 # [グローバル|セッション]バインディングの削除 {#drop-global-session-binding}
@@ -200,5 +200,5 @@ No query specified
 -   [[グローバル|セッション]バインディングの作成](/sql-statements/sql-statement-create-binding.md)
 -   [[グローバル|セッション]バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
 -   [テーブルを分析](/sql-statements/sql-statement-analyze-table.md)
--   [オプティマイザーヒント](/optimizer-hints.md)
+-   [オプティマイザのヒント](/optimizer-hints.md)
 -   [SQL プラン管理](/sql-plan-management.md)

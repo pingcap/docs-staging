@@ -1,6 +1,6 @@
 ---
 title: CLUSTER_HARDWARE
-summary: CLUSTER_HARDWARE information_schema テーブルについて学習します。
+summary: CLUSTER_HARDWARE` information_schema テーブルについて学習します。
 ---
 
 # クラスターハードウェア {#cluster-hardware}
@@ -9,7 +9,7 @@ summary: CLUSTER_HARDWARE information_schema テーブルについて学習し�
 
 > **注記：**
 >
-> この表は TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> この表は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 ```sql
 USE information_schema;

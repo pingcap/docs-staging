@@ -5,13 +5,13 @@ summary: データ移行に関するよくある質問について説明しま�
 
 # 移行に関するよくある質問 {#migration-faqs}
 
-このドキュメントでは、TiDB データ移行に関するよくある質問 (FAQ) をまとめています。
+このドキュメントでは、TiDB データ移行に関連するよくある質問 (FAQ) をまとめています。
 
 移行関連ツールに関するよくある質問については、以下のリストの対応するリンクをクリックしてください。
 
 -   [バックアップと復元に関するよくある質問](/faq/backup-and-restore-faq.md)
 -   [TiDBBinlogFAQ](/tidb-binlog/tidb-binlog-faq.md)
--   [TiDB Lightningに関するよくある質問](/tidb-lightning/tidb-lightning-faq.md)
+-   [TiDB Lightningよくある質問](/tidb-lightning/tidb-lightning-faq.md)
 -   [TiDB データ移行 (DM) に関するよくある質問](/dm/dm-faq.md)
 -   [TiCDC よくある質問](/ticdc/ticdc-faq.md)
 
@@ -64,7 +64,7 @@ iperf Done.
 
 出力にネットワーク帯域幅が低く、帯域幅の変動が大きいことが示されている場合、各コンポーネントログに多数の再試行と EOF エラーが表示されることがあります。この場合、ネットワーク サービス プロバイダーに相談して、ネットワーク品質を改善する必要があります。
 
-各メトリックの出力が良好であれば、各コンポーネントを更新してみてください。更新後も問題が解決しない場合は、PingCAP またはコミュニティから[支持を得ます](/support.md)リクエストしてください。
+各メトリックの出力が良好であれば、各コンポーネントを更新してみてください。更新後も問題が解決しない場合は、PingCAP またはコミュニティから[サポートを受ける](/support.md)リクエストしてください。
 
 ### 誤ってMySQLユーザーテーブルをTiDBにインポートしてしまったり、パスワードを忘れてログインできなくなったりした場合、どのように対処すればよいでしょうか? {#if-i-accidentally-import-the-mysql-user-table-into-tidb-or-forget-the-password-and-cannot-log-in-how-to-deal-with-it}
 
@@ -74,7 +74,7 @@ TiDB サービスを再起動し、構成ファイルに`-skip-grant-table=true`
 
 TiDB のデータをエクスポートするには、次の方法を使用できます。
 
--   Dumplingを使用してデータをエクスポートします。詳細については、 [Dumplingのドキュメント](/dumpling-overview.md)参照してください。
+-   Dumpling を使用してデータをエクスポートします。詳細については、 [Dumplingのドキュメント](/dumpling-overview.md)参照してください。
 -   mysqldump と`WHERE`句を使用してデータをエクスポートします。
 -   MySQL クライアントを使用して、 `select`の結果をファイルにエクスポートします。
 
@@ -91,7 +91,7 @@ DB2 または Oracle から TiDB にすべてのデータを移行するか、�
 
 ### エラー: java.sql.BatchUpdateException: Sqoop を使用して TiDB にデータを<code>batches</code>で書き込むときに、 <code>java.sql.BatchUpdateException:statement count 5001 exceeds the transaction limitation</code> {#error-code-java-sql-batchupdateexception-statement-count-5001-exceeds-the-transaction-limitation-code-while-using-sqoop-to-write-data-into-tidb-in-code-batches-code}
 
-Sqoop では、 `--batch`各バッチで 100 個`statement`をコミットすることを意味しますが、デフォルトでは各`statement`に 100 個の SQL ステートメントが含まれます。したがって、100 * 100 = 10000 個の SQL ステートメントとなり、単一の TiDB トランザクションで許可されるステートメントの最大数である 5000 を超えます。
+Sqoop では、 `--batch`各バッチで 100 個の`statement`をコミットすることを意味しますが、デフォルトでは各`statement`に 100 個の SQL ステートメントが含まれます。したがって、100 * 100 = 10000 個の SQL ステートメントとなり、単一の TiDB トランザクションで許可されるステートメントの最大数である 5000 を超えます。
 
 2つの解決策:
 
@@ -117,7 +117,7 @@ Sqoop では、 `--batch`各バッチで 100 個`statement`をコミットする
 -   データベースの主キーが均等に分散されていません (たとえば、 [`SHARD_ROW_ID_BITS`](/shard-row-id-bits.md)有効にした場合)。
 -   アップストリーム データベースは TiDB であり、エクスポートされたテーブルはパーティションテーブルです。
 
-上記の場合、 Dumpling はエクスポート用に過度に大きなデータ チャンクを分割し、過度に大きな結果を含むクエリを送信します。この問題を解決するには、最新バージョンのDumplingを入手してください。
+上記の場合、 Dumpling はエクスポート用に過度に大きなデータ チャンクを分割し、過度に大きな結果を含むクエリを送信します。この問題を解決するには、最新バージョンのDumpling を入手してください。
 
 ### TiDB には Oracle のフラッシュバック クエリのような機能がありますか? DDL をサポートしていますか? {#does-tidb-have-a-function-like-the-flashback-query-in-oracle-does-it-support-ddl}
 
@@ -141,7 +141,7 @@ Sqoop では、 `--batch`各バッチで 100 個`statement`をコミットする
 
 ### <code>transaction too large</code>エラーメッセージが表示されます {#the-error-message-code-transaction-too-large-code-is-displayed}
 
-基盤となるstorageエンジンの制限により、TiDB 内の各キー値エントリ (1 行) は 6 MB 以下にする必要があります。1 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v50)構成値を最大 120 MB まで調整できます。
+基盤となるstorageエンジンの制限により、TiDB 内の各キー値エントリ (1 行) は 6 MB 以下にする必要があります。1 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500)構成値を最大 120 MB まで調整できます。
 
 分散トランザクションには 2 フェーズ コミットが必要で、最レイヤーでRaftレプリケーションが実行されます。トランザクションが非常に大きい場合、コミット プロセスは非常に遅くなり、書き込み競合が発生する可能性が高くなります。さらに、失敗したトランザクションのロールバックにより、不要なパフォーマンスの低下が発生します。これらの問題を回避するために、トランザクション内のキー値エントリの合計サイズをデフォルトで 100 MB 以下に制限しています。より大きなトランザクションが必要な場合は、TiDB 構成ファイルの値`txn-total-size-limit`を変更します。この構成項目の最大値は 10 G までです。実際の制限は、マシンの物理メモリによっても左右されます。
 
@@ -153,7 +153,7 @@ Google Cloud Spanner には[同様の制限](https://cloud.google.com/spanner/do
 
 ### TiDB はデータを削除した後すぐにスペースを解放しますか? {#does-tidb-release-space-immediately-after-deleting-data}
 
-`DELETE` `DROP`操作は`TRUNCATE`もデータを即時に解放しません。7 と`DROP`操作では、TiDB GC (ガベージ コレクション) 時間 (デフォルトでは 10 分) が`TRUNCATE`すると、データが削除され、領域が解放されます。11 `DELETE`操作では、TiDB GC に従ってデータは削除されますが、領域は解放されません。後続のデータが RocksDB に書き込まれ、 `COMPACT`が実行されると、領域が再利用されます。
+`DELETE`の操作はいずれもデータを即時に解放しません。7 `DROP` `DROP` `TRUNCATE`は、TiDB GC (ガベージ コレクション) 時間 (デフォルトでは 10 分) `TRUNCATE`経過すると、データが削除され、領域が解放されます。11 `DELETE`操作では、TiDB GC に従ってデータは削除されますが、領域は解放されません。後続のデータが RocksDB に書き込まれ、 `COMPACT`実行されると、領域が再利用されます。
 
 ### データをロードするときに、ターゲット テーブルで DDL 操作を実行できますか? {#can-i-execute-ddl-operations-on-the-target-table-when-loading-data}
 
@@ -165,15 +165,15 @@ Google Cloud Spanner には[同様の制限](https://cloud.google.com/spanner/do
 
 ### データを削除した後、クエリ速度が遅くなるのはなぜですか? {#why-does-the-query-speed-getting-slow-after-deleting-data}
 
-大量のデータを削除すると、無駄なキーが大量に残り、クエリの効率に影響します。 [リージョン結合機能](/best-practices/massive-regions-best-practices.md#method-3-enable-region-merge)でこの問題を解決できます。詳細については、 [TiDB ベストプラクティスのデータセクションの削除](https://en.pingcap.com/blog/tidb-best-practice/#write)を参照してください。
+大量のデータを削除すると、無駄なキーが大量に残り、クエリの効率に影響します。 [リージョン結合機能](/best-practices/massive-regions-best-practices.md#method-3-enable-region-merge)でこの問題を解決できます。詳細については、 [TiDB ベストプラクティスのデータセクションの削除](https://www.pingcap.com/blog/tidb-best-practice/#write)を参照してください。
 
 ### データを削除する最も効率的な方法は何ですか? {#what-is-the-most-efficient-way-of-deleting-data}
 
 大量のデータを削除する場合は、 `Delete from t where xx limit 5000;`使用することをお勧めします。ループを介して削除し、 `Affected Rows == 0`ループ終了の条件として使用して、トランザクションサイズの制限を超えないようにします。ビジネスフィルタリングロジックを満たすという前提条件により、強力なフィルターインデックス列を追加するか、 `id >= 5000*n+m and id < 5000*(n+1)+m`など、主キーを直接使用して範囲を選択することをお勧めします。
 
-一度に削除する必要があるデータの量が非常に多い場合、このループ メソッドは、削除ごとに逆方向に移動するため、だんだん遅くなります。前のデータを削除した後、多くの削除済みフラグが短期間残り (その後、すべてガベージ コレクションによって処理されます)、次の Delete ステートメントに影響します。可能であれば、Where 条件を絞り込むことをお勧めします。1 [詳細はTiDBベストプラクティスを参照](https://en.pingcap.com/blog/tidb-best-practice/#write)参照してください。
+一度に削除する必要があるデータの量が非常に多い場合、このループ メソッドは、削除ごとに逆方向に移動するため、どんどん遅くなります。前のデータを削除した後、多くの削除済みフラグが短期間残り (その後、すべてガベージ コレクションによって処理されます)、次の Delete ステートメントに影響します。可能であれば、Where 条件を絞り込むことをお勧めします[詳細はTiDBベストプラクティスを参照](https://www.pingcap.com/blog/tidb-best-practice/#write)参照してください。
 
-### TiDB のデータ読み込み速度を向上させるにはどうすればよいでしょうか? {#how-to-improve-the-data-loading-speed-in-tidb}
+### TiDB でのデータ読み込み速度を向上させるにはどうすればよいでしょうか? {#how-to-improve-the-data-loading-speed-in-tidb}
 
--   [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)ツールは分散データ インポート用に開発されました。データ インポート プロセスでは、パフォーマンス上の理由から完全なトランザクション プロセスが実行されないことに注意してください。したがって、インポート プロセス中にインポートされるデータのACID制約は保証されません。インポートされたデータのACID制約は、インポート プロセス全体が終了してからのみ保証されます。したがって、適用可能なシナリオには、主に新しいデータ (新しいテーブルや新しいインデックスなど) のインポート、または完全なバックアップと復元 (元のテーブルを切り捨ててからデータをインポート) が含まれます。
+-   [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)ツールは分散データ インポート用に開発されました。データ インポート プロセスは、パフォーマンス上の理由から完全なトランザクション プロセスを実行しないことに注意してください。したがって、インポート プロセス中にインポートされるデータのACID制約は保証されません。インポートされたデータのACID制約は、インポート プロセス全体が終了してからのみ保証されます。したがって、適用可能なシナリオには、主に新しいデータ (新しいテーブルや新しいインデックスなど) のインポート、または完全なバックアップと復元 (元のテーブルを切り捨ててからデータをインポート) が含まれます。
 -   TiDB へのデータのロードは、ディスクとクラスター全体の状態に関係しています。データをロードするときは、ホストのディスク使用率、TiClient エラー、バックオフ、スレッド CPU などのメトリックに注意してください。これらのメトリックを使用してボトルネックを分析できます。

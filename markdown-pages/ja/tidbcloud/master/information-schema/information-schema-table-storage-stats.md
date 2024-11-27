@@ -1,18 +1,18 @@
 ---
 title: TABLE_STORAGE_STATS
-summary: TABLE_STORAGE_STATSテーブルは、storageエンジン (TiKV) によって格納されるテーブル サイズに関する情報を提供します。テーブルのフィールドは次のように説明されています。TABLE_SCHEMA テーブルが属するスキーマの名前。TABLE_NAME テーブルの名前。TABLE_ID テーブルの ID。PEER_COUNT テーブルのレプリカの数。REGION_COUNT リージョンの数。EMPTY_REGION_COUNT このテーブルにデータが含まれていないリージョンの数。TABLE_SIZE テーブルの合計サイズ (MiB 単位)。TABLE_KEYS テーブル内のレコードの総数。
+summary: TABLE_STORAGE_STATS INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
-# TABLE_STORAGE_STATS {#table-storage-stats}
+# テーブルストレージ統計 {#table-storage-stats}
 
-`TABLE_STORAGE_STATS`テーブルは、storageエンジン (TiKV) によって格納されるテーブル サイズに関する情報を提供します。
+`TABLE_STORAGE_STATS`テーブルは、storageエンジン (TiKV) によって保存されるテーブル サイズに関する情報を提供します。
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC TABLE_STORAGE_STATS;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +--------------------+-------------+------+------+---------+-------+
@@ -36,7 +36,7 @@ INSERT INTO test.t1 VALUES (1);
 SELECT * FROM TABLE_STORAGE_STATS WHERE table_schema = 'test' AND table_name = 't1'\G
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 *************************** 1. row ***************************
@@ -51,7 +51,7 @@ EMPTY_REGION_COUNT: 1
 1 row in set (0.00 sec)
 ```
 
-`TABLE_STORAGE_STATS`テーブルのフィールドは次のように説明されています。
+`TABLE_STORAGE_STATS`テーブル内のフィールドは次のように説明されます。
 
 -   `TABLE_SCHEMA` : テーブルが属するスキーマの名前。
 -   `TABLE_NAME` : テーブルの名前。
@@ -60,4 +60,4 @@ EMPTY_REGION_COUNT: 1
 -   `REGION_COUNT` : リージョンの数。
 -   `EMPTY_REGION_COUNT` : このテーブルにデータが含まれていないリージョンの数。
 -   `TABLE_SIZE` : テーブルの合計サイズ (MiB 単位)。
--   `TABLE_KEYS` : テーブル内のレコードの総数。
+-   `TABLE_KEYS` : テーブル内のレコードの合計数。

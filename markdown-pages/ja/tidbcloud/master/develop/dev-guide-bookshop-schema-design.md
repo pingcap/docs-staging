@@ -1,6 +1,6 @@
 ---
 title: Bookshop Example Application
-summary: Bookshop は、書籍を購入して評価するためのオンライン書店アプリです。テーブル構造とデータは、 TiUPまたはTiDB Cloud経由でインポートできます。方法 1 では、 TiUPを使用してサンプル データをすばやく生成してインポートし、方法 2 では、Amazon S3 からTiDB Cloudにデータをインポートします。データベース テーブルには、書籍、著者、ユーザー、評価、書籍の著者、注文が含まれます。データベース初期化スクリプト dbinit.sql` は、Bookshop アプリケーションのテーブル構造を作成します。
+summary: Bookshop は、書籍を購入して評価するためのオンライン書店アプリです。テーブル構造とデータは、 TiUPまたはTiDB Cloud経由でインポートできます。方法 1 では、 TiUP を使用してサンプル データをすばやく生成してインポートし、方法 2 では、Amazon S3 からTiDB Cloudにデータをインポートします。データベース テーブルには、書籍、著者、ユーザー、評価、書籍の著者、注文が含まれます。データベース初期化スクリプト dbinit.sql` は、Bookshop アプリケーションのテーブル構造を作成します。
 ---
 
 # 書店のサンプルアプリケーション {#bookshop-example-application}
@@ -13,7 +13,7 @@ Bookshop は、さまざまなカテゴリの本を購入したり、読んだ�
 
 <CustomContent platform="tidb">
 
-Bookshop テーブル構造とデータを[TiUP経由](#method-1-via-tiup-demo)または[TiDB Cloudのインポート機能を介して](#method-2-via-tidb-cloud-import)いずれかでインポートできます。
+Bookshop テーブル構造とデータを[TiUP経由](#method-1-via-tiup-demo)または[TiDB Cloudのインポート機能を介して](#method-2-via-tidb-cloud-import)のいずれかでインポートできます。
 
 </CustomContent>
 
@@ -27,13 +27,13 @@ TiDB Cloudの場合は、 [方法1: `tiup demo`経由](#method-1-via-tiup-demo)�
 
 <CustomContent platform="tidb">
 
-TiDB クラスターが[TiUP](/tiup/tiup-reference.md#tiup-reference)を使用してデプロイされている場合、または TiDBサーバーに接続できる場合は、次のコマンドを実行して、Bookshop アプリケーションのサンプル データをすばやく生成してインポートできます。
+TiDB クラスターが[TiUP](/tiup/tiup-reference.md#tiup-reference)使用してデプロイされている場合、または TiDBサーバーに接続できる場合は、次のコマンドを実行して、Bookshop アプリケーションのサンプル データをすばやく生成してインポートできます。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-TiDB クラスターが[TiUP](https://docs.pingcap.com/tidb/stable/tiup-reference)を使用してデプロイされている場合、または TiDBサーバーに接続できる場合は、次のコマンドを実行して、Bookshop アプリケーションのサンプル データをすばやく生成してインポートできます。
+TiDB クラスターが[TiUP](https://docs.pingcap.com/tidb/stable/tiup-reference)使用してデプロイされている場合、または TiDBサーバーに接続できる場合は、次のコマンドを実行して、Bookshop アプリケーションのサンプル データをすばやく生成してインポートできます。
 
 </CustomContent>
 
@@ -41,7 +41,7 @@ TiDB クラスターが[TiUP](https://docs.pingcap.com/tidb/stable/tiup-referenc
 tiup demo bookshop prepare
 ```
 
-デフォルトでは、このコマンドにより、アプリケーションはアドレス`127.0.0.1`のポート`4000`に接続できるようになり、パスワードなしで`root`ユーザーとしてログインできるようになり、 `bookshop`という名前のデータベースに[テーブル構造](#description-of-the-tables)が作成されます。
+デフォルトでは、このコマンドにより、アプリケーションはアドレス`127.0.0.1`のポート`4000`に接続できるようになり、パスワードなしで`root`ユーザーとしてログインできるようになり、 `bookshop`という名前のデータベースに[テーブル構造](#description-of-the-tables)作成されます。
 
 #### 接続情報を構成する {#configure-connection-information}
 
@@ -65,13 +65,13 @@ tiup demo bookshop prepare -U <username> -H <endpoint> -P 4000 -p <password>
 
 次のパラメータを構成することで、各データベース テーブルに生成されるデータの量を指定できます。
 
-| パラメータ       | デフォルト値   | 説明                        |
-| ----------- | -------- | ------------------------- |
-| `--users`   | `10000`  | `users`テーブルに生成されるデータの行数   |
-| `--authors` | `20000`  | `authors`テーブルに生成される行数     |
-| `--books`   | `20000`  | `books`テーブルに生成されるデータの行数   |
-| `--orders`  | `300000` | `orders`テーブルに生成されるデータの行数  |
-| `--ratings` | `300000` | `ratings`テーブルに生成されるデータの行数 |
+| パラメータ       | デフォルト値   | 説明                         |
+| ----------- | -------- | -------------------------- |
+| `--users`   | `10000`  | `users`のテーブルに生成されるデータの行数   |
+| `--authors` | `20000`  | `authors`のテーブルに生成される行数     |
+| `--books`   | `20000`  | `books`のテーブルに生成されるデータの行数   |
+| `--orders`  | `300000` | `orders`のテーブルに生成されるデータの行数  |
+| `--ratings` | `300000` | `ratings`のテーブルに生成されるデータの行数 |
 
 たとえば、次のコマンドを実行して生成します。
 
@@ -97,19 +97,19 @@ tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --rati
         >
         > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅にある をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
 
-    2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート] を**クリックします。
+    2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート]**をクリックします。
 
-2.  **S3 からデータをインポートを**選択します。
+2.  **S3 からデータをインポート**を選択します。
 
     TiDB Cloud Import を初めて使用する場合は、 **「Amazon S3 からのインポート」**を選択します。
 
-3.  **「Amazon S3 からのデータのインポート**」ページで、次のソース データ情報を設定します。
+3.  **「Amazon S3 からのデータのインポート」**ページで、次のソース データ情報を設定します。
 
     -   **インポートファイル数**:**複数のファイル**を選択します。
     -   **含まれるスキーマ ファイル**: **[はい]**を選択します。
-    -   **データ形式**: **SQL**を選択します。
-    -   **フォルダーURI** : `s3://developer.pingcap.com/bookshop/`を入力します。
-    -   **バケットアクセス**: **AWS ロール ARN**を選択します。
+    -   **データ形式**: **SQL を**選択します。
+    -   **フォルダーURI** : `s3://developer.pingcap.com/bookshop/`と入力します。
+    -   **バケットアクセス**: **AWS ロール ARN を**選択します。
     -   **ロール ARN** : `arn:aws:iam::494090988690:role/s3-tidb-cloud-developer-access`と入力します。
 
     この例では、次のデータが事前に生成されます。
@@ -122,7 +122,7 @@ tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --rati
 
 4.  **[接続]** &gt; **[インポートの開始]**をクリックしてインポート プロセスを開始し、 TiDB Cloud がインポートを完了するまで待ちます。
 
-TiDB Cloudにデータをインポートまたは移行する方法の詳細については、 [TiDB Cloud移行の概要](https://docs.pingcap.com/tidbcloud/tidb-cloud-migration-overview)を参照してください。
+TiDB Cloudにデータをインポートまたは移行する方法の詳細については、 [TiDB Cloud移行の概要](https://docs.pingcap.com/tidbcloud/tidb-cloud-migration-overview)参照してください。
 
 ### データのインポートステータスをビュー {#view-data-import-status}
 
@@ -199,7 +199,7 @@ WHERE table_schema LIKE 'bookshop';
 
 | フィールド名 | タイプ    | 説明                                     |
 | ------ | ------ | -------------------------------------- |
-| 書籍ID   | ビッグイント | 書籍の一意の ID ( [本](#books-table)にリンク)     |
+| 書籍ID   | ビッグイント | 書籍の固有 ID ( [本](#books-table)にリンク)      |
 | ユーザーID | ビッグイント | ユーザーの一意の識別子（ [ユーザー](#users-table)にリンク） |
 | スコア    | ちっちゃい  | ユーザー評価 (1-5)                           |
 | 評価     | 日時     | 評価時間                                   |
@@ -210,7 +210,7 @@ WHERE table_schema LIKE 'bookshop';
 
 | フィールド名 | タイプ        | 説明                                  |
 | ------ | ---------- | ----------------------------------- |
-| 書籍ID   | ビッグイント(20) | 書籍の一意の ID ( [本](#books-table)にリンク)  |
+| 書籍ID   | ビッグイント(20) | 書籍の固有 ID ( [本](#books-table)にリンク)   |
 | 著者ID   | ビッグイント(20) | 著者の固有ID（ [著者](#authors-table)へのリンク） |
 
 ### <code>orders</code>表 {#code-orders-code-table}
@@ -220,7 +220,7 @@ WHERE table_schema LIKE 'bookshop';
 | フィールド名 | タイプ        | 説明                                          |
 | ------ | ---------- | ------------------------------------------- |
 | id     | ビッグイント(20) | 注文の一意のID                                    |
-| 書籍ID   | ビッグイント(20) | 書籍の一意の ID ( [本](#books-table)にリンク)          |
+| 書籍ID   | ビッグイント(20) | 書籍の固有 ID ( [本](#books-table)にリンク)           |
 | ユーザーID | ビッグイント(20) | ユーザー固有の識別子（ [ユーザー](#users-table)に関連付けられている） |
 | 量      | タイニーイント(4) | 購入数量                                        |
 | 注文日時   | 日時         | 購入時間                                        |

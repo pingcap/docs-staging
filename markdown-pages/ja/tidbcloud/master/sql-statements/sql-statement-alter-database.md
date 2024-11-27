@@ -1,13 +1,13 @@
 ---
 title: ALTER DATABASE | TiDB SQL Statement Reference
-summary: ALTER DATABASEは、デフォルトの文字セットと照合順序を変更するために使用されます。TiDBはMySQLと完全な互換性があります。文字セットと照合順序のサポートについては、詳細を参照してください。
+summary: TiDB データベースに対する ALTER DATABASE の使用法の概要。
 ---
 
 # データベースの変更 {#alter-database}
 
-`ALTER DATABASE`は、現在のデータベースのデフォルトの文字セットと照合順序を指定または変更するために使用されます。 `ALTER SCHEMA` `ALTER DATABASE`と同じ効果があります。
+`ALTER DATABASE` 、現在のデータベースのデフォルトの文字セットと照合順序を指定または変更するために使用されます。 `ALTER SCHEMA` `ALTER DATABASE`と同じ効果があります。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 AlterDatabaseStmt ::=
@@ -29,13 +29,13 @@ ALTER DATABASE test DEFAULT CHARACTER SET = utf8mb4;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-現在、TiDB は一部の文字セットと照合順序のみをサポートしています。詳細については[文字セットと照合順序のサポート](/character-set-and-collation.md)を参照してください。
+現在、TiDB は一部の文字セットと照合順序のみをサポートしています。詳細については[文字セットと照合順序のサポート](/character-set-and-collation.md)参照してください。
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`ALTER DATABASE`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`ALTER DATABASE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [データベースの作成](/sql-statements/sql-statement-create-database.md)
--   [データベースを表示する](/sql-statements/sql-statement-show-databases.md)
+-   [データベースを表示](/sql-statements/sql-statement-show-databases.md)

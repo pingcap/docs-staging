@@ -1,6 +1,6 @@
 ---
 title: Sink to MySQL
-summary: このドキュメントでは、Sink to MySQL 変更フィードを使用して、 TiDB Cloudから MySQL にデータをストリーミングする方法について説明します。データ レプリケーション用の MySQL シンクを作成するための制限、前提条件、および手順が含まれています。プロセスには、ネットワーク接続の設定、既存のデータの MySQL へのロード、および MySQL でのターゲット テーブルの作成が含まれます。前提条件を完了すると、ユーザーは MySQL シンクを作成して、データを MySQL にレプリケートできます。
+Summary: Learn how to create a changefeed to stream data from TiDB Cloud to MySQL.
 ---
 
 # MySQLに沈む {#sink-to-mysql}
@@ -9,8 +9,8 @@ summary: このドキュメントでは、Sink to MySQL 変更フィードを使
 
 > **注記：**
 >
-> -   changefeed 機能を使用するには、 TiDB Cloud Dedicated クラスターのバージョンが v6.1.3 以降であることを確認してください。
-> -   [TiDB Cloudサーバーレス クラスター](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)の場合、changefeed 機能は使用できません。
+> -   changefeed 機能を使用するには、TiDB 専用クラスターのバージョンが v6.1.3 以降であることを確認してください。
+> -   [TiDB サーバーレス クラスター](/tidb-cloud/select-cluster-tier.md#tidb-serverless)の場合、changefeed 機能は使用できません。
 
 ## 制限 {#restrictions}
 
@@ -26,7 +26,7 @@ summary: このドキュメントでは、Sink to MySQL 変更フィードを使
 -   既存のデータをエクスポートして MySQL にロードする (オプション)
 -   既存のデータをロードせず、増分データのみをMySQLに複製する場合は、MySQLに対応するターゲットテーブルを作成します。
 
-### ネットワーク {#network}
+### 通信網 {#network}
 
 TiDB クラスタ がMySQL サービスに接続できることを確認します。
 
@@ -36,7 +36,7 @@ MySQL サービスがパブリックインターネットアクセスのない A
 
 2.  MySQL サービスが関連付けられているセキュリティ グループの受信ルールを変更します。
 
-    受信ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-cidr-for-a-region)追加する必要があります。これにより、トラフィックが TiDBクラスタから MySQL インスタンスに流れるようになります。
+    受信ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-project-cidr)追加する必要があります。これにより、トラフィックが TiDBクラスタから MySQL インスタンスに流れるようになります。
 
 3.  MySQL URL にホスト名が含まれている場合は、 TiDB Cloud がMySQL サービスの DNS ホスト名を解決できるようにする必要があります。
 
@@ -47,9 +47,9 @@ MySQL サービスがパブリック インターネット アクセスのない
 
 1.  MySQL サービスが Google Cloud SQL の場合、Google Cloud SQL インスタンスに関連付けられた VPC で MySQL エンドポイントを公開する必要があります。Google によって開発された[**Cloud SQL 認証プロキシ**](https://cloud.google.com/sql/docs/mysql/sql-proxy)を使用する必要がある場合があります。
 2.  MySQL サービスの VPC と TiDB クラスター間の接続は[VPCピアリング接続を設定する](/tidb-cloud/set-up-vpc-peering-connections.md) 。
-3.  MySQL が配置されている VPC の受信ファイアウォール ルールを変更します。
+3.  MySQL が配置されている VPC の Ingress ファイアウォール ルールを変更します。
 
-    入力ファイアウォール ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-cidr-for-a-region)追加する必要があります。これにより、トラフィックが TiDBクラスタから MySQL エンドポイントに流れるようになります。
+    入力ファイアウォール ルールに[TiDB Cloudクラスターが配置されているリージョンの CIDR](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-project-cidr)追加する必要があります。これにより、トラフィックが TiDBクラスタから MySQL エンドポイントに流れるようになります。
 
 ### 既存のデータを読み込む（オプション） {#load-existing-data-optional}
 
@@ -131,7 +131,7 @@ MySQL サービスがパブリック インターネット アクセスのない
 
     変更フィード名をクリックすると、チェックポイント、レプリケーションのレイテンシー、その他のメトリックなど、変更フィードに関する詳細が表示されます。
 
-11. Dumplingを使用して[既存のデータをロードしました](#load-existing-data-optional)持っている場合は、シンクの作成後に GC 時間を元の値 (デフォルト値は`10m` ) に戻す必要があります。
+11. Dumpling を使用して[既存のデータをロードしました](#load-existing-data-optional)持っている場合は、シンクの作成後に GC 時間を元の値 (デフォルト値は`10m` ) に戻す必要があります。
 
 ```sql
 SET GLOBAL tidb_gc_life_time = '10m';

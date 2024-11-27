@@ -12,9 +12,9 @@ TiDB クラスターには多くの監視メトリックがあります。異常
 
 > **注記：**
 >
-> 上記の 2 つの監視概要テーブルは、TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> 上記の 2 つの監視概要テーブルは、TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
-2 つのテーブルには、すべての監視データがまとめられており、各監視メトリックを効率的に確認できます。 `information_schema.metrics_summary`と比較すると、 `information_schema.metrics_summary_by_label`テーブルには`label`列が追加され、異なるラベルに従って差別化された統計が実行されます。
+2 つのテーブルには、各監視メトリックを効率的に確認できるように、すべての監視データがまとめられています。 `information_schema.metrics_summary`と比較すると、 `information_schema.metrics_summary_by_label`テーブルには`label`列が追加され、異なるラベルに従って差別化された統計が実行されます。
 
 ```sql
 USE information_schema;
@@ -131,7 +131,7 @@ MAX_VALUE    | 0.008241
 COMMENT      | The quantile of TiDB query durations(second)
 ```
 
-上記のクエリ結果の 2 行目と 3 行目は、 `tidb_query_duration`の`Select`と`Rollback`ステートメントの平均実行時間が長いことを示しています。
+上記のクエリ結果の 2 行目と 3 行目は、 `tidb_query_duration`の`Select`番目と`Rollback`ステートメントの平均実行時間が長いことを示しています。
 
 上記の例に加えて、監視サマリー テーブルを使用して、2 つの期間のフル リンク監視項目を比較することで、監視データから最大の変化があるモジュールをすばやく見つけ、ボトルネックをすばやく特定できます。次の例では、2 つの期間 (t1 がベースライン) のすべての監視項目を比較し、これらの項目を最大の違いに従って並べ替えます。
 
@@ -179,8 +179,8 @@ ORDER BY ratio DESC LIMIT 10;
 -   期間 t2 の`tib_slow_query_cop_process_total_time` (TiDB の遅いクエリでの時間消費量`cop process` ) は、期間 t1 の 5,865 倍になります。
 -   期間 t2 の`tidb_distsql_partial_scan_key_total_num` (TiDB の`distsql`によって要求されたスキャンするキーの数) は、期間 t1 の 3,648 倍になります。期間 t2 中、 `tidb_slow_query_cop_wait_total_time` (TiDB の低速クエリでキューイングを要求するコプロセッサーの待機時間) は、期間 t1 の 267 倍になります。
 -   期間 t2 の`tikv_cop_total_response_size` (TiKVコプロセッサー要求結果のサイズ) は、期間 t1 の 192 倍になります。
--   期間 t2 (TiKVコプロセッサーによって要求されたスキャン) の`tikv_cop_scan_details` 、期間 t1 の 0 の 105 倍になります。
+-   期間 t2 (TiKVコプロセッサーによって要求されたスキャン) の`tikv_cop_scan_details`は、期間 t1 の 0 の 105 倍になります。
 
-上記の結果から、期間 t2 のコプロセッサー要求が期間 t1 の要求よりもはるかに多いことがわかります。これにより、TiKVコプロセッサーが過負荷になり、 `cop task`する必要があります。期間 t2 にいくつかの大きなクエリが発生し、負荷がさらに増加し​​ている可能性があります。
+上記の結果から、期間 t2 のコプロセッサーリクエストが期間`cop task`のリクエストよりもはるかに多いことがわかります。これにより、TiKVコプロセッサーが過負荷になり、待機する必要があります。期間 t2 にいくつかの大きなクエリが発生し、負荷が増加する可能性があります。
 
-実際、t1 から t2 までの全期間を通じて、 `go-ycsb`圧力テストが実行されています。その後、期間 t2 中に 20 個の`tpch`クエリが実行されています。したがって、多くのコプロセッサー要求を引き起こすのは`tpch`クエリです。
+実際、t1 から t2 までの全期間を通じて、 `go-ycsb`圧力テストが実行されています。その後、期間 t2 中に 20 個`tpch`クエリが実行されています。したがって、多くのコプロセッサー要求を引き起こすのは`tpch`クエリです。

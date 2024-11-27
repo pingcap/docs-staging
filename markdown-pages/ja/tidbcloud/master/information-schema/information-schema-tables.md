@@ -1,11 +1,11 @@
 ---
 title: TABLES
-summary: テーブル表は、データベース内のテーブルに関する情報を提供します。テーブル内の列の説明は、テーブルが属するカタログの名前、テーブルが属するスキーマの名前、テーブルの名前、テーブルのタイプ、storageエンジンのタイプ、バージョン、行フォーマット、統計におけるテーブルの行数、テーブルの平均行長、データ長、最大データ長、インデックスの長さ、データフラグメント、自動インクリメント主キーの現在のステップ、テーブルが作成された時刻、テーブルが更新された時刻、テーブルがチェックされた時刻、テーブル内の文字列の照合順序、チェックサム、オプションを作成します、テーブルのコメントとメモ、テーブルの内部 ID、テーブルのシャーディング タイプです。
+summary: TABLES information_schema テーブルについて学習します。
 ---
 
 # テーブル {#tables}
 
-`TABLES`表は、データベース内のテーブルに関する情報を提供します。
+`TABLES`テーブルは、データベース内のテーブルに関する情報を提供します。
 
 ```sql
 USE information_schema;
@@ -68,14 +68,14 @@ SELECT * FROM tables WHERE table_schema='mysql' AND table_name='user'\G
                CHECK_TIME: NULL
           TABLE_COLLATION: utf8mb4_bin
                  CHECKSUM: NULL
-           CREATE_OPTIONS: 
-            TABLE_COMMENT: 
+           CREATE_OPTIONS:
+            TABLE_COMMENT:
             TIDB_TABLE_ID: 5
 TIDB_ROW_ID_SHARDING_INFO: NULL
 1 row in set (0.00 sec)
 ```
 
-次のステートメントは同等です。
+次の文は同等です。
 
 ```sql
 SELECT table_name FROM INFORMATION_SCHEMA.TABLES
@@ -87,7 +87,7 @@ SHOW TABLES
   [LIKE 'wild']
 ```
 
-`TABLES`のテーブルの列の説明は次のとおりです。
+`TABLES`表の列の説明は次のとおりです。
 
 -   `TABLE_CATALOG` : テーブルが属するカタログの名前。値は常に`def`です。
 -   `TABLE_SCHEMA` : テーブルが属するスキーマの名前。
@@ -95,28 +95,28 @@ SHOW TABLES
 -   `TABLE_TYPE` : テーブルのタイプ。
 -   `ENGINE` :storageエンジンのタイプ。現在の値は`InnoDB`です。
 -   `VERSION` : バージョン。デフォルトの値は`10`です。
--   `ROW_FORMAT` : 行フォーマット。現在の値は`Compact`です。
--   `TABLE_ROWS` : 統計におけるテーブルの行数。
--   `AVG_ROW_LENGTH` : テーブルの平均行長。 `AVG_ROW_LENGTH` = `DATA_LENGTH` / `TABLE_ROWS` 。
--   `DATA_LENGTH` : データ長。 `DATA_LENGTH` = `TABLE_ROWS` * タプル内の列のstorage域長の合計。 TiKV のレプリカは考慮されません。
+-   `ROW_FORMAT` : 行形式。現在の値は`Compact`です。
+-   `TABLE_ROWS` : 統計のテーブル内の行数。
+-   `AVG_ROW_LENGTH` : テーブルの平均行の長さ`AVG_ROW_LENGTH` = `DATA_LENGTH` / `TABLE_ROWS` 。
+-   `DATA_LENGTH` : データ長。2 `TABLE_ROWS` `DATA_LENGTH`タプル内の列のstorage長の合計。TiKV のレプリカは考慮されません。
 -   `MAX_DATA_LENGTH` : 最大データ長。現在の値は`0`で、データ長に上限がないことを意味します。
--   `INDEX_LENGTH` : インデックスの長さ。 `INDEX_LENGTH` = `TABLE_ROWS` * インデックス タプル内の列の長さの合計。 TiKV のレプリカは考慮されません。
+-   `INDEX_LENGTH` : インデックスの長さ。2 `TABLE_ROWS` `INDEX_LENGTH`インデックス タプル内の列の長さの合計。TiKV のレプリカは考慮されません。
 -   `DATA_FREE` : データフラグメント。現在の値は`0`です。
 -   `AUTO_INCREMENT` : 自動インクリメント主キーの現在のステップ。
 -   `CREATE_TIME` : テーブルが作成された時刻。
--   `UPDATE_TIME` : テーブルが更新された時刻。
--   `CHECK_TIME` : テーブルがチェックされた時刻。
+-   `UPDATE_TIME` : テーブルが更新される時刻。
+-   `CHECK_TIME` : テーブルがチェックされる時刻。
 -   `TABLE_COLLATION` : テーブル内の文字列の照合順序。
 -   `CHECKSUM` : チェックサム。
 -   `CREATE_OPTIONS` : オプションを作成します。
--   `TABLE_COMMENT` : テーブルのコメントとメモ。
+-   `TABLE_COMMENT` : 表のコメントとメモ。
 
-テーブル内のほとんどの情報は MySQL と同じです。 TiDB によって新たに定義された列は 2 つだけです。
+テーブル内のほとんどの情報は MySQL と同じです。TiDB によって新たに定義されるのは 2 つの列だけです。
 
 -   `TIDB_TABLE_ID` : テーブルの内部 ID を示します。この ID は TiDB クラスター内で一意です。
 -   `TIDB_ROW_ID_SHARDING_INFO` : テーブルのシャーディング タイプを示します。可能な値は次のとおりです。
     -   `"NOT_SHARDED"` : テーブルはシャード化されていません。
-    -   `"NOT_SHARDED(PK_IS_HANDLE)"` : 整数の主キーを行 ID として定義するテーブルはシャード化されません。
-    -   `"PK_AUTO_RANDOM_BITS={bit_number}"` : 主キーには`AUTO_RANDOM`属性が割り当てられているため、整数の主キーを行 ID として定義するテーブルはシャーディングされます。
-    -   `"SHARD_BITS={bit_number}"` : テーブルは`SHARD_ROW_ID_BITS={bit_number}`を使用してシャード化されます。
-    -   NULL: テーブルはシステム テーブルまたはビューであるため、シャーディングできません。
+    -   `"NOT_SHARDED(PK_IS_HANDLE)"` : 行 ID として整数の主キーを定義するテーブルはシャード化されません。
+    -   `"PK_AUTO_RANDOM_BITS={bit_number}"` : 行 ID として整数の主キーを定義するテーブルは、主キーに`AUTO_RANDOM`属性が割り当てられているため、シャード化されます。
+    -   `"SHARD_BITS={bit_number}"` : テーブルは`SHARD_ROW_ID_BITS={bit_number}`を使用してシャーディングされます。
+    -   NULL: テーブルはシステム テーブルまたはビューであるため、シャード化できません。

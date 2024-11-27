@@ -1,13 +1,13 @@
 ---
 title: DELETE | TiDB SQL Statement Reference
-summary: DELETEステートメントは、指定されたテーブルから行を削除します。MySQLの互換性があります。
+summary: TiDB データベースでの DELETE の使用法の概要。
 ---
 
 # 消去 {#delete}
 
 `DELETE`ステートメントは、指定されたテーブルから行を削除します。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 DeleteFromStmt ::=
@@ -51,11 +51,11 @@ mysql> SELECT * FROM t1;
 4 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`DELETE`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`DELETE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [入れる](/sql-statements/sql-statement-insert.md)
 -   [選択する](/sql-statements/sql-statement-select.md)

@@ -1,6 +1,6 @@
 ---
 title: TIKV_STORE_STATUS
-summary: TIKV_STORE_STATUS INFORMATION_SCHEMA テーブルについて学習します。
+summary: TIKV_STORE_STATUS` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # TIKV_ストアステータス {#tikv-store-status}
@@ -9,7 +9,7 @@ summary: TIKV_STORE_STATUS INFORMATION_SCHEMA テーブルについて学習し�
 
 > **注記：**
 >
-> このテーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -45,7 +45,7 @@ DESC TIKV_STORE_STATUS;
 19 rows in set (0.00 sec)
 ```
 
-`TIKV_STORE_STATUS`表の列の説明は次のとおりです。
+`TIKV_STORE_STATUS`の表の列の説明は次のとおりです。
 
 -   `STORE_ID` : ストアの ID。
 -   `ADDRESS` : ストアのアドレス。
@@ -64,5 +64,5 @@ DESC TIKV_STORE_STATUS;
 -   `REGION_SCORE` : ストアのリージョンスコア。
 -   `REGION_SIZE` : ストア上のすべてのリージョンのおおよその合計データ サイズ (MB)。
 -   `START_TS` : ストアが開始されたときのタイムスタンプ。
--   `LAST_HEARTBEAT_TS` : ストアから送信された最後のハートビートビートのタイムスタンプ。
+-   `LAST_HEARTBEAT_TS` : ストアから送信された最後のハートビートのタイムスタンプ。
 -   `UPTIME` : ストアが開始してからの合計時間。

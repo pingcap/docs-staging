@@ -21,7 +21,7 @@ summary: TiDB アプリケーション開発者向けに、SQL パフォーマ�
 
 ## スキーマ設計 {#schema-design}
 
-[SQLパフォーマンスのチューニング](#sql-performance-tuning)を過ぎてもアプリケーションのパフォーマンスがまだ良好でない場合は、次の問題を回避するためにスキーマ設計とデータ アクセス パターンを確認する必要がある可能性があります。
+[SQLパフォーマンスのチューニング](#sql-performance-tuning)過ぎてもアプリケーションのパフォーマンスがまだ良好でない場合は、次の問題を回避するためにスキーマ設計とデータ アクセス パターンを確認する必要がある可能性があります。
 
 <CustomContent platform="tidb">
 
@@ -48,5 +48,19 @@ summary: TiDB アプリケーション開発者向けに、SQL パフォーマ�
 <CustomContent platform="tidb-cloud">
 
 -   [SQL性能チューニング](/tidb-cloud/tidb-cloud-sql-tuning-overview.md)
+
+</CustomContent>
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
 
 </CustomContent>

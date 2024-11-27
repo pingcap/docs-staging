@@ -1,13 +1,13 @@
 ---
 title: ALTER USER | TiDB SQL Statement Reference
-summary: TiDBのALTER USERステートメントは、既存のユーザーの情報を変更します。ユーザー名と接続元のホストの組み合わせを変更し、異なる権限を持たせることができます。例えば、パスワードの変更やアカウントのロック、属性やコメントの変更、リソースグループの変更などが可能です。また、パスワードの有効期限ポリシーや再利用ポリシーも変更できます。これにより、ユーザーのセキュリティと管理が容易になります。
+summary: TiDB データベースの ALTER USER の使用法の概要。
 ---
 
 # ユーザーの変更 {#alter-user}
 
-このステートメントは、TiDB 権限システム内の既存のユーザーを変更します。 MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。これにより、ＩＰアドレス`192.168.1.1`からのみ接続可能なユーザ`'newuser2'@'192.168.1.1'`を作成することができる。 2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
+このステートメントは、TiDB 権限システム内の既存のユーザーを変更します。MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。したがって、IP アドレス`192.168.1.1`からのみ接続できるユーザー`'newuser2'@'192.168.1.1'`を作成できます。また、2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 AlterUserStmt ::=
@@ -61,7 +61,7 @@ mysql> SHOW CREATE USER 'newuser';
 
 ### 基本的なユーザー情報を変更する {#modify-basic-user-information}
 
-ユーザー`newuser`のパスワードを変更します。
+ユーザー`newuser`のパスワードを変更します:
 
     mysql> ALTER USER 'newuser' IDENTIFIED BY 'newnewpassword';
     Query OK, 0 rows affected (0.02 sec)
@@ -74,7 +74,7 @@ mysql> SHOW CREATE USER 'newuser';
     +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
     1 row in set (0.00 sec)
 
-ユーザーをロック`newuser` :
+ユーザー`newuser`ロックする:
 
 ```sql
 ALTER USER 'newuser' ACCOUNT LOCK;
@@ -82,7 +82,7 @@ ALTER USER 'newuser' ACCOUNT LOCK;
 
     Query OK, 0 rows affected (0.02 sec)
 
-`newuser`の属性を変更します。
+`newuser`の属性を変更します:
 
 ```sql
 ALTER USER 'newuser' ATTRIBUTE '{"newAttr": "value", "deprecatedAttr": null}';
@@ -98,7 +98,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-`newuser`のコメントを`ALTER USER ... COMMENT`使用して変更します。
+`ALTER USER ... COMMENT`を使用して`newuser`のコメントを変更します。
 
 ```sql
 ALTER USER 'newuser' COMMENT 'Here is the comment';
@@ -114,7 +114,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-`ALTER USER ... ATTRIBUTE`使用して`newuser`のコメントを削除します。
+`ALTER USER ... ATTRIBUTE`を使用して`newuser`のコメントを削除します。
 
 ```sql
 ALTER USER 'newuser' ATTRIBUTE '{"comment": null}';
@@ -130,7 +130,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-`newuser`の自動パスワード有効期限ポリシーを、 `ALTER USER ... PASSWORD EXPIRE NEVER`によって期限切れにならないように変更します。
+`ALTER USER ... PASSWORD EXPIRE NEVER`を実行して、 `newuser`の自動パスワード有効期限ポリシーを無期限に変更します。
 
 ```sql
 ALTER USER 'newuser' PASSWORD EXPIRE NEVER;
@@ -138,7 +138,7 @@ ALTER USER 'newuser' PASSWORD EXPIRE NEVER;
 
     Query OK, 0 rows affected (0.02 sec)
 
-`newuser`のパスワード再利用ポリシーを変更し、 `ALTER USER ... PASSWORD REUSE INTERVAL ... DAY`使用して過去 90 日以内に使用されたパスワードの再利用を禁止します。
+`ALTER USER ... PASSWORD REUSE INTERVAL ... DAY`を使用して、 `newuser`のパスワード再利用ポリシーを変更し、過去 90 日以内に使用されたパスワードの再利用を禁止します。
 
 ```sql
 ALTER USER 'newuser' PASSWORD REUSE INTERVAL 90 DAY;
@@ -148,7 +148,7 @@ ALTER USER 'newuser' PASSWORD REUSE INTERVAL 90 DAY;
 
 ### ユーザーにバインドされているリソース グループを変更する {#modify-the-resource-group-bound-to-the-user}
 
-ユーザー`newuser`のリソース グループを`rg1`に変更するには、 `ALTER USER ... RESOURCE GROUP`を使用します。
+`ALTER USER ... RESOURCE GROUP`使用して、ユーザー`newuser` ～ `rg1`のリソース グループを変更します。
 
 ```sql
 ALTER USER 'newuser' RESOURCE GROUP rg1;
@@ -169,7 +169,7 @@ SELECT USER, JSON_EXTRACT(User_attributes, "$.resource_group") FROM mysql.user W
     +---------+---------------------------------------------------+
     1 row in set (0.02 sec)
 
-ユーザーをリソース グループにバインド解除します。つまり、ユーザーを`default`リソース グループにバインドします。
+ユーザーをリソース グループからバインド解除します。つまり、ユーザーを`default`リソース グループにバインドします。
 
 ```sql
 ALTER USER 'newuser' RESOURCE GROUP `default`;
@@ -183,7 +183,7 @@ SELECT USER, JSON_EXTRACT(User_attributes, "$.resource_group") FROM mysql.user W
     +---------+---------------------------------------------------+
     1 row in set (0.02 sec)
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 <CustomContent platform="tidb">
 
@@ -192,5 +192,5 @@ SELECT USER, JSON_EXTRACT(User_attributes, "$.resource_group") FROM mysql.user W
 </CustomContent>
 
 -   [ユーザーを作成](/sql-statements/sql-statement-create-user.md)
--   [ユーザーを削除する](/sql-statements/sql-statement-drop-user.md)
+-   [ユーザーを削除](/sql-statements/sql-statement-drop-user.md)
 -   [ユーザーの作成を表示](/sql-statements/sql-statement-show-create-user.md)

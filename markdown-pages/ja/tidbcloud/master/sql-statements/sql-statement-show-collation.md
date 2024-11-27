@@ -1,6 +1,6 @@
 ---
 title: SHOW COLLATION | TiDB SQL Statement Reference
-summary: An overview of the usage of SHOW COLLATION for the TiDB database.
+summary: TiDB データベースの SHOW COLLATION の使用法の概要。
 ---
 
 # 照合を表示 {#show-collation}

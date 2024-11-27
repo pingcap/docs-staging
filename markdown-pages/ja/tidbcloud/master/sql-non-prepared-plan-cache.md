@@ -1,36 +1,36 @@
 ---
 title: SQL Non-Prepared Execution Plan Cache
-summary: TiDBは、非準備実行プランキャッシュをサポートし、一部のステートメントの最適化フェーズをスキップしてパフォーマンスを向上させる。ただし、追加のメモリとCPUオーバーヘッドが発生する可能性があり、使用条件を検討する必要がある。キャッシュの監視や制限事項も考慮し、機能を有効化する際には慎重に検討する必要がある。
+summary: TiDB の SQL 非準備実行プラン キャッシュの原理、使用方法、および例について学習します。
 ---
 
-# SQL の未準備実行プラン キャッシュ {#sql-non-prepared-execution-plan-cache}
+# SQL 未準備実行プラン キャッシュ {#sql-non-prepared-execution-plan-cache}
 
-TiDB は、 [ステートメントの`Prepare` / `Execute`](/sql-prepared-plan-cache.md)と同様、一部の非`PREPARE`ステートメントの実行プラン キャッシュをサポートします。この機能により、これらのステートメントは最適化フェーズをスキップし、パフォーマンスを向上させることができます。
+TiDB は、 [ステートメントの`Prepare` / `Execute`](/sql-prepared-plan-cache.md)と同様に、一部の`PREPARE`以外のステートメントの実行プランのキャッシュをサポートしています。この機能により、これらのステートメントは最適化フェーズをスキップしてパフォーマンスを向上させることができます。
 
-準備されていないプラン キャッシュを有効にすると、追加のメモリと CPU オーバーヘッドが発生する可能性があり、すべての状況に適しているとは限りません。シナリオでこの機能を有効にするかどうかを決定するには、 [パフォーマンス上の利点](#performance-benefits)セクションと[メモリ監視](#monitoring)セクションを参照してください。
+準備されていないプラン キャッシュを有効にすると、追加のメモリと CPU のオーバーヘッドが発生する可能性があり、すべての状況に適しているとは限りません。シナリオでこの機能を有効にするかどうかを判断するには、セクション[パフォーマンス上の利点](#performance-benefits)と[メモリ監視](#monitoring)を参照してください。
 
 ## 原理 {#principle}
 
-準備されていないプラン キャッシュは、 [準備されたプランのキャッシュ](/sql-prepared-plan-cache.md)とキャッシュを共有するセッション レベルの機能です。準備されていないプラン キャッシュの基本原理は次のとおりです。
+非準備プラン キャッシュは、 [準備されたプランキャッシュ](/sql-prepared-plan-cache.md)とキャッシュを共有するセッション レベルの機能です。非準備プラン キャッシュの基本原理は次のとおりです。
 
-1.  未準備プラン キャッシュを有効にすると、TiDB はまず抽象構文ツリー (AST) に基づいてクエリをパラメータ化します。たとえば、 `SELECT * FROM t WHERE b < 10 AND a = 1`は`SELECT * FROM t WHERE b < ? and a = ?`としてパラメータ化されます。
-2.  次に、TiDB はパラメーター化されたクエリを使用してプラン キャッシュを検索します。
+1.  準備されていないプラン キャッシュを有効にすると、TiDB はまず抽象構文ツリー (AST) に基づいてクエリをパラメーター化します。たとえば、 `SELECT * FROM t WHERE b < 10 AND a = 1` `SELECT * FROM t WHERE b < ? and a = ?`としてパラメーター化されます。
+2.  次に、TiDB はパラメータ化されたクエリを使用してプラン キャッシュを検索します。
 3.  再利用可能なプランが見つかった場合は、それが直接使用され、最適化フェーズはスキップされます。
-4.  それ以外の場合、オプティマイザは新しいプランを生成し、後続のクエリで再利用できるようにそれをキャッシュに再度追加します。
+4.  それ以外の場合、オプティマイザーは新しいプランを生成し、それをキャッシュに戻して、後続のクエリで再利用します。
 
 ## 使用法 {#usage}
 
-準備されていないプラン キャッシュを有効または無効にするには、 [`tidb_enable_non_prepared_plan_cache`](/system-variables.md#tidb_enable_non_prepared_plan_cache)システム変数を設定します。 [`tidb_session_plan_cache_size`](/system-variables.md#tidb_session_plan_cache_size-new-in-v710)システム変数を使用して、準備されていないプラン キャッシュのサイズを制御することもできます。キャッシュされたプランの数が`tidb_session_plan_cache_size`を超えると、TiDB は最も最近使用されていない (LRU) 戦略を使用してプランを削除します。
+準備されていないプラン キャッシュを有効または無効にするには、 [`tidb_enable_non_prepared_plan_cache`](/system-variables.md#tidb_enable_non_prepared_plan_cache)システム変数を設定します。また、 [`tidb_session_plan_cache_size`](/system-variables.md#tidb_session_plan_cache_size-new-in-v710)システム変数を使用して準備されていないプラン キャッシュのサイズを制御することもできます。キャッシュされたプランの数が`tidb_session_plan_cache_size`を超えると、TiDB は最も最近使用されていない (LRU) 戦略を使用してプランを削除します。
 
-v7.1.0 以降、システム変数[`tidb_plan_cache_max_plan_size`](/system-variables.md#tidb_plan_cache_max_plan_size-new-in-v710)を使用してキャッシュできるプランの最大サイズを制御できます。デフォルト値は 2 MB です。プランのサイズがこの値を超える場合、プランはキャッシュされません。
+v7.1.0 以降では、システム変数[`tidb_plan_cache_max_plan_size`](/system-variables.md#tidb_plan_cache_max_plan_size-new-in-v710)を使用して、キャッシュできるプランの最大サイズを制御できます。デフォルト値は 2 MB です。プランのサイズがこの値を超えると、プランはキャッシュされません。
 
 > **注記：**
 >
-> `tidb_session_plan_cache_size`で指定されたメモリは、準備済みプラン キャッシュと準備されていないプラン キャッシュ間で共有されます。現在のクラスターで準備済みプラン キャッシュを有効にしている場合、準備されていないプラン キャッシュを有効にすると、元の準備済みプラン キャッシュのヒット率が低下する可能性があります。
+> `tidb_session_plan_cache_size`で指定されたメモリは、準備済みプラン キャッシュと準備されていないプラン キャッシュの間で共有されます。現在のクラスターに対して準備済みプラン キャッシュを有効にしている場合、準備されていないプラン キャッシュを有効にすると、元の準備済みプラン キャッシュのヒット率が低下する可能性があります。
 
 ## 例 {#example}
 
-次の例は、準備されていないプラン キャッシュの使用方法を示しています。
+次の例は、準備されていないプラン キャッシュを使用する方法を示しています。
 
 1.  テスト用にテーブル`t`を作成します。
 
@@ -57,7 +57,7 @@ v7.1.0 以降、システム変数[`tidb_plan_cache_max_plan_size`](/system-vari
     SELECT @@last_plan_from_cache;
     ```
 
-    出力の`last_plan_from_cache`の値が`1`の場合、2 番目のクエリの実行プランがキャッシュから取得されたことを意味します。
+    出力の`last_plan_from_cache`の値が`1`の場合、2 番目のクエリの実行プランはキャッシュから取得されることを意味します。
 
     ```sql
     +------------------------+
@@ -70,64 +70,64 @@ v7.1.0 以降、システム変数[`tidb_plan_cache_max_plan_size`](/system-vari
 
 ## 制限 {#restrictions}
 
-### 次善のプランをキャッシュする {#cache-suboptimal-plans}
+### 最適でない計画をキャッシュする {#cache-suboptimal-plans}
 
-TiDB は、パラメーター化されたクエリに対して 1 つのプランのみをキャッシュします。たとえば、クエリ`SELECT * FROM t WHERE a < 1`と`SELECT * FROM t WHERE a < 100000`は同じパラメータ化された形式`SELECT * FROM t WHERE a < ?`を共有するため、同じプランを共有します。
+TiDB は、パラメータ化されたクエリに対して 1 つのプランのみをキャッシュします。たとえば、クエリ`SELECT * FROM t WHERE a < 1`と`SELECT * FROM t WHERE a < 100000`同じパラメータ化された形式`SELECT * FROM t WHERE a < ?`を共有しているため、同じプランを共有します。
 
-これによりパフォーマンスの問題が発生する場合は、 `ignore_plan_cache()`ヒントを使用してキャッシュ内のプランを無視し、オプティマイザーが毎回 SQL の新しい実行プランを生成するようにすることができます。 SQL を変更できない場合は、バインディングを作成して問題を解決できます。たとえば、 `CREATE BINDING FOR SELECT ... USING SELECT /*+ ignore_plan_cache() */ ...` 。
+これによりパフォーマンスの問題が発生する場合は、 `ignore_plan_cache()`ヒントを使用してキャッシュ内のプランを無視し、オプティマイザが毎回 SQL の新しい実行プランを生成するようにすることができます。SQL を変更できない場合は、バインディングを作成して問題を解決できます。たとえば、 `CREATE BINDING FOR SELECT ... USING SELECT /*+ ignore_plan_cache() */ ...` 。
 
 ### 使用制限 {#usage-restrictions}
 
-前述のリスクと、実行プラン キャッシュは単純なクエリに対してのみ大きな利点を提供するという事実 (クエリが複雑で実行に時間がかかる場合、実行プラン キャッシュの使用はあまり役に立たない可能性があります) により、TiDB には厳しい制限があります。準備されていないプラン キャッシュの範囲について。制限事項は次のとおりです。
+前述のリスクと、実行プラン キャッシュが大きなメリットをもたらすのは単純なクエリのみであるという事実 (クエリが複雑で実行に時間がかかる場合、実行プラン キャッシュを使用してもあまり役に立たない可能性があります) のため、TiDB では準備されていないプラン キャッシュの範囲に厳しい制限が設けられています。制限は次のとおりです。
 
--   [準備されたプランのキャッシュ](/sql-prepared-plan-cache.md)でサポートされていないクエリまたはプランは、準備されていないプラン キャッシュでもサポートされません。
+-   [準備されたプランキャッシュ](/sql-prepared-plan-cache.md)でサポートされていないクエリまたはプランは、準備されていないプラン キャッシュでもサポートされません。
 -   `Window`や`Having`などの複雑な演算子を含むクエリはサポートされていません。
 -   3 つ以上の`Join`テーブルまたはサブクエリを含むクエリはサポートされていません。
--   `ORDER BY 1`や`GROUP BY a+1`など、 `ORDER BY`または`GROUP BY`直後に数値または式を含むクエリはサポートされていません。 `ORDER BY column_name`と`GROUP BY column_name`のみがサポートされます。
--   `JSON` 、 `ENUM` 、 `SET` 、または`BIT`タイプの列でフィルター処理するクエリ ( `SELECT * FROM t WHERE json_col = '{}'`など) はサポートされていません。
--   `SELECT * FROM t WHERE a is NULL`など、 `NULL`の値でフィルタリングするクエリはサポートされていません。
--   パラメータ化後のパラメータが 200 を超えるクエリ ( `SELECT * FROM t WHERE a in (1, 2, 3, ... 201)`など) は、デフォルトではサポートされていません。 v7.3.0 以降、 [`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-new-in-v710)システム変数に[`44823`](/optimizer-fix-controls.md#44823-new-in-v730) fix を設定することで、この制限を変更できます。
--   パーティション化されたテーブル、仮想列、一時テーブル、ビュー、またはメモリテーブルにアクセスするクエリ ( `SELECT * FROM INFORMATION_SCHEMA.COLUMNS`など) はサポートされていません。ここで、 `COLUMNS`は TiDBメモリテーブルです。
+-   `ORDER BY 1`や`GROUP BY a+1`など、 `ORDER BY`または`GROUP BY`の直後に数字または式が含まれるクエリはサポートされていません。 `ORDER BY column_name`と`GROUP BY column_name`のみがサポートされています。
+-   `SELECT * FROM t WHERE json_col = '{}'`など、 `JSON` 、 `ENUM` 、 `SET` 、または`BIT`タイプの列でフィルタリングするクエリはサポートされていません。
+-   `SELECT * FROM t WHERE a is NULL`など、 `NULL`値でフィルタリングするクエリはサポートされていません。
+-   パラメータ化後のパラメータ数が 200 を超えるクエリ ( `SELECT * FROM t WHERE a in (1, 2, 3, ... 201)`など) は、デフォルトではサポートされません。v7.3.0 以降では、 [`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-new-in-v653-and-v710)システム変数に[`44823`](/optimizer-fix-controls.md#44823-new-in-v730)修正を設定することで、この制限を変更できます。
+-   仮想列、一時テーブル、ビュー、またはメモリテーブルにアクセスするクエリはサポートされていません (例: `SELECT * FROM INFORMATION_SCHEMA.COLUMNS` 、 `COLUMNS`は TiDBメモリテーブル)。
 -   ヒントまたはバインディングを含むクエリはサポートされていません。
--   DML ステートメントまたは`FOR UPDATE`句を含む`SELECT`ステートメントは、デフォルトではサポートされていません。この制限を解除するには、 `SET tidb_enable_non_prepared_plan_cache_for_dml = ON`を実行します。
+-   DML ステートメントまたは`FOR UPDATE`句を含む`SELECT`ステートメントは、デフォルトではサポートされていません。この制限を解除するには、 `SET tidb_enable_non_prepared_plan_cache_for_dml = ON`実行します。
 
-この機能を有効にすると、オプティマイザーはクエリを迅速に評価します。準備されていないプラン キャッシュのサポート条件を満たさない場合、クエリは通常の最適化プロセスに戻ります。
+この機能を有効にすると、オプティマイザーはクエリを迅速に評価します。準備されていないプラン キャッシュのサポート条件を満たしていない場合、クエリは通常の最適化プロセスに戻ります。
 
 ## パフォーマンス上の利点 {#performance-benefits}
 
-内部テストでは、準備されていないプラン キャッシュ機能を有効にすると、ほとんどの TP シナリオでパフォーマンスが大幅に向上します。たとえば、TPC-C テストでは約 4%、一部の銀行ワークロードでは 10% 以上、Sysbench RangeScan では 15% のパフォーマンス向上がありました。
+内部テストでは、準備されていないプラン キャッシュ機能を有効にすると、ほとんどの TP シナリオでパフォーマンスが大幅に向上します。たとえば、TPC-C テストでは約 4%、一部の銀行業務ワークロードでは 10% 以上、Sysbench RangeScan では 15% のパフォーマンス向上が見られます。
 
-ただし、この機能では、クエリがサポートされているかどうかの判断、クエリのパラメータ化、キャッシュ内のプランの検索など、追加のメモリと CPU のオーバーヘッドも発生します。キャッシュがワークロード内のクエリの大部分にヒットできない場合、キャッシュを有効にすると実際にパフォーマンスに悪影響を及ぼす可能性があります。
+ただし、この機能により、クエリがサポートされているかどうかの判断、クエリのパラメータ化、キャッシュ内のプランの検索など、追加のメモリと CPU のオーバーヘッドも発生します。ワークロード内のクエリの大部分をキャッシュで処理できない場合、キャッシュを有効にするとパフォーマンスに悪影響が出る可能性があります。
 
-この場合、Grafana の**[プラン キャッシュ OPS を使用したクエリ]**パネルの`non-prepared`メトリックと、 **[プラン キャッシュ ミス OPS]**パネルの`non-prepared-unsupported`メトリックを観察する必要があります。ほとんどのクエリがサポートされておらず、プラン キャッシュにヒットできるクエリが少数しかない場合は、この機能を無効にすることができます。
+この場合、Grafana の**Queries Using Plan Cache OPS**パネルの`non-prepared`メトリックと**Plan Cache Miss OPS**パネルの`non-prepared-unsupported`メトリックを観察する必要があります。ほとんどのクエリがサポートされておらず、プラン キャッシュにヒットできるクエリが少数の場合は、この機能を無効にすることができます。
 
 ![non-prepared-unsupported](https://download.pingcap.com/images/docs/non-prepapred-plan-cache-unsupprot.png)
 
 ## 診断 {#diagnostics}
 
-準備されていないプラン キャッシュを有効にした後、 `EXPLAIN FORMAT='plan_cache' SELECT ...`ステートメントを実行して、クエリがキャッシュにヒットできるかどうかを確認できます。キャッシュにヒットできないクエリの場合、システムは警告としてその理由を返します。
+準備されていないプラン キャッシュを有効にした後、 `EXPLAIN FORMAT='plan_cache' SELECT ...`ステートメントを実行して、クエリがキャッシュにヒットできるかどうかを確認できます。キャッシュにヒットできないクエリの場合、システムは警告で理由を返します。
 
-`FORMAT='plan_cache'`を追加しない場合、 `EXPLAIN`ステートメントはキャッシュにヒットしないことに注意してください。
+`FORMAT='plan_cache'`追加しないと、 `EXPLAIN`ステートメントはキャッシュにヒットしないことに注意してください。
 
 クエリがキャッシュにヒットするかどうかを確認するには、次の`EXPLAIN FORMAT='plan_cache'`ステートメントを実行します。
 
 ```sql
-EXPLAIN FORMAT='plan_cache' SELECT * FROM (SELECT a+1 FROM t1) t;
+EXPLAIN FORMAT='plan_cache' SELECT * FROM (SELECT a+1 FROM t) t;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 3 rows in set, 1 warning (0.00 sec)
 ```
 
-キャッシュにヒットできないクエリを表示するには、 `SHOW warnings;`を実行します。
+キャッシュにヒットできないクエリを表示するには、 `SHOW warnings;`実行します。
 
 ```sql
 SHOW warnings;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +---------+------+-------------------------------------------------------------------------------+
@@ -142,11 +142,11 @@ SHOW warnings;
 
 ## 監視 {#monitoring}
 
-未準備プラン キャッシュを有効にすると、次のペインでメモリ使用量、キャッシュ内のプラン数、キャッシュ ヒット率を監視できます。
+準備されていないプラン キャッシュを有効にすると、次のペインでメモリ使用量、キャッシュ内のプランの数、キャッシュ ヒット率を監視できます。
 
 ![non-prepare-plan-cache](https://download.pingcap.com/images/docs/tidb-non-prepared-plan-cache-metrics.png)
 
-`statements_summary`テーブルのキャッシュ ヒット率やスロー クエリ ログも監視できます。以下に、 `statements_summary`の表でキャッシュ ヒット率を表示する方法を示します。
+`statements_summary`テーブルとスロー クエリ ログでキャッシュ ヒット率を監視することもできます。次に、 `statements_summary`テーブルでキャッシュ ヒット率を表示する方法を示します。
 
 1.  テーブル`t`を作成します。
 
@@ -168,13 +168,13 @@ SHOW warnings;
     SELECT * FROM t WHERE a<3;
     ```
 
-4.  `statements_summary`テーブルをクエリして、キャッシュ ヒット率を表示します。
+4.  キャッシュヒット率を表示するには、 `statements_summary`テーブルをクエリします。
 
     ```sql
     SELECT digest_text, query_sample_text, exec_count, plan_in_cache, plan_cache_hits FROM INFORMATION_SCHEMA.STATEMENTS_SUMMARY WHERE query_sample_text LIKE '%SELECT * FROM %';
     ```
 
-    出力は次のとおりです。
+    出力は次のようになります。
 
     ```sql
     +---------------------------------+------------------------------------------+------------+---------------+-----------------+

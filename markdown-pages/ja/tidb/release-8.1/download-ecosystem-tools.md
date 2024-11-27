@@ -7,12 +7,12 @@ summary: TiDB ツールの最も公式にメンテナンスされたバージョ
 
 このドキュメントでは、 TiDB Toolkitをダウンロードする方法について説明します。
 
-TiDB Toolkitには、データ エクスポート ツールDumpling、データ インポート ツールTiDB Lightning、バックアップおよび復元ツールBRなど、頻繁に使用される TiDB ツールが含まれています。
+TiDB Toolkit には、データ エクスポート ツールDumpling、データ インポート ツールTiDB Lightning、バックアップおよび復元ツールBRなど、頻繁に使用される TiDB ツールが含まれています。
 
 > **ヒント：**
 >
-> -   デプロイメント環境にインターネット アクセスがある場合は、単一の[TiUPコマンド](/tiup/tiup-component-management.md)使用して TiDB ツールをデプロイできるため、 TiDB Toolkitを別途ダウンロードする必要はありません。
-> -   Kubernetes 上で TiDB をデプロイして保守する必要がある場合は、 TiDB Toolkit をダウンロードする代わりに、 [TiDB Operatorのオフライン インストール](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-tidb-operator#offline-installation)手順に従ってください。
+> -   デプロイメント環境にインターネット アクセスがある場合は、 [TiUPコマンド](/tiup/tiup-component-management.md)つを使用して TiDB ツールをデプロイできるため、 TiDB Toolkitを別途ダウンロードする必要はありません。
+> -   Kubernetes 上で TiDB をデプロイして保守する必要がある場合は、 TiDB Toolkit をダウンロードする代わりに、 [TiDB Operatorのオフライン インストール](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-tidb-operator#offline-installation)の手順に従ってください。
 
 ## 環境要件 {#environment-requirements}
 
@@ -25,7 +25,7 @@ TiDB Toolkit は次のリンクからダウンロードできます。
 
     https://download.pingcap.org/tidb-community-toolkit-{version}-linux-{arch}.tar.gz
 
-リンク内の`{version}` TiDB のバージョン番号を示し、 `{arch}`システムのアーキテクチャ( `amd64`または`arm64`を示します。たとえば、 `amd64`アーキテクチャの`v8.1.0`のダウンロード リンクは`https://download.pingcap.org/tidb-community-toolkit-v8.1.0-linux-amd64.tar.gz`です。
+リンク内の`{version}` TiDB のバージョン番号を示し、 `{arch}`システムのアーキテクチャ`amd64`または`arm64`を示します。たとえば、 `amd64`アーキテクチャの`v8.1.1`のダウンロード リンクは`https://download.pingcap.org/tidb-community-toolkit-v8.1.1-linux-amd64.tar.gz`です。
 
 > **注記：**
 >
@@ -49,4 +49,4 @@ TiDB Toolkit は次のリンクからダウンロードできます。
 
 > **注記：**
 >
-> `{version}`インストールするツールのバージョンによって異なります。 `{arch}`システムのアーキテクチャによって異なり、 `amd64`または`arm64`になります。
+> `{version}`インストールするツールのバージョンによって異なります。 `{arch}`はシステムのアーキテクチャによって異なり、 `amd64`または`arm64`になります。

@@ -1,13 +1,13 @@
 ---
 title: DROP DATABASE | TiDB SQL Statement Reference
-summary: DROP DATABASEステートメントは、指定されたデータベースを永久に削除します。削除されたデータベースに関連付けられているユーザー権限は影響を受けません。TiDB のDROP DATABASEステートメントは MySQL と完全な互換性があります。
+summary: TiDB データベースに対する DROP DATABASE の使用法の概要。
 ---
 
-# データベースを削除 {#drop-database}
+# データベースの削除 {#drop-database}
 
-`DROP DATABASE`ステートメントは、指定されたデータベース スキーマと、その中に作成されたすべてのテーブルとビューを永久に削除します。削除されたデータベースに関連付けられているユーザー権限は影響を受けません。
+`DROP DATABASE`ステートメントは、指定されたデータベース スキーマと、その中に作成されたすべてのテーブルおよびビューを完全に削除します。削除されたデータベースに関連付けられているユーザー権限は影響を受けません。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 DropDatabaseStmt ::=
@@ -44,11 +44,11 @@ mysql> SHOW DATABASES;
 3 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`DROP DATABASE`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`DROP DATABASE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [データベースの作成](/sql-statements/sql-statement-create-database.md)
 -   [データベースの変更](/sql-statements/sql-statement-alter-database.md)

@@ -67,9 +67,9 @@ mysqlclient のインストールで問題が発生した場合は、 [mysqlclie
 
 #### <code>django-tidb</code>とは何ですか? {#what-is-code-django-tidb-code}
 
-`django-tidb`は、TiDB と Django 間の互換性の問題を解決する Django 用の TiDB 方言です。
+`django-tidb` 、TiDB と Django 間の互換性の問題を解決する Django 用の TiDB 方言です。
 
-`django-tidb`をインストールするには、Django のバージョンと一致するバージョンを選択します。たとえば、 `django==4.2.*`を使用している場合は`django-tidb==4.2.*`をインストールします。マイナー バージョンは同じである必要はありません。最新のマイナー バージョンを使用することをお勧めします。
+`django-tidb`インストールするには、Django のバージョンと一致するバージョンを選択します。たとえば、 `django==4.2.*`使用している場合は`django-tidb==4.2.*`インストールします。マイナー バージョンは同じである必要はありません。最新のマイナー バージョンを使用することをお勧めします。
 
 詳細については[django-tidb リポジトリ](https://github.com/pingcap/django-tidb)を参照してください。
 
@@ -86,9 +86,9 @@ mysqlclient のインストールで問題が発生した場合は、 [mysqlclie
 
 3.  接続ダイアログの構成が動作環境と一致していることを確認します。
 
-    -   **接続タイプは**`Public`に設定されています
+    -   **接続タイプ**は`Public`に設定されています
 
-    -   **ブランチ**は`main`に設定されています
+    -   **ブランチは**`main`に設定されています
 
     -   **接続先は**`General`に設定されています
 
@@ -98,7 +98,7 @@ mysqlclient のインストールで問題が発生した場合は、 [mysqlclie
     >
     > プログラムが Windows Subsystem for Linux (WSL) で実行されている場合は、対応する Linux ディストリビューションに切り替えます。
 
-4.  ランダムなパスワードを作成するには、 **「パスワードの生成」を**クリックします。
+4.  ランダムなパスワードを作成するには、 **「パスワードの生成」**をクリックします。
 
     > **ヒント：**
     >
@@ -121,9 +121,9 @@ mysqlclient のインストールで問題が発生した場合は、 [mysqlclie
     CA_PATH='{ssl_ca}'  # e.g. /etc/ssl/certs/ca-certificates.crt (Debian / Ubuntu / Arch)
     ```
 
-    プレースホルダー`{}`を、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
+    プレースホルダー`{}` 、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
 
-    TiDB Cloud Serverless には安全な接続が必要です。 mysqlclient の`ssl_mode`デフォルトで`PREFERRED`になっているため、 `CA_PATH`手動で指定する必要はありません。空のままにしておきます。ただし、 `CA_PATH`手動で指定する特別な理由がある場合は、 [TiDB Cloud ServerlessへのTLS接続](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)を参照して、さまざまなオペレーティング システムの証明書パスを取得できます。
+    TiDB Cloud Serverless には安全な接続が必要です。 mysqlclient の`ssl_mode`はデフォルトで`PREFERRED`になっているため、 `CA_PATH`手動で指定する必要はありません。空のままにしておきます。ただし、特別な理由により`CA_PATH`手動で指定する必要がある場合は、 [TiDB Cloud ServerlessへのTLS接続](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)を参照して、さまざまなオペレーティング システムの証明書パスを取得できます。
 
 7.  `.env`ファイルを保存します。
 
@@ -138,7 +138,7 @@ mysqlclient のインストールで問題が発生した場合は、 [mysqlclie
 
     IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
 
-    TiDB Dedicated は、**パブリック**接続タイプに加えて、**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
 4.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -157,7 +157,7 @@ mysqlclient のインストールで問題が発生した場合は、 [mysqlclie
     CA_PATH='{your-downloaded-ca-path}'
     ```
 
-    プレースホルダー`{}`を接続ダイアログから取得した接続パラメータに置き換え、 `CA_PATH`前の手順でダウンロードした証明書パスで構成してください。
+    プレースホルダー`{}`接続ダイアログから取得した接続パラメータに置き換え、 `CA_PATH`前の手順でダウンロードした証明書パスで構成してください。
 
 6.  `.env`ファイルを保存します。
 
@@ -180,7 +180,7 @@ mysqlclient のインストールで問題が発生した場合は、 [mysqlclie
     TIDB_DB_NAME='test'
     ```
 
-    プレースホルダー`{}`を接続パラメータに置き換え、 `CA_PATH`行を削除してください。TiDB をローカルで実行している場合、デフォルトのホスト アドレスは`127.0.0.1`で、パスワードは空です。
+    プレースホルダー`{}`接続パラメータに置き換え、 `CA_PATH`行を削除してください。TiDB をローカルで実行している場合、デフォルトのホスト アドレスは`127.0.0.1`で、パスワードは空です。
 
 3.  `.env`ファイルを保存します。
 
@@ -222,7 +222,7 @@ python manage.py migrate
 
 次のサンプル コード スニペットを参照して、独自のアプリケーション開発を完了することができます。
 
-完全なサンプル コードとその実行方法については、 [tidb サンプル/tidb-python-django-クイックスタート](https://github.com/tidb-samples/tidb-python-django-quickstart)リポジトリを参照してください。
+完全なサンプル コードとその実行方法については、 [tidb-samples/tidb-python-django-quickstart](https://github.com/tidb-samples/tidb-python-django-quickstart)リポジトリを参照してください。
 
 ### TiDBに接続する {#connect-to-tidb}
 
@@ -251,7 +251,7 @@ if TIDB_CA_PATH:
     }
 ```
 
-`${tidb_host}` `${tidb_user}` `${tidb_password}` `${tidb_db_name}` `${tidb_port}` TiDB クラスターの実際の値に置き換える必要`${ca_path}`あります。
+`${tidb_host}` 、 `${tidb_user}` `${tidb_password}` `${tidb_port}` TiDB クラスターの実際`${tidb_db_name}` `${ca_path}`に置き換える必要があります。
 
 ### データモデルを定義する {#define-the-data-model}
 

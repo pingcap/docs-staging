@@ -5,7 +5,7 @@ hide_commit: true
 summary: TiDB は、ハイブリッド トランザクションおよび分析処理 (HTAP) ワークロードをサポートするオープン ソースの分散 SQL データベースです。このガイドでは、機能、 TiFlash、開発、展開、移行、保守、監視、チューニング、ツール、リファレンスに関する情報を提供します。クイック スタートから TiDB の高度な構成やツールまで、すべてを網羅しています。
 ---
 
-<LearningPathContainer platform="tidb" title="TiDB Self-Managed" subTitle="TiDB is an open-source distributed SQL database that supports Hybrid Transactional and Analytical Processing (HTAP) workloads. Find the guide, samples, and references you need to use TiDB.">
+<LearningPathContainer platform="tidb" title="TiDBセルフマネージド" subTitle="TiDB is an open-source distributed SQL database that supports Hybrid Transactional and Analytical Processing (HTAP) workloads. Find the guide, samples, and references you need to use TiDB.">
 
 <!-- Localization note for TiDB:
 
@@ -17,7 +17,7 @@ summary: TiDB は、ハイブリッド トランザクションおよび分析�
 
 <LearningPath label="Learn" icon="cloud1">
 
-[TiDBとは](https://docs.pingcap.com/tidb/v8.1/overview)
+[TiDBセルフマネージドとは](https://docs.pingcap.com/tidb/v8.1/overview)
 
 [特徴](https://docs.pingcap.com/tidb/v8.1/basic-features)
 
@@ -27,7 +27,7 @@ summary: TiDB は、ハイブリッド トランザクションおよび分析�
 
 <LearningPath label="Try" icon="cloud5">
 
-[TiDB を試してみる](https://docs.pingcap.com/tidb/v8.1/quick-start-with-tidb)
+[TiDBセルフマネージドを試してみる](https://docs.pingcap.com/tidb/v8.1/quick-start-with-tidb)
 
 [HTAPを試してみる](https://docs.pingcap.com/tidb/v8.1/quick-start-with-htap)
 
@@ -49,7 +49,7 @@ summary: TiDB は、ハイブリッド トランザクションおよび分析�
 
 [ソフトウェアおよびハードウェアの要件](https://docs.pingcap.com/tidb/v8.1/hardware-and-software-requirements)
 
-[TiUPを使用して TiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/v8.1/production-deployment-using-tiup)
+[TiUP を使用して TiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/v8.1/production-deployment-using-tiup)
 
 [Kubernetes に TiDBクラスタをデプロイ](https://docs.pingcap.com/tidb-in-kubernetes/stable)
 
@@ -75,7 +75,7 @@ summary: TiDB は、ハイブリッド トランザクションおよび分析�
 
 [毎日のチェック](https://docs.pingcap.com/tidb/v8.1/daily-check)
 
-[TiUPを使用して TiDB を管理](https://docs.pingcap.com/tidb/v8.1/maintain-tidb-using-tiup)
+[TiUP を使用して TiDB を管理](https://docs.pingcap.com/tidb/v8.1/maintain-tidb-using-tiup)
 
 </LearningPath>
 
@@ -127,7 +127,7 @@ summary: TiDB は、ハイブリッド トランザクションおよび分析�
 
 <LearningPath label="Reference" icon="cloud-dev">
 
-[TiDB ロードマップ](https://docs.pingcap.com/tidb/v8.1/tidb-roadmap)
+[TiDB ロードマップ](https://docs.pingcap.com/tidb/dev/tidb-roadmap)
 
 [TiDBコンフィグレーションファイルのパラメータ](https://docs.pingcap.com/tidb/v8.1/tidb-configuration-file)
 

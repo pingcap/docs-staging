@@ -124,7 +124,7 @@ TiDB は、ユーザーが TiDB にログインするための証明書ベース
 
 ### クライアントキーと証明書を生成する {#generate-client-key-and-certificate}
 
-サーバーキーと証明書を生成したら、クライアントのキーと証明書を生成する必要があります。ユーザーごとに異なるキーと証明書を生成する必要があることがよくあります。
+サーバーキーと証明書を生成したら、クライアントのキーと証明書を生成する必要があります。多くの場合、ユーザーごとに異なるキーと証明書を生成する必要があります。
 
 1.  次のコマンドを実行してクライアント キーを生成します。
 
@@ -255,7 +255,7 @@ mysql -utest -h0.0.0.0 -P4000 --ssl-cert /path/to/client-cert.new.pem --ssl-key 
         openssl x509 -noout -extensions subjectAltName -in client.crt
         ```
 
-    -   `REQUIRE SAN`現在、次の`Subject Alternative Name`チェック項目をサポートしています。
+    -   `REQUIRE SAN`現在、次の`Subject Alternative Name`のチェック項目をサポートしています。
 
         -   URI
         -   IP
@@ -267,7 +267,7 @@ mysql -utest -h0.0.0.0 -P4000 --ssl-cert /path/to/client-cert.new.pem --ssl-key 
         CREATE USER 'u1'@'%' REQUIRE SAN 'DNS:d1,URI:spiffe://example.org/myservice1,URI:spiffe://example.org/myservice2';
         ```
 
-        上記の構成では、URI 項目`spiffe://example.org/myservice1`または`spiffe://example.org/myservice2`と DNS 項目`d1`を持つ証明書を使用して、 `u1`ユーザーのみが TiDB にログインできます。
+        上記の構成では、 URI 項目`spiffe://example.org/myservice1`または`spiffe://example.org/myservice2`と DNS 項目`d1`を持つ証明書を使用して、 `u1`ユーザーのみが TiDB にログインできます。
 
 -   `REQUIRE CIPHER` : クライアントがサポートする暗号方式をチェックします。サポートされている暗号方式のリストを確認するには、次のステートメントを使用します。
 
@@ -277,7 +277,7 @@ mysql -utest -h0.0.0.0 -P4000 --ssl-cert /path/to/client-cert.new.pem --ssl-key 
 
 ### ユーザー証明書情報を構成する {#configure-user-certificate-information}
 
-ユーザー証明書情報 ( `REQUIRE SUBJECT` 、 `REQUIRE ISSUER` 、 `REQUIRE SAN` 、 `REQUIRE CIPHER` ) を取得したら、ユーザーの作成、権限の付与、またはユーザーの変更時にこれらの情報が検証されるように構成します。次のステートメントの`<replaceable>`を対応する情報に置き換えます。
+ユーザー証明書情報 ( `REQUIRE SUBJECT` 、 `REQUIRE ISSUER` 、 `REQUIRE SAN` 、 `REQUIRE CIPHER` ) を取得したら、ユーザーの作成、権限の付与、またはユーザーの変更時にこれらの情報が検証されるように構成します。次のステートメントの`<replaceable>`対応する情報に置き換えます。
 
 スペースまたは`and`区切り文字として使用して、1 つのオプションまたは複数のオプションを設定できます。
 
@@ -308,7 +308,7 @@ MySQL クライアントに接続し、次のステートメントを実行し�
 \s
 ```
 
-出力：
+出力:
 
     --------------
     mysql  Ver 8.3.0 for Linux on x86_64 (MySQL Community Server - GPL)
@@ -324,7 +324,7 @@ MySQL クライアントに接続し、次のステートメントを実行し�
 SHOW VARIABLES LIKE '%ssl%';
 ```
 
-出力：
+出力:
 
     +---------------+----------------------------------+
     | Variable_name | Value                            |
@@ -427,4 +427,8 @@ CA 証明書は、クライアントとサーバー間の相互検証の基礎�
     sudo openssl x509 -req -in server-req.new.pem -days 365000 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out server-cert.new.pem
     ```
 
-3.  新しいサーバーキーと証明書を使用するように TiDBサーバーを構成します。詳細については[TiDBサーバーを構成する](#configure-tidb-and-the-client-to-use-certificates)を参照してください。
+3.  新しいサーバーキーと証明書を使用するように TiDBサーバーを構成します。詳細については[TiDBサーバーを構成する](#configure-tidb-and-the-client-to-use-certificates)参照してください。
+
+## 証明書のポリシーベースのアクセス制御 {#policy-based-access-control-for-certificates}
+
+TiDB は、基盤となるキー管理サーバーによって定義されたポリシーを活用して、証明書のポリシーベースのアクセス制御 (PBAC) をサポートします。これにより、時間ベースのポリシー (たとえば、特定の時間のみ有効な証明書)、場所ベースのポリシー (たとえば、特定の地理的な場所へのアクセスを制限する)、その他のカスタマイズ可能な条件など、さまざまな基準に基づいてアクセスをきめ細かく制御できるようになり、証明書管理のセキュリティと柔軟性が向上します。

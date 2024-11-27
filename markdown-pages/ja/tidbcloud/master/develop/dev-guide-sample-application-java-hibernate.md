@@ -11,7 +11,7 @@ TiDB は MySQL 互換のデータベースであり、 [休止状態](https://hi
 
 -   環境を設定します。
 -   Hibernate を使用して TiDB クラスターに接続します。
--   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)を見つけることができます。
+-   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)見つけることができます。
 
 > **注記：**
 >
@@ -21,7 +21,7 @@ TiDB は MySQL 互換のデータベースであり、 [休止状態](https://hi
 
 このチュートリアルを完了するには、次のものが必要です。
 
--   **Java Development Kit (JDK) 17**以上。ビジネスおよび個人の要件に基づいて[オープンJDK](https://openjdk.org/)または[オラクル](https://www.oracle.com/hk/java/technologies/downloads/)を選択できます。
+-   **Java Development Kit (JDK) 17**以上。ビジネスおよび個人の要件に応じて[オープンJDK](https://openjdk.org/)または[オラクル](https://www.oracle.com/hk/java/technologies/downloads/)選択できます。
 -   [メイヴン](https://maven.apache.org/install.html) **3.8**以上。
 -   [ギット](https://git-scm.com/downloads) 。
 -   TiDB クラスター。
@@ -71,7 +71,7 @@ cd tidb-java-hibernate-quickstart
 
     -   **接続タイプ**は`Public`に設定されています
 
-    -   **ブランチ**は`main`に設定されています
+    -   **ブランチは**`main`に設定されています
 
     -   **接続先は**`General`に設定されています
 
@@ -81,7 +81,7 @@ cd tidb-java-hibernate-quickstart
     >
     > プログラムが Windows Subsystem for Linux (WSL) で実行されている場合は、対応する Linux ディストリビューションに切り替えます。
 
-4.  ランダムなパスワードを作成するには、 **「パスワードの生成」を**クリックします。
+4.  ランダムなパスワードを作成するには、 **「パスワードの生成」**をクリックします。
 
     > **ヒント：**
     >
@@ -104,7 +104,7 @@ cd tidb-java-hibernate-quickstart
     export USE_SSL='true'
     ```
 
-    プレースホルダー`{}`を、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
+    プレースホルダー`{}` 、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
 
     TiDB Cloud Serverless では安全な接続が必要です。そのため、 `USE_SSL`の値を`true`に設定する必要があります。
 
@@ -121,7 +121,7 @@ cd tidb-java-hibernate-quickstart
 
     IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
 
-    TiDB Dedicated は、**パブリック**接続タイプに加えて、**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
 4.  次のコマンドを実行して`env.sh.example`コピーし、名前を`env.sh`に変更します。
 
@@ -140,7 +140,7 @@ cd tidb-java-hibernate-quickstart
     export USE_SSL='false'
     ```
 
-    プレースホルダー`{}`を、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
+    プレースホルダー`{}` 、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
 
 6.  `env.sh`ファイルを保存します。
 
@@ -164,7 +164,7 @@ cd tidb-java-hibernate-quickstart
     export USE_SSL='false'
     ```
 
-    プレースホルダー`{}`を接続パラメータに置き換え、 `USE_SSL`を`false`に設定してください。TiDB をローカルで実行している場合、デフォルトのホスト アドレスは`127.0.0.1`で、パスワードは空です。
+    プレースホルダー`{}`接続パラメータに置き換え、 `USE_SSL`を`false`に設定してください。TiDB をローカルで実行している場合、デフォルトのホスト アドレスは`127.0.0.1`で、パスワードは空です。
 
 3.  `env.sh`ファイルを保存します。
 
@@ -217,7 +217,7 @@ Hibernate 構成ファイル`hibernate.cfg.xml`を編集します。
 </hibernate-configuration>
 ```
 
-`${tidb_jdbc_url}` `${tidb_user}` TiDB クラスターの実際の値に置き換えてください。次に、次の関数を定義`${tidb_password}`ます。
+`${tidb_jdbc_url}` `${tidb_user}` TiDB クラスターの実際の値に置き換えてください。次に、次の関数`${tidb_password}`定義します。
 
 ```java
 public SessionFactory getSessionFactory() {
@@ -238,7 +238,7 @@ try (Session session = sessionFactory.openSession()) {
 }
 ```
 
-詳細については[データを挿入](/develop/dev-guide-insert-data.md)および[データの更新](/develop/dev-guide-update-data.md)を参照してください。
+詳細については、 [データを挿入](/develop/dev-guide-insert-data.md)および[データの更新](/develop/dev-guide-update-data.md)を参照してください。
 
 ### クエリデータ {#query-data}
 
@@ -263,7 +263,7 @@ try (Session session = sessionFactory.openSession()) {
 
 ## 次のステップ {#next-steps}
 
--   [Hibernateのドキュメント](https://hibernate.org/orm/documentation)から Hibernate の使い方を詳しく学びます。
+-   [Hibernateのドキュメント](https://hibernate.org/orm/documentation)から Hibernate の詳しい使い方を学びます。
 -   [開発者ガイド](/develop/dev-guide-overview.md)の[データを挿入](/develop/dev-guide-insert-data.md) 、 [データの更新](/develop/dev-guide-update-data.md) 、 [データを削除する](/develop/dev-guide-delete-data.md) 、 [単一テーブル読み取り](/develop/dev-guide-get-data-from-single-table.md) 、 [取引](/develop/dev-guide-transaction-overview.md) 、 [SQLパフォーマンスの最適化](/develop/dev-guide-optimize-sql-overview.md)などの章で、 TiDB アプリケーション開発のベスト プラクティスを学習します。
 -   プロフェッショナル[TiDB 開発者コース](https://www.pingcap.com/education/)を通じて学び、試験に合格すると[TiDB 認定](https://www.pingcap.com/education/certification/)獲得します。
 -   Java開発者向けコースを通じて学習します: [Javaから TiDB を操作する](https://eng.edu.pingcap.com/catalog/info/id:212) .

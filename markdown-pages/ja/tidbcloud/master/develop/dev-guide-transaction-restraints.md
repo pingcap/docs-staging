@@ -709,14 +709,17 @@ mysql> SELECT * FROM T2;
 
 基本的な原則は、トランザクションのサイズを制限することです。KV レベルでは、TiDB は単一のトランザクションのサイズに制限を設けています。SQL レベルでは、1 行のデータに 1 つの KV エントリがマップされ、インデックスを追加するごとに 1 つの KV エントリが追加されます。SQL レベルでの制限は次のとおりです。
 
--   単一行レコードの最大サイズは 120 MiB です。TiDB v4.0.10 以降の v4.0.x バージョン、TiDB v5.0.0 以降のバージョンでは、tidb-server の[`performance.txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500)構成パラメータを使用して調整できます。v4.0.10 より前のバージョンでは、値は`6 MB`です。
+-   単一行レコードの最大サイズは 120 MiB です。
+
+    -   TiDB v4.0.10 以降の v4.0.x バージョン、TiDB v5.0.0 以降のバージョンでは、tidb-server の[`performance.txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500)構成パラメータを使用して調整できます。v4.0.10 より前のバージョンでは、値は`6 MB`です。
+    -   v7.6.0 以降では、 [`tidb_txn_entry_size_limit`](/system-variables.md#tidb_txn_entry_size_limit-new-in-v760)システム変数を使用して、この構成項目の値を動的に変更できます。
 
 -   サポートされる単一トランザクションの最大サイズは 1 TiB です。
 
     -   TiDB v4.0 以降のバージョンでは、 [`performance.txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit)で設定できます。それより前のバージョンでは、値は`100 MB`です。
     -   TiDB v6.5.0 以降のバージョンでは、この構成は推奨されません。詳細については、 [`performance.txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit) ) を参照してください。
 
-サイズ制限と行制限の両方について、トランザクション実行中にトランザクションのエンコードと追加キーのオーバーヘッドも考慮する必要があることに注意してください。最適なパフォーマンスを実現するには、100〜500行ごとに1つのトランザクションを書き込むことをお勧めします。
+サイズ制限と行制限の両方について、トランザクション実行中にトランザクションのエンコードと追加キーのオーバーヘッドも考慮する必要があることに注意してください。最適なパフォーマンスを実現するには、100 ～ 500 行ごとに 1 つのトランザクションを書き込むことをお勧めします。
 
 ## 自動コミットされた<code>SELECT FOR UPDATE</code>文はロックを待機しません。 {#auto-committed-code-select-for-update-code-statements-do-not-wait-for-locks}
 

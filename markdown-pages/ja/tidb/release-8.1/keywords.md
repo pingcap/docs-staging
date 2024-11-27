@@ -7,7 +7,7 @@ summary: キーワードと予約語
 
 この記事では、TiDB のキーワード、予約語と非予約語の違いを紹介し、クエリのすべてのキーワードをまとめます。
 
-キーワードは、 `SELECT` 、 `UPDATE` 、 `DELETE`など、SQL 文で特別な意味を持つ単語です。キーワードの中には、直接識別子として使用できるものがあり、これらは**非予約キーワード**と呼ばれます。キーワードの中には、識別子として使用する前に特別な処理が必要なものがあり、これらは**予約キーワード**と呼ばれます。ただし、特別な非予約キーワードでも、特別な処理が必要なものがあります。これらは予約キーワードとして扱うことをお勧めします。
+キーワードは、 [`SELECT`](/sql-statements/sql-statement-select.md) 、 [`UPDATE`](/sql-statements/sql-statement-update.md) 、 [`DELETE`](/sql-statements/sql-statement-delete.md)など、SQL 文で特別な意味を持つ単語です。キーワードの中には、直接識別子として使用できるものがあり、これらは**非予約キーワード**と呼ばれます。キーワードの中には、識別子として使用する前に特別な処理が必要なものがあり、これらは**予約キーワード**と呼ばれます。ただし、特別な非予約キーワードでも、特別な処理が必要なものがあります。これらは予約キーワードとして扱うことをお勧めします。
 
 予約語を識別子として使用するには、バッククォート`` ` ``で囲む必要があります。
 
@@ -23,7 +23,7 @@ CREATE TABLE `select` (a INT);
 
     Query OK, 0 rows affected (0.09 sec)
 
-予約されていないキーワードにはバックティックは必要ありません`BEGIN`や`END`など)。これらは次のステートメントで識別子として正常に使用できます。
+予約されていないキーワードにはバックティックは必要ありません ( `BEGIN`や`END`など)。これらは次のステートメントで識別子として正常に使用できます。
 
 ```sql
 CREATE TABLE `select` (BEGIN int, END int);
@@ -39,7 +39,7 @@ CREATE TABLE test.select (BEGIN int, END int);
 
     Query OK, 0 rows affected (0.08 sec)
 
-v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/information-schema-keywords.md)テーブルにキーワードの完全なリストを提供します。
+v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/information-schema-keywords.md)テーブルにキーワードの完全なリストを提供します。
 
 ## キーワードリスト {#keyword-list}
 
@@ -71,9 +71,9 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   属性
 -   属性
 -   自動IDキャッシュ
--   自動増加
+-   自動インクリメント
 -   自動ランダム
--   AUTO_RANDOM_BASE
+-   自動ランダムベース
 -   平均
 -   平均行の長さ
 
@@ -121,7 +121,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   変化（R）
 -   チャー（R）
 -   キャラクター（R）
--   文字コード
+-   文字セット
 -   チェック（R）
 -   チェックポイント
 -   チェックサム
@@ -130,7 +130,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   クライアント
 -   クライアントエラーの概要
 -   近い
--   集まる
+-   クラスタ
 -   クラスター
 -   CMスケッチ
 -   合体
@@ -142,7 +142,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   コラム
 -   コメント
 -   専念
--   関与する
+-   コミット
 -   コンパクト
 -   圧縮
 -   圧縮
@@ -151,7 +151,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   繋がり
 -   一貫性
 -   一貫性のある
--   制約 (R)
+-   制約（R）
 -   コンテクスト
 -   続行 (R)
 -   変換 (R)
@@ -182,7 +182,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   データベース（R）
 -   データベース (R)
 -   日付
--   日付時刻
+-   日時
 -   日
 -   曜日_時間 (R)
 -   デイ_マイクロセカンド (R)
@@ -210,7 +210,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   ディスク
 -   明確 (R)
 -   ディスティンクトロウ（R）
--   部門（R）
+-   部門 (R)
 -   する
 -   ダブル（R）
 -   ドレイナー
@@ -257,7 +257,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   誤り（R）
 -   欠陥
 -   フェッチ（R）
--   田畑
+-   フィールド
 -   ファイル
 -   初め
 -   FIRST_VALUE (R ウィンドウ)
@@ -265,12 +265,12 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   フロート（R）
 -   フロート4（R）
 -   フロート8（R）
--   流す
+-   フラッシュ
 -   続く
 -   賛成（R）
 -   フォース（R）
 -   外国人（R）
--   フォーマット
+-   形式
 -   見つかった
 -   （R）より
 -   満杯
@@ -324,7 +324,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   挿入メソッド
 -   実例
 -   INT（R）
--   INT1（R）
+-   INT1（右）
 -   INT2（R）
 -   INT3 (R)
 -   INT4 (R)
@@ -386,7 +386,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   ログ
 -   ロング（右）
 -   ロングブロブ（R）
--   ロングテキスト (R)
+-   ロングテキスト（R）
 -   低優先度（R）
 
 <a id="M" class="letter" href="#M">ま</a>
@@ -468,7 +468,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   オプション
 -   オプション（R）
 -   または（R）
--   注文 (R)
+-   注文（R）
 -   アウト（R）
 -   アウター（右）
 -   アウトファイル (R)
@@ -491,7 +491,6 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   PER_DB
 -   PER_TABLE
 -   悲観的
--   配置（S）
 -   プラグイン
 -   ポイント
 -   ポリシー
@@ -520,7 +519,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 
 <a id="R" class="letter" href="#R">R</a>
 
--   部隊）
+-   レンジ（R）
 -   RANK (Rウィンドウ)
 -   レート制限
 -   読む (R)
@@ -562,7 +561,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   RLIKE (R)
 -   役割
 -   ロールバック
--   巻き上げる
+-   ロールアップ
 -   ルーティーン
 -   ROW（右）
 -   行数
@@ -572,11 +571,11 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   RTREE
 -   走る
 
-<a id="S" class="letter" href="#S">S</a>
+<a id="S" class="letter" href="#S">ス</a>
 
 -   サンプルレート
 -   サンプル
--   さん
+-   サン
 -   セーブポイント
 -   2番
 -   秒_マイクロ秒 (R)
@@ -620,7 +619,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   SQL_NO_CACHE
 -   SQL_SMALL_RESULT (R)
 -   SQL_TSI_DAY
--   SQL_TSI_HOUR
+-   SQL_TSI_時間
 -   SQL_TSI_分
 -   SQL_TSI_MONTH
 -   SQL_TSI_QUARTER
@@ -636,14 +635,14 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   統計
 -   統計
 -   STATS_AUTO_RECALC
--   統計_バケット
+-   統計バケット
 -   統計値の選択
 -   統計列リスト
 -   統計_拡張 (R)
 -   健康状態
 -   統計ヒストグラム
 -   統計_ロック済み
--   統計META
+-   統計_META
 -   統計オプション
 -   統計_永続
 -   統計サンプルページ
@@ -661,7 +660,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   スワップ
 -   スイッチ
 -   システム
--   システム時刻
+-   システム時間
 
 <a id="T" class="letter" href="#T">T</a>
 
@@ -670,8 +669,6 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   テーブルサンプル（R）
 -   テーブルスペース
 -   テーブルチェックサム
--   テレメトリー
--   テレメトリーID
 -   一時的
 -   誘惑的
 -   終了しました (R)
@@ -692,7 +689,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   トップ
 -   TPCC
 -   TPCH_10
--   痕跡
+-   トレース
 -   伝統的
 -   トレーリング（R）
 -   取引
@@ -723,7 +720,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   使用法 (R)
 -   使用（R）
 -   ユーザー
--   使用方法 (R)
+-   (R) の使用
 -   UTC_DATE (日付)
 -   UTC_TIME (時刻)
 -   UTC_タイムスタンプ (R)
@@ -733,7 +730,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   検証
 -   価値
 -   価値観（R）
--   ヴァービナリー（R）
+-   ヴァーバイナリー（R）
 -   ヴァルチャー（R）
 -   ヴァーチャルキャラクター（R）
 -   変数
@@ -752,7 +749,7 @@ v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/info
 -   どこ (R)
 -   ながら（R）
 -   幅
--   ウィンドウ (R-ウィンドウ)
+-   WINDOW (R-ウィンドウ)
 -   ウィズ（R）
 -   それなし
 -   ワークロード

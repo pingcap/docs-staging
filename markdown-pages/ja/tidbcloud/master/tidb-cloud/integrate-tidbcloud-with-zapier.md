@@ -27,7 +27,7 @@ Zapier の[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
 
 -   A [Zapierアカウント](https://zapier.com/app/login) 。
 -   A [GitHub アカウント](https://github.com/login) 。
--   [TiDB Cloudアカウント](https://tidbcloud.com/signup)およびTiDB Cloud上のTiDB Cloud Serverless クラスター。詳細については、 [TiDB Cloudクイック スタート](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart#step-1-create-a-tidb-cluster)を参照してください。
+-   [TiDB Cloudアカウント](https://tidbcloud.com/signup)およびTiDB Cloud上の TiDB Serverless クラスター。詳細については、 [TiDB Cloudクイック スタート](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart#step-1-create-a-tidb-cluster)を参照してください。
 
 ### ステップ1: テンプレートを取得する {#step-1-get-the-template}
 
@@ -71,7 +71,7 @@ Zapier の[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
 
     この手順では、イベント データを保存するために、 TiDB Cloudクラスター内のテーブルを指定する必要があります。テーブルがまだない場合は、この手順で作成できます。
 
-    1.  ドロップダウン リストからプロジェクト名とクラスター名を選択します。クラスターの接続情報が自動的に表示されます。
+    1.  ドロップダウンリストからプロジェクト名とクラスター名を選択します。クラスターの接続情報が自動的に表示されます。
 
         ![Set up project name and cluster name](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-set-up-tidbcloud-project-and-cluster.png)
 
@@ -147,35 +147,35 @@ Zapier の[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
 
 次の表は、TiDB Cloud App でサポートされているトリガーを示しています。
 
-| トリガー            | 説明                                         |
+| 引き金             | 説明                                         |
 | --------------- | ------------------------------------------ |
 | 新しいクラスタ         | 新しいクラスターが作成された場合にトリガーされます。                 |
 | 新しいテーブル         | 新しいテーブルが作成された時にトリガーされます。                   |
 | 新しい行            | 新しい行が作成された場合にトリガーされます。最近の 10000 行のみを取得します。 |
 | 新しい行 (カスタム クエリ) | 指定したカスタム クエリから新しい行が返されたときにトリガーされます。        |
 
-### アクション {#actions}
+### 行動 {#actions}
 
 次の表は、TiDB Cloud App でサポートされているアクションの一覧です。一部のアクションには追加のリソースが必要なため、アクションを使用する前に対応するリソースを準備する必要があることに注意してください。
 
-| アクション           | 説明                                                            | リソース                                    |
-| --------------- | ------------------------------------------------------------- | --------------------------------------- |
-| クラスタを見つける       | 既存のTiDB Cloud Serverless またはTiDB Cloud Dedicated クラスターを検索します。 | なし                                      |
-| クラスタの作成         | 新しいクラスターを作成します。TiDB TiDB Cloud Serverless クラスターの作成のみをサポートします。 | なし                                      |
-| データベースを検索       | 既存のデータベースを検索します。                                              | TiDB Cloudサーバーレスクラスター                   |
-| データベースの作成       | 新しいデータベースを作成します。                                              | TiDB Cloudサーバーレスクラスター                   |
-| テーブルを探す         | 既存のテーブルを検索します。                                                | TiDB Cloud Serverless クラスターとデータベース      |
-| テーブルを作成         | 新しいテーブルを作成します。                                                | TiDB Cloud Serverless クラスターとデータベース      |
-| 行を作成            | 新しい行を作成します。                                                   | TiDB Cloud Serverless クラスター、データベース、テーブル |
-| 行を更新            | 既存の行を更新します。                                                   | TiDB Cloud Serverless クラスター、データベース、テーブル |
-| 行を検索            | ルックアップ列を使用してテーブル内の行を検索します。                                    | TiDB Cloud Serverless クラスター、データベース、テーブル |
-| 行の検索 (カスタム クエリ) | 指定したカスタム クエリを使用してテーブル内の行を検索します。                               | TiDB Cloud Serverless クラスター、データベース、テーブル |
+| アクション           | 説明                                                  | リソース                          |
+| --------------- | --------------------------------------------------- | ----------------------------- |
+| クラスタを見つける       | 既存の TiDB Serverless または TiDB Dedicated クラスターを検索します。 | なし                            |
+| クラスタの作成         | 新しいクラスターを作成します。TiDB Serverless クラスターの作成のみをサポートします。  | なし                            |
+| データベースを検索       | 既存のデータベースを検索します。                                    | TiDB サーバーレス クラスター             |
+| データベースの作成       | 新しいデータベースを作成します。                                    | TiDB サーバーレス クラスター             |
+| テーブルを探す         | 既存のテーブルを検索します。                                      | TiDB サーバーレス クラスターとデータベース      |
+| テーブルを作成         | 新しいテーブルを作成します。                                      | TiDB サーバーレス クラスターとデータベース      |
+| 行を作成            | 新しい行を作成します。                                         | TiDB サーバーレス クラスター、データベース、テーブル |
+| 行を更新            | 既存の行を更新します。                                         | TiDB サーバーレス クラスター、データベース、テーブル |
+| 行を検索            | ルックアップ列を使用してテーブル内の行を検索します。                          | TiDB サーバーレス クラスター、データベース、テーブル |
+| 行の検索 (カスタム クエリ) | 指定したカスタム クエリを使用してテーブル内の行を検索します。                     | TiDB サーバーレス クラスター、データベース、テーブル |
 
 ## TiDB Cloudアプリ テンプレート {#tidb-cloud-app-templates}
 
 TiDB Cloud は、 Zapier で直接使用できるテンプレートをいくつか提供しています。すべてのテンプレートは[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)ページで見つかります。
 
-以下にいくつか例を挙げます。
+ここではいくつかの例を示します。
 
 -   [Google スプレッドシートで新しいTiDB Cloud行を複製する](https://zapier.com/apps/google-sheets/integrations/tidb-cloud/1134881/duplicate-new-tidb-cloud-rows-in-google-sheets) 。
 -   [新しいカスタム TiDB クエリから Gmail 経由でメールを送信する](https://zapier.com/apps/gmail/integrations/tidb-cloud/1134903/send-emails-via-gmail-from-new-custom-tidb-queries) 。

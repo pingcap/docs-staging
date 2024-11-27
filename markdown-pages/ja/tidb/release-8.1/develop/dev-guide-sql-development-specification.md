@@ -20,7 +20,7 @@ summary: TiDB の SQL 開発仕様について学習します。
 ## フィールドで関数を使用する {#use-functions-on-fields}
 
 -   基本原則: クエリされたフィールドで関連関数を使用できます。インデックスの失敗を回避するには、データ型変換関数を含め、 `WHERE`句のフィルターされたフィールドで関数を使用しないでください。式インデックスの使用を検討してください。
--   詳細な説明：
+-   詳細な説明:
 
     推奨されません:
 
@@ -40,11 +40,25 @@ summary: TiDB の SQL 開発仕様について学習します。
 
 ## その他の仕様 {#other-specifications}
 
--   条件`WHERE`のインデックス列に対して数学演算や関数を実行しないでください。
--   `OR`を`IN`または`UNION`に置き換えます。 `IN`の数は`300`未満でなければなりません。
+-   条件`WHERE`インデックス列に対して数学演算や関数を実行しないでください。
+-   `OR` `IN`または`UNION`に置き換えます。 `IN`の数は`300`未満でなければなりません。
 -   あいまいプレフィックスクエリにはプレフィックス`%`を使用しないでください。
--   アプリケーションが**マルチステートメント**を使用して SQL を実行する場合、つまり、複数の SQL がセミコロンで結合され、一度にクライアントに送信されて実行される場合、TiDB は最初の SQL 実行の結果のみを返します。
+-   アプリケーションが**マルチステートメントを**使用して SQL を実行する場合、つまり、複数の SQL がセミコロンで結合され、一度にクライアントに送信されて実行される場合、TiDB は最初の SQL 実行の結果のみを返します。
 -   式を使用する場合は、式がstorageレイヤー(TiKV またはTiFlash ) へのコンピューティングのプッシュダウンをサポートしているかどうかを確認してください。サポートしていない場合は、TiDBレイヤーでメモリ消費量が増え、OOM が発生することも予想されます。storageレイヤーにプッシュダウンできるコンピューティングは次のとおりです。
     -   [TiFlashはプッシュダウン計算をサポート](/tiflash/tiflash-supported-pushdown-calculations.md) 。
     -   [TiKV - プッシュダウンの式のリスト](/functions-and-operators/expressions-pushed-down.md) 。
     -   [述語プッシュダウン](/predicate-push-down.md) 。
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

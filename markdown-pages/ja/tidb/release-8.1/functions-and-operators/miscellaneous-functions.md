@@ -9,26 +9,26 @@ TiDB は、MySQL 8.0 で利用可能な[その他の関数](https://dev.mysql.co
 
 ## サポートされている関数 {#supported-functions}
 
-| 名前                                    | 説明                                                                                                                                                                       |
-| :------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`ANY_VALUE()`](#any_value)           | `ONLY_FULL_GROUP_BY`値を拒否しない                                                                                                                                              |
-| [`BIN_TO_UUID()`](#bin_to_uuid)       | UUIDをバイナリ形式からテキスト形式に変換する                                                                                                                                                 |
-| [`DEFAULT()`](#default)               | テーブル列のデフォルト値を返します                                                                                                                                                        |
-| [`GROUPING()`](#grouping)             | `GROUP BY`操作の修飾子                                                                                                                                                         |
-| [`INET_ATON()`](#inet_aton)           | IPアドレスの数値を返す                                                                                                                                                             |
-| [`INET_NTOA()`](#inet_ntoa)           | 数値からIPアドレスを返す                                                                                                                                                            |
-| [`INET6_ATON()`](#inet6_aton)         | IPv6アドレスの数値を返す                                                                                                                                                           |
-| [`INET6_NTOA()`](#inet6_ntoa)         | 数値から IPv6 アドレスを返します                                                                                                                                                      |
-| [`IS_IPV4()`](#is_ipv4)               | 引数がIPv4アドレスかどうか                                                                                                                                                          |
-| [`IS_IPV4_COMPAT()`](#is_ipv4_compat) | 引数がIPv4互換アドレスであるかどうか                                                                                                                                                     |
-| [`IS_IPV4_MAPPED()`](#is_ipv4_mapped) | 引数がIPv4マップアドレスであるかどうか                                                                                                                                                    |
-| [`IS_IPV6()`](#is_ipv6)               | 引数がIPv6アドレスかどうか                                                                                                                                                          |
-| [`IS_UUID()`](#is_uuid)               | 引数がUUIDかどうか                                                                                                                                                              |
-| [`NAME_CONST()`](#name_const)         | 列名を変更するために使用できます                                                                                                                                                         |
-| [`SLEEP()`](#sleep)                   | 指定した秒数スリープします。1 クラスターの場合、 `SLEEP()`関数には最大 300 秒のスリープ時間しかサポートできないという制限[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)あることに注意してください。 |
-| [`UUID()`](#uuid)                     | ユニバーサルユニーク識別子 (UUID) を返す                                                                                                                                                 |
-| [`UUID_TO_BIN()`](#uuid_to_bin)       | UUIDをテキスト形式からバイナリ形式に変換する                                                                                                                                                 |
-| [`VALUES()`](#values)                 | INSERT中に使用される値を定義します                                                                                                                                                     |
+| 名前                                    | 説明                                                                                                                                                                               |
+| :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`ANY_VALUE()`](#any_value)           | `ONLY_FULL_GROUP_BY`値を拒否しない                                                                                                                                                      |
+| [`BIN_TO_UUID()`](#bin_to_uuid)       | UUIDをバイナリ形式からテキスト形式に変換する                                                                                                                                                         |
+| [`DEFAULT()`](#default)               | テーブル列のデフォルト値を返します                                                                                                                                                                |
+| [`GROUPING()`](#grouping)             | `GROUP BY`操作の修飾子                                                                                                                                                                 |
+| [`INET_ATON()`](#inet_aton)           | IPアドレスの数値を返す                                                                                                                                                                     |
+| [`INET_NTOA()`](#inet_ntoa)           | 数値からIPアドレスを返す                                                                                                                                                                    |
+| [`INET6_ATON()`](#inet6_aton)         | IPv6アドレスの数値を返す                                                                                                                                                                   |
+| [`INET6_NTOA()`](#inet6_ntoa)         | 数値から IPv6 アドレスを返します                                                                                                                                                              |
+| [`IS_IPV4()`](#is_ipv4)               | 引数がIPv4アドレスかどうか                                                                                                                                                                  |
+| [`IS_IPV4_COMPAT()`](#is_ipv4_compat) | 引数がIPv4互換アドレスであるかどうか                                                                                                                                                             |
+| [`IS_IPV4_MAPPED()`](#is_ipv4_mapped) | 引数がIPv4マップアドレスであるかどうか                                                                                                                                                            |
+| [`IS_IPV6()`](#is_ipv6)               | 引数がIPv6アドレスかどうか                                                                                                                                                                  |
+| [`IS_UUID()`](#is_uuid)               | 引数がUUIDかどうか                                                                                                                                                                      |
+| [`NAME_CONST()`](#name_const)         | 列名を変更するために使用できます                                                                                                                                                                 |
+| [`SLEEP()`](#sleep)                   | 指定した秒数スリープします。1 クラスターの場合、 `SLEEP()`関数には最大 300 秒のスリープ時間しか[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)できないという制限があることに注意してください。 |
+| [`UUID()`](#uuid)                     | ユニバーサルユニーク識別子 (UUID) を返す                                                                                                                                                         |
+| [`UUID_TO_BIN()`](#uuid_to_bin)       | UUIDをテキスト形式からバイナリ形式に変換する                                                                                                                                                         |
+| [`VALUES()`](#values)                 | INSERT中に使用される値を定義します                                                                                                                                                             |
 
 ### 任意の値() {#any-value}
 
@@ -57,7 +57,7 @@ SELECT ANY_VALUE(id),GROUP_CONCAT(id),name FROM fruits GROUP BY name;
 4 rows in set (0.00 sec)
 ```
 
-前の例では、列`id`が非集計であり、句`GROUP BY`に含まれていないため、TiDB は最初の`SELECT`ステートメントに対してエラーを返します。この問題に対処するために、2 番目の`SELECT`クエリは`ANY_VALUE()`を使用して各グループから任意の値を取得し、 `GROUP_CONCAT()`を使用して各グループ内の列`id`のすべての値を 1 つの文字列に連結します。このアプローチにより、非集計列の SQL モードを変更せずに、各グループから 1 つの値とグループのすべての値を取得できます。
+前の例では、列`id`が非集計であり、句`GROUP BY`に含まれていないため、TiDB は最初の`SELECT`ステートメントに対してエラーを返します。この問題に対処するために、2 番目の`SELECT`クエリは`ANY_VALUE()`使用して各グループから任意の値を取得し、 `GROUP_CONCAT()`使用して各グループ内の列`id`のすべての値を 1 つの文字列に連結します。このアプローチにより、非集計列の SQL モードを変更せずに、各グループから 1 つの値とグループのすべての値を取得できます。
 
 ### BIN_TO_UUID() {#bin-to-uuid}
 

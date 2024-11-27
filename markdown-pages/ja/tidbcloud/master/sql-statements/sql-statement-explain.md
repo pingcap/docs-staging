@@ -1,6 +1,6 @@
 ---
 title: EXPLAIN | TiDB SQL Statement Reference
-summary: An overview of the usage of EXPLAIN for the TiDB database.
+summary: TiDB データベースでのEXPLAINの使用法の概要。
 ---
 
 # <code>EXPLAIN</code> {#code-explain-code}
@@ -173,10 +173,10 @@ EXPLAIN DELETE FROM t1 WHERE c1=3;
 | フォーマット       | 説明                                                                                                                                   |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
 | 指定されていない     | 形式が指定されていない場合は、デフォルトの形式`EXPLAIN` `row`使用されます。                                                                                        |
-| `brief`      | `EXPLAIN`ステートメントの出力の演算子 ID は、 `FORMAT`指定されていない場合の演算子 ID と比較して簡略化されます。                                                                |
+| `brief`      | `EXPLAIN`ステートメントの出力の演算子 ID は、 `FORMAT`が指定されていない場合の演算子 ID と比較して簡略化されます。                                                               |
 | `dot`        | `EXPLAIN`ステートメントは DOT 実行プランを出力します。これを使用して、 `dot`プログラム ( `graphviz`パッケージ内) を通じて PNG ファイルを生成することができます。                                 |
 | `row`        | `EXPLAIN`ステートメントは結果を表形式で出力します。詳細については[クエリ実行プランを理解する](/explain-overview.md)を参照してください。                                                 |
-| `tidb_json`  | `EXPLAIN`ステートメントは実行プランを JSON 形式で出力し、演算子情報を JSON 配列に格納します。                                                                            |
+| `tidb_json`  | `EXPLAIN`ステートメントは実行プランを JSON で出力し、演算子情報を JSON 配列に格納します。                                                                              |
 | `verbose`    | `EXPLAIN`ステートメントは、結果を`row`形式で出力し、結果にはクエリの推定コストを示す`estCost`列が追加されます。この形式の使用方法の詳細については、 [SQL プラン管理](/sql-plan-management.md)を参照してください。 |
 | `plan_cache` | `EXPLAIN`ステートメントは、 [プランキャッシュ](/sql-non-prepared-plan-cache.md#diagnostics)情報を警告として含めて、 `row`形式で結果を出力します。                             |
 
@@ -320,7 +320,7 @@ EXPLAIN FORMAT = "tidb_json" SELECT id FROM t WHERE a = 1;
 `EXPLAIN FOR CONNECTION` 、現在実行中の SQL クエリまたは接続で最後に実行された SQL クエリの実行プランを取得するために使用されます。出力形式は`EXPLAIN`と同じです。ただし、TiDB での`EXPLAIN FOR CONNECTION`の実装は MySQL での実装とは異なります。それらの違い (出力形式以外) は次のとおりです。
 
 -   接続がスリープ状態の場合、MySQL は空の結果を返しますが、TiDB は最後に実行されたクエリ プランを返します。
--   現在のセッションの実行プランを取得しようとすると、MySQL はエラーを返しますが、TiDB は通常どおり結果を返します。
+-   現在のセッションの実行プランを取得しようとすると、MySQL はエラーを返しますが、TiDB は正常に結果を返します。
 -   MySQL では、ログイン ユーザーがクエリ対象の接続と同じであるか、ログイン ユーザーが**`PROCESS`**権限を持っている必要があります。一方、TiDB では、ログイン ユーザーがクエリ対象の接続と同じであるか、ログイン ユーザーが**`SUPER`**権限を持っている必要があります。
 
 ## 参照 {#see-also}

@@ -13,7 +13,7 @@ summary: TiDB ダッシュボード リソース マネージャー ページは
 
 -   TiDB ダッシュボードにログインしたら、左側のナビゲーション メニューで**[リソース マネージャー]**をクリックします。
 
--   ブラウザで[http://127.0.0.1:2379/ダッシュボード/#/リソースマネージャー](http://127.0.0.1:2379/dashboard/#/resource_manager)アクセスします。3 `127.0.0.1:2379`実際の PD インスタンスのアドレスとポートに置き換えます。
+-   ブラウザで[http://127.0.0.1:2379/dashboard/#/resource_manager](http://127.0.0.1:2379/dashboard/#/resource_manager)アクセスします。3 `127.0.0.1:2379`実際の PD インスタンスのアドレスとポートに置き換えます。
 
 ## リソース マネージャー ページ {#resource-manager-page}
 
@@ -23,7 +23,7 @@ summary: TiDB ダッシュボード リソース マネージャー ページは
 
 リソース マネージャー ページには、次の 3 つのセクションが含まれています。
 
--   コンフィグレーション: このセクションには、TiDB の`RESOURCE_GROUPS`テーブルから取得されたデータが表示されます。すべてのリソース グループに関する情報が含まれています。詳細については、 [`RESOURCE_GROUPS`](/information-schema/information-schema-resource-groups.md)を参照してください。
+-   コンフィグレーション: このセクションには、TiDB の`RESOURCE_GROUPS`テーブルから取得されたデータが表示されます。すべてのリソース グループに関する情報が含まれています。詳細については、 [`RESOURCE_GROUPS`](/information-schema/information-schema-resource-groups.md)参照してください。
 
 -   容量の見積もり: リソース計画を立てる前に、クラスターの全体的な容量を把握しておく必要があります。次のいずれかの方法を使用できます。
 
@@ -34,7 +34,7 @@ summary: TiDB ダッシュボード リソース マネージャー ページは
 
 ## 容量の見積り {#estimate-capacity}
 
-リソース計画を立てる前に、クラスターの全体的な容量を把握しておく必要があります。TiDB では[リクエストユニット (RU)](/tidb-resource-control.md#what-is-request-unit-ru#what-is-request-unit-ru)現在のクラスターの容量を見積もる 2 つの方法を提供しています。
+リソース計画を立てる前に、クラスターの全体的な容量を把握しておく必要があります。TiDB では、現在のクラスターの[リクエストユニット (RU)](/tidb-resource-control.md#what-is-request-unit-ru#what-is-request-unit-ru)を見積もる 2 つの方法を提供しています。
 
 -   [ハードウェアの展開に基づいて容量を見積もる](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-hardware-deployment)
 
@@ -57,11 +57,15 @@ summary: TiDB ダッシュボード リソース マネージャー ページは
 
     -   時間ウィンドウの範囲が 10 分から 24 時間の範囲外の場合、次のエラーが表示されます`ERROR 1105 (HY000): the duration of calibration is too short, which could lead to inaccurate output. Please make the duration between 10m0s and 24h0m0s` 。
 
-    -   [実際の作業負荷に基づく容量推定](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-actual-workload)機能の監視メトリックには、 `tikv_cpu_quota` 、 `tidb_server_maxprocs` 、 `resource_manager_resource_unit` 、および`process_cpu_usage`含まれます。CPU クォータ監視データが空の場合、対応する監視メトリック名 (例: `Error 1105 (HY000): There is no CPU quota metrics, metrics 'tikv_cpu_quota' is empty` ) にエラーが発生します。
+    -   [実際の作業負荷に基づく容量推定](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-actual-workload)機能の監視メトリックには、 `tikv_cpu_quota` 、 `tidb_server_maxprocs` 、 `resource_manager_resource_unit` 、および`process_cpu_usage`が含まれます。CPU クォータ監視データが空の場合、対応する監視メトリック名 (例: `Error 1105 (HY000): There is no CPU quota metrics, metrics 'tikv_cpu_quota' is empty` ) にエラーが発生します。
 
     -   時間枠内のワークロードが低すぎる場合、または`resource_manager_resource_unit`と`process_cpu_usage`監視データが欠落している場合は、エラーが報告されます`Error 1105 (HY000): The workload in selected time window is too low, with which TiDB is unable to reach a capacity estimation; please select another time window with higher workload, or calibrate resource by hardware instead` 。また、TiKV は macOS 上の CPU 使用率を監視しないため、実際のワークロードに基づく容量推定をサポートしておらず、このエラーも報告されます。
 
     [メトリクス](#metrics)セクションの**CPU 使用率**を使用して適切な時間範囲を選択できます。
+
+> **注記：**
+>
+> 容量推定機能を使用するには、現在のログイン ユーザーが`SUPER`または`RESOURCE_GROUP_ADMIN`権限と、一部のシステム テーブルに対する`SELECT`権限を持っている必要があります。この機能を使用する前に、現在のユーザーがこれらの権限を持っていることを確認してください。権限がない場合、一部の機能が正しく動作しない可能性があります。詳細については、 [`CALIBRATE RESOURCE`](/sql-statements/sql-statement-calibrate-resource.md#privileges)参照してください。
 
 ## メトリクス {#metrics}
 

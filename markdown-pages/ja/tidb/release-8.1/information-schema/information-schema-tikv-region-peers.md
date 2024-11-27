@@ -1,6 +1,6 @@
 ---
 title: TIKV_REGION_PEERS
-summary: TIKV_REGION_PEERS INFORMATION_SCHEMA テーブルについて学習します。
+summary: TIKV_REGION_PEERS` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # TIKV_REGION_PEERS {#tikv-region-peers}
@@ -9,7 +9,7 @@ summary: TIKV_REGION_PEERS INFORMATION_SCHEMA テーブルについて学習し�
 
 > **注記：**
 >
-> このテーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ```sql
 USE INFORMATION_SCHEMA;

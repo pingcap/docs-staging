@@ -1,21 +1,18 @@
 ---
 title: SHOW CREATE USER | TiDB SQL Statement Reference
-summary: このステートメントは、CREATE USER構文を使用してユーザーを再作成する方法を示しています。SHOW CREATE USERの出力は MySQL と一致するように設計されていますが、TiDBでまだサポートされていないオプションは解析されますが、無視されます。MySQLの互換性について詳細については、「セキュリティ互換性」を参照してください。関連記事には、ユーザーを作成、助成金を表示する、ユーザーを削除するが含まれます。
+summary: TiDB データベースに対する SHOW CREATE USER の使用法の概要。
 ---
 
 # ユーザーの作成を表示 {#show-create-user}
 
 このステートメントは、 `CREATE USER`構文を使用してユーザーを再作成する方法を示しています。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**ShowCreateUserStmt:**
-
-![ShowCreateUserStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCreateUserStmt.png)
-
-**ユーザー名:**
-
-![Username](https://download.pingcap.com/images/docs/sqlgram/Username.png)
+```ebnf+diagram
+ShowCreateUserStmt ::=
+    "SHOW" "CREATE" "USER" (Username ("@" Hostname)? | "CURRENT_USER" ( "(" ")" )? )
+```
 
 ## 例 {#examples}
 
@@ -37,12 +34,22 @@ mysql> SHOW GRANTS FOR 'root';
 1 row in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
--   `SHOW CREATE USER`の出力は MySQL と一致するように設計されていますが、 `CREATE`オプションのうちのいくつかは TiDB でまだサポートされていません。まだサポートされていないオプションは解析されますが、無視されます。詳細については、「セキュリティ互換性」を参照してください。
+<CustomContent platform="tidb">
 
-## こちらも参照 {#see-also}
+-   `SHOW CREATE USER`の出力は MySQL と一致するように設計されていますが、 `CREATE`のオプションのいくつかはまだ TiDB でサポートされていません。まだサポートされていないオプションは解析されますが無視されます。詳細については[Securityの互換性](/security-compatibility-with-mysql.md)を参照してください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+-   `SHOW CREATE USER`の出力は MySQL と一致するように設計されていますが、 `CREATE`のオプションのうちいくつかはまだ TiDB でサポートされていません。まだサポートされていないオプションは解析されますが無視されます。詳細については[Securityの互換性](https://docs.pingcap.com/tidb/stable/security-compatibility-with-mysql/)を参照してください。
+
+</CustomContent>
+
+## 参照 {#see-also}
 
 -   [ユーザーを作成](/sql-statements/sql-statement-create-user.md)
--   [助成金を表示する](/sql-statements/sql-statement-show-grants.md)
--   [ユーザーを削除する](/sql-statements/sql-statement-drop-user.md)
+-   [ショーグラント](/sql-statements/sql-statement-show-grants.md)
+-   [ユーザーを削除](/sql-statements/sql-statement-drop-user.md)

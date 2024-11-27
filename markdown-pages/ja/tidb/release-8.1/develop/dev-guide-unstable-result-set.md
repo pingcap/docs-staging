@@ -90,9 +90,9 @@ ORDER BY
 +------------+--------------+------------------+
 ```
 
-`a`フィールドの値を SQL で取得する方法を指定して***おら***ず、2 つの結果が両方とも SQL セマンティクスで満たされている`stuname` 、結果が 2 つあります。その結果、結果セットが不安定になります。したがって、 `GROUP BY`ステートメントの結果セットの安定性を保証する場合は、 `FULL GROUP BY`構文を使用します。
+`a`フィールドの値を SQL で取得する方法を指定しておら***ず***、2 つの結果が両方とも SQL セマンティクスによって満たされているため、結果が 2 つあります。その結果、結果セットが不安定に`stuname`ます。したがって、 `GROUP BY`ステートメントの結果セットの安定性を保証する場合は、 `FULL GROUP BY`構文を使用します。
 
-MySQL は、 `FULL GROUP BY`構文をチェックするかどうかを制御する`sql_mode`スイッチ`ONLY_FULL_GROUP_BY`提供します。TiDB もこの`sql_mode`スイッチと互換性があります。
+MySQL は、 `FULL GROUP BY`構文をチェックするかどうかを制御する`sql_mode`スイッチ`ONLY_FULL_GROUP_BY`を提供します。TiDB もこの`sql_mode`スイッチと互換性があります。
 
 ```sql
 mysql> select a.class, a.stuname, max(b.courscore) from stu_info a join stu_score b on a.stuno=b.stuno group by a.class order by a.class, a.stuname;
@@ -115,7 +115,7 @@ ERROR 1055 (42000): Expression #2 of ORDER BY is not in GROUP BY clause and cont
 
 ## 注文する {#order-by}
 
-SQL セマンティクスでは、 `ORDER BY`構文が使用されている場合にのみ結果セットが順番に出力されます。単一インスタンス データベースの場合、データは 1 つのサーバーに保存されるため、複数回実行した結果はデー​​タの再編成なしで安定していることがよくあります。一部のデータベース (特に MySQL InnoDBstorageエンジン) では、主キーまたはインデックスの順序で結果セットを出力することもできます。
+SQL セマンティクスでは、 `ORDER BY`構文が使用されている場合にのみ、結果セットが順番に出力されます。単一インスタンス データベースの場合、データは 1 つのサーバーに保存されるため、複数回実行した結果は、データの再編成なしで安定していることがよくあります。一部のデータベース (特に MySQL InnoDBstorageエンジン) では、主キーまたはインデックスの順序で結果セットを出力することもできます。
 
 分散データベースである TiDB は、複数のサーバーにデータを格納します。また、TiDBレイヤーはデータ ページをキャッシュしないため、 `ORDER BY`のない SQL ステートメントの結果セットの順序は不安定であると認識されやすくなります。連続した結果セットを出力するには、SQL セマンティクスに準拠する`ORDER BY`節に order フィールドを明示的に追加する必要があります。
 
@@ -167,13 +167,13 @@ mysql> select a.class, a.stuname, b.course, b.courscore from stu_info a join stu
 
 ```
 
-`ORDER BY`値が同じ場合、結果は不安定になります。ランダム性を減らすには、 `ORDER BY`値が一意である必要があります。一意性を保証できない場合は、 `ORDER BY`​​のフィールドの`ORDER BY`の組み合わせが一意になるまで、さらに`ORDER BY`フィールドを追加する必要があります。そうすれば、結果は安定します。
+`ORDER BY`値が同じ場合、結果は不安定になります。ランダム性を減らすには、 `ORDER BY`値が一意である必要があります。一意性を保証できない場合は、 `ORDER BY`のフィールドの`ORDER BY`の組み合わせが一意になるまで、さらに`ORDER BY`フィールドを追加する必要があります。そうすれば、結果は安定します。
 
 ## <code>GROUP_CONCAT()</code>で order by が使用されていないため、結果セットは不安定です。 {#the-result-set-is-unstable-because-order-by-is-not-used-in-code-group-concat-code}
 
 TiDB はstorageレイヤーからデータを並列に読み取るため、結果セットは不安定になり、 `ORDER BY`なしで`GROUP_CONCAT()`によって返される結果セットの順序は不安定であると簡単に認識されます。
 
-`GROUP_CONCAT()`結果セット出力を順序どおりに取得できるようにするには、SQL セマンティクスに準拠する`ORDER BY`句にソート フィールドを追加する必要があります。次の例では、 `ORDER BY`なしで`customer_id`を結合する`GROUP_CONCAT()`によって、不安定な結果セットが発生します。
+`GROUP_CONCAT()`結果セット出力を順序どおりに取得できるようにするには、SQL セマンティクスに準拠する`ORDER BY`句にソート フィールドを追加する必要があります。次の例では、 `ORDER BY`なしで`customer_id`結合する`GROUP_CONCAT()`によって、不安定な結果セットが発生します。
 
 1.  除外`ORDER BY`
 
@@ -199,7 +199,7 @@ TiDB はstorageレイヤーからデータを並列に読み取るため、結�
     +-------------------------------------------------------------------------+
     ```
 
-2.  `ORDER BY`含む
+2.  `ORDER BY`を含む
 
     最初のクエリ:
 
@@ -226,3 +226,17 @@ TiDB はstorageレイヤーからデータを並列に読み取るため、結�
 ## <code>SELECT * FROM T LIMIT N</code>で結果が不安定になる {#unstable-results-in-code-select-from-t-limit-n-code}
 
 返される結果は、storageノード (TiKV) 上のデータの分散に関係します。複数のクエリを実行すると、storageノード (TiKV) の異なるstorageユニット (リージョン) が異なる速度で結果を返すため、結果が不安定になる可能性があります。
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

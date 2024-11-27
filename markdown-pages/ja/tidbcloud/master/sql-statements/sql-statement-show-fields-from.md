@@ -1,8 +1,8 @@
 ---
 title: SHOW [FULL] FIELDS FROM | TiDB SQL Statement Reference
-summary: SHOW COLUMNS FROMステートメントのエイリアスで、MySQLとの互換性のために含まれています。
+summary: TiDB データベースの SHOW [FULL] FIELDS FROM の使用法の概要。
 ---
 
-# からの [完全な] フィールドを表示 {#show-full-fields-from}
+# [FULL]フィールドを表示 {#show-full-fields-from}
 
-このステートメントは[`SHOW [FULL] COLUMNS FROM`](/sql-statements/sql-statement-show-columns-from.md)のエイリアスです。これは、MySQL との互換性のために含まれています。
+このステートメントは[`SHOW [FULL] COLUMNS FROM`](/sql-statements/sql-statement-show-columns-from.md)のエイリアスです。MySQL との互換性のために含まれています。

@@ -1,23 +1,23 @@
 ---
 title: WITH | TiDB SQL Statement Reference
-summary: 共通テーブル式 (CTE) は、SQL ステートメント内で複数回参照できる一時的な結果セットで、ステートメントの可読性と実行効率を向上させます。WITHステートメントを適用して共通テーブル式を使用できます。非再帰的CTEと再帰的CTEの例があります。MySQLの互換性についても記載されています。
+summary: TiDB データベースの WITH (共通テーブル式) の使用法の概要。
 ---
 
 # と {#with}
 
-共通テーブル式 (CTE) は、SQL ステートメント内で複数回参照できる一時的な結果セットで、ステートメントの可読性と実行効率を向上させます。 `WITH`ステートメントを適用して共通テーブル式を使用できます。
+共通テーブル式 (CTE) は、SQL ステートメント内で複数回参照できる一時的な結果セットであり、ステートメントの可読性と実行効率を向上させます。共通テーブル式を使用するには、 `WITH`ステートメントを適用できます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**句あり:**
+**句:**
 
 ```ebnf+diagram
 WithClause ::=
         "WITH" WithList
-|       "WITH" recursive WithList
+|       "WITH" "RECURSIVE" WithList
 ```
 
-**リストあり:**
+**リスト付き:**
 
 ```ebnf+diagram
 WithList ::=
@@ -25,14 +25,14 @@ WithList ::=
 |       CommonTableExpr
 ```
 
-**CommonTableExpr:**
+**共通テーブル表現:**
 
 ```ebnf+diagram
 CommonTableExpr ::=
         Identifier IdentListWithParenOpt "AS" SubSelect
 ```
 
-**IdentListWithParenOpt:**
+**親オプション付き識別子リスト:**
 
 ```ebnf+diagram
 IdentListWithParenOpt ::=
@@ -41,10 +41,10 @@ IdentListWithParenOpt ::=
 
 ## 例 {#examples}
 
-非再帰的 CTE:
+非再帰CTE:
 
 ```sql
-WITH CTE AS (SELECT 1, 2) SELECT * FROM cte t1, cte t2;
+WITH cte AS (SELECT 1, 2) SELECT * FROM cte t1, cte t2;
 ```
 
     +---+---+---+---+
@@ -54,7 +54,7 @@ WITH CTE AS (SELECT 1, 2) SELECT * FROM cte t1, cte t2;
     +---+---+---+---+
     1 row in set (0.00 sec)
 
-再帰的 CTE:
+再帰CTE:
 
 ```sql
 WITH RECURSIVE cte(a) AS (SELECT 1 UNION SELECT a+1 FROM cte WHERE a < 5) SELECT * FROM cte;
@@ -71,15 +71,16 @@ WITH RECURSIVE cte(a) AS (SELECT 1 UNION SELECT a+1 FROM cte WHERE a < 5) SELECT
     +---+
     5 rows in set (0.00 sec)
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
--   strict モードでは、再帰的に計算されたデータ長がシード部分のデータ長を超えると、TiDB は警告を返しますが、MySQL はエラーを返します。非厳密モードでは、TiDB の動作は MySQL の動作と一致します。
--   再帰的 CTE のデータ型はシード部分によって決定されます。シード部分のデータ型は、MySQL と完全に一致していない場合があります (関数など)。
--   複数の`UNION` / `UNION ALL`演算子の場合、MySQL では`UNION`後に`UNION ALL`を続けることは許可されませんが、TiDB では許可されます。
--   CTE の定義に問題がある場合、TiDB はエラーを報告しますが、MySQL は CTE が参照されていない場合はエラーを報告しません。
+-   厳密モードでは、再帰的に計算されたデータ長がシード部分のデータ長を超えると、TiDB は警告を返し、MySQL はエラーを返します。非厳密モードでは、TiDB の動作は MySQL の動作と一致します。
+-   再帰 CTE のデータ型はシード部分によって決まります。シード部分のデータ型は、場合によっては MySQL と完全に一致しません (関数など)。
+-   `UNION` / `UNION ALL`演算子が複数ある場合、MySQL では`UNION`の後に`UNION ALL`を続けることはできませんが、TiDB では可能です。
+-   CTE の定義に問題がある場合、TiDB はエラーを報告しますが、CTE が参照されていない場合、MySQL はエラーを報告しません。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
+-   [開発者ガイド: 共通テーブル式](/develop/dev-guide-use-common-table-expression.md)
 -   [選択する](/sql-statements/sql-statement-select.md)
 -   [入れる](/sql-statements/sql-statement-insert.md)
 -   [消去](/sql-statements/sql-statement-delete.md)

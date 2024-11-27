@@ -1,13 +1,13 @@
 ---
 title: CREATE TABLE LIKE | TiDB SQL Statement Reference
-summary: テーブルを作成するステートメントは、既存のテーブルの定義をコピーします。MySQLの互換性があり、PRE_SPLIT_REGIONS属性で定義されたテーブルをコピーする場合、新しいテーブルも同じ属性を継承します。テーブルの作成や表示に関する詳細は、関連するドキュメントを参照してください。
+summary: TiDB データベースの CREATE TABLE LIKE の使用法の概要。
 ---
 
-# 次のようなテーブルを作成します {#create-table-like}
+# 次のようなテーブルを作成する {#create-table-like}
 
 このステートメントは、データをコピーせずに、既存のテーブルの定義をコピーします。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 CreateTableLikeStmt ::=
@@ -53,15 +53,15 @@ mysql> SELECT * FROM t2;
 Empty set (0.00 sec)
 ```
 
-## 分割前の領域 {#pre-split-region}
+## 分割前の地域 {#pre-split-region}
 
-コピーするテーブルが`PRE_SPLIT_REGIONS`属性で定義されている場合、 `CREATE TABLE LIKE`ステートメントで作成されたテーブルはこの属性を継承し、新しいテーブルのリージョンが分割されます。 `PRE_SPLIT_REGIONS`の詳細については、 [`CREATE TABLE`ステートメント](/sql-statements/sql-statement-create-table.md)を参照してください。
+コピー元のテーブルに`PRE_SPLIT_REGIONS`属性が定義されている場合、 `CREATE TABLE LIKE`ステートメントで作成されたテーブルはこの属性を継承し、新しいテーブル上のリージョンは分割されます。 `PRE_SPLIT_REGIONS`の詳細については[`CREATE TABLE`ステートメント](/sql-statements/sql-statement-create-table.md)を参照してください。
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`CREATE TABLE LIKE`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`CREATE TABLE LIKE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
--   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
+-   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)

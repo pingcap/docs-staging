@@ -1,6 +1,6 @@
 ---
 title: TRACE | TiDB SQL Statement Reference
-summary: An overview of the usage of TRACE for the TiDB database.
+summary: TiDB データベースでの TRACE の使用法の概要。
 ---
 
 # 痕跡 {#trace}

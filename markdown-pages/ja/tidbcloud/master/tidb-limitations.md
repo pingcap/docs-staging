@@ -5,11 +5,7 @@ summary: TiDB の使用制限について学習します。
 
 # TiDB の制限 {#tidb-limitations}
 
-このドキュメントでは、最大識別子長や、サポートされるデータベース、テーブル、インデックス、パーティション テーブル、シーケンスの最大数など、TiDB の一般的な使用上の制限について説明します。
-
-> **注記：**
->
-> TiDB は、MySQL の多くの制限を含む、MySQL プロトコルおよび構文との高い互換性を備えています。たとえば、1 つのインデックスには最大 16 列を含めることができます。詳細については、 [MySQL 互換性](/mysql-compatibility.md)および公式の MySQL ドキュメントを参照してください。
+このドキュメントでは、識別子の最大長や、サポートされるデータベース、テーブル、インデックス、パーティション テーブル、シーケンスの最大数など、TiDB の一般的な使用上の制限について説明します。
 
 ## 識別子の長さの制限 {#limitations-on-identifier-length}
 
@@ -39,7 +35,7 @@ summary: TiDB の使用制限について学習します。
 
 ## 単一テーブルに関する制限 {#limitations-on-a-single-table}
 
-| タイプ     | 上限（デフォルト値）                  |
+| タイプ     | 上限値（デフォルト値）                 |
 | :------ | :-------------------------- |
 | コラム     | デフォルトは1017で、最大4096まで調整できます。 |
 | インデックス  | デフォルトは64で、最大512まで調整可能       |
@@ -56,13 +52,13 @@ summary: TiDB の使用制限について学習します。
 
 ## 1行の制限 {#limitation-on-a-single-row}
 
-| タイプ | 上限（デフォルト値）                 |
+| タイプ | 上限値（デフォルト値）                |
 | :-- | :------------------------- |
 | サイズ | デフォルトは6 MiBで、120 MiBまで調整可能 |
 
 <CustomContent platform="tidb">
 
-[`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500)構成項目を介してサイズ制限を調整できます。
+[`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v50)構成項目を介してサイズ制限を調整できます。
 
 </CustomContent>
 

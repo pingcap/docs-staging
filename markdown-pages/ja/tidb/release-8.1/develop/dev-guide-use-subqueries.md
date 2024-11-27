@@ -17,10 +17,10 @@ summary: TiDB でサブクエリを使用する方法を学習します。
 
 ほとんどの場合、サブクエリには次の 5 つの種類があります。
 
--   スカラー サブクエリ (例: `SELECT (SELECT s1 FROM t2) FROM t1` 。
+-   スカラー サブクエリ (例: `SELECT (SELECT s1 FROM t2) FROM t1` )。
 -   派生テーブル (例: `SELECT t1.s1 FROM (SELECT s1 FROM t2) t1` 。
--   存在テスト、例えば`WHERE NOT EXISTS(SELECT ... FROM t2)` 、 `WHERE t1.a IN (SELECT ... FROM t2)` 。
--   `WHERE t1.a = ANY(SELECT ... FROM t2)` `WHERE t1.a = ANY(SELECT ... FROM t2)`の定量化された比較。
+-   存在`WHERE t1.a IN (SELECT ... FROM t2)` 、例： `WHERE NOT EXISTS(SELECT ... FROM t2)` 。
+-   `WHERE t1.a = ANY(SELECT ... FROM t2)`など`WHERE t1.a = ANY(SELECT ... FROM t2)`定量化された比較。
 -   比較演算子のオペランドとしてのサブクエリ (例: `WHERE t1.a > (SELECT ... FROM t2)` 。
 
 ## サブクエリのカテゴリ {#category-of-subquery}
@@ -33,7 +33,7 @@ summary: TiDB でサブクエリを使用する方法を学習します。
 
 サブクエリを比較演算子 ( `>` 、 `>=` 、 `<` 、 `<=` 、 `=` 、または`! =` ) のオペランドとして使用する自己完結型サブクエリの場合、内部サブクエリは 1 回だけクエリを実行し、TiDB は実行プラン フェーズ中にそれを定数として書き換えます。
 
-たとえば、年齢が平均年齢より大きい`authors`テーブル内の著者を照会するには、比較演算子のオペランドとしてサブクエリを使用できます。
+たとえば、年齢が平均年齢より大きい`authors`のテーブル内の著者を照会するには、比較演算子のオペランドとしてサブクエリを使用できます。
 
 ```sql
 SELECT * FROM authors a1 WHERE (IFNULL(a1.death_year, YEAR(NOW())) - a1.birth_year) > (
@@ -83,7 +83,7 @@ WHERE (IFNULL(a1.death_year, YEAR(NOW())) - a1.birth_year) > 34;
 
 相関サブクエリの場合、内部サブクエリは外部クエリの列を参照するため、各サブクエリは外部クエリの各行に対して 1 回実行されます。つまり、外部クエリが 1,000 万件の結果を取得すると仮定すると、サブクエリも 1,000 万回実行され、より多くの時間とリソースが消費されます。
 
-そのため、処理の過程で、TiDB は実行プラン レベルでクエリ効率を向上させるよう[相関サブクエリの非相関](/correlated-subquery-optimization.md)努めます。
+そのため、処理の過程で、TiDB は実行プラン レベルで[相関サブクエリの非相関](/correlated-subquery-optimization.md)効率を向上させるように努めます。
 
 次の文は、同じ性別の他の著者の平均年齢よりも年上の著者を照会するためのものです。
 
@@ -99,7 +99,7 @@ SELECT * FROM authors a1 WHERE (IFNULL(a1.death_year, YEAR(NOW())) - a1.birth_ye
 );
 ```
 
-TiDB はこれを同等の`join`クエリに書き換えます。
+TiDB はこれを同等の`join`のクエリに書き換えます。
 
 ```sql
 SELECT *
@@ -125,4 +125,18 @@ WHERE
 
 -   [サブクエリ関連の最適化](/subquery-optimization.md)
 -   [相関サブクエリの非相関](/correlated-subquery-optimization.md)
--   [TiDB におけるサブクエリの最適化](https://en.pingcap.com/blog/subquery-optimization-in-tidb/)
+-   [TiDB におけるサブクエリの最適化](https://www.pingcap.com/blog/subquery-optimization-in-tidb/)
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

@@ -11,7 +11,7 @@ TiDB Cloud [データ サービス (ベータ版)](https://tidbcloud.com/console
 
 > **注記：**
 >
-> データ サービスは[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターで利用できます。TiDB TiDB Cloud Dedicated クラスターでデータ サービスを使用するには、 [TiDB Cloudサポート](/tidb-cloud/tidb-cloud-support.md)お問い合わせください。
+> データ サービスは[TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless)クラスターで利用できます。TiDB 専用クラスターでデータ サービスを使用するには、 [TiDB Cloudサポート](/tidb-cloud/tidb-cloud-support.md)お問い合わせください。
 
 Data Service のエンドポイントは、SQL ステートメントを実行するためにカスタマイズできる Web API です。SQL ステートメントのパラメーター ( `WHERE`句で使用される値など) を指定できます。クライアントがエンドポイントを呼び出し、要求 URL でパラメーターの値を指定すると、エンドポイントは指定されたパラメーターを使用して対応する SQL ステートメントを実行し、結果を HTTP 応答の一部として返します。
 
@@ -25,14 +25,14 @@ Data Service のエンドポイントは、SQL ステートメントを実行す
 
 ## シナリオ {#scenarios}
 
-データ サービスを使用すると、 TiDB Cloud をHTTPS と互換性のある任意のアプリケーションまたはサービスとシームレスに統合できます。次に、一般的な使用シナリオを示します。
+データ サービスを使用すると、 TiDB Cloud をHTTPS と互換性のある任意のアプリケーションまたはサービスとシームレスに統合できます。次に、一般的な使用シナリオをいくつか示します。
 
 -   モバイル アプリケーションまたは Web アプリケーションから直接 TiDB クラスターのデータベースにアクセスします。
 -   サーバーレス エッジ関数を使用してエンドポイントを呼び出し、データベース接続プールによって発生するスケーラビリティの問題を回避します。
 -   データ サービスをデータ ソースとして使用して、 TiDB Cloudをデータ視覚化プロジェクトと統合します。これにより、データベース接続のユーザー名とパスワードが公開されることがなくなり、API がより安全で使いやすくなります。
 -   MySQL インターフェースがサポートしていない環境からデータベースに接続します。これにより、データにアクセスするための柔軟性とオプションが向上します。
 
-## 次は何か {#what-s-next}
+## 次は何ですか {#what-s-next}
 
 -   [データサービスを始める](/tidb-cloud/data-service-get-started.md)
 -   [Chat2Query APIを使い始める](/tidb-cloud/use-chat2query-api.md)

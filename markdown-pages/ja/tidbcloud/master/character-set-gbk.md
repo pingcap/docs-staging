@@ -1,6 +1,6 @@
 ---
 title: GBK
-summary: This document provides details about the TiDB support of the GBK character set.
+summary: このドキュメントでは、GBK 文字セットの TiDB サポートについて詳しく説明します。
 ---
 
 # イギリス {#gbk}
@@ -101,8 +101,6 @@ SHOW COLLATION WHERE CHARSET = 'gbk';
 <!---->
 
 -   現在、 `ENUM`および`SET`タイプのバイナリ文字については、TiDB は`utf8mb4`文字セットとして処理します。
-
--   TiDB v7.5.0 では、述語に`LIKE 'prefix%'`などの文字列プレフィックスの`LIKE`含まれており、ターゲット列が GBK照合順序( `gbk_bin`または`gbk_chinese_ci` ) に設定されている場合、オプティマイザーは現在この述語を範囲スキャンに変換できません。代わりに、フルスキャンを実行します。その結果、このような SQL クエリによって予期しないリソース消費が発生する可能性があります。v7.5.1 以降では、この制限はなくなりました。
 
 ## コンポーネントの互換性 {#component-compatibility}
 

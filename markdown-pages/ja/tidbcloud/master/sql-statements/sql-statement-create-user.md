@@ -1,13 +1,13 @@
 ---
 title: CREATE USER | TiDB SQL Statement Reference
-summary: 新しいユーザーを作成するためのステートメントです。パスワードを指定してユーザーを作成し、特定のホストからのみ接続可能なユーザーを作成することができます。さらに、異なる権限を持つ2人のユーザーを作成することも可能です。MySQLの互換性に関する注意もあります。
+summary: TiDB データベースの CREATE USER の使用法の概要。
 ---
 
 # ユーザーを作成 {#create-user}
 
-このステートメントは、パスワードを指定して新しいユーザーを作成します。 MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。これにより、ＩＰアドレス`192.168.1.1`からのみ接続可能なユーザ`'newuser2'@'192.168.1.1'`を作成することができる。 2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
+このステートメントは、パスワードを指定して新しいユーザーを作成します。MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。したがって、IP アドレス`192.168.1.1`からのみ接続できるユーザー`'newuser2'@'192.168.1.1'`を作成できます。また、2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 CreateUserStmt ::=
@@ -50,7 +50,7 @@ RequireListElement ::= 'ISSUER' Issuer | 'SUBJECT' Subject | 'CIPHER' Cipher | '
 
 ## 例 {#examples}
 
-`newuserpassword`パスワードを使用してユーザーを作成します。
+`newuserpassword`パスワードを持つユーザーを作成します。
 
 ```sql
 mysql> CREATE USER 'newuser' IDENTIFIED BY 'newuserpassword';
@@ -86,7 +86,7 @@ CREATE USER 'newuser5'@'%' ACCOUNT LOCK;
 
     Query OK, 1 row affected (0.02 sec)
 
-コメントを含むユーザーを作成します。
+コメント付きのユーザーを作成します。
 
 ```sql
 CREATE USER 'newuser6'@'%' COMMENT 'This user is created only for test';
@@ -100,7 +100,7 @@ SELECT * FROM information_schema.user_attributes;
     +-----------+------+---------------------------------------------------+
     1 rows in set (0.00 sec)
 
-`email`属性のユーザーを作成します。
+属性が`email`ユーザーを作成します。
 
 ```sql
 CREATE USER 'newuser7'@'%' ATTRIBUTE '{"email": "user@pingcap.com"}';
@@ -116,7 +116,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-最新の 5 つのパスワードの再利用を許可しないユーザーを作成します。
+過去 5 つのパスワードを再利用できないユーザーを作成します。
 
 ```sql
 CREATE USER 'newuser8'@'%' PASSWORD HISTORY 5;
@@ -124,7 +124,7 @@ CREATE USER 'newuser8'@'%' PASSWORD HISTORY 5;
 
     Query OK, 1 row affected (0.02 sec)
 
-パスワードが手動で期限切れになったユーザーを作成します。
+パスワードを手動で期限切れにするユーザーを作成します。
 
 ```sql
 CREATE USER 'newuser9'@'%' PASSWORD EXPIRE;
@@ -148,14 +148,14 @@ SELECT USER, HOST, USER_ATTRIBUTES FROM MYSQL.USER WHERE USER='newuser7';
 1 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
 次の`CREATE USER`オプションは TiDB ではまだサポートされていないため、解析されますが無視されます。
 
--   TiDB は、 `WITH MAX_QUERIES_PER_HOUR` 、 `WITH MAX_UPDATES_PER_HOUR` 、および`WITH MAX_USER_CONNECTIONS`オプションをサポートしません。
+-   TiDB は`WITH MAX_QUERIES_PER_HOUR` 、 `WITH MAX_UPDATES_PER_HOUR` 、 `WITH MAX_USER_CONNECTIONS`オプションをサポートしていません。
 -   TiDB は`DEFAULT ROLE`オプションをサポートしていません。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 <CustomContent platform="tidb">
 
@@ -164,6 +164,6 @@ SELECT USER, HOST, USER_ATTRIBUTES FROM MYSQL.USER WHERE USER='newuser7';
 
 </CustomContent>
 
--   [ユーザーを削除する](/sql-statements/sql-statement-drop-user.md)
+-   [ユーザーを削除](/sql-statements/sql-statement-drop-user.md)
 -   [ユーザーの作成を表示](/sql-statements/sql-statement-show-create-user.md)
 -   [ユーザーの変更](/sql-statements/sql-statement-alter-user.md)

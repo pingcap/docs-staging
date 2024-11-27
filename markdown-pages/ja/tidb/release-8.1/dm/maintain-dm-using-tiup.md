@@ -1,11 +1,11 @@
 ---
 title: Maintain a DM Cluster Using TiUP
-summary: TiUPを使用して DM クラスターを保守する方法を学習します。
+summary: TiUP を使用して DM クラスターを保守する方法を学習します。
 ---
 
 # TiUPを使用して DMクラスタを管理 {#maintain-a-dm-cluster-using-tiup}
 
-このドキュメントでは、TiUP DMコンポーネントを使用して DM クラスターを保守する方法について説明します。
+このドキュメントでは、 TiUP DMコンポーネントを使用して DM クラスターを保守する方法について説明します。
 
 DM クラスターをまだ展開していない場合は、手順[TiUPを使用して DMクラスタをデプロイ](/dm/deploy-a-dm-cluster-using-tiup.md)を参照してください。
 
@@ -101,7 +101,7 @@ tiup dm display prod-cluster
     172.19.0.101:3000  grafana       172.19.0.101  3000       linux/x86_64  Up         -                                  /home/tidb/deploy/grafana-3000
     172.19.0.101:9090  prometheus    172.19.0.101  9090       linux/x86_64  Up         /home/tidb/data/prometheus-9090    /home/tidb/deploy/prometheus-9090
 
-`Status`列目では、 `Up`または`Down`を使用して、サービスが正常に実行されているかどうかを示します。
+`Status`列目では、 `Up`または`Down`使用して、サービスが正常に実行されているかどうかを示します。
 
 DM マスターコンポーネントの場合、ステータスに`|L`追加されることがあります。これは、DM マスター ノードがLeaderであることを示します。DM ワーカーコンポーネントの場合、 `Free` 、現在の DM ワーカー ノードがアップストリームにバインドされていないことを示します。
 
@@ -163,7 +163,7 @@ tiup dm scale-in prod-cluster -N 172.16.5.140:8262
 >
 > v2.0.5 以降、dmctl は[データソースのエクスポートとインポート、およびクラスターのタスクコンフィグレーション](/dm/dm-export-import-config.md)サポートします。
 >
-> アップグレードする前に、 `config export`使用してクラスターの構成ファイルをエクスポートできます。アップグレード後に以前のバージョンにダウングレードする必要がある場合は、まず以前のクラスターを再デプロイし、次に`config import`を使用して以前の構成ファイルをインポートできます。
+> アップグレードする前に、 `config export`使用してクラスターの構成ファイルをエクスポートできます。アップグレード後に以前のバージョンにダウングレードする必要がある場合は、まず以前のクラスターを再デプロイし、次に`config import`使用して以前の構成ファイルをインポートできます。
 >
 > v2.0.5 より前のクラスターの場合は、dmctl (&gt;= v2.0.5 かつ &lt; v8.0.0) を使用して、データ ソースおよびタスク構成ファイルをエクスポートおよびインポートできます。
 >
@@ -173,11 +173,11 @@ tiup dm scale-in prod-cluster -N 172.16.5.140:8262
 
 ### アップグレードコマンド {#upgrade-command}
 
-`tiup dm upgrade`コマンドを実行して、DM クラスターをアップグレードできます。たとえば、次のコマンドはクラスターを`${version}`にアップグレードします。このコマンドを実行する前に、 `${version}`必要なバージョンに変更してください。
+`tiup dm upgrade`コマンドを実行して DM クラスターをアップグレードできます。たとえば、次のコマンドはクラスターを`${version}`にアップグレードします。このコマンドを実行する前に、 `${version}`必要なバージョンに変更してください。
 
 > **注記：**
 >
-> DM のバージョン 8.0.0 以降では、暗号化と復号化の固定秘密キーが削除され、暗号化と復号化の秘密キーをカスタマイズできるようになりました。アップグレード前に[データソース構成](/dm/dm-source-configuration-file.md)と[移行タスクの構成](/dm/task-configuration-file-full.md)で暗号化されたパスワードが使用されている場合は、追加の操作については[DM 暗号化と復号化のための秘密鍵をカスタマイズする](/dm/dm-customized-secret-key.md)のアップグレード手順を参照する必要があります。
+> DM v8.0.0 以降では、暗号化および復号化の固定秘密キーが削除され、暗号化および復号化の秘密キーをカスタマイズできるようになりました。アップグレード前に[データソース構成](/dm/dm-source-configuration-file.md)および[移行タスクの構成](/dm/task-configuration-file-full.md)で暗号化されたパスワードが使用されている場合は、追加の操作については[DM 暗号化と復号化のための秘密鍵をカスタマイズする](/dm/dm-customized-secret-key.md)のアップグレード手順を参照する必要があります。
 
 ```bash
 tiup dm upgrade prod-cluster ${version}
@@ -241,7 +241,7 @@ tiup dm patch prod-cluster /tmp/dm--hotfix.tar.gz -N 172.16.4.5:8261
 
 > **注記：**
 >
-> -   TiUP は、DM 1.0 クラスターへの DM ポータルコンポーネントのインポートをサポートしていません。
+> -   TiUP は、 DM 1.0 クラスターへの DM ポータルコンポーネントのインポートをサポートしていません。
 > -   インポートする前に元のクラスターを停止する必要があります。
 > -   2.0 にアップグレードする必要があるタスクでは`stop-task`実行しないでください。
 > -   TiUP は、v2.0.0-rc.2 以降のバージョンの DM クラスターへのインポートのみをサポートします。
@@ -258,7 +258,7 @@ TiUPがリリースされる前は、DM クラスターのデプロイに DM-Ans
 tiup dm import --dir=/path/to/dm-ansible --cluster-version ${version}
 ```
 
-`tiup list dm-master`を実行すると、 TiUPでサポートされている最新のクラスター バージョンが表示されます。
+`tiup list dm-master`実行すると、 TiUPでサポートされている最新のクラスター バージョンが表示されます。
 
 `import`コマンドを使用するプロセスは次のとおりです。
 
@@ -269,7 +269,7 @@ tiup dm import --dir=/path/to/dm-ansible --cluster-version ${version}
 
 ## 操作ログをビュー {#view-the-operation-log}
 
-操作ログを`audit`するには、 `audit`コマンドを使用します。3 コマンドの使用方法は次のとおりです。
+操作ログを表示するには、 `audit`コマンドを使用`audit`ます。3 コマンドの使用方法は次のとおりです。
 
 ```bash
 Usage:
@@ -299,7 +299,7 @@ tiup dm audit 4D5kQY
 
 ## DM クラスター内のホストでコマンドを実行する {#run-commands-on-a-host-in-the-dm-cluster}
 
-DM クラスター内のホストでコマンド`exec`実行するには、 `exec`コマンドを使用します。3 コマンドの使用方法は次のとおりです。
+DM クラスター内のホストでコマンドを実行するには、 `exec`コマンドを使用します。3 `exec`の使用方法は次のとおりです。
 
 ```bash
 Usage:
@@ -346,9 +346,9 @@ tiup dmctl --master-addr master1:8261 operate-source create /tmp/source1.yml
 -   認証にSSHプラグインを使用するには
 -   カスタマイズされたSSHクライアントを使用するには
 
-次に、 `--native-ssh`コマンドライン フラグを使用して、システム ネイティブのコマンドライン ツールを有効にします。
+次に、 `--native-ssh`コマンドライン フラグを使用して、システム ネイティブ コマンドライン ツールを有効にします。
 
--   クラスターをデプロイ: `tiup dm deploy <cluster-name> <version> <topo> --native-ssh` `<cluster-name>`にクラスターの名前、 `<version>`にデプロイする DM バージョン ( `v8.1.0`など)、 `<topo>`にトポロジ ファイル名を入力します。
+-   クラスターをデプロイ: `tiup dm deploy <cluster-name> <version> <topo> --native-ssh` `<cluster-name>`にクラスターの名前、 `<version>`にデプロイする DM バージョン ( `v8.1.1`など)、 `<topo>`にトポロジ ファイル名を入力します。
 -   クラスターを起動します: `tiup dm start <cluster-name> --native-ssh` .
 -   クラスターのアップグレード: `tiup dm upgrade ... --native-ssh`
 
@@ -368,4 +368,4 @@ export TIUP_NATIVE_SSH=enable
 
 > **注記：**
 >
-> クラスターの展開プロセス中に、接続にパスワードを使用する必要がある場合、またはキー ファイルに`passphrase`が設定されている場合は、制御マシンに`sshpass`インストールされていることを確認する必要があります。そうでない場合、タイムアウト エラーが報告されます。
+> クラスターの展開プロセス中に、接続にパスワードを使用する必要がある場合、またはキー ファイルに`passphrase`が設定されている場合は、制御マシンに`sshpass`がインストールされていることを確認する必要があります。そうでない場合、タイムアウト エラーが報告されます。

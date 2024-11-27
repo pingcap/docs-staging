@@ -1,11 +1,11 @@
 ---
 title: VARIABLES_INFO
-summary: 表VARIABLES_INFOは、TiDBインスタンスまたはクラスター内のシステム変数に関する情報を提供します。VARIABLE_NAMEは変数の名前、VARIABLE_SCOPEは変数のスコープ、DEFAULT_VALUEはデフォルト値、CURRENT_VALUEは現在値、MIN_VALUEは最小値、MAX_VALUEは最大値、POSSIBLE_VALUESは可能な値、IS_NOOPはnoop変数かどうかを示します。
+summary: VARIABLES_INFO information_schema テーブルについて学習します。
 ---
 
 # 変数情報 {#variables-info}
 
-表`VARIABLES_INFO`は、現在の TiDB インスタンスまたは TiDB クラスター内のシステム変数のデフォルト値、現在の値、およびスコープに関する情報を提供します。
+`VARIABLES_INFO`テーブルには、現在の TiDB インスタンスまたは TiDB クラスターの[システム変数](/system-variables.md)のデフォルト値、現在の値、およびスコープに関する情報が提供されます。
 
 ```sql
 USE information_schema;
@@ -43,13 +43,13 @@ SELECT * FROM variables_info ORDER BY variable_name LIMIT 3;
 3 rows in set (0.01 sec)
 ```
 
-`VARIABLES_INFO`テーブルのフィールドは次のように説明されています。
+`VARIABLES_INFO`テーブル内のフィールドは次のように説明されます。
 
 -   `VARIABLE_NAME` : システム変数の名前。
--   `VARIABLE_SCOPE` : システム変数のスコープ。 `SESSION` 、システム変数が現在のセッションでのみ有効であることを意味します。 `INSTANCE` 、システム変数が TiDB インスタンスで有効であることを意味します。 `GLOBAL` 、システム変数が TiDB クラスターで有効であることを意味します。 `NONE` 、システム変数が TiDB クラスターで読み取り専用であることを意味します。
+-   `VARIABLE_SCOPE` : システム変数のスコープ`SESSION`は、システム変数が現在のセッションでのみ有効であることを意味します`INSTANCE`は、システム変数が TiDB インスタンスで有効であることを意味します。6 `GLOBAL` 、システム変数が TiDB クラスターで有効であることを意味します。8 `NONE` 、システム変数が TiDB クラスターで読み取り専用であることを意味します。
 -   `DEFAULT_VALUE` : システム変数のデフォルト値。
--   `CURRENT_VALUE` : システム変数の現在値。スコープに`SESSION`含まれる場合、 `CURRENT_VALUE`現在のセッションの値になります。
--   `MIN_VALUE` : システム変数に許可される最小値。システム変数が数値でない場合、 `MIN_VALUE`は NULL になります。
--   `MAX_VALUE` : システム変数に許可される最大値。システム変数が数値でない場合、 `MAX_VALUE`は NULL になります。
--   `POSSIBLE_VALUES` : システム変数の可能な値。システム変数が列挙型ではない場合、 `POSSIBLE_VALUES`は NULL になります。
+-   `CURRENT_VALUE` : システム変数の現在の値。スコープに`SESSION`含まれる場合、現在のセッションの値は`CURRENT_VALUE`なります。
+-   `MIN_VALUE` : システム変数に許可される最小値。システム変数が数値でない場合、 `MIN_VALUE` NULL になります。
+-   `MAX_VALUE` : システム変数に許可される最大値。システム変数が数値でない場合、 `MAX_VALUE` NULL になります。
+-   `POSSIBLE_VALUES` : システム変数の可能な値。システム変数が列挙型でない場合、 `POSSIBLE_VALUES` NULL になります。
 -   `IS_NOOP` : システム変数が`noop`システム変数であるかどうか。

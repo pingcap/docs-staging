@@ -1,6 +1,6 @@
 ---
 title: SHOW BUILTINS
-summary: The usage of SHOW BUILTINS in TiDB.
+summary: TiDB での SHOW BUILTINS の使用法。
 ---
 
 # ビルトインを表示 {#show-builtins}

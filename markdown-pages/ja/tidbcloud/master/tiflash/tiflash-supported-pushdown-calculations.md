@@ -1,56 +1,56 @@
 ---
 title: Push-down calculations Supported by TiFlash
-summary: TiFlashは、TableScan、選択、HashAgg、StreamAgg、TopN、リミット、プロジェクト、HashJoin、ウィンドウ関数をサポートしています。TiFlashにプッシュダウンできる式のタイプには、数値関数、論理関数、ビット単位の演算、文字列関数、正規表現の関数、日付関数、JSON関数、変換関数、集計関数、その他の関数があります。ただし、TiFlashにプッシュダウンできない制限もあります。例えば、Bit、Set、Geometryタイプを含む式や一部の関数はTiFlashにプッシュダウンできません。また、ウィンドウ関数の一部もサポートされていません。
+summary: TiFlashでサポートされているプッシュダウン計算について学習します。
 ---
 
 # TiFlashでサポートされるプッシュダウン計算 {#push-down-calculations-supported-by-tiflash}
 
-このドキュメントでは、 TiFlashでサポートされているプッシュダウン計算を紹介します。
+このドキュメントでは、 TiFlashでサポートされているプッシュダウン計算について説明します。
 
 ## プッシュダウン演算子 {#push-down-operators}
 
-TiFlash は、次の演算子のプッシュダウンをサポートしています。
+TiFlash は次の演算子のプッシュダウンをサポートしています。
 
 -   TableScan: テーブルからデータを読み取ります。
 -   選択: データをフィルタリングします。
--   HashAgg: [ハッシュ集計](/explain-aggregation.md#hash-aggregation)アルゴリズムに基づいてデータの集計を実行します。
--   StreamAgg: [ストリーム集計](/explain-aggregation.md#stream-aggregation)アルゴリズムに基づいてデータの集計を実行します。 SteamAgg は`GROUP BY`条件なしの集計のみをサポートします。
+-   HashAgg: [ハッシュ集計](/explain-aggregation.md#hash-aggregation)アルゴリズムに基づいてデータ集約を実行します。
+-   StreamAgg: [ストリーム集計](/explain-aggregation.md#stream-aggregation)アルゴリズムに基づいてデータ集約を実行します。SteamAgg は`GROUP BY`条件なしの集約のみをサポートします。
 -   TopN: TopN 計算を実行します。
--   リミット: リミット計算を実行します。
--   プロジェクト: 投影計算を実行します。
+-   制限: 制限の計算を実行します。
+-   投影: 投影計算を実行します。
 -   HashJoin: [ハッシュ結合](/explain-joins.md#hash-join)アルゴリズムを使用して結合計算を実行しますが、次の条件が適用されます。
-    -   オペレータは[MPPモード](/tiflash/use-tiflash-mpp-mode.md)の場合のみ押下可能です。
-    -   サポートされている結合は、内部結合、左結合、セミ結合、アンチセミ結合、左セミ結合、およびアンチ左セミ結合です。
-    -   前述の結合は、等価結合と非等価結合 (デカルト結合またはヌル認識半結合) の両方をサポートしています。デカルト結合またはヌル認識セミ結合を計算する場合、シャッフル ハッシュ結合アルゴリズムの代わりにブロードキャスト アルゴリズムが使用されます。
+    -   演算子は[MPPモード](/tiflash/use-tiflash-mpp-mode.md)でのみ押すことができます。
+    -   サポートされている結合は、Inner Join、Left Join、Semi Join、Anti Semi Join、Left Semi Join、および Anti Left Semi Join です。
+    -   上記の結合は、Equi Join と Non-Equi Join (Cartesian Join または Null 対応 Semi Join) の両方をサポートします。Cartesian Join または Null 対応 Semi Join を計算するときは、Shuffle Hash Join アルゴリズムではなく、Broadcast アルゴリズムが使用されます。
 -   [ウィンドウ関数](/functions-and-operators/window-functions.md) : 現在、 TiFlash は`ROW_NUMBER()` 、 `RANK()` 、 `DENSE_RANK()` 、 `LEAD()` 、 `LAG()` 、 `FIRST_VALUE()` 、および`LAST_VALUE()`をサポートしています。
 
-TiDB では、オペレーターはツリー構造で編成されます。オペレーターをTiFlashにプッシュダウンするには、次の前提条件をすべて満たす必要があります。
+TiDB では、演算子はツリー構造で編成されます。演算子をTiFlashにプッシュダウンするには、次の前提条件をすべて満たす必要があります。
 
--   その子オペレータはすべてTiFlashにプッシュダウンできます。
+-   その子演算子はすべてTiFlashにプッシュダウンできます。
 -   演算子に式が含まれている場合 (ほとんどの演算子には式が含まれています)、演算子のすべての式をTiFlashにプッシュダウンできます。
 
 ## プッシュダウン式 {#push-down-expressions}
 
-TiFlash は、次のプッシュダウン式をサポートしています。
+TiFlash は次のプッシュダウン式をサポートしています。
 
-| 式のタイプ                                                                                                   | オペレーション                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| :------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [数値関数と演算子](/functions-and-operators/numeric-functions-and-operators.md)                                 | `+` `-` `/` `*` `%` `>=` `<=` `=` `!=` `<` `>` `ROUND()` `ABS()` `FLOOR(int)` `CEIL(int)` `CEILING(int)` `SQRT()` `LOG()` `LOG2()` `LOG10()` `LN()` `EXP()` `POW()` `SIGN()` `RADIANS()` `DEGREES()` `CONV()` `CRC32()` `GREATEST(int/real)` `LEAST(int/real)`                                                                                                                                                                                                                                                                                                                      |
-| [論理関数](/functions-and-operators/control-flow-functions.md)と[演算子](/functions-and-operators/operators.md) | `AND` 、 `OR` 、 `NOT` 、 `CASE WHEN` 、 `IF()` 、 `IFNULL()` 、 `ISNULL()` 、 `IN` 、 `LIKE` 、 `ILIKE` 、 `COALESCE` 、 `IS`                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| [ビット単位の演算](/functions-and-operators/bit-functions-and-operators.md)                                     | `&` (ビット数)、 `|` (bitor)、 `~` (bitneg)、 `^` (bitxor)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| [文字列関数](/functions-and-operators/string-functions.md)                                                   | `SUBSTR()` `CHAR_LENGTH()` `REPLACE()` `CONCAT()` `CONCAT_WS()` `LEFT()` `RIGHT()` `ASCII()` `LENGTH()` `TRIM()` `LTRIM()` `RTRIM()` `POSITION()` `FORMAT()` `LOWER()` `UCASE()` `UPPER()` `SUBSTRING_INDEX()` `LPAD()` `RPAD()` `STRCMP()`                                                                                                                                                                                                                                                                                                                                         |
-| [正規表現の関数と演算子](/functions-and-operators/string-functions.md)                                             | `REGEXP` `REGEXP_LIKE()` `REGEXP_INSTR()` `REGEXP_SUBSTR()` `REGEXP_REPLACE()` `RLIKE`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| [日付関数](/functions-and-operators/date-and-time-functions.md)                                             | `DATE_FORMAT()` `TIMESTAMPDIFF()` `FROM_UNIXTIME()` `UNIX_TIMESTAMP(int)` `UNIX_TIMESTAMP(decimal)` `STR_TO_DATE(date)` `STR_TO_DATE(datetime)` `DATEDIFF()` `YEAR()` `MONTH()` `DAY()` `EXTRACT(datetime)` `DATE()` `HOUR()` `MICROSECOND()` `MINUTE()` `SECOND()` `SYSDATE()` `DATE_ADD/ADDDATE(datetime, int)` `DATE_ADD/ADDDATE(string, int/real)` `DATE_SUB/SUBDATE(datetime, int)` `DATE_SUB/SUBDATE(string, int/real)` `QUARTER()` `DAYNAME()` `DAYOFMONTH()` `DAYOFWEEK()` `DAYOFYEAR()` `LAST_DAY()` `MONTHNAME()` `TO_SECONDS()` `TO_DAYS()` `FROM_DAYS()` `WEEKOFYEAR()` |
-| [JSON関数](/functions-and-operators/json-functions.md)                                                    | `JSON_LENGTH()` `->` `->>` `JSON_EXTRACT()`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| [変換関数](/functions-and-operators/cast-functions-and-operators.md)                                        | `CAST(int AS DOUBLE), CAST(int AS DECIMAL)` 、 `CAST(int AS STRING)` 、 `CAST(int AS TIME)` 、 `CAST(double AS INT)` 、 `CAST(double AS DECIMAL)` 、 `CAST(double AS STRING)` 、 `CAST(double AS TIME)` 、 `CAST(string AS INT)` `CAST(string AS TIME)` `CAST(string AS DOUBLE), CAST(string AS DECIMAL)` `CAST(decimal AS INT)` 、 20 、 `CAST(decimal AS STRING)` 、 `CAST(decimal AS TIME)` 、 `CAST(time AS INT)` 、 `CAST(time AS DECIMAL)` 、 `CAST(time AS STRING)` 、 `CAST(time AS REAL)`                                                                                                |
-| [集計関数](/functions-and-operators/aggregate-group-by-functions.md)                                        | `MIN()` `MAX()` `SUM()` `COUNT()` `AVG()` `APPROX_COUNT_DISTINCT()` `GROUP_CONCAT()`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| [その他の関数](/functions-and-operators/miscellaneous-functions.md)                                           | `INET_NTOA()` `INET_ATON()` `INET6_NTOA()` `INET6_ATON()`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| 表現タイプ                                                                                                      | オペレーション                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| :--------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [数値関数と演算子](/functions-and-operators/numeric-functions-and-operators.md)                                    | `+` `-` `/` `*` `%` `>=` `<=` `=` `!=` `<` `>` `ROUND()` `ABS()` `FLOOR(int)` `CEIL(int)` `CEILING(int)` `SQRT()` `LOG()` `LOG2()` `LOG10()` `LN()` `EXP()` `POW()` `POWER()` `SIGN()` `RADIANS()` `DEGREES()` `CONV()` `CRC32()` `GREATEST(int/real)` `LEAST(int/real)`                                                                                                                                                                                                                                                                                                                                                                                          |
+| [論理関数](/functions-and-operators/control-flow-functions.md)と[オペレーター](/functions-and-operators/operators.md) | `AND` `OR` `NOT` `CASE WHEN` `IF()` `IFNULL()` `ISNULL()` `IN` `LIKE` `ILIKE` `COALESCE` `IS`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| [ビット演算](/functions-and-operators/bit-functions-and-operators.md)                                           | `&` (ビットアンド)、 `|` (ビットオア)、 `~` (ビットネガティブ)、 `^` (ビットオア)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| [文字列関数](/functions-and-operators/string-functions.md)                                                      | `SUBSTR()` `CHAR_LENGTH()` `REPLACE()` `CONCAT()` `CONCAT_WS()` `LEFT()` `RIGHT()` `ASCII()` `LENGTH()` `TRIM()` `LTRIM()` `RTRIM()` `POSITION()` `FORMAT()` `LOWER()` `UCASE()` `UPPER()` `SUBSTRING_INDEX()` `LPAD()` `RPAD()` `STRCMP()`                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| [正規表現関数と演算子](/functions-and-operators/string-functions.md)                                                 | `REGEXP` `REGEXP_LIKE()` `REGEXP_INSTR()` `REGEXP_SUBSTR()` `REGEXP_REPLACE()` `RLIKE`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| [日付関数](/functions-and-operators/date-and-time-functions.md)                                                | `DATE_FORMAT()` `TIMESTAMPDIFF()` `FROM_UNIXTIME()` `UNIX_TIMESTAMP(int)` `UNIX_TIMESTAMP(decimal)` `STR_TO_DATE(date)` `STR_TO_DATE(datetime)` `DATEDIFF()` `YEAR()` `MONTH()` `DAY()` `EXTRACT(datetime)` `DATE()` `HOUR()` `MICROSECOND()` `MINUTE()` `SECOND()` `SYSDATE()` `DATE_ADD/ADDDATE(datetime, int)` `DATE_ADD/ADDDATE(string, int/real)` `DATE_SUB/SUBDATE(datetime, int)` `DATE_SUB/SUBDATE(string, int/real)` `QUARTER()` `DAYNAME()` `DAYOFMONTH()` `DAYOFWEEK()` `DAYOFYEAR()` `LAST_DAY()` `MONTHNAME()` `TO_SECONDS()` `TO_DAYS()` `FROM_DAYS()` `WEEKOFYEAR()`                                                                               |
+| [JSON関数](/functions-and-operators/json-functions.md)                                                       | `JSON_LENGTH()` `->` `->>` `JSON_EXTRACT()` `JSON_ARRAY()` `JSON_DEPTH()` `JSON_VALID()` `JSON_KEYS()` `JSON_CONTAINS_PATH()` `JSON_UNQUOTE()`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| [変換関数](/functions-and-operators/cast-functions-and-operators.md)                                           | `CAST(int AS DOUBLE), CAST(int AS DECIMAL)` `CAST(int AS STRING)` `CAST(int AS TIME)` `CAST(double AS INT)` `CAST(double AS DECIMAL)` `CAST(double AS STRING)` `CAST(double AS TIME)` `CAST(string AS INT)` `CAST(string AS DOUBLE), CAST(string AS DECIMAL)` `CAST(string AS TIME)` `CAST(decimal AS INT)` `CAST(decimal AS STRING)` `CAST(decimal AS TIME)` `CAST(decimal AS DOUBLE)` `CAST(time AS INT)` `CAST(time AS DECIMAL)` `CAST(time AS STRING)` `CAST(time AS REAL)` `CAST(json AS JSON)` `CAST(json AS STRING)` `CAST(int AS JSON)` `CAST(real AS JSON)` `CAST(decimal AS JSON)` `CAST(string AS JSON)` `CAST(time AS JSON)` `CAST(duration AS JSON)` |
+| [集計関数](/functions-and-operators/aggregate-group-by-functions.md)                                           | `MIN()` `MAX()` `SUM()` `COUNT()` `AVG()` `APPROX_COUNT_DISTINCT()` `GROUP_CONCAT()`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| [その他の関数](/functions-and-operators/miscellaneous-functions.md)                                              | `INET_NTOA()` `INET_ATON()` `INET6_NTOA()` `INET6_ATON()`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 ## 制限 {#restrictions}
 
--   Bit、Set、および Geometry タイプを含む式をTiFlashにプッシュダウンすることはできません。
+-   Bit、Set、Geometry 型を含む式は、 TiFlashにプッシュダウンできません。
 
--   `DATE_ADD()` 、 `DATE_SUB()` 、 `ADDDATE()` 、および`SUBDATE()`関数は、次の間隔タイプのみをサポートします。他の間隔タイプが使用されている場合、 TiFlash はエラーを報告します。
+-   `DATE_ADD()` `ADDDATE()`および`SUBDATE()`関数は`DATE_SUB()`次の間隔タイプのみをサポートします。他の間隔タイプを使用すると、 TiFlash はエラーを報告します。
 
     -   日
     -   週
@@ -60,15 +60,15 @@ TiFlash は、次のプッシュダウン式をサポートしています。
     -   分
     -   2番
 
-クエリでサポートされていないプッシュダウン計算が発生した場合、TiDB は残りの計算を完了する必要があり、これはTiFlashアクセラレーション効果に大きな影響を与える可能性があります。現在サポートされていない演算子と式は、将来のバージョンでサポートされる可能性があります。
+クエリがサポートされていないプッシュダウン計算に遭遇した場合、TiDB は残りの計算を完了する必要があり、 TiFlash の高速化効果に大きく影響する可能性があります。現在サポートされていない演算子と式は、将来のバージョンでサポートされる可能性があります。
 
-`MAX()`のような関数は、集計関数として使用される場合はプッシュダウンでサポートされますが、ウィンドウ関数としてはサポートされません。
+`MAX()`のような関数は、集計関数として使用する場合はプッシュダウンがサポートされますが、ウィンドウ関数として使用する場合はサポートされません。
 
 ## 例 {#examples}
 
 このセクションでは、演算子と式をTiFlashにプッシュダウンする例をいくつか示します。
 
-### 例 1: オペレーターをTiFlashにプッシュダウンする {#example-1-push-operators-down-to-tiflash}
+### 例1: 演算子をTiFlashにプッシュダウンする {#example-1-push-operators-down-to-tiflash}
 
 ```sql
 CREATE TABLE t(id INT PRIMARY KEY, a INT);
@@ -88,9 +88,9 @@ EXPLAIN SELECT * FROM t LIMIT 3;
 5 rows in set (0.18 sec)
 ```
 
-前の例では、オペレーター`Limit`がデータをフィルタリングするためにTiFlashにプッシュダウンされます。これにより、ネットワーク上で転送されるデータ量が減り、ネットワークのオーバーヘッドが軽減されます。これは、 `Limit_15`演算子の行の`task`列の`mpp[tiflash]`値によって示されます。
+前の例では、演算子`Limit`データをフィルタリングするためにTiFlashにプッシュダウンされ、ネットワーク経由で転送されるデータの量を減らし、ネットワーク オーバーヘッドを削減するのに役立ちます。これは、演算子`Limit_15`の行の列`task`の`mpp[tiflash]`の値によって示されます。
 
-### 例 2: 式をTiFlashにプッシュダウンする {#example-2-push-expressions-down-to-tiflash}
+### 例2: 式をTiFlashにプッシュダウンする {#example-2-push-expressions-down-to-tiflash}
 
 ```sql
 CREATE TABLE t(id INT PRIMARY KEY, a INT);
@@ -114,9 +114,9 @@ EXPLAIN SELECT MAX(id + a) FROM t GROUP BY a;
 8 rows in set (0.18 sec)
 ```
 
-前の例では、式`id + a`がTiFlashにプッシュダウンされて事前に計算されます。これにより、ネットワーク上で転送されるデータ量が削減され、ネットワーク送信のオーバーヘッドが削減され、全体的な計算パフォーマンスが向上します。これは、 `operator`列の値が`plus(test.t.id, test.t.a)`である行の`task`列の値`mpp[tiflash]`によって示されます。
+前の例では、式`id + a`は事前に計算のためにTiFlashにプッシュダウンされます。これにより、ネットワーク経由で転送されるデータの量が削減され、ネットワーク転送のオーバーヘッドが削減され、全体的な計算パフォーマンスが向上します。これは、 `operator`列に`plus(test.t.id, test.t.a)`値がある行の`task`列に`mpp[tiflash]`値があることで示されます。
 
-### 例 3: プッシュダウンの制限 {#example-3-restrictions-for-pushdown}
+### 例3: プッシュダウンの制限 {#example-3-restrictions-for-pushdown}
 
 ```sql
 CREATE TABLE t(id INT PRIMARY KEY, a INT);
@@ -137,9 +137,9 @@ EXPLAIN SELECT id FROM t WHERE TIME(now()+ a) < '12:00:00';
 5 rows in set, 3 warnings (0.20 sec)
 ```
 
-前の例では、 TiFlashに対して`TableFullScan`のみを実行します。他の関数は`root`で計算およびフィルタリングされ、 TiFlashにはプッシュされません。
+前の例では、 TiFlashに対して`TableFullScan`を実行します。その他の関数は`root`で計算およびフィルタリングされ、 TiFlashにプッシュダウンされません。
 
-次のコマンドを実行すると、 TiFlashにプッシュダウンできない演算子と式を特定できます。
+次のコマンドを実行すると、 TiFlashにプッシュダウンできない演算子と式を識別できます。
 
 ```sql
 SHOW WARNINGS;
@@ -154,9 +154,9 @@ SHOW WARNINGS;
 3 rows in set (0.18 sec)
 ```
 
-関数`Time`と`Cast`をTiFlashにプッシュダウンできないため、前の例の式をTiFlashに完全にプッシュダウンすることはできません。
+前述の例の式は、関数`Time`と`Cast`をTiFlashにプッシュダウンできないため、 TiFlashに完全にプッシュダウンすることはできません。
 
-### 例 4: ウィンドウ関数 {#example-4-window-functions}
+### 例4: ウィンドウ関数 {#example-4-window-functions}
 
 ```sql
 CREATE TABLE t(id INT PRIMARY KEY, c1 VARCHAR(100));
@@ -181,7 +181,7 @@ EXPLAIN SELECT id, ROW_NUMBER() OVER (PARTITION BY id > 10) FROM t;
 
 ```
 
-この出力では、 `Window`オペレーションの`task`列の値が`mpp[tiflash]`であることがわかり、 `ROW_NUMBER() OVER (PARTITION BY id > 10)`オペレーションをTiFlashにプッシュダウンできることを示しています。
+この出力では、 `Window`操作の`task`列の値が`mpp[tiflash]`であることがわかり、 `ROW_NUMBER() OVER (PARTITION BY id > 10)`操作をTiFlashにプッシュダウンできることがわかります。
 
 ```sql
 CREATE TABLE t(id INT PRIMARY KEY, c1 VARCHAR(100));
@@ -203,4 +203,4 @@ EXPLAIN SELECT id, MAX(id) OVER (PARTITION BY id > 10) FROM t;
 7 rows in set (0.0010 sec)
 ```
 
-この出力では、 `Window`オペレーションの`task`列の値が`root`であることがわかります。これは、 `MAX(id) OVER (PARTITION BY id > 10)`オペレーションをTiFlashにプッシュダウンできないことを示しています。これは、 `MAX()`は集計関数としてのプッシュダウンのみがサポートされており、ウィンドウ関数としてはサポートされていないためです。
+この出力では、 `Window`操作の`task`列の値が`root`であることがわかります。これは、 `MAX(id) OVER (PARTITION BY id > 10)`操作をTiFlashにプッシュダウンできないことを示しています。これは、 `MAX()`プッシュダウンでサポートされているのは集計関数としてのみであり、ウィンドウ関数としてはサポートされていないためです。

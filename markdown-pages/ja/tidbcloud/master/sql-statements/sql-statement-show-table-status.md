@@ -1,25 +1,22 @@
 ---
 title: SHOW TABLE STATUS | TiDB SQL Statement Reference
-summary: テーブルステータスを表示は、TiDB内のテーブルに関する統計を示します。統計が古い場合は、ANALYZE TABLEを実行することをお勧めします。このステートメントはMySQLと完全な互換性があります。
+summary: TiDB データベースの SHOW TABLE STATUS の使用法の概要。
 ---
 
 # テーブルステータスを表示 {#show-table-status}
 
-このステートメントは、TiDB 内のテーブルに関するさまざまな統計を示します。統計が古いと思われる場合は、 [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)を実行することをお勧めします。
+このステートメントは、TiDB 内のテーブルに関するさまざまな統計を表示します。統計が古いと思われる場合は、 [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)実行することをお勧めします。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**ShowTableStatusStmt:**
+```ebnf+diagram
+ShowTableStatusStmt ::=
+    "SHOW" "TABLE" "STATUS" ("FROM" Identifier | "IN" Identifier )? ShowLikeOrWhere?
 
-![ShowTableStatusStmt](https://download.pingcap.com/images/docs/sqlgram/ShowTableStatusStmt.png)
-
-**送信者または受信者:**
-
-![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
-
-**ステータステーブル名:**
-
-![StatusTableName](https://download.pingcap.com/images/docs/sqlgram/StatusTableName.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## 例 {#examples}
 
@@ -53,7 +50,7 @@ Max_data_length: 0
         Comment:
 1 row in set (0.00 sec)
 
-mysql> analyze table t1;
+mysql> ANALYZE TABLE t1;
 Query OK, 0 rows affected (0.12 sec)
 
 mysql> SHOW TABLE STATUS LIKE 't1'\G
@@ -79,13 +76,13 @@ Max_data_length: 0
 1 row in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SHOW TABLE STATUS`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`SHOW TABLE STATUS`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [テーブルを表示](/sql-statements/sql-statement-show-tables.md)
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
--   [ドロップテーブル](/sql-statements/sql-statement-drop-table.md)
--   [テーブルの作成を表示](/sql-statements/sql-statement-show-create-table.md)
+-   [テーブルを削除](/sql-statements/sql-statement-drop-table.md)
+-   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)

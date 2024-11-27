@@ -11,7 +11,7 @@ TiDB は MySQL 互換のデータベースであり、Ruby 用の最も人気の
 
 -   環境を設定します。
 -   mysql2 を使用して TiDB クラスターに接続します。
--   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)を見つけることができます。
+-   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)見つけることができます。
 
 > **注記：**
 >
@@ -85,12 +85,12 @@ bundle add mysql2 dotenv
 
 3.  接続ダイアログの構成が動作環境と一致していることを確認します。
 
-    -   **接続タイプ**は`Public`に設定されています。
-    -   **ブランチ**は`main`に設定されています。
+    -   **接続タイプは**`Public`に設定されています。
+    -   **ブランチは**`main`に設定されています。
     -   **Connect With は**`General`に設定されています。
     -   **オペレーティング システムは**、アプリケーションを実行するオペレーティング システムと一致します。
 
-4.  まだパスワードを設定していない場合は、 **「パスワードの生成」**をクリックしてランダムなパスワードを生成します。
+4.  まだパスワードを設定していない場合は、「**パスワードの生成」**をクリックしてランダムなパスワードを生成します。
 
 5.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -98,7 +98,7 @@ bundle add mysql2 dotenv
     cp .env.example .env
     ```
 
-6.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`を接続パラメータに置き換えます。
+6.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`接続パラメータに置き換えます。
 
     ```dotenv
     DATABASE_HOST={host}
@@ -126,7 +126,7 @@ bundle add mysql2 dotenv
 
     IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
 
-    TiDB Dedicated は、**パブリック**接続タイプに加えて、**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
 4.  次のコマンドを実行して`.env.example`コピーし、名前を`.env`に変更します。
 
@@ -134,7 +134,7 @@ bundle add mysql2 dotenv
     cp .env.example .env
     ```
 
-5.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`を接続パラメータに置き換えます。
+5.  `.env`ファイルを編集し、環境変数を次のように設定し、接続ダイアログで対応するプレースホルダー`{}`接続パラメータに置き換えます。
 
     ```dotenv
     DATABASE_HOST={host}
@@ -150,7 +150,7 @@ bundle add mysql2 dotenv
     >
     > パブリック エンドポイントを使用してTiDB Cloud Dedicated クラスターに接続する場合は、TLS 接続を有効にすることをお勧めします。
     >
-    > TLS 接続を有効にするには、 `DATABASE_ENABLE_SSL`から`true`を変更し、 `DATABASE_SSL_CA`を使用して接続ダイアログからダウンロードした CA 証明書のファイル パスを指定します。
+    > TLS 接続を有効にするには、 `DATABASE_ENABLE_SSL`から`true`変更し、 `DATABASE_SSL_CA`使用して接続ダイアログからダウンロードした CA 証明書のファイル パスを指定します。
 
 6.  `.env`ファイルを保存します。
 
@@ -163,7 +163,7 @@ bundle add mysql2 dotenv
     cp .env.example .env
     ```
 
-2.  `.env`ファイルを編集し、環境変数を次のように設定し、対応するプレースホルダー`{}`を独自の TiDB 接続情報に置き換えます。
+2.  `.env`ファイルを編集し、環境変数を次のように設定し、対応するプレースホルダー`{}`独自の TiDB 接続情報に置き換えます。
 
     ```dotenv
     DATABASE_HOST={host}
@@ -190,7 +190,7 @@ ruby app.rb
 
 接続が成功すると、コンソールに次のように TiDB クラスターのバージョンが出力されます。
 
-    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v7.5.3)
+    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.1.1)
     ⏳ Loading sample game data...
     ✅ Loaded sample game data.
 
@@ -294,7 +294,7 @@ end
 
 デフォルトでは、mysql2 gem は、ファイルが見つかるまで特定の順序で既存の CA 証明書を検索できます。
 
-1.  Debian、Ubuntu、Gentoo、Arch、Slackwareの場合は`/etc/ssl/certs/ca-certificates.crt`
+1.  Debian、Ubuntu、Gentoo、Arch、または Slackware の場合は`/etc/ssl/certs/ca-certificates.crt`
 2.  RedHat、Fedora、CentOS、Mageia、Vercel、または Netlify の場合は`/etc/pki/tls/certs/ca-bundle.crt`
 3.  OpenSUSEの場合は`/etc/ssl/ca-bundle.pem`
 4.  macOS または Alpine (docker コンテナ) の場合は`/etc/ssl/cert.pem`

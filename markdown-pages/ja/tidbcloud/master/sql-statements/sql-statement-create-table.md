@@ -198,7 +198,7 @@ SELECT * FROM t1;
     +------+
     1 row in set (0.00 sec)
 
-テーブルが存在する場合はそれを削除し、存在しない場合は条件付きでテーブルを作成します。
+テーブルが存在する場合は削除し、存在しない場合は条件付きでテーブルを作成します。
 
 ```sql
 DROP TABLE IF EXISTS t1;
@@ -249,7 +249,7 @@ mysql> DESC t1;
 -   `index_col_name`のうち`[ASC | DESC]`現在解析されていますが無視されます (MySQL 5.7互換の動作)。
 -   `COMMENT`属性は`WITH PARSER`オプションをサポートしていません。
 -   TiDB は、デフォルトで 1 つのテーブルに 1017 列をサポートし、最大 4096 列をサポートします。InnoDB での対応する列数制限は 1017 列で、MySQL でのハード制限は 4096 列です。詳細については、 [TiDB の制限](/tidb-limitations.md)を参照してください。
--   TiDB は`HASH` 、 `RANGE` 、 `LIST` 、および`KEY` [パーティションタイプ](/partitioned-table.md#partitioning-types)をサポートします。サポートされていないパーティション タイプの場合、TiDB は`Warning: Unsupported partition type %s, treat as normal table`を返します。ここで、 `%s`サポートされていない特定のパーティション タイプです。
+-   パーティション テーブルの場合、範囲列、ハッシュ列、範囲列 (単一列) のみがサポートされます。詳細については、 [パーティションテーブル](/partitioned-table.md)を参照してください。
 
 ## 参照 {#see-also}
 

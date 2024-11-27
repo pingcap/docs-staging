@@ -1,21 +1,18 @@
 ---
 title: SHOW CREATE TABLE | TiDB SQL Statement Reference
-summary: このステートメントは、SQL を使用して既存のテーブルを再作成するための正確なステートメントを示しています。TiDB のSHOW CREATE TABLEステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、バグを報告。テーブルの作成、ドロップテーブル、テーブルを表示、次の列を表示も参照。
+summary: TiDB データベースに対する SHOW CREATE TABLE の使用法の概要。
 ---
 
-# テーブルの作成を表示 {#show-create-table}
+# 表示テーブルの作成 {#show-create-table}
 
 このステートメントは、SQL を使用して既存のテーブルを再作成するための正確なステートメントを示しています。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**ShowCreateTableStmt:**
-
-![ShowCreateTableStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCreateTableStmt.png)
-
-**テーブル名:**
-
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+```ebnf+diagram
+ShowCreateTableStmt ::=
+    "SHOW" "CREATE" "TABLE" (SchemaName ".")? TableName
+```
 
 ## 例 {#examples}
 
@@ -23,24 +20,22 @@ summary: このステートメントは、SQL を使用して既存のテーブ�
 mysql> CREATE TABLE t1 (a INT);
 Query OK, 0 rows affected (0.12 sec)
 
-mysql> SHOW CREATE TABLE t1;
-+-------+------------------------------------------------------------------------------------------------------------+
-| Table | Create Table                                                                                               |
-+-------+------------------------------------------------------------------------------------------------------------+
-| t1    | CREATE TABLE `t1` (
+mysql> SHOW CREATE TABLE t1\G
+*************************** 1. row ***************************
+       Table: t1
+Create Table: CREATE TABLE `t1` (
   `a` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin |
-+-------+------------------------------------------------------------------------------------------------------------+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
 1 row in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SHOW CREATE TABLE`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`SHOW CREATE TABLE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
--   [ドロップテーブル](/sql-statements/sql-statement-drop-table.md)
+-   [テーブルを削除](/sql-statements/sql-statement-drop-table.md)
 -   [テーブルを表示](/sql-statements/sql-statement-show-tables.md)
--   [次の列を表示](/sql-statements/sql-statement-show-columns-from.md)
+-   [列を表示](/sql-statements/sql-statement-show-columns-from.md)

@@ -18,7 +18,7 @@ v7.4.0 以降、TiDB の`GROUP BY`句は`WITH ROLLUP`修飾子をサポートし
 
 このグループ化方法では、グループ リストに`N`列がある場合、TiDB はクエリ結果を`N+1`グループに集計します。
 
-例えば：：
+例えば：
 
 ```sql
 SELECT count(1) FROM t GROUP BY a,b,c WITH ROLLUP;
@@ -46,7 +46,7 @@ SELECT count(1) FROM t GROUP BY a,b,c WITH ROLLUP;
 
 ## 例 {#examples}
 
-`year` 、 `month` 、 `day` 、および`profit`列を持つ`bank`名前の利益テーブルがあるとします。
+`year` 、 `month` 、 `day` 、および`profit`列を持つ`bank`という名前の利益テーブルがあるとします。
 
 ```sql
 CREATE TABLE bank
@@ -75,7 +75,7 @@ SELECT year, SUM(profit) AS profit FROM bank GROUP BY year;
 2 rows in set (0.15 sec)
 ```
 
-銀行レポートには通常、年間利益に加えて、すべての年の総利益または詳細な利益分析のための月ごとの分割利益も含める必要があります。 v7.4.0 より前では、複数のクエリで異なる`GROUP BY`句を使用し、UNION を使用して結果を結合して集計サマリーを取得する必要がありました。 v7.4.0 以降では、 `GROUP BY`句に`WITH ROLLUP`修飾子を追加することで、単一のクエリで目的の結果を簡単に得ることができます。
+銀行レポートには通常、年間利益に加えて、すべての年の総利益または詳細な利益分析のための月ごとの分割利益も含める必要があります。v7.4.0 より前では、複数のクエリで異なる`GROUP BY`句を使用し、UNION を使用して結果を結合して集計サマリーを取得する必要がありました。v7.4.0 以降では、 `GROUP BY`句に`WITH ROLLUP`修飾子を追加することで、単一のクエリで目的の結果を簡単に得ることができます。
 
 ```sql
 SELECT year, month, SUM(profit) AS profit from bank GROUP BY year, month WITH ROLLUP ORDER BY year desc, month desc;
@@ -92,15 +92,15 @@ SELECT year, month, SUM(profit) AS profit from bank GROUP BY year, month WITH RO
 6 rows in set (0.025 sec)
 ```
 
-上記の結果には、年と月の両方、年別、全体など、さまざまなディメンションで集計されたデータが含まれています。結果では、 `NULL`値のない行は、その行の`profit`年と月の両方をグループ化して計算されていることを示します。7 列に`NULL`値が`month`行は、その行の`profit` 1 年のすべての月を集計して計算されていることを示し、 `year`列に`NULL`値がある行は、その行の`profit`すべての年を集計して計算されていることを示します。
+上記の結果には、年と月の両方、年別、全体など、さまざまなディメンションで集計されたデータが含まれています。結果では、 `NULL`値のない行は、その行の`profit`年と月の両方をグループ化して計算されていることを示します`month`列に`NULL`値がある行は、その行の`profit` 1 年のすべての月を集計して計算されていることを示し、 `year`列に`NULL`値がある行は、その行の`profit`すべての年を集計して計算されていることを示します。
 
 具体的には：
 
--   最初の行の`profit`値は 2 次元グループ`{year, month}`から取得され、細粒度`{2000, "Jan"}`グループの集計結果を表します。
+-   最初の行の`profit`値は 2 次元グループ`{year, month}`からのもので、細粒度`{2000, "Jan"}`グループの集計結果を表します。
 -   2 行目の値`profit`は 1 次元グループ`{year}`からのもので、中間レベル`{2001}`グループの集計結果を表します。
 -   最後の行の`profit`値は 0 次元のグループ化`{}`から取得され、全体的な集計結果を表します。
 
-`WITH ROLLUP`の結果の`NULL`値は、Aggregate 演算子が適用される直前に生成されます。したがって、 `SELECT` 、 `HAVING` 、および`ORDER BY`句で`NULL`値を使用して、集計結果をさらにフィルター処理できます。
+`WITH ROLLUP`結果の`NULL`値は、Aggregate 演算子が適用される直前に生成されます。したがって、 `SELECT` 、 `HAVING` 、および`ORDER BY`句で`NULL`値を使用して、集計結果をさらにフィルター処理できます。
 
 たとえば、 `HAVING`句の`NULL`使用して、2 次元グループの集計結果のみをフィルタリングして表示できます。
 
@@ -137,7 +137,7 @@ SELECT year, month, SUM(profit) AS profit, grouping(year) as grp_year, grouping(
 
 この出力では、 `grp_year`と`grp_month`の結果から直接行の集計ディメンションを把握することができ、 `year`と`month`グループ化式におけるネイティブの`NULL`値からの干渉を防ぐことができます。
 
-`GROUPING()`関数は、最大 64 個のグループ化式をパラメータとして受け入れることができます。複数のパラメータの出力では、各パラメータは`0`または`1`の結果を生成し、これらのパラメータは、各ビットが`0`または`1`である 64 ビットの`UNSIGNED LONGLONG`をまとめて形成します。次の式を使用して、各パラメータのビット位置を取得できます。
+`GROUPING()`関数は、最大 64 個のグループ化式をパラメータとして受け入れることができます。複数のパラメータの出力では、各パラメータは`0`または`1`の結果を生成し、これらのパラメータは、各ビットが`0`または`1`である 64 ビットの`UNSIGNED LONGLONG`まとめて形成します。次の式を使用して、各パラメータのビット位置を取得できます。
 
 ```go
 GROUPING(day, month, year):
@@ -164,7 +164,7 @@ SELECT year, month, SUM(profit) AS profit, grouping(year) as grp_year, grouping(
 
 多次元グループ化の要件を満たすために、多次元データ集約では`Expand`演算子を使用してデータを複製します。各レプリカは特定の次元のグループに対応します。MPP のデータシャッフル機能により、 `Expand`演算子は複数のTiFlashノード間で大量のデータを迅速に再編成および計算し、各ノードの計算能力を最大限に活用できます。
 
-`Expand`演算子の実装は、 `Projection`演算子の実装と似ています。違いは、 `Expand`が複数レベルの`Projection`であり、複数のレベルの射影演算式が含まれていることです。生データの各行に対して、 `Projection`演算子は結果に 1 行のみを生成しますが、 `Expand`演算子は結果に複数の行を生成します (行数は射影演算式のレベル数に等しくなります)。
+`Expand`演算子の実装は、 `Projection`演算子の実装と似ています。違いは、 `Expand`複数レベルの`Projection`であり、複数のレベルの射影演算式が含まれていることです。生データの各行に対して、 `Projection`演算子は結果に 1 行のみを生成しますが、 `Expand`演算子は結果に複数の行を生成します (行数は射影演算式のレベル数に等しくなります)。
 
 実行プランの例を次に示します。
 
@@ -193,7 +193,7 @@ explain SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 
 前の例では、グループ化リスト内の列の順序は`[year, month]`で、 ROLLUP 構文によって生成されるディメンション グループは`{year, month}` 、 `{year}` 、および`{}`です。ディメンション グループ`{year, month}`の場合、 `year`と`month`両方が必須の列であるため、TiDB はそれらのビット位置をそれぞれ 1 と 1 で埋めます。これにより、 `11...0`の UINT64 が形成され、これは 10 進数では 3 です。したがって、射影式は`[test.bank.profit, Column#6, Column#7, 3->gid]`です ( `column#6` `year`に対応し、 `column#7` `month`に対応します)。
 
-以下は生データの行の例です。
+以下は生データの例の行です。
 
 ```sql
 +------+-------+------+------------+

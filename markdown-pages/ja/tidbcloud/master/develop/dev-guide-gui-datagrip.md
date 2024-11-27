@@ -9,7 +9,7 @@ TiDB は MySQL 互換のデータベースであり、 [ジェットブレイン
 
 > **注記：**
 >
-> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed と互換性があります。
+> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed と互換性があります。
 
 DataGrip は次の 2 つの方法で使用できます。
 
@@ -56,11 +56,11 @@ DataGrip は次の 2 つの方法で使用できます。
 3.  接続ダイアログの構成が動作環境と一致していることを確認します。
 
     -   **接続タイプ**は`Public`に設定されています
-    -   **ブランチ**は`main`に設定されています
+    -   **ブランチは**`main`に設定されています
     -   **接続先は**`DataGrip`に設定されています
     -   **オペレーティング システムは**環境に適合します。
 
-4.  ランダムなパスワードを作成するには、 **「パスワードの生成」を**クリックします。
+4.  ランダムなパスワードを作成するには、 **「パスワードの生成」**をクリックします。
 
     > **ヒント：**
     >
@@ -70,7 +70,7 @@ DataGrip は次の 2 つの方法で使用できます。
 
     ![Create a project in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-create-project.jpg)
 
-6.  新しく作成したプロジェクトで、**データベース エクスプローラー**パネルの左上隅にある**+**をクリックし、**データ ソース**&gt;**その他**&gt; **TiDB**を選択します。
+6.  新しく作成したプロジェクトで、**データベース エクスプローラー**パネルの左上隅にある**+**をクリックし、**データ ソース**&gt;**その他**&gt; **TiDB を**選択します。
 
     ![Select a data source in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-data-source-select.jpg)
 
@@ -78,13 +78,13 @@ DataGrip は次の 2 つの方法で使用できます。
 
     ![Configure the URL field for TiDB Cloud Serverless](https://download.pingcap.com/images/docs/develop/datagrip-url-paste.jpg)
 
-    **不足しているドライバー ファイルをダウンロードする**警告が表示された場合は、 **[ダウンロード] を**クリックしてドライバー ファイルを取得します。
+    **不足しているドライバー ファイルをダウンロードする**警告が表示された場合は、 **[ダウンロード]**をクリックしてドライバー ファイルを取得します。
 
 8.  **「テスト接続」**をクリックして、 TiDB Cloud Serverless クラスターへの接続を検証します。
 
     ![Test the connection to a TiDB Cloud Serverless clustser](https://download.pingcap.com/images/docs/develop/datagrip-test-connection.jpg)
 
-9.  **[OK]**をクリックして接続構成を保存します。
+9.  **[OK] を**クリックして接続構成を保存します。
 
 </div>
 <div label="TiDB Cloud Dedicated">
@@ -97,13 +97,13 @@ DataGrip は次の 2 つの方法で使用できます。
 
     IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
 
-    TiDB Dedicated は、**パブリック**接続タイプに加えて、**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
 4.  DataGrip を起動し、接続を管理するためのプロジェクトを作成します。
 
     ![Create a project in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-create-project.jpg)
 
-5.  新しく作成したプロジェクトで、**データベース エクスプローラー**パネルの左上隅にある**+**をクリックし、**データ ソース**&gt;**その他**&gt; **TiDB**を選択します。
+5.  新しく作成したプロジェクトで、**データベース エクスプローラー**パネルの左上隅にある**+**をクリックし、**データ ソース**&gt;**その他**&gt; **TiDB を**選択します。
 
     ![Select a data source in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-data-source-select.jpg)
 
@@ -124,7 +124,7 @@ DataGrip は次の 2 つの方法で使用できます。
 
     ![Configure the CA for TiDB Cloud Dedicated](https://download.pingcap.com/images/docs/develop/datagrip-dedicated-ssl.jpg)
 
-    **不足しているドライバー ファイルをダウンロードする**警告が表示された場合は、 **[ダウンロード] を**クリックしてドライバー ファイルを取得します。
+    **不足しているドライバー ファイルをダウンロードする**警告が表示された場合は、 **[ダウンロード]**をクリックしてドライバー ファイルを取得します。
 
 8.  **[詳細設定]**タブをクリックし、スクロールして**enabledTLSProtocols**パラメータを見つけ、その値を`TLSv1.2,TLSv1.3`に設定します。
 
@@ -134,7 +134,7 @@ DataGrip は次の 2 つの方法で使用できます。
 
     ![Test the connection to a TiDB Cloud Dedicated cluster](https://download.pingcap.com/images/docs/develop/datagrip-dedicated-test-connection.jpg)
 
-10. **[OK]**をクリックして接続構成を保存します。
+10. **[OK] を**クリックして接続構成を保存します。
 
 </div>
 <div label="TiDB Self-Managed">
@@ -143,7 +143,7 @@ DataGrip は次の 2 つの方法で使用できます。
 
     ![Create a project in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-create-project.jpg)
 
-2.  新しく作成したプロジェクトで、**データベース エクスプローラー**パネルの左上隅にある**+**をクリックし、**データ ソース**&gt;**その他**&gt; **TiDB**を選択します。
+2.  新しく作成したプロジェクトで、**データベース エクスプローラー**パネルの左上隅にある**+**をクリックし、**データ ソース**&gt;**その他**&gt; **TiDB を**選択します。
 
     ![Select a data source in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-data-source-select.jpg)
 
@@ -158,13 +158,13 @@ DataGrip は次の 2 つの方法で使用できます。
 
     ![Configure the connection parameters for TiDB Self-Managed](https://download.pingcap.com/images/docs/develop/datagrip-self-hosted-connect.jpg)
 
-    **不足しているドライバー ファイルをダウンロードする**警告が表示された場合は、 **[ダウンロード] を**クリックしてドライバー ファイルを取得します。
+    **不足しているドライバー ファイルをダウンロードする**警告が表示された場合は、 **[ダウンロード]**をクリックしてドライバー ファイルを取得します。
 
-4.  **「接続のテスト」**をクリックして、TiDB セルフマネージド クラスターへの接続を検証します。
+4.  **「テスト接続」**をクリックして、TiDB セルフマネージド クラスターへの接続を検証します。
 
     ![Test the connection to a TiDB Self-Managed cluster](https://download.pingcap.com/images/docs/develop/datagrip-self-hosted-test-connection.jpg)
 
-5.  **[OK]**をクリックして接続構成を保存します。
+5.  **[OK] を**クリックして接続構成を保存します。
 
 </div>
 </SimpleTab>

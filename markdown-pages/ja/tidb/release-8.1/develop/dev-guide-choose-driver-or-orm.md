@@ -27,11 +27,11 @@ TiDB は MySQL プロトコルと高い互換性がありますが、一部の�
 
 サポートレベル:**フル**
 
-[MySQL ドキュメント](https://dev.mysql.com/doc/connector-j/en/)に従って、 Java JDBC ドライバーをダウンロードして構成できます。TiDB v6.3.0 以降では、MySQL Connector/J 8.0.33 以降を使用することをお勧めします。
+[MySQL ドキュメント](https://dev.mysql.com/doc/connector-j/en/)に従って、 Java JDBC ドライバーをダウンロードして構成できます。TiDB v6.3.0 以降では、MySQL Connector/J の最新の GA バージョンを使用することをお勧めします。
 
-> **ヒント：**
+> **警告：**
 >
-> 8.0.32 より前の Connector/J 8.0 バージョンには[バグ](https://bugs.mysql.com/bug.php?id=106252)があり、v6.3.0 より前の TiDB バージョンを使用するとスレッドがハングする可能性があります。この問題を回避するには、MySQL Connector/J 8.0.32 以降のバージョン、または TiDB JDBC ( *TiDB-JDBC*タブを参照) を使用することをお勧めします。
+> MySQL Connector/J 8.0 の 8.0.31 より前のバージョンには[バグ](https://bugs.mysql.com/bug.php?id=106252)があり (詳細は[MySQL JDBC のバグ](/develop/dev-guide-third-party-tools-compatibility.md#mysql-jdbc-bugs)を参照)、v6.3.0 より前のバージョンの TiDB を使用するとスレッドがハングする可能性があります。この問題を回避するには、MySQL Connector/J 8.0.31 以前のバージョンを使用し**ないで**ください。
 
 完全なアプリケーションを構築する方法の例については、 [TiDB と JDBC を使用してシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-java-jdbc.md)参照してください。
 
@@ -40,7 +40,7 @@ TiDB は MySQL プロトコルと高い互換性がありますが、一部の�
 
 サポートレベル:**フル**
 
-[TiDB-JDBC](https://github.com/pingcap/mysql-connector-j)は、MySQL 8.0.29 をベースにカスタマイズされたJavaドライバーです。MySQL 公式バージョン 8.0.29 をベースにコンパイルされた TiDB-JDBC は、元の JDBC の準備モードでのマルチパラメータおよびマルチフィールド EOF のバグを修正し、自動 TiCDC スナップショット メンテナンスや SM3 認証プラグインなどの機能を追加します。
+[TiDB-JDBC](https://github.com/pingcap/mysql-connector-j) 、MySQL 8.0.29 をベースにカスタマイズされたJavaドライバーです。MySQL 公式バージョン 8.0.29 をベースにコンパイルされた TiDB-JDBC は、元の JDBC の準備モードでのマルチパラメータおよびマルチフィールド EOF のバグを修正し、自動 TiCDC スナップショット メンテナンスや SM3 認証プラグインなどの機能を追加します。
 
 SM3 ベースの認証は、TiDB の TiDB-JDBC でのみサポートされます。
 
@@ -74,7 +74,7 @@ SM3 認証を有効にする必要がある場合は、 `pom.xml`ファイルの
 </dependency>
 ```
 
-Gradle を使用する場合は、 `dependencies`に次の内容を追加します。
+Gradle を使用する場合は、次の内容を`dependencies`に追加します。
 
 ```gradle
 implementation group: 'io.github.lastincisor', name: 'mysql-connector-java', version: '8.0.29-tidb-1.0.0'
@@ -87,18 +87,18 @@ implementation group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.67
 
 ### Java ORM フレームワーク {#java-orm-frameworks}
 
+<SimpleTab>
+<div label="Hibernate">
+
 > **注記：**
 >
 > -   現在、Hibernate は[ネストされたトランザクションをサポートしない](https://stackoverflow.com/questions/37927208/nested-transaction-in-spring-app-with-jpa-postgres)実行します。
 >
-> -   v6.2.0 以降、 TiDB は[セーブポイント](/sql-statements/sql-statement-savepoint.md)サポートします。 `@Transactional`の`Propagation.NESTED`トランザクション伝播オプションを使用するには、つまり`@Transactional(propagation = Propagation.NESTED)`を設定するには、 TiDB が v6.2.0 以降であることを確認してください。
-
-<SimpleTab>
-<div label="Hibernate">
+> -   v6.2.0 以降、 TiDB は[セーブポイント](/sql-statements/sql-statement-savepoint.md)サポートしています。 `@Transactional`の`Propagation.NESTED`トランザクション伝播オプションを使用するには、つまり`@Transactional(propagation = Propagation.NESTED)`を設定するには、 TiDB が v6.2.0 以降であることを確認してください。
 
 サポートレベル:**フル**
 
-アプリケーションのさまざまな依存関係間の複雑な関係を手動で管理することを避けるために、 [グラドル](https://gradle.org/install)または[メイヴン](https://maven.apache.org/install.html)を使用して、間接的なものも含め、アプリケーションのすべての依存関係を取得できます。TiDB 方言をサポートしているのは Hibernate `6.0.0.Beta2`以上であることに注意してください。
+アプリケーションのさまざまな依存関係間の複雑な関係を手動で管理することを避けるために、 [グラドル](https://gradle.org/install)または[メイヴン](https://maven.apache.org/install.html)使用して、間接的なものも含め、アプリケーションのすべての依存関係を取得できます。TiDB 方言をサポートしているのは Hibernate `6.0.0.Beta2`以上のみであることに注意してください。
 
 Maven を使用している場合は、 `<dependencies></dependencies>`に以下を追加します。
 
@@ -106,21 +106,21 @@ Maven を使用している場合は、 `<dependencies></dependencies>`に以下
 <dependency>
     <groupId>org.hibernate.orm</groupId>
     <artifactId>hibernate-core</artifactId>
-    <version>6.0.0.CR2</version>
+    <version>6.2.3.Final</version>
 </dependency>
 
 <dependency>
     <groupId>mysql</groupId>
     <artifactId>mysql-connector-java</artifactId>
-    <version>5.1.49</version>
+    <version>8.0.33</version>
 </dependency>
 ```
 
 Gradle を使用している場合は、 `dependencies`に以下を追加します。
 
 ```gradle
-implementation 'org.hibernate:hibernate-core:6.0.0.CR2'
-implementation 'mysql:mysql-connector-java:5.1.49'
+implementation 'org.hibernate:hibernate-core:6.2.3.Final'
+implementation 'mysql:mysql-connector-java:8.0.33'
 ```
 
 -   Hibernate を使用してネイティブJavaで TiDB アプリケーションを構築する例については、 [TiDB と Hibernate を使ってシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-java-hibernate.md)参照してください。
@@ -130,7 +130,7 @@ implementation 'mysql:mysql-connector-java:5.1.49'
 
 > **注記：**
 >
-> `Hibernate`バージョンをアップグレードできない場合は、代わりにMySQL 5.7方言`org.hibernate.dialect.MySQL57Dialect`を使用してください。ただし、この設定では予期しない結果が生じたり、 [シーケンス](/sql-statements/sql-statement-create-sequence.md)などの一部の TiDB 固有の機能が使用できなくなる可能性があります。
+> `Hibernate`バージョンをアップグレードできない場合は、代わりにMySQL 5.7方言`org.hibernate.dialect.MySQL57Dialect`使用してください。ただし、この設定では予期しない結果が生じたり、 [シーケンス](/sql-statements/sql-statement-create-sequence.md)などの一部の TiDB 固有の機能が使用できなくなる可能性があります。
 
 </div>
 
@@ -138,7 +138,7 @@ implementation 'mysql:mysql-connector-java:5.1.49'
 
 サポートレベル:**フル**
 
-アプリケーションのさまざまな依存関係間の複雑な関係を手動で管理することを避けるために、 [グラドル](https://gradle.org/install)または[メイヴン](https://maven.apache.org/install.html)を使用して、間接的な依存関係も含め、アプリケーションのすべての依存関係を取得できます。
+アプリケーションのさまざまな依存関係間の複雑な関係を手動で管理することを避けるために、 [グラドル](https://gradle.org/install)または[メイヴン](https://maven.apache.org/install.html)使用して、間接的な依存関係も含め、アプリケーションのすべての依存関係を取得できます。
 
 Maven を使用している場合は、 `<dependencies></dependencies>`に以下を追加します。
 
@@ -146,21 +146,21 @@ Maven を使用している場合は、 `<dependencies></dependencies>`に以下
 <dependency>
     <groupId>org.mybatis</groupId>
     <artifactId>mybatis</artifactId>
-    <version>3.5.9</version>
+    <version>3.5.13</version>
 </dependency>
 
 <dependency>
     <groupId>mysql</groupId>
     <artifactId>mysql-connector-java</artifactId>
-    <version>5.1.49</version>
+    <version>8.0.33</version>
 </dependency>
 ```
 
 Gradle を使用している場合は、 `dependencies`に以下を追加します。
 
 ```gradle
-implementation 'org.mybatis:mybatis:3.5.9'
-implementation 'mysql:mysql-connector-java:5.1.49'
+implementation 'org.mybatis:mybatis:3.5.13'
+implementation 'mysql:mysql-connector-java:8.0.33'
 ```
 
 MyBatis を使用して TiDB アプリケーションを構築する例については、 [TiDB と MyBatis を使ってシンプルな CRUD アプリを構築する](/develop/dev-guide-sample-application-java-mybatis.md)参照してください。
@@ -270,14 +270,14 @@ MySQL Connector/Python を使用して TiDB アプリケーションを構築す
 </div>
 </SimpleTab>
 
-### Python ORM フレームワーク {#python-orm-frameworks}
+### Python ORMフレームワーク {#python-orm-frameworks}
 
 <SimpleTab>
 <div label="Django">
 
 サポートレベル:**フル**
 
-[ジャンゴ](https://docs.djangoproject.com/)は人気の Python Web フレームワークです。TiDB と Django 間の互換性の問題を解決するために、PingCAP は TiDB 方言`django-tidb`を提供しています。これをインストールするには、 [`django-tidb`ドキュメント](https://github.com/pingcap/django-tidb#installation-guide)参照してください。
+[ジャンゴ](https://docs.djangoproject.com/)は人気の Python Web フレームワークです。TiDB と Django 間の互換性の問題を解決するために、PingCAP は TiDB 方言`django-tidb`を提供しています。これをインストールするには、 [`django-tidb`ドキュメント](https://github.com/pingcap/django-tidb#installation-guide)を参照してください。
 
 Django を使用して TiDB アプリケーションを構築する例については、 [Django で TiDB に接続する](/develop/dev-guide-sample-application-python-django.md)参照してください。
 
@@ -305,5 +305,19 @@ peewee を使用して TiDB アプリケーションを構築する例につい�
 <CustomContent platform="tidb-cloud">
 
 ドライバーまたは ORM を決定したら、 [TiDBクラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)実行できます。
+
+</CustomContent>
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
 
 </CustomContent>

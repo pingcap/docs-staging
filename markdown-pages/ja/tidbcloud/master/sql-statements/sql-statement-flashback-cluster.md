@@ -1,18 +1,17 @@
 ---
 title: FLASHBACK CLUSTER
 summary: TiDB データベースでの FLASHBACK CLUSTER の使用方法を学習します。
-aliases: ['/tidb/v7.5/sql-statement-flashback-to-timestamp','/tidb/stable/sql-statement-flashback-to-timestamp','/tidbcloud/sql-statement-flashback-to-timestamp']
 ---
 
 # フラッシュバッククラスター {#flashback-cluster}
 
 TiDB v6.4.0 では、 `FLASHBACK CLUSTER TO TIMESTAMP`構文が導入されました。これを使用して、クラスターを特定の時点に復元できます。タイムスタンプを指定する場合、datetime 値を設定するか、time 関数を使用できます。datetime の形式は &#39;2016-10-08 16:45:26.999&#39; のようで、最小時間単位はミリ秒です。ただし、ほとんどの場合、&#39;2016-10-08 16:45:26&#39; のように、時間単位として秒を使用してタイムスタンプを指定するだけで十分です。
 
-v6.5.6、v7.1.3、v7.5.1 以降、TiDB では`FLASHBACK CLUSTER TO TSO`構文が導入されています。この構文を使用すると、 [TSO](/tso.md)を使用してより正確なリカバリ ポイントを指定できるため、データ リカバリの柔軟性が向上します。
+v6.5.6、v7.1.3、v7.5.1、v7.6.0 以降、TiDB では`FLASHBACK CLUSTER TO TSO`構文が導入されています。この構文を使用すると、 [TSO](/tso.md)使用してより正確なリカバリ ポイントを指定できるため、データ リカバリの柔軟性が向上します。
 
 > **警告：**
 >
-> `FLASHBACK CLUSTER TO [TIMESTAMP|TSO]`構文は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターには適用されません。予期しない結果を回避するには、 TiDB Cloud Serverless クラスターでこのステートメントを実行しないでください。
+> `FLASHBACK CLUSTER TO [TIMESTAMP|TSO]`構文は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターには適用されません。予期しない結果を回避するには、TiDB Serverless クラスターでこのステートメントを実行しないでください。
 
 > **警告：**
 >
@@ -47,7 +46,7 @@ FlashbackToTimestampStmt
            | 'FLASHBACK' 'CLUSTER' 'TO' 'TSO' LengthNum
 ```
 
-## 注記 {#notes}
+## ノート {#notes}
 
 -   `FLASHBACK`ステートメントで指定する時間は、ガベージ コレクション (GC) の有効期間内である必要があります。システム変数[`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50) (デフォルト: `10m0s` ) は、行の以前のバージョンの保持時間を定義します。ガベージコレクションが実行された現在の`safePoint` 、次のクエリで取得できます。
 
@@ -62,7 +61,7 @@ FlashbackToTimestampStmt
 -   `FLASHBACK`文で指定した時点では、完全に実行されていない DDL 文は存在できません。そのような DDL が存在する場合、TiDB はそれを拒否します。
 -   `FLASHBACK CLUSTER`を実行する前に、TiDB は関連するすべての接続を切断し、 `FLASHBACK CLUSTER`ステートメントが完了するまでこれらのテーブルに対する読み取りおよび書き込み操作を禁止します。
 -   `FLASHBACK CLUSTER`ステートメントは実行後にキャンセルできません。TiDB は成功するまで再試行を続けます。
--   `FLASHBACK CLUSTER`の実行中にデータをバックアップする必要がある場合は、 [バックアップと復元](/br/br-snapshot-guide.md)を使用して、 `FLASHBACK CLUSTER`の開始時刻よりも前の`BackupTS`を指定できます。また、 `FLASHBACK CLUSTER`の実行中に[ログバックアップ](/br/br-pitr-guide.md)を有効にすると失敗します。そのため、 `FLASHBACK CLUSTER`が完了した後にログバックアップを有効にするようにしてください。
+-   `FLASHBACK CLUSTER`の実行中にデータをバックアップする必要がある場合は、 [復元する](/br/br-snapshot-guide.md)を使用して、 `FLASHBACK CLUSTER`の開始時刻よりも前の`BackupTS`を指定できます。また、 `FLASHBACK CLUSTER`の実行中に[ログバックアップ](/br/br-pitr-guide.md)を有効にすると失敗します。そのため、 `FLASHBACK CLUSTER`が完了した後にログバックアップを有効にするようにしてください。
 -   `FLASHBACK CLUSTER`ステートメントによってメタデータ (テーブル構造、データベース構造) がロールバックされた場合、関連する変更は TiCDC によって複製され**ません**。したがって、タスクを手動で一時停止し、 `FLASHBACK CLUSTER`の完了を待ってから、上流と下流のスキーマ定義を手動で複製して、一貫性があることを確認する必要があります。その後、TiCDC の変更フィードを再作成する必要があります。
 
 </CustomContent>

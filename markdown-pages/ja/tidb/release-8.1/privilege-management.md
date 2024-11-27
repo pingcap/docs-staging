@@ -24,7 +24,7 @@ TiDB は、構文や権限タイプを含むMySQL 5.7の権限管理システム
 GRANT SELECT ON test.* TO 'xxx'@'%';
 ```
 
-次のステートメントを使用して、 `xxx`のユーザーにすべてのデータベースに対するすべての権限を付与します。
+次のステートメントを使用して、 `xxx`ユーザーにすべてのデータベースに対するすべての権限を付与します。
 
 ```sql
 GRANT ALL PRIVILEGES ON *.* TO 'xxx'@'%';
@@ -54,7 +54,7 @@ mysql> SELECT user,host,authentication_string FROM mysql.user WHERE user='idonte
 Empty set (0.00 sec)
 ```
 
-次の例では、SQL モード`NO_AUTO_CREATE_USER`が設定されていないため、ユーザー`idontexist`は空のパスワードで自動的に作成されます。これはセキュリティ上のリスクがあるため**推奨されません**。ユーザー名のスペルを間違えると、空のパスワードで新しいユーザーが作成されます。
+次の例では、SQL モード`NO_AUTO_CREATE_USER`が設定されていないため、ユーザー`idontexist`空のパスワードで自動的に作成されます。これはセキュリティ上のリスクがあるため**推奨されません**。ユーザー名のスペルを間違えると、空のパスワードで新しいユーザーが作成されます。
 
 ```sql
 mysql> SET @@sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
@@ -104,7 +104,7 @@ mysql> SELECT user,host,db FROM mysql.db WHERE user='genius';
 
 `REVOKE`ステートメントにより、システム管理者はユーザー アカウントから権限を取り消すことができます。
 
-`REVOKE`ステートメントは`REVOKE`ステートメントに対応します。
+`REVOKE`番目のステートメントは`REVOKE`ステートメントに対応します。
 
 ```sql
 REVOKE ALL PRIVILEGES ON `test`.* FROM 'genius'@'localhost';
@@ -126,9 +126,9 @@ mysql> GRANT ALL PRIVILEGES ON `te\%`.* TO 'genius'@'localhost';
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-この例では、完全一致を使用して`te%`という名前のデータベースを検索します。 `%`では`\`エスケープ文字が使用されているため、 `%`ワイルドカードとはみなされないことに注意してください。
+この例では、完全一致を使用して`te%`という名前のデータベースを検索します。 `%`では`\`エスケープ文字が使用されるため、 `%`ワイルドカードとはみなされないことに注意してください。
 
-文字列は一重引用符 (&#39;&#39;) で囲まれ、識別子はバッククォート (``) で囲まれます。以下の違いを参照してください。
+文字列は一重引用符 (&#39;&#39;) で囲まれ、識別子はバックティック (``) で囲まれます。以下の違いを確認してください。
 
 ```sql
 mysql> GRANT ALL PRIVILEGES ON 'test'.* TO 'genius'@'localhost';
@@ -195,21 +195,21 @@ v5.1 以降、TiDB 機能は MySQL 8.0 から借用した動的権限をサポ�
 -   `SYSTEM_VARIABLES_ADMIN`
 -   `ROLE_ADMIN`
 -   `CONNECTION_ADMIN`
--   `PLACEMENT_ADMIN`権限所有者は配置ポリシーを作成、変更、削除できます。
--   `DASHBOARD_CLIENT` 、権限所有者が TiDB ダッシュボードにログインすることを許可します。
+-   `PLACEMENT_ADMIN`場合、権限所有者は配置ポリシーを作成、変更、削除できます。
+-   `DASHBOARD_CLIENT`権限所有者が TiDB ダッシュボードにログインすることを許可します。
 -   `RESTRICTED_TABLES_ADMIN` SEM が有効な場合に権限所有者がシステム テーブルを表示できるようにします。
--   `RESTRICTED_STATUS_ADMIN` SEM が有効な場合に、権限所有者が[`SHOW [GLOBAL|SESSION] STATUS`](/sql-statements/sql-statement-show-status.md)のすべてのステータス変数を表示できるようにします。
+-   `RESTRICTED_STATUS_ADMIN` 、SEM が有効な場合に、権限所有者が[`SHOW [GLOBAL|SESSION] STATUS`](/sql-statements/sql-statement-show-status.md)のすべてのステータス変数を表示できるようにします。
 -   `RESTRICTED_VARIABLES_ADMIN`場合、SEM が有効なときに権限所有者はすべてのシステム変数を表示できます。
--   `RESTRICTED_USER_ADMIN` 、SEM が有効な場合に、特権所有者のアクセスが SUPER ユーザーによって取り消されることを禁止します。
--   `RESTRICTED_CONNECTION_ADMIN`権限所有者が`RESTRICTED_USER_ADMIN`のユーザーの接続を切断することを許可します。この権限は`KILL`および`KILL TIDB`ステートメントに影響します。
--   `RESTRICTED_REPLICA_WRITER_ADMIN`では、TiDB クラスターで読み取り専用モードが有効になっている場合でも、権限所有者は影響を受けずに書き込みまたは更新操作を実行できます。詳細については、 [`tidb_restricted_read_only`](/system-variables.md#tidb_restricted_read_only-new-in-v520)を参照してください。
+-   `RESTRICTED_USER_ADMIN` SEM が有効な場合に、特権所有者のアクセスが SUPER ユーザーによって取り消されることを禁止します。
+-   `RESTRICTED_CONNECTION_ADMIN` 、権限所有者が`RESTRICTED_USER_ADMIN`のユーザーの接続を切断することを許可します。この権限は`KILL`および`KILL TIDB`ステートメントに影響します。
+-   `RESTRICTED_REPLICA_WRITER_ADMIN` 、TiDB クラスターで読み取り専用モードが有効になっている場合でも、権限所有者は影響を受けずに書き込みまたは更新操作を実行できます。詳細については、 [`tidb_restricted_read_only`](/system-variables.md#tidb_restricted_read_only-new-in-v520)参照してください。
 
 動的権限の完全なセットを表示するには、 `SHOW PRIVILEGES`ステートメントを実行します。プラグインは新しい権限を追加できるため、割り当て可能な権限のリストは TiDB のインストールによって異なる場合があります。
 
 ## <code>SUPER</code>特権 {#code-super-code-privilege}
 
 -   `SUPER`権限により、ユーザーはほぼすべての操作を実行できます。デフォルトでは、この権限は`root`ユーザーのみに付与されます。他のユーザーにこの権限を付与する場合は注意してください。
--   `SUPER`権限は[MySQL 8.0 では非推奨](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#dynamic-privileges-migration-from-super)とみなされ、よりきめ細かいアクセス制御を提供するために[動的権限](#dynamic-privileges)に置き換えることができます。
+-   `SUPER`権限は[MySQL 8.0 では非推奨](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#dynamic-privileges-migration-from-super)みなされ、よりきめ細かいアクセス制御を提供するために[動的権限](#dynamic-privileges)に置き換えることができます。
 
 ## TiDB操作に必要な権限 {#privileges-required-for-tidb-operations}
 
@@ -260,11 +260,11 @@ mysql> SELECT * FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE grantee = "'root'@
 -   すべての`ALTER`ステートメントについて、ユーザーは対応するテーブルに対する`ALTER`権限を持っている必要があります。
 -   `ALTER...DROP`と`ALTER...RENAME TO`以外のステートメントの場合、ユーザーは対応するテーブルに対して`INSERT`と`CREATE`権限を持っている必要があります。
 -   `ALTER...DROP`ステートメントの場合、ユーザーは対応するテーブルに対して`DROP`権限を持っている必要があります。
--   `ALTER...RENAME TO`ステートメントの場合、ユーザーは名前変更前のテーブルに対して`DROP`権限を持っている必要があり、名前変更後のテーブルに対して`CREATE`と`INSERT`権限を持っている必要があります。
+-   `ALTER...RENAME TO`ステートメントの場合、ユーザーは名前変更前のテーブルに対して`DROP`権限を持っている必要があり、名前変更後のテーブルに対して`CREATE`権限と`INSERT`権限を持っている必要があります。
 
 > **注記：**
 >
-> MySQL 5.7のドキュメントでは、テーブルで`ALTER`操作を実行するには、ユーザーに`INSERT`と`CREATE`権限が必要です。しかし、実際には、 MySQL 5.7.25 では、この場合、 `ALTER`権限のみが必要です。現在、TiDB の`ALTER`権限は、MySQL の実際の動作と一致しています。
+> MySQL 5.7 のドキュメントでは、テーブルで`ALTER`操作を実行するには、ユーザーに`INSERT`と`CREATE`権限が必要です。しかし、実際には、 MySQL 5.7.25 では、この場合、 `ALTER`権限のみが必要です。現在、TiDB の`ALTER`権限は、MySQL の実際の動作と一致しています。
 
 ### バックアップ {#backup}
 
@@ -294,7 +294,7 @@ mysql> SELECT * FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE grantee = "'root'@
 
 > **注記：**
 >
-> 現在のユーザーがビューを作成したユーザーでない場合は、権限`CREATE VIEW`と`SUPER`の両方が必要です。
+> 現在のユーザーがビューを作成したユーザーでない場合は、権限`CREATE VIEW`と`SUPER`両方が必要です。
 
 ### データベースの削除 {#drop-database}
 
@@ -312,7 +312,7 @@ mysql> SELECT * FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE grantee = "'root'@
 
 ターゲット テーブルには`SELECT` 、 `UPDATE` 、 `INSERT` 、 `DELETE` 、および`ALTER`権限が必要です。TiDB にローカルに保存されているファイルをインポートするには、 `FILE`権限も必要です。
 
-### データを読み込む {#load-data}
+### データをロード {#load-data}
 
 テーブルに対して`INSERT`権限が必要です。 `REPLACE INTO`使用する場合は、 `DELETE`権限も必要です。
 
@@ -342,7 +342,7 @@ mysql> SELECT * FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE grantee = "'root'@
 
 `SHOW CREATE VIEW` `SHOW VIEW`権限が必要です。
 
-`SHOW GRANTS`では、 `mysql`データベースに対する`SELECT`権限が必要です。対象ユーザーが現在のユーザーの場合、 `SHOW GRANTS`権限は必要ありません。
+`SHOW GRANTS`では、 `mysql`データベースに対する`SELECT`権限が必要です。ターゲット ユーザーが現在のユーザーの場合、 `SHOW GRANTS`権限は必要ありません。
 
 `SHOW PROCESSLIST`では、他のユーザーに属する接続を表示するには`SUPER`権限が必要です。
 
@@ -370,7 +370,7 @@ mysql> SELECT * FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE grantee = "'root'@
 
 `GRANT`によって付与される権限とともに`GRANT`権限が必要です。
 
-ユーザーを暗黙的に作成するには、追加の`CREATE USER`権限が必要です。
+ユーザーを暗黙的に作成するには、追加の権限が`CREATE USER`必要です。
 
 `GRANT ROLE` `SUPER`または`ROLE_ADMIN`権限が必要です。
 
@@ -412,11 +412,11 @@ mysql> SELECT * FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE grantee = "'root'@
 
 `SUPER`または`RESOURCE_GROUP_ADMIN`権限が必要です。
 
-## 特権システムの導入 {#implementation-of-the-privilege-system}
+## 特権制度の導入 {#implementation-of-the-privilege-system}
 
 ### 権限表 {#privilege-table}
 
-次のシステム テーブルは、権限に関連するすべてのデータが格納されているため特別です。
+次の[`mysql`システム テーブル](/mysql-schema/mysql-schema.md) 、権限に関連するすべてのデータが格納されているため特別です。
 
 -   `mysql.user` (ユーザー アカウント、グローバル権限)
 -   `mysql.db` (データベースレベルの権限)
@@ -435,39 +435,39 @@ mysql> SELECT User,Host,Select_priv,Insert_priv FROM mysql.user LIMIT 1;
 1 row in set (0.00 sec)
 ```
 
-このレコードで`mysql.user` 、 `Host`と`User` 、 `root`ユーザーが任意のホスト（ `%` ）から送信した接続要求を受け入れることができることを決定します`Select_priv`と`Insert_priv` 、ユーザーがグローバル`Select`と`Insert`権限を持っていることを意味します。17テーブル内の有効範囲はグローバルです。
+このレコードでは、 `Host`と`User` `root`ユーザーが任意のホスト（ `%` ）から送信した接続要求を受け入れることができることを決定します。9と`Insert_priv` `Select_priv`ユーザーがグローバル`Select`と`Insert`権限を持っていることを意味します。17 `mysql.user`内の有効範囲はグローバルです。
 
 `mysql.db`の`Host`と`User` 、ユーザーがアクセスできるデータベースを決定します。有効範囲はデータベースです。
 
 > **注記：**
 >
-> 権限テーブルの更新は、 `GRANT` 、 `CREATE USER` 、 `DROP USER`などの指定された構文のみで行うことをお勧めします。基礎となる権限テーブルを直接編集しても、権限キャッシュは自動的に更新されず、 `FLUSH PRIVILEGES`実行されるまで予期しない動作が発生します。
+> 権限テーブルの更新は、 `GRANT` 、 `CREATE USER` 、 `DROP USER`などの指定された構文のみを使用して行うことをお勧めします。基礎となる権限テーブルを直接編集しても、権限キャッシュは自動的に更新されず、 `FLUSH PRIVILEGES`が実行されるまで予期しない動作が発生します。
 
 ### 接続検証 {#connection-verification}
 
-クライアントが接続要求を送信すると、TiDBサーバーはログイン操作を検証します。TiDBサーバーは最初に`mysql.user`テーブルをチェックし`User` 。3 と`Host`のレコードが接続要求と一致する場合、TiDBサーバーは`authentication_string`検証します。
+クライアントが接続要求を送信すると、TiDBサーバーはログイン操作を検証します。TiDBサーバーは`Host`に`mysql.user`テーブルをチェックします。3 と`User`のレコードが接続要求と一致する場合、TiDBサーバーは`authentication_string`を検証します。
 
-ユーザー ID は、接続を開始するホスト`Host`とユーザー名`User`の 2 つの情報に基づいています。ユーザー名が空でない場合は、ユーザー名が完全に一致している必要があります。
+ユーザー ID は、接続を開始するホスト`Host` ) とユーザー名`User` ) の 2 つの情報に基づいています。ユーザー名が空でない場合は、ユーザー名が完全に一致している必要があります。
 
-`User` + `Host` 、 `user`テーブルの複数の行に一致する可能性があります。このシナリオに対処するために、 `user`テーブルの行はソートされます。クライアントが接続すると、テーブル行が 1 つずつチェックされ、最初に一致した行が検証に使用されます。ソートすると、ホストがユーザーよりも優先されます。
+`User` + `Host` 、 `user`テーブルの複数の行に一致する可能性があります。このシナリオに対処するために、 `user`テーブルの行はソートされます。クライアントが接続すると、テーブル行が 1 つずつチェックされ、最初に一致した行が検証に使用されます。ソート時には、ホストがユーザーよりも優先されます。
 
 ### 確認をリクエストする {#request-verification}
 
 接続が成功すると、要求検証プロセスによって、操作に権限があるかどうかがチェックされます。
 
-データベース関連のリクエスト（ `INSERT` ）の場合、リクエスト検証プロセスはまず`mysql.user`テーブルでユーザーのグローバル権限をチェックします。権限が付与されている場合は、直接アクセスできます。権限が付与され`UPDATE`いない場合は、 `mysql.db`テーブルをチェックします。
+データベース関連のリクエスト（ `INSERT` ）の場合、リクエスト検証プロセスはまず`mysql.user`テーブルでユーザーのグローバル権限をチェックします。権限が付与されている場合は、直接アクセスでき`UPDATE` 。権限が付与されていない場合は、 `mysql.db`テーブルをチェックします。
 
 `user`テーブルには、デフォルトのデータベースに関係なく、グローバル権限があります。たとえば、 `user`の`DELETE`権限は、任意の行、テーブル、またはデータベースに適用できます。
 
-`db`テーブルでは、空のユーザーが匿名ユーザー名と一致します。3 列ではワイルドカードは使用できません。5 `Host`と`Db`列の値には`User`パターン マッチングを使用できる`%`と`_`を使用できます。
+`db`テーブルでは、空のユーザーが匿名ユーザー名と一致します。3 列ではワイルドカード`Db`使用できません。5 `Host`と`User`列の値には、パターン マッチングを使用できる`%`と`_`を使用できます。
 
 `user`および`db`テーブルのデータも、メモリにロードされるときにソートされます。
 
-`tables_priv`と`columns_priv`での`%`の使用は似ていますが、 `Db` 、 `Table_name` 、 `Column_name`の列値には`%`含めることはできません。ロード時の並べ替えも同様です。
+`tables_priv`と`columns_priv`での`%`の使用は同様ですが、 `Db` 、 `Table_name` 、 `Column_name`の列値には`%`含めることはできません。ロード時のソートも同様です。
 
 ### 効果時間 {#time-of-effect}
 
-TiDB が起動すると、いくつかの権限チェックテーブルがメモリにロードされ、キャッシュされたデータを使用して権限が検証されます。 `GRANT` `DROP USER` `REVOKE`権限管理ステートメントを実行する`CREATE USER` 、すぐに有効になります。
+`CREATE USER`が起動すると、いくつかの権限チェックテーブルがメモリ`DROP USER`ロードされ、キャッシュされたデータを使用して権限が検証`REVOKE` `GRANT`の権限管理ステートメントを実行すると、すぐに有効になります。
 
 `mysql.user`などのテーブルを`INSERT` 、 `DELETE` 、 `UPDATE`などのステートメントで手動で編集しても、すぐには反映されません。この動作は MySQL と互換性があり、権限キャッシュは次のステートメントで更新できます。
 

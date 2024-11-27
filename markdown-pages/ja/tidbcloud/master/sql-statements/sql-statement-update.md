@@ -1,37 +1,30 @@
 ---
 title: UPDATE | TiDB SQL Statement Reference
-summary: UPDATEステートメントは、指定されたテーブル内のデータを変更するために使用されます。例えば、テーブルt1のc1が3の行のc1を5に変更することができます。TiDBは、より標準的なSQL動作に従い、列bを更新します。MySQLとは異なり、列bは値aに設定されず、値aはa+1に更新されます。
+summary: TiDB データベースの UPDATE の使用法の概要。
 ---
 
 # アップデート {#update}
 
 `UPDATE`ステートメントは、指定されたテーブル内のデータを変更するために使用されます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**更新手順:**
+```ebnf+diagram
+UpdateStmt ::=
+    "UPDATE" UpdateOption
+(   TableRef "SET" Assignment ("," Assignment)* WhereClause? OrderBy? Limit?
+|   TableRefs "SET" Assignment ("," Assignment)* WhereClause?
+)
 
-![UpdateStmt](https://download.pingcap.com/images/docs/sqlgram/UpdateStmt.png)
+UpdateOption ::=
+    OptimizerHints? ("LOW_PRIORITY" | "HIGH_PRIORITY" | "DELAYED")? "IGNORE"?
 
-**優先度の最適化:**
+TableRef ::=
+    ( TableFactor | JoinTable )
 
-![PriorityOpt](https://download.pingcap.com/images/docs/sqlgram/PriorityOpt.png)
-
-**テーブル参照:**
-
-![TableRef](https://download.pingcap.com/images/docs/sqlgram/TableRef.png)
-
-**テーブル参照:**
-
-![TableRefs](https://download.pingcap.com/images/docs/sqlgram/TableRefs.png)
-
-**課題リスト:**
-
-![AssignmentList](https://download.pingcap.com/images/docs/sqlgram/AssignmentList.png)
-
-**WhereClauseオプション:**
-
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
+TableRefs ::=
+    EscapedTableRef ("," EscapedTableRef)*
+```
 
 ## 例 {#examples}
 
@@ -68,9 +61,9 @@ mysql> SELECT * FROM t1;
 3 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB は、式を評価するときに常に列の元の値を使用します。例えば：
+TiDB は、式を評価するときに常に列の元の値を使用します。例:
 
 ```sql
 CREATE TABLE t (a int, b int);
@@ -78,11 +71,11 @@ INSERT INTO t VALUES (1,2);
 UPDATE t SET a = a+1,b=a;
 ```
 
-MySQL では、列`b`は値`a`に設定されているため 2 に更新され、同じステートメント内で値`a` (1) は`a+1` (2) に更新されます。
+MySQL では、列`b`は値`a`に設定されているため 2 に更新され、同じステートメントで値`a` (1) は値`a+1` (2) に更新されます。
 
-TiDB は、より標準的な SQL 動作に従い、 `b`対 1 を更新します。
+TiDB はより標準的な SQL 動作に従い、 `b`対 1 で更新します。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [入れる](/sql-statements/sql-statement-insert.md)
 -   [選択する](/sql-statements/sql-statement-select.md)

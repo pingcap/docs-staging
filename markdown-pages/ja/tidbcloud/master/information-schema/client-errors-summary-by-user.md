@@ -1,34 +1,34 @@
 ---
 title: CLIENT_ERRORS_SUMMARY_BY_USER
-summary: 表CLIENT_ERRORS_SUMMARY_BY_USERは、TiDBサーバーに接続するクライアントに返される SQL エラーと警告の概要を示しています。これには不正な形式のSQLステートメント、ゼロ除算エラー、範囲外または重複したキー値を挿入しようとしたエラーなどが含まれます。クライアントエラーはMySQLサーバープロトコル経由でクライアントに返され、アプリケーションは適切なアクションを実行することが期待されます。また、CLIENT_ERRORS_SUMMARY_BY_USERはユーザーごとにエラーを要約し、エラーを検査するための便利な方法を提供します。
+summary: CLIENT_ERRORS_SUMMARY_BY_USER INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
-# CLIENT_ERRORS_SUMMARY_BY_USER {#client-errors-summary-by-user}
+# クライアントエラーの概要 {#client-errors-summary-by-user}
 
-表`CLIENT_ERRORS_SUMMARY_BY_USER`は、TiDBサーバーに接続するクライアントに返される SQL エラーと警告の概要を示しています。これらには次のものが含まれます。
+表`CLIENT_ERRORS_SUMMARY_BY_USER`は、TiDBサーバーに接続するクライアントに返された SQL エラーと警告の概要を示しています。これには次のものが含まれます。
 
--   不正な形式の SQL ステートメント。
+-   不正な SQL ステートメント。
 -   ゼロ除算エラー。
 -   範囲外または重複したキー値を挿入しようとしました。
--   許可エラー。
+-   権限エラー。
 -   存在しないテーブル。
 
-クライアント エラーは MySQLサーバープロトコル経由でクライアントに返され、アプリケーションは適切なアクションを実行することが期待されます。表`INFORMATION_SCHEMA.CLIENT_ERRORS_SUMMARY_BY_USER`は、アプリケーションが TiDBサーバーから返されたエラーを正しく処理 (またはログ記録) していないシナリオでエラーを検査するための便利な方法を提供します。
+クライアント エラーは MySQLサーバープロトコルを介してクライアントに返され、アプリケーションは適切なアクションを実行することが期待されます。1 `INFORMATION_SCHEMA.CLIENT_ERRORS_SUMMARY_BY_USER`表は、アプリケーションが TiDBサーバーから返されたエラーを正しく処理 (またはログに記録) していないシナリオでエラーを検査するための便利な方法を提供します。
 
-`CLIENT_ERRORS_SUMMARY_BY_USER`ユーザーごとにエラーを要約するため、あるユーザーサーバーが他のサーバーよりも多くのエラーを生成しているシナリオを診断するのに役立ちます。考えられるシナリオは次のとおりです。
+`CLIENT_ERRORS_SUMMARY_BY_USER`ユーザーごとにエラーを要約するため、1 つのユーザーサーバーが他のサーバーよりも多くのエラーを生成しているシナリオを診断するのに役立ちます。考えられるシナリオは次のとおりです。
 
--   許可エラー。
--   テーブルまたはリレーショナル オブジェクトが欠落しています。
--   SQL 構文が間違っているか、アプリケーションと TiDB のバージョンとの間に互換性がない。
+-   権限エラー。
+-   テーブルまたはリレーショナル オブジェクトが見つかりません。
+-   SQL 構文が正しくないか、アプリケーションと TiDB のバージョン間に互換性がありません。
 
-要約されたカウントはステートメント`FLUSH CLIENT_ERRORS_SUMMARY`でリセットできます。概要は各 TiDBサーバーに対してローカルであり、メモリ内にのみ保持されます。 TiDBサーバーが再起動すると、サマリーは失われます。
+要約されたカウントは、ステートメント`FLUSH CLIENT_ERRORS_SUMMARY`でリセットできます。要約は各 TiDBサーバーにローカルであり、メモリ内にのみ保持されます。要約は、TiDBサーバーを再起動すると失われます。
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC CLIENT_ERRORS_SUMMARY_BY_USER;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +---------------+---------------+------+------+---------+-------+
@@ -48,14 +48,14 @@ DESC CLIENT_ERRORS_SUMMARY_BY_USER;
 フィールドの説明:
 
 -   `USER` : 認証されたユーザー。
--   `ERROR_NUMBER` : 返された MySQL 互換のエラー番号。
+-   `ERROR_NUMBER` : 返された MySQL 互換エラー番号。
 -   `ERROR_MESSAGE` : エラー番号と一致するエラー メッセージ (プリペアドステートメント形式)。
 -   `ERROR_COUNT` : このエラーがユーザーに返された回数。
 -   `WARNING_COUNT` : この警告がユーザーに返された回数。
--   `FIRST_SEEN` : このエラー (または警告) が初めてユーザーに送信されたとき。
--   `LAST_SEEN` : このエラー (または警告) がユーザーに送信された最新の時刻。
+-   `FIRST_SEEN` : このエラー (または警告) がユーザーに初めて送信されたとき。
+-   `LAST_SEEN` : このエラー (または警告) がユーザーに最後に送信された時刻。
 
-次の例は、クライアントがローカル TiDBサーバーに接続するときに生成される警告を示しています。 `FLUSH CLIENT_ERRORS_SUMMARY`を実行するとサマリーがリセットされます。
+次の例は、クライアントがローカル TiDBサーバーに接続したときに生成される警告を示しています。 `FLUSH CLIENT_ERRORS_SUMMARY`実行すると、サマリーがリセットされます。
 
 ```sql
 SELECT 0/0;
@@ -64,7 +64,7 @@ FLUSH CLIENT_ERRORS_SUMMARY;
 SELECT * FROM CLIENT_ERRORS_SUMMARY_BY_USER;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +-----+

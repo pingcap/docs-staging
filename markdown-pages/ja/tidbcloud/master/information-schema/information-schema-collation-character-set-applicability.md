@@ -1,18 +1,18 @@
 ---
 title: COLLATION_CHARACTER_SET_APPLICABILITY
-summary: COLLATION_CHARACTER_SET_APPLICABILITY表は、照合順序を該当する文字セット名にマップします。MySQLとの互換性のために含まれており、utf8mb4文字セットの照合順序マッピングを示します。COLLATION_NAMEは照合順序の名前で、CHARACTER_SET_NAMEは照合順序が属する文字セットの名前です。これにより、文字セットと照合順序の関連性が把握できます。
+summary: COLLATION_CHARACTER_SET_APPLICABILITY INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
-# COLLATION_CHARACTER_SET_APPLICABILITY {#collation-character-set-applicability}
+# 照合文字セットの適用性 {#collation-character-set-applicability}
 
-`COLLATION_CHARACTER_SET_APPLICABILITY`表は、照合順序を該当する文字セット名にマップします。 `COLLATIONS`テーブルと同様に、これは MySQL との互換性のためだけに含まれています。
+`COLLATION_CHARACTER_SET_APPLICABILITY`テーブルは、照合`COLLATIONS`を該当する文字セット名にマッピングします。3 テーブルと同様に、これは MySQL との互換性のためだけに含まれています。
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC COLLATION_CHARACTER_SET_APPLICABILITY;
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +--------------------+-------------+------+------+---------+-------+
@@ -24,13 +24,13 @@ DESC COLLATION_CHARACTER_SET_APPLICABILITY;
 2 rows in set (0.00 sec)
 ```
 
-`COLLATION_CHARACTER_SET_APPLICABILITY`表の`utf8mb4`文字セットの照合順序マッピングをビュー。
+`COLLATION_CHARACTER_SET_APPLICABILITY`テーブル内の`utf8mb4`文字セットの照合順序マッピングをビュー。
 
 ```sql
 SELECT * FROM COLLATION_CHARACTER_SET_APPLICABILITY WHERE character_set_name='utf8mb4';
 ```
 
-出力は次のとおりです。
+出力は次のようになります。
 
 ```sql
 +--------------------+--------------------+
@@ -43,7 +43,14 @@ SELECT * FROM COLLATION_CHARACTER_SET_APPLICABILITY WHERE character_set_name='ut
 3 rows in set (0.00 sec)
 ```
 
-`COLLATION_CHARACTER_SET_APPLICABILITY`のテーブルの列の説明は次のとおりです。
+`COLLATION_CHARACTER_SET_APPLICABILITY`表の列の説明は次のとおりです。
 
 -   `COLLATION_NAME` :照合順序の名前。
 -   `CHARACTER_SET_NAME` :照合順序が属する文字セットの名前。
+
+## 参照 {#see-also}
+
+-   [`SHOW CHARACTER SET`](/sql-statements/sql-statement-show-character-set.md)
+-   [`SHOW COLLATION`](/sql-statements/sql-statement-show-collation.md)
+-   [`INFORMATION_SCHEMA.CHARACTER_SETS`](/information-schema/information-schema-character-sets.md)
+-   [`INFORMATION_SCHEMA.COLLATIONS`](/information-schema/information-schema-collations.md)

@@ -9,14 +9,14 @@ summary: 2021 年のTiDB Cloudのリリース ノートについて説明しま�
 
 ## 2021年12月28日 {#december-28-2021}
 
-新機能:
+新機能：
 
 -   サポート[Amazon S3 または GCS から Apache Parquet ファイルをTiDB Cloudにインポートする](/tidb-cloud/import-parquet-files.md)
 
-バグ修正:
+バグの修正：
 
 -   TiDB Cloudに 1000 を超えるファイルをインポートするときに発生するインポート エラーを修正しました
--   TiDB Cloud が、すでにデータが存在する既存のテーブルにデータをインポートできる問題を修正しました。
+-   TiDB Cloud が、すでにデータがある既存のテーブルにデータをインポートできる問題を修正しました。
 
 ## 2021年11月30日 {#november-30-2021}
 
@@ -24,7 +24,7 @@ summary: 2021 年のTiDB Cloudのリリース ノートについて説明しま�
 
 -   TiDB Cloud をDeveloper Tier[TiDB v5.3.0](https://docs.pingcap.com/tidb/stable/release-5.3.0)にアップグレード
 
-新機能:
+新機能：
 
 -   サポート[TiDB クラウド プロジェクトに VPC CIDR を追加する](/tidb-cloud/set-up-vpc-peering-connections.md)
 
@@ -33,14 +33,14 @@ summary: 2021 年のTiDB Cloudのリリース ノートについて説明しま�
 -   Developer Tierの監視機能の向上
 -   自動バックアップ時間をDeveloper Tierクラスタの作成時間と同じに設定できるようになりました
 
-バグ修正:
+バグの修正：
 
 -   Developer Tierでディスクがいっぱいになったために発生する TiKV クラッシュの問題を修正
 -   HTMLインジェクションの脆弱性を修正
 
 ## 2021年11月8日 {#november-8-2021}
 
--   Launch [Developer Tier](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)では、 TiDB Cloudの1年間の無料トライアルが提供されます。
+-   Launch [Developer Tier](/tidb-cloud/select-cluster-tier.md#tidb-serverless)では、 TiDB Cloudの1年間の無料トライアルが提供されます。
 
     各Developer Tierクラスターはフル機能の TiDB クラスターであり、次のものが付属しています。
 
@@ -91,7 +91,7 @@ summary: 2021 年のTiDB Cloudのリリース ノートについて説明しま�
 
 ## 2021年6月25日 {#june-25-2021}
 
--   [TiDB Cloudの価格](https://www.pingcap.com/pricing/)ページで**リージョン選択が**機能しない問題を修正
+-   [TiDB Cloudの価格](https://en.pingcap.com/products/tidbcloud/pricing/)ページで**リージョン選択が**機能しない問題を修正
 
 ## 2021年6月24日 {#june-24-2021}
 

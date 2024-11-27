@@ -34,7 +34,7 @@ TiDB は、完全なデータ移行、増分データ移行、バックアップ
     -   ローカルディスクまたは Amazon S3 からのデータ
 -   **下流**：TiDB
 -   **利点**:
-    -   大量のデータを迅速にインポートし、TiDB クラスタ内の特定のテーブルを迅速に初期化する機能をサポート
+    -   大量のデータを迅速にインポートし、TiDB クラスター内の特定のテーブルを迅速に初期化する機能をサポート
     -   インポートの進行状況を保存するチェックポイントをサポートし、再起動後に中断したところから`tidb-lightning`を続行します。
     -   データフィルタリングをサポート
 -   **制限事項**:
@@ -59,7 +59,7 @@ TiDB は、完全なデータ移行、増分データ移行、バックアップ
 -   **上流**: TiDB
 -   **ダウンストリーム**: TiDB、MySQL、Kafka、MQ、Confluent、Amazon S3、GCS、Azure Blob Storage、NFS などのstorageサービス。
 -   **利点**: TiCDCオープンプロトコルを提供する
--   **制限事項**: TiCDC は、少なくとも 1 つの有効なインデックスを持つテーブルのみをレプリケートします。次のシナリオはサポートされていません。
+-   **制限**: TiCDC は、少なくとも 1 つの有効なインデックスを持つテーブルのみをレプリケートします。次のシナリオはサポートされていません。
     -   RawKV のみを使用する TiKV クラスター。
     -   DDL 操作`CREATE SEQUENCE`と TiDB の`SEQUENCE`関数。
 
@@ -87,7 +87,7 @@ TiDB は、完全なデータ移行、増分データ移行、バックアップ
 
 ## TiUPを使用してツールをインストールする {#install-tools-using-tiup}
 
-TiDB v4.0 以降、 TiUP は、TiDB エコシステム内のさまざまなクラスター コンポーネントの管理に役立つパッケージ マネージャーとして機能します。これで、1 つのコマンドを使用して任意のクラスターコンポーネントを管理できます。
+TiDB v4.0 以降、 TiUP は、 TiDB エコシステム内のさまざまなクラスター コンポーネントの管理に役立つパッケージ マネージャーとして機能します。これで、1 つのコマンドを使用して任意のクラスターコンポーネントを管理できます。
 
 ### ステップ1. TiUPをインストールする {#step-1-install-tiup}
 
@@ -103,38 +103,49 @@ source ~/.bash_profile
 
 ### ステップ2. コンポーネントをインストールする {#step-2-install-components}
 
-使用可能なすべてのコンポーネントを表示するには、次のコマンドを使用できます。
+利用可能なコンポーネントを確認するには、次のコマンドを使用できます。
 
 ```shell
 tiup list
 ```
 
-コマンド出力には、使用可能なすべてのコンポーネントがリストされます。
+このコマンドは利用可能なコンポーネントを出力します。
 
 ```bash
 Available components:
-Name            Owner    Description
-----            -----    -----------
-bench           pingcap  Benchmark database with different workloads
-br              pingcap  TiDB/TiKV cluster backup restore tool
-cdc             pingcap  CDC is a change data capture tool for TiDB
-client          pingcap  Client to connect playground
-cluster         pingcap  Deploy a TiDB cluster for production
-ctl             pingcap  TiDB controller suite
-dm              pingcap  Data Migration Platform manager
-dmctl           pingcap  dmctl component of Data Migration Platform
-errdoc          pingcap  Document about TiDB errors
-pd-recover      pingcap  PD Recover is a disaster recovery tool of PD, used to recover the PD cluster which cannot start or provide services normally
-playground      pingcap  Bootstrap a local TiDB cluster for fun
-tidb            pingcap  TiDB is an open source distributed HTAP database compatible with the MySQL protocol
-tidb-lightning  pingcap  TiDB Lightning is a tool used for fast full import of large amounts of data into a TiDB cluster
-tiup            pingcap  TiUP is a command-line component management tool that can help to download and install TiDB platform components to the local system
+Name            Owner      Description
+----            -----      -----------
+PCC             community  A tool used to capture plan changes among different versions of TiDB
+bench           pingcap    Benchmark database with different workloads
+br              pingcap    TiDB/TiKV cluster backup restore tool.
+cdc             pingcap    CDC is a change data capture tool for TiDB
+chaosd          community  An easy-to-use Chaos Engineering tool used to inject failures to a physical node
+client          pingcap    Client to connect playground
+cloud           pingcap    CLI tool to manage TiDB Cloud
+cluster         pingcap    Deploy a TiDB cluster for production
+ctl             pingcap    TiDB controller suite
+dm              pingcap    Data Migration Platform manager
+dmctl           pingcap    dmctl component of Data Migration Platform.
+errdoc          pingcap    Document about TiDB errors
+pd-recover      pingcap    PD Recover is a disaster recovery tool of PD, used to recover the PD cluster which cannot start or provide services normally.
+playground      pingcap    Bootstrap a local TiDB cluster for fun
+tidb            pingcap    TiDB is an open source distributed HTAP database compatible with the MySQL protocol.
+tidb-dashboard  pingcap    TiDB Dashboard is a Web UI for monitoring, diagnosing, and managing the TiDB cluster
+tidb-lightning  pingcap    TiDB Lightning is a tool used for fast full import of large amounts of data into a TiDB cluster
+tikv-br         pingcap    TiKV cluster backup restore tool
+tikv-cdc        pingcap    TiKV-CDC is a change data capture tool for TiKV
+tiproxy         pingcap    TiProxy is a database proxy that is based on TiDB.
+tiup            pingcap    TiUP is a command-line component management tool that can help to download and install TiDB platform components to the local system
 ```
 
-インストールするコンポーネントを選択してください:
+必要なコンポーネントを 1 つ以上インストールします。例:
 
 ```shell
-tiup install dumpling tidb-lightning
+tiup install dm
+```
+
+```shell
+tiup install dm tidb-lightning
 ```
 
 > **注記：**

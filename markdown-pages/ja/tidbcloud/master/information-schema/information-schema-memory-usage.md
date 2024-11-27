@@ -1,11 +1,11 @@
 ---
 title: MEMORY_USAGE
-summary: TiDBのMEMORY_USAGEテーブルは、現在のメモリ使用量を示します。列にはMEMORY_TOTAL、MEMORY_LIMIT、MEMORY_CURRENT、MEMORY_MAX_USEDなどがあります。これらはTiDBのメモリに関する情報を提供します。MEMORY_TOTALは利用可能なメモリの合計を示し、MEMORY_LIMITはメモリ使用制限を示します。MEMORY_CURRENTは現在のメモリ使用量を示し、MEMORY_MAX_USEDは開始時からの最大メモリ使用量を示します。また、セッション終了回数やディスク使用量なども提供されます。
+summary: MEMORY_USAGE information_schema システム テーブルについて学習します。
 ---
 
 # メモリ使用量 {#memory-usage}
 
-表`MEMORY_USAGE`は、現在の TiDB インスタンスの現在のメモリ使用量を示しています。
+`MEMORY_USAGE`表は、現在の TiDB インスタンスの現在のメモリ使用量を示します。
 
 ```sql
 USE information_schema;
@@ -44,16 +44,32 @@ SELECT * FROM information_schema.memory_usage;
 2 rows in set (0.002 sec)
 ```
 
-`MEMORY_USAGE`のテーブルの列は次のように説明されます。
+`MEMORY_USAGE`の表の列は次のように説明されます。
 
--   MEMORY_TOTAL: TiDB の利用可能なメモリの合計 (バイト単位)。
--   MEMORY_LIMIT: TiDB のメモリ使用制限 (バイト単位)。値はシステム変数[`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-new-in-v640)と同じです。
+-   MEMORY_TOTAL: TiDB の使用可能なメモリの合計 (バイト単位)。
+-   MEMORY_LIMIT: TiDB のメモリ使用量制限 (バイト単位)。値はシステム変数[`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-new-in-v640)の値と同じです。
 -   MEMORY_CURRENT: TiDB の現在のメモリ使用量 (バイト単位)。
--   MEMORY_MAX_USED: TiDB の開始時から現在までの最大メモリ使用量 (バイト単位)。
--   CURRENT_OPS: &quot;縮小中&quot; |ヌル。 「縮小」とは、TiDB がメモリ使用量を縮小する操作を実行していることを意味します。
--   SESSION_KILL_LAST: 最後にセッションが終了したときのタイムスタンプ。
--   SESSION_KILL_TOTAL: TiDB の開始時から現在までの、セッションが終了された回数。
+-   MEMORY_MAX_USED: TiDB の起動時から現在までのメモリ使用量 (バイト単位)。
+-   CURRENT_OPS: &quot;shrinking&quot; | null。&quot;shrinking&quot; は、TiDB がメモリ使用量を削減する操作を実行していることを意味します。
+-   SESSION_KILL_LAST: セッションが最後に終了した時のタイムスタンプ。
+-   SESSION_KILL_TOTAL: TiDB の開始時から現在までのセッションが終了した回数。
 -   GC_LAST:メモリ使用量によってGolang GC が最後にトリガーされたときのタイムスタンプ。
--   GC_TOTAL: TiDB の開始時から現在までに、メモリ使用量によってGolang GC がトリガーされた回数。
--   DISK_USAGE: 現在のデータ流出操作のディスク使用量 (バイト単位)。
--   QUERY_FORCE_DISK: TiDB の開始時から現在までに、データがディスクに流出した回数。
+-   GC_TOTAL: TiDB の起動時から現在までの、メモリ使用量によってGolang GC がトリガーされた回数。
+-   DISK_USAGE: 現在のデータスピル操作のディスク使用量（バイト単位）。
+-   QUERY_FORCE_DISK: TiDB が開始されてから現在までにデータがディスクに書き出された回数。
+
+## 参照 {#see-also}
+
+<CustomContent platform="tidb">
+
+-   [TiDBメモリ制御](/configure-memory-usage.md)
+-   [TiKVメモリパラメータのパフォーマンスを調整する](/tune-tikv-memory-performance.md)
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+-   [TiDBメモリ制御](https://docs.pingcap.com/tidb/stable/configure-memory-usage)
+-   [TiKVメモリパラメータのパフォーマンスを調整する](https://docs.pingcap.com/tidb/stable/tune-tikv-memory-performance)
+
+</CustomContent>

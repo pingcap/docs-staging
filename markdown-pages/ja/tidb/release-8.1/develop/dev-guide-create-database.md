@@ -11,7 +11,7 @@ summary: データベースを作成するための手順、ルール、およ�
 
 データベースを作成する前に、次の操作を実行します。
 
--   [TiDB サーバーレスクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
+-   [TiDB Cloudサーバーレスクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md)読んでください。
 
 ## データベースとは {#what-is-database}
@@ -73,8 +73,22 @@ mysql
 -   [データベースの命名規則](/develop/dev-guide-object-naming-guidelines.md)に従って、データベースに意味のある名前を付けます。
 -   TiDB には、 `test`という名前のデフォルトのデータベースが付属しています。ただし、必要がない限り、本番環境で使用することはお勧めしません。SQL セッションで`CREATE DATABASE`ステートメントを使用して独自のデータベースを作成し、 [`USE {databasename};`](/sql-statements/sql-statement-use.md)ステートメントを使用して現在のデータベースを変更することができます。
 -   `root`ユーザーを使用して、データベース、ロール、ユーザーなどのオブジェクトを作成します。ロールとユーザーには必要な権限のみを付与します。
--   ベスト プラクティスとして、データベース スキーマの変更を実行するには、ドライバーまたは ORM ではなく**、MySQL コマンドライン クライアント**または**MySQL GUI クライアント**を使用することをお勧めします。
+-   ベスト プラクティスとして、データベース スキーマの変更を実行するには、ドライバーまたは ORM ではなく、 **MySQL コマンドライン クライアント**または**MySQL GUI クライアントを**使用することをお勧めします。
 
 ## 次のステップ {#next-step}
 
-データベースを作成したら、そこに**テーブル**を追加できます。詳細については、 [テーブルを作成する](/develop/dev-guide-create-table.md)を参照してください。
+データベースを作成したら、そこに**テーブル**を追加できます。詳細については、 [テーブルを作成する](/develop/dev-guide-create-table.md)参照してください。
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

@@ -36,7 +36,7 @@ TiDB悲観的トランザクション モードでは、2 つのクライアン�
 | UPDATE books SET stock=stock-1 WHERE id=2; -- 実行はブロックされます |                                                               |
 |                                                           | UPDATE books SET stock=stock-1 WHERE id=1; -- デッドロックエラーが発生します |
 
-クライアント B でデッドロック エラーが発生すると、TiDB は自動的にクライアント B のトランザクションをロールバックします。クライアント A の`id=2`更新は正常に実行されます。その後、 `COMMIT`を実行してトランザクションを終了できます。
+クライアント B でデッドロック エラーが発生すると、TiDB は自動的にクライアント B のトランザクションをロールバックします。クライアント A の`id=2`更新は正常に実行されます。その後、 `COMMIT`実行してトランザクションを終了できます。
 
 ### 解決策1: デッドロックを回避する {#solution-1-avoid-deadlocks}
 
@@ -65,11 +65,11 @@ UPDATE books SET stock=stock-1 WHERE id IN (1, 2);
 
 ### 解決策3:楽観的トランザクションを使用する {#solution-3-use-optimistic-transactions}
 
-楽観的トランザクション モデルではデッドロックは発生しません。ただし、アプリケーションでは、失敗した場合に備えて楽観的トランザクションの再試行ロジックを追加する必要があります。詳細については、 [アプリケーションの再試行とエラー処理](#application-retry-and-error-handling)を参照してください。
+楽観的トランザクション モデルではデッドロックは発生しません。ただし、アプリケーションでは、失敗した場合に備えて楽観的トランザクションの再試行ロジックを追加する必要があります。詳細については、 [アプリケーションの再試行とエラー処理](#application-retry-and-error-handling)参照してください。
 
 ### 解決策4: 再試行 {#solution-4-retry}
 
-エラー メッセージに示されているように、アプリケーションに再試行ロジックを追加します。詳細については、 [アプリケーションの再試行とエラー処理](#application-retry-and-error-handling)参照してください。
+エラー メッセージで提案されているように、アプリケーションに再試行ロジックを追加します。詳細については、 [アプリケーションの再試行とエラー処理](#application-retry-and-error-handling)参照してください。
 
 ## アプリケーションの再試行とエラー処理 {#application-retry-and-error-handling}
 
@@ -152,5 +152,19 @@ while True:
 <CustomContent platform="tidb-cloud">
 
 -   [楽観的トランザクションにおける書き込み競合のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-write-conflicts)
+
+</CustomContent>
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
 
 </CustomContent>

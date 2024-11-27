@@ -1,13 +1,13 @@
 ---
 title: GRANT <privileges> | TiDB SQL Statement Reference
-summary: このステートメントは、TiDB内の既存のユーザーに権限を割り当てます。権限システムはMySQLに従い、データベース/テーブルのパターンに基づいて資格情報が割り当てられます。実行にはGRANT OPTION権限と、割り当てたすべての権限が必要です。MySQLと同様に、USAGE特権はTiDBサーバーにログインできることを示し、カラムレベルの権限はサポートされていません。また、NO_AUTO_CREATE_USER SQLモードが存在しない場合、GRANTステートメントは空のパスワードを持つ新しいユーザーを自動的に作成します。TiDBでは、GRANT <privileges>ステートメントが正常に実行されると、実行結果が現在の接続に即座に反映されます。
+summary: TiDB データベースに対する GRANT <権限> の使用法の概要。
 ---
 
 # <code>GRANT &#x3C;privileges></code> {#code-grant-x3c-privileges-code}
 
-このステートメントは、TiDB 内の既存のユーザーに権限を割り当てます。 TiDB の権限システムは MySQL に従っており、データベース/テーブルのパターンに基づいて資格情報が割り当てられます。このステートメントを実行するには、 `GRANT OPTION`権限と、割り当てたすべての権限が必要です。
+このステートメントは、TiDB 内の既存のユーザーに権限を割り当てます。TiDB の権限システムは MySQL に準拠しており、資格情報はデータベース/テーブル パターンに基づいて割り当てられます。このステートメントを実行するには、 `GRANT OPTION`権限と割り当てたすべての権限が必要です。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 GrantStmt ::=
@@ -79,18 +79,18 @@ mysql> SHOW GRANTS FOR 'newuser';
 2 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
--   MySQL と同様に、 `USAGE`特権は TiDBサーバーにログインできることを示します。
+-   MySQL と同様に、 `USAGE`権限は TiDBサーバーにログインする機能を示します。
 -   カラムレベルの権限は現在サポートされていません。
--   MySQL と同様に、 `NO_AUTO_CREATE_USER` SQL モードが存在しない場合、ユーザーが存在しない場合、 `GRANT`ステートメントは空のパスワードを持つ新しいユーザーを自動的に作成します。この SQL モードを削除すると (デフォルトで有効になっています)、セキュリティ上のリスクが生じます。
--   TiDB では、 `GRANT <privileges>`ステートメントが正常に実行されると、実行結果が現在の接続に即座に反映されます。一方、 [MySQL では、一部の権限については、実行結果は後続の接続でのみ有効になります。](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html) 。詳細は[TiDB #39356](https://github.com/pingcap/tidb/issues/39356)を参照してください。
+-   MySQL と同様に、 `NO_AUTO_CREATE_USER` sql モードが存在しない場合、ユーザーが存在しないときは、 `GRANT`ステートメントによって空のパスワードを持つ新しいユーザーが自動的に作成されます。この sql モードを削除すると (デフォルトで有効になっています)、セキュリティ上のリスクが生じます。
+-   TiDB では、 `GRANT <privileges>`ステートメントが正常に実行されると、実行結果が現在の接続に直ちに反映されます。一方、 [MySQLでは、一部の権限では、実行結果は後続の接続にのみ有効になります。](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)については、詳細については[ティDB #39356](https://github.com/pingcap/tidb/issues/39356)を参照してください。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [`GRANT &#x3C;role>`](/sql-statements/sql-statement-grant-role.md)
 -   [`REVOKE &#x3C;privileges>`](/sql-statements/sql-statement-revoke-privileges.md)
--   [助成金を表示する](/sql-statements/sql-statement-show-grants.md)
+-   [ショーグラント](/sql-statements/sql-statement-show-grants.md)
 
 <CustomContent platform="tidb">
 

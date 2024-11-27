@@ -1,6 +1,6 @@
 ---
 title: Runtime Filter
-summary: Learn the working principles of Runtime Filter and how to use it.
+summary: ランタイム フィルターの動作原理とその使用方法を学びます。
 ---
 
 # ランタイムフィルター {#runtime-filter}

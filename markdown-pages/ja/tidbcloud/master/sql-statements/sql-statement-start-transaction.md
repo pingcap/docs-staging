@@ -1,17 +1,17 @@
 ---
 title: START TRANSACTION | TiDB SQL Statement Reference
-summary: TiDB内での取引を開始するためのステートメントは、START TRANSACTIONです。これにより、新しいトランザクションが開始されます。デフォルトでは、すべてのステートメントが独自のトランザクションで自動コミットされます。MySQLとの互換性が保証されます。START TRANSACTIONは、MySQLのSTART TRANSACTION WITH CONSISTENT SNAPSHOTに相当します。また、START TRANSACTION READ ONLYは解析されますが、書き込み操作は引き続き許可されます。
+summary: TiDB データベースの START TRANSACTION の使用法の概要。
 ---
 
-# 取引を開始する {#start-transaction}
+# 取引を開始 {#start-transaction}
 
-このステートメントは、TiDB 内で新しいトランザクションを開始します。これはステートメント`BEGIN`と同様です。
+このステートメントは、TiDB 内で新しいトランザクションを開始します。これはステートメント`BEGIN`に似ています。
 
-`START TRANSACTION`ステートメントがない場合、デフォルトでは、すべてのステートメントが独自のトランザクションで自動コミットされます。この動作により、MySQL との互換性が保証されます。
+`START TRANSACTION`ステートメントがない場合、すべてのステートメントはデフォルトで独自のトランザクションで自動コミットされます。この動作により、MySQL の互換性が確保されます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
-**BeginTransactionStmt:**
+**トランザクション開始ステートメント:**
 
 ```ebnf+diagram
 BeginTransactionStmt ::=
@@ -38,15 +38,15 @@ mysql> COMMIT;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
--   `START TRANSACTION` 、TiDB 内でトランザクションを直ちに開始します。これは、トランザクションを`START TRANSACTION`して作成する MySQL とは異なります。ただし、TiDB の`START TRANSACTION` MySQL の`START TRANSACTION WITH CONSISTENT SNAPSHOT`に相当します。
+-   `START TRANSACTION` 、TiDB 内ですぐにトランザクションを開始します。これは、 `START TRANSACTION`遅延トランザクションを作成する MySQL とは異なります。ただし、TiDB の`START TRANSACTION` 、MySQL の`START TRANSACTION WITH CONSISTENT SNAPSHOT`に相当します。
 
 -   ステートメント`START TRANSACTION READ ONLY`は MySQL との互換性のために解析されますが、書き込み操作は引き続き許可されます。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [専念](/sql-statements/sql-statement-commit.md)
 -   [ロールバック](/sql-statements/sql-statement-rollback.md)
 -   [始める](/sql-statements/sql-statement-begin.md)
--   [因果関係の一貫性のみを考慮してトランザクションを開始する](/transaction-overview.md#causal-consistency)
+-   [因果関係の一貫性のみで取引を開始する](/transaction-overview.md#causal-consistency)

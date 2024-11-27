@@ -1,13 +1,13 @@
 ---
 title: INSERT | TiDB SQL Statement Reference
-summary: このステートメントはテーブルに新しい行を挿入します。TiDB のINSERTステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、バグを報告。
+summary: TiDB データベースでの INSERT の使用法の概要。
 ---
 
 # 入れる {#insert}
 
 このステートメントはテーブルに新しい行を挿入します。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 InsertIntoStmt ::=
@@ -95,11 +95,11 @@ mysql> SELECT * FROM t2;
 5 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`INSERT`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`INSERT`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [消去](/sql-statements/sql-statement-delete.md)
 -   [選択する](/sql-statements/sql-statement-select.md)

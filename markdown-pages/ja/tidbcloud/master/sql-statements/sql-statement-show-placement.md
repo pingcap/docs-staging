@@ -9,7 +9,7 @@ summary: TiDB での SHOW PLACEMENT の使用法。
 
 > **注記：**
 >
-> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 このステートメントは、配置Driver(PD) が配置のスケジュールで行った現在の進行状況を示す`Scheduling_State`フィールドを含む結果セットを返します。
 
@@ -21,7 +21,7 @@ summary: TiDB での SHOW PLACEMENT の使用法。
 
 ```ebnf+diagram
 ShowStmt ::=
-    "PLACEMENT"
+    "SHOW" "PLACEMENT" ShowLikeOrWhere?
 ```
 
 ## 例 {#examples}

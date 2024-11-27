@@ -3,9 +3,9 @@ title: Check Cluster Status
 summary: TiDB クラスターの実行ステータスを確認する方法を学習します。
 ---
 
-# クラスタステータスの確認 {#check-cluster-status}
+# クラスタのステータスを確認する {#check-cluster-status}
 
-TiDB クラスターをデプロイした後は、クラスターが正常に動作しているかどうかを確認する必要があります。このドキュメントでは、 TiUPコマンド[TiDBダッシュボード](/dashboard/dashboard-intro.md)と Grafana を使用してクラスターの状態を確認する方法と、TiDB データベースにログインして簡単な SQL 操作を実行する方法を紹介します。
+TiDB クラスターをデプロイした後は、クラスターが正常に動作しているか確認する必要があります。このドキュメントでは、 TiUPコマンド[TiDBダッシュボード](/dashboard/dashboard-intro.md)と Grafana を使用してクラスターの状態を確認する方法と、TiDB データベースにログインして簡単な SQL 操作を実行する方法を紹介します。
 
 ## TiDBクラスタのステータスを確認する {#check-the-tidb-cluster-status}
 
@@ -19,11 +19,11 @@ TiDB クラスターをデプロイした後は、クラスターが正常に動
 tiup cluster display tidb-test
 ```
 
-期待される出力: 各ノードの`Status`情報が`Up`の場合、クラスターは正常に実行されます。
+期待される出力: 各ノードの`Status`情報が`Up`場合、クラスターは正常に実行されます。
 
 ### TiDBダッシュボードを使用する {#use-tidb-dashboard}
 
-1.  `${pd-ip}:${pd-port}/dashboard`で TiDB ダッシュボードにログインします。ユーザー名とパスワードは TiDB `root`ユーザーと同じです。5 パスワードを変更した場合は、変更し`root`パスワードを入力します。デフォルトではパスワードは空です。
+1.  `${pd-ip}:${pd-port}/dashboard`で TiDB ダッシュボードにログインします。ユーザー名とパスワードは TiDB `root`ユーザーと同じです。5 `root`を変更した場合は、変更したパスワードを入力します。デフォルトではパスワードは空です。
 
     ![TiDB-Dashboard](https://download.pingcap.com/images/docs/tiup/tidb-dashboard.png)
 
@@ -51,14 +51,14 @@ tiup cluster display tidb-test
 mysql -u root -h ${tidb_server_host_IP_address} -P 4000
 ```
 
-`${tidb_server_host_IP_address}` 、 `10.0.1.7`などの[クラスタトポロジファイルを初期化する](/production-deployment-using-tiup.md#step-3-initialize-cluster-topology-file)の場合に`tidb_servers`に設定される IP アドレスの 1 つです。
+`${tidb_server_host_IP_address}` 、 [クラスタトポロジファイルを初期化する](/production-deployment-using-tiup.md#step-3-initialize-cluster-topology-file)場合に`tidb_servers`に設定される IP アドレスの 1 つ ( `10.0.1.7`など) です。
 
 次の情報はログインが成功したことを示します。
 
 ```sql
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 3
-Server version: 8.0.11-TiDB-v8.1.0 TiDB Server (Apache License 2.0) Community Edition, MySQL 8.0 compatible
+Server version: 8.0.11-TiDB-v8.1.1 TiDB Server (Apache License 2.0) Community Edition, MySQL 8.0 compatible
 Copyright (c) 2000, 2023, Oracle and/or its affiliates. All rights reserved.
 Oracle is a registered trademark of Oracle Corporation and/or its
 affiliates. Other names may be trademarks of their respective

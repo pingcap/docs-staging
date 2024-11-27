@@ -7,7 +7,7 @@ summary: TiDB Distributed eXecution Framework (DXF) の使用例、制限、使�
 
 > **注記：**
 >
-> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 TiDB は、優れたスケーラビリティと弾力性を備えたコンピューティングとストレージの分離アーキテクチャを採用しています。v7.1.0 以降、TiDB は分散アーキテクチャのリソースの利点をさらに活用するために、分散実行フレームワーク (DXF) を導入しています。DXF の目標は、タスクの統一されたスケジュールと分散実行を実装し、全体と個々のタスクの両方に統一されたリソース管理機能を提供することです。これにより、リソース使用に関するユーザーの期待をよりよく満たすことができます。
 
@@ -27,7 +27,7 @@ DXF を有効にすると上記の問題が解決され、次の 3 つの利点�
 -   DXF はタスクの分散実行をサポートしており、TiDB クラスター全体の利用可能なコンピューティング リソースを柔軟にスケジュールできるため、TiDB クラスター内のコンピューティング リソースをより有効に活用できます。
 -   DXF は、全体タスクと個々のタスクの両方に対して、統合されたリソースの使用および管理機能を提供します。
 
-現在、DXF は`ADD INDEX`と`IMPORT INTO`ステートメントの分散実行をサポートしています。
+現在、DXF は`ADD INDEX`と`IMPORT INTO`のステートメントの分散実行をサポートしています。
 
 -   `ADD INDEX`インデックスを作成するために使用される DDL ステートメントです。例:
 
@@ -36,11 +36,16 @@ DXF を有効にすると上記の問題が解決され、次の 3 つの利点�
     CREATE INDEX idx1 ON table t1(c1);
     ```
 
--   `IMPORT INTO` 、 `CSV` 、 `SQL` 、 `PARQUET`などの形式のデータを空のテーブルにインポートするために使用されます。詳細については、 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)参照してください。
+-   `IMPORT INTO`は、 `CSV` 、 `SQL` 、 `PARQUET`などの形式のデータを空のテーブルにインポートするために使用されます。詳細については、 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)を参照してください。
 
 ## 制限 {#limitation}
 
-DXF は、一度に`ADD INDEX`タスクの分散実行のみをスケジュールできます。現在の`ADD INDEX`分散タスクが完了する前に新しい`ADD INDEX`タスクが送信された場合、新しいタスクはトランザクションを通じて実行されます。
+DXF では、最大 16 個のタスク ( `ADD INDEX`タスクと`IMPORT INTO`タスクを含む) を同時にスケジュールできます。
+
+## <code>ADD INDEX</code>制限 {#code-add-index-code-limitation}
+
+-   各クラスターでは、一度に 1 つ`ADD INDEX`タスクのみを分散実行できます。現在の`ADD INDEX`の分散タスクが完了する前に新しい`ADD INDEX`タスクが送信された場合、新しい`ADD INDEX`タスクは DXF によってスケジュールされるのではなく、トランザクションを通じて実行されます。
+-   DXF を介して`TIMESTAMP`データ型の列にインデックスを追加することは、インデックスとデータの間に不整合が生じる可能性があるため、サポートされていません。
 
 ## 前提条件 {#prerequisites}
 
@@ -74,7 +79,7 @@ DXF を使用して`ADD INDEX`タスクを実行する前に、 [高速オンラ
 
 ## 使用法 {#usage}
 
-1.  DXFを有効にするには、値を[`tidb_enable_dist_task`](/system-variables.md#tidb_enable_dist_task-new-in-v710) `ON`設定します。
+1.  DXF を有効にするには、 [`tidb_enable_dist_task`](/system-variables.md#tidb_enable_dist_task-new-in-v710)の値を`ON`に設定します。v8.1.0 以降では、この変数はデフォルトで有効になっています。v8.1.0 以降のバージョンで新しく作成されたクラスターの場合は、この手順をスキップできます。
 
     ```sql
     SET GLOBAL tidb_enable_dist_task = ON;
@@ -89,12 +94,20 @@ DXF を使用して`ADD INDEX`タスクを実行する前に、 [高速オンラ
     -   [`tidb_ddl_error_count_limit`](/system-variables.md#tidb_ddl_error_count_limit)
     -   [`tidb_ddl_reorg_batch_size`](/system-variables.md#tidb_ddl_reorg_batch_size) : デフォルト値を使用します。推奨される最大値は`1024`です。
 
-3.  v7.4.0 以降、TiDB Self-Managed では、実際のニーズに応じて DXF タスクを実行する TiDB ノードの数を調整できます。TiDB クラスターを展開した後、クラスター内の各 TiDB ノードに対してインスタンス レベルのシステム変数[`tidb_service_scope`](/system-variables.md#tidb_service_scope-new-in-v740)設定できます。TiDB ノードの`tidb_service_scope` `background`に設定すると、TiDB ノードは DXF タスクを実行できます。TiDB ノードの`tidb_service_scope`デフォルト値 &quot;&quot; に設定すると、TiDB ノードは DXF タスクを実行できません。クラスター内のどの TiDB ノードにも`tidb_service_scope`設定されていない場合、DXF はデフォルトですべての TiDB ノードがタスクを実行するようにスケジュールします。
+## タスクのスケジュール {#task-scheduling}
 
-    > **注記：**
-    >
-    > -   複数の TiDB ノードを持つクラスターでは、2 つ以上の TiDB ノードに`tidb_service_scope` ～ `background`設定することを強くお勧めします。1 つの TiDB ノードにのみ`tidb_service_scope`設定されている場合、ノードが再起動されるか障害が発生すると、タスクは`background`設定されていない他の TiDB ノードに再スケジュールされ、これらの TiDB ノードに影響を及ぼします。
-    > -   分散タスクの実行中、 `tidb_service_scope`構成への変更は現在のタスクには適用されませんが、次のタスクからは適用されます。
+デフォルトでは、DXF はすべての TiDB ノードをスケジュールして分散タスクを実行します。v7.4.0 以降、TiDB セルフホスト クラスターでは、 [`tidb_service_scope`](/system-variables.md#tidb_service_scope-new-in-v740)構成することで、分散タスクを実行するように DXF によってスケジュールできる TiDB ノードを制御できます。
+
+-   バージョン v7.4.0 から v8.0.0 の場合、 [`tidb_service_scope`](/system-variables.md#tidb_service_scope-new-in-v740)のオプションの値は`''`または`background`です。現在のクラスターに`tidb_service_scope = 'background'` TiDB ノードがある場合、DXF はこれらのノードにタスクの実行をスケジュールします。障害または通常のスケールインが原因で、現在のクラスターに`tidb_service_scope = 'background'` TiDB ノードがない場合、DXF は`tidb_service_scope = ''`のノードにタスクの実行をスケジュールします。
+
+-   v8.1.0 以降では、 [`tidb_service_scope`](/system-variables.md#tidb_service_scope-new-in-v740)任意の有効な値に設定できます。分散タスクが送信されると、タスクは現在接続されている TiDB ノードの`tidb_service_scope`値にバインドされ、DXF は同じ`tidb_service_scope`値を持つ TiDB ノードにのみタスクの実行をスケジュールします。ただし、以前のバージョンとの構成の互換性のために、分散タスクが`tidb_service_scope = ''`ノードに送信され、現在のクラスターに`tidb_service_scope = 'background'` TiDB ノードがある場合、DXF は`tidb_service_scope = 'background'`の TiDB ノードにタスクの実行をスケジュールします。
+
+タスク実行中に新しいノードが追加された場合、DXF は前述のルールに基づいて、新しいノードにタスクをスケジュールして実行するかどうかを決定します。新しく追加されたノードにタスクを実行させたくない場合は、事前にこれらのノードに`tidb_service_scope`設定することをお勧めします。
+
+> **注記：**
+>
+> -   バージョン v7.4.0 から v8.0.0 の場合、複数の TiDB ノードを持つクラスターでは、2 つ以上の TiDB ノードに`tidb_service_scope`から`background`設定することを強くお勧めします。この変数が 1 つの TiDB ノードにのみ設定されている場合、そのノードが再起動または失敗すると、タスクは`tidb_service_scope = ''`の TiDB ノードに再スケジュールされ、これらの TiDB ノードで実行されているアプリケーションに影響します。
+> -   分散タスクの実行中、 `tidb_service_scope`構成への変更は現在のタスクには適用されませんが、次のタスクからは適用されます。
 
 ## 実施原則 {#implementation-principles}
 

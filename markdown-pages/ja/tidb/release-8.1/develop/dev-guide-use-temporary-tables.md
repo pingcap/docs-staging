@@ -55,7 +55,7 @@ TiDB の一時テーブルは、ローカル一時テーブルとグローバル
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-`CREATE TEMPORARY TABLE <table_name>`ステートメントを使用して一時テーブルを作成できます。デフォルトのタイプはローカル一時テーブルであり、現在のセッションでのみ表示されます。
+`CREATE TEMPORARY TABLE <table_name>`ステートメントを使用して一時テーブルを作成できます。デフォルトのタイプはローカル一時テーブルで、現在のセッションでのみ表示されます。
 
 ```sql
 CREATE TEMPORARY TABLE top_50_eldest_authors (
@@ -145,7 +145,7 @@ CREATE GLOBAL TEMPORARY TABLE IF NOT EXISTS top_50_eldest_authors_global (
 </div>
 <div label="Java" value="java">
 
-グローバル一時テーブルを使用する場合は、まず自動コミット モードをオフにする必要があります。JavaJava、 `conn.setAutoCommit(false);`ステートメントでこれを行うことができ、 `conn.commit();`でトランザクションを明示的にコミットできます。トランザクション中にグローバル一時テーブルに追加されたデータは、トランザクションがコミットまたはキャンセルされた後にクリアされます。
+グローバル一時テーブルを使用する場合は、まず自動コミット モードをオフにする必要があります。Java では、`conn.setAutoCommit(false);`ステートメントでこれを行うことができ、 `conn.commit();`でトランザクションを明示的にコミットできます。トランザクション中にグローバル一時テーブルに追加されたデータは、トランザクションがコミットまたはキャンセルされた後にクリアされます。
 
 ```java
 public List<Author> getTop50EldestAuthorInfo() throws SQLException {
@@ -194,7 +194,7 @@ public List<Author> getTop50EldestAuthorInfo() throws SQLException {
 
 `SHOW [FULL] TABLES`ステートメントでは、既存のグローバル一時テーブルのリストを表示できますが、リストにローカル一時テーブルは表示されません。現時点では、TiDB には一時テーブル情報を格納するための同様の`information_schema.INNODB_TEMP_TABLE_INFO`システム テーブルはありません。
 
-たとえば、テーブル リストにはグローバル一時テーブル`top_50_eldest_authors_global`が表示されますが、テーブル`top_50_eldest_authors`は表示されません。
+たとえば、テーブル リストにはグローバル一時テーブル`top_50_eldest_authors_global`表示されますが、テーブル`top_50_eldest_authors`は表示されません。
 
     +-------------------------------+------------+
     | Tables_in_bookshop            | Table_type |
@@ -251,3 +251,17 @@ TiDB の一時テーブルの制限については、 [他の TiDB 機能との�
 ## 続きを読む {#read-more}
 
 -   [一時テーブル](/temporary-tables.md)
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

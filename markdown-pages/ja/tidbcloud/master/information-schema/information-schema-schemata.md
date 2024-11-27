@@ -1,11 +1,11 @@
 ---
 title: SCHEMATA
-summary: SCHEMATA表は、データベースに関する情報を示します。テーブルデータはSHOW DATABASESステートメントの結果に相当します。CATALOG_NAMEはデータベースが属するカタログを示し、SCHEMA_NAMEはデータベース名を示します。DEFAULT_CHARACTER_SET_NAMEはデータベースのデフォルトの文字セットを示し、DEFAULT_COLLATION_NAMEはデータベースのデフォルトの照合順序を示します。SQL_PATHの値は常にNULLです。
+summary: SCHEMATA information_schema テーブルについて学習します。
 ---
 
 # スキーマ {#schemata}
 
-`SCHEMATA`表は、データベースに関する情報を示します。テーブル データは`SHOW DATABASES`ステートメントの結果に相当します。
+`SCHEMATA`テーブルはデータベースに関する情報を提供します。テーブル データは[`SHOW DATABASES`](/sql-statements/sql-statement-show-databases.md)ステートメントの結果に相当します。
 
 ```sql
 USE information_schema;
@@ -38,7 +38,7 @@ SELECT * FROM SCHEMATA;
     +--------------+--------------------+----------------------------+------------------------+----------+
     5 rows in set (0.00 sec)
 
-`SCHEMATA`テーブルのフィールドは次のように説明されています。
+`SCHEMATA`テーブル内のフィールドは次のように説明されます。
 
 -   `CATALOG_NAME` : データベースが属するカタログ。
 -   `SCHEMA_NAME` : データベース名。

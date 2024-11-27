@@ -1,39 +1,39 @@
 ---
 title: 2023-08-31 TiDB Cloud Console Maintenance Notification
-summary: TiDB Cloudコンソールは2023年8月31日にメンテナンスを実施します。メンテナンス期間はUTC+0の8から10で約2時間かかります。メンテナンスの理由はパフォーマンスと効率の向上であり、影響を受ける機能にはクラスタ管理やバックアップなどが含まれます。メンテナンス完了後、影響を受けた機能が復元されます。お問い合わせがある場合は、支援チームに連絡してください。
+summary: 2023 年 8 月 31 日のTiDB Cloud Console メンテナンスの詳細 (メンテナンス ウィンドウ、理由、影響など) について説明します。
 ---
 
-# [2023-08-31] TiDB Cloudコンソール メンテナンスのお知らせ {#2023-08-31-tidb-cloud-console-maintenance-notification}
+# [2023-08-31] TiDB Cloudコンソールメンテナンス通知 {#2023-08-31-tidb-cloud-console-maintenance-notification}
 
-このお知らせには、2023年8月31日の[TiDB Cloudコンソール](https://tidbcloud.com/)メンテナンスにあたり、知っておいていただきたい内容が記載されております。
+この通知では、2023 年 8 月 31 日の[TiDB Cloudコンソール](https://tidbcloud.com/)目のメンテナンスについて知っておく必要のある詳細について説明します。
 
 ## メンテナンス期間 {#maintenance-window}
 
 -   日付: 2023-08-31
--   開始時刻: 8:00 (UTC+0)
--   終了時刻: 10:00 (UTC+0)
--   所要時間：約2時間
+-   開始時間: 8:00 (UTC+0)
+-   終了時間: 10:00 (UTC+0)
+-   所要時間: 約2時間
 
 > **注記：**
 >
-> 現在、ユーザーはTiDB Cloudコンソールのメンテナンスのタイミングを変更できないため、事前にそれに応じて計画を立てる必要があります。
+> 現在、ユーザーはTiDB Cloudコンソールのメンテナンスのタイミングを変更できないため、事前に計画を立てる必要があります。
 
 ## メンテナンスの理由 {#reason-for-maintenance}
 
-パフォーマンスと効率を向上させるために、 TiDB Cloudコンソールのメタ データベース サービスをアップグレードしています。この改善は、高品質のサービスを提供するという継続的な取り組みの一環として、すべてのユーザーにより良いエクスペリエンスを提供することを目的としています。
+パフォーマンスと効率性を向上させるために、 TiDB Cloudコンソールのメタ データベース サービスをアップグレードしています。この改善は、高品質なサービスを提供するという当社の継続的な取り組みの一環として、すべてのユーザーに優れたエクスペリエンスを提供することを目的としています。
 
 ## インパクト {#impact}
 
-メンテナンス期間中は、 TiDB Cloudコンソール UI および API 内の作成および更新に関連する機能で断続的な中断が発生する可能性があります。ただし、TiDB クラスターはデータの読み取りと書き込みの通常の操作を維持し、オンライン ビジネスに悪影響を及ぼさないようにします。
+メンテナンス期間中、 TiDB Cloudコンソール UI および API 内での作成と更新に関連する機能に断続的な中断が発生する可能性があります。ただし、TiDB クラスターはデータの読み取りと書き込みの通常の操作を維持し、オンライン ビジネスに悪影響が及ばないようにします。
 
-### 影響を受けるTiDB Cloudコンソール UI の機能 {#affected-features-of-tidb-cloud-console-ui}
+### TiDB Cloudコンソール UI の影響を受ける機能 {#affected-features-of-tidb-cloud-console-ui}
 
 -   クラスタレベル
     -   クラスタ管理
-        -   クラスターの作成
-        -   クラスターの削除
+        -   クラスターを作成する
+        -   クラスターを削除する
         -   スケールクラスター
-        -   クラスターの一時停止または再開
+        -   クラスターを一時停止または再開する
         -   クラスターのパスワードを変更する
         -   クラスタートラフィックフィルターを変更する
     -   輸入
@@ -46,7 +46,7 @@ summary: TiDB Cloudコンソールは2023年8月31日にメンテナンスを実
         -   手動バックアップジョブを作成する
         -   自動バックアップジョブ
     -   復元する
-        -   復元ジョブの作成
+        -   復元ジョブを作成する
     -   データベース監査ログ
         -   接続性をテストする
         -   アクセスレコードの追加または削除
@@ -55,24 +55,24 @@ summary: TiDB Cloudコンソールは2023年8月31日にメンテナンスを実
 -   プロジェクトレベル
     -   ネットワークアクセス
         -   プライベートエンドポイントを作成する
-        -   プライベート エンドポイントを削除する
-        -   VPC ピアリングの追加
+        -   プライベートエンドポイントを削除する
+        -   VPC ピアリングを追加する
         -   VPC ピアリングの削除
     -   メンテナンス
-        -   メンテナンス期間の変更
+        -   メンテナンスウィンドウを変更する
         -   タスクを延期する
     -   ごみ箱
-        -   クラスターの削除
-        -   バックアップの削除
-        -   クラスターの復元
+        -   クラスターを削除する
+        -   バックアップを削除する
+        -   クラスターを復元する
 
-### 影響を受けるTiDB Cloud API の機能 {#affected-features-of-tidb-cloud-api}
+### TiDB Cloud API の影響を受ける機能 {#affected-features-of-tidb-cloud-api}
 
 -   クラスタ管理
     -   [クラスターの作成](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/CreateCluster)
     -   [クラスターの削除](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/DeleteCluster)
     -   [クラスターの更新](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)
-    -   [AWSCmekの作成](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/CreateAwsCmek)
+    -   [作成AwsCmek](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/CreateAwsCmek)
 -   バックアップ
     -   [バックアップを作成する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Backup/operation/CreateBackup)
     -   [バックアップの削除](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Backup/operation/DeleteBackup)
@@ -80,7 +80,7 @@ summary: TiDB Cloudコンソールは2023年8月31日にメンテナンスを実
     -   [復元タスクの作成](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Restore/operation/CreateRestoreTask)
 -   輸入
     -   [インポートタスクの作成](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Import/operation/CreateImportTask)
-    -   [更新インポートタスク](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Import/operation/UpdateImportTask)
+    -   [インポートタスクの更新](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Import/operation/UpdateImportTask)
 
 ## 完了と再開 {#completion-and-resumption}
 
@@ -88,4 +88,4 @@ summary: TiDB Cloudコンソールは2023年8月31日にメンテナンスを実
 
 ## 支持を得ます {#get-support}
 
-ご質問がある場合、またはサポートが必要な場合は、 [支援チーム](/tidb-cloud/tidb-cloud-support.md)までお問い合わせください。私たちはあなたの懸念に対処し、必要なガイダンスを提供するためにここにいます。
+ご質問やサポートが必要な場合は、 [支援チーム](/tidb-cloud/tidb-cloud-support.md)ご連絡ください。お客様の懸念に対処し、必要なガイダンスを提供いたします。

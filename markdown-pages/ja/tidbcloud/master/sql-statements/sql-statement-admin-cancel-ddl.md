@@ -1,16 +1,16 @@
 ---
 title: ADMIN CANCEL DDL | TiDB SQL Statement Reference
-summary: ADMIN CANCEL DDLステートメントを使用すると、実行中の DDL ジョブをキャンセルできます。job_idを使用してADMIN SHOW DDL JOBSを実行し、ジョブを特定します。キャンセル後、DDL ジョブを実行する SQL ステートメントはエラーを返します。すでに完了した DDL ジョブをキャンセルするとエラーが表示されます。このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
+summary: TiDB データベースの ADMIN CANCEL DDL の使用法の概要。
 category: reference
 ---
 
-# 管理者が DDL をキャンセル {#admin-cancel-ddl}
+# 管理者はDDLをキャンセルします {#admin-cancel-ddl}
 
-`ADMIN CANCEL DDL`ステートメントを使用すると、実行中の DDL ジョブをキャンセルできます。 `job_id` [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)を実行すると見つかります。
+`ADMIN CANCEL DDL`ステートメントを使用すると、実行中の DDL ジョブをキャンセルできます。 `job_id`は、 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)実行することで見つかります。
 
-`ADMIN CANCEL DDL`ステートメントを使用すると、コミットされたがまだ実行が完了していない DDL ジョブをキャンセルすることもできます。キャンセル後、DDL ジョブを実行する SQL ステートメントは`ERROR 8214 (HY000): Cancelled DDL job`エラーを返します。すでに完了した DDL ジョブをキャンセルすると、 `RESULT`列に`DDL Job:90 not found`エラーが表示されます。これは、ジョブが DDL 待機キューから削除されたことを示します。
+`ADMIN CANCEL DDL`ステートメントを使用すると、コミットされているがまだ実行が完了していない DDL ジョブをキャンセルすることもできます。キャンセル後、DDL ジョブを実行する SQL ステートメントは`ERROR 8214 (HY000): Cancelled DDL job`エラーを返します。すでに完了している DDL ジョブをキャンセルすると、 `RESULT`列に`DDL Job:90 not found`エラーが表示されます。これは、ジョブが DDL 待機キューから削除されたことを示します。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 AdminStmt ::=
@@ -22,24 +22,24 @@ NumList ::=
 
 ## 例 {#examples}
 
-現在実行中の DDL ジョブをキャンセルし、対応するジョブが正常にキャンセルされたかどうかを返すには、 `ADMIN CANCEL DDL JOBS`を使用します。
+現在実行中の DDL ジョブをキャンセルし、対応するジョブが正常にキャンセルされたかどうかを返すには、 `ADMIN CANCEL DDL JOBS`使用します。
 
 ```sql
 ADMIN CANCEL DDL JOBS job_id [, job_id] ...;
 ```
 
-操作がジョブのキャンセルに失敗した場合は、特定の理由が表示されます。
+ジョブをキャンセルする操作が失敗した場合は、具体的な理由が表示されます。
 
 > **注記：**
 >
-> -   DDL ジョブをキャンセルできるのはこの操作のみです。他のすべての操作や環境の変更 (マシンの再起動やクラスターの再起動など) では、これらのジョブをキャンセルすることはできません。
-> -   この操作により、複数の DDL ジョブを同時にキャンセルできます。 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)ステートメントを使用して DDL ジョブの ID を取得できます。
-> -   キャンセルしたいジョブが終了している場合、キャンセル操作は失敗します。
+> -   v6.2.0 より前では、この操作のみが DDL ジョブをキャンセルでき、他のすべての操作や環境変更 (マシンの再起動やクラスターの再起動など) ではこれらのジョブをキャンセルできませんでした。v6.2.0 以降では、 [`KILL`](/sql-statements/sql-statement-kill.md)ステートメントを使用して、進行中の DDL ジョブを強制終了してキャンセルすることもできます。
+> -   この操作では、複数の DDL ジョブを同時にキャンセルできます。1 ステートメントを使用して[`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md) DDL ジョブの ID を取得できます。
+> -   キャンセルするジョブが完了している場合、キャンセル操作は失敗します。
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
+このステートメントは、MySQL 構文に対する TiDB 拡張です。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [`ADMIN SHOW DDL [JOBS|JOB QUERIES]`](/sql-statements/sql-statement-admin-show-ddl.md)

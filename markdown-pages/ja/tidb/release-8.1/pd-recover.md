@@ -9,7 +9,7 @@ PD Recover は、正常に起動またはサービスを提供できない PD �
 
 ## ソースコードからコンパイルする {#compile-from-source-code}
 
--   Go モジュールが使用されるため、 [行く](https://golang.org/) 1.21 以降が必要です。
+-   Go モジュールが使用されるため、 [行く](https://golang.org/)以降が必要です。
 -   [PDプロジェクト](https://github.com/pingcap/pd)のルート ディレクトリで、 `make pd-recover`コマンドを使用して`bin/pd-recover`コンパイルして生成します。
 
 > **注記：**
@@ -18,9 +18,9 @@ PD Recover は、正常に起動またはサービスを提供できない PD �
 
 ## TiDB Toolkitをダウンロード {#download-tidb-toolkit}
 
-PD Recover インストール パッケージはTiDB Toolkitに含まれています。TiDB TiDB Toolkitをダウンロードするには、 [TiDBツールをダウンロード](/download-ecosystem-tools.md)参照してください。
+PD Recover インストール パッケージはTiDB Toolkitに含まれています。TiDB TiDB Toolkit をダウンロードするには、 [TiDBツールをダウンロード](/download-ecosystem-tools.md)参照してください。
 
-次のセクションでは、PD クラスターを回復するための 2 つの方法 (存続している PD ノードから回復する方法と、PD クラスター全体を再構築する方法) を紹介します。
+次のセクションでは、PD クラスターを回復するための 2 つの方法 (存続している PD ノードからの回復と PD クラスター全体の再構築) を紹介します。
 
 ## 方法1: 残存PDノードを使用してPDクラスターを回復する {#method-1-recover-a-pd-cluster-using-a-surviving-pd-node}
 
@@ -40,7 +40,7 @@ PD Recover インストール パッケージはTiDB Toolkitに含まれてい�
 
 ### ステップ3: <code>pd-recover</code>を使用してメタデータを修復する {#step-3-repair-metadata-using-code-pd-recover-code}
 
-この方法では、少数の PD ノードを使用してサービスを回復するため、ノードに古いデータが含まれている可能性があります。1 と`tso`データがロールバックされると、クラスター データが破損したり、使用できなくなったりする可能`alloc_id`があります。これを防ぐには、 `pd-recover`使用してメタデータを変更し、ノードが正しい割り当て ID と TSO サービスを提供できるようにする必要があります。次に例を示します。
+この方法では、少数の PD ノードを使用してサービスを回復するため、ノードに古いデータが含まれている可能性があります。1 と`alloc_id` `tso`データがロールバックされると、クラスター データが破損したり、使用できなくなったりする可能性があります。これを防ぐには、 `pd-recover`使用してメタデータを変更し、ノードが正しい割り当て ID と TSO サービスを提供できるようにする必要があります。次に例を示します。
 
 ```shell
 ./bin/pd-recover --from-old-member --endpoints=http://127.0.0.1:2379 # Specify the corresponding PD address
@@ -109,7 +109,7 @@ cat {{/path/to}}/tikv.log | grep "connect to PD cluster"
 
 ### ステップ2: 割り当てられたIDを取得する {#step-2-get-allocated-id}
 
-指定する割り当て ID 値は、現在割り当てられている最大の ID 値よりも大きくする必要があります。割り当て ID を取得するには、モニターから取得するか、サーバー上で直接ログを表示します。
+指定する割り当て ID 値は、現在割り当てられている最大の ID 値よりも大きくなければなりません。割り当て ID を取得するには、モニターから取得するか、サーバー上で直接ログを表示します。
 
 #### モニターから割り当てられたIDを取得する（推奨） {#get-allocated-id-from-the-monitor-recommended}
 
@@ -132,11 +132,11 @@ cat {{/path/to}}/pd*.log | grep "idAllocator allocates a new id" |  awk -F'=' '{
 
 ### ステップ3: 新しいPDクラスターをデプロイ {#step-3-deploy-a-new-pd-cluster}
 
-新しい PD クラスターをデプロイする前に、既存の PD クラスターを停止し、以前のデータ ディレクトリを削除するか、 `--data-dir`を使用して新しいデータ ディレクトリを指定する必要があります。
+新しい PD クラスターをデプロイする前に、既存の PD クラスターを停止し、以前のデータ ディレクトリを削除するか、 `--data-dir`使用して新しいデータ ディレクトリを指定する必要があります。
 
 ### ステップ4: pd-recoverを使用する {#step-4-use-pd-recover}
 
-1 つの PD ノードで`pd-recover`だけ実行する必要があります。
+1 つの PD ノードで`pd-recover`実行するだけで済みます。再割り当てを回避するために、 `-alloc-id`パラメータを割り当てられた ID よりも大きい値に設定することをお勧めします。たとえば、監視やログから取得した最大の割り当て ID が`9000`の場合、 `-alloc-id`パラメータに`10000`以上の値を渡すことをお勧めします。
 
 ```bash
 ./pd-recover -endpoints http://10.0.1.13:2379 -cluster-id 6747551640615446306 -alloc-id 10000
@@ -148,10 +148,10 @@ cat {{/path/to}}/pd*.log | grep "idAllocator allocates a new id" |  awk -F'=' '{
 
 ## FAQ {#faq}
 
-### クラスタIDを取得する際に複数のクラスタIDが見つかりました {#multiple-cluster-ids-are-found-when-getting-the-cluster-id}
+### クラスターIDを取得する際に複数のクラスターIDが見つかりました {#multiple-cluster-ids-are-found-when-getting-the-cluster-id}
 
 PD クラスターが作成されると、新しいクラスター ID が生成されます。ログを表示することで、古いクラスターのクラスター ID を確認できます。
 
-### <code>pd-recover</code>を実行すると、エラー<code>dial tcp 10.0.1.13:2379: connect: connection refused</code>が返されます。 {#the-error-code-dial-tcp-10-0-1-13-2379-connect-connection-refused-code-is-returned-when-executing-code-pd-recover-code}
+### <code>pd-recover</code>を実行すると、エラー「 <code>dial tcp 10.0.1.13:2379: connect: connection refused</code>が返されます。 {#the-error-code-dial-tcp-10-0-1-13-2379-connect-connection-refused-code-is-returned-when-executing-code-pd-recover-code}
 
 PD リカバリを使用する前に、 `pd-recover` . PD クラスターをデプロイ起動するを実行する場合は、PD サービスが必要です。

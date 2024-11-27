@@ -3,7 +3,7 @@ title: TiDB Data Type
 summary: TiDB の JSON データ型について学習します。
 ---
 
-# JSON型 {#json-type}
+# JSON データ型 {#json-data-type}
 
 TiDB は、半構造化データを格納するのに役立つ`JSON` (JavaScript Object Notation) データ型をサポートしています。 `JSON`データ型には、文字列列に`JSON`形式の文字列を格納する場合と比べて、次の利点があります。
 
@@ -23,11 +23,32 @@ INSERT INTO city (id,detail) VALUES (1, '{"name": "Beijing", "population": 100}'
 SELECT id FROM city WHERE population >= 100;
 ```
 
-詳細については[JSON関数](/functions-and-operators/json-functions.md)および[生成された列](/generated-columns.md)を参照してください。
+詳細については[JSON関数](/functions-and-operators/json-functions.md)および[生成された列](/generated-columns.md)参照してください。
+
+## JSON 値型 {#json-value-types}
+
+JSON ドキュメント内の値には型があります。これは[`JSON_TYPE`](/functions-and-operators/json-functions/json-functions-return.md#json_type)の出力に表示されます。
+
+| タイプ    | 例                              |
+| ------ | ------------------------------ |
+| 配列     | `[]`                           |
+| 少し     |                                |
+| ブロブ    | `0x616263`                     |
+| ブール    | `true`                         |
+| 日付     | `"2025-06-14"`                 |
+| 日時     | `"2025-06-14 09:05:10.000000"` |
+| ダブル    | `1.14`                         |
+| 整数     | `5`                            |
+| NULL   | `null`                         |
+| 物体     | `{}`                           |
+| 不透明    |                                |
+| 弦      | `"foobar"`                     |
+| 時間     | `"09:10:00.000000"`            |
+| 符号なし整数 | `9223372036854776000`          |
 
 ## 制限 {#restrictions}
 
--   現在、 TiDB はTiFlashへの限定された`JSON`関数のプッシュダウンのみをサポートしています。詳細については、 [プッシュダウン式](/tiflash/tiflash-supported-pushdown-calculations.md#push-down-expressions)を参照してください。
+-   現在、 TiDB はTiFlashへの限定された`JSON`関数のプッシュダウンのみをサポートしています。詳細については、 [プッシュダウン式](/tiflash/tiflash-supported-pushdown-calculations.md#push-down-expressions)参照してください。
 -   TiDB バックアップ &amp; リストア (BR) は、v6.3.0 で JSON 列データのエンコード方法を変更します。したがって、 BRを使用して JSON 列を含むデータを v6.3.0 より前の TiDB クラスターにリストアすることはお勧めしません。
 -   `DATE` 、 `DATETIME` 、 `TIME`などの非標準`JSON`データ型を含むデータをレプリケートする場合は、レプリケーション ツールを使用しないでください。
 
@@ -101,4 +122,4 @@ SELECT id FROM city WHERE population >= 100;
     INSERT INTO t VALUES (3);
     ```
 
-`JSON`データ型の詳細については、 [JSON関数](/functions-and-operators/json-functions.md)および[生成された列](/generated-columns.md)を参照してください。
+`JSON`データ型の詳細については、 [JSON関数](/functions-and-operators/json-functions.md)および[生成された列](/generated-columns.md)参照してください。

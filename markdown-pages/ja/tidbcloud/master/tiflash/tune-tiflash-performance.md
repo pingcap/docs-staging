@@ -1,41 +1,41 @@
 ---
 title: Tune TiFlash Performance
-summary: マシンリソースを計画し、TiDBパラメータを調整することで、TiFlashのパフォーマンスを調整する方法を学びます。
+summary: マシン リソースを計画し、TiDB パラメータを調整することで、 TiFlashのパフォーマンスを調整する方法を学習します。
 ---
 
 # TiFlash のパフォーマンスを調整する {#tune-tiflash-performance}
 
-このドキュメントでは、マシン リソースを適切に計画し、TiDB パラメーターを調整することにより、 TiFlashのパフォーマンスを調整する方法を紹介します。これらの方法に従うことで、 TiFlashクラスターは最適なパフォーマンスを達成できます。
+このドキュメントでは、マシン リソースを適切に計画し、TiDB パラメータを調整することで、 TiFlashのパフォーマンスを調整する方法を紹介します。これらの方法に従うことで、 TiFlashクラスターは最適なパフォーマンスを実現できます。
 
 ## リソースを計画する {#plan-resources}
 
-マシン リソースを節約し、分離の要件がない場合は、 TiKV とTiFlashの両方の展開を組み合わせた方法を使用できます。 TiKV とTiFlashにそれぞれ十分なリソースを保存し、ディスクを共有しないことをお勧めします。
+マシンリソースを節約し、分離の要件がない場合は、 TiKV とTiFlashの両方の展開を組み合わせた方法を使用できます。 TiKV とTiFlashにそれぞれ十分なリソースを節約し、ディスクを共有しないことをお勧めします。
 
-## TiDB パラメータを調整する {#tune-tidb-parameters}
+## TiDBパラメータを調整する {#tune-tidb-parameters}
 
 このセクションでは、次のような TiDB パラメータを調整してTiFlash のパフォーマンスを向上させる方法について説明します。
 
 -   [MPPモードを強制的に有効にする](#forcibly-enable-the-mpp-mode)
--   [集計関数を`Join`または`Union`の前の位置にプッシュダウンします。](#push-down-aggregate-functions-to-a-position-before-join-or-union)
+-   [集計関数を`Join`または`Union`前の位置へプッシュダウンする](#push-down-aggregate-functions-to-a-position-before-join-or-union)
 -   [`Distinct`最適化を有効にする](#enable-distinct-optimization)
 -   [`ALTER TABLE ... COMPACT`ステートメントを使用してデータを圧縮する](#compact-data-using-the-alter-table--compact-statement)
--   [シャッフルされたハッシュ結合をブロードキャスト ハッシュ結合に置き換える](#replace-shuffled-hash-join-with-broadcast-hash-join)
--   [より大きな同時実行数を設定する](#set-a-greater-execution-concurrency)
--   [`tiflash_fine_grained_shuffle_stream_count`を構成する](#configure-tiflash_fine_grained_shuffle_stream_count)
+-   [シャッフルハッシュ結合をブロードキャストハッシュ結合に置き換える](#replace-shuffled-hash-join-with-broadcast-hash-join)
+-   [実行同時実行性を高める](#set-a-greater-execution-concurrency)
+-   [`tiflash_fine_grained_shuffle_stream_count`を設定する](#configure-tiflash_fine_grained_shuffle_stream_count)
 
 ### MPPモードを強制的に有効にする {#forcibly-enable-the-mpp-mode}
 
-MPP 実行プランは分散コンピューティング リソースを最大限に活用できるため、バッチ データ クエリの効率が大幅に向上します。オプティマイザーがクエリの MPP 実行プランを生成しない場合は、MPP モードを強制的に有効にすることができます。
+MPP 実行プランは分散コンピューティング リソースを最大限に活用できるため、バッチ データ クエリの効率が大幅に向上します。オプティマイザーがクエリに対して MPP 実行プランを生成しない場合は、MPP モードを強制的に有効にすることができます。
 
-変数[`tidb_enforce_mpp`](/system-variables.md#tidb_enforce_mpp-new-in-v51)は、オプティマイザのコスト推定を無視し、クエリ実行に TiFlash の MPP モードを強制的に使用するかどうかを制御します。 MPP モードを強制的に有効にするには、次のコマンドを実行します。
+変数[`tidb_enforce_mpp`](/system-variables.md#tidb_enforce_mpp-new-in-v51)オプティマイザのコスト見積もりを無視し、クエリ実行に TiFlash の MPP モードを強制的に使用するかどうかを制御します。MPP モードを強制的に有効にするには、次のコマンドを実行します。
 
 ```sql
 set @@tidb_enforce_mpp = ON;
 ```
 
-次の例は、 `tidb_enforce_mpp`が有効になる前と後のクエリ結果を示しています。この変数を有効にする前に、TiDB は TiKV からデータを読み取り、TiDB で`Join`と`Aggregation`を実行する必要があります。 `tidb_enforce_mpp`が有効になると、 `Join`と`Aggregation`がTiFlashにプッシュダウンされます。さらに、オプティマイザは必ずしも MPP 実行プランを生成するとは限らないため、 `tidb_enforce_mpp`有効にすることで、オプティマイザに MPP 実行プランを生成させることができます。
+次の例は、 `tidb_enforce_mpp`有効にする前と有効にした後のクエリ結果を示しています。この変数を有効にする前は、 TiDB は TiKV からデータを読み取り、 TiDB で`Join`と`Aggregation`を実行する必要があります。 `tidb_enforce_mpp`を有効にすると、 `Join`と`Aggregation` TiFlashにプッシュダウンされます。 また、オプティマイザは必ずしも MPP 実行プランを生成するわけではないため、 `tidb_enforce_mpp`有効にすることで、オプティマイザに MPP 実行プランを生成させることができます。
 
-MPP モードを有効にする前に:
+MPP モードを有効にする前:
 
 ```sql
 mysql> explain analyze select o_orderpriority, count(*) as order_count from orders where o_orderdate >= '1995-01-01' and o_orderdate < date_add('1995-01-01', interval '3' month) and exists (select * from lineitem where l_orderkey = o_orderkey and l_commitdate < l_receiptdate) group by o_orderpriority;
@@ -56,7 +56,7 @@ mysql> explain analyze select o_orderpriority, count(*) as order_count from orde
 10 rows in set (22.82 sec)
 ```
 
-MPP モードを有効にします。
+MPP モードを有効にする:
 
 ```sql
 mysql> set @@tidb_enforce_mpp = ON;
@@ -93,19 +93,19 @@ mysql> explain analyze select o_orderpriority, count(*) as order_count from orde
 18 rows in set (6.00 sec)
 ```
 
-### 集計関数を<code>Join</code>または<code>Union</code>の前の位置にプッシュダウンします。 {#push-down-aggregate-functions-to-a-position-before-code-join-code-or-code-union-code}
+### 集計関数を<code>Join</code>または<code>Union</code>前の位置へプッシュダウンする {#push-down-aggregate-functions-to-a-position-before-code-join-code-or-code-union-code}
 
-集計演算を`Join`または`Union`の前の位置にプッシュダウンすると、 `Join`または`Union`の演算で処理されるデータを減らすことができ、パフォーマンスが向上します。
+集計操作を`Join`または`Union`前の位置にプッシュダウンすることで、 `Join`または`Union`操作で処理されるデータを削減し、パフォーマンスを向上させることができます。
 
-変数[`tidb_opt_agg_push_down`](/system-variables.md#tidb_opt_agg_push_down) 、オプティマイザが集約関数を`Join`または`Union`の前の位置にプッシュダウンする最適化操作を実行するかを制御します。クエリでの集計操作が非常に遅い場合は、この変数を`ON`に設定できます。
+変数[`tidb_opt_agg_push_down`](/system-variables.md#tidb_opt_agg_push_down) 、オプティマイザが集計関数を`Join`または`Union`前の位置にプッシュダウンする最適化操作を実行するかどうかを制御します。クエリで集計操作が非常に遅い場合は、この変数を`ON`に設定できます。
 
 ```sql
 set @@tidb_opt_agg_push_down = ON;
 ```
 
-次の例は、 `tidb_opt_agg_push_down`変数を有効にする前と後のクエリ結果を示しています。この変数が有効になる前は、 `HashJoin_41`操作に続いて`HashAgg_58`操作が実行されます。この変数を有効にすると、新しく生成された`HashAgg_21`と`HashAgg_32`のオペレーションが`HashJoin_76`オペレーションの前に実行されます。これにより、 `Join`操作で処理されるデータが大幅に削減されます。
+次の例は、 `tidb_opt_agg_push_down`変数を有効にする前と有効にした後のクエリ結果を示しています。この変数を有効にする前は、 `HashJoin_41`操作の後に`HashAgg_58`操作が実行されます。この変数を有効にすると、 `HashJoin_76`操作の前に新しく生成された`HashAgg_21`と`HashAgg_32`操作が実行されます。これにより、 `Join`操作で処理されるデータが大幅に削減されます。
 
-`tidb_opt_agg_push_down`を有効にする前:
+`tidb_opt_agg_push_down`有効になる前:
 
 ```sql
 mysql> explain analyze select count(*) from t1 join t2 where t1.a = t2.b group by t1.a;
@@ -136,7 +136,7 @@ mysql> set @@tidb_opt_agg_push_down = ON;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-`tidb_opt_agg_push_down`を有効にした後:
+`tidb_opt_agg_push_down`有効になった後:
 
 ```sql
 mysql> explain analyze select count(*) from t1 join t2 where t1.a = t2.b group by t1.a;
@@ -169,15 +169,15 @@ mysql> explain analyze select count(*) from t1 join t2 where t1.a = t2.b group b
 
 TiFlash は、 `Sum`などの`Distinct`列を受け入れる一部の集計関数をサポートしていません。デフォルトでは、集計関数全体が TiDB で計算されます。 `Distinct`最適化を有効にすると、一部の操作をTiFlashにプッシュダウンできるため、クエリのパフォーマンスが向上します。
 
-クエリ内で`distinct`演算を行う集計関数が遅い場合は、 [`tidb_opt_distinct_agg_push_down`](/system-variables.md#tidb_opt_distinct_agg_push_down)変数の値を`ON`に設定することで、 `Distinct`演算を行う集計関数 ( `select sum(distinct a) from t`など) をコプロセッサーにプッシュ ダウンする最適化演算を有効にすることができます。
+クエリ内で`distinct`操作の集計関数が遅い場合は、 [`tidb_opt_distinct_agg_push_down`](/system-variables.md#tidb_opt_distinct_agg_push_down)変数の値を`ON`に設定することで、 `Distinct` ( `select sum(distinct a) from t`など) の集計関数をコプロセッサーにプッシュダウンする最適化操作を有効にすることができます。
 
 ```sql
 set @@tidb_opt_distinct_agg_push_down = ON;
 ```
 
-次の例は、 `tidb_opt_distinct_agg_push_down`変数を有効にする前と後のクエリ結果を示しています。この変数を有効にする前に、TiDB はTiFlashからすべてのデータを読み取り、TiDB で`distinct`を実行する必要があります。この変数を有効にすると、 `distinct a`がTiFlashにプッシュダウンされ、新しい`group by`列`test.t.a`が`HashAgg_6`に追加されます。クエリ結果の 2 つの警告は、集計関数をTiFlashに完全にプッシュダウンできないことを示しています。
+次の例は、 `tidb_opt_distinct_agg_push_down`変数を有効にする前と有効にした後のクエリ結果を示しています。この変数を有効にする前に、TiDB はTiFlashからすべてのデータを読み取り、 TiDB で`distinct`を実行する必要があります。この変数を有効にすると、 `distinct a`がTiFlashにプッシュダウンされ、新しい`group by`列`test.t.a`が`HashAgg_6`に追加されます。クエリ結果の 2 つの警告は、集計関数をTiFlashに完全にプッシュダウンできないことを示しています。
 
-`tidb_opt_distinct_agg_push_down`を有効にする前:
+`tidb_opt_distinct_agg_push_down`有効になる前:
 
 ```sql
 mysql> explain analyze select count(distinct a) from test.t;
@@ -199,7 +199,7 @@ mysql> set @@tidb_opt_distinct_agg_push_down = ON;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-`tidb_opt_distinct_agg_push_down`を有効にした後:
+`tidb_opt_distinct_agg_push_down`有効になった後:
 
 ```sql
 mysql> explain analyze select count(distinct a) from test.t;
@@ -217,7 +217,7 @@ mysql> explain analyze select count(distinct a) from test.t;
 
 ### <code>ALTER TABLE ... COMPACT</code>ステートメントを使用してデータを圧縮する {#compact-data-using-the-code-alter-table-compact-code-statement}
 
-[`ALTER TABLE ... COMPACT`](/sql-statements/sql-statement-alter-table-compact.md)ステートメントを実行すると、 TiFlashノード上の特定のテーブルまたはパーティションの圧縮を開始できます。圧縮中に、削除された行のクリーンアップや、更新によって生じた複数のバージョンのデータのマージなど、ノード上の物理データが再書き込みされます。これにより、アクセス パフォーマンスが向上し、ディスク使用量が削減されます。以下に例を示します。
+[`ALTER TABLE ... COMPACT`](/sql-statements/sql-statement-alter-table-compact.md)ステートメントを実行すると、 TiFlashノード上の特定のテーブルまたはパーティションの圧縮を開始できます。圧縮中は、ノード上の物理データが書き換えられ、削除された行がクリーンアップされ、更新によって発生した複数のバージョンのデータがマージされます。これにより、アクセス パフォーマンスが向上し、ディスク使用量が削減されます。次に例を示します。
 
 ```sql
 ALTER TABLE employees COMPACT TIFLASH REPLICA;
@@ -227,25 +227,25 @@ ALTER TABLE employees COMPACT TIFLASH REPLICA;
 ALTER TABLE employees COMPACT PARTITION pNorth, pEast TIFLASH REPLICA;
 ```
 
-### シャッフルされたハッシュ結合をブロードキャスト ハッシュ結合に置き換える {#replace-shuffled-hash-join-with-broadcast-hash-join}
+### シャッフルハッシュ結合をブロードキャストハッシュ結合に置き換える {#replace-shuffled-hash-join-with-broadcast-hash-join}
 
-小さなテーブルを使用する`Join`操作の場合、ブロードキャスト ハッシュ結合アルゴリズムは大きなテーブルの転送を回避できるため、コンピューティング パフォーマンスが向上します。
+小さなテーブルでの`Join`操作の場合、ブロードキャスト ハッシュ結合アルゴリズムにより大きなテーブルの転送を回避できるため、コンピューティング パフォーマンスが向上します。
 
--   [`tidb_broadcast_join_threshold_size`](/system-variables.md#tidb_broadcast_join_threshold_size-new-in-v50)変数は、ブロードキャスト ハッシュ結合アルゴリズムを使用するかどうかを制御します。テーブル サイズ (単位: バイト) がこの変数の値より小さい場合、ブロードキャスト ハッシュ結合アルゴリズムが使用されます。それ以外の場合は、シャッフル ハッシュ結合アルゴリズムが使用されます。
+-   [`tidb_broadcast_join_threshold_size`](/system-variables.md#tidb_broadcast_join_threshold_size-new-in-v50)変数は、ブロードキャスト ハッシュ結合アルゴリズムを使用するかどうかを制御します。テーブル サイズ (単位: バイト) がこの変数の値より小さい場合は、ブロードキャスト ハッシュ結合アルゴリズムが使用されます。それ以外の場合は、シャッフル ハッシュ結合アルゴリズムが使用されます。
 
     ```sql
     set @@tidb_broadcast_join_threshold_size = 2000000;
     ```
 
--   [`tidb_broadcast_join_threshold_count`](/system-variables.md#tidb_broadcast_join_threshold_count-new-in-v50)変数は、ブロードキャスト ハッシュ結合アルゴリズムを使用するかどうかも制御します。結合操作のオブジェクトがサブクエリに属している場合、オプティマイザはサブクエリの結果セットのサイズを推定できません。この状況では、サイズは結果セット内の行数によって決まります。サブクエリの推定行数がこの変数の値より少ない場合は、ブロードキャスト ハッシュ結合アルゴリズムが使用されます。それ以外の場合は、シャッフル ハッシュ結合アルゴリズムが使用されます。
+-   [`tidb_broadcast_join_threshold_count`](/system-variables.md#tidb_broadcast_join_threshold_count-new-in-v50)変数は、ブロードキャスト ハッシュ結合アルゴリズムを使用するかどうかも制御します。結合操作のオブジェクトがサブクエリに属している場合、オプティマイザはサブクエリ結果セットのサイズを推定できません。この場合、サイズは結果セットの行数によって決まります。サブクエリの推定行数がこの変数の値より少ない場合、ブロードキャスト ハッシュ結合アルゴリズムが使用されます。それ以外の場合は、シャッフル ハッシュ結合アルゴリズムが使用されます。
 
     ```sql
     set @@tidb_broadcast_join_threshold_count = 100000;
     ```
 
-次の例は、 `tidb_broadcast_join_threshold_size`が再構成される前と後のクエリ結果を示しています。再構成前は、 `ExchangeSender_29`の`ExchangeType`は`HashPartition`です。この変数の値が`10000000`に変更されると、 `ExchangeSender_29`の`ExchangeType`は`Broadcast`に変更されます。
+次の例は、 `tidb_broadcast_join_threshold_size`が再構成される前と再構成された後のクエリ結果を示しています。再構成前は、 `ExchangeSender_29`のうち`ExchangeType`は`HashPartition`です。この変数の値が`10000000`に変更されると、 `ExchangeSender_29`のうち`ExchangeType`は`Broadcast`に変わります。
 
-`tidb_broadcast_join_threshold_size`を再構成する前:
+`tidb_broadcast_join_threshold_size`再構成される前:
 
 ```sql
 mysql> explain analyze select max(l_shipdate), max(l_commitdate), max(l_receiptdate) from supplier,lineitem where s_suppkey = l_suppkey;
@@ -267,14 +267,14 @@ mysql> explain analyze select max(l_shipdate), max(l_commitdate), max(l_receiptd
 11 rows in set (3.83 sec)
 ```
 
-`tidb_broadcast_join_threshold_size` ～ `10000000`を設定：
+セット`tidb_broadcast_join_threshold_size` ～ `10000000` :
 
 ```sql
 mysql> set @@tidb_broadcast_join_threshold_size = 10000000;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-`tidb_broadcast_join_threshold_size`を`10000000`に設定した後:
+`tidb_broadcast_join_threshold_size` `10000000`に設定した後:
 
 ```sql
 mysql> explain analyze select max(l_shipdate), max(l_commitdate), max(l_receiptdate) from supplier,lineitem where s_suppkey = l_suppkey;
@@ -294,9 +294,9 @@ mysql> explain analyze select max(l_shipdate), max(l_commitdate), max(l_receiptd
 9 rows in set (2.76 sec)
 ```
 
-### より大きな同時実行数を設定する {#set-a-greater-execution-concurrency}
+### 実行同時実行性を高める {#set-a-greater-execution-concurrency}
 
-同時実行性が向上すると、 TiFlash がシステムのより多くの CPU リソースを占有することができるようになり、クエリのパフォーマンスが向上します。
+実行の同時実行性が高まると、 TiFlash はシステムの CPU リソースをより多く占有できるようになり、クエリ パフォーマンスが向上します。
 
 [`tidb_max_tiflash_threads`](/system-variables.md#tidb_max_tiflash_threads-new-in-v610)変数は、 TiFlash がリクエストを実行するための最大同時実行数を設定するために使用されます。単位はスレッドです。
 
@@ -304,9 +304,9 @@ mysql> explain analyze select max(l_shipdate), max(l_commitdate), max(l_receiptd
 set @@tidb_max_tiflash_threads = 20;
 ```
 
-次の例は、 `tidb_max_tiflash_threads`が再構成される前と後のクエリ結果を示しています。再構成前、すべてのTiFlashオペレーターの同時実行数は 24 です。この変数の値が`20`に変更されると、同時実行数は 60 になります。
+次の例は、 `tidb_max_tiflash_threads`を再設定する前と後のクエリ結果を示しています。 `tidb_max_tiflash_threads`を設定する前は、単一のTiFlashインスタンスの要求実行の同時実行は 8 スレッドです。 クラスターには合計 3 つのTiFlashインスタンスがあるため、すべてのTiFlashインスタンスでの要求実行のスレッドの合計数は 24 (8 × 3) です。 `tidb_max_tiflash_threads`を`20`に設定した後は、すべてのTiFlashインスタンスでの要求実行のスレッドの合計数は 60 (20 × 3) です。
 
-`tidb_max_tiflash_threads`を再構成する前:
+`tidb_max_tiflash_threads`再構成される前:
 
 ```sql
 mysql> explain analyze select a, count(*) from t group by a;
@@ -326,14 +326,14 @@ mysql> explain analyze select a, count(*) from t group by a;
 9 rows in set (0.67 sec)
 ```
 
-`tidb_max_tiflash_threads` ～ `20`を設定：
+セット`tidb_max_tiflash_threads` ～ `20` :
 
 ```sql
 mysql> set @@tidb_max_tiflash_threads = 20;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-`tidb_max_tiflash_threads`を`20`に設定した後:
+`tidb_max_tiflash_threads` `20`に設定した後:
 
 ```sql
 mysql> explain analyze select a, count(*) from t group by a;
@@ -353,19 +353,19 @@ mysql> explain analyze select a, count(*) from t group by a;
 9 rows in set (0.37 sec)
 ```
 
-### <code>tiflash_fine_grained_shuffle_stream_count</code>を構成する {#configure-code-tiflash-fine-grained-shuffle-stream-count-code}
+### <code>tiflash_fine_grained_shuffle_stream_count</code>を設定する {#configure-code-tiflash-fine-grained-shuffle-stream-count-code}
 
-ファイン グレイン シャッフル機能の[`tiflash_fine_grained_shuffle_stream_count`](/system-variables.md#tiflash_fine_grained_shuffle_stream_count-new-in-v620)を構成することで、ウィンドウ関数の実行の同時実行性を高めることができます。このようにして、ウィンドウ関数の実行により多くのシステム リソースが占有されるため、クエリのパフォーマンスが向上します。
+Fine Grained Shuffle 機能の[`tiflash_fine_grained_shuffle_stream_count`](/system-variables.md#tiflash_fine_grained_shuffle_stream_count-new-in-v620)を構成することで、ウィンドウ関数の実行の同時実行性を高めることができます。これにより、ウィンドウ関数の実行でより多くのシステム リソースを占有できるようになり、クエリのパフォーマンスが向上します。
 
-ウィンドウ関数が実行のためにTiFlashにプッシュダウンされる場合、この変数を使用してウィンドウ関数実行の同時実行レベルを制御できます。単位はスレッドです。
+ウィンドウ関数が実行のためにTiFlashにプッシュダウンされるときに、この変数を使用してウィンドウ関数実行の同時実行レベルを制御できます。単位はスレッドです。
 
 ```sql
 set @@tiflash_fine_grained_shuffle_stream_count = 20;
 ```
 
-次の例は、 `tiflash_fine_grained_shuffle_stream_count`変数が再構成される前と後のクエリ結果を示しています。再構成前は、 `[ExchangeSender_11, ExchangeReceiver_12, Sort_13, Window_22]`の`stream_count` 8 です。再構成後は、 `stream_count` 20 になります。
+次の例は、 `tiflash_fine_grained_shuffle_stream_count`変数が再構成される前と後のクエリ結果を示しています。再構成前は、 `[ExchangeSender_11, ExchangeReceiver_12, Sort_13, Window_22]`の`stream_count` 8 です。再構成後は、 `stream_count`が 20 になります。
 
-`tiflash_fine_grained_shuffle_stream_count`を再構成する前:
+`tiflash_fine_grained_shuffle_stream_count`再構成される前:
 
 ```sql
 mysql> explain analyze select *, row_number() over (partition by a) from t;
@@ -383,14 +383,14 @@ mysql> explain analyze select *, row_number() over (partition by a) from t;
 7 rows in set (4 min 30.59 sec)
 ```
 
-`tiflash_fine_grained_shuffle_stream_count` ～ `20`を設定：
+セット`tiflash_fine_grained_shuffle_stream_count` ～ `20` :
 
 ```sql
 mysql> set @@tiflash_fine_grained_shuffle_stream_count = 20;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-`tiflash_fine_grained_shuffle_stream_count`を`20`に設定した後:
+`tiflash_fine_grained_shuffle_stream_count` `20`に設定した後:
 
 ```sql
 mysql> explain analyze select *, row_number() over (partition by a) from t;

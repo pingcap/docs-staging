@@ -14,8 +14,8 @@ summary: データの更新方法とデータの一括更新方法について�
 
 このドキュメントを読む前に、次のものを準備する必要があります。
 
--   [TiDB サーバーレスクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
--   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) [データベースを作成する](/develop/dev-guide-create-database.md)読ん[セカンダリインデックスを作成する](/develop/dev-guide-create-secondary-indexes.md) [テーブルを作成する](/develop/dev-guide-create-table.md) 。
+-   [TiDB Cloudサーバーレスクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
+-   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) [データベースを作成する](/develop/dev-guide-create-database.md) [セカンダリインデックスを作成する](/develop/dev-guide-create-secondary-indexes.md) [テーブルを作成する](/develop/dev-guide-create-table.md)ください。
 -   `UPDATE`データが必要な場合は、まず[データを挿入する](/develop/dev-guide-insert-data.md)データが必要です。
 
 ## <code>UPDATE</code>使用する {#use-code-update-code}
@@ -24,7 +24,7 @@ summary: データの更新方法とデータの一括更新方法について�
 
 > **注記：**
 >
-> 多数の行 (たとえば 1 万行以上) を更新する必要がある場合は、一度に完全な更新を行うのでは***なく***、すべての行が更新されるまで、部分的な更新を繰り返すことをお勧めします。この操作をループするスクリプトまたはプログラムを作成できます。詳細については、 [一括更新](#bulk-update)を参照してください。
+> 多数の行 (たとえば 1 万行以上) を更新する必要がある場合は、一度に完全な更新を行うのでは***なく***、すべての行が更新されるまで、部分的な更新を繰り返すことをお勧めします。この操作をループするスクリプトまたはプログラムを作成できます。詳細については、 [一括更新](#bulk-update)参照してください。
 
 ### <code>UPDATE</code> SQL構文 {#code-update-code-sql-syntax}
 
@@ -46,9 +46,9 @@ UPDATE {table} SET {update_column} = {update_value} WHERE {filter_column} = {fil
 
 ### ベストプラクティス<code>UPDATE</code> {#code-update-code-best-practices}
 
-次に、データを更新するためのベスト プラクティスをいくつか示します。
+データの更新に関するベスト プラクティスを次に示します。
 
--   `UPDATE`ステートメントでは必ず`WHERE`句を指定します。5 ステートメント`WHERE` `UPDATE`がない場合、TiDB はテーブル内の***すべての行***を更新します。
+-   `UPDATE`ステートメントでは必ず`WHERE`句を指定します。5 ステートメントに`WHERE`句がない場合、TiDB はテーブル内の***すべての行***`UPDATE`更新します。
 
 <CustomContent platform="tidb">
 
@@ -64,7 +64,7 @@ UPDATE {table} SET {update_column} = {update_value} WHERE {filter_column} = {fil
 
 ### <code>UPDATE</code>例 {#code-update-code-example}
 
-ある著者が**Helen Haruki**に名前を変更したとします。 [著者](/develop/dev-guide-bookshop-schema-design.md#authors-table)テーブルを変更する必要があります。 彼女の固有の`id`が**1 で**あると仮定すると、フィルターは`id = 1`になります。
+ある著者が**Helen Haruki**に名前を変更したとします。 [著者](/develop/dev-guide-bookshop-schema-design.md#authors-table)テーブルを変更する必要があります。 彼女の固有の`id`が**1**であると仮定すると、フィルターは`id = 1`になります。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -94,7 +94,7 @@ try (Connection connection = ds.getConnection()) {
 
 ## <code>INSERT ON DUPLICATE KEY UPDATE</code>を使用する {#use-code-insert-on-duplicate-key-update-code}
 
-テーブルに新しいデータを挿入する必要があるが、一意キー (主キーは一意キーでもある) が競合している場合は、最初に競合したレコードが更新されます。 `INSERT ... ON DUPLICATE KEY UPDATE ...`ステートメントを使用して、挿入または更新を行うことができます。
+テーブルに新しいデータを挿入する必要があるが、一意キー (主キーは一意キーでもある) が競合している場合は、最初に競合したレコードが更新されます。 `INSERT ... ON DUPLICATE KEY UPDATE ...`ステートメントを使用して挿入または更新できます。
 
 ### <code>INSERT ON DUPLICATE KEY UPDATE</code> SQL 構文 {#code-insert-on-duplicate-key-update-code-sql-syntax}
 
@@ -118,7 +118,7 @@ INSERT INTO {table} ({columns}) VALUES ({values})
 -   `INSERT ON DUPLICATE KEY UPDATE` 、一意のキーが 1 つあるテーブルにのみ使用してください。このステートメントは、***一意のキー***(主キーを含む) の競合が検出されるとデータを更新します。競合行が複数ある場合は、1 行のみが更新されます。したがって、競合行が 1 行のみであることを保証できない限り、複数の一意のキーがあるテーブルで`INSERT ON DUPLICATE KEY UPDATE`ステートメントを使用することはお勧めしません。
 -   データを作成または更新するときにこのステートメントを使用します。
 
-### <code>INSERT ON DUPLICATE KEY UPDATE</code>の例 {#code-insert-on-duplicate-key-update-code-example}
+### <code>INSERT ON DUPLICATE KEY UPDATE</code>例 {#code-insert-on-duplicate-key-update-code-example}
 
 たとえば、 [評価](/develop/dev-guide-bookshop-schema-design.md#ratings-table)テーブルを更新して、本に対するユーザーの評価を含める必要があります。ユーザーがまだ本を評価していない場合は、新しい評価が作成されます。ユーザーがすでに評価している場合は、以前の評価が更新されます。
 
@@ -160,17 +160,17 @@ VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `score` = ?, `rated_at` = NOW()"
 
 ## 一括更新 {#bulk-update}
 
-テーブル内の複数行のデータを更新する必要がある場合は、 [`INSERT ON DUPLICATE KEY UPDATE`を使用する](#use-insert-on-duplicate-key-update)と`WHERE`句を使用して、更新する必要があるデータをフィルター処理できます。
+テーブル内の複数行のデータを更新する必要がある場合は、 `WHERE`句を使用して、更新する必要があるデータを[`INSERT ON DUPLICATE KEY UPDATE`を使用する](#use-insert-on-duplicate-key-update)処理できます。
 
 <CustomContent platform="tidb">
 
-ただし、多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、データを繰り返し更新することをお勧めします。つまり、更新が完了するまで、各反復でデータの一部のみを更新します。これは、TiDB が単一トランザクションのサイズを制限しているためです ( [トランザクションの合計サイズ制限](/tidb-configuration-file.md#txn-total-size-limit) 、デフォルトでは 100 MB)。一度にデータ更新が多すぎると、ロックが長時間保持される ( [悲観的取引](/pessimistic-transaction.md)か、競合が発生します ( [楽観的取引](/optimistic-transaction.md) )。プログラムまたはスクリプトでループを使用して、操作を完了できます。
+ただし、多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、データを繰り返し更新することをお勧めします。つまり、更新が完了するまで、各反復でデータの一部のみを更新します。これは、TiDB が単一トランザクションのサイズを制限しているためです ( [トランザクションの合計サイズ制限](/tidb-configuration-file.md#txn-total-size-limit) 、デフォルトでは 100 MB)。一度にデータ更新が多すぎると、ロックが長時間保持される ( [悲観的取引](/pessimistic-transaction.md) ) か、競合が発生します ( [楽観的取引](/optimistic-transaction.md) )。プログラムまたはスクリプトでループを使用して、操作を完了できます。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-ただし、多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、データを繰り返し更新することをお勧めします。つまり、更新が完了するまで、各反復でデータの一部のみを更新します。これは、TiDB が 1 つのトランザクションのサイズをデフォルトで 100 MB に制限しているためです。一度にデータ更新が多すぎると、ロックが長時間保持される ( [悲観的取引](/pessimistic-transaction.md)か、競合が発生します ( [楽観的取引](/optimistic-transaction.md) )。プログラムまたはスクリプトでループを使用して、操作を完了できます。
+ただし、多数の行 (たとえば、1 万行以上) を更新する必要がある場合は、データを繰り返し更新することをお勧めします。つまり、更新が完了するまで、各反復でデータの一部のみを更新します。これは、TiDB が 1 つのトランザクションのサイズをデフォルトで 100 MB に制限しているためです。一度にデータ更新が多すぎると、ロックが長時間保持される ( [悲観的取引](/pessimistic-transaction.md) ) か、競合が発生します ( [楽観的取引](/optimistic-transaction.md) )。プログラムまたはスクリプトでループを使用して、操作を完了できます。
 
 </CustomContent>
 
@@ -182,9 +182,9 @@ VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `score` = ?, `rated_at` = NOW()"
 
 ### 例 {#example}
 
-過去 1 年間に、 `bookshop` Web サイトでユーザーから多数の書籍評価があったとします。ただし、元の 5 段階評価の設計では書籍評価の差別化が不十分でした。ほとんどの書籍は`3`と評価されています。評価を差別化するために、5 段階評価から 10 段階評価に切り替えることにしました。
+過去 1 年間に、 `bookshop` Web サイトでユーザーから多数の書籍評価があったものの、当初の設計では 5 段階評価だったため、書籍評価の差別化が不十分だったとします。ほとんどの書籍は`3`評価されています。評価を差別化するために、5 段階評価から 10 段階評価に切り替えることにしました。
 
-前の 5 段階評価の`ratings`テーブルのデータを`2`にして、行が更新されたかどうかを示す新しい列を評価テーブルに追加する必要があります。この列を使用すると、 `SELECT`で更新された行をフィルター処理できるため、スクリプトがクラッシュして行が複数回更新され、不合理なデータが生成されることがなくなります。
+前の 5 段階評価の`ratings`テーブルのデータを`2`倍にして、行が更新されたかどうかを示す新しい列を評価テーブルに追加する必要があります。この列を使用すると、 `SELECT`で更新された行をフィルター処理できるため、スクリプトがクラッシュして行が複数回更新され、不合理なデータが生成されることがなくなります。
 
 たとえば、10 ポイント スケールかどうかの識別子として、データ型[ブール](/data-type-numeric.md#boolean-type)を持つ`ten_point`という名前の列を作成します。
 
@@ -194,7 +194,7 @@ ALTER TABLE `bookshop`.`ratings` ADD COLUMN `ten_point` BOOL NOT NULL DEFAULT FA
 
 > **注記：**
 >
-> この一括更新アプリケーションは、 **DDL**ステートメントを使用してデータ テーブルのスキーマを変更します。TiDB のすべての DDL 変更操作はオンラインで実行されます。詳細については、 [列を追加](/sql-statements/sql-statement-add-column.md)を参照してください。
+> この一括更新アプリケーションは、 **DDL**ステートメントを使用してデータ テーブルのスキーマを変更します。TiDB のすべての DDL 変更操作はオンラインで実行されます。詳細については、 [列を追加](/sql-statements/sql-statement-add-column.md)参照してください。
 
 <SimpleTab groupId="language">
 <div label="Golang" value="golang">
@@ -275,7 +275,7 @@ func placeHolder(n int) string {
 }
 ```
 
-各反復で、 `SELECT`​​主キーの順にクエリを実行します。10 段階評価 ( `ten_point`は`false` ) に更新されていない最大`1000`行の主キー値を選択します。各`SELECT`ステートメントは、重複を防ぐために、前の`SELECT`結果の最大値よりも大きい主キーを選択します。次に、一括更新を使用し、その`score`列を`2`倍にして、 `ten_point`を`true`に設定します。 `ten_point`を更新する目的は、クラッシュ後の再起動時に更新アプリケーションが同じ行を繰り返し更新してデータ破損を引き起こすのを防ぐことです。 `time.Sleep(time.Second)`各ループで、更新アプリケーションが 1 秒間一時停止して、更新アプリケーションがハードウェア リソースを大量に消費するのを防ぎます。
+各反復で、 `SELECT`主キーの順にクエリを実行します。10 段階評価 ( `ten_point`は`false` ) に更新されていない最大`1000`行の主キー値を選択します。各`SELECT`ステートメントは、重複を防ぐために、前の`SELECT`結果の最大値よりも大きい主キーを選択します。次に、一括更新を使用し、その`score`列を`2`で乗算し、 `ten_point`を`true`に設定します。 `ten_point`を更新する目的は、クラッシュ後に再起動した場合に更新アプリケーションが同じ行を繰り返し更新してデータが破損するのを防ぐことです。 `time.Sleep(time.Second)`各ループで、更新アプリケーションが 1 秒間一時停止して、更新アプリケーションがハードウェア リソースを大量に消費するのを防ぎます。
 
 </div>
 
@@ -441,8 +441,22 @@ public class BatchUpdateExample {
 </hibernate-configuration>
 ```
 
-各反復で、 `SELECT`​​主キーの順にクエリを実行します。10 段階評価 ( `ten_point`は`false` ) に更新されていない最大`1000`行の主キー値を選択します。各`SELECT`ステートメントは、重複を防ぐために、前の`SELECT`結果の最大値よりも大きい主キーを選択します。次に、一括更新を使用し、その`score`列を`2`倍にして、 `ten_point`を`true`に設定します。 `ten_point`を更新する目的は、クラッシュ後の再起動時に更新アプリケーションが同じ行を繰り返し更新してデータ破損を引き起こすのを防ぐことです。 `TimeUnit.SECONDS.sleep(1);`各ループで、更新アプリケーションが 1 秒間一時停止して、更新アプリケーションがハードウェア リソースを大量に消費するのを防ぎます。
+各反復で、 `SELECT`主キーの順にクエリを実行します。10 段階評価 ( `ten_point`は`false` ) に更新されていない最大`1000`行の主キー値を選択します。各`SELECT`ステートメントは、重複を防ぐために、前の`SELECT`結果の最大値よりも大きい主キーを選択します。次に、一括更新を使用し、その`score`列を`2`で乗算し、 `ten_point`を`true`に設定します。 `ten_point`を更新する目的は、クラッシュ後に再起動した場合に更新アプリケーションが同じ行を繰り返し更新してデータが破損するのを防ぐことです。 `TimeUnit.SECONDS.sleep(1);`各ループで、更新アプリケーションが 1 秒間一時停止して、更新アプリケーションがハードウェア リソースを大量に消費するのを防ぎます。
 
 </div>
 
 </SimpleTab>
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
+
+</CustomContent>

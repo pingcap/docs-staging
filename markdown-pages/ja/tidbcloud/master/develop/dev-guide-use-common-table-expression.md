@@ -7,7 +7,7 @@ summary: SQL ステートメントをより効率的に記述するのに役立�
 
 一部のトランザクション シナリオでは、アプリケーションの複雑さにより、最大 2,000 行の単一の SQL ステートメントを記述する必要がある場合があります。ステートメントには、多数の集計と複数レベルのサブクエリのネストが含まれる可能性があります。このような長い SQL ステートメントを維持することは、開発者にとって悪夢になる可能性があります。
 
-このような長い SQL ステートメントを回避するには、 [ビュー](/develop/dev-guide-use-views.md)使用してクエリを簡略化するか、 [一時テーブル](/develop/dev-guide-use-temporary-tables.md)を使用して中間クエリ結果をキャッシュします。
+このような長い SQL 文を回避するには、 [ビュー](/develop/dev-guide-use-views.md)使用してクエリを簡略化するか、 [一時テーブル](/develop/dev-guide-use-temporary-tables.md)使用して中間クエリ結果をキャッシュします。
 
 このドキュメントでは、クエリ結果を再利用するためのより便利な方法である、TiDB の共通テーブル式 (CTE) 構文を紹介します。
 
@@ -15,7 +15,7 @@ TiDB v5.1 以降、TiDB は ANSI SQL99 標準の CTE と再帰をサポートし
 
 ## 基本的な使い方 {#basic-use}
 
-共通テーブル式 (CTE) は、SQL ステートメント内で複数回参照できる一時的な結果セットであり、ステートメントの読みやすさと実行効率を向上させます。CTE を使用するには、 `WITH`ステートメントを適用できます。
+共通テーブル式 (CTE) は、SQL ステートメント内で複数回参照できる一時的な結果セットであり、ステートメントの読みやすさと実行効率を向上させます。CTE を使用するには、 [`WITH`](/sql-statements/sql-statement-with.md)ステートメントを適用できます。
 
 共通テーブル式は、非再帰 CTE と再帰 CTE の 2 つのタイプに分類できます。
 
@@ -209,7 +209,7 @@ SELECT * FROM fibonacci;
 
 -   [と](/sql-statements/sql-statement-with.md)
 
-## 助けが必要？ {#need-help}
+## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 

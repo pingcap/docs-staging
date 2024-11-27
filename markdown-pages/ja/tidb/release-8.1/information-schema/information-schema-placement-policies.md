@@ -1,6 +1,6 @@
 ---
 title: PLACEMENT_POLICIES
-summary: PLACEMENT_POLICIES information_schema テーブルについて学習します。
+summary: PLACEMENT_POLICIES` information_schema テーブルについて学習します。
 ---
 
 # 配置ポリシー {#placement-policies}
@@ -9,7 +9,7 @@ summary: PLACEMENT_POLICIES information_schema テーブルについて学習し
 
 > **注記：**
 >
-> このテーブルは[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ```sql
 USE information_schema;
@@ -38,10 +38,10 @@ DESC placement_policies;
 
 ## 例 {#examples}
 
-`PLACEMENT_POLICIES`テーブルには、すべての配置ポリシーのみが表示されます。配置ルールの標準バージョン (すべての配置ポリシーと配置ポリシーが割り当てられたオブジェクトを含む) を表示するには、代わりにステートメント`SHOW PLACEMENT`を使用します。
+`PLACEMENT_POLICIES`テーブルには、すべての配置ポリシーのみが表示されます。配置ルールの標準バージョン (すべての配置ポリシーと配置ポリシーが割り当てられたオブジェクトを含む) を表示するには、代わりにステートメント`SHOW PLACEMENT`使用します。
 
 ```sql
-CREATE TABLE t1 (a INT);
+CREATE TABLE t1 (a INT); 
 CREATE PLACEMENT POLICY p1 primary_region="us-east-1" regions="us-east-1";
 CREATE TABLE t3 (a INT) PLACEMENT POLICY=p1;
 SHOW PLACEMENT; -- Shows all information, including table t3.

@@ -25,7 +25,7 @@ summary: ある TiDB クラスターから別の TiDB クラスターにデー�
 
 1.  TiDB クラスターをデプロイ。
 
-    TiUP Playground を使用して、アップストリームとダウンストリームの 2 つの TiDB クラスターをデプロイ。詳細については、 [TiUPを使用してオンライン TiDBクラスタをデプロイおよび管理](/tiup/tiup-cluster.md)を参照してください。
+    TiUP Playground を使用して、アップストリームとダウンストリームの 2 つの TiDB クラスターをデプロイ。詳細については、 [TiUP を使用してオンライン TiDBクラスタをデプロイおよび管理](/tiup/tiup-cluster.md)を参照してください。
 
     ```shell
     # Create an upstream cluster
@@ -99,12 +99,12 @@ summary: ある TiDB クラスターから別の TiDB クラスターにデー�
 
 ## ステップ2. 全データを移行する {#step-2-migrate-full-data}
 
-環境設定後、 [BR](https://github.com/pingcap/tidb/tree/release-8.1/br)のバックアップと復元関数を使用して全データを移行できます。 [3つの方法](/br/br-use-overview.md#deploy-and-use-br)でBRを起動できます。 このドキュメントでは、SQL 文`BACKUP`と`RESTORE`を使用します。
+環境設定後、 [BR](https://github.com/pingcap/tidb/tree/release-8.1/br)のバックアップと復元関数を使用して全データを移行できます。 [3つの方法](/br/br-use-overview.md#deploy-and-use-br)でBR を起動できます。 このドキュメントでは、SQL 文`BACKUP`と`RESTORE`使用します。
 
 > **注記：**
 >
 > -   `BACKUP`と`RESTORE` SQL ステートメントは実験的です。本番環境での使用は推奨されません。予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)報告できます。
-> -   本番クラスターでは、GC を無効にしてバックアップを実行すると、クラスターのパフォーマンスに影響する可能性があります。パフォーマンスの低下を避けるために、オフピーク時にデータをバックアップし、 `RATE_LIMIT`適切な値に設定することをお勧めします。
+> -   本番クラスターでは、GC を無効にしてバックアップを実行すると、クラスターのパフォーマンスに影響する可能性があります。パフォーマンスの低下を避けるために、オフピーク時にデータをバックアップし、 `RATE_LIMIT`を適切な値に設定することをお勧めします。
 > -   アップストリーム クラスタとダウンストリーム クラスタのバージョンが異なる場合は、 [BR互換性](/br/backup-and-restore-overview.md#before-you-use)確認する必要があります。このドキュメントでは、アップストリーム クラスタとダウンストリーム クラスタは同じバージョンであると想定しています。
 
 1.  GC を無効にします。
@@ -132,7 +132,11 @@ summary: ある TiDB クラスターから別の TiDB クラスターにデー�
         +-------------------------+
         1 row in set (0.00 sec)
 
-2.  バックアップデータ。
+    > **注記：**
+    >
+    > TiCDC `gc-ttl`デフォルトで 24 時間です。バックアップと復元に長い時間がかかる場合、デフォルトの`gc-ttl`不十分な可能性があり、後続の[増分レプリケーションタスク](#step-3-migrate-incremental-data)失敗する可能性があります。この状況を回避するには、TiCDCサーバーを起動するときに、特定のニーズに応じて`gc-ttl`値を調整します。詳細については、 [TiCDC の`gc-ttl`とは何ですか?](/ticdc/ticdc-faq.md#what-is-gc-ttl-in-ticdc)参照してください。
+
+2.  データをバックアップします。
 
     データをバックアップするには、アップストリーム クラスターで`BACKUP`ステートメントを実行します。
 
@@ -147,11 +151,11 @@ summary: ある TiDB クラスターから別の TiDB クラスターにデー�
         +---------------+----------+--------------------+---------------------+---------------------+
         1 row in set (2.11 sec)
 
-    `BACKUP`コマンドが実行されると、 TiDB はバックアップ データに関するメタデータを返します。 `BackupTS`バックアップされる前に生成されたデータなので注意してください。 このドキュメントでは、 `BackupTS`**データ チェックの終了**と**TiCDC による増分移行スキャンの開始**として使用します。
+    `BACKUP`コマンドが実行されると、 TiDB はバックアップ データに関するメタデータを返します。 `BackupTS`はバックアップされる前に生成されたデータなので注意してください。 このドキュメントでは、 `BackupTS`**データ チェックの終了**と**TiCDC による増分移行スキャンの開始**として使用します。
 
 3.  データを復元します。
 
-    ダウンストリーム クラスターで`RESTORE`コマンドを実行してデータを復元します。
+    データを復元するには、ダウンストリーム クラスターで`RESTORE`コマンドを実行します。
 
     ```sql
     mysql> RESTORE DATABASE * FROM 's3://backup?access-key=minio&secret-access-key=miniostorage&endpoint=http://${HOST_IP}:6060&force-path-style=true';
@@ -166,7 +170,7 @@ summary: ある TiDB クラスターから別の TiDB クラスターにデー�
 
 4.  (オプション) データを検証します。
 
-    [同期差分インスペクター](/sync-diff-inspector/sync-diff-inspector-overview.md)使用すると、特定の時点でのアップストリームとダウンストリーム間のデータの整合性をチェックできます。前の`BACKUP`出力は、アップストリーム クラスターが 431434047157698561 にバックアップを完了したことを示しています。前の`RESTORE`の出力は、ダウンストリームが 431434141450371074 に復元を完了したことを示しています。
+    [同期差分インスペクター](/sync-diff-inspector/sync-diff-inspector-overview.md)使用すると、特定の時点でのアップストリームとダウンストリーム間のデータの一貫性を確認できます。前の`BACKUP`出力は、アップストリーム クラスターが 431434047157698561 にバックアップを完了したことを示しています。前の`RESTORE`出力は、ダウンストリームが 431434141450371074 に復元を完了したことを示しています。
 
     ```shell
     sync_diff_inspector -C ./config.yaml
@@ -200,9 +204,9 @@ summary: ある TiDB クラスターから別の TiDB クラスターにデー�
 
 ## ステップ3. 増分データを移行する {#step-3-migrate-incremental-data}
 
-1.  TiCDC をデプロイ。
+1.  TiCDCをデプロイ。
 
-    完全なデータ移行が完了したら、増分データをレプリケートするために TiCDC をデプロイして構成します。本番環境では、 [TiCDC をデプロイ](/ticdc/deploy-ticdc.md)手順に従って TiCDC をデプロイします。このドキュメントでは、テスト クラスターの作成時に TiCDC ノードが起動されています。したがって、TiCDC をデプロイする手順をスキップして、changefeed 構成に進むことができます。
+    完全なデータ移行が完了したら、増分データをレプリケートするために TiCDC をデプロイして構成します。本番環境では、 [TiCDC をデプロイ](/ticdc/deploy-ticdc.md)の手順に従って TiCDC をデプロイします。このドキュメントでは、テスト クラスターの作成時に TiCDC ノードが起動されています。したがって、TiCDC をデプロイする手順をスキップして、changefeed 構成に進むことができます。
 
 2.  変更フィードを作成します。
 
@@ -223,7 +227,7 @@ summary: ある TiDB クラスターから別の TiDB クラスターにデー�
 
 3.  GC を有効にします。
 
-    TiCDC を使用した増分移行では、GC は複製された履歴データのみを削除します。そのため、チェンジフィードを作成した後、以下のコマンドを実行して GC を有効にする必要があります。詳細については、 [TiCDCガベージコレクション(GC) セーフポイントの完全な動作は何ですか?](/ticdc/ticdc-faq.md#what-is-the-complete-behavior-of-ticdc-garbage-collection-gc-safepoint)参照してください。
+    TiCDC を使用した増分移行では、GC はレプリケートされた履歴データのみを削除します。そのため、チェンジフィードを作成した後、以下のコマンドを実行して GC を有効にする必要があります。詳細については、 [TiCDCガベージコレクション(GC) セーフポイントの完全な動作は何ですか?](/ticdc/ticdc-faq.md#what-is-the-complete-behavior-of-ticdc-garbage-collection-gc-safepoint)参照してください。
 
     GC を有効にするには、次のコマンドを実行します。
 

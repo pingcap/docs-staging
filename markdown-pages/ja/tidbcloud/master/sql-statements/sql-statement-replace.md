@@ -1,13 +1,13 @@
 ---
 title: REPLACE | TiDB SQL Statement Reference
-summary: REPLACEステートメントは、DELETE + INSERTステートメントを組み合わせたもので、アプリケーションコードを簡素化するために使用できます。TiDB のREPLACEステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、バグを報告してください。
+summary: TiDB データベースでの REPLACE の使用法の概要。
 ---
 
 # 交換する {#replace}
 
-`REPLACE`ステートメントは、意味的には`DELETE` + `INSERT`ステートメントを組み合わせたものです。アプリケーションコードを簡素化するために使用できます。
+`REPLACE`ステートメントは意味的には`DELETE` + `INSERT`ステートメントを組み合わせたものです。これを使用してアプリケーション コードを簡素化できます。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 ReplaceIntoStmt ::=
@@ -66,11 +66,11 @@ mysql> SELECT * FROM t1;
 3 rows in set (0.00 sec)
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`REPLACE`ステートメントは MySQL と完全な互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) .
+TiDB の`REPLACE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [消去](/sql-statements/sql-statement-delete.md)
 -   [入れる](/sql-statements/sql-statement-insert.md)

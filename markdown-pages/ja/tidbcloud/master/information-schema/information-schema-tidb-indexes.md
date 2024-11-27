@@ -1,11 +1,11 @@
 ---
 title: TIDB_INDEXES
-summary: TIDB_INDEXESテーブルは、すべてのテーブルのINDEX情報を提供します。TABLE_SCHEMAはインデックスが属するスキーマの名前で、TABLE_NAMEはインデックスが属するテーブルの名前です。NON_UNIQUEはインデックスが一意の場合は0で、それ以外の場合は1です。KEY_NAMEはインデックス名で、SEQ_IN_INDEXはインデックス内の列の連続番号です。COLUMN_NAMEはインデックスが配置されている列の名前で、INDEX_COMMENTはインデックスのコメントです。INDEX_IDはインデックスIDで、IS_VISIBLEはインデックスが表示されるかどうかを示します。CLUSTEREDはクラスター化インデックスかどうかです。
+summary: TIDB_INDEXES information_schema テーブルについて学習します。
 ---
 
-# TIDB_INDEXES {#tidb-indexes}
+# TIDB_インデックス {#tidb-indexes}
 
-`TIDB_INDEXES`テーブルは、すべてのテーブルの INDEX 情報を提供します。
+`TIDB_INDEXES`テーブルはすべてのテーブルの INDEX 情報を提供します。
 
 ```sql
 USE information_schema;
@@ -30,7 +30,7 @@ DESC tidb_indexes;
     +---------------+---------------+------+------+---------+-------+
     12 rows in set (0.00 sec)
 
-`INDEX_ID`は、TiDB が各インデックスに割り当てる一意の ID です。別のテーブルまたは API から取得した`INDEX_ID`の結合操作を行うために使用できます。
+`INDEX_ID`は、TiDB が各インデックスに割り当てる一意の ID です。別のテーブルまたは API から取得した`INDEX_ID`との結合操作を実行するために使用できます。
 
 たとえば、 [`SLOW_QUERY`テーブル](/information-schema/information-schema-slow-query.md)の遅いクエリに関係する`TABLE_ID`と`INDEX_ID`を取得し、次の SQL ステートメントを使用して特定のインデックス情報を取得できます。
 
@@ -47,16 +47,16 @@ WHERE
  AND index_id = ?
 ```
 
-`TIDB_INDEXES`テーブルのフィールドは次のように説明されています。
+`TIDB_INDEXES`テーブル内のフィールドは次のように説明されます。
 
 -   `TABLE_SCHEMA` : インデックスが属するスキーマの名前。
 -   `TABLE_NAME` : インデックスが属するテーブルの名前。
--   `NON_UNIQUE` : インデックスが一意の場合、値は`0`です。それ以外の場合、値は`1`です。
--   `KEY_NAME` : インデックス名。インデックスが主キーの場合、名前は`PRIMARY`です。
--   `SEQ_IN_INDEX` : `1`から始まるインデックス内の列の連続番号。
+-   `NON_UNIQUE` : インデックスが一意の場合、値は`0`になります。それ以外の場合、値は`1`になります。
+-   `KEY_NAME` : インデックス名。インデックスが主キーの場合、名前は`PRIMARY`なります。
+-   `SEQ_IN_INDEX` : インデックス内の列の連続番号`1`から始まります。
 -   `COLUMN_NAME` : インデックスが配置されている列の名前。
--   `SUB_PART` : インデックスのプレフィックス長。列が部分的にインデックス付けされている場合、値`SUB_PART`はインデックス付けされた文字の数になります。それ以外の場合、値は`NULL`です。
--   `INDEX_COMMENT` : インデックスのコメント。インデックスの作成時に作成されます。
+-   `SUB_PART` : インデックスのプレフィックス長。列が部分的にインデックスされている場合、値`SUB_PART`はインデックスされた文字の数です。それ以外の場合、値は`NULL`です。
+-   `INDEX_COMMENT` : インデックスの作成時に作成されるインデックスのコメント。
 -   `INDEX_ID` : インデックス ID。
 -   `IS_VISIBLE` : インデックスが表示されるかどうか。
 -   `CLUSTERED` : [クラスター化インデックス](/clustered-indexes.md)かどうか。

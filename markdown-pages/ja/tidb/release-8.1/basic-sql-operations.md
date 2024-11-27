@@ -5,7 +5,7 @@ summary: TiDB データベースの基本的な SQL ステートメントにつ�
 
 # TiDB で SQL を探索する {#explore-sql-with-tidb}
 
-TiDB は MySQL と互換性があり、ほとんどの場合 MySQL ステートメントを直接使用できます。サポートされていない機能については、 [MySQLとの互換性](/mysql-compatibility.md#unsupported-features)参照してください。
+TiDB は MySQL と互換性があり、ほとんどの場合、MySQL ステートメントを直接使用できます。サポートされていない機能については、 [MySQLとの互換性](/mysql-compatibility.md#unsupported-features)参照してください。
 
 <CustomContent platform="tidb">
 
@@ -13,9 +13,9 @@ SQL を試して、MySQL クエリと TiDB の互換性をテストするには�
 
 </CustomContent>
 
-このページでは、DDL、DML、CRUD 操作などの基本的なTiDB SQLステートメントについて説明します。TiDB ステートメントの完全なリストについては、 [TiDB SQL構文図](https://pingcap.github.io/sqlgram/)参照してください。
+このページでは、DDL、DML、CRUD 操作などの基本的なTiDB SQLステートメントについて説明します。TiDB ステートメントの完全なリストについては、 [SQL ステートメントの概要](/sql-statements/sql-statement-overview.md)参照してください。
 
-## カテゴリー {#category}
+## カテゴリ {#category}
 
 SQL は関数に応じて次の 4 つのタイプに分けられます。
 
@@ -33,7 +33,7 @@ SQL は関数に応じて次の 4 つのタイプに分けられます。
 
 TiDB のデータベースは、テーブルやインデックスなどのオブジェクトのコレクションと考えることができます。
 
-データベースのリストを表示するには、次`SHOW DATABASES`ステートメントを使用します。
+データベースのリストを表示するには、次の`SHOW DATABASES`ステートメントを使用します。
 
 ```sql
 SHOW DATABASES;
@@ -45,7 +45,7 @@ SHOW DATABASES;
 USE mysql;
 ```
 
-データベース内のすべてのテーブルを表示するには、次`SHOW TABLES`ステートメントを使用します。
+データベース内のすべてのテーブルを表示するには、 `SHOW TABLES`ステートメントを使用します。
 
 ```sql
 SHOW TABLES FROM mysql;
@@ -63,9 +63,9 @@ CREATE DATABASE db_name [options];
 CREATE DATABASE IF NOT EXISTS samp_db;
 ```
 
-データベースが存在する場合にエラーを防ぐために`IF NOT EXISTS`追加します。
+データベースが存在する場合にエラーを防ぐために`IF NOT EXISTS`を追加します。
 
-データベースを削除するには、次`DROP DATABASE`ステートメントを使用します。
+データベースを削除するには、 `DROP DATABASE`ステートメントを使用します。
 
 ```sql
 DROP DATABASE samp_db;
@@ -79,7 +79,7 @@ DROP DATABASE samp_db;
 CREATE TABLE table_name column_name data_type constraint;
 ```
 
-たとえば、番号、名前、誕生日などのフィールドを含む`person`名前のテーブルを作成するには、次のステートメントを使用します。
+たとえば、番号、名前、誕生日などのフィールドを含む`person`という名前のテーブルを作成するには、次のステートメントを使用します。
 
 ```sql
 CREATE TABLE person (
@@ -89,7 +89,7 @@ CREATE TABLE person (
     );
 ```
 
-テーブルを作成するステートメント (DDL) を表示するには、次`SHOW CREATE`ステートメントを使用します。
+テーブルを作成するステートメント (DDL) を表示するには、 `SHOW CREATE`ステートメントを使用します。
 
 ```sql
 SHOW CREATE table person;
@@ -103,25 +103,25 @@ DROP TABLE person;
 
 ## インデックスの作成、表示、削除 {#create-show-and-drop-an-index}
 
-インデックスは、インデックス付き列のクエリを高速化するために使用されます。値が一意でない列のインデックスを作成するには、次`CREATE INDEX`ステートメントを使用します。
+インデックスは、インデックス付き列のクエリを高速化するために使用されます。値が一意でない列のインデックスを作成するには、 `CREATE INDEX`ステートメントを使用します。
 
 ```sql
 CREATE INDEX person_id ON person (id);
 ```
 
-または、次`ALTER TABLE`ステートメントを使用します。
+または、 `ALTER TABLE`ステートメントを使用します。
 
 ```sql
 ALTER TABLE person ADD INDEX person_id (id);
 ```
 
-値が一意の列に一意のインデックスを作成するには、次`CREATE UNIQUE INDEX`ステートメントを使用します。
+値が一意の列に一意のインデックスを作成するには、 `CREATE UNIQUE INDEX`ステートメントを使用します。
 
 ```sql
 CREATE UNIQUE INDEX person_unique_id ON person (id);
 ```
 
-または、次`ALTER TABLE`ステートメントを使用します。
+または、 `ALTER TABLE`ステートメントを使用します。
 
 ```sql
 ALTER TABLE person ADD UNIQUE person_unique_id (id);
@@ -157,19 +157,19 @@ ALTER TABLE person DROP INDEX person_unique_id;
 INSERT INTO person VALUES(1,'tom','20170912');
 ```
 
-いくつかのフィールドのデータを含むレコードをテーブルに挿入するには、次`INSERT`ステートメントを使用します。
+いくつかのフィールドのデータを含むレコードをテーブルに挿入するには、次の`INSERT`ステートメントを使用します。
 
 ```sql
 INSERT INTO person(id,name) VALUES('2','bob');
 ```
 
-テーブル内のレコードの一部のフィールドを更新するには、次`UPDATE`ステートメントを使用します。
+テーブル内のレコードの一部のフィールドを更新するには、 `UPDATE`ステートメントを使用します。
 
 ```sql
 UPDATE person SET birthday='20180808' WHERE id=2;
 ```
 
-テーブル内のデータを削除するには、次`DELETE`ステートメントを使用します。
+テーブル内のデータを削除するには、次の`DELETE`ステートメントを使用します。
 
 ```sql
 DELETE FROM person WHERE id=2;
@@ -189,7 +189,7 @@ DQL は、1 つまたは複数のテーブルから必要なデータ行を取�
 SELECT * FROM person;
 ```
 
-特定の列をクエリするには、 `SELECT`キーワードの後に​​列名を追加します。
+特定の列をクエリするには、 `SELECT`キーワードの後に列名を追加します。
 
 ```sql
 SELECT name FROM person;

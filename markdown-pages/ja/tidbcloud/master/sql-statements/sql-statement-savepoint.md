@@ -1,6 +1,6 @@
 ---
 title: SAVEPOINT | TiDB SQL Statement Reference
-summary: SAVEPOINTは、TiDB v6.2.0で導入された機能です。現在のトランザクションに指定された名前のセーブポイントを設定し、ROLLBACK TO SAVEPOINTでロールバックします。RELEASE SAVEPOINTは指定されたセーブポイントとその後のすべてのセーブポイントを削除します。MySQLとの互換性については、TiDBはすべてのロックを解放する点で異なります。
+summary: TiDB データベースの SAVEPOINT の使用法の概要。
 ---
 
 # セーブポイント {#savepoint}
@@ -15,22 +15,35 @@ RELEASE SAVEPOINT identifier
 
 > **警告：**
 >
-> -   TiDB Binlogが有効な場合は`SAVEPOINT`を使用できません。
-> -   [`tidb_constraint_check_in_place_pessimistic`](/system-variables.md#tidb_constraint_check_in_place_pessimistic-new-in-v630)が無効になっている場合、悲観的トランザクションで`SAVEPOINT`を使用することはできません。
+> -   TiDB Binlog が有効になっている場合は`SAVEPOINT`使用できません。
+> -   [`tidb_constraint_check_in_place_pessimistic`](/system-variables.md#tidb_constraint_check_in_place_pessimistic-new-in-v630)が無効になっている場合、悲観的トランザクションでは`SAVEPOINT`使用できません。
 
--   `SAVEPOINT`は、現在のトランザクションに指定された名前のセーブポイントを設定するために使用されます。同名のセーブポイントがすでに存在する場合は削除され、新たに同名のセーブポイントが設定されます。
+-   `SAVEPOINT` 、現在のトランザクションで指定された名前のセーブポイントを設定するために使用されます。同じ名前のセーブポイントがすでに存在する場合は、削除され、同じ名前の新しいセーブポイントが設定されます。
 
--   `ROLLBACK TO SAVEPOINT` 、トランザクションを指定された名前のセーブポイントにロールバックしますが、トランザクションは終了しません。セーブポイントの後にテーブル データに加えられたデータ変更はロールバックで元に戻され、セーブポイント以降のセーブポイントはすべて削除されます。悲観的トランザクションでは、トランザクションによって保持されているロックはロールバックされません。代わりに、トランザクションが終了するとロックが解放されます。
+-   `ROLLBACK TO SAVEPOINT` 、指定された名前のセーブポイントまでトランザクションをロールバックし、トランザクションを終了しません。セーブポイント後にテーブル データに加えられたデータ変更はロールバックで元に戻され、セーブポイント以降のすべてのセーブポイントは削除されます。悲観的トランザクションでは、トランザクションによって保持されたロックはロールバックされません。代わりに、トランザクションが終了するとロックが解放されます。
 
     `ROLLBACK TO SAVEPOINT`ステートメントで指定されたセーブポイントが存在しない場合、ステートメントは次のエラーを返します。
 
         ERROR 1305 (42000): SAVEPOINT identifier does not exist
 
--   `RELEASE SAVEPOINT`ステートメントは、現在のトランザクションをコミットまたはロールバックせずに、指定されたセーブポイントとこのセーブポイント以降の**すべてのセーブポイントを**現在のトランザクションから削除します。指定された名前のセーブポイントが存在しない場合は、次のエラーが返されます。
+-   `RELEASE SAVEPOINT`ステートメントは、現在のトランザクションをコミットまたはロールバックせずに、指定されたセーブポイントと、このセーブポイント以降の**すべてのセーブポイントを**現在のトランザクションから削除します。指定された名前のセーブポイントが存在しない場合は、次のエラーが返されます。
 
         ERROR 1305 (42000): SAVEPOINT identifier does not exist
 
     トランザクションがコミットまたはロールバックされると、トランザクション内のすべてのセーブポイントが削除されます。
+
+## 概要 {#synopsis}
+
+```ebnf+diagram
+SavepointStmt ::=
+    "SAVEPOINT" Identifier
+
+RollbackToStmt ::=
+    "ROLLBACK" "TO" "SAVEPOINT"? Identifier
+
+ReleaseSavepointStmt ::=
+    "RELEASE" "SAVEPOINT" Identifier
+```
 
 ## 例 {#examples}
 
@@ -44,7 +57,7 @@ CREATE TABLE t1 (a INT NOT NULL PRIMARY KEY);
 Query OK, 0 rows affected (0.12 sec)
 ```
 
-現在のトランザクションを開始します。
+現在のトランザクションを開始します:
 
 ```sql
 BEGIN;
@@ -72,7 +85,7 @@ SAVEPOINT sp1;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-テーブルにデータを再度挿入し、セーブポイント`sp2`を設定します。
+テーブルに再度データを挿入し、セーブポイント`sp2`を設定します。
 
 ```sql
 INSERT INTO t1 VALUES (2);
@@ -90,7 +103,7 @@ SAVEPOINT sp2;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-セーブポイント`sp2`を解放します。
+セーブポイント`sp2`を解放します:
 
 ```sql
 RELEASE SAVEPOINT sp2;
@@ -100,7 +113,7 @@ RELEASE SAVEPOINT sp2;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-セーブポイント`sp1`にロールバックします。
+セーブポイント`sp1`にロールバックします:
 
 ```sql
 ROLLBACK TO SAVEPOINT sp1;
@@ -110,7 +123,7 @@ ROLLBACK TO SAVEPOINT sp1;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-トランザクションをコミットし、テーブルをクエリします。 `sp1`より前に挿入されたデータのみが返されます。
+トランザクションをコミットし、テーブルをクエリします。1 `sp1`前に挿入されたデータのみが返されます。
 
 ```sql
 COMMIT;
@@ -133,14 +146,16 @@ SELECT * FROM t1;
 1 row in set
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-トランザクションを指定されたセーブポイントにロールバックするために`ROLLBACK TO SAVEPOINT`が使用される場合、MySQL は指定されたセーブポイントの後にのみ保持されているロックを解放しますが、TiDB悲観的トランザクションでは、TiDB は指定されたセーブポイントの後に保持されているロックをすぐには解放しません。代わりに、TiDB はトランザクションがコミットまたはロールバックされるときにすべてのロックを解放します。
+`ROLLBACK TO SAVEPOINT`使用してトランザクションを指定されたセーブポイントまでロールバックすると、MySQL は指定されたセーブポイント後にのみ保持されたロックを解放しますが、TiDB悲観的トランザクションでは、TiDB は指定されたセーブポイント後に保持されたロックをすぐには解放しません。代わりに、TiDB はトランザクションがコミットまたはロールバックされたときにすべてのロックを解放します。
 
-## こちらも参照 {#see-also}
+TiDB は MySQL 構文`ROLLBACK WORK TO SAVEPOINT ...`をサポートしていません。
+
+## 参照 {#see-also}
 
 -   [専念](/sql-statements/sql-statement-commit.md)
 -   [ロールバック](/sql-statements/sql-statement-rollback.md)
--   [取引を開始する](/sql-statements/sql-statement-start-transaction.md)
--   [TiDB オプティミスティックトランザクションモード](/optimistic-transaction.md)
--   [TiDB ペシミスティックトランザクションモード](/pessimistic-transaction.md)
+-   [取引を開始](/sql-statements/sql-statement-start-transaction.md)
+-   [TiDB 楽観的トランザクションモード](/optimistic-transaction.md)
+-   [TiDB 悲観的トランザクションモード](/pessimistic-transaction.md)

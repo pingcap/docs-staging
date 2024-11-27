@@ -1,6 +1,6 @@
 ---
 title: Sink to Apache Kafka
-summary: このドキュメントでは、 TiDB Cloudから Apache Kafka にデータをストリーミングするための変更フィードを作成する方法について説明します。Apache Kafka の変更フィードを構成するための制限、前提条件、および手順が含まれています。プロセスには、ネットワーク接続の設定、Kafka ACL 承認の権限の追加、および変更フィード仕様の構成が含まれます。
+Summary: Learn how to create a changefeed to stream data from TiDB Cloud to Apache Kafka.
 ---
 
 # Apache Kafka にシンクする {#sink-to-apache-kafka}
@@ -9,8 +9,8 @@ summary: このドキュメントでは、 TiDB Cloudから Apache Kafka にデ�
 
 > **注記：**
 >
-> -   changefeed 機能を使用するには、 TiDB Cloud Dedicated クラスターのバージョンが v6.1.3 以降であることを確認してください。
-> -   [TiDB Cloudサーバーレス クラスター](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)の場合、changefeed 機能は使用できません。
+> -   changefeed 機能を使用するには、TiDB 専用クラスターのバージョンが v6.1.3 以降であることを確認してください。
+> -   [TiDB サーバーレス クラスター](/tidb-cloud/select-cluster-tier.md#tidb-serverless)の場合、changefeed 機能は使用できません。
 
 ## 制限 {#restrictions}
 
@@ -26,7 +26,7 @@ Apache Kafka にデータをストリーミングするための変更フィー�
 -   ネットワーク接続を設定する
 -   Kafka ACL 認証の権限を追加する
 
-### ネットワーク {#network}
+### 通信網 {#network}
 
 TiDB クラスターが Apache Kafka サービスに接続できることを確認します。
 
@@ -66,7 +66,7 @@ TiDB Cloud の変更フィードが Apache Kafka にデータをストリーミ�
 
 ## ステップ2. changefeedターゲットを構成する {#step-2-configure-the-changefeed-target}
 
-1.  **「ブローカーコンフィグレーション」**で、Kafka ブローカーのエンドポイントを入力します。複数のエンドポイントを区切るには、コンマ`,`を使用できます。
+1.  **Brokers コンフィグレーション**で、Kafka ブローカーのエンドポイントを入力します。複数のエンドポイントを区切るには、コンマ`,`を使用できます。
 
 2.  Kafka 認証構成に応じて認証オプションを選択します。
 
@@ -116,7 +116,7 @@ TiDB Cloud の変更フィードが Apache Kafka にデータをストリーミ�
 
     -   **テーブルごとに変更ログを Kafka トピックに配布する**
 
-        変更フィードで各テーブル専用の Kafka トピックを作成する場合は、このモードを選択します。すると、テーブルのすべての Kafka メッセージが専用の Kafka トピックに送信されます。トピック プレフィックス、データベース名とテーブル名の間の区切り文字、およびサフィックスを設定することで、テーブルのトピック名をカスタマイズできます。たとえば、区切り文字を`_`に設定すると、トピック名の形式は`<Prefix><DatabaseName>_<TableName><Suffix>`になります。
+        changefeed で各テーブル専用の Kafka トピックを作成する場合は、このモードを選択します。すると、テーブルのすべての Kafka メッセージが専用の Kafka トピックに送信されます。トピック プレフィックス、データベース名とテーブル名の間の区切り文字、およびサフィックスを設定することで、テーブルのトピック名をカスタマイズできます。たとえば、区切り文字を`_`に設定すると、トピック名の形式は`<Prefix><DatabaseName>_<TableName><Suffix>`になります。
 
         スキーマ イベントの作成などの行以外のイベントの変更ログの場合は、 **[デフォルトのトピック名]**フィールドにトピック名を指定できます。変更フィードは、そのような変更ログを収集するためにそれに応じてトピックを作成します。
 
@@ -132,7 +132,7 @@ TiDB Cloud の変更フィードが Apache Kafka にデータをストリーミ�
 
 7.  **パーティション配布**領域では、Kafka メッセージが送信されるパーティションを決定できます。
 
-    -   **インデックス値によって変更ログを Kafka パーティションに配布する**
+    -   **インデックス値によって変更ログを Kafka パーティションに分散する**
 
         変更フィードでテーブルの Kafka メッセージを異なるパーティションに送信する場合は、この分散方法を選択します。行の変更ログのインデックス値によって、変更ログが送信されるパーティションが決まります。この分散方法により、パーティションのバランスが向上し、行レベルの秩序性が確保されます。
 
@@ -142,8 +142,8 @@ TiDB Cloud の変更フィードが Apache Kafka にデータをストリーミ�
 
 8.  **トピックコンフィグレーション**領域で、次の番号を設定します。変更フィードは、番号に従って Kafka トピックを自動的に作成します。
 
-    -   **レプリケーション係数**: 各 Kafka メッセージが複製される Kafka サーバーの数を制御します。有効な値の範囲は[`min.insync.replicas`](https://kafka.apache.org/33/documentation.html#brokerconfigs_min.insync.replicas)から Kafka ブローカーの数までです。
-    -   **パーティション数**: トピック内に存在するパーティションの数を制御します。有効な値の範囲は`[1, 10 * the number of Kafka brokers]`です。
+    -   **レプリケーション係数**: 各 Kafka メッセージが複製される Kafka サーバーの数を制御します。
+    -   **パーティション番号**: トピック内に存在するパーティションの数を制御します。
 
 9.  **「次へ」**をクリックします。
 

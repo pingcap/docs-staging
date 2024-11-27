@@ -1,11 +1,11 @@
 ---
 title: SESSION_CONNECT_ATTRS
-summary: SESSION_CONNECT_ATTRS パフォーマンス スキーマ テーブルについて学習します。
+summary: SESSION_CONNECT_ATTRS` パフォーマンス スキーマ テーブルについて学習します。
 ---
 
 # セッション接続属性 {#session-connect-attrs}
 
-`SESSION_CONNECT_ATTRS`表は、接続属性に関する情報を提供します。セッション属性は、接続を確立するときにクライアントによって送信されるキーと値のペアです。
+`SESSION_CONNECT_ATTRS`の表は、接続属性に関する情報を提供します。セッション属性は、接続を確立するときにクライアントによって送信されるキーと値のペアです。
 
 共通の属性:
 
@@ -45,14 +45,14 @@ TABLE SESSION_CONNECT_ATTRS;
     | PROCESSLIST_ID | ATTR_NAME       | ATTR_VALUE | ORDINAL_POSITION |
     +----------------+-----------------+------------+------------------+
     |        2097154 | _client_name    | libmysql   |                0 |
-    |        2097154 | _client_version | 8.1.0      |                1 |
+    |        2097154 | _client_version | 8.1.1      |                1 |
     |        2097154 | _os             | Linux      |                2 |
     |        2097154 | _pid            | 1299203    |                3 |
     |        2097154 | _platform       | x86_64     |                4 |
     |        2097154 | program_name    | mysqlsh    |                5 |
     +----------------+-----------------+------------+------------------+
 
-`SESSION_CONNECT_ATTRS`テーブル内のフィールドは次のように説明されます。
+`SESSION_CONNECT_ATTRS`のテーブル内のフィールドは次のように説明されます。
 
 -   `PROCESSLIST_ID` : セッションのプロセスリスト ID。
 -   `ATTR_NAME` : 属性名。

@@ -1,6 +1,7 @@
 ---
 title: Data Migration Overview
 summary: データ移行シナリオとソリューションの概要を学習します。
+aliases: ['/tidb/stable/migrate-full-data-from-mysql']
 ---
 
 # データ移行の概要 {#data-migration-overview}
@@ -8,7 +9,7 @@ summary: データ移行シナリオとソリューションの概要を学習�
 このドキュメントでは、TiDB で使用できるデータ移行ソリューションの概要を説明します。データ移行ソリューションは次のとおりです。
 
 -   完全なデータ移行。
-    -   Amazon Auroraスナップショット、CSV ファイル、または SQL ダンプ ファイルを TiDB にインポートするには、 TiDB Lightningを使用して完全な移行を実行できます。
+    -   Amazon Auroraスナップショット、CSV ファイル、または SQL ダンプファイルを TiDB にインポートするには、 TiDB Lightning を使用して完全な移行を実行できます。
     -   すべての TiDB データを CSV ファイルまたは SQL ダンプ ファイルとしてエクスポートするには、 Dumpling を使用して完全な移行を実行します。これにより、MySQL または MariaDB からのデータ移行が容易になります。
     -   データ サイズのボリュームが小さい (たとえば、1 TiB 未満) データベースからすべてのデータを移行するには、TiDB データ移行 (DM) を使用することもできます。
 
@@ -32,7 +33,7 @@ Auroraから AWS にデプロイされた TiDB クラスターにデータを移
 
 クラウドstorage(S3) サービスを使用しておらず、ネットワーク接続が良好で、ネットワークレイテンシーが低い場合は、 [小規模データセットを MySQL から TiDB に移行する](/migrate-small-mysql-to-tidb.md)手順に従って MySQL から TiDB にデータを移行できます。
 
-移行速度に対する要求が高い場合、またはデータ サイズが大きい場合 (たとえば、1 TiB より大きい)、および移行期間中に他のアプリケーションによる TiDB への書き込みを許可しない場合は、 TiDB Lightningを使用してデータをすばやくインポートできます。その後、アプリケーションのニーズに基づいて、DM を使用して増分データ (binlog) を複製できます。1 [大規模なデータセットをMySQLからTiDBに移行する](/migrate-large-mysql-to-tidb.md)参照してください。
+移行速度に対する要求が高い場合、またはデータ サイズが大きい場合 (たとえば、1 TiB より大きい)、および移行期間中に他のアプリケーションによる TiDB への書き込みを許可しない場合は、 TiDB Lightning を使用してデータをすばやくインポートできます。その後、アプリケーションのニーズに基づいて、DM を使用して増分データ (binlog) を複製できます[大規模なデータセットをMySQLからTiDBに移行する](/migrate-large-mysql-to-tidb.md)参照してください。
 
 ## MySQL シャードを TiDB に移行してマージする {#migrate-and-merge-mysql-shards-into-tidb}
 

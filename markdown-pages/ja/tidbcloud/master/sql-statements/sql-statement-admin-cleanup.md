@@ -1,13 +1,13 @@
 ---
 title: ADMIN CLEANUP INDEX
-summary: ADMIN CLEANUP INDEXステートメントは、テーブル内の不整合なデータとインデックスを削除するために使用されます。外部キー制約はサポートされていません。テーブルのデータとインデックスが矛盾している場合、このステートメントを使用してダングリングインデックスを削除できます。TiDBの拡張機能であり、MySQLとの互換性があります。
+summary: TiDB データベースの ADMIN CLEANUP の使用法の概要。
 ---
 
-# 管理者のクリーンアップインデックス {#admin-cleanup-index}
+# 管理者クリーンアップインデックス {#admin-cleanup-index}
 
-`ADMIN CLEANUP INDEX`ステートメントは、テーブルに一貫性のないデータとインデックスがある場合に、テーブルから冗長なインデックスを削除するために使用されます。この構文はまだ[外部キー制約](/foreign-key.md)をサポートしていないことに注意してください。
+`ADMIN CLEANUP INDEX`ステートメントは、テーブルに不整合なデータとインデックスがある場合に、テーブルから冗長なインデックスを削除するために使用されます。この構文は[外部キー制約](/foreign-key.md)まだサポートしていないことに注意してください。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 AdminCleanupStmt ::=
@@ -19,7 +19,7 @@ TableNameList ::=
 
 ## 例 {#examples}
 
-何らかの理由により、データベース内の`tbl`テーブルにデータとインデックスの不整合があるとします (たとえば、災害復旧シナリオでクラスター内の一部の行データが失われます)。
+何らかの理由により、データベース内の`tbl`テーブルに一貫性のないデータとインデックスがあるとします (たとえば、災害復旧シナリオでクラスター内の一部の行データが失われるなど)。
 
 ```sql
 SELECT * FROM tbl;
@@ -29,13 +29,13 @@ ADMIN CHECK INDEX tbl idx ;
 ERROR 1105 (HY000): handle &kv.CommonHandle{encoded:[]uint8{0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf8}, colEndOffsets:[]uint16{0xa}}, index:types.Datum{k:0x5, decimal:0x0, length:0x0, i:0, collation:"utf8mb4_bin", b:[]uint8{0x0}, x:interface {}(nil)} != record:<nil>
 ```
 
-`SELECT`クエリのエラー メッセージから、 `tbl`テーブルには 2 行のデータと 3 行のインデックス データが含まれていることがわかります。これは、行とインデックスのデータが矛盾していることを意味します。同時に、少なくとも 1 つのインデックスがダングリング状態になります。この場合、 `ADMIN CLEANUP INDEX`ステートメントを使用して、ダングリング インデックスを削除できます。
+`SELECT`クエリのエラー メッセージから、 `tbl`テーブルには 2 行のデータと 3 行のインデックス データが含まれていることがわかります。これは、行とインデックス データが矛盾していることを意味します。同時に、少なくとも 1 つのインデックスがダングリング状態にあります。この場合、 `ADMIN CLEANUP INDEX`ステートメントを使用してダングリング インデックスを削除できます。
 
 ```sql
 ADMIN CLEANUP INDEX tbl idx;
 ```
 
-実行結果は以下のようになります。
+実行結果は以下のとおりです。
 
 ```sql
 ADMIN CLEANUP INDEX tbl idx;
@@ -59,12 +59,12 @@ Query OK, 0 rows affected (0.01 sec)
 >
 > レプリカの損失によりデータとインデックスが不整合になった場合:
 >
-> -   行データとインデックス データの両方が失われる可能性があります。一貫性を復元するには、 `ADMIN CLEANUP INDEX`と[`ADMIN RECOVER INDEX`](/sql-statements/sql-statement-admin-recover.md)ステートメントを一緒に使用します。
-> -   `ADMIN CLEANUP INDEX`ステートメントは常に単一スレッドで実行されます。テーブルデータが大きい場合は、インデックスを再構築してインデックスデータを回復することをお勧めします。
-> -   `ADMIN CLEANUP INDEX`ステートメントを実行すると、対応するテーブルまたはインデックスはロックされず、TiDB は他のセッションがテーブル レコードを同時に変更できるようになります。ただし、この場合、 `ADMIN CLEANUP INDEX`すべてのテーブル レコードを正しく処理できない可能性があります。したがって、 `ADMIN CLEANUP INDEX`を実行するときは、テーブルのデータを同時に変更しないようにしてください。
-> -   TiDB のエンタープライズ エディションを使用している場合は、サポート エンジニアに[リクエストを送信する](/support.md)して支援を求めることができます。
+> -   行データとインデックス データの両方が失われる可能性があります。一貫性を回復するには、ステートメント`ADMIN CLEANUP INDEX`と[`ADMIN RECOVER INDEX`](/sql-statements/sql-statement-admin-recover.md)を一緒に使用します。
+> -   `ADMIN CLEANUP INDEX`ステートメントは常に 1 つのスレッドで実行されます。テーブル データが大きい場合は、インデックスを再構築してインデックス データを回復することをお勧めします。
+> -   `ADMIN CLEANUP INDEX`文を実行すると、対応するテーブルまたはインデックスはロックされず、TiDB は他のセッションが同時にテーブル レコードを変更することを許可します。ただし、この場合、 `ADMIN CLEANUP INDEX`すべてのテーブル レコードを正しく処理できない可能性があります。したがって、 `ADMIN CLEANUP INDEX`実行するときは、テーブル データを同時に変更しないようにしてください。
+> -   TiDB のエンタープライズ エディションを使用している場合は、サポート エンジニアに問い合わせて支援を受けることができ[リクエストを送信する](/support.md) 。
 >
-> `ADMIN CLEANUP INDEX`ステートメントはアトミックではありません。ステートメントの実行中に中断された場合は、成功するまで再実行することをお勧めします。
+> `ADMIN CLEANUP INDEX`文はアトミックではありません。実行中に文が中断された場合は、成功するまで再度実行することをお勧めします。
 
 </CustomContent>
 
@@ -74,20 +74,20 @@ Query OK, 0 rows affected (0.01 sec)
 >
 > レプリカの損失によりデータとインデックスが不整合になった場合:
 >
-> -   行データとインデックス データの両方が失われる可能性があります。一貫性を復元するには、 `ADMIN CLEANUP INDEX`と[`ADMIN RECOVER INDEX`](/sql-statements/sql-statement-admin-recover.md)ステートメントを一緒に使用します。
-> -   `ADMIN CLEANUP INDEX`ステートメントは常に単一スレッドで実行されます。テーブルデータが大きい場合は、インデックスを再構築してインデックスデータを回復することをお勧めします。
-> -   `ADMIN CLEANUP INDEX`ステートメントを実行すると、対応するテーブルまたはインデックスはロックされず、TiDB は他のセッションがテーブル レコードを同時に変更できるようになります。ただし、この場合、 `ADMIN CLEANUP INDEX`すべてのテーブル レコードを正しく処理できない可能性があります。したがって、 `ADMIN CLEANUP INDEX`を実行するときは、テーブルのデータを同時に変更しないようにしてください。
-> -   TiDB のエンタープライズ エディションを使用している場合は、サポート エンジニアに[リクエストを送信する](https://support.pingcap.com/hc/en-us)して支援を求めることができます。
+> -   行データとインデックス データの両方が失われる可能性があります。一貫性を回復するには、ステートメント`ADMIN CLEANUP INDEX`と[`ADMIN RECOVER INDEX`](/sql-statements/sql-statement-admin-recover.md)を一緒に使用します。
+> -   `ADMIN CLEANUP INDEX`ステートメントは常に 1 つのスレッドで実行されます。テーブル データが大きい場合は、インデックスを再構築してインデックス データを回復することをお勧めします。
+> -   `ADMIN CLEANUP INDEX`文を実行すると、対応するテーブルまたはインデックスはロックされず、TiDB は他のセッションが同時にテーブル レコードを変更することを許可します。ただし、この場合、 `ADMIN CLEANUP INDEX`すべてのテーブル レコードを正しく処理できない可能性があります。したがって、 `ADMIN CLEANUP INDEX`実行するときは、テーブル データを同時に変更しないようにしてください。
+> -   TiDB のエンタープライズ エディションを使用している場合は、サポート エンジニアに問い合わせて支援を受けることができ[リクエストを送信する](https://support.pingcap.com/hc/en-us) 。
 >
-> `ADMIN CLEANUP INDEX`ステートメントはアトミックではありません。ステートメントが実行中に中断された場合は、成功するまで再実行することをお勧めします。
+> `ADMIN CLEANUP INDEX`文はアトミックではありません。実行中に文が中断された場合は、成功するまで再度実行することをお勧めします。
 
 </CustomContent>
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL 構文に対する TiDB 拡張機能です。
+このステートメントは、MySQL 構文に対する TiDB 拡張です。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [`ADMIN CHECK TABLE/INDEX`](/sql-statements/sql-statement-admin-check-table-index.md)
 -   [`ADMIN RECOVER INDEX`](/sql-statements/sql-statement-admin-recover.md)

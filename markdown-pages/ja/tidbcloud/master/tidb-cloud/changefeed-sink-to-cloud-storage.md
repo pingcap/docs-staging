@@ -1,6 +1,6 @@
 ---
 title: Sink to Cloud Storage
-summary: このドキュメントでは、TiDB Cloudから Amazon S3 または GCS にデータをストリーミングするための変更フィードを作成する方法について説明します。制限事項、宛先、レプリケーション、仕様の設定手順、およびレプリケーション プロセスの開始が含まれます。
+Summary: Learn how to create a changefeed to stream data from a TiDB Dedicated cluster to cloud storage, such as Amazon S3 and GCS.
 ---
 
 # クラウドストレージに保存 {#sink-to-cloud-storage}
@@ -9,8 +9,8 @@ summary: このドキュメントでは、TiDB Cloudから Amazon S3 または G
 
 > **注記：**
 >
-> -   データをクラウドstorageにストリーミングするには、TiDB クラスターのバージョンが v7.1.1 以降であることを確認してください。TiDB TiDB Cloud Dedicated クラスターを v7.1.1 以降にアップグレードするには、 [TiDB Cloudサポートにお問い合わせください](/tidb-cloud/tidb-cloud-support.md)実行します。
-> -   [TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターでは、changefeed 機能は使用できません。
+> -   データをクラウドstorageにストリーミングするには、TiDB クラスターのバージョンが v7.1.1 以降であることを確認してください。TiDB Dedicated クラスターを v7.1.1 以降にアップグレードするには、 [TiDB Cloudサポートにお問い合わせください](/tidb-cloud/tidb-cloud-support.md)実行します。
+> -   [TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless)クラスターでは、changefeed 機能は使用できません。
 
 ## 制限 {#restrictions}
 
@@ -48,7 +48,7 @@ summary: このドキュメントでは、TiDB Cloudから Amazon S3 または G
 
     3.  ロールの名前、説明、ID、およびロール起動ステージを入力します。ロールの作成後は、ロール名を変更できません。
 
-    4.  **[権限の追加]**をクリックします。次の権限をロールに追加し、 **[追加]**をクリックします。
+    4.  **[権限の追加]**をクリックします。次の読み取り専用権限をロールに追加し、 **[追加]**をクリックします。
 
         -   storage.buckets.get
         -   storage.オブジェクト.作成
@@ -81,7 +81,7 @@ summary: このドキュメントでは、TiDB Cloudから Amazon S3 または G
 
         ![Get bucket URI](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-uri01.png)
 
-    -   フォルダの gsutil URI を取得するには、フォルダを開いてコピー ボタンをクリックし、プレフィックスとして`gs://`追加します。たとえば、バケット名が`test-sink-gcs`でフォルダ名が`changefeed-xxx`場合、URI は`gs://test-sink-gcs/changefeed-xxx/`になります。
+    -   フォルダの gsutil URI を取得するには、フォルダを開き、コピー ボタンをクリックし、プレフィックスとして`gs://`追加します。たとえば、バケット名が`test-sink-gcs`でフォルダ名が`changefeed-xxx`場合、URI は`gs://test-sink-gcs/changefeed-xxx/`になります。
 
         ![Get bucket URI](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-uri02.png)
 
@@ -90,7 +90,7 @@ summary: このドキュメントでは、TiDB Cloudから Amazon S3 または G
 </div>
 </SimpleTab>
 
-**「次へ」**をクリックして、 TiDB Cloud Dedicated クラスターから Amazon S3 または GCS への接続を確立します。TiDB TiDB Cloud は、接続が成功したかどうかを自動的にテストして検証します。
+**「次へ」**をクリックして、TiDB 専用クラスターから Amazon S3 または GCS への接続を確立します。TiDB TiDB Cloud は、接続が成功したかどうかを自動的にテストして検証します。
 
 -   はいの場合は、構成の次の手順に進みます。
 -   そうでない場合は、接続エラーが表示されるので、エラーを処理する必要があります。エラーが解決したら、 **[次へ]**をクリックして接続を再試行してください。
@@ -116,16 +116,16 @@ summary: このドキュメントでは、TiDB Cloudから Amazon S3 または G
     -   特定の[TSO](https://docs.pingcap.com/tidb/stable/glossary#tso)からレプリケーションを開始する
     -   特定の時間からレプリケーションを開始する
 
-4.  **データ形式**領域で、 **CSV**または**Canal-JSON**形式を選択します。
+4.  **データ形式**領域で、 **CSV**または**Canal-JSON**形式のいずれかを選択します。
 
     <SimpleTab>
      <div label="Configure CSV format">
 
     **CSV**形式を設定するには、次のフィールドに入力します。
 
-    -   **バイナリエンコード方式**: バイナリデータのエンコード方式。base64 (デフォルト) または**hex****を**選択できます。AWS DMS と統合する場合は**hex を**使用します。
+    -   **バイナリエンコード方式**: バイナリデータのエンコード方式。base64 (デフォルト) または**hex****を**選択できます。AWS DMS と統合する場合は**hex**を使用します。
     -   **日付区切り**: 年、月、日に基づいてデータを回転するか、まったく回転しないことを選択します。
-    -   **区切り文字**: CSV ファイル内の値を区切る文字を指定します。最もよく使用される区切り文字はカンマ ( `,` ) です。
+    -   **区切り文字**: CSV ファイル内の値を区切る文字を指定します。最もよく使用される区切り文字はコンマ ( `,` ) です。
     -   **引用符**: 区切り文字または特殊文字を含む値を囲むために使用する文字を指定します。通常、引用符文字として二重引用符 ( `"` ) が使用されます。
     -   **Null/空の値**: CSV ファイルで Null または空の値をどのように表現するかを指定します。これは、データを適切に処理および解釈するために重要です。
     -   **コミット Ts を含める**: CSV 行に[`commit-ts`](https://docs.pingcap.com/tidb/stable/ticdc-sink-to-cloud-storage#replicate-change-data-to-storage-services)を含めるかどうかを制御します。
@@ -156,7 +156,7 @@ summary: このドキュメントでは、TiDB Cloudから Amazon S3 または G
 
 **次へ**をクリックして、変更フィード仕様を構成します。
 
-1.  **「Changefeed 仕様」**領域で、Changefeed で使用されるレプリケーション容量単位 (RCU) の数を指定します。
+1.  **「Changefeed 仕様」**領域で、変更フィードで使用されるレプリケーション容量単位 (RCU) の数を指定します。
 2.  **「Changefeed 名」**領域で、Changefeed の名前を指定します。
 
 ## ステップ4. 構成を確認してレプリケーションを開始する {#step-4-review-the-configuration-and-start-replication}

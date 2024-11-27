@@ -1,6 +1,6 @@
 ---
 title: SHOW CREATE DATABASE
-summary: An overview of the use of SHOW CREATE DATABASE in the TiDB database.
+summary: TiDB データベースでの SHOW CREATE DATABASE の使用の概要。
 ---
 
 # 表示データベースの作成 {#show-create-database}

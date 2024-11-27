@@ -1,21 +1,21 @@
 ---
 title: EXPLAIN Statements Using Views
-summary: ビューを使用したEXPLAINステートメントは、ビューが参照するテーブルとインデックスを表示します。ビューは仮想テーブルであり、データを格納しないため、ビューの定義とステートメントの残りの部分はSQLの最適化中にマージされます。ビューの述語はベーステーブルにプッシュダウンされ、TiDBはビュー定義とステートメント自体の両方を満たすインデックスを使用します。
+summary: TiDB の `EXPLAIN` ステートメントによって返される実行プラン情報について学習します。
 ---
 
 # ビューを使用したEXPLAINステートメント {#explain-statements-using-views}
 
-`EXPLAIN`ビュー自体の名前ではなく、 [ビュー](/views.md)が参照するテーブルとインデックスを表示します。これは、ビューは単なる仮想テーブルであり、それ自体にはデータが格納されないためです。ビューの定義とステートメントの残りの部分は、SQL の最適化中にマージされます。
+`EXPLAIN` 、ビュー自体の名前ではなく、 [ビュー](/views.md)が参照するテーブルとインデックスを表示します。これは、ビューが仮想テーブルにすぎず、それ自体にデータを格納しないためです。ビューの定義とステートメントの残りの部分は、SQL の最適化中に結合されます。
 
 <CustomContent platform="tidb">
 
-[自転車シェアのサンプル データベース](/import-example-data.md)から、次の 2 つのクエリが同様の方法で実行されることがわかります。
+[バイクシェアのサンプルデータベース](/import-example-data.md)から、次の 2 つのクエリが同様の方法で実行されていることがわかります。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[自転車シェアのサンプル データベース](/tidb-cloud/import-sample-data.md)から、次の 2 つのクエリが同様の方法で実行されることがわかります。
+[バイクシェアのサンプルデータベース](/tidb-cloud/import-sample-data.md)から、次の 2 つのクエリが同様の方法で実行されていることがわかります。
 
 </CustomContent>
 
@@ -50,7 +50,7 @@ Query OK, 0 rows affected (0.13 sec)
 3 rows in set (0.00 sec)
 ```
 
-同様に、ビューの述語がベーステーブルにプッシュダウンされます。
+同様に、ビューからの述語はベース テーブルにプッシュダウンされます。
 
 ```sql
 EXPLAIN SELECT * FROM long_trips WHERE bike_number = 'W00950';
@@ -78,9 +78,9 @@ EXPLAIN SELECT * FROM trips WHERE bike_number = 'W00950';
 3 rows in set (0.00 sec)
 ```
 
-上記の最初のステートメントでは、ビュー定義を満たすためにインデックスが使用され、TiDB がテーブル行を読み取るときに`bike_number = 'W00950'`が適用されることがわかります。 2 番目のステートメントでは、ステートメントを満たすインデックスがないため、 `TableFullScan`が使用されます。
+上記の最初のステートメントでは、ビュー定義を満たすためにインデックスが使用され、TiDB がテーブル行を読み取るときに`bike_number = 'W00950'`適用されていることがわかります。2 番目のステートメントでは、ステートメントを満たすインデックスがないため、 `TableFullScan`が使用されています。
 
-TiDB は、ビュー定義とステートメント自体の両方を満たすインデックスを使用します。次の複合インデックスを考えてみましょう。
+TiDB は、ビュー定義とステートメント自体の両方を満たすインデックスを使用します。次の複合インデックスを検討してください。
 
 ```sql
 ALTER TABLE trips ADD INDEX (bike_number, duration);
@@ -110,4 +110,4 @@ Query OK, 0 rows affected (2 min 31.20 sec)
 3 rows in set (0.00 sec)
 ```
 
-最初のステートメントでは、TiDB は複合インデックス`(bike_number, duration)`の両方の部分を使用できます。 2 番目のステートメントでは、インデックス`(bike_number, duration)`の最初の部分`bike_number`のみが使用されます。
+最初のステートメントでは、TiDB は複合インデックス`(bike_number, duration)`の両方の部分を使用できます。2 番目のステートメントでは、インデックス`(bike_number, duration)`の最初の部分`bike_number`のみが使用されます。

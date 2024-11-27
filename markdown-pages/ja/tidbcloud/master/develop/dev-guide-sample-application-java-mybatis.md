@@ -11,7 +11,7 @@ TiDB は MySQL 互換のデータベースであり、 [マイバティス](http
 
 -   環境を設定します。
 -   MyBatis を使用して TiDB クラスターに接続します。
--   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)を見つけることができます。
+-   アプリケーションをビルドして実行します。オプションで、基本的な CRUD 操作用の[サンプルコードスニペット](#sample-code-snippets)見つけることができます。
 
 > **注記：**
 >
@@ -21,7 +21,7 @@ TiDB は MySQL 互換のデータベースであり、 [マイバティス](http
 
 このチュートリアルを完了するには、次のものが必要です。
 
--   **Java Development Kit (JDK) 17**以上。ビジネスおよび個人の要件に基づいて[オープンJDK](https://openjdk.org/)または[オラクル](https://www.oracle.com/hk/java/technologies/downloads/)を選択できます。
+-   **Java Development Kit (JDK) 17**以上。ビジネスおよび個人の要件に応じて[オープンJDK](https://openjdk.org/)または[オラクル](https://www.oracle.com/hk/java/technologies/downloads/)選択できます。
 -   [メイヴン](https://maven.apache.org/install.html) **3.8**以上。
 -   [ギット](https://git-scm.com/downloads) 。
 -   TiDB クラスター。
@@ -71,7 +71,7 @@ cd tidb-java-mybatis-quickstart
 
     -   **接続タイプ**は`Public`に設定されています
 
-    -   **ブランチ**は`main`に設定されています
+    -   **ブランチは**`main`に設定されています
 
     -   **接続先は**`General`に設定されています
 
@@ -81,7 +81,7 @@ cd tidb-java-mybatis-quickstart
     >
     > プログラムが Windows Subsystem for Linux (WSL) で実行されている場合は、対応する Linux ディストリビューションに切り替えます。
 
-4.  ランダムなパスワードを作成するには、 **「パスワードの生成」を**クリックします。
+4.  ランダムなパスワードを作成するには、 **「パスワードの生成」**をクリックします。
 
     > **ヒント：**
     >
@@ -104,7 +104,7 @@ cd tidb-java-mybatis-quickstart
     export USE_SSL='true'
     ```
 
-    プレースホルダー`{}`を、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
+    プレースホルダー`{}` 、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
 
     TiDB Cloud Serverless では安全な接続が必要です。そのため、 `USE_SSL`の値を`true`に設定する必要があります。
 
@@ -121,7 +121,7 @@ cd tidb-java-mybatis-quickstart
 
     IP アクセス リストを設定していない場合は、 **「IP アクセス リストの設定」**をクリックするか、手順[IPアクセスリストを構成する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)に従って最初の接続の前に設定してください。
 
-    TiDB Dedicated は、**パブリック**接続タイプに加えて、**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    **パブリック**接続タイプに加えて、TiDB Dedicated は**プライベートエンドポイント**と**VPC ピアリング**接続タイプもサポートしています。詳細については、 [TiDB専用クラスタに接続する](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)参照してください。
 
 4.  次のコマンドを実行して`env.sh.example`コピーし、名前を`env.sh`に変更します。
 
@@ -140,7 +140,7 @@ cd tidb-java-mybatis-quickstart
     export USE_SSL='false'
     ```
 
-    プレースホルダー`{}`を、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
+    プレースホルダー`{}` 、接続ダイアログから取得した接続パラメータに必ず置き換えてください。
 
 6.  `env.sh`ファイルを保存します。
 
@@ -164,7 +164,7 @@ cd tidb-java-mybatis-quickstart
     export USE_SSL='false'
     ```
 
-    プレースホルダー`{}`を接続パラメータに置き換え、 `USE_SSL`を`false`に設定してください。TiDB をローカルで実行している場合、デフォルトのホスト アドレスは`127.0.0.1`で、パスワードは空です。
+    プレースホルダー`{}`接続パラメータに置き換え、 `USE_SSL`を`false`に設定してください。TiDB をローカルで実行している場合、デフォルトのホスト アドレスは`127.0.0.1`で、パスワードは空です。
 
 3.  `env.sh`ファイルを保存します。
 
@@ -223,7 +223,7 @@ MyBatis設定ファイル`mybatis-config.xml`を編集します。
 </configuration>
 ```
 
-`${tidb_jdbc_url}` `${tidb_password}`必ず TiDB クラスターの実際の値に置き換えてください。また、 `${mapper_location}`マッパー XML 構成ファイルのパスに置き換えてください。マッパー XML 構成ファイルが`${tidb_user}`ある場合は、それぞれに`<mapper/>`タグを追加する必要があります。次に、次の関数を定義します。
+`${tidb_jdbc_url}` `${tidb_password}`必ず TiDB クラスターの実際の値に置き換えてください。また、 `${mapper_location}`マッパー XML 構成ファイルのパスに置き換えてください。マッパー XML 構成ファイル`${tidb_user}`複数ある場合は、それぞれに`<mapper/>`タグを追加する必要があります。次に、次の関数を定義します。
 
 ```java
 public SqlSessionFactory getSessionFactory() {
@@ -251,7 +251,7 @@ public SqlSessionFactory getSessionFactory() {
 
 ### クエリデータ {#query-data}
 
-マッパー XML にノードを追加し、XML 構成ファイルの`mapper.namespace`属性で構成されたインターフェース クラスに同じ名前の関数を追加します。具体的には、MyBatis クエリ関数の戻り値の型として`resultMap`を使用する場合は、 `<resultMap/>`ノードが正しく構成されていることを確認してください。
+マッパー XML にノードを追加し、XML 構成ファイルの`mapper.namespace`属性で構成されたインターフェース クラスに同じ名前の関数を追加します。具体的には、MyBatis クエリ関数の戻り値の型として`resultMap`使用する場合は、 `<resultMap/>`ノードが正しく構成されていることを確認してください。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

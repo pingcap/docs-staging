@@ -1,11 +1,11 @@
 ---
 title: Explain Statements That Use Aggregation
-summary: SQL オプティマイザーは、集計時にハッシュ集計またはストリーム集計演算子を選択します。集約はコプロセッサ層と TiDB 層の両方で実行されます。SHOW TABLE REGIONSの出力から、テーブルが複数のリージョンに分割されていることがわかります。EXPLAINを使用すると、TiKV 内の各リージョンでStreamAgg_8が実行され、TiDB にデータが集約されます。ハッシュ集計アルゴリズムは、ハッシュ テーブルを使用して、集約の実行中に中間結果を保存します。ストリーム集計アルゴリズムは、通常、ハッシュ集計よりもメモリ消費量が少なくなります。TiDB のGROUP BY句はWITH ROLLUP修飾子をサポートします。
+summary: TiDB の `EXPLAIN` ステートメントによって返される実行プラン情報について学習します。
 ---
 
-# 集計を使用した Explain ステートメント {#explain-statements-using-aggregation}
+# 集計を使用してステートメントを説明する {#explain-statements-using-aggregation}
 
-データを集約するとき、SQL オプティマイザーはハッシュ集計またはストリーム集計演算子のいずれかを選択します。クエリの効率を向上させるために、集約はコプロセッサ層と TiDB 層の両方で実行されます。次の例を考えてみましょう。
+データを集計する場合、SQL オプティマイザーはハッシュ集計またはストリーム集計演算子のいずれかを選択します。クエリの効率を向上させるために、集計はコプロセッサと TiDB レイヤーの両方で実行されます。次の例を検討してください。
 
 ```sql
 CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY auto_increment, pad1 BLOB, pad2 BLOB, pad3 BLOB);
@@ -47,7 +47,7 @@ SHOW TABLE t1 REGIONS;
 4 rows in set (0.00 sec)
 ```
 
-次の集計ステートメントで`EXPLAIN`を使用すると、TiKV 内の各リージョンで最初に`└─StreamAgg_8`が実行されることがわかります。次に、各 TiKVリージョンは1 行を TiDB に送り返し、各リージョンからのデータを`StreamAgg_16`に集約します。
+`EXPLAIN`次の集計ステートメントで使用すると、最初に TiKV 内の各リージョンで`└─StreamAgg_8`実行されることがわかります。次に、各 TiKVリージョンは 1 行を TiDB に送り返し、TiDB は各リージョンからのデータを`StreamAgg_16`で集計します。
 
 ```sql
 EXPLAIN SELECT COUNT(*) FROM t1;
@@ -65,7 +65,7 @@ EXPLAIN SELECT COUNT(*) FROM t1;
 4 rows in set (0.00 sec)
 ```
 
-これは`EXPLAIN ANALYZE`で観察するのが最も簡単です。ここでは`TableFullScan`が使用されており、セカンダリ インデックスがないため、 `actRows` `SHOW TABLE REGIONS`のリージョンの数と一致します。
+これは`EXPLAIN ANALYZE`で最も簡単に確認できます。ここでは、 `TableFullScan`が使用されており、セカンダリ インデックスがないため、 `actRows` `SHOW TABLE REGIONS`のリージョン数と一致しています。
 
 ```sql
 EXPLAIN ANALYZE SELECT COUNT(*) FROM t1;
@@ -85,7 +85,7 @@ EXPLAIN ANALYZE SELECT COUNT(*) FROM t1;
 
 ## ハッシュ集計 {#hash-aggregation}
 
-ハッシュ集計アルゴリズムは、ハッシュ テーブルを使用して、集約の実行中に中間結果を保存します。複数のスレッドを使用して並列実行されますが、 Stream 集計よりも多くのメモリを消費します。
+ハッシュ集計アルゴリズムは、集約の実行中にハッシュ テーブルを使用して中間結果を保存します。複数のスレッドを使用して並列に実行されますが、ストリーム集計よりも多くのメモリを消費します。
 
 以下は`HashAgg`演算子の例です。
 
@@ -105,11 +105,11 @@ EXPLAIN SELECT /*+ HASH_AGG() */ count(*) FROM t1;
 4 rows in set (0.00 sec)
 ```
 
-`operator info` 、データの集計に使用されるハッシュ関数が`funcs:count(1)->Column#6`であることを示します。
+`operator info` 、データを集約するために使用されるハッシュ関数が`funcs:count(1)->Column#6`であることを示します。
 
 ## ストリーム集計 {#stream-aggregation}
 
-ストリーム集計アルゴリズムは、通常、ハッシュ集計よりもメモリ消費量が少なくなります。ただし、この演算子では、値が到着したときに*ストリーミング*して集計を適用できるように、データが順序付けられて送信される必要があります。
+ストリーム集計アルゴリズムは通常、ハッシュ集計よりもメモリ消費量が少なくなります。ただし、この演算子では、データが到着すると*ストリームして*集約を適用できるように、データが順序どおりに送信されることが必要です。
 
 次の例を考えてみましょう。
 
@@ -137,7 +137,7 @@ Records: 5  Duplicates: 0  Warnings: 0
 5 rows in set (0.00 sec)
 ```
 
-この例では、 `col1`にインデックスを追加することで`└─Sort_13`演算子を削除できます。インデックスが追加されると、データを順番に読み取ることができ、 `└─Sort_13`演算子が削除されます。
+この例では、 `col1`にインデックスを追加することで`└─Sort_13`演算子を削除できます。インデックスが追加されると、データが順番に読み取られ、 `└─Sort_13`演算子が削除されます。
 
 ```sql
 ALTER TABLE t2 ADD INDEX (col1);
@@ -159,11 +159,11 @@ Query OK, 0 rows affected (0.28 sec)
 5 rows in set (0.00 sec)
 ```
 
-## ROLLUP を使用した多次元データ集約 {#multidimensional-data-aggregation-with-rollup}
+## ROLLUP による多次元データ集約 {#multidimensional-data-aggregation-with-rollup}
 
 v7.4.0 以降、TiDB の`GROUP BY`句は`WITH ROLLUP`修飾子をサポートします。
 
-`GROUP BY`句では、1 つ以上の列をグループ リストとして指定し、リストの後に`WITH ROLLUP`修飾子を追加できます。次に、TiDB は、グループ リストの列に基づいて多次元の降順グループ化を実行し、出力で各グループの概要結果を提供します。
+`GROUP BY`句では、1 つ以上の列をグループ リストとして指定し、リストの後に`WITH ROLLUP`修飾子を追加できます。すると、TiDB はグループ リスト内の列に基づいて多次元降順グループ化を実行し、出力で各グループの要約結果を提供します。
 
 > **注記：**
 >
@@ -188,6 +188,6 @@ explain SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 10 rows in set (0.05 sec)
 ```
 
-前述のステートメントの`GROUP BY year, month WITH ROLLUP`構文に従って、このステートメントの SQL 集計結果を計算し、3 つのグループ、 `{year, month}` 、 `{year}` 、および`{}`に連結できます。
+前のステートメントの`GROUP BY year, month WITH ROLLUP`構文に従って、このステートメントの SQL 集計結果は、それぞれ`{year, month}` 、 `{year}` 、 `{}` 3 つのグループに計算され、連結されます。
 
-詳細については、 [GROUP BY 修飾子](/functions-and-operators/group-by-modifier.md)を参照してください。
+詳細については[GROUP BY 修飾子](/functions-and-operators/group-by-modifier.md)参照してください。

@@ -1,6 +1,6 @@
 ---
 title: SHOW ENGINES | TiDB SQL Statement Reference
-summary: An overview of the usage of SHOW ENGINES for the TiDB database.
+summary: TiDB データベースの SHOW ENGINES の使用法の概要。
 ---
 
 # エンジンを表示 {#show-engines}

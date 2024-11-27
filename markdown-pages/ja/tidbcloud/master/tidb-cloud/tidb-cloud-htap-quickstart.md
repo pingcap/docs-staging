@@ -1,7 +1,6 @@
 ---
 title: TiDB Cloud HTAP Quick Start
 summary: TiDB Cloudで HTAP を使い始める方法を学習します。
-aliases: ['/tidbcloud/use-htap-cluster']
 ---
 
 # TiDB Cloud HTAP クイックスタート {#tidb-cloud-htap-quick-start}
@@ -10,9 +9,9 @@ aliases: ['/tidbcloud/use-htap-cluster']
 
 このチュートリアルでは、 TiDB Cloudのハイブリッド トランザクションおよび分析処理 (HTAP) 機能を簡単に体験する方法を説明します。内容には、テーブルをTiFlashに複製する方法、 TiFlashを使用してクエリを実行する方法、パフォーマンスの向上を体験する方法などが含まれます。
 
-## 始める前に {#before-you-begin}
+## あなたが始める前に {#before-you-begin}
 
-HTAP 機能を体験する前に、 [TiDB Cloudクイック スタート](/tidb-cloud/tidb-cloud-quickstart.md)に従ってTiDB Cloud Serverless クラスターを作成し、 **Steam Game Stats**サンプル データセットをクラスターにインポートします。
+HTAP 機能を体験する前に、 [TiDB Cloudクイック スタート](/tidb-cloud/tidb-cloud-quickstart.md)に従ってTiFlashノードを含むクラスターを作成し、TiDB クラスターに接続し、Capital Bikeshare サンプル データをクラスターにインポートします。
 
 ## 手順 {#steps}
 
@@ -20,28 +19,28 @@ HTAP 機能を体験する前に、 [TiDB Cloudクイック スタート](/tidb-
 
 TiFlashノードを含むクラスターが作成された後、TiKV はデフォルトでデータをTiFlashに複製しません。複製するテーブルを指定するには、TiDB の MySQL クライアントで DDL ステートメントを実行する必要があります。その後、TiDB はそれに応じて指定されたテーブルのレプリカをTiFlashに作成します。
 
-たとえば、 `games`テーブル ( **Steam Game Stats**サンプル データセット内) をTiFlashに複製するには、次のステートメントを実行します。
+たとえば、 `trips`テーブル (Capital Bikeshare サンプル データ内) をTiFlashに複製するには、次のステートメントを実行します。
 
 ```sql
-USE game;
+USE bikeshare;
 ```
 
 ```sql
-ALTER TABLE games SET TIFLASH REPLICA 2;
+ALTER TABLE trips SET TIFLASH REPLICA 1;
 ```
 
 レプリケーションの進行状況を確認するには、次のステートメントを実行します。
 
 ```sql
-SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_ID, REPLICA_COUNT, LOCATION_LABELS, AVAILABLE, PROGRESS FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'game' and TABLE_NAME = 'games';
+SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'bikeshare' and TABLE_NAME = 'trips';
 ```
 
 ```sql
-+--------------+------------+----------+---------------+-----------------+-----------+----------+
-| TABLE_SCHEMA | TABLE_NAME | TABLE_ID | REPLICA_COUNT | LOCATION_LABELS | AVAILABLE | PROGRESS |
-+--------------+------------+----------+---------------+-----------------+-----------+----------+
-| game         | games      |       88 |             2 |                 |         1 |        1 |
-+--------------+------------+----------+---------------+-----------------+-----------+----------+
++--------------+------------+----------+---------------+-----------------+-----------+----------+------------+
+| TABLE_SCHEMA | TABLE_NAME | TABLE_ID | REPLICA_COUNT | LOCATION_LABELS | AVAILABLE | PROGRESS | TABLE_MODE |
++--------------+------------+----------+---------------+-----------------+-----------+----------+------------+
+| bikeshare    | trips      |       88 |             1 |                 |         1 |        1 | NORMAL     |
++--------------+------------+----------+---------------+-----------------+-----------+----------+------------+
 1 row in set (0.20 sec)
 ```
 
@@ -54,20 +53,12 @@ SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_ID, REPLICA_COUNT, LOCATION_LABELS, AVAIL
 
 レプリケーションのプロセスが完了したら、いくつかのクエリの実行を開始できます。
 
-たとえば、毎年リリースされるゲームの数、平均価格、平均プレイ時間を確認できます。
+たとえば、出発駅と到着駅ごとに旅行回数を確認できます。
 
 ```sql
-SELECT
-  YEAR(`release_date`) AS `release_year`,
-  COUNT(*) AS `games_released`,
-  AVG(`price`) AS `average_price`,
-  AVG(`average_playtime_forever`) AS `average_playtime`
-FROM
-  `games`
-GROUP BY
-  `release_year`
-ORDER BY
-  `release_year` DESC;
+SELECT start_station_name, end_station_name, COUNT(ride_id) as count from `trips`
+GROUP BY start_station_name, end_station_name
+ORDER BY count ASC;
 ```
 
 ### ステップ3. 行ベースのstorageと列ベースのstorageのクエリパフォーマンスを比較する {#step-3-compare-the-query-performance-between-row-based-storage-and-columnar-storage}
@@ -77,20 +68,12 @@ ORDER BY
 -   TiKV を使用してこのクエリの実行統計を取得するには、次のステートメントを実行します。
 
     ```sql
-    EXPLAIN ANALYZE SELECT /*+ READ_FROM_STORAGE(TIKV[games]) */
-      YEAR(`release_date`) AS `release_year`,
-      COUNT(*) AS `games_released`,
-      AVG(`price`) AS `average_price`,
-      AVG(`average_playtime_forever`) AS `average_playtime`
-    FROM
-      `games`
-    GROUP BY
-      `release_year`
-    ORDER BY
-      `release_year` DESC;
+    EXPLAIN ANALYZE SELECT /*+ READ_FROM_STORAGE(TIKV[trips]) */ start_station_name, end_station_name, COUNT(ride_id) as count from `trips`
+    GROUP BY start_station_name, end_station_name
+    ORDER BY count ASC;
     ```
 
-    TiFlashレプリカを持つテーブルの場合、TiDB オプティマイザーはコスト見積もりに基づいて TiKV レプリカとTiFlashレプリカのどちらを使用するかを自動的に決定します。前の`EXPLAIN ANALYZE`文では、 `/*+ READ_FROM_STORAGE(TIKV[games]) */`ヒントを使用してオプティマイザーに TiKV を選択させ、TiKV の実行統計を確認できるようにしています。
+    TiFlashレプリカを持つテーブルの場合、TiDB オプティマイザーはコスト見積もりに基づいて TiKV レプリカとTiFlashレプリカのどちらを使用するかを自動的に決定します。前の`EXPLAIN ANALYZE`ステートメントでは、 `HINT /*+ READ_FROM_STORAGE(TIKV[trips]) */`を使用してオプティマイザーに TiKV を選択させ、TiKV の実行統計を確認できるようにしています。
 
     > **注記：**
     >
@@ -99,50 +82,41 @@ ORDER BY
     出力では、 `execution info`列目から実行時間を取得できます。
 
     ```sql
-    id                         | estRows  | actRows | task      | access object | execution info                             | operator info                                 | memory  | disk    
-    ---------------------------+----------+---------+-----------+---------------+--------------------------------------------+-----------------------------------------------+---------+---------
-    Sort_5                     | 4019.00  | 28      | root      |               | time:672.7ms, loops:2, RU:1159.679690      | Column#36:desc                                | 18.0 KB | 0 Bytes 
-    └─Projection_7             | 4019.00  | 28      | root      |               | time:672.7ms, loops:6, Concurrency:5       | year(game.games.release_date)->Column#36, ... | 35.5 KB | N/A     
-      └─HashAgg_15             | 4019.00  | 28      | root      |               | time:672.6ms, loops:6, partial_worker:...  | group by:Column#38, funcs:count(Column#39)... | 56.7 KB | N/A     
-        └─TableReader_16       | 4019.00  | 28      | root      |               | time:672.4ms, loops:2, cop_task: {num:...  | data:HashAgg_9                                | 3.60 KB | N/A     
-          └─HashAgg_9          | 4019.00  | 28      | cop[tikv] |               | tikv_task:{proc max:300ms, min:0s, avg...  | group by:year(game.games.release_date), ...   | N/A     | N/A     
-            └─TableFullScan_14 | 68223.00 | 68223   | cop[tikv] | table:games   | tikv_task:{proc max:290ms, min:0s, avg...  | keep order:false                              | N/A     | N/A     
+    id                         | estRows   | actRows | task      | access object | execution info                            | operator info                                | memory  | disk
+    ---------------------------+-----------+---------+-----------+---------------+-------------------------------------------+-----------------------------------------------+---------+---------
+    Sort_5                     | 633.00    | 73633   | root      |               | time:1.62s, loops:73                      | Column#15                                    | 6.88 MB | 0 Bytes
+    └─Projection_7             | 633.00    | 73633   | root      |               | time:1.57s, loops:76, Concurrency:OFF...  | bikeshare.trips.start_station_name...        | 6.20 MB | N/A                                                                                                                                        | 6.20 MB | N/A
+      └─HashAgg_15             | 633.00    | 73633   | root      |               | time:1.57s, loops:76, partial_worker:...  | group by:bikeshare.trips.end_station_name... | 58.0 MB | N/A
+        └─TableReader_16       | 633.00    | 111679  | root      |               | time:1.34s, loops:3, cop_task: {num: ...  | data:HashAgg_8                               | 7.55 MB | N/A
+          └─HashAgg_8          | 633.00    | 111679  | cop[tikv] |               | tikv_task:{proc max:830ms, min:470ms,...  | group by:bikeshare.trips.end_station_name... | N/A     | N/A
+            └─TableFullScan_14 | 816090.00 | 816090  | cop[tikv] | table:trips   | tikv_task:{proc max:490ms, min:310ms,...  | keep order:false                             | N/A     | N/A
     (6 rows)
     ```
 
 -   TiFlashを使用してこのクエリの実行統計を取得するには、次のステートメントを実行します。
 
     ```sql
-    EXPLAIN ANALYZE SELECT
-      YEAR(`release_date`) AS `release_year`,
-      COUNT(*) AS `games_released`,
-      AVG(`price`) AS `average_price`,
-      AVG(`average_playtime_forever`) AS `average_playtime`
-    FROM
-      `games`
-    GROUP BY
-      `release_year`
-    ORDER BY
-      `release_year` DESC;
+    EXPLAIN ANALYZE SELECT start_station_name, end_station_name, COUNT(ride_id) as count from `trips`
+    GROUP BY start_station_name, end_station_name
+    ORDER BY count ASC;
     ```
 
     出力では、 `execution info`列目から実行時間を取得できます。
 
     ```sql
-    id                                   | estRows  | actRows | task         | access object | execution info                                        | operator info                              | memory  | disk    
-    -------------------------------------+----------+---------+--------------+---------------+-------------------------------------------------------+--------------------------------------------+---------+---------
-    Sort_5                               | 4019.00  | 28      | root         |               | time:222.2ms, loops:2, RU:25.609675                   | Column#36:desc                             | 3.77 KB | 0 Bytes 
-    └─TableReader_39                     | 4019.00  | 28      | root         |               | time:222.1ms, loops:2, cop_task: {num: 2, max: 0s,... | MppVersion: 1, data:ExchangeSender_38      | 4.64 KB | N/A     
-      └─ExchangeSender_38                | 4019.00  | 28      | mpp[tiflash] |               | tiflash_task:{time:214.8ms, loops:1, threads:1}       | ExchangeType: PassThrough                  | N/A     | N/A     
-        └─Projection_8                   | 4019.00  | 28      | mpp[tiflash] |               | tiflash_task:{time:214.8ms, loops:1, threads:1}       | year(game.games.release_date)->Column#3... | N/A     | N/A     
-          └─Projection_34                | 4019.00  | 28      | mpp[tiflash] |               | tiflash_task:{time:214.8ms, loops:1, threads:1}       | Column#33, div(Column#34, cast(case(eq(... | N/A     | N/A     
-            └─HashAgg_35                 | 4019.00  | 28      | mpp[tiflash] |               | tiflash_task:{time:214.8ms, loops:1, threads:1}       | group by:Column#63, funcs:sum(Column#64... | N/A     | N/A     
-              └─ExchangeReceiver_37      | 4019.00  | 28      | mpp[tiflash] |               | tiflash_task:{time:214.8ms, loops:1, threads:8}       |                                            | N/A     | N/A     
-                └─ExchangeSender_36      | 4019.00  | 28      | mpp[tiflash] |               | tiflash_task:{time:210.6ms, loops:1, threads:1}       | ExchangeType: HashPartition, Compressio... | N/A     | N/A     
-                  └─HashAgg_33           | 4019.00  | 28      | mpp[tiflash] |               | tiflash_task:{time:210.6ms, loops:1, threads:1}       | group by:Column#75, funcs:count(1)->Col... | N/A     | N/A     
-                    └─Projection_40      | 68223.00 | 68223   | mpp[tiflash] |               | tiflash_task:{time:210.6ms, loops:2, threads:8}       | game.games.price, game.games.price, gam... | N/A     | N/A     
-                      └─TableFullScan_23 | 68223.00 | 68223   | mpp[tiflash] | table:games   | tiflash_task:{time:210.6ms, loops:2, threads:8}, ...  | keep order:false                           | N/A     | N/A     
-    (11 rows)
+    id                                 | estRows   | actRows | task         | access object | execution info                            | operator info                      | memory  | disk
+    -----------------------------------+-----------+---------+--------------+---------------+-------------------------------------------+------------------------------------+---------+---------
+    Sort_5                             | 633.00    | 73633   | root         |               | time:420.2ms, loops:73                    | Column#15                          | 5.61 MB | 0 Bytes
+    └─Projection_7                     | 633.00    | 73633   | root         |               | time:368.7ms, loops:73, Concurrency:OFF   | bikeshare.trips.start_station_...  | 4.94 MB | N/A
+      └─TableReader_34                 | 633.00    | 73633   | root         |               | time:368.6ms, loops:73, cop_task: {num... | data:ExchangeSender_33             | N/A     | N/A
+        └─ExchangeSender_33            | 633.00    | 73633   | mpp[tiflash] |               | tiflash_task:{time:360.7ms, loops:1,...   | ExchangeType: PassThrough          | N/A     | N/A
+          └─Projection_29              | 633.00    | 73633   | mpp[tiflash] |               | tiflash_task:{time:330.7ms, loops:1,...   | Column#15, bikeshare.trips.star... | N/A     | N/A
+            └─HashAgg_30               | 633.00    | 73633   | mpp[tiflash] |               | tiflash_task:{time:330.7ms, loops:1,...   | group by:bikeshare.trips.end_st... | N/A     | N/A
+              └─ExchangeReceiver_32    | 633.00    | 73633   | mpp[tiflash] |               | tiflash_task:{time:280.7ms, loops:12,...  |                                    | N/A     | N/A
+                └─ExchangeSender_31    | 633.00    | 73633   | mpp[tiflash] |               | tiflash_task:{time:272.3ms, loops:256,... | ExchangeType: HashPartition, Ha... | N/A     | N/A
+                  └─HashAgg_12         | 633.00    | 73633   | mpp[tiflash] |               | tiflash_task:{time:252.3ms, loops:256,... | group by:bikeshare.trips.end_st... | N/A     | N/A
+                    └─TableFullScan_28 | 816090.00 | 816090  | mpp[tiflash] | table:trips   | tiflash_task:{time:92.3ms, loops:16,...   | keep order:false                   | N/A     | N/A
+    (10 rows)
     ```
 
 > **注記：**

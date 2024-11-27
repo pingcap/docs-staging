@@ -7,7 +7,7 @@ summary: TiDB に接続する方法を学習します。
 
 TiDB は MySQL プロトコルと高い互換性があります。クライアント リンク パラメータの完全なリストについては、 [MySQL クライアント オプション](https://dev.mysql.com/doc/refman/8.0/en/mysql-command-options.html)参照してください。
 
-TiDB は[MySQL クライアント/サーバー プロトコル](https://dev.mysql.com/doc/dev/mysql-server/latest/PAGE_PROTOCOL.html)サポートしており、これにより、ほとんどのクライアント ドライバーと ORM フレームワークが MySQL に接続するのと同じように TiDB に接続できるようになります。
+TiDB は[MySQL クライアント/サーバー プロトコル](https://dev.mysql.com/doc/dev/mysql-server/latest/PAGE_PROTOCOL.html)をサポートしており、これにより、ほとんどのクライアント ドライバーと ORM フレームワークが MySQL に接続するのと同じように TiDB に接続できるようになります。
 
 ## マイグレーション {#mysql}
 
@@ -33,7 +33,7 @@ mysql --host <tidb_server_host> --port 4000 -u root -p --comments
 
 <div label="MySQL Shell">
 
-TiDB のコマンドライン ツールとして使用できる MySQL Shell を使用して TiDB に接続できます。MySQL Shell をインストールするには、 [MySQL Shell ドキュメント](https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-install.html)手順に従ってください。インストール後、次のコマンドを使用して TiDB に接続できます。
+TiDB のコマンドライン ツールとして使用できる MySQL Shell を使用して TiDB に接続できます。MySQL Shell をインストールするには、 [MySQL Shell ドキュメント](https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-install.html)の手順に従ってください。インストール後、次のコマンドを使用して TiDB に接続できます。
 
 ```shell
 mysqlsh --sql mysql://root@<tidb_server_host>:4000
@@ -133,3 +133,7 @@ TiDB SQLユーザーの詳細については、 [TiDB ユーザーアカウン�
 TiDB SQLユーザーの詳細については、 [TiDB ユーザーアカウント管理](https://docs.pingcap.com/tidb/stable/user-account-management)参照してください。
 
 </CustomContent>
+
+## ヘルプが必要ですか? {#need-help}
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。

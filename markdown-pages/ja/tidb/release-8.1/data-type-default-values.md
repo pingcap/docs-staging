@@ -11,29 +11,29 @@ summary: TiDB のデータ型のデフォルト値について学習します。
 
 -   時間型の場合、 `TIMESTAMP`と`DATETIME`列のデフォルト値として`NOW` 、 `CURRENT_TIMESTAMP` 、 `LOCALTIME` 、および`LOCALTIMESTAMP`関数を使用できます。
 -   整数型の場合、 `NEXT VALUE FOR`関数を使用してシーケンスの次の値を列のデフォルト値として設定し、 [`RAND()`](/functions-and-operators/numeric-functions-and-operators.md)関数を使用してランダムな浮動小数点値を列のデフォルト値として生成できます。
--   文字列型の場合、 [`UUID()`](/functions-and-operators/miscellaneous-functions.md)関数を使用して、列のデフォルト値として[ユニバーサルユニーク識別子 (UUID)](/best-practices/uuid.md)を生成できます。
+-   文字列型の場合、 [`UUID()`](/functions-and-operators/miscellaneous-functions.md)関数を使用して、列のデフォルト値として[ユニバーサルユニーク識別子 (UUID)](/best-practices/uuid.md)生成できます。
 -   バイナリ型の場合、 [`UUID_TO_BIN()`](/functions-and-operators/miscellaneous-functions.md)関数を使用して UUID をバイナリ形式に変換し、変換された値を列のデフォルト値として設定できます。
--   v8.0.0 以降、TiDB は[`BLOB`](/data-type-string.md#blob-type) 、 [`TEXT`](/data-type-string.md#text-type) 、および[`JSON`](/data-type-json.md#json-type)データ型に対して[デフォルト値を指定する](#specify-expressions-as-default-values)追加でサポートしますが、それらに対して[デフォルト値](#default-values)を設定するには式のみを使用できます。
+-   v8.0.0 以降、TiDB は[`BLOB`](/data-type-string.md#blob-type) 、 [`TEXT`](/data-type-string.md#text-type) 、および[`JSON`](/data-type-json.md#json-data-type)データ型に対して[デフォルト値の指定](#specify-expressions-as-default-values)追加でサポートしますが、それらに対して[デフォルト値](#default-values)を設定するには式のみを使用できます。
 
 列定義に明示的な`DEFAULT`値が含まれていない場合、TiDB は次のようにデフォルト値を決定します。
 
--   列が値として`NULL`を取ることができる場合、列は明示的な`DEFAULT NULL`句で定義されます。
--   列が値として`NULL`を取ることができない場合、TiDB は明示的な`DEFAULT`句なしで列を定義します。
+-   列が値として`NULL`取ることができる場合、列は明示的な`DEFAULT NULL`句で定義されます。
+-   列が値として`NULL`取ることができない場合、TiDB は明示的な`DEFAULT`句なしで列を定義します。
 
-明示的な`DEFAULT`句のない`NOT NULL`列へのデータ入力の場合、 `INSERT`または`REPLACE`ステートメントに列の値が含まれていない場合、TiDB はその時点で有効な SQL モードに従って列を処理します。
+明示的な`DEFAULT`句のない`NOT NULL`列へのデータ入力の場合、 `INSERT`または`REPLACE`ステートメントに列の値が含まれていないと、TiDB はその時点で有効な SQL モードに従って列を処理します。
 
 -   厳密な SQL モードが有効になっている場合、トランザクション テーブルではエラーが発生し、ステートメントはロールバックされます。非トランザクション テーブルではエラーが発生します。
 -   厳密モードが有効になっていない場合、TiDB は列を列データ型の暗黙的なデフォルト値に設定します。
 
 暗黙のデフォルトは次のように定義されます。
 
--   数値型の場合、デフォルトは`AUTO_INCREMENT`です。1 属性で宣言された場合、デフォルトはシーケンス内の次の値になります。
--   `TIMESTAMP`以外の日付と時刻の型の場合、デフォルトはその型に適切な「ゼロ」値です。 `TIMESTAMP`の場合、デフォルト値は現在の日付と時刻です。
+-   数値型の場合、デフォルトは 0 です`AUTO_INCREMENT`属性で宣言された場合、デフォルトはシーケンス内の次の値になります。
+-   `TIMESTAMP`以外の日付と時刻の型の場合、デフォルトはその型に適切な「ゼロ」値です。 `TIMESTAMP`場合、デフォルト値は現在の日付と時刻です。
 -   `ENUM`以外の文字列型の場合、デフォルト値は空の文字列です。 `ENUM`の場合、デフォルト値は最初の列挙値です。
 
 ## 式をデフォルト値として指定する {#specify-expressions-as-default-values}
 
-MySQL 8.0.13 以降では、 `DEFAULT`句でデフォルト値として式を指定できるようになりました。詳細については、 [MySQL 8.0.13 以降の明示的なデフォルト処理](https://dev.mysql.com/doc/refman/8.0/en/data-type-defaults.html#data-type-defaults-explicit)を参照してください。
+MySQL 8.0.13 以降では、 `DEFAULT`句でデフォルト値として式を指定できるようになりました。詳細については、 [MySQL 8.0.13 以降の明示的なデフォルト処理](https://dev.mysql.com/doc/refman/8.0/en/data-type-defaults.html#data-type-defaults-explicit)参照してください。
 
 v8.0.0 以降、TiDB は`DEFAULT`句のデフォルト値として次の式を指定することもサポートします。
 

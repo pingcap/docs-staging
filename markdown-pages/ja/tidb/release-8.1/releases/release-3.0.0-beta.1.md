@@ -18,8 +18,8 @@ TiDB Ansible バージョン: 3.0.0-beta.1
 ## ティビ {#tidb}
 
 -   SQL オプティマイザー
-    -   `Sort Merge Join` [＃9032](https://github.com/pingcap/tidb/pull/9037)を使用して直積を計算することをサポートする
-    -   実行計画が統計に過度に依存することを防ぐためのいくつかのルールを備えた Skyline Pruning をサポートします[＃9337](https://github.com/pingcap/tidb/pull/9337)
+    -   `Sort Merge Join` [＃9032](https://github.com/pingcap/tidb/pull/9037)使用して直積を計算することをサポートする
+    -   実行計画が統計に過度に依存しないようにするためのいくつかのルールを備えた Skyline Pruning をサポートします[＃9337](https://github.com/pingcap/tidb/pull/9337)
 
     <!---->
 
@@ -37,7 +37,7 @@ TiDB Ansible バージョン: 3.0.0-beta.1
 
     <!---->
 
-    -   列とハンドル列[＃9315](https://github.com/pingcap/tidb/pull/9315)間の順序相関を示す統計の種類を追加します。
+    -   列とハンドル列[＃9315](https://github.com/pingcap/tidb/pull/9315)の間の順序相関を示す統計の種類を追加します。
 -   SQL実行エンジン
     -   組み込み関数を追加する
         -   `JSON_QUOTE` [＃7832](https://github.com/pingcap/tidb/pull/7832)
@@ -61,37 +61,37 @@ TiDB Ansible バージョン: 3.0.0-beta.1
     -   遅いSQL文を簡単に追跡できるように、SQLテキストにHASHフィンガープリントを追加することをサポート[＃9662](https://github.com/pingcap/tidb/pull/9662)
     -   binlogの有効化状態を制御するための`log_bin`システム変数 (デフォルトでは &quot;0&quot;) を追加します。現在は状態の確認のみをサポートしています[＃9343](https://github.com/pingcap/tidb/pull/9343)
     -   設定ファイル[＃9864](https://github.com/pingcap/tidb/pull/9864)を使用して送信binlog戦略の管理をサポート
-    -   `INFORMATION_SCHEMA.SLOW_QUERY`メモリテーブル[＃9290](https://github.com/pingcap/tidb/pull/9290)を使用してスローログのクエリをサポート
+    -   `INFORMATION_SCHEMA.SLOW_QUERY`メモリテーブル[＃9290](https://github.com/pingcap/tidb/pull/9290)使用してスローログのクエリをサポート
     -   TiDBに表示されるMySQLバージョンを5.7.10から5.7.25に変更する[＃9553](https://github.com/pingcap/tidb/pull/9553)
-    -   [ログ形式](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md)を統合してツールによる収集と分析を容易にする
+    -   [ログ形式](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md)統合してツールによる収集と分析を容易にする
     -   統計[＃9209](https://github.com/pingcap/tidb/pull/9209)に基づいて実際のデータ量と推定データ量の差を記録するための監視項目`high_error_rate_feedback_total`を追加します。
-    -   データベースディメンションにQPSモニタリング項目を追加します。これは、構成項目[＃9151](https://github.com/pingcap/tidb/pull/9151)を使用して有効にできます。
+    -   データベースディメンションにQPS監視項目を追加します。これは、構成項目[＃9151](https://github.com/pingcap/tidb/pull/9151)を使用して有効にできます。
 -   DDL
     -   DDLタスクの再試行回数を制限するために、 `ddl_error_count_limit`グローバル変数（デフォルトでは「512」）を追加します（この回数が制限を超えると、DDLタスクはキャンセルされます） [＃9295](https://github.com/pingcap/tidb/pull/9295)
     -   ALTER ALGORITHM `INPLACE` / `INSTANT` [＃8811](https://github.com/pingcap/tidb/pull/8811)をサポート
-    -   `SHOW CREATE VIEW`ステートメント[＃9309](https://github.com/pingcap/tidb/pull/9309)を支持する
-    -   `SHOW CREATE USER`ステートメント[＃9240](https://github.com/pingcap/tidb/pull/9240)を支持する
+    -   `SHOW CREATE VIEW`ステートメント[＃9309](https://github.com/pingcap/tidb/pull/9309)支持する
+    -   `SHOW CREATE USER`ステートメント[＃9240](https://github.com/pingcap/tidb/pull/9240)支持する
 
 ## PD {#pd}
 
--   [ログ形式](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md)を統合してツールによる収集と分析を容易にする
+-   [ログ形式](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md)統合してツールによる収集と分析を容易にする
 -   シミュレーター
     -   異なるストアで異なるハートビート間隔をサポート[＃1418](https://github.com/pingcap/pd/pull/1418)
     -   データのインポートに関する事例を追加[＃1263](https://github.com/pingcap/pd/pull/1263)
 -   ホットスポットのスケジュールを設定可能にする[＃1412](https://github.com/pingcap/pd/pull/1412)
--   以前のストアID [＃1429](https://github.com/pingcap/pd/pull/1429)を置き換えるために、ディメンション監視項目としてストアアドレスを追加します。
+-   以前のストアID [＃1429](https://github.com/pingcap/pd/pull/1429)置き換えるために、ディメンション監視項目としてストアアドレスを追加します。
 -   `GetStores`オーバーヘッドを最適化して、リージョン検査サイクル[＃1410](https://github.com/pingcap/pd/pull/1410)を高速化します。
--   トゥームストーンストア[＃1472](https://github.com/pingcap/pd/pull/1472)を削除するためのインターフェイスを追加します
+-   トゥームストーンストア[＃1472](https://github.com/pingcap/pd/pull/1472)を削除するためのインターフェースを追加する
 
 ## ティクヴ {#tikv}
 
 -   コプロセッサーの計算実行フレームワークを最適化し、TableScanセクションを実装することで、単一のTableScanのパフォーマンスが5%～30%向上しました。
     -   `BatchRows`行目と`BatchColumn`列目[＃3660](https://github.com/tikv/tikv/pull/3660)の定義を実装する
     -   `VectorLike`実装して、エンコードされたデータとデコードされたデータに同じ方法でアクセスできるようにする[＃4242](https://github.com/tikv/tikv/pull/4242)
-    -   `BatchExecutor`インターフェースに定義し、リクエストを`BatchExecutor` [＃4243](https://github.com/tikv/tikv/pull/4243)に変換する方法を実装する
+    -   `BatchExecutor`をインターフェースに定義し、リクエストを`BatchExecutor` [＃4243](https://github.com/tikv/tikv/pull/4243)に変換する方法を実装する
     -   式ツリーをRPN形式に変換する実装[＃4329](https://github.com/tikv/tikv/pull/4329)
     -   計算を高速化するために`BatchTableScanExecutor`ベクトル化演算子を実装する[＃4351](https://github.com/tikv/tikv/pull/4351)
--   [ログ形式](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md)を統合してツールによる収集と分析を容易にする
+-   [ログ形式](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md)統合してツールによる収集と分析を容易にする
 -   ローカルリーダーを使用してRaw Readインターフェース[＃4222](https://github.com/tikv/tikv/pull/4222)で読み取ることをサポート
 -   構成情報に関するメトリックを追加する[＃4206](https://github.com/tikv/tikv/pull/4206)
 -   境界[＃4255](https://github.com/tikv/tikv/pull/4255)超えるキーに関するメトリックを追加します
@@ -103,7 +103,7 @@ TiDB Ansible バージョン: 3.0.0-beta.1
 ## ツール {#tools}
 
 -   TiDBBinlog
-    -   Kafka からbinlogを読み取り、データを MySQL に複製する Arbiter ツールを追加します。
+    -   Kafka からbinlog を読み取り、データを MySQL に複製する Arbiter ツールを追加します。
     -   複製する必要のないファイルのフィルタリングをサポート
     -   生成された列の複製をサポート
 -   稲妻

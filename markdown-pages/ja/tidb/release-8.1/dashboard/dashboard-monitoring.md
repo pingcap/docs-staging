@@ -13,7 +13,7 @@ TiDB ダッシュボードにログインし、左側のナビゲーション �
 
 ![Monitoring page](https://download.pingcap.com/images/docs/dashboard/dashboard-monitoring.png)
 
-TiDB クラスターがTiUPを使用してデプロイされている場合は、Grafana でパフォーマンス概要ダッシュボードを表示することもできます。このデプロイ モードでは、監視システム (Prometheus と Grafana) が同時にデプロイされます。詳細については、 [TiDB 監視フレームワークの概要](/tidb-monitoring-framework.md)参照してください。
+TiDB クラスターがTiUP を使用してデプロイされている場合は、Grafana でパフォーマンス概要ダッシュボードを表示することもできます。このデプロイ モードでは、監視システム (Prometheus と Grafana) が同時にデプロイされます。詳細については、 [TiDB 監視フレームワークの概要](/tidb-monitoring-framework.md)参照してください。
 
 ![performance overview](https://download.pingcap.com/images/docs/performance/grafana_performance_overview.png)
 
@@ -45,7 +45,7 @@ TiDB クラスターがTiUPを使用してデプロイされている場合は�
 
 -   実行時間: SQL 実行中に 1 秒あたりに消費されるデータベース時間
 -   tso_wait: SQL 実行中の 1 秒あたりの同時 TSO 待機時間
--   kv 要求タイプ: SQL 実行中に 1 秒あたりに各 KV 要求タイプを待機する時間。KV 要求は同時であるため、合計 KV 要求待機時間は SQL 実行時間を超える場合があります。
+-   kv 要求タイプ: SQL 実行中に 1 秒あたりに各 KV 要求タイプを待機する時間。KV 要求は同時実行されるため、合計 KV 要求待機時間は SQL 実行時間を超える場合があります。
 
 緑のメトリックは一般的な KV 書き込み要求 (事前書き込みやコミットなど) を表し、青のメトリックは一般的な読み取り要求を表し、他の色のメトリックは注意を払う必要がある予期しない状況を表します。たとえば、悲観的ロック KV 要求は赤でマークされ、TSO 待機は濃い茶色でマークされます。
 
@@ -56,7 +56,7 @@ TiDB クラスターがTiUPを使用してデプロイされている場合は�
 
 ### 品質保証 {#qps}
 
-すべての TiDB インスタンスで 1 秒あたりに実行された SQL ステートメントの数 (タイプ別に収集`INSERT` : `SELECT` `UPDATE`
+すべての TiDB インスタンスで`UPDATE`秒あたりに実行された SQL ステートメントの数 (タイプ別に収集`INSERT` `SELECT`
 
 ### タイプ別CPS {#cps-by-type}
 
@@ -69,11 +69,11 @@ TiDB クラスターがTiUPを使用してデプロイされている場合は�
 ### KV/TSO リクエスト OPS {#kv-tso-request-ops}
 
 -   kv リクエスト合計: すべての TiDB インスタンスにおける 1 秒あたりの KV リクエストの合計数
--   タイプ別の KV 要求: `Get` 、 `Prewrite` 、 `Commit`などのタイプに基づく、すべての TiDB インスタンスでの 1 秒あたりの KV 要求の数。
--   tso - cmd: すべての TiDB インスタンスにおける`tso cmd`秒あたりのリクエスト数
--   tso - リクエスト: すべての TiDB インスタンスにおける`tso request`秒あたりのリクエスト数
+-   タイプ別の KV リクエスト数: `Get`などのタイプに基づく、すべての TiDB インスタンスでの`Prewrite`秒あたりの KV リクエスト`Commit`
+-   tso - cmd: TiDB がすべての TiDB インスタンスの PD に送信する 1 秒あたりの gRPC リクエストの数。各 gRPC リクエストには、TSO リクエストのバッチが含まれます。
+-   tso - リクエスト: すべての TiDB インスタンスにおける 1 秒あたりの TSO リクエスト数
 
-通常、 `tso - cmd` `tso - request`で割ると、1 秒あたりのリクエストの平均バッチ サイズが得られます。
+一般的に、 `tso - request` `tso - cmd`で割った値が、1 秒あたりの TSO 要求バッチの平均サイズになります。
 
 ### 接続数 {#connection-count}
 
@@ -100,14 +100,14 @@ TiDB クラスターがTiUPを使用してデプロイされている場合は�
 
 -   所要時間: 実行時間
 
-    -   クライアントから TiDB へのリクエストを受信して​​から、TiDB がリクエストを実行し、結果をクライアントに返すまでの期間。通常、クライアント リクエストは SQL ステートメントの形式で送信されますが、この期間には`COM_PING` 、 `COM_SLEEP` 、 `COM_STMT_FETCH` 、 `COM_SEND_LONG_DATA`などのコマンドの実行時間が含まれる場合があります。
+    -   クライアントから TiDB へのリクエストを受信してから、TiDB がリクエストを実行し、結果をクライアントに返すまでの期間。通常、クライアント リクエストは SQL ステートメントの形式で送信されますが、この期間には`COM_PING` 、 `COM_SLEEP` 、 `COM_STMT_FETCH` 、 `COM_SEND_LONG_DATA`などのコマンドの実行時間が含まれる場合があります。
     -   TiDB はマルチクエリをサポートしています。つまり、クライアントは一度に複数の SQL ステートメント (例: `select 1; select 1; select 1;`を送信できます。この場合、このクエリの合計実行時間には、すべての SQL ステートメントの実行時間が含まれます。
 
 -   平均: すべてのリクエストを実行する平均時間
 
 -   99: すべてのリクエストを実行するための P99 期間
 
--   タイプ別の平均: すべての TiDB インスタンスですべてのリクエストを実行する平均時間 (タイプ`SELECT` `UPDATE`収集`INSERT`
+-   タイプ別の平均: すべての TiDB インスタンスですべてのリクエスト`UPDATE`実行する平均時間 (タイプ`SELECT`別に収集`INSERT`
 
 ### 接続アイドル時間 {#connection-idle-duration}
 
@@ -132,7 +132,7 @@ TiDB クラスターがTiUPを使用してデプロイされている場合は�
 
 ### 平均 TiKV GRPC 期間 {#avg-tikv-grpc-duration}
 
-`kv_get` 、 `kv_prewrite` 、 `kv_commit`などのタイプに基づいて、すべての TiKV インスタンスで gRPC リクエストを実行するのに費やされた平均時間。
+`kv_get` 、 `kv_prewrite` 、 `kv_commit`を含むタイプに基づいて、すべての TiKV インスタンスで gRPC リクエストを実行するのに費やされた平均時間。
 
 ### PD TSO 待機/RPC 期間 {#pd-tso-wait-rpc-duration}
 
@@ -153,7 +153,7 @@ TiDB クラスターがTiUPを使用してデプロイされている場合は�
 
 ### 追加ログ期間、コミットログ期間、適用ログ期間 {#append-log-duration-commit-log-duration-and-apply-log-duration}
 
--   ログ追加期間: Raftがログを追加するのにかかる時間
+-   ログ追加時間: Raftがログを追加するのにかかる時間
 -   コミットログ期間: Raftがログをコミットするのにかかる時間
 -   ログ適用期間: Raftがログを適用するために要する時間
 

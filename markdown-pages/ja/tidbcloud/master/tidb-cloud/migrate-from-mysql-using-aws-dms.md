@@ -11,7 +11,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
 このドキュメントでは、Amazon RDS を例に、AWS DMS を使用してデータをTiDB Cloudに移行する方法を説明します。この手順は、セルフホスト型 MySQL データベースまたは Amazon AuroraからTiDB Cloudにデータを移行する場合にも適用されます。
 
-この例では、データソースは Amazon RDS で、データの送信先はTiDB Cloud内のTiDB Cloud Dedicated クラスターです。アップストリーム データベースとダウンストリーム データベースは両方とも同じリージョンにあります。
+この例では、データソースは Amazon RDS で、データの送信先はTiDB Cloudの TiDB Dedicated クラスターです。アップストリーム データベースとダウンストリーム データベースは両方とも同じリージョンにあります。
 
 ## 前提条件 {#prerequisites}
 
@@ -58,7 +58,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
 ## ステップ2. ソースデータベースエンドポイントを作成する {#step-2-create-the-source-database-endpoint}
 
-1.  [AWS DMS コンソール](https://console.aws.amazon.com/dms/v2/home)で、先ほど作成したレプリケーションインスタンスをクリックします。次のスクリーンショットに示すように、パブリックおよびプライベートネットワークの IP アドレスをコピーします。
+1.  [AWS DMS コンソール](https://console.aws.amazon.com/dms/v2/home)で、先ほど作成したレプリケーション インスタンスをクリックします。次のスクリーンショットに示すように、パブリック ネットワークとプライベート ネットワークの IP アドレスをコピーします。
 
     ![Copy the public and private network IP addresses](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-copy-ip.png)
 
@@ -94,7 +94,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
 ## ステップ3. ターゲットデータベースエンドポイントを作成する {#step-3-create-the-target-database-endpoint}
 
-1.  [AWS DMS コンソール](https://console.aws.amazon.com/dms/v2/home)で、先ほど作成したレプリケーションインスタンスをクリックします。次のスクリーンショットに示すように、パブリックおよびプライベートネットワークの IP アドレスをコピーします。
+1.  [AWS DMS コンソール](https://console.aws.amazon.com/dms/v2/home)で、先ほど作成したレプリケーション インスタンスをクリックします。次のスクリーンショットに示すように、パブリック ネットワークとプライベート ネットワークの IP アドレスをコピーします。
 
     ![Copy the public and private network IP addresses](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-copy-ip.png)
 
@@ -102,7 +102,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
 3.  ダイアログの**「ステップ 1: トラフィックフィルターの作成」**で、 **「編集」**をクリックし、AWS DMS コンソールからコピーしたパブリックおよびプライベートネットワークの IP アドレスを入力して、 **「フィルターの更新」**をクリックします。AWS DMS レプリケーションインスタンスのパブリック IP アドレスとプライベート IP アドレスを TiDB クラスターのトラフィックフィルターに同時に追加することをお勧めします。そうしないと、一部のシナリオで AWS DMS が TiDB クラスターに接続できない可能性があります。
 
-4.  CA 証明書をダウンロードするには、 `-h` CA 証明書**のダウンロード」**をクリックします。ダイアログの**「手順 3: SQL クライアントで接続する**」で、接続文字列の`-u` 、および`-P`情報を後で使用するためにメモします。
+4.  CA 証明書をダウンロードするには、「CA 証明書**のダウンロード」**をクリックします。ダイアログの**「手順 3: SQL クライアントを使用して接続する**」で、接続文字列の`-u` 、および`-P` `-h`を後で使用するためにメモします。
 
 5.  ダイアログの**「VPC ピアリング**」タブをクリックし、 **「ステップ 1: VPC のセットアップ**」の下にある**「追加」**をクリックして、TiDB クラスターと AWS DMS の VPC ピアリング接続を作成します。
 
@@ -186,8 +186,8 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
 ## 参照 {#see-also}
 
--   AWS DMS をTiDB Cloud Serverless またはTiDB Cloud Dedicated に接続する方法の詳細については、 [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)参照してください。
+-   AWS DMS を TiDB Serverless または TiDB Dedicated に接続する方法の詳細については、 [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)参照してください。
 
 -   Aurora MySQL や Amazon Relational Database Service (RDS) などの MySQL 互換データベースからTiDB Cloudに移行する場合は、 [TiDB Cloud上のデータ移行](/tidb-cloud/migrate-from-mysql-using-data-migration.md)使用することをお勧めします。
 
--   AWS DMS を使用して Amazon RDS for Oracle からTiDB Cloud Serverless に移行する場合は、 [AWS DMS を使用して Amazon RDS for Oracle からTiDB Cloud Serverless に移行する](/tidb-cloud/migrate-from-oracle-using-aws-dms.md)参照してください。
+-   AWS DMS を使用して Amazon RDS for Oracle から TiDB Serverless に移行する場合は、 [AWS DMS を使用して Amazon RDS for Oracle から TiDB Serverless に移行する](/tidb-cloud/migrate-from-oracle-using-aws-dms.md)参照してください。

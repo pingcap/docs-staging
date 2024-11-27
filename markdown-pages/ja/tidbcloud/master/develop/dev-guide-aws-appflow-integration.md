@@ -5,7 +5,7 @@ summary: TiDB を Amazon AppFlow と統合する方法を段階的に紹介し�
 
 # TiDB を Amazon AppFlow と統合する {#integrate-tidb-with-amazon-appflow}
 
-[Amazon アプリフロー](https://aws.amazon.com/appflow/)は、SaaS (Software as a Service) アプリケーションを AWS サービスに接続し、データを安全に転送するために使用する、フルマネージド API 統合サービスです。Amazon AppFlow を使用すると、Salesforce、Amazon S3、LinkedIn、GitHub など、さまざまなタイプのデータプロバイダーとの間で、TiDB からデータをインポートおよびエクスポートできます。詳細については、AWS ドキュメントの[サポートされているソースおよび宛先アプリケーション](https://docs.aws.amazon.com/appflow/latest/userguide/app-specific.html)を参照してください。
+[Amazon アプリフロー](https://aws.amazon.com/appflow/)は、SaaS (Software as a Service) アプリケーションを AWS サービスに接続し、データを安全に転送するために使用する、フルマネージド API 統合サービスです。Amazon AppFlow を使用すると、Salesforce、Amazon S3、LinkedIn、GitHub など、さまざまなタイプのデータプロバイダーとの間で、TiDB からデータをインポートおよびエクスポートできます。詳細については、AWS ドキュメントの[サポートされているソースおよび宛先アプリケーション](https://docs.aws.amazon.com/appflow/latest/userguide/app-specific.html)参照してください。
 
 このドキュメントでは、TiDB を Amazon AppFlow と統合する方法について説明し、 TiDB Cloud Serverless クラスターの統合を例として取り上げます。
 
@@ -29,7 +29,7 @@ TiDB クラスターがない場合は、 [TiDB Cloudサーバーレス](https:/
     -   ユーザーには次の権限があります:
 
         -   `AWSCertificateManagerFullAccess` : [AWS シークレットマネージャー](https://aws.amazon.com/secrets-manager/)読み取りと書き込みに使用されます。
-        -   `AWSCloudFormationFullAccess` : SAM CLI は[AWS クラウドフォーメーション](https://aws.amazon.com/cloudformation/)を使用して AWS リソースを宣言します。
+        -   `AWSCloudFormationFullAccess` : SAM CLI は[AWS クラウドフォーメーション](https://aws.amazon.com/cloudformation/)使用して AWS リソースを宣言します。
         -   `AmazonS3FullAccess` : AWS CloudFormation は[アマゾンS3](https://aws.amazon.com/s3/?nc2=h_ql_prod_fs_s3)使用して公開します。
         -   `AWSLambda_FullAccess` : 現在、Amazon AppFlow の新しいコネクタを実装するには[AWS ラムダ](https://aws.amazon.com/lambda/?nc2=h_ql_prod_fs_lbd)唯一の方法です。
         -   `IAMFullAccess` : SAM CLI はコネクタ用に`ConnectorFunctionRole`作成する必要があります。
@@ -40,7 +40,7 @@ TiDB クラスターがない場合は、 [TiDB Cloudサーバーレス](https:/
 
 ### コードを複製する {#clone-the-code}
 
-TiDB と Amazon AppFlow の[統合サンプルコードリポジトリ](https://github.com/pingcap-inc/tidb-appflow-integration)をクローンします。
+TiDB と Amazon AppFlow の[統合サンプルコードリポジトリ](https://github.com/pingcap-inc/tidb-appflow-integration)クローンします。
 
 ```bash
 git clone https://github.com/pingcap-inc/tidb-appflow-integration
@@ -70,7 +70,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
     > **注記：**
     >
     > -   `--guided`オプションでは、プロンプトを使用してデプロイメントをガイドします。入力内容は構成ファイル (デフォルトでは`samconfig.toml` ) に保存されます。
-    > -   `stack_name` 、デプロイする AWS Lambda の名前を指定します。
+    > -   `stack_name`デプロイする AWS Lambda の名前を指定します。
     > -   このガイドでは、 TiDB Cloud Serverless のクラウドプロバイダーとして AWS を使用します。Amazon S3 をソースまたは宛先として使用するには、AWS Lambda の`region`を Amazon S3 と同じに設定する必要があります。
     > -   すでに`sam deploy --guided`実行している場合は、代わりに`sam deploy`実行するだけで、SAM CLI は構成ファイル`samconfig.toml`を使用して対話を簡素化します。
 
@@ -88,15 +88,15 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
     ![register connector](https://download.pingcap.com/images/docs/develop/aws-appflow-step-register-connector.png)
 
-2.  **「新しいコネクタの登録」**ダイアログで、アップロードした Lambda 関数を選択し、コネクタ名を使用してコネクタ ラベルを指定します。
+2.  **「新しいコネクタの登録」ダイアログ**で、アップロードした Lambda 関数を選択し、コネクタ名を使用してコネクタ ラベルを指定します。
 
     ![register connector dialog](https://download.pingcap.com/images/docs/develop/aws-appflow-step-register-connector-dialog.png)
 
-3.  **「登録」を**クリックします。すると、TiDB コネクタが正常に登録されます。
+3.  **「登録」**をクリックします。すると、TiDB コネクタが正常に登録されます。
 
 ## ステップ2. フローを作成する {#step-2-create-a-flow}
 
-[Amazon AppFlow &gt; フロー](https://console.aws.amazon.com/appflow/home#/list)に移動し、 **「フローの作成」を**クリックします。
+[Amazon AppFlow &gt; フロー](https://console.aws.amazon.com/appflow/home#/list)に移動して、 **「フローの作成」**をクリックします。
 
 ![create flow](https://download.pingcap.com/images/docs/develop/aws-appflow-step-create-flow.png)
 
@@ -118,7 +118,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
     ![salesforce data](https://download.pingcap.com/images/docs/develop/aws-appflow-step-salesforce-data.png)
 
-2.  **[接続]を**クリックします。
+2.  **[接続]**をクリックします。
 
     1.  **「Salesforce に接続」**ダイアログで、この接続の名前を指定し、 **「続行」**をクリックします。
 
@@ -132,7 +132,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
     >
     > 会社ですでに Salesforce の Professional Edition を使用している場合、REST API はデフォルトでは有効になっていません。REST API を使用するには、新しい Developer Edition を登録する必要がある場合があります。詳細については、 [Salesforce フォーラムトピック](https://developer.salesforce.com/forums/?id=906F0000000D9Y2IAK)を参照してください。
 
-3.  **宛先の詳細**領域で、宛先として**TiDB-Connector**を選択します。**接続**ボタンが表示されます。
+3.  **宛先の詳細**領域で、宛先として**TiDB-Connector を**選択します。**接続**ボタンが表示されます。
 
     ![tidb dest](https://download.pingcap.com/images/docs/develop/aws-appflow-step-tidb-dest.png)
 
@@ -152,7 +152,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
 5.  `sf_account`テーブルが作成されたら、 **[接続]**をクリックします。接続ダイアログが表示されます。
 
-6.  **「TiDB コネクタに接続」**ダイアログで、TiDB クラスターの接続プロパティを入力します。TiDB TiDB Cloud Serverless クラスターを使用する場合は、 **TLS**オプションを`Yes`に設定して、TiDB コネクタが TLS 接続を使用できるようにする必要があります。次に、 **「接続」を**クリックします。
+6.  **[TiDB コネクタに接続]**ダイアログで、TiDB クラスターの接続プロパティを入力します。TiDB TiDB Cloud Serverless クラスターを使用する場合は、 **TLS**オプションを`Yes`に設定して、TiDB コネクタが TLS 接続を使用できるようにする必要があります。次に、 **[接続]**をクリックします。
 
     ![tidb connection message](https://download.pingcap.com/images/docs/develop/aws-appflow-step-tidb-connection-message.png)
 
@@ -160,7 +160,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
     ![database](https://download.pingcap.com/images/docs/develop/aws-appflow-step-database.png)
 
-    次のスクリーンショットは、Salesforce**アカウント**オブジェクトから TiDB の`sf_account`テーブルにデータを転送するための構成を示しています。
+    次のスクリーンショットは、Salesforce**アカウント**オブジェクトから TiDB の`sf_account`のテーブルにデータを転送するための構成を示しています。
 
     ![complete flow](https://download.pingcap.com/images/docs/develop/aws-appflow-step-complete-flow.png)
 
@@ -170,7 +170,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
 ### マッピングルールを設定する {#set-mapping-rules}
 
-Salesforce の**Account**オブジェクトのフィールドを TiDB の`sf_account`テーブルにマップし、 **[次へ]**をクリックします。
+Salesforce の**Account**オブジェクトのフィールドを TiDB の`sf_account`のテーブルにマップし、 **[次へ]**をクリックします。
 
 -   `sf_account`テーブルが TiDB に新しく作成され、空です。
 
@@ -182,7 +182,7 @@ Salesforce の**Account**オブジェクトのフィールドを TiDB の`sf_acc
     +----+------+------+---------------+--------+----------+
     ```
 
--   マッピングルールを設定するには、左側でソースフィールド名を選択し、右側で宛先フィールド名を選択します。次に、 **「フィールドのマップ」**をクリックすると、ルールが設定されます。
+-   マッピングルールを設定するには、左側でソースフィールド名を選択し、右側で宛先フィールド名を選択します。次に、 **「フィールドのマッピング」**をクリックすると、ルールが設定されます。
 
     ![add mapping rule](https://download.pingcap.com/images/docs/develop/aws-appflow-step-add-mapping-rule.png)
 
@@ -207,13 +207,13 @@ Salesforce の**Account**オブジェクトのフィールドを TiDB の`sf_acc
 
 ### フローを確認して作成する {#confirm-and-create-the-flow}
 
-作成するフローの情報を確認します。問題がなければ、 **「フローを作成」を**クリックします。
+作成するフローの情報を確認します。問題がなければ、 **「フローを作成」**をクリックします。
 
 ![review](https://download.pingcap.com/images/docs/develop/aws-appflow-step-review.png)
 
 ## ステップ3. フローを実行する {#step-3-run-the-flow}
 
-新しく作成されたフローのページで、右上隅の**「フロー実行」を**クリックします。
+新しく作成されたフローのページで、右上隅の**「フロー実行」**をクリックします。
 
 ![run flow](https://download.pingcap.com/images/docs/develop/aws-appflow-step-run-flow.png)
 
@@ -248,7 +248,7 @@ test> SELECT * FROM sf_account;
 
 -   何か問題が発生した場合は、AWS マネジメントコンソールの[クラウドウォッチ](https://console.aws.amazon.com/cloudwatch/home)ページに移動してログを取得できます。
 -   このドキュメントの手順は[Amazon AppFlow カスタムコネクタ SDK を使用してカスタムコネクタを構築する](https://aws.amazon.com/blogs/compute/building-custom-connectors-using-the-amazon-appflow-custom-connector-sdk/)に基づいています。
--   [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)本番環境ではあり**ません**。
+-   [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)は本番環境では**ありません**。
 -   長くなりすぎないように、このドキュメントの例では`Insert`戦略のみを示していますが、 `Update`と`Upsert`戦略もテストされており、使用できます。
 
 ## ヘルプが必要ですか? {#need-help}

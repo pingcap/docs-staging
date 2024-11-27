@@ -1,13 +1,13 @@
 ---
 title: REVOKE <privileges> | TiDB SQL Statement Reference
-summary: このステートメントは、既存のユーザーから権限を削除します。実行には GRANT OPTION 権限と取り消すすべての権限が必要です。MySQLの互換性では、TiDBでは即座に反映されますが、MySQLでは後続の接続でのみ有効になります。
+summary: TiDB データベースに対する REVOKE <権限> の使用法の概要。
 ---
 
 # <code>REVOKE &#x3C;privileges></code> {#code-revoke-x3c-privileges-code}
 
 このステートメントは、既存のユーザーから権限を削除します。このステートメントを実行するには、 `GRANT OPTION`権限と取り消すすべての権限が必要です。
 
-## あらすじ {#synopsis}
+## 概要 {#synopsis}
 
 ```ebnf+diagram
 GrantStmt ::=
@@ -96,14 +96,14 @@ mysql> SHOW GRANTS FOR 'newuser';
 ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%'
 ```
 
-## MySQLの互換性 {#mysql-compatibility}
+## MySQL 互換性 {#mysql-compatibility}
 
--   TiDB では、 `REVOKE <privileges>`ステートメントが正常に実行されると、実行結果が現在の接続に即座に反映されます。一方、 [MySQL では、一部の権限については、実行結果は後続の接続でのみ有効になります。](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html) 。詳細は[TiDB #39356](https://github.com/pingcap/tidb/issues/39356)を参照してください。
+-   TiDB では、 `REVOKE <privileges>`ステートメントが正常に実行されると、実行結果が現在の接続に直ちに反映されます。一方、 [MySQLでは、一部の権限では、実行結果は後続の接続にのみ有効になります。](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)については、詳細については[ティDB #39356](https://github.com/pingcap/tidb/issues/39356)を参照してください。
 
-## こちらも参照 {#see-also}
+## 参照 {#see-also}
 
 -   [`GRANT &#x3C;privileges>`](/sql-statements/sql-statement-grant-privileges.md)
--   [助成金を表示する](/sql-statements/sql-statement-show-grants.md)
+-   [ショーグラント](/sql-statements/sql-statement-show-grants.md)
 
 <CustomContent platform="tidb">
 

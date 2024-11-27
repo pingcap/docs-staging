@@ -1,6 +1,6 @@
 ---
 title: SHOW DATABASES | TiDB SQL Statement Reference
-summary: An overview of the usage of SHOW DATABASES for the TiDB database.
+summary: TiDB データベースに対する SHOW DATABASES の使用法の概要。
 ---
 
 # データベースを表示 {#show-databases}

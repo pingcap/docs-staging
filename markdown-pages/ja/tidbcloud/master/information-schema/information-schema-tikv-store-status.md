@@ -64,5 +64,5 @@ DESC TIKV_STORE_STATUS;
 -   `REGION_SCORE` : ストアのリージョンスコア。
 -   `REGION_SIZE` : ストア上のすべてのリージョンのおおよその合計データ サイズ (MB)。
 -   `START_TS` : ストアが開始されたときのタイムスタンプ。
--   `LAST_HEARTBEAT_TS` : ストアから送信された最後のハートビートビートのタイムスタンプ。
+-   `LAST_HEARTBEAT_TS` : ストアから送信された最後のハートビートのタイムスタンプ。
 -   `UPTIME` : ストアが開始してからの合計時間。

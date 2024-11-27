@@ -1,6 +1,6 @@
 ---
 title: Explain Statements Using Index Merge
-summary: Learn about the execution plan information returned by the `EXPLAIN` statement in TiDB.
+summary: TiDB の `EXPLAIN` ステートメントによって返される実行プラン情報について学習します。
 ---
 
 # インデックスマージを使用したステートメントの説明 {#explain-statements-using-index-merge}
@@ -84,15 +84,15 @@ EXPLAIN SELECT /*+ USE_INDEX_MERGE(t, idx_a, idx_b, idx_c) */ * FROM t WHERE a >
 -   3 つのフィルタ条件のそれぞれについて、それぞれの選択性は非常に高いため、単一のインデックスを使用する`IndexLookUp`の実行効率は理想的ではありません。
 -   3 つのフィルター条件の全体的な選択性は低いです。
 
-交差型インデックス マージを使用してテーブルにアクセスする場合、オプティマイザはテーブルで複数のインデックスを使用することを選択し、各インデックスによって返された結果をマージして、前の例の出力の後半の`IndexMerge`の実行プランを生成します`IndexMerge_9`演算子の`operator info`の`type: intersection`情報は、この演算子が交差型インデックス マージであることを示しています。実行プランのその他の部分は、前のユニオン型インデックス マージの例と同様です。
+交差型インデックス マージを使用してテーブルにアクセスする場合、オプティマイザはテーブルで複数のインデックスを使用することを選択し、各インデックスによって返された結果をマージして、前の例の出力の`IndexMerge`後ろの実行プランを生成します`IndexMerge_9`の`operator info`演算子の`type: intersection`情報は、この演算子が交差型インデックス マージであることを示しています。実行プランのその他の部分は、前のユニオン型インデックス マージの例と同様です。
 
 > **注記：**
 >
 > -   インデックスマージ機能は、v5.4.0 からデフォルトで有効になっています。つまり、 [`tidb_enable_index_merge`](/system-variables.md#tidb_enable_index_merge-new-in-v40)は`ON`です。
 >
-> -   SQL ヒント[`USE_INDEX_MERGE`](/optimizer-hints.md#use_index_merget1_name-idx1_name--idx2_name-)を使用すると、 `tidb_enable_index_merge`の設定に関係なく、オプティマイザにインデックス マージを適用させることができます。フィルタリング条件にプッシュダウンできない式が含まれている場合にインデックス マージを有効にするには、SQL ヒント[`USE_INDEX_MERGE`](/optimizer-hints.md#use_index_merget1_name-idx1_name--idx2_name-)を使用する必要があります。
+> -   SQL ヒント[`USE_INDEX_MERGE`](/optimizer-hints.md#use_index_merget1_name-idx1_name--idx2_name-)を使用すると、 `tidb_enable_index_merge`の設定に関係なく、オプティマイザにインデックス マージを強制的に適用させることができます。フィルタリング条件にプッシュダウンできない式が含まれている場合にインデックス マージを有効にするには、SQL ヒント[`USE_INDEX_MERGE`](/optimizer-hints.md#use_index_merget1_name-idx1_name--idx2_name-)を使用する必要があります。
 >
-> -   オプティマイザがクエリ プランに対して単一インデックス スキャン メソッド (フル テーブル スキャン以外) を選択できる場合、オプティマイザはインデックス マージを自動的に使用しません。オプティマイザがインデックス マージを使用するには、オプティマイザ ヒントを使用する必要があります。
+> -   オプティマイザがクエリ プランに単一インデックス スキャン メソッド (フル テーブル スキャン以外) を選択できる場合、オプティマイザはインデックス マージを自動的に使用しません。オプティマイザがインデックス マージを使用するには、オプティマイザ ヒントを使用する必要があります。v8.1.0 以降では、 [オプティマイザー修正コントロール 52869](/optimizer-fix-controls.md#52869-new-in-v810)設定することでこの制限を解除できます。この制限を解除すると、オプティマイザはより多くのクエリでインデックス マージを自動的に選択できるようになりますが、オプティマイザが最適な実行プランを無視する可能性があります。したがって、この制限を解除する前に、実際の使用ケースで十分なテストを実施して、パフォーマンスの低下が発生しないことを確認することをお勧めします。
 >
 > -   インデックスマージは現時点では[一時テーブル](/temporary-tables.md)ではサポートされていません。
 >

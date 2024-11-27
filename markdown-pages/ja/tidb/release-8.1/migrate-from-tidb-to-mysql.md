@@ -16,7 +16,7 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
 
 1.  TiDB クラスターをアップストリームにデプロイ。
 
-    TiUP Playground を使用して TiDB クラスターをデプロイ。詳細については、 [TiUPを使用してオンライン TiDBクラスタをデプロイおよび管理](/tiup/tiup-cluster.md)を参照してください。
+    TiUP Playground を使用して TiDB クラスターをデプロイ。詳細については、 [TiUP を使用してオンライン TiDBクラスタをデプロイおよび管理](/tiup/tiup-cluster.md)を参照してください。
 
     ```shell
     # Create a TiDB cluster
@@ -33,7 +33,7 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
         docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -p 3306:3306 -d mysql
         ```
 
-    -   本番環境では、 [MySQLのインストール](https://dev.mysql.com/doc/refman/8.0/en/installing.html)手順に従って MySQL インスタンスをデプロイできます。
+    -   本番環境では、 [MySQLのインストール](https://dev.mysql.com/doc/refman/8.0/en/installing.html)の手順に従って MySQL インスタンスをデプロイできます。
 
 3.  サービスのワークロードをシミュレートします。
 
@@ -56,7 +56,7 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
 
 1.  ガベージコレクション (GC) を無効にします。
 
-    増分移行中に新しく書き込まれたデータが削除されないようにするには、完全なデータをエクスポートする前に、アップストリーム クラスターの GC を無効にする必要があります。この方法では、履歴データは削除されません。TiDB v4.0.0 以降のバージョンでは、 Dumpling が[GC時間を自動的に延長する](/dumpling-overview.md#manually-set-the-tidb-gc-time)なる可能性があります。ただし、 Dumplingの終了後に GC プロセスが開始され、増分変更の移行が失敗する可能性があるため、GC を手動で無効にする必要があります。
+    増分移行中に新しく書き込まれたデータが削除されないようにするには、完全なデータをエクスポートする前に、アップストリーム クラスターの GC を無効にする必要があります。この方法では、履歴データは削除されません。TiDB v4.0.0 以降のバージョンでは、 Dumpling が[GCセーフポイントを自動的に調整してGCをブロックする](/dumpling-overview.md#manually-set-the-tidb-gc-time)なる可能性があります。ただし、 Dumpling の終了後に GC プロセスが開始され、増分変更の移行が失敗する可能性があるため、GC を手動で無効にする必要があります。
 
     GC を無効にするには、次のコマンドを実行します。
 
@@ -72,22 +72,22 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
     MySQL [test]> SELECT @@global.tidb_gc_enable;
     ```
 
-        +-------------------------+：
+        +-------------------------+
         | @@global.tidb_gc_enable |
         +-------------------------+
         |                       0 |
         +-------------------------+
         1 row in set (0.00 sec)
 
-2.  バックアップデータ。
+2.  データをバックアップします。
 
-    1.  Dumplingを使用して SQL 形式でデータをエクスポートします。
+    1.  Dumpling を使用して SQL 形式でデータをエクスポートします。
 
         ```shell
         tiup dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o ./dumpling_output -r 200000 -F256MiB
         ```
 
-    2.  データのエクスポートが完了したら、次のコマンドを実行してメタデータを確認します。メタデータの`Pos`エクスポート スナップショットの TSO であり、BackupTS として記録できます。
+    2.  データのエクスポートが完了したら、次のコマンドを実行してメタデータを確認します。メタデータの`Pos`はエクスポート スナップショットの TSO であり、BackupTS として記録できます。
 
         ```shell
         cat dumpling_output/metadata
@@ -102,7 +102,7 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
 
 3.  データを復元します。
 
-    MyLoader (オープンソース ツール) を使用して、ダウンストリーム MySQL インスタンスにデータをインポートします。MyLoader のインストール方法と使用方法の詳細については、 [マイダンプラー/マイローダー](https://github.com/mydumper/mydumper)を参照してください。MyLoader v0.10 以前のバージョンを使用する必要があることに注意してください。それ以降のバージョンでは、 Dumplingによってエクスポートされたメタデータ ファイルを処理できません。
+    MyLoader (オープンソースツール) を使用して、ダウンストリーム MySQL インスタンスにデータをインポートします。MyLoader のインストール方法と使用方法の詳細については、 [マイダンプラー/マイローダー](https://github.com/mydumper/mydumper)参照してください。MyLoader v0.10 以前のバージョンを使用する必要があることに注意してください。それ以降のバージョンでは、 Dumplingによってエクスポートされたメタデータ ファイルを処理できません。
 
     Dumplingによってエクスポートされた完全なデータを MySQL にインポートするには、次のコマンドを実行します。
 
@@ -118,7 +118,7 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
     sync_diff_inspector -C ./config.yaml
     ```
 
-    sync-diff-inspector の設定方法の詳細については、 [コンフィグレーションファイルの説明](/sync-diff-inspector/sync-diff-inspector-overview.md#configuration-file-description)参照してください。このドキュメントでは、設定は次のとおりです。
+    sync-diff-inspector の設定方法の詳細については、 [コンフィグレーションファイルの説明](/sync-diff-inspector/sync-diff-inspector-overview.md#configuration-file-description)参照してください。このドキュメントでは、設定は次のようになります。
 
     ```toml
     # Diff Configuration.
@@ -145,7 +145,7 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
 
 ## ステップ3. 増分データを移行する {#step-3-migrate-incremental-data}
 
-1.  TiCDC をデプロイ。
+1.  TiCDCをデプロイ。
 
     完全なデータ移行が完了したら、増分データをレプリケートするための TiCDC クラスターをデプロイして構成します。本番環境では、 [TiCDC をデプロイ](/ticdc/deploy-ticdc.md)手順に従って TiCDC をデプロイします。このドキュメントでは、テスト クラスターの作成時に TiCDC ノードが起動されています。したがって、TiCDC をデプロイする手順をスキップして、次の手順に進み、変更フィードを作成できます。
 

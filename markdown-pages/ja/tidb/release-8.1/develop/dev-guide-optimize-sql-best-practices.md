@@ -78,7 +78,7 @@ public void batchInsert(Connection connection) throws SQLException {
 </div>
 </SimpleTab>
 
-`PREPARE`ステートメントを繰り返し実行しないでください。繰り返し実行すると、実行効率が向上しません。
+`PREPARE`文を繰り返し実行しないでください。繰り返し実行すると、実行効率が向上しません。
 
 ### 必要な列のみをクエリする {#only-query-the-columns-you-need}
 
@@ -102,7 +102,7 @@ SELECT title, price FROM books WHERE title = 'Marian Yost';
 
 大量のデータを更新する場合は[一括更新](/develop/dev-guide-update-data.md#bulk-update)使用することをお勧めします。
 
-### 完全なテーブルデータには<code>DELETE</code>ではなく<code>TRUNCATE</code>使用します {#use-code-truncate-code-instead-of-code-delete-code-for-full-table-data}
+### テーブルデータ全体に対しては<code>DELETE</code>ではなく<code>TRUNCATE</code>使用します。 {#use-code-truncate-code-instead-of-code-delete-code-for-full-table-data}
 
 テーブルからすべてのデータを削除する必要がある場合は、 `TRUNCATE`ステートメントを使用することをお勧めします。
 
@@ -142,7 +142,7 @@ SET @@global.tidb_ddl_reorg_worker_cnt = 16;
 SET @@global.tidb_ddl_reorg_batch_size = 4096;
 ```
 
-インデックス追加操作のターゲット列が頻繁に更新される場合 ( `UPDATE` 、 `INSERT` 、 `DELETE`を含む)、上記の変数を増やすと書き込み競合が増加し、オンライン ワークロードに影響します。したがって、再試行が頻繁に行われるため、インデックス追加操作の完了に時間がかかる場合があります。この場合、オンライン アプリケーションとの書き込み競合を回避するために、上記の変数の値を減らすことをお勧めします。
+インデックス追加操作のターゲット列が頻繁に更新される場合 ( `UPDATE` 、 `INSERT` 、 `DELETE`を含む)、上記の変数を増やすと書き込み競合が増え、オンライン ワークロードに影響します。したがって、再試行が頻繁に行われるため、インデックス追加操作の完了に時間がかかる場合があります。この場合、オンライン アプリケーションとの書き込み競合を回避するために、上記の変数の値を減らすことをお勧めします。
 
 ```sql
 SET @@global.tidb_ddl_reorg_worker_cnt = 4;
@@ -188,5 +188,19 @@ SET @@global.tidb_ddl_reorg_batch_size = 128;
 <CustomContent platform="tidb-cloud">
 
 -   [高度な同時書き込みのベストプラクティス](https://docs.pingcap.com/tidb/stable/high-concurrency-best-practices)
+
+</CustomContent>
+
+## ヘルプが必要ですか? {#need-help}
+
+<CustomContent platform="tidb">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](/support.md)について質問します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[TiDB コミュニティ](https://ask.pingcap.com/) 、または[サポートチケットを作成する](https://support.pingcap.com/)について質問します。
 
 </CustomContent>

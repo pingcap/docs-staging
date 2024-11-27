@@ -10,7 +10,7 @@ summary: TiDB データベースの BACKUP の使用法の概要。
 > **警告：**
 >
 > -   この機能は実験的ものです。本番環境での使用は推奨されません。この機能は予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)報告できます。
-> -   この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> -   この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
 
 `BACKUP`ステートメントは[BRツール](https://docs.pingcap.com/tidb/stable/backup-and-restore-overview)と同じエンジンを使用しますが、バックアップ プロセスは別のBRツールではなく TiDB 自体によって実行されます。BR のすべての利点と警告は、このステートメントにも適用されます。
 
@@ -18,7 +18,7 @@ summary: TiDB データベースの BACKUP の使用法の概要。
 
 `BACKUP`ステートメントは、バックアップ タスク全体が完了するか、失敗するか、キャンセルされるまでブロックされます。 `BACKUP`を実行するには、長時間持続する接続を準備する必要があります。 タスクは、 [`KILL TIDB QUERY`](/sql-statements/sql-statement-kill.md)ステートメントを使用してキャンセルできます。
 
-一度に実行できるタスク`BACKUP`と[`RESTORE`](/sql-statements/sql-statement-restore.md)は 1 つだけです。同じ TiDBサーバーで`BACKUP`または`RESTORE`ステートメントがすでに実行されている場合、新しい`BACKUP`実行は、以前のすべてのタスクが完了するまで待機します。
+一度に実行できるのは`BACKUP`と[`RESTORE`](/sql-statements/sql-statement-restore.md)タスク 1 つだけです。同じ TiDBサーバーで`BACKUP`または`RESTORE`ステートメントがすでに実行されている場合、新しい`BACKUP`実行は、以前のすべてのタスクが完了するまで待機します。
 
 `BACKUP` 「tikv」storageエンジンでのみ使用できます。「unistore」エンジンで`BACKUP`を使用すると失敗します。
 
@@ -125,9 +125,11 @@ BACKUP DATABASE `test` TO 's3://example-bucket-2020/backup-05/'
 
 `RATE_LIMIT`使用すると、TiKV ノードあたりの平均アップロード速度が制限され、ネットワーク帯域幅が削減されます。
 
-デフォルトでは、すべての TiKV ノードは 4 つのバックアップ スレッドを実行します。この値は`CONCURRENCY`オプションで調整できます。
+バックアップが完了する前に、 `BACKUP`​​クラスター上のデータに対してチェックサムを実行し、正確性を検証します。この検証が不要であると確信している場合は、 `CHECKSUM`パラメータを`FALSE`に設定してチェックを無効にすることができます。
 
-バックアップが完了する前に、 `BACKUP`クラスター上のデータに対してチェックサムを実行し、正確性を検証します。この手順は、不要であることが確実な場合は、 `CHECKSUM`オプションで無効にできます。
+テーブルとインデックスのバックアップのためにBRが実行できる同時タスクの数を指定するには、 `CONCURRENCY`パラメータを使用します。このパラメータはBR内のスレッド プール サイズを制御し、バックアップ操作のパフォーマンスと効率を最適化します。
+
+1 つのタスクは、バックアップ スキーマに従って、1 つのテーブル範囲または 1 つのインデックス範囲を表します。1 つのインデックスを持つ 1 つのテーブルの場合、このテーブルをバックアップするために 2 つのタスクが使用されます。デフォルト値`CONCURRENCY`は`4`です。多数のテーブルまたはインデックスをバックアップする必要がある場合は、値を増やします。
 
 ```sql
 BACKUP DATABASE `test` TO 's3://example-bucket-2020/backup-06/'
