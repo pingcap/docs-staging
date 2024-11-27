@@ -9,12 +9,16 @@ The `SHOW PROFILES` statement currently only returns an empty result.
 
 ## Synopsis
 
-**ShowStmt:**
+```ebnf+diagram
+ShowProfilesStmt ::=
+    "SHOW" "PROFILES" ShowLikeOrWhere?
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+ShowLikeOrWhere ::=
+    "LIKE" SimpleExpr
+|   "WHERE" Expression
+```
 
 ## Examples
-
 
 ```sql
 SHOW PROFILES;
@@ -27,3 +31,5 @@ Empty set (0.00 sec)
 ## MySQL compatibility
 
 This statement is included only for compatibility with MySQL. Executing `SHOW PROFILES` always returns an empty result.
+
+As an alternative, TiDB provides [statement summary tables](/statement-summary-tables.md) to help understand SQL performance issues.

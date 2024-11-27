@@ -9,84 +9,48 @@ The `SELECT` statement is used to read data from TiDB.
 
 ## Synopsis
 
-**SelectStmt:**
-
-![SelectStmt](https://download.pingcap.com/images/docs/sqlgram/SelectStmt.png)
-
-**FromDual:**
-
-![FromDual](https://download.pingcap.com/images/docs/sqlgram/FromDual.png)
-
-**SelectStmtOpts:**
-
-![SelectStmtOpts](https://download.pingcap.com/images/docs/sqlgram/SelectStmtOpts.png)
-
-**SelectStmtFieldList:**
-
-![SelectStmtFieldList](https://download.pingcap.com/images/docs/sqlgram/SelectStmtFieldList.png)
-
-**TableRefsClause:**
-
 ```ebnf+diagram
+SelectStmt ::=
+    ( SelectStmtBasic | SelectStmtFromDualTable | SelectStmtFromTable )
+    OrderBy? SelectStmtLimit? SelectLockOpt? SelectStmtIntoOption
+
+SelectStmtBasic ::=
+    "SELECT" SelectStmtOpts Field ("," Field)* ( "HAVING" Expression)?
+
+SelectStmtFromDualTable ::=
+    "SELECT" SelectStmtOpts Field ("," Field)* "FROM" "DUAL" WhereClause?
+
+SelectStmtFromTable ::=
+    "SELECT" SelectStmtOpts Field ("," Field)* "FROM" TableRefsClause
+    WhereClause? GroupByClause? ( "HAVING" Expression)? WindowClause?
+
+SelectStmtOpts ::=
+    TableOptimizerHints DefaultFalseDistictOpt PriorityOpt SelectStmtSQLSmallResult
+    SelectStmtSQLBigResult SelectStmtSQLBufferResult SelectStmtSQLCache SelectStmtCalcFoundRows
+    SelectStmtStraightJoin
+
 TableRefsClause ::=
     TableRef AsOfClause? ( ',' TableRef AsOfClause? )*
 
 AsOfClause ::=
     'AS' 'OF' 'TIMESTAMP' Expression
-```
 
-**WhereClauseOptional:**
+SelectStmtLimit ::=
+    ("LIMIT" LimitOption ( ("," | "OFFSET") LimitOption )?
+| "FETCH" ("FIRST" | "NEXT") LimitOption? ("ROW" | "ROWS") "ONLY" )
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
-
-**SelectStmtGroup:**
-
-![SelectStmtGroup](https://download.pingcap.com/images/docs/sqlgram/SelectStmtGroup.png)
-
-**HavingClause:**
-
-![HavingClause](https://download.pingcap.com/images/docs/sqlgram/HavingClause.png)
-
-**OrderByOptional:**
-
-![OrderByOptional](https://download.pingcap.com/images/docs/sqlgram/OrderByOptional.png)
-
-**SelectStmtLimit:**
-
-![SelectStmtLimit](https://download.pingcap.com/images/docs/sqlgram/SelectStmtLimit.png)
-
-**FirstOrNext:**
-
-![FirstOrNext](https://download.pingcap.com/images/docs/sqlgram/FirstOrNext.png)
-
-**FetchFirstOpt:**
-
-![FetchFirstOpt](https://download.pingcap.com/images/docs/sqlgram/FetchFirstOpt.png)
-
-**RowOrRows:**
-
-![RowOrRows](https://download.pingcap.com/images/docs/sqlgram/RowOrRows.png)
-
-**SelectLockOpt:**
-
-```ebnf+diagram
 SelectLockOpt ::= 
-    ( ( 'FOR' 'UPDATE' ( 'OF' TableList )? 'NOWAIT'? )
-|   ( 'LOCK' 'IN' 'SHARE' 'MODE' ) )?
+    ( 'FOR' 'UPDATE' ( 'OF' TableList )? 'NOWAIT'?
+|   'LOCK' 'IN' 'SHARE' 'MODE' )
 
 TableList ::=
     TableName ( ',' TableName )*
-```
 
-**WindowClauseOptional**
+WindowClause ::=
+    "WINDOW" WindowDefinition ("," WindowDefinition)*
 
-![WindowClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WindowClauseOptional.png)
-
-**TableSampleOpt**
-
-```ebnf+diagram
 TableSampleOpt ::=
-    'TABLESAMPLE' 'REGIONS()'
+    'TABLESAMPLE' 'REGIONS' '(' ')'
 ```
 
 ## Description of the syntax elements

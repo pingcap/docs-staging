@@ -17,13 +17,11 @@ The user-defined variables are session-specific, which means a user variable def
 
 ## Set the user-defined variables
 
-You can use the `SET` statement to set a user-defined variable, and the syntax is `SET @var_name = expr [, @var_name = expr] ...;`. For example:
-
+You can use the [`SET` statement](/sql-statements/sql-statement-set-variable.md) to set a user-defined variable, and the syntax is `SET @var_name = expr [, @var_name = expr] ...;`. For example:
 
 ```sql
 SET @favorite_db = 'TiDB';
 ```
-
 
 ```sql
 SET @a = 'a', @b = 'b', @c = 'c';
@@ -31,27 +29,23 @@ SET @a = 'a', @b = 'b', @c = 'c';
 
 For the assignment operator, you can also use `:=`. For example:
 
-
 ```sql
 SET @favorite_db := 'TiDB';
 ```
 
 The content to the right of the assignment operator can be any valid expression. For example:
 
-
 ```sql
 SET @c = @a + @b;
 ```
 
-
 ```sql
-set @c = b'1000001' + b'1000001';
+SET @c = b'1000001' + b'1000001';
 ```
 
 ## Read the user-defined variables
 
 To read a user-defined variable, you can use the `SELECT` statement to query:
-
 
 ```sql
 SELECT @a1, @a2, @a3
@@ -83,13 +77,11 @@ Before the variable `@a4` is modified or the connection is closed, its value is 
 
 If a hexadecimal literal or binary literal is used when setting the user-defined variable, TiDB will treat it as a binary string. If you want to set it to a number, you can manually add the `CAST` conversion, or use the numeric operator in the expression:
 
-
 ```sql
 SET @v1 = b'1000001';
 SET @v2 = b'1000001'+0;
 SET @v3 = CAST(b'1000001' AS UNSIGNED);
 ```
-
 
 ```sql
 SELECT @v1, @v2, @v3;
@@ -105,7 +97,6 @@ SELECT @v1, @v2, @v3;
 
 If you refer to a user-defined variable that has not been initialized, it has a value of NULL and a type of string.
 
-
 ```sql
 SELECT @not_exist;
 ```
@@ -119,7 +110,6 @@ SELECT @not_exist;
 ```
 
 In addition to using the `SELECT` statement to read the user-defined variables, another common usage is the `PREPARE` statement. For example:
-
 
 ```sql
 SET @s = 'SELECT SQRT(POW(?,2) + POW(?,2)) AS hypotenuse';
@@ -139,7 +129,6 @@ EXECUTE stmt USING @a, @b;
 
 The contents of the user-defined variables are not recognized as identifiers in the SQL statements. For example:
 
-
 ```sql
 SELECT * from t;
 ```
@@ -151,7 +140,6 @@ SELECT * from t;
 | 1 |
 +---+
 ```
-
 
 ```sql
 SET @col = "`a`";

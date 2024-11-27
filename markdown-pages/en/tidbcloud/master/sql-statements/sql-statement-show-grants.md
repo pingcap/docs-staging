@@ -9,25 +9,17 @@ This statement shows a list of privileges associated with a user. As in MySQL, t
 
 ## Synopsis
 
-**ShowGrantsStmt:**
+```ebnf+diagram
+ShowGrantsStmt ::=
+    "SHOW" "GRANTS" ("FOR" Username ("USING" RolenameList)?)?
 
-![ShowGrantsStmt](https://download.pingcap.com/images/docs/sqlgram/ShowGrantsStmt.png)
+Username ::=
+    "CURRENT_USER" ( "(" ")" )?
+| Username ("@" Hostname)?
 
-**Username:**
-
-![Username](https://download.pingcap.com/images/docs/sqlgram/Username.png)
-
-**UsingRoles:**
-
-![UsingRoles](https://download.pingcap.com/images/docs/sqlgram/UsingRoles.png)
-
-**RolenameList:**
-
-![RolenameList](https://download.pingcap.com/images/docs/sqlgram/RolenameList.png)
-
-**Rolename:**
-
-![Rolename](https://download.pingcap.com/images/docs/sqlgram/Rolename.png)
+RolenameList ::=
+    Rolename ("@" Hostname)? ("," Rolename ("@" Hostname)? )*
+```
 
 ## Examples
 

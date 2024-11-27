@@ -7,11 +7,15 @@ summary: Learn about the TiDB system tables.
 
 The `mysql` schema contains TiDB system tables. The design is similar to the `mysql` schema in MySQL, where tables such as `mysql.user` can be edited directly. It also contains a number of tables which are extensions to MySQL.
 
+> **Note:**
+>
+> In most scenarios, it is not recommended to change the content of system tables directly using `INSERT`, `UPDATE`, or `DELETE`. Instead, use statements such as [`CREATE USER`](/sql-statements/sql-statement-create-user.md), [`ALTER USER`](/sql-statements/sql-statement-alter-user.md), [`DROP USER`](/sql-statements/sql-statement-drop-user.md), [`GRANT`](/sql-statements/sql-statement-grant-privileges.md), [`REVOKE`](/sql-statements/sql-statement-revoke-privileges.md), and [`SHOW CREATE USER`](/sql-statements/sql-statement-show-create-user.md) to manage users and privileges. If direct modification of system tables is unavoidable, use [`FLUSH PRIVILEGES`](/sql-statements/sql-statement-flush-privileges.md) to make the changes take effect.
+
 ## Grant system tables
 
 These system tables contain grant information about user accounts and their privileges:
 
-- `user`: user accounts, global privileges, and other non-privilege columns
+- [`user`](/mysql-schema/mysql-schema-user.md): user accounts, global privileges, and other non-privilege columns
 - `db`: database-level privileges
 - `tables_priv`: table-level privileges
 - `columns_priv`: column-level privileges
@@ -45,7 +49,6 @@ Currently, the `help_topic` is NULL.
 - `stats_fm_sketch`: the FMSketch distribution of the histogram of the statistics column
 - `analyze_options`: the default `analyze` options for each table
 - `column_stats_usage`: the usage of column statistics
-- `schema_index_usage`: the usage of indexes
 - `analyze_jobs`: the ongoing statistics collection tasks and the history task records within the last 7 days
 
 ## Execution plan-related system tables
@@ -96,6 +99,10 @@ Currently, the `help_topic` is NULL.
 * `tidb_global_task_history`: the metadata of the historical DXF tasks, including both succeeded and failed tasks
 * `tidb_background_subtask`: the metadata of the current DXF subtask
 * `tidb_background_subtask_history`: the metadata of the historical DXF subtasks
+
+## System tables related to Resource Control
+
+* `request_unit_by_group`: the history records of consumed resource units (RUs) of all resource groups
 
 ## Miscellaneous system tables
 
