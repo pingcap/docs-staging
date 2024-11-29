@@ -17,7 +17,7 @@ TiDB バージョン: 5.4.2
 
 -   ティビ
 
-    -   可用性を向上させるために、不健全な TiKV ノードにリクエストを送信しないようにする[＃34906](https://github.com/pingcap/tidb/issues/34906)
+    -   可用性を向上させるために、不健全な TiKV ノードへのリクエストの送信を避ける[＃34906](https://github.com/pingcap/tidb/issues/34906)
 
 -   ティクヴ
 
@@ -35,7 +35,7 @@ TiDB バージョン: 5.4.2
 
         -   散布リージョンをバッチモードに最適化して、散布リージョンプロセスの安定性を向上させる[＃33618](https://github.com/pingcap/tidb/issues/33618)
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -50,7 +50,7 @@ TiDB バージョン: 5.4.2
     -   ロールバックされる非同期コミットトランザクションがアトミック性を満たさない可能性がある問題を修正[＃33641](https://github.com/pingcap/tidb/issues/33641)
     -   以前は、ネットワーク接続の問題が発生すると、TiDB は切断されたセッションによって保持されたリソースを正しく解放できないことがありました。この問題は修正され、開いているトランザクションをロールバックし、その他の関連リソースを解放できるようになりました[＃34722](https://github.com/pingcap/tidb/issues/34722)
     -   TiDBがCTE [＃33965](https://github.com/pingcap/tidb/issues/33965)のビューをクエリするときに`references invalid table`エラーが誤って報告される可能性がある問題を修正しました。
-    -   `fatal error: concurrent map read and map write`エラー[＃35340](https://github.com/pingcap/tidb/issues/35340)によって発生するpanic問題を修正
+    -   `fatal error: concurrent map read and map write`エラー[＃35340](https://github.com/pingcap/tidb/issues/35340)によるpanic問題を修正
 
 -   ティクヴ
 
@@ -59,11 +59,11 @@ TiDB バージョン: 5.4.2
     -   リージョンマージプロセス[＃12663](https://github.com/tikv/tikv/issues/12663)でソースピアがスナップショットによってログをキャッチアップするときに発生する可能性のあるpanic問題を修正しました。
     -   ピアが同時に分割され、破棄されたときに発生する可能性のあるpanic問題を修正しました[＃12825](https://github.com/tikv/tikv/issues/12825)
     -   PDクライアントがエラー[＃12345](https://github.com/tikv/tikv/issues/12345)に遭遇したときに発生するPDクライアントの頻繁な再接続の問題を修正
-    -   `DATETIME`値に小数点と`Z` [＃12739](https://github.com/tikv/tikv/issues/12739)が含まれている場合に発生する時間解析エラーの問題を修正しました。
+    -   `DATETIME`値に小数点が含まれ、 `Z` [＃12739](https://github.com/tikv/tikv/issues/12739)場合に発生する時間解析エラーの問題を修正しました。
     -   空の文字列の型変換を実行するときに TiKV がパニックになる問題を修正[＃12673](https://github.com/tikv/tikv/issues/12673)
     -   非同期コミットが有効な場合の悲観的トランザクションにおけるコミットレコードの重複の可能性を修正[＃12615](https://github.com/tikv/tikv/issues/12615)
     -   Follower Read [＃12478](https://github.com/tikv/tikv/issues/12478)使用時に TiKV が`invalid store ID 0`エラーを報告する問題を修正
-    -   ピアの破壊とリージョン[＃12368](https://github.com/tikv/tikv/issues/12368)のバッチ分割の競合によって発生する TiKVpanicの問題を修正しました。
+    -   ピアの破壊とリージョン[＃12368](https://github.com/tikv/tikv/issues/12368)バッチ分割の競合によって発生する TiKVpanicの問題を修正しました。
     -   tikv-ctl が間違った文字列一致のために誤った結果を返す問題を修正[＃12329](https://github.com/tikv/tikv/issues/12329)
     -   AUFS [＃12543](https://github.com/tikv/tikv/issues/12543)でTiKVを起動できない問題を修正
 
@@ -78,7 +78,7 @@ TiDB バージョン: 5.4.2
 
     -   状況によっては、クラスター化インデックスを持つテーブルの列を削除した後にTiFlash がクラッシュする問題を修正[＃5154](https://github.com/pingcap/tiflash/issues/5154)
     -   多数のINSERTおよびDELETE操作後に発生する可能性のあるデータの不整合を修正[＃4956](https://github.com/pingcap/tiflash/issues/4956)
-    -   コーナーケース[＃4512](https://github.com/pingcap/tiflash/issues/4512)での誤った 10 進数比較結果を修正
+    -   コーナーケース[＃4512](https://github.com/pingcap/tiflash/issues/4512)での誤った小数比較結果を修正
 
 -   ツール
 
@@ -98,10 +98,10 @@ TiDB バージョン: 5.4.2
         -   ファイル名の競合によりデータ損失が発生する可能性がある問題を修正[＃5486](https://github.com/pingcap/tiflow/issues/5486)
         -   リージョンリーダーが見つからず再試行が制限を超えた場合に発生するレプリケーション中断を修正[＃5230](https://github.com/pingcap/tiflow/issues/5230)
         -   MySQL Sink が間違ったチェックポイントを保存する可能性があるバグを修正しました[＃5107](https://github.com/pingcap/tiflow/issues/5107)
-        -   HTTPサーバー[＃5303](https://github.com/pingcap/tiflow/issues/5303)で goroutine リークを引き起こす可能性のあるバグを修正しました
+        -   HTTPサーバー[＃5303](https://github.com/pingcap/tiflow/issues/5303)で goroutine リークを引き起こす可能性のあるバグを修正
         -   メタリージョンの変更によりレイテンシーが増加する可能性がある問題を修正[＃4756](https://github.com/pingcap/tiflow/issues/4756) [＃4762](https://github.com/pingcap/tiflow/issues/4762)
 
     -   TiDB データ移行 (DM)
 
-        -   タスクが自動的に再開された後にDMがより多くのディスク領域を占有する問題を修正[＃5344](https://github.com/pingcap/tiflow/issues/5344)
-        -   `case-sensitive: true`が設定されていない場合、大文字テーブルが複製できない問題を修正[＃5255](https://github.com/pingcap/tiflow/issues/5255)
+        -   タスクが自動的に再開された後に DM がより多くのディスク領域を占有する問題を修正[＃5344](https://github.com/pingcap/tiflow/issues/5344)
+        -   `case-sensitive: true`が設定されていない場合、大文字テーブルを複製できない問題を修正[＃5255](https://github.com/pingcap/tiflow/issues/5255)

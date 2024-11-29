@@ -151,7 +151,7 @@ MySQL シャードを移行およびマージする場合、上流のシャー�
 
 #### アップストリームデータソースを選択して構成する {#choose-and-configure-the-upstream-data-source}
 
-DM は、フルデータ移行を実行する際にデータベース全体のフルデータをバックアップし、並列論理バックアップ方式を使用します。MySQL のバックアップ中は、グローバル読み取りロック[`FLUSH TABLES WITH READ LOCK`](https://dev.mysql.com/doc/refman/8.0/en/flush.html#flush-tables-with-read-lock)が追加されます。アップストリーム データベースの DML および DDL 操作は、短時間ブロックされます。そのため、アップストリームのバックアップ データベースを使用してフルデータ バックアップを実行し、データ ソースの GTID 機能を有効にすることを強くお勧めします ( `enable-gtid: true` )。これにより、アップストリームからの影響を回避し、アップストリームのマスター ノードに切り替えて、増分移行中のレイテンシーを削減できます。アップストリーム MySQL データ ソースの切り替え手順については、 [アップストリーム MySQL インスタンス間の DM ワーカー接続を切り替える](/dm/usage-scenario-master-slave-switch.md#switch-dm-worker-connection-via-virtual-ip)参照してください。
+DM は、フルデータ移行を実行する際にデータベース全体のフルデータをバックアップし、並列論理バックアップ方式を使用します。MySQL のバックアップ中は、グローバル読み取りロック[`FLUSH TABLES WITH READ LOCK`](https://dev.mysql.com/doc/refman/8.0/en/flush.html#flush-tables-with-read-lock)が追加されます。アップストリーム データベースの DML および DDL 操作は、短時間ブロックされます。そのため、アップストリームのバックアップ データベースを使用してフルデータ バックアップを実行し、データ ソースの GTID 機能を有効にすることを強くお勧めします ( `enable-gtid: true` )。このようにして、アップストリームからの影響を回避し、アップストリームのマスター ノードに切り替えて、増分移行中のレイテンシーを削減できます。アップストリーム MySQL データ ソースの切り替え手順については、 [アップストリーム MySQL インスタンス間の DM ワーカー接続を切り替える](/dm/usage-scenario-master-slave-switch.md#switch-dm-worker-connection-via-virtual-ip)参照してください。
 
 次の点に注意してください。
 

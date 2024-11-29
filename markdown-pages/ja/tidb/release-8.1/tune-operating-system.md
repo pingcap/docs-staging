@@ -18,7 +18,7 @@ summary: オペレーティング システムのパラメータを調整する�
 
 ### 60秒で {#in-60-seconds}
 
-[*60,000 ミリ秒での Linux パフォーマンス分析*](http://www.brendangregg.com/Articles/Netflix_Linux_Perf_Analysis_60s.pdf) 、著者 Brendan Gregg と Netflix パフォーマンス エンジニアリング チームによって公開されています。使用されているすべてのツールは、Linux の公式リリースから入手できます。次のリスト項目の出力を分析して、最も一般的なパフォーマンスの問題をトラブルシューティングできます。
+[*60,000 ミリ秒での Linux パフォーマンス分析*](http://www.brendangregg.com/Articles/Netflix_Linux_Perf_Analysis_60s.pdf)は、著者 Brendan Gregg と Netflix パフォーマンス エンジニアリング チームによって公開されています。使用されているすべてのツールは、Linux の公式リリースから入手できます。次のリスト項目の出力を分析して、最も一般的なパフォーマンスの問題をトラブルシューティングできます。
 
 -   `uptime`
 -   `dmesg | tail`
@@ -35,13 +35,13 @@ summary: オペレーティング システムのパラメータを調整する�
 
 ### パフォーマンス {#perf}
 
-perf は Linux カーネルが提供する重要なパフォーマンス解析ツールであり、ハードウェアレベル (CPU/PMU、パフォーマンス監視ユニット) の機能とソフトウェア機能 (ソフトウェア カウンター、トレース ポイント) をカバーしています。詳細な使用方法については[パフォーマンスの例](http://www.brendangregg.com/perf.html#Background)を参照してください。
+perf は Linux カーネルが提供する重要なパフォーマンス解析ツールであり、ハードウェアレベル (CPU/PMU、パフォーマンス監視ユニット) の機能とソフトウェア機能 (ソフトウェア カウンター、トレース ポイント) をカバーしています。詳細な使用方法については[パフォーマンスの例](http://www.brendangregg.com/perf.html#Background)参照してください。
 
 ### BCC/bpftrace {#bcc-bpftrace}
 
-CentOS 7.6 以降、Linux カーネルは Berkeley Packet Filter (BPF) をサポートしています。したがって、 [60秒で](#in-60-seconds)の結果に基づいて詳細な分析を行うための適切なツールを選択できます。 perf/ftrace と比較すると、BPF はプログラム可能でパフォーマンス オーバーヘッドが少なくなっています。 kprobe と比較すると、BPF はセキュリティが高く、本番環境に適しています。 BCC ツールキットの詳細な使用方法については、 [BPF コンパイラ コレクション (BCC)](https://github.com/iovisor/bcc/blob/master/README.md)を参照してください。
+CentOS 7.6 以降、Linux カーネルは Berkeley Packet Filter (BPF) をサポートしています。したがって、 [60秒で](#in-60-seconds)の結果に基づいて詳細な分析を行うための適切なツールを選択できます。 perf/ftrace と比較すると、BPF はプログラム可能でパフォーマンス オーバーヘッドが少なくなっています。 kprobe と比較すると、BPF はセキュリティが高く、本番環境に適しています。 BCC ツールキットの詳細な使用方法については、 [BPF コンパイラ コレクション (BCC)](https://github.com/iovisor/bcc/blob/master/README.md)参照してください。
 
-## 性能調整 {#performance-tuning}
+## パフォーマンスチューニング {#performance-tuning}
 
 このセクションでは、分類されたカーネル サブシステムに基づいたパフォーマンス チューニングについて説明します。
 
@@ -54,17 +54,17 @@ cpufreq は、CPU 周波数を動的に調整するモジュールです。5 つ
 -   `irqbalance`サービスを通じて自動バランスを実現できます。
 -   手動バランス:
     -   割り込みのバランスをとる必要があるデバイスを特定します。CentOS 7.5 以降では、 `be2iscsi`ドライバーと NVMe 設定を使用するデバイスなど、特定のデバイスとそのドライバーに対して最適な割り込みアフィニティがシステムによって自動的に構成されます。このようなデバイスの割り込みアフィニティを手動で構成することはできなくなりました。
-    -   その他のデバイスについては、チップのマニュアルを参照して、これらのデバイスが割り込みの分散をサポートしているかどうかを確認してください。
+    -   その他のデバイスについては、チップのマニュアルをチェックして、これらのデバイスが割り込みの分散をサポートしているかどうかを確認してください。
         -   そうでない場合、これらのデバイスのすべての割り込みは同じ CPU にルーティングされ、変更できません。
-        -   該当する場合は、 `smp_affinity`マスクを計算し、対応する構成ファイルを設定します。詳細については、 [カーネルドキュメント](https://www.kernel.org/doc/Documentation/IRQ-affinity.txt)を参照してください。
+        -   該当する場合は、 `smp_affinity`マスクを計算し、対応する構成ファイルを設定します。詳細については、 [カーネルドキュメント](https://www.kernel.org/doc/Documentation/IRQ-affinity.txt)参照してください。
 
 ### NUMA CPU バインディング {#numa-cpu-binding}
 
-Non-Uniform Memory Access (NUMA) ノードをまたいでメモリへのアクセスをできるだけ避けるために、スレッドの CPU アフィニティを設定することで、スレッド/プロセスを特定の CPU コアにバインドすることができます。通常のプログラムの場合、CPU バインドには`numactl`コマンドを使用できます。詳細な使用方法については、Linux のマニュアル ページを参照してください。ネットワーク インターフェイス カード (NIC) 割り込みについては、 [ネットワークを調整する](#network-tuning)を参照してください。
+非均一メモリ アクセス (NUMA) ノードをまたいでメモリへのアクセスをできるだけ避けるために、スレッドの CPU アフィニティを設定することで、スレッド/プロセスを特定の CPU コアにバインドすることができます。通常のプログラムの場合、CPU バインドには`numactl`コマンドを使用できます。詳細な使用方法については、Linux のマニュアル ページを参照してください。ネットワーク インターフェイス カード (NIC) 割り込みについては、 [ネットワークを調整する](#network-tuning)参照してください。
 
 ### メモリ - 透過的巨大ページ (THP) {#memory-transparent-huge-page-thp}
 
-データベースは連続的なメモリアクセス パターンではなく、散在的なメモリ アクセス パターンを持つことが多いため、データベース アプリケーションに THP を使用することは推奨され**ません**。高レベルのメモリ断片化が深刻な場合は、THP ページが割り当てられるときにレイテンシーが高くなります。THP の直接圧縮を有効にすると、CPU 使用率が急上昇します。したがって、THP を無効にすることをお勧めします。
+データベースは連続的なメモリ アクセス パターンではなく、散在的なメモリアクセス パターンを持つことが多いため、データベース アプリケーションに THP を使用することは推奨され**ません**。高レベルのメモリ断片化が深刻な場合は、THP ページが割り当てられるときにレイテンシーが高くなります。THP の直接圧縮を有効にすると、CPU 使用率が急上昇します。したがって、THP を無効にすることをお勧めします。
 
 ```shell
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
@@ -110,7 +110,7 @@ echo noop > /sys/block/${SSD_DEV_NAME}/queue/scheduler
 
 -   NIC ハードウェア キャッシュ: ハードウェア レベルでパケット損失を正しく観察するには、 `ethtool -S ${NIC_DEV_NAME}`コマンドを使用して`drops`フィールドを観察します。パケット損失が発生すると、ハード/ソフト割り込みの処理速度が NIC の受信速度に追いつかない可能性があります。受信バッファ サイズが上限より小さい場合は、パケット損失を回避するために RX バッファを増やすこともできます。クエリ コマンドは`ethtool -g ${NIC_DEV_NAME}` 、変更コマンドは`ethtool -G ${NIC_DEV_NAME}`です。
 
--   ハードウェア割り込み: NIC が Receive-Side Scaling (RSS、マルチ NIC 受信とも呼ばれる) 機能をサポートしている場合は、 `/proc/interrupts` NIC 割り込みを確認します。割り込みが不均等な場合は、 [CPU - 周波数スケーリング](#cpufrequency-scaling) 、 [CPU—割り込みアフィニティ](#cpuinterrupt-affinity) 、および[NUMA CPU バインディング](#numa-cpu-binding)を参照してください。NIC が RSS をサポートしていない場合、または RSS の数が物理 CPU コアの数よりも大幅に少ない場合は、 Receive Packet Steering (RPS、RSS のソフトウェア実装と見なすことができます) と、RPS 拡張 Receive Flow Steering (RFS) を構成します。詳細な構成については、 [カーネルドキュメント](https://www.kernel.org/doc/Documentation/networking/scaling.txt)を参照してください。
+-   ハードウェア割り込み: NIC が Receive-Side Scaling (RSS、マルチ NIC 受信とも呼ばれる) 機能をサポートしている場合は、 `/proc/interrupts` NIC 割り込みを確認します。割り込みが不均等な場合は、 [CPU - 周波数スケーリング](#cpufrequency-scaling) 、 [CPU—割り込みアフィニティ](#cpuinterrupt-affinity) 、および[NUMA CPU バインディング](#numa-cpu-binding)を参照してください。NIC が RSS をサポートしていない場合、または RSS の数が物理 CPU コアの数よりも大幅に少ない場合は、 Receive Packet Steering (RPS、RSS のソフトウェア実装と見なすことができます) と、RPS 拡張 Receive Flow Steering (RFS) を構成します。詳細な構成については、 [カーネルドキュメント](https://www.kernel.org/doc/Documentation/networking/scaling.txt)参照してください。
 
 -   ソフトウェア割り込み: `/proc/net/softnet_stat`の監視を観察します。3 列目以外の他の列の値が増加している場合は、 `softirq`の`net.core.netdev_budget`または`net.core.dev_weight`の値を適切に調整して、CPU 時間を増やします。また、CPU 使用率をチェックして、どのタスクが頻繁に CPU を使用しているか、それらを最適化できるかどうかを判断する必要もあります。
 

@@ -36,5 +36,5 @@ summary: TiDB 2.1.6 および TiDB Ansible 2.1.6 は、2019 年 3 月 15 日に�
     -   RocksDB [＃4369](https://github.com/tikv/tikv/pull/4369)のメモリ使用量を制限する
     -   スケジュールが完了する前にリージョンが分散される問題を修正[＃4369](https://github.com/tikv/tikv/pull/4369)
     -   大規模なテーブルのデータとインデックスを個別にインポートすることで、バッチインポート時の時間消費を効果的に削減します[＃132](https://github.com/pingcap/tidb-lightning/pull/132)
-    -   CSV [＃111](https://github.com/pingcap/tidb-lightning/pull/111)サポート
+    -   CSV [＃111](https://github.com/pingcap/tidb-lightning/pull/111)をサポート
     -   スキーマ名に英数字以外の文字が含まれているためにインポートが失敗するエラーを修正[＃9547](https://github.com/pingcap/tidb/pull/9547)

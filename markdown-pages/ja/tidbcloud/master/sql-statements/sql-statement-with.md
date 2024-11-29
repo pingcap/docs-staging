@@ -81,7 +81,7 @@ WITH RECURSIVE cte(a) AS (SELECT 1 UNION SELECT a+1 FROM cte WHERE a < 5) SELECT
 ## 参照 {#see-also}
 
 -   [開発者ガイド: 共通テーブル式](/develop/dev-guide-use-common-table-expression.md)
--   [選択する](/sql-statements/sql-statement-select.md)
+-   [選択](/sql-statements/sql-statement-select.md)
 -   [入れる](/sql-statements/sql-statement-insert.md)
 -   [消去](/sql-statements/sql-statement-delete.md)
 -   [アップデート](/sql-statements/sql-statement-update.md)

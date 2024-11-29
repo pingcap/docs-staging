@@ -13,7 +13,7 @@ TiDB Control は TiDB のコマンドライン ツールであり、通常はデ
 
 ## TiDBコントロールを取得する {#get-tidb-control}
 
-TiDB Control は、 TiUPを使用してインストールするか、ソース コードからコンパイルすることで入手できます。
+TiDB Control は、 TiUP を使用してインストールするか、ソース コードからコンパイルすることで入手できます。
 
 > **注記：**
 >
@@ -31,10 +31,10 @@ TiUPをインストールした後、 `tiup ctl:v<CLUSTER_VERSION> tidb`コマ�
 
 ## 使い方の紹介 {#usage-introduction}
 
-このセクションでは、 `tidb-ctl`コマンド、サブコマンド、オプション、およびフラグの使用方法について説明します。
+このセクションでは、 `tidb-ctl`のコマンド、サブコマンド、オプション、およびフラグの使用方法について説明します。
 
--   コマンド: `-`または`--`ない文字
--   サブコマンド: コマンドの後に続く`-`または`--`ない文字
+-   コマンド: `-`または`--`のない文字
+-   サブコマンド: コマンドの後に続く`-`または`--`のない文字
 -   オプション: `-`または`--`の文字
 -   フラグ: コマンド/サブコマンドまたはオプションの直後に続く文字。コマンド/サブコマンドまたはオプションに値を渡す。
 
@@ -57,7 +57,7 @@ TiUPをインストールした後、 `tiup ctl:v<CLUSTER_VERSION> tidb`コマ�
 -   `tidb-ctl schema` : スキーマ情報を取得するために使用される
 -   `tidb-ctl table` : テーブル情報を取得するために使用
 
-### 助けを得ます {#get-help}
+### ヘルプを受ける {#get-help}
 
 使用情報を取得するには`tidb-ctl -h/--help`使用します。
 
@@ -68,7 +68,7 @@ TiDB コントロールは、複数のコマンド層で構成されています
 使用方法の詳細を取得するには、 `tidb-ctl schema -h`使用します。 `schema`コマンド自体には、 `in`と`tid` 2 つのサブコマンドがあります。
 
 -   `in`は、データベース名を通じてデータベース内のすべてのテーブルのテーブル スキーマを取得するために使用されます。
--   `tid`は、データベース全体で一意の`table_id`を使用してテーブル スキーマを取得するために使用されます。
+-   `tid` 、データベース全体で一意の`table_id`使用してテーブル スキーマを取得するために使用されます。
 
 ### グローバルオプション {#global-options}
 
@@ -84,7 +84,7 @@ TiDB コントロールは、複数のコマンド層で構成されています
 
 `--pdhost`と`--pdport`主に`etcd`サブコマンドで使用されます。たとえば、 `tidb-ctl etcd ddlinfo` 。アドレスとポートを指定しない場合は、次のデフォルト値が使用されます。
 
--   TiDB および PD のデフォルトのサービス アドレス: `127.0.0.1`サービス アドレスは IP アドレスである必要があります。
+-   TiDB および PD のデフォルトのサービス アドレス: `127.0.0.1` 。サービス アドレスは IP アドレスである必要があります。
 -   TiDB のデフォルトのサービス ポート: `10080` 。
 -   PD のデフォルトのサービス ポート: `2379` 。
 
@@ -136,13 +136,13 @@ tidb-ctl schema in <database name>
 
     (上記の出力も切り捨てられています。)
 
-    デフォルトの TiDB サービス アドレスとポートを使用しない場合は、 `--host`および`--port`オプションを使用して構成します。たとえば、 `tidb-ctl --host 172.16.55.88 --port 8898 schema in mysql -n db` 。
+    デフォルトの TiDB サービス アドレスとポートを使用しない場合は、 `--host`および`--port`オプションを使用して構成します。たとえば、 `tidb-ctl --host 172.16.55.88 --port 8898 schema in mysql -n db`です。
 
 #### <code>tid</code>サブコマンド {#the-code-tid-code-subcommand}
 
-`tid`は、データベース全体で一意の`table_id`を使用してテーブル スキーマを取得するために使用されます。4 `in`コマンドを使用して特定のスキーマのすべてのテーブル ID を取得し、 `tid`サブコマンドを使用して詳細なテーブル情報を取得できます。
+`tid` 、データベース全体で一意の`table_id`使用してテーブル スキーマを取得するために使用されます。4 `in`コマンドを使用して特定のスキーマのすべてのテーブル ID を取得し、 `tid`サブコマンドを使用して詳細なテーブル情報を取得できます。
 
-たとえば、テーブル ID `mysql.stat_meta`は`21`です。5 `tidb-ctl schema tid -i 21`使用すると、 `mysql.stat_meta`の詳細を取得できます。
+たとえば、テーブル ID `mysql.stat_meta`は`21`です`tidb-ctl schema tid -i 21`使用すると、 `mysql.stat_meta`の詳細を取得できます。
 
 ```json
 {
@@ -208,7 +208,7 @@ tidb-ctl base64decode [table_id] [base64_data]
     }%
     ```
 
-3.  ``handle id (uint64) using `base64decode` ``デコードします。
+3.  ``handle id (uint64) using `base64decode` ``をデコードします。
 
     ```shell
     $ tidb-ctl base64decode AAAAAAAAAAE=
@@ -216,7 +216,7 @@ tidb-ctl base64decode [table_id] [base64_data]
     uint64: 1
     ```
 
-4.  `base64decode`を使用して行データをデコードします。
+4.  `base64decode`使用して行データをデコードします。
 
     ```shell
     $ ./tidb-ctl base64decode test.t CAIIAggEAhjlk4jlk4ggaGVsbG8IBgAICAmAgIDwjYuu0Rk=
@@ -265,7 +265,7 @@ tidb-ctl base64decode [table_id] [base64_data]
     tidb-ctl etcd putkey "foo" "bar"
     ```
 
-    実際には、 KEY が`/tidb/ddl/all_schema_versions/foo`で VALUE が`bar`であるキーと値のペアが etcd に追加されます。
+    実際には、 KEY が`/tidb/ddl/all_schema_versions/foo`で VALUE が`bar`あるキーと値のペアが etcd に追加されます。
 
 -   `tidb-ctl etcd delkey` etcd 内の KEY を削除します。2 または`/tidb/ddl/fg/owner/` `/tidb/ddl/all_schema_versions/`プレフィックスを持つ KEY のみを削除できます。
 

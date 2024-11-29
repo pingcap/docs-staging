@@ -98,7 +98,7 @@ ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%
 
 ## MySQL 互換性 {#mysql-compatibility}
 
--   TiDB では、 `REVOKE <privileges>`ステートメントが正常に実行されると、実行結果が現在の接続に直ちに反映されます。一方、 [MySQLでは、一部の権限では、実行結果は後続の接続にのみ有効になります。](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)については、詳細については[ティDB #39356](https://github.com/pingcap/tidb/issues/39356)を参照してください。
+-   TiDB では、 `REVOKE <privileges>`ステートメントが正常に実行されると、実行結果が現在の接続に直ちに反映されます。一方、 [MySQLでは、一部の権限では、実行結果は後続の接続にのみ有効になります。](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)については、詳細については[ティDB #39356](https://github.com/pingcap/tidb/issues/39356)参照してください。
 
 ## 参照 {#see-also}
 

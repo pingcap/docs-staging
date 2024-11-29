@@ -26,7 +26,7 @@ summary: 最適化ルールと式プッシュダウンの動作を制御する�
 | 集計プッシュダウン                  | 集約プッシュダウン        | 集約をその子にプッシュダウンしようとします。                                                                |
 | TopNプッシュダウン                | トップn_プッシュダウン     | TopN 演算子をデータ ソースに近い場所にプッシュしようとします。                                                    |
 | 参加順序の変更                    | 結合順序変更           | 複数テーブルの結合の順序を決定します。                                                                   |
-| ウィンドウ関数からTopNまたはLimitを導出する | ウィンドウからトップnを派生する | ウィンドウ関数から TopN または Limit 演算子を導出します。                                                   |
+| ウィンドウ関数からTopNまたはLimitを導出する | ウィンドウからトップnを取得する | ウィンドウ関数から TopN または Limit 演算子を導出します。                                                   |
 
 ### 最適化ルールを無効にする {#disable-optimization-rules}
 
@@ -99,7 +99,7 @@ DESC mysql.expr_pushdown_blacklist;
 -   `store_type` : 計算のために関数がプッシュダウンされないようにするコンポーネントを指定します。使用可能なコンポーネントは`tidb` 、 `tikv` 、および`tiflash`です。 `store_type`は大文字と小文字を区別しません。複数のコンポーネントを指定する必要がある場合は、各コンポーネントをコンマで区切ります。
     -   `store_type`が`tidb`の場合、TiDBメモリテーブルの読み取り中に他の TiDB サーバーで関数を実行できるかどうかを示します。
     -   `store_type`が`tikv`の場合、関数が TiKV サーバーのコプロセッサーコンポーネントで実行できるかどうかを示します。
-    -   `store_type`が`tiflash`の場合、関数がTiFlash Server のコプロセッサーコンポーネントで実行できるかどうかを示します。
+    -   `store_type`が`tiflash`場合、関数がTiFlash Server のコプロセッサーコンポーネントで実行できるかどうかを示します。
 -   `reason` : この関数がブロックリストに追加された理由を記録します。
 
 ### 使用法 {#usage}
@@ -128,9 +128,9 @@ DESC mysql.expr_pushdown_blacklist;
 
 ## 表現ブロックリストの使用例 {#expression-blocklist-usage-example}
 
-次の例では、 `<`および`>`演算子がブロックリストに追加され、その後`>`演算子がブロックリストから削除されます。
+次の例では、 `<`および`>`演算子がブロックリストに追加され、 `>`演算子がブロックリストから削除されます。
 
-ブロックリストが有効かどうかを判断するには、 `EXPLAIN`の結果を観察します（ [TiDB クエリ実行プランの概要](/explain-overview.md)を参照）。
+ブロックリストが有効かどうかを判断するには、 `EXPLAIN`の結果を観察します（ [TiDB クエリ実行プランの概要](/explain-overview.md)参照）。
 
 1.  次の SQL ステートメントの`WHERE`番目の句の述語`a < 2`と`a > 2` 、TiKV にプッシュダウンできます。
 
@@ -149,7 +149,7 @@ DESC mysql.expr_pushdown_blacklist;
     3 rows in set (0.00 sec)
     ```
 
-2.  式を`mysql.expr_pushdown_blacklist`テーブルに挿入し、 `admin reload expr_pushdown_blacklist`を実行します。
+2.  式を`mysql.expr_pushdown_blacklist`テーブルに挿入し、 `admin reload expr_pushdown_blacklist`実行します。
 
     ```sql
     INSERT INTO mysql.expr_pushdown_blacklist VALUES('<','tikv',''), ('>','tikv','');
@@ -168,7 +168,7 @@ DESC mysql.expr_pushdown_blacklist;
     Query OK, 0 rows affected (0.00 sec)
     ```
 
-3.  実行プランをもう一度観察すると、演算子`<`と`>`の両方が TiKVコプロセッサーにプッシュダウンされていないことがわかります。
+3.  実行プランをもう一度観察すると、演算子`<`と`>`両方が TiKVコプロセッサーにプッシュダウンされていないことがわかります。
 
     ```sql
     EXPLAIN SELECT * FROM t WHERE a < 2 and a > 2;
@@ -185,7 +185,7 @@ DESC mysql.expr_pushdown_blacklist;
     3 rows in set (0.00 sec)
     ```
 
-4.  ブロックリストから 1 つの式 (ここでは`>` ) を削除し、 `admin reload expr_pushdown_blacklist`を実行します。
+4.  ブロックリストから 1 つの式 (ここでは`>` ) を削除し、 `admin reload expr_pushdown_blacklist`実行します。
 
     ```sql
     DELETE FROM mysql.expr_pushdown_blacklist WHERE name = '>';

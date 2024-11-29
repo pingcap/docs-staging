@@ -109,7 +109,7 @@ DROP TABLE person;
 CREATE INDEX person_id ON person (id);
 ```
 
-または、 `ALTER TABLE`ステートメントを使用します。
+または、次の`ALTER TABLE`ステートメントを使用します。
 
 ```sql
 ALTER TABLE person ADD INDEX person_id (id);

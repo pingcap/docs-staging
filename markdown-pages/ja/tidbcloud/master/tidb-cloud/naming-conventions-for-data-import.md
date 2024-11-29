@@ -8,7 +8,7 @@ summary: データのインポート時の CSV、Parquet、 Aurora Snapshot、SQ
 TiDB Cloudには、CSV、Parquet、 Aurora Snapshot、SQL のファイル形式でデータをインポートできます。データが正常にインポートされるようにするには、次の 2 種類のファイルを準備する必要があります。
 
 -   **スキーマファイル**。データベーススキーマファイル（オプション）とテーブルスキーマファイルをSQL形式（ `.sql` ）で準備します。テーブルスキーマファイルが提供されていない場合は、事前にターゲットデータベースに対応するテーブルを手動で作成する必要があります。
--   **データ ファイル**。データをインポートするための命名規則に準拠したデータ ファイルを準備します。データ ファイル名が要件を満たせない場合は、 [**ファイルパターン**](#file-pattern)を使用してインポート タスクを実行することをお勧めします。そうしないと、インポート タスクはインポートするデータ ファイルをスキャンできません。
+-   **データ ファイル**。データをインポートするための命名規則に準拠したデータ ファイルを準備します。データ ファイル名が要件を満たせない場合は、 [**ファイルパターン**](#file-pattern)使用してインポート タスクを実行することをお勧めします。そうしないと、インポート タスクはインポートするデータ ファイルをスキャンできません。
 
 ## スキーマファイルの命名規則 {#naming-conventions-for-schema-files}
 
@@ -56,7 +56,7 @@ CSV ファイルをインポートするときは、データ ファイルに次
 -   *`._xxx_xxx_xxx`* 、例えば`._0_0_01`
 -   *`_xxx_xxx_xxx`* 、例えば`_0_0_01`
 
-`${compress}`は圧縮形式で、オプションです。TiDB TiDB Cloud は、 `.gzip` 、 `.gz` 、 `.zstd` 、 `.zst` 、 `.snappy`の形式をサポートしています。
+`${compress}`圧縮形式で、オプションです。TiDB TiDB Cloud は、 `.gzip` 、 `.gz` 、 `.zstd` 、 `.zst` 、 `.snappy`の形式をサポートしています。
 
 たとえば、次のすべてのファイルのターゲット データベースとテーブルは`import_db`と`test_table`です。
 
@@ -103,7 +103,7 @@ SQL ファイルをインポートするときは、データ ファイルに次
 -   *`._xxx_xxx_xxx`* 、例えば`._0_0_01`
 -   *`_xxx_xxx_xxx`* 、例えば`_0_0_01`
 
-`${compress}`は圧縮形式で、オプションです。TiDB TiDB Cloud は、 `.gzip` 、 `.gz` 、 `.zstd` 、 `.zst` 、 `.snappy`の形式をサポートしています。
+`${compress}`圧縮形式で、オプションです。TiDB TiDB Cloud は、 `.gzip` 、 `.gz` 、 `.zstd` 、 `.zst` 、 `.snappy`の形式をサポートしています。
 
 例えば：
 
@@ -111,7 +111,7 @@ SQL ファイルをインポートするときは、データ ファイルに次
 -   `import_db.test_table.01.sql`
 -   `import_db.test_table.01.sql.gz`
 
-SQL ファイルがデフォルト設定で TiDB Dumplingを介してエクスポートされる場合、デフォルトで命名規則に準拠します。
+SQL ファイルがデフォルト設定で TiDB Dumpling を介してエクスポートされる場合、デフォルトで命名規則に準拠します。
 
 > **注記：**
 >
@@ -121,5 +121,5 @@ SQL ファイルがデフォルト設定で TiDB Dumplingを介してエクス�
 
 CSV または Parquet のソース データ ファイルが命名規則に準拠していない場合は、ファイル パターン機能を使用して、ソース データ ファイルとターゲット テーブル間の名前マッピング関係を確立できます。この機能は、 Auroraスナップショットおよび SQL データ ファイルをサポートしていません。
 
--   CSVファイルについては、 [ステップ4. CSVファイルをTiDB Cloudにインポートする](/tidb-cloud/import-csv-files.md#step-4-import-csv-files-to-tidb-cloud)の**ファイルパターン**を参照してください。
--   Parquetファイルについては、 [ステップ4. ParquetファイルをTiDB Cloudにインポートする](/tidb-cloud/import-parquet-files.md#step-4-import-parquet-files-to-tidb-cloud)の**ファイルパターン**を参照してください。
+-   CSVファイルについては、 [ステップ4. CSVファイルをTiDB Cloudにインポートする](/tidb-cloud/import-csv-files.md#step-4-import-csv-files-to-tidb-cloud)の**詳細設定**&gt;**マッピング設定**を参照してください。
+-   Parquetファイルについては、 [ステップ4. ParquetファイルをTiDB Cloudにインポートする](/tidb-cloud/import-parquet-files.md#step-4-import-parquet-files-to-tidb-cloud)の**詳細設定**&gt;**マッピング設定**を参照してください。

@@ -80,7 +80,7 @@ CREATE TABLE t (i int);
 CREATE TABLE test.t (i int);
 ```
 
-`.`周りには空白が存在できます。3 `table_name.col_name` `table_name . col_name`同等です。
+`.`周りには空白が存在できます`table_name.col_name`と`table_name . col_name`は同等です。
 
 この識別子を引用するには、次のようにします。
 

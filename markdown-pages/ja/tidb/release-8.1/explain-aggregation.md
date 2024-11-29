@@ -1,6 +1,6 @@
 ---
 title: Explain Statements That Use Aggregation
-summary: TiDB の `EXPLAIN` ステートメントによって返される実行プラン情報について学習します。
+summary: TiDB の EXPLAIN` ステートメントによって返される実行プラン情報について学習します。
 ---
 
 # 集計を使用してステートメントを説明する {#explain-statements-using-aggregation}
@@ -47,7 +47,7 @@ SHOW TABLE t1 REGIONS;
 4 rows in set (0.00 sec)
 ```
 
-`EXPLAIN`次の集計ステートメントで使用すると、最初に TiKV 内の各リージョンで`└─StreamAgg_8`実行されることがわかります。次に、各 TiKVリージョンは 1 行を TiDB に送り返し、TiDB は各リージョンからのデータを`StreamAgg_16`で集計します。
+`EXPLAIN`次の集計ステートメントで使用すると、最初に TiKV 内の各リージョンで`└─StreamAgg_8`実行されることがわかります。次に、各 TiKVリージョンは1 行を TiDB に送り返し、TiDB は各リージョンからのデータを`StreamAgg_16`に集計します。
 
 ```sql
 EXPLAIN SELECT COUNT(*) FROM t1;
@@ -65,7 +65,7 @@ EXPLAIN SELECT COUNT(*) FROM t1;
 4 rows in set (0.00 sec)
 ```
 
-これは`EXPLAIN ANALYZE`で最も簡単に確認できます。ここでは、 `TableFullScan`が使用されており、セカンダリ インデックスがないため、 `actRows` `SHOW TABLE REGIONS`のリージョン数と一致しています。
+これは`EXPLAIN ANALYZE`で最も簡単に確認できます。ここでは、 `TableFullScan`が使用されており、セカンダリ インデックスがないため、 `actRows`が`SHOW TABLE REGIONS`のリージョン数と一致しています。
 
 ```sql
 EXPLAIN ANALYZE SELECT COUNT(*) FROM t1;
@@ -105,11 +105,11 @@ EXPLAIN SELECT /*+ HASH_AGG() */ count(*) FROM t1;
 4 rows in set (0.00 sec)
 ```
 
-`operator info` 、データを集約するために使用されるハッシュ関数が`funcs:count(1)->Column#6`であることを示します。
+`operator info`は、データを集約するために使用されるハッシュ関数が`funcs:count(1)->Column#6`あることを示します。
 
 ## ストリーム集計 {#stream-aggregation}
 
-ストリーム集計アルゴリズムは通常、ハッシュ集計よりもメモリ消費量が少なくなります。ただし、この演算子では、データが到着すると*ストリームして*集約を適用できるように、データが順序どおりに送信されることが必要です。
+ストリーム集計アルゴリズムは通常、ハッシュ集計よりもメモリ消費量が少なくなります。ただし、この演算子では、到着した値に集約を適用して*ストリーミング*できるように、データが順序どおりに送信されることが必要です。
 
 次の例を考えてみましょう。
 
@@ -188,6 +188,6 @@ explain SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 10 rows in set (0.05 sec)
 ```
 
-前のステートメントの`GROUP BY year, month WITH ROLLUP`構文に従って、このステートメントの SQL 集計結果は、それぞれ`{year, month}` 、 `{year}` 、 `{}` 3 つのグループに計算され、連結されます。
+前のステートメントの`GROUP BY year, month WITH ROLLUP`構文に従って、このステートメントの SQL 集計結果は、それぞれ`{year, month}` 、 `{year}` 、 `{}`の 3 つのグループに計算され、連結されます。
 
 詳細については[GROUP BY 修飾子](/functions-and-operators/group-by-modifier.md)参照してください。

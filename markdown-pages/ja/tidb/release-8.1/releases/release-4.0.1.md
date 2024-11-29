@@ -13,7 +13,7 @@ TiDB バージョン: 4.0.1
 
 -   ティクヴ
 
-    -   `--advertise-status-addr`開始フラグを追加して、 [＃8046](https://github.com/tikv/tikv/pull/8046)をアドバタイズするステータスアドレスを指定します。
+    -   `--advertise-status-addr`開始フラグを追加して、 [＃8046](https://github.com/tikv/tikv/pull/8046)アドバタイズするステータスアドレスを指定します。
 
 -   PD
 
@@ -23,7 +23,7 @@ TiDB バージョン: 4.0.1
 -   TiFlash
 
     -   TiDBの新しい照合順序フレームワークをサポート
-    -   `If` / `BitAnd/BitOr` / `BitXor/BitNot` / `Json_length`関数をTiFlashにプッシュダウンするサポート
+    -   `If` / `BitAnd/BitOr` / `BitXor/BitNot` / `Json_length`関数をTiFlashにプッシュダウンする機能をサポート
     -   TiFlashの大規模トランザクションのResolve Lockロジックをサポート
 
 -   ツール
@@ -32,7 +32,7 @@ TiDB バージョン: 4.0.1
 
         -   BRとTiDBクラスタの互換性がない問題を回避するために、 BRの起動時にバージョンチェックを追加します[＃311](https://github.com/pingcap/br/pull/311)
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティクヴ
 

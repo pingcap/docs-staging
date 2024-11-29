@@ -9,13 +9,13 @@ summary: TiDB データベースに対する ANALYZE の使用法の概要。
 
 TiDB は、統計が自身の推定値と一致しないことを発見すると、時間の経過とともに統計を自動的に更新します。
 
-現在、TiDB は`ANALYZE TABLE`ステートメントを使用して完全なコレクションとして統計情報を収集します。詳細については、 [統計学入門](/statistics.md)を参照してください。
+現在、TiDB は`ANALYZE TABLE`ステートメントを使用して完全なコレクションとして統計情報を収集します。詳細については、 [統計学入門](/statistics.md)参照してください。
 
 ## 概要 {#synopsis}
 
 ```ebnf+diagram
 AnalyzeTableStmt ::=
-    'ANALYZE' ( 'TABLE' ( TableNameList ( 'ALL COLUMNS' | 'PREDICATE COLUMNS' ) | TableName ( 'INDEX' IndexNameList? | AnalyzeColumnOption | 'PARTITION' PartitionNameList ( 'INDEX' IndexNameList? | AnalyzeColumnOption )? )? ) 'INDEX' IndexNameList? ) AnalyzeOptionListOpt
+    'ANALYZE' ( 'TABLE' ( TableNameList ( 'ALL COLUMNS' | 'PREDICATE COLUMNS' ) | TableName ( 'INDEX' IndexNameList? | AnalyzeColumnOption | 'PARTITION' PartitionNameList ( 'INDEX' IndexNameList? | AnalyzeColumnOption )? )? ) ) AnalyzeOptionListOpt
 
 AnalyzeOptionListOpt ::=
 ( WITH AnalyzeOptionList )?
@@ -96,10 +96,10 @@ mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 
 TiDB は、収集する統計と、クエリ実行中に統計を利用する方法の**両方**において MySQL とは異なります。このステートメントは構文的には MySQL に似ていますが、次の違いがあります。
 
--   `ANALYZE TABLE`実行すると、TiDB は最近コミットされた変更を含まない場合があります。行のバッチ更新後、統計更新にこれらの変更を反映させるには、 `ANALYZE TABLE`実行する前に`sleep(1)`を実行する必要がある場合があります。7 [＃16570](https://github.com/pingcap/tidb/issues/16570)参照してください。
+-   `ANALYZE TABLE`実行すると、TiDB は最近コミットされた変更を含まない場合があります。行のバッチ更新後、統計更新でこれらの変更を反映するには、 `ANALYZE TABLE`実行する前に`sleep(1)`を実行する必要がある場合があります[＃16570](https://github.com/pingcap/tidb/issues/16570)参照してください。
 -   `ANALYZE TABLE` 、MySQL よりも TiDB で実行するのに大幅に時間がかかります。
 
 ## 参照 {#see-also}
 
 -   [EXPLAIN](/sql-statements/sql-statement-explain.md)
--   [EXPLAIN分析](/sql-statements/sql-statement-explain-analyze.md)
+-   [EXPLAIN](/sql-statements/sql-statement-explain-analyze.md)

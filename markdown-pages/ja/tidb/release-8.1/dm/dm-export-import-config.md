@@ -1,11 +1,11 @@
 ---
 title: Export and Import Data Sources and Task Configuration of Clusters
-summary: DM を使用するときに、データ ソースとクラスターのタスク構成をエ​​クスポートおよびインポートする方法を学習します。
+summary: DM を使用するときに、クラスターのデータ ソースとタスク構成をエクスポートおよびインポートする方法を学習します。
 ---
 
 # データソースのエクスポートとインポート、およびクラスターのタスクコンフィグレーション {#export-and-import-data-sources-and-task-configuration-of-clusters}
 
-`config`コマンドは、クラスターのデータ ソースとタスク構成をエ​​クスポートおよびインポートするために使用されます。
+`config`コマンドは、クラスターのデータ ソースとタスク構成をエクスポートおよびインポートするために使用されます。
 
 > **注記：**
 >
@@ -26,7 +26,7 @@ Global Flags:
 Use "dmctl config [command] --help" for more information about a command.
 ```
 
-## クラスターのデータソースとタスク構成をエ​​クスポートする {#export-the-data-source-and-task-configuration-of-clusters}
+## クラスターのデータソースとタスク構成をエクスポートする {#export-the-data-source-and-task-configuration-of-clusters}
 
 `export`コマンドを使用して、クラスターのデータ ソースとタスク構成を指定されたファイルにエクスポートできます。
 

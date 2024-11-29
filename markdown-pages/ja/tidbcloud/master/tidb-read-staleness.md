@@ -1,6 +1,6 @@
 ---
 title: Read Historical Data Using the `tidb_read_staleness` System Variable
-summary: tidb_read_staleness システム変数を使用して履歴データを読み取る方法を学習します。
+summary: tidb_read_staleness` システム変数を使用して履歴データを読み取る方法を学習します。
 ---
 
 # <code>tidb_read_staleness</code>システム変数を使用して履歴データを読み取る {#read-historical-data-using-the-code-tidb-read-staleness-code-system-variable}
@@ -11,7 +11,7 @@ summary: tidb_read_staleness システム変数を使用して履歴データを
 
 `tidb_read_staleness`システム変数は、TiDB が現在のセッションで読み取ることができる履歴データの時間範囲を設定するために使用されます。この変数のデータ型は int 型で、スコープは`SESSION`です。値を設定すると、TiDB はこの変数で許可されている範囲からできるだけ新しいタイムスタンプを選択し、その後のすべての読み取り操作はこのタイムスタンプに対して実行されます。たとえば、この変数の値が`-5`に設定されている場合、TiKV に対応する履歴バージョンのデータがあるという条件で、TiDB は 5 秒の時間範囲内でできるだけ新しいタイムスタンプを選択します。
 
-`tidb_read_staleness`を有効にした後でも、次の操作を実行できます。
+`tidb_read_staleness`有効にした後でも、次の操作を実行できます。
 
 -   現在のセッションでデータを挿入、変更、削除したり、DML 操作を実行したりします。これらのステートメントは`tidb_read_staleness`の影響を受けません。
 -   現在のセッションで対話型トランザクションを開始します。このトランザクション内のクエリは引き続き最新のデータを読み取ります。
@@ -23,11 +23,11 @@ summary: tidb_read_staleness システム変数を使用して履歴データを
 
 > **注記：**
 >
-> レイテンシーを減らし、ステイル読み取りデータの適時性を向上させるには、TiKV `advance-ts-interval`構成項目を変更します。詳細については[ステイル読み取りのレイテンシーを削減](/stale-read.md#reduce-stale-read-latency)を参照してください。
+> レイテンシーを減らし、ステイル読み取りデータの適時性を向上させるには、TiKV `advance-ts-interval`構成項目を変更します。詳細については[ステイル読み取りのレイテンシーを削減](/stale-read.md#reduce-stale-read-latency)参照してください。
 
 ## 使用例 {#usage-examples}
 
-このセクションでは、例を挙げて`tidb_read_staleness`使用方法を説明します。
+このセクションでは、 `tidb_read_staleness`使用方法を例とともに説明します。
 
 1.  テーブルを作成し、テーブルに数行のデータを挿入します。
 
@@ -81,7 +81,7 @@ summary: tidb_read_staleness システム変数を使用して履歴データを
         +------+
         3 rows in set (0.00 sec)
 
-5.  システム変数`tidb_read_staleness`を設定します。
+5.  `tidb_read_staleness`システム変数を設定します。
 
     この変数のスコープは`SESSION`です。値を設定すると、TiDB は値で設定された時間より前に最新バージョンのデータを読み取ります。
 

@@ -53,8 +53,8 @@ Query OK, 0 rows affected (2.50 sec)
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`DO`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`DO`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 
--   [選択する](/sql-statements/sql-statement-select.md)
+-   [選択](/sql-statements/sql-statement-select.md)

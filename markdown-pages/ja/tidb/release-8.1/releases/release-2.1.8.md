@@ -27,9 +27,9 @@ TiDB Ansible バージョン: 2.1.8
 -   オプティマイザヒントに一致しないテーブル名が含まれている場合に警告を返す[＃9970](https://github.com/pingcap/tidb/pull/9970)
 -   ログ形式を統一し、分析ツールを使用したログ収集を容易にする統一ログ形式
 -   NULL値が多すぎると統計推定が不正確になる問題を修正[＃9979](https://github.com/pingcap/tidb/pull/9979)
--   TIMESTAMP型のデフォルト値が境界値[＃9987](https://github.com/pingcap/tidb/pull/9987)の場合にエラーが報告される問題を修正
+-   TIMESTAMP型のデフォルト値が境界値[＃9987](https://github.com/pingcap/tidb/pull/9987)場合にエラーが報告される問題を修正
 -   `time_zone` [＃10000](https://github.com/pingcap/tidb/pull/10000)の値を検証する
--   `2019.01.01`回限りのフォーマット[＃10001](https://github.com/pingcap/tidb/pull/10001)をサポート
+-   `2019.01.01`回限りのフォーマット[＃10001](https://github.com/pingcap/tidb/pull/10001)サポート
 -   `EXPLAIN`ステートメントによって返される結果で行数の推定が誤って表示される場合がある問題を修正[＃10044](https://github.com/pingcap/tidb/pull/10044)
 -   `KILL TIDB [session id]`場合によっては文の実行を即座に停止できない問題を修正[＃9976](https://github.com/pingcap/tidb/pull/9976)
 -   いくつかのケースにおける定数フィルタリング条件の述語プッシュダウン問題を修正[＃10049](https://github.com/pingcap/tidb/pull/10049)
@@ -38,7 +38,7 @@ TiDB Ansible バージョン: 2.1.8
 ## PD {#pd}
 
 -   `regionScatterer`無効な`OperatorStep` [＃1482](https://github.com/pingcap/pd/pull/1482)を生成する可能性がある問題を修正
--   ホットストアがキー[＃1487](https://github.com/pingcap/pd/pull/1487)の統計を誤って作成する問題を修正
+-   ホットストアがキー[＃1487](https://github.com/pingcap/pd/pull/1487)の統計を不正確にする問題を修正
 -   `MergeRegion`オペレータ[＃1495](https://github.com/pingcap/pd/pull/1495)の短すぎるタイムアウト問題を修正
 -   TSO リクエストを処理する PDサーバーの経過時間メトリックを追加する[＃1502](https://github.com/pingcap/pd/pull/1502)
 
@@ -50,7 +50,7 @@ TiDB Ansible バージョン: 2.1.8
 
 ## ツール {#tools}
 
--   Lightning のテーブルをインポートする順序を最適化して、インポートプロセス中にクラスター上で`Checksum`と`Analyze`を実行する大きなテーブルの影響を軽減し、 `Checksum`と`Analyze`の成功率を向上させます[＃156](https://github.com/pingcap/tidb-lightning/pull/156)
+-   Lightning のテーブルをインポートする順序を最適化して、インポートプロセス中にクラスター上で`Checksum`と`Analyze`実行する大きなテーブルの影響を軽減し、 `Checksum`と`Analyze`の成功率を向上させます[＃156](https://github.com/pingcap/tidb-lightning/pull/156)
 -   KVエンコーダ[＃145](https://github.com/pingcap/tidb-lightning/pull/145)の追加解析作業を回避するために、データソースファイルの内容をTiDBの`types.Datum`に直接解析することで、LightningのエンコードSQLパフォーマンスを50％向上しました。
 -   TiDB Binlog Pumpに`storage.sync-log`構成項目を追加して、 Pump [＃529](https://github.com/pingcap/tidb-binlog/pull/529)でローカルstorageのディスクを非同期にフラッシュできるようにします。
 -   TiDB Binlog PumpとDrainer [＃530](https://github.com/pingcap/tidb-binlog/pull/530)間の通信のトラフィック圧縮をサポート

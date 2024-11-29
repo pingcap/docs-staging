@@ -441,7 +441,7 @@ mysql> SELECT User,Host,Select_priv,Insert_priv FROM mysql.user LIMIT 1;
 
 > **注記：**
 >
-> 権限テーブルの更新は、 `GRANT` 、 `CREATE USER` 、 `DROP USER`などの指定された構文のみを使用して行うことをお勧めします。基礎となる権限テーブルを直接編集しても、権限キャッシュは自動的に更新されず、 `FLUSH PRIVILEGES`が実行されるまで予期しない動作が発生します。
+> 権限テーブルの更新は、 `GRANT` 、 `CREATE USER` 、 `DROP USER`などの指定された構文のみで行うことをお勧めします。基礎となる権限テーブルを直接編集しても、権限キャッシュは自動的に更新されず、 `FLUSH PRIVILEGES`が実行されるまで予期しない動作が発生します。
 
 ### 接続検証 {#connection-verification}
 

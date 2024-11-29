@@ -9,7 +9,7 @@ summary: TiDB データベースの LOAD STATS の使用法の概要。
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ## 概要 {#synopsis}
 
@@ -20,11 +20,11 @@ LoadStatsStmt ::=
 
 ## 例 {#examples}
 
-アドレス`http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}`にアクセスすると、TiDB インスタンスの統計情報をダウンロードできます。
+アドレス`http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}`アクセスすると、TiDB インスタンスの統計情報をダウンロードできます。
 
-`LOAD STATS ${stats_path}`を使用して特定の統計ファイルを読み込むこともできます。
+`LOAD STATS ${stats_path}`使用して特定の統計ファイルを読み込むこともできます。
 
-`${stats_path}`絶対パスまたは相対パスになります。相対パスを使用する場合、対応するファイルは`tidb-server`が開始するパスから検索されます。次に例を示します。
+`${stats_path}`は絶対パスでも相対パスでもかまいません。相対パスを使用する場合、対応するファイルは`tidb-server`が開始するパスから検索されます。次に例を示します。
 
 ```sql
 LOAD STATS '/tmp/stats.json';

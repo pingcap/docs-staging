@@ -1,15 +1,15 @@
 ---
-title: Configure Cluster Security Settings
-summary: クラスターに接続するためのルート パスワードと許可された IP アドレスを構成する方法を学習します。
+title: Configure Cluster Password Settings
+summary: クラスターに接続するためのルート パスワードを構成する方法を学習します。
 ---
 
-# クラスタのSecurity設定を構成する {#configure-cluster-security-settings}
+# クラスタパスワード設定を構成する {#configure-cluster-password-settings}
 
-TiDB 専用クラスターの場合、クラスターに接続するためのルート パスワードと許可された IP アドレスを構成できます。
+TiDB Cloud Dedicated クラスターの場合、クラスターに接続するためのルート パスワードと許可された IP アドレスを構成できます。
 
 > **注記：**
 >
-> TiDB Serverless クラスターの場合、このドキュメントは適用されないため、代わりに[TiDB サーバーレスへの TLS 接続](/tidb-cloud/secure-connections-to-serverless-clusters.md)を参照してください。
+> TiDB Cloud Serverless クラスターの場合、このドキュメントは適用されません。代わりに[TiDB Cloud ServerlessへのTLS接続](/tidb-cloud/secure-connections-to-serverless-clusters.md)を参照してください。
 
 1.  TiDB Cloudコンソールで、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
@@ -17,14 +17,12 @@ TiDB 専用クラスターの場合、クラスターに接続するためのル
     >
     > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅にある をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
 
-2.  ターゲット クラスターの行で、 **[...]**をクリックし、 **[Security設定]**を選択します。
+2.  ターゲット クラスターの行で、 **[...]**をクリックし、 **[パスワード設定]**を選択します。
 
-3.  **[Security設定]**ダイアログで、ルート パスワードと許可される IP アドレスを設定します。
+3.  クラスターに接続するためのルート パスワードを設定し、 **[保存]**をクリックします。
 
-    クラスターに任意の IP アドレスからアクセスできるようにするには、 **「どこからでもアクセスを許可」**をクリックします。
-
-4.  **「適用」を**クリックします。
+    **「パスワードの自動生成」をクリックすると、ランダムなパスワード**を生成できます。生成されたパスワードは再度表示されないので、パスワードは安全な場所に保存してください。
 
 > **ヒント：**
 >
-> クラスターの概要ページを表示している場合は、ページの右上隅にある**...**をクリックし、 **[Security設定]**を選択して、これらの設定も構成できます。
+> クラスターの概要ページを表示している場合は、ページの右上隅にある**...**をクリックし、**パスワード設定を**選択して、これらの設定も構成できます。

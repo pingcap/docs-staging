@@ -39,7 +39,7 @@ INSERT INTO users (id,age,last_login) VALUES (NULL,123,NULL);
 
     Query OK, 1 row affected (0.03 sec)
 
--   最初の`INSERT`文は、 `AUTO_INCREMENT`列に`NULL`を割り当てることができるため成功します。TiDB はシーケンス番号を自動的に生成します。
+-   最初の`INSERT`文は、 `AUTO_INCREMENT`列に`NULL`割り当てることができるため成功します。TiDB はシーケンス番号を自動的に生成します。
 -   2 番目の`INSERT`ステートメントは、 `age`列が`NOT NULL`として定義されているため失敗します。
 -   3 番目の`INSERT`ステートメントは、 `last_login`列が`NOT NULL`として明示的に定義されていないため成功します。デフォルトでは NULL 値が許可されます。
 
@@ -49,9 +49,9 @@ INSERT INTO users (id,age,last_login) VALUES (NULL,123,NULL);
 >
 > `CHECK`制約機能はデフォルトで無効になっています。有効にするには、 [`tidb_enable_check_constraint`](/system-variables.md#tidb_enable_check_constraint-new-in-v720)変数を`ON`に設定する必要があります。
 
-`CHECK`制約は、テーブル内の列の値を、指定した条件を満たすように制限します。3 制約`CHECK`テーブルに追加されると、TiDB はテーブルへのデータの挿入または更新中に制約が満たされているかどうかを確認します。制約が満たされていない場合は、エラーが返されます。
+`CHECK`制約は、テーブル内の列の値を、指定した条件を満たすように制限します。3 制約がテーブルに追加される`CHECK` 、TiDB はテーブルへのデータの挿入または更新中に制約が満たされているかどうかを確認します。制約が満たされていない場合は、エラーが返されます。
 
-TiDB の`CHECK`制約の構文は、MySQL の構文と同じです。
+TiDB の`CHECK`制約の構文は MySQL の構文と同じです。
 
 ```sql
 [CONSTRAINT [symbol]] CHECK (expr) [[NOT] ENFORCED]
@@ -61,7 +61,7 @@ TiDB の`CHECK`制約の構文は、MySQL の構文と同じです。
 
 -   `[]` : `[]`内の内容はオプションです。
 -   `CONSTRAINT [symbol]` : `CHECK`番目の制約の名前を指定します。
--   `CHECK (expr)` : 制約条件を指定します。2 `expr`ブール式である必要があります。テーブルの各行について、この式の計算結果は`TRUE` 、 `FALSE` 、または`UNKNOWN` ( `NULL`の値の場合) のいずれかである必要があります。行の計算結果が`FALSE`の場合、制約に違反していることを示します。
+-   `CHECK (expr)` : 制約条件を指定します`expr`ブール式である必要があります。テーブルの各行について、この式の計算結果は`TRUE` 、 `FALSE` 、または`UNKNOWN` ( `NULL`の値の場合) のいずれかである必要があります。行の計算結果が`FALSE`の場合、制約に違反していることを示します。
 -   `[NOT] ENFORCED` : 制約チェックを実装するかどうかを指定します。これを使用して、制約`CHECK`を有効または無効にすることができます。
 
 ### <code>CHECK</code>制約を追加する {#add-code-check-code-constraints}
@@ -117,8 +117,8 @@ ALTER TABLE t DROP CONSTRAINT t_chk_1;
 
 テーブルに[`CHECK`制約を追加する](#add-check-constraints)設定すると、データの挿入または更新中に TiDB が制約チェックを実装する必要があるかどうかを指定できます。
 
--   `NOT ENFORCED`を指定すると、TiDB はデータの挿入または更新時に制約条件をチェックしません。
--   `NOT ENFORCED`が指定されていない場合、または`ENFORCED`指定されている場合、TiDB はデータの挿入または更新中に制約条件をチェックします。
+-   `NOT ENFORCED`指定すると、TiDB はデータの挿入または更新時に制約条件をチェックしません。
+-   `NOT ENFORCED`が指定されていない場合、または`ENFORCED`が指定されている場合、TiDB はデータの挿入または更新中に制約条件をチェックします。
 
 制約を追加するときに`[NOT] ENFORCED`指定することに加えて、 `ALTER TABLE`ステートメントを使用して`CHECK`制約を有効または無効にすることもできます。例:
 
@@ -265,7 +265,7 @@ INSERT INTO users (username) VALUES ('jane'), ('chris'), ('bill');
 
         ERROR 1062 (23000): Duplicate entry 'bill' for key 'users.username'
 
--   この変数が無効になっている場合、データの書き込みが必要な悲観的トランザクションをコミットすると、 `Write conflict`エラーが返される可能性があります。このエラーが発生すると、TiDB は現在のトランザクションをロールバックします。
+-   この変数が無効になっている場合、データの書き込みが必要な悲観的トランザクションをコミットすると、エラー`Write conflict`が返される可能性があります。このエラーが発生すると、TiDB は現在のトランザクションをロールバックします。
 
     次の例のように、2 つの同時トランザクションが同じテーブルにデータを挿入する必要がある場合、悲観的ロックをスキップすると、トランザクションをコミットしたときに TiDB は`Write conflict`エラーを返します。そして、トランザクションはロールバックされます。
 
@@ -304,7 +304,7 @@ INSERT INTO users (username) VALUES ('jane'), ('chris'), ('bill');
     >
     > `8147`エラーが発生すると、TiDB は現在のトランザクションをロールバックします。
 
-    次の例のように、 `INSERT`番目のステートメントの実行時に、TiDB はロックをスキップします。次に、 `DELETE`のステートメントの実行時に、TiDB は一意のインデックスをロックし、一意の制約をチェックするため、 `DELETE`のステートメントでエラーが報告されます。
+    次の例のように、 `INSERT`番目のステートメントの実行時に、TiDB はロックをスキップします。次に、 `DELETE`ステートメントの実行時に、TiDB は一意のインデックスをロックし、一意の制約をチェックするため、 `DELETE`ステートメントでエラーが報告されます。
 
     ```sql
     SET tidb_constraint_check_in_place_pessimistic = OFF;
@@ -347,9 +347,9 @@ CREATE TABLE t4 (a INT NOT NULL, b INT NOT NULL, PRIMARY KEY (a,b));
 
     Query OK, 0 rows affected (0.10 sec)
 
--   列`a`が主キーとして定義されており、NULL 値が許可されないため、テーブル`t2`を作成できませんでした。
+-   列`a`主キーとして定義されており、NULL 値が許可されないため、テーブル`t2`を作成できませんでした。
 -   テーブルには主キーを 1 つしか持てないため、テーブル`t3`を作成できませんでした。
--   主キーは 1 つしか存在できませんが、TiDB では複数の列を複合主キーとして定義することがサポートされているため、表`t4`正常に作成されました。
+-   主キーは 1 つしか存在できませんが、TiDB では複数の列を複合主キーとして定義できるため、表`t4`正常に作成されました。
 
 上記のルールに加えて、TiDB は現在、 `NONCLUSTERED`タイプの主キーの追加と削除のみをサポートしています。例:
 
@@ -373,7 +373,7 @@ ALTER TABLE t5 DROP PRIMARY KEY;
 
 > **注記：**
 >
-> v6.6.0 以降、TiDB は[FOREIGN KEY制約](/foreign-key.md)を実験的機能としてサポートします。v6.6.0 より前の TiDB では、外部キー制約の作成と削除がサポートされていましたが、制約は実際には有効ではありませんでした。TiDB を v6.6.0 にアップグレードした後、無効な外部キーを削除して新しい外部キーを作成し、外部キー制約を有効にすることができます。
+> v6.6.0 以降、TiDB は[FOREIGN KEY制約](/foreign-key.md)を実験的機能としてサポートします。v6.6.0 より前の TiDB は外部キー制約の作成と削除をサポートしていますが、制約は実際には有効ではありません。TiDB を v6.6.0 にアップグレードした後、無効な外部キーを削除して新しい外部キーを作成し、外部キー制約を有効にすることができます。
 
 TiDB は、DDL コマンドで`FOREIGN KEY`制約の作成をサポートしています。
 
@@ -406,7 +406,7 @@ FROM information_schema.key_column_usage WHERE table_name IN ('users', 'orders')
     +------------+-------------+-----------------+-----------------------+------------------------+
     3 rows in set (0.00 sec)
 
-TiDB は、 `ALTER TABLE`コマンドを介して`DROP FOREIGN KEY`と`ADD FOREIGN KEY`の構文もサポートします。
+TiDB は、 `ALTER TABLE`コマンドを介して`DROP FOREIGN KEY`と`ADD FOREIGN KEY`構文もサポートします。
 
 ```sql
 ALTER TABLE orders DROP FOREIGN KEY fk_user_id;

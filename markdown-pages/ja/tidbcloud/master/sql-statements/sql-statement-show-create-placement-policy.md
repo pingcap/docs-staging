@@ -5,11 +5,11 @@ summary: TiDB での SHOW CREATE PLACEMENT POLICY の使用法。
 
 # 配置ポリシーの作成を表示 {#show-create-placement-policy}
 
-`SHOW CREATE PLACEMENT POLICY`は配置ポリシーの定義を表示するために使用されます。これを使用して、配置ポリシーの現在の定義を確認し、別の TiDB クラスターで再作成することができます。
+`SHOW CREATE PLACEMENT POLICY`配置ポリシーの定義を表示するために使用されます。これを使用して、配置ポリシーの現在の定義を確認し、別の TiDB クラスターで再作成することができます。
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ## 概要 {#synopsis}
 

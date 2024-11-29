@@ -9,11 +9,11 @@ summary: TiDB での SHOW PLACEMENT の使用法。
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 このステートメントは、配置Driver(PD) が配置のスケジュールで行った現在の進行状況を示す`Scheduling_State`フィールドを含む結果セットを返します。
 
--   `PENDING` : PD はまだ配置のスケジュールを開始していません。これは、配置ルールが意味的には正しいが、現在クラスターによって満たされていないことを示している可能性があります。たとえば、 `FOLLOWERS=4`場合、フォロワーの候補となる TiKV ストアは 3 つしかありません。
+-   `PENDING` : PD はまだ配置のスケジュールを開始していません。これは、配置ルールが意味的には正しいが、現在クラスターによって満たされていないことを示している可能性があります。たとえば、 `FOLLOWERS=4`の場合、フォロワーの候補となる TiKV ストアは 3 つしかありません。
 -   `INPROGRESS` : PD が現在配置をスケジュール中です。
 -   `SCHEDULED` : PD は配置を正常にスケジュールしました。
 

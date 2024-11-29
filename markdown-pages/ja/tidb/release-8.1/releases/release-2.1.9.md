@@ -31,7 +31,7 @@ TiDB Ansible バージョン: 2.1.9
     -   `StreamAgg`と`HashAgg` [＃10133](https://github.com/pingcap/tidb/pull/10133)
     -   `TableReader`と`IndexReader`と`IndexLookup` [＃10169](https://github.com/pingcap/tidb/pull/10169)
 -   スロークエリログの改善
-    -   類似のSQL [＃10093](https://github.com/pingcap/tidb/pull/10093)を区別するために`SQL Digest`追加します
+    -   類似のSQL [＃10093](https://github.com/pingcap/tidb/pull/10093)区別するために`SQL Digest`を追加します
     -   低速クエリステートメントで使用される統計のバージョン情報を追加する[＃10220](https://github.com/pingcap/tidb/pull/10220)
     -   スロークエリログ[＃10246](https://github.com/pingcap/tidb/pull/10246)でステートメントのメモリ消費量を表示する
     -   コプロセッサー関連情報の出力形式を調整し、pt-query-digest [＃10300](https://github.com/pingcap/tidb/pull/10300)で解析できるようにします。
@@ -42,7 +42,7 @@ TiDB Ansible バージョン: 2.1.9
 
 ## PD {#pd}
 
--   GetOperator サービス[＃1514](https://github.com/pingcap/pd/pull/1514)サポートする
+-   GetOperator サービス[＃1514](https://github.com/pingcap/pd/pull/1514)をサポートする
 
 ## ティクヴ {#tikv}
 
@@ -59,7 +59,7 @@ TiDB Ansible バージョン: 2.1.9
     -   行IDまたはデフォルトの列値[＃174](https://github.com/pingcap/tidb-lightning/pull/174)を使用して、ダンプファイル内の不足している列データを入力します。
     -   一部の SST ファイルのインポートに失敗するものの、インポート結果[＃4566](https://github.com/tikv/tikv/pull/4566)が成功して返されるというインポーターのバグを修正しました。
     -   SST ファイルを TiKV [＃4607](https://github.com/tikv/tikv/pull/4607)にアップロードするときに、インポーターで速度制限を設定できるようになりました。
-    -   インポーター RocksDB SST 圧縮方式を`lz4`に変更して CPU 消費量を削減[＃4624](https://github.com/tikv/tikv/pull/4624)
+    -   CPU 消費量を減らすために、インポーター RocksDB SST 圧縮方式を`lz4`に変更します[＃4624](https://github.com/tikv/tikv/pull/4624)
 -   同期差分インスペクター
     -   サポートチェックポイント[＃227](https://github.com/pingcap/tidb-tools/pull/227)
 

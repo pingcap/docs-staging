@@ -1,6 +1,6 @@
 ---
 title: TiDB 2.1 GA Release Notes
-summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、および使いやすさが大幅に向上して、2018 年 11 月 30 日にリリースされました。このリリースには、SQL オプティマイザー、SQL エグゼキューター、統計、式、サーバー、DDL、互換性、配置Driver(PD)、TiKV、およびツールの最適化が含まれています。また、高速なフルデータ インポートのためのTiDB Lightningが導入され、新しい TiDB Binlogがサポートされています。ただし、TiDB 2.1 では、新しいstorageエンジンの採用により、v2.0.x 以前へのダウングレードはサポートされていません。さらに、TiDB 2.1 では並列 DDL が有効になっているため、2.0.1 より前のバージョンの TiDB を使用しているクラスターは、ローリング アップデートを使用して 2.1 にアップグレードできません。TiDB 2.0.6 以前から TiDB 2.1 にアップグレードする場合、進行中の DDL 操作によってアップグレード プロセスが遅くなる可能性があります。
+summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、および使いやすさが大幅に向上して、2018 年 11 月 30 日にリリースされました。このリリースには、SQL オプティマイザー、SQL エグゼキューター、統計、式、サーバー、DDL、互換性、配置Driver(PD)、TiKV、およびツールの最適化が含まれています。また、高速なフルデータ インポートのためのTiDB Lightning が導入され、新しい TiDB Binlogがサポートされています。ただし、TiDB 2.1 では、新しいstorageエンジンの採用により、v2.0.x 以前へのダウングレードはサポートされていません。さらに、TiDB 2.1 では並列 DDL が有効になっているため、2.0.1 より前のバージョンの TiDB を使用しているクラスターは、ローリング アップデートを使用して 2.1 にアップグレードできません。TiDB 2.0.6 以前から TiDB 2.1 にアップグレードする場合、進行中の DDL 操作によってアップグレード プロセスが遅くなる可能性があります。
 ---
 
 # TiDB 2.1 GA リリースノート {#tidb-2-1-ga-release-notes}
@@ -17,13 +17,13 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
     -   適切なインデックスがなくてもマージ結合を使用できるように結合ヒント`TIDB_SMJ`最適化します。
 
-    -   結合ヒント`TIDB_INLJ`を最適化して、結合する内部テーブルを指定します。
+    -   結合ヒント`TIDB_INLJ`最適化して、結合する内部テーブルを指定します。
 
-    -   相関サブクエリを最適化し、フィルタをプッシュダウンし、インデックスの選択範囲を拡張することで、一部のクエリの効率が桁違いに向上します。
+    -   相関サブクエリを最適化し、フィルタをプッシュダウンし、インデックスの選択範囲を拡張することで、一部のクエリの効率を大幅に向上させます。
 
-    -   `UPDATE`番目と`DELETE`のステートメントでインデックスヒントと結合ヒントの使用をサポートします。
+    -   `UPDATE`と`DELETE`ステートメントでインデックスヒントと結合ヒントの使用をサポートします。
 
-    -   より多くの関数の押し下げをサポート: `ABS` / `CEIL` / `FLOOR` / `IS TRUE` / `IS FALSE`
+    -   より多くの関数のプッシュダウンをサポート: `ABS` / `CEIL` / `FLOOR` / `IS TRUE` / `IS FALSE`
 
     -   組み込み関数`IF`と`IFNULL`の定数畳み込みアルゴリズムを最適化する
 
@@ -43,7 +43,7 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
     -   時間データ型のメモリ使用量を最適化し、時間データ型のメモリ使用量を 50% 削減します。
 
-    -   ポイント選択のパフォーマンスを最適化し、Sysbench のポイント選択効率の結果を 60% 向上します。
+    -   ポイント選択パフォーマンスを最適化し、Sysbench のポイント選択効率結果を 60% 向上します。
 
     -   ワイドテーブルの挿入や更新における TiDB のパフォーマンスを 20 倍向上
 
@@ -85,7 +85,7 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
         -   TiKVクラスター内のテーブル領域の分布を分散する
 
-        -   `general log`開くかどうかを制御します
+        -   `general log`を開くかどうかを制御します
 
         -   オンラインでのログレベルの変更をサポート
 
@@ -97,9 +97,9 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
     -   [トランザクションの自動再試行回数を制御するために`tidb_retry_limit`システム変数を追加します。](/system-variables.md#tidb_retry_limit)
 
-    -   [トランザクションが自動的に再試行されるかどうかを制御するには、 `tidb_disable_txn_auto_retry`システム変数を追加します。](/system-variables.md#tidb_disable_txn_auto_retry)
+    -   [トランザクションが自動的に再試行されるかどうかを制御するための`tidb_disable_txn_auto_retry`システム変数を追加します。](/system-variables.md#tidb_disable_txn_auto_retry)
 
-    -   [遅いクエリを取得するために`admin show slow`ステートメントの使用をサポートします](/identify-slow-queries.md#admin-show-slow-command)
+    -   [`admin show slow`ステートメントを使用して遅いクエリを取得できるようにサポートします。](/identify-slow-queries.md#admin-show-slow-command)
 
     -   [`tidb_slow_log_threshold`環境変数を追加して、スローログのしきい値を自動的に設定します。](/system-variables.md#tidb_slow_log_threshold)
 
@@ -117,7 +117,7 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
     -   `ALTER TABLE RENAME KEY TO`構文をサポートする
 
-    -   `admin show ddl jobs`の出力情報にテーブル名とデータベース名を追加します
+    -   `admin show ddl jobs`の出力情報にテーブル名とデータベース名を追加します。
 
     -   [`ddl/owner/resign` HTTP インターフェースを使用して DDL 所有者を解放し、新しい DDL 所有者の選出を開始することをサポートします。](https://github.com/pingcap/tidb/blob/release-2.1/docs/tidb_http_api.md)
 
@@ -143,7 +143,7 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
     -   バージョン管理メカニズムを導入し、クラスタのローリングアップデートを互換性を持ってサポートする
 
-    -   ネットワーク分離後にネットワークが回復したときにリーダーの再選出を回避するためにPDノード間で[`Raft PreVote`有効にする](https://github.com/pingcap/pd/blob/5c7b18cf3af91098f07cf46df0b59fbf8c7c5462/conf/config.toml#L22)
+    -   ネットワーク分離後にネットワークが回復したときにリーダーの再選出を回避するためにPDノード間で[`Raft PreVote`を有効にする](https://github.com/pingcap/pd/blob/5c7b18cf3af91098f07cf46df0b59fbf8c7c5462/conf/config.toml#L22)
 
     -   スケジュール中にマシン障害によってデータが利用できなくなるリスクを軽減するために、デフォルトで`raft learner`有効にします。
 
@@ -159,7 +159,7 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
     -   PDの再起動による不要なスケジュールを削減するためにコーディネーターの起動を最適化します。
 
-    -   バランススケジューラが小さな領域を頻繁にスケジュールする問題を最適化します。
+    -   バランススケジューラが小さなリージョンを頻繁にスケジュールする問題を最適化します。
 
     -   リージョン内の行数を考慮してリージョンのマージを最適化します
 
@@ -169,11 +169,11 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
 -   APIと操作ツール
 
-    -   `TiDB reverse scan`機能をサポートするために[`GetPrevRegion`インターフェース](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L40)追加します
+    -   `TiDB reverse scan`機能をサポートするために[`GetPrevRegion`インターフェース](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L40)を追加します
 
     -   [`BatchSplitRegion`インターフェース](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L54)追加すると、TiKVリージョン分割が高速化されます。
 
-    -   TiDBで分散GCをサポートするには[`GCSafePoint`インターフェース](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L64-L66)追加します
+    -   TiDBで分散GCをサポートするには[`GCSafePoint`インターフェース](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L64-L66)を追加します
 
     -   TiDBで分散GCをサポートするために[`GetAllStores`インターフェース](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L32)追加します。
 
@@ -194,7 +194,7 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
     <!---->
 
-    -   [pd-回復](/pd-recover.md) `max-replica`パラメータを提供する必要がない
+    -   [pd-回復](/pd-recover.md) `max-replica`番目のパラメータを提供する必要がない
 
 -   メトリクス
 
@@ -238,7 +238,7 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
     -   RocksDB の停止を回避するためにスナップショット書き込みプロセスを改善する
 
-    -   [読み取り要求を処理するための`LocalReader`スレッドを追加し、読み取り要求の遅延を減らします。](https://github.com/tikv/rfcs/pull/17)
+    -   [読み取り要求を処理する`LocalReader`スレッドを追加し、読み取り要求の遅延を削減します。](https://github.com/tikv/rfcs/pull/17)
 
     -   [大量の書き込みによる大きなリージョンを回避するために、 `BatchSplit`サポートします。](https://github.com/tikv/rfcs/pull/6)
 
@@ -254,7 +254,7 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
     -   RocksDBの`CompactFiles`バグを修正し、Lightningを使用したデータのインポートへの影響を軽減します
 
-    -   スナップショットファイルの破損の可能性のある問題を修正するために、RocksDB を v5.15 にアップグレードしてください。
+    -   スナップショットファイルの破損の可能性のある問題を修正するために、RocksDB を v5.15 にアップグレードします。
 
     -   フラッシュが書き込みをブロックする問題を回避するために`IngestExternalFile`改善しました
 
@@ -283,4 +283,4 @@ summary: TiDB 2.1 GA は、安定性、パフォーマンス、互換性、お�
 
 <!---->
 
--   TiDB 2.0.6 以前から TiDB 2.1 にアップグレードする場合は、進行中の DDL 操作、特に時間のかかる`Add Index`操作があるかどうかを確認してください。DDL 操作によってアップグレード プロセスが遅くなるためです。進行中の DDL 操作がある場合は、DDL 操作が完了するまで待ってからロール更新を行ってください。
+-   TiDB 2.0.6 以前から TiDB 2.1 にアップグレードする場合は、進行中の DDL 操作、特に時間のかかる`Add Index`の操作があるかどうかを確認してください。DDL 操作によってアップグレード プロセスが遅くなるためです。進行中の DDL 操作がある場合は、DDL 操作が完了するまで待ってからロール更新を行ってください。

@@ -14,7 +14,7 @@ TiDB クラスターには多くの監視メトリックがあります。異常
 >
 > 上記の 2 つの監視概要テーブルは、TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
-2 つのテーブルには、各監視メトリックを効率的に確認できるように、すべての監視データがまとめられています。 `information_schema.metrics_summary`と比較すると、 `information_schema.metrics_summary_by_label`テーブルには`label`列が追加され、異なるラベルに従って差別化された統計が実行されます。
+2 つのテーブルには、すべての監視データがまとめられており、各監視メトリックを効率的に確認できます。 `information_schema.metrics_summary`と比較すると、 `information_schema.metrics_summary_by_label`テーブルには`label`列が追加され、異なるラベルに従って差別化された統計が実行されます。
 
 ```sql
 USE information_schema;

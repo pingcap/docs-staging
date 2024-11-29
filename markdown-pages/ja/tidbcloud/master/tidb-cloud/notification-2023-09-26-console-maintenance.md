@@ -1,6 +1,6 @@
 ---
 title: 2023-09-26 TiDB Cloud Console Maintenance Notification
-summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 (メンテナンス ウィンドウ、理由、影響など) について説明します。
+summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 (メンテナンス期間、理由、影響など) について説明します。
 ---
 
 # [2023-09-26] TiDB Cloudコンソールメンテナンス通知 {#2023-09-26-tidb-cloud-console-maintenance-notification}
@@ -16,7 +16,7 @@ summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 
 
 > **注記：**
 >
-> 現在、 TiDB Cloudコンソールの全体的なメンテナンス スケジュールでは、メンテナンスのタイミングに対するユーザーによる変更はサポートされていません。
+> 現在、 TiDB Cloudコンソールの全体的なメンテナンス スケジュールでは、ユーザーによるメンテナンスのタイミングの変更はサポートされていません。
 
 ## メンテナンスの理由 {#reason-for-maintenance}
 
@@ -69,13 +69,13 @@ summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 
 
 ### TiDB Cloud API の影響を受ける機能 {#affected-features-of-tidb-cloud-api}
 
--   [APIリクエスト](https://docs.pingcap.com/tidbcloud/api/v1beta)件すべてに500で応答します。
+-   [APIリクエスト](https://docs.pingcap.com/tidbcloud/api/v1beta)すべてに500で応答します。
 -   [データサービスAPI](https://docs.pingcap.com/tidbcloud/data-service-overview)影響を受けません。
 
 ## 完了と再開 {#completion-and-resumption}
 
 メンテナンスが正常に完了すると、影響を受けた機能が復元され、さらに優れたエクスペリエンスが提供されます。
 
-## 支持を得ます {#get-support}
+## サポートを受ける {#get-support}
 
-ご質問やサポートが必要な場合は、 [支援チーム](/tidb-cloud/tidb-cloud-support.md)ご連絡ください。お客様の懸念に対処し、必要なガイダンスを提供いたします。
+ご質問やサポートが必要な場合は、 [サポートチーム](/tidb-cloud/tidb-cloud-support.md)ご連絡ください。お客様の懸念に対処し、必要なガイダンスを提供いたします。

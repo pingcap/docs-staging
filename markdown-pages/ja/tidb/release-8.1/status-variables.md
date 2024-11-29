@@ -9,7 +9,7 @@ summary: ステータス変数を使用してシステムとセッションの�
 
 [グローバルステータスを表示](/sql-statements/sql-statement-show-status.md)コマンドを使用してグローバル ステータスを取得し、 [セッションステータスを表示](/sql-statements/sql-statement-show-status.md)コマンドを使用して現在のセッションのステータスを取得できます。
 
-さらに、MySQL 互換性のために[フラッシュステータス](/sql-statements/sql-statement-flush-status.md)コマンドがサポートされています。
+さらに、MySQL との互換性のために[フラッシュステータス](/sql-statements/sql-statement-flush-status.md)コマンドがサポートされています。
 
 ## 変数参照 {#variable-reference}
 
@@ -101,7 +101,7 @@ summary: ステータス変数を使用してシステムとセッションの�
 
 -   範囲: セッション | グローバル
 -   タイプ: 文字列
--   ホスト名とプロセス ID (pid) を含む、 [GC](/garbage-collection-overview.md)のリーダーに関する情報。
+-   ホスト名とプロセス ID (pid) を含む、 [GC](/garbage-collection-overview.md)リーダーに関する情報。
 
 ### tidb_gc_leader_lease {#tidb-gc-leader-lease}
 

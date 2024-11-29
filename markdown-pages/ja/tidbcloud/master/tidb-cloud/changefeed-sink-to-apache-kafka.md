@@ -1,23 +1,23 @@
 ---
 title: Sink to Apache Kafka
-Summary: Learn how to create a changefeed to stream data from TiDB Cloud to Apache Kafka.
+summary: このドキュメントでは、 TiDB Cloudから Apache Kafka にデータをストリーミングするための変更フィードを作成する方法について説明します。Apache Kafka の変更フィードを構成するための制限、前提条件、および手順が含まれています。プロセスには、ネットワーク接続の設定、Kafka ACL 承認の権限の追加、変更フィード仕様の構成が含まれます。
 ---
 
 # Apache Kafka にシンクする {#sink-to-apache-kafka}
 
-このドキュメントでは、TiDB Cloudから Apache Kafka にデータをストリーミングするための変更フィードを作成する方法について説明します。
+このドキュメントでは、 TiDB Cloudから Apache Kafka にデータをストリーミングするための変更フィードを作成する方法について説明します。
 
 > **注記：**
 >
-> -   changefeed 機能を使用するには、TiDB 専用クラスターのバージョンが v6.1.3 以降であることを確認してください。
-> -   [TiDB サーバーレス クラスター](/tidb-cloud/select-cluster-tier.md#tidb-serverless)の場合、changefeed 機能は使用できません。
+> -   changefeed 機能を使用するには、 TiDB Cloud Dedicated クラスターのバージョンが v6.1.3 以降であることを確認してください。
+> -   [TiDB Cloudサーバーレス クラスター](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)場合、changefeed 機能は使用できません。
 
 ## 制限 {#restrictions}
 
 -   TiDB Cloudクラスターごとに、最大 100 個の変更フィードを作成できます。
--   現在、 TiDB Cloud は、Kafka ブローカーに接続するための自己署名 TLS 証明書のアップロードをサポートしていません。
+-   現在、 TiDB Cloud は、 Kafka ブローカーに接続するための自己署名 TLS 証明書のアップロードをサポートしていません。
 -   TiDB Cloud は変更フィードを確立するために TiCDC を使用するため、同じ[TiCDCとしての制限](https://docs.pingcap.com/tidb/stable/ticdc-overview#unsupported-scenarios)持ちます。
--   複製するテーブルに主キーまたは NULL 以外の一意のインデックスがない場合、複製中に一意の制約がないと、再試行シナリオによっては下流に重複したデータが挿入される可能性があります。
+-   複製するテーブルに主キーまたは null 以外の一意のインデックスがない場合、複製中に一意の制約がないと、再試行シナリオによっては下流に重複したデータが挿入される可能性があります。
 
 ## 前提条件 {#prerequisites}
 
@@ -26,7 +26,7 @@ Apache Kafka にデータをストリーミングするための変更フィー�
 -   ネットワーク接続を設定する
 -   Kafka ACL 認証の権限を追加する
 
-### 通信網 {#network}
+### ネットワーク {#network}
 
 TiDB クラスターが Apache Kafka サービスに接続できることを確認します。
 
@@ -48,7 +48,7 @@ Apache Kafka サービスがインターネットにアクセスできない Goo
 1.  Apache Kafka サービスの VPC と TiDB クラスター間の接続は[VPCピアリング接続を設定する](/tidb-cloud/set-up-vpc-peering-connections.md) 。
 2.  Apache Kafka が配置されている VPC の Ingress ファイアウォール ルールを変更します。
 
-    TiDB Cloudクラスターが配置されているリージョンの CIDR を、イングレス ファイアウォール ルールに追加する必要があります。CIDR は、 **VPC ピアリング**ページにあります。これにより、トラフィックが TiDB クラスターから Kafka ブローカーに流れるようになります。
+    TiDB Cloudクラスターが配置されているリージョンの CIDR を、イングレス ファイアウォール ルールに追加する必要があります。CIDR は、 **VPC ピアリング**ページで確認できます。これにより、トラフィックが TiDB クラスターから Kafka ブローカーに流れるようになります。
 
 ### Kafka ACL 認証 {#kafka-acl-authorization}
 
@@ -57,20 +57,20 @@ TiDB Cloud の変更フィードが Apache Kafka にデータをストリーミ�
 -   Kafka のトピック リソース タイプに`Create`および`Write`権限が追加されます。
 -   Kafka のクラスター リソース タイプに`DescribeConfigs`権限が追加されます。
 
-たとえば、Kafka クラスターが Confluent Cloud にある場合、詳細については Confluent ドキュメントの[リソース](https://docs.confluent.io/platform/current/kafka/authorization.html#resources)と[ACLの追加](https://docs.confluent.io/platform/current/kafka/authorization.html#adding-acls)を参照してください。
+たとえば、Kafka クラスターが Confluent Cloud にある場合、詳細については Confluent ドキュメントの[リソース](https://docs.confluent.io/platform/current/kafka/authorization.html#resources)と[ACLの追加](https://docs.confluent.io/platform/current/kafka/authorization.html#adding-acls)参照してください。
 
 ## ステップ1. Apache Kafkaのchangefeedページを開く {#step-1-open-the-changefeed-page-for-apache-kafka}
 
-1.  [TiDB Cloudコンソール](https://tidbcloud.com)で、ターゲット TiDB クラスターのクラスター概要ページに移動し、左側のナビゲーション ペインで**[Changefeed] を**クリックします。
-2.  **「Changefeed の作成」**をクリックし、**ターゲット タイプ**として**Kafka**を選択します。
+1.  [TiDB Cloudコンソール](https://tidbcloud.com)で、ターゲット TiDB クラスターのクラスター概要ページに移動し、左側のナビゲーション ペインで**[Changefeed]**をクリックします。
+2.  **「Changefeed の作成」**をクリックし、**ターゲット タイプ**として**Kafka を**選択します。
 
 ## ステップ2. changefeedターゲットを構成する {#step-2-configure-the-changefeed-target}
 
-1.  **Brokers コンフィグレーション**で、Kafka ブローカーのエンドポイントを入力します。複数のエンドポイントを区切るには、コンマ`,`を使用できます。
+1.  **「ブローカーコンフィグレーション」**で、Kafka ブローカーのエンドポイントを入力します。複数のエンドポイントを区切るには、コンマ`,`使用できます。
 
 2.  Kafka 認証構成に応じて認証オプションを選択します。
 
-    -   Kafka で認証が不要な場合は、デフォルトのオプション**「無効」の**ままにします。
+    -   Kafka で認証が不要な場合は、デフォルトのオプション**「Disable」**のままにします。
     -   Kafka に認証が必要な場合は、対応する認証タイプを選択し、認証用の Kafka アカウントのユーザー名とパスワードを入力します。
 
 3.  Kafka のバージョンを選択します。不明な場合は、Kafka V2 を使用してください。
@@ -87,7 +87,7 @@ TiDB Cloud の変更フィードが Apache Kafka にデータをストリーミ�
 
     -   **フィルター ルール**: この列でフィルター ルールを設定できます。デフォルトでは、すべてのテーブルを複製するルール`*.*`があります。新しいルールを追加すると、 TiDB Cloud はTiDB 内のすべてのテーブルを照会し、右側のボックスにルールに一致するテーブルのみを表示します。最大 100 個のフィルター ルールを追加できます。
     -   **有効なキーを持つテーブル**: この列には、主キーや一意のインデックスなど、有効なキーを持つテーブルが表示されます。
-    -   **有効なキーのないテーブル**: この列には、主キーまたは一意のキーがないテーブルが表示されます。これらのテーブルは、一意の識別子がないと、ダウンストリームが重複イベントを処理するときにデータの一貫性がなくなる可能性があるため、レプリケーション中に問題が発生します。データの一貫性を確保するには、レプリケーションを開始する前に、これらのテーブルに一意のキーまたは主キーを追加することをお勧めします。または、フィルター ルールを追加して、これらのテーブルを除外することもできます。たとえば、ルール`"!test.tbl1"`を使用してテーブル`test.tbl1`を除外できます。
+    -   **有効なキーのないテーブル**: この列には、主キーまたは一意のキーがないテーブルが表示されます。これらのテーブルは、一意の識別子がないと、ダウンストリームが重複イベントを処理するときにデータの一貫性がなくなる可能性があるため、レプリケーション中に問題が発生します。データの一貫性を確保するには、レプリケーションを開始する前に、これらのテーブルに一意のキーまたは主キーを追加することをお勧めします。または、フィルター ルールを追加して、これらのテーブルを除外することもできます。たとえば、ルール`"!test.tbl1"`使用してテーブル`test.tbl1`を除外できます。
 
 2.  **イベント フィルターを**カスタマイズして、複製するイベントをフィルターします。
 
@@ -99,26 +99,26 @@ TiDB Cloud の変更フィードが Apache Kafka にデータをストリーミ�
     -   Avro は、豊富なデータ構造を備えたコンパクトで高速なバイナリ データ形式で、さまざまなフロー システムで広く使用されています。詳細については、 [Avroデータ形式](https://docs.pingcap.com/tidb/stable/ticdc-avro-protocol)参照してください。
     -   Canal-JSON は解析しやすいプレーンな JSON テキスト形式です。詳細については、 [Canal-JSON データ形式](https://docs.pingcap.com/tidb/stable/ticdc-canal-json)参照してください。
 
-4.  TiDB**拡張フィールドを Kafka メッセージ本文に追加する場合は、TiDB 拡張**オプションを有効にします。
+4.  TiDB 拡張フィールドを Kafka メッセージ本文に追加する場合は、 **TiDB 拡張**オプションを有効にします。
 
-    TiDB拡張フィールドの詳細については、 [Avro データ形式の TiDB 拡張フィールド](https://docs.pingcap.com/tidb/stable/ticdc-avro-protocol#tidb-extension-fields)および[Canal-JSON データ形式の TiDB 拡張フィールド](https://docs.pingcap.com/tidb/stable/ticdc-canal-json#tidb-extension-field)を参照してください。
+    TiDB拡張フィールドの詳細については、 [Avro データ形式の TiDB 拡張フィールド](https://docs.pingcap.com/tidb/stable/ticdc-avro-protocol#tidb-extension-fields)および[Canal-JSON データ形式の TiDB 拡張フィールド](https://docs.pingcap.com/tidb/stable/ticdc-canal-json#tidb-extension-field)参照してください。
 
-5.  データ形式として**Avro**を選択した場合は、ページに Avro 固有の構成がいくつか表示されます。これらの構成は次のように入力できます。
+5.  データ形式として**Avro を**選択した場合、ページに Avro 固有の構成がいくつか表示されます。これらの構成は次のように入力できます。
 
     -   **Decimal**および**Unsigned BigInt**構成では、 TiDB Cloud がKafka メッセージ内の Decimal および Unsigned Bigint データ型を処理する方法を指定します。
     -   **スキーマ レジストリ**領域で、スキーマ レジストリ エンドポイントを入力します。HTTP**認証**を有効にすると、ユーザー名とパスワードのフィールドが表示され、TiDB クラスターのエンドポイントとパスワードが自動的に入力されます。
 
-6.  **「トピック配布」**領域で配布モードを選択し、モードに応じてトピック名の設定を入力します。
+6.  「**トピック配布」**領域で配布モードを選択し、モードに応じてトピック名の設定を入力します。
 
-    データ形式として**Avro**を選択した場合は、 **「配布モード」**ドロップダウン リストで**「変更ログをテーブルごとに Kafka トピックに配布」**モードのみを選択できます。
+    データ形式として**Avro を**選択した場合は、 **「配布モード」**ドロップダウン リスト**で「変更ログをテーブルごとに Kafka トピックに配布」**モードのみを選択できます。
 
     配布モードは、変更フィードが Kafka トピックをテーブル別、データベース別、またはすべての変更ログに対して 1 つのトピックを作成する方法を制御します。
 
-    -   **テーブルごとに変更ログを Kafka トピックに配布する**
+    -   **テーブルごとに変更ログを Kafka Topics に配布する**
 
         changefeed で各テーブル専用の Kafka トピックを作成する場合は、このモードを選択します。すると、テーブルのすべての Kafka メッセージが専用の Kafka トピックに送信されます。トピック プレフィックス、データベース名とテーブル名の間の区切り文字、およびサフィックスを設定することで、テーブルのトピック名をカスタマイズできます。たとえば、区切り文字を`_`に設定すると、トピック名の形式は`<Prefix><DatabaseName>_<TableName><Suffix>`になります。
 
-        スキーマ イベントの作成などの行以外のイベントの変更ログの場合は、 **[デフォルトのトピック名]**フィールドにトピック名を指定できます。変更フィードは、そのような変更ログを収集するためにそれに応じてトピックを作成します。
+        スキーマ イベントの作成などの行以外のイベントの変更ログの場合は、 **[既定のトピック名]**フィールドにトピック名を指定できます。変更フィードは、そのような変更ログを収集するためにそれに応じてトピックを作成します。
 
     -   **データベースごとに変更ログを Kafka Topics に配布する**
 
@@ -132,7 +132,7 @@ TiDB Cloud の変更フィードが Apache Kafka にデータをストリーミ�
 
 7.  **パーティション配布**領域では、Kafka メッセージが送信されるパーティションを決定できます。
 
-    -   **インデックス値によって変更ログを Kafka パーティションに分散する**
+    -   **インデックス値によって変更ログを Kafka パーティションに配布する**
 
         変更フィードでテーブルの Kafka メッセージを異なるパーティションに送信する場合は、この分散方法を選択します。行の変更ログのインデックス値によって、変更ログが送信されるパーティションが決まります。この分散方法により、パーティションのバランスが向上し、行レベルの秩序性が確保されます。
 
@@ -142,8 +142,8 @@ TiDB Cloud の変更フィードが Apache Kafka にデータをストリーミ�
 
 8.  **トピックコンフィグレーション**領域で、次の番号を設定します。変更フィードは、番号に従って Kafka トピックを自動的に作成します。
 
-    -   **レプリケーション係数**: 各 Kafka メッセージが複製される Kafka サーバーの数を制御します。
-    -   **パーティション番号**: トピック内に存在するパーティションの数を制御します。
+    -   **レプリケーション係数**: 各 Kafka メッセージが複製される Kafka サーバーの数を制御します。有効な値の範囲は[`min.insync.replicas`](https://kafka.apache.org/33/documentation.html#brokerconfigs_min.insync.replicas)から Kafka ブローカーの数までです。
+    -   **パーティション数**: トピック内に存在するパーティションの数を制御します。有効な値の範囲は`[1, 10 * the number of Kafka brokers]`です。
 
 9.  **「次へ」**をクリックします。
 

@@ -83,7 +83,7 @@ TiDB スナップショットのバックアップと復元のアーキテクチ
 
 5.  BR は各 TiKV ノードから復元結果を受信します。
 
-    -   `RegionNotFound`または`EpochNotMatch`が原因で一部のデータの復元に失敗した場合 (たとえば、TiKV ノードがダウンしている場合)、 BR は復元を再試行します。
+    -   `RegionNotFound`または`EpochNotMatch`原因で一部のデータの復元に失敗した場合 (たとえば、TiKV ノードがダウンしている場合)、 BR は復元を再試行します。
     -   復元に失敗し、再試行できないデータがある場合、復元タスクは失敗します。
     -   すべてのデータが復元されると、復元タスクは成功します。
 
@@ -93,7 +93,7 @@ TiDB スナップショットのバックアップと復元のアーキテクチ
 
 スナップショット バックアップでは、次の種類のファイルが生成されます。
 
--   `SST`ファイル: TiKV ノードがバックアップするデータを保存します。2 ファイルのサイズは`SST`リージョンのサイズと同じです。
+-   `SST`ファイル: `SST`ノードがバックアップするデータを保存します。2 ファイルのサイズは、リージョンのサイズと同じです。
 -   `backupmeta`ファイル: すべてのバックアップ ファイルの数、キー範囲、サイズ、各バックアップ ファイルのハッシュ (sha256) 値など、バックアップ タスクのメタデータを保存します。
 -   `backup.lock`ファイル: 複数のバックアップ タスクが同じディレクトリにデータを保存するのを防ぎます。
 
@@ -104,22 +104,22 @@ TiDB スナップショットのバックアップと復元のアーキテクチ
 -   `storeID` TiKV ノード ID です。
 -   `regionID`リージョンID です。
 -   `regionEpoch` リージョンのバージョン番号です。
--   `keyHash`範囲の startKey のハッシュ (sha256) 値であり、ファイルの一意性を保証します。
--   `timestamp`は、TiKV によって生成されたときの SST ファイルの Unix タイムスタンプです。
+-   `keyHash`は範囲の startKey のハッシュ (sha256) 値であり、ファイルの一意性を保証します。
+-   `timestamp` TiKV によって生成されたときの SST ファイルの Unix タイムスタンプです。
 -   `cf` RocksDB のカラムファミリを示します ( `cf`が`default`または`write`のデータのみを復元します)。
 
 データが Amazon S3 またはネットワーク ディスクにバックアップされると、SST ファイルの名前は`regionID_regionEpoch_keyHash_timestamp_cf`の形式で付けられます。名前のフィールドの説明は次のとおりです。
 
 -   `regionID`リージョンID です。
 -   `regionEpoch` リージョンのバージョン番号です。
--   `keyHash`範囲の startKey のハッシュ (sha256) 値であり、ファイルの一意性を保証します。
--   `timestamp`は、TiKV によって生成されたときの SST ファイルの Unix タイムスタンプです。
+-   `keyHash`は範囲の startKey のハッシュ (sha256) 値であり、ファイルの一意性を保証します。
+-   `timestamp` TiKV によって生成されたときの SST ファイルの Unix タイムスタンプです。
 -   `cf` RocksDB のカラムファミリを示します ( `cf`が`default`または`write`のデータのみを復元します)。
 
 ### SST ファイルの保存形式 {#storage-format-of-sst-files}
 
 -   SSTファイルのstorage形式の詳細については、 [RocksDB BlockBasedTable 形式](https://github.com/facebook/rocksdb/wiki/Rocksdb-BlockBasedTable-Format)参照してください。
--   SST ファイル内のバックアップ データのエンコード形式の詳細については、 [テーブルデータからキー値へのマッピング](/tidb-computing.md#mapping-table-data-to-key-value)を参照してください。
+-   SST ファイル内のバックアップ データのエンコード形式の詳細については、 [テーブルデータからキー値へのマッピング](/tidb-computing.md#mapping-table-data-to-key-value)参照してください。
 
 ### バックアップファイルの構造 {#structure-of-backup-files}
 
@@ -133,7 +133,7 @@ GCS または Azure Blob Storage にデータをバックアップすると、SS
         ├── {storeID}-{regionID}-{regionEpoch}-{keyHash}-{timestamp}-{cf}.sst
         └── {storeID}-{regionID}-{regionEpoch}-{keyHash}-{timestamp}-{cf}.sst
 
-Amazon S3 またはネットワーク ディスクにデータをバックアップすると、SST ファイルは`storeID`に基づいてサブディレクトリに保存されます。構造は次のとおりです。
+データを Amazon S3 またはネットワーク ディスクにバックアップすると、SST ファイルは`storeID`に基づいてサブディレクトリに保存されます。構造は次のとおりです。
 
     .
     └── 20220621

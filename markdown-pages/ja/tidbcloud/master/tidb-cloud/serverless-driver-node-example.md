@@ -3,22 +3,22 @@ title: TiDB Cloud Serverless Driver Node.js Tutorial
 summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス ドライバーを使用する方法を学習します。
 ---
 
-# TiDB CloudレスDriverNode.js チュートリアル {#tidb-cloud-serverless-driver-node-js-tutorial}
+# TiDB CloudサーバーレスDriverNode.js チュートリアル {#tidb-cloud-serverless-driver-node-js-tutorial}
 
 このチュートリアルでは、ローカル Node.js プロジェクトでTiDB Cloudサーバーレス ドライバーを使用する方法について説明します。
 
 > **注記：**
 >
-> -   このチュートリアルは、TiDB Serverless クラスターにのみ適用されます。
+> -   このチュートリアルは、 TiDB Cloud Serverless クラスターにのみ適用されます。
 > -   Cloudflare Workers、Vercel Edge Functions、Netlify Edge Functions でTiDB Cloudサーバーレス ドライバーを使用する方法については、 [自動車販売に関する洞察](https://car-sales-insight.vercel.app/)と[サンプルリポジトリ](https://github.com/tidbcloud/car-sales-insight)ご覧ください。
 
-## あなたが始める前に {#before-you-begin}
+## 始める前に {#before-you-begin}
 
 このステップバイステップのチュートリアルを完了するには、次のものが必要です。
 
 -   [Node.js](https://nodejs.org/en) &gt;= 18.0.0。
 -   [ネプ](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)またはお好みのパッケージ マネージャーを使用します。
--   TiDB サーバーレス クラスター。ない場合は、 [TiDBサーバーレスクラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md)使用できます。
+-   TiDB Cloud Serverless クラスター。ない場合は、 [TiDB Cloud Serverless クラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md)使用できます。
 
 ## ステップ1. ローカルNode.jsプロジェクトを作成する {#step-1-create-a-local-node-js-project}
 
@@ -61,7 +61,7 @@ summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス 
     ```js
     import { connect } from '@tidbcloud/serverless'
 
-    const conn = connect({url: 'mysql://[username]:[password]@[host]/[database]'}) // replace with your TiDB Serverless cluster information
+    const conn = connect({url: 'mysql://[username]:[password]@[host]/[database]'}) // replace with your TiDB Cloud Serverless cluster information
     console.log(await conn.execute("show tables"))
     ```
 
@@ -71,9 +71,9 @@ summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス 
 
 ## Node.js の以前のバージョンとの互換性 {#compatibility-with-earlier-versions-of-node-js}
 
-グローバル`fetch`関数を持たない Node.js 18.0.0 より前のバージョンを使用している場合は、次の手順で`fetch`を取得できます。
+グローバル`fetch`関数を持たない Node.js 18.0.0 より前のバージョンを使用している場合は、次の手順で`fetch`取得できます。
 
-1.  `undici`など、 `fetch`を提供するパッケージをインストールします。
+1.  `fetch` `undici`など）を提供するパッケージをインストールします。
 
         npm install undici
 

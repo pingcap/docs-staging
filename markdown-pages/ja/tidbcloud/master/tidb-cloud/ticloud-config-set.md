@@ -1,6 +1,6 @@
 ---
 title: ticloud config set
-summary: ticloud config set のリファレンス。
+summary: ticloud config set` のリファレンス。
 ---
 
 # ticloud 設定セット {#ticloud-config-set}
@@ -11,15 +11,15 @@ summary: ticloud config set のリファレンス。
 ticloud config set <property-name> <value> [flags]
 ```
 
-設定できるプロパティには、 `public-key` 、 `private-key` 、 `api-url`などがあります。
+設定できるプロパティには、 `public-key` 、 `private-key` 、 `api-url`があります。
 
-| プロパティ   | 説明                                                          | 必須  |
-| ------- | ----------------------------------------------------------- | --- |
-| 公開鍵     | TiDB CloudAPIの公開鍵                                           | はい  |
-| 秘密鍵     | TiDB CloudAPIの秘密鍵                                           | はい  |
-| API URL | TiDB Cloudのベース API URL (デフォルトは`https://api.tidbcloud.com` ) | いいえ |
+| プロパティ   | 説明                                                                  | 必須  |
+| ------- | ------------------------------------------------------------------- | --- |
+| 公開鍵     | TiDB Cloud API の公開キーを指定します。                                         | はい  |
+| 秘密鍵     | TiDB Cloud API の秘密キーを指定します。                                         | はい  |
+| API URL | TiDB Cloudのベース API URL を指定します (デフォルトは`https://api.tidbcloud.com` )。 | いいえ |
 
-> **ノート：**
+> **注記：**
 >
 > 特定のユーザー プロファイルのプロパティを構成する場合は、 `-P`フラグを追加し、コマンドで対象のユーザー プロファイル名を指定できます。
 
@@ -49,9 +49,9 @@ ticloud config set api-url https://api.tidbcloud.com
 
 ## 旗 {#flags}
 
-| フラグ        | 説明           |
-| ---------- | ------------ |
-| -h, --help | このコマンドのヘルプ情報 |
+| フラグ        | 説明                  |
+| ---------- | ------------------- |
+| -h, --help | このコマンドのヘルプ情報を表示します。 |
 
 ## 継承されたフラグ {#inherited-flags}
 
@@ -59,6 +59,7 @@ ticloud config set api-url https://api.tidbcloud.com
 | ----------------- | ------------------------------------------------------------------------------ | --- | -------------------------------------------------------------- |
 | --色なし             | 出力のカラーを無効にします。                                                                 | いいえ | 非対話型モードでのみ機能します。対話型モードでは、一部の UI コンポーネントで色を無効にしても機能しない可能性があります。 |
 | -P, --profile 文字列 | このコマンドで使用するアクティブ[ユーザープロフィール](/tidb-cloud/cli-reference.md#user-profile)を指定します。 | いいえ | 非対話型モードと対話型モードの両方で動作します。                                       |
+| -D、--デバッグ         | デバッグ モードを有効にします。                                                               | いいえ | 非対話型モードと対話型モードの両方で動作します。                                       |
 
 ## フィードバック {#feedback}
 

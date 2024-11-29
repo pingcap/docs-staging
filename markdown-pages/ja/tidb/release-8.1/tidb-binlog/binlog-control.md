@@ -1,11 +1,11 @@
 ---
 title: binlogctl
-summary: binlogctl の使い方を学びます。
+summary: binlogctl` の使い方を学びます。
 ---
 
 # binlogctl {#binlogctl}
 
-[Binlog制御](https://github.com/pingcap/tidb-binlog/tree/release-8.1/binlogctl) (略して`binlogctl` ) は、 TiDB Binlog用のコマンドライン ツールです。 `binlogctl`を使用して、 TiDB Binlogクラスターを管理できます。
+[Binlog制御](https://github.com/pingcap/tidb-binlog/tree/release-8.1/binlogctl) (略して`binlogctl` ) は、 TiDB Binlog用のコマンドライン ツールです。 `binlogctl`使用して、 TiDB Binlogクラスターを管理できます。
 
 `binlogctl`次の目的で使用できます。
 
@@ -56,7 +56,7 @@ summary: binlogctl の使い方を学びます。
 
 -   すべてのPumpまたはDrainerノードの状態を確認します。
 
-    `cmd`を`pumps`または`drainers`に設定します。例:
+    `cmd` `pumps`または`drainers`に設定します。例:
 
     ```bash
     bin/binlogctl -pd-urls=http://127.0.0.1:2379 -cmd pumps
@@ -87,7 +87,7 @@ summary: binlogctl の使い方を学びます。
 
     PumpまたはDrainerノードが正常に動作している場合、または通常のプロセスで一時停止または閉じられている場合は、正常状態です。異常な状態では、PumpまたはDrainerノードは状態を正しく維持できません。これは、データレプリケーションタスクに影響します。この場合は、 `binlogctl`使用して状態情報を修復します。
 
-    PumpまたはDrainerノードの状態を更新するには、 `cmd`を`update-pump`または`update-drainer`設定します。状態は`paused`または`offline`になります。例:
+    PumpまたはDrainerノードの状態を更新するには、 `cmd` `update-pump`または`update-drainer`に設定します。状態は`paused`または`offline`になります。例:
 
     ```bash
     bin/binlogctl -pd-urls=http://127.0.0.1:2379 -cmd update-pump -node-id ip-127-0-0-1:8250 -state paused

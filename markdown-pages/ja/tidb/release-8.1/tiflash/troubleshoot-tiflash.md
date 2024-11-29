@@ -5,7 +5,7 @@ summary: TiFlashクラスターのトラブルシューティングを行う際�
 
 # TiFlashクラスタのトラブルシューティング {#troubleshoot-a-tiflash-cluster}
 
-このセクションでは、 TiFlash の使用時によく発生する問題、その理由、および解決策について説明します。
+このセクションでは、 TiFlashの使用時によく発生する問題、その理由、および解決策について説明します。
 
 ## TiFlash が起動に失敗する {#tiflash-fails-to-start}
 
@@ -19,7 +19,7 @@ summary: TiFlashクラスターのトラブルシューティングを行う際�
     dnf install libnsl
     ```
 
-2.  システムの`ulimit`パラメータ設定を確認してください。
+2.  システムの`ulimit`のパラメータ設定を確認してください。
 
     ```shell
     ulimit -n 1000000
@@ -27,7 +27,7 @@ summary: TiFlashクラスターのトラブルシューティングを行う際�
 
 3.  PD Controlツールを使用して、ノード (同じ IP とポート) 上でオフラインに失敗したTiFlashインスタンスがあるかどうかを確認し、インスタンスを強制的にオフラインにします。詳細な手順については、 [TiFlashクラスターのスケールイン](/scale-tidb-using-tiup.md#scale-in-a-tiflash-cluster)を参照してください。
 
-上記の方法で問題を解決できない場合は、 TiFlashログ ファイルと PingCAP またはコミュニティからの[支持を得ます](/support.md)保存します。
+上記の方法で問題を解決できない場合は、 TiFlashログ ファイルと PingCAP またはコミュニティからの[サポートを受ける](/support.md)保存します。
 
 ## TiFlashレプリカは常に利用できません {#tiflash-replica-is-always-unavailable}
 
@@ -50,7 +50,7 @@ summary: TiFlashクラスターのトラブルシューティングを行う際�
     echo "store" | /path/to/pd-ctl -u http://${pd-ip}:${pd-port}
     ```
 
-    TiFlashプロキシの`store.labels` `{"key": "engine", "value": "tiflash"}`などの情報が含まれています。この情報を確認することで、 TiFlashプロキシを確認できます。
+    TiFlashプロキシの`store.labels`は`{"key": "engine", "value": "tiflash"}`などの情報が含まれています。この情報を確認することで、 TiFlashプロキシを確認できます。
 
 4.  `pd buddy`ログを正しく印刷できるかどうかを確認します (ログ パスは [flash.flash_cluster] 構成項目の`log`の値です。デフォルトのログ パスは、 TiFlash構成ファイルで構成されている`tmp`ディレクトリの下にあります)。
 
@@ -65,11 +65,11 @@ summary: TiFlashクラスターのトラブルシューティングを行う際�
     > **注記：**
     >
     > -   [配置ルール](/configure-placement-rules.md)が有効になっていて、複数のルールが存在する場合、以前に構成された[`max-replicas`](/pd-configuration-file.md#max-replicas) 、 [`location-labels`](/pd-configuration-file.md#location-labels) 、および[`isolation-level`](/pd-configuration-file.md#isolation-level)有効になりません。レプリカ ポリシーを調整するには、配置ルールに関連するインターフェイスを使用します。
-    > -   [配置ルール](/configure-placement-rules.md)が有効になっていて、デフォルト ルールが 1 つだけ存在する場合、 `max-replicas` 、または`isolation-level` `location-labels`構成が変更されると、TiDB はこのデフォルト ルールを自動的に更新します。
+    > -   [配置ルール](/configure-placement-rules.md)が有効になっていて、デフォルト ルールが 1 つだけ存在する場合、 `max-replicas` 、または`isolation-level` `location-labels`が変更されると、TiDB はこのデフォルト ルールを自動的に更新します。
 
 6.  マシン ( TiFlashノードの`store`があるマシン) の残りのディスク容量が十分かどうかを確認します。デフォルトでは、残りのディスク容量が`store`容量 ( `low-space-ratio`パラメータによって制御されます) の 20% 未満の場合、PD はこのTiFlashノードにデータをスケジュールできません。
 
-## 一部のクエリでは<code>Region Unavailable</code>エラーが返されます {#some-queries-return-the-code-region-unavailable-code-error}
+## 一部のクエリでは、 <code>Region Unavailable</code>エラーが返されます。 {#some-queries-return-the-code-region-unavailable-code-error}
 
 TiFlashへの負荷が大きすぎてTiFlashデータのレプリケーションが遅れる場合、一部のクエリで`Region Unavailable`エラーが返されることがあります。
 
@@ -118,7 +118,7 @@ TiFlashノードをデプロイし、レプリケーションを開始した後 
     `progress`に変化があるかどうかを確認します。
 
     -   はいの場合、 TiFlashレプリケーションは正常に実行されます。
-    -   いいえの場合、 TiFlashレプリケーションは異常です。 `tidb.log`で、 `Tiflash replica is not available`ログを検索します。対応するテーブルの`progress`が更新されているかどうかを確認します。更新されていない場合は、 `tiflash log`で詳細情報を確認します。たとえば、 `tiflash log`の`lag_region_info`を検索して、どのリージョンが遅れているかを確認します。
+    -   いいえの場合、 TiFlashレプリケーションは異常です。 `tidb.log`で、 `Tiflash replica is not available`のログを検索します。対応するテーブルの`progress`が更新されているかどうかを確認します。更新されていない場合は、 `tiflash log`で詳細情報を確認します。たとえば、 `tiflash log`の`lag_region_info`検索して、どのリージョンが遅れているかを確認します。
 
 3.  pd-ctl を使用して、 [配置ルール](/configure-placement-rules.md)機能が有効になっているかどうかを確認します。
 
@@ -155,7 +155,7 @@ TiFlashノードをデプロイし、レプリケーションを開始した後 
 
 5.  TiDB がテーブルの配置ルールを作成したかどうかを確認します。
 
-    TiDB DDL 所有者のログを検索し、TiDB が PD に配置ルールを追加するように通知したかどうかを確認します。パーティション化されていないテーブルの場合は`ConfigureTiFlashPDForTable`検索します。パーティション化されたテーブルの場合は`ConfigureTiFlashPDForPartitions`を検索します。
+    TiDB DDL 所有者のログを検索し、TiDB が PD に配置ルールを追加するように通知したかどうかを確認します。パーティション化されていないテーブルの場合は`ConfigureTiFlashPDForTable`検索します。パーティション化されたテーブルの場合は`ConfigureTiFlashPDForPartitions`検索します。
 
     -   キーワードが見つかった場合は、次の手順に進みます。
     -   そうでない場合は、トラブルシューティングのために、対応するコンポーネントのログを収集します。
@@ -166,7 +166,7 @@ TiFlashノードをデプロイし、レプリケーションを開始した後 
 
 7.  PD のスケジュールが適切に設定されているかどうかを確認します。
 
-    `pd.log`ファイルで`table-<table_id>-r`キーワードと`add operator`ようなスケジュール動作を検索します。
+    `pd.log`ファイルで`table-<table_id>-r`キーワードと`add operator`のようなスケジュール動作を検索します。
 
     -   キーワードが見つかった場合、PD は適切にスケジュールします。
     -   そうでない場合、PD は適切にスケジュールされません。

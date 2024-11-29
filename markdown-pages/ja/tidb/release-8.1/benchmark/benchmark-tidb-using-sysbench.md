@@ -19,7 +19,7 @@ server_configs:
     log.level: "error"
 ```
 
-また、 [`tidb_enable_prepared_plan_cache`](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610)有効になっていることを確認し、 `--db-ps-mode=auto`を使用して sysbench が準備されたステートメントを使用できるようにすることもお勧めします。SQL プラン キャッシュの機能と監視方法については、 [SQL 準備済み実行プラン キャッシュ](/sql-prepared-plan-cache.md)ドキュメントを参照してください。
+また、 [`tidb_enable_prepared_plan_cache`](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610)有効になっていることを確認し、 `--db-ps-mode=auto`使用して sysbench が準備されたステートメントを使用できるようにすることもお勧めします。SQL プラン キャッシュの機能と監視方法については、 [SQL 準備実行プラン キャッシュ](/sql-prepared-plan-cache.md)ドキュメントを参照してください。
 
 > **注記：**
 >
@@ -29,7 +29,7 @@ server_configs:
 
 ログ レベルが高くなると、TiKV のパフォーマンスも向上します。
 
-TiKV クラスターには、デフォルト CF、書き込み CF、ロック CF など、さまざまな種類のデータを格納するために主に使用される複数のカラムファミリがあります。Sysbench テストでは、デフォルト CF と書き込み CF のみに焦点を当てる必要があります。データのインポートに使用されるカラムファミリは、TiDB クラスター間で一定の割合を持ちます。
+TiKV クラスターには、デフォルト CF、書き込み CF、ロック CF など、主にさまざまな種類のデータを格納するために使用される複数のカラムファミリがあります。Sysbench テストでは、デフォルト CF と書き込み CF にのみ焦点を当てる必要があります。データのインポートに使用されるカラムファミリは、TiDB クラスター間で一定の割合を持ちます。
 
 デフォルト CF : 書き込み CF = 4 : 1
 
@@ -75,7 +75,7 @@ report-interval=10
 db-driver=mysql
 ```
 
-上記のパラメータは、実際のニーズに応じて調整できます。そのうち、 `TIDB_HOST`は TiDBサーバーの IP アドレス (構成ファイルに複数のアドレスを含めることができないため)、 `threads`はテストの同時接続数で、「8、16、32、64、128、256」に調整できます。データをインポートするときは、threads = 8 または 16 に設定することをお勧めします。5 `threads`調整したら、 **config**という名前のファイルを保存します。
+上記のパラメータは、実際のニーズに応じて調整できます。そのうち、 `TIDB_HOST`は TiDBサーバーの IP アドレス (構成ファイルに複数のアドレスを含めることはできないため)、 `threads`テストの同時接続数で、「8、16、32、64、128、256」に調整できます。データをインポートするときは、threads = 8 または 16 に設定することをお勧めします`threads`を調整したら、 **config**という名前のファイルを保存します。
 
 サンプル**設定**ファイルとして以下を参照してください。
 
@@ -95,7 +95,7 @@ db-driver=mysql
 
 > **注記：**
 >
-> 楽観的トランザクション モデルを有効にすると (TiDB はデフォルトで悲観的トランザクション モードを使用します)、同時実行の競合が見つかったときに TiDB はトランザクションをロールバックします。1 から`tidb_disable_txn_auto_retry`に設定すると、トランザクションの競合が発生した後に自動再試行メカニズムが`off`になり、トランザクションの競合エラーが原因で Sysbench が終了するのを防ぐことができます。
+> 楽観的トランザクション モデルを有効にすると (TiDB はデフォルトで悲観的トランザクション モードを使用します)、同時実行の競合が見つかったときに TiDB はトランザクションをロールバックします。1 から`tidb_disable_txn_auto_retry` `off`設定すると、トランザクションの競合が発生した後に自動再試行メカニズムがオンになり、トランザクションの競合エラーが原因で Sysbench が終了するのを防ぐことができます。
 
 データをインポートする前に、TiDB にいくつかの設定を行う必要があります。MySQL クライアントで次のコマンドを実行します。
 
@@ -114,7 +114,7 @@ create database sbtest;
 Sysbench スクリプトがインデックスを作成する順序を調整します。Sysbench は、「テーブルの作成 -&gt; データの挿入 -&gt; インデックスの作成」の順序でデータをインポートするため、TiDB がデータをインポートするのに時間がかかります。ユーザーは順序を調整して、データのインポートを高速化できます。Sysbench バージョン[1.0.20](https://github.com/akopytov/sysbench/tree/1.0.20)を使用するとします。順序は、次の 2 つの方法のいずれかで調整できます。
 
 -   TiDB 用に変更された[oltp_common.lua](https://raw.githubusercontent.com/pingcap/tidb-bench/master/sysbench/sysbench-patch/oltp_common.lua)ファイルをダウンロードし、 `/usr/share/sysbench/oltp_common.lua`ファイルを上書きします。
--   `/usr/share/sysbench/oltp_common.lua`で、行[235-240](https://github.com/akopytov/sysbench/blob/1.0.20/src/lua/oltp_common.lua#L235-L240)を行 198 のすぐ後ろに移動します。
+-   `/usr/share/sysbench/oltp_common.lua`で、行[235-240](https://github.com/akopytov/sysbench/blob/1.0.20/src/lua/oltp_common.lua#L235-L240)行 198 のすぐ後ろに移動します。
 
 > **注記：**
 >
@@ -158,7 +158,7 @@ sysbench --config-file=config oltp_read_only --tables=32 --table-size=10000000 -
 
 この問題は、多くの場合、プロキシの使用に関係しています。単一の TiDBサーバーに負荷をかけ、各結果を合計し、合計結果をプロキシを使用した結果と比較することができます。
 
-HAproxy を例に挙げてみましょう。パラメータ`nbproc` 、最大で起動できるプロセスの数を増やすことができます。HAproxy の最新バージョンでは、 `nbthread`と`cpu-map`サポートされています。これらすべてにより、プロキシの使用によるパフォーマンスへの悪影響を軽減できます。
+HAproxy を例に挙げてみましょう。パラメータ`nbproc` 、最大で起動できるプロセスの数を増やすことができます。HAproxy の最新バージョンでは、 `nbthread`と`cpu-map`もサポートされています。これらすべてにより、プロキシの使用によるパフォーマンスへの悪影響を軽減できます。
 
 ### 同時実行性が高いにもかかわらず、TiKV の CPU 使用率が低いのはなぜですか? {#under-high-concurrency-why-is-the-cpu-utilization-rate-of-tikv-still-low}
 

@@ -35,7 +35,7 @@ SQL 診断システムは、次の 3 つの主要部分で構成されていま�
 -   カーネル パラメータ テーブル[`information_schema.cluster_systeminfo`](/information-schema/information-schema-cluster-systeminfo.md)では、クラスター内のさまざまなインスタンスのカーネル構成情報を照会できます。現在、TiDB は sysctl 情報の照会をサポートしています。
 -   クラスター ログ テーブル[`information_schema.cluster_log`](/information-schema/information-schema-cluster-log.md)では、クラスター ログをクエリできます。クエリ条件を各インスタンスにプッシュダウンすることで、クエリがクラスターのパフォーマンスに与える影響は、 `grep`コマンドよりも少なくなります。
 
-TiDB v4.0 より前のシステム テーブルでは、現在のインスタンスのみを表示できます。TiDB v4.0 では、対応するクラスター テーブルが導入され、単一の TiDB インスタンスでクラスター全体のグローバル ビューを取得できます。これらのテーブルは現在`information_schema`にあり、クエリ方法は他の`information_schema`つのシステム テーブルと同じです。
+TiDB v4.0 より前のシステム テーブルでは、現在のインスタンスのみを表示できます。TiDB v4.0 では、対応するクラスター テーブルが導入され、単一の TiDB インスタンスでクラスター全体のグローバル ビューを取得できます。これらのテーブルは現在`information_schema`にあり、クエリ方法は他の`information_schema`のシステム テーブルと同じです。
 
 ## クラスタ監視テーブル {#cluster-monitoring-tables}
 
@@ -50,7 +50,7 @@ TiDB クラスターには多くの監視メトリックがあるため、TiDB �
 
 ## 自動診断 {#automatic-diagnostics}
 
-上記のクラスター情報テーブルとクラスター監視テーブルでは、クラスターのトラブルシューティングを行うために SQL 文を手動で実行する必要があります。TiDB v4.0 は自動診断をサポートしています。既存の基本情報テーブルに基づいて診断関連のシステム テーブルを使用することで、診断が自動的に実行されます。自動診断に関連するシステム テーブルは次のとおりです。
+上記のクラスター情報テーブルとクラスター監視テーブルでは、クラスターのトラブルシューティングを行うために SQL 文を手動で実行する必要があります。TiDB v4.0 は自動診断をサポートしています。既存の基本情報テーブルに基づいて診断関連のシステム テーブルを使用することで、診断を自動的に実行できます。自動診断に関連するシステム テーブルは次のとおりです。
 
--   診断結果テーブル[`information_schema.inspection_result`](/information-schema/information-schema-inspection-result.md)には、システムの診断結果が表示されます。診断は受動的にトリガーされます`select * from inspection_result`を実行すると、すべての診断ルールがトリガーされてシステムが診断され、システム内の障害またはリスクが結果に表示されます。
+-   診断結果テーブル[`information_schema.inspection_result`](/information-schema/information-schema-inspection-result.md)には、システムの診断結果が表示されます。診断は受動的にトリガーされます`select * from inspection_result`実行すると、すべての診断ルールがトリガーされてシステムが診断され、システム内の障害またはリスクが結果に表示されます。
 -   診断サマリー テーブル[`information_schema.inspection_summary`](/information-schema/information-schema-inspection-summary.md)には、特定のリンクまたはモジュールの監視情報が要約されています。モジュールまたはリンク全体のコンテキストに基づいて、トラブルシューティングや問題の特定を行うことができます。

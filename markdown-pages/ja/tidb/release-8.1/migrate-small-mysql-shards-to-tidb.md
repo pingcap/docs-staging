@@ -11,7 +11,7 @@ summary: シャードの小さなデータセットを MySQL から TiDB に移�
 
 このドキュメントでは、移行手順を説明するために簡単な例を取り上げます。この例では、2 つのデータ ソース MySQL インスタンスの MySQL シャードがダウンストリーム TiDB クラスターに移行されます。
 
-この例では、MySQL インスタンス 1 と MySQL インスタンス 2 の両方に次のスキーマとテーブルが含まれています。 この例では、両方のインスタンスでプレフィックスが`sale`であるスキーマ`store_01`と`store_02`テーブルを移行して、スキーマ`store`のダウンストリーム`sale`テーブルにマージします。
+この例では、MySQL インスタンス 1 と MySQL インスタンス 2 の両方に次のスキーマとテーブルが含まれています。 この例では、両方のインスタンスでプレフィックスが`sale`である`store_01`および`store_02`スキーマのテーブルを移行して、 `store`スキーマのダウンストリーム`sale`テーブルにマージします。
 
 | スキーマ   | テーブル          |
 | :----- | :------------ |
@@ -22,7 +22,7 @@ summary: シャードの小さなデータセットを MySQL から TiDB に移�
 
 | スキーマ | テーブル |
 | :--- | :--- |
-| 店    | セール  |
+| 店    | 販売   |
 
 ## 前提条件 {#prerequisites}
 
@@ -48,7 +48,7 @@ CREATE TABLE `sale_01` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ```
 
-`id`列目は主`id`で、 `sid`列目はシャーディング キーです。5 列目は自動増分であり、複数のシャーディング テーブル範囲が重複するとデータの競合が発生します。7 `sid`インデックスがグローバルに一意であることを保証できるため、 [自動増分主キーの主キー属性を削除します](/dm/shard-merge-best-practices.md#remove-the-primary-key-attribute-from-the-column)列目の手順に従って`id`列目をバイパスできます。
+`id`列目は主キーで、 `sid`列目はシャーディング キーです。5 `id`目は自動増分であり、複数のシャーディング テーブル範囲が重複するとデータの競合が発生します。7 列`sid`インデックスがグローバルに一意であることを保証できるため、 [自動増分主キーの主キー属性を削除します](/dm/shard-merge-best-practices.md#remove-the-primary-key-attribute-from-the-column)列目の手順に従って`id`列目をバイパスできます。
 
 ```sql
 CREATE TABLE `sale` (
@@ -79,7 +79,7 @@ from:
   port: ${port}             # For example: 3306
 ```
 
-ターミナルで次のコマンドを実行します。1 `tiup dmctl`使用して、データ ソース構成を DM クラスターにロードします。
+ターミナルで次のコマンドを実行します`tiup dmctl`使用して、データ ソース構成を DM クラスターにロードします。
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} operate-source create source1.yaml
@@ -166,9 +166,9 @@ block-allow-list:           # filter or only migrate all operations of some data
     do-dbs: ["store_*"]     # The allow list of the schemas to be migrated, similar to replicate-do-db in MySQL.
 ```
 
-上記の例は、移行タスクを実行するための最小限の構成です。詳細については、 [DM 高度なタスクコンフィグレーションファイル](/dm/task-configuration-file-full.md)を参照してください。
+上記の例は、移行タスクを実行するための最小限の構成です。詳細については、 [DM 高度なタスクコンフィグレーションファイル](/dm/task-configuration-file-full.md)参照してください。
 
-タスク ファイル内の`routes`および`filters`の構成の詳細については、次のドキュメントを参照してください。
+タスク ファイル内の`routes`およびその他の構成の詳細については、次のドキュメント`filters`参照してください。
 
 -   [テーブルルーティング](/dm/dm-table-routing.md)
 -   [ブロックと許可のテーブルリスト](/dm/dm-block-allow-table-lists.md)
@@ -194,17 +194,17 @@ tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
 | `--master-addr` | dmctl が接続するクラスター内の任意の DM マスター ノードの`{advertise-addr}`例: 172.16.10.71:8261 |
 | `start-task`    | データ移行タスクを開始します。                                                          |
 
-移行タスクの開始に失敗した場合は、エラー情報に従って構成情報を変更し、 `start-task task.yaml`再度実行して移行タスクを開始します。問題が発生した場合は、 [エラーの処理](/dm/dm-error-handling.md)と[FAQ](/dm/dm-faq.md)を参照してください。
+移行タスクの開始に失敗した場合は、エラー情報に従って構成情報を変更し、 `start-task task.yaml`再度実行して移行タスクを開始します。問題が発生した場合は、 [エラーの処理](/dm/dm-error-handling.md)と[FAQ](/dm/dm-faq.md)参照してください。
 
 ## ステップ4. タスクを確認する {#step-4-check-the-task}
 
-移行タスクを開始した後、 `dmtcl tiup`使用して`query-status`を実行し、タスクのステータスを表示できます。
+移行タスクを開始した後、 `dmtcl tiup`使用して`query-status`実行し、タスクのステータスを表示できます。
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} query-status ${task-name}
 ```
 
-エラーが発生した場合は、 `query-status ${task-name}`使用して詳細情報を表示します。 `query-status`コマンドのクエリ結果、タスク ステータス、サブタスク ステータスの詳細については、 [TiDB データ移行クエリのステータス](/dm/dm-query-status.md)を参照してください。
+エラーが発生した場合は、 `query-status ${task-name}`使用して詳細情報を表示します。 `query-status`コマンドのクエリ結果、タスク ステータス、サブタスク ステータスの詳細については、 [TiDB データ移行クエリのステータス](/dm/dm-query-status.md)参照してください。
 
 ## ステップ 5. タスクを監視し、ログを確認する (オプション) {#step-5-monitor-tasks-and-check-logs-optional}
 
@@ -218,8 +218,8 @@ Grafana またはログを通じて、移行タスクの履歴と内部運用メ
 
     DM が実行中の場合、DM-master、DM-worker、dmctl は移行タスクに関する情報を含むログを出力します。各コンポーネントのログ ディレクトリは次のとおりです。
 
-    -   DM マスター ログ ディレクトリ: DM マスター プロセス パラメータ`--log-file`で指定されます。DM がTiUPを使用して展開されている場合、ログ ディレクトリは`/dm-deploy/dm-master-8261/log/`です。
-    -   DM ワーカー ログ ディレクトリ: DM ワーカー プロセス パラメータ`--log-file`で指定されます。DM がTiUPを使用してデプロイされている場合、ログ ディレクトリは`/dm-deploy/dm-worker-8262/log/`です。
+    -   DM マスター ログ ディレクトリ: DM マスター プロセス パラメータ`--log-file`で指定されます。DM がTiUP を使用して展開されている場合、ログ ディレクトリは`/dm-deploy/dm-master-8261/log/`です。
+    -   DM ワーカー ログ ディレクトリ: DM ワーカー プロセス パラメータ`--log-file`で指定されます。DM がTiUP を使用してデプロイされている場合、ログ ディレクトリは`/dm-deploy/dm-worker-8262/log/`です。
 
 ## 参照 {#see-also}
 

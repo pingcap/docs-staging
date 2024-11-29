@@ -225,7 +225,7 @@ tiup ctl:v<CLUSTER_VERSION> pd -u https://127.0.0.1:2379 --cacert="path/to/ca" -
     config set key-type raw  // Enable cross table merge.
     ```
 
--   `region-score-formula-version` 、リージョンスコアの式のバージョンを制御します。値のオプションは`v1`と`v2`です。式のバージョン 2 は、TiKV ノードをオンラインまたはオフラインにするなどの一部のシナリオで、冗長なバランスリージョンスケジューリングを削減するのに役立ちます。
+-   `region-score-formula-version`リージョンスコアの式のバージョンを制御します。値のオプションは`v1`と`v2`です。式のバージョン 2 は、TiKV ノードをオンラインまたはオフラインにするなどの一部のシナリオで、冗長なバランスリージョンスケジューリングを削減するのに役立ちます。
 
     ```bash
     config set region-score-formula-version v2
@@ -257,7 +257,7 @@ tiup ctl:v<CLUSTER_VERSION> pd -u https://127.0.0.1:2379 --cacert="path/to/ca" -
     config set leader-schedule-limit 4         // 4 tasks of leader scheduling at the same time at most
     ```
 
--   `region-schedule-limit` 、同時にリージョンをスケジュールするタスクの数を制御します。この値により、リージョンバランス オペレーターが過度に作成されるのを回避できます。デフォルト値は`2048`で、これはすべてのサイズのクラスターに十分であり、値を`0`に設定するとスケジュールが閉じられます。通常、リージョンのスケジュール速度は`store-limit`に制限されますが、何をしているのかを正確に理解していない限り、この値をカスタマイズしないことをお勧めします。
+-   `region-schedule-limit` 、同時にリージョンをスケジュールするタスクの数を制御します。この値により、リージョンバランス オペレーターが過度に作成されるのを回避できます。デフォルト値は`2048`で、これはすべてのサイズのクラスターに十分であり、値を`0`に設定するとスケジュールが閉じられます。通常、リージョンスケジューリング速度は`store-limit`に制限されますが、何をしているのかを正確に理解していない限り、この値をカスタマイズしないことをお勧めします。
 
     ```bash
     config set region-schedule-limit 2         // 2 tasks of Region scheduling at the same time at most
@@ -307,7 +307,7 @@ tiup ctl:v<CLUSTER_VERSION> pd -u https://127.0.0.1:2379 --cacert="path/to/ca" -
     config set cluster-version 1.0.8              // Set the version of the cluster to 1.0.8
     ```
 
--   `replication-mode`デュアル データ センター シナリオにおけるリージョンのレプリケーション モードを制御します。詳細については[DR自動同期モードを有効にする](/two-data-centers-in-one-city-deployment.md#enable-the-dr-auto-sync-mode)参照してください。
+-   `replication-mode` 、デュアル データ センター シナリオにおけるリージョンのレプリケーション モードを制御します。詳細については[DR自動同期モードを有効にする](/two-data-centers-in-one-city-deployment.md#enable-the-dr-auto-sync-mode)参照してください。
 
 -   `leader-schedule-policy` 、リーダーのスケジュール戦略を選択するために使用されます。 `size`または`count`に従ってリーダーをスケジュールできます。
 
@@ -345,7 +345,7 @@ tiup ctl:v<CLUSTER_VERSION> pd -u https://127.0.0.1:2379 --cacert="path/to/ca" -
 
 #### <code>config placement-rules [disable | enable | load | save | show | rule-group]</code> {#code-config-placement-rules-disable-enable-load-save-show-rule-group-code}
 
-`config placement-rules [disable | enable | load | save | show | rule-group]`の使い方については[配置ルールを構成する](/configure-placement-rules.md#configure-rules)参照してください。
+`config placement-rules [disable | enable | load | save | show | rule-group]`の使い方については[配置ルールを設定する](/configure-placement-rules.md#configure-rules)参照してください。
 
 ### <code>health</code> {#code-health-code}
 
@@ -828,7 +828,7 @@ TiDB v6.3.0 以降、 PD は`balance-region-scheduler`と`balance-leader-schedul
 
 このコマンドを使用して、 `balance-leader-scheduler`ポリシーを表示および制御します。
 
-TiDB v6.0.0 以降、PD はバランスリーダーがタスクを処理する速度を制御するために`balance-leader-scheduler`の`Batch`パラメータを導入しました。このパラメータを使用するには、pd-ctl を使用して`balance-leader batch`構成項目を変更します。
+TiDB v6.0.0 以降、PD は、バランス リーダーがタスクを処理する速度を制御するために、 `balance-leader-scheduler`の`Batch`パラメータを導入しました。このパラメータを使用するには、pd-ctl を使用して`balance-leader batch`構成項目を変更します。
 
 v6.0.0 より前の PD にはこの設定項目がないため、 `balance-leader batch=1`なります。v6.0.0 以降のバージョンでは、 `balance-leader batch`のデフォルト値は`4`です。この設定項目を`4`より大きい値に設定するには、同時に[`scheduler-max-waiting-operator`](#config-show--set-option-value--placement-rules) (デフォルト値は`5` ) にもより大きな値を設定する必要があります。両方の設定項目を変更した後にのみ、期待される高速化効果が得られます。
 

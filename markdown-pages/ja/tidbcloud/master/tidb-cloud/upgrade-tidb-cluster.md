@@ -5,7 +5,7 @@ summary: TiDB クラスターをアップグレードする方法を学びます
 
 # TiDBクラスタのアップグレード {#upgrade-a-tidb-cluster}
 
-このドキュメントでは、TiDB Cloud上の TiDB クラスターをアップグレードする方法について説明します。TiDB TiDB Cloud には、TiDB バージョンをアップグレードするための 2 つのアップグレード メカニズムが用意されています。
+このドキュメントでは、 TiDB Cloud上の TiDB クラスターをアップグレードする方法について説明します。TiDB TiDB Cloud には、 TiDB バージョンをアップグレードするための 2 つのアップグレード メカニズムが用意されています。
 
 ## 定期的にアップグレードする {#regularly-upgrade}
 

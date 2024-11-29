@@ -1,6 +1,6 @@
 ---
 title: TiDB Sysbench Performance Test Report -- v2.1 vs. v2.0
-summary: TiDB 2.1 は、`Point Select` テストで TiDB 2.0 を上回り、クエリ パフォーマンスが 50% 向上しました。ただし、`Update Non-Index` テストと `Update Index` テストでは、2 つのバージョン間で同様のパフォーマンスが示されています。このテストは、2018 年 9 月に中国北京で、特定のテスト環境と構成を使用して実施されました。
+summary: TiDB 2.1 は、Point Select` テストで TiDB 2.0 を上回り、クエリ パフォーマンスが 50% 向上しました。ただし、`Update Non-Index` テストと `Update Index` テストでは、2 つのバージョン間で同様のパフォーマンスが示されています。このテストは、特定のテスト環境と構成を使用して、2018 年 9 月に中国北京で実施されました。
 ---
 
 # TiDB Sysbench パフォーマンス テスト レポート - v2.1 と v2.0 {#tidb-sysbench-performance-test-report-v2-1-vs-v2-0}
@@ -120,7 +120,7 @@ block-cache-size = "20GB"
 
 ![update non-index](https://download.pingcap.com/images/docs/sysbench_v3_update_non_index.png)
 
-上記の統計によると、TiDB 2.1 と TiDB 2.0 の`Update Non-Index`の書き込みパフォーマンスはほぼ同じです。
+上記の統計によると、TiDB 2.1 と TiDB 2.0 の`Update Non-Index`書き込みパフォーマンスはほぼ同じです。
 
 ### <code>Update Index</code>テスト {#code-update-index-code-test}
 
@@ -139,4 +139,4 @@ block-cache-size = "20GB"
 
 ![update index](https://download.pingcap.com/images/docs/sysbench_v3_update_index.png)
 
-上記の統計によると、TiDB 2.1 と TiDB 2.0 の`Update Index`の書き込みパフォーマンスはほぼ同じです。
+上記の統計によると、TiDB 2.1 と TiDB 2.0 の`Update Index`書き込みパフォーマンスはほぼ同じです。

@@ -7,19 +7,19 @@ summary: TiDB の一般的なエラーをトラブルシューティングする
 
 このドキュメントでは、TiDB およびその他のコンポーネントの一般的な問題をまとめています。関連する問題が発生した場合、このマップを使用して問題を診断し、解決することができます。
 
-## 1. サービスが利用できない {#1-service-unavailable}
+## 1. サービスは利用できません {#1-service-unavailable}
 
-### 1.1 クライアントが<code>Region is Unavailable</code>エラーを報告する {#1-1-the-client-reports-code-region-is-unavailable-code-error}
+### 1.1 クライアントが<code>Region is Unavailable</code> 」というエラーを報告する {#1-1-the-client-reports-code-region-is-unavailable-code-error}
 
--   1.1.1 `Region is Unavailable`エラーは通常、一定期間リージョンが利用できないために発生します。 `TiKV server is busy`発生するか、 `not leader`または`epoch not match`が原因で TiKV へのリクエストが失敗するか、TiKV へのリクエストがタイムアウトします。このような場合、TiDB は`backoff`再試行メカニズムを実行します。 `backoff`がしきい値 (デフォルトでは 20 秒) を超えると、エラーがクライアントに送信されます。 `backoff`しきい値内では、このエラーはクライアントには表示されません。
+-   1.1.1 `Region is Unavailable`エラーは通常、一定期間リージョンが利用できないために発生します。 `TiKV server is busy`発生するか、 `not leader`または`epoch not match`原因で TiKV へのリクエストが失敗するか、TiKV へのリクエストがタイムアウトします。このような場合、TiDB は`backoff`再試行メカニズムを実行します。 `backoff`がしきい値 (デフォルトでは 20 秒) を超えると、エラーがクライアントに送信されます。 `backoff`しきい値内では、このエラーはクライアントには表示されません。
 
 -   1.1.2 複数の TiKV インスタンスが同時に OOM になり、OOM 期間中にLeaderが存在しなくなります。中国語では[ケース991](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case991.md)参照してください。
 
--   1.1.3 TiKV は`TiKV server is busy`報告し、 `backoff`時間を超過しています。詳細については、 [4.3](#43-the-client-reports-the-server-is-busy-error)を参照してください。 `TiKV server is busy`内部フロー制御メカニズムの結果であり、 `backoff`時間にはカウントされません。この問題は修正される予定です。
+-   1.1.3 TiKV は`TiKV server is busy`報告し、 `backoff`回数を超えています。詳細については、 [4.3](#43-the-client-reports-the-server-is-busy-error)を参照してください。 `TiKV server is busy`内部フロー制御メカニズムの結果であり、 `backoff`回数にはカウントされません。この問題は修正される予定です。
 
--   1.1.4 複数の TiKV インスタンスの起動に失敗し、リージョンにLeaderが存在しない状態になります。物理マシンに複数の TiKV インスタンスがデプロイされている場合、ラベルが適切に構成されていないと、物理マシンの障害によりリージョンにLeaderが存在しない状態になる可能性があります。中国語の[ケース228](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case228.md)を参照してください。
+-   1.1.4 複数の TiKV インスタンスの起動に失敗し、リージョンにLeaderが存在しない状態になります。物理マシンに複数の TiKV インスタンスがデプロイされている場合、ラベルが適切に構成されていないと、物理マシンの障害によりリージョンにLeaderが存在しない状態になる可能性があります。中国語の[ケース228](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case228.md)参照してください。
 
--   1.1.5Followerの適用が前のエポックで遅れている場合、FollowerがLeaderになった後、 `epoch not match`で要求を拒否します。中国語では[ケース-958](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case958.md)参照してください (TiKV はメカニズムを最適化する必要があります)。
+-   1.1.5Followerの適用が前のエポックで遅れている場合、FollowerがLeaderになった後、 `epoch not match`で要求を拒否します。 中国語では[ケース-958](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case958.md)参照してください (TiKV はメカニズムを最適化する必要があります)。
 
 ### 1.2 PDエラーによりサービスが利用できなくなる {#1-2-pd-errors-cause-service-unavailable}
 
@@ -30,7 +30,7 @@ summary: TiDB の一般的なエラーをトラブルシューティングする
 ### 2.1 一時的な増加 {#2-1-transient-increase}
 
 -   2.1.1 間違った TiDB 実行プランによりレイテンシーが増加します。 [3.3](#33-wrong-execution-plan)を参照してください。
--   2.1.2 PDLeader選挙問題または[5.2](#52-pd-election)と[5.3](#53-pd-oom)を参照してください。
+-   2.1.2 PDLeader選挙問題またはOOM。1と[5.2](#52-pd-election) [5.3](#53-pd-oom)参照してください。
 -   2.1.3 一部の TiKV インスタンスで多数のLeaderがドロップします。1 [4.4](#44-some-tikv-nodes-drop-leader-frequently)参照してください。
 -   2.1.4 その他の原因については[読み取りおよび書き込み遅延の増加のトラブルシューティング](/troubleshoot-cpu-issues.md)参照。
 
@@ -38,7 +38,7 @@ summary: TiDB の一般的なエラーをトラブルシューティングする
 
 -   2.2.1 TiKV シングルスレッドボトルネック
 
-    -   TiKV インスタンス内のリージョンが多すぎると、単一の gRPC スレッドがボトルネックになります ( **Grafana** -&gt; **TiKV 詳細**-&gt;**スレッド CPU/gRPC CPU スレッドあたりの**メトリックを確認してください)。v3.x 以降のバージョンでは、 `Hibernate Region`を有効にして問題を解決できます。中国語では[ケース612](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case612.md)参照してください。
+    -   TiKV インスタンス内のリージョンが多すぎると、単一の gRPC スレッドがボトルネックになります ( **Grafana** -&gt; **TiKV 詳細**-&gt;**スレッド CPU/gRPC CPU スレッドあたりの**メトリックを確認してください)。v3.x 以降のバージョンでは、 `Hibernate Region`有効にして問題を解決できます。中国語では[ケース612](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case612.md)参照してください。
 
     -   v3.0 より前のバージョンでは、raftstore スレッドまたは適用スレッドがボトルネックになった場合 ( **Grafana** -&gt; **TiKV-details** -&gt; **Thread CPU/raft store CPU**および**Async apply CPU**メトリックが`80%`を超える)、TiKV (v2.x) インスタンスをスケールアウトするか、マルチスレッドで v3.x にアップグレードできます。 <!-- See [case-517](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case517.md) in Chinese. -->
 
@@ -58,7 +58,7 @@ summary: TiDB の一般的なエラーをトラブルシューティングする
 
 -   3.1.2 TiDB DDL ジョブがハングしたり、実行が遅くなる (DDL の進行状況を確認するには`admin show ddl jobs`使用します)
 
-    -   原因 1: TiDB はバージョン 6.3.0 で[メタデータロック](/metadata-lock.md)を導入し、バージョン 6.5.0 以降のバージョンではデフォルトで有効になっています。DDL 操作に関係するテーブルが、コミットされていないトランザクションに関係するテーブルと交差している場合、トランザクションがコミットまたはロールバックされるまで、DDL 操作はブロックされます。
+    -   原因 1: TiDB はバージョン 6.3.0 で[メタデータロック](/metadata-lock.md)導入し、バージョン 6.5.0 以降のバージョンではデフォルトで有効になっています。DDL 操作に関係するテーブルが、コミットされていないトランザクションに関係するテーブルと交差している場合、トランザクションがコミットまたはロールバックされるまで、DDL 操作はブロックされます。
 
     -   原因 2: 他のコンポーネント (PD/TiKV) とのネットワークの問題。
 
@@ -66,7 +66,7 @@ summary: TiDB の一般的なエラーをトラブルシューティングする
 
     -   原因 4: 初期バージョン (v2.1.15 およびバージョン &lt; v3.0.0-rc1) では、PD インスタンスが TiDB キーの削除に失敗し、すべての DDL 変更が 2 つのリースを待機することになります。
 
-    -   その他の原因不明の場合、 [バグを報告](https://github.com/pingcap/tidb/issues/new?labels=type%2Fbug&#x26;template=bug-report.md) 。
+    -   その他の原因不明の場合、 [バグを報告する](https://github.com/pingcap/tidb/issues/new?labels=type%2Fbug&#x26;template=bug-report.md) 。
 
     -   解決：
 
@@ -83,15 +83,15 @@ summary: TiDB の一般的なエラーをトラブルシューティングする
 
     -   詳しい原因と解決策については[`Information schema is changed`エラーが報告される理由](/faq/sql-faq.md#what-triggers-the-information-schema-is-changed-error)参照してください。
 
-    -   背景: 増加した`schema version`の数は、各 DDL 変更操作の`schema state`の数と一致しています。たとえば、 `create table`操作ではバージョン変更が 1 つあり、 `add column`操作ではバージョン変更が 4 つあります。したがって、列変更操作が多すぎると、 `schema version`が急速に増加する可能性があります。詳細については、 [オンラインスキーマ変更](https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/41376.pdf)を参照してください。
+    -   背景: 増加した`schema version`の数は、各 DDL 変更操作の`schema state`の数と一致しています。たとえば、 `create table`操作ではバージョン変更が 1 つあり、 `add column`操作ではバージョン変更が 4 つあります。したがって、列変更操作が多すぎると、 `schema version`急速に増加する可能性があります。詳細については、 [オンラインスキーマ変更](https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/41376.pdf)を参照してください。
 
 -   3.1.4 TiDBはログに`information schema is out of date`報告します
 
-    -   原因 1: DML ステートメントを実行している TiDBサーバーが`graceful kill`で停止し、終了する準備をしています。DML ステートメントを含むトランザクションの実行時間が 1 つの DDL リースを超えています。トランザクションがコミットされるとエラーが報告されます。
+    -   原因 1: DML ステートメントを実行している TiDBサーバーが`graceful kill`で停止し、終了する準備をしています。DML ステートメントを含むトランザクションの実行時間が 1 DDL リースを超えています。トランザクションがコミットされるとエラーが報告されます。
 
     -   原因 2: TiDBサーバーは、 DML ステートメントの実行時に PD または TiKV に接続できません。その結果、TiDBサーバーは1 つの DDL リース (デフォルトでは`45s` ) 内で新しいスキーマをロードしなかったか、 `keep alive`設定で TiDBサーバーがPD から切断されました。
 
-    -   原因 3: TiKV の負荷が高いか、ネットワーク**が**タイムアウトしています。Grafana -&gt; **TiDB**および**TiKV**でノード負荷を確認してください。
+    -   原因 3: TiKV の負荷が高いか、ネットワークがタイムアウトしています。Grafana -&gt; **TiDB**および**TiKV**で**ノード**負荷を確認してください。
 
     -   解決：
 
@@ -107,7 +107,7 @@ summary: TiDB の一般的なエラーをトラブルシューティングする
 
     -   ログを確認する
 
-        -   `dmesg -T | grep tidb-server`実行します。結果には、エラーが発生した時点付近の OOM-killer ログが表示されます。
+        -   `dmesg -T | grep tidb-server`を実行します。結果には、エラーが発生した時点付近の OOM-killer ログが表示されます。
 
         -   エラーが発生した後の時点（つまり、tidb-server が再起動した時点）の「Welcome to TiDB」ログ`tidb.log`を grep します。
 
@@ -119,7 +119,7 @@ summary: TiDB の一般的なエラーをトラブルシューティングする
 
 -   3.2.2 OOM の原因となる SQL ステートメントを特定します。(現在、TiDB のすべてのバージョンでは SQL を正確に特定できません。SQL ステートメントを特定した後でも、OOM の原因が SQL ステートメントにあるかどうかを分析する必要があります。)
 
-    -   バージョン &gt;= v3.0.0 の場合、 `tidb.log`で &quot;expensive_query&quot; を grep します。そのログ メッセージには、タイムアウトになったかメモリクォータを超えた SQL クエリが記録されます。
+    -   バージョン &gt;= v3.0.0 の場合、 `tidb.log`で &quot;expensive_query&quot; を grep します。このログ メッセージには、タイムアウトになったかメモリクォータを超えた SQL クエリが記録されます。
 
     -   バージョン &lt; v3.0.0 の場合、 `tidb.log`で grep &quot;メモリ exceeds quota&quot; を実行して、メモリクォータを超える SQL クエリを見つけます。
 
@@ -129,11 +129,11 @@ summary: TiDB の一般的なエラーをトラブルシューティングする
 
 -   3.2.3 OOMの問題を軽減する
 
-    -   `SWAP`を有効にすると、大規模なクエリによるメモリの過剰使用によって発生する OOM の問題を軽減できます。メモリが不足している場合、この方法は I/O オーバーヘッドにより大規模なクエリのパフォーマンスに影響を与える可能性があります。パフォーマンスが影響を受ける程度は、残りのメモリ領域とディスク I/O 速度によって異なります。
+    -   `SWAP`有効にすると、大規模なクエリによるメモリの過剰使用によって発生する OOM の問題を軽減できます。メモリが不足している場合、この方法は I/O オーバーヘッドにより大規模なクエリのパフォーマンスに影響を与える可能性があります。パフォーマンスが影響を受ける程度は、残りのメモリ領域とディスク I/O 速度によって異なります。
 
 -   3.2.4 OOMの典型的な理由
 
-    -   SQL クエリには`join`あります。 `explain`を使用して SQL ステートメントを表示すると、 `join`操作で`HashJoin`アルゴリズムが選択され、 `inner`テーブルが大きいことがわかります。
+    -   SQL クエリには`join`あります。 `explain`使用して SQL ステートメントを表示すると、 `join`操作で`HashJoin`アルゴリズムが選択され、 `inner`テーブルが大きいことがわかります。
 
     -   `UPDATE/DELETE`回のクエリのデータ量が大きすぎます。中国語では[ケース-882](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case882.md)参照してください。
 
@@ -153,17 +153,17 @@ OOM のトラブルシューティングの詳細については、 [TiDB OOM �
 
 -   3.3.2 実行計画を調査する
 
-    -   実行時間が許容範囲内であれば、 `explain analyze`の結果の`count`と`execution info`の`row`を比較します。 `TableScan/IndexScan`行に大きな差が見つかった場合、統計が間違っている可能性があります。 他の行に`explain analyze {SQL}`差が見つかった場合、問題は統計にない可能性があります。
+    -   実行時間が許容`explain analyze {SQL}`内であれば、 `explain analyze`の結果の`count`と`execution info`の`row`を比較します。 `TableScan/IndexScan`行に大きな差が見つかった場合、統計が間違っている可能性があります。 他の行に大きな差が見つかった場合、問題は統計にない可能性があります。
 
-    -   `select count(*)` 。実行プランに`join`操作が含まれている場合、 `explain analyze`に長い時間がかかる可能性があります。 `TableScan/IndexScan`の条件に対して`select count(*)`を実行し、 `explain`結果の`row count`情報を比較することで、統計に問題があるかどうかを確認できます。
+    -   `select count(*)` 。実行プランに`join`操作が含まれている場合、 `explain analyze`長い時間がかかる可能性があります。 `TableScan/IndexScan`の条件に対して`select count(*)`を実行し、 `explain`結果の`row count`情報を比較することで、統計に問題があるかどうかを確認できます。
 
 -   3.3.3 緩和策
 
     -   v3.0 以降のバージョンでは、 `SQL Bind`機能を使用して実行プランをバインドします。
 
-    -   統計を更新します。問題の原因が統計[統計をダンプする](/statistics.md#export-statistics)にあることがほぼ確実な場合は、 `show stats_meta`の`modify count/row count`が特定の値 (たとえば、0.3) より大きい、またはテーブルに時間列のインデックスがあるなど、統計が古いことが原因である場合は、 `analyze table`を使用して回復を試みることができます。 `auto analyze`が設定されている場合は、 `tidb_auto_analyze_ratio`システム変数が大きすぎないか (たとえば、0.3 より大きい)、現在の時刻が`tidb_auto_analyze_start_time`から`tidb_auto_analyze_end_time`の間であるかどうかを確認します。
+    -   統計を更新します。問題の原因が統計[統計をダンプする](/statistics.md#export-statistics)にあることがほぼ確実な場合は、 `show stats_meta`の`modify count/row count`が特定の値 (たとえば、0.3) より大きい、またはテーブルに時間列のインデックスがあるなど、統計が古いことが原因である場合は、 `analyze table`使用して回復を試みることができます。 `auto analyze`が設定されている場合は、 `tidb_auto_analyze_ratio`システム変数が大きすぎないか (たとえば、0.3 より大きい)、および現在の時刻が`tidb_auto_analyze_start_time`から`tidb_auto_analyze_end_time`の間であるかどうかを確認します。
 
-    -   その他の状況では、 [バグを報告](https://github.com/pingcap/tidb/issues/new?labels=type%2Fbug&#x26;template=bug-report.md) 。
+    -   その他の状況では、 [バグを報告する](https://github.com/pingcap/tidb/issues/new?labels=type%2Fbug&#x26;template=bug-report.md) 。
 
 ### 3.4 SQL実行エラー {#3-4-sql-execution-error}
 
@@ -171,9 +171,9 @@ OOM のトラブルシューティングの詳細については、 [TiDB OOM �
 
     -   原因：
 
-        MySQL では、2 つの大きな精度の`Decimal`を除算し、結果が最大小数点精度 ( `30` ) を超える場合、 `30`桁のみが予約され、エラーは報告されません。
+        MySQL では、2 つの大きな精度の`Decimal`除算し、結果が最大小数点精度 ( `30` ) を超える場合、 `30`桁のみが予約され、エラーは報告されません。
 
-        TiDB では、計算結果は MySQL と同じですが、 `Decimal`を表すデータ構造内で、小数精度のフィールドが実際の精度を保持します。
+        TiDB では、計算結果は MySQL と同じですが、 `Decimal`表すデータ構造内で、小数精度のフィールドが実際の精度を保持します。
 
         `(0.1^30) / 10`例に挙げます。精度は最大`30`であるため、TiDB と MySQL の結果はどちらも`0`なります。ただし、TiDB では、小数点精度のフィールドは依然として`31`です。
 
@@ -185,7 +185,7 @@ OOM のトラブルシューティングの詳細については、 [TiDB OOM �
 
 ### 3.5 クエリが遅い問題 {#3-5-slow-query-issues}
 
-遅いクエリを識別するには、 [遅いクエリを特定する](/identify-slow-queries.md)参照してください。遅いクエリを分析して処理するには、 [遅いクエリを分析する](/analyze-slow-queries.md)を参照してください。
+遅いクエリを識別するには、 [遅いクエリを特定する](/identify-slow-queries.md)参照してください。遅いクエリを分析して処理するには、 [遅いクエリを分析する](/analyze-slow-queries.md)参照してください。
 
 ### 3.6 ホットスポットの問題 {#3-6-hotspot-issues}
 
@@ -195,15 +195,15 @@ TiDB は、ホットスポットのトラブルシューティング、解決、
 
 ### 3.7 ディスクI/O使用率が高い {#3-7-high-disk-i-o-usage}
 
-CPU ボトルネックとトランザクション競合によるボトルネックをトラブルシューティングした後、TiDB の応答が遅くなった場合は、現在のシステム ボトルネックを特定するために I/O メトリックを確認する必要があります。TiDB での I/O 使用率が高い問題を特定して対処する方法については、 [ディスク I/O 使用率が高い場合のトラブルシューティング](/troubleshoot-high-disk-io.md)参照してください。
+CPU ボトルネックとトランザクション競合によるボトルネックをトラブルシューティングした後、TiDB の応答が遅くなった場合は、現在のシステム ボトルネックを特定するために I/O メトリックを確認する必要があります。TiDB での I/O 使用率が高い問題を特定して対処する方法については、 [ディスクI/O使用率が高い場合のトラブルシューティング](/troubleshoot-high-disk-io.md)参照してください。
 
 ### 3.8 ロックの競合 {#3-8-lock-conflicts}
 
-TiDB は完全な分散トランザクションをサポートします。v3.0 以降、TiDB は楽観的トランザクション モードと悲観的トランザクション モードを提供します。ロック関連の問題のトラブルシューティング方法と、楽観的と悲観的ロックの競合の処理方法については、 [ロック競合のトラブルシューティング](/troubleshoot-lock-conflicts.md)を参照してください。
+TiDB は完全な分散トランザクションをサポートします。v3.0 以降、TiDB は楽観的トランザクション モードと悲観的トランザクション モードを提供します。ロック関連の問題のトラブルシューティング方法と、楽観的と悲観的ロックの競合の処理方法については、 [ロック競合のトラブルシューティング](/troubleshoot-lock-conflicts.md)参照してください。
 
 ### 3.9 データとインデックスの不一致 {#3-9-inconsistency-between-data-and-indexes}
 
-TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md)ステートメントを実行するときに、データとインデックス間の一貫性をチェックします。チェックの結果、レコードのキー値と対応するインデックスのキー値が一致していないことが判明した場合、つまり、行データを格納するキー値のペアと、そのインデックスを格納する対応するキー値のペアが一致していない場合 (たとえば、インデックスが多すぎる、またはインデックスが欠落している)、TiDB はデータ不一致エラーを報告し、関連するエラーをエラー ログに出力。
+TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md)のステートメントを実行するときに、データとインデックス間の一貫性をチェックします。チェックの結果、レコードのキー値と対応するインデックスのキー値が一致していないことが判明した場合、つまり、行データを格納するキー値のペアと、そのインデックスを格納する対応するキー値のペアが一致していない場合 (たとえば、インデックスが多すぎる、またはインデックスが欠落している)、TiDB はデータ不一致エラーを報告し、関連するエラーをエラー ログに出力。
 
 不整合エラーの詳細とチェックをバイパスする方法については、 [データとインデックス間の不整合のトラブルシューティング](/troubleshoot-data-inconsistency-errors.md)参照してください。
 
@@ -215,11 +215,11 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
     この問題は予想通りです。1 `tikv-ctl`使用してリージョンを復元できます。
 
--   4.1.2 TiKV が仮想マシンに展開されている場合、仮想マシンが強制終了されるか物理マシンの電源がオフになると、エラー`entries[X, Y] is unavailable from storage`が報告されます。
+-   4.1.2 TiKV が仮想マシンに展開されている場合、仮想マシンが強制終了されるか物理マシンの電源がオフになると、 `entries[X, Y] is unavailable from storage`エラーが報告されます。
 
-    この問題は予想通りです。仮想マシンの`fsync`信頼できないため、 `tikv-ctl`を使用してリージョンを復元する必要があります。
+    この問題は予想通りです。仮想マシンの`fsync`信頼できないため、 `tikv-ctl`使用してリージョンを復元する必要があります。
 
--   4.1.3 その他の予期せぬ原因の場合、 [バグを報告](https://github.com/tikv/tikv/issues/new?template=bug-report.md) .
+-   4.1.3 その他の予期せぬ原因の場合、 [バグを報告する](https://github.com/tikv/tikv/issues/new?template=bug-report.md) .
 
 ### 4.2 TiKV OOM {#4-2-tikv-oom}
 
@@ -227,7 +227,7 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
     問題の原因を確認するには、モニター**Grafana** -&gt; **TiKV-details**で対応するインスタンスを選択して、RocksDB の`block cache size`確認します。
 
-    一方で、 `[storage.block-cache] capacity = # "1GB"`パラメータが適切に設定されているかどうかを確認してください。デフォルトでは、TiKV の`block-cache`はマシンの合計メモリの`45%`に設定されています。TiKV は物理マシンのメモリを取得するため、コンテナのメモリ制限を超える可能性があるため、コンテナに TiKV をデプロイするときにこのパラメータを明示的に指定する必要があります。
+    一方で、 `[storage.block-cache] capacity = # "1GB"`パラメータが適切に設定されているかどうかを確認してください。デフォルトでは、TiKV の`block-cache`マシンの合計メモリの`45%`に設定されています。TiKV は物理マシンのメモリを取得するため、コンテナのメモリ制限を超える可能性があるため、コンテナに TiKV をデプロイするときにこのパラメータを明示的に指定する必要があります。
 
 -   4.2.2コプロセッサーは多数の大きなクエリを受信し、大量のデータを返します。gRPC はコプロセッサがデータを返すのと同じ速さでデータを送信できず、OOM が発生します。
 
@@ -235,7 +235,7 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
 -   4.2.3 他のコンポーネントがメモリを大量に占有します。
 
-    この問題は予期されていません。 [バグを報告](https://github.com/tikv/tikv/issues/new?template=bug-report.md)実行できます。
+    この問題は予期されていません。 [バグを報告する](https://github.com/tikv/tikv/issues/new?template=bug-report.md)実行できます。
 
 ### 4.3 クライアントが<code>server is busy</code>エラーを報告する {#4-3-the-client-reports-the-code-server-is-busy-code-error}
 
@@ -243,32 +243,32 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
 -   4.3.1 TiKV RocksDB の遭遇`write stall` 。
 
-    TiKV インスタンスには 2 つの RocksDB インスタンスがあり、 `data/raft`にはRaftログを保存し、もう`data/db`つには実際のデータを保存します。ログで`grep "Stalling" RocksDB`実行すると、ストールの具体的な原因を確認できます。RocksDB ログは`LOG`で始まるファイルで、 `LOG`現在のログです。 `write stall` RocksDB にネイティブに組み込まれたパフォーマンス低下メカニズムです。RocksDB で`write stall`が発生すると、システムのパフォーマンスが大幅に低下します。v5.2.0 より前のバージョンでは、TiDB は`write stall`に遭遇すると`ServerIsBusy`エラーを直接クライアントに返すことで、すべての書き込み要求をブロックしようとしますが、これにより QPS パフォーマンスが急激に低下する可能性があります。v5.2.0 以降、TiKV は、 `write stall`が発生したときに`server is busy`をクライアントに返すという以前のメカニズムに代わる、スケジューリングレイヤーで書き込み要求を動的に遅延させることで書き込みを抑制する新しいフロー制御メカニズムを導入しています。新しいフロー制御メカニズムはデフォルトで有効になっており、TiKV は`KvDB`および`RaftDB` (memtable を除く) の`write stall`メカニズムを自動的に無効にします。ただし、保留中の要求の数が特定のしきい値を超えると、フロー制御メカニズムは引き続き有効になり、一部またはすべての書き込み要求を拒否し、クライアントに`server is busy`エラーを返します。詳細な説明としきい値については、 [フロー制御設定](/tikv-configuration-file.md#storageflow-control)を参照してください。
+    TiKV インスタンスには 2 つの RocksDB インスタンスがあり、 `data/raft`にはRaftログを保存し、もう`data/db`つには実際のデータを保存します。ログで`grep "Stalling" RocksDB`実行すると、ストールの具体的な原因を確認できます。RocksDB ログは`LOG`で始まるファイルで、 `LOG`現在のログです。 `write stall`は RocksDB にネイティブに組み込まれたパフォーマンス低下メカニズムです。RocksDB で`write stall`発生すると、システムのパフォーマンスが大幅に低下します。v5.2.0 より前のバージョンでは、TiDB は`write stall`に遭遇すると`ServerIsBusy`エラーを直接クライアントに返すことで、すべての書き込み要求をブロックしようとしていましたが、これにより QPS パフォーマンスが急激に低下する可能性があります。v5.2.0 以降、TiKV は、 `write stall`が発生したときに`server is busy`クライアントに返すという以前のメカニズムに代わる、スケジューリングレイヤーで書き込み要求を動的に遅延させることで書き込みを抑制する新しいフロー制御メカニズムを導入しています。新しいフロー制御メカニズムはデフォルトで有効になっており、TiKV は`KvDB`および`RaftDB` (memtable を除く) の`write stall`メカニズムを自動的に無効にします。ただし、保留中の要求の数が特定のしきい値を超えると、フロー制御メカニズムは引き続き有効になり、一部またはすべての書き込み要求を拒否し、クライアントに`server is busy`エラーを返します。詳細な説明としきい値については、 [フロー制御設定](/tikv-configuration-file.md#storageflow-control)参照してください。
 
     -   保留中の圧縮バイトが多すぎるために`server is busy`エラーが発生した場合は、 [`soft-pending-compaction-bytes-limit`](/tikv-configuration-file.md#soft-pending-compaction-bytes-limit)および[`hard-pending-compaction-bytes-limit`](/tikv-configuration-file.md#hard-pending-compaction-bytes-limit)パラメータの値を増やすことでこの問題を軽減できます。
 
-        -   保留中の圧縮バイトが`soft-pending-compaction-bytes-limit`パラメータの値 (デフォルトでは`192GiB` ) に達すると、フロー制御メカニズムは一部の書き込み要求を拒否し始めます (クライアントに`ServerIsBusy`を返すことによって)。この場合、このパラメータの値を`[storage.flow-control] soft-pending-compaction-bytes-limit = "384GiB"`などに増やすことができます。
+        -   保留中の圧縮バイトが`soft-pending-compaction-bytes-limit`パラメータの値 (デフォルトでは`192GiB` ) に達すると、フロー制御メカニズムは一部の書き込み要求を拒否し始めます (クライアントに`ServerIsBusy`を返すことによって)。この場合、このパラメータの値を`[storage.flow-control] soft-pending-compaction-bytes-limit = "384GiB"`に増やすことができます。
 
-        -   保留中の圧縮バイトが`hard-pending-compaction-bytes-limit`パラメータの値（デフォルトでは`1024GiB` ）に達すると、フロー制御メカニズムはすべての書き込み要求を拒否し始めます（クライアントに`ServerIsBusy`を返します）。しきい値`soft-pending-compaction-bytes-limit`に達するとフロー制御メカニズムが介入して書き込み速度を遅くするため、このシナリオが発生する可能性は低くなります。発生した場合は、このパラメータの値を`[storage.flow-control] hard-pending-compaction-bytes-limit = "2048GiB"`などに増やすことができます。
+        -   保留中の圧縮バイトが`hard-pending-compaction-bytes-limit`パラメータの値（デフォルトでは`1024GiB` ）に達すると、フロー制御メカニズムはすべての書き込み要求を拒否し始めます（クライアントに`ServerIsBusy`を返します）。しきい値`soft-pending-compaction-bytes-limit`に達するとフロー制御メカニズムが介入して書き込み速度を遅くするため、このシナリオが発生する可能性は低くなります。発生した場合は、このパラメータの値を`[storage.flow-control] hard-pending-compaction-bytes-limit = "2048GiB"`に増やすことができます。
 
-        -   ディスク I/O 容量が長時間書き込みに追いつかない場合は、ディスクをスケールアップすることをお勧めします。ディスク スループットが上限に達して書き込みが停止する場合 (たとえば、SATA SSD が NVME SSD よりはるかに低い場合)、CPU リソースが十分であれば、より高い圧縮率の圧縮アルゴリズムを適用できます。この方法では、CPU リソースがディスク リソースと交換され、ディスクへの負荷が軽減されます。
+        -   ディスク I/O 容量が長時間書き込みに追いつかない場合は、ディスクをスケールアップすることをお勧めします。ディスク スループットが上限に達して書き込みが停止した場合 (たとえば、SATA SSD が NVME SSD よりはるかに低い場合)、CPU リソースが十分であれば、より高い圧縮率の圧縮アルゴリズムを適用できます。この方法では、CPU リソースがディスク リソースと交換され、ディスクへの負荷が軽減されます。
 
         -   デフォルトの CF 圧縮で高圧が発生する場合は、 `[rocksdb.defaultcf] compression-per-level`パラメータを`["no", "no", "lz4", "lz4", "lz4", "zstd", "zstd"]`から`["no", "no", "zstd", "zstd", "zstd", "zstd", "zstd"]`に変更します。
 
-    -   memtable が多すぎると、ストールが発生します。これは通常、インスタント書き込みの量が多く、memtable がディスクにフラッシュされるのが遅い場合に発生します。ディスク書き込み速度を改善できず、この問題がビジネスのピーク時にのみ発生する場合は、対応する CF の`max-write-buffer-number`を増やすことで軽減できます。
+    -   memtable が多すぎると、ストールが発生します。これは通常、インスタント書き込みの量が多く、memtable がディスクにフラッシュされるのが遅い場合に発生します。ディスク書き込み速度を改善できず、この問題がビジネスのピーク時にのみ発生する場合は、対応する CF の`max-write-buffer-number`増やすことで軽減できます。
 
         -   たとえば、 `[rocksdb.defaultcf] max-write-buffer-number` `8`に設定します (デフォルトは`5` )。これにより、メモリ内のメモリテーブルが増えるため、ピーク時のメモリ使用量が増加する可能性があることに注意してください。
 
 -   4.3.2 `scheduler too busy`
 
-    -   深刻な書き込み競合。1 `latch wait duration`高い。モニター**Grafana** -&gt; **TiKV-details** -&gt; **scheduler prewrite** / **scheduler commit**で`latch wait duration`を確認できます。スケジューラに書き込みタスクが溜まると、保留中の書き込みタスクが`[storage] scheduler-pending-write-threshold`で設定したしきい値 (100MB) を超えます。15 `MVCC_CONFLICT_COUNTER`該当するメトリックを確認することで原因を確認できます。
+    -   深刻な書き込み競合`latch wait duration`が高い。モニター**Grafana** -&gt; **TiKV-details** -&gt; **scheduler prewrite** / **scheduler commit**で`latch wait duration`確認できます。スケジューラに書き込みタスクが溜まると、保留中の書き込みタスクが`[storage] scheduler-pending-write-threshold`で設定したしきい値 (100MB) を超えます。15 に該当するメトリックを確認することで`MVCC_CONFLICT_COUNTER`を確認できます。
 
-    -   書き込み速度が遅いため、書き込みタスクが溜まります。TiKV に書き込まれるデータが`[storage] scheduler-pending-write-threshold`で設定されたしきい値 (100 MB) を超えています。3 [4.5](#45-tikv-write-is-slow)参照してください。
+    -   書き込み速度が遅いため、書き込みタスクが溜まります。TiKV に書き込まれるデータが`[storage] scheduler-pending-write-threshold`で設定されたしきい値 (100 MB) を超えています[4.5](#45-tikv-write-is-slow)を参照してください。
 
--   4.3.3 `raftstore is busy` . メッセージの処理がメッセージの受信よりも遅くなります。 `channel full`状態は短期的にはサービスに影響しませんが、エラーが長時間続くと、Leaderの切り替えが発生する可能性があります。
+-   4.3.3 `raftstore is busy` . メッセージの処理がメッセージの受信よりも遅くなります。 `channel full`の状態は短期的にはサービスに影響しませんが、エラーが長時間続くと、Leaderの切り替えが発生する可能性があります。
 
-    -   `append log`エンカウンターストール[4.3.1](#43-the-client-reports-the-server-is-busy-error)を参照してください。
-    -   `append log duration`は高いため、メッセージの処理が遅くなります。2 [4.5](#45-tikv-write-is-slow)参照して、 `append log duration`が高い理由を分析できます。
+    -   `append log`エンカウンターストール。2 を参照してください[4.3.1](#43-the-client-reports-the-server-is-busy-error)
+    -   `append log duration`は高いため、メッセージの処理が遅くなります[4.5](#45-tikv-write-is-slow)を参照して、 `append log duration`が高い理由を分析できます。
     -   raftstore は、大量のメッセージを瞬時に受信し (TiKV Raftメッセージ ダッシュボードで確認)、処理に失敗します。通常、短期的な`channel full`ステータスはサービスに影響しません。
 
 -   4.3.4 TiKV コプロセッサがキュー内にあります。蓄積されたタスクの数が`coprocessor threads * readpool.coprocessor.max-tasks-per-worker-[normal|low|high]`超えています。大規模なクエリが多すぎると、タスクがコプロセッサに蓄積されます。実行プランの変更によって大量のテーブル スキャン操作が発生していないかどうかを確認する必要があります。 [3.3](#33-wrong-execution-plan)を参照してください。
@@ -277,15 +277,15 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
 -   4.4.1 TiKVの再開による再選挙
 
-    -   TiKV がパニックした後、systemd によって引き上げられ、正常に動作します。panicが発生したかどうかは、TiKV ログを表示することで確認できます。この問題は予期しないものなので、発生した場合は[バグを報告](https://github.com/tikv/tikv/issues/new?template=bug-report.md) 。
+    -   TiKV がパニックした後、systemd によって引き上げられ、正常に動作します。TiKV ログを表示することで、panicが発生したかどうかを確認できます。この問題は予期しないものであるため、発生した場合は[バグを報告する](https://github.com/tikv/tikv/issues/new?template=bug-report.md) 。
 
-    -   TiKV はサードパーティによって停止または強制終了され、その後`dmesg`によってプルアップされます。1 と TiKV ログを表示して原因を確認してください。
+    -   TiKV はサードパーティによって停止または強制終了され、その後 systemd によってプルアップされます。1 と TiKV ログ`dmesg`表示して原因を確認してください。
 
-    -   TiKV は OOM であり、再起動が発生します。1 [4.2](#42-tikv-oom)参照してください。
+    -   TiKV は OOM であり、再起動が発生します[4.2](#42-tikv-oom)を参照してください。
 
     -   `THP` (Transparent Hugepage) を動的に調整しているため、TiKV がハングします。中国語のケース[ケース-500](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case500.md)を参照してください。
 
--   4.4.2 TiKV RocksDB が書き込み停止に遭遇し、その結果再選出が行われます。モニター**Grafana** -&gt; **TiKV-details** -&gt; **errors**に`server is busy`が表示されているかどうかを確認できます[4.3.1](#43-the-client-reports-the-server-is-busy-error)を参照してください。
+-   4.4.2 TiKV RocksDB が書き込み停止に遭遇し、その結果再選出が行われます。モニター**Grafana** -&gt; **TiKV-details** -&gt; **errors**に`server is busy`表示されているかどうかを確認できます[4.3.1](#43-the-client-reports-the-server-is-busy-error)を参照してください。
 
 -   4.4.3 ネットワーク分離による再選。
 
@@ -295,40 +295,40 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
 -   4.5.2 スケジューラ CPU がビジー状態です (トランザクション kv のみ)。
 
-    プレライト/コミットの`scheduler command duration` `scheduler latch wait duration`と`storage async write duration`の合計よりも長くなっています。スケジューラワーカーの CPU 需要が高く、 `scheduler-worker-pool-size` * 100% の 80% 以上になっているか、マシン全体の CPU リソースが比較的限られています。書き込みワークロードが大きい場合は、 `[storage] scheduler-worker-pool-size`設定が小さすぎないか確認してください。
+    プレライト/コミットの`scheduler command duration`が`scheduler latch wait duration`と`storage async write duration`の合計よりも長くなっています。スケジューラワーカーの CPU 需要が高く、 `scheduler-worker-pool-size` * 100% の 80% 以上になっているか、マシン全体の CPU リソースが比較的限られています。書き込みワークロードが大きい場合は、 `[storage] scheduler-worker-pool-size`設定が小さすぎないか確認してください。
 
-    その他の状況では、 [バグを報告](https://github.com/tikv/tikv/issues/new?template=bug-report.md) 。
+    その他の状況では、 [バグを報告する](https://github.com/tikv/tikv/issues/new?template=bug-report.md) 。
 
 -   4.5.3 ログの追加が遅い。
 
     TiKV Grafana の**Raft IO** / `append log duration`が高くなっているのは、通常、ディスク書き込み操作が遅いためです。RocksDB - raft の`WAL Sync Duration max`値を確認することで原因を確認できます。
 
-    その他の状況では、 [バグを報告](https://github.com/tikv/tikv/issues/new?template=bug-report.md) 。
+    その他の状況では、 [バグを報告する](https://github.com/tikv/tikv/issues/new?template=bug-report.md) 。
 
 -   4.5.4 raftstore スレッドがビジー状態です。
 
-    **Raft Propose** / `propose wait duration` 、TiKV Grafana のログ追加期間よりも大幅に大きくなります。次の方法を実行します。
+    **Raft Propose** / `propose wait duration`は、TiKV Grafana のログ追加期間よりも大幅に大きくなります。次の方法を実行します。
 
-    -   `[raftstore] store-pool-size`設定値が小さすぎないか確認してください。値は`1` ～ `5`の間で、大きすぎないように設定することをお勧めします。
+    -   `[raftstore] store-pool-size`設定値が小さすぎないか確認してください。値は`1` ～ `5`間で、大きすぎないように設定することをお勧めします。
     -   マシン上の CPU リソースが不足していないかどうかを確認します。
 
 -   4.5.5 適用が遅いです。
 
     TiKV Grafana の**Raft IO** / `apply log duration`が高くなっています。これは通常、 **Raft Propose** / `apply wait duration`も高いことを意味します。考えられる原因は次のとおりです。
 
-    -   `[raftstore] apply-pool-size`は小さすぎます ( `1`から`5`の間で大きすぎない値を設定することを推奨します)。また、 **Thread CPU** / `apply CPU`は大きすぎます。
+    -   `[raftstore] apply-pool-size`は小さすぎます ( `1`から`5`間で大きすぎない値を設定することを推奨します)。また、 **Thread CPU** / `apply CPU`は大きすぎます。
 
     -   マシン上の CPU リソースが不足しています。
 
-    -   リージョン書き込みホットスポット。単一の適用スレッドの CPU 使用率が高くなります。現在、単一のリージョンのホットスポット問題に適切に対処することはできませんが、これは改善中です。各スレッドの CPU 使用率を表示するには、Grafana 式を変更して`by (instance, name)`追加します。
+    -   リージョン書き込みホットスポット。単一の適用スレッドの CPU 使用率が高くなります。現在、単一のリージョンのホットスポット問題に適切に対処することはできませんが、これは改善中です。各スレッドの CPU 使用率を表示するには、Grafana 式を変更して`by (instance, name)`を追加します。
 
     -   RocksDB の書き込みが遅いです。RocksDB **kv** / `max write duration`が高くなっています。1 つのRaftログに複数の KV が含まれている可能性があります。RocksDB に書き込むと、128 個の KV が書き込みバッチで RocksDB に書き込まれます。したがって、適用ログは RocksDB の複数の書き込みに関連付けられている可能性があります。
 
-    -   その他の状況では、 [バグを報告](https://github.com/tikv/tikv/issues/new?template=bug-report.md) 。
+    -   その他の状況では、 [バグを報告する](https://github.com/tikv/tikv/issues/new?template=bug-report.md) 。
 
 -   4.5.6 Raftコミット ログが遅い。
 
-    TiKV Grafana の**Raft IO** / `commit log duration`は高いです (このメトリックは、Grafana v4.x 以降でのみサポートされています)。すべてのリージョンは、独立したRaftグループに対応しています。Raft には、TCP のスライディング ウィンドウ メカニズムに似たフロー制御メカニズムがあります`[raftstore] raft-max-inflight-msgs = 256`パラメータを構成することで、スライディング ウィンドウのサイズを制御できます。書き込みホット スポットがあり、 `commit log duration`が高い場合は、パラメータを`1024`に増やすなどして調整できます。
+    TiKV Grafana の**Raft IO** / `commit log duration`は高いです (このメトリックは、Grafana v4.x 以降でのみサポートされています)。すべてのリージョンは、独立したRaftグループに対応しています。Raftには、TCP のスライディング ウィンドウ メカニズムに似たフロー制御メカニズムがあります。5 `[raftstore] raft-max-inflight-msgs = 256`を構成することで、スライディング ウィンドウのサイズを制御できます。書き込みホット スポットがあり、 `commit log duration`が高い場合は、パラメータを`1024`に増やすなどして調整できます。
 
 -   4.5.7 その他の状況については、 [パフォーマンスマップ](https://github.com/pingcap/tidb-map/blob/master/maps/performance-map.png)の書き込みパスを参照して原因を分析します。
 
@@ -338,9 +338,9 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
 -   5.1.1 マージ
 
-    -   テーブル間の空の領域は結合できません。TiKV の`[coprocessor] split-region-on-table`パラメータを変更する必要があります。このパラメータは、v4.x ではデフォルトで`false`に設定されています。中国語の[ケース-896](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case896.md)を参照してください。
+    -   テーブル間の空の領域は結合できません。TiKV の`[coprocessor] split-region-on-table`パラメータを変更する必要があります。このパラメータは、v4.x ではデフォルトで`false`に設定されています。中国語の[ケース-896](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case896.md)参照してください。
 
-    -   リージョンのマージが遅いです。Grafana -&gt; **PD** -&gt;**オペレーター**のモニターダッシュボードにアクセスして**、**マージされたオペレーターが生成されたかどうかを確認できます。マージを高速化するには、 `merge-schedule-limit`の値を増やします。
+    -   リージョンのマージが遅いです。Grafana -&gt; **PD** -&gt;**オペレーター**のモニターダッシュボードにアクセスして、マージされた**オペレーター**が生成されたかどうかを確認できます。マージを高速化するには、 `merge-schedule-limit`の値を増やします。
 
 -   5.1.2 レプリカの追加またはレプリカのオンライン/オフライン化
 
@@ -350,23 +350,23 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
 -   5.1.3 バランス
 
-    -   Leader/ リージョンの数が均等に配分されていません。中国語では[ケース394](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case394.md)と[ケース759](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case759.md)を参照してください。主な原因は、バランスがリージョン/ Leaderのサイズに基づいてスケジュールを実行するため、数が均等に配分されない可能性があることです。TiDB 4.0 では、 `[leader-schedule-policy]`パラメータが導入され、 Leaderのスケジュール ポリシーを`count`ベースまたは`size`ベースに設定できるようになりました。
+    -   Leader/ リージョン の数が均等に配分されていません。中国語では[ケース394](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case394.md)と[ケース759](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case759.md)参照してください。主な原因は、バランスがリージョン/ Leaderのサイズに基づいてスケジュールを実行するため、数が均等に配分されない可能性があることです。TiDB 4.0 では、 `[leader-schedule-policy]`パラメータが導入され、 Leaderのスケジュール ポリシーを`count`ベースまたは`size`ベースに設定できるようになりました。
 
 ### 5.2 PD選挙 {#5-2-pd-election}
 
 -   5.2.1 PD スイッチLeader。
 
-    -   原因 1: ディスク。PD ノードが配置されているディスクの I/O 負荷が最大になっています。PD が、I/O 需要の高い他のコンポーネントと一緒にデプロイされているかどうか、およびディスクの状態を調べます。原因を確認するには、 **Grafana** -&gt;**ディスク パフォーマンス**-&gt;**レイテンシー**/**負荷**のモニター メトリックを表示します。必要に応じて、FIO ツールを使用してディスクのチェックを実行することもできます。中国語の[ケース-292](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case292.md)を参照してください。
+    -   原因 1: ディスク。PD ノードが配置されているディスクの I/O 負荷が最大になっています。PD が、I/O 需要の高い他のコンポーネントと一緒にデプロイされているかどうか、およびディスクの状態を調べます。原因を確認するには、 **Grafana** -&gt;**ディスク パフォーマンス**-&gt;**レイテンシー**/**負荷**のモニター メトリックを表示します。必要に応じて、FIO ツールを使用してディスクのチェックを実行することもできます。中国語の[ケース292](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case292.md)参照してください。
 
-    -   原因 2: ネットワーク。PD ログには`lost the TCP streaming connection`が表示されます。PD ノード間のネットワークに問題がないか確認し、モニター**Grafana** -&gt; **PD** -&gt; **etcd**で`round trip`を表示して原因を確認する必要があります。中国語では[ケース177](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case177.md)参照してください。
+    -   原因 2: ネットワーク。PD ログには`lost the TCP streaming connection`表示されます。PD ノード間のネットワークに問題がないか確認し、モニター**Grafana** -&gt; **PD** -&gt; **etcd**で`round trip`表示して原因を確認する必要があります。中国語では[ケース177](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case177.md)参照してください。
 
-    -   原因 3: システム負荷が高い。ログには`server is likely overloaded`表示されます。中国語では[ケース214](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case214.md)参照してください。
+    -   原因 3: システム負荷が高い。ログには`server is likely overloaded`と表示されます。中国語では[ケース214](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case214.md)参照してください。
 
 -   5.2.2 PD がLeaderを選出できない、または選出が遅い。
 
-    -   PD がLeaderを選出できません: PD ログには`lease is not expired`表示されます。3 [この問題](https://github.com/etcd-io/etcd/issues/10355) v3.0.x および v2.1.19 で修正されました。中国語では[ケース-875](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case875.md)参照してください。
+    -   PD がLeaderを選出できません: PD ログには`lease is not expired`と表示されます。3 [この号](https://github.com/etcd-io/etcd/issues/10355) v3.0.x および v2.1.19 で修正されました。中国語では[ケース-875](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case875.md)参照してください。
 
-    -   選挙が遅い:リージョンの読み込み時間が長いです。この問題は、PD ログで`grep "regions cost"`実行することで確認できます。結果が`load 460927 regions cost 11.77099s`などの秒単位の場合、リージョンの読み込みが遅いことを意味します。v3.0 で`use-region-storage`を`true`に設定して`region storage`機能を有効にすると、リージョンの読み込み時間が大幅に短縮されます。中国語では[ケース429](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case429.md)参照してください。
+    -   選挙が遅い:リージョンの読み込み時間が長いです。この問題は、PD ログで`grep "regions cost"`実行することで確認できます。結果が`load 460927 regions cost 11.77099s`などの秒単位の場合、リージョンの読み込みが遅いことを意味します。v3.0 で`use-region-storage`を`true`に設定することで`region storage`機能を有効にでき、リージョンの読み込み時間が大幅に短縮されます。中国語では[ケース429](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case429.md)参照してください。
 
 -   5.2.3 TiDB が SQL ステートメントを実行すると PD がタイムアウトします。
 
@@ -374,17 +374,17 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
     -   ネットワークの問題。モニター**Grafana** -&gt; **blackbox_exporter** -&gt; **pingレイテンシー**にアクセスして、TiDB から PDLeaderへのネットワークが正常に動作しているかどうかを確認します。
 
-    -   PDはパニックに陥る[バグを報告](https://github.com/pingcap/pd/issues/new?labels=kind%2Fbug&#x26;template=bug-report.md) .
+    -   PDはパニックに陥る[バグを報告する](https://github.com/pingcap/pd/issues/new?labels=kind%2Fbug&#x26;template=bug-report.md) .
 
-    -   PDはOOMです。1 [5.3](#53-pd-oom)参照してください。
+    -   PDは[5.3](#53-pd-oom)です。1を参照してください。
 
-    -   問題に他の原因がある場合は、 `curl http://127.0.0.1:2379/debug/pprof/goroutine?debug=2`と[バグを報告](https://github.com/pingcap/pd/issues/new?labels=kind%2Fbug&#x26;template=bug-report.md)を実行して goroutine を取得します。
+    -   問題に他の原因がある場合は、 `curl http://127.0.0.1:2379/debug/pprof/goroutine?debug=2`と[バグを報告する](https://github.com/pingcap/pd/issues/new?labels=kind%2Fbug&#x26;template=bug-report.md)実行して goroutine を取得します。
 
 -   5.2.4 その他の問題
 
-    -   PDは`FATAL`エラーを報告し、ログには`range failed to find revision pair`表示されます。この問題はv3.0.8（ [＃2040](https://github.com/pingcap/pd/pull/2040) ）で修正されました。詳細については、中国語の[ケース947](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case947.md)を参照してください。
+    -   PDは`FATAL`エラーを報告し、ログには`range failed to find revision pair`表示されます。この問題はv3.0.8（ [＃2040](https://github.com/pingcap/pd/pull/2040) ）で修正されました。詳細については、中国語の[ケース947](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case947.md)参照してください。
 
-    -   その他の状況では、 [バグを報告](https://github.com/pingcap/pd/issues/new?labels=kind%2Fbug&#x26;template=bug-report.md) 。
+    -   その他の状況では、 [バグを報告する](https://github.com/pingcap/pd/issues/new?labels=kind%2Fbug&#x26;template=bug-report.md) 。
 
 ### 5.3 PD OOM {#5-3-pd-oom}
 
@@ -400,7 +400,7 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
 ### 6.1 TiDBBinlog {#6-1-tidb-binlog}
 
--   6.1.1 TiDB Binlog は、TiDB からの変更を収集し、下流の TiDB または MySQL プラットフォームにバックアップとレプリケーションを提供するツールです。詳細については、 [GitHub 上の TiDBBinlog](https://github.com/pingcap/tidb-binlog)参照してください。
+-   6.1.1 TiDB Binlog は、 TiDB からの変更を収集し、下流の TiDB または MySQL プラットフォームにバックアップとレプリケーションを提供するツールです。詳細については、 [GitHub 上の TiDBBinlog](https://github.com/pingcap/tidb-binlog)参照してください。
 
 -   6.1.2Pump/Drainerステータスの`Update Time`正常に更新され、ログに異常は表示されませんが、下流にデータは書き込まれません。
 
@@ -424,17 +424,17 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
 -   6.1.5 上流と下流のデータの不一致
 
-    -   一部の TiDB ノードでは、 binlogが有効になっていません。v3.0.6 以降のバージョンでは、 [http://127.0.0.1:10080/情報/すべて](http://127.0.0.1:10080/info/all)インターフェイスにアクセスすることで、すべてのノードのbinlogステータスを確認できます。v3.0.6 より前のバージョンでは、構成ファイルを表示することで、 binlogステータスを確認できます。
+    -   一部の TiDB ノードでは、 binlogが有効になっていません。v3.0.6 以降のバージョンでは、 [http://127.0.0.1:10080/info/all](http://127.0.0.1:10080/info/all)インターフェイスにアクセスすることで、すべてのノードのbinlogステータスを確認できます。v3.0.6 より前のバージョンでは、構成ファイルを表示することで、 binlogステータスを確認できます。
 
-    -   一部の TiDB ノードは`ignore binlog`ステータスになります。v3.0.6 以降のバージョンでは、 [http://127.0.0.1:10080/情報/すべて](http://127.0.0.1:10080/info/all)インターフェイスにアクセスして、すべてのノードのbinlogステータスを確認できます。v3.0.6 より前のバージョンでは、TiDB ログをチェックして、 `ignore binlog`キーワードが含まれているかどうかを確認します。
+    -   一部の TiDB ノードは`ignore binlog`ステータスになります。v3.0.6 以降のバージョンでは、 [http://127.0.0.1:10080/info/all](http://127.0.0.1:10080/info/all)インターフェイスにアクセスして、すべてのノードのbinlogステータスを確認できます。v3.0.6 より前のバージョンでは、TiDB ログをチェックして、 `ignore binlog`キーワードが含まれているかどうかを確認します。
 
     -   タイムスタンプ列の値がアップストリームとダウンストリームで一致していません。
 
-        -   これはタイムゾーンが異なるために発生します。Drainerがアップストリームおよびダウンストリーム データベースと同じタイムゾーンにあることを確認する必要があります。Drainerはタイムゾーンを`/etc/localtime`から取得し、 `TZ`環境変数をサポートしていません。中国語の[ケース826](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case826.md)参照してください。
+        -   これはタイムゾーンが異なるために発生します。Drainerがアップストリームおよびダウンストリーム データベースと同じタイムゾーンにあることを確認する必要があります。Drainerはタイムゾーンを`/etc/localtime`から取得し、 `TZ`環境変数をサポートしていません。中国語の[ケース-826](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case826.md)参照してください。
 
         -   TiDB では timestamp のデフォルト値は`null`ですが、 MySQL 5.7 (MySQL 8 は含みません) では同じデフォルト値が現在時刻になっています。そのため、アップストリーム TiDB の timestamp が`null`で、ダウンストリームがMySQL 5.7の場合、 timestamp 列のデータが不整合になります。binlogを有効にする前に、アップストリームで`set @@global.explicit_defaults_for_timestamp=on;`実行する必要があります。
 
-    -   その他の状況では、 [バグを報告](https://github.com/pingcap/tidb-binlog/issues/new?labels=bug&#x26;template=bug-report.md) 。
+    -   その他の状況では、 [バグを報告する](https://github.com/pingcap/tidb-binlog/issues/new?labels=bug&#x26;template=bug-report.md) 。
 
 -   6.1.6 遅いレプリケーション
 
@@ -444,17 +444,17 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
     -   ダウンストリームがファイルに出力する場合は、出力ディスクまたはネットワーク ディスクが遅いかどうかを確認します。
 
-    -   その他の状況では、 [バグを報告](https://github.com/pingcap/tidb-binlog/issues/new?labels=bug&#x26;template=bug-report.md) 。
+    -   その他の状況では、 [バグを報告する](https://github.com/pingcap/tidb-binlog/issues/new?labels=bug&#x26;template=bug-report.md) 。
 
--   6.1.7Pumpはbinlogを書き込むことができず、エラー`no space left on device`を報告します。
+-   6.1.7Pumpはbinlog を書き込むことができず、エラー`no space left on device`を報告します。
 
-    -   ローカル ディスク領域が不足しているため、 Pump はbinlogデータを正常に書き込むことができません。ディスク領域をクリーンアップしてから、 Pumpを再起動する必要があります。
+    -   Pump がbinlogデータを正常に書き込むには、ローカル ディスク領域が不足しています。ディスク領域をクリーンアップしてから、 Pump を再起動する必要があります。
 
--   6.1.8Pumpは起動時にエラー`fail to notify all living drainer`を報告します。
+-   6.1.8Pumpは起動時に`fail to notify all living drainer`エラーを報告します。
 
     -   原因: Pumpが起動すると、状態`online`にあるすべてのDrainerノードに通知します。Drainerへの通知に失敗すると、このエラー ログが出力されます。
 
-    -   解決方法: binlogctl ツールを使用して、各Drainerノードが正常かどうかを確認します。これは、 `online`状態のすべてのDrainerノードが正常に動作していることを確認するためです。Drainer ノードの状態が実際の動作状態と一致していない場合は、 binlogctl ツールを使用して状態を変更し、Pumpを再起動します。ケース[全ての生きた排水管に通知できなかった](/tidb-binlog/handle-tidb-binlog-errors.md#fail-to-notify-all-living-drainer-is-returned-when-pump-is-started)を参照してください。
+    -   解決方法: binlogctl ツールを使用して、各Drainerノードが正常かどうかを確認します。これは、 `online`状態のすべてのDrainerノードが正常に動作していることを確認するためです。Drainer ノードの状態が実際の動作状態と一致していない場合は、 binlogctl ツールを使用して状態を変更し、 Pump を再起動します。ケース[全ての生きた排水管に通知できなかった](/tidb-binlog/handle-tidb-binlog-errors.md#fail-to-notify-all-living-drainer-is-returned-when-pump-is-started)を参照してください。
 
 -   6.1.9Drainerは`gen update sqls failed: table xxx: row data is corruption []`エラーを報告します。
 
@@ -462,32 +462,32 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
 -   6.1.10Drainerのレプリケーションがハングします。プロセスはアクティブなままですが、チェックポイントは更新されません。
 
-    -   この問題は v3.0.4 で修正されました。中国語版[ケース741](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case741.md)参照してください。
+    -   この問題は v3.0.4 で修正されました。中国語版[ケース741](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case741.md)を参照してください。
 
 -   6.1.11 いずれかのコンポーネントがパニックになります。
 
-    -   [バグを報告](https://github.com/pingcap/tidb-binlog/issues/new?labels=bug&#x26;template=bug-report.md) 。
+    -   [バグを報告する](https://github.com/pingcap/tidb-binlog/issues/new?labels=bug&#x26;template=bug-report.md) 。
 
 ### 6.2 データ移行 {#6-2-data-migration}
 
 -   6.2.1 TiDB Data Migration (DM)は、MySQL/MariaDBからTiDBへのデータ移行をサポートする移行ツールです。詳細については、 [DMの概要](/dm/dm-overview.md)参照してください。
 
--   6.2.2 `Access denied for user 'root'@'172.31.43.27' (using password: YES)` `query status`を実行するかログを確認すると表示されます。
+-   6.2.2 `Access denied for user 'root'@'172.31.43.27' (using password: YES)` `query status`実行するかログを確認すると表示されます。
 
     -   すべての DM 構成ファイル内のデータベース関連のパスワードは`dmctl`で暗号化する必要があります。データベース パスワードが空の場合、パスワードを暗号化する必要はありません。クリアテキスト パスワードは v1.0.6 以降で使用できます。
-    -   DM 操作中、上流および下流データベースのユーザーは、対応する読み取りおよび書き込み権限を持っている必要があります。データ移行は、データ複製タスクを開始するときに自動的に[対応する権限を事前チェックする](/dm/dm-precheck.md) 。
+    -   DM 操作中、上流および下流データベースのユーザーは、対応する読み取りおよび書き込み権限を持っている必要があります。データ移行は、データ複製タスクの開始時に自動的に実行さ[対応する権限を事前チェックする](/dm/dm-precheck.md)ます。
     -   DM クラスターに DM-worker/DM-master/dmctl の異なるバージョンをデプロイするには、中国語の[AskTUGのケーススタディ](https://asktug.com/t/dm1-0-0-ga-access-denied-for-user/1049/5)参照してください。
 
 -   6.2.3 レプリケーション タスクが中断され、 `driver: bad connection`エラーが返されます。
 
-    -   `driver: bad connection`エラーは、DM と下流の TiDB データベース間の接続に異常 (ネットワーク障害や TiDB の再起動など) が発生し、現在のリクエストのデータがまだ TiDB に送信されていないことを示します。
+    -   エラー`driver: bad connection`は、DM と下流の TiDB データベース間の接続に異常 (ネットワーク障害や TiDB の再起動など) が発生し、現在のリクエストのデータがまだ TiDB に送信されていないことを示します。
 
-        -   DM 1.0.0 GA より前のバージョンの場合は、 `stop-task`実行してタスクを停止し、 `start-task`実行してタスクを再起動します。
+        -   DM 1.0.0 GA より前のバージョンの場合は、 `stop-task`実行してタスクを停止し、 `start-task`を実行してタスクを再起動します。
         -   DM 1.0.0 GA 以降のバージョンでは、このタイプのエラーに対する自動再試行メカニズムが追加されています。 [＃265](https://github.com/pingcap/dm/pull/265)参照してください。
 
 -   6.2.4 レプリケーション タスクが`invalid connection`エラーで中断されます。
 
-    -   `invalid connection`エラーは、DM と下流の TiDB データベース間の接続に異常が発生し (ネットワーク障害、TiDB の再起動、TiKV ビジーなど)、現在のリクエストのデータの一部が TiDB に送信されたことを示します。DM はレプリケーション タスクで下流にデータを並行してレプリケーションする機能があるため、タスクが中断されるといくつかのエラーが発生する可能性があります。これらのエラーは、 `query-status`または`query-error`を実行することで確認できます。
+    -   `invalid connection`エラーは、DM と下流の TiDB データベース間の接続に異常が発生し (ネットワーク障害、TiDB の再起動、TiKV ビジーなど)、現在のリクエストのデータの一部が TiDB に送信されたことを示します。DM はレプリケーション タスクで下流にデータを並行してレプリケーションする機能があるため、タスクが中断されるといくつかのエラーが発生する可能性があります。これらのエラーは、 `query-status`または`query-error`実行することで確認できます。
 
         -   増分レプリケーション プロセス中に`invalid connection`エラーのみが発生した場合、DM はタスクを自動的に再試行します。
         -   バージョンの問題により DM が再試行しない、または自動的に再試行できない場合 (自動再試行は v1.0.0-rc.1 で導入されています)、 `stop-task`使用してタスクを停止し、 `start-task`使用してタスクを再起動します。
@@ -508,17 +508,17 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
     -   マスターbinlogが消去されているかどうかを確認します。
     -   `relay.meta`で記録した位置情報を確認します。
 
-        -   `relay.meta`は空の GTID 情報を記録しています。DM-worker は終了時または 30 秒ごとに`relay.meta`に GTID 情報をメモリに保存します。DM-worker が上流の GTID 情報を取得しない場合は、空の GTID 情報を`relay.meta`に保存します。中国語では[ケース772](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case772.md)参照してください。
+        -   `relay.meta`空の GTID 情報を記録しています。DM-worker は終了時または 30 秒ごとに`relay.meta`に GTID 情報をメモリに保存します。DM-worker が上流の GTID 情報を取得しない場合は、空の GTID 情報を`relay.meta`に保存します。中国語では[ケース772](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case772.md)参照してください。
 
-        -   `relay.meta`で記録されたbinlogイベントにより、不完全なリカバリ プロセスがトリガーされ、間違った GTID 情報が記録されます。この問題は v1.0.2 で修正されていますが、以前のバージョンでも発生する可能性があります。 <!--See [case-764](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case764.md).-->
+        -   `relay.meta`で記録されたbinlogイベントにより、不完全なリカバリ プロセスがトリガーされ、間違った GTID 情報が記録されます。この問題は v1.0.2 で修正されており、以前のバージョンでも発生する可能性があります。 <!--See [case-764](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case764.md).-->
 
 -   6.2.7 DMレプリケーションプロセスがエラー`Error 1366: incorrect utf8 value eda0bdedb29d(\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd)`を返します。
 
-    -   この値は MySQL 8.0 または TiDB に正常に書き込むことができ`tidb_skip_utf8_check`んが、 MySQL 5.7には書き込むことができます。1 パラメータを有効にすると、データ形式のチェックをスキップできます。
+    -   この値は MySQL 8.0 または TiDB に正常に書き込むことができませんが、 MySQL 5.7には書き込むことができます`tidb_skip_utf8_check`パラメータを有効にすると、データ形式のチェックをスキップできます。
 
 ### 6.3 TiDB Lightning {#6-3-tidb-lightning}
 
--   6.3.1 TiDB Lightning は、大量のデータを TiDB クラスターに高速かつ完全にインポートするためのツールです。 [GitHub 上のTiDB Lightning](https://github.com/pingcap/tidb/tree/release-8.1/lightning)を参照してください。
+-   6.3.1 TiDB Lightningは、大量のデータを TiDB クラスターに高速かつ完全にインポートするためのツールです。 [GitHub 上のTiDB Lightning](https://github.com/pingcap/tidb/tree/release-8.1/lightning)参照してください。
 
 -   6.3.2 インポート速度が遅すぎます。
 
@@ -526,7 +526,7 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
         -   設定は、ログの先頭から`region-concurrency`検索すると見つかります。
         -   TiDB Lightning が他のサービス (たとえば、Importer) とサーバーを共有する場合は、そのサーバーの CPU コアの合計数の`region-concurrency` ～ 75% を手動で設定する必要があります。
-        -   CPU にクォータがある場合 (Kubernetes 設定によって制限されている場合など)、 TiDB Lightning はこれを読み取ることができない可能性があります。この場合、 `region-concurrency`手動で減らす必要があります。
+        -   CPU にクォータがある場合 (Kubernetes 設定によって制限されている場合など)、 TiDB Lightning はこれを読み取ることができない可能性があります。この場合、 `region-concurrency`も手動で減らす必要があります。
 
     -   インデックスを追加するたびに、各行に新しい KV ペアが導入されます。インデックスが N 個ある場合、インポートされる実際のサイズは、 [Dumpling](/dumpling-overview.md)出力のサイズの約 (N+1) 倍になります。インデックスが無視できるほど小さい場合は、最初にスキーマからインデックスを削除し、インポートが完了した後に`CREATE INDEX`経由で再度追加することができます。
 
@@ -592,25 +592,25 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
     -   `send request is cancelled` : 送信フェーズ中にリクエストがタイムアウトしました。Grafana -&gt; **TiDB** -&gt; **Batch Client** / `Pending Request Count by TiKV`**の**監視を調査して、保留中のリクエスト数が 128 より大きいかどうかを確認できます。
 
         -   値が 128 より大きい場合、送信が KV の処理能力を超えるため、送信が重なってしまいます。
-        -   値が 128 より大きくない場合は、ログをチェックして、レポートが対応する KV の操作および保守の変更によって発生したものかどうかを確認します。それ以外の場合、このエラーは予期しないものであり、 [バグを報告](https://github.com/pingcap/tidb/issues/new?labels=type%2Fbug&#x26;template=bug-report.md)実行する必要があります。
+        -   値が 128 より大きくない場合は、ログをチェックして、レポートが対応する KV の操作および保守の変更によって発生したものかどうかを確認します。それ以外の場合、このエラーは予期しないものであり、 [バグを報告する](https://github.com/pingcap/tidb/issues/new?labels=type%2Fbug&#x26;template=bug-report.md)実行する必要があります。
 
     -   `wait response is cancelled` : リクエストは TiKV に送信された後にタイムアウトしました。その時点で PD と KV に記録される対応する TiKV アドレスとリージョンの応答時間を確認する必要があります。
 
 -   7.1.5 `distsql.go`レポート`inconsistent index` 。
 
-    データ インデックスに矛盾があるようです。報告されたインデックスがあるテーブルで`admin check table <TableName>`コマンドを実行します。チェックが失敗した場合は、次のコマンドを実行してガベージコレクションを無効にし、 [バグを報告](https://github.com/pingcap/tidb/issues/new?labels=type%2Fbug&#x26;template=bug-report.md)実行します。
+    データ インデックスに矛盾があるようです。報告されたインデックスがあるテーブルで`admin check table <TableName>`コマンドを実行します。チェックが失敗した場合は、次のコマンドを実行してガベージコレクションを無効にし、 [バグを報告する](https://github.com/pingcap/tidb/issues/new?labels=type%2Fbug&#x26;template=bug-report.md)実行します。
 
     ```sql
     SET GLOBAL tidb_gc_enable = 0;
     ```
 
-### 7.2 ティクヴィ {#7-2-tikv}
+### 7.2 ティクヴァ {#7-2-tikv}
 
 -   7.2.1 `key is locked` .
 
     読み取りと書き込みに競合があります。読み取り要求でコミットされていないデータが検出されたため、データがコミットされるまで待機する必要があります。
 
-    このエラーが少数であればビジネスに影響はありませんが、このエラーが多数発生すると、ビジネスにおいて読み取り/書き込みの競合が深刻であることを示します。
+    このエラーが少数であればビジネスに影響はありませんが、このエラーが多数発生すると、ビジネスにおいて読み取りと書き込みの競合が深刻であることを示します。
 
 -   7.2.2 `write conflict` .
 
@@ -634,6 +634,6 @@ TiDB は、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-s
 
     リクエストはLeaderではないレプリカに送信されます。エラー応答にどのレプリカが最新のLeaderであるかが示されている場合、TiDB はエラーに従ってローカルルーティングを更新し、最新のLeaderに新しいリクエストを送信します。通常、業務には影響しません。
 
-    v3.0 以降のバージョンでは、以前のLeaderへのリクエストが失敗した場合、TiDB は他のピアを試行するため、TiKV ログに`peer is not leader`頻繁に記録される可能性があります。TiDB の対応するリージョンの`switch region peer to next due to send request fail`ログを確認して、送信失敗の根本原因を特定できます。詳細については、 [7.1.4](#71-tidb)を参照してください。
+    v3.0 以降のバージョンでは、以前のLeaderへのリクエストが失敗した場合、TiDB は他のピアを試行するため、TiKV ログに`peer is not leader`頻繁に記録される可能性があります。送信失敗の根本原因を特定するには、TiDB の対応するリージョンの`switch region peer to next due to send request fail`ログを確認してください。詳細については、 [7.1.4](#71-tidb)を参照してください。
 
     このエラーは、他の理由によりリージョンにLeaderが存在しない場合にも返される可能性があります。詳細については、 [4.4](#44-some-tikv-nodes-drop-leader-frequently)参照してください。

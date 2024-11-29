@@ -9,7 +9,7 @@ summary: TiDB データベースでの CREATE BINDING の使用。
 
 `BINDING` `GLOBAL`または`SESSION`いずれかの基準になります。デフォルトは`SESSION`です。
 
-バインドされた SQL 文はパラメータ化され、システム テーブルに格納されます。SQL クエリが処理されるとき、パラメータ化された SQL 文とシステム テーブル内のバインドされた文が一致し、システム変数`tidb_use_plan_baselines`が`ON` (デフォルト) に設定されていれば、対応するオプティマイザ ヒントが利用できます。複数の実行プランが利用できる場合、オプティマイザはコストが最も低いプランをバインドすることを選択します。詳細については、 [バインディングを作成する](/sql-plan-management.md#create-a-binding)を参照してください。
+バインドされた SQL 文はパラメータ化され、システム テーブルに格納されます。SQL クエリが処理されるとき、パラメータ化された SQL 文とシステム テーブル内のバインドされた文が一致し、システム変数`tidb_use_plan_baselines`が`ON` (デフォルト) に設定されている限り、対応するオプティマイザ ヒントが使用可能です。複数の実行プランが使用可能な場合、オプティマイザはコストが最も低いプランをバインドすることを選択します。詳細については、 [バインディングを作成する](/sql-plan-management.md#create-a-binding)参照してください。
 
 ## 概要 {#synopsis}
 
@@ -175,5 +175,5 @@ mysql> SELECT @@LAST_PLAN_FROM_BINDING;
 -   [[グローバル|セッション]バインディングの削除](/sql-statements/sql-statement-drop-binding.md)
 -   [[グローバル|セッション]バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
 -   [テーブルを分析](/sql-statements/sql-statement-analyze-table.md)
--   [オプティマイザーヒント](/optimizer-hints.md)
+-   [オプティマイザーのヒント](/optimizer-hints.md)
 -   [SQL プラン管理](/sql-plan-management.md)

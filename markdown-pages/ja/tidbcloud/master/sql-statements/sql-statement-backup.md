@@ -9,18 +9,18 @@ summary: TiDB データベースの BACKUP の使用法の概要。
 
 > **警告：**
 >
-> -   この機能は実験的ものです。本番環境での使用は推奨されません。この機能は予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)報告できます。
-> -   この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> -   この機能は実験的です。本番環境での使用は推奨されません。この機能は予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告できます。
+> -   この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
-`BACKUP`ステートメントは[BRツール](https://docs.pingcap.com/tidb/stable/backup-and-restore-overview)と同じエンジンを使用しますが、バックアップ プロセスは別のBRツールではなく TiDB 自体によって実行されます。BR のすべての利点と警告は、このステートメントにも適用されます。
+`BACKUP`ステートメントは[BRツール](https://docs.pingcap.com/tidb/stable/backup-and-restore-overview)と同じエンジンを使用しますが、バックアップ プロセスは別のBRツールではなく TiDB 自体によって実行されます。BRのすべての利点と警告は、このステートメントにも適用されます。
 
-`BACKUP`を実行するには、 `BACKUP_ADMIN`または`SUPER`権限が必要です。さらに、バックアップを実行する TiDB ノードとクラスター内のすべての TiKV ノードの両方に、宛先への読み取りまたは書き込み権限が必要です。9 [Security強化モード](/system-variables.md#tidb_enable_enhanced_security)有効になっている場合、ローカルstorage( `local://`で始まるstorageパス) は許可されません。
+`BACKUP`実行するには、 `BACKUP_ADMIN`または`SUPER`権限が必要です。さらに、バックアップを実行する TiDB ノードとクラスター内のすべての TiKV ノードの両方に、宛先への読み取りまたは書き込み権限が必要です。9 [Security強化モード](/system-variables.md#tidb_enable_enhanced_security)有効になっている場合、ローカルstorage( `local://`で始まるstorageパス) は許可されません。
 
-`BACKUP`ステートメントは、バックアップ タスク全体が完了するか、失敗するか、キャンセルされるまでブロックされます。 `BACKUP`を実行するには、長時間持続する接続を準備する必要があります。 タスクは、 [`KILL TIDB QUERY`](/sql-statements/sql-statement-kill.md)ステートメントを使用してキャンセルできます。
+`BACKUP`ステートメントは、バックアップ タスク全体が完了するか、失敗するか、キャンセルされるまでブロックされます。 `BACKUP`実行するには、長時間持続する接続を準備する必要があります。 タスクは、 [`KILL TIDB QUERY`](/sql-statements/sql-statement-kill.md)ステートメントを使用してキャンセルできます。
 
 一度に実行できるのは`BACKUP`と[`RESTORE`](/sql-statements/sql-statement-restore.md)タスク 1 つだけです。同じ TiDBサーバーで`BACKUP`または`RESTORE`ステートメントがすでに実行されている場合、新しい`BACKUP`実行は、以前のすべてのタスクが完了するまで待機します。
 
-`BACKUP` 「tikv」storageエンジンでのみ使用できます。「unistore」エンジンで`BACKUP`を使用すると失敗します。
+`BACKUP` 「tikv」storageエンジンでのみ使用できます。「unistore」エンジンで`BACKUP`使用すると失敗します。
 
 ## 概要 {#synopsis}
 
@@ -73,8 +73,8 @@ BACKUP DATABASE `test` TO 'local:///mnt/backup/2020/04/';
 | `Destination`    | リンク先URL                                                        |
 | `Size`           | バックアップアーカイブの合計サイズ（バイト単位）                                       |
 | `BackupTS`       | バックアップ作成時のスナップショットのTSO（ [増分バックアップ](#incremental-backup)の場合に便利） |
-| `Queue Time`     | `BACKUP`タスクがキューに入れられたときのタイムスタンプ (現在のタイムゾーン)。                   |
-| `Execution Time` | `BACKUP`タスクの実行が開始されたときのタイムスタンプ (現在のタイム ゾーン)。                   |
+| `Queue Time`     | `BACKUP`番目のタスクがキューに入れられたときのタイムスタンプ (現在のタイムゾーン)。                |
+| `Execution Time` | `BACKUP`のタスクの実行が開始されたときのタイムスタンプ (現在のタイム ゾーン)。                  |
 
 ### テーブルのバックアップ {#back-up-tables}
 
@@ -92,7 +92,7 @@ BACKUP TABLE sbtest02, sbtest03, sbtest04 TO 'local:///mnt/backup/sbtest/';
 BACKUP DATABASE * TO 'local:///mnt/backup/full/';
 ```
 
-システム テーブル ( `mysql.*` `PERFORMANCE_SCHEMA.*` …) `INFORMATION_SCHEMA.*`バックアップに含まれないことに注意してください。
+システム テーブル ( `mysql.*` 、…) `INFORMATION_SCHEMA.*`バックアップに含まれ`PERFORMANCE_SCHEMA.*`ことに注意してください。
 
 ### 外部ストレージ {#external-storages}
 
@@ -125,7 +125,7 @@ BACKUP DATABASE `test` TO 's3://example-bucket-2020/backup-05/'
 
 `RATE_LIMIT`使用すると、TiKV ノードあたりの平均アップロード速度が制限され、ネットワーク帯域幅が削減されます。
 
-バックアップが完了する前に、 `BACKUP`​​クラスター上のデータに対してチェックサムを実行し、正確性を検証します。この検証が不要であると確信している場合は、 `CHECKSUM`パラメータを`FALSE`に設定してチェックを無効にすることができます。
+バックアップが完了する前に、 `BACKUP`クラスター上のデータに対してチェックサムを実行し、正確性を検証します。この検証が不要であると確信している場合は、 `CHECKSUM`パラメータを`FALSE`に設定してチェックを無効にすることができます。
 
 テーブルとインデックスのバックアップのためにBRが実行できる同時タスクの数を指定するには、 `CONCURRENCY`パラメータを使用します。このパラメータはBR内のスレッド プール サイズを制御し、バックアップ操作のパフォーマンスと効率を最適化します。
 

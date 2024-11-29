@@ -1,19 +1,19 @@
 ---
 title: TIDB_INDEX_USAGE
-summary: TIDB_INDEX_USAGE INFORMATION_SCHEMA テーブルについて学習します。
+summary: TIDB_INDEX_USAGE` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # TIDB_インデックス使用法 {#tidb-index-usage}
 
 <CustomContent platform="tidb">
 
-v8.0.0 以降、TiDB は`TIDB_INDEX_USAGE`テーブルを提供します。3 `TIDB_INDEX_USAGE`使用して、現在の TiDB ノード上のすべてのインデックスの使用統計を取得できます。デフォルトでは、TiDB は SQL ステートメントの実行中にこれらのインデックス使用統計を収集します。5 構成項目または[`instance.tidb_enable_collect_execution_info`](/tidb-configuration-file.md#tidb_enable_collect_execution_info)システム変数をオフにすることで[`tidb_enable_collect_execution_info`](/system-variables.md#tidb_enable_collect_execution_info)この機能を無効にすることができます。
+v8.0.0 以降、TiDB は`TIDB_INDEX_USAGE`テーブルを提供します`TIDB_INDEX_USAGE`使用して、現在の TiDB ノード上のすべてのインデックスの使用統計を取得できます。デフォルトでは、TiDB は SQL ステートメントの実行中にこれらのインデックス使用統計を[`tidb_enable_collect_execution_info`](/system-variables.md#tidb_enable_collect_execution_info) [`instance.tidb_enable_collect_execution_info`](/tidb-configuration-file.md#tidb_enable_collect_execution_info)変数をオフにすることで、この機能を無効にすることができます。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-v8.0.0 以降、TiDB は`TIDB_INDEX_USAGE`テーブルを提供します。3 `TIDB_INDEX_USAGE`使用して、現在の TiDB ノード上のすべてのインデックスの使用統計を取得できます。デフォルトでは、TiDB は SQL ステートメントの実行中にこれらのインデックス使用統計を収集します。5 構成項目または[`instance.tidb_enable_collect_execution_info`](https://docs.pingcap.com/tidb/v8.0/tidb-configuration-file#tidb_enable_collect_execution_info)システム変数をオフにすることで[`tidb_enable_collect_execution_info`](/system-variables.md#tidb_enable_collect_execution_info)この機能を無効にすることができます。
+v8.0.0 以降、TiDB は`TIDB_INDEX_USAGE`テーブルを提供します`TIDB_INDEX_USAGE`使用して、現在の TiDB ノード上のすべてのインデックスの使用統計を取得できます。デフォルトでは、TiDB は SQL ステートメントの実行中にこれらのインデックス使用統計を[`tidb_enable_collect_execution_info`](/system-variables.md#tidb_enable_collect_execution_info) [`instance.tidb_enable_collect_execution_info`](https://docs.pingcap.com/tidb/v8.0/tidb-configuration-file#tidb_enable_collect_execution_info)変数をオフにすることで、この機能を無効にすることができます。
 
 </CustomContent>
 
@@ -99,8 +99,8 @@ DESC CLUSTER_TIDB_INDEX_USAGE;
 
 ## 制限事項 {#limitations}
 
--   `TIDB_INDEX_USAGE`テーブルのデータは最大 5 分遅延される可能性があります。
--   TiDB が再起動すると、 `TIDB_INDEX_USAGE`テーブルのデータがクリアされます。
+-   `TIDB_INDEX_USAGE`のテーブルのデータは最大 5 分遅延される可能性があります。
+-   TiDB が再起動すると、 `TIDB_INDEX_USAGE`テーブル内のデータがクリアされます。
 
 ## 続きを読む {#read-more}
 

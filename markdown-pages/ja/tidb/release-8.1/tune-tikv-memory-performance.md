@@ -5,13 +5,13 @@ summary: 最適なパフォーマンスを得るために TiKV パラメータ�
 
 # TiKV メモリ パラメータのパフォーマンスを調整する {#tune-tikv-memory-parameter-performance}
 
-このドキュメントでは、最適なパフォーマンスを得るために TiKV パラメータを調整する方法について説明します。 デフォルトの構成ファイルは[etc/config-template.toml](https://github.com/tikv/tikv/blob/release-8.1/etc/config-template.toml)にあります。 構成を変更するには、構成項目の限定セットに対して[TiUPを使用する](/maintain-tidb-using-tiup.md#modify-the-configuration)または[TiKVを動的に変更する](/dynamic-config.md#modify-tikv-configuration-dynamically)実行します。 完全な構成については、 [TiKV 設定ファイル](/tikv-configuration-file.md)を参照してください。
+このドキュメントでは、最適なパフォーマンスを得るために TiKV パラメータを調整する方法について説明します。 デフォルトの構成ファイルは[etc/config-template.toml](https://github.com/tikv/tikv/blob/release-8.1/etc/config-template.toml)にあります。 構成を変更するには、構成項目の限定セットに対して[TiUPを使用する](/maintain-tidb-using-tiup.md#modify-the-configuration)または[TiKVを動的に変更する](/dynamic-config.md#modify-tikv-configuration-dynamically)実行します。 完全な構成については、 [TiKV 設定ファイル](/tikv-configuration-file.md)参照してください。
 
 TiKV は、TiKVアーキテクチャの最下位レベルで永続storageとして RocksDB を使用します。そのため、パフォーマンス パラメータの多くは RocksDB に関連しています。TiKV は 2 つの RocksDB インスタンスを使用します。デフォルトの RocksDB インスタンスは KV データを格納し、 Raft RocksDB インスタンス (RaftDB) はRaftログを格納します。
 
 TiKV は RocksDB から`Column Families` (CF) を実装します。
 
--   デフォルトの RocksDB インスタンスは`write` KV データを`default` 、および`lock` CF に保存します。
+-   デフォルトの RocksDB インスタンスは、KV データを`default` `write`および`lock` CF に保存します。
 
     -   `default` CF には実際のデータが格納されます。対応するパラメータは`[rocksdb.defaultcf]`にあります。
     -   `write` CF には、マルチバージョン同時実行制御 (MVCC) のバージョン情報とインデックス関連のデータが格納されます。対応するパラメータは`[rocksdb.writecf]`にあります。
@@ -21,11 +21,11 @@ TiKV は RocksDB から`Column Families` (CF) を実装します。
 
     -   `default` CF にはRaftログが格納されます。対応するパラメータは`[raftdb.defaultcf]`にあります。
 
-TiKV 3.0 以降では、デフォルトではすべての CF が 1 つのブロックキャッシュインスタンスを共有します。 `[storage.block-cache]`未満の`capacity`パラメータを設定することで、キャッシュのサイズを構成できます。ブロックキャッシュが大きいほど、より多くのホット データをキャッシュでき、データの読み取りが容易になりますが、その一方で、システムメモリの占有量も多くなります。
+TiKV 3.0 以降では、デフォルトではすべての CF が 1 つのブロックキャッシュインスタンスを共有します。 `[storage.block-cache]`未満の`capacity`パラメータを設定することで、キャッシュのサイズを構成できます。ブロックキャッシュが大きいほど、より多くのホット データをキャッシュでき、データの読み取りが容易になりますが、その一方で、システムメモリの占有量も大きくなります。
 
 TiKV 3.0 より前では、共有ブロックキャッシュはサポートされていないため、各 CF ごとにブロックキャッシュを個別に構成する必要があります。
 
-各 CF には個別の`write buffer`あります。 `write-buffer-size`パラメータを設定することでサイズを設定できます。
+各 CF には個別の`write buffer`もあります。 `write-buffer-size`パラメータを設定することでサイズを設定できます。
 
 ## パラメータ仕様 {#parameter-specification}
 
@@ -239,11 +239,11 @@ TiKV 3.0 より前では、共有ブロックキャッシュはサポートさ�
 
 ## TiKVメモリ使用量 {#tikv-memory-usage}
 
-システムメモリを占有する`block cache`と`write buffer`の他に、次のシナリオでもシステムメモリが占​​有されます。
+システムメモリを占有する`block cache`と`write buffer`他に、次のシナリオでもシステムメモリが占​​有されます。
 
 -   メモリの一部はシステムのページ キャッシュとして予約されています。
 
--   TiKV が`select * from ...`のような大きなクエリを処理する場合、データを読み取り、対応するデータ構造をメモリ内に生成し、この構造を TiDB に返します。このプロセス中、TiKV はメモリの一部を占有します。
+-   TiKV が`select * from ...`ような大きなクエリを処理する場合、データを読み取り、対応するデータ構造をメモリ内に生成し、この構造を TiDB に返します。このプロセス中、TiKV はメモリの一部を占有します。
 
 ## TiKVの推奨構成 {#recommended-configuration-of-tikv}
 

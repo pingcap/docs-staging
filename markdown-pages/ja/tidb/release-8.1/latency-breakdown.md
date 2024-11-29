@@ -14,7 +14,7 @@ summary: TiDB のレイテンシーの詳細と、実際の使用例でレイテ
 -   [TiKVスナップショット](#tikv-snapshot)
 -   [非同期書き込み](#async-write)
 
-これらの分析により、 TiDB SQLクエリ中の時間コストに関する詳細な情報が得られます。これは、TiDB のクリティカル パス診断のガイドです。また、第[診断のユースケース](#diagnosis-use-cases)セクションでは、実際の使用例でレイテンシーを分析する方法を紹介します。
+これらの分析により、 TiDB SQLクエリ中の時間コストに関する詳細な情報が得られます。これは、TiDB のクリティカル パス診断のガイドです。さらに、第[診断のユースケース](#diagnosis-use-cases)セクションでは、実際の使用例でレイテンシーを分析する方法を紹介します。
 
 このドキュメントの前に[パフォーマンス分析とチューニング](/performance-tuning-methods.md)読んでおくことをお勧めします。レイテンシーをメトリックに分解する場合、特定の遅いクエリではなく、期間またはレイテンシーの平均値を計算することに注意してください。多くのメトリックは、期間またはレイテンシーの分布であるヒストグラムとして表示されます。平均レイテンシーを計算するには、次の合計とカウント カウンターを使用する必要があります。
 
@@ -63,9 +63,9 @@ e2e duration =
 ```
 
 -   `tidb_server_get_token_duration_seconds`トークン待機の期間を記録します。これは通常 1 ミリ秒未満であり、無視できるほど小さいです。
--   `tidb_session_parse_duration_seconds` 、SQL クエリを抽象構文ツリー (AST) に解析する時間を記録します。これは[`PREPARE/EXECUTE`ステートメント](/develop/dev-guide-optimize-sql-best-practices.md#use-prepare)でスキップできます。
+-   `tidb_session_parse_duration_seconds` SQL クエリを抽象構文ツリー (AST) に解析する時間を記録します。これは[`PREPARE/EXECUTE`ステートメント](/develop/dev-guide-optimize-sql-best-practices.md#use-prepare)でスキップできます。
 -   `tidb_session_compile_duration_seconds` AST を実行プランにコンパイルする時間を記録し、 [SQL 準備済み実行プラン キャッシュ](/sql-prepared-plan-cache.md)でスキップできます。
--   `tidb_session_execute_duration_seconds{type="general"}` 、すべての種類のユーザー クエリが混在する実行期間を記録します。パフォーマンスの問題やボトルネックを分析するには、これを細かい期間に分割する必要があります。
+-   `tidb_session_execute_duration_seconds{type="general"}`実行期間を記録します。これには、すべての種類のユーザー クエリが混在します。パフォーマンスの問題やボトルネックを分析するには、これを細かい期間に分割する必要があります。
 
 一般的に、OLTP (オンライン トランザクション処理) ワークロードは、いくつかの重要なコードを共有する読み取りクエリと書き込みクエリに分けられます。次のセクションでは、実行方法が異なる[クエリの読み取り](#read-queries)と[クエリを書く](#write-queries)のレイテンシーについて説明します。
 
@@ -75,7 +75,7 @@ e2e duration =
 
 ### ポイントゲット {#point-get}
 
-以下は[ポイントゲット](/glossary.md#point-get)の操作の時間コスト図です。
+以下は[ポイントゲット](/glossary.md#point-get)操作の時間コスト図です。
 
 ```railroad+diagram
 Diagram(
@@ -102,7 +102,7 @@ tidb_session_execute_duration_seconds{type="general"} =
     read value duration
 ```
 
-`pd_client_cmd_handle_cmds_duration_seconds{type="wait"}` 、PD から[TSO (タイムスタンプ オラクル)](/glossary.md#tso)をフェッチする期間を記録します。クラスター化されたプライマリ インデックスを使用した自動コミット トランザクション モードで読み取る場合、またはスナップショットから読み取る場合、値は 0 になります。
+`pd_client_cmd_handle_cmds_duration_seconds{type="wait"}` PD から[TSO (タイムスタンプ オラクル)](/glossary.md#tso)フェッチする期間を記録します。クラスター化されたプライマリ インデックスを使用した自動コミット トランザクション モードで読み取る場合、またはスナップショットから読み取る場合、値は 0 になります。
 
 `read handle duration`と`read value duration`次のように計算されます。
 
@@ -117,7 +117,7 @@ read handle duration = read value duration =
     tidb_tikvclient_rpc_net_latency_seconds{store="?"}
 ```
 
-`tidb_tikvclient_request_seconds{type="Get"}`バッチ gRPC ラッパーを介して TiKV に直接送信される GET リクエストの期間を記録します。 `tidb_tikvclient_batch_wait_duration` 、 `tidb_tikvclient_batch_send_latency` 、 `tidb_tikvclient_rpc_net_latency_seconds{store="?"}`などの先行するバッチ クライアント期間の詳細については、 [バッチクライアント](#batch-client)セクションを参照してください。
+`tidb_tikvclient_request_seconds{type="Get"}`は、バッチ gRPC ラッパーを介して TiKV に直接送信される GET リクエストの期間を記録します。 `tidb_tikvclient_batch_wait_duration` 、 `tidb_tikvclient_batch_send_latency` 、 `tidb_tikvclient_rpc_net_latency_seconds{store="?"}`などの先行するバッチ クライアント期間の詳細については、 [バッチクライアント](#batch-client)セクションを参照してください。
 
 `tikv_grpc_msg_duration_seconds{type="kv_get"}`期間は次のように計算されます。
 
@@ -138,7 +138,7 @@ read value duration(from disk) =
     sum(rate(tikv_storage_rocksdb_perf{metric="block_read_time",req="get/batch_get_command"})) / sum(rate(tikv_storage_rocksdb_perf{metric="block_read_count",req="get/batch_get_command"}))
 ```
 
-TiKV はstorageエンジンとして RocksDB を使用します。必要な値がブロックキャッシュにない場合、TiKV はディスクから値をロードする必要があります。 `tikv_storage_rocksdb_perf`の場合、取得要求は`get`または`batch_get_command`いずれかになります。
+TiKV はstorageエンジンとして RocksDB を使用します。必要な値がブロックキャッシュにない場合、TiKV はディスクから値をロードする必要があります。 `tikv_storage_rocksdb_perf`場合、取得要求は`get`または`batch_get_command`いずれかになります。
 
 ### 一括ポイント取得 {#batch-point-get}
 
@@ -156,7 +156,7 @@ Diagram(
 )
 ```
 
-バッチポイント取得中、 `tidb_session_execute_duration_seconds{type="general"}`次のように計算されます。
+バッチポイント取得中、 `tidb_session_execute_duration_seconds{type="general"}`は次のように計算されます。
 
 ```text
 tidb_session_execute_duration_seconds{type="general"} =
@@ -442,7 +442,7 @@ tikv_grpc_msg_duration_seconds{type="kv_pessimistic_lock"} =
         sum(rate(tikv_storage_rocksdb_perf{metric="block_read_time",req="acquire_pessimistic_lock"})) / sum(rate(tikv_storage_rocksdb_perf{metric="block_read_count",req="acquire_pessimistic_lock"}))
     ```
 
--   `lock write duration`はディスク上の書き込みロックの持続時間です。詳細については、セクション[非同期書き込み](#async-write)を参照してください。
+-   `lock write duration`ディスク上の書き込みロックの持続時間です。詳細については、セクション[非同期書き込み](#async-write)を参照してください。
 
 ### 専念 {#commit}
 
@@ -522,7 +522,7 @@ Commit_time =
 
 -   `Get_latest_ts_time` 、非同期コミットまたはシングル フェーズ コミット (1PC) トランザクションで最新の TSO を取得するのにかかる時間を記録します。
 -   `Prewrite_time`事前書き込みフェーズの期間を記録します。
--   `Get_commit_ts_time` 、一般的な 2PC トランザクションの期間を記録します。
+-   `Get_commit_ts_time`一般的な 2PC トランザクションの期間を記録します。
 -   `Commit_time`コミット フェーズの期間を記録します。非同期コミットまたは 1PC トランザクションにはこのフェーズがないことに注意してください。
 
 悲観的ロックと同様に、フロー制御はレイテンシー(前の式の`prewrite_round`と`commit_round` ) の増幅として機能します。
@@ -720,7 +720,7 @@ async write duration(async io enabled) =
     tikv_raftstore_apply_log_duration_seconds
 ```
 
-非同期書き込みは、次の 3 つのフェーズに分けられます。
+非同期書き込みは次の 3 つのフェーズに分けられます。
 
 -   提案する
 -   専念
@@ -779,7 +779,7 @@ wait by write worker duration =
 
 非同期 IO の有無の違いは、ログをローカルに保持する期間です。非同期 IO を使用すると、ログをローカルに保持する期間は、ウォーターフォール メトリックから直接計算できます (バッチ待機期間はスキップされます)。
 
-レプリケート ログ期間は、クォーラム ピアで保持されるログの期間を記録します。これには、RPC 期間と、大多数で保持されるログの期間が含まれます。1 `replicate log duration`次のように計算されます。
+レプリケート ログ期間は、クォーラム ピアで保持されるログの期間を記録します。これには、RPC 期間と、大多数で保持されるログの期間が含まれます。1 は`replicate log duration`のように計算されます。
 
 ```text
 replicate log duration =
@@ -857,17 +857,17 @@ tikv_raftstore_apply_log_duration_seconds =
 
 ## 診断のユースケース {#diagnosis-use-cases}
 
-前のセクションでは、クエリ実行中の時間コスト メトリックについて詳細に説明しました。このセクションでは、読み取りまたは書き込みクエリが遅い場合にメトリックを分析する一般的な手順を紹介します。すべてのメトリックは[パフォーマンス概要ダッシュボード](/grafana-performance-overview-dashboard.md)の [データベース時間] パネルで確認できます。
+前のセクションでは、クエリ実行中の時間コスト メトリックについて詳細に説明しました。このセクションでは、読み取りまたは書き込みクエリが遅い場合にメトリックを分析する一般的な手順を紹介します。すべてのメトリックは、 [パフォーマンス概要ダッシュボード](/grafana-performance-overview-dashboard.md)の [データベース時間] パネルで確認できます。
 
 ### 遅い読み取りクエリ {#slow-read-queries}
 
 `SELECT`ステートメントがデータベース時間の大部分を占める場合、TiDB の読み取りクエリが遅いと想定できます。
 
-遅いクエリの実行プランは、TiDB ダッシュボードの[Top SQL文](/dashboard/dashboard-overview.md#top-sql-statements)パネルにあります。遅い読み取りクエリの時間コストを調査するには、前述の説明に従って[ポイントゲット](#point-get) 、 [一括ポイント取得](#batch-point-get) 、および[シンプルなコプロセッサクエリ](#table-scan--index-scan)を分析できます。
+遅いクエリの実行プランは、TiDB ダッシュボードの[Top SQL文](/dashboard/dashboard-overview.md#top-sql-statements)パネルにあります。遅い読み取りクエリの時間コストを調査するには、前述の説明に従って[ポイントゲット](#point-get) 、 [一括ポイント取得](#batch-point-get) 、および[シンプルなコプロセッサクエリ](#table-scan--index-scan)分析できます。
 
 ### 書き込みクエリが遅い {#slow-write-queries}
 
-書き込み速度が遅い原因を調査する前に、 `tikv_scheduler_latch_wait_duration_seconds_sum{type="acquire_pessimistic_lock"} by (instance)`を確認して競合の原因をトラブルシューティングする必要があります。
+書き込み速度が遅い原因を調査する前に、次の`tikv_scheduler_latch_wait_duration_seconds_sum{type="acquire_pessimistic_lock"} by (instance)`確認して競合の原因をトラブルシューティングする必要があります。
 
 -   特定の TiKV インスタンスでこのメトリックが高い場合、ホットなリージョンで競合が発生している可能性があります。
 -   このメトリックがすべてのインスタンスにわたって高い場合、アプリケーションに競合が発生している可能性があります。

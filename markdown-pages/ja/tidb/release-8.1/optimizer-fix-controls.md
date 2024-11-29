@@ -1,6 +1,6 @@
 ---
 title: Optimizer Fix Controls
-summary: オプティマイザー修正制御機能について学習し、`tidb_opt_fix_control` を使用して TiDB オプティマイザーをより細かく制御する方法について説明します。
+summary: オプティマイザー修正制御機能について学習し、tidb_opt_fix_control` を使用して TiDB オプティマイザーをより細かく制御する方法について説明します。
 ---
 
 # オプティマイザー修正コントロール {#optimizer-fix-controls}
@@ -18,7 +18,7 @@ v6.5.3 および v7.1.0 以降、TiDB は、オプティマイザーの動作を
 
 各修正は、特定の目的のために TiDB オプティマイザーの動作を調整するために使用される制御項目です。動作変更の技術的な詳細を含む GitHub の問題に対応する番号で示されます。たとえば、修正`44262`の場合、 [問題 44262](https://github.com/pingcap/tidb/issues/44262)でそれが制御するものを確認できます。
 
-[`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-new-in-v653-and-v710)システム変数は、複数の修正をカンマで区切られた 1 つの値として受け入れます ( `,` )。形式は`"<#issue1>:<value1>,<#issue2>:<value2>,...,<#issueN>:<valueN>"`で、 `<#issueN>`修正番号です。例:
+[`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-new-in-v653-and-v710)システム変数は、複数の修正をカンマで区切られた 1 つの値 ( `,` ) として受け入れます。形式は`"<#issue1>:<value1>,<#issue2>:<value2>,...,<#issueN>:<valueN>"`で、 `<#issueN>`修正番号です。例:
 
 ```sql
 SET SESSION tidb_opt_fix_control = '44262:ON,44389:ON';
@@ -61,15 +61,15 @@ SET SESSION tidb_opt_fix_control = '44262:ON,44389:ON';
 -   デフォルト値: `OFF`
 -   可能な値: `ON` 、 `OFF`
 -   シナリオによっては、 `IndexJoin`演算子の`Probe`側に`Selection`演算子が含まれている場合、TiDB は行数`IndexScan`を大幅に過大評価します。これにより、 `IndexJoin`ではなく、最適ではないクエリ プランが選択される場合があります。
--   この問題を緩和するために、TiDB では改善が導入されました。ただし、クエリ プランのフォールバックのリスクが発生する可能性があるため、この改善はデフォルトで無効になっています。
+-   この問題を軽減するために、TiDB では改善が導入されました。ただし、クエリ プランのフォールバックのリスクが発生する可能性があるため、この改善はデフォルトで無効になっています。
 -   この変数は、前述の改善を有効にするかどうかを制御します。
 
 ### <a href="https://github.com/pingcap/tidb/issues/45132"><code>45132</code></a> <span class="version-mark">v7.4.0 の新機能</span> {#a-href-https-github-com-pingcap-tidb-issues-45132-code-45132-code-a-span-class-version-mark-new-in-v7-4-0-span}
 
 -   デフォルト値: `1000`
 -   可能な値: `[0, 2147483647]`
--   この変数は、アクセス パスを選択するためのオプティマイザのヒューリスティック戦略のしきい値を設定します。アクセス パスの推定行数 ( `Index_A`など) が他のアクセス パスの推定行数 (デフォルトは`1000`倍) よりもはるかに小さい場合、オプティマイザはコストの比較をスキップし、直接`Index_A`を選択します。
--   `0` 、このヒューリスティック戦略を無効にすることを意味します。
+-   この変数は、アクセス パスを選択するためのオプティマイザのヒューリスティック戦略のしきい値を設定します。アクセス パスの推定行数 ( `Index_A`など) が他のアクセス パスの推定行数 (デフォルトは`1000`倍) よりもはるかに小さい場合、オプティマイザはコストの比較をスキップし、直接`Index_A`選択します。
+-   `0`このヒューリスティック戦略を無効にすることを意味します。
 
 ### <a href="https://github.com/pingcap/tidb/issues/52869"><code>52869</code></a> <span class="version-mark">v8.1.0 の新機能</span> {#a-href-https-github-com-pingcap-tidb-issues-52869-code-52869-code-a-span-class-version-mark-new-in-v8-1-0-span}
 

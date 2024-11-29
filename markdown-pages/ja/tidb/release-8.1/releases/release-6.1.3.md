@@ -17,7 +17,7 @@ TiDB バージョン: 6.1.3
 
     -   ティCDC
 
-        -   デフォルト値[`transaction-atomicity`](/ticdc/ticdc-sink-to-mysql.md#configure-sink-uri-for-mysql-or-tidb)を`table`から`none`に変更します。これにより、レプリケーションのレイテンシーが短縮され、OOM のリスクが軽減され、すべてのトランザクションではなく、少数のトランザクション (単一トランザクションのサイズが 1024 行を超える) のみが分割されるようになります[＃7505](https://github.com/pingcap/tiflow/issues/7505) [＃5231](https://github.com/pingcap/tiflow/issues/5231) @ [アズドンメン](https://github.com/asddongmen)
+        -   デフォルト値[`transaction-atomicity`](/ticdc/ticdc-sink-to-mysql.md#configure-sink-uri-for-mysql-or-tidb)を`table`から`none`に変更します。これにより、レプリケーションのレイテンシーが短縮され、OOM のリスクが軽減され、すべてのトランザクションではなく、少数のトランザクション (1 つのトランザクションのサイズが 1024 行を超える) のみが分割されるようになります[＃7505](https://github.com/pingcap/tiflow/issues/7505) [＃5231](https://github.com/pingcap/tiflow/issues/5231) @ [アズドンメン](https://github.com/asddongmen)
 
 ## 改善点 {#improvements}
 
@@ -30,13 +30,13 @@ TiDB バージョン: 6.1.3
     -   ティCDC
 
         -   パフォーマンスを向上させるために、TiCDC でトランザクション分割を有効にし、変更フィードのセーフ モードをデフォルトで無効にします[＃7505](https://github.com/pingcap/tiflow/issues/7505) @ [アズドンメン](https://github.com/asddongmen)
-        -   [＃7532](https://github.com/pingcap/tiflow/issues/7532)プロトコル エンコーダー[＃7540](https://github.com/pingcap/tiflow/issues/7540) @ [＃7543](https://github.com/pingcap/tiflow/issues/7543) [スドジ](https://github.com/sdojjy) [3エースショーハンド](https://github.com/3AceShowHand)のパフォーマンスを向上
+        -   Kafka プロトコル エンコーダー[＃7540](https://github.com/pingcap/tiflow/issues/7540) [スドジ](https://github.com/sdojjy) [＃7543](https://github.com/pingcap/tiflow/issues/7543) [3エースショーハンド](https://github.com/3AceShowHand)のパフォーマンス[＃7532](https://github.com/pingcap/tiflow/issues/7532)向上
 
 -   その他
 
-    -   TiDB の Go コンパイラー バージョンを go1.18 から[1.19 へ](https://go.dev/doc/go1.19)にアップグレードすると、TiDB の安定性が向上します。具体的には、TiDB のメモリ使用量を一定のしきい値未満に保つために、Go 環境変数[`GOMEMLIMIT`](https://pkg.go.dev/runtime@go1.19#hdr-Environment_Variables)が導入されました。これにより、ほとんどの OOM の問題が軽減されます。詳細については、 [`GOMEMLIMIT`を設定してOOMの問題を軽減する](/configure-memory-usage.md#mitigate-oom-issues-by-configuring-gomemlimit)を参照してください。
+    -   TiDB の Go コンパイラー バージョンを go1.18 から[1.19 へ](https://go.dev/doc/go1.19)にアップグレードすると、TiDB の安定性が向上します。具体的には、TiDB のメモリ使用量を一定のしきい値未満に保つために、Go 環境変数[`GOMEMLIMIT`](https://pkg.go.dev/runtime@go1.19#hdr-Environment_Variables)が導入されました。これにより、ほとんどの OOM の問題が軽減されます。詳細については、 [`GOMEMLIMIT`を設定してOOMの問題を軽減する](/configure-memory-usage.md#mitigate-oom-issues-by-configuring-gomemlimit)参照してください。
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -47,7 +47,7 @@ TiDB バージョン: 6.1.3
     -   gPRCログが間違ったファイルに出力される問題を修正[＃38941](https://github.com/pingcap/tidb/issues/38941) @ [xhebox](https://github.com/xhebox)
     -   テーブルが切り捨てられたり削除されたりしても、テーブルのTiFlash同期ステータスが etcd から削除されない問題を修正[＃37168](https://github.com/pingcap/tidb/issues/37168) @ [カルビンネオ](https://github.com/CalvinNeo)
     -   データソース名インジェクションによりデータファイルに無制限にアクセスできる問題を修正 (CVE-2022-3023) [＃38541](https://github.com/pingcap/tidb/issues/38541) @ [ランス6716](https://github.com/lance6716)
-    -   関数`str_to_date` `NO_ZERO_DATE` 3SQLモード[＃39146](https://github.com/pingcap/tidb/issues/39146) @ [メンシン9014](https://github.com/mengxin9014)で間違った結果を返す問題を修正
+    -   関数`str_to_date`が`NO_ZERO_DATE`モード[＃39146](https://github.com/pingcap/tidb/issues/39146) @ [メンシン9014](https://github.com/mengxin9014)で間違った結果を返す問題を修正
     -   バックグラウンドでの統計収集タスクがpanicになる可能性がある問題を修正[＃35421](https://github.com/pingcap/tidb/issues/35421) @ [リリンハイ](https://github.com/lilinghai)
     -   いくつかのシナリオで、悲観的ロックが非一意のセカンダリインデックス[＃36235](https://github.com/pingcap/tidb/issues/36235) @ [エキシウム](https://github.com/ekexium)に誤って追加される問題を修正しました。
 

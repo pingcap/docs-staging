@@ -9,7 +9,7 @@ summary: TiDB データベースの QUERY WATCH の使用法の概要。
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ## 概要 {#synopsis}
 
@@ -42,7 +42,7 @@ DropQueryWatchStmt ::=
     "QUERY" "WATCH" "REMOVE" NUM
 ```
 
-## パラメーター {#parameters}
+## パラメータ {#parameters}
 
 [`QUERY WATCH`パラメータ](/tidb-resource-control.md#query-watch-parameters)参照。
 

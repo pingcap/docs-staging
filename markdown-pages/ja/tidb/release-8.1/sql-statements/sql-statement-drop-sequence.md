@@ -5,7 +5,7 @@ summary: TiDB データベースの DROP SEQUENCE の使用法の概要。
 
 # ドロップシーケンス {#drop-sequence}
 
-`DROP SEQUENCE`ステートメントは、TiDB 内のシーケンス オブジェクトを削除します。
+`DROP SEQUENCE`のステートメントは、TiDB 内のシーケンス オブジェクトを削除します。
 
 ## 概要 {#synopsis}
 

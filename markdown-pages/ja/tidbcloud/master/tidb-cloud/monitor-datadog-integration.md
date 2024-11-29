@@ -9,7 +9,7 @@ TiDB Cloud はDatadog 統合 (ベータ版) をサポートしています。TiD
 
 ## 前提条件 {#prerequisites}
 
--   TiDB Cloud をDatadog と統合するには、Datadog アカウントと[Datadog API キー](https://app.datadoghq.com/organization-settings/api-keys)必要です。Datadog アカウントを初めて作成すると、Datadog から API キーが付与されます。
+-   TiDB Cloud をDatadog と統合するには、Datadog アカウントと[Datadog API キー](https://app.datadoghq.com/organization-settings/api-keys)が必要です。Datadog アカウントを初めて作成すると、Datadog から API キーが付与されます。
 
     Datadog アカウントをお持ちでない場合は、 [https://app.datadoghq.com/signup](https://app.datadoghq.com/signup)でサインアップしてください。
 
@@ -17,7 +17,7 @@ TiDB Cloud はDatadog 統合 (ベータ版) をサポートしています。TiD
 
 ## 制限 {#limitation}
 
--   [TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless)クラスターでは Datadog 統合を使用できません。
+-   [TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターでは Datadog 統合を使用できません。
 
 -   クラスターのステータスが**CREATING** 、 **RESTORING** 、 **PAUSED** 、または**RESUMING**の場合、Datadog 統合は使用できません。
 
@@ -29,7 +29,7 @@ TiDB Cloud はDatadog 統合 (ベータ版) をサポートしています。TiD
 
 2.  クリック<mdsvgicon name="icon-left-projects">左下隅で、複数のプロジェクトがある場合は対象プロジェクトに切り替えて、 **[プロジェクト設定]**をクリックします。</mdsvgicon>
 
-3.  プロジェクトの**「プロジェクト設定」**ページで、左側のナビゲーション ペインの**「統合」**をクリックし、 **「Datadog への統合 (ベータ版)」**をクリックします。
+3.  プロジェクトの「**プロジェクト設定」**ページで、左側のナビゲーション ペインの**「統合」**をクリックし、 **「Datadog への統合 (ベータ版)」**をクリックします。
 
 4.  Datadog の API キーを入力し、Datadog のサイトを選択します。
 

@@ -73,7 +73,7 @@ mysql> SELECT * FROM t1;
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`DROP VIEW`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`DROP VIEW`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 

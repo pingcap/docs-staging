@@ -13,7 +13,7 @@ summary: TiDB v5.2.0 では、v5.1.1 と比較して、Point Select パフォー
 
 ### ハードウェア構成 {#hardware-configuration}
 
-| サービスの種類 | EC2タイプ     | インスタンス数 |
+| サービスタイプ | EC2タイプ     | インスタンス数 |
 | :------ | :--------- | :------ |
 | PD      | m5.特大      | 3       |
 | ティクヴ    | i3.4xlarge | 3       |
@@ -22,7 +22,7 @@ summary: TiDB v5.2.0 では、v5.1.1 と比較して、Point Select パフォー
 
 ### ソフトウェアバージョン {#software-version}
 
-| サービスの種類 | ソフトウェアバージョン       |
+| サービスタイプ | ソフトウェアバージョン       |
 | :------ | :---------------- |
 | PD      | v5.1.1 および v5.2.0 |
 | ティビ     | v5.1.1 および v5.2.0 |
@@ -76,7 +76,7 @@ set global tidb_enable_clustered_index = 1;
 2.  Sysbench を使用して、各テーブルに 1,000 万行のデータが含まれる 16 個のテーブルをインポートします。
 3.  各テーブルに対して`analyze table`ステートメントを実行します。
 4.  さまざまな同時実行テストの前に、復元に使用するデータをバックアップします。これにより、各テストのデータの一貫性が確保されます。
-5.  Sysbench クライアント`read_write`起動して、テスト`point_select` `update_non_index`実行します。HAProxy 経由で`update_index`に対してストレス テストを実行します。テストには 5 分かかります。
+5.  Sysbench クライアントを起動して、テスト`point_select` `read_write`実行します。HAProxy 経由で TiDB に対してストレス テストを実行します。テスト`update_non_index` `update_index` 5 分かかります。
 6.  各タイプのテストが完了したら、クラスターを停止し、手順 4 のバックアップ データでクラスターを上書きして、クラスターを再起動します。
 
 ### テストデータを準備する {#prepare-test-data}
@@ -113,7 +113,7 @@ sysbench $testname \
     run --tables=16 --table-size=10000000
 ```
 
-## 試験結果 {#test-results}
+## テスト結果 {#test-results}
 
 ### ポイントセレクトパフォーマンス {#point-select-performance}
 

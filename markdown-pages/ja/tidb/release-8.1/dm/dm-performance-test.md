@@ -1,6 +1,6 @@
 ---
 title: DM Cluster Performance Test
-summary: DM クラスターのパフォーマンスをテストする方法を学習します。
+summary: DM クラスターのパフォーマンスをテストする方法を学びます。
 ---
 
 # DMクラスタパフォーマンス テスト {#dm-cluster-performance-test}
@@ -13,11 +13,11 @@ MySQL -&gt; DM -&gt; TiDB という単純な移行データ フローを使用�
 
 ## テスト環境をデプロイ {#deploy-test-environment}
 
--   すべてのデフォルト構成で、 TiUPを使用して TiDB テスト クラスターをデプロイ。
+-   すべてのデフォルト構成で、 TiUP を使用して TiDB テスト クラスターをデプロイ。
 -   MySQL サービスをデプロイ。binlogの`ROW`モードを有効にし、他の構成項目にはデフォルト構成を使用します。
 -   DM ワーカーと DM マスターを使用して DM クラスターをデプロイ。
 
-## 性能テスト {#performance-test}
+## パフォーマンステスト {#performance-test}
 
 ### テーブルスキーマ {#table-schema}
 
@@ -46,7 +46,7 @@ sysbench --test=oltp_insert --tables=4 --mysql-host=172.16.4.40 --mysql-port=330
 
 #### データ移行タスクを作成する {#create-a-data-migration-task}
 
-1.  アップストリーム MySQL ソースを作成し、 `source-id`を`source-1`に設定します。詳細については、 [データソース構成をロードする](/dm/dm-manage-source.md#operate-data-source)を参照してください。
+1.  アップストリーム MySQL ソースを作成し、 `source-id` `source-1`に設定します。詳細については、 [データソース構成をロードする](/dm/dm-manage-source.md#operate-data-source)参照してください。
 
 2.  移行タスクを作成します ( `full`モード)。以下はタスク構成テンプレートです。
 
@@ -80,7 +80,7 @@ mydumpers:
     threads: 32
 ```
 
-移行タスクの作成方法の詳細については、 [データ移行タスクを作成する](/dm/dm-create-task.md)を参照してください。
+移行タスクの作成方法の詳細については、 [データ移行タスクを作成する](/dm/dm-create-task.md)参照してください。
 
 > **注記：**
 >
@@ -103,7 +103,7 @@ DM-worker ログを確認します。 `all data files have been finished`表示�
 
 #### データ移行タスクを作成する {#create-a-data-migration-task}
 
-1.  アップストリーム MySQL のソースを作成します。1 `source-id` `source-1`に設定します ( [フルインポートベンチマークケース](#full-import-benchmark-case)でソースを作成している場合は、再度作成する必要はありません)。詳細については、 [データソース構成をロードする](/dm/dm-manage-source.md#operate-data-source)を参照してください。
+1.  アップストリーム MySQL のソースを作成します`source-id`を`source-1`に設定します ( [フルインポートベンチマークケース](#full-import-benchmark-case)でソースを作成している場合は、再度作成する必要はありません)。詳細については、 [データソース構成をロードする](/dm/dm-manage-source.md#operate-data-source)参照してください。
 
 2.  DM 移行タスクを作成します ( `all`モード)。タスク構成ファイルの例を次に示します。
 
@@ -140,7 +140,7 @@ syncers:
 
 > **注記：**
 >
-> さまざまな構成でのパフォーマンスをテストするには、構成項目`syncers`の`worker-count`と`batch`を調整できます。
+> さまざまな構成でのパフォーマンスをテストするには、構成項目`syncers`の`worker-count`と`batch`調整できます。
 
 #### 増分データを生成する {#generate-incremental-data}
 
@@ -156,4 +156,4 @@ sysbench --test=oltp_insert --tables=4 --num-threads=32 --mysql-host=172.17.4.40
 
 #### テスト結果を取得する {#get-test-results}
 
-DM の移行ステータスを確認するには、 `query-status`コマンドを実行します。DM の監視メトリックを確認するには、Grafana を使用します。ここでの監視メトリックとは、 `finished sqls jobs` (単位時間あたりに完了したジョブの数) およびその他の関連メトリックを指します。詳細については、 [Binlog移行監視メトリクス](/dm/monitor-a-dm-cluster.md#binlog-replication)を参照してください。
+DM の移行ステータスを確認するには、 `query-status`コマンドを実行します。DM の監視メトリックを確認するには、Grafana を使用します。ここでの監視メトリックとは、 `finished sqls jobs` (単位時間あたりに完了したジョブの数) およびその他の関連メトリックを指します。詳細については、 [Binlog移行監視メトリクス](/dm/monitor-a-dm-cluster.md#binlog-replication)参照してください。

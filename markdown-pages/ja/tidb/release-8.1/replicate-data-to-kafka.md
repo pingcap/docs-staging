@@ -50,7 +50,7 @@ summary: TiCDC を使用して TiDB データを Apache Kafka および Apache F
         {matcher = ['*.*'], topic = "tidb_{schema}_{table}", partition="index-value"},
         ]
 
-    設定ファイルの`dispatchers`の詳細な説明については[Kafka シンクのトピックおよびパーティションディスパッチャーのルールをカスタマイズする](/ticdc/ticdc-sink-to-kafka.md#customize-the-rules-for-topic-and-partition-dispatchers-of-kafka-sink)を参照してください。
+    設定ファイルの`dispatchers`の詳細な説明については[Kafka シンクのトピックおよびパーティションディスパッチャーのルールをカスタマイズする](/ticdc/ticdc-sink-to-kafka.md#customize-the-rules-for-topic-and-partition-dispatchers-of-kafka-sink)参照してください。
 
 2.  増分データを Kafka に複製するための変更フィードを作成します。
 
@@ -74,13 +74,13 @@ summary: TiCDC を使用して TiDB データを Apache Kafka および Apache F
     tiup cdc:v<CLUSTER_VERSION> cli changefeed create --server="http://127.0.0.1:8300" --sink-uri="kafka://127.0.0.1:9092,127.0.0.2:9092,127.0.0.3:9092/kafka-topic-name?protocol=canal-json&partition-num=3&replication-factor=1&max-message-bytes=1048576" --config="changefeed.conf"
     ```
 
-3.  changefeed を作成したら、次のコマンドを実行して changefeed のステータスを確認します。
+3.  changefeed を作成した後、次のコマンドを実行して changefeed のステータスを確認します。
 
     ```shell
     tiup cdc:v<CLUSTER_VERSION> cli changefeed list --server="http://127.0.0.1:8300"
     ```
 
-    チェンジフィードを管理するには、 [TiCDC 変更フィードを管理する](/ticdc/ticdc-manage-changefeed.md)を参照してください。
+    チェンジフィードを管理するには、 [TiCDC チェンジフィードの管理](/ticdc/ticdc-manage-changefeed.md)を参照してください。
 
 ## ステップ3. 変更ログを生成するためにデータを書き込む {#step-3-write-data-to-generate-change-logs}
 
@@ -113,7 +113,7 @@ summary: TiCDC を使用して TiDB データを Apache Kafka および Apache F
 
     Flink エコシステムでは、Kafka データを消費し、Flink にデータを出力するために Flink Kafka コネクタが使用されます。ただし、Flink Kafka コネクタは自動的にインストールされません。これを使用するには、Flink をインストールした後、Flink Kafka コネクタとその依存関係を Flink インストール ディレクトリに追加します。具体的には、次の jar ファイルを Flink インストール ディレクトリの`lib`ディレクトリにダウンロードします。すでに Flink クラスターを実行している場合は、再起動して新しいプラグインをロードします。
 
-    -   [flink-コネクタ-kafka-1.15.0.jar](https://repo.maven.apache.org/maven2/org/apache/flink/flink-connector-kafka/1.15.0/flink-connector-kafka-1.15.0.jar)
+    -   [flink-connector-kafka-1.15.0.jar](https://repo.maven.apache.org/maven2/org/apache/flink/flink-connector-kafka/1.15.0/flink-connector-kafka-1.15.0.jar)
     -   [flink-sql-コネクタ-kafka-1.15.0.jar](https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-connector-kafka/1.15.0/flink-sql-connector-kafka-1.15.0.jar)
     -   [kafka-クライアント-3.2.0.jar](https://repo.maven.apache.org/maven2/org/apache/kafka/kafka-clients/3.2.0/kafka-clients-3.2.0.jar)
 
@@ -152,7 +152,7 @@ summary: TiCDC を使用して TiDB データを Apache Kafka および Apache F
 
 3.  テーブルのデータをクエリします。
 
-    `tpcc_orders`テーブルのデータを照会するには、次のコマンドを実行します。
+    `tpcc_orders`のテーブルのデータを照会するには、次のコマンドを実行します。
 
     ```sql
     SELECT * FROM tpcc_orders;

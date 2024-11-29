@@ -1,6 +1,6 @@
 ---
 title: TiDB 4.0 GA Release Notes
-summary: TiDB 4.0.0 GA は 2020 年 5 月 28 日にリリースされました。このバージョンでは、大規模トランザクションのエラー メッセージが最適化され、`Changefeed` 構成ファイルの使いやすさが向上し、新しい構成項目とさまざまな構文および関数のサポートが追加され、TiKV、 TiFlash、PD、およびツールの複数のバグと問題が修正され、PD の新しい監視項目とさまざまな機能のサポートが追加され、バックアップと復元 (BR) と TiCDC のさまざまな問題が修正されました。
+summary: TiDB 4.0.0 GA は 2020 年 5 月 28 日にリリースされました。このバージョンでは、大規模トランザクションのエラー メッセージが最適化され、Changefeed` 構成ファイルの使いやすさが向上し、新しい構成項目とさまざまな構文および関数のサポートが追加され、TiKV、 TiFlash、PD、およびツールの複数のバグと問題が修正され、PD の新しい監視項目とさまざまな機能のサポートが追加され、バックアップと復元 (BR) と TiCDC のさまざまな問題が修正されました。
 ---
 
 # TiDB 4.0 GA リリースノート {#tidb-4-0-ga-release-notes}
@@ -12,7 +12,7 @@ TiDB バージョン: 4.0.0
 ## 互換性の変更 {#compatibility-changes}
 
 -   ティビ
-    -   大規模トランザクションのエラーメッセージを最適化してトラブルシューティングを容易にします[＃17219](https://github.com/pingcap/tidb/pull/17219)
+    -   大規模トランザクションのエラーメッセージを最適化してトラブルシューティングを容易にする[＃17219](https://github.com/pingcap/tidb/pull/17219)
 
 -   ティCDC
     -   `Changefeed`設定ファイルの構造を最適化して使いやすさを向上[＃588](https://github.com/pingcap/tiflow/pull/588)
@@ -22,7 +22,7 @@ TiDB バージョン: 4.0.0
 
 -   ティクヴ
     -   バックアップと復元（BR） [＃7937](https://github.com/tikv/tikv/pull/7937)を使用してバックアップするときに発生する`DefaultNotFound`エラーを修正します
-    -   順序の異なる`ReadIndex`パッケージ[＃7930](https://github.com/tikv/tikv/pull/7930)によって発生するシステム パニックを修正
+    -   順序の異なる`ReadIndex`のパッケージ[＃7930](https://github.com/tikv/tikv/pull/7930)によって発生するシステム パニックを修正
     -   TiKV の再起動後にスナップショット ファイルを誤って削除することで発生するシステム パニックを修正[＃7927](https://github.com/tikv/tikv/pull/7927)
 
 -   TiFlash
@@ -32,13 +32,13 @@ TiDB バージョン: 4.0.0
 
 -   ティビ
     -   再試行コミットフェーズ[＃16849](https://github.com/pingcap/tidb/pull/16849)の`goroutines`の数を制御するために`committer-concurrency`構成項目を追加します。
-    -   `show table partition regions`構文[＃17294](https://github.com/pingcap/tidb/pull/17294)をサポートする
+    -   `show table partition regions`構文[＃17294](https://github.com/pingcap/tidb/pull/17294)サポートする
     -   TiDBサーバー[＃15700](https://github.com/pingcap/tidb/pull/15700)が使用する一時ディスク領域を制限するための`tmp-storage-quota`構成項目を追加します。
     -   テーブルの作成および変更時に、パーティションテーブルが一意のプレフィックスインデックスを使用しているかどうかのチェックをサポート[＃17213](https://github.com/pingcap/tidb/pull/17213)
-    -   `insert/replace into tbl_name partition` （ `partition_name_list` ）の声明を支持する[＃17313](https://github.com/pingcap/tidb/pull/17313)
-    -   `Distinct`関数[＃17240](https://github.com/pingcap/tidb/pull/17240)を使用するときに`collations`の値をチェックする機能をサポート
+    -   `insert/replace into tbl_name partition` （ `partition_name_list` ）の声明[＃17313](https://github.com/pingcap/tidb/pull/17313)支持する
+    -   `Distinct`関数[＃17240](https://github.com/pingcap/tidb/pull/17240)使用するときに`collations`の値をチェックする機能をサポート
     -   ハッシュパーティションプルーニング[＃17310](https://github.com/pingcap/tidb/pull/17310)中の`is null`フィルタ条件をサポート
-    -   パーティションテーブル[＃17392](https://github.com/pingcap/tidb/pull/17392) [＃17405](https://github.com/pingcap/tidb/pull/17405) `admin recover index` [＃17317](https://github.com/pingcap/tidb/pull/17317) `admin check index` `admin cleanup index`サポート
+    -   パーティションテーブル`admin recover index` [＃17405](https://github.com/pingcap/tidb/pull/17405) [＃17392](https://github.com/pingcap/tidb/pull/17392) [＃17317](https://github.com/pingcap/tidb/pull/17317) `admin check index` `admin cleanup index`サポート
     -   `in`式[＃17320](https://github.com/pingcap/tidb/pull/17320)の範囲パーティションプルーニングをサポート
 
 -   TiFlash
@@ -51,19 +51,19 @@ TiDB バージョン: 4.0.0
 
 -   PD
     -   組み込み TiDB ダッシュボード[＃2457](https://github.com/pingcap/pd/pull/2457)のリバース プロキシ リソース プレフィックスの指定をサポート
-    -   PD クライアントリージョン[＃2443](https://github.com/pingcap/pd/pull/2443)のインターフェイスで`pending peer`と`down peer`情報を返すことをサポート
-    -   `Direction of hotspot move leader` `Direction of hotspot move peer`の監視[＃2448](https://github.com/pingcap/pd/pull/2448) `Hot cache read entry number`追加する
+    -   PDクライアントリージョン[＃2443](https://github.com/pingcap/pd/pull/2443)のインターフェースで`pending peer`と`down peer`情報を返すことをサポート
+    -   `Direction of hotspot move leader`など[＃2448](https://github.com/pingcap/pd/pull/2448)監視項目`Direction of hotspot move peer`追加`Hot cache read entry number`
 
 -   ツール
     -   バックアップと復元 (BR)
         -   `Sequence`と`View`のバックアップと復元をサポート[＃242](https://github.com/pingcap/br/pull/242)
     -   ティCDC
-        -   `Changefeed` [＃561](https://github.com/pingcap/tiflow/pull/561)を作成するときに`Sink URI`の有効性をチェックするサポート
+        -   `Changefeed` [＃561](https://github.com/pingcap/tiflow/pull/561)作成するときに`Sink URI`の有効性をチェックするサポート
         -   システム起動時にPDおよびTiKVバージョンがシステム要件を満たしているかどうかのチェックをサポート[＃570](https://github.com/pingcap/tiflow/pull/570)
         -   同じスケジュールタスク生成サイクル[＃572](https://github.com/pingcap/tiflow/pull/572)で複数のテーブルのスケジュールをサポート
         -   HTTP API [＃591](https://github.com/pingcap/tiflow/pull/591)にノードの役割に関する情報を追加する
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -73,38 +73,38 @@ TiDB バージョン: 4.0.0
     -   `update`文[＃17305](https://github.com/pingcap/tidb/pull/17305)でパーティションの選択が誤っている問題を修正
     -   TiKV [＃17380](https://github.com/pingcap/tidb/pull/17380)から不明なエラー メッセージを受信したときにシステム パニックが発生する問題を修正
     -   `key`パーティション[＃17242](https://github.com/pingcap/tidb/pull/17242)のテーブルを作成するときに誤った処理ロジックによって発生するシステムパニックを修正
-    -   オプティマイザ処理ロジック[＃17365](https://github.com/pingcap/tidb/pull/17365)の誤りにより間違った`Index Merge Join`プランが選択される問題を修正
+    -   オプティマイザ処理ロジック[＃17365](https://github.com/pingcap/tidb/pull/17365)誤りにより間違った`Index Merge Join`プランが選択される問題を修正
     -   Grafana [＃16561](https://github.com/pingcap/tidb/pull/16561)の`SELECT`のステートメントの不正確な`duration`監視メトリックの問題を修正しました
     -   システムエラーが発生したときにGCワーカーがブロックされる問題を修正[＃16915](https://github.com/pingcap/tidb/pull/16915)
     -   ブール列の制約`UNIQUE`が比較[＃17306](https://github.com/pingcap/tidb/pull/17306)で誤った結果をもたらす問題を修正
     -   `tidb_opt_agg_push_down`が有効になっていて、集計関数がパーティションテーブル[＃17328](https://github.com/pingcap/tidb/pull/17328)をプッシュダウンしたときに、誤った処理ロジックによって発生するシステム パニックを修正しました。
     -   一部のケースで障害が発生した TiKV ノードにアクセスする問題を修正[＃17342](https://github.com/pingcap/tidb/pull/17342)
     -   `tidb.toml`の`isolation-read`設定項目が有効にならない問題を修正[＃17322](https://github.com/pingcap/tidb/pull/17322)
-    -   `hint`を使用してストリーム集約[＃17347](https://github.com/pingcap/tidb/pull/17347)を強制する場合に、処理ロジックが間違っているために出力結果の順序が間違っている問題を修正しました。
+    -   `hint`を使用してストリーム集約[＃17347](https://github.com/pingcap/tidb/pull/17347)を強制する場合に、処理ロジックが誤っているために出力結果の順序が誤っている問題を修正しました。
     -   `insert`異なる`SQL_MODE` [＃17314](https://github.com/pingcap/tidb/pull/17314)の下でDIVを処理する動作を修正
 
 -   TiFlash
 
     -   検索ログ機能における正規表現のマッチング動作が他のコンポーネントと一致しない問題を修正
-    -   デフォルトで遅延処理の最適化`Raft Compact Log Command`を無効にすることで、ノードが大量のデータを書き込むときに再起動に時間がかかる問題を修正しました。
-    -   一部のシナリオで TiDB が`DROP DATABASE`ステートメントを誤って処理するため、システムが起動に失敗する問題を修正しました。
+    -   デフォルトで遅延処理の最適化`Raft Compact Log Command`無効にすることで、ノードが大量のデータを書き込むときに再起動に時間がかかる問題を修正しました。
+    -   一部のシナリオで TiDB が`DROP DATABASE`のステートメントを誤って処理するため、システムが起動に失敗する問題を修正しました。
     -   `Server_info`のCPU情報の収集方法が他のコンポーネントと異なる問題を修正
-    -   `batch coprocessor`が有効な場合に`Query`ステートメントを実行するとエラー`Too Many Pings`が報告される問題を修正しました
+    -   `batch coprocessor`が有効な場合に`Query`ステートメントを実行するとエラー`Too Many Pings`報告される問題を修正しました
     -   TiFlashが関連情報を報告しないため、ダッシュボードに正しい`deploy path`情報が表示されない問題を修正しました。
 
 -   ティクヴ
 
-    -   BR [＃7937](https://github.com/tikv/tikv/pull/7937)を使用してバックアップするときに発生する`DefaultNotFound`エラーを修正
+    -   BR [＃7937](https://github.com/tikv/tikv/pull/7937)使用してバックアップするときに発生する`DefaultNotFound`エラーを修正
     -   順序の乱れた`ReadIndex`パケット[＃7930](https://github.com/tikv/tikv/pull/7930)によるシステムパニックを修正
     -   読み取り要求コールバック関数が呼び出されないために予期しないエラーが返される問題を修正[＃7921](https://github.com/tikv/tikv/pull/7921)
     -   TiKV の再起動時にスナップショット ファイルを誤って削除することで発生するシステム パニックを修正[＃7927](https://github.com/tikv/tikv/pull/7927)
     -   storage暗号化[＃7898](https://github.com/tikv/tikv/pull/7898)の処理ロジックが正しくないため、 `master key`回転できない問題を修正
-    -   storage暗号化が有効になっているときに、受信したスナップショットの`lock cf`ファイルが暗号化されない問題を修正しました[＃7922](https://github.com/tikv/tikv/pull/7922)
+    -   storage暗号化が有効になっているときに、受信したスナップショットの`lock cf`のファイルが暗号化されない問題を修正しました[＃7922](https://github.com/tikv/tikv/pull/7922)
 
 -   PD
 
     -   pd-ctl [＃2446](https://github.com/pingcap/pd/pull/2446)を使用して`evict-leader-scheduler`または`grant-leader-scheduler`削除するときに発生する 404 エラーを修正しました
-    -   TiFlashレプリカが存在する場合に`presplit`機能が正しく動作しない可能性がある問題を修正しました[＃2447](https://github.com/pingcap/pd/pull/2447)
+    -   TiFlashレプリカが存在する場合に`presplit`機能が正常に動作しない可能性がある問題を修正しました[＃2447](https://github.com/pingcap/pd/pull/2447)
 
 -   ツール
 

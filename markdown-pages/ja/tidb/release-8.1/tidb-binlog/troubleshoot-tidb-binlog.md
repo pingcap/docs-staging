@@ -3,7 +3,7 @@ title: TiDB Binlog Troubleshooting
 summary: TiDB Binlogのトラブルシューティング プロセスを学習します。
 ---
 
-# TiDBBinlogシューティング {#tidb-binlog-troubleshooting}
+# TiDBBinlogのトラブルシューティング {#tidb-binlog-troubleshooting}
 
 このドキュメントでは、TiDB Binlog をトラブルシューティングして問題を見つける方法について説明します。
 

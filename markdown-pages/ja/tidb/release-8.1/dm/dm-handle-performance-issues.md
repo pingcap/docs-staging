@@ -15,19 +15,19 @@ summary: DM に存在する可能性のある一般的なパフォーマンス�
 -   Grafana 監視ダッシュボードで[監視メトリクス](/dm/monitor-a-dm-cluster.md#task)表示できます。
 -   診断するコンポーネントは正常に動作しています。そうでない場合、監視メトリックの例外が発生する可能性があり、パフォーマンスの問題の診断に影響する可能性があります。
 
-データ移行のレイテンシーが大きい場合、ボトルネックが DMコンポーネント内にあるか TiDB クラスター内にあるかを素早く判断するには、まず[下流にSQL文を書き込む](#write-sql-statements-to-downstream)の`DML queue remain length`を確認します。
+データ移行のレイテンシーが大きい場合、ボトルネックが DMコンポーネント内にあるか TiDB クラスター内にあるかを素早く判断するには、まず[下流にSQL文を書き込む](#write-sql-statements-to-downstream)の`DML queue remain length`確認します。
 
 ## リレーログユニット {#relay-log-unit}
 
 リレー ログ ユニットのパフォーマンスの問題を診断するには、 `binlog file gap between master and relay`監視メトリックを確認します。このメトリックの詳細については、 [リレーログの監視メトリクス](/dm/monitor-a-dm-cluster.md#relay-log)を参照してください。このメトリックが長時間にわたって 1 より大きい場合、通常はパフォーマンスの問題があることを示します。このメトリックが 0 の場合、通常はパフォーマンスの問題がないことを示します。
 
-`binlog file gap between master and relay`の値が 0 であるが、パフォーマンスの問題があると思われる場合は、 `binlog pos`を確認できます。このメトリックの`master`が`relay`より大幅に大きい場合は、パフォーマンスの問題がある可能性があります。この場合は、この問題を適切に診断して対処します。
+`binlog file gap between master and relay`の値が 0 であるが、パフォーマンスの問題があると思われる場合は、 `binlog pos`確認できます。このメトリックの`master`が`relay`より大幅に大きい場合は、パフォーマンスの問題がある可能性があります。この場合は、この問題を適切に診断して対処します。
 
 ### binlogデータを読み取る {#read-binlog-data}
 
-`read binlog event duration` 、リレー ログがアップストリーム データベース (MySQL/MariaDB) からbinlog を読み取る期間を示します。理想的には、このメトリックは、DM ワーカーと MySQL/MariaDB インスタンス間のネットワークレイテンシーに近くなります。
+`read binlog event duration`リレー ログがアップストリーム データベース (MySQL/MariaDB) からbinlogを読み取る期間を示します。理想的には、このメトリックは、DM ワーカーと MySQL/MariaDB インスタンス間のネットワークレイテンシーに近くなります。
 
--   1 つのデータセンターでのデータ移行の場合、 binlogデータの読み取りはパフォーマンスのボトルネックにはなりません。1 `read binlog event duration`値が大きすぎる場合は、DM-worker と MySQL/MariaDB 間のネットワーク接続を確認してください。
+-   1 つのデータセンターでのデータ移行の場合、 binlogデータの読み取りはパフォーマンスのボトルネックにはなりません。1 の値が大きすぎる場合は、DM-worker と MySQL/ `read binlog event duration`間のネットワーク接続を確認してください。
 
 -   地理的に分散された環境でのデータ移行では、DM ワーカーと MySQL/MariaDB を 1 つのデータセンターにデプロイし、TiDB クラスターをターゲット データセンターにデプロイします。
 
@@ -47,7 +47,7 @@ binlogイベントを DMメモリに読み込んだ後、DM のリレー処理�
 
 ### リレーログファイルを書き込む {#write-relay-log-files}
 
-binlogイベントをリレー ログ ファイルに書き込む場合、関連するパフォーマンス メトリックは`write relay log duration`です。3 `binlog event size`大きすぎない場合、この値はマイクロ秒である必要があります。5 `write relay log duration`大きすぎる場合は、ディスクの書き込みパフォーマンスを確認してください。書き込みパフォーマンスの低下を回避するには、DM ワーカーにローカル SSD を使用します。
+binlogイベントを`write relay log duration`ログ ファイルに書き込む場合、関連するパフォーマンス メトリックは`write relay log duration`です。3 が大きすぎない場合、この値はマイクロ秒である必要があります。5 `binlog event size`大きすぎる場合は、ディスクの書き込みパフォーマンスを確認してください。書き込みパフォーマンスの低下を回避するには、DM ワーカーにローカル SSD を使用します。
 
 ## 負荷ユニット {#load-unit}
 
@@ -60,7 +60,7 @@ Binlogレプリケーション ユニットのパフォーマンスの問題を�
 -   このメトリックが長時間にわたって 1 より大きい場合、通常はパフォーマンスの問題があることを示します。
 -   このメトリックが 0 の場合、通常はパフォーマンスの問題がないことを示します。
 
-`binlog file gap between master and syncer`が長時間にわたって 1 より大きい場合は、 `binlog file gap between relay and syncer`をチェックして、レイテンシーが主にどのユニットに存在するかを調べます。この値が通常 0 の場合、レイテンシーはリレー ログ ユニットに存在する可能性があります。その場合は、 [リレーログユニット](#relay-log-unit)を参照してこの問題を解決できます。それ以外の場合は、 Binlogレプリケーション ユニットの確認を続けます。
+`binlog file gap between master and syncer`長時間にわたって 1 より大きい場合は、 `binlog file gap between relay and syncer`チェックして、レイテンシーが主にどのユニットに存在するかを調べます。この値が通常 0 の場合、レイテンシーはリレー ログ ユニットに存在する可能性があります。その場合は、 [リレーログユニット](#relay-log-unit)を参照してこの問題を解決できます。それ以外の場合は、 Binlogレプリケーション ユニットの確認を続けます。
 
 ### binlogデータを読み取る {#read-binlog-data}
 
@@ -68,17 +68,17 @@ Binlogレプリケーション ユニットは、設定に応じて、アップ�
 
 -   DM のBinlogレプリケーション処理ユニットがアップストリーム MySQL/MariaDB からbinlogイベントを読み取る場合、問題を特定して解決するには、「リレー ログ ユニット」セクションの[binlogデータを読み取る](#read-binlog-data)を参照してください。
 
--   DM のBinlogレプリケーション処理ユニットがリレー ログ ファイルからbinlogイベントを読み取る場合、 `binlog event size`大きすぎない場合、 `read binlog event duration`の値はマイクロ秒である必要があります。5 `read binlog event duration`大きすぎる場合は、ディスクの読み取りパフォーマンスを確認してください。書き込みパフォーマンスの低下を回避するには、DM ワーカーにローカル SSD を使用します。
+-   DM のBinlogレプリケーション処理ユニットがリレー ログ ファイルからbinlogイベントを読み取る場合、 `binlog event size`が大きすぎない場合、 `read binlog event duration`の値はマイクロ`read binlog event duration`である必要があります。5 が大きすぎる場合は、ディスクの読み取りパフォーマンスを確認してください。書き込みパフォーマンスの低下を回避するには、DM ワーカーにローカル SSD を使用します。
 
 ### binlogイベント変換 {#binlog-event-conversion}
 
 Binlogレプリケーション ユニットは、DML を構築し、DDL を解析し、 binlogイベント データから[テーブルルーター](/dm/dm-table-routing.md)変換を実行します。関連するメトリックは`transform binlog event duration`です。
 
-所要時間は主に上流の書き込み操作によって影響を受けます。 `INSERT INTO`ステートメントを例にとると、単一の`VALUES`を変換するのにかかる時間は、大量の`VALUES`変換するのにかかる時間とは大きく異なります。 かかる時間は数十マイクロ秒から数百マイクロ秒の範囲になる場合があります。 ただし、通常、これはシステムのボトルネックにはなりません。
+所要時間は主に上流の書き込み操作によって影響を受けます。 `INSERT INTO`ステートメントを例にとると、単一の`VALUES`変換するのにかかる時間は、大量の`VALUES`変換するのにかかる時間とは大きく異なります。 かかる時間は数十マイクロ秒から数百マイクロ秒の範囲になる場合があります。 ただし、通常、これはシステムのボトルネックにはなりません。
 
 ### 下流にSQL文を書き込む {#write-sql-statements-to-downstream}
 
-Binlogレプリケーション ユニットが変換された SQL ステートメントをダウンストリームに書き込む場合、関連するパフォーマンス メトリックは`DML queue remain length`と`transaction execution latency`になります。
+Binlogレプリケーション ユニットが変換された SQL ステートメントをダウンストリームに書き込む場合、関連するパフォーマンス メトリックは`DML queue remain length`と`transaction execution latency`なります。
 
 DM は、 binlogイベントから SQL ステートメントを構築した後、 `worker-count`キューを使用してこれらのステートメントを同時にダウンストリームに書き込みます。ただし、監視エントリが多すぎることを避けるために、DM は同時キューの ID に対してモジュロ`8`演算を実行します。つまり、すべての同時キューは`q_0`から`q_7`までの 1 つの項目に対応します。
 
@@ -90,8 +90,8 @@ DM は、 binlogイベントから SQL ステートメントを構築した後�
 
 -   データ移行リンクに顕著なレイテンシーが見られ、各`q_*`に対応する`DML queue remain length`の曲線がほぼ同じで、ほぼ常に 0 である場合、DM がアップストリームからのデータを時間内に読み取り、変換、または同時に書き込むことができていないことを意味します (ボトルネックはリレー ログ ユニットにある可能性があります)。トラブルシューティングについては、このドキュメントの前のセクションを参照してください。
 
-`DML queue remain length`に対応する曲線が 0 でない場合 (通常、最大値は 1024 以下)、ダウンストリームに SQL ステートメントを書き込むときにボトルネックがあることを示します。3 `transaction execution latency`使用すると、ダウンストリームへの単一のトランザクションの実行に費やされた時間を表示できます。
+`DML queue remain length`に対応する曲線が 0 でない場合 (通常、最大値は 1024 以下)、ダウンストリームに SQL ステートメントを書き込むときにボトルネックがあることを示します`transaction execution latency`使用すると、ダウンストリームへの単一のトランザクションの実行に費やされた時間を表示できます。
 
-`transaction execution latency`は通常数十ミリ秒です。この値が大きすぎる場合は、ダウンストリーム データベースの監視に基づいてダウンストリームのパフォーマンスを確認してください。また、DM とダウンストリーム データベースの間に大きなネットワークレイテンシーがあるかどうかを確認することもできます。
+`transaction execution latency`は通常数十ミリ秒です。この値が大きすぎる場合は、ダウンストリーム データベースの監視に基づいてダウンストリームのパフォーマンスを確認してください。また、DM とダウンストリーム データベースの間に大きなネットワークレイテンシーがあるかどうかも確認できます。
 
-`BEGIN` 、 `INSERT` 、 `UPDATE` 、 `DELETE` 、 `COMMIT`などの単一のステートメントをダウンストリームに書き込むのに費やされた時間を表示するには、 `statement execution latency`もチェックできます。
+`BEGIN` 、 `INSERT` 、 `UPDATE` 、 `DELETE` 、 `COMMIT`などの単一のステートメントをダウンストリームに書き込むのに費やされた時間を表示するには、 `statement execution latency`もチェックします。

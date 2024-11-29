@@ -30,7 +30,7 @@ summary: TiDB 1.0.7 は、コマンドの最適化、データ競合とリソー
 
 ## ティクヴ {#tikv}
 
--   [`Table Scan`サポート](https://github.com/pingcap/tikv/pull/2657)
+-   [`Table Scan`をサポート](https://github.com/pingcap/tikv/pull/2657)
 -   [tikv-ctl のリモート モードをサポートする](https://github.com/pingcap/tikv/pull/2377)
 -   [tikv-ctl protoのフォーマット互換性の問題を修正](https://github.com/pingcap/tikv/pull/2668)
 -   [PDからのスケジュールコマンドの消失を修正](https://github.com/pingcap/tikv/pull/2669)

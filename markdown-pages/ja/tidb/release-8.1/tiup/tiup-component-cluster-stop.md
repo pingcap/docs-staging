@@ -17,7 +17,7 @@ summary: 「tiup cluster stop」コマンドは、指定されたクラスター
 tiup cluster stop <cluster-name> [flags]
 ```
 
-`<cluster-name>`は操作対象となるクラスターの名前です。クラスター名を忘れた場合は、 [`tiup cluster list`](/tiup/tiup-component-cluster-list.md)コマンドで確認できます。
+`<cluster-name>`操作対象となるクラスターの名前です。クラスター名を忘れた場合は、 [`tiup cluster list`](/tiup/tiup-component-cluster-list.md)コマンドで確認できます。
 
 ## オプション {#options}
 
@@ -45,7 +45,7 @@ tiup cluster stop <cluster-name> [flags]
 
 -   ヘルプ情報を出力します。
 -   データ型: `BOOLEAN`
--   このオプションは、デフォルトで値`false`で無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにする必要があります。
+-   このオプションは、値`false`でデフォルトで無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにします。
 
 ## 出力 {#output}
 

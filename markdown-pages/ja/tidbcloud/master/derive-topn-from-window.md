@@ -11,7 +11,7 @@ summary: ウィンドウ関数から TopN または Limit を導出する最適�
 SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY a) AS rownumber FROM t) dt WHERE rownumber <= 3
 ```
 
-一般的な SQL 実行プロセスでは、 TiDB は最初にテーブル`t`内のすべてのデータをソートし、次に各行の`ROW_NUMBER()`結果を計算し、最後に`rownumber <= 3`でフィルタリングします。
+一般的な SQL 実行プロセスでは、 TiDB は最初にテーブル`t`内のすべてのデータをソートし、次に各行の`ROW_NUMBER()`の結果を計算し、最後に`rownumber <= 3`でフィルタリングします。
 
 v7.0.0 以降、TiDB はウィンドウ関数から TopN または Limit 演算子を導出することをサポートしています。この最適化ルールにより、TiDB は次のように元の SQL を同等の形式に書き換えることができます。
 
@@ -91,7 +91,7 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY value) AS rownumber FR
 
 > **注記：**
 >
-> `PARTITION BY`を含むウィンドウ関数の場合、パーティション列が主キーのプレフィックスであり、主キーがクラスター化インデックスである場合にのみ、最適化ルールが有効になります。
+> `PARTITION BY`含むウィンドウ関数の場合、パーティション列が主キーのプレフィックスであり、主キーがクラスター化インデックスである場合にのみ、最適化ルールが有効になります。
 
 #### 例3: ORDER BYのないウィンドウ関数 {#example-3-window-functions-without-order-by}
 
@@ -141,7 +141,7 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY id1 ORDER BY value
     |             └─TableFullScan_18     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                                                                                       |
     +------------------------------------+----------+-----------+---------------+----------------------------------------------------------------------------------------------------------------------+
 
-このクエリでは、オプティマイザーはウィンドウ関数から TopN 演算子を導出し、それを TiKV にプッシュダウンします。この TopN は実際にはパーティション TopN であることに注意してください。つまり、TopN は同じ`id1`値を持つデータの各グループに適用されます。
+このクエリでは、オプティマイザーはウィンドウ関数から TopN 演算子を導出し、それを TiKV にプッシュダウンします。この TopN は実際にはパーティション TopN であり、つまり TopN は同じ`id1`値を持つデータの各グループに適用されることに注意してください。
 
 #### 例5: PARTITION BY列は主キーのプレフィックスではない {#example-5-partition-by-column-is-not-a-prefix-of-the-primary-key}
 

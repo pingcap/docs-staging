@@ -1,6 +1,6 @@
 ---
 title: Generate Self-signed Certificates for TiDB Data Migration
-summary: openssl を使用して自己署名証明書を生成します。
+summary: openssl` を使用して自己署名証明書を生成します。
 ---
 
 # TiDB データ移行用の自己署名証明書を生成する {#generate-self-signed-certificates-for-tidb-data-migration}
@@ -36,9 +36,9 @@ summary: openssl を使用して自己署名証明書を生成します。
 
 ## CA証明書を生成する {#generate-the-ca-certificate}
 
-証明機関 (CA) は、デジタル証明書を発行する信頼できるエンティティです。実際には、管理者に連絡して証明書を発行するか、信頼できる CA を使用します。CA は複数の証明書ペアを管理します。ここでは、次のようにしてオリジナルの証明書ペアを生成するだけです。
+証明機関 (CA) は、デジタル証明書を発行する信頼できる機関です。実際には、管理者に連絡して証明書を発行するか、信頼できる CA を使用します。CA は複数の証明書ペアを管理します。ここでは、次のようにしてオリジナルの証明書ペアを生成するだけです。
 
-1.  CA キーを生成します:
+1.  CA キーを生成します。
 
     ```bash
     openssl genrsa -out ca-key.pem 4096
@@ -86,7 +86,7 @@ DM マスター インスタンスに証明書を発行するには、次の手�
     find / -name openssl.cnf
     ```
 
-3.  `openssl.cnf`を編集し、 `[ req ]`フィールドの下に`req_extensions = v3_req`を追加し、 `[ v3_req ]`フィールドの下に`subjectAltName = @alt_names`を追加します。最後に、新しいフィールドを作成し、上記のクラスター トポロジの説明に従って`Subject Alternative Name` (SAN) の情報を編集します。
+3.  `openssl.cnf`編集し、 `[ req ]`フィールドの下に`req_extensions = v3_req`を追加し、 `[ v3_req ]`フィールドの下に`subjectAltName = @alt_names`を追加します。最後に、新しいフィールドを作成し、上記のクラスター トポロジの説明に従って`Subject Alternative Name` (SAN) の情報を編集します。
 
         [ alt_names ]
         IP.1 = 127.0.0.1

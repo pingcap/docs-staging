@@ -5,9 +5,9 @@ summary: TiDB の SQL 非準備実行プラン キャッシュの原理、使用
 
 # SQL 未準備実行プラン キャッシュ {#sql-non-prepared-execution-plan-cache}
 
-TiDB は、 [ステートメントの`Prepare` / `Execute`](/sql-prepared-plan-cache.md)と同様に、一部の`PREPARE`以外のステートメントの実行プランのキャッシュをサポートしています。この機能により、これらのステートメントは最適化フェーズをスキップしてパフォーマンスを向上させることができます。
+TiDB は、 [ステートメント`Prepare` / `Execute`](/sql-prepared-plan-cache.md)と同様に、一部の`PREPARE`以外のステートメントの実行プランのキャッシュをサポートしています。この機能により、これらのステートメントは最適化フェーズをスキップしてパフォーマンスを向上させることができます。
 
-準備されていないプラン キャッシュを有効にすると、追加のメモリと CPU のオーバーヘッドが発生する可能性があり、すべての状況に適しているとは限りません。シナリオでこの機能を有効にするかどうかを判断するには、セクション[パフォーマンス上の利点](#performance-benefits)と[メモリ監視](#monitoring)を参照してください。
+準備されていないプラン キャッシュを有効にすると、追加のメモリと CPU オーバーヘッドが発生する可能性があり、すべての状況に適しているとは限りません。シナリオでこの機能を有効にするかどうかを判断するには、セクション[パフォーマンス上の利点](#performance-benefits)と[メモリ監視](#monitoring)を参照してください。
 
 ## 原理 {#principle}
 
@@ -20,7 +20,7 @@ TiDB は、 [ステートメントの`Prepare` / `Execute`](/sql-prepared-plan-c
 
 ## 使用法 {#usage}
 
-準備されていないプラン キャッシュを有効または無効にするには、 [`tidb_enable_non_prepared_plan_cache`](/system-variables.md#tidb_enable_non_prepared_plan_cache)システム変数を設定します。また、 [`tidb_session_plan_cache_size`](/system-variables.md#tidb_session_plan_cache_size-new-in-v710)システム変数を使用して準備されていないプラン キャッシュのサイズを制御することもできます。キャッシュされたプランの数が`tidb_session_plan_cache_size`を超えると、TiDB は最も最近使用されていない (LRU) 戦略を使用してプランを削除します。
+準備されていないプラン キャッシュを有効または無効にするには、 [`tidb_enable_non_prepared_plan_cache`](/system-variables.md#tidb_enable_non_prepared_plan_cache)システム変数を設定します。また、 [`tidb_session_plan_cache_size`](/system-variables.md#tidb_session_plan_cache_size-new-in-v710)システム変数を使用して準備されていないプラン キャッシュのサイズを制御することもできます。キャッシュされたプランの数が`tidb_session_plan_cache_size`超えると、TiDB は最も最近使用されていない (LRU) 戦略を使用してプランを削除します。
 
 v7.1.0 以降では、システム変数[`tidb_plan_cache_max_plan_size`](/system-variables.md#tidb_plan_cache_max_plan_size-new-in-v710)を使用して、キャッシュできるプランの最大サイズを制御できます。デフォルト値は 2 MB です。プランのサイズがこの値を超えると、プランはキャッシュされません。
 
@@ -74,22 +74,22 @@ v7.1.0 以降では、システム変数[`tidb_plan_cache_max_plan_size`](/syste
 
 TiDB は、パラメータ化されたクエリに対して 1 つのプランのみをキャッシュします。たとえば、クエリ`SELECT * FROM t WHERE a < 1`と`SELECT * FROM t WHERE a < 100000`同じパラメータ化された形式`SELECT * FROM t WHERE a < ?`を共有しているため、同じプランを共有します。
 
-これによりパフォーマンスの問題が発生する場合は、 `ignore_plan_cache()`ヒントを使用してキャッシュ内のプランを無視し、オプティマイザが毎回 SQL の新しい実行プランを生成するようにすることができます。SQL を変更できない場合は、バインディングを作成して問題を解決できます。たとえば、 `CREATE BINDING FOR SELECT ... USING SELECT /*+ ignore_plan_cache() */ ...` 。
+これによりパフォーマンスの問題が発生する場合は、 `ignore_plan_cache()`ヒントを使用してキャッシュ内のプランを無視し、オプティマイザーが毎回 SQL の新しい実行プランを生成するようにすることができます。SQL を変更できない場合は、バインディングを作成して問題を解決できます。たとえば、 `CREATE BINDING FOR SELECT ... USING SELECT /*+ ignore_plan_cache() */ ...`です。
 
 ### 使用制限 {#usage-restrictions}
 
-前述のリスクと、実行プラン キャッシュが大きなメリットをもたらすのは単純なクエリのみであるという事実 (クエリが複雑で実行に時間がかかる場合、実行プラン キャッシュを使用してもあまり役に立たない可能性があります) のため、TiDB では準備されていないプラン キャッシュの範囲に厳しい制限が設けられています。制限は次のとおりです。
+前述のリスクと、実行プラン キャッシュが大きなメリットをもたらすのは単純なクエリに対してのみであるという事実 (クエリが複雑で実行に時間がかかる場合、実行プラン キャッシュを使用してもあまり役に立たない可能性があります) のため、TiDB では、準備されていないプラン キャッシュの範囲に厳しい制限が設けられています。制限は次のとおりです。
 
 -   [準備されたプランキャッシュ](/sql-prepared-plan-cache.md)でサポートされていないクエリまたはプランは、準備されていないプラン キャッシュでもサポートされません。
 -   `Window`や`Having`などの複雑な演算子を含むクエリはサポートされていません。
 -   3 つ以上の`Join`テーブルまたはサブクエリを含むクエリはサポートされていません。
--   `ORDER BY 1`や`GROUP BY a+1`など、 `ORDER BY`または`GROUP BY`の直後に数字または式が含まれるクエリはサポートされていません。 `ORDER BY column_name`と`GROUP BY column_name`のみがサポートされています。
+-   `ORDER BY 1`や`GROUP BY a+1`など、 `ORDER BY`または`GROUP BY`直後に数字または式が含まれるクエリはサポートされていません。 `ORDER BY column_name`と`GROUP BY column_name`のみがサポートされています。
 -   `SELECT * FROM t WHERE json_col = '{}'`など、 `JSON` 、 `ENUM` 、 `SET` 、または`BIT`タイプの列でフィルタリングするクエリはサポートされていません。
 -   `SELECT * FROM t WHERE a is NULL`など、 `NULL`値でフィルタリングするクエリはサポートされていません。
 -   パラメータ化後のパラメータ数が 200 を超えるクエリ ( `SELECT * FROM t WHERE a in (1, 2, 3, ... 201)`など) は、デフォルトではサポートされません。v7.3.0 以降では、 [`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-new-in-v653-and-v710)システム変数に[`44823`](/optimizer-fix-controls.md#44823-new-in-v730)修正を設定することで、この制限を変更できます。
 -   仮想列、一時テーブル、ビュー、またはメモリテーブルにアクセスするクエリはサポートされていません (例: `SELECT * FROM INFORMATION_SCHEMA.COLUMNS` 、 `COLUMNS`は TiDBメモリテーブル)。
 -   ヒントまたはバインディングを含むクエリはサポートされていません。
--   DML ステートメントまたは`FOR UPDATE`句を含む`SELECT`ステートメントは、デフォルトではサポートされていません。この制限を解除するには、 `SET tidb_enable_non_prepared_plan_cache_for_dml = ON`実行します。
+-   DML ステートメントまたは`FOR UPDATE`句を含む`SELECT`ステートメントは、デフォルトではサポートされていません。この制限を削除するには、 `SET tidb_enable_non_prepared_plan_cache_for_dml = ON`実行します。
 
 この機能を有効にすると、オプティマイザーはクエリを迅速に評価します。準備されていないプラン キャッシュのサポート条件を満たしていない場合、クエリは通常の最適化プロセスに戻ります。
 

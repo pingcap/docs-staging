@@ -1,6 +1,6 @@
 ---
 title: TiDB 3.0.13 Release Notes
-summary: TiDB 3.0.13 は 2020 年 4 月 22 日にリリースされました。バグ修正には、`INSERT ... ON DUPLICATE KEY UPDATE` ステートメントの問題の解決と、TiKV の `リージョン Merge` 中にシステムが停止して使用できなくなる問題の修正が含まれています。
+summary: TiDB 3.0.13 は 2020 年 4 月 22 日にリリースされました。バグ修正には、INSERT ... ON DUPLICATE KEY UPDATE` ステートメントの問題の解決と、TiKV の `リージョン Merge` 中にシステムが停止して使用できなくなる問題の修正が含まれています。
 ---
 
 # TiDB 3.0.13 リリースノート {#tidb-3-0-13-release-notes}
@@ -9,7 +9,7 @@ summary: TiDB 3.0.13 は 2020 年 4 月 22 日にリリースされました。�
 
 TiDB バージョン: 3.0.13
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -17,4 +17,4 @@ TiDB バージョン: 3.0.13
 
 -   ティクヴ
 
-    -   `Region Merge`を繰り返し実行するとシステムが停止し、サービスが利用できなくなる問題を修正[＃7612](https://github.com/tikv/tikv/pull/7612)
+    -   `Region Merge`繰り返し実行するとシステムが停止し、サービスが利用できなくなる問題を修正[＃7612](https://github.com/tikv/tikv/pull/7612)

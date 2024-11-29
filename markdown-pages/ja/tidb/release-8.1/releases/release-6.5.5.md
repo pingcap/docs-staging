@@ -15,7 +15,7 @@ TiDB バージョン: 6.5.5
 
 -   ティビ
 
-    -   [`NO_MERGE_JOIN()`](/optimizer-hints.md#no_merge_joint1_name--tl_name-) [`NO_HASH_JOIN()`](/optimizer-hints.md#no_hash_joint1_name--tl_name-) [＃45520](https://github.com/pingcap/tidb/issues/45520) [qw4990](https://github.com/qw4990) [`NO_INDEX_HASH_JOIN()`](/optimizer-hints.md#no_index_hash_joint1_name--tl_name-)含む新しいオプティマイザヒント[`NO_INDEX_MERGE_JOIN()`](/optimizer-hints.md#no_index_merge_joint1_name--tl_name-)追加します[`NO_INDEX_JOIN()`](/optimizer-hints.md#no_index_joint1_name--tl_name-)
+    -   [`NO_MERGE_JOIN()`](/optimizer-hints.md#no_merge_joint1_name--tl_name-) [`NO_HASH_JOIN()`](/optimizer-hints.md#no_hash_joint1_name--tl_name-) [`NO_INDEX_MERGE_JOIN()`](/optimizer-hints.md#no_index_merge_joint1_name--tl_name-) [`NO_INDEX_HASH_JOIN()`](/optimizer-hints.md#no_index_hash_joint1_name--tl_name-) [qw4990](https://github.com/qw4990)含む新しいオプティマイザヒントを追加し[＃45520](https://github.com/pingcap/tidb/issues/45520) [`NO_INDEX_JOIN()`](/optimizer-hints.md#no_index_joint1_name--tl_name-)
     -   コプロセッサ[＃46514](https://github.com/pingcap/tidb/issues/46514) @ [あなた06](https://github.com/you06)に関連するリクエストソース情報を追加します
 
 -   ティクヴ
@@ -32,17 +32,17 @@ TiDB バージョン: 6.5.5
 
         -   ログバックアップのCPUオーバーヘッドを削減`resolve lock` [＃40759](https://github.com/pingcap/tidb/issues/40759) @ [3ポインター](https://github.com/3pointer)
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
-    -   ステイル読み取り が利用できないレプリカ[＃46198](https://github.com/pingcap/tidb/issues/46198) @ [ジグアン](https://github.com/zyguan)を選択する可能性がある問題を修正しました
+    -   ステイル読み取りで使用できないレプリカ[＃46198](https://github.com/pingcap/tidb/issues/46198) @ [ジグアン](https://github.com/zyguan)が選択される可能性がある問題を修正しました
     -   ステイル読み取りとSchema Cache [＃43481](https://github.com/pingcap/tidb/issues/43481) @ [クレイジーcs520](https://github.com/crazycs520)の非互換性により追加のオーバーヘッドが発生する問題を修正
 
 -   ティクヴ
 
     -   Titan が有効になっているときに TiKV が起動に失敗し、 `Blob file deleted twice`エラーが発生する問題を修正しました[＃15454](https://github.com/tikv/tikv/issues/15454) @ [コナー1996](https://github.com/Connor1996)
-    -   オンラインの安全でないリカバリがマージ中止[＃15580](https://github.com/tikv/tikv/issues/15580) @ [v01dスター](https://github.com/v01dstar)を処理できない問題を修正
+    -   オンラインの安全でないリカバリがマージ中止[＃15580](https://github.com/tikv/tikv/issues/15580) @ [v01dスター](https://github.com/v01dstar)処理できない問題を修正
 
 -   PD
 
@@ -62,11 +62,11 @@ TiDB バージョン: 6.5.5
     -   ティCDC
 
         -   PDノード[＃9565](https://github.com/pingcap/tiflow/issues/9565) @ [アズドンメン](https://github.com/asddongmen)のネットワーク分離によって発生するTiCDCレプリケーションレイテンシーの問題を修正
-        -   CSV形式[＃9658](https://github.com/pingcap/tiflow/issues/9658) @ [3エースショーハンド](https://github.com/3AceShowHand)を使用するとTiCDCが`UPDATE`演算を誤って`INSERT`に変更する問題を修正
+        -   CSV形式[＃9658](https://github.com/pingcap/tiflow/issues/9658) @ [3エースショーハンド](https://github.com/3AceShowHand)使用するとTiCDCが`UPDATE`演算を誤って`INSERT`に変更する問題を修正
         -   一部のログにユーザーパスワードが記録される問題を修正[＃9690](https://github.com/pingcap/tiflow/issues/9690) @ [スドジ](https://github.com/sdojjy)
         -   SASL認証を使用するとTiCDCがpanicを起こす可能性がある問題を修正[＃9669](https://github.com/pingcap/tiflow/issues/9669) @ [スドジ](https://github.com/sdojjy)
         -   一部の特殊なケースで TiCDC レプリケーション タスクが失敗する可能性がある問題を修正[＃9685](https://github.com/pingcap/tiflow/issues/9685) [＃9697](https://github.com/pingcap/tiflow/issues/9697) [＃9695](https://github.com/pingcap/tiflow/issues/9695) [＃9736](https://github.com/pingcap/tiflow/issues/9736) @ [ヒック](https://github.com/hicqu) @ [チャールズ・チュン96](https://github.com/CharlesCheung96)
-        -   上流に多数のリージョン[＃9741](https://github.com/pingcap/tiflow/issues/9741) @ [スドジ](https://github.com/sdojjy)がある場合に TiCDC が TiKV ノード障害から迅速に回復できない問題を修正しました。
+        -   上流にリージョン[＃9741](https://github.com/pingcap/tiflow/issues/9741) @ [スドジ](https://github.com/sdojjy)が多数ある場合に TiCDC が TiKV ノード障害から迅速に回復できない問題を修正しました。
 
     -   TiDB Lightning
 

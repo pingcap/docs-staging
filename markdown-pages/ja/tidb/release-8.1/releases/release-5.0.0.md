@@ -16,7 +16,7 @@ v5.0 の主な新機能または改善点は次のとおりです。
 -   TiFlashノードを通じて超並列処理 (MPP)アーキテクチャを導入し、大規模な結合クエリの実行ワークロードをTiFlashノード間で共有します。MPP モードを有効にすると、TiDB はコストに基づいて、MPP フレームワークを使用して計算を実行するかどうかを決定します。MPP モードでは、計算中に結合キーが`Exchange`操作を通じて再分配されるため、計算負荷が各TiFlashノードに分散され、計算が高速化されます。ベンチマークによると、同じクラスター リソースの場合、TiDB 5.0 MPP は Greenplum 6.15.0 および Apache Spark 3.1.1 よりも 2 ～ 3 倍高速化され、一部のクエリでは 8 倍のパフォーマンスが向上しました。
 -   クラスター化インデックス機能を導入して、データベースのパフォーマンスを向上させます。たとえば、TPC-C tpmC テストでは、クラスター化インデックスを有効にした TiDB のパフォーマンスが 39% 向上します。
 -   非同期コミット機能を有効にすると、書き込みレイテンシーが短縮されます。たとえば、64 スレッドの Sysbench テストでは、非同期コミットを有効にすると、インデックス更新の平均レイテンシーが12.04 ミリ秒から 7.01 ミリ秒に 41.7% 短縮されます。
--   ジッターを減らします。これは、オプティマイザーの安定性を向上させ、システム タスクによる I/O、ネットワーク、CPU、メモリリソースの使用を制限することで実現されます。たとえば、8 時間のパフォーマンス テストでは、TPC-C tpmC の標準偏差は 2% を超えません。
+-   ジッターを削減します。これは、オプティマイザーの安定性を向上させ、システム タスクによる I/O、ネットワーク、CPU、メモリリソースの使用を制限することで実現されます。たとえば、8 時間のパフォーマンス テストでは、TPC-C tpmC の標準偏差は 2% を超えません。
 -   スケジュールを改善し、実行計画を可能な限り安定させることで、システムの安定性を高めます。
 -   リージョンメンバーシップの変更中にシステムの可用性を確保するRaft Joint Consensus アルゴリズムを導入します。
 -   `EXPLAIN`機能と非表示のインデックスを最適化し、データベース管理者 (DBA) が SQL ステートメントをより効率的にデバッグできるようにします。
@@ -39,7 +39,7 @@ v5.0 の主な新機能または改善点は次のとおりです。
     >
     > 変数のスコープはセッションからグローバルに変更され、デフォルト値は`20000`から`0`に変更されます。アプリケーションが元のデフォルト値に依存している場合は、アップグレード後に`set global`ステートメントを使用して変数を元の値に変更する必要があります。
 
--   [`tidb_enable_noop_functions`](/system-variables.md#tidb_enable_noop_functions-new-in-v40)システム変数を使用して、一時テーブルの構文の互換性を制御します。この変数値が`OFF`の場合、 `CREATE TEMPORARY TABLE`構文はエラーを返します。
+-   [`tidb_enable_noop_functions`](/system-variables.md#tidb_enable_noop_functions-new-in-v40)システム変数を使用して、一時テーブルの構文の互換性を制御します。この変数値が`OFF`場合、 `CREATE TEMPORARY TABLE`構文はエラーを返します。
 
 -   ガベージコレクション関連のパラメータを直接制御するには、次のシステム変数を追加します。
     -   [`tidb_gc_concurrency`](/system-variables.md#tidb_gc_concurrency-new-in-v50)
@@ -57,7 +57,7 @@ v5.0 の主な新機能または改善点は次のとおりです。
 
     -   `OFF` : クラスター化インデックスは無効です。非クラスター化インデックスの追加または削除はサポートされています。
 
-    -   `INT_ONLY` : デフォルト値。動作は v5.0 以前と同じです。 `alter-primary-key = false`と組み合わせて、 INT 型のクラスター化インデックスを有効にするかどうかを制御できます。
+    -   `INT_ONLY` : デフォルト値。動作は v5.0 以前と同じです。 `alter-primary-key = false`と組み合わせて INT 型のクラスター化インデックスを有効にするかどうかを制御できます。
     > **注記：**
     >
     > 5.0 GA の`tidb_enable_clustered_index`の`INT_ONLY`値は、 5.0 RC の`OFF`値と同じ意味を持ちます。 `OFF`設定の 5.0 RC クラスターから 5.0 GA にアップグレードすると、 `INT_ONLY`として表示されます。
@@ -70,7 +70,7 @@ v5.0 の主な新機能または改善点は次のとおりです。
 -   `performance.max-memory`構成項目を[`performance.server-memory-quota`](/tidb-configuration-file.md#server-memory-quota-new-in-v409)に置き換える
 -   `tikv-client.copr-cache.enable`構成項目を[`tikv-client.copr-cache.capacity-mb`](/tidb-configuration-file.md#capacity-mb)に置き換えます。項目の値が`0.0`の場合、この機能は無効になります。項目の値が`0.0`より大きい場合、この機能は有効になります。デフォルト値は`1000.0`です。
 -   `rocksdb.auto-tuned`構成項目を[`rocksdb.rate-limiter-auto-tuned`](/tikv-configuration-file.md#rate-limiter-auto-tuned-new-in-v50)に置き換えます。
--   `raftstore.sync-log`設定項目を削除します。デフォルトでは、書き込まれたデータは強制的にディスクに書き出されます。v5.0 より前は、 `raftstore.sync-log`明示的に無効にできました。v5.0 以降では、設定値は強制的に`true`に設定されます。
+-   `raftstore.sync-log`設定項目を削除します。デフォルトでは、書き込まれたデータは強制的にディスクに書き込まれます。v5.0 より前は、 `raftstore.sync-log`明示的に無効にできました。v5.0 以降では、設定値は強制的に`true`に設定されます。
 -   `gc.enable-compaction-filter`構成項目のデフォルト値を`false`から`true`に変更します。
 -   `enable-cross-table-merge`構成項目のデフォルト値を`false`から`true`に変更します。
 -   [`rate-limiter-auto-tuned`](/tikv-configuration-file.md#rate-limiter-auto-tuned-new-in-v50)構成項目のデフォルト値を`false`から`true`に変更します。
@@ -98,7 +98,7 @@ v5.0 の主な新機能または改善点は次のとおりです。
 
 [ユーザードキュメント](/partitioned-table.md#list-columns-partitioning)
 
-List COLUMNS パーティショニングは、リスト パーティションのバリエーションです。複数の列をパーティション キーとして使用できます。整数データ型の他に、文字列`DATETIME` `DATE`型の列もパーティション列として使用できます。
+List COLUMNS パーティショニングは`DATETIME` `DATE`型の列もパーティション列として使用できます。
 
 List COLUMNS パーティショニングを有効にするには、セッション変数[`tidb_enable_list_partition`](/system-variables.md#tidb_enable_list_partition-new-in-v50)を`ON`に設定します。
 
@@ -106,7 +106,7 @@ List COLUMNS パーティショニングを有効にするには、セッショ�
 
 [ユーザードキュメント](/sql-statements/sql-statement-alter-index.md) , [＃9246](https://github.com/pingcap/tidb/issues/9246)
 
-パフォーマンスを調整したり、最適なインデックスを選択したりする場合、SQL ステートメントを使用してインデックスを`Visible`または`Invisible`設定できます。この設定により、 `DROP INDEX`や`ADD INDEX`などのリソースを消費する操作の実行を回避できます。
+パフォーマンスを調整したり、最適なインデックスを選択したりする場合、SQL ステートメントを使用してインデックスを`Visible`または`Invisible`に設定できます。この設定により、 `DROP INDEX`や`ADD INDEX`などのリソースを消費する操作の実行を回避できます。
 
 インデックスの可視性を変更するには、 `ALTER INDEX`ステートメントを使用します。変更後、オプティマイザーはインデックスの可視性に基づいて、このインデックスをインデックス リストに追加するかどうかを決定します。
 
@@ -133,12 +133,12 @@ List COLUMNS パーティショニングを有効にするには、セッショ�
 現在、この機能には次のような非互換性の問題が残っています。
 
 -   同時トランザクションがある場合、トランザクションのセマンティクスが変わる可能性があります
--   この機能を TiDB Binlogと併用すると発生する既知の互換性の問題
+-   この機能を TiDB Binlogと併用した場合に発生する既知の互換性の問題
 -   `Change Column`との互換性がない
 
 ### 文字セットと照合順序 {#character-set-and-collation}
 
--   `utf8mb4_unicode_ci`と`utf8_unicode_ci` [＃17596](https://github.com/pingcap/tidb/issues/17596)をサポートします[ユーザードキュメント](/character-set-and-collation.md#new-framework-for-collations)
+-   `utf8mb4_unicode_ci`と`utf8_unicode_ci` [ユーザードキュメント](/character-set-and-collation.md#new-framework-for-collations)をサポートします[＃17596](https://github.com/pingcap/tidb/issues/17596)
 -   照合順序の大文字と小文字を区別しない比較ソートをサポートする
 
 ### Security {#security}
@@ -152,9 +152,9 @@ TiDB は出力ログ情報の感度低下をサポートしています。この
 -   グローバル変数[`tidb_redact_log`](/system-variables.md#tidb_redact_log) 。デフォルト値は`0`で、これは感度低下が無効であることを意味します。tidb-server ログの感度低下を有効にするには、変数値を`1`に設定します。
 -   設定項目`security.redact-info-log` 。デフォルト値は`false`で、これは感度低下が無効であることを意味します。tikv-server ログの感度低下を有効にするには、変数値を`true`に設定します。
 -   構成項目`security.redact-info-log` 。デフォルト値は`false`で、これは感度低下が無効であることを意味します。pd-server ログの感度低下を有効にするには、変数値を`true`に設定します。
--   tiflash-server の場合は設定項目`security.redact_info_log` 、tiflash-learner の場合は設定項目`security.redact-info-log`です。デフォルト値は両方とも`false`で、これは感度低下が無効であることを意味します。tiflash-server および tiflash-learner ログの感度低下を有効にするには、両方の変数の値を`true`に設定します。
+-   tiflash-server の場合は設定項目`security.redact_info_log` 、tiflash-learner の場合は設定項目`security.redact-info-log` 。デフォルト値は両方とも`false`で、これは感度低下が無効であることを意味します。tiflash-server および tiflash-learner ログの感度低下を有効にするには、両方の変数の値を`true`に設定します。
 
-この機能は v5.0 で導入されました。この機能を使用するには、システム変数と上記のすべての構成項目を有効にします。
+この機能はバージョン 5.0 で導入されました。この機能を使用するには、システム変数と上記のすべての構成項目を有効にします。
 
 ## パフォーマンスの最適化 {#performance-optimization}
 
@@ -183,7 +183,7 @@ TPC-H 100 ベンチマーク テストでは、 TiFlash MPP は従来の分析�
 
 [ユーザードキュメント](/clustered-indexes.md) , [＃4841](https://github.com/pingcap/tidb/issues/4841)
 
-テーブル構造を設計したり、データベースの動作を分析したりする際に、主キーを持つ一部の列が頻繁にグループ化され、並べ替えられ、これらの列に対するクエリによって特定の範囲のデータまたは異なる値を持つ少量のデータが返されることが多く、対応するデータによって読み取りまたは書き込みのホットスポットの問題が発生しない場合は、クラスター化インデックス機能を使用することをお勧めします。
+テーブル構造を設計したり、データベースの動作を分析したりする際に、主キーを持つ一部の列が頻繁にグループ化され、並べ替えられ、これらの列に対するクエリによって特定の範囲のデータや異なる値を持つ少量のデータが返されることが多く、対応するデータによって読み取りまたは書き込みのホットスポットの問題が発生しない場合は、クラスター化インデックス機能を使用することをお勧めします。
 
 クラスター化インデックスは、一部のデータベース管理システムでは*インデックス構成テーブル*とも呼ばれ、テーブルのデータに関連付けられたstorage構造です。クラスター化インデックスを作成するときに、テーブルから 1 つ以上の列をインデックスのキーとして指定できます。TiDB はこれらのキーを特定の構造に格納します。これにより、TiDB はキーに関連付けられた行を迅速かつ効率的に見つけることができるため、データのクエリと書き込みのパフォーマンスが向上します。
 
@@ -197,7 +197,7 @@ TPC-H 100 ベンチマーク テストでは、 TiFlash MPP は従来の分析�
 各テーブルでは、クラスター化インデックスまたは非クラスター化インデックスを使用してデータを並べ替えて保存できます。これら 2 つのstorage構造の違いは次のとおりです。
 
 -   クラスター化インデックスを作成する場合、テーブル内の 1 つ以上の列をインデックスのキー値として指定できます。クラスター化インデックスは、キー値に従ってテーブルのデータを並べ替えて格納します。各テーブルには、クラスター化インデックスを 1 つだけ含めることができます。テーブルにクラスター化インデックスがある場合は、クラスター化インデックス テーブルと呼ばれます。それ以外の場合は、非クラスター化インデックス テーブルと呼ばれます。
--   非クラスター化インデックスを作成すると、テーブル内のデータは順序付けされていない構造で格納されます。TiDB は各データ行に一意の ROWID を自動的に割り当てるため、非クラスター化インデックスのキー値を明示的に指定する必要はありません。クエリの実行中、ROWID は対応する行の検索に使用されます。データのクエリまたは挿入を実行すると、少なくとも 2 つのネットワーク I/O 操作が発生するため、クラスター化インデックスと比較してパフォーマンスが低下します。
+-   非クラスター化インデックスを作成すると、テーブル内のデータは順序付けされていない構造で格納されます。TiDB は各データ行に一意の ROWID を自動的に割り当てるため、非クラスター化インデックスのキー値を明示的に指定する必要はありません。クエリの実行中、ROWID は対応する行を見つけるために使用されます。データのクエリまたは挿入を実行すると、少なくとも 2 つのネットワーク I/O 操作が発生するため、クラスター化インデックスと比較してパフォーマンスが低下します。
 
 テーブル データが変更されると、データベース システムはクラスター化インデックスと非クラスター化インデックスを自動的に維持します。
 
@@ -218,11 +218,11 @@ CREATE TABLE `t` (`a` VARCHAR(255) PRIMARY KEY CLUSTERED, `b` INT);
 ステートメント`SHOW INDEX FROM tbl-name`を実行すると、テーブルにクラスター化インデックスがあるかどうかを照会できます。
 
 -   クラスター化インデックス機能を制御するには、システム変数`tidb_enable_clustered_index`を構成します。サポートされる値は`ON` 、 `OFF` 、および`INT_ONLY`です。
-    -   `ON` : クラスター化インデックス機能がすべての種類の主キーに対して有効になっていることを示します。非クラスター化インデックスの追加と削除がサポートされています。
+    -   `ON` : すべての種類の主キーに対してクラスター化インデックス機能が有効になっていることを示します。非クラスター化インデックスの追加と削除がサポートされています。
     -   `OFF` : すべての種類の主キーに対してクラスター化インデックス機能が無効になっていることを示します。非クラスター化インデックスの追加と削除はサポートされています。
     -   `INT_ONLY` : デフォルト値。変数が`INT_ONLY`に設定され、 `alter-primary-key` `false`に設定されている場合、単一の整数列で構成される主キーは、デフォルトでクラスター化インデックスとして作成されます。この動作は、TiDB v5.0 以前のバージョンの動作と一致しています。
 
-`CREATE TABLE`ステートメントにキーワード`CLUSTERED | NONCLUSTERED`が含まれている場合、そのステートメントはシステム変数と構成項目の構成をオーバーライドします。
+`CREATE TABLE`ステートメントにキーワード`CLUSTERED | NONCLUSTERED`含まれている場合、そのステートメントはシステム変数と構成項目の構成をオーバーライドします。
 
 ステートメントでキーワード`CLUSTERED | NONCLUSTERED`を指定して、クラスター化インデックス機能を使用することをお勧めします。これにより、TiDB はシステム内のクラスター化インデックスと非クラスター化インデックスのすべてのデータ型を必要に応じて同時に使用できるようになります。
 
@@ -235,7 +235,7 @@ CREATE TABLE `t` (`a` VARCHAR(255) PRIMARY KEY CLUSTERED, `b` INT);
 -   `ALTER TABLE`ステートメントを使用したクラスター化インデックスの追加、削除、および変更はサポートされていません。
 -   クラスター化インデックスの再編成と再作成はサポートされていません。
 -   インデックスの有効化または無効化はサポートされていないため、非表示のインデックス機能はクラスター化インデックスには効果がありません。
--   クラスター化インデックスとして`UNIQUE KEY`を作成することはサポートされていません。
+-   クラスター化インデックスとして`UNIQUE KEY`作成することはサポートされていません。
 -   クラスター化インデックス機能を TiDB Binlogと併用することはサポートされていません。TiDB Binlogを有効にすると、TiDB はクラスター化インデックスとして単一の整数主キーの作成のみをサポートします。TiDB Binlog は、クラスター化インデックスを持つ既存のテーブルのデータ変更をダウンストリームに複製しません。
 -   クラスター化インデックス機能を属性`SHARD_ROW_ID_BITS`および`PRE_SPLIT_REGIONS`と併用することはサポートされていません。
 -   クラスターを新しいバージョンにアップグレードしてからロールバックする場合は、ロールバック前にテーブル データをエクスポートし、ロールバック後にデータをインポートして、新しく追加されたテーブルをダウングレードする必要があります。他のテーブルは影響を受けません。
@@ -266,9 +266,9 @@ CREATE TABLE `t` (`a` VARCHAR(255) PRIMARY KEY CLUSTERED, `b` INT);
 
 [ユーザードキュメント](/tidb-configuration-file.md#tikv-clientcopr-cache-new-in-v400) , [＃18028](https://github.com/pingcap/tidb/issues/18028)
 
-5.0 GA では、コプロセッサーキャッシュ機能がデフォルトで有効になっています。この機能を有効にすると、データの読み取りのレイテンシーを削減するために、TiDB は tikv-server にプッシュダウンされた演算子の計算結果を tidb-server にキャッシュします。
+5.0 GA では、コプロセッサーキャッシュ機能がデフォルトで有効になっています。この機能を有効にすると、データの読み取りのレイテンシーを減らすために、TiDB は tikv-server にプッシュダウンされた演算子の計算結果を tidb-server にキャッシュします。
 
-コプロセッサーキャッシュ機能を無効にするには、 `tikv-client.copr-cache` ～ `0.0`の`capacity-mb`の構成項目を変更します。
+コプロセッサーキャッシュ機能を無効にするには、 `tikv-client.copr-cache` ～ `0.0`の`capacity-mb`構成項目を変更します。
 
 ### <code>delete from table where id &lt;? Limit ?</code>ステートメントの実行パフォーマンスを向上 {#improve-the-execution-performance-of-code-delete-from-table-where-id-x3c-limit-code-statement}
 
@@ -276,7 +276,7 @@ CREATE TABLE `t` (`a` VARCHAR(255) PRIMARY KEY CLUSTERED, `b` INT);
 
 `delete from table where id <? limit ?`ステートメントの p99 パフォーマンスが 4 倍向上します。
 
-### ロードベースの分割戦略を最適化して、一部の小さなテーブルのホットスポット読み取りシナリオでデータを分割できないパフォーマンスの問題を解決します。 {#optimize-load-base-split-strategy-to-solve-the-performance-problem-that-data-cannot-be-split-in-some-small-table-hotspot-read-scenarios}
+### ロードベースの分割戦略を最適化して、一部の小さなテーブルのホットスポット読み取りシナリオでデータを分割できないというパフォーマンスの問題を解決します。 {#optimize-load-base-split-strategy-to-solve-the-performance-problem-that-data-cannot-be-split-in-some-small-table-hotspot-read-scenarios}
 
 [＃18005](https://github.com/pingcap/tidb/issues/18005)
 
@@ -302,7 +302,7 @@ TiDB のスケジューリング プロセスは、I/O、ネットワーク、CP
 
 v5.0 より前の TiDB では、テーブル間のリージョンマージ機能がデフォルトで無効になっています。v5.0 以降では、空のリージョンの数と、ネットワーク、メモリ、CPU のオーバーヘッドを削減するために、この機能がデフォルトで有効になっています。1 `schedule.enable-cross-table-merge`構成項目を変更することで、この機能を無効にすることができます。
 
-#### バックグラウンドタスクとフォアグラウンドの読み取りおよび書き込み間のI/Oリソースの競合のバランスをとるために、デフォルトでシステムが自動的にデータ圧縮速度を調整するようにします。 {#enable-the-system-to-automatically-adjust-the-data-compaction-speed-by-default-to-balance-the-contention-for-i-o-resources-between-background-tasks-and-foreground-reads-and-writes}
+#### バックグラウンドタスクとフォアグラウンドの読み取りおよび書き込み間のI/Oリソースの競合のバランスをとるために、デフォルトでシステムが自動的にデータ圧縮速度を調整するようにする {#enable-the-system-to-automatically-adjust-the-data-compaction-speed-by-default-to-balance-the-contention-for-i-o-resources-between-background-tasks-and-foreground-reads-and-writes}
 
 [ユーザードキュメント](/tikv-configuration-file.md#rate-limiter-auto-tuned-new-in-v50)
 
@@ -342,11 +342,11 @@ SQL BINDING ステートメントを使用して SQL ステートメントを手
 
 TiDB をアップグレードする場合、パフォーマンスのジッターを回避するために、ベースライン キャプチャ機能を有効にして、システムが最新の実行プランを自動的にキャプチャしてバインドし、システム テーブルに保存できるようにします。TiDB をアップグレードした後、 `SHOW GLOBAL BINDING`コマンドを実行してバインドされた実行プランをエクスポートし、これらのプランを削除するかどうかを決定できます。
 
-この機能はデフォルトでは無効になっています。サーバーを変更するか、 `tidb_capture_plan_baselines`グローバル システム変数を`ON`に設定することで有効にできます。この機能を有効にすると、システムは`bind-info-lease` (デフォルト値は`3s` ) ごとにステートメント サマリーから少なくとも 2 回表示される SQL ステートメントを取得し、これらの SQL ステートメントを自動的にキャプチャしてバインドします。
+この機能はデフォルトでは無効になっています。サーバーを変更するか、 `tidb_capture_plan_baselines`グローバル システム変数を`ON`に設定することで有効にできます。この機能を有効にすると、システムは`bind-info-lease`回 (デフォルト値は`3s` ) ごとにステートメント サマリーから少なくとも 2 回表示される SQL ステートメントを取得し、これらの SQL ステートメントを自動的にキャプチャしてバインドします。
 
 ### TiFlashクエリの安定性を向上 {#improve-stability-of-tiflash-queries}
 
-TiFlashが失敗した場合に TiKV にクエリをフォールバックするためのシステム変数[`tidb_allow_fallback_to_tikv`](/system-variables.md#tidb_allow_fallback_to_tikv-new-in-v50)を追加します。デフォルト値は`OFF`です。
+TiFlash が失敗した場合に TiKV にクエリをフォールバックするためのシステム変数[`tidb_allow_fallback_to_tikv`](/system-variables.md#tidb_allow_fallback_to_tikv-new-in-v50)を追加します。デフォルト値は`OFF`です。
 
 ### TiCDC の安定性を改善し、増分データの複製が多すぎることによる OOM の問題を軽減します。 {#improve-ticdc-stability-and-alleviate-the-oom-issue-caused-by-replicating-too-much-incremental-data}
 
@@ -357,7 +357,7 @@ TiCDC v4.0.9 以前のバージョンでは、データ変更を過度に複製�
 -   TiCDC のデータ複製タスクは長時間一時停止され、その間に大量の増分データが蓄積され、複製が必要になります。
 -   データ複製タスクは早いタイムスタンプから開始されるため、大量の増分データを複製する必要が生じます。
 
-Unified Sorter は、以前のバージョンの`memory` `file`エンジン オプションと統合されています。変更を手動で構成する必要はありません。
+Unified Sorter は`file`以前のバージョンの`memory`ソート エンジン オプションと統合されています。変更を手動で構成する必要はありません。
 
 制限事項:
 
@@ -390,7 +390,7 @@ TiDB データ移行ツールは、Amazon S3 (およびその他の S3 互換sto
 この機能を使用するには、次のドキュメントを参照してください。
 
 -   [Amazon S3クラウドstorageにデータをエクスポートする](/dumpling-overview.md#export-data-to-amazon-s3-cloud-storage) , [＃8](https://github.com/pingcap/dumpling/issues/8)
--   [TiDB Lightningを使用して Amazon Aurora MySQL から移行する](/migrate-aurora-to-tidb.md) , [＃266](https://github.com/pingcap/tidb-lightning/issues/266)
+-   [TiDB Lightning を使用して Amazon Aurora MySQL から移行する](/migrate-aurora-to-tidb.md) , [＃266](https://github.com/pingcap/tidb-lightning/issues/266)
 
 ### TiDB Cloudのデータインポートパフォーマンスを最適化 {#optimize-the-data-import-performance-of-tidb-cloud}
 
@@ -425,18 +425,18 @@ TiDB v5.0 では、パフォーマンスの問題をより効率的にトラブ�
 
 [ユーザードキュメント](/production-deployment-using-tiup.md)
 
-以前のバージョンの TiDB では、 TiUPを使用して TiDB クラスターを展開する DBA は、環境の初期化が複雑で、チェックサム構成が過剰で、クラスター トポロジ ファイルの編集が難しいことに気付きました。これらの問題はすべて、DBA の展開効率の低下につながります。TiDB v5.0 では、次の項目により、 TiUPを使用した TiDB 展開の DBA の効率が向上しています。
+以前のバージョンの TiDB では、 TiUP を使用して TiDB クラスターを展開する DBA は、環境の初期化が複雑で、チェックサム構成が過剰で、クラスター トポロジ ファイルの編集が難しいことに気付きました。これらの問題はすべて、DBA の展開効率の低下につながります。TiDB v5.0 では、次の項目により、 TiUP を使用した TiDB 展開の DBA の効率が向上しています。
 
 -   TiUP クラスタ は、より包括的なワンクリック環境チェックを実行し、修復の推奨事項を提供する`check topo.yaml`コマンドをサポートしています。
 -   TiUP クラスタ は、環境チェック中に検出された環境の問題を自動的に修復する`check topo.yaml --apply`コマンドをサポートしています。
 -   TiUP クラスタ は、DBA が編集してグローバル ノード パラメータの変更をサポートするためのクラスター トポロジ テンプレート ファイルを取得する`template`コマンドをサポートしています。
 -   TiUP は、リモート Prometheus を構成するために`edit-config`コマンドを使用して`remote_config`パラメータを編集することをサポートしています。
 -   TiUP は、 `edit-config`コマンドを使用してさまざまな AlertManager を構成するために`external_alertmanagers`パラメータを編集することをサポートしています。
--   tiup-clusterの`edit-config`サブコマンドを使用してトポロジファイルを編集するときに、構成項目の値のデータ型を変更できます。
+-   tiup-clusterの`edit-config`サブコマンドを使用してトポロジ ファイルを編集するときに、構成項目の値のデータ型を変更できます。
 
 ### アップグレードの安定性を向上 {#improve-upgrade-stability}
 
-TiUP v1.4.0 より前では、 tiup-clusterを使用して TiDB クラスターをアップグレードすると、クラスターの SQL 応答が長時間にわたってジッタし、PD オンライン ローリング アップグレード中は、クラスターの QPS が 10 秒から 30 秒の間ジッタします。
+TiUP v1.4.0 より前では、 tiup-cluster を使用して TiDB クラスターをアップグレードすると、クラスターの SQL 応答が長時間にわたってジッタし、PD オンライン ローリング アップグレード中は、クラスターの QPS が 10 秒から 30 秒の間ジッタします。
 
 TiUP v1.4.0 ではロジックが調整され、次の最適化が行われます。
 
@@ -455,7 +455,7 @@ v1.4.0 以降、 TiUP は次の項目を最適化します。
 
 ### ブレークポイント機能をサポートする {#support-the-breakpoint-feature}
 
-TiUP v1.4.0 より前では、DBA がtiup-clusterを使用して TiDB クラスターをアップグレードするときに、コマンドの実行が中断されると、すべてのアップグレード操作を最初から再度実行する必要がありました。
+TiUP v1.4.0 より前では、DBA がtiup-cluster を使用して TiDB クラスターをアップグレードするときに、コマンドの実行が中断されると、すべてのアップグレード操作を最初から再度実行する必要がありました。
 
 TiUP v1.4.0 では、アップグレードの中断後にすべての操作が再実行されるのを回避するために、 tiup-cluster `replay`サブコマンドを使用してブレークポイントから失敗した操作を再試行することがサポートされています。
 
@@ -464,7 +464,7 @@ TiUP v1.4.0 では、アップグレードの中断後にすべての操作が�
 TiUP v1.4.0 では、TiDB クラスターの操作と保守の機能がさらに強化されています。
 
 -   より多くの使用シナリオに適応するために、ダウンタイム TiDB および DM クラスターでのアップグレードまたはパッチ操作をサポートします。
--   クラスターのバージョンを取得するために、 tiup-clusterの`display`サブコマンドに`--version`パラメーターを追加します。
+-   クラスターのバージョンを取得するために、 tiup-clusterの`display`サブコマンドに`--version`パラメータを追加します。
 -   スケールアウトするノードに Prometheus のみが含まれている場合、Prometheus ノードの不在によるスケールアウトの失敗を回避するために、監視構成の更新操作は実行されません。
 -   入力されたTiUPコマンドの結果が正しくない場合に、エラー メッセージにユーザー入力を追加して、問題の原因をより迅速に特定できるようにします。
 

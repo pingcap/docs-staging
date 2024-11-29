@@ -23,7 +23,7 @@ summary: 2017 年 6 月 16 日にリリースされた TiDB RC3 は、MySQL の�
     -   `Merge Sort Join`オペレーターをサポート
     -   `Index Lookup Join`オペレーターをサポート
     -   `Optimizer Hint`構文をサポートする
-    -   `Scan` `Aggregation`のメモリ消費`Join`最適化する
+    -   `Scan` `Aggregation`のメモリ消費を最適化`Join`
     -   コストベースオプティマイザー（CBO）フレームワークを最適化する
     -   リファクタリング`Expression`
 -   より完全な権限管理をサポート

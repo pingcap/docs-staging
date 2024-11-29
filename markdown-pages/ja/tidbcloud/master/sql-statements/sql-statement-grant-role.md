@@ -5,7 +5,7 @@ summary: TiDB データベースに対する GRANT <role> の使用法の概要�
 
 # <code>GRANT &#x3C;role></code> {#code-grant-x3c-role-code}
 
-以前に作成したロールを既存のユーザーに割り当てます。ユーザーは、ステートメント`SET ROLE <rolename>`を使用してロールの権限を引き受けるか、 `SET ROLE ALL`を使用して割り当てられているすべてのロールを引き受けることができます。
+以前に作成したロールを既存のユーザーに割り当てます。ユーザーは、ステートメント`SET ROLE <rolename>`使用してロールの権限を引き受けるか、ステートメント`SET ROLE ALL`使用して割り当てられているすべてのロールを引き受けることができます。
 
 ## 概要 {#synopsis}
 
@@ -22,7 +22,7 @@ UsernameList ::=
 
 ## 例 {#examples}
 
-`root`人のユーザーとして TiDB に接続します。
+`root`ユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
@@ -44,7 +44,7 @@ GRANT analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-`jennifer`人のユーザーとして TiDB に接続します。
+`jennifer`ユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
@@ -86,7 +86,7 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-`root`人のユーザーとして TiDB に接続します。
+`root`ユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
@@ -99,7 +99,7 @@ SET DEFAULT ROLE analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.02 sec)
 ```
 
-`jennifer`人のユーザーとして TiDB に接続します。
+`jennifer`ユーザーとして TiDB に接続します。
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
@@ -129,7 +129,7 @@ SHOW TABLES IN test;
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`GRANT <role>`ステートメントは、MySQL 8.0 のロール機能と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`GRANT <role>`ステートメントは、MySQL 8.0 のロール機能と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 

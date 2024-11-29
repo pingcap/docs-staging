@@ -30,7 +30,7 @@ ShowLikeOrWhere ::=
 | 状態       | 「使用中」、「削除済み」、「無効」、「拒否」、「検証待ち」などのステータス                                                                                                   |
 | 作成時間     | 作成時間                                                                                                                                    |
 | 更新時間     | 更新時間                                                                                                                                    |
-| 文字コード    | キャラクターセット                                                                                                                               |
+| 文字セット    | 文字セット                                                                                                                                   |
 | 照合順序     | 並べ替えルール                                                                                                                                 |
 | ソース      | バインディングの作成方法`manual` ( `create [global] binding` SQL ステートメントによって作成)、 `capture` (TiDB によって自動的にキャプチャ)、 `evolve` (TiDB によって自動的に展開) が含まれます。 |
 
@@ -132,5 +132,5 @@ Original_sql: select * from t1 where b = ?
 -   [[グローバル|セッション]バインディングの作成](/sql-statements/sql-statement-create-binding.md)
 -   [[グローバル|セッション]バインディングの削除](/sql-statements/sql-statement-drop-binding.md)
 -   [テーブルを分析](/sql-statements/sql-statement-analyze-table.md)
--   [オプティマイザのヒント](/optimizer-hints.md)
+-   [オプティマイザーのヒント](/optimizer-hints.md)
 -   [SQL プラン管理](/sql-plan-management.md)

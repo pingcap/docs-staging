@@ -1,11 +1,11 @@
 ---
 title: tiup cluster reload
-summary: tiup cluster reload コマンドは、変更されたクラスター構成を適用し、サービスを再起動するために使用されます。`--force` で強制実行、`--transfer-timeout` で転送タイムアウトを設定、`--ignore-config-check` で構成チェックを無視、`-N、--node` でノードを指定、`-R、--role` でロールを指定、`--skip-restart` で再起動をスキップすることができます。出力はtiup-clusterの実行ログです。
+summary: tiup cluster reload` コマンドは、変更されたクラスター構成を適用し、サービスを再起動するために使用されます。`--force` で強制実行、`--transfer-timeout` で転送タイムアウトを設定、`--ignore-config-check` で構成チェックを無視、`-N、--node` でノードを指定、`-R、--role` でロールを指定、`--skip-restart` で再起動をスキップすることができます。出力はtiup-clusterの実行ログです。
 ---
 
 # tiup cluster reload {#tiup-cluster-reload}
 
-[クラスタ構成の変更](/tiup/tiup-component-cluster-edit-config.md)の後、設定を有効にするには、 `tiup cluster reload`コマンドを使用してクラスターをリロードする必要があります。このコマンドは、サービスが実行されているリモート マシンに制御マシンの設定を公開し、アップグレード プロセスに従ってサービスを順番に再起動します。クラスターは、再起動プロセス中も引き続き使用できます。
+[クラスタ構成の変更](/tiup/tiup-component-cluster-edit-config.md)の後、設定を有効にするには、 `tiup cluster reload`コマンドを使用してクラスターをリロードする必要があります。このコマンドは、サービスが実行されているリモート マシンに制御マシンの設定を公開し、アップグレード プロセスに従ってサービスを順番に再起動します。再起動プロセス中もクラスターは引き続き使用できます。
 
 ## 構文 {#syntax}
 
@@ -35,13 +35,13 @@ tiup cluster reload <cluster-name> [flags]
 
 ### --設定チェックを無視 {#ignore-config-check}
 
--   コンポーネントのバイナリ ファイルがデプロイされた後、 `<binary> --config-check <config-file>`使用して TiDB、TiKV、および PD コンポーネントの構成がチェックされます。3 `<binary>`デプロイされたバイナリ ファイルのパスです。5 `<config-file>` 、ユーザー構成に基づいて生成された構成ファイルです。このチェックをスキップする場合は、このオプションを使用できます。
+-   コンポーネントのバイナリ ファイルがデプロイされた後、 `<binary> --config-check <config-file>`使用して TiDB、TiKV、および PD コンポーネントの構成がチェックされます`<binary>`はデプロイされたバイナリ ファイルのパスです`<config-file>`は、ユーザー構成に基づいて生成された構成ファイルです。このチェックをスキップする場合は、このオプションを使用できます。
 -   データ型: `BOOLEAN`
 -   デフォルト: false
 
 ### -N、--ノード {#n-node}
 
--   再起動するノードを指定します。指定しない場合は、すべてのノードが再起動されます。 [`tiup cluster display`](/tiup/tiup-component-cluster-display.md)オプションの値は、ノード ID のコンマ区切りリストです。1 コマンドによって返されるクラスター ステータス テーブルの最初の列からノード ID を取得できます。
+-   再起動するノードを指定します。指定しない場合は、すべてのノードが再起動されます。このオプションの値は、ノード ID のコンマ区切りリストです。1 [`tiup cluster display`](/tiup/tiup-component-cluster-display.md)によって返されるクラスター ステータス テーブルの最初の列からノード ID を取得できます。
 -   データ型: `STRINGS`
 -   このオプションがコマンドで指定されていない場合は、デフォルトですべてのノードが選択されます。
 
@@ -78,6 +78,26 @@ tiup cluster reload <cluster-name> [flags]
 -   ヘルプ情報を出力します。
 -   データ型: `BOOLEAN`
 -   デフォルト: false
+
+### --pre-restart-script {#pre-restart-script}
+
+> **警告：**
+>
+> このオプションは実験的であり、本番での展開には推奨されません。
+
+-   リロード前にスクリプトを実行します。
+-   データ型: `STRINGS`
+-   このオプションは、再ロードするノードで実行されるスクリプトのパスを指定します。 `--skip-restart`が`true`に設定されている場合は有効になりません。
+
+### --post-再起動スクリプト {#post-restart-script}
+
+> **警告：**
+>
+> このオプションは実験的であり、本番での展開には推奨されません。
+
+-   リロード後にスクリプトを実行します。
+-   データ型: `STRINGS`
+-   このオプションは、ノードのリロード後に実行されるスクリプトのパスを指定します。 `--skip-restart`が`true`に設定されている場合は有効になりません。
 
 ## 出力 {#output}
 

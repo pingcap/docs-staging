@@ -1,6 +1,6 @@
 ---
 title: TiDB Lightning Command Line Flags
-summary: コマンドラインフラグを使用してTiDB Lightningを構成する方法を学習します。
+summary: コマンドラインフラグを使用してTiDB Lightning を構成する方法を学習します。
 ---
 
 # TiDB Lightningコマンドラインフラグ {#tidb-lightning-command-line-flags}
@@ -11,14 +11,14 @@ TiDB Lightning は、構成ファイルまたはコマンド ラインを使用�
 
 ### <code>tidb-lightning</code> {#code-tidb-lightning-code}
 
-`tidb-lightning`を使用して次のパラメータを設定できます。
+`tidb-lightning`使用して次のパラメータを設定できます。
 
 | パラメータ                                                 | 説明                                                                                                                                                                                | 対応する構成項目                       |
 | :---------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------- |
 | `--config <file>`                                     | ファイルからグローバル構成を読み取ります。このパラメータが指定されていない場合、 TiDB Lightning はデフォルトの構成を使用します。                                                                                                          |                                |
 | `-V`                                                  | プログラムのバージョンを印刷します。                                                                                                                                                                |                                |
 | `-d <directory>`                                      | ローカル ディレクトリまたはデータ ファイルの[外部storageURI](/external-storage-uri.md) 。                                                                                                                 | `mydumper.data-source-dir`     |
-| `-L <level>`                                          | ログ レベル: `debug` `warn`または`error`デフォルト`info` `fatal` `info`                                                                                                                        | `lightning.level`              |
+| `-L <level>`                                          | `fatal` `info` `debug` `warn` `info` `error`                                                                                                                                      | `lightning.level`              |
 | `-f <rule>`                                           | [テーブルフィルタルール](/table-filter.md) 。複数回指定できます。                                                                                                                                       | `mydumper.filter`              |
 | `--backend <backend>`                                 | インポート モードを選択します。1 `local` [物理インポートモード](/tidb-lightning/tidb-lightning-physical-import-mode.md) 、 `tidb` [論理インポートモード](/tidb-lightning/tidb-lightning-logical-import-mode.md)を表します。 | `tikv-importer.backend`        |
 | `--log-file <file>`                                   | ログ ファイルのパス。デフォルトでは`/tmp/lightning.log.{timestamp}`です。 &#39;-&#39; に設定すると、ログ ファイルは stdout に出力されます。                                                                                 | `lightning.log-file`           |
@@ -33,7 +33,7 @@ TiDB Lightning は、構成ファイルまたはコマンド ラインを使用�
 | `--analyze <level>`                                   | インポート後にテーブルを分析します。使用可能な値は、「必須」、「オプション」(デフォルト値)、および「オフ」です。                                                                                                                         | `post-restore.analyze`         |
 | `--checksum <level>`                                  | インポート後にチェックサムを比較します。使用可能な値は、「必須」(デフォルト値)、「オプション」、および「オフ」です。                                                                                                                       | `post-restore.checksum`        |
 | `--check-requirements <bool>`                         | タスクを開始する前にクラスターのバージョンの互換性を確認し、実行中に TiKV に 10% 以上の空き領域が残っているかどうかを確認します。(デフォルト = true)                                                                                              | `lightning.check-requirements` |
-| `--ca <file>`                                         | TLS 接続の CA 証明書パス                                                                                                                                                                  | `security.ca-path`             |
+| `--ca <file>`                                         | TLS接続のCA証明書パス                                                                                                                                                                     | `security.ca-path`             |
 | `--cert <file>`                                       | TLS接続の証明書パス                                                                                                                                                                       | `security.cert-path`           |
 | `--key <file>`                                        | TLS接続の秘密鍵パス                                                                                                                                                                       | `security.key-path`            |
 | `--server-mode`                                       | TiDB Lightningをサーバーモードで起動する                                                                                                                                                       | `lightning.server-mode`        |
@@ -42,7 +42,7 @@ TiDB Lightning は、構成ファイルまたはコマンド ラインを使用�
 
 ## <code>tidb-lightning-ctl</code> {#code-tidb-lightning-ctl-code}
 
-`tidb-lightning`のすべてのパラメータは`tidb-lightning-ctl`に適用されます。さらに、 `tidb-lightning-ctl`を使用して次のパラメータを設定することもできます。
+`tidb-lightning`のすべてのパラメータは`tidb-lightning-ctl`に適用されます。さらに、 `tidb-lightning-ctl`使用して次のパラメータを設定することもできます。
 
 | パラメータ                                     | 説明                                                  |
 | :---------------------------------------- | :-------------------------------------------------- |
@@ -56,4 +56,4 @@ TiDB Lightning は、構成ファイルまたはコマンド ラインを使用�
 | `--checkpoint-error-ignore <table_name>`  | 指定されたテーブルに関連するチェックポイントに記録されたエラーを無視します。              |
 | `--checkpoint-remove <table_name>`        | テーブルのチェックポイントを無条件に削除します。                            |
 
-`<table_name>` 、形式`` `db`.`tbl` `` (バッククォートを含む) の修飾テーブル名、またはキーワード`all`いずれかである必要があります。
+`<table_name>`は、形式`` `db`.`tbl` `` (バッククォートを含む) の修飾テーブル名、またはキーワード`all`のいずれかである必要があります。

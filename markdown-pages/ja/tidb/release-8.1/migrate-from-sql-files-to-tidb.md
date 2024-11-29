@@ -5,22 +5,22 @@ summary: SQL ファイルから TiDB にデータを移行する方法を学び�
 
 # SQL ファイルから TiDB へのデータの移行 {#migrate-data-from-sql-files-to-tidb}
 
-このドキュメントでは、TiDB Lightningを使用して MySQL SQL ファイルから TiDB にデータを移行する方法について説明します。MySQL SQL ファイルの生成方法については、 [Dumplingを使用して SQL ファイルにエクスポートする](/dumpling-overview.md#export-to-sql-files)を参照してください。
+このドキュメントでは、 TiDB Lightning を使用して MySQL SQL ファイルから TiDB にデータを移行する方法について説明します。MySQL SQL ファイルの生成方法については、 [Dumplingを使用して SQL ファイルにエクスポートする](/dumpling-overview.md#export-to-sql-files)を参照してください。
 
 ## 前提条件 {#prerequisites}
 
--   [TiUPを使用してTiDB Lightningをインストールする](/migration-tools.md)
+-   [TiUP を使用してTiDB Lightning をインストールする](/migration-tools.md)
 -   [TiDB Lightningのターゲットデータベースに必要な権限を付与します](/tidb-lightning/tidb-lightning-faq.md#what-are-the-privilege-requirements-for-the-target-database)
 
 ## ステップ1. SQLファイルを準備する {#step-1-prepare-sql-files}
 
-すべての SQL ファイルを`/data/my_datasource/`や`s3://my-bucket/sql-backup`などの同じディレクトリに配置します。TiDB TiDB Lightning は、このディレクトリとそのサブディレクトリ内の`.sql`つのファイルすべてを再帰的に検索します。
+すべての SQL ファイルを`/data/my_datasource/`や`s3://my-bucket/sql-backup`などの同じディレクトリに配置します。TiDB TiDB Lightning は、このディレクトリとそのサブディレクトリ内の`.sql`ファイルすべてを再帰的に検索します。
 
 ## ステップ2. ターゲットテーブルスキーマを定義する {#step-2-define-the-target-table-schema}
 
 TiDB にデータをインポートするには、ターゲット データベースのテーブル スキーマを作成する必要があります。
 
-Dumplingを使用してデータをエクスポートすると、テーブル スキーマ ファイルが自動的にエクスポートされます。他の方法でエクスポートされたデータの場合は、次のいずれかの方法でテーブル スキーマを作成できます。
+Dumpling を使用してデータをエクスポートすると、テーブル スキーマ ファイルが自動的にエクスポートされます。他の方法でエクスポートされたデータの場合は、次のいずれかの方法でテーブル スキーマを作成できます。
 
 -   **方法 1** : TiDB Lightningを使用してターゲット テーブル スキーマを作成します。
 
@@ -89,4 +89,4 @@ TiDB Lightning は、 `~/.aws/credentials`からの資格情報ファイルの�
 
 > **注記：**
 >
-> インポートが成功したかどうかに関係なく、最後の行には`tidb lightning exit`が表示されます。これは、タスクが完了したことではなく、 TiDB Lightningが正常に終了したことを意味します。インポート プロセス中に問題が発生した場合は、トラブルシューティングについては[TiDB LightningFAQ](/tidb-lightning/tidb-lightning-faq.md)を参照してください。
+> インポートが成功したかどうかに関係なく、最後の行に`tidb lightning exit`表示されます。これは、タスクが完了したことではなく、 TiDB Lightningが正常に終了したことを意味します。インポート プロセス中に問題が発生した場合は、トラブルシューティングについては[TiDB LightningFAQ](/tidb-lightning/tidb-lightning-faq.md)を参照してください。

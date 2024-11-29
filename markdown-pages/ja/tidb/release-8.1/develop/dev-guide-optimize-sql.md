@@ -238,7 +238,7 @@ EXPLAIN SELECT * FROM books WHERE id = 896;
 
 ## 適切な結合タイプを使用する {#use-the-right-join-type}
 
-[JOIN実行プラン](/explain-joins.md)参照。
+[JOIN 実行プラン](/explain-joins.md)参照。
 
 ### 参照 {#see-also}
 

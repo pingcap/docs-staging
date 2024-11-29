@@ -7,7 +7,7 @@ summary: TiDB ダッシュボードの「低速クエリ」ページでは、ク
 
 TiDB ダッシュボードの「スロー クエリ」ページでは、クラスター内のすべてのスロー クエリを検索して表示できます。
 
-デフォルトでは、実行時間が 300 ミリ秒を超える SQL クエリは低速クエリと見なされます。これらのクエリは[スロークエリログ](/identify-slow-queries.md)に記録され、TiDB ダッシュボードで検索できます。低速クエリのしきい値は、 [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold)セッション変数または[`instance.tidb_slow_log_threshold`](/tidb-configuration-file.md#tidb_slow_log_threshold) TiDB パラメータで調整できます。
+デフォルトでは、実行時間が 300 ミリ秒を超える SQL クエリは低速クエリと見なされます。これらのクエリは[スロークエリログ](/identify-slow-queries.md)に記録され、TiDB ダッシュボードで検索できます。低速クエリのしきい値は、 [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold)セッション変数または[`instance.tidb_slow_log_threshold`](/tidb-configuration-file.md#tidb_slow_log_threshold) TiDB パラメータを使用して調整できます。
 
 > **注記：**
 >
@@ -19,7 +19,7 @@ TiDB ダッシュボードの「スロー クエリ」ページでは、クラ�
 
 -   TiDB ダッシュボードにログインしたら、左側のナビゲーション メニューで**「Slow Queries」**をクリックします。
 
--   ブラウザで[http://127.0.0.1:2379/ダッシュボード/#/slow_query](http://127.0.0.1:2379/dashboard/#/slow_query)アクセスします。3 `127.0.0.1:2379`実際の PD アドレスとポートに置き換えます。
+-   ブラウザで[http://127.0.0.1:2379/dashboard/#/slow_query](http://127.0.0.1:2379/dashboard/#/slow_query)アクセスします。3 `127.0.0.1:2379`実際の PD アドレスとポートに置き換えます。
 
 スロー クエリ ページに表示されるすべてのデータは、TiDB スロー クエリ システム テーブルとスロー クエリ ログから取得されます。詳細については、 [スロークエリログ](/identify-slow-queries.md)参照してください。
 
@@ -31,7 +31,7 @@ TiDB ダッシュボードの「スロー クエリ」ページでは、クラ�
 
 ### より多くの列を表示する {#display-more-columns}
 
-ページの**「列」**をクリックすると、さらに列を表示できます。列名の右側にある**(i)**アイコンにマウスを移動すると、その列の説明が表示されます。
+ページの**「列」**をクリックすると、さらに列を表示できます。マウスを列名の右側にある**(i)**アイコンに移動すると、その列の説明が表示されます。
 
 ![Show more columns](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-list2-v620.png)
 
@@ -63,7 +63,7 @@ TiDB ダッシュボードの「スロー クエリ」ページでは、クラ�
 >
 > `Query`列に記録されるクエリの最大長は、 [`tidb_stmt_summary_max_sql_length`](/system-variables.md#tidb_stmt_summary_max_sql_length-new-in-v40)システム変数によって制限されます。
 
-アイテムの詳細情報を表示するには、「**展開」**ボタンをクリックします。詳細情報をクリップボードにコピーするには、「**コピー」**ボタンをクリックします。
+**展開**ボタンをクリックすると、アイテムの詳細情報が表示されます。**コピー**ボタンをクリックすると、詳細情報がクリップボードにコピーされます。
 
 ### 実行計画 {#execution-plans}
 
@@ -71,7 +71,7 @@ TiDB ダッシュボードでは、実行プランをテーブル、テキスト
 
 #### 表形式の実行計画 {#execution-plan-in-table-format}
 
-テーブル形式では、実行プランに関する詳細情報が提供され、異常なオペレーター メトリックをすばやく特定し、さまざまなオペレーターのステータスを比較するのに役立ちます。次の図は、テーブル形式の実行プランを示しています。
+テーブル形式では、実行プランに関する詳細情報が提供されるため、異常なオペレーター メトリックをすばやく特定し、さまざまなオペレーターのステータスを比較するのに役立ちます。次の図は、テーブル形式の実行プランを示しています。
 
 ![Execution plan in table format](https://download.pingcap.com/images/docs/dashboard/dashboard-table-plan.png)
 
@@ -86,11 +86,11 @@ TiDB ダッシュボードでは、実行プランをテーブル、テキスト
 
 #### グラフ形式の実行計画 {#execution-plan-in-graph-format}
 
-グラフ形式は、複雑な SQL ステートメントの実行プラン ツリーを表示し、各演算子とその対応する内容を詳細に理解するのに適しています。次の図は、グラフ形式の実行プランを示しています。
+グラフ形式は、複雑な SQL 文の実行プラン ツリーを表示し、各演算子とその対応する内容を詳細に理解するのに適しています。次の図は、グラフ形式の実行プランを示しています。
 
 ![Execution plan in graph format](https://download.pingcap.com/images/docs/dashboard/dashboard-visual-plan-2.png)
 
--   グラフは左から右、上から下への実行を示します。
+-   グラフは、左から右、上から下への実行を示します。
 -   上位ノードは親演算子であり、下位ノードは子演算子です。
 -   タイトル バーの色は、演算子が実行されるコンポーネントを示します。黄色は TiDB、青は TiKV、ピンクはTiFlashを表します。
 -   タイトルバーにはオペレーター名が表示され、その下に表示されるテキストはオペレーターの基本情報です。
@@ -123,7 +123,7 @@ SQL 実行の基本情報には、テーブル名、インデックス名、実�
 
 #### コプロセッサータブ {#coprocessor-tab}
 
-**「コプロセッサー」**タブをクリックすると、コプロセッサーの読み取りに関連する情報が表示されます。
+**[コプロセッサー]**タブをクリックすると、コプロセッサーの読み取りに関連する情報が表示されます。
 
 ![Coprocessor read](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-detail-plans-cop-read.png)
 

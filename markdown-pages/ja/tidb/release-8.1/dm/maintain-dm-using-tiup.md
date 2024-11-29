@@ -269,7 +269,7 @@ tiup dm import --dir=/path/to/dm-ansible --cluster-version ${version}
 
 ## 操作ログをビュー {#view-the-operation-log}
 
-操作ログを表示するには、 `audit`コマンドを使用`audit`ます。3 コマンドの使用方法は次のとおりです。
+操作ログを表示するには、 `audit`コマンドを使用します。3 コマンドの使用方法は次の`audit`です。
 
 ```bash
 Usage:

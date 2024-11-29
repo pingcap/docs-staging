@@ -1,6 +1,6 @@
 ---
 title: tiup uninstall
-summary: tiup uninstallコマンドは、インストールされたコンポーネントをアンインストールするために使用されます。このコマンドには、コンポーネントのすべてのバージョンをアンインストールするオプションと、 TiUP自体をアンインストールするオプションがあります。コマンドがエラーなしで終了すると、「コンポーネントが正常にアンインストールされました!」と出力されます。バージョンが指定されていない場合、または--all が指定されている場合は、すべてのバージョンを削除するために「tiup uninstall tidbx --all」を使用するようにというエラーが報告されます。
+summary: tiup uninstallコマンドは、インストールされたコンポーネントをアンインストールするために使用されます。このコマンドには、コンポーネントのすべてのバージョンをアンインストールするオプションと、 TiUP自体をアンインストールするオプションがあります。コマンドがエラーなしで終了すると、「コンポーネントが正常にアンインストールされました!」と出力されます。バージョンが指定されていない場合、または--allが指定されている場合は、すべてのバージョンを削除するために「tiup uninstall tidbx --all」を使用するようにエラーが報告されます。
 ---
 
 # tiup uninstall {#tiup-uninstall}
@@ -33,7 +33,7 @@ tiup uninstall <component1>:<version> [component2...N] [flags]
 
 ## 出力 {#outputs}
 
--   コマンドがエラーなしで終了すると、 `Uninstalled component "%s" successfully!`出力されます。
+-   コマンドがエラーなしで終了した場合は`Uninstalled component "%s" successfully!`が出力されます。
 -   `<version>`も`--all`指定されていない場合は、 `Use "tiup uninstall tidbx --all" if you want to remove all versions.`エラーが報告されます。
 
 [&lt;&lt; 前のページに戻る - TiUPリファレンスコマンドリスト](/tiup/tiup-reference.md#command-list)

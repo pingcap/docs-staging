@@ -58,7 +58,7 @@ TiDB は、MySQL 8.0 で利用可能な[日付と時刻関数](https://dev.mysql
 | [`SUBDATE()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_subdate)                                           | 3つの引数で呼び出された場合のDATE_SUB()の同義語                      |
 | [`SUBTIME()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_subtime)                                           | 回数を引く                                              |
 | [`SYSDATE()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_sysdate)                                           | 関数が実行される時刻を返す                                      |
-| [`TIME()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_time)                                                 | 渡された式の時間部分を抽出します                                   |
+| [`TIME()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_time)                                                 | 渡された式の時間部分を抽出する                                    |
 | [`TIME_FORMAT()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_time-format)                                   | 時間としてフォーマット                                        |
 | [`TIME_TO_SEC()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_time-to-sec)                                   | 引数を秒数に変換して返します                                     |
 | [`TIMEDIFF()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_timediff)                                         | 時間を減算する                                            |
@@ -83,18 +83,18 @@ TiDB は、MySQL 8.0 で利用可能な[日付と時刻関数](https://dev.mysql
 
 関数`STR_TO_DATE()`は TiDB でサポートされていますが、すべての日付と時刻の値を解析することはできません。また、次の日付と時刻の書式設定オプションは**実装されていません**。
 
-| フォーマット          | 説明                                               |
-| --------------- | ------------------------------------------------ |
-| 「%a」            | 曜日の略称（日曜～土曜）                                     |
-| 「%D」            | 英語の接尾辞付きの月日（0日、1日、2日、3日）                         |
-| 「%U」            | 週（00..53）、日曜日が週の最初の日。WEEK() モード 0                |
-| 「%u」            | 週 (00..53)、月曜日が週の最初の日。WEEK() モード 1               |
-| 「%V」            | 週 (01..53)、日曜日が週の最初の日。WEEK() モード 2。%X とともに使用される。 |
-| 「%v」            | 週 (01..53)、月曜日が週の最初の日。WEEK() モード 3。%x とともに使用     |
-| 「%W」            | 曜日名（日曜日..土曜日）                                    |
-| &quot;%w&quot;  | 曜日 (0=日曜日..6=土曜日)                                |
-| &quot;％バツ&quot; | 日曜日を週の最初の日とする週の年、数字、4 桁。                         |
-| &quot;％バツ&quot; | 週の年。月曜日が週の最初の日となります。数字 4 桁。                      |
+| 形式             | 説明                                               |
+| -------------- | ------------------------------------------------ |
+| 「%a」           | 曜日の略称（日曜～土曜）                                     |
+| 「%D」           | 英語の接尾辞付きの月日（0日、1日、2日、3日）                         |
+| 「%U」           | 週（00..53）、日曜日が週の最初の日。WEEK() モード 0                |
+| 「%u」           | 週 (00..53)、月曜日が週の最初の日。WEEK() モード 1               |
+| 「%V」           | 週 (01..53)、日曜日が週の最初の日。WEEK() モード 2。%X とともに使用される。 |
+| 「%v」           | 週 (01..53)、月曜日が週の最初の日。WEEK() モード 3。%x とともに使用     |
+| 「%W」           | 曜日名（日曜日..土曜日）                                    |
+| &quot;%w&quot; | 曜日 (0=日曜日..6=土曜日)                                |
+| 「%X」           | 日曜日を週の最初の日とする週の年、数字、4 桁。                         |
+| &quot;%x&quot; | 週の年。月曜日を週の最初の日とする、数字 4 桁。                        |
 
 詳細は[問題 #30082](https://github.com/pingcap/tidb/issues/30082)参照してください。
 

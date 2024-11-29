@@ -5,26 +5,26 @@ summary: TiDB データベースの RESTORE の使用法の概要。
 
 # 復元する {#restore}
 
-このステートメントは、 [`BACKUP`ステートメント](/sql-statements/sql-statement-backup.md)によって以前に作成されたバックアップ アーカイブからの分散復元を実行します。
+このステートメントは、 [`BACKUP`ステートメント](/sql-statements/sql-statement-backup.md)によって以前に作成されたバックアップ アーカイブから分散復元を実行します。
 
 > **警告：**
 >
-> -   この機能は実験的ものです。本番環境での使用は推奨されません。この機能は予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)報告できます。
-> -   この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> -   この機能は実験的です。本番環境での使用は推奨されません。この機能は予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告できます。
+> -   この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
-`RESTORE`ステートメントは[BRツール](https://docs.pingcap.com/tidb/stable/backup-and-restore-overview)と同じエンジンを使用しますが、復元プロセスは別のBRツールではなく TiDB 自体によって実行されます。BRのすべての利点と注意事項もここで適用されます。特に、 **`RESTORE`現在ACIDに準拠していません**。7 `RESTORE`実行する前に、次の要件が満たされていることを確認してください。
+`RESTORE`ステートメントは[BRツール](https://docs.pingcap.com/tidb/stable/backup-and-restore-overview)と同じエンジンを使用しますが、復元プロセスは別のBRツールではなく TiDB 自体によって実行されます。BR のすべての利点と注意事項もここで適用されます。特に、RESTORE は現在BR **`RESTORE`ACIDしていません**`RESTORE`実行する前に、次の要件が満たされていることを確認してください。
 
 -   クラスターは「オフライン」であり、現在の TiDB セッションは復元されるすべてのテーブルにアクセスするための唯一のアクティブな SQL 接続です。
--   完全な復元を実行する場合、復元するテーブルがすでに存在してはいけません。既存のデータが上書きされ、データとインデックスの間に不整合が生じる可能性があるためです。
--   増分復元が実行されている場合、テーブルはバックアップが作成された時点の`LAST_BACKUP`タイムスタンプとまったく同じ状態になっている必要があります。
+-   完全な復元を実行する場合、既存のデータが上書きされ、データとインデックスの間に不整合が生じる可能性があるため、復元するテーブルがすでに存在していてはいけません。
+-   増分復元が実行されている場合、テーブルはバックアップが作成された時点の`LAST_BACKUP`番目のタイムスタンプとまったく同じ状態になっている必要があります。
 
-`RESTORE`を実行するには、 `RESTORE_ADMIN`または`SUPER`権限が必要です。さらに、復元を実行する TiDB ノードとクラスター内のすべての TiKV ノードの両方に、宛先からの読み取り権限が必要です。
+`RESTORE`実行するには、 `RESTORE_ADMIN`または`SUPER`権限が必要です。さらに、復元を実行する TiDB ノードとクラスター内のすべての TiKV ノードの両方に、宛先からの読み取り権限が必要です。
 
 `RESTORE`ステートメントはブロックしており、復元タスク全体が完了、失敗、またはキャンセルされた後にのみ終了します。 `RESTORE`を実行するには、長時間持続する接続を準備する必要があります。 タスクは[`KILL TIDB QUERY`](/sql-statements/sql-statement-kill.md)ステートメントを使用してキャンセルできます。
 
-一度に実行できるタスク`BACKUP`と`RESTORE`は 1 つだけです。同じ TiDBサーバー上でタスク`BACKUP`または`RESTORE`がすでに実行されている場合、新しいタスク`RESTORE`の実行は、以前のタスクがすべて完了するまで待機します。
+一度に実行できるタスク`BACKUP`と`RESTORE` 1 つだけです。同じ TiDBサーバー上でタスク`BACKUP`または`RESTORE`すでに実行されている場合、新しいタスク`RESTORE`の実行は、以前のタスクがすべて完了するまで待機します。
 
-`RESTORE` 「tikv」storageエンジンでのみ使用できます。「unistore」エンジンで`RESTORE`を使用すると失敗します。
+`RESTORE` 「tikv」storageエンジンでのみ使用できます。「unistore」エンジンで`RESTORE`使用すると失敗します。
 
 ## 概要 {#synopsis}
 
@@ -67,17 +67,17 @@ RESTORE DATABASE * FROM 'local:///mnt/backup/2020/04/';
 
 上記の結果の最初の行は次のように説明されます。
 
-| カラム              | 説明                                            |
-| :--------------- | :-------------------------------------------- |
-| `Destination`    | 読み取る先のURL                                     |
-| `Size`           | バックアップアーカイブの合計サイズ（バイト単位）                      |
-| `BackupTS`       | （使用されていない）                                    |
-| `Queue Time`     | `RESTORE`タスクがキューに入れられたときのタイムスタンプ (現在のタイムゾーン)。 |
-| `Execution Time` | `RESTORE`タスクの実行が開始されたときのタイムスタンプ (現在のタイム ゾーン)。 |
+| カラム              | 説明                                               |
+| :--------------- | :----------------------------------------------- |
+| `Destination`    | 読み取る先のURL                                        |
+| `Size`           | バックアップアーカイブの合計サイズ（バイト単位）                         |
+| `BackupTS`       | (未使用)                                            |
+| `Queue Time`     | `RESTORE`番目のタスクがキューに入れられたときのタイムスタンプ (現在のタイムゾーン)。 |
+| `Execution Time` | `RESTORE`のタスクの実行が開始されたときのタイムスタンプ (現在のタイム ゾーン)。   |
 
 ### 部分的な復元 {#partial-restore}
 
-復元するデータベースまたはテーブルを指定できます。バックアップ アーカイブにデータベースまたはテーブルが欠落している場合、それら`RESTORE`無視され、何もせずに完了します。
+復元するデータベースまたはテーブルを指定できます。バックアップ アーカイブにデータベースまたはテーブルが欠落している場合、それらは無視され、 `RESTORE`もせずに完了します。
 
 ```sql
 RESTORE DATABASE `test` FROM 'local:///mnt/backup/2020/04/';
@@ -118,7 +118,7 @@ RESTORE DATABASE * FROM 's3://example-bucket-2020/backup-05/'
 
 `RATE_LIMIT`使用すると、TiKV ノードあたりの平均ダウンロード速度が制限され、ネットワーク帯域幅が削減されます。
 
-復元が完了する前に、 `RESTORE`​​バックアップ ファイルのデータに対してチェックサムを実行し、正確性を検証します。この検証が不要であると確信できる場合は、 `CHECKSUM`パラメータを`FALSE`に設定してチェックを無効にすることができます。
+復元が完了する前に、 `RESTORE`バックアップ ファイルのデータに対してチェックサムを実行し、正確性を検証します。この検証が不要であると確信できる場合は、 `CHECKSUM`パラメータを`FALSE`に設定してチェックを無効にすることができます。
 
 ```sql
 RESTORE DATABASE * FROM 's3://example-bucket-2020/backup-06/'

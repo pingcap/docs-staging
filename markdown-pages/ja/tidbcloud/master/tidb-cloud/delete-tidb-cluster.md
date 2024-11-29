@@ -5,7 +5,7 @@ summary: TiDB クラスターを削除する方法を学習します。
 
 # TiDBクラスタを削除する {#delete-a-tidb-cluster}
 
-このドキュメントでは、TiDB Cloud上の TiDB クラスターを削除する方法について説明します。
+このドキュメントでは、 TiDB Cloud上の TiDB クラスターを削除する方法について説明します。
 
 次の手順を実行することで、いつでもクラスターを削除できます。
 
@@ -17,21 +17,29 @@ summary: TiDB クラスターを削除する方法を学習します。
     >
     > または、ターゲット クラスターの名前をクリックして概要ページに移動し、右上隅の**[...]**をクリックすることもできます。
 
-3.  ドロップダウンメニューで**「削除」を**クリックします。
+3.  ドロップダウンメニューで**「削除」**をクリックします。
 
-4.  クラスター削除ウィンドウで、 `<organization name>/<project name>/<cluster name>`入力します。
+4.  クラスター削除ウィンドウで、削除を確認します。
 
-    将来クラスターを復元する場合は、クラスターのバックアップがあることを確認してください。バックアップがないと、復元できなくなります。TiDB 専用クラスターのバックアップ方法の詳細については、 [TiDB専用データのバックアップと復元](/tidb-cloud/backup-and-restore.md)参照してください。
+    -   手動または自動バックアップが少なくとも 1 つある場合は、バックアップの数とバックアップの課金ポリシーを確認できます。 **[続行]**をクリックして`<organization name>/<project name>/<cluster name>`と入力します。
+    -   バックアップがない場合は、 `<organization name>/<project name>/<cluster name>`と入力してください。
+
+    将来クラスターを復元する場合は、クラスターのバックアップがあることを確認してください。バックアップがないと、復元できなくなります。TiDB TiDB Cloud Dedicated クラスターのバックアップ方法の詳細については、 [TiDB Cloud専用データのバックアップと復元](/tidb-cloud/backup-and-restore.md)参照してください。
 
     > **注記：**
     >
-    > [TiDB サーバーレス クラスター](/tidb-cloud/select-cluster-tier.md#tidb-serverless) [バックアップからのインプレース復元](/tidb-cloud/backup-and-restore-serverless.md#restore)のみをサポートし、削除後のデータの復元はサポートしていません。TiDB Serverless クラスターを削除し、将来そのデータを復元する場合は、 [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)を使用してデータをバックアップとしてエクスポートできます。
+    > [TiDB Cloudサーバーレス クラスター](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) [バックアップからのインプレース復元](/tidb-cloud/backup-and-restore-serverless.md#restore)のみをサポートし、削除後のデータの復元はサポートしていません。TiDB TiDB Cloud Serverless クラスターを削除し、将来そのデータを復元する場合は、 [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)使用してデータをバックアップとしてエクスポートできます。
 
-5.  **[結果を理解しました。このクラスターを削除します]**をクリックします。
+5.  **「理解しました、削除します」**をクリックします。
 
-バックアップされた TiDB 専用クラスターが削除されると、クラスターの既存のバックアップ ファイルはごみ箱に移動されます。
+    バックアップされたTiDB Cloud Dedicated クラスターが削除されると、クラスターの既存のバックアップ ファイルはごみ箱に移動されます。
 
--   自動バックアップからのバックアップ ファイルの場合、ごみ箱には 7 日間保存されます。
--   手動バックアップからのバックアップ ファイルには有効期限はありません。
+    -   自動バックアップは、保持期間が終了すると期限切れになり、自動的に削除されます。変更しない場合、デフォルトの保持期間は 7 日間です。
 
-ごみ箱から TiDB 専用クラスターを復元する場合は、 [削除されたクラスターを復元する](/tidb-cloud/backup-and-restore.md#restore-a-deleted-cluster)参照してください。
+    -   手動バックアップは、手動で削除されるまでごみ箱に保存されます。
+
+    > **注記：**
+    >
+    > バックアップは削除されるまで料金が発生し続けることにご注意ください。
+
+    TiDB Cloud Dedicated クラスターをごみ箱から復元する場合は、 [削除されたクラスターを復元する](/tidb-cloud/backup-and-restore.md#restore-a-deleted-cluster)参照してください。

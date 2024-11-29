@@ -1,6 +1,6 @@
 ---
 title: Read Historical Data Using the `tidb_external_ts` Variable
-summary: tidb_external_ts 変数を使用して履歴データを読み取る方法を学びます。
+summary: tidb_external_ts` 変数を使用して履歴データを読み取る方法を学びます。
 ---
 
 # <code>tidb_external_ts</code>変数を使用して履歴データを読み取る {#read-historical-data-using-the-code-tidb-external-ts-code-variable}
@@ -13,11 +13,11 @@ summary: tidb_external_ts 変数を使用して履歴データを読み取る方
 
 ## 機能の説明 {#feature-description}
 
-システム変数[`tidb_external_ts`](/system-variables.md#tidb_external_ts-new-in-v640) `tidb_enable_external_ts_read`が有効な場合に読み取る履歴データのタイムスタンプを指定します。
+システム変数[`tidb_external_ts`](/system-variables.md#tidb_external_ts-new-in-v640)は、 `tidb_enable_external_ts_read`が有効な場合に読み取る履歴データのタイムスタンプを指定します。
 
-システム変数[`tidb_enable_external_ts_read`](/system-variables.md#tidb_enable_external_ts_read-new-in-v640)は、履歴データを現在のセッションで読み取るか、グローバルで読み取るかを制御します。デフォルト値は`OFF`で、履歴データの読み取り機能が無効になっていることを意味し、 `tidb_external_ts`値は無視されます。 `tidb_enable_external_ts_read`がグローバルに`ON`に設定されている場合、すべてのクエリは`tidb_external_ts`で指定された時間より前に履歴データを読み取ります。 `tidb_enable_external_ts_read`が特定のセッションに対してのみ`ON`に設定されている場合、そのセッションのクエリのみが履歴データを読み取ります。
+システム変数[`tidb_enable_external_ts_read`](/system-variables.md#tidb_enable_external_ts_read-new-in-v640)は、履歴データを現在のセッションで読み取るか、グローバルに読み取るかを制御します。デフォルト値は`OFF`で、履歴データの読み取り機能が無効になっていることを意味し、 `tidb_external_ts`値は無視されます。 `tidb_enable_external_ts_read`がグローバルに`ON`に設定されている場合、すべてのクエリは`tidb_external_ts`で指定された時間より前に履歴データを読み取ります。 `tidb_enable_external_ts_read`が特定のセッションに対してのみ`ON`に設定されている場合、そのセッションのクエリのみが履歴データを読み取ります。
 
-`tidb_enable_external_ts_read`有効にすると、TiDB は読み取り専用になります。すべての書き込みクエリは`ERROR 1836 (HY000): Running in read-only mode`のようなエラーで失敗します。
+`tidb_enable_external_ts_read`を有効にすると、TiDB は読み取り専用になります。すべての書き込みクエリは`ERROR 1836 (HY000): Running in read-only mode`ようなエラーで失敗します。
 
 ## 使用例 {#usage-examples}
 
@@ -82,7 +82,7 @@ summary: tidb_external_ts 変数を使用して履歴データを読み取る方
         +------+
         4 rows in set (0.00 sec)
 
-5.  `tidb_enable_external_ts_read`から`ON`に設定し、表のデータを表示します。
+5.  `tidb_enable_external_ts_read`から`ON`に設定し、表にデータを表示します。
 
     ```sql
     SET tidb_enable_external_ts_read=ON;
@@ -98,4 +98,4 @@ summary: tidb_external_ts 変数を使用して履歴データを読み取る方
         +------+
         3 rows in set (0.00 sec)
 
-    新しい行が挿入される前にタイムスタンプに`tidb_external_ts`設定されるため、 `tidb_enable_external_ts_read`が有効になった後は新しく挿入された行は返されません。
+    新しい行が挿入される前にタイムスタンプに`tidb_external_ts`が設定されるため、 `tidb_enable_external_ts_read`が有効になった後は新しく挿入された行は返されません。

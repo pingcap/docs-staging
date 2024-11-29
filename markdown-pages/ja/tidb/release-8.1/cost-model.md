@@ -5,7 +5,7 @@ summary: 物理的な最適化中に TiDB によって使用されるコスト �
 
 # コストモデル {#cost-model}
 
-TiDB は、 [物理的な最適化](/sql-physical-optimization.md)の間にコスト モデルを使用してインデックスと演算子を選択します。このプロセスを次の図に示します。
+TiDB は、 [物理的な最適化](/sql-physical-optimization.md)間にコスト モデルを使用してインデックスと演算子を選択します。このプロセスを次の図に示します。
 
 ![CostModel](https://download.pingcap.com/images/docs/cost-model.png)
 

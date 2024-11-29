@@ -16,12 +16,12 @@ cdc cli changefeed create --server=http://10.0.10.25:8300 --sink-uri="mysql://ro
 ```shell
 Create changefeed successfully!
 ID: simple-replication-task
-Info: {"upstream_id":7178706266519722477,"namespace":"default","id":"simple-replication-task","sink_uri":"mysql://root:xxxxx@127.0.0.1:4000/?time-zone=","create_time":"2024-05-24T15:05:46.679218+08:00","start_ts":438156275634929669,"engine":"unified","config":{"case_sensitive":false,"enable_old_value":true,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":true,"bdr_mode":false,"sync_point_interval":30000000000,"sync_point_retention":3600000000000,"filter":{"rules":["test.*"],"event_filters":null},"mounter":{"worker_num":16},"sink":{"protocol":"","schema_registry":"","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false},"column_selectors":null,"transaction_atomicity":"none","encoder_concurrency":16,"terminator":"\r\n","date_separator":"none","enable_partition_separator":false},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"storage":""}},"state":"normal","creator_version":"v8.1.0"}
+Info: {"upstream_id":7178706266519722477,"namespace":"default","id":"simple-replication-task","sink_uri":"mysql://root:xxxxx@127.0.0.1:4000/?time-zone=","create_time":"2024-08-27T15:05:46.679218+08:00","start_ts":438156275634929669,"engine":"unified","config":{"case_sensitive":false,"enable_old_value":true,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":true,"bdr_mode":false,"sync_point_interval":30000000000,"sync_point_retention":3600000000000,"filter":{"rules":["test.*"],"event_filters":null},"mounter":{"worker_num":16},"sink":{"protocol":"","schema_registry":"","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false},"column_selectors":null,"transaction_atomicity":"none","encoder_concurrency":16,"terminator":"\r\n","date_separator":"none","enable_partition_separator":false},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"storage":""}},"state":"normal","creator_version":"v8.1.1"}
 ```
 
--   `--changefeed-id` : レプリケーション タスクの ID。形式は`^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`正規表現と一致する必要があります。この ID が指定されていない場合、TiCDC は ID として UUID (バージョン 4 形式) を自動的に生成します。
+-   `--changefeed-id` : レプリケーション タスクの ID。形式は`^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`の正規表現と一致する必要があります。この ID が指定されていない場合、TiCDC は ID として UUID (バージョン 4 形式) を自動的に生成します。
 
--   `--sink-uri` : レプリケーション タスクのダウンストリーム アドレス。次の形式に従って`--sink-uri`設定します。現在、このスキームは`mysql` 、 `tidb` 、および`kafka`をサポートしています。
+-   `--sink-uri` : レプリケーション タスクのダウンストリーム アドレス。次の形式に従って`--sink-uri`設定します。現在、このスキームは`mysql` 、 `tidb` 、および`kafka`サポートしています。
 
         [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
 
@@ -75,6 +75,11 @@ case-sensitive = false
 # The format of this parameter is "h m s", for example, "1h30m30s".
 changefeed-error-stuck-duration = "30m"
 
+# The default value is false, indicating that bi-directional replication (BDR) mode is not enabled.
+# To set up BDR clusters using TiCDC, modify this parameter to `true` and set the TiDB clusters to BDR mode.
+# For more information, see https://docs.pingcap.com/tidb/stable/ticdc-bidirectional-replication.
+# bdr-mode = false
+
 [mounter]
 # The number of threads with which the mounter decodes KV data. The default value is 16.
 # worker-num = 16
@@ -101,7 +106,7 @@ rules = ['*.*', '!test.*']
 
 # The second event filter rule.
 # matcher = ["test.fruit"] # matcher is an allow list, which means this rule only applies to the fruit table in the test database.
-# ignore-event = ["drop table", "delete"] # Ignore the `drop table` DDL events and the `delete` DML events.
+# ignore-event = ["drop table", "delete"] # Ignore the `drop table` DDL events and the `delete` DML events. Note that when a value in the clustered index column is updated in TiDB, TiCDC splits an `UPDATE` event into `DELETE` and `INSERT` events. TiCDC cannot identify such events as `UPDATE` events and thus cannot correctly filter out such events.
 # ignore-sql = ["^drop table", "alter table"] # Ignore DDL statements that start with `drop table` or contain `alter table`.
 # ignore-insert-value-expr = "price > 1000 and origin = 'no where'" # Ignore insert DMLs that contain the conditions "price > 1000" and "origin = 'no where'".
 
@@ -129,7 +134,7 @@ enable-table-across-nodes = false
 # For example, if you specify the routing rule for a matcher as the string `code`, then all Pulsar messages that match that matcher will be routed with `code` as the key.
 # dispatchers = [
 #    {matcher = ['test1.*', 'test2.*'], topic = "Topic expression 1", partition = "index-value"},
-#    {matcher = ['test3.*', 'test4.*'], topic = "Topic expression 2", partition = "index-value", index-name="index1"},
+#    {matcher = ['test3.*', 'test4.*'], topic = "Topic expression 2", partition = "index-value", index = "index1"},
 #    {matcher = ['test1.*', 'test5.*'], topic = "Topic expression 3", partition = "table"},
 #    {matcher = ['test6.*'], partition = "columns", columns = "['a', 'b']"}
 #    {matcher = ['test7.*'], partition = "ts"}
@@ -187,6 +192,10 @@ date-separator = 'day'
 # Whether to use partitions as the separation string. The default value is true, which means that partitions in a table are stored in separate directories. It is recommended that you keep the value as `true` to avoid potential data loss in downstream partitioned tables <https://github.com/pingcap/tiflow/issues/8724>. For usage examples, see <https://docs.pingcap.com/tidb/dev/ticdc-sink-to-cloud-storage#data-change-records)>.
 # Note: This configuration item only takes effect if the downstream is a storage service.
 enable-partition-separator = true
+
+# Controls whether to disable the output of schema information. The default value is false, which means enabling the output of schema information.
+# Note: This parameter only takes effect when the sink type is MQ and the output protocol is Debezium.
+debezium-disable-schema = false
 
 # Since v6.5.0, TiCDC supports saving data changes to storage services in CSV format. Ignore the following configurations if you replicate data to MQ or MySQL sinks.
 # [sink.csv]
@@ -291,6 +300,10 @@ sasl-oauth-scopes = ["producer.kafka", "consumer.kafka"]
 sasl-oauth-grant-type = "client_credentials"
 # The audience in the Kafka SASL OAUTHBEARER authentication. The default value is empty. This parameter is optional when the OAUTHBEARER authentication is used.
 sasl-oauth-audience = "kafka"
+
+# The following configuration item controls whether to output the original data change event. The default value is false. For more information, see https://docs.pingcap.com/tidb/v8.1/ticdc-split-update-behavior#control-whether-to-split-primary-or-unique-key-update-events.
+# output-raw-change-event = false
+
 # The following configuration is only required when using Avro as the protocol and AWS Glue Schema Registry:
 # Please refer to the section "Integrate TiCDC with AWS Glue Schema Registry" in the document "Sync Data to Kafka": https://docs.pingcap.com/tidb/dev/ticdc-sink-to-kafka#integrate-ticdc-with-aws-glue-schema-registry
 # [sink.kafka-config.glue-schema-registry-config]
@@ -341,6 +354,9 @@ batching-max-publish-delay=10
 # The timeout for a Pulsar producer to send a message. The value is 30 seconds by default.
 send-timeout=30
 
+# The following configuration item controls whether to output the original data change event. The default value is false. For more information, see https://docs.pingcap.com/tidb/v8.1/ticdc-split-update-behavior#control-whether-to-split-primary-or-unique-key-update-events.
+# output-raw-change-event = false
+
 [sink.cloud-storage-config]
 # The concurrency for saving data changes to the downstream cloud storage. 
 # The default value is 16.
@@ -360,4 +376,6 @@ file-cleanup-cron-spec = "0 0 2 * * *"
 # The concurrency for uploading a single file.
 # The default value is 1, which means concurrency is disabled.
 flush-concurrency = 1
+# The following configuration item controls whether to output the original data change event. The default value is false. For more information, see https://docs.pingcap.com/tidb/v8.1/ticdc-split-update-behavior#control-whether-to-split-primary-or-unique-key-update-events.
+output-raw-change-event = false
 ```

@@ -23,22 +23,22 @@ TiDB Ansible バージョン: 3.0.0-rc.2
     -   単調に増加するインデックス列[＃10355](https://github.com/pingcap/tidb/pull/10355)に対する増分`Analyze`操作をサポートする
     -   `Order By`節[＃10488](https://github.com/pingcap/tidb/pull/10488)のNULL値は無視する
     -   列情報[＃10384](https://github.com/pingcap/tidb/pull/10384)を簡略化する際、 `UnionAll`論理演算子のスキーマ情報計算が誤っていた問題を修正
-    -   `Not`演算子[＃10363](https://github.com/pingcap/tidb/pull/10363/files)を押し下げるときに元の式を変更しないでください
-    -   ヒストグラム[＃10573](https://github.com/pingcap/tidb/pull/10573)の`dump` `load`をサポート
+    -   `Not`演算子[＃10363](https://github.com/pingcap/tidb/pull/10363/files)押し下げるときに元の式を変更しないでください
+    -   ヒストグラム[＃10573](https://github.com/pingcap/tidb/pull/10573) `load` `dump`をサポート
 
 -   実行エンジン
     -   `batchChecker` [＃10370](https://github.com/pingcap/tidb/pull/10370)で重複行を取得するときに、一意のインデックスを持つ仮想列を適切に処理します。
     -   `CHAR`列[＃10124](https://github.com/pingcap/tidb/pull/10124)のスキャン範囲計算の問題を修正
     -   `PointGet`負の数を誤って処理する問題を修正[＃10113](https://github.com/pingcap/tidb/pull/10113)
     -   実行効率を向上させるために同じ名前の関数を`Window`マージする[＃9866](https://github.com/pingcap/tidb/pull/9866)
-    -   `Window`関数の`RANGE`フレームに`OrderBy`節[＃10496](https://github.com/pingcap/tidb/pull/10496)を含めないようにする
+    -   `Window`関数の`RANGE`フレームに`OrderBy`節[＃10496](https://github.com/pingcap/tidb/pull/10496)含めないようにする
 
 -   サーバ
     -   TiKV [＃10301](https://github.com/pingcap/tidb/pull/10301)で障害が発生したときに TiDB が TiKV への新しい接続を継続的に作成する問題を修正しました
     -   `tidb_disable_txn_auto_retry`書き込み競合エラー[＃10339](https://github.com/pingcap/tidb/pull/10339)のみではなく、再試行可能なすべてのエラーに適用する
     -   パラメータなしのDDL文の実行を許可する`prepare` / `execute` [＃10144](https://github.com/pingcap/tidb/pull/10144)
-    -   バックオフ時間を制御する変数`tidb_back_off_weight`追加する[＃10266](https://github.com/pingcap/tidb/pull/10266)
-    -   デフォルト値を`tidb_disable_txn_auto_retry`から`on` [＃10266](https://github.com/pingcap/tidb/pull/10266)設定することで、デフォルト条件で自動的にコミットされていないトランザクションをTiDBが再試行することを禁止します。
+    -   バックオフ時間を制御する変数`tidb_back_off_weight`を追加する[＃10266](https://github.com/pingcap/tidb/pull/10266)
+    -   デフォルト値を`tidb_disable_txn_auto_retry`から`on`に設定することで、デフォルト条件で自動的にコミットされていないトランザクションをTiDBが再試行することを禁止します[＃10266](https://github.com/pingcap/tidb/pull/10266)
     -   `RBAC` [＃10261](https://github.com/pingcap/tidb/pull/10261)分の`role`のデータベース権限判定を修正
     -   悲観的トランザクションモードのサポート（実験的） [＃10297](https://github.com/pingcap/tidb/pull/10297)
     -   いくつかのケースでロック競合の処理の待機時間を短縮する[＃10006](https://github.com/pingcap/tidb/pull/10006)
@@ -46,16 +46,16 @@ TiDB Ansible バージョン: 3.0.0-rc.2
     -   `tidb_low_resolution_tso`変数を追加して、バッチで取得される TSO の数を制御し、TSO を取得するトランザクションの回数を減らし、データの一貫性がそれほど厳密に要求されないシナリオに適応します[＃10428](https://github.com/pingcap/tidb/pull/10428)
 
 -   DDL
-    -   古いバージョンの TiDB [＃10272](https://github.com/pingcap/tidb/pull/10272)のstorage内の文字セット名の大文字の問題を修正しました
-    -   テーブル作成時にテーブル領域を事前割り当てして[＃10221](https://github.com/pingcap/tidb/pull/10221)テーブル作成後の書き込みホットスポットを回避するテーブルパーティションのサポート`preSplit`
+    -   TiDB [＃10272](https://github.com/pingcap/tidb/pull/10272)の旧バージョンのstorage内の文字セット名の大文字の問題を修正しました
+    -   テーブル作成時にテーブル領域を事前割り当てして、テーブル作成後の書き込みホットスポットを回避するテーブルパーティションのサポート`preSplit` [＃10221](https://github.com/pingcap/tidb/pull/10221)
     -   TiDBがPDのバージョン情報を誤って更新する場合がある問題を修正[＃10324](https://github.com/pingcap/tidb/pull/10324)
-    -   `ALTER DATABASE`文[＃10393](https://github.com/pingcap/tidb/pull/10393)を使用して文字セットと照合順序を変更することをサポートします
+    -   `ALTER DATABASE`文[＃10393](https://github.com/pingcap/tidb/pull/10393)使用して文字セットと照合順序を変更することをサポートします
     -   ホットスポットの問題を軽減するために、指定されたテーブルのインデックスと範囲に基づいて領域を分割することをサポートします[＃10203](https://github.com/pingcap/tidb/pull/10203)
-    -   `alter table`文[＃10433](https://github.com/pingcap/tidb/pull/10433)を使用して小数列の精度を変更することを禁止する
+    -   `alter table`文[＃10433](https://github.com/pingcap/tidb/pull/10433)使用して小数列の精度を変更することを禁止する
     -   ハッシュパーティション[＃10273](https://github.com/pingcap/tidb/pull/10273)の式と関数の制限を修正
     -   パーティションを含むテーブルにインデックスを追加すると、場合によっては TiDBpanicが発生する問題を修正[＃10475](https://github.com/pingcap/tidb/pull/10475)
     -   無効なテーブルスキーマを回避するために、DDLを実行する前にテーブル情報を検証します[＃10464](https://github.com/pingcap/tidb/pull/10464)
-    -   デフォルトでハッシュパーティションを有効にし、パーティション定義に列が1つしかない場合は範囲​​列パーティションを有効にします[＃9936](https://github.com/pingcap/tidb/pull/9936)
+    -   デフォルトでハッシュパーティションを有効にし、パーティション定義に列が1つしかない場合は範囲列パーティションを有効にします[＃9936](https://github.com/pingcap/tidb/pull/9936)
 
 ## PD {#pd}
 
@@ -77,7 +77,7 @@ TiDB Ansible バージョン: 3.0.0-rc.2
     -   悲観的ロックトランザクションをサポート[＃4698](https://github.com/tikv/tikv/pull/4698)
 
 -   Raftstore
-    -   ラフトストアCPUの消費量を減らすために休止状態領域をサポートする[＃4591](https://github.com/tikv/tikv/pull/4591)
+    -   ラフトストアCPUの消費量を減らすために休止領域をサポートする[＃4591](https://github.com/tikv/tikv/pull/4591)
     -   リーダーが学習者[＃4653](https://github.com/tikv/tikv/pull/4653)の`ReadIndex`リクエストに返信しない問題を修正
     -   一部のケースでリーダーの転送に失敗する問題を修正[＃4684](https://github.com/tikv/tikv/pull/4684)
     -   いくつかのケースでダーティリード問題を修正[＃4688](https://github.com/tikv/tikv/pull/4688)

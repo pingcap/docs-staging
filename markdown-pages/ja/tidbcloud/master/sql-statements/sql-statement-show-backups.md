@@ -5,15 +5,15 @@ summary: TiDB データベースに対する SHOW [BACKUPS|RESTORES] の使用�
 
 # [バックアップ|復元]を表示 {#show-backups-restores}
 
-これらのステートメントは、TiDB インスタンスで実行されたキューに入れられたタスク、実行中のタスク、最近完了したタスク[`BACKUP`](/sql-statements/sql-statement-backup.md)と[`RESTORE`](/sql-statements/sql-statement-restore.md)のリストを表示します。
+これらのステートメントは、TiDB インスタンスで実行されたキューに入れられたタスク、実行中のタスク、最近完了したタスク[`BACKUP`](/sql-statements/sql-statement-backup.md)と[`RESTORE`](/sql-statements/sql-statement-restore.md)リストを表示します。
 
 どちらのステートメントも、実行には`SUPER`権限が必要です。
 
-`SHOW BACKUPS`使用して`BACKUP`のタスクを照会し、 `SHOW RESTORES`を使用して`RESTORE`タスクを照会します。
+`BACKUP`タスクを照会するには`SHOW BACKUPS`使用し、 `RESTORE`タスクを照会するには`SHOW RESTORES`使用します。
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 `br`コマンドライン ツールで開始されたバックアップと復元は表示されません。
 
@@ -53,16 +53,16 @@ SHOW BACKUPS;
 
 上記の結果の最初の行は次のように説明されます。
 
-| カラム              | 説明                                                                  |
-| :--------------- | :------------------------------------------------------------------ |
-| `Destination`    | 宛先 URL (秘密鍵の漏洩を防ぐため、すべてのパラメータを削除)                                   |
-| `State`          | タスクの状態                                                              |
-| `Progress`       | 現在の状態における進捗の推定値（パーセンテージ）                                            |
-| `Queue_time`     | タスクがキューに入れられたとき                                                     |
-| `Execution_time` | タスクが開始されたとき。キューイングタスクの場合は値は`0000-00-00 00:00:00`です。                 |
-| `Finish_time`    | タスクが終了したときのタイムスタンプ。キューイングおよび実行中のタスクの場合、値は`0000-00-00 00:00:00`なります。 |
-| `Connection`     | このタスクを実行している接続ID                                                    |
-| `Message`        | 詳細を記載したメッセージ                                                        |
+| カラム              | 説明                                                                   |
+| :--------------- | :------------------------------------------------------------------- |
+| `Destination`    | 宛先 URL (秘密鍵の漏洩を防ぐため、すべてのパラメータを削除)                                    |
+| `State`          | タスクの状態                                                               |
+| `Progress`       | 現在の状態の進捗状況の推定値（パーセンテージ）                                              |
+| `Queue_time`     | タスクがキューに入れられたとき                                                      |
+| `Execution_time` | タスクが開始されたとき。キューイングタスクの場合は値は`0000-00-00 00:00:00`です。                  |
+| `Finish_time`    | タスクが終了したときのタイムスタンプ。キューイングおよび実行中のタスクの場合、値は`0000-00-00 00:00:00`になります。 |
+| `Connection`     | このタスクを実行している接続ID                                                     |
+| `Message`        | 詳細を記載したメッセージ                                                         |
 
 考えられる状態は次のとおりです。
 

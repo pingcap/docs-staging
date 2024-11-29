@@ -5,7 +5,7 @@ summary: DM を使用して、オンライン DDL ツール gh-ost または pt-
 
 # gh-ost または pt-osc を使用するデータベースからの継続的なレプリケーション {#continuous-replication-from-databases-that-use-gh-ost-or-pt-osc}
 
-本番シナリオでは、DDL 実行中のテーブル ロックによって、データベースからの読み取りまたはデータベースへの書き込みがある程度ブロックされる可能性があります。そのため、読み取りと書き込みへの影響を最小限に抑えるために、オンライン DDL ツールを使用して DDL を実行することがよくあります。一般的な DDL ツールは[おばけ](https://github.com/github/gh-ost)と[pt-osc](https://www.percona.com/doc/percona-toolkit/3.0/pt-online-schema-change.html)です。
+実本番シナリオでは、DDL 実行中のテーブル ロックによって、データベースからの読み取りまたはデータベースへの書き込みがある程度ブロックされる可能性があります。そのため、読み取りと書き込みへの影響を最小限に抑えるために、オンライン DDL ツールを使用して DDL を実行することがよくあります。一般的な DDL ツールは[おばけ](https://github.com/github/gh-ost)と[pt-osc](https://www.percona.com/doc/percona-toolkit/3.0/pt-online-schema-change.html)です。
 
 DM を使用して MySQL から TiDB にデータを移行する場合、 `online-ddl`有効にして DM と gh-ost または pt-osc の連携を許可できます。
 
@@ -56,7 +56,7 @@ DM のワークフロー:
 
 ![dm-online-ddl](https://download.pingcap.com/images/docs/dm/dm-online-ddl.png)
 
-ワークフローの変更により、次の利点がもたらされます。
+ワークフローの変更により、次のような利点がもたらされます。
 
 -   ダウンストリーム TiDB はゴースト テーブルを作成して複製する必要がないため、storageスペースとネットワーク転送のオーバーヘッドが節約されます。
 

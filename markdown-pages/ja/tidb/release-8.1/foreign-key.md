@@ -45,13 +45,13 @@ ReferenceOption
 
 -   親テーブルも子テーブルも一時テーブルではありません。
 
--   ユーザーには親テーブルに対する権限`REFERENCES`あります。
+-   ユーザーには親テーブルに対する権限`REFERENCES`があります。
 
 -   親テーブルと子テーブルの外部キーによって参照される列は、同じデータ型であり、サイズ、精度、長さ、文字セット、および照合順序が同じです。
 
 -   外部キーの列は、それ自体を参照することはできません。
 
--   外部キーの列と参照先の親テーブルの列には同じインデックスがあり、インデックスの列の順序は外部キーの列の順序と一致します。これは、外部キー制約チェックを実行するときに、インデックスを使用してテーブル全体のスキャンを回避するためです。
+-   外部キーの列と参照先の親テーブルの列には同じインデックスがあり、インデックス内の列の順序は外部キーの列の順序と一致します。これは、外部キー制約チェックを実行するときに、インデックスを使用してテーブル全体のスキャンを回避するためです。
 
     -   親テーブルに対応する外部キー インデックスがない場合、エラー`ERROR 1822: Failed to add the foreign key constraint. Missing index for constraint 'fk' in the referenced table 't'`が報告されます。
     -   子テーブルに対応する外部キー インデックスがない場合、外部キーと同じ名前のインデックスが自動的に作成されます。
@@ -141,7 +141,7 @@ ALTER TABLE table_name
     [ON UPDATE reference_option]
 ```
 
-外部キーは自己参照、つまり同じテーブルを参照することができます。 `ALTER TABLE`を使用してテーブルに外部キー制約を追加する場合は、まず外部キーが参照する親テーブルの列にインデックスを作成する必要があります。
+外部キーは自己参照、つまり同じテーブルを参照することができます。 `ALTER TABLE`使用してテーブルに外部キー制約を追加する場合は、まず外部キーが参照する親テーブルの列にインデックスを作成する必要があります。
 
 ## 外部キー制約を削除する {#delete-a-foreign-key-constraint}
 
@@ -174,7 +174,7 @@ TiDB は、システム変数[`foreign_key_checks`](/system-variables.md#foreign
 -   外部キーによって参照される親テーブルを削除する場合、外部キー制約チェックが無効になっている場合にのみ削除が成功します。
 -   データベースにデータをインポートする場合、テーブルの作成順序が外部キーの依存関係の順序と異なることがあり、テーブルの作成が失敗する可能性があります。外部キー制約チェックが無効になっている場合にのみ、テーブルを正常に作成できます。また、外部キー制約チェックを無効にすると、データのインポートが高速化されます。
 -   データベースにデータをインポートするときに、子テーブルのデータを最初にインポートすると、エラーが報告されます。外部キー制約チェックが無効になっている場合にのみ、子テーブルのデータを正常にインポートできます。
--   実行される`ALTER TABLE`つの操作に外部キーの変更が含まれる場合、この操作は外部キー制約チェックが無効になっている場合にのみ成功します。
+-   実行される`ALTER TABLE`操作に外部キーの変更が含まれる場合、この操作は外部キー制約チェックが無効になっている場合にのみ成功します。
 
 外部キー制約チェックが無効になっている場合、次のシナリオを除き、外部キー制約チェックと参照操作は実行されません。
 
@@ -190,7 +190,7 @@ TiDB は現在`LOCK IN SHARE MODE`サポートしていないため、子テー�
 
 ## 外部キーの定義とメタデータ {#definition-and-metadata-of-foreign-keys}
 
-外部キー制約の定義を表示するには、次[`SHOW CREATE TABLE`](/sql-statements/sql-statement-show-create-table.md)ステートメントを実行します。
+外部キー制約の定義を表示するには、次の[`SHOW CREATE TABLE`](/sql-statements/sql-statement-show-create-table.md)ステートメントを実行します。
 
 ```sql
 mysql> SHOW CREATE TABLE child\G
@@ -271,7 +271,7 @@ mysql> explain insert into child values (1,1);
 +-----------------------+---------+------+---------------+-------------------------------+
 ```
 
-`EXPLAIN ANALYZE`ステートメントを使用して、外部キー参照動作の実行を表示できます。3 `Foreign_Key_Cascade`は、実行される DML ステートメントの外部キー参照を実行します。
+`EXPLAIN ANALYZE`ステートメントを使用して、外部キー参照動作の実行を表示できます。3 演算子`Foreign_Key_Cascade` 、実行される DML ステートメントの外部キー参照を実行します。
 
 ```sql
 mysql> explain analyze delete from parent where id = 1;
@@ -292,7 +292,7 @@ mysql> explain analyze delete from parent where id = 1;
 
 ### TiDB バージョン間の互換性 {#compatibility-between-tidb-versions}
 
-v6.6.0 より前の TiDB では、外部キーを作成する構文がサポートされていますが、作成された外部キーは無効です。v6.6.0 より前に作成された TiDB クラスターを v6.6.0 以降にアップグレードすると、アップグレード前に作成された外部キーは無効のままになります。v6.6.0 以降のバージョンで作成`SHOW CREATE TABLE`れた外部キーのみが有効になります。無効な外部キーを削除して新しい外部キーを作成し、外部キー制約を有効にすることができます。1 ステートメントを使用して、外部キーが有効かどうかを確認できます。無効な外部キーには`/* FOREIGN KEY INVALID */`コメントがあります。
+v6.6.0 より前の TiDB では、外部キーを作成する構文がサポートされていますが、作成された外部キーは無効です。v6.6.0 より前に作成された TiDB クラスターを v6.6.0 以降にアップグレードすると、アップグレード前に作成された外部キーは無効のままになります。v6.6.0 以降のバージョンで作成された外部キーのみが有効になります。無効な外部キーを削除して新しい外部キーを作成し、外部キー制約を有効にすることができます`SHOW CREATE TABLE`ステートメントを使用して、外部キーが有効かどうかを確認できます。無効な外部キーには`/* FOREIGN KEY INVALID */`コメントがあります。
 
 ```sql
 mysql> SHOW CREATE TABLE child\G
@@ -313,16 +313,16 @@ Create Table | CREATE TABLE `child` (
 -   [TiDBBinlog](/tidb-binlog/tidb-binlog-overview.md)外部キーをサポートしません。
 -   [DM](/dm/dm-overview.md)外部キーをサポートしていません。DM は、データを TiDB に複製するときに、下流の TiDB の[`foreign_key_checks`](/system-variables.md#foreign_key_checks)無効にします。そのため、外部キーによって発生するカスケード操作は上流から下流に複製されず、データの不整合が発生する可能性があります。
 -   [ティCDC](/ticdc/ticdc-overview.md) v6.6.0 は外部キーと互換性があります。以前のバージョンの TiCDC では、外部キーを持つテーブルを複製するときにエラーが報告される可能性があります。v6.6.0 より前のバージョンの TiCDC を使用する場合は、ダウンストリーム TiDB クラスターの`foreign_key_checks`無効にすることをお勧めします。
--   [BR](/br/backup-and-restore-overview.md) v6.6.0 は外部キーと互換性があります。以前のバージョンのBRでは、外部キーを持つテーブルを v6.6.0 以降のクラスターに復元するときにエラーが報告される可能性があります。v6.6.0 より前のBRを使用する場合は、クラスターを復元する前に、ダウンストリーム TiDB クラスターの`foreign_key_checks`を無効にすることをお勧めします。
+-   [BR](/br/backup-and-restore-overview.md) v6.6.0 は外部キーと互換性があります。以前のバージョンのBRでは、外部キーを持つテーブルを v6.6.0 以降のクラスターに復元するときにエラーが報告される可能性があります。v6.6.0 より前のBR を使用する場合は、クラスターを復元する前に、ダウンストリーム TiDB クラスターの`foreign_key_checks`無効にすることをお勧めします。
 -   [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)使用する場合、ターゲット テーブルが外部キーを使用している場合は、データをインポートする前に、ダウンストリーム TiDB クラスターの`foreign_key_checks`無効にすることをお勧めします。v6.6.0 より前のバージョンでは、このシステム変数を無効にしても効果がなく、ダウンストリーム データベース ユーザーに`REFERENCES`権限を付与するか、ダウンストリーム データベースにターゲット テーブルを事前に手動で作成して、スムーズなデータ インポートを確保する必要があります。
 
 </CustomContent>
 
--   [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)は外部キーと互換性があります。
+-   [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)外部キーと互換性があります。
 
 <CustomContent platform="tidb">
 
--   [同期差分インスペクター](/sync-diff-inspector/sync-diff-inspector-overview.md)を使用して上流データベースと下流データベース間でデータを比較する場合、データベースのバージョンが異なり、 [下流の TiDB に無効な外部キーがある](#compatibility-between-tidb-versions)があると、sync-diff-inspector によってテーブル スキーマの不整合エラーが報告されることがあります。これは、TiDB v6.6.0 で無効な外部キーに対して`/* FOREIGN KEY INVALID */`コメントが追加されたためです。
+-   [同期差分インスペクター](/sync-diff-inspector/sync-diff-inspector-overview.md)使用して上流データベースと下流データベース間でデータを比較する場合、データベースのバージョンが異なり、 [下流の TiDB に無効な外部キーがある](#compatibility-between-tidb-versions)があると、sync-diff-inspector によってテーブル スキーマの不整合エラーが報告されることがあります。これは、TiDB v6.6.0 で無効な外部キーに対して`/* FOREIGN KEY INVALID */`コメントが追加されたためです。
 
 </CustomContent>
 
@@ -330,7 +330,7 @@ Create Table | CREATE TABLE `child` (
 
 名前を指定せずに外部キーを作成すると、TiDB によって生成される名前は MySQL によって生成される名前とは異なります。たとえば、TiDB によって生成される外部キー名は`fk_1` 、 `fk_2` 、 `fk_3`ですが、MySQL によって生成される外部キー名は`table_name_ibfk_1` 、 `table_name_ibfk_2` 、 `table_name_ibfk_3`です。
 
-MySQL と TiDB はどちらも「インライン`REFERENCES`仕様」を解析しますが無視します。5 `FOREIGN KEY`の定義の一部である`REFERENCES`仕様のみがチェックされ、適用されます。次の例では、 `REFERENCES`句を使用して外部キー制約を作成します。
+MySQL と TiDB はどちらも「インライン`REFERENCES`仕様」を解析しますが無視します。5 `FOREIGN KEY`定義の一部である`REFERENCES`の仕様のみがチェックされ、適用されます。次の例では、 `REFERENCES`句を使用して外部キー制約を作成します。
 
 ```sql
 CREATE TABLE parent (

@@ -11,7 +11,7 @@ TiDB v3.0.8 より前のバージョンでは、TiDB はデフォルトで楽観
 
 ## 書き込み競合の原因 {#the-reason-of-write-conflicts}
 
-TiDB は[パーコレーター](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf)トランザクション モデルを使用してトランザクションを実装します。3 `percolator`一般的に 2PC の実装です。詳細な 2PC プロセスについては[TiDB 楽観的トランザクションモデル](/optimistic-transaction.md)を参照してください。
+TiDB は[パーコレーター](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf)トランザクション モデルを使用してトランザクションを実装します`percolator`一般的に 2PC の実装です。詳細な 2PC プロセスについては[TiDB 楽観的トランザクションモデル](/optimistic-transaction.md)参照してください。
 
 クライアントが TiDB に`COMMIT`リクエストを送信すると、TiDB は 2PC プロセスを開始します。
 
@@ -19,7 +19,7 @@ TiDB は[パーコレーター](https://www.usenix.org/legacy/event/osdi10/tech/
 2.  TiDB は、このコミットに関係するすべての TiKV リージョンに`prewrite`リクエストを送信します。TiKV は、すべてのキーが正常にプレビューできるかどうかを判断します。
 3.  TiDB は、 `prewrite`リクエストがすべて成功したという結果を受け取ります。
 4.  TiDB は PD から`commit_ts`取得します。
-5.  TiDB は、トランザクションの主キーを含む TiKVリージョンに`commit`リクエストを送信します。TiKV は`commit`のリクエストを受信すると、データの有効性をチェックし、 `prewrite`ステージに残っているロックをクリアします。
+5.  TiDB は、トランザクションの主キーを含む TiKVリージョンに`commit`のリクエストを送信します。TiKV は`commit`リクエストを受信すると、データの有効性をチェックし、 `prewrite`のステージに残っているロックをクリアします。
 6.  `commit`目のリクエストが正常に返されると、TiDB はクライアントに成功を返します。
 
 書き込み競合はステージ`prewrite`で発生します。トランザクションが別のトランザクションが現在のキー ( `data.commit_ts` &gt; `txn.start_ts` ) を書き込んでいることを検出すると、書き込み競合が発生します。
@@ -38,7 +38,7 @@ TiDB Grafana パネルで、 **KV エラー**の下にある次の監視メト�
 
     ![lock-resolve-ops](https://download.pingcap.com/images/docs/troubleshooting-write-conflict-lock-resolve-ops.png)
 
-    -   `not_expired` 、ロックの TTL が期限切れになっていないことを示します。競合トランザクションは、TTL が期限切れになるまでロックを解決できません。
+    -   `not_expired`ロックの TTL が期限切れになっていないことを示します。競合トランザクションは、TTL が期限切れになるまでロックを解決できません。
     -   `wait_expired` 、トランザクションがロックの有効期限が切れるまで待機する必要があることを示します。
     -   `expired`ロックの TTL が期限切れになったことを示します。その後、競合トランザクションはこのロックを解決できます。
 
@@ -46,7 +46,7 @@ TiDB Grafana パネルで、 **KV エラー**の下にある次の監視メト�
 
     ![kv-retry-duration](https://download.pingcap.com/images/docs/troubleshooting-write-conflict-kv-retry-duration.png)
 
-また、TiDB ログで検索するキーワードとして`[kv:9007]Write conflict`使用することもできます。キーワードは、クラスター内に書き込み競合が存在することも示します。
+また、TiDB ログで検索するためのキーワードとして`[kv:9007]Write conflict`使用することもできます。キーワードは、クラスター内に書き込み競合が存在することも示します。
 
 ## 書き込み競合を解決する {#resolve-write-conflicts}
 
@@ -59,10 +59,10 @@ TiDB Grafana パネルで、 **KV エラー**の下にある次の監視メト�
 上記のログの説明は次のとおりです。
 
 -   `[kv:9007]Write conflict` : 書き込み-書き込み競合を示します。
--   `txnStartTS=416617006551793665` : 現在のトランザクションの`start_ts`を示します。4 ツールを使用して、 `start_ts`物理時間`pd-ctl`変換できます。
--   `conflictStartTS=416617018650001409` : 書き込み競合トランザクションの`start_ts`を示します。
--   `conflictCommitTS=416617023093080065` : 書き込み競合トランザクションの`commit_ts`を示します。
--   `key={tableID=47, indexID=1, indexValues={string, }}` : 書き込み競合キーを示します`tableID`書き込み競合テーブルの ID を示します。4 `indexID`書き込み競合インデックスの ID を示します。書き込み競合キーがレコード キーの場合、ログには`handle=x`が出力、どのレコード (行) に競合があるかが示されます。8 `indexValues`競合があるインデックスの値を示します。
+-   `txnStartTS=416617006551793665` : 現在のトランザクションの`start_ts`示します。4 `pd-ctl`を使用して、 `start_ts`物理時間に変換できます。
+-   `conflictStartTS=416617018650001409` : 書き込み競合トランザクションの`start_ts`示します。
+-   `conflictCommitTS=416617023093080065` : 書き込み競合トランザクションの`commit_ts`示します。
+-   `key={tableID=47, indexID=1, indexValues={string, }}` : 書き込み競合キーを示します。2 `tableID`書き込み競合テーブルの ID を示します。4 `indexID`書き込み競合インデックスの ID を示します。書き込み競合キーがレコード キーの場合、ログには`handle=x`出力、どのレコード (行) に競合があるかが示されます。8 `indexValues`競合があるインデックスの値を示します。
 -   `primary={tableID=47, indexID=1, indexValues={string, }}` : 現在のトランザクションの主キー情報を示します。
 
 `pd-ctl`ツールを使用して、タイムスタンプを読み取り可能な時間に変換できます。
@@ -71,7 +71,7 @@ TiDB Grafana パネルで、 **KV エラー**の下にある次の監視メト�
 tiup ctl:v<CLUSTER_VERSION> pd -u https://127.0.0.1:2379 tso {TIMESTAMP}
 ```
 
-`tableID`を使用して、関連するテーブルの名前を見つけることができます。
+`tableID`使用して、関連するテーブルの名前を見つけることができます。
 
 ```shell
 curl http://{TiDBIP}:10080/db-table/{tableID}
@@ -83,4 +83,4 @@ curl http://{TiDBIP}:10080/db-table/{tableID}
 SELECT * FROM INFORMATION_SCHEMA.TIDB_INDEXES WHERE TABLE_SCHEMA='{db_name}' AND TABLE_NAME='{table_name}' AND INDEX_ID={indexID};
 ```
 
-さらに、TiDB v3.0.8 以降のバージョンでは、悲観的トランザクションがデフォルト モードになります。ペシミスティック トランザクション モードでは、トランザクションの事前書き込み段階での書き込み競合を回避できるため、アプリケーションを変更する必要がなくなります。悲観的悲観的モードでは、各 DML ステートメントは実行中に関連キーに悲観的ロックを書き込みます。この悲観的ロックにより、他のトランザクションが同じキーを変更するのを防ぐことができるため、トランザクション 2PC の`prewrite`段階で書き込み競合が発生しないことが保証されます。
+さらに、TiDB v3.0.8 以降のバージョンでは、悲観的トランザクションがデフォルト モードになります。悲観的悲観的モードでは、各 DML ステートメントは実行中に関連するキーに悲観的ロックを書き込みます。この悲観的ロックにより、他のトランザクションが同じキーを変更するのを防ぐことができるため、トランザクション 2PC の`prewrite`段階で書き込み競合が発生しないことが保証されます。

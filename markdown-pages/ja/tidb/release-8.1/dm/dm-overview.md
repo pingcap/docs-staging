@@ -13,14 +13,14 @@ summary: データ移行ツール、アーキテクチャ、主要コンポー�
 
 [TiDB データ移行](https://github.com/pingcap/tiflow/tree/release-8.1/dm) (DM) は、MySQL 互換データベース (MySQL、MariaDB、 Aurora MySQL など) から TiDB への完全なデータ移行と増分データレプリケーションをサポートする統合データ移行タスク管理プラットフォームです。データ移行の運用コストを削減し、トラブルシューティング プロセスを簡素化するのに役立ちます。
 
-## 基本的な機能 {#basic-features}
+## 基本機能 {#basic-features}
 
 -   **MySQL との互換性。DM**は、MySQL プロトコルおよびMySQL 5.7と MySQL 8.0 のほとんどの機能と構文と互換性があります。
 -   **DML および DDL イベントのレプリケーション。MySQL** binlog内の DML および DDL イベントの解析とレプリケーションをサポートします。
 -   **MySQL シャードの移行とマージ。DM**は、上流の複数の MySQL データベース インスタンスを下流の 1 つの TiDB データベースに移行およびマージすることをサポートします。さまざまな移行シナリオに合わせてレプリケーション ルールをカスタマイズできます。上流の MySQL シャードの DDL 変更を自動的に検出して処理できるため、運用コストが大幅に削減されます。
 -   **さまざまな種類のフィルター。**データ移行プロセス中に MySQLbinlogイベントをフィルター処理するために、イベント タイプ、正規表現、SQL 式を事前定義できます。
 -   **集中管理。DM**はクラスター内の数千のノードをサポートします。多数のデータ移行タスクを同時に実行および管理できます。
--   **サードパーティのオンラインスキーマ変更プロセスの最適化。MySQL**エコシステムでは、gh-ost や pt-osc などのツールが広く使用されています。DM は、中間データの不要な移行を回避するために変更プロセスを最適化します。詳細については、 [オンラインDDL](/dm/dm-online-ddl-tool-support.md)を参照してください。
+-   **サードパーティのオンラインスキーマ変更プロセスの最適化。MySQL**エコシステムでは、gh-ost や pt-osc などのツールが広く使用されています。DM は、中間データの不要な移行を回避するために変更プロセスを最適化します。詳細については、 [オンラインDDL](/dm/dm-online-ddl-tool-support.md)参照してください。
 -   **高可用性。DM**は、異なるノード上で自由にスケジュールされるデータ移行タスクをサポートします。少数のノードがクラッシュしても、実行中のタスクは影響を受けません。
 
 ## クイックインストール {#quick-installation}
@@ -59,15 +59,15 @@ DM ツールを使用する前に、次の制限に注意してください。
 
 -   GBK 文字セットの互換性
 
-    -   DM は、v5.4.0 より前の TiDB クラスターへの`charset=GBK`テーブルの移行をサポートしていません。
+    -   DM は、v5.4.0 より前の TiDB クラスターへの`charset=GBK`のテーブルの移行をサポートしていません。
 
 -   Binlogの互換性
 
-    -   DM は MySQL 8.0 の新機能binlog [トランザクションペイロードイベント](https://dev.mysql.com/doc/refman/8.0/en/binary-log-transaction-compression.html)をサポートしていません。binlog Transaction_payload_event を使用すると、アップストリームとダウンストリームの間でデータの不整合が発生する可能性があります。
+    -   DM は MySQL 8.0 の新機能binlog [トランザクションペイロードイベント](https://dev.mysql.com/doc/refman/8.0/en/binary-log-transaction-compression.html)をサポートしていません。binlog binlogを使用すると、アップストリームとダウンストリームの間でデータの不整合が発生する可能性があります。
 
 ## 貢献する {#contributing}
 
-DM オープンソース プロジェクトへの参加を歓迎します。あなたの貢献は大歓迎です。詳細については、 [貢献.md](https://github.com/pingcap/tiflow/blob/release-8.1/dm/CONTRIBUTING.md)を参照してください。
+DM オープンソース プロジェクトへの参加を歓迎します。あなたの貢献は大歓迎です。詳細については、 [貢献.md](https://github.com/pingcap/tiflow/blob/release-8.1/dm/CONTRIBUTING.md)参照してください。
 
 ## コミュニティサポート {#community-support}
 
@@ -75,7 +75,7 @@ DM の詳細については、オンライン ドキュメントをご覧くだ�
 
 ## ライセンス {#license}
 
-DM は Apache 2.0 ライセンスに準拠しています。詳細については[ライセンス](https://github.com/pingcap/tiflow/blob/release-8.1/LICENSE)を参照してください。
+DM は Apache 2.0 ライセンスに準拠しています。詳細については[ライセンス](https://github.com/pingcap/tiflow/blob/release-8.1/LICENSE)参照してください。
 
 ## DM バージョン {#dm-versions}
 
@@ -88,4 +88,4 @@ v5.4 より前の DM ドキュメントは TiDB ドキュメントから独立�
 > **注記：**
 >
 > -   2021 年 10 月より、DM の GitHub リポジトリは[ピンキャップ/tiflow](https://github.com/pingcap/tiflow/tree/release-8.1/dm)に移動されました。DM で問題が発生した場合は、フィードバックを得るために`pingcap/tiflow`リポジトリに問題を送信してください。
-> -   以前のバージョン (v1.0 および v2.0) では、DM は TiDB とは独立したバージョン番号を使用します。v5.3 以降、DM は TiDB と同じバージョン番号を使用します。DM v2.0 の次のバージョンは DM v5.3 です。DM v2.0 から v5.3 への互換性の変更はなく、アップグレード プロセスは通常のアップグレードと同じで、バージョン番号が増加するだけです。
+> -   以前のバージョン (v1.0 および v2.0) では、DM は TiDB とは独立したバージョン番号を使用します。v5.3 以降、DM は TiDB と同じバージョン番号を使用します。DM v2.0 の次のバージョンは DM v5.3 です。DM v2.0 から v5.3 への互換性の変更はなく、アップグレード プロセスは通常のアップグレードと同じで、バージョン番号の増加のみです。

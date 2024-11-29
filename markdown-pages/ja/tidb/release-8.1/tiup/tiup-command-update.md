@@ -35,7 +35,7 @@ tiup update [component1][:version] [component2..N] [flags]
 
 ### --毎晩 {#nightly}
 
--   指定されたコンポーネントをナイトリー バージョンに更新します。このオプションを指定した`tiup update`コマンドは、 `tiup update <component>:nightly`コマンドと同等です。
+-   指定されたコンポーネントをナイトリー バージョンに更新します。このオプションを指定した`tiup update`コマンドは、 `tiup update <component>:nightly`コマンドと同じです。
 -   データ型: `BOOLEAN`
 -   このオプションはデフォルトでは無効になっており、デフォルト値は`false`です。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにします。
 
@@ -47,7 +47,7 @@ tiup update [component1][:version] [component2..N] [flags]
 
 ## 出力 {#outputs}
 
--   更新が成功すると`Updated successfully!`出力されます。
+-   更新が成功すると`Updated successfully!`が出力されます。
 -   対象バージョンが存在しない場合は、エラー`Error: version %s not supported by component %s`が報告されます。
 
 [&lt;&lt; 前のページに戻る - TiUPリファレンスコマンドリスト](/tiup/tiup-reference.md#command-list)

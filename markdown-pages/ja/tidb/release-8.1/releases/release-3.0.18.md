@@ -15,14 +15,14 @@ TiDB バージョン: 3.0.18
 
     -   TiDBBinlog
 
-        -   Pump GC構成[＃996](https://github.com/pingcap/tidb-binlog/pull/996) Goの時間期間形式をサポート
+        -   Pump GC構成[＃996](https://github.com/pingcap/tidb-binlog/pull/996)のGoの時間期間形式をサポート
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
-    -   `Hash`関数による`decimal`型の誤った処理により、HashJoin 結果が誤って[＃19185](https://github.com/pingcap/tidb/pull/19185)になる問題を修正しました。
-    -   `Hash`関数による`set`型と`enum`型の誤った処理により、HashJoin 結果が誤ってしまう問題を修正しました[＃19175](https://github.com/pingcap/tidb/pull/19175)
+    -   `Hash`関数による`decimal`型の誤った処理により、HashJoin 結果が誤って[＃19185](https://github.com/pingcap/tidb/pull/19185)なる問題を修正しました。
+    -   `Hash`関数による`set`と`enum`型の誤った処理により、HashJoin 結果が誤っている問題を修正しました[＃19175](https://github.com/pingcap/tidb/pull/19175)
     -   悲観的ロックモード[＃19236](https://github.com/pingcap/tidb/pull/19236)で重複キーのチェックが失敗する問題を修正
     -   `Apply`と`Union Scan`演算子が間違った実行結果を引き起こす問題を修正しました[＃19297](https://github.com/pingcap/tidb/pull/19297)
     -   トランザクション[＃19274](https://github.com/pingcap/tidb/pull/19274)で一部のキャッシュされた実行プランが誤って実行される問題を修正しました。
@@ -37,4 +37,4 @@ TiDB バージョン: 3.0.18
 
         -   `--log-file`引数が有効にならない問題を修正[＃345](https://github.com/pingcap/tidb-lightning/pull/345)
         -   TiDB バックエンド[＃357](https://github.com/pingcap/tidb-lightning/pull/357)使用時の空のバイナリ/16 進リテラルの構文エラーを修正
-        -   TiDB-backend [＃368](https://github.com/pingcap/tidb-lightning/pull/368)使用時の予期しない`switch-mode`呼び出しを修正
+        -   TiDB-backend [＃368](https://github.com/pingcap/tidb-lightning/pull/368)使用時の予期しない`switch-mode`の呼び出しを修正

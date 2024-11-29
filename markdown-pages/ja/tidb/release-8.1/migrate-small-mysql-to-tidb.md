@@ -110,7 +110,7 @@ tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
 
 ## ステップ4: 移行タスクのステータスを確認する {#step-4-check-the-migration-task-status}
 
-DM クラスターに進行中の移行タスクがあるかどうか、タスクのステータス、およびその他の情報を確認するには、 `tiup dmctl`を使用して`query-status`コマンドを実行します。
+DM クラスターに進行中の移行タスクがあるかどうか、タスクのステータス、およびその他の情報を確認するには、 `tiup dmctl`使用して`query-status`コマンドを実行します。
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} query-status ${task-name}
@@ -124,13 +124,13 @@ tiup dmctl --master-addr ${advertise-addr} query-status ${task-name}
 
 TiUPを使用して DM をデプロイするときに Prometheus、Alertmanager、および Grafana をデプロイした場合は、デプロイ中に指定した IP アドレスとポートを使用して Grafana にアクセスできます。その後、DM ダッシュボードを選択して、DM 関連の監視メトリックを表示できます。
 
--   DM マスターのログ ディレクトリ: DM マスター プロセス パラメータ`--log-file`で指定されます。TiUPを使用して DM を展開した場合、ログ ディレクトリはデフォルトで`/dm-deploy/dm-master-8261/log/`になります。
--   DM-worker のログ ディレクトリ: DM-worker プロセス パラメータ`--log-file`で指定されます。TiUPを使用して DM をデプロイした場合、ログ ディレクトリはデフォルトで`/dm-deploy/dm-worker-8262/log/`になります。
+-   DM マスターのログ ディレクトリ: DM マスター プロセス パラメータ`--log-file`で指定されます。TiUPを使用して DM を展開した場合、ログ ディレクトリはデフォルトで`/dm-deploy/dm-master-8261/log/`なります。
+-   DM-worker のログ ディレクトリ: DM-worker プロセス パラメータ`--log-file`で指定されます。TiUPを使用して DM をデプロイした場合、ログ ディレクトリはデフォルトで`/dm-deploy/dm-worker-8262/log/`なります。
 
-## 次は何ですか {#what-s-next}
+## 次は何か {#what-s-next}
 
 -   [移行タスクを一時停止する](/dm/dm-pause-task.md)
 -   [移行タスクを再開する](/dm/dm-resume-task.md)
 -   [移行タスクを停止する](/dm/dm-stop-task.md)
--   [クラスターデータソースとタスク構成をエ​​クスポートおよびインポートする](/dm/dm-export-import-config.md)
+-   [クラスターデータソースとタスク構成をエクスポートおよびインポートする](/dm/dm-export-import-config.md)
 -   [失敗したDDLステートメントを処理する](/dm/handle-failed-ddl-statements.md)

@@ -11,7 +11,7 @@ summary: このドキュメントでは、グローバル構成とインスタ�
 
 `source-id`および DM ワーカー ID を含む重要な概念の説明については、 [重要な概念](/dm/dm-config-overview.md#important-concepts)参照してください。
 
-## タスク構成ファイル テンプレート (上級) {#task-configuration-file-template-advanced}
+## タスク構成ファイル テンプレート (詳細) {#task-configuration-file-template-advanced}
 
 以下は、**高度な**データ移行タスクを実行できるタスク構成ファイル テンプレートです。
 
@@ -244,7 +244,7 @@ mysql-instances:
 サンプル構成ファイルを見ると、構成ファイルには`Global configuration`と`Instance configuration` 2 つの部分が含まれており、 `Global configuration`には`Basic configuration`と`Feature configuration set`含まれていることがわかります。構成の順序は次のとおりです。
 
 1.  [グローバル構成](#global-configuration)編集します。
-2.  グローバル設定に基づいて[インスタンス構成](#instance-configuration)を編集します。
+2.  グローバル構成に基づいて[インスタンス構成](#instance-configuration)を編集します。
 
 ## グローバル構成 {#global-configuration}
 
@@ -273,7 +273,7 @@ mysql-instances:
 
 ## インスタンス構成 {#instance-configuration}
 
-この部分では、データ移行のサブタスクを定義します。DM は、アップストリームの 1 つまたは複数の MySQL インスタンスからダウンストリームの同じインスタンスへのデータの移行をサポートします。
+この部分では、データ移行のサブタスクを定義します。DM は、アップストリームの 1 つまたは複数の MySQL インスタンスからダウンストリームの同じインスタンスへのデータ移行をサポートします。
 
 上記オプションの設定詳細については、次の表に示すように、 [機能構成セット](#feature-configuration-set)の対応する部分を参照してください。
 

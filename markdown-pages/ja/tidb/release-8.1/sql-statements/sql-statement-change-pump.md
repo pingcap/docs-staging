@@ -9,7 +9,7 @@ summary: TiDB データベースの CHANGE PUMP の使用法の概要。
 
 > **注記：**
 >
-> この機能は TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> この機能は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 > **ヒント：**
 >
@@ -32,7 +32,7 @@ SHOW PUMP STATUS;
 2 rows in set (0.00 sec)
 ```
 
-ポンプ 1 の状態は 1 日以上更新されていないことがわかります。Pumpは異常な状態ですが、 `State` `Online`ままです。 `CHANGE PUMP`を使用した後、ポンプの`State` 「一時停止」に変更されます。
+ポンプ 1 の状態は 1 日以上更新されていないことがわかります。Pumpは異常な状態ですが、 `State` `Online`ままです。 `CHANGE PUMP`使用した後、ポンプの`State` 「一時停止」に変更されます。
 
 ```sql
 CHANGE PUMP TO NODE_STATE ='paused' FOR NODE_ID 'pump1';

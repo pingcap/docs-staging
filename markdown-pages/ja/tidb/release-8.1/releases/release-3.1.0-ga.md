@@ -28,7 +28,7 @@ TiDB Ansible バージョン: 3.1.0 GA
 -   ティビ
 
     -   `explain format = "dot"` [＃16125](https://github.com/pingcap/tidb/pull/16125)のコプロセッサータスク情報の表示をサポート
-    -   `disable-error-stack`設定項目[＃16182](https://github.com/pingcap/tidb/pull/16182)を使用してログの冗長スタック情報を削減する
+    -   `disable-error-stack`設定項目[＃16182](https://github.com/pingcap/tidb/pull/16182)使用してログの冗長スタック情報を削減する
 
 -   配置Driver（PD）
 
@@ -44,9 +44,9 @@ TiDB Ansible バージョン: 3.1.0 GA
 
     -   TiFlashモニター[＃1253](https://github.com/pingcap/tidb-ansible/pull/1253) [＃1257](https://github.com/pingcap/tidb-ansible/pull/1257)を追加
     -   TiFlash [＃1262](https://github.com/pingcap/tidb-ansible/pull/1262) [＃1265](https://github.com/pingcap/tidb-ansible/pull/1265) [＃1271](https://github.com/pingcap/tidb-ansible/pull/1271)の設定パラメータを最適化する
-    -   TiDB起動スクリプト[＃1268](https://github.com/pingcap/tidb-ansible/pull/1268)最適化する
+    -   TiDB起動スクリプト[＃1268](https://github.com/pingcap/tidb-ansible/pull/1268)を最適化する
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -54,7 +54,7 @@ TiDB Ansible バージョン: 3.1.0 GA
     -   選択性計算[＃16052](https://github.com/pingcap/tidb/pull/16052)で一部の式が繰り返しカウントされる問題を修正
     -   極端なケースで統計情報をロードするときに発生するpanic問題を修正[＃15710](https://github.com/pingcap/tidb/pull/15710)
     -   SQLクエリ[＃16015](https://github.com/pingcap/tidb/pull/16015)で同等の式が認識されない場合にエラーが返される問題を修正
-    -   あるデータベースの`view`別のデータベース[＃15867](https://github.com/pingcap/tidb/pull/15867)からクエリするとエラーが返される問題を修正しました。
+    -   あるデータベースの`view`を別のデータベース[＃15867](https://github.com/pingcap/tidb/pull/15867)からクエリするとエラーが返される問題を修正しました。
     -   `fast analyze` [＃16080](https://github.com/pingcap/tidb/pull/16080)を使用して列を処理するときに発生するpanic問題を修正しました
     -   `current_role`印刷結果[＃16084](https://github.com/pingcap/tidb/pull/16084)の誤った文字セットを修正
     -   MySQL接続ハンドシェイクエラー[＃15799](https://github.com/pingcap/tidb/pull/15799)のログを改良する
@@ -62,11 +62,11 @@ TiDB Ansible バージョン: 3.1.0 GA
     -   `TypeNull`クラスが可変長型[＃15739](https://github.com/pingcap/tidb/pull/15739)と誤認されるため、左結合の`sort`演算子がpanic問題を修正しました。
     -   監視セッション再試行エラーの数が不正確になる問題を修正[＃16120](https://github.com/pingcap/tidb/pull/16120)
     -   `ALLOW_INVALID_DATES`モード[＃16171](https://github.com/pingcap/tidb/pull/16171)で`weekday`の結果が誤っている問題を修正
-    -   クラスターにTiFlashノード[＃15761](https://github.com/pingcap/tidb/pull/15761)ある場合にガベージコレクション（GC）が正常に動作しない可能性がある問題を修正
-    -   ハッシュパーティションテーブル[＃16219](https://github.com/pingcap/tidb/pull/16219)を作成するときにユーザーが大きなパーティション数を設定すると、TiDB がメモリ不足 (OOM) になる問題を修正しました。
-    -   警告がエラーと誤認される問題を修正し、 `UNION`文の動作を`SELECT`文の動作と同じにする[＃16138](https://github.com/pingcap/tidb/pull/16138)
-    -   `TopN` mocktikv [＃16200](https://github.com/pingcap/tidb/pull/16200)にプッシュダウンされたときの実行エラーを修正
-    -   [＃16142](https://github.com/pingcap/tidb/pull/16142) `runtime.growslice`オーバーヘッドを避けるために、初期の長さを`chunk.column.nullBitMap`に増やします。
+    -   クラスターにTiFlashノード[＃15761](https://github.com/pingcap/tidb/pull/15761)がある場合にガベージコレクション（GC）が正常に動作しない可能性がある問題を修正
+    -   ハッシュパーティションテーブル[＃16219](https://github.com/pingcap/tidb/pull/16219)を作成するときにユーザーが大きなパーティション数を設定すると、TiDB がメモリ(OOM) になる問題を修正しました。
+    -   警告がエラーと誤認される問題を修正し、 `UNION`文の動作を`SELECT`の動作と同じにする[＃16138](https://github.com/pingcap/tidb/pull/16138)
+    -   `TopN`が mocktikv [＃16200](https://github.com/pingcap/tidb/pull/16200)にプッシュダウンされたときの実行エラーを修正
+    -   不要な`runtime.growslice`を避けるために、初期の長さを`chunk.column.nullBitMap`に増やします[＃16142](https://github.com/pingcap/tidb/pull/16142)
 
 -   ティクヴ
 
@@ -78,7 +78,7 @@ TiDB Ansible バージョン: 3.1.0 GA
 
     -   TiDBからスキーマを複製する際の`rename table`操作の潜在的な問題を修正
     -   複数のデータパス構成で`rename table`操作によって発生するデータ損失の問題を修正しました。
-    -   一部のシナリオでTiFlashが誤ったstorage容量を報告する問題を修正
+    -   一部のシナリオでTiFlash が誤ったstorage容量を報告する問題を修正
     -   リージョンマージが有効な場合にTiFlashから読み取ることによって発生する可能性のある問題を修正しました。
 
 -   ツール

@@ -3,7 +3,7 @@ title: Upgrade and After Upgrade FAQs
 summary: TiDB のアップグレード中およびアップグレード後のよくある質問と解決策について説明します。
 ---
 
-# アップグレードとアップグレード後のよくある質問 {#upgrade-and-after-upgrade-faqs}
+# アップグレードとアップグレード後のFAQ {#upgrade-and-after-upgrade-faqs}
 
 このドキュメントでは、TiDB のアップグレード時またはアップグレード後によくある質問とその解決策を紹介します。
 
@@ -13,7 +13,7 @@ summary: TiDB のアップグレード中およびアップグレード後のよ
 
 ### ローリングアップデートの効果は何ですか? {#what-are-the-effects-of-rolling-updates}
 
-TiDB サービスにローリング アップデートを適用すると、実行中のアプリケーションがさまざまな程度で影響を受けます。したがって、業務のピーク時にローリング アップデートを実行することはお勧めしません。最小のクラスター トポロジ (TiDB * 2、PD * 3、TiKV * 3) を構成する必要があります。クラスターにPumpまたはDrainerサービスが含まれている場合は、ローリング アップデートの前にDrainerを停止することをお勧めします。TiDB をアップグレードすると、 Pumpもアップグレードされます。
+TiDB サービスにローリング アップデートを適用すると、実行中のアプリケーションがさまざまな程度で影響を受けます。したがって、業務のピーク時にローリング アップデートを実行することはお勧めしません。最小のクラスター トポロジ (TiDB * 2、PD * 3、TiKV * 3) を構成する必要があります。クラスターにPumpまたはDrainerサービスが含まれている場合は、ローリング アップデートの前にDrainer を停止することをお勧めします。TiDB をアップグレードすると、 Pumpもアップグレードされます。
 
 ### DDL 実行中に TiDB クラスターをアップグレードできますか? {#can-i-upgrade-the-tidb-cluster-during-the-ddl-execution}
 
@@ -29,7 +29,7 @@ TiDB サービスにローリング アップデートを適用すると、実�
 
 ### バイナリを使用して TiDB をアップグレードするにはどうすればよいですか? {#how-to-upgrade-tidb-using-the-binary}
 
-バイナリを使用して TiDB をアップグレードすることは推奨されません。代わりに、バージョンの一貫性と互換性の両方を保証する[TiUPを使用して TiDB をアップグレードする](/upgrade-tidb-using-tiup.md)または[Kubernetes 上の TiDB クラスターをアップグレードする](https://docs.pingcap.com/tidb-in-kubernetes/stable/upgrade-a-tidb-cluster)にアップグレードすることをお勧めします。
+バイナリを使用して TiDB をアップグレードすることは推奨されません。代わりに、バージョンの一貫性と互換性の両方を保証する[TiUP を使用して TiDB をアップグレードする](/upgrade-tidb-using-tiup.md)または[Kubernetes 上の TiDB クラスターをアップグレードする](https://docs.pingcap.com/tidb-in-kubernetes/stable/upgrade-a-tidb-cluster)にアップグレードすることをお勧めします。
 
 ## アップグレード後のFAQ {#after-upgrade-faqs}
 
@@ -247,9 +247,9 @@ TiDB v2.1.1 以前のバージョンでは、文字セットが UTF-8 の場合�
 
         Query OK, 1 row affected
 
-    具体的には、変数`tidb_skip_utf8_check`を使用して、データの UTF-8 および UTF8MB4 の正当なチェックをスキップできます。ただし、チェックをスキップすると、MySQL がチェックを実行するため、TiDB から MySQL へのデータの複製に失敗する可能性があります。
+    具体的には、変数`tidb_skip_utf8_check`使用して、データの UTF-8 および UTF8MB4 の正当なチェックをスキップできます。ただし、チェックをスキップすると、MySQL がチェックを実行するため、TiDB から MySQL へのデータの複製に失敗する可能性があります。
 
-    UTF-8 チェックのみをスキップしたい場合は、 `tidb_check_mb4_value_in_utf8`設定できます。この変数は v2.1.3 の`config.toml`ファイルに追加され、設定ファイルの`check-mb4-value-in-utf8`を変更してからクラスターを再起動すると有効になります。
+    UTF-8 チェックのみをスキップしたい場合は、 `tidb_check_mb4_value_in_utf8`設定できます。この変数は v2.1.3 の`config.toml`ファイルに追加され、設定ファイルで`check-mb4-value-in-utf8`変更してからクラスターを再起動すると有効になります。
 
     v2.1.5 以降では、HTTP API とセッション変数を通じて`tidb_check_mb4_value_in_utf8`設定できます。
 

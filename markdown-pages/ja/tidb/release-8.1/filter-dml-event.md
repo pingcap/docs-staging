@@ -33,7 +33,7 @@ expression-filter:
     insert-value-expr: "c % 2 = 0"
 ```
 
-上記の設定例では、 `even_c`ルールが設定され、データ ソース`mysql-replica-01`によって参照されています。このルールによれば、 `expr_filter`スキーマの`tb1`テーブルで、 `c`列 ( `c % 2 = 0` ) に偶数が挿入されると、この`insert`ステートメントは下流に複製されません。次の例は、このルールの効果を示しています。
+上記の設定例では、 `even_c`ルールが設定され、データソース`mysql-replica-01`によって参照されています。このルールによれば、 `expr_filter`スキーマの`tb1`テーブルで、 `c`列 ( `c % 2 = 0` ) に偶数が挿入されると、この`insert`ステートメントは下流に複製されません。次の例は、このルールの効果を示しています。
 
 次のデータをアップストリーム データ ソースに増分的に挿入します。
 
@@ -41,7 +41,7 @@ expression-filter:
 INSERT INTO tbl(id, c) VALUES (1, 1), (2, 2), (3, 3), (4, 4);
 ```
 
-次に、ダウンストリームの`tb1`テーブルをクエリします。3 `c`奇数行のみがレプリケートされていることがわかります。
+次に、ダウンストリームの`tb1`テーブルをクエリします`c`の奇数行のみがレプリケートされていることがわかります。
 
 ```sql
 MySQL [test]> select * from tbl;
@@ -56,9 +56,9 @@ MySQL [test]> select * from tbl;
 
 ## コンフィグレーションパラメータと説明 {#configuration-parameters-and-description}
 
--   `schema` : 一致するアップストリーム スキーマの名前。ワイルドカード一致または通常の一致はサポートされていません。
+-   `schema` : 一致させるアップストリーム スキーマの名前。ワイルドカード一致または通常の一致はサポートされていません。
 -   `table` : 一致させるアップストリーム テーブルの名前。ワイルドカード一致または通常の一致はサポートされていません。
--   `insert-value-expr` : `INSERT`種類のbinlogイベント (WRITE_ROWS_EVENT) によって運ばれる値に影響を及ぼす式を設定します。この式`update-new-value-expr`同じ設定項目内で`update-old-value-expr` 、または`delete-value-expr`と一緒に使用することはできません。
+-   `insert-value-expr` : `INSERT`種類のbinlogイベント (WRITE_ROWS_EVENT) によって運ばれる`update-new-value-expr`に影響を及ぼす式を設定します。この式を同じ設定項目内で`update-old-value-expr` 、または`delete-value-expr`と一緒に使用することはできません。
 -   `update-old-value-expr` : `UPDATE`種類のbinlogイベント (UPDATE_ROWS_EVENT) によって保持される古い値に有効になる式を構成します。この式を同じ構成項目で`insert-value-expr`または`delete-value-expr`と一緒に使用することはできません。
 -   `update-new-value-expr` : `UPDATE`種類のbinlogイベント (UPDATE_ROWS_EVENT) によって伝達される新しい値に有効になる式を構成します。この式を同じ構成項目で`insert-value-expr`または`delete-value-expr`と一緒に使用することはできません。
 -   `delete-value-expr` : `DELETE`種類のbinlogイベント (DELETE_ROWS_EVENT) によって伝達される値に影響を及ぼす式を設定します。この式は`insert-value-expr` 、 `update-old-value-expr` 、または`update-new-value-expr`と一緒に使用することはできません。
@@ -66,15 +66,15 @@ MySQL [test]> select * from tbl;
 > **注記：**
 >
 > -   `update-old-value-expr`と`update-new-value-expr`一緒に設定できます。
-> -   `update-old-value-expr`と`update-new-value-expr`が一緒に構成されている場合、「更新 + 古い値」が`update-old-value-expr`に一致し**、** 「更新 + 新しい値」が`update-new-value-expr`に一致する行がフィルタリングされます。
-> -   `update-old-value-expr`と`update-new-value-expr`のいずれかが設定されている場合、設定された式によって**行の変更全体**をフィルタリングするかどうかが決定されます。つまり、古い値の削除と新しい値の挿入が全体としてフィルタリングされます。
+> -   `update-old-value-expr`と`update-new-value-expr`一緒に構成されている場合、「更新 + 古い値」が`update-old-value-expr`に一致し**、** 「更新 + 新しい値」が`update-new-value-expr`一致する行がフィルタリングされます。
+> -   `update-old-value-expr`と`update-new-value-expr`のいずれかが設定されている場合、設定された式**によって行の変更全体**をフィルタリングするかどうかが決定されます。つまり、古い値の削除と新しい値の挿入が全体としてフィルタリングされます。
 
 SQL 式は 1 つの列または複数の列で使用できます。また、 `c % 2 = 0` 、 `a*a + b*b = c*c` 、 `ts > NOW()`など、TiDB でサポートされている SQL関数を使用することもできます。
 
-`TIMESTAMP`デフォルトのタイムゾーンは、タスク構成ファイルで指定されたタイムゾーンです。デフォルト値はダウンストリームのタイムゾーンです。 `c_timestamp = '2021-01-01 12:34:56.5678+08:00'`のような方法でタイムゾーンを明示的に指定できます。
+`TIMESTAMP`デフォルトのタイムゾーンは、タスク構成ファイルで指定されたタイムゾーンです。デフォルト値はダウンストリームのタイムゾーンです。 `c_timestamp = '2021-01-01 12:34:56.5678+08:00'`ような方法でタイムゾーンを明示的に指定できます。
 
-`expression-filter`構成項目の下に複数のフィルタリング ルールを設定できます。上流データ ソースは、 `expression-filters`の必要なルールを参照して有効にします。複数のルールを使用する場合、**いずれか**のルールが一致すると、行の変更全体がフィルタリングされます。
+`expression-filter`構成項目の下に複数のフィルタリング ルールを設定できます。上流データ ソースは、 `expression-filters`の必要なルールを参照して有効にします。複数のルールを使用する場合、いずれ**か**のルールが一致すると、行の変更全体がフィルタリングされます。
 
 > **注記：**
 >
-> 式フィルタリング ルールを多すぎる数に設定すると、DM の計算オーバーヘッドが増加し、データのレプリケーションが遅くなります。
+> 式フィルタリング ルールを多く設定しすぎると、DM の計算オーバーヘッドが増加し、データのレプリケーションが遅くなります。

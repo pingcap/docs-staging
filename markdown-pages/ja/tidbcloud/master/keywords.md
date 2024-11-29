@@ -151,7 +151,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   繋がり
 -   一貫性
 -   一貫性のある
--   制約（R）
+-   制約 (R)
 -   コンテクスト
 -   続行 (R)
 -   変換 (R)
@@ -164,7 +164,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   CSV_ヘッダー
 -   NULLではありません
 -   NULL は無効です
--   CSV_セパレータ
+-   CSV_セパレーター
 -   CSV_TRIM_LAST_SEPARATORS
 -   CUME_DIST (R ウィンドウ)
 -   現在
@@ -468,7 +468,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   オプション
 -   オプション（R）
 -   または（R）
--   注文（R）
+-   注文 (R)
 -   アウト（R）
 -   アウター（右）
 -   アウトファイル (R)
@@ -571,7 +571,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   RTREE
 -   走る
 
-<a id="S" class="letter" href="#S">ス</a>
+<a id="S" class="letter" href="#S">S</a>
 
 -   サンプルレート
 -   サンプル
@@ -619,7 +619,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   SQL_NO_CACHE
 -   SQL_SMALL_RESULT (R)
 -   SQL_TSI_DAY
--   SQL_TSI_時間
+-   SQL_TSI_HOUR
 -   SQL_TSI_分
 -   SQL_TSI_MONTH
 -   SQL_TSI_QUARTER
@@ -671,7 +671,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   テーブルチェックサム
 -   一時的
 -   誘惑的
--   終了しました (R)
+-   終了しました（R）
 -   TEXT
 -   よりも
 -   その後（R）

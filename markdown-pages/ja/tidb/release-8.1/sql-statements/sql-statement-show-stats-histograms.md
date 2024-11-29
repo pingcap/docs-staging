@@ -10,23 +10,23 @@ summary: TiDB データベースの SHOW HISTOGRAMS の使用法の概要。
 
 現在、 `SHOW STATS_HISTOGRAMS`ステートメントは次の列を返します。
 
-| カラム名              | 説明                                 |
-| ----------------- | ---------------------------------- |
-| データベース名           | データベース名                            |
-| `Table_name`      | テーブル名                              |
-| `Partition_name`  | パーティション名                           |
-| `Column_name`     | 列名                                 |
-| `Is_index`        | インデックス列であるかどうか                     |
-| `Update_time`     | 更新時間                               |
-| `Distinct_count`  | 個別のカウント                            |
-| `Null_count`      | NULL カウント                          |
-| `Avg_col_size`    | 平均コルサイズ                            |
-| `Correlation`     | 相関                                 |
-| `Load_status`     | 負荷ステータス（ `allEvicted`など`allLoaded` |
-| `Total_mem_usage` | 総メモリ使用量                            |
-| `Hist_mem_usage`  | 過去のメモリ使用量                          |
-| `Topn_mem_usage`  | TopNのメモリ使用量                        |
-| `Cms_mem_usage`   | CMSのメモリ使用量                         |
+| カラム名              | 説明                                                 |
+| ----------------- | -------------------------------------------------- |
+| `Db_name`         | データベース名                                            |
+| `Table_name`      | テーブル名                                              |
+| `Partition_name`  | パーティション名                                           |
+| `Column_name`     | 列名（ `is_index`が`0`場合）またはインデックス名（ `is_index`が`1`場合） |
+| `Is_index`        | インデックス列であるかどうか                                     |
+| `Update_time`     | 更新時間                                               |
+| `Distinct_count`  | 個別のカウント                                            |
+| `Null_count`      | NULL カウント                                          |
+| `Avg_col_size`    | 平均コルサイズ                                            |
+| `Correlation`     | この列と整数主キー列の間のピアソン相関係数。2つの列間の関連の度合いを示します。           |
+| `Load_status`     | 負荷ステータス（ `allEvicted`など`allLoaded`                 |
+| `Total_mem_usage` | 総メモリ使用量                                            |
+| `Hist_mem_usage`  | 過去のメモリ使用量                                          |
+| `Topn_mem_usage`  | TopNのメモリ使用量                                        |
+| `Cms_mem_usage`   | CMSのメモリ使用量                                         |
 
 ## 概要 {#synopsis}
 

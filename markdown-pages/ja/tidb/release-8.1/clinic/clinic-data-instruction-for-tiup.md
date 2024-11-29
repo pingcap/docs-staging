@@ -73,7 +73,7 @@ PingCAPクリニックによって収集された診断データは、クラス�
 | コンフィグレーションファイル | `ticdc.toml`                                                              | `--include=config`                                |
 | デバッグデータ        | `info.txt` `status.txt` `changefeeds.txt` `captures.txt` `processors.txt` | `--include=debug` (Diag はデフォルトではこのデータ タイプを収集しません) |
 
-### Prometheus 監視データ {#prometheus-monitoring-data}
+### プロメテウス監視データ {#prometheus-monitoring-data}
 
 | データ型        | エクスポートされたファイル        | PingCAPクリニックによるデータ収集のパラメータ |
 | :---------- | :------------------- | :------------------------- |

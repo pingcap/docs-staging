@@ -14,11 +14,11 @@ summary: Grafana ダッシュボードのスナップショットをエクスポ
 >
 > 現在、MetricsToolはGrafana v6.xxでのみ使用できます。
 
-メトリクス データはトラブルシューティングに重要です。リモート アシスタンスをリクエストすると、サポート スタッフが Grafana ダッシュボードを表示して問題を診断する必要がある場合があります。1 [メトリクスツール](https://metricstool.pingcap.net/) Grafana ダッシュボードのスナップショットをローカル ファイルとしてエクスポートし、これらのスナップショットを視覚化するのに役立ちます。これらのスナップショットを部外者と共有して、Grafanaサーバー上の他の機密情報へのアクセス権を与えることなく、グラフを正確に読み取ることができるようにすることができます。
+メトリクス データはトラブルシューティングに重要です。リモート アシスタンスをリクエストすると、サポート スタッフが Grafana ダッシュボードを表示して問題を診断する必要がある場合があります。1 [メトリクスツール](https://metricstool.pingcap.net/) 、Grafana ダッシュボードのスナップショットをローカル ファイルとしてエクスポートし、これらのスナップショットを視覚化するのに役立ちます。これらのスナップショットを部外者と共有して、Grafanaサーバー上の他の機密情報へのアクセス権を与えることなく、グラフを正確に読み取ることができるようにすることができます。
 
 ## 使用法 {#usage}
 
-MetricsTool は[翻訳: 翻訳者: 渡辺 俊之](https://metricstool.pingcap.net/)からアクセスできます。これは 3 つのツール セットで構成されています。
+MetricsTool は[https://metricstool.pingcap.net/](https://metricstool.pingcap.net/)からアクセスできます。これは 3 つのツール セットで構成されています。
 
 -   **エクスポート**: ブラウザの開発者ツールで実行されるユーザー スクリプト。これにより、任意の Grafana v6.xxサーバー上の現在のダッシュボードに表示されているすべてのパネルのスナップショットをダウンロードできます。
 
@@ -28,11 +28,11 @@ MetricsTool は[翻訳: 翻訳者: 渡辺 俊之](https://metricstool.pingcap.ne
 
     ![Screenshot of MetricsTool Visualizer](https://download.pingcap.com/images/docs/metricstool-visualize.png)
 
--   **インポート**: エクスポートされたスナップショットを実際の G​​rafana インスタンスにインポートする手順。
+-   **インポート**: エクスポートされたスナップショットを実際の Grafana インスタンスにインポートする手順。
 
 ## よくある質問 {#faqs}
 
-### スクリーンショットや PDF 印刷と比較して、このツールの利点は何ですか? {#what-is-the-advantage-of-this-tool-compared-with-screenshot-or-pdf-printing}
+### スクリーンショットや PDF 印刷と比べて、このツールの利点は何ですか? {#what-is-the-advantage-of-this-tool-compared-with-screenshot-or-pdf-printing}
 
 MetricsTool によってエクスポートされたスナップショット ファイルには、取得時の実際の値が含まれています。また、Visualizer を使用すると、レンダリングされたグラフをライブ Grafana ダッシュボードのように操作でき、シリーズの切り替え、より狭い時間範囲へのズーム、特定の時間における正確な値の確認などの操作がサポートされます。これにより、MetricsTool は画像や PDF よりもはるかに強力になります。
 

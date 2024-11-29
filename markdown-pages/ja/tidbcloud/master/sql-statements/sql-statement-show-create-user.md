@@ -3,7 +3,7 @@ title: SHOW CREATE USER | TiDB SQL Statement Reference
 summary: TiDB データベースに対する SHOW CREATE USER の使用法の概要。
 ---
 
-# ユーザーの作成を表示 {#show-create-user}
+# 表示 ユーザーの作成 {#show-create-user}
 
 このステートメントは、 `CREATE USER`構文を使用してユーザーを再作成する方法を示しています。
 
@@ -38,13 +38,13 @@ mysql> SHOW GRANTS FOR 'root';
 
 <CustomContent platform="tidb">
 
--   `SHOW CREATE USER`の出力は MySQL と一致するように設計されていますが、 `CREATE`のオプションのいくつかはまだ TiDB でサポートされていません。まだサポートされていないオプションは解析されますが無視されます。詳細については[Securityの互換性](/security-compatibility-with-mysql.md)を参照してください。
+-   `SHOW CREATE USER`の出力は MySQL と一致するように設計されていますが、 `CREATE`のオプションのいくつかはまだ TiDB でサポートされていません。まだサポートされていないオプションは解析されますが無視されます。詳細については[Securityの互換性](/security-compatibility-with-mysql.md)参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
--   `SHOW CREATE USER`の出力は MySQL と一致するように設計されていますが、 `CREATE`のオプションのうちいくつかはまだ TiDB でサポートされていません。まだサポートされていないオプションは解析されますが無視されます。詳細については[Securityの互換性](https://docs.pingcap.com/tidb/stable/security-compatibility-with-mysql/)を参照してください。
+-   `SHOW CREATE USER`の出力は MySQL と一致するように設計されていますが、 `CREATE`のオプションのいくつかはまだ TiDB でサポートされていません。まだサポートされていないオプションは解析されますが無視されます。詳細については[Securityの互換性](https://docs.pingcap.com/tidb/stable/security-compatibility-with-mysql/)参照してください。
 
 </CustomContent>
 

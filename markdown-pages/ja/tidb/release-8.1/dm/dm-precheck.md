@@ -5,7 +5,7 @@ summary: 移行タスクを開始する前に DM が実行する事前チェッ�
 
 # 移行タスクの事前チェック {#migration-task-precheck}
 
-DM を使用してアップストリームからダウンストリームにデータを移行する前に、事前チェックを行うことでアップストリーム データベース構成のエラーを検出し、移行がスムーズに進むようにします。このドキュメントでは、DM 事前チェック機能について、その使用シナリオ、チェック項目、引数などを紹介します。
+DM を使用して上流から下流にデータを移行する前に、事前チェックを行うことで上流のデータベース構成のエラーを検出し、移行がスムーズに進むようにします。このドキュメントでは、DM 事前チェック機能について、その使用シナリオ、チェック項目、引数などを紹介します。
 
 ## 使用シナリオ {#usage-scenario}
 
@@ -52,14 +52,14 @@ tiup dmctl check-task ./task.yaml
 
     -   アップストリーム テーブルに、TiDB でサポートされていない外部キーがあるかどうかを確認します。事前チェックで外部キーが見つかった場合は、警告が返されます。
 
-    -   アップストリーム テーブルが TiDB と互換性のない文字セットを使用していないかどうかを確認します。詳細については、 [TiDB でサポートされる文字セット](/character-set-and-collation.md)参照してください。
+    -   アップストリーム テーブルが TiDB と互換性のない文字セットを使用しているかどうかを確認します。詳細については、 [TiDB でサポートされる文字セット](/character-set-and-collation.md)参照してください。
 
     -   アップストリーム テーブルに主キー制約または一意キー制約 (v1.0.7 から導入) があるかどうかを確認します。
 
     > **警告：**
     >
-    > -   アップストリームで互換性のない文字セットが使用されている場合でも、ダウンストリームで utf8mb4 文字セットを使用してテーブルを作成することで、レプリケーションを続行できます。ただし、この方法はお勧めしません。アップストリームで使用されている互換性のない文字セットを、ダウンストリームでサポートされている別の文字セットに置き換えることをお勧めします。
-    > -   アップストリーム テーブルに主キー制約または一意キー制約がない場合、同じデータ行がダウンストリームに複数回レプリケートされる可能性があり、これもレプリケーションのパフォーマンスに影響する可能性があります。本番環境では、アップストリーム テーブルに主キー制約または一意キー制約を指定することをお勧めします。
+    > -   アップストリームで互換性のない文字セットが使用されている場合でも、ダウンストリームで utf8mb4 文字セットを使用してテーブルを作成することで、レプリケーションを続行できます。ただし、この方法は推奨されません。アップストリームで使用されている互換性のない文字セットを、ダウンストリームでサポートされている別の文字セットに置き換えることをお勧めします。
+    > -   アップストリーム テーブルに主キー制約または一意キー制約がない場合、同じデータ行がダウンストリームに複数回レプリケートされる可能性があり、これもレプリケーションのパフォーマンスに影響する可能性があります。実本番環境では、アップストリーム テーブルに主キー制約または一意キー制約を指定することをお勧めします。
 
 ### 完全なデータ移行のためのチェック項目 {#check-items-for-full-data-migration}
 
@@ -69,28 +69,28 @@ tiup dmctl check-task ./task.yaml
 
     -   INFORMATION_SCHEMA およびダンプ テーブルに対する SELECT 権限
     -   RELOAD権限が`consistency=flush`場合
-    -   ダンプテーブルに対するLOCK TABLES権限`consistency=flush/lock`場合）
+    -   ダンプテーブルに対するLOCK TABLES権限（ `consistency=flush/lock`場合）
 
 -   (必須) アップストリーム MySQL マルチインスタンス シャーディング テーブルの一貫性
 
     -   悲観的モードでは、すべてのシャード テーブルのテーブル スキーマが次の項目で一貫しているかどうかを確認します。
 
-        -   列の数
+        -   列数
         -   カラム名
         -   カラムの順序
         -   カラムタイプ
         -   主キー
         -   ユニークインデックス
 
-    -   楽観的モードでは、すべてのシャード テーブルのスキーマが[楽観的互換性](https://github.com/pingcap/tiflow/blob/release-8.1/dm/docs/RFCS/20191209_optimistic_ddl.md#modifying-column-types)満たしているかどうかを確認します。
+    -   楽観的モードでは、すべてのシャード テーブルのスキーマが[楽観的互換性](https://github.com/pingcap/tiflow/blob/release-8.1/dm/docs/RFCS/20191209_optimistic_ddl.md#modifying-column-types)を満たしているかどうかを確認します。
 
     -   移行タスクが`start-task`コマンドによって正常に開始された場合、このタスクの事前チェックでは整合性チェックがスキップされます。
 
 -   シャードテーブル内の主キーの自動増分
 
-    -   シャード テーブルに自動増分主キーがある場合、事前チェックは警告を返します。自動増分主キーに競合がある場合は、解決策については[自動増分主キーの競合を処理する](/dm/shard-merge-best-practices.md#handle-conflicts-of-auto-increment-primary-key)を参照してください。
+    -   シャード テーブルに自動増分主キーがある場合、事前チェックは警告を返します。自動増分主キーに競合がある場合は、解決策については[自動増分主キーの競合を処理する](/dm/shard-merge-best-practices.md#handle-conflicts-of-auto-increment-primary-key)参照してください。
 
-#### 物理的な輸入のためのアイテムを確認する {#check-items-for-physical-import}
+#### 物理的な輸入品目を確認する {#check-items-for-physical-import}
 
 タスク構成で`import-mode: "physical"`設定すると、 [物理的な輸入](/tidb-lightning/tidb-lightning-physical-import-mode.md)正常に実行されることを確認するために、次のチェック項目が追加されます。プロンプトに従った後、これらのチェック項目の要件を満たすのが難しい場合は、 [論理インポートモード](/tidb-lightning/tidb-lightning-logical-import-mode.md)を使用してデータをインポートしてみてください。
 
@@ -100,7 +100,7 @@ tiup dmctl check-task ./task.yaml
 
 -   下流データベースにおけるリージョン分布
 
-    -   異なる TiKV ノード上のリージョンの数をチェックします。リージョン数が最も少ない TiKV ノードには`a`リージョンがあり、リージョン数が最も多い TiKV ノードには`b`リージョンがあると仮定すると、 `a / b`が 0.75 未満の場合、事前チェックは警告を返します。関連する PD パラメータを調整してリージョンのスケジュールを高速化し、リージョン数が変化するのを待つことができます。7 [PD スケジューリングのベスト プラクティス -Leader/リージョンの配分がバランスが取れていない](/best-practices/pd-scheduling-best-practices.md#leadersregions-are-not-evenly-distributed)参照してください。
+    -   異なる TiKV ノード上のリージョンの数をチェックします。リージョン数が最も少ない TiKV ノードのリージョン数が`a`で、リージョン数が最も多い TiKV ノードのリージョン数が`b`であると仮定すると、 `a / b` 0.75 未満の場合、事前チェックで警告が返されます。関連する PD パラメータを調整してリージョンのスケジュールを高速化し、リージョン数が変化するのを待つことができます[PD スケジューリングのベスト プラクティス -Leader/リージョンの配分がバランスが取れていない](/best-practices/pd-scheduling-best-practices.md#leadersregions-are-not-evenly-distributed)参照してください。
 
 -   下流データベースのTiDB、PD、およびTiKVのバージョン
 
@@ -121,7 +121,7 @@ tiup dmctl check-task ./task.yaml
 -   (必須) 上流データベースのレプリケーション権限
 
     -   レプリケーションクライアント権限
-    -   REPLICATION SLAVE 権限
+    -   レプリケーションスレーブ権限
 
 -   データベースのプライマリ/セカンダリ構成
 
@@ -131,18 +131,18 @@ tiup dmctl check-task ./task.yaml
 
     -   binlogが有効になっているかどうかを確認します (DM で必要)。
     -   `binlog_format=ROW`が構成されているかどうかを確認します (DM は ROW 形式のbinlogの移行のみをサポートします)。
-    -   `binlog_row_image=FULL`設定されているかどうかを確認します (DM は`binlog_row_image=FULL`のみをサポートします)。
-    -   `binlog_do_db`または`binlog_ignore_db`が設定されている場合は、移行するデータベース テーブルが`binlog_do_db`および`binlog_ignore_db`の条件を満たしているかどうかを確認します。
+    -   `binlog_row_image=FULL`が設定されているかどうかを確認します (DM は`binlog_row_image=FULL`のみをサポートします)。
+    -   `binlog_do_db`または`binlog_ignore_db`設定されている場合は、移行するデータベース テーブルが`binlog_do_db`および`binlog_ignore_db`の条件を満たしているかどうかを確認します。
 
 -   (必須) アップストリーム データベースが[オンラインDDL](/dm/feature-online-ddl.md)プロセス ( `ghost`テーブルは作成されているが、 `rename`フェーズはまだ実行されていない) にあるかどうかを確認します。アップストリームがオンライン DDL プロセスにある場合、事前チェックでエラーが返されます。この場合、DDL が完了するまで待ってから再試行してください。
 
 ### 完全データ移行と増分データ移行のチェック項目 {#check-items-for-full-and-incremental-data-migration}
 
-完全および増分データ移行モード（ `task-mode: all` ）の場合、事前チェックには[共通チェック項目](#common-check-items)に加えて[完全なデータ移行チェック項目](#check-items-for-full-data-migration)と[増分データ移行チェック項目](#check-items-for-incremental-data-migration)含まれます。
+完全および増分データ移行モード（ `task-mode: all` ）の場合、事前チェックには[共通チェック項目](#common-check-items)に加えて、 [完全なデータ移行チェック項目](#check-items-for-full-data-migration)と[増分データ移行チェック項目](#check-items-for-incremental-data-migration)含まれます。
 
 ### 無視できるチェック項目 {#ignorable-check-items}
 
-事前チェックにより、環境内の潜在的なリスクを見つけることができます。チェック項目を無視することはお勧めしません。データ移行タスクに特別なニーズがある場合は、 [`ignore-checking-items`設定項目](/dm/task-configuration-file-full.md#task-configuration-file-template-advanced)使用して一部のチェック項目をスキップできます。
+事前チェックにより、環境内の潜在的なリスクを見つけることができます。チェック項目を無視することはお勧めしません。データ移行タスクに特別なニーズがある場合は、 [`ignore-checking-items`設定項目](/dm/task-configuration-file-full.md#task-configuration-file-template-advanced)を使用して一部のチェック項目をスキップできます。
 
 | チェック項目                      | 説明                                                            |
 | :-------------------------- | :------------------------------------------------------------ |
@@ -150,7 +150,7 @@ tiup dmctl check-task ./task.yaml
 | `replication_privilege`     | アップストリーム MySQL インスタンス内のユーザーのレプリケーション権限をチェックします。               |
 | `version`                   | アップストリーム データベースのバージョンを確認します。                                  |
 | `server_id`                 | server_id がアップストリーム データベースで設定されているかどうかを確認します。                 |
-| `binlog_enable`             | アップストリーム データベースでbinlog が有効になっているかどうかを確認します。                   |
+| `binlog_enable`             | アップストリーム データベースでbinlogが有効になっているかどうかを確認します。                    |
 | `table_schema`              | アップストリーム MySQL テーブル内のテーブル スキーマの互換性をチェックします。                   |
 | `schema_of_shard_tables`    | アップストリーム MySQL マルチインスタンス シャード内のテーブル スキーマの一貫性をチェックします。         |
 | `auto_increment_ID`         | アップストリームの MySQL マルチインスタンス シャードで自動インクリメント主キーが競合するかどうかを確認します。   |
@@ -182,4 +182,4 @@ mydumpers:                           # Configuration arguments of the dump proce
 
 > **注記：**
 >
-> 値`threads`は、アップストリーム データベースと DM 間の物理接続の数を決定します。値が`threads`に大きすぎると、アップストリームの負荷が増加する可能性があります。したがって、適切な値に`threads`を設定する必要があります。
+> 値`threads`は、アップストリーム データベースと DM 間の物理接続の数を決定します。値が`threads`に大きすぎると、アップストリームの負荷が増加する可能性があります。したがって、適切な値`threads`に設定する必要があります。

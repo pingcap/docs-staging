@@ -10,7 +10,7 @@ summary: このドキュメントでは、データ移行構成ファイルの�
 ## DM プロセス構成ファイル {#dm-process-configuration-files}
 
 -   `dm-master.toml` : DMマスタープロセスを実行するための構成ファイル。DMマスターのトポロジ情報とログが含まれます。詳細については、 [DMマスターコンフィグレーションファイル](/dm/dm-master-configuration-file.md)を参照してください。
--   `dm-worker.toml` : DM-workerプロセスを実行するための構成ファイル。トポロジ情報とDM-workerのログが含まれます。詳細については、 [DM-workerコンフィグレーションファイル](/dm/dm-worker-configuration-file.md)を参照してください。
+-   `dm-worker.toml` : DM-worker プロセスを実行するための構成ファイル。トポロジ情報と DM-worker のログが含まれます。詳細については、 [DM-workerコンフィグレーションファイル](/dm/dm-worker-configuration-file.md)を参照してください。
 -   `source.yaml` : MySQLやMariaDBなどのアップストリームデータベースの設定。詳細については[アップストリームデータベースコンフィグレーションファイル](/dm/dm-source-configuration-file.md)を参照してください。
 
 ## DM移行タスクの構成 {#dm-migration-task-configuration}
@@ -27,8 +27,8 @@ summary: このドキュメントでは、データ移行構成ファイルの�
 
 このセクションでは、いくつかの重要な概念について説明します。
 
-| コンセプト       | 説明                                                                                  | コンフィグレーションファイル                                             |
-| :---------- | :---------------------------------------------------------------------------------- | :--------------------------------------------------------- |
-| `source-id` | MySQL または MariaDB インスタンス、またはプライマリ セカンダリ構造を持つ移行グループを一意に表します。1 `source-id`最大長は 32 です。 | `source_id` / `source.yaml` ;<br/> `task.yaml`中`source-id` |
-| DMマスターID    | DMマスターを一意に表す（ `dm-master.toml`の`master-addr`パラメータによって）                              | `master-addr` / `dm-master.toml`                           |
-| DMワーカーID    | DMワーカーを一意に表す（ `dm-worker.toml`の`worker-addr`パラメータによって）                              | `worker-addr` / `dm-worker.toml`                           |
+| コンセプト       | 説明                                                                               | コンフィグレーションファイル                                             |
+| :---------- | :------------------------------------------------------------------------------- | :--------------------------------------------------------- |
+| `source-id` | MySQL または MariaDB インスタンス、またはプライマリ セカンダリ構造を持つ移行グループを一意に表します。1 の最大長は`source-id`です。 | `source_id` / `source.yaml` ;<br/> `task.yaml`中`source-id` |
+| DMマスターID    | DMマスターを一意に表す（ `dm-master.toml`の`master-addr`パラメータによって）                           | `master-addr` / `dm-master.toml`                           |
+| DMワーカーID    | DMワーカーを一意に表す（ `dm-worker.toml`の`worker-addr`パラメータによって）                           | `worker-addr` / `dm-worker.toml`                           |

@@ -7,7 +7,7 @@ summary: TiDB データ移行を v1.0.x から v2.0+ に手動でアップグレ
 
 このドキュメントでは、TiDB DM ツールを v1.0.x から v2.0+ に手動でアップグレードする方法を紹介します。主な考え方は、v1.0.x のグローバル チェックポイント情報を使用して、v2.0+ クラスターで新しいデータ移行タスクを開始することです。
 
-TiDB DM ツールを v1.0.x から v2.0+ に自動的にアップグレードする方法については、 [TiUPを使用して、DM-Ansible によってデプロイされた 1.0 クラスターを自動的にインポートする](/dm/maintain-dm-using-tiup.md#import-and-upgrade-a-dm-10-cluster-deployed-using-dm-ansible)を参照してください。
+TiDB DM ツールを v1.0.x から v2.0+ に自動的にアップグレードする方法については、 [TiUP を使用して、DM-Ansible によってデプロイされた 1.0 クラスターを自動的にインポートする](/dm/maintain-dm-using-tiup.md#import-and-upgrade-a-dm-10-cluster-deployed-using-dm-ansible)を参照してください。
 
 > **注記：**
 >
@@ -25,7 +25,7 @@ v2.0+ で準備された構成ファイルには、アップストリーム デ�
 
 ### 上流データベース構成ファイル {#upstream-database-configuration-file}
 
-v2.0 以降では、 [アップストリームデータベース構成ファイル](/dm/dm-source-configuration-file.md)​​ DM ワーカーのプロセス構成から分離されているため、 [v1.0.x DMワーカー構成](/dm/dm-worker-configuration-file.md)に基づいてソース構成を取得する必要があります。
+v2.0 以降では、 [アップストリームデータベース構成ファイル](/dm/dm-source-configuration-file.md)は DM ワーカーのプロセス構成から分離されているため、 [v1.0.x DMワーカー構成](/dm/dm-worker-configuration-file.md)に基づいてソース構成を取得する必要があります。
 
 > **注記：**
 >
@@ -106,7 +106,7 @@ from:
 >
 > 他の v2.0+ クラスターが利用可能な場合は、この手順をスキップしてください。
 
-[TiUPを使用する](/dm/deploy-a-dm-cluster-using-tiup.md) 、必要なノード数に応じて新しい v2.0+ クラスターをデプロイします。
+[TiUPを使用する](/dm/deploy-a-dm-cluster-using-tiup.md)必要なノード数に応じて新しい v2.0+ クラスターをデプロイします。
 
 ## ステップ3: v1.0.xクラスターを停止する {#step-3-stop-the-v1-0-x-cluster}
 
@@ -120,7 +120,7 @@ from:
 
 2.  ダウンストリーム TiDB クラスターで、v1.0.x データ移行タスクの増分チェックポイント テーブルから対応するグローバル チェックポイント情報を取得します。
 
-    -   v1.0.x データ移行構成で`meta-schema`指定されておらず（またはその値がデフォルトの`dm_meta`に指定されており）、対応するタスク名が`task_v1`で、対応するチェックポイント情報がダウンストリーム TiDB の`` `dm_meta`.`task_v1_syncer_checkpoint` ``テーブルにあると仮定します。
+    -   v1.0.x データ移行構成で`meta-schema`が指定されておらず（またはその値がデフォルトの`dm_meta`に指定されており）、対応するタスク名が`task_v1`で、対応するチェックポイント情報がダウンストリーム TiDB の`` `dm_meta`.`task_v1_syncer_checkpoint` ``テーブルにあると仮定します。
     -   次の SQL ステートメントを使用して、データ移行タスクに対応するすべての上流データベース ソースのグローバル チェックポイント情報を取得します。
 
         ```sql

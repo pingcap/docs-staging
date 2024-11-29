@@ -3,11 +3,11 @@ title: Back up and Restore Data Using Dumpling and TiDB Lightning
 summary: DumplingとTiDB Lightning を使用して TiDB の完全なデータをバックアップおよび復元する方法を学びます。
 ---
 
-# DumplingとTiDB Lightningを使用してデータをバックアップおよび復元する {#back-up-and-restore-data-using-dumpling-and-tidb-lightning}
+# DumplingとTiDB Lightning を使用してデータをバックアップおよび復元する {#back-up-and-restore-data-using-dumpling-and-tidb-lightning}
 
-このドキュメントでは、DumplingとTiDB Lightningを使用して TiDB の完全なデータをバックアップおよび復元する方法について説明します。
+このドキュメントでは、 DumplingとTiDB Lightning を使用して TiDB の完全なデータをバックアップおよび復元する方法について説明します。
 
-少量のデータ（たとえば、50 GiB 未満）をバックアップする必要があり、高速バックアップを必要としない場合は、 [Dumpling](/dumpling-overview.md)使用して TiDB データベースからデータをエクスポートし、 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)を使用してデータを別の TiDB データベースに復元できます。
+少量のデータ（たとえば、50 GiB 未満）をバックアップする必要があり、高速バックアップを必要としない場合は、 [Dumpling](/dumpling-overview.md)使用して TiDB データベースからデータをエクスポートし、 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)使用してデータを別の TiDB データベースに復元できます。
 
 より大きなデータベースをバックアップする必要がある場合は、 [BR](/br/backup-and-restore-overview.md)使用することをお勧めします。 Dumpling を使用して大きなデータベースをエクスポートすることもできますが、そのためにはBR の方が適したツールです。
 
@@ -19,7 +19,7 @@ summary: DumplingとTiDB Lightning を使用して TiDB の完全なデータを
     tiup install dumpling
     ```
 
--   TiDB Lightning をインストールします:
+-   TiDB Lightningをインストールします:
 
     ```shell
     tiup install tidb-lightning
@@ -27,7 +27,7 @@ summary: DumplingとTiDB Lightning を使用して TiDB の完全なデータを
 
 -   [Dumplingに必要なソースデータベース権限を付与する](/dumpling-overview.md#export-data-from-tidb-or-mysql)
 
--   [TiDB Lightningに必要なターゲットデータベース権限を付与します](/tidb-lightning/tidb-lightning-requirements.md#privileges-of-the-target-database)
+-   [TiDB Lightningに必要なターゲットデータベース権限を付与する](/tidb-lightning/tidb-lightning-requirements.md#privileges-of-the-target-database)
 
 ## リソース要件 {#resource-requirements}
 
@@ -35,7 +35,7 @@ summary: DumplingとTiDB Lightning を使用して TiDB の完全なデータを
 
 **メモリと CPU** : TiDB Lightning は大量のリソースを消費するため、64 GiB を超えるメモリと 32 を超える CPU コアを割り当てることをお勧めします。最高のパフォーマンスを得るには、CPU コアとメモリ(GiB) の比率が 1:2 より大きいことを確認してください。
 
-**ディスクスペース**：
+**ディスク容量**:
 
 外部storageとしては、Amazon S3、Google Cloud Storage (GCS)、または Azure Blob Storage を使用することをお勧めします。このようなクラウドstorageを使用すると、ディスク容量に制限されることなく、バックアップ ファイルをすばやく保存できます。
 
@@ -44,7 +44,7 @@ summary: DumplingとTiDB Lightning を使用して TiDB の完全なデータを
 -   Dumpling には、データ ソース全体を保存できる (またはエクスポートするすべてのアップストリーム テーブルを保存できる) ディスク領域が必要です。必要な領域を計算するには、 [下流のstorageスペース要件](/tidb-lightning/tidb-lightning-requirements.md#storage-space-of-the-target-database)参照してください。
 -   インポート中、 TiDB Lightning はソートされたキーと値のペアを保存するために一時的なスペースを必要とします。ディスク スペースは、データ ソースからの最大の単一テーブルを保持するのに十分な大きさである必要があります。
 
-**注**: MySQL からDumplingによってエクスポートされる正確なデータ量を計算することは困難ですが、次の SQL ステートメントを使用して`information_schema.tables`テーブルの`DATA_LENGTH`フィールドを要約することで、データ量を見積もることができます。
+**注**: MySQL からDumplingによってエクスポートされる正確なデータ量を計算することは困難ですが、次の SQL ステートメントを使用して`information_schema.tables`のテーブルの`DATA_LENGTH`フィールドを要約することで、データ量を見積もることができます。
 
 ```sql
 -- Calculate the size of all schemas
@@ -77,7 +77,7 @@ LIMIT
 
 ### ターゲット TiKV クラスターのディスク容量 {#disk-space-for-the-target-tikv-cluster}
 
-ターゲット TiKV クラスターには、インポートされたデータを格納するのに十分なディスク容量が必要です。 [標準的なハードウェア要件](/hardware-and-software-requirements.md)に加えて、ターゲット TiKV クラスターのstorage容量**は、データ ソースのサイズ x <a href="/faq/manage-cluster-faq.md#is-the-number-of-replicas-in-each-region-configurable-if-yes-how-to-configure-it">レプリカの数</a>x 2**よりも大きくする必要があります。たとえば、クラスターがデフォルトで 3 つのレプリカを使用する場合、ターゲット TiKV クラスターには、データ ソースのサイズの 6 倍よりも大きいstorage容量が必要です。次の理由により、式に x 2 が含まれています。
+ターゲット TiKV クラスターには、インポートされたデータを格納するのに十分なディスク容量が必要です。 [標準的なハードウェア要件](/hardware-and-software-requirements.md)に加えて、ターゲット TiKV クラスターのstorage容量は**、データ ソースのサイズ x <a href="/faq/manage-cluster-faq.md#is-the-number-of-replicas-in-each-region-configurable-if-yes-how-to-configure-it">レプリカの数</a>x 2**よりも大きくする必要があります。たとえば、クラスターがデフォルトで 3 つのレプリカを使用する場合、ターゲット TiKV クラスターには、データ ソースのサイズの 6 倍よりも大きいstorage容量が必要です。次の理由により、式に x 2 が含まれています。
 
 -   インデックスは余分なスペースを占める可能性があります。
 -   RocksDB には空間増幅効果があります。
@@ -90,7 +90,7 @@ LIMIT
     tiup dumpling -h ${ip} -P 3306 -u root -t 16 -r 200000 -F 256MiB -B my_db1 -f 'my_db1.table[12]' -o 's3://my-bucket/sql-backup'
     ```
 
-    Dumpling はデフォルトで SQL ファイルにデータをエクスポートします。1 オプションを追加することで`--filetype`別のファイル形式を指定できます。
+    Dumpling は`--filetype`で SQL ファイルにデータをエクスポートします。1 オプションを追加することで、別のファイル形式を指定できます。
 
     Dumplingのその他の構成については、 [Dumplingのオプションリスト](/dumpling-overview.md#option-list-of-dumpling)参照してください。
 
@@ -98,7 +98,7 @@ LIMIT
 
 ## TiDB Lightningを使用して完全なデータを復元する {#use-tidb-lightning-to-restore-full-data}
 
-1.  `tidb-lightning.toml`ファイルを編集して、 Dumplingを使用して`s3://my-bucket/sql-backup`からバックアップされた完全なデータをターゲット TiDB クラスターにインポートします。
+1.  `tidb-lightning.toml`ファイルを編集して、 Dumplingを使用して`s3://my-bucket/sql-backup`からバックアップされた完全なデータをターゲットの TiDB クラスターにインポートします。
 
     ```toml
     [lightning]
@@ -141,10 +141,10 @@ LIMIT
 
 3.  インポートが開始されたら、ログでキーワード`grep` `progress`を入力してインポートの進行状況を確認できます。デフォルトでは、進行状況は 5 分ごとに更新されます。
 
-4.  TiDB Lightning はインポートを完了すると、自動的に終了します。最後の行の`tidb-lightning.log`に`the whole procedure completed`が含まれているかどうかを確認します。含まれている場合は、インポートは成功です。含まれていない場合は、インポートでエラーが発生します。エラー メッセージの指示に従ってエラーに対処してください。
+4.  TiDB Lightning はインポートを完了すると、自動的に終了します。最後の行の`tidb-lightning.log`に`the whole procedure completed`含まれているかどうかを確認します。含まれている場合は、インポートは成功です。含まれていない場合は、インポートでエラーが発生します。エラー メッセージの指示に従ってエラーに対処してください。
 
 > **注記：**
 >
-> インポートが成功したかどうかに関係なく、ログの最後の行には`tidb lightning exit`が表示されます。これは、 TiDB Lightning が正常に終了したことを意味しますが、必ずしもインポートが成功したことを意味するわけではありません。
+> インポートが成功したかどうかに関係なく、ログの最後の行には`tidb lightning exit`表示されます。これは、 TiDB Lightning が正常に終了したことを意味しますが、必ずしもインポートが成功したことを意味するわけではありません。
 
 インポートに失敗した場合は、トラブルシューティングについては[TiDB LightningFAQ](/tidb-lightning/tidb-lightning-faq.md)を参照してください。

@@ -12,7 +12,7 @@ summary: MariaDB から TiDB にデータを移行する方法を学びます。
 適切な移行戦略を選択してください。
 
 -   最初の戦略は[Dumplingでデータをダンプし、 TiDB Lightningでデータを復元する](#dump-data-with-dumpling-and-restore-data-with-tidb-lightning)です。これは MariaDB のすべてのバージョンで機能します。この戦略の欠点は、ダウンタイムが長くなることです。
--   2 番目の戦略は、DM を使用して MariaDB から TiDB に移行する[DMでデータを複製する](#replicate-data-with-dm)です。DM は MariaDB のすべてのバージョンをサポートしているわけではありません。サポートされているバージョンは[DM 互換性カタログ](/dm/dm-compatibility-catalog.md#compatibility-catalog-of-tidb-data-migration)にリストされています。
+-   2 番目の戦略は、DM を使用して[DMでデータを複製する](#replicate-data-with-dm)から TiDB に移行することです。DM は MariaDB のすべてのバージョンをサポートしているわけではありません。サポートされているバージョンは[DM 互換性カタログ](/dm/dm-compatibility-catalog.md#compatibility-catalog-of-tidb-data-migration)にリストされています。
 
 これら 2 つの戦略の他に、状況に応じて利用できる他の戦略があるかもしれません。たとえば、次のようになります。
 
@@ -36,7 +36,7 @@ TiDB は[MySQLと互換性あり](/mysql-compatibility.md)であり、MySQL と 
 
 ### 認証 {#authentication}
 
-[MySQL とのSecurity互換性](/security-compatibility-with-mysql.md)ドキュメントには、TiDB がサポートする認証方法がリストされています。TiDB は、MariaDB のいくつかの認証方法をサポートしていません。つまり、アカウントに新しいパスワード ハッシュを作成するか、その他の特定の対策を講じる必要がある場合があります。
+[MySQL とのSecurity互換性](/security-compatibility-with-mysql.md)ドキュメントには、TiDB がサポートする認証方法がリストされています。TiDB は MariaDB のいくつかの認証方法をサポートしていません。つまり、アカウントに新しいパスワード ハッシュを作成するか、その他の特定の対策を講じる必要がある場合があります。
 
 使用されている認証方法を確認するには、次のステートメントを実行します。
 
@@ -61,7 +61,7 @@ GROUP BY
 
 ### システムバージョン管理されたテーブル {#system-versioned-tables}
 
-TiDB は[システムバージョン管理されたテーブル](https://mariadb.com/kb/en/system-versioned-tables/)サポートしていません。ただし、TiDB は[`AS OF TIMESTAMP`](/as-of-timestamp.md)をサポートしており、システム バージョン管理されたテーブルの使用例の一部を置き換える可能性があります。
+TiDB は[システムバージョン管理されたテーブル](https://mariadb.com/kb/en/system-versioned-tables/)サポートしていません。ただし、TiDB は[`AS OF TIMESTAMP`](/as-of-timestamp.md)サポートしており、システム バージョン管理されたテーブルの使用例の一部を置き換える可能性があります。
 
 次のステートメントを使用して、影響を受けるテーブルを確認できます。
 
@@ -84,7 +84,7 @@ WHERE
 1 row in set (0.005 sec)
 ```
 
-システムのバージョン管理を削除するには、次`ALTER TABLE`ステートメントを実行します。
+システムのバージョン管理を削除するには、次の`ALTER TABLE`ステートメントを実行します。
 
 ```sql
 MariaDB [test]> ALTER TABLE t DROP SYSTEM VERSIONING;
@@ -119,7 +119,7 @@ WHERE
 
 ### ストレージエンジン {#storage-engines}
 
-MariaDB は、 `InnoDB` 、 `MyISAM` 、 `Aria`などのローカル データ用のstorageエンジンを提供しています。データ形式は TiDB によって直接サポートされていませんが、これらを移行することは問題なく機能します。ただし、 `CONNECT`storageエンジンや`Spider`など、一部のエンジンはデータをサーバーの外部に配置します。このようなテーブルを TiDB に移行することはできますが、TiDB は TiDB クラスターの外部にデータを保存する機能を提供していません。
+MariaDB は、 `InnoDB` 、 `MyISAM` 、 `Aria`などのローカル データ用のstorageエンジンを提供しています。データ形式は TiDB では直接サポートされていませんが、これらの移行は問題なく機能します。ただし、 `CONNECT`storageエンジンや`Spider`など、一部のエンジンはサーバーの外部にデータを配置します。このようなテーブルを TiDB に移行することはできますが、TiDB は TiDB クラスターの外部にデータを保存する機能を提供していません。
 
 使用しているstorageエンジンを確認するには、次のステートメントを実行します。
 
@@ -270,19 +270,19 @@ MariaDB から TiDB にデータを移行するには、次の手順を実行し
     tiup dumpling --port 3306 --host 127.0.0.1 --user root --password secret -F 256MB  -o /data/backup
     ```
 
-3.  `tiup tidb-lightning`コマンドを使用してデータを復元します。TiDB TiDB Lightning の設定方法と実行方法の詳細については、 [TiDB Lightningを使い始める](/get-started-with-tidb-lightning.md)を参照してください。
+3.  `tiup tidb-lightning`コマンドを使用してデータを復元します。TiDB TiDB Lightning の設定方法と実行方法の詳細については、 [TiDB Lightningを使い始める](/get-started-with-tidb-lightning.md)参照してください。
 
-4.  ユーザー アカウントと権限を移行します。ユーザーと権限を移行する方法の詳細については、 [ユーザーと権限をエクスポートする](#export-users-and-grants)を参照してください。
+4.  ユーザー アカウントと権限を移行します。ユーザーと権限を移行する方法の詳細については、 [ユーザーと権限をエクスポートする](#export-users-and-grants)参照してください。
 
 5.  アプリケーションを再構成します。TiDBサーバーに接続できるように、アプリケーション構成を変更する必要があります。
 
-6.  クリーンアップ。移行が成功したことを確認したら、MariaDB のデータの最終バックアップを作成し、サーバーを停止します。これは、 TiUP、 Dumpling、 TiDB Lightningなどのツールを削除できることも意味します。
+6.  クリーンアップします。移行が成功したことを確認したら、MariaDB のデータの最終バックアップを作成し、サーバーを停止します。これは、 TiUP、 Dumpling、 TiDB Lightningなどのツールを削除できることも意味します。
 
 ## DMでデータを複製する {#replicate-data-with-dm}
 
 この方法では、レプリケーションを設定し、アプリケーションを停止してレプリケーションが追いつくのを待ってから、TiDB を使用するようにアプリケーションを再構成することを前提としています。
 
-DM を使用するには、 [TiUPクラスター](/dm/deploy-a-dm-cluster-using-tiup.md)または[TiDB Operator](/tidb-operator-overview.md)を使用して DM サービスのセットを展開する必要があります。その後、 `dmctl`を使用して DM サービスを構成します。
+DM を使用するには、 [TiUPクラスター](/dm/deploy-a-dm-cluster-using-tiup.md)または[TiDB Operator](/tidb-operator-overview.md)を使用して DM サービスのセットを展開する必要があります。その後、 `dmctl`使用して DM サービスを構成します。
 
 > **注記：**
 >
@@ -290,7 +290,7 @@ DM を使用するには、 [TiUPクラスター](/dm/deploy-a-dm-cluster-using-
 
 ### ステップ1.準備 {#step-1-prepare}
 
-MariaDB で binlogs が有効になっており、 `binlog_format` `ROW`に設定されていることを確認してください。 `binlog_annotate_row_events=OFF`と`log_bin_compress=OFF`を設定することも推奨されます。
+MariaDB で binlogs が有効になっており、 `binlog_format` `ROW`に設定されていることを確認してください。 `binlog_annotate_row_events=OFF`と`log_bin_compress=OFF`設定することも推奨されます。
 
 また、 `SUPER`権限または`BINLOG MONITOR`および`REPLICATION MASTER ADMIN`権限を持つアカウントも必要です。このアカウントには、移行するスキーマの読み取り権限も必要です。
 
@@ -314,7 +314,7 @@ MariaDB から MariaDB へのレプリケーションの場合のように、最
 
 ### ステップ4. データをテストする {#step-4-test-your-data}
 
-データが複製されたら、読み取り専用クエリを実行してデータを検証できます。詳細については、 [アプリケーションをテストする](#test-your-application)参照してください。
+データが複製されたら、読み取り専用クエリを実行して検証することができます。詳細については、 [アプリケーションをテストする](#test-your-application)参照してください。
 
 ### ステップ5. 切り替える {#step-5-switch-over}
 
@@ -338,8 +338,8 @@ TiDB に切り替えるには、次の手順を実行する必要があります
 
 テストには`sysbench`などの汎用ツールを使用することもできますが、アプリケーションの特定の機能をテストすることを強くお勧めします。たとえば、データの一時コピーを使用して、アプリケーションのコピーを TiDB クラスターに対して実行します。
 
-このようなテストにより、アプリケーションの TiDB との互換性とパフォーマンスが検証されます。アプリケーションと TiDB のログ ファイルを監視して、対処が必要な警告があるかどうかを確認する必要があります。アプリケーションが使用しているデータベース ドライバー ( Javaベースのアプリケーションの場合は MySQL Connector/J など) がテストされていることを確認してください。必要に応じて、JMeter などのアプリケーションを使用してアプリケーションに負荷をかけることもできます。
+このようなテストにより、アプリケーションの互換性と TiDB とのパフォーマンスが検証されます。対処が必要な警告があるかどうかを確認するには、アプリケーションと TiDB のログ ファイルを監視する必要があります。アプリケーションが使用しているデータベース ドライバー ( Javaベースのアプリケーションの場合は MySQL Connector/J など) がテストされていることを確認してください。必要に応じて、JMeter などのアプリケーションを使用してアプリケーションに負荷をかけることもできます。
 
 ## データを検証する {#validate-data}
 
-[同期差分インスペクター](/sync-diff-inspector/sync-diff-inspector-overview.md)使用して、MariaDB と TiDB のデータが同一で​​あるかどうかを検証できます。
+[同期差分インスペクター](/sync-diff-inspector/sync-diff-inspector-overview.md)使用して、MariaDB と TiDB のデータが同一であるかどうかを検証できます。

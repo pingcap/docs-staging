@@ -38,7 +38,7 @@ TiDB ダッシュボードは、 [国際データセンター](https://openid.ne
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-enable-2.png)
 
-7.  設定を保存するには、 **[**更新] をクリックします。
+7.  設定を保存するには、[**更新**] をクリックします。
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-enable-3.png)
 
@@ -56,9 +56,9 @@ SSO を無効にすると、保存されている SQL パスワードが完全�
 
 2.  左側のサイドバーにあるユーザー名をクリックして、設定ページにアクセスします。
 
-3.  **「シングル サインオン」**セクションで、 **「TiDB ダッシュボードにサインインするときに SSO を使用する」の**選択を解除します。
+3.  「**シングル サインオン」**セクションで、 **「TiDB ダッシュボードにサインインするときに SSO を使用する」の**選択を解除します。
 
-4.  設定を保存するには、 **[**更新] をクリックします。
+4.  設定を保存するには、[**更新**] をクリックします。
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-disable.png)
 
@@ -90,7 +90,7 @@ TiDB ダッシュボードに SSO が設定されると、次の手順に従っ�
 
 ## 例 1: TiDB ダッシュボードの SSO サインインに Okta を使用する {#example-1-use-okta-for-tidb-dashboard-sso-sign-in}
 
-[オクタ](https://www.okta.com/) OIDC SSO アイデンティティ サービスであり、TiDB ダッシュボードの SSO 機能と互換性があります。以下の手順では、Okta を TiDB ダッシュボード SSO プロバイダーとして使用できるように Okta と TiDB ダッシュボードを構成する方法を示します。
+[オクタ](https://www.okta.com/)は OIDC SSO アイデンティティ サービスであり、TiDB ダッシュボードの SSO 機能と互換性があります。以下の手順では、Okta を TiDB ダッシュボード SSO プロバイダーとして使用できるように Okta と TiDB ダッシュボードを構成する方法を示します。
 
 ### ステップ1: Oktaを構成する {#step-1-configure-okta}
 
@@ -104,9 +104,9 @@ TiDB ダッシュボードに SSO が設定されると、次の手順に従っ�
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-1.png)
 
-4.  ポップアップダイアログで、**サインイン方法**で**OIDC - OpenID Connect**を選択します。
+4.  ポップアップダイアログで、**サインイン方法**で**OIDC - OpenID Connect を**選択します。
 
-5.  **アプリケーションタイプ**で**シングルページアプリケーション**を選択します。
+5.  **アプリケーションタイプ**で**シングルページアプリケーションを**選択します。
 
 6.  **「次へ」**ボタンをクリックします。
 
@@ -126,21 +126,21 @@ TiDB ダッシュボードに SSO が設定されると、次の手順に従っ�
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-3.png)
 
-9.  **[割り当て**] フィールドで、組織内のどのタイプのユーザーに SSO サインインを許可するかを設定し、 **[保存]**をクリックして設定を保存します。
+9.  [割り当て] フィールドで、組織内のどのタイプのユーザーに SSO サインインを許可するかを設定し、[**保存****]**をクリックして設定を保存します。
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-4.png)
 
 ### ステップ2: OIDC情報を取得し、TiDBダッシュボードに入力します {#step-2-obtain-oidc-information-and-fill-in-tidb-dashboard}
 
-1.  Okta で作成したアプリケーション統合で、 **「サインオン」を**クリックします。
+1.  Okta で作成したアプリケーション統合で、 **「サインオン」**をクリックします。
 
     ![Sample Step 1](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-info-1.png)
 
-2.  **OpenID Connect ID トークン**セクションから**Issuer**フィールドと**Audience**フィールドの値をコピーします。
+2.  **OpenID Connect ID トークン**セクションから**Issuer フィールド**と**Audience**フィールドの値をコピーします。
 
     ![Sample Step 2](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-info-2.png)
 
-3.  TiDB ダッシュボードの設定ページを開き、前の手順で取得した**Issuer**を**OIDC クライアント ID**に入力し、 **Audience**を**OIDC 検出 URL**に入力します。次に、認証を完了して設定を保存します。例:
+3.  TiDB ダッシュボード設定ページを開き、前の手順で取得した**Issuer**を**OIDC クライアント ID**に入力し、 **Audience**を**OIDC 検出 URL**に入力します。次に、認証を完了して設定を保存します。例:
 
     ![Sample Step 3](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-info-3.png)
 
@@ -160,7 +160,7 @@ Okta と同様に、 [作者0](https://auth0.com/)も OIDC SSO アイデンテ�
 
     ![Create Application](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-auth0-create-app.png)
 
-    ポップアップ ダイアログで、**名前**(例:「TiDB Dashboard」) を入力します。**アプリケーションの種類の選択**で、**シングル ページ Web アプリケーション**を選択します。**作成を**クリックします。
+    ポップアップ ダイアログで、**名前**(例:「TiDB Dashboard」) を入力します。**アプリケーションの種類の選択**で、**シングル ページ Web アプリケーションを**選択します。**作成**をクリックします。
 
 4.  **[設定]を**クリックします。
 
@@ -184,7 +184,7 @@ Okta と同様に、 [作者0](https://auth0.com/)も OIDC SSO アイデンテ�
 
 ### ステップ2: OIDC情報を取得し、TiDBダッシュボードに入力します {#step-2-obtain-oidc-information-and-fill-in-tidb-dashboard}
 
-1.  Auth0 の**「設定」**タブの**「基本情報**」にある**クライアント**ID を、TiDB ダッシュボードの**OIDC クライアント ID**に入力します。
+1.  Auth0 の**「設定」**タブの**「基本情報」**にある**クライアント ID を**、TiDB ダッシュボードの**OIDC クライアント ID**に入力します。
 
 2.  **OIDC 検出 URL**に、 `https://`で始まり`/`で終わる**ドメイン**フィールド値 (例: `https://example.us.auth0.com/` ) を入力します。認証を完了し、構成を保存します。
 

@@ -28,9 +28,9 @@ tiup dm patch <cluster-name> <package-path> [flags]
 
 -   置換するコンポーネントの名前`${component}` (dm-master、dm-worker ...)、コンポーネントの`${version}` (v2.0.0、v2.0.1 ...)、およびコンポーネントが実行されるオペレーティング システム`${os}`とプラットフォーム`${arch}`を決定します。
 -   コマンド`wget https://tiup-mirrors.pingcap.com/${component}-${version}-${os}-${arch}.tar.gz -O /tmp/${component}-${version}-${os}-${arch}.tar.gz`を使用して現在のコンポーネントパッケージをダウンロードします。
--   `mkdir -p /tmp/package && cd /tmp/package`を実行して、ファイルをパックするための一時ディレクトリを作成します。
+-   `mkdir -p /tmp/package && cd /tmp/package`実行して、ファイルをパックするための一時ディレクトリを作成します。
 -   `tar xf /tmp/${component}-${version}-${os}-${arch}.tar.gz`実行して元のバイナリ パッケージを解凍します。
--   `find .`を実行して、一時パッケージ ディレクトリ内のファイル構造を表示します。
+-   `find .`実行して、一時パッケージ ディレクトリ内のファイル構造を表示します。
 -   バイナリ ファイルまたは構成ファイルを一時ディレクトリ内の対応する場所にコピーします。
 -   `tar czf /tmp/${component}-hotfix-${os}-${arch}.tar.gz *`実行して、一時ディレクトリにファイルをパックします。
 -   最後に、 `tiup dm patch`コマンドの`<package-path>`の値として`/tmp/${component}-hotfix-${os}-${arch}.tar.gz`使用できます。
@@ -41,7 +41,7 @@ tiup dm patch <cluster-name> <package-path> [flags]
 
 -   特定のコンポーネント(dm-worker など) にパッチを適用した後、tiup-dm がコンポーネントをスケールアウトすると、tiup-dm はデフォルトで元のコンポーネントバージョンを使用します。将来クラスターがスケールアウトするときにパッチを適用したバージョンを使用するには、コマンドでオプション`--overwrite`を指定する必要があります。
 -   データ型: `BOOLEAN`
--   このオプションは、デフォルトで値`false`で無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにする必要があります。
+-   このオプションは、値`false`でデフォルトで無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにします。
 
 ### -N、--ノード {#n-node}
 
@@ -71,7 +71,7 @@ tiup dm patch <cluster-name> <package-path> [flags]
 
 -   ヘルプ情報を出力します。
 -   データ型: `BOOLEAN`
--   このオプションは、値`false`でデフォルトで無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにする必要があります。
+-   このオプションは、値`false`でデフォルトで無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにします。
 
 ## 例 {#example}
 
@@ -145,7 +145,7 @@ tiup dm patch <cluster-name> <package-path> [flags]
         172.16.100.21:9090  prometheus           172.16.100.21  9090       linux/x86_64  Up         /home/tidb/dm/data/prometheus-9090    /home/tidb/dm/deploy/prometheus-9090
         Total nodes: 5
 
-    指定されたノードまたは指定されたロールに修正プログラムを適用します。1 と`-N` `-R`が指定されている場合は、交差が採用されます。
+    指定されたノードまたは指定されたロールに修正プログラムを適用します。1 と`-R` `-N`両方が指定されている場合は、交差が採用されます。
 
         # Apply hotfix to a specified node.
         tiup dm patch dm-test dm-master-hotfix-linux-amd64.tar.gz -N 172.16.100.21:8261

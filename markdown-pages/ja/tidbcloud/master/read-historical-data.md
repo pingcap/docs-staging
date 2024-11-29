@@ -1,11 +1,11 @@
 ---
 title: Read Historical Data Using the System Variable `tidb_snapshot`
-summary: システム変数 `tidb_snapshot` を使用して、TiDB が履歴バージョンからデータを読み取る方法について学習します。
+summary: システム変数 tidb_snapshot` を使用して、TiDB が履歴バージョンからデータを読み取る方法について学習します。
 ---
 
 # システム変数<code>tidb_snapshot</code>を使用して履歴データを読み取る {#read-historical-data-using-the-system-variable-code-tidb-snapshot-code}
 
-このドキュメントでは、システム変数`tidb_snapshot`を使用して履歴バージョンからデータを読み取る方法について説明します。これには、履歴データを保存するための具体的な使用例と戦略が含まれます。
+このドキュメントでは、システム変数`tidb_snapshot`使用して履歴バージョンからデータを読み取る方法について説明します。これには、履歴データを保存するための具体的な使用例と戦略が含まれます。
 
 > **注記：**
 >
@@ -13,21 +13,21 @@ summary: システム変数 `tidb_snapshot` を使用して、TiDB が履歴バ�
 
 ## 機能の説明 {#feature-description}
 
-TiDB は、特別なクライアントやドライバーを使用せずに、標準の SQL インターフェイスを使用して履歴データを直接読み取る機能を実装します。
+TiDB は、特別なクライアントやドライバーを使用せずに、標準の SQL インターフェースを使用して履歴データを直接読み取る機能を実装します。
 
 > **注記：**
 >
-> -   データが更新または削除された場合でも、SQL インターフェイスを使用してその履歴バージョンを読み取ることができます。
+> -   データが更新または削除された場合でも、SQL インターフェースを使用してその履歴バージョンを読み取ることができます。
 > -   履歴データを読み取る場合、TiDB は、現在のテーブル構造が異なっていても、古いテーブル構造でデータを返します。
 
 ## TiDBが履歴バージョンからデータを読み取る方法 {#how-tidb-reads-data-from-history-versions}
 
-[`tidb_snapshot`](/system-variables.md#tidb_snapshot)システム変数は`tidb_snapshot`履歴データの読み取りをサポートするために導入されました。3 変数について:
+[`tidb_snapshot`](/system-variables.md#tidb_snapshot)システム変数は、履歴データの読み取りをサポートするために導入されました。3 `tidb_snapshot`について:
 
 -   変数は`SESSION`スコープ内で有効です。
 -   その値は`SET`ステートメントを使用して変更できます。
 -   変数のデータ型はテキストです。
--   変数は、TSO (Timestamp Oracle) と datetime を受け入れます。TSO は、PD から取得されるグローバルに一意のタイム サービスです。受け入れられる datetime 形式は「2016-10-08 16:45:26.999」です。通常、datetime は秒精度を使用して設定できます (例:「2016-10-08 16:45:26」)。
+-   変数は、TSO (Timestamp Oracle) と日時を受け入れます。TSO は、PD から取得されるグローバルに一意のタイム サービスです。受け入れられる日時の形式は「2016-10-08 16:45:26.999」です。通常、日時は秒精度を使用して設定できます (例:「2016-10-08 16:45:26」)。
 -   変数が設定されると、TiDB はデータ構造のためだけにその値をタイムスタンプとして使用してスナップショットを作成し、オーバーヘッドは発生しません。その後、すべての`SELECT`操作はこのスナップショットからデータを読み取ります。
 
 > **注記：**
@@ -119,7 +119,7 @@ TiDBでは、ガベージコレクション（GC）が定期的に実行され�
 
     > **注記：**
     >
-    > `@@`はシステム変数を示すのに使用され、 `@`はユーザー変数を示すのに使用されるため、 `tidb_snapshot`前には`@`ではなく`@@`使用する必要があります。
+    > `@@`システム変数を示すのに使用され、 `@`ユーザー変数を示すのに使用されるため、 `tidb_snapshot`の前には`@`ではなく`@@`使用する必要があります。
 
     **結果:**次のステートメントから読み取られるのは、更新操作前のデータ、つまり履歴データです。
 
@@ -135,7 +135,7 @@ TiDBでは、ガベージコレクション（GC）が定期的に実行され�
     3 rows in set (0.00 sec)
     ```
 
-7.  変数`tidb_snapshot` &quot;&quot; (空の文字列) に設定すると、最新バージョンからデータを読み取ることができます。
+7.  変数`tidb_snapshot`を &quot;&quot; (空の文字列) に設定すると、最新バージョンからデータを読み取ることができます。
 
     ```sql
     mysql> set @@tidb_snapshot="";
@@ -156,7 +156,7 @@ TiDBでは、ガベージコレクション（GC）が定期的に実行され�
 
     > **注記：**
     >
-    > `@@`はシステム変数を示すのに使用され、 `@`はユーザー変数を示すのに使用されるため、 `tidb_snapshot`前には`@`ではなく`@@`使用する必要があります。
+    > `@@`システム変数を示すのに使用され、 `@`ユーザー変数を示すのに使用されるため、 `tidb_snapshot`の前には`@`ではなく`@@`使用する必要があります。
 
 ## 履歴データを復元する方法 {#how-to-restore-historical-data}
 
@@ -172,6 +172,6 @@ SET GLOBAL tidb_gc_life_time="60m";
 
 古いバージョンからデータを復元するには、次のいずれかの方法を使用できます。
 
--   単純なケースでは、変数`tidb_snapshot`を設定した後に[`SELECT`](/sql-statements/sql-statement-select.md)使用して出力をコピーして貼り付けるか、または`SELECT ... INTO OUTFILE`を使用してから[`LOAD DATA`](/sql-statements/sql-statement-load-data.md)を使用して後でデータをインポートします。
+-   単純なケースでは、変数`tidb_snapshot`を設定した後に[`SELECT`](/sql-statements/sql-statement-select.md)使用して出力をコピーして貼り付けるか、または`SELECT ... INTO OUTFILE`使用してから[`LOAD DATA`](/sql-statements/sql-statement-load-data.md)使用して後でデータをインポートします。
 
 -   履歴スナップショットをエクスポートするには[Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview#export-historical-data-snapshots-of-tidb)使用します。Dumplingは、より大きなデータセットのエクスポートに適しています。

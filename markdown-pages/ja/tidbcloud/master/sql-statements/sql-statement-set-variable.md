@@ -5,7 +5,7 @@ summary: TiDB データベースの SET [GLOBAL|SESSION] <variable> の使用法
 
 # <code>SET [GLOBAL|SESSION] &#x3C;variable></code> {#code-set-global-session-x3c-variable-code}
 
-ステートメント`SET [GLOBAL|SESSION]`は、TiDB の組み込み変数の 1 つを変更します。これらの変数は、 `SESSION`または`GLOBAL`スコープの[システム変数](/system-variables.md)または[ユーザー変数](/user-defined-variables.md)いずれかになります。
+ステートメント`SET [GLOBAL|SESSION]` TiDB の組み込み変数の 1 つを変更します。これらの変数は、 `SESSION`または`GLOBAL`スコープの[システム変数](/system-variables.md)または[ユーザー変数](/user-defined-variables.md)いずれかになります。
 
 > **警告：**
 >
@@ -106,8 +106,8 @@ SELECT @myvar, @myvar + 1;
 次の動作の違いが適用されます。
 
 -   `SET GLOBAL`で行われた変更は、クラスター内のすべての TiDB インスタンスに伝播されます。これは、変更がレプリカに伝播されない MySQL とは異なります。
--   TiDB は、いくつかの変数を読み取り可能かつ設定可能なものとして提示します。これは、アプリケーションとコネクタの両方が MySQL 変数を読み取るのが一般的であるため、MySQL との互換性のために必要です。たとえば、JDBC コネクタは、動作に依存していないにもかかわらず、クエリ キャッシュ設定の読み取りと設定の両方を行います。
--   `SET GLOBAL`で行われた変更は、TiDBサーバーの再起動後も保持されます。つまり、TiDB の`SET GLOBAL` 、MySQL 8.0 以降で利用可能な`SET PERSIST`に似た動作をすることになります。
+-   TiDB は、いくつかの変数を読み取り可能かつ設定可能として提示します。これは、アプリケーションとコネクタの両方が MySQL 変数を読み取るのが一般的であるため、MySQL との互換性のために必要です。たとえば、JDBC コネクタは、動作に依存していないにもかかわらず、クエリ キャッシュ設定の読み取りと設定の両方を行います。
+-   `SET GLOBAL`で行われた変更は、TiDBサーバーの再起動後も保持されます。つまり、TiDB の`SET GLOBAL`は、MySQL 8.0 以降で利用可能な`SET PERSIST`に似た動作をすることになります。
 -   TiDB はグローバル変数を永続化するため、 `SET PERSIST`と`SET PERSIST_ONLY`サポートしません。
 
 ## 参照 {#see-also}

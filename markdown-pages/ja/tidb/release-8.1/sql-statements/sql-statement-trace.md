@@ -3,7 +3,7 @@ title: TRACE | TiDB SQL Statement Reference
 summary: TiDB データベースでの TRACE の使用法の概要。
 ---
 
-# 痕跡 {#trace}
+# トレース {#trace}
 
 `TRACE`ステートメントは、クエリ実行に関する詳細情報を提供します。これは、TiDB サーバーのステータス ポートによって公開されるグラフィカル インターフェイスを通じて表示されることを目的としています。
 
@@ -17,11 +17,11 @@ TracableStmt ::=
     ( SelectStmt | DeleteFromStmt | UpdateStmt | InsertIntoStmt | ReplaceIntoStmt | UnionStmt | LoadDataStmt | BeginTransactionStmt | CommitStmt | RollbackStmt | SetStmt )
 ```
 
-| フォーマット | 説明              |
-| ------ | --------------- |
-| 行      | ツリー形式で出力        |
-| json   | JSON形式の構造化された出力 |
-| ログ     | ログベースの出力        |
+| 形式   | 説明              |
+| ---- | --------------- |
+| 行    | ツリー形式で出力        |
+| json | JSON形式の構造化された出力 |
+| ログ   | ログベースの出力        |
 
 ## 例 {#examples}
 
@@ -94,4 +94,4 @@ TRACE FORMAT='log' SELECT * FROM mysql.user;
 
 ## 参照 {#see-also}
 
--   [EXPLAIN分析](/sql-statements/sql-statement-explain-analyze.md)
+-   [EXPLAIN](/sql-statements/sql-statement-explain-analyze.md)

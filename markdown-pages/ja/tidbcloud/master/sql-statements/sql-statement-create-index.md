@@ -42,7 +42,7 @@ IndexOption ::=
 |   IndexType
 |   'WITH' 'PARSER' Identifier
 |   'COMMENT' stringLit
-|   IndexInvisible
+|   ("VISIBLE" | "INVISIBLE")
 
 IndexTypeName ::=
     'BTREE'
@@ -137,11 +137,39 @@ CREATE TABLE t1 (
 DROP INDEX idx1 ON t1;
 ```
 
-式インデックスにはさまざまな種類の式が含まれます。正確性を保証するために、式インデックスの作成には、完全にテストされた一部の関数のみが許可されます。つまり、本番環境では、これらの関数のみが式で許可されます。これらの関数は、 `tidb_allow_function_for_expression_index`変数をクエリすることで取得できます。現在、許可されている関数は次のとおりです。
+式インデックスには、さまざまな種類の式が含まれます。正確性を保証するために、式インデックスの作成には、完全にテストされた一部の関数のみが許可されます。つまり、実本番環境では、これらの関数のみが式で許可されます。これらの関数は、 [`tidb_allow_function_for_expression_index`](/system-variables.md#tidb_allow_function_for_expression_index-new-in-v520)変数をクエリすることで取得できます。現在、許可されている関数は次のとおりです。
 
-    JSON_ARRAY, JSON_ARRAY_APPEND, JSON_ARRAY_INSERT, JSON_CONTAINS, JSON_CONTAINS_PATH, JSON_DEPTH, JSON_EXTRACT, JSON_INSERT, JSON_KEYS, JSON_LENGTH, JSON_MERGE_PATCH, JSON_MERGE_PRESERVE, JSON_OBJECT, JSON_PRETTY, JSON_QUOTE, JSON_REMOVE, JSON_REPLACE, JSON_SEARCH, JSON_SET, JSON_STORAGE_SIZE, JSON_TYPE, JSON_UNQUOTE, JSON_VALID, LOWER, MD5, REVERSE, TIDB_SHARD, UPPER, VITESS_HASH
+-   [`JSON_ARRAY()`](/functions-and-operators/json-functions.md)
+-   [`JSON_ARRAY_APPEND()`](/functions-and-operators/json-functions.md)
+-   [`JSON_ARRAY_INSERT()`](/functions-and-operators/json-functions.md)
+-   [`JSON_CONTAINS()`](/functions-and-operators/json-functions.md)
+-   [`JSON_CONTAINS_PATH()`](/functions-and-operators/json-functions.md)
+-   [`JSON_DEPTH()`](/functions-and-operators/json-functions.md)
+-   [`JSON_EXTRACT()`](/functions-and-operators/json-functions.md)
+-   [`JSON_INSERT()`](/functions-and-operators/json-functions.md)
+-   [`JSON_KEYS()`](/functions-and-operators/json-functions.md)
+-   [`JSON_LENGTH()`](/functions-and-operators/json-functions.md)
+-   [`JSON_MERGE_PATCH()`](/functions-and-operators/json-functions.md)
+-   [`JSON_MERGE_PRESERVE()`](/functions-and-operators/json-functions.md)
+-   [`JSON_OBJECT()`](/functions-and-operators/json-functions.md)
+-   [`JSON_PRETTY()`](/functions-and-operators/json-functions.md)
+-   [`JSON_QUOTE()`](/functions-and-operators/json-functions.md)
+-   [`JSON_REMOVE()`](/functions-and-operators/json-functions.md)
+-   [`JSON_REPLACE()`](/functions-and-operators/json-functions.md)
+-   [`JSON_SEARCH()`](/functions-and-operators/json-functions.md)
+-   [`JSON_SET()`](/functions-and-operators/json-functions.md)
+-   [`JSON_STORAGE_SIZE()`](/functions-and-operators/json-functions.md)
+-   [`JSON_TYPE()`](/functions-and-operators/json-functions.md)
+-   [`JSON_UNQUOTE()`](/functions-and-operators/json-functions.md)
+-   [`JSON_VALID()`](/functions-and-operators/json-functions.md)
+-   [`LOWER()`](/functions-and-operators/string-functions.md#lower)
+-   [`MD5()`](/functions-and-operators/encryption-and-compression-functions.md)
+-   [`REVERSE()`](/functions-and-operators/string-functions.md#reverse)
+-   [`TIDB_SHARD()`](/functions-and-operators/tidb-functions.md#tidb_shard)
+-   [`UPPER()`](/functions-and-operators/string-functions.md#upper)
+-   [`VITESS_HASH()`](/functions-and-operators/tidb-functions.md)
 
-上記のリストに含まれていない関数については、完全にテストされておらず、本番環境では推奨されません。これは、実験的なものと見なすことができます。演算子、 `CAST` `CASE WHEN`の他の式も実験的ものと見なしており、本番環境では推奨されません。
+上記のリストに含まれていない関数は、完全にテストされておらず、本番環境では推奨されません。 `CASE WHEN`関数の`CAST`の式も実験的と見なしており、実稼働本番では推奨されません。
 
 <CustomContent platform="tidb">
 
@@ -175,7 +203,7 @@ allow-expression-index = true
 
 クエリ ステートメント内の式が式インデックス内の式と一致する場合、オプティマイザーはクエリの式インデックスを選択できます。統計によっては、オプティマイザーが式インデックスを選択しない場合もあります。このような場合は、オプティマイザー ヒントを使用して、オプティマイザーに式インデックスを選択させることができます。
 
-次の例では、式`LOWER(col1)`に式インデックス`idx`を作成するとします。
+次の例では、式`LOWER(col1)`に式インデックス`idx`作成するとします。
 
 クエリ ステートメントの結果が同じ式である場合、式インデックスが適用されます。次のステートメントを例に挙げます。
 
@@ -183,7 +211,7 @@ allow-expression-index = true
 SELECT LOWER(col1) FROM t;
 ```
 
-フィルタリング条件に同じ式が含まれている場合は、式インデックスが適用されます。次のステートメントを例に挙げます。
+フィルタリング条件に同じ式が含まれている場合は、式のインデックスが適用されます。次のステートメントを例に挙げます。
 
 ```sql
 SELECT * FROM t WHERE LOWER(col1) = "a";
@@ -200,14 +228,14 @@ SELECT * FROM t WHERE LOWER(col1) > "b" OR LOWER(col1) < "a";
 SELECT * FROM t ORDER BY LOWER(col1);
 ```
 
-同じ式が集約関数（ `GROUP BY` ）に含まれている場合は、式インデックスが適用されます。次の文を例に挙げます。
+同じ式が集約関数（ `GROUP BY` ）に含まれている場合は、式のインデックスが適用されます。次の文を例に挙げます。
 
 ```sql
 SELECT MAX(LOWER(col1)) FROM t;
 SELECT MIN(col1) FROM t GROUP BY LOWER(col1);
 ```
 
-式インデックスに対応する式を確認するには、 [`SHOW INDEX`](/sql-statements/sql-statement-show-indexes.md)実行するか、システム テーブル[`information_schema.tidb_indexes`](/information-schema/information-schema-tidb-indexes.md)とテーブル[`information_schema.STATISTICS`](/information-schema/information-schema-statistics.md)を確認します。出力の`Expression`列は対応する式を示します。式以外のインデックスの場合、列には`NULL`が表示されます。
+式インデックスに対応する式を確認するには、 [`SHOW INDEX`](/sql-statements/sql-statement-show-indexes.md)を実行するか、システム テーブル[`information_schema.tidb_indexes`](/information-schema/information-schema-tidb-indexes.md)とテーブル[`information_schema.STATISTICS`](/information-schema/information-schema-statistics.md)を確認します。出力の`Expression`列は対応する式を示します。式以外のインデックスの場合、列には`NULL`表示されます。
 
 式インデックスの維持コストは、行が挿入または更新されるたびに式の値を計算する必要があるため、他のインデックスの維持コストよりも高くなります。式の値は既にインデックスに格納されているため、オプティマイザーが式インデックスを選択するときにこの値を再計算する必要はありません。
 
@@ -324,7 +352,7 @@ Query OK, 1 row affected (0.00 sec)
 -   複数値インデックスによって使用される追加のstorageスペース = 行あたりの配列要素の平均数 * 通常のセカンダリ インデックスによって使用されるスペース。
 -   通常のインデックスと比較すると、DML 操作では複数値インデックスのインデックス レコードがより多く変更されるため、複数値インデックスは通常のインデックスよりもパフォーマンスに大きな影響を与えます。
 -   多値インデックスは特殊なタイプの式インデックスであるため、多値インデックスには式インデックスと同じ制限があります。
--   テーブルで複数値インデックスが使用されている場合、 BR、TiCDC、またはTiDB Lightningを使用して、v6.6.0 より前の TiDB クラスターにテーブルをバックアップ、複製、またはインポートすることはできません。
+-   テーブルで複数値インデックスが使用されている場合、 BR、TiCDC、またはTiDB Lightning を使用して、v6.6.0 より前の TiDB クラスターにテーブルをバックアップ、複製、またはインポートすることはできません。
 -   複雑な条件を持つクエリの場合、TiDB は複数値インデックスを選択できない可能性があります。複数値インデックスでサポートされる条件パターンの詳細については、 [複数値インデックスを使用する](/choose-index.md#use-multi-valued-indexes)を参照してください。
 
 ## 目に見えないインデックス {#invisible-index}
@@ -346,11 +374,12 @@ TiDB v8.0.0 以降では、システム変数[`tidb_opt_use_invisible_indexes`](
 
 ## MySQL 互換性 {#mysql-compatibility}
 
--   TiDB は`FULLTEXT`と`SPATIAL`構文の解析をサポートしていますが、 `FULLTEXT` 、 `HASH` 、および`SPATIAL`インデックスの使用はサポートしていません。
+-   TiDB は`FULLTEXT`構文の解析をサポートしていますが、 `FULLTEXT` 、 `HASH` 、および`SPATIAL`インデックスの使用はサポートしていません。
+-   TiDB `RTREE` `BTREE` `HASH`インデックス タイプを受け入れますが、それらを無視します。
 -   降順インデックスはサポートされていません ( MySQL 5.7と同様)。
 -   `CLUSTERED`タイプの主キーをテーブルに追加することはサポートされていません。 `CLUSTERED`タイプの主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
 -   式インデックスはビューと互換性がありません。ビューを使用してクエリを実行する場合、式インデックスを同時に使用することはできません。
--   式インデックスには、バインディングとの互換性の問題があります。式インデックスの式に定数がある場合、対応するクエリに対して作成されたバインディングのスコープが拡張されます。たとえば、式インデックスの式が`a+1`で、対応するクエリ条件が`a+1 > 2`であるとします。この場合、作成されたバインディングは`a+? > ?`です。つまり、 `a+2 > 2`などの条件を持つクエリでも式インデックスの使用が強制され、実行プランが不十分になります。さらに、これは SQL プラン管理 (SPM) のベースライン キャプチャとベースラインの進化にも影響します。
+-   式インデックスには、バインディングとの互換性の問題があります。式インデックスの式に定数がある場合、対応するクエリに対して作成されたバインディングのスコープが拡張されます。たとえば、式インデックスの式が`a+1`で、対応するクエリ条件が`a+1 > 2`あるとします。この場合、作成されたバインディングは`a+? > ?`です。つまり、 `a+2 > 2`などの条件を持つクエリでも式インデックスの使用が強制され、実行プランが不十分になります。さらに、これは SQL プラン管理 (SPM) のベースライン キャプチャとベースラインの進化にも影響します。
 -   複数値インデックスで書き込まれるデータは、定義されたデータ型と完全に一致する必要があります。一致しない場合、データの書き込みは失敗します。詳細については、 [複数値インデックスを作成する](/sql-statements/sql-statement-create-index.md#create-multi-valued-indexes)参照してください。
 
 ## 参照 {#see-also}

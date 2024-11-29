@@ -6,13 +6,29 @@ category: reference
 
 # 管理者チェックサムテーブル {#admin-checksum-table}
 
-`ADMIN CHECKSUM TABLE`ステートメントは、テーブルのデータとインデックスの CRC64 チェックサムを計算します。このステートメントは、TiDB Lightningなどのプログラムによって、インポート操作が正常に完了したことを確認するために使用されます。
+`ADMIN CHECKSUM TABLE`ステートメントは、テーブルのデータとインデックスの CRC64 チェックサムを計算します。
+
+<CustomContent platform="tidb">
+
+[チェックサム](/tidb-lightning/tidb-lightning-glossary.md#checksum)は、テーブル データと`table_id`などのプロパティに基づいて計算されます。つまり、データは同じだが`table_id`値が異なる 2 つのテーブルでは、チェックサムが異なります。
+
+[TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 、 [TiDB データ移行](/dm/dm-overview.md) 、または[`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)を使用してテーブルをインポートした後、データの整合性を検証するためにデフォルトで`ADMIN CHECKSUM TABLE <table>`実行されます。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+[チェックサム](https://docs.pingcap.com/tidb/stable/tidb-lightning-glossary#checksum)は、 `table_id`などのテーブル データとプロパティに基づいて計算されます。つまり、データは同じだが`table_id`値が異なる 2 つのテーブルでは、チェックサムが異なります。
+
+[`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)使用してテーブルをインポートした後、データの整合性を検証するためにデフォルトで`ADMIN CHECKSUM TABLE <table>`実行されます。
+
+</CustomContent>
 
 ## 概要 {#synopsis}
 
 ```ebnf+diagram
-AdminStmt ::=
-    'ADMIN' ( 'SHOW' ( 'DDL' ( 'JOBS' Int64Num? WhereClauseOptional | 'JOB' 'QUERIES' NumList )? | TableName 'NEXT_ROW_ID' | 'SLOW' AdminShowSlow ) | 'CHECK' ( 'TABLE' TableNameList | 'INDEX' TableName Identifier ( HandleRange ( ',' HandleRange )* )? ) | 'RECOVER' 'INDEX' TableName Identifier | 'CLEANUP' ( 'INDEX' TableName Identifier | 'TABLE' 'LOCK' TableNameList ) | 'CHECKSUM' 'TABLE' TableNameList | 'CANCEL' 'DDL' 'JOBS' NumList | 'RELOAD' ( 'EXPR_PUSHDOWN_BLACKLIST' | 'OPT_RULE_BLACKLIST' | 'BINDINGS' ) | 'PLUGINS' ( 'ENABLE' | 'DISABLE' ) PluginNameList | 'REPAIR' 'TABLE' TableName CreateTableStmt | ( 'FLUSH' | 'CAPTURE' | 'EVOLVE' ) 'BINDINGS' )
+AdminChecksumTableStmt ::=
+    'ADMIN' 'CHECKSUM' 'TABLE' TableNameList
 
 TableNameList ::=
     TableName ( ',' TableName )*

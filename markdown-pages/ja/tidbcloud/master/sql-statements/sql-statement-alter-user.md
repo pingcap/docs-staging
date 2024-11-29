@@ -5,7 +5,7 @@ summary: TiDB データベースの ALTER USER の使用法の概要。
 
 # ユーザーの変更 {#alter-user}
 
-このステートメントは、TiDB 権限システム内の既存のユーザーを変更します。MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。したがって、IP アドレス`192.168.1.1`からのみ接続できるユーザー`'newuser2'@'192.168.1.1'`を作成できます。また、2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
+このステートメントは、TiDB 権限システム内の既存のユーザーを変更します。MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。したがって、IP アドレス`192.168.1.1`からのみ接続できるユーザー`'newuser2'@'192.168.1.1'`作成できます。また、2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
 
 ## 概要 {#synopsis}
 
@@ -98,7 +98,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-`ALTER USER ... COMMENT`を使用して`newuser`のコメントを変更します。
+`ALTER USER ... COMMENT`使用して`newuser`のコメントを変更します。
 
 ```sql
 ALTER USER 'newuser' COMMENT 'Here is the comment';
@@ -114,7 +114,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-`ALTER USER ... ATTRIBUTE`を使用して`newuser`のコメントを削除します。
+`ALTER USER ... ATTRIBUTE`使用して`newuser`のコメントを削除します。
 
 ```sql
 ALTER USER 'newuser' ATTRIBUTE '{"comment": null}';
@@ -130,7 +130,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-`ALTER USER ... PASSWORD EXPIRE NEVER`を実行して、 `newuser`の自動パスワード有効期限ポリシーを無期限に変更します。
+`ALTER USER ... PASSWORD EXPIRE NEVER`実行して、 `newuser`の自動パスワード有効期限ポリシーを無期限に変更します。
 
 ```sql
 ALTER USER 'newuser' PASSWORD EXPIRE NEVER;
@@ -138,7 +138,7 @@ ALTER USER 'newuser' PASSWORD EXPIRE NEVER;
 
     Query OK, 0 rows affected (0.02 sec)
 
-`ALTER USER ... PASSWORD REUSE INTERVAL ... DAY`を使用して、 `newuser`のパスワード再利用ポリシーを変更し、過去 90 日以内に使用されたパスワードの再利用を禁止します。
+`ALTER USER ... PASSWORD REUSE INTERVAL ... DAY`使用して、過去 90 日以内に使用されたパスワードの再利用を禁止するように`newuser`パスワード再利用ポリシーを変更します。
 
 ```sql
 ALTER USER 'newuser' PASSWORD REUSE INTERVAL 90 DAY;
@@ -193,4 +193,4 @@ SELECT USER, JSON_EXTRACT(User_attributes, "$.resource_group") FROM mysql.user W
 
 -   [ユーザーを作成](/sql-statements/sql-statement-create-user.md)
 -   [ユーザーを削除](/sql-statements/sql-statement-drop-user.md)
--   [ユーザーの作成を表示](/sql-statements/sql-statement-show-create-user.md)
+-   [表示 ユーザーの作成](/sql-statements/sql-statement-show-create-user.md)

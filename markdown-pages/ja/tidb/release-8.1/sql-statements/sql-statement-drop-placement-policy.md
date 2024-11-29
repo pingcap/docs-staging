@@ -5,11 +5,11 @@ summary: TiDB での ALTER PLACEMENT POLICY の使用法。
 
 # ドロップ配置ポリシー {#drop-placement-policy}
 
-`DROP PLACEMENT POLICY` 、以前に作成された配置ポリシーを削除するために使用されます。
+`DROP PLACEMENT POLICY`以前に作成された配置ポリシーを削除するために使用されます。
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ## 概要 {#synopsis}
 

@@ -7,7 +7,7 @@ summary: TiDB データ移行ツールを使用してデータを移行すると
 
 このドキュメントでは、TiDB データ移行 (DM) ツールを使用してデータを移行するときに、失敗した DDL ステートメントを処理する方法について説明します。
 
-現在、TiDB はすべての MySQL 構文と完全に互換性があるわけではありません ( [TiDBでサポートされているDDLステートメント](/mysql-compatibility.md#ddl-operations)を参照)。そのため、DM が MySQL から TiDB にデータを移行しているときに、TiDB が対応する DDL ステートメントをサポートしていない場合、エラーが発生して移行プロセスが中断される可能性があります。この場合、DM の`binlog`コマンドを使用して移行を再開できます。
+現在、TiDB はすべての MySQL 構文と完全に互換性があるわけではありません ( [TiDBでサポートされているDDLステートメント](/mysql-compatibility.md#ddl-operations)参照)。そのため、DM が MySQL から TiDB にデータを移行しているときに、TiDB が対応する DDL ステートメントをサポートしていない場合、エラーが発生して移行プロセスが中断される可能性があります。この場合、DM の`binlog`コマンドを使用して移行を再開できます。
 
 ## 制限 {#restrictions}
 
@@ -29,11 +29,11 @@ summary: TiDB データ移行ツールを使用してデータを移行すると
 
 ## コマンド {#commands}
 
-dmctl を使用して失敗した DDL ステートメントを手動で処理する場合、よく使用されるコマンドには`query-status`と`binlog`が含まれます。
+dmctl を使用して失敗した DDL ステートメントを手動で処理する場合、よく使用されるコマンドには`query-status`と`binlog`含まれます。
 
 ### クエリステータス {#query-status}
 
-`query-status`コマンドは、各 MySQL インスタンス内のサブタスクやリレーユニットなどの現在の状態を照会するために使用されます。詳細については、 [クエリステータス](/dm/dm-query-status.md)を参照してください。
+`query-status`コマンドは、各 MySQL インスタンス内のサブタスクやリレーユニットなどの現在の状態を照会するために使用されます。詳細については、 [クエリステータス](/dm/dm-query-status.md)参照してください。
 
 ### binlog {#binlog}
 
@@ -68,7 +68,7 @@ binlog -h
 
 `binlog`次のサブコマンドをサポートします:
 
--   `inject` : 現在のエラー イベントまたはbinlogのbinlog位置に DDL ステートメントを挿入します。binlog 位置を指定するには、 `-b, --binlog-pos`を参照してください。
+-   `inject` : 現在のエラー イベントまたは特定のbinlog位置にbinlogステートメントを挿入します。binlog 位置を指定するには、 `-b, --binlog-pos`を参照してください。
 -   `list` : 現在のbinlog位置または現在のbinlog位置以降の有効な`inject` 、 `skip` 、および`replace`操作をすべてリストします。binlog位置を指定するには、 `-b, --binlog-pos`を参照してください。
 -   `replace` : 特定のbinlog位置の DDL ステートメントを別の DDL ステートメントに置き換えます。binlog位置を指定するには、 `-b, --binlog-pos`を参照してください。
 -   `revert` : 前の操作が有効にならない場合にのみ、指定されたbinlog操作で`inject` 、 `skip` 、または`replace`操作を元に戻します。binlogの位置を指定するには、 `-b, --binlog-pos`を参照してください。
@@ -80,7 +80,7 @@ binlog -h
     -   タイプ: 文字列。
     -   binlogの位置を指定します。binlogイベントの位置が`binlog-pos`と一致すると、操作が実行されます。指定されていない場合、DM は現在失敗した DDL ステートメントに`binlog-pos`自動的に設定します。
     -   形式: `binlog-filename:binlog-pos` 、たとえば`mysql-bin|000001.000003:3270` 。
-    -   移行でエラーが返された後、 `query-status`で返された`startLocation`の`position`からbinlogの位置を取得できます。移行でエラーが返される前は、アップストリーム MySQL インスタンスで[`SHOW BINLOG EVENTS`](https://dev.mysql.com/doc/refman/8.0/en/show-binlog-events.html)を使用してbinlogの位置を取得できます。
+    -   移行でエラーが返された後、 `query-status`で返された`startLocation`の`position`からbinlogの位置を取得できます。移行でエラーが返される前は、アップストリーム MySQL インスタンスで[`SHOW BINLOG EVENTS`](https://dev.mysql.com/doc/refman/8.0/en/show-binlog-events.html)使用してbinlogの位置を取得できます。
 
 -   `-s, --source` :
     -   タイプ: 文字列。
@@ -110,7 +110,7 @@ binlog skip -h
 
 #### シャードマージなしのシナリオ {#non-shard-merge-scenario}
 
-アップストリーム テーブル`db1.tbl1`をダウンストリーム TiDB に移行する必要があるとします。初期のテーブル スキーマは次のとおりです。
+アップストリーム テーブル`db1.tbl1`ダウンストリーム TiDB に移行する必要があるとします。初期のテーブル スキーマは次のとおりです。
 
 ```sql
 SHOW CREATE TABLE db1.tbl1;
@@ -134,7 +134,7 @@ SHOW CREATE TABLE db1.tbl1;
 ALTER TABLE db1.tbl1 CHANGE c2 c2 DECIMAL (10, 3);
 ```
 
-この DDL ステートメントは TiDB でサポートされていないため、DM の移行タスクが中断されます。1 コマンド`query-status <task-name>`実行すると、次のエラーが表示されます。
+この DDL ステートメントは TiDB でサポートされていないため、DM の移行タスクが中断されます。1 `query-status <task-name>`を実行すると、次のエラーが表示されます。
 
     ERROR 8200 (HY000): Unsupported modify column: can't change decimal column precision
 
@@ -242,7 +242,7 @@ SHOW CREATE TABLE shard_db.shard_table;
 ALTER TABLE `shard_db_*`.`shard_table_*` CHARACTER SET LATIN1 COLLATE LATIN1_DANISH_CI;
 ```
 
-この DDL ステートメントは TiDB でサポートされていないため、DM の移行タスクは中断されます。 `query-status`コマンドを実行すると、MySQL インスタンス 1 の`shard_table_1`テーブルと MySQL インスタンス`shard_db_2`の`shard_db_1`テーブルによって報告された次の`shard_table_1`が表示されます。
+この DDL ステートメントは TiDB でサポートされていないため、DM の移行タスクは中断されます。 `query-status`コマンドを実行すると、MySQL インスタンス 1 の`shard_table_1`テーブルと MySQL インスタンス`shard_db_1`の`shard_db_2`テーブルによって報告された次のエラー`shard_table_1`表示されます。
 
     {
         "Message": "cannot track DDL: ALTER TABLE `shard_db_1`.`shard_table_1` CHARACTER SET UTF8 COLLATE UTF8_UNICODE_CI",
@@ -258,7 +258,7 @@ ALTER TABLE `shard_db_*`.`shard_table_*` CHARACTER SET LATIN1 COLLATE LATIN1_DAN
 
 実際の本番環境では、この DDL ステートメントが下流の TiDB で実行されないこと (つまり、元のテーブル スキーマが保持されること) が許容されると仮定します。その場合、 `binlog skip <task-name>`使用してこの DDL ステートメントをスキップし、移行を再開できます。手順は次のとおりです。
 
-1.  `binlog skip <task-name>`を実行して、MySQL インスタンス 1 と 2 で現在失敗している DDL ステートメントをスキップします。
+1.  `binlog skip <task-name>`実行して、MySQL インスタンス 1 と 2 で現在失敗している DDL ステートメントをスキップします。
 
     ```bash
     » binlog skip test
@@ -283,7 +283,7 @@ ALTER TABLE `shard_db_*`.`shard_table_*` CHARACTER SET LATIN1 COLLATE LATIN1_DAN
             ]
         }
 
-2.  `query-status`コマンドを実行する`shard_db_2` 、MySQL インスタンス 1 の`shard_table_2`テーブルと MySQL インスタンス 2 の`shard_db_1`テーブルによって報告されたエラーを確認できます`shard_table_2`
+2.  `query-status`コマンドを実行すると、MySQL インスタンス 1 の`shard_table_2`テーブルと MySQL インスタンス`shard_db_2`の`shard_table_2`テーブルによって報告された`shard_db_1`を確認できます。
 
         {
             "Message": "cannot track DDL: ALTER TABLE `shard_db_1`.`shard_table_2` CHARACTER SET UTF8 COLLATE UTF8_UNICODE_CI",
@@ -431,7 +431,7 @@ binlog replace -h
 
 #### シャードマージなしのシナリオ {#non-shard-merge-scenario}
 
-アップストリーム テーブル`db1.tbl1`をダウンストリーム TiDB に移行する必要があるとします。初期のテーブル スキーマは次のとおりです。
+アップストリーム テーブル`db1.tbl1`ダウンストリーム TiDB に移行する必要があるとします。初期のテーブル スキーマは次のとおりです。
 
 ```sql
 SHOW CREATE TABLE db1.tbl1;
@@ -454,7 +454,7 @@ SHOW CREATE TABLE db1.tbl1;
 ALTER TABLE `db1`.`tbl1` ADD COLUMN new_col INT UNIQUE;
 ```
 
-この DDL ステートメントは TiDB でサポートされていないため、 `query-status`タスクは中断されます。1 コマンドを実行すると、次のエラーが表示されます。
+この DDL ステートメントは TiDB でサポートされていないため、移行タスクは中断されます。1 `query-status`を実行すると、次のエラーが表示されます。
 
     {
         "Message": "cannot track DDL: ALTER TABLE `db1`.`tbl1` ADD COLUMN `new_col` INT UNIQUE KEY",
@@ -565,7 +565,7 @@ SHOW CREATE TABLE shard_db.shard_table;
 ALTER TABLE `shard_db_*`.`shard_table_*` ADD COLUMN new_col INT UNIQUE;
 ```
 
-この DDL ステートメントは TiDB でサポートされていないため、移行タスクは中断されます。 `query-status`コマンドを実行すると、MySQL インスタンス 1 の`shard_table_1`テーブルと MySQL インスタンス 2 の`shard_db_2`テーブルによって報告され`shard_db_1`次のエラーが表示されます`shard_table_1`
+この DDL ステートメントは TiDB でサポートされていないため、移行タスクは中断されます。 `query-status`コマンドを実行すると、MySQL インスタンス 1 の`shard_table_1`テーブルと MySQL インスタンス`shard_db_1`の`shard_db_2`テーブルによって報告された次のエラーが`shard_table_1`されます。
 
     {
         "Message": "cannot track DDL: ALTER TABLE `shard_db_1`.`shard_table_1` ADD COLUMN `new_col` INT UNIQUE KEY",
@@ -617,7 +617,7 @@ ALTER TABLE `shard_db_*`.`shard_table_*` ADD COLUMN new_col INT UNIQUE;
             ]
         }
 
-2.  `query-status <task-name>`使用してタスクのステータスを表示すると、MySQL インスタンス 1 の`shard_table_2`テーブルと MySQL インスタンス 2 の`shard_db_2`テーブルによって報告され`shard_db_1`次のエラーを確認できます`shard_table_2`
+2.  `query-status <task-name>`使用してタスクのステータスを表示すると、MySQL インスタンス 1 の`shard_table_2`テーブルと MySQL インスタンス`shard_db_2`の`shard_db_1` `shard_table_2`によって報告された次のエラーを確認できます。
 
         {
             "Message": "detect inconsistent DDL sequence from source ... ddls: [ALTER TABLE `shard_db`.`tb` ADD COLUMN `new_col` INT UNIQUE KEY] source: `shard_db_1`.`shard_table_2`], right DDL sequence should be ..."

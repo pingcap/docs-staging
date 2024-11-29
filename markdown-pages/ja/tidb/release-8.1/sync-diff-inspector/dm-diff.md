@@ -1,6 +1,6 @@
 ---
 title: Data Check in the DM Replication Scenario
-summary: データ チェックを実行するために、`DM-master` から特定の `task-name` 構成を設定する方法について学習します。
+summary: データ チェックを実行するために、DM-master` から特定の `task-name` 構成を設定する方法について説明します。
 ---
 
 # DM レプリケーション シナリオにおけるデータ チェック {#data-check-in-the-dm-replication-scenario}
@@ -37,4 +37,4 @@ dm-task = "test"
     target-check-tables = ["hb_test.*"]
 ```
 
-この例では、dm-task = &quot;test&quot; に設定されており、&quot;test&quot; タスクの下にある hb_test スキーマのすべてのテーブルをチェックします。これにより、アップストリーム データベースとダウンストリーム データベース間のスキーマの定期的なマッチングが自動的に取得され、DM レプリケーション後のデータの一貫性が検証されます。
+この例では、dm-task = &quot;test&quot; に設定されており、&quot;test&quot; タスクの下にある hb_test スキーマのすべてのテーブルをチェックします。DM レプリケーション後のデータの一貫性を確認するために、アップストリーム データベースとダウンストリーム データベース間のスキーマの定期的なマッチングが自動的に取得されます。

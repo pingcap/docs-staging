@@ -3,9 +3,9 @@ title: Best Practices for Importing 50 TiB Data
 summary: 大量のデータをインポートするためのベスト プラクティスを学びます。
 ---
 
-# 50 TiB データのインポートに関するベスト プラクティス {#best-practices-for-importing-50-tib-data}
+# 50 TiB のデータをインポートするためのベスト プラクティス {#best-practices-for-importing-50-tib-data}
 
-このドキュメントでは、データのインポートに影響するいくつかの重要な要素と手順を含む、大量のデータを TiDB にインポートするためのベスト プラクティスについて説明します。当社は、50 TiB を超える大規模な単一テーブルのデータを社内環境と顧客環境の両方に正常にインポートしており、これらの実際のアプリケーション シナリオに基づいてベスト プラクティスを蓄積しています。これにより、データをよりスムーズかつ効率的にインポートできるようになります。
+このドキュメントでは、データのインポートに影響するいくつかの重要な要素と手順を含む、大量のデータを TiDB にインポートするためのベスト プラクティスについて説明します。50 TiB を超える大規模な単一テーブルのデータを社内環境と顧客の環境の両方にインポートすることに成功しており、これらの実際のアプリケーション シナリオに基づいてベスト プラクティスを蓄積しているため、データをよりスムーズかつ効率的にインポートできます。
 
 TiDB Lightning （ [物理インポートモード](/tidb-lightning/tidb-lightning-physical-import-mode.md) ）は、空のテーブルにデータをインポートしたり、空のクラスターを初期化したりするために使用される包括的で効率的なデータインポートツールであり、ファイルをデータソースとして使用します。TiDB TiDB Lightningには、単一インスタンスと[並行輸入](/tidb-lightning/tidb-lightning-distributed-import.md) 2つの実行モードがあります。さまざまなサイズのソースファイルをインポートできます。
 
@@ -15,8 +15,8 @@ TiDB Lightning （ [物理インポートモード](/tidb-lightning/tidb-lightni
 
 次のセクションは、複数のテーブルのインポートと大きな単一のテーブルのインポートの両方に適用されます。
 
--   [キーファクタ](#key-factors)
--   [ソースファイルの準備](#prepare-source-files)
+-   [重要な要素](#key-factors)
+-   [ソースファイルを準備する](#prepare-source-files)
 -   [storage容量の見積もり](#estimate-storage-space)
 -   [設定パラメータを変更する](#change-configuration-parameters)
 -   [「チェックサム不一致」エラーを解決する](#resolve-the-checksum-mismatch-error)
@@ -27,7 +27,7 @@ TiDB Lightning （ [物理インポートモード](/tidb-lightning/tidb-lightni
 
 -   [大きな単一テーブルをインポートするためのベストプラクティス](#best-practices-for-importing-a-large-single-table)
 
-## キーファクタ {#key-factors}
+## 重要な要素 {#key-factors}
 
 データをインポートする場合、いくつかの重要な要素がインポートのパフォーマンスに影響し、インポートが失敗する原因となることがあります。一般的な重要な要素は次のとおりです。
 
@@ -72,7 +72,7 @@ TiDB Lightning （ [物理インポートモード](/tidb-lightning/tidb-lightni
     -   [問題-43079](https://github.com/pingcap/tidb/pull/43079) : TiDB Lightning は、 NotLeader エラーの再試行中にリージョンピア情報を更新できません。
     -   [問題-43291](https://github.com/pingcap/tidb/issues/43291) : 一時ファイルが見つからない場合 (「そのようなファイルまたはディレクトリはありません」というエラー)、 TiDB Lightning は再試行しません。
 
-## ソースファイルの準備 {#prepare-source-files}
+## ソースファイルを準備する {#prepare-source-files}
 
 -   ソース ファイルを生成するときは、1 つのファイル内で主キーで並べ替えることをお勧めします。テーブル定義に主キーがない場合は、自動増分主キーを追加できます。この場合、ファイルの内容の順序は関係ありません。
 -   ソース ファイルを複数のTiDB Lightningインスタンスに割り当てる場合は、複数のソース ファイル間で重複する主キーや null 以外の一意のインデックスが存在する状況を回避するようにしてください。生成されたファイルがグローバルにソートされている場合は、範囲に基づいて異なるTiDB Lightningインスタンスに分散して、最適なインポート パフォーマンスを実現できます。
@@ -107,7 +107,7 @@ TiDB Lightningパラメータの詳細については、 [TiDB Lightning構成�
 
 ## チェックポイントを有効にする {#enable-checkpoint}
 
-大量データのインポートには、 [ライトニングチェックポイント](/tidb-lightning/tidb-lightning-checkpoints.md)を参考にチェックポイントを有効にすることが必須です。コンテナが終了してチェックポイント情報が削除される可能性があるコンテナ環境でTiDB Lightningを動作させる場合は、チェックポイント情報が失われないように、ドライバーとして MySQL を優先して使用することをお勧めします。
+大量データのインポートには、 [ライトニングチェックポイント](/tidb-lightning/tidb-lightning-checkpoints.md)参考にチェックポイントを有効にすることが必須です。コンテナが終了してチェックポイント情報が削除される可能性があるコンテナ環境でTiDB Lightning を動作させる場合は、チェックポイント情報が失われないように、ドライバーとして MySQL を優先して使用することをお勧めします。
 
 インポート中にダウンストリーム TiKV の容量が不足した場合は、すべてのTiDB Lightningインスタンスで`kill`コマンド ( `-9`オプションなし) を手動で実行できます。容量を拡大した後、チェックポイント情報に基づいてインポートを再開できます。
 
@@ -122,11 +122,11 @@ TiDB Lightningパラメータの詳細については、 [TiDB Lightning構成�
 
 ### ソースファイルを生成する {#generate-source-files}
 
-[ソースファイルの準備](#prepare-source-files)に記載されている手順に従ってください。
+[ソースファイルを準備する](#prepare-source-files)に記載されている手順に従ってください。
 
 大きな単一テーブルの場合、グローバルなソートは実行できないが、主キーに基づいて各ファイル内でのソートは可能であり、ファイルが標準の CSV ファイルである場合は、それぞれ約 20 GiB の大きな単一ファイルを生成することをお勧めします。
 
-次に、 `strict-format`を有効にします。このアプローチにより、TiDB Lightningインスタンス間でインポートされたファイルの主キーと一意のキーの重複が削減され、 TiDB Lightningインスタンスはインポート前に大きなファイルを分割して、最適なインポート パフォーマンスを実現できます。
+次に、 `strict-format`有効にします。このアプローチにより、 TiDB Lightningインスタンス間でインポートされたファイルの主キーと一意のキーの重複が削減され、 TiDB Lightningインスタンスはインポート前に大きなファイルを分割して、最適なインポート パフォーマンスを実現できます。
 
 ### クラスタトポロジを計画する {#plan-cluster-topology}
 
@@ -138,18 +138,18 @@ TiDB Lightningパラメータの詳細については、 [TiDB Lightning構成�
 -   `send-kv-pairs`を`3200`に設定します。この方法は、TiDB v7.1.0 以前のバージョンに適用されます。v7.2.0 以降では、このパラメータは`send-kv-size`に置き換えられ、追加の設定は必要ありません。
 -   インスタンスが配置されているノード上のメモリを`GOMEMLIMIT` ～ 80% に調整します。
 
-インポート プロセス中の PD 散布リージョンのレイテンシーが30 分を超える場合は、次の最適化を検討してください。
+インポート プロセス中の PD 散布リージョンのレイテンシーが 30 分を超える場合は、次の最適化を検討してください。
 
 -   TiKV クラスターで I/O ボトルネックが発生しているかどうかを確認します。
 -   TiKV `raftstore.apply-pool-size`デフォルト値の`2`から`4`または`8`に増やします。
--   TiDB Lightning `region-split-concurrency` CPU コア数の半分に減らします (最小値は`1` )。
+-   TiDB Lightning `region-split-concurrency` CPU コア数の半分に減らします (最小値は`1` 。
 
 ### 分析操作を無効にする {#disable-the-analyze-operation}
 
 単一のテーブルが大きい場合（たとえば、行数が 10 億行以上、列数が 50 列以上）、インポート処理中に`analyze`操作（ `analyze="off"` ）を無効にし、インポートが完了した後に[`ANALYZE TABLE`](/sql-statements//sql-statement-analyze-table.md)ステートメントを手動で実行することをお勧めします。
 
-`analyze`の設定の詳細については、 [TiDB Lightningタスク構成](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)を参照してください。
+`analyze`の設定の詳細については、 [TiDB Lightningタスク構成](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)参照してください。
 
 ## トラブルシューティング {#troubleshooting}
 
-TiDB Lightningの使用中に問題が発生した場合は、 [TiDB Lightningシューティング](/tidb-lightning/troubleshoot-tidb-lightning.md)参照してください。
+TiDB Lightningの使用中に問題が発生した場合は、 [TiDB Lightning のトラブルシューティング](/tidb-lightning/troubleshoot-tidb-lightning.md)参照してください。

@@ -5,7 +5,7 @@ summary: TiDB データベースの RENAME USER の使用法の概要。
 
 # ユーザー名の変更 {#rename-user}
 
-`RENAME USER`は既存のユーザーの名前を変更するために使用されます。
+`RENAME USER`既存のユーザーの名前を変更するために使用されます。
 
 ## 概要 {#synopsis}
 
@@ -72,7 +72,7 @@ ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-`RENAME USER` MySQL と完全に互換性があると予想されます。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support)実行できます。
+`RENAME USER` MySQL と完全に互換性があると予想されます。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)実行できます。
 
 ## 参照 {#see-also}
 

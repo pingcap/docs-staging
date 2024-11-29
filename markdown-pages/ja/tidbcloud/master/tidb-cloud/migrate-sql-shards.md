@@ -1,6 +1,6 @@
 ---
 title: Migrate and Merge MySQL Shards of Large Datasets to TiDB Cloud
-summary: 大規模なデータセットの MySQL シャードをTiDB Cloudに移行およびマージする方法を学びます。
+summary: 大規模なデータセットの MySQL シャードをTiDB Cloudに移行してマージする方法を学びます。
 ---
 
 # 大規模データセットの MySQL シャードをTiDB Cloudに移行して統合する {#migrate-and-merge-mysql-shards-of-large-datasets-to-tidb-cloud}
@@ -56,7 +56,7 @@ DM のバージョンは v5.3.0 です。TiDB DM を手動でデプロイする�
 
 ### ステップ1. Amazon S3バケットにディレクトリを作成する {#step-1-create-directories-in-the-amazon-s3-bucket}
 
-Amazon S3 バケットに、第 1 レベルのディレクトリ`store` (データベースのレベルに対応) と第 2 レベルのディレクトリ`sales` (テーブルのレベルに対応) を作成します。5 `sales` 、各 MySQL インスタンスの第 3 レベルのディレクトリを作成します (MySQL インスタンスのレベルに対応)。例:
+Amazon S3 バケットに、第 1 レベルのディレクトリ`store` (データベースのレベルに対応) と第 2 レベルのディレクトリ`sales` (テーブルのレベルに対応) を作成します`sales`で、各 MySQL インスタンスの第 3 レベルのディレクトリを作成します (MySQL インスタンスのレベルに対応)。例:
 
 -   MySQLインスタンス1のデータを`s3://dumpling-s3/store/sales/instance01/`に移行する
 -   MySQLインスタンス2のデータを`s3://dumpling-s3/store/sales/instance02/`に移行する
@@ -72,10 +72,10 @@ Dumpling のインストール方法については、 [Dumplingの紹介](https
 
 Dumplingを使用してデータを Amazon S3 にエクスポートする場合は、次の点に注意してください。
 
--   アップストリーム クラスターのbinlogを有効にします。
+-   アップストリーム クラスターのbinlog を有効にします。
 -   正しい Amazon S3 ディレクトリとリージョンを選択します。
--   上流クラスターへの影響を最小限に抑えるために`-t`オプションを設定して適切な同時実行性を選択するか、バックアップ データベースから直接エクスポートします。このパラメータの使用方法の詳細については、 [Dumplingのオプションリスト](https://docs.pingcap.com/tidb/stable/dumpling-overview#option-list-of-dumpling)を参照してください。
--   `--filetype csv`と`--no-schemas`に適切な値を設定します。これらのパラメータの使用方法の詳細については、 [Dumplingのオプションリスト](https://docs.pingcap.com/tidb/stable/dumpling-overview#option-list-of-dumpling)を参照してください。
+-   上流クラスターへの影響を最小限に抑えるために`-t`オプションを設定するか、バックアップ データベースから直接エクスポートして、適切な同時実行性を選択します。このパラメータの使用方法の詳細については、 [Dumplingのオプションリスト](https://docs.pingcap.com/tidb/stable/dumpling-overview#option-list-of-dumpling)参照してください。
+-   `--filetype csv`と`--no-schemas`に適切な値を設定します。これらのパラメータの使用方法の詳細については、 [Dumplingのオプションリスト](https://docs.pingcap.com/tidb/stable/dumpling-overview#option-list-of-dumpling)参照してください。
 
 CSV ファイルに次のように名前を付けます。
 
@@ -83,11 +83,11 @@ CSV ファイルに次のように名前を付けます。
 
 > **注記：**
 >
-> 場合によっては、前述のルールに従って CSV ファイル名を更新できない場合 (たとえば、CSV ファイル リンクが他のプログラムでも使用されている場合)、ファイル名を変更せずに、 [ステップ5](#step-5-perform-the-data-import-task)の**ファイル パターン**を使用してソース データを単一のターゲット テーブルにインポートできます。
+> 場合によっては、前述のルールに従って CSV ファイル名を更新できない場合 (たとえば、CSV ファイル リンクが他のプログラムでも使用されている場合)、ファイル名を変更せずに、 [ステップ5](#step-5-perform-the-data-import-task)の**マッピング設定**を使用してソース データを単一のターゲット テーブルにインポートできます。
 
 データを Amazon S3 にエクスポートするには、次の手順を実行します。
 
-1.  Amazon S3 バケットの`AWS_ACCESS_KEY_ID`と`AWS_SECRET_ACCESS_KEY`を取得します。
+1.  Amazon S3 バケットの`AWS_ACCESS_KEY_ID`と`AWS_SECRET_ACCESS_KEY`取得します。
 
     ```shell
     [root@localhost ~]# export AWS_ACCESS_KEY_ID={your_aws_access_key_id}
@@ -183,44 +183,47 @@ Amazon S3 アクセスを構成した後、次のようにしてTiDB Cloudコン
         >
         > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅にある をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
 
-    2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート] を**クリックします。
+    2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート]**をクリックします。
 
-2.  **「インポート」**ページで、右上隅の**「データのインポート」**をクリックし、 **「S3 から」**を選択します。
+2.  **S3 からデータをインポート**を選択します。
 
-3.  **S3 からのインポート**ページで、次の情報を入力します。
+    このクラスターにデータを初めてインポートする場合は、 **「Amazon S3 からのインポート」**を選択します。
 
+3.  **「Amazon S3 からのデータのインポート」**ページで、次の情報を入力します。
+
+    -   **インポートファイル数**:**複数のファイル**を選択します。
+    -   **含まれるスキーマ ファイル**: **[いいえ]**を選択します。
     -   **データ形式**: **CSV**を選択します。
-    -   **バケット URI** : ソース データのバケット URI を入力します。テーブルに対応する第 2 レベルのディレクトリ (この例では`s3://dumpling-s3/store/sales`を使用すると、 TiDB Cloud はすべての MySQL インスタンスのデータを一度に`store.sales`にインポートしてマージできます。
-    -   **ロール ARN** : 取得したロール ARN を入力します。
+    -   **フォルダー URI** : ソース データのバケット URI を入力します。テーブルに対応する第 2 レベルのディレクトリ (この例では`s3://dumpling-s3/store/sales/`を使用すると、 TiDB Cloud はすべての MySQL インスタンスのデータを一度に`store.sales`つにインポートしてマージできます。
+    -   **バケットアクセス**&gt; **AWS ロール ARN** : 取得したロール ARN を入力します。
 
-    バケットの場所がクラスターと異なる場合は、クロスリージョンのコンプライアンスを確認します。 **[次へ]**をクリックします。
+    バケットの場所がクラスターと異なる場合は、クロスリージョンのコンプライアンスを確認してください。
 
-    TiDB Cloud は、指定されたバケット URI のデータにアクセスできるかどうかの検証を開始します。検証後、 TiDB Cloud は、デフォルトのファイル名パターンを使用してデータ ソース内のすべてのファイルをスキャンし、次のページの左側にスキャンの概要結果を返します。1 エラー`AccessDenied`発生した場合は、 [S3 からのデータインポート中に発生するアクセス拒否エラーのトラブルシューティング](/tidb-cloud/troubleshoot-import-access-denied-error.md)を参照してください。
+    TiDB Cloud は、指定されたバケット URI のデータにアクセスできるかどうかの検証を開始します。検証後、 TiDB Cloud は、デフォルトのファイル名パターンを使用してデータ ソース内のすべてのファイルをスキャンし、次のページの左側にスキャンの概要結果を返します。1 エラーが発生した場合は、 [S3 からのデータインポート中に発生するアクセス拒否エラーのトラブルシューティング](/tidb-cloud/troubleshoot-import-access-denied-error.md)参照`AccessDenied`てください。
 
-4.  必要に応じてファイル パターンを変更し、テーブル フィルター ルールを追加します。
+4.  **[接続]**をクリックします。
 
-    -   **ファイル パターン**: ファイル名が特定のパターンに一致する CSV ファイルを単一のターゲット テーブルにインポートする場合は、ファイル パターンを変更します。
+5.  **[宛先]**セクションで、ターゲット データベースとテーブルを選択します。
 
-        > **注記：**
-        >
-        > この機能を使用する場合、1 つのインポート タスクでは、一度に 1 つのテーブルにのみデータをインポートできます。この機能を使用してデータを複数のテーブルにインポートする場合は、異なるターゲット テーブルを指定して、複数回インポートする必要があります。
+    複数のファイルをインポートする場合は、 **[詳細設定]** &gt; **[マッピング設定]**を使用して、各ターゲット テーブルとそれに対応する CSV ファイルのカスタム マッピング ルールを定義できます。その後、提供されたカスタム マッピング ルールを使用してデータ ソース ファイルが再スキャンされます。
 
-        ファイル パターンを変更するには、 **[変更] を**クリックし、次のフィールドで CSV ファイルと単一のターゲット テーブル間のカスタム マッピング ルールを指定して、 **[スキャン]**をクリックします。
+    ソース ファイルの URI と名前を**[ソース ファイルの URI と名前]**に入力するときは、次の形式`s3://[bucket_name]/[data_source_folder]/[file_name].csv`になっていることを確認してください。たとえば、 `s3://sampledata/ingest/TableName.01.csv`です。
 
-        -   **ソース ファイル名**: インポートする CSV ファイルの名前と一致するパターンを入力します。CSV ファイルが 1 つしかない場合は、ここでファイル名を直接入力します。CSV ファイルの名前には、接尾辞「.csv」を含める必要があることに注意してください。
+    ソース ファイルを一致させるためにワイルドカードを使用することもできます。例:
 
-            例えば：
+    -   `s3://[bucket_name]/[data_source_folder]/my-data?.csv` : そのフォルダー内の`my-data`で始まり、その後に 1 文字 ( `my-data1.csv`や`my-data2.csv`など) が続くすべての CSV ファイルが同じターゲット テーブルにインポートされます。
 
-            -   `my-data?.csv` : `my-data`と 1 文字で始まるすべての CSV ファイル ( `my-data1.csv`や`my-data2.csv`など) が同じターゲット テーブルにインポートされます。
-            -   `my-data*.csv` : `my-data`で始まるすべての CSV ファイルが同じターゲット テーブルにインポートされます。
+    -   `s3://[bucket_name]/[data_source_folder]/my-data*.csv` : フォルダー内の`my-data`で始まるすべての CSV ファイルが同じターゲット テーブルにインポートされます。
 
-        -   **ターゲット テーブル名**: TiDB Cloudのターゲット テーブルの名前を入力します。これは`${db_name}.${table_name}`形式である必要があります。たとえば、 `mydb.mytable` 。このフィールドでは 1 つの特定のテーブル名のみが受け入れられるため、ワイルドカードはサポートされていないことに注意してください。
+    サポートされているのは`?`と`*`のみであることに注意してください。
 
-    -   **テーブル フィルター**: インポートするテーブルをフィルターする場合は、この領域で[テーブルフィルター](/table-filter.md#syntax)つ以上のルールを指定できます。
+    > **注記：**
+    >
+    > URI にはデータ ソース フォルダーが含まれている必要があります。
 
-5.  **「次へ」**をクリックします。
+6.  必要に応じて CSV 構成を編集します。
 
-6.  **プレビュー**ページでは、データをプレビューできます。プレビューされたデータが期待したものと異なる場合は、**ここをクリックして csv 構成を編集する**リンクをクリックし、区切り文字、区切り記号、ヘッダー、 `backslash escape`などの CSV 固有`trim last separator`構成を更新します。
+    また、 **「CSV 構成の編集」**をクリックして、バックスラッシュ エスケープ、セパレーター、区切り文字を構成し、よりきめ細かい制御を行うこともできます。
 
     > **注記：**
     >
@@ -236,7 +239,7 @@ Amazon S3 アクセスを構成した後、次のようにしてTiDB Cloudコン
 
 アップストリーム クラスターの指定された位置からbinlogに基づいてデータの変更をTiDB Cloudに複製するには、TiDB Data Migration (DM) を使用して増分レプリケーションを実行します。
 
-### あなたが始める前に {#before-you-begin}
+### 始める前に {#before-you-begin}
 
 増分データを移行し、MySQL シャードをTiDB Cloudにマージする場合、 TiDB Cloud はまだ MySQL シャードの移行とマージをサポートしていないため、TiDB DM を手動でデプロイする必要があります。詳細な手順については、 [TiUPを使用して DMクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/deploy-a-dm-cluster-using-tiup)参照してください。
 
@@ -274,7 +277,7 @@ Amazon S3 アクセスを構成した後、次のようにしてTiDB Cloudコン
      port: 3308
     ```
 
-3.  ターミナルで次のコマンドを実行します。1 `tiup dmctl`使用して、最初のデータ ソース構成を DM クラスターにロードします。
+3.  ターミナルで次のコマンドを実行します`tiup dmctl`使用して、最初のデータ ソース構成を DM クラスターにロードします。
 
     ```shell
     [root@localhost ~]# tiup dmctl --master-addr ${advertise-addr} operate-source create dm-source1.yaml
@@ -309,7 +312,7 @@ Amazon S3 アクセスを構成した後、次のようにしてTiDB Cloudコン
 
     ```
 
-4.  ターミナルで次のコマンドを実行します。1 `tiup dmctl`使用して、2 番目のデータ ソース構成を DM クラスターにロードします。
+4.  ターミナルで次のコマンドを実行します`tiup dmctl`使用して、2 番目のデータ ソース構成を DM クラスターにロードします。
 
     ```shell
     [root@localhost ~]# tiup dmctl --master-addr 192.168.11.110:9261 operate-source create dm-source2.yaml
@@ -459,7 +462,7 @@ Starting component `dmctl`: /root/.tiup/components/dmctl/${tidb_version}/dmctl/d
 
 ### ステップ3. レプリケーションタスクを開始する {#step-3-start-the-replication-task}
 
-`tiup dmctl`を使用して次のコマンドを実行し、データ複製タスクを開始します。
+`tiup dmctl`使用して次のコマンドを実行し、データ複製タスクを開始します。
 
 ```shell
 [root@localhost ~]# tiup dmctl --master-addr ${advertise-addr}  start-task dm-task.yaml
@@ -503,11 +506,11 @@ Starting component `dmctl`: /root/.tiup/components/dmctl/${tidb_version}/dmctl/d
 
 タスクの開始に失敗した場合は、プロンプト メッセージを確認し、構成を修正してください。その後、上記のコマンドを再実行してタスクを開始できます。
 
-問題が発生した場合は、 [DM エラー処理](https://docs.pingcap.com/tidb/stable/dm-error-handling)と[DMFAQ](https://docs.pingcap.com/tidb/stable/dm-faq)を参照してください。
+問題が発生した場合は、 [DM エラー処理](https://docs.pingcap.com/tidb/stable/dm-error-handling)と[DMに関するFAQ](https://docs.pingcap.com/tidb/stable/dm-faq)を参照してください。
 
 ### ステップ4. レプリケーションタスクのステータスを確認する {#step-4-check-the-replication-task-status}
 
-DM クラスターに進行中のレプリケーション タスクがあるかどうかを確認し、タスクのステータスを表示するには、 `tiup dmctl`を使用して`query-status`コマンドを実行します。
+DM クラスターに進行中のレプリケーション タスクがあるかどうかを確認し、タスクのステータスを表示するには、 `tiup dmctl`使用して`query-status`コマンドを実行します。
 
 ```shell
 [root@localhost ~]# tiup dmctl --master-addr 192.168.11.110:9261 query-status test-task1

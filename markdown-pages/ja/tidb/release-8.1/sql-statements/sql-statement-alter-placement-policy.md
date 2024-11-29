@@ -5,13 +5,13 @@ summary: TiDB での ALTER PLACEMENT POLICY の使用法。
 
 # 配置ポリシーの変更 {#alter-placement-policy}
 
-`ALTER PLACEMENT POLICY` 、以前に作成された既存の配置ポリシーを変更するために使用されます。配置ポリシーを使用するすべてのテーブルとパーティションは自動的に更新されます。
+`ALTER PLACEMENT POLICY`以前に作成された既存の配置ポリシーを変更するために使用されます。配置ポリシーを使用するすべてのテーブルとパーティションは自動的に更新されます。
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
-`ALTER PLACEMENT POLICY` 、以前のポリシーを新しい定義に*置き換えます*。古いポリシーを新しいポリシーと*マージ*しません。次の例では、 `ALTER PLACEMENT POLICY`が実行されると`FOLLOWERS=4`は失われます。
+`ALTER PLACEMENT POLICY` 、以前のポリシーを新しい定義に*置き換えます*。古いポリシーを新しいポリシーと*マージしません*。次の例では、 `ALTER PLACEMENT POLICY`が実行されると`FOLLOWERS=4`失われます。
 
 ```sql
 CREATE PLACEMENT POLICY p1 FOLLOWERS=4;

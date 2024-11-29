@@ -9,7 +9,7 @@ summary: TiDB Binlogクラスターをデプロイする方法を学びます。
 
 ## ハードウェア要件 {#hardware-requirements}
 
-PumpとDrainer は、Intel x86-64アーキテクチャを搭載した 64 ビット ユニバーサル ハードウェアサーバープラットフォーム上で展開され、動作します。
+PumpとDrainer は、 Intel x86-64アーキテクチャを搭載した 64 ビット ユニバーサル ハードウェアサーバープラットフォーム上で展開され、動作します。
 
 開発、テスト、本番環境におけるサーバーハードウェアの要件は次のとおりです。
 
@@ -18,9 +18,9 @@ PumpとDrainer は、Intel x86-64アーキテクチャを搭載した 64 ビッ�
 | Pump    | 3      | 8コア以上 | SSD、200 GB以上                                                                   | 16G |
 | Drainer | 1      | 8コア以上 | SAS、100 GB 以上 (バイナリログがローカル ファイルとして出力される場合、ディスク サイズはこれらのファイルが保持される期間によって異なります。) | 16G |
 
-## TiUPを使用して TiDB Binlogをデプロイ {#deploy-tidb-binlog-using-tiup}
+## TiUP を使用して TiDB Binlog をデプロイ {#deploy-tidb-binlog-using-tiup}
 
-TiDB BinlogはTiUPを使用してデプロイすることをお勧めします。そのためには、 TiUP を使用してTiUPをデプロイする際に、 [TiDBBinlog展開トポロジ](/tidb-binlog-deployment-topology.md)の TiDB Binlogの`drainer`と`pump`ノード情報を追加する必要があります。詳細なデプロイ情報については、 [TiUPを使用して TiDBクラスタをデプロイ](/production-deployment-using-tiup.md)を参照してください。
+TiDB Binlog はTiUP を使用してデプロイすることをお勧めします。そのためには、 TiUP を使用して TiDB をデプロイする際に、 [TiDBBinlog展開トポロジ](/tidb-binlog-deployment-topology.md)の TiDB Binlogの`drainer`と`pump`のノード情報を追加する必要があります。詳細なデプロイ情報については、 [TiUP を使用して TiDBクラスタをデプロイ](/production-deployment-using-tiup.md)を参照してください。
 
 ## バイナリパッケージを使用してTiDB Binlogをデプロイ {#deploy-tidb-binlog-using-a-binary-package}
 
@@ -352,7 +352,7 @@ PD ノードが 3 つ、TiDB ノードが 1 つ、 Pumpノードが 2 つ、 Dra
         >
         > ダウンストリームが MySQL/TiDB の場合、データの整合性を保証するために、 Drainerの初期起動前に`initial-commit-ts`値を取得してデータの完全バックアップを作成し、データを復元する必要があります。
 
-        Drainerを初めて起動するときは、 `initial-commit-ts`パラメータを使用します。
+        Drainer を初めて起動するときは、 `initial-commit-ts`パラメータを使用します。
 
         ```bash
         ./drainer -config drainer.toml -initial-commit-ts {initial-commit-ts}
@@ -362,12 +362,12 @@ PD ノードが 3 つ、TiDB ノードが 1 つ、 Pumpノードが 2 つ、 Dra
 
 3.  TiDBサーバーを起動しています:
 
-    -   PumpとDrainer を起動した後、TiDBサーバーの設定ファイルに次のセクションを追加して、 binlogを有効にして TiDBサーバーを起動します。
+    -   PumpとDrainer を起動した後、TiDBサーバーの設定ファイルに次のセクションを追加して、 binlog を有効にして TiDBサーバーを起動します。
 
             [binlog]
             enable=true
 
-    -   TiDBサーバーは、PD から登録されたポンプのアドレスを取得し、それらすべてにデータをストリーミングします。登録されたPumpインスタンスがない場合、TiDBサーバーは起動を拒否するか、Pumpインスタンスがオンラインになるまで起動をブロックします。
+    -   TiDBサーバーは、 PD から登録されたポンプのアドレスを取得し、それらすべてにデータをストリーミングします。登録されたPumpインスタンスがない場合、TiDBサーバーは起動を拒否するか、Pumpインスタンスがオンラインになるまで起動をブロックします。
 
 > **注記：**
 >
@@ -375,6 +375,6 @@ PD ノードが 3 つ、TiDB ノードが 1 つ、 Pumpノードが 2 つ、 Dra
 > -   TiDBサーバーで TiDB Binlogサービスを有効にするには、TiDB の`-enable-binlog`起動パラメータを使用するか、TiDBサーバー構成ファイルの [ binlog ] セクションに enable=true を追加します。
 > -   同じクラスター内のすべての TiDB インスタンスで TiDB Binlogサービスが有効になっていることを確認してください。有効になっていないと、データ レプリケーション中に上流と下流のデータの不整合が発生する可能性があります。TiDB Binlogサービスが有効になっていない TiDB インスタンスを一時的に実行する場合は、TiDB 構成ファイルで`run_ddl=false`設定します。
 > -   Drainer は、 `ignore schemas`のテーブル (フィルター リスト内のスキーマ) に対する`rename` DDL 操作をサポートしていません。
-> -   既存の TiDB クラスターでDrainerを起動する場合、通常はクラスター データの完全バックアップを作成し、**スナップショット タイム**スタンプを取得し、データをターゲット データベースにインポートしてから、 Drainerを起動して対応するスナップ**ショット タイムスタンプ**から増分データを複製する必要があります。
-> -   ダウンストリーム データベースが TiDB または MySQL の場合、アップストリーム データベースとダウンストリーム データベースの`sql_mode`一致していることを確認します。つまり、各 SQL ステートメントがアップストリームで実行され、ダウンストリームに複製されたときに、 `sql_mode`が同じである必要があります。アップストリームとダウンストリームでそれぞれ`select @@sql_mode;`ステートメントを実行して、 `sql_mode`比較できます。
+> -   既存の TiDB クラスターでDrainer を起動する場合、通常はクラスター データの完全バックアップを作成し、**スナップショット タイムスタンプ**を取得し、データをターゲット データベースにインポートしてから、 Drainer を起動して対応する**スナップショット タイムスタンプ**から増分データを複製する必要があります。
+> -   ダウンストリーム データベースが TiDB または MySQL の場合、アップストリーム データベースとダウンストリーム データベースの`sql_mode`一致していることを確認します。つまり、各 SQL ステートメントがアップストリームで実行され、ダウンストリームに複製されたときに、 `sql_mode`同じである必要があります。アップストリームとダウンストリームでそれぞれ`select @@sql_mode;`ステートメントを実行して、 `sql_mode`比較できます。
 > -   DDL ステートメントがアップストリームでサポートされているが、ダウンストリームと互換性がない場合、 Drainer はデータのレプリケーションに失敗します。例として、ダウンストリーム データベース MySQL が InnoDB エンジンを使用しているときに`CREATE TABLE t1(a INT) ROW_FORMAT=FIXED;`ステートメントをレプリケーションする場合が挙げられます。この場合、 Drainerで[トランザクションをスキップする](/tidb-binlog/tidb-binlog-faq.md#what-can-i-do-when-some-ddl-statements-supported-by-the-upstream-database-cause-error-when-executed-in-the-downstream-database)設定し、ダウンストリーム データベースで互換性のあるステートメントを手動で実行できます。

@@ -3,11 +3,11 @@ title: Integrate TiDB Cloud with Netlify
 summary: TiDB Cloudクラスターを Netlify プロジェクトに接続する方法を学習します。
 ---
 
-# TiDB Cloudを Netlify と統合する {#integrate-tidb-cloud-with-netlify}
+# TiDB Cloud をNetlify と統合する {#integrate-tidb-cloud-with-netlify}
 
 [ネットリファイ](https://netlify.com/) 、最新の Web プロジェクトを自動化するためのオールインワン プラットフォームです。ホスティング インフラストラクチャ、継続的インテグレーション、デプロイメント パイプラインを単一のワークフローに置き換え、プロジェクトの拡大に​​合わせてサーバーレス関数、ユーザー認証、フォーム処理などの動的な機能を統合します。
 
-このドキュメントでは、TiDB Cloud をデータベース バックエンドとして使用して、Netlify にフルスタック アプリをデプロイする方法について説明します。また、 TiDB Cloudサーバーレス ドライバーを使用して Netlify エッジ機能を使用する方法も学習できます。
+このドキュメントでは、 TiDB Cloud をデータベース バックエンドとして使用して、Netlify にフルスタック アプリをデプロイする方法について説明します。また、 TiDB Cloudサーバーレス ドライバーを使用して Netlify エッジ機能を使用する方法も学習できます。
 
 ## 前提条件 {#prerequisites}
 
@@ -24,20 +24,20 @@ Netlify アカウントと CLI が必要です。お持ちでない場合は、�
 
 TiDB Cloudにアカウントとクラスターがあることが前提となります。アカウントとクラスターがない場合は、以下を参照して作成してください。
 
--   [TiDB サーバーレス クラスターを作成する](/tidb-cloud/create-tidb-cluster-serverless.md)
--   [TiDB専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md)
+-   [TiDB Cloud Serverless クラスターを作成する](/tidb-cloud/create-tidb-cluster-serverless.md)
+-   [TiDB Cloud専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md)
 
 1 つのTiDB Cloudクラスターは複数の Netlify サイトに接続できます。
 
 ### TiDB Cloudのトラフィック フィルターで許可されるすべての IP アドレス {#all-ip-addresses-allowed-for-traffic-filter-in-tidb-cloud}
 
-TiDB 専用クラスターの場合、クラスターのトラフィック フィルターが接続にすべての IP アドレス ( `0.0.0.0/0`に設定) を許可していることを確認します。これは、Netlify デプロイメントが動的 IP アドレスを使用するためです。
+TiDB Cloud Dedicated クラスターの場合、クラスターのトラフィック フィルターですべての IP アドレス ( `0.0.0.0/0`に設定) が接続に許可されていることを確認します。これは、Netlify デプロイメントで動的 IP アドレスが使用されるためです。
 
-TiDB Serverless クラスターはデフォルトですべての IP アドレスの接続を許可するため、トラフィック フィルターを構成する必要はありません。
+TiDB Cloud Serverless クラスターは、デフォルトですべての IP アドレスの接続を許可するため、トラフィック フィルターを構成する必要はありません。
 
 ## ステップ1. サンプルプロジェクトと接続文字列を取得する {#step-1-get-the-example-project-and-the-connection-string}
 
-すぐに使い始められるように、 TiDB Cloud、 React と Prisma Client を使用して、Next.js による TypeScript のフルスタック サンプル アプリを提供しています。これは、自分のブログを投稿したり削除したりできるシンプルなブログ サイトです。すべてのコンテンツは、Prisma を通じてTiDB Cloudに保存されます。
+すぐに使い始められるように、 TiDB Cloudでは、React と Prisma Client を使用して、Next.js による TypeScript のフルスタック サンプル アプリを提供しています。これは、自分のブログを投稿したり削除したりできるシンプルなブログ サイトです。すべてのコンテンツは、Prisma を通じてTiDB Cloudに保存されます。
 
 ### サンプルプロジェクトをフォークして自分のスペースにクローンする {#fork-the-example-project-and-clone-it-to-your-own-space}
 
@@ -52,9 +52,9 @@ TiDB Serverless クラスターはデフォルトですべての IP アドレス
 
 ### TiDB Cloud接続文字列を取得する {#get-the-tidb-cloud-connection-string}
 
-TiDB Serverless クラスターの場合、接続文字列は[TiDB CloudCLI](/tidb-cloud/cli-reference.md)または[TiDB Cloudコンソール](https://tidbcloud.com/)から取得できます。
+TiDB Cloud Serverless クラスターの場合、接続文字列は[TiDB CloudCLI](/tidb-cloud/cli-reference.md)または[TiDB Cloudコンソール](https://tidbcloud.com/)から取得できます。
 
-TiDB 専用クラスターの場合、接続文字列はTiDB Cloudコンソールからのみ取得できます。
+TiDB Cloud Dedicated クラスターの場合、接続文字列はTiDB Cloudコンソールからのみ取得できます。
 
 <SimpleTab>
 <div label="TiDB Cloud CLI">
@@ -78,7 +78,7 @@ TiDB 専用クラスターの場合、接続文字列はTiDB Cloudコンソー�
         Choose the operating system
         > [x] macOS/Alpine (Detected)
 
-    出力は次のようになります。1 `url`値に Prisma の接続文字列が含まれています。
+    出力は次のようになります`url`値に Prisma の接続文字列が含まれています。
 
     ```shell
     datasource db {
@@ -134,7 +134,7 @@ TiDB 専用クラスターの場合、接続文字列はTiDB Cloudコンソー�
     netlify init
     ```
 
-    プロンプトが表示されたら、 **「新しいサイトの作成と構成」**を選択し、GitHub へのアクセスを許可します。その他のオプションはすべてデフォルト値を使用します。
+    プロンプトが表示されたら、 **「新しいサイトの作成と構成」**を選択し、GitHub アクセスを許可します。他のすべてのオプションにはデフォルト値を使用します。
 
     ```shell
     Adding local .netlify folder to .gitignore file...
@@ -197,7 +197,7 @@ TiDB 専用クラスターの場合、接続文字列はTiDB Cloudコンソー�
 
 4.  アプリをローカルでビルドし、スキーマをTiDB Cloudクラスターに移行します。
 
-    > **チップ：**
+    > **ヒント:**
     >
     > ローカルデプロイをスキップしてアプリを Netlify に直接デプロイする場合は、手順 6 に進んでください。
 
@@ -212,9 +212,9 @@ TiDB 専用クラスターの場合、接続文字列はTiDB Cloudコンソー�
     netlify dev
     ```
 
-    次に、ブラウザで`http://localhost:3000/`に移動して、UI を調べます。
+    次に、ブラウザで`http://localhost:3000/`に移動して、その UI を調べます。
 
-6.  アプリを Netlify にデプロイ。ローカル プレビューに満足したら、次のコマンドを使用してサイトを Netlify にデプロイできます。1 `--trigger` 、ローカル ファイルをアップロードせずにデプロイすることを意味します。ローカルで変更を加えた場合は、必ず GitHub リポジトリにコミットしてください。
+6.  アプリを Netlify にデプロイ。ローカル プレビューに満足したら、次のコマンドを使用してサイトを Netlify にデプロイできます。1 `--trigger`ローカル ファイルをアップロードせずにデプロイすることを意味します。ローカルで変更を加えた場合は、必ず GitHub リポジトリにコミットしてください。
 
     ```shell
     netlify deploy --prod --trigger

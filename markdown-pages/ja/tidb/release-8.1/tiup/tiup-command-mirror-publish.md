@@ -1,11 +1,11 @@
 ---
 title: tiup mirror publish
-summary: tiup mirror publish コマンドは、新しいコンポーネントまたはバージョンを公開するために使用されます。アクセス権を持つコンポーネント所有者のみが公開できます。
+summary: tiup mirror publish` コマンドは、新しいコンポーネントまたはバージョンを公開するために使用されます。アクセス権を持つコンポーネント所有者のみが公開できます。
 ---
 
 # tiup mirror publish {#tiup-mirror-publish}
 
-コマンド`tiup mirror publish`は、新しいコンポーネントまたは既存のコンポーネントの新しいバージョンを公開するために使用されます。 対象コンポーネントへのアクセス権を持つコンポーネント所有者のみが公開できます。 新しいコンポーネント所有者を追加するには、 [コマンド`grant`](/tiup/tiup-command-mirror-grant.md)の使用方法を参照してください。
+コマンド`tiup mirror publish`は、新しいコンポーネントまたは既存のコンポーネントの新しいバージョンを公開するために使用されます。 対象コンポーネントへのアクセス権を持つコンポーネント所有者のみがそれを公開できます。 新しいコンポーネント所有者を追加するには、 [コマンドを`grant`](/tiup/tiup-command-mirror-grant.md)の使用方法を参照してください。
 
 ## 構文 {#syntax}
 
@@ -42,7 +42,7 @@ tiup mirror publish <comp-name> <version> <tarball> <entry> [flags]
 
 > **注記：**
 >
-> `--arch` `any`に設定する場合は、 `--os` `any`に設定する必要があります。
+> `--arch` `any`に設定する場合は、 `--os`も`any`に設定する必要があります。
 
 ### --os {#os}
 
@@ -58,7 +58,7 @@ tiup mirror publish <comp-name> <version> <tarball> <entry> [flags]
 
 > **注記：**
 >
-> `--os` `any`に設定する場合は、 `--arch` `any`に設定する必要があります。
+> `--os` `any`に設定する場合は、 `--arch`も`any`に設定する必要があります。
 
 ### --説明 {#desc}
 

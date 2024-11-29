@@ -9,11 +9,11 @@ summary: TiDB データベースの CHANGE DRAINER の使用法の概要。
 
 > **注記：**
 >
-> この機能は TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> この機能は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 > **ヒント：**
 >
-> Drainer の状態は実行中に自動的に PD に報告されます。Drainerが異常な状況にあり、その状態が PD に保存されている状態情報と一致しない場合にのみ、 `CHANGE DRAINER`ステートメントを使用して PD に保存されている状態情報を変更できます。
+> Drainerの状態は実行中に自動的に PD に報告されます。Drainer が異常な状況にあり、その状態が PD に保存されている状態情報と一致しない場合にのみ、 `CHANGE DRAINER`ステートメントを使用して PD に保存されている状態情報を変更できます。
 
 ## 例 {#examples}
 
@@ -32,7 +32,7 @@ SHOW DRAINER STATUS;
 2 rows in set (0.00 sec)
 ```
 
-ドレイナー 1 の状態は 1 日以上更新されていないことがわかります。Drainerは異常な状態ですが、 `State` `Online`ままです。 `CHANGE DRAINER`を使用した後、ドレイナーの`State` 「一時停止」に変更されます。
+ドレイナー 1 の状態は 1 日以上更新されていないことがわかります。Drainerは異常な状態ですが、 `State` `Online`ままです。 `CHANGE DRAINER`使用した後、ドレイナーの`State` 「一時停止」に変更されます。
 
 ```sql
 CHANGE DRAINER TO NODE_STATE ='paused' FOR NODE_ID 'drainer1';

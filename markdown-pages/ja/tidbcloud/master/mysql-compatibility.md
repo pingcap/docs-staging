@@ -114,7 +114,7 @@ mysql> SELECT _tidb_rowid, id FROM t;
 3 rows in set (0.01 sec)
 ```
 
-示されているように、共有アロケータがあるため、 `id`毎回 2 ずつ増加します。この動作は[MySQL互換モード](/auto-increment.md#mysql-compatibility-mode)では変わり、共有アロケータがないため、数字のスキップは行われません。
+ご覧のとおり、共有アロケータがあるため、 `id`毎回 2 ずつ増加します。この動作は[MySQL互換モード](/auto-increment.md#mysql-compatibility-mode)では変わり、共有アロケータがないため、数字のスキップは行われません。
 
 <CustomContent platform="tidb">
 

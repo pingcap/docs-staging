@@ -100,7 +100,7 @@ summary: DBeaver コミュニティを使用して TiDB に接続する方法を
 
     ![Select TiDB as the database in DBeaver](https://download.pingcap.com/images/docs/develop/dbeaver-select-database.jpg)
 
-5.  適切な接続文字列をコピーして、DBeaver 接続パネルに貼り付けます。DBeaver フィールドとTiDB Cloud Dedicated 接続文字列間のマッピングは次のとおりです。
+5.  適切な接続文字列をコピーして DBeaver 接続パネルに貼り付けます。DBeaver フィールドとTiDB Cloud Dedicated 接続文字列間のマッピングは次のとおりです。
 
     | DBeaverフィールド | TiDB Cloud専用接続文字列 |
     | ------------ | ----------------- |

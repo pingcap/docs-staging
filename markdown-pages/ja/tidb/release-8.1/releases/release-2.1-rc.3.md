@@ -19,7 +19,7 @@ summary: TiDB 2.1 RC3 は、安定性、互換性、SQL オプティマイザー
 -   SQL実行エンジン
     -   トランザクション[＃7717](https://github.com/pingcap/tidb/pull/7717)における読み取り要求のパフォーマンスを最適化する
     -   一部のエグゼキュータにおけるChunkメモリの割り当てコストを最適化する[＃7540](https://github.com/pingcap/tidb/pull/7540)
-    -   ポイントクエリがすべて NULL 値を取得する列によって発生する「インデックスが範囲外」panicを修正[＃7790](https://github.com/pingcap/tidb/pull/7790)
+    -   ポイントクエリがすべて NULL 値を取得する列によって発生する「インデックス範囲外」panicを修正[＃7790](https://github.com/pingcap/tidb/pull/7790)
 -   サーバ
     -   設定ファイル内のメモリクォータが有効にならない問題を修正[＃7729](https://github.com/pingcap/tidb/pull/7729)
     -   各ステートメントの実行優先度を設定するためのシステム変数`tidb_force_priority`を追加します[＃7694](https://github.com/pingcap/tidb/pull/7694)
@@ -29,8 +29,8 @@ summary: TiDB 2.1 RC3 は、安定性、互換性、SQL オプティマイザー
     -   `hostname`システム変数の値が空になる問題を修正[＃7750](https://github.com/pingcap/tidb/pull/7750)
 -   表現
     -   `AES_ENCRYPT` `AES_DECRYPT`関数[＃7425](https://github.com/pingcap/tidb/pull/7425)の`init_vecter`引数をサポート
-    -   いくつかの式で`Format`の結果が正しくない問題を修正[＃7770](https://github.com/pingcap/tidb/pull/7770)
-    -   `JSON_LENGTH`組み込み関数[＃7739](https://github.com/pingcap/tidb/pull/7739)をサポート
+    -   `Format`の結果が一部の式で正しくない問題を修正[＃7770](https://github.com/pingcap/tidb/pull/7770)
+    -   `JSON_LENGTH`組み込み関数[＃7739](https://github.com/pingcap/tidb/pull/7739)サポート
     -   符号なし整数型を小数型[＃7792](https://github.com/pingcap/tidb/pull/7792)にキャストする際の誤った結果の問題を修正
 -   DMML の
     -   ユニークキー[＃7675](https://github.com/pingcap/tidb/pull/7675)を更新する際に`INSERT … ON DUPLICATE KEY UPDATE`文の結果が正しくない問題を修正
@@ -46,7 +46,7 @@ summary: TiDB 2.1 RC3 は、安定性、互換性、SQL オプティマイザー
 -   改善
     -   リージョンAPI [＃1252](https://github.com/pingcap/pd/pull/1252)でより詳細な情報を返す
 -   バグ修正
-    -   `adjacent-region-scheduler`がリーダーを切り替えた後にクラッシュが発生する可能性がある問題を修正[＃1250](https://github.com/pingcap/pd/pull/1250)
+    -   PDがリーダーを切り替えた後に`adjacent-region-scheduler`が発生する可能性がある問題を修正[＃1250](https://github.com/pingcap/pd/pull/1250)
 
 ## ティクヴ {#tikv}
 
@@ -58,6 +58,6 @@ summary: TiDB 2.1 RC3 は、安定性、互換性、SQL オプティマイザー
     -   `truncate_int`機能[＃3532](https://github.com/tikv/tikv/pull/3532)のサポートを追加
     -   `year`機能[＃3622](https://github.com/tikv/tikv/pull/3622)のサポートを追加
     -   `truncate_real`機能[＃3633](https://github.com/tikv/tikv/pull/3633)のサポートを追加
--   バグの修正
+-   バグ修正
     -   時間関数[＃3487](https://github.com/tikv/tikv/pull/3487) 、 [＃3615](https://github.com/tikv/tikv/pull/3615)に関連するレポートエラーの動作を修正しました
     -   文字列から解析された時間が TiDB [＃3589](https://github.com/tikv/tikv/pull/3589)の時間と一致しない問題を修正

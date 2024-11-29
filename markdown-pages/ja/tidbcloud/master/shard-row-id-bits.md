@@ -5,7 +5,7 @@ summary: SHARD_ROW_ID_BITS 属性について学習します。
 
 # シャード行IDビット {#shard-row-id-bits}
 
-このドキュメントでは、暗黙の`_tidb_rowid`がシャードされた後のシャードのビット数を設定するために使用される`SHARD_ROW_ID_BITS`テーブル属性について説明します。
+このドキュメントでは、暗黙の`_tidb_rowid`シャードされた後のシャードのビット数を設定するために使用される`SHARD_ROW_ID_BITS`テーブル属性について説明します。
 
 ## コンセプト {#concept}
 
@@ -19,13 +19,13 @@ summary: SHARD_ROW_ID_BITS 属性について学習します。
 
 <CustomContent platform="tidb">
 
-使用方法の詳細については[ホットスポットの問題のトラブルシューティングガイド](/troubleshoot-hot-spot-issues.md#use-shard_row_id_bits-to-process-hotspots)を参照してください。
+使用方法の詳細については[ホットスポットの問題のトラブルシューティングガイド](/troubleshoot-hot-spot-issues.md#use-shard_row_id_bits-to-process-hotspots)参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-使用方法の詳細については[ホットスポットの問題のトラブルシューティングガイド](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#use-shard_row_id_bits-to-process-hotspots)を参照してください。
+使用方法の詳細については[ホットスポットの問題のトラブルシューティングガイド](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues#use-shard_row_id_bits-to-process-hotspots)参照してください。
 
 </CustomContent>
 

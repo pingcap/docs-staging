@@ -14,8 +14,8 @@ summary: TiCDC で使用される CLI と構成パラメータについて学習
 -   `addr` : TiCDC のリスニング アドレス、HTTP API アドレス、および TiCDC サービスの Prometheus アドレス。デフォルト値は`127.0.0.1:8300`です。
 -   `advertise-addr` : クライアントが TiCDC にアクセスするために使用するアドバタイズされたアドレス。指定されていない場合、値は`addr`と同じになります。
 -   `pd` : PD エンドポイントのコンマ区切りリスト。
--   `config` : TiCDC が使用する構成ファイルのアドレス (オプション)。このオプションは、TiCDC v5.0.0 以降でサポートされています。このオプションは、 TiUP v1.4.0 以降の TiCDC デプロイメントで使用できます。詳細な構成の説明については、 [TiCDC Changefeed構成](/ticdc/ticdc-changefeed-config.md)を参照してください。
--   `data-dir` : ディスクを使用してファイルを保存する必要がある場合に TiCDC が使用するディレクトリを指定します。TiCDC で使用されるソート エンジンと redo ログは、このディレクトリを使用して一時ファイルを保存します。このディレクトリの空きディスク領域が 500 GiB 以上であることを確認することをお勧めします。TiUP を使用しTiUPいる場合は、 [`cdc_servers`](/tiup/tiup-cluster-topology-reference.md#cdc_servers)セクションで`data_dir`を構成するか、 `global`でデフォルトの`data_dir`パスを直接使用できます。
+-   `config` : TiCDCが使用する構成ファイルのアドレス（オプション）。このオプションは、TiCDC v5.0.0以降でサポートされています。このオプションは、 TiUP v1.4.0以降のTiCDCデプロイメントで使用できます。詳細な構成の説明については、 [TiCDC Changefeed構成](/ticdc/ticdc-changefeed-config.md)参照してください。
+-   `data-dir` : ディスクを使用してファイルを保存する必要がある場合に TiCDC が使用するディレクトリを指定します。TiCDC が使用するソート エンジンと REDO ログは、このディレクトリを使用して一時ファイルを保存します。このディレクトリの空きディスク領域が 500 GiB 以上であることを確認することをお勧めします。TiUPを使用している場合は、 [`cdc_servers`](/tiup/tiup-cluster-topology-reference.md#cdc_servers)セクションで`data_dir`構成するか、 `global`でデフォルトの`data_dir`パスを直接使用できます。
 -   `gc-ttl` : TiCDC によって設定された PD のサービス レベル`GC safepoint`の TTL (Time To Live) と、レプリケーション タスクが一時停止できる期間 (秒単位)。デフォルト値は`86400`で、これは 24 時間を意味します。注: TiCDC レプリケーション タスクを一時停止すると、TiCDC GC セーフポイントの進行に影響します。つまり、 [TiCDC GCセーフポイントの完全な動作](/ticdc/ticdc-faq.md#what-is-the-complete-behavior-of-ticdc-garbage-collection-gc-safepoint)で詳しく説明されているように、アップストリーム TiDB GC の進行に影響します。
 -   `log-file` : TiCDC プロセスの実行中にログが出力されるパス。このパラメータを指定しない場合、ログは標準出力 (stdout) に書き込まれます。
 -   `log-level` : TiCDC プロセス実行時のログ レベル。デフォルト値は`"info"`です。
@@ -23,8 +23,8 @@ summary: TiCDC で使用される CLI と構成パラメータについて学習
 -   `cert` : TLS 接続用の PEM 形式の証明書ファイルのパスを指定します (オプション)。
 -   `cert-allowed-cn` : TLS 接続の共通名のパスを PEM 形式で指定します (オプション)。
 -   `key` : TLS 接続用の PEM 形式の秘密鍵ファイルのパスを指定します (オプション)。
--   `tz` : TiCDC サービスが使用するタイムゾーン。TiCDC は、 `TIMESTAMP`などの時間データ型を内部的に変換するとき、またはデータをダウンストリームに複製するときに、このタイムゾーンを使用します。デフォルトは、プロセスが実行されるローカル タイムゾーンです`time-zone` ( `sink-uri`で) と`tz`同時に指定すると、内部 TiCDC プロセスは`tz`で指定されたタイムゾーンを使用し、シンクは`time-zone`で指定されたタイムゾーンを使用してダウンストリームにデータを複製します。14 で指定`tz`れたタイムゾーンが`time-zone` ( `sink-uri`で) で指定されたタイムゾーンと同じであることを確認してください。
--   `cluster-id` : (オプション) TiCDC クラスターの ID。デフォルト値は`default`です。 `cluster-id`は TiCDC クラスターの一意の識別子です。同じ`cluster-id`を持つ TiCDC ノードは同じクラスターに属します。 `cluster-id`の長さは最大 128 文字です。 `cluster-id` `^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$`のパターンに従う必要があり、 `owner` 、 `capture` 、 `task` 、 `changefeed` 、 `job` 、および`meta`のいずれかにすることはできません。
+-   `tz` : TiCDC サービスが使用するタイムゾーン。TiCDC は、 `TIMESTAMP`などの時間データ型を内部的に変換するとき、またはデータをダウンストリームに複製するときに、このタイムゾーンを使用します。デフォルトは、プロセスが実行されるローカル タイムゾーンです。4 ( `sink-uri`で) と`tz` `time-zone`指定すると、内部 TiCDC プロセスは`tz`で指定されたタイムゾーンを使用し、シンクは`time-zone`で指定されたタイムゾーンを使用してダウンストリームにデータを複製します`tz`で指定されたタイムゾーンが`time-zone` ( `sink-uri`で) で指定されたタイムゾーンと同じであることを確認してください。
+-   `cluster-id` : (オプション) TiCDC クラスターの ID。デフォルト値は`default`です。 `cluster-id` TiCDC クラスターの一意の識別子です。同じ`cluster-id`を持つ TiCDC ノードは同じクラスターに属します。 `cluster-id`の長さは最大 128 文字です。 `cluster-id` `^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$`のパターンに従う必要があり、 `owner` 、 `capture` 、 `task` 、 `changefeed` 、 `job` 、および`meta`のいずれかにすることはできません。
 
 ## <code>cdc server</code>構成ファイルのパラメータ {#code-cdc-server-code-configuration-file-parameters}
 

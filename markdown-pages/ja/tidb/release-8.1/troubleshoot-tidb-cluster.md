@@ -3,13 +3,13 @@ title: TiDB Cluster Troubleshooting Guide
 summary: TiDB を使用する際に問題を診断して解決する方法を学びます。
 ---
 
-# TiDBクラスタシューティング ガイド {#tidb-cluster-troubleshooting-guide}
+# TiDBクラスタトラブルシューティング ガイド {#tidb-cluster-troubleshooting-guide}
 
-このガイドは、TiDB の使用中に発生する基本的な問題の診断と解決に役立ちます。問題が解決しない場合は、次の情報を収集して、 [バグを報告](/support.md)を実行してください。
+このガイドは、TiDB の使用中に発生する基本的な問題を診断して解決するのに役立ちます。問題が解決しない場合は、次の情報を収集して、 [バグを報告する](/support.md)実行してください。
 
 -   正確なエラーメッセージとエラー発生時の操作
 -   すべてのコンポーネントの状態
--   エラーを報告するコンポーネントのログ内の`error` `fatal` `panic`
+-   エラーを`panic`するコンポーネントのログ内の`error` `fatal`情報
 -   構成と展開トポロジ
 -   `dmesg`のTiDBコンポーネント関連の問題
 
@@ -17,7 +17,7 @@ summary: TiDB を使用する際に問題を診断して解決する方法を学
 
 ## データベースに接続できません {#cannot-connect-to-the-database}
 
-1.  `tidb-server` `tikv-server`含むすべてのサービスが開始されている`pd-server`を確認します。
+1.  `tidb-server` `tikv-server`含むすべてのサービスが`pd-server`されていることを確認します。
 
 2.  `ps`コマンドを使用して、すべてのプロセスが実行されているかどうかを確認します。
 
@@ -26,15 +26,15 @@ summary: TiDB を使用する際に問題を診断して解決する方法を学
     <!---->
 
     -   すべてのプロセスが実行中の場合は、 `tidb-server`ログをチェックして、次のメッセージが表示されているかどうかを確認します。
-        -   情報スキーマが古くなっています: `tikv-server`に接続できない場合、このメッセージが表示されます。 `pd-server`と`tikv-server`の状態とログを確認してください。
-        -   panic: プログラムに問題がある場合、このメッセージが表示されます。詳細なpanicログを提供してください[バグを報告](/support.md) 。
+        -   情報スキーマが古くなっています: `tikv-server`が接続できない場合にこのメッセージが表示されます。 `pd-server`と`tikv-server`の状態とログを確認してください。
+        -   panic: プログラムに問題がある場合、このメッセージが表示されます。詳細なpanicログを提供してください[バグを報告する](/support.md) 。
 
 3.  データがクリアされ、サービスが再デプロイされる場合は、次の点を確認してください。
 
     -   `tikv-server`と`pd-server`のデータはすべてクリアされます。特定のデータは`tikv-server`に保存され、メタデータは`pd-server`に保存されます。2 つのサーバーのうち 1 つだけがクリアされると、データの不整合が発生します。
-    -   `pd-server`と`tikv-server`のデータがクリアされ、 `pd-server`と`tikv-server`が再起動されたら、 `tidb-server`も再起動する必要があります。クラスター ID は、 `pd-server`が初期化されるときにランダムに割り当てられます。そのため、クラスターが再デプロイされると、クラスター ID が変更され、新しいクラスター ID を取得するには`tidb-server`を再起動する必要があります。
+    -   `pd-server`と`tikv-server`のデータがクリアされ、 `pd-server`と`tikv-server`が再起動されたら、 `tidb-server`も再起動する必要があります。クラスター ID は、 `pd-server`が初期化されるときにランダムに割り当てられます。そのため、クラスターが再デプロイされると、クラスター ID が変更され、新しいクラスター ID を取得するには`tidb-server`再起動する必要があります。
 
-## <code>tidb-server</code>を起動できません {#cannot-start-code-tidb-server-code}
+## <code>tidb-server</code>起動できません {#cannot-start-code-tidb-server-code}
 
 `tidb-server`起動できない場合の状況については、以下を参照してください。
 
@@ -57,7 +57,7 @@ summary: TiDB を使用する際に問題を診断して解決する方法を学
 
 `tikv-server`起動できない場合の状況については、以下を参照してください。
 
--   起動パラメータにエラーがあります: [TiKV の設定とオプション](/command-line-flags-for-tikv-configuration.md)参照してください。
+-   起動パラメータのエラー: [TiKV の設定とオプション](/command-line-flags-for-tikv-configuration.md)参照してください。
 
 -   ポートが使用中です: `lsof -i:port`コマンドを使用して、特定のポートに関連するすべてのネットワークを表示し、 `tikv-server`を開始するポートが使用されていないことを確認します。
 
@@ -95,7 +95,7 @@ summary: TiDB を使用する際に問題を診断して解決する方法を学
 
 ## TiDBpanic {#tidb-panic}
 
-panicログを提供してください[バグを報告](/support.md)できます。
+panicログを提供してください[バグを報告する](/support.md)できます。
 
 ## 接続が拒否されました {#the-connection-is-rejected}
 
@@ -110,7 +110,7 @@ panicログを提供してください[バグを報告](/support.md)できます
 
 ## データベースアクセスがタイムアウトし、システム負荷が高すぎる {#database-access-times-out-and-the-system-load-is-too-high}
 
-まず、 [スロークエリログ](/identify-slow-queries.md)チェックして、不適切な SQL ステートメントが原因かどうかを確認します。
+まず、 [スロークエリログ](/identify-slow-queries.md)をチェックして、不適切な SQL ステートメントが原因かどうかを確認します。
 
 問題を解決できなかった場合は、次の情報を提供してください。
 

@@ -73,7 +73,7 @@ TiDB は、低コストで簡単にクラスターを管理できるいくつか
 
 TiDB コミュニティは非常に活発です。エンジニアは機能の最適化とバグの修正を続けています。そのため、TiDB バージョンは非常に速く更新されます。最新バージョンの情報を常に把握したい場合は、 [TiDB リリース タイムライン](/releases/release-timeline.md)参照してください。
 
-TiDB [TiUPを使用する](/production-deployment-using-tiup.md)または[TiDB Operatorの使用](https://docs.pingcap.com/tidb-in-kubernetes/stable)導入することをお勧めします。TiDB ではバージョン番号が一元管理されています。次のいずれかの方法でバージョン番号を確認できます。
+TiDB [TiUPを使用する](/production-deployment-using-tiup.md)または[TiDB Operatorの使用](https://docs.pingcap.com/tidb-in-kubernetes/stable)導入することをお勧めします。TiDB ではバージョン番号が一元管理されています。次のいずれかの方法でバージョン番号を表示できます。
 
 -   `select tidb_version()`
 -   `tidb-server -V`
@@ -86,7 +86,7 @@ TiDB [TiUPを使用する](/production-deployment-using-tiup.md)または[TiDB O
 
 オンライン サービスを中断することなく、TiDB クラスターをスケールアウトできます。
 
--   クラスターが[TiUP](/production-deployment-using-tiup.md)使用してデプロイされている場合は、 [TiUPを使用して TiDBクラスタを拡張する](/scale-tidb-using-tiup.md)を参照してください。
+-   クラスターが[TiUP](/production-deployment-using-tiup.md)使用してデプロイされている場合は、 [TiUP を使用して TiDBクラスタをスケールする](/scale-tidb-using-tiup.md)を参照してください。
 -   クラスターが Kubernetes 上で[TiDB Operator](/tidb-operator-overview.md)使用してデプロイされている場合は、 [Kubernetes で TiDB を手動でスケールする](https://docs.pingcap.com/tidb-in-kubernetes/stable/scale-a-tidb-cluster)を参照してください。
 
 ### TiDB を水平方向にスケーリングするにはどうすればよいですか? {#how-to-scale-tidb-horizontally}
@@ -386,7 +386,7 @@ WAL は順序付き書き込みに属しており、現在、固有の構成は�
 
 ### TiKVアーキテクチャのRaft + 複数のレプリカは絶対的なデータ安全性を実現できますか? スタンドアロンstorageに最も厳格なモード ( <code>sync-log = true</code> ) を適用する必要がありますか? {#can-raft-multiple-replicas-in-the-tikv-architecture-achieve-absolute-data-safety-is-it-necessary-to-apply-the-most-strict-mode-code-sync-log-true-code-to-a-standalone-storage}
 
-データは、ノード障害が発生した場合の回復可能性を確保するために、 [Raftコンセンサスアルゴリズム](https://raft.github.io/)使用して TiKV ノード間で冗長的に複製されます。データがレプリカの 50% 以上に書き込まれた場合にのみ、アプリケーションは ACK を返します (3 つのノードのうち 2 つ)。ただし、理論上は 2 つのノードがクラッシュする可能性があります。したがって、データの安全性に対する要件がそれほど厳しくなく、パフォーマンスに対する要件が厳しいシナリオを除き、 `sync-log`モードを有効にすることを強くお勧めします。
+データは、ノード障害が発生した場合の回復可能性を確保するために、 [Raftコンセンサスアルゴリズム](https://raft.github.io/)使用して TiKV ノード間で冗長的に複製されます。データがレプリカの 50% 以上に書き込まれた場合にのみ、アプリケーションは ACK を返します (3 つのノードのうち 2 つ)。ただし、理論的には、2 つのノードがクラッシュする可能性があります。したがって、データの安全性に対する要件がそれほど厳しくなく、パフォーマンスに対する要件が厳しいシナリオを除き、 `sync-log`モードを有効にすることを強くお勧めします。
 
 `sync-log`使用する代わりに、 Raftグループに 3 つのレプリカではなく 5 つのレプリカを持つことも検討できます。これにより、データの安全性を維持しながら、2 つのレプリカの障害を許容できます。
 

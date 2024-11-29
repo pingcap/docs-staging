@@ -31,7 +31,7 @@ TiDB クラスターには、TiDBサーバー、PD (配置Driver)サーバー、
 
 いいえ。TiDB は MySQL の構文とプロトコルをサポートしていますが、PingCAP, Inc. によって開発および保守されている新しいオープン ソース データベースです。
 
-### TiDB、TiKV、PD（配置Driver）のそれぞれの責任は何ですか? {#what-is-the-respective-responsibility-of-tidb-tikv-and-pd-placement-driver}
+### TiDB、TiKV、PD (Placement Driver) のそれぞれの責任は何ですか? {#what-is-the-respective-responsibility-of-tidb-tikv-and-pd-placement-driver}
 
 -   TiDB は SQL コンピューティングレイヤーとして機能し、主に SQL の解析、クエリ プランの指定、エグゼキュータの生成を担当します。
 -   TiKV は、実際のデータを保存するために使用される分散型キー値storageエンジンとして機能します。つまり、TiKV は TiDB のstorageエンジンです。
@@ -107,12 +107,12 @@ Atomikos の 2 つのデータ ソースを設定したら、JDBC ドライブ�
 
 ### TiDB は、パフォーマンスを損なうことなく、列指向storageエンジン (TiFlash) への大量の同時<code>INSERT</code>または<code>UPDATE</code>操作をどのようにサポートできるでしょうか? {#how-could-tidb-support-high-concurrent-code-insert-code-or-code-update-code-operations-to-the-columnar-storage-engine-tiflash-without-hurting-performance}
 
--   [TiFlash](/tiflash/tiflash-overview.md)では、列指向エンジンの変更を処理するために DeltaTree という特別な構造が導入されています。
--   TiFlash はRaftグループ内で学習者の役割を担うため、ログのコミットや書き込みには投票しません。つまり、DML 操作はTiFlashの確認応答を待つ必要がないため、 TiFlashによって OLTP のパフォーマンスが低下することはありません。さらに、 TiFlashと TiKV は別々のインスタンスで動作するため、互いに影響を及ぼしません。
+-   [TiFlash](/tiflash/tiflash-overview.md)列指向エンジンの変更を処理するために DeltaTree という特別な構造が導入されています。
+-   TiFlash はRaftグループ内で学習者の役割として機能するため、ログのコミットや書き込みには投票しません。つまり、DML 操作はTiFlashの確認応答を待つ必要がないため、 TiFlashOLTP のパフォーマンスが低下することはありません。さらに、 TiFlashと TiKV は別々のインスタンスで動作するため、互いに影響を及ぼしません。
 
 ### TiFlash はどのような一貫性を提供しますか? {#what-kind-of-consistency-does-tiflash-provide}
 
-TiFlash はデフォルトで強力なデータ一貫性を維持します。ラフト学習プロセスがデータを更新します。クエリ内のデータがトランザクションと完全に一致していることを確認するための TSO チェックもあります。詳細については、 [非同期レプリケーション](/tiflash/tiflash-overview.md#asynchronous-replication)および[一貫性](/tiflash/tiflash-overview.md#consistency)を参照してください。
+TiFlash はデフォルトで強力なデータ一貫性を維持します。ラフト学習プロセスがデータを更新します。クエリ内のデータがトランザクションと完全に一致していることを確認するための TSO チェックもあります。詳細については、 [非同期レプリケーション](/tiflash/tiflash-overview.md#asynchronous-replication)および[一貫性](/tiflash/tiflash-overview.md#consistency)参照してください。
 
 ## TiDB テクニック {#tidb-techniques}
 

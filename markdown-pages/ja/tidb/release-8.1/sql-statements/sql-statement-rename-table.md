@@ -45,10 +45,10 @@ mysql> SHOW TABLES;
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`RENAME TABLE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`RENAME TABLE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [テーブルを表示](/sql-statements/sql-statement-show-tables.md)
--   [他の机](/sql-statements/sql-statement-alter-table.md)
+-   [テーブルの変更](/sql-statements/sql-statement-alter-table.md)

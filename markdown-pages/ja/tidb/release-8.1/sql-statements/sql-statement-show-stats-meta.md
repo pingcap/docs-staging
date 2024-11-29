@@ -20,7 +20,7 @@ summary: TiDB データベースの SHOW STATS_META の使用法の概要。
 
 > **注記：**
 >
-> `update_time` 、TiDB が DML ステートメントに従って`modify_count`および`row_count`フィールドを更新するときに更新されます。したがって、 `update_time` `ANALYZE`ステートメントの最後の実行時間ではありません。
+> `update_time`は、TiDB が DML ステートメントに従って`modify_count`および`row_count`フィールドを更新するときに更新されます。したがって、 `update_time` `ANALYZE`ステートメントの最後の実行時間ではありません。
 
 ## 概要 {#synopsis}
 

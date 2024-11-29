@@ -1,6 +1,6 @@
 ---
 title: TiDB 2.1.3 Release Notes
-summary: TiDB 2.1.3 および TiDB Ansible 2.1.3 がリリースされ、システムの安定性、SQL オプティマイザー、統計、および実行エンジンが改善されました。修正には、 プリペアドプランキャッシュ、Range コンピューティング、`CAST(str AS TIME(N))`、Generated カラム、統計ヒストグラム、`Sort Merge Join` などの問題が含まれます。その他の改善には、`_tidb_rowid` 構築クエリの範囲のサポート、`ALLOW_INVALID_DATES` SQL モードなどが含まれます。PD および TiKV にも修正と改善が加えられています。TiDB Binlog は、 Pumpクライアント ログの問題と、NULL 値を含む一意のキーによって発生するデータの不整合を修正します。
+summary: TiDB 2.1.3 および TiDB Ansible 2.1.3 がリリースされ、システムの安定性、SQL オプティマイザー、統計、および実行エンジンが改善されました。修正には、 プリペアドプランキャッシュ、Range コンピューティング、CAST(str AS TIME(N))`、Generated カラム、統計ヒストグラム、`Sort Merge Join` などの問題が含まれます。その他の改善には、`_tidb_rowid` 構築クエリの範囲のサポート、`ALLOW_INVALID_DATES` SQL モードなどが含まれます。PD および TiKV にも修正と改善が加えられています。TiDB Binlog は、 Pumpクライアント ログの問題と、NULL 値を含む一意のキーによって発生するデータの不整合を修正します。
 ---
 
 # TiDB 2.1.3 リリースノート {#tidb-2-1-3-release-notes}
@@ -12,7 +12,7 @@ summary: TiDB 2.1.3 および TiDB Ansible 2.1.3 がリリースされ、シス�
 -   SQL オプティマイザー/エグゼキューター
     -   一部のケースでプリペアドプランキャッシュのpanic問題を修正[＃8826](https://github.com/pingcap/tidb/pull/8826)
     -   インデックスがプレフィックスインデックスの場合に範囲計算が間違っている問題を修正[＃8851](https://github.com/pingcap/tidb/pull/8851)
-    -   `SQL_MODE`が厳密でない場合に文字列が不正な`TIME`形式の場合、 `CAST(str AS TIME(N))` nullを返すようにする[＃8966](https://github.com/pingcap/tidb/pull/8966)
+    -   `SQL_MODE`が厳密でない場合に文字列が不正な`TIME`形式である場合に`CAST(str AS TIME(N))` nullを返すようにする[＃8966](https://github.com/pingcap/tidb/pull/8966)
     -   `UPDATE`の処理中に生成されるカラムがpanic問題を修正[＃8980](https://github.com/pingcap/tidb/pull/8980)
     -   いくつかのケースにおける統計ヒストグラムの上限オーバーフロー問題を修正[＃8989](https://github.com/pingcap/tidb/pull/8989)
     -   `_tidb_rowid`構築クエリの範囲をサポートし、テーブル全体のスキャンを回避してクラスターのストレスを軽減します[＃9059](https://github.com/pingcap/tidb/pull/9059)
@@ -22,11 +22,11 @@ summary: TiDB 2.1.3 および TiDB Ansible 2.1.3 がリリースされ、シス�
     -   `Sort Merge Join`場合によっては間違った結果が返される問題を修正[＃9046](https://github.com/pingcap/tidb/pull/9046)
     -   `CASE`節[＃8355](https://github.com/pingcap/tidb/pull/8355)でJSON型を返すことをサポート
 -   サーバ
-    -   コメント[＃8766](https://github.com/pingcap/tidb/pull/8766)に非TiDBヒントが存在する場合、エラーではなく警告を返します。
+    -   コメント[＃8766](https://github.com/pingcap/tidb/pull/8766)に非 TiDB ヒントが存在する場合、エラーではなく警告を返します。
     -   設定されたTIMEZONE値[＃8879](https://github.com/pingcap/tidb/pull/8879)の有効性を確認する
     -   `QueryDurationHistogram`メトリック項目を最適化して、より多くのステートメント タイプを表示する[＃8875](https://github.com/pingcap/tidb/pull/8875)
     -   一部のケースにおける bigint の下限オーバーフローの問題を修正[＃8544](https://github.com/pingcap/tidb/pull/8544)
-    -   `ALLOW_INVALID_DATES` SQLモード[＃9110](https://github.com/pingcap/tidb/pull/9110)サポート
+    -   `ALLOW_INVALID_DATES` SQLモード[＃9110](https://github.com/pingcap/tidb/pull/9110)をサポート
 -   DDL
     -   MySQL [＃8808](https://github.com/pingcap/tidb/pull/8808)の動作と一貫性を保つために`RENAME TABLE`互換性問題を修正しました。
     -   `ADD INDEX`の同時変更をすぐに有効にする[＃8786](https://github.com/pingcap/tidb/pull/8786)
@@ -53,5 +53,5 @@ summary: TiDB 2.1.3 および TiDB Ansible 2.1.3 がリリースされ、シス�
 
 -   TiDBBinlog
     -   TiDBの起動または再起動中に発生する`no available pump`問題を修正する[＃157](https://github.com/pingcap/tidb-tools/pull/158)
-    -   Pumpクライアントログ[＃165](https://github.com/pingcap/tidb-tools/pull/165)出力を有効にする
+    -   Pumpクライアントログ[＃165](https://github.com/pingcap/tidb-tools/pull/165)の出力を有効にする
     -   テーブルに一意キーのみがあり、主キーがない場合に、一意キーに NULL 値が含まれることで発生するデータの不整合の問題を修正しました。

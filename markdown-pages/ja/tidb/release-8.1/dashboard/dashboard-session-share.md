@@ -13,7 +13,7 @@ TiDB ダッシュボードの現在のセッションを他のユーザーと共
 
 2.  左側のサイドバーにあるユーザー名をクリックして、設定ページにアクセスします。
 
-3.  **[現在のセッションを共有]を**クリックします。
+3.  **[現在のセッションを共有]**をクリックします。
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-settings-1-v650.png)
 
@@ -23,15 +23,15 @@ TiDB ダッシュボードの現在のセッションを他のユーザーと共
 
 4.  ポップアップダイアログで共有設定を調整します。
 
-    -   有効期限: 共有セッションが有効な期間。現在のセッションからサインアウトしても、共有セッションの有効時間は影響を受けません。
+    -   有効期限: 共有セッションが有効な期間。現在のセッションからサインアウトしても、共有セッションの有効時間には影響しません。
 
     -   読み取り専用権限として共有: 共有セッションでは読み取り操作のみが許可され、書き込み操作 (構成の変更など) は許可されません。
 
-5.  **「認証コードの生成」を**クリックします。
+5.  **「認証コードの生成」**をクリックします。
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-settings-2-v650.png)
 
-6.  生成された**認証コードを、**セッションを共有するユーザーに提供します。
+6.  セッションを共有するユーザーに、生成された**認証コードを**提供します。
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-settings-3-v650.png)
 
@@ -41,11 +41,11 @@ TiDB ダッシュボードの現在のセッションを他のユーザーと共
 
 ## 招待される側の手順 {#steps-for-the-invitee}
 
-1.  TiDB ダッシュボードのサインイン ページで、 **[代替認証の使用] を**クリックします。
+1.  TiDB ダッシュボードのサインイン ページで、 **[代替認証の使用]**をクリックします。
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-signin-1-v650.png)
 
-2.  **認証コード**をクリックしてサインインに使用します。
+2.  **認証コードを**クリックしてサインインに使用します。
 
     ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-signin-2-v650.png)
 

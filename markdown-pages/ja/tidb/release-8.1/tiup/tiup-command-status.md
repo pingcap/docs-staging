@@ -1,6 +1,6 @@
 ---
 title: tiup status
-summary: 「tiup status」コマンドは、「tiup <コンポーネント>」コマンドを使用してコンポーネントを実行した後、コンポーネントの動作情報を表示するために使用されます。動作中のコンポーネントの名前、コンポーネント、PID、ステータス、作成時刻、ディレクトリ、バイナリ、および引数が表示されます。コンポーネントのステータスは、Up、Down、Tombstone、Pending Offline、または Unknown のいずれかです。ステータスは、PD スケジュール情報から取得されます。
+summary: 「tiup status」コマンドは、「tiup <コンポーネント>」コマンドを使用してコンポーネントを実行した後、コンポーネントの動作情報を表示するために使用されます。動作中のコンポーネントの名前、コンポーネント、PID、ステータス、作成時刻、ディレクトリ、バイナリ、および引数が表示されます。コンポーネントのステータスは、アップ、ダウン、トゥームストーン、オフライン保留中、または不明のいずれかです。ステータスは、PD スケジュール情報から取得されます。
 ---
 
 # tiup status {#tiup-status}
@@ -51,6 +51,6 @@ tiup status [flags]
 >
 > TiUPの`Pending Offline` 、PD API によって返される`Offline` 、および TiDB ダッシュボードの`Leaving`同じステータスを示します。
 
-コンポーネントのステータスはPDスケジュール情報から取得されます。詳細については[情報収集](/tidb-scheduling.md#information-collection)を参照してください。
+コンポーネントのステータスはPDスケジュール情報から取得されます。詳細については、 [情報収集](/tidb-scheduling.md#information-collection)参照してください。
 
 [&lt;&lt; 前のページに戻る - TiUPリファレンスコマンドリスト](/tiup/tiup-reference.md#command-list)

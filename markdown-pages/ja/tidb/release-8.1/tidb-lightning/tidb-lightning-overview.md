@@ -19,6 +19,10 @@ TiDB Lightning は次のソースからデータを読み取ることができ�
 -   [アマゾンS3](/external-storage-uri.md#amazon-s3-uri-format)
 -   [Google クラウド ストレージ](/external-storage-uri.md#gcs-uri-format)
 
+> **注記：**
+>
+> TiDB Lightningと比較すると、 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)ステートメントは TiDB ノード上で直接実行でき、自動化された分散タスク スケジューリングと[TiDB グローバルソート](/tidb-global-sort.md)をサポートし、デプロイメント、リソース使用率、タスク構成の利便性、呼び出しと統合の容易さ、高可用性、スケーラビリティが大幅に向上しています。適切なシナリオでは、 TiDB Lightningではなく`IMPORT INTO`使用を検討することをお勧めします。
+
 ## TiDB Lightningアーキテクチャ {#tidb-lightning-architecture}
 
 ![Architecture of TiDB Lightning tool set](https://download.pingcap.com/images/docs/tidb-lightning-architecture.png)

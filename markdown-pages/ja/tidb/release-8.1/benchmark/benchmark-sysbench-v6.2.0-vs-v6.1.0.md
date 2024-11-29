@@ -13,7 +13,7 @@ summary: TiDB v6.2.0 と v6.1.0 は、Sysbench テストで同様のパフォー
 
 ### ハードウェア構成 {#hardware-configuration}
 
-| サービスの種類 | EC2タイプ     | インスタンス数 |
+| サービスタイプ | EC2タイプ     | インスタンス数 |
 | :------ | :--------- | :------ |
 | PD      | m5.特大      | 3       |
 | ティクヴ    | i3.4xlarge | 3       |
@@ -22,7 +22,7 @@ summary: TiDB v6.2.0 と v6.1.0 は、Sysbench テストで同様のパフォー
 
 ### ソフトウェアバージョン {#software-version}
 
-| サービスの種類 | ソフトウェアバージョン       |
+| サービスタイプ | ソフトウェアバージョン       |
 | :------ | :---------------- |
 | PD      | v6.1.0 および v6.2.0 |
 | ティビ     | v6.1.0 および v6.2.0 |
@@ -99,12 +99,12 @@ listen tidb-cluster                        # Database load balancing.
 2.  Sysbench を使用して、各テーブルに 1,000 万行のデータが含まれる 16 個のテーブルをインポートします。
 3.  各テーブルに対して`analyze table`ステートメントを実行します。
 4.  さまざまな同時実行テストの前に、復元に使用するデータをバックアップします。これにより、各テストのデータの一貫性が確保されます。
-5.  Sysbench クライアントを起動して、テスト`point_select` 、および`update_non_index` `read_write`実行します。HAProxy 経由で`update_index`に対してストレス テストを実行します。各ワークロードでの各同時実行に対して、テストには 20 分かかります。
+5.  Sysbench クライアントを起動して、テスト`point_select` 、および`update_non_index` `update_index`実行します。HAProxy 経由で TiDB に対してストレス テストを実行します。各ワークロードでの各同時実行に対して、テストに`read_write` 20 分かかります。
 6.  各タイプのテストが完了したら、クラスターを停止し、手順 4 のバックアップ データでクラスターを上書きして、クラスターを再起動します。
 
 ### テストデータを準備する {#prepare-test-data}
 
-テストデータを準備するには、次のコマンドを実行します。
+テスト データを準備するには、次のコマンドを実行します。
 
 ```bash
 sysbench oltp_common \
@@ -136,7 +136,7 @@ sysbench $testname \
     run --tables=16 --table-size=10000000
 ```
 
-## 試験結果 {#test-results}
+## テスト結果 {#test-results}
 
 ### ポイントセレクトパフォーマンス {#point-select-performance}
 
@@ -170,7 +170,7 @@ v6.1.0 と比較すると、v6.2.0 の Update Non-index パフォーマンスは
 | 600  | 24144.78   | 24007.57   | 38.25                | 37.56                | -0.57     |
 | 900  | 26770.9    | 26589.84   | 51.94                | 52.89                | -0.68     |
 
-v6.1.0 と比較すると、v6.2.0 の Update Index のパフォーマンスは基本的に変化せず、0.47% 減少しました。
+v6.1.0 と比較すると、v6.2.0 の Update Index のパフォーマンスは基本的に変化がなく、0.47% 減少しました。
 
 ![Update Index](https://download.pingcap.com/images/docs/sysbench_v610vsv620_update_index.png)
 

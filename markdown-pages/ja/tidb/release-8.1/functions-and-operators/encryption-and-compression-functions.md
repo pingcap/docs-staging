@@ -46,7 +46,7 @@ SELECT AES_DECRYPT(0x28409970815CD536428876175F1A4923, 'secret');
 
 ### <a href="https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_aes-encrypt"><code>AES_ENCRYPT()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-encryption-functions-html-function-aes-encrypt-code-aes-encrypt-code-a}
 
-`AES_ENCRYPT(data, key [,iv])`関数は、 [高度暗号化標準 (AES)](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)アルゴリズムを使用して`data` `key`で暗号化します。
+`AES_ENCRYPT(data, key [,iv])`関数は、 [高度暗号化規格 (AES)](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)アルゴリズムを使用して`data` `key`で暗号化します。
 
 [`block_encryption_mode`](/system-variables.md#block_encryption_mode)システム変数を使用して AES 暗号化モードを選択できます。
 

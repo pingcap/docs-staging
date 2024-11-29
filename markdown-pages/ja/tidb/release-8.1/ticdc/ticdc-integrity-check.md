@@ -35,7 +35,7 @@ TiCDC はデフォルトでデータ整合性検証を無効にします。有�
     corruption-handle-level = "warn"
     ```
 
-3.  データ エンコード形式として Avro を使用する場合は、 [`sink-uri`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka)に[`enable-tidb-extension=true`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka)設定する必要があります。ネットワーク転送中に数値精度が失われてチェックサム検証が失敗するのを防ぐには、 [`avro-decimal-handling-mode=string`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka)と[`avro-bigint-unsigned-handling-mode=string`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka)設定する必要があります。次に例を示します。
+3.  データ エンコード形式として Avro を使用する場合は、 [`sink-uri`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka)に[`enable-tidb-extension=true`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka)設定する必要があります。ネットワーク転送中に数値精度が失われてチェックサム検証が失敗するのを防ぐには、 [`avro-decimal-handling-mode=string`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka)と[`avro-bigint-unsigned-handling-mode=string`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka)も設定する必要があります。次に例を示します。
 
     ```shell
     cdc cli changefeed create --server=http://127.0.0.1:8300 --changefeed-id="kafka-avro-checksum" --sink-uri="kafka://127.0.0.1:9092/topic-name?protocol=avro&enable-tidb-extension=true&avro-decimal-handling-mode=string&avro-bigint-unsigned-handling-mode=string" --schema-registry=http://127.0.0.1:8081 --config changefeed_config.toml
@@ -45,13 +45,13 @@ TiCDC はデフォルトでデータ整合性検証を無効にします。有�
 
     > **注記：**
     >
-    > 既存の変更フィードの場合、 `avro-decimal-handling-mode`と`avro-bigint-unsigned-handling-mode`が設定されていない場合、チェックサム検証機能を有効にすると、スキーマの互換性の問題が発生する可能性があります。 この問題を解決するには、スキーマ レジストリの互換性タイプを`NONE`に変更できます。 詳細については、 [スキーマレジストリ](https://docs.confluent.io/platform/current/schema-registry/fundamentals/avro.html#no-compatibility-checking)を参照してください。
+    > 既存の変更フィードの場合、 `avro-decimal-handling-mode`と`avro-bigint-unsigned-handling-mode`が設定されていない場合、チェックサム検証機能を有効にすると、スキーマの互換性の問題が発生する可能性があります。 この問題を解決するには、スキーマ レジストリの互換性タイプを`NONE`に変更できます。 詳細については、 [スキーマレジストリ](https://docs.confluent.io/platform/current/schema-registry/fundamentals/avro.html#no-compatibility-checking)参照してください。
 
 ## 機能を無効にする {#disable-the-feature}
 
 TiCDC は、デフォルトでデータ整合性検証を無効にします。この機能を有効にした後に無効にするには、次の手順を実行します。
 
-1.  [タスク構成の更新](/ticdc/ticdc-manage-changefeed.md#update-task-configuration)で説明した`Pause Task -> Modify Configuration -> Resume Task`プロセスに従い、changefeed の`--config`のパラメータで指定された構成ファイル内の`[integrity]`構成をすべて削除します。
+1.  [タスク構成の更新](/ticdc/ticdc-manage-changefeed.md#update-task-configuration)で説明した`Pause Task -> Modify Configuration -> Resume Task`プロセスに従い、changefeed の`--config`のパラメータで指定された構成ファイル内の`[integrity]`の構成をすべて削除します。
 
     ```toml
     [integrity]
@@ -79,18 +79,18 @@ TiCDC は、デフォルトでデータ整合性検証を無効にします。�
         return result
     }
 
--   `columns`列 ID でソートする必要があります。Avro スキーマでは、フィールドはすでに列 ID でソートされているため、 `columns`順序を直接使用できます。
+-   `columns`列 ID でソートする必要があります。Avro スキーマでは、フィールドはすでに列 ID でソートされているため、 `columns`の順序を直接使用できます。
 
 -   `encode(column)`関数は列の値をバイトにエンコードします。エンコード ルールは列のデータ型によって異なります。具体的なルールは次のとおりです。
 
-    -   TINYINT、SMALLINT、INT、BIGINT、MEDIUMINT、YEAR 型は UINT64 に変換され、リトルエンディアン形式でエンコードされます。たとえば、数値`0x0123456789abcdef` `hex'0x0123456789abcdef'`としてエンコードされます。
+    -   TINYINT、SMALLINT、INT、BIGINT、MEDIUMINT、YEAR 型は UINT64 に変換され、リトルエンディアン形式でエンコードされます。たとえば、数値`0x0123456789abcdef`は`hex'0x0123456789abcdef'`としてエンコードされます。
 
     -   FLOAT および DOUBLE 型は DOUBLE に変換され、その後 IEEE754 形式の UINT64 としてエンコードされます。
 
     -   BIT、ENUM、SET 型は UINT64 に変換されます。
 
         -   BIT 型はバイナリ形式の UINT64 に変換されます。
-        -   ENUM 型と SET 型は、UINT64 の対応する INT 値に変換されます。たとえば、 `SET('a','b','c')`型の列のデータ値が`'a,c'`の場合、値は`0b101`としてエンコードされ、10 進数では`5`になります。
+        -   ENUM 型と SET 型は、UINT64 の対応する INT 値に変換されます。たとえば、 `SET('a','b','c')`型の列のデータ値が`'a,c'`の場合、値は`0b101`としてエンコードされ、10 進数では`5`なります。
 
     -   TIMESTAMP、DATE、DURATION、DATETIME、JSON、および DECIMAL 型は、最初に STRING に変換され、次にバイトに変換されます。
 
@@ -98,7 +98,7 @@ TiCDC は、デフォルトでデータ整合性検証を無効にします。�
 
     -   NULL および GEOMETRY 型はチェックサム計算から除外され、この関数は空のバイトを返します。
 
-Golangを使用したデータ消費とチェックサム検証の実装の詳細については、 [TiCDC 行データ チェックサム検証](/ticdc/ticdc-avro-checksum-verification.md)参照してください。
+Golang を使用したデータ消費とチェックサム検証の実装の詳細については、 [TiCDC 行データ チェックサム検証](/ticdc/ticdc-avro-checksum-verification.md)参照してください。
 
 > **注記：**
 >

@@ -17,7 +17,7 @@ TiDB は、MySQL 8.0 で利用可能な[情報関数](https://dev.mysql.com/doc/
 | [`CURRENT_USER()` 、 `CURRENT_USER`](#current_user) | 認証されたユーザー名とホスト名を返す                            |
 | [`DATABASE()`](#database)                          | デフォルトの（現在の）データベース名を返す                         |
 | [`FOUND_ROWS()`](#found_rows)                      | `LIMIT`節を持つ`SELECT`の場合、 `LIMIT`節がない場合に返される行の数 |
-| [`LAST_INSERT_ID()`](#last_insert_id)              | 最後の`INSERT`列の`AUTOINCREMENT`番目の値を返す           |
+| [`LAST_INSERT_ID()`](#last_insert_id)              | 最後の`INSERT`の列の`AUTOINCREMENT`番目の値を返す          |
 | [`ROW_COUNT()`](#row_count)                        | 影響を受ける行数                                      |
 | [`SCHEMA()`](#schema)                              | `DATABASE()`の同義語                              |
 | [`SESSION_USER()`](#session_user)                  | `USER()`の同義語                                  |
@@ -25,7 +25,7 @@ TiDB は、MySQL 8.0 で利用可能な[情報関数](https://dev.mysql.com/doc/
 | [`USER()`](#user)                                  | クライアントから提供されたユーザー名とホスト名を返します                  |
 | [`VERSION()`](#version)                            | MySQLサーバーのバージョンを示す文字列を返します                    |
 
-### 基準（） {#benchmark}
+### ベンチマーク（） {#benchmark}
 
 `BENCHMARK()`関数は、指定された式を指定された回数実行します。
 
@@ -57,7 +57,7 @@ SELECT BENCHMARK(5, SLEEP(2));
 
 `CONNECTION_ID()`関数は接続の ID を返します。この関数は、TiDB の[`enable-32bits-connection-id`](/tidb-configuration-file.md#enable-32bits-connection-id-new-in-v730)構成項目の値に基づいて、32 ビットまたは 64 ビットの接続 ID を返します。
 
-[`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-new-in-v610)有効になっている場合、接続 ID を使用して、同じクラスターの複数の TiDB インスタンスにわたるクエリを強制終了できます。
+[`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-new-in-v610)が有効になっている場合、接続 ID を使用して、同じクラスターの複数の TiDB インスタンスにわたるクエリを強制終了できます。
 
 </CustomContent>
 
@@ -65,7 +65,7 @@ SELECT BENCHMARK(5, SLEEP(2));
 
 `CONNECTION_ID()`関数は接続の ID を返します。この関数は、TiDB の[`enable-32bits-connection-id`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#enable-32bits-connection-id-new-in-v730)構成項目の値に基づいて、32 ビットまたは 64 ビットの接続 ID を返します。
 
-[`enable-global-kill`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#enable-global-kill-new-in-v610)有効になっている場合、接続 ID を使用して、同じクラスターの複数の TiDB インスタンスにわたるクエリを強制終了できます。
+[`enable-global-kill`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#enable-global-kill-new-in-v610)が有効になっている場合、接続 ID を使用して、同じクラスターの複数の TiDB インスタンスにわたるクエリを強制終了できます。
 
 </CustomContent>
 
@@ -80,17 +80,17 @@ SELECT CONNECTION_ID();
     +-----------------+
     1 row in set (0.00 sec)
 
-### 現在の役割（） {#current-role}
+### 現在のロール() {#current-role}
 
 <CustomContent platform="tidb">
 
-`CURRENT_ROLE()`関数は、現在のセッションの現在の[役割](/role-based-access-control.md)を返します。
+`CURRENT_ROLE()`関数は、現在のセッションの現在の[役割](/role-based-access-control.md)返します。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-`CURRENT_ROLE()`関数は、現在のセッションの現在の[役割](https://docs.pingcap.com/tidb/stable/role-based-access-control)を返します。
+`CURRENT_ROLE()`関数は、現在のセッションの現在の[役割](https://docs.pingcap.com/tidb/stable/role-based-access-control)返します。
 
 </CustomContent>
 
@@ -105,7 +105,7 @@ SELECT CURRENT_ROLE();
     +----------------+
     1 row in set (0.00 sec)
 
-### 現在の使用者（） {#current-user}
+### 現在のユーザー() {#current-user}
 
 `CURRENT_USER()`関数は、現在のセッションで使用されているアカウントを返します。
 
@@ -164,11 +164,11 @@ SELECT FOUND_ROWS();
 
 > **注記：**
 >
-> `LIMIT`句を考慮せずに結果セット内の行の合計数を計算する`SQL_CALC_FOUND_ROWS`クエリ修飾子は、 [`tidb_enable_noop_functions`](/system-variables.md#tidb_enable_noop_functions-new-in-v40)が有効な場合にのみ受け入れられます。このクエリ修飾子は、MySQL 8.0.17 以降では非推奨です。代わりに`COUNT(*)`を使用することをお勧めします。
+> `LIMIT`句を考慮せずに結果セット内の行の合計数を計算する`SQL_CALC_FOUND_ROWS`クエリ修飾子は、 [`tidb_enable_noop_functions`](/system-variables.md#tidb_enable_noop_functions-new-in-v40)が有効な場合にのみ受け入れられます。このクエリ修飾子は、MySQL 8.0.17 以降では非推奨です。代わりに`COUNT(*)`使用することをお勧めします。
 
 ### 最後の挿入ID() {#last-insert-id}
 
-`LAST_INSERT_ID()`関数は、 [`AUTO_INCREMENT`](/auto-increment.md)列または[`AUTO_RANDOM`](/auto-random.md)列を含むテーブルに最後に挿入された行の ID を返します。
+`LAST_INSERT_ID()`関数は、 [`AUTO_INCREMENT`](/auto-increment.md)または[`AUTO_RANDOM`](/auto-random.md)列を含むテーブルに最後に挿入された行の ID を返します。
 
 ```sql
 CREATE TABLE t1(id SERIAL);
@@ -200,11 +200,11 @@ TABLE t1;
 
 > **注記**
 >
-> -   TiDB では、 [`AUTO_ID_CACHE`](/auto-increment.md#auto_id_cache)​​ MySQL によって返される結果とは異なる結果をもたらす可能性があります。この矛盾は、TiDB が各ノードに ID をキャッシュするため、順序が乱れたり、欠落した ID が生じる可能性があるために発生します。アプリケーションで厳密な ID 順序の維持が不可欠な場合は、 [MySQL互換モード](/auto-increment.md#mysql-compatibility-mode)有効にすることができます。
+> -   TiDB では、 [`AUTO_ID_CACHE`](/auto-increment.md#auto_id_cache) MySQL によって返される結果とは異なる結果をもたらす可能性があります。この矛盾は、TiDB が各ノードに ID をキャッシュするため、順序が乱れたり、欠落した ID が生じる可能性があるために発生します。アプリケーションで厳密な ID 順序の維持が不可欠な場合は、 [MySQL互換モード](/auto-increment.md#mysql-compatibility-mode)有効にすることができます。
 >
 > -   前の例では、ID は 2 ずつ増加しますが、MySQL は同じシナリオで 1 ずつ増加する ID を生成します。互換性に関する詳細については、 [自動増分ID](/mysql-compatibility.md#auto-increment-id)参照してください。
 
-### 行数() {#row-count}
+### ROW_COUNT() {#row-count}
 
 `ROW_COUNT()`関数は影響を受ける行の数を返します。
 
@@ -239,7 +239,7 @@ SELECT ROW_COUNT();
 
 ### ユーザー（） {#user}
 
-`USER()`関数は現在の接続のユーザーを返します。 `USER()`ワイルドカードではなく実際の IP アドレスを表示するため、これは`CURRENT_USER()`の出力とは若干異なる場合があります。
+`USER()`関数は現在の接続のユーザーを返します。 `USER()`ワイルドカードではなく実際の IP アドレスを表示するため、 `CURRENT_USER()`の出力とは若干異なる場合があります。
 
 ```sql
 SELECT USER(), CURRENT_USER();
@@ -252,7 +252,7 @@ SELECT USER(), CURRENT_USER();
     +----------------+----------------+
     1 row in set (0.00 sec)
 
-### バージョン（） {#version}
+### バージョン() {#version}
 
 `VERSION()`関数は、MySQL と互換性のある形式で TiDB バージョンを返します。より詳細な結果を取得するには、 [`TIDB_VERSION()`](/functions-and-operators/tidb-functions.md#tidb_version)関数を使用できます。
 

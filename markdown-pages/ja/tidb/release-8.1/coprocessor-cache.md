@@ -11,7 +11,7 @@ v4.0 以降、TiDB インスタンスは TiKV (コプロセッサーキャッシ
 
 <CustomContent platform="tidb">
 
-コプロセッサーキャッシュは、TiDB 構成ファイルの`tikv-client.copr-cache`構成項目を介して構成できます。コプロセッサーキャッシュを有効にして構成する方法の詳細については、 [TiDBコンフィグレーションファイル](/tidb-configuration-file.md#tikv-clientcopr-cache-new-in-v400)を参照してください。
+コプロセッサーキャッシュは、TiDB 構成ファイルの`tikv-client.copr-cache`構成項目を介して構成できます。コプロセッサーキャッシュを有効にして構成する方法の詳細については、 [TiDBコンフィグレーションファイル](/tidb-configuration-file.md#tikv-clientcopr-cache-new-in-v400)参照してください。
 
 </CustomContent>
 
@@ -68,7 +68,7 @@ EXPLAIN ANALYZE SELECT * FROM t USE INDEX(a);
 3 rows in set (0.62 sec)
 ```
 
-実行結果の列`execution info`は、コプロセッサーキャッシュのヒット率を示す`copr_cache_hit_ratio`情報が表示されます。上記の例の`0.75` 、ヒット率が約 75% であることを意味します。
+実行結果の列`execution info`には、コプロセッサーキャッシュのヒット率を示す`copr_cache_hit_ratio`情報が表示されます。上記の例の`0.75` 、ヒット率が約 75% であることを意味します。
 
 ### Grafana モニタリング パネルをビュー {#view-the-grafana-monitoring-panel}
 

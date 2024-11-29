@@ -42,7 +42,7 @@ shard-ddl-lock -h
 
 <!---->
 
--   `shard-ddl-lock [command]` : 指定された DDL ロックを解放するように DM マスターに要求します。2 `[command]`値として`unlock`を受け入れます。
+-   `shard-ddl-lock [command]` : 指定された DDL ロックを解放するように DM マスターに要求します。2 `[command]`値として`unlock`のみを受け入れます。
 
 ## 使用例 {#usage-examples}
 
@@ -82,7 +82,7 @@ shard-ddl-lock test
 
 ### <code>shard-ddl-lock unlock</code> {#code-shard-ddl-lock-unlock-code}
 
-このコマンドは、所有者に DDL ステートメントを実行するよう要求し、所有者以外の他のすべての DM ワーカーに DDL ステートメントをスキップするよう要求し、 `DM-master`のロック情報を削除するなど、指定された`DM-master`ロックのロックを解除するよう 1 に積極的に要求します。
+このコマンドは、所有`DM-master`に DDL ステートメントを実行するよう要求し、所有者以外の他のすべての DM ワーカーに DDL ステートメントをスキップするよう要求し、 `DM-master`のロック情報を削除するなど、指定された DDL ロックのロックを解除するよう 1 に積極的に要求します。
 
 > **注記：**
 >
@@ -119,7 +119,7 @@ shard-ddl-lock unlock -h
 -   `-f, --force-remove` :
 
     -   フラグ; ブール値; オプション
-    -   指定されていない場合、このコマンドは所有者が DDL ステートメントの実行に成功した場合にのみロック情報を削除します。指定されている場合、このコマンドは所有者が DDL ステートメントの実行に失敗してもロック情報を強制的に削除します (これを実行すると、ロックに対して再度クエリや操作を行うことはできません)。
+    -   指定されていない場合、このコマンドは所有者が DDL ステートメントの実行に成功した場合にのみロック情報を削除します。指定されている場合、このコマンドは所有者が DDL ステートメントの実行に失敗してもロック情報を強制的に削除します (これを行うと、ロックに対して再度クエリや操作を行うことはできません)。
 
 -   `lock-id` :
 
@@ -145,7 +145,7 @@ shard-ddl-lock unlock test-`shard_db`.`shard_table`
 
 #### 異常なロックの原因 {#the-reason-for-the-abnormal-lock}
 
-`DM-master`シャーディング DDL ロックを自動的にロック解除する前に、すべての MySQL ソースがシャーディング DDL イベントを受信する必要があります (詳細については、 [シャードマージの原則](/dm/feature-shard-merge-pessimistic.md#principles)を参照)。シャーディング DDL イベントがすでに移行プロセスにあり、一部の MySQL ソースが削除されて再ロードされない場合 (これらの MySQL ソースはアプリケーションの要求に応じて削除されています)、すべての DM ワーカーが DDL イベントを受信できるわけではないため、シャーディング DDL ロックを自動的に移行してロック解除することはできません。
+`DM-master`シャーディング DDL ロックを自動的にロック解除する前に、すべての MySQL ソースがシャーディング DDL イベントを受信する必要があります (詳細については、 [シャードマージの原則](/dm/feature-shard-merge-pessimistic.md#principles)参照)。シャーディング DDL イベントがすでに移行プロセス中であり、一部の MySQL ソースが削除されて再ロードされない場合 (これらの MySQL ソースはアプリケーションの要求に応じて削除されています)、すべての DM ワーカーが DDL イベントを受信できるわけではないため、シャーディング DDL ロックを自動的に移行してロック解除することはできません。
 
 > **注記：**
 >
@@ -153,7 +153,7 @@ shard-ddl-lock unlock test-`shard_db`.`shard_table`
 
 #### 手動ソリューション {#manual-solution}
 
-アップストリームにインスタンス`MySQL-1` ( `mysql-replica-01` ) と`MySQL-2` ( `mysql-replica-02` ) の 2 つがあり、17 にテーブル`shard_db_1` . `shard_table_1`と`shard_db_1` . `MySQL-1`の`shard_table_2` 、27 にテーブル`shard_db_2` . `shard_table_1`と`shard_db_2` . `shard_table_2`の 2 つがあるとし`MySQL-2` 。ここで、4 つのテーブルをマージし、ダウンストリーム TiDB のテーブル`shard_db` . `shard_table`に移行する必要があります。
+アップストリームにインスタンス`MySQL-1` ( `mysql-replica-01` ) と`MySQL-2` ( `mysql-replica-02` ) の 2 つがあり、 `MySQL-1`にテーブル`shard_db_1` . `shard_table_1`と`shard_db_1` . `shard_table_2`の 2 つ、 `MySQL-2`にテーブル`shard_db_2` . `shard_table_1`と`shard_db_2` . `shard_table_2`の 2 つがあるとします。ここで、4 つのテーブルをマージし、ダウンストリーム TiDB のテーブル`shard_db` . `shard_table`に移行する必要があります。
 
 初期のテーブル構造は次のとおりです。
 
@@ -169,7 +169,7 @@ SHOW CREATE TABLE shard_db_1.shard_table_1;
 +---------------+------------------------------------------+
 ```
 
-テーブル構造を変更するために、アップストリームのシャード テーブルで次の DDL 操作が実行されます。
+テーブル構造を変更するために、アップストリームのシャード テーブルに対して次の DDL 操作が実行されます。
 
 ```sql
 ALTER TABLE shard_db_*.shard_table_* ADD COLUMN c2 INT;
@@ -177,7 +177,7 @@ ALTER TABLE shard_db_*.shard_table_* ADD COLUMN c2 INT;
 
 MySQLとDMの操作プロセスは次のとおりです。
 
-1.  対応する DDL 操作が`mysql-replica-01`の 2 つのシャード テーブルに対して実行され、テーブル構造が変更されます。
+1.  テーブル構造を変更するために、 `mysql-replica-01`の 2 つのシャード テーブルに対して対応する DDL 操作が実行されます。
 
     ```sql
     ALTER TABLE shard_db_1.shard_table_1 ADD COLUMN c2 INT;
@@ -187,7 +187,7 @@ MySQLとDMの操作プロセスは次のとおりです。
     ALTER TABLE shard_db_1.shard_table_2 ADD COLUMN c2 INT;
     ```
 
-2.  DM-worker は、受信した`mysql-replica-01`つの 2 つのシャード テーブルの DDL 情報を DM-master に送信し、DM-master は対応する DDL ロックを作成します。
+2.  DM-worker は、受信した`mysql-replica-01`の 2 つのシャード テーブルの DDL 情報を DM-master に送信し、DM-master は対応する DDL ロックを作成します。
 
 3.  現在の DDL ロックの情報を確認するには`shard-ddl-lock`使用します。
 
@@ -218,13 +218,13 @@ MySQLとDMの操作プロセスは次のとおりです。
 
 4.  アプリケーションの要求により、 `mysql-replica-02`に対応するデータは下流の TiDB に移行する必要がなくなり、 `mysql-replica-02`削除されます。
 
-5.  `DM-master`の ID が``test-`shard_db`.`shard_table` ``ロックは`mysql-replica-02`の DDL 情報を受信できません。
+5.  `DM-master`の ID が``test-`shard_db`.`shard_table` ``のロックは`mysql-replica-02`の DDL 情報を受信できません。
 
-    -   返される結果`unsynced` by `shard-ddl-lock`には常に`mysql-replica-02`の情報が含まれています。
+    -   返される結果`unsynced` by `shard-ddl-lock`は常に`mysql-replica-02`の情報が含まれています。
 
-6.  `shard-ddl-lock unlock`使用して`DM-master`を要求し、DDL ロックをアクティブにロック解除します。
+6.  `shard-ddl-lock unlock`使用して`DM-master`要求し、DDL ロックをアクティブにロック解除します。
 
-    -   DDL ロックの所有者がオフラインになった場合は、パラメータ`--owner`を使用して、別の DM ワーカーを新しい所有者として指定し、DDL を実行できます。
+    -   DDL ロックの所有者がオフラインになった場合は、パラメータ`--owner`使用して、別の DM ワーカーを新しい所有者として指定し、DDL を実行できます。
     -   いずれかの MySQL ソースがエラーを報告した場合、 `result` `false`に設定され、この時点で各 MySQL ソースのエラーが許容範囲内であり、期待どおりであるかどうかを慎重に確認する必要があります。
 
         ```bash
@@ -266,7 +266,7 @@ MySQLとDMの操作プロセスは次のとおりです。
 
 #### インパクト {#impact}
 
-`shard-ddl-lock unlock`を使用して手動でロックを解除した後、タスク構成情報に含まれるオフライン MySQL ソースを処理しないと、次のシャーディング DDL イベントを受信したときにロックを自動的に移行できない可能性があります。
+`shard-ddl-lock unlock`使用してロックを手動でロック解除した後、タスク構成情報に含まれるオフライン MySQL ソースを処理しないと、次のシャーディング DDL イベントを受信したときにロックを自動的に移行できない可能性があります。
 
 したがって、DDL ロックを手動でロック解除した後、次の操作を実行する必要があります。
 
@@ -297,7 +297,7 @@ MySQLとDMの操作プロセスは次のとおりです。
 
 ここで、 [一部のMySQLソースが削除されました](#scenario-1-some-mysql-sources-are-removed)の手動ソリューションと同じ上流および下流のテーブル構造と、テーブルのマージおよび移行に対する同じ要求があるとします。
 
-`DM-master`自動的にロック解除処理を実行すると、所有者 ( `mysql-replica-01` ) は DDL を正常に実行し、移行処理を継続します。しかし、非所有者 ( `mysql-replica-02` ) に DDL 操作のスキップを要求する処理では、対応する DM ワーカーが再起動されたため、DM ワーカーが DDL 操作をスキップした後、チェックポイントの更新に失敗します。
+`DM-master`自動的にロック解除処理を実行すると、所有者（ `mysql-replica-01` ）はDDLを正常に実行し、移行処理を継続します。しかし、非所有者（ `mysql-replica-02` ）にDDL操作のスキップを要求する処理では、対応するDMワーカーが再起動されたため、DMワーカーがDDL操作をスキップした後、チェックポイントの更新に失敗します。
 
 `mysql-replica-02`復元に対応するデータ移行サブタスクの後、DM マスターに新しいロックが作成されますが、他の MySQL ソースは DDL 操作を実行またはスキップし、後続の移行を実行しています。
 
@@ -332,7 +332,7 @@ MySQLとDMの操作プロセスは次のとおりです。
     }
     ```
 
-2.  `shard-ddl-lock`使用して`DM-master`にロックを解除するように依頼します。
+2.  `shard-ddl-lock`使用して`DM-master`ロックを解除するように依頼します。
 
     -   ロック解除処理中に、所有者はダウンストリームへの DDL 操作を再度実行しようとします (再起動前の元の所有者はダウンストリームへの DDL 操作を 1 回実行しています)。DDL 操作が複数回実行可能であることを確認してください。
 

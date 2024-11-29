@@ -5,7 +5,7 @@ summary: TiDB データベースの SHOW [FULL] TABLES の使用法の概要。
 
 # [全]テーブルを表示 {#show-full-tables}
 
-このステートメントは、現在選択されているデータベース内のテーブルとビューのリストを表示します。オプションのキーワード`FULL` 、テーブルのタイプが`BASE TABLE` 、 `SEQUENCE` 、または`VIEW`であるかどうかを示します。
+このステートメントは、現在選択されているデータベース内のテーブルとビューのリストを表示します。オプションのキーワード`FULL`は、テーブルのタイプが`BASE TABLE` 、 `SEQUENCE` 、または`VIEW`であるかどうかを示します。
 
 別のデータベース内のテーブルを表示するには、 `SHOW TABLES IN DatabaseName`使用します。
 
@@ -77,7 +77,7 @@ mysql> SHOW TABLES IN mysql;
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SHOW [FULL] TABLES`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`SHOW [FULL] TABLES`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 

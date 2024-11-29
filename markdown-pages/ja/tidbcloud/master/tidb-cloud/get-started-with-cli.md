@@ -5,15 +5,19 @@ summary: TiDB Cloud CLI を使用してTiDB Cloudリソースを管理する方�
 
 # TiDB CloudCLI クイック スタート {#tidb-cloud-cli-quick-start}
 
-TiDB Cloud は、数行のコマンドで端末からTiDB Cloudを操作できるコマンドライン インターフェイス (CLI) [`ticloud`](https://github.com/tidbcloud/tidbcloud-cli)を提供します。たとえば、 `ticloud`を使用して次の操作を簡単に実行できます。
+TiDB Cloud は、数行のコマンドで端末からTiDB Cloudと対話するためのコマンドライン インターフェイス (CLI) [`ticloud`](https://github.com/tidbcloud/tidbcloud-cli)を提供します。たとえば、 `ticloud`使用して次の操作を簡単に実行できます。
 
 -   クラスターを作成、削除、および一覧表示します。
--   Amazon S3 またはローカル ファイルからクラスターにデータをインポートします。
+-   クラスターにデータをインポートします。
+-   クラスターからデータをエクスポートします。
 
-## あなたが始める前に {#before-you-begin}
+> **注記：**
+>
+> TiDB Cloud CLI はベータ版です。
+
+## 始める前に {#before-you-begin}
 
 -   TiDB Cloudアカウントをお持ちであること。お持ちでない場合は、 [無料トライアルにサインアップ](https://tidbcloud.com/free-trial) 。
--   [TiDB CloudAPIキーを作成する](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management) 。
 
 ## インストール {#installation}
 
@@ -56,7 +60,7 @@ MySQL コマンドライン クライアントがない場合はインストー�
     sudo yum install mysql
     ```
 
--   マックOS：
+-   macOS:
 
     ```shell
     brew install mysql-client
@@ -70,16 +74,54 @@ Windows の場合、次のいずれかの方法で`ticloud`インストールで
 
 -   手動でインストールする
 
-    [リリース](https://github.com/tidbcloud/tidbcloud-cli/releases/latest)ページからコンパイル済みバイナリをダウンロードし、インストール先の場所にコピーします。
+    [リリース](https://github.com/tidbcloud/tidbcloud-cli/releases/latest)ページから事前コンパイルされたバイナリをダウンロードし、インストール先の場所にコピーします。
 
 -   GitHub Actionsにインストール
 
     GitHub Actions で`ticloud`設定するには、 [`setup-tidbcloud-cli`](https://github.com/tidbcloud/setup-tidbcloud-cli)使用します。
 
-MySQL コマンドライン クライアントがインストールされていない場合はインストールしてください。インストール方法については[Windows 用 MySQL インストーラ](https://dev.mysql.com/doc/refman/8.0/en/mysql-installer.html)の手順を参照してください。Windows で`ticloud connect`を起動するには、PATH 環境変数に`mysql.exe`含むディレクトリが含まれている必要があります。
+MySQL コマンドライン クライアントがインストールされていない場合はインストールしてください。インストール方法については[Windows 用 MySQL インストーラ](https://dev.mysql.com/doc/refman/8.0/en/mysql-installer.html)の手順を参照してください。Windows で`ticloud connect`起動するには、PATH 環境変数に`mysql.exe`含むディレクトリが含まれている必要があります。
 
 </div>
 </SimpleTab>
+
+## クイックスタート {#quick-start}
+
+[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) TiDB Cloudを使い始めるのに最適な方法です。このセクションでは、 TiDB Cloud CLI を使用してTiDB Cloud Serverless クラスターを作成する方法を学習します。
+
+### ユーザープロファイルを作成するか、 TiDB Cloudにログインします {#create-a-user-profile-or-log-into-tidb-cloud}
+
+TiDB Cloud CLI を使用してクラスターを作成する前に、ユーザー プロファイルを作成するか、 TiDB Cloudにログインする必要があります。
+
+-   [TiDB CloudAPI キー](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management)でユーザープロファイルを作成します:
+
+    ```shell
+    ticloud config create
+    ```
+
+    > **警告：**
+    >
+    > プロファイル名には`.`含める**ことはできません**。
+
+-   認証を使用してTiDB Cloudにログインします。
+
+    ```shell
+    ticloud auth login
+    ```
+
+    ログインに成功すると、OAuth トークンが現在のプロファイルに割り当てられます。プロファイルが存在しない場合は、トークンは`default`名前のプロファイルに割り当てられます。
+
+> **注記：**
+>
+> 前述の 2 つの方法では、 TiDB Cloud API キーが OAuth トークンよりも優先されます。両方が利用可能な場合は、API キーが使用されます。
+
+### TiDB Cloud Serverless クラスターを作成する {#create-a-tidb-cloud-serverless-cluster}
+
+TiDB Cloud Serverless クラスターを作成するには、次のコマンドを入力し、CLI プロンプトに従って必要な情報を入力します。
+
+```shell
+ticloud serverless create
+```
 
 ## TiDB CloudCLIを使用する {#use-the-tidb-cloud-cli}
 
@@ -114,7 +156,7 @@ tiup cloud --help
 `tiup cloud <command>`でコマンドを実行します。例:
 
 ```shell
-tiup cloud cluster create
+tiup cloud serverless create
 ```
 
 TiUPによる最新バージョンへのアップデート:
@@ -123,43 +165,9 @@ TiUPによる最新バージョンへのアップデート:
 tiup update cloud
 ```
 
-## クイックスタート {#quick-start}
+## 次は何か {#what-s-next}
 
-[TiDB サーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-serverless) TiDB Cloudを使い始めるのに最適な方法です。このセクションでは、 TiDB Cloud CLI を使用して TiDB Serverless クラスターを作成する方法を学習します。
-
-### ユーザープロフィールを作成する {#create-a-user-profile}
-
-クラスターを作成する前に、 TiDB Cloud API キーを使用してユーザー プロファイルを作成する必要があります。
-
-```shell
-ticloud config create
-```
-
-> **警告：**
->
-> プロファイル名には`.`含めること**はできません**。
-
-### TiDB サーバーレス クラスターを作成する {#create-a-tidb-serverless-cluster}
-
-TiDB Serverless クラスターを作成するには、次のコマンドを入力し、CLI プロンプトに従って必要な情報を入力し、パスワードを設定します。
-
-```shell
-ticloud cluster create
-```
-
-### クラスターに接続する {#connect-to-the-cluster}
-
-クラスターが作成されたら、クラスターに接続できます。
-
-```shell
-ticloud connect
-```
-
-デフォルトのユーザーを使用するかどうかを尋ねるプロンプトが表示されたら、 `Y`選択し、クラスターの作成時に設定したパスワードを入力します。
-
-## 次は何ですか {#what-s-next}
-
-TiDB Cloud CLI のその他の機能については、 [CLI リファレンス](/tidb-cloud/cli-reference.md)ご覧ください。
+TiDB Cloud CLI のその他の機能については、 [CLI リファレンス](/tidb-cloud/cli-reference.md)をご覧ください。
 
 ## フィードバック {#feedback}
 

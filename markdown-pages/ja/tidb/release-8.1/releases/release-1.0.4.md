@@ -10,7 +10,7 @@ summary: TiDB 1.0.4 は 2017 年 12 月 11 日にリリースされました。�
 ## ティビ {#tidb}
 
 -   [`tidb-server`起動時に統計情報の読み込みを高速化します](https://github.com/pingcap/tidb/pull/5362)
--   [変数の`show variables`ステートメントのパフォーマンスを向上する](https://github.com/pingcap/tidb/pull/5363)
+-   [`show variables`ステートメントのパフォーマンスを向上する](https://github.com/pingcap/tidb/pull/5363)
 -   [結合されたインデックスを処理するために`Add Index`ステートメントを使用するときに発生する可能性のある問題を修正しました。](https://github.com/pingcap/tidb/pull/5323)
 -   [`Rename Table`ステートメントを使用してテーブルを別のデータベースに移動するときに発生する可能性のある問題を修正しました。](https://github.com/pingcap/tidb/pull/5314)
 -   [`Alter/Drop User`ステートメントの有効性を加速する](https://github.com/pingcap/tidb/pull/5226)

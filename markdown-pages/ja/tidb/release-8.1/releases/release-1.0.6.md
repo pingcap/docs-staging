@@ -10,7 +10,7 @@ summary: TiDB 1.0.6 は、2018 年 1 月 8 日にリリースされました。�
 ## ティビ {#tidb}
 
 -   [`Alter Table Auto_Increment`構文をサポートする](https://github.com/pingcap/tidb/pull/5511)
--   [コストベースの計算のバグと統計の`Null Json`の問題を修正しました](https://github.com/pingcap/tidb/pull/5556)
+-   [コストベースの計算のバグと統計の`Null Json`問題を修正しました](https://github.com/pingcap/tidb/pull/5556)
 -   [単一テーブルの書き込みホットスポットを回避するために、暗黙の行IDを分割する拡張構文をサポートします。](https://github.com/pingcap/tidb/pull/5559)
 -   [潜在的なDDLの問題を修正](https://github.com/pingcap/tidb/pull/5562)
 -   [`curtime` 、 `sysdate` 、 `curdate`関数のタイムゾーン設定を考慮する](https://github.com/pingcap/tidb/pull/5564)
@@ -25,4 +25,4 @@ summary: TiDB 1.0.6 は、2018 年 1 月 8 日にリリースされました。�
 
 なし。
 
-1.0.5 から 1.0.6 にアップグレードするには、PD -&gt; TiKV -&gt; TiDB のローリング アップグレードの順序に従います。
+1.0.5 から 1.0.6 にアップグレードするには、PD -&gt; TiKV -&gt; TiDB のローリング アップグレード順序に従います。
