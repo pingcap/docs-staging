@@ -24,7 +24,7 @@ TiDB Lightning を使用すると、次のシナリオでデータを並列に�
 
 ## 考慮事項 {#considerations}
 
-並列インポートを使用するには、 `parallel-import = true`設定する必要があります。TiDB TiDB Lightningが起動すると、下流の TiDB クラスターにメタデータを登録し、同時にターゲット クラスターにデータを移行している他のインスタンスがあるかどうかを自動的に検出します。ある場合は、自動的に並列インポート モードに入ります。
+並列インポートを使用するには、 `parallel-import = true`設定する必要があります。TiDB TiDB Lightningを起動すると、下流の TiDB クラスターにメタデータを登録し、同時にターゲット クラスターにデータを移行している他のインスタンスがあるかどうかを自動的に検出します。ある場合は、自動的に並列インポート モードに入ります。
 
 ただし、データを並行して移行する場合は、次の点を考慮する必要があります。
 
@@ -33,7 +33,7 @@ TiDB Lightning を使用すると、次のシナリオでデータを並列に�
 
 ### 主キーまたは一意のインデックス間の競合を処理する {#handle-conflicts-between-primary-keys-or-unique-indexes}
 
-[物理インポートモード](/tidb-lightning/tidb-lightning-physical-import-mode.md)を使用してデータを並列にインポートする場合は、データ ソース間およびターゲット TiDB クラスター内のテーブル間で主キーまたは一意のインデックスの競合がないこと、およびインポート中にターゲット テーブルにデータが書き込まれていないことを確認してください。そうでない場合、 TiDB Lightning はインポートされたデータの正確性を保証できず、インポートが完了した後にターゲット テーブルに不整合なインデックスが含まれることになります。
+[物理インポートモード](/tidb-lightning/tidb-lightning-physical-import-mode.md)使用してデータを並列にインポートする場合は、データ ソース間およびターゲット TiDB クラスター内のテーブル間で主キーまたは一意のインデックスの競合がないこと、およびインポート中にターゲット テーブルにデータが書き込まれていないことを確認してください。そうでない場合、 TiDB Lightning はインポートされたデータの正確性を保証できず、インポートが完了した後にターゲット テーブルに不整合なインデックスが含まれることになります。
 
 ### インポートパフォーマンスの最適化 {#optimize-import-performance}
 
@@ -43,9 +43,9 @@ TiDB Lightning は、生成されたキー値データを、対応するリー�
 -   並列インポートを実行する各TiDB Lightningインスタンスのソース ファイルの合計サイズは 5 TiB 未満である必要があります。
 -   TiDB Lightningインスタンスの合計数は 10 未満である必要があります。
 
-TiDB Lightningを使用して共有データベースとテーブルを並列でインポートする場合は、データの量に応じて適切な数のTiDB Lightningインスタンスを選択します。
+TiDB Lightning を使用して共有データベースとテーブルを並列でインポートする場合は、データの量に応じて適切な数のTiDB Lightningインスタンスを選択します。
 
--   MySQL データ量が 2 TiB 未満の場合、並列インポートに 1 つのTiDB Lightningインスタンスを使用できます。
+-   MySQL のデータ量が 2 TiB 未満の場合、並列インポートに 1 つのTiDB Lightningインスタンスを使用できます。
 -   MySQL データ量が 2 TiB を超え、MySQL インスタンスの合計数が 10 未満の場合は、MySQL インスタンスごとに 1 つのTiDB Lightningインスタンスを使用することをお勧めします。また、並列TiDB Lightningインスタンスの数は 10 を超えないようにしてください。
 -   MySQL データ量が 2 TiB を超え、MySQL インスタンスの合計数が 10 を超える場合は、これらの MySQL インスタンスによってエクスポートされたデータをインポートするために 5 ～ 10 個のTiDB Lightningインスタンスを割り当てることをお勧めします。
 
@@ -63,9 +63,9 @@ TiDB Lightning は実行時に一部のリソースを排他的に使用しま�
     -   checkpoint.driver = &quot;file&quot; (デフォルト) を設定する場合は、チェックポイントへのパスがインスタンスごとに一意であることを確認してください。
     -   checkpoint.driver = &quot;mysql&quot; を設定する場合は、インスタンスごとに一意のスキーマを設定する必要があります。
 -   各TiDB Lightningのログ ファイルは、一意のパスに設定する必要があります。同じログ ファイルを共有すると、ログのクエリとトラブルシューティングに影響します。
--   [ウェブインターフェース](/tidb-lightning/tidb-lightning-web-interface.md)または Debug API を使用する場合は、インスタンスごとに`lightning.status-addr`一意のアドレスに設定する必要があります。そうしないと、ポートの競合によりTiDB Lightningプロセスが起動しなくなります。
+-   [ウェブインターフェース](/tidb-lightning/tidb-lightning-web-interface.md)または Debug API を使用する場合は、インスタンスごとに`lightning.status-addr`一意のアドレスに設定する必要があります。そうしないと、ポートの競合によりTiDB Lightningプロセスが起動しません。
 
-## 例 1: Dumpling + TiDB Lightningを使用して、シャードされたデータベースとテーブルを TiDB に並列でインポートする {#example-1-use-dumpling-tidb-lightning-to-import-sharded-databases-and-tables-into-tidb-in-parallel}
+## 例 1: Dumpling + TiDB Lightning を使用して、シャードされたデータベースとテーブルを TiDB に並列でインポートする {#example-1-use-dumpling-tidb-lightning-to-import-sharded-databases-and-tables-into-tidb-in-parallel}
 
 この例では、アップストリームが 10 個のシャード テーブルを持つ MySQL クラスターであり、合計サイズが 10 TiB であると想定します。5 つのTiDB Lightningインスタンスを使用して並列インポートを実行し、各インスタンスが 2 TiB をインポートします。合計インポート時間 ( Dumplingエクスポートに必要な時間を除く) は、約 40 時間から約 10 時間に短縮できると推定されます。
 
@@ -75,8 +75,8 @@ TiDB Lightning は実行時に一部のリソースを排他的に使用しま�
 
 TiDB Lightningがデプロイされている 5 つのノード上の 2 つのシャード テーブルをエクスポートします。
 
--   2 つのシャード テーブルが同じ MySQL インスタンスにある場合は、 Dumplingの`--filter`パラメータを使用して直接エクスポートできます。TiDB TiDB Lightningを使用してインポートする場合は、 Dumpling がデータをエクスポートするディレクトリとして`data-source-dir`指定できます。
--   2 つのシャード テーブルのデータが別の MySQL ノードに分散されている場合は、 Dumpling を使用して個別にエクスポートする必要があります。エクスポートされたデータは、同じ親ディレクトリ<b>内の異なるサブディレクトリ</b>に配置する必要があります。TiDB TiDB Lightning を使用して並列インポートを実行する場合は、親ディレクトリとして`data-source-dir`指定する必要があります。
+-   2 つのシャード テーブルが同じ MySQL インスタンスにある場合は、 Dumplingの`--filter`パラメータを使用して直接エクスポートできます。TiDB TiDB Lightning を使用してインポートする場合は、 Dumpling がデータをエクスポートするディレクトリとして`data-source-dir`指定できます。
+-   2 つのシャード テーブルのデータが別の MySQL ノードに分散されている場合は、 Dumpling を使用して個別にエクスポートする必要があります。エクスポートされたデータは、同じ親ディレクトリ内<b>の異なるサブディレクトリに</b>配置する必要があります。TiDB TiDB Lightning を使用して並列インポートを実行する場合は、親ディレクトリとして`data-source-dir`指定する必要があります。
 
 Dumpling を使用してデータをエクスポートする方法の詳細については、 [Dumpling](/dumpling-overview.md)参照してください。
 
@@ -111,7 +111,7 @@ Dumpling を使用してデータをエクスポートする方法の詳細に�
 
 ### ステップ3: TiDB Lightningを起動してデータをインポートする {#step-3-start-tidb-lightning-to-import-data}
 
-並列インポート中、各TiDB Lightningノードのサーバー構成要件は、非並列インポート モードと同じです。各TiDB Lightningノードは同じリソースを消費する必要があります。異なるサーバーに展開することをお勧めします。詳細な展開手順については、 [TiDB Lightning をデプロイ](/tidb-lightning/deploy-tidb-lightning.md)参照してください。
+並列インポート中、各TiDB Lightningノードのサーバー構成要件は、非並列インポート モードと同じです。各TiDB Lightningノードは同じリソースを消費する必要があります。異なるサーバーに展開することをお勧めします。詳細な展開手順については、 [TiDB Lightningをデプロイ](/tidb-lightning/deploy-tidb-lightning.md)参照してください。
 
 各サーバーでTiDB Lightning を順番に起動します。コマンドラインから`nohup`使用して直接起動すると、SIGHUP シグナルにより終了する可能性があります。そのため、スクリプトに`nohup`入れることをお勧めします。例:
 
@@ -122,11 +122,11 @@ nohup tiup tidb-lightning -config tidb-lightning.toml > nohup.out &
 
 並列インポート中、 TiDB Lightning はタスクの開始後に次のチェックを自動的に実行します。
 
--   ローカル ディスク ( `sort-kv-dir`構成によって制御) と TiKV クラスターに、データをインポートするのに十分なスペースがあるかどうかを確認します。必要なディスク スペースについては、 [下流のstorageスペース要件](/tidb-lightning/tidb-lightning-requirements.md#storage-space-of-the-target-database)と[リソース要件](/tidb-lightning/tidb-lightning-physical-import-mode.md#environment-requirements)を参照してください。TiDB TiDB Lightning はデータ ソースをサンプリングし、サンプル結果からインデックス サイズのパーセンテージを推定します。推定にはインデックスが含まれるため、ソース データのサイズがローカル ディスクの使用可能なスペースよりも小さい場合でも、チェックが失敗する場合があります。
+-   ローカル ディスク ( `sort-kv-dir`構成によって制御) と TiKV クラスターに、データをインポートするための十分なスペースがあるかどうかを確認します。必要なディスク スペースについては、 [下流のstorageスペース要件](/tidb-lightning/tidb-lightning-requirements.md#storage-space-of-the-target-database)と[リソース要件](/tidb-lightning/tidb-lightning-physical-import-mode.md#environment-requirements)参照してください。TiDB TiDB Lightning はデータ ソースをサンプリングし、サンプル結果からインデックス サイズのパーセンテージを推定します。推定にはインデックスが含まれるため、ソース データのサイズがローカル ディスクの使用可能なスペースよりも小さい場合でも、チェックが失敗する場合があります。
 -   TiKV クラスター内の領域が均等に分散されているかどうか、および空の領域が多すぎないかどうかを確認します。空の領域の数が max(1000、テーブル数 * 3) を超える場合、つまり「1000」または「テーブル数の 3 倍」のいずれか大きい方を超える場合、インポートは実行できません。
 -   データソースからデータが順番にインポートされているかを確認します。 `mydumper.batch-size`のサイズは、チェックの結果に基づいて自動的に調整されます。 そのため、 `mydumper.batch-size`構成は使用できなくなります。
 
-チェックをオフにして、 `lightning.check-requirements`構成で強制インポートを実行することもできます。詳細なチェックについては、 [TiDB Lightning事前チェック](/tidb-lightning/tidb-lightning-prechecks.md)を参照してください。
+チェックをオフにして、 `lightning.check-requirements`構成で強制インポートを実行することもできます。詳細なチェックについては、 [TiDB Lightning事前チェック](/tidb-lightning/tidb-lightning-prechecks.md)参照してください。
 
 ### ステップ4: インポートの進行状況を確認する {#step-4-check-the-import-progress}
 
@@ -145,7 +145,7 @@ TiDB Lightning は、単一テーブルの並列インポートもサポート�
 >
 > ローカル環境では、 Dumplingの`--filesize`または`--where`パラメータを使用して、1 つのテーブルのデータを複数の部分に分割し、複数のサーバーのローカル ディスクに事前にエクスポートすることができます。この方法でも、並列インポートを実行できます。構成は例 1 と同じです。
 
-ソースファイルが Amazon S3 に保存されていると仮定すると、テーブルファイルは`my_db.my_table.00001.sql` ~ `my_db.my_table.10000.sql` 、合計 10,000 個の SQL ファイルになります。インポートを高速化するために 2 つのTiDB Lightningインスタンスを使用する場合は、構成ファイルに次の設定を追加する必要があります。
+ソースファイルが Amazon S3 に保存されていると仮定すると、テーブルファイルは`my_db.my_table.00001.sql` ~ `my_db.my_table.10000.sql` 、合計 10,000 個の SQL ファイルになります。インポートを高速化するために 2 つのTiDB Lightningインスタンスを使用する場合は、設定ファイルに次の設定を追加する必要があります。
 
     [[mydumper.files]]
     # the db schema file

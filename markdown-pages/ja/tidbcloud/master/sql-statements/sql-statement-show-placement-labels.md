@@ -5,11 +5,11 @@ summary: TiDB での SHOW PLACEMENT LABELS の使用法。
 
 # 配置ラベルを表示 {#show-placement-labels}
 
-`SHOW PLACEMENT LABELS` 、配置ルールで使用できるラベルと値を要約するために使用されます。
+`SHOW PLACEMENT LABELS`配置ルールで使用できるラベルと値を要約するために使用されます。
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ## 概要 {#synopsis}
 

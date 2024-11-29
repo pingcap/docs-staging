@@ -6,7 +6,7 @@ summary: TiDB でテーブルを作成する場合のパフォーマンス最適
 
 # TiDB 高速テーブル作成 {#tidb-accelerated-table-creation}
 
-TiDB v7.6.0 では、テーブル作成の高速化をサポートするシステム変数[`tidb_ddl_version`](https://docs.pingcap.com/tidb/v7.6/system-variables#tidb_enable_fast_create_table-new-in-v800)が導入され、バルク テーブル作成の効率が向上しました。v8.0.0 以降では、このシステム変数の名前は[`tidb_enable_fast_create_table`](/system-variables.md#tidb_enable_fast_create_table-new-in-v800)に変更されています。
+TiDB v7.6.0 では、テーブル作成の高速化をサポートするシステム変数[`tidb_ddl_version`](https://docs.pingcap.com/tidb/v7.6/system-variables#tidb_enable_fast_create_table-new-in-v800)が導入され、バルク テーブル作成の効率が向上しました。v8.0.0 以降では、このシステム変数の名前が[`tidb_enable_fast_create_table`](/system-variables.md#tidb_enable_fast_create_table-new-in-v800)に変更されています。
 
 TiDB は、オンライン非同期スキーマ変更アルゴリズムを使用してメタデータを変更します。すべての DDL ジョブは`mysql.tidb_ddl_job`テーブルに送信され、所有者ノードが DDL ジョブをプルして実行します。オンライン DDL アルゴリズムの各フェーズを実行した後、DDL ジョブは完了としてマークされ、 `mysql.tidb_ddl_history`テーブルに移動されます。したがって、DDL ステートメントは所有者ノードでのみ実行でき、線形に拡張することはできません。
 
@@ -14,7 +14,7 @@ TiDB は、オンライン非同期スキーマ変更アルゴリズムを使用
 
 > **警告：**
 >
-> この機能は現在実験的機能であり、本番環境での使用は推奨されません。この機能は予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を上げてフィードバックをお寄せください。
+> この機能は現在実験的機能であり、本番環境での使用は推奨されません。この機能は予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)上げてフィードバックをお寄せください。
 
 ## TiDBツールとの互換性 {#compatibility-with-tidb-tools}
 
@@ -22,7 +22,7 @@ TiDB は、オンライン非同期スキーマ変更アルゴリズムを使用
 
 ## 制限 {#limitation}
 
-パフォーマンスの最適化は、 [`CREATE TABLE`](/sql-statements/sql-statement-create-table.md)ステートメントでのみテーブル作成に使用できるようになりました。このステートメントには、外部キー制約を含めることはできません。
+パフォーマンス最適化は、 [`CREATE TABLE`](/sql-statements/sql-statement-create-table.md)ステートメントでのみテーブル作成に使用できるようになり、このステートメントには外部キー制約を含めることはできません。
 
 ## テーブル作成を高速化するには、 <code>tidb_enable_fast_create_table</code>を使用します。 {#use-code-tidb-enable-fast-create-table-code-to-accelerate-table-creation}
 

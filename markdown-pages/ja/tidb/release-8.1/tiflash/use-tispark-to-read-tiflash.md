@@ -3,7 +3,7 @@ title: Use TiSpark to Read TiFlash Replicas
 summary: TiSpark を使用してTiFlashレプリカを読み取る方法を学習します。
 ---
 
-# TiSpark を使用してTiFlashレプリカを読み取る {#use-tispark-to-read-tiflash-replicas}
+# TiSparkを使用してTiFlashレプリカを読み取る {#use-tispark-to-read-tiflash-replicas}
 
 このドキュメントでは、TiSpark を使用してTiFlashレプリカを読み取る方法について説明します。
 
@@ -11,7 +11,7 @@ summary: TiSpark を使用してTiFlashレプリカを読み取る方法を学�
 
 > **注記：**
 >
-> このパラメータを`tiflash`に設定すると、クエリに関係するすべてのテーブルのTiFlashレプリカのみが読み取られ、これらのテーブルにはTiFlashレプリカが必要です。TiFlash レプリカがないテーブルの場合は、エラーが報告されます。このパラメータを`tikv`に設定すると、TiKV レプリカのみが読み取られます。
+> このパラメータを`tiflash`に設定すると、クエリに関係するすべてのテーブルのTiFlashレプリカのみが読み取られ、これらのテーブルにはTiFlashレプリカが必要です。TiFlash レプリカがないテーブルの場合は、エラーが報告されます。このパラメータを`tikv`に設定すると、 TiFlashレプリカのみが読み取られます。
 
 このパラメータは、次のいずれかの方法で設定できます。
 
@@ -21,6 +21,6 @@ summary: TiSpark を使用してTiFlashレプリカを読み取る方法を学�
 
 -   Spark シェルまたは Thriftサーバーを初期化するときに、初期化コマンドに`--conf spark.tispark.isolation_read_engines=tiflash`追加します。
 
--   Spark シェルで`spark.conf.set("spark.tispark.isolation_read_engines", "tiflash")`リアルタイムで設定します。
+-   Spark シェルでリアルタイムに`spark.conf.set("spark.tispark.isolation_read_engines", "tiflash")`設定します。
 
--   サーバーが beeline 経由で接続された後、Thriftサーバーに`set spark.tispark.isolation_read_engines=tiflash`設定します。
+-   サーバーがbeeline 経由で接続された後、Thriftサーバーに`set spark.tispark.isolation_read_engines=tiflash`設定します。

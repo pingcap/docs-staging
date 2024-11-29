@@ -1,6 +1,6 @@
 ---
 title: TiDB 4.0.0 Beta.1 Release Notes
-summary: TiDB 4.0.0 Beta.1 は、2020 年 2 月 28 日にリリースされました。互換性の変更、新機能、バグ修正が含まれています。主なハイライトとしては、SQL パフォーマンス診断のサポート、`シーケンス` 機能、コンポーネント間の TLS サポートなどがあります。さらに、 TiDB Lightning、Web インターフェイスのバグ修正も行われました。
+summary: TiDB 4.0.0 Beta.1 は、2020 年 2 月 28 日にリリースされました。互換性の変更、新機能、バグ修正が含まれています。主なハイライトとしては、SQL パフォーマンス診断のサポート、シーケンス` 機能、コンポーネント間の TLS サポートなどがあります。さらに、 TiDB Lightning、Web インターフェイスのバグ修正も行われています。
 ---
 
 # TiDB 4.0.0 Beta.1 リリースノート {#tidb-4-0-0-beta-1-release-notes}
@@ -51,7 +51,7 @@ TiDB Ansible バージョン: 4.0.0-beta.1
     -   `json_objectagg`集計関数[＃11154](https://github.com/pingcap/tidb/pull/11154)を追加する
     -   監査ログに拒否された接続試行を記録することをサポート[＃14594](https://github.com/pingcap/tidb/pull/14594)
     -   1つのサーバーへの接続数を制御するために、 `max-server-connections`構成項目（デフォルトでは`4096` ）を追加します[＃14409](https://github.com/pingcap/tidb/pull/14409)
-    -   サーバーレベル[＃14440](https://github.com/pingcap/tidb/pull/14440)で複数のstorageエンジンを指定して分離読み取りをサポートする
+    -   サーバーレベル[＃14440](https://github.com/pingcap/tidb/pull/14440)で複数のstorageエンジンを指定して分離読み取りをサポート
     -   `Apply`オペレータと`Sort`オペレータのコストモデルを最適化して安定性を向上させる[＃13550](https://github.com/pingcap/tidb/pull/13550) [＃14708](https://github.com/pingcap/tidb/pull/14708)
 
 -   ティクヴ
@@ -59,7 +59,7 @@ TiDB Ansible バージョン: 4.0.0-beta.1
     -   コプロセッサー[＃6341](https://github.com/tikv/tikv/pull/6341)の`Chunk Encoder`のパフォーマンスを最適化
 
 -   PD
-    -   ダッシュボードUI [＃2086](https://github.com/pingcap/pd/pull/2086)を通じてクラスター内のホットスポットの分布へのアクセスをサポート
+    -   ダッシュボードUI [＃2086](https://github.com/pingcap/pd/pull/2086)を介してクラスター内のホットスポットの分布へのアクセスをサポート
     -   クラスターコンポーネント[＃2116](https://github.com/pingcap/pd/pull/2116)の`START_TIME`と`UPTIME`キャプチャと表示をサポート
     -   `member` API [＃2130](https://github.com/pingcap/pd/pull/2130)の返されたメッセージにデプロイメントパスとコンポーネントバージョンの情報を追加します。
     -   pd-ctl に`component`サブコマンドを追加して、他のコンポーネントの構成を変更および確認します (実験的) [＃2092](https://github.com/pingcap/pd/pull/2092)
@@ -75,14 +75,14 @@ TiDB Ansible バージョン: 4.0.0-beta.1
     -   TiFlashの設定ファイル[＃1141](https://github.com/pingcap/tidb-ansible/pull/1141)に`flash_proxy_status_port`設定項目（デフォルトでは`20292` ）を追加します。
     -   TiFlash監視ダッシュボードを追加する[＃1147](https://github.com/pingcap/tidb-ansible/pull/1147) [＃1151](https://github.com/pingcap/tidb-ansible/pull/1151)
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
-    -   64文字を超える列名で`view`を作成するとエラーが報告される問題を修正[＃14850](https://github.com/pingcap/tidb/pull/14850)
-    -   `create or replace view`文が誤って処理されたために`information_schema.views`に重複データが存在する問題を修正[＃14832](https://github.com/pingcap/tidb/pull/14832)
+    -   64文字を超える列名で`view`作成するとエラーが報告される問題を修正[＃14850](https://github.com/pingcap/tidb/pull/14850)
+    -   `create or replace view`文が正しく処理されていないため、 `information_schema.views`に重複データが存在する問題を修正[＃14832](https://github.com/pingcap/tidb/pull/14832)
     -   `plan cache`が有効になっている場合の`BatchPointGet`の誤った結果を修正[＃14855](https://github.com/pingcap/tidb/pull/14855)
     -   タイムゾーンを変更した後にデータが間違ったパーティションテーブルに挿入される問題を修正[＃14370](https://github.com/pingcap/tidb/pull/14370)
-    -   外部結合の簡略化[＃14515](https://github.com/pingcap/tidb/pull/14515)中に`IsTrue`関数の無効な名前を使用して式を再構築するときに発生するpanicを修正しました
+    -   外部結合の簡略化[＃14515](https://github.com/pingcap/tidb/pull/14515)中に`IsTrue`関数の無効な名前を使用して式を再構築するときに発生するpanicを修正
     -   `show binding`文[＃14443](https://github.com/pingcap/tidb/pull/14443)の不正な権限チェックを修正
 
 -   ティクヴ

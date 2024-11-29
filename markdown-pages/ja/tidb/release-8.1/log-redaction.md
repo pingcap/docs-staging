@@ -11,7 +11,7 @@ TiDB が詳細なログ情報を提供する場合、ログに機密データ (�
 
 TiDB 側でログ編集を有効にするには、 [`global.tidb_redact_log`](/system-variables.md#tidb_redact_log)の値を`1`に設定します。この構成値のデフォルトは`0`で、ログ編集が無効であることを意味します。
 
-`set`構文を使用してグローバル変数`tidb_redact_log`を設定できます。
+`set`構文を使用してグローバル変数`tidb_redact_log`設定できます。
 
 ```sql
 set @@global.tidb_redact_log=1;
@@ -31,7 +31,7 @@ ERROR 1062 (23000): Duplicate entry '1' for key 't.a'
 
     [2020/10/20 11:45:49.539 +08:00] [INFO] [conn.go:800] ["command dispatched failed"] [conn=5] [connInfo="id:5, addr:127.0.0.1:57222 status:10, collation:utf8_general_ci,  user:root"] [command=Query] [status="inTxn:0, autocommit:1"] [sql="insert into t values ( ? ) , ( ? )"] [txn_mode=OPTIMISTIC] [err="[kv:1062]Duplicate entry '?' for key 't.a'"]
 
-上記のエラー ログから、 `tidb_redact_log`を有効にした後、 `?`使用してすべての機密情報が保護されていることがわかります。このようにして、データ セキュリティのリスクが回避されます。
+上記のエラー ログから、 `tidb_redact_log`有効にした後、 `?`使用してすべての機密情報が保護されていることがわかります。このようにして、データ セキュリティのリスクが回避されます。
 
 ## TiKV側でのログ編集 {#log-redaction-in-tikv-side}
 

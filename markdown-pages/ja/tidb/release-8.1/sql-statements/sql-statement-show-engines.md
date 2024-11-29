@@ -32,4 +32,4 @@ mysql> SHOW ENGINES;
 
 ## MySQL 互換性 {#mysql-compatibility}
 
--   このステートメントは、サポートされているエンジンとして常に InnoDB のみを返します。内部的には、TiDB は通常、storageエンジンとして[ティクヴ](/tikv-overview.md)を使用します。
+-   このステートメントは、サポートされているエンジンとして常に InnoDB のみを返します。内部的には、TiDB は通常、storageエンジンとして[ティクヴ](/tikv-overview.md)使用します。

@@ -17,7 +17,7 @@ summary: TiDB Binlogエラーの処理方法を学習します。
     replica.fetch.max.bytes=1073741824
     fetch.message.max.bytes=1073741824
 
-## Pumpは<code>no space left on device</code>を返します {#pump-returns-code-no-space-left-on-device-code-error}
+## Pumpは<code>no space left on device</code>エラーを返します {#pump-returns-code-no-space-left-on-device-code-error}
 
 原因: Pump がbinlogデータを正常に書き込むには、ローカル ディスク領域が不十分です。
 
@@ -27,7 +27,7 @@ summary: TiDB Binlogエラーの処理方法を学習します。
 
 原因: Pumpが起動すると、状態`online`にあるすべてのDrainerノードに通知します。Drainerへの通知に失敗すると、このエラー ログが出力されます。
 
-解決策: [binlogctl ツール](/tidb-binlog/binlog-control.md)使用して、各Drainerノードが正常かどうかを確認します。これは、 `online`状態にあるすべてのDrainerノードが正常に動作していることを確認するためです。Drainer ノードの状態が実際の動作状態と一致していない場合は、binlogctl ツールを使用して状態を変更し、 Pumpを再起動します。
+解決策: [binlogctl ツール](/tidb-binlog/binlog-control.md)を使用して、各Drainerノードが正常かどうかを確認します。これは、 `online`状態にあるすべてのDrainerノードが正常に動作していることを確認するためです。Drainer ノードの状態が実際の動作状態と一致していない場合は、binlogctl ツールを使用して状態を変更し、 Pump をDrainer起動します。
 
 ## TiDB Binlogレプリケーション中にデータ損失が発生する {#data-loss-occurs-during-the-tidb-binlog-replication}
 
@@ -35,9 +35,9 @@ summary: TiDB Binlogエラーの処理方法を学習します。
 
 ## アップストリーム トランザクションが大きい場合、Pumpはエラーを報告します<code>rpc error: code = ResourceExhausted desc = trying to send message larger than max (2191430008 vs. 2147483647)</code> {#when-the-upstream-transaction-is-large-pump-reports-an-error-code-rpc-error-code-resourceexhausted-desc-trying-to-send-message-larger-than-max-2191430008-vs-2147483647-code}
 
-このエラーは、TiDB からPumpに送信された gRPC メッセージがサイズ制限を超えたために発生します。Pumpの起動時に`max-message-size`指定することで、 Pumpが許可する gRPC メッセージの最大サイズを調整できます。
+このエラーは、TiDB からPumpに送信された gRPC メッセージがサイズ制限を超えたために発生します。Pumpの起動時に`max-message-size`指定することで、 Pump が許可する gRPC メッセージの最大サイズを調整できます。
 
 ## Drainerによって出力されるファイル形式の増分データに対してクリーニング メカニズムはありますか? データは削除されますか? {#is-there-any-cleaning-mechanism-for-the-incremental-data-of-the-file-format-output-by-drainer-will-the-data-be-deleted}
 
 -   Drainer v3.0.x には、ファイル形式の増分データのクリーニング メカニズムはありません。
--   v4.0.xバージョンでは、時間ベースのデータクリーニングメカニズムがあります。詳細については、 [ドレイナーの`retention-time`設定項目](https://github.com/pingcap/tidb-binlog/blob/v4.0.9/cmd/drainer/drainer.toml#L153)を参照してください。
+-   バージョン v4.0.x では、時間ベースのデータクリーニングメカニズムがあります。詳細については、 [ドレイナーの`retention-time`設定項目](https://github.com/pingcap/tidb-binlog/blob/v4.0.9/cmd/drainer/drainer.toml#L153)を参照してください。

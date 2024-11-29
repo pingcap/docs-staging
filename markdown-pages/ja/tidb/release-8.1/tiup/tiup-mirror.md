@@ -5,7 +5,7 @@ summary: プライベートミラーを作成する方法を学習します。
 
 # プライベートミラーを作成する {#create-a-private-mirror}
 
-プライベート クラウドを作成する場合、通常は、 TiUPの公式ミラーにアクセスできない隔離されたネットワーク環境を使用する必要があります。そのため、主に`mirror`コマンドで実装されるプライベート ミラーを作成できます。オフライン展開には`mirror`コマンドを使用することもできます。プライベート ミラーを使用すると、自分で構築してパッケージ化したコンポーネントを使用することもできます。
+プライベート クラウドを作成する場合、通常は、 TiUPの公式ミラーにアクセスできない隔離されたネットワーク環境を使用する必要があります。そのため、主に`mirror`コマンドで実装されるプライベート ミラーを作成できます。オフライン展開には`mirror`コマンドを使用することもできます。プライベート ミラーでは、自分で構築してパッケージ化したコンポーネントを使用することもできます。
 
 ## TiUP <code>mirror</code>概要 {#tiup-code-mirror-code-overview}
 
@@ -60,7 +60,7 @@ tiup mirror clone <target-dir> [global-version] [flags]
 
 -   クローン作成時にバージョンを一致させるためにプレフィックスマッチングを使用するかどうかを決定します
 
-    `--prefix`フラグが指定されている場合、クローンのバージョン番号はプレフィックスによって一致します。たとえば、 `--prefix`を「v5.0.0」として指定すると、「v5.0.0-rc」と「v5.0.0」が一致します。
+    `--prefix`フラグが指定されている場合、クローンのバージョン番号はプレフィックスによって一致します。たとえば、 `--prefix` 「v5.0.0」として指定すると、「v5.0.0-rc」と「v5.0.0」が一致します。
 
 -   完全なクローンを使用するかどうかを決定します
 
@@ -68,11 +68,11 @@ tiup mirror clone <target-dir> [global-version] [flags]
 
     > **注記：**
     >
-    > `global-version` `--full` 、およびコンポーネントバージョンが指定されていない場合は、一部のメタ情報のみが複製されます。
+    > フラグ`--full` 、およびコンポーネントバージョンが指定されていない場合は、一部のメタ情報のみ`global-version`複製されます。
 
 -   特定のプラットフォームからパッケージをクローンするかどうかを決定します
 
-    特定のプラットフォーム用のパッケージのみをクローンする場合は、 `-os`と`-arch`を使用してプラットフォームを指定します。例:
+    特定のプラットフォーム用のパッケージのみをクローンする場合は、 `-os`と`-arch`使用してプラットフォームを指定します。例:
 
     -   Linux のクローンを作成するには、 `tiup mirror clone <target-dir> [global-version] --os=linux`コマンドを実行します。
     -   amd64 のクローンを作成するには、 `tiup mirror clone <target-dir> [global-version] --arch=amd64`コマンドを実行します。
@@ -82,15 +82,15 @@ tiup mirror clone <target-dir> [global-version] [flags]
 
     コンポーネントの 1 つのバージョンのみ (すべてのバージョンではない) を複製する場合は、 `--<component>=<version>`使用してこのバージョンを指定します。例:
 
-    -   `tiup mirror clone <target-dir> --tidb v8.1.0`コマンドを実行して、TiDBコンポーネントの v8.1.0 バージョンをクローンします。
-    -   `tiup mirror clone <target-dir> --tidb v8.1.0 --tikv all`コマンドを実行して、TiDBコンポーネントの v8.1.0 バージョンと TiKVコンポーネントのすべてのバージョンを複製します。
-    -   `tiup mirror clone <target-dir> v8.1.0`コマンドを実行して、クラスター内のすべてのコンポーネントの v8.1.0 バージョンを複製します。
+    -   `tiup mirror clone <target-dir> --tidb v8.1.1`コマンドを実行して、TiDBコンポーネントの v8.1.1 バージョンをクローンします。
+    -   `tiup mirror clone <target-dir> --tidb v8.1.1 --tikv all`コマンドを実行して、TiDBコンポーネントの v8.1.1 バージョンと TiKVコンポーネントのすべてのバージョンを複製します。
+    -   `tiup mirror clone <target-dir> v8.1.1`コマンドを実行して、クラスター内のすべてのコンポーネントの v8.1.1 バージョンを複製します。
 
 クローン作成後、署名キーが自動的に設定されます。
 
 ### プライベートリポジトリを管理する {#manage-the-private-repository}
 
-`tiup mirror clone`を使用してクローンされたリポジトリは、SCP、NFS 経由でファイルを共有するか、HTTP または HTTPS プロトコル経由でリポジトリを利用できるようにすることで、ホスト間で共有できます`tiup mirror set <location>`を使用してリポジトリの場所を指定します。
+`tiup mirror clone`使用してクローンされたリポジトリは、SCP、NFS 経由でファイルを共有するか、HTTP または HTTPS プロトコル経由でリポジトリを利用できるようにすることで、ホスト間で共有できます`tiup mirror set <location>`使用してリポジトリの場所を指定します。
 
 ```bash
 tiup mirror set /shared_data/tiup
@@ -102,16 +102,16 @@ tiup mirror set https://tiup-mirror.example.com/
 
 > **注記：**
 >
-> `tiup mirror clone`を実行したマシンで`tiup mirror set...`実行した場合、次に`tiup mirror clone...`実行すると、マシンはリモート ミラーではなくローカル ミラーからクローンを作成します。したがって、プライベート ミラーを更新する前に`tiup mirror set --reset`実行してミラーをリセットする必要があります。
+> `tiup mirror clone`実行したマシンで`tiup mirror set...`実行した場合、次に`tiup mirror clone...`実行すると、マシンはリモート ミラーではなくローカル ミラーからクローンを作成します。したがって、プライベート ミラーを更新する前に`tiup mirror set --reset`を実行してミラーをリセットする必要があります。
 
-ミラーを使用する別の方法は、 `TIUP_MIRRORS`環境変数を使用することです。プライベート リポジトリで`tiup list`を実行する例を次に示します。
+ミラーを使用する別の方法は、 `TIUP_MIRRORS`環境変数を使用することです。以下は、プライベート リポジトリで`tiup list`を実行する例です。
 
 ```bash
 export TIUP_MIRRORS=/shared_data/tiup
 tiup list
 ```
 
-`TIUP_MIRRORS`設定により、ミラー構成を永続的に変更できます (例: `tiup mirror set` 。詳細については、 [ティアップ号 #651](https://github.com/pingcap/tiup/issues/651)を参照してください。
+`TIUP_MIRRORS`設定により、ミラー構成を永続的に変更できます (例: `tiup mirror set` )。詳細については、 [ティアップ号 #651](https://github.com/pingcap/tiup/issues/651)参照してください。
 
 ### プライベートリポジトリを更新する {#update-the-private-repository}
 
@@ -125,7 +125,7 @@ tiup list
 
 自分で構築した TiDB、TiKV、PD などの TiDB コンポーネントを操作するためのカスタム リポジトリを作成できます。独自の tiup コンポーネントを作成することも可能です。
 
-独自のコンポーネントを作成するには、 `tiup package`コマンドを実行し、 [コンポーネントのパッケージ](https://github.com/pingcap/tiup/blob/master/doc/user/package.md)の指示に従って実行します。
+独自のコンポーネントを作成するには、 `tiup package`コマンドを実行し、 [コンポーネントのパッケージ](https://github.com/pingcap/tiup/blob/master/doc/user/package.md)指示に従って実行します。
 
 ### カスタムリポジトリを作成する {#create-a-custom-repository}
 
@@ -166,7 +166,7 @@ tiup mirror grant jdoe
     $ tiup package hello --entry hello --name hello --release v0.0.1
     ```
 
-    `package/hello-v0.0.1-linux-amd64.tar.gz`が作成されます。
+    `package/hello-v0.0.1-linux-amd64.tar.gz`作成されます。
 
 2.  リポジトリと秘密鍵を作成し、リポジトリに所有権を付与します。
 

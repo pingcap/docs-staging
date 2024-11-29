@@ -5,11 +5,11 @@ summary: バイナリ パッケージを使用して DM クラスターを迅速
 
 # TiDB データ移行のクイック スタート ガイド {#quick-start-guide-for-tidb-data-migration}
 
-このドキュメントでは、 [TiDB データ移行 (DM)](/dm/dm-overview.md)使用して MySQL から TiDB にデータを移行する方法について説明します。このガイドは DM 機能の簡単なデモであり、本番環境での使用は推奨されません。
+このドキュメントでは、 [TiDB データ移行 (DM)](/dm/dm-overview.md)使用して MySQL から TiDB にデータを移行する方法について説明します。このガイドは DM 機能の簡単なデモであり、実本番環境での使用は推奨されません。
 
 ## ステップ1: DMクラスターをデプロイ {#step-1-deploy-a-dm-cluster}
 
-1.  TiUPをインストールし、 TiUP を使用して[`dmctl`](/dm/dmctl-introduction.md)インストールします。
+1.  TiUPをインストールし、 TiUPを使用して[`dmctl`](/dm/dmctl-introduction.md)インストールします。
 
     ```shell
     curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
@@ -20,7 +20,7 @@ summary: バイナリ パッケージを使用して DM クラスターを迅速
 
         tiup dm template
 
-3.  出力内の構成情報をコピーし、変更された IP アドレスを含む`topology.yaml`ファイルとして保存します。TiUPを使用して`topology.yaml`ファイルで DM クラスターをデプロイ。
+3.  出力内の構成情報をコピーし、変更された IP アドレスを含む`topology.yaml`のファイルとして保存します。TiUPを使用して`topology.yaml`ファイルで DM クラスターをデプロイ。
 
     ```shell
     tiup dm deploy dm-test 6.0.0 topology.yaml -p

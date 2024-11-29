@@ -1,18 +1,18 @@
 ---
-title: TiDB Cloud Introduction
+title: What is TiDB Cloud
 summary: TiDB Cloudとそのアーキテクチャについて学びます。
 category: intro
 ---
 
-# TiDB Cloudの紹介 {#tidb-cloud-introduction}
+# TiDB Cloudとは {#what-is-tidb-cloud}
 
-[TiDB Cloud](https://www.pingcap.com/tidb-cloud/) 、オープンソースのハイブリッド トランザクションおよび分析処理 (HTAP) データベースである[ティビ](https://docs.pingcap.com/tidb/stable/overview)クラウドに提供する、フルマネージドの Database-as-a-Service (DBaaS) です。TiDB TiDB Cloud は、データベースの複雑な部分ではなく、アプリケーションに集中できるように、データベースを簡単に導入および管理する方法を提供します。TiDB TiDB Cloudクラスターを作成して、Google Cloud と Amazon Web Services (AWS) でミッション クリティカルなアプリケーションを迅速に構築できます。
+[TiDB Cloud](https://www.pingcap.com/tidb-cloud/)は、オープンソースのハイブリッド トランザクションおよび分析処理 (HTAP) データベースである[ティビ](https://docs.pingcap.com/tidb/stable/overview)クラウドに提供する、フルマネージドの Database-as-a-Service (DBaaS) です。TiDB TiDB Cloud は、データベースの複雑な部分ではなく、アプリケーションに集中できるように、データベースを簡単に導入および管理する方法を提供します。TiDB TiDB Cloudクラスターを作成して、Google Cloud と Amazon Web Services (AWS) でミッション クリティカルなアプリケーションを迅速に構築できます。
 
 ![TiDB Cloud Overview](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-overview.png)
 
-## TiDB Cloud理由 {#why-tidb-cloud}
+## TiDB Cloudを選ぶ理由 {#why-tidb-cloud}
 
-TiDB Cloudと、ほとんどまたはまったくトレーニングを受けなくても、インフラストラクチャ管理やクラスターの展開などの複雑なタスクを簡単に処理できます。
+TiDB Cloud を使用すると、ほとんどまたはまったくトレーニングを受けなくても、インフラストラクチャ管理やクラスターの展開などの複雑なタスクを簡単に処理できます。
 
 -   開発者とデータベース管理者 (DBA) は、大量のオンライン トラフィックを簡単に処理し、複数のデータセットにわたる大量のデータを迅速に分析できます。
 
@@ -22,7 +22,7 @@ TiDB Cloudの詳細については、次のビデオをご覧ください。
 
 <iframe width="600" height="450" src="https://www.youtube.com/embed/skCV9BEmjbo?enablejsapi=1" title="TiDB Cloud を選ぶ理由" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-TiDB Cloudを使用すると、次の主な機能を利用できます。
+TiDB Cloud を使用すると、次の主な機能を利用できます。
 
 -   **高速かつカスタマイズされたスケーリング**
 
@@ -42,7 +42,7 @@ TiDB Cloudを使用すると、次の主な機能を利用できます。
 
 -   **エンタープライズグレードのSecurity**
 
-    専用ネットワークとマシンでデータをセキュリティ。転送中と保存中の両方の暗号化をサポートします。TiDB TiDB Cloud は、SOC 2 タイプ 2、ISO 27001:2013、ISO 27701 の認定を受けており、GDPR に完全に準拠しています。
+    転送中と保存中の両方の暗号化をサポートし、専用ネットワークとマシンでデータをセキュリティ。TiDB TiDB Cloud は、SOC 2 タイプ 2、ISO 27001:2013、ISO 27701 の認定を受けており、GDPR に完全に準拠しています。
 
 -   **フルマネージドサービス**
 
@@ -64,15 +64,15 @@ TiDB Cloudを使用すると、次の主な機能を利用できます。
 
 TiDB Cloud、次の 2 つのデプロイメント オプションが提供されます。
 
--   [TiDB サーバーレス](https://www.pingcap.com/tidb-serverless)
+-   [TiDB Cloudサーバーレス](https://www.pingcap.com/tidb-serverless)
 
-    TiDB Serverless は、完全に管理されたマルチテナントの TiDB サービスです。瞬時に自動スケーリングされる MySQL 互換データベースを提供し、十分な無料利用枠と、無料制限を超えた場合の使用量に基づく課金を提供します。
+    TiDB Cloud Serverless は、完全に管理されたマルチテナントの TiDB サービスです。瞬時に自動スケーリングされる MySQL 互換データベースを提供し、十分な無料利用枠と、無料制限を超えた場合の使用量に基づく課金を提供します。
 
--   [TiDB専用](https://www.pingcap.com/tidb-dedicated)
+-   [TiDB Cloud専用](https://www.pingcap.com/tidb-dedicated)
 
-    TiDB Dedicated は、クロスゾーンの高可用性、水平スケーリング、および[HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing)利点を備えた本番向けです。
+    TiDB Cloud Dedicated は、クロスゾーンの高可用性、水平スケーリング、および[HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing)利点を備えた本番環境向けです。
 
-TiDB Serverless と TiDB Dedicated の機能比較については、 [TiDB: 高度なオープンソースの分散SQLデータベース](https://www.pingcap.com/get-started-tidb)参照してください。
+TiDB Cloud Serverless とTiDB Cloud Dedicated の機能比較については、 [TiDB: 高度なオープンソースの分散SQLデータベース](https://www.pingcap.com/get-started-tidb)参照してください。
 
 ## アーキテクチャ {#architecture}
 
@@ -80,7 +80,7 @@ TiDB Serverless と TiDB Dedicated の機能比較については、 [TiDB: 高�
 
 -   TiDB VPC (仮想プライベートクラウド)
 
-    各TiDB Cloudクラスターでは、 TiDB Operatorノードとログ ノードを含むすべての TiDB ノードと補助ノードが独立した VPC にデプロイされます。
+    各TiDB Cloudクラスターでは、 TiDB Operatorノードとログ ノードを含むすべての TiDB ノードと補助ノードが同じ VPC にデプロイされます。
 
 -   TiDB Cloudセントラル サービス
 

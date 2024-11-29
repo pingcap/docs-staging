@@ -9,7 +9,7 @@ summary: TiDB Binlogで使用される用語を学習します。
 
 ## Binlog {#binlog}
 
-TiDB Binlogでは、binlog は TiDB からのバイナリ ログ データを指します。また、 Drainerが Kafka またはファイルに書き込むバイナリ ログ データも指します。前者と後者は形式が異なります。また、TiDB の binlog と MySQL の binlog も形式が異なります。
+TiDB Binlogでは、binlog は TiDB からのバイナリ ログ データを指します。また、 Drainer がKafka またはファイルに書き込むバイナリ ログ データも指します。前者と後者は形式が異なります。また、TiDB の binlog と MySQL の binlog も形式が異なります。
 
 ## Binlogイベント {#binlog-event}
 
@@ -23,4 +23,4 @@ Drainerからの DML バイナリログには、 `INSERT` 、 `UPDATE` 、 `DELE
 
 セーフ モードとは、増分レプリケーション タスクのテーブル スキーマに主キーまたは一意のインデックスが存在する場合に、DML のべき等インポートをサポートするモードを指します。
 
-このモードでは、 `INSERT`ステートメントは`REPLACE`に、 `UPDATE`ステートメントは`DELETE`と`REPLACE`に書き換えられ、書き換えられたステートメントが下流に実行されます。セーフ モードは、 Drainer の起動後 5 分以内に自動的に有効になります。設定ファイルの`safe-mode`パラメータを変更することで、このモードを手動で有効にできますが、この設定は下流が MySQL または TiDB の場合にのみ有効です。
+このモードでは、 `INSERT`ステートメントは`REPLACE`に、 `UPDATE`ステートメントは`DELETE`と`REPLACE`に書き換えられ、書き換えられたステートメントが下流に実行されます。セーフ モードは、 Drainerの起動後 5 分以内に自動的に有効になります。設定ファイルの`safe-mode`パラメータを変更することで、このモードを手動で有効にできますが、この設定は下流が MySQL または TiDB の場合にのみ有効です。

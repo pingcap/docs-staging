@@ -1,6 +1,6 @@
 ---
 title: TiDB 5.0.1 Release Notes
-summary: TiDB 5.0.1 は 2021 年 4 月 24 日にリリースされました。`committer-concurrency` のデフォルト値が 128 に変更されました。TiDB、TiKV、PD、 TiFlash、およびツールにさまざまなバグ修正と改善が行われました。たとえば、TiDB ではクエリ結果とパフォーマンスの低下に関する問題が修正され、TiKV ではコプロセッサと起動エラーに関する問題が修正されました。TiDB TiDB Lightningや Backup & Restore などのツールにもバグ修正が行われました。
+summary: TiDB 5.0.1 は 2021 年 4 月 24 日にリリースされました。committer-concurrency` のデフォルト値が 128 に変更されました。TiDB、TiKV、PD、 TiFlash、およびツールにさまざまなバグ修正と改善が行われました。たとえば、TiDB ではクエリ結果とパフォーマンスの低下に関する問題が修正され、TiKV ではコプロセッサと起動エラーに関する問題が修正されました。TiDB TiDB Lightningや Backup & Restore などのツールにもバグ修正が行われました。
 ---
 
 # TiDB 5.0.1 リリースノート {#tidb-5-0-1-release-notes}
@@ -21,11 +21,11 @@ TiDB バージョン: 5.0.1
 
 -   ティクヴ
 
-    -   `zstd`使用してリージョンスナップショット[＃10005](https://github.com/tikv/tikv/pull/10005)を圧縮します
+    -   `zstd`使用してリージョンスナップショット[＃10005](https://github.com/tikv/tikv/pull/10005)圧縮します
 
 -   PD
 
-    -   異性体ストア[＃3605](https://github.com/pingcap/pd/pull/3605)より適切に満たすようにリージョンスコア計算機を修正する
+    -   異性体ストア[＃3605](https://github.com/pingcap/pd/pull/3605)をより適切に満たすようにリージョンスコア計算機を修正する
     -   `scatter region`スケジューラ[＃3602](https://github.com/pingcap/pd/pull/3602)を追加した後の予期しない統計を回避する
 
 -   ツール
@@ -34,7 +34,7 @@ TiDB バージョン: 5.0.1
 
         -   概要ログから誤解を招く情報を削除する[＃1009](https://github.com/pingcap/br/pull/1009)
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -62,14 +62,14 @@ TiDB バージョン: 5.0.1
 
 -   TiFlash
 
-    -   storageエンジンが一部の範囲のデータの削除に失敗する問題を修正しました
+    -   storageエンジンが一部の範囲のデータを削除できない問題を修正
     -   時間型を整数型にキャストしたときに誤った結果が返される問題を修正しました
-    -   10秒以内に対応するタスクが見つから`receiver`バグを修正
+    -   10秒以内に対応する`receiver`が見つからないバグを修正
     -   `cancelMPPQuery`に無効なイテレータが存在する可能性がある問題を修正
     -   `bitwise`演算子の動作がTiDBと異なるバグを修正
     -   `prefix key`使用時に範囲が重複することで発生するアラート問題を修正
     -   文字列型を整数型にキャストしたときに誤った結果が返される問題を修正しました
-    -   連続した高速書き込みによりTiFlash のメモリが不足する可能性がある問題を修正しました。
+    -   連続した高速書き込みによりTiFlash のメモリが不足する問題を修正
     -   重複した列名によりTiFlashがエラーを起こす問題を修正
     -   TiFlashがMPPプランを解析できない問題を修正
     -   テーブルGC中にヌルポインタの例外が発生する可能性がある問題を修正しました。

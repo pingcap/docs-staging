@@ -53,11 +53,11 @@ mysql> SELECT * FROM t1;
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`DELETE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`DELETE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 
 -   [入れる](/sql-statements/sql-statement-insert.md)
--   [選択する](/sql-statements/sql-statement-select.md)
+-   [選択](/sql-statements/sql-statement-select.md)
 -   [アップデート](/sql-statements/sql-statement-update.md)
 -   [交換する](/sql-statements/sql-statement-replace.md)

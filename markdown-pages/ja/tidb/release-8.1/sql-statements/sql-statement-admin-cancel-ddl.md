@@ -13,8 +13,8 @@ category: reference
 ## 概要 {#synopsis}
 
 ```ebnf+diagram
-AdminStmt ::=
-    'ADMIN' ( 'SHOW' ( 'DDL' ( 'JOBS' Int64Num? WhereClauseOptional | 'JOB' 'QUERIES' NumList )? | TableName 'NEXT_ROW_ID' | 'SLOW' AdminShowSlow ) | 'CHECK' ( 'TABLE' TableNameList | 'INDEX' TableName Identifier ( HandleRange ( ',' HandleRange )* )? ) | 'RECOVER' 'INDEX' TableName Identifier | 'CLEANUP' ( 'INDEX' TableName Identifier | 'TABLE' 'LOCK' TableNameList ) | 'CHECKSUM' 'TABLE' TableNameList | 'CANCEL' 'DDL' 'JOBS' NumList | 'RELOAD' ( 'EXPR_PUSHDOWN_BLACKLIST' | 'OPT_RULE_BLACKLIST' | 'BINDINGS' ) | 'PLUGINS' ( 'ENABLE' | 'DISABLE' ) PluginNameList | 'REPAIR' 'TABLE' TableName CreateTableStmt | ( 'FLUSH' | 'CAPTURE' | 'EVOLVE' ) 'BINDINGS' )
+AdminCancelDDLStmt ::=
+    'ADMIN' 'CANCEL' 'DDL' 'JOBS' NumList 
 
 NumList ::=
     Int64Num ( ',' Int64Num )*
@@ -33,7 +33,7 @@ ADMIN CANCEL DDL JOBS job_id [, job_id] ...;
 > **注記：**
 >
 > -   v6.2.0 より前では、この操作のみが DDL ジョブをキャンセルでき、他のすべての操作や環境変更 (マシンの再起動やクラスターの再起動など) ではこれらのジョブをキャンセルできませんでした。v6.2.0 以降では、 [`KILL`](/sql-statements/sql-statement-kill.md)ステートメントを使用して、進行中の DDL ジョブを強制終了してキャンセルすることもできます。
-> -   この操作では、複数の DDL ジョブを同時にキャンセルできます。1 ステートメントを使用して[`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md) DDL ジョブの ID を取得できます。
+> -   この操作では、複数の DDL ジョブを同時にキャンセルできます。1 ステートメントを使用して、DDL ジョブの ID [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)取得できます。
 > -   キャンセルするジョブが完了している場合、キャンセル操作は失敗します。
 
 ## MySQL 互換性 {#mysql-compatibility}

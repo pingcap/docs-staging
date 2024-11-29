@@ -3,7 +3,7 @@ title: SET PASSWORD | TiDB SQL Statement Reference
 summary: TiDB データベースの SET PASSWORD の使用法の概要。
 ---
 
-# パスワードを設定してください {#set-password}
+# パスワードを設定する {#set-password}
 
 このステートメントは、TiDB システム データベース内のユーザー アカウントのユーザー パスワードを変更します。
 
@@ -56,7 +56,7 @@ mysql> SHOW CREATE USER 'newuser';
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SET PASSWORD`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`SET PASSWORD`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 

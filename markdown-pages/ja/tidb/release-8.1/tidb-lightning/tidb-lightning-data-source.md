@@ -11,7 +11,7 @@ TiDB Lightningのデータ ソースを指定するには、次の構成を使�
 
 ```toml
 [mydumper]
-# Local source data directory or the URI of the external storage such as S3. For more information about the URI of the external storage, see https://docs.pingcap.com/tidb/v6.6/backup-and-restore-storages#uri-format.
+# Local source data directory or the URI of the external storage such as S3. For more information about the URI of the external storage, see https://docs.pingcap.com/tidb/v8.1/backup-and-restore-storages#uri-format.
 data-source-dir = "/data/my_database"
 ```
 
@@ -25,7 +25,7 @@ TiDB Lightningが実行されると、 `data-source-dir`のパターンに一致
 | データファイル  | テーブルのデータが複数のデータファイルに分割されている場合、各データファイルのファイル名には数字の接尾辞を付ける必要があります。                                                                                                                                  | `${db_name}.${table_name}.001.${csv|sql|parquet}`        |
 | 圧縮ファイル   | ファイルに`gzip` 、 `snappy` 、 `zstd`などの圧縮サフィックスが含まれている場合、 TiDB Lightning はインポートする前にファイルを解凍します。Snappy 圧縮ファイルは[公式Snappyフォーマット](https://github.com/google/snappy)である必要があります。その他の Snappy 圧縮形式はサポートされていません。 | `${db_name}.${table_name}.${csv|sql|parquet}.{compress}` |
 
-TiDB Lightning は、可能な限りデータを並列処理します。ファイルは順番に読み取る必要があるため、データ処理の同時実行はファイル レベル ( `region-concurrency`で制御) になります。そのため、インポートされたファイルが大きい場合、インポートのパフォーマンスが低下します。最高のパフォーマンスを実現するには、インポートされたファイルのサイズを 256 MiB 以下に制限することをお勧めします。
+TiDB Lightning は、可能な限りデータを並列処理します。ファイルは順番に読み取る必要があるため、データ処理の同時実行はファイル レベル ( `region-concurrency`で制御) になります。したがって、インポートされたファイルが大きい場合、インポートのパフォーマンスが低下します。最高のパフォーマンスを実現するには、インポートされたファイルのサイズを 256 MiB 以下に制限することをお勧めします。
 
 ## データベースとテーブルの名前を変更する {#rename-databases-and-tables}
 
@@ -45,14 +45,14 @@ rename srcdb. tgtdb. *.sql
 
 ### 正規表現を使用してオンラインで名前を置換する {#use-regular-expressions-to-replace-names-online}
 
-正規表現を使用してオンラインで名前を置き換えるには、 `[[mydumper.files]]`内の`pattern`構成を使用してファイル名を一致させ、 `schema`と`table`を希望の名前に置き換えます。詳細については、 [カスタマイズされたファイルを一致させる](#match-customized-files)を参照してください。
+正規表現を使用してオンラインで名前を置き換えるには、 `[[mydumper.files]]`内の`pattern`構成を使用してファイル名を一致させ、 `schema`と`table`希望の名前に置き換えます。詳細については、 [カスタマイズされたファイルを一致させる](#match-customized-files)参照してください。
 
 以下は、正規表現を使用してオンラインで名前を置き換える例です。この例では、
 
 -   データファイル`pattern`の一致ルールは`^({schema_regrex})\.({table_regrex})\.({file_serial_regrex})\.(csv|parquet|sql)`です。
 -   `schema` `'$1'`として指定します。これは、最初の正規表現`schema_regrex`の値が変更されないことを意味します。または、 `schema` `'tgtdb'`などの文字列として指定します。これは、固定のターゲット データベース名を意味します。
 -   `table` `'$2'`として指定します。これは、2 番目の正規表現`table_regrex`の値が変更されないことを意味します。または、 `table` `'t1'`などの文字列として指定します。これは、固定のターゲット テーブル名を意味します。
--   `type` `'$3'`として指定します。これはデータ ファイルの種類を意味します。5 `type` `"table-schema"` ( `schema.sql`ファイルを表す) または`"schema-schema"` ( `schema-create.sql`ファイルを表す) として指定できます。
+-   `type` `'$3'`として指定します。これはデータ ファイルの種類`"schema-schema"` `type` `schema.sql` `"table-schema"` `schema-create.sql`表す) として指定できます。
 
 ```toml
 [mydumper]
@@ -137,9 +137,9 @@ backslash-escape = true
 trim-last-separator = false
 ```
 
-`separator` 、 `delimiter` 、 `terminator`などの文字列フィールドの入力に特殊文字が含まれる場合は、バックスラッシュを使用して特殊文字をエスケープできます。エスケープ シーケンスは*二重引用符で囲まれた*文字列 ( `"…"` ) である必要があります。たとえば、 `separator = "\u001f"` 、区切り文字として ASCII 文字`0X1F`を使用することを意味します。
+`separator` 、 `delimiter` 、 `terminator`などの文字列フィールドの入力に特殊文字が含まれる場合は、バックスラッシュを使用して特殊文字をエスケープできます。エスケープ シーケンスは*二重引用符で囲まれた*文字列 ( `"…"` ) である必要があります。たとえば、 `separator = "\u001f"`区切り文字として ASCII 文字`0X1F`使用することを意味します。
 
-*一重引用符で囲まれた*文字列 ( `'…'` ) を使用すると、バックスラッシュのエスケープを抑制できます。たとえば、 `terminator = '\n'` 、 LF `\n`ではなく、バックスラッシュ ( `\` ) と文字`n`の 2 文字の文字列を終端文字として使用することを意味します。
+*一重引用符で囲まれた*文字列 ( `'…'` ) を使用すると、バックスラッシュのエスケープを抑制できます。たとえば、 `terminator = '\n'` 、 LF `\n`ではなく、バックスラッシュ ( `\` ) と文字`n`の 2 文字の文字列を終端として使用することを意味します。
 
 詳細については[TOML v1.0.0仕様](https://toml.io/en/v1.0.0#string)参照してください。
 
@@ -168,18 +168,18 @@ trim-last-separator = false
     -   `'"'`フィールドを二重引用符で囲みます。 [RFC 4180](https://tools.ietf.org/html/rfc4180)と同じです。
     -   `''`引用を無効にします。
 
--   `LOAD DATA`のステートメントの`FIELDS ENCLOSED BY`オプションに対応します。
+-   `LOAD DATA`ステートメントの`FIELDS ENCLOSED BY`オプションに対応します。
 
 #### <code>terminator</code> {#code-terminator-code}
 
 -   行末記号を定義します。
--   `terminator`空の場合、 `"\n"` (改行) と`"\r\n"` (復帰 + 改行) の両方が行末文字として使用されます。
--   `LOAD DATA`のステートメントの`LINES TERMINATED BY`オプションに対応します。
+-   `terminator`が空の場合、 `"\n"` (改行) と`"\r\n"` (復帰 + 改行) の両方が行末文字として使用されます。
+-   `LOAD DATA`ステートメントの`LINES TERMINATED BY`オプションに対応します。
 
 #### <code>header</code> {#code-header-code}
 
 -   *すべての*CSV ファイルにヘッダー行が含まれているかどうか。
--   `header`が`true`の場合、最初の行は*列名*として使用されます。 `header`が`false`の場合、最初の行は通常のデータ行として扱われます。
+-   `header`が`true`場合、最初の行は*列名*として使用されます。 `header`が`false`場合、最初の行は通常のデータ行として扱われます。
 
 #### <code>not-null</code>と<code>null</code> {#code-not-null-code-and-code-null-code}
 
@@ -194,7 +194,7 @@ trim-last-separator = false
     \N,"\N",
     ```
 
-    デフォルト設定（ `not-null = false; null = '\N'` ）では、列`A`と`B`はTiDBにインポートされた後、両方ともNULLに変換されます。列`C`は空の文字列`''`ですが、NULLではありません。
+    デフォルト設定（ `not-null = false; null = '\N'` ）では、列`A`と`B` TiDBにインポートされた後、両方ともNULLに変換されます。列`C`は空の文字列`''`ですが、NULLではありません。
 
 #### <code>backslash-escape</code> {#code-backslash-escape-code}
 
@@ -202,7 +202,7 @@ trim-last-separator = false
 
 -   `backslash-escape`が真の場合、次のシーケンスが認識され、変換されます。
 
-    | シーケンス | に変換                    |
+    | シーケンス | 変換された                  |
     | ----- | ---------------------- |
     | `\0`  | ヌル文字 ( `U+0000` )      |
     | `\b`  | バックスペース ( `U+0008` )   |
@@ -211,11 +211,11 @@ trim-last-separator = false
     | `\t`  | タブ ( `U+0009` )        |
     | `\Z`  | ウィンドウズEOF ( `U+001A` ) |
 
-    それ以外の場合（たとえば、 `\"` ）、バックスラッシュは削除され、フィールドに次の文字（ `"` ）が残ります。残された文字には特別な役割（たとえば、区切り文字）はなく、通常の文字です。
+    その他の場合（たとえば、 `\"` ）は、バックスラッシュが削除され、フィールドに次の文字（ `"` ）が残ります。残った文字には特別な役割（たとえば、区切り文字）はなく、通常の文字です。
 
 -   引用符で囲んでも、バックスラッシュがエスケープ文字として解析されるかどうかには影響しません。
 
--   `LOAD DATA`のステートメントの`FIELDS ESCAPED BY '\'`オプションに対応します。
+-   `LOAD DATA`ステートメントの`FIELDS ESCAPED BY '\'`オプションに対応します。
 
 #### <code>trim-last-separator</code> {#code-trim-last-separator-code}
 
@@ -227,8 +227,8 @@ trim-last-separator = false
     A,,B,,
     ```
 
-    -   `trim-last-separator = false`場合、これは 5 つのフィールド`('A', '', 'B', '', '')`の行として解釈されます。
-    -   `trim-last-separator = true`場合、これは 3 つのフィールド`('A', '', 'B')`の行として解釈されます。
+    -   `trim-last-separator = false`の場合、これは 5 つのフィールド`('A', '', 'B', '', '')`の行として解釈されます。
+    -   `trim-last-separator = true`の場合、これは 3 つのフィールド`('A', '', 'B')`の行として解釈されます。
 
 -   このオプションは非推奨です。代わりに`terminator`オプションを使用してください。
 
@@ -255,7 +255,7 @@ TiDB Lightning は、 `LOAD DATA`ステートメントでサポートされて�
 
 ### 厳格なフォーマット {#strict-format}
 
-TiDB Lightning は、入力ファイルのサイズが 256 MiB 程度に均一である場合に最も効果的に機能します。入力が 1 つの巨大な CSV ファイルである場合、 TiDB Lightning は1 つのスレッドでしかファイルを処理できないため、インポート速度が低下します。
+TiDB Lightning は、入力ファイルのサイズが 256 MiB 前後の均一な場合に最適に機能します。入力が 1 つの巨大な CSV ファイルである場合、 TiDB Lightning は1 つのスレッドでしかファイルを処理できないため、インポート速度が低下します。
 
 これは、最初に CSV を複数のファイルに分割することで修正できます。一般的な CSV 形式では、ファイル全体を読み取らずに行の開始位置や終了位置をすばやく特定する方法はありません。そのため、 TiDB Lightning はデフォルトで CSV ファイルを自動的に分割しませ*ん*。ただし、CSV 入力が特定の制限に準拠していることが確実な場合は、 `strict-format`設定を有効にして、 TiDB Lightning がファイルを複数の 256 MiB サイズのチャンクに分割し、並列処理できるようにすることができます。
 
@@ -269,7 +269,7 @@ strict-format = true
 -   区切り文字が空です。
 -   各フィールドにはターミネータ自体は含まれません。デフォルト設定では、各フィールドに CR ( `\r` ) または LF ( `\n` ) が含まれないことを意味します。
 
-CSV ファイルが厳密ではなく、 `strict-format`誤って`true`に設定されている場合、複数行にまたがるフィールドが 2 つのチャンクに分割され、解析エラーが発生したり、破損したデータが黙ってインポートされたりする可能性があります。
+CSV ファイルが厳密ではなく、 `strict-format`が誤って`true`に設定されている場合、複数行にまたがるフィールドが 2 つのチャンクに分割され、解析エラーが発生したり、破損したデータが黙ってインポートされたりする可能性があります。
 
 ### 一般的な構成例 {#common-configuration-examples}
 
@@ -362,7 +362,7 @@ TiDB Lightning は現在、 Dumplingによってエクスポートされた圧�
 > -   TiDB Lightning は1 つの大きな圧縮ファイルを同時に解凍できないため、圧縮ファイルのサイズがインポート速度に影響します。解凍後のソース ファイルは 256 MiB 以下にすることをお勧めします。
 > -   TiDB Lightning は個別に圧縮されたデータ ファイルのみをインポートし、複数のデータ ファイルが含まれる単一の圧縮ファイルのインポートはサポートしていません。
 > -   TiDB Lightning は、 `db.table.parquet.snappy`などの別の圧縮ツールで圧縮された`parquet`ファイルをサポートしていません。 `parquet`ファイルを圧縮する場合は、 `parquet`ファイル ライターの圧縮形式を設定できます。
-> -   TiDB Lightning v6.4.0 以降のバージョンでは、次の圧縮データ ファイルのみがサポートされています: `gzip` 、 `snappy` 、および`zstd` 。その他の種類のファイルではエラーが発生します。ソース データ ファイルが格納されているディレクトリにサポートされていない圧縮ファイルが存在する場合、タスクによってエラーが報告されます。このようなエラーを回避するには、サポートされていないファイルをインポート データ ディレクトリから移動します。
+> -   TiDB Lightning v6.4.0 以降のバージョンでは、次の圧縮データ ファイルのみがサポートされています: `gzip` 、 `snappy` 、および`zstd` 。その他の種類のファイルではエラーが発生します。ソース データ ファイルが保存されているディレクトリにサポートされていない圧縮ファイルが存在する場合、タスクによってエラーが報告されます。このようなエラーを回避するには、サポートされていないファイルをインポート データ ディレクトリから移動します。
 > -   Snappy 圧縮ファイルは[公式Snappyフォーマット](https://github.com/google/snappy)である必要があります。Snappy 圧縮の他のバリエーションはサポートされていません。
 
 ## カスタマイズされたファイルを一致させる {#match-customized-files}
@@ -377,7 +377,7 @@ S3 にエクスポートされたAuroraスナップショットを例に挙げ�
 
 前述の Parquet ファイル パスに基づいて、 `(?i)^(?:[^/]*/)*([a-z0-9\-_]+).([a-z0-9\-_]+)/(?:[^/]*/)*(?:[a-z0-9\-_.]+\.(parquet))$`ような正規表現を記述してファイルを一致させることができます。一致グループでは、 `index=1`は`some-database` 、 `index=2`は`some-table` 、 `index=3`は`parquet`です。
 
-デフォルトの命名規則に従わないデータ ファイルをTiDB Lightningが認識できるように、正規表現と対応するインデックスに従って構成ファイルを記述できます。例:
+デフォルトの命名規則に従わないデータ ファイルをTiDB Lightning が認識できるように、正規表現と対応するインデックスに従って構成ファイルを記述できます。例:
 
 ```toml
 [[mydumper.files]]
@@ -389,19 +389,19 @@ type = '$3'
 ```
 
 -   **schema** : ターゲット データベースの名前。値は次のとおりです。
-    -   正規表現を使用して取得されたグループ インデックス (例: `$1` 。
-    -   インポートするデータベースの名前 (例: `db1` 。一致したすべてのファイルは`db1`にインポートされます。
+    -   正規表現を使用して取得されたグループ インデックス (例: `$1` )。
+    -   インポートするデータベースの名前 (例: `db1` )。一致したファイルはすべて`db1`にインポートされます。
 -   **table** : 対象テーブルの名前。値は次のとおりです。
-    -   正規表現を使用して取得されたグループ インデックス (例: `$2` 。
-    -   インポートするテーブルの名前 (例: `table1` 。一致したすべてのファイルは`table1`にインポートされます。
+    -   正規表現を使用して取得されたグループ インデックス (例: `$2` )。
+    -   インポートするテーブルの名前 (例: `table1` )。一致したすべてのファイルは`table1`にインポートされます。
 -   **type** : ファイルの種類。 `sql` 、 `parquet` 、 `csv`をサポートします。値は次のとおりです。
-    -   正規表現を使用して取得されたグループ インデックス (例: `$3` 。
+    -   正規表現を使用して取得されたグループ インデックス (例: `$3` )。
 -   **key** : ファイル番号（例: `${db_name}.${table_name}.001.csv`の`001`など）。
-    -   正規表現を使用して取得されたグループ インデックス (例: `$4` 。
+    -   正規表現を使用して取得されたグループ インデックス (例: `$4` )。
 
 ## Amazon S3からデータをインポートする {#import-data-from-amazon-s3}
 
-次の例は、 TiDB Lightningを使用して Amazon S3 からデータをインポートする方法を示しています。詳細なパラメータ設定については、 [外部ストレージサービスの URI 形式](/external-storage-uri.md)参照してください。
+次の例は、 TiDB Lightning を使用して Amazon S3 からデータをインポートする方法を示しています。詳細なパラメータ設定については、 [外部ストレージサービスの URI 形式](/external-storage-uri.md)参照してください。
 
 -   ローカルに設定された権限を使用して S3 データにアクセスします。
 

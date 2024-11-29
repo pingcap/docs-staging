@@ -12,8 +12,8 @@ summary: TiDB データベースの ADMIN PAUSE DDL JOBS の使用法の概要�
 ## 概要 {#synopsis}
 
 ```ebnf+diagram
-AdminStmt ::=
-    'ADMIN' ( 'SHOW' ( 'DDL' ( 'JOBS' Int64Num? WhereClauseOptional | 'JOB' 'QUERIES' NumList )? | TableName 'NEXT_ROW_ID' | 'SLOW' AdminShowSlow ) | 'CHECK' ( 'TABLE' TableNameList | 'INDEX' TableName Identifier ( HandleRange ( ',' HandleRange )* )? ) | 'RECOVER' 'INDEX' TableName Identifier | 'CLEANUP' ( 'INDEX' TableName Identifier | 'TABLE' 'LOCK' TableNameList ) | 'CHECKSUM' 'TABLE' TableNameList | 'CANCEL' 'DDL' 'JOBS' NumList | 'PAUSE' 'DDL' 'JOBS' NumList | 'RESUME' 'DDL' 'JOBS' NumList | 'RELOAD' ( 'EXPR_PUSHDOWN_BLACKLIST' | 'OPT_RULE_BLACKLIST' | 'BINDINGS' ) | 'PLUGINS' ( 'ENABLE' | 'DISABLE' ) PluginNameList | 'REPAIR' 'TABLE' TableName CreateTableStmt | ( 'FLUSH' | 'CAPTURE' | 'EVOLVE' ) 'BINDINGS' )
+AdminPauseDDLStmt ::=
+    'ADMIN' 'PAUSE' 'DDL' 'JOBS' NumList 
 
 NumList ::=
     Int64Num ( ',' Int64Num )*
@@ -34,8 +34,8 @@ ADMIN PAUSE DDL JOBS job_id [, job_id] ...;
 > **注記：**
 >
 > -   このステートメントは DDL ジョブを一時停止できますが、他の操作や環境の変更 (マシンの再起動やクラスターの再起動など) では、クラスターのアップグレードを除いて DDL ジョブは一時停止されません。
-> -   クラスターのアップグレード中は、進行中の DDL ジョブが一時停止され、アップグレード中に開始された DDL ジョブも一時停止されます。アップグレード後、一時停止されたすべての DDL ジョブが再開されます。アップグレード中の一時停止および再開操作は自動的に実行されます。詳細については、 [TiDB スムーズアップグレード](/smooth-upgrade-tidb.md)を参照してください。
-> -   このステートメントは[`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)複数の DDL ジョブを一時停止できます。1 ステートメントを使用して、DDL ジョブの`job_id`取得できます。
+> -   クラスターのアップグレード中は、進行中の DDL ジョブが一時停止され、アップグレード中に開始された DDL ジョブも一時停止されます。アップグレード後、一時停止されたすべての DDL ジョブが再開されます。アップグレード中の一時停止および再開操作は自動的に実行されます。詳細については、 [TiDB スムーズアップグレード](/smooth-upgrade-tidb.md)参照してください。
+> -   このステートメントは複数の DDL ジョブを一時停止できます。1 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)を使用して、DDL ジョブの`job_id`取得できます。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
@@ -43,8 +43,8 @@ ADMIN PAUSE DDL JOBS job_id [, job_id] ...;
 > **注記：**
 >
 > -   このステートメントは DDL ジョブを一時停止できますが、他の操作や環境の変更 (マシンの再起動やクラスターの再起動など) では、クラスターのアップグレードを除いて DDL ジョブは一時停止されません。
-> -   クラスターのアップグレード中は、進行中の DDL ジョブが一時停止され、アップグレード中に開始された DDL ジョブも一時停止されます。アップグレード後、一時停止されたすべての DDL ジョブが再開されます。アップグレード中の一時停止および再開操作は自動的に実行されます。詳細については、 [TiDB スムーズアップグレード](https://docs.pingcap.com/tidb/stable/smooth-upgrade-tidb)を参照してください。
-> -   このステートメントは[`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)複数の DDL ジョブを一時停止できます。1 ステートメントを使用して、DDL ジョブの`job_id`取得できます。
+> -   クラスターのアップグレード中は、進行中の DDL ジョブが一時停止され、アップグレード中に開始された DDL ジョブも一時停止されます。アップグレード後、一時停止されたすべての DDL ジョブが再開されます。アップグレード中の一時停止および再開操作は自動的に実行されます。詳細については、 [TiDB スムーズアップグレード](https://docs.pingcap.com/tidb/stable/smooth-upgrade-tidb)参照してください。
+> -   このステートメントは複数の DDL ジョブを一時停止できます。1 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)を使用して、DDL ジョブの`job_id`取得できます。
 
 </CustomContent>
 

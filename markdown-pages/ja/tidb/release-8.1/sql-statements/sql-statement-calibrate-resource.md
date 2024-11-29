@@ -9,7 +9,7 @@ summary: TiDB データベースの CALIBRATE RESOURCE の使用法の概要。
 
 > **注記：**
 >
-> この機能は TiDB Self-Hosted にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> この機能は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 ## 概要 {#synopsis}
 
@@ -28,7 +28,7 @@ WorkloadOption ::=
 
 -   [`tidb_enable_resource_control`](/system-variables.md#tidb_enable_resource_control-new-in-v660)有効にしました。
 -   ユーザーには`SUPER`または`RESOURCE_GROUP_ADMIN`権限があります。
--   ユーザーには、 `METRICS_SCHEMA`スキーマ内のすべてのテーブルに対する`SELECT`権限があります。
+-   [実際の作業負荷に基づいて容量を見積もる](#estimate-capacity-based-on-actual-workload)するには、ユーザーは`METRICS_SCHEMA`スキーマ内のすべてのテーブルに対して`SELECT`権限を持っている必要があります。
 
 ## 容量を推定する方法 {#methods-for-estimating-capacity}
 
@@ -45,7 +45,7 @@ TiDB は推定に 2 つの方法を提供します。
 
 > **注記：**
 >
-> TiKV は macOS 上の CPU 使用率メト​​リックを監視しません。macOS 上の実際のワークロードに基づく容量推定はサポートされていません。
+> TiKV は macOS 上の CPU 使用率メトリックを監視しません。macOS 上の実際のワークロードに基づく容量推定はサポートされていません。
 
 ### ハードウェアの展開に基づいて容量を見積もる {#estimate-capacity-based-on-hardware-deployment}
 
@@ -55,7 +55,7 @@ TiDB は推定に 2 つの方法を提供します。
 -   `OLTP_WRITE_ONLY` : 大量のデータ書き込みを伴うワークロードに適用されます。 `sysbench oltp_write_only`と同様のワークロード モデルに基づいて推定されます。
 -   `OLTP_READ_WRITE` : 偶数データの読み取りと書き込みのワークロードに適用されます。 `sysbench oltp_read_write`と同様のワークロード モデルに基づいて推定されます。
 -   `OLTP_READ_ONLY` : 大量のデータ読み取りが行われるワークロードに適用されます。 `sysbench oltp_read_only`と同様のワークロード モデルに基づいて推定されます。
--   `TPCH_10` : AP クエリに適用されます。2 からの 22 のクエリに基づいて推定されます`TPCH-10G`
+-   `TPCH_10` : AP クエリに適用されます。2 `TPCH-10G`の 22 のクエリに基づいて推定されます。
 
 > **注記：**
 >
@@ -75,7 +75,7 @@ CALIBRATE RESOURCE START_TIME '2023-04-18 08:00:00' DURATION '20m';
 1 row in set (0.01 sec)
 ```
 
-実際のワークロードに応じて RU 容量を表示するには、開始時刻`START_TIME`と終了時刻`END_TIME`を指定します。
+実際のワークロードに応じて RU 容量を表示するには、開始時刻`START_TIME`と終了時刻`END_TIME`指定します。
 
 ```sql
 CALIBRATE RESOURCE START_TIME '2023-04-18 08:00:00' END_TIME '2023-04-18 08:20:00';
@@ -87,7 +87,7 @@ CALIBRATE RESOURCE START_TIME '2023-04-18 08:00:00' END_TIME '2023-04-18 08:20:0
 1 row in set (0.01 sec)
 ```
 
-時間ウィンドウ範囲`DURATION` 10 分から 24 時間の範囲にない場合は、エラーが発生します。
+時間ウィンドウ範囲`DURATION`が 10 分から 24 時間の範囲にない場合は、エラーが発生します。
 
 ```sql
 CALIBRATE RESOURCE START_TIME '2023-04-18 08:00:00' DURATION '25h';
@@ -96,7 +96,7 @@ CALIBRATE RESOURCE START_TIME '2023-04-18 08:00:00' DURATION '9m';
 ERROR 1105 (HY000): the duration of calibration is too short, which could lead to inaccurate output. Please make the duration between 10m0s and 24h0m0s
 ```
 
-[実際の作業負荷に基づく容量推定](#estimate-capacity-based-on-actual-workload)機能の監視メトリックには、 `tikv_cpu_quota` 、 `tidb_server_maxprocs` 、 `resource_manager_resource_unit` 、 `process_cpu_usage` 、 `tiflash_cpu_quota` 、 `tiflash_resource_manager_resource_unit` 、および`tiflash_process_cpu_usage`含まれます。CPU クォータ監視データが空の場合、次の例に示すように、対応する監視メトリック名にエラーが発生します。
+[実際の作業負荷に基づく容量推定](#estimate-capacity-based-on-actual-workload)機能の監視メトリックには、 `tikv_cpu_quota` 、 `tidb_server_maxprocs` 、 `resource_manager_resource_unit` 、 `process_cpu_usage` 、 `tiflash_cpu_quota` 、 `tiflash_resource_manager_resource_unit` 、および`tiflash_process_cpu_usage`が含まれます。CPU クォータ監視データが空の場合、次の例に示すように、対応する監視メトリック名にエラーが発生します。
 
 ```sql
 CALIBRATE RESOURCE START_TIME '2023-04-18 08:00:00' DURATION '60m';

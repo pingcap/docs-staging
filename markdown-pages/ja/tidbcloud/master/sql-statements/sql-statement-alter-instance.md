@@ -1,6 +1,6 @@
 ---
 title: ALTER INSTANCE
-summary: TiDB での `ALTER INSTANCE` の使用法の概要を学習します。
+summary: TiDB での ALTER INSTANCE` の使用法の概要を学習します。
 ---
 
 # インスタンスの変更 {#alter-instance}
@@ -9,7 +9,7 @@ summary: TiDB での `ALTER INSTANCE` の使用法の概要を学習します。
 
 > **注記：**
 >
-> [TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)では TLS 証明書を自動的に更新できるため、この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターには適用されません。
+> [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) TLS 証明書を自動的に更新できるため、この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターには適用されません。
 
 ## TLSをリロード {#reload-tls}
 
@@ -27,7 +27,7 @@ summary: TiDB での `ALTER INSTANCE` の使用法の概要を学習します。
 
 新しくロードされた証明書、キー、および CA は、ステートメントが正常に実行された後に確立された接続で有効になります。このステートメントの実行前に確立された接続は影響を受けません。
 
-再読み込み中にエラーが発生した場合、デフォルトではこのエラーメッセージが返され、以前のキーと証明書が引き続き使用されます。ただし、オプションの`NO ROLLBACK ON ERROR`を追加した場合は、再読み込み中にエラーが発生してもエラーは返されず、後続のリクエストは TLS セキュリティ接続が無効な状態で処理されます。
+再読み込み中にエラーが発生した場合、デフォルトではこのエラーメッセージが返され、以前のキーと証明書が引き続き使用されます。ただし、オプションの`NO ROLLBACK ON ERROR`追加した場合は、再読み込み中にエラーが発生してもエラーは返されず、後続のリクエストは TLS セキュリティ接続が無効な状態で処理されます。
 
 ## 構文図 {#syntax-diagram}
 

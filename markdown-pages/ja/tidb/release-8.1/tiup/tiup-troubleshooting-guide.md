@@ -9,7 +9,7 @@ summary: TiUPの使用中に問題が発生した場合のトラブルシュー�
 
 ## TiUPコマンドのトラブルシューティング {#troubleshoot-tiup-commands}
 
-### <code>tiup list</code>を使用して最新のコンポーネントリストを表示できません {#can-t-see-the-latest-component-list-using-code-tiup-list-code}
+### <code>tiup list</code>使用して最新のコンポーネントリストを表示できません {#can-t-see-the-latest-component-list-using-code-tiup-list-code}
 
 TiUP はミラーサーバーから最新のコンポーネントリストを毎回更新するわけではありません。 `tiup list`実行することで、コンポーネントリストを強制的に更新することができます。
 
@@ -33,8 +33,8 @@ CDNサーバーのキャッシュ時間が短いため、新しいチェック�
 
 この問題を解決するには、 `tiup cluster deploy -i identity_file`実行して秘密鍵を指定したかどうかを確認します。
 
--   `-i`フラグが指定されていない場合、 TiUP は秘密鍵パスを自動的に検出しない可能性があります。 `-i`を使用して秘密鍵パスを明示的に指定することをお勧めします。
--   `-i`フラグが指定されている場合、 TiUP は指定された秘密鍵を使用してリモート ホストにログインできない可能性があります。3 コマンド`ssh -i identity_file user@remote`手動で実行することで確認できます。
+-   `-i`フラグが指定されていない場合、 TiUP は秘密鍵パスを自動的に検出しない可能性があります。 `-i`使用して秘密鍵パスを明示的に指定することをお勧めします。
+-   `-i`フラグが指定されている場合、 TiUP は指定された秘密鍵を使用してリモート ホストにログインできない可能性があります。3 `ssh -i identity_file user@remote`を手動で実行することで確認できます。
 -   リモート ホストへのログインにパスワードを使用する場合は、フラグ`-p`を指定し、正しいログイン パスワードを入力したことを確認してください。
 
 ### TiUPクラスタコンポーネントを使用したクラスタのアップグレード プロセスが中断されます {#the-process-of-upgrading-the-cluster-using-the-tiup-cluster-component-is-interrupted}
@@ -47,10 +47,10 @@ CDNサーバーのキャッシュ時間が短いため、新しいチェック�
 2.  新しいコンポーネントをリモートに配布する
 3.  すべてのコンポーネントのローリング再起動を実行します
 
-ローリング再起動中にアップグレードが中断された場合は、操作`tiup cluster upgrade`を繰り返す代わりに、 `tiup cluster restart -N <node1> -N <node2>`使用して、再起動が完了していないノードを再起動できます。
+ローリング再起動中にアップグレードが中断された場合は、操作`tiup cluster upgrade`を繰り返す代わりに、操作`tiup cluster restart -N <node1> -N <node2>`使用して、再起動が完了していないノードを再起動できます。
 
 同じコンポーネントの再起動されていないノードの数が比較的多い場合は、 `tiup cluster restart -R <component>`実行して特定のタイプのコンポーネントを再起動することもできます。
 
-### アップグレード中に、 <code>node_exporter-9100.service/blackbox_exporter-9115.service</code>が存在しないことがわかります。 {#during-the-upgrade-you-find-that-code-node-exporter-9100-service-blackbox-exporter-9115-service-code-does-not-exist}
+### アップグレード中に、 <code>node_exporter-9100.service/blackbox_exporter-9115.service</code>存在しないことがわかります。 {#during-the-upgrade-you-find-that-code-node-exporter-9100-service-blackbox-exporter-9115-service-code-does-not-exist}
 
-以前に TiDB Ansible からクラスターを移行し、エクスポーターが TiDB Ansible にデプロイされていなかっTiUP場合、この状況が発生する可能性があります。これを解決するには、とりあえず他のノードから新しいノードに不足しているファイルを手動でコピーします。TiUP チームは、移行プロセス中に不足しているコンポーネントを完成させます。
+以前に TiDB Ansible からクラスターを移行し、エクスポーターが TiDB Ansible にデプロイされていなかった場合、この状況が発生する可能性があります。これを解決するには、とりあえず他のノードから新しいノードに不足しているファイルを手動でコピーします。TiUP チームは、移行プロセス中に不足しているコンポーネントを完成させます。

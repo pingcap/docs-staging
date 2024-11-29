@@ -43,14 +43,14 @@ tiup bench rawsql # Benchmark a database using arbitrary SQL files
 -   `--host`と`--port`にコンマ区切りの値を渡すと、クライアント側の負荷分散が有効になります。たとえば、 `--host 172.16.4.1,172.16.4.2 --port 4000,4001`指定すると、プログラムはラウンドロビン方式で選択された 172.16.4.1:4000、172.16.4.1:4001、172.16.4.2:4000、および 172.16.4.2:4001 に接続します。
 -   `--conn-params` [クエリ文字列](https://en.wikipedia.org/wiki/Query_string)の形式に従う必要があります。データベースによってパラメータが異なる場合があります。例:
     -   `--conn-params tidb_isolation_read_engines='tiflash'` TiDB にTiFlashからの読み取りを強制します。
-    -   `--conn-params sslmode=disable` 、PostgreSQL に接続するときに SSL を無効にします。
--   CH-benCHmark を実行する場合、 `--ap-host` 、 `--ap-port` 、および`--ap-conn-params`を使用して、OLAP クエリ用のスタンドアロン TiDBサーバーを指定できます。
+    -   `--conn-params sslmode=disable` PostgreSQL に接続するときに SSL を無効にします。
+-   CH-benCHmark を実行する場合、 `--ap-host` 、 `--ap-port` 、および`--ap-conn-params`使用して、OLAP クエリ用のスタンドアロン TiDBサーバーを指定できます。
 
 次のセクションでは、 TiUPを使用して TPC-C、TPC-H、YCSB テストを実行する方法について説明します。
 
 ## TiUPを使用してTPC-Cテストを実行する {#run-tpc-c-test-using-tiup}
 
-TiUPベンチコンポーネントは、TPC-C テストを実行するために次のコマンドとフラグをサポートしています。
+TiUPベンチコンポーネントは、 TPC-C テストを実行するために次のコマンドとフラグをサポートしています。
 
 ```bash
 Available Commands:
@@ -70,7 +70,7 @@ Flags:
 
 ### テスト手順 {#test-procedures}
 
-以下に、TPC-C テストを実行するための簡略化された手順を示します。詳細な手順については、 [TiDB で TPC-C テストを実行する方法](/benchmark/benchmark-tidb-using-tpcc.md)を参照してください。
+以下に、TPC-C テストを実行するための簡略化された手順を示します。詳細な手順については、 [TiDB で TPC-C テストを実行する方法](/benchmark/benchmark-tidb-using-tpcc.md)参照してください。
 
 1.  ハッシュを使用して 4 つのパーティションを使用して 4 つのウェアハウスを作成します。
 

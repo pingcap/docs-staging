@@ -61,7 +61,7 @@ SHOW CHARACTER SET WHERE Description='UTF-8 Unicode';
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SHOW CHARACTER SET`ステートメントの使用法は、MySQL と完全に互換性があります。ただし、TiDB の文字セットは、MySQL と比較してデフォルトの照合順序が異なる場合があります。詳細については、 [MySQLとの互換性](/mysql-compatibility.md)を参照してください。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support)を参照してください。
+TiDB の`SHOW CHARACTER SET`ステートメントの使用法は、MySQL と完全に互換性があります。ただし、TiDB の文字セットは、MySQL と比較してデフォルトの照合順序が異なる場合があります。詳細については、 [MySQLとの互換性](/mysql-compatibility.md)を参照してください。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

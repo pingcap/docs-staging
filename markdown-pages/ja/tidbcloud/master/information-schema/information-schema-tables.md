@@ -1,6 +1,6 @@
 ---
 title: TABLES
-summary: TABLES information_schema テーブルについて学習します。
+summary: TABLES` information_schema テーブルについて学習します。
 ---
 
 # テーブル {#tables}
@@ -68,8 +68,8 @@ SELECT * FROM tables WHERE table_schema='mysql' AND table_name='user'\G
                CHECK_TIME: NULL
           TABLE_COLLATION: utf8mb4_bin
                  CHECKSUM: NULL
-           CREATE_OPTIONS:
-            TABLE_COMMENT:
+           CREATE_OPTIONS: 
+            TABLE_COMMENT: 
             TIDB_TABLE_ID: 5
 TIDB_ROW_ID_SHARDING_INFO: NULL
 1 row in set (0.00 sec)
@@ -98,9 +98,9 @@ SHOW TABLES
 -   `ROW_FORMAT` : 行形式。現在の値は`Compact`です。
 -   `TABLE_ROWS` : 統計のテーブル内の行数。
 -   `AVG_ROW_LENGTH` : テーブルの平均行の長さ`AVG_ROW_LENGTH` = `DATA_LENGTH` / `TABLE_ROWS` 。
--   `DATA_LENGTH` : データ長。2 `TABLE_ROWS` `DATA_LENGTH`タプル内の列のstorage長の合計。TiKV のレプリカは考慮されません。
+-   `DATA_LENGTH` : データ長`DATA_LENGTH` = `TABLE_ROWS` * タプル内の列のstorage長の合計。TiKV のレプリカは考慮されません。
 -   `MAX_DATA_LENGTH` : 最大データ長。現在の値は`0`で、データ長に上限がないことを意味します。
--   `INDEX_LENGTH` : インデックスの長さ。2 `TABLE_ROWS` `INDEX_LENGTH`インデックス タプル内の列の長さの合計。TiKV のレプリカは考慮されません。
+-   `INDEX_LENGTH` : インデックスの長さ`INDEX_LENGTH` = `TABLE_ROWS` * インデックスタプル内の列の長さの合計。TiKV のレプリカは考慮されません。
 -   `DATA_FREE` : データフラグメント。現在の値は`0`です。
 -   `AUTO_INCREMENT` : 自動インクリメント主キーの現在のステップ。
 -   `CREATE_TIME` : テーブルが作成された時刻。
@@ -118,5 +118,5 @@ SHOW TABLES
     -   `"NOT_SHARDED"` : テーブルはシャード化されていません。
     -   `"NOT_SHARDED(PK_IS_HANDLE)"` : 行 ID として整数の主キーを定義するテーブルはシャード化されません。
     -   `"PK_AUTO_RANDOM_BITS={bit_number}"` : 行 ID として整数の主キーを定義するテーブルは、主キーに`AUTO_RANDOM`属性が割り当てられているため、シャード化されます。
-    -   `"SHARD_BITS={bit_number}"` : テーブルは`SHARD_ROW_ID_BITS={bit_number}`を使用してシャーディングされます。
+    -   `"SHARD_BITS={bit_number}"` : テーブルは`SHARD_ROW_ID_BITS={bit_number}`使用してシャーディングされます。
     -   NULL: テーブルはシステム テーブルまたはビューであるため、シャード化できません。

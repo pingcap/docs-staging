@@ -1,6 +1,6 @@
 ---
 title: Filter DMLs Using SQL Expressions
-summary: 増分データ移行では、SQL 式を使用してbinlogイベントをフィルタリングできます。DM は、v2.0.5 以降、 binlog値フィルタを使用した移行中のデータのフィルタリングをサポートしています。binlog イベントの値に基づいて SQL 式を構成し、行の変更を下流に移行するかどうかを決定できます。詳細な操作とbinlogについては、「SQL 式を使用した DML イベントのフィルタリング」を参照してください。
+summary: 増分データ移行では、SQL 式を使用してbinlogイベントをフィルタリングできます。DM は、v2.0.5 以降、 binlog値フィルタを使用した移行中のデータのフィルタリングをサポートしています。binlogbinlogの値に基づいて SQL 式を構成し、行の変更を下流に移行するかどうかを決定できます。詳細な操作と実装については、「SQL 式を使用した DML イベントのフィルタリング」を参照してください。
 ---
 
 # SQL 式を使用して DML をフィルタリングする {#filter-dmls-using-sql-expressions}

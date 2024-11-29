@@ -16,10 +16,10 @@ TiDB Ansible バージョン: 3.0.3
 -   SQL オプティマイザー
     -   `aggregation_eliminate`や`column_prune`などのロジック最適化ルールを無効にするには、 `opt_rule_blacklist`テーブルを追加します[＃11658](https://github.com/pingcap/tidb/pull/11658)
     -   結合キーがプレフィックスインデックスまたは負の値に等しい符号なしインデックス列を使用する場合、 `Index Join`に対して誤った結果が返される可能性がある問題を修正しました[＃11759](https://github.com/pingcap/tidb/pull/11759)
-    -   `create … binding ...`の`SELECT`のステートメントのうち`”`または`\`解析エラーになる可能性がある問題を修正しました[＃11726](https://github.com/pingcap/tidb/pull/11726)
+    -   `create … binding ...`の`SELECT`のステートメントのうち`"`または`\`解析エラーになる可能性がある問題を修正しました[＃11726](https://github.com/pingcap/tidb/pull/11726)
 -   SQL実行エンジン
     -   Quote関数がnull値を処理するときに戻り値の型エラーが発生する可能性がある問題を修正しました[＃11619](https://github.com/pingcap/tidb/pull/11619)
-    -   `NotNullFlag`保持した状態で Max/Min を型推論に使用すると、 `ifnull`の誤った結果が返される可能性がある問題を修正しました[＃11641](https://github.com/pingcap/tidb/pull/11641)
+    -   `NotNullFlag`を保持した状態で Max/Min を使用して型推論を行うと、 `ifnull`の誤った結果が返される可能性がある問題を修正しました[＃11641](https://github.com/pingcap/tidb/pull/11641)
     -   文字列形式[＃11660](https://github.com/pingcap/tidb/pull/11660)でビット型データを比較するときに発生する可能性のあるエラーを修正
     -   シーケンシャル読み取りを必要とするデータの同時実行性を減らして、OOM [＃11679](https://github.com/pingcap/tidb/pull/11679)の可能性を下げます。
     -   一部の組み込み関数で複数のパラメータが符号なしの場合（たとえば、 `if`と`coalesce` ）に誤った型推論が発生する可能性がある問題を修正しました[＃11621](https://github.com/pingcap/tidb/pull/11621)
@@ -27,9 +27,9 @@ TiDB Ansible バージョン: 3.0.3
     -   Pump/Drainer[＃11827](https://github.com/pingcap/tidb/pull/11827)の状態を変更するSQL文を実行するとpanicが発生する可能性がある問題を修正
     -   Autocommit = 1 で`begin`文[＃11736](https://github.com/pingcap/tidb/pull/11736)がない場合に`select ... for update`でpanicが発生する可能性がある問題を修正しました。
     -   `set default role`文の実行時に発生する可能性のある権限チェックエラーを修正[＃11777](https://github.com/pingcap/tidb/pull/11777)
-    -   `create user`または`drop user`を実行したときに発生する可能性のある権限チェックエラーを修正[＃11814](https://github.com/pingcap/tidb/pull/11814)
+    -   `create user`または`drop user`実行したときに発生する可能性のある権限チェックエラーを修正[＃11814](https://github.com/pingcap/tidb/pull/11814)
     -   `select ... for update`ステートメントが`PointGetExecutor`関数[＃11718](https://github.com/pingcap/tidb/pull/11718)に組み込まれると自動的に再試行される可能性がある問題を修正しました。
-    -   ウィンドウ関数がパーティション[＃11825](https://github.com/pingcap/tidb/pull/11825)処理するときに発生する可能性のある境界エラーを修正しました
+    -   ウィンドウ関数がパーティション[＃11825](https://github.com/pingcap/tidb/pull/11825)を処理するときに発生する可能性のある境界エラーを修正しました
     -   `time`関数が誤った形式の引数[＃11893](https://github.com/pingcap/tidb/pull/11893)を処理するときに EOF エラーに遭遇する問題を修正しました
     -   ウィンドウ関数が渡されたパラメータをチェックしない問題を修正[＃11705](https://github.com/pingcap/tidb/pull/11705)
     -   `Explain`で表示される計画結果が実際に実行された計画[＃11186](https://github.com/pingcap/tidb/pull/11186)と一致しない問題を修正
@@ -55,7 +55,7 @@ TiDB Ansible バージョン: 3.0.3
 -   リージョンマージ中に発生する可能性のある TiKV パニックを修正[＃5291](https://github.com/tikv/tikv/pull/5291)
 -   デッドロック検出器[＃5317](https://github.com/tikv/tikv/pull/5317)のリーダー変更チェックを高速化
 -   `grpc env`使用してデッドロック クライアント[＃5346](https://github.com/tikv/tikv/pull/5346)を作成するサポート
--   設定が正しいかどうかを確認するには`config-check`追加します[＃5349](https://github.com/tikv/tikv/pull/5349)
+-   設定が正しいかどうかを確認するには`config-check`を追加します[＃5349](https://github.com/tikv/tikv/pull/5349)
 -   リーダー[＃5351](https://github.com/tikv/tikv/pull/5351)がない場合にReadIndex が何も返さない問題を修正しました
 
 ## PD {#pd}
@@ -65,15 +65,15 @@ TiDB Ansible バージョン: 3.0.3
 ## ツール {#tools}
 
 -   TiDBBinlog
-    -   Drainerのデフォルト値`defaultBinlogItemCount` 65536 から 512 に変更して、 Drainer の起動時に OOM が発生する可能性を減らします[＃721](https://github.com/pingcap/tidb-binlog/pull/721)
+    -   Drainerのデフォルト値`defaultBinlogItemCount`を 65536 から 512 に変更して、 Drainer の起動時に OOM が発生する可能性を減らします[＃721](https://github.com/pingcap/tidb-binlog/pull/721)
     -   潜在的なオフライン輻輳を回避するためにポンプサーバーのオフラインロジックを最適化します[＃701](https://github.com/pingcap/tidb-binlog/pull/701)
 -   TiDB Lightning:
-    -   [＃225](https://github.com/pingcap/tidb-lightning/pull/225) `sys`インポートするときに、デフォルトでシステムデータベース`mysql` `performance_schema`スキップします`information_schema`
+    -   [＃225](https://github.com/pingcap/tidb-lightning/pull/225)インポートするときに`performance_schema`デフォルトでシステムデータベース`mysql` `information_schema`スキップします`sys`
 
 ## TiDB アンシブル {#tidb-ansible}
 
 -   ローリングアップデートのPD操作を最適化して安定性を向上[＃894](https://github.com/pingcap/tidb-ansible/pull/894)
 -   現在のGrafanaバージョン[＃892](https://github.com/pingcap/tidb-ansible/pull/892)でサポートされていないGrafana Collectorコンポーネントを削除します。
--   TiKVアラートルール[＃898](https://github.com/pingcap/tidb-ansible/pull/898)更新
+-   TiKVアラートルール[＃898](https://github.com/pingcap/tidb-ansible/pull/898)を更新
 -   生成されたTiKV構成で`pessimistic-txn`パラメータ[＃911](https://github.com/pingcap/tidb-ansible/pull/911)が欠落する問題を修正
 -   SparkをV2.4.3にアップデートし、TiSparkをSpark V2.4.3 [＃913](https://github.com/pingcap/tidb-ansible/pull/913) 、 [＃918](https://github.com/pingcap/tidb-ansible/pull/918)と互換性のあるV2.1.4にアップデートします。

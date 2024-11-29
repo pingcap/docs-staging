@@ -1,11 +1,11 @@
 ---
 title: TiUP Common Operations
-summary: TiUPを使用して TiDB クラスターを操作および保守するための一般的な操作を学習します。
+summary: TiUP を使用して TiDB クラスターを操作および保守するための一般的な操作を学習します。
 ---
 
 # TiUP共通操作 {#tiup-common-operations}
 
-このドキュメントでは、 TiUPを使用して TiDB クラスターを操作および保守する場合の次の一般的な操作について説明します。
+このドキュメントでは、 TiUP を使用して TiDB クラスターを操作および保守する場合の次の一般的な操作について説明します。
 
 -   クラスターリストをビュー
 -   クラスターを起動する
@@ -48,7 +48,7 @@ tiup cluster start ${cluster-name}
     tiup cluster start ${cluster-name} -R pd
     ```
 
--   このコマンドは、ホスト`1.2.3.4`と`1.2.3.5`上の PD コンポーネントのみを起動します。
+-   このコマンドは、ホスト`1.2.3.4`と`1.2.3.5`の PD コンポーネントのみを起動します。
 
     ```bash
     tiup cluster start ${cluster-name} -N 1.2.3.4:2379,1.2.3.5:2379
@@ -56,7 +56,7 @@ tiup cluster start ${cluster-name}
 
 > **注記：**
 >
-> `-R`または`-N`パラメータを使用して指定されたコンポーネントを起動する場合は、起動順序が正しいことを確認してください。たとえば、PDコンポーネントを TiKVコンポーネントの前に起動します。そうしないと、起動が失敗する可能性があります。
+> `-R`または`-N`パラメータを使用して指定されたコンポーネントを起動する場合は、起動順序が正しいことを確認してください。たとえば、PDコンポーネントをTiKVコンポーネントの前に起動します。そうしないと、起動が失敗する可能性があります。
 
 ## クラスターのステータスをビュー {#view-the-cluster-status}
 
@@ -94,7 +94,7 @@ tiup cluster display ${cluster-name}
 
     パラメータの形式については[TiUPパラメータ テンプレート](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml)参照してください。
 
-    **構成項目の階層を表すには . を使用します`.`**
+    **構成項目の階層を表すには`.`を使用します**。
 
     コンポーネントの構成パラメータの詳細については、 [TiDB `config.toml.example`](https://github.com/pingcap/tidb/blob/release-8.1/pkg/config/config.toml.example) 、 [TiKV `config.toml.example`](https://github.com/tikv/tikv/blob/release-8.1/etc/config-template.toml) 、および[PD `config.toml.example`](https://github.com/tikv/pd/blob/release-8.1/conf/config.toml)を参照してください。
 
@@ -116,7 +116,7 @@ tidb-server でトランザクション サイズ制限パラメータ ( [パフ
 
 ## 修正プログラムパッケージに置き換える {#replace-with-a-hotfix-package}
 
-通常のアップグレードについては、 [TiUPを使用して TiDB をアップグレードする](/upgrade-tidb-using-tiup.md)参照してください。ただし、デバッグなどの一部のシナリオでは、現在実行中のコンポーネントを一時パッケージに置き換える必要がある場合があります。これを実現するには、 `patch`コマンドを使用します。
+通常のアップグレードについては、 [TiUP を使用して TiDB をアップグレードする](/upgrade-tidb-using-tiup.md)参照してください。ただし、デバッグなどの一部のシナリオでは、現在実行中のコンポーネントを一時パッケージに置き換える必要がある場合があります。これを実現するには、 `patch`コマンドを使用します。
 
 ```bash
 tiup cluster patch --help
@@ -170,7 +170,7 @@ tiup cluster rename ${cluster-name} ${new-name}
 
 TiDB クラスター内のコンポーネントは次の順序で停止されます (監視コンポーネントも停止されます)。
 
-**Alertmanager &gt; Grafana &gt; Prometheus &gt; TiCDC &gt; Drainer &gt; TiFlash &gt; TiDB &gt; Pump &gt; TiKV &gt; PD**
+**アラートマネージャー &gt; Grafana &gt; Prometheus &gt; TiCDC &gt;Drainer&gt; TiFlash &gt; TiDB &gt;Pump&gt; TiKV &gt; PD**
 
 クラスターを停止するには、次のコマンドを実行します。
 

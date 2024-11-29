@@ -200,5 +200,5 @@ No query specified
 -   [[グローバル|セッション]バインディングの作成](/sql-statements/sql-statement-create-binding.md)
 -   [[グローバル|セッション]バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
 -   [テーブルを分析](/sql-statements/sql-statement-analyze-table.md)
--   [オプティマイザのヒント](/optimizer-hints.md)
+-   [オプティマイザーのヒント](/optimizer-hints.md)
 -   [SQL プラン管理](/sql-plan-management.md)

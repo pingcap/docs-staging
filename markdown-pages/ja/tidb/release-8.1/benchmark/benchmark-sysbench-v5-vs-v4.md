@@ -13,16 +13,16 @@ summary: TiDB v5.0 は、Sysbench パフォーマンス テストで v4.0 を上
 
 ### ハードウェア構成 {#hardware-configuration}
 
-| サービスの種類 | EC2タイプ     | インスタンス数 |
+| サービスタイプ | EC2タイプ     | インスタンス数 |
 | :------ | :--------- | :------ |
 | PD      | m5.特大      | 3       |
 | ティクヴ    | i3.4xlarge | 3       |
-| ティビ     | c5.4特大     | 3       |
+| ティビ     | c5.4xラージ   | 3       |
 | システムベンチ | c5.9特大     | 1       |
 
 ### ソフトウェアバージョン {#software-version}
 
-| サービスの種類 | ソフトウェアバージョン |
+| サービスタイプ | ソフトウェアバージョン |
 | :------ | :---------- |
 | PD      | 4.0 と 5.0   |
 | ティビ     | 4.0 と 5.0   |
@@ -103,11 +103,11 @@ set global tidb_enable_clustered_index = 1;
 
 ## テスト計画 {#test-plan}
 
-1.  TiUPを使用して TiDB v5.0 および v4.0をデプロイ。
+1.  TiUPを使用して TiDB v5.0 および v4.0 をデプロイ。
 2.  Sysbench を使用して、各テーブルに 1,000 万行のデータが含まれる 16 個のテーブルをインポートします。
 3.  各テーブルに対して`analyze table`ステートメントを実行します。
 4.  さまざまな同時実行テストの前に、復元に使用するデータをバックアップします。これにより、各テストのデータの一貫性が確保されます。
-5.  Sysbench クライアントを起動して、テスト`point_select` `update_non_index`実行します。AWS NLB 経由で`read_write` `update_index`ストレス テストを実行します。各テスト タイプでは、ウォームアップに 1 分、テストに 5 分かかります。
+5.  Sysbench クライアント`update_index` `point_select` `read_write`します。AWS NLB 経由で TiDB のストレステストを実行します。各テスト タイプでは、ウォームアップに 1 分、テストに 5 分かかり`update_non_index` 。
 6.  各タイプのテストが完了したら、クラスターを停止し、手順 4 のバックアップ データでクラスターを上書きして、クラスターを再起動します。
 
 ### テストデータを準備する {#prepare-test-data}
@@ -144,7 +144,7 @@ sysbench $testname \
     run --tables=16 --table-size=10000000
 ```
 
-## 試験結果 {#test-results}
+## テスト結果 {#test-results}
 
 ### ポイントセレクトパフォーマンス {#point-select-performance}
 

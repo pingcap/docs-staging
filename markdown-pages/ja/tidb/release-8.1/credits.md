@@ -18,7 +18,7 @@ TiDB 開発者は、新機能の開発、パフォーマンスの改善、安定
 -   [pingcap/tidb 演算子](https://github.com/pingcap/tidb-operator/graphs/contributors)
 -   [pingcap/tiup](https://github.com/pingcap/tiup/graphs/contributors)
 -   [pingcap/tidb-binlog](https://github.com/pingcap/tidb-binlog/graphs/contributors)
--   [pingcap/tidb ダッシュボード](https://github.com/pingcap/tidb-dashboard/graphs/contributors)
+-   [pingcap/tidbダッシュボード](https://github.com/pingcap/tidb-dashboard/graphs/contributors)
 -   [ピンキャップ/tiflow](https://github.com/pingcap/tiflow/graphs/contributors)
 -   [pingcap/tidbツール](https://github.com/pingcap/tidb-tools/graphs/contributors)
 -   [pingcap/tispark](https://github.com/pingcap/tispark/graphs/contributors)

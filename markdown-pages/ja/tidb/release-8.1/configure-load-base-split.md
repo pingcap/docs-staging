@@ -9,7 +9,7 @@ Load Base Split は、TiDB 4.0 で導入された新しい機能です。小さ�
 
 ## シナリオ {#scenarios}
 
-TiDB では、負荷が特定のノードに集中すると、ホットスポットが生成されやすくなります。PD は、パフォーマンスを向上させるために、ホット リージョンがすべてのノードに可能な限り均等に分散されるようにスケジュールしようとします。
+TiDB では、負荷が特定のノードに集中すると、ホットスポットが生成されやすくなります。PD は、パフォーマンスを向上させるために、ホット リージョンがすべてのノードに可能な限り均等に分散されるようにスケジュールを設定しようとします。
 
 ただし、PD スケジューリングの最小単位はリージョンです。クラスター内のホットスポットの数がノード数より少ない場合、またはいくつかのホットスポットの負荷が他のリージョンよりもはるかに大きい場合、PD はホットスポットをあるノードから別のノードに移動することしかできず、クラスター全体で負荷を共有することはできません。
 
@@ -22,7 +22,7 @@ TiDB では、負荷が特定のノードに集中すると、ホットスポッ
 
 ## 実施原則 {#implementation-principles}
 
-Load Base Split は、統計情報に基づいてリージョンを自動的に分割します。読み取り負荷または CPU 使用率が 10 秒間継続的にしきい値を超えるリージョンを識別し、これらのリージョンを適切な位置で分割します。分割位置を選択する際、Load Base Split は分割後の両方のリージョンのアクセス負荷を分散し、リージョン間のアクセスを回避しようとします。
+Load Base Split は、統計情報に基づいてリージョンを自動的に分割します。読み取り負荷または CPU 使用率が 10 秒間継続的にしきい値を超えるリージョンを識別し、これらのリージョンを適切な位置に分割します。分割位置を選択する際、Load Base Split は分割後の両方のリージョンのアクセス負荷を分散し、リージョン間のアクセスを回避しようとします。
 
 Load Base Split によって分割されたリージョンは、すぐにはマージされません。一方で、PD の`MergeChecker`ホット リージョンをスキップします。他方では、PD はハートビート情報の`QPS`に従って 2 つのリージョンをマージするかどうかも決定し、 `QPS`の高い 2 つのリージョンのマージを回避します。
 
@@ -30,17 +30,17 @@ Load Base Split によって分割されたリージョンは、すぐにはマ�
 
 ロード ベース分割機能は現在、次のパラメータによって制御されています。
 
--   [`split.qps-threshold`](/tikv-configuration-file.md#qps-threshold) :リージョンがホットスポットとして識別される QPS しきい値。4 [`region-split-size`](/tikv-configuration-file.md#region-split-size)未満の場合はデフォルト値は 1 秒あたり`3000`です。それ以外の場合はデフォルト値は`7000`です。
--   [`split.byte-threshold`](/tikv-configuration-file.md#byte-threshold-new-in-v50) : (v5.0 で導入)リージョンがホットスポットとして識別されるトラフィックしきい値。単位はバイトです。2 `region-split-size` 4 GB 未満の場合、デフォルト値は 30 MiB/秒です。それ以外の場合、デフォルト値は 100 MiB/秒です。
--   [`split.region-cpu-overload-threshold-ratio`](/tikv-configuration-file.md#region-cpu-overload-threshold-ratio-new-in-v620) : (v6.2.0 で導入)リージョンがホットスポットとして識別される CPU 使用率しきい値 (読み取りスレッド プールの CPU 時間の割合)。4 が`region-split-size` GB 未満の場合はデフォルト値は`0.25`です。それ以外の場合はデフォルト値は`0.75`です。
+-   [`split.qps-threshold`](/tikv-configuration-file.md#qps-threshold) :リージョンがホットスポットとして識別される QPS しきい値。4 GB [`region-split-size`](/tikv-configuration-file.md#region-split-size)の場合はデフォルト値は 1 秒あたり`3000`です。それ以外の場合はデフォルト値は`7000`です。
+-   [`split.byte-threshold`](/tikv-configuration-file.md#byte-threshold-new-in-v50) : (v5.0 で導入)リージョンがホットスポットとして識別されるトラフィックしきい値。単位はバイトです`region-split-size`が 4 GB 未満の場合、デフォルト値は 30 MiB/秒です。それ以外の場合、デフォルト値は 100 MiB/秒です。
+-   [`split.region-cpu-overload-threshold-ratio`](/tikv-configuration-file.md#region-cpu-overload-threshold-ratio-new-in-v620) : (v6.2.0 で導入)リージョンがホットスポットとして識別される CPU 使用率しきい値 (読み取りスレッド プールの CPU 時間の割合) `region-split-size`が 4 GB 未満の場合はデフォルト値は`0.25`です。それ以外の場合はデフォルト値は`0.75`です。
 
 リージョンが10 秒連続して次のいずれかの条件を満たす場合、TiKV はリージョンを分割しようとします。
 
 -   読み取り要求の合計が`split.qps-threshold`超えます。
 -   トラフィックが`split.byte-threshold`超えます。
--   統合読み取りプール内の CPU 使用率が`split.region-cpu-overload-threshold-ratio`を超えています。
+-   統合読み取りプールでの CPU 使用率が`split.region-cpu-overload-threshold-ratio`超えています。
 
-Load Base Split はデフォルトで有効になっていますが、パラメータはかなり高い値に設定されています。この機能を無効にする場合は、 `split.qps-threshold`と`split.byte-threshold`十分に高く設定し、同時に`split.region-cpu-overload-threshold-ratio`から`0`を設定します。
+Load Base Split はデフォルトで有効になっていますが、パラメータはかなり高い値に設定されています。この機能を無効にする場合は、 `split.qps-threshold`と`split.byte-threshold`十分に高く設定し、同時に`split.region-cpu-overload-threshold-ratio`から`0`設定します。
 
 パラメータを変更するには、次の 2 つの方法のいずれかを実行します。
 

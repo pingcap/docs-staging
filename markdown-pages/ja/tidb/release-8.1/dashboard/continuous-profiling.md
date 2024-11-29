@@ -36,27 +36,27 @@ summary: TiDB ダッシュボード継続プロファイリングを使用する
 
 ## ページにアクセスする {#access-the-page}
 
-次のいずれかの方法で継続的プロファイリング ページにアクセスできます。
+次のいずれかの方法で継続プロファイリング ページにアクセスできます。
 
--   TiDB ダッシュボードにログインしたら、左側のナビゲーション メニューで**[高度なデバッグ]** &gt; **[インスタンスのプロファイリング]** &gt; **[継続的なプロファイリング**] をクリックします。
+-   TiDB ダッシュボードにログインしたら、左側のナビゲーション メニューで**[高度なデバッグ]** &gt; **[インスタンスのプロファイリング]** &gt; **[継続的なプロファイリング]**をクリックします。
 
     ![Access page](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-access.png)
 
--   ブラウザで[http://127.0.0.1:2379/ダッシュボード/#/継続的なプロファイリング](http://127.0.0.1:2379/dashboard/#/continuous_profiling)アクセスします。3 `127.0.0.1:2379`実際の PD インスタンスのアドレスとポートに置き換えます。
+-   ブラウザで[http://127.0.0.1:2379/dashboard/#/continuous_profiling](http://127.0.0.1:2379/dashboard/#/continuous_profiling)アクセスします。3 `127.0.0.1:2379`実際の PD インスタンスのアドレスとポートに置き換えます。
 
 ## 継続的なプロファイリングを有効にする {#enable-continuous-profiling}
 
 > **注記：**
 >
-> 継続的プロファイリングを使用するには、クラスターを最新バージョンのTiUP (v1.9.0 以上) またはTiDB Operator (v1.3.0 以上) でデプロイまたはアップグレードする必要があります。クラスターを以前のバージョンのTiUPまたはTiDB Operatorを使用してアップグレードした場合は、手順[FAQ](/dashboard/dashboard-faq.md#a-required-component-ngmonitoring-is-not-started-error-is-shown)参照してください。
+> 継続的プロファイリングを使用するには、クラスターを最新バージョンのTiUP (v1.9.0 以上) またはTiDB Operator (v1.3.0 以上) でデプロイまたはアップグレードする必要があります。クラスターを以前のバージョンのTiUPまたはTiDB Operator を使用してアップグレードした場合は、手順[FAQ](/dashboard/dashboard-faq.md#a-required-component-ngmonitoring-is-not-started-error-is-shown)参照してください。
 
 継続的プロファイリングを有効にすると、Web ページを常にアクティブにしなくても、バックグラウンドでパフォーマンス データを継続的に収集できます。収集されたデータは一定期間保持され、期限切れのデータは自動的にクリアされます。
 
 この機能を有効にするには:
 
 1.  [継続的プロファイリングページ](#access-the-page)ご覧ください。
-2.  **「設定を開く」**をクリックします。右側の**設定**領域で、 **「機能の有効化」**をオンにし、必要に応じて**「保存期間」**のデフォルト値を変更します。
-3.  **「保存」を**クリックします。
+2.  **「設定を開く」**をクリックします。右側の**設定**領域で、 **「機能の有効化」**をオンにし、必要に応じて**「保持期間」**のデフォルト値を変更します。
+3.  **「保存」**をクリックします。
 
 ![Enable feature](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-start.png)
 
@@ -84,7 +84,7 @@ summary: TiDB ダッシュボード継続プロファイリングを使用する
 
 1.  [継続的プロファイリングページ](#access-the-page)ご覧ください。
 2.  右上隅の歯車アイコンをクリックして設定ページを開きます。 **[機能の有効化]**をオフにします。
-3.  **「保存」を**クリックします。
+3.  **「保存」**をクリックします。
 4.  ポップアップされたダイアログボックスで、 **[無効にする]**をクリックします。
 
 ![Disable feature](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-stop.png)

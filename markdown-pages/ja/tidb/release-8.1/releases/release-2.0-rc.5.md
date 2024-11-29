@@ -11,7 +11,7 @@ summary: TiDB 2.0 RC5 は、MySQL 互換性、SQL 最適化、安定性の向上
 
 -   `Top-N`プッシュダウンルールの適用に関する問題を修正
 -   NULL値を含む列の行数の推定を修正
--   バイナリ型のゼロ値を修正
+-   バイナリ型のゼロ値を修正する
 -   トランザクション内の`BatchGet`問題を修正する
 -   `Add Index`操作をロールバックしながら書き込まれたデータをクリーンアップして、消費スペースを削減します。
 -   `insert on duplicate key update`ステートメントを最適化するとパフォーマンスが10倍向上します
@@ -31,7 +31,7 @@ summary: TiDB 2.0 RC5 は、MySQL 互換性、SQL 最適化、安定性の向上
 
 ## ティクヴ {#tikv}
 
--   `tikv-ctl`分の`compact`で指定されたリージョンをサポート
+-   `tikv-ctl`の`compact`で指定されたリージョンをサポート
 -   RawKVClient でバッチ Put、バッチ Get、バッチ Delete、バッチ Scan をサポート
 -   スナップショットが多すぎることによるOOM問題を修正
 -   コプロセッサーでより詳細なエラー情報を返す
@@ -40,7 +40,7 @@ summary: TiDB 2.0 RC5 は、MySQL 互換性、SQL 最適化、安定性の向上
 -   `ImportSST::Upload`インターフェースを簡素化
 -   gRPCの`keepalive`プロパティを設定する
 -   TiKVから`tikv-importer`独立したバイナリとして分割する
--   コプロセッサー内の各`scan range`行がスキャンした行数に関する統計情報を提供します。
+-   コプロセッサー内の各`scan range`がスキャンした行数に関する統計情報を提供します。
 -   macOSシステムでのコンパイル問題を修正
 -   RocksDB メトリックの誤用問題を修正
 -   コプロセッサーの`overflow as warning`オプションをサポート

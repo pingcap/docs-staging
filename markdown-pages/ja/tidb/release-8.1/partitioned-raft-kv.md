@@ -11,7 +11,7 @@ summary: TiKV のパーティション化されたRaft KV 機能について学�
 
 v6.6.0 より前では、TiKV の Raft ベースのstorageエンジンは、単一の RocksDB インスタンスを使用して、TiKV インスタンスのすべてのリージョンのデータを格納していました。
 
-より大規模なクラスターをより安定的にサポートするために、TiDB v6.6.0 以降では、複数の RocksDBstorageを使用して TiKVリージョンデータを保存し、各リージョンのデータを個別の RocksDB インスタンスに独立して保存する新しい TiKV ストレージ エンジンが導入されました。
+より大規模なクラスターをより安定的にサポートするために、TiDB v6.6.0 以降では、複数の RocksDB インスタンスを使用して TiKVリージョンデータを保存し、各リージョンのデータを個別の RocksDB インスタンスに独立して保存する新しい TiKV ストレージ エンジンが導入されました。
 
 新しいエンジンは、各 RocksDB インスタンス内のファイルの数とレベルをより適切に制御し、リージョン間のデータ操作の物理的な分離を実現し、より多くのデータを安定して管理することをサポートします。これは、パーティション分割によって複数の RocksDB インスタンスを管理する TiKV と見なすことができます。そのため、この機能は Partitioned Raft KV と名付けられています。
 
@@ -29,7 +29,7 @@ TiKV クラスターに次の特性がある場合、この機能を使用でき
 
 ## 使用法 {#usage}
 
-Partitioned Raft KV を有効にするには、クラスター作成時に設定項目[`storage.engine`](/tikv-configuration-file.md#engine-new-in-v660) ～ `"partitioned-raft-kv"`を設定します。同時に、設定項目[`rocksdb.write-buffer-flush-oldest-first`](/tikv-configuration-file.md#write-buffer-flush-oldest-first-new-in-v660)と[`rocksdb.write-buffer-limit`](/tikv-configuration-file.md#write-buffer-limit-new-in-v660)を使用して、 Raft KV 使用時の RocksDB のメモリ使用量を制御できます。
+Partitioned Raft KV を有効にするには、クラスター作成時に設定項目[`storage.engine`](/tikv-configuration-file.md#engine-new-in-v660) ～ `"partitioned-raft-kv"`設定します。同時に、設定項目[`rocksdb.write-buffer-flush-oldest-first`](/tikv-configuration-file.md#write-buffer-flush-oldest-first-new-in-v660)と[`rocksdb.write-buffer-limit`](/tikv-configuration-file.md#write-buffer-limit-new-in-v660)使用して、 Raft KV 使用時の RocksDB のメモリ使用量を制御できます。
 
 ## 制限 {#restrictions}
 

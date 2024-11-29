@@ -25,7 +25,7 @@ GRANT 'r1', 'r2', 'r3' TO 'u1'@'%';
 SET DEFAULT ROLE 'r1' TO 'u1'@'%';
 ```
 
-`'u1'@'%'`としてログインし、次の`SET ROLE`のステートメントを実行してすべてのロールを有効にします。
+`'u1'@'%'`としてログインし、次の`SET ROLE`ステートメントを実行してすべてのロールを有効にします。
 
 ```sql
 SET ROLE ALL;
@@ -39,7 +39,7 @@ SELECT CURRENT_ROLE();
     +----------------------------+
     1 row in set (0.000 sec)
 
-`'r2'`と`'r3'`を有効にするには、次の`SET ROLE`ステートメントを実行します。
+`'r2'`と`'r3'`有効にするには、次の`SET ROLE`ステートメントを実行します。
 
 ```sql
 SET ROLE 'r2', 'r3';
@@ -83,7 +83,7 @@ SELECT CURRENT_ROLE();
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SET ROLE`ステートメントは、MySQL 8.0 のロール機能と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`SET ROLE`ステートメントは、MySQL 8.0 のロール機能と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 

@@ -3,13 +3,13 @@ title: TiUP FAQs
 summary: TiUPユーザーからよく寄せられる質問に対する回答を提供します。
 ---
 
-# TiUPに関するよくある質問 {#tiup-faqs}
+# TiUPよくある質問 {#tiup-faqs}
 
 このドキュメントには、 TiUPに関するよくある質問 (FAQ) がまとめられています。
 
 ## TiUP は公式ミラーソースを使用できないのでしょうか? {#can-tiup-not-use-the-official-mirror-source}
 
-TiUP は、 `TIUP_MIRRORS`環境変数を通じてミラー ソースを指定することをサポートしています。ミラー ソースのアドレスは、ローカル ディレクトリまたは HTTPサーバーアドレスにすることができます。環境がネットワークにアクセスできない場合は、独自のオフライン ミラー ソースを作成してTiUPを使用することができます。
+TiUP は、 `TIUP_MIRRORS`環境変数を通じてミラー ソースを指定することをサポートしています。ミラー ソースのアドレスは、ローカル ディレクトリまたは HTTPサーバーアドレスにすることができます。環境がネットワークにアクセスできない場合は、独自のオフライン ミラー ソースを作成してTiUP を使用することができます。
 
 非公式ミラーを使用した後、公式ミラーに戻して使用する場合は、次のいずれかの対策を講じてください。
 
@@ -22,7 +22,7 @@ TiUP は今のところサードパーティのコンポーネントをサポー
 
 ## TiUPプレイグラウンドとTiUPクラスター コンポーネントの違いは何ですか? {#what-is-the-difference-between-the-tiup-playground-and-tiup-cluster-components}
 
-TiUPプレイグラウンドコンポーネントは、主に Linux または macOS オペレーティング システム上にスタンドアロン開発環境を構築するために使用されます。これにより、すぐに開始して、指定されたバージョンのTiUPクラスターを簡単に実行できます。TiUP クラスターコンポーネントは、主に本番環境クラスター (通常は大規模クラスター) の展開と保守に使用されます。TiUP プレイグラウンドによって展開された TiDB クラスターには、一部の機能と運用能力が不足している可能性があるTiUP、完全な機能テストと安定性テストには推奨されません。
+TiUPプレイグラウンドコンポーネントは、主に Linux または macOS オペレーティング システム上にスタンドアロン開発環境を構築するために使用されます。TiUPにより、すぐに開始して、指定されたバージョンのTiUPクラスターを簡単に実行できます。TiUP クラスターコンポーネントは、主に本番環境クラスター (通常は大規模クラスター) の展開と保守に使用されます。TiUP プレイグラウンドによって展開されたTiUPクラスターには、一部の機能と運用能力が不足している可能性があるため、完全な機能テストと安定性テストには推奨されません。
 
 ## TiUPクラスターコンポーネントのトポロジ ファイルを作成するにはどうすればよいでしょうか? {#how-do-i-write-the-topology-file-for-the-tiup-cluster-component}
 
@@ -46,7 +46,7 @@ TiUPクラスターコンポーネントを使用すると、同じホストに�
 
 複数の異なるクラスターが同じTiUP制御マシンによってデプロイされている場合、デプロイおよびスケーリング中にこれらのクラスター間のポートとディレクトリの競合が検出されます。クラスターが異なるTiUP制御マシンによってデプロイされている場合、競合の検出は現在サポートされていません。
 
-## クラスタの展開中に、 TiUP は<code>ssh: handshake failed: read tcp 10.10.10.34:38980 -&gt; 10.10.10.34:3600: read: connection reset by peer</code> {#during-cluster-deployment-tiup-received-an-code-ssh-handshake-failed-read-tcp-10-10-10-34-38980-10-10-10-34-3600-read-connection-reset-by-peer-code-error}
+## クラスタの展開中に、 TiUP は<code>ssh: handshake failed: read tcp 10.10.10.34:38980 -&gt; 10.10.10.34:3600: read: connection reset by peer</code>エラーを受信しました {#during-cluster-deployment-tiup-received-an-code-ssh-handshake-failed-read-tcp-10-10-10-34-38980-10-10-10-34-3600-read-connection-reset-by-peer-code-error}
 
 このエラーは、 TiUPの同時スレッドのデフォルト数が SSH 接続のデフォルトの最大数を超えているために発生する可能性があります。この問題を解決するには、SSH 接続のデフォルト数を増やしてから、sshd サービスを再起動します。
 

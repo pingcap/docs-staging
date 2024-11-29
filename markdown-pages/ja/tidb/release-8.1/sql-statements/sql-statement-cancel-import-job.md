@@ -9,7 +9,7 @@ summary: TiDB での CANCEL IMPORT の使用法の概要。
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ## 必要な権限 {#required-privileges}
 
@@ -24,7 +24,7 @@ CancelImportJobsStmt ::=
 
 ## 例 {#example}
 
-ID が`1`のインポート ジョブをキャンセルするには、次のステートメントを実行します。
+ID が`1`インポート ジョブをキャンセルするには、次のステートメントを実行します。
 
 ```sql
 CANCEL IMPORT JOB 1;

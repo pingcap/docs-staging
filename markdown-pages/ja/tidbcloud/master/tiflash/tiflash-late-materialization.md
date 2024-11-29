@@ -9,12 +9,12 @@ summary: TiFlash の遅延マテリアライゼーション機能を使用して
 >
 > TiFlash の遅延マテリアライゼーションは[高速スキャンモード](/tiflash/use-fastscan.md)では有効になりません。
 
-TiFlash遅延マテリアライゼーションは、OLAP シナリオでクエリを高速化するための最適化方法です。1 システム変数を使用して[`tidb_opt_enable_late_materialization`](/system-variables.md#tidb_opt_enable_late_materialization-new-in-v700) TiFlash遅延マテリアライゼーションを有効にするか無効にするかを制御できます。
+TiFlash遅延マテリアライゼーションは、OLAP シナリオでクエリを高速化するための最適化方法です。1 システム[`tidb_opt_enable_late_materialization`](/system-variables.md#tidb_opt_enable_late_materialization-new-in-v700)を使用して、 TiFlash遅延マテリアライゼーションを有効にするか無効にするかを制御できます。
 
 -   無効にすると、フィルタ条件（ `WHERE`句）を含む`SELECT`ステートメントを処理するために、 TiFlash はクエリに必要な列からすべてのデータを読み取り、クエリ条件に基づいてデータをフィルタ処理して集計します。
--   有効にすると、 TiFlash はフィルター条件の一部を TableScan 演算子にプッシュダウンすることをサポートします。つまり、 TiFlash はまず、TableScan 演算子にプッシュダウンされたフィルター条件に関連する列データをスキャンし、条件を満たす行をフィルター処理してから、これらの行の他の列データをスキャンしてさらに計算することで、IO スキャンとデータ処理の計算を削減します。
+-   有効にすると、 TiFlash はフィルター条件の一部を TableScan 演算子にプッシュダウンすることをサポートします。つまり、 TiFlash はまず TableScan 演算子にプッシュダウンされたフィルター条件に関連する列データをスキャンし、条件を満たす行をフィルターし、次にこれらの行の他の列データをスキャンしてさらに計算することで、IO スキャンとデータ処理の計算を削減します。
 
-OLAP シナリオにおける特定のクエリのパフォーマンスを向上させるため、v7.1.0 以降では、 TiFlash の遅延マテリアライゼーション機能がデフォルトで有効になっています。TiDB オプティマイザーは、統計情報とフィルター条件に基づいてプッシュダウンするフィルター条件を決定し、フィルタリング率の高いフィルター条件を優先してプッシュダウンします。詳細なアルゴリズムについては、 [RFC ドキュメント](https://github.com/pingcap/tidb/tree/release-8.1/docs/design/2022-12-06-support-late-materialization.md)参照してください。
+OLAP シナリオにおける特定のクエリのパフォーマンスを向上させるため、v7.1.0 以降では、 TiFlash の遅延マテリアライゼーション機能がデフォルトで有効になっています。TiDB オプティマイザーは、統計とフィルター条件に基づいてプッシュダウンするフィルター条件を決定し、フィルタリング率の高いフィルター条件を優先してプッシュダウンします。詳細なアルゴリズムについては、 [RFC ドキュメント](https://github.com/pingcap/tidb/tree/release-8.1/docs/design/2022-12-06-support-late-materialization.md)を参照してください。
 
 例えば：
 
@@ -86,7 +86,7 @@ SET GLOBAL tidb_opt_enable_late_materialization=ON;
 
 フィルター条件が TableScan オペレーターにプッシュダウンされると、TableScan オペレーターの実行プロセスには主に次の手順が含まれます。
 
-1.  3 つの列`<handle, del_mark, version>`を読み取り、マルチバージョン同時実行制御 (MVCC) フィルタリングを実行して、MVCC ビットマップを生成します。
+1.  3 つの列`<handle, del_mark, version>`読み取り、マルチバージョン同時実行制御 (MVCC) フィルタリングを実行して、MVCC ビットマップを生成します。
 2.  フィルター条件に関連する列を読み取り、条件を満たす行をフィルターして、フィルター ビットマップを生成します。
 3.  MVCC ビットマップとフィルター ビットマップの間で`AND`操作を実行して、最終ビットマップを生成します。
 4.  最終ビットマップに従って、残りの列の対応する行を読み取ります。

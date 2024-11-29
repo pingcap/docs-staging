@@ -1,11 +1,11 @@
 ---
 title:  Migrate from Amazon RDS for Oracle to TiDB Cloud Using AWS DMS
-summary: AWS Database Migration Service (AWS DMS) を使用して、Amazon RDS for Oracle から TiDB Serverless にデータを移行する方法を学びます。
+summary: AWS Database Migration Service (AWS DMS) を使用して、Amazon RDS for Oracle からTiDB Cloud Serverless にデータを移行する方法を学びます。
 ---
 
 # AWS DMS を使用して Amazon RDS for Oracle からTiDB Cloudに移行する {#migrate-from-amazon-rds-for-oracle-to-tidb-cloud-using-aws-dms}
 
-このドキュメントでは、AWS Database Migration Service (AWS DMS) を使用して Amazon RDS for Oracle から[TiDB サーバーレス](https://tidbcloud.com/console/clusters/create-cluster)にデータを移行する方法の例を段階的に説明します。
+このドキュメントでは、AWS Database Migration Service (AWS DMS) を使用して Amazon RDS for Oracle から[TiDB Cloudサーバーレス](https://tidbcloud.com/console/clusters/create-cluster)にデータを移行する方法の例を段階的に説明します。
 
 TiDB Cloudと AWS DMS について詳しく知りたい場合は、以下を参照してください。
 
@@ -24,7 +24,7 @@ PostgreSQL、Oracle、SQL Server などの異種データベースからTiDB Clo
 大まかに言うと、次の手順に従います。
 
 1.  ソース Amazon RDS for Oracle をセットアップします。
-2.  ターゲット[TiDB サーバーレス](https://tidbcloud.com/console/clusters/create-cluster)を設定します。
+2.  ターゲット[TiDB Cloudサーバーレス](https://tidbcloud.com/console/clusters/create-cluster)を設定します。
 3.  AWS DMS を使用してデータ移行 (フルロード) を設定します。
 
 次の図は、高レベルのアーキテクチャを示しています。
@@ -62,18 +62,18 @@ Oracle DB インスタンスを作成する方法については、 [Oracle DB�
 
 次のスクリプトを使用して、github_events テーブルに 10000 行のデータを作成し、入力します。github イベント データセットを使用して、 [GHアーカイブ](https://gharchive.org/)からダウンロードできます。これには 10000 行のデータが含まれています。次の SQL スクリプトを使用して、Oracle で実行します。
 
--   [テーブルスキーマ_oracle.sql](https://github.com/pingcap-inc/tidb-integration-script/blob/main/aws-dms/oracle_table_schema.sql)
+-   [テーブルスキーマOracle.sql](https://github.com/pingcap-inc/tidb-integration-script/blob/main/aws-dms/oracle_table_schema.sql)
 -   [oracle_data.sql](https://github.com/pingcap-inc/tidb-integration-script/blob/main/aws-dms/oracle_data.sql)
 
 SQL スクリプトの実行が完了したら、Oracle のデータを確認します。次の例では、 [DBeaver](https://dbeaver.io/)使用してデータを照会します。
 
 ![Oracle RDS Data](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-3.png)
 
-## ステップ4. TiDBサーバーレスクラスターを作成する {#step-4-create-a-tidb-serverless-cluster}
+## ステップ4. TiDB Cloud Serverlessクラスターを作成する {#step-4-create-a-tidb-cloud-serverless-cluster}
 
 1.  [TiDB Cloudコンソール](https://tidbcloud.com/console/clusters)にログインします。
 
-2.  [TiDB サーバーレス クラスターを作成する](/tidb-cloud/tidb-cloud-quickstart.md) 。
+2.  [TiDB Cloud Serverless クラスターを作成する](/tidb-cloud/tidb-cloud-quickstart.md) 。
 
 3.  [**クラスター**](https://tidbcloud.com/console/clusters)ページで、ターゲット クラスター名をクリックして概要ページに移動します。
 
@@ -91,7 +91,7 @@ SQL スクリプトの実行が完了したら、Oracle のデータを確認し
 
 > **注記：**
 >
-> TiDB Serverless と連携する AWS DMS レプリケーションインスタンスを作成する詳細な手順については、 [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)参照してください。
+> TiDB Cloud Serverless と連携する AWS DMS レプリケーションインスタンスを作成する詳細な手順については、 [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)参照してください。
 
 ## ステップ6. DMSエンドポイントを作成する {#step-6-create-dms-endpoints}
 
@@ -109,7 +109,7 @@ SQL スクリプトの実行が完了したら、Oracle のデータを確認し
 
 > **注記：**
 >
-> TiDB Serverless DMS エンドポイントを作成する詳細な手順については、 [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)参照してください。
+> TiDB Cloud Serverless DMS エンドポイントを作成する詳細な手順については、 [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)参照してください。
 
 ## ステップ7. スキーマを移行する {#step-7-migrate-the-schema}
 
@@ -121,7 +121,7 @@ AWS スキーマ変換ツールを使用してスキーマを移行する場合�
 
 ## ステップ8. データベース移行タスクを作成する {#step-8-create-a-database-migration-task}
 
-1.  AWS DMS コンソールで、 [データ移行タスク](https://console.aws.amazon.com/dms/v2/home#tasks)ページに移動します。リージョンに切り替えます。次に、ウィンドウの右上隅にある**[タスクの作成] を**クリックします。
+1.  AWS DMS コンソールで、 [データ移行タスク](https://console.aws.amazon.com/dms/v2/home#tasks)ページに移動します。リージョンに切り替えます。次に、ウィンドウの右上隅にある**[タスクの作成]**をクリックします。
 
     ![Create task](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-to-tidb-cloud-create-task.png)
 
@@ -139,7 +139,7 @@ AWS スキーマ変換ツールを使用してスキーマを移行する場合�
 
 ## ステップ9. 下流のTiDBクラスタのデータを確認する {#step-9-check-data-in-the-downstream-tidb-cluster}
 
-[TiDB サーバーレス クラスター](https://tidbcloud.com/console/clusters/create-cluster)に接続し、 `admin.github_event`テーブルのデータを確認します。次のスクリーンショットに示すように、DMS はテーブル`github_events`と 10000 行のデータを正常に移行しました。
+[TiDB Cloudサーバーレス クラスター](https://tidbcloud.com/console/clusters/create-cluster)に接続し、 `admin.github_event`テーブルのデータを確認します。次のスクリーンショットに示すように、DMS はテーブル`github_events`と 10000 行のデータを正常に移行しました。
 
 ![Check Data In TiDB](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-14.png)
 

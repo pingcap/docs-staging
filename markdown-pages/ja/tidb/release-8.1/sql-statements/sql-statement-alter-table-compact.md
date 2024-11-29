@@ -5,11 +5,11 @@ summary: TiDB データベースに対する ALTER TABLE ... COMPACT の使用�
 
 # ALTER TABLE ... COMPACT {#alter-table-compact}
 
-読み取りパフォーマンスを向上させ、ディスク使用量を削減するために、TiDB はstorageノードでバックグラウンドでデータ圧縮を自動的にスケジュールします。圧縮中、storageノードは物理データを書き換えます。これには、削除された行のクリーンアップや、更新によって発生した複数のデータ バージョンをマージすることが含まれ`ALTER TABLE ... COMPACT` 。1 ステートメントを使用すると、バックグラウンドで圧縮がトリガーされるまで待たずに、特定のテーブルの圧縮をすぐに開始できます。
+読み取りパフォーマンスを向上させ、ディスク使用量を削減するために、TiDB はstorageノードでのデータ圧縮を`ALTER TABLE ... COMPACT`グラウンドで自動的にスケジュールします。圧縮中、storageノードは物理データを書き換えます。これには、削除された行のクリーンアップや、更新によって発生した複数のデータ バージョンをマージすることが含まれます。1 ステートメントを使用すると、バックグラウンドで圧縮がトリガーされるまで待たずに、特定のテーブルの圧縮をすぐに開始できます。
 
 このステートメントを実行しても、既存の SQL ステートメントはブロックされず、トランザクション、DDL、GC などの TiDB 機能にも影響はありません。SQL ステートメントで選択できるデータも変更されません。このステートメントを実行すると、IO および CPU リソースが消費されます。ビジネスに悪影響を与えないように、リソースが利用可能なときなど、適切な実行タイミングを選択するように注意してください。
 
-テーブルのすべてのレプリカが圧縮されると、圧縮ステートメントが終了して返されます。実行プロセス中に、 [`KILL`](/sql-statements/sql-statement-kill.md)ステートメントを実行することで、圧縮を安全に中断できます。圧縮を中断しても、データの一貫性が損なわれたり、データが失われたりすることはありません。また、後続の手動またはバックグラウンドの圧縮にも影響しません。
+テーブルのすべてのレプリカが圧縮されると、圧縮ステートメントが終了して返されます。実行プロセス中に、 [`KILL`](/sql-statements/sql-statement-kill.md)ステートメントを実行することで、安全に圧縮を中断できます。圧縮を中断しても、データの一貫性が損なわれたり、データが失われたりすることはありません。また、後続の手動またはバックグラウンドの圧縮にも影響しません。
 
 このデータ圧縮ステートメントは現在、 TiFlashレプリカに対してのみサポートされており、TiKV レプリカに対してはサポートされていません。
 
@@ -69,7 +69,7 @@ PARTITION BY LIST (store_id) (
 ALTER TABLE employees SET TIFLASH REPLICA 2;
 ```
 
-次のステートメントを実行すると、テーブル`employees`のパーティション`pNorth`と`pEast`の 2 つのTiFlashレプリカの圧縮をすぐに開始できます。
+次のステートメントを実行すると、 `employees`テーブル内の`pNorth`および`pEast`パーティションの 2 つのTiFlashレプリカの圧縮をすぐに開始できます。
 
 ```sql
 ALTER TABLE employees COMPACT PARTITION pNorth, pEast TIFLASH REPLICA;
@@ -79,7 +79,7 @@ ALTER TABLE employees COMPACT PARTITION pNorth, pEast TIFLASH REPLICA;
 
 `ALTER TABLE ... COMPACT`ステートメントは、テーブル内のすべてのレプリカを同時に圧縮します。
 
-オンライン ビジネスへの重大な影響を回避するために、各TiFlashインスタンスは、デフォルトでは一度に 1 つのテーブル内のデータのみを圧縮します (バックグラウンドでトリガーされる圧縮を除く)。つまり、 `ALTER TABLE ... COMPACT`ステートメントを複数のテーブルで同時に実行する場合、それらの実行は同時に実行されるのではなく、同じTiFlashインスタンスでキューに入れられます。
+オンライン ビジネスへの重大な影響を回避するために、各TiFlashインスタンスは、デフォルトでは一度に 1 つのテーブルのデータのみを圧縮します (バックグラウンドでトリガーされる圧縮を除く)。つまり、 `ALTER TABLE ... COMPACT`ステートメントを複数のテーブルで同時に実行する場合、それらの実行は同時に実行されるのではなく、同じTiFlashインスタンスでキューに入れられます。
 
 <CustomContent platform="tidb">
 
@@ -189,9 +189,9 @@ SELECT PARTITION_NAME, TOTAL_DELTA_ROWS, TOTAL_STABLE_ROWS
 
 > **注記：**
 >
-> -   圧縮中にデータが更新された場合、圧縮が完了した後も`TOTAL_DELTA_ROWS` 0 以外の値のままである可​​能性があります。これは正常であり、これらの更新が圧縮されていないことを示しています。これらの更新を圧縮するには、 `ALTER TABLE ... COMPACT`ステートメントを再度実行します。
+> -   圧縮中にデータが更新された場合、圧縮が完了した後も`TOTAL_DELTA_ROWS` 0 以外の値のままである可能性があります。これは正常であり、これらの更新が圧縮されていないことを示しています。これらの更新を圧縮するには、 `ALTER TABLE ... COMPACT`ステートメントを再度実行します。
 >
-> -   `TOTAL_DELTA_ROWS`は行数ではなくデータのバージョンを示します。たとえば、行を挿入してから削除すると、 `TOTAL_DELTA_ROWS` 2 増加します。
+> -   `TOTAL_DELTA_ROWS`数ではなくデータのバージョンを示します。たとえば、行を挿入してから削除すると、 `TOTAL_DELTA_ROWS`は 2 増加します。
 
 ## 互換性 {#compatibility}
 
@@ -205,5 +205,5 @@ SELECT PARTITION_NAME, TOTAL_DELTA_ROWS, TOTAL_STABLE_ROWS
 
 ## 参照 {#see-also}
 
--   [他の机](/sql-statements/sql-statement-alter-table.md)
+-   [テーブルの変更](/sql-statements/sql-statement-alter-table.md)
 -   [TIDBを殺せ](/sql-statements/sql-statement-kill.md)

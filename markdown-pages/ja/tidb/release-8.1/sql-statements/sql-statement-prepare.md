@@ -20,7 +20,7 @@ PrepareSQL ::=
 
 > **注記：**
 >
-> `PREPARE`つのステートメントごとに、プレースホルダーの最大数は 65535 です。
+> `PREPARE`ステートメントごとに、プレースホルダーの最大数は 65535 です。
 
 現在の TiDB インスタンス内の`PREPARE`ステートメントの数を制限するには、 [`max_prepared_stmt_count`](/system-variables.md#max_prepared_stmt_count)システム変数を使用できます。
 
@@ -47,7 +47,7 @@ Query OK, 0 rows affected (0.00 sec)
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`PREPARE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`PREPARE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 

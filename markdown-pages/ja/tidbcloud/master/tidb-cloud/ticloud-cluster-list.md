@@ -1,50 +1,51 @@
 ---
-title: ticloud cluster list
-summary: ticloud cluster list のリファレンス。
+title: ticloud serverless cluster list
+summary: ticloud serverless list` のリファレンス。
 ---
 
-# ticloud クラスター リスト {#ticloud-cluster-list}
+# ticloud サーバーレス リスト {#ticloud-serverless-list}
 
-プロジェクト内のすべてのクラスターを一覧表示します。
+プロジェクト内のすべてのTiDB Cloud Serverless クラスターを一覧表示します。
 
 ```shell
-ticloud cluster list <project-id> [flags]
+ticloud serverless list [flags]
 ```
 
 または、次のエイリアス コマンドを使用します。
 
 ```shell
-ticloud cluster ls <project-id> [flags]
+ticloud serverless ls [flags]
 ```
 
 ## 例 {#examples}
 
-プロジェクト内のすべてのクラスターを一覧表示します (対話型モード):
+インタラクティブ モードですべてのTiDB Cloud Serverless クラスターを一覧表示します。
 
 ```shell
-ticloud cluster list
+ticloud serverless list
 ```
 
-指定されたプロジェクト内のすべてのクラスターを一覧表示します (非対話型モード):
+指定されたプロジェクト内のすべてのTiDB Cloud Serverless クラスターを非対話モードで一覧表示します。
 
 ```shell
-ticloud cluster list <project-id>
+ticloud serverless list -p <project-id>
 ```
 
-指定されたプロジェクト内のすべてのクラスターを JSON 形式で一覧表示します。
+非対話モードで、指定されたプロジェクト内のすべてのTiDB Cloud Serverless クラスターを JSON 形式で一覧表示します。
 
 ```shell
-ticloud cluster list <project-id> -o json
+ticloud serverless list -p <project-id> -o json
 ```
 
 ## 旗 {#flags}
 
-非対話型モードでは、必要なフラグを手動で入力する必要があります。対話型モードでは、CLI プロンプトに従って入力するだけです。
+非対話型モードでは、必要なフラグを手動で入力する必要があります。対話型モードでは、CLI プロンプトに従ってフラグを入力するだけです。
 
-| フラグ         | 説明                                                                        | 必須  | 注記                       |
-| ----------- | ------------------------------------------------------------------------- | --- | ------------------------ |
-| -h, --help  | このコマンドのヘルプ情報                                                              | いいえ | 非対話型モードと対話型モードの両方で動作します。 |
-| -o, --出力文字列 | 出力形式 (デフォルトは`human` )。有効な値は`human`または`json`です。完全な結果を得るには、 `json`形式を使用します。 | いいえ | 非対話型モードと対話型モードの両方で動作します。 |
+| フラグ                | 説明                                                                              | 必須  | 注記                       |
+| ------------------ | ------------------------------------------------------------------------------- | --- | ------------------------ |
+| -p, --プロジェクトID 文字列 | プロジェクトの ID を指定します。                                                              | はい  | 非対話型モードでのみ動作します。         |
+| -h, --help         | このコマンドのヘルプ情報を表示します。                                                             | いいえ | 非対話型モードと対話型モードの両方で動作します。 |
+| -o, --出力文字列        | 出力形式を指定します (デフォルトは`human` )。有効な値は`human`または`json`です。完全な結果を得るには、 `json`形式を使用します。 | いいえ | 非対話型モードと対話型モードの両方で動作します。 |
 
 ## 継承されたフラグ {#inherited-flags}
 
@@ -52,6 +53,7 @@ ticloud cluster list <project-id> -o json
 | ----------------- | ------------------------------------------------------------------------------ | --- | -------------------------------------------------------------- |
 | --色なし             | 出力のカラーを無効にします。                                                                 | いいえ | 非対話型モードでのみ機能します。対話型モードでは、一部の UI コンポーネントで色を無効にしても機能しない可能性があります。 |
 | -P, --profile 文字列 | このコマンドで使用するアクティブ[ユーザープロフィール](/tidb-cloud/cli-reference.md#user-profile)を指定します。 | いいえ | 非対話型モードと対話型モードの両方で動作します。                                       |
+| -D、--デバッグ         | デバッグ モードを有効にします。                                                               | いいえ | 非対話型モードと対話型モードの両方で動作します。                                       |
 
 ## フィードバック {#feedback}
 

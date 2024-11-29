@@ -25,7 +25,7 @@ JSON関数を使用して[JSONデータ型](/data-type-json.md)のデータを�
 | [-&gt;](/functions-and-operators/json-functions/json-functions-search.md#-)                                 | 評価パスの後のJSON列から値を返します。1の別名です`JSON_EXTRACT(doc, path_literal)`                              |
 | [-&gt;&gt;](/functions-and-operators/json-functions/json-functions-search.md#--1)                           | 評価パスの後のJSON列からの値と、その結果の引用符を外した値を返します`JSON_UNQUOTE(JSON_EXTRACT(doc, path_literal))`の別名です。 |
 | [JSON_KEYS()](/functions-and-operators/json-functions/json-functions-search.md#json_keys)                   | JSONオブジェクトの最上位レベルの値からキーをJSON配列として返します。パス引数が指定されている場合は、選択したパスから最上位レベルのキーを返します。             |
-| [JSON_SEARCH()](/functions-and-operators/json-functions/json-functions-search.md#json_search)               | JSONドキュメントで文字列の1つまたはすべてに一致するものを検索する                                                       |
+| [JSON_検索()](/functions-and-operators/json-functions/json-functions-search.md#json_search)                   | JSONドキュメントで文字列の1つまたはすべてに一致するものを検索する                                                       |
 | [メンバー()](/functions-and-operators/json-functions/json-functions-search.md#member-of)                        | 渡された値が JSON 配列の要素である場合は 1 を返します。それ以外の場合は 0 を返します。                                         |
 | [JSON_OVERLAPS()](/functions-and-operators/json-functions/json-functions-search.md#json_overlaps)           | 2 つの JSON ドキュメントに重複部分があるかどうかを示します。重複している場合は 1 を返します。重複していない場合は 0 を返します。                   |
 
@@ -130,7 +130,7 @@ JSON関数を使用して[JSONデータ型](/data-type-json.md)のデータを�
 | `$.database.versions[0].type`         | 最初のデータベース バージョンのタイプ。       | `"lts"`                                                                                              |
 | `$.database.versions[*].release_date` | すべてのバージョンのリリース日。           | `["2024-08-27","2024-03-29"]`                                                                        |
 | `$.*.features`                        | 2つの機能配列                    | `[["distributed", "scalable", "relational", "cloud native"], ["MySQL compatible", "Shard merging"]]` |
-| `$**.version`                         | パスワイルドカードを使用したすべてのバージョン    | `["v8.1.1","v8.0.0"]`                                                                                |
+| `$**.version`                         | パスワイルドカードを含むすべてのバージョン      | `["v8.1.1","v8.0.0"]`                                                                                |
 | `$.database.features[0 to 2]`         | 1 番目から 3 番目までのデータベース機能の範囲。 | `["scalable","relational"]`                                                                          |
 
 詳細については[JSONPathのIETFドラフト](https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html)参照してください。

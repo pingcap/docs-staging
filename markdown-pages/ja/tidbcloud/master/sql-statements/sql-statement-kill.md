@@ -38,17 +38,17 @@ KILL 5857102839209263511;
 ## MySQL 互換性 {#mysql-compatibility}
 
 -   MySQL の`KILL`ステートメントは現在接続されている MySQL インスタンス内の接続のみを終了できますが、TiDB の`KILL`ステートメントはクラスター全体の任意の TiDB インスタンス内の接続を終了できます。
--   v7.2.0 以前のバージョンでは、MySQL コマンドラインの<kbd>Control+C</kbd>を使用して TiDB 内のクエリまたは接続を終了することはサポートされていません。
+-   v7.2.0 以前のバージョンでは、MySQL コマンドラインの<kbd>Control+C を</kbd>使用して TiDB 内のクエリまたは接続を終了することはサポートされていません。
 
 ## 行動変化の説明 {#behavior-change-descriptions}
 
 <CustomContent platform="tidb">
 
-v7.3.0 以降、TiDB は 32 ビット接続 ID の生成をサポートしています。これはデフォルトで有効になっており、 [`enable-32bits-connection-id`](/tidb-configuration-file.md#enable-32bits-connection-id-new-in-v730)構成項目によって制御されます。Global Kill 機能と 32 ビット接続 ID の両方が有効になっている場合、TiDB は 32 ビット接続 ID を生成し、MySQL コマンドラインで<kbd>Control+C</kbd>を使用してクエリまたは接続を終了できます。
+v7.3.0 以降、TiDB は 32 ビット接続 ID の生成をサポートしています。これはデフォルトで有効になっており、 [`enable-32bits-connection-id`](/tidb-configuration-file.md#enable-32bits-connection-id-new-in-v730)構成項目によって制御されます。Global Kill 機能と 32 ビット接続 ID の両方が有効になっている場合、TiDB は 32 ビット接続 ID を生成し、MySQL コマンドラインで<kbd>Control+C を</kbd>使用してクエリまたは接続を終了できます。
 
 > **警告：**
 >
-> クラスター内の TiDB インスタンスの数が 2048 を超えるか、単一の TiDB インスタンスの同時接続数が 1048576 を超えると、32 ビット接続 ID スペースが不足し、自動的に 64 ビット接続 ID にアップグレードされます。アップグレード プロセス中、既存のビジネス接続と確立された接続は影響を受けません。ただし、後続の新しい接続は、MySQL コマンドラインで<kbd>Control+C</kbd>を使用して終了することはできません。
+> クラスター内の TiDB インスタンスの数が 2048 を超えるか、単一の TiDB インスタンスの同時接続数が 1048576 を超えると、32 ビット接続 ID スペースが不足し、自動的に 64 ビット接続 ID にアップグレードされます。アップグレード プロセス中、既存のビジネス接続と確立された接続は影響を受けません。ただし、後続の新しい接続は、MySQL コマンドラインで<kbd>Control+C を</kbd>使用して終了することはできません。
 
 v6.1.0 以降、TiDB は Global Kill 機能をサポートしています。この機能はデフォルトで有効になっており、 [`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-new-in-v610)構成によって制御されます。
 
@@ -56,7 +56,7 @@ v6.1.0 以降、TiDB は Global Kill 機能をサポートしています。こ�
 
 <CustomContent platform="tidb-cloud">
 
-v7.3.0 以降、TiDB は 32 ビット接続 ID の生成をサポートしており、これはデフォルトで有効になっています。Global Kill 機能と 32 ビット接続 ID の両方が有効になっている場合は、MySQL コマンドラインで<kbd>Control+C</kbd>を使用してクエリまたは接続を終了できます。
+v7.3.0 以降、TiDB は 32 ビット接続 ID の生成をサポートしており、これはデフォルトで有効になっています。Global Kill 機能と 32 ビット接続 ID の両方が有効になっている場合は、MySQL コマンドラインで<kbd>Control+C を</kbd>使用してクエリまたは接続を終了できます。
 
 v6.1.0 以降、TiDB は Global Kill 機能をサポートしており、デフォルトで有効になっています。
 
@@ -70,11 +70,11 @@ Global Kill 機能が有効になっていない場合、または v6.1.0 より
 
 <CustomContent platform="tidb">
 
--   クライアントが常に同じ TiDB インスタンスに接続されることが確実でない限り、構成ファイルで[`compatible-kill-query = true`](/tidb-configuration-file.md#compatible-kill-query)を設定することは**強く推奨されません**。これは、デフォルトの MySQL クライアントで<kbd>Control+C</kbd>を押すと、 `KILL`が実行される新しい接続が開かれるためです。クライアントと TiDB クラスターの間にプロキシがある場合、新しい接続は別の TiDB インスタンスにルーティングされる可能性があり、誤って別のセッションが強制終了される可能性があります。
+-   クライアントが常に同じ TiDB インスタンスに接続されることが確実でない限り、構成ファイルで[`compatible-kill-query = true`](/tidb-configuration-file.md#compatible-kill-query)設定すること**は強く推奨されません**。これは、デフォルトの MySQL クライアントで<kbd>Control+C を</kbd>押すと、 `KILL`が実行される新しい接続が開かれるためです。クライアントと TiDB クラスターの間にプロキシがある場合、新しい接続は別の TiDB インスタンスにルーティングされる可能性があり、誤って別のセッションが強制終了される可能性があります。
 
 </CustomContent>
 
--   `KILL TIDB`ステートメントは TiDB の拡張機能です。このステートメントの機能は、MySQL `KILL [CONNECTION|QUERY]`コマンドおよび MySQL コマンドライン<kbd>Control+C</kbd>に似ています。同じ TiDB インスタンスで`KILL TIDB`を使用するのは安全です。
+-   `KILL TIDB`ステートメントは TiDB の拡張機能です。このステートメントの機能は、MySQL `KILL [CONNECTION|QUERY]`コマンドおよび MySQL コマンドライン<kbd>Control+C</kbd>に似ています。同じ TiDB インスタンスで`KILL TIDB`使用するのは安全です。
 
 ## 参照 {#see-also}
 

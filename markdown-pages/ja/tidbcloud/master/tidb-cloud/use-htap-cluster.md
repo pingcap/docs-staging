@@ -7,11 +7,11 @@ summary: TiDB Cloudで HTAP クラスターを使用する方法を学習しま�
 
 [HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing)ハイブリッド トランザクション/分析処理を意味します。TiDB TiDB Cloudの HTAP クラスターは、トランザクション処理用に設計された行ベースのstorageエンジン[ティクヴ](https://tikv.org)と、分析処理用に設計された列指向storage[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)で構成されています。アプリケーション データは最初に TiKV に保存され、次にRaftコンセンサス アルゴリズムを介してTiFlashに複製されます。つまり、行ストアから列指向ストアへのリアルタイムのレプリケーションです。
 
-TiDB Cloudを使用すると、HTAP ワークロードに応じて 1 つ以上のTiFlashノードを指定して、HTAP クラスターを簡単に作成できます。クラスターの作成時にTiFlashノード数が指定されていない場合、またはTiFlashノードをさらに追加する場合は、ノード数を[クラスターのスケーリング](/tidb-cloud/scale-tidb-cluster.md)ずつ変更できます。
+TiDB Cloudを使用すると、HTAP ワークロードに応じて 1 つ以上のTiFlashノードを指定することで、HTAP クラスターを簡単に作成できます。クラスターの作成時にTiFlashノード数が指定されていない場合、またはTiFlashノードをさらに追加したい場合は、ノード数を[クラスターのスケーリング](/tidb-cloud/scale-tidb-cluster.md)ずつ変更できます。
 
 > **注記：**
 >
-> TiFlash は、TiDB Serverless クラスターでは常に有効になっています。無効にすることはできません。
+> TiFlash は、 TiDB Cloud Serverless クラスターでは常に有効になっています。無効にすることはできません。
 
 TiKV データはデフォルトではTiFlashに複製されません。次の SQL ステートメントを使用して、 TiFlashに複製するテーブルを選択できます。
 
@@ -49,7 +49,7 @@ explain analyze select count(*) from test.t;
 +--------------------------+---------+---------+--------------+---------------+----------------------------------------------------------------------+--------------------------------+-----------+------+
 ```
 
-`cop[tiflash]` 、タスクが処理のためにTiFlashに送信されることを意味します。クエリでTiFlashレプリカが選択されていない場合は、 `analyze table`ステートメントを使用して統計を更新し、 `explain analyze`番目のステートメントを使用して結果を確認してください。
+`cop[tiflash]` 、タスクが処理のためにTiFlashに送信されることを意味します。クエリでTiFlashレプリカが選択されていない場合は、 `analyze table`番目のステートメントを使用して統計を更新し、 `explain analyze`番目のステートメントを使用して結果を確認してください。
 
 ### エンジン分離 {#engine-isolation}
 
@@ -67,4 +67,4 @@ set @@session.tidb_isolation_read_engines = "engine list separated by commas";
 select /*+ read_from_storage(tiflash[table_name]) */ ... from table_name;
 ```
 
-TiFlashの詳細については、ドキュメント[ここ](https://docs.pingcap.com/tidb/stable/tiflash-overview/)を参照してください。
+TiFlash の詳細については、ドキュメント[ここ](https://docs.pingcap.com/tidb/stable/tiflash-overview/)を参照してください。

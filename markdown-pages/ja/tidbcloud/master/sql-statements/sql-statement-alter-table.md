@@ -3,7 +3,7 @@ title: ALTER TABLE | TiDB SQL Statement Reference
 summary: TiDB データベースの ALTER TABLE の使用法の概要。
 ---
 
-# 他の机 {#alter-table}
+# テーブルの変更 {#alter-table}
 
 このステートメントは、既存のテーブルを新しいテーブル構造に適合するように変更します。ステートメント`ALTER TABLE`は次の目的で使用できます。
 
@@ -38,7 +38,7 @@ AlterTableSpec ::=
 |   'ORDER' 'BY' AlterOrderItem ( ',' AlterOrderItem )*
 |   ( 'DISABLE' | 'ENABLE' ) 'KEYS'
 |   ( 'MODIFY' ColumnKeywordOpt IfExists | 'CHANGE' ColumnKeywordOpt IfExists ColumnName ) ColumnDef ColumnPosition
-|   'ALTER' ( ColumnKeywordOpt ColumnName ( 'SET' 'DEFAULT' ( SignedLiteral | '(' Expression ')' ) | 'DROP' 'DEFAULT' ) | 'CHECK' Identifier EnforcedOrNot | 'INDEX' Identifier IndexInvisible )
+|   'ALTER' ( ColumnKeywordOpt ColumnName ( 'SET' 'DEFAULT' ( SignedLiteral | '(' Expression ')' ) | 'DROP' 'DEFAULT' ) | 'CHECK' Identifier EnforcedOrNot | 'INDEX' Identifier ("VISIBLE" | "INVISIBLE") )
 |   'RENAME' ( ( 'COLUMN' | KeyOrIndex ) Identifier 'TO' Identifier | ( 'TO' | '='? | 'AS' ) TableName )
 |   LockClause
 |   AlgorithmClause
@@ -94,7 +94,7 @@ EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 3 rows in set (0.00 sec)
 ```
 
-ステートメント[`ALTER TABLE .. ADD INDEX`](/sql-statements/sql-statement-add-index.md)テーブル t1 にインデックスを追加するために使用できます。3 `EXPLAIN` 、元のクエリでインデックス範囲スキャンが使用されるようになり、より効率的になっていることを確認します。
+ステートメント[`ALTER TABLE .. ADD INDEX`](/sql-statements/sql-statement-add-index.md) 、テーブル t1 にインデックスを追加するために使用できます。3 `EXPLAIN`元のクエリでインデックス範囲スキャンが使用されるようになり、より効率的になっていることを確認します。
 
 ```sql
 ALTER TABLE t1 ADD INDEX (c1);
@@ -133,7 +133,7 @@ ALTER TABLE t1 ADD INDEX (c1), ALGORITHM=INSTANT;
 ERROR 1846 (0A000): ALGORITHM=INSTANT is not supported. Reason: Cannot alter table by INSTANT. Try ALGORITHM=INPLACE.
 ```
 
-ただし、 `INPLACE`操作に`ALGORITHM=COPY`アサーションを使用すると、エラーではなく警告が生成されます。これは、TiDB がアサーションを*this algorithm or better*として解釈するためです。この動作の違いは、TiDB が使用するアルゴリズムが MySQL と異なる可能性があるため、MySQL との互換性に役立ちます。
+ただし、 `INPLACE`操作に`ALGORITHM=COPY`アサーションを使用すると、エラーではなく警告が生成されます。これは、TiDB がアサーションを*this algorithm or better*として解釈するためです。TiDB が使用するアルゴリズムは MySQL と異なる可能性があるため、この動作の違いは MySQL との互換性に役立ちます。
 
 ```sql
 ALTER TABLE t1 ADD INDEX (c1), ALGORITHM=COPY;
@@ -158,7 +158,7 @@ TiDB の`ALTER TABLE`には次の主な制限が適用されます。
 -   `ALTER TABLE`つのステートメントで複数のスキーマ オブジェクトを変更する場合:
 
     -   複数の変更で同じオブジェクトを変更することはサポートされていません。
-    -   TiDB は**、実行前に**テーブル スキーマに従ってステートメントを検証します。たとえば、列`c1`テーブルに存在しないため、 `ALTER TABLE t ADD COLUMN c1 INT, ADD COLUMN c2 INT AFTER c1;`を実行するとエラーが返されます。
+    -   TiDB は、**実行前に**テーブル スキーマに従ってステートメントを検証します。たとえば、列`c1`テーブルに存在しないため、 `ALTER TABLE t ADD COLUMN c1 INT, ADD COLUMN c2 INT AFTER c1;`実行するとエラーが返されます。
     -   `ALTER TABLE`ステートメントの場合、TiDB での実行順序は左から右への変更が 1 つずつ順番に実行されるため、場合によっては MySQL と互換性がありません。
 
 -   主キー列の[再編成データ](/sql-statements/sql-statement-modify-column.md#reorg-data-change)種類の変更はサポートされていません。
@@ -167,13 +167,13 @@ TiDB の`ALTER TABLE`には次の主な制限が適用されます。
 
 -   生成された列の列タイプの変更はサポートされていません。
 
--   一部のデータ型 (たとえば、一部の TIME、Bit、Set、Enum、JSON 型) の変更は、TiDB と MySQL 間の`CAST`関数の動作の互換性の問題によりサポートされていません。
+-   一部のデータ型 (たとえば、一部の TIME、Bit、Set、Enum、JSON 型) の変更は、TiDB と MySQL 間の`CAST`の関数の動作の互換性の問題によりサポートされていません。
 
 -   空間データ型はサポートされていません。
 
--   `ALTER TABLE t CACHE | NOCACHE` 、MySQL 構文に対する TiDB 拡張です。詳細については、 [キャッシュされたテーブル](/cached-tables.md)を参照してください。
+-   `ALTER TABLE t CACHE | NOCACHE` 、MySQL 構文に対する TiDB 拡張です。詳細については、 [キャッシュされたテーブル](/cached-tables.md)参照してください。
 
-詳細な制限については[MySQL 互換性](/mysql-compatibility.md#ddl-operations)を参照してください。
+詳細な制限については[MySQL 互換性](/mysql-compatibility.md#ddl-operations)参照してください。
 
 ## 参照 {#see-also}
 

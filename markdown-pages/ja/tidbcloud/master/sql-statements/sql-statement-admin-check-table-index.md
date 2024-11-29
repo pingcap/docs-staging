@@ -13,7 +13,7 @@ category: reference
 -   [FOREIGN KEY制約](/foreign-key.md)チェックしています。
 -   [クラスター化された主キー](/clustered-indexes.md)が使用されている場合は、PRIMARY KEY インデックスをチェックします。
 
-`ADMIN CHECK [TABLE|INDEX]`問題が見つかった場合は、インデックスを削除して再作成することで解決できます。問題が解決しない場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support)実行できます。
+`ADMIN CHECK [TABLE|INDEX]`問題が見つかった場合は、インデックスを削除して再作成することで解決できます。問題が解決しない場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)実行できます。
 
 ## 原則 {#principles}
 
@@ -28,16 +28,18 @@ category: reference
 ## 概要 {#synopsis}
 
 ```ebnf+diagram
-AdminStmt ::=
-    'ADMIN' ( 'SHOW' ( 'DDL' ( 'JOBS' Int64Num? WhereClauseOptional | 'JOB' 'QUERIES' NumList )? | TableName 'NEXT_ROW_ID' | 'SLOW' AdminShowSlow ) | 'CHECK' ( 'TABLE' TableNameList | 'INDEX' TableName Identifier ( HandleRange ( ',' HandleRange )* )? ) | 'RECOVER' 'INDEX' TableName Identifier | 'CLEANUP' ( 'INDEX' TableName Identifier | 'TABLE' 'LOCK' TableNameList ) | 'CHECKSUM' 'TABLE' TableNameList | 'CANCEL' 'DDL' 'JOBS' NumList | 'RELOAD' ( 'EXPR_PUSHDOWN_BLACKLIST' | 'OPT_RULE_BLACKLIST' | 'BINDINGS' ) | 'PLUGINS' ( 'ENABLE' | 'DISABLE' ) PluginNameList | 'REPAIR' 'TABLE' TableName CreateTableStmt | ( 'FLUSH' | 'CAPTURE' | 'EVOLVE' ) 'BINDINGS' )
+AdminCheckStmt ::=
+    'ADMIN' 'CHECK' ( 'TABLE' TableNameList | 'INDEX' TableName Identifier ( HandleRange ( ',' HandleRange )* )? ) 
 
 TableNameList ::=
     TableName ( ',' TableName )*
+
+HandleRange ::= '(' Int64Num ',' Int64Num ')'
 ```
 
 ## 例 {#examples}
 
-`tbl_name`テーブル内のすべてのデータと対応するインデックスの一貫性をチェックするには、 `ADMIN CHECK TABLE`を使用します。
+`tbl_name`テーブル内のすべてのデータと対応するインデックスの一貫性をチェックするには、 `ADMIN CHECK TABLE`使用します。
 
 ```sql
 ADMIN CHECK TABLE tbl_name [, tbl_name] ...;
@@ -49,13 +51,13 @@ ADMIN CHECK TABLE tbl_name [, tbl_name] ...;
 ADMIN CHECK INDEX tbl_name idx_name;
 ```
 
-上記のステートメントは、 `tbl_name`のテーブル内の`idx_name`番目のインデックスに対応する列データとインデックス データの一貫性をチェックするために使用されます。一貫性チェックに合格すると、空の結果が返されます。それ以外の場合は、データが不一致であることを示すエラー メッセージが返されます。
+上記のステートメントは、 `tbl_name`番目のテーブル内の`idx_name`のインデックスに対応する列データとインデックス データの一貫性をチェックするために使用されます。一貫性チェックに合格すると、空の結果が返されます。それ以外の場合は、データが不一致であることを示すエラー メッセージが返されます。
 
 ```sql
 ADMIN CHECK INDEX tbl_name idx_name (lower_val, upper_val) [, (lower_val, upper_val)] ...;
 ```
 
-上記のステートメントは、データ範囲（チェック対象）を指定して、 `tbl_name`のテーブルの`idx_name`のインデックスに対応する列データとインデックス データの整合性をチェックするために使用されます。整合性チェックに合格すると、空の結果が返されます。それ以外の場合は、データが不整合であることを示すエラー メッセージが返されます。
+上記のステートメントは、データ範囲（チェック対象）を指定して、 `tbl_name`番目のテーブルの`idx_name`のインデックスに対応する列データとインデックス データの整合性をチェックするために使用されます。整合性チェックに合格すると、空の結果が返されます。それ以外の場合は、データが不整合であることを示すエラー メッセージが返されます。
 
 ## MySQL 互換性 {#mysql-compatibility}
 

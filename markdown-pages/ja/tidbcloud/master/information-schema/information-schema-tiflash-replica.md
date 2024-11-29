@@ -1,6 +1,6 @@
 ---
 title: TIFLASH_REPLICA
-summary: TIFLASH_REPLICA INFORMATION_SCHEMA テーブルについて学習します。
+summary: TIFLASH_REPLICA` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # TIFLASH_レプリカ {#tiflash-replica}
@@ -37,4 +37,4 @@ DESC TIFLASH_REPLICA;
 -   `REPLICA_COUNT` : TiFlashレプリカの数。
 -   `LOCATION_LABELS` : TiFlashレプリカが作成されるときに設定される LocationLabelList。
 -   `AVAILABLE` : テーブルのTiFlashレプリカが使用可能かどうかを示します。値が`1` (使用可能) の場合、TiDB オプティマイザーはクエリ コストに基づいてクエリを TiKV またはTiFlashにプッシュダウンすることをインテリジェントに選択できます。値が`0` (使用不可) の場合、TiDB はクエリをTiFlashにプッシュダウンしません。このフィールドの値が`1` (使用可能) になると、それ以上変更されなくなります。
--   `PROGRESS` : TiFlashレプリカのレプリケーションの進行状況。精度は小数点以下 2 桁、分単位です。このフィールドのスコープは`[0, 1]`です。4 `AVAILABLE`が`1`で`PROGRESS` 1 未満の場合、 TiFlashレプリカは TiKV より大幅に遅れており、 TiFlashにプッシュダウンされたクエリは、データ レプリケーションの待機のタイムアウトにより失敗する可能性があります。
+-   `PROGRESS` : TiFlashレプリカのレプリケーションの進行状況。精度は小数点以下`AVAILABLE`桁、分単位です。このフィールドのスコープは`[0, 1]`です。4 フィールドが`1`で`PROGRESS`が 1 未満の場合、 TiFlashレプリカは TiKV より大幅に遅れており、 TiFlashにプッシュダウンされたクエリは、データ レプリケーションの待機のタイムアウトにより失敗する可能性があります。

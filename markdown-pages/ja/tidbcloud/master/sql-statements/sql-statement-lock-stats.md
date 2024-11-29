@@ -5,7 +5,7 @@ summary: TiDB データベースの LOCK STATS の使用法の概要。
 
 # ロック統計 {#lock-stats}
 
-`LOCK STATS` 、テーブルまたはパーティションの統計をロックするために使用されます。統計がロックされると、TiDB はテーブルまたはパーティションの統計を自動的に更新しません。動作の詳細については、 [統計情報のロックの動作](/statistics.md#behaviors-of-locking-statistics)を参照してください。
+`LOCK STATS` 、テーブルまたはパーティションの統計をロックするために使用されます。統計がロックされると、TiDB はテーブルまたはパーティションの統計を自動的に更新しません。動作の詳細については、 [統計情報のロックの動作](/statistics.md#behaviors-of-locking-statistics)参照してください。
 
 ## 概要 {#synopsis}
 
@@ -103,7 +103,7 @@ mysql> SHOW WARNINGS;
 6 rows in set (0.01 sec)
 ```
 
-パーティション`p1`の統計をロックし、 `ANALYZE`を実行します。警告メッセージは、 `ANALYZE`ステートメントがパーティション`p1`をスキップしたことを示します。
+パーティション`p1`の統計をロックし、 `ANALYZE`実行します。警告メッセージは、 `ANALYZE`ステートメントがパーティション`p1`をスキップしたことを示します。
 
 ```sql
 mysql> LOCK STATS t PARTITION p1;

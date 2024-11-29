@@ -327,7 +327,7 @@ TiDB は MySQL のエラー コードと互換性があり、ほとんどの場�
 
     完全なエラーメッセージ: `ERROR 8130 (HY000): client has multi-statement capability disabled`
 
-    このエラーは、TiDB の以前のバージョンからアップグレードした後に発生する可能性があります。SQL インジェクション攻撃の影響を軽減するために、TiDB ではデフォルトで、 `COM_QUERY`呼び出しで複数のクエリが実行されないようにするようになりました。
+    このエラーは、TiDB の以前のバージョンからアップグレードした後に発生する可能性があります。SQL インジェクション攻撃の影響を軽減するために、TiDB ではデフォルトで`COM_QUERY`呼び出しで複数のクエリが実行されないようにするようになりました。
 
     システム変数[`tidb_multi_statement_mode`](/system-variables.md#tidb_multi_statement_mode-new-in-v4011)使用してこの動作を制御できます。
 

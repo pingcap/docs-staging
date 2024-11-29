@@ -50,7 +50,7 @@ WHERE
   AND peer.store_id = tikv.store_id;
 ```
 
-`TIKV_REGION_PEERS`テーブル内のフィールドは次のように説明されます。
+`TIKV_REGION_PEERS`のテーブル内のフィールドは次のように説明されます。
 
 -   REGION_ID:リージョンID。
 -   PEER_ID:リージョンピアの ID。

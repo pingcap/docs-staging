@@ -289,7 +289,7 @@ await this.dataSource.manager.save(player);
 
 ### クエリデータ {#query-data}
 
-次のクエリは、ID 101 の単一のオブジェクト`Player`を返します。レコードが見つからない場合は`null`返します。
+次のクエリは、ID 101 の単一の`Player`のオブジェクトを返します。レコードが見つからない場合は`null`返します。
 
 ```typescript
 const player: Player | null = await this.dataSource.manager.findOneBy(Player, {

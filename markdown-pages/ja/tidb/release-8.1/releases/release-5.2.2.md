@@ -26,7 +26,7 @@ TiDB バージョン: 5.2.2
 -   PD
 
     -   ホットスポット スケジューラ[＃3869](https://github.com/tikv/pd/issues/3869)の QPS ディメンションに書き込みクエリの種類を追加する
-    -   バランス領域スケジューラの再試行制限を動的に調整して、スケジューラ[＃3744](https://github.com/tikv/pd/issues/3744)のパフォーマンスを向上させる
+    -   バランス領域スケジューラの再試行制限を動的に調整して、スケジューラ[＃3744](https://github.com/tikv/pd/issues/3744)のパフォーマンスを向上させることをサポートします。
     -   TiDBダッシュボードをv2021.10.08.1 [＃4070](https://github.com/tikv/pd/pull/4070)に更新
     -   エビクトリーダースケジューラが不健全なピアを持つ領域をスケジュールできるようにサポート[＃4093](https://github.com/tikv/pd/issues/4093)
     -   スケジューラ[＃4146](https://github.com/tikv/pd/issues/4146)の終了プロセスを高速化
@@ -40,7 +40,7 @@ TiDB バージョン: 5.2.2
         -   監視項目とアラートルールを最適化して、同期リンク、メモリGC、在庫データスキャンプロセスの可観測性を向上させる[＃2735](https://github.com/pingcap/tiflow/pull/2735) [＃1606](https://github.com/pingcap/tiflow/issues/1606) [＃3000](https://github.com/pingcap/tiflow/pull/3000) [＃2985](https://github.com/pingcap/tiflow/issues/2985) [＃2156](https://github.com/pingcap/tiflow/issues/2156)
         -   同期タスクのステータスが正常であれば、ユーザーの誤解を避けるために過去のエラーメッセージは表示されなくなります[＃2242](https://github.com/pingcap/tiflow/issues/2242)
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -54,23 +54,23 @@ TiDB バージョン: 5.2.2
     -   ベクトル化された式[＃28643](https://github.com/pingcap/tidb/issues/28643)の関数`hour`の誤った結果を修正
     -   MySQL 5.1またはそれ以前のクライアントバージョン[＃27855](https://github.com/pingcap/tidb/issues/27855)に接続する際の認証問題を修正
     -   新しいインデックスが追加されたときに、指定された時間外にauto analyzeがトリガーされる可能性がある問題を修正[＃28698](https://github.com/pingcap/tidb/issues/28698)
-    -   セッション変数を設定すると`tidb_snapshot` [＃28683](https://github.com/pingcap/tidb/pull/28683)無効になるバグを修正
+    -   セッション変数を設定すると`tidb_snapshot` [＃28683](https://github.com/pingcap/tidb/pull/28683)が無効になるバグを修正
     -   ピア領域が不足しているクラスターでBRが機能しないバグを修正[＃27534](https://github.com/pingcap/tidb/issues/27534)
     -   サポートされていない`cast`がTiFlash [＃23907](https://github.com/pingcap/tidb/issues/23907)にプッシュダウンされたときに発生する`tidb_cast to Int32 is not supported`ような予期しないエラーを修正
-    -   `%s value is out of range in '%s'`エラーメッセージ[＃27964](https://github.com/pingcap/tidb/issues/27964)に`DECIMAL overflow`欠落している問題を修正
+    -   `%s value is out of range in '%s'`エラーメッセージ[＃27964](https://github.com/pingcap/tidb/issues/27964)に`DECIMAL overflow`が欠落している問題を修正
     -   MPPノードの可用性検出が一部のコーナーケースで機能しないバグを修正[＃3118](https://github.com/pingcap/tics/issues/3118)
     -   `MPP task ID` [＃27952](https://github.com/pingcap/tidb/issues/27952)を割り当てる際の`DATA RACE`問題を修正
-    -   空の`dual table`を削除した後の MPP クエリの`INDEX OUT OF RANGE`エラーを修正します[＃28250](https://github.com/pingcap/tidb/issues/28250)
+    -   空の`dual table`削除した後の MPP クエリの`INDEX OUT OF RANGE`エラーを修正します[＃28250](https://github.com/pingcap/tidb/issues/28250)
     -   MPPクエリ[＃1791](https://github.com/pingcap/tics/issues/1791)の誤検知エラーログ`invalid cop task execution summaries length`の問題を修正
     -   MPPクエリ[＃28149](https://github.com/pingcap/tidb/pull/28149)のエラーログ`cannot found column in Schema column`の問題を修正
     -   TiFlashがシャットダウンするときに TiDB がpanicになる可能性がある問題を修正[＃28096](https://github.com/pingcap/tidb/issues/28096)
     -   安全でない 3DES (Triple Data Encryption Algorithm) ベースの TLS 暗号スイート[＃27859](https://github.com/pingcap/tidb/pull/27859)のサポートを削除します。
     -   Lightning が事前チェック中にオフラインの TiKV ノードに接続し、インポートが失敗する問題を修正[＃27826](https://github.com/pingcap/tidb/pull/27826)
     -   多数のファイルをテーブル[＃27605](https://github.com/pingcap/tidb/issues/27605)にインポートするときに事前チェックに時間がかかりすぎる問題を修正しました。
-    -   式を書き換える`between`間違った照合順序順序が推測される問題を修正[＃27146](https://github.com/pingcap/tidb/issues/27146)
+    -   式を書き換えると間違った照合順序`between`推測される問題を修正[＃27146](https://github.com/pingcap/tidb/issues/27146)
     -   `group_concat`関数が照合順序を考慮していなかった問題を修正[＃27429](https://github.com/pingcap/tidb/issues/27429)
-    -   `extract`関数の引数が負の期間[＃27236](https://github.com/pingcap/tidb/issues/27236)の場合に発生する結果の誤りを修正
-    -   `NO_UNSIGNED_SUBTRACTION` [＃26765](https://github.com/pingcap/tidb/issues/26765)に設定されている場合にパーティションの作成が失敗する問題を修正
+    -   `extract`関数の引数が負の期間[＃27236](https://github.com/pingcap/tidb/issues/27236)場合に発生する結果の誤りを修正
+    -   `NO_UNSIGNED_SUBTRACTION`が[＃26765](https://github.com/pingcap/tidb/issues/26765)に設定されている場合にパーティションの作成が失敗する問題を修正
     -   列プルーニングと集計プッシュダウンで副作用のある式を避ける[＃27106](https://github.com/pingcap/tidb/issues/27106)
     -   不要な gRPC ログを削除する[＃24190](https://github.com/pingcap/tidb/issues/24190)
     -   精度関連の問題を修正するために有効な小数点以下の桁数を制限する[＃3091](https://github.com/pingcap/tics/issues/3091)

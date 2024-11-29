@@ -32,23 +32,23 @@ PumpまたはDrainerの状態の説明:
 -   開始: 開始されると、PumpノードはすべてのDrainerノードに`online`状態で通知します。通知が成功すると、Pumpノードは状態を`online`に設定します。それ以外の場合、Pumpノードはエラーを報告し、状態を`paused`に設定してプロセスを終了します。
 -   終了中: プロセスが正常に終了する前に、 Pumpノードは`paused`または`offline`状態になります。プロセスが異常終了した場合 ( `kill -9`コマンド、プロセスpanic、クラッシュが原因)、ノードは`online`状態のままになります。
     -   一時停止: Pumpプロセスを一時停止するには、 `kill`コマンド ( `kill -9`ではありません) を使用するか、 <kbd>Ctrl</kbd> + <kbd>C</kbd>を押すか、binlogctl ツールで`pause-pump`コマンドを使用します。一時停止命令を受信すると、 Pumpノードは状態を`pausing`に設定し、 binlog書き込み要求の受信を停止し、 Drainerノードへのbinlogデータの提供を停止します。すべてのスレッドが安全に終了すると、 Pumpノードは状態を`paused`に更新し、プロセスを終了します。
-    -   オフライン: Pumpプロセスを閉じるには、binlogctl ツールの`offline-pump`コマンドのみを使用します。オフライン命令を受信すると、 Pumpノードは状態を`closing`に設定し、 binlog書き込み要求の受信を停止します。Pump ノードは、すべてのbinlogデータがDrainerノードによって消費されるまで、 Drainerノードにbinlogを提供し続けます。その後、 Pumpノードは状態を`offline`に設定し、プロセスを終了します。
+    -   オフライン: Pumpプロセスを閉じるには、binlogctl ツールの`offline-pump`コマンドのみを使用します。オフライン命令を受信すると、 Pumpノードは状態を`closing`に設定し、 binlog書き込み要求の受信を停止します。Pump ノードは、すべてのbinlogデータがDrainerノードによって消費されるまで、 Drainerノードにbinlog を提供し続けます。その後、 Pumpノードは状態を`offline`に設定し、プロセスを終了します。
 
 ### Drainer {#drainer}
 
 -   開始: 開始されると、 Drainerノードは状態を`online`に設定し、状態`offline`ではないすべてのPumpノードから binlog を取得しようとします。binlog を取得できない場合は、試行を続けます。
--   終了: プロセスが正常に終了する前に、 Drainerノードは`paused`または`offline`状態になります。プロセスが異常終了した場合 ( `kill -9` 、プロセスpanic、クラッシュが原因)、 Drainerノードは`online`状態のままになります。
+-   終了中: プロセスが正常に終了する前に、 Drainerノードは`paused`または`offline`状態になります。プロセスが異常終了した場合 ( `kill -9` 、プロセスpanic、クラッシュが原因)、 Drainerノードは`online`状態のままになります。
     -   一時停止: `kill`コマンド ( `kill -9`ではありません) を使用するか、 <kbd>Ctrl</kbd> + <kbd>C</kbd>を押すか、binlogctl ツールで`pause-drainer`コマンドを使用することで、 Drainerプロセスを一時停止できます。一時停止命令を受信すると、 Drainerノードは状態を`pausing`に設定し、 Pumpノードからの binlog のプルを停止します。すべてのスレッドが安全に終了すると、 Drainerノードは状態を`paused`に設定し、プロセスを終了します。
     -   オフライン: Drainerプロセスを閉じるには、binlogctl ツールの`offline-drainer`コマンドを使用する必要があります。オフライン命令を受信すると、 Drainerノードは状態を`closing`に設定し、 Pumpノードからの binlog の取得を停止します。すべてのスレッドが安全に終了すると、 Drainerノードは状態を`offline`に更新し、プロセスを終了します。
 
-Drainerを一時停止、終了、確認、状態の変更を行う方法については、 [binlogctl ガイド](/tidb-binlog/binlog-control.md)参照してください。
+Drainer を一時停止、終了、確認、状態の変更を行う方法については、 [binlogctl ガイド](/tidb-binlog/binlog-control.md)を参照してください。
 
-## <code>binlogctl</code>を使用してPump/Drainerを管理する {#use-code-binlogctl-code-to-manage-pump-drainer}
+## <code>binlogctl</code>使用してPump/Drainerを管理する {#use-code-binlogctl-code-to-manage-pump-drainer}
 
 [`binlogctl`](https://github.com/pingcap/tidb-binlog/tree/release-8.1/binlogctl) 、以下の機能を備えた TiDB Binlogの操作ツールです。
 
 -   PumpまたはDrainerの状態を確認する
--   PumpまたはDrainerを一時停止または閉じる
+-   PumpまたはDrainerの一時停止または閉鎖
 -   PumpやDrainerの異常時の対応
 
 `binlogctl`の詳しい使い方については[binlogctl の概要](/tidb-binlog/binlog-control.md)を参照してください。
@@ -69,7 +69,7 @@ binlog関連の状態を表示または変更するには、TiDB で対応する
         | log_bin       |  0   |
         +---------------+-------+
 
-    値が`0`場合、 binlogは有効になります。値が`1`場合、 binlogは無効になります。
+    値が`0`の場合、 binlog は有効になります。値が`1`場合、 binlog は無効になります。
 
 -   すべてのPumpまたはDrainerノードのステータスを確認します。
 
@@ -111,7 +111,7 @@ binlog関連の状態を表示または変更するには、TiDB で対応する
 
         Query OK, 0 rows affected (0.01 sec)
 
-    上記の SQL 文を実行すると、binlogctl の`update-pump`または`update-drainer`のコマンドと同じように動作します。上記の SQL 文は、 PumpまたはDrainerノードが異常な状態にある場合に**のみ**使用してください。
+    上記の SQL 文を実行すると、binlogctl の`update-pump`番目または`update-drainer`コマンドと同じように動作します。上記の SQL 文は、 PumpまたはDrainerノードが異常な状態にある場合に**のみ**使用してください。
 
 > **注記：**
 >

@@ -63,9 +63,9 @@ mysql> SHOW SESSION VARIABLES LIKE 'transaction_isolation';
 ## MySQL 互換性 {#mysql-compatibility}
 
 -   TiDB は、構文でのみトランザクションを読み取り専用として設定する機能をサポートしています。
--   分離レベル`READ-UNCOMMITTED`および`SERIALIZABLE`はサポートされていません。
+-   分離レベル`READ-UNCOMMITTED`および`SERIALIZABLE`サポートされていません。
 -   分離レベル`REPEATABLE-READ`は、MySQL と部分的に互換性のあるスナップショット分離テクノロジを使用することで実現されます。
--   悲観的トランザクションでは、TiDB は MySQL と互換性のある 2 つの分離レベル ( `REPEATABLE-READ`と`READ-COMMITTED`をサポートします。詳細については、 [分離レベル](/transaction-isolation-levels.md)を参照してください。
+-   悲観的トランザクションでは、TiDB は MySQL と互換性のある 2 つの分離レベル ( `REPEATABLE-READ`と`READ-COMMITTED`をサポートします。詳細については、 [分離レベル](/transaction-isolation-levels.md)参照してください。
 
 ## 参照 {#see-also}
 

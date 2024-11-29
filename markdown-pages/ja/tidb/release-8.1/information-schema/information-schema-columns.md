@@ -1,6 +1,6 @@
 ---
 title: COLUMNS
-summary: COLUMNS INFORMATION_SCHEMA テーブルについて学習します。
+summary: COLUMNS` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # コラム {#columns}
@@ -85,7 +85,7 @@ CHARACTER_MAXIMUM_LENGTH: NULL
 -   `TABLE_NAME` : 列を含むテーブルの名前。
 -   `COLUMN_NAME` : 列の名前。
 -   `ORDINAL_POSITION` : テーブル内の列の位置。
--   `COLUMN_DEFAULT` : 列のデフォルト値。明示的なデフォルト値が`NULL`場合、または列定義に`default`句が含まれていない場合、この値は`NULL`になります。
+-   `COLUMN_DEFAULT` : 列のデフォルト値。明示的なデフォルト値が`NULL`の場合、または列定義に`default`句が含まれていない場合、この値は`NULL`なります。
 -   `IS_NULLABLE` : 列が NULL 可能かどうか。列が NULL 値を格納できる場合、この値は`YES`になります。そうでない場合は`NO`になります。
 -   `DATA_TYPE` : 列内のデータのタイプ。
 -   `CHARACTER_MAXIMUM_LENGTH` : 文字列列の場合、文字の最大長。
@@ -96,7 +96,7 @@ CHARACTER_MAXIMUM_LENGTH: NULL
 -   `CHARACTER_SET_NAME` : 文字列列の文字セットの名前。
 -   `COLLATION_NAME` : 文字列列の照合順序の名前。
 -   `COLUMN_TYPE` : 列のタイプ。
--   `COLUMN_KEY` : この列がインデックス化されているかどうか。このフィールドには次の値が含まれます。
+-   `COLUMN_KEY` : この列にインデックスが付けられているかどうか。このフィールドには次の値が含まれます。
     -   空: この列はインデックス化されていません。または、この列はインデックス化されており、複数列の一意でないインデックスの 2 番目の列です。
     -   `PRI` : この列は主キーまたは複数の主キーの 1 つです。
     -   `UNI` : この列は一意のインデックスの最初の列です。

@@ -21,13 +21,13 @@ TiDB バージョン: 6.1.7
 
     -   ティCDC
 
-        -   TiCDC レプリケーション パフォーマンスを向上させるバッチ`UPDATE` DML ステートメントをサポート[＃8084](https://github.com/pingcap/tiflow/issues/8084) @ [アミヤンフェイ](https://github.com/amyangfei)
+        -   TiCDC レプリケーション パフォーマンスを向上させるバッチ`UPDATE` DML ステートメントのサポート[＃8084](https://github.com/pingcap/tiflow/issues/8084) @ [アミヤンフェイ](https://github.com/amyangfei)
 
     -   TiDB Lightning
 
         -   インポート後にSQLでチェックサムを検証し、検証[＃41941](https://github.com/pingcap/tidb/issues/41941) @ [GMHDBJD](https://github.com/GMHDBJD)の安定性を向上
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -36,17 +36,17 @@ TiDB バージョン: 6.1.7
     -   共通テーブル式 (CTE) を含むクエリによってディスク容量が不足する可能性がある問題を修正[＃44477](https://github.com/pingcap/tidb/issues/44477) @ [グオシャオゲ](https://github.com/guo-shaoge)
     -   CTEと相関サブクエリを同時に使用すると、クエリ結果が不正確になったりpanicが発生する可能性がある問題を修正[＃44649](https://github.com/pingcap/tidb/issues/44649) [＃38170](https://github.com/pingcap/tidb/issues/38170) [＃44774](https://github.com/pingcap/tidb/issues/44774) @ [ウィノロス](https://github.com/winoros) @ [グオシャオゲ](https://github.com/guo-shaoge)
     -   ステートメントの`n`負の数[＃44786](https://github.com/pingcap/tidb/issues/44786) @ [xhebox](https://github.com/xhebox)の場合に、ステートメント`SELECT CAST(n AS CHAR)`のクエリ結果が正しくない問題を修正しました。
-    -   特定のケースにおける TiDB のpanic問題を修正[＃40857](https://github.com/pingcap/tidb/issues/40857) @ [ドゥージール9](https://github.com/Dousir9)
+    -   特定のケースにおける TiDB のクエリpanic問題を修正[＃40857](https://github.com/pingcap/tidb/issues/40857) @ [ドゥージール9](https://github.com/Dousir9)
     -   SQL コンパイル エラー ログが編集されない問題を修正[＃41831](https://github.com/pingcap/tidb/issues/41831) @ [ランス6716](https://github.com/lance6716)
     -   テーブルパーティション定義で`FLOOR()`関数を使用してパーティション列を[＃42323](https://github.com/pingcap/tidb/issues/42323) @ [ジフハウス](https://github.com/jiyfhust)に丸めた場合、 `SELECT`ステートメントがパーティションテーブルに対してエラーを返す問題を修正しました。
-    -   リージョン[＃43144](https://github.com/pingcap/tidb/issues/43144) @ [lcwangchao](https://github.com/lcwangchao)の分割中にパーティション テーブルをクエリするとエラーが発生する可能性がある問題を修正しました。
-    -   統計情報[＃42052](https://github.com/pingcap/tidb/issues/42052) @ [翻訳者](https://github.com/xuyifangreeneyes)の読み取り中に不要なメモリが使用される問題を修正
+    -   リージョン分割[＃43144](https://github.com/pingcap/tidb/issues/43144) @ [lcwangchao](https://github.com/lcwangchao)中にパーティション テーブルをクエリするとエラーが発生する可能性がある問題を修正しました。
+    -   統計情報[＃42052](https://github.com/pingcap/tidb/issues/42052) @ [翻訳者](https://github.com/xuyifangreeneyes)読み取り中に不要なメモリが使用される問題を修正
     -   多数の空のパーティションテーブル[＃44308](https://github.com/pingcap/tidb/issues/44308) @ [ホーキングレイ](https://github.com/hawkingrei)を作成した後にメモリ使用量が過剰になる問題を修正
     -   `tidb_opt_agg_push_down`が有効になっている場合にクエリが誤った結果を返す可能性がある問題を修正[＃44795](https://github.com/pingcap/tidb/issues/44795) @ [アイリンキッド](https://github.com/AilinKid)
     -   共通テーブル式の結合結果が間違っている可能性がある問題を修正[＃38170](https://github.com/pingcap/tidb/issues/38170) @ [翻訳:](https://github.com/wjhuang2016)
     -   GC がロック[＃43243](https://github.com/pingcap/tidb/issues/43243) @ [ミョンケミンタ](https://github.com/MyonKeminta)を解決するときに、まれに悲観的トランザクションの残留悲観的ロックがデータの正確性に影響を与える可能性がある問題を修正しました。
     -   キャッシュ テーブルに新しい列が追加された後、列[＃42928](https://github.com/pingcap/tidb/issues/42928) @ [ルクス](https://github.com/lqs)のデフォルト値ではなく値が`NULL`なる問題を修正しました。
-    -   インデックス結合[＃43686](https://github.com/pingcap/tidb/issues/43686) @ [アイリンキッド](https://github.com/AilinKid) @ [ミョンス](https://github.com/mjonss)のプローブ フェーズでパーティション テーブル内の対応する行が見つからない場合に TiDB がエラーを返す問題を修正しました。
+    -   インデックス結合[＃43686](https://github.com/pingcap/tidb/issues/43686) @ [アイリンキッド](https://github.com/AilinKid) @ [ミョンス](https://github.com/mjonss)のプローブフェーズでパーティションテーブル内の対応する行が見つからない場合に TiDB がエラーを返す問題を修正しました。
     -   データベースを削除すると GC の進行が遅くなる問題を修正[＃33069](https://github.com/pingcap/tidb/issues/33069) @ [天菜まお](https://github.com/tiancaiamao)
     -   `ON UPDATE`ステートメントが主キー[＃44565](https://github.com/pingcap/tidb/issues/44565) @ [ジグアン](https://github.com/zyguan)を正しく更新しない場合にデータとインデックスが不整合になる問題を修正しました
     -   テーブル名の変更中に TiCDC が行の変更の一部を失う可能性がある問題を修正[＃43338](https://github.com/pingcap/tidb/issues/43338) @ [タンジェンタ](https://github.com/tangenta)
@@ -59,15 +59,15 @@ TiDB バージョン: 6.1.7
     -   `INFORMATION_SCHEMA.DDL_JOBS`テーブルの`QUERY`列目のデータ長が列定義[＃42440](https://github.com/pingcap/tidb/issues/42440) @ [天菜まお](https://github.com/tiancaiamao)を超える可能性がある問題を修正しました。
     -   `min, max`クエリ結果が正しくない問題を修正[＃43805](https://github.com/pingcap/tidb/issues/43805) @ [うわー](https://github.com/wshwsh12)
     -   テーブル[＃43392](https://github.com/pingcap/tidb/issues/43392) @ [グオシャオゲ](https://github.com/guo-shaoge)を分析するときに TiDB が構文エラーを報告する問題を修正しました。
-    -   `SHOW PROCESSLIST`ステートメントがサブクエリ時間が長いステートメントのトランザクションの TxnStart を表示できない問題を修正[＃40851](https://github.com/pingcap/tidb/issues/40851) @ [クレイジーcs520](https://github.com/crazycs520)
+    -   `SHOW PROCESSLIST`文がサブクエリ時間が長い文のトランザクションの TxnStart を表示できない問題を修正[＃40851](https://github.com/pingcap/tidb/issues/40851) @ [クレイジーcs520](https://github.com/crazycs520)
     -   `DROP TABLE`操作が実行されているときに`ADMIN SHOW DDL JOBS`結果にテーブル名が表示されない問題を修正[＃42268](https://github.com/pingcap/tidb/issues/42268) @ [天菜まお](https://github.com/tiancaiamao)
     -   IPv6環境で誤ったTiDBアドレスが表示される問題を修正[＃43260](https://github.com/pingcap/tidb/issues/43260) @ [ネクスター](https://github.com/nexustar)
-    -   `AES_DECRYPT`式[＃43063](https://github.com/pingcap/tidb/issues/43063) @ [lcwangchao](https://github.com/lcwangchao)を使用すると SQL 文が`runtime error: index out of range`エラーを報告する問題を修正しました。
+    -   `AES_DECRYPT`式[＃43063](https://github.com/pingcap/tidb/issues/43063) @ [lcwangchao](https://github.com/lcwangchao)を使用すると SQL 文が`runtime error: index out of range`エラーを報告する問題を修正しました
     -   `SUBPARTITION`使用してパーティション テーブル[＃41198](https://github.com/pingcap/tidb/issues/41198) [＃41200](https://github.com/pingcap/tidb/issues/41200) @ [ミョンス](https://github.com/mjonss)を作成するときに警告が表示されない問題を修正しました
     -   CTE を含むクエリによって TiDB がハングする問題を修正[＃43749](https://github.com/pingcap/tidb/issues/43749) [＃36896](https://github.com/pingcap/tidb/issues/36896) @ [グオシャオゲ](https://github.com/guo-shaoge)
     -   パーティションテーブルのパーティションを切り捨てると、パーティションの配置ルールが無効になる可能性がある問題を修正[＃44031](https://github.com/pingcap/tidb/issues/44031) @ [lcwangchao](https://github.com/lcwangchao)
     -   述語[＃43645](https://github.com/pingcap/tidb/issues/43645) @ [ウィノロス](https://github.com/winoros)をプッシュダウンするときに CTE 結果が正しくない問題を修正しました
-    -   `auto-commit`の変更がトランザクションのコミット動作[＃36581](https://github.com/pingcap/tidb/issues/36581) @ [翻訳](https://github.com/cfzjywxk)に影響する問題を修正
+    -   `auto-commit`変更がトランザクションのコミット動作[＃36581](https://github.com/pingcap/tidb/issues/36581) @ [翻訳](https://github.com/cfzjywxk)に影響する問題を修正
 
 -   ティクヴ
 
@@ -88,9 +88,9 @@ TiDB バージョン: 6.1.7
 
     -   ティCDC
 
-        -   TiCDC が下流の Kafka-on-Pulsar [＃8892](https://github.com/pingcap/tiflow/issues/8892) @ [ハイラスティン](https://github.com/hi-rustin)で変更フィードを作成できない問題を修正しました
+        -   TiCDC が下流の Kafka-on-Pulsar [＃8892](https://github.com/pingcap/tiflow/issues/8892) @ [ハイラスティン](https://github.com/Rustin170506)で変更フィードを作成できない問題を修正しました
         -   PDアドレスまたはリーダーに障害が発生したときにTiCDCが自動的に回復できない問題を修正[＃8812](https://github.com/pingcap/tiflow/issues/8812) [＃8877](https://github.com/pingcap/tiflow/issues/8877) @ [アズドンメン](https://github.com/asddongmen)
-        -   ダウンストリームが Kafka の場合、TiCDC がダウンストリームのメタデータを頻繁にクエリしすぎて、ダウンストリームに過度の負荷がかかる問題を修正しました[＃8957](https://github.com/pingcap/tiflow/issues/8957) [＃8959](https://github.com/pingcap/tiflow/issues/8959) @ [ハイラスティン](https://github.com/hi-rustin)
+        -   ダウンストリームが Kafka の場合、TiCDC がダウンストリームのメタデータを頻繁にクエリしすぎて、ダウンストリームに過度の負荷がかかる問題を修正しました[＃8957](https://github.com/pingcap/tiflow/issues/8957) [＃8959](https://github.com/pingcap/tiflow/issues/8959) @ [ハイラスティン](https://github.com/Rustin170506)
         -   ネットワーク分離やPDオーナーノードの再起動などのPD障害時にTiCDCが停止する問題を修正[＃8808](https://github.com/pingcap/tiflow/issues/8808) [＃8812](https://github.com/pingcap/tiflow/issues/8812) [＃8877](https://github.com/pingcap/tiflow/issues/8877) @ [アズドンメン](https://github.com/asddongmen)
 
     -   TiDB Lightning
@@ -104,5 +104,5 @@ TiDB バージョン: 6.1.7
     -   TiDBBinlog
 
         -   etcdクライアントが初期化中に最新のノード情報を自動的に同期しない問題を修正[＃1236](https://github.com/pingcap/tidb-binlog/issues/1236) @ [リチュンジュ](https://github.com/lichunzhu)
-        -   TiKVクライアント[＃1170](https://github.com/pingcap/tidb-binlog/issues/1170) [リチュンジュ](https://github.com/lichunzhu)にアップグレードすることで、古いTiKVクライアントバージョンによるDrainerのpanic問題を修正しました。
-        -   フィルタリングされていない失敗した DDL ステートメントによってタスク エラーが発生する問題を修正[＃1228](https://github.com/pingcap/tidb-binlog/issues/1228) @ [リチュンジュ](https://github.com/lichunzhu)
+        -   TiKVクライアント[＃1170](https://github.com/pingcap/tidb-binlog/issues/1170)を[リチュンジュ](https://github.com/lichunzhu)にアップグレードすることで、古いTiKVクライアントバージョンによるDrainerのpanic問題を修正しました。
+        -   フィルタリングされていない失敗した DDL ステートメントがタスク エラー[＃1228](https://github.com/pingcap/tidb-binlog/issues/1228) @ [リチュンジュ](https://github.com/lichunzhu)を引き起こす問題を修正しました

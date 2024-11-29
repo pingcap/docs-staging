@@ -34,11 +34,11 @@ TiDB Ansible バージョン: 3.0.11
 -   TiDB アンシブル
     -   `create_users.yml`のロジックを変更して、制御マシンのユーザーが`ansible_user` [＃1184](https://github.com/pingcap/tidb-ansible/pull/1184)と一貫性を保つ必要がないようにします。
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
     -   `Union`使用するクエリが読み取り専用としてマークされていないため、楽観的トランザクションを再試行するときに Goroutine リークが発生する問題を修正しました[＃15076](https://github.com/pingcap/tidb/pull/15076)
-    -   `SET SESSION tidb_snapshot = 'xxx';`ステートメント[＃14391](https://github.com/pingcap/tidb/pull/14391)を実行するときに`tidb_snapshot`パラメータの値が正しく使用されていないため、スナップショット時にテーブルの状態を正しく出力`SHOW TABLE STATUS`ない問題を修正しました。
+    -   `SET SESSION tidb_snapshot = 'xxx';`ステートメント[＃14391](https://github.com/pingcap/tidb/pull/14391)を実行するときに`tidb_snapshot`パラメータの値が正しく使用されていないため`SHOW TABLE STATUS`スナップショット時にテーブルの状態を正しく出力できない問題を修正しました。
     -   `Sort Merge Join`と`ORDER BY DESC`同時に含まれるSQL文によって発生する誤った結果を修正する[＃14664](https://github.com/pingcap/tidb/pull/14664)
     -   サポートされていない式を使用してパーティション テーブルを作成するときに TiDBサーバーのpanicを修正しました。このpanicを修正すると、エラー情報`This partition function is not allowed`が返されます[＃14769](https://github.com/pingcap/tidb/pull/14769)
     -   `Union` [＃14944](https://github.com/pingcap/tidb/pull/14944)を含むサブクエリで`select max() from subquery`ステートメントを実行したときに発生した誤った結果を修正します。

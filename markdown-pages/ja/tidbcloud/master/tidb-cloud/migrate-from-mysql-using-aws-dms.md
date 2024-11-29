@@ -11,17 +11,17 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
 このドキュメントでは、Amazon RDS を例に、AWS DMS を使用してデータをTiDB Cloudに移行する方法を説明します。この手順は、セルフホスト型 MySQL データベースまたは Amazon AuroraからTiDB Cloudにデータを移行する場合にも適用されます。
 
-この例では、データソースは Amazon RDS で、データの送信先はTiDB Cloudの TiDB Dedicated クラスターです。アップストリーム データベースとダウンストリーム データベースは両方とも同じリージョンにあります。
+この例では、データソースは Amazon RDS で、データの送信先はTiDB Cloud内のTiDB Cloud Dedicated クラスターです。アップストリーム データベースとダウンストリーム データベースは両方とも同じリージョンにあります。
 
 ## 前提条件 {#prerequisites}
 
 移行を開始する前に、必ず次の内容をお読みください。
 
--   ソースデータベースが Amazon RDS または Amazon Auroraの場合、 `binlog_format`パラメータを`ROW`に設定する必要があります。データベースがデフォルトのパラメータグループを使用する場合、 `binlog_format`パラメータはデフォルトで`MIXED`なり、変更できません。この場合、 [新しいパラメータグループを作成する](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_GettingStarted.Prerequisites.html#CHAP_GettingStarted.Prerequisites.params) 、たとえば`newset`設定し、その`binlog_format`を`ROW`に設定する必要があります。次に、 [デフォルトのパラメータグループを変更する](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithDBInstanceParamGroups.html#USER_WorkingWithParamGroups.Modifying)を`newset`に設定します。パラメータグループを変更すると、データベースが再起動されることに注意してください。
--   ソースデータベースが TiDB と互換性のある照合順序を使用していることを確認してください。TiDB の utf8mb4 文字セットのデフォルトの照合順序は`utf8mb4_bin`です。ただし、MySQL 8.0 では、デフォルトの照合順序は`utf8mb4_0900_ai_ci`です。アップストリーム MySQL がデフォルトの照合順序を使用している場合、TiDB は`utf8mb4_0900_ai_ci`と互換性がないため、AWS DMS は TiDB にターゲットテーブルを作成できず、データを移行できません。この問題を解決するには、移行前にソースデータベースの照合順序を`utf8mb4_bin`に変更する必要があります。TiDB でサポートされている文字セットと照合順序の完全なリストについては、 [文字セットと照合順序](https://docs.pingcap.com/tidb/stable/character-set-and-collation)を参照してください。
--   TiDB `PERFORMANCE_SCHEMA` `INFORMATION_SCHEMA` `mysql` `sys` `test`移行タスクを作成するときは、デフォルトの`%`を使用して移行オブジェクトを選択するのではなく、これらのシステムデータベースを除外する必要があります。そうしないと、AWS DMS はこれらのシステムデータベースをソースデータベースからターゲット TiDB に移行しようとし、タスクが失敗します。この問題を回避するには、特定のデータベース名とテーブル名を入力することをお勧めします。
+-   ソースデータベースが Amazon RDS または Amazon Auroraの場合、 `binlog_format`パラメータを`ROW`に設定する必要があります。データベースがデフォルトのパラメータグループを使用する場合、 `binlog_format`パラメータはデフォルトで`MIXED`になり、変更できません。この場合、 [新しいパラメータグループを作成する](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_GettingStarted.Prerequisites.html#CHAP_GettingStarted.Prerequisites.params) 、たとえば`newset`に設定し、その`binlog_format` `ROW`に設定する必要があります。次に、 [デフォルトのパラメータグループを変更する](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithDBInstanceParamGroups.html#USER_WorkingWithParamGroups.Modifying)を`newset`に設定します。パラメータグループを変更すると、データベースが再起動されることに注意してください。
+-   ソースデータベースが TiDB と互換性のある照合順序を使用していることを確認してください。TiDB の utf8mb4 文字セットのデフォルトの照合照合順序は`utf8mb4_bin`です。ただし、MySQL 8.0 では、デフォルトの照合照合順序は`utf8mb4_0900_ai_ci`です。アップストリーム MySQL がデフォルトの照合順序を使用している場合、TiDB は`utf8mb4_0900_ai_ci`と互換性がないため、AWS DMS は TiDB にターゲットテーブルを作成できず、データを移行できません。この問題を解決するには、移行前にソースデータベースの照合順序を`utf8mb4_bin`に変更する必要があります。TiDB でサポートされている文字セットと照合順序の完全なリストについては、 [文字セットと照合順序](https://docs.pingcap.com/tidb/stable/character-set-and-collation)参照してください。
+-   TiDB には`test` `mysql` `INFORMATION_SCHEMA` `sys`を作成するときは、デフォルトの`%`使用`PERFORMANCE_SCHEMA`て移行オブジェクトを選択するのではなく、これらのシステムデータベースを除外する必要があります。そうしないと、AWS DMS はこれらのシステムデータベースをソースデータベースからターゲット TiDB に移行しようとし、タスクが失敗します。この問題を回避するには、特定のデータベース名とテーブル名を入力することをお勧めします。
 -   AWS DMS のパブリックおよびプライベート ネットワーク IP アドレスを、ソース データベースとターゲット データベースの両方の IP アクセス リストに追加します。そうしないと、シナリオによってはネットワーク接続が失敗する可能性があります。
--   [VPC ピアリング](/tidb-cloud/set-up-vpc-peering-connections.md#set-up-vpc-peering-on-aws)または[プライベートエンドポイント接続](/tidb-cloud/set-up-private-endpoint-connections.md)を使用して、AWS DMS と TiDB クラスターを接続します。
+-   [VPC ピアリング](/tidb-cloud/set-up-vpc-peering-connections.md#set-up-vpc-peering-on-aws)または[プライベートエンドポイント接続](/tidb-cloud/set-up-private-endpoint-connections.md)使用して、AWS DMS と TiDB クラスターを接続します。
 -   より優れたデータ書き込みパフォーマンスを得るには、AWS DMS と TiDB クラスターに同じリージョンを使用することをお勧めします。
 -   AWS DMS `dms.t3.large` (2 vCPU および 8 GiBメモリ) 以上のインスタンスクラスを使用することをお勧めします。インスタンスクラスが小さいと、メモリ不足 (OOM) エラーが発生する可能性があります。
 -   AWS DMS はターゲットデータベースに`awsdms_control`データベースを自動的に作成します。
@@ -46,7 +46,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
     -   **エンジン バージョン**: デフォルト構成を使用します。
     -   **マルチ AZ** : ビジネス ニーズに応じて、**シングル AZ**または**マルチ AZ**を選択します。
 
-5.  **割り当てられたstorage(GiB)**フィールドでstorageを構成します。デフォルトの構成を使用します。
+5.  **割り当てられたstorage(GiB)**フィールドでstorageを構成します。デフォルト構成を使用します。
 
 6.  接続とセキュリティを構成します。
     -   **ネットワークタイプ - 新規**: **IPv4**を選択します。
@@ -54,7 +54,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
     -   **レプリケーション サブネット グループ**: レプリケーション インスタンスのサブネット グループを選択します。
     -   **パブリックアクセス可能**: デフォルトの設定を使用します。
 
-7.  必要に応じて、**詳細設定**、**メンテナンス**、**タグを**構成します。 **「レプリケーション インスタンスの作成」を**クリックして、インスタンスの作成を完了します。
+7.  必要に応じて、**詳細設定**、**メンテナンス**、**タグ**を構成します。 **「レプリケーション インスタンスの作成」**をクリックして、インスタンスの作成を完了します。
 
 ## ステップ2. ソースデータベースエンドポイントを作成する {#step-2-create-the-source-database-endpoint}
 
@@ -66,7 +66,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
     ![Configure the security group rules](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-rules.png)
 
-3.  **[エンドポイントの作成] を**クリックして、ソース データベース エンドポイントを作成します。
+3.  **[エンドポイントの作成]**をクリックして、ソース データベース エンドポイントを作成します。
 
     ![Click Create endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-endpoint.png)
 
@@ -78,7 +78,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
     -   **エンドポイント識別子**: 後続のタスク構成で識別できるように、ソース エンドポイントのラベルを作成します。
     -   **記述的な Amazon リソース名 (ARN) - オプション**: デフォルトの DMS ARN のわかりやすい名前を作成します。
-    -   **ソースエンジン**: **MySQL**を選択します。
+    -   **ソースエンジン**: **MySQL を**選択します。
     -   **エンドポイント データベースへのアクセス**:**アクセス情報を手動で提供するを**選択します。
     -   **サーバー名**: データプロバイダーのデータサーバーの名前を入力します。データベースコンソールからコピーできます。アップストリームが Amazon RDS または Amazon Auroraの場合は、名前が自動的に入力されます。ドメイン名のないセルフホスト MySQL の場合は、IP アドレスを入力できます。
     -   ソース データベースの**ポート**、**ユーザー名**、および**パスワード**を入力します。
@@ -88,7 +88,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
 6.  **エンドポイント設定**、 **KMS キー**、**タグに**はデフォルト値を使用します。**エンドポイント接続のテスト (オプション)**セクションでは、ネットワーク構成を簡素化するために、ソース データベースと同じ VPC を選択することをお勧めします。対応するレプリケーション インスタンスを選択し、**テストの実行を**クリックします。ステータスは**成功**である必要があります。
 
-7.  **[エンドポイントの作成]を**クリックします。
+7.  **[エンドポイントの作成]**をクリックします。
 
     ![Click Create endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-connection.png)
 
@@ -98,15 +98,15 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
     ![Copy the public and private network IP addresses](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-copy-ip.png)
 
-2.  TiDB Cloudコンソールで、 [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして、右上隅の**[接続] を**クリックし、 TiDB Cloudデータベース接続情報を取得します。
+2.  TiDB Cloudコンソールで、 [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして、右上隅の**[接続]**をクリックし、 TiDB Cloudデータベース接続情報を取得します。
 
-3.  ダイアログの**「ステップ 1: トラフィックフィルターの作成」**で、 **「編集」**をクリックし、AWS DMS コンソールからコピーしたパブリックおよびプライベートネットワークの IP アドレスを入力して、 **「フィルターの更新」**をクリックします。AWS DMS レプリケーションインスタンスのパブリック IP アドレスとプライベート IP アドレスを TiDB クラスターのトラフィックフィルターに同時に追加することをお勧めします。そうしないと、一部のシナリオで AWS DMS が TiDB クラスターに接続できない可能性があります。
+3.  ダイアログの**「ステップ 1: トラフィックフィルターの作成」**で、 **「編集」**をクリックし、AWS DMS コンソールからコピーしたパブリックおよびプライベートネットワークの IP アドレスを入力して、「フィルターの**更新」**をクリックします。AWS DMS レプリケーションインスタンスのパブリック IP アドレスとプライベート IP アドレスを TiDB クラスターのトラフィックフィルターに同時に追加することをお勧めします。そうしないと、一部のシナリオで AWS DMS が TiDB クラスターに接続できない可能性があります。
 
-4.  CA 証明書をダウンロードするには、「CA 証明書**のダウンロード」**をクリックします。ダイアログの**「手順 3: SQL クライアントを使用して接続する**」で、接続文字列の`-u` 、および`-P` `-h`を後で使用するためにメモします。
+4.  CA 証明書をダウンロードするには、 **「CA 証明書のダウンロード」**をクリックします。ダイアログの**「手順 3: SQL クライアントを使用して接続する」で、接続文字列の 5、7、および 9 の情報を後で使用するためにメモ**`-u` `-h` `-P`
 
-5.  ダイアログの**「VPC ピアリング**」タブをクリックし、 **「ステップ 1: VPC のセットアップ**」の下にある**「追加」**をクリックして、TiDB クラスターと AWS DMS の VPC ピアリング接続を作成します。
+5.  ダイアログの「 **VPC ピアリング」**タブをクリックし、 **「ステップ 1: VPC**のセットアップ」の下にある「**追加**」をクリックして、TiDB クラスターと AWS DMS の VPC ピアリング接続を作成します。
 
-6.  対応する情報を設定します。1 [VPC ピアリング接続を設定する](/tidb-cloud/set-up-vpc-peering-connections.md)参照してください。
+6.  該当する情報を設定します[VPC ピアリング接続を設定する](/tidb-cloud/set-up-vpc-peering-connections.md)を参照してください。
 
 7.  TiDB クラスターのターゲット エンドポイントを構成します。
 
@@ -132,15 +132,15 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
     ![Upload CA](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-upload-ca.png)
 
-10. **エンドポイント設定**、 **KMS キー**、**タグに**はデフォルト値を使用します。**エンドポイント接続のテスト (オプション)**セクションで、ソース データベースと同じ VPC を選択します。対応するレプリケーション インスタンスを選択し、**テストの実行**をクリックします。ステータスは**成功**である必要があります。
+10. **エンドポイント設定**、 **KMS キー**、**タグに**はデフォルト値を使用します。**エンドポイント接続のテスト (オプション)**セクションで、ソース データベースと同じ VPC を選択します。対応するレプリケーション インスタンスを選択し、**テストの実行を**クリックします。ステータスは**成功**である必要があります。
 
-11. **[エンドポイントの作成]を**クリックします。
+11. **[エンドポイントの作成]**をクリックします。
 
     ![Click Create endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-target-endpoint3.png)
 
 ## ステップ4. データベース移行タスクを作成する {#step-4-create-a-database-migration-task}
 
-1.  AWS DMS コンソールで、 [データ移行タスク](https://console.aws.amazon.com/dms/v2/home#tasks)ページに移動します。リージョンに切り替えます。次に、ウィンドウの右上隅にある**[タスクの作成] を**クリックします。
+1.  AWS DMS コンソールで、 [データ移行タスク](https://console.aws.amazon.com/dms/v2/home#tasks)ページに移動します。リージョンに切り替えます。次に、ウィンドウの右上隅にある**[タスクの作成]**をクリックします。
 
     ![Create task](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-create-task.png)
 
@@ -151,7 +151,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
     -   **レプリケーションインスタンス**: 先ほど作成した AWS DMS インスタンスを選択します。
     -   **ソース データベース エンドポイント**: 先ほど作成したソース データベース エンドポイントを選択します。
     -   **ターゲット データベース エンドポイント**: 作成したターゲット データベース エンドポイントを選択します。
-    -   **移行タイプ**: 必要に応じて移行タイプを選択します。この例では、「**既存のデータを移行し、進行中の変更を複製する」を**選択します。
+    -   **移行タイプ**: 必要に応じて移行タイプを選択します。この例では、 **「既存のデータを移行し、進行中の変更を複製する」**を選択します。
 
     ![Task configurations](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-task-config.png)
 
@@ -164,7 +164,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
     -   **レプリケーションに LOB 列を含める**:**制限付き LOB モード**を選択します。
     -   **最大 LOB サイズ (KB)** : デフォルト値**32**を使用します。
     -   **検証をオンにします**。必要に応じて選択します。
-    -   **タスク ログ**: 今後のトラブルシューティングのために**CloudWatch ログをオンにする**を選択します。関連する構成にはデフォルト設定を使用します。
+    -   **タスク ログ**: 今後のトラブルシューティングのために**CloudWatch ログをオンにするを**選択します。関連する構成にはデフォルト設定を使用します。
 
     ![Task settings](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-task-settings.png)
 
@@ -186,8 +186,8 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
 ## 参照 {#see-also}
 
--   AWS DMS を TiDB Serverless または TiDB Dedicated に接続する方法の詳細については、 [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)参照してください。
+-   AWS DMS をTiDB Cloud Serverless またはTiDB Cloud Dedicated に接続する方法の詳細については、 [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)参照してください。
 
 -   Aurora MySQL や Amazon Relational Database Service (RDS) などの MySQL 互換データベースからTiDB Cloudに移行する場合は、 [TiDB Cloud上のデータ移行](/tidb-cloud/migrate-from-mysql-using-data-migration.md)使用することをお勧めします。
 
--   AWS DMS を使用して Amazon RDS for Oracle から TiDB Serverless に移行する場合は、 [AWS DMS を使用して Amazon RDS for Oracle から TiDB Serverless に移行する](/tidb-cloud/migrate-from-oracle-using-aws-dms.md)参照してください。
+-   AWS DMS を使用して Amazon RDS for Oracle からTiDB Cloud Serverless に移行する場合は、 [AWS DMS を使用して Amazon RDS for Oracle からTiDB Cloud Serverless に移行する](/tidb-cloud/migrate-from-oracle-using-aws-dms.md)参照してください。

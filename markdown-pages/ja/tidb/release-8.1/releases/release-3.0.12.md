@@ -1,6 +1,6 @@
 ---
 title: TiDB 3.0.12 Release Notes
-summary: TiDB 3.0.12 は、2020 年 3 月 16 日にリリースされました。これには、TiDB、TiKV、PD、TiDB Ansible の互換性の変更、新機能、バグ修正、および改善が含まれています。新しいバージョンでは既知の問題がいくつか修正されているため、最新の 3.0.x バージョンを使用することをお勧めします。新しい機能には、置き換えられた証明書ファイルの動的読み込み、DDL 要求のフロー制限、およびbinlog書き込みが失敗した場合に TiDBサーバーを終了するためのサポートが含まれます。バグ修正では、ロック、エラー メッセージの表示、小数点の精度、およびデータ インデックスの不整合に関する問題に対処しています。さらに、TiKV のフロー制御メカニズムと PD のリージョン情報処理が改善されました。
+summary: TiDB 3.0.12 は、2020 年 3 月 16 日にリリースされました。これには、TiDB、TiKV、PD、TiDB Ansible の互換性の変更、新機能、バグ修正、および改善が含まれています。新しいバージョンではいくつかの既知の問題が修正されているため、最新の 3.0.x バージョンを使用することをお勧めします。新機能には、置き換えられた証明書ファイルの動的読み込み、DDL 要求のフロー制限、およびbinlog書き込みが失敗した場合に TiDBサーバーを終了するためのサポートが含まれます。バグ修正では、ロック、エラー メッセージの表示、小数点の精度、およびデータ インデックスの不整合に関する問題に対処しています。さらに、TiKV のフロー制御メカニズムと PD のリージョン情報処理が改善されました。
 ---
 
 # TiDB 3.0.12 リリースノート {#tidb-3-0-12-release-notes}
@@ -18,7 +18,7 @@ TiDB Ansible バージョン: 3.0.12
 ## 互換性の変更 {#compatibility-changes}
 
 -   ティビ
-    -   スロークエリログの事前書き込みbinlogのタイミングが不正確になる問題を修正しました。元のタイミングフィールドは`Binlog_prewrite_time`と呼ばれていました。この修正後、名前は`Wait_prewrite_binlog_time`に変更されました[＃15276](https://github.com/pingcap/tidb/pull/15276)
+    -   スロークエリログの事前書き込みバイナリbinlogのタイミングが不正確になる問題を修正しました。元のタイミングフィールドは`Binlog_prewrite_time`と呼ばれていました。この修正後、名前は`Wait_prewrite_binlog_time`に変更されました[＃15276](https://github.com/pingcap/tidb/pull/15276)
 
 ## 新機能 {#new-features}
 
@@ -32,11 +32,11 @@ TiDB Ansible バージョン: 3.0.12
     -   TiDBBinlog
         -   Drainerに`kafka-client-id`設定項目を追加します。これは、Kafkaクライアントへの接続をサポートし、クライアントID [＃929](https://github.com/pingcap/tidb-binlog/pull/929)を設定します。
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
-    -   `GRANT`複数のユーザーを変更するときにアトミック`REVOKE`を保証する[＃15092](https://github.com/pingcap/tidb/pull/15092)
-    -   パーティションテーブル上の悲観的ロックのロックが正しい行[＃15114](https://github.com/pingcap/tidb/pull/15114)をロックできなかった問題を修正しました。
+    -   `GRANT`複数のユーザーを変更[＃15092](https://github.com/pingcap/tidb/pull/15092)ときにアトミック性を保証する`REVOKE`
+    -   パーティションテーブル上の悲観的ロックのロックが正しい行[＃15114](https://github.com/pingcap/tidb/pull/15114)ロックできなかった問題を修正しました。
     -   インデックスの長さが制限[＃15130](https://github.com/pingcap/tidb/pull/15130)を超えた場合に、構成の値`max-index-length`に従ってエラー メッセージを表示するようにします。
     -   `FROM_UNIXTIME`関数[＃15270](https://github.com/pingcap/tidb/pull/15270)の小数点の誤りを修正
     -   トランザクション[＃15176](https://github.com/pingcap/tidb/pull/15176)で自分自身が書き込んだレコードを削除することによって発生する競合検出の失敗またはデータ インデックスの不整合の問題を修正しました。
@@ -46,7 +46,7 @@ TiDB Ansible バージョン: 3.0.12
     -   Raftstoreにフロー制御メカニズムを導入して、フロー制御がないと追跡が遅くなりすぎてクラスターがスタックしたり、トランザクション サイズによって TiKV 接続が頻繁に再接続されたりする可能性がある問題を解決します[＃7072](https://github.com/tikv/tikv/pull/7072) [＃6993](https://github.com/tikv/tikv/pull/6993)
 
 -   PD
-    -   PD がリージョンハートビート[＃2233](https://github.com/pingcap/pd/pull/2233)を処理するときにデータ競合によって発生するリージョン情報の誤りの問題を修正しました。
+    -   PD がリージョンハートビート[＃2233](https://github.com/pingcap/pd/pull/2233)処理するときにデータ競合によって発生するリージョン情報の誤りの問題を修正しました。
 
 -   TiDB アンシブル
     -   クラスター[＃1198](https://github.com/pingcap/tidb-ansible/pull/1198)内で複数の Grafana/Prometheus/Alertmanager のデプロイをサポート

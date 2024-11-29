@@ -5,21 +5,21 @@ summary: TiDB Cloudで SQL パフォーマンスを調整する方法につい�
 
 # SQL チューニングの概要 {#sql-tuning-overview}
 
-このドキュメントでは、TiDB Cloudで SQL パフォーマンスを調整する方法を紹介します。最高の SQL パフォーマンスを得るには、次の操作を実行できます。
+このドキュメントでは、 TiDB Cloudで SQL パフォーマンスを調整する方法を紹介します。最高の SQL パフォーマンスを得るには、次の操作を実行できます。
 
 -   SQL パフォーマンスを調整します。クエリ ステートメントの分析、実行プランの最適化、完全なテーブル スキャンの最適化など、SQL パフォーマンスを最適化する方法は多数あります。
 -   スキーマ設計を最適化します。ビジネス ワークロードの種類によっては、トランザクションの競合やホットスポットを回避するためにスキーマを最適化する必要がある場合があります。
 
-## SQLパフォーマンスの調整 {#tune-sql-performance}
+## SQLパフォーマンスのチューニング {#tune-sql-performance}
 
 SQL ステートメントのパフォーマンスを向上させるには、次の原則を考慮してください。
 
 -   スキャンするデータの範囲を最小限に抑えます。常に、最小限の範囲のデータのみをスキャンし、すべてのデータをスキャンしないようにすることがベスト プラクティスです。
 -   適切なインデックスを使用します。SQL ステートメントの`WHERE`節の各列には、対応するインデックスがあることを確認してください。そうでない場合、 `WHERE`節はテーブル全体をスキャンし、パフォーマンスが低下します。
 -   適切な結合タイプを使用します。クエリ内の各テーブルのサイズと相関関係に応じて、適切な結合タイプを選択することが非常に重要です。通常、TiDB のコストベース オプティマイザーは最適な結合タイプを自動的に選択します。ただし、場合によっては結合タイプを手動で指定する必要があります。詳細については、 [テーブル結合を使用するステートメントを説明する](/explain-joins.md)参照してください。
--   適切なstorageエンジンを使用します。ハイブリッド トランザクションおよび分析処理 (HTAP) ワークロードには、 TiFlashstorageエンジンを使用することをお勧めします。1 [HTAP クエリ](/develop/dev-guide-hybrid-oltp-and-olap-queries.md)参照してください。
+-   適切なstorageエンジンを使用します。ハイブリッド トランザクションおよび分析処理 (HTAP) ワークロードには、 TiFlashstorageエンジンを使用することをお勧めします[HTAP クエリ](/develop/dev-guide-hybrid-oltp-and-olap-queries.md)参照してください。
 
-TiDB Cloud は、クラスター上の低速クエリを分析するのに役立ついくつかのツールを提供します。次のセクションでは、低速クエリを最適化するためのいくつかの方法について説明します。
+TiDB Cloud には、クラスター上の低速クエリを分析するのに役立つツールがいくつか用意されています。次のセクションでは、低速クエリを最適化するためのいくつかの方法について説明します。
 
 ### 診断タブのステートメントを使用する {#use-statement-on-the-diagnosis-tab}
 
@@ -27,15 +27,23 @@ TiDB Cloudコンソールの**[診断]**タブには**<a href="/tidb-cloud/tune-
 
 このサブタブでは、同じ構造を持つ SQL クエリ (クエリ パラメータが一致しない場合でも) が同じ SQL ステートメントにグループ化されることに注意してください。たとえば、 `SELECT * FROM employee WHERE id IN (1, 2, 3)`と`select * from EMPLOYEE where ID in (4, 5)`どちらも同じ SQL ステートメント`select * from employee where id in (...)`の一部です。
 
-**ステートメント**でいくつかの重要な情報を表示できます。
+**SQL ステートメント**でいくつかの重要な情報を表示できます。
 
--   SQL ステートメントの概要: SQL ダイジェスト、SQL テンプレート ID、現在表示されている時間範囲、実行プランの数、実行が行われるデータベースなどが含まれます。
+-   **SQL テンプレート**: SQL ダイジェスト、SQL テンプレート ID、現在表示されている時間範囲、実行プランの数、実行が行われるデータベースが含まれます。
+
+    ![Details0](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-detail0.png)
+
 -   実行プラン リスト: SQL ステートメントに複数の実行プランがある場合は、リストが表示されます。異なる実行プランを選択でき、選択した実行プランの詳細がリストの下部に表示されます。実行プランが 1 つしかない場合は、リストは表示されません。
--   実行プランの詳細: 選択した実行プランの詳細を表示します。SQL タイプの実行プランと対応する実行時間を複数の観点から収集し、詳細情報の取得に役立ちます。1 (下の画像の領域[実行計画の詳細](https://docs.pingcap.com/tidb/stable/dashboard-statement-details#statement-execution-details-of-tidb-dashboard) ) を参照してください。
 
-![Details](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-detail.png)
+    ![Details1](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-detail1.png)
 
-**ステートメント**ダッシュボードの情報に加えて、次のセクションで説明するように、TiDB Cloudの SQL ベスト プラクティスもいくつかあります。
+-   実行プランの詳細: 選択した実行プランの詳細を表示します。各 SQL タイプの実行プランと対応する実行時間を複数の観点から収集し、詳細情報の取得に役立ちます[実行計画](https://docs.pingcap.com/tidb/stable/dashboard-statement-details#execution-plans)参照してください。
+
+    ![Details2](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-detail2.png)
+
+-   関連する低速クエリ
+
+**ステートメント**ダッシュボードの情報に加えて、次のセクションで説明するように、 TiDB Cloudの SQL ベスト プラクティスもいくつかあります。
 
 ### 実行計画を確認する {#check-the-execution-plan}
 
@@ -45,15 +53,15 @@ TiDB によって選択された実行プランが最適でない場合は、 EX
 
 ### 実行計画を最適化する {#optimize-the-execution-plan}
 
-元のクエリ テキストを`parser`で解析し、基本的な有効性を検証した後、TiDB はまずクエリに対して論理的に同等の変更を加えます。詳細については、 [SQL 論理最適化](/sql-logical-optimization.md)を参照してください。
+元のクエリ テキストを`parser`で解析し、基本的な有効性を検証した後、TiDB はまずクエリに対して論理的に同等の変更を加えます。詳細については、 [SQL 論理最適化](/sql-logical-optimization.md)参照してください。
 
-これらの等価性の変更により、クエリは論理実行プランで処理しやすくなります。等価性の変更後、TiDB は元のクエリと同等のクエリ プラン構造を取得し、その後、データ分布と演算子の特定の実行オーバーヘッドに基づいて最終的な実行プランを取得します。詳細については、 [SQL 物理最適化](/sql-physical-optimization.md)参照してください。
+これらの等価性の変更により、論理実行プランでクエリを処理しやすくなります。等価性の変更後、TiDB は元のクエリと同等のクエリ プラン構造を取得し、データ分布と演算子の特定の実行オーバーヘッドに基づいて最終的な実行プランを取得します。詳細については、 [SQL 物理最適化](/sql-physical-optimization.md)参照してください。
 
 また、TiDB では、 [実行プランキャッシュの準備](/sql-prepared-plan-cache.md)で紹介されているように、 `PREPARE`ステートメントを実行するときに実行プランの作成オーバーヘッドを削減するために、実行プラン キャッシュを有効にすることを選択できます。
 
 ### フルテーブルスキャンの最適化 {#optimize-full-table-scan}
 
-SQL クエリが遅くなる最も一般的な理由は、 `SELECT`ステートメントがフル テーブル スキャンを実行するか、間違ったインデックスを使用することですEXPLAINまたはEXPLAIN ANALYZE を使用して、クエリの実行プランを表示し、実行が遅い原因を特定できます。最適化に使用できるものは[3つの方法](/develop/dev-guide-optimize-sql.md)あります。
+SQL クエリが遅くなる最も一般的な理由は、 `SELECT`文が完全なテーブル スキャンを実行するか、間違ったインデックスを使用することです。EXPLAIN またはEXPLAIN ANALYZEを使用して、クエリの実行プランを表示し、実行が遅い原因を特定できます。最適化に使用できるものは[3つの方法](/develop/dev-guide-optimize-sql.md)あります。
 
 -   セカンダリインデックスを使用する
 -   カバーインデックスを使用する
@@ -71,7 +79,7 @@ SQL クエリが遅くなる最も一般的な理由は、 `SELECT`ステート�
 
 [インデックス作成のベストプラクティス](/develop/dev-guide-index-best-practice.md)には、インデックスの作成と使用に関するベスト プラクティスが含まれています。
 
-デフォルトではインデックス作成の速度は控えめですが、シナリオによってはインデックス作成プロセスを[変数の変更](/develop/dev-guide-optimize-sql-best-practices.md#add-index-best-practices)高速化できます。
+デフォルトではインデックス作成の速度は控えめですが、シナリオによってはインデックス作成プロセスを[変数の変更](/develop/dev-guide-optimize-sql-best-practices.md#add-index-best-practices)倍高速化できます。
 
 <!--
 ### Use the slow log memory mapping table
@@ -91,15 +99,15 @@ SQL パフォーマンス チューニングを行ってもパフォーマンス
 
 ### トランザクションの競合 {#transaction-conflicts}
 
-トランザクションの競合を特定して解決する方法の詳細については、 [ロック競合のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts#troubleshoot-lock-conflicts)を参照してください。
+トランザクションの競合を特定して解決する方法の詳細については、 [ロック競合のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts#troubleshoot-lock-conflicts)参照してください。
 
 ### ホットスポットの問題 {#hotspot-issues}
 
-[キービジュアライザー](/tidb-cloud/tune-performance.md#key-visualizer)を使用してホットスポットの問題を分析できます。
+[キービジュアライザー](/tidb-cloud/tune-performance.md#key-visualizer)使用してホットスポットの問題を分析できます。
 
 Key Visualizer を使用すると、TiDB クラスターの使用パターンを分析し、トラフィックのホットスポットをトラブルシューティングできます。このページでは、TiDB クラスターのトラフィックの経時的な変化を視覚的に表示します。
 
-Key Visualizer では次の情報を確認できます。まず、いくつか[基本概念](https://docs.pingcap.com/tidb/stable/dashboard-key-visualizer#basic-concepts)理解しておく必要があるかもしれません。
+Key Visualizer では次の情報を確認できます。まず、いくつか[基本的な概念](https://docs.pingcap.com/tidb/stable/dashboard-key-visualizer#basic-concepts)つを理解する必要があるかもしれません。
 
 -   全体的なトラフィックを時間の経過とともに表示する大きなヒートマップ
 -   ヒートマップの座標に関する詳細情報

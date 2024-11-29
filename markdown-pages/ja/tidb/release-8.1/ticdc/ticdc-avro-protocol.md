@@ -5,7 +5,9 @@ summary: TiCDC Avro プロトコルの概念とその使用方法を学びます
 
 # TiCDC Avro プロトコル {#ticdc-avro-protocol}
 
-Avro は、 [アパッチアブロ™](https://avro.apache.org/)で定義され、 [合流プラットフォーム](https://docs.confluent.io/platform/current/platform.html)によってデフォルトのデータ交換形式として選択されたデータ交換形式プロトコルです。このドキュメントでは、TiDB 拡張フィールド、Avro データ形式の定義、および Avro と[Confluent スキーマ レジストリ](https://docs.confluent.io/platform/current/schema-registry/index.html)間の相互作用を含む、TiCDC での Avro データ形式の実装について説明します。
+TiCDC Avroプロトコルは、 [合流プラットフォーム](https://docs.confluent.io/platform/current/platform.html)で定義された[合流アブロ](https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/serdes-avro.html)データ交換プロトコルのサードパーティ実装です。Avroは[アパッチアブロ™](https://avro.apache.org/)で定義されたデータ形式です。
+
+このドキュメントでは、TiCDC が Confluent Avro プロトコルを実装する方法と、Avro と[Confluent スキーマ レジストリ](https://docs.confluent.io/platform/current/schema-registry/index.html)間の相互作用について説明します。
 
 > **警告：**
 >
@@ -13,36 +15,17 @@ Avro は、 [アパッチアブロ™](https://avro.apache.org/)で定義され�
 
 ## Avroを使用する {#use-avro}
 
-メッセージ キュー (MQ) をダウンストリーム シンクとして使用する場合、 `sink-uri`で Avro を指定できます。TiCDC は TiDB DML イベントをキャプチャし、これらのイベントから Avro メッセージを作成し、メッセージをダウンストリームに送信します。Avro はスキーマの変更を検出すると、最新のスキーマをスキーマ レジストリに登録します。
-
 以下は Avro を使用した構成例です。
 
 ```shell
 cdc cli changefeed create --server=http://127.0.0.1:8300 --changefeed-id="kafka-avro" --sink-uri="kafka://127.0.0.1:9092/topic-name?protocol=avro" --schema-registry=http://127.0.0.1:8081 --config changefeed_config.toml
 ```
 
-```shell
-[sink]
-dispatchers = [
- {matcher = ['*.*'], topic = "tidb_{schema}_{table}"},
-]
-```
+値`--schema-registry`は、 `https`プロトコルと`username:password`認証をサポートします。ユーザー名とパスワードは URL エンコードされている必要があります。たとえば、 `--schema-registry=https://username:password@schema-registry-uri.com`です。
 
-値`--schema-registry`は、 `https`プロトコルと`username:password`認証をサポートします (例: `--schema-registry=https://username:password@schema-registry-uri.com` 。ユーザー名とパスワードは URL エンコードされている必要があります。
-
-## TiDB拡張フィールド {#tidb-extension-fields}
-
-デフォルトでは、Avro は DML イベントで変更された行のデータのみを収集し、データ変更の種類や TiDB 固有の CommitTS (トランザクションの一意の識別子) は収集しません。この問題に対処するために、TiCDC は Avro プロトコル メッセージに次の 3 つの TiDB 拡張フィールドを導入します。7 で`enable-tidb-extension`が`true` ( `sink-uri`では`false` ) に設定されている場合、TiCDC はメッセージ生成中にこれらの 3 つのフィールドを Avro メッセージに追加します。
-
--   `_tidb_op` : DML タイプ。「c」は挿入を示し、「u」は更新を示します。
--   `_tidb_commit_ts` : トランザクションの一意の識別子。
--   `_tidb_commit_physical_time` : トランザクション識別子内の物理的なタイムスタンプ。
-
-以下は設定例です。
-
-```shell
-cdc cli changefeed create --server=http://127.0.0.1:8300 --changefeed-id="kafka-avro-enable-extension" --sink-uri="kafka://127.0.0.1:9092/topic-name?protocol=avro&enable-tidb-extension=true" --schema-registry=http://127.0.0.1:8081 --config changefeed_config.toml
-```
+> **注記：**
+>
+> Avro プロトコルを使用する場合、1 つの Kafka トピックには 1 つのテーブルのデータのみを含めることができます。構成ファイルで[トピックディスパッチャ](/ticdc/ticdc-sink-to-kafka.md#topic-dispatchers)を構成する必要があります。
 
 ```shell
 [sink]
@@ -85,7 +68,36 @@ TiCDC は DML イベントを Kafka イベントに変換し、イベントの�
         ]
     }
 
-デフォルトでは、値のデータ形式はキーのデータ形式と同じです。ただし、値の`fields`には主キー列だけでなく、すべての列が含まれます。
+デフォルトでは、値のデータ形式はキーと同じです。ただし、値の`fields`にはすべての列が含まれます。
+
+> **注記：**
+>
+> Avro プロトコルは、DML イベントを次のようにエンコードします。
+>
+> -   削除イベントの場合、Avro はキー部分のみをエンコードします。値の部分は空です。
+> -   挿入イベントの場合、Avro はすべての列データを値部分にエンコードします。
+> -   更新イベントの場合、Avro は値部分に更新されるすべての列データのみをエンコードします。
+
+## TiDB拡張フィールド {#tidb-extension-fields}
+
+デフォルトでは、Avro は DML イベントで変更された行のデータのみを収集し、データ変更の種類や TiDB 固有の CommitTS (トランザクションの一意の識別子) は収集しません。この問題に対処するために、TiCDC は Avro プロトコル メッセージに次の 3 つの TiDB 拡張フィールドを導入します`sink-uri`で`enable-tidb-extension`が`true` (デフォルトでは`false` ) に設定されている場合、TiCDC はメッセージ生成中にこれらの 3 つのフィールドを Avro メッセージに追加します。
+
+-   `_tidb_op` : DML タイプ。「c」は挿入を示し、「u」は更新を示します。
+-   `_tidb_commit_ts` : トランザクションの一意の識別子。
+-   `_tidb_commit_physical_time` : トランザクション識別子内の物理的なタイムスタンプ。
+
+以下は設定例です。
+
+```shell
+cdc cli changefeed create --server=http://127.0.0.1:8300 --changefeed-id="kafka-avro-enable-extension" --sink-uri="kafka://127.0.0.1:9092/topic-name?protocol=avro&enable-tidb-extension=true" --schema-registry=http://127.0.0.1:8081 --config changefeed_config.toml
+```
+
+```shell
+[sink]
+dispatchers = [
+ {matcher = ['*.*'], topic = "tidb_{schema}_{table}"},
+]
+```
 
 [`enable-tidb-extension`](#tidb-extension-fields)有効にすると、値のデータ形式は次のようになります。
 
@@ -145,7 +157,7 @@ TiCDC は DML イベントを Kafka イベントに変換し、イベントの�
 
 -   `{{ColumnName}}`列名を示します。
 -   `{{TIDB_TYPE}}` TiDB 内の型を示します。これは SQL 型との 1 対 1 のマッピングではありません。
--   `{{AVRO_TYPE}}` [アブロスペック](https://avro.apache.org/docs/current/spec.html)の型を示します。
+-   `{{AVRO_TYPE}}` [Avro仕様](https://avro.apache.org/docs/++version++/specification)内のタイプを示します。
 
 | SQL タイプ  | TIDB_タイプ | AVRO_タイプ | 説明                                                                                                    |
 | -------- | -------- | -------- | ----------------------------------------------------------------------------------------------------- |
@@ -167,10 +179,10 @@ TiCDC は DML イベントを Kafka イベントに変換し、イベントの�
 | 長文       | TEXT     | 弦        | <li></li>                                                                                             |
 | 文字       | TEXT     | 弦        | <li></li>                                                                                             |
 | バルチャー    | TEXT     | 弦        | <li></li>                                                                                             |
-| 浮く       | 浮く       | ダブル      | <li></li>                                                                                             |
+| フロート     | フロート     | ダブル      | <li></li>                                                                                             |
 | ダブル      | ダブル      | ダブル      | <li></li>                                                                                             |
 | 日付       | 日付       | 弦        | <li></li>                                                                                             |
-| 日付時刻     | 日付時刻     | 弦        | <li></li>                                                                                             |
+| 日時       | 日時       | 弦        | <li></li>                                                                                             |
 | タイムスタンプ  | タイムスタンプ  | 弦        | <li></li>                                                                                             |
 | 時間       | 時間       | 弦        | <li></li>                                                                                             |
 | 年        | 年        | 整数       | <li></li>                                                                                             |
@@ -180,14 +192,14 @@ TiCDC は DML イベントを Kafka イベントに変換し、イベントの�
 | セット      | セット      | 弦        | <li></li>                                                                                             |
 | 小数点      | 小数点      | バイト      | `avro-decimal-handling-mode`文字列の場合、AVRO_TYPE は文字列になります。                                               |
 
-Avro プロトコルでは、他の 2 つの`sink-uri`パラメータ`avro-decimal-handling-mode`と`avro-bigint-unsigned-handling-mode`もカラムデータ形式に影響する可能性があります。
+Avro プロトコルでは、他の 2 つの`sink-uri`パラメータ ( `avro-decimal-handling-mode`と`avro-bigint-unsigned-handling-mode`もカラムデータ形式に影響する可能性があります。
 
 -   `avro-decimal-handling-mode` 、Avro が 10 進数フィールドを処理する方法を制御します。これには以下が含まれます。
 
     -   文字列: Avro は小数フィールドを文字列として処理します。
     -   precise: Avro は 10 進数フィールドをバイトとして処理します。
 
--   `avro-bigint-unsigned-handling-mode` 、Avro が BIGINT UNSIGNED フィールドを処理する方法を制御します。これには以下が含まれます。
+-   `avro-bigint-unsigned-handling-mode` Avro が BIGINT UNSIGNED フィールドを処理する方法を制御します。これには以下が含まれます。
 
     -   文字列: Avro は BIGINT UNSIGNED フィールドを文字列として処理します。
     -   long: Avro は BIGINT UNSIGNED フィールドを 64 ビットの符号付き整数として処理します。値が`9223372036854775807`より大きい場合、オーバーフローが発生します。
@@ -250,18 +262,31 @@ dispatchers = [
 
 ## DDL イベントとスキーマの変更 {#ddl-events-and-schema-changes}
 
-Avro は下流で DDL イベントを生成しません。DML イベントが発生するたびに、スキーマが変更されているかどうかを確認します。スキーマが変更されると、Avro は新しいスキーマを生成し、それをスキーマ レジストリに登録します。スキーマの変更が互換性チェックに合格しない場合、登録は失敗します。TiCDC はスキーマの互換性の問題を解決しません。
+Avro は、DDL イベントとウォーターマーク イベントを下流に送信しません。DML イベントが発生するたびに、スキーマが変更されたかどうかを確認します。スキーマが変更されると、Avro は新しいスキーマを生成し、それをスキーマ レジストリに登録します。スキーマの変更が互換性チェックに合格しない場合、登録は失敗します。TiCDC は、スキーマの互換性の問題を解決しません。
 
-スキーマの変更が互換性チェックに合格し、新しいバージョンが登録された場合でも、システムが正常に実行されるようにするには、データ プロデューサーとコンシューマーがアップグレードを実行する必要があることに注意してください。
+たとえば、Confluent Schema Registry のデフォルトの[互換性ポリシー](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html#compatibility-types) `BACKWARD`で、ソース テーブルに空でない列を追加します。この状況では、Avro は新しいスキーマを生成しますが、互換性の問題により Schema Registry への登録に失敗します。この時点で、changefeed はエラー状態になります。
 
-Confluent Schema Registry のデフォルトの互換性ポリシーが`BACKWARD`であると仮定し、ソース テーブルに空でない列を追加します。この状況では、Avro は新しいスキーマを生成しますが、互換性の問題により Schema Registry への登録に失敗します。この時点で、changefeed はエラー状態になります。
+スキーマの変更が互換性チェックに合格し、新しいバージョンが登録された場合でも、データ プロデューサーとコンシューマーはデータのエンコードとデコードのために新しいスキーマを取得する必要があることに注意してください。
 
 スキーマの詳細については、 [スキーマレジストリ関連ドキュメント](https://docs.confluent.io/platform/current/schema-registry/avro.html)を参照してください。
 
+## 消費者実装 {#consumer-implementation}
+
+TiCDC Avro プロトコルは[`io.confluent.kafka.serializers.KafkaAvroDeserializer`](https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/serdes-avro.html#avro-deserializer)で逆シリアル化できます。
+
+コンシューマー プログラムは[スキーマレジストリ API](https://docs.confluent.io/platform/current/schema-registry/develop/api.html)を介して最新のスキーマを取得し、そのスキーマを使用して TiCDC Avro プロトコルによってエンコードされたデータを逆シリアル化できます。
+
+### イベントの種類を区別する {#distinguish-event-types}
+
+コンシューマー プログラムは、次のルールによって DML イベント タイプを区別できます。
+
+-   Key部分のみの場合はDeleteイベントとなります。
+-   キー部分と値部分の両方がある場合は、挿入イベントまたは更新イベントのいずれかです。 [TiDB拡張フィールド](#tidb-extension-fields)が有効になっている場合は、 `_tidb_op`フィールドを使用して、挿入イベントか更新イベントかを識別できます。 TiDB 拡張フィールドが有効になっていない場合、それらを区別することはできません。
+
 ## トピックの分布 {#topic-distribution}
 
-スキーマ レジストリは、TopicNameStrategy、RecordNameStrategy、TopicRecordNameStrategy の 3 [件名戦略](https://docs.confluent.io/platform/current/schema-registry/serdes-develop/index.html#subject-name-strategy)をサポートしています。現在、TiCDC Avro は TopicNameStrategy のみをサポートしています。つまり、Kafka トピックは 1 つのデータ形式でのみデータを受信できます。したがって、TiCDC Avro では、複数のテーブルを同じトピックにマッピングすることは禁止されています。変更フィードを作成すると、トピック ルールに、構成された配布ルールの`{schema}`および`{table}`プレースホルダーが含まれていない場合、エラーが報告されます。
+スキーマ レジストリは、TopicNameStrategy、RecordNameStrategy、TopicRecordNameStrategy の[件名戦略](https://docs.confluent.io/platform/current/schema-registry/serdes-develop/index.html#subject-name-strategy)つをサポートしています。現在、TiCDC Avro は TopicNameStrategy のみをサポートしています。つまり、Kafka トピックは 1 つのデータ形式でのみデータを受信できます。したがって、TiCDC Avro では、複数のテーブルを同じトピックにマッピングすることは禁止されています。変更フィードを作成すると、トピック ルールに、構成された配布ルールの`{schema}`および`{table}`プレースホルダーが含まれていない場合、エラーが報告されます。
 
 ## 互換性 {#compatibility}
 
-TiCDC クラスターを v7.0.0 にアップグレードする際、Avro を使用してレプリケートされたテーブルに`FLOAT`データ型が含まれている場合は、アップグレード前に Confluent Schema Registry の互換性ポリシーを手動で`None`に調整して、changefeed がスキーマを正常に更新できるようにする必要があります。そうしないと、アップグレード後に changefeed がスキーマを更新できず、エラー状態になります。詳細については、 [＃8490](https://github.com/pingcap/tiflow/issues/8490)を参照してください。
+TiCDC クラスターを v7.0.0 にアップグレードする際、Avro を使用してレプリケートされたテーブルに`FLOAT`データ型が含まれている場合は、アップグレード前に Confluent Schema Registry の互換性ポリシーを手動で`None`に調整して、changefeed がスキーマを正常に更新できるようにする必要があります。そうしないと、アップグレード後に changefeed がスキーマを更新できず、エラー状態になります。詳細については、 [＃8490](https://github.com/pingcap/tiflow/issues/8490)参照してください。

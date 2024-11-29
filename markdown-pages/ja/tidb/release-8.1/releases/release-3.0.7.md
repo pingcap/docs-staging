@@ -14,7 +14,7 @@ TiDB Ansible バージョン: 3.0.7
 ## ティビ {#tidb}
 
 -   TiDB サーバーのローカル時間が PD のタイムスタンプ[＃13868](https://github.com/pingcap/tidb/pull/13868)より遅れているためにロック TTL の値が大きすぎる問題を修正しました
--   `gotime.Local` [＃13793](https://github.com/pingcap/tidb/pull/13793)を使用して文字列から日付を解析した後にタイムゾーンが正しくない問題を修正しました
+-   `gotime.Local` [＃13793](https://github.com/pingcap/tidb/pull/13793)使用して文字列から日付を解析した後にタイムゾーンが正しくない問題を修正しました
 -   `builtinIntervalRealSig` [＃13767](https://github.com/pingcap/tidb/pull/13767)の実装で`binSearch`関数がエラーを返さないため、結果が不正確になる可能性がある問題を修正しました。
 -   整数を符号なし浮動小数点型または小数点型に変換すると精度が失われ、データが正しくなくなる問題を修正[＃13755](https://github.com/pingcap/tidb/pull/13755)
 -   Natural Outer Join および Outer Join [＃13739](https://github.com/pingcap/tidb/pull/13739)で`USING`節が使用されている場合に`not null`フラグが適切にリセットされないため、結果が正しくない問題を修正しました。

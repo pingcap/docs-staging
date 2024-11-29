@@ -1,6 +1,6 @@
 ---
 title: VIEWS
-summary: VIEWS INFORMATION_SCHEMA テーブルについて学習します。
+summary: VIEWS` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # ビュー {#views}
@@ -61,7 +61,7 @@ COLLATION_CONNECTION: utf8mb4_0900_ai_ci
 -   `TABLE_CATALOG` : ビューが属するカタログの名前。この値は常に`def`です。
 -   `TABLE_SCHEMA` : ビューが属するスキーマの名前。
 -   `TABLE_NAME` : ビュー名。
--   `VIEW_DEFINITION` : ビューの作成時に`SELECT`番目のステートメントによって作成されるビューの定義。
+-   `VIEW_DEFINITION` : ビューの作成時に`SELECT`のステートメントによって作成されるビューの定義。
 -   `CHECK_OPTION` : `CHECK_OPTION`値。値のオプションは`NONE` 、 `CASCADE` 、および`LOCAL`です。
 -   `IS_UPDATABLE` : `UPDATE` / `INSERT` / `DELETE`がビューに適用可能かどうか。TiDB では、値は常に`NO`です。
 -   `DEFINER` : ビューを作成したユーザーの名前。形式は`'user_name'@'host_name'`です。

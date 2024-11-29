@@ -3,9 +3,9 @@ title: Integrate TiDB Cloud with dbt
 summary: TiDB Cloudでの dbt の使用例を学びます。
 ---
 
-# TiDB Cloudをdbtと統合する {#integrate-tidb-cloud-with-dbt}
+# TiDB Cloud をdbt と統合する {#integrate-tidb-cloud-with-dbt}
 
-[データ構築ツール (dbt)](https://www.getdbt.com/)は、分析エンジニアが SQL ステートメントを使用してウェアハウス内のデータを変換するのに役立つ、人気の高いオープンソースのデータ変換ツールです。2 プラグ[dbt-tidb](https://github.com/pingcap/dbt-tidb)を使用すると、 TiDB Cloudで作業する分析エンジニアは、テーブルやビューの作成プロセスを考えることなく、SQL を介してフォームを直接作成し、データを照合できます。
+[データ構築ツール (dbt)](https://www.getdbt.com/)は、分析エンジニアが SQL ステートメントを使用してウェアハウス内のデータを変換するのに役立つ、人気の高いオープンソースのデータ変換ツールです。2 [dbt-tidb](https://github.com/pingcap/dbt-tidb)インを使用すると、 TiDB Cloudで作業する分析エンジニアは、テーブルやビューの作成プロセスを考えることなく、SQL を介してフォームを直接作成し、データを照合できます。
 
 このドキュメントでは、dbt プロジェクトを例に、 TiDB Cloudで dbt を使用する方法を紹介します。
 
@@ -21,7 +21,7 @@ dbt を別途インストールすることもできます。dbt ドキュメン
 
 ## ステップ2: デモプロジェクトを作成する {#step-2-create-a-demo-project}
 
-dbt 機能を試すには、dbt-lab が提供するデモ プロジェクト[ジャッフルショップ](https://github.com/dbt-labs/jaffle_shop)使用できます。プロジェクトは GitHub から直接クローンできます。
+dbt 関数を試すには、dbt-lab が提供するデモ プロジェクト[ジャッフルショップ](https://github.com/dbt-labs/jaffle_shop)使用できます。プロジェクトは GitHub から直接クローンできます。
 
 ```shell
 git clone https://github.com/dbt-labs/jaffle_shop && \
@@ -59,9 +59,9 @@ cd jaffle_shop
 
 -   `dbt_project.yml`は dbt プロジェクト構成ファイルであり、プロジェクト名とデータベース構成ファイル情報を保持します。
 
--   `models`ディレクトリには、プロジェクトの SQL モデルとテーブル スキーマが含まれています。このセクションはデータ アナリストが記述することに注意してください。モデルの詳細については、 [SQL モデル](https://docs.getdbt.com/docs/build/sql-models)を参照してください。
+-   `models`ディレクトリには、プロジェクトの SQL モデルとテーブル スキーマが含まれています。このセクションはデータ アナリストが記述することに注意してください。モデルの詳細については、 [SQL モデル](https://docs.getdbt.com/docs/build/sql-models)参照してください。
 
--   `seeds`ディレクトリには、データベース エクスポート ツールによってダンプされた CSV ファイル`jaffle_shop`格納されます。たとえば、 Dumplingを使用して[TiDB Cloudデータをエクスポートする](https://docs.pingcap.com/tidbcloud/export-data-from-tidb-cloud) CSV ファイルにすることができます。5 プロジェクトでは、これらの CSV ファイルが処理される生データとして使用されます。
+-   `seeds`ディレクトリには、データベース エクスポート ツールによってダンプされた CSV ファイルが格納されます。たとえば、 Dumplingを使用して[TiDB Cloudデータをエクスポートする](https://docs.pingcap.com/tidbcloud/export-data-from-tidb-cloud) CSV ファイルにすることができます。5 `jaffle_shop`では、これらの CSV ファイルが処理される生データとして使用されます。
 
 ## ステップ3: プロジェクトを構成する {#step-3-configure-the-project}
 
@@ -90,7 +90,7 @@ cd jaffle_shop
            password: "your_password"                                   # The password to use for authenticating to the TiDB Cloud clusters
     ```
 
-    `server`の値`username` `port`の接続ダイアログから取得できます。このダイアログを開くには、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動し、右上隅の**[接続]**をクリックします。
+    `server` `username`値は`port`クラスターの接続ダイアログから取得できます。このダイアログを開くには、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動し、右上隅の**[接続]**をクリックします。
 
 2.  プロジェクトの構成を完了します。
 
@@ -170,11 +170,11 @@ cd jaffle_shop
     3 of 3 OK loaded seed file analytics.raw_payments............................... [INSERT 113 in 0.24s]
     ```
 
-    結果からわかるように、シード ファイルが開始され、 `analytics.raw_customers` 、 `analytics.raw_orders` 、 `analytics.raw_payments` 3 つのテーブルにロードされました。
+    結果からわかるように、シード ファイルが開始され、 `analytics.raw_customers` 、 `analytics.raw_orders` 、 `analytics.raw_payments`の 3 つのテーブルにロードされました。
 
 2.  TiDB Cloudで結果を確認します。
 
-    `show databases`コマンドは、dbt `show tables`作成した新しい`analytics`データベースを一覧表示します。5 コマンドは、 `analytics`データベースに、作成したテーブルに対応する 3 つのテーブルがあることを示します。
+    `show databases`コマンドは、dbt が作成した新しい`analytics`データベースを一覧表示します。5 コマンドは`analytics` `show tables`に、作成したテーブルに対応する 3 つのテーブルがあることを示します。
 
     ```sql
     mysql> SHOW DATABASES;
@@ -331,14 +331,14 @@ dbt を使用すると、プロジェクトの全体的な構造を表示し、�
 
 ## サポートされている関数 {#supported-functions}
 
-dbt-tidb では以下の関数を直接使用できます。使用方法については[dbt-util](https://github.com/dbt-labs/dbt-utils)を参照してください。
+dbt-tidb では以下の関数を直接使用できます。使用方法については[dbt-util](https://github.com/dbt-labs/dbt-utils)参照してください。
 
 以下の関数がサポートされています:
 
 -   `bool_or`
 -   `cast_bool_to_text`
 -   `dateadd`
--   `datediff` dbt-util とは少し異なることに注意して`datediff` 。切り上げではなく切り捨てになります。
+-   `datediff`は dbt-util とは少し`datediff`ことに注意してください。切り上げではなく切り捨てになります。
 -   `date_trunc`
 -   `hash`
 -   `safe_cast`

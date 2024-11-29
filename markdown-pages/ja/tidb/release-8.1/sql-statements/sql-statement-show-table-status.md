@@ -78,7 +78,7 @@ Max_data_length: 0
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SHOW TABLE STATUS`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`SHOW TABLE STATUS`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 

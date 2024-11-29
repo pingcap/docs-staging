@@ -1,17 +1,17 @@
 ---
 title: Configure TiFlash
-summary: TiFlash の設定方法を学習します。
+summary: TiFlashの設定方法を学びます。
 ---
 
-# TiFlash を設定する {#configure-tiflash}
+# TiFlashを設定する {#configure-tiflash}
 
-このドキュメントでは、 TiFlashの導入と使用に関連する構成パラメータについて説明します。
+このドキュメントでは、 TiFlashの展開と使用に関連する構成パラメータについて説明します。
 
 ## PD スケジューリングパラメータ {#pd-scheduling-parameters}
 
-[pd-ctl](/pd-control.md)を使用して PD スケジューリング パラメータを調整できます。tiup を使用してクラスターをデプロイおよび管理する場合は、 `pd-ctl -u <pd_ip:pd_port>`代わりに`tiup ctl:v<CLUSTER_VERSION> pd`使用できることに注意してください。
+[pd-ctl](/pd-control.md)使用して PD スケジューリング パラメータを調整できます。tiup を使用してクラスターをデプロイおよび管理する場合は、 `pd-ctl -u <pd_ip:pd_port>`代わりに`tiup ctl:v<CLUSTER_VERSION> pd`使用できることに注意してください。
 
--   [`replica-schedule-limit`](/pd-configuration-file.md#replica-schedule-limit) : レプリカ関連のオペレータが生成されるレートを決定します。このパラメータは、ノードをオフラインにしたり、レプリカを追加したりする操作に影響します。
+-   [`replica-schedule-limit`](/pd-configuration-file.md#replica-schedule-limit) : レプリカ関連のオペレーターが生成されるレートを決定します。このパラメーターは、ノードをオフラインにしたり、レプリカを追加したりする操作に影響します。
 
     > **注記：**
     >
@@ -21,13 +21,13 @@ summary: TiFlash の設定方法を学習します。
 
     > **注記：**
     >
-    > v4.0.2 以降、 `store-balance-rate`パラメータは非推奨となり、 `store limit`コマンドに変更が加えられました。詳細については[店舗制限](/configure-store-limit.md)を参照してください。
+    > v4.0.2 以降、 `store-balance-rate`パラメータは非推奨となり、 `store limit`コマンドに変更が加えられました。詳細については[店舗制限](/configure-store-limit.md)参照してください。
 
-    -   指定されたストアのスケジューリング レートを設定するには、 `pd-ctl -u <pd_ip:pd_port> store limit <store_id> <value>`コマンドを実行します。( `store_id`を取得するには、 `pd-ctl -u <pd_ip:pd_port> store`コマンドを実行できます。
+    -   指定されたストアのスケジューリング レートを設定するには、 `pd-ctl -u <pd_ip:pd_port> store limit <store_id> <value>`コマンドを実行します。( `store_id`取得するには、 `pd-ctl -u <pd_ip:pd_port> store`コマンドを実行できます。
     -   指定されたストアのリージョンのスケジュール レートを設定しない場合、このストアは`store-balance-rate`の設定を継承します。
     -   `pd-ctl -u <pd_ip:pd_port> store limit`コマンドを実行すると、現在の設定値`store-balance-rate`を表示できます。
 
--   [`replication.location-labels`](/pd-configuration-file.md#location-labels) : TiKV インスタンスのトポロジ関係を示します。キーの順序は、異なるラベルの階層関係を示します。TiFlashが有効になっている場合は、 [`pd-ctl config placement-rules`](/pd-control.md#config-show--set-option-value--placement-rules)を使用してデフォルト値を設定する必要があります。詳細については、 [地理的に分散された展開トポロジ](/geo-distributed-deployment-topology.md)を参照してください。
+-   [`replication.location-labels`](/pd-configuration-file.md#location-labels) : TiKV インスタンスのトポロジ関係を示します。キーの順序は、異なるラベルの階層関係を示します。TiFlashが有効になっている場合は、 [`pd-ctl config placement-rules`](/pd-control.md#config-show--set-option-value--placement-rules)使用してデフォルト値を設定する必要があります。詳細については、 [地理的に分散された展開トポロジ](/geo-distributed-deployment-topology.md)参照してください。
 
 ## TiFlash構成パラメータ {#tiflash-configuration-parameters}
 
@@ -165,23 +165,26 @@ delta_index_cache_size = 0
     ## The external access address of status-addr. If it is left empty, the value of "status-addr" is used by default.
     ## Should guarantee that other nodes can access through `advertise-status-addr` when you deploy the cluster on multiple nodes.
     advertise-status-addr = ""
+    ## The external access address of the TiFlash coprocessor service.
+    engine-addr = "10.0.1.20:3930"
     ## The data storage path of proxy.
     data-dir = "/tidb-data/tiflash-9000/flash"
     ## The configuration file path of proxy.
     config = "/tidb-deploy/tiflash-9000/conf/tiflash-learner.toml"
     ## The log path of proxy.
     log-file = "/tidb-deploy/tiflash-9000/log/tiflash_tikv.log"
-    ## The log level of proxy (available options: "trace", "debug", "info", "warn", "error"). The default value is "info"
-    # log-level = "info" 
 
 [logger]
+    ## Note that the following parameters only take effect in tiflash.log and tiflash_error.log. If you need to configure log parameters of TiFlash Proxy, specify them in tiflash-learner.toml.
     ## log level (available options: "trace", "debug", "info", "warn", "error"). The default value is "info".
     level = "info"
+    ## The log of TiFlash.
     log = "/tidb-deploy/tiflash-9000/log/tiflash.log"
+    ## The error log of TiFlash. The "warn" and "error" level logs are also output to this log file.
     errorlog = "/tidb-deploy/tiflash-9000/log/tiflash_error.log"
     ## Size of a single log file. The default value is "100M".
     size = "100M"
-    ## Maximum number of log files to save. The default value is 10.
+    ## Maximum number of log files to save. The default value is 10. For TiFlash logs and TiFlash error logs, the maximum number of log files to save is `count` respectively.
     count = 10
 
 [raft]
@@ -204,6 +207,13 @@ delta_index_cache_size = 0
     ## see known issue [#5576](https://github.com/pingcap/tiflash/issues/5576).
     # dt_enable_logical_split = false
 
+    ## `max_threads` indicates the internal thread concurrency when TiFlash executes an MPP task.
+    ## The default value is 0. When it is set to 0,
+    ## TiFlash uses the number of CPU cores as the execution concurrency.
+    ## This parameter only takes effect
+    ## when the system variable `tidb_max_tiflash_threads` is set to -1.
+    max_threads = 0
+    
     ## The memory usage limit for the generated intermediate data in a single query.
     ## When the value is an integer, the unit is byte. For example, 34359738368 means 32 GiB of memory limit, and 0 means no limit.
     ## When the value is a floating-point number in the range of [0.0, 1.0), it means the ratio of the allowed memory usage to the total memory of the node. For example, 0.8 means 80% of the total memory, and 0.0 means no limit.
@@ -250,6 +260,15 @@ delta_index_cache_size = 0
     ## New in v7.4.0. This item controls whether to enable the TiFlash resource control feature. When it is set to true, TiFlash uses the pipeline execution model.
     enable_resource_control = true
 
+    ## New in v6.0.0. This item is used for the MinTSO scheduler. It specifies the maximum number of threads that one resource group can use. The default value is 5000. For details about the MinTSO scheduler, see https://docs.pingcap.com/tidb/v8.1/tiflash-mintso-scheduler.
+    task_scheduler_thread_soft_limit = 5000
+
+    ## New in v6.0.0. This item is used for the MinTSO scheduler. It specifies the maximum number of threads in the global scope. The default value is 10000. For details about the MinTSO scheduler, see https://docs.pingcap.com/tidb/v8.1/tiflash-mintso-scheduler.
+    task_scheduler_thread_hard_limit = 10000
+
+    ## New in v6.4.0. This item is used for the MinTSO scheduler. It specifies the maximum number of queries that can run simultaneously in a TiFlash instance. The default value is 0, which means twice the number of vCPUs. For details about the MinTSO scheduler, see https://docs.pingcap.com/tidb/v8.1/tiflash-mintso-scheduler.
+    task_scheduler_active_set_soft_limit = 0
+
 ## Security settings take effect starting from v4.0.5.
 [security]
     ## New in v5.0. This configuration item enables or disables log redaction. If the configuration value
@@ -268,9 +287,26 @@ delta_index_cache_size = 0
 
 ### <code>tiflash-learner.toml</code>ファイルを設定する {#configure-the-code-tiflash-learner-toml-code-file}
 
+`tiflash-learner.toml`のパラメータは基本的に TiKV のパラメータと同じです。TiFlash Proxyの設定については[TiKV 構成](/tikv-configuration-file.md)を参照してください。以下はよく使用されるパラメータのみです。次の点に注意してください。
+
+-   TiKV と比較して、 TiFlash Proxy には`raftstore.snap-handle-pool-size`の追加パラメーターがあります。
+-   キーが`engine`の`label`予約されており、手動で構成することはできません。
+
 ```toml
-[server]
-    engine-addr = The external access address of the TiFlash coprocessor service.
+[log]
+    ## The log level of TiFlash Proxy (available options: "trace", "debug", "info", "warn", "error"). The default value is "info". Introduced in v5.4.0.
+    level = "info"
+
+[log.file]
+    ## The maximum number of log files to save. Introduced in v5.4.0.
+    ## If this parameter is not set or set to the default value `0`, TiFlash Proxy saves all log files.
+    ## If this parameter is set to a non-zero value, TiFlash Proxy retains at most the number of old log files specified by `max-backups`. For example, if you set it to `7`, TiFlash Proxy retains at most 7 old log files.
+    max-backups = 0
+    ## The maximum number of days that the log files are retained. Introduced in v5.4.0.
+    ## If this parameter is not set or set to the default value `0`, TiFlash Proxy retains all log files.
+    ## If this parameter is set to a non-zero value, TiFlash Proxy cleans up outdated log files after the number of days specified by `max-days`.
+    max-days = 0
+
 [raftstore]
     ## The allowable number of threads in the pool that flushes Raft data to storage.
     apply-pool-size = 4
@@ -279,15 +315,10 @@ delta_index_cache_size = 0
     store-pool-size = 4
 
     ## The number of threads that handle snapshots.
-    ## The default number is 2.
-    ## If you set it to 0, the multi-thread optimization is disabled.
+    ## The default value is 2. If you set it to 0, the multi-thread optimization is disabled.
+    ## A specific parameter of TiFlash Proxy, introduced in v4.0.0.
     snap-handle-pool-size = 2
 
-    ## The shortest interval at which Raft store persists WAL.
-    ## You can properly increase the latency to reduce IOPS usage.
-    ## The default value is "4ms".
-    ## If you set it to 0ms, the optimization is disabled.
-    store-batch-retry-recv-timeout = "4ms"
 [security]
     ## New in v5.0. This configuration item enables or disables log redaction.
     ## If the configuration value is set to true,
@@ -309,21 +340,19 @@ delta_index_cache_size = 0
     ## Specifies the old master key when rotating the new master key. The configuration format is the same as that of `master-key`. To learn how to configure a master key, see  Configure encryption: https://docs.pingcap.com/tidb/dev/encryption-at-rest#configure-encryption .
 ```
 
-上記項目以外のパラメータはTiKVと同じです。キーが`engine`の`label`は予約されており、手動で設定できないことに注意してください。
-
 ### トポロジラベルによるレプリカのスケジュール {#schedule-replicas-by-topology-labels}
 
 [利用可能なゾーンを設定する](/tiflash/create-tiflash-replicas.md#set-available-zones)参照。
 
 ### マルチディスク展開 {#multi-disk-deployment}
 
-TiFlash は、マルチディスク展開をサポートしています。TiFlash ノードに複数のディスクがある場合は、次のセクションで説明するパラメータを設定することで、それらのディスクを最大限に活用できます。TiUP に使用するTiUPの設定テンプレートについては、 [TiFlashトポロジの複雑なテンプレート](https://github.com/pingcap/docs/blob/master/config-templates/complex-tiflash.yaml)を参照してください。
+TiFlash は、マルチディスク展開をサポートしています。TiFlash ノードに複数のディスクがある場合は、次のセクションで説明するパラメータを設定することで、それらのディスクを最大限に活用できますTiUPに使用するTiFlashの設定テンプレートについては、 [TiFlashトポロジの複雑なテンプレート](https://github.com/pingcap/docs/blob/master/config-templates/complex-tiflash.yaml)参照してください。
 
 #### TiDB バージョン v4.0.9 より前のマルチディスク展開 {#multi-disk-deployment-with-tidb-version-earlier-than-v4-0-9}
 
-v4.0.9 より前の TiDB クラスターの場合、 TiFlash はstorageエンジンのメイン データを複数のディスクに保存することのみをサポートします。1 ( TiUPでは`path` `data_dir`および`path_realtime_mode`構成を指定することで、複数のディスクにTiFlashノードを設定できます。
+v4.0.9 より前の TiDB クラスターの場合、 TiFlash はstorageエンジンのメイン データを複数のディスクに保存することのみをサポートします`path` ( TiUPでは`data_dir` ) および`path_realtime_mode`構成を指定することで、複数のディスクにTiFlashノードを設定できます。
 
-`path`に複数のデータstorageディレクトリがある場合は、それぞれをコンマで区切ります。たとえば、 `/nvme_ssd_a/data/tiflash,/sata_ssd_b/data/tiflash,/sata_ssd_c/data/tiflash` 。環境内に複数のディスクがある場合は、各ディレクトリを 1 つのディスクに対応させ、パフォーマンスが最も優れたディスクを先頭に配置して、すべてのディスクのパフォーマンスを最大化することをお勧めします。
+`path`に複数のデータstorageディレクトリがある場合は、それぞれをコンマで区切ります。たとえば、 `/nvme_ssd_a/data/tiflash,/sata_ssd_b/data/tiflash,/sata_ssd_c/data/tiflash`です。環境内に複数のディスクがある場合は、各ディレクトリを 1 つのディスクに対応させ、パフォーマンスが最も優れたディスクを先頭に配置して、すべてのディスクのパフォーマンスを最大化することをお勧めします。
 
 TiFlashノードに同様の I/O メトリックを持つディスクが複数ある場合は、 `path_realtime_mode`パラメータをデフォルト値のままにしておくことができます (または明示的に`false`に設定することもできます)。これは、データがすべてのstorageディレクトリ間で均等に分散されることを意味します。ただし、最新のデータは最初のディレクトリにのみ書き込まれるため、対応するディスクは他のディスクよりもビジー状態になります。
 
@@ -331,12 +360,12 @@ TiFlashノードに I/O メトリックが異なる複数のディスクがあ�
 
 #### TiDB v4.0.9 以降を使用したマルチディスク展開 {#multi-disk-deployment-with-tidb-v4-0-9-or-later}
 
-v4.0.9 以降のバージョンの TiDB クラスターの場合、 TiFlash はstorageエンジンのメイン データと最新データを複数のディスクに保存することをサポートします。TiFlash ノードを複数のディスクに展開する場合は、ノードを最大限に活用するために、 `[storage]`セクションでstorageディレクトリを指定することをお勧めします。v4.0.9 より前の構成 ( `path`および`path_realtime_mode` ) も引き続きサポートされていることに注意してください。
+v4.0.9 以降のバージョンの TiDB クラスターの場合、 TiFlash はstorageエンジンのメイン データと最新データを複数のディスクに保存することをサポートします。TiFlash ノードを複数のディスクに展開する場合は、ノードを最大限に活用するために、 `[storage]`セクションでstorageディレクトリを指定することをお勧めしますTiFlashより前の構成 ( `path`および`path_realtime_mode` ) も引き続きサポートされていることに注意してください。
 
-TiFlashノードに類似した I/O メトリックを持つ複数のディスクがある場合は、 `storage.main.dir`リストで対応するディレクトリを指定し、 `storage.latest.dir`空のままにしておくことをお勧めします。TiFlashは、I/O 負荷とデータをすべてのディレクトリに分散します。
+TiFlashノードに類似した I/O メトリックを持つ複数のディスクがある場合は、リスト`storage.main.dir`で対応するディレクトリを指定し、 `storage.latest.dir`空のままにしておくことをお勧めします。TiFlashは、 I/O 負荷とデータをすべてのディレクトリに分散します。
 
-TiFlashノードに I/O メトリックが異なる複数のディスクがある場合は、 `storage.latest.dir`リストでメトリックが高いディレクトリを指定し、 `storage.main.dir`リストでメトリックが低いディレクトリを指定することをお勧めします。たとえば、1 つの NVMe-SSD と 2 つの SATA-SSD の場合、 `storage.latest.dir`を`["/nvme_ssd_a/data/tiflash"]`に、 `storage.main.dir`を`["/sata_ssd_b/data/tiflash", "/sata_ssd_c/data/tiflash"]`に設定できます。TiFlashは、I/O プレッシャーとデータをそれぞれこの 2 つのディレクトリ リストに分散します。この場合、容量`storage.latest.dir`は、計画された総容量の 10% として計画する必要があることに注意してください。
+TiFlashノードに I/O メトリックが異なる複数のディスクがある場合は、 `storage.latest.dir`リストでメトリックの高いディレクトリを指定し、 `storage.main.dir`リストでメトリックの低いディレクトリを指定することをお勧めします。たとえば、1 つの NVMe-SSD と 2 つの SATA-SSD の場合、 `storage.latest.dir` `["/nvme_ssd_a/data/tiflash"]`に、 `storage.main.dir`を`["/sata_ssd_b/data/tiflash", "/sata_ssd_c/data/tiflash"]`に設定できます。TiFlashは、 I/O プレッシャーとデータをそれぞれこの 2 つのディレクトリ リストに分散します。この場合、容量`storage.latest.dir`は、計画された総容量の 10% として計画する必要があることに注意してください。
 
 > **警告：**
 >
-> `[storage]`構成は、 TiUP v1.2.5 以降でサポートされています。TiDB クラスターのバージョンが v4.0.9 以降の場合は、 TiUPバージョンが v1.2.5 以降であることを確認してください。そうでない場合、 `[storage]`で定義されているデータ ディレクトリはTiUPによって管理されません。
+> `[storage]`構成は、TiUP v1.2.5 以降でサポートされています。TiDB クラスターのバージョンが v4.0.9 以降の場合は、 TiUPバージョンが v1.2.5 以降であることを確認してください。そうでない場合、 `[storage]`で定義されているデータ ディレクトリはTiUPによって管理されません。

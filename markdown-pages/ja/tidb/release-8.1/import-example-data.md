@@ -9,7 +9,7 @@ TiDB マニュアルで使用されている例では、 [キャピタル・バ�
 
 ## すべてのデータファイルをダウンロード {#download-all-data-files}
 
-システム データは、1 年ごとに[.zipファイルでダウンロード](https://s3.amazonaws.com/capitalbikeshare-data/index.html)提供されます。すべてのファイルをダウンロードして解凍するには、約 3 GB のディスク領域が必要です。bash スクリプトを使用して 2010 年から 2017 年までのすべてのファイルをダウンロードするには、次の操作を実行します。
+システム データは、1 年ごとに[.zipファイルでダウンロード](https://s3.amazonaws.com/capitalbikeshare-data/index.html)ずつ提供されます。すべてのファイルをダウンロードして解凍するには、約 3 GB のディスク領域が必要です。bash スクリプトを使用して 2010 年から 2017 年までのすべてのファイルをダウンロードするには、次の操作を実行します。
 
 ```bash
 mkdir -p bikeshare-data && cd bikeshare-data

@@ -47,9 +47,9 @@ TiDB Lightningでは、テーブルのチェックサムは、そのテーブル
 
 -   KVペアの数、
 -   すべてのKVペアの合計長さ、および
--   各ペアの[CRC-64-ECMA](https://en.wikipedia.org/wiki/Cyclic_redundancy_check)値のビット単位の XOR。
+-   各ペアの[CRC-64-ECMA](https://en.wikipedia.org/wiki/Cyclic_redundancy_check)の値のビット単位の XOR。
 
-TiDB Lightning [インポートされたデータを検証する](/tidb-lightning/tidb-lightning-faq.md#how-to-ensure-the-integrity-of-the-imported-data) 、各テーブルの[地元](/tidb-lightning/tidb-lightning-glossary.md#local-checksum)と[リモートチェックサム](/tidb-lightning/tidb-lightning-glossary.md#remote-checksum)を比較します。いずれかのペアが一致しない場合は、プログラムは停止します。 `post-restore.checksum`構成を`false`に設定することで、このチェックをスキップできます。
+TiDB Lightning [インポートされたデータを検証する](/tidb-lightning/tidb-lightning-faq.md#how-to-ensure-the-integrity-of-the-imported-data) 、各テーブルの[地元](/tidb-lightning/tidb-lightning-glossary.md#local-checksum)と[リモートチェックサム](/tidb-lightning/tidb-lightning-glossary.md#remote-checksum)比較します。いずれかのペアが一致しない場合は、プログラムは停止します。 `post-restore.checksum`構成を`false`に設定することで、このチェックをスキップできます。
 
 チェックサムの不一致を適切に処理する方法については、 [よくある質問](/tidb-lightning/troubleshoot-tidb-lightning.md#checksum-failed-checksum-mismatched-remote-vs-local)も参照してください。
 
@@ -75,7 +75,7 @@ TiDB Lightning [インポートされたデータを検証する](/tidb-lightnin
 
 ### データエンジン {#data-engine}
 
-実際の行データをソートする場合は[エンジン](/tidb-lightning/tidb-lightning-glossary.md#engine) 。
+実際の行データをソートする場合は[エンジン](/tidb-lightning/tidb-lightning-glossary.md#engine)です。
 
 テーブルが非常に大きい場合、タスクのパイプライン処理を改善し、TiKV インポーターのスペースを節約するために、そのデータは複数のデータ エンジンに配置されます。デフォルトでは、SQL データ 100 GB ごとに新しいデータ エンジンが開かれますが、これは`mydumper.batch-size`設定で構成できます。
 
@@ -91,7 +91,7 @@ TiKV インポーターでは、エンジンは KV ペアをソートするた�
 
 TiDB Lightning は、エンジンを通じてデータを TiKV Importer に転送します。最初にエンジンを開き、KV ペアを (特定の順序なしで) エンジンに送信し、最後にエンジンを閉じます。エンジンは、閉じた後に受信した KV ペアを並べ替えます。閉じたエンジンは、TiKV ストアにアップロードして取り込むことができます。
 
-エンジンは、TiKV インポーター`import-dir`を一時storageとして使用します。これは、「エンジン ファイル」と呼ばれることもあります。
+エンジンは、TiKV インポーター`import-dir`一時storageとして使用します。これは、「エンジン ファイル」と呼ばれることもあります。
 
 [データエンジン](/tidb-lightning/tidb-lightning-glossary.md#data-engine)と[インデックスエンジン](/tidb-lightning/tidb-lightning-glossary.md#index-engine)も参照してください。
 
@@ -113,11 +113,11 @@ TiDB Lightning は、エンジンを通じてデータを TiKV Importer に転�
 
 読み取り速度とスペース使用量の低下を犠牲にして、書き込み用に TiKV を最適化する構成。
 
-TiDB Lightning は実行中にインポート モードを自動的にオン/オフにします。ただし、TiKV がインポート モードで停止した場合は、 `tidb-lightning-ctl` ～ [強制的に元に戻す](/tidb-lightning/troubleshoot-tidb-lightning.md#the-tidb-cluster-uses-lots-of-cpu-resources-and-runs-very-slowly-after-using-tidb-lightning) ～ [ノーマルモード](/tidb-lightning/tidb-lightning-glossary.md#normal-mode)を使用できます。
+TiDB Lightning は実行中にインポート モードを自動的にオン/オフにします。ただし、TiKV がインポート モードで停止した場合は、 `tidb-lightning-ctl` ～ [強制的に元に戻す](/tidb-lightning/troubleshoot-tidb-lightning.md#the-tidb-cluster-uses-lots-of-cpu-resources-and-runs-very-slowly-after-using-tidb-lightning) ～ [通常モード](/tidb-lightning/tidb-lightning-glossary.md#normal-mode)使用できます。
 
 ### インデックスエンジン {#index-engine}
 
-インデックスをソートする場合は[エンジン](/tidb-lightning/tidb-lightning-glossary.md#engine) 。
+インデックスをソートする場合は[エンジン](/tidb-lightning/tidb-lightning-glossary.md#engine)です。
 
 インデックスの数に関係なく、すべてのテーブルは 1 つのインデックス エンジンに関連付けられます。
 
@@ -155,9 +155,9 @@ KV ペアを TiKV Importer に送信する前に、 TiDB Lightning自体によ�
 
 ## いいえ {#n}
 
-### ノーマルモード {#normal-mode}
+### 通常モード {#normal-mode}
 
-[インポートモード](/tidb-lightning/tidb-lightning-glossary.md#import-mode)無効になっているモード。
+[インポートモード](/tidb-lightning/tidb-lightning-glossary.md#import-mode)が無効になっているモード。
 
 <!-- P -->
 
@@ -165,7 +165,7 @@ KV ペアを TiKV Importer に送信する前に、 TiDB Lightning自体によ�
 
 ### 後処理 {#post-processing}
 
-データ ソース全体が解析され、TiKV Importer に送信された後の期間。TiDB TiDB Lightning はTiKV Importer がアップロードして[摂取する](/tidb-lightning/tidb-lightning-glossary.md#ingest) [SST ファイル](/tidb-lightning/tidb-lightning-glossary.md#sst-file)を待機しています。
+データ ソース全体が解析され、TiKV Importer に送信された後の期間。TiDB TiDB Lightning はTiKV Importer がアップロードして[摂取する](/tidb-lightning/tidb-lightning-glossary.md#ingest)から[SST ファイル](/tidb-lightning/tidb-lightning-glossary.md#sst-file)まで待機します。
 
 <!-- R -->
 
@@ -181,7 +181,7 @@ KV ペアを TiKV Importer に送信する前に、 TiDB Lightning自体によ�
 
 ### Scattering {#scattering}
 
-[リージョン](/glossary.md#regionpeerraft-group)のリーダーとピアをランダムに再割り当てする操作。Scattering、インポートされたデータが TiKV ストア間で均等に分散されます。これにより、PD のストレスが軽減されます。
+[リージョン](/glossary.md#regionpeerraft-group)のリーダーとピアをランダムに再割り当てする操作。Scatteringにより、インポートされたデータが TiKV ストア間で均等に分散されます。これにより、PD のストレスが軽減されます。
 
 ### 分割 {#splitting}
 
@@ -189,6 +189,6 @@ KV ペアを TiKV Importer に送信する前に、 TiDB Lightning自体によ�
 
 ### SST ファイル {#sst-file}
 
-SST は「ソートされた文字列テーブル」の略です。SST ファイルは、RocksDB (および TiKV) の KV ペアのコレクションのネイティブstorage形式です。
+SST は「ソートされた文字列テーブル」の略語です。SST ファイルは、RocksDB (および TiKV) の KV ペアのコレクションのネイティブstorage形式です。
 
-TiKV インポーターは、閉じた[エンジン](/tidb-lightning/tidb-lightning-glossary.md#engine)から SST ファイルを生成します。これらの SST ファイルはアップロードされ、その後 TiKV ストアに[摂取した](/tidb-lightning/tidb-lightning-glossary.md#ingest) 。
+TiKV インポーターは、閉じた[エンジン](/tidb-lightning/tidb-lightning-glossary.md#engine)から SST ファイルを生成します。これらの SST ファイルはアップロードされ、その後 TiKV ストアに[摂取した](/tidb-lightning/tidb-lightning-glossary.md#ingest)れます。

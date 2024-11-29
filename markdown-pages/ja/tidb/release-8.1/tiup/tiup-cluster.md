@@ -1,11 +1,11 @@
 ---
 title: Deploy and Maintain an Online TiDB Cluster Using TiUP
-summary: TiUPを使用してオンライン TiDB クラスターをデプロイおよび保守する方法を学習します。
+summary: TiUP を使用してオンライン TiDB クラスターをデプロイおよび保守する方法を学習します。
 ---
 
-# TiUPを使用してオンライン TiDBクラスタをデプロイおよび管理 {#deploy-and-maintain-an-online-tidb-cluster-using-tiup}
+# TiUP を使用してオンライン TiDBクラスタをデプロイおよび管理 {#deploy-and-maintain-an-online-tidb-cluster-using-tiup}
 
-このドキュメントでは、 TiUPクラスターコンポーネントの使用方法に焦点を当てています。オンライン展開の完全な手順については、 [TiUPを使用して TiDBクラスタをデプロイ](/production-deployment-using-tiup.md)を参照してください。
+このドキュメントでは、 TiUPクラスターコンポーネントの使用方法に焦点を当てています。オンライン展開の完全な手順については、 [TiUP を使用して TiDBクラスタをデプロイ](/production-deployment-using-tiup.md)を参照してください。
 
 ローカル テスト展開に使用される[TiUP遊び場コンポーネント](/tiup/tiup-playground.md)と同様に、 TiUPクラスターコンポーネントは、本番環境用に TiDB を迅速に展開します。プレイグラウンドと比較して、クラスターコンポーネントは、アップグレード、スケーリング、さらには操作と監査を含む、より強力な本番クラスター管理機能を提供します。
 
@@ -59,13 +59,13 @@ tiup cluster
 tiup cluster deploy <cluster-name> <version> <topology.yaml> [flags]
 ```
 
-このコマンドでは、クラスター名、TiDB クラスター バージョン ( `v8.1.0`など)、およびクラスターのトポロジ ファイルを指定する必要があります。
+このコマンドでは、クラスター名、TiDB クラスター バージョン ( `v8.1.1`など)、およびクラスターのトポロジ ファイルを指定する必要があります。
 
 トポロジ ファイルを作成するには、 [例](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml)を参照してください。次のファイルは最も単純なトポロジの例です。
 
 > **注記：**
 >
-> TiUPクラスターコンポーネントがデプロイメントとスケーリングに使用するトポロジ ファイルは[ヤム](https://yaml.org/spec/1.2/spec.html)構文を使用して記述されるため、インデントが正しいことを確認してください。
+> TiUPクラスターコンポーネントがデプロイメントとスケーリングに使用するトポロジ ファイルは[ヤム](https://yaml.org/spec/1.2/spec.html)の構文を使用して記述されるため、インデントが正しいことを確認してください。
 
 ```yaml
 ---
@@ -103,7 +103,7 @@ monitoring_servers:
   - host: 172.16.5.134
 ```
 
-デフォルトでは、 TiUP はamd64アーキテクチャで実行されるバイナリ ファイルとして展開されます。ターゲット マシンが arm64アーキテクチャである場合は、トポロジ ファイルで構成できます。
+デフォルトでは、 TiUPは amd64アーキテクチャで実行されるバイナリ ファイルとして展開されます。ターゲット マシンが arm64アーキテクチャである場合は、トポロジ ファイルで構成できます。
 
 ```yaml
 global:
@@ -119,10 +119,10 @@ tidb_servers:
 ...
 ```
 
-ファイルを`/tmp/topology.yaml`として保存します。TiDB v8.1.0 を使用し、クラスター名が`prod-cluster`場合は、次のコマンドを実行します。
+ファイルを`/tmp/topology.yaml`として保存します。TiDB v8.1.1 を使用し、クラスター名が`prod-cluster`場合は、次のコマンドを実行します。
 
 ```shell
-tiup cluster deploy -p prod-cluster v8.1.0 /tmp/topology.yaml
+tiup cluster deploy -p prod-cluster v8.1.1 /tmp/topology.yaml
 ```
 
 実行中に、 TiUP はトポロジーを再度確認するように要求し、ターゲット マシンのルート パスワードを要求します (フラグ`-p`はパスワードの入力を意味します)。
@@ -130,7 +130,7 @@ tiup cluster deploy -p prod-cluster v8.1.0 /tmp/topology.yaml
 ```bash
 Please confirm your topology:
 TiDB Cluster: prod-cluster
-TiDB Version: v8.1.0
+TiDB Version: v8.1.1
 Type        Host          Ports                            OS/Arch       Directories
 ----        ----          -----                            -------       -----------
 pd          172.16.5.134  2379/2380                        linux/x86_64  deploy/pd-2379,data/pd-2379
@@ -171,7 +171,7 @@ tiup cluster list
     Starting /root/.tiup/components/cluster/v1.12.3/cluster list
     Name          User  Version    Path                                               PrivateKey
     ----          ----  -------    ----                                               ----------
-    prod-cluster  tidb  v8.1.0    /root/.tiup/storage/cluster/clusters/prod-cluster  /root/.tiup/storage/cluster/clusters/prod-cluster/ssh/id_rsa
+    prod-cluster  tidb  v8.1.1    /root/.tiup/storage/cluster/clusters/prod-cluster  /root/.tiup/storage/cluster/clusters/prod-cluster/ssh/id_rsa
 
 ## クラスターを起動する {#start-the-cluster}
 
@@ -195,7 +195,7 @@ tiup cluster display prod-cluster
 
     Starting /root/.tiup/components/cluster/v1.12.3/cluster display prod-cluster
     TiDB Cluster: prod-cluster
-    TiDB Version: v8.1.0
+    TiDB Version: v8.1.1
     ID                  Role        Host          Ports                            OS/Arch       Status  Data Dir              Deploy Dir
     --                  ----        ----          -----                            -------       ------  --------              ----------
     172.16.5.134:3000   grafana     172.16.5.134  3000                             linux/x86_64  Up      -                     deploy/grafana-3000
@@ -214,15 +214,15 @@ tiup cluster display prod-cluster
     172.16.5.140:20160  tikv        172.16.5.140  20160/20180                      linux/x86_64  Up      data/tikv-20160       deploy/tikv-20160
     172.16.5.144:6000   tiproxy     172.16.5.144  6000/3080                        linux/x86_64  Up      -                     deploy/tiproxy-6000
 
-`Status`列目では、 `Up`または`Down`を使用して、サービスが正常に実行されているかどうかを示します。
+`Status`列目では、 `Up`または`Down`使用して、サービスが正常に実行されているかどうかを示します。
 
-PDコンポーネントの場合、 `Up`または`Down`に`|L`または`|UI`が追加されることがあります。 `|L` PD ノードがLeaderであることを示し、 `|UI` [TiDBダッシュボード](/dashboard/dashboard-intro.md)が PD ノードで実行されていることを示します。
+PDコンポーネントの場合、 `Up`または`Down`に`|L`または`|UI`追加されることがあります。 `|L` PD ノードがLeaderであることを示し、 `|UI` [TiDBダッシュボード](/dashboard/dashboard-intro.md) PD ノードで実行されていることを示します。
 
 ## クラスターのスケールイン {#scale-in-a-cluster}
 
 > **注記：**
 >
-> このセクションでは、スケールインコマンドの構文についてのみ説明します。オンラインスケーリングの詳細な手順については、 [TiUPを使用して TiDBクラスタをスケールする](/scale-tidb-using-tiup.md)を参照してください。
+> このセクションでは、スケールインコマンドの構文についてのみ説明します。オンラインスケーリングの詳細な手順については、 [TiUP を使用して TiDBクラスタをスケールする](/scale-tidb-using-tiup.md)を参照してください。
 
 クラスターのスケーリングとは、一部のノードをオフラインにすることを意味します。この操作により、特定のノードがクラスターから削除され、残りのファイルが削除されます。
 
@@ -264,7 +264,7 @@ tiup cluster display prod-cluster
 
     Starting /root/.tiup/components/cluster/v1.12.3/cluster display prod-cluster
     TiDB Cluster: prod-cluster
-    TiDB Version: v8.1.0
+    TiDB Version: v8.1.1
     ID                  Role        Host          Ports                            OS/Arch       Status   Data Dir              Deploy Dir
     --                  ----        ----          -----                            -------       ------   --------              ----------
     172.16.5.134:3000   grafana     172.16.5.134  3000                             linux/x86_64  Up       -                     deploy/grafana-3000
@@ -289,9 +289,9 @@ PD がノード上のデータを他の TiKV ノードにスケジュールす�
 
 > **注記：**
 >
-> このセクションでは、スケールアウトコマンドの構文についてのみ説明します。オンラインスケーリングの詳細な手順については、 [TiUPを使用して TiDBクラスタをスケールする](/scale-tidb-using-tiup.md)を参照してください。
+> このセクションでは、スケールアウト コマンドの構文についてのみ説明します。オンライン スケーリングの詳細な手順については、 [TiUP を使用して TiDBクラスタをスケールする](/scale-tidb-using-tiup.md)を参照してください。
 
-スケールアウト操作には、デプロイメントと同様の内部ロジックがあります。TiUP クラスターコンポーネントは、まずノードの SSH 接続を確認し、ターゲット ノードに必要なディレクトリを作成してから、デプロイメント操作を実行し、ノード サービスを開始します。
+スケールアウト操作には、TiUPと同様の内部ロジックがあります。TiUP クラスターコンポーネントは、まずノードの SSH 接続を確認し、ターゲット ノードに必要なディレクトリを作成してから、デプロイメント操作を実行し、ノード サービスを開始します。
 
 PD をスケールアウトすると、ノードが`join`クラスターに追加され、PD に関連付けられているサービスの構成が更新されます。他のサービスをスケールアウトすると、サービスが直接起動され、クラスターに追加されます。
 
@@ -327,7 +327,7 @@ PD をスケールアウトすると、ノードが`join`クラスターに追�
 
 > **注記：**
 >
-> このセクションでは、アップグレード コマンドの構文についてのみ説明します。オンライン アップグレードの詳細な手順については、 [TiUPを使用して TiDB をアップグレードする](/upgrade-tidb-using-tiup.md)を参照してください。
+> このセクションでは、アップグレード コマンドの構文についてのみ説明します。オンライン アップグレードの詳細な手順については、 [TiUP を使用して TiDB をアップグレードする](/upgrade-tidb-using-tiup.md)を参照してください。
 
 ローリング アップグレード機能は、TiDB の分散機能を活用します。アップグレード プロセスはアプリケーションに対して可能な限り透過的に行われるため、ビジネスには影響しません。
 
@@ -373,10 +373,10 @@ Global Flags:
   -y, --yes               Skip all confirmations and assumes 'yes'
 ```
 
-たとえば、次のコマンドはクラスターを v8.1.0 にアップグレードします。
+たとえば、次のコマンドはクラスターを v8.1.1 にアップグレードします。
 
 ```bash
-tiup cluster upgrade tidb-test v8.1.0
+tiup cluster upgrade tidb-test v8.1.1
 ```
 
 ## 構成の更新 {#update-configuration}
@@ -423,7 +423,7 @@ alertmanager_servers:
 -   `monitoring_servers`の`rule_dir`フィールドに指定されたフォルダーには、 `*.rules.yml`ファイルがすべて含まれている必要があります。
 -   `alertmanager_servers`の`config_file`欄に指定するファイルの形式については[Alertmanager 構成テンプレート](https://github.com/pingcap/tiup/blob/master/embed/templates/config/alertmanager.yml)を参照してください。
 
-`tiup reload`実行すると、 TiUP はまずターゲット マシンの古い構成ファイルをすべて削除し、次にコントロール マシンからターゲット マシンの対応する構成ディレクトリに該当する構成をアップロードします。したがって、特定の構成ファイルを変更する場合は、すべての構成ファイル (変更されていないものも含む) が同じディレクトリにあることを確認してください。たとえば、Grafana の`tidb.json`ファイルを変更するには、まず Grafana の`dashboards`ディレクトリから`*.json`つのファイルすべてをローカル ディレクトリにコピーする必要があります。そうしないと、ターゲット マシンから他の JSON ファイルが失われます。
+`tiup reload`実行すると、 TiUP はまずターゲット マシンの古い構成ファイルをすべて削除し、次にコントロール マシンからターゲット マシンの対応する構成ディレクトリに該当する構成をアップロードします。したがって、特定の構成ファイルを変更する場合は、すべての構成ファイル (変更されていないものも含む) が同じディレクトリにあることを確認してください。たとえば、Grafana の`tidb.json`ファイルを変更するには、まず Grafana の`dashboards`ディレクトリから`*.json`ファイルすべてをローカル ディレクトリにコピーする必要があります。そうしないと、ターゲット マシンから他の JSON ファイルが失われます。
 
 > **注記：**
 >
@@ -480,7 +480,7 @@ tiup cluster patch test-cluster /tmp/tidb-hotfix.tar.gz -N 172.16.4.5:4000
 >
 > 現在、 TiUPクラスターの TiSpark のサポートはまだ**実験的**です。TiSpark が有効になっている TiDB クラスターのインポートはサポートされていません。
 
-TiUPがリリースされる前は、TiDB クラスターのデプロイに TiDB Ansible がよく使用されていました。TiDB Ansible によってデプロイされたクラスターをTiUPが引き継げるようにするには、 `import`コマンドを使用します。
+TiUPがリリースされる前は、TiDB クラスターのデプロイに TiDB Ansible がよく使用されていました。TiDB Ansible によってデプロイされたクラスターをTiUP が引き継げるようにするには、 `import`コマンドを使用します。
 
 `import`コマンドの使用方法は次のとおりです。
 
@@ -519,7 +519,7 @@ tiup cluster import --dir=/path/to/tidb-ansible
 
 ## 操作ログをビュー {#view-the-operation-log}
 
-操作ログを`audit`するには、 `audit`コマンドを使用します。3 コマンドの使用方法は次のとおりです。
+操作ログを表示するには、 `audit`コマンドを使用します。3 コマンドの使用方法は次の`audit`です。
 
 ```bash
 Usage:
@@ -538,13 +538,13 @@ tiup cluster audit
     Starting component `cluster`: /home/tidb/.tiup/components/cluster/v1.12.3/cluster audit
     ID      Time                       Command
     --      ----                       -------
-    4BLhr0  2024-05-24T23:55:09+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.1.0 /tmp/topology.yaml
-    4BKWjF  2024-05-24T23:36:57+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.1.0 /tmp/topology.yaml
-    4BKVwH  2024-05-24T23:02:08+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.1.0 /tmp/topology.yaml
-    4BKKH1  2024-05-24T16:39:04+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster destroy test
-    4BKKDx  2024-05-24T16:36:57+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.1.0 /tmp/topology.yaml
+    4BLhr0  2024-08-27T23:55:09+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.1.1 /tmp/topology.yaml
+    4BKWjF  2024-08-27T23:36:57+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.1.1 /tmp/topology.yaml
+    4BKVwH  2024-08-27T23:02:08+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.1.1 /tmp/topology.yaml
+    4BKKH1  2024-08-27T16:39:04+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster destroy test
+    4BKKDx  2024-08-27T16:36:57+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.1.1 /tmp/topology.yaml
 
-最初の列は`audit-id`です。特定のコマンドの実行ログを表示するには、次のようにコマンドの`audit-id`をフラグとして渡します。
+最初の列は`audit-id`です。特定のコマンドの実行ログを表示するには、次のようにコマンドの`audit-id`フラグとして渡します。
 
 ```bash
 tiup cluster audit 4BLhr0
@@ -552,7 +552,7 @@ tiup cluster audit 4BLhr0
 
 ## TiDBクラスタ内のホストでコマンドを実行する {#run-commands-on-a-host-in-the-tidb-cluster}
 
-TiDB クラスター内のホストでコマンド`exec`実行するには、 `exec`コマンドを使用します。3 コマンドの使用方法は次のとおりです。
+TiDB クラスター内のホストでコマンドを実行するには、 `exec`コマンドを使用します。3 `exec`の使用方法は次のとおりです。
 
 ```bash
 Usage:
@@ -632,13 +632,13 @@ tiup cluster check topology.yml --user tidb -p
 tiup cluster check <cluster-name> --cluster
 ```
 
-CPU スレッド数チェック、メモリサイズ チェック、およびディスク パフォーマンス チェックは、デフォルトでは無効になっています。本番環境では、最高のパフォーマンスを得るために、3 つのチェックを有効にして、それらが合格することを確認することをお勧めします。
+CPU スレッド数チェック、メモリサイズ チェック、およびディスク パフォーマンス チェックは、デフォルトでは無効になっています。本番環境では、最高のパフォーマンスを得るために、3 つのチェックを有効にして、チェックに合格することを確認することをお勧めします。
 
 -   CPU: スレッド数が 16 以上の場合、チェックに合格します。
 -   メモリ: 物理メモリの合計サイズが 32 GB 以上の場合、チェックは合格です。
 -   ディスク: `data_dir`のパーティションに対して`fio`テストを実行し、結果を記録します。
 
-チェックを実行するときに、フラグ`--apply`が指定されている場合、プログラムは失敗した項目を自動的に修復します。自動修復は、構成またはシステム パラメータを変更することで調整できる一部の項目に限定されます。その他の修復されていない項目は、実際の状況に応じて手動で処理する必要があります。
+チェックを実行するときに、フラグ`--apply`が指定されている場合、プログラムは失敗した項目を自動的に修復します。自動修復は、構成またはシステム パラメータを変更することで調整できる一部の項目に限定されます。修復されていないその他の項目は、実際の状況に応じて手動で処理する必要があります。
 
 環境チェックは、クラスターのデプロイには必要ありません。本番環境では、デプロイ前に環境チェックを実行し、すべてのチェック項目に合格することをお勧めします。すべてのチェック項目に合格していない場合、クラスターはデプロイされ、正常に実行される可能性がありますが、最高のパフォーマンスが得られない可能性があります。
 
@@ -649,9 +649,9 @@ CPU スレッド数チェック、メモリサイズ チェック、およびデ
 -   認証にSSHプラグインを使用するには
 -   カスタマイズされたSSHクライアントを使用するには
 
-次に、 `--ssh=system`コマンドライン フラグを使用して、システム ネイティブのコマンドライン ツールを有効にします。
+次に、 `--ssh=system`コマンドライン フラグを使用して、システム ネイティブ コマンドライン ツールを有効にします。
 
--   クラスターをデプロイ: `tiup cluster deploy <cluster-name> <version> <topo> --ssh=system` `<cluster-name>`にクラスターの名前、 `<version>`にデプロイする TiDB バージョン ( `v8.1.0`など)、 `<topo>`にトポロジ ファイルを入力します。
+-   クラスターをデプロイ: `tiup cluster deploy <cluster-name> <version> <topo> --ssh=system` `<cluster-name>`にクラスターの名前、 `<version>`にデプロイする TiDB バージョン ( `v8.1.1`など)、 `<topo>`にトポロジ ファイルを入力します。
 -   クラスターを開始する: `tiup cluster start <cluster-name> --ssh=system`
 -   クラスターのアップグレード: `tiup cluster upgrade ... --ssh=system`
 
@@ -671,18 +671,18 @@ export TIUP_NATIVE_SSH=enable
 
 > **注記：**
 >
-> クラスターの展開プロセス中に、接続にパスワードを使用する必要がある場合 ( `-p` ) または`passphrase`キー ファイルに構成されている場合は、制御マシンに`sshpass`インストールされていることを確認する必要があります。そうでない場合、タイムアウト エラーが報告されます。
+> クラスターの展開プロセス中に、接続にパスワードを使用する必要がある場合 ( `-p` ) または`passphrase`キー ファイルに構成されている場合は、制御マシンに`sshpass`がインストールされていることを確認する必要があります。そうでない場合、タイムアウト エラーが報告されます。
 
 ## 制御マシンを移行し、 TiUPデータをバックアップする {#migrate-control-machine-and-back-up-tiup-data}
 
 TiUPデータは、ユーザーのホーム ディレクトリの`.tiup`ディレクトリに保存されます。コントロール マシンを移行するには、次の手順を実行して、 `.tiup`ディレクトリを対応するターゲット マシンにコピーします。
 
-1.  元のマシンのホームディレクトリで`tar czvf tiup.tar.gz .tiup`を実行します。
+1.  元のマシンのホームディレクトリで`tar czvf tiup.tar.gz .tiup`実行します。
 2.  `tiup.tar.gz`ターゲット マシンのホーム ディレクトリにコピーします。
 3.  対象マシンのホームディレクトリで`tar xzvf tiup.tar.gz`実行します。
 4.  `.tiup`ディレクトリを`PATH`環境変数に追加します。
 
-    `bash`使用していて、ユーザーが`tidb`の場合、 `~/.bashrc`に`export PATH=/home/tidb/.tiup/bin:$PATH`追加して`source ~/.bashrc`を実行します。その後、使用するシェルとユーザーに応じて対応する調整を行います。
+    `bash`使用していて、ユーザーが`tidb`場合、 `~/.bashrc`に`export PATH=/home/tidb/.tiup/bin:$PATH`を追加して`source ~/.bashrc`実行します。その後、使用するシェルとユーザーに応じて対応する調整を行います。
 
 > **注記：**
 >
@@ -690,7 +690,7 @@ TiUPデータは、ユーザーのホーム ディレクトリの`.tiup`ディ�
 
 ## クラスタの展開とO&amp;Mのためのメタファイルのバックアップと復元 {#back-up-and-restore-meta-files-for-cluster-deployment-and-o-x26-m}
 
-運用および保守 (O&amp;M) に使用されるメタ ファイルが失われると、 TiUPを使用したクラスターの管理が失敗します。次のコマンドを実行して、メタ ファイルを定期的にバックアップすることをお勧めします。
+運用および保守 (O&amp;M) に使用されるメタ ファイルが失われると、 TiUP を使用したクラスターの管理が失敗します。次のコマンドを実行して、メタ ファイルを定期的にバックアップすることをお勧めします。
 
 ```bash
 tiup cluster meta backup ${cluster_name}

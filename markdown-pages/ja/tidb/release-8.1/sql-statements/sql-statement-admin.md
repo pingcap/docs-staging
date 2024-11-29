@@ -31,13 +31,12 @@ summary: TiDB データベースの ADMIN の使用法の概要。
 
 <CustomContent platform="tidb">
 
-| 声明                                                                                      | 説明                                    |
-| --------------------------------------------------------------------------------------- | ------------------------------------- |
-| [`ADMIN CANCEL DDL JOBS`](/sql-statements/sql-statement-admin-cancel-ddl.md)            | 現在実行中の DDL ジョブをキャンセルします。              |
-| [`ADMIN CHECKSUM TABLE`](/sql-statements/sql-statement-admin-checksum-table.md)         | テーブルのすべての行とインデックスの CRC64 を計算します。      |
-| [`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md) | テーブルまたはインデックスの一貫性をチェックします。            |
-| [`ADMIN SHOW DDL [JOBS|QUERIES]`](/sql-statements/sql-statement-admin-show-ddl.md)      | 現在実行中または最近完了した DDL ジョブの詳細を表示します。      |
-| [`ADMIN SHOW TELEMETRY`](/sql-statements/sql-statement-admin-show-telemetry.md)         | テレメトリ機能の一部として PingCAP に報告される情報を表示します。 |
+| 声明                                                                                      | 説明                               |
+| --------------------------------------------------------------------------------------- | -------------------------------- |
+| [`ADMIN CANCEL DDL JOBS`](/sql-statements/sql-statement-admin-cancel-ddl.md)            | 現在実行中の DDL ジョブをキャンセルします。         |
+| [`ADMIN CHECKSUM TABLE`](/sql-statements/sql-statement-admin-checksum-table.md)         | テーブルのすべての行とインデックスの CRC64 を計算します。 |
+| [`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md) | テーブルまたはインデックスの一貫性をチェックします。       |
+| [`ADMIN SHOW DDL [JOBS|QUERIES]`](/sql-statements/sql-statement-admin-show-ddl.md)      | 現在実行中または最近完了した DDL ジョブの詳細を表示します。 |
 
 </CustomContent>
 
@@ -59,7 +58,7 @@ ADMIN RELOAD opt_rule_blacklist;
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ```sql
 ADMIN PLUGINS ENABLE plugin_name [, plugin_name] ...;
@@ -133,7 +132,7 @@ ADMIN SHOW t NEXT_ROW_ID;
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ```sql
 ADMIN SHOW SLOW RECENT N;
@@ -153,7 +152,51 @@ ADMIN SHOW SLOW TOP [INTERNAL | ALL] N;
 
 ```ebnf+diagram
 AdminStmt ::=
-    'ADMIN' ( 'SHOW' ( 'DDL' ( 'JOBS' Int64Num? WhereClauseOptional | 'JOB' 'QUERIES' NumList )? | TableName 'NEXT_ROW_ID' | 'SLOW' AdminShowSlow ) | 'CHECK' ( 'TABLE' TableNameList | 'INDEX' TableName Identifier ( HandleRange ( ',' HandleRange )* )? ) | 'RECOVER' 'INDEX' TableName Identifier | 'CLEANUP' ( 'INDEX' TableName Identifier | 'TABLE' 'LOCK' TableNameList ) | 'CHECKSUM' 'TABLE' TableNameList | 'CANCEL' 'DDL' 'JOBS' NumList | 'RELOAD' ( 'EXPR_PUSHDOWN_BLACKLIST' | 'OPT_RULE_BLACKLIST' | 'BINDINGS' ) | 'PLUGINS' ( 'ENABLE' | 'DISABLE' ) PluginNameList | 'REPAIR' 'TABLE' TableName CreateTableStmt | ( 'FLUSH' | 'CAPTURE' | 'EVOLVE' ) 'BINDINGS' )
+    'ADMIN' ( 
+        'SHOW' ( 
+            'DDL' ( 
+                'JOBS' Int64Num? WhereClauseOptional 
+                | 'JOB' 'QUERIES' (NumList | AdminStmtLimitOpt)
+            )? 
+            | TableName 'NEXT_ROW_ID' 
+            | 'SLOW' AdminShowSlow 
+            | 'BDR' 'ROLE'
+        ) 
+        | 'CHECK' ( 
+            'TABLE' TableNameList 
+            | 'INDEX' TableName Identifier ( HandleRange ( ',' HandleRange )* )? 
+        ) 
+        | 'RECOVER' 'INDEX' TableName Identifier 
+        | 'CLEANUP' ( 
+            'INDEX' TableName Identifier 
+            | 'TABLE' 'LOCK' TableNameList ) 
+        | 'CHECKSUM' 'TABLE' TableNameList | 'CANCEL' 'DDL' 'JOBS' NumList 
+        | ( 'CANCEL' | 'PAUSE' | 'RESUME' ) 'DDL' 'JOBS' NumList
+        | 'RELOAD' (
+            'EXPR_PUSHDOWN_BLACKLIST' 
+            | 'OPT_RULE_BLACKLIST' 
+            | 'BINDINGS'
+            | 'STATS_EXTENDED'
+            | 'STATISTICS'
+        ) 
+        | 'PLUGINS' ( 'ENABLE' | 'DISABLE' ) PluginNameList 
+        | 'REPAIR' 'TABLE' TableName CreateTableStmt 
+        | ( 'FLUSH' | 'CAPTURE' | 'EVOLVE' ) 'BINDINGS'
+        | 'FLUSH' ('SESSION' | 'INSTANCE') 'PLAN_CACHE'
+        | 'SET' 'BDR' 'ROLE' ( 'PRIMARY' | 'SECONDARY' )
+        | 'UNSET' 'BDR' 'ROLE'
+    )
+
+NumList ::=
+    Int64Num ( ',' Int64Num )*
+
+AdminStmtLimitOpt ::=
+    'LIMIT' LengthNum
+|    'LIMIT' LengthNum ',' LengthNum
+|    'LIMIT' LengthNum 'OFFSET' LengthNum
+
+TableNameList ::=
+    TableName ( ',' TableName )*
 ```
 
 ## 例 {#examples}
@@ -231,22 +274,22 @@ ADMIN SHOW DDL JOBS 5 WHERE state != 'synced' AND db_name = 'test';
 -   `TABLE_NAME` : DDL 操作が実行されるテーブルの名前。
 -   `JOB_TYPE` : DDL 操作のタイプ。
 -   `SCHEMA_STATE` : スキーマの現在の状態。 `JOB_TYPE`が`add index`の場合はインデックスの状態、 `JOB_TYPE`が`add column`の場合は列の状態、 `JOB_TYPE`が`create table`の場合はテーブルの状態です。一般的な状態は次のとおりです。
-    -   `none` : 存在しないことを示します。2 または`create` `drop`が失敗してロールバックすると、通常は`none`状態になります。
-    -   `delete only` : これらの 4 つの状態は中間`write reorganization`です。中間状態からの変換は非常に速いため、これらの状態は通常の操作では表示されません`write reorganization`状態`write only` `delete reorganization` `add index`操作でのみ表示されます。これは、インデックス データが追加されていることを意味します。
-    -   `public` : 存在し使用可能であることを示します。2 や`create table` `add index/column`の操作が完了すると、通常は`public`状態になり、作成されたテーブル/列/インデックスを正常に読み書きできる状態になります。
+    -   `none` : 存在しないことを示します。2 または`drop` `create`操作が失敗してロールバックすると、通常は`none`状態になります。
+    -   `delete only` : これらの 4 つ`write only`状態は中間状態です。中間状態からの変換は非常`write reorganization`速いため、これらの状態`delete reorganization`通常の操作では表示されません`write reorganization`状態は`add index`操作でのみ表示されます。これは、インデックス データが追加されていることを意味します。
+    -   `public` : 存在し使用可能であることを示します。2 や`add index/column`などの操作が完了すると、通常は`public`状態になり、作成されたテーブル/列/インデックスを正常に読み書きできる状態に`create table`ます。
 -   `SCHEMA_ID` : DDL 操作が実行されるデータベースの ID。
 -   `TABLE_ID` : DDL 操作が実行されるテーブルの ID。
--   `ROW_COUNT` : `add index`番目の操作を実行するときに追加されたデータ行の数。
+-   `ROW_COUNT` : `add index`の操作を実行するときに追加されたデータ行の数。
 -   `START_TIME` : DDL 操作の開始時刻。
 -   `END_TIME` : DDL 操作の終了時刻。
 -   `STATE` : DDL 操作の状態。一般的な状態は次のとおりです。
-    -   `none` : 操作タスクは DDL ジョブ キューに入れられましたが、前のタスクが完了するのを待機しているため、まだ実行されていないことを示します。別の理由としては、ドロップ操作を実行した後に`none`状態になりますが、すぐに`synced`状態に更新され、すべての TiDB インスタンスがこの状態に同期されたことが考えられます。
+    -   `none` : 操作タスクは DDL ジョブ キューに入れられたが、前のタスクが完了するのを待機しているため、まだ実行されていないことを示します。別の理由としては、ドロップ操作を実行した後に`none`状態になったが、すぐに`synced`状態に更新され、すべての TiDB インスタンスがこの状態に同期されたことが考えられます。
     -   `running` : 操作が実行中であることを示します。
     -   `synced` : 操作が正常に実行され、すべての TiDB インスタンスがこの状態に同期されたことを示します。
     -   `rollback done` : 操作が失敗し、ロールバックが完了したことを示します。
     -   `rollingback` : 操作が失敗し、ロールバック中であることを示します。
     -   `cancelling` : 操作がキャンセルされていることを示します。この状態は、 [`ADMIN CANCEL DDL JOBS`](/sql-statements/sql-statement-admin-cancel-ddl.md)コマンドを使用して DDL ジョブをキャンセルした場合にのみ発生します。
-    -   `paused` : 操作が一時停止されていることを示します。この状態は[`ADMIN RESUME DDL JOBS`](/sql-statements/sql-statement-admin-resume-ddl.md) [`ADMIN PAUSED DDL JOBS`](/sql-statements/sql-statement-admin-pause-ddl.md)コマンドを使用して DDL ジョブを一時停止した場合にのみ表示されます。4 コマンドを使用して DDL ジョブを再開できます。
+    -   `paused` : 操作が一時停止されていることを示します。この状態は、 [`ADMIN PAUSED DDL JOBS`](/sql-statements/sql-statement-admin-pause-ddl.md)コマンドを使用して DDL ジョブを一時停止した場合にのみ表示されます。4 コマンドを使用して[`ADMIN RESUME DDL JOBS`](/sql-statements/sql-statement-admin-resume-ddl.md)ジョブを再開できます。
 
 ## MySQL 互換性 {#mysql-compatibility}
 

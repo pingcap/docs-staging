@@ -1,6 +1,6 @@
 ---
 title: Create a Secondary Index
-summary: セカンダリ インデックスを作成する手順、ルール、および例を学習します。
+summary: セカンダリ インデックスを作成するための手順、ルール、および例を学習します。
 ---
 
 # セカンダリインデックスを作成する {#create-a-secondary-index}

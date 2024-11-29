@@ -25,15 +25,15 @@ TiDB バージョン: 3.0.16
 -   ティクヴ
 
     -   スナップショットを受信した後にストアハートビートをPDに送信しないようにする[＃8145](https://github.com/tikv/tikv/pull/8145)
-    -   PDクライアントログ[＃8091](https://github.com/tikv/tikv/pull/8091)改善
+    -   PDクライアントログ[＃8091](https://github.com/tikv/tikv/pull/8091)の改善
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
     -   あるトランザクションで書き込まれ削除された主キーのロックが別のトランザクションによって解決されたために発生したデータの不整合の問題を修正しました[＃18248](https://github.com/pingcap/tidb/pull/18248)
     -   PDサーバー側フォロワー[＃17944](https://github.com/pingcap/tidb/pull/17944)の`Got too many pings`エラーログを修正
-    -   HashJoinの子が`TypeNull`列目[＃17935](https://github.com/pingcap/tidb/pull/17935)を返すときに発生する可能性のあるpanic問題を修正しました。
+    -   HashJoinの子が`TypeNull`列[＃17935](https://github.com/pingcap/tidb/pull/17935)返すときに発生する可能性のあるpanic問題を修正しました。
     -   アクセスが拒否されたときのエラーメッセージを修正[＃17722](https://github.com/pingcap/tidb/pull/17722)
     -   `int`と`float`タイプの JSON 比較の問題を修正[＃17715](https://github.com/pingcap/tidb/pull/17715)
     -   データ競合[＃17710](https://github.com/pingcap/tidb/pull/17710)原因となる障害ポイントを更新する
@@ -47,7 +47,7 @@ TiDB バージョン: 3.0.16
 
 -   ティクヴ
 
-    -   取り込まれたファイルから読み取られる潜在的な誤った結果を修正[＃8039](https://github.com/tikv/tikv/pull/8039)
+    -   取り込まれたファイルから読み取られる可能性のある誤った結果を修正[＃8039](https://github.com/tikv/tikv/pull/8039)
     -   複数のマージプロセス中にストアが分離されている場合にピアを削除できない問題を修正[＃8005](https://github.com/tikv/tikv/pull/8005)
 
 -   PD

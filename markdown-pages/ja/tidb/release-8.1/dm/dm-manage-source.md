@@ -103,7 +103,7 @@ config source mysql-replica-01
             password: '******'
     }
 
-`source-id`わからない場合は、まず`dmctl --master-addr <master-addr> operate-source show`実行してすべてのデータ ソースを一覧表示できます。
+`source-id`がわからない場合は、まず`dmctl --master-addr <master-addr> operate-source show`実行してすべてのデータ ソースを一覧表示できます。
 
 ```bash
 operate-source show
@@ -144,7 +144,7 @@ help transfer-source
     Global Flags:
       -s, --source strings   MySQL Source ID.
 
-転送する前に、DM は、バインド解除するワーカーにまだ実行中のタスクがあるかどうかを確認します。ワーカーに実行中のタスクがある場合は、まず[タスクを一時停止する](/dm/dm-pause-task.md)実行し、バインドを変更してから[タスクを再開する](/dm/dm-resume-task.md)実行する必要があります。
+転送する前に、DM は、バインド解除するワーカーにまだ実行中のタスクがあるかどうかを確認します。ワーカーに実行中のタスクがある場合は、まず[タスクを一時停止する](/dm/dm-pause-task.md)実行してバインドを変更し、次に[タスクを再開する](/dm/dm-resume-task.md)実行する必要があります。
 
 ### 使用例 {#usage-example}
 
@@ -191,7 +191,7 @@ transfer-source mysql-replica-01 dm-worker-2
         "msg": ""
     }
 
-`dmctl --master-addr <master-addr> list-member --worker`を実行して、コマンドが有効になるかどうかを確認します。
+`dmctl --master-addr <master-addr> list-member --worker`実行して、コマンドが有効になるかどうかを確認します。
 
 ```bash
 list-member --worker

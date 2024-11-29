@@ -1,6 +1,6 @@
 ---
 title: Interaction Test on Online Workloads and `ADD INDEX` Operations
-summary: このドキュメントでは、オンライン ワークロードと `ADD INDEX` 操作間の相互作用効果をテストします。
+summary: このドキュメントでは、オンライン ワークロードと ADD INDEX` 操作間の相互作用効果をテストします。
 ---
 
 # オンライン ワークロードと<code>ADD INDEX</code>操作のインタラクション テスト {#interaction-test-on-online-workloads-and-code-add-index-code-operations}
@@ -33,7 +33,7 @@ Sysbench バージョン: 1.0.17
 
 ### TiDBパラメータ設定 {#tidb-parameter-configuration}
 
-TiDB、TiKV、PD はすべてデフォルト[TiDB Operator](https://github.com/pingcap/tidb-operator)構成を使用します。
+TiDB、TiKV、PD はすべてデフォルトの[TiDB Operator](https://github.com/pingcap/tidb-operator)構成を使用します。
 
 ### クラスタトポロジー {#cluster-topology}
 
@@ -81,13 +81,13 @@ sysbench $testname \
 
 ## テストプラン1: <code>ADD INDEX</code>ステートメントのターゲット列への書き込み操作を頻繁に実行する {#test-plan-1-frequently-perform-write-operations-to-the-target-column-of-the-code-add-index-code-statement}
 
-1.  `oltp_read_write`目のテストを開始します。
+1.  `oltp_read_write`テストを開始します。
 2.  手順 1 と同時に実行します。1 `alter table sbtest1 add index c_idx(c)`使用してインデックスを追加します。
 3.  ステップ 2 の最後に実行します。インデックスが正常に追加されたら、テスト`oltp_read_write`を停止します。
 4.  `alter table ... add index`の期間と、この期間の Sysbench の平均 TPS と QPS を取得します。
 5.  2 つのパラメータ`tidb_ddl_reorg_worker_cnt`と`tidb_ddl_reorg_batch_size`の値を徐々に増やし、手順 1 ～ 4 を繰り返します。
 
-### 試験結果 {#test-results}
+### テスト結果 {#test-results}
 
 #### <code>ADD INDEX</code>操作なしの<code>oltp_read_write</code>のテスト結果 {#test-result-of-code-oltp-read-write-code-without-code-add-index-code-operations}
 
@@ -209,20 +209,20 @@ sysbench $testname \
 
 ### テストの結論 {#test-conclusion}
 
-`ADD INDEX`文のターゲット列に対して頻繁に書き込み操作 (このテストには`UPDATE` 、および`DELETE` `INSERT`が含まれます) を実行すると、デフォルトの`ADD INDEX`構成はシステムのオンライン ワークロードに大きな影響を与えます。これは主に、同時操作`ADD INDEX`と列更新によって発生する書き込み競合が原因です。システムのパフォーマンスは次のようになります。
+`ADD INDEX`文のターゲット列に対して頻繁`INSERT` `UPDATE`および`DELETE`操作が含まれます) を実行すると、デフォルトの`ADD INDEX`構成はシステムのオンライン ワークロードに大きな影響を与えます。これは主に、同時操作`ADD INDEX`と列更新によって発生する書き込み競合が原因です。システムのパフォーマンスは次のようになります。
 
 -   パラメータ`tidb_ddl_reorg_worker_cnt`と`tidb_ddl_reorg_batch_size`の値が増加すると、パラメータ`TiKV_prewrite_latch_wait_duration`の値が大幅に増加し、書き込み速度が低下します。
 -   `tidb_ddl_reorg_worker_cnt`と`tidb_ddl_reorg_batch_size`の値が非常に大きい場合は、 `admin show ddl`コマンドを実行して、 `Write conflict, txnStartTS 410327455965380624 is stale [try again later], ErrCount:38, SnapshotVersion: 410327228136030220`などの DDL ジョブの再試行を複数回確認できます。この状況では、 `ADD INDEX`操作の完了に非常に長い時間がかかります。
 
 ## テストプラン 2: <code>ADD INDEX</code>ステートメントのターゲット列への書き込み操作を実行しない (クエリのみ) {#test-plan-2-do-not-perform-write-operations-to-the-target-column-of-the-code-add-index-code-statement-query-only}
 
-1.  `oltp_read_only`目のテストを開始します。
+1.  `oltp_read_only`テストを開始します。
 2.  手順 1 と同時に実行します。1 `alter table sbtest1 add index c_idx(c)`使用してインデックスを追加します。
 3.  ステップ 2 の最後に実行します。インデックスが正常に追加されたら、テスト`oltp_read_only`を停止します。
 4.  `alter table ... add index`の期間と、この期間の Sysbench の平均 TPS と QPS を取得します。
 5.  2 つのパラメータ`tidb_ddl_reorg_worker_cnt`と`tidb_ddl_reorg_batch_size`の値を徐々に増やし、手順 1 ～ 4 を繰り返します。
 
-### 試験結果 {#test-results}
+### テスト結果 {#test-results}
 
 #### <code>ADD INDEX</code>操作なしの<code>oltp_read_only</code>のテスト結果 {#test-result-of-code-oltp-read-only-code-without-code-add-index-code-operations}
 
@@ -274,17 +274,17 @@ sysbench $testname \
 
 ### テストの結論 {#test-conclusion}
 
-`ADD INDEX`番目のステートメントのターゲット列に対してのみクエリ操作を実行する場合、 `ADD INDEX`の操作がオンライン ワークロードに与える影響は明らかではありません。
+`ADD INDEX`のステートメントのターゲット列に対してのみクエリ操作を実行する場合、 `ADD INDEX`の操作がオンライン ワークロードに与える影響は明らかではありません。
 
 ## テストプラン3: <code>ADD INDEX</code>ステートメントのターゲット列はオンラインワークロードとは無関係です {#test-plan-3-the-target-column-of-the-code-add-index-code-statement-is-irrelevant-to-online-workloads}
 
-1.  `oltp_read_write`目のテストを開始します。
+1.  `oltp_read_write`テストを開始します。
 2.  手順 1 と同時に実行します。1 `alter table test add index pad_idx(pad)`使用してインデックスを追加します。
 3.  ステップ 2 の最後に実行します。インデックスが正常に追加されたら、テスト`oltp_read_only`を停止します。
 4.  `alter table ... add index`の期間と、この期間の Sysbench の平均 TPS と QPS を取得します。
 5.  2 つのパラメータ`tidb_ddl_reorg_worker_cnt`と`tidb_ddl_reorg_batch_size`の値を徐々に増やし、手順 1 ～ 4 を繰り返します。
 
-### 試験結果 {#test-results}
+### テスト結果 {#test-results}
 
 ### <code>ADD INDEX</code>操作なしの<code>oltp_read_write</code>のテスト結果 {#test-result-of-code-oltp-read-write-code-without-code-add-index-code-operations}
 
@@ -340,5 +340,5 @@ sysbench $testname \
 
 ## まとめ {#summary}
 
--   `ADD INDEX`ステートメントのターゲット列に対して頻繁に書き込み操作 ( `INSERT` `UPDATE`を含む) を実行すると、デフォルト`DELETE` `ADD INDEX`構成では比較的頻繁に書き込み競合が発生し、オンライン ワークロードに大きな影響を与えます。同時に、 `ADD INDEX`操作は再試行が連続するため、完了するまでに長い時間がかかります。このテストでは、 `tidb_ddl_reorg_worker_cnt`と`tidb_ddl_reorg_batch_size`の積をデフォルト値の 1/32 に変更できます。たとえば、 `tidb_ddl_reorg_worker_cnt`を`4`に、 `tidb_ddl_reorg_batch_size`を`256`に設定すると、パフォーマンスが向上します。
+-   `ADD INDEX`ステートメントのターゲット列に対して頻繁に書き込み操作 ( `INSERT` `UPDATE`を含む) を実行すると、デフォルトの`ADD INDEX`構成では比較的頻繁`DELETE`書き込み競合が発生し、オンライン ワークロードに大きな影響を与えます。同時に、 `ADD INDEX`操作は再試行が連続するため、完了するまでに長い時間がかかります。このテストでは、 `tidb_ddl_reorg_worker_cnt`と`tidb_ddl_reorg_batch_size`の積をデフォルト値の 1/32 に変更できます。たとえば、 `tidb_ddl_reorg_worker_cnt` `4`に、 `tidb_ddl_reorg_batch_size` `256`に設定すると、パフォーマンスが向上します。
 -   `ADD INDEX`ステートメントのターゲット列に対してのみクエリ操作を実行する場合、またはターゲット列がオンライン ワークロードに直接関連していない場合は、デフォルトの`ADD INDEX`構成を使用できます。

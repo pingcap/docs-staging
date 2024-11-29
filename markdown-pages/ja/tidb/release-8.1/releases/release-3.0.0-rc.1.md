@@ -1,6 +1,6 @@
 ---
 title: TiDB 3.0.0-rc.1 Release Notes
-summary: TiDB 3.0.0-rc.1 は、安定性、使いやすさ、機能、SQL オプティマイザ、統計、実行エンジンが改善され、2019 年 5 月 10 日にリリースされました。このリリースには、SQL オプティマイザ、実行エンジン、サーバー、DDL、PD、TiKV、TiDB Binlog、Lightning、sync-diff-inspector、TiDB Ansible の機能強化が含まれています。注目すべき改善点としては、SQL プラン管理、メモリ使用量の追跡、実行エンジンでの制御のサポート、DDL の CREATE TABLE` ステートメントの `pre_split_regions` オプションの追加などがあります。このリリースには、さまざまなバグ修正とパフォーマンスの最適化も含まれています。
+summary: TiDB 3.0.0-rc.1 は、安定性、使いやすさ、機能、SQL オプティマイザー、統計、実行エンジンが改善され、2019 年 5 月 10 日にリリースされました。このリリースには、SQL オプティマイザー、実行エンジン、サーバー、DDL、PD、TiKV、TiDB Binlog、Lightning、sync-diff-inspector、TiDB Ansible の機能強化が含まれています。注目すべき改善点としては、SQL プラン管理、メモリ使用量の追跡、実行エンジンでの制御のサポート、DDL の CREATE TABLE` ステートメントの `pre_split_regions` オプションの追加などがあります。このリリースには、さまざまなバグ修正とパフォーマンスの最適化も含まれています。
 ---
 
 # TiDB 3.0.0-rc.1 リリースノート {#tidb-3-0-0-rc-1-release-notes}
@@ -18,7 +18,7 @@ TiDB Ansible バージョン: 3.0.0-rc.1
 ## ティビ {#tidb}
 
 -   SQL オプティマイザー
-    -   列間の順序相関を使用してコスト見積りの精度を向上させます。相関を見積りに直接使用できない場合のシナリオでインデックススキャンの優先順位を制御するヒューリスティックパラメータ`tidb_opt_correlation_exp_factor`を導入します[＃9839](https://github.com/pingcap/tidb/pull/9839)
+    -   列間の順序相関を使用してコスト見積りの精度を向上させます。相関を見積りに直接使用できない場合に、インデックススキャンの優先順位を制御するヒューリスティックパラメータ`tidb_opt_correlation_exp_factor`を導入します[＃9839](https://github.com/pingcap/tidb/pull/9839)
     -   フィルタ[＃10053](https://github.com/pingcap/tidb/pull/10053)に関連する列がある場合、複合インデックスのアクセス条件を抽出するときに、インデックスのプレフィックス列をさらに一致させます。
     -   結合に参加するテーブルの数が`tidb_opt_join_reorder_threshold`未満の場合は、動的プログラミングアルゴリズムを使用して結合操作の実行順序を指定します[＃8816](https://github.com/pingcap/tidb/pull/8816)
     -   アクセス条件として複合インデックスを使用する場合、インデックス結合を構築する内部テーブル内のインデックスのプレフィックス列をさらに一致させる[＃8471](https://github.com/pingcap/tidb/pull/8471)

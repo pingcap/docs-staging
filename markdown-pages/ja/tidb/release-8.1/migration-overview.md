@@ -45,7 +45,7 @@ Auroraから AWS にデプロイされた TiDB クラスターにデータを移
 
 -   [大規模データセットの MySQL シャードを TiDB に移行してマージする](/migrate-large-mysql-shards-to-tidb.md)
 
-## ファイルから TiDB にデータを移行する {#migrate-data-from-files-to-tidb}
+## ファイルからTiDBにデータを移行する {#migrate-data-from-files-to-tidb}
 
 -   [CSVファイルからTiDBにデータを移行する](/migrate-from-csv-files-to-tidb.md)
 -   [SQL ファイルから TiDB にデータを移行する](/migrate-from-sql-files-to-tidb.md)

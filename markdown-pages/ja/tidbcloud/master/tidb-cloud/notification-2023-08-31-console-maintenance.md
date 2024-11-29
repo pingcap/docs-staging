@@ -5,7 +5,7 @@ summary: 2023 年 8 月 31 日のTiDB Cloud Console メンテナンスの詳細 
 
 # [2023-08-31] TiDB Cloudコンソールメンテナンス通知 {#2023-08-31-tidb-cloud-console-maintenance-notification}
 
-この通知では、2023 年 8 月 31 日の[TiDB Cloudコンソール](https://tidbcloud.com/)目のメンテナンスについて知っておく必要のある詳細について説明します。
+この通知では、2023 年 8 月 31 日の[TiDB Cloudコンソール](https://tidbcloud.com/)メンテナンスについて知っておく必要のある詳細について説明します。
 
 ## メンテナンス期間 {#maintenance-window}
 
@@ -16,7 +16,7 @@ summary: 2023 年 8 月 31 日のTiDB Cloud Console メンテナンスの詳細 
 
 > **注記：**
 >
-> 現在、ユーザーはTiDB Cloudコンソールのメンテナンスのタイミングを変更できないため、事前に計画を立てる必要があります。
+> 現在、ユーザーはTiDB Cloudコンソールのメンテナンスのタイミングを変更できないため、事前に計画する必要があります。
 
 ## メンテナンスの理由 {#reason-for-maintenance}
 
@@ -74,7 +74,7 @@ summary: 2023 年 8 月 31 日のTiDB Cloud Console メンテナンスの詳細 
     -   [クラスターの更新](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/UpdateCluster)
     -   [作成AwsCmek](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster/operation/CreateAwsCmek)
 -   バックアップ
-    -   [バックアップを作成する](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Backup/operation/CreateBackup)
+    -   [バックアップの作成](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Backup/operation/CreateBackup)
     -   [バックアップの削除](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Backup/operation/DeleteBackup)
 -   復元する
     -   [復元タスクの作成](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Restore/operation/CreateRestoreTask)
@@ -86,6 +86,6 @@ summary: 2023 年 8 月 31 日のTiDB Cloud Console メンテナンスの詳細 
 
 メンテナンスが正常に完了すると、影響を受けた機能が復元され、さらに優れたエクスペリエンスが提供されます。
 
-## 支持を得ます {#get-support}
+## サポートを受ける {#get-support}
 
-ご質問やサポートが必要な場合は、 [支援チーム](/tidb-cloud/tidb-cloud-support.md)ご連絡ください。お客様の懸念に対処し、必要なガイダンスを提供いたします。
+ご質問やサポートが必要な場合は、 [サポートチーム](/tidb-cloud/tidb-cloud-support.md)ご連絡ください。お客様の懸念に対処し、必要なガイダンスを提供いたします。

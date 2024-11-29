@@ -25,7 +25,7 @@ TiDB は、MySQL 8.0 で利用可能な[数値関数と演算子](https://dev.my
 | :------------------------------------------------------------------------------------------------------ | :------------------ |
 | [`ABS()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_abs)             | 絶対値を返す              |
 | [`ACOS()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_acos)           | 逆余弦を返す              |
-| [`ASIN()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_asin)           | アークサインを返す           |
+| [`ASIN()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_asin)           | 逆正弦を返す              |
 | [`ATAN()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_atan)           | 逆正接を返す              |
 | [`ATAN2(), ATAN()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_atan2) | 2つの引数の逆正接を返す        |
 | [`CEIL()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_ceil)           | 引数より小さくない最小の整数値を返す  |

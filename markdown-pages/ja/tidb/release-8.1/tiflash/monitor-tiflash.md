@@ -7,11 +7,11 @@ summary: TiFlashの監視項目について学びます。
 
 このドキュメントでは、 TiFlashの監視項目について説明します。
 
-TiUPを使用して TiDB クラスターをデプロイすると、監視システム (Prometheus および Grafana) も同時にデプロイされます。詳細については、 [監視フレームワークの概要](/tidb-monitoring-framework.md)参照してください。
+TiUP を使用して TiDB クラスターをデプロイすると、監視システム (Prometheus および Grafana) も同時にデプロイされます。詳細については、 [監視フレームワークの概要](/tidb-monitoring-framework.md)参照してください。
 
 Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter を含む一連のサブダッシュボードに分かれています。診断に役立つメトリックが多数あります。
 
-TiFlashには、 **TiFlash-Summary** 、 **TiFlash-Proxy-Summary** 、および**TiFlash-Proxy-Details の**3 つのダッシュボード パネルがあります。これらのパネルのメトリックは、 TiFlashの現在の状態を示します。 **TiFlash-Proxy-Summary**パネルと**TiFlash-Proxy-Details**パネルには、主にRaftレイヤーの情報が表示され、メトリックの詳細は[TiKVの主要な監視指標](/grafana-tikv-dashboard.md)に記載されています。
+TiFlashには、 **TiFlash -Summary** **、** **TiFlash-Proxy-Summary** 、および**TiFlash-Proxy-Details**の 3 つのダッシュボード パネルがあります。これらのパネルのメトリックは、 TiFlashの現在の状態を示します。 TiFlash -Proxy-Summary パネルと**TiFlash-Proxy-Details**パネルには、主にRaftレイヤーの情報が表示され、メトリックの詳細は[TiKVの主要な監視指標](/grafana-tikv-dashboard.md)に記載されています。
 
 > **注記：**
 >
@@ -37,10 +37,10 @@ TiFlashには、 **TiFlash-Summary** 、 **TiFlash-Proxy-Summary** 、および*
 
 ## コプロセッサー {#coprocessor}
 
--   要求 QPS: すべてのTiFlashインスタンスが受信したコプロセッサ要求の数。1 `batch`バッチ要求の数です`batch_cop`はバッチ要求内のコプロセッサ要求の数です`cop`はコプロセッサ インターフェイスを介して直接送信されるコプロセッサ要求の数です`cop_dag`はすべてのコプロセッサ要求内の dag 要求の数です。9 `super_batch`スーパー バッチ機能を有効にする要求の数です。
+-   要求 QPS: すべてのTiFlashインスタンスが受信したコプロセッサ要求の数`batch`はバッチ要求の数です`batch_cop`はバッチ要求内のコプロセッサ要求の数です`cop`はコプロセッサ インターフェイスを介して直接送信されるコプロセッサ要求の数です`cop_dag`はすべてのコプロセッサ要求内の dag 要求の数です。9 `super_batch`スーパー バッチ機能を有効にする要求の数です。
 -   Executor QPS: すべてのTiFlashインスタンスが受信したリクエスト内の各タイプの DAG Executor の数`table_scan`はテーブル スキャン Executor です`selection`は選択 Executor です`aggregation`は集約 Executor です`top_n`は`TopN` Executor です`limit`は制限 Executor です。
 -   要求期間: コプロセッサ要求を処理するすべてのTiFlashインスタンスの合計期間。合計期間は、コプロセッサ要求が受信された時点から要求への応答が完了するまでの時間です。
--   エラー QPS: コプロセッサ要求を処理するすべてのTiFlashインスタンスのエラー数。1 `meet_lock`読み取りデータがロックされていることを意味します。3 `region_not_found`リージョンが存在しないことを意味します`epoch_not_match`は読み取りリージョンエポックがローカル エポックと一致していないことを意味します`kv_client_error` TiKV との通信でエラーが返されたことを意味します。9 `internal_error` TiFlashの内部システム エラーです。11 `other`その他のタイプのエラーです。
+-   エラー QPS: コプロセッサ要求を処理するすべてのTiFlashインスタンスのエラー数`meet_lock`読み取りデータがロックされていることを意味します`region_not_found`リージョンが存在しないことを意味します。5 `epoch_not_match`読み取りリージョンエポックがローカル エポックと一致していないことを意味します。7 `kv_client_error` TiKV との通信でエラーが返されたことを意味します`internal_error`はTiFlashの内部システム エラーです`other`はその他のタイプのエラーです。
 -   要求処理期間: すべてのTiFlashインスタンスがコプロセッサ要求を処理する期間。処理時間は、コプロセッサ要求の実行開始から実行完了までです。
 -   応答バイト/秒: すべてのTiFlashインスタンスからの応答の合計バイト数。
 -   Cop タスクのメモリ使用量: コプロセッサ要求を処理するすべてのTiFlashインスタンスの合計メモリ使用量。
@@ -62,18 +62,18 @@ TiFlashには、 **TiFlash-Summary** 、 **TiFlash-Proxy-Summary** 、および*
 ## DDL {#ddl}
 
 -   スキーマ バージョン: 各TiFlashインスタンスに現在キャッシュされているスキーマのバージョン。
--   スキーマ適用 OPM: 1 分あたりにすべてのTiFlashインスタンスによって`apply`操作で同期された TiDB `schema diff`の数。この項目には、 `diff apply` 、 `full apply` 、および`failed apply`の 3 種類の`apply`の数が含まれます。 `diff apply` 、単一の適用の通常のプロセスです。 `diff apply`が失敗すると、 `failed apply`が`1`増加し、 TiFlash は`full apply`にロールバックして最新のスキーマ情報を取得し、 TiFlashのスキーマ バージョンを更新します。
+-   スキーマ適用 OPM: 1 分あたりにすべてのTiFlashインスタンスによって`apply`操作で同期された TiDB `schema diff`の数。この項目には、 `diff apply` 、 `full apply` 、および`failed apply`の 3 種類の`apply`の数が含まれます。 `diff apply` 、単一の適用の通常のプロセスです。 `diff apply`失敗すると、 `failed apply`が`1`増加し、 TiFlash は`full apply`にロールバックして最新のスキーマ情報を取得し、 TiFlashのスキーマ バージョンを更新します。
 -   スキーマ内部 DDL OPM: すべてのTiFlashインスタンスで 1 分あたりに実行される特定の DDL 操作の数。
 -   スキーマ適用期間: すべてのTiFlashインスタンスでの単一の`apply schema`操作に使用される時間。
 
 ## ストレージ {#storage}
 
 -   書き込みコマンド OPS: すべてのTiFlashインスタンスのstorageレイヤーで 1 秒あたりに受信される書き込み要求の数。
--   書き込み増幅: 各TiFlashインスタンスの書き込み増幅 (ディスク書き込みの実際のバイト数を論理データの書き込みバイト数で割った値)。1 `total`この開始以降の書き込み増幅で、 `5min`過去 5 分間の書き込み増幅です。
+-   書き込み増幅: 各TiFlashインスタンスの書き込み増幅 (ディスク書き込みの実際のバイト数を論理データの書き込みバイト数で割った値) `total`はこの開始以降の書き込み増幅で、 `5min`過去 5 分間の書き込み増幅です。
 -   読み取りタスク OPS: 各TiFlashインスタンスのstorageレイヤーでの 1 秒あたりの読み取りタスクの数。
 -   粗セット フィルター レート: 過去 1 分間に各TiFlashインスタンスによって読み取られたパケット数のうち、storageレイヤーの粗セット インデックスによってフィルター処理されたパケット数の割合。
 -   内部タスク OPS: すべてのTiFlashインスタンスが 1 秒あたりに内部データ ソート タスクを実行する回数。
--   内部タスクの期間: すべてのTiFlashインスタンスが内部データ ソート タスクに費やした時間。
+-   内部タスクの所要時間: すべてのTiFlashインスタンスが内部データ ソート タスクに費やした時間。
 -   ページ GC タスク OPM: すべてのTiFlashインスタンスが 1 分間に Delta データ ソート タスクを実行する回数。
 -   ページ GC タスクの期間: すべてのTiFlashインスタンスが Delta データ ソート タスクを実行するために消費する時間の分布。
 -   ディスク書き込み OPS: すべてのTiFlashインスタンスによる 1 秒あたりのディスク書き込み数。
@@ -88,14 +88,14 @@ TiFlashには、 **TiFlash-Summary** 、 **TiFlash-Proxy-Summary** 、および*
 ## ストレージ書き込み停止 {#storage-write-stall}
 
 -   書き込みとデルタ管理スループット: すべてのインスタンスの書き込みとデータ圧縮のスループット。
-    -   `throughput_write` Raftを介したデータ同期のスループットを意味します。
+    -   `throughput_write` Raft を介したデータ同期のスループットを意味します。
     -   `throughput_delta-management`データ圧縮のスループットを意味します。
-    -   `total_write` 、前回の開始以降に書き込まれた合計バイト数を意味します。
-    -   `total_delta-management` 、前回の開始以降に圧縮されたデータの合計バイト数を意味します。
+    -   `total_write`前回の開始以降に書き込まれた合計バイト数を意味します。
+    -   `total_delta-management`前回の開始以降に圧縮されたデータの合計バイト数を意味します。
 -   書き込み停止期間: インスタンスごとの書き込みおよびリージョンデータの削除 (範囲の削除) の停止期間。
 -   インスタンスごとの書き込みスループット: インスタンスごとの書き込みのスループット。これには、 Raft書き込みコマンドとRaftスナップショットを適用した場合のスループットが含まれます。
 -   インスタンス別の書き込みコマンド OPS: インスタンスによって受信されたさまざまな種類のコマンドの合計数。
-    -   `write block` 、データ ログがRaftを介して同期されることを意味します。
+    -   `write block`データ ログがRaft を介して同期されることを意味します。
     -   `delete_range` 、一部のリージョンがこのインスタンスから削除されるか、このインスタンスに移動されることを意味します。
     -   `ingest` 、いくつかのリージョンスナップショットがこのインスタンスに適用されていることを意味します。
 

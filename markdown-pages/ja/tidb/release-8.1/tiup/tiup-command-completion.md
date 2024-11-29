@@ -1,11 +1,11 @@
 ---
 title: tiup completion
-summary: TiUP は、`bash` および `zsh` コマンドをサポートする、自動コマンドライン補完用の設定ファイルを生成するtiup completionコマンドを提供します。`bash` コマンドを補完するには、`bash-completion` をインストールし、`tiup completion <shell>` 構文を使用してシェル タイプを設定します。`bash` の場合は、コマンドをファイルに記述し、`.bash_profile` でソース化します。`zsh` の場合は、`tiup completion zsh` コマンドを使用します。
+summary: TiUP は、 bash` および `zsh` コマンドをサポートする、自動コマンドライン補完用の設定ファイルを生成するtiup completionコマンドを提供します。`bash` コマンドを補完するには、`bash-completion` をインストールし、`tiup completion <shell>` 構文を使用してシェル タイプを設定します。`bash` の場合は、コマンドをファイルに記述し、`.bash_profile` でソース化します。`zsh` の場合は、`tiup completion zsh` コマンドを使用します。
 ---
 
 # tiup completion {#tiup-completion}
 
-ユーザーのコスト削減のため、 TiUP は自動コマンドライン補完用の構成ファイルを生成する`tiup completion`コマンドを提供します。現在、 TiUP は`bash`と`zsh`コマンドの補完をサポートしています。
+ユーザーのコスト削減のため、 TiUP は自動コマンドライン補完用の構成ファイルを生成する`tiup completion`コマンドを提供します。現在、 TiUP は`bash`コマンドと`zsh`コマンドの補完をサポートしています。
 
 `bash`コマンドを完了するには、まず`bash-completion`をインストールする必要があります。次の手順を参照してください。
 
@@ -18,7 +18,7 @@ summary: TiUP は、`bash` および `zsh` コマンドをサポートする、�
 tiup completion <shell>
 ```
 
-`<shell>`は、使用するシェルの種類を設定するために使用されます。現在、 `bash`と`zsh`がサポートされています。
+`<shell>`使用するシェルの種類を設定するために使用されます。現在、 `bash`と`zsh`がサポートされています。
 
 ## 使用法 {#usage}
 

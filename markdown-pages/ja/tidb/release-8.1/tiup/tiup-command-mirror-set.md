@@ -1,6 +1,6 @@
 ---
 title: tiup mirror set
-summary: tiup mirror set コマンドは、現在のミラーをローカル ファイル システムとリモート ネットワーク アドレスの間で切り替えます。公式のミラー アドレスは。中間者攻撃を防ぐために、ネットワーク ミラーのルート証明書を指定するには。出力は生成されません。
+summary: tiup mirror set` コマンドは、現在のミラーをローカル ファイル システムとリモート ネットワーク アドレスの間で切り替えます。公式のミラー アドレスは ` <a href="https://tiup-mirrors.pingcap.com`">https://tiup-mirrors.pingcap.com`</a>です。ミラー アドレスを設定するには、`tiup mirror set <mirror-addr>` を使用します。中間者攻撃を防ぐために、ネットワーク ミラーのルート証明書を指定するには、`-r, --root` オプションを使用します。出力は生成されません。
 ---
 
 # tiup mirror set {#tiup-mirror-set}
@@ -34,7 +34,7 @@ tiup mirror set <mirror-addr> [flags]
 
     tiup mirror set <mirror-addr> -r /path/to/local/root.json
 
-上記の手順では、 `wget`コマンドの前にミラーが攻撃された場合、ルート証明書が正しくないことがわかります。3 コマンドの後にミラーが攻撃された場合、 TiUP はミラー`wget`ルート証明書と一致しないことを検出します。
+上記の手順では、 `wget`コマンドの前にミラーが攻撃された場合、ルート証明書が正しくないことがわかります。3 `wget`の後にミラーが攻撃された場合、 TiUP はミラーがルート証明書と一致しないことを検出します。
 
 -   データ型: `String`
 -   デフォルト: `{mirror-dir}/root.json`

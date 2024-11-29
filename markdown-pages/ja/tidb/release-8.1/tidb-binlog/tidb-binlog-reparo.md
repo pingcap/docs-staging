@@ -5,9 +5,9 @@ summary: Reparoの使い方を学びます。
 
 # Reparoユーザーガイド {#reparo-user-guide}
 
-Reparo は、増分データを回復するために使用される TiDB Binlogツールです。増分データをバックアップするには、TiDB BinlogのDrainer を使用して、binlogデータを protobuf 形式でファイルに出力します。増分データを復元するには、 Reparoを使用してファイル内のbinlogデータを解析し、TiDB/MySQL にbinlogを適用します。
+Reparo は、増分データを回復するために使用される TiDB Binlogツールです。増分データをバックアップするには、TiDB BinlogのDrainer を使用して、binlogデータを protobuf 形式でファイルに出力します。増分データを復元するには、 Reparo を使用してファイル内のbinlogデータを解析し、TiDB/MySQL にbinlogを適用します。
 
-Reparoインストールパッケージ( `reparo` )はTiDB Toolkitに含まれています。TiDBTiDB Toolkitをダウンロードするには、 [TiDBツールをダウンロード](/download-ecosystem-tools.md)を参照してください。
+Reparoインストールパッケージ( `reparo` )はTiDB Toolkitに含まれています。TiDBTiDB Toolkitをダウンロードするには、 [TiDBツールをダウンロード](/download-ecosystem-tools.md)参照してください。
 
 ## Reparoの使用 {#reparo-usage}
 
@@ -117,7 +117,7 @@ password = ""
 
 > **注記：**
 >
-> -   `data-dir` 、 Drainer が出力するbinlogファイルのディレクトリを指定します。
+> -   `data-dir` Drainer が出力するbinlogファイルのディレクトリを指定します。
 > -   `start-datatime`と`start-tso`どちらもリカバリを開始する時点を指定するために使用されますが、時間形式が異なります。設定されていない場合、リカバリプロセスはデフォルトで最も古いbinlogファイルから開始されます。
 > -   `stop-datetime`と`stop-tso`どちらもリカバリを終了する時点を指定するために使用されますが、時間形式が異なります。設定されていない場合、リカバリ プロセスはデフォルトで最後のbinlogファイルで終了します。
 > -   `dest-type`宛先タイプを指定します。その値は「mysql」と「print」になります。

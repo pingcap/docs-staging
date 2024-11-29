@@ -29,7 +29,7 @@ TiDB Ansible バージョン: 3.1.0-beta.2
     -   DDL ステートメントによる列ストアのレプリカの作成または削除のサポート[＃14537](https://github.com/pingcap/tidb/pull/14537)
     -   オプティマイザが異なるstorageエンジンを独立して選択できる機能を追加する[＃14537](https://github.com/pingcap/tidb/pull/14537)
     -   SQLヒントが異なるstorageエンジンをサポートする機能を追加[＃14537](https://github.com/pingcap/tidb/pull/14537)
-    -   `tidb_replica_read`システム変数[＃13464](https://github.com/pingcap/tidb/pull/13464)を使用してフォロワーからのデータの読み取りをサポート
+    -   `tidb_replica_read`システム変数[＃13464](https://github.com/pingcap/tidb/pull/13464)使用してフォロワーからのデータの読み取りをサポート
 -   ティクヴ
     -   Raftstore
         -   他のノードをTiKVサーバー[＃6491](https://github.com/tikv/tikv/pull/6491)に接続するための`peer_address`パラメータを追加します
@@ -44,10 +44,10 @@ TiDB Ansible バージョン: 3.1.0-beta.2
     -   初回リリース
 -   TiDB アンシブル
     -   1 つのクラスターに複数の Grafana/Prometheus/Alertmanager をデプロイするサポート[＃1143](https://github.com/pingcap/tidb-ansible/pull/1143)
-    -   TiFlashコンポーネント[＃1148](https://github.com/pingcap/tidb-ansible/pull/1148)展開をサポート
+    -   TiFlashコンポーネント[＃1148](https://github.com/pingcap/tidb-ansible/pull/1148)の展開をサポート
     -   TiFlashコンポーネント[＃1152](https://github.com/pingcap/tidb-ansible/pull/1152)に関連する監視メトリックを追加する
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティクヴ
     -   Raftstore
@@ -55,7 +55,7 @@ TiDB Ansible バージョン: 3.1.0-beta.2
         -   リーダー移行プロセス中の`ReadIndex`リクエストによって引き起こされるpanic問題を修正[＃6613](https://github.com/tikv/tikv/pull/6613)
         -   特定の状況で休止状態領域が正しく起動しない問題を修正[＃6730](https://github.com/tikv/tikv/pull/6730) [＃6737](https://github.com/tikv/tikv/pull/6737) [＃6972](https://github.com/tikv/tikv/pull/6972)
     -   バックアップ
-        -   追加データ[＃6659](https://github.com/tikv/tikv/pull/6659)のバックアップによって復元中に発生した不整合なデータインデックスを修正
+        -   追加データ[＃6659](https://github.com/tikv/tikv/pull/6659)のバックアップによって復元中に発生したデータインデックスの不整合を修正
         -   バックアップ中に削除された値を誤って処理することで発生するpanicを修正[＃6726](https://github.com/tikv/tikv/pull/6726)
 -   PD
     -   ルールチェッカーがリージョン[＃2161](https://github.com/pingcap/pd/pull/2161)にストアを割り当てられないために発生するpanicを修正

@@ -1,11 +1,11 @@
 ---
 title: tiup cluster meta backup
-summary: TiUPメタファイルは、クラスターの運用と保守に不可欠です。`tiup cluster meta backup` を使用して、ファイルを定期的にバックアップします。`tiup dm list` を使用してクラスター名を確認します。`--file` オプションでターゲット ディレクトリを指定します。ヘルプ情報を表示するには、`-h, --help` を使用します。出力には、 tiup-clusterの実行ログが含まれます。
+summary: TiUPメタファイルは、クラスターの運用と保守に不可欠です。tiup cluster meta backup` を使用して、ファイルを定期的にバックアップします。`tiup dm list` を使用してクラスター名を確認します。`--file` オプションでターゲット ディレクトリを指定します。ヘルプ情報を表示するには、`-h, --help` を使用します。出力には、 tiup-clusterの実行ログが含まれます。
 ---
 
 # tiup クラスタ メタ バックアップ {#tiup-cluster-meta-backup}
 
-TiUPメタ ファイルは、クラスターの運用と保守 (OM) に使用されます。このファイルが失われると、 TiUPを使用してクラスターを管理できなくなります。この状況を回避するには、 `tiup cluster meta backup`コマンドを使用して、 TiUPメタ ファイルを定期的にバックアップします。
+TiUPメタ ファイルは、クラスターの運用と保守 (OM) に使用されます。このファイルが失われると、 TiUP を使用してクラスターを管理できなくなります。この状況を回避するには、 `tiup cluster meta backup`コマンドを使用して、 TiUPメタ ファイルを定期的にバックアップします。
 
 ## 構文 {#syntax}
 
@@ -31,4 +31,4 @@ TiUPメタ バックアップ ファイルを保存するターゲット ディ�
 
 tiup-clusterの実行ログ。
 
-[&lt;&lt; 前のページに戻る - TiUP クラスタコマンド リスト](/tiup/tiup-component-cluster.md#command-list)
+[&lt;&lt; 前のページに戻る - TiUPクラスタコマンド リスト](/tiup/tiup-component-cluster.md#command-list)

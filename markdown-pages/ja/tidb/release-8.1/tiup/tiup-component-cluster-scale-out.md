@@ -63,4 +63,4 @@ tiup cluster scale-out <cluster-name> <topology.yaml> [flags]
 
 スケールアウトのログ。
 
-[&lt;&lt; 前のページに戻る - TiUP クラスタコマンド リスト](/tiup/tiup-component-cluster.md#command-list)
+[&lt;&lt; 前のページに戻る - TiUPクラスタコマンド リスト](/tiup/tiup-component-cluster.md#command-list)

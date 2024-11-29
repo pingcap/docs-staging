@@ -5,7 +5,7 @@ summary: TiDB データベースに対する DROP DATABASE の使用法の概要
 
 # データベースの削除 {#drop-database}
 
-`DROP DATABASE`ステートメントは、指定されたデータベース スキーマと、その中に作成されたすべてのテーブルおよびビューを完全に削除します。削除されたデータベースに関連付けられているユーザー権限は影響を受けません。
+`DROP DATABASE`ステートメントは、指定されたデータベース スキーマと、その中に作成されたすべてのテーブルとビューを完全に削除します。削除されたデータベースに関連付けられているユーザー権限は影響を受けません。
 
 ## 概要 {#synopsis}
 
@@ -46,7 +46,7 @@ mysql> SHOW DATABASES;
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`DROP DATABASE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`DROP DATABASE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 

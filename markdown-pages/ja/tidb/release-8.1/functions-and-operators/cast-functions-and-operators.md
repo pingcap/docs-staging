@@ -5,7 +5,7 @@ summary: キャスト関数と演算子について学習します。
 
 # キャスト関数と演算子 {#cast-functions-and-operators}
 
-キャスト関数と演算子を使用すると、あるデータ型から別のデータ型に値を変換できます。TiDB は、MySQL 8.0 で利用可能な[キャスト関数と演算子](https://dev.mysql.com/doc/refman/8.0/en/cast-functions.html)をすべてサポートします。
+キャスト関数と演算子を使用すると、あるデータ型から別のデータ型に値を変換できます。TiDB は、MySQL 8.0 で利用可能な[キャスト関数と演算子](https://dev.mysql.com/doc/refman/8.0/en/cast-functions.html)すべてサポートします。
 
 | 名前                      | 説明               |
 | ----------------------- | ---------------- |
@@ -15,35 +15,35 @@ summary: キャスト関数と演算子について学習します。
 
 > **注記：**
 >
-> TiDB と MySQL は、 `SELECT CAST(MeN AS CHAR)` (または同等の形式`SELECT CONVERT(MeM, CHAR)` ) に対して一貫性のない結果を表示します。ここで、 `MeN`科学的記数法の倍精度浮動小数点数を表します。MySQL は、 `-15 <= N <= 14`場合は完全な数値を表示し、 `N < -15`または`N > 14`場合は科学的記数法を表示します。ただし、TiDB は常に完全な数値を表示します。たとえば、MySQL は`SELECT CAST(3.1415e15 AS CHAR)`の結果を`3.1415e15`として表示しますが、TiDB は結果を`3141500000000000`として表示します。
+> TiDB と MySQL は、 `SELECT CAST(MeN AS CHAR)` (または同等の形式`SELECT CONVERT(MeM, CHAR)` ) に対して一貫性のない結果を表示します。ここで、 `MeN`科学的記数法の倍精度浮動小数点数を表します。MySQL は、 `-15 <= N <= 14`の場合は完全な数値を表示し、 `N < -15`または`N > 14`の場合は科学的記数法を表示します。ただし、TiDB は常に完全な数値を表示します。たとえば、MySQL は`SELECT CAST(3.1415e15 AS CHAR)`の結果を`3.1415e15`として表示しますが、TiDB は結果を`3141500000000000`として表示します。
 
 ## バイナリ {#binary}
 
-[`BINARY`](https://dev.mysql.com/doc/refman/8.0/en/cast-functions.html#operator_binary)演算子は MySQL 8.0.27 以降では非推奨になりました。TiDB と MySQL の両方で、代わりに`CAST(... AS BINARY)`を使用することをお勧めします。
+[`BINARY`](https://dev.mysql.com/doc/refman/8.0/en/cast-functions.html#operator_binary)演算子は MySQL 8.0.27 以降では非推奨になりました。TiDB と MySQL の両方で、代わりに`CAST(... AS BINARY)`使用することをお勧めします。
 
 ## キャスト {#cast}
 
 [`CAST(&#x3C;expression> AS &#x3C;type> [ARRAY])`](https://dev.mysql.com/doc/refman/8.0/en/cast-functions.html#function_cast)関数は、式を特定の型にキャストするために使用されます。
 
-この関数は[多値インデックス](/sql-statements/sql-statement-create-index.md#multi-valued-indexes)を作成する場合にも使用されます。
+この関数は[多値インデックス](/sql-statements/sql-statement-create-index.md#multi-valued-indexes)作成する場合にも使用されます。
 
 次のタイプがサポートされています:
 
-| タイプ                  | 説明                                          | 多値インデックスで使用できるかどうか     |
-| -------------------- | ------------------------------------------- | ---------------------- |
-| `BINARY(n)`          | バイナリ文字列                                     | いいえ                    |
-| `CHAR(n)`            | 文字列                                         | はい、ただし長さが指定されている場合のみです |
-| `DATE`               | 日付                                          | はい                     |
-| `DATETIME(fsp)`      | 日付/時刻（ `fsp`はオプション）                         | はい                     |
-| `DECIMAL(n, m)`      | 10 進数。1 と`m`オプションで、指定しない場合は`10`と`0`になります`n` | いいえ                    |
-| `DOUBLE`             | 倍精度浮動小数点数                                   | いいえ                    |
-| `FLOAT(n)`           | 浮動小数点数。1 `n`オプションで、 `0`から`53`までの範囲で指定します。   | いいえ                    |
-| `JSON`               | 翻訳                                          | いいえ                    |
-| `REAL`               | 浮動小数点数                                      | はい                     |
-| `SIGNED [INTEGER]`   | 符号付き整数                                      | はい                     |
-| `TIME(fsp)`          | 時間                                          | はい                     |
-| `UNSIGNED [INTEGER]` | 符号なし整数                                      | はい                     |
-| `YEAR`               | 年                                           | いいえ                    |
+| タイプ                  | 説明                                         | 多値インデックスで使用できるかどうか     |
+| -------------------- | ------------------------------------------ | ---------------------- |
+| `BINARY(n)`          | バイナリ文字列                                    | いいえ                    |
+| `CHAR(n)`            | 文字列                                        | はい、ただし長さが指定されている場合のみです |
+| `DATE`               | 日付                                         | はい                     |
+| `DATETIME(fsp)`      | 日付/時刻（ `fsp`はオプション）                        | はい                     |
+| `DECIMAL(n, m)`      | 10 進数`n`と`m`はオプションで、指定しない場合は`10`と`0`になります。 | いいえ                    |
+| `DOUBLE`             | 倍精度浮動小数点数                                  | いいえ                    |
+| `FLOAT(n)`           | 浮動小数点数`n`オプションで、 `0`から`53`までの範囲で指定します。     | いいえ                    |
+| `JSON`               | 翻訳                                         | いいえ                    |
+| `REAL`               | 浮動小数点数                                     | はい                     |
+| `SIGNED [INTEGER]`   | 符号付き整数                                     | はい                     |
+| `TIME(fsp)`          | 時間                                         | はい                     |
+| `UNSIGNED [INTEGER]` | 符号なし整数                                     | はい                     |
+| `YEAR`               | 年                                          | いいえ                    |
 
 例:
 
@@ -120,6 +120,6 @@ SELECT CONVERT(0x616263 USING utf8mb4);
 
 ## MySQL 互換性 {#mysql-compatibility}
 
--   TiDB は`SPATIAL`型に対するキャスト操作をサポートしていません。詳細については、 [＃6347](https://github.com/pingcap/tidb/issues/6347)を参照してください。
--   TiDB は`CAST()`に対して`AT TIME ZONE`サポートしていません。詳細については、 [＃51742](https://github.com/pingcap/tidb/issues/51742)を参照してください。
--   `CAST(24 AS YEAR)` TiDB では 2 桁、MySQL では 4 桁を返します。詳細については、 [＃29629](https://github.com/pingcap/tidb/issues/29629)参照してください。
+-   TiDB は`SPATIAL`型に対するキャスト操作をサポートしていません。詳細については、 [＃6347](https://github.com/pingcap/tidb/issues/6347)参照してください。
+-   TiDB は`CAST()`に対して`AT TIME ZONE`サポートしていません。詳細については、 [＃51742](https://github.com/pingcap/tidb/issues/51742)参照してください。
+-   `CAST(24 AS YEAR)` 、TiDB では 2 桁、MySQL では 4 桁を返します。詳細については、 [＃29629](https://github.com/pingcap/tidb/issues/29629)参照してください。

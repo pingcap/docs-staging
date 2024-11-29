@@ -84,7 +84,7 @@ mysql> SHOW GRANTS FOR 'newuser';
 -   MySQL と同様に、 `USAGE`権限は TiDBサーバーにログインする機能を示します。
 -   カラムレベルの権限は現在サポートされていません。
 -   MySQL と同様に、 `NO_AUTO_CREATE_USER` sql モードが存在しない場合、ユーザーが存在しないときは、 `GRANT`ステートメントによって空のパスワードを持つ新しいユーザーが自動的に作成されます。この sql モードを削除すると (デフォルトで有効になっています)、セキュリティ上のリスクが生じます。
--   TiDB では、 `GRANT <privileges>`ステートメントが正常に実行されると、実行結果が現在の接続に直ちに反映されます。一方、 [MySQLでは、一部の権限では、実行結果は後続の接続にのみ有効になります。](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)については、詳細については[ティDB #39356](https://github.com/pingcap/tidb/issues/39356)を参照してください。
+-   TiDB では、 `GRANT <privileges>`ステートメントが正常に実行されると、実行結果が現在の接続に直ちに反映されます。一方、 [MySQLでは、一部の権限では、実行結果は後続の接続にのみ有効になります。](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)については、詳細については[ティDB #39356](https://github.com/pingcap/tidb/issues/39356)参照してください。
 
 ## 参照 {#see-also}
 

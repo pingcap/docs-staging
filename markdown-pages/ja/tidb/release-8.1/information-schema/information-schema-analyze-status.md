@@ -1,6 +1,6 @@
 ---
 title: ANALYZE_STATUS
-summary: ANALYZE_STATUS information_schema テーブルについて学習します。
+summary: ANALYZE_STATUS` information_schema テーブルについて学習します。
 ---
 
 # 分析ステータス {#analyze-status}
@@ -57,7 +57,7 @@ SELECT * FROM information_schema.analyze_status;
 6 rows in set (0.00 sec)
 ```
 
-`ANALYZE_STATUS`テーブル内のフィールドは次のように説明されます。
+`ANALYZE_STATUS`のテーブル内のフィールドは次のように説明されます。
 
 -   `TABLE_SCHEMA` : テーブルが属するデータベースの名前。
 -   `TABLE_NAME` : テーブルの名前。
@@ -67,7 +67,7 @@ SELECT * FROM information_schema.analyze_status;
 -   `START_TIME` : `ANALYZE`番目のタスクの開始時刻。
 -   `END_TIME` : `ANALYZE`番目のタスクの終了時刻。
 -   `STATE` : タスク`ANALYZE`の実行ステータス。値は`pending` 、 `running` 、 `finished` 、または`failed`になります。
--   `FAIL_REASON` : タスクが失敗した理由。実行が成功した場合、値は`NULL`になります。
+-   `FAIL_REASON` : タスクが失敗した理由。実行が成功した場合、値は`NULL`なります。
 -   `INSTANCE` : タスクを実行する TiDB インスタンス。
 -   `PROCESS_ID` : タスクを実行するプロセス ID。
 -   `REMAINING_SECONDS` : タスクが完了するまでの残り時間の推定値 (秒単位)。

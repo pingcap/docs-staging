@@ -17,7 +17,7 @@ TiDB は、ホットスポットのトラブルシューティング、解決、
 
 ### TiDB エンコーディングルール {#tidb-encoding-rules}
 
-TiDB は各テーブルに TableID、各インデックスに IndexID、各行に RowID を割り当てます。デフォルトでは、テーブルが整数の主キーを使用する場合、主キーの値が RowID として扱われます。これらの ID のうち、TableID はクラスター全体で一意であり、IndexID と RowID はテーブル内で一意です。これらの ID の型はすべて int64 です。
+TiDB は各テーブルに TableID、各インデックスに IndexID、各行に RowID を割り当てます。デフォルトでは、テーブルが整数の主キーを使用する場合、主キーの値が RowID として扱われます。これらの ID のうち、TableID はクラスター全体で一意ですが、IndexID と RowID はテーブル内で一意です。これらの ID の型はすべて int64 です。
 
 各データ行は、次の規則に従ってキーと値のペアとしてエンコードされます。
 
@@ -34,14 +34,14 @@ TiDB は各テーブルに TableID、各インデックスに IndexID、各行�
 インデックス データには、一意のインデックスと非一意のインデックスの 2 種類があります。
 
 -   一意のインデックスの場合は、上記のコーディング規則に従うことができます。
--   非一意インデックスの場合、同じインデックスの`tablePrefix{tableID}_indexPrefixSep{indexID}`同じであり、複数の行の`ColumnsValue`同じである可能性があるため、このエンコーディングでは一意キーを構築できません。非一意インデックスのエンコーディング ルールは次のとおりです。
+-   非一意インデックスの場合、同じインデックスの`tablePrefix{tableID}_indexPrefixSep{indexID}`は同じであり、複数の行の`ColumnsValue`同じである可能性があるため、このエンコーディングでは一意キーを構築できません。非一意インデックスのエンコーディング ルールは次のとおりです。
 
         Key: tablePrefix{tableID}_indexPrefixSep{indexID}_indexedColumnsValue_rowID
         Value: null
 
 ### テーブルホットスポット {#table-hotspots}
 
-TiDB のコーディング規則によれば、同じテーブルのデータは TableID の先頭で始まる範囲にあり、データは RowID 値の順序で配置されます。テーブルの挿入中に RowID 値が増加すると、挿入された行は末尾にのみ追加できます。Regionは一定のサイズに`INSERT`と分割され、その後も範囲の末尾にのみ追加できます。1 操作は 1 つのリージョンでのみ実行でき、ホットスポットを形成します。
+TiDB のコーディング規則によれば、同じテーブルのデータは TableID の先頭で始まる範囲にあり、データは RowID 値の順序で配置されます。テーブルの挿入中に RowID 値が増加すると、挿入された行は末尾にのみ追加できます。Regionは一定のサイズに達すると分割され、その後も範囲の末尾にのみ追加できます。1 操作は`INSERT`つのリージョンでのみ実行でき、ホットスポットを形成します。
 
 一般的な自動増分主キーは順次増加します。主キーが整数型の場合、デフォルトで主キーの値が RowID として使用されます。このとき、RowID は順次増加し、 `INSERT`操作が多数存在するとテーブルの書き込みホットスポットが形成されます。
 
@@ -63,11 +63,11 @@ TiDB のコーディング規則によれば、同じテーブルのデータは
 
 ### TiDBダッシュボードを使用してホットスポットテーブルを見つける {#use-tidb-dashboard-to-locate-hotspot-tables}
 
-[TiDBダッシュボード](/dashboard/dashboard-intro.md)の**Key Visualizer**機能は、ホットスポットのトラブルシューティング範囲をテーブル レベルに絞り込むのに役立ちます。以下は、 **Key Visualizer**で表示されるサーマル ダイアグラムの例です。グラフの横軸は時間、縦軸は各種テーブルとインデックスです。色が明るいほど、負荷が大きいことを示します。ツールバーで読み取りフローと書き込みフローを切り替えることができます。
+[TiDBダッシュボード](/dashboard/dashboard-intro.md)の**Key Visualizer**機能は、ユーザーがホットスポットのトラブルシューティング範囲をテーブル レベルに絞り込むのに役立ちます。以下は、 **Key Visualizer**で表示されるサーマル ダイアグラムの例です。グラフの横軸は時間、縦軸は各種テーブルとインデックスです。色が明るいほど、負荷が大きいことを示します。ツールバーで読み取りフローと書き込みフローを切り替えることができます。
 
 ![Dashboard Example 1](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-1.png)
 
-書き込みフロー グラフに、次の明るい斜めの線 (斜め上または斜め下) が表示されることがあります。書き込みは最後にのみ表示されるため、テーブル領域の数が増えると、はしごのように見えます。これは、このテーブルに書き込みホットスポットが表示されていることを示しています。
+書き込みフロー グラフに、次の明るい斜線 (斜め上または斜め下) が表示されることがあります。書き込みは最後にのみ表示されるため、テーブル領域の数が増えると、はしごのように見えます。これは、このテーブルに書き込みホットスポットが表示されていることを示しています。
 
 ![Dashboard Example 2](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-2.png)
 
@@ -81,9 +81,9 @@ TiDB のコーディング規則によれば、同じテーブルのデータは
 
 ## <code>SHARD_ROW_ID_BITS</code>を使用してホットスポットを処理する {#use-code-shard-row-id-bits-code-to-process-hotspots}
 
-クラスター化されていない主キーまたは主キーの`INSERT`テーブルの場合、TiDB は暗黙的な自動増分 RowID を使用します。1 操作が多数存在する場合、データは単一のリージョンに書き込まれ、書き込みホットスポットが発生します。
+クラスター化されていない主キーまたは主キーのないテーブルの場合、TiDB は暗黙的な自動増分 RowID を使用します`INSERT`操作が多数存在する場合、データは単一のリージョンに書き込まれ、書き込みホットスポットが発生します。
 
-[`SHARD_ROW_ID_BITS`](/shard-row-id-bits.md)を設定すると、行 ID が分散されて複数のリージョンに書き込まれるため、書き込みホットスポットの問題を軽減できます。
+[`SHARD_ROW_ID_BITS`](/shard-row-id-bits.md)設定すると、行 ID が分散されて複数のリージョンに書き込まれるため、書き込みホットスポットの問題を軽減できます。
 
     SHARD_ROW_ID_BITS = 4 # Represents 16 shards.
     SHARD_ROW_ID_BITS = 6 # Represents 64 shards.
@@ -98,7 +98,7 @@ ALTER TABLE: ALTER TABLE t SHARD_ROW_ID_BITS = 4;
 
 値`SHARD_ROW_ID_BITS`は動的に変更できます。変更された値は、新しく書き込まれたデータに対してのみ有効になります。
 
-`CLUSTERED`型の主キーを持つテーブルの場合、TiDB はテーブルの主キーを RowID として使用します。この時点では、 `SHARD_ROW_ID_BITS`オプションは RowID 生成ルールを変更するため使用できません。5 型`NONCLUSTERED`主キーを持つテーブルの場合、TiDB は自動的に割り当てられた 64 ビット整数を RowID として使用します。この場合、 `SHARD_ROW_ID_BITS`機能を使用することができます`CLUSTERED`型の主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
+`CLUSTERED`型の主キーを持つテーブルの場合、TiDB はテーブルの主キーを RowID として使用します。この時点では、 `SHARD_ROW_ID_BITS`オプションは`NONCLUSTERED`生成ルールを変更するため使用できません。5 型の主キーを持つテーブルの場合、TiDB は自動的に割り当てられた 64 ビット整数を RowID として使用します。この場合、 `SHARD_ROW_ID_BITS`機能が使用できます`CLUSTERED`型の主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
 
 次の 2 つの負荷図は、主キーのない 2 つのテーブルが`SHARD_ROW_ID_BITS`使用してホットスポットを分散する場合を示しています。最初の図はホットスポットを分散する前の状況を示し、2 番目の図はホットスポットを分散した後の状況を示しています。
 
@@ -106,13 +106,13 @@ ALTER TABLE: ALTER TABLE t SHARD_ROW_ID_BITS = 4;
 
 ![Dashboard Example 6](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-6.png)
 
-上記の負荷図に示すように、設定`SHARD_ROW_ID_BITS`前は、負荷ホットスポットが単一のリージョンに集中していました。設定`SHARD_ROW_ID_BITS`の後は、負荷ホットスポットが分散するようになります。
+上記の負荷図に示すように、設定`SHARD_ROW_ID_BITS`の前は、負荷ホットスポットが単一のリージョンに集中していました。設定`SHARD_ROW_ID_BITS`の後は、負荷ホットスポットが分散するようになります。
 
 ## <code>AUTO_RANDOM</code>を使用して自動増分主キー ホットスポット テーブルを処理する {#handle-auto-increment-primary-key-hotspot-tables-using-code-auto-random-code}
 
 自動インクリメント主キーによってもたらされる書き込みホットスポットを解決するには、 `AUTO_RANDOM`使用して、自動インクリメント主キーを持つホットスポット テーブルを処理します。
 
-この機能を有効にすると、TiDB は書き込みホットスポットを分散させる目的を達成するために、ランダムに分散され、重複のない (スペースが使い果たされる前に) 主キーを生成します。
+この機能を有効にすると、TiDB は書き込みホットスポットを分散させる目的を達成するために、ランダムに分散された非重複の (スペースが使い果たされる前に) 主キーを生成します。
 
 TiDB によって生成された主キーは自動増分主キーではなくなり、 `LAST_INSERT_ID()`使用して前回割り当てられた主キー値を取得できることに注意してください。
 
@@ -146,7 +146,7 @@ SELECT LAST_INSERT_ID();
 +------------------+
 ```
 
-次の 2 つの負荷図は、ホットスポットを分散させるために`AUTO_INCREMENT`から`AUTO_RANDOM`を変更する前と変更した後の状況を示しています。最初の図では`AUTO_INCREMENT`が使用され、2 番目の図では`AUTO_RANDOM`が使用されます。
+次の 2 つの負荷図は、ホットスポットを分散させるために`AUTO_INCREMENT`から`AUTO_RANDOM`変更する前と変更した後の状況を示しています。最初の図では`AUTO_INCREMENT`使用され、2 番目の図では`AUTO_RANDOM`使用されます。
 
 ![Dashboard Example 7](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-7.png)
 

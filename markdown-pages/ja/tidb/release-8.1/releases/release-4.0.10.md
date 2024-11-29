@@ -17,13 +17,13 @@ TiDB バージョン: 4.0.10
 
 -   TiFlash
 
-    -   ログからユーザーデータを編集するための`security.redact_info_log`構成項目を追加します
+    -   ログからユーザーデータを編集するための`security.redact_info_log`構成項目を追加します。
 
 ## 改善点 {#improvements}
 
 -   ティビ
 
-    -   トランザクション内のキー値エントリのサイズ制限を`txn-entry-size-limit` [＃21843](https://github.com/pingcap/tidb/pull/21843)を使用して設定可能にする
+    -   トランザクション内のキー値エントリのサイズ制限を`txn-entry-size-limit` [＃21843](https://github.com/pingcap/tidb/pull/21843)使用して設定可能にする
 
 -   PD
 
@@ -34,7 +34,6 @@ TiDB バージョン: 4.0.10
 
     -   ティCDC
 
-        -   `maxwell`プロトコル[＃1144](https://github.com/pingcap/tiflow/pull/1144)の古い値機能を有効にする
         -   統合ソート機能をデフォルトで有効にする[＃1230](https://github.com/pingcap/tiflow/pull/1230)
 
     -   Dumpling
@@ -45,7 +44,7 @@ TiDB バージョン: 4.0.10
 
         -   S3 [＃533](https://github.com/pingcap/tidb-lightning/pull/533)からの読み取り時に発生するエラーの再試行をサポート
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -54,11 +53,11 @@ TiDB バージョン: 4.0.10
     -   ログレベルが`'debug'` [＃22293](https://github.com/pingcap/tidb/pull/22293)のときにSQL文にバインドされたベースラインキャプチャを機能させる
     -   リージョンのマージが発生したときにGCロックを正しく解放する[＃22267](https://github.com/pingcap/tidb/pull/22267)
     -   `datetime`タイプのユーザー変数の正しい値を返す[＃22143](https://github.com/pingcap/tidb/pull/22143)
-    -   複数のテーブルフィルターがある場合のインデックスマージの使用に関する問題を修正[＃22124](https://github.com/pingcap/tidb/pull/22124)
+    -   複数のテーブルフィルターがある場合にインデックスマージを使用する問題を修正[＃22124](https://github.com/pingcap/tidb/pull/22124)
     -   `prepare`プラン キャッシュ[＃21960](https://github.com/pingcap/tidb/pull/21960)によって発生するTiFlashの`wrong precision`問題を修正
     -   スキーマ変更[＃21596](https://github.com/pingcap/tidb/pull/21596)によって誤った結果が発生する問題を修正
     -   `ALTER TABLE` [＃21474](https://github.com/pingcap/tidb/pull/21474)で不要な列フラグの変更を避ける
-    -   オプティマイザヒント[＃21380](https://github.com/pingcap/tidb/pull/21380)で使用されるクエリブロックのテーブルエイリアスのデータベース名を設定します
+    -   オプティマイザヒント[＃21380](https://github.com/pingcap/tidb/pull/21380)で使用されるクエリブロックのテーブルエイリアスのデータベース名を設定します。
     -   `IndexHashJoin`と`IndexMergeJoin`の適切なオプティマイザヒントを生成する[＃21020](https://github.com/pingcap/tidb/pull/21020)
 
 -   ティクヴ
@@ -83,13 +82,12 @@ TiDB バージョン: 4.0.10
 
     -   ティCDC
 
-        -   `base64`データ出力の問題と TSO を Unix タイムスタンプ[＃1173](https://github.com/pingcap/tiflow/pull/1173)に出力する際の問題を含む`maxwell`プロトコルの問題を修正しました。
         -   古いメタデータにより、新しく作成された変更フィードが異常になる可能性があるバグを修正[＃1184](https://github.com/pingcap/tiflow/pull/1184)
         -   クローズド通知[＃1199](https://github.com/pingcap/tiflow/pull/1199)で受信者を作成する問題を修正
         -   TiCDC 所有者が etcd ウォッチ クライアント[＃1227](https://github.com/pingcap/tiflow/pull/1227)でメモリを過剰に消費する可能性があるバグを修正しました。
         -   `max-batch-size`有効にならない問題を修正[＃1253](https://github.com/pingcap/tiflow/pull/1253)
         -   キャプチャ情報が構築される前に古いタスクをクリーンアップする問題を修正[＃1280](https://github.com/pingcap/tiflow/pull/1280)
-        -   MySQLシンク[＃1285](https://github.com/pingcap/tiflow/pull/1285)で`rollback`呼び出されないため、db connのリサイクルがブロックされる問題を修正
+        -   MySQLシンク[＃1285](https://github.com/pingcap/tiflow/pull/1285)で`rollback`が呼び出されないため、db connのリサイクルがブロックされる問題を修正
 
     -   Dumpling
 

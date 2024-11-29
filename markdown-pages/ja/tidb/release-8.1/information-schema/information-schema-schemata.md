@@ -1,6 +1,6 @@
 ---
 title: SCHEMATA
-summary: SCHEMATA information_schema テーブルについて学習します。
+summary: SCHEMATA` information_schema テーブルについて学習します。
 ---
 
 # スキーマ {#schemata}
@@ -43,5 +43,5 @@ SELECT * FROM SCHEMATA;
 -   `CATALOG_NAME` : データベースが属するカタログ。
 -   `SCHEMA_NAME` : データベース名。
 -   `DEFAULT_CHARACTER_SET_NAME` : データベースのデフォルトの文字セット。
--   `DEFAULT_COLLATION_NAME` : データベースのデフォルトの照合順序。
+-   `DEFAULT_COLLATION_NAME` : データベースのデフォルトの照合照合順序。
 -   `SQL_PATH` : この項目の値は常に`NULL`です。

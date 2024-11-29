@@ -1,6 +1,6 @@
 ---
 title: tiup mirror sign
-summary: tiup mirror sign コマンドは、 TiUPミラー内のメタデータ ファイルに署名するために使用されます。ネットワーク アドレスとローカル ファイル パスをサポートします。オプションには、秘密キーの場所の指定や、ネットワーク署名のアクセス タイムアウトの設定が含まれます。正常に実行された場合は出力は表示されませんが、署名が重複している場合やマニフェスト ファイルが無効な場合はエラーが報告されます。
+summary: tiup mirror sign` コマンドは、 TiUPミラー内のメタデータ ファイルに署名するために使用されます。ネットワーク アドレスとローカル ファイル パスをサポートします。オプションには、秘密キーの場所の指定や、ネットワーク署名のアクセス タイムアウトの設定が含まれます。正常に実行された場合は出力は表示されませんが、署名が重複している場合やマニフェスト ファイルが無効な場合はエラーが報告されます。
 ---
 
 # tiup mirror sign {#tiup-mirror-sign}
@@ -13,7 +13,7 @@ summary: tiup mirror sign コマンドは、 TiUPミラー内のメタデータ 
 tiup mirror sign <manifest-file> [flags]
 ```
 
-`<manifest-file>`は署名するファイルのアドレスであり、次の 2 つの形式があります。
+`<manifest-file>`署名するファイルのアドレスであり、次の 2 つの形式があります。
 
 -   HTTPまたはHTTPSで始まるネットワークアドレス（例： `http://172.16.5.5:8080/rotate/root.json`
 -   ローカルファイルパス（相対パスまたは絶対パス）
@@ -29,7 +29,7 @@ tiup mirror sign <manifest-file> [flags]
 
 -   `{component}.json`ファイルの署名に使用される秘密キーの場所を指定します。
 -   データ型: `STRING`
--   -   このオプションがコマンドで指定されていない場合は、デフォルトで`"${TIUP_HOME}/keys/private.json"`が使用されます。
+-   -   このオプションがコマンドで指定されていない場合は、デフォルトで`"${TIUP_HOME}/keys/private.json"`使用されます。
 
 ### - タイムアウト {#timeout}
 
@@ -39,7 +39,7 @@ tiup mirror sign <manifest-file> [flags]
 
 > **注記：**
 >
-> このオプションは、 `<manifest-file>`ネットワーク アドレスの場合にのみ有効です。
+> このオプションは、 `<manifest-file>`がネットワーク アドレスの場合にのみ有効です。
 
 ## 出力 {#output}
 

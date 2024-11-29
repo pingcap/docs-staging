@@ -24,7 +24,7 @@ rules = ['*.*', '!test.*']
 -   `rules = ['test1.*']`
     -   `test1`データベース内のすべてのテーブルを複製する
 -   `rules = ['*.*', '!scm1.tbl2']`
-    -   `scm1.tbl2`テーブルを除くすべてのテーブルを複製する
+    -   `scm1.tbl2`のテーブルを除くすべてのテーブルを複製する
 -   `rules = ['scm1.tbl2', 'scm1.tbl3']`
     -   テーブル`scm1.tbl2`と`scm1.tbl3`のみを複製する
 -   `rules = ['scm1.tidb_*']`
@@ -36,7 +36,7 @@ rules = ['*.*', '!test.*']
 
 v6.2.0 以降、TiCDC はイベント フィルターをサポートします。イベント フィルター ルールを構成して、指定した条件を満たす DML イベントと DDL イベントをフィルター処理できます。
 
-以下はイベント フィルタ ルールの例です。
+以下はイベント フィルター ルールの例です。
 
 ```toml
 [filter]
@@ -58,49 +58,49 @@ ignore-update-new-value-expr = "gender = 'male' and age > 18" # Ignore update DM
 
 -   `ignore-event` : 無視するイベント タイプ。このパラメータは文字列の配列を受け入れます。複数のイベント タイプを設定できます。現在、次のイベント タイプがサポートされています。
 
-    | イベント               | タイプ    | エイリアス       | 説明                                                                      |
-    | ------------------ | ------ | ----------- | ----------------------------------------------------------------------- |
-    | すべてのDML            |        |             | すべてのDMLイベントに一致します                                                       |
-    | すべてのDDL            |        |             | すべてのDDLイベントに一致します                                                       |
-    | 入れる                | DMML の |             | `insert` DMLイベントに一致                                                     |
-    | アップデート             | DMML の |             | `update` DMLイベントに一致                                                     |
-    | 消去                 | DMML の |             | `delete` DMLイベントに一致                                                     |
-    | スキーマを作成する          | DDL    | データベースを作成する | `create database`イベントに一致                                                |
-    | スキーマを削除する          | DDL    | データベースを削除   | `drop database`イベントに一致                                                  |
-    | テーブルを作成する          | DDL    |             | `create table`イベントに一致                                                   |
-    | ドロップテーブル           | DDL    |             | `drop table`イベントに一致                                                     |
-    | テーブル名の変更           | DDL    |             | `rename table`イベントに一致                                                   |
-    | テーブルを切り捨てる         | DDL    |             | `truncate table`イベントに一致                                                 |
-    | 他の机                | DDL    |             | `alter table` `drop index`すべての条項を含む`alter table`イベント`create index`一致します |
-    | テーブルパーティションを追加     | DDL    |             | `add table partition`イベントに一致                                            |
-    | テーブルパーティションを削除する   | DDL    |             | `drop table partition`イベントに一致                                           |
-    | テーブルパーティションを切り捨てる  | DDL    |             | `truncate table partition`イベントに一致                                       |
-    | ビューを作成             | DDL    |             | `create view`イベントに一致                                                    |
-    | ドロップビュー            | DDL    |             | `drop view`イベントに一致                                                      |
-    | スキーマの文字セットと照合を変更する | DDL    |             | `modify schema charset and collate`イベントに一致                              |
-    | テーブルを回復する          | DDL    |             | `recover table`イベントに一致                                                  |
-    | 自動 ID をリベースする      | DDL    |             | `rebase auto id`イベントに一致                                                 |
-    | テーブルコメントの変更        | DDL    |             | `modify table comment`イベントに一致                                           |
-    | テーブルの文字セットと照合を変更する | DDL    |             | `modify table charset and collate`イベントに一致                               |
-    | 交換テーブルパーティション      | DDL    |             | `exchange table partition`イベントに一致                                       |
-    | テーブルパーティションを再編成する  | DDL    |             | `reorganize table partition`イベントに一致                                     |
-    | テーブルパーティションの変更     | DDL    |             | `alter table partitioning`イベントに一致                                       |
-    | テーブルパーティションを削除する   | DDL    |             | `remove table partitioning`イベントに一致                                      |
-    | 列を追加               | DDL    |             | `add column`イベントに一致                                                     |
-    | ドロップ列              | DDL    |             | `drop column`イベントに一致                                                    |
-    | 列を変更する             | DDL    |             | `modify column`イベントに一致                                                  |
-    | デフォルト値を設定する        | DDL    |             | `set default value`イベントに一致                                              |
-    | 主キーを追加する           | DDL    |             | `add primary key`イベントに一致                                                |
-    | 主キーを削除する           | DDL    |             | `drop primary key`イベントに一致                                               |
-    | インデックス名の変更         | DDL    |             | `rename index`イベントに一致                                                   |
-    | インデックスの可視性を変更する    | DDL    |             | `alter index visibility`イベントに一致                                         |
-    | TTL情報を変更する         | DDL    |             | `alter ttl info`イベントに一致                                                 |
-    | TTLの変更削除           | DDL    |             | テーブルのすべてのTTL属性を削除するDDLイベントに一致します                                        |
-    | 複数のスキーマの変更         | DDL    |             | 同じDDL文内でテーブルの複数の属性を変更するDDLイベントに一致します。                                   |
+    | イベント               | タイプ    | エイリアス       | 説明                                                                   |
+    | ------------------ | ------ | ----------- | -------------------------------------------------------------------- |
+    | すべてのDML            |        |             | すべてのDMLイベントに一致します                                                    |
+    | すべてのDDL            |        |             | すべてのDDLイベントに一致                                                       |
+    | 入れる                | DMML の |             | `insert` DMLイベントに一致                                                  |
+    | アップデート             | DMML の |             | `update` DMLイベントに一致                                                  |
+    | 消去                 | DMML の |             | `delete` DMLイベントに一致                                                  |
+    | スキーマを作成する          | DDL    | データベースを作成する | `create database`イベントに一致                                             |
+    | スキーマを削除する          | DDL    | データベースを削除   | `drop database`イベントに一致                                               |
+    | テーブルを作成する          | DDL    |             | `create table`イベントに一致                                                |
+    | ドロップテーブル           | DDL    |             | `drop table`イベントに一致                                                  |
+    | テーブル名の変更           | DDL    |             | `rename table`イベントに一致                                                |
+    | テーブルを切り捨てる         | DDL    |             | `truncate table`イベントに一致                                              |
+    | テーブルを変更する          | DDL    |             | `alter table`のすべての条項`drop index`含む`alter table` `create index`に一致します |
+    | テーブルパーティションを追加     | DDL    |             | `add table partition`イベントに一致                                         |
+    | テーブルパーティションを削除する   | DDL    |             | `drop table partition`イベントに一致                                        |
+    | テーブルパーティションを切り捨てる  | DDL    |             | `truncate table partition`イベントに一致                                    |
+    | ビューを作成             | DDL    |             | `create view`イベントに一致                                                 |
+    | ドロップビュー            | DDL    |             | `drop view`イベントに一致                                                   |
+    | スキーマの文字セットと照合を変更する | DDL    |             | `modify schema charset and collate`イベントに一致                           |
+    | テーブルを回復する          | DDL    |             | `recover table`イベントに一致                                               |
+    | 自動 ID をリベースする      | DDL    |             | `rebase auto id`イベントに一致                                              |
+    | テーブルコメントの変更        | DDL    |             | `modify table comment`イベントに一致                                        |
+    | テーブルの文字セットと照合を変更する | DDL    |             | `modify table charset and collate`イベントに一致                            |
+    | 交換テーブルパーティション      | DDL    |             | `exchange table partition`イベントに一致                                    |
+    | テーブルパーティションを再編成する  | DDL    |             | `reorganize table partition`イベントに一致                                  |
+    | テーブルパーティションの変更     | DDL    |             | `alter table partitioning`イベントに一致                                    |
+    | テーブルパーティションを削除する   | DDL    |             | `remove table partitioning`イベントに一致                                   |
+    | 列を追加               | DDL    |             | `add column`イベントに一致                                                  |
+    | ドロップ列              | DDL    |             | `drop column`イベントに一致                                                 |
+    | 列を変更する             | DDL    |             | `modify column`イベントに一致                                               |
+    | デフォルト値を設定する        | DDL    |             | `set default value`イベントに一致                                           |
+    | 主キーを追加する           | DDL    |             | `add primary key`イベントに一致                                             |
+    | 主キーを削除する           | DDL    |             | `drop primary key`イベントに一致                                            |
+    | インデックス名の変更         | DDL    |             | `rename index`イベントに一致                                                |
+    | インデックスの可視性を変更する    | DDL    |             | `alter index visibility`イベントに一致                                      |
+    | TTL情報を変更する         | DDL    |             | `alter ttl info`イベントに一致                                              |
+    | TTLの変更削除           | DDL    |             | テーブルのすべてのTTL属性を削除するDDLイベントに一致します                                     |
+    | 複数のスキーマの変更         | DDL    |             | 同じDDL文内でテーブルの複数の属性を変更するDDLイベントに一致します。                                |
 
     > **注記：**
     >
-    > TiDB の DDL ステートメントは、 `ALTER TABLE t MODIFY COLUMN a INT, ADD COLUMN b INT, DROP COLUMN c;`のように、単一テーブルの複数の属性を同時に変更することをサポートしています。この操作は MultiSchemaChange として定義されています。このタイプの DDL を除外する場合は、 `ignore-event`で`"multi schema change"`構成する必要があります。
+    > TiDB の DDL ステートメントは、 `ALTER TABLE t MODIFY COLUMN a INT, ADD COLUMN b INT, DROP COLUMN c;`のように、単一テーブルの複数の属性を同時に変更することをサポートしています。この操作は MultiSchemaChange として定義されています。このタイプの DDL を除外する場合は、 `ignore-event`で`"multi schema change"`を構成する必要があります。
 
 -   `ignore-sql` : フィルター処理する DDL ステートメントの正規表現。このパラメータは文字列の配列を受け入れ、複数の正規表現を構成できます。この構成は DDL イベントにのみ適用されます。
 

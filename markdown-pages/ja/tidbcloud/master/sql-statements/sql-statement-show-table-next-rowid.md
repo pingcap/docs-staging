@@ -1,6 +1,6 @@
 ---
 title: SHOW TABLE NEXT_ROW_ID
-summary: TiDB での `SHOW TABLE NEXT_ROW_ID` の使用方法を学びます。
+summary: TiDB での SHOW TABLE NEXT_ROW_ID` の使用方法を学びます。
 ---
 
 # テーブルNEXT_ROW_IDを表示 {#show-table-next-row-id}
@@ -21,7 +21,7 @@ ShowTableNextRowIDStmt ::=
 
 ## 例 {#examples}
 
-新しく作成されたテーブルの場合、行 ID が割り当てられていないため、 `NEXT_GLOBAL_ROW_ID` `1`なります。
+新しく作成されたテーブルの場合、行 ID が割り当てられていないため、 `NEXT_GLOBAL_ROW_ID` `1`になります。
 
 ```sql
 CREATE TABLE t(a int);

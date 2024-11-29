@@ -7,7 +7,7 @@ summary: TiUPのプレイグラウンドコンポーネントを使用して、�
 
 TiDB クラスターは、複数のコンポーネントで構成される分散システムです。一般的な TiDB クラスターは、少なくとも 3 つの PD ノード、3 つの TiKV ノード、および 2 つの TiDB ノードで構成されます。TiDB をすぐに試してみたい場合、多数のコンポーネントを手動でデプロイするのは時間がかかり、複雑であると感じるかもしれません。このドキュメントでは、 TiUPのプレイグラウンドコンポーネントと、それを使用してローカル TiDB テスト環境をすばやく構築する方法を紹介します。
 
-## TiUPプレイグラウンドの概要 {#tiup-playground-overview}
+## TiUP遊び場の概要 {#tiup-playground-overview}
 
 プレイグラウンドコンポーネントの基本的な使用方法は次のとおりです。
 
@@ -21,9 +21,9 @@ tiup playground ${version} [flags]
 
 -   このコマンドはプレイグラウンドコンポーネントのバージョンを指定しないため、 TiUP は最初にインストールされているプレイグラウンドコンポーネントの最新バージョンをチェックします。最新バージョンが v1.12.3 であると仮定すると、このコマンドは`tiup playground:v1.12.3`と同じように動作します。
 -   TiUPプレイグラウンドを使用して TiDB、TiKV、および PD コンポーネントをインストールしていない場合、プレイグラウンドコンポーネントはこれらのコンポーネントの最新の安定バージョンをインストールしてから、これらのインスタンスを起動します。
--   このコマンドは TiDB、PD、および TiKVコンポーネントのバージョンを指定しないため、 TiUPプレイグラウンドはデフォルトで各コンポーネントの最新バージョンを使用します。最新バージョンが v8.1.0 であると仮定すると、このコマンドは`tiup playground:v1.12.3 v8.1.0`と同じように動作します。
+-   このコマンドは TiDB、PD、および TiKVコンポーネントのバージョンを指定しないため、 TiUPプレイグラウンドはデフォルトで各コンポーネントの最新バージョンを使用します。最新バージョンが v8.1.1 であると仮定すると、このコマンドは`tiup playground:v1.12.3 v8.1.1`と同じように動作します。
 -   このコマンドは各コンポーネントの数を指定しないため、 TiUPプレイグラウンドはデフォルトで、1 つの TiDB インスタンス、1 つの TiKV インスタンス、1 つの PD インスタンス、および 1 つのTiFlashインスタンスで構成される最小のクラスターを起動します。
--   各 TiDBコンポーネントを起動すると、 TiUPプレイグラウンドは、クラスターが正常に起動したことを通知し、MySQL クライアント経由で TiDB クラスターに接続する方法や[TiDBダッシュボード](/dashboard/dashboard-intro.md)にアクセスする方法などの役立つ情報を提供します。
+-   各 TiDBコンポーネントを起動すると、 TiUPプレイグラウンドはクラスターが正常に起動したことを通知し、MySQL クライアント経由で TiDB クラスターに接続する方法や[TiDBダッシュボード](/dashboard/dashboard-intro.md)にアクセスする方法などの役立つ情報を提供します。
 
 プレイグラウンドコンポーネントのコマンドライン フラグは次のように記述されます。
 
@@ -95,7 +95,7 @@ tiup playground nightly
 
 ### PDのデフォルト設定を上書きする {#override-pd-s-default-configuration}
 
-まず、 [PD 構成テンプレート](https://github.com/pingcap/pd/blob/release-8.1/conf/config.toml)コピーする必要があります。コピーしたファイルを`~/config/pd.toml`に配置し、必要に応じて変更を加えたら、次のコマンドを実行して PD のデフォルト設定を上書きできます。
+まず、 [PD 構成テンプレート](https://github.com/pingcap/pd/blob/release-8.1/conf/config.toml)をコピーする必要があります。コピーしたファイルを`~/config/pd.toml`に配置し、必要に応じて変更を加えたら、次のコマンドを実行して PD のデフォルト設定を上書きできます。
 
 ```shell
 tiup playground --pd.config ~/config/pd.toml
@@ -164,7 +164,7 @@ tiup playground scale-out --db 2
 
 ## クラスターのスケールイン {#scale-in-a-cluster}
 
-`tiup playground scale-in`コマンドで`pid`を指定すると、対応するインスタンスをスケールできます。 `pid`を表示するには、 `tiup playground display`実行します。
+`tiup playground scale-in`コマンドで`pid`指定すると、対応するインスタンスをスケールできます。 `pid`を表示するには、 `tiup playground display`を実行します。
 
 ```shell
 tiup playground scale-in --pid 86526

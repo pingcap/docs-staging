@@ -5,7 +5,7 @@ summary: TiDB データベースの CREATE USER の使用法の概要。
 
 # ユーザーを作成 {#create-user}
 
-このステートメントは、パスワードを指定して新しいユーザーを作成します。MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。したがって、IP アドレス`192.168.1.1`からのみ接続できるユーザー`'newuser2'@'192.168.1.1'`を作成できます。また、2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
+このステートメントは、パスワードを指定して新しいユーザーを作成します。MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。したがって、IP アドレス`192.168.1.1`からのみ接続できるユーザー`'newuser2'@'192.168.1.1'`作成できます。また、2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
 
 ## 概要 {#synopsis}
 
@@ -150,9 +150,9 @@ SELECT USER, HOST, USER_ATTRIBUTES FROM MYSQL.USER WHERE USER='newuser7';
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-次の`CREATE USER`オプションは TiDB ではまだサポートされていないため、解析されますが無視されます。
+次の`CREATE USER`のオプションは TiDB ではまだサポートされていないため、解析されますが無視されます。
 
--   TiDB は`WITH MAX_QUERIES_PER_HOUR` 、 `WITH MAX_UPDATES_PER_HOUR` 、 `WITH MAX_USER_CONNECTIONS`オプションをサポートしていません。
+-   TiDB は`WITH MAX_QUERIES_PER_HOUR` 、 `WITH MAX_UPDATES_PER_HOUR` 、および`WITH MAX_USER_CONNECTIONS`オプションをサポートしていません。
 -   TiDB は`DEFAULT ROLE`オプションをサポートしていません。
 
 ## 参照 {#see-also}
@@ -165,5 +165,5 @@ SELECT USER, HOST, USER_ATTRIBUTES FROM MYSQL.USER WHERE USER='newuser7';
 </CustomContent>
 
 -   [ユーザーを削除](/sql-statements/sql-statement-drop-user.md)
--   [ユーザーの作成を表示](/sql-statements/sql-statement-show-create-user.md)
+-   [表示 ユーザーの作成](/sql-statements/sql-statement-show-create-user.md)
 -   [ユーザーの変更](/sql-statements/sql-statement-alter-user.md)

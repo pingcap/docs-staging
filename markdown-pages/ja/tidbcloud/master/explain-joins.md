@@ -207,7 +207,7 @@ EXPLAIN SELECT /*+ HASH_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 4.  `Probe`側のデータを使用してハッシュ テーブルを調べます。
 5.  適格なデータをユーザーに返します。
 
-`EXPLAIN`結果テーブルの`operator info`列には、クエリが内部結合か外部結合か、結合の条件は何かなど、 `HashJoin_27`に関するその他の情報も記録されます。上記の例では、クエリは内部結合であり、結合条件`equal:[eq(test.t1.id, test.t2.id)]`クエリ条件`WHERE t1.id = t2.id`と部分的に対応しています。次の例の他の結合演算子の演算子情報もこれに似ています。
+`EXPLAIN`結果テーブルの`operator info`列には、クエリが内部結合か外部結合か、結合の条件は何かなど、 `HashJoin_27`に関するその他の情報も記録されます。上記の例では、クエリは内部結合であり、結合条件`equal:[eq(test.t1.id, test.t2.id)]`クエリ条件`WHERE t1.id = t2.id`と部分的に対応しています。次の例の他の結合演算子の演算子情報は、これに似ています。
 
 ### 実行時統計 {#runtime-statistics}
 

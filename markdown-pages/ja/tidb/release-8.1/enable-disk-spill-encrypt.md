@@ -9,9 +9,9 @@ summary: TiDB でディスク スピルの暗号化を有効にする方法を�
 
 ディスク スピルの暗号化を有効にすると、攻撃者がこれらの一時ファイルを読み取ってデータにアクセスするのを防ぐことができます。
 
-## 構成、設定 {#configure}
+## 設定 {#configure}
 
-ディスク スピル ファイルの暗号化を有効にするには、TiDB 構成ファイルのセクション`[security]`の項目[`spilled-file-encryption-method`](/tidb-configuration-file.md#spilled-file-encryption-method)を構成します。
+ディスク スピル ファイルの暗号化を有効にするには、TiDB 構成ファイルのセクション`[security]`の項目[`spilled-file-encryption-method`](/tidb-configuration-file.md#spilled-file-encryption-method)構成します。
 
 ```toml
 [security]

@@ -17,7 +17,7 @@ summary: DM 接続で TLS を有効にする方法を学習します。
 
     DM-master と DM-worker のサーバー証明書を別々に用意することをお勧めします。2 つのコンポーネントが相互に認証できることを確認してください。dmctl のクライアント証明書を 1 つ共有することもできます。
 
-    自己署名証明書を生成するには、 `openssl` 、 `cfssl` 、および`easy-rsa`などの`openssl`に基づいたその他のツールを使用できます。
+    自己署名証明書を生成するには、 `openssl` 、 `cfssl`および`easy-rsa`などの`openssl`に基づいた他のツールを使用できます。
 
     `openssl`選択した場合は[自己署名証明書の生成](/dm/dm-generate-self-signed-certificates.md)を参照できます。
 
@@ -77,11 +77,11 @@ summary: DM 接続で TLS を有効にする方法を学習します。
     cert-allowed-cn = ["dm"]
     ```
 
-### 証明書を再読み込み {#reload-certificates}
+### 証明書を再読み込みする {#reload-certificates}
 
 証明書とキーを再ロードするために、DM-master、DM-worker、および dmctl は、新しい接続が作成されるたびに現在の証明書とキー ファイルを再読み取りします。
 
-`ssl-ca` `ssl-cert`または`ssl-key`で指定されたファイルが更新された場合は、DM コンポーネントを再起動して証明書とキー ファイルを再読み込みし、相互に再接続します。
+`ssl-ca` 、または`ssl-cert`で指定されたファイルが更新`ssl-key`れた場合は、DM コンポーネントを再起動して証明書とキー ファイルを再読み込みし、相互に再接続します。
 
 ## DMコンポーネントと上流または下流のデータベース間の暗号化されたデータ転送を有効にする {#enable-encrypted-data-transmission-between-dm-components-and-the-upstream-or-downstream-database}
 

@@ -5,7 +5,7 @@ summary: Data Migration を使用して、Amazon Aurora MySQL、Amazon Relationa
 
 # データ移行を使用して、MySQL 互換データベースから増分データのみをTiDB Cloudに移行する {#migrate-only-incremental-data-from-mysql-compatible-databases-to-tidb-cloud-using-data-migration}
 
-このドキュメントでは、TiDB Cloud コンソールのデータ移行機能を使用して、クラウドプロバイダー (Amazon Aurora MySQL、Amazon Relational Database Service (RDS)、または Google Cloud SQL for MySQL) 上の MySQL 互換データベースまたはセルフホスト型ソースデータベースからTiDB Cloud TiDB Cloudに増分データを移行する方法について説明します。
+このドキュメントでは、 TiDB Cloudのデータ移行機能を使用して、クラウドプロバイダー (Amazon Aurora MySQL、Amazon Relational Database Service (RDS)、または Google Cloud SQL for MySQL) 上の MySQL 互換データベースまたはセルフホスト型ソースデータベースからTiDB Cloud Cloud に増分データを移行する方法について説明します。
 
 既存のデータ、または既存のデータと増分データの両方を移行する方法については、 [データ移行を使用してMySQL互換データベースをTiDB Cloudに移行する](/tidb-cloud/migrate-from-mysql-using-data-migration.md)参照してください。
 
@@ -13,9 +13,9 @@ summary: Data Migration を使用して、Amazon Aurora MySQL、Amazon Relationa
 
 > **注記**：
 >
-> このセクションには、増分データ移行に関する制限事項のみが記載されています。一般的な制限事項も読むことをお勧めします。1 [制限事項](/tidb-cloud/migrate-from-mysql-using-data-migration.md#limitations)参照してください。
+> このセクションには、増分データ移行に関する制限事項のみが記載されています。一般的な制限事項も読むことをお勧めします[制限事項](/tidb-cloud/migrate-from-mysql-using-data-migration.md#limitations)参照してください。
 
--   ターゲット データベースにターゲット テーブルがまだ作成されていない場合、移行ジョブは次のようにエラーを報告し、失敗します。 この場合は、ターゲット テーブルを手動で作成してから、移行ジョブを再試行する必要があります。
+-   ターゲット データベースにターゲット テーブルがまだ作成されていない場合、移行ジョブは次のようにエラーを報告し、失敗します。この場合、ターゲット テーブルを手動で作成してから、移行ジョブを再試行する必要があります。
 
     ```sql
     startLocation: [position: (mysql_bin.000016, 5122), gtid-set:
@@ -49,13 +49,13 @@ Amazon RDS および Amazon Aurora MySQL の場合、新しい変更可能なパ
 -   `gtid_mode`
 -   `enforce_gtid_consistency`
 
-次の SQL ステートメントを実行すると、GTID モードが正常に有効化されているかどうかを確認できます。
+次の SQL ステートメントを実行すると、GTID モードが正常に有効化されたかどうかを確認できます。
 
 ```sql
 SHOW VARIABLES LIKE 'gtid_mode';
 ```
 
-結果が`ON`または`ON_PERMISSIVE`場合、 GTID モードは正常に有効化されています。
+結果が`ON`または`ON_PERMISSIVE`の場合、 GTID モードは正常に有効化されています。
 
 詳細については[GTIDベースのレプリケーションのパラメータ](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/mysql-replication-gtid.html#mysql-replication-gtid.parameters)参照してください。
 
@@ -67,7 +67,7 @@ Google Cloud SQL for MySQL では、GTID モードがデフォルトで有効に
 SHOW VARIABLES LIKE 'gtid_mode';
 ```
 
-結果が`ON`または`ON_PERMISSIVE`場合、 GTID モードは正常に有効化されています。
+結果が`ON`または`ON_PERMISSIVE`の場合、 GTID モードは正常に有効化されています。
 
 ### セルフホスト型MySQLインスタンスの場合 {#for-a-self-hosted-mysql-instance}
 
@@ -100,7 +100,7 @@ SHOW VARIABLES LIKE 'gtid_mode';
     SHOW VARIABLES LIKE 'gtid_mode';
     ```
 
-    結果が`ON`または`ON_PERMISSIVE`場合、 GTID モードは正常に有効化されています。
+    結果が`ON`または`ON_PERMISSIVE`の場合、 GTID モードは正常に有効化されています。
 
 ## ステップ1:<strong>データ移行</strong>ページに移動します {#step-1-go-to-the-strong-data-migration-strong-page}
 
@@ -110,9 +110,9 @@ SHOW VARIABLES LIKE 'gtid_mode';
     >
     > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅にある をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
 
-2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[データ移行] を**クリックします。
+2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[データ移行]**をクリックします。
 
-3.  **「データ移行」**ページで、右上隅の**「移行ジョブの作成」**をクリックします。 **「移行ジョブの作成」**ページが表示されます。
+3.  「**データ移行」**ページで、右上隅の**「移行ジョブの作成」**をクリックします。 **「移行ジョブの作成」**ページが表示されます。
 
 ## ステップ2: ソースとターゲットの接続を構成する {#step-2-configure-the-source-and-target-connection}
 
@@ -126,7 +126,7 @@ SHOW VARIABLES LIKE 'gtid_mode';
     -   **リージョン**: データ ソースのリージョン。クラウド データベースにのみ必要です。
     -   **接続方法**: データ ソースの接続方法。現在、接続方法に応じて、パブリック IP、VPC ピアリング、またはプライベート リンクを選択できます。
     -   **ホスト名または IP アドレス**(パブリック IP および VPC ピアリングの場合): データ ソースのホスト名または IP アドレス。
-    -   **サービス名**(Private Link の場合): エンドポイント サービス名。
+    -   **サービス名**(プライベート リンクの場合): エンドポイント サービス名。
     -   **ポート**: データ ソースのポート。
     -   **ユーザー名**: データ ソースのユーザー名。
     -   **パスワード**: ユーザー名のパスワード。
@@ -145,7 +145,7 @@ SHOW VARIABLES LIKE 'gtid_mode';
 5.  表示されるメッセージに従ってアクションを実行します。
 
     -   パブリック IP または VPC ピアリングを使用する場合は、データ移行サービスの IP アドレスをソース データベースとファイアウォール (存在する場合) の IP アクセス リストに追加する必要があります。
-    -   AWS Private Link を使用する場合は、エンドポイント要求を受け入れるように求められます。 [AWS VPC コンソール](https://us-west-2.console.aws.amazon.com/vpc/home)に移動し、 **[エンドポイント サービス]**をクリックしてエンドポイント要求を受け入れます。
+    -   AWS Private Link を使用する場合は、エンドポイント要求を受け入れるように求められます。 [AWS VPC コンソール](https://us-west-2.console.aws.amazon.com/vpc/home)に移動し、 **[エンドポイント サービス] を**クリックしてエンドポイント要求を受け入れます。
 
 ## ステップ3: 移行ジョブの種類を選択する {#step-3-choose-migration-job-type}
 
@@ -165,7 +165,7 @@ SHOW VARIABLES LIKE 'gtid_mode';
 
 ### GTIDを指定する {#specify-gtid}
 
-ソース データベースの GTID (例: `3E11FA47-71CA-11E1-9E33-C80AA9429562:1-23`を指定するには、このオプションを選択します。移行ジョブは、指定された GTID セットを除くトランザクションを複製し、ソース データベースの進行中の変更をTiDB Cloudに移行します。
+ソース データベースの GTID (例: `3E11FA47-71CA-11E1-9E33-C80AA9429562:1-23` ) を指定するには、このオプションを選択します。移行ジョブは、指定された GTID セットを除くトランザクションを複製し、ソース データベースの進行中の変更をTiDB Cloudに移行します。
 
 次のコマンドを実行して、ソース データベースの GTID を確認できます。
 
@@ -189,13 +189,13 @@ SHOW MASTER STATUS;
 
 ## ステップ4: 移行するオブジェクトを選択する {#step-4-choose-the-objects-to-be-migrated}
 
-1.  **[移行するオブジェクトの選択]**ページで、移行するオブジェクトを選択します。[**すべて]**をクリックしてすべてのオブジェクトを選択するか、 **[カスタマイズ]**をクリックしてオブジェクト名の横にあるチェックボックスをクリックしてオブジェクトを選択します。
+1.  **[移行するオブジェクトの選択]**ページで、移行するオブジェクトを選択します。 **[すべて**] をクリックしてすべてのオブジェクトを選択するか、 **[カスタマイズ]**をクリックしてオブジェクト名の横にあるチェックボックスをクリックしてオブジェクトを選択します。
 
 2.  **「次へ」**をクリックします。
 
 ## ステップ5: 事前チェック {#step-5-precheck}
 
-**「事前チェック」**ページでは、事前チェックの結果を確認できます。事前チェックが失敗した場合は、 **「失敗」**または**「警告」の**詳細に従って操作し、 **「再度チェック」**をクリックして再チェックする必要があります。
+「**事前チェック」**ページでは、事前チェックの結果を確認できます。事前チェックが失敗した場合は、 **「失敗」**または**「警告」の**詳細に従って操作し、「再度**チェック」をクリックして再チェックする**必要があります。
 
 一部のチェック項目にのみ警告がある場合は、リスクを評価して警告を無視するかどうかを検討できます。すべての警告を無視すると、移行ジョブは自動的に次のステップに進みます。
 
@@ -207,13 +207,13 @@ SHOW MASTER STATUS;
 
 ## ステップ6: 仕様を選択して移行を開始する {#step-6-choose-a-spec-and-start-migration}
 
-**「仕様の選択と移行の開始」**ページで、パフォーマンス要件に応じて適切な移行仕様を選択します。仕様の詳細については、 [データ移行の仕様](/tidb-cloud/tidb-cloud-billing-dm.md#specifications-for-data-migration)を参照してください。
+**「仕様の選択と移行の開始」**ページで、パフォーマンス要件に応じて適切な移行仕様を選択します。仕様の詳細については、 [データ移行の仕様](/tidb-cloud/tidb-cloud-billing-dm.md#specifications-for-data-migration)参照してください。
 
 仕様を選択したら、 **「ジョブの作成」と「開始」**をクリックして移行を開始します。
 
 ## ステップ7: 移行の進行状況をビュー {#step-7-view-the-migration-progress}
 
-移行ジョブが作成されると、**移行ジョブの詳細**ページで移行の進行状況を確認できます。移行の進行状況は**、ステージとステータス**領域に表示されます。
+移行ジョブが作成されると、**移行ジョブの詳細**ページで移行の進行状況を確認できます。移行の進行状況は、**ステージとステータス**領域に表示されます。
 
 移行ジョブは実行中に一時停止または削除できます。
 

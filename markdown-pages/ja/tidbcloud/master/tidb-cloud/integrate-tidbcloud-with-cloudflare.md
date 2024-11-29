@@ -3,25 +3,25 @@ title: Integrate TiDB Cloud with Cloudflare
 summary: TiDB Cloudを使用して Cloudflare Workers をデプロイする方法を学びます。
 ---
 
-# TiDB Cloudを Cloudflare Workers と統合する {#integrate-tidb-cloud-with-cloudflare-workers}
+# TiDB Cloud をCloudflare Workers と統合する {#integrate-tidb-cloud-with-cloudflare-workers}
 
-[Cloudflare ワーカー](https://workers.cloudflare.com/) 、HTTP リクエストやデータベースの変更など、特定のイベントに応じてコードを実行できるプラットフォームです。Cloudflare Workers は使いやすく、カスタム API、サーバーレス関数、マイクロサービスなど、さまざまなアプリケーションの構築に使用できます。特に、低レイテンシーのパフォーマンスが必要なアプリケーションや、迅速に拡張する必要があるアプリケーションに役立ちます。
+[Cloudflare ワーカー](https://workers.cloudflare.com/)は、HTTP リクエストやデータベースの変更など、特定のイベントに応じてコードを実行できるプラットフォームです。Cloudflare Workers は使いやすく、カスタム API、サーバーレス関数、マイクロサービスなど、さまざまなアプリケーションの構築に使用できます。特に、低レイテンシーのパフォーマンスが必要なアプリケーションや、迅速に拡張する必要があるアプリケーションに役立ちます。
 
 Cloudflare Workers は直接 TCP 接続できない V8 エンジンで実行されるため、Cloudflare Workers からTiDB Cloudに接続するのは難しい場合があります。1 [TiDB Cloudサーバーレス ドライバー](/tidb-cloud/serverless-driver.md)使用すると、HTTP 接続を介して Cloudflare Workers に接続できます。
 
-このドキュメントでは、TiDB Cloudサーバーレス ドライバーを使用して Cloudflare Workers に接続する方法を段階的に説明します。
+このドキュメントでは、 TiDB Cloudサーバーレス ドライバーを使用して Cloudflare Workers に接続する方法を段階的に説明します。
 
 > **注記：**
 >
-> TiDB Cloudサーバーレス ドライバーは、TiDB Serverless でのみ使用できます。
+> TiDB Cloudサーバーレス ドライバーは、 TiDB Cloud Serverless でのみ使用できます。
 
-## あなたが始める前に {#before-you-begin}
+## 始める前に {#before-you-begin}
 
 この記事の手順を試す前に、次のものを準備する必要があります。
 
--   TiDB CloudアカウントとTiDB Cloud上の TiDB Serverless クラスター。詳細については、 [TiDB Cloudクイック スタート](/tidb-cloud/tidb-cloud-quickstart.md#step-1-create-a-tidb-cluster)を参照してください。
+-   TiDB CloudアカウントとTiDB Cloud上のTiDB Cloud Serverless クラスター。詳細については、 [TiDB Cloudクイック スタート](/tidb-cloud/tidb-cloud-quickstart.md#step-1-create-a-tidb-cluster)参照してください。
 -   A [Cloudflare Workers アカウント](https://dash.cloudflare.com/login) 。
--   [ネプ](https://docs.npmjs.com/about-npm)がインストールされています。
+-   [ネプ](https://docs.npmjs.com/about-npm)インストールされています。
 
 ## ステップ1: Wranglerを設定する {#step-1-set-up-wrangler}
 
@@ -55,7 +55,7 @@ Cloudflare Workers は直接 TCP 接続できない V8 エンジンで実行さ�
 
 ## ステップ3: Cloudflare Worker機能を開発する {#step-3-develop-the-cloudflare-worker-function}
 
-必要に応じて`src/index.ts`変更する必要があります。
+必要に応じて`src/index.ts`を変更する必要があります。
 
 たとえば、すべてのデータベースを表示する場合は、次のコードを使用できます。
 
@@ -78,7 +78,7 @@ export default {
 
 ## ステップ4: 環境でDATABASE_URLを設定する {#step-4-set-the-database-url-in-your-environment}
 
-`DATABASE_URL` `mysql://username:password@host/database`形式に従います。環境変数は wrangler cli で設定できます。
+`DATABASE_URL`は`mysql://username:password@host/database`形式に従います。環境変数は wrangler cli で設定できます。
 
     wrangler secret put <DATABASE_URL>
 

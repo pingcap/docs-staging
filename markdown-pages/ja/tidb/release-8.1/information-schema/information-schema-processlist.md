@@ -1,6 +1,6 @@
 ---
 title: PROCESSLIST
-summary: PROCESSLIST information_schema テーブルについて学習します。
+summary: PROCESSLIST` information_schema テーブルについて学習します。
 ---
 
 # プロセスリスト {#processlist}
@@ -66,7 +66,7 @@ SELECT * FROM processlist\G
 `PROCESSLIST`テーブル内のフィールドは次のように説明されます。
 
 -   ID: ユーザー接続の ID。
--   USER: `PROCESS`を実行しているユーザーの名前。
+-   USER: `PROCESS`実行しているユーザーの名前。
 -   HOST: ユーザーが接続しているアドレス。
 -   DB: 現在接続されているデフォルト データベースの名前。
 -   COMMAND: `PROCESS`が実行しているコマンドの種類。
@@ -81,7 +81,7 @@ SELECT * FROM processlist\G
 
 ## クラスタープロセスリスト {#cluster-processlist}
 
-`CLUSTER_PROCESSLIST`は`PROCESSLIST`に対応するクラスター システム テーブルです。クラスター内のすべての TiDB ノードの`PROCESSLIST`情報を照会するために使用されます。 `CLUSTER_PROCESSLIST`のテーブル スキーマには`PROCESSLIST`よりも 1 つ多い列、つまり`INSTANCE`列があり、このデータ行の元の TiDB ノードのアドレスが格納されます。
+`CLUSTER_PROCESSLIST` `PROCESSLIST`に対応するクラスター システム テーブルです。クラスター内のすべての TiDB ノードの`PROCESSLIST`情報を照会するために使用されます。 `CLUSTER_PROCESSLIST`のテーブル スキーマには`PROCESSLIST`よりも 1 つ多い列、つまり`INSTANCE`列があり、このデータ行の元の TiDB ノードのアドレスが格納されます。
 
 ```sql
 SELECT * FROM information_schema.cluster_processlist;
@@ -89,7 +89,7 @@ SELECT * FROM information_schema.cluster_processlist;
 
 ```sql
 +-----------------+-----+------+----------+------+---------+------+------------+------------------------------------------------------+-----+----------------------------------------+----------------+
-| INSTANCE        | ID  | USER | HOST     | DB   | COMMAND | TIME | STATE      | INFO                                                 | MEM | TxnStart                               | RESOURCE_GROUP |
+| INSTANCE        | ID  | USER | HOST     | DB   | COMMAND | TIME | STATE      | INFO                                                 | MEM | TxnStart                               | RESOURCE_GROUP | 
 +-----------------+-----+------+----------+------+---------+------+------------+------------------------------------------------------+-----+----------------------------------------+----------------+
 
 | 10.0.1.22:10080 | 150 | u1   | 10.0.1.1 | test | Query   | 0    | autocommit | select count(*) from usertable                       | 372 | 05-28 03:54:21.230(416976223923077223) | default        |

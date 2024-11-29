@@ -19,7 +19,7 @@ summary: TiFlashクラスターのアラート ルールについて学習しま
 
 -   解決：
 
-    エラーは、 [支持を得ます](/support.md)間違ったロジックによって発生した可能性があります。1 PingCAP またはコミュニティから。
+    エラーは[サポートを受ける](/support.md)何らかの間違ったロジックによって発生した可能性があります。1 PingCAP またはコミュニティから。
 
 ## <code>TiFlash_schema_apply_duration</code> {#code-tiflash-schema-apply-duration-code}
 
@@ -33,7 +33,7 @@ summary: TiFlashクラスターのアラート ルールについて学習しま
 
 -   解決：
 
-    これは、 TiFlashstorageエンジンの内部的な問題が原因である可能性があります。1 [支持を得ます](/support.md) PingCAP またはコミュニティから提供されました。
+    これは、 TiFlashstorageエンジンの内部的な問題が原因である可能性があります[サポートを受ける](/support.md)は PingCAP またはコミュニティから提供されました。
 
 ## <code>TiFlash_raft_read_index_duration</code> {#code-tiflash-raft-read-index-duration-code}
 
@@ -47,7 +47,7 @@ summary: TiFlashクラスターのアラート ルールについて学習しま
 
     > **注記：**
     >
-    > `read index` 、TiKV リーダーに送信される kvproto 要求です。TiKV 領域の再試行、ビジー ストア、またはネットワークの問題により、要求時間が`read index`と長くなる可能性があります。
+    > `read index`は、TiKV リーダーに送信される kvproto 要求です。TiKV 領域の再試行、ビジー ストア、またはネットワークの問題により、要求時間が`read index`と長くなる可能性があります。
 
 -   解決：
 
@@ -65,4 +65,4 @@ summary: TiFlashクラスターのアラート ルールについて学習しま
 
 -   解決：
 
-    これは、TiKV とプロキシ間の通信エラーが原因である可能性があります。1 [支持を得ます](/support.md) PingCAP またはコミュニティから取得されました。
+    これは、TiKV とプロキシ間の通信エラーが原因である可能性があります。1 [サポートを受ける](/support.md) PingCAP またはコミュニティから取得されました。

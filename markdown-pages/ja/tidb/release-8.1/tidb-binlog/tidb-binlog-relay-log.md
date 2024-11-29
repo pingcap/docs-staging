@@ -1,21 +1,21 @@
 ---
 title: TiDB Binlog Relay Log
-summary: 極端なケースでリレー ログを使用してデータの一貫性を維持する方法を学習します。
+summary: 極端な場合にリレー ログを使用してデータの一貫性を維持する方法を学習します。
 ---
 
 # TiDBBinlogリレーログ {#tidb-binlog-relay-log}
 
 バイナリログを複製する場合、 Drainer はアップストリームからトランザクションを分割し、分割されたトランザクションを同時にダウンストリームに複製します。
 
-上流のクラスターが利用できず、 Drainerが異常終了する極端なケースでは、下流のクラスター (MySQL または TiDB) がデータの不整合がある中間状態になる可能性があります。このような場合、 Drainer はリレー ログを使用して下流のクラスターが一貫した状態であることを確認できます。
+上流のクラスターが利用できず、 Drainer が異常終了する極端なケースでは、下流のクラスター (MySQL または TiDB) がデータの不整合がある中間状態になる可能性があります。このような場合、 Drainer はリレー ログを使用して下流のクラスターが一貫した状態であることを確認できます。
 
 ## Drainerレプリケーション中の一貫した状態 {#consistent-state-during-drainer-replication}
 
-下流のクラスターが一貫した状態に達するということは、下流のクラスターのデータが`tidb_snapshot = ts`設定された上流のスナップショットと同じであることを意味します。
+下流のクラスターが一貫した状態に達するということは、下流のクラスターのデータが`tidb_snapshot = ts`に設定された上流のスナップショットと同じであることを意味します。
 
-チェックポイントの一貫性とは、 Drainerチェックポイントがレプリケーションの一貫性のある状態を`consistent`に保存することを意味します。Drainerが実行されると、 `consistent`は`false`になります。Drainerが正常に終了すると、 `consistent` `true`に設定されます。
+チェックポイントの一貫性とは、 Drainerチェックポイントがレプリケーションの一貫性のある状態を`consistent`に保存することを意味します。Drainerが実行されると、 `consistent` `false`になります。Drainerが正常に終了すると、 `consistent` `true`に設定されます。
 
-次のようにしてダウンストリーム チェックポイント テーブルをクエリできます。
+ダウンストリーム チェックポイント テーブルを次のようにクエリできます。
 
 ```sql
 select * from tidb_binlog.checkpoint;
@@ -39,7 +39,7 @@ Drainer はリレー ログを有効にすると、まずbinlogイベントを�
 
 ### Drainer がリレーログからバイナリログを消費するシナリオをトリガーする {#trigger-scenarios-where-drainer-consumes-binlogs-from-the-relay-log}
 
-Drainerが起動すると、上流クラスターの Placement Driver (PD) への接続に失敗し、チェックポイントで`consistent = false`を検出すると、 Drainer はリレー ログを読み取って、下流クラスターを整合性のある状態に復元しようとします。その後、 Drainerプロセスはチェックポイント`consistent`を`true`に設定して終了します。
+Drainer が起動すると、上流クラスターの Placement Driver (PD) への接続に失敗し、チェックポイントで`consistent = false`を検出すると、 Drainer はリレー ログを読み取って、下流クラスターを整合性のある状態に復元しようとします。その後、 Drainerプロセスはチェックポイント`consistent`を`true`に設定して終了します。
 
 ### リレーログのGCメカニズム {#gc-mechanism-of-relay-log}
 

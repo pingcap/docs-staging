@@ -1,6 +1,6 @@
 ---
 title: TiDB 4.0.16 Release Notes
-summary: TiDB 4.0.16 は 2021 年 12 月 17 日にリリースされました。このリリースには、TiKV とツールの互換性の変更、TiDB、TiKV、ツールの改善、TiDB、TiKV、PD、 TiFlash、TiDB Binlog 、TiCDC のバグ修正が含まれています。バグ修正では、クエリ パニック、誤った結果、パニック、メモリメモリの問題の修正も含まれています。
+summary: TiDB 4.0.16 は 2021 年 12 月 17 日にリリースされました。このリリースには、TiKV とツールの互換性の変更、TiDB、TiKV、ツールの改善、TiDB、TiKV、PD、 TiFlash、TiDB Binlog、TiCDC のバグ修正が含まれています。バグ修正では、クエリ パニック、誤った結果、パニック、メモリリークなどのさまざまな問題に対処しています。このリリースには、TiCDC レプリケーションの中断、コンテナー環境での OOM、メモリリークの問題の修正も含まれています。
 ---
 
 # TiDB 4.0.16 リリースノート {#tidb-4-0-16-release-notes}
@@ -43,7 +43,7 @@ TiDB バージョン: 4.0.16
         -   頻繁な etcd 書き込みが PD サービスに影響を与えないように、EtcdWorker にティック頻度制限を追加します[＃3112](https://github.com/pingcap/tiflow/issues/3112)
         -   TiKV リロードのレート制限制御を最適化して、チェンジフィード初期化中の gPRC 輻輳を軽減します[＃3110](https://github.com/pingcap/tiflow/issues/3110)
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -54,28 +54,28 @@ TiDB バージョン: 4.0.16
     -   プランナーが`join`の無効なプランをキャッシュする場合がある問題を修正[＃28087](https://github.com/pingcap/tidb/issues/28087)
     -   `sql_mode`が空の場合に TiDB が`null`非 NULL 列に挿入できないバグを修正[＃11648](https://github.com/pingcap/tidb/issues/11648)
     -   関数`GREATEST`と`LEAST`の間違った結果型を修正[＃29019](https://github.com/pingcap/tidb/issues/29019)
-    -   グローバルレベルの権限を付与および取り消す操作`grant`および`revoke`を実行するときに発生する`privilege check fail`エラーを修正します[＃29675](https://github.com/pingcap/tidb/issues/29675)
+    -   グローバルレベルの権限を付与および取り消す`grant`および`revoke`操作を実行するときに発生する`privilege check fail`エラーを修正します[＃29675](https://github.com/pingcap/tidb/issues/29675)
     -   `ENUM`データ型[＃29357](https://github.com/pingcap/tidb/issues/29357)で`CASE WHEN`関数を使用するときに発生するpanicを修正
     -   ベクトル化された式[＃29244](https://github.com/pingcap/tidb/issues/29244)の関数`microsecond`の誤った結果を修正
     -   ベクトル化された式[＃28643](https://github.com/pingcap/tidb/issues/28643)の関数`hour`の誤った結果を修正
     -   楽観的トランザクションの競合によりトランザクションが互いにブロックされる可能性がある問題を修正[＃11148](https://github.com/tikv/tikv/issues/11148)
-    -   `auto analyze`の結果[＃29188](https://github.com/pingcap/tidb/issues/29188)からの不完全なログ情報の問題を修正
-    -   `SQL_MODE` &#39;NO_ZERO_IN_DATE&#39; の場合に無効なデフォルト日付を使用してもエラーが報告されない問題を修正しました[＃26766](https://github.com/pingcap/tidb/issues/26766)
-    -   Grafanaのコプロセッサーキャッシュパネルにメトリックが表示されない問題を修正しました。現在、Grafanaは`hits` / `miss` / `evict` [＃26338](https://github.com/pingcap/tidb/issues/26338)の数値を表示します。
+    -   `auto analyze`結果[＃29188](https://github.com/pingcap/tidb/issues/29188)からの不完全なログ情報の問題を修正
+    -   `SQL_MODE`が &#39;NO_ZERO_IN_DATE&#39; の場合に無効なデフォルト日付を使用してもエラーが報告されない問題を修正しました[＃26766](https://github.com/pingcap/tidb/issues/26766)
+    -   Grafanaのコプロセッサーキャッシュパネルにメトリックが表示されない問題を修正しました。現在、Grafanaは`hits` / `miss` / `evict` [＃26338](https://github.com/pingcap/tidb/issues/26338)の数を表示します。
     -   同じパーティションを同時に切り捨てると DDL ステートメントがスタックする問題を修正しました[＃26229](https://github.com/pingcap/tidb/issues/26229)
     -   `Decimal` `String`に変換するときに長さ情報が間違っている問題を修正しました[＃29417](https://github.com/pingcap/tidb/issues/29417)
     -   `NATURAL JOIN`複数のテーブルを結合するために使用した場合、クエリ結果に余分な列が含まれる問題を修正[＃29481](https://github.com/pingcap/tidb/issues/29481)
-    -   `IndexScan`プレフィックス インデックス[＃29711](https://github.com/pingcap/tidb/issues/29711)を使用する場合に`TopN`が誤って`indexPlan`にプッシュダウンされる問題を修正しました。
+    -   `IndexScan`プレフィックス インデックス[＃29711](https://github.com/pingcap/tidb/issues/29711)使用する場合に`TopN`誤って`indexPlan`にプッシュダウンされる問題を修正しました。
     -   `DOUBLE`種類の自動インクリメント列を使用してトランザクションを再試行すると、データが破損する問題を修正しました[＃29892](https://github.com/pingcap/tidb/issues/29892)
 
 -   ティクヴ
 
     -   極端な状況でリージョンのマージ、ConfChange、スナップショットが同時に発生した場合に発生するpanicの問題を修正[＃11475](https://github.com/tikv/tikv/issues/11475)
     -   小数点以下の除算結果がゼロの場合の負の符号の問題を修正[＃29586](https://github.com/pingcap/tidb/issues/29586)
-    -   TiKV メトリクス[＃11299](https://github.com/tikv/tikv/issues/11299)でインスタンスごとの gRPC リクエストの平均レイテンシーが不正確になる問題を修正
+    -   TiKV メトリック[＃11299](https://github.com/tikv/tikv/issues/11299)でインスタンスごとの gRPC リクエストの平均レイテンシーが不正確になる問題を修正
     -   ダウンストリームデータベースが見つからない場合に発生する TiCDCpanicの問題を修正[＃11123](https://github.com/tikv/tikv/issues/11123)
     -   チャネルがいっぱいになるとRaft接続が切断される問題を修正[＃11047](https://github.com/tikv/tikv/issues/11047)
-    -   TiDBが`Max`関数の`Int64`型が符号付き整数であるかどうかを正しく識別できず、 `Max` / `Min` [＃10158](https://github.com/tikv/tikv/issues/10158)の計算結果が間違ってしまう問題を修正しました`Min`
+    -   TiDBが`Max`関数の`Int64`型`Min`符号付き整数であるかどうかを正しく識別できず、 `Max` / `Min` [＃10158](https://github.com/tikv/tikv/issues/10158)の計算結果が間違ってしまう問題を修正しました。
     -   輻輳エラー[＃11082](https://github.com/tikv/tikv/issues/11082)によりCDCがスキャン再試行を頻繁に追加する問題を修正
 
 -   PD
@@ -92,11 +92,11 @@ TiDB バージョン: 4.0.16
 
     -   TiDBBinlog
 
-        -   1 GB を超えるトランザクションを転送するときにDrainerが終了するバグを修正[＃28659](https://github.com/pingcap/tidb/issues/28659)
+        -   1 GB を超えるトランザクションを転送するときにDrainer が終了するバグを修正[＃28659](https://github.com/pingcap/tidb/issues/28659)
 
     -   ティCDC
 
-        -   チェンジフィードチェックポイントラグ[＃3010](https://github.com/pingcap/tiflow/issues/3010)負の値エラーを修正
+        -   チェンジフィードチェックポイントラグ[＃3010](https://github.com/pingcap/tiflow/issues/3010)の負の値エラーを修正
         -   コンテナ環境の OOM を修正[＃1798](https://github.com/pingcap/tiflow/issues/1798)
         -   複数の TiKV がクラッシュした場合や強制再起動中に TiCDC レプリケーションが中断される問題を修正[＃3288](https://github.com/pingcap/tiflow/issues/3288)
         -   DDL [＃3174](https://github.com/pingcap/tiflow/issues/3174)の処理後のメモリリークの問題を修正
@@ -107,7 +107,7 @@ TiDB バージョン: 4.0.16
         -   `tikv_cdc_min_resolved_ts_no_change_for_1m`チェンジフィードがない場合に警告が継続する問題を修正[＃11017](https://github.com/tikv/tikv/issues/11017)
         -   Kafka メッセージの書き込み中にエラーが発生すると TiCDC 同期タスクが一時停止する可能性がある問題を修正[＃2978](https://github.com/pingcap/tiflow/issues/2978)
         -   `force-replicate`が有効になっている場合に、有効なインデックスのない一部のパーティションテーブルが無視される可能性がある問題を修正[＃2834](https://github.com/pingcap/tiflow/issues/2834)
-        -   新しい変更フィード[＃2389](https://github.com/pingcap/tiflow/issues/2389)を作成するときに発生するメモリリークの問題を修正
+        -   新しい変更フィード[＃2389](https://github.com/pingcap/tiflow/issues/2389)作成するときに発生するメモリリークの問題を修正しました
         -   シンクコンポーネントの進行によりデータの不整合が発生する可能性がある問題を修正しました[＃3503](https://github.com/pingcap/tiflow/issues/3503)
         -   株価データのスキャンに時間がかかりすぎると、TiKV が GC を実行するため株価データのスキャンが失敗する可能性がある問題を修正[＃2470](https://github.com/pingcap/tiflow/issues/2470)
         -   changefeed update コマンドがグローバルコマンドラインパラメータを認識しない問題を修正[＃2803](https://github.com/pingcap/tiflow/issues/2803)

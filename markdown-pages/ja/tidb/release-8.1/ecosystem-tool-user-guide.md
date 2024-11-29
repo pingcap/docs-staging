@@ -9,24 +9,24 @@ TiDB は、TiDB の導入と保守、データの管理 (データの移行、�
 
 ## 導入・運用ツール {#deployment-and-operation-tools}
 
-TiDB は、さまざまなシステム環境での展開と運用のニーズを満たすために、 TiUPとTiDB Operatorを提供します。
+TiDB は、さまざまなシステム環境での展開と運用のニーズを満たすために、 TiUPとTiDB Operator を提供します。
 
 ### 物理マシンまたは仮想マシンに TiDB をデプロイて運用する - TiUP {#deploy-and-operate-tidb-on-physical-or-virtual-machines-tiup}
 
-[TiUP](/tiup/tiup-overview.md) 、物理マシンまたは仮想マシン上の TiDB パッケージ マネージャーです。TiUPは、TiDB、PD、TiKV などの複数の TiDB コンポーネントを管理できます。TiDB エコシステム内の任意のコンポーネントを起動するには、 TiUPコマンドを 1 行実行するだけです。
+[TiUP](/tiup/tiup-overview.md) 、物理マシンまたは仮想マシン上の TiDB パッケージ マネージャーです。TiUPは、 TiDB、PD、TiKV などの複数の TiDB コンポーネントを管理できます。TiDB エコシステム内の任意のコンポーネントを起動するには、 TiUPコマンドを 1 行実行するだけです。
 
-TiUP は、 Golangで記述されたクラスタ管理コンポーネント[TiUPクラスター](https://github.com/pingcap/tiup/tree/master/components/cluster)提供します。TiUP クラスタを使用すると、 TiUPクラスタのデプロイ、起動、停止、破棄、スケーリング、アップグレードなどの日常的なデータベース操作を簡単に実行し、TiDB クラスタのパラメータを管理できます。
+TiUP は、 Golangで記述されたクラスタ管理コンポーネント[TiUPクラスター](https://github.com/pingcap/tiup/tree/master/components/cluster)を提供します。TiUP クラスタを使用すると、 TiUPクラスタのデプロイ、起動、停止、破棄、スケーリング、アップグレードなどの日常的なデータベース操作を簡単に実行し、TiDB クラスタのパラメータを管理できます。
 
 TiUPの基本は次のとおりです。
 
 -   [用語と概念](/tiup/tiup-terminology-and-concepts.md)
--   [TiUPを使用して TiDBクラスタをデプロイ](/production-deployment-using-tiup.md)
--   [TiUPコマンドを使用してTiUPコンポーネントを管理する](/tiup/tiup-component-management.md)
+-   [TiUP を使用して TiDBクラスタをデプロイ](/production-deployment-using-tiup.md)
+-   [TiUPTiUPを管理する](/tiup/tiup-component-management.md)
 -   適用可能な TiDB バージョン: v4.0 以降
 
 ### Kubernetes 上で TiDB をデプロイて運用する - TiDB Operator {#deploy-and-operate-tidb-on-kubernetes-tidb-operator}
 
-[TiDB Operator](https://github.com/pingcap/tidb-operator) 、Kubernetes 上の TiDB クラスターを管理するための自動運用システムです。デプロイメント、アップグレード、スケーリング、バックアップ、構成変更など、TiDB のライフサイクル全体を管理します。TiDB TiDB Operator を使用すると、パブリック クラウドまたはプライベート クラウドにデプロイされた Kubernetes クラスターで TiDB をシームレスに実行できます。
+[TiDB Operator](https://github.com/pingcap/tidb-operator) 、Kubernetes 上の TiDB クラスターを管理するための自動運用システムです。デプロイメント、アップグレード、スケーリング、バックアップ、構成変更など、TiDB のライフサイクル全体を管理します。TiDB TiDB Operatorを使用すると、パブリック クラウドまたはプライベート クラウドにデプロイされた Kubernetes クラスターで TiDB をシームレスに実行できます。
 
 TiDB Operatorの基本は次のとおりです。
 
@@ -49,7 +49,7 @@ DM の基本は次のとおりです。
 -   サポートされている TiDB バージョン: すべてのバージョン
 -   Kubernetes サポート: Kubernetes に TiDB DM をデプロイするには[TiDB Operator](https://github.com/pingcap/tidb-operator)使用します。
 
-データ量が 1 TB 未満の場合は、DM を使用して MySQL/MariaDB から TiDB にデータを直接移行することをお勧めします。移行プロセスには、完全なデータ移行と増分データ レプリケーションが含まれます。
+データ量が 1 TB 未満の場合は、DM を使用して MySQL/MariaDB から TiDB にデータを直接移行することをお勧めします。移行プロセスには、完全なデータ移行と増分データレプリケーションが含まれます。
 
 データ量が 1 TB を超える場合は、次の手順を実行します。
 
@@ -63,7 +63,7 @@ DM の基本は次のとおりです。
 
 ### 完全なデータエクスポート - Dumpling {#full-data-export-dumpling}
 
-[Dumpling](/dumpling-overview.md) 、MySQL または TiDB からの論理的な完全データ エクスポートをサポートします。
+[Dumpling](/dumpling-overview.md) MySQL または TiDB からの論理的な完全データ エクスポートをサポートします。
 
 Dumplingの基本は次のとおりです。
 
@@ -87,7 +87,7 @@ TiDB Lightning は次のモードをサポートしています。
 
 TiDB Lightningの基本は次のとおりです。
 
--   情報元：
+-   データソース:
     -   Dumplingの出力ファイル
     -   その他の互換性のあるCSVファイル
     -   Amazon Auroraまたは Apache Hive からエクスポートされた Parquet ファイル
@@ -100,7 +100,7 @@ TiDB Lightningの基本は次のとおりです。
 
 ### バックアップと復元 - バックアップと復元 (BR) {#backup-and-restore-backup-x26-restore-br}
 
-[復元する](/br/backup-and-restore-overview.md) (BR) は、TiDB クラスター データの分散バックアップと復元のためのコマンドライン ツールです。BRは、膨大なデータ量の TiDB クラスターを効率的にバックアップおよび復元できます。
+[バックアップと復元](/br/backup-and-restore-overview.md) (BR) は、TiDB クラスター データの分散バックアップと復元のためのコマンドライン ツールです。BRは、膨大なデータ量の TiDB クラスターを効率的にバックアップおよび復元できます。
 
 BRの基本は次のとおりです。
 
@@ -111,7 +111,7 @@ BRの基本は次のとおりです。
 
 -   サポートされている TiDB バージョン: v4.0 以降
 
--   Kubernetes サポート: はい。詳細については[BRを使用して S3 互換ストレージにデータをバックアップする](https://docs.pingcap.com/tidb-in-kubernetes/stable/backup-to-aws-s3-using-br)と[BRを使用して S3 互換ストレージからデータを復元する](https://docs.pingcap.com/tidb-in-kubernetes/stable/restore-from-aws-s3-using-br)を参照してください。
+-   Kubernetes サポート: はい。詳細については[BR を使用して S3 互換ストレージにデータをバックアップする](https://docs.pingcap.com/tidb-in-kubernetes/stable/backup-to-aws-s3-using-br)と[BRを使用して S3 互換ストレージからデータを復元する](https://docs.pingcap.com/tidb-in-kubernetes/stable/restore-from-aws-s3-using-br)参照してください。
 
 ### 増分データレプリケーション - TiCDC {#incremental-data-replication-ticdc}
 
@@ -125,14 +125,14 @@ TiCDC の基本は次のとおりです。
 
 ### 増分ログレプリケーション - TiDB Binlog {#incremental-log-replication-tidb-binlog}
 
-[TiDBBinlog](/tidb-binlog/tidb-binlog-overview.md) 、TiDB クラスターのbinlogを収集し、ほぼリアルタイムのデータ複製とバックアップを提供するツールです。TiDB クラスターをプライマリ TiDB クラスターのセカンダリ クラスターにするなど、TiDB クラスター間の増分データ複製に使用できます。
+[TiDBBinlog](/tidb-binlog/tidb-binlog-overview.md) TiDB クラスターのbinlogを収集し、ほぼリアルタイムのデータ複製とバックアップを提供するツールです。TiDB クラスターをプライマリ TiDB クラスターのセカンダリ クラスターにするなど、TiDB クラスター間の増分データ複製に使用できます。
 
 TiDB Binlogの基本は次のとおりです。
 
 -   出典: TiDB クラスター
 -   ターゲット: TiDB クラスター、MySQL、Kafka、または増分バックアップ ファイル
 -   サポートされている TiDB バージョン: v2.1 以降
--   Kubernetes サポート: はい。詳細については[TiDBBinlogクラスタ操作](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-tidb-binlog)と[Kubernetes 上の TiDB Binlog Drainer構成](https://docs.pingcap.com/tidb-in-kubernetes/stable/configure-tidb-binlog-drainer)を参照してください。
+-   Kubernetes サポート: はい。詳細については[TiDBBinlogクラスタ操作](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-tidb-binlog)と[Kubernetes での TiDBBinlogDrainer構成](https://docs.pingcap.com/tidb-in-kubernetes/stable/configure-tidb-binlog-drainer)参照してください。
 
 ### 同期差分インスペクター {#sync-diff-inspector}
 
@@ -146,4 +146,4 @@ sync-diff-inspector の基本は次のとおりです。
 
 ## OLAP クエリ ツール - TiSpark {#olap-query-tool-tispark}
 
-[ティスパーク](/tispark-overview.md)は、OLAP クエリの複雑さに対処するために PingCAP によって開発された製品です。Spark の強みと、分散 TiKV クラスターおよび TiDB の機能を組み合わせて、ワンストップのハイブリッド トランザクションおよび分析処理 (HTAP) ソリューションを提供します。
+[ティスパーク](/tispark-overview.md) 、OLAP クエリの複雑さに対処するために PingCAP によって開発された製品です。Spark の強みと、分散 TiKV クラスターおよび TiDB の機能を組み合わせて、ワンストップのハイブリッド トランザクションおよび分析処理 (HTAP) ソリューションを提供します。

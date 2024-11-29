@@ -330,7 +330,7 @@
         -   [PDスケジュール](/best-practices/pd-scheduling-best-practices.md)
         -   [大規模リージョンによる TiKV性能チューニング](/best-practices/massive-regions-best-practices.md)
         -   [3ノードのハイブリッド展開](/best-practices/three-nodes-hybrid-deployment.md)
-        -   [3 つのデータセンター展開におけるローカル読み取り](/best-practices/three-dc-local-read.md)
+        -   [3 つのデータ センター展開でのローカル読み取り](/best-practices/three-dc-local-read.md)
         -   [UUIDを使用する](/best-practices/uuid.md)
         -   [読み取り専用ストレージノード](/best-practices/readonly-nodes.md)
     -   [配置ルールを使用する](/configure-placement-rules.md)

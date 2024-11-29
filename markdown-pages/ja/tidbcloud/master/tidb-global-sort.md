@@ -16,11 +16,11 @@ summary: TiDB グローバル ソートの使用例、制限、使用方法、�
 
 > **注記：**
 >
-> この機能は[TiDB サーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-serverless)クラスターでは使用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ## 概要 {#overview}
 
-TiDB グローバル ソート機能は、データ インポートおよび DDL (データ定義言語) 操作の安定性と効率性を高めます。1 [TiDB 分散実行フレームワーク (DXF)](/tidb-distributed-execution-framework.md)汎用演算子として機能し、クラウド上でグローバル ソート サービスを提供します。
+TiDB グローバル ソート機能は、データ インポートおよび DDL (データ定義言語) 操作の安定性と効率性を高めます[TiDB 分散実行フレームワーク (DXF)](/tidb-distributed-execution-framework.md)の汎用演算子として機能し、クラウド上でグローバル ソート サービスを提供します。
 
 現在、グローバルソート機能は、クラウドstorageとして Amazon S3 の使用をサポートしています。
 

@@ -5,7 +5,7 @@ summary: TiDB データベースの SHOW [FULL] COLUMNS FROM の使用法の概�
 
 # [全]列を表示 {#show-full-columns-from}
 
-ステートメント`SHOW [FULL] COLUMNS FROM <table_name>` 、テーブルまたはビューの列を便利な表形式で記述します。オプションのキーワード`FULL`は、現在のユーザーがその列に対して持つ権限と、テーブル定義からの`comment`表示します。
+ステートメント`SHOW [FULL] COLUMNS FROM <table_name>` 、テーブルまたはビューの列を便利な表形式で記述します。オプションのキーワード`FULL`現在のユーザーがその列に対して持つ権限と、テーブル定義からの`comment`を表示します。
 
 ステートメント`SHOW [FULL] FIELDS FROM <table_name>` 、 `DESC <table_name>` 、 `DESCRIBE <table_name>` 、および`EXPLAIN <table_name>`は、このステートメントのエイリアスです。
 
@@ -129,7 +129,7 @@ mysql> SHOW FULL COLUMNS FROM mysql.user;
 
 ## MySQL 互換性 {#mysql-compatibility}
 
-TiDB の`SHOW [FULL] COLUMNS FROM`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告](https://docs.pingcap.com/tidb/stable/support) 。
+TiDB の`SHOW [FULL] COLUMNS FROM`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
 
 ## 参照 {#see-also}
 

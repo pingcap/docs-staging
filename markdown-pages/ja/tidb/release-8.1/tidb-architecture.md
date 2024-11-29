@@ -24,17 +24,17 @@ summary: TiDBプラットフォームの主要なアーキテクチャコンポ�
 
 ## TiDBサーバー {#tidb-server}
 
-[TiDBサーバー](/tidb-computing.md) 、MySQL プロトコルの接続エンドポイントを外部に公開するステートレス SQLレイヤーです。TiDBサーバーはSQL 要求を受け取り、SQL 解析と最適化を実行し、最終的に分散実行プランを生成します。水平方向に拡張可能で、TiProxy、Linux Virtual Server (LVS)、HAProxy、ProxySQL、F5 などの負荷分散コンポーネントを通じて外部に統一されたインターフェイスを提供します。データを保存せず、コンピューティングと SQL 分析のみを目的としており、実際のデータ読み取り要求を TiKV ノード (またはTiFlashノード) に送信します。
+[TiDBサーバー](/tidb-computing.md)は、MySQL プロトコルの接続エンドポイントを外部に公開するステートレス SQLレイヤーです。TiDBサーバーはSQL 要求を受け取り、SQL 解析と最適化を実行し、最終的に分散実行プランを生成します。水平方向に拡張可能で、TiProxy、Linux Virtual Server (LVS)、HAProxy、ProxySQL、F5 などの負荷分散コンポーネントを通じて外部に統一されたインターフェイスを提供します。データを保存せず、コンピューティングと SQL 分析のみを目的としており、実際のデータ読み取り要求を TiKV ノード (またはTiFlashノード) に送信します。
 
 ## 配置Driver(PD)サーバー {#placement-driver-pd-server}
 
-[PDサーバー](/tidb-scheduling.md) 、クラスタ全体のメタデータ管理コンポーネントです。各 TiKV ノードのリアルタイムデータ分布と TiDB クラスタ全体のトポロジ構造のメタデータを保存し、TiDB ダッシュボード管理 UI を提供し、分散トランザクションにトランザクション ID を割り当てます。PDサーバーは、クラスタのメタデータを保存するだけでなく、TiKV ノードからリアルタイムに報告されたデータ分布状態に応じて、特定の TiKV ノードにデータスケジュールコマンドを送信するため、TiDB クラスタ全体の「頭脳」です。また、PDサーバーは少なくとも 3 つのノードで構成され、高可用性を備えています。奇数の PD ノードを展開することをお勧めします。
+[PDサーバー](/tidb-scheduling.md)は、クラスタ全体のメタデータ管理コンポーネントです。各 TiKV ノードのリアルタイム データ分布と TiDB クラスタ全体のトポロジ構造のメタデータを保存し、TiDB ダッシュボード管理 UI を提供し、分散トランザクションにトランザクション ID を割り当てます。PDサーバーは、クラスタのメタデータを保存するだけでなく、TiKV ノードからリアルタイムに報告されたデータ分布状態に応じて、特定の TiKV ノードにデータ スケジューリング コマンドを送信するため、TiDB クラスタ全体の「頭脳」です。また、PDサーバーは少なくとも 3 つのノードで構成され、高可用性を備えています。奇数の PD ノードを展開することをお勧めします。
 
 ## ストレージサーバー {#storage-servers}
 
 ### TiKVサーバー {#tikv-server}
 
-[TiKVサーバー](/tidb-storage.md)データの保存を担当します。TiKV は分散トランザクション キー値storageエンジンです。
+[TiKVサーバー](/tidb-storage.md)はデータの保存を担当します。TiKV は分散トランザクション キー値storageエンジンです。
 
 <CustomContent platform="tidb">
 
@@ -52,4 +52,4 @@ summary: TiDBプラットフォームの主要なアーキテクチャコンポ�
 
 ### TiFlashサーバー {#tiflash-server}
 
-[TiFlashサーバー](/tiflash/tiflash-overview.md)特殊なタイプのstorageサーバーです。通常のTiKVノードとは異なり、 TiFlashは列ごとにデータを保存し、主に分析処理を高速化するように設計されています。
+[TiFlashサーバー](/tiflash/tiflash-overview.md)は特殊なタイプのstorageサーバーです。通常のTiKVノードとは異なり、 TiFlashは列ごとにデータを保存し、主に分析処理を高速化するように設計されています。

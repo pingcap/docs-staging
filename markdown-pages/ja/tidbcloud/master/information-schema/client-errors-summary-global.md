@@ -1,6 +1,6 @@
 ---
 title: CLIENT_ERRORS_SUMMARY_GLOBAL
-summary: CLIENT_ERRORS_SUMMARY_GLOBAL INFORMATION_SCHEMA テーブルについて学習します。
+summary: CLIENT_ERRORS_SUMMARY_GLOBAL` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
 # クライアント_エラー_概要_グローバル {#client-errors-summary-global}
@@ -13,7 +13,7 @@ summary: CLIENT_ERRORS_SUMMARY_GLOBAL INFORMATION_SCHEMA テーブルについ�
 -   権限エラー。
 -   テーブルが存在しません。
 
-クライアント エラーは MySQLサーバープロトコルを介してクライアントに返され、アプリケーションは適切なアクションを実行する必要があります。1 `INFORMATION_SCHEMA.CLIENT_ERRORS_SUMMARY_GLOBAL`表は概要を示しており、アプリケーションが TiDBサーバーから返されたエラーを正しく処理 (またはログに記録) していないシナリオで役立ちます。
+クライアント エラーは MySQLサーバープロトコルを介してクライアントに返され、アプリケーションは適切なアクションを実行することが期待されます。1 `INFORMATION_SCHEMA.CLIENT_ERRORS_SUMMARY_GLOBAL`の表は概要を示しており、アプリケーションが TiDBサーバーから返されたエラーを正しく処理 (またはログに記録) していないシナリオで役立ちます。
 
 要約されたカウントは、ステートメント`FLUSH CLIENT_ERRORS_SUMMARY`でリセットできます。要約は各 TiDBサーバーにローカルであり、メモリ内にのみ保持されます。要約は、TiDBサーバーを再起動すると失われます。
 
@@ -47,7 +47,7 @@ DESC CLIENT_ERRORS_SUMMARY_GLOBAL;
 -   `FIRST_SEEN` : このエラー (または警告) が初めて送信されたとき。
 -   `LAST_SEEN` : このエラー (または警告) が最後に送信された時刻。
 
-次の例は、ローカル TiDBサーバーに接続するときに生成される警告を示しています。 `FLUSH CLIENT_ERRORS_SUMMARY`実行すると、サマリーがリセットされます。
+次の例は、ローカル TiDBサーバーに接続するときに生成される警告を示しています。 `FLUSH CLIENT_ERRORS_SUMMARY`を実行すると、サマリーがリセットされます。
 
 ```sql
 SELECT 0/0;

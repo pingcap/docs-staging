@@ -53,7 +53,7 @@ Microsoft アカウントでサインインするには、次の手順を実行�
 
 1.  TiDB Cloud [ログイン](https://tidbcloud.com/)ページに移動します。
 
-2.  **「Microsoft でサインイン」を**クリックします。Microsoft のログイン ページに移動します。
+2.  **「Microsoft でサインイン」**をクリックします。Microsoft のログイン ページに移動します。
 
 3.  画面の指示に従って、Microsoft のユーザー名とパスワードを入力します。
 

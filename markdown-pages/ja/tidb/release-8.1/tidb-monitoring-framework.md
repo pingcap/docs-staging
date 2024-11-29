@@ -5,7 +5,7 @@ summary: Prometheus と Grafana を使用して、TiDB 監視フレームワー�
 
 # TiDB 監視フレームワークの概要 {#tidb-monitoring-framework-overview}
 
-TiDB 監視フレームワークは、Prometheus と Grafana という 2 つのオープン ソース プロジェクトを採用しています。TiDB は、 [プロメテウス](https://prometheus.io)を使用して監視およびパフォーマンス メトリックを保存し、 [グラファナ](https://grafana.com/grafana)使用してこれらのメトリックを視覚化します。
+TiDB 監視フレームワークは、Prometheus と Grafana という 2 つのオープン ソース プロジェクトを採用しています。TiDB は、 [プロメテウス](https://prometheus.io)使用して監視とパフォーマンス メトリックを保存し、 [グラファナ](https://grafana.com/grafana)使用してこれらのメトリックを視覚化します。
 
 ## TiDB の Prometheus について {#about-prometheus-in-tidb}
 
@@ -17,7 +17,7 @@ Prometheus は複数のコンポーネントで構成されています。現在
 -   アプリケーションで必要なメトリックをカスタマイズするためのクライアントライブラリ
 -   アラートメカニズム用のAlertmanager
 
-回路図は以下の通りです：
+図は以下のとおりです。
 
 ![diagram](https://download.pingcap.com/images/docs/prometheus-in-tidb.png)
 

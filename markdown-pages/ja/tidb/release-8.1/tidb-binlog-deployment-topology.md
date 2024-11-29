@@ -25,7 +25,7 @@ TiDB Binlog は、増分データのレプリケーションに広く使用さ�
 -   [TiDB Binlogトポロジのシンプルなテンプレート (ダウンストリーム タイプとして`file`を使用)](https://github.com/pingcap/docs/blob/master/config-templates/simple-file-binlog.yaml)
 -   [TiDB Binlogトポロジの複雑なテンプレート](https://github.com/pingcap/docs/blob/master/config-templates/complex-tidb-binlog.yaml)
 
-上記の TiDB クラスタ トポロジ ファイルの構成項目の詳細については、 [TiUPを使用して TiDB をデプロイするためのトポロジコンフィグレーションファイル](/tiup/tiup-cluster-topology-reference.md)を参照してください。
+上記の TiDB クラスタ トポロジ ファイルの構成項目の詳細については、 [TiUP を使用して TiDB をデプロイするためのトポロジコンフィグレーションファイル](/tiup/tiup-cluster-topology-reference.md)参照してください。
 
 ### 主なパラメータ {#key-parameters}
 
@@ -39,7 +39,7 @@ TiDB Binlog は、増分データのレプリケーションに広く使用さ�
 -   `server_configs.tidb.binlog.ignore-error: true`
 
     -   高可用性のシナリオでは、この構成を有効にすることをお勧めします。
-    -   `true`に設定すると、エラーが発生すると、TiDB はbinlogへのデータの書き込みを停止し、監視メトリック`tidb_server_critical_error_total`の値に`1`を追加します。
+    -   `true`に設定すると、エラーが発生すると、TiDB はbinlogへのデータの書き込みを停止し、監視メトリック`tidb_server_critical_error_total`の値に`1`追加します。
     -   `false`に設定すると、TiDB がbinlogへのデータの書き込みに失敗すると、TiDB サービス全体が停止します。
 
 -   `drainer_servers.config.syncer.db-type`
@@ -53,5 +53,5 @@ TiDB Binlog は、増分データのレプリケーションに広く使用さ�
 > **注記：**
 >
 > -   構成ファイル テンプレートを編集するときに、カスタム ポートまたはディレクトリが必要ない場合は、IP のみを変更します。
-> -   構成ファイルで`tidb`ユーザーを手動で作成する必要はありません。TiUP クラスターコンポーネントは、ターゲット マシンに`tidb`ユーザーを自動的に作成します。ユーザーをカスタマイズすることも、ユーザーをコントロール マシンと一致させることもできます。
+> -   構成ファイルで`tidb`ユーザーを手動で作成する必要はありません。TiUPTiUPコンポーネントは、ターゲット マシンに`tidb`ユーザーを自動的に作成します。ユーザーをカスタマイズすることも、ユーザーをコントロール マシンと一致させることもできます。
 > -   デプロイメント ディレクトリを相対パスとして構成すると、クラスターはユーザーのホーム ディレクトリにデプロイされます。

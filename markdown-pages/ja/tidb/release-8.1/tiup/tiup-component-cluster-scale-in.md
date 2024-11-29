@@ -1,6 +1,6 @@
 ---
 title: tiup cluster scale-in
-summary: tiup cluster scale-in コマンドは、指定されたノードをオフラインにしてクラスターから削除し、残りのファイルを削除することで、クラスターをスケールインするために使用されます。TiKV、 TiFlash、TiDB Binlogなどのコンポーネントは非同期で処理され、チェックとクリーンアップのための追加の手順が必要です。このコマンドには、ノードの指定、強制削除、転送タイムアウト、ヘルプ情報のオプションも含まれています。
+summary: tiup cluster scale-in` コマンドは、指定されたノードをオフラインにしてクラスターから削除し、残りのファイルを削除することで、クラスターをスケールインするために使用されます。TiKV、 TiFlash、TiDB Binlogなどのコンポーネントは非同期で処理され、チェックとクリーンアップのための追加の手順が必要です。このコマンドには、ノードの指定、強制削除、転送タイムアウト、ヘルプ情報のオプションも含まれています。
 ---
 
 # tiup cluster scale-in {#tiup-cluster-scale-in}
@@ -9,7 +9,7 @@ summary: tiup cluster scale-in コマンドは、指定されたノードをオ�
 
 ## コンポーネントのオフラインプロセスの特別な処理 {#particular-handling-of-components-offline-process}
 
-TiKV、 TiFlash、および TiDB Binlogコンポーネントは非同期的にオフラインになるため (最初にTiUP がAPI を介してノードを削除する必要がある)、停止プロセスには長い時間がかかる (ノードが正常にオフラインになったかどうかをTiUPが継続的に確認する必要がある) ため、TiKV、 TiFlash、および TiDB Binlogコンポーネントは特に次のように処理されます。
+TiKV、 TiFlash、および TiDB Binlogコンポーネントは非同期的にオフラインになるため (最初にTiUP がAPI を介してノードを削除する必要がある)、停止プロセスには長い時間がかかる (ノードが正常にオフラインになったかどうかをTiUP が継続的に確認する必要がある) ため、TiKV、 TiFlash、および TiDB Binlogコンポーネントは特に次のように処理されます。
 
 -   TiKV、 TiFlash、および TiDB Binlogコンポーネントの場合:
 
@@ -32,7 +32,7 @@ TiKV、 TiFlash、および TiDB Binlogコンポーネントは非同期的に�
 tiup cluster scale-in <cluster-name> [flags]
 ```
 
-`<cluster-name>`はスケールインするクラスターの名前です。クラスター名を忘れた場合は、 [`tiup cluster list`](/tiup/tiup-component-cluster-list.md)コマンドを使用して確認できます。
+`<cluster-name>`スケールインするクラスターの名前です。クラスター名を忘れた場合は、 [`tiup cluster list`](/tiup/tiup-component-cluster-list.md)コマンドを使用して確認できます。
 
 ## オプション {#options}
 
@@ -46,7 +46,7 @@ tiup cluster scale-in <cluster-name> [flags]
 
 -   指定されたノードをクラスターから強制的に削除するかどうかを制御します。オフラインにするノードのホストがダウンしている場合があり、その場合は SSH 経由でノードに接続して操作を行うことができません。その場合は、 `--force`オプションを使用してクラスターからノードを強制的に削除できます。
 -   データ型: `BOOLEAN`
--   このオプションは、値`false`でデフォルトで無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにする必要があります。
+-   このオプションは、値`false`でデフォルトで無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにします。
 
 > **警告：**
 >
@@ -66,7 +66,7 @@ tiup cluster scale-in <cluster-name> [flags]
 
 -   ヘルプ情報を出力します。
 -   データ型: `BOOLEAN`
--   このオプションは、値`false`でデフォルトで無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにする必要があります。
+-   このオプションは、値`false`でデフォルトで無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにします。
 
 ## 出力 {#output}
 

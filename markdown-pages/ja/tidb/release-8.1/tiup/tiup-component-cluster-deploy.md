@@ -14,7 +14,7 @@ tiup cluster deploy <cluster-name> <version> <topology.yaml> [flags]
 ```
 
 -   `<cluster-name>` : 新しいクラスターの名前。既存のクラスター名と同じにすることはできません。
--   `<version>` : デプロイする TiDB クラスターのバージョン番号 (例: `v8.1.0` 。
+-   `<version>` : デプロイする TiDB クラスターのバージョン番号 (例: `v8.1.1` 。
 -   `<topology.yaml>` : 準備された[トポロジファイル](/tiup/tiup-cluster-topology-reference.md) 。
 
 ## オプション {#options}
@@ -33,13 +33,13 @@ tiup cluster deploy <cluster-name> <version> <topology.yaml> [flags]
 
 ### -p, --パスワード {#p-password}
 
--   ターゲット マシンに接続するために使用するパスワードを指定します。このオプションは`-i/--identity_file`と同時に使用しないでください。
+-   ターゲット マシンへの接続に使用するパスワードを指定します。このオプションは`-i/--identity_file`と同時に使用しないでください。
 -   データ型: `BOOLEAN`
 -   このオプションはデフォルトでは無効になっており、デフォルト値は`false`です。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにします。
 
 ### --設定チェックを無視 {#ignore-config-check}
 
--   このオプションは、構成チェックをスキップするために使用されます。コンポーネントのバイナリ ファイルがデプロイされた後、 `<binary> --config-check <config-file>`を使用して TiDB、TiKV、および PD コンポーネントの構成がチェックされます。3 `<binary>` 、デプロイされたバイナリ ファイルのパスです。5 `<config-file>` 、ユーザー構成に基づいて生成された構成ファイルです。
+-   このオプションは、構成チェックをスキップするために使用されます。コンポーネントのバイナリ ファイルがデプロイされた後、 `<binary> --config-check <config-file>`を使用して TiDB、TiKV、および PD コンポーネントの構成がチェックされます。3 は、デプロイされたバイナリ ファイルのパスです`<binary>` `<config-file>` 、ユーザー構成に基づいて生成された構成ファイルです。
 -   このオプションはデフォルトでは無効になっており、デフォルト値は`false`です。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにします。
 -   デフォルト: false
 
@@ -67,4 +67,4 @@ tiup cluster deploy <cluster-name> <version> <topology.yaml> [flags]
 
 デプロイメント ログ。
 
-[&lt;&lt; 前のページに戻る - TiUP クラスタコマンド リスト](/tiup/tiup-component-cluster.md#command-list)
+[&lt;&lt; 前のページに戻る - TiUPクラスタコマンド リスト](/tiup/tiup-component-cluster.md#command-list)

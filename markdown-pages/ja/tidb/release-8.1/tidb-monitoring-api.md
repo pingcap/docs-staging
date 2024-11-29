@@ -27,14 +27,14 @@ summary: TiDB 監視サービスの API を学習します。
 curl http://127.0.0.1:10080/status
 {
     connections: 0,  # The current number of clients connected to the TiDB server.
-    version: "8.0.11-TiDB-v8.1.0",  # The TiDB version number.
+    version: "8.0.11-TiDB-v8.1.1",  # The TiDB version number.
     git_hash: "778c3f4a5a716880bcd1d71b257c8165685f0d70"  # The Git Hash of the current TiDB code.
 }
 ```
 
 #### 保管情報 {#storage-information}
 
-次の例では、 `http://${host}:${port}/schema_storage/${db}/${table}`を使用して特定のデータ テーブルのstorage情報を取得します。結果は**JSON**形式で返されます。
+次の例では、 `http://${host}:${port}/schema_storage/${db}/${table}`使用して特定のデータ テーブルのstorage情報を取得します。結果は**JSON**形式で返されます。
 
 ```bash
 curl http://127.0.0.1:10080/schema_storage/mysql/stats_histograms

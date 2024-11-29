@@ -61,7 +61,7 @@ v5.1 の主な新機能または改善点は次のとおりです。
 
 -   アップグレード前に、TiDB 構成[`feedback-probability`](https://docs.pingcap.com/tidb/v5.1/tidb-configuration-file#feedback-probability)の値を確認してください。値が 0 でない場合、アップグレード後に「回復可能な goroutine でpanicが発生しました」というエラーが発生しますが、このエラーはアップグレードには影響しません。
 -   TiDB の Go コンパイラ バージョンを go1.13.7 から go1.16.4 にアップグレードすると、TiDB のパフォーマンスが向上します。TiDB 開発者の場合は、スムーズなコンパイルを確実に実行できるように Go コンパイラ バージョンをアップグレードしてください。
--   TiDB ローリング アップグレード中に、TiDB Binlogを使用するクラスター内にクラスター化インデックスを持つテーブルを作成しないようにしてください。
+-   TiDB ローリング アップグレード中に、TiDB Binlog を使用するクラスター内にクラスター化インデックスを持つテーブルを作成しないようにしてください。
 -   TiDB ローリング アップグレード中は、 `alter table ... modify column`または`alter table ... change column`のようなステートメントを実行しないでください。
 -   v5.1 以降、各テーブルのTiFlashレプリカを構築するときに、システム テーブルのレプリカを設定することはサポートされなくなりました。クラスターをアップグレードする前に、関連するシステム テーブル レプリカをクリアする必要があります。そうしないと、アップグレードは失敗します。
 -   TiCDC の`cdc cli changefeed`コマンドの`--sort-dir`パラメータは非推奨です。代わりに、 `cdc server`コマンドで`--sort-dir`設定できます[＃1795](https://github.com/pingcap/tiflow/pull/1795)
@@ -75,7 +75,7 @@ v5.1 の主な新機能または改善点は次のとおりです。
 
     この機能により、TiDB は階層データを再帰的または非再帰的にクエリする機能を強化し、人事、製造、金融市場、教育などの複数の分野でツリー クエリを使用してアプリケーション ロジックを実装するニーズを満たします。
 
-    TiDBでは、共通テーブル式を使用するために`WITH` [＃17472](https://github.com/pingcap/tidb/issues/17472)を適用できます[ユーザードキュメント](/sql-statements/sql-statement-with.md)
+    TiDBでは、共通テーブル式[ユーザードキュメント](/sql-statements/sql-statement-with.md)使用するために`WITH`文を適用できます[＃17472](https://github.com/pingcap/tidb/issues/17472)
 
 -   MySQL 8.0 の動的権限機能をサポートします。
 
@@ -93,17 +93,17 @@ v5.1 の主な新機能または改善点は次のとおりです。
 
 -   Security強化モード (SEM) の新しい構成項目を追加します。これにより、TiDB 管理者権限がより細かく分割されます。
 
-    Security強化モードはデフォルトで無効になっています。有効にするには、 [ユーザードキュメント](/system-variables.md#tidb_enable_enhanced_security)参照してください。
+    Security強化モードはデフォルトで無効になっています。有効にするには、 [ユーザードキュメント](/system-variables.md#tidb_enable_enhanced_security)を参照してください。
 
--   オンラインでの列タイプ変更機能を強化します。1 ステートメントを使用したオンラインでの列タイプ変更をサポートします。これには`ALTER TABLE`が含まれますが、これらに限定されません。
+-   オンラインでの列タイプ変更機能を強化します`ALTER TABLE`ステートメントを使用したオンラインでの列タイプ変更をサポートします。これには以下が含まれますが、これらに限定されません。
 
-    -   `VARCHAR`を`BIGINT`に変更
+    -   `VARCHAR` `BIGINT`に変更
     -   `DECIMAL`精度の変更
     -   `VARCHAR(10)`の長さを`VARCHAR(5)`に圧縮する
 
     [ユーザードキュメント](/sql-statements/sql-statement-modify-column.md)
 
--   指定された時点または指定された時間範囲から履歴データを読み取るために使用される新しい実験的機能であるステイル読み取りを実行するための新しい SQL 構文`AS OF TIMESTAMP`を導入します。
+-   指定された時点または指定された時間範囲から履歴データを読み取るために使用される新しい実験的機能であるステイル読み取り を実行するための新しい SQL 構文`AS OF TIMESTAMP`を導入します。
 
     [ユーザードキュメント](/stale-read.md) , [＃21094](https://github.com/pingcap/tidb/issues/21094)
 
@@ -125,7 +125,7 @@ v5.1 の主な新機能または改善点は次のとおりです。
 
 -   ロックビュー機能のサポート（Experimental）
 
-    ロックビュー機能は、悲観的ロックのロック競合とロック待機に関する詳細情報を提供し、DBA がトランザクションのロック状態を観察し、デッドロックの問題をトラブルシューティングするのに役立ちます[＃24199](https://github.com/pingcap/tidb/issues/24199)
+    ロックビュー機能は、ロック競合や悲観的ロックのロック待機に関する詳細情報を提供し、DBA がトランザクションのロック状態を観察し、デッドロックの問題をトラブルシューティングするのに役立ちます[＃24199](https://github.com/pingcap/tidb/issues/24199)
 
     ユーザードキュメント:
 
@@ -185,12 +185,12 @@ TiDB は、実行ステータスや失敗ステータスなど、テレメトリ
 
     -   組み込み関数`VITESS_HASH()` [＃23915](https://github.com/pingcap/tidb/pull/23915)をサポート
     -   `WHERE`節[＃23619](https://github.com/pingcap/tidb/issues/23619)で列挙型を使用する場合のパフォーマンスを向上させるために、列挙型のデータを TiKV にプッシュダウンすることをサポートします。
-    -   `RENAME USER`構文[＃23648](https://github.com/pingcap/tidb/issues/23648)をサポートする
+    -   `RENAME USER`構文[＃23648](https://github.com/pingcap/tidb/issues/23648)サポートする
     -   ROW_NUMBER() [＃23807](https://github.com/pingcap/tidb/issues/23807)を使用してデータをページングする際の TiDB OOM 問題を解決するためにウィンドウ関数の計算を最適化します。
-    -   `UNION ALL`を使用して多数の`SELECT`文を結合する場合のTiDB OOM問題を解決するために`UNION ALL`の計算を最適化します[＃21441](https://github.com/pingcap/tidb/issues/21441)
+    -   `UNION ALL`使用して多数の`SELECT`文を結合する場合のTiDB OOM問題を解決するために`UNION ALL`の計算を最適化します[＃21441](https://github.com/pingcap/tidb/issues/21441)
     -   パーティションテーブルの動的プルーニングモードを最適化してパフォーマンスと安定性を向上[＃24150](https://github.com/pingcap/tidb/issues/24150)
     -   複数のシナリオで発生する`Region is Unavailable`問題を修正する[プロジェクト#62](https://github.com/pingcap/tidb/projects/62)
-    -   頻繁なスケジュール設定で発生する可能性のある複数の`Region is Unavailable`つの問題を修正
+    -   頻繁なスケジュール設定で発生する可能性のある複数の`Region is Unavailable`問題を修正
     -   一部の高負荷書き込み状況で発生する可能性のある`Region is Unavailable`問題を修正
     -   キャッシュされた統計が最新である場合は、CPU使用率の上昇を避けるために、 `mysql.stats_histograms`テーブルを頻繁に読み取らないようにします[＃24317](https://github.com/pingcap/tidb/pull/24317)
 
@@ -209,7 +209,7 @@ TiDB は、実行ステータスや失敗ステータスなど、テレメトリ
 
 -   TiFlash
 
-    -   `Union All` `TopN`関数を`Limit`
+    -   `Union All` `TopN` `Limit`をサポート
     -   MPP モードで左外部結合と半反結合を含むカルテシアン積をサポート
     -   実行中のDDL文と読み取り操作が相互にブロックされないようにロック操作を最適化します。
     -   TiFlashによる期限切れデータのクリーンアップを最適化
@@ -239,7 +239,7 @@ TiDB は、実行ステータスや失敗ステータスなど、テレメトリ
         -   いくつかのログメッセージの説明をより明確かつ問題の診断に役立つように改善しました[＃1759](https://github.com/pingcap/tiflow/pull/1759)
         -   バックプレッシャー機能をサポートし、TiCDCスキャン速度が下流の処理能力を感知できるようにします[＃10151](https://github.com/tikv/tikv/pull/10151)
         -   TiCDCが初期スキャンを実行する際のメモリ使用量を削減する[＃10133](https://github.com/tikv/tikv/pull/10133)
-        -   悲観的トランザクションにおける TiCDC 古い値のキャッシュヒット率を向上させる[＃10089](https://github.com/tikv/tikv/pull/10089)
+        -   悲観的トランザクションにおける TiCDC の古い値のキャッシュヒット率を向上させる[＃10089](https://github.com/tikv/tikv/pull/10089)
 
     -   Dumpling
 
@@ -249,11 +249,11 @@ TiDB は、実行ステータスや失敗ステータスなど、テレメトリ
 
     -   TiDB Lightning
 
-        -   データのインポート速度を向上します。最適化の結果、TPC-C データのインポート速度が 30% 向上し、インデックス数 (5 個) が多い大きなテーブル (2TB 以上) のインポート速度が 50% 以上向上しました[＃753](https://github.com/pingcap/br/pull/753)
-        -   インポート前にインポートするデータとターゲット クラスターの事前チェックを追加し、インポート要件を満たしていない場合はエラーを報告してインポート プロセスを拒否します[＃999](https://github.com/pingcap/br/pull/999)
+        -   データのインポート速度を向上します。最適化の結果、TPC-C データのインポート速度が 30% 向上し、インデックス数が多い (5 個) 大規模なテーブル (2TB 以上) のインポート速度が 50% 以上向上しました[＃753](https://github.com/pingcap/br/pull/753)
+        -   インポートするデータとインポート前にターゲット クラスターの事前チェックを追加し、インポート要件を満たしていない場合はエラーを報告してインポート プロセスを拒否します[＃999](https://github.com/pingcap/br/pull/999)
         -   ローカルバックエンドでのチェックポイント更新のタイミングを最適化し、ブレークポイント[＃1080](https://github.com/pingcap/br/pull/1080)からの再開のパフォーマンスを向上
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -275,8 +275,8 @@ TiDB は、実行ステータスや失敗ステータスなど、テレメトリ
     -   `point get`の準備されたプラン キャッシュがトランザクション[＃24741](https://github.com/pingcap/tidb/issues/24741)の`point get`ステートメントによって誤って使用される問題を修正しました。
     -   照合順序が`ascii_bin`または`latin1_bin`場合に間違ったプレフィックスインデックス値を書き込む問題を修正しました[＃24569](https://github.com/pingcap/tidb/issues/24569)
     -   進行中のトランザクションがGCワーカー[＃24591](https://github.com/pingcap/tidb/issues/24591)によって中断される可能性がある問題を修正
-    -   `new-collation`が有効で`new-row-format`無効の場合、クラスター化インデックスでポイントクエリが間違って実行される可能性があるバグを修正[＃24541](https://github.com/pingcap/tidb/issues/24541)
-    -   シャッフルハッシュ結合のパーティションキーの変換をリファクタリングする[＃24490](https://github.com/pingcap/tidb/pull/24490)
+    -   `new-collation`が有効で`new-row-format`が無効の場合、クラスター化インデックスでポイントクエリが間違って実行される可能性があるバグを修正[＃24541](https://github.com/pingcap/tidb/issues/24541)
+    -   シャッフルハッシュ結合[＃24490](https://github.com/pingcap/tidb/pull/24490)のパーティションキーの変換をリファクタリングする
     -   `HAVING`節[＃24045](https://github.com/pingcap/tidb/issues/24045)を含むクエリのプラン構築時に発生するpanic問題を修正
     -   列プルーニングの改善により、 `Apply`および`Join`演算子の結果が間違ってしまう問題を修正しました[＃23887](https://github.com/pingcap/tidb/issues/23887)
     -   非同期コミットからフォールバックしたプライマリロックが解決できないバグを修正[＃24384](https://github.com/pingcap/tidb/issues/24384)
@@ -284,8 +284,8 @@ TiDB は、実行ステータスや失敗ステータスなど、テレメトリ
     -   悲観的ロックが`ErrKeyExists`エラー[＃23799](https://github.com/pingcap/tidb/issues/23799)を受け取ったときに不必要な悲観的ロールバックを避ける
     -   sql_modeに`ANSI_QUOTES` [＃24429](https://github.com/pingcap/tidb/issues/24429)含まれている場合に数値リテラルが認識されない問題を修正
     -   `INSERT INTO table PARTITION (<partitions>) ... ON DUPLICATE KEY UPDATE`のようなステートメントは、リストされていないパーティション[＃24746](https://github.com/pingcap/tidb/issues/24746)からデータを読み取ることを禁止します。
-    -   SQL文に`GROUP BY`と`UNION` [＃24281](https://github.com/pingcap/tidb/issues/24281)が含まれている場合に発生する可能性のある`index out of range`エラーを修正します。
-    -   `CONCAT`関数が照合順序[＃24296](https://github.com/pingcap/tidb/issues/24296)を誤って処理する問題を修正
+    -   SQL文に`GROUP BY`と`UNION`両方が含まれている場合に発生する可能性のある`index out of range`エラーを修正します[＃24281](https://github.com/pingcap/tidb/issues/24281)
+    -   `CONCAT`関数が照合順序[＃24296](https://github.com/pingcap/tidb/issues/24296)誤って処理する問題を修正
     -   `collation_server`グローバル変数が新しいセッション[＃24156](https://github.com/pingcap/tidb/pull/24156)で有効にならない問題を修正
 
 -   ティクヴ
@@ -293,8 +293,8 @@ TiDB は、実行ステータスや失敗ステータスなど、テレメトリ
     -   コプロセッサが`IN`式[＃9821](https://github.com/tikv/tikv/issues/9821)の符号付きまたは符号なし整数型を適切に処理できない問題を修正
     -   SST ファイルをバッチで取り込んだ後に多くの空の領域が発生する問題を修正[＃964](https://github.com/pingcap/br/issues/964)
     -   ファイル辞書ファイルが破損した後にTiKVが起動できなくなるバグを修正[＃9886](https://github.com/tikv/tikv/issues/9886)
-    -   古い値の読み取りによって発生する TiCDC OOM 問題を修正[＃9996](https://github.com/tikv/tikv/issues/9996) [＃9981](https://github.com/tikv/tikv/issues/9981)
-    -   照合順序が`latin1_bin` [＃24548](https://github.com/pingcap/tidb/issues/24548)の場合にクラスター化された主キー列のセカンダリ インデックスに空の値が含まれる問題を修正しました。
+    -   古い値の読み取りによって引き起こされる TiCDC OOM 問題を修正[＃9996](https://github.com/tikv/tikv/issues/9996) [＃9981](https://github.com/tikv/tikv/issues/9981)
+    -   照合順序が`latin1_bin` [＃24548](https://github.com/pingcap/tidb/issues/24548)場合にクラスター化された主キー列のセカンダリ インデックスに空の値が含まれる問題を修正しました。
     -   `abort-on-panic`設定を追加すると、panicが発生したときに TiKV がコアダンプファイルを生成できるようになります。ユーザーは、コアダンプ[＃10216](https://github.com/tikv/tikv/pull/10216)を有効にするために環境を正しく設定する必要があります。
     -   TiKVがビジーでないときに発生する`point get`クエリのパフォーマンス低下の問題を修正しました[＃10046](https://github.com/tikv/tikv/issues/10046)
 
@@ -309,19 +309,19 @@ TiDB は、実行ステータスや失敗ステータスなど、テレメトリ
 -   TiFlash
 
     -   時間型を整数型にキャストしたときに誤った結果が返される問題を修正しました
-    -   10秒以内に対応するタスクが見つから`receiver`バグを修正
+    -   10秒以内に対応する`receiver`が見つからないバグを修正
     -   `cancelMPPQuery`に無効なイテレータが存在する可能性がある問題を修正
     -   `bitwise`演算子の動作がTiDBと異なるバグを修正
     -   `prefix key`使用時に範囲が重複することで発生するアラート問題を修正
     -   文字列型を整数型にキャストしたときに誤った結果が返される問題を修正しました
-    -   連続した高速書き込みによりTiFlash のメモリが不足する可能性がある問題を修正しました。
+    -   連続した高速書き込みによりTiFlash のメモリが不足する問題を修正
     -   テーブルGC中にヌルポインタの例外が発生する可能性がある問題を修正しました。
     -   ドロップされたテーブルにデータを書き込むときに発生するTiFlashpanicの問題を修正しました
     -   BR復元中にTiFlash がpanicになる可能性がある問題を修正
-    -   共有デルタインデックスを同時にクローン化するときに誤った結果が生成される問題を修正
+    -   共有デルタインデックスを同時に複製するときに誤った結果が返される問題を修正
     -   圧縮フィルター機能が有効になっているときに発生する可能性のあるpanicを修正
     -   TiFlash が非同期コミットからフォールバックしたロックを解決できない問題を修正
-    -   `TIMEZONE`型のキャスト結果に`TIMESTAMP`型が含まれている場合に誤った結果が返される問題を修正しました。
+    -   `TIMEZONE`型のキャスト結果に`TIMESTAMP`型が含まれている場合に誤った結果が返される問題を修正しました
     -   セグメント分割中に発生するTiFlashpanic問題を修正
 
 -   ツール
@@ -349,6 +349,6 @@ TiDB は、実行ステータスや失敗ステータスなど、テレメトリ
         -   古いリージョンが多数存在する場合に発生する KV クライアントのデッドロック バグを修正[＃1599](https://github.com/pingcap/tiflow/issues/1599)
         -   `--cert-allowed-cn`フラグ[＃1697](https://github.com/pingcap/tiflow/pull/1697)の間違ったヘルプ情報を修正
         -   MySQL [＃1750](https://github.com/pingcap/tiflow/pull/1750)にデータを複製する際にSUPER権限を必要とする`explicit_defaults_for_timestamp`の更新を元に戻す
-        -   シンクフロー制御をサポートし、メモリオーバーフローのリスクを軽減します[＃1840](https://github.com/pingcap/tiflow/pull/1840)
+        -   メモリオーバーフローのリスクを軽減するためにシンクフロー制御をサポートする[＃1840](https://github.com/pingcap/tiflow/pull/1840)
         -   テーブル[＃1828](https://github.com/pingcap/tiflow/pull/1828)を移動するときにレプリケーション タスクが停止する可能性があるバグを修正しました。
         -   TiCDC チェンジフィード チェックポイント[＃1759](https://github.com/pingcap/tiflow/pull/1759)の停滞により TiKV GC セーフ ポイントがブロックされる問題を修正しました。

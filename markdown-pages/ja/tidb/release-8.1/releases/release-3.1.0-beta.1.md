@@ -1,6 +1,6 @@
 ---
 title: TiDB 3.1 Beta.1 Release Notes
-summary: TiDB 3.1 Beta.1 は、2020 年 1 月 10 日にリリースされました。このリリースには、バックアップ ファイルの名前変更や増分バックアップ機能の追加など、TiKV への変更が含まれています。BR などのツールでは、バックアップの進行状況情報が改善され、パーティション テーブルの機能が追加されました。TiDB BRでは、Transparent Huge Pages が自動的に無効になり、 BRコンポーネントの Grafana モニタリングが追加されました。全体として、このリリースでは、バックアップと復元のプロセス、モニタリング、およびデプロイメントの最適化の改善に重点が置かれています。
+summary: TiDB 3.1 Beta.1 は、2020 年 1 月 10 日にリリースされました。このリリースには、バックアップ ファイルの名前変更や増分バックアップ機能の追加など、TiKV への変更が含まれていますBRなどのツールでは、バックアップの進行状況情報が改善され、パーティション テーブルの機能が追加されました。TiDB Ansible では、Transparent Huge Pages が自動的に無効になり、 BRコンポーネントの Grafana モニタリングが追加されました。全体として、このリリースでは、バックアップと復元のプロセス、モニタリング、およびデプロイメントの最適化の改善に重点が置かれています。
 ---
 
 # TiDB 3.1 ベータ 1 リリース ノート {#tidb-3-1-beta-1-release-notes}
@@ -20,10 +20,10 @@ TiDB Ansible バージョン: 3.1.0-beta.1
 
 -   sst_importer
     -   復元中にSSTファイルにMVCCプロパティがない問題を修正[＃6378](https://github.com/tikv/tikv/pull/6378)
-    -   `tikv_import_download_duration` `tikv_import_ingest_duration`の監視項目を追加して`tikv_import_download_bytes` SSTファイルのダウンロードと`tikv_import_ingest_bytes` `tikv_import_error_counter`オーバーヘッドを観察します[＃6404](https://github.com/tikv/tikv/pull/6404)
+    -   `tikv_import_download_duration` `tikv_import_error_counter` `tikv_import_ingest_bytes`監視項目を追加し`tikv_import_ingest_duration` `tikv_import_download_bytes` SSTファイルのダウンロードと取り込みのオーバーヘッドを観察します[＃6404](https://github.com/tikv/tikv/pull/6404)
 
 -   ラフトストア
-    -   リーダーが変更されたときにフォロワーが古いデータを読み取り、トランザクションの分離が壊れるFollower Readの問題を修正[＃6343](https://github.com/tikv/tikv/pull/6343)
+    -   リーダーが変更されたときにフォロワーが古いデータを読み取り、トランザクションの分離が壊れるFollower Readの問題を修正しました[＃6343](https://github.com/tikv/tikv/pull/6343)
 
 ## ツール {#tools}
 

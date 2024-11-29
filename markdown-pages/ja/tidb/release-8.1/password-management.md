@@ -266,7 +266,7 @@ TiDB は、グローバル レベルとアカウント レベルでの自動パ�
 
 パスワードの有効期限切れに対する TiDBサーバーの動作を制御できます。パスワードの有効期限が切れると、サーバーはクライアントを切断するか、クライアントを「サンドボックス モード」に制限します。「サンドボックス モード」では、TiDBサーバーは期限切れのアカウントからの接続を許可します。ただし、このような接続では、ユーザーはパスワードのリセットのみが許可されます。
 
-TiDBサーバーは、 「サンドボックス モード」で期限切れのパスワードを持つユーザーを制限するかどうかを制御できます。パスワードの有効期限が切れたときの TiDBサーバーの動作を制御するには、TiDB 構成ファイルで[`security.disconnect-on-expired-password`](/tidb-configuration-file.md#disconnect-on-expired-password-new-in-v650)パラメータを構成します。
+TiDBサーバーは、 「サンドボックス モード」でパスワードの期限が切れたユーザーを制限するかどうかを制御できます。パスワードの期限が切れたときの TiDBサーバーの動作を制御するには、TiDB 構成ファイルで[`security.disconnect-on-expired-password`](/tidb-configuration-file.md#disconnect-on-expired-password-new-in-v650)パラメータを構成します。
 
 ```toml
 [security]

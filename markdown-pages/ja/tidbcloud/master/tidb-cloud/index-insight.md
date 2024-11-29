@@ -5,11 +5,11 @@ summary: TiDB Cloudの Index Insight 機能を使用して、低速クエリの�
 
 # インデックスインサイト（ベータ版） {#index-insight-beta}
 
-TiDB Cloudの Index Insight (ベータ版) 機能は、インデックスを効果的に使用していない低速クエリに対してインデックスの推奨事項を提供することで、クエリ パフォーマンスを最適化する強力な機能を提供します。このドキュメントでは、Index Insight 機能を効果的に有効化して活用する手順について説明します。
+TiDB Cloudの Index Insight (ベータ版) 機能は、インデックスを効果的に使用していない低速クエリに対してインデックスの推奨事項を提供することで、クエリ パフォーマンスを最適化する強力な機能を提供します。このドキュメントでは、Index Insight 機能を効果的に有効化して活用するための手順について説明します。
 
 > **注記：**
 >
-> Index Insight は現在ベータ版であり、 [TiDB専用](/tidb-cloud/select-cluster-tier.md#tidb-dedicated)クラスターでのみ使用できます。
+> Index Insight は現在ベータ版であり、 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターでのみ使用できます。
 
 ## 導入 {#introduction}
 
@@ -24,13 +24,13 @@ Index Insight 機能には、次のような利点があります。
 
 このセクションでは、Index Insight 機能を有効にして、低速クエリに推奨されるインデックスを取得する方法について説明します。
 
-### あなたが始める前に {#before-you-begin}
+### 始める前に {#before-you-begin}
 
-Index Insight 機能を有効にする前に、TiDB 専用クラスターを作成していることを確認してください。クラスターがない場合は、 [TiDB専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md)の手順に従って作成してください。
+Index Insight 機能を有効にする前に、 TiDB Cloud Dedicated クラスターを作成していることを確認してください。クラスターがない場合は、 [TiDB Cloud専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md)の手順に従って作成してください。
 
 ### ステップ1: Index Insightを有効にする {#step-1-enable-index-insight}
 
-1.  [TiDB Cloudコンソール](https://tidbcloud.com)で、TiDB 専用クラスターのクラスター概要ページに移動し、左側のナビゲーション ペインで**[診断] を**クリックします。
+1.  [TiDB Cloudコンソール](https://tidbcloud.com)で、 TiDB Cloud Dedicated クラスターのクラスター概要ページに移動し、左側のナビゲーション ペインで**[診断]**をクリックします。
 
 2.  **Index Insight BETA**タブをクリックします。Index **Insight の概要**ページが表示されます。
 
@@ -46,13 +46,13 @@ Index Insight 機能を有効にする前に、TiDB 専用クラスターを作�
 
     > **注記：**
     >
-    > TiDB 専用クラスターに接続するには、 [TiDB専用クラスターに接続する](/tidb-cloud/connect-to-tidb-cluster.md)参照してください。
+    > TiDB Cloud Dedicated クラスターに接続するには、 [TiDB Cloud Dedicatedクラスタに接続する](/tidb-cloud/connect-to-tidb-cluster.md)参照してください。
 
-4.  前の手順で作成した SQL ユーザーのユーザー名とパスワードを入力します。次に、 **[アクティブ化] を**クリックしてアクティブ化プロセスを開始します。
+4.  前の手順で作成した SQL ユーザーのユーザー名とパスワードを入力します。次に、 **[アクティブ化]**をクリックしてアクティブ化プロセスを開始します。
 
 ### ステップ2: Index Insightを手動で起動する {#step-2-manually-trigger-index-insight}
 
-遅いクエリのインデックス推奨事項を取得するには、 **Index Insight 概要**ページの右上隅にある**[チェック アップ]**をクリックして、Index Insight 機能を手動でトリガーできます。
+遅いクエリのインデックス推奨事項を取得するには、 **Index Insight 概要**ページの右上隅にある**[チェック アップ] を**クリックして、Index Insight 機能を手動でトリガーできます。
 
 次に、この機能は過去 3 時間の遅いクエリのスキャンを開始します。スキャンが完了すると、分析に基づいてインデックスの推奨事項のリストが提供されます。
 
@@ -105,7 +105,7 @@ Index Insight 機能を無効にするには、次の手順を実行します。
 
 ### Index Insight を非アクティブ化した後、SQL ユーザーを削除するにはどうすればよいでしょうか? {#how-to-delete-the-sql-user-after-deactivating-index-insight}
 
-Index Insight 機能を無効にした後、 `DROP USER`ステートメントを実行して、その機能用に作成された SQL ユーザーを削除できます。次に例を示します。3 `'username'`実際の値に置き換えます。
+Index Insight 機能を無効にした後、 `DROP USER`ステートメントを実行して、その機能用に作成された SQL ユーザーを削除できます。次に例を示します`'username'`実際の値に置き換えます。
 
 ```sql
 DROP USER 'username';
@@ -119,7 +119,7 @@ DROP USER 'username';
 
 1.  資格情報を確認してください: 入力したユーザー名とパスワードが正しいことを確認してください。大文字と小文字の区別に注意してください。
 2.  アカウントのステータスを確認する: ユーザー アカウントがアクティブなステータスであり、期限切れまたはロックされていないことを確認します。これを確認するには、システム管理者または関連するサポート チャネルに問い合わせてください。
-3.  新しい SQL ユーザーを作成します。前の手順でこの問題が解決しない場合は、次のステートメントを使用して新しい SQL ユーザーを作成できます。1 と`'random_password'` `'index_insight_user'`の値に置き換えます。
+3.  新しい SQL ユーザーを作成します。前の手順でこの問題が解決しない場合は、次のステートメントを使用して新しい SQL ユーザーを作成できます。1 と`'index_insight_user'` `'random_password'`実際の値に置き換えます。
 
     ```sql
     CREATE user 'index_insight_user'@'%' IDENTIFIED by 'random_password';
@@ -139,7 +139,7 @@ DROP USER 'username';
 
 1.  ユーザー権限を確認する: ユーザー アカウントに、 `information_schema`と`mysql`の読み取り権限、およびすべてのデータベースに対する`PROCESS`と`REFERENCES`権限など、必要な権限が付与されているかどうかを確認します。
 
-2.  新しい SQL ユーザーを作成します。前の手順でこの問題が解決しない場合は、次のステートメントを使用して新しい SQL ユーザーを作成できます。1 と`'random_password'` `'index_insight_user'`の値に置き換えます。
+2.  新しい SQL ユーザーを作成します。前の手順でこの問題が解決しない場合は、次のステートメントを使用して新しい SQL ユーザーを作成できます。1 と`'index_insight_user'` `'random_password'`実際の値に置き換えます。
 
     ```sql
     CREATE user 'index_insight_user'@'%' IDENTIFIED by 'random_password';
@@ -151,7 +151,7 @@ DROP USER 'username';
 
 上記の手順を実行しても問題が解決しない場合は、 [PingCAP サポートチーム](/tidb-cloud/tidb-cloud-support.md)連絡することをお勧めします。
 
-### Index Insight の使用中に、 <code>operations may be too frequent</code>メッセージが表示されるのはなぜですか? {#why-does-the-code-operations-may-be-too-frequent-code-message-show-up-during-using-index-insight}
+### Index Insight の使用中に、 <code>operations may be too frequent</code>なぜですか? {#why-does-the-code-operations-may-be-too-frequent-code-message-show-up-during-using-index-insight}
 
 `operations may be too frequent`メッセージは通常、Index Insight によって設定されたレートまたは使用制限を超えた場合に表示されます。
 

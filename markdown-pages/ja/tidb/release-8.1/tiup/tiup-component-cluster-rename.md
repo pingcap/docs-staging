@@ -1,11 +1,11 @@
 ---
 title: tiup cluster rename
-summary: tiup cluster rename コマンドは、デプロイ後にクラスター名を変更するために使用されます。`grafana_servers` の `dashboard_dir` フィールドがTiUPクラスター用に構成されている場合は、追加の手順が必要です。コマンドの構文は `tiup cluster rename <old-cluster-name> <new-cluster-name>` です。`-h, --help` オプションはヘルプ情報を出力。出力はtiup-clusterの実行ログです。
+summary: tiup cluster rename` コマンドは、デプロイ後にクラスター名を変更するために使用されます。`grafana_servers` の `dashboard_dir` フィールドがTiUPクラスター用に構成されている場合は、追加の手順が必要です。コマンドの構文は `tiup cluster rename <old-cluster-name> <new-cluster-name>` です。`-h, --help` オプションはヘルプ情報を出力。出力はtiup-clusterの実行ログです。
 ---
 
 # tiup cluster rename {#tiup-cluster-rename}
 
-[クラスターが展開される](/tiup/tiup-component-cluster-deploy.md)ときにクラスター名を指定します。クラスターをデプロイした後にクラスター名を変更する場合は、コマンド`tiup cluster rename`を使用します。
+[クラスターが展開される](/tiup/tiup-component-cluster-deploy.md)ときにクラスター名を指定します。クラスターをデプロイした後にクラスター名を変更する場合は、コマンド`tiup cluster rename`使用します。
 
 > **注記：**
 >
@@ -29,7 +29,7 @@ tiup cluster rename <old-cluster-name> <new-cluster-name> [flags]
 
 -   ヘルプ情報を出力します。
 -   データ型: `BOOLEAN`
--   このオプションは、デフォルトで値`false`で無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにする必要があります。
+-   このオプションは、値`false`でデフォルトで無効になっています。このオプションを有効にするには、このオプションをコマンドに追加し、値`true`を渡すか、値を渡さないようにします。
 
 ## 出力 {#outputs}
 

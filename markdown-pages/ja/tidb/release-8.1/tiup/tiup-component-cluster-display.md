@@ -76,11 +76,11 @@ tiup cluster display <cluster-name> [flags]
 -   SSHクライアントタイプ
 -   ダッシュボードアドレス
 -   次のフィールドを持つテーブル:
-    -   ID: `IP:PORT`のノードID
+    -   ID: ノード`IP:PORT`
     -   ロール: このノードにデプロイされたサービス ロール (TiDB、TiKV など)
     -   ホスト: ノードに対応するマシンのIP
     -   ポート: サービスが占有するポート番号
-    -   OS/アーキテクチャ: このノードのオペレーティング システムとマシンアーキテクチャ
+    -   OS/Arch: このノードのオペレーティング システムとマシンアーキテクチャ
     -   ステータス: ノードサービスの現在のステータス
     -   データ ディレクトリ: サービスのデータ ディレクトリ。1 `-`データ ディレクトリがないことを意味します。
     -   デプロイ Dir: サービスのデプロイディレクトリ
@@ -99,6 +99,6 @@ tiup cluster display <cluster-name> [flags]
 >
 > TiUPの`Pending Offline` 、PD API によって返される`Offline` 、および TiDB ダッシュボードの`Leaving`同じステータスを示します。
 
-ノードのサービスステータスはPDのスケジュール情報から取得されます。詳細については[情報収集](/tidb-scheduling.md#information-collection)を参照してください。
+ノードのサービスステータスはPDのスケジュール情報から取得されます。詳細については[情報収集](/tidb-scheduling.md#information-collection)参照してください。
 
-[&lt;&lt; 前のページに戻る - TiUP クラスタコマンド リスト](/tiup/tiup-component-cluster.md#command-list)
+[&lt;&lt; 前のページに戻る - TiUPクラスタコマンド リスト](/tiup/tiup-component-cluster.md#command-list)

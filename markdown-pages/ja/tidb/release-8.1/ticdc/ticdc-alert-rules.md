@@ -17,7 +17,7 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 -   アラートルール:
 
-    `(time() - ticdc_owner_checkpoint_ts / 1000) > 600`
+    `ticdc_owner_checkpoint_ts_lag > 600`
 
 -   説明：
 
@@ -31,7 +31,7 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 -   アラートルール:
 
-    `(time() - ticdc_owner_resolved_ts / 1000) > 300`
+    `ticdc_owner_resolved_ts_lag > 300`
 
 -   説明：
 
@@ -53,7 +53,7 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 -   解決：
 
-    このアラートはレプリケーションの中断に似ています。 [TiCDC はレプリケーションの中断を処理します](/ticdc/troubleshoot-ticdc.md#how-do-i-handle-replication-interruptions)参照してください。
+    このアラートはレプリケーションの中断に似ています。 [TiCDC はレプリケーションの中断を処理します](/ticdc/troubleshoot-ticdc.md#how-do-i-handle-replication-interruptions)を参照してください。
 
 ### <code>ticdc_processor_exit_with_error_count</code> {#code-ticdc-processor-exit-with-error-count-code}
 
@@ -183,7 +183,7 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 -   解決：
 
-    根本的な原因は多数考えられます。1 [TiCDC のトラブルシューティング](/ticdc/troubleshoot-ticdc.md)参照してください。
+    根本的な原因は多数考えられます[TiCDC のトラブルシューティング](/ticdc/troubleshoot-ticdc.md)参照してください。
 
 ### <code>ticdc_memory_abnormal</code> {#code-ticdc-memory-abnormal-code}
 

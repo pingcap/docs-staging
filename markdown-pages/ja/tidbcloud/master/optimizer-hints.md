@@ -180,7 +180,7 @@ select /*+ HASH_JOIN(t1, t2) */ * from t1, t2 where t1.id = t2.id;
 
 > **注記：**
 >
-> `TIDB_HJ` 、TiDB 3.0.x およびそれ以前のバージョンでは`HASH_JOIN`の別名です。これらのバージョンのいずれかを使用している場合は、ヒントに`TIDB_HJ(t1_name [, tl_name ...])`構文を適用する必要があります。TiDB のそれ以降のバージョンでは、 `TIDB_HJ`と`HASH_JOIN`どちらもヒントの有効な名前ですが、 `HASH_JOIN`が推奨されます。
+> `TIDB_HJ` 、TiDB 3.0.x 以前のバージョンでは`HASH_JOIN`の別名です。これらのバージョンのいずれかを使用している場合は、ヒントに`TIDB_HJ(t1_name [, tl_name ...])`構文を適用する必要があります。TiDB のそれ以降のバージョンでは、 `TIDB_HJ`と`HASH_JOIN`どちらもヒントに有効な名前ですが、 `HASH_JOIN`が推奨されます。
 
 ### NO_HASH_JOIN(t1_name [, tl_name ...]) {#no-hash-join-t1-name-tl-name}
 
@@ -256,7 +256,7 @@ EXPLAIN SELECT * FROM t WHERE EXISTS (SELECT /*+ SEMI_JOIN_REWRITE() */ 1 FROM t
 
 ### SHUFFLE_JOIN(t1_name [, tl_name ...]) {#shuffle-join-t1-name-tl-name}
 
-ヒント`SHUFFLE_JOIN(t1_name [, tl_name ...])`は、指定されたテーブルで Shuffle Join アルゴリズムを使用するようにオプティマイザに指示します。このヒントは MPP モードでのみ有効です。例:
+`SHUFFLE_JOIN(t1_name [, tl_name ...])`ヒントは、指定されたテーブルでシャッフル結合アルゴリズムを使用するようにオプティマイザに指示します。このヒントは MPP モードでのみ有効です。例:
 
 ```sql
 SELECT /*+ SHUFFLE_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
@@ -286,7 +286,7 @@ SELECT /*+ BROADCAST_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
 このヒントがクエリ ブロックで使用される場合、オプティマイザーはサブクエリとその外部クエリ ブロック間の相関列の非相関化を実行しようとはせず、常に Apply 演算子を使用してクエリを実行します。
 
-デフォルトでは、 TiDB は相関サブクエリに対して[相関除去を実行する](/correlated-subquery-optimization.md)を試みて、実行効率を高めます。ただし、 [いくつかのシナリオ](/correlated-subquery-optimization.md#restrictions)では、相関解除によって実行効率が実際に低下する可能性があります。この場合、このヒントを使用して、オプティマイザに相関解除を実行しないように手動で指示できます。例:
+デフォルトでは、 TiDB は相関サブクエリに対して[相関除去を実行する](/correlated-subquery-optimization.md)を試みて、より高い実行効率を実現します。ただし、 [いくつかのシナリオ](/correlated-subquery-optimization.md#restrictions)では、相関解除によって実行効率が実際に低下する可能性があります。この場合、このヒントを使用して、オプティマイザに相関解除を実行しないように手動で指示できます。例:
 
 ```sql
 create table t1(a int, b int);

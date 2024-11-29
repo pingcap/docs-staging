@@ -28,7 +28,7 @@ summary: TiDB Binlogの設定項目について学習します。
 
 ### pd-urls {#pd-urls}
 
--   PD URL のコンマ区切りリストを指定します。複数のアドレスを指定すると、PD クライアントが 1 つのアドレスへの接続に失敗すると、自動的に別のアドレスへの接続を試みます。
+-   PD URL のコンマ区切りリストを指定します。複数のアドレスが指定されている場合、PD クライアントが 1 つのアドレスへの接続に失敗すると、自動的に別のアドレスへの接続を試みます。
 -   デフォルト値: `http://127.0.0.1:2379`
 
 ### データディレクトリ {#data-dir}
@@ -72,12 +72,12 @@ summary: TiDB Binlogの設定項目について学習します。
 
 #### ssl-ca {#ssl-ca}
 
--   信頼できる SSL 証明書リストまたは CA リストのファイル パスを指定します。たとえば、 `/path/to/ca.pem` 。
+-   信頼できる SSL 証明書リストまたは CA リストのファイル パスを指定します。たとえば、 `/path/to/ca.pem`です。
 -   デフォルト値: &quot;&quot;
 
 #### SSL証明書 {#ssl-cert}
 
--   Privacy Enhanced Mail (PEM) 形式でエンコードされた X509 証明書ファイルのパスを指定します。たとえば、 `/path/to/pump.pem` 。
+-   Privacy Enhanced Mail (PEM) 形式でエンコードされた X509 証明書ファイルのパスを指定します。たとえば、 `/path/to/pump.pem`です。
 -   デフォルト値: &quot;&quot;
 
 #### SSLキー {#ssl-key}
@@ -124,11 +124,11 @@ summary: TiDB Binlogの設定項目について学習します。
 -   書き込み-L0-一時停止-トリガー
 -   書き込み-L0-スローダウン-トリガー
 
-上記項目の詳しい説明については[GoLevelDB ドキュメント](https://godoc.org/github.com/syndtr/goleveldb/leveldb/opt#Options)を参照。
+上記項目の詳しい説明については[GoLevelDB ドキュメント](https://godoc.org/github.com/syndtr/goleveldb/leveldb/opt#Options)参照。
 
 ## Drainer {#drainer}
 
-このセクションでは、 Drainerの設定項目を紹介します。完全なDrainer設定ファイルの例については、 [Drainerコンフィグレーション](https://github.com/pingcap/tidb-binlog/blob/release-8.1/cmd/drainer/drainer.toml)を参照してください。
+このセクションでは、 Drainerの設定項目を紹介します。完全なDrainer設定ファイルの例については、 [Drainerコンフィグレーション](https://github.com/pingcap/tidb-binlog/blob/release-8.1/cmd/drainer/drainer.toml)参照してください。
 
 ### 住所 {#addr}
 
@@ -173,15 +173,15 @@ summary: TiDB Binlogの設定項目について学習します。
 ### 初期コミット {#initial-commit-ts}
 
 -   レプリケーション プロセスを開始するトランザクションのコミット タイムスタンプを指定します。この構成は、レプリケーション プロセスが初めて実行されるDrainerノードにのみ適用されます。ダウンストリームにチェックポイントが既に存在する場合、チェックポイントに記録された時間に従ってレプリケーションが実行されます。
--   commit ts (コミット タイムスタンプ) は、TiDB 内の[取引](/transaction-overview.md#transactions)のコミットの特定の時点です。これは、現在のトランザクションの一意の ID として PD からグローバルに一意で増加するタイムスタンプです。次の一般的な方法で`initial-commit-ts`構成を取得できます。
+-   commit ts (コミット タイムスタンプ) は、TiDB 内の[取引](/transaction-overview.md#transactions)のコミットの特定の時点です。これは、現在のトランザクションの一意の ID として PD からグローバルに一意で増加するタイムスタンプです。次の一般的な方法で`initial-commit-ts`の構成を取得できます。
     -   BRを使用する場合は、 BRによってバックアップされたメタデータ (backupmeta) に記録されたバックアップ TS から`initial-commit-ts`取得できます。
-    -   Dumplingを使用する場合は、 Dumplingによってバックアップされたメタデータ（メタデータ）に記録されたPosから`initial-commit-ts`を取得できます。
+    -   Dumplingを使用する場合は、 Dumplingによってバックアップされたメタデータ（メタデータ）に記録されたPosから`initial-commit-ts`取得できます。
     -   PD Controlが使用されている場合、 `tso`コマンドの出力には`initial-commit-ts`含まれます。
 -   デフォルト値: `-1` 。Drainerは開始時刻として PD から新しいタイムスタンプを取得します。つまり、レプリケーション プロセスは現在の時刻から開始されます。
 
 ### 同期チェック時間 {#synced-check-time}
 
--   HTTP API を介して`/status`パスにアクセスし、 Drainerレプリケーションのステータスを照会できます。3 `synced-check-time`最後の正常なレプリケーションから何分経過すると`synced`と見なされるか、つまりレプリケーションが完了したかを指定します。
+-   HTTP API を介して`/status`パスにアクセスし、 Drainerレプリケーションのステータスを照会できます。3 `synced-check-time` 、最後の正常なレプリケーションから何分経過すると`synced`とみなされるか、つまりレプリケーションが完了したかを指定します。
 -   デフォルト値: `5`
 
 ### コンプレッサー {#compressor}
@@ -195,12 +195,12 @@ summary: TiDB Binlogの設定項目について学習します。
 
 #### ssl-ca {#ssl-ca}
 
--   信頼できる SSL 証明書リストまたは CA リストのファイル パスを指定します。たとえば、 `/path/to/ca.pem` 。
+-   信頼できる SSL 証明書リストまたは CA リストのファイル パスを指定します。たとえば、 `/path/to/ca.pem`です。
 -   デフォルト値: &quot;&quot;
 
 #### SSL証明書 {#ssl-cert}
 
--   PEM 形式でエンコードされた X509 証明書ファイルのパスを指定します。たとえば、 `/path/to/drainer.pem` 。
+-   PEM 形式でエンコードされた X509 証明書ファイルのパスを指定します。たとえば、 `/path/to/drainer.pem`です。
 -   デフォルト値: &quot;&quot;
 
 #### SSLキー {#ssl-key}
@@ -235,7 +235,7 @@ summary: TiDB Binlogの設定項目について学習します。
 
 #### スキーマを無視 {#ignore-schemas}
 
--   レプリケーション中に無視するデータベースを指定します。無視するデータベースが複数ある場合は、コンマで区切ります。binlog ファイル内のすべての変更がフィルター処理される場合、 binlogファイル全体が無視されます。
+-   レプリケーションbinlogに無視するデータベースを指定します。無視するデータベースが複数ある場合は、カンマで区切ります。binlog ファイル内のすべての変更がフィルター処理される場合、 binlogファイル全体が無視されます。
 -   デフォルト値: `INFORMATION_SCHEMA,PERFORMANCE_SCHEMA,mysql`
 
 #### 無視テーブル {#ignore-table}
@@ -296,7 +296,7 @@ tbl-name = "~^a.*"
 
 セーフ モードが有効になっている場合、 Drainer はレプリケーションの更新を次のように変更します。
 
--   `Insert`は`Replace Into`に変更されます
+-   `Insert` `Replace Into`に変更されます
 -   `Update`は`Delete`プラス`Replace Into`に変更されます
 
 デフォルト値: `false`
@@ -310,14 +310,14 @@ tbl-name = "~^a.*"
 次の構成項目は、ダウンストリーム データベースへの接続に関連しています。
 
 -   `host` : この項目が設定されていない場合、TiDB Binlog はデフォルトで`localhost`である`MYSQL_HOST`環境変数をチェックしようとします。
--   `port` : この項目が設定されていない場合、TiDB Binlog は`MYSQL_PORT`環境変数 (デフォルトでは`3306` ) をチェックしようとします。
+-   `port` : この項目が設定されていない場合、TiDB Binlog はデフォルトで`3306`である`MYSQL_PORT`環境変数をチェックしようとします。
 -   `user` : この項目が設定されていない場合、TiDB Binlog はデフォルトで`root`である`MYSQL_USER`環境変数をチェックしようとします。
 -   `password` : この項目が設定されていない場合、TiDB Binlog はデフォルトで`""`である`MYSQL_PSWD`環境変数をチェックしようとします。
 -   `read-timeout` : ダウンストリーム データベース接続の I/O 読み取りタイムアウトを指定します。デフォルト値は`1m`です。Drainerが時間のかかる一部の DDL で失敗し続ける場合は、この構成をより大きな値に設定できます。
 
 #### ファイル {#file}
 
--   `dir` : binlogファイルが保存されるディレクトリを指定します。この項目が設定されていない場合は、 `data-dir`が使用されます。
+-   `dir` : binlogファイルが保存されるディレクトリを指定します。この項目が設定されていない場合は、 `data-dir`使用されます。
 
 #### カフカ {#kafka}
 
@@ -334,9 +334,9 @@ tbl-name = "~^a.*"
 
 -   `type` : レプリケーションの進行状況を保存する方法を指定します。現在、使用可能なオプションは`mysql` 、 `tidb` 、および`file`です。
 
-    この設定項目は、デフォルトではダウンストリーム タイプと同じです。たとえば、ダウンストリームが`file`の場合、チェックポイントの進行状況はローカル ファイル`<data-dir>/savepoint`に保存され、ダウンストリームが`mysql`の場合、進行状況はダウンストリーム データベースに保存されます。進行状況を保存するために`mysql`または`tidb`を使用して明示的に指定する必要がある場合は、次の設定を行います。
+    この設定項目は、デフォルトではダウンストリーム タイプと同じです。たとえば、ダウンストリームが`file`の場合、チェックポイントの進行状況はローカル ファイル`<data-dir>/savepoint`に保存され、ダウンストリームが`mysql`の場合、進行状況はダウンストリーム データベースに保存されます。進行状況を保存するために`mysql`または`tidb`使用して明示的に指定する必要がある場合は、次の設定を行います。
 
--   デフォルトでは`schema` : `"tidb_binlog"` 。
+-   デフォルトでは`schema` : `"tidb_binlog"`です。
 
     > **注記：**
     >

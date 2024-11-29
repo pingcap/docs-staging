@@ -30,11 +30,11 @@ CREATE ROLE 'app_developer', 'app_read', 'app_write';
 
 ロールは`mysql.user`テーブルに保存され、ロール名のホスト名部分 (省略されている場合) はデフォルトで`'%'`になります。作成しようとしているロールの名前は一意である必要があります。一意でない場合は、エラーが報告されます。
 
-ロールを作成するには、権限`CREATE ROLE`または`CREATE USER`が必要です。
+ロールを作成するには、権限`CREATE ROLE`または`CREATE USER`必要です。
 
 ### ロールに権限を付与する {#grant-a-privilege-to-a-role}
 
-ロールに権限を付与する操作は、ユーザーに権限を付与する操作と同じです。詳細については、 [TiDB権限管理](/privilege-management.md)を参照してください。
+ロールに権限を付与する操作は、ユーザーに権限を付与する操作と同じです。詳細については、 [TiDB権限管理](/privilege-management.md)参照してください。
 
 たとえば、次のステートメントを使用して、 `app_read`ロールに`app_db`データベースを読み取る権限を付与できます。
 
@@ -77,7 +77,7 @@ GRANT 'app_read', 'app_write' TO 'rw_user1'@'localhost';
 
 別のユーザーにロールを付与したり、ロールを取り消したりするには、 `SUPER`権限が必要です。
 
-ユーザーにロールを付与しても、そのロールがすぐに有効になるわけではありません。ロールを有効にするには、別の操作が必要です。
+ユーザーにロールを付与することは、そのロールをすぐに有効にすることを意味するわけではありません。ロールを有効にすることは別の操作です。
 
 次の操作は「関係ループ」を形成する可能性があります。
 
@@ -151,10 +151,10 @@ SHOW GRANTS FOR 'read_user1'@'localhost' USING 'app_read';
     | GRANT `app_read`@`%` TO `read_user1`@`localhost`       |
     +--------------------------------------------------------+
 
-現在のユーザーの権限を確認するには、 `SHOW GRANTS`または`SHOW GRANTS FOR CURRENT_USER()`を使用します。5 と`SHOW GRANTS FOR CURRENT_USER()` `SHOW GRANTS`次の点で異なります。
+現在のユーザーの権限を確認するには、 `SHOW GRANTS`または`SHOW GRANTS FOR CURRENT_USER()`使用します。5 と`SHOW GRANTS` `SHOW GRANTS FOR CURRENT_USER()`次の点で異なります。
 
 -   `SHOW GRANTS` 、現在のユーザーに対して有効なロールの権限を示します。
--   `SHOW GRANTS FOR CURRENT_USER()`有効なロールの権限は表示されません。
+-   `SHOW GRANTS FOR CURRENT_USER()`有効なロールの権限を表示しません。
 
 ### デフォルトロールを設定する {#set-the-default-role}
 
@@ -168,7 +168,7 @@ SET DEFAULT ROLE
     TO user [, user ]
 ```
 
-たとえば、次のステートメントを使用して、デフォルトのロール`rw_user1@localhost` ～ `app_read`および`app_write`を設定できます。
+たとえば、次のステートメントを使用して、デフォルトのロール`rw_user1@localhost` ～ `app_read`および`app_write`設定できます。
 
 ```sql
 SET DEFAULT ROLE app_read, app_write TO 'rw_user1'@'localhost';
@@ -204,7 +204,7 @@ SET ROLE {
 }
 ```
 
-たとえば、 `rw_user1`ログインした後、次のステートメントを使用して、現在のセッションでのみ有効なロール`app_read`と`app_write`を有効にできます。
+たとえば、 `rw_user1`ログインした後、次のステートメントを使用して、現在のセッションでのみ有効なロール`app_read`と`app_write`有効にできます。
 
 ```sql
 SET ROLE 'app_read', 'app_write';
@@ -236,7 +236,7 @@ SET ROLE ALL EXCEPT 'app_read'
 
 > **注記：**
 >
-> `SET ROLE`を使用してロールを有効にすると、このロールは現在のセッションでのみ有効になります。
+> `SET ROLE`使用してロールを有効にすると、このロールは現在のセッションでのみ有効になります。
 
 ### 現在有効なロールを確認する {#check-the-current-enabled-role}
 
@@ -248,7 +248,7 @@ SET ROLE ALL EXCEPT 'app_read'
 SET DEFAULT ROLE ALL TO 'rw_user1'@'localhost';
 ```
 
-`rw_user1@localhost`がログインしたら、次のステートメントを実行できます。
+`rw_user1@localhost`ログインしたら、次のステートメントを実行できます。
 
 ```sql
 SELECT CURRENT_ROLE();
@@ -278,7 +278,7 @@ SET ROLE 'app_read'; SELECT CURRENT_ROLE();
 REVOKE 'app_read' FROM 'read_user1'@'localhost', 'read_user2'@'localhost';
 ```
 
-次のステートメントを使用して、 `rw_user1@localhost`ユーザーに付与されたロール`app_read`と`app_write`を取り消すことができます。
+次のステートメントを使用して、 `rw_user1@localhost`ユーザーに付与されたロール`app_read`と`app_write`取り消すことができます。
 
 ```sql
 REVOKE 'app_read', 'app_write' FROM 'rw_user1'@'localhost';
@@ -288,7 +288,7 @@ REVOKE 'app_read', 'app_write' FROM 'rw_user1'@'localhost';
 
 ### 権限を取り消す {#revoke-a-privilege}
 
-`REVOKE`ステートメントは`GRANT`の逆です。 `REVOKE`を使用して`app_write`の権限を取り消すことができます。
+`REVOKE`ステートメントは`GRANT`の逆です。 `REVOKE`使用して`app_write`の権限を取り消すことができます。
 
 ```sql
 REVOKE INSERT, UPDATE, DELETE ON app_db.* FROM 'app_write';
@@ -298,7 +298,7 @@ REVOKE INSERT, UPDATE, DELETE ON app_db.* FROM 'app_write';
 
 ### 役割を削除する {#delete-a-role}
 
-次のステートメントを使用して、ロール`app_read`と`app_write`を削除できます。
+次のステートメントを使用して、ロール`app_read`と`app_write`削除できます。
 
 ```sql
 DROP ROLE 'app_read', 'app_write';
@@ -306,7 +306,7 @@ DROP ROLE 'app_read', 'app_write';
 
 この操作により、 `mysql.user`テーブルの`app_read`と`app_write`のロール レコードと承認テーブル内の関連レコードが削除され、2 つのロールに関連する承認が終了します。
 
-ロールを削除するには、権限`DROP ROLE`または`DROP USER`が必要です。
+ロールを削除するには、権限`DROP ROLE`または`DROP USER`必要です。
 
 ### 承認テーブル {#authorization-table}
 
@@ -317,7 +317,7 @@ DROP ROLE 'app_read', 'app_write';
 
 #### <code>mysql.role_edges</code> {#code-mysql-role-edges-code}
 
-`mysql.role_edges`次のデータが含まれます。
+`mysql.role_edges`には次のデータが含まれます。
 
 ```sql
 SELECT * FROM mysql.role_edges;
@@ -331,7 +331,7 @@ SELECT * FROM mysql.role_edges;
     1 row in set (0.00 sec)
 
 -   `FROM_HOST`と`FROM_USER`それぞれロールのホスト名とユーザー名を示します。
--   `TO_HOST`と`TO_USER` 、ロールが付与されるユーザーのホスト名とユーザー名を示します。
+-   `TO_HOST`と`TO_USER`ロールが付与されるユーザーのホスト名とユーザー名を示します。
 
 #### <code>mysql.default_roles</code> {#code-mysql-default-roles-code}
 

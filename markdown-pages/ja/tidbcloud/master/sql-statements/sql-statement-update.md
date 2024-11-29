@@ -71,13 +71,13 @@ INSERT INTO t VALUES (1,2);
 UPDATE t SET a = a+1,b=a;
 ```
 
-MySQL では、列`b`は値`a`に設定されているため 2 に更新され、同じステートメントで値`a` (1) は値`a+1` (2) に更新されます。
+MySQL では、列`b`値`a`に設定されているため 2 に更新され、同じステートメントで値`a` (1) は値`a+1` (2) に更新されます。
 
 TiDB はより標準的な SQL 動作に従い、 `b`対 1 で更新します。
 
 ## 参照 {#see-also}
 
 -   [入れる](/sql-statements/sql-statement-insert.md)
--   [選択する](/sql-statements/sql-statement-select.md)
+-   [選択](/sql-statements/sql-statement-select.md)
 -   [消去](/sql-statements/sql-statement-delete.md)
 -   [交換する](/sql-statements/sql-statement-replace.md)

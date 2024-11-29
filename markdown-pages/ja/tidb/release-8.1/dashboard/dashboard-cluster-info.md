@@ -13,11 +13,11 @@ summary: TiDB ダッシュボードのクラスタ情報ページでは、クラ
 
 -   TiDB ダッシュボードにログインしたら、左側のナビゲーション メニューで**「クラスタ情報」**をクリックします。
 
--   ブラウザで[http://127.0.0.1:2379/ダッシュボード/#/cluster_info/インスタンス](http://127.0.0.1:2379/dashboard/#/cluster_info/instance)アクセスします。3 `127.0.0.1:2379`実際の PD インスタンスのアドレスとポートに置き換えます。
+-   ブラウザで[http://127.0.0.1:2379/dashboard/#/cluster_info/instance](http://127.0.0.1:2379/dashboard/#/cluster_info/instance)アクセスします。3 `127.0.0.1:2379`実際の PD インスタンスのアドレスとポートに置き換えます。
 
 ## インスタンスリスト {#instance-list}
 
-インスタンスのリストを表示するには、 **「インスタンス」**をクリックします。
+インスタンスのリストを表示するには、 **「インスタンス」を**クリックします。
 
 ![Instance list](https://download.pingcap.com/images/docs/dashboard/dashboard-cluster-info-instances-v650.png)
 

@@ -5,7 +5,7 @@ summary: このドキュメントでは、TiDB ダッシュボードに関する
 
 # TiDBダッシュボードに関するよくある質問 {#tidb-dashboard-faqs}
 
-このドキュメントでは、TiDB ダッシュボードに関するよくある質問 (FAQ) と回答をまとめています。指示どおりに実行しても問題が見つからない、または問題が解決しない場合は、PingCAP またはコミュニティに[支持を得ます](/support.md)ください。
+このドキュメントでは、TiDB ダッシュボードに関するよくある質問 (FAQ) と回答をまとめています。指示どおりに実行しても問題が見つからない、または問題が解決しない場合は、PingCAP またはコミュニティに[サポートを受ける](/support.md)てください。
 
 ## アクセスに関するFAQ {#access-related-faq}
 
@@ -21,13 +21,13 @@ summary: このドキュメントでは、TiDB ダッシュボードに関する
 
 セキュリティ上の理由から、PD 上の TiDB ダッシュボードは、 `0.0.0.0`ではなく、デプロイメント時に指定された IP アドレスのみを監視します (つまり、1 つの NIC のみをリッスンします)。したがって、ホストに複数の NIC がインストールされている場合、別の NIC を使用して TiDB ダッシュボードにアクセスすることはできません。
 
-`tiup cluster`または`tiup playground`コマンドを使用して TiDB をデプロイした場合、現時点ではこの問題を解決することはできません。リバース プロキシを使用して、TiDB ダッシュボードを別の NIC に安全に公開することをお勧めします。詳細については、 [リバースプロキシの背後で TiDB ダッシュボードを使用する](/dashboard/dashboard-ops-reverse-proxy.md)を参照してください。
+`tiup cluster`または`tiup playground`コマンドを使用して TiDB をデプロイした場合、現時点ではこの問題を解決することはできません。リバース プロキシを使用して、TiDB ダッシュボードを別の NIC に安全に公開することをお勧めします。詳細については、 [リバースプロキシの背後でTiDBダッシュボードを使用する](/dashboard/dashboard-ops-reverse-proxy.md)参照してください。
 
 ## UI関連のFAQ {#ui-related-faq}
 
 ### 概要ページの<strong>QPS</strong>と<strong>レイテンシの</strong>セクションに<code>prometheus_not_found</code>エラーが表示される {#a-code-prometheus-not-found-code-error-is-shown-in-strong-qps-strong-and-strong-latency-strong-sections-on-the-overview-page}
 
-**概要**ページの**QPS セクション**と**レイテンシ**セクションには、Prometheus がデプロイされたクラスターが必要です。そうでない場合は、エラーが表示されます。この問題は、クラスターに Prometheus インスタンスをデプロイすることで解決できます。
+**概要**ページの**QPS**セクションと**レイテンシ**セクションには、Prometheus がデプロイされたクラスターが必要です。そうでない場合は、エラーが表示されます。この問題は、クラスターに Prometheus インスタンスをデプロイすることで解決できます。
 
 Prometheus インスタンスがデプロイされた後もこの問題が発生する場合は、デプロイメント ツールが古く (TiUPまたはTiDB Operator)、ツールがメトリック アドレスを自動的に報告しないため、TiDB ダッシュボードがメトリックをクエリできないことが原因である可能性があります。デプロイメント ツールを最新バージョンにアップグレードして、もう一度試してください。
 
@@ -42,7 +42,7 @@ Prometheus インスタンスがデプロイされた後もこの問題が発生
 
 2.  アップグレード後、Prometheus インスタンスを使用して新しいクラスターをデプロイすると、メトリックが正常に表示されます。
 
-3.  アップグレード後、既存のクラスターを再起動してメトリック アドレスを報告できます。1 `CLUSTER_NAME`実際のクラスター名に置き換えます。
+3.  アップグレード後、既存のクラスターでは、このクラスターを再起動してメトリック アドレスを報告できます。1 `CLUSTER_NAME`実際のクラスター名に置き換えます。
 
     ```bash
     tiup cluster start CLUSTER_NAME
@@ -52,11 +52,11 @@ Prometheus インスタンスがデプロイされた後もこの問題が発生
 
 ### <strong>スロークエリ</strong>ページに<code>invalid connection</code>エラーが表示されます {#an-code-invalid-connection-code-error-is-shown-on-the-strong-slow-queries-strong-page}
 
-考えられる原因は、TiDB のプリペアドプランキャッシュ機能を有効にしていることです。実験的機能であるため、有効にすると、特定の TiDB バージョンでプリペアドプランキャッシュが正しく機能しない可能性があり、TiDB ダッシュボード (およびその他のアプリケーション) でこの問題が発生する可能性があります。プリペアドプランキャッシュを無効にするには、システム変数[`tidb_enable_prepared_plan_cache = OFF`](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610)を設定します。
+考えられる原因は、TiDB のプリペアドプランキャッシュ機能を有効にしていることです。実験的機能であるため、有効にすると、特定の TiDB バージョンでプリペアドプランキャッシュが正しく機能しない可能性があり、TiDB ダッシュボード (およびその他のアプリケーション) でこの問題が発生する可能性があります。システム変数[`tidb_enable_prepared_plan_cache = OFF`](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610)を設定すると、プリペアドプランキャッシュを無効にすることができます。
 
 ### <code>required component NgMonitoring is not started</code>エラーが表示されます {#a-code-required-component-ngmonitoring-is-not-started-code-error-is-shown}
 
-NgMonitoring は、**継続的なプロファイリング**や**Top SQL**などの TiDB ダッシュボード機能をサポートするために、v5.4.0 以降のバージョンの TiDB クラスターに組み込まれた高度な監視コンポーネントです。TiUPの新しいバージョンを使用してクラスターをデプロイまたはアップグレードすると、NgMonitoring が自動的にデプロイされます。TiDB TiDB Operatorを使用してデプロイされたクラスターの場合は、 [継続的なプロファイリングを有効にする](https://docs.pingcap.com/tidb-in-kubernetes/dev/access-dashboard/#enable-continuous-profiling)を参照して NgMonitoring を手動でデプロイできます。
+NgMonitoring は、**継続的なプロファイリング**や**Top SQL**などのTiUPダッシュボード機能をサポートするために、v5.4.0 以降のバージョンの TiDB クラスターに組み込まれた高度な監視コンポーネントです。TiUP の新しいバージョンを使用してクラスターをデプロイまたはアップグレードすると、NgMonitoring が自動的にデプロイされます。TiDB TiDB Operator を使用してデプロイされたクラスターの場合は、 [継続的なプロファイリングを有効にする](https://docs.pingcap.com/tidb-in-kubernetes/dev/access-dashboard/#enable-continuous-profiling)を参照して NgMonitoring を手動でデプロイできます。
 
 Web ページに`required component NgMonitoring is not started`表示される場合は、次のようにしてデプロイメントの問題をトラブルシューティングできます。
 
@@ -90,7 +90,7 @@ Web ページに`required component NgMonitoring is not started`表示される�
     tiup cluster edit-config ${cluster-name}
     ```
 
-2.  `monitoring_servers`の下に`ng_port:12020`パラメータを追加します。
+2.  `monitoring_servers`下に`ng_port:12020`パラメータを追加します。
 
         monitoring_servers:
         - host: 172.16.6.6
@@ -102,19 +102,19 @@ Web ページに`required component NgMonitoring is not started`表示される�
     tiup cluster reload ${cluster-name} --role prometheus
     ```
 
-上記の手順を実行した後もエラー メッセージが表示される場合は、PingCAP またはコミュニティから[支持を得ます](/support.md)問い合わせてください。
+上記の手順を実行した後もエラー メッセージが表示される場合は、PingCAP またはコミュニティから[サポートを受ける](/support.md)問い合わせてください。
 
 </details>
 
 <details><summary>TiDB Operatorを使用してデプロイされたクラスター</summary>
 
-TiDB Operatorドキュメントのセクション[継続的なプロファイリングを有効にする](https://docs.pingcap.com/tidb-in-kubernetes/dev/access-dashboard/#enable-continuous-profiling)の手順に従って、NgMonitoringコンポーネントをデプロイ。
+TiDB Operatorドキュメントのセクション[継続的なプロファイリングを有効にする](https://docs.pingcap.com/tidb-in-kubernetes/dev/access-dashboard/#enable-continuous-profiling)手順に従って、NgMonitoringコンポーネントをデプロイ。
 
 </details>
 
 <details><summary>TiUP Playground の使用を開始したクラスター</summary>
 
-クラスターを起動すると、 TiUP Playground (&gt;= v1.8.0) は NgMonitoringコンポーネントを自動的に起動します。TiUP Playgroundを最新バージョンに更新するには、次のコマンドを実行します。
+クラスターを起動すると、 TiUP Playground (&gt;= v1.8.0) は NgMonitoringコンポーネントを自動的に起動します。TiUP Playground を最新バージョンに更新するには、次のコマンドを実行します。
 
 ```shell
 tiup update --self
@@ -125,11 +125,11 @@ tiup update playground
 
 ### <strong>スロークエリ</strong>ページに<code>unknown field</code>エラーが表示される {#an-code-unknown-field-code-error-is-shown-on-the-strong-slow-queries-strong-page}
 
-クラスターのアップグレード後に**「遅いクエリ」**ページにエラー`unknown field`が表示される場合、そのエラーは、TiDB ダッシュボードサーバーのフィールド (更新される可能性がある) とユーザー設定フィールド (ブラウザー キャッシュ内にある) の違いによって発生する互換性の問題に関連しています。この問題は修正されています。クラスターが v5.0.3 または v4.0.14 より前の場合は、次の手順を実行してブラウザー キャッシュをクリアしてください。
+クラスターのアップグレード後に**「低速クエリ」**ページにエラー`unknown field`が表示される場合、そのエラーは、TiDB ダッシュボードサーバーのフィールド (更新される可能性がある) とユーザー設定フィールド (ブラウザー キャッシュ内にある) の違いによって発生する互換性の問題に関連しています。この問題は修正されています。クラスターが v5.0.3 または v4.0.14 より前の場合は、次の手順を実行してブラウザー キャッシュをクリアしてください。
 
 1.  TiDB ダッシュボード ページを開きます。
 
-2.  開発者ツールを開きます。ブラウザによって開発者ツールを開く方法が異なります。**メニューバーを**クリックした後:
+2.  開発者ツールを開きます。ブラウザによって開発者ツールを開く方法が異なります。**メニューバー**をクリックした後:
 
     -   Firefox:**メニュー**&gt; **Web 開発**&gt;**ツールの切り替え**、または**ツール**&gt; **Web 開発**&gt;**ツールの切り替え**。
     -   Chrome:**その他のツール**&gt;**開発者ツール**。

@@ -1,6 +1,6 @@
 ---
 title: TiDB 4.0.7 Release Notes
-summary: TiDB 4.0.7 は 2020 年 9 月 29 日にリリースされました。新機能には、PD クライアントでの `GetAllMembers` 関数の追加や、TiDB ダッシュボードでのメトリック関係グラフの生成のサポートが含まれます。TiDB、TiKV、PD、 TiFlash、およびさまざまなツールに改善が加えられました。TiDB、TiKV、PD、 TiFlash、および Backup & Restore やDumplingなどのツールのバグ修正も実装されました。
+summary: TiDB 4.0.7 は 2020 年 9 月 29 日にリリースされました。新機能には、PD クライアントでの GetAllMembers` 関数の追加や、TiDB ダッシュボードでのメトリック関係グラフの生成のサポートが含まれます。TiDB、TiKV、PD、 TiFlash、およびさまざまなツールに改善が加えられました。TiDB、TiKV、PD、 TiFlash、および Backup & Restore やDumplingなどのツールのバグ修正も実装されました。
 ---
 
 # TiDB 4.0.7 リリースノート {#tidb-4-0-7-release-notes}
@@ -32,7 +32,7 @@ TiDB バージョン: 4.0.7
 
 -   ティクヴ
 
-    -   JSONログ形式[＃8382](https://github.com/tikv/tikv/pull/8382)サポート
+    -   JSONログ形式[＃8382](https://github.com/tikv/tikv/pull/8382)をサポート
 
 -   PD
 
@@ -57,24 +57,24 @@ TiDB バージョン: 4.0.7
 
         -   HTTPインターフェース[＃393](https://github.com/pingcap/tidb-lightning/pull/393)を介してログレベルを動的に更新する機能をサポート
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
-    -   `or` `COALESCE`によって発生する`and`のベクトル化バグ[＃20092](https://github.com/pingcap/tidb/pull/20092)修正
+    -   ショートカット`COALESCE` [＃20092](https://github.com/pingcap/tidb/pull/20092)発生する`and`の`or`化バグを修正
     -   copタスクストアが異なるタイプの場合にプランダイジェストが同じになる問題を修正[＃20076](https://github.com/pingcap/tidb/pull/20076)
     -   `!= any()`関数[＃20062](https://github.com/pingcap/tidb/pull/20062)の誤った動作を修正
     -   `slow-log`ファイルが存在しない場合に発生するクエリエラーを修正[＃20051](https://github.com/pingcap/tidb/pull/20051)
     -   コンテキストがキャンセルされたときにリージョン要求が再試行し続ける問題を修正[＃20031](https://github.com/pingcap/tidb/pull/20031)
     -   ストリーミングリクエストで`cluster_slow_query`テーブルの時間型をクエリするとエラーが発生する可能性がある問題を修正しました[＃19943](https://github.com/pingcap/tidb/pull/19943)
-    -   `case when`を使用する DML ステートメントがスキーマ変更[＃20095](https://github.com/pingcap/tidb/pull/20095)を引き起こす可能性がある問題を修正しました。
+    -   `case when`使用する DML ステートメントがスキーマ変更[＃20095](https://github.com/pingcap/tidb/pull/20095)を引き起こす可能性がある問題を修正しました。
     -   スローログの`prev_stmt`情報が感度低下しない問題を修正[＃20048](https://github.com/pingcap/tidb/pull/20048)
     -   tidb-server が異常終了したときにテーブルロックを解除しない問題を修正[#20020](https://github.com/pingcap/tidb/pull/20020)
     -   `ENUM`と`SET`タイプの[＃19950](https://github.com/pingcap/tidb/pull/19950)のデータを挿入するときに発生する誤ったエラーメッセージを修正
     -   いくつかの状況における`IsTrue`関数の誤った動作を修正[＃19903](https://github.com/pingcap/tidb/pull/19903)
     -   PD のスケールインまたはスケールアウト後に`CLUSTER_INFO`システム テーブルが正常に動作しない可能性がある問題を修正しました[＃20026](https://github.com/pingcap/tidb/pull/20026)
     -   `control`式[＃19910](https://github.com/pingcap/tidb/pull/19910)で定数を折り畳むときに不要な警告やエラーを回避する
-    -   メモリ不足 (OOM) を回避するために統計情報の更新方法を更新[＃20013](https://github.com/pingcap/tidb/pull/20013)
+    -   メモリ不足 (OOM) を回避するために統計情報の更新方法を更新[#20013](https://github.com/pingcap/tidb/pull/20013)
 
 -   ティクヴ
 

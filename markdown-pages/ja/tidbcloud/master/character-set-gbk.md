@@ -31,7 +31,7 @@ SHOW COLLATION WHERE CHARSET = 'gbk';
 
 ### 照合順序 {#collations}
 
-MySQL の GBK 文字セットのデフォルトの照合順序は`gbk_chinese_ci`です。MySQL とは異なり、TiDB の GBK 文字セットのデフォルトの照合順序は`gbk_bin`です。また、TiDB は GBK を UTF8MB4 に変換してからバイナリ照合順序を使用するため、TiDB の`gbk_bin`照合順序は MySQL の`gbk_bin`照合順序と同じではありません。
+MySQL の GBK 文字セットのデフォルトの照合照合順序は`gbk_chinese_ci`です。MySQL とは異なり、TiDB の GBK 文字セットのデフォルトの照合照合順序は`gbk_bin`です。また、TiDB は GBK を UTF8MB4 に変換してからバイナリ照合順序を使用するため、TiDB の`gbk_bin`照合順序は MySQL の`gbk_bin`照合順序と同じではありません。
 
 <CustomContent platform="tidb">
 
@@ -108,7 +108,7 @@ SHOW COLLATION WHERE CHARSET = 'gbk';
 
 -   TiDB データ移行 (DM) は、v5.4.0 より前の TiDB クラスターへの`charset=GBK`テーブルの移行をサポートしていません。
 
--   TiDB Lightning は、 v5.4.0 より前の TiDB クラスターへの`charset=GBK`テーブルのインポートをサポートしていません。
+-   TiDB Lightning は、 v5.4.0 より前の TiDB クラスターへの`charset=GBK`のテーブルのインポートをサポートしていません。
 
 -   v6.1.0 より前のバージョンの TiCDC では、 `charset=GBK`テーブルのレプリケーションはサポートされていません。v6.1.0 より前のバージョンの TiCDC では、 `charset=GBK`テーブルの TiDB クラスターへのレプリケーションはサポートされていません。
 

@@ -1,6 +1,6 @@
 ---
 title: TiDB 5.0.2 Release Notes
-summary: TiDB 5.0.2 は 2021 年 6 月 10 日にリリースされました。新しいバージョンには、互換性の変更、新機能、改善、バグ修正、および TiKV、 TiFlash、PD、TiCDC、Backup & Restore (BR)、 TiDB Lightningなどのさまざまなツールの更新が含まれています。注目すべき変更点としては、TiCDC での `--sort-dir` の非推奨、TiKV での Hibernate リージョン機能の有効化、TiDB、TiKV、PD、 TiFlash、および TiCDC、 BR、 TiDB Lightningなどのツールでのさまざまなバグ修正などがあります。
+summary: TiDB 5.0.2 は 2021 年 6 月 10 日にリリースされました。新しいバージョンには、互換性の変更、新機能、改善、バグ修正、および TiKV、 TiFlash、PD、TiCDC、Backup & Restore (BR)、 TiDB Lightningなどのさまざまなツールの更新が含まれています。注目すべき変更点としては、TiCDC での --sort-dir` の非推奨、TiKV での Hibernate リージョン機能の有効化、TiDB、TiKV、PD、 TiFlash、および TiCDC、 BR、 TiDB Lightningなどのツールでのさまざまなバグ修正などがあります。
 ---
 
 # TiDB 5.0.2 リリースノート {#tidb-5-0-2-release-notes}
@@ -15,7 +15,7 @@ TiDB バージョン: 5.0.2
 
     -   ティCDC
 
-        -   `cdc cli changefeed`コマンドの`--sort-dir`非推奨にします。代わりに、ユーザーは`cdc server`コマンドで`--sort-dir`を設定できます[＃1795](https://github.com/pingcap/tiflow/pull/1795)
+        -   `cdc cli changefeed`コマンドの`--sort-dir`非推奨にします。代わりに、ユーザーは`cdc server`コマンドで`--sort-dir`設定できます[＃1795](https://github.com/pingcap/tiflow/pull/1795)
 
 ## 新機能 {#new-features}
 
@@ -34,7 +34,7 @@ TiDB バージョン: 5.0.2
     -   BRは、仮想ホストアドレス指定モード[＃10243](https://github.com/tikv/tikv/pull/10243)を使用してS3互換storageをサポートするようになりました。
     -   TiCDCのスキャン速度[＃10151](https://github.com/tikv/tikv/pull/10151)のバックプレッシャーをサポート
     -   TiCDCの初期スキャン[＃10133](https://github.com/tikv/tikv/pull/10133)のメモリ使用量を削減
-    -   悲観的トランザクション[＃10089](https://github.com/tikv/tikv/pull/10089)におけるTiCDCの古い値機能のキャッシュヒット率を向上させる
+    -   悲観的トランザクション[＃10089](https://github.com/tikv/tikv/pull/10089)におけるTiCDCの古い値機能のキャッシュヒット率を改善
     -   ホットスポット書き込みがあるときに、リージョンサイズの増加が分割速度を超えるという問題を軽減するために、リージョンをより均等に分割します[＃9785](https://github.com/tikv/tikv/issues/9785)
 
 -   TiFlash
@@ -60,7 +60,7 @@ TiDB バージョン: 5.0.2
 
         -   バックアップ操作が失敗したときにエラーが出力されない問題を修正[＃280](https://github.com/pingcap/dumpling/pull/280)
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティビ
 
@@ -68,8 +68,8 @@ TiDB バージョン: 5.0.2
     -   `point get`の準備されたプラン キャッシュがトランザクション[＃24741](https://github.com/pingcap/tidb/issues/24741)の`point get`ステートメントによって誤って使用される問題を修正しました。
     -   照合順序が`ascii_bin`または`latin1_bin`場合に間違ったプレフィックスインデックス値を書き込む問題を修正しました[＃24569](https://github.com/pingcap/tidb/issues/24569)
     -   進行中のトランザクションがGCワーカー[＃24591](https://github.com/pingcap/tidb/issues/24591)によって中断される可能性がある問題を修正
-    -   `new-collation`が有効で`new-row-format`無効の場合、クラスター化インデックスでポイントクエリが間違って実行される可能性があるバグを修正[＃24541](https://github.com/pingcap/tidb/issues/24541)
-    -   シャッフルハッシュ結合のパーティションキーの変換をリファクタリングする[＃24490](https://github.com/pingcap/tidb/pull/24490)
+    -   `new-collation`が有効で`new-row-format`が無効の場合、クラスター化インデックスでポイントクエリが間違って実行される可能性があるバグを修正[＃24541](https://github.com/pingcap/tidb/issues/24541)
+    -   シャッフルハッシュ結合[＃24490](https://github.com/pingcap/tidb/pull/24490)のパーティションキーの変換をリファクタリングする
     -   `HAVING`節[＃24045](https://github.com/pingcap/tidb/issues/24045)を含むクエリのプラン構築時に発生するpanic問題を修正
     -   列プルーニングの改善により、 `Apply`および`Join`演算子の結果が間違ってしまう問題を修正しました[＃23887](https://github.com/pingcap/tidb/issues/23887)
     -   非同期コミットからフォールバックしたプライマリロックが解決できないバグを修正[＃24384](https://github.com/pingcap/tidb/issues/24384)
@@ -77,14 +77,14 @@ TiDB バージョン: 5.0.2
     -   悲観的ロックが`ErrKeyExists`エラー[＃23799](https://github.com/pingcap/tidb/issues/23799)を受け取ったときに不必要な悲観的ロールバックを避ける
     -   sql_modeに`ANSI_QUOTES` [＃24429](https://github.com/pingcap/tidb/issues/24429)含まれている場合に数値リテラルが認識されない問題を修正
     -   `INSERT INTO table PARTITION (<partitions>) ... ON DUPLICATE KEY UPDATE`のようなステートメントは、リストされていないパーティション[＃24746](https://github.com/pingcap/tidb/issues/24746)からデータを読み取ることを禁止します。
-    -   SQL文に`GROUP BY`と`UNION` [＃24281](https://github.com/pingcap/tidb/issues/24281)が含まれている場合に発生する可能性のある`index out of range`エラーを修正します。
-    -   `CONCAT`関数が照合順序[＃24296](https://github.com/pingcap/tidb/issues/24296)を誤って処理する問題を修正
+    -   SQL文に`GROUP BY`と`UNION`両方が含まれている場合に発生する可能性のある`index out of range`エラーを修正します[＃24281](https://github.com/pingcap/tidb/issues/24281)
+    -   `CONCAT`関数が照合順序[＃24296](https://github.com/pingcap/tidb/issues/24296)誤って処理する問題を修正
     -   `collation_server`グローバル変数が新しいセッション[＃24156](https://github.com/pingcap/tidb/pull/24156)で有効にならない問題を修正
 
 -   ティクヴ
 
     -   古い値の読み取りによって引き起こされる TiCDC OOM 問題を修正[＃9996](https://github.com/tikv/tikv/issues/9996) [＃9981](https://github.com/tikv/tikv/issues/9981)
-    -   照合順序が`latin1_bin` [＃24548](https://github.com/pingcap/tidb/issues/24548)の場合にクラスター化された主キー列のセカンダリ インデックスに空の値が含まれる問題を修正しました。
+    -   照合順序が`latin1_bin` [＃24548](https://github.com/pingcap/tidb/issues/24548)場合にクラスター化された主キー列のセカンダリ インデックスに空の値が含まれる問題を修正しました。
     -   `abort-on-panic`設定を追加すると、panicが発生したときに TiKV がコアダンプファイルを生成できるようになります。ユーザーは、コアダンプ[＃10216](https://github.com/tikv/tikv/pull/10216)を有効にするために環境を正しく設定する必要があります。
     -   TiKVがビジーでないときに発生する`point get`クエリのパフォーマンス低下の問題を修正しました[＃10046](https://github.com/tikv/tikv/issues/10046)
 
@@ -96,13 +96,13 @@ TiDB バージョン: 5.0.2
 
 -   TiFlash
 
-    -   共有デルタインデックスを同時にクローン化するときに誤った結果が生成される問題を修正
+    -   共有デルタインデックスを同時に複製するときに誤った結果が返される問題を修正
     -   不完全なデータでTiFlash が再起動に失敗する可能性がある問題を修正
     -   古いdmファイルが自動的に削除されない問題を修正
     -   圧縮フィルター機能が有効になっているときに発生する可能性のあるpanicを修正
     -   `ExchangeSender`重複したデータを送信する潜在的な問題を修正
     -   TiFlash が非同期コミットからフォールバックしたロックを解決できない問題を修正
-    -   `TIMEZONE`型のキャスト結果に`TIMESTAMP`型が含まれている場合に誤った結果が返される問題を修正しました。
+    -   `TIMEZONE`型のキャスト結果に`TIMESTAMP`型が含まれている場合に誤った結果が返される問題を修正しました
     -   セグメント分割中に発生するTiFlashpanic問題を修正
     -   非ルート MPP タスクの実行情報が正確でない問題を修正しました
 
@@ -114,8 +114,8 @@ TiDB バージョン: 5.0.2
         -   Unified Sorter 内の古い一時ファイルのクリーンアップをサポートし、 `sort-dir`ディレクトリ[＃1742](https://github.com/pingcap/tiflow/pull/1742)の共有を禁止します。
         -   古いリージョンが多数存在する場合に発生する KV クライアントのデッドロック バグを修正[＃1599](https://github.com/pingcap/tiflow/issues/1599)
         -   `--cert-allowed-cn`フラグ[＃1697](https://github.com/pingcap/tiflow/pull/1697)の間違ったヘルプ情報を修正
-        -   MySQL [＃1750](https://github.com/pingcap/tiflow/pull/1750)にデータを複製する際に`SUPER`権限を必要とする`explicit_defaults_for_timestamp`の更新を元に戻す
-        -   シンクフロー制御をサポートし、メモリオーバーフローのリスクを軽減します[＃1840](https://github.com/pingcap/tiflow/pull/1840)
+        -   MySQL [＃1750](https://github.com/pingcap/tiflow/pull/1750)にデータを複製するときに`SUPER`権限を必要とする`explicit_defaults_for_timestamp`の更新を元に戻す
+        -   メモリオーバーフローのリスクを軽減するためにシンクフロー制御をサポートする[＃1840](https://github.com/pingcap/tiflow/pull/1840)
         -   テーブル[＃1828](https://github.com/pingcap/tiflow/pull/1828)を移動するときにレプリケーション タスクが停止する可能性があるバグを修正しました。
         -   TiCDC チェンジフィード チェックポイント[＃1759](https://github.com/pingcap/tiflow/pull/1759)の停滞により TiKV GC セーフ ポイントがブロックされる問題を修正しました。
 

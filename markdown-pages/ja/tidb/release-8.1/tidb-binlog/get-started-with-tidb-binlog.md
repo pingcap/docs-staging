@@ -1,33 +1,33 @@
 ---
 title: TiDB Binlog Tutorial
-summary: シンプルな TiDB クラスターを使用して TiDB Binlogをデプロイする方法を学習します。
+summary: シンプルな TiDB クラスターを使用して TiDB Binlog をデプロイする方法を学習します。
 ---
 
-# TiDBBinlogログチュートリアル {#tidb-binlog-tutorial}
+# TiDBBinlogチュートリアル {#tidb-binlog-tutorial}
 
-このチュートリアルは、各コンポーネント(Placement Driver、TiKV Server、TiDB Server、 Pump、およびDrainer ) の単一ノードを持つ単純な TiDB Binlogデプロイメントから始まり、MariaDB Server インスタンスにデータをプッシュするようにセットアップされます。
+このチュートリアルは、各コンポーネント(Placement Driver、TiKV Server、TiDB Server、 Pump、およびDrainer ) の単一ノードを持つ単純な TiDB Binlogデプロイメントから開始し、MariaDB Server インスタンスにデータをプッシュするようにセットアップされます。
 
-このチュートリアルは、 [TiDBアーキテクチャ](/tidb-architecture.md)に多少精通していて、すでに TiDB クラスターを設定している可能性があり (必須ではありません)、 TiDB Binlogの実践的な経験を積みたいと考えているユーザーを対象としています。このチュートリアルは、 TiDB Binlogを実際に試し、そのアーキテクチャの概念を理解するのに最適です。
+このチュートリアルは、 [TiDBアーキテクチャ](/tidb-architecture.md)に多少精通していて、すでに TiDB クラスターを設定している可能性があり (必須ではありません)、 TiDB Binlogの実践的な経験を積みたいと考えているユーザーを対象としています。このチュートリアルは、 TiDB Binlogを実際に試し、そのアーキテクチャの概念を理解するのに適しています。
 
 > **警告：**
 >
-> このチュートリアルの TiDB をデプロイする手順は、本番環境または開発環境で TiDB をデプロイする際には使用**しない**でください。
+> このチュートリアルで TiDB をデプロイする手順は、本番または開発環境で TiDB をデプロイする際には使用し**ない**でください。
 
 このチュートリアルでは、x86-64 で最新の Linux ディストリビューションを使用していることを前提としています。このチュートリアルでは、例として VMware で実行されている最小限の CentOS 7 インストールを使用しています。既存の環境の癖の影響を受けないように、クリーン インストールから開始することをお勧めします。ローカル仮想化を使用しない場合は、クラウド サービスを使用して CentOS 7 VM を簡単に起動できます。
 
 ## TiDBBinlogの概要 {#tidb-binlog-overview}
 
-TiDB Binlog は、TiDB からバイナリ ログ データを収集し、リアルタイムのデータ バックアップとレプリケーションを提供するソリューションです。TiDB サーバー クラスターから下流のプラットフォームに増分データ更新をプッシュします。
+TiDB Binlog は、 TiDB からバイナリ ログ データを収集し、リアルタイムのデータ バックアップとレプリケーションを提供するソリューションです。増分データ更新を TiDB サーバー クラスターから下流のプラットフォームにプッシュします。
 
 TiDB Binlog は、増分バックアップ、ある TiDB クラスターから別の TiDB クラスターへのデータの複製、または TiDB 更新を Kafka 経由で任意のダウンストリーム プラットフォームに送信するために使用できます。
 
 TiDB Binlog は、MySQL または MariaDB から TiDB にデータを移行する場合に特に便利です。この場合、TiDB DM (データ移行) プラットフォームを使用して、MySQL/MariaDB クラスターから TiDB にデータを取得し、TiDB Binlogを使用して別のダウンストリーム MySQL/MariaDB インスタンス/クラスターを TiDB クラスターと同期させることができます。TiDB Binlog を使用すると、TiDB へのアプリケーション トラフィックをダウンストリーム MySQL または MariaDB インスタンス/クラスターにプッシュできるため、ダウンタイムやデータ損失なしでアプリケーションを MySQL または MariaDB に簡単に戻すことができるため、TiDB への移行のリスクが軽減されます。
 
-詳細については[TiDB Binlogクラスタユーザー ガイド](/tidb-binlog/tidb-binlog-overview.md)参照してください。
+詳細については[TiDBBinlogクラスタユーザー ガイド](/tidb-binlog/tidb-binlog-overview.md)参照してください。
 
 ## アーキテクチャ {#architecture}
 
-TiDB Binlog は、 **Pump**と**Drainer**の 2 つのコンポーネントで構成されています。複数のPumpノードが Pump クラスターを構成します。各Pumpノードは TiDB サーバー インスタンスに接続し、クラスター内の各 TiDB サーバー インスタンスに対する更新を受け取ります。DrainerはPumpクラスターに接続し、受信した更新を特定のダウンストリームの宛先 (Kafka、別の TiDBクラスタ、MySQL/MariaDBサーバーなど) に適した形式に変換します。
+TiDB Binlog は、 **Pump**と**Drainer の**2 つのコンポーネントで構成されています。複数のPumpノードが Pump クラスターを構成します。各Pumpノードは TiDB サーバー インスタンスに接続し、クラスター内の各 TiDB サーバー インスタンスに対する更新を受け取ります。DrainerはPumpクラスターに接続し、受信した更新を特定のダウンストリームの宛先 (Kafka、別の TiDBクラスタ、MySQL/MariaDBサーバーなど) に適した形式に変換します。
 
 ![TiDB-Binlog architecture](https://download.pingcap.com/images/docs/tidb-binlog-cluster-architecture.png)
 
@@ -42,7 +42,7 @@ sudo yum install -y mariadb-server
 ```
 
 ```bash
-curl -L https://download.pingcap.org/tidb-community-server-v8.1.0-linux-amd64.tar.gz | tar xzf -
+curl -L https://download.pingcap.org/tidb-community-server-v8.1.1-linux-amd64.tar.gz | tar xzf -
 cd tidb-latest-linux-amd64
 ```
 
@@ -119,7 +119,7 @@ for f in *.toml; do echo "$f:"; cat "$f"; echo; done
 
 ## ブートストラップ {#bootstrapping}
 
-これで、各コンポーネントを起動できます。これは、特定の順序で実行するのが最適です。最初に Placement Driver (PD)、次に TiKV Server、次にPump (TiDB はバイナリ ログを送信するためにPumpサービスに接続する必要があるため)、最後に TiDB Server です。
+これで、各コンポーネントを起動できます。これは、特定の順序で行うのが最適です。最初に Placement Driver (PD)、次に TiKV Server、次にPump (TiDB はバイナリ ログを送信するためにPumpサービスに接続する必要があるため)、最後に TiDB Server です。
 
 以下を使用してすべてのサービスを開始します。
 
@@ -143,7 +143,7 @@ sleep 3
     [kolbe@localhost tidb-latest-linux-amd64]$ ./bin/tidb-server --config=tidb.toml &>tidb.out &
     [4] 21058
 
-`jobs`を実行すると、実行中のデーモンのリストが表示されます。
+`jobs`実行すると、実行中のデーモンのリストが表示されます。
 
     [kolbe@localhost tidb-latest-linux-amd64]$ jobs
     [1]   Running                 ./bin/pd-server --config=pd.toml &>pd.out &
@@ -174,9 +174,9 @@ mysql -h 127.0.0.1 -P 4000 -u root -e 'select tidb_version()\G'
     TiKV Min Version: 2.1.0-alpha.1-ff3dd160846b7d1aed9079c389fc188f7f5ea13e
     Check Table Before Drop: false
 
-この時点では、TiDBクラスタが稼働しており、クラスターからバイナリ ログを読み取り、それをデータ ディレクトリにリレー ログとして保存してい`pump` 。次の手順では、 `drainer`が書き込み可能な MariaDBサーバーを起動します。
+この時点では、TiDBクラスタが稼働しており、クラスターからバイナリ ログを`pump` 、それをデータ ディレクトリにリレー ログとして保存しています。次の手順では、 `drainer`書き込み可能な MariaDBサーバーを起動します。
 
-開始`drainer`次を使用します:
+開始`drainer`は次を使用します:
 
 ```bash
 sudo systemctl start mariadb
@@ -311,7 +311,7 @@ MariaDBサーバーをクエリしたときに、TiDB に挿入したのと同�
 
 クラスターに参加しているポンプとドレイナーに関する情報は PD に保存されます。binlogctl ツールを使用して、それらの状態に関する情報を照会および操作できます。詳細については、 [binlogctl ガイド](/tidb-binlog/binlog-control.md)参照してください。
 
-`binlogctl`を使用して、クラスター内のポンプとドレーナーの現在のステータスを表示します。
+`binlogctl`使用して、クラスター内のポンプとドレーナーの現在のステータスを表示します。
 
 ```bash
 ./binlogctl -cmd drainers
@@ -326,7 +326,7 @@ MariaDBサーバーをクエリしたときに、TiDB に挿入したのと同�
     [kolbe@localhost tidb-latest-linux-amd64]$ ./binlogctl -cmd pumps
     [2019/04/11 17:44:13.904 -04:00] [INFO] [nodes.go:47] ["query node"] [type=pump] [node="{NodeID: localhost.localdomain:8250, Addr: 192.168.236.128:8250, State: online, MaxCommitTS: 407638914024079361, UpdateTime: 2019-04-11 17:44:13 -0400 EDT}"]
 
-Drainerを強制終了すると、クラスターはそれを「一時停止」状態にします。つまり、クラスターは Drainer が再参加することを期待します。
+Drainer を強制終了すると、クラスターはそれを「一時停止」状態にします。つまり、クラスターは Drainer が再参加することを期待します。
 
 ```bash
 pkill drainer
@@ -389,6 +389,6 @@ sleep 3
 
 ## 結論 {#conclusion}
 
-このチュートリアルでは、単一のPumpと単一のDrainerを備えたクラスターを使用して、TiDB クラスターから下流の MariaDBサーバーにレプリケートするように TiDB Binlogを設定しました。これまで見てきたように、TiDB Binlog はTiDB クラスターへの変更をキャプチャして処理するための包括的なプラットフォームです。
+このチュートリアルでは、単一のPumpと単一のDrainer を備えたクラスターを使用して、TiDB クラスターから下流の MariaDBサーバーにレプリケートするように TiDB Binlog を設定しました。これまで見てきたように、TiDB Binlogは TiDB クラスターへの変更をキャプチャして処理するための包括的なプラットフォームです。
 
 より堅牢な開発、テスト、または本番の展開では、高可用性とスケーリングのために複数の TiDB サーバーを用意し、複数のPumpインスタンスを使用して、TiDBサーバーインスタンスへのアプリケーション トラフィックがPumpクラスターの問題の影響を受けないようにします。また、追加のDrainerインスタンスを使用して、さまざまなダウンストリーム プラットフォームに更新をプッシュしたり、増分バックアップを実装したりすることもできます。

@@ -5,7 +5,7 @@ summary: TiCDC 行データ チェックサム検証の詳細な実装を紹介�
 
 # Avro に基づく TiCDC 行データ チェックサム検証 {#ticdc-row-data-checksum-verification-based-on-avro}
 
-このドキュメントでは、TiCDC によって Kafka に送信され、 Golang を使用して Avro プロトコルでエンコードされたデータを使用する方法と、 [単一行データチェックサム機能](/ticdc/ticdc-integrity-check.md)使用してデータ検証を実行する方法について説明します。
+このドキュメントでは、TiCDC によって Kafka に送信され、 Golang を使用して Avro プロトコルでエンコードされたデータを使用する方法と、 [単一行データチェックサム機能](/ticdc/ticdc-integrity-check.md)を使用してデータ検証を実行する方法を紹介します。
 
 この例のソースコードは[`avro-checksum-verification`](https://github.com/pingcap/tiflow/tree/release-8.1/examples/golang/avro-checksum-verification)ディレクトリにあります。
 

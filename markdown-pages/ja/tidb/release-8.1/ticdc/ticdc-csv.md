@@ -32,7 +32,7 @@ output-old-value = false
 
 ## トランザクション制約 {#transactional-constraints}
 
--   単一の CSV ファイルでは、行の`commit-ts`後続の行の 1 と等しいか、それより小さくなります。
+-   単一の CSV ファイルでは、行の`commit-ts`が後続の行の 1 と等しいかそれより小さくなります。
 -   単一テーブルの同じトランザクションが同じ CSV ファイルに保存されます。
 -   同じトランザクションの複数のテーブルを異なる CSV ファイルに保存できます。
 
@@ -44,7 +44,7 @@ output-old-value = false
 
 CSV ファイルでは、各列は次のように定義されます。
 
--   カラム1: 操作タイプ インジケータ。 `I` 、 `U` 、 `D`が含まれます。 `I`は`INSERT` 、 `U`は`UPDATE` 、 `D` `DELETE`を意味します。
+-   カラム1: 操作タイプ インジケータ。 `I` 、 `U` 、 `D`が含まれます。 `I`は`INSERT` 、 `U`は`UPDATE` 、 `D` `DELETE`意味します。
 -   カラム2: テーブル名。
 -   カラム3: スキーマ名。
 -   カラム4: ソース トランザクションの`commit-ts`この列はオプションです。
@@ -63,7 +63,7 @@ CREATE TABLE `employee` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
-`include-commit-ts = true`および`output-old-value = false`場合、このテーブルの DML イベントは次のように CSV 形式で保存されます。
+`include-commit-ts = true`および`output-old-value = false`の場合、このテーブルの DML イベントは次のように CSV 形式で保存されます。
 
 ```shell
 "I","employee","hr",433305438660591626,101,"Smith","Bob","2014-06-04","New York"
@@ -73,7 +73,7 @@ CREATE TABLE `employee` (
 "U","employee","hr",433305438660591630,102,"Alex","Alice","2018-06-15","Beijing"
 ```
 
-`include-commit-ts = true`および`output-old-value = true`場合、このテーブルの DML イベントは次のように CSV 形式で保存されます。
+`include-commit-ts = true`および`output-old-value = true`の場合、このテーブルの DML イベントは次のように CSV 形式で保存されます。
 
     "I","employee","hr",433305438660591626,false,101,"Smith","Bob","2014-06-04","New York"
     "D","employee","hr",433305438660591627,true,101,"Smith","Bob","2015-10-08","Shanghai"
@@ -88,7 +88,7 @@ CREATE TABLE `employee` (
 | MySQLタイプ                                                                      | CSVタイプ | 例                               | 説明                                 |
 | ----------------------------------------------------------------------------- | ------ | ------------------------------- | ---------------------------------- |
 | `BOOLEAN` / `TINYINT` / `SMALLINT` / `INT` / `MEDIUMINT` / `BIGINT`           | 整数     | `123`                           | <li></li>                          |
-| `FLOAT` / `DOUBLE`                                                            | 浮く     | `153.123`                       | <li></li>                          |
+| `FLOAT` / `DOUBLE`                                                            | フロート   | `153.123`                       | <li></li>                          |
 | `NULL`                                                                        | ヌル     | `\N`                            | <li></li>                          |
 | `TIMESTAMP` / `DATETIME`                                                      | 弦      | `"1973-12-30 15:30:00.123456"`  | フォーマット: `yyyy-MM-dd HH:mm:ss.%06d` |
 | `DATE`                                                                        | 弦      | `"2000-01-01"`                  | フォーマット: `yyyy-MM-dd`               |

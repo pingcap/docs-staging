@@ -1,6 +1,6 @@
 ---
 title: TiDB 2.1.2 Release Notes
-summary: TiDB 2.1.2 および TiDB Ansible 2.1.2 は、2018 年 12 月 22 日にリリースされました。このリリースには、システムの互換性と安定性の向上が含まれています。主な更新には、Kafka バージョンの TiDB Binlogとの互換性、ローリング更新中の終了メカニズムの改善、およびさまざまな問題の修正が含まれます。PD および TiKV も、リージョンのマージ問題の修正や「DAY」単位の構成形式のサポートなどの更新を受けました。さらに、 TiDB Lightningおよび TiDB Binlog が更新され、新機能のサポートとボトルネックの解消が図られました。
+summary: TiDB 2.1.2 および TiDB Ansible 2.1.2 は、2018 年 12 月 22 日にリリースされました。このリリースには、システムの互換性と安定性の向上が含まれています。主な更新には、Kafka バージョンの TiDB Binlogとの互換性、ローリング更新中の終了メカニズムの改善、およびさまざまな問題の修正が含まれます。PD および TiKV も、リージョンのマージ問題の修正や「DAY」単位の構成形式のサポートなどの更新を受けました。さらに、 TiDB Lightningおよび TiDB Binlogが更新され、新機能のサポートとボトルネックの解消が図られました。
 ---
 
 # TiDB 2.1.2 リリースノート {#tidb-2-1-2-release-notes}
@@ -25,14 +25,14 @@ summary: TiDB 2.1.2 および TiDB Ansible 2.1.2 は、2018 年 12 月 22 日に
 
 -   `DAY` （ `d` ）単位の設定フォーマットをサポートし、設定互換性の問題を修正[＃3931](https://github.com/tikv/tikv/pull/3931)
 -   `Approximate Size Split` [＃3942](https://github.com/tikv/tikv/pull/3942)によって引き起こされる可能性のあるpanic問題を修正
--   リージョンマージ[＃3822](https://github.com/tikv/tikv/pull/3822) [＃3873](https://github.com/tikv/tikv/pull/3873) 2つの問題を修正
+-   リージョンマージ[＃3822](https://github.com/tikv/tikv/pull/3822)に関する2つ[＃3873](https://github.com/tikv/tikv/pull/3873)問題を修正
 
 ## ツール {#tools}
 
 -   TiDB Lightning
     -   Lightning でサポートされる最小のクラスタバージョンを TiDB 2.1.0 にする
-    -   Lightning [＃144](https://github.com/pingcap/tidb-tools/issues/144)で解析された`JSON`データを含むファイルのコンテンツ エラーを修正しました
-    -   チェックポイントを使用してLightningを再起動した後に`Too many open engines`が発生する問題を修正しました
+    -   Lightning [＃144](https://github.com/pingcap/tidb-tools/issues/144)で解析された`JSON`のデータを含むファイルのコンテンツ エラーを修正しました
+    -   チェックポイントを使用してLightningを再起動した後に`Too many open engines`発生する問題を修正しました
 -   TiDBBinlog
     -   Drainer がKafka にデータを書き込む際のボトルネックを解消
     -   TiDB BinlogのKafkaバージョンをサポート

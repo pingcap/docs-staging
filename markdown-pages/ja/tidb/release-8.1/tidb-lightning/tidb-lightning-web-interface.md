@@ -1,6 +1,6 @@
 ---
 title: TiDB Lightning Web Interface
-summary: Web インターフェースを通じてTiDB Lightningを制御します。
+summary: Web インターフェースを通じてTiDB Lightning を制御します。
 ---
 
 # TiDB Lightning Web インターフェース {#tidb-lightning-web-interface}
@@ -25,7 +25,7 @@ TiDB Lightningが起動したら、 `http://127.0.0.1:8289`アクセスしてプ
 
 サーバーモードでは、 TiDB Lightning はすぐに実行を開始しません。代わりに、ユーザーは Web インターフェイスを介して (複数の)*タスク*を送信してデータをインポートします。
 
-## 表紙 {#front-page}
+## トップページ {#front-page}
 
 ![Front page of the web interface](https://download.pingcap.com/images/docs/lightning-web-frontpage.png)
 

@@ -75,6 +75,7 @@ KeyPart ::=
 IndexOption ::=
     'COMMENT' String
 |   ( 'VISIBLE' | 'INVISIBLE' )
+|   ('USING' | 'TYPE') ('BTREE' | 'RTREE' | 'HASH')
 
 ForeignKeyDef
          ::= ( 'CONSTRAINT' Identifier )? 'FOREIGN' 'KEY'
@@ -134,14 +135,14 @@ PlacementPolicyOption ::=
 | `PRE_SPLIT_REGIONS`                          | テーブルを作成するときに`2^(PRE_SPLIT_REGIONS)`リージョンを事前に分割するには                            | `PRE_SPLIT_REGIONS` = 4             |
 | `AUTO_ID_CACHE`                              | TiDBインスタンスの自動IDキャッシュサイズを設定します。デフォルトでは、TiDBは自動IDの割り当て速度に応じてこのサイズを自動的に変更します。    | `AUTO_ID_CACHE` = 200               |
 | `AUTO_RANDOM_BASE`                           | auto_randomの初期増分値を設定します。このオプションは内部インターフェースの一部とみなすことができます。ユーザーはこのパラメータを無視できます。 | `AUTO_RANDOM_BASE` = 0              |
-| `CHARACTER SET`                              | テーブルの[キャラクターセット](/character-set-and-collation.md)指定するには                       | `CHARACTER SET` = &#39;utf8mb4&#39; |
+| `CHARACTER SET`                              | テーブルの[文字セット](/character-set-and-collation.md)指定するには                           | `CHARACTER SET` = &#39;utf8mb4&#39; |
 | `COMMENT`                                    | コメント情報                                                                        | `COMMENT` = &#39;コメント情報&#39;        |
 
 <CustomContent platform="tidb">
 
 > **注記：**
 >
-> `split-table`構成オプションはデフォルトで有効になっています。有効にすると、新しく作成されたテーブルごとに個別のリージョンが作成されます。詳細については、 [TiDB 構成ファイル](/tidb-configuration-file.md)を参照してください。
+> `split-table`構成オプションはデフォルトで有効になっています。有効にすると、新しく作成されたテーブルごとに個別のリージョンが作成されます。詳細については、 [TiDB 構成ファイル](/tidb-configuration-file.md)参照してください。
 
 </CustomContent>
 
@@ -232,11 +233,12 @@ mysql> DESC t1;
 ## MySQL 互換性 {#mysql-compatibility}
 
 -   空間型を除くすべてのデータ型がサポートされています。
--   `FULLTEXT` `HASH` `SPATIAL`はサポートされていません。
+-   TiDB `RTREE` `BTREE` `HASH`インデックス タイプを受け入れますが、それらを無視します。
+-   TiDB は`FULLTEXT`の構文の解析をサポートしていますが、 `FULLTEXT`インデックスの使用はサポートしていません。
 
 <CustomContent platform="tidb">
 
--   互換性のため、 `index_col_name`属性は、デフォルトで最大 3072 バイトの長さ制限を持つ長さオプションをサポートします。長さ制限は、 `max-index-length`構成オプションを通じて変更できます。詳細については、 [TiDB 構成ファイル](/tidb-configuration-file.md#max-index-length)を参照してください。
+-   互換性のため、 `index_col_name`属性は、デフォルトで最大 3072 バイトの長さ制限を持つ長さオプションをサポートします。長さ制限は、 `max-index-length`構成オプションを通じて変更できます。詳細については、 [TiDB 構成ファイル](/tidb-configuration-file.md#max-index-length)参照してください。
 
 </CustomContent>
 
@@ -248,8 +250,8 @@ mysql> DESC t1;
 
 -   `index_col_name`のうち`[ASC | DESC]`現在解析されていますが無視されます (MySQL 5.7互換の動作)。
 -   `COMMENT`属性は`WITH PARSER`オプションをサポートしていません。
--   TiDB は、デフォルトで 1 つのテーブルに 1017 列をサポートし、最大 4096 列をサポートします。InnoDB での対応する列数制限は 1017 列で、MySQL でのハード制限は 4096 列です。詳細については、 [TiDB の制限](/tidb-limitations.md)を参照してください。
--   パーティション テーブルの場合、範囲列、ハッシュ列、範囲列 (単一列) のみがサポートされます。詳細については、 [パーティションテーブル](/partitioned-table.md)を参照してください。
+-   TiDB は、デフォルトで 1 つのテーブルに 1017 列をサポートし、最大 4096 列をサポートします。InnoDB での対応する列数制限は 1017 列で、MySQL でのハード制限は 4096 列です。詳細については、 [TiDB の制限](/tidb-limitations.md)参照してください。
+-   TiDB は`HASH` 、 `RANGE` 、 `LIST` 、および`KEY` [パーティションタイプ](/partitioned-table.md#partitioning-types)をサポートします。サポートされていないパーティション タイプの場合、TiDB は`Warning: Unsupported partition type %s, treat as normal table`返します。ここで、 `%s`サポートされていない特定のパーティション タイプです。
 
 ## 参照 {#see-also}
 

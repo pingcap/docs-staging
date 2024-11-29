@@ -31,7 +31,7 @@ TiDB Ansible バージョン: 2.1.16
     -   SQL 文に現在の時刻 ( `CURRENT_TIMESTAMP`や`NOW`など) の計算が含まれる場合に、現在のタイムスタンプを複数回取得することで発生する MySQL の非互換性の問題を修正しました[＃11392](https://github.com/pingcap/tidb/pull/11392)
     -   AUTO_INCREMENT列がFLOATまたはDOUBLE型[＃11389](https://github.com/pingcap/tidb/pull/11389)を処理できない問題を修正
     -   `CONVERT_TZ`関数が無効な引数[＃11357](https://github.com/pingcap/tidb/pull/11357)受け入れたときに`NULL`が正しく返されない問題を修正しました
-    -   `PARTITION BY LIST`文でエラーが報告される問題を修正しました。(現在は構文のみがサポートされています。TiDB が文を実行すると、通常のテーブルが作成され、プロンプト メッセージが表示されます) [＃11236](https://github.com/pingcap/tidb/pull/11236)
+    -   `PARTITION BY LIST`文でエラーが報告される問題を修正しました。(現在は構文のみがサポートされています。TiDB が文を実行すると、通常のテーブルが作成され、プロンプト メッセージが提供されます) [＃11236](https://github.com/pingcap/tidb/pull/11236)
     -   `Mod(%)` 、 `Multiple(*)` 、 `Minus(-)`演算で、小数点以下の桁数が多い場合（ `select 0.000 % 0.11234500000000000000`など）に、MySQL の結果と矛盾する`0`結果が返される問題を修正しました[＃11353](https://github.com/pingcap/tidb/pull/11353)
 -   サーバ
     -   `OnInit`が[＃11426](https://github.com/pingcap/tidb/pull/11426)にコールバックされたときにプラグインが`NULL`ドメインを取得する問題を修正

@@ -40,10 +40,10 @@ summary: TiDB システム テーブルについて学習します。
 
 ## 統計システムテーブル {#statistics-system-tables}
 
--   `stats_buckets` : 統計のバケツ
+-   `stats_buckets` : 統計の塊
 -   `stats_histograms` : 統計のヒストグラム
 -   `stats_top_n` : 統計のトップN
--   `stats_meta` : テーブルのメタ情報（行の総数や更新された行など）
+-   `stats_meta` : テーブルのメタ情報（行の総数や更新された行数など）
 -   `stats_extended` : 列間の順序相関などの拡張統計
 -   `stats_feedback` : 統計のクエリフィードバック
 -   `stats_fm_sketch` : 統計列のヒストグラムのFMSketch分布

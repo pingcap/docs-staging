@@ -1,6 +1,6 @@
 ---
 title: TiDB 4.0.0 Beta.2 Release Notes
-summary: TiDB 4.0.0 Beta.2 は、2020 年 3 月 18 日にリリースされました。新機能には、動的に更新された構成の永続化、双方向データ レプリケーション、TLS 構成、変更データ キャプチャ、増分バックアップなどの実験的機能のサポートが含まれます。バグ修正では、panic、休止状態領域、レプリケーションの遅延、互換性に関する問題が対処されています。TiDB Ansible は、etcd へのノード情報の挿入と ARM プラットフォームへのサービスのデプロイをサポートするようになりました。
+summary: TiDB 4.0.0 Beta.2 は、2020 年 3 月 18 日にリリースされました。新機能には、動的に更新された構成の永続化、双方向データ レプリケーション、TLS 構成、変更データ キャプチャ、増分バックアップなどの実験的機能のサポートが含まれます。バグ修正では、panic、休止状態領域、レプリケーション遅延、互換性に関する問題に対処しています。TiDB Ansible は、etcd へのノード情報の挿入と ARM プラットフォームへのサービスのデプロイをサポートするようになりました。
 ---
 
 # TiDB 4.0.0 Beta.2 リリースノート {#tidb-4-0-0-beta-2-release-notes}
@@ -41,9 +41,9 @@ TiDB Ansible バージョン: 4.0.0-beta.2
 
 -   TiDB アンシブル
     -   etcd [＃1196](https://github.com/pingcap/tidb-ansible/pull/1196)へのノード情報の注入をサポート
-    -   ARM プラットフォーム[＃1204](https://github.com/pingcap/tidb-ansible/pull/1204)での TiDB サービスの展開をサポート
+    -   ARM プラットフォーム[＃1204](https://github.com/pingcap/tidb-ansible/pull/1204)への TiDB サービスの導入をサポート
 
-## バグの修正 {#bug-fixes}
+## バグ修正 {#bug-fixes}
 
 -   ティクヴ
     -   バックアップ中に空の短い値に遭遇したときに発生する可能性のあるpanic問題を修正しました[＃6718](https://github.com/tikv/tikv/pull/6718)
