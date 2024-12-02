@@ -44,9 +44,9 @@ Assume that tables 1~4 have the same table structure as follows.
 
 ```sql
 CREATE TABLE `table1` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `sid` bigint(20) NOT NULL,
-  `pid` bigint(20) NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `sid` bigint NOT NULL,
+  `pid` bigint NOT NULL,
   `comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sid` (`sid`)
@@ -58,9 +58,9 @@ For those four tables, the `id` column is the primary key. It is auto-incrementa
 
 ```sql
 CREATE TABLE `table5` (
-  `id` bigint(20) NOT NULL,
-  `sid` bigint(20) NOT NULL,
-  `pid` bigint(20) NOT NULL,
+  `id` bigint NOT NULL,
+  `sid` bigint NOT NULL,
+  `pid` bigint NOT NULL,
   `comment` varchar(255) DEFAULT NULL,
   INDEX (`id`),
   UNIQUE KEY `sid` (`sid`)
@@ -135,9 +135,9 @@ Create `mydb.table5` at downstream.
 
 ```sql
 CREATE TABLE `table5` (
-  `id` bigint(20) NOT NULL,
-  `sid` bigint(20) NOT NULL,
-  `pid` bigint(20) NOT NULL,
+  `id` bigint NOT NULL,
+  `sid` bigint NOT NULL,
+  `pid` bigint NOT NULL,
   `comment` varchar(255) DEFAULT NULL,
   INDEX (`id`),
   UNIQUE KEY `sid` (`sid`)
