@@ -165,32 +165,32 @@
           {
             "id": "v1beta",
             "pathname": "v1beta",
-            "production": "https://download.pingcap.org/tidbcloud-oas.json",
+            "production": "/openapi/tidbcloud-oas.json",
             "preview": "https://download.pingcap.org/tidbcloud-oas-preview.json"
           },
           {
             "id": "v1beta1",
             "pathname": "v1beta1/billing",
-            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-billing.swagger.json",
-            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-billing.swagger.json"
+            "production": "/openapi/tidbcloud-oas-v1beta1-billing.swagger.json",
+            "preview": "/openapi/tidbcloud-oas-v1beta1-billing.swagger.json"
           },
           {
             "id": "v1beta1",
             "pathname": "v1beta1/dataservice",
-            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-dataservice.swagger.json",
-            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-dataservice.swagger.json"
+            "production": "/openapi/tidbcloud-oas-v1beta1-dataservice.swagger.json",
+            "preview": "/openapi/tidbcloud-oas-v1beta1-dataservice.swagger.json"
           },
           {
             "id": "v1beta1",
             "pathname": "v1beta1/iam",
-            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-iam.swagger.json",
-            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-iam.swagger.json"
+            "production": "/openapi/tidbcloud-oas-v1beta1-iam.swagger.json",
+            "preview": "/openapi/tidbcloud-oas-v1beta1-iam.swagger.json"
           },
           {
             "id": "msp",
             "pathname": "v1beta1/msp",
-            "production": "https://download.pingcap.org/tidbcloud-oas-v1beta1-msp.json",
-            "preview": "https://download.pingcap.org/tidbcloud-oas-v1beta1-msp.json"
+            "production": "/openapi/tidbcloud-oas-v1beta1-msp.json",
+            "preview": "/openapi/tidbcloud-oas-v1beta1-msp.json"
           }
         ]
       }
