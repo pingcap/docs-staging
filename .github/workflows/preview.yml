@@ -42,14 +42,14 @@ jobs:
           mkdir -p ./preview/markdown-pages/zh/tidb
 
           cp -rip ./main/markdown-pages/en/tidb/master ./preview/markdown-pages/en/tidb/master
-          cp -rip ./main/markdown-pages/en/tidb/release-8.1 ./preview/markdown-pages/en/tidb/release-8.1
+          cp -rip ./main/markdown-pages/en/tidb/release-8.5 ./preview/markdown-pages/en/tidb/release-8.5
           cp -rip ./main/markdown-pages/en/tidbcloud ./preview/markdown-pages/en/
 
-          cp -rip ./main/markdown-pages/zh/tidb/release-8.1 ./preview/markdown-pages/zh/tidb/release-8.1
+          cp -rip ./main/markdown-pages/zh/tidb/release-8.5 ./preview/markdown-pages/zh/tidb/release-8.5
           cp -rip ./main/markdown-pages/zh/tidb/master ./preview/markdown-pages/zh/tidb/master
 
           cp -rip ./main/markdown-pages/ja/tidb/master ./preview/markdown-pages/ja/tidb/master
-          cp -rip ./main/markdown-pages/ja/tidb/release-8.1 ./preview/markdown-pages/ja/tidb/release-8.1
+          cp -rip ./main/markdown-pages/ja/tidb/release-8.5 ./preview/markdown-pages/ja/tidb/release-8.5
           cp -rip ./main/markdown-pages/ja/tidbcloud ./preview/markdown-pages/ja/
 
       - name: Git commit and push
