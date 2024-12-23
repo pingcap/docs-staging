@@ -33,7 +33,7 @@ aliases: ['/docs-cn/tidb-data-migration/dev/quick-start-with-dm/','/docs-cn/tidb
 
     
     ```shell
-    tiup dm deploy dm-test 6.0.0 topology.yaml -p
+    tiup dm deploy dm-test 8.5.0 topology.yaml -p
     ```
 
 ## 第 2 步：准备数据源
