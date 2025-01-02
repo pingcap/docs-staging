@@ -18,12 +18,12 @@
   - [Try Out TiDB Cloud CLI](/tidb-cloud/get-started-with-cli.md)
   - [Perform a PoC](/tidb-cloud/tidb-cloud-poc.md)
 - Key Concepts
-  - [Architecture](/tidb-cloud/architecture-cocepts.md)
+  - [Architecture](/tidb-cloud/architecture-concepts.md)
   - [Database Schema](/tidb-cloud/database-schema-concepts.md)
   - [Transactions](/tidb-cloud/transaction_concepts.md)
   - [SQL](/tidb-cloud/sql-concepts.md)
   - [AI Features](/tidb-cloud/ai-feature-concepts.md)
-  - [Data Service](/tidb-cloud/data-service-concepts.md) ![BETA]()
+  - [Data Service](/tidb-cloud/data-service-concepts.md) ![BETA](/media/tidb-cloud/blank_transparent_placeholder.png)
   - [Scalability](/tidb-cloud/scalability-concepts.md)
   - [High Availability](/tidb-cloud/high-availability-with-multi-az.md)
   - [Monitoring](/tidb-cloud/monitoring-concepts.md)
@@ -75,7 +75,7 @@
     - [mysql2](/develop/dev-guide-sample-application-ruby-mysql2.md)
     - [Rails](/develop/dev-guide-sample-application-ruby-rails.md)
   - [WordPress](/tidb-cloud/dev-guide-wordpress.md)
-  - Serverless Driver ![BETA]()
+  - Serverless Driver ![BETA](/media/tidb-cloud/blank_transparent_placeholder.png)
     - [TiDB Cloud Serverless Driver](/tidb-cloud/serverless-driver.md)
     - [Node.js Example](/tidb-cloud/serverless-driver-node-example.md)
     - [Prisma Example](/tidb-cloud/serverless-driver-prisma-example.md)
@@ -143,7 +143,7 @@
       - [Connection Overview](/tidb-cloud/connect-to-tidb-cluster-serverless.md)
       - [Connect via Public Endpoint](/tidb-cloud/connect-via-standard-connection-serverless.md)
       - [Connect via Private Endpoint](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
-    - Branch ![BETA]()
+    - Branch ![BETA](/media/tidb-cloud/blank_transparent_placeholder.png)
       - [Overview](/tidb-cloud/branch-overview.md)
       - [Manage Branches](/tidb-cloud/branch-manage.md)
       - [GitHub Integration](/tidb-cloud/branch-github-integration.md)
@@ -179,12 +179,12 @@
     - [Built-in Metrics](/tidb-cloud/built-in-monitoring.md)
     - [Built-in Alerting](/tidb-cloud/monitor-built-in-alerting.md)
     - [Cluster Events](/tidb-cloud/tidb-cloud-events.md)
-    - [Third-Party Metrics Integrations](/tidb-cloud/third-party-monitoring-integrations.md) ![BETA]()
+    - [Third-Party Metrics Integrations](/tidb-cloud/third-party-monitoring-integrations.md) ![BETA](/media/tidb-cloud/blank_transparent_placeholder.png)
   - Tune Performance
     - [Overview](/tidb-cloud/tidb-cloud-tune-performance-overview.md)
     - Analyze Performance
       - [Use the Diagnosis Tab](/tidb-cloud/tune-performance.md)
-      - [Use Index Insight](/tidb-cloud/index-insight.md) ![BETA]()
+      - [Use Index Insight](/tidb-cloud/index-insight.md) ![BETA](/media/tidb-cloud/blank_transparent_placeholder.png)
       - [Use Statement Summary Tables](/statement-summary-tables.md)
     - SQL Tuning
       - [Overview](/tidb-cloud/tidb-cloud-sql-tuning-overview.md)
@@ -235,6 +235,12 @@
        - [Overview](/garbage-collection-overview.md)
        - [Configuration](/garbage-collection-configuration.md)
     - [Tune TiFlash Performance](/tiflash/tune-tiflash-performance.md)
+  - Optimize Resource Allocation
+    - [Overview of Resource Allocation](/tidb-cloud/optimize-resource-allocation.md)
+    - [Resource Control](/tidb-resource-control.md)
+    - TiDB Node Group
+      - [Overview of TiDB Node Group](/tidb-cloud/tidb-node-group-overview.md)
+      - [Manage TiDB Node Groups](/tidb-cloud/tidb-node-group-management.md)
   - [Upgrade a TiDB Cluster](/tidb-cloud/upgrade-tidb-cluster.md)
   - [Delete a TiDB Cluster](/tidb-cloud/delete-tidb-cluster.md)
 - Migrate or Import Data
@@ -261,9 +267,9 @@
       - [Precheck Errors, Migration Errors, and Alerts for Data Migration](/tidb-cloud/tidb-cloud-dm-precheck-and-troubleshooting.md)
       - [Connect AWS DMS to TiDB Cloud clusters](/tidb-cloud/tidb-cloud-connect-aws-dms.md)
 - Explore Data
-  - [Chat2Query in SQL Editor](/tidb-cloud/explore-data-with-chat2query.md) ![BETA]()
+  - [Chat2Query in SQL Editor](/tidb-cloud/explore-data-with-chat2query.md) ![BETA](/media/tidb-cloud/blank_transparent_placeholder.png)
   - [SQL Proxy Account](/tidb-cloud/sql-proxy-account.md)
-- Vector Search ![BETA]()
+- Vector Search ![BETA](/media/tidb-cloud/blank_transparent_placeholder.png)
   - [Overview](/tidb-cloud/vector-search-overview.md)
   - Get Started
     - [Get Started with SQL](/tidb-cloud/vector-search-get-started-using-sql.md)
@@ -286,7 +292,7 @@
   - [Improve Performance](/tidb-cloud/vector-search-improve-performance.md)
   - [Limitations](/tidb-cloud/vector-search-limitations.md)
   - [Changelogs](/tidb-cloud/vector-search-changelogs.md)
-- Data Service ![BETA]()
+- Data Service ![BETA](/media/tidb-cloud/blank_transparent_placeholder.png)
   - [Overview](/tidb-cloud/data-service-overview.md)
   - [Get Started](/tidb-cloud/data-service-get-started.md)
   - Chat2Query API
@@ -742,11 +748,18 @@
     - [TiDB Cloud Partners](/tidb-cloud/tidb-cloud-partners.md)
     - [MSP Customer](/tidb-cloud/managed-service-provider-customer.md)
     - [Reseller's Customer](/tidb-cloud/cppo-customer.md)
+  - TiDB Distributed eXecution Framework (DXF)
+    - [Introduction](/tidb-distributed-execution-framework.md)
+    - [TiDB Global Sort](/tidb-global-sort.md)
   - [TiDB Cloud Dedicated Limitations and Quotas](/tidb-cloud/limitations-and-quotas.md)
   - [TiDB Cloud Serverless Limitations](/tidb-cloud/serverless-limitations.md)
   - [Limited SQL Features on TiDB Cloud](/tidb-cloud/limited-sql-features.md)
   - [TiDB Limitations](/tidb-limitations.md)
   - Benchmarks
+    - TiDB v8.5
+      - [Performance Highlights](/tidb-cloud/v8.5-performance-highlights.md)
+      - [TPC-C Performance Test Report](/tidb-cloud/v8.5-performance-benchmarking-with-tpcc.md)
+      - [Sysbench Performance Test Report](/tidb-cloud/v8.5-performance-benchmarking-with-sysbench.md)
     - TiDB v8.1
       - [TPC-C Performance Test Report](/tidb-cloud/v8.1-performance-benchmarking-with-tpcc.md)
       - [Sysbench Performance Test Report](/tidb-cloud/v8.1-performance-benchmarking-with-sysbench.md)
@@ -762,10 +775,12 @@
   - [System Variables](/system-variables.md)
   - [Server Status Variables](/status-variables.md)
   - [Table Filter](/table-filter.md)
-  - [Resource Control](/tidb-resource-control.md)
-  - TiDB Distributed eXecution Framework (DXF)
-    - [Introduction](/tidb-distributed-execution-framework.md)
-    - [TiDB Global Sort](/tidb-global-sort.md)
+  - Optimize Resource Allocation
+    - [Overview of Resource Allocation](/tidb-cloud/optimize-resource-allocation.md)
+    - [Resource Control](/tidb-resource-control.md)
+    - TiDB Node Group
+      - [Overview of TiDB Node Group](/tidb-cloud/tidb-node-group-overview.md)
+      - [Manage TiDB Node Groups](/tidb-cloud/tidb-node-group-management.md)
   - [URI Formats of External Storage Services](/external-storage-uri.md)
   - [DDL Execution Principles and Best Practices](/ddl-introduction.md)
   - [Troubleshoot Inconsistency Between Data and Indexes](/troubleshoot-data-inconsistency-errors.md)
