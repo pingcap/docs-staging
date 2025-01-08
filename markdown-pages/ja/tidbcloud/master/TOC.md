@@ -6,7 +6,9 @@
 -   TiDB Cloudについて
     -   [TiDB Cloudとは](/tidb-cloud/tidb-cloud-intro.md)
     -   [アーキテクチャ](/tidb-cloud/tidb-cloud-intro.md#architecture)
-    -   [高可用性](/tidb-cloud/high-availability-with-multi-az.md)
+    -   高可用性
+        -   [マルチAZ配置](/tidb-cloud/high-availability-with-multi-az.md)
+        -   [TiDB Cloud Serverless の高可用性](/tidb-cloud/serverless-high-availability.md)
     -   [MySQL 互換性](/mysql-compatibility.md)
     -   [ロードマップ](/tidb-cloud/tidb-cloud-roadmap.md)
 -   始める
@@ -215,6 +217,12 @@
             -   [概要](/garbage-collection-overview.md)
             -   [コンフィグレーション](/garbage-collection-configuration.md)
         -   [TiFlash のパフォーマンスを調整する](/tiflash/tune-tiflash-performance.md)
+    -   リソース割り当ての最適化
+        -   [リソース割り当ての概要](/tidb-cloud/optimize-resource-allocation.md)
+        -   [リソース管理](/tidb-resource-control.md)
+        -   TiDB ノード グループ
+            -   [TiDBノードグループの概要](/tidb-cloud/tidb-node-group-overview.md)
+            -   [TiDBノードグループの管理](/tidb-cloud/tidb-node-group-management.md)
     -   [TiDBクラスタのアップグレード](/tidb-cloud/upgrade-tidb-cluster.md)
     -   [TiDBクラスタを削除する](/tidb-cloud/delete-tidb-cluster.md)
 -   データの移行またはインポート
@@ -289,6 +297,9 @@
     -   [カフカシンクへ](/tidb-cloud/changefeed-sink-to-apache-kafka.md)
     -   [TiDB Cloudシンクへ](/tidb-cloud/changefeed-sink-to-tidb-cloud.md)
     -   [クラウドストレージへ](/tidb-cloud/changefeed-sink-to-cloud-storage.md)
+    -   参照
+        -   [AWS でセルフホスト型 Kafka プライベートリンク サービスをセットアップする](/tidb-cloud/setup-self-hosted-kafka-private-link-service.md)
+        -   [Google Cloud でセルフホスト型 Kafka プライベート サービス接続を設定する](/tidb-cloud/setup-self-hosted-kafka-private-service-connect.md)
 -   災害復旧
     -   [リカバリーグループの概要](/tidb-cloud/recovery-group-overview.md)
     -   [始める](/tidb-cloud/recovery-group-get-started.md)
@@ -746,7 +757,6 @@
         -   [アップグレード](/tidb-cloud/ticloud-upgrade.md)
         -   [ヘルプ](/tidb-cloud/ticloud-help.md)
     -   [テーブルフィルター](/table-filter.md)
-    -   [リソース管理](/tidb-resource-control.md)
     -   [外部ストレージサービスの URI 形式](/external-storage-uri.md)
     -   [DDL 実行の原則とベスト プラクティス](/ddl-introduction.md)
     -   [データとインデックス間の不整合のトラブルシューティング](/troubleshoot-data-inconsistency-errors.md)
@@ -756,7 +766,8 @@
     -   [TiDB Cloudよくある質問](/tidb-cloud/tidb-cloud-faq.md)
     -   [TiDB Cloudサーバーレスに関するよくある質問](/tidb-cloud/serverless-faqs.md)
 -   リリースノート
-    -   [2024](/tidb-cloud/tidb-cloud-release-notes.md)
+    -   [2025](/tidb-cloud/tidb-cloud-release-notes.md)
+    -   [2024](/tidb-cloud/release-notes-2024.md)
     -   [2023](/tidb-cloud/release-notes-2023.md)
     -   [2022](/tidb-cloud/release-notes-2022.md)
     -   [2021](/tidb-cloud/release-notes-2021.md)
