@@ -5,11 +5,11 @@ summary: TiUP 可用于 TiDB 升级。升级过程中需注意不支持 TiFlash 
 
 # 使用 TiUP 升级 TiDB
 
-本文档适用于从以下版本升级到 TiDB v8.5.0：v6.1.x、v6.5.x、v7.1.x、v7.5.x、v8.1.x、v8.2.0、v8.3.0、v8.4.0
+本文档适用于从以下版本升级到 TiDB v8.5.x：v6.1.x、v6.5.x、v7.1.x、v7.5.x、v8.1.x、v8.2.0、v8.3.0、v8.4.0
 
 > **警告：**
 >
-> 1. 从 v8.4.0 版本开始，TiDB 已结束对 CentOS 7 和 Red Hat Enterprise Linux 7 的支持，建议使用 Rocky Linux 9.1 及以上的版本。如果将运行在 CentOS 7 或 Red Hat Enterprise Linux 7 上的 TiDB 集群升级到 v8.4.0 或之后版本，将导致集群不可用。升级 TiDB 前，请务必确保你的操作系统版本符合[操作系统及平台要求](/hardware-and-software-requirements.md#操作系统及平台要求)。
+> 1. 升级 TiDB 前，请务必确保你的操作系统版本符合[操作系统及平台要求](/hardware-and-software-requirements.md#操作系统及平台要求)。如需将运行在 CentOS Linux 7 上的集群升级到 TiDB v8.5 版本，请选择升级至 TiDB v8.5.1 或以上版本，以避免集群不可用的风险。详情参考 [TiDB 8.5.1 Release Notes](/releases/release-8.5.1.md)。
 > 2. 不支持将 TiFlash 组件从 5.3 之前的老版本在线升级至 5.3 及之后的版本，只能采用停机升级。如果集群中其他组件（如 tidb，tikv）不能停机升级，参考[不停机升级](#不停机升级)中的注意事项。
 > 3. 在升级 TiDB 集群的过程中，**请勿执行** DDL 语句，否则可能会出现行为未定义的问题。
 > 4. 集群中有 DDL 语句正在被执行时（通常为 `ADD INDEX` 和列类型变更等耗时较久的 DDL 语句），**请勿进行**升级操作。在升级前，建议使用 [`ADMIN SHOW DDL`](/sql-statements/sql-statement-admin-show-ddl.md) 命令查看集群中是否有正在进行的 DDL Job。如需升级，请等待 DDL 执行完成或使用 [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md) 命令取消该 DDL Job 后再进行升级。
@@ -59,7 +59,12 @@ summary: TiUP 可用于 TiDB 升级。升级过程中需注意不支持 TiFlash 
 
 ### 2.1 查阅兼容性变更
 
-查阅 TiDB v8.5.0 release notes 中的[兼容性变更](/releases/release-8.5.0.md#兼容性变更)。如果有任何变更影响到了你的升级，请采取相应的措施。
+查阅 TiDB release notes 中的兼容性变更。如果有任何变更影响到了你的升级，请采取相应的措施。
+
+以下为从 v8.4.0 升级至当前版本 (v8.5.1) 所需查阅的 release notes。如果从 v8.3.0 或之前版本升级到当前版本，可能也需要考虑和查看中间版本的 [Release Notes](/releases/release-notes.md)。
+
+- TiDB v8.5.0 [兼容性变更](/releases/release-8.5.0.md#兼容性变更)
+- TiDB v8.5.1 [Release Notes](/releases/release-8.5.1.md)
 
 ### 2.2 升级 TiUP 或更新 TiUP 离线镜像
 
@@ -131,7 +136,7 @@ tiup update cluster
 > 以下情况可跳过此步骤：
 >
 > - 原集群没有修改过配置参数，或通过 tiup cluster 修改过参数但不需要调整。
-> - 升级后对未修改过的配置项希望使用 `8.5.0` 默认参数。
+> - 升级后对未修改过的配置项希望使用 `8.5.1` 默认参数。
 
 1. 进入拓扑文件的 `vi` 编辑模式：
 
@@ -181,11 +186,11 @@ tiup cluster check <cluster-name> --cluster
 tiup cluster upgrade <cluster-name> <version>
 ```
 
-以升级到 v8.5.0 版本为例：
+以升级到 v8.5.1 版本为例：
 
 
 ```
-tiup cluster upgrade <cluster-name> v8.5.0
+tiup cluster upgrade <cluster-name> v8.5.1
 ```
 
 > **注意：**
@@ -227,7 +232,7 @@ tiup cluster upgrade -h | grep "version"
 tiup cluster stop <cluster-name>
 ```
 
-之后通过 `upgrade` 命令添加 `--offline` 参数来进行停机升级，其中 `<cluster-name>` 为集群名，`<version>` 为升级的目标版本，例如 `v8.5.0`。
+之后通过 `upgrade` 命令添加 `--offline` 参数来进行停机升级，其中 `<cluster-name>` 为集群名，`<version>` 为升级的目标版本，例如 `v8.5.1`。
 
 
 ```shell
@@ -253,7 +258,7 @@ tiup cluster display <cluster-name>
 ```
 Cluster type:       tidb
 Cluster name:       <cluster-name>
-Cluster version:    v8.5.0
+Cluster version:    v8.5.1
 ```
 
 ## 4. 升级 FAQ
@@ -306,7 +311,7 @@ Cluster version:    v8.5.0
 
 ### 4.3 升级过程中 evict leader 等待时间过长，如何跳过该步骤快速升级
 
-可以指定 `--force`，升级时会跳过 `PD transfer leader` 和 `TiKV evict leader` 过程，直接重启并升级版本，对线上运行的集群性能影响较大。命令如下，其中 `<version>` 为升级的目标版本，例如 `v8.5.0`：
+可以指定 `--force`，升级时会跳过 `PD transfer leader` 和 `TiKV evict leader` 过程，直接重启并升级版本，对线上运行的集群性能影响较大。命令如下，其中 `<version>` 为升级的目标版本，例如 `v8.5.1`：
 
 
 ```shell
@@ -319,5 +324,5 @@ tiup cluster upgrade <cluster-name> <version> --force
 
 
 ```
-tiup install ctl:v8.5.0
+tiup install ctl:v8.5.1
 ```
