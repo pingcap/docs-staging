@@ -44,14 +44,14 @@ TiDB Operator uses [Custom Resource Definition (CRD)](https://kubernetes.io/docs
 
 
 ```shell
-kubectl create -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.5.4/manifests/crd.yaml
+kubectl create -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.5.5/manifests/crd.yaml
 ```
 
 If the server cannot access the Internet, you need to download the `crd.yaml` file on a machine with Internet access before installing:
 
 
 ```shell
-wget https://raw.githubusercontent.com/pingcap/tidb-operator/v1.5.4/manifests/crd.yaml
+wget https://raw.githubusercontent.com/pingcap/tidb-operator/v1.5.5/manifests/crd.yaml
 kubectl create -f ./crd.yaml
 ```
 
@@ -97,7 +97,7 @@ When you use TiDB Operator, `tidb-scheduler` is not mandatory. Refer to [tidb-sc
 
     > **Note:**
     >
-    > `${chart_version}` represents the chart version of TiDB Operator. For example, `v1.5.4`. You can view the currently supported versions by running the `helm search repo -l tidb-operator` command.
+    > `${chart_version}` represents the chart version of TiDB Operator. For example, `v1.5.5`. You can view the currently supported versions by running the `helm search repo -l tidb-operator` command.
 
 2. Configure TiDB Operator
 
@@ -142,14 +142,14 @@ If your server cannot access the Internet, install TiDB Operator offline by the 
 
     
     ```shell
-    wget http://charts.pingcap.org/tidb-operator-v1.5.4.tgz
+    wget http://charts.pingcap.org/tidb-operator-v1.5.5.tgz
     ```
 
-    Copy the `tidb-operator-v1.5.4.tgz` file to the target server and extract it to the current directory:
+    Copy the `tidb-operator-v1.5.5.tgz` file to the target server and extract it to the current directory:
 
     
     ```shell
-    tar zxvf tidb-operator.v1.5.4.tgz
+    tar zxvf tidb-operator.v1.5.5.tgz
     ```
 
 2. Download the Docker images used by TiDB Operator
@@ -160,8 +160,8 @@ If your server cannot access the Internet, install TiDB Operator offline by the 
 
     
     ```shell
-    pingcap/tidb-operator:v1.5.4
-    pingcap/tidb-backup-manager:v1.5.4
+    pingcap/tidb-operator:v1.5.5
+    pingcap/tidb-backup-manager:v1.5.5
     bitnami/kubectl:latest
     pingcap/advanced-statefulset:v0.7.0
     k8s.gcr.io/kube-scheduler:v1.16.9
@@ -173,13 +173,13 @@ If your server cannot access the Internet, install TiDB Operator offline by the 
 
     
     ```shell
-    docker pull pingcap/tidb-operator:v1.5.4
-    docker pull pingcap/tidb-backup-manager:v1.5.4
+    docker pull pingcap/tidb-operator:v1.5.5
+    docker pull pingcap/tidb-backup-manager:v1.5.5
     docker pull bitnami/kubectl:latest
     docker pull pingcap/advanced-statefulset:v0.7.0
 
-    docker save -o tidb-operator-v1.5.4.tar pingcap/tidb-operator:v1.5.4
-    docker save -o tidb-backup-manager-v1.5.4.tar pingcap/tidb-backup-manager:v1.5.4
+    docker save -o tidb-operator-v1.5.5.tar pingcap/tidb-operator:v1.5.5
+    docker save -o tidb-backup-manager-v1.5.5.tar pingcap/tidb-backup-manager:v1.5.5
     docker save -o bitnami-kubectl.tar bitnami/kubectl:latest
     docker save -o advanced-statefulset-v0.3.3.tar pingcap/advanced-statefulset:v0.7.0
     ```
@@ -188,8 +188,8 @@ If your server cannot access the Internet, install TiDB Operator offline by the 
 
     
     ```shell
-    docker load -i tidb-operator-v1.5.4.tar
-    docker load -i tidb-backup-manager-v1.5.4.tar
+    docker load -i tidb-operator-v1.5.5.tar
+    docker load -i tidb-backup-manager-v1.5.5.tar
     docker load -i bitnami-kubectl.tar
     docker load -i advanced-statefulset-v0.3.3.tar
     ```
