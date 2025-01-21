@@ -231,7 +231,7 @@ spec:
       ngMonitoring:
         requests:
           storage: 10Gi
-        version: v7.5.3
+        version: v7.5.5
         # storageClassName: default
         baseImage: pingcap/ng-monitoring
     EOF
