@@ -21,7 +21,6 @@ summary: 了解部署 TiDB 前的环境检查操作。
 
 1. 查看数据盘。
 
-    
     ```bash
     fdisk -l
     ```
@@ -32,7 +31,6 @@ summary: 了解部署 TiDB 前的环境检查操作。
 
 2. 创建分区。
 
-    
     ```bash
     parted -s -a optimal /dev/nvme0n1 mklabel gpt -- mkpart primary ext4 1 -1
     ```
@@ -50,7 +48,6 @@ summary: 了解部署 TiDB 前的环境检查操作。
 
 3. 格式化文件系统。
 
-    
     ```bash
     mkfs.ext4 /dev/nvme0n1p1
     ```
@@ -59,7 +56,6 @@ summary: 了解部署 TiDB 前的环境检查操作。
 
     本例中 `nvme0n1p1` 的 UUID 为 `c51eb23b-195c-4061-92a9-3fad812cc12f`。
 
-    
     ```bash
     lsblk -f
     ```
@@ -77,7 +73,6 @@ summary: 了解部署 TiDB 前的环境检查操作。
 
 5. 编辑 `/etc/fstab` 文件，添加 `nodelalloc` 挂载参数。
 
-    
     ```bash
     vi /etc/fstab
     ```
@@ -88,7 +83,6 @@ summary: 了解部署 TiDB 前的环境检查操作。
 
 6. 挂载数据盘。
 
-    
     ```bash
     mkdir /data1 && \
     systemctl daemon-reload && \
@@ -97,7 +91,6 @@ summary: 了解部署 TiDB 前的环境检查操作。
 
 7. 执行以下命令，如果文件系统为 ext4，并且挂载参数中包含 `nodelalloc`，则表示已生效。
 
-    
     ```bash
     mount -t ext4
     ```
@@ -164,7 +157,6 @@ TiDB 的部分操作需要向服务器写入临时文件，因此需要确保运
 
 1. 检查防火墙状态（以 CentOS Linux release 7.7.1908 (Core) 为例）
 
-    
     ```shell
     sudo firewall-cmd --state
     sudo systemctl status firewalld.service
@@ -172,21 +164,18 @@ TiDB 的部分操作需要向服务器写入临时文件，因此需要确保运
 
 2. 关闭防火墙服务
 
-    
     ```bash
     sudo systemctl stop firewalld.service
     ```
 
 3. 关闭防火墙自动启动服务
 
-    
     ```bash
     sudo systemctl disable firewalld.service
     ```
 
 4. 检查防火墙状态
 
-    
     ```bash
     sudo systemctl status firewalld.service
     ```
@@ -199,7 +188,6 @@ TiDB 是一套分布式数据库系统，需要节点间保证时间的同步，
 
 1. 执行以下命令，如果输出 `running` 表示 NTP 服务正在运行：
 
-    
     ```bash
     sudo systemctl status ntpd.service
     ```
@@ -212,7 +200,6 @@ TiDB 是一套分布式数据库系统，需要节点间保证时间的同步，
 
     - 若返回报错信息 `Unit ntpd.service could not be found.`，请尝试执行以下命令，以查看与 NTP 进行时钟同步所使用的系统配置是 `chronyd` 还是 `ntpd`：
 
-        
         ```bash
         sudo systemctl status chronyd.service
         ```
@@ -233,7 +220,6 @@ TiDB 是一套分布式数据库系统，需要节点间保证时间的同步，
     >
     > Ubuntu 系统需安装 `ntpstat` 软件包。
 
-    
     ```bash
     ntpstat
     ```
@@ -264,7 +250,6 @@ TiDB 是一套分布式数据库系统，需要节点间保证时间的同步，
     >
     > 该操作仅适用于使用 Chrony 的系统，不适用于使用 NTPd 的系统。
 
-    
     ```bash
     chronyc tracking
     ```
@@ -301,7 +286,6 @@ TiDB 是一套分布式数据库系统，需要节点间保证时间的同步，
 
 如果要使 NTP 服务尽快开始同步，执行以下命令。可以将 `pool.ntp.org` 替换为你的 NTP 服务器：
 
-
 ```bash
 sudo systemctl stop ntpd.service && \
 sudo ntpdate pool.ntp.org && \
@@ -309,7 +293,6 @@ sudo systemctl start ntpd.service
 ```
 
 如果要在 CentOS 7 系统上手动安装 NTP 服务，可执行以下命令：
-
 
 ```bash
 sudo yum install ntp ntpdate && \
@@ -333,7 +316,6 @@ sudo systemctl enable ntpd.service
 
 1. 执行以下命令查看透明大页的开启状态。
 
-    
     ```bash
     cat /sys/kernel/mm/transparent_hugepage/enabled
     ```
@@ -380,7 +362,6 @@ sudo systemctl enable ntpd.service
 
 3. 执行以下命令查看磁盘的唯一标识 `ID_SERIAL`。
 
-    
     ```bash
     udevadm info --name=/dev/sdb | grep ID_SERIAL
     ```
@@ -397,7 +378,6 @@ sudo systemctl enable ntpd.service
 
 4. 执行以下命令查看 cpufreq 模块选用的节能策略。
 
-    
     ```bash
     cpupower frequency-info --policy
     ```
@@ -418,7 +398,6 @@ sudo systemctl enable ntpd.service
 
         1. 执行 `tuned-adm list` 命令查看当前操作系统的 tuned 策略。
 
-            
             ```bash
             tuned-adm list
             ```
@@ -442,7 +421,6 @@ sudo systemctl enable ntpd.service
 
         2. 创建新的 tuned 策略。
 
-            
             ```bash
             mkdir /etc/tuned/balanced-tidb-optimal/
             vi /etc/tuned/balanced-tidb-optimal/tuned.conf
@@ -471,7 +449,6 @@ sudo systemctl enable ntpd.service
             >
             > 如果已经使用 `noop` 或 `none` I/O 调度器，则无需在 tuned 策略中配置调度器相关的内容，可以跳过此步骤。
 
-            
             ```bash
             tuned-adm profile balanced-tidb-optimal
             ```
@@ -484,7 +461,6 @@ sudo systemctl enable ntpd.service
             >
             > 需安装 `grubby` 软件包。
 
-            
             ```bash
             grubby --default-kernel
             ```
@@ -495,18 +471,16 @@ sudo systemctl enable ntpd.service
 
         2. 执行 `grubby --update-kernel` 命令修改内核配置。
 
-            
             ```bash
             grubby --args="transparent_hugepage=never" --update-kernel `grubby --default-kernel`
             ```
 
             > **注意：**
             >
-            > 你也可以在 `--update-kernel` 后指定实际的版本号，例如：`--update-kernel /boot/vmlinuz-3.10.0-957.el7.x86_64`。
+            > 你也可以在 `--update-kernel` 后指定实际的版本号，例如：`--update-kernel /boot/vmlinuz-3.10.0-957.el7.x86_64` 或 `ALL`。
 
         3. 执行 `grubby --info` 命令查看修改后的默认内核配置。
 
-            
             ```bash
             grubby --info /boot/vmlinuz-3.10.0-957.el7.x86_64
             ```
@@ -526,7 +500,6 @@ sudo systemctl enable ntpd.service
 
         4. 修改当前的内核配置立即关闭透明大页。
 
-            
             ```bash
             echo never > /sys/kernel/mm/transparent_hugepage/enabled
             echo never > /sys/kernel/mm/transparent_hugepage/defrag
@@ -534,7 +507,6 @@ sudo systemctl enable ntpd.service
 
         5. 配置 udev 脚本应用 IO 调度器策略。
 
-            
             ```bash
             vi /etc/udev/rules.d/60-tidb-schedulers.rules
             ```
@@ -551,7 +523,6 @@ sudo systemctl enable ntpd.service
             >
             > 对于已经使用 `noop` 或 `none` I/O 调度器的设备，无需配置 udev 规则，可以跳过此步骤。
 
-            
             ```bash
             udevadm control --reload-rules
             udevadm trigger --type=devices --action=change
@@ -559,7 +530,6 @@ sudo systemctl enable ntpd.service
 
         7. 创建 CPU 节能策略配置服务。
 
-            
             ```bash
             cat  >> /etc/systemd/system/cpupower.service << EOF
             [Unit]
@@ -574,7 +544,6 @@ sudo systemctl enable ntpd.service
 
         8. 应用 CPU 节能策略配置服务。
 
-            
             ```bash
             systemctl daemon-reload
             systemctl enable cpupower.service
@@ -583,7 +552,6 @@ sudo systemctl enable ntpd.service
 
 6. 执行以下命令验证透明大页的状态。
 
-    
     ```bash
     cat /sys/kernel/mm/transparent_hugepage/enabled
     ```
@@ -594,7 +562,6 @@ sudo systemctl enable ntpd.service
 
 7. 执行以下命令验证数据目录所在磁盘的 I/O 调度器。
 
-    
     ```bash
     cat /sys/block/sd[bc]/queue/scheduler
     ```
@@ -606,7 +573,6 @@ sudo systemctl enable ntpd.service
 
 8. 执行以下命令查看 cpufreq 模块选用的节能策略。
 
-    
     ```bash
     cpupower frequency-info --policy
     ```
@@ -619,7 +585,6 @@ sudo systemctl enable ntpd.service
 
 9. 执行以下命令修改 sysctl 参数。
 
-    
     ```bash
     echo "fs.file-max = 1000000">> /etc/sysctl.conf
     echo "net.core.somaxconn = 32768">> /etc/sysctl.conf
@@ -640,7 +605,6 @@ sudo systemctl enable ntpd.service
 
 10. 执行以下命令配置用户的 limits.conf 文件。
 
-    
     ```bash
     cat << EOF >>/etc/security/limits.conf
     tidb           soft    nofile          1000000
@@ -656,7 +620,6 @@ sudo systemctl enable ntpd.service
 
 1. 以 `root` 用户依次登录到部署目标机器创建 `tidb` 用户并设置登录密码。
 
-    
     ```bash
     useradd tidb && \
     passwd tidb
@@ -664,7 +627,6 @@ sudo systemctl enable ntpd.service
 
 2. 执行以下命令，将 `tidb ALL=(ALL) NOPASSWD: ALL` 添加到文件末尾，即配置好 sudo 免密码。
 
-    
     ```bash
     visudo
     ```
@@ -675,7 +637,6 @@ sudo systemctl enable ntpd.service
 
 3. 以 `tidb` 用户登录到中控机，执行以下命令。将 `10.0.1.1` 替换成你的部署目标机器 IP，按提示输入部署目标机器 `tidb` 用户密码，执行成功后即创建好 SSH 互信，其他机器同理。新建的 `tidb` 用户下没有 `.ssh` 目录，需要执行生成 rsa 密钥的命令来生成 `.ssh` 目录。如果要在中控机上部署 TiDB 组件，需要为中控机和中控机自身配置互信。
 
-    
     ```bash
     ssh-keygen -t rsa
     ssh-copy-id -i ~/.ssh/id_rsa.pub 10.0.1.1
@@ -683,7 +644,6 @@ sudo systemctl enable ntpd.service
 
 4. 以 `tidb` 用户登录中控机，通过 `ssh` 的方式登录目标机器 IP。如果不需要输入密码并登录成功，即表示 SSH 互信配置成功。
 
-    
     ```bash
     ssh 10.0.1.1
     ```
@@ -694,7 +654,6 @@ sudo systemctl enable ntpd.service
 
 5. 以 `tidb` 用户登录到部署目标机器后，执行以下命令，不需要输入密码并切换到 `root` 用户，表示 `tidb` 用户 sudo 免密码配置成功。
 
-    
     ```bash
     sudo -su root
     ```
