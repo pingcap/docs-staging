@@ -14,7 +14,7 @@ import { mdxFromMarkdown } from "mdast-util-mdx";
 import { gfmFromMarkdown } from "mdast-util-gfm";
 import { visit } from "unist-util-visit";
 
-const IMAGE_CDN_PREFIX = "https://download.pingcap.com/images";
+const IMAGE_CDN_PREFIX = "https://docs-download.pingcap.com/media/images";
 export const imageCDNs = {
   docs: IMAGE_CDN_PREFIX + "/docs",
   "docs-cn": IMAGE_CDN_PREFIX + "/docs-cn",
@@ -185,7 +185,7 @@ export async function retrieveTiDBMDsFromZip(
       const { entryName } = zipEntry;
       sig.info("unzip file(entryName):", entryName);
       // Ignore if not markdown file
-      if (!entryName.endsWith('.md') || entryName.endsWith('.template.md')) {
+      if (!entryName.endsWith(".md") || entryName.endsWith(".template.md")) {
         return;
       }
       const relativePathNameList = entryName.split("/");
