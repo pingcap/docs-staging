@@ -72,7 +72,7 @@ If you deploy TiCDC using TiUP, replace `cdc cli` in the following commands with
 
 - Query the `capture` list:
 
-    
+
     ```shell
     cdc cli capture list --pd=http://10.0.10.25:2379
     ```
@@ -104,7 +104,7 @@ This feature is available in TiDB v5.1.2 and later versions.
 
 The state of a replication task represents the running status of the replication task. During the running of TiCDC, replication tasks might fail with errors, be manually paused, resumed, or reach the specified `TargetTs`. These behaviors can lead to the change of the replication task state. This section describes the states of TiCDC replication tasks and the transfer relationships between states.
 
-![TiCDC state transfer](https://download.pingcap.com/images/docs/ticdc/ticdc-state-transfer.png)
+![TiCDC state transfer](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-state-transfer.png)
 
 The states in the above state transfer diagram are described as follows:
 
@@ -143,7 +143,7 @@ Info: {"sink-uri":"mysql://root:123456@127.0.0.1:3306/","opts":{},"create-time":
 - `--changefeed-id`: The ID of the replication task. The format must match the `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$` regular expression. If this ID is not specified, TiCDC automatically generates a UUID (the version 4 format) as the ID.
 - `--sink-uri`: The downstream address of the replication task. Configure `--sink-uri` according to the following format. Currently, the scheme supports `mysql`/`tidb`/`kafka`/`pulsar`/`s3`/`local`.
 
-    
+
     ```
     [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
     ```
@@ -491,7 +491,7 @@ Currently, you can modify the following configuration items:
 
 - Query the `processor` list:
 
-    
+
     ```shell
     cdc cli processor list --pd=http://10.0.10.25:2379
     ```
@@ -508,7 +508,7 @@ Currently, you can modify the following configuration items:
 
 - Query a specific `changefeed` which corresponds to the status of a specific replication task:
 
-    
+
     ```shell
     cdc cli processor query --pd=http://10.0.10.25:2379 --changefeed-id=simple-replication-task --capture-id=b293999a-4168-4988-a4f4-35d9589b226b
     ```
@@ -694,7 +694,7 @@ The cyclic replication feature supports replicating data across multiple indepen
 
 Enable cyclic replication in the three clusters of A, B, and C. Two TiCDC clusters are used for the replication from cluster A to cluster B. Among the three clusters, DDL statements enters cluster A first.
 
-![TiCDC cyclic replication](https://download.pingcap.com/images/docs/ticdc/cdc-cyclic-replication.png)
+![TiCDC cyclic replication](https://docs-download.pingcap.com/media/images/docs/ticdc/cdc-cyclic-replication.png)
 
 To use the cyclic replication feature, you need to configure the following parameters for the replication task upon the task creation.
 
@@ -706,7 +706,7 @@ To create a cyclic replication task, take the following steps:
 
 1. [Enable the TiCDC component](/ticdc/deploy-ticdc.md) in TiDB cluster A, cluster B, and cluster C.
 
-    
+
     ```shell
     # Enables TiCDC in cluster A.
     cdc server \
@@ -730,7 +730,7 @@ To create a cyclic replication task, take the following steps:
 
 2. Create the mark tables used for the cyclic replication in cluster A, cluster B, and cluster C.
 
-    
+
     ```shell
     # Creates mark tables in cluster A.
     cdc cli changefeed cyclic create-marktables \
@@ -748,7 +748,7 @@ To create a cyclic replication task, take the following steps:
 
 3. Create the cyclic replication task in cluster A, cluster B, and cluster C.
 
-    
+
     ```shell
     # Creates the cyclic replication task in cluster A.
     cdc cli changefeed create \
@@ -839,4 +839,4 @@ In the output of the above command, if the value of `sort-engine` is "unified", 
 > + If your servers use mechanical hard drives or other storage devices that have high latency or limited bandwidth, use the unified sorter with caution.
 > + By default, Unified Sorter uses `data_dir` to store temporary files. It is recommended to ensure that the free disk space is greater than or equal to 500 GiB. For production environments, it is recommended to ensure that the free disk space on each node is greater than (the maximum `checkpoint-ts` delay allowed by the business) * (upstream write traffic at business peak hours). In addition, if you plan to replicate a large amount of historical data after `changefeed` is created, make sure that the free space on each node is greater than the amount of replicated data.
 > + Unified sorter is enabled by default. If your servers do not match the above requirements and you want to disable the unified sorter, you need to manually set `sort-engine` to `memory` for the changefeed.
-> + To enable Unified Sorter on an existing changefeed that uses `memory` to sort, see the methods provided in [How do I handle the OOM that occurs after TiCDC is restarted after a task interruption?](/ticdc/troubleshoot-ticdc.md#what-should-i-do-to-handle-the-oom-that-occurs-after-ticdc-is-restarted-after-a-task-interruption). 
+> + To enable Unified Sorter on an existing changefeed that uses `memory` to sort, see the methods provided in [How do I handle the OOM that occurs after TiCDC is restarted after a task interruption?](/ticdc/troubleshoot-ticdc.md#what-should-i-do-to-handle-the-oom-that-occurs-after-ticdc-is-restarted-after-a-task-interruption).

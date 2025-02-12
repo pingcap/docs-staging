@@ -12,7 +12,7 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-rollback/','/docs-cn/v3.0/
 
 **Statement:**
 
-![Statement](https://download.pingcap.com/images/docs-cn/sqlgram/Statement.png)
+![Statement](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Statement.png)
 
 ## 示例
 

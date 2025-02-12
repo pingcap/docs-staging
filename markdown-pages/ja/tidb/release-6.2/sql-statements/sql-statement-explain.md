@@ -249,7 +249,7 @@ The xx.dot is the result returned by the above statement.
 
 `dot`のプログラムがコンピューターにインストールされていない場合は、結果を[このウェブサイト](http://www.webgraphviz.com/)にコピーしてツリー図を取得します。
 
-![Explain Dot](https://download.pingcap.com/images/docs/explain_dot.png)
+![Explain Dot](https://docs-download.pingcap.com/media/images/docs/explain_dot.png)
 
 ## MySQL の互換性 {#mysql-compatibility}
 

@@ -13,7 +13,7 @@ summary: TiDB 数据库中 SHOW ERRORS 的使用概况。
 
 **ShowErrorsStmt:**
 
-![ShowErrorsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowErrorsStmt.png)
+![ShowErrorsStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowErrorsStmt.png)
 
 ## 示例
 

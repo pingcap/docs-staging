@@ -12,7 +12,7 @@ This statement is used to list all supported storage engines. The syntax is incl
 
 **ShowEnginesStmt:**
 
-![ShowEnginesStmt](https://download.pingcap.com/images/docs/sqlgram/ShowEnginesStmt.png)
+![ShowEnginesStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowEnginesStmt.png)
 
 ```sql
 SHOW ENGINES

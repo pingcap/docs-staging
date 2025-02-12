@@ -36,7 +36,7 @@ curl http://127.0.0.1:10080/status
 
 PD API 地址：`http://${host}:${port}/pd/api/v1/${api_name}`。
 
-其中 port 默认为 2379，各类 api_name 详细信息参见 [PD API Doc](https://download.pingcap.com/pd-api-v1.html)。
+其中 port 默认为 2379，各类 api_name 详细信息参见 [PD API Doc](https://docs-download.pingcap.com/api/pd-api/pd-api-v1.html)。
 
 通过这个接口可以获取当前所有 TiKV 的状态以及负载均衡信息。其中最重要也是最常用的接口获取 TiKV 集群所有节点状态的接口，下面以一个单个 TiKV 构成的集群为例，说明一些用户需要了解的信息：
 
@@ -109,7 +109,7 @@ curl http://127.0.0.1:2379/pd/api/v1/stores
 
 整个架构如下图所示，在 TiDB/PD/TiKV 三个组件的启动参数中添加 Prometheus Pushgateway 地址:
 
-![Deployment Architecture](https://download.pingcap.com/images/docs-cn/monitor-architecture.png)
+![Deployment Architecture](https://docs-download.pingcap.com/media/images/docs-cn/monitor-architecture.png)
 
 ### 搭建监控系统
 

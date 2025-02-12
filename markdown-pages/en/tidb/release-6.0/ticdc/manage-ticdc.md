@@ -74,7 +74,7 @@ If you deploy TiCDC using TiUP, replace `cdc cli` in the following commands with
 
 - Query the `capture` list:
 
-    
+
     ```shell
     cdc cli capture list --pd=http://10.0.10.25:2379
     ```
@@ -104,7 +104,7 @@ If you deploy TiCDC using TiUP, replace `cdc cli` in the following commands with
 
 The state of a replication task represents the running status of the replication task. During the running of TiCDC, replication tasks might fail with errors, be manually paused, resumed, or reach the specified `TargetTs`. These behaviors can lead to the change of the replication task state. This section describes the states of TiCDC replication tasks and the transfer relationships between states.
 
-![TiCDC state transfer](https://download.pingcap.com/images/docs/ticdc/ticdc-state-transfer.png)
+![TiCDC state transfer](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-state-transfer.png)
 
 The states in the above state transfer diagram are described as follows:
 
@@ -143,7 +143,7 @@ Info: {"sink-uri":"mysql://root:123456@127.0.0.1:3306/","opts":{},"create-time":
 - `--changefeed-id`: The ID of the replication task. The format must match the `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$` regular expression. If this ID is not specified, TiCDC automatically generates a UUID (the version 4 format) as the ID.
 - `--sink-uri`: The downstream address of the replication task. Configure `--sink-uri` according to the following format. Currently, the scheme supports `mysql`/`tidb`/`kafka`/`pulsar`/`s3`/`local`.
 
-    
+
     ```
     [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
     ```
@@ -490,7 +490,7 @@ Currently, you can modify the following configuration items:
 
 - Query the `processor` list:
 
-    
+
     ```shell
     cdc cli processor list --pd=http://10.0.10.25:2379
     ```
@@ -507,7 +507,7 @@ Currently, you can modify the following configuration items:
 
 - Query a specific `changefeed` which corresponds to the status of a specific replication task:
 
-    
+
     ```shell
     cdc cli processor query --pd=http://10.0.10.25:2379 --changefeed-id=simple-replication-task --capture-id=b293999a-4168-4988-a4f4-35d9589b226b
     ```

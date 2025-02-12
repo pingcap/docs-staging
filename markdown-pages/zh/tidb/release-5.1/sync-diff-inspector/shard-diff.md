@@ -10,7 +10,7 @@ sync-diff-inspector 支持对分库分表场景进行数据校验。例如有多
 
 使用 `table-config` 对 `table-0` 进行特殊配置，设置 `is-sharding=true`，并且在 `table-config.source-tables` 中配置上游表信息。这种配置方式需要对所有分表进行设置，适合上游分表数量较少，且分表的命名规则没有规律的场景。场景如图所示：
 
-![shard-table-sync-1](https://download.pingcap.com/images/docs-cn/shard-table-sync-1.png)
+![shard-table-sync-1](https://docs-download.pingcap.com/media/images/docs-cn/shard-table-sync-1.png)
 
 sync-diff-inspector 完整的示例配置如下：
 
@@ -121,7 +121,7 @@ fix-sql-file = "fix.sql"
 
 当上游分表较多，且所有分表的命名都符合一定的规则时，则可以使用 `table-rules` 进行配置。场景如图所示：
 
-![shard-table-sync-2](https://download.pingcap.com/images/docs-cn/shard-table-sync-2.png)
+![shard-table-sync-2](https://docs-download.pingcap.com/media/images/docs-cn/shard-table-sync-2.png)
 
 sync-diff-inspector 完整的示例配置如下：
 

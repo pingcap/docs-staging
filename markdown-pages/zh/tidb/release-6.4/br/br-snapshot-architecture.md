@@ -11,13 +11,13 @@ summary: 了解 TiDB 快照备份与恢复功能的架构设计。
 
 快照数据备份和恢复的架构如下：
 
-![BR snapshot backup and restore architecture](https://download.pingcap.com/images/docs-cn/br/br-snapshot-arch.png)
+![BR snapshot backup and restore architecture](https://docs-download.pingcap.com/media/images/docs-cn/br/br-snapshot-arch.png)
 
 ## 备份流程
 
 集群快照数据备份的流程如下：
 
-![snapshot backup process design](https://download.pingcap.com/images/docs-cn/br/br-snapshot-backup-ts.png)
+![snapshot backup process design](https://docs-download.pingcap.com/media/images/docs-cn/br/br-snapshot-backup-ts.png)
 
 完整的备份交互流程描述如下：
 
@@ -49,7 +49,7 @@ summary: 了解 TiDB 快照备份与恢复功能的架构设计。
 
 恢复集群快照备份数据的流程如下：
 
-![snapshot restore process design](https://download.pingcap.com/images/docs-cn/br/br-snapshot-restore-ts.png)
+![snapshot restore process design](https://docs-download.pingcap.com/media/images/docs-cn/br/br-snapshot-restore-ts.png)
 
 完整的恢复交互流程描述如下：
 

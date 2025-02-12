@@ -13,7 +13,7 @@ Syncer 包含在 tidb-enterprise-tools 安装包中，可[在此下载](/downloa
 
 ## Syncer 架构
 
-![Syncer 架构](https://download.pingcap.com/images/docs-cn/syncer-architecture.png)
+![Syncer 架构](https://docs-download.pingcap.com/media/images/docs-cn/syncer-architecture.png)
 
 ## Syncer 部署位置
 
@@ -304,7 +304,7 @@ tbl-name = "~^2016_.*"
 
 暂时对 DDL 支持不完善。
 
-![sharding](https://download.pingcap.com/images/docs-cn/syncer-sharding.png)
+![sharding](https://docs-download.pingcap.com/media/images/docs-cn/syncer-sharding.png)
 
 #### 分库分表同步示例
 
@@ -472,7 +472,7 @@ target-table = "order_2017"
 
 Syncer 使用开源时序数据库 Prometheus 作为监控和性能指标信息存储方案，使用 Grafana 作为可视化组件进行展示，配合 AlertManager 来实现报警。其方案如下图所示：
 
-![monitor_scheme](https://download.pingcap.com/images/docs-cn/syncer-monitor-scheme.png)
+![monitor_scheme](https://docs-download.pingcap.com/media/images/docs-cn/syncer-monitor-scheme.png)
 
 ### 配置 Syncer 监控与告警
 

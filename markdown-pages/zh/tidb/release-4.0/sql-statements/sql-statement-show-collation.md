@@ -16,7 +16,7 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-collation/','/docs-
 
 **ShowCollationStmt:**
 
-![ShowCollationStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowCollationStmt.png)
+![ShowCollationStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowCollationStmt.png)
 
 ## 示例
 

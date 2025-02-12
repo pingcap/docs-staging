@@ -12,7 +12,7 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-builtins/','/docs-c
 
 **ShowBuiltinsStmt:**
 
-![ShowBuiltinsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowBuiltinsStmt.png)
+![ShowBuiltinsStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowBuiltinsStmt.png)
 
 ## 示例
 

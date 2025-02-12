@@ -10,7 +10,7 @@ TiKV 是一个分布式事务型的键值数据库，提供了满足 ACID 约束
 
 与传统的整节点备份方式不同，TiKV 参考 Spanner 设计了 multi-raft-group 的副本机制。将数据按照 key 的范围划分成大致相等的切片（下文统称为 Region），每一个切片会有多个副本（通常是 3 个），其中一个副本是 Leader，提供读写服务。TiKV 通过 PD 对这些 Region 以及副本进行调度，以保证数据和读写负载都均匀地分散在各个 TiKV 上，这样的设计保证了整个集群资源的充分利用并且可以随着机器数量的增加水平扩展。
 
-![TiKV 架构](https://download.pingcap.com/images/docs-cn/tikv-arch.png)
+![TiKV 架构](https://docs-download.pingcap.com/media/images/docs-cn/tikv-arch.png)
 
 ### Region 与 RocksDB
 

@@ -315,56 +315,56 @@ This section shows images of the service panels on the TiKV dashboard.
 
 ### Cluster
 
-![TiKV Dashboard - Cluster metrics](https://download.pingcap.com/images/docs/tikv-dashboard-cluster.png)
+![TiKV Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-cluster.png)
 
 ### Errors
 
-![TiKV Dashboard - Errors metrics](https://download.pingcap.com/images/docs/tikv-dashboard-errors.png)
+![TiKV Dashboard - Errors metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-errors.png)
 
 ### Server
 
-![TiKV Dashboard - Server metrics](https://download.pingcap.com/images/docs/tikv-dashboard-server.png)
+![TiKV Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-server.png)
 
 ### Raft IO
 
-![TiKV Dashboard - Raft IO metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raftio.png)
+![TiKV Dashboard - Raft IO metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raftio.png)
 
 ### Raft process
 
-![TiKV Dashboard - Raft process metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-process.png)
+![TiKV Dashboard - Raft process metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-process.png)
 
 ### Raft message
 
-![TiKV Dashboard - Raft message metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-message.png)
+![TiKV Dashboard - Raft message metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-message.png)
 
 ### Raft propose
 
-![TiKV Dashboard - Raft propose metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-propose.png)
+![TiKV Dashboard - Raft propose metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-propose.png)
 
 ### Raft admin
 
-![TiKV Dashboard - Raft admin metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-admin.png)
+![TiKV Dashboard - Raft admin metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-admin.png)
 
 ### Local reader
 
-![TiKV Dashboard - Local reader metrics](https://download.pingcap.com/images/docs/tikv-dashboard-local-reader.png)
+![TiKV Dashboard - Local reader metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-local-reader.png)
 
 ### Storage
 
-![TiKV Dashboard - Storage metrics](https://download.pingcap.com/images/docs/tikv-dashboard-storage.png)
+![TiKV Dashboard - Storage metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-storage.png)
 
 ### Scheduler
 
-![TiKV Dashboard - Scheduler metrics](https://download.pingcap.com/images/docs/tikv-dashboard-scheduler.png)
+![TiKV Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-scheduler.png)
 
 ### Scheduler - batch_get
 
-![TiKV Dashboard - Scheduler - batch_get metrics](https://download.pingcap.com/images/docs/tikv-dashboard-scheduler-batch-get.png)
+![TiKV Dashboard - Scheduler - batch_get metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-scheduler-batch-get.png)
 
 ### Scheduler - cleanup
 
-![TiKV Dashboard - Scheduler - cleanup metrics](https://download.pingcap.com/images/docs/tikv-dashboard-scheduler-cleanup.png)
+![TiKV Dashboard - Scheduler - cleanup metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-scheduler-cleanup.png)
 
 ### Scheduler - commit
 
-![TiKV Dashboard - Scheduler commit metrics](https://download.pingcap.com/images/docs/tikv-dashboard-scheduler-commit.png)
+![TiKV Dashboard - Scheduler commit metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-scheduler-commit.png)

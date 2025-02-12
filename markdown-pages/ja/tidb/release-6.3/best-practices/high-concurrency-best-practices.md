@@ -36,7 +36,7 @@ summary: Learn best practices for highly-concurrent write-intensive workloads in
 
 TiDB はデータをリージョンに分割し、それぞれがデフォルトで 96M のサイズ制限を持つデータの範囲を表します。各リージョンには複数のレプリカがあり、レプリカの各グループはRaftグループと呼ばれます。 Raftグループでは、リージョンリーダーがデータ範囲内で読み取りおよび書き込みタスク (TiDB がサポートする[フォロワー読み取り](/follower-read.md) ) を実行します。リージョンリーダーは、配置Driver(PD) コンポーネントによってさまざまな物理ノードに自動的にスケジュールされ、読み取りと書き込みの負荷が均等に分散されます。
 
-![TiDB Data Overview](https://download.pingcap.com/images/docs/best-practices/tidb-data-overview.png)
+![TiDB Data Overview](https://docs-download.pingcap.com/media/images/docs/best-practices/tidb-data-overview.png)
 
 理論的には、アプリケーションに書き込みホットスポットがない場合、TiDB はそのアーキテクチャのおかげで、読み取りおよび書き込み容量を直線的にスケーリングできるだけでなく、分散リソースを最大限に活用することもできます。この観点から、TiDB は同時実行が多く、書き込みが集中するシナリオに特に適しています。
 
@@ -77,10 +77,10 @@ SELECT
     '@example.com'
   )
 FROM
-  (WITH RECURSIVE nr(n) AS 
+  (WITH RECURSIVE nr(n) AS
     (SELECT 1                              -- Start CTE at 1
       UNION ALL SELECT n + 1               -- increase n with 1 every loop
-      FROM nr WHERE n < 1000000            -- stop loop at 1_000_000 
+      FROM nr WHERE n < 1000000            -- stop loop at 1_000_000
     ) SELECT n FROM nr
   ) a;
 ```
@@ -91,19 +91,19 @@ FROM
 
 クラスタ トポロジでは、2 つの TiDB ノード、3 つの PD ノード、および 6 つの TiKV ノードがデプロイされます。このテストはベンチマークではなく原理を明確にするためのものであるため、QPS パフォーマンスは無視します。
 
-![QPS1](https://download.pingcap.com/images/docs/best-practices/QPS1.png)
+![QPS1](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS1.png)
 
 クライアントは短時間で「集中的な」書き込み要求を開始します。これは、TiDB が受け取る 3K QPS です。理論的には、負荷圧力は 6 つの TiKV ノードに均等に分散する必要があります。ただし、各 TiKV ノードの CPU 使用率から、負荷分散は不均一です。 `tikv-3`のノードは書き込みホットスポットです。
 
-![QPS2](https://download.pingcap.com/images/docs/best-practices/QPS2.png)
+![QPS2](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS2.png)
 
-![QPS3](https://download.pingcap.com/images/docs/best-practices/QPS3.png)
+![QPS3](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS3.png)
 
 [RaftストアCPU](/grafana-tikv-dashboard.md)は`raftstore`スレッドの CPU 使用率で、通常は書き込み負荷を表します。このシナリオでは、 `tikv-3`がこのRaftグループのリーダーです。 `tikv-0`と`tikv-1`はフォロワーです。他のノードの負荷はほとんど空です。
 
 PD の監視メトリクスでも、ホットスポットが発生していることを確認できます。
 
-![QPS4](https://download.pingcap.com/images/docs/best-practices/QPS4.png)
+![QPS4](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS4.png)
 
 ## ホットスポットの原因 {#hotspot-causes}
 
@@ -115,13 +115,13 @@ PD の監視メトリクスでも、ホットスポットが発生している�
 
 短期間に大量のデータが同じリージョンに継続的に書き込まれます。
 
-![TiKV Region Split](https://download.pingcap.com/images/docs/best-practices/tikv-Region-split.png)
+![TiKV Region Split](https://docs-download.pingcap.com/media/images/docs/best-practices/tikv-Region-split.png)
 
 上の図は、リージョン分割プロセスを示しています。データが継続的に TiKV に書き込まれると、TiKV はリージョンを複数のリージョンに分割します。リーダーの選出は、分割されるリージョンリーダーが配置されている元のストアで開始されるため、新しく分割された 2 つのリージョンのリーダーが同じストアに残っている可能性があります。この分割プロセスは、新しく分割されたリージョン2 とリージョン3 でも発生する可能性があります。このようにして、書き込み圧力は TiKV ノード 1 に集中します。
 
 連続書き込みプロセス中に、ノード 1 でホットスポットが発生していることを確認した後、PD は集中したリーダーを他のノードに均等に分散します。 TiKV ノードの数がリージョンレプリカの数より多い場合、TiKV はこれらのリージョンをアイドル ノードに移行しようとします。書き込みプロセス中のこれら 2 つの操作は、PD のモニタリング メトリックにも反映されます。
 
-![QPS5](https://download.pingcap.com/images/docs/best-practices/QPS5.png)
+![QPS5](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS5.png)
 
 一定期間の継続的な書き込みの後、PD は TiKV クラスター全体を自動的にスケジュールして、圧力が均等に分散される状態にします。その時までに、クラスター全体の容量を完全に使用できます。
 
@@ -145,7 +145,7 @@ SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)]
 
 ただし、TiDB はこの事前分割操作を自動的に実行しません。その理由は、TiDB 内のデータ配布に関連しています。
 
-![Table Region Range](https://download.pingcap.com/images/docs/best-practices/table-Region-range.png)
+![Table Region Range](https://docs-download.pingcap.com/media/images/docs/best-practices/table-Region-range.png)
 
 上記の図から、行のキーのエンコード規則によると、 `rowID`が唯一の変数部分です。 TiDB では、 `rowID`は`Int64`の整数です。ただし、リージョンの分割も実際の状況に基づく必要があるため、 `Int64`の整数範囲を目的の範囲数に均等に分割してから、これらの範囲を異なるノードに分散する必要はない場合があります。
 
@@ -185,11 +185,11 @@ ORDER BY
 
 次に、書き込みロードを再度操作します。
 
-![QPS6](https://download.pingcap.com/images/docs/best-practices/QPS6.png)
+![QPS6](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS6.png)
 
-![QPS7](https://download.pingcap.com/images/docs/best-practices/QPS7.png)
+![QPS7](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS7.png)
 
-![QPS8](https://download.pingcap.com/images/docs/best-practices/QPS8.png)
+![QPS8](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS8.png)
 
 明らかなホットスポットの問題が解決されたことがわかります。
 

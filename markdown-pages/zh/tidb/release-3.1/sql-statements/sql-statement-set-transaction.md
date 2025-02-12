@@ -12,15 +12,15 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-set-transaction/','/docs-c
 
 **SetStmt:**
 
-![SetStmt](https://download.pingcap.com/images/docs-cn/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SetStmt.png)
 
 **TransactionChar:**
 
-![TransactionChar](https://download.pingcap.com/images/docs-cn/sqlgram/TransactionChar.png)
+![TransactionChar](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TransactionChar.png)
 
 **IsolationLevel:**
 
-![IsolationLevel](https://download.pingcap.com/images/docs-cn/sqlgram/IsolationLevel.png)
+![IsolationLevel](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IsolationLevel.png)
 
 ## 示例
 

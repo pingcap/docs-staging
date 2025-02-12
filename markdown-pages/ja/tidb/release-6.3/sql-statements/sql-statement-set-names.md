@@ -11,31 +11,31 @@ summary: An overview of the usage of SET [NAMES|CHARACTER SET] for the TiDB data
 
 **SetNamesStmt:**
 
-![SetNamesStmt](https://download.pingcap.com/images/docs/sqlgram/SetNamesStmt.png)
+![SetNamesStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetNamesStmt.png)
 
 **変数割り当てリスト:**
 
-![VariableAssignmentList](https://download.pingcap.com/images/docs/sqlgram/VariableAssignmentList.png)
+![VariableAssignmentList](https://docs-download.pingcap.com/media/images/docs/sqlgram/VariableAssignmentList.png)
 
 **変数割り当て:**
 
-![VariableAssignment](https://download.pingcap.com/images/docs/sqlgram/VariableAssignment.png)
+![VariableAssignment](https://docs-download.pingcap.com/media/images/docs/sqlgram/VariableAssignment.png)
 
 **文字セット名:**
 
-![CharsetName](https://download.pingcap.com/images/docs/sqlgram/CharsetName.png)
+![CharsetName](https://docs-download.pingcap.com/media/images/docs/sqlgram/CharsetName.png)
 
 **文字列名:**
 
-![StringName](https://download.pingcap.com/images/docs/sqlgram/StringName.png)
+![StringName](https://docs-download.pingcap.com/media/images/docs/sqlgram/StringName.png)
 
 **文字セットKw:**
 
-![CharsetKw](https://download.pingcap.com/images/docs/sqlgram/CharsetKw.png)
+![CharsetKw](https://docs-download.pingcap.com/media/images/docs/sqlgram/CharsetKw.png)
 
 **文字セット名またはデフォルト:**
 
-![CharsetNameOrDefault](https://download.pingcap.com/images/docs/sqlgram/CharsetNameOrDefault.png)
+![CharsetNameOrDefault](https://docs-download.pingcap.com/media/images/docs/sqlgram/CharsetNameOrDefault.png)
 
 ## 例 {#examples}
 

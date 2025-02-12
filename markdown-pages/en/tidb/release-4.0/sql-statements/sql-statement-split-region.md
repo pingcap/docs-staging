@@ -16,31 +16,31 @@ To solve the hotspot problem in the above scenario, TiDB introduces the pre-spli
 
 **SplitRegionStmt:**
 
-![SplitRegionStmt](https://download.pingcap.com/images/docs/sqlgram/SplitRegionStmt.png)
+![SplitRegionStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SplitRegionStmt.png)
 
 **SplitSyntaxOption:**
 
-![SplitSyntaxOption](https://download.pingcap.com/images/docs/sqlgram/SplitSyntaxOption.png)
+![SplitSyntaxOption](https://docs-download.pingcap.com/media/images/docs/sqlgram/SplitSyntaxOption.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 **PartitionNameListOpt:**
 
-![PartitionNameListOpt](https://download.pingcap.com/images/docs/sqlgram/PartitionNameListOpt.png)
+![PartitionNameListOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/PartitionNameListOpt.png)
 
 **SplitOption:**
 
-![SplitOption](https://download.pingcap.com/images/docs/sqlgram/SplitOption.png)
+![SplitOption](https://docs-download.pingcap.com/media/images/docs/sqlgram/SplitOption.png)
 
 **RowValue:**
 
-![RowValue](https://download.pingcap.com/images/docs/sqlgram/RowValue.png)
+![RowValue](https://docs-download.pingcap.com/media/images/docs/sqlgram/RowValue.png)
 
 **Int64Num:**
 
-![Int64Num](https://download.pingcap.com/images/docs/sqlgram/Int64Num.png)
+![Int64Num](https://docs-download.pingcap.com/media/images/docs/sqlgram/Int64Num.png)
 
 ## Usage of Split Region
 
@@ -170,7 +170,7 @@ In the split method above, both data with the `y` and `z` prefixes are written i
 SPLIT TABLE t INDEX idx1 BETWEEN ("a") AND ("{") REGIONS 26;
 ```
 
-This statement splits index idx1 of the table `t` into 26 Regions from a~`{`. The range of Region 1 is `[minIndexValue, b)`; the range of Region 2 is `[b, c)`; … the range of Region 25 is `[y, z)`, and the range of Region 26 is `[z, maxIndexValue)`. 
+This statement splits index idx1 of the table `t` into 26 Regions from a~`{`. The range of Region 1 is `[minIndexValue, b)`; the range of Region 2 is `[b, c)`; … the range of Region 25 is `[y, z)`, and the range of Region 26 is `[z, maxIndexValue)`.
 
 If the column of index `idx2` is of time type like timestamp/datetime, and you want to split index Region by year:
 
@@ -236,14 +236,14 @@ Splitting Regions for partitioned tables is the same as splitting Regions for or
 
 + The syntax of even split:
 
-    
+
     ```sql
     SPLIT [PARTITION] TABLE t [PARTITION] [(partition_name_list...)] [INDEX index_name] BETWEEN (lower_value) AND (upper_value) REGIONS region_num
     ```
 
 + The syntax of uneven split:
 
-    
+
     ```sql
     SPLIT [PARTITION] TABLE table_name [PARTITION (partition_name_list...)] [INDEX index_name] BY (value_list) [, (value_list)] ...
     ```
@@ -252,14 +252,14 @@ Splitting Regions for partitioned tables is the same as splitting Regions for or
 
 1. Create a partitioned table `t`.
 
-    
+
     ```sql
     create table t (a int,b int,index idx(a)) partition by hash(a) partitions 2;
     ```
 
     After creating the table `t`, a Region is split for each partition. Use the `SHOW TABLE REGIONS` syntax to view the Regions of this table:
 
-    
+
     ```sql
     show table t regions;
     ```
@@ -275,14 +275,14 @@ Splitting Regions for partitioned tables is the same as splitting Regions for or
 
 2. Use the `SPLIT` syntax to split a Region for each partition. In the following example, four Regions are split in the range of `[0,10000]`.
 
-    
+
     ```sql
     split partition table t between (0) and (10000) regions 4;
     ```
 
 3. Use the `SHOW TABLE REGIONS` syntax to view the Regions of this table again. You can see that this table now has ten Regions, each partition with five Regions, four of which are the row data and one is the index data.
 
-    
+
     ```sql
     show table t regions;
     ```
@@ -306,7 +306,7 @@ Splitting Regions for partitioned tables is the same as splitting Regions for or
 
 4. You can also split Regions for the index of each partition. For example, you can split the `[1000,10000]` range of the `idx` index into two Regions:
 
-    
+
     ```sql
     split partition table t index idx between (1000) and (10000) regions 2;
     ```
@@ -317,7 +317,7 @@ You can specify the partition to be split. See the following usage example:
 
 1. Create a partitioned table:
 
-    
+
     ```sql
     create table t ( a int, b int, index idx(b)) partition by range( a ) (
         partition p1 values less than (10000),
@@ -327,21 +327,21 @@ You can specify the partition to be split. See the following usage example:
 
 2. Split two Regions in the `[0,10000]` range of the `p1` partition:
 
-    
+
     ```sql
     split partition table t partition (p1) between (0) and (10000) regions 2;
     ```
 
 3. Split two Regions in the `[10000,20000]` range of the `p2` partition:
 
-    
+
     ```sql
     split partition table t partition (p2) between (10000) and (20000) regions 2;
     ```
 
 4. Use the `SHOW TABLE REGIONS` syntax to view the Regions of this table:
 
-    
+
     ```sql
     show table t regions;
     ```
@@ -360,7 +360,7 @@ You can specify the partition to be split. See the following usage example:
 
 5. Split two Regions in the `[0,20000]` range of the `idx` index of `p1` and `p2` partitions:
 
-    
+
     ```sql
     split partition table t partition (p1,p2) index idx between (0) and (20000) regions 2;
     ```

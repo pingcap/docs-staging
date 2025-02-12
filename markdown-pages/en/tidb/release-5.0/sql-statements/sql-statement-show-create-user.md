@@ -11,11 +11,11 @@ This statement shows how to re-create a user using the `CREATE USER` syntax.
 
 **ShowCreateUserStmt:**
 
-![ShowCreateUserStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCreateUserStmt.png)
+![ShowCreateUserStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowCreateUserStmt.png)
 
 **Username:**
 
-![Username](https://download.pingcap.com/images/docs/sqlgram/Username.png)
+![Username](https://docs-download.pingcap.com/media/images/docs/sqlgram/Username.png)
 
 ## Examples
 

@@ -12,11 +12,11 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-use/','/docs-cn/v2.1/refer
 
 **UseStmt:**
 
-![UseStmt](https://download.pingcap.com/images/docs-cn/sqlgram/UseStmt.png)
+![UseStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/UseStmt.png)
 
 **DBName:**
 
-![DBName](https://download.pingcap.com/images/docs-cn/sqlgram/DBName.png)
+![DBName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DBName.png)
 
 ## 示例
 

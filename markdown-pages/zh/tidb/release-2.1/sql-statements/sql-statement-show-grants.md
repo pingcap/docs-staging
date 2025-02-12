@@ -12,11 +12,11 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-show-grants/','/docs-cn/v2
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowStmt.png)
 
 **Username:**
 
-![Username](https://download.pingcap.com/images/docs-cn/sqlgram/Username.png)
+![Username](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Username.png)
 
 ## 示例
 

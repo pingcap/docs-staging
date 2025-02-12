@@ -129,11 +129,11 @@ ProxySQL は、構成を管理するためのポート ( ***ProxySQL Admin イ�
 -   ***ProxySQL 管理インターフェイス***: 管理インターフェイスに接続するには、 `admin`ユーザーを使用して構成の読み取りと書き込みを行うか、 `stats`ユーザーを使用して統計の一部を読み取ることができます (構成の読み取りまたは書き込みはできません)。デフォルトの資格証明は`admin:admin`および`stats:stats`です。セキュリティ上の理由から、既定の資格情報を使用してローカルに接続できますが、リモートで接続するには、多くの場合`radmin`という名前の新しいユーザーを構成する必要があります。
 -   ***ProxySQL MySQL Interface*** : SQL を設定済みのサービスに転送するためのプロキシとして使用されます。
 
-![proxysql config flow](https://download.pingcap.com/images/docs/develop/proxysql_config_flow.png)
+![proxysql config flow](https://docs-download.pingcap.com/media/images/docs/develop/proxysql_config_flow.png)
 
 ProxySQL 構成には、 `runtime` 、 `memory` 、および`disk`の 3 つのレイヤーがあります。 `memory`レイヤーの構成のみを変更できます。構成を変更した後、 `LOAD xxx TO runtime`を使用して構成を有効にするか、 `SAVE xxx TO DISK`を使用してディスクに保存し、構成の損失を防ぐことができます。
 
-![proxysql config layer](https://download.pingcap.com/images/docs/develop/proxysql_config_layer.png)
+![proxysql config layer](https://docs-download.pingcap.com/media/images/docs/develop/proxysql_config_layer.png)
 
 ### TiDBサーバーの構成 {#configure-tidb-server}
 

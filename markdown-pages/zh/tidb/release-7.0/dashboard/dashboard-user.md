@@ -43,7 +43,7 @@ TiDB Dashboard 与 TiDB 使用相同的用户权限体系和登录验证方式�
 
 如果登录 TiDB Dashboard 时指定的 SQL 用户未满足上述权限需求，则登录将失败，如下图所示：
 
-![insufficient-privileges](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-user-insufficient-privileges.png)
+![insufficient-privileges](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-user-insufficient-privileges.png)
 
 ## 示例：创建一个最小权限 SQL 用户用于登录 TiDB Dashboard
 

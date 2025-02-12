@@ -14,15 +14,15 @@ The statements `DESC` and `DESCRIBE` are aliases of this statement. The alternat
 
 **ExplainSym:**
 
-![ExplainSym](https://download.pingcap.com/images/docs/sqlgram/ExplainSym.png)
+![ExplainSym](https://docs-download.pingcap.com/media/images/docs/sqlgram/ExplainSym.png)
 
 **ExplainStmt:**
 
-![ExplainStmt](https://download.pingcap.com/images/docs/sqlgram/ExplainStmt.png)
+![ExplainStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ExplainStmt.png)
 
 **ExplainableStmt:**
 
-![ExplainableStmt](https://download.pingcap.com/images/docs/sqlgram/ExplainableStmt.png)
+![ExplainableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ExplainableStmt.png)
 
 ## Examples
 
@@ -142,7 +142,7 @@ The xx.dot is the result returned by the above statement.
 
 If the `dot` program is not installed on your computer, copy the result to [this website](http://www.webgraphviz.com/) to get a tree diagram:
 
-![Explain Dot](https://download.pingcap.com/images/docs/explain_dot.png)
+![Explain Dot](https://docs-download.pingcap.com/media/images/docs/explain_dot.png)
 
 ## MySQL compatibility
 

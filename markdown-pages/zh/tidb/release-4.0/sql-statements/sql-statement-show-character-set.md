@@ -12,11 +12,11 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-character-set/','/d
 
 **ShowCharsetStmt:**
 
-![ShowCharsetStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowCharsetStmt.png)
+![ShowCharsetStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowCharsetStmt.png)
 
 **CharsetKw:**
 
-![CharsetKw](https://download.pingcap.com/images/docs-cn/sqlgram/CharsetKw.png)
+![CharsetKw](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CharsetKw.png)
 
 ## 示例
 

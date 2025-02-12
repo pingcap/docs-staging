@@ -11,7 +11,7 @@ summary: TiDB 数据库中 SHOW ENGINES 的使用概况。
 
 **ShowEnginesStmt:**
 
-![ShowEnginesStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowEnginesStmt.png)
+![ShowEnginesStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowEnginesStmt.png)
 
 ```sql
 SHOW ENGINES;

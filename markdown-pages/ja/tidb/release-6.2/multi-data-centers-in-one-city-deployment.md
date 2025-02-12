@@ -31,7 +31,7 @@ TiDB クラスターは、同じ都市の 3 つの DC にデプロイできま�
 
 TiDB、TiKV、および PD は 3 つの DC に分散されます。これは、最も高い可用性を備えた最も一般的な展開です。
 
-![3-DC Deployment Architecture](https://download.pingcap.com/images/docs/deploy-3dc.png)
+![3-DC Deployment Architecture](https://docs-download.pingcap.com/media/images/docs/deploy-3dc.png)
 
 **利点:**
 
@@ -39,7 +39,7 @@ TiDB、TiKV、および PD は 3 つの DC に分散されます。これは、�
 -   1 つの DC がダウンしても (RPO = 0)、データが失われることはありません。
 -   1 つの DC がダウンしても、他の 2 つの DC は自動的にリーダーの選出を開始し、妥当な時間内 (ほとんどの場合 20 秒以内) にサービスを自動的に再開します。詳細については、次の図を参照してください。
 
-![Disaster Recovery for 3-DC Deployment](https://download.pingcap.com/images/docs/deploy-3dc-dr.png)
+![Disaster Recovery for 3-DC Deployment](https://docs-download.pingcap.com/media/images/docs/deploy-3dc-dr.png)
 
 **短所:**
 
@@ -53,7 +53,7 @@ TiDB、TiKV、および PD は 3 つの DC に分散されます。これは、�
 
 3 つの DC のすべてがアプリケーションにサービスを提供する必要がない場合は、すべての要求を 1 つの DC にディスパッチし、すべての TiKVリージョンリーダーと PD リーダーを同じ DC に移行するようにスケジューリング ポリシーを構成できます。このようにして、TSO の取得も TiKV リージョンの読み取りも、DC 間のネットワークレイテンシーの影響を受けません。この DC がダウンしている場合、PD リーダーと TiKVリージョンリーダーは、他の生き残った DC で自動的に選出され、まだ生きている DC に要求を切り替えるだけで済みます。
 
-![Read Performance Optimized 3-DC Deployment](https://download.pingcap.com/images/docs/deploy-3dc-optimize.png)
+![Read Performance Optimized 3-DC Deployment](https://docs-download.pingcap.com/media/images/docs/deploy-3dc-optimize.png)
 
 **利点:**
 
@@ -89,7 +89,7 @@ member leader_priority pdName3 3
 
 次の例では、3 つの DC (IDC1、IDC2、および IDC3) が 1 つの都市にあると想定しています。各 IDC には 2 セットのラックがあり、各ラックには 3 台のサーバーがあります。この例では、ハイブリッド デプロイまたは複数のインスタンスが 1 台のマシンにデプロイされるシナリオは無視されています。 1 つの都市の 3 つの DC での TiDB クラスター (3 つのレプリカ) の展開は次のとおりです。
 
-![3-DC in One City](https://download.pingcap.com/images/docs/multi-data-centers-in-one-city-deployment-sample.png)
+![3-DC in One City](https://docs-download.pingcap.com/media/images/docs/multi-data-centers-in-one-city-deployment-sample.png)
 
 #### TiKV ラベル {#tikv-labels}
 

@@ -12,23 +12,23 @@ The `UPDATE` statement is used to modify data in a specified table.
 
 **UpdateStmt:**
 
-![UpdateStmt](https://download.pingcap.com/images/docs/sqlgram/UpdateStmt.png)
+![UpdateStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/UpdateStmt.png)
 
 **TableRef:**
 
-![TableRef](https://download.pingcap.com/images/docs/sqlgram/TableRef.png)
+![TableRef](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableRef.png)
 
 **TableRefs:**
 
-![TableRefs](https://download.pingcap.com/images/docs/sqlgram/TableRefs.png)
+![TableRefs](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableRefs.png)
 
 **AssignmentList:**
 
-![AssignmentList](https://download.pingcap.com/images/docs/sqlgram/AssignmentList.png)
+![AssignmentList](https://docs-download.pingcap.com/media/images/docs/sqlgram/AssignmentList.png)
 
 **WhereClauseOptional:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/WhereClauseOptional.png)
 
 ## Examples
 

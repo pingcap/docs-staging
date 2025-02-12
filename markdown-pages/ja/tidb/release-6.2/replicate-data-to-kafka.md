@@ -162,6 +162,6 @@ summary: Learn how to replicate TiDB data to Apache Kafka and Apache Flink using
 
     このコマンドを実行すると、次の図に示すように、テーブルに新しいデータがあることがわかります。
 
-    ![SQL query result](https://download.pingcap.com/images/docs/integrate/sql-query-result.png)
+    ![SQL query result](https://docs-download.pingcap.com/media/images/docs/integrate/sql-query-result.png)
 
 Kafka とのデータ統合が行われます。

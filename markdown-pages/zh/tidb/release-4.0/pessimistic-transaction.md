@@ -93,7 +93,7 @@ BEGIN /*T! PESSIMISTIC */;
 4. `START TRANSACTION WITH CONSISTENT SNAPSHOT` 之后，MySQL 仍然可以读取到之后在其他事务创建的表，而 TiDB 不能。
 
 5. autocommit 事务优先采用乐观事务提交。
-    
+
     使用悲观事务模型时，autocommit 事务首先尝试使用开销更小的乐观事务模式提交。如果发生了写冲突，重试时才会使用悲观事务提交。所以 `tidb_retry_limit = 0` 时，autocommit 事务遇到写冲突仍会报 `Write Conflict` 错误。
 
     自动提交的 `SELECT FOR UPDATE` 语句不会等锁。
@@ -124,7 +124,7 @@ TiDB 在悲观事务模式下支持了 2 种隔离级别：
 
 如果业务逻辑依赖加锁或等锁机制，或者即使在集群异常情况下也要尽可能保证事务提交的成功率，应关闭 pipelined 加锁功能。
 
-![Pipelined pessimistic lock](https://download.pingcap.com/images/docs-cn/pessimistic-transaction-pipelining.png)
+![Pipelined pessimistic lock](https://docs-download.pingcap.com/media/images/docs-cn/pessimistic-transaction-pipelining.png)
 
 该功能默认关闭，可修改 TiKV 配置启用：
 

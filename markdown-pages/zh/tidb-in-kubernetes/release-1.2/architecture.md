@@ -11,7 +11,7 @@ summary: 了解 TiDB Operator 架构及其工作原理。
 
 下图是 TiDB Operator 的架构概览。
 
-![TiDB Operator Overview](https://download.pingcap.com/images/tidb-in-kubernetes/tidb-operator-overview-1.2.png)
+![TiDB Operator Overview](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-overview-1.2.png)
 
 其中，`TidbCluster`、`TidbMonitor`、`TidbInitializer`、`Backup`、`Restore`、`BackupSchedule`、`TidbClusterAutoScaler` 是由 CRD（`CustomResourceDefinition`）定义的自定义资源：
 
@@ -29,7 +29,7 @@ TiDB 集群的编排和调度逻辑则由下列组件负责：
 * `tidb-scheduler` 是一个 Kubernetes 调度器扩展，它为 Kubernetes 调度器注入 TiDB 集群特有的调度逻辑。
 * `tidb-admission-webhook` 是一个 Kubernetes 动态准入控制器，完成 Pod、StatefulSet 等相关资源的修改、验证与运维。
 * `discovery` 是一个用于组件间发现的服务。每一个 TiDB 集群会对应存在一个 discovery Pod，用于该集群中组件发现其他已经创建的组件。
-  
+
 > **注意：**
 >
 > `tidb-scheduler` 并不是必须使用，详情可以参考 [tidb-scheduler 与 default-scheduler](tidb-scheduler.md#tidb-scheduler-与-default-scheduler)。
@@ -38,7 +38,7 @@ TiDB 集群的编排和调度逻辑则由下列组件负责：
 
 下图是 TiDB Operator 的控制流程解析。从 TiDB Operator v1.1 开始，TiDB 集群、监控、初始化、备份等组件，都通过 CR 进行部署、管理。
 
-![TiDB Operator Control Flow](https://download.pingcap.com/images/tidb-in-kubernetes/tidb-operator-control-flow-1.1.png)
+![TiDB Operator Control Flow](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-control-flow-1.1.png)
 
 整体的控制流程如下：
 

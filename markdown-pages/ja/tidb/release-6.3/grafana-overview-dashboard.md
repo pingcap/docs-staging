@@ -70,4 +70,4 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 
 ## 概要ダッシュボードのインターフェース {#interface-of-the-overview-dashboard}
 
-![overview](https://download.pingcap.com/images/docs/grafana-monitor-overview.png)
+![overview](https://docs-download.pingcap.com/media/images/docs/grafana-monitor-overview.png)

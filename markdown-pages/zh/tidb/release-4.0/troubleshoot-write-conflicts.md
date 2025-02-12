@@ -33,19 +33,19 @@ TiDB 会根据 `tidb_disable_txn_auto_retry` 和 `tidb_retry_limit` 参数设置
 
 * 通过 TiDB 监控面板中 KV Errors 监控栏中 KV Backoff OPS 监控指标项，查看 TiKV 中返回错误信息的数量
 
-    ![kv-backoff-ops](https://download.pingcap.com/images/docs-cn/troubleshooting-write-conflict-kv-backoff-ops.png)
+    ![kv-backoff-ops](https://docs-download.pingcap.com/media/images/docs-cn/troubleshooting-write-conflict-kv-backoff-ops.png)
 
     txnlock 表示集群中存在写写冲突，txnLockFast 表示集群中存在读写冲突。
 
 * 通过 TiDB 监控面板中 KV Errors 监控栏中 Lock Resolve OPS 监控指标项，查看事务冲突相关的数量
 
-    ![lock-resolve-ops](https://download.pingcap.com/images/docs-cn/troubleshooting-write-conflict-lock-resolve-ops.png)
+    ![lock-resolve-ops](https://docs-download.pingcap.com/media/images/docs-cn/troubleshooting-write-conflict-lock-resolve-ops.png)
 
     expired、not_expired、wait_expired 表示对应的 lock 状态
 
 * 通过 TiDB 监控面板中 KV Errors 监控栏中 KV Retry Duration 监控指标项，查看 KV 重试请求的时间
 
-    ![kv-retry-duration](https://download.pingcap.com/images/docs-cn/troubleshooting-write-conflict-kv-retry-duration.png)
+    ![kv-retry-duration](https://docs-download.pingcap.com/media/images/docs-cn/troubleshooting-write-conflict-kv-retry-duration.png)
 
 也可以通过 TiDB 日志查看是否有 `[kv:9007]Write conflict` 关键字，如果搜索到对应关键字，则可以表明集群中存在写写冲突。
 

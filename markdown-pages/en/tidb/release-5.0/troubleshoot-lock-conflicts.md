@@ -4,26 +4,26 @@ summary: Learn to analyze and resolve lock conflicts in TiDB.
 ---
 
 # Troubleshoot Lock Conflicts
- 
+
 TiDB supports complete distributed transactions. Starting from v3.0, TiDB provides optimistic transaction mode and pessimistic transaction mode. This document introduces how to troubleshoot and resolve lock conflicts in TiDB.
 
 ## Optimistic transaction mode
 
 Transactions in TiDB use two-phase commit (2PC) that includes the Prewrite phase and the Commit phase. The procedure is as follows:
 
-![two-phase commit in the optimistic transaction mode](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-01.png)
- 
+![two-phase commit in the optimistic transaction mode](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-01.png)
+
 For details of Percolator and TiDB's algorithm of the transactions, see [Google's Percolator](https://ai.google/research/pubs/pub36726).
 
 ### Prewrite phase (optimistic)
- 
+
 In the Prewrite phase, TiDB adds a primary lock and a secondary lock to target keys. If there are lots of requests for adding locks to the same target key, TiDB prints an error such as write conflict or `keyislocked` to the log and reports it to the client. Specifically, the following errors related to locks might occur in the Prewrite phase.
- 
+
 #### Read-write conflict (optimistic)
- 
+
 As the TiDB server receives a read request from a client, it gets a globally unique and increasing timestamp at the physical time as the start_ts of the current transaction. The transaction needs to read the latest data before start_ts, that is, the target key of the latest commit_ts that is smaller than start_ts. When the transaction finds that the target key is locked by another transaction, and it cannot know which phase the other transaction is in, a read-write conflict happens. The diagram is as follows:
 
-![read-write conflict](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-04.png)
+![read-write conflict](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-04.png)
 
 Txn0 completes the Prewrite phase and enters the Commit phase. At this time, Txn1 requests to read the same target key. Txn1 needs to read the target key of the latest commit_ts that is smaller than its start_ts. Because Txn1’s start_ts is larger than Txn0's lock_ts, Txn1 must wait for the target key's lock to be cleared, but it hasn’t been done. As a result, Txn1 cannot confirm whether Txn0 has been committed or not. Thus, a read-write conflict between Txn1 and Txn0 happens.
 
@@ -35,8 +35,8 @@ You can detect the read-write conflict in your TiDB cluster by the following way
 
         On the `KV Errors` panel in the TiDB dashboard, there are two monitoring metrics `Lock Resolve OPS` and `KV Backoff OPS` which can be used to check read-write conflicts in the transactions. If the values of both `not_expired` and `resolve` under `Lock Resolve OPS` increase, there might be many read-write conflicts. The `not_expired` item means that the transaction's lock has not timed out. The `resolve` item means that the other transaction tries to clean up the locks. If the value of another `txnLockFast` item under `KV Backoff OPS` increases, there might also be read-write conflicts.
 
-        ![KV-backoff-txnLockFast-optimistic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-09.png)
-        ![KV-Errors-resolve-optimistic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-08.png)
+        ![KV-backoff-txnLockFast-optimistic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-09.png)
+        ![KV-Errors-resolve-optimistic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-08.png)
 
     * Logs of the TiDB server
 
@@ -75,7 +75,7 @@ Solutions:
 
     ```sh
     ./tidb-ctl decoder -f table_row -k "t\x00\x00\x00\x00\x00\x00\x00\x1c_r\x00\x00\x00\x00\x00\x00\x00\xfa"
-    
+
     table_id: -9223372036854775780
     row_id: -9223372036854775558
     ```
@@ -88,8 +88,8 @@ You can check whether there's any "KeyIsLocked" error in the TiDB monitoring on 
 
 The `KV Errors` panel in the TiDB dashboard has two monitoring metrics `Lock Resolve OPS` and `KV Backoff OPS` which can be used to check write-write conflicts caused by a transaction. If the `resolve` item under `Lock Resolve OPS` and the `txnLock` item under `KV Backoff OPS` have a clear upward trend, a "KeyIsLocked" error occurs. `resolve` refers to the operation that attempts to clear the lock, and `txnLock` represents a write conflict.
 
-![KV-backoff-txnLockFast-optimistic-01](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-07.png)
-![KV-Errors-resolve-optimistic-01](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-08.png)
+![KV-backoff-txnLockFast-optimistic-01](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-07.png)
+![KV-Errors-resolve-optimistic-01](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-08.png)
 
 Solutions:
 
@@ -125,7 +125,7 @@ You can check whether there is any "LockNotFound" error in the following ways:
     ```log
     Error: KV error safe to retry restarts txn: Txn(Mvcc(TxnLockNotFound)) [ERROR [Kv.rs:708] ["KvService::batch_raft send response fail"] [err=RemoteStoped]
     ```
- 
+
 Solutions:
 
 * By checking the time interval between start_ts and commit_ts, you can confirm whether the commit time exceeds the TTL time.
@@ -147,15 +147,15 @@ Before v3.0.8, TiDB uses the optimistic transaction mode by default. In this mod
 
 The commit phase of the pessimistic transaction mode and the optimistic transaction mode in TiDB has the same logic, and both commits are in the 2PC mode. The important adaptation of pessimistic transactions is DML execution.
 
-![TiDB pessimistic transaction commit logic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-05.png)
- 
+![TiDB pessimistic transaction commit logic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-05.png)
+
 The pessimistic transaction adds an `Acquire Pessimistic Lock` phase before 2PC. This phase includes the following steps:
 
 1. (same as the optimistic transaction mode) Receive the `begin` request from the client, and the current timestamp is this transaction’s start_ts.
 2. When the TiDB server receives an `update` request from the client, the TiDB server initiates a pessimistic lock request to the TiKV server, and the lock is persisted to the TiKV server.
-3. (same as the optimistic transaction mode) When the client sends the commit request, TiDB starts to perform the 2PC similar to the optimistic transaction mode. 
+3. (same as the optimistic transaction mode) When the client sends the commit request, TiDB starts to perform the 2PC similar to the optimistic transaction mode.
 
-![Pessimistic transactions in TiDB](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-06.png)
+![Pessimistic transactions in TiDB](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-06.png)
 
 For details, see [Pessimistic transaction mode](/pessimistic-transaction.md).
 
@@ -190,7 +190,7 @@ Solutions:
 * If the above error occurs frequently, it is recommended to adjust from the application side.
 
 #### Lock wait timeout exceeded
- 
+
 In the pessimistic transaction mode, transactions wait for locks of each other. The timeout for waiting a lock is defined by the [innodb_lock_wait_timeout](/pessimistic-transaction.md#behaviors) parameter of TiDB. This is the maximum wait lock time at the SQL statement level, which is the expectation of a SQL statement Locking, but the lock has never been acquired. After this time, TiDB will not try to lock again and will return the corresponding error message to the client.
 
 When a wait lock timeout occurs, the following error message will be returned to the client:
@@ -215,7 +215,7 @@ TTL manager has timed out, pessimistic locks may expire, please commit or rollba
 
 Solutions:
 
-* First, confirm whether the application logic can be optimized. For example, large transactions may trigger TiDB's transaction size limit, which can be split into multiple small transactions. 
+* First, confirm whether the application logic can be optimized. For example, large transactions may trigger TiDB's transaction size limit, which can be split into multiple small transactions.
 * Also, you can adjust the related parameters properly to meet the application transaction logic.
 
 #### Deadlock found when trying to get lock

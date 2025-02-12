@@ -57,7 +57,7 @@ Version 2 的统计信息避免了 Version 1 中因为哈希冲突导致的在�
 
 等深直方图，就是让落入每个桶里的值数量尽量相等。举个例子，比方说对于给定的集合 {1.6, 1.9, 1.9, 2.0, 2.4, 2.6, 2.7, 2.7, 2.8, 2.9, 3.4, 3.5}，并且生成 4 个桶，那么最终的等深直方图就会如下图所示，包含四个桶 [1.6, 1.9]，[2.0, 2.6]，[2.7, 2.8]，[2.9, 3.5]，其桶深均为 3。
 
-![等深直方图示例](https://download.pingcap.com/images/docs-cn/statistics-1.png)
+![等深直方图示例](https://docs-download.pingcap.com/media/images/docs-cn/statistics-1.png)
 
 在[手动收集统计信息](#手动收集)一节中有控制直方图桶数量上限的参数。当桶数量越多，直方图的估算精度就越高，不过也会同时增大统计信息的内存使用，可以视具体情况来做调整。
 
@@ -133,7 +133,7 @@ ANALYZE TABLE TableNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH
 
 - 如果要收集指定列的统计信息，请使用以下语法：
 
-    
+
     ```sql
     ANALYZE TABLE TableName COLUMNS ColumnNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -156,7 +156,7 @@ ANALYZE TABLE TableNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH
 
     2. 在业务的查询模式稳定以后，使用以下语法收集 `PREDICATE COLUMNS` 的统计信息。
 
-        
+
         ```sql
         ANALYZE TABLE TableName PREDICATE COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
         ```
@@ -170,7 +170,7 @@ ANALYZE TABLE TableNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH
 
 - 如果要收集所有列的统计信息以及所有索引的统计信息，可以使用以下语法：
 
-    
+
     ```sql
     ANALYZE TABLE TableName ALL COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -256,14 +256,14 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
 
 - 如果要收集 TableName 中所有的 PartitionNameList 中分区的统计信息，请使用以下语法：
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
 
 - 如果要收集 TableName 中所有的 PartitionNameList 中分区的索引统计信息，请使用以下语法：
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -274,7 +274,7 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
     >
     > 收集 `PREDICATE COLUMNS` 的统计信息目前为实验特性，不建议在生产环境中使用。
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [COLUMNS ColumnNameList|PREDICATE COLUMNS|ALL COLUMNS] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -337,7 +337,7 @@ ANALYZE INCREMENTAL TABLE TableName PARTITION PartitionNameList INDEX [IndexName
 
 1. 执行以下 SQL 语句：
 
-    
+
     ```sql
     SHOW ANALYZE STATUS
     ```
@@ -494,7 +494,7 @@ SHOW STATS_META [ShowLikeOrWhere];
 
 其中，`ShowLikeOrWhereOpt` 部分的语法图为：
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
 
 目前 `SHOW STATS_META` 会输出 6 列，具体如下：
 
@@ -524,7 +524,7 @@ SHOW STATS_HEALTHY [ShowLikeOrWhere];
 
 `SHOW STATS_HEALTHY` 的语法图为：
 
-![ShowStatsHealthy](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStatsHealthy.png)
+![ShowStatsHealthy](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowStatsHealthy.png)
 
 目前，`SHOW STATS_HEALTHY` 会输出 4 列，具体如下：
 
@@ -578,7 +578,7 @@ SHOW STATS_BUCKETS [ShowLikeOrWhere];
 
 **SHOW STATS_BUCKETS:**
 
-![SHOW STATS_BUCKETS](https://download.pingcap.com/images/docs-cn/sqlgram/SHOW_STATS_BUCKETS.png)
+![SHOW STATS_BUCKETS](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SHOW_STATS_BUCKETS.png)
 
 该语句会输出所有桶的信息，你可以通过 ShowLikeOrWhere 来筛选需要的信息。
 
@@ -671,21 +671,21 @@ DROP STATS TableName GLOBAL;
 
 + 通过以下接口可以获取数据库 `${db_name}` 中的表 `${table_name}` 的 JSON 格式的统计信息：
 
-    
+
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}
     ```
 
     示例如下：
 
-    
+
     ```
     curl -s http://127.0.0.1:10080/stats/dump/test/t1 -o /tmp/t1.json
     ```
 
 + 通过以下接口可以获取数据库 `${db_name}` 中的表 `${table_name}` 在指定时间上的 JSON 格式统计信息。指定的时间应在 GC SafePoint 之后。
 
-    
+
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}/${yyyyMMddHHmmss}
     ```

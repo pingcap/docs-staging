@@ -31,7 +31,7 @@ A histogram is an approximate representation of the distribution of data. It div
 
 Here "equal-depth" means that the number of values ​​falling into each bucket is as equal as possible. For example, for a given set {1.6, 1.9, 1.9, 2.0, 2.4, 2.6, 2.7, 2.7, 2.8, 2.9, 3.4, 3.5}, you want to generate 4 buckets. The equal-depth histogram is as follows. It contains four buckets [1.6, 1.9], [2.0, 2.6], [2.7, 2.8], [2.9, 3.5]. The bucket depth is 3.
 
-![Equal-depth Histogram Example](https://download.pingcap.com/images/docs/statistics-1.png)
+![Equal-depth Histogram Example](https://docs-download.pingcap.com/media/images/docs/statistics-1.png)
 
 For details about the parameter that determines the upper limit to the number of histogram buckets, refer to [Manual Collection](#manual-collection). When the number of buckets is larger, the accuracy of the histogram is higher; however, higher accuracy is at the cost of the usage of memory resources. You can adjust this number appropriately according to the actual scenario.
 
@@ -68,7 +68,7 @@ You can perform full collection using the following syntax.
 
 + To collect statistics of all the tables in `TableNameList`:
 
-    
+
     ```sql
     ANALYZE TABLE TableNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH|SAMPLES];
     ```
@@ -81,7 +81,7 @@ You can perform full collection using the following syntax.
 
 + To collect statistics of the index columns on all `IndexNameList`s in `TableName`:
 
-    
+
     ```sql
     ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH|SAMPLES];
     ```
@@ -90,14 +90,14 @@ You can perform full collection using the following syntax.
 
 + To collect statistics of partition in all `PartitionNameList`s in `TableName`:
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH|SAMPLES];
     ```
 
 + To collect statistics of index columns for the partitions in all `PartitionNameList`s in `TableName`:
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH|SAMPLES];
     ```
@@ -115,14 +115,14 @@ You can perform incremental collection using the following syntax.
 
 + To incrementally collect statistics for index columns in all `IndexNameLists` in `TableName`:
 
-    
+
     ```sql
     ANALYZE INCREMENTAL TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH|SAMPLES];
     ```
 
 + To incrementally collect statistics of index columns for partitions in all `PartitionNameLists` in `TableName`:
 
-    
+
     ```sql
     ANALYZE INCREMENTAL TABLE TableName PARTITION PartitionNameList INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH|SAMPLES];
     ```
@@ -218,11 +218,11 @@ You can use the `SHOW STATS_HEALTHY` statement to check the health state of tabl
 
 The synopsis of `SHOW STATS_HEALTHY` is:
 
-![ShowStatsHealthy](https://download.pingcap.com/images/docs/sqlgram/ShowStatsHealthy.png)
+![ShowStatsHealthy](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStatsHealthy.png)
 
 and the synopsis of the `ShowLikeOrWhereOpt` part is:
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
 
 Currently, the `SHOW STATS_HEALTHY` statement returns the following 4 columns:
 
@@ -274,7 +274,7 @@ SHOW STATS_BUCKETS [ShowLikeOrWhere]
 
 The diagram is as follows:
 
-![SHOW STATS_BUCKETS](https://download.pingcap.com/images/docs/sqlgram/SHOW_STATS_BUCKETS.png)
+![SHOW STATS_BUCKETS](https://docs-download.pingcap.com/media/images/docs/sqlgram/SHOW_STATS_BUCKETS.png)
 
 This statement returns information about all the buckets. You can use `ShowLikeOrWhere` to filter the information you need.
 
@@ -338,14 +338,14 @@ The interface to export statistics is as follows:
 
 + To obtain the JSON format statistics of the `${table_name}` table in the `${db_name}` database:
 
-    
+
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}
     ```
 
 + To obtain the JSON format statistics of the `${table_name}` table in the `${db_name}` database at specific time:
 
-    
+
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}/${yyyyMMddHHmmss}
     ```

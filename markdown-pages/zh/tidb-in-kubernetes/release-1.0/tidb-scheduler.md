@@ -49,7 +49,7 @@ TiDB 集群包括 PD，TiKV 以及 TiDB 三个核心组件，每个组件又是�
 
 ## 工作原理
 
-![TiDB Scheduler 工作原理](https://download.pingcap.com/images/tidb-in-kubernetes/tidb-scheduler-overview.png)
+![TiDB Scheduler 工作原理](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-scheduler-overview.png)
 
 TiDB Scheduler 通过实现 Kubernetes 调度器扩展（[Scheduler extender](https://github.com/kubernetes/design-proposals-archive/blob/main/scheduling/scheduler_extender.md)）来添加自定义调度规则。
 

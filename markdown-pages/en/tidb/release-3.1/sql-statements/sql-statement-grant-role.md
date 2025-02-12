@@ -11,15 +11,15 @@ Assigns a previously created role to an existing user. The user can use then use
 
 **GrantRoleStmt:**
 
-![GrantRoleStmt](https://download.pingcap.com/images/docs/sqlgram/GrantRoleStmt.png)
+![GrantRoleStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/GrantRoleStmt.png)
 
 **RolenameList:**
 
-![RolenameList](https://download.pingcap.com/images/docs/sqlgram/RolenameList.png)
+![RolenameList](https://docs-download.pingcap.com/media/images/docs/sqlgram/RolenameList.png)
 
 **UsernameList:**
 
-![UsernameList](https://download.pingcap.com/images/docs/sqlgram/UsernameList.png)
+![UsernameList](https://docs-download.pingcap.com/media/images/docs/sqlgram/UsernameList.png)
 
 ## Examples
 

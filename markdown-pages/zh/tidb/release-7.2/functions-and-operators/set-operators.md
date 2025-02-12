@@ -117,7 +117,7 @@ TiDB 支持使用括号修改集合运算的优先级，如同[四则运算](htt
 
 ## 与 `ORDER BY` 和 `Limit` 结合
 
-TiDB 支持单独为整个集合运算进行 [`ORDER BY`](https://download.pingcap.com/images/docs-cn/sqlgram/OrderByOptional.png) 或者 [`LIMIT`](https://download.pingcap.com/images/docs-cn/sqlgram/LimitClause.png)。
+TiDB 支持单独为整个集合运算进行 [`ORDER BY`](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/OrderByOptional.png) 或者 [`LIMIT`](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/LimitClause.png)。
 
 ```sql
 (SELECT * FROM t1 UNION ALL SELECT * FROM t1 INTERSECT SELECT * FROM t2) ORDER BY a LIMIT 2;

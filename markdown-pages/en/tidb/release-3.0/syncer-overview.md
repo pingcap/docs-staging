@@ -18,7 +18,7 @@ It can be [downloaded](/download-ecosystem-tools.md) as part of the Enterprise T
 
 ## Syncer architecture
 
-![syncer sharding](https://download.pingcap.com/images/docs/syncer_architecture.png)
+![syncer sharding](https://docs-download.pingcap.com/media/images/docs/syncer_architecture.png)
 
 ## Where to deploy Syncer
 
@@ -306,7 +306,7 @@ You can use Syncer to import data from sharded tables into one table within one 
 
 Currently, the support for DDL is still in progress.
 
-![syncer sharding](https://download.pingcap.com/images/docs/syncer-sharding.png)
+![syncer sharding](https://docs-download.pingcap.com/media/images/docs/syncer-sharding.png)
 
 #### Usage of replicating data from sharded tables
 
@@ -482,7 +482,7 @@ The `syncer` monitoring solution contains the following components:
 
 See the following diagram:
 
-![syncer_monitor_scheme](https://download.pingcap.com/images/docs/syncer-monitor-scheme.png)
+![syncer_monitor_scheme](https://docs-download.pingcap.com/media/images/docs/syncer-monitor-scheme.png)
 
 ### Configure Syncer monitor and alert
 

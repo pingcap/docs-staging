@@ -12,15 +12,15 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-explain-analyze/','/docs-c
 
 **ExplainSym:**
 
-![ExplainSym](https://download.pingcap.com/images/docs-cn/sqlgram/ExplainSym.png)
+![ExplainSym](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ExplainSym.png)
 
 **ExplainStmt:**
 
-![ExplainStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ExplainStmt.png)
+![ExplainStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ExplainStmt.png)
 
 **ExplainableStmt:**
 
-![ExplainableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ExplainableStmt.png)
+![ExplainableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ExplainableStmt.png)
 
 ## 示例
 

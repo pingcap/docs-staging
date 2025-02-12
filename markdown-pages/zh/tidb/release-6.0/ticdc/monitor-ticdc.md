@@ -15,7 +15,7 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 下图显示了 TiCDC Dashboard 各监控面板：
 
-![TiCDC Dashboard - Overview](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-overview.png)
+![TiCDC Dashboard - Overview](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-overview.png)
 
 各监控面板说明如下：
 
@@ -28,7 +28,7 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 **Server** 面板示例如下：
 
-![TiCDC Dashboard - Server metrics](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-server.png)
+![TiCDC Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-server.png)
 
 **Server** 面板的各指标说明如下：
 
@@ -44,9 +44,9 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 **Changefeed** 面板示例如下：
 
-![TiCDC Dashboard - Changefeed metrics 1](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-changefeed-1.png)
-![TiCDC Dashboard - Changefeed metrics 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-changefeed-2.png)
-![TiCDC Dashboard - Changefeed metrics 3](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-changefeed-3.png)
+![TiCDC Dashboard - Changefeed metrics 1](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-changefeed-1.png)
+![TiCDC Dashboard - Changefeed metrics 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-changefeed-2.png)
+![TiCDC Dashboard - Changefeed metrics 3](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-changefeed-3.png)
 
 **Changefeed** 面板的各指标说明如下：
 
@@ -70,9 +70,9 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 **Events** 面板示例如下：
 
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-events-1.png)
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-events-2.png)
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-events-3.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-events-1.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-events-2.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-events-3.png)
 
 **Events** 面板的各指标说明如下：
 
@@ -100,8 +100,8 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 **TiKV** 面板示例如下：
 
-![TiCDC Dashboard - TiKV metrics 1](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-tikv-1.png)
-![TiCDC Dashboard - TiKV metrics 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-tikv-2.png)
+![TiCDC Dashboard - TiKV metrics 1](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-tikv-1.png)
+![TiCDC Dashboard - TiKV metrics 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-tikv-2.png)
 
 **TiKV** 面板的各指标说明如下：
 

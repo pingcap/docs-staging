@@ -7,7 +7,7 @@ aliases: ['/docs-cn/stable/sql-optimization-concepts/','/docs-cn/v4.0/sql-optimi
 
 在 TiDB 中，从输入的查询文本到最终的执行计划执行结果的过程可以见下图。
 
-![SQL Optimization](https://download.pingcap.com/images/docs-cn/sql-optimization.png)
+![SQL Optimization](https://docs-download.pingcap.com/media/images/docs-cn/sql-optimization.png)
 
 在经过了 `parser` 对原始查询文本的解析以及一些简单的合法性验证后，TiDB 首先会对查询做一些逻辑上的等价变化，详细的变化可以查询[逻辑优化](/sql-logical-optimization.md)章节。
 

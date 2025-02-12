@@ -14,7 +14,7 @@ TiDB 默认使用乐观事务模型，不会出现读写冲突，所有的读操
 
 TiDB 中事务使用两阶段提交，流程如下：
 
-![TiDB 中的两阶段提交](https://download.pingcap.com/images/docs-cn/2pc-in-tidb.png)
+![TiDB 中的两阶段提交](https://docs-download.pingcap.com/media/images/docs-cn/2pc-in-tidb.png)
 
 1. 客户端开始一个事务。
 
@@ -81,24 +81,24 @@ tidb_retry_limit = 10
 
 - Session 级别设置：
 
-    
+
     ```sql
     set @@tidb_disable_txn_auto_retry = off;
     ```
 
-    
+
     ```sql
     set @@tidb_retry_limit = 10;
     ```
 
 - Global 级别设置：
 
-    
+
     ```sql
     set @@global.tidb_disable_txn_auto_retry = off;
     ```
 
-    
+
     ```sql
     set @@global.tidb_retry_limit = 10;
     ```
@@ -160,7 +160,7 @@ scheduler-concurrency = 2048000
 
 此外，TiKV 支持监控等待 latch 的时间：
 
-![Scheduler latch wait duration](https://download.pingcap.com/images/docs-cn/optimistic-transaction-metric.png)
+![Scheduler latch wait duration](https://docs-download.pingcap.com/media/images/docs-cn/optimistic-transaction-metric.png)
 
 当 `Scheduler latch wait duration` 的值特别高时，说明大量时间消耗在等待锁的请求上。如果不存在底层写入慢的问题，基本上可以判断该段时间内冲突比较多。
 

@@ -45,7 +45,7 @@ summary: Learn how to build a TiDB cluster in TiDB Cloud (Developer Tier) and co
 
 7.  ダイアログ ボックスで、 [**ステップ 2: SQL クライアントに接続**する] を探し、文字列をコピーして SQL クライアントに接続し、後で使用できるようにします。
 
-    ![SQL string](https://download.pingcap.com/images/docs/develop/tidb-cloud-connect.png)
+    ![SQL string](https://docs-download.pingcap.com/media/images/docs/develop/tidb-cloud-connect.png)
 
     <CustomContent platform="tidb">
 
@@ -143,7 +143,7 @@ mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
 
 2.  [ステップ1](#step-1-create-a-free-cluster)で取得した接続文字列を実行します。
 
-    
+
     ```shell
     mysql --connect-timeout 15 -u '<prefix>.root' -h <host> -P 4000 -p
     ```
@@ -163,7 +163,7 @@ git clone https://github.com/pingcap-inc/tidb-example-java.git
 
     `plain-java-jdbc/src/main/java/com/pingcap/JDBCExample.java`で、ホスト、ポート、ユーザー、およびパスワードのパラメーターを変更します。
 
-    
+
     ```java
     mysqlDataSource.setServerName("localhost");
     mysqlDataSource.setPortNumber(4000);
@@ -174,14 +174,14 @@ git clone https://github.com/pingcap-inc/tidb-example-java.git
 
     設定したパスワードが`123456`で、 TiDB Cloudから取得した接続文字列が次のとおりであるとします。
 
-    
+
     ```shell
     mysql --connect-timeout 15 -u '4JC1i9KroBMFRwW.root' -h xxx.tidbcloud.com -P 4000 -D test -p
     ```
 
     この場合、次のようにパラメータを変更できます。
 
-    
+
     ```java
     mysqlDataSource.setServerName("xxx.tidbcloud.com");
     mysqlDataSource.setPortNumber(4000);

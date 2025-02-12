@@ -972,7 +972,7 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
     - When setting `tidb_constraint_check_in_place_pessimistic` to `OFF` and using pessimistic transactions:
 
-        
+
         ```sql
         set @@tidb_constraint_check_in_place_pessimistic=OFF;
         create table t (i int key);
@@ -1052,7 +1052,7 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 > **Warning:**
 >
 > Acceleration of `ADD INDEX` and `CREATE INDEX` is an experimental feature. It is not recommended that you use it in production environments.
-> 
+>
 > Currently, this feature is not fully compatible with adding a unique index. When adding a unique index, it is recommended to disable the index acceleration feature (set `tidb_ddl_enable_fast_reorg` to `OFF`).
 >
 > This feature is not compatible with [PITR (Point-in-time recovery)](/br/backup-and-restore-overview.md). When using index acceleration, you need to ensure that there are no PITR log backup tasks running in the background. Otherwise, unexpected behaviors might occur, including:
@@ -2677,7 +2677,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 - Unit: Rows
 - This variable is used to set the minimum number of rows during the coprocessor paging request process. Setting it to a too small value increases the RPC request count between TiDB and TiKV, while setting it to a too large value might cause a performance decrease when executing queries using IndexLookup with Limit. The default value of this variable brings better performance in OLTP scenarios than in OLAP scenarios. If the application only uses TiKV as the storage engine, consider increasing the value of this variable when executing OLAP workload queries, which might bring you better performance.
 
-![Paging size impact on TPCH](https://download.pingcap.com/images/docs/paging-size-impact-on-tpch.png)
+![Paging size impact on TPCH](https://docs-download.pingcap.com/media/images/docs/paging-size-impact-on-tpch.png)
 
 As shown in this diagram, when [`tidb_enable_paging`](/system-variables.md#tidb_max_paging_size-new-in-v630) is enabled, the performance of TPCH is affected by the settings of `tidb_min_paging_size` and [`tidb_max_paging_size`](/system-variables.md#tidb_max_paging_size-new-in-v630). The vertical axis is the execution time, and it is the smaller the better.
 

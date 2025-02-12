@@ -21,7 +21,7 @@ PITR 可用于满足以下业务需求：
 
 下图为 PITR 功能使用示意：
 
-![Point-in-Time Recovery](https://download.pingcap.com/images/docs-cn/br/pitr-usage.png)
+![Point-in-Time Recovery](https://docs-download.pingcap.com/media/images/docs-cn/br/pitr-usage.png)
 
 ### 备份数据
 
@@ -93,7 +93,7 @@ PITR 可用于满足以下业务需求：
 
 ### 版本兼容检查
 
-在 v6.3.0 中，PITR 产生的备份文件采用新的压缩方法，同时还会合并小文件（为解决之前小文件过多带来的问题），但是这也导致旧版本 TiDB 集群与新版本产生的备份数据不兼容，详情如下表所示： 
+在 v6.3.0 中，PITR 产生的备份文件采用新的压缩方法，同时还会合并小文件（为解决之前小文件过多带来的问题），但是这也导致旧版本 TiDB 集群与新版本产生的备份数据不兼容，详情如下表所示：
 
 | 恢复版本（横向）\ 备份版本（纵向）   | 用 PITR v6.2.0 恢复 TiDB v6.2.0 | 用 PITR v6.3.0 恢复 TiDB v6.3.0 |
 |  ----  |  ----  | ---- |
@@ -106,7 +106,7 @@ PITR 主要用于快照备份恢复和日志备份恢复。关于快照备份恢
 
 日志备份恢复的架构实现如下：
 
-![BR log backup and restore architecture](https://download.pingcap.com/images/docs-cn/br/br-log-arch.png)
+![BR log backup and restore architecture](https://docs-download.pingcap.com/media/images/docs-cn/br/br-log-arch.png)
 
 进行日志备份时：
 

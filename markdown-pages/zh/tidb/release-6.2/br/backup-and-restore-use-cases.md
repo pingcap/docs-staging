@@ -96,7 +96,7 @@ BR 可以直接将命令下发到 TiKV 集群来执行备份和恢复，不依�
 
 部署拓扑如下图所示：
 
-![img](https://download.pingcap.com/images/docs-cn/br/backup-nfs-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-nfs-deploy.png)
 
 ### 运行备份
 
@@ -118,19 +118,19 @@ bin/br backup table \
 
 **Backup CPU Utilization**：参与备份的 TiKV 节点（例如 backup-worker 和 backup-endpoint）的 CPU 使用率。
 
-![img](https://download.pingcap.com/images/docs-cn/br/backup-cpu.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-cpu.png)
 
 **IO Utilization**：参与备份的 TiKV 节点的 I/O 使用率。
 
-![img](https://download.pingcap.com/images/docs-cn/br/backup-io.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-io.png)
 
 **BackupSST Generation Throughput**：参与备份的 TiKV 节点生成 backupSST 文件的吞吐。正常时单个 TiKV 节点的吞吐在 150 MB/s 左右。
 
-![img](https://download.pingcap.com/images/docs-cn/br/backup-throughput.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-throughput.png)
 
 **One Backup Range Duration**：备份一个 range 的操作耗时，包括扫描耗时 (scan KV) 和保存耗时（保存为 backupSST 文件）。
 
-![img](https://download.pingcap.com/images/docs-cn/br/backup-range-duration.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-range-duration.png)
 
 **One Backup Subtask Duration**：一次备份任务会被拆分成多个子任务。该监控项显示子任务的耗时。
 
@@ -139,15 +139,15 @@ bin/br backup table \
 > * 虽然本次任务是备份单表，但因为表中有 3 个索引，所以正常会拆分成 4 个子任务。
 > * 下图中有 20 个点，蓝色和黄色各 10 个，代表 10 个子任务。备份过程中可能发生 Region 调度行为，少量重试是正常的。
 
-![img](https://download.pingcap.com/images/docs-cn/br/backup-subtask-duration.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-subtask-duration.png)
 
 **Backup Errors**：备份过程中的错误。正常时无错误。即使出现少量错误，备份操作也有重试机制，可能会导致备份时间增加，但不会影响备份的正确性。
 
-![img](https://download.pingcap.com/images/docs-cn/br/backup-errors.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-errors.png)
 
 **Checksum Request Duration**：对备份集群执行 admin checksum 的耗时统计。
 
-![img](https://download.pingcap.com/images/docs-cn/br/checksum-duration.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/checksum-duration.png)
 
 ### 结果解读
 
@@ -204,9 +204,9 @@ bin/br backup table \
     --concurrency 16
 ```
 
-![img](https://download.pingcap.com/images/docs-cn/br/backup-diff.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-diff.png)
 
-![img](https://download.pingcap.com/images/docs-cn/br/backup-diff2.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-diff2.png)
 
 性能调优后的结果如下（保持数据大小不变）：
 
@@ -227,7 +227,7 @@ bin/br backup table \
 
 部署拓扑如下图所示：
 
-![img](https://download.pingcap.com/images/docs-cn/br/restore-nfs-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/restore-nfs-deploy.png)
 
 ### 运行恢复
 
@@ -244,31 +244,31 @@ bin/br restore table --db batchmark --table order_line -s local:///br_data --pd 
 
 **CPU**：参与恢复的 TiKV 节点 CPU 使用率。
 
-![img](https://download.pingcap.com/images/docs-cn/br/restore-cpu.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/restore-cpu.png)
 
 **IO Utilization**：参与恢复的 TiKV 节点的 I/O 使用率。
 
-![img](https://download.pingcap.com/images/docs-cn/br/restore-io.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/restore-io.png)
 
 **Region** 分布：Region 分布越均匀，说明恢复资源利用越充分。
 
-![img](https://download.pingcap.com/images/docs-cn/br/restore-region.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/restore-region.png)
 
 **Process SST Duration**：处理 SST 文件的延迟。恢复一张表时，如果 `tableID` 发生了变化，需要对 `tableID` 进行 `rewrite`，否则会进行 `rename`。通常 `rewrite` 延迟要高于 `rename` 的延迟。
 
-![img](https://download.pingcap.com/images/docs-cn/br/restore-process-sst.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/restore-process-sst.png)
 
 **DownLoad SST Throughput**：从 External Storage 下载 SST 文件的吞吐。
 
-![img](https://download.pingcap.com/images/docs-cn/br/restore-download-sst.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/restore-download-sst.png)
 
 **Restore Errors**：恢复过程中的错误。
 
-![img](https://download.pingcap.com/images/docs-cn/br/restore-errors.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/restore-errors.png)
 
 **Checksum Request Duration**：对恢复集群执行 admin checksum 的耗时统计，会比备份时的 checksum 延迟高。
 
-![img](https://download.pingcap.com/images/docs-cn/br/restore-checksum.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/restore-checksum.png)
 
 ### 结果解读
 
@@ -336,7 +336,7 @@ bin/br restore table --db batchmark --table order_line -s local:///br_data/ --pd
 
 ### 部署拓扑
 
-![img](https://download.pingcap.com/images/docs-cn/br/backup-local-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-local-deploy.png)
 
 ### 运行备份
 
@@ -401,7 +401,7 @@ bin/br backup table \
 
 ### 部署拓扑
 
-![img](https://download.pingcap.com/images/docs-cn/br/restore-local-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs-cn/br/restore-local-deploy.png)
 
 ### 运行恢复
 

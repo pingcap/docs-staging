@@ -10,7 +10,7 @@ aliases: ['/docs-cn/stable/dumpling-overview/','/docs-cn/v4.0/dumpling-overview/
 
 下图展示了使用 Dumpling 导出数据的场景。
 
-![Dumpling 导出数据](https://download.pingcap.com/images/docs-cn/dumpling.png)
+![Dumpling 导出数据](https://docs-download.pingcap.com/media/images/docs-cn/dumpling.png)
 
 要快速了解 Dumpling 的基本功能，建议先观看下面的培训视频（时长 28 分钟）。注意本视频只作为功能介绍、学习参考，具体操作步骤和最新功能，请以文档内容为准。
 
@@ -111,7 +111,7 @@ dumpling \
 
 + `metadata`：此文件包含导出的起始时间，以及 master binary log 的位置。
 
-    
+
     ```shell
     cat metadata
     ```
@@ -127,7 +127,7 @@ dumpling \
 
 + `{schema}-schema-create.sql`：创建 schema 的 SQL 文件。
 
-    
+
     ```shell
     cat test-schema-create.sql
     ```
@@ -138,7 +138,7 @@ dumpling \
 
 + `{schema}.{table}-schema.sql`：创建 table 的 SQL 文件
 
-    
+
     ```shell
     cat test.t1-schema.sql
     ```
@@ -151,7 +151,7 @@ dumpling \
 
 + `{schema}.{table}.{0001}.{sql|csv`}：数据源文件
 
-    
+
     ```shell
     cat test.t1.0.sql
     ```

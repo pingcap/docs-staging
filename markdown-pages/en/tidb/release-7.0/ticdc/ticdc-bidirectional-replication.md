@@ -17,7 +17,7 @@ TiCDC only replicates incremental data changes that occur after a specified time
 
 2. Deploy two TiCDC clusters between the two TiDB clusters. The cluster topology is as follows. The arrows in the diagram indicate the directions of data flow.
 
-    ![TiCDC bidirectional replication](https://download.pingcap.com/images/docs/ticdc/ticdc-bidirectional-replication.png)
+    ![TiCDC bidirectional replication](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-bidirectional-replication.png)
 
 3. Specify the starting time point of data replication for the upstream and downstream clusters.
 

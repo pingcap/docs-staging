@@ -16,11 +16,11 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-set-variable/','/docs-cn
 
 **SetStmt:**
 
-![SetStmt](https://download.pingcap.com/images/docs-cn/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SetStmt.png)
 
 **VariableAssignment:**
 
-![VariableAssignment](https://download.pingcap.com/images/docs-cn/sqlgram/VariableAssignment.png)
+![VariableAssignment](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/VariableAssignment.png)
 
 ## 示例
 

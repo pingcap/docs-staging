@@ -19,13 +19,13 @@ Prometheus 提供了多个组件供用户使用。目前，TiDB 使用了以下�
 
 其结构如下图所示：
 
-![Prometheus in TiDB](https://download.pingcap.com/images/docs-cn/prometheus-in-tidb.png)
+![Prometheus in TiDB](https://docs-download.pingcap.com/media/images/docs-cn/prometheus-in-tidb.png)
 
 ## Grafana 在 TiDB 中的应用
 
 Grafana 是一个开源的 metric 分析及可视化系统。TiDB 使用 Grafana 来展示 TiDB 集群各组件的相关监控，监控项分组如下图所示：
 
-![Grafana monitored_groups](https://download.pingcap.com/images/docs-cn/grafana_monitored_groups.png)
+![Grafana monitored_groups](https://docs-download.pingcap.com/media/images/docs-cn/grafana_monitored_groups.png)
 
 - {TiDB_Cluster_name}-Backup-Restore：备份恢复相关的监控项。
 - {TiDB_Cluster_name}-Binlog：TiDB Binlog 相关的监控项。
@@ -49,4 +49,4 @@ Grafana 是一个开源的 metric 分析及可视化系统。TiDB 使用 Grafana
 
 每个分组包含多个监控项页签，页签中包含多个详细的监控项信息。以 Overview 监控组为例，其中包含 5 个页签，每个页签内有相应的监控指标看板，如下图所示：
 
-![Grafana Overview](https://download.pingcap.com/images/docs-cn/grafana_monitor_overview.png)
+![Grafana Overview](https://docs-download.pingcap.com/media/images/docs-cn/grafana_monitor_overview.png)

@@ -11,11 +11,11 @@ This statement lists the current sessions connected to the same TiDB server. The
 
 **ShowProcesslistStmt:**
 
-![ShowProcesslistStmt](https://download.pingcap.com/images/docs/sqlgram/ShowProcesslistStmt.png)
+![ShowProcesslistStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowProcesslistStmt.png)
 
 **OptFull:**
 
-![OptFull](https://download.pingcap.com/images/docs/sqlgram/OptFull.png)
+![OptFull](https://docs-download.pingcap.com/media/images/docs/sqlgram/OptFull.png)
 
 ## Examples
 

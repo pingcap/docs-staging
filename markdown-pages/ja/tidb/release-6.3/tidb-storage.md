@@ -7,7 +7,7 @@ summary: Understand the storage layer of a TiDB database.
 
 このドキュメントでは、 [TiKV](https://github.com/tikv/tikv)のいくつかの設計アイデアと主要な概念を紹介します。
 
-![storage-architecture](https://download.pingcap.com/images/docs/tidb-storage-architecture.png)
+![storage-architecture](https://docs-download.pingcap.com/media/images/docs/tidb-storage-architecture.png)
 
 ## キーと値のペア {#key-value-pairs}
 
@@ -38,7 +38,7 @@ Raftはコンセンサスアルゴリズムです。このドキュメントで�
 
 TiKV はRaftを使用してデータ レプリケーションを実行します。各データ変更はRaftログとして記録されます。 Raftログの複製により、データはRaftグループの複数のノードに安全かつ確実に複製されます。ただし、 Raftプロトコルによると、書き込みが成功するには、データが大部分のノードに複製されるだけで済みます。
 
-![Raft in TiDB](https://download.pingcap.com/images/docs/tidb-storage-1.png)
+![Raft in TiDB](https://docs-download.pingcap.com/media/images/docs/tidb-storage-1.png)
 
 要約すると、TiKV は、スタンドアロン マシン RocksDB を介してディスクにデータをすばやく保存し、マシンの障害が発生した場合にRaftを介して複数のマシンにデータを複製できます。データは、RocksDB ではなく、 Raftのインターフェースを介して書き込まれます。 Raftの実装により、TiKV は分散 Key-Value ストレージになります。いくつかのマシンに障害が発生した場合でも、TiKV はアプリケーションに影響を与えないネイティブRaftプロトコルによってレプリカを自動的に完成させることができます。
 
@@ -51,7 +51,7 @@ TiKV はRaftを使用してデータ レプリケーションを実行します�
 
 TiKV は、Key-Value スペース全体を一連の連続する Key セグメントに分割する 2 番目のソリューションを選択します。各セグメントはリージョンと呼ばれます。データを保存する各リージョンにはサイズ制限があります (デフォルト値は 96 MB で、サイズは構成可能です)。各リージョンは、左が閉じて右が開いた間隔である`[StartKey, EndKey)`で表すことができます。
 
-![Region in TiDB](https://download.pingcap.com/images/docs/tidb-storage-2.png)
+![Region in TiDB](https://docs-download.pingcap.com/media/images/docs/tidb-storage-2.png)
 
 ここでのリージョンは、SQL のテーブルとは関係がないことに注意してください。このドキュメントでは、SQL のことは忘れて、今のところ KV に焦点を当てます。データをリージョンに分割した後、TiKV は 2 つの重要なタスクを実行します。
 
@@ -68,7 +68,7 @@ TiKV は、Key-Value スペース全体を一連の連続する Key セグメン
 
     レプリカの 1 つはグループのリーダーとして機能し、もう 1 つはフォロワーとして機能します。デフォルトでは、すべての読み取りと書き込みはリーダーを通じて処理され、そこで読み取りが行われ、書き込みがフォロワーにレプリケートされます。次の図は、 リージョンとRaftグループに関する全体像を示しています。
 
-![TiDB Storage](https://download.pingcap.com/images/docs/tidb-storage-3.png)
+![TiDB Storage](https://docs-download.pingcap.com/media/images/docs/tidb-storage-3.png)
 
 リージョンでデータを分散および複製するため、分散 Key-Value システムがあり、これにはある程度の災害復旧機能があります。容量、ディスク障害、データ損失について心配する必要はもうありません。
 

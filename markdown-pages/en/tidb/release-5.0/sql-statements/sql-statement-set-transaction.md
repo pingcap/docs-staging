@@ -11,15 +11,15 @@ The `SET TRANSACTION` statement can be used to change the current isolation leve
 
 **SetStmt:**
 
-![SetStmt](https://download.pingcap.com/images/docs/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetStmt.png)
 
 **TransactionChar:**
 
-![TransactionChar](https://download.pingcap.com/images/docs/sqlgram/TransactionChar.png)
+![TransactionChar](https://docs-download.pingcap.com/media/images/docs/sqlgram/TransactionChar.png)
 
 **IsolationLevel:**
 
-![IsolationLevel](https://download.pingcap.com/images/docs/sqlgram/IsolationLevel.png)
+![IsolationLevel](https://docs-download.pingcap.com/media/images/docs/sqlgram/IsolationLevel.png)
 
 ## Examples
 

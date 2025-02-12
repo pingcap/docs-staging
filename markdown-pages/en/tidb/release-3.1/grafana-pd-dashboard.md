@@ -93,40 +93,40 @@ To understand the key metrics displayed on the Overview dashboard, check the fol
 
 ### Cluster
 
-![PD Dashboard - Cluster metrics](https://download.pingcap.com/images/docs/pd-dashboard-cluster-v2.png)
+![PD Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-cluster-v2.png)
 
 ### Statistics - Balance
 
-![PD Dashboard - Statistics - Balance metrics](https://download.pingcap.com/images/docs/pd-dashboard-balance-v2.png)
+![PD Dashboard - Statistics - Balance metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-balance-v2.png)
 
 ### Statistics - Hotspot
 
-![PD Dashboard - Statistics - Hotspot metrics](https://download.pingcap.com/images/docs/pd-dashboard-hotspot.png)
+![PD Dashboard - Statistics - Hotspot metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-hotspot.png)
 
 ### Scheduler
 
-![PD Dashboard - Scheduler metrics](https://download.pingcap.com/images/docs/pd-dashboard-scheduler-v2.png)
+![PD Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-scheduler-v2.png)
 
 ### Operator
 
-![PD Dashboard - Operator metrics](https://download.pingcap.com/images/docs/pd-dashboard-operator-v2.png)
+![PD Dashboard - Operator metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-operator-v2.png)
 
 ### gRPC
 
-![PD Dashboard - gRPC metrics](https://download.pingcap.com/images/docs/pd-dashboard-grpc-v2.png)
+![PD Dashboard - gRPC metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-grpc-v2.png)
 
 ### etcd
 
-![PD Dashboard - etcd metrics](https://download.pingcap.com/images/docs/pd-dashboard-etcd-v2.png)
+![PD Dashboard - etcd metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-etcd-v2.png)
 
 ### TiDB
 
-![PD Dashboard - TiDB metrics](https://download.pingcap.com/images/docs/pd-dashboard-tidb-v2.png)
+![PD Dashboard - TiDB metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-tidb-v2.png)
 
 ### Heartbeat
 
-![PD Dashboard - Heartbeat metrics](https://download.pingcap.com/images/docs/pd-dashboard-heartbeat-v2.png)
+![PD Dashboard - Heartbeat metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-heartbeat-v2.png)
 
 ### Region storage
 
-![PD Dashboard - Region storage](https://download.pingcap.com/images/docs/pd-dashboard-region-storage.png)
+![PD Dashboard - Region storage](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-region-storage.png)

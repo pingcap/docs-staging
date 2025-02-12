@@ -11,11 +11,11 @@ The `USE` statement selects a current database for the user session.
 
 **UseStmt:**
 
-![UseStmt](https://download.pingcap.com/images/docs/sqlgram/UseStmt.png)
+![UseStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/UseStmt.png)
 
 **DBName:**
 
-![DBName](https://download.pingcap.com/images/docs/sqlgram/DBName.png)
+![DBName](https://docs-download.pingcap.com/media/images/docs/sqlgram/DBName.png)
 
 ## Examples
 

@@ -8,7 +8,7 @@ aliases: ['/docs-cn/stable/tidb-storage/','/docs-cn/v4.0/tidb-storage/']
 
 本文主要介绍 [TiKV](https://github.com/tikv/tikv) 的一些设计思想和关键概念。
 
-![storage-architecture](https://download.pingcap.com/images/docs-cn/tidb-storage-architecture.png)
+![storage-architecture](https://docs-download.pingcap.com/media/images/docs-cn/tidb-storage-architecture.png)
 
 ## Key-Value Pairs（键值对）
 
@@ -37,7 +37,7 @@ TiKV 数据存储的两个关键点：
 
 TiKV 利用 Raft 来做数据复制，每个数据变更都会落地为一条 Raft 日志，通过 Raft 的日志复制功能，将数据安全可靠地同步到复制组的每一个节点中。不过在实际写入中，根据 Raft 的协议，只需要同步复制到多数节点，即可安全地认为数据写入成功。
 
-![Raft in TiDB](https://download.pingcap.com/images/docs-cn/tidb-storage-1.png)
+![Raft in TiDB](https://docs-download.pingcap.com/media/images/docs-cn/tidb-storage-1.png)
 
 总结一下，通过单机的 RocksDB，TiKV 可以将数据快速地存储在磁盘上；通过 Raft，将数据复制到多台机器上，以防单机失效。数据的写入是通过 Raft 这一层的接口写入，而不是直接写 RocksDB。通过实现 Raft，TiKV 变成了一个分布式的 Key-Value 存储，少数几台机器宕机也能通过原生的 Raft 协议自动把副本补全，可以做到对业务无感知。
 
@@ -50,7 +50,7 @@ TiKV 利用 Raft 来做数据复制，每个数据变更都会落地为一条 Ra
 
 TiKV 选择了第二种方式，将整个 Key-Value 空间分成很多段，每一段是一系列连续的 Key，将每一段叫做一个 Region，并且会尽量保持每个 Region 中保存的数据不超过一定的大小，目前在 TiKV 中默认是 96MB。每一个 Region 都可以用 [StartKey，EndKey) 这样一个左闭右开区间来描述。
 
-![Region in TiDB](https://download.pingcap.com/images/docs-cn/tidb-storage-2.png)
+![Region in TiDB](https://docs-download.pingcap.com/media/images/docs-cn/tidb-storage-2.png)
 
 注意，这里的 Region 还是和 SQL 中的表没什么关系。 这里的讨论依然不涉及 SQL，只和 KV 有关。
 
@@ -66,7 +66,7 @@ TiKV 选择了第二种方式，将整个 Key-Value 空间分成很多段，每�
 
 大家理解了 Region 之后，应该可以理解下面这张图：
 
-![TiDB Storage](https://download.pingcap.com/images/docs-cn/tidb-storage-3.png)
+![TiDB Storage](https://docs-download.pingcap.com/media/images/docs-cn/tidb-storage-3.png)
 
 以 Region 为单位做数据的分散和复制，TiKV 就成为了一个分布式的具备一定容灾能力的 KeyValue 系统，不用再担心数据存不下，或者是磁盘故障丢失数据的问题。
 

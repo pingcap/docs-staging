@@ -12,23 +12,23 @@ The `ALTER TABLE.. MODIFY COLUMN` statement modifies a column on an existing tab
 
 **AlterTableStmt:**
 
-![AlterTableStmt](https://download.pingcap.com/images/docs/sqlgram/AlterTableStmt.png)
+![AlterTableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/AlterTableStmt.png)
 
 **AlterTableSpec:**
 
-![AlterTableSpec](https://download.pingcap.com/images/docs/sqlgram/AlterTableSpec.png)
+![AlterTableSpec](https://docs-download.pingcap.com/media/images/docs/sqlgram/AlterTableSpec.png)
 
 **ColumnKeywordOpt:**
 
-![ColumnKeywordOpt](https://download.pingcap.com/images/docs/sqlgram/ColumnKeywordOpt.png)
+![ColumnKeywordOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ColumnKeywordOpt.png)
 
 **ColumnDef:**
 
-![ColumnDef](https://download.pingcap.com/images/docs/sqlgram/ColumnDef.png)
+![ColumnDef](https://docs-download.pingcap.com/media/images/docs/sqlgram/ColumnDef.png)
 
 **ColumnPosition:**
 
-![ColumnPosition](https://download.pingcap.com/images/docs/sqlgram/ColumnPosition.png)
+![ColumnPosition](https://docs-download.pingcap.com/media/images/docs/sqlgram/ColumnPosition.png)
 
 ## Examples
 

@@ -12,27 +12,27 @@ This statement inserts new rows into a table.
 
 **InsertIntoStmt:**
 
-![InsertIntoStmt](https://download.pingcap.com/images/docs/sqlgram/InsertIntoStmt.png)
+![InsertIntoStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/InsertIntoStmt.png)
 
 **PriorityOpt:**
 
-![PriorityOpt](https://download.pingcap.com/images/docs/sqlgram/PriorityOpt.png)
+![PriorityOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/PriorityOpt.png)
 
 **IgnoreOptional:**
 
-![IgnoreOptional](https://download.pingcap.com/images/docs/sqlgram/IgnoreOptional.png)
+![IgnoreOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/IgnoreOptional.png)
 
 **IntoOpt:**
 
-![IntoOpt](https://download.pingcap.com/images/docs/sqlgram/IntoOpt.png)
+![IntoOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/IntoOpt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 **InsertValues:**
 
-![InsertValues](https://download.pingcap.com/images/docs/sqlgram/InsertValues.png)
+![InsertValues](https://docs-download.pingcap.com/media/images/docs/sqlgram/InsertValues.png)
 
 ## Examples
 

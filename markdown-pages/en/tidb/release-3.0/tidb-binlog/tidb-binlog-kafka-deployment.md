@@ -21,7 +21,7 @@ TiDB Binlog supports the following scenarios:
 
 The TiDB Binlog architecture is as follows:
 
-![TiDB Binlog architecture](https://download.pingcap.com/images/docs/tidb_binlog_kafka_architecture.png)
+![TiDB Binlog architecture](https://docs-download.pingcap.com/media/images/docs/tidb_binlog_kafka_architecture.png)
 
 The TiDB Binlog cluster mainly consists of three components:
 
@@ -74,7 +74,7 @@ cd tidb-binlog-kafka-linux-amd64
 
     We set the startup parameter `binlog-socket` as the specified unix socket file path of the corresponding parameter `socket` in Pump. The final deployment architecture is as follows:
 
-    ![TiDB Pump deployment architecture](https://download.pingcap.com/images/docs/tidb_pump_deployment.jpeg)
+    ![TiDB Pump deployment architecture](https://docs-download.pingcap.com/media/images/docs/tidb_pump_deployment.jpeg)
 
 - Drainer does not support renaming DDL on the table of the ignored schemas (schemas in the filter list).
 

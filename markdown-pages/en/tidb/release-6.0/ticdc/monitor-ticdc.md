@@ -15,7 +15,7 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 The TiCDC dashboard contains four monitoring panels. See the following screenshot:
 
-![TiCDC Dashboard - Overview](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-overview.png)
+![TiCDC Dashboard - Overview](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-overview.png)
 
 The description of each panel is as follows:
 
@@ -28,7 +28,7 @@ The description of each panel is as follows:
 
 The following is an example of the **Server** panel:
 
-![TiCDC Dashboard - Server metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-server.png)
+![TiCDC Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-server.png)
 
 The description of each metric in the **Server** panel is as follows:
 
@@ -44,9 +44,9 @@ The description of each metric in the **Server** panel is as follows:
 
 The following is an example of the **Changefeed** panel:
 
-![TiCDC Dashboard - Changefeed metrics 1](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-changefeed-1.png)
-![TiCDC Dashboard - Changefeed metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-changefeed-2.png)
-![TiCDC Dashboard - Changefeed metrics 3](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-changefeed-3.png)
+![TiCDC Dashboard - Changefeed metrics 1](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-changefeed-1.png)
+![TiCDC Dashboard - Changefeed metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-changefeed-2.png)
+![TiCDC Dashboard - Changefeed metrics 3](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-changefeed-3.png)
 
 The description of each metric in the **Changefeed** panel is as follows:
 
@@ -70,9 +70,9 @@ The description of each metric in the **Changefeed** panel is as follows:
 
 The following is an example of the **Events** panel:
 
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-events-1.png)
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-events-2.png)
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-events-3.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-events-1.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-events-2.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-events-3.png)
 
 The description of each metric in the **Events** panel is as follows:
 
@@ -100,8 +100,8 @@ The description of each metric in the **Events** panel is as follows:
 
 The following is an example of the **TiKV** panel:
 
-![TiCDC Dashboard - TiKV metrics 1](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-tikv-1.png)
-![TiCDC Dashboard - TiKV metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-tikv-2.png)
+![TiCDC Dashboard - TiKV metrics 1](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-tikv-1.png)
+![TiCDC Dashboard - TiKV metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-tikv-2.png)
 
 The description of each metric in the **TiKV** panel is as follows:
 

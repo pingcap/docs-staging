@@ -12,7 +12,7 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-warnings/','/docs-c
 
 **ShowWarningsStmt:**
 
-![ShowWarningsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowWarningsStmt.png)
+![ShowWarningsStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowWarningsStmt.png)
 
 ## 示例
 

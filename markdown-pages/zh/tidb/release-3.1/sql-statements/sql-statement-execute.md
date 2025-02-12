@@ -12,11 +12,11 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-execute/','/docs-cn/v3.1/r
 
 **ExecuteStmt:**
 
-![ExecuteStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ExecuteStmt.png)
+![ExecuteStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ExecuteStmt.png)
 
 **Identifier:**
 
-![Identifier](https://download.pingcap.com/images/docs-cn/sqlgram/Identifier.png)
+![Identifier](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Identifier.png)
 
 ## 示例
 

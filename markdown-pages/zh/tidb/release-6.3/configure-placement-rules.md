@@ -23,7 +23,7 @@ Placement Rules 特性在 TiDB v5.0 及以上的版本中默认开启。如需�
 
 Placement Rules 示意图如下所示：
 
-![Placement rules overview](https://download.pingcap.com/images/docs-cn/placement-rules-1.png)
+![Placement rules overview](https://docs-download.pingcap.com/media/images/docs-cn/placement-rules-1.png)
 
 ### 规则字段
 
@@ -132,28 +132,28 @@ pd-ctl 支持使用多种方式查看系统中的 Rule，输出是 json 格式�
 
 + 查看所有规则列表
 
-    
+
     ```bash
     pd-ctl config placement-rules show
     ```
 
 + 查看 PD Group 的所有规则列表
 
-    
+
     ```bash
     pd-ctl config placement-rules show --group=pd
     ```
 
 + 查看对应 Group 和 ID 的某条规则
 
-    
+
     ```bash
     pd-ctl config placement-rules show --group=pd --id=default
     ```
 
 + 查看 Region 所匹配的规则列表
 
-    
+
     ```bash
     pd-ctl config placement-rules show --region=2
     ```
@@ -206,28 +206,28 @@ pd-ctl config placement save --in=rules.json
 
 + 查看所有的规则分组列表
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group show
     ```
 
 + 查看指定 ID 的规则分组
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group show pd
     ```
 
 + 设置规则分组的 index 和 override 属性
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group set pd 100 true
     ```
 
 + 删除规则分组配置（如组内还有规则，则使用默认分组配置）
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group delete pd
     ```

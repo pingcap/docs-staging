@@ -12,19 +12,19 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-drop-database/','/docs-cn/
 
 **DropDatabaseStmt:**
 
-![DropDatabaseStmt](https://download.pingcap.com/images/docs-cn/sqlgram/DropDatabaseStmt.png)
+![DropDatabaseStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DropDatabaseStmt.png)
 
 **DatabaseSym:**
 
-![DatabaseSym](https://download.pingcap.com/images/docs-cn/sqlgram/DatabaseSym.png)
+![DatabaseSym](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DatabaseSym.png)
 
 **IfExists:**
 
-![IfExists](https://download.pingcap.com/images/docs-cn/sqlgram/IfExists.png)
+![IfExists](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IfExists.png)
 
 **DBName:**
 
-![DBName](https://download.pingcap.com/images/docs-cn/sqlgram/DBName.png)
+![DBName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DBName.png)
 
 ## 示例
 

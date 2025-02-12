@@ -19,7 +19,7 @@ TiDB Binlog supports the following scenarios:
 
 The TiDB Binlog architecture is as follows:
 
-![TiDB Binlog architecture](https://download.pingcap.com/images/docs/architecture.jpeg)
+![TiDB Binlog architecture](https://docs-download.pingcap.com/media/images/docs/architecture.jpeg)
 
 The TiDB Binlog cluster mainly consists of two components:
 
@@ -65,7 +65,7 @@ TiDB Binlog can be [downloaded](/download-ecosystem-tools.md) as part of the Ent
 
   We set the startup parameter `binlog-socket` as the specified unix socket file path of the corresponding parameter `socket` in Pump. The final deployment architecture is as follows:
 
-  ![TiDB pump deployment architecture](https://download.pingcap.com/images/docs/tidb_pump_deployment.jpeg)
+  ![TiDB pump deployment architecture](https://docs-download.pingcap.com/media/images/docs/tidb_pump_deployment.jpeg)
 
 - Currently, you need to deploy Drainer manually.
 

@@ -9,7 +9,7 @@ sync-diff-inspector は、シャーディング シナリオでのデータ チ�
 
 アップストリームのシャード テーブルの数が少なく、シャード テーブルの命名規則に次のようなパターンがないシナリオでは、 `Datasource config`を使用して`table-0`を構成し、対応する`rules`を設定して、アップストリーム間のマッピング関係を持つテーブルを構成できます。およびダウンストリーム データベース。この構成方法では、すべてのシャード テーブルを設定する必要があります。
 
-![shard-table-replica-1](https://download.pingcap.com/images/docs/shard-table-replica-1.png)
+![shard-table-replica-1](https://docs-download.pingcap.com/media/images/docs/shard-table-replica-1.png)
 
 以下は、sync-diff-inspector 構成の完全な例です。
 
@@ -77,7 +77,7 @@ target-table = "table-0"     # The name of the target table
 
 アップストリームのシャード テーブルが多数あり、以下に示すように、すべてのシャード テーブルの命名規則にパターンがある場合は、構成に`table-rules`を使用できます。
 
-![shard-table-replica-2](https://download.pingcap.com/images/docs/shard-table-replica-2.png)
+![shard-table-replica-2](https://docs-download.pingcap.com/media/images/docs/shard-table-replica-2.png)
 
 以下は、sync-diff-inspector 構成の完全な例です。
 

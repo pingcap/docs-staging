@@ -12,7 +12,7 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-prepare/','/docs-cn/v3.0/r
 
 **PreparedStmt:**
 
-![PreparedStmt](https://download.pingcap.com/images/docs-cn/sqlgram/PreparedStmt.png)
+![PreparedStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/PreparedStmt.png)
 
 ## 示例
 

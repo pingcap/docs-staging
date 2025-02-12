@@ -16,7 +16,7 @@ TiDB Dashboard simplifies the operation and maintenance of the TiDB database. Yo
 
 ### Instance panel
 
-![Instance panel](https://download.pingcap.com/images/docs/instance-status-panel.png)
+![Instance panel](https://docs-download.pingcap.com/media/images/docs/instance-status-panel.png)
 
 + **Status**: This indicator is used to check whether the status is normal. For an online node, this can be ignored.
 + **Up Time**: The key indicator. If you find that the `Up Time` is changed, you need to locate the reason why the component is restarted.
@@ -24,19 +24,19 @@ TiDB Dashboard simplifies the operation and maintenance of the TiDB database. Yo
 
 ### Host panel
 
-![Host panel](https://download.pingcap.com/images/docs/host-panel.png)
+![Host panel](https://docs-download.pingcap.com/media/images/docs/host-panel.png)
 
 You can view the usage of CPU, memory, and disk. When the usage of any resource exceeds 80%, it is recommended to scale out the capacity accordingly.
 
 ### SQL analysis panel
 
-![SQL analysis panel](https://download.pingcap.com/images/docs/sql-analysis-panel.png)
+![SQL analysis panel](https://docs-download.pingcap.com/media/images/docs/sql-analysis-panel.png)
 
 You can locate the slow SQL statement executed in the cluster. Then you can optimize the specific SQL statement.
 
 ### Region panel
 
-![Region panel](https://download.pingcap.com/images/docs/region-panel.png)
+![Region panel](https://docs-download.pingcap.com/media/images/docs/region-panel.png)
 
 + `miss-peer-region-count`: The number of Regions without enough replicas. This value is not always greater than `0`.
 + `extra-peer-region-count`: The number of Regions with extra replicas. These Regions are generated during the scheduling process.
@@ -49,13 +49,13 @@ Generally, it is normal that these values are not `0`. However, it is not normal
 
 ### KV Request Duration
 
-![TiKV request duration](https://download.pingcap.com/images/docs/kv-duration-panel.png)
+![TiKV request duration](https://docs-download.pingcap.com/media/images/docs/kv-duration-panel.png)
 
 The KV request duration 99 in TiKV. If you find nodes with a long duration, check whether there are hot spots, or whether there are nodes with poor performance.
 
 ### PD TSO Wait Duration
 
-![TiDB TSO Wait Duration](https://download.pingcap.com/images/docs/pd-duration-panel.png)
+![TiDB TSO Wait Duration](https://docs-download.pingcap.com/media/images/docs/pd-duration-panel.png)
 
 The time it takes for TiDB to obtain TSO from PD. The following are reasons for the long wait duration:
 
@@ -65,18 +65,18 @@ The time it takes for TiDB to obtain TSO from PD. The following are reasons for 
 
 ### Overview panel
 
-![Overview panel](https://download.pingcap.com/images/docs/overview-panel.png)
+![Overview panel](https://docs-download.pingcap.com/media/images/docs/overview-panel.png)
 
 You can view the load, memory available, network traffic, and I/O utilities. When a bottleneck is found, it is recommended to scale out the capacity, or to optimize the cluster topology, SQL, cluster parameters, etc.
 
 ### Exceptions
 
-![Exceptions](https://download.pingcap.com/images/docs/failed-query-panel.png)
+![Exceptions](https://docs-download.pingcap.com/media/images/docs/failed-query-panel.png)
 
 You can view the errors triggered by the execution of SQL statements on each TiDB instance. These include syntax error, primary key conflicts, etc.
 
 ### GC status
 
-![GC status](https://download.pingcap.com/images/docs/garbage-collation-panel.png)
+![GC status](https://docs-download.pingcap.com/media/images/docs/garbage-collation-panel.png)
 
 You can check whether the GC (Garbage Collection) status is normal by viewing the time when the last GC happens. If the GC is abnormal, it might lead to excessive historical data, thereby decreasing the access efficiency.

@@ -12,11 +12,11 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-create-user/','/doc
 
 **ShowCreateUserStmt:**
 
-![ShowCreateUserStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowCreateUserStmt.png)
+![ShowCreateUserStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowCreateUserStmt.png)
 
 **Username:**
 
-![Username](https://download.pingcap.com/images/docs-cn/sqlgram/Username.png)
+![Username](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Username.png)
 
 ## 示例
 

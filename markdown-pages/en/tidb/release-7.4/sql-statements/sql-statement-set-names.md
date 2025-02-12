@@ -11,31 +11,31 @@ The statements `SET NAMES`, `SET CHARACTER SET` and `SET CHARSET` modify the var
 
 **SetNamesStmt:**
 
-![SetNamesStmt](https://download.pingcap.com/images/docs/sqlgram/SetNamesStmt.png)
+![SetNamesStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetNamesStmt.png)
 
 **VariableAssignmentList:**
 
-![VariableAssignmentList](https://download.pingcap.com/images/docs/sqlgram/VariableAssignmentList.png)
+![VariableAssignmentList](https://docs-download.pingcap.com/media/images/docs/sqlgram/VariableAssignmentList.png)
 
 **VariableAssignment:**
 
-![VariableAssignment](https://download.pingcap.com/images/docs/sqlgram/VariableAssignment.png)
+![VariableAssignment](https://docs-download.pingcap.com/media/images/docs/sqlgram/VariableAssignment.png)
 
 **CharsetName:**
 
-![CharsetName](https://download.pingcap.com/images/docs/sqlgram/CharsetName.png)
+![CharsetName](https://docs-download.pingcap.com/media/images/docs/sqlgram/CharsetName.png)
 
 **StringName:**
 
-![StringName](https://download.pingcap.com/images/docs/sqlgram/StringName.png)
+![StringName](https://docs-download.pingcap.com/media/images/docs/sqlgram/StringName.png)
 
 **CharsetKw:**
 
-![CharsetKw](https://download.pingcap.com/images/docs/sqlgram/CharsetKw.png)
+![CharsetKw](https://docs-download.pingcap.com/media/images/docs/sqlgram/CharsetKw.png)
 
 **CharsetNameOrDefault:**
 
-![CharsetNameOrDefault](https://download.pingcap.com/images/docs/sqlgram/CharsetNameOrDefault.png)
+![CharsetNameOrDefault](https://docs-download.pingcap.com/media/images/docs/sqlgram/CharsetNameOrDefault.png)
 
 ## Examples
 

@@ -12,23 +12,23 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-modify-column/','/docs-cn/
 
 **AlterTableStmt:**
 
-![AlterTableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/AlterTableStmt.png)
+![AlterTableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/AlterTableStmt.png)
 
 **AlterTableSpec:**
 
-![AlterTableSpec](https://download.pingcap.com/images/docs-cn/sqlgram/AlterTableSpec.png)
+![AlterTableSpec](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/AlterTableSpec.png)
 
 **ColumnKeywordOpt:**
 
-![ColumnKeywordOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ColumnKeywordOpt.png)
+![ColumnKeywordOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ColumnKeywordOpt.png)
 
 **ColumnDef:**
 
-![ColumnDef](https://download.pingcap.com/images/docs-cn/sqlgram/ColumnDef.png)
+![ColumnDef](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ColumnDef.png)
 
 **ColumnPosition:**
 
-![ColumnPosition](https://download.pingcap.com/images/docs-cn/sqlgram/ColumnPosition.png)
+![ColumnPosition](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ColumnPosition.png)
 
 ## 示例
 

@@ -11,11 +11,11 @@ This statement removes a role, that was previously created with `CREATE ROLE`.
 
 **DropRoleStmt:**
 
-![DropRoleStmt](https://download.pingcap.com/images/docs/sqlgram/DropRoleStmt.png)
+![DropRoleStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/DropRoleStmt.png)
 
 **RolenameList:**
 
-![RolenameList](https://download.pingcap.com/images/docs/sqlgram/RolenameList.png)
+![RolenameList](https://docs-download.pingcap.com/media/images/docs/sqlgram/RolenameList.png)
 
 ## Examples
 

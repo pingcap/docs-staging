@@ -37,7 +37,7 @@ Top SQL機能はまだ初期段階にあり、継続的に強化されていま�
 
 -   TiDB ダッシュボードにログインしたら、左側のナビゲーション バーで [ **Top SQL** ] をクリックします。
 
-    ![Top SQL](https://download.pingcap.com/images/docs/dashboard/top-sql-access.png)
+    ![Top SQL](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-access.png)
 
 -   ブラウザで[http://127.0.0.1:2379/dashboard/#/topsql](http://127.0.0.1:2379/dashboard/#/topsql)にアクセスします。 `127.0.0.1:2379`を実際の PD インスタンスのアドレスとポートに置き換えます。
 
@@ -70,19 +70,19 @@ SET GLOBAL tidb_enable_top_sql = 1;
 
 2.  負荷を監視する特定の TiDB または TiKV インスタンスを選択します。
 
-    ![Select Instance](https://download.pingcap.com/images/docs/dashboard/top-sql-usage-select-instance.png)
+    ![Select Instance](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-usage-select-instance.png)
 
     どの TiDB または TiKV インスタンスを監視するかわからない場合は、任意のインスタンスを選択できます。また、クラスターの CPU 負荷が極端に不均衡な場合は、最初に Grafana チャートを使用して、観察する特定のインスタンスを決定できます。
 
 3.  Top SQLによって表示されるグラフと表を確認してください。
 
-    ![Chart and Table](https://download.pingcap.com/images/docs/dashboard/top-sql-usage-chart.png)
+    ![Chart and Table](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-usage-chart.png)
 
     棒グラフのバーのサイズは、その時点で SQL ステートメントによって消費される CPU リソースのサイズを表します。さまざまな色によって、さまざまな種類の SQL ステートメントが区別されます。ほとんどの場合、グラフ内の対応する時間範囲で CPU リソースのオーバーヘッドが高い SQL ステートメントにのみ注目する必要があります。
 
 4.  テーブル内の SQL ステートメントをクリックすると、詳細情報が表示されます。 Call/sec (1 秒あたりの平均クエリ数) や Scan Indexes/sec (1 秒あたりにスキャンされるインデックス行の平均数) など、そのステートメントのさまざまなプランの詳細な実行メトリックを確認できます。
 
-    ![Details](https://download.pingcap.com/images/docs/dashboard/top-sql-details.png)
+    ![Details](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-details.png)
 
 5.  これらの最初の手がかりに基づいて、 [SQL ステートメント](/dashboard/dashboard-statement-list.md)ページまたは[遅いクエリ](/dashboard/dashboard-slow-query.md)ページをさらに調べて、CPU の高消費または SQL ステートメントの大量のデータ スキャンの根本原因を見つけることができます。
 
@@ -90,11 +90,11 @@ SET GLOBAL tidb_enable_top_sql = 1;
 
 -   タイム ピッカーで時間範囲を調整するか、チャートで時間範囲を選択して、問題をより正確かつ詳細に確認できます。時間範囲を狭くすると、最大 1 秒の精度で、より詳細なデータを提供できます。
 
-    ![Change time range](https://download.pingcap.com/images/docs/dashboard/top-sql-usage-change-timerange.png)
+    ![Change time range](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-usage-change-timerange.png)
 
 -   チャートが古くなっている場合は、[**更新**] ボタンをクリックするか、[<strong>更新</strong>] ドロップダウン リストから [自動更新] オプションを選択できます。
 
-    ![Refresh](https://download.pingcap.com/images/docs/dashboard/top-sql-usage-refresh.png)
+    ![Refresh](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-usage-refresh.png)
 
 ## Top SQLを無効にする {#disable-top-sql}
 

@@ -12,19 +12,19 @@ The `DROP DATABASE` statement permanently removes a specified database schema, a
 
 **DropDatabaseStmt:**
 
-![DropDatabaseStmt](https://download.pingcap.com/images/docs/sqlgram/DropDatabaseStmt.png)
+![DropDatabaseStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/DropDatabaseStmt.png)
 
 **DatabaseSym:**
 
-![DatabaseSym](https://download.pingcap.com/images/docs/sqlgram/DatabaseSym.png)
+![DatabaseSym](https://docs-download.pingcap.com/media/images/docs/sqlgram/DatabaseSym.png)
 
 **IfExists:**
 
-![IfExists](https://download.pingcap.com/images/docs/sqlgram/IfExists.png)
+![IfExists](https://docs-download.pingcap.com/media/images/docs/sqlgram/IfExists.png)
 
 **DBName:**
 
-![DBName](https://download.pingcap.com/images/docs/sqlgram/DBName.png)
+![DBName](https://docs-download.pingcap.com/media/images/docs/sqlgram/DBName.png)
 
 ## Examples
 

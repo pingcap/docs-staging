@@ -20,7 +20,7 @@ The key ranges of multiple rules can have overlapping parts, which means that a 
 
 In addition, to meet the requirement that rules from different sources are isolated from each other, the concept of "Group" is also introduced. If you do not want a rule to be affected by other rules in the system (such as being overridden), you can use a separate group for it.
 
-![Placement rules overview](https://download.pingcap.com/images/docs/placement-rules-1.png)
+![Placement rules overview](https://docs-download.pingcap.com/media/images/docs/placement-rules-1.png)
 
 ### Rule fields
 
@@ -113,28 +113,28 @@ pd-ctl supports using the following methods to view rules in the system, and the
 
 - To view the list of all rules:
 
-    
+
     ```bash
     pd-ctl config placement-rules show
     ```
 
 - To view the list of all rules in a PD Group:
 
-    
+
     ```bash
     pd-ctl config placement-rules show --group=pd
     ```
 
 - To view the rule of a specific ID in a Group:
 
-    
+
     ```bash
     pd-ctl config placement-rules show --group=pd --id=default
     ```
 
 - To view the rule list that matches a Region:
 
-    
+
     ```bash
     pd-ctl config placement-rules show --region=2
     ```

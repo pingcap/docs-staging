@@ -17,7 +17,7 @@ The TiDB Lightning tool set consists of two components:
 
 - **`tikv-importer`** (the "back end") combines and sorts the KV pairs and then imports these sorted pairs as a whole into the TiKV cluster.
 
-![Architecture of TiDB Lightning tool set](https://download.pingcap.com/images/docs/tidb-lightning-architecture-v2.1.png)
+![Architecture of TiDB Lightning tool set](https://docs-download.pingcap.com/media/images/docs/tidb-lightning-architecture-v2.1.png)
 
 ## Prerequisites
 
@@ -87,7 +87,7 @@ Download the TiDB Lightning installation package from the following link:
 
 3. Run `tikv-importer`:
 
-    
+
     ```sh
     nohup ./tikv-importer -C tikv-importer.toml > nohup.out &
     ```
@@ -98,7 +98,7 @@ Download the TiDB Lightning installation package from the following link:
 2. Upload the [prepared data source](#prepare-full-backup-data) to the server.
 3. After configuring the parameters properly, use a `nohup` command to start the `tidb-lightning` process. If you directly run the command in the command-line, the process might exit because of the SIGHUP signal received. Instead, it's preferable to run a bash script that contains the `nohup` command:
 
-    
+
     ```sh
     #!/bin/bash
     nohup ./tidb-lightning \

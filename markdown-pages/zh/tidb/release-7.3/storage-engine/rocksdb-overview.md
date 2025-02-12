@@ -14,7 +14,7 @@ RocksDB 允许用户创建多个 ColumnFamily，这些 ColumnFamily 各自拥有
 
 TiKV 的系统架构如下图所示：
 
-![TiKV RocksDB](https://download.pingcap.com/images/docs-cn/tikv-rocksdb.png)
+![TiKV RocksDB](https://docs-download.pingcap.com/media/images/docs-cn/tikv-rocksdb.png)
 
 RocksDB 作为 TiKV 的核心存储引擎，用于存储 Raft 日志以及用户数据。每个 TiKV 实例中有两个 RocksDB 实例，一个用于存储 Raft 日志（通常被称为 raftdb），另一个用于存储用户数据以及 MVCC 信息（通常被称为 kvdb）。kvdb 中有四个 ColumnFamily：raft、lock、default 和 write：
 

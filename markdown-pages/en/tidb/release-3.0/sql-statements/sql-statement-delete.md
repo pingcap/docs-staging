@@ -12,7 +12,7 @@ The `DELETE` statement removes rows from a specified table.
 
 **DeleteFromStmt:**
 
-![DeleteFromStmt](https://download.pingcap.com/images/docs/sqlgram/DeleteFromStmt.png)
+![DeleteFromStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/DeleteFromStmt.png)
 
 ## Examples
 

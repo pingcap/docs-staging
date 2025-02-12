@@ -7,7 +7,7 @@ summary: Introduce TiDB Dashboard.
 
 TiDB ダッシュボードは、TiDB クラスターを監視、診断、および管理するための Web UI であり、v4.0 以降で使用できます。これは PD コンポーネントに組み込まれており、個別に展開する必要はありません。
 
-![TiDB Dashboard interface](https://download.pingcap.com/images/docs/dashboard/dashboard-intro.gif)
+![TiDB Dashboard interface](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-intro.gif)
 
 TiDB ダッシュボードは[GitHub](https://github.com/pingcap-incubator/tidb-dashboard)でオープンソース化されています。
 

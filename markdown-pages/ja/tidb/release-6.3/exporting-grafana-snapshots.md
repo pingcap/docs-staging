@@ -18,11 +18,11 @@ MetricsTool は[https://metricstool.pingcap.com/](https://metricstool.pingcap.co
 
 -   **エクスポート**: ブラウザーの開発者ツールで実行されるユーザー スクリプト。Grafana v6.xxサーバーの現在のダッシュボードに表示されているすべてのパネルのスナップショットをダウンロードできます。
 
-    ![Screenshot of MetricsTool Exporter after running the user script](https://download.pingcap.com/images/docs/metricstool-export.png)
+    ![Screenshot of MetricsTool Exporter after running the user script](https://docs-download.pingcap.com/media/images/docs/metricstool-export.png)
 
 -   **Visualize** : エクスポートされたスナップショット ファイルを視覚化する Web ページ。可視化されたスナップショットは、ライブの Grafana ダッシュボードと同じ方法で操作できます。
 
-    ![Screenshot of MetricsTool Visualizer](https://download.pingcap.com/images/docs/metricstool-visualize.png)
+    ![Screenshot of MetricsTool Visualizer](https://docs-download.pingcap.com/media/images/docs/metricstool-visualize.png)
 
 -   **Import** : エクスポートされたスナップショットを実際の Grafana インスタンスにインポートする手順。
 

@@ -12,7 +12,7 @@ This document describes the architecture of TiDB Operator and how it works.
 
 The following diagram is an overview of the architecture of TiDB Operator.
 
-![TiDB Operator Overview](https://download.pingcap.com/images/tidb-in-kubernetes/tidb-operator-overview-1.1.png)
+![TiDB Operator Overview](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-overview-1.1.png)
 
 `TidbCluster`, `TidbMonitor`, `TidbInitializer`, `Backup`, `Restore`, `BackupSchedule`, and `TidbClusterAutoScaler` are custom resources defined by CRD (`CustomResourceDefinition`).
 
@@ -34,9 +34,9 @@ In addition, TiDB Operator provides `tkctl`, the command-line interface for TiDB
 
 ## Control flow
 
-The following diagram is the analysis of the control flow of TiDB Operator. Starting from TiDB Operator v1.1, the TiDB cluster, monitoring, initialization, backup, and other components are deployed and managed using CR. 
+The following diagram is the analysis of the control flow of TiDB Operator. Starting from TiDB Operator v1.1, the TiDB cluster, monitoring, initialization, backup, and other components are deployed and managed using CR.
 
-![TiDB Operator Control Flow](https://download.pingcap.com/images/tidb-in-kubernetes/tidb-operator-control-flow-1.1.png)
+![TiDB Operator Control Flow](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-control-flow-1.1.png)
 
 The overall control flow is described as follows:
 

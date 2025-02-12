@@ -11,15 +11,15 @@ This statement removes a previously assigned role from a specified user (or list
 
 **RevokeRoleStmt:**
 
-![RevokeRoleStmt](https://download.pingcap.com/images/docs/sqlgram/RevokeRoleStmt.png)
+![RevokeRoleStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/RevokeRoleStmt.png)
 
 **RolenameList:**
 
-![RolenameList](https://download.pingcap.com/images/docs/sqlgram/RolenameList.png)
+![RolenameList](https://docs-download.pingcap.com/media/images/docs/sqlgram/RolenameList.png)
 
 **UsernameList:**
 
-![UsernameList](https://download.pingcap.com/images/docs/sqlgram/UsernameList.png)
+![UsernameList](https://docs-download.pingcap.com/media/images/docs/sqlgram/UsernameList.png)
 
 ## Examples
 

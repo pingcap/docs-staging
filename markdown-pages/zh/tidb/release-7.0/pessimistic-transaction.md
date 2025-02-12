@@ -137,7 +137,7 @@ TiDB 在悲观事务模式下支持了 2 种隔离级别：
 
 TiDB 悲观锁复用了乐观锁的两阶段提交逻辑，重点在 DML 执行时做了改造。
 
-![TiDB 悲观事务的提交流程](https://download.pingcap.com/images/docs-cn/pessimistic-transaction-commit.png)
+![TiDB 悲观事务的提交流程](https://docs-download.pingcap.com/media/images/docs-cn/pessimistic-transaction-commit.png)
 
 在两阶段提交之前增加了 Acquire Pessimistic Lock 阶段，简要步骤如下。
 
@@ -145,7 +145,7 @@ TiDB 悲观锁复用了乐观锁的两阶段提交逻辑，重点在 DML 执行�
 2. TiDB 收到来自客户端的更新数据的请求：TiDB 向 TiKV 发起加悲观锁请求，该锁持久化到 TiKV。
 3. （同乐观锁）客户端发起 commit，TiDB 开始执行与乐观锁一样的两阶段提交。
 
-![TiDB 中的悲观事务](https://download.pingcap.com/images/docs-cn/pessimistic-transaction-in-tidb.png)
+![TiDB 中的悲观事务](https://docs-download.pingcap.com/media/images/docs-cn/pessimistic-transaction-in-tidb.png)
 
 相关细节本节不再赘述，详情可阅读 [TiDB 悲观锁实现原理](https://tidb.net/blog/7730ed79)。
 
@@ -159,7 +159,7 @@ TiDB 悲观锁复用了乐观锁的两阶段提交逻辑，重点在 DML 执行�
 
 如果业务逻辑依赖加锁或等锁机制，或者即使在集群异常情况下也要尽可能保证事务提交的成功率，应关闭 pipelined 加锁功能。
 
-![Pipelined pessimistic lock](https://download.pingcap.com/images/docs-cn/pessimistic-transaction-pipelining.png)
+![Pipelined pessimistic lock](https://docs-download.pingcap.com/media/images/docs-cn/pessimistic-transaction-pipelining.png)
 
 该功能默认开启，可修改 TiKV 配置关闭：
 

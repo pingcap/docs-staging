@@ -16,11 +16,11 @@ summary: TiDB 数据库中 SHOW TABLE NEXT_ROW_ID 的使用概况。
 
 **ShowTableNextRowIDStmt:**
 
-![ShowTableNextRowIDStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTableNextRowIDStmt.png)
+![ShowTableNextRowIDStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTableNextRowIDStmt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 ## 示例
 

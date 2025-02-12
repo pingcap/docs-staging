@@ -20,19 +20,19 @@ DDL 是数据库应用中必然会使用的一类 SQL。MySQL 虽然在 5.6 的�
 3. 将 DDL 目标表的数据同步到镜像表；
 4. 在目标表与镜像表数据一致后，通过 `RENAME` 语句使镜像表替换掉目标表。
 
-![DM online-ddl](https://download.pingcap.com/images/tidb-data-migration/dm-online-ddl-2.png)
+![DM online-ddl](https://docs-download.pingcap.com/media/images/tidb-data-migration/dm-online-ddl-2.png)
 
 在使用 DM 完成 MySQL 到 TiDB 的数据迁移时，online-ddl 功能可以识别上述步骤 2 产生的 DDL，并在步骤 4 时向下游应用 DDL，从而降低镜像表的同步开销。
 
 > **注意：**
-> 
+>
 > 如果希望从源码方面了解 DM online-ddl，可以参考 [DM 源码阅读系列文章（八）Online Schema Change 迁移支持](https://pingcap.com/blog-cn/dm-source-code-reading-8/#dm-源码阅读系列文章八online-schema-change-迁移支持)，以及 [TiDB Online Schema Change 原理](https://pingcap.com/zh/blog/tidb-source-code-reading-17)。
 
 ## `online-ddl` 配置
 
 一般情况下建议开启 DM 的 `online-ddl` 配置，将产生以下效果：
 
-![DM online-ddl](https://download.pingcap.com/images/tidb-data-migration/dm-online-ddl.png)
+![DM online-ddl](https://docs-download.pingcap.com/media/images/tidb-data-migration/dm-online-ddl.png)
 
 - 下游 TiDB 无需创建和同步镜像表，节约相应存储空间和网络传输等开销；
 - 在分库分表合并场景下，忽略各分表镜像表的 RENAME 操作，保证同步正确性；
@@ -41,7 +41,7 @@ DDL 是数据库应用中必然会使用的一类 SQL。MySQL 虽然在 5.6 的�
 > **注意：**
 >
 > 如果需要关闭 `online-ddl` 配置，需注意以下影响：
-> 
+>
 > - 下游 TiDB 将原样同步 gh-ost/pt-osc 等 online DDL 工具的行为；
 > - 你需要手动将 online DDL 工具产生的各种临时表、镜像表等添加到任务配置白名单中；
 > - 此场景下，无法与分库分表合并场景兼容使用。

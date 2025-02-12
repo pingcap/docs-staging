@@ -229,7 +229,7 @@ The xx.dot is the result returned by the above statement.
 
 If the `dot` program is not installed on your computer, copy the result to [this website](http://www.webgraphviz.com/) to get a tree diagram:
 
-![Explain Dot](https://download.pingcap.com/images/docs/explain_dot.png)
+![Explain Dot](https://docs-download.pingcap.com/media/images/docs/explain_dot.png)
 
 ## MySQL compatibility
 

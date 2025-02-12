@@ -103,7 +103,7 @@ TiUP を使用して TiCDC をデプロイする場合は、次のコマンド�
 
 レプリケーション タスクの状態は、レプリケーション タスクの実行ステータスを表します。 TiCDC の実行中に、レプリケーション タスクがエラーで失敗したり、手動で一時停止、再開したり、指定された`TargetTs`に達したりする場合があります。これらの動作により、レプリケーション タスクの状態が変化する可能性があります。このセクションでは、TiCDC レプリケーション タスクの状態と、状態間の転送関係について説明します。
 
-![TiCDC state transfer](https://download.pingcap.com/images/docs/ticdc/ticdc-state-transfer.png)
+![TiCDC state transfer](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-state-transfer.png)
 
 上記の状態遷移図の状態は、次のように説明されています。
 
@@ -142,7 +142,7 @@ Info: {"sink-uri":"mysql://root:123456@127.0.0.1:3306/","opts":{},"create-time":
 
 -   `--sink-uri` : レプリケーション タスクのダウンストリーム アドレス。 `--sink-uri`を次の形式に従って構成します。現在、スキームは`mysql` 、 `tidb` 、および`kafka`をサポートしています。
 
-    
+
     ```
     [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
     ```

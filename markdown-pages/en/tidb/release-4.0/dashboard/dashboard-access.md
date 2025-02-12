@@ -30,7 +30,7 @@ You can use TiDB Dashboard in the following common desktop browsers of a relativ
 
 For the first-time access, TiDB Dashboard displays the user sign in interface, as shown in the image below. You can sign in using the TiDB `root` account.
 
-![Login interface](https://download.pingcap.com/images/docs/dashboard/dashboard-access-login.png)
+![Login interface](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-access-login.png)
 
 If one of the following situations exists, the login might fail:
 
@@ -50,10 +50,10 @@ The following languages are supported in TiDB Dashboard:
 
 In the **SQL User Sign In** page, you can click the **Switch Language** drop-down list to switch the interface language.
 
-![Switch language](https://download.pingcap.com/images/docs/dashboard/dashboard-access-switch-language.png)
+![Switch language](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-access-switch-language.png)
 
 ## Logout
 
 Once you have logged in, click the login user name in the left navigation bar to switch to the user page. Click the **Logout** button on the user page to log out the current user. After logging out, you need to re-enter your username and password.
 
-![Logout](https://download.pingcap.com/images/docs/dashboard/dashboard-access-logout.png)
+![Logout](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-access-logout.png)

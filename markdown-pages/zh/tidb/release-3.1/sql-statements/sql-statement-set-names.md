@@ -12,7 +12,7 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-set-names/','/docs-cn/v3.1
 
 **SetStmt:**
 
-![SetStmt](https://download.pingcap.com/images/docs-cn/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SetStmt.png)
 
 ## 示例
 

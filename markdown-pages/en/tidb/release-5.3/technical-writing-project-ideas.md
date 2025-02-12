@@ -7,7 +7,7 @@ summary: Learn about the technical writing project ideas of TiDB for Google Seas
 
 Announcement: [PingCAP](https://pingcap.com) is applying to participate in [Google Season of Docs 2020](https://developers.google.com/season-of-docs).
 
-![Google Season of Docs](https://download.pingcap.com/images/docs/season-of-docs.png)
+![Google Season of Docs](https://docs-download.pingcap.com/media/images/docs/season-of-docs.png)
 
 We are dedicated to delivering high quality technical information that is easy to use, easy to understand and easy to find. We are working on it, and your help and support would definitely help!
 

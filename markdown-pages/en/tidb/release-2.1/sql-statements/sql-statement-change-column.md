@@ -12,27 +12,27 @@ The `ALTER TABLE.. CHANGE COLUMN` statement changes a column on an existing tabl
 
 **AlterTableStmt:**
 
-![AlterTableStmt](https://download.pingcap.com/images/docs/sqlgram/AlterTableStmt.png)
+![AlterTableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/AlterTableStmt.png)
 
 **AlterTableSpec:**
 
-![AlterTableSpec](https://download.pingcap.com/images/docs/sqlgram/AlterTableSpec.png)
+![AlterTableSpec](https://docs-download.pingcap.com/media/images/docs/sqlgram/AlterTableSpec.png)
 
 **ColumnKeywordOpt:**
 
-![ColumnKeywordOpt](https://download.pingcap.com/images/docs/sqlgram/ColumnKeywordOpt.png)
+![ColumnKeywordOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ColumnKeywordOpt.png)
 
 **ColumnName:**
 
-![ColumnName](https://download.pingcap.com/images/docs/sqlgram/ColumnName.png)
+![ColumnName](https://docs-download.pingcap.com/media/images/docs/sqlgram/ColumnName.png)
 
 **ColumnDef:**
 
-![ColumnDef](https://download.pingcap.com/images/docs/sqlgram/ColumnDef.png)
+![ColumnDef](https://docs-download.pingcap.com/media/images/docs/sqlgram/ColumnDef.png)
 
 **ColumnPosition:**
 
-![ColumnPosition](https://download.pingcap.com/images/docs/sqlgram/ColumnPosition.png)
+![ColumnPosition](https://docs-download.pingcap.com/media/images/docs/sqlgram/ColumnPosition.png)
 
 ## Examples
 

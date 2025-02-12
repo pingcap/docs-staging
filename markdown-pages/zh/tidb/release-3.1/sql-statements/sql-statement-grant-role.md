@@ -11,15 +11,15 @@ summary: TiDB 数据库中 GRANT <role> 的使用概况。
 
 **GrantRoleStmt:**
 
-![GrantRoleStmt](https://download.pingcap.com/images/docs-cn/sqlgram/GrantRoleStmt.png)
+![GrantRoleStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/GrantRoleStmt.png)
 
 **RolenameList:**
 
-![RolenameList](https://download.pingcap.com/images/docs-cn/sqlgram/RolenameList.png)
+![RolenameList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/RolenameList.png)
 
 **UsernameList:**
 
-![UsernameList](https://download.pingcap.com/images/docs-cn/sqlgram/UsernameList.png)
+![UsernameList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/UsernameList.png)
 
 ## 示例
 

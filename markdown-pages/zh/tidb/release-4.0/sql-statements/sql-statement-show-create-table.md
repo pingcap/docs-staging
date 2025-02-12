@@ -12,11 +12,11 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-create-table/','/do
 
 **ShowCreateTableStmt:**
 
-![ShowCreateTableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowCreateTableStmt.png)
+![ShowCreateTableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowCreateTableStmt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 ## 示例
 

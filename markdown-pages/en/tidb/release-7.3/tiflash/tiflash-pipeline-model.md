@@ -89,7 +89,7 @@ The new pipeline execution model makes the following optimizations:
 
 The architecture of the pipeline execution model is as follows:
 
-![TiFlash pipeline execution model design](https://download.pingcap.com/images/docs/tiflash/tiflash-pipeline-model.png)
+![TiFlash pipeline execution model design](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash-pipeline-model.png)
 
 As shown in the preceding figure, the pipeline execution model consists of two main components: the pipeline query executor and the task scheduler.
 

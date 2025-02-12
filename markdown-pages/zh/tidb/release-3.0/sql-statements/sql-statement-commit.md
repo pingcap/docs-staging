@@ -14,7 +14,7 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-commit/','/docs-cn/v3.0/re
 
 **CommitStmt:**
 
-![CommitStmt](https://download.pingcap.com/images/docs-cn/sqlgram/CommitStmt.png)
+![CommitStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CommitStmt.png)
 
 ## 示例
 

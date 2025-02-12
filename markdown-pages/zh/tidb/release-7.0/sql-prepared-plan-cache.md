@@ -176,7 +176,7 @@ mysql> SHOW WARNINGS;
 
 Grafana 中 `Plan Cache Memory Usage` 和 `Plan Cache Plan Num` 监控如下图所示：
 
-![grafana_panels](https://download.pingcap.com/images/docs-cn/planCache-memoryUsage-planNum-panels.png)
+![grafana_panels](https://docs-download.pingcap.com/media/images/docs-cn/planCache-memoryUsage-planNum-panels.png)
 
 目前可以通过变量 `tidb_prepared_plan_cache_size` 来设置每个 `SESSION` 最多缓存的计划数量，针对不同的环境，推荐的设置如下，你可以结合监控进行调整：
 
@@ -304,4 +304,4 @@ mysql> select @@last_plan_from_cache;       -- 因为开关打开，第二次依
 
 在 [Grafana 面板](/grafana-tidb-dashboard.md)的 TiDB 页面，**Executor** 部分包含“Queries Using Plan Cache OPS”和“Plan Cache Miss OPS”两个图表，用以检查 TiDB 和应用是否正确配置，以便 SQL 执行计划缓存能正常工作。TiDB 页面的 **Server** 部分还提供了“Prepared Statement Count”图表，如果应用使用了预处理语句，这个图表会显示非零值。通过数值变化，可以判断 SQL 执行计划缓存是否正常工作。
 
-![`sql_plan_cache`](https://download.pingcap.com/images/docs-cn/performance/sql_plan_cache.png)
+![`sql_plan_cache`](https://docs-download.pingcap.com/media/images/docs-cn/performance/sql_plan_cache.png)

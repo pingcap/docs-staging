@@ -13,7 +13,7 @@ summary: TiDB Dashboard 的流量可视化页面可用于分析 TiDB 集群的�
 
 * 登录 TiDB Dashboard 后，点击左侧导航条的**流量可视化** (Key Visualizer)：
 
-    ![访问](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-access-v650.png)
+    ![访问](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-access-v650.png)
 
 * 在浏览器中访问 `http://127.0.0.1:2379/dashboard/#/keyviz`（将 `127.0.0.1:2379` 替换为实际 PD 实例地址和端口）。
 
@@ -21,7 +21,7 @@ summary: TiDB Dashboard 的流量可视化页面可用于分析 TiDB 集群的�
 
 流量可视化页面示例如下：
 
-![Key Visualizer 示例图](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-overview.png)
+![Key Visualizer 示例图](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-overview.png)
 
 从以上流量可视化界面可以观察到以下信息：
 
@@ -65,19 +65,19 @@ summary: TiDB Dashboard 的流量可视化页面可用于分析 TiDB 集群的�
 
 首次使用流量可视化页面需要先通过**设置**页面手动开启此功能。参考页面指引，点击**打开设置** (Open Settings) 即可打开设置页面：
 
-![功能未开启](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-not-enabled.png)
+![功能未开启](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-not-enabled.png)
 
 在功能已经开启时，可通过右上角的设置图标打开设置页面：
 
-![设置按钮](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-settings-button.png)
+![设置按钮](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-settings-button.png)
 
 设置页面如下图所示：
 
-![设置页面](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-settings.png)
+![设置页面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-settings.png)
 
 通过开关设定好是否开启收集，并点击**保存** (Save) 后生效。开启后，在界面上观察到工具栏已经可以使用：
 
-![工具栏](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-toolbar.png)
+![工具栏](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-toolbar.png)
 
 功能开启后，后台会持续收集数据，稍等一段时间即可看到热力图。
 
@@ -88,12 +88,12 @@ summary: TiDB Dashboard 的流量可视化页面可用于分析 TiDB 集群的�
 * 在热力图中向上或向下滚动。
 * 点击**框选** (Select & Zoom) 按钮，然后点击并拖动以选择要放大的区域。
 
-![框选](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-select-zoom.gif)
+![框选](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-select-zoom.gif)
 
 * 点击**重置** (Reset) 按钮，将 Region 范围重置为整个数据库。
 * 点击「时间选择框」（界面的 **6 hour** 处），重新选择观察时间段。
 
-![时间选择](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-select-time.png)
+![时间选择](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-select-time.png)
 
 > **注意：**
 >
@@ -109,7 +109,7 @@ summary: TiDB Dashboard 的流量可视化页面可用于分析 TiDB 集群的�
 
 ### 选择指标
 
-![指标选择](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-select-type.png)
+![指标选择](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-select-type.png)
 
 你可以通过「指标选择框」（以上界面中 **Write (bytes)** 处）来查看你关心的指标：
 
@@ -131,11 +131,11 @@ summary: TiDB Dashboard 的流量可视化页面可用于分析 TiDB 集群的�
 
 可以将鼠标悬停在你所关注的 Bucket 上，来查看这个区域的详细信息：
 
-![Bucket 详细信息](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-tooltip.png)
+![Bucket 详细信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-tooltip.png)
 
 如果需要复制某个信息，可以进行点击 Bucket。此时相关详细信息的页面会被暂时钉住。点击你关注的信息，即可将其复制到剪切板：
 
-![复制 Bucket 详细信息](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-tooltip-copy.png)
+![复制 Bucket 详细信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-tooltip-copy.png)
 
 ## 常见热力图解读
 
@@ -143,19 +143,19 @@ summary: TiDB Dashboard 的流量可视化页面可用于分析 TiDB 集群的�
 
 ### 均衡：期望结果
 
-![均衡结果图](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-well-dist.png)
+![均衡结果图](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-well-dist.png)
 
 如上图所示，热力图颜色均匀或者深色和亮色混合良好，说明读取或写入在时间和 Region 空间范围上都分布得比较均衡，访问压力均匀地分摊在所有的机器上。这种负载是最适合分布式数据库的。
 
 ### X 轴明暗交替：需要关注高峰期的资源情况
 
-![X 轴明暗交替](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-period.png)
+![X 轴明暗交替](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-period.png)
 
 如上图所示，热力图在 X 轴（时间）上表现出明暗交替，但 Y 轴 (Region) 则比较均匀，说明读取或写入负载具有周期性的变化。这种情况可能出现在周期性的定时任务场景，如大数据平台每天定时从 TiDB 中抽取数据。一般来说可以关注一下使用高峰时期资源是否充裕。
 
 ### Y 轴明暗交替：需要关注产生的热点聚集程度
 
-![Y 轴明暗交替](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-continue.png)
+![Y 轴明暗交替](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-continue.png)
 
 如上图所示，热力图包含几个明亮的条纹，从 Y 轴来看条纹周围都是暗的，这表明明亮条纹区域的 Region 有很高的读写流量，可以从业务角度观察一下是否符合预期。例如，所有业务都关联用户表的情况下，用户表的整体流量就会很高，那么在热力图中表现为亮色区域就非常合理。
 
@@ -163,7 +163,7 @@ summary: TiDB Dashboard 的流量可视化页面可用于分析 TiDB 集群的�
 
 ### 明亮斜线：需要关注业务模式
 
-![明亮斜线](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-keyviz-sequential.png)
+![明亮斜线](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-keyviz-sequential.png)
 
 如上图所示，热力图显示了明亮的斜线，表明读写的 Region 是连续的。这种场景常常出现在带索引的数据导入或者扫描阶段。例如，向自增 ID 的表进行连续写入等等。图中明亮部分对应的 Region 是读写流量的热点，往往会成为整个集群的性能问题所在。这种时候，可能需要业务重新调整主键，尽可能打散以将压力分散在多个 Region 上，或者选择将业务任务安排在低峰期。
 

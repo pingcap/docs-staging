@@ -14,15 +14,15 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-drop-table/','/docs-cn/v2.
 
 **DropTableStmt:**
 
-![DropTableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/DropTableStmt.png)
+![DropTableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DropTableStmt.png)
 
 **TableOrTables:**
 
-![TableOrTables](https://download.pingcap.com/images/docs-cn/sqlgram/TableOrTables.png)
+![TableOrTables](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableOrTables.png)
 
 **TableNameList:**
 
-![TableNameList](https://download.pingcap.com/images/docs-cn/sqlgram/TableNameList.png)
+![TableNameList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableNameList.png)
 
 ## 示例
 

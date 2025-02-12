@@ -11,11 +11,11 @@ summary: TiDB 数据库中 DROP ROLE 的使用概况。
 
 **DropRoleStmt:**
 
-![DropRoleStmt](https://download.pingcap.com/images/docs-cn/sqlgram/DropRoleStmt.png)
+![DropRoleStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DropRoleStmt.png)
 
 **RolenameList:**
 
-![RolenameList](https://download.pingcap.com/images/docs-cn/sqlgram/RolenameList.png)
+![RolenameList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/RolenameList.png)
 
 ## 示例
 

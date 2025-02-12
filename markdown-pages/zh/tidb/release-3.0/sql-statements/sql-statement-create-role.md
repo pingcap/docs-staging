@@ -11,15 +11,15 @@ summary: TiDB 数据库中 CREATE ROLE 的使用概况。
 
 **CreateRoleStmt:**
 
-![CreateRoleStmt](https://download.pingcap.com/images/docs-cn/sqlgram/CreateRoleStmt.png)
+![CreateRoleStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CreateRoleStmt.png)
 
 **IfNotExists:**
 
-![IfNotExists](https://download.pingcap.com/images/docs-cn/sqlgram/IfNotExists.png)
+![IfNotExists](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IfNotExists.png)
 
 **RoleSpec:**
 
-![RoleSpec](https://download.pingcap.com/images/docs-cn/sqlgram/RoleSpec.png)
+![RoleSpec](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/RoleSpec.png)
 
 ## 示例
 

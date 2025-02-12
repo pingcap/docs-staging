@@ -11,7 +11,7 @@ This document applies to migrating MySQL shards less than 1 TiB in total. If you
 
 This document takes a simple example to illustrate the migration procedure. The MySQL shards of the two data source MySQL instances in the example are migrated to the downstream TiDB cluster. The diagram is shown as follows.
 
-![Use DM to Migrate Sharded Tables](https://download.pingcap.com/images/docs/migrate-shard-tables-within-1tb-en.png)
+![Use DM to Migrate Sharded Tables](https://docs-download.pingcap.com/media/images/docs/migrate-shard-tables-within-1tb-en.png)
 
 Both MySQL Instance 1 and MySQL Instance 2 contain the following schemas and tables. In this example, you migrate and merge tables from `store_01` and `store_02` schemas with a `sale` prefix in both instances, into the downstream `sale` table in the `store` schema.
 

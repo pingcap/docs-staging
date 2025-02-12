@@ -12,11 +12,11 @@ This statement shows the exact statement to recreate an existing table using SQL
 
 **ShowCreateTableStmt:**
 
-![ShowCreateTableStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCreateTableStmt.png)
+![ShowCreateTableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowCreateTableStmt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 ## Examples
 

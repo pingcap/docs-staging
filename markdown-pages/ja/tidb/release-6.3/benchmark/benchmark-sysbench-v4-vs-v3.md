@@ -153,7 +153,7 @@ sysbench $testname \
 
 v3.0 と比較して、TiDB v4.0 の Point Select パフォーマンスは 14% 向上しています。
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench-v4vsv3-point-select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench-v4vsv3-point-select.png)
 
 ### インデックス以外のパフォーマンスを更新 {#update-non-index-performance}
 
@@ -168,7 +168,7 @@ v3.0 と比較して、TiDB v4.0 の Point Select パフォーマンスは 14% �
 
 v3.0 と比較して、TiDB v4.0 の Update Non-index パフォーマンスは 15% 向上しました。
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench-v4vsv3-update-non-index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench-v4vsv3-update-non-index.png)
 
 ### インデックスのパフォーマンスを更新する {#update-index-performance}
 
@@ -183,7 +183,7 @@ v3.0 と比較して、TiDB v4.0 の Update Non-index パフォーマンスは 1
 
 v3.0 と比較して、TiDB v4.0 の更新インデックスのパフォーマンスは 17% 向上しています。
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench-v4vsv3-update-index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench-v4vsv3-update-index.png)
 
 ### 読み書きのパフォーマンス {#read-write-performance}
 
@@ -198,4 +198,4 @@ v3.0 と比較して、TiDB v4.0 の更新インデックスのパフォーマ�
 
 v3.0 と比較すると、TiDB v4.0 の読み取り/書き込みパフォーマンスは 31% 向上しています。
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench-v4vsv3-read-write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench-v4vsv3-read-write.png)

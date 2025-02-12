@@ -22,7 +22,7 @@ Placement Rules 是 PD 在 4.0 版本引入的试验特性，它是一套副本�
 
 Placement Rules 示意图如下所示：
 
-![Placement rules overview](https://download.pingcap.com/images/docs-cn/placement-rules-1.png)
+![Placement rules overview](https://docs-download.pingcap.com/media/images/docs-cn/placement-rules-1.png)
 
 ### 规则字段
 
@@ -115,28 +115,28 @@ pd-ctl 支持使用多种方式查看系统中的 Rule，输出是 json 格式�
 
 + 查看所有规则列表
 
-    
+
     ```bash
     pd-ctl config placement-rules show
     ```
 
 + 查看 PD Group 的所有规则列表
 
-    
+
     ```bash
     pd-ctl config placement-rules show --group=pd
     ```
 
 + 查看对应 Group 和 ID 的某条规则
 
-    
+
     ```bash
     pd-ctl config placement-rules show --group=pd --id=default
     ```
 
 + 查看 Region 所匹配的规则列表
 
-    
+
     ```bash
     pd-ctl config placement-rules show --region=2
     ```

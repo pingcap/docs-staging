@@ -12,7 +12,7 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-load-stats/']
 
 **LoadStatsStmt:**
 
-![LoadStatsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/LoadStatsStmt.png)
+![LoadStatsStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/LoadStatsStmt.png)
 
 ## 参数说明
 

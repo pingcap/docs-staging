@@ -87,7 +87,7 @@ DM Portal 可以在 [dm-portal-latest-linux-amd64.tar.gz](https://download.pingc
 1. 填写任务名称。
 2. 选择任务类型。
 
-![DM Portal BasicConfig](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-basicconfig-zh.png)
+![DM Portal BasicConfig](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-basicconfig-zh.png)
 
 ### 实例信息配置
 
@@ -109,7 +109,7 @@ DM Portal 可以在 [dm-portal-latest-linux-amd64.tar.gz](https://download.pingc
 2. 填写下游实例信息。
 3. 点击**下一步**。
 
-![DM Portal InstanceConfig](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-instanceconfig-zh.png)
+![DM Portal InstanceConfig](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-instanceconfig-zh.png)
 
 ### binlog 过滤配置
 
@@ -131,11 +131,11 @@ DM Portal 可以在 [dm-portal-latest-linux-amd64.tar.gz](https://download.pingc
 1. 点击需要配置的数据库或者数据表。
 2. 点击编辑按钮，选择需要过滤的 binlog 类型。
 
-![DM Portal InstanceShow](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-instanceshow-zh.png)
+![DM Portal InstanceShow](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-instanceshow-zh.png)
 
-![DM Portal BinlogFilter 1](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-binlogfilter-1-zh.png)
+![DM Portal BinlogFilter 1](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-binlogfilter-1-zh.png)
 
-![DM Portal BinlogFilter 2](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-binlogfilter-2-zh.png)
+![DM Portal BinlogFilter 2](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-binlogfilter-2-zh.png)
 
 ### 库表路由配置
 
@@ -162,40 +162,40 @@ DM Portal 可以在 [dm-portal-latest-linux-amd64.tar.gz](https://download.pingc
 
 ##### 移动迁移库表
 
-![DM Portal TableRoute 1](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-tableroute-1-zh.png)
+![DM Portal TableRoute 1](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-tableroute-1-zh.png)
 
-![DM Portal TableRoute 2](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-tableroute-2-zh.png)
+![DM Portal TableRoute 2](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-tableroute-2-zh.png)
 
 ##### 右键修改库表名称
 
-![DM Portal ChangeTableName](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-changetablename-zh.png)
+![DM Portal ChangeTableName](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-changetablename-zh.png)
 
 ##### 合并数据表操作
 
-![DM Portal MergeTable 1](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-mergetable-1-zh.png)
+![DM Portal MergeTable 1](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-mergetable-1-zh.png)
 
-![DM Portal MergeTable 2](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-mergetable-2-zh.png)
+![DM Portal MergeTable 2](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-mergetable-2-zh.png)
 
 ##### 移动数据表至其他数据库
 
-![DM Portal MoveToDB 1](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-movetodb-1-zh.png)
+![DM Portal MoveToDB 1](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-movetodb-1-zh.png)
 
-![DM Portal MoveToDB 2](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-movetodb-2-zh.png)
+![DM Portal MoveToDB 2](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-movetodb-2-zh.png)
 
 ##### 移动数据表至新建默认数据库
 
-![DM Portal MoveToNewDB 1](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-movetonewdb-1-zh.png)
+![DM Portal MoveToNewDB 1](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-movetonewdb-1-zh.png)
 
-![DM Portal MoveToNewDB 2](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-movetonewdb-2-zh.png)
+![DM Portal MoveToNewDB 2](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-movetonewdb-2-zh.png)
 
 ##### 撤销本次操作
 
-![DM Portal Revert](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-revert-zh.png)
+![DM Portal Revert](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-revert-zh.png)
 
 ##### 清空下游实例
 
-![DM Portal Reset](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-reset-zh.png)
+![DM Portal Reset](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-reset-zh.png)
 
 ##### 完成并下载
 
-![DM Portal GenerateConfig](https://download.pingcap.com/images/tidb-data-migration/zh/dm-portal-generateconfig-zh.png)
+![DM Portal GenerateConfig](https://docs-download.pingcap.com/media/images/tidb-data-migration/zh/dm-portal-generateconfig-zh.png)

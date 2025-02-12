@@ -12,15 +12,15 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-deallocate/','/docs-cn/v3.
 
 **DeallocateStmt:**
 
-![DeallocateStmt](https://download.pingcap.com/images/docs-cn/sqlgram/DeallocateStmt.png)
+![DeallocateStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DeallocateStmt.png)
 
 **DeallocateSym:**
 
-![DeallocateSym](https://download.pingcap.com/images/docs-cn/sqlgram/DeallocateSym.png)
+![DeallocateSym](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DeallocateSym.png)
 
 **Identifier:**
 
-![Identifier](https://download.pingcap.com/images/docs-cn/sqlgram/Identifier.png)
+![Identifier](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Identifier.png)
 
 ## 示例
 

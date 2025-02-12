@@ -12,15 +12,15 @@ The `DEALLOCATE` statement provides an SQL interface to server-side prepared sta
 
 **DeallocateStmt:**
 
-![DeallocateStmt](https://download.pingcap.com/images/docs/sqlgram/DeallocateStmt.png)
+![DeallocateStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/DeallocateStmt.png)
 
 **DeallocateSym:**
 
-![DeallocateSym](https://download.pingcap.com/images/docs/sqlgram/DeallocateSym.png)
+![DeallocateSym](https://docs-download.pingcap.com/media/images/docs/sqlgram/DeallocateSym.png)
 
 **Identifier:**
 
-![Identifier](https://download.pingcap.com/images/docs/sqlgram/Identifier.png)
+![Identifier](https://docs-download.pingcap.com/media/images/docs/sqlgram/Identifier.png)
 
 ## Examples
 

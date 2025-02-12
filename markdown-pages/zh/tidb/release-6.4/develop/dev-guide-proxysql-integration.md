@@ -129,11 +129,11 @@ ProxySQL 使用一个单独的端口进行配置管理，另一个端口进行�
 - **_ProxySQL Admin interface_**：可以使用具有 `admin` 权限的用户连接到管理界面，以读取和写入配置，或者使用具有 `stats` 权限的用户，只能读取某些统计数据（不读取或写入配置）。默认凭证是 `admin:admin` 和 `stats:stats`，但出于安全考虑，可以使用默认凭证进行本地连接。要远程连接，需要配置一个新的用户，通常它被命名为 `radmin`。
 - **_ProxySQL MySQL Interface_**：用于代理，将 SQL 转发到配置的服务中。
 
-![proxysql config flow](https://download.pingcap.com/images/docs-cn/develop/proxysql_config_flow.png)
+![proxysql config flow](https://docs-download.pingcap.com/media/images/docs-cn/develop/proxysql_config_flow.png)
 
 ProxySQL 有三层配置：`runtime`、`memory`、`disk`。你仅能更改 `memory` 层的配置。在更改配置后，可以使用 `LOAD xxx TO runtime` 来生效这个配置，也可以使用 `SAVE xxx TO DISK` 落盘，防止配置丢失。
 
-![proxysql config layer](https://download.pingcap.com/images/docs-cn/develop/proxysql_config_layer.png)
+![proxysql config layer](https://docs-download.pingcap.com/media/images/docs-cn/develop/proxysql_config_layer.png)
 
 ### 配置 TiDB 后端
 

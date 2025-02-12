@@ -12,7 +12,7 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-show-privileges/','/docs-c
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowStmt.png)
 
 ## 示例
 

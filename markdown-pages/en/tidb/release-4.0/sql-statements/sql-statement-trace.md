@@ -12,11 +12,11 @@ The `TRACE` statement provides detailed information about query execution. It is
 
 **TraceStmt:**
 
-![TraceStmt](https://download.pingcap.com/images/docs/sqlgram/TraceStmt.png)
+![TraceStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/TraceStmt.png)
 
 **TraceableStmt:**
 
-![TraceableStmt](https://download.pingcap.com/images/docs/sqlgram/TraceableStmt.png)
+![TraceableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/TraceableStmt.png)
 
 ## Examples
 
@@ -53,9 +53,9 @@ trace format='json' select * from mysql.user;
 
 The JSON formatted trace can be pasted into the trace viewer, which is accessed via the TiDB status port:
 
-![TiDB Trace Viewer-1](https://download.pingcap.com/images/docs/trace-paste.png)
+![TiDB Trace Viewer-1](https://docs-download.pingcap.com/media/images/docs/trace-paste.png)
 
-![TiDB Trace Viewer-2](https://download.pingcap.com/images/docs/trace-view.png)
+![TiDB Trace Viewer-2](https://docs-download.pingcap.com/media/images/docs/trace-view.png)
 
 ## MySQL compatibility
 

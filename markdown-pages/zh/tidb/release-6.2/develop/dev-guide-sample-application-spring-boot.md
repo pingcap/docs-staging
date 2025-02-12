@@ -67,14 +67,14 @@ summary: 给出一个 Spring Boot 构建 TiDB 应用程序示例。
 
 - macOS 安装：
 
-    
+
     ```
     brew install maven
     ```
 
 - 基于 Debian 的 Linux 发行版上安装（如 Ubuntu 等）：
 
-    
+
     ```
     apt-get install maven
     ```
@@ -83,14 +83,14 @@ summary: 给出一个 Spring Boot 构建 TiDB 应用程序示例。
 
 - dnf 包管理器
 
-    
+
     ```
     dnf install maven
     ```
 
 - yum 包管理器
 
-    
+
     ```
     yum install maven
     ```
@@ -237,7 +237,7 @@ Hibernate: create table player_jpa (id bigint not null, coins integer, goods int
 
 2. 导入后 **Collections** > **Player** 如图所示：
 
-    ![postman import](https://download.pingcap.com/images/docs-cn/develop/postman_player_import.png)
+    ![postman import](https://docs-download.pingcap.com/media/images/docs-cn/develop/postman_player_import.png)
 
 3. 发送请求：
 
@@ -245,37 +245,37 @@ Hibernate: create table player_jpa (id bigint not null, coins integer, goods int
 
         点击 **Create** 标签，点击 **Send** 按钮，发送 `POST` 形式的 `http://localhost:8000/player/` 请求。返回值为增加的玩家个数，预期为 1。
 
-        ![Postman-Create](https://download.pingcap.com/images/docs-cn/develop/postman_player_create.png)
+        ![Postman-Create](https://docs-download.pingcap.com/media/images/docs-cn/develop/postman_player_create.png)
 
     - 使用 ID 获取玩家信息
 
         点击 **GetByID** 标签，点击 **Send** 按钮，发送 `GET` 形式的 `http://localhost:8000/player/1` 请求。返回值为 ID 为 1 的玩家信息。
 
-        ![Postman-GetByID](https://download.pingcap.com/images/docs-cn/develop/postman_player_getbyid.png)
+        ![Postman-GetByID](https://docs-download.pingcap.com/media/images/docs-cn/develop/postman_player_getbyid.png)
 
     - 使用 Limit 批量获取玩家信息
 
         点击 **GetByLimit** 标签，点击 **Send** 按钮，发送 `GET` 形式的 `http://localhost:8000/player/limit/3` 请求。返回值为最多 3 个玩家的信息列表。
 
-        ![Postman-GetByLimit](https://download.pingcap.com/images/docs-cn/develop/postman_player_getbylimit.png)
+        ![Postman-GetByLimit](https://docs-download.pingcap.com/media/images/docs-cn/develop/postman_player_getbylimit.png)
 
     - 分页获取玩家信息
 
         点击 **GetByPage** 标签，点击 **Send** 按钮，发送 `GET` 形式的 `http://localhost:8080/player/page?index=0&size=2` 请求。返回值为 index 为 0 的页，每页有 2 个玩家信息列表。此外，还包含了分页信息，如偏移量、总页数、是否排序等。
 
-        ![Postman-GetByPage](https://download.pingcap.com/images/docs-cn/develop//postman_player_getbypage.png)
+        ![Postman-GetByPage](https://docs-download.pingcap.com/media/images/docs-cn/develop//postman_player_getbypage.png)
 
     - 获取玩家个数
 
         点击 **Count** 标签，点击 **Send** 按钮，发送 `GET` 形式的 `http://localhost:8000/player/count` 请求。返回值为玩家个数。
 
-        ![Postman-Count](https://download.pingcap.com/images/docs-cn/develop/postman_player_count.png)
+        ![Postman-Count](https://docs-download.pingcap.com/media/images/docs-cn/develop/postman_player_count.png)
 
     - 玩家交易
 
         点击 **Trade** 标签，点击 **Send** 按钮，发送 `PUT` 形式的 `http://localhost:8000/player/trade` 请求。请求参数为售卖玩家 ID `sellID`、购买玩家 ID `buyID`、购买货物数量 `amount` 以及购买消耗金币数 `price`。返回值为交易是否成功。当出现售卖玩家货物不足、购买玩家金币不足或数据库错误时，交易将不成功。并且由于[数据库事务](/develop/dev-guide-transaction-overview.md)保证，不会有玩家的金币或货物丢失的情况。
 
-        ![Postman-Trade](https://download.pingcap.com/images/docs-cn/develop/postman_player_trade.png)
+        ![Postman-Trade](https://docs-download.pingcap.com/media/images/docs-cn/develop/postman_player_trade.png)
 
 </div>
 
@@ -1029,7 +1029,7 @@ public class PlayerController {
 
 配置完毕后如图所示：
 
-![Spring Initializr Config](https://download.pingcap.com/images/docs-cn/develop/IMG_20220401-234316020.png)
+![Spring Initializr Config](https://docs-download.pingcap.com/media/images/docs-cn/develop/IMG_20220401-234316020.png)
 
 > **注意：**
 >
@@ -1045,7 +1045,7 @@ public class PlayerController {
 
 1. 如此[依赖文件](https://github.com/pingcap-inc/tidb-example-java/blob/main/spring-jpa-hibernate/pom.xml#L26)中所示，将 **Spring Data JPA** 内引入的 `jakarta` 包进行排除，即将：
 
-    
+
     ```xml
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -1055,7 +1055,7 @@ public class PlayerController {
 
     更改为：
 
-    
+
     ```xml
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -1071,7 +1071,7 @@ public class PlayerController {
 
 2. 随后如此[依赖文件](https://github.com/pingcap-inc/tidb-example-java/blob/main/spring-jpa-hibernate/pom.xml#L53)中所示，引入 `6.0.0.Beta2` 版本以上的 **Hibernate** 依赖，此处以 `6.0.0.CR2` 版本为例：
 
-    
+
     ```xml
     <dependency>
         <groupId>org.hibernate.orm</groupId>

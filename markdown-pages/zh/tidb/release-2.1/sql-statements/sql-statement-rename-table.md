@@ -12,11 +12,11 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-rename-table/','/docs-cn/v
 
 **RenameTableStmt:**
 
-![RenameTableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/RenameTableStmt.png)
+![RenameTableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/RenameTableStmt.png)
 
 **TableToTable:**
 
-![TableToTable](https://download.pingcap.com/images/docs-cn/sqlgram/TableToTable.png)
+![TableToTable](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableToTable.png)
 
 ## 示例
 

@@ -12,27 +12,27 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-insert/','/docs-cn/v2.1/re
 
 **InsertIntoStmt:**
 
-![InsertIntoStmt](https://download.pingcap.com/images/docs-cn/sqlgram/InsertIntoStmt.png)
+![InsertIntoStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/InsertIntoStmt.png)
 
 **PriorityOpt:**
 
-![PriorityOpt](https://download.pingcap.com/images/docs-cn/sqlgram/PriorityOpt.png)
+![PriorityOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/PriorityOpt.png)
 
 **IgnoreOptional:**
 
-![IgnoreOptional](https://download.pingcap.com/images/docs-cn/sqlgram/IgnoreOptional.png)
+![IgnoreOptional](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IgnoreOptional.png)
 
 **IntoOpt:**
 
-![IntoOpt](https://download.pingcap.com/images/docs-cn/sqlgram/IntoOpt.png)
+![IntoOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IntoOpt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 **InsertValues:**
 
-![InsertValues](https://download.pingcap.com/images/docs-cn/sqlgram/InsertValues.png)
+![InsertValues](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/InsertValues.png)
 
 ## 示例
 

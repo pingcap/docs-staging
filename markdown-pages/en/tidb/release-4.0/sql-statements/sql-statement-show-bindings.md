@@ -12,19 +12,19 @@ The `SHOW BINDINGS` statement is used to display information about created SQL b
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStmt.png)
 
 **ShowTargetFilterable:**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTargetFilterable.png)
 
 **GlobalScope:**
 
-![GlobalScope](https://download.pingcap.com/images/docs/sqlgram/GlobalScope.png)
+![GlobalScope](https://docs-download.pingcap.com/media/images/docs/sqlgram/GlobalScope.png)
 
 **ShowLikeOrWhereOpt**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## Syntax description
 

@@ -43,13 +43,13 @@ curl http://127.0.0.1:10080/schema_storage/mysql/stats_histograms
 
 ```
 {
-    "table_schema": "mysql", 
-    "table_name": "stats_histograms", 
-    "table_rows": 0, 
-    "avg_row_length": 0, 
-    "data_length": 0, 
-    "max_data_length": 0, 
-    "index_length": 0, 
+    "table_schema": "mysql",
+    "table_name": "stats_histograms",
+    "table_rows": 0,
+    "avg_row_length": 0,
+    "data_length": 0,
+    "max_data_length": 0,
+    "index_length": 0,
     "data_free": 0
 }
 ```
@@ -61,13 +61,13 @@ curl http://127.0.0.1:10080/schema_storage/test
 ```
 [
     {
-        "table_schema": "test", 
-        "table_name": "test", 
-        "table_rows": 0, 
-        "avg_row_length": 0, 
-        "data_length": 0, 
-        "max_data_length": 0, 
-        "index_length": 0, 
+        "table_schema": "test",
+        "table_name": "test",
+        "table_rows": 0,
+        "avg_row_length": 0,
+        "data_length": 0,
+        "max_data_length": 0,
+        "index_length": 0,
         "data_free": 0
     }
 ]
@@ -77,7 +77,7 @@ curl http://127.0.0.1:10080/schema_storage/test
 
 - PD API address: `http://${host}:${port}/pd/api/v1/${api_name}`
 - Default port: `2379`
-- Details about API names: see [PD API doc](https://download.pingcap.com/pd-api-v1.html)
+- Details about API names: see [PD API doc](https://docs-download.pingcap.com/api/pd-api/pd-api-v1.html)
 
 The PD interface provides the status of all the TiKV servers and the information about load balancing. See the following example for the information about a single-node TiKV cluster:
 

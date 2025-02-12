@@ -32,7 +32,7 @@ Raft 是一种分布式一致性算法，在 TiDB 集群的多种组件中，PD 
 
 集群 TiDB、TiKV 和 PD 组件分别分布在 3 个不同的数据中心，这是最常规且高可用性最高的方案。
 
-![三中心部署](https://download.pingcap.com/images/docs-cn/deploy-3dc.png)
+![三中心部署](https://docs-download.pingcap.com/media/images/docs-cn/deploy-3dc.png)
 
 **优点：**
 
@@ -40,7 +40,7 @@ Raft 是一种分布式一致性算法，在 TiDB 集群的多种组件中，PD 
 - 任何一个数据中心失效后，不会产生任何数据丢失 (RPO = 0)
 - 任何一个数据中心失效后，其他两个数据中心会自动发起 leader election，并在合理长的时间内（通常情况 20s 以内）自动恢复服务
 
-![三中心部署容灾](https://download.pingcap.com/images/docs-cn/deploy-3dc-dr.png)
+![三中心部署容灾](https://docs-download.pingcap.com/media/images/docs-cn/deploy-3dc-dr.png)
 
 **缺点：**
 
@@ -54,7 +54,7 @@ Raft 是一种分布式一致性算法，在 TiDB 集群的多种组件中，PD 
 
 如果不需要每个数据中心同时对外提供服务，可以将业务流量全部派发到一个数据中心，并通过调度策略把 Region leader 和 PD leader 都迁移到同一个数据中心。这样一来，不管是从 PD 获取 TSO，还是读取 Region，都不会受数据中心间网络的影响。当该数据中心失效后，PD leader 和 Region leader 会自动在其它数据中心选出，只需要把业务流量转移至其他存活的数据中心即可。
 
-![三中心部署读性能优化](https://download.pingcap.com/images/docs-cn/deploy-3dc-optimize.png)
+![三中心部署读性能优化](https://docs-download.pingcap.com/media/images/docs-cn/deploy-3dc-optimize.png)
 
 **优点：**
 
@@ -84,7 +84,7 @@ member leader_priority pdName3 3
 
 下面假设某城存有 IDC1、IDC2、IDC3 三机房，机房 IDC 中存有两套机架，每个机架存有三台服务器，不考虑混布以及单台机器多实例部署下，同城三数据中心架构集群（3 副本）部署参考如下：
 
-![同城三数据中心集群部署](https://download.pingcap.com/images/docs-cn/multi-data-centers-in-one-city-deployment-sample.png)
+![同城三数据中心集群部署](https://docs-download.pingcap.com/media/images/docs-cn/multi-data-centers-in-one-city-deployment-sample.png)
 
 #### TiKV Labels 简介
 
@@ -102,7 +102,7 @@ TiKV 是一个 Multi-Raft 系统，其数据按 Region（默认 96M）切分，�
 server_configs:
   pd:
     replication.location-labels: ["zone","dc","rack","host"]
-    
+
 tikv_servers:
   - host: 10.63.10.30
     config:

@@ -26,7 +26,7 @@ DM WebUI has the following pages:
 
 The interface is as follows:
 
-![webui](https://download.pingcap.com/images/docs/dm/dm-webui-preview-en.png)
+![webui](https://docs-download.pingcap.com/media/images/docs/dm/dm-webui-preview-en.png)
 
 ## Access method
 
@@ -123,4 +123,4 @@ The query result contains the corresponding information of the upstream table an
 
 ### Members
 
-The **Members** page displays all the master and worker nodes in the DM cluster, and the binding relationship between worker nodes and the source. 
+The **Members** page displays all the master and worker nodes in the DM cluster, and the binding relationship between worker nodes and the source.

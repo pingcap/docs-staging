@@ -16,7 +16,7 @@ title: 开发 Java 应用使用 TiDB 的最佳实践
 - 数据访问框架：应用通常选择通过数据访问框架 ([MyBatis](http://www.mybatis.org/mybatis-3/zh/index.html), [Hibernate](https://hibernate.org/)) 的封装来进一步简化和管理数据库访问操作。
 - 业务实现：业务逻辑控制着何时发送和发送什么指令到数据库，其中有些业务会使用 [Spring Transaction](https://docs.spring.io/spring/docs/4.2.x/spring-framework-reference/html/transaction.html) 切面来控制管理事务的开始和提交逻辑。
 
-![Java Component](https://download.pingcap.com/images/docs-cn/best-practices/java-practice-1.png)
+![Java Component](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/java-practice-1.png)
 
 如上图所示，应用可能使用 Spring Transaction 来管理控制事务非手工启停，通过类似 MyBatis 的数据访问框架管理生成和执行 SQL，通过连接池获取已池化的长连接，最后通过 JDBC 接口调用实现通过 MySQL 协议和 TiDB 完成交互。
 
@@ -77,7 +77,7 @@ JDBC 实现通常通过 JDBC URL 参数的形式来提供实现相关的配置�
 
 在 TiDB 监控中可以通过 **Query Summary** > **QPS By Instance** 查看请求命令类型，如果类似下图，请求中 `COM_STMT_EXECUTE` 数目远远多于 `COM_STMT_PREPARE` 即生效。
 
-![QPS By Instance](https://download.pingcap.com/images/docs-cn/java-practice-2.png)
+![QPS By Instance](https://docs-download.pingcap.com/media/images/docs-cn/java-practice-2.png)
 
 另外，通过 `useConfigs = maxPerformance` 配置会同时配置多个参数，其中也包括 `cachePrepStmts = true`。
 

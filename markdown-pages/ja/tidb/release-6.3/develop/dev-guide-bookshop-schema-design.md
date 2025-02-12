@@ -97,14 +97,14 @@ TiDB Cloudのデータベースの詳細ページで、[**インポート**] ボ
 
     **バケット URL** :
 
-    
+
     ```
     s3://developer.pingcap.com/bookshop/
     ```
 
     **Role-ARN** :
 
-    
+
     ```
     arn:aws:iam::494090988690:role/s3-tidb-cloud-developer-access
     ```
@@ -121,7 +121,7 @@ TiDB Cloudのデータベースの詳細ページで、[**インポート**] ボ
 
 3.  **データ形式**に<strong>TiDB Dumpling</strong>を選択します。
 
-    ![Import Bookshop data in TiDB Cloud](https://download.pingcap.com/images/docs/develop/tidb_cloud_import_bookshop_data.png)
+    ![Import Bookshop data in TiDB Cloud](https://docs-download.pingcap.com/media/images/docs/develop/tidb_cloud_import_bookshop_data.png)
 
 4.  データベースのログイン情報を入力します。
 
@@ -129,7 +129,7 @@ TiDB Cloudのデータベースの詳細ページで、[**インポート**] ボ
 
 6.  TiDB Cloudがインポートを完了するまで待ちます。
 
-    ![Bookshop data importing](https://download.pingcap.com/images/docs/develop/importing_bookshop_data.png)
+    ![Bookshop data importing](https://docs-download.pingcap.com/media/images/docs/develop/importing_bookshop_data.png)
 
     インポート プロセス中に次のエラー メッセージが表示された場合は、 `DROP DATABASE bookshop;`コマンドを実行して、以前に作成したサンプル データベースをクリアしてから、データを再度インポートします。
 

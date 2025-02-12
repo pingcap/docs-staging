@@ -9,7 +9,7 @@ TiDB Lightning 是一个将全量数据高速导入到 TiDB 集群的工具，�
 - **迅速**导入**大量新**数据。
 - 备份恢复所有数据。
 
-![TiDB Lightning 整体架构](https://download.pingcap.com/images/docs-cn/tidb-lightning-architecture.png)
+![TiDB Lightning 整体架构](https://docs-download.pingcap.com/media/images/docs-cn/tidb-lightning-architecture.png)
 
 本教程假设使用的是若干新的、纯净版 CentOS 7 实例，你可以（使用 VMware、VirtualBox 及其他工具）在本地虚拟化或在供应商提供的平台上部署一台小型的云虚拟主机。因为 TiDB Lightning 对计算机资源消耗较高，建议分配 16 GB 以上的内存以及 32 核以上的 CPU 以获取最佳性能。
 
@@ -88,7 +88,7 @@ TiDB Lightning 是一个将全量数据高速导入到 TiDB 集群的工具，�
 
 4. 配置合适的参数运行 `tidb-lightning`。如果直接在命令行中用 `nohup` 启动程序，可能会因为 SIGHUP 信号而退出，建议把 `nohup` 放到脚本里面，如：
 
-    
+
     ```sh
     #!/bin/bash
     nohup ./tidb-lightning -config tidb-lightning.toml > nohup.out &

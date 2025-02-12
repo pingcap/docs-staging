@@ -9,7 +9,7 @@ summary: 介绍如何从小数据量 MySQL 迁移数据到 TiDB。
 
 一般而言，受到表结构索引数目等信息、硬件以及网络环境影响，迁移速率在 30～50GB/h 不等。使用 TiDB DM 迁移的流程如下图所示。
 
-![dm](https://download.pingcap.com/images/docs-cn/dm/migrate-with-dm.png)
+![dm](https://docs-download.pingcap.com/media/images/docs-cn/dm/migrate-with-dm.png)
 
 ## 前提条件
 

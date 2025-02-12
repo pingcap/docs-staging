@@ -11,7 +11,7 @@ TiDB 提供了丰富的数据迁移相关的工具，用于全量迁移、增量
 
 下图显示了各迁移工具的使用场景。
 
-![TiDB Migration Tools](https://download.pingcap.com/images/docs-cn/migration-tools.png)
+![TiDB Migration Tools](https://docs-download.pingcap.com/media/images/docs-cn/migration-tools.png)
 
 下表介绍了迁移工具的使用场景、支持的上下游等信息。
 

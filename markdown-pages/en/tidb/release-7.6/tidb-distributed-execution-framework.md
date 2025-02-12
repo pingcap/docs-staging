@@ -101,7 +101,7 @@ Adjust the following system variables related to Fast Online DDL:
 
 The architecture of the DXF is as follows:
 
-![Architecture of the DXF](https://download.pingcap.com/images/docs/dist-task/dist-task-architect.jpg)
+![Architecture of the DXF](https://docs-download.pingcap.com/media/images/docs/dist-task/dist-task-architect.jpg)
 
 As shown in the preceding diagram, the execution of tasks in the DXF is mainly handled by the following modules:
 

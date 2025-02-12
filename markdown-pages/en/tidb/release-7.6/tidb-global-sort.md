@@ -69,7 +69,7 @@ To enable Global Sort, follow these steps:
 
 The algorithm of the Global Sort feature is as follows:
 
-![Algorithm of Global Sort](https://download.pingcap.com/images/docs/dist-task/global-sort.jpeg)
+![Algorithm of Global Sort](https://docs-download.pingcap.com/media/images/docs/dist-task/global-sort.jpeg)
 
 The detailed implementation principles are as follows:
 

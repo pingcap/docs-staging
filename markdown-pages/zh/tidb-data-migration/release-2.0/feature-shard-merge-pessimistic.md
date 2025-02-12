@@ -56,7 +56,7 @@ DM 在悲观模式下进行分表 DDL 的迁移有以下几点使用限制：
 
 以下是一个简化后的例子：
 
-![shard-ddl-example-1](https://download.pingcap.com/images/tidb-data-migration/shard-ddl-example-1.png)
+![shard-ddl-example-1](https://docs-download.pingcap.com/media/images/tidb-data-migration/shard-ddl-example-1.png)
 
 在上图的例子中，分表的合库合表过程简化成了上游只有两个 MySQL 实例，每个实例内只有一个表。假设在数据迁移开始时，将两个分表的表结构版本记为 schema V1，将 DDL 语句执行完后的表结构版本记为 schema V2。
 
@@ -78,7 +78,7 @@ DM 在悲观模式下进行分表 DDL 的迁移有以下几点使用限制：
 
 基于上述例子，本部分介绍了 DM 在默认的悲观模式下合库合表过程中进行 DDL 迁移的实现原理。
 
-![shard-ddl-flow](https://download.pingcap.com/images/tidb-data-migration/shard-ddl-flow.png)
+![shard-ddl-flow](https://docs-download.pingcap.com/media/images/tidb-data-migration/shard-ddl-flow.png)
 
 在这个例子中，DM-worker-1 负责迁移来自 MySQL 实例 1 的数据，DM-worker-2 负责迁移来自 MySQL 实例 2 的数据，DM-master 负责协调多个 DM-worker 间的 DDL 迁移。
 
@@ -114,7 +114,7 @@ DM 在悲观模式下进行分表 DDL 的迁移有以下几点使用限制：
 
 假设同一个 MySQL 实例中有 table_1 和 table_2 两个分表需要进行合并：
 
-![shard-ddl-example-2](https://download.pingcap.com/images/tidb-data-migration/shard-ddl-example-2.png)
+![shard-ddl-example-2](https://docs-download.pingcap.com/media/images/tidb-data-migration/shard-ddl-example-2.png)
 
 在这个例子中，由于数据来自同一个 MySQL 实例，因此所有数据都是从同一个 binlog 流中获得，时序如下：
 

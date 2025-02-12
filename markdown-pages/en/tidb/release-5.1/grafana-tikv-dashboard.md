@@ -28,7 +28,7 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Region: The number of Regions per TiKV instance
 - Uptime: The runtime of TiKV since last restart
 
-![TiKV Dashboard - Cluster metrics](https://download.pingcap.com/images/docs/tikv-dashboard-cluster.png)
+![TiKV Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-cluster.png)
 
 ## Errors
 
@@ -42,7 +42,7 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Leader drop: The count of dropped leaders per TiKV instance
 - Leader missing: The count of missing leaders per TiKV instance
 
-![TiKV Dashboard - Errors metrics](https://download.pingcap.com/images/docs/tikv-dashboard-errors.png)
+![TiKV Dashboard - Errors metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-errors.png)
 
 ## Server
 
@@ -55,7 +55,7 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Region average written keys: The average number of written keys to Regions per TiKV instance
 - Region average written bytes: The average written bytes to Regions per TiKV instance
 
-![TiKV Dashboard - Server metrics](https://download.pingcap.com/images/docs/tikv-dashboard-server.png)
+![TiKV Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-server.png)
 
 ## gRPC
 
@@ -95,7 +95,7 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Commit log duration: The time consumed by Raft to commit logs
 - Commit log duration per server: The time consumed by Raft to commit logs per TiKV instance
 
-![TiKV Dashboard - Raft IO metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raftio.png)
+![TiKV Dashboard - Raft IO metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raftio.png)
 
 ## Raft process
 
@@ -111,7 +111,7 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Process ready duration: The time consumed for processes to be ready in Raft
 - Process ready duration per server: The time consumed for peer processes to be ready in Raft per TiKV instance. It should be less than 2 seconds (P99.99).
 
-![TiKV Dashboard - Raft process metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-process.png)
+![TiKV Dashboard - Raft process metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-process.png)
 
 ## Raft message
 
@@ -122,7 +122,7 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Vote: The number of Vote messages sent in Raft per second
 - Raft dropped messages: The number of dropped Raft messages per type per second
 
-![TiKV Dashboard - Raft message metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-message.png)
+![TiKV Dashboard - Raft message metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-message.png)
 
 ## Raft propose
 
@@ -136,7 +136,7 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Apply wait duration per server: The histogram of apply time of each proposal per TiKV instance
 - Raft log speed: The average rate at which peers propose logs
 
-![TiKV Dashboard - Raft propose metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-propose.png)
+![TiKV Dashboard - Raft propose metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-propose.png)
 
 ## Raft admin
 
@@ -145,13 +145,13 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Check split: The number of Raftstore split check commands per second
 - 99.99% Check split duration: The time consumed when running split check commands (P99.99)
 
-![TiKV Dashboard - Raft admin metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-admin.png)
+![TiKV Dashboard - Raft admin metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-admin.png)
 
 ## Local reader
 
 - Local reader requests: The number of total requests and the number of rejections from the local read thread
 
-![TiKV Dashboard - Local reader metrics](https://download.pingcap.com/images/docs/tikv-dashboard-local-reader.png)
+![TiKV Dashboard - Local reader metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-local-reader.png)
 
 ## Unified Read Pool
 
@@ -166,7 +166,7 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Storage async snapshot duration: The time consumed by processing asynchronous snapshot requests. It should be less than `1s` in `.99`.
 - Storage async write duration: The time consumed by processing asynchronous write requests. It should be less than `1s` in `.99`.
 
-![TiKV Dashboard - Storage metrics](https://download.pingcap.com/images/docs/tikv-dashboard-storage.png)
+![TiKV Dashboard - Storage metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-storage.png)
 
 ## Scheduler
 
@@ -175,7 +175,7 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Scheduler priority commands: The count of different priority commands per second
 - Scheduler pending commands: The count of pending commands per TiKV instance per second
 
-![TiKV Dashboard - Scheduler metrics](https://download.pingcap.com/images/docs/tikv-dashboard-scheduler.png)
+![TiKV Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-scheduler.png)
 
 ## Scheduler - commit
 
@@ -189,7 +189,7 @@ This document provides a detailed description of these key metrics on the **TiKV
 - Scheduler scan details [write]: The keys scan details of write CF when executing the commit command
 - Scheduler scan details [default]: The keys scan details of default CF when executing the commit command
 
-![TiKV Dashboard - Scheduler commit metrics](https://download.pingcap.com/images/docs/tikv-dashboard-scheduler-commit.png)
+![TiKV Dashboard - Scheduler commit metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-scheduler-commit.png)
 
 ## Scheduler - pessimistic_rollback
 

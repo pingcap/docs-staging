@@ -8,7 +8,7 @@ title: TiDB 用户账户管理
 
 要快速了解 TiDB 如何进行认证与赋权并创建与管理用户账户，建议先观看下面的培训视频（时长 22 分钟）。注意本视频只作为学习参考，如需了解具体的用户账户管理方法，请参考本文档的内容。
 
-<video src="https://download.pingcap.com/docs-cn%2FLesson11_security.mp4" width="600px" height="450px" controls="controls" poster="https://download.pingcap.com/docs-cn/poster_lesson11.png"></video>
+<video src="https://docs-download.pingcap.com/media/videos/docs-cn%2FLesson11_security.mp4" width="600px" height="450px" controls="controls" poster="https://docs-download.pingcap.com/media/videos/docs-cn/poster_lesson11.png"></video>
 
 ## 用户名和密码
 
@@ -156,21 +156,21 @@ TiDB 将密码存在 `mysql.user` 系统数据库里面。只有拥有 `CREATE U
 
 - 在 `CREATE USER` 创建用户时通过 `IDENTIFIED BY` 指定密码：
 
-    
+
     ```sql
     CREATE USER 'test'@'localhost' IDENTIFIED BY 'mypass';
     ```
 
 - 为一个已存在的账户修改密码，可以通过 `SET PASSWORD FOR` 或者 `ALTER USER` 语句完成：
 
-    
+
     ```sql
     SET PASSWORD FOR 'root'@'%' = 'xxx';
     ```
 
     或者：
 
-    
+
     ```sql
     ALTER USER 'test'@'localhost' IDENTIFIED BY 'mypass';
     ```

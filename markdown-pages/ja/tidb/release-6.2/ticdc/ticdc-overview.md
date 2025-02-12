@@ -18,7 +18,7 @@ TiCDC が実行されている場合、PD で etcd を介して高可用性を�
 
 TiCDC のアーキテクチャを次の図に示します。
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/cdc-architecture.png)
 
 ### システムの役割 {#system-roles}
 

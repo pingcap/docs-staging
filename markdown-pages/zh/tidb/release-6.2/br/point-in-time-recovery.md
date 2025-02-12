@@ -21,7 +21,7 @@ PITR 可用于满足以下业务需求：
 
 下图为 PITR 功能使用示意：
 
-![Point-in-Time Recovery](https://download.pingcap.com/images/docs-cn/br/pitr-usage.png)
+![Point-in-Time Recovery](https://docs-download.pingcap.com/media/images/docs-cn/br/pitr-usage.png)
 
 ### 备份数据
 
@@ -98,7 +98,7 @@ PITR 主要用于快照备份恢复和日志备份恢复。关于快照备份恢
 
 日志备份恢复的架构实现如下：
 
-![BR log backup and restore architecture](https://download.pingcap.com/images/docs-cn/br/br-log-arch.png)
+![BR log backup and restore architecture](https://docs-download.pingcap.com/media/images/docs-cn/br/br-log-arch.png)
 
 进行日志备份时：
 

@@ -16,7 +16,7 @@ TiCDC 运行时是一种无状态节点，通过 PD 内部的 etcd 实现高可�
 
 TiCDC 的系统架构如下图所示：
 
-![TiCDC architecture](https://download.pingcap.com/images/docs-cn/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/cdc-architecture.png)
 
 ### 系统角色
 

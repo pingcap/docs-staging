@@ -12,23 +12,23 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-show-indexes/','/docs-cn/v
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowStmt.png)
 
 **ShowTargetFilterable:**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTargetFilterable.png)
 
 **ShowIndexKwd:**
 
-![ShowIndexKwd](https://download.pingcap.com/images/docs-cn/sqlgram/ShowIndexKwd.png)
+![ShowIndexKwd](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowIndexKwd.png)
 
 **FromOrIn:**
 
-![FromOrIn](https://download.pingcap.com/images/docs-cn/sqlgram/FromOrIn.png)
+![FromOrIn](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/FromOrIn.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 ## 示例
 

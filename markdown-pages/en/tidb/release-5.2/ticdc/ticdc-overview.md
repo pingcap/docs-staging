@@ -17,7 +17,7 @@ When TiCDC is running, it is a stateless node that achieves high availability th
 
 The architecture of TiCDC is shown in the following figure:
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/cdc-architecture.png)
 
 ### System roles
 

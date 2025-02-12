@@ -21,7 +21,7 @@ title: PD 重要监控指标详解
 - Abnormal stores：处于异常状态的节点数目，正常情况应当为 0
 - Region health：集群所有 Region 的状态。通常情况下，pending 或 down 的 peer 应该少于 100，miss 的 peer 不能一直大于 0，empty Region 过多需及时打开 Region Merge
 - Current peer count：当前集群 peer 的总量
-![PD Dashboard - Header](https://download.pingcap.com/images/docs-cn/pd-dashboard-header-v4.png)
+![PD Dashboard - Header](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-header-v4.png)
 
 ## Cluster
 
@@ -33,7 +33,7 @@ title: PD 重要监控指标详解
 - Label distribution：集群中 TiKV 节点的 label 分布情况
 - Store Limit：Store 的调度限流状态
 
-![PD Dashboard - Cluster metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-cluster-v4.png)
+![PD Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-cluster-v4.png)
 
 ## Operator
 
@@ -46,7 +46,7 @@ title: PD 重要监控指标详解
 - Operator finish duration：已完成的 operator 所花费的最长时间
 - Operator step duration：已完成的 operator 的步骤所花费的最长时间
 
-![PD Dashboard - Operator metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-operator-v4.png)
+![PD Dashboard - Operator metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-operator-v4.png)
 
 ## Statistics - Balance
 
@@ -62,7 +62,7 @@ title: PD 重要监控指标详解
 - Store leader count：每个 TiKV 实例上所有 leader 的数量
 - Store Region count：每个 TiKV 实例上所有 Region 的数量
 
-![PD Dashboard - Balance metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-balance-v4.png)
+![PD Dashboard - Balance metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-balance-v4.png)
 
 ## Statistics - hot write
 
@@ -77,7 +77,7 @@ title: PD 重要监控指标详解
 - Direction of hotspot move leader：热点调度中 leader 的调度方向，正数代表调入，负数代表调出
 - Direction of hotspot move peer：热点调度中 peer 的调度方向，正数代表调入，负数代表调出
 
-![PD Dashboard - Hot write metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-hotwrite-v4.png)
+![PD Dashboard - Hot write metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-hotwrite-v4.png)
 
 ## Statistics - hot read
 
@@ -87,7 +87,7 @@ title: PD 重要监控指标详解
 - Store read rate keys：每个 TiKV 实例总的读取 keys
 - Hot cache read entry number：每个 TiKV 实例进入热点统计模块的 peer 的数量
 
-![PD Dashboard - Hot read metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-hotread-v4.png)
+![PD Dashboard - Hot read metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-hotread-v4.png)
 
 ## Scheduler
 
@@ -105,14 +105,14 @@ title: PD 重要监控指标详解
 - Filter source：尝试选择 Store 作为调度 source 时没有通过 Filter 的计数
 - Balance Direction：Store 被选作调度 target 或 source 的次数
 
-![PD Dashboard - Scheduler metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-scheduler-v4.png)
+![PD Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-scheduler-v4.png)
 
 ## gRPC
 
 - Completed commands rate：gRPC 命令的完成速率
 - 99% Completed commands duration：99% 命令的最长消耗时间
 
-![PD Dashboard - gRPC metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-grpc-v2.png)
+![PD Dashboard - gRPC metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-grpc-v2.png)
 
 ## etcd
 
@@ -125,7 +125,7 @@ title: PD 重要监控指标详解
 - Raft committed index：最后一次 commit 的 Raft index
 - Raft applied index：最后一次 apply 的 Raft index
 
-![PD Dashboard - etcd metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-etcd-v2.png)
+![PD Dashboard - etcd metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-etcd-v2.png)
 
 ## TiDB
 
@@ -133,7 +133,7 @@ title: PD 重要监控指标详解
 - Handle requests count：TiDB 的请求数量
 - Handle requests duration：每个请求所花费的时间，99% 的情况下，应该小于 100ms
 
-![PD Dashboard - TiDB metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-tidb-v4.png)
+![PD Dashboard - TiDB metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-tidb-v4.png)
 
 ## Heartbeat
 
@@ -144,11 +144,11 @@ title: PD 重要监控指标详解
 - Region schedule push：PD 向 TiKV 发送的调度命令的个数
 - 99% Region heartbeat latency：99% 的情况下，心跳的延迟
 
-![PD Dashboard - Heartbeat metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-heartbeat-v4.png)
+![PD Dashboard - Heartbeat metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-heartbeat-v4.png)
 
 ## Region storage
 
 - Syncer Index：Leader 记录 Region 变更历史的最大 index
 - history last index：Follower 成功同步的 Region 变更历史的 index
 
-![PD Dashboard - Region storage](https://download.pingcap.com/images/docs-cn/pd-dashboard-region-storage.png)
+![PD Dashboard - Region storage](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-region-storage.png)

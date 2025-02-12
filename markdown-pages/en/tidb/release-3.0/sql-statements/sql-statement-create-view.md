@@ -12,35 +12,35 @@ The `CREATE VIEW` statement saves a `SELECT` statement as a queryable object, si
 
 **CreateViewStmt:**
 
-![CreateViewStmt](https://download.pingcap.com/images/docs/sqlgram/CreateViewStmt.png)
+![CreateViewStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/CreateViewStmt.png)
 
 **OrReplace:**
 
-![OrReplace](https://download.pingcap.com/images/docs/sqlgram/OrReplace.png)
+![OrReplace](https://docs-download.pingcap.com/media/images/docs/sqlgram/OrReplace.png)
 
 **ViewAlgorithm:**
 
-![ViewAlgorithm](https://download.pingcap.com/images/docs/sqlgram/ViewAlgorithm.png)
+![ViewAlgorithm](https://docs-download.pingcap.com/media/images/docs/sqlgram/ViewAlgorithm.png)
 
 **ViewDefiner:**
 
-![ViewDefiner](https://download.pingcap.com/images/docs/sqlgram/ViewDefiner.png)
+![ViewDefiner](https://docs-download.pingcap.com/media/images/docs/sqlgram/ViewDefiner.png)
 
 **ViewSQLSecurity:**
 
-![ViewSQLSecurity](https://download.pingcap.com/images/docs/sqlgram/ViewSQLSecurity.png)
+![ViewSQLSecurity](https://docs-download.pingcap.com/media/images/docs/sqlgram/ViewSQLSecurity.png)
 
 **ViewName:**
 
-![ViewName](https://download.pingcap.com/images/docs/sqlgram/ViewName.png)
+![ViewName](https://docs-download.pingcap.com/media/images/docs/sqlgram/ViewName.png)
 
 **ViewFieldList:**
 
-![ViewFieldList](https://download.pingcap.com/images/docs/sqlgram/ViewFieldList.png)
+![ViewFieldList](https://docs-download.pingcap.com/media/images/docs/sqlgram/ViewFieldList.png)
 
 **ViewCheckOption:**
 
-![ViewCheckOption](https://download.pingcap.com/images/docs/sqlgram/ViewCheckOption.png)
+![ViewCheckOption](https://docs-download.pingcap.com/media/images/docs/sqlgram/ViewCheckOption.png)
 
 ## Examples
 

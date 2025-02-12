@@ -12,15 +12,15 @@ This statement copies the definition of an existing table, without copying any d
 
 **CreateTableStmt:**
 
-![CreateTableStmt](https://download.pingcap.com/images/docs/sqlgram/CreateTableStmt.png)
+![CreateTableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/CreateTableStmt.png)
 
 **LikeTableWithOrWithoutParen:**
 
-![LikeTableWithOrWithoutParen](https://download.pingcap.com/images/docs/sqlgram/LikeTableWithOrWithoutParen.png)
+![LikeTableWithOrWithoutParen](https://docs-download.pingcap.com/media/images/docs/sqlgram/LikeTableWithOrWithoutParen.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 ## Examples
 

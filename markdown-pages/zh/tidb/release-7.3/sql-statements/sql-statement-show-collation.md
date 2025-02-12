@@ -15,7 +15,7 @@ summary: TiDB 数据库中 SHOW COLLATION 的使用概况。
 
 **ShowCollationStmt:**
 
-![ShowCollationStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowCollationStmt.png)
+![ShowCollationStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowCollationStmt.png)
 
 ## 示例
 

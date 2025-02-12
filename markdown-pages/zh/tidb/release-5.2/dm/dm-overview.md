@@ -26,7 +26,7 @@ DM 工具的文档目前独立于 TiDB 文档。要访问 DM 工具的文档，�
 
 本节介绍 DM 工具的核心功能模块。
 
-![DM Core Features](https://download.pingcap.com/images/docs-cn/dm/dm-core-features.png)
+![DM Core Features](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-core-features.png)
 
 ### Block & allow lists
 

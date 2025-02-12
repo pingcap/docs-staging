@@ -12,7 +12,7 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-delete/','/docs-cn/v3.0/re
 
 **DeleteFromStmt:**
 
-![DeleteFromStmt](https://download.pingcap.com/images/docs-cn/sqlgram/DeleteFromStmt.png)
+![DeleteFromStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DeleteFromStmt.png)
 
 ## 示例
 

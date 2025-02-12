@@ -11,23 +11,23 @@ summary: TiDB 数据库中 SHOW INDEXES [FROM|IN] 的使用概况。
 
 **ShowIndexStmt:**
 
-![ShowIndexStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowIndexStmt.png)
+![ShowIndexStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowIndexStmt.png)
 
 **ShowIndexKwd:**
 
-![ShowIndexKwd](https://download.pingcap.com/images/docs-cn/sqlgram/ShowIndexKwd.png)
+![ShowIndexKwd](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowIndexKwd.png)
 
 **FromOrIn:**
 
-![FromOrIn](https://download.pingcap.com/images/docs-cn/sqlgram/FromOrIn.png)
+![FromOrIn](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/FromOrIn.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 **ShowLikeOrWhereOpt:**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## 示例
 

@@ -71,4 +71,4 @@ To understand the key metrics displayed on the Overview dashboard, check the fol
 
 ## Interface of the Overview dashboard
 
-![overview](https://download.pingcap.com/images/docs/grafana-monitor-overview.png)
+![overview](https://docs-download.pingcap.com/media/images/docs/grafana-monitor-overview.png)

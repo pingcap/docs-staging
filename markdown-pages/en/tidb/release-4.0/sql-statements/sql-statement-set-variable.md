@@ -16,11 +16,11 @@ The statement `SET [GLOBAL|SESSION]` modifies one of TiDB's built in variables, 
 
 **SetStmt:**
 
-![SetStmt](https://download.pingcap.com/images/docs/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetStmt.png)
 
 **VariableAssignment:**
 
-![VariableAssignment](https://download.pingcap.com/images/docs/sqlgram/VariableAssignment.png)
+![VariableAssignment](https://docs-download.pingcap.com/media/images/docs/sqlgram/VariableAssignment.png)
 
 ## Examples
 

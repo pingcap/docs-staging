@@ -13,7 +13,7 @@ You can use one of the following two methods to access the Key Visualizer page:
 
 * After logging into TiDB Dashboard, click **Key Visualizer** on the left navigation menu:
 
-![Access Key Visualizer](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-access.png)
+![Access Key Visualizer](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-access.png)
 
 * Visit <http://127.0.0.1:2379/dashboard/#/keyviz> in your browser. Replace `127.0.0.1:2379` with the actual PD instance address and port.
 
@@ -21,7 +21,7 @@ You can use one of the following two methods to access the Key Visualizer page:
 
 The following image is a demonstration of the Key Visualizer page:
 
-![Key Visualizer page](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-overview.png)
+![Key Visualizer page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-overview.png)
 
 From the interface above, you can see the following objects:
 
@@ -66,19 +66,19 @@ This section introduces how to use Key Visualizer.
 
 To use the Key Visualizer page for the first time, you need to manually enable this feature on the **Settings** page. Follow the page guide and click **Open Settings** to open the settings page:
 
-![Feature disabled](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-not-enabled.png)
+![Feature disabled](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-not-enabled.png)
 
 After this feature is enabled, you can open the settings page by clicking the **Settings** icon in the upper right corner:
 
-![Settings icon](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-settings-button.png)
+![Settings icon](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-settings-button.png)
 
 The settings page is shown as follows:
 
-![Settings page](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-settings.png)
+![Settings page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-settings.png)
 
 Set whether to start data collection through the switch, and click **Save** to take effect. After enabling the feature, you can see that the toolbar is available:
 
-![Toolbar](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-toolbar.png)
+![Toolbar](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-toolbar.png)
 
 After this feature is enabled, data collection is going on at the backend. You can see the heatmap shortly.
 
@@ -90,12 +90,12 @@ When you open Key Visualizer, the heatmap of the entire database over the recent
 2. Click and drag one of the following buttons to select the range.
     + Click the **Select & Zoom** button. Then click and drag this button to select the area to zoom in.
 
-    ![Selection box](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-select-zoom.gif)
+    ![Selection box](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-select-zoom.gif)
 
     + Click the **Reset** button to reset the Region range to the entire database.
     + Click the **time selection box** (at the position of `6 hours` on the interface above) and select the observation time period again.
 
-    ![Select time](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-select-time.png)
+    ![Select time](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-select-time.png)
 
 > **Note:**
 >
@@ -111,7 +111,7 @@ The heatmap uses colors of different brightnesses to indicate the Bucket traffic
 
 ### Select metrics
 
-![Select metrics](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-select-type.png)
+![Select metrics](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-select-type.png)
 
 You can view a metric you are interested in by selecting this metric in the **metrics selection box** (at the `Write (bytes)` position in the interface above):
 
@@ -133,11 +133,11 @@ To regain a heatmap based on the current time, click the **Refresh** button. If 
 
 You can hover your mouse over the Bucket you are interested in to view the detailed information of this Region range. The image below is an example of this information:
 
-![Bucket details](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-tooltip.png)
+![Bucket details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-tooltip.png)
 
 If you want to copy this information, click a Bucket. Then, the page with relevant details is temporarily pinned. Click on the information, and you have copied it to the clipboard.
 
-![Copy Bucket details](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-tooltip-copy.png)
+![Copy Bucket details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-tooltip-copy.png)
 
 ## Common heatmap types
 
@@ -145,19 +145,19 @@ This section shows and interprets four common types of heatmap in Key Visualizer
 
 ### Evenly distributed workload
 
-![Balanced](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-well-dist.png)
+![Balanced](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-well-dist.png)
 
 In the heatmap above, bright and dark colors are a fine-grained mix. This indicates that reads or writes are evenly distributed over time and among key ranges. The workload is evenly distributed to all nodes, which is ideal for a distributed database.
 
 ### Periodically reads and writes
 
-![Periodically](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-period.png)
+![Periodically](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-period.png)
 
 In the heatmap above, there is an alternating brightness and darkness along the X-axis (time) but the brightness is relatively even along the Y-axis (Region). This indicates that the reads and writes change periodically, which might occur in scenarios of periodically scheduled tasks. For example, the big data platform periodically extracts data from TiDB every day. In this kind of scenarios, pay attention to whether the resources are sufficient during peak usage.
 
 ### Concentrated reads or writes
 
-![Concentrated](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-continue.png)
+![Concentrated](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-continue.png)
 
 In the heatmap above, you can see several bright lines. Along the Y-axis, the fringes around the bright lines are dark, which indicates that the Regions corresponding to bright lines have high read and write traffic. You can observe whether the traffic distribution is expected by your application. For example, when all services are associated with the user table, the overall traffic of the user table can be high, so it is reasonable to show bright lines in the heatmap.
 
@@ -165,7 +165,7 @@ In addition, the height of the bright lines (the thickness along the Y-axis) is 
 
 ### Sequential reads or writes
 
-![Sequential](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-sequential.png)
+![Sequential](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-sequential.png)
 
 In the heatmap above, you can see a bright line. This means that the data reads or writes are sequential. Typical scenarios of sequential data reads or writes are importing data or scanning tables and indexes. For example, you continuously write data to tables with auto-increment IDs.
 

@@ -82,4 +82,4 @@ title: Overview 面板重要监控指标详解
 
 ## 图例
 
-![overview](https://download.pingcap.com/images/docs-cn/grafana_monitor_overview.png)
+![overview](https://docs-download.pingcap.com/media/images/docs-cn/grafana_monitor_overview.png)

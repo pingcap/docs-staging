@@ -43,7 +43,7 @@ For details about how to control and manage TiDB SQL users, see [TiDB User Accou
 
 If an SQL user does not meet the preceding privilege requirements, the user fails to sign in to TiDB Dashboard, as shown below.
 
-![insufficient-privileges](https://download.pingcap.com/images/docs/dashboard/dashboard-user-insufficient-privileges.png)
+![insufficient-privileges](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-user-insufficient-privileges.png)
 
 ## Example: Create a least-privileged SQL user to access TiDB Dashboard
 
@@ -57,7 +57,7 @@ If an SQL user does not meet the preceding privilege requirements, the user fail
 
     -- To modify the configuration items on the interface after signing in to TiDB Dashboard, the user-defined SQL user must be granted with the following privilege.
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboardAdmin'@'%';
-    
+
     -- To use the Fast Bind Executions Plan feature (https://docs.pingcap.com/tidb/v6.6/dashboard-statement-details#fast-plan-binding) on the interface after signing in to TiDB Dashboard, the user-defined SQL user must be granted with the following privileges.
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboardAdmin'@'%';
     GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';
@@ -76,7 +76,7 @@ If an SQL user does not meet the preceding privilege requirements, the user fail
 
     -- To modify the configuration items on the interface after signing in to TiDB Dashboard, the user-defined SQL user must be granted with the following privilege.
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboardAdmin'@'%';
-    
+
     -- To use the Fast Bind Executions Plan feature (https://docs.pingcap.com/tidb/v6.6/dashboard-statement-details#fast-plan-binding) on the interface after signing in to TiDB Dashboard, the user-defined SQL user must be granted with the following privileges.
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboardAdmin'@'%';
     GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';
@@ -94,7 +94,7 @@ The following example demonstrates how to create a role and a user to access TiD
     GRANT SHOW DATABASES ON *.* TO 'dashboard_access'@'%';
     GRANT DASHBOARD_CLIENT ON *.* TO 'dashboard_access'@'%';
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboard_access'@'%';
-    GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';    
+    GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';
     ```
 
 2. Grant the `dashboard_access` role to other users and set `dashboard_access` as the default role:

@@ -42,7 +42,7 @@ Raft 是一种分布式一致性算法，在 TiDB 集群的多种组件中，PD 
 
 集群 TiDB、TiKV 和 PD 组件分别部署在 3 个不同的 AZ，这是最常规且高可用性最高的方案。
 
-![三 AZ 部署](https://download.pingcap.com/images/docs-cn/deploy-3dc.png)
+![三 AZ 部署](https://docs-download.pingcap.com/media/images/docs-cn/deploy-3dc.png)
 
 **优点：**
 
@@ -50,7 +50,7 @@ Raft 是一种分布式一致性算法，在 TiDB 集群的多种组件中，PD 
 - 任何一个 AZ 失效后，不会产生任何数据丢失 (RPO = 0)
 - 任何一个 AZ 失效后，其他两个 AZ 会自动发起 leader election，并在一定时间内（通常 20s 以内）自动恢复服务
 
-![三 AZ 部署容灾](https://download.pingcap.com/images/docs-cn/deploy-3dc-dr.png)
+![三 AZ 部署容灾](https://docs-download.pingcap.com/media/images/docs-cn/deploy-3dc-dr.png)
 
 **缺点：**
 
@@ -65,7 +65,7 @@ Raft 是一种分布式一致性算法，在 TiDB 集群的多种组件中，PD 
 
 如果不需要每个 AZ 同时对外提供服务，可以将业务流量全部派发到一个 AZ，并通过调度策略把 Region leader 和 PD leader 都迁移到同一个 AZ。这样，不管是从 PD 获取 TSO，还是读取 Region，都不会受 AZ 间网络的影响。当该 AZ 失效时，PD leader 和 Region leader 会自动在其它 AZ 选出，只需要把业务流量转移至其他存活的 AZ 即可。
 
-![三 AZ 部署读性能优化](https://download.pingcap.com/images/docs-cn/deploy-3dc-optimize.png)
+![三 AZ 部署读性能优化](https://docs-download.pingcap.com/media/images/docs-cn/deploy-3dc-optimize.png)
 
 **优点：**
 
@@ -101,7 +101,7 @@ member leader_priority pdName3 3
 
 假设某区域有三个 AZ，AZ1、AZ2 和 AZ3。每个 AZ 中有两套机架，每个机架有三台服务器，不考虑混合布署以及单台机器多实例部署，同区域三 AZ 架构集群（3 副本）部署参考如下：
 
-![同区域三 AZ 集群部署](https://download.pingcap.com/images/docs-cn/multi-data-centers-in-one-city-deployment-sample.png)
+![同区域三 AZ 集群部署](https://docs-download.pingcap.com/media/images/docs-cn/multi-data-centers-in-one-city-deployment-sample.png)
 
 #### TiKV Labels 简介
 

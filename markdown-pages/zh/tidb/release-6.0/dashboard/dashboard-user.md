@@ -33,12 +33,12 @@ TiDB Dashboard 与 TiDB 使用相同的用户权限体系和登录验证方式�
     - SYSTEM_VARIABLES_ADMIN
 
 > **注意：**
-> 
+>
 > 拥有 `ALL PRIVILEGES` 或 `SUPER` 等粗粒度高权限的用户同样可以登录 TiDB Dashboard。出于最小权限原则，强烈建议创建用户时仅使用上述精细权限，从而防止用户执行非预期操作。请参阅[权限管理](/privilege-management.md)了解这些权限的详细信息。
 
 如果登录 TiDB Dashboard 时指定的 SQL 用户未满足上述权限需求，则登录将失败，如下图所示：
 
-![insufficient-privileges](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-user-insufficient-privileges.png)
+![insufficient-privileges](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-user-insufficient-privileges.png)
 
 ## 示例：创建一个最小权限 SQL 用户用于登录 TiDB Dashboard
 

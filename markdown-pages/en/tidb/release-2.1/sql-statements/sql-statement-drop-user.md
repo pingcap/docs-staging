@@ -12,11 +12,11 @@ This statement removes a user from the TiDB system database. The optional keywor
 
 **DropUserStmt:**
 
-![DropUserStmt](https://download.pingcap.com/images/docs/sqlgram/DropUserStmt.png)
+![DropUserStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/DropUserStmt.png)
 
 **Username:**
 
-![Username](https://download.pingcap.com/images/docs/sqlgram/Username.png)
+![Username](https://docs-download.pingcap.com/media/images/docs/sqlgram/Username.png)
 
 ## Examples
 

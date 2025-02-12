@@ -20,7 +20,7 @@ TiKV 集群是 TiDB 数据库的分布式 KV 存储引擎，数据以 Region 为
     * 从节点的恢复时间来看
         * 如果节点只是短暂掉线（重启服务），是否需要进行调度。
         * 如果节点是长时间掉线（磁盘故障，数据全部丢失），如何进行调度。
-    * 假设集群需要每个 Raft Group 有 N 个副本，从单个 Raft Group 的副本个数来看 
+    * 假设集群需要每个 Raft Group 有 N 个副本，从单个 Raft Group 的副本个数来看
         * 副本数量不够（例如节点掉线，失去副本），需要选择适当的机器的进行补充。
         * 副本数量过多（例如掉线的节点又恢复正常，自动加入集群），需要合理的删除多余的副本。
 * 读/写通过 Leader 进行，Leader 的分布只集中在少量几个节点会对集群造成影响。
@@ -85,7 +85,7 @@ TiKV 节点（Store）与 PD 之间存在心跳包，一方面 PD 通过心跳�
 + **Offline**：当对某个 TiKV Store 通过 PD Control 进行手动下线操作，该 Store 会变为 Offline 状态。该状态只是 Store 下线的中间状态，处于该状态的 Store 会将其上的所有 Region 搬离至其它满足搬迁条件的 Up 状态 Store。当该 Store 的 `leader_count` 和 `region_count` (在 PD Control 中获取) 均显示为 0 后，该 Store 会由 Offline 状态变为 Tombstone 状态。在 Offline 状态下，禁止关闭该 Store 服务以及其所在的物理服务器。下线过程中，如果集群里不存在满足搬迁条件的其它目标 Store（例如没有足够的 Store 能够继续满足集群的副本数量要求），该 Store 将一直处于 Offline 状态。
 + **Tombstone**：表示该 TiKV Store 已处于完全下线状态，可以使用 `remove-tombstone` 接口安全地清理该状态的 TiKV。
 
-![TiKV store status relationship](https://download.pingcap.com/images/docs-cn/tikv-store-status-relationship.png)
+![TiKV store status relationship](https://docs-download.pingcap.com/media/images/docs-cn/tikv-store-status-relationship.png)
 
 **每个 Raft Group 的 Leader 会定期向 PD 汇报 Region 的状态信息**
 

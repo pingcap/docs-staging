@@ -14,7 +14,7 @@ aliases: ['/docs-cn/stable/dashboard/dashboard-cluster-info/','/docs-cn/v4.0/das
 
 - 登录后，左侧导航条点击**集群信息**：
 
-  ![访问](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-cluster-info-access.png)
+  ![访问](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-cluster-info-access.png)
 
 - 在浏览器中访问 <http://127.0.0.1:2379/dashboard/#/cluster_info/instance>（将 `127.0.0.1:2379` 替换为实际 PD 实例地址和端口）。
 
@@ -22,7 +22,7 @@ aliases: ['/docs-cn/stable/dashboard/dashboard-cluster-info/','/docs-cn/v4.0/das
 
 点击**实例**可查看实例列表：
 
-![实例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-cluster-info-instances.png)
+![实例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-cluster-info-instances.png)
 
 实例列表列出了该集群中 TiDB、TiKV、PD 和 TiFlash 组件所有实例的概况信息。
 
@@ -51,7 +51,7 @@ aliases: ['/docs-cn/stable/dashboard/dashboard-cluster-info/','/docs-cn/v4.0/das
 
 点击**主机**可查看主机列表：
 
-![主机](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-cluster-info-hosts.png)
+![主机](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-cluster-info-hosts.png)
 
 主机列表列出了该集群中 TiDB、TiKV、PD 和 TiFlash 组件所有实例对应主机的运行情况。
 

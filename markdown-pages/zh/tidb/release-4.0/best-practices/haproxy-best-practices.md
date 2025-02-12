@@ -7,7 +7,7 @@ aliases: ['/docs-cn/stable/best-practices/haproxy-best-practices/','/docs-cn/v4.
 
 本文介绍 [HAProxy](https://github.com/haproxy/haproxy) 在 TiDB 中的最佳配置和使用方法。HAProxy 提供 TCP 协议下的负载均衡能力，TiDB 客户端通过连接 HAProxy 提供的浮动 IP 即可对数据进行操作，实现 TiDB Server 层的负载均衡。
 
-![HAProxy 在 TiDB 中的最佳实践](https://download.pingcap.com/images/docs-cn/haproxy.jpg)
+![HAProxy 在 TiDB 中的最佳实践](https://docs-download.pingcap.com/media/images/docs-cn/haproxy.jpg)
 
 ## HAProxy 简介
 
@@ -76,14 +76,14 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下部署操作具�
 
 1. 使用 yum 安装 HAProxy：
 
-    
+
     ```bash
     yum -y install haproxy
     ```
 
 2. 验证 HAProxy 安装是否成功：
 
-    
+
     ```bash
     which haproxy
     ```
@@ -180,14 +180,14 @@ listen tidb-cluster                        # 配置 database 负载均衡。
 
 - 方法一：执行 `haproxy`，默认读取 `/etc/haproxy/haproxy.cfg`（推荐）。
 
-    
+
     ```bash
     haproxy -f /etc/haproxy/haproxy.cfg
     ```
 
 - 方法二：使用 `systemd` 启动 HAProxy。
 
-    
+
     ```bash
     systemctl start haproxy.service
     ```
@@ -198,21 +198,21 @@ listen tidb-cluster                        # 配置 database 负载均衡。
 
     1. 执行如下命令：
 
-        
+
         ```bash
         ps -ef | grep haproxy
         ```
 
     2. 终止 HAProxy 相关的 PID 进程：
 
-        
+
         ```bash
         kill -9 ${haproxy.pid}
         ```
 
 - 方法二：使用 `systemd`。
 
-    
+
     ```bash
     systemctl stop haproxy.service
     ```

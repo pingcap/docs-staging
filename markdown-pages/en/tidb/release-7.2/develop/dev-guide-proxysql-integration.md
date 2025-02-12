@@ -29,7 +29,7 @@ ProxySQL is designed from the ground up to be fast, efficient, and easy to use. 
 
 The most obvious way to deploy ProxySQL with TiDB is to add ProxySQL as a standalone intermediary between the application layer and TiDB. However, the scalability and failure tolerance are not guaranteed, and it also adds additional latency due to network hop. To avoid these problems, an alternate deployment architecture is to deploy ProxySQL as a sidecar as below:
 
-![proxysql-client-side-tidb-cloud](https://download.pingcap.com/images/docs/develop/proxysql-client-side-tidb-cloud.png)
+![proxysql-client-side-tidb-cloud](https://docs-download.pingcap.com/media/images/docs/develop/proxysql-client-side-tidb-cloud.png)
 
 > **Note:**
 >
@@ -85,7 +85,7 @@ systemctl start docker
     1. Download the **64-bit Git for Windows Setup** package from the [Git Windows Download](https://git-scm.com/download/win) page.
     2. Install the Git package by following the setup wizard. You can click **Next** for a few times to use the default installation settings.
 
-        ![proxysql-windows-git-install](https://download.pingcap.com/images/docs/develop/proxysql-windows-git-install.png)
+        ![proxysql-windows-git-install](https://docs-download.pingcap.com/media/images/docs/develop/proxysql-windows-git-install.png)
 
 - Download and install MySQL Shell.
 
@@ -109,7 +109,7 @@ systemctl start docker
     1. Download Docker Desktop installer from the [Docker Download](https://www.docker.com/products/docker-desktop/) page.
     2. Double-click the installer to run it. After the installation is completed, you will be prompted for a restart.
 
-        ![proxysql-windows-docker-install](https://download.pingcap.com/images/docs/develop/proxysql-windows-docker-install.png)
+        ![proxysql-windows-docker-install](https://docs-download.pingcap.com/media/images/docs/develop/proxysql-windows-docker-install.png)
 
 - Download the latest Python 3 installer from the [Python Download](https://www.python.org/downloads/) page and run it.
 
@@ -690,11 +690,11 @@ To use ProxySQL as a proxy for TiDB, you need to configure ProxySQL. To do so, y
 2. Configure the TiDB clusters to be used, where you can add one or multiple TiDB clusters to ProxySQL. The following statement will add one TiDB Dedicated cluster for example. You need to replace `<tidb cloud dedicated cluster host>` and `<tidb cloud dedicated cluster port>` with your TiDB Cloud endpoint and port (the default port is `4000`).
 
     ```sql
-    INSERT INTO mysql_servers(hostgroup_id, hostname, port) 
-    VALUES 
+    INSERT INTO mysql_servers(hostgroup_id, hostname, port)
+    VALUES
       (
         0,
-        '<tidb cloud dedicated cluster host>', 
+        '<tidb cloud dedicated cluster host>',
         <tidb cloud dedicated cluster port>
       );
     LOAD mysql servers TO runtime;
@@ -711,13 +711,13 @@ To use ProxySQL as a proxy for TiDB, you need to configure ProxySQL. To do so, y
 
     ```sql
     INSERT INTO mysql_users(
-      username, password, active, default_hostgroup, 
+      username, password, active, default_hostgroup,
       transaction_persistent
-    ) 
-    VALUES 
+    )
+    VALUES
       (
-        '<tidb cloud dedicated cluster username>', 
-        '<tidb cloud dedicated cluster password>', 
+        '<tidb cloud dedicated cluster username>',
+        '<tidb cloud dedicated cluster password>',
         1, 0, 1
       );
     LOAD mysql users TO runtime;
@@ -798,7 +798,7 @@ This section takes query routing as an example to show some of the benefits that
 
 Databases can be overloaded by high traffic, faulty code, or malicious spam. With query rules of ProxySQL, you can respond to these issues quickly and effectively by rerouting, rewriting, or rejecting queries.
 
-![proxysql-client-side-rules](https://download.pingcap.com/images/docs/develop/proxysql-client-side-rules.png)
+![proxysql-client-side-rules](https://docs-download.pingcap.com/media/images/docs/develop/proxysql-client-side-rules.png)
 
 > **Note:**
 >

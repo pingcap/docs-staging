@@ -12,7 +12,7 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-load-data/','/docs-cn/v2.1
 
 **LoadDataStmt:**
 
-![LoadDataStmt](https://download.pingcap.com/images/docs-cn/sqlgram/LoadDataStmt.png)
+![LoadDataStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/LoadDataStmt.png)
 
 ## 示例
 

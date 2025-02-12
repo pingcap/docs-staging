@@ -12,19 +12,19 @@ This statement removes an index from a specified table, marking space as free in
 
 **AlterTableStmt:**
 
-![AlterTableStmt](https://download.pingcap.com/images/docs/sqlgram/AlterTableStmt.png)
+![AlterTableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/AlterTableStmt.png)
 
 **AlterTableSpec:**
 
-![AlterTableSpec](https://download.pingcap.com/images/docs/sqlgram/AlterTableSpec.png)
+![AlterTableSpec](https://docs-download.pingcap.com/media/images/docs/sqlgram/AlterTableSpec.png)
 
 **KeyOrIndex:**
 
-![KeyOrIndex](https://download.pingcap.com/images/docs/sqlgram/KeyOrIndex.png)
+![KeyOrIndex](https://docs-download.pingcap.com/media/images/docs/sqlgram/KeyOrIndex.png)
 
 **Identifier:**
 
-![Identifier](https://download.pingcap.com/images/docs/sqlgram/Identifier.png)
+![Identifier](https://docs-download.pingcap.com/media/images/docs/sqlgram/Identifier.png)
 
 ## Examples
 

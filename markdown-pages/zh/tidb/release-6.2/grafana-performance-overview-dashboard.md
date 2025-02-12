@@ -145,4 +145,4 @@ Connection Idle Duration 指空闲连接的持续时间。
 
 ## 图例
 
-![performance overview](https://download.pingcap.com/images/docs-cn/performance/grafana_performance_overview.png)
+![performance overview](https://docs-download.pingcap.com/media/images/docs-cn/performance/grafana_performance_overview.png)

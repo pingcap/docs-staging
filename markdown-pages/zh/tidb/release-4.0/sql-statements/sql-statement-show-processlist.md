@@ -12,11 +12,11 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-processlist/','/doc
 
 **ShowProcesslistStmt:**
 
-![ShowProcesslistStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowProcesslistStmt.png)
+![ShowProcesslistStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowProcesslistStmt.png)
 
 **OptFull:**
 
-![OptFull](https://download.pingcap.com/images/docs-cn/sqlgram/OptFull.png)
+![OptFull](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/OptFull.png)
 
 ## 示例
 

@@ -15,7 +15,7 @@ You can use one of the following two methods to access the SQL statement summary
 
 - After logging into TiDB Dashboard, click **SQL Statements** on the left navigation menu:
 
-  ![Access SQL statement summary page](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-access.png)
+  ![Access SQL statement summary page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-access.png)
 
 - Visit <http://127.0.0.1:2379/dashboard/#/statement> in your browser. Replace `127.0.0.1:2379` with the actual PD instance address and port.
 
@@ -23,35 +23,35 @@ All the data shown on the SQL statement summary page are from the TiDB statement
 
 > **Note:**
 >
-> In the **Mean Latency** column of the SQL statement summary page, the blue bar indicates the average execution time. If there is a yellow line on the blue bar for an SQL statement, the left and right sides of the yellow line respectively represent the minimum and maximum execution time of the SQL statement during the recent data collection cycle. 
+> In the **Mean Latency** column of the SQL statement summary page, the blue bar indicates the average execution time. If there is a yellow line on the blue bar for an SQL statement, the left and right sides of the yellow line respectively represent the minimum and maximum execution time of the SQL statement during the recent data collection cycle.
 
 ### Change Filters
 
 On the top of the SQL statement summary page, you can modify the time range of SQL executions to be displayed. You can also filter the list by database in which SQL statements are executed, or by SQL types. The following image shows all SQL executions over the recent data collection cycle (recent 30 minutes by default).
 
-![Modify filters](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-filter-options.png)
+![Modify filters](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-filter-options.png)
 
 ### Display More Columns
 
 Click **Columns** on the page and you can choose to see more columns. You can move your mouse to the **(i)** icon at the right side of a column name to view the description of this column:
 
-![Choose columns](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-columns-selector.png)
+![Choose columns](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-columns-selector.png)
 
 ### Sort by Column
 
 By default, the list is sorted by **Total Latency** from high to low. Click on different column headings to modify the sorting basis or switch the sorting order:
 
-![Modify list sorting](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-change-order.png)
+![Modify list sorting](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-change-order.png)
 
 ### Change Settings
 
 On the list page, click the **Settings** button on the top right to change the settings of the SQL statements feature:
 
-![Settings entry](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-setting-entry.png)
+![Settings entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-setting-entry.png)
 
 After clicking the **Settings** button, you can see the following setting dialog box:
 
-![Settings](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-settings.png)
+![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-settings.png)
 
 On the setting page, you can disable or enable the SQL statements feature. When the SQL statements feature is enabled, you can modify the following settings:
 

@@ -64,7 +64,7 @@ scrape_configs:
 
 ### 第一行：速度面板
 
-![第一行速度面板](https://download.pingcap.com/images/docs-cn/lightning-grafana-row-1.png)
+![第一行速度面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-1.png)
 
 | 面板名称 | 序列 | 描述 |
 |:-----|:-----|:-----|
@@ -76,7 +76,7 @@ scrape_configs:
 
 ### 第二行：进度面板
 
-![第二行进度面板](https://download.pingcap.com/images/docs-cn/lightning-grafana-row-2.png)
+![第二行进度面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-2.png)
 
 | 面板名称 | 描述 |
 |:-----|:-----|
@@ -86,7 +86,7 @@ scrape_configs:
 
 ### 第三行：资源使用面板
 
-![第三行资源使用面板](https://download.pingcap.com/images/docs-cn/lightning-grafana-row-3.png)
+![第三行资源使用面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-3.png)
 
 | 面板名称 | 描述 |
 |:-----|:-----|
@@ -96,7 +96,7 @@ scrape_configs:
 
 ### 第四行：配额使用面板
 
-![第四行配额使用面板](https://download.pingcap.com/images/docs-cn/lightning-grafana-row-4.png)
+![第四行配额使用面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-4.png)
 
 | 面板名称 | 序列 | 描述 |
 |:-----|:-----|:-----|
@@ -110,7 +110,7 @@ scrape_configs:
 
 ### 第五行：读取速度面板
 
-![第五行读取速度面板](https://download.pingcap.com/images/docs-cn/lightning-grafana-row-5.png)
+![第五行读取速度面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-5.png)
 
 | 面板名称 | 序列 | 描述 |
 |:-----|:-----|:-----|
@@ -123,7 +123,7 @@ scrape_configs:
 
 ### 第六行：存储空间面板
 
-![第六行存储空间面板](https://download.pingcap.com/images/docs-cn/lightning-grafana-row-6.png)
+![第六行存储空间面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-6.png)
 
 | 面板名称 | 序列 |描述 |
 |:-----|:-----|:-----|
@@ -137,7 +137,7 @@ scrape_configs:
 
 ### 第七行：导入速度面板
 
-![第七行导入速度面板](https://download.pingcap.com/images/docs-cn/lightning-grafana-row-7.png)
+![第七行导入速度面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-7.png)
 
 | 面板名称 | 序列 | 描述 |
 |:-----|:-----|:-----|

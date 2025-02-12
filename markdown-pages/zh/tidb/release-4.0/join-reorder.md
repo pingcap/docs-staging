@@ -13,15 +13,15 @@ aliases: ['/docs-cn/stable/join-reorder/','/docs-cn/v4.0/join-reorder/','/docs-c
 
 以三个表 t1、t2、t3 的 Join 为例。首先获取所有参与 Join 的节点，将所有节点按照行数多少，从少到多进行排序。
 
-![join-reorder-1](https://download.pingcap.com/images/docs-cn/join-reorder-1.png)
+![join-reorder-1](https://docs-download.pingcap.com/media/images/docs-cn/join-reorder-1.png)
 
 之后选定其中最小的表，将其与其他两个表分别做一次 Join，观察输出的结果集大小，选择其中结果更小的一对。
 
-![join-reorder-2](https://download.pingcap.com/images/docs-cn/join-reorder-2.png)
+![join-reorder-2](https://docs-download.pingcap.com/media/images/docs-cn/join-reorder-2.png)
 
 然后进入下一轮的选择，如果这时是四个表，那么就继续比较输出结果集的大小，进行选择。这里只有三个表，因此就直接得到了最终的 Join 结果。
 
-![join-reorder-3](https://download.pingcap.com/images/docs-cn/join-reorder-3.png)
+![join-reorder-3](https://docs-download.pingcap.com/media/images/docs-cn/join-reorder-3.png)
 
 以上就是当前 TiDB 中使用的 Join reorder 算法。
 

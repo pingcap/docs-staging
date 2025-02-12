@@ -12,7 +12,7 @@ The statement `KILL TIDB` is used to terminate connections in TiDB.
 
 **KillStmt:**
 
-![KillStmt](https://download.pingcap.com/images/docs/sqlgram/KillStmt.png)
+![KillStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/KillStmt.png)
 
 ## Examples
 

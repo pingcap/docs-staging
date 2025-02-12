@@ -14,7 +14,7 @@ In the absence of a `BEGIN` statement, every statement will by default autocommi
 
 **BeginTransactionStmt:**
 
-![BeginTransactionStmt](https://download.pingcap.com/images/docs/sqlgram/BeginTransactionStmt.png)
+![BeginTransactionStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/BeginTransactionStmt.png)
 
 ## Examples
 

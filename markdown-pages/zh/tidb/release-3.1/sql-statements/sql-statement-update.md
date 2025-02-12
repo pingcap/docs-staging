@@ -12,23 +12,23 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-update/','/docs-cn/v3.1/re
 
 **UpdateStmt:**
 
-![UpdateStmt](https://download.pingcap.com/images/docs-cn/sqlgram/UpdateStmt.png)
+![UpdateStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/UpdateStmt.png)
 
 **TableRef:**
 
-![TableRef](https://download.pingcap.com/images/docs-cn/sqlgram/TableRef.png)
+![TableRef](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableRef.png)
 
 **TableRefs:**
 
-![TableRefs](https://download.pingcap.com/images/docs-cn/sqlgram/TableRefs.png)
+![TableRefs](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableRefs.png)
 
 **AssignmentList:**
 
-![AssignmentList](https://download.pingcap.com/images/docs-cn/sqlgram/AssignmentList.png)
+![AssignmentList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/AssignmentList.png)
 
 **WhereClauseOptional:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs-cn/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/WhereClauseOptional.png)
 
 ## 示例
 

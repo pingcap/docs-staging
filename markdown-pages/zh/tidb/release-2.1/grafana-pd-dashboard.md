@@ -29,7 +29,7 @@ aliases: ['/docs-cn/v2.1/grafana-pd-dashboard/','/docs-cn/v2.1/reference/key-mon
 - Region label isolation level：不同 label 所在的 level 的 Region 数量
 - Region health：每个 Region 的状态，通常情况下，pending 的 peer 应该少于 100，miss 的 peer 不能一直大于 0
 
-![PD Dashboard - Cluster metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-cluster.png)
+![PD Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-cluster.png)
 
 ## Balance
 
@@ -45,7 +45,7 @@ aliases: ['/docs-cn/v2.1/grafana-pd-dashboard/','/docs-cn/v2.1/reference/key-mon
 - Store leader count：每个 TiKV 实例上所有 leader 的数量
 - Store Region count：每个 TiKV 实例上所有 Region 的数量
 
-![PD Dashboard - Balance metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-balance.png)
+![PD Dashboard - Balance metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-balance.png)
 
 ## HotRegion
 
@@ -58,7 +58,7 @@ aliases: ['/docs-cn/v2.1/grafana-pd-dashboard/','/docs-cn/v2.1/reference/key-mon
 - Hot read Region's leader read bytes：每个 TiKV 实例上热点的 leader 的读取大小
 - Hot read Region's peer read bytes：每个 TiKV 实例上热点的 peer 的读取大小
 
-![PD Dashboard - HotRegion metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-hot-region.png)
+![PD Dashboard - HotRegion metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-hot-region.png)
 
 ## Scheduler
 
@@ -73,7 +73,7 @@ aliases: ['/docs-cn/v2.1/grafana-pd-dashboard/','/docs-cn/v2.1/reference/key-mon
 - Replica checker：replica checker 的状态
 - Region merge checker：merge checker 的状态
 
-![PD Dashboard - Scheduler metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-scheduler.png)
+![PD Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-scheduler.png)
 
 ## Operator
 
@@ -88,14 +88,14 @@ aliases: ['/docs-cn/v2.1/grafana-pd-dashboard/','/docs-cn/v2.1/reference/key-mon
 - 99% Operator step duration：已完成的 operator 的步骤中，99% 所需花费的时间
 - 50% Operator step duration：已完成的 operator 的步骤中，50% 所需花费的时间
 
-![PD Dashboard - Operator metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-operator.png)
+![PD Dashboard - Operator metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-operator.png)
 
 ## gRPC
 
 - Completed commands rate：gRPC 命令的完成速率
 - 99% Completed commands duration：99% 的情况下，命令的完成时间
 
-![PD Dashboard - gRPC metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-grpc.png)
+![PD Dashboard - gRPC metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-grpc.png)
 
 ## etcd
 
@@ -108,14 +108,14 @@ aliases: ['/docs-cn/v2.1/grafana-pd-dashboard/','/docs-cn/v2.1/reference/key-mon
 - Raft committed index：最后一次 commit 的 Raft index
 - Raft applied index：最后一次 apply 的 Raft index
 
-![PD Dashboard - etcd metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-etcd.png)
+![PD Dashboard - etcd metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-etcd.png)
 
 ## TiDB
 
 - Handle requests count：TiDB 的请求数量
 - Handle requests duration：每个请求所花费的时间，99% 的情况下，应该小于 100ms
 
-![PD Dashboard - TiDB metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-tidb.png)
+![PD Dashboard - TiDB metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-tidb.png)
 
 ## Heartbeat
 
@@ -125,4 +125,4 @@ aliases: ['/docs-cn/v2.1/grafana-pd-dashboard/','/docs-cn/v2.1/reference/key-mon
 - Region schedule push：PD 向 TiKV 发送的调度命令的个数
 - 99% Region heartbeat latency：99% 的情况下，心跳的延迟
 
-![PD Dashboard - Heartbeat metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-heartbeat.png)
+![PD Dashboard - Heartbeat metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-heartbeat.png)

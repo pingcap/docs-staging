@@ -12,7 +12,7 @@ This statement shows a list of warnings that occurred for previously executed st
 
 **ShowWarningsStmt:**
 
-![ShowWarningsStmt](https://download.pingcap.com/images/docs/sqlgram/ShowWarningsStmt.png)
+![ShowWarningsStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowWarningsStmt.png)
 
 ## Examples
 

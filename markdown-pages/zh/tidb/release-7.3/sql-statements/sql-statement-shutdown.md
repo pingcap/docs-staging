@@ -11,7 +11,7 @@ summary: TiDB 数据库中 SHUTDOWN 的使用概况。
 
 **Statement:**
 
-![Statement](https://download.pingcap.com/images/docs-cn/sqlgram/ShutdownStmt.png)
+![Statement](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShutdownStmt.png)
 
 ## 示例
 

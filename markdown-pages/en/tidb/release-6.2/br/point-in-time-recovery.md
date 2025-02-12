@@ -21,7 +21,7 @@ This document introduces the design, capabilities, and architecture of PITR. If 
 
 The following are the procedures of using PITR in your business:
 
-![Point-in-Time Recovery](https://download.pingcap.com/images/docs/br/pitr-usage.png)
+![Point-in-Time Recovery](https://docs-download.pingcap.com/media/images/docs/br/pitr-usage.png)
 
 ### Back up data
 
@@ -98,7 +98,7 @@ PITR is used for snapshot backup and restoration *and* log backup and restoratio
 
 Log backup and restoration are implemented as follows:
 
-![BR log backup and restore architecture](https://download.pingcap.com/images/docs/br/br-log-arch.png)
+![BR log backup and restore architecture](https://docs-download.pingcap.com/media/images/docs/br/br-log-arch.png)
 
 When a log backup task is performed:
 

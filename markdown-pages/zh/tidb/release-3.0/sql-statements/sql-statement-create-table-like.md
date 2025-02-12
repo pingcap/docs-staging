@@ -12,15 +12,15 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-create-table-like/','/docs
 
 **CreateTableStmt:**
 
-![CreateTableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/CreateTableStmt.png)
+![CreateTableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CreateTableStmt.png)
 
 **LikeTableWithOrWithoutParen:**
 
-![LikeTableWithOrWithoutParen](https://download.pingcap.com/images/docs-cn/sqlgram/LikeTableWithOrWithoutParen.png)
+![LikeTableWithOrWithoutParen](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/LikeTableWithOrWithoutParen.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 ## 示例
 

@@ -19,7 +19,7 @@ title: TiDB Dashboard 诊断报告
 
 报告中报表示例如下：
 
-![示例报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-example-table.png)
+![示例报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-example-table.png)
 
 上图中，最上面蓝框内的 **Total Time Consume** 是报表名。下方红框内的内容是对该报表意义的解释，以及报表中各个字段的含义。
 
@@ -41,13 +41,13 @@ title: TiDB Dashboard 诊断报告
 
 **Report Time Range** 表显示生成报告的时间范围，包括开始时间和结束时间。
 
-![report time range 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-report-time-range.png)
+![report time range 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-report-time-range.png)
 
 #### Cluster Hardware
 
 **Cluster Hardware** 表显示集群中各服务器的硬件信息，包括 CPU、Memory、磁盘等信息。
 
-![Cluster Hardware 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-cluster-hardware.png)
+![Cluster Hardware 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-cluster-hardware.png)
 
 上表中各个字段含义如下：
 
@@ -62,7 +62,7 @@ title: TiDB Dashboard 诊断报告
 
 **Cluster Info** 为集群拓扑信息。表中信息来自 TiDB 的 [information_schema.cluster_info](/information-schema/information-schema-cluster-info.md) 系统表。
 
-![Cluster Info 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-cluster-info.png)
+![Cluster Info 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-cluster-info.png)
 
 上表中各个字段含义如下：
 
@@ -96,25 +96,25 @@ TiDB 内置自动诊断的结果，具体各字段含义以及介绍可以参考
 * 节点正在使用的 TCP 连接数
 * 节点所有的 TCP 连接数
 
-![Node Load Info 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-node-load-info.png)
+![Node Load Info 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-node-load-info.png)
 
 #### Instance CPU Usage
 
 **Instance CPU Usage** 表显示各个 TiDB/PD/TiKV 进程的 CPU 使用率的平均值 (AVG)，最大值 (MAX)，最小值 (MIN)，这里进程 CPU 使用率最大值是 `100% * CPU 逻辑核心数`。
 
-![Instance CPU Usage 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-process-cpu-usage.png)
+![Instance CPU Usage 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-process-cpu-usage.png)
 
 #### Instance Memory Usage
 
 **Instance Memory Usage** 表显示各个 TiDB/PD/TiKV 进程占用内存字节数的平均值 (AVG)，最大值 (MAX)，最小值 (MIN)。
 
-![Instance Memory Usage 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-process-memory-usage.png)
+![Instance Memory Usage 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-process-memory-usage.png)
 
 #### TiKV Thread CPU Usage
 
 **TiKV Thread CPU Usage** 表显示 TiKV 内部各个模块线程的 CPU 使用率的平均值 (AVG)、最大值 (MAX)、和最小值 (MIN)。这里进程 CPU 使用率最大值为 `100% * 对应配置的线程数量`。
 
-![TiKV Thread CPU Usage 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-thread-cpu-usage.png)
+![TiKV Thread CPU Usage 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-thread-cpu-usage.png)
 
 上表中的字段解释如下：
 
@@ -129,7 +129,7 @@ TiDB 内置自动诊断的结果，具体各字段含义以及介绍可以参考
 
 **TiDB/PD Goroutines Count** 表显示 TiDB/PD goroutines 数量的平均值 (AVG)，最大值 (MAX)，和最小值 (MIN)。如果 goroutines 数量超过 2000，说明该进程并发太高，会对整体请求的延迟有影响。
 
-![TiDB/PD goroutines count 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-goroutines-count.png)
+![TiDB/PD goroutines count 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-goroutines-count.png)
 
 ### 概览信息
 
@@ -137,7 +137,7 @@ TiDB 内置自动诊断的结果，具体各字段含义以及介绍可以参考
 
 **Time Consumed by Each Component** 显示包括集群中 TiDB、PD、TiKV 各个模块的监控耗时以及各项耗时的占比。默认时间单位是秒。用户可以用该表快速定位哪些模块的耗时较多。
 
-![Total Time Consume 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-total-time-consume.png)
+![Total Time Consume 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-total-time-consume.png)
 
 上表各列的字段含义如下：
 
@@ -153,7 +153,7 @@ TiDB 内置自动诊断的结果，具体各字段含义以及介绍可以参考
 
 以上监控中相关模块的耗时关系如下所示：
 
-![各个模块耗时关系图](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-time-relation.png)
+![各个模块耗时关系图](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-time-relation.png)
 
 上图中，黄色部分是 TiDB 相关的监控，蓝色部分是 TiKV 相关的监控，灰色部分暂时没有具体对应的监控项。
 
@@ -209,7 +209,7 @@ TiDB 内置自动诊断的结果，具体各字段含义以及介绍可以参考
 
 **Errors Occurred in Each Component** 表显示包括 TiDB 和 TiKV 出现错误的总数。例如写 binlog 失败、`tikv server is busy`、`TiKV channel full`、`tikv write stall` 等错误，具体各项错误含义可以看行注释。
 
-![Errors Occurred in Each Component 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-error.png)
+![Errors Occurred in Each Component 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-error.png)
 
 ### TiDB/PD/TiKV 的具体监控信息
 
@@ -229,7 +229,7 @@ TiDB 内置自动诊断的结果，具体各字段含义以及介绍可以参考
 
 **TiDB Transaction** 表显示 TiDB 事务相关的监控。
 
-![Transaction 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-tidb-txn.png)
+![Transaction 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-tidb-txn.png)
 
 * `TOTAL_VALUE`：该项监控在报告时间段内所有值的和 (SUM)。
 * `TOTAL_COUNT`：该项监控出现的总次数。
@@ -244,7 +244,7 @@ TiDB 内置自动诊断的结果，具体各字段含义以及介绍可以参考
 
 ##### DDL Owner
 
-![TiDB DDL Owner 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-tidb-ddl.png)
+![TiDB DDL Owner 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-tidb-ddl.png)
 
 上表表示从 `2020-05-21 14:40:00` 开始，集群的 DDL owner 在 `10.0.1.13:10080` 节点。如果 owner 发生变更，上表会有多行数据，其中 `MinTime` 列表示已知对应 Owner 的最小时间。
 
@@ -303,7 +303,7 @@ TIKV 模块的相关监控报表如下：
 
 示例：
 
-![Scheduler Config Change History 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-config-change.png)
+![Scheduler Config Change History 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-config-change.png)
 
 上面报表显示，`leader-schedule-limit` 配置参数在报告时间范围内有被修改过：
 
@@ -322,7 +322,7 @@ TIKV 模块的相关监控报表如下：
 
 首先在基本信息中的 **Compare Report Time Range** 报表会显示出对比的两个时间段：
 
-![Compare Report Time Range 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-compare-time.png)
+![Compare Report Time Range 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-compare-time.png)
 
 其中 `t1` 是正常时间段，或者叫参考时间段，`t2` 是异常时间段。
 
@@ -336,7 +336,7 @@ TIKV 模块的相关监控报表如下：
 
 本部分以 `Instance CPU Usage` 为例介绍 `DIFF_RATIO`。
 
-![Compare Instance CPU Usage 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-compare-instance-cpu-usage.png)
+![Compare Instance CPU Usage 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-compare-instance-cpu-usage.png)
 
 * `t1.AVG`、`t1.MAX`、`t1.Min` 分别是 `t1` 时间段内 CPU 使用率的平均值、最大值、最小值。
 * `t2.AVG`、`t2.MAX`、`t2.Min` 分别是 `t2` 时间段内 CPU 使用率的平均值、最大值、最小值。
@@ -357,7 +357,7 @@ TIKV 模块的相关监控报表如下：
 
 `Maximum Different Item` 的报表是对比两个时间段的监控项后，按照监控项的差异大小排序，通过这个表可以很快发现两个时间段哪些监控的差异最大。示例如下：
 
-![Maximum Different Item 报表](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-maximum-different-item.png)
+![Maximum Different Item 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-maximum-different-item.png)
 
 * `Table`：表示这个监控项来自于对比报告中报表，如 `TiKV, coprocessor_info` 表示是 TiKV 组件下的 `coprocessor_info` 报表。
 * `METRIC_NAME`：监控项名，点击 `expand` 可以查看该监控的不同 label 的差异对比。

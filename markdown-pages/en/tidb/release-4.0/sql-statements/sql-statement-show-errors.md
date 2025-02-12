@@ -14,7 +14,7 @@ The behavior of which statements generate errors vs. warnings is highly influenc
 
 **ShowErrorsStmt:**
 
-![ShowErrorsStmt](https://download.pingcap.com/images/docs/sqlgram/ShowErrorsStmt.png)
+![ShowErrorsStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowErrorsStmt.png)
 
 ## Examples
 

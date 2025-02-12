@@ -83,4 +83,4 @@ aliases: ['/docs-cn/stable/grafana-overview-dashboard/','/docs-cn/v4.0/grafana-o
 
 ## 图例
 
-![overview](https://download.pingcap.com/images/docs-cn/grafana_monitor_overview.png)
+![overview](https://docs-download.pingcap.com/media/images/docs-cn/grafana_monitor_overview.png)
