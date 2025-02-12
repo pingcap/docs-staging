@@ -11,11 +11,11 @@ summary: TiDB ダッシュボード監視ページを使用すると、ユーザ
 
 TiDB ダッシュボードにログインし、左側のナビゲーション バーから**[監視]**をクリックします。パフォーマンス概要ダッシュボードが表示されます。
 
-![Monitoring page](https://download.pingcap.com/images/docs/dashboard/dashboard-monitoring.png)
+![Monitoring page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-monitoring.png)
 
 TiDB クラスターがTiUP を使用してデプロイされている場合は、Grafana でパフォーマンス概要ダッシュボードを表示することもできます。このデプロイ モードでは、監視システム (Prometheus と Grafana) が同時にデプロイされます。詳細については、 [TiDB 監視フレームワークの概要](/tidb-monitoring-framework.md)参照してください。
 
-![performance overview](https://download.pingcap.com/images/docs/performance/grafana_performance_overview.png)
+![performance overview](https://docs-download.pingcap.com/media/images/docs/performance/grafana_performance_overview.png)
 
 ## パフォーマンス概要の主要指標 {#key-metrics-on-performance-overview}
 

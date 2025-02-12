@@ -13,7 +13,7 @@ MySQLシャードのデータサイズが1TiB未満の場合は、 [小さなデ
 
 次の図は、 DumplingとTiDBLightningを使用してMySQLシャードテーブルをTiDBに移行およびマージする方法を示しています。
 
-![Use Dumpling and TiDB Lightning to migrate and merge MySQL shards to TiDB](https://download.pingcap.com/images/docs/shard-merge-using-lightning-en.png)
+![Use Dumpling and TiDB Lightning to migrate and merge MySQL shards to TiDB](https://docs-download.pingcap.com/media/images/docs/shard-merge-using-lightning-en.png)
 
 この例では、 `my_db1`と`my_db2`の2つのデータベースがあることを前提としています。 Dumplingを使用して、 `my_db1`から2つのテーブル`table1`と`table2`をエクスポートし、 `my_db2`からそれぞれ2つのテーブル`table3`と`table4`をエクスポートします。その後、TiDB Lightingを使用して、エクスポートされた4つのテーブルをターゲットTiDBの`mydb`から同じ`table5`にインポートしてマージします。
 
@@ -233,7 +233,7 @@ CREATE TABLE `table5` (
 
 2.  `tidb-lightning`を実行します。シェルでプログラム名を直接呼び出してプログラムを実行すると、SIGHUPシグナルを受信した後、プロセスが予期せず終了する場合があります。 `nohup`などのツールを使用してプログラムを実行し、プロセスをシェルのバック`tiup`に置くことをお勧めし`screen` 。 S3から移行する場合は、Amazon S3バックエンドストアにアクセスできるアカウントのSecretKeyとAccessKeyを、環境変数としてLightningノードに渡す必要があります。 `~/.aws/credentials`からのクレデンシャルファイルの読み取りもサポートされています。例えば：
 
-    
+
     ```shell
     export AWS_ACCESS_KEY_ID=${access_key}
     export AWS_SECRET_ACCESS_KEY=${secret_key}

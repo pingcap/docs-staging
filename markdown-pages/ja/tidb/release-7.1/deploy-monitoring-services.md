@@ -231,7 +231,7 @@ PDサーバー、TiKVサーバー、および TiDBサーバーの Grafana ダッ
 
 上部のメニューで**[新しいダッシュボード]**をクリックし、表示するダッシュボードを選択します。
 
-![view dashboard](https://download.pingcap.com/images/docs/view-dashboard.png)
+![view dashboard](https://docs-download.pingcap.com/media/images/docs/view-dashboard.png)
 
 クラスター コンポーネントの次のメトリックを取得できます。
 

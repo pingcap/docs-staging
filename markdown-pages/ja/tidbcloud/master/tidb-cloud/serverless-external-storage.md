@@ -52,7 +52,7 @@ TiDB Cloud Serverless クラスターが Amazon S3 バケットにアクセス�
 
     5.  CloudFormation スタックが実行された後、 **[出力]**タブをクリックし、 **[値]**列でロール ARN 値を見つけることができます。
 
-        ![img.png](https://download.pingcap.com/images/docs/tidb-cloud/serverless-external-storage/serverless-role-arn.png)
+        ![img.png](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-external-storage/serverless-role-arn.png)
 
 AWS CloudFormation でロール ARN を作成する際に問題が発生した場合は、次の手順に従って手動で作成できます。
 
@@ -66,11 +66,11 @@ AWS CloudFormation でロール ARN を作成する際に問題が発生した�
 
     2.  **[バケット]**リストで、ソース データを含むバケットの名前を選択し、 **[ARN のコピー]**をクリックして S3 バケット ARN (例: `arn:aws:s3:::tidb-cloud-source-data` ) を取得します。後で使用するために、バケット ARN をメモしておきます。
 
-        ![Copy bucket ARN](https://download.pingcap.com/images/docs/tidb-cloud/copy-bucket-arn.png)
+        ![Copy bucket ARN](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/copy-bucket-arn.png)
 
     3.  [IAMコンソール](https://console.aws.amazon.com/iam/)を開き、左側のナビゲーション ペインで**[ポリシー]**をクリックして、 **[ポリシーの作成]**をクリックします。
 
-        ![Create a policy](https://download.pingcap.com/images/docs/tidb-cloud/aws-create-policy.png)
+        ![Create a policy](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-create-policy.png)
 
     4.  **[ポリシーの作成]**ページで、 **[JSON]**タブをクリックします。
 
@@ -134,7 +134,7 @@ AWS CloudFormation でロール ARN を作成する際に問題が発生した�
 
     1.  [IAMコンソール](https://console.aws.amazon.com/iam/)で、左側のナビゲーション ペインの**[ロール]**をクリックし、 **[ロールの作成]**をクリックします。
 
-        ![Create a role](https://download.pingcap.com/images/docs/tidb-cloud/aws-create-role.png)
+        ![Create a role](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-create-role.png)
 
     2.  ロールを作成するには、次の情報を入力します。
 
@@ -148,7 +148,7 @@ AWS CloudFormation でロール ARN を作成する際に問題が発生した�
 
     5.  ロールのリストで、作成したロールの名前をクリックして概要ページに移動し、ロール ARN を取得できます。
 
-        ![Copy AWS role ARN](https://download.pingcap.com/images/docs/tidb-cloud/aws-role-arn.png)
+        ![Copy AWS role ARN](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-role-arn.png)
 
 </details>
 
@@ -189,11 +189,11 @@ TiDB Serverless クラスターが GCS バケットにアクセスできるよ�
     6.  オプション: `Grant users access to this service account`で、 [サービスアカウントを他のリソースに接続する](https://cloud.google.com/iam/docs/attach-service-accounts)が必要なメンバーを選択します。
     7.  **[完了]**をクリックして、サービス アカウントの作成を完了します。
 
-    ![service-account](https://download.pingcap.com/images/docs/tidb-cloud/serverless-external-storage/gcs-service-account.png)
+    ![service-account](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-external-storage/gcs-service-account.png)
 
 2.  サービス アカウントをクリックし、 `KEYS`ページで**[キーの追加]**をクリックしてサービス アカウント キーを作成します。
 
-    ![service-account-key](https://download.pingcap.com/images/docs/tidb-cloud/serverless-external-storage/gcs-service-account-key.png)
+    ![service-account-key](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-external-storage/gcs-service-account-key.png)
 
 3.  デフォルトのキータイプ`JSON`を選択し、 **[作成]**をクリックして Google Cloud 認証情報ファイルをダウンロードします。このファイルには、 TiDB Cloud Serverless クラスタの GCS アクセスを構成するときに使用する必要があるサービス アカウント キーが含まれています。
 
@@ -225,7 +225,7 @@ Azure ARM テンプレートを使用して SAS トークンを作成するに�
 
     3.  **カスタム デプロイ**ページで、**リソース グループ**と**ストレージ アカウント名**を入力します。コンテナーが配置されているstorageアカウントの概要ページからすべての情報を取得できます。
 
-        ![azure-storage-account-overview](https://download.pingcap.com/images/docs/tidb-cloud/serverless-external-storage/azure-storage-account-overview.png)
+        ![azure-storage-account-overview](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-external-storage/azure-storage-account-overview.png)
 
     4.  **[確認と作成]**または**[次へ**] をクリックして、展開を確認します。 **[作成] を**クリックして、展開を開始します。
 
@@ -239,7 +239,7 @@ Azure ARM テンプレートを使用して SAS トークンを作成する際�
 
 2.  **ストレージ アカウント**ページで、[**Security+ ネットワーク]**をクリックし、 **[共有アクセス署名]**をクリックします。
 
-    ![sas-position](https://download.pingcap.com/images/docs/tidb-cloud/serverless-external-storage/azure-sas-position.png)
+    ![sas-position](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-external-storage/azure-sas-position.png)
 
 3.  **Shared Access Signature**ページで、次のように必要なアクセス許可を持つサービス SAS トークンを作成します。詳細については、 [サービスSASトークンを作成する](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview)参照してください。
 
@@ -249,7 +249,7 @@ Azure ARM テンプレートを使用して SAS トークンを作成する際�
     4.  必要に応じて**開始日時と有効期限**を調整します。
     5.  その他の設定はデフォルト値のままにしておきます。
 
-    ![sas-create](https://download.pingcap.com/images/docs/tidb-cloud/serverless-external-storage/azure-sas-create.png)
+    ![sas-create](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-external-storage/azure-sas-create.png)
 
 4.  SAS トークンを生成するには、 **[SAS と接続文字列の生成]**をクリックします。
 

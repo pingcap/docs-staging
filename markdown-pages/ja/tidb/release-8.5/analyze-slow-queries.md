@@ -31,7 +31,7 @@ summary: 遅いクエリを見つけて分析する方法を学びます。
 
 ## クエリのパフォーマンスボトルネックを特定する {#identify-the-performance-bottleneck-of-the-query}
 
-まず、クエリ プロセスの概要を理解する必要があります。TiDB のクエリ実行プロセスの主要な段階を[TiDB パフォーマンス マップ](https://download.pingcap.com/images/docs/performance-map.png)に示します。
+まず、クエリ プロセスの概要を理解する必要があります。TiDB のクエリ実行プロセスの主要な段階を[TiDB パフォーマンス マップ](https://docs-download.pingcap.com/media/images/docs/performance-map.png)に示します。
 
 次の方法を使用して期間情報を取得できます。
 

@@ -11,11 +11,11 @@ summary: 介绍如何通过 TiDB Dashboard 监控页面查看 Performance Overvi
 
 登录 Dashboard 后点击左侧导航的 **Monitoring** （监控）可以进入此功能页面：
 
-![Monitoring page](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-monitoring.png)
+![Monitoring page](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-monitoring.png)
 
 如果你使用 TiUP 部署 TiDB，你也可以在 Grafana 上查看 Performance Overview 面板。监控架构参见 [TiDB 监控框架概述](/tidb-monitoring-framework.md)。
 
-![performance overview](https://download.pingcap.com/images/docs-cn/performance/grafana_performance_overview.png)
+![performance overview](https://docs-download.pingcap.com/media/images/docs-cn/performance/grafana_performance_overview.png)
 
 ## 面板监控指标详解
 

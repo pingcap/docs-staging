@@ -21,7 +21,7 @@ v5.0で導入された配置ルールは、PDがさまざまなタイプのデ�
 
 さらに、さまざまなソースからのルールを相互に分離するという要件を満たすために、これらのルールをより柔軟な方法で編成できます。そこで、「グループ」の概念を紹介します。一般に、ユーザーはさまざまなソースに応じてさまざまなグループにルールを配置できます。
 
-![Placement rules overview](https://download.pingcap.com/images/docs/placement-rules-1.png)
+![Placement rules overview](https://docs-download.pingcap.com/media/images/docs/placement-rules-1.png)
 
 ### ルールフィールド {#rule-fields}
 
@@ -128,28 +128,28 @@ pd-ctlは、次のメソッドを使用してシステム内のルールを表�
 
 -   すべてのルールのリストを表示するには：
 
-    
+
     ```bash
     pd-ctl config placement-rules show
     ```
 
 -   PDグループ内のすべてのルールのリストを表示するには：
 
-    
+
     ```bash
     pd-ctl config placement-rules show --group=pd
     ```
 
 -   グループ内の特定のIDのルールを表示するには：
 
-    
+
     ```bash
     pd-ctl config placement-rules show --group=pd --id=default
     ```
 
 -   リージョンに一致するルールリストを表示するには：
 
-    
+
     ```bash
     pd-ctl config placement-rules show --region=2
     ```
@@ -202,28 +202,28 @@ pd-ctl config placement save --in=rules.json
 
 -   すべてのルールグループのリストを表示するには：
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group show
     ```
 
 -   特定のIDのルールグループを表示するには：
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group show pd
     ```
 
 -   ルールグループの`index`と`override`の属性を設定するには：
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group set pd 100 true
     ```
 
 -   ルールグループの構成を削除するには（グループにルールがある場合は、デフォルトのグループ構成を使用します）：
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group delete pd
     ```

@@ -25,7 +25,7 @@ DM WebUI 主要包含以下界面：
 
 界面示例如下：
 
-![webui](https://download.pingcap.com/images/docs-cn/dm/dm-webui-preview-cn.png)
+![webui](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-webui-preview-cn.png)
 
 ## 访问方式
 

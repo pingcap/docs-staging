@@ -15,7 +15,7 @@ TiDBダッシュボードの現在のセッションを他のユーザーと共�
 
 3.  [**現在のセッションを共有]**をクリックします。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-settings-1.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-settings-1.png)
 
     > **ノート：**
     >
@@ -29,11 +29,11 @@ TiDBダッシュボードの現在のセッションを他のユーザーと共�
 
 5.  [**認証コードの生成]を**クリックします。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-settings-2.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-settings-2.png)
 
 6.  生成された**認証コード**を、セッションを共有するユーザーに提供します。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-settings-3.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-settings-3.png)
 
     > **警告：**
     >
@@ -43,14 +43,14 @@ TiDBダッシュボードの現在のセッションを他のユーザーと共�
 
 1.  TiDBダッシュボードのサインインページで、[**代替認証を使用**]をクリックします。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-signin-1.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-signin-1.png)
 
 2.  サインインに使用するには、[**認証コード]**をクリックします。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-signin-2.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-signin-2.png)
 
 3.  招待者から受け取った認証コードを入力します。
 
 4.  [**サインイン]**をクリックします。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-signin-3.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-signin-3.png)

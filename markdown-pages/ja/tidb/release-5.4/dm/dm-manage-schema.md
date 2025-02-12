@@ -15,7 +15,7 @@ DMを使用してテーブルを移行する場合、DMはテーブルスキー�
 
 -   インクリメンタルレプリケーションの場合、データリンク全体に次のテーブルスキーマが含まれます。これらは同じでも異なる場合もあります。
 
-    ![schema](https://download.pingcap.com/images/docs/dm/operate-schema.png)
+    ![schema](https://docs-download.pingcap.com/media/images/docs/dm/operate-schema.png)
 
     -   `schema-U`として識別される、現時点でのアップストリームテーブルスキーマ。
     -   DMによって現在消費されているbinlogイベントのテーブルスキーマ`schema-B`として識別されます。このスキーマは、履歴時のアップストリームテーブルスキーマに対応します。

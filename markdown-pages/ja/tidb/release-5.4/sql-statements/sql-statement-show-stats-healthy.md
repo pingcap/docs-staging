@@ -13,15 +13,15 @@ summary: An overview of the usage of SHOW STATS_HEALTHY for TiDB database.
 
 **ShowStmt**
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStmt.png)
 
 **ShowTargetFiltertable**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTargetFilterable.png)
 
 **ShowLikeOrWhereOpt**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## 例 {#examples}
 
@@ -64,7 +64,7 @@ mysql> SHOW STATS_HEALTHY;
 
 ```sql
 DELETE FROM t1 WHERE id BETWEEN 101010 AND 201010; # delete about 30% of records
-SHOW STATS_HEALTHY; 
+SHOW STATS_HEALTHY;
 ```
 
 ```sql

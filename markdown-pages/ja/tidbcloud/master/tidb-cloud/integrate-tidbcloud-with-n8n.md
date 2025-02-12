@@ -74,7 +74,7 @@ TiDB Cloudノードは、npm リポジトリでは`n8n-nodes-tidb-cloud`とい�
 
 最終的なワークフローは次の画像のようになります。
 
-![img](https://download.pingcap.com/images/docs/tidb-cloud/integration-n8n-workflow-rss.jpg)
+![img](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/integration-n8n-workflow-rss.jpg)
 
 ### (オプション) TiDB Cloud Serverless クラスターを作成する {#optional-create-a-tidb-cloud-serverless-cluster}
 

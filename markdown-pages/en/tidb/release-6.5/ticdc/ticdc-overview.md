@@ -58,7 +58,7 @@ As an incremental data replication tool for TiDB, TiCDC is highly available thro
 
 The architecture of TiCDC is shown in the following figure:
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/cdc-architecture.png)
 
 The components in the preceding architecture diagram are described as follows:
 

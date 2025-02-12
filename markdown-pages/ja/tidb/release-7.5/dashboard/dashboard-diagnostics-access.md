@@ -17,7 +17,7 @@ TiDB ダッシュボードのクラスター診断機能は、指定された時
 
 -   TiDB ダッシュボードにログインした後、左側のナビゲーション メニューで**[クラスタ診断]**をクリックします。
 
-    ![Access Cluster Diagnostics page](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-access-v650.png)
+    ![Access Cluster Diagnostics page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-access-v650.png)
 
 -   ブラウザで`http://127.0.0.1:2379/dashboard/#/diagnose`にアクセスしてください。 `127.0.0.1:2379`を実際の PD アドレスとポート番号に置き換えます。
 
@@ -29,7 +29,7 @@ TiDB ダッシュボードのクラスター診断機能は、指定された時
 2.  **範囲期間**(例: `10 min`を設定します。
 3.  **「開始」**をクリックします。
 
-![Generate diagnostic report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-gen-report-v650.png)
+![Generate diagnostic report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-gen-report-v650.png)
 
 > **注記：**
 >
@@ -37,7 +37,7 @@ TiDB ダッシュボードのクラスター診断機能は、指定された時
 
 前述の手順では、 `2022-05-21 14:40:00` ～ `2022-05-21 14:50:00`の時間範囲の診断レポートを生成します。 **[開始]**をクリックすると、以下のインターフェイスが表示されます。**進行状況**は、診断レポートの進行状況バーです。レポートが生成されたら、 **「完全なレポートをビュー」**をクリックします。
 
-![Report progress](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-gen-process-v650.png)
+![Report progress](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-gen-process-v650.png)
 
 ## 比較レポートの生成 {#generate-comparison-report}
 
@@ -54,7 +54,7 @@ QPS ジッターやレイテンシーの増加など、特定の時点でシス�
 4.  **[ベースライン範囲開始時刻]**を設定します。これは、システムが正常である (比較される) 範囲の開始時刻です ( `2022-05-21 14:30:00`など)。
 5.  **「開始」**をクリックします。
 
-![Generate comparison report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-gen-compare-report-v650.png)
+![Generate comparison report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-gen-compare-report-v650.png)
 
 次に、レポートが生成されるのを待ち、 **「ビュー Full Report」**をクリックします。
 

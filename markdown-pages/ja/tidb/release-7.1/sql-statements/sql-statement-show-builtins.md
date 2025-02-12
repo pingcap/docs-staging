@@ -11,7 +11,7 @@ summary: The usage of SHOW BUILTINS in TiDB.
 
 **ShowBuiltinsStmt:**
 
-![ShowBuiltinsStmt](https://download.pingcap.com/images/docs/sqlgram/ShowBuiltinsStmt.png)
+![ShowBuiltinsStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowBuiltinsStmt.png)
 
 ## 例 {#examples}
 

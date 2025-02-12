@@ -48,7 +48,7 @@ online-ddl: true                # 开启 DM 的 online DDL 支持特性。兼容
 - 仅从镜像表同步数据；
 - 在下游执行 DDL 变更。
 
-![dm-online-ddl](https://download.pingcap.com/images/docs-cn/dm/dm-online-ddl.png)
+![dm-online-ddl](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-online-ddl.png)
 
 这些变化将带来一些好处：
 

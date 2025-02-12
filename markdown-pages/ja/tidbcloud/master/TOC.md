@@ -23,7 +23,7 @@
     -   [取引](/tidb-cloud/transaction-concepts.md)
     -   [構文](/tidb-cloud/sql-concepts.md)
     -   [AI機能](/tidb-cloud/ai-feature-concepts.md)
-    -   [データサービス](/tidb-cloud/data-service-concepts.md) ![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+    -   [データサービス](/tidb-cloud/data-service-concepts.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   [スケーラビリティ](/tidb-cloud/scalability-concepts.md)
     -   高可用性
         -   [TiDB Cloud Serverless の高可用性](/tidb-cloud/serverless-high-availability.md)
@@ -77,7 +77,7 @@
         -   [マイSQL2](/develop/dev-guide-sample-application-ruby-mysql2.md)
         -   [レール](/develop/dev-guide-sample-application-ruby-rails.md)
     -   [ワードプレス](/tidb-cloud/dev-guide-wordpress.md)
-    -   サーバーレスDriver![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+    -   サーバーレスDriver![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
         -   [TiDB CloudサーバーレスDriver](/tidb-cloud/serverless-driver.md)
         -   [Node.jsの例](/tidb-cloud/serverless-driver-node-example.md)
         -   [プリズマの例](/tidb-cloud/serverless-driver-prisma-example.md)
@@ -145,7 +145,7 @@
             -   [接続の概要](/tidb-cloud/connect-to-tidb-cluster-serverless.md)
             -   [パブリックエンドポイント経由で接続](/tidb-cloud/connect-via-standard-connection-serverless.md)
             -   [プライベートエンドポイント経由で接続](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
-        -   支店![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+        -   支店![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
             -   [概要](/tidb-cloud/branch-overview.md)
             -   [ブランチの管理](/tidb-cloud/branch-manage.md)
             -   [GitHub 統合](/tidb-cloud/branch-github-integration.md)
@@ -181,12 +181,12 @@
         -   [組み込みメトリック](/tidb-cloud/built-in-monitoring.md)
         -   [組み込みアラート](/tidb-cloud/monitor-built-in-alerting.md)
         -   [クラスタイベント](/tidb-cloud/tidb-cloud-events.md)
-        -   [サードパーティのメトリクスの統合](/tidb-cloud/third-party-monitoring-integrations.md) ![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+        -   [サードパーティのメトリクスの統合](/tidb-cloud/third-party-monitoring-integrations.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   パフォーマンスの調整
         -   [概要](/tidb-cloud/tidb-cloud-tune-performance-overview.md)
         -   パフォーマンスを分析する
             -   [診断タブを使用する](/tidb-cloud/tune-performance.md)
-            -   [インデックスインサイトを使用する](/tidb-cloud/index-insight.md) ![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+            -   [インデックスインサイトを使用する](/tidb-cloud/index-insight.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
             -   [ステートメント概要表の使用](/statement-summary-tables.md)
         -   SQLチューニング
             -   [概要](/tidb-cloud/tidb-cloud-sql-tuning-overview.md)
@@ -269,9 +269,9 @@
         -   [データ移行の事前チェックエラー、移行エラー、アラート](/tidb-cloud/tidb-cloud-dm-precheck-and-troubleshooting.md)
         -   [AWS DMS をTiDB Cloudクラスターに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)
 -   データを探索する
-    -   [SQL エディタでの Chat2Query](/tidb-cloud/explore-data-with-chat2query.md) ![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+    -   [SQL エディタでの Chat2Query](/tidb-cloud/explore-data-with-chat2query.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   [SQL プロキシ アカウント](/tidb-cloud/sql-proxy-account.md)
--   ベクトル検索![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+-   ベクトル検索![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   [概要](/tidb-cloud/vector-search-overview.md)
     -   始める
         -   [SQL を使い始める](/tidb-cloud/vector-search-get-started-using-sql.md)
@@ -294,7 +294,7 @@
     -   [パフォーマンスの向上](/tidb-cloud/vector-search-improve-performance.md)
     -   [制限事項](/tidb-cloud/vector-search-limitations.md)
     -   [変更履歴](/tidb-cloud/vector-search-changelogs.md)
--   データサービス![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+-   データサービス![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   [概要](/tidb-cloud/data-service-overview.md)
     -   [始める](/tidb-cloud/data-service-get-started.md)
     -   チャット2クエリAPI
@@ -676,7 +676,7 @@
     -   [メタデータロック](/metadata-lock.md)
     -   [UUIDを使用する](/best-practices/uuid.md)
     -   [TiDB 高速テーブル作成](/accelerated-table-creation.md)
--   APIリファレンス![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+-   APIリファレンス![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   [概要](/tidb-cloud/api-overview.md)
     -   v1ベータ1
         -   [請求する](https://docs.pingcap.com/tidbcloud/api/v1beta1/billing)
@@ -684,7 +684,7 @@
         -   [IAMは](https://docs.pingcap.com/tidbcloud/api/v1beta1/iam)
         -   [MSP (非推奨)](https://docs.pingcap.com/tidbcloud/api/v1beta1/msp)
     -   [v1ベータ](https://docs.pingcap.com/tidbcloud/api/v1beta)
--   CLI リファレンス![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+-   CLI リファレンス![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   [概要](/tidb-cloud/cli-reference.md)
     -   認証
         -   [ログイン](/tidb-cloud/ticloud-auth-login.md)

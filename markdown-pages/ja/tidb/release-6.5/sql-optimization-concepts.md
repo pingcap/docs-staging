@@ -7,7 +7,7 @@ summary: Learn about the logical and physical optimization of SQL in TiDB.
 
 TiDB では、クエリの入力から最終的な実行計画に従って実行結果を取得するまでのプロセスを次のように示します。
 
-![SQL Optimization Process](https://download.pingcap.com/images/docs/sql-optimization.png)
+![SQL Optimization Process](https://docs-download.pingcap.com/media/images/docs/sql-optimization.png)
 
 元のクエリ テキストを`parser`で解析し、いくつかの簡単な有効性チェックを行った後、TiDB は最初に論理的に同等の変更をクエリに加えます。詳細な変更については、 [SQL 論理最適化](/sql-logical-optimization.md)を参照してください。
 

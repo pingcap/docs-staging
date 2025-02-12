@@ -23,11 +23,11 @@ aliases: ['/zh/tidb/dev/bidirectional-replication-between-tidb-clusters/','/zh/t
 
 使用场景示例图如下：
 
-![使用场景示例图](https://download.pingcap.com/images/docs-cn/binlog/bi-repl1.jpg)
+![使用场景示例图](https://docs-download.pingcap.com/media/images/docs-cn/binlog/bi-repl1.jpg)
 
 ## 实现原理
 
-![原理示例图](https://download.pingcap.com/images/docs-cn/binlog/bi-repl2.png)
+![原理示例图](https://docs-download.pingcap.com/media/images/docs-cn/binlog/bi-repl2.png)
 
 在 A 和 B 两个集群间开启双向同步，则写入集群 A 的数据会同步到集群 B 中，然后这部分数据又会继续同步到集群 A，这样就会出现无限循环同步的情况。如上图所示，在同步数据的过程中 Drainer 对 binlog 加上标记，通过过滤掉有标记的 binlog 来避免循环同步。详细的实现流程如下：
 

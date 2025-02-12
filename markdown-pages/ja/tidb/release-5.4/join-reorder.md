@@ -29,17 +29,17 @@ t1とt3のデータ量と分散は異なるため、これら2つの実行順序
 
 まず、TiDBは結合操作に参加するすべてのノードを取得し、行番号の昇順でノードをソートします。
 
-![join-reorder-1](https://download.pingcap.com/images/docs/join-reorder-1.png)
+![join-reorder-1](https://docs-download.pingcap.com/media/images/docs/join-reorder-1.png)
 
 その後、行数が最も少ないテーブルが選択され、他の2つのテーブルとそれぞれ結合されます。 TiDBは、出力結果セットのサイズを比較することにより、結果セットが小さいペアを選択します。
 
-![join-reorder-2](https://download.pingcap.com/images/docs/join-reorder-2.png)
+![join-reorder-2](https://docs-download.pingcap.com/media/images/docs/join-reorder-2.png)
 
 次に、TiDBは次の選択ラウンドに入ります。 4つのテーブルを結合しようとすると、TiDBは引き続き出力結果セットのサイズを比較し、結果セットが小さいペアを選択します。
 
 この場合、結合されるテーブルは3つだけなので、TiDBは最終的な結合結果を取得します。
 
-![join-reorder-3](https://download.pingcap.com/images/docs/join-reorder-3.png)
+![join-reorder-3](https://docs-download.pingcap.com/media/images/docs/join-reorder-3.png)
 
 上記のプロセスは、現在TiDBで使用されている結合したテーブルの再配置アルゴリズムです。
 

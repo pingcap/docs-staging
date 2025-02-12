@@ -19,7 +19,7 @@ TiFlash MinTSO 调度器是 TiFlash 中针对 MPP (Massively Parallel Processing
 
 如背景所述，TiFlash Task 调度器引入的初衷是控制 MPP 查询运行时使用的线程数。一种简单的调度策略是指定 TiFlash 可以申请的最大线程数。对于每个 MPP Task，调度器根据当前系统已经使用的线程数以及该 MPP Task 预期使用的线程数，决定该 MPP Task 是否能够被调度：
 
-![TiFlash MinTSO Scheduler v1](https://download.pingcap.com/images/docs-cn/tiflash/tiflash_mintso_v1.png)
+![TiFlash MinTSO Scheduler v1](https://docs-download.pingcap.com/media/images/docs-cn/tiflash/tiflash_mintso_v1.png)
 
 尽管上述调度策略能有效控制系统的线程数，但是 MPP Task 并不是一个最小的独立执行单元，不同 MPP Task 之间会有依赖关系：
 
@@ -57,7 +57,7 @@ EXPLAIN SELECT count(*) FROM t0 a JOIN t0 b ON a.id = b.id;
 
 MinTSO 调度器的目标是在控制系统线程数的同时，确保系统中始终有且只有一个特殊的查询，其所有的 MPP Task 都可以被调度。MinTSO 调度器是一个完全分布式的调度器，每个 TiFlash 节点仅根据自身信息对 MPP Task 进行调度，因此，所有 TiFlash 节点的 MinTSO 调度器需要识别出同一个“特殊”查询。在 TiDB 中，每个查询都会带有一个读的时间戳 (`start_ts`)，MinTSO 调度器定义“特殊”查询的标准为当前 TiFlash 节点上 `start_ts` 最小的查询。根据全局最小一定是局部最小的原理，所有的 TiFlash 选出的“特殊”查询必然是同一个，称为 MinTSO 查询。MinTSO 调度器的调度流程如下：
 
-![TiFlash MinTSO Scheduler v2](https://download.pingcap.com/images/docs-cn/tiflash/tiflash_mintso_v2.png)
+![TiFlash MinTSO Scheduler v2](https://docs-download.pingcap.com/media/images/docs-cn/tiflash/tiflash_mintso_v2.png)
 
 通过引入 soft limit 与 hard limit，MinTSO 调度器在控制系统线程数的同时，有效地避免了系统死锁。不过对于高并发场景，可能会出现大多数查询都只有部分 MPP Task 被调度的情况。只有部分 MPP Task 被调度的查询无法正常执行，从而导致系统执行效率低下。为了避免这种情况，TiFlash 在查询层面为 MinTSO 调度器引入了一个限制，即 active_set_soft_limit，该限制要求系统最多只有 active_set_soft_limit 个查询的 MPP Task 可以参与调度；对于其它的查询，其 MPP Task 不参与调度，只有等当前查询结束之后，新的查询才能参与调度。该限制只是一个 soft limit，因为对于 MinTSO 查询来说，其所有 MPP Task 在系统线程数不超过 hard limit 时都可以直接被调度。
 

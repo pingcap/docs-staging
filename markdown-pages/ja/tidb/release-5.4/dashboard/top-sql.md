@@ -31,7 +31,7 @@ Top SQL機能はデフォルトで無効になっています。次のいずれ�
 
 Top SQLを有効にしたら、TiDBダッシュボードにログインし、左側のペインで[**Top SQL** ]をクリックして使用できます。
 
-![Top SQL](https://download.pingcap.com/images/docs/dashboard/top-sql-overview.png)
+![Top SQL](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-overview.png)
 
 使用上のヒント：
 
@@ -40,4 +40,4 @@ Top SQLを有効にしたら、TiDBダッシュボードにログインし、左
 -   グラフには、選択した時間範囲で選択したノードの負荷に最も寄与する上位5種類のクエリが表示されます。
 -   リストでクエリタイプを選択すると、このノードでのそのクエリタイプの実行プランと、呼び出し/秒、スキャン行/秒、スキャンインデックス/秒、遅延/呼び出しなどの実行の詳細を表示できます。
 
-![Top SQL Details](https://download.pingcap.com/images/docs/dashboard/top-sql-details.png)
+![Top SQL Details](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-details.png)

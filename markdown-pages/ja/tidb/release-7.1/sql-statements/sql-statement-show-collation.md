@@ -15,7 +15,7 @@ summary: An overview of the usage of SHOW COLLATION for the TiDB database.
 
 **照合順序の表示:**
 
-![ShowCollationStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCollationStmt.png)
+![ShowCollationStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowCollationStmt.png)
 
 ## 例 {#examples}
 

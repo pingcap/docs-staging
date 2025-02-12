@@ -264,7 +264,7 @@ TTL は、他の TiDB 移行、バックアップ、およびリカバリ ツー
 
     [Grafana `TiDB`ダッシュボード](/grafana-tidb-dashboard.md)では、パネル`TTL Insert Rows Per Hour`過去 1 時間に挿入された行の合計数を記録します。対応する`TTL Delete Rows Per Hour` 、過去 1 時間に TTL タスクによって削除された行の合計数を記録します。7 が`TTL Delete Rows Per Hour` `TTL Insert Rows Per Hour`も高い場合は、挿入率が削除率よりも高く、データの総量が増加することを意味します。例:
 
-    ![insert fast example](https://download.pingcap.com/images/docs/ttl/insert-fast.png)
+    ![insert fast example](https://docs-download.pingcap.com/media/images/docs/ttl/insert-fast.png)
 
     注意すべき点は、TTL は期限切れの行がすぐに削除されることを保証するものではなく、現在挿入されている行は将来の TTL タスクで削除されるため、短期間で TTL 削除の速度が挿入の速度よりも遅い場合でも、必ずしも TTL の速度が遅すぎることを意味するわけではないということです。状況をその文脈で考慮する必要があります。
 
@@ -272,11 +272,11 @@ TTL は、他の TiDB 移行、バックアップ、およびリカバリ ツー
 
     `TTL Scan Worker Time By Phase`と`TTL Delete Worker Time By Phase`パネルを見てください。スキャン ワーカーが`dispatch`フェーズに多くの時間いるのに、削除ワーカーが`idle`フェーズにほとんどいない場合、スキャン ワーカーは削除ワーカーが削除を完了するのを待機しています。この時点でクラスター リソースがまだ空いている場合は、 `tidb_ttl_ delete_worker_count`増やして削除ワーカーの数を増やすことを検討できます。例:
 
-    ![scan fast example](https://download.pingcap.com/images/docs/ttl/scan-fast.png)
+    ![scan fast example](https://docs-download.pingcap.com/media/images/docs/ttl/scan-fast.png)
 
     対照的に、スキャン ワーカーが第`dispatch`フェーズにほとんどなく、削除ワーカーが第`idle`フェーズに長時間ある場合、スキャン ワーカーは比較的ビジー状態です。例:
 
-    ![delete fast example](https://download.pingcap.com/images/docs/ttl/delete-fast.png)
+    ![delete fast example](https://docs-download.pingcap.com/media/images/docs/ttl/delete-fast.png)
 
     TTL ジョブのスキャンと削除の割合はマシン構成とデータ分布に関連しているため、各瞬間の監視データは実行中の TTL ジョブのみを表します。表`mysql.tidb_ttl_job_history`を読むと、特定の瞬間にどの TTL ジョブが実行されているか、およびジョブに対応する表を確認できます。
 

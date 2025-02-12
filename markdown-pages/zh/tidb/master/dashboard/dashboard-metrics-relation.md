@@ -11,7 +11,7 @@ TiDB Dashboard 监控关系图是 TiDB v4.0.7 起提供的新功能，可以将�
 
 登录 TiDB Dashboard 后点击左侧导航的**集群诊断** (Cluster Diagnostics) 可以进入此功能页面：
 
-![生成监控关系图首页](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-metrics-relation-home-v650.png)
+![生成监控关系图首页](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-home-v650.png)
 
 设置**区间起始时间** (Range Start Time) 和**区间长度** (Range Duration) 参数后，点击**生成监控关系图** (Generate Metrics Relation) 按钮后，会进入监控关系图页面。
 
@@ -19,11 +19,11 @@ TiDB Dashboard 监控关系图是 TiDB v4.0.7 起提供的新功能，可以将�
 
 下面是一份监控耗时关系图示例，描述的是某个 TiDB 集群在 2020-07-29 16:36:00 开始往后 5 分钟内，TiDB 集群中各个监控的总耗时比例，以及各项监控之间的关系。
 
-![监控关系图示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-metrics-relation-example.png)
+![监控关系图示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-example.png)
 
 例如以下 `tidb_execute` 节点监控图表示：`tidb_execute` 监控项的总耗时为 19306.46 秒，占总查询耗时的 89.4%，其中 `tidb_execute` 节点自身的耗时是 9070.18 秒，占总查询耗时的 42%。将鼠标悬停在该方框上，可以看到监控项的注释说明，总耗时、平均耗时、平均 P99 耗时等详细信息。
 
-![监控关系图 tidb_execute 节点示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-metrics-relation-node-example.png)
+![监控关系图 tidb_execute 节点示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-node-example.png)
 
 ### 节点的含义
 
@@ -35,7 +35,7 @@ TiDB Dashboard 监控关系图是 TiDB v4.0.7 起提供的新功能，可以将�
 
 `节点监控的总耗时 = 节点自身的耗时 + 子节点的耗时`，所以某些节点监控图会显示节点自身的耗时和总耗时的比例。例如 `tidb_execute` 监控：
 
-![监控关系图 tidb_execute 节点示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-metrics-relation-node-example1.png)
+![监控关系图 tidb_execute 节点示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-node-example1.png)
 
 * `tidb_execute` 是监控项的名字。该监控是指一条 SQL 请求在 TiDB 执行引擎中的执行耗时。
 * `19306.46s` 表示 `tidb_execute` 监控项消耗的总时间为 19306.46 秒。`89.40%` 表示 19306.46 秒占所有 SQL 查询总耗时（包括用户 SQL 和 TiDB 内部的 SQL）的比例为 89.40%。查询总耗时是 `tidb_query` 监控项的总耗时。
@@ -43,7 +43,7 @@ TiDB Dashboard 监控关系图是 TiDB v4.0.7 起提供的新功能，可以将�
 
 将鼠标悬停在该节点后，会显示监控项的更多详细信息：
 
-![监控关系图 tidb_execute 节点注释](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-metrics-relation-node-example2.png)
+![监控关系图 tidb_execute 节点注释](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-node-example2.png)
 
 上图信息为该项监控的注释说明，包括总耗时、总次数、平均耗时和平均 P99、P90、P80 耗时。
 
@@ -51,7 +51,7 @@ TiDB Dashboard 监控关系图是 TiDB v4.0.7 起提供的新功能，可以将�
 
 下面以 `tidb_execute` 监控为例介绍该监控项相关的子节点：
 
-![监控关系图 tidb_execute 节点注释](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-metrics-relation-relation-example1.png)
+![监控关系图 tidb_execute 节点注释](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-relation-example1.png)
 
 可以看到，`tidb_execute` 包含两个子节点，分别是：
 
@@ -68,7 +68,7 @@ TiDB Dashboard 监控关系图是 TiDB v4.0.7 起提供的新功能，可以将�
 
 ### `tidb_kv_request` 及其父节点
 
-![监控关系图虚线节点关系](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-metrics-relation-relation-example2.png)
+![监控关系图虚线节点关系](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-relation-example2.png)
 
 `tidb_kv_request` 的父节点 `tidb_cop` 和 `tidb_txn_cmd.get` 都用虚拟箭头指向 `tidb_kv_request`，这里表示：
 

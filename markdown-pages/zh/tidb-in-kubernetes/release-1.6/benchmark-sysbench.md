@@ -229,11 +229,11 @@ Host Network:
 
 QPS 对比：
 
-![Pod vs Host Network](https://download.pingcap.com/images/tidb-in-kubernetes/pod-vs-host-network-qps.png)
+![Pod vs Host Network](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/pod-vs-host-network-qps.png)
 
 Latency 对比：
 
-![Pod vs Host Network](https://download.pingcap.com/images/tidb-in-kubernetes/pod-vs-host-network-latency.png)
+![Pod vs Host Network](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/pod-vs-host-network-latency.png)
 
 从图中可以看到 Host 网络下整体表现略好于 Pod 网络。
 
@@ -267,11 +267,11 @@ Ubuntu:
 
 QPS 对比：
 
-![COS vs Ubuntu](https://download.pingcap.com/images/tidb-in-kubernetes/cos-vs-ubuntu-qps.png)
+![COS vs Ubuntu](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/cos-vs-ubuntu-qps.png)
 
 Latency 对比：
 
-![COS vs Ubuntu](https://download.pingcap.com/images/tidb-in-kubernetes/cos-vs-ubuntu-latency.png)
+![COS vs Ubuntu](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/cos-vs-ubuntu-latency.png)
 
 从图中可以看到 Host 模式下，在单纯的 Point Select 测试中，TiDB 在 Ubuntu 系统中的表现比在 COS 系统中的表现要好。
 
@@ -309,11 +309,11 @@ Load Balancer:
 
 QPS 对比：
 
-![Service vs Load Balancer](https://download.pingcap.com/images/tidb-in-kubernetes/service-vs-load-balancer-qps.png)
+![Service vs Load Balancer](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/service-vs-load-balancer-qps.png)
 
 Latency 对比：
 
-![Service vs Load Balancer](https://download.pingcap.com/images/tidb-in-kubernetes/service-vs-load-balancer-latency.png)
+![Service vs Load Balancer](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/service-vs-load-balancer-latency.png)
 
 从图中可以看到在单纯的 Point Select 测试中，使用 Kubernetes Service 访问 TiDB 时的表现比使用 Google Cloud Load Balancer 访问时要好。
 
@@ -347,11 +347,11 @@ c2-standard-16:
 
 QPS 对比：
 
-![n1-standard-16 vs c2-standard-16](https://download.pingcap.com/images/tidb-in-kubernetes/n1-standard-16-vs-c2-standard-16-qps.png)
+![n1-standard-16 vs c2-standard-16](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/n1-standard-16-vs-c2-standard-16-qps.png)
 
 Latency 对比：
 
-![n1-standard-16 vs c2-standard-16](https://download.pingcap.com/images/tidb-in-kubernetes/n1-standard-16-vs-c2-standard-16-latency.png)
+![n1-standard-16 vs c2-standard-16](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/n1-standard-16-vs-c2-standard-16-latency.png)
 
 ### OLTP 其他测试
 
@@ -368,8 +368,8 @@ Latency 对比：
 | 1200    | 22121.87  | 90.78           |
 | 1500    | 22650.13  | 118.92          |
 
-![OLTP Update Index](https://download.pingcap.com/images/tidb-in-kubernetes/oltp-update-index-qps.png)
-![OLTP Update Index](https://download.pingcap.com/images/tidb-in-kubernetes/oltp-update-index-latency.png)
+![OLTP Update Index](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/oltp-update-index-qps.png)
+![OLTP Update Index](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/oltp-update-index-latency.png)
 
 #### OLTP Update Non Index
 
@@ -382,8 +382,8 @@ Latency 对比：
 | 1200    | 33942.60  | 54.83           |
 | 1500    | 42603.13  | 125.52          |
 
-![OLTP Update No Index](https://download.pingcap.com/images/tidb-in-kubernetes/oltp-update-no-index-qps.png)
-![OLTP Update No Index](https://download.pingcap.com/images/tidb-in-kubernetes/oltp-update-no-index-latency.png)
+![OLTP Update No Index](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/oltp-update-no-index-qps.png)
+![OLTP Update No Index](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/oltp-update-no-index-latency.png)
 
 #### OLTP Read Write
 
@@ -396,8 +396,8 @@ Latency 对比：
 | 1200    | 125615.89 | 282.25          |
 | 1500    | 128501.34 | 344.082         |
 
-![OLTP Read Write](https://download.pingcap.com/images/tidb-in-kubernetes/oltp-read-write-qps.png)
-![OLTP Read Write](https://download.pingcap.com/images/tidb-in-kubernetes/oltp-read-write-latency.png)
+![OLTP Read Write](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/oltp-read-write-qps.png)
+![OLTP Read Write](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/oltp-read-write-latency.png)
 
 ### 单可用区与多可用区对比
 
@@ -427,11 +427,11 @@ Google Cloud 多可用区涉及跨 Zone 通信，网络延迟相比同 Zone 会�
 
 QPS 对比：
 
-![Single Zonal vs Regional](https://download.pingcap.com/images/tidb-in-kubernetes/single-zonal-vs-regional-qps.png)
+![Single Zonal vs Regional](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/single-zonal-vs-regional-qps.png)
 
 Latency 对比：
 
-![Single Zonal vs Regional](https://download.pingcap.com/images/tidb-in-kubernetes/single-zonal-vs-regional-latency.png)
+![Single Zonal vs Regional](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/single-zonal-vs-regional-latency.png)
 
 从图中可以看到并发压力增大后，网络额外延迟产生的影响越来越小，额外的网络延迟将不再是主要的性能瓶颈。
 

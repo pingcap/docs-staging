@@ -25,7 +25,7 @@ TiDB Cloud Serverless extends these capabilities with two types of high availabi
 
 When you create a cluster with the default zonal high availability, all components, including Gateway, TiDB, TiKV, and TiFlash compute/write nodes, run in the same availability zone. The placement of these components in the data plane offer infrastructure redundancy with virtual machine pools, which minimizes failover time and network latency due to colocation.
 
-![TiDB Cloud Serverless zonal high availability](https://download.pingcap.com/images/docs/tidb-cloud/serverless-zonal-high-avaliability-aws.png)
+![TiDB Cloud Serverless zonal high availability](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-zonal-high-avaliability-aws.png)
 
 In zonal high availability architecture:
 
@@ -54,7 +54,7 @@ When you create a cluster with regional high availability, critical OLTP (Online
 > - Regional high availability is currently in beta and only available in the AWS Tokyo (`ap-northeast-1`) region.
 > - You can enable regional high availability only during cluster creation.
 
-![TiDB Cloud Serverless regional high availability](https://download.pingcap.com/images/docs/tidb-cloud/serverless-regional-high-avaliability-aws.png)
+![TiDB Cloud Serverless regional high availability](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-regional-high-avaliability-aws.png)
 
 In regional high availability architecture:
 

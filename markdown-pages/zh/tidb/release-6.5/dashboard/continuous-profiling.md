@@ -40,7 +40,7 @@ summary: 了解如何持续地收集 TiDB、TiKV、PD 各个实例的性能数�
 
 - 登录后，在左侧导航栏中点击**高级调试** (Advanced Debugging) > **实例性能分析** (Profiling Instances) > **持续分析** (Continuous Profiling)。
 
-  ![访问页面](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-access.png)
+  ![访问页面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-access.png)
 
 - 在浏览器中访问 <http://127.0.0.1:2379/dashboard/#/continuous_profiling>（将 `127.0.0.1:2379` 替换为实际 PD 实例地址和端口）。
 
@@ -58,7 +58,7 @@ summary: 了解如何持续地收集 TiDB、TiKV、PD 各个实例的性能数�
 2. 点击**打开设置** (Open Settings)。在右侧**设置** (Settings) 页面，将**启用特性** (Enable Feature) 下方的开关打开。设置**保留时间** (Retention Period)，默认值为 3 天。
 3. 点击**保存** (Save)。
 
-![启用功能](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-start.png)
+![启用功能](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-start.png)
 
 ## 查看集群当前性能数据
 
@@ -68,17 +68,17 @@ summary: 了解如何持续地收集 TiDB、TiKV、PD 各个实例的性能数�
 
 你可以在列表中看到自启用该功能以来所有自动收集的性能数据：
 
-![历史结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-history.png)
+![历史结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-history.png)
 
 ## 下载性能数据
 
 进入某次分析结果后，可点击右上角下载按钮 (Download Profiling Result) 打包下载所有性能数据：
 
-![下载某次分析结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-download.png)
+![下载某次分析结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-download.png)
 
 也可以点击列表中的单个实例查看其性能数据，或者悬浮在 **...** 按钮上下载原始数据：
 
-![查看单个实例分析结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-single.png)
+![查看单个实例分析结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-single.png)
 
 ## 停用持续性能分析
 
@@ -89,7 +89,7 @@ summary: 了解如何持续地收集 TiDB、TiKV、PD 各个实例的性能数�
 3. 点击**保存** (Save)。
 4. 在弹出的**关闭持续分析功能** (Disable Continuous Profiling Feature) 对话框中，点击**确认** (Disable)。
 
-![停用功能](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-stop.png)
+![停用功能](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-stop.png)
 
 ## 常见问题
 

@@ -15,7 +15,7 @@ TiUniManager 可帮助 DBA 避免因人工操作失误导致的数据库故障�
 
 TiUniManager 的软件架构图如下。
 
-![TiUniManager 架构](https://download.pingcap.com/images/docs-cn/tiunimanager/tiunimanager-architecture.png)
+![TiUniManager 架构](https://docs-download.pingcap.com/media/images/docs-cn/tiunimanager/tiunimanager-architecture.png)
 
 ### Web UI
 

@@ -1033,7 +1033,7 @@ MPP は、 TiFlashエンジンによって提供される分散コンピュー�
 
     -   `tidb_constraint_check_in_place_pessimistic` ～ `OFF`を設定し、悲観的トランザクションを使用する場合:
 
-        
+
         ```sql
         set @@tidb_constraint_check_in_place_pessimistic=OFF;
         create table t (i int key);
@@ -2782,7 +2782,7 @@ v5.0 以降、上記のシステム変数を個別に変更することができ
 -   単位: 行
 -   この変数は、コプロセッサーのページング要求プロセス中に行の最小数を設定するために使用されます。設定値が小さすぎると、TiDB と TiKV 間の RPC リクエスト数が増加します。設定値が大きすぎると、IndexLookup を制限付きで使用してクエリを実行するときに、パフォーマンスが低下する可能性があります。この変数のデフォルト値は、OLAP シナリオよりも OLTP シナリオで優れたパフォーマンスをもたらします。アプリケーションがstorageエンジンとして TiKV のみを使用する場合は、OLAP ワークロード クエリを実行するときにこの変数の値を増やすことを検討してください。これにより、パフォーマンスが向上する可能性があります。
 
-![Paging size impact on TPCH](https://download.pingcap.com/images/docs/paging-size-impact-on-tpch.png)
+![Paging size impact on TPCH](https://docs-download.pingcap.com/media/images/docs/paging-size-impact-on-tpch.png)
 
 この図に示すように、 [`tidb_enable_paging`](#tidb_enable_paging-new-in-v540)が有効な場合、TPCH のパフォーマンスは`tidb_min_paging_size`と[`tidb_max_paging_size`](#tidb_max_paging_size-new-in-v630)の設定の影響を受けます。縦軸は実行時間で、小さいほど良い。
 

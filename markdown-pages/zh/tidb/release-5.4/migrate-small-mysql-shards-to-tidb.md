@@ -14,7 +14,7 @@ summary: 介绍如何从 TB 级以下分库分表 MySQL 迁移数据到 TiDB。
 
 本文以一个简单的场景为例，示例中的两个数据源 MySQL 实例的分库和分表数据迁移至下游 TiDB 集群。示意图如下。
 
-![migrate-01](https://download.pingcap.com/images/docs-cn/lightning/migrate-shared-mysql-01.png)
+![migrate-01](https://docs-download.pingcap.com/media/images/docs-cn/lightning/migrate-shared-mysql-01.png)
 
 数据源 MySQL 实例 1 和 实例 2 均使用以下表结构，计划将 store_01 和 store_02 中 sale 开头的表合并导入下游 store.sale 表
 

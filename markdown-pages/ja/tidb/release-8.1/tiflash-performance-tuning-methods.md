@@ -19,7 +19,7 @@ summary: パフォーマンス概要ダッシュボードにTiFlashメトリッ�
 
 このTiFlashクラスターは 2 つのノードで構成され、各ノードは 16 個のコアと 48 GB のメモリで構成されています。CH-benCHmark ワークロード中、CPU 使用率は最大 1500%、メモリ使用量は最大 20 GB、IO 使用率は最大 91% に達することがあります。これらのメトリックは、 TiFlashノードのリソースが飽和状態に近づいていることを示しています。
 
-![CH-TiFlash-MPP](https://download.pingcap.com/images/docs/performance/tiflash/tiflash-resource-usage.png)
+![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs/performance/tiflash/tiflash-resource-usage.png)
 
 ## TiFlashパフォーマンスの主要指標 {#key-metrics-for-tiflash-performance}
 
@@ -58,13 +58,13 @@ summary: パフォーマンス概要ダッシュボードにTiFlashメトリッ�
 
 `cop`リクエストの処理時間は比較的短いため、リクエストの一部はデータ アクセスとコプロセッサを介したフィルタリングのためにTiFlashにプッシュダウンされていることがわかります。
 
-![CH-TiFlash-MPP](https://download.pingcap.com/images/docs/performance/tiflash/ch-2tiflash-op.png)
+![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs/performance/tiflash/ch-2tiflash-op.png)
 
 例2: TiFlash `cop`リクエストが総処理時間の大部分を占める
 
 次の図のワークロードでは、 `cop`リクエストが全体の処理時間の大部分を占めています。この場合、SQL 実行プランをチェックして、これらの`cop`リクエストが生成された理由を確認できます。
 
-![Cop](https://download.pingcap.com/images/docs/performance/tiflash/tiflash_request_duration_by_type.png)
+![Cop](https://docs-download.pingcap.com/media/images/docs/performance/tiflash/tiflash_request_duration_by_type.png)
 
 ### ラフト関連のメトリクス {#raft-related-metrics}
 
@@ -106,10 +106,10 @@ summary: パフォーマンス概要ダッシュボードにTiFlashメトリッ�
 
 このクラスターには、2 つのTiFlashノードがあります。TiKV からTiFlashへの増分データ複製速度は、約 28 MB/秒です。安定レイヤー(ファイル記述子) の最大書き込みスループットは 939 MB/秒、最大読み取りスループットは 1.1 GiB/秒です。一方、デルタレイヤー(ページ) の最大書き込みスループットは 74 MB/秒、最大読み取りスループットは 111 MB/秒です。この環境では、 TiFlash は強力な IO スループット機能を備えた専用の NVME ディスクを使用します。
 
-![CH-2TiFlash-OP](https://download.pingcap.com/images/docs/performance/tiflash/ch-2tiflash-raft-io-flow.png)
+![CH-2TiFlash-OP](https://docs-download.pingcap.com/media/images/docs/performance/tiflash/ch-2tiflash-raft-io-flow.png)
 
 例2: パブリッククラウド展開環境における[CH-benCHmark ワークロード](/benchmark/benchmark-tidb-using-ch.md)のRaftとIOメトリック
 
 次の図に示すように、 `Raft Wait Index Duration`の 99 パーセンタイルは最大 438 ミリ秒、 `Raft Batch Read Index Duration`の 99 パーセンタイルは最大 125 ミリ秒です。このクラスターにはTiFlashノードが 1 つだけあります。TiKV は、1 秒あたり約 5 MB の増分データをTiFlashに複製します。安定レイヤー(ファイル記述子) の最大書き込みトラフィックは 78 MB/秒、最大読み取りトラフィックは 221 MB/秒です。一方、デルタレイヤー(ページ) の最大書き込みトラフィックは 8 MB/秒、最大読み取りトラフィックは 18 MB/秒です。この環境では、 TiFlash はIO スループットが比較的弱い AWS EBS クラウド ディスクを使用します。
 
-![CH-TiFlash-MPP](https://download.pingcap.com/images/docs/performance/tiflash/ch-1tiflash-raft-io-flow-cloud.png)
+![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs/performance/tiflash/ch-1tiflash-raft-io-flow-cloud.png)

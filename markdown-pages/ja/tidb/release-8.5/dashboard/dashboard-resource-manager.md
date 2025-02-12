@@ -19,7 +19,7 @@ summary: TiDB ダッシュボード リソース マネージャー ページは
 
 次の図は、リソース マネージャーの詳細ページを示しています。
 
-![TiDB Dashboard: Resource Manager](https://download.pingcap.com/images/docs/dashboard/dashboard-resource-manager-info.png)
+![TiDB Dashboard: Resource Manager](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-resource-manager-info.png)
 
 リソース マネージャー ページには、次の 3 つのセクションが含まれています。
 
@@ -45,13 +45,13 @@ summary: TiDB ダッシュボード リソース マネージャー ページは
     -   `oltp_read_write` : 偶数データの読み取りと書き込みのワークロードに適用されます。 `sysbench oltp_read_write`と同様のワークロード モデルに基づいて推定されます。
     -   `oltp_read_only` : 大量のデータ読み取りが行われるワークロードに適用されます。 `sysbench oltp_read_only`と同様のワークロード モデルに基づいて推定されます。
 
-    ![Calibrate by Hardware](https://download.pingcap.com/images/docs/dashboard/dashboard-resource-manager-calibrate-by-hardware.png)
+    ![Calibrate by Hardware](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-resource-manager-calibrate-by-hardware.png)
 
     **ユーザー リソース グループの合計 RU は**、 `default`リソース グループを除くすべてのユーザー リソース グループの RU の合計量を表します。この値が推定容量より少ない場合、システムはアラートをトリガーします。デフォルトでは、システムは定義済みの`default`リソース グループに無制限の使用を割り当てます。すべてのユーザーが`default`リソース グループに属している場合、リソースはリソース制御が無効になっている場合と同じ方法で割り当てられます。
 
 -   [実際の作業負荷に基づいて容量を見積もる](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-actual-workload)
 
-    ![Calibrate by Workload](https://download.pingcap.com/images/docs/dashboard/dashboard-resource-manager-calibrate-by-workload.png)
+    ![Calibrate by Workload](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-resource-manager-calibrate-by-workload.png)
 
     推定する時間範囲は 10 分から 24 時間まで選択できます。使用されるタイムゾーンはフロントエンド ユーザーのタイムゾーンと同じです。
 

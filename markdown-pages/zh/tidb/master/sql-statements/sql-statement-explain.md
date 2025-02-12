@@ -274,7 +274,7 @@ The `xx.dot` is the result returned by the above statement.
 
 如果你的计算机上未安装 `dot` 程序，可将结果复制到[本网站](http://www.webgraphviz.com/)以获取树形图：
 
-![Explain Dot](https://download.pingcap.com/images/docs-cn/explain_dot.png)
+![Explain Dot](https://docs-download.pingcap.com/media/images/docs-cn/explain_dot.png)
 
 </div>
 

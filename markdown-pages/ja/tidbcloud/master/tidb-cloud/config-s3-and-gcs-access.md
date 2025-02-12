@@ -45,11 +45,11 @@ TiDB Cloud がAmazon S3 バケット内のソースデータにアクセスで�
 
     2.  **[バケット]**リストで、ソース データを含むバケットの名前を選択し、 **[ARN のコピー]**をクリックして S3 バケット ARN (例: `arn:aws:s3:::tidb-cloud-source-data` ) を取得します。後で使用するために、バケット ARN をメモしておきます。
 
-        ![Copy bucket ARN](https://download.pingcap.com/images/docs/tidb-cloud/copy-bucket-arn.png)
+        ![Copy bucket ARN](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/copy-bucket-arn.png)
 
     3.  [https://console.aws.amazon.com/iam/](https://console.aws.amazon.com/iam/)でIAMコンソールを開き、左側のナビゲーション ペインで**[ポリシー]**をクリックして、 **[ポリシーの作成]**をクリックします。
 
-        ![Create a policy](https://download.pingcap.com/images/docs/tidb-cloud/aws-create-policy.png)
+        ![Create a policy](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-create-policy.png)
 
     4.  **[ポリシーの作成]**ページで、 **[JSON]**タブをクリックします。
 
@@ -112,7 +112,7 @@ TiDB Cloud がAmazon S3 バケット内のソースデータにアクセスで�
 
     1.  IAMコンソールの[https://console.aws.amazon.com/iam/](https://console.aws.amazon.com/iam/)で、左側のナビゲーション ペインで**[ロール]**をクリックし、 **[ロールの作成]**をクリックします。
 
-        ![Create a role](https://download.pingcap.com/images/docs/tidb-cloud/aws-create-role.png)
+        ![Create a role](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-create-role.png)
 
     2.  ロールを作成するには、次の情報を入力します。
 
@@ -126,7 +126,7 @@ TiDB Cloud がAmazon S3 バケット内のソースデータにアクセスで�
 
     5.  ロールのリストで、作成したロールの名前をクリックして概要ページに移動し、ロール ARN をコピーします。
 
-        ![Copy AWS role ARN](https://download.pingcap.com/images/docs/tidb-cloud/aws-role-arn.png)
+        ![Copy AWS role ARN](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-role-arn.png)
 
 4.  TiDB Cloudコンソールで、**データ インポート**ページに移動し、 TiDB Cloudアカウント ID と外部 ID を取得して、ロール ARN を**ロール ARN**フィールドに貼り付けます。
 
@@ -183,7 +183,7 @@ TiDB Cloud がGCS バケット内のソース データにアクセスできる�
 
     2.  [役割](https://console.cloud.google.com/iam-admin/roles)ページに移動し、 **[ロールの作成]**をクリックします。
 
-        ![Create a role](https://download.pingcap.com/images/docs/tidb-cloud/gcp-create-role.png)
+        ![Create a role](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/gcp-create-role.png)
 
     3.  ロールの名前、説明、ID、およびロール起動ステージを入力します。ロールの作成後は、ロール名を変更できません。
 
@@ -197,13 +197,13 @@ TiDB Cloud がGCS バケット内のソース データにアクセスできる�
 
         権限名をフィルター クエリとして**[プロパティ名または値の入力]**フィールドにコピーし、フィルター結果で名前を選択できます。3 つの権限を追加するには、権限名の間に**OR**を使用できます。
 
-        ![Add permissions](https://download.pingcap.com/images/docs/tidb-cloud/gcp-add-permissions.png)
+        ![Add permissions](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/gcp-add-permissions.png)
 
 3.  [バケツ](https://console.cloud.google.com/storage/browser)ページに移動し、 TiDB Cloud がアクセスする GCS バケットの名前をクリックします。
 
 4.  **バケットの詳細**ページで、 **「権限」**タブをクリックし、 **「アクセスの許可」**をクリックします。
 
-    ![Grant Access to the bucket ](https://download.pingcap.com/images/docs/tidb-cloud/gcp-bucket-permissions.png)
+    ![Grant Access to the bucket ](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/gcp-bucket-permissions.png)
 
 5.  バケットへのアクセスを許可するには次の情報を入力し、 **「保存」**をクリックします。
 
@@ -219,12 +219,12 @@ TiDB Cloud がGCS バケット内のソース データにアクセスできる�
 
     ファイルの gsutil URI をコピーする場合は、ファイルを選択し、 **[オブジェクト オーバーフロー メニューを開く]**をクリックして、 **[gsutil URI をコピー]**をクリックします。
 
-    ![Get bucket URI](https://download.pingcap.com/images/docs/tidb-cloud/gcp-bucket-uri01.png)
+    ![Get bucket URI](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/gcp-bucket-uri01.png)
 
     フォルダの gsutil URI を使用する場合は、フォルダを開き、フォルダ名の後の [コピー] ボタンをクリックしてフォルダ名をコピーします。その後、フォルダの正しい URI を取得するには、名前の先頭に`gs://` 、末尾に`/`を追加する必要があります。
 
     たとえば、フォルダー名が`tidb-cloud-source-data`場合、URI として`gs://tidb-cloud-source-data/`使用する必要があります。
 
-    ![Get bucket URI](https://download.pingcap.com/images/docs/tidb-cloud/gcp-bucket-uri02.png)
+    ![Get bucket URI](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/gcp-bucket-uri02.png)
 
 7.  TiDB Cloudコンソールで、Google Cloud サービス アカウント ID を取得する**データ インポート**ページに移動し、GCS バケットの gsutil URI を**Bucket gsutil URI**フィールドに貼り付けます。たとえば、 `gs://tidb-cloud-source-data/`貼り付けます。

@@ -17,7 +17,7 @@ You can access the instance profiling page using either of the following methods
 
 - After logging into TiDB Dashboard, click **Advanced Debugging** > **Profiling Instances** > **Manual Profiling** on the left navigation bar.
 
-  ![Access instance profiling page](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-access.png)
+  ![Access instance profiling page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-access.png)
 
 - Visit <http://127.0.0.1:2379/dashboard/#/instance_profiling> in your browser. Replace `127.0.0.1:2379` with the actual PD instance address and port.
 
@@ -25,7 +25,7 @@ You can access the instance profiling page using either of the following methods
 
 In the instance profiling page, choose at least one target instance and click **Start Profiling** to start the instance profiling.
 
-![Start instance profiling](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-start.png)
+![Start instance profiling](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-start.png)
 
 You can modify the profiling duration before starting the profiling. This duration is determined by the time needed for the profiling, which is 30 seconds by default. The 30-second duration takes approximately 30 seconds to complete.
 
@@ -33,7 +33,7 @@ You can modify the profiling duration before starting the profiling. This durati
 
 After a profiling is started, you can view the profiling status and progress in real time.
 
-![Profiling detail](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-view-progress.png)
+![Profiling detail](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-view-progress.png)
 
 The profiling runs in the background. Refreshing or exiting the current page does not stop the profiling task that is running.
 
@@ -41,16 +41,16 @@ The profiling runs in the background. Refreshing or exiting the current page doe
 
 After the profiling of all instances is completed, you can click **Download Profiling Result** in the upper right corner to download all profiling results.
 
-![Download profiling result](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-download.png)
+![Download profiling result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-download.png)
 
 You can also click an individual instance in the table to view its profiling result (including flame charts, directed acyclic graphs, and texts). Alternatively, you can hover on ... to download raw data.
 
-![Single instance result](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-view-single.png)
+![Single instance result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-view-single.png)
 
 ## View profiling history
 
 The profiling history is listed on the instance profiling page. Click one row of the list and you can view the status detail.
 
-![View profiling history](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-history.png)
+![View profiling history](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-history.png)
 
 For detailed operations on the profiling status page, see [View profiling status](#view-profiling-status).

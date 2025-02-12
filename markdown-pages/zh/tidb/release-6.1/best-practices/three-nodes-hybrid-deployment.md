@@ -19,11 +19,11 @@ summary: 了解三节点混合部署最佳实践。
 
 下图是默认参数配置下，12 小时内集群的 QPS 监控，可以看倒有比较明显的抖动。
 
-![QPS with default config](https://download.pingcap.com/images/docs-cn/best-practices/three-nodes-default-config-qps.png)
+![QPS with default config](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/three-nodes-default-config-qps.png)
 
 调整参数后，稳定性得到了改善。
 
-![QPS with modified config](https://download.pingcap.com/images/docs-cn/best-practices/three-nodes-final-config-qps.png)
+![QPS with modified config](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/three-nodes-final-config-qps.png)
 
 ## 参数调整
 
@@ -64,7 +64,7 @@ tikv:
 
 本次测试最后选择设置该参数值为 `2`，通过 **gRPC poll CPU** 面板观察，利用率正好在 80% 左右。
 
-![gRPC Pool CPU](https://download.pingcap.com/images/docs-cn/best-practices/three-nodes-grpc-pool-usage.png)
+![gRPC Pool CPU](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/three-nodes-grpc-pool-usage.png)
 
 #### `storage.scheduler-worker-pool-size`
 
@@ -72,7 +72,7 @@ tikv:
 
 一般来说该线程池的利用率保持在 50% - 75% 之间是比较好的。和 gRPC 线程池情况类似，混合部署时该参数默认取值偏大，资源利用不充分。本次测试最后选择取值为 `2`，通过 **Scheduler worker CPU** 面板观察，利用率比较符合最佳实践。
 
-![Scheduler Worker CPU](https://download.pingcap.com/images/docs-cn/best-practices/three-nodes-scheduler-pool-usage.png)
+![Scheduler Worker CPU](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/three-nodes-scheduler-pool-usage.png)
 
 ### TiKV 后台任务资源配置
 
@@ -99,7 +99,7 @@ RocksDB 线程池是进行 Compact 和 Flush 任务的线程池，默认大小�
 
 因为 TiDB 使用的是 MVCC 的模型，TiKV 还需要周期性地在后台清除旧版本的数据。当可用资源有限的时候，这个操作会引起周期性的性能抖动。可以用 `gc.max_write_bytes_per_sec` 来限制这一操作的资源使用。
 
-![GC Impact](https://download.pingcap.com/images/docs-cn/best-practices/three-nodes-gc-impact.png)
+![GC Impact](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/three-nodes-gc-impact.png)
 
 除了在配置文件中设置该参数之外，还可以通过 tikv-ctl 动态调节，为调整该参数提供便利：
 

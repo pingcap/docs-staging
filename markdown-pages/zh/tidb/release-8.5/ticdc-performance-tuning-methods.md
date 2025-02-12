@@ -44,7 +44,7 @@ summary: 本文介绍了 Performance Overview 面板中的 TiCDC 部分，帮助
 - 添加 TiCDC 节点：将 TiCDC 集群扩展到多个节点，以增加处理能力。
 - 优化 TiCDC 节点的资源：提高 TiCDC 节点的 CPU 和内存配置，以改善性能。
 
-![TiCDC overview](https://download.pingcap.com/images/docs-cn/performance/cdc/cdc-slow.png)
+![TiCDC overview](https://docs-download.pingcap.com/media/images/docs-cn/performance/cdc/cdc-slow.png)
 
 ### 数据流吞吐指标和下游延迟信息
 
@@ -66,6 +66,6 @@ summary: 本文介绍了 Performance Overview 面板中的 TiCDC 部分，帮助
 - 在第一段负载期间，由于下游 TiDB 集群写入数据缓慢，导致 TiCDC 消费数据的速度跟不上上游的 QPS，引起 Changefeed checkpoint lag 不断增长。然而，Changefeed resolved ts lag 仍然在 300 毫秒以内，说明同步延迟和吞吐瓶颈不在 puller 和 sorter 模块中，而在下游的 sink 模块。
 - 在第二段负载期间，因为下游 TiDB 集群的写入速度快，TiCDC 同步数据的速度完全追上了上游的速度，因此 Changefeed checkpoint lag 和 Changefeed resolved ts lag 保持在 500 毫秒以内，此时 TiCDC 的同步速度较为理想。
 
-![TiCDC overview](https://download.pingcap.com/images/docs-cn/performance/cdc/cdc-fast-1.png)
+![TiCDC overview](https://docs-download.pingcap.com/media/images/docs-cn/performance/cdc/cdc-fast-1.png)
 
-![data flow and txn latency](https://download.pingcap.com/images/docs-cn/performance/cdc/cdc-fast-2.png)
+![data flow and txn latency](https://docs-download.pingcap.com/media/images/docs-cn/performance/cdc/cdc-fast-2.png)

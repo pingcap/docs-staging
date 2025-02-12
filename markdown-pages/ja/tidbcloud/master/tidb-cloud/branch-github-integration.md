@@ -1,5 +1,5 @@
 ---
-title: Integrate TiDB Cloud Serverless Branching (Beta) with GitHub 
+title: Integrate TiDB Cloud Serverless Branching (Beta) with GitHub
 summary: TiDB Cloud Serverless ブランチ機能を GitHub と統合する方法を学びます。
 ---
 
@@ -40,7 +40,7 @@ TiDB Cloud Serverless ブランチを GitHub リポジトリに統合するに�
     -   GitHub にログインしていない場合は、まず GitHub にログインするように求められます。
     -   統合を初めて使用する場合は、 **TiDB Cloud Branching**アプリを承認するように求められます。
 
-    <img src="https://download.pingcap.com/images/docs/tidb-cloud/branch/github-authorize.png" width="80%" />
+    <img src="https://docs-download.pingcap.com/media/images/docs/tidb-cloud/branch/github-authorize.png" width="80%" />
 
 4.  **「GitHub に接続」**ダイアログで、 **「GitHub アカウント」**ドロップダウン リストから GitHub アカウントを選択します。
 
@@ -50,7 +50,7 @@ TiDB Cloud Serverless ブランチを GitHub リポジトリに統合するに�
 
 6.  **「接続」**をクリックして、 TiDB Cloud Serverless クラスターと GitHub リポジトリを接続します。
 
-    <img src="https://download.pingcap.com/images/docs/tidb-cloud/branch/github-connect.png" width="40%" />
+    <img src="https://docs-download.pingcap.com/media/images/docs/tidb-cloud/branch/github-connect.png" width="40%" />
 
 ## TiDB Cloudブランチングアプリの動作 {#tidb-cloud-branching-app-behaviors}
 

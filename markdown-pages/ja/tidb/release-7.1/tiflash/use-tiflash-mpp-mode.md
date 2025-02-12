@@ -21,7 +21,7 @@ TiFlash は、計算にクロスノード データ交換 (データ シャッ�
 
 次の図は、MPP モードがどのように機能するかを示しています。
 
-![mpp-mode](https://download.pingcap.com/images/docs/tiflash/tiflash-mpp.png)
+![mpp-mode](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash-mpp.png)
 
 ## MPP モードを選択するかどうかを制御します {#control-whether-to-select-the-mpp-mode}
 

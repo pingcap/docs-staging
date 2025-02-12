@@ -72,7 +72,7 @@ BEGIN /*T! PESSIMISTIC */;
 
 - 如果 `Point Get` 和 `Batch Point Get` 算子没有读到数据，依然会对给定的主键或者唯一键加锁，阻塞其他事务对相同主键唯一键加锁或者进行写入操作。
 
-- 支持 `FOR UPDATE OF TABLES` 语法，对于存在多表 join 的语句，只对 `OF TABLES` 中包含的表关联的行进行悲观锁加锁操作。 
+- 支持 `FOR UPDATE OF TABLES` 语法，对于存在多表 join 的语句，只对 `OF TABLES` 中包含的表关联的行进行悲观锁加锁操作。
 
 ## 和 MySQL InnoDB 的差异
 
@@ -114,7 +114,7 @@ BEGIN /*T! PESSIMISTIC */;
 4. `START TRANSACTION WITH CONSISTENT SNAPSHOT` 之后，MySQL 仍然可以读取到之后在其他事务创建的表，而 TiDB 不能。
 
 5. autocommit 事务优先采用乐观事务提交。
-    
+
     使用悲观事务模式时，autocommit 事务首先尝试使用开销更小的乐观事务模式提交。如果发生了写冲突，重试时才会使用悲观事务提交。所以 `tidb_retry_limit = 0` 时，autocommit 事务遇到写冲突仍会报 `Write Conflict` 错误。
 
     自动提交的 `SELECT FOR UPDATE` 语句不会等锁。
@@ -139,7 +139,7 @@ TiDB 在悲观事务模式下支持了 2 种隔离级别：
 
 TiDB 悲观锁复用了乐观锁的两阶段提交逻辑，重点在 DML 执行时做了改造。
 
-![TiDB 悲观事务的提交流程](https://download.pingcap.com/images/docs-cn/pessimistic-transaction-commit.png)
+![TiDB 悲观事务的提交流程](https://docs-download.pingcap.com/media/images/docs-cn/pessimistic-transaction-commit.png)
 
 在两阶段提交之前增加了 Acquire Pessimistic Lock 阶段，简要步骤如下。
 
@@ -147,7 +147,7 @@ TiDB 悲观锁复用了乐观锁的两阶段提交逻辑，重点在 DML 执行�
 2. TiDB 收到来自客户端的更新数据的请求：TiDB 向 TiKV 发起加悲观锁请求，该锁持久化到 TiKV。
 3. （同乐观锁）客户端发起 commit，TiDB 开始执行与乐观锁一样的两阶段提交。
 
-![TiDB 中的悲观事务](https://download.pingcap.com/images/docs-cn/pessimistic-transaction-in-tidb.png)
+![TiDB 中的悲观事务](https://docs-download.pingcap.com/media/images/docs-cn/pessimistic-transaction-in-tidb.png)
 
 相关细节本节不再赘述，详情可阅读 [TiDB 悲观锁实现原理](https://tidb.net/blog/7730ed79)。
 
@@ -161,7 +161,7 @@ TiDB 悲观锁复用了乐观锁的两阶段提交逻辑，重点在 DML 执行�
 
 如果业务逻辑依赖加锁或等锁机制，或者即使在集群异常情况下也要尽可能保证事务提交的成功率，应关闭 pipelined 加锁功能。
 
-![Pipelined pessimistic lock](https://download.pingcap.com/images/docs-cn/pessimistic-transaction-pipelining.png)
+![Pipelined pessimistic lock](https://docs-download.pingcap.com/media/images/docs-cn/pessimistic-transaction-pipelining.png)
 
 该功能默认开启，可修改 TiKV 配置关闭：
 

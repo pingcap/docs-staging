@@ -15,7 +15,7 @@ summary: This document describes how to use multi-table join queries.
 
 内部結合の結合結果は、結合条件に一致する行のみを返します。
 
-![Inner Join](https://download.pingcap.com/images/docs/develop/inner-join.png)
+![Inner Join](https://docs-download.pingcap.com/media/images/docs/develop/inner-join.png)
 
 たとえば、最も多作な著者を知りたい場合は、 `authors`という名前の author テーブルと`book_authors`名前の書籍の author テーブルを結合する必要があります。
 
@@ -88,7 +88,7 @@ public List<Author> getTop10AuthorsOrderByBooks() throws SQLException {
 
 左外部結合は、結合条件に一致する、左側のテーブルのすべての行と右側のテーブルの値を返します。右側のテーブルに一致する行がない場合は、 `NULL`で埋められます。
 
-![Left Outer Join](https://download.pingcap.com/images/docs/develop/left-outer-join.png)
+![Left Outer Join](https://docs-download.pingcap.com/media/images/docs/develop/left-outer-join.png)
 
 場合によっては、複数のテーブルを使用してデータ クエリを完了したいが、結合条件が満たされていないためにデータ セットが小さくなりすぎないようにしたい場合があります。
 
@@ -191,7 +191,7 @@ public List<Book> getLatestBooksWithAverageScore() throws SQLException {
 
 右外部結合は、右側のテーブルのすべてのレコードと、結合条件に一致する左側のテーブルの値を返します。一致する値がない場合は、 `NULL`で埋められます。
 
-![Right Outer Join](https://download.pingcap.com/images/docs/develop/right-outer-join.png)
+![Right Outer Join](https://docs-download.pingcap.com/media/images/docs/develop/right-outer-join.png)
 
 ### クロスジョイン {#cross-join}
 

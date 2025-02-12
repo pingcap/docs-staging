@@ -56,7 +56,7 @@ TiDB 是一个兼容 MySQL 的数据库。[MySQL Workbench](https://www.mysql.co
 
 5. 启动 MySQL Workbench，并点击 **MySQL Connections** 标题旁边的 **+**。
 
-    ![MySQL Workbench: add new connection](https://download.pingcap.com/images/docs-cn/develop/mysql-workbench-add-new-connection.png)
+    ![MySQL Workbench: add new connection](https://docs-download.pingcap.com/media/images/docs-cn/develop/mysql-workbench-add-new-connection.png)
 
 6. 在 **Setup New Connection** 对话框中，配置以下连接参数：
 
@@ -66,11 +66,11 @@ TiDB 是一个兼容 MySQL 的数据库。[MySQL Workbench](https://www.mysql.co
     - **Username**：输入从 TiDB Cloud 连接对话框中的得到的 `USERNAME` 参数。
     - **Password**：点击 **Store in Keychain ...**  或 **Store in Vault**，输入 TiDB Cloud Serverless 集群的密码，然后点击 **OK** 保存密码。
 
-        ![MySQL Workbench: store the password of TiDB Cloud Serverless in keychain](https://download.pingcap.com/images/docs-cn/develop/mysql-workbench-store-password-in-keychain.png)
+        ![MySQL Workbench: store the password of TiDB Cloud Serverless in keychain](https://docs-download.pingcap.com/media/images/docs-cn/develop/mysql-workbench-store-password-in-keychain.png)
 
     下图显示了连接参数的示例：
 
-    ![MySQL Workbench: configure connection settings for TiDB Cloud Serverless](https://download.pingcap.com/images/docs-cn/develop/mysql-workbench-connection-config-serverless-parameters.png)
+    ![MySQL Workbench: configure connection settings for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs-cn/develop/mysql-workbench-connection-config-serverless-parameters.png)
 
 7. 点击 **Test Connection** 以验证与 TiDB Cloud Serverless 集群的连接。
 
@@ -91,7 +91,7 @@ TiDB 是一个兼容 MySQL 的数据库。[MySQL Workbench](https://www.mysql.co
 
 4. 启动 MySQL Workbench，并点击 **MySQL Connections** 标题旁边的 **+**。
 
-    ![MySQL Workbench: add new connection](https://download.pingcap.com/images/docs-cn/develop/mysql-workbench-add-new-connection.png)
+    ![MySQL Workbench: add new connection](https://docs-download.pingcap.com/media/images/docs-cn/develop/mysql-workbench-add-new-connection.png)
 
 5. 在 **Setup New Connection** 对话框中，配置以下连接参数：
 
@@ -101,11 +101,11 @@ TiDB 是一个兼容 MySQL 的数据库。[MySQL Workbench](https://www.mysql.co
     - **Username**：输入从 TiDB Cloud 连接对话框中的得到的 `USERNAME` 参数。
     - **Password**：点击 **Store in Keychain ...**，输入 TiDB Cloud Dedicated 集群的密码，然后点击 **OK** 保存密码。
 
-        ![MySQL Workbench: store the password of TiDB Cloud Dedicated in keychain](https://download.pingcap.com/images/docs-cn/develop/mysql-workbench-store-dedicated-password-in-keychain.png)
+        ![MySQL Workbench: store the password of TiDB Cloud Dedicated in keychain](https://docs-download.pingcap.com/media/images/docs-cn/develop/mysql-workbench-store-dedicated-password-in-keychain.png)
 
     下图显示了连接参数的示例：
 
-    ![MySQL Workbench: configure connection settings for TiDB Cloud Dedicated](https://download.pingcap.com/images/docs-cn/develop/mysql-workbench-connection-config-dedicated-parameters.png)
+    ![MySQL Workbench: configure connection settings for TiDB Cloud Dedicated](https://docs-download.pingcap.com/media/images/docs-cn/develop/mysql-workbench-connection-config-dedicated-parameters.png)
 
 6. 点击 **Test Connection** 以验证与 TiDB Cloud Dedicated 集群的连接。
 
@@ -116,7 +116,7 @@ TiDB 是一个兼容 MySQL 的数据库。[MySQL Workbench](https://www.mysql.co
 
 1. 启动 MySQL Workbench，并点击 **MySQL Connections** 标题旁边的 **+**。
 
-    ![MySQL Workbench: add new connection](https://download.pingcap.com/images/docs-cn/develop/mysql-workbench-add-new-connection.png)
+    ![MySQL Workbench: add new connection](https://docs-download.pingcap.com/media/images/docs-cn/develop/mysql-workbench-add-new-connection.png)
 
 2. 在 **Setup New Connection** 对话框中，配置以下连接参数：
 
@@ -126,11 +126,11 @@ TiDB 是一个兼容 MySQL 的数据库。[MySQL Workbench](https://www.mysql.co
     - **Username**：输入用于连接到 TiDB 的用户名。
     - **Password**：点击 **Store in Keychain ...**，输入用于连接 TiDB 集群的密码，然后点击 **OK** 保存密码。
 
-        ![MySQL Workbench: store the password of TiDB Self-Managed in keychain](https://download.pingcap.com/images/docs-cn/develop/mysql-workbench-store-self-hosted-password-in-keychain.png)
+        ![MySQL Workbench: store the password of TiDB Self-Managed in keychain](https://docs-download.pingcap.com/media/images/docs-cn/develop/mysql-workbench-store-self-hosted-password-in-keychain.png)
 
     下图显示了连接参数的示例：
 
-    ![MySQL Workbench: configure connection settings for TiDB Self-Managed](https://download.pingcap.com/images/docs-cn/develop/mysql-workbench-connection-config-self-hosted-parameters.png)
+    ![MySQL Workbench: configure connection settings for TiDB Self-Managed](https://docs-download.pingcap.com/media/images/docs-cn/develop/mysql-workbench-connection-config-self-hosted-parameters.png)
 
 3. 点击 **Test Connection** 以验证与本地部署 TiDB 集群的连接。
 
@@ -148,7 +148,7 @@ TiDB 是一个兼容 MySQL 的数据库。[MySQL Workbench](https://www.mysql.co
 1. 启动 MySQL Workbench 并打开 **Workbench Preferences** 页面。
 2. 在 **SQL Editor** > **MySQL Session** 部分，调整 **DBMS connection read timeout interval (in seconds)** 的设置。该字段控制了 MySQL Workbench 在断开与服务器的连接之前查询可以执行的最长时间（以秒为单位）。
 
-    ![MySQL Workbench: adjust timeout option in SQL Editor settings](https://download.pingcap.com/images/docs-cn/develop/mysql-workbench-adjust-sqleditor-read-timeout.jpg)
+    ![MySQL Workbench: adjust timeout option in SQL Editor settings](https://docs-download.pingcap.com/media/images/docs-cn/develop/mysql-workbench-adjust-sqleditor-read-timeout.jpg)
 
 更多信息，可以参考 [MySQL Workbench 常见问题](https://dev.mysql.com/doc/workbench/en/workbench-faq.html)。
 

@@ -42,7 +42,7 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
 3. 点击**保存** (Save)。
 
-![启用功能](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-start.png)
+![启用功能](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-start.png)
 
 ### 使用 TiDB Operator 部署的集群
 
@@ -54,7 +54,7 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
 - 登录后，左侧导航条点击**高级调试** (Advanced Debugging) > **实例性能分析** (Profiling Instances) > **持续分析** (Continuous Profiling)：
 
-  ![访问页面](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-access.png)
+  ![访问页面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-access.png)
 
 - 在浏览器中访问 <http://127.0.0.1:2379/dashboard/#/continuous_profiling>（将 `127.0.0.1:2379` 替换为实际 PD 实例地址和端口）。
 
@@ -62,7 +62,7 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
 开始持续性能分析后，可以在列表中看到已经完成的性能分析结果：
 
-![历史结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-history.png)
+![历史结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-history.png)
 
 性能分析在后台运行，刷新或退出当前页面不会终止正在运行的性能分析任务。
 
@@ -70,11 +70,11 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
 进入某次分析结果后，可点击右上角下载按钮 (Download Profiling Result) 打包下载所有性能分析结果：
 
-![下载某次分析结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-download.png)
+![下载某次分析结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-download.png)
 
 也可以点击列表中的单个实例查看其性能分析结果（包括火焰图、有向无环图、文本），或者悬浮在 ... 按钮上下载原始数据：
 
-![查看单个实例分析结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-single.png)
+![查看单个实例分析结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-single.png)
 
 ## 停用持续性能分析
 
@@ -84,4 +84,4 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 4. 点击**保存** (Save)。
 5. 点击弹窗的**确认**（Disable）。
 
-![停用功能](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-stop.png)
+![停用功能](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-stop.png)

@@ -32,8 +32,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: "new-deploy-arch"
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -122,4 +120,4 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
           https://api.github.com/repos/pingcap/website-docs/actions/workflows/production.yml/dispatches \
-          -d '{"ref":"test/deploy-arch","inputs":{"hash": "$CURRENT_SHA", "fallback": "false"}}'
+          -d '{"ref":"master","inputs":{"hash": "$CURRENT_SHA", "fallback": "false"}}'

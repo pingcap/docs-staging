@@ -162,7 +162,7 @@ TiDB クラスターでは、TSO (Timestamp Oracle) の提供やリクエスト�
 
 次の図は、それぞれ 56 個の CPU を搭載した 3 台の PD サーバーで構成された大規模 TiDB クラスターの症状を示しています。これらの図から、1 秒あたりのクエリ (QPS) が 100 万を超え、1 秒あたりの TSO (Timestamp Oracle) リクエストが 162,000 を超えると、CPU 使用率が約 4,600% に達することがわかります。この高い CPU 使用率は、PD リーダーに大きな負荷がかかっており、使用可能な CPU リソースが不足していることを示しています。
 
-![pd-server-cpu](https://download.pingcap.com/images/docs/performance/public-cloud-best-practice/baseline_cpu.png) ![pd-server-metrics](https://download.pingcap.com/images/docs/performance/public-cloud-best-practice/baseline_metrics.png)
+![pd-server-cpu](https://docs-download.pingcap.com/media/images/docs/performance/public-cloud-best-practice/baseline_cpu.png) ![pd-server-metrics](https://docs-download.pingcap.com/media/images/docs/performance/public-cloud-best-practice/baseline_metrics.png)
 
 ### PDパフォーマンスの調整 {#tune-pd-performance}
 
@@ -197,4 +197,4 @@ PD 構成に加えて、TSO クライアント バッチ待機機能を有効に
 
 これらの改善は、チューニング調整によって、安定した TSO 処理パフォーマンスを維持しながら、PDサーバーの CPU 使用率を正常に削減できたことを示しています。
 
-![pd-server-cpu](https://download.pingcap.com/images/docs/performance/public-cloud-best-practice/after_tuning_cpu.png) ![pd-server-metrics](https://download.pingcap.com/images/docs/performance/public-cloud-best-practice/after_tuning_metrics.png)
+![pd-server-cpu](https://docs-download.pingcap.com/media/images/docs/performance/public-cloud-best-practice/after_tuning_cpu.png) ![pd-server-metrics](https://docs-download.pingcap.com/media/images/docs/performance/public-cloud-best-practice/after_tuning_metrics.png)

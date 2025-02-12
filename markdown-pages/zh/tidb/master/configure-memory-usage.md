@@ -104,7 +104,7 @@ SET GLOBAL tidb_server_memory_limit = "32GB";
 
 1. 配置报警比例为 `0.85`：
 
-    
+
     ```sql
     SET GLOBAL tidb_memory_usage_alarm_ratio = 0.85;
     ```
@@ -160,7 +160,7 @@ TiDB 支持对执行算子的数据落盘功能。当 SQL 的内存使用超过 
 
 1. 将 SQL 语句的 Memory Quota 配置为 1GB（默认 1GB）：
 
-    
+
     ```sql
     SET tidb_mem_quota_query = 1 << 30;
     ```
@@ -169,7 +169,7 @@ TiDB 支持对执行算子的数据落盘功能。当 SQL 的内存使用超过 
 
 3. 尝试执行以下 SQL 语句：
 
-    
+
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```
@@ -182,7 +182,7 @@ TiDB 支持对执行算子的数据落盘功能。当 SQL 的内存使用超过 
 
 4. 执行相同的 SQL 语句，不再返回错误，可以执行成功。从详细的执行计划可以看出，HashAgg 使用了 600MB 的硬盘空间。
 
-    
+
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```
@@ -212,14 +212,14 @@ Golang 自 Go 1.19 版本开始引入 [`GOMEMLIMIT`](https://pkg.go.dev/runtime@
 
 对于 v6.1.3 <= TiDB < v6.5.0 的版本，你可以通过手动设置 Go `GOMEMLIMIT` 环境变量的方式来缓解一类 OOM 问题。该类 OOM 问题具有一个典型特征：观察 Grafana 监控，OOM 前的时刻，TiDB-Runtime > Memory Usage 面板中 **estimate-inuse** 立柱部分在整个立柱中仅仅占一半。如下图所示：
 
-![normal OOM case example](https://download.pingcap.com/images/docs-cn/configure-memory-usage-oom-example.png)
+![normal OOM case example](https://docs-download.pingcap.com/media/images/docs-cn/configure-memory-usage-oom-example.png)
 
 为了验证 `GOMEMLIMIT` 在该类场景下的效果，以下通过一个对比实验进行说明：
 
 - 在 TiDB v6.1.2 下，模拟负载在持续运行几分钟后，TiDB server 会发生 OOM（系统内存约 48 GiB）：
 
-    ![v6.1.2 workload oom](https://download.pingcap.com/images/docs-cn/configure-memory-usage-612-oom.png)
+    ![v6.1.2 workload oom](https://docs-download.pingcap.com/media/images/docs-cn/configure-memory-usage-612-oom.png)
 
 - 在 TiDB v6.1.3 下，设置 `GOMEMLIMIT` 为 40000 MiB，模拟负载长期稳定运行、TiDB server 未发生 OOM 且进程最高内存用量稳定在 40.8 GiB 左右：
 
-    ![v6.1.3 workload no oom with GOMEMLIMIT](https://download.pingcap.com/images/docs-cn/configure-memory-usage-613-no-oom.png)
+    ![v6.1.3 workload no oom with GOMEMLIMIT](https://docs-download.pingcap.com/media/images/docs-cn/configure-memory-usage-613-no-oom.png)

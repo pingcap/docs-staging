@@ -41,15 +41,15 @@ AWS PrivateLink または VPC ピアリング接続を使用しており、ソ�
 
 -   ソース データベースと TiDB ノードが同じリージョンにない場合、データ移行ジョブがソース データベースからデータを収集するときに、リージョン間のトラフィック料金が発生します。
 
-    ![Cross-region traffic charges](https://download.pingcap.com/images/docs/tidb-cloud/dm-billing-cross-region-fees.png)
+    ![Cross-region traffic charges](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/dm-billing-cross-region-fees.png)
 
 -   ソース データベースと TiDB ノードが同じリージョン内であっても異なる AZ にある場合、データ移行ジョブがソース データベースからデータを収集するときに、AZ 間のトラフィック料金が発生します。
 
-    ![Cross-AZ traffic charges](https://download.pingcap.com/images/docs/tidb-cloud/dm-billing-cross-az-fees.png)
+    ![Cross-AZ traffic charges](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/dm-billing-cross-az-fees.png)
 
 -   データ移行ジョブと TiDB ノードが同じ AZ にない場合、データ移行ジョブがターゲット TiDB ノードにデータを書き込むときに、AZ 間トラフィック料金が発生します。また、データ移行ジョブと TiDB ノードがソース データベースと同じ AZ (またはリージョン) にない場合、データ移行ジョブがソース データベースからデータを収集するときに、AZ 間 (またはリージョン間) トラフィック料金が発生します。
 
-    ![Cross-region and cross-AZ traffic charges](https://download.pingcap.com/images/docs/tidb-cloud/dm-billing-cross-region-and-az-fees.png)
+    ![Cross-region and cross-AZ traffic charges](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/dm-billing-cross-region-and-az-fees.png)
 
 クロスリージョンおよびクロスAZトラフィックの料金は、 TiDB Cloudと同じです。詳細については、 [TiDB Cloudの価格詳細](https://www.pingcap.com/tidb-dedicated-pricing-details/)参照してください。
 

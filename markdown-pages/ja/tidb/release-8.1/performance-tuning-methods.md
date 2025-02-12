@@ -28,7 +28,7 @@ TiDB は、SQL 処理パスとデータベース時間を継続的に測定し�
 
 次の図は、典型的な SQL プロセスを示しています。ほとんどの SQL 処理パスが TiDB パフォーマンス メトリックでカバーされていることがわかります。データベース時間はさまざまなディメンションに分割され、それに応じて色分けされています。ワークロードの特性をすばやく理解し、データベース内のボトルネックがあればそれを捕捉できます。
 
-![database time decomposition chart](https://download.pingcap.com/images/docs/performance/dashboard-diagnostics-time-relation.png)
+![database time decomposition chart](https://docs-download.pingcap.com/media/images/docs/performance/dashboard-diagnostics-time-relation.png)
 
 データベース時間は、すべての SQL 処理時間の合計です。データベース時間を次の 3 つの次元に分割すると、TiDB のボトルネックをすばやく特定するのに役立ちます。
 
@@ -83,7 +83,7 @@ TiDB は、SQL 処理パスとデータベース時間を継続的に測定し�
 
 **例1: TPC-Cワークロード**
 
-![TPC-C](https://download.pingcap.com/images/docs/performance/tpcc_db_time.png)
+![TPC-C](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_db_time.png)
 
 -   SQL タイプ別のデータベース時間: 最も時間のかかるステートメントは、 `commit` 、 `update` 、 `select` 、および`insert`ステートメントです。
 -   SQL フェーズ別のデータベース時間: 最も時間のかかるフェーズは緑色で表示される SQL 実行です。
@@ -103,7 +103,7 @@ TiDB は、SQL 処理パスとデータベース時間を継続的に測定し�
 
 **例 2: OLTP 読み取り負荷の高いワークロード**
 
-![OLTP](https://download.pingcap.com/images/docs/performance/oltp_normal_db_time.png)
+![OLTP](https://docs-download.pingcap.com/media/images/docs/performance/oltp_normal_db_time.png)
 
 -   SQL タイプ別のデータベース時間: 時間のかかる主なステートメントは`SELECT` 、 `COMMIT` 、 `UPDATE` 、 `INSERT`で、その中で`SELECT`最も多くのデータベース時間を消費します。
 -   SQL フェーズ別のデータベース時間: ほとんどの時間は緑色のフェーズ`execute`で消費されます。
@@ -111,7 +111,7 @@ TiDB は、SQL 処理パスとデータベース時間を継続的に測定し�
 
 **例3: 読み取り専用OLTPワークロード**
 
-![OLTP](https://download.pingcap.com/images/docs/performance/oltp_long_compile_db_time.png)
+![OLTP](https://docs-download.pingcap.com/media/images/docs/performance/oltp_long_compile_db_time.png)
 
 -   SQL タイプ別のデータベース時間: 主に`SELECT`ステートメントです。
 -   SQL フェーズ別のデータベース時間: 時間のかかる主なフェーズは、オレンジ色の`compile`と緑色の`execute`です。フェーズ`compile`のレイテンシが最も高いのは、TiDB が実行プランを生成するのに時間がかかりすぎていることを示しています。その後のパフォーマンス データに基づいて、根本原因をさらに特定する必要があります。
@@ -123,7 +123,7 @@ TiDB は、SQL 処理パスとデータベース時間を継続的に測定し�
 
 **例4: ロック競合ワークロード**
 
-![OLTP](https://download.pingcap.com/images/docs/performance/oltp_lock_contention_db_time.png)
+![OLTP](https://docs-download.pingcap.com/media/images/docs/performance/oltp_lock_contention_db_time.png)
 
 -   SQL タイプ別のデータベース時間: 主に`UPDATE`ステートメントです。
 -   SQL フェーズ別のデータベース時間: ほとんどの時間は緑色の実行フェーズで消費されます。
@@ -131,7 +131,7 @@ TiDB は、SQL 処理パスとデータベース時間を継続的に測定し�
 
 **例5: HTAP CH-ベンチマークワークロード**
 
-![HTAP](https://download.pingcap.com/images/docs/performance/htap_tiflash_mpp.png)
+![HTAP](https://docs-download.pingcap.com/media/images/docs/performance/htap_tiflash_mpp.png)
 
 -   SQL タイプ別のデータベース時間: 主に`SELECT`ステートメントです。
 -   SQL フェーズ別のデータベース時間: ほとんどの時間は緑色の実行フェーズで消費されます。
@@ -160,13 +160,13 @@ TiDB は、SQL 処理パスとデータベース時間を継続的に測定し�
 
 TPC-C のワークロードは、主に`SELECT` `INSERT`ステートメントです。合計 QPS は 1 秒あたり`UPDATE`コマンドの数に等しく、後者は Queries Using Plan Cache OPS パネルの`avg-hit`にほぼ等しくなります。理想的には、クライアントはプリペアドステートメントのオブジェクトをキャッシュします。このようにして、SQL ステートメントが`StmtExecute`されると、キャッシュされたステートメントが直接呼び出されます。すべての SQL 実行は準備されたプラン キャッシュにヒットし、実行プランを生成するために再コンパイルする必要はありません。
 
-![TPC-C](https://download.pingcap.com/images/docs/performance/tpcc_qps.png)
+![TPC-C](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_qps.png)
 
 **例 2: 準備されたプラン キャッシュは、読み取り専用 OLTP ワークロードのクエリ コマンドには使用できません。**
 
 このワークロードでは、 `Commit QPS` = `Rollback QPS` = `Select QPS`です。アプリケーションは自動コミット同時実行を有効にしており、接続プールから接続がフェッチされるたびにロールバックが実行されます。その結果、これら 3 つのステートメントは同じ回数実行されます。
 
-![OLTP-Query](https://download.pingcap.com/images/docs/performance/oltp_long_compile_qps.png)
+![OLTP-Query](https://docs-download.pingcap.com/media/images/docs/performance/oltp_long_compile_qps.png)
 
 -   QPS パネルの赤い太線は失敗したクエリを表し、右側の Y 軸は失敗したクエリの数を示します。0 以外の値は、失敗したクエリが存在することを意味します。
 -   合計 QPS は、CPS By Type パネルのクエリの数と等しく、クエリ コマンドがアプリケーションによって使用されています。
@@ -183,13 +183,13 @@ TPC-C のワークロードは、主に`SELECT` `INSERT`ステートメントで
 >
 > TiDB v6.0.0 以降では、グローバル変数 ( `set global tidb_ignore_prepared_cache_close_stmt=on;` ) を介して、 `StmtClose`コマンドがキャッシュされた実行プランをクリアするのを防ぐことができます。このようにして、後続の実行は準備されたプラン キャッシュをヒットすることができます。
 
-![OLTP-Prepared](https://download.pingcap.com/images/docs/performance/oltp_prepared_statement_no_plan_cache.png)
+![OLTP-Prepared](https://docs-download.pingcap.com/media/images/docs/performance/oltp_prepared_statement_no_plan_cache.png)
 
 **例4: 準備されたステートメントにリソースリークがある**
 
 1 秒あたり`StmtPrepare`コマンドの数は 1 秒あたり`StmtClose`コマンドの数よりもはるかに多く、これはアプリケーションに準備済みステートメントのオブジェクト リークがあることを示しています。
 
-![OLTP-Query](https://download.pingcap.com/images/docs/performance/prepared_statement_leaking.png)
+![OLTP-Query](https://docs-download.pingcap.com/media/images/docs/performance/prepared_statement_leaking.png)
 
 -   QPS パネルでは、赤い太線は失敗したクエリの数を示し、右側のY軸は数値の座標値を示します。この例では、1 秒あたりの失敗したクエリの数は 74.6 です。
 -   CPS By Type パネルでは、1 秒あたり`StmtPrepare`コマンドの数が 1 秒あたり`StmtClose`コマンドの数よりはるかに多く、準備されたステートメントのアプリケーションでオブジェクト リークが発生していることを示しています。
@@ -204,7 +204,7 @@ TPC-C のワークロードは、主に`SELECT` `INSERT`ステートメントで
 
 **例 1: 忙しい作業負荷**
 
-![TPC-C](https://download.pingcap.com/images/docs/performance/tpcc_source_sql.png)
+![TPC-C](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_source_sql.png)
 
 この TPC-C ワークロードでは、
 
@@ -213,7 +213,7 @@ TPC-C のワークロードは、主に`SELECT` `INSERT`ステートメントで
 
 **例2: ワークロードを分析する**
 
-![OLTP](https://download.pingcap.com/images/docs/performance/internal_stats.png)
+![OLTP](https://docs-download.pingcap.com/media/images/docs/performance/internal_stats.png)
 
 このワークロードでは、クラスター内で実行されているステートメントは`ANALYZE`だけです。
 
@@ -231,7 +231,7 @@ TiDB CPU パネルと TiKV CPU/IO MBps パネルでは、平均、最大、デ�
 
 このワークロードでは、各 TiDB と TiKV は 8 個の CPU で構成されています。
 
-![TPC-C](https://download.pingcap.com/images/docs/performance/tidb_high_cpu.png)
+![TPC-C](https://docs-download.pingcap.com/media/images/docs/performance/tidb_high_cpu.png)
 
 -   TiDB の平均、最大、デルタ CPU 使用率はそれぞれ 575%、643%、136% です。
 -   TiKV の平均、最大、およびデルタ CPU 使用率は、それぞれ 146%、215%、および 118% です。TiKV の平均、最大、およびデルタ I/O スループットは、それぞれ 9.06 MB/秒、19.7 MB/秒、および 17.1 MB/秒です。
@@ -242,7 +242,7 @@ TiDB CPU パネルと TiKV CPU/IO MBps パネルでは、平均、最大、デ�
 
 以下の TPC-C ワークロードでは、各 TiDB と TiKV は 16 個の CPU で構成されています。
 
-![TPC-C](https://download.pingcap.com/images/docs/performance/tpcc_cpu_io.png)
+![TPC-C](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_cpu_io.png)
 
 -   TiDB の平均、最大、デルタ CPU 使用率はそれぞれ 883%、962%、153% です。
 -   TiKV の平均、最大、およびデルタ CPU 使用率は、それぞれ 1288%、1360%、および 126% です。TiKV の平均、最大、およびデルタ I/O スループットは、それぞれ 130 MB/秒、153 MB/秒、および 53.7 MB/秒です。
@@ -277,7 +277,7 @@ TiDB CPU パネルと TiKV CPU/IO MBps パネルでは、平均、最大、デ�
 
 **例1: 切断回数が多すぎる**
 
-![high disconnection/s](https://download.pingcap.com/images/docs/performance/high_disconnections.png)
+![high disconnection/s](https://docs-download.pingcap.com/media/images/docs/performance/high_disconnections.png)
 
 このワークロードでは、
 
@@ -287,7 +287,7 @@ TiDB CPU パネルと TiKV CPU/IO MBps パネルでは、平均、最大、デ�
 
 **例2: TiDBがユーザー応答時間のボトルネックとなっている**
 
-![TiDB is the Bottleneck](https://download.pingcap.com/images/docs/performance/tpcc_duration_idle.png)
+![TiDB is the Bottleneck](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_duration_idle.png)
 
 この TPC-C ワークロードでは、
 
@@ -298,7 +298,7 @@ TiDB CPU パネルと TiKV CPU/IO MBps パネルでは、平均、最大、デ�
 
 **例3: TiDBはユーザー応答時間のボトルネックではない**
 
-![TiDB is not Bottleneck](https://download.pingcap.com/images/docs/performance/cloud_query_long_idle.png)
+![TiDB is not Bottleneck](https://docs-download.pingcap.com/media/images/docs/performance/cloud_query_long_idle.png)
 
 このワークロードでは、平均クエリレイテンシーは 1.69 ミリ秒で、 `avg-in-txn`は 18 ミリ秒です。これは、TiDB がトランザクション内の SQL ステートメントを処理するのに平均 1.69 ミリ秒を費やし、その後次のステートメントを受信するのに 18 ミリ秒待機する必要があることを示しています。
 
@@ -326,13 +326,13 @@ TiDB での SQL 処理は、 `get token` 、 `parse` 、 `compile` 、 `execute`
 
 **例1: `compile`フェーズでのデータベースのボトルネック**
 
-![Compile](https://download.pingcap.com/images/docs/performance/long_compile.png)
+![Compile](https://docs-download.pingcap.com/media/images/docs/performance/long_compile.png)
 
 上の図では、フェーズ`parse`の平均時間はそれぞれ 17.1 us、729 us、681 us です。アプリケーションが`query`コマンド インターフェイスを使用し、準備されたプラン キャッシュ`compile`使用できないため、 `compile`は`execute`なります。
 
 **例2: `execute`フェーズでのデータベースのボトルネック**
 
-![Execute](https://download.pingcap.com/images/docs/performance/long_execute.png)
+![Execute](https://docs-download.pingcap.com/media/images/docs/performance/long_execute.png)
 
 この TPC-C ワークロードでは、フェーズ`compile`の平均時間はそれぞれ 7.39 `parse`秒、38.1 マイクロ秒、 `execute`ミリ秒です。フェーズ`execute`が`query`レイテンシーのボトルネックです。
 
@@ -348,7 +348,7 @@ TSO 待機時間は`TSO WAIT`として記録され、TSO 要求のネットワ�
 -   一般的な KV 読み取り要求: `Get` `BatchGet`および`Cop`
 -   一般的なKV書き込み`Commit` : `Prewrite`フェーズコミットの場合は`PessimisticLock`
 
-![Execute](https://download.pingcap.com/images/docs/performance/execute_phase.png)
+![Execute](https://docs-download.pingcap.com/media/images/docs/performance/execute_phase.png)
 
 このセクションのインジケーターは、次の 3 つのパネルに対応しています。
 
@@ -367,19 +367,19 @@ TSO 待機時間は`TSO WAIT`として記録され、TSO 要求のネットワ�
 
 **例1: 同じデータセンターに展開されたクラスタのワークロードが低い**
 
-![Same Data Center](https://download.pingcap.com/images/docs/performance/oltp_kv_tso.png)
+![Same Data Center](https://docs-download.pingcap.com/media/images/docs/performance/oltp_kv_tso.png)
 
 このワークロードでは、TiDB での平均`Prewrite`レイテンシーは 925 us で、TiKV 内での平均`kv_prewrite`処理レイテンシーは720 us です。この差は約 200 us で、同じデータ センターでは正常です。平均 TSO 待機レイテンシーは 206 us、RPC 時間は 144 us です。
 
 **例 2: パブリック クラウド クラスタ上の通常のワークロード**
 
-![Cloud Env ](https://download.pingcap.com/images/docs/performance/cloud_kv_tso.png)
+![Cloud Env ](https://docs-download.pingcap.com/media/images/docs/performance/cloud_kv_tso.png)
 
 この例では、TiDB クラスターは同じリージョン内の異なるデータセンターに展開されています。TiDB の平均`commit`レイテンシーは 12.7 ミリ秒で、TiKV 内の平均`kv_commit`処理レイテンシーは 10.2 ミリ秒で、約 2.5 ミリ秒の差があります。平均 TSO 待機レイテンシーは 3.12 ミリ秒、RPC 時間は 693 マイクロ秒です。
 
 **例3: パブリッククラウドクラスタのリソース過負荷**
 
-![Cloud Env, TiDB Overloaded](https://download.pingcap.com/images/docs/performance/cloud_kv_tso_overloaded.png)
+![Cloud Env, TiDB Overloaded](https://docs-download.pingcap.com/media/images/docs/performance/cloud_kv_tso_overloaded.png)
 
 この例では、TiDB クラスターが同じリージョン内の異なるデータセンターに展開されており、TiDB ネットワークと CPU リソースが深刻な過負荷状態になっています。TiDB 上の平均`BatchGet`レイテンシーは 38.6 ミリ秒で、TiKV 内の平均`kv_batch_get`処理レイテンシーは6.15 ミリ秒です。その差は 32 ミリ秒以上で、通常値よりもはるかに高くなっています。平均 TSO 待機レイテンシーは 9.45 ミリ秒、RPC 時間は 14.3 ミリ秒です。
 
@@ -395,7 +395,7 @@ TiKV は、次の手順で書き込み要求を処理します。
     -   `Store`スレッドはRaftメッセージと新しい`proposals`処理します。新しい`proposals`が受信されると、リーダー ノードの`Store`スレッドはローカルRaft DB に書き込み、メッセージを複数のフォロワー ノードにコピーします。ほとんどの場合、この`proposals`正常に永続化されると、 `proposals`が正常にコミットされます。
     -   `Apply`スレッドはコミットされた`proposals` KV DB に書き込みます。データが KV DB に正常に書き込まれると、 `Apply`スレッドは書き込み要求が完了したことを外部に通知します。
 
-![TiKV Write](https://download.pingcap.com/images/docs/performance/store_apply.png)
+![TiKV Write](https://docs-download.pingcap.com/media/images/docs/performance/store_apply.png)
 
 `Storage Async Write Duration`メトリックは、書き込み要求が raftstore に入った後のレイテンシーを記録します。データは要求ごとに収集されます。
 
@@ -418,17 +418,17 @@ v5.4.0 では、gPRC モジュールが最適化され、 Raftログのレプリ
 
 v5.3.0:
 
-![v5.3.0](https://download.pingcap.com/images/docs/performance/v5.3.0_store_apply.png)
+![v5.3.0](https://docs-download.pingcap.com/media/images/docs/performance/v5.3.0_store_apply.png)
 
 v5.4.0:
 
-![v5.4.0](https://download.pingcap.com/images/docs/performance/v5.4.0_store_apply.png)
+![v5.4.0](https://docs-download.pingcap.com/media/images/docs/performance/v5.4.0_store_apply.png)
 
 **例2: 保存期間がボトルネック**
 
 上記の式を適用します: 10.1 ms ~= 9.81 ms + 0.304 ms。結果は、書き込み要求のレイテンシーのボトルネックが`Store Duration`にあることを示しています。
 
-![Store](https://download.pingcap.com/images/docs/performance/cloud_store_apply.png)
+![Store](https://docs-download.pingcap.com/media/images/docs/performance/cloud_store_apply.png)
 
 #### コミットログ期間、追加ログ期間、適用ログ期間 {#commit-log-duration-append-log-duration-and-apply-log-duration}
 
@@ -465,15 +465,15 @@ v5.4.0 では、gPRC モジュールが最適化され、 Raftログのレプリ
 
 v5.3.0:
 
-![v5.3.0](https://download.pingcap.com/images/docs/performance/v5.3.0_commit_append_apply.png)
+![v5.3.0](https://docs-download.pingcap.com/media/images/docs/performance/v5.3.0_commit_append_apply.png)
 
 v5.4.0:
 
-![v5.4.0](https://download.pingcap.com/images/docs/performance/v5.4.0_commit_append_apply.png)
+![v5.4.0](https://docs-download.pingcap.com/media/images/docs/performance/v5.4.0_commit_append_apply.png)
 
 **例2: コミットログ期間がボトルネックになる**
 
-![Store](https://download.pingcap.com/images/docs/performance/cloud_append_commit_apply.png)
+![Store](https://docs-download.pingcap.com/media/images/docs/performance/cloud_append_commit_apply.png)
 
 -   平均`Append Log Duration` = 4.38 ミリ秒
 -   平均`Commit Log Duration` = 7.92 ミリ秒
@@ -489,4 +489,4 @@ v5.4.0:
 
 v6.1.0 以降、Grafana にはデフォルトでパフォーマンス概要ダッシュボードが組み込まれています。このダッシュボードは、TiDB v4.x および v5.x バージョンと互換性があります。TiDB が v6.1.0 より前の場合は、次の図に示すように、 [`performance_overview.json`](https://github.com/pingcap/tidb/blob/release-8.1/pkg/metrics/grafana/performance_overview.json)手動でインポートする必要があります。
 
-![Store](https://download.pingcap.com/images/docs/performance/import_dashboard.png)
+![Store](https://docs-download.pingcap.com/media/images/docs/performance/import_dashboard.png)

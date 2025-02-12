@@ -11,7 +11,7 @@ TiFlashでは、柱状レプリカはRaftLearnerコンセンサスアルゴリ�
 
 ## 建築 {#architecture}
 
-![TiFlash Architecture](https://download.pingcap.com/images/docs/tidb-storage-architecture.png)
+![TiFlash Architecture](https://docs-download.pingcap.com/media/images/docs/tidb-storage-architecture.png)
 
 上の図は、TiFlashノードを含むHTAP形式のTiDBのアーキテクチャです。
 

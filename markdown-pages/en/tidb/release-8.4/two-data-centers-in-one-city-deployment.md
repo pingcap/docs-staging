@@ -24,7 +24,7 @@ The architecture of the cluster deployment is as follows:
 - The cluster has six replicas: three Voter replicas in AZ1, and two Voter replicas along with one Learner replica in AZ2. For the TiKV component, each rack has a proper label.
 - The Raft protocol is adopted to ensure consistency and high availability of data, which is transparent to users.
 
-![2-AZ-in-1-region architecture](https://download.pingcap.com/images/docs/two-dc-replication-1.png)
+![2-AZ-in-1-region architecture](https://docs-download.pingcap.com/media/images/docs/two-dc-replication-1.png)
 
 This deployment solution defines three statuses to control and identify the replication status of the cluster, which restricts the replication mode of TiKV. The replication mode of the cluster can automatically and adaptively switch between the three statuses. For details, see the [Status switch](#status-switch) section.
 
@@ -207,7 +207,7 @@ The replication mode is controlled by PD. You can configure the replication mode
 
 - Method 1: Configure the PD configuration file, and then deploy a cluster.
 
-    
+
     ```toml
     [replication-mode]
     replication-mode = "dr-auto-sync"
@@ -219,12 +219,12 @@ The replication mode is controlled by PD. You can configure the replication mode
     dr-replicas = 2
     wait-store-timeout = "1m"
     wait-recover-timeout = "0s"
-    pause-region-split = false  
+    pause-region-split = false
     ```
 
 - Method 2: If you have deployed a cluster, use pd-ctl commands to modify the configurations of PD.
 
-    
+
     ```shell
     config set replication-mode dr-auto-sync
     config set replication-mode dr-auto-sync label-key az

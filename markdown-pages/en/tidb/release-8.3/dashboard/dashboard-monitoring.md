@@ -11,11 +11,11 @@ On the monitoring page, you can view the Performance Overview dashboard, a perfo
 
 Log in to TiDB dashboard and click **Monitoring** from the left navigation bar. The Performance Overview dashboard is displayed.
 
-![Monitoring page](https://download.pingcap.com/images/docs/dashboard/dashboard-monitoring.png)
+![Monitoring page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-monitoring.png)
 
 If the TiDB cluster is deployed using TiUP, you can also view the Performance Overview dashboard on Grafana. In this deployment mode, the monitoring system (Prometheus & Grafana) is deployed at the same time. For more information, see [TiDB Monitoring Framework Overview](/tidb-monitoring-framework.md).
 
-![performance overview](https://download.pingcap.com/images/docs/performance/grafana_performance_overview.png)
+![performance overview](https://docs-download.pingcap.com/media/images/docs/performance/grafana_performance_overview.png)
 
 ## Key Metrics on Performance Overview
 

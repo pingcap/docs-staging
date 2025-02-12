@@ -51,14 +51,14 @@ To install **Maven** from the command line.
 
 - macOS:
 
-    
+
     ```shell
     brew install maven
     ```
 
 - Debian-based Linux distributions (such as Ubuntu):
 
-    
+
     ```shell
     apt-get install maven
     ```
@@ -67,14 +67,14 @@ To install **Maven** from the command line.
 
     - dnf:
 
-        
+
         ```shell
         dnf install maven
         ```
 
     - yum:
 
-        
+
         ```shell
         yum install maven
         ```
@@ -151,14 +151,14 @@ If you prefer to build manually, follow these steps:
 
 1. Clear cache and package:
 
-    
+
     ```shell
     mvn clean package
     ```
 
 2. Run applications with JAR files:
 
-    
+
     ```shell
     java -jar target/spring-jpa-hibernate-0.0.1.jar
     ```
@@ -215,37 +215,37 @@ After the service is up and running, you can send the HTTP requests to the backe
 
 You can download this [configuration file](https://raw.githubusercontent.com/pingcap-inc/tidb-example-java/main/spring-jpa-hibernate/Player.postman_collection.json) locally and import it into [Postman](https://www.postman.com/) as shown here:
 
-![import the collection into Postman](https://download.pingcap.com/images/docs/develop/IMG_20220402-003303222.png)
+![import the collection into Postman](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003303222.png)
 
 #### Create players
 
 Click on the **Create** tab and the **Send** button to send a POST request to `http://localhost:8080/player/`. The return value is the number of players added, which is expected to be 1.
 
-![Postman-Create a player](https://download.pingcap.com/images/docs/develop/IMG_20220402-003350731.png)
+![Postman-Create a player](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003350731.png)
 
 #### Get player information by ID
 
 Click on the **GetByID** tab and the **Send** button to send a GET request to `http://localhost:8080/player/1`. The return value is the information of the player with ID `1`.
 
-![Postman-GetByID](https://download.pingcap.com/images/docs/develop/IMG_20220402-003416079.png)
+![Postman-GetByID](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003416079.png)
 
 #### Get player information in bulk by limit
 
 Click on the **GetByLimit** tab and the **Send** button to send a GET request to `http://localhost:8080/player/limit/3`. The return value is a list of information for up to 3 players.
 
-![Postman-GetByLimit](https://download.pingcap.com/images/docs/develop/IMG_20220402-003505846.png)
+![Postman-GetByLimit](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003505846.png)
 
 #### Get player information by page
 
 Click on the **GetByPage** tab and the **Send** button to send a GET request to `http://localhost:8080/player/page?index=0&size=2`. The return value is the page with index `0`, with `2` players per page. The return value also contains the paging information such as offset, totalPages, and sort.
 
-![Postman-GetByPage](https://download.pingcap.com/images/docs/develop/IMG_20220402-003528474.png)
+![Postman-GetByPage](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003528474.png)
 
 #### Count players
 
 Click the **Count** tab and the **Send** button to send a GET request to `http://localhost:8080/player/count`. The return value is the number of players.
 
-![Postman-Count](https://download.pingcap.com/images/docs/develop/IMG_20220402-003549966.png)
+![Postman-Count](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003549966.png)
 
 #### Player trading
 
@@ -253,7 +253,7 @@ Click on the **Trade** tab and the **Send** button to send a PUT request to `htt
 
 The return value is whether the transaction is successful or not. When there are insufficient goods for the seller, insufficient coins for the buyer, or a database error, the [database transaction](/develop/dev-guide-transaction-overview.md) guarantees that the trade is not successful and no player's coins or goods are lost.
 
-![Postman-Trade](https://download.pingcap.com/images/docs/develop/IMG_20220402-003659102.png)
+![Postman-Trade](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003659102.png)
 
 ### Step 6.2 Using curl requests
 
@@ -1002,7 +1002,7 @@ This application is built using [Spring Initializr](https://start.spring.io/). Y
 
 The complete configuration is as follows:
 
-![Spring Initializr Configuration](https://download.pingcap.com/images/docs/develop/develop-spring-initializr-configuration.png)
+![Spring Initializr Configuration](https://docs-download.pingcap.com/media/images/docs/develop/develop-spring-initializr-configuration.png)
 
 > **Note:**
 >

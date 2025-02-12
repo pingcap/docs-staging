@@ -27,25 +27,25 @@ summary: 了解如何在 TiDB Dashboard 中查看慢查询。
 
 可按时间范围、慢查询语句关联的数据库、SQL 关键字、SQL 类型、显示的慢查询语句数量等条件过滤，筛选慢查询句。如下所示，默认显示 30 分钟内最近 100 条慢查询。
 
-![修改列表过滤条件](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-list1-v620.png)
+![修改列表过滤条件](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-list1-v620.png)
 
 ### 显示更多列信息
 
 页面顶部**选择列** (**Columns**) 选项中可选择显示更多列，可将鼠标移动到列名右侧的 **(i)** 图标处查看列的说明：
 
-![显示更多列信息](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-list2-v620.png)
+![显示更多列信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-list2-v620.png)
 
 ### 导出慢查询到本地
 
 点击页面右上角 ☰ (**更多**) 可以显示**导出** (**Export**) 选项。点击**导出** (**Export**) 后，TiDB Dashboard 会将当前列表中的慢查询以 CSV 文件的格式进行导出。
 
-![导出慢查询到本地](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-export-v651.png)
+![导出慢查询到本地](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-export-v651.png)
 
 ### 修改列表排序依据
 
 列表默认以**结束运行时间** (**Finish Time**) 逆序排序，点击不同的列标题可以修改排序依据或切换排序顺序：
 
-![修改列表排序依据](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-list3-v620.png)
+![修改列表排序依据](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-list3-v620.png)
 
 ## 查看执行详情
 
@@ -55,7 +55,7 @@ summary: 了解如何在 TiDB Dashboard 中查看慢查询。
 - 执行计划：慢查询的执行计划（下图中区域 2）
 - 其他分类好的 SQL 执行信息（下图中区域 3）
 
-![查看执行详情](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-detail1-v620.png)
+![查看执行详情](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail1-v620.png)
 
 ### SQL
 
@@ -73,7 +73,7 @@ TiDB Dashboard 提供三种方式查看执行计划：表格、文本和图形�
 
 表格形态的执行计划提供详细的执行计划信息，便于你快速识别算子指标的异常情况，以及对比不同算子的状态。下图是一个表格形态的执行计划示例：
 
-![表格形态的执行计划](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-table-plan.png)
+![表格形态的执行计划](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-table-plan.png)
 
 表格形态展示的内容与文本形态类似，但具有更易用的交互：
 
@@ -82,13 +82,13 @@ TiDB Dashboard 提供三种方式查看执行计划：表格、文本和图形�
 - 如果执行计划内容较多，可以下载 txt 格式到本地分析
 - 允许隐藏任意列，并且能够在列选择中进行管理
 
-![表格形态的执行计划-选择列](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-table-plan-columnpicker.png)
+![表格形态的执行计划-选择列](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-table-plan-columnpicker.png)
 
 #### 图形形态的执行计划
 
 图形形态的执行计划更适合宏观地查看一个复杂 SQL 的执行计划树，并且详细了解每个算子及对应的内容。下图是一个图形形态的执行计划示例：
 
-![可视化执行计划弹窗](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-visual-plan-2.png)
+![可视化执行计划弹窗](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-visual-plan-2.png)
 
 - 执行计划的展示顺序是从左到右，从上到下。
 - 上面的节点是父算子，下面的节点是子算子。
@@ -97,19 +97,19 @@ TiDB Dashboard 提供三种方式查看执行计划：表格、文本和图形�
 
 点击节点区域，右侧将弹出算子的详细信息。
 
-![可视化执行计划弹窗-侧栏](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-visual-plan-popup.png)
+![可视化执行计划弹窗-侧栏](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-visual-plan-popup.png)
 
 ### SQL 执行相关信息
 
 其他关于该 SQL 的基本信息、执行时间、Coprocessor 读取、事务、报错等信息，可点击相应标签页标题切换。
 
-![显示不同分类执行信息](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-detail2-v620.png)
+![显示不同分类执行信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail2-v620.png)
 
 #### 基本信息
 
 包含关于表名、索引名、执行次数、累计耗时等信息。**描述** (Description) 列对各个字段进行了具体描述。
 
-![基本信息](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-basic.png)
+![基本信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-basic.png)
 
 #### 执行时间
 
@@ -119,16 +119,16 @@ TiDB Dashboard 提供三种方式查看执行计划：表格、文本和图形�
 >
 > 由于单个 SQL 语句内部可能有并行执行的操作，因此各阶段累加时间可能超出该 SQL 语句的实际执行时间。
 
-![执行时间](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-time.png)
+![执行时间](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-time.png)
 
 #### Coprocessor 读取
 
 显示 Coprocessor 读取的相关信息。
 
-![Coprocessor 读取](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-cop-read.png)
+![Coprocessor 读取](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-cop-read.png)
 
 #### 事务
 
 显示执行计划与事务相关的信息，比如平均写入 key 个数，最大写入 key 个数等。
 
-![事务](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-transaction.png)
+![事务](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-transaction.png)

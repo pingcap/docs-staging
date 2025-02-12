@@ -21,7 +21,7 @@ summary: TiDB Cloudコンソールで、 TiDB Cloud Data App を GPT や Dify �
 
 3.  **[GPT との統合]**領域で、 **[コンフィグレーションの取得]**をクリックします。
 
-    ![Get Configuration](https://download.pingcap.com/images/docs/tidb-cloud/data-service/GPTs1.png)
+    ![Get Configuration](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/data-service/GPTs1.png)
 
 4.  表示されたダイアログ ボックスには、次のフィールドが表示されます。
 
@@ -31,7 +31,7 @@ summary: TiDB Cloudコンソールで、 TiDB Cloud Data App を GPT や Dify �
 
     c.**エンコードされた API キー**: 指定した API キーに相当する base64 でエンコードされた文字列をコピーします。
 
-    ![GPTs Dialog Box](https://download.pingcap.com/images/docs/tidb-cloud/data-service/GPTs2.png)
+    ![GPTs Dialog Box](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/data-service/GPTs2.png)
 
 5.  コピーした API 仕様 URL とエンコードされた API キーを GPT 構成で使用します。
 

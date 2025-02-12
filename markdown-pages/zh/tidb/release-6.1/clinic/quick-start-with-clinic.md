@@ -55,7 +55,7 @@ PingCAP Clinic 由 Diag 诊断客户端（以下简称为 Diag）和 Clinic Serv
 
     点击 Cluster 页面右下角的图标，选择 **Get Access Token For Diag Tool**，在弹出窗口中点击 **+** 符号获取 Token 后，复制并保存 Token 信息。
 
-    ![Token 示例](https://download.pingcap.com/images/docs-cn/clinic-get-token.png)
+    ![Token 示例](https://docs-download.pingcap.com/media/images/docs-cn/clinic-get-token.png)
 
     > **注意：**
     >

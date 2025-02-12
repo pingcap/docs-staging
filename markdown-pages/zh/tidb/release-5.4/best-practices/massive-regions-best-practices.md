@@ -13,7 +13,7 @@ summary: 了解海量 Region 导致性能问题的原因和优化方法。
 
 一个 TiKV 实例上有多个 Region。Region 消息是通过 Raftstore 模块驱动 Raft 状态机来处理的。这些消息包括 Region 上读写请求的处理、Raft log 的持久化和复制、Raft 的心跳处理等。但是，Region 数量增多会影响整个集群的性能。为了解释这一点，需要先了解 TiKV 的核心模块 Raftstore 的工作流程。
 
-![图 1 Raftstore 处理流程示意图](https://download.pingcap.com/images/docs-cn/best-practices/raft-process.png)
+![图 1 Raftstore 处理流程示意图](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/raft-process.png)
 
 > **注意：**
 >
@@ -40,7 +40,7 @@ summary: 了解海量 Region 导致性能问题的原因和优化方法。
 
     参考值：低于 `raftstore.store-pool-size * 85%`。
 
-    ![图 2 查看 Raftstore CPU](https://download.pingcap.com/images/docs-cn/best-practices/raft-store-cpu.png)
+    ![图 2 查看 Raftstore CPU](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/raft-store-cpu.png)
 
 + Raft Propose 下的 `Propose wait duration`
 
@@ -48,7 +48,7 @@ summary: 了解海量 Region 导致性能问题的原因和优化方法。
 
     参考值：低于 50-100ms。
 
-    ![图 3 查看 Propose wait duration](https://download.pingcap.com/images/docs-cn/best-practices/propose-wait-duration.png)
+    ![图 3 查看 Propose wait duration](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/propose-wait-duration.png)
 
 + Raft IO 下的 `Commit log duration`
 
@@ -60,7 +60,7 @@ summary: 了解海量 Region 导致性能问题的原因和优化方法。
 
   参考值：低于 200-500ms。
 
-    ![图 4 查看 Commit log duration](https://download.pingcap.com/images/docs-cn/best-practices/commit-log-duration.png)
+    ![图 4 查看 Commit log duration](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/commit-log-duration.png)
 
 ## 性能优化方法
 
@@ -150,7 +150,7 @@ PD 需要将 Region Meta 信息持久化在 etcd 上，以保证切换 PD Leader
 
 可在 TiKV Grafana 面板中查看 Task 下的 Worker pending tasks 来确定 pd-worker 是否有任务堆积。通常来说，pending tasks 应该维持在一个比较低的值。
 
-![图 4 查看 pd-worker](https://download.pingcap.com/images/docs-cn/best-practices/pd-worker-metrics.png)
+![图 4 查看 pd-worker](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/pd-worker-metrics.png)
 
 老版本 TiDB (< v3.0.5) pd-worker 的效率有一些缺陷，如果碰到类似问题，建议升级至最新版本。
 

@@ -45,7 +45,7 @@ summary: TiCDCのパフォーマンス分析とチューニング方法につい
 -   TiCDC ノードをさらに追加する: TiCDC クラスターを複数のノードにスケールアウトして、処理能力を向上させます。
 -   TiCDC ノード リソースの最適化: TiCDC ノードの CPU およびメモリ構成を増やしてパフォーマンスを向上させます。
 
-![TiCDC overview](https://download.pingcap.com/images/docs/performance/cdc/cdc-slow.png)
+![TiCDC overview](https://docs-download.pingcap.com/media/images/docs/performance/cdc/cdc-slow.png)
 
 ### データ フローのスループット メトリックとダウンストリームレイテンシー {#data-flow-throughput-metrics-and-downstream-latency}
 
@@ -67,6 +67,6 @@ summary: TiCDCのパフォーマンス分析とチューニング方法につい
 -   最初のワークロード中は、ダウンストリーム TiDB クラスターのデータの書き込みが遅いため、TiCDC はアップストリーム QPS に遅れる速度でデータを消費し、 `Changefeed checkpoint lag`が継続的に増加します。ただし、 `Changefeed resolved ts lag` 300 ミリ秒以内にとどまっており、レプリケーションの遅延とスループットのボトルネックがプーラー モジュールとソーター モジュールによって引き起こされているのではなく、下流のシンク モジュールによって引き起こされていることを示しています。
 -   2 番目のワークロード中は、ダウンストリーム TiDB クラスターのデータ書き込み速度が速いため、TiCDC はアップストリームに完全に追いつく速度でデータをレプリケートします。1 と`Changefeed checkpoint lag` `Changefeed resolved ts lag` 500 ミリ秒以内に留まり、これは TiCDC にとって比較的理想的なレプリケーション速度です。
 
-![TiCDC overview](https://download.pingcap.com/images/docs/performance/cdc/cdc-fast-1.png)
+![TiCDC overview](https://docs-download.pingcap.com/media/images/docs/performance/cdc/cdc-fast-1.png)
 
-![data flow and txn latency](https://download.pingcap.com/images/docs/performance/cdc/cdc-fast-2.png)
+![data flow and txn latency](https://docs-download.pingcap.com/media/images/docs/performance/cdc/cdc-fast-2.png)

@@ -15,7 +15,7 @@ summary: リカバリ グループを使用して、 TiDB Cloudクラスター�
 
 フェイルオーバーを実行する前に、リカバリ グループが作成され、セカンダリ クラスターに正常にレプリケートされている必要があります。詳細については、 [リカバリグループの使用を開始する](/tidb-cloud/recovery-group-get-started.md)参照してください。
 
-![Protected Recovery Group](https://download.pingcap.com/images/docs/tidb-cloud/recovery-group/recovery-group-protected.png)
+![Protected Recovery Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/recovery-group/recovery-group-protected.png)
 
 ## リカバリグループを使用したデータベースのフェイルオーバー {#failover-databases-using-a-recovery-group}
 
@@ -37,7 +37,7 @@ summary: リカバリ グループを使用して、 TiDB Cloudクラスター�
 
 6.  確認エントリに**「フェールオーバー」**と入力し、 **「フェールオーバー グループを理解しました」**をクリックしてフェールオーバーを開始し、フェールオーバーの潜在的な中断の性質を理解していることを確認します。
 
-    ![Fail Over Recovery Group](https://download.pingcap.com/images/docs/tidb-cloud/recovery-group/recovery-group-failover.png)
+    ![Fail Over Recovery Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/recovery-group/recovery-group-failover.png)
 
 ## リカバリグループを使用してデータベースを再保護する {#reprotect-databases-using-a-recovery-group}
 
@@ -45,7 +45,7 @@ summary: リカバリ グループを使用して、 TiDB Cloudクラスター�
 
 災害の影響を受けた元のプライマリ クラスターを再度オンラインにできる場合は、**再保護**アクションを使用して、リカバリ領域から元の領域へのレプリケーションを再確立できます。
 
-![Unprotected Recovery Group](https://download.pingcap.com/images/docs/tidb-cloud/recovery-group/recovery-group-unprotected.png)
+![Unprotected Recovery Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/recovery-group/recovery-group-unprotected.png)
 
 1.  [TiDB Cloudコンソール](https://tidbcloud.com/)で、<mdsvgicon name="icon-left-projects">左下隅で、複数のプロジェクトがある場合は対象プロジェクトに切り替えて、 **[プロジェクト設定]**をクリックします。</mdsvgicon>
 
@@ -65,4 +65,4 @@ summary: リカバリ グループを使用して、 TiDB Cloudクラスター�
 
 5.  再保護操作を開始するには、 **「再保護」**をクリックして再保護操作を確認します。
 
-    ![Reprotect Recovery Group](https://download.pingcap.com/images/docs/tidb-cloud/recovery-group/recovery-group-reprotected.png)
+    ![Reprotect Recovery Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/recovery-group/recovery-group-reprotected.png)

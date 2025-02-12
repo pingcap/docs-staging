@@ -25,7 +25,7 @@ TiDB Lightning は次のソースからデータを読み取ることができ�
 
 ## TiDB Lightningアーキテクチャ {#tidb-lightning-architecture}
 
-![Architecture of TiDB Lightning tool set](https://download.pingcap.com/images/docs/tidb-lightning-architecture.png)
+![Architecture of TiDB Lightning tool set](https://docs-download.pingcap.com/media/images/docs/tidb-lightning-architecture.png)
 
 TiDB Lightning は、 `backend`で構成された 2 つのインポート モードをサポートしています。インポート モードによって、データが TiDB にインポートされる方法が決まります。
 

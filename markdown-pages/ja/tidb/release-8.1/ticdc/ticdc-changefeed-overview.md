@@ -11,7 +11,7 @@ summary: チェンジフィードの基本的な概念、状態の定義、お�
 
 レプリケーション タスクの状態は、レプリケーション タスクの実行ステータスを表します。TiCDC の実行中に、レプリケーション タスクがエラーで失敗したり、手動で一時停止または再開されたり、指定された`TargetTs`に到達したりすることがあります。これらの動作により、レプリケーション タスクの状態が変化する可能性があります。このセクションでは、TiCDC レプリケーション タスクの状態と、状態間の転送関係について説明します。
 
-![TiCDC state transfer](https://download.pingcap.com/images/docs/ticdc/ticdc-changefeed-state-transfer.png)
+![TiCDC state transfer](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-changefeed-state-transfer.png)
 
 上記の状態転送図の各状態は、次のように説明されます。
 

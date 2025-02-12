@@ -6,7 +6,7 @@ aliases: ['/docs-cn/dev/tispark-overview/','/docs-cn/dev/reference/tispark/','/z
 
 # TiSpark 用户指南
 
-![TiSpark 架构](https://download.pingcap.com/images/docs-cn/tispark-architecture.png)
+![TiSpark 架构](https://docs-download.pingcap.com/media/images/docs-cn/tispark-architecture.png)
 
 ## TiSpark vs TiFlash
 

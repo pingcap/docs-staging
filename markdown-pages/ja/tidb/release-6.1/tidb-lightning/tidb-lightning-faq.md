@@ -127,7 +127,7 @@ TiDB Lightningは、10 ギガビットのネットワーク カードで使用�
 
 1.  チェックポイント ファイルを削除します。
 
-    
+
     ```sh
     tidb-lightning-ctl --config conf/tidb-lightning.toml --checkpoint-remove=all
     ```
@@ -145,7 +145,7 @@ TiDB Lightningは、10 ギガビットのネットワーク カードで使用�
 
     次のコマンドを使用して、メタデータをクリーンアップします。
 
-    
+
     ```sql
     DROP DATABASE IF EXISTS `lightning_metadata`;
     ```
@@ -156,7 +156,7 @@ TiDB Lightningは、10 ギガビットのネットワーク カードで使用�
 
     `ps`などのコマンドを使用してTiDB Lightningのプロセス ID (PID) を取得し、次のコマンドを実行します。
 
-    
+
     ```sh
     kill -USR1 <lightning-pid>
     ```
@@ -175,7 +175,7 @@ SQL での配置ルールの目的は、特定の TiKV ノードのデータの�
 
 ソース クラスタに次のトポロジがあるとします。
 
-![TiDB Lightning FAQ - source cluster topology](https://download.pingcap.com/images/docs/lightning-faq-source-cluster-topology.jpg)
+![TiDB Lightning FAQ - source cluster topology](https://docs-download.pingcap.com/media/images/docs/lightning-faq-source-cluster-topology.jpg)
 
 ソース クラスタには、次の配置ポリシーがあります。
 
@@ -185,11 +185,11 @@ CREATE PLACEMENT POLICY p1 PRIMARY_REGION="us-east" REGIONS="us-east,us-west";
 
 **状況 1:**ターゲット クラスターに 3 つのレプリカがあり、トポロジーがソース クラスターとは異なります。このような場合、 TiDB Lightningがターゲット クラスタに配置ポリシーを作成するときに、エラーは報告されません。ただし、ターゲット クラスタのセマンティクスは間違っています。
 
-![TiDB Lightning FAQ - situation 1](https://download.pingcap.com/images/docs/lightning-faq-situation-1.jpg)
+![TiDB Lightning FAQ - situation 1](https://docs-download.pingcap.com/media/images/docs/lightning-faq-situation-1.jpg)
 
 **状況 2:**ターゲット クラスターは、リージョン「us-mid」の別の TiKV ノードにフォロワー レプリカを配置し、トポロジーにリージョン「us-west」を持っていません。このような場合、ターゲット クラスタで配置ポリシーを作成すると、 TiDB Lightningはエラーを報告します。
 
-![TiDB Lightning FAQ - situation 2](https://download.pingcap.com/images/docs/lightning-faq-situation-2.jpg)
+![TiDB Lightning FAQ - situation 2](https://docs-download.pingcap.com/media/images/docs/lightning-faq-situation-2.jpg)
 
 **回避策:**
 

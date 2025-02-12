@@ -111,13 +111,13 @@ BRツールはすでにGCへの自己適応をサポートしています。 `ba
 
 次の図は、BRの類型を示しています。
 
-![img](https://download.pingcap.com/images/docs/br/backup-nfs-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-nfs-deploy.png)
 
 #### バックアップ操作 {#backup-operation}
 
 バックアップ操作の前に、 `admin checksum table order_line`コマンドを実行して、バックアップするテーブルの統計情報を取得します（ `--db batchmark --table order_line` ）。次の画像は、この情報の例を示しています。
 
-![img](https://download.pingcap.com/images/docs/br/total-data.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/total-data.png)
 
 `br backup`コマンドを実行します。
 
@@ -137,19 +137,19 @@ bin/br backup table \
 
 **バックアップCPU使用率**：バックアップ操作で動作している各TiKVノードのCPU使用率（たとえば、backup-workerとbackup-endpoint）。
 
-![img](https://download.pingcap.com/images/docs/br/backup-cpu.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-cpu.png)
 
 **IO使用率**：バックアップ操作で動作している各TiKVノードのI/O使用率。
 
-![img](https://download.pingcap.com/images/docs/br/backup-io.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-io.png)
 
 **BackupSST生成スループット**：バックアップ操作で動作している各TiKVノードのbackupSST生成スループット。通常は約150MB/秒です。
 
-![img](https://download.pingcap.com/images/docs/br/backup-throughput.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-throughput.png)
 
 **1つのバックアップ範囲期間**：範囲をバックアップする期間。これは、KVをスキャンし、その範囲をbackupSSTファイルとして保存するための合計時間コストです。
 
-![img](https://download.pingcap.com/images/docs/br/backup-range-duration.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-range-duration.png)
 
 **1つのバックアップサブタスク期間**：バックアップタスクが分割される各サブタスクの期間。
 
@@ -158,15 +158,15 @@ bin/br backup table \
 > -   このタスクでは、バックアップされる単一のテーブルに3つのインデックスがあり、タスクは通常4つのサブタスクに分割されます。
 > -   次の画像のパネルには13のポイントがあります。これは、9回（つまり、13〜4回）の再試行を意味します。リージョンのスケジューリングはバックアッププロセス中に発生する可能性があるため、数回の再試行が正常です。
 
-![img](https://download.pingcap.com/images/docs/br/backup-subtask-duration.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-subtask-duration.png)
 
 **バックアップエラー**：バックアッププロセス中に発生したエラー。通常の状況ではエラーは発生しません。いくつかのエラーが発生した場合でも、バックアップ操作には再試行メカニズムがあり、バックアップ時間が長くなる可能性がありますが、操作の正確性には影響しません。
 
-![img](https://download.pingcap.com/images/docs/br/backup-errors.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-errors.png)
 
 **チェックサム要求期間**：バックアップクラスタでの管理チェックサム要求の期間。
 
-![img](https://download.pingcap.com/images/docs/br/checksum-duration.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/checksum-duration.png)
 
 #### バックアップ結果の説明 {#backup-results-explanation}
 
@@ -221,9 +221,9 @@ bin/br backup table \
     --concurrency 16
 ```
 
-![img](https://download.pingcap.com/images/docs/br/backup-diff.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-diff.png)
 
-![img](https://download.pingcap.com/images/docs/br/backup-diff2.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-diff2.png)
 
 調整されたパフォーマンス結果は次のとおりです（同じデータサイズで）。
 
@@ -243,7 +243,7 @@ bin/br backup table \
 
 次の図は、BRの類型を示しています。
 
-![img](https://download.pingcap.com/images/docs/br/restore-nfs-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-nfs-deploy.png)
 
 #### 復元操作 {#restoration-operation}
 
@@ -262,31 +262,31 @@ bin/br restore table --db batchmark --table order_line -s local:///br_data --pd 
 
 **CPU使用率**：復元操作で動作している各TiKVノードのCPU使用率。
 
-![img](https://download.pingcap.com/images/docs/br/restore-cpu.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-cpu.png)
 
 **IO使用率**：復元操作で動作している各TiKVノードのI/O使用率。
 
-![img](https://download.pingcap.com/images/docs/br/restore-io.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-io.png)
 
 **地域**：地域の分布。リージョンが均等に分散されるほど、復元リソースがより適切に使用されます。
 
-![img](https://download.pingcap.com/images/docs/br/restore-region.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-region.png)
 
 SSTの処理**時間**：SSTファイルの処理の遅延。テーブルを復元するときに、 `tableID`が変更された場合は、 `tableID`を書き直す必要があります。それ以外の場合、 `tableID`は名前が変更されます。一般的に、書き換えの遅延は名前変更の遅延よりも長くなります。
 
-![img](https://download.pingcap.com/images/docs/br/restore-process-sst.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-process-sst.png)
 
 **SSTスループット**のダウンロード：外部ストレージからSSTファイルをダウンロードするスループット。
 
-![img](https://download.pingcap.com/images/docs/br/restore-download-sst.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-download-sst.png)
 
 **復元エラー**：復元プロセス中に発生したエラー。
 
-![img](https://download.pingcap.com/images/docs/br/restore-errors.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-errors.png)
 
 **チェックサム要求期間**：管理者チェックサム要求の期間。この復元の期間は、バックアップの期間よりも長くなります。
 
-![img](https://download.pingcap.com/images/docs/br/restore-checksum.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-checksum.png)
 
 #### 復元結果の説明 {#restoration-results-explanation}
 
@@ -356,13 +356,13 @@ bin/br restore table --db batchmark --table order_line -s local:///br_data/ --pd
 
 次の図は、BRの類型を示しています。
 
-![img](https://download.pingcap.com/images/docs/br/backup-local-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-local-deploy.png)
 
 #### バックアップ操作 {#backup-operation}
 
 バックアップ操作の前に、 `admin checksum table order_line`コマンドを実行して、バックアップするテーブルの統計情報を取得します（ `--db batchmark --table order_line` ）。次の画像は、この情報の例を示しています。
 
-![img](https://download.pingcap.com/images/docs/br/total-data.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/total-data.png)
 
 `br backup`コマンドを実行します。
 
@@ -417,7 +417,7 @@ bin/br backup table \
 
 次の図は、BRの類型を示しています。
 
-![img](https://download.pingcap.com/images/docs/br/restore-local-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-local-deploy.png)
 
 #### 復元操作 {#restoration-operation}
 

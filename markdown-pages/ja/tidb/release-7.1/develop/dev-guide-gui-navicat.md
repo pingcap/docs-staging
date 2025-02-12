@@ -69,7 +69,7 @@ TiDB は MySQL 互換データベースであり、 [ナビキャット](https:/
 
 5.  Navicat for MySQL を起動し、左上隅の**[接続]**をクリックして、ドロップダウン リストから**MySQL**を選択します。
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs/develop/navicat-add-new-connection.jpg)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-add-new-connection.jpg)
 
 6.  **[新しい接続 (MySQL)]**ダイアログで、次の接続パラメータを構成します。
 
@@ -79,11 +79,11 @@ TiDB は MySQL 互換データベースであり、 [ナビキャット](https:/
     -   **ユーザー名**: TiDB Cloud接続ダイアログから`USERNAME`パラメータを入力します。
     -   **パスワード**: TiDB サーバーレスクラスターのパスワードを入力します。
 
-    ![Navicat: configure connection general panel for TiDB Serverless](https://download.pingcap.com/images/docs/develop/navicat-connection-config-serverless-general.png)
+    ![Navicat: configure connection general panel for TiDB Serverless](https://docs-download.pingcap.com/media/images/docs/develop/navicat-connection-config-serverless-general.png)
 
 7.  **[SSL]**タブをクリックし、 **[SSL を使用する]** 、 **[認証を使用する**] 、および**[CA に対してサーバー証明書を検証する**] チェックボックスを選択します。次に、 TiDB Cloud接続ダイアログから**CA 証明書**フィールドに`CA`ファイルを選択します。
 
-    ![Navicat: configure connection SSL panel for TiDB Serverless](https://download.pingcap.com/images/docs/develop/navicat-connection-config-serverless-ssl.png)
+    ![Navicat: configure connection SSL panel for TiDB Serverless](https://docs-download.pingcap.com/media/images/docs/develop/navicat-connection-config-serverless-ssl.png)
 
 8.  **「接続のテスト」**をクリックして、TiDB サーバーレスクラスターへの接続を検証します。
 
@@ -104,7 +104,7 @@ TiDB は MySQL 互換データベースであり、 [ナビキャット](https:/
 
 5.  Navicat for MySQL を起動し、左上隅の**[接続]**をクリックして、ドロップダウン リストから**MySQL**を選択します。
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs/develop/navicat-add-new-connection.jpg)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-add-new-connection.jpg)
 
 6.  **[新しい接続 (MySQL)]**ダイアログで、次の接続パラメータを構成します。
 
@@ -114,11 +114,11 @@ TiDB は MySQL 互換データベースであり、 [ナビキャット](https:/
     -   **ユーザー名**: TiDB Cloud接続ダイアログから`user`パラメータを入力します。
     -   **パスワード**: TiDB 専用クラスターのパスワードを入力します。
 
-    ![Navicat: configure connection general panel for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/navicat-connection-config-dedicated-general.png)
+    ![Navicat: configure connection general panel for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/navicat-connection-config-dedicated-general.png)
 
 7.  **[SSL]**タブをクリックし、 **[SSL を使用する]** 、 **[認証を使用する**] 、および**[CA に対してサーバー証明書を検証する**] チェックボックスを選択します。次に、手順 4 でダウンロードした CA ファイルを**[CA 証明書]**フィールドに選択します。
 
-    ![Navicat: configure connection SSL panel for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/navicat-connection-config-dedicated-ssl.jpg)
+    ![Navicat: configure connection SSL panel for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/navicat-connection-config-dedicated-ssl.jpg)
 
 8.  **接続をテストして、** TiDB 専用クラスターへの接続を検証します。
 
@@ -129,7 +129,7 @@ TiDB は MySQL 互換データベースであり、 [ナビキャット](https:/
 
 1.  Navicat for MySQL を起動し、左上隅の**[接続]**をクリックして、ドロップダウン リストから**MySQL**を選択します。
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs/develop/navicat-add-new-connection.jpg)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-add-new-connection.jpg)
 
 2.  **[新しい接続 (MySQL)]**ダイアログで、次の接続パラメータを構成します。
 
@@ -139,7 +139,7 @@ TiDB は MySQL 互換データベースであり、 [ナビキャット](https:/
     -   **ユーザー名**: TiDB への接続に使用するユーザー名を入力します。
     -   **パスワード**: TiDB への接続に使用するパスワードを入力します。
 
-    ![Navicat: configure connection general panel for self-hosted TiDB](https://download.pingcap.com/images/docs/develop/navicat-connection-config-self-hosted-general.png)
+    ![Navicat: configure connection general panel for self-hosted TiDB](https://docs-download.pingcap.com/media/images/docs/develop/navicat-connection-config-self-hosted-general.png)
 
 3.  **[接続のテスト]**をクリックして、TiDB セルフホスト クラスターへの接続を検証します。
 

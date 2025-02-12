@@ -26,11 +26,11 @@ tiup cluster display tidb-test
 
 1.  `${pd-ip}:${pd-port}/dashboard`で TiDB ダッシュボードにログインします。ユーザー名とパスワードは、TiDB `root`ユーザーのものと同じです。 `root`パスワードを変更した場合は、変更したパスワードを入力します。デフォルトでは、パスワードは空です。
 
-    ![TiDB-Dashboard](https://download.pingcap.com/images/docs/tiup/tidb-dashboard.png)
+    ![TiDB-Dashboard](https://docs-download.pingcap.com/media/images/docs/tiup/tidb-dashboard.png)
 
 2.  ホームページには、TiDB クラスター内のノード情報が表示されます。
 
-    ![TiDB-Dashboard-status](https://download.pingcap.com/images/docs/tiup/tidb-dashboard-status.png)
+    ![TiDB-Dashboard-status](https://docs-download.pingcap.com/media/images/docs/tiup/tidb-dashboard-status.png)
 
 ### グラファナを使う {#use-grafana}
 
@@ -38,7 +38,7 @@ tiup cluster display tidb-test
 
 2.  TiDB ポートのステータスと負荷監視情報を確認するには、 **[概要]**をクリックします。
 
-    ![Grafana-overview](https://download.pingcap.com/images/docs/tiup/grafana-overview.png)
+    ![Grafana-overview](https://docs-download.pingcap.com/media/images/docs/tiup/grafana-overview.png)
 
 ## データベースにログインして簡単な操作を行う {#log-in-to-the-database-and-perform-simple-operations}
 
@@ -73,7 +73,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   TiDB のバージョンを確認します。
 
-    
+
     ```sql
     select tidb_version()\G
     ```
@@ -96,7 +96,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   `pingcap`という名前のデータベースを作成します。
 
-    
+
     ```sql
     create database pingcap;
     ```
@@ -109,7 +109,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
     `pingcap`データベースに切り替えます。
 
-    
+
     ```sql
     use pingcap;
     ```
@@ -122,7 +122,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   `tab_tidb`という名前のテーブルを作成します。
 
-    
+
     ```sql
     CREATE TABLE `tab_tidb` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -141,7 +141,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   データの挿入:
 
-    
+
     ```sql
     insert into `tab_tidb` values (1,'TiDB',5,'TiDB-v5.0.0');
     ```
@@ -154,7 +154,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   `tab_tidb`のエントリをビュー。
 
-    
+
     ```sql
     select * from tab_tidb;
     ```
@@ -172,7 +172,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   ストアの状態`store_id` 、容量、および TiKV の稼働時間をビュー。
 
-    
+
     ```sql
     select STORE_ID,ADDRESS,STORE_STATE,STORE_STATE_NAME,CAPACITY,AVAILABLE,UPTIME from INFORMATION_SCHEMA.TIKV_STORE_STATUS;
     ```
@@ -192,7 +192,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 -   TiDB を終了します。
 
-    
+
     ```sql
     exit
     ```

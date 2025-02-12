@@ -5,19 +5,19 @@ summary: Learn the architecture of backup and restore based on EBS volume snapsh
 
 # BR Federation Architecture and Processes
 
-BR Federation is a system designed to [back up and restore TiDB clusters deployed across multiple Kubernetes using EBS snapshots](deploy-tidb-cluster-across-multiple-kubernetes.md). 
+BR Federation is a system designed to [back up and restore TiDB clusters deployed across multiple Kubernetes using EBS snapshots](deploy-tidb-cluster-across-multiple-kubernetes.md).
 
-Normally, TiDB Operator can only access the Kubernetes cluster where it is deployed. This means a TiDB Operator can only back up TiKV volumes' snapshots within its own Kubernetes cluster. However, to perform EBS snapshot backup and restore across multiple Kubernetes clusters, a coordinator role is required. This is where the BR Federation comes in. 
+Normally, TiDB Operator can only access the Kubernetes cluster where it is deployed. This means a TiDB Operator can only back up TiKV volumes' snapshots within its own Kubernetes cluster. However, to perform EBS snapshot backup and restore across multiple Kubernetes clusters, a coordinator role is required. This is where the BR Federation comes in.
 
 This document outlines the architecture of the BR Federation and the processes involved in backup and restoration.
 
 ## BR Federation architecture
 
-BR Federation operates as the control plane, interacting with the data plane, which includes each Kubernetes cluster where TiDB components are deployed. The interaction is facilitated through the Kubernetes API Server. 
+BR Federation operates as the control plane, interacting with the data plane, which includes each Kubernetes cluster where TiDB components are deployed. The interaction is facilitated through the Kubernetes API Server.
 
 BR Federation coordinates `Backup` and `Restore` Custom Resources (CRs) in the data plane to accomplish backup and restoration across multiple Kubernetes clusters.
 
-![BR Federation architecture](https://download.pingcap.com/images/tidb-in-kubernetes/br-federation-architecture.png)
+![BR Federation architecture](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/br-federation-architecture.png)
 
 ## Backup process
 
@@ -31,13 +31,13 @@ The backup process in the data plane consists of three phases:
 
 3. **Phase Three:** After EBS snapshots are completed, TiDB Operator deletes the first backup pod to resume region scheduling and GC for the TiDB cluster. This operation is required only in the Kubernetes cluster where Phase One was executed.
 
-![backup process in data plane](https://download.pingcap.com/images/tidb-in-kubernetes/volume-backup-process-data-plane.png)
+![backup process in data plane](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-backup-process-data-plane.png)
 
 ### Backup orchestration process
 
 The orchestration process of `Backup` from the control plane to the data plane is as follows:
 
-![backup orchestration process](https://download.pingcap.com/images/tidb-in-kubernetes/volume-backup-process-across-multiple-kubernetes-overall.png)
+![backup orchestration process](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-backup-process-across-multiple-kubernetes-overall.png)
 
 ## Restore process
 
@@ -51,10 +51,10 @@ The restore process in the data plane consists of three phases:
 
 3. **Phase Three:** TiDB Operator restarts all TiKV instances to run in normal mode, and start TiDB finally. This phase must be executed in each Kubernetes cluster.
 
-![restore process in data plane](https://download.pingcap.com/images/tidb-in-kubernetes/volume-restore-process-data-plane.png)
+![restore process in data plane](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-restore-process-data-plane.png)
 
 ### Restore orchestration process
 
 The orchestration process of `Restore` from the control plane to the data plane is as follows:
 
-![restore orchestration process](https://download.pingcap.com/images/tidb-in-kubernetes/volume-restore-process-across-multiple-kubernetes-overall.png)
+![restore orchestration process](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-restore-process-across-multiple-kubernetes-overall.png)

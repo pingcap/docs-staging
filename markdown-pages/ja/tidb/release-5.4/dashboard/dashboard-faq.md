@@ -36,7 +36,7 @@ Prometheusインスタンスがデプロイされたときにこの問題が引�
 
 1.  TiUPおよびTiUPクラスターのアップグレード：
 
-    
+
     ```bash
     tiup update --self
     tiup update cluster --force
@@ -46,7 +46,7 @@ Prometheusインスタンスがデプロイされたときにこの問題が引�
 
 3.  アップグレード後、既存のクラスタの場合、このクラスタを再起動してメトリックアドレスをレポートできます。 `CLUSTER_NAME`を実際のクラスタ名に置き換えます。
 
-    
+
     ```bash
     tiup cluster start CLUSTER_NAME
     ```
@@ -73,11 +73,11 @@ Prometheusインスタンスがデプロイされたときにこの問題が引�
 
     次の例では、Chromeが使用されています。
 
-    ![Opening DevTools from Chrome's main menu](https://download.pingcap.com/images/docs/dashboard/dashboard-faq-devtools.png)
+    ![Opening DevTools from Chrome's main menu](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-faq-devtools.png)
 
 3.  [**アプリケーション**]パネルを選択し、[<strong>ローカルストレージ</strong>]メニューを展開して、[ <strong>TiDBダッシュボード]ページのドメイン</strong>を選択します。 [<strong>すべてクリア</strong>]ボタンをクリックします。
 
-    ![Clear the Local Storage](https://download.pingcap.com/images/docs/dashboard/dashboard-faq-devtools-application.png)
+    ![Clear the Local Storage](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-faq-devtools-application.png)
 
 ### <code>required component NgMonitoring is not started</code>エラーが表示されます {#a-code-required-component-ngmonitoring-is-not-started-code-error-is-shown}
 
@@ -91,7 +91,7 @@ NgMonitoringは、v5.4.0以降のバージョンのTiDBクラスターに組み�
 
 1.  TiUPクラスタのバージョンを確認してください。 NgMonitoringは、TiUPがv1.9.0以降の場合にのみ使用できます。
 
-    
+
     ```shell
     tiup cluster --version
     ```
@@ -106,7 +106,7 @@ NgMonitoringは、v5.4.0以降のバージョンのTiDBクラスターに組み�
 
 2.  TiUPクラスタのバージョンがv1.9.0より前の場合は、TiUPおよびTiUPクラスタを最新バージョンにアップグレードします。
 
-    
+
     ```shell
     tiup update --all
     ```
@@ -115,7 +115,7 @@ NgMonitoringは、v5.4.0以降のバージョンのTiDBクラスターに組み�
 
 1.  クラスタ構成ファイルを編集モードで開きます。
 
-    
+
     ```shell
     tiup cluster edit-config ${cluster-name}
     ```
@@ -130,7 +130,7 @@ NgMonitoringは、v5.4.0以降のバージョンのTiDBクラスターに組み�
 
 3.  プロメテウスをリロード：
 
-    
+
     ```shell
     tiup cluster reload ${cluster-name} --role prometheus
     ```

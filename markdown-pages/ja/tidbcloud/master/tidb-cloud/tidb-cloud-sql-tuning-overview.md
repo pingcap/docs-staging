@@ -31,15 +31,15 @@ TiDB Cloudコンソールの**[診断]**タブには**<a href="/tidb-cloud/tune-
 
 -   **SQL テンプレート**: SQL ダイジェスト、SQL テンプレート ID、現在表示されている時間範囲、実行プランの数、実行が行われるデータベースが含まれます。
 
-    ![Details0](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-detail0.png)
+    ![Details0](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-detail0.png)
 
 -   実行プラン リスト: SQL ステートメントに複数の実行プランがある場合は、リストが表示されます。異なる実行プランを選択でき、選択した実行プランの詳細がリストの下部に表示されます。実行プランが 1 つしかない場合は、リストは表示されません。
 
-    ![Details1](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-detail1.png)
+    ![Details1](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-detail1.png)
 
 -   実行プランの詳細: 選択した実行プランの詳細を表示します。各 SQL タイプの実行プランと対応する実行時間を複数の観点から収集し、詳細情報の取得に役立ちます[実行計画](https://docs.pingcap.com/tidb/stable/dashboard-statement-details#execution-plans)参照してください。
 
-    ![Details2](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-detail2.png)
+    ![Details2](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-detail2.png)
 
 -   関連する低速クエリ
 

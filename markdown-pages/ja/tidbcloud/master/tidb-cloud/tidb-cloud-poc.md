@@ -214,7 +214,7 @@ PoC の申請が承認されると、アカウントにクレジットが付与�
 
 PoC に残っているクレジットを確認するには、次のスクリーンショットに示すように、対象プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
-![TiDB Cloud PoC Credits](https://download.pingcap.com/images/docs/tidb-cloud/poc-points.png)
+![TiDB Cloud PoC Credits](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/poc-points.png)
 
 または、<mdsvgicon name="icon-top-organization"> TiDB Cloudコンソールの左下隅で、 **[請求]**をクリックし、 **[クレジット]**をクリックしてクレジットの詳細ページを表示します。</mdsvgicon>
 

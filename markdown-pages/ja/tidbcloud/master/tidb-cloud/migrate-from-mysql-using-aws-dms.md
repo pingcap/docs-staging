@@ -37,7 +37,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
 2.  **レプリケーションインスタンスの作成を**クリックします。
 
-    ![Create replication instance](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-create-instance.png)
+    ![Create replication instance](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-create-instance.png)
 
 3.  インスタンス名、ARN、説明を入力します。
 
@@ -60,19 +60,19 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
 
 1.  [AWS DMS コンソール](https://console.aws.amazon.com/dms/v2/home)で、先ほど作成したレプリケーション インスタンスをクリックします。次のスクリーンショットに示すように、パブリック ネットワークとプライベート ネットワークの IP アドレスをコピーします。
 
-    ![Copy the public and private network IP addresses](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-copy-ip.png)
+    ![Copy the public and private network IP addresses](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-copy-ip.png)
 
 2.  Amazon RDS のセキュリティグループルールを設定します。この例では、AWS DMS インスタンスのパブリック IP アドレスとプライベート IP アドレスをセキュリティグループに追加します。
 
-    ![Configure the security group rules](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-rules.png)
+    ![Configure the security group rules](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-rules.png)
 
 3.  **[エンドポイントの作成]**をクリックして、ソース データベース エンドポイントを作成します。
 
-    ![Click Create endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-endpoint.png)
+    ![Click Create endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-endpoint.png)
 
 4.  この例では、 **「RDS DB インスタンスの選択」**をクリックし、ソース RDS インスタンスを選択します。ソース データベースがセルフホスト型 MySQL の場合は、この手順をスキップして、次の手順で情報を入力できます。
 
-    ![Select RDS DB instance](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-select-rds.png)
+    ![Select RDS DB instance](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-select-rds.png)
 
 5.  次の情報を設定します。
 
@@ -84,19 +84,19 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
     -   ソース データベースの**ポート**、**ユーザー名**、および**パスワード**を入力します。
     -   **セキュリティ Socket Layer (SSL) モード**: 必要に応じて SSL モードを有効にすることができます。
 
-    ![Fill in the endpoint configurations](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-endpoint-config.png)
+    ![Fill in the endpoint configurations](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-endpoint-config.png)
 
 6.  **エンドポイント設定**、 **KMS キー**、**タグに**はデフォルト値を使用します。**エンドポイント接続のテスト (オプション)**セクションでは、ネットワーク構成を簡素化するために、ソース データベースと同じ VPC を選択することをお勧めします。対応するレプリケーション インスタンスを選択し、**テストの実行を**クリックします。ステータスは**成功**である必要があります。
 
 7.  **[エンドポイントの作成]**をクリックします。
 
-    ![Click Create endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-connection.png)
+    ![Click Create endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-connection.png)
 
 ## ステップ3. ターゲットデータベースエンドポイントを作成する {#step-3-create-the-target-database-endpoint}
 
 1.  [AWS DMS コンソール](https://console.aws.amazon.com/dms/v2/home)で、先ほど作成したレプリケーション インスタンスをクリックします。次のスクリーンショットに示すように、パブリック ネットワークとプライベート ネットワークの IP アドレスをコピーします。
 
-    ![Copy the public and private network IP addresses](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-copy-ip.png)
+    ![Copy the public and private network IP addresses](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-copy-ip.png)
 
 2.  TiDB Cloudコンソールで、 [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして、右上隅の**[接続]**をクリックし、 TiDB Cloudデータベース接続情報を取得します。
 
@@ -115,7 +115,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
     -   **記述的な Amazon リソース名 (ARN) - オプション**: デフォルトの DMS ARN のわかりやすい名前を作成します。
     -   **ターゲットエンジン**: **MySQL**を選択します。
 
-    ![Configure the target endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-target-endpoint.png)
+    ![Configure the target endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-target-endpoint.png)
 
 8.  [AWS DMS コンソール](https://console.aws.amazon.com/dms/v2/home)で、 **[エンドポイントの作成]**をクリックしてターゲット データベース エンドポイントを作成し、次の情報を構成します。
 
@@ -126,23 +126,23 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
     -   **セキュリティ Socket Layer (SSL) モード**: **Verify-ca**を選択します。
     -   **「新しい CA 証明書の追加」**をクリックして、前の手順でTiDB Cloudコンソールからダウンロードした CA ファイルをインポートします。
 
-    ![Fill in the target endpoint information](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-target-endpoint2.png)
+    ![Fill in the target endpoint information](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-target-endpoint2.png)
 
 9.  CA ファイルをインポートします。
 
-    ![Upload CA](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-upload-ca.png)
+    ![Upload CA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-upload-ca.png)
 
 10. **エンドポイント設定**、 **KMS キー**、**タグに**はデフォルト値を使用します。**エンドポイント接続のテスト (オプション)**セクションで、ソース データベースと同じ VPC を選択します。対応するレプリケーション インスタンスを選択し、**テストの実行を**クリックします。ステータスは**成功**である必要があります。
 
 11. **[エンドポイントの作成]**をクリックします。
 
-    ![Click Create endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-target-endpoint3.png)
+    ![Click Create endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-target-endpoint3.png)
 
 ## ステップ4. データベース移行タスクを作成する {#step-4-create-a-database-migration-task}
 
 1.  AWS DMS コンソールで、 [データ移行タスク](https://console.aws.amazon.com/dms/v2/home#tasks)ページに移動します。リージョンに切り替えます。次に、ウィンドウの右上隅にある**[タスクの作成]**をクリックします。
 
-    ![Create task](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-create-task.png)
+    ![Create task](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-create-task.png)
 
 2.  次の情報を設定します。
 
@@ -153,7 +153,7 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
     -   **ターゲット データベース エンドポイント**: 作成したターゲット データベース エンドポイントを選択します。
     -   **移行タイプ**: 必要に応じて移行タイプを選択します。この例では、 **「既存のデータを移行し、進行中の変更を複製する」**を選択します。
 
-    ![Task configurations](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-task-config.png)
+    ![Task configurations](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-task-config.png)
 
 3.  次の情報を設定します。
 
@@ -166,23 +166,23 @@ AWS DMS は、リレーショナルデータベース、データウェアハウ
     -   **検証をオンにします**。必要に応じて選択します。
     -   **タスク ログ**: 今後のトラブルシューティングのために**CloudWatch ログをオンにするを**選択します。関連する構成にはデフォルト設定を使用します。
 
-    ![Task settings](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-task-settings.png)
+    ![Task settings](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-task-settings.png)
 
 4.  **テーブル マッピング**セクションで、移行するデータベースを指定します。
 
     スキーマ名は、Amazon RDS インスタンス内のデータベース名です。**ソース名**のデフォルト値は「%」で、これは Amazon RDS 内のすべてのデータベースが TiDB に移行されることを意味します。これにより、Amazon RDS 内の`mysql`や`sys`などのシステム データベースが TiDB クラスターに移行され、タスクが失敗します。したがって、特定のデータベース名を入力するか、すべてのシステム データベースを除外することをお勧めします。たとえば、次のスクリーンショットの設定によると、 `franktest`という名前のデータベースとそのデータベース内のすべてのテーブルのみが移行されます。
 
-    ![Table mappings](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-table-mappings.png)
+    ![Table mappings](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-table-mappings.png)
 
 5.  右下隅の**「タスクの作成」を**クリックします。
 
 6.  [データ移行タスク](https://console.aws.amazon.com/dms/v2/home#tasks)ページに戻ります。地域に切り替えます。タスクのステータスと進行状況を確認できます。
 
-    ![Tasks status](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-task-status.png)
+    ![Tasks status](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-task-status.png)
 
 移行中に問題や障害が発生した場合は、 [クラウドウォッチ](https://console.aws.amazon.com/cloudwatch/home)のログ情報を確認して問題のトラブルシューティングを行うことができます。
 
-![Troubleshooting](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-troubleshooting.png)
+![Troubleshooting](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-to-tidb-cloud-troubleshooting.png)
 
 ## 参照 {#see-also}
 

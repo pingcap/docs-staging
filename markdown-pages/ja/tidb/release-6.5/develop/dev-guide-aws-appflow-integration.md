@@ -82,17 +82,17 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
 4.  [AWS ラムダ コンソール](https://console.aws.amazon.com/lambda/home)に移動すると、アップロードしたばかりの Lambda が表示されます。ウィンドウの右上隅で正しいリージョンを選択する必要があることに注意してください。
 
-    ![lambda dashboard](https://download.pingcap.com/images/docs/develop/aws-appflow-step-lambda-dashboard.png)
+    ![lambda dashboard](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-lambda-dashboard.png)
 
 ### Lambda を使用してコネクタを登録する {#use-lambda-to-register-a-connector}
 
 1.  [AWS マネジメント コンソール](https://console.aws.amazon.com)で[Amazon AppFlow &gt; コネクタ](https://console.aws.amazon.com/appflow/home#/gallery)に移動し、 **[Register new connector]**をクリックします。
 
-    ![register connector](https://download.pingcap.com/images/docs/develop/aws-appflow-step-register-connector.png)
+    ![register connector](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-register-connector.png)
 
 2.  **[新しいコネクタの登録] ダイアログ**で、アップロードした Lambda 関数を選択し、コネクタ名を使用してコネクタ ラベルを指定します。
 
-    ![register connector dialog](https://download.pingcap.com/images/docs/develop/aws-appflow-step-register-connector-dialog.png)
+    ![register connector dialog](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-register-connector-dialog.png)
 
 3.  **[登録]**をクリックします。その後、TiDB コネクタが正常に登録されます。
 
@@ -100,13 +100,13 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
 [Amazon AppFlow &gt; フロー](https://console.aws.amazon.com/appflow/home#/list)に移動し、 **[Create flow]**をクリックします。
 
-![create flow](https://download.pingcap.com/images/docs/develop/aws-appflow-step-create-flow.png)
+![create flow](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-create-flow.png)
 
 ### フロー名を設定する {#set-the-flow-name}
 
 フロー名を入力し、 **[次へ]**をクリックします。
 
-![name flow](https://download.pingcap.com/images/docs/develop/aws-appflow-step-name-flow.png)
+![name flow](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-name-flow.png)
 
 ### ソース テーブルと宛先テーブルを設定する {#set-the-source-and-destination-tables}
 
@@ -114,21 +114,21 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
 1.  ソース名を選択します。このドキュメントでは、サンプル ソースとして**Salesforce**を使用しています。
 
-    ![salesforce source](https://download.pingcap.com/images/docs/develop/aws-appflow-step-salesforce-source.png)
+    ![salesforce source](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-salesforce-source.png)
 
     Salesforce に登録すると、Salesforce によっていくつかのサンプル データがプラットフォームに追加されます。次の手順では、 **Account**オブジェクトをソース オブジェクトの例として使用します。
 
-    ![salesforce data](https://download.pingcap.com/images/docs/develop/aws-appflow-step-salesforce-data.png)
+    ![salesforce data](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-salesforce-data.png)
 
 2.  **[接続]**をクリックします。
 
     1.  **[Salesforce に接続]**ダイアログで、この接続の名前を指定し、 <strong>[続行]</strong>をクリックします。
 
-        ![connect to salesforce](https://download.pingcap.com/images/docs/develop/aws-appflow-step-connect-to-salesforce.png)
+        ![connect to salesforce](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-connect-to-salesforce.png)
 
     2.  **[許可]**をクリックして、AWS が Salesforce データを読み取れることを確認します。
 
-        ![allow salesforce](https://download.pingcap.com/images/docs/develop/aws-appflow-step-allow-salesforce.png)
+        ![allow salesforce](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-allow-salesforce.png)
 
     > **ノート：**
     >
@@ -136,7 +136,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
 3.  **[送信先の詳細]**領域で、送信先として<strong>TiDB-Connector</strong>を選択します。<strong>接続</strong>ボタンが表示されます。
 
-    ![tidb dest](https://download.pingcap.com/images/docs/develop/aws-appflow-step-tidb-dest.png)
+    ![tidb dest](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-tidb-dest.png)
 
 4.  **Connect**をクリックする前に、TiDB に Salesforce <strong>Account</strong>オブジェクト用の`sf_account`テーブルを作成する必要があります。このテーブル スキーマは[Amazon AppFlow のチュートリアル](https://docs.aws.amazon.com/appflow/latest/userguide/flow-tutorial-set-up-source.html)のサンプル データとは異なることに注意してください。
 
@@ -156,19 +156,19 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
 6.  **[TiDB コネクタに接続]**ダイアログで、TiDB クラスターの接続プロパティを入力します。 TiDB Cloud Serverless Tierクラスターを使用する場合は、 <strong>TLS</strong>オプションを`Yes`に設定する必要があります。これにより、TiDB コネクタが TLS 接続を使用できるようになります。次に、 <strong>[接続]</strong>をクリックします。
 
-    ![tidb connection message](https://download.pingcap.com/images/docs/develop/aws-appflow-step-tidb-connection-message.png)
+    ![tidb connection message](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-tidb-connection-message.png)
 
 7.  これで、接続用に指定したデータベース内のすべてのテーブルを取得できます。ドロップダウン リストから**sf_account**テーブルを選択します。
 
-    ![database](https://download.pingcap.com/images/docs/develop/aws-appflow-step-database.png)
+    ![database](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-database.png)
 
     次のスクリーンショットは、Salesforce **Account**オブジェクトから TiDB の`sf_account`テーブルにデータを転送する構成を示しています。
 
-    ![complete flow](https://download.pingcap.com/images/docs/develop/aws-appflow-step-complete-flow.png)
+    ![complete flow](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-complete-flow.png)
 
 8.  **[エラー処理]**領域で、 <strong>[現在のフローの実行を停止する]</strong>を選択します。 <strong>[フロー トリガー]</strong>領域で、 <strong>[オンデマンドで実行</strong>] トリガー タイプを選択します。これは、フローを手動で実行する必要があることを意味します。次に、 <strong>[次へ]</strong>をクリックします。
 
-    ![complete step1](https://download.pingcap.com/images/docs/develop/aws-appflow-step-complete-step1.png)
+    ![complete step1](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-complete-step1.png)
 
 ### マッピング ルールの設定 {#set-mapping-rules}
 
@@ -186,7 +186,7 @@ Salesforce の**Account**オブジェクトのフィールドを TiDB の`sf_acc
 
 -   マッピング ルールを設定するには、左側でソース フィールド名を選択し、右側で宛先フィールド名を選択します。次に、 **Map fields を**クリックすると、ルールが設定されます。
 
-    ![add mapping rule](https://download.pingcap.com/images/docs/develop/aws-appflow-step-add-mapping-rule.png)
+    ![add mapping rule](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-add-mapping-rule.png)
 
 -   このドキュメントでは、次のマッピング ルール (ソース フィールド名 -&gt; 宛先フィールド名) が必要です。
 
@@ -197,31 +197,31 @@ Salesforce の**Account**オブジェクトのフィールドを TiDB の`sf_acc
     -   アカウントの評価 -&gt; 評価
     -   業種 -&gt; 業種
 
-    ![mapping a rule](https://download.pingcap.com/images/docs/develop/aws-appflow-step-mapping-a-rule.png)
+    ![mapping a rule](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-mapping-a-rule.png)
 
-    ![show all mapping rules](https://download.pingcap.com/images/docs/develop/aws-appflow-step-show-all-mapping-rules.png)
+    ![show all mapping rules](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-show-all-mapping-rules.png)
 
 ### (オプション) フィルターを設定する {#optional-set-filters}
 
 データ フィールドにフィルターを追加する場合は、ここで設定できます。それ以外の場合は、この手順をスキップして**[次へ]**をクリックします。
 
-![filters](https://download.pingcap.com/images/docs/develop/aws-appflow-step-filters.png)
+![filters](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-filters.png)
 
 ### フローの確認と作成 {#confirm-and-create-the-flow}
 
 作成するフローの情報を確認します。問題がなければ、 **[Create flow]**をクリックします。
 
-![review](https://download.pingcap.com/images/docs/develop/aws-appflow-step-review.png)
+![review](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-review.png)
 
 ## ステップ 3. フローを実行する {#step-3-run-the-flow}
 
 新しく作成されたフローのページで、右上隅にある**[フローの実行]**をクリックします。
 
-![run flow](https://download.pingcap.com/images/docs/develop/aws-appflow-step-run-flow.png)
+![run flow](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-run-flow.png)
 
 次のスクリーンショットは、フローが正常に実行される例を示しています。
 
-![run success](https://download.pingcap.com/images/docs/develop/aws-appflow-step-run-success.png)
+![run success](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-run-success.png)
 
 `sf_account`テーブルをクエリすると、Salesforce **Account**オブジェクトのレコードが書き込まれていることがわかります。
 

@@ -11,23 +11,23 @@ summary: 助成金を表示するステートメントは、ユーザーに関�
 
 **ShowGrantsStmt:**
 
-![ShowGrantsStmt](https://download.pingcap.com/images/docs/sqlgram/ShowGrantsStmt.png)
+![ShowGrantsStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowGrantsStmt.png)
 
 **ユーザー名:**
 
-![Username](https://download.pingcap.com/images/docs/sqlgram/Username.png)
+![Username](https://docs-download.pingcap.com/media/images/docs/sqlgram/Username.png)
 
 **ロールの使用:**
 
-![UsingRoles](https://download.pingcap.com/images/docs/sqlgram/UsingRoles.png)
+![UsingRoles](https://docs-download.pingcap.com/media/images/docs/sqlgram/UsingRoles.png)
 
 **役割名リスト:**
 
-![RolenameList](https://download.pingcap.com/images/docs/sqlgram/RolenameList.png)
+![RolenameList](https://docs-download.pingcap.com/media/images/docs/sqlgram/RolenameList.png)
 
 **役割名:**
 
-![Rolename](https://download.pingcap.com/images/docs/sqlgram/Rolename.png)
+![Rolename](https://docs-download.pingcap.com/media/images/docs/sqlgram/Rolename.png)
 
 ## 例 {#examples}
 

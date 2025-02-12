@@ -21,7 +21,7 @@ DM が増分レプリケーションを実行する場合、最初にアップ�
 
 増分レプリケーションの場合、スキーマのメンテナンスは複雑です。データ レプリケーション全体では、次の 4 つのテーブル スキーマが関係します。これらのスキーマは、相互に一貫性がある場合もあれば、矛盾している場合もあります。
 
-![schema](https://download.pingcap.com/images/docs/dm/operate-schema.png)
+![schema](https://docs-download.pingcap.com/media/images/docs/dm/operate-schema.png)
 
 -   現時点での上流テーブル スキーマ。 `schema-U`として識別されます。
 -   現在 DM によって消費されているbinlogイベントのテーブル スキーマ。 `schema-B`として識別されます。このスキーマは、歴史的な時点の上流テーブル スキーマに対応します。

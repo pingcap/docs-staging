@@ -62,7 +62,7 @@ TiDB は統計を使用して決定します[どのインデックスを選択�
 
 ここで「深さが等しい」とは、各バケットに入る値の数が可能な限り等しいことを意味します。たとえば、特定のセット {1.6、1.9、1.9、2.0、2.4、2.6、2.7、2.7、2.8、2.9、3.4、3.5} に対して、4 つのバケットを生成するとします。等深度ヒストグラムは次のとおりです。これには、4 つのバケット [1.6、1.9]、[2.0、2.6]、[2.7、2.8]、[2.9、3.5] が含まれています。バケットの深さは 3 です。
 
-![Equal-depth Histogram Example](https://download.pingcap.com/images/docs/statistics-1.png)
+![Equal-depth Histogram Example](https://docs-download.pingcap.com/media/images/docs/statistics-1.png)
 
 ヒストグラムバケット数の上限を決定するパラメータの詳細については、 [マニュアルの収集](#manual-collection)を参照してください。バケットの数が多いほど、ヒストグラムの精度は高くなります。ただし、精度を高めるとメモリリソースの使用量が犠牲になります。実際のシナリオに応じて、この数値を適切に調整できます。
 
@@ -540,7 +540,7 @@ SHOW STATS_META [ShowLikeOrWhere];
 
 `ShowLikeOrWhereOpt`の構文は次のとおりです。
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
 
 現在、 `SHOW STATS_META`ステートメントは次の 6 つの列を返します。
 
@@ -569,7 +569,7 @@ SHOW STATS_HEALTHY [ShowLikeOrWhere];
 
 `SHOW STATS_HEALTHY`のあらすじは以下の通りです。
 
-![ShowStatsHealthy](https://download.pingcap.com/images/docs/sqlgram/ShowStatsHealthy.png)
+![ShowStatsHealthy](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStatsHealthy.png)
 
 現在、 `SHOW STATS_HEALTHY`ステートメントは次の 4 つの列を返します。
 
@@ -619,7 +619,7 @@ SHOW STATS_BUCKETS [ShowLikeOrWhere]
 
 回路図は以下の通りです：
 
-![SHOW STATS\_BUCKETS](https://download.pingcap.com/images/docs/sqlgram/SHOW_STATS_BUCKETS.png)
+![SHOW STATS\_BUCKETS](https://docs-download.pingcap.com/media/images/docs/sqlgram/SHOW_STATS_BUCKETS.png)
 
 このステートメントは、すべてのバケットに関する情報を返します。 `ShowLikeOrWhere`使用して必要な情報をフィルタリングできます。
 

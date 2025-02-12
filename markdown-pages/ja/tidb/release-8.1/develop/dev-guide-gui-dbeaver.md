@@ -63,23 +63,23 @@ summary: DBeaver コミュニティを使用して TiDB に接続する方法を
 
 5.  DBeaver を起動し、左上隅にある**[新しいデータベース接続]**をクリックします。 **[データベースへの接続] ダイアログ**で、リストから**[TiDB]**を選択し、 **[次へ]**をクリックします。
 
-    ![Select TiDB as the database in DBeaver](https://download.pingcap.com/images/docs/develop/dbeaver-select-database.jpg)
+    ![Select TiDB as the database in DBeaver](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-select-database.jpg)
 
 6.  TiDB Cloud接続ダイアログから接続文字列をコピーします。DBeaver で、[**接続方法]**に**[URL]**を選択し、接続文字列を**[URL]**フィールドに貼り付けます。
 
 7.  **認証 (データベース ネイティブ)**セクションで、**ユーザー名**と**パスワード**を入力します。例は次のとおりです。
 
-    ![Configure connection settings for TiDB Cloud Serverless](https://download.pingcap.com/images/docs/develop/dbeaver-connection-settings-serverless.jpg)
+    ![Configure connection settings for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-connection-settings-serverless.jpg)
 
 8.  **「テスト接続」**をクリックして、 TiDB Cloud Serverless クラスターへの接続を検証します。
 
     **「ドライバー ファイルのダウンロード」**ダイアログが表示されたら、 **「ダウンロード」**をクリックしてドライバー ファイルを取得します。
 
-    ![Download driver files](https://download.pingcap.com/images/docs/develop/dbeaver-download-driver.jpg)
+    ![Download driver files](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-download-driver.jpg)
 
     接続テストが成功すると、次のように**接続テスト**ダイアログが表示されます。 **[OK]**をクリックして閉じます。
 
-    ![Connection test result](https://download.pingcap.com/images/docs/develop/dbeaver-connection-test.jpg)
+    ![Connection test result](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-connection-test.jpg)
 
 9.  **「完了」**をクリックして接続構成を保存します。
 
@@ -98,7 +98,7 @@ summary: DBeaver コミュニティを使用して TiDB に接続する方法を
 
 4.  DBeaver を起動し、左上隅にある**[新しいデータベース接続]**をクリックします。 **[データベースへの接続] ダイアログ**で、リストから**[TiDB]**を選択し、 **[次へ]**をクリックします。
 
-    ![Select TiDB as the database in DBeaver](https://download.pingcap.com/images/docs/develop/dbeaver-select-database.jpg)
+    ![Select TiDB as the database in DBeaver](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-select-database.jpg)
 
 5.  適切な接続文字列をコピーして、DBeaver 接続パネルに貼り付けます。DBeaver フィールドとTiDB Cloud Dedicated 接続文字列間のマッピングは次のとおりです。
 
@@ -111,17 +111,17 @@ summary: DBeaver コミュニティを使用して TiDB に接続する方法を
 
     例は以下のとおりです。
 
-    ![Configure connection settings for TiDB Cloud Dedicated](https://download.pingcap.com/images/docs/develop/dbeaver-connection-settings-dedicated.jpg)
+    ![Configure connection settings for TiDB Cloud Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-connection-settings-dedicated.jpg)
 
 6.  **「テスト接続」**をクリックして、 TiDB Cloud Dedicated クラスターへの接続を検証します。
 
     **「ドライバー ファイルのダウンロード」**ダイアログが表示されたら、 **「ダウンロード」**をクリックしてドライバー ファイルを取得します。
 
-    ![Download driver files](https://download.pingcap.com/images/docs/develop/dbeaver-download-driver.jpg)
+    ![Download driver files](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-download-driver.jpg)
 
     接続テストが成功すると、次のように**接続テスト**ダイアログが表示されます。 **[OK]**をクリックして閉じます。
 
-    ![Connection test result](https://download.pingcap.com/images/docs/develop/dbeaver-connection-test.jpg)
+    ![Connection test result](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-connection-test.jpg)
 
 7.  **「完了」**をクリックして接続構成を保存します。
 
@@ -130,7 +130,7 @@ summary: DBeaver コミュニティを使用して TiDB に接続する方法を
 
 1.  DBeaver を起動し、左上隅にある**[新しいデータベース接続]**をクリックします。 **[データベースへの接続] ダイアログ**で、リストから**[TiDB]**を選択し、 **[次へ]**をクリックします。
 
-    ![Select TiDB as the database in DBeaver](https://download.pingcap.com/images/docs/develop/dbeaver-select-database.jpg)
+    ![Select TiDB as the database in DBeaver](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-select-database.jpg)
 
 2.  次の接続パラメータを構成します。
 
@@ -141,17 +141,17 @@ summary: DBeaver コミュニティを使用して TiDB に接続する方法を
 
     例は以下のとおりです。
 
-    ![Configure connection settings for TiDB Self-Managed](https://download.pingcap.com/images/docs/develop/dbeaver-connection-settings-self-hosted.jpg)
+    ![Configure connection settings for TiDB Self-Managed](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-connection-settings-self-hosted.jpg)
 
 3.  **「テスト接続」**をクリックして、TiDB セルフマネージド クラスターへの接続を検証します。
 
     **「ドライバー ファイルのダウンロード」**ダイアログが表示されたら、 **「ダウンロード」**をクリックしてドライバー ファイルを取得します。
 
-    ![Download driver files](https://download.pingcap.com/images/docs/develop/dbeaver-download-driver.jpg)
+    ![Download driver files](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-download-driver.jpg)
 
     接続テストが成功すると、次のように**接続テスト**ダイアログが表示されます。 **[OK]**をクリックして閉じます。
 
-    ![Connection test result](https://download.pingcap.com/images/docs/develop/dbeaver-connection-test.jpg)
+    ![Connection test result](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-connection-test.jpg)
 
 4.  **「完了」**をクリックして接続構成を保存します。
 

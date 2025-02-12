@@ -27,7 +27,7 @@ TiDB Lightningが起動したら、 `http://127.0.0.1:8289`アクセスしてプ
 
 ## トップページ {#front-page}
 
-![Front page of the web interface](https://download.pingcap.com/images/docs/lightning-web-frontpage.png)
+![Front page of the web interface](https://docs-download.pingcap.com/media/images/docs/lightning-web-frontpage.png)
 
 タイトル バーの機能 (左から右へ):
 
@@ -52,7 +52,7 @@ TiDB Lightningが起動したら、 `http://127.0.0.1:8289`アクセスしてプ
 
 タスクを送信するには、タイトル バーの**+**ボタンをクリックします。
 
-![Submit task dialog](https://download.pingcap.com/images/docs/lightning-web-submit.png)
+![Submit task dialog](https://docs-download.pingcap.com/media/images/docs/lightning-web-submit.png)
 
 タスクは[タスク構成](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)として記述される TOML ファイルです。UPLOAD**を**クリックしてローカルの TOML ファイルを開くこともできます。
 
@@ -62,7 +62,7 @@ TiDB Lightningが起動したら、 `http://127.0.0.1:8289`アクセスしてプ
 
 テーブルの詳細な進行状況を表示するには、フロント ページのテーブル カードの**[&gt;]**ボタンをクリックしてください。
 
-![Table progress](https://download.pingcap.com/images/docs/lightning-web-table.png)
+![Table progress](https://docs-download.pingcap.com/media/images/docs/lightning-web-table.png)
 
 このページには、テーブルに関連付けられているすべてのエンジンとデータ ファイルのインポートの進行状況が表示されます。
 
@@ -72,7 +72,7 @@ TiDB Lightningが起動したら、 `http://127.0.0.1:8289`アクセスしてプ
 
 現在のタスクとキューに入れられたタスクを管理するには、タイトル バーの**ⓘ**ボタンをクリックします。
 
-![Task management page](https://download.pingcap.com/images/docs/lightning-web-queue.png)
+![Task management page](https://docs-download.pingcap.com/media/images/docs/lightning-web-queue.png)
 
 各タスクには、送信された時間によってラベルが付けられます。タスクをクリックすると、JSON 形式の構成が表示されます。
 

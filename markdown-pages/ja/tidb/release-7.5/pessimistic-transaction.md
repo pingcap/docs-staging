@@ -138,7 +138,7 @@ TiDB は、悲観的トランザクション モードで次の 2 つの分離�
 
 トランザクションのコミット処理では、悲観的トランザクションと楽観的トランザクションは同じロジックを持ちます。どちらのトランザクションも 2 フェーズ コミット (2PC) モードを採用しています。悲観的トランザクションの重要な適応は、DML の実行です。
 
-![TiDB pessimistic transaction commit process](https://download.pingcap.com/images/docs/pessimistic-transaction-commit.png)
+![TiDB pessimistic transaction commit process](https://docs-download.pingcap.com/media/images/docs/pessimistic-transaction-commit.png)
 
 悲観的トランザクションでは、2PC の前に`Acquire Pessimistic Lock`フェーズが追加されます。このフェーズには次の手順が含まれます。
 
@@ -146,7 +146,7 @@ TiDB は、悲観的トランザクション モードで次の 2 つの分離�
 2.  TiDBサーバーがクライアントから書き込み要求を受信すると、TiDBサーバーはTiKVサーバーに対して悲観的ロック要求を開始し、ロックは TiKVサーバーに対して永続化されます。
 3.  (楽観的トランザクション モードと同じ) クライアントがコミット リクエストを送信すると、TiDB はオプティ楽観的トランザクション モードと同様の 2 フェーズ コミットの実行を開始します。
 
-![Pessimistic transactions in TiDB](https://download.pingcap.com/images/docs/pessimistic-transaction-in-tidb.png)
+![Pessimistic transactions in TiDB](https://docs-download.pingcap.com/media/images/docs/pessimistic-transaction-in-tidb.png)
 
 ## パイプライン化されたロックプロセス {#pipelined-locking-process}
 
@@ -162,7 +162,7 @@ TiDB は、悲観的トランザクション モードで次の 2 つの分離�
 
 アプリケーション ロジックがロックまたはロック待機メカニズムに依存している場合、または TiKV クラスターの異常が発生した場合でもトランザクション コミットの成功率をできる限り保証したい場合は、パイプライン ロック機能を無効にする必要があります。
 
-![Pipelined pessimistic lock](https://download.pingcap.com/images/docs/pessimistic-transaction-pipelining.png)
+![Pipelined pessimistic lock](https://docs-download.pingcap.com/media/images/docs/pessimistic-transaction-pipelining.png)
 
 この機能はデフォルトで有効になっています。これを無効にするには、TiKV 構成を変更します。
 

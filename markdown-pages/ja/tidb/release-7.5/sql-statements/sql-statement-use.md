@@ -11,11 +11,11 @@ summary: USEステートメントは、ユーザー セッションの現在の�
 
 **使用方法:**
 
-![UseStmt](https://download.pingcap.com/images/docs/sqlgram/UseStmt.png)
+![UseStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/UseStmt.png)
 
 **DB名:**
 
-![DBName](https://download.pingcap.com/images/docs/sqlgram/DBName.png)
+![DBName](https://docs-download.pingcap.com/media/images/docs/sqlgram/DBName.png)
 
 ## 例 {#examples}
 

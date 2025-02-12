@@ -19,7 +19,7 @@ summary: Learn about Lightning and the whole architecture.
 
 ## TiDBLightningアーキテクチャ {#tidb-lightning-architecture}
 
-![Architecture of TiDB Lightning tool set](https://download.pingcap.com/images/docs/tidb-lightning-architecture.png)
+![Architecture of TiDB Lightning tool set](https://docs-download.pingcap.com/media/images/docs/tidb-lightning-architecture.png)
 
 完全なインポートプロセスは次のとおりです。
 

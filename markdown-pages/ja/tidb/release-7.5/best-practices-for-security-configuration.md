@@ -34,11 +34,11 @@ TiDB の展開中は、Grafana のパスワードをすぐに強力なものに�
 
 -   Grafana に初めてログインしたら、プロンプトに従ってパスワードを変更します。
 
-    ![Grafana Password Reset Guide](https://download.pingcap.com/images/docs/grafana-password-reset1.png)
+    ![Grafana Password Reset Guide](https://docs-download.pingcap.com/media/images/docs/grafana-password-reset1.png)
 
 -   パスワードを変更するには、Grafana 個人設定センターにアクセスします。
 
-    ![Grafana Password Reset Guide](https://download.pingcap.com/images/docs/grafana-password-reset2.png)
+    ![Grafana Password Reset Guide](https://docs-download.pingcap.com/media/images/docs/grafana-password-reset2.png)
 
 ## TiDBダッシュボードのセキュリティ強化 {#enhance-tidb-dashboard-security}
 

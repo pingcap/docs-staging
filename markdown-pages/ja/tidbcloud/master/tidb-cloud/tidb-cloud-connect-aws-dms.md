@@ -64,7 +64,7 @@ TiDB Cloud Dedicated の場合、クライアントはパブリック エンド�
 
 1.  AWS DMS コンソールで、 [**レプリケーションインスタンス**](https://console.aws.amazon.com/dms/v2/home#replicationInstances)ページに移動し、対応するリージョンに切り替えます。AWS DMS にはTiDB Cloudと同じリージョンを使用することをお勧めします。
 
-    ![Create replication instance](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-connect-replication-instances.png)
+    ![Create replication instance](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-connect-replication-instances.png)
 
 2.  **レプリケーションインスタンスの作成を**クリックします。
 
@@ -84,7 +84,7 @@ TiDB Cloud Dedicated の場合、クライアントはパブリック エンド�
     -   **レプリケーション サブネット グループ**: レプリケーション インスタンスのサブネット グループを選択します。
     -   **パブリックアクセス可能**: ネットワーク構成に基づいて設定します。
 
-    ![Connectivity and security](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-connect-connectivity-security.png)
+    ![Connectivity and security](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-connect-connectivity-security.png)
 
 7.  必要に応じて、 **[詳細設定]** 、 **[メンテナンス]** 、 **[タグ]**セクションを構成し、 **[レプリケーション インスタンスの作成] を**クリックしてインスタンスの作成を完了します。
 
@@ -98,7 +98,7 @@ TiDB Cloud Dedicated の場合、クライアントはパブリック エンド�
 
 1.  AWS DMS コンソールで、 [**エンドポイント**](https://console.aws.amazon.com/dms/v2/home#endpointList)ページに移動し、対応するリージョンに切り替えます。
 
-    ![Create endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-connect-create-endpoint.png)
+    ![Create endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-connect-create-endpoint.png)
 
 2.  **エンドポイントの作成**をクリックして、ターゲット データベース エンドポイントを作成します。
 
@@ -133,7 +133,7 @@ TiDB Cloud Dedicated の場合、クライアントはパブリック エンド�
     </div>
      </SimpleTab>
 
-    ![Provide access information manually](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-connect-configure-endpoint.png)
+    ![Provide access information manually](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-connect-configure-endpoint.png)
 
 6.  エンドポイントを**ターゲット エンドポイント**として作成する場合は、**エンドポイント設定**セクションを展開し、**エンドポイント接続属性を使用する**チェックボックスをオンにして、**追加の接続属性を**`Initstmt=SET FOREIGN_KEY_CHECKS=0;`に設定します。
 

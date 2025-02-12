@@ -11,15 +11,15 @@ summary: TiDB 数据库中 SHOW [GLOBAL|SESSION] VARIABLES 的使用概况。
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowStmt.png)
 
 **ShowTargetFilterable:**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTargetFilterable.png)
 
 **GlobalScope:**
 
-![GlobalScope](https://download.pingcap.com/images/docs-cn/sqlgram/GlobalScope.png)
+![GlobalScope](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/GlobalScope.png)
 
 ## 示例
 

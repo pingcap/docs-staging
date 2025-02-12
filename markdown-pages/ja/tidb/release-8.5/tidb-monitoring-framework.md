@@ -19,13 +19,13 @@ Prometheus は複数のコンポーネントで構成されています。現在
 
 図は以下のとおりです。
 
-![diagram](https://download.pingcap.com/images/docs/prometheus-in-tidb.png)
+![diagram](https://docs-download.pingcap.com/media/images/docs/prometheus-in-tidb.png)
 
 ## TiDB の Grafana について {#about-grafana-in-tidb}
 
 Grafana は、メトリックを分析および視覚化するためのオープンソース プロジェクトです。TiDB は Grafana を使用して、次のようにパフォーマンス メトリックを表示します。
 
-![Grafana monitored\_groups](https://download.pingcap.com/images/docs/grafana-monitored-groups.png)
+![Grafana monitored\_groups](https://docs-download.pingcap.com/media/images/docs/grafana-monitored-groups.png)
 
 -   {TiDB_Cluster_name}-Backup-Restore: バックアップと復元に関連するメトリックを監視します。
 -   {TiDB_Cluster_name}-Blackbox_exporter: ネットワーク プローブに関連するメトリックを監視します。
@@ -49,4 +49,4 @@ Grafana は、メトリックを分析および視覚化するためのオープ
 
 各グループには監視メトリックの複数のパネル ラベルがあり、各パネルには複数の監視メトリックの詳細情報が含まれています。たとえば、**概要**監視グループには 5 つのパネル ラベルがあり、各ラベルは監視パネルに対応しています。次の UI を参照してください。
 
-![Grafana Overview](https://download.pingcap.com/images/docs/grafana-monitor-overview.png)
+![Grafana Overview](https://docs-download.pingcap.com/media/images/docs/grafana-monitor-overview.png)

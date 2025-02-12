@@ -16,7 +16,7 @@ RocksDB では、ユーザーは複数のカラムファミリー (CF) を作成
 
 TiKV のアーキテクチャを以下に示します。
 
-![TiKV RocksDB](https://download.pingcap.com/images/docs/tikv-rocksdb.png)
+![TiKV RocksDB](https://docs-download.pingcap.com/media/images/docs/tikv-rocksdb.png)
 
 TiKV のstorageエンジンとして、 Raftログとユーザー データを保存するために RocksDB が使用されます。 TiKV ノード内のすべてのデータは、2 つの RocksDB インスタンスを共有します。 1 つはRaftログ (多くの場合 raftdb と呼ばれます) 用で、もう 1 つはユーザー データと MVCC メタデータ (多くの場合 kvdb と呼ばれます) 用です。 kvdb には、raft、lock、default、および write の 4 つの CF があります。
 

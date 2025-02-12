@@ -64,7 +64,7 @@ Airbyte バナーが表示されたら、ユーザー名 ( `airbyte` ) とパス
 
 4.  コネクタの作成を完了するには、[ソースまたは**宛先の****設定**] をクリックします。次のスクリーンショットは、ソースとしての TiDB の構成を示しています。
 
-![TiDB source configuration](https://download.pingcap.com/images/docs/tidb-cloud/integration-airbyte-parameters.jpg)
+![TiDB source configuration](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/integration-airbyte-parameters.jpg)
 
 TiDB から Snowflake、CSV ファイルから TiDB など、ソースと宛先の任意の組み合わせを使用できます。
 
@@ -95,7 +95,7 @@ TiDB コネクタの詳細については、 [TiDB ソース](https://docs.airby
     > -   増分モードでは、Airbyte は最後の同期ジョブ以降にソースに追加されたレコードのみを読み取ります。増分モードを使用した最初の同期は、完全更新モードと同等です。
     > -   フル リフレッシュ モードでは、Airbyte はソース内のすべてのレコードを読み取り、同期タスクごとに宛先に複製します。Airbyte の**Namespace**という名前のテーブルごとに同期モードを個別に設定できます。
 
-    ![Set up connection](https://download.pingcap.com/images/docs/tidb-cloud/integration-airbyte-connection.jpg)
+    ![Set up connection](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/integration-airbyte-connection.jpg)
 
 7.  デフォルトの正規化モードを使用するには、 **「正規化と変換」**を**「正規化された表形式データ」**に設定するか、ジョブの dbt ファイルを設定することができます。正規化の詳細については、 [変換と正規化](https://docs.airbyte.com/operator-guides/transformation-and-normalization/transformations-with-dbt)を参照してください。
 
@@ -103,7 +103,7 @@ TiDB コネクタの詳細については、 [TiDB ソース](https://docs.airby
 
 9.  接続が確立されたら、 **[有効]**をクリックして同期タスクをアクティブにします。 **[今すぐ同期]**をクリックしてすぐに同期することもできます。
 
-![Sync data](https://download.pingcap.com/images/docs/tidb-cloud/integration-airbyte-sync.jpg)
+![Sync data](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/integration-airbyte-sync.jpg)
 
 ## 制限事項 {#limitations}
 

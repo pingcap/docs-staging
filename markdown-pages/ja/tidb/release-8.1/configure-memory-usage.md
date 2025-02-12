@@ -199,14 +199,14 @@ GO 1.19 では、GC をトリガーするメモリ制限を設定するための
 
 v6.1.3 &lt;= TiDB &lt; v6.5.0 の場合、手動で`GOMEMLIMIT`設定することで、OOM 問題の一般的なカテゴリを軽減できます。OOM 問題の一般的なカテゴリは、OOM が発生する前に、Grafana で使用されていると推定されるメモリがメモリ全体の半分しか占めないことです (TiDB-Runtime &gt; Memory Usage &gt; Estimation-inuse)。次の図を参照してください。
 
-![normal OOM case example](https://download.pingcap.com/images/docs/configure-memory-usage-oom-example.png)
+![normal OOM case example](https://docs-download.pingcap.com/media/images/docs/configure-memory-usage-oom-example.png)
 
 `GOMEMLIMIT`のパフォーマンスを確認するために、 `GOMEMLIMIT`構成の有無による特定のメモリ使用量を比較するテストを実行します。
 
 -   TiDB v6.1.2 では、シミュレートされたワークロードが数分間実行された後、TiDBサーバーはOOM (システムメモリ: 約 48 GiB) に遭遇します。
 
-    ![v6.1.2 workload oom](https://download.pingcap.com/images/docs/configure-memory-usage-612-oom.png)
+    ![v6.1.2 workload oom](https://docs-download.pingcap.com/media/images/docs/configure-memory-usage-612-oom.png)
 
 -   TiDB v6.1.3 では、 `GOMEMLIMIT` 40000 MiB に設定されています。シミュレートされたワークロードは長時間安定して実行され、TiDBサーバーで OOM は発生せず、プロセスの最大メモリ使用量は 40.8 GiB 前後で安定していることがわかります。
 
-    ![v6.1.3 workload no oom with GOMEMLIMIT](https://download.pingcap.com/images/docs/configure-memory-usage-613-no-oom.png)
+    ![v6.1.3 workload no oom with GOMEMLIMIT](https://docs-download.pingcap.com/media/images/docs/configure-memory-usage-613-no-oom.png)

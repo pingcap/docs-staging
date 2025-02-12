@@ -29,7 +29,7 @@ Sync ユニットは、DML ステートメントを次のように処理しま�
 
 5.  定期的に、binlogの位置または GTID をチェックポイントに保存します。
 
-![DML processing logic](https://download.pingcap.com/images/docs/dm/dm-dml-replication-logic.png)
+![DML processing logic](https://docs-download.pingcap.com/media/images/docs/dm/dm-dml-replication-logic.png)
 
 ## DML最適化ロジック {#dml-optimization-logic}
 

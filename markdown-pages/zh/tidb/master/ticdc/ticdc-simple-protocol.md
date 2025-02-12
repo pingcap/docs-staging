@@ -516,13 +516,13 @@ TiCDC 会把一个 `BOOTSTRAP` 事件编码成如下的 JSON 格式：
 
 在此场景下，消费者从创建表开始消费，因此消费者能够接收到该表的所有 DDL 和 BOOTSTRAP 消息。此时，消费者可以通过一个 DML 消息中的 `table` 名和 `schemaVersion` 字段来获取对应的 tableSchema 信息。具体过程如下图所示：
 
-![TiCDC Simple Protocol consumer scene 1](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-simple-consumer-1.png)
+![TiCDC Simple Protocol consumer scene 1](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-simple-consumer-1.png)
 
 ### 场景二：消费者从中间开始消费
 
 在一个新的消费者加入到消费者组时，它可能会从中间开始消费，因此它可能会错过之前的 DDL 和 BOOTSTRAP 消息。在这种情况下，消费者可能会先接收到一些 DML 消息，但是此时它还没有该表的 schema 信息。因此，它需要先等待一段时间，直到它接收到该表 DDL 或 BOOTSTRAP 消息，从而获取到该表的 schema 信息。由于 TiCDC 会周期性地发送 BOOTSTRAP 消息，消费者总是能够在一段时间内获取到该表的 schema 信息。具体过程如下图所示：
 
-![TiCDC Simple Protocol consumer scene 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-simple-consumer-2.png)
+![TiCDC Simple Protocol consumer scene 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-simple-consumer-2.png)
 
 ## 参考
 

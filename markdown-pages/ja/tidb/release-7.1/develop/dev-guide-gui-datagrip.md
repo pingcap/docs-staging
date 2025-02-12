@@ -68,21 +68,21 @@ DataGrip は 2 つの方法で使用できます。
 
 5.  DataGrip を起動し、接続を管理するためのプロジェクトを作成します。
 
-    ![Create a project in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-create-project.jpg)
+    ![Create a project in DataGrip](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-create-project.jpg)
 
 6.  新しく作成したプロジェクトで、 **[データベース エクスプローラー]**パネルの左上隅にある**[+]**をクリックし、 **[データ ソース]** &gt; **[その他]** &gt; **[TiDB]**を選択します。
 
-    ![Select a data source in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-data-source-select.jpg)
+    ![Select a data source in DataGrip](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-data-source-select.jpg)
 
 7.  TiDB Cloud接続ダイアログから接続文字列をコピーします。次に、それを**URL**フィールドに貼り付けると、残りのパラメータが自動入力されます。結果の例は次のとおりです。
 
-    ![Configure the URL field for TiDB Serverless](https://download.pingcap.com/images/docs/develop/datagrip-url-paste.jpg)
+    ![Configure the URL field for TiDB Serverless](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-url-paste.jpg)
 
     **「不足しているドライバー ファイルをダウンロードする」**という警告が表示された場合は、 **「ダウンロード」を**クリックしてドライバー ファイルを取得します。
 
 8.  **「接続のテスト」**をクリックして、TiDB サーバーレスクラスターへの接続を検証します。
 
-    ![Test the connection to a TiDB Serverless clustser](https://download.pingcap.com/images/docs/develop/datagrip-test-connection.jpg)
+    ![Test the connection to a TiDB Serverless clustser](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-test-connection.jpg)
 
 9.  **「OK」**をクリックして接続構成を保存します。
 
@@ -99,11 +99,11 @@ DataGrip は 2 つの方法で使用できます。
 
 4.  DataGrip を起動し、接続を管理するためのプロジェクトを作成します。
 
-    ![Create a project in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-create-project.jpg)
+    ![Create a project in DataGrip](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-create-project.jpg)
 
 5.  新しく作成したプロジェクトで、 **[データベース エクスプローラー]**パネルの左上隅にある**[+]**をクリックし、 **[データ ソース]** &gt; **[その他]** &gt; **[TiDB]**を選択します。
 
-    ![Select a data source in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-data-source-select.jpg)
+    ![Select a data source in DataGrip](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-data-source-select.jpg)
 
 6.  適切な接続文字列をコピーして、DataGrip の**[データ ソースとドライバー]**ウィンドウに貼り付けます。 DataGrip フィールドと TiDB 専用接続文字列間のマッピングは次のとおりです。
 
@@ -116,21 +116,21 @@ DataGrip は 2 つの方法で使用できます。
 
     例は次のとおりです。
 
-    ![Configure the connection parameters for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/datagrip-dedicated-connect.jpg)
+    ![Configure the connection parameters for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-dedicated-connect.jpg)
 
 7.  **[SSH/SSL]**タブをクリックし、 **[SSL を使用]**チェックボックスを選択して、CA 証明書のパスを**[CA ファイル]**フィールドに入力します。
 
-    ![Configure the CA for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/datagrip-dedicated-ssl.jpg)
+    ![Configure the CA for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-dedicated-ssl.jpg)
 
     **「不足しているドライバー ファイルをダウンロードする」**という警告が表示された場合は、 **「ダウンロード」を**クリックしてドライバー ファイルを取得します。
 
 8.  **「詳細」**タブをクリックし、スクロールして**「enabledTLSProtocols」**パラメータを見つけ、その値を`TLSv1.2,TLSv1.3`に設定します。
 
-    ![Configure the TLS for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/datagrip-dedicated-advanced.jpg)
+    ![Configure the TLS for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-dedicated-advanced.jpg)
 
 9.  **「接続のテスト」**をクリックして、TiDB 専用クラスターへの接続を検証します。
 
-    ![Test the connection to a TiDB Dedicated cluster](https://download.pingcap.com/images/docs/develop/datagrip-dedicated-test-connection.jpg)
+    ![Test the connection to a TiDB Dedicated cluster](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-dedicated-test-connection.jpg)
 
 10. **「OK」**をクリックして接続構成を保存します。
 
@@ -139,11 +139,11 @@ DataGrip は 2 つの方法で使用できます。
 
 1.  DataGrip を起動し、接続を管理するためのプロジェクトを作成します。
 
-    ![Create a project in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-create-project.jpg)
+    ![Create a project in DataGrip](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-create-project.jpg)
 
 2.  新しく作成したプロジェクトで、 **[データベース エクスプローラー]**パネルの左上隅にある**[+]**をクリックし、 **[データ ソース]** &gt; **[その他]** &gt; **[TiDB]**を選択します。
 
-    ![Select a data source in DataGrip](https://download.pingcap.com/images/docs/develop/datagrip-data-source-select.jpg)
+    ![Select a data source in DataGrip](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-data-source-select.jpg)
 
 3.  次の接続パラメータを構成します。
 
@@ -154,13 +154,13 @@ DataGrip は 2 つの方法で使用できます。
 
     例は次のとおりです。
 
-    ![Configure the connection parameters for TiDB Self-Hosted](https://download.pingcap.com/images/docs/develop/datagrip-self-hosted-connect.jpg)
+    ![Configure the connection parameters for TiDB Self-Hosted](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-self-hosted-connect.jpg)
 
     **「不足しているドライバー ファイルをダウンロードする」**という警告が表示された場合は、 **「ダウンロード」を**クリックしてドライバー ファイルを取得します。
 
 4.  **[接続のテスト]**をクリックして、TiDB セルフホスト クラスターへの接続を検証します。
 
-    ![Test the connection to a TiDB Self-Hosted cluster](https://download.pingcap.com/images/docs/develop/datagrip-self-hosted-test-connection.jpg)
+    ![Test the connection to a TiDB Self-Hosted cluster](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-self-hosted-test-connection.jpg)
 
 5.  **「OK」**をクリックして接続構成を保存します。
 

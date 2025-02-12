@@ -17,7 +17,7 @@ AWS PrivateLink を利用することで、エンドポイント接続は安全�
 
 プライベート エンドポイントのアーキテクチャは次のとおりです。
 
-![Private endpoint architecture](https://download.pingcap.com/images/docs/tidb-cloud/aws-private-endpoint-arch.png)
+![Private endpoint architecture](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-private-endpoint-arch.png)
 
 プライベートエンドポイントとエンドポイントサービスの詳細な定義については、次の AWS ドキュメントを参照してください。
 
@@ -61,7 +61,7 @@ AWS マネジメントコンソールを使用して VPC インターフェイ�
 
     **エンドポイントの作成**ページが表示されます。
 
-    ![Verify endpoint service](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/create-endpoint-2.png)
+    ![Verify endpoint service](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/create-endpoint-2.png)
 
 3.  **「その他のエンドポイント サービス」**を選択します。
 
@@ -124,7 +124,7 @@ aws ec2 create-vpc-endpoint --vpc-id ${your_vpc_id} --region ${region_id} --serv
 
 AWS マネジメントコンソールで、VPC エンドポイントのセキュリティグループを適切に設定する必要がある場合があります。 **[VPC]** &gt; **[エンドポイント]**に移動します。VPC エンドポイントを右クリックし、適切な**[セキュリティグループの管理]**を選択します。ポート 4000 または顧客定義のポートで EC2 インスタンスからのインバウンドアクセスを許可する、VPC 内の適切なセキュリティグループ。
 
-![Manage security groups](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/manage-security-groups.png)
+![Manage security groups](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/manage-security-groups.png)
 
 ### プライベート DNS を有効にできません。enableDnsSupport および<code>enableDnsSupport</code> VPC 属性が有効になっていないことを示すエラーが報告されます<code>enableDnsHostnames</code> {#i-cannot-enable-private-dns-an-error-is-reported-indicating-that-the-code-enablednssupport-code-and-code-enablednshostnames-code-vpc-attributes-are-not-enabled}
 

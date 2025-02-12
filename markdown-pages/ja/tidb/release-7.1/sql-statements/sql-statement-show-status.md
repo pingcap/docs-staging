@@ -11,15 +11,15 @@ summary: An overview of the usage of SHOW [GLOBAL|SESSION] STATUS for the TiDB d
 
 **表示手順:**
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStmt.png)
 
 **ShowTargetFilterable:**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTargetFilterable.png)
 
 **グローバルスコープ:**
 
-![GlobalScope](https://download.pingcap.com/images/docs/sqlgram/GlobalScope.png)
+![GlobalScope](https://docs-download.pingcap.com/media/images/docs/sqlgram/GlobalScope.png)
 
 ## 例 {#examples}
 

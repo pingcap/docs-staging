@@ -31,7 +31,7 @@ Top SQL 功能默认关闭。你可以通过以下方法在整个集群范围内
 
 开启 Top SQL 后，只需要登录 TiDB Dashboard，然后点击左侧面板中的 **Top SQL** 即可使用 Top SQL。
 
-![Top SQL](https://download.pingcap.com/images/docs-cn/dashboard/top-sql-overview.png)
+![Top SQL](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/top-sql-overview.png)
 
 使用提示：
 
@@ -40,4 +40,4 @@ Top SQL 功能默认关闭。你可以通过以下方法在整个集群范围内
 * 列表中展示了选中节点、选中时间范围内消耗负载最多的 5 类查询。
 * 点击选中列表中的某个查询类型，可以查看这类查询在这个节点上的执行计划，以及详细执行信息，例如 Call/sec （平均每秒请求数）、 Scan Rows/sec （平均每秒扫描行数）、 Scan Indexes/sec （平均每秒扫描索引数）、Latency/call （平均延迟）。
 
-![Top SQL Details](https://download.pingcap.com/images/docs-cn/dashboard/top-sql-details.png)
+![Top SQL Details](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/top-sql-details.png)

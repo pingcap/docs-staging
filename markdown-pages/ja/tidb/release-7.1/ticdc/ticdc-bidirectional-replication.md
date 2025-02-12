@@ -17,7 +17,7 @@ TiCDC は、指定されたタイムスタンプの後に発生する増分デ�
 
 2.  2 つの TiDB クラスターの間に 2 つの TiCDC クラスターをデプロイ。クラスタのトポロジは以下のとおりです。図中の矢印はデータの流れの方向を示しています。
 
-    ![TiCDC bidirectional replication](https://download.pingcap.com/images/docs/ticdc/ticdc-bidirectional-replication.png)
+    ![TiCDC bidirectional replication](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-bidirectional-replication.png)
 
 3.  上流クラスターと下流クラスターのデータ複製の開始時点を指定します。
 

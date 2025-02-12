@@ -51,14 +51,14 @@ summary: Learn an example of how to build a TiDB application using Spring Boot.
 
 -   マックOS：
 
-    
+
     ```shell
     brew install maven
     ```
 
 -   Debian ベースの Linux ディストリビューション (Ubuntu など):
 
-    
+
     ```shell
     apt-get install maven
     ```
@@ -67,14 +67,14 @@ summary: Learn an example of how to build a TiDB application using Spring Boot.
 
     -   dnf:
 
-        
+
         ```shell
         dnf install maven
         ```
 
     -   うーん:
 
-        
+
         ```shell
         yum install maven
         ```
@@ -151,14 +151,14 @@ make
 
 1.  キャッシュとパッケージをクリアします。
 
-    
+
     ```shell
     mvn clean package
     ```
 
 2.  JAR ファイルを使用してアプリケーションを実行します。
 
-    
+
     ```shell
     java -jar target/spring-jpa-hibernate-0.0.1.jar
     ```
@@ -215,37 +215,37 @@ Hibernate: create table player_jpa (id bigint not null, coins integer, goods int
 
 この[構成ファイル](https://raw.githubusercontent.com/pingcap-inc/tidb-example-java/main/spring-jpa-hibernate/Player.postman_collection.json)ローカルにダウンロードして、次に示すように[郵便屋さん](https://www.postman.com/)にインポートできます。
 
-![import the collection into Postman](https://download.pingcap.com/images/docs/develop/IMG_20220402-003303222.png)
+![import the collection into Postman](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003303222.png)
 
 #### プレーヤーを作成する {#create-players}
 
 **[作成]**タブをクリックし、 <strong>[送信]</strong>ボタンをクリックして、POST 要求を`http://localhost:8080/player/`に送信します。戻り値は追加されたプレーヤーの数で、1 であると予想されます。
 
-![Postman-Create a player](https://download.pingcap.com/images/docs/develop/IMG_20220402-003350731.png)
+![Postman-Create a player](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003350731.png)
 
 #### IDでプレイヤー情報を取得する {#get-player-information-by-id}
 
 **GetByID**タブをクリックし、 <strong>[送信]</strong>ボタンをクリックして、GET 要求を`http://localhost:8080/player/1`に送信します。戻り値は ID `1`のプレイヤーの情報です。
 
-![Postman-GetByID](https://download.pingcap.com/images/docs/develop/IMG_20220402-003416079.png)
+![Postman-GetByID](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003416079.png)
 
 #### 制限付きでプレイヤー情報を一括取得 {#get-player-information-in-bulk-by-limit}
 
 **GetByLimit**タブをクリックし、 <strong>Send</strong>ボタンをクリックして、GET リクエストを`http://localhost:8080/player/limit/3`に送信します。戻り値は、最大 3 人のプレイヤーの情報のリストです。
 
-![Postman-GetByLimit](https://download.pingcap.com/images/docs/develop/IMG_20220402-003505846.png)
+![Postman-GetByLimit](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003505846.png)
 
 #### ページごとにプレイヤー情報を取得する {#get-player-information-by-page}
 
 **GetByPage**タブをクリックし、 <strong>[送信]</strong>ボタンをクリックして、GET 要求を`http://localhost:8080/player/page?index=0&size=2`に送信します。戻り値はインデックス`0`のページで、1 ページあたり`2`人のプレイヤーがいます。戻り値には、オフセット、totalPages、および並べ替えなどのページング情報も含まれています。
 
-![Postman-GetByPage](https://download.pingcap.com/images/docs/develop/IMG_20220402-003528474.png)
+![Postman-GetByPage](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003528474.png)
 
 #### プレイヤーを数える {#count-players}
 
 **[カウント]**タブと<strong>[送信]</strong>ボタンをクリックして、GET 要求を`http://localhost:8080/player/count`に送信します。戻り値はプレイヤー数です。
 
-![Postman-Count](https://download.pingcap.com/images/docs/develop/IMG_20220402-003549966.png)
+![Postman-Count](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003549966.png)
 
 #### プレイヤーの取引 {#player-trading}
 
@@ -253,7 +253,7 @@ Hibernate: create table player_jpa (id bigint not null, coins integer, goods int
 
 戻り値は、トランザクションが成功したかどうかです。売り手にとって不十分な商品、買い手にとって不十分なコイン、またはデータベース エラーがある場合、 [データベース トランザクション](/develop/dev-guide-transaction-overview.md)取引が成功せず、プレイヤーのコインや商品が失われないことを保証します。
 
-![Postman-Trade](https://download.pingcap.com/images/docs/develop/IMG_20220402-003659102.png)
+![Postman-Trade](https://docs-download.pingcap.com/media/images/docs/develop/IMG_20220402-003659102.png)
 
 ### ステップ 6.2 curl リクエストの使用 {#step-6-2-using-curl-requests}
 
@@ -1002,7 +1002,7 @@ public class PlayerController {
 
 完全な構成は次のとおりです。
 
-![Spring Initializr Configuration](https://download.pingcap.com/images/docs/develop/develop-spring-initializr-configuration.png)
+![Spring Initializr Configuration](https://docs-download.pingcap.com/media/images/docs/develop/develop-spring-initializr-configuration.png)
 
 > **ノート：**
 >

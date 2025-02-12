@@ -11,7 +11,7 @@ summary: SHOW PROFILESステートメントは現在、空の結果のみを返�
 
 **表示手順:**
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStmt.png)
 
 ## 例 {#examples}
 

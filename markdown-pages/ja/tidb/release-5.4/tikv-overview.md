@@ -11,7 +11,7 @@ TiKVは、分散型のトランザクション型Key-Valueデータベースで�
 
 TiKVは、GoogleSpannerの設計に基づいてマルチラフトグループレプリカメカニズムを実装します。リージョンは、Key-Valueデータ移動の基本単位であり、ストア内のデータ範囲を指します。各リージョンは複数のノードに複製されます。これらの複数のレプリカは、ラフトグループを形成します。リージョンのレプリカはピアと呼ばれます。通常、リージョンには3つのピアがあります。そのうちの1つは、読み取りおよび書き込みサービスを提供するリーダーです。 PDコンポーネントは、すべてのリージョンのバランスを自動的に取り、TiKVクラスタのすべてのノード間で読み取りと書き込みのスループットのバランスが取れていることを保証します。 PDと慎重に設計されたRaftグループにより、TiKVは水平方向のスケーラビリティに優れており、100TBを超えるデータを格納するために簡単に拡張できます。
 
-![TiKV Architecture](https://download.pingcap.com/images/docs/tikv-arch.png)
+![TiKV Architecture](https://docs-download.pingcap.com/media/images/docs/tikv-arch.png)
 
 ### リージョンとRocksDB {#region-and-rocksdb}
 

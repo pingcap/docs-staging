@@ -215,7 +215,7 @@ spec:
 
     执行以下命令部署 TidbNGMonitoring CR。其中， `${cluster_name}` 为 TidbCluster CR 的名称，`${cluster_ns}` 为 TidbCluster CR 所在的命名空间。
 
-    
+
     ```bash
     cat << EOF | kubectl apply -n ${ns} -f -
     apiVersion: pingcap.com/v1alpha1
@@ -244,7 +244,7 @@ spec:
     2. 点击**打开设置** (Open Settings)。在右侧**设置** (Settings) 页面，将**启用特性** (Enable Feature) 下方的开关打开。设置**保留时间** (Retention Period) 或保留默认值。
     3. 点击**保存** (Save)。
 
-    ![启用功能](https://download.pingcap.com/images/tidb-in-kubernetes/dashboard-conprof-start.png)
+    ![启用功能](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/dashboard-conprof-start.png)
 
 关于持续性能分析功能的更多操作，参考 [TiDB Dashboard 实例性能分析 - 持续分析页面](https://docs.pingcap.com/zh/tidb/stable/continuous-profiling)。
 

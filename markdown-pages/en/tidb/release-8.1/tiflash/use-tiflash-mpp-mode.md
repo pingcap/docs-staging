@@ -21,7 +21,7 @@ TiFlash supports using the MPP mode to execute queries, which introduces cross-n
 
 The following diagram shows how the MPP mode works.
 
-![mpp-mode](https://download.pingcap.com/images/docs/tiflash/tiflash-mpp.png)
+![mpp-mode](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash-mpp.png)
 
 ## Control whether to select the MPP mode
 

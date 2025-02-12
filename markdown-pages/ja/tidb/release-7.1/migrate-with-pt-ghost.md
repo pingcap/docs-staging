@@ -54,7 +54,7 @@ DMのワークフロー:
 
 -   記録された DDL をダウンストリームに適用します。
 
-![dm-online-ddl](https://download.pingcap.com/images/docs/dm/dm-online-ddl.png)
+![dm-online-ddl](https://docs-download.pingcap.com/media/images/docs/dm/dm-online-ddl.png)
 
 ワークフローの変更により、次の利点がもたらされます。
 

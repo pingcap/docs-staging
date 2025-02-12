@@ -11,7 +11,7 @@ summary: An overview of the usage of SHOW PROFILES for the TiDB database.
 
 **ShowStmt：**
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStmt.png)
 
 ## 例 {#examples}
 

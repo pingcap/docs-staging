@@ -8,7 +8,7 @@ summary: Learn about SQL Prepared Execution Plan Cache in TiDB.
 > **Warning:**
 >
 > If a cached `UPDATE` or `DELETE` statement encounters a DDL operation that modifies the relevant schema during execution, it might cause data inconsistency between tables and indexes. For more information, see [Issue #51407](https://github.com/pingcap/tidb/issues/51407). It is recommended to monitor the status of this issue and upgrade to [the latest LTS version](https://docs.pingcap.com/tidb/stable) to resolve this issue. Before upgrading, you can try the following workarounds:
-> 
+>
 > - Before executing DDL, temporarily [disable the prepared plan cache](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610), and re-enable it after the DDL is complete.
 > - Avoid executing DDL during business peak hours. After executing DDL, immediately run [`ADMIN CHECK TABLE`](/sql-statements/sql-statement-admin-check-table-index.md) to check the consistency between tables and indexes. If errors are found, rebuild the relevant indexes.
 
@@ -184,7 +184,7 @@ To view the total number of execution plans cached in each TiDB instance, you ca
 
 The following is an example of the **Plan Cache Memory Usage** and **Plan Cache Plan Num** panels in Grafana:
 
-![grafana_panels](https://download.pingcap.com/images/docs/planCache-memoryUsage-planNum-panels.png)
+![grafana_panels](https://docs-download.pingcap.com/media/images/docs/planCache-memoryUsage-planNum-panels.png)
 
 Starting from v7.1.0, you can control the maximum number of plans that can be cached in each session by configuring the system variable [`tidb_session_plan_cache_size`](/system-variables.md#tidb_session_plan_cache_size-new-in-v710). For different environments, the recommended value is as follows and you can adjust it according to the monitoring panels:
 
@@ -338,7 +338,7 @@ mysql> select @@last_plan_from_cache;       -- Reuse the last plan
 
 In [the Grafana dashboard](/grafana-tidb-dashboard.md) on the TiDB page in the **Executor** section, there are the "Queries Using Plan Cache OPS" and "Plan Cache Miss OPS" graphs. These graphs can be used to check if both TiDB and the application are configured correctly to allow the SQL Plan Cache to work correctly. The **Server** section on the same page provides the "Prepared Statement Count" graph. This graph shows a non-zero value if the application uses prepared statements, which is required for the SQL Plan Cache to function correctly.
 
-![`sql_plan_cache`](https://download.pingcap.com/images/docs/performance/sql_plan_cache.png)
+![`sql_plan_cache`](https://docs-download.pingcap.com/media/images/docs/performance/sql_plan_cache.png)
 
 </CustomContent>
 

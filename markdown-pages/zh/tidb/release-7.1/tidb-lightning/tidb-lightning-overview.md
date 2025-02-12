@@ -26,7 +26,7 @@ TiDB Lightning 支持从以下位置读取：
 
 ## TiDB Lightning 整体架构
 
-![TiDB Lightning 整体架构](https://download.pingcap.com/images/docs-cn/tidb-lightning-architecture.png)
+![TiDB Lightning 整体架构](https://docs-download.pingcap.com/media/images/docs-cn/tidb-lightning-architecture.png)
 
 TiDB Lightning 目前支持两种导入方式，通过 `backend` 配置区分。不同的模式决定 TiDB Lightning 如何将数据导入到目标 TiDB 集群。
 

@@ -11,15 +11,15 @@ The `SET ROLE` statement is used to enable roles in the current session. After e
 
 **SetRoleStmt:**
 
-![SetRoleStmt](https://download.pingcap.com/images/docs/sqlgram/SetRoleStmt.png)
+![SetRoleStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetRoleStmt.png)
 
 **SetRoleOpt:**
 
-![SetRoleOpt](https://download.pingcap.com/images/docs/sqlgram/SetRoleOpt.png)
+![SetRoleOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetRoleOpt.png)
 
 **SetDefaultRoleOpt:**
 
-![SetDefaultRoleOpt](https://download.pingcap.com/images/docs/sqlgram/SetDefaultRoleOpt.png)
+![SetDefaultRoleOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetDefaultRoleOpt.png)
 
 ## Examples
 

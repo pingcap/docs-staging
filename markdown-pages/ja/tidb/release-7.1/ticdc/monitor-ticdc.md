@@ -15,7 +15,7 @@ cdc cli changefeed create --server=http://10.0.10.25:8300 --sink-uri="mysql://ro
 
 TiCDC ダッシュボードには 4 つの監視パネルが含まれています。次のスクリーンショットを参照してください。
 
-![TiCDC Dashboard - Overview](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-overview.png)
+![TiCDC Dashboard - Overview](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-overview.png)
 
 各パネルの説明は次のとおりです。
 
@@ -28,7 +28,7 @@ TiCDC ダッシュボードには 4 つの監視パネルが含まれていま�
 
 以下は**「サーバー」**パネルの例です。
 
-![TiCDC Dashboard - Server metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-server.png)
+![TiCDC Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-server.png)
 
 **「サーバー」**パネルの各メトリックの説明は次のとおりです。
 
@@ -44,7 +44,7 @@ TiCDC ダッシュボードには 4 つの監視パネルが含まれていま�
 
 以下は、 **Changefeed**パネルの例です。
 
-![TiCDC Dashboard - Changefeed metrics 1](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-changefeed-1.png)
+![TiCDC Dashboard - Changefeed metrics 1](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-changefeed-1.png)
 
 -   Changefeed テーブル数: レプリケーション タスクで各 TiCDC ノードがレプリケートする必要があるテーブルの数
 -   プロセッサー解決済み ts: TiCDC クラスター内で解決されたタイムスタンプ
@@ -55,20 +55,20 @@ TiCDC ダッシュボードには 4 つの監視パネルが含まれていま�
 -   チェンジフィード チェックポイント ラグ: 上流と下流間のデータ レプリケーションの進行ラグ (単位は秒)
 -   プロセッサー解決 ts ラグ: 上流ノードと TiCDC ノード間のデータ複製の進行ラグ (単位は秒)
 
-![TiCDC Dashboard - Changefeed metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-changefeed-2.png)
+![TiCDC Dashboard - Changefeed metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-changefeed-2.png)
 
 -   シンク書き込み期間: TiCDC がトランザクション変更をダウンストリームに書き込むのに費やした時間のヒストグラム
 -   シンク書き込み期間パーセンタイル: TiCDC が 1 秒以内にトランザクション変更をダウンストリームに書き込むのに費やした時間 (P95、P99、および P999)
 -   フラッシュ シンク期間: TiCDC がデータをダウンストリームに非同期的にフラッシュするのに費やした時間のヒストグラム
 -   フラッシュ シンク期間パーセンタイル: TiCDC が 1 秒以内にデータをダウンストリームに非同期的にフラッシュするのに費やした時間 (P95、P99、および P999)
 
-![TiCDC Dashboard - Changefeed metrics 3](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-changefeed-3.png)
+![TiCDC Dashboard - Changefeed metrics 3](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-changefeed-3.png)
 
 -   MySQL シンク競合検出期間: MySQL シンク競合の検出に費やされた時間のヒストグラム
 -   MySQL シンク競合検出期間パーセンタイル: 1 秒以内に MySQL シンク競合を検出するのに費やした時間 (P95、P99、および P999)
 -   MySQL シンク ワーカーの負荷: TiCDC ノードの MySQL シンク ワーカーのワークロード
 
-![TiCDC Dashboard - Changefeed metrics 4](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-changefeed-4.png)
+![TiCDC Dashboard - Changefeed metrics 4](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-changefeed-4.png)
 
 -   Changefeed catch-up ETA: レプリケーション タスクが上流のクラスター データに追いつくのに必要な推定時間。アップストリームの書き込み速度が TiCDC レプリケーション速度よりも速い場合、メトリックは非常に大きくなる可能性があります。 TiCDC レプリケーション速度は多くの要因の影響を受けるため、このメトリクスは参照のみを目的としており、実際のレプリケーション時間ではない可能性があります。
 
@@ -76,7 +76,7 @@ TiCDC ダッシュボードには 4 つの監視パネルが含まれていま�
 
 以下は、 **「イベント」**パネルの例です。
 
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-events-1.png) ![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-events-2.png) ![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-events-3.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-events-1.png) ![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-events-2.png) ![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-events-3.png)
 
 **[イベント]**パネルの各メトリックの説明は次のとおりです。
 
@@ -104,7 +104,7 @@ TiCDC ダッシュボードには 4 つの監視パネルが含まれていま�
 
 以下は**TiKV**パネルの例です。
 
-![TiCDC Dashboard - TiKV metrics 1](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-tikv-1.png) ![TiCDC Dashboard - TiKV metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-tikv-2.png)
+![TiCDC Dashboard - TiKV metrics 1](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-tikv-1.png) ![TiCDC Dashboard - TiKV metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-tikv-2.png)
 
 **TiKV**パネルの各メトリックの説明は次のとおりです。
 

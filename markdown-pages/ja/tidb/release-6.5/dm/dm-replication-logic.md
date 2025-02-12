@@ -29,7 +29,7 @@ summary: Learn how the core processing unit Sync in DM replicates DML statements
 
 5.  binlogの位置または GTID を定期的にチェックポイントに保存します。
 
-![DML processing logic](https://download.pingcap.com/images/docs/dm/dm-dml-replication-logic.png)
+![DML processing logic](https://docs-download.pingcap.com/media/images/docs/dm/dm-dml-replication-logic.png)
 
 ## DML 最適化ロジック {#dml-optimization-logic}
 

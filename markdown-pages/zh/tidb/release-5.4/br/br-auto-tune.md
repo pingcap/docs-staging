@@ -75,6 +75,6 @@ tikv-ctl modify-tikv-config -n backup.enable-auto-tune -v <true|false>
 
 在监控面板的 “Backup CPU Utilization” 中，可以看到自动限流目前选择的线程池的大小：
 
-![Grafana dashboard example of backup auto-tune metrics](https://download.pingcap.com/images/docs-cn/br/backup-auto-throttle.png)
+![Grafana dashboard example of backup auto-tune metrics](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-auto-throttle.png)
 
 图片中，黄色半透明的填充部分为开启自动调节后备份任务可用的线程，即备份任务能使用的所有资源。从中可以看到备份任务的 CPU 使用率不会超过黄色部分。

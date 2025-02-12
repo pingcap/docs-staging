@@ -70,7 +70,7 @@ set global tidb_hashagg_partial_concurrency=1;
 set global tidb_enable_async_commit = 1;
 set global tidb_enable_1pc = 1;
 set global tidb_guarantee_linearizability = 0;
-set global tidb_enable_clustered_index = 1; 
+set global tidb_enable_clustered_index = 1;
 
 ```
 
@@ -134,7 +134,7 @@ sysbench $testname \
 
 v5.2.0 对比 v5.1.1，Point Select 性能提升了 11.03%。
 
-![Point Select](https://download.pingcap.com/images/docs-cn/sysbench_v511vsv520_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v511vsv520_point_select.png)
 
 ### Update Non-index 性能
 
@@ -149,7 +149,7 @@ v5.2.0 对比 v5.1.1，Point Select 性能提升了 11.03%。
 
 v5.2.0 对比 v5.1.1，Update Non-index 性能下降了 1.98%。
 
-![Update Non-index](https://download.pingcap.com/images/docs-cn/sysbench_v511vsv520_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v511vsv520_update_non_index.png)
 
 ### Update Index 性能
 
@@ -164,7 +164,7 @@ v5.2.0 对比 v5.1.1，Update Non-index 性能下降了 1.98%。
 
 v5.2.0 对比 v5.1.1，Update Index 性能下降了 4.33%。
 
-![Update Index](https://download.pingcap.com/images/docs-cn/sysbench_v511vsv520_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v511vsv520_update_index.png)
 
 ### Read Write 性能
 
@@ -179,4 +179,4 @@ v5.2.0 对比 v5.1.1，Update Index 性能下降了 4.33%。
 
 v5.2.0 对比 v5.1.1，Read Write 性能下降了 1.24%。
 
-![Read Write](https://download.pingcap.com/images/docs-cn/sysbench_v511vsv520_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v511vsv520_read_write.png)

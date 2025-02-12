@@ -7,7 +7,7 @@ summary: This document describes best practices for configuration and usage of H
 
 このドキュメントでは、TiDBでの[HAProxy](https://github.com/haproxy/haproxy)の構成と使用に関するベストプラクティスについて説明します。 HAProxyは、TCPベースのアプリケーションに負荷分散を提供します。 TiDBクライアントからは、HAProxyによって提供されるフローティング仮想IPアドレスに接続するだけでデータを操作できます。これは、TiDBサーバー層での負荷分散を実現するのに役立ちます。
 
-![HAProxy Best Practices in TiDB](https://download.pingcap.com/images/docs/haproxy.jpg)
+![HAProxy Best Practices in TiDB](https://docs-download.pingcap.com/media/images/docs/haproxy.jpg)
 
 ## HAProxyの概要 {#haproxy-overview}
 
@@ -77,21 +77,21 @@ HAProxyを使用して、負荷分散されたデータベース環境を簡単�
 
 1.  HAProxy2.5.0ソースコードのパッケージをダウンロードします。
 
-    
+
     ```bash
     wget https://github.com/haproxy/haproxy/archive/refs/tags/v2.5.0.zip
     ```
 
 2.  パッケージを解凍します。
 
-    
+
     ```bash
     unzip v2.5.0.zip
     ```
 
 3.  ソースコードからアプリケーションをコンパイルします。
 
-    
+
     ```bash
     cd haproxy-2.5.0
     make clean
@@ -101,14 +101,14 @@ HAProxyを使用して、負荷分散されたデータベース環境を簡単�
 
 4.  プロファイルを再構成します。
 
-    
+
     ```bash
     echo 'export PATH=/app/haproxy:$PATH' >> /etc/profile
     ```
 
 5.  インストールが成功したかどうかを確認します。
 
-    
+
     ```bash
     which haproxy
     ```
@@ -212,14 +212,14 @@ HAProxyを停止するには、 `kill -9`コマンドを使用します。
 
 1.  次のコマンドを実行します。
 
-    
+
     ```bash
     ps -ef | grep haproxy
     ```
 
 2.  HAProxyのプロセスを終了します。
 
-    
+
     ```bash
     kill -9 ${haproxy.pid}
     ```

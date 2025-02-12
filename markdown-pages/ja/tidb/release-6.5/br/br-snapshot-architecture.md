@@ -11,13 +11,13 @@ summary: Learn about the architecture of TiDB snapshot backup and restore.
 
 TiDB スナップショットのバックアップと復元のアーキテクチャは次のとおりです。
 
-![BR snapshot backup and restore architecture](https://download.pingcap.com/images/docs/br/br-snapshot-arch.png)
+![BR snapshot backup and restore architecture](https://docs-download.pingcap.com/media/images/docs/br/br-snapshot-arch.png)
 
 ## バックアップのプロセス {#process-of-backup}
 
 クラスタ スナップショット バックアップのプロセスは次のとおりです。
 
-![snapshot backup process design](https://download.pingcap.com/images/docs/br/br-snapshot-backup-ts.png)
+![snapshot backup process design](https://docs-download.pingcap.com/media/images/docs/br/br-snapshot-backup-ts.png)
 
 完全なバックアップ プロセスは次のとおりです。
 
@@ -54,7 +54,7 @@ TiDB スナップショットのバックアップと復元のアーキテクチ
 
 クラスター スナップショットの復元のプロセスは次のとおりです。
 
-![snapshot restore process design](https://download.pingcap.com/images/docs/br/br-snapshot-restore-ts.png)
+![snapshot restore process design](https://docs-download.pingcap.com/media/images/docs/br/br-snapshot-restore-ts.png)
 
 完全な復元プロセスは次のとおりです。
 

@@ -11,23 +11,23 @@ summary: TiDB 数据库中 SHOW GRANTS 的使用概况。
 
 **ShowGrantsStmt:**
 
-![ShowGrantsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowGrantsStmt.png)
+![ShowGrantsStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowGrantsStmt.png)
 
 **Username:**
 
-![Username](https://download.pingcap.com/images/docs-cn/sqlgram/Username.png)
+![Username](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Username.png)
 
 **UsingRoles:**
 
-![UsingRoles](https://download.pingcap.com/images/docs-cn/sqlgram/UsingRoles.png)
+![UsingRoles](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/UsingRoles.png)
 
 **RolenameList:**
 
-![RolenameList](https://download.pingcap.com/images/docs-cn/sqlgram/RolenameList.png)
+![RolenameList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/RolenameList.png)
 
 **Rolename:**
 
-![Rolename](https://download.pingcap.com/images/docs-cn/sqlgram/Rolename.png)
+![Rolename](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Rolename.png)
 
 ## 示例
 

@@ -11,7 +11,7 @@ TiFlash 支持 MPP 模式的查询执行，即在计算中引入跨节点的数�
 
 MPP 模式的工作原理见下图。
 
-![mpp-mode](https://download.pingcap.com/images/docs-cn/tiflash/tiflash-mpp.png)
+![mpp-mode](https://docs-download.pingcap.com/media/images/docs-cn/tiflash/tiflash-mpp.png)
 
 ## 控制是否选择 MPP 模式
 

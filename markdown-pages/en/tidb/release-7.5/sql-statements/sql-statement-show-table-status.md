@@ -11,15 +11,15 @@ This statement shows various statistics about tables in TiDB. If the statistics 
 
 **ShowTableStatusStmt:**
 
-![ShowTableStatusStmt](https://download.pingcap.com/images/docs/sqlgram/ShowTableStatusStmt.png)
+![ShowTableStatusStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTableStatusStmt.png)
 
 **FromOrIn:**
 
-![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
+![FromOrIn](https://docs-download.pingcap.com/media/images/docs/sqlgram/FromOrIn.png)
 
 **StatusTableName:**
 
-![StatusTableName](https://download.pingcap.com/images/docs/sqlgram/StatusTableName.png)
+![StatusTableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/StatusTableName.png)
 
 ## Examples
 

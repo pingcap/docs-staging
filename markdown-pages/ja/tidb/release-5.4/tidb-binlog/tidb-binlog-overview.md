@@ -22,7 +22,7 @@ TiDBBinlogには次の機能があります。
 
 TiDBBinlogアーキテクチャは次のとおりです。
 
-![TiDB Binlog architecture](https://download.pingcap.com/images/docs/tidb-binlog-cluster-architecture.png)
+![TiDB Binlog architecture](https://docs-download.pingcap.com/media/images/docs/tidb-binlog-cluster-architecture.png)
 
 TiDB Binlogクラスタは、ポンプとドレイナーで構成されています。
 

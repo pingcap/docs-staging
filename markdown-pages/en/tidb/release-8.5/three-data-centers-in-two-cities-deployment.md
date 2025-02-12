@@ -27,7 +27,7 @@ The architecture of the cluster deployment is as follows:
 - The cluster has five replicas, two in AZ1, two in AZ2, and one in AZ3. For the TiKV component, each rack has a label, which means that each rack has a replica.
 - The Raft protocol is adopted to ensure consistency and high availability of data, which is transparent to users.
 
-![3-AZ-in-2-region architecture](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-01.png)
+![3-AZ-in-2-region architecture](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-01.png)
 
 This architecture is highly available. The distribution of Region leaders is restricted to the two AZs (AZ1 and AZ2) that are in the same region (Seattle). Compared with the three-AZ solution in which the distribution of Region leaders is not restricted, this architecture has the following advantages and disadvantages:
 
@@ -47,7 +47,7 @@ This architecture is highly available. The distribution of Region leaders is res
 
 The configuration of the three AZs in two regions (Seattle and San Francisco) deployment plan is illustrated as follows:
 
-![3-AZ-2-region](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-02.png)
+![3-AZ-2-region](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-02.png)
 
 From the preceding illustration, you can see that Seattle has two AZs: AZ1 and AZ2. AZ1 has three sets of racks: rac1, rac2, and rac3. AZ2 has two racks: rac4 and rac5. The AZ3 in San Francisco has the rac6 rack.
 
@@ -128,7 +128,7 @@ alertmanager_servers:
 
 In the deployment of three AZs in two regions, the label design requires taking availability and disaster recovery into account. It is recommended that you define the four levels (`az`, `replication zone`, `rack`, and `host`) based on the physical structure of the deployment.
 
-![Label logical definition](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-03.png)
+![Label logical definition](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-03.png)
 
 In the PD configuration, add level information of TiKV labels:
 

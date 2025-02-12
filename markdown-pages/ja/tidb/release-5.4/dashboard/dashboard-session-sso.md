@@ -28,7 +28,7 @@ TiDBダッシュボードは、 [OIDC](https://openid.net/connect/)ベースの�
 
     TiDBダッシュボードはこのSQLパスワードを保存し、SSOサインインが完了した後に通常のSQLサインインを偽装するために使用します。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-enable-1.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-enable-1.png)
 
     > **ノート：**
     >
@@ -36,11 +36,11 @@ TiDBダッシュボードは、 [OIDC](https://openid.net/connect/)ベースの�
 
 6.  [**承認して保存]を**クリックします。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-enable-2.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-enable-2.png)
 
 7.  [**更新**（更新）]をクリックして、構成を保存します。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-enable-3.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-enable-3.png)
 
 これで、TiDBダッシュボードでSSOサインインが有効になりました。
 
@@ -60,7 +60,7 @@ SSOを無効にすると、保存されているSQLパスワードが完全に�
 
 4.  [**更新**（更新）]をクリックして、構成を保存します。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-disable.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-disable.png)
 
 ### パスワード変更後、パスワードを再入力してください {#re-enter-the-password-after-a-password-change}
 
@@ -72,7 +72,7 @@ SQLユーザーのパスワードが変更されると、SSOサインインは�
 
 3.  [**シングルサインオン**]セクションで、[<strong>偽装の承認]</strong>をクリックし、更新されたSQLパスワードを入力します。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-reauthorize.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-reauthorize.png)
 
 4.  [**承認して保存]を**クリックします。
 
@@ -82,7 +82,7 @@ TiDBダッシュボード用にSSOを構成したら、次の手順を実行し�
 
 1.  TiDBダッシュボードのサインインページで、[**会社のアカウントからサインイン**]をクリックします。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-signin.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-signin.png)
 
 2.  SSOサービスが構成されているシステムにサインインします。
 
@@ -102,7 +102,7 @@ TiDBダッシュボード用にSSOを構成したら、次の手順を実行し�
 
 3.  [**アプリ統合の作成]**をクリックします。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-1.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-1.png)
 
 4.  ポップアップダイアログで、[ **OIDC]-[OpenID ConnectinSign** <strong>-inメソッド</strong>]を選択します。
 
@@ -110,7 +110,7 @@ TiDBダッシュボード用にSSOを構成したら、次の手順を実行し�
 
 6.  [**次へ**]ボタンをクリックします。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-2.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-2.png)
 
 7.  **サインインリダイレクトURI**を次のように入力します。
 
@@ -128,25 +128,25 @@ TiDBダッシュボード用にSSOを構成したら、次の手順を実行し�
 
     同様に、 `DASHBOARD_IP:PORT`を実際のドメイン（またはIPアドレス）とポートに置き換えます。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-3.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-3.png)
 
 9.  組織内でSSOサインインを許可するユーザーのタイプを[**割り当て**]フィールドで構成し、[<strong>保存</strong>]をクリックして構成を保存します。
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-4.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-4.png)
 
 ### ステップ2：OIDC情報を取得し、TiDBダッシュボードに入力します {#step-2-obtain-oidc-information-and-fill-in-tidb-dashboard}
 
 1.  Oktaで作成したばかりのアプリケーション統合で、[**サインオン**]をクリックします。
 
-    ![Sample Step 1](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-info-1.png)
+    ![Sample Step 1](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-info-1.png)
 
 2.  **OpenID ConnectIDToken**セクションから<strong>Issuer</strong>フィールドと<strong>Audience</strong>フィールドの値をコピーします。
 
-    ![Sample Step 2](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-info-2.png)
+    ![Sample Step 2](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-info-2.png)
 
 3.  TiDBダッシュボード構成ページを開き、最後の手順で取得した**発行者**を<strong>OIDCクライアントID</strong>に入力し、 <strong>OIDCディスカバリーURL</strong>に<strong>オーディエンス</strong>を入力します。次に、認証を終了し、構成を保存します。例えば：
 
-    ![Sample Step 3](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-okta-info-3.png)
+    ![Sample Step 3](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-info-3.png)
 
 これで、TiDBダッシュボードはサインインにOktaSSOを使用するように構成されました。
 
@@ -162,13 +162,13 @@ Oktaと同様に、 [Auth0](https://auth0.com/)もOIDCSSOIDサービスを提供
 
 3.  [**アプリ統合の作成]**をクリックします。
 
-    ![Create Application](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-auth0-create-app.png)
+    ![Create Application](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-auth0-create-app.png)
 
     ポップアップダイアログで、「**名前**」（「TiDBダッシュボード」など）を入力します。<strong>アプリケーションタイプの</strong>選択で<strong>シングルページWebアプリケーション</strong>を選択します。 [<strong>作成]</strong>をクリックします。
 
 4.  [**設定]**をクリックします。
 
-    ![Settings](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-auth0-settings-1.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-auth0-settings-1.png)
 
 5.  **許可されたコールバックURL**を次のように入力します。
 
@@ -186,7 +186,7 @@ Oktaと同様に、 [Auth0](https://auth0.com/)もOIDCSSOIDサービスを提供
 
     同様に、 `DASHBOARD_IP:PORT`を実際のドメイン（またはIPアドレス）とポートに置き換えます。
 
-    ![Settings](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-auth0-settings-2.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-auth0-settings-2.png)
 
 7.  他の設定のデフォルト値を保持し、[**変更を保存**]をクリックします。
 
@@ -196,7 +196,7 @@ Oktaと同様に、 [Auth0](https://auth0.com/)もOIDCSSOIDサービスを提供
 
 2.  **OIDC Discovery URL**に、プレフィックスが`https://`でサフィックスが`/`の<strong>Domain</strong>フィールド値を入力します（例： `https://example.us.auth0.com/` ）。承認を完了し、構成を保存します。
 
-    ![Settings](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-auth0-settings-3.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-auth0-settings-3.png)
 
 これで、TiDBダッシュボードはサインインにAuth0SSOを使用するように構成されました。
 
@@ -210,7 +210,7 @@ Oktaと同様に、 [Auth0](https://auth0.com/)もOIDCSSOIDサービスを提供
 
 2.  トップサイドバーの**アプリケーション**から移動します。
 
-3.  [**アプリケーション]-[追加]を**クリックします。 ![Settings](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-casdoor-settings-1.png)
+3.  [**アプリケーション]-[追加]を**クリックします。 ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-casdoor-settings-1.png)
 
 4.  **名前**と<strong>表示名</strong>を入力します（例： <strong>TiDBダッシュボード</strong>）。
 
@@ -222,7 +222,7 @@ Oktaと同様に、 [Auth0](https://auth0.com/)もOIDCSSOIDサービスを提供
 
     `DASHBOARD_IP:PORT`を、ブラウザでTiDBダッシュボードにアクセスするために使用する実際のドメイン（またはIPアドレス）とポートに置き換えます。
 
-    ![Settings](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-casdoor-settings-2.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-casdoor-settings-2.png)
 
 6.  他の設定のデフォルト値を保持し、[**保存して終了**]をクリックします。
 
@@ -234,6 +234,6 @@ Oktaと同様に、 [Auth0](https://auth0.com/)もOIDCSSOIDサービスを提供
 
 2.  **OIDC Discovery URL**に、プレフィックスが`https://`でサフィックスが`/`の<strong>Domain</strong>フィールド値を入力します（例： `https://casdoor.example.com/` ）。承認を完了し、構成を保存します。
 
-    ![Settings](https://download.pingcap.com/images/docs/dashboard/dashboard-session-sso-casdoor-settings-3.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-casdoor-settings-3.png)
 
 これで、TiDBダッシュボードはサインインにCasdoorSSOを使用するように構成されました。

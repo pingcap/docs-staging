@@ -11,7 +11,7 @@ summary: 了解 Data Migration (DM) 高可用的内部机制，以及对迁移�
 
 ## DM master 内部架构
 
-![DM master 高可用架构](https://download.pingcap.com/images/docs-cn/dm/dm-high-availability-1.png)
+![DM master 高可用架构](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-high-availability-1.png)
 
 - **gRPC 和 HTTP 接口。**DM master 对外提供 gRPC 以及 HTTP 接口，供其他组件调用，如 dmctl、WebUI、DM worker。DM master 的 Follower 节点在收到 gRPC 和 HTTP 请求后，会 redirect 给 DM master 的 Leader 节点进行处理。
 
@@ -60,7 +60,7 @@ DM master 集群的 Leader 出现节点故障之后，会由 Election 模块重�
 
 DM worker 高可用架构如下所示：
 
-![DM worker 高可用架构](https://download.pingcap.com/images/docs-cn/dm/dm-high-availability-2.png)
+![DM worker 高可用架构](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-high-availability-2.png)
 
 ### 任务调度策略
 

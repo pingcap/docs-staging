@@ -13,7 +13,7 @@ summary: An overview of the usage of SHOW ERRORS for the TiDB database.
 
 **ShowErrorsStmt:**
 
-![ShowErrorsStmt](https://download.pingcap.com/images/docs/sqlgram/ShowErrorsStmt.png)
+![ShowErrorsStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowErrorsStmt.png)
 
 ## 例 {#examples}
 

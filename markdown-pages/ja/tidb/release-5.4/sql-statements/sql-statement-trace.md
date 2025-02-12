@@ -11,11 +11,11 @@ summary: An overview of the usage of TRACE for the TiDB database.
 
 **TraceStmt：**
 
-![TraceStmt](https://download.pingcap.com/images/docs/sqlgram/TraceStmt.png)
+![TraceStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/TraceStmt.png)
 
 **TraceableStmt：**
 
-![TraceableStmt](https://download.pingcap.com/images/docs/sqlgram/TraceableStmt.png)
+![TraceableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/TraceableStmt.png)
 
 ## 例 {#examples}
 
@@ -52,9 +52,9 @@ trace format='json' select * from mysql.user;
 
 JSON形式のトレースは、TiDBステータスポートを介してアクセスされるトレースビューアに貼り付けることができます。
 
-![TiDB Trace Viewer-1](https://download.pingcap.com/images/docs/trace-paste.png)
+![TiDB Trace Viewer-1](https://docs-download.pingcap.com/media/images/docs/trace-paste.png)
 
-![TiDB Trace Viewer-2](https://download.pingcap.com/images/docs/trace-view.png)
+![TiDB Trace Viewer-2](https://docs-download.pingcap.com/media/images/docs/trace-view.png)
 
 ## MySQLの互換性 {#mysql-compatibility}
 

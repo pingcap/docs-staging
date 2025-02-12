@@ -43,7 +43,7 @@ TiDB 专门引入了[向量数据类型](/vector-search/vector-search-data-types
 
 TiDB 向量搜索 (Vector Search) 通过使用[距离函数](/vector-search/vector-search-functions-and-operators.md)来计算给定向量与数据库中存储的向量之间的距离，从而识别前 k 个近邻（KNN）向量。其中，与给定向量距离最小的向量即代表最相似的数据。
 
-![The Schematic TiDB Vector Search](https://download.pingcap.com/images/docs-cn/vector-search/embedding-search.png)
+![The Schematic TiDB Vector Search](https://docs-download.pingcap.com/media/images/docs-cn/vector-search/embedding-search.png)
 
 TiDB 作为一款关系型数据库，在引入了向量搜索功能后，支持将数据及其对应的向量表示（向量嵌入）存储在同一个数据库中。你可以选择以下任一种存储方式：
 

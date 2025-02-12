@@ -13,7 +13,7 @@ summary: Learn how to locate problems using diagnostic report of TiDB Dashboard.
 
 ### 例1 {#example-1}
 
-![QPS example](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-usage1.png)
+![QPS example](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-usage1.png)
 
 `go-ycsb`圧力テストの結果は上の画像に示されています。 `2020-03-10 13:24:30`時に、QPSが突然低下し始めたことがわかります。 3分後、QPSは正常に戻り始めました。 TiDBダッシュボードの診断レポートを使用して原因を特定できます。
 
@@ -27,7 +27,7 @@ summary: Learn how to locate problems using diagnostic report of TiDB Dashboard.
 
 レポートが生成されたら、[**診断の比較]**ページでこのレポートを表示できます。
 
-![Comparison diagnostics](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-usage2.png)
+![Comparison diagnostics](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-usage2.png)
 
 上記の診断結果は、診断時に大きなクエリが存在する可能性があることを示しています。上記のレポートの各**詳細**は、次のように説明されています。
 
@@ -63,7 +63,7 @@ digest             | 24bd6d8a9b238086c9b8c3d240ad4ef32f79ce94cf5a468c0b8fe1eb5f8
 
 大きなクエリが実行されていない場合、クエリは低速ログに記録されません。この状況でも、この大きなクエリは診断できます。次の例を参照してください。
 
-![QPS results](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-usage3.png)
+![QPS results](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-usage3.png)
 
 別の`go-ycsb`つの圧力テストの結果が上の画像に示されています。 `2020-03-08 01:46:30`時に、QPSが突然低下し始め、回復しなかったことがわかります。
 
@@ -75,7 +75,7 @@ digest             | 24bd6d8a9b238086c9b8c3d240ad4ef32f79ce94cf5a468c0b8fe1eb5f8
 
 レポートが生成されたら、[**診断の比較]**ページでこのレポートを表示できます。
 
-![Comparison diagnostics](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-usage4.png)
+![Comparison diagnostics](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-usage4.png)
 
 診断結果は例1の結果と同様です。上の画像の最後の行は、クエリが遅い可能性があることを示し、SQLステートメントを使用してTiDBログの高価なクエリをクエリできることを示しています。 SQL文の実行結果は以下のとおりです。
 
@@ -94,7 +94,7 @@ MESSAGE  | [expensivequery.go:167] [expensive_query] [cost_time=60.085949605s] [
 
 診断が間違っている可能性があるため、比較レポートを使用すると、DBAが問題をより迅速に特定するのに役立つ場合があります。次の例を参照してください。
 
-![QPS results](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-usage5.png)
+![QPS results](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-usage5.png)
 
 `go-ycsb`圧力テストの結果は上の画像に示されています。 `2020-05-22 22:14:00`時に、QPSが突然低下し始めたことがわかります。 3分後、QPSは正常に戻り始めました。 TiDBダッシュボードの比較診断レポートを使用して、原因を特定できます。
 
@@ -106,7 +106,7 @@ MESSAGE  | [expensivequery.go:167] [expensive_query] [cost_time=60.085949605s] [
 
 比較レポートを生成した後、 **Maxdiffアイテム**レポートを確認してください。このレポートでは、上記の2つの時間範囲の監視項目を比較し、監視項目の違いに応じて並べ替えます。この表の結果は次のとおりです。
 
-![Comparison results](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-usage6.png)
+![Comparison results](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-usage6.png)
 
 上記の結果から、T2のコプロセッサー要求はT1のコプロセッサー要求よりもはるかに多いことがわかります。より多くの負荷をもたらすいくつかの大きなクエリがT2に表示される可能性があります。
 

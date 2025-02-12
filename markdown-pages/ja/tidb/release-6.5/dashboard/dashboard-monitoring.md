@@ -11,11 +11,11 @@ summary: Learn how to view the Performance Overview dashboard on TiDB Dashboard 
 
 TiDB ダッシュボードにログインし、左側のナビゲーション バーから**[監視]**をクリックします。パフォーマンス概要ダッシュボードが表示されます。
 
-![Monitoring page](https://download.pingcap.com/images/docs/dashboard/dashboard-monitoring.png)
+![Monitoring page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-monitoring.png)
 
 TiDB クラスターがTiUPを使用してデプロイされている場合は、Grafana でパフォーマンス概要ダッシュボードを表示することもできます。この展開モードでは、監視システム (Prometheus &amp; Grafana) が同時に展開されます。詳細については、 [TiDB 監視フレームワークの概要](/tidb-monitoring-framework.md)を参照してください。
 
-![performance overview](https://download.pingcap.com/images/docs/performance/grafana_performance_overview.png)
+![performance overview](https://docs-download.pingcap.com/media/images/docs/performance/grafana_performance_overview.png)
 
 ## パフォーマンスの概要に関する主要指標 {#key-metrics-on-performance-overview}
 

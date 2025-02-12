@@ -24,7 +24,7 @@ TiDB は通常、高可用性と災害復旧機能を確保するためにマル
 -   クラスターには 6 つのレプリカがあります。AZ1 には 3 つの投票者レプリカ、AZ2 には 2 つの投票者レプリカと 1 つのLearnerレプリカです。 TiKVコンポーネントの場合、各ラックには適切なラベルが付いています。
 -   Raftプロトコルは、ユーザーにとって透過的なデータの一貫性と高可用性を確保するために採用されています。
 
-![2-AZ-in-1-region architecture](https://download.pingcap.com/images/docs/two-dc-replication-1.png)
+![2-AZ-in-1-region architecture](https://docs-download.pingcap.com/media/images/docs/two-dc-replication-1.png)
 
 この導入ソリューションでは、クラスターのレプリケーション ステータスを制御および識別するための 3 つのステータスを定義し、TiKV のレプリケーション モードを制限します。クラスターのレプリケーション モードは、3 つのステータス間を自動的かつ適応的に切り替えることができます。詳細は[ステータススイッチ](#status-switch)章を参照してください。
 

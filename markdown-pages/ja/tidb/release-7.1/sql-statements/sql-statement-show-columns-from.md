@@ -17,43 +17,43 @@ summary: An overview of the usage of SHOW [FULL] COLUMNS FROM for the TiDB datab
 
 **表示手順:**
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStmt.png)
 
 **ShowColumnsFilterable:**
 
-![ShowColumnsFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowColumnsFilterable.png)
+![ShowColumnsFilterable](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowColumnsFilterable.png)
 
 **オプトフル:**
 
-![OptFull](https://download.pingcap.com/images/docs/sqlgram/OptFull.png)
+![OptFull](https://docs-download.pingcap.com/media/images/docs/sqlgram/OptFull.png)
 
 **フィールドまたは列:**
 
-![FieldsOrColumns](https://download.pingcap.com/images/docs/sqlgram/FieldsOrColumns.png)
+![FieldsOrColumns](https://docs-download.pingcap.com/media/images/docs/sqlgram/FieldsOrColumns.png)
 
 **ShowTableAliasOpt:**
 
-![ShowTableAliasOpt](https://download.pingcap.com/images/docs/sqlgram/ShowTableAliasOpt.png)
+![ShowTableAliasOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTableAliasOpt.png)
 
 **送信者または受信者:**
 
-![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
+![FromOrIn](https://docs-download.pingcap.com/media/images/docs/sqlgram/FromOrIn.png)
 
 **テーブル名:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 **ShowDatabaseNameOpt:**
 
-![ShowDatabaseNameOpt](https://download.pingcap.com/images/docs/sqlgram/ShowDatabaseNameOpt.png)
+![ShowDatabaseNameOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowDatabaseNameOpt.png)
 
 **DB名:**
 
-![DBName](https://download.pingcap.com/images/docs/sqlgram/DBName.png)
+![DBName](https://docs-download.pingcap.com/media/images/docs/sqlgram/DBName.png)
 
 **ShowLikeOrWhereOpt:**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## 例 {#examples}
 

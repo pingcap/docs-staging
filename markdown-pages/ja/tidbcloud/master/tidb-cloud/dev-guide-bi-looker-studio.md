@@ -78,7 +78,7 @@ TiDB Cloud Serverless のインタラクティブ チュートリアルで提供
     -   **パスワード**: TiDB Cloud Serverless 接続ダイアログから`PASSWORD`のパラメータを入力します。
     -   **SSL を有効にする**: このオプションを選択し、 **MySQL SSL クライアントコンフィグレーションファイル**の右側にあるアップロード アイコンをクリックして、 [ステップ2](#step-2-get-the-connection-information-for-your-cluster)からダウンロードした CA ファイルをアップロードします。
 
-    ![Looker Studio: configure connection settings for TiDB Cloud Serverless](https://download.pingcap.com/images/docs/tidb-cloud/looker-studio-configure-connection.png)
+    ![Looker Studio: configure connection settings for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/looker-studio-configure-connection.png)
 
 4.  **[認証]**をクリックします。
 
@@ -90,7 +90,7 @@ TiDB Cloud Serverless のインタラクティブ チュートリアルで提供
 
 1.  右側のペインで、 **[カスタム クエリ]**をクリックします。
 
-    ![Looker Studio: custom query](https://download.pingcap.com/images/docs/tidb-cloud/looker-studio-custom-query.png)
+    ![Looker Studio: custom query](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/looker-studio-custom-query.png)
 
 2.  次のコードを**「カスタムクエリの入力」**領域にコピーし、右下隅の**「追加」**をクリックします。
 
@@ -124,7 +124,7 @@ TiDB Cloud Serverless のインタラクティブ チュートリアルで提供
 
 すると、次のようなコンボ チャートが表示されます。
 
-![Looker Studio: A simple Combo chart](https://download.pingcap.com/images/docs/tidb-cloud/looker-studio-simple-chart.png)
+![Looker Studio: A simple Combo chart](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/looker-studio-simple-chart.png)
 
 ## 次のステップ {#next-steps}
 

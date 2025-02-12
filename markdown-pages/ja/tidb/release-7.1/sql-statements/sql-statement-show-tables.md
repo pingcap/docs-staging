@@ -13,19 +13,19 @@ summary: An overview of the usage of SHOW [FULL] TABLES for the TiDB database.
 
 **ShowTablesStmt:**
 
-![ShowTablesStmt](https://download.pingcap.com/images/docs/sqlgram/ShowTablesStmt.png)
+![ShowTablesStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTablesStmt.png)
 
 **オプトフル:**
 
-![OptFull](https://download.pingcap.com/images/docs/sqlgram/OptFull.png)
+![OptFull](https://docs-download.pingcap.com/media/images/docs/sqlgram/OptFull.png)
 
 **ShowDatabaseNameOpt:**
 
-![ShowDatabaseNameOpt](https://download.pingcap.com/images/docs/sqlgram/ShowDatabaseNameOpt.png)
+![ShowDatabaseNameOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowDatabaseNameOpt.png)
 
 **ShowLikeOrWhereOpt:**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## 例 {#examples}
 

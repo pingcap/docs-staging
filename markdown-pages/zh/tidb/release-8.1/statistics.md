@@ -71,7 +71,7 @@ TiDB 根据表的变更次数自动调度 [`ANALYZE`](/sql-statements/sql-statem
 
 等深直方图，就是让落入每个桶里的数值数量尽量相等。例如，对于给定的集合 {1.6, 1.9, 1.9, 2.0, 2.4, 2.6, 2.7, 2.7, 2.8, 2.9, 3.4, 3.5} 生成 4 个桶，那么最终的等深直方图就会如下图所示，包含四个桶 [1.6, 1.9]，[2.0, 2.6]，[2.7, 2.8]，[2.9, 3.5]，其桶深均为 3。
 
-![等深直方图示例](https://download.pingcap.com/images/docs-cn/statistics-1.png)
+![等深直方图示例](https://docs-download.pingcap.com/media/images/docs-cn/statistics-1.png)
 
 你可以通过 `WITH NUM BUCKETS` 参数控制直方图的桶数量上限，参见[手动收集](#手动收集)小节。桶数量越多，直方图的估算精度就越高，不过也会同时增加统计信息的内存使用。可以视具体情况来调整桶的数量上限。
 
@@ -693,7 +693,7 @@ mysql> SHOW WARNINGS;
 
 相关系统变量的关系如下图所示：
 
-![analyze_concurrency](https://download.pingcap.com/images/docs-cn/analyze_concurrency.png)
+![analyze_concurrency](https://docs-download.pingcap.com/media/images/docs-cn/analyze_concurrency.png)
 
 `tidb_build_stats_concurrency`、`tidb_build_sampling_stats_concurrency` 和 `tidb_analyze_partition_concurrency` 为上下游关系。实际的总并发为：`tidb_build_stats_concurrency`* (`tidb_build_sampling_stats_concurrency` + `tidb_analyze_partition_concurrency`) 。所以在变更这些参数的时候，需要同时考虑这三个参数的值。建议按 `tidb_analyze_partition_concurrency`、`tidb_build_sampling_stats_concurrency`、`tidb_build_stats_concurrency` 的顺序逐个调节，并观察对系统的影响。这三个参数的值越大，对系统的资源开销就越大。
 

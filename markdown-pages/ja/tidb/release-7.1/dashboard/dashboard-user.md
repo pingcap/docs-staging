@@ -43,7 +43,7 @@ TiDB SQLユーザーを制御および管理する方法の詳細については
 
 SQL ユーザーが前述の権限要件を満たしていない場合、以下に示すように、ユーザーは TiDB ダッシュボードへのサインインに失敗します。
 
-![insufficient-privileges](https://download.pingcap.com/images/docs/dashboard/dashboard-user-insufficient-privileges.png)
+![insufficient-privileges](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-user-insufficient-privileges.png)
 
 ## 例: TiDB ダッシュボードにアクセスするための最小権限の SQL ユーザーを作成する {#example-create-a-least-privileged-sql-user-to-access-tidb-dashboard}
 
@@ -94,7 +94,7 @@ SQL ユーザーが前述の権限要件を満たしていない場合、以下�
     GRANT SHOW DATABASES ON *.* TO 'dashboard_access'@'%';
     GRANT DASHBOARD_CLIENT ON *.* TO 'dashboard_access'@'%';
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboard_access'@'%';
-    GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';    
+    GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';
     ```
 
 2.  `dashboard_access`ロールを他のユーザーに付与し、 `dashboard_access`デフォルトのロールとして設定します。

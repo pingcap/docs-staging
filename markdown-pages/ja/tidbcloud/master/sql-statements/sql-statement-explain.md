@@ -262,7 +262,7 @@ The xx.dot is the result returned by the above statement.
 
 コンピュータに`dot`プログラムがない場合、結果を[このウェブサイト](http://www.webgraphviz.com/)にコピーしてツリー ダイアグラムを取得します。
 
-![Explain Dot](https://download.pingcap.com/images/docs/explain_dot.png)
+![Explain Dot](https://docs-download.pingcap.com/media/images/docs/explain_dot.png)
 
 </div>
 

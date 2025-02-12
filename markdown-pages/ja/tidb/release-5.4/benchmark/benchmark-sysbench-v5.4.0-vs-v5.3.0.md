@@ -157,7 +157,7 @@ sysbench $testname \
 
 v5.3.0と比較して、v5.4.0のポイント選択のパフォーマンスは0.64％わずかに向上しています。
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v530vsv540_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v530vsv540_point_select.png)
 
 ### 非インデックスパフォーマンスの更新 {#update-non-index-performance}
 
@@ -169,7 +169,7 @@ v5.3.0と比較して、v5.4.0のポイント選択のパフォーマンスは0.
 
 v5.3.0と比較して、v5.4.0の非インデックスの更新のパフォーマンスは2.59％向上しています。
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v530vsv540_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v530vsv540_update_non_index.png)
 
 ### インデックスパフォーマンスの更新 {#update-index-performance}
 
@@ -181,7 +181,7 @@ v5.3.0と比較して、v5.4.0の非インデックスの更新のパフォー�
 
 v5.3.0と比較して、v5.4.0の更新インデックスのパフォーマンスは4.85％向上しています。
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v530vsv540_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v530vsv540_update_index.png)
 
 ### 読み取り/書き込みパフォーマンス {#read-write-performance}
 
@@ -193,4 +193,4 @@ v5.3.0と比較して、v5.4.0の更新インデックスのパフォーマン�
 
 v5.3.0と比較して、v5.4.0の読み取り/書き込みパフォーマンスは3.30％向上しています。
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v530vsv540_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v530vsv540_read_write.png)

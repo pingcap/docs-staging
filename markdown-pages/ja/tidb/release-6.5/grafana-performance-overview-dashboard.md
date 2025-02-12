@@ -165,7 +165,7 @@ Connection Idle Duration は、接続がアイドル状態である期間を示�
 
 ### パフォーマンス概要パネルのインターフェース {#interface-of-the-performance-overview-panels}
 
-![performance overview](https://download.pingcap.com/images/docs/performance/grafana_performance_overview.png)
+![performance overview](https://docs-download.pingcap.com/media/images/docs/performance/grafana_performance_overview.png)
 
 ## TiFlash {#tiflash}
 

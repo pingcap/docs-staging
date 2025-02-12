@@ -11,27 +11,27 @@ summary: An overview of the usage of UPDATE for the TiDB database.
 
 **UpdateStmt:**
 
-![UpdateStmt](https://download.pingcap.com/images/docs/sqlgram/UpdateStmt.png)
+![UpdateStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/UpdateStmt.png)
 
 **プライオリティオプト:**
 
-![PriorityOpt](https://download.pingcap.com/images/docs/sqlgram/PriorityOpt.png)
+![PriorityOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/PriorityOpt.png)
 
 **テーブル参照:**
 
-![TableRef](https://download.pingcap.com/images/docs/sqlgram/TableRef.png)
+![TableRef](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableRef.png)
 
 **テーブル参照:**
 
-![TableRefs](https://download.pingcap.com/images/docs/sqlgram/TableRefs.png)
+![TableRefs](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableRefs.png)
 
 **割り当てリスト:**
 
-![AssignmentList](https://download.pingcap.com/images/docs/sqlgram/AssignmentList.png)
+![AssignmentList](https://docs-download.pingcap.com/media/images/docs/sqlgram/AssignmentList.png)
 
 **Where句オプション:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/WhereClauseOptional.png)
 
 ## 例 {#examples}
 

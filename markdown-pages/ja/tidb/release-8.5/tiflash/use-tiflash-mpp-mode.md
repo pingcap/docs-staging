@@ -21,7 +21,7 @@ TiFlash は、クエリを実行するために MPP モードの使用をサポ�
 
 次の図は、MPP モードの動作を示しています。
 
-![mpp-mode](https://download.pingcap.com/images/docs/tiflash/tiflash-mpp.png)
+![mpp-mode](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash-mpp.png)
 
 ## MPPモードを選択するかどうかを制御します {#control-whether-to-select-the-mpp-mode}
 

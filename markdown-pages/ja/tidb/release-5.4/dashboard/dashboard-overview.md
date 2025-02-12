@@ -18,13 +18,13 @@ summary: Learn the overview page of TiDB Dashboard.
 
 TiDBダッシュボードにログインした後、デフォルトで概要ページが表示されます。または、左側のナビゲーションメニューの[**概要**]をクリックして、このページに入ることができます。
 
-![Enter overview page](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-access.png)
+![Enter overview page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-access.png)
 
 ## QPS {#qps}
 
 この領域には、最近1時間のクラスタ全体の1秒あたりの成功および失敗したクエリの数が表示されます。
 
-![QPS](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-qps.png)
+![QPS](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-qps.png)
 
 > **ノート：**
 >
@@ -34,7 +34,7 @@ TiDBダッシュボードにログインした後、デフォルトで概要ペ�
 
 この領域は、最近1時間のクラスタ全体でのクエリの99.9％、99％、および90％のレイテンシーを示しています。
 
-![Latency](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-latency.png)
+![Latency](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-latency.png)
 
 > **ノート：**
 >
@@ -44,7 +44,7 @@ TiDBダッシュボードにログインした後、デフォルトで概要ペ�
 
 この領域には、最近の期間にクラスタ全体で最長の実行時間を累積した10種類のSQLステートメントが表示されます。クエリパラメータが異なるが構造が同じSQLステートメントは、同じSQLタイプに分類され、同じ行に表示されます。
 
-![Top SQL](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-top-statements.png)
+![Top SQL](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-top-statements.png)
 
 この領域に表示される情報は、より詳細な[SQLステートメントページ](/dashboard/dashboard-statement-list.md)と一致しています。 [**Top SQLステートメント**]見出しをクリックして、完全なリストを表示できます。この表の列の詳細については、 [SQLステートメントページ](/dashboard/dashboard-statement-list.md)を参照してください。
 
@@ -56,7 +56,7 @@ TiDBダッシュボードにログインした後、デフォルトで概要ペ�
 
 デフォルトでは、この領域には、最近30分間のクラスタ全体での最新の10個の低速クエリが表示されます。
 
-![Recent slow queries](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-slow-query.png)
+![Recent slow queries](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-slow-query.png)
 
 デフォルトでは、300ミリ秒より長く実行されたSQLクエリは低速クエリとしてカウントされ、テーブルに表示されます。このしきい値は、 [tidb_slow_log_threshold](/system-variables.md#tidb_slow_log_threshold)変数または[遅いしきい値](/tidb-configuration-file.md#slow-threshold)パラメーターを変更することで変更できます。
 
@@ -70,7 +70,7 @@ TiDBダッシュボードにログインした後、デフォルトで概要ペ�
 
 この領域には、クラスタ全体でのTiDB、TiKV、PD、およびTiFlashのインスタンスと異常なインスタンスの総数が要約されています。
 
-![Instances](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-instances.png)
+![Instances](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-instances.png)
 
 上の画像のステータスは次のとおりです。
 
@@ -83,7 +83,7 @@ TiDBダッシュボードにログインした後、デフォルトで概要ペ�
 
 この領域には、詳細なモニターとアラートを表示するためのリンクがあります。
 
-![Monitor and alert](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-monitor.png)
+![Monitor and alert](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-monitor.png)
 
 -   **メトリックの表示**：このリンクをクリックして、クラスタの詳細な監視情報を表示できるGrafanaダッシュボードにジャンプします。 Grafanaダッシュボードの各モニタリング指標の詳細については、 [モニタリング指標](/grafana-overview-dashboard.md)を参照してください。
 -   **アラートの表示**：このリンクをクリックして、クラスタの詳細なアラート情報を表示できるAlertManagerページにジャンプします。アラートがクラスタに存在する場合、アラートの数はリンクテキストに直接表示されます。

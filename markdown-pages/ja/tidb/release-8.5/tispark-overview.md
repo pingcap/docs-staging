@@ -5,7 +5,7 @@ summary: TiSpark を使用して、オンライン トランザクションと�
 
 # TiSpark ユーザーガイド {#tispark-user-guide}
 
-![TiSpark architecture](https://download.pingcap.com/images/docs/tispark-architecture.png)
+![TiSpark architecture](https://docs-download.pingcap.com/media/images/docs/tispark-architecture.png)
 
 ## TiSpark 対TiFlash {#tispark-vs-tiflash}
 

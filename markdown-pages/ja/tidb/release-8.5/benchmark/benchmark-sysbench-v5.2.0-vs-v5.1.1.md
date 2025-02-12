@@ -128,7 +128,7 @@ sysbench $testname \
 
 v5.1.1 と比較して、v5.2.0 のポイント選択パフォーマンスは 11.03% 向上しました。
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v511vsv520_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v511vsv520_point_select.png)
 
 ### 非インデックスパフォーマンスの更新 {#update-non-index-performance}
 
@@ -143,7 +143,7 @@ v5.1.1 と比較して、v5.2.0 のポイント選択パフォーマンスは 11
 
 v5.1.1 と比較すると、v5.2.0 の非インデックス更新パフォーマンスは 1.98% 減少します。
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v511vsv520_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v511vsv520_update_non_index.png)
 
 ### インデックスのパフォーマンスを更新 {#update-index-performance}
 
@@ -158,7 +158,7 @@ v5.1.1 と比較すると、v5.2.0 の非インデックス更新パフォーマ
 
 v5.0.2 と比較すると、v5.1.0 の更新インデックスのパフォーマンスは 4.33% 低下します。
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v511vsv520_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v511vsv520_update_index.png)
 
 ### 読み取り書き込みパフォーマンス {#read-write-performance}
 
@@ -173,4 +173,4 @@ v5.0.2 と比較すると、v5.1.0 の更新インデックスのパフォーマ
 
 v5.0.2 と比較すると、v5.1.0 の読み取り書き込みパフォーマンスは 1.24% 低下します。
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v511vsv520_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v511vsv520_read_write.png)

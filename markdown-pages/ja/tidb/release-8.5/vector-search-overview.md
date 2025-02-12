@@ -59,7 +59,7 @@ TiDB では、ベクトル埋め込みのstorageと取得を最適化し、AI �
 
 TiDB ベクトル検索は、 [距離関数](/vector-search-functions-and-operators.md)を使用して指定されたベクトルとデータベースに保存されているベクトル間の距離を計算し、上位 k 近傍 (KNN) ベクトルを識別します。クエリ内の指定されたベクトルに最も近いベクトルは、意味の最も類似したデータを表します。
 
-![The Schematic TiDB Vector Search](https://download.pingcap.com/images/docs/vector-search/embedding-search.png)
+![The Schematic TiDB Vector Search](https://docs-download.pingcap.com/media/images/docs/vector-search/embedding-search.png)
 
 統合ベクトル検索機能を備えたリレーショナル データベースである TiDB を使用すると、データとそれに対応するベクトル表現 (つまり、ベクトル埋め込み) を 1 つのデータベースにまとめて保存できます。storageには、次のいずれかの方法を選択できます。
 

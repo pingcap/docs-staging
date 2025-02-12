@@ -101,7 +101,7 @@ TiDB は、パラメータ化されたクエリに対して 1 つのプランの
 
 この場合、Grafana の**Queries Using Plan Cache OPS**パネルの`non-prepared`メトリックと**Plan Cache Miss OPS**パネルの`non-prepared-unsupported`メトリックを観察する必要があります。ほとんどのクエリがサポートされておらず、プラン キャッシュにヒットできるクエリが少数の場合は、この機能を無効にすることができます。
 
-![non-prepared-unsupported](https://download.pingcap.com/images/docs/non-prepapred-plan-cache-unsupprot.png)
+![non-prepared-unsupported](https://docs-download.pingcap.com/media/images/docs/non-prepapred-plan-cache-unsupprot.png)
 
 ## 診断 {#diagnostics}
 
@@ -144,7 +144,7 @@ SHOW warnings;
 
 準備されていないプラン キャッシュを有効にすると、次のペインでメモリ使用量、キャッシュ内のプラン数、キャッシュ ヒット率を監視できます。
 
-![non-prepare-plan-cache](https://download.pingcap.com/images/docs/tidb-non-prepared-plan-cache-metrics.png)
+![non-prepare-plan-cache](https://docs-download.pingcap.com/media/images/docs/tidb-non-prepared-plan-cache-metrics.png)
 
 `statements_summary`テーブルとスロー クエリ ログでキャッシュ ヒット率を監視することもできます。次に、 `statements_summary`テーブルでキャッシュ ヒット率を表示する方法を示します。
 

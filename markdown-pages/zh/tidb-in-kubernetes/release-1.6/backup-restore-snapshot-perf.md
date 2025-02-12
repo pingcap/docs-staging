@@ -30,7 +30,7 @@ EBS 卷快照备份阶段包含创建备份任务、停止调度、停止 GC、�
 
 卷备份过程是完全并发进行的，因此整个备份的时间取决于耗时最久数据卷快照创建时间，与集群规模无关。该环节由 AWS EBS 服务来完成，当前 AWS 没有提供卷快照完成量化指标。根据测试，在 TiDB-Operator 推荐机型配置下，使用存储卷类型 GP3，配置 400 MiB/s 与 7000 IOPS，整个备份过程耗时大致如下：
 
-![EBS Snapshot backup perf](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-backup-perf.png)
+![EBS Snapshot backup perf](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-backup-perf.png)
 
 | 卷数据    | 卷总容量 | 卷配置             | 大概备份时间 |
 | :------: | :-----: | :---------------: | :--------: |
@@ -50,7 +50,7 @@ EBS 卷快照备份阶段包含创建备份任务、停止调度、停止 GC、�
 
 使用 GP3 卷进行备份时，经过测试集群影响小于 3%。如下图所示，10:25 分之后发起备份。
 
-![EBS Snapshot backup impact](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-backup-impact.jpg)
+![EBS Snapshot backup impact](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-backup-impact.jpg)
 
 ## 恢复性能
 
@@ -100,7 +100,7 @@ EBS 卷快照恢复阶段包含以下阶段，详细信息，参考[基于 EBS �
 
 该延迟加载操作需要一些时间才能完成，并且可能会导致首次访问每个块时的 I/O 操作延迟大大提高。受 EBS 卷快照恢复卷延迟加载的影响，TiKV 启动和数据恢复这两个阶段耗时最长。根据测试，在 TiDB Operator 推荐 EC2 机型配置下使用 GP3 如下配置，整个恢复时间大致如下：
 
-![EBS Snapshot restore perf](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-restore-perf.png)
+![EBS Snapshot restore perf](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-restore-perf.png)
 
 | 卷数据  | 卷总容量   | 卷配置             | 恢复大致耗时 |
 | :------: | :-----: | :---------------: | :--------: |

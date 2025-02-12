@@ -63,7 +63,7 @@ TiCDC is an incremental data replication tool for TiDB, which is highly availabl
 
 The architecture of TiCDC is illustrated in the following figure:
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/cdc-architecture.png)
 
 The components in the architecture diagram are described as follows:
 

@@ -20,7 +20,7 @@ AWS CloudFormation is used to create the necessary resources for the project, in
 
 The structure of the bookshop project is as follows:
 
-![AWS Lambda structure overview](https://download.pingcap.com/images/docs/develop/aws-lambda-structure-overview.png)
+![AWS Lambda structure overview](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-structure-overview.png)
 
 ## Prerequisites
 
@@ -35,14 +35,14 @@ Before getting started, ensure that you have the following:
     - [IAM Roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html)
 - A [TiDB Cloud](https://tidbcloud.com) account and a TiDB Cloud Serverless cluster. Get the connection information for your TiDB Cloud Serverless cluster:
 
-    ![TiDB Cloud connection information](https://download.pingcap.com/images/docs/develop/aws-lambda-tidbcloud-connection-info.png)
+    ![TiDB Cloud connection information](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-tidbcloud-connection-info.png)
 
 - API test tools such as [Postman](https://www.postman.com/) and [cURL](https://curl.se/). Most examples in this document use cURL. For Windows users, Postman is recommended.
 - Download the [latest release assets](https://github.com/pingcap/TiDB-Lambda-integration/releases/latest) of the project to your local machine, which includes `cloudformation_template.yml` and `cloudformation_template.json` files.
 
 > **Note:**
 >
-> - When you create the AWS resources, it is recommended to use `us-east-1` as your cluster region. This is because the Lambda function code in this demo hardcodes the region as `us-east-1`, and the code bundle is stored in the `us-east-1` region. 
+> - When you create the AWS resources, it is recommended to use `us-east-1` as your cluster region. This is because the Lambda function code in this demo hardcodes the region as `us-east-1`, and the code bundle is stored in the `us-east-1` region.
 > - If you use a different region, you need to follow the following instructions to modify the Lambda function code, rebuild it, and upload the code bundle to your own S3 bucket.
 
 <details>
@@ -115,13 +115,13 @@ To set up the bookshop project using AWS CloudFormation, do the following:
 
         If you do not have the file yet, download it from [GitHub](https://github.com/pingcap/TiDB-Lambda-integration/releases/latest). The file contains the AWS CloudFormation template that creates the necessary resources for the project.
 
-        ![Create a stack](https://download.pingcap.com/images/docs/develop/aws-lambda-cf-create-stack.png)
+        ![Create a stack](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-cf-create-stack.png)
 
     3. Specify stack details.
 
         - If you use `us-east-1` as your cluster region, fill in the fields as in the following screenshot:
 
-            ![Specify AWS Lambda stack details](https://download.pingcap.com/images/docs/develop/aws-lambda-cf-stack-config.png)
+            ![Specify AWS Lambda stack details](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-cf-stack-config.png)
 
             - **Stack name**: enter the stack name.
             - **S3Bucket**: enter the S3 bucket where you store the zip file.
@@ -140,11 +140,11 @@ To set up the bookshop project using AWS CloudFormation, do the following:
 
     4. Configure stack options. You can use the default configurations.
 
-        ![Configure stack options](https://download.pingcap.com/images/docs/develop/aws-lambda-cf-stack-config-option.png)
+        ![Configure stack options](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-cf-stack-config-option.png)
 
     5. Review and create the stack.
 
-        ![Review and create the stack](https://download.pingcap.com/images/docs/develop/aws-lambda-cf-stack-config-review.png)
+        ![Review and create the stack](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-cf-stack-config-review.png)
 
 ## Step 2. Use the bookshop project
 
@@ -154,7 +154,7 @@ After the stack has been created, you can use the project as follows:
 
 2. Copy the `Invoke URL` from the **Overview** page. This URL serves as the API endpoint.
 
-    ![API Gateway Invoke URL](https://download.pingcap.com/images/docs/develop/aws-lambda-get-apigateway-invoke-url.png)
+    ![API Gateway Invoke URL](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-get-apigateway-invoke-url.png)
 
 3. Use API test tools such as Postman and cURL to test the API:
 
@@ -198,5 +198,5 @@ After the stack has been created, you can use the project as follows:
 
 To avoid unnecessary charges, clean up all resources that have been created.
 
-1. Access the [AWS Management Console](https://console.aws.amazon.com/cloudformation). 
+1. Access the [AWS Management Console](https://console.aws.amazon.com/cloudformation).
 2. Delete the AWS CloudFormation stack that you created.

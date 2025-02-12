@@ -29,17 +29,17 @@ Take the three tables above (t1, t2, and t3) as an example.
 
 First, TiDB obtains all the nodes that participates in the join operation, and sorts the nodes in the ascending order of row numbers.
 
-![join-reorder-1](https://download.pingcap.com/images/docs/join-reorder-1.png)
+![join-reorder-1](https://docs-download.pingcap.com/media/images/docs/join-reorder-1.png)
 
 After that, the table with the least rows is selected and joined with other two tables respectively. By comparing the sizes of the output result sets, TiDB selects the pair with a smaller result set.
 
-![join-reorder-2](https://download.pingcap.com/images/docs/join-reorder-2.png)
+![join-reorder-2](https://docs-download.pingcap.com/media/images/docs/join-reorder-2.png)
 
 Then TiDB enters the next round of selection. If you try to join four tables, TiDB continues to compare the sizes of the output result sets and selects the pair with a smaller result set.
 
 In this case only three tables are joined, so TiDB gets the final join result.
 
-![join-reorder-3](https://download.pingcap.com/images/docs/join-reorder-3.png)
+![join-reorder-3](https://docs-download.pingcap.com/media/images/docs/join-reorder-3.png)
 
 The above process is the Join Reorder algorithm currently used in TiDB.
 

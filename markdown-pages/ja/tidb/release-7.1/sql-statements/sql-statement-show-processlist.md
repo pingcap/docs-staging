@@ -11,11 +11,11 @@ summary: An overview of the usage of SHOW [FULL] PROCESSLIST for the TiDB databa
 
 **ShowProcesslistStmt:**
 
-![ShowProcesslistStmt](https://download.pingcap.com/images/docs/sqlgram/ShowProcesslistStmt.png)
+![ShowProcesslistStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowProcesslistStmt.png)
 
 **オプトフル:**
 
-![OptFull](https://download.pingcap.com/images/docs/sqlgram/OptFull.png)
+![OptFull](https://docs-download.pingcap.com/media/images/docs/sqlgram/OptFull.png)
 
 ## 例 {#examples}
 

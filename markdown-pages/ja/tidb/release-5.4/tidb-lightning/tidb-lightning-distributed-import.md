@@ -24,11 +24,11 @@ v5.3.0以降、TiDB Lightningの[ローカルバックエンドモード](/tidb-
 
 次の図は、シャーディングされたスキーマとシャーディングされたテーブルのインポートがどのように機能するかを示しています。このシナリオでは、複数のTiDB Lightningインスタンスを使用して、MySQLシャードテーブルをダウンストリームTiDBクラスタにインポートできます。
 
-![Import sharded schemas and sharded tables](https://download.pingcap.com/images/docs/parallel-import-shard-tables-en.png)
+![Import sharded schemas and sharded tables](https://docs-download.pingcap.com/media/images/docs/parallel-import-shard-tables-en.png)
 
 次の図は、単一のテーブルのインポートがどのように機能するかを示しています。このシナリオでは、複数のTiDB Lightningインスタンスを使用して、単一のテーブルからデータを分割し、それをダウンストリームのTiDBクラスタに並行してインポートできます。
 
-![Import single tables](https://download.pingcap.com/images/docs/parallel-import-single-tables-en.png)
+![Import single tables](https://docs-download.pingcap.com/media/images/docs/parallel-import-single-tables-en.png)
 
 ## 考慮事項 {#considerations}
 

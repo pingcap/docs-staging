@@ -168,8 +168,8 @@ Google Cloud 的[实时迁移功能](https://cloud.google.com/compute/docs/insta
 
 以下图表展示了一个由三个 PD Server 组成的大规模 TiDB 集群的特征，其中每个 PD Server 均配置了 56 核的 CPU。可以看出，当每秒查询数（QPS）超过 100 万次且每秒 TSO 请求数超过 162,000 次时，CPU 利用率达到约 4600%。这一高 CPU 利用率表明 PD Leader 的负载已经相当高且可用的 CPU 资源即将耗尽。
 
-![pd-server-cpu](https://download.pingcap.com/images/docs-cn/performance/public-cloud-best-practice/baseline_cpu.png)
-![pd-server-metrics](https://download.pingcap.com/images/docs-cn/performance/public-cloud-best-practice/baseline_metrics.png)
+![pd-server-cpu](https://docs-download.pingcap.com/media/images/docs-cn/performance/public-cloud-best-practice/baseline_cpu.png)
+![pd-server-metrics](https://docs-download.pingcap.com/media/images/docs-cn/performance/public-cloud-best-practice/baseline_metrics.png)
 
 ### 优化 PD 性能
 
@@ -210,5 +210,5 @@ set global tidb_tso_client_batch_max_wait_time = 2; # 默认值为 0
 
 以上性能提升表明，这些调整措施成功地降低了 PD Server 的 CPU 利用率，同时保持了稳定的 TSO 处理性能。
 
-![pd-server-cpu](https://download.pingcap.com/images/docs-cn/performance/public-cloud-best-practice/after_tuning_cpu.png)
-![pd-server-metrics](https://download.pingcap.com/images/docs-cn/performance/public-cloud-best-practice/after_tuning_metrics.png)
+![pd-server-cpu](https://docs-download.pingcap.com/media/images/docs-cn/performance/public-cloud-best-practice/after_tuning_cpu.png)
+![pd-server-metrics](https://docs-download.pingcap.com/media/images/docs-cn/performance/public-cloud-best-practice/after_tuning_metrics.png)

@@ -81,6 +81,6 @@ The following is an example of how auto-tune works. `*` denotes a CPU core used 
 
 In the **Backup CPU Utilization** panel, you can see the size of the thread pool adjusted by auto-tune:
 
-![Grafana dashboard example of backup auto-tune metrics](https://download.pingcap.com/images/docs/br/br-auto-throttle.png)
+![Grafana dashboard example of backup auto-tune metrics](https://docs-download.pingcap.com/media/images/docs/br/br-auto-throttle.png)
 
 In the image above, the yellow semi-transparent area represents the threads available for backup tasks. You can see the CPU utilization of backup tasks does not go beyond the yellow area.

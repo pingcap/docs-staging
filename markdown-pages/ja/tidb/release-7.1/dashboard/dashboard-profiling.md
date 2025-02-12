@@ -35,7 +35,7 @@ summary: Learn how to collect performance data to analyze sophisticated problems
 
 -   TiDB ダッシュボードにログインした後、左側のナビゲーション メニューで**[高度なデバッグ**] &gt; **[プロファイリング インスタンス]** &gt; **[手動プロファイリング]**をクリックします。
 
-    ![Access instance profiling page](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-access.png)
+    ![Access instance profiling page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-access.png)
 
 -   ブラウザで[http://127.0.0.1:2379/dashboard/#/instance_profiling](http://127.0.0.1:2379/dashboard/#/instance_profiling)にアクセスしてください。 `127.0.0.1:2379`を実際の PD インスタンスのアドレスとポートに置き換えます。
 
@@ -43,7 +43,7 @@ summary: Learn how to collect performance data to analyze sophisticated problems
 
 インスタンス プロファイリング ページで、少なくとも 1 つのターゲット インスタンスを選択し、 **[プロファイリングの開始]**をクリックしてインスタンス プロファイリングを開始します。
 
-![Start instance profiling](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-start.png)
+![Start instance profiling](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-start.png)
 
 プロファイリングを開始する前に、プロファイリングの期間を変更できます。この期間は、プロファイリングに必要な時間によって決まります。デフォルトでは 30 秒です。 30 秒の期間が完了するまでに 30 秒かかります。
 
@@ -53,7 +53,7 @@ summary: Learn how to collect performance data to analyze sophisticated problems
 
 プロファイリングを開始すると、プロファイリングのステータスと進行状況をリアルタイムで表示できます。
 
-![Profiling detail](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-view-progress.png)
+![Profiling detail](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-view-progress.png)
 
 プロファイリングはバックグラウンドで実行されます。現在のページを更新または終了しても、実行中のプロファイリング タスクは停止しません。
 
@@ -61,16 +61,16 @@ summary: Learn how to collect performance data to analyze sophisticated problems
 
 すべてのインスタンスのプロファイリングが完了したら、右上隅にある**[プロファイリング結果のダウンロード]**をクリックして、すべてのパフォーマンス データをダウンロードできます。
 
-![Download profiling result](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-download.png)
+![Download profiling result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-download.png)
 
 テーブル内の個々のインスタンスをクリックして、そのプロファイリング結果を表示することもできます。または、... にカーソルを合わせると、生データをダウンロードできます。
 
-![Single instance result](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-view-single.png)
+![Single instance result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-view-single.png)
 
 ## プロファイリング履歴のビュー {#view-profiling-history}
 
 オンデマンド プロファイリング履歴がページにリストされます。行をクリックすると詳細が表示されます。
 
-![View profiling history](https://download.pingcap.com/images/docs/dashboard/dashboard-profiling-history.png)
+![View profiling history](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-history.png)
 
 プロファイリング ステータス ページの詳細な操作については、 [プロファイリングステータスのビュー](#view-profiling-status)を参照してください。

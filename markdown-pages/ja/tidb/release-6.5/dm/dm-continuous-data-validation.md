@@ -249,11 +249,11 @@ Flags:
 
 DM での継続的なデータ検証 (バリデーター) のアーキテクチャは次のとおりです。
 
-![validator summary](https://download.pingcap.com/images/docs/dm/dm-validator-summary.jpeg)
+![validator summary](https://docs-download.pingcap.com/media/images/docs/dm/dm-validator-summary.jpeg)
 
 継続的なデータ検証のライフサイクルは次のとおりです。
 
-![validator lifecycle](https://download.pingcap.com/images/docs/dm/dm-validator-lifecycle.jpeg)
+![validator lifecycle](https://docs-download.pingcap.com/media/images/docs/dm/dm-validator-lifecycle.jpeg)
 
 継続的なデータ検証の詳細な実装は次のとおりです。
 

@@ -15,7 +15,7 @@ summary: View the execution status of all SQL statements in the TiDB cluster.
 
 -   TiDBダッシュボードにログインした後、左側のナビゲーションメニューで[ **SQLステートメント**]をクリックします。
 
-    ![Access SQL statement summary page](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-access.png)
+    ![Access SQL statement summary page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-access.png)
 
 -   ブラウザで[http://127.0.0.1:2379/dashboard/#/statement](http://127.0.0.1:2379/dashboard/#/statement)にアクセスします。 `127.0.0.1:2379`を実際のPDインスタンスのアドレスとポートに置き換えます。
 
@@ -29,29 +29,29 @@ SQLステートメントの要約ページに表示されるすべてのデー�
 
 SQLステートメントの要約ページの上部で、表示するSQL実行の時間範囲を変更できます。 SQLステートメントが実行されるデータベースまたはSQLタイプでリストをフィルタリングすることもできます。次の画像は、最近のデータ収集サイクル（デフォルトでは最近の30分）でのすべてのSQL実行を示しています。
 
-![Modify filters](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-filter-options.png)
+![Modify filters](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-filter-options.png)
 
 ### その他の列を表示する {#display-more-columns}
 
 ページの[**列]**をクリックすると、さらに列を表示するように選択できます。列名の右側にある<strong>（i）</strong>アイコンにマウスを移動すると、この列の説明が表示されます。
 
-![Choose columns](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-columns-selector.png)
+![Choose columns](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-columns-selector.png)
 
 ### 列で並べ替え {#sort-by-column}
 
 デフォルトでは、リストは**合計レイテンシー**で高から低にソートされます。別の列見出しをクリックして、並べ替え基準を変更するか、並べ替え順序を切り替えます。
 
-![Modify list sorting](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-change-order.png)
+![Modify list sorting](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-change-order.png)
 
 ### 設定を変更する {#change-settings}
 
 リストページで、右上の**[設定]**ボタンをクリックして、SQLステートメント機能の設定を変更します。
 
-![Settings entry](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-setting-entry.png)
+![Settings entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-setting-entry.png)
 
 [**設定]**ボタンをクリックすると、次の設定ダイアログボックスが表示されます。
 
-![Settings](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-settings.png)
+![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-settings.png)
 
 設定ページで、SQLステートメント機能を無効または有効にできます。 SQLステートメント機能が有効になっている場合、次の設定を変更できます。
 

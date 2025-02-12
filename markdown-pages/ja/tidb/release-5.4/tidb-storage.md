@@ -7,7 +7,7 @@ summary: Understand the storage layer of a TiDB database.
 
 このドキュメントでは、 [TiKV](https://github.com/tikv/tikv)のいくつかの設計アイデアと主要な概念を紹介します。
 
-![storage-architecture](https://download.pingcap.com/images/docs/tidb-storage-architecture.png)
+![storage-architecture](https://docs-download.pingcap.com/media/images/docs/tidb-storage-architecture.png)
 
 ## キーと値のペア {#key-value-pairs}
 
@@ -38,7 +38,7 @@ RocksDBは、Facebookによってオープンソース化された優れたス�
 
 TiKVはRaftを使用してデータレプリケーションを実行します。各データ変更は、Raftログとして記録されます。 Raftログレプリケーションにより、データはRaftグループの複数のノードに安全かつ確実にレプリケートされます。ただし、Raftプロトコルによると、書き込みが成功するために必要なのは、データが大部分のノードに複製されることだけです。
 
-![Raft in TiDB](https://download.pingcap.com/images/docs/tidb-storage-1.png)
+![Raft in TiDB](https://docs-download.pingcap.com/media/images/docs/tidb-storage-1.png)
 
 要約すると、TiKVはスタンドアロンマシンRocksDBを介してデータをディスクにすばやく保存し、マシンに障害が発生した場合にRaftを介してデータを複数のマシンに複製できます。データは、RocksDBではなくRaftのインターフェースを介して書き込まれます。 Raftの実装により、TiKVは分散型Key-Valueストレージになります。いくつかのマシン障害が発生した場合でも、TiKVは、アプリケーションに影響を与えないネイティブRaftプロトコルにより、レプリカを自動的に完成させることができます。
 
@@ -51,7 +51,7 @@ TiKVはRaftを使用してデータレプリケーションを実行します。
 
 TiKVは、Key-Valueスペース全体を一連の連続するKeyセグメントに分割する2番目のソリューションを選択します。各セグメントはリージョンと呼ばれます。データを保存するリージョンごとにサイズ制限があります（デフォルト値は96 MBで、サイズを構成できます）。各リージョンは、左閉と右開の間隔である`[StartKey, EndKey)`で表すことができます。
 
-![Region in TiDB](https://download.pingcap.com/images/docs/tidb-storage-2.png)
+![Region in TiDB](https://docs-download.pingcap.com/media/images/docs/tidb-storage-2.png)
 
 ここでのリージョンは、SQLのテーブルとは関係がないことに注意してください。このドキュメントでは、SQLを忘れて、今のところKVに焦点を当てます。データをリージョンに分割した後、TiKVは2つの重要なタスクを実行します。
 
@@ -68,7 +68,7 @@ TiKVは、Key-Valueスペース全体を一連の連続するKeyセグメント�
 
     レプリカの1つはグループのリーダーとして機能し、もう1つはフォロワーとして機能します。デフォルトでは、すべての読み取りと書き込みはリーダーを介して処理され、読み取りが行われ、書き込みがフォロワーに複製されます。次の図は、RegionとRaftグループの全体像を示しています。
 
-![TiDB Storage](https://download.pingcap.com/images/docs/tidb-storage-3.png)
+![TiDB Storage](https://docs-download.pingcap.com/media/images/docs/tidb-storage-3.png)
 
 リージョンでデータを分散および複製する際、ある程度のディザスタリカバリ機能を備えた分散型Key-Valueシステムがあります。容量、ディスク障害、データ損失について心配する必要はもうありません。
 

@@ -116,7 +116,7 @@ TiDBは、括弧を使用して集合演算の優先順位を指定すること�
 
 ## <code>Order By</code>と<code>Limit</code>を使用する {#use-code-order-by-code-and-code-limit-code}
 
-TiDBは、セット操作での[`ORDER BY`](https://download.pingcap.com/images/docs/sqlgram/OrderByOptional.png)つまたは[`LIMIT`](https://download.pingcap.com/images/docs/sqlgram/LimitClause.png)の句の使用をサポートしています。これらの2つの句は、ステートメント全体の最後にある必要があります。
+TiDBは、セット操作での[`ORDER BY`](https://docs-download.pingcap.com/media/images/docs/sqlgram/OrderByOptional.png)つまたは[`LIMIT`](https://docs-download.pingcap.com/media/images/docs/sqlgram/LimitClause.png)の句の使用をサポートしています。これらの2つの句は、ステートメント全体の最後にある必要があります。
 
 ```sql
 (select * from t1 union all select * from t1 intersect select * from t2) order by a limit 2;

@@ -13,15 +13,15 @@ summary: TRUNCATEステートメントは、テーブルからデータを非ト
 
 **TruncateTableStmt:**
 
-![TruncateTableStmt](https://download.pingcap.com/images/docs/sqlgram/TruncateTableStmt.png)
+![TruncateTableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/TruncateTableStmt.png)
 
 **オプトテーブル:**
 
-![OptTable](https://download.pingcap.com/images/docs/sqlgram/OptTable.png)
+![OptTable](https://docs-download.pingcap.com/media/images/docs/sqlgram/OptTable.png)
 
 **テーブル名:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 ## 例 {#examples}
 

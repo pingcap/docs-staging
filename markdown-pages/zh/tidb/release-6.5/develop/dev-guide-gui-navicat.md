@@ -52,7 +52,7 @@ TiDB 是一个兼容 MySQL 的数据库。[Navicat](https://www.navicat.com) 是
 
 5. 启动 Navicat Premium，点击左上角的 **Connection**，在 **Vendor Filter** 中勾选 **PingCAP**，并双击右侧面板中的 **TiDB**。
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs-cn/develop/navicat-premium-add-new-connection.png)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-add-new-connection.png)
 
 6. 在 **New Connection (TiDB)** 对话框中，配置以下连接参数：
 
@@ -62,11 +62,11 @@ TiDB 是一个兼容 MySQL 的数据库。[Navicat](https://www.navicat.com) 是
     - **User Name**：输入从 TiDB Cloud 连接对话框中的得到的 `USERNAME` 参数。
     - **Password**：输入 TiDB Serverless 集群的密码。
 
-    ![Navicat: configure connection general panel for TiDB Serverless](https://download.pingcap.com/images/docs-cn/develop/navicat-premium-connection-config-serverless-general.png)
+    ![Navicat: configure connection general panel for TiDB Serverless](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-connection-config-serverless-general.png)
 
 7. 点击 **SSL** 选项卡，选择 **Use SSL**，**Use authentication** 以及 **Verify server certificate against CA** 复选框。并在 **CA Certificate** 字段中填入从 TiDB Cloud 连接对话框中获取的 `CA` 文件路径。
 
-    ![Navicat: configure connection SSL panel for TiDB Serverless](https://download.pingcap.com/images/docs-cn/develop/navicat-premium-connection-config-serverless-ssl.png)
+    ![Navicat: configure connection SSL panel for TiDB Serverless](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-connection-config-serverless-ssl.png)
 
 8. 点击 **Test Connection** 以验证与 TiDB Serverless 集群的连接。
 
@@ -87,7 +87,7 @@ TiDB 是一个兼容 MySQL 的数据库。[Navicat](https://www.navicat.com) 是
 
 5. 启动 Navicat Premium，点击左上角的 **Connection**，在 **Vendor Filter** 中勾选 **PingCAP**，并双击右侧面板中的 **TiDB**。
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs-cn/develop/navicat-premium-add-new-connection.png)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-add-new-connection.png)
 
 6. 在 **New Connection (TiDB)** 对话框中，配置以下连接参数：
 
@@ -97,11 +97,11 @@ TiDB 是一个兼容 MySQL 的数据库。[Navicat](https://www.navicat.com) 是
     - **User Name**: 输入从 TiDB Cloud 连接对话框中的得到的 `USERNAME` 参数。
     - **Password**：输入 TiDB Dedicated 集群的密码。
 
-    ![Navicat: configure connection general panel for TiDB Dedicated](https://download.pingcap.com/images/docs-cn/develop/navicat-premium-connection-config-dedicated-general.png)
+    ![Navicat: configure connection general panel for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-connection-config-dedicated-general.png)
 
 7. 点击 **SSL** 选项卡，选择 **Use SSL**，**Use authentication** 以及 **Verify server certificate against CA** 复选框。然后，在 **CA Certificate** 字段中选择第 4 步下载的 CA 文件。
 
-    ![Navicat: configure connection SSL panel for TiDB Dedicated](https://download.pingcap.com/images/docs-cn/develop/navicat-premium-connection-config-dedicated-ssl.png)
+    ![Navicat: configure connection SSL panel for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-connection-config-dedicated-ssl.png)
 
 8. 点击 **Test Connection** 以验证与 TiDB Dedicated 集群的连接。
 
@@ -112,7 +112,7 @@ TiDB 是一个兼容 MySQL 的数据库。[Navicat](https://www.navicat.com) 是
 
 1. 启动 Navicat Premium，点击左上角的 **Connection**，在 **Vendor Filter** 中勾选 **PingCAP**，并双击右侧面板中的 **TiDB**。
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs-cn/develop/navicat-premium-add-new-connection.png)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-add-new-connection.png)
 
 2. 在 **New Connection (TiDB)** 对话框中，配置以下连接参数：
 
@@ -122,7 +122,7 @@ TiDB 是一个兼容 MySQL 的数据库。[Navicat](https://www.navicat.com) 是
     - **User Name**：输入用于连接到 TiDB 的用户名。
     - **Password**：输入用于连接到 TiDB 的密码。
 
-    ![Navicat: configure connection general panel for self-hosted TiDB](https://download.pingcap.com/images/docs-cn/develop/navicat-premium-connection-config-self-hosted-general.png)
+    ![Navicat: configure connection general panel for self-hosted TiDB](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-connection-config-self-hosted-general.png)
 
 3. 点击 **Test Connection** 以验证与本地部署 TiDB 集群的连接。
 

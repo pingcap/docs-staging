@@ -17,7 +17,7 @@ JavaアプリケーションでTiDBデータベースと対話する一般的な
 -   データアクセスフレームワーク：アプリケーションは通常、 [MyBatis](https://mybatis.org/mybatis-3/index.html)や[Hibernate](https://hibernate.org/)などのデータアクセスフレームワークを使用して、データベースアクセス操作をさらに簡素化および管理します。
 -   アプリケーションの実装：アプリケーションロジックは、データベースにどのコマンドを送信するかを制御します。一部のアプリケーションは、 [春のトランザクション](https://docs.spring.io/spring/docs/4.2.x/spring-framework-reference/html/transaction.html)の側面を使用して、トランザクションの開始ロジックとコミットロジックを管理します。
 
-![Java application components](https://download.pingcap.com/images/docs/best-practices/java-practice-1.png)
+![Java application components](https://docs-download.pingcap.com/media/images/docs/best-practices/java-practice-1.png)
 
 上の図から、Javaアプリケーションが次のことを実行する可能性があることがわかります。
 
@@ -99,7 +99,7 @@ JDBCは通常、実装関連の構成をJDBCURLパラメーターの形式で提
 -   TiDBモニタリングダッシュボードに移動し、[ **Query Summary** ]&gt; [ <strong>QPSByInstance</strong> ]からリクエストコマンドタイプを表示します。
 -   リクエストの`COM_STMT_EXECUTE`の数が`COM_STMT_PREPARE`の数よりはるかに多い場合は、この設定がすでに有効になっていることを意味します。
 
-![QPS By Instance](https://download.pingcap.com/images/docs/java-practice-2.png)
+![QPS By Instance](https://docs-download.pingcap.com/media/images/docs/java-practice-2.png)
 
 さらに、 `useConfigs=maxPerformance`を構成すると、 `cachePrepStmts=true`を含む複数のパラメーターが同時に構成されます。
 

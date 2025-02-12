@@ -88,7 +88,7 @@ TiDB は 60 秒ごとに更新情報を保持します。
 
 ここで「等深度」とは、各バケットに入る値の数が可能な限り等しくなることを意味します。たとえば、特定のセット {1.6、1.9、1.9、2.0、2.4、2.6、2.7、2.7、2.8、2.9、3.4、3.5} に対して、4 つのバケットを生成するとします。等深度ヒストグラムは次のようになります。[1.6、1.9]、[2.0、2.6]、[2.7、2.8]、[2.9、3.5] の 4 つのバケットが含まれます。バケットの深さは 3 です。
 
-![Equal-depth Histogram Example](https://download.pingcap.com/images/docs/statistics-1.png)
+![Equal-depth Histogram Example](https://docs-download.pingcap.com/media/images/docs/statistics-1.png)
 
 ヒストグラムのバケット数の上限を決定するパラメータの詳細については、 [手動収集](#manual-collection)を参照してください。バケット数が多いほどヒストグラムの精度は高くなりますが、精度が高くなるとメモリリソースの使用量が増大します。実際のシナリオに応じて、この数値を適切に調整してください。
 
@@ -747,7 +747,7 @@ TiDB v6.0 以降、TiDB は`KILL`ステートメントを使用してバック�
 
 関連するシステム変数の関係を以下に示します。
 
-![analyze\_concurrency](https://download.pingcap.com/images/docs/analyze_concurrency.png)
+![analyze\_concurrency](https://docs-download.pingcap.com/media/images/docs/analyze_concurrency.png)
 
 `tidb_build_stats_concurrency` 、 `tidb_build_sampling_stats_concurrency` 、 `tidb_analyze_partition_concurrency` 、上の図に示すように、上流と下流の関係にあります。実際の合計同時実行数は、 `tidb_build_stats_concurrency` * ( `tidb_build_sampling_stats_concurrency` + `tidb_analyze_partition_concurrency` ) です。これらの変数を変更するときは、それぞれの値を同時に考慮する必要があります。 `tidb_analyze_partition_concurrency` 、 `tidb_build_sampling_stats_concurrency` 、 `tidb_build_stats_concurrency`の順に 1 つずつ調整し、システムへの影響を観察することをお勧めします。これら 3 つの変数の値が大きいほど、システムのリソース オーバーヘッドが大きくなります。
 

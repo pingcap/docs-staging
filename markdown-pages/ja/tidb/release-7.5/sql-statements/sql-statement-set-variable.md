@@ -15,11 +15,11 @@ summary: ステートメントSET [GLOBAL|SESSION]は、TiDBの組み込み変�
 
 **セットステート:**
 
-![SetStmt](https://download.pingcap.com/images/docs/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetStmt.png)
 
 **変数の割り当て:**
 
-![VariableAssignment](https://download.pingcap.com/images/docs/sqlgram/VariableAssignment.png)
+![VariableAssignment](https://docs-download.pingcap.com/media/images/docs/sqlgram/VariableAssignment.png)
 
 ## 例 {#examples}
 

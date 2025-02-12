@@ -55,7 +55,7 @@ PingCAPクリニックを使用する前に、Diag をインストールし、�
 
     トークンを取得するには、 [クラスタ]ページの右下隅にあるアイコンをクリックし、 **[診断ツールのアクセス トークンの取得]**を選択し、ポップアップ ウィンドウで**[+]**をクリックします。表示されたトークンをコピーして保存したことを確認してください。
 
-    ![An example of a token](https://download.pingcap.com/images/docs/clinic-get-token.png)
+    ![An example of a token](https://docs-download.pingcap.com/media/images/docs/clinic-get-token.png)
 
     > **ノート：**
     >
@@ -127,7 +127,7 @@ PingCAPクリニックを使用する前に、Diag をインストールし、�
 
     -   クラスターが配置されているネットワークがインターネットにアクセスできる場合は、次のコマンドを使用して、収集したデータを含むフォルダーを直接アップロードできます。
 
-        
+
         ```bash
         tiup diag upload ${filepath}
         ```

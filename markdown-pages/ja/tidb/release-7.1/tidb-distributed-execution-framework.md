@@ -115,7 +115,7 @@ Fast Online DDL に関連する次のシステム変数を調整します。
 
 TiDB バックエンド タスク分散実行フレームワークのアーキテクチャは次のとおりです。
 
-![Architecture of the TiDB backend task distributed execution framework](https://download.pingcap.com/images/docs/dist-task/dist-task-architect.jpg)
+![Architecture of the TiDB backend task distributed execution framework](https://docs-download.pingcap.com/media/images/docs/dist-task/dist-task-architect.jpg)
 
 上の図に示すように、分散フレームワークにおけるバックエンド タスクの実行は、主に次のモジュールによって処理されます。
 

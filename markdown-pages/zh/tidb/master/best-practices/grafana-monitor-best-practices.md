@@ -12,7 +12,7 @@ aliases: ['/docs-cn/dev/best-practices/grafana-monitor-best-practices/','/docs-c
 
 Prometheus 是一个拥有多维度数据模型和灵活查询语句的时序数据库。Grafana 是一个开源的 metric 分析及可视化系统。
 
-![TiDB 监控整体架构](https://download.pingcap.com/images/docs-cn/prometheus-in-tidb.png)
+![TiDB 监控整体架构](https://docs-download.pingcap.com/media/images/docs-cn/prometheus-in-tidb.png)
 
 从 TiDB 2.1.3 版本开始，监控可以支持 pull，这是一个非常好的调整，它有以下几个优点：
 
@@ -50,7 +50,7 @@ tidb_executor_statement_total{type="Use"} 466016
 
 这些数据会存储在 Prometheus 中，然后在 Grafana 上进行展示。在面板上点击鼠标右键会出现 **Edit** 按钮（或直接按 <kbd>E</kbd> 键），如下图所示：
 
-![Metrics 面板的编辑入口](https://download.pingcap.com/images/docs-cn/best-practices/metric-board-edit-entry.png)
+![Metrics 面板的编辑入口](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/metric-board-edit-entry.png)
 
 点击 **Edit** 按钮之后，在 Metrics 面板上可以看到利用该 metric 的 query 表达式。面板上一些细节的含义如下：
 
@@ -62,7 +62,7 @@ tidb_executor_statement_total{type="Use"} 466016
 
 Metrics 面板中的表达式如下：
 
-![Metric 面板中的表达式](https://download.pingcap.com/images/docs-cn/best-practices/metric-board-expression.jpeg)
+![Metric 面板中的表达式](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/metric-board-expression.jpeg)
 
 Prometheus 支持很多表达式与函数，更多表达式请参考 [Prometheus 官网页面](https://prometheus.io/docs/prometheus/latest/querying)。
 
@@ -74,11 +74,11 @@ Prometheus 支持很多表达式与函数，更多表达式请参考 [Prometheus
 
 在[监控数据的来源与展示](#监控数据的来源与展示)一节的示例中，数据是按照 type 进行分组的。如果你想知道是否还能按其它维度分组，并快速查看还有哪些维度，可采用以下技巧：**在 query 的表达式上只保留指标名称，不做任何计算，`Legend format` 也留空**。这样就能显示出原始的 metric 数据。比如，下图能看到有 3 个维度（`instance`、`job` 和 `type`）：
 
-![编辑表达式并查看所有维度](https://download.pingcap.com/images/docs-cn/best-practices/edit-expression-check-dimensions.jpg)
+![编辑表达式并查看所有维度](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/edit-expression-check-dimensions.jpg)
 
 然后调整表达式，在原有的 `type` 后面加上 `instance` 这个维度，在 `Legend format` 处增加 `{{instance}}`，就可以看到每个 TiDB server 上执行的不同类型 SQL 语句的 QPS 了。如下图所示：
 
-![给表达式增加一个 instance 维度](https://download.pingcap.com/images/docs-cn/best-practices/add-instance-dimension.jpeg)
+![给表达式增加一个 instance 维度](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/add-instance-dimension.jpeg)
 
 ### 技巧 2：调整 Y 轴标尺的计算方式
 
@@ -88,11 +88,11 @@ Prometheus 支持很多表达式与函数，更多表达式请参考 [Prometheus
 
 标尺默认的比例尺为 2 的对数：
 
-![标尺默认的比例尺为 2 的对数](https://download.pingcap.com/images/docs-cn/best-practices/default-axes-scale.jpg)
+![标尺默认的比例尺为 2 的对数](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/default-axes-scale.jpg)
 
 将标尺的比例尺调整为线性：
 
-![调整标尺的比例尺为线性](https://download.pingcap.com/images/docs-cn/best-practices/axes-scale-linear.jpg)
+![调整标尺的比例尺为线性](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/axes-scale-linear.jpg)
 
 > **建议：**
 >
@@ -104,33 +104,33 @@ Prometheus 支持很多表达式与函数，更多表达式请参考 [Prometheus
 
 基线默认为 `0`：
 
-![基线默认为 0](https://download.pingcap.com/images/docs-cn/best-practices/default-y-min.jpeg)
+![基线默认为 0](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/default-y-min.jpeg)
 
 将基线调整为 `auto`：
 
-![调整基线为 auto](https://download.pingcap.com/images/docs-cn/best-practices/y-min-auto.jpg)
+![调整基线为 auto](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/y-min-auto.jpg)
 
 ### 技巧 4：标尺联动
 
 在 **Settings** 面板中，有一个 **Graph Tooltip** 设置项，默认使用 **Default**。
 
-![图形展示工具](https://download.pingcap.com/images/docs-cn/best-practices/graph-tooltip.jpeg)
+![图形展示工具](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/graph-tooltip.jpeg)
 
 下面将图形展示工具分别调整为 **Shared crosshair** 和 **Shared Tooltip** 看看效果。可以看到标尺能联动展示了，方便排查问题时确认 2 个指标的关联性。
 
 将图形展示工具调整为 **Shared crosshair**：
 
-![调整图形展示工具为 Shared crosshair](https://download.pingcap.com/images/docs-cn/best-practices/graph-tooltip-shared-crosshair.jpeg)
+![调整图形展示工具为 Shared crosshair](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/graph-tooltip-shared-crosshair.jpeg)
 
 将图形展示工具调整为 **Shared Tooltip**：
 
-![调整图形展示工具为 Shared Tooltip](https://download.pingcap.com/images/docs-cn/best-practices/graph-tooltip-shared-tooltip.jpg)
+![调整图形展示工具为 Shared Tooltip](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/graph-tooltip-shared-tooltip.jpg)
 
 ### 技巧 5：手动输入 `ip:端口号` 查看历史信息
 
 PD 的 dashboard 只展示当前 leader 的 metric 信息，而有时想看历史上 PD leader 当时的状况，但是 `instance` 下拉列表中已不存在这个成员了。此时，可以手动输入 `ip:2379` 来查看当时的数据。
 
-![查看历史 metric 信息](https://download.pingcap.com/images/docs-cn/best-practices/manually-input-check-metric.jpeg)
+![查看历史 metric 信息](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/manually-input-check-metric.jpeg)
 
 ### 技巧 6：巧用 `Avg` 函数
 
@@ -138,11 +138,11 @@ PD 的 dashboard 只展示当前 leader 的 metric 信息，而有时想看历�
 
 增加 `Avg` 等汇总函数：
 
-![增加 Avg 等汇总函数](https://download.pingcap.com/images/docs-cn/best-practices/add-avg-function.jpeg)
+![增加 Avg 等汇总函数](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/add-avg-function.jpeg)
 
 然后查看整体趋势：
 
-![增加 Avg 函数查看整体趋势](https://download.pingcap.com/images/docs-cn/best-practices/add-avg-function-check-trend.jpg)
+![增加 Avg 函数查看整体趋势](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/add-avg-function-check-trend.jpg)
 
 ### 技巧 7：使用 Prometheus 的 API 接口获得表达式的结果
 
@@ -154,7 +154,7 @@ Grafana 通过 Prometheus 的接口获取数据，你也可以用该接口来获
 
 Prometheus 的 API 接口如下：
 
-![Prometheus 的 API 接口](https://download.pingcap.com/images/docs-cn/best-practices/prometheus-api-interface.jpg)
+![Prometheus 的 API 接口](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/prometheus-api-interface.jpg)
 
 
 ```bash

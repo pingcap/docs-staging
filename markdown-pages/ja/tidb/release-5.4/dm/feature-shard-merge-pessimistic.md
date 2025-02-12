@@ -39,7 +39,7 @@ DMには、ペシミスティックモードでの次のシャーディングDDL
 
 簡単な例を次に示します。
 
-![shard-ddl-example-1](https://download.pingcap.com/images/docs/dm/shard-ddl-example-1.png)
+![shard-ddl-example-1](https://docs-download.pingcap.com/media/images/docs/dm/shard-ddl-example-1.png)
 
 上記の例では、マージプロセスが簡略化されており、アップストリームには2つのMySQLインスタンスのみが存在し、各インスタンスには1つのテーブルしかありません。移行が開始されると、2つのシャーディングされたテーブルのテーブルスキーマバージョンは`schema V1`としてマークされ、DDLステートメントの実行後のテーブルスキーマバージョンは`schema V2`としてマークされます。
 
@@ -57,7 +57,7 @@ DMには、ペシミスティックモードでの次のシャーディングDDL
 
 このセクションでは、ペシミスティックモードでの上記の例に基づいて、シャーディングされたテーブルをマージするプロセスでDMがDDLステートメントを移行する方法を示します。
 
-![shard-ddl-flow](https://download.pingcap.com/images/docs/dm/shard-ddl-flow.png)
+![shard-ddl-flow](https://docs-download.pingcap.com/media/images/docs/dm/shard-ddl-flow.png)
 
 この例では、 `DM-worker-1`はMySQLインスタンス1からデータを移行し、 `DM-worker-2`はMySQLインスタンス2からデータを移行します`DM-master`は複数のDMワーカー間のDDL移行を調整します。 DDLステートメントを受信する`DM-worker-1`から開始して、DDL移行プロセスは次のように簡略化されます。
 
@@ -81,7 +81,7 @@ DMには、ペシミスティックモードでの次のシャーディングDDL
 
 1つのMySQLインスタンスにマージされる2つのシャードテーブル、つまり`table_1`と`table_2`があると仮定します。
 
-![shard-ddl-example-2](https://download.pingcap.com/images/docs/dm/shard-ddl-example-2.png)
+![shard-ddl-example-2](https://docs-download.pingcap.com/media/images/docs/dm/shard-ddl-example-2.png)
 
 データは同じMySQLインスタンスから取得されるため、すべてのデータは同じbinlogストリームから取得されます。この場合、時系列は次のようになります。
 

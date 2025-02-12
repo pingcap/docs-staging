@@ -44,7 +44,7 @@ TiUPを使用してデプロイされたクラスターで継続的プロファ�
 
 3.  この機能を有効にするには、[**保存]**をクリックします。
 
-![Enable the feature](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-start.png)
+![Enable the feature](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-start.png)
 
 ### TiDB Operatorを使用してデプロイされたクラスター {#clusters-deployed-using-tidb-operator}
 
@@ -56,7 +56,7 @@ TiUPを使用してデプロイされたクラスターで継続的プロファ�
 
 -   TiDBダッシュボードにログインした後、左側のナビゲーションバーで[**高度なデバッグ**]&gt;[<strong>インスタンスのプロファイリング</strong>]&gt;[<strong>継続的なプロファイリング</strong>]をクリックします。
 
-    ![Access](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-access.png)
+    ![Access](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-access.png)
 
 -   ブラウザから[http://127.0.0.1:2379/dashboard/#/continuous_profiling](http://127.0.0.1:2379/dashboard/#/continuous_profiling)にアクセスします。 `127.0.0.1:2379`を実際のPDインスタンスのアドレスとポートに置き換えます。
 
@@ -64,7 +64,7 @@ TiUPを使用してデプロイされたクラスターで継続的プロファ�
 
 継続的なプロファイリングを開始した後、インスタンスプロファイリングページでプロファイリング結果を表示できます。
 
-![Profiling history](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-history.png)
+![Profiling history](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-history.png)
 
 パフォーマンスプロファイリングはバックグラウンドで実行されます。現在のページを更新または終了しても、実行中のパフォーマンスプロファイリングタスクは終了しません。
 
@@ -72,11 +72,11 @@ TiUPを使用してデプロイされたクラスターで継続的プロファ�
 
 プロファイリング結果ページで、右上隅にある[**プロファイリング結果のダウンロード**]をクリックして、すべてのプロファイリング結果をダウンロードできます。
 
-![Download profiling result](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-download.png)
+![Download profiling result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-download.png)
 
 テーブル内の個々のインスタンスをクリックして、そのプロファイリング結果（フレームチャート、有向非巡回グラフ、テキストなど）を表示することもできます。または、...にカーソルを合わせて生データをダウンロードすることもできます。
 
-![View the profiling result of an instance](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-single.png)
+![View the profiling result of an instance](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-single.png)
 
 ## 継続的なプロファイリングを無効にする {#disable-continuous-profiling}
 
@@ -90,4 +90,4 @@ TiUPを使用してデプロイされたクラスターで継続的プロファ�
 
 5.  ポップアップウィンドウで、[**無効**にする]をクリックします。
 
-![Disable the feature](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-stop.png)
+![Disable the feature](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-stop.png)

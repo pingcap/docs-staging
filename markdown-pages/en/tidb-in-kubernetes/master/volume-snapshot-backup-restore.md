@@ -4,7 +4,7 @@ summary: Learn the architecture of backup and restore based on EBS volume snapsh
 ---
 
 > **Warning:**
-> 
+>
 > This document is deprecated. Refer to [BR Federation](br-federation-architecture.md).
 
 # Architecture of Backup and Restore Based on EBS Volume Snapshots
@@ -13,13 +13,13 @@ Backup and restore based on EBS volume snapshots is provided in TiDB Operator. T
 
 The architecture of backup and restore based on EBS volume snapshots is as follows:
 
-![AWS EBS Snapshot Backup and Restore architecture](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-backup-restore-overview.png)
+![AWS EBS Snapshot Backup and Restore architecture](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-backup-restore-overview.png)
 
 ## Back up TiDB cluster data by EBS volume snapshots
 
 Workflow of EBS volume snapshot backup:
 
-![EBS Snapshot backup process design](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-backup-workflow.png)
+![EBS Snapshot backup process design](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-backup-workflow.png)
 
 1. The user submits a backup CRD.
    * TiDB Operator checks and collects information of volumes currently mounted to TiKV.
@@ -47,7 +47,7 @@ Workflow of EBS volume snapshot backup:
 
 Workflow of EBS volume snapshot restore:
 
-![EBS Snapshot restore process design](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-restore-workflow.png)
+![EBS Snapshot restore process design](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-restore-workflow.png)
 
 1. The user creates a TiDB cluster with `spec.recoveryMode:true` configured in the spec.
    * When a TiDB cluster is started in restore mode, the PD nodes are started and no TiKVs are started. The user is expected to create a restore job to continue the restore process.

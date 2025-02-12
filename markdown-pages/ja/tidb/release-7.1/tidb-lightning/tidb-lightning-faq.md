@@ -174,7 +174,7 @@ SQL の配置ルールの目的は、テーブルまたはパーティション 
 
 ソース クラスターに次のトポロジがあるとします。
 
-![TiDB Lightning FAQ - source cluster topology](https://download.pingcap.com/images/docs/lightning-faq-source-cluster-topology.jpg)
+![TiDB Lightning FAQ - source cluster topology](https://docs-download.pingcap.com/media/images/docs/lightning-faq-source-cluster-topology.jpg)
 
 ソースクラスターには次の配置ポリシーがあります。
 
@@ -184,11 +184,11 @@ CREATE PLACEMENT POLICY p1 PRIMARY_REGION="us-east" REGIONS="us-east,us-west";
 
 **状況 1:**ターゲット クラスターには 3 つのレプリカがあり、トポロジはソース クラスターとは異なります。このような場合、 TiDB Lightning がターゲット クラスターに配置ポリシーを作成するときに、エラーは報告されません。ただし、ターゲット クラスターのセマンティクスが間違っています。
 
-![TiDB Lightning FAQ - situation 1](https://download.pingcap.com/images/docs/lightning-faq-situation-1.jpg)
+![TiDB Lightning FAQ - situation 1](https://docs-download.pingcap.com/media/images/docs/lightning-faq-situation-1.jpg)
 
 **状況 2:**ターゲット クラスターは、リージョン「us-mid」の別の TiKV ノードにフォロワー レプリカを配置しますが、トポロジにリージョン「us-west」がありません。このような場合、ターゲット クラスターで配置ポリシーを作成すると、 TiDB Lightning はエラーを報告します。
 
-![TiDB Lightning FAQ - situation 2](https://download.pingcap.com/images/docs/lightning-faq-situation-2.jpg)
+![TiDB Lightning FAQ - situation 2](https://docs-download.pingcap.com/media/images/docs/lightning-faq-situation-2.jpg)
 
 **回避策:**
 

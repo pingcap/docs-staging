@@ -81,6 +81,6 @@ Auto-tuneは、BRを使用したバックアップタスクで使用されるス
 
 [**バックアップCPU使用率**]パネルで、自動調整によって調整されたスレッドプールのサイズを確認できます。
 
-![Grafana dashboard example of backup auto-tune metrics](https://download.pingcap.com/images/docs/br/br-auto-throttle.png)
+![Grafana dashboard example of backup auto-tune metrics](https://docs-download.pingcap.com/media/images/docs/br/br-auto-throttle.png)
 
 上の画像では、黄色の半透明の領域がバックアップタスクに使用できるスレッドを表しています。バックアップタスクのCPU使用率が黄色の領域を超えていないことがわかります。

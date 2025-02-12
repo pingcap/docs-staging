@@ -17,7 +17,7 @@ summary: Learn the optimistic transaction model in TiDB.
 
 分散トランザクションをサポートするために、TiDBは楽観的なトランザクションで2フェーズコミット（2PC）を採用しています。手順は次のとおりです。
 
-![2PC in TiDB](https://download.pingcap.com/images/docs/2pc-in-tidb.png)
+![2PC in TiDB](https://docs-download.pingcap.com/media/images/docs/2pc-in-tidb.png)
 
 1.  クライアントはトランザクションを開始します。
 
@@ -82,24 +82,24 @@ tidb_retry_limit = 10
 
 1.  セッションレベル：
 
-    
+
     ```sql
     SET tidb_disable_txn_auto_retry = OFF;
     ```
 
-    
+
     ```sql
     SET tidb_retry_limit = 10;
     ```
 
 2.  グローバルレベル：
 
-    
+
     ```sql
     SET GLOBAL tidb_disable_txn_auto_retry = OFF;
     ```
 
-    
+
     ```sql
     SET GLOBAL tidb_retry_limit = 10;
     ```
@@ -135,6 +135,6 @@ scheduler-concurrency = 2048000
 
 さらに、TiKVは、スケジューラーでラッチを待機するために費やされる時間の監視をサポートします。
 
-![Scheduler latch wait duration](https://download.pingcap.com/images/docs/optimistic-transaction-metric.png)
+![Scheduler latch wait duration](https://docs-download.pingcap.com/media/images/docs/optimistic-transaction-metric.png)
 
 `Scheduler latch wait duration`が高く、書き込みが遅い場合は、現時点で書き込みの競合が多いと安全に判断できます。

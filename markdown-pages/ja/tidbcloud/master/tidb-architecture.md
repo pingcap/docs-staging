@@ -20,7 +20,7 @@ summary: TiDBプラットフォームの主要なアーキテクチャコンポ�
 
 分散データベースである TiDB は、複数のコンポーネントで構成されるように設計されています。これらのコンポーネントは相互に通信し、完全な TiDB システムを形成します。アーキテクチャは次のとおりです。
 
-![TiDB Architecture](https://download.pingcap.com/images/docs/tidb-architecture-v6.png)
+![TiDB Architecture](https://docs-download.pingcap.com/media/images/docs/tidb-architecture-v6.png)
 
 ## TiDBサーバー {#tidb-server}
 

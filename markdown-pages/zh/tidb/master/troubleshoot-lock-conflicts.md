@@ -168,7 +168,7 @@ CURRENT_SQL_DIGEST_TEXT: update `t` set `v` = `v` + ? where `id` = ? ;
 
 在 TiDB 中，读取数据时，会获取一个包含当前物理时间且全局唯一递增的时间戳作为当前事务的 start_ts。事务在读取时，需要读到目标 key 的 commit_ts 小于这个事务的 start_ts 的最新的数据版本。当读取时发现目标 key 上存在 lock 时，因为无法知道上锁的那个事务是在 Commit 阶段还是 Prewrite 阶段，所以就会出现读写冲突的情况，如下图：
 
-![读写冲突](https://download.pingcap.com/images/docs-cn/troubleshooting-lock-pic-04.png)
+![读写冲突](https://docs-download.pingcap.com/media/images/docs-cn/troubleshooting-lock-pic-04.png)
 
 分析：
 
@@ -182,8 +182,8 @@ Txn0 完成了 Prewrite，在 Commit 的过程中 Txn1 对该 key 发起了读�
 
         观察 KV Errors 下 Lock Resolve OPS 面板中的 not_expired/resolve 监控项以及 KV Backoff OPS 面板中的 tikvLockFast 监控项，如果有较为明显的上升趋势，那么可能是当前的环境中出现了大量的读写冲突。其中，not_expired 是指对应的锁还没有超时，resolve 是指尝试清锁的操作，tikvLockFast 代表出现了读写冲突。
 
-        ![KV-backoff-txnLockFast-optimistic](https://download.pingcap.com/images/docs-cn/troubleshooting-lock-pic-09.png)
-        ![KV-Errors-resolve-optimistic](https://download.pingcap.com/images/docs-cn/troubleshooting-lock-pic-08.png)
+        ![KV-backoff-txnLockFast-optimistic](https://docs-download.pingcap.com/media/images/docs-cn/troubleshooting-lock-pic-09.png)
+        ![KV-Errors-resolve-optimistic](https://docs-download.pingcap.com/media/images/docs-cn/troubleshooting-lock-pic-08.png)
 
     * 通过 TiDB 日志分析：
 
@@ -235,8 +235,8 @@ Txn0 完成了 Prewrite，在 Commit 的过程中 Txn1 对该 key 发起了读�
 
 观察 KV Errors 下 Lock Resolve OPS 面板中的 resolve 监控项以及 KV Backoff OPS 面板中的 txnLock 监控项，会有比较明显的上升趋势，其中 resolve 是指尝试清锁的操作，txnLock 代表出现了写冲突。
 
-![KV-backoff-txnLockFast-optimistic-01](https://download.pingcap.com/images/docs-cn/troubleshooting-lock-pic-07.png)
-![KV-Errors-resolve-optimistic-01](https://download.pingcap.com/images/docs-cn/troubleshooting-lock-pic-08.png)
+![KV-backoff-txnLockFast-optimistic-01](https://docs-download.pingcap.com/media/images/docs-cn/troubleshooting-lock-pic-07.png)
+![KV-Errors-resolve-optimistic-01](https://docs-download.pingcap.com/media/images/docs-cn/troubleshooting-lock-pic-08.png)
 
 处理建议：
 

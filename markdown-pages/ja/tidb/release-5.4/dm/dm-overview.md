@@ -37,7 +37,7 @@ v5.4より前では、DMドキュメントはTiDBドキュメントから独立�
 
 このセクションでは、DMが提供する基本的なデータ移行機能について説明します。
 
-![DM Core Features](https://download.pingcap.com/images/docs/dm/dm-core-features.png)
+![DM Core Features](https://docs-download.pingcap.com/media/images/docs/dm/dm-core-features.png)
 
 ### スキーマおよびテーブルレベルでのリストの移行をブロックおよび許可する {#block-and-allow-lists-migration-at-the-schema-and-table-levels}
 

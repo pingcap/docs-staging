@@ -29,7 +29,7 @@ ProxySQL は、高速かつ効率的で使いやすいように最初から設�
 
 ProxySQL を TiDB とともにデプロイする最も明白な方法は、アプリケーションレイヤーと TiDB の間にスタンドアロンの仲介者として ProxySQL を追加することです。ただし、スケーラビリティと耐障害性は保証されておらず、ネットワーク ホップによるレイテンシーも追加されます。これらの問題を回避するための代替デプロイメントアーキテクチャは、次のように ProxySQL をサイドカーとしてデプロイすることです。
 
-![proxysql-client-side-tidb-cloud](https://download.pingcap.com/images/docs/develop/proxysql-client-side-tidb-cloud.png)
+![proxysql-client-side-tidb-cloud](https://docs-download.pingcap.com/media/images/docs/develop/proxysql-client-side-tidb-cloud.png)
 
 > **ノート：**
 >
@@ -85,7 +85,7 @@ systemctl start docker
     1.  [Git Windowsのダウンロード](https://git-scm.com/download/win)ページから**64 ビット Git for Windows セットアップ**パッケージをダウンロードします。
     2.  セットアップ ウィザードに従って Git パッケージをインストールします。 **「次へ」を**数回クリックして、デフォルトのインストール設定を使用できます。
 
-        ![proxysql-windows-git-install](https://download.pingcap.com/images/docs/develop/proxysql-windows-git-install.png)
+        ![proxysql-windows-git-install](https://docs-download.pingcap.com/media/images/docs/develop/proxysql-windows-git-install.png)
 
 -   MySQL シェルをダウンロードしてインストールします。
 
@@ -109,7 +109,7 @@ systemctl start docker
     1.  [ドッカーのダウンロード](https://www.docker.com/products/docker-desktop/)ページからDocker Desktopインストーラーをダウンロードします。
     2.  インストーラーをダブルクリックして実行します。インストールが完了すると、再起動を求めるメッセージが表示されます。
 
-        ![proxysql-windows-docker-install](https://download.pingcap.com/images/docs/develop/proxysql-windows-docker-install.png)
+        ![proxysql-windows-docker-install](https://docs-download.pingcap.com/media/images/docs/develop/proxysql-windows-docker-install.png)
 
 -   [Pythonのダウンロード](https://www.python.org/downloads/)ページから最新の Python 3 インストーラーをダウンロードして実行します。
 
@@ -689,11 +689,11 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
 2.  使用する TiDB クラスターを構成します。ここで、1 つまたは複数の TiDB クラスターを ProxySQL に追加できます。たとえば、次のステートメントは TiDB 専用クラスターを 1 つ追加します。 `<tidb cloud dedicated cluster host>`と`<tidb cloud dedicated cluster port>` TiDB Cloudエンドポイントとポートに置き換える必要があります (デフォルトのポートは`4000` )。
 
     ```sql
-    INSERT INTO mysql_servers(hostgroup_id, hostname, port) 
-    VALUES 
+    INSERT INTO mysql_servers(hostgroup_id, hostname, port)
+    VALUES
       (
         0,
-        '<tidb cloud dedicated cluster host>', 
+        '<tidb cloud dedicated cluster host>',
         <tidb cloud dedicated cluster port>
       );
     LOAD mysql servers TO runtime;
@@ -710,13 +710,13 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
 
     ```sql
     INSERT INTO mysql_users(
-      username, password, active, default_hostgroup, 
+      username, password, active, default_hostgroup,
       transaction_persistent
-    ) 
-    VALUES 
+    )
+    VALUES
       (
-        '<tidb cloud dedicated cluster username>', 
-        '<tidb cloud dedicated cluster password>', 
+        '<tidb cloud dedicated cluster username>',
+        '<tidb cloud dedicated cluster password>',
         1, 0, 1
       );
     LOAD mysql users TO runtime;
@@ -797,7 +797,7 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
 
 データベースは、高トラフィック、欠陥のあるコード、または悪意のあるスパムによって過負荷になる可能性があります。 ProxySQL のクエリ ルールを使用すると、クエリの再ルーティング、書き換え、または拒否により、これらの問題に迅速かつ効果的に対応できます。
 
-![proxysql-client-side-rules](https://download.pingcap.com/images/docs/develop/proxysql-client-side-rules.png)
+![proxysql-client-side-rules](https://docs-download.pingcap.com/media/images/docs/develop/proxysql-client-side-rules.png)
 
 > **ノート：**
 >

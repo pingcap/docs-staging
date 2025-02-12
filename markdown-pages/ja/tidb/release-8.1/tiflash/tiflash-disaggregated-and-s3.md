@@ -9,7 +9,7 @@ summary: TiFlash の分散storageとコンピューティングアーキテク�
 
 ## アーキテクチャの概要 {#architecture-overview}
 
-![TiFlash Write and Compute Separation Architecture](https://download.pingcap.com/images/docs/tiflash/tiflash-s3.png)
+![TiFlash Write and Compute Separation Architecture](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash-s3.png)
 
 分散storageおよびコンピューティングアーキテクチャでは、 TiFlashプロセスのさまざまな機能が分割され、書き込みノードとコンピューティング ノードの 2 種類のノードに割り当てられます。これら 2 種類のノードは個別に展開し、独立して拡張できるため、必要に応じて展開する書き込みノードとコンピューティング ノードの数を決定できます。
 

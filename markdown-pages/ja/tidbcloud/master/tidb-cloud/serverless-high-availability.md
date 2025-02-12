@@ -25,7 +25,7 @@ TiDB Cloud Serverless は、さまざまな運用要件を満たすために、�
 
 デフォルトのゾーン高可用性でクラスターを作成すると、ゲートウェイ、TiDB、TiKV、 TiFlashコンピューティング/書き込みノードを含むすべてのコンポーネントが同じ可用性ゾーンで実行されます。これらのコンポーネントをデータ プレーンに配置すると、仮想マシン プールによるインフラストラクチャの冗長性が提供され、コロケーションによるフェイルオーバー時間とネットワークレイテンシーが最小限に抑えられます。
 
-![TiDB Cloud Serverless zonal high availability](https://download.pingcap.com/images/docs/tidb-cloud/serverless-zonal-high-avaliability-aws.png)
+![TiDB Cloud Serverless zonal high availability](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-zonal-high-avaliability-aws.png)
 
 ゾーン高可用性アーキテクチャの場合:
 
@@ -54,7 +54,7 @@ storageレイヤーでは、高い耐久性を確保するために、永続化�
 > -   リージョン高可用性は現在ベータ版であり、AWS 東京 ( `ap-northeast-1` ) リージョンでのみ利用可能です。
 > -   リージョン高可用性を有効にできるのは、クラスターの作成時のみです。
 
-![TiDB Cloud Serverless regional high availability](https://download.pingcap.com/images/docs/tidb-cloud/serverless-regional-high-avaliability-aws.png)
+![TiDB Cloud Serverless regional high availability](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-regional-high-avaliability-aws.png)
 
 地域高可用性アーキテクチャの場合:
 

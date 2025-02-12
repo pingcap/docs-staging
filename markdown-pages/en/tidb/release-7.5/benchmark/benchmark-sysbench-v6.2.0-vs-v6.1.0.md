@@ -154,7 +154,7 @@ sysbench $testname \
 
 Compared with v6.1.0, the Point Select performance of v6.2.0 slightly drops by 3.58%.
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v610vsv620_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v610vsv620_point_select.png)
 
 ### Update Non-index performance
 
@@ -166,7 +166,7 @@ Compared with v6.1.0, the Point Select performance of v6.2.0 slightly drops by 3
 
 Compared with v6.1.0, the Update Non-index performance of v6.2.0 is basically unchanged, reduced by 0.85%.
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v610vsv620_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v610vsv620_update_non_index.png)
 
 ### Update Index performance
 
@@ -178,7 +178,7 @@ Compared with v6.1.0, the Update Non-index performance of v6.2.0 is basically un
 
 Compared with v6.1.0, the Update Index performance of v6.2.0 is basically unchanged, reduced by 0.47%.
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v610vsv620_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v610vsv620_update_index.png)
 
 ### Read Write performance
 
@@ -190,4 +190,4 @@ Compared with v6.1.0, the Update Index performance of v6.2.0 is basically unchan
 
 Compared with v6.1.0, the Read Write performance of v6.2.0 is reduced by 1.21%.
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v610vsv620_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v610vsv620_read_write.png)

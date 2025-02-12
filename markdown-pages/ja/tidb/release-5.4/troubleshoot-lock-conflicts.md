@@ -11,7 +11,7 @@ TiDBは、完全な分散トランザクションをサポートしています�
 
 TiDBのトランザクションは、プリライトフェーズとコミットフェーズを含む2フェーズコミット（2PC）を使用します。手順は次のとおりです。
 
-![two-phase commit in the optimistic transaction mode](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-01.png)
+![two-phase commit in the optimistic transaction mode](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-01.png)
 
 PercolatorとTiDBのトランザクションのアルゴリズムの詳細については、 [Googleのパーコレーター](https://ai.google/research/pubs/pub36726)を参照してください。
 
@@ -23,7 +23,7 @@ PercolatorとTiDBのトランザクションのアルゴリズムの詳細につ
 
 TiDBサーバーは、クライアントから読み取り要求を受信すると、現在のトランザクションのstart_tsとして、物理的な時間にグローバルに一意で増加するタイムスタンプを取得します。トランザクションは、start_tsの前に最新のデータ、つまり、start_tsよりも小さい最新のcommit_tsのターゲットキーを読み取る必要があります。トランザクションがターゲットキーが別のトランザクションによってロックされていることを検出し、他のトランザクションがどのフェーズにあるかを知ることができない場合、読み取りと書き込みの競合が発生します。回路図は以下の通りです：
 
-![read-write conflict](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-04.png)
+![read-write conflict](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-04.png)
 
 Txn0はプリライトフェーズを完了し、コミットフェーズに入ります。このとき、Txn1は同じターゲットキーの読み取りを要求します。 Txn1は、start_tsよりも小さい最新のcommit_tsのターゲットキーを読み取る必要があります。 Txn1のstart_tsはTxn0のlock_tsよりも大きいため、Txn1はターゲットキーのロックがクリアされるのを待つ必要がありますが、まだ実行されていません。その結果、Txn1はTxn0がコミットされているかどうかを確認できません。したがって、Txn1とTxn0の間で読み取りと書き込みの競合が発生します。
 
@@ -35,7 +35,7 @@ Txn0はプリライトフェーズを完了し、コミットフェーズに入�
 
         TiDBダッシュボードの`KV Errors`のパネルには、トランザクションでの読み取りと書き込みの競合をチェックするために使用できる2つの監視メトリック`Lock Resolve OPS`と`KV Backoff OPS`があります。 `Lock Resolve OPS`未満の`not_expired`と`resolve`の両方の値が増加すると、多くの読み取り/書き込みの競合が発生する可能性があります。 `not_expired`項目は、トランザクションのロックがタイムアウトしていないことを意味します。 `resolve`項目は、他のトランザクションがロックをクリーンアップしようとすることを意味します。 `KV Backoff OPS`未満の別の`txnLockFast`アイテムの値が増加すると、読み取りと書き込みの競合も発生する可能性があります。
 
-        ![KV-Errors-resolve-optimistic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-08.png) ![KV-backoff-txnLockFast-optimistic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-09.png)
+        ![KV-Errors-resolve-optimistic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-08.png) ![KV-backoff-txnLockFast-optimistic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-09.png)
 
     -   TiDBサーバーのログ
 
@@ -87,7 +87,7 @@ GrafanaのTiDBモニタリングに「KeyIsLocked」エラーがあるかどう�
 
 TiDBダッシュボードの`KV Errors`のパネルには、トランザクションによって引き起こされた書き込みと書き込みの競合をチェックするために使用できる2つの監視メトリック`Lock Resolve OPS`と`KV Backoff OPS`があります。 `Lock Resolve OPS`未満の`resolve`アイテムと`KV Backoff OPS`未満の`txnLock`アイテムに明確な上昇傾向がある場合、「KeyIsLocked」エラーが発生します。 `resolve`はロックをクリアしようとする操作を示し、 `txnLock`は書き込みの競合を表します。
 
-![KV-Errors-resolve-optimistic-01](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-08.png) ![KV-backoff-txnLockFast-optimistic-01](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-07.png)
+![KV-Errors-resolve-optimistic-01](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-08.png) ![KV-backoff-txnLockFast-optimistic-01](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-07.png)
 
 ソリューション：
 
@@ -145,7 +145,7 @@ v3.0.8より前では、TiDBはデフォルトでオプティミスティック�
 
 TiDBのペシミスティックトランザクションモードとオプティミスティックトランザクションモードのコミットフェーズは同じロジックであり、両方のコミットは2PCモードです。悲観的なトランザクションの重要な適応は、DMLの実行です。
 
-![TiDB pessimistic transaction commit logic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-05.png)
+![TiDB pessimistic transaction commit logic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-05.png)
 
 悲観的なトランザクションは、2PCの前に`Acquire Pessimistic Lock`フェーズを追加します。このフェーズには、次の手順が含まれます。
 
@@ -153,7 +153,7 @@ TiDBのペシミスティックトランザクションモードとオプティ�
 2.  TiDBサーバーがクライアントから`update`要求を受信すると、TiDBサーバーはTiKVサーバーへの悲観的なロック要求を開始し、ロックはTiKVサーバーに保持されます。
 3.  （楽観的トランザクションモードと同じ）クライアントがコミット要求を送信すると、TiDBは楽観的トランザクションモードと同様に2PCの実行を開始します。
 
-![Pessimistic transactions in TiDB](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-06.png)
+![Pessimistic transactions in TiDB](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-06.png)
 
 詳細については、 [悲観的なトランザクションモード](/pessimistic-transaction.md)を参照してください。
 

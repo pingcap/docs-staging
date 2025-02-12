@@ -55,7 +55,7 @@ TiDB ノード グループを作成するには、次の手順を実行しま�
         -   **vCPU + RAM** : 必要な[TiFlashサイズ](/tidb-cloud/size-your-cluster.md#size-tiflash)を選択します。
         -   **ストレージ x ノード**:storageサイズとTiFlashノードの数を選択します。
 
-    ![Create TiDB Node Group](https://download.pingcap.com/images/docs/tidb-cloud/tidb-node-group-create.png)
+    ![Create TiDB Node Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-node-group-create.png)
 
 5.  新しい TiDB ノードは、新しい TiDB ノード グループとともに追加され、クラスターの課金に影響します。右側のペインでクラスターのサイズを確認し、 **[確認]**をクリックします。
 
@@ -85,7 +85,7 @@ TiDB ノード グループを作成しても、デフォルト グループの�
 
 6.  **[ネットワーク]**ページの右上隅にある**[接続]**をクリックして、接続文字列を取得します。
 
-![Connect to the new TiDB node group via Public Endpoint](https://download.pingcap.com/images/docs/tidb-cloud/tidb-node-group-connect-public-endpoint.png)
+![Connect to the new TiDB node group via Public Endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-node-group-connect-public-endpoint.png)
 
 詳細については[パブリック接続経由​​でTiDB Cloud Dedicatedに接続する](/tidb-cloud/connect-via-standard-connection.md)参照してください。
 
@@ -150,7 +150,7 @@ TiDB ノード グループの詳細を表示するには、次の手順を実�
     -   新しいノード グループを追加します。
     -   TiKV ノードとTiFlashノードのサイズと**ストレージ x ノード**構成を更新します。
 
-![Change TiDB node group node count](https://download.pingcap.com/images/docs/tidb-cloud/tidb-node-group-change-node-count.png)
+![Change TiDB node group node count](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-node-group-change-node-count.png)
 
 ## TiDBノードグループを削除する {#delete-a-tidb-node-group}
 
@@ -165,4 +165,4 @@ TiDB ノード グループを削除するには、次の手順を実行しま�
 3.  **[ノード マップ]**ページで、右上隅の**[変更]**をクリックします。 **[クラスタの変更]**ページが表示されます。
 4.  **クラスタの変更**ページで、 <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 6V5.2C16 4.0799 16 3.51984 15.782 3.09202C15.5903 2.71569 15.2843 2.40973 14.908 2.21799C14.4802 2 13.9201 2 12.8 2H11.2C10.0799 2 9.51984 2 9.09202 2.21799C8.71569 2.40973 8.40973 2.71569 8.21799 3.09202C8 3.51984 8 4.0799 8 5.2V6M10 11.5V16.5M14 11.5V16.5M3 6H21M19 6V17.2C19 18.8802 19 19.7202 18.673 20.362C18.3854 20.9265 17.9265 21.3854 17.362 21.673C16.7202 22 15.8802 22 14.2 22H9.8C8.11984 22 7.27976 22 6.63803 21.673C6.07354 21.3854 5.6146 20.9265 5.32698 20.362C5 19.7202 5 18.8802 5 17.2V6" stroke="currentColor" stroke-width="inherit" stroke-linecap="round" stroke-linejoin="round"></path></svg> TiDB ノード グループを削除します。
 
-![Delete the TiDB node group](https://download.pingcap.com/images/docs/tidb-cloud/tidb-node-group-delete.png)
+![Delete the TiDB node group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-node-group-delete.png)

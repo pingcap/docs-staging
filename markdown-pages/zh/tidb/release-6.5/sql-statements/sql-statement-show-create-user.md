@@ -11,11 +11,11 @@ summary: TiDB 数据库中 SHOW CREATE USER 的使用概况。
 
 **ShowCreateUserStmt:**
 
-![ShowCreateUserStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowCreateUserStmt.png)
+![ShowCreateUserStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowCreateUserStmt.png)
 
 **Username:**
 
-![Username](https://download.pingcap.com/images/docs-cn/sqlgram/Username.png)
+![Username](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Username.png)
 
 ## 示例
 

@@ -29,7 +29,7 @@ TiDB Lightning 启动后，可以访问 `http://127.0.0.1:8289` 来管理程序�
 
 ## TiDB Lightning Web 首页
 
-![TiDB Lightning Web 首页](https://download.pingcap.com/images/docs-cn/lightning-web-frontpage.png)
+![TiDB Lightning Web 首页](https://docs-download.pingcap.com/media/images/docs-cn/lightning-web-frontpage.png)
 
 标题栏上图标所对应的功能，从左到右依次为：
 
@@ -54,7 +54,7 @@ TiDB Lightning 启动后，可以访问 `http://127.0.0.1:8289` 来管理程序�
 
 点击标题栏的 **+** 图标提交任务。
 
-![提交任务对话框](https://download.pingcap.com/images/docs-cn/lightning-web-submit.png)
+![提交任务对话框](https://docs-download.pingcap.com/media/images/docs-cn/lightning-web-submit.png)
 
 任务 (task) 为 TOML 格式的文件，具体参考 [TiDB Lightning 任务配置](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-任务配置)。你也可以点击 **UPLOAD** 上传一个本地的 TOML 文件。
 
@@ -64,7 +64,7 @@ TiDB Lightning 启动后，可以访问 `http://127.0.0.1:8289` 来管理程序�
 
 点击首页表格卡片上的 **>** 图标，查看表格导入的详细进度。
 
-![表格导入进度](https://download.pingcap.com/images/docs-cn/lightning-web-table.png)
+![表格导入进度](https://docs-download.pingcap.com/media/images/docs-cn/lightning-web-table.png)
 
 该页显示每张表的引擎文件的导入过程。
 
@@ -74,7 +74,7 @@ TiDB Lightning 启动后，可以访问 `http://127.0.0.1:8289` 来管理程序�
 
 单击标题栏上的 **ⓘ** 图标来管理当前及队列中的任务。
 
-![任务管理页面](https://download.pingcap.com/images/docs-cn/lightning-web-queue.png)
+![任务管理页面](https://docs-download.pingcap.com/media/images/docs-cn/lightning-web-queue.png)
 
 每个任务都是依据提交时间来标记。点击该任务将显示 JSON 格式的配置文件。
 

@@ -9,13 +9,13 @@ summary: 了解 TiDB EBS 卷快照的备份恢复架构设计。
 
 基于 EBS 卷快照的备份恢复功能架构如下：
 
-![AWS EBS Snapshot Backup and Restore architecture](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-backup-restore-overview.png)
+![AWS EBS Snapshot Backup and Restore architecture](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-backup-restore-overview.png)
 
 ## 备份 EBS 卷快照
 
 EBS 卷快照备份流程如下：
 
-![EBS Snapshot backup process design](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-backup-workflow.png)
+![EBS Snapshot backup process design](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-backup-workflow.png)
 
 1. 用户提交备份 CRD
    * TiDB Operator 检查和收集当前集群 TiKV 已挂载卷信息。
@@ -43,7 +43,7 @@ EBS 卷快照备份流程如下：
 
 EBS 卷快照恢复流程如下：
 
-![EBS Snapshot restore process design](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-restore-workflow.png)
+![EBS Snapshot restore process design](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-restore-workflow.png)
 
 1. 用户以恢复模式创建 TiDB 集群，即在 Spec 中指定 `spec.recoveryMode:true`。
    * 恢复模式创建的 TiDB 集群，将会首先启动 PD 节点，不启动 TiKV 节点，同时等待用户创建恢复任务进行下一步恢复。
@@ -82,7 +82,7 @@ EBS 卷快照恢复流程如下：
 │   ├── kubernetes
 │   │   ├── pvcs
 │   │   ├── crd
-```   
+```
 
 具体示例如下
 

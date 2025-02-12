@@ -236,7 +236,7 @@ PDサーバー、TiKVサーバー、およびTiDBサーバーのGrafanaダッシ
 
 トップメニューの[**新しいダッシュボード**]をクリックして、表示するダッシュボードを選択します。
 
-![view dashboard](https://download.pingcap.com/images/docs/view-dashboard.png)
+![view dashboard](https://docs-download.pingcap.com/media/images/docs/view-dashboard.png)
 
 クラスタコンポーネントについて、次のメトリックを取得できます。
 

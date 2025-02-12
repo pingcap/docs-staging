@@ -9,7 +9,7 @@ v7.0.0 以降、 TiUP を使用して Grafana をデプロイすると、TiCDC �
 
 次の図は、TiCDC 概要ダッシュボードの監視パネルを示しています。
 
-![TiCDC Summary Dashboard - Overview](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor.png)
+![TiCDC Summary Dashboard - Overview](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor.png)
 
 各監視パネルは次のように説明されます。
 
@@ -25,7 +25,7 @@ v7.0.0 以降、 TiUP を使用して Grafana をデプロイすると、TiCDC �
 
 **サーバー**パネルは次のとおりです。
 
-![TiCDC Summary Dashboard - Server metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor-server.png)
+![TiCDC Summary Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor-server.png)
 
 -   **Uptime** : TiCDC ノードが実行されている時間。
 -   **CPU 使用率**: TiCDC ノードの CPU 使用率。
@@ -35,31 +35,31 @@ v7.0.0 以降、 TiUP を使用して Grafana をデプロイすると、TiCDC �
 
 **Changefeed**パネルは次のとおりです。
 
-![TiCDC Summary Dashboard - Changefeed metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor-changefeed.png)
+![TiCDC Summary Dashboard - Changefeed metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor-changefeed.png)
 
 -   **Changefeed Checkpoint lag** : 上流の TiDB クラスターと下流のシステム間のデータ レプリケーションのレイテンシーを時間で測定して示します。一般に、このメトリックはデータ レプリケーション タスクの全体的な健全性を反映します。通常、遅延が小さいほど、レプリケーション タスクのステータスは良好になります。遅延が増加する場合、通常、チェンジフィードのレプリケーション能力またはダウンストリーム システムの消費能力がアップストリームの書き込み速度に追いつけないことを示しています。
 -   **Changefeed Resolved ts lag** : 上流の TiDB クラスターと TiCDC ノード間のデータレイテンシーを時間で測定して示します。このメトリクスは、アップストリームからデータ変更をプルするチェンジフィードの機能を反映します。遅延が増加すると、チェンジフィードがアップストリームによって生成されたデータ変更を時間内に取得できないことを意味します。
 
 ## データフローパネル {#dataflow-panel}
 
-![TiCDC Summary Dashboard - Puller metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor-dataflow-puller.png)
+![TiCDC Summary Dashboard - Puller metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor-dataflow-puller.png)
 
 -   **Puller 出力イベント/s** : TiCDC ノードで、Puller モジュールによって Sorter モジュールに出力される 1 秒あたりのデータ変更の数。このメトリクスは、TiCDC がアップストリームからデータ変更をプルする速度を反映します。
 -   **Puller 出力イベント**: TiCDC ノードの Puller モジュールによって Sorter モジュールに出力されたデータ変更の総数。
 
-![TiCDC Summary Dashboard - Sorter metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor-dataflow-sorter.png)
+![TiCDC Summary Dashboard - Sorter metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor-dataflow-sorter.png)
 
 -   **ソーター出力イベント/秒**: ソーター モジュールによって TiCDC ノードのシンク モジュールに出力される 1 秒あたりのデータ変更の数。 Sorter のデータ出力速度は Sink モジュールの影響を受けることに注意してください。したがって、Sorter モジュールの出力速度が Puller モジュールの出力速度よりも低い場合、それは必ずしも Sorter モジュールのソート速度が遅すぎることを意味するわけではありません。まず、シンク モジュールに関連するメトリクスを観察して、シンク モジュールがデータをフラッシュするのに時間がかかり、その結果ソーター モジュールの出力が低下するかどうかを確認する必要があります。
 
 -   **ソーター出力イベント**: ソーター モジュールによって TiCDC ノードのシンク モジュールに出力されたデータ変更の総数。
 
-![TiCDC Summary Dashboard - Mounter metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor-dataflow-mounter.png)
+![TiCDC Summary Dashboard - Mounter metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor-dataflow-mounter.png)
 
 -   **マウンター出力イベント/秒**: TiCDC ノードでマウンター モジュールによってデコードされた 1 秒あたりのデータ変更の数。アップストリーム データの変更に多数のフィールドが含まれる場合、マウンタ モジュールのデコード速度が影響を受ける可能性があります。
 
 -   **マウンター出力イベント**: TiCDC ノードのマウンター モジュールによってデコードされたデータ変更の総数。
 
-![TiCDC Summary Dashboard - Sink metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor-dataflow-sink.png)
+![TiCDC Summary Dashboard - Sink metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor-dataflow-sink.png)
 
 -   **シンク フラッシュ行/秒**: TiCDC ノードでシンク モジュールによってダウンストリームに出力される 1 秒あたりのデータ変更の数。このメトリクスは、データ変更がダウンストリームにレプリケートされる速度を反映します。**シンク フラッシュ行数/秒**が**プーラー出力イベント/秒**よりも低い場合、レプリケーションのレイテンシーが増加する可能性があります。
 
@@ -69,7 +69,7 @@ v7.0.0 以降、 TiUP を使用して Grafana をデプロイすると、TiCDC �
 
 **[トランザクションシンク]**パネルには、ダウンストリームが MySQL または TiDB である場合にのみデータが表示されます。
 
-![TiCDC Summary Dashboard - Transaction Sink metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor-transaction-sink.png)
+![TiCDC Summary Dashboard - Transaction Sink metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor-transaction-sink.png)
 
 -   **バックエンド フラッシュ期間**: TiCDCトランザクションシンク モジュールがダウンストリームで SQL ステートメントを実行するのにかかる期間。このメトリックを観察することで、ダウンストリームのパフォーマンスがレプリケーション速度のボトルネックになっているかどうかを判断できます。一般に、p999 値は 500 ミリ秒未満である必要があります。値がこの制限を超えると、レプリケーション速度に影響が生じ、変更フィード チェックポイントのラグが増加する可能性があります。
 
@@ -79,7 +79,7 @@ v7.0.0 以降、 TiUP を使用して Grafana をデプロイすると、TiCDC �
 
 **MQ シンク**パネルには、ダウンストリームが Kafka である場合にのみデータが表示されます。
 
-![TiCDC Summary Dashboard - Transaction Sink metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor-mq-sink.png)
+![TiCDC Summary Dashboard - Transaction Sink metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor-mq-sink.png)
 
 -   **ワーカー送信メッセージ継続時間パーセンタイル**: TiCDC MQ シンク ワーカーがダウンストリームにデータを送信するレイテンシー。
 -   **Kafka Oncoming Bytes** : TiCDC MQ シンクがデータをダウンストリームに送信する速度。
@@ -88,7 +88,7 @@ v7.0.0 以降、 TiUP を使用して Grafana をデプロイすると、TiCDC �
 
 **Cloud Storage シンク**パネルには、ダウンストリームが Cloud Storage である場合にのみデータが表示されます。
 
-![TiCDC Summary Dashboard - Transaction Sink metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor-cloud-storage.png)
+![TiCDC Summary Dashboard - Transaction Sink metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor-cloud-storage.png)
 
 -   **Write Bytes/s** : Cloud Storage Sink モジュールがダウンストリームにデータを書き込む速度。
 -   **ファイル数**: Cloud Storage Sink モジュールによって書き込まれたファイルの総数。
@@ -97,7 +97,7 @@ v7.0.0 以降、 TiUP を使用して Grafana をデプロイすると、TiCDC �
 
 **[やり直し]**パネルには、やり直しログ機能が有効になっている場合にのみデータが表示されます。
 
-![TiCDC Summary Dashboard - Transaction Sink metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-summary-monitor-redo.png)
+![TiCDC Summary Dashboard - Transaction Sink metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-summary-monitor-redo.png)
 
 -   **Redo Write rows/s** : Redo モジュールによって 1 秒あたりに書き込まれる行数。やり直し機能が有効になっている場合、レプリケーション タスクのレイテンシーが増加すると、このメトリックとプーラー出力イベント/秒の値の間に大きな違いがあるかどうかを観察できます。その場合、レイテンシーのレイテンシーは、Redo モジュールの書き込み能力が不十分であることが原因である可能性があります。
 -   **Redo Write byte/s** : Redo モジュールによって 1 秒あたりにデータが書き込まれる速度。

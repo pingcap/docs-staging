@@ -149,7 +149,7 @@ TiDBは、ペシミスティックトランザクションモードで次の2つ
 
 アプリケーションロジックがロックまたはロック待機メカニズムに依存している場合、またはTiKVクラスタの異常の場合でもトランザクションコミットの成功率を可能な限り保証したい場合は、パイプラインロック機能を無効にする必要があります。
 
-![Pipelined pessimistic lock](https://download.pingcap.com/images/docs/pessimistic-transaction-pipelining.png)
+![Pipelined pessimistic lock](https://docs-download.pingcap.com/media/images/docs/pessimistic-transaction-pipelining.png)
 
 この機能はデフォルトで有効になっています。これを無効にするには、TiKV構成を変更します。
 

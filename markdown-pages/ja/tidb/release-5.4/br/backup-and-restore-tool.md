@@ -19,7 +19,7 @@ BRは、バックアップまたは復元コマンドを各TiKVノードに送�
 
 各TiKVノードには、バックアップ操作で生成されたバックアップファイルが保存され、復元中に保存されたバックアップファイルが読み取られるパスがあります。
 
-![br-arch](https://download.pingcap.com/images/docs/br-arch.png)
+![br-arch](https://docs-download.pingcap.com/media/images/docs/br-arch.png)
 
 <details>
 

@@ -9,7 +9,7 @@ summary: Learn the architecture and working principles of TiCDC.
 
 複数の TiCDC ノードで構成される TiCDC クラスターは、分散型のステートレスアーキテクチャを使用します。 TiCDC とそのコンポーネントの設計は次のとおりです。
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/ticdc-architecture-1.jpg)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-architecture-1.jpg)
 
 ## TiCDC コンポーネント {#ticdc-components}
 
@@ -19,7 +19,7 @@ summary: Learn the architecture and working principles of TiCDC.
 
 各パイプラインには、プーラー、ソーター、マウンター、シンクのコンポーネントが含まれています。
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/ticdc-architecture-2.jpg)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-architecture-2.jpg)
 
 これらのコンポーネントは相互に直列に動作して、データのプル、データの並べ替え、データのロード、上流から下流へのデータの複製などのレプリケーション プロセスを完了します。コンポーネントは次のように説明されます。
 
@@ -30,7 +30,7 @@ summary: Learn the architecture and working principles of TiCDC.
 
 高可用性を実現するために、各 TiCDC クラスターは複数の TiCDC ノードを実行します。これらのノードは定期的にステータスを PD の etcd クラスターに報告し、ノードの 1 つを TiCDC クラスターの所有者として選択します。オーナーノードは、etcd に保存されているステータスに基づいてデータをスケジュールし、スケジュール結果を etcd に書き込みます。プロセッサは、etcd のステータスに従ってタスクを完了します。プロセッサを実行しているノードに障害が発生した場合、クラスタはテーブルを他のノードにスケジュールします。所有者ノードに障害が発生した場合、他のノードのキャプチャ プロセスが新しい所有者を選出します。次の図を参照してください。
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/ticdc-architecture-3.PNG)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-architecture-3.PNG)
 
 ## 変更フィードとタスク {#changefeeds-and-tasks}
 
@@ -63,13 +63,13 @@ dispatchers = [
 
 以下は、Changefeed と Task が含まれる TiCDCアーキテクチャ図です。
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/ticdc-architecture-6.jpg)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-architecture-6.jpg)
 
 上の図では、4 つのテーブルをダウンストリームにレプリケートするために変更フィードが作成されます。この変更フィードは 3 つのタスクに分割され、TiCDC クラスター内の 3 つのキャプチャ プロセスにそれぞれ送信されます。 TiCDC がデータを処理した後、データはダウンストリーム システムに複製されます。
 
 TiCDC は、MySQL、TiDB、および Kafka データベースへのデータのレプリケーションをサポートしています。上の図は、チェンジフィード レベルでのデータ転送のプロセスのみを示しています。次のセクションでは、テーブル`table1`を複製する Task1 を例として、TiCDC がデータを処理する方法について詳しく説明します。
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/ticdc-architecture-5.jpg)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-architecture-5.jpg)
 
 1.  データのプッシュ: データ変更が発生すると、TiKV はデータを Puller モジュールにプッシュします。
 2.  増分データのスキャン: Puller モジュールは、受信したデータ変更が連続していないと判断した場合、TiKV からデータをプルします。
