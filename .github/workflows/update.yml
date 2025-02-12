@@ -32,6 +32,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: "new-deploy-arch"
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -50,7 +52,7 @@ jobs:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # docs-dm and docs-tidb-operator need specify language
-          if [ ${{ inputs.repo }} = "pingcap/docs-dm" ] || [ ${{ inputs.repo }} = "pingcap/docs-tidb-operator" ] 
+          if [ ${{ inputs.repo }} = "pingcap/docs-dm" ] || [ ${{ inputs.repo }} = "pingcap/docs-tidb-operator" ]
           then
           yarn download ${{ inputs.repo }} en --ref ${{ inputs.branch }}
           yarn download ${{ inputs.repo }} zh --ref ${{ inputs.branch }}
@@ -120,4 +122,4 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
           https://api.github.com/repos/pingcap/website-docs/actions/workflows/production.yml/dispatches \
-          -d '{"ref":"master","inputs":{"hash": "$CURRENT_SHA", "fallback": "false"}}'
+          -d '{"ref":"test/deploy-arch","inputs":{"hash": "$CURRENT_SHA", "fallback": "false"}}'
