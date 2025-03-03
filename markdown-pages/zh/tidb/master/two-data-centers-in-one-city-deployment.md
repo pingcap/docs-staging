@@ -207,7 +207,7 @@ cat default.json
 
 + 方法一：先配置 PD 的配置文件，然后部署集群。
 
-
+    
     ```toml
     [replication-mode]
     replication-mode = "dr-auto-sync"
@@ -224,7 +224,7 @@ cat default.json
 
 + 方法二：如果已经部署了集群，则使用 pd-ctl 命令修改 PD 的配置。
 
-
+    
     ```shell
     config set replication-mode dr-auto-sync
     config set replication-mode dr-auto-sync label-key az

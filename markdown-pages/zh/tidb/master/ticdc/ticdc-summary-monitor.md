@@ -21,7 +21,7 @@ summary: 了解 TiCDC 基本的监控指标。
 - Cloud Storage Sink：下游为 Cloud Storage 时的写速率信息
 - Redo：开启 Redo 功能时的写延迟信息
 
-## Server 监控栏
+## Server 监控栏 
 
 Server 监控栏示例如下：
 

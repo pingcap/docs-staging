@@ -37,9 +37,9 @@ summary: 介绍如何使用 TiDB Dashboard 的资源管控页面查看资源管�
 在进行资源规划之前，你需要了解集群的整体容量。目前提供两种估算方式预估当前集群的 [Request Unit (RU)](/tidb-resource-control-ru-groups.md#什么是-request-unit-ru#什么是-request-unit-ru) 的容量：
 
 - [基于硬件部署估算容量](/sql-statements/sql-statement-calibrate-resource.md#基于硬件部署估算容量) (Calibrate by Hardware)
-
+    
     目前提供了以下负载类型供选择：
-
+    
     - `tpcc`：数据写入较重的负载，根据类似 `TPC-C` 的负载模型预测。
     - `oltp_write_only`：数据写入较重的负载，根据类似 `sysbench oltp_write_only` 的负载模型预测。
     - `oltp_read_write`：数据读写平衡的负载，根据类似 `sysbench oltp_read_write` 的负载模型预测。
@@ -58,7 +58,7 @@ summary: 介绍如何使用 TiDB Dashboard 的资源管控页面查看资源管�
     - 如果时间窗口范围不满足 10 分钟至 24 小时的条件，会报错 `Error 1105 (HY000): the duration of calibration is too short, which could lead to inaccurate output. Please make the duration between 10m0s and 24h0m0s`。
 
     - [根据实际负载估算容量](/sql-statements/sql-statement-calibrate-resource.md#根据实际负载估算容量)功能的监控指标包括 `tikv_cpu_quota`、`tidb_server_maxprocs`、`resource_manager_resource_unit`、`process_cpu_usage`。如果 CPU quota 监控数据为空，会有对应监控项名称的报错，如 `Error 1105 (HY000): There is no CPU quota metrics, metrics 'tikv_cpu_quota' is empty`。
-
+  
     - 如果时间窗口范围内的负载过低或者 `resource_manager_resource_unit` 及 `process_cpu_usage` 监控数据缺失，会报错 `Error 1105 (HY000): The workload in selected time window is too low, with which TiDB is unable to reach a capacity estimation; please select another time window with higher workload, or calibrate resource by hardware instead`。此外，由于 TiKV 未在 macOS 上监控 CPU 使用率，所以不支持根据实际负载估算容量功能，也会报告此错误。
 
   可以通过[监控指标](#监控指标)中的 **CPU Usage** 选择合适的时间范围。
