@@ -78,10 +78,10 @@ SELECT
     '@example.com'
   )
 FROM
-  (WITH RECURSIVE nr(n) AS
+  (WITH RECURSIVE nr(n) AS 
     (SELECT 1                              -- Start CTE at 1
       UNION ALL SELECT n + 1               -- increase n with 1 every loop
-      FROM nr WHERE n < 1000000            -- stop loop at 1_000_000
+      FROM nr WHERE n < 1000000            -- stop loop at 1_000_000 
     ) SELECT n FROM nr
   ) a;
 ```
