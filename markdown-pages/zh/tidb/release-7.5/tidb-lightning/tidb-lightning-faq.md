@@ -97,7 +97,7 @@ sql-mode = "STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"
 
 1. 删除断点文件。
 
-
+    
     ```sh
     tidb-lightning-ctl --config conf/tidb-lightning.toml --checkpoint-remove=all
     ```
@@ -115,7 +115,7 @@ sql-mode = "STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"
 
     使用下面命令清理元信息：
 
-
+    
     ```sql
     DROP DATABASE IF EXISTS `lightning_metadata`;
     ```
@@ -126,7 +126,7 @@ sql-mode = "STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"
 
     首先通过 `ps` 等命令获取 TiDB Lightning 的进程 PID，然后运行如下命令：
 
-
+    
     ```sh
     kill -USR1 <lightning-pid>
     ```

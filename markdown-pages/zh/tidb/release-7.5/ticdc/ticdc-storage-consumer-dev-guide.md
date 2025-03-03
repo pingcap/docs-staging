@@ -8,7 +8,7 @@ summary: 了解如何设计与实现一个消费程序来消费 storage sink 中
 本文介绍如何设计和实现一个 TiDB 数据变更的消费程序。
 
 > **注意：**
->
+> 
 > 当前 Storage sink 无法处理 `DROP DATABASE` DDL，请你尽量避免执行该语句。如果需要执行 `DROP DATABASE` DDL，请在下游 MySQL 手动执行。
 
 TiCDC 不提供消费存储服务的数据的标准实现。本文介绍一个基于 Golang 的消费示例程序，该示例程序能够读取存储服务中的数据并写入到兼容 MySQL 的下游数据库。你可以参考本文提供的数据格式和以下示例代码实现消费端。
@@ -43,7 +43,7 @@ type ConsumerManager struct {
   // It indicates that the data whose transaction commit time is less than this checkpoint has been stored in storage
   StorageCheckpoint int64
   // it indicates where the consumer has consumed
-  // ConsumerManager periodically collects TableConsumer.Checkpoint,
+  // ConsumerManager periodically collects TableConsumer.Checkpoint, 
   // then Checkpoint is updated to the minimum value of all TableConsumer.Checkpoint
   Checkpoint int64
 
@@ -72,9 +72,9 @@ type TableConsumer struct {
 // For any DDL, assign a TableVersionConsumer for the new table version
 func (tc *TableConsumer) Dispatch() {}
 
-// If DDL query is empty or its tableVersion is less than TableConsumer.Checkpoint,
+// If DDL query is empty or its tableVersion is less than TableConsumer.Checkpoint, 
 // - ignore this DDL, and consume the data under the table version
-// Otherwise,
+// Otherwise, 
 // - execute DDL first, and then consume the data under the table version
 // - But for dropped table, self recycling after drop table DDL is executed
 func (tc *TableConsumer) ExecuteDDL() {}
@@ -90,13 +90,13 @@ type TableVersionConsumer struct {
   # partitionNum int64
   // Must be consumed sequentially according to the data file number
   fileSet map[filename string]*TableVersionConsumer
-  currentVersion
+  currentVersion 
 }
 
-// If data commit ts is less than TableConsumer.Checkpoint
-// or bigger than ConsumerManager.StorageCheckpoint,
+// If data commit ts is less than TableConsumer.Checkpoint 
+// or bigger than ConsumerManager.StorageCheckpoint, 
 // - ignore this data
-// Otherwise,
+// Otherwise, 
 // - process this data and write it to MySQL
 func (tc *TableVersionConsumer) ExecuteDML() {}
 ```

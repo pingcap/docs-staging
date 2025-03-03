@@ -70,7 +70,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - raft message batch size：TiKV 与 TiKV 之间 raft 消息的 batch 大小
 - gRPC request sources QPS: 不同 gRPC 请求来源的速度
 - gRPC request sources duration: 不同 gRPC 请求来源的执行总时间
-- gRPC resource group QPS: 不同 resource group 的 gRPC 请求速度
+- gRPC resource group QPS: 不同 resource group 的 gRPC 请求速度 
 
 ### Thread CPU
 

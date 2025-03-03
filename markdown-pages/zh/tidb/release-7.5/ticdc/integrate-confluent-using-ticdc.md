@@ -238,25 +238,25 @@ create or replace TABLE TIDB_TEST_ITEM (
 
     ```
     --将数据合并到 TEST_ITEM 表
-    merge into TEST_ITEM n
-      using
+    merge into TEST_ITEM n 
+      using 
           -- 查询 TEST_ITEM_STREAM
-          (SELECT RECORD_METADATA:key as k, RECORD_CONTENT:val as v from TEST_ITEM_STREAM) stm
+          (SELECT RECORD_METADATA:key as k, RECORD_CONTENT:val as v from TEST_ITEM_STREAM) stm 
           -- 以 i_id 相等为条件将流和表做匹配
-          on k:i_id = n.i_id
+          on k:i_id = n.i_id 
       -- 如果 TEST_ITEM 表中存在匹配 i_id 的记录，并且 v 为空，则删除这条记录
-      when matched and IS_NULL_VALUE(v) = true then
-          delete
-
+      when matched and IS_NULL_VALUE(v) = true then 
+          delete 
+      
       -- 如果 TEST_ITEM 表中存在匹配 i_id 的记录，并且 v 不为空，则更新这条记录
-      when matched and IS_NULL_VALUE(v) = false then
-          update set n.i_data = v:i_data, n.i_im_id = v:i_im_id, n.i_name = v:i_name, n.i_price = v:i_price
-
+      when matched and IS_NULL_VALUE(v) = false then 
+          update set n.i_data = v:i_data, n.i_im_id = v:i_im_id, n.i_name = v:i_name, n.i_price = v:i_price 
+  
       -- 如果 TEST_ITEM 表中不存在匹配 i_id 的记录，则插入这条记录
-      when not matched then
-          insert
-              (i_data, i_id, i_im_id, i_name, i_price)
-          values
+      when not matched then 
+          insert 
+              (i_data, i_id, i_im_id, i_name, i_price) 
+          values 
               (v:i_data, v:i_id, v:i_im_id, v:i_name, v:i_price)
     ;
     ```
@@ -274,24 +274,24 @@ create or replace TABLE TIDB_TEST_ITEM (
     create or replace task STREAM_TO_ITEM
         warehouse = test
         -- 每分钟执行一次
-        schedule = '1 minute'
+        schedule = '1 minute' 
     when
         -- 当 TEST_ITEM_STREAM 中无数据时跳过
-        system$stream_has_data('TEST_ITEM_STREAM')
+        system$stream_has_data('TEST_ITEM_STREAM') 
     as
     -- 将数据合并到 TEST_ITEM 表，和上文中的 merge into 语句相同
-    merge into TEST_ITEM n
-      using
-          (select RECORD_METADATA:key as k, RECORD_CONTENT:val as v from TEST_ITEM_STREAM) stm
-          on k:i_id = n.i_id
-      when matched and IS_NULL_VALUE(v) = true then
-          delete
-      when matched and IS_NULL_VALUE(v) = false then
-          update set n.i_data = v:i_data, n.i_im_id = v:i_im_id, n.i_name = v:i_name, n.i_price = v:i_price
-      when not matched then
-          insert
-              (i_data, i_id, i_im_id, i_name, i_price)
-          values
+    merge into TEST_ITEM n 
+      using 
+          (select RECORD_METADATA:key as k, RECORD_CONTENT:val as v from TEST_ITEM_STREAM) stm 
+          on k:i_id = n.i_id 
+      when matched and IS_NULL_VALUE(v) = true then 
+          delete 
+      when matched and IS_NULL_VALUE(v) = false then 
+          update set n.i_data = v:i_data, n.i_im_id = v:i_im_id, n.i_name = v:i_name, n.i_price = v:i_price 
+      when not matched then 
+          insert 
+              (i_data, i_id, i_im_id, i_name, i_price) 
+          values 
               (v:i_data, v:i_id, v:i_im_id, v:i_name, v:i_price)
     ;
     ```
