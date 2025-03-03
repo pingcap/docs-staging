@@ -47,7 +47,7 @@ summary: 介绍 TiProxy 的流量回放的使用场景和使用步骤。
     > - 再次捕获流量时，上次的流量文件不会自动删除，需要手动删除。
 
     例如，以下命令连接到 TiProxy 实例 `10.0.1.10:3080`，捕获一个小时的流量，并将流量保存到 TiProxy 实例的 `/tmp/traffic` 目录下：
-
+    
     ```shell
     tiproxyctl traffic capture --host 10.0.1.10 --port 3080 --output="/tmp/traffic" --duration=1h
     ```
