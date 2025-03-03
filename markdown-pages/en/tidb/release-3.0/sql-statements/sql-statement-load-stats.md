@@ -12,7 +12,7 @@ The `LOAD STATS` statement is used to load the statistics into TiDB.
 
 **LoadStatsStmt:**
 
-![LoadStatsStmt](https://download.pingcap.com/images/docs/sqlgram/LoadStatsStmt.png)
+![LoadStatsStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/LoadStatsStmt.png)
 
 ## Examples
 

@@ -58,9 +58,9 @@ Pessimistic transactions in TiDB behave similarly to those in MySQL. See the min
 ## Difference with MySQL InnoDB
 
 1. When TiDB executes DML or `SELECT FOR UPDATE` statements that use range in the WHERE clause, concurrent DML statements within the range are not blocked.
-    
+
     For example:
-    
+
     ```sql
     CREATE TABLE t1 (
      id INT NOT NULL PRIMARY KEY,
@@ -68,18 +68,18 @@ Pessimistic transactions in TiDB behave similarly to those in MySQL. See the min
     );
     INSERT INTO t1 (id) VALUES (1),(5),(10);
     ```
-    
+
     ```sql
     BEGIN /*T! PESSIMISTIC */;
     SELECT * FROM t1 WHERE id BETWEEN 1 AND 10 FOR UPDATE;
     ```
-    
+
     ```sql
     BEGIN /*T! PESSIMISTIC */;
     INSERT INTO t1 (id) VALUES (6); -- blocks only in MySQL
     UPDATE t1 SET pad1='new value' WHERE id = 5; -- blocks waiting in both MySQL and TiDB
     ```
-    
+
     This behavior is because TiDB does not currently support _gap locking_.
 
 2. TiDB does not support `SELECT LOCK IN SHARE MODE`.
@@ -126,7 +126,7 @@ To reduce the overhead of locking, TiKV implements the pipelined locking process
 
 If the application logic relies on the locking or lock waiting mechanisms, or if you want to guarantee as much as possible the success rate of transaction commits even in the case of TiKV cluster anomalies, you should disable the pipelined locking feature.
 
-![Pipelined pessimistic lock](https://download.pingcap.com/images/docs/pessimistic-transaction-pipelining.png)
+![Pipelined pessimistic lock](https://docs-download.pingcap.com/media/images/docs/pessimistic-transaction-pipelining.png)
 
 This feature is disabled by default. To enable it, modify the TiKV configuration:
 

@@ -7,7 +7,7 @@ summary: Learn how to share the current TiDB Dashboard session to other users.
 
 > **Note:**
 >
-> This feature is available only in clusters of v4.0.6 or later. 
+> This feature is available only in clusters of v4.0.6 or later.
 
 You can share the current session of the TiDB Dashboard to other users so that they can access and operate the TiDB Dashboard without entering the user password.
 
@@ -19,7 +19,7 @@ You can share the current session of the TiDB Dashboard to other users so that t
 
 3. Click **Share Current Session**.
 
-    ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-settings-1.png)
+    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-settings-1.png)
 
    > **Note:**
    >
@@ -33,11 +33,11 @@ You can share the current session of the TiDB Dashboard to other users so that t
 
 5. Click **Generate Authorization Code**.
 
-   ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-settings-2.png)
+   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-settings-2.png)
 
 6. Provide the generated **Authorization Code** to the user to whom you want to share the session.
 
-   ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-settings-3.png)
+   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-settings-3.png)
 
    > **Warning:**
    >
@@ -47,14 +47,14 @@ You can share the current session of the TiDB Dashboard to other users so that t
 
 1. On the sign-in page of TiDB Dashboard, click **Use Alternative Authentication**.
 
-   ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-signin-1.png)
+   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-signin-1.png)
 
 2. Click **Authorization Code** to use it to sign in.
 
-   ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-signin-2.png)
+   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-signin-2.png)
 
 3. Enter the authorization code you have received from the inviter.
 
 4. Click **Sign In**.
 
-   ![Sample Step](https://download.pingcap.com/images/docs/dashboard/dashboard-session-share-signin-3.png)
+   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-signin-3.png)

@@ -18,7 +18,7 @@ TiDB Lightning 有以下两个主要的使用场景：
 
 ## TiDB Lightning 整体架构
 
-![TiDB Lightning 整体架构](https://download.pingcap.com/images/docs-cn/tidb-lightning-architecture.png)
+![TiDB Lightning 整体架构](https://docs-download.pingcap.com/media/images/docs-cn/tidb-lightning-architecture.png)
 
 TiDB Lightning 整体工作原理如下：
 

@@ -12,27 +12,27 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-create-user/','/docs-cn/v2
 
 **CreateUserStmt:**
 
-![CreateUserStmt](https://download.pingcap.com/images/docs-cn/sqlgram/CreateUserStmt.png)
+![CreateUserStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CreateUserStmt.png)
 
 **IfNotExists:**
 
-![IfNotExists](https://download.pingcap.com/images/docs-cn/sqlgram/IfNotExists.png)
+![IfNotExists](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IfNotExists.png)
 
 **UserSpecList:**
 
-![UserSpecList](https://download.pingcap.com/images/docs-cn/sqlgram/UserSpecList.png)
+![UserSpecList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/UserSpecList.png)
 
 **UserSpec:**
 
-![UserSpec](https://download.pingcap.com/images/docs-cn/sqlgram/UserSpec.png)
+![UserSpec](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/UserSpec.png)
 
 **AuthOption:**
 
-![AuthOption](https://download.pingcap.com/images/docs-cn/sqlgram/AuthOption.png)
+![AuthOption](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/AuthOption.png)
 
 **StringName:**
 
-![StringName](https://download.pingcap.com/images/docs-cn/sqlgram/StringName.png)
+![StringName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/StringName.png)
 
 ## 示例
 

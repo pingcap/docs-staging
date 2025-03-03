@@ -12,47 +12,47 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-create-table/','/docs-cn/v
 
 **CreateTableStmt:**
 
-![CreateTableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/CreateTableStmt.png)
+![CreateTableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CreateTableStmt.png)
 
 **IfNotExists:**
 
-![IfNotExists](https://download.pingcap.com/images/docs-cn/sqlgram/IfNotExists.png)
+![IfNotExists](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IfNotExists.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 **TableElementListOpt:**
 
-![TableElementListOpt](https://download.pingcap.com/images/docs-cn/sqlgram/TableElementListOpt.png)
+![TableElementListOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableElementListOpt.png)
 
 **TableElement:**
 
-![TableElement](https://download.pingcap.com/images/docs-cn/sqlgram/TableElement.png)
+![TableElement](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableElement.png)
 
 **PartitionOpt:**
 
-![PartitionOpt](https://download.pingcap.com/images/docs-cn/sqlgram/PartitionOpt.png)
+![PartitionOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/PartitionOpt.png)
 
 **ColumnDef:**
 
-![ColumnDef](https://download.pingcap.com/images/docs-cn/sqlgram/ColumnDef.png)
+![ColumnDef](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ColumnDef.png)
 
 **ColumnName:**
 
-![ColumnName](https://download.pingcap.com/images/docs-cn/sqlgram/ColumnName.png)
+![ColumnName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ColumnName.png)
 
 **Type:**
 
-![Type](https://download.pingcap.com/images/docs-cn/sqlgram/Type.png)
+![Type](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Type.png)
 
 **ColumnOptionListOpt:**
 
-![ColumnOptionListOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ColumnOptionListOpt.png)
+![ColumnOptionListOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ColumnOptionListOpt.png)
 
 **TableOptionListOpt:**
 
-![TableOptionListOpt](https://download.pingcap.com/images/docs-cn/sqlgram/TableOptionListOpt.png)
+![TableOptionListOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableOptionListOpt.png)
 
 TiDB 支持以下 `table_option`。TiDB 会解析并忽略其他 `table_option` 参数，例如 `AVG_ROW_LENGTH`、`CHECKSUM`、`COMPRESSION`、`CONNECTION`、`DELAY_KEY_WRITE`、`ENGINE`、`KEY_BLOCK_SIZE`、`MAX_ROWS`、`MIN_ROWS`、`ROW_FORMAT` 和 `STATS_PERSISTENT`。
 

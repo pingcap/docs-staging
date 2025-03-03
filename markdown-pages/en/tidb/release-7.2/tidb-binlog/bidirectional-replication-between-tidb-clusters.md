@@ -21,11 +21,11 @@ If you want two TiDB clusters to exchange data changes with each other, TiDB Bin
 
 The user scenario is shown as below:
 
-![Architect](https://download.pingcap.com/images/docs/binlog/bi-repl1.jpg)
+![Architect](https://docs-download.pingcap.com/media/images/docs/binlog/bi-repl1.jpg)
 
 ## Implementation details
 
-![Mark Table](https://download.pingcap.com/images/docs/binlog/bi-repl2.png)
+![Mark Table](https://docs-download.pingcap.com/media/images/docs/binlog/bi-repl2.png)
 
 If the bidirectional replication is enabled between cluster A and cluster B, the data written to cluster A will be replicated to cluster B, and then these data changes will be replicated back to cluster A, which causes an infinite loop of replication. From the figure above, you can see that during the data replication, Drainer marks the binlog events, and filters out the marked events to avoid such a replication loop.
 

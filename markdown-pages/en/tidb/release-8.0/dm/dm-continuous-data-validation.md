@@ -273,11 +273,11 @@ Flags:
 
 The architecture of continuous data validation (validator) in DM is as follows:
 
-![validator summary](https://download.pingcap.com/images/docs/dm/dm-validator-summary.jpeg)
+![validator summary](https://docs-download.pingcap.com/media/images/docs/dm/dm-validator-summary.jpeg)
 
 The lifecycle of continuous data validation is as follows:
 
-![validator lifecycle](https://download.pingcap.com/images/docs/dm/dm-validator-lifecycle.jpeg)
+![validator lifecycle](https://docs-download.pingcap.com/media/images/docs/dm/dm-validator-lifecycle.jpeg)
 
 The detailed implementation of continuous data validation is as follows:
 

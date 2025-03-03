@@ -152,7 +152,7 @@ Confluent 是一个兼容 Apache Kafka 的数据流平台，能够访问、存�
 
 2. 观察 Confluent 中数据传输情况。
 
-    ![Confluent topics](https://download.pingcap.com/images/docs-cn/integrate/confluent-topics.png)
+    ![Confluent topics](https://docs-download.pingcap.com/media/images/docs-cn/integrate/confluent-topics.png)
 
     在 Confluent 集群控制面板中，可以观察到相应的 Topic 已经被自动创建，并有数据正在写入。至此，TiDB 数据库中的增量数据就被成功输出到了 Confluent Cloud。
 
@@ -174,19 +174,19 @@ Snowflake 是一种云原生数据仓库。借助 Confluent 的能力，你只�
 
 2. 在 Confluent 集群控制面板中，选择 **Data integration** > **Connectors** > **Snowflake Sink**，进入如下页面：
 
-    ![Add snowflake sink connector](https://download.pingcap.com/images/docs-cn/integrate/add-snowflake-sink-connector.png)
+    ![Add snowflake sink connector](https://docs-download.pingcap.com/media/images/docs-cn/integrate/add-snowflake-sink-connector.png)
 
 3. 选择需要同步到 Snowflake 的 Topic 后，进入下一页面：
 
-    ![Credentials](https://download.pingcap.com/images/docs-cn/integrate/credentials.png)
+    ![Credentials](https://docs-download.pingcap.com/media/images/docs-cn/integrate/credentials.png)
 
 4. 填写 Snowflake 连接认证信息，其中 Database name 和 Schema name 填写在上一步创建的 Database 和 Schema 名，随后进入下一页面：
 
-    ![Configuration](https://download.pingcap.com/images/docs-cn/integrate/configuration.png)
+    ![Configuration](https://docs-download.pingcap.com/media/images/docs-cn/integrate/configuration.png)
 
 5. 在 **Configuration** 页面中，`record value format` 和 `record key format` 都选择 `AVRO`，点击 **Continue**，直到 Connector 创建完成。等待 Connector 状态变为 `RUNNING`，这个过程可能持续数分钟。
 
-    ![Data preview](https://download.pingcap.com/images/docs-cn/integrate/data-preview.png)
+    ![Data preview](https://docs-download.pingcap.com/media/images/docs-cn/integrate/data-preview.png)
 
 6. 在 Snowflake 控制面板中，选择 **Data** > **Database** > **TPCC** > **TiCDC**，可以观察到 TiDB 中的增量数据实时同步到了 Snowflake，如上图。至此，就完成了 TiDB 与 Snowflake 的数据集成。
 
@@ -210,7 +210,7 @@ ksqlDB 是一种面向流式数据处理的数据库。你可以直接在 Conflu
     SELECT * FROM ORDERS EMIT CHANGES;
     ```
 
-    ![Select from orders](https://download.pingcap.com/images/docs-cn/integrate/select-from-orders.png)
+    ![Select from orders](https://docs-download.pingcap.com/media/images/docs-cn/integrate/select-from-orders.png)
 
 可以观察到 TiDB 中的增量数据实时同步到了 ksqlDB，如上图。至此，就完成了 TiDB 与 ksqlDB 的数据集成。
 
@@ -241,11 +241,11 @@ SQL Server 是 Microsoft 推出的关系型数据库软件。借助 Confluent �
 
 2. 在 Confluent 集群控制面板中，选择 **Data integration** > **Connectors** > **Microsoft SQL Server Sink**，进入如下页面：
 
-    ![Topic selection](https://download.pingcap.com/images/docs-cn/integrate/topic-selection.png)
+    ![Topic selection](https://docs-download.pingcap.com/media/images/docs-cn/integrate/topic-selection.png)
 
 3. 选择需要同步到 SQL Server 的 Topic 后，进入下一页面：
 
-    ![Authentication](https://download.pingcap.com/images/docs-cn/integrate/authentication.png)
+    ![Authentication](https://docs-download.pingcap.com/media/images/docs-cn/integrate/authentication.png)
 
 4. 在填写 SQL Server 的连接和认证信息后，进入下一页面。
 
@@ -263,6 +263,6 @@ SQL Server 是 Microsoft 推出的关系型数据库软件。借助 Confluent �
 
 6. 配置完成后，选择 **Continue**，等待 Connector 状态变为 **RUNNING**，这个过程可能持续数分钟。
 
-    ![Results](https://download.pingcap.com/images/docs-cn/integrate/results.png)
+    ![Results](https://docs-download.pingcap.com/media/images/docs-cn/integrate/results.png)
 
 7. 连接 SQL Server。观察 TiDB 中的增量数据实时同步到了 SQL Server，如上图。至此，就完成了 TiDB 与 SQL Server 的数据集成。

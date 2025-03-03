@@ -15,31 +15,31 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-split-region/','/docs-cn
 
 **SplitRegionStmt:**
 
-![SplitRegionStmt](https://download.pingcap.com/images/docs-cn/sqlgram/SplitRegionStmt.png)
+![SplitRegionStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SplitRegionStmt.png)
 
 **SplitSyntaxOption:**
 
-![SplitSyntaxOption](https://download.pingcap.com/images/docs-cn/sqlgram/SplitSyntaxOption.png)
+![SplitSyntaxOption](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SplitSyntaxOption.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 **PartitionNameListOpt:**
 
-![PartitionNameListOpt](https://download.pingcap.com/images/docs-cn/sqlgram/PartitionNameListOpt.png)
+![PartitionNameListOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/PartitionNameListOpt.png)
 
 **SplitOption:**
 
-![SplitOption](https://download.pingcap.com/images/docs-cn/sqlgram/SplitOption.png)
+![SplitOption](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SplitOption.png)
 
 **RowValue:**
 
-![RowValue](https://download.pingcap.com/images/docs-cn/sqlgram/RowValue.png)
+![RowValue](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/RowValue.png)
 
 **Int64Num:**
 
-![Int64Num](https://download.pingcap.com/images/docs-cn/sqlgram/Int64Num.png)
+![Int64Num](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Int64Num.png)
 
 ## Split Region 的使用
 
@@ -73,7 +73,7 @@ SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)] ...
 > **注意：**
 >
 > 以下会话变量会影响 `SPLIT` 语句的行为，需要特别注意：
-> 
+>
 > * `tidb_wait_split_region_finish`：打散 Region 的时间可能较长，由 PD 调度以及 TiKV 的负载情况所决定。这个变量用来设置在执行 `SPLIT REGION` 语句时，是否同步等待所有 Region 都打散完成后再返回结果给客户端。默认 `1` 代表等待打散完成后再返回结果。`0` 代表不等待 Region 打散完成就返回结果。
 > * `tidb_wait_split_region_timeout`：这个变量用来设置 `SPLIT REGION` 语句的执行超时时间，单位是秒，默认值是 300 秒，如果超时还未完成 `Split` 操作，就返回一个超时错误。
 
@@ -233,14 +233,14 @@ region4  [("c", "")                    , maxIndexValue               )
 
 - 均匀切分的语法如下：
 
-    
+
     ```sql
     SPLIT [PARTITION] TABLE t [PARTITION] [(partition_name_list...)] [INDEX index_name] BETWEEN (lower_value) AND (upper_value) REGIONS region_num
     ```
 
 - 不均匀切分的语法如下：
 
-    
+
     ```sql
     SPLIT [PARTITION] TABLE table_name [PARTITION (partition_name_list...)] [INDEX index_name] BY (value_list) [, (value_list)] ...
     ```
@@ -249,14 +249,14 @@ region4  [("c", "")                    , maxIndexValue               )
 
 1. 首先创建一个分区表。
 
-    
+
     ```sql
     create table t (a int,b int,index idx(a)) partition by hash(a) partitions 2;
     ```
 
     此时建完表后会为每个 partition 都单独 split 一个 Region，用 `SHOW TABLE REGIONS` 语法查看该表的 Region 如下：
 
-    
+
     ```sql
     show table t regions;
     ```
@@ -272,14 +272,14 @@ region4  [("c", "")                    , maxIndexValue               )
 
 2. 用 `SPLIT` 语法为每个 partition 切分 Region，示例如下，在 [0,10000] 范围内切分成 4 个 Region。
 
-    
+
     ```sql
     split partition table t between (0) and (10000) regions 4;
     ```
 
 3. 用 `SHOW TABLE REGIONS` 语法查看该表的 Region。如下会发现该表现在一共有 10 个 Region，每个 partition 分别有 5 个 Region，其中 4 个 Region 是表的行数据，1 个 Region 是表的索引数据。
 
-    
+
     ```sql
     show table t regions;
     ```
@@ -303,7 +303,7 @@ region4  [("c", "")                    , maxIndexValue               )
 
 4. 也可以给每个分区的索引切分 Region，如将索引 `idx` 的 [1000,10000] 范围切分成 2 个 Region：
 
-    
+
     ```sql
     split partition table t index idx between (1000) and (10000) regions 2;
     ```
@@ -314,31 +314,31 @@ region4  [("c", "")                    , maxIndexValue               )
 
 1. 首先创建一个分区表：
 
-    
+
     ```sql
-    create table t ( a int, b int, index idx(b)) partition by range( a ) ( 
-        partition p1 values less than (10000), 
-        partition p2 values less than (20000), 
+    create table t ( a int, b int, index idx(b)) partition by range( a ) (
+        partition p1 values less than (10000),
+        partition p2 values less than (20000),
         partition p3 values less than (MAXVALUE) );
     ```
 
 2. 为 `p1` 分区的 [0,10000] 预切分 2 个 Region：
 
-    
+
     ```sql
     split partition table t partition (p1) between (0) and (10000) regions 2;
     ```
 
 3. 为 `p2` 分区的 [10000,20000] 预切分 2 个 Region：
 
-    
+
     ```sql
     split partition table t partition (p2) between (10000) and (20000) regions 2;
     ```
 
 4. 用 `SHOW TABLE REGIONS` 语法查看该表的 Region 如下：
 
-    
+
     ```sql
     show table t regions;
     ```
@@ -357,7 +357,7 @@ region4  [("c", "")                    , maxIndexValue               )
 
 5. 为 `p1` 和 `p2` 分区的索引 `idx` 的 [0,20000] 范围预切分 2 个 Region:
 
-    
+
     ```sql
     split partition table t partition (p1,p2) index idx between (0) and (20000) regions 2;
     ```

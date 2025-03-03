@@ -127,9 +127,9 @@ syncer:
 
 #### DM key indicator monitor
 
-![DM benchmark](https://download.pingcap.com/images/tidb-data-migration/en/dm-benchmark-01-en.png)
+![DM benchmark](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-benchmark-01-en.png)
 
 #### TiDB key indicator monitor
 
-![TiDB transaction's OPS and duration](https://download.pingcap.com/images/tidb-data-migration/en/dm-benchmark-02-en.png)
-![TiDB's query duration and QPS](https://download.pingcap.com/images/tidb-data-migration/en/dm-benchmark-03-en.png)
+![TiDB transaction's OPS and duration](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-benchmark-02-en.png)
+![TiDB's query duration and QPS](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-benchmark-03-en.png)

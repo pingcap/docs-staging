@@ -12,11 +12,11 @@ The `EXECUTE` statement provides an SQL interface to server-side prepared statem
 
 **ExecuteStmt:**
 
-![ExecuteStmt](https://download.pingcap.com/images/docs/sqlgram/ExecuteStmt.png)
+![ExecuteStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ExecuteStmt.png)
 
 **Identifier:**
 
-![Identifier](https://download.pingcap.com/images/docs/sqlgram/Identifier.png)
+![Identifier](https://docs-download.pingcap.com/media/images/docs/sqlgram/Identifier.png)
 
 ## Examples
 

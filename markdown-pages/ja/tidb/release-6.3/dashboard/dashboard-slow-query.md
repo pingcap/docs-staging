@@ -19,7 +19,7 @@ TiDB ダッシュボードの [スロー クエリ] ページで、クラスタ�
 
 -   TiDB ダッシュボードにログインした後、左側のナビゲーション メニューで [**スロー クエリ**] をクリックします。
 
-![Access slow query page](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-access-v620.png)
+![Access slow query page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-access-v620.png)
 
 -   ブラウザで[http://127.0.0.1:2379/dashboard/#/slow_query](http://127.0.0.1:2379/dashboard/#/slow_query)にアクセスします。 `127.0.0.1:2379`を実際の PD アドレスとポートに置き換えます。
 
@@ -29,19 +29,19 @@ TiDB ダッシュボードの [スロー クエリ] ページで、クラスタ�
 
 時間範囲、関連するデータベース、SQL キーワード、SQL タイプ、表示するスロー クエリの数に基づいて、スロー クエリをフィルタリングできます。下の画像では、最近 30 分間の 100 件のスロー クエリがデフォルトで表示されています。
 
-![Modify list filters](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-list1-v620.png)
+![Modify list filters](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list1-v620.png)
 
 ### より多くの列を表示 {#display-more-columns}
 
 ページの [**列]**をクリックすると、さらに列を表示するように選択できます。列名の右側にある<strong>(i)</strong>アイコンにマウスを移動すると、この列の説明が表示されます。
 
-![Show more columns](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-list2-v620.png)
+![Show more columns](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list2-v620.png)
 
 ### 列で並べ替え {#sort-by-column}
 
 デフォルトでは、リストは**終了時間**の降順でソートされます。列見出しをクリックして、列で並べ替えるか、並べ替え順序を切り替えます。
 
-![Modify sorting basis](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-list3-v620.png)
+![Modify sorting basis](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list3-v620.png)
 
 ## 実行の詳細をビュー {#view-execution-details}
 
@@ -51,7 +51,7 @@ TiDB ダッシュボードの [スロー クエリ] ページで、クラスタ�
 -   Plan: 遅いクエリの実行計画 (次の図の領域 2)
 -   その他ソート済みSQL実行情報（下図の領域3）
 
-![View execution details](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-detail1-v620.png)
+![View execution details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail1-v620.png)
 
 ### SQL {#sql}
 
@@ -65,7 +65,7 @@ TiDB ダッシュボードでは、グラフとテキストの 2 つの方法で
 
 次の図は、視覚的な実行計画を示しています。
 
-![Visual execution plan](https://download.pingcap.com/images/docs/dashboard/dashboard-visual-plan-2.png)
+![Visual execution plan](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-visual-plan-2.png)
 
 -   グラフは、左から右、上から下に実行を示します。
 -   上のノードは親オペレータで、下のノードは子オペレータです。
@@ -74,10 +74,10 @@ TiDB ダッシュボードでは、グラフとテキストの 2 つの方法で
 
 ノード領域をクリックすると、右側のサイドバーにオペレーターの詳細情報が表示されます。
 
-![Visual execution plan - sidebar](https://download.pingcap.com/images/docs/dashboard/dashboard-visual-plan-popup.png)
+![Visual execution plan - sidebar](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-visual-plan-popup.png)
 
 ### SQL実行の詳細 {#sql-execution-details}
 
 対応するタブのタイトルをクリックして、SQL 実行の情報を切り替えます。
 
-![Show different execution information](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-detail2-v620.png)
+![Show different execution information](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail2-v620.png)

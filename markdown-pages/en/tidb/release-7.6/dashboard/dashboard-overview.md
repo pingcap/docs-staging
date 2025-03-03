@@ -18,13 +18,13 @@ This page shows the overview of the entire TiDB cluster, including the following
 
 After logging in to TiDB Dashboard, the overview page is entered by default, or you can click **Overview** in the left navigation menu to enter this page:
 
-![Enter overview page](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-access-v650.png)
+![Enter overview page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-access-v650.png)
 
 ## QPS
 
 This area shows the number of successful and failed queries per second for the entire cluster over the recent hour:
 
-![QPS](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-qps.png)
+![QPS](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-qps.png)
 
 > **Note:**
 >
@@ -34,7 +34,7 @@ This area shows the number of successful and failed queries per second for the e
 
 This area shows the latency of 99.9%, 99%, and 90% of queries in the entire cluster over the recent one hour:
 
-![Latency](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-latency.png)
+![Latency](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-latency.png)
 
 > **Note:**
 >
@@ -44,7 +44,7 @@ This area shows the latency of 99.9%, 99%, and 90% of queries in the entire clus
 
 This area shows the ten types of SQL statements that have accumulated the longest execution time in the entire cluster over the recent period. SQL statements with different query parameters but of the same structure are classified into the same SQL type and displayed in the same row:
 
-![Top SQL](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-top-statements.png)
+![Top SQL](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-top-statements.png)
 
 The information shown in this area is consistent with the more detailed [SQL Statements Page](/dashboard/dashboard-statement-list.md). You can click the **Top SQL Statements** heading to view the complete list. For details of the columns in this table, see [SQL Statements Page](/dashboard/dashboard-statement-list.md).
 
@@ -56,7 +56,7 @@ The information shown in this area is consistent with the more detailed [SQL Sta
 
 By default, this area shows the latest 10 slow queries in the entire cluster over the recent 30 minutes:
 
-![Recent slow queries](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-slow-query.png)
+![Recent slow queries](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-slow-query.png)
 
 By default, the SQL query that is executed longer than 300 milliseconds is counted as a slow query and displayed on the table. You can change this threshold by modifying the [tidb_slow_log_threshold](/system-variables.md#tidb_slow_log_threshold) variable or the [instance.tidb_slow_log_threshold](/tidb-configuration-file.md#tidb_slow_log_threshold) TiDB parameter.
 
@@ -70,7 +70,7 @@ The content displayed in this area is consistent with the more detailed [Slow Qu
 
 This area summarizes the total number of instances and abnormal instances of TiDB, TiKV, PD, and TiFlash in the entire cluster:
 
-![Instances](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-instances.png)
+![Instances](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-instances.png)
 
 The statuses in the preceding image are described as follows:
 
@@ -83,7 +83,7 @@ Click the **Instance** title to enter the [Cluster Info Page](/dashboard/dashboa
 
 This area provides links for you to view detailed monitor and alert:
 
-![Monitor and alert](https://download.pingcap.com/images/docs/dashboard/dashboard-overview-monitor.png)
+![Monitor and alert](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-monitor.png)
 
 - **View Metrics**: Click this link to jump to the Grafana dashboard where you can view detailed monitoring information of the cluster. For details of each monitoring metric in the Grafana dashboard, see [monitoring metrics](/grafana-overview-dashboard.md).
 - **View Alerts**: Click this link to jump to the AlertManager page where you can view detailed alert information of the cluster. If alerts exist in the cluster, the number of alerts is directly shown in the link text.

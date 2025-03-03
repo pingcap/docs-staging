@@ -12,35 +12,35 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-create-index/','/docs-cn/v
 
 **CreateIndexStmt:**
 
-![CreateIndexStmt](https://download.pingcap.com/images/docs-cn/sqlgram/CreateIndexStmt.png)
+![CreateIndexStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CreateIndexStmt.png)
 
 **CreateIndexStmtUnique:**
 
-![CreateIndexStmtUnique](https://download.pingcap.com/images/docs-cn/sqlgram/CreateIndexStmtUnique.png)
+![CreateIndexStmtUnique](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CreateIndexStmtUnique.png)
 
 **Identifier:**
 
-![Identifier](https://download.pingcap.com/images/docs-cn/sqlgram/Identifier.png)
+![Identifier](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Identifier.png)
 
 **IndexTypeOpt:**
 
-![IndexTypeOpt](https://download.pingcap.com/images/docs-cn/sqlgram/IndexTypeOpt.png)
+![IndexTypeOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IndexTypeOpt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 **IndexColNameList:**
 
-![IndexColNameList](https://download.pingcap.com/images/docs-cn/sqlgram/IndexColNameList.png)
+![IndexColNameList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IndexColNameList.png)
 
 **IndexOptionList:**
 
-![IndexOptionList](https://download.pingcap.com/images/docs-cn/sqlgram/IndexOptionList.png)
+![IndexOptionList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IndexOptionList.png)
 
 **IndexOption:**
 
-![IndexOption](https://download.pingcap.com/images/docs-cn/sqlgram/IndexOption.png)
+![IndexOption](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IndexOption.png)
 
 ## 示例
 

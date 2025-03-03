@@ -29,7 +29,7 @@ aliases: ['/docs-cn/v3.0/grafana-pd-dashboard/','/docs-cn/v3.0/reference/key-mon
 - Current peer count：当前集群 peer 的总量
 - Region health：每个 Region 的状态，通常情况下，pending 的 peer 应该少于 100，miss 的 peer 不能一直大于 0
 
-![PD Dashboard - Cluster metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-cluster-v2.png)
+![PD Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-cluster-v2.png)
 
 ## Operator
 
@@ -44,7 +44,7 @@ aliases: ['/docs-cn/v3.0/grafana-pd-dashboard/','/docs-cn/v3.0/reference/key-mon
 - 99% Operator step duration：99% 已完成的 operator 步骤所花费的最长时间
 - 50% Operator step duration：50% 已完成的 operator 步骤所花费的最长时间
 
-![PD Dashboard - Operator metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-operator-v2.png)
+![PD Dashboard - Operator metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-operator-v2.png)
 
 ## Statistics - Balance
 
@@ -60,7 +60,7 @@ aliases: ['/docs-cn/v3.0/grafana-pd-dashboard/','/docs-cn/v3.0/reference/key-mon
 - Store leader count：每个 TiKV 实例上所有 leader 的数量
 - Store Region count：每个 TiKV 实例上所有 Region 的数量
 
-![PD Dashboard - Balance metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-balance-v2.png)
+![PD Dashboard - Balance metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-balance-v2.png)
 
 ## Statistics - hotspot
 
@@ -73,7 +73,7 @@ aliases: ['/docs-cn/v3.0/grafana-pd-dashboard/','/docs-cn/v3.0/reference/key-mon
 - Hot read Region's leader read bytes：每个 TiKV 实例上热点的 leader 的读取大小
 - Hot read Region's peer read bytes：每个 TiKV 实例上热点的 peer 的读取字节数
 
-![PD Dashboard - Hotspot metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-hotspot.png)
+![PD Dashboard - Hotspot metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-hotspot.png)
 
 ## Scheduler
 
@@ -92,14 +92,14 @@ aliases: ['/docs-cn/v3.0/grafana-pd-dashboard/','/docs-cn/v3.0/reference/key-mon
 - Balance Direction：Store 被选作调度 target 或 source 的次数
 - Store Limit：Store 的调度限流状态
 
-![PD Dashboard - Scheduler metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-scheduler-v2.png)
+![PD Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-scheduler-v2.png)
 
 ## gRPC
 
 - Completed commands rate：gRPC 命令的完成速率
 - 99% Completed commands duration：99% 命令的最长消耗时间
 
-![PD Dashboard - gRPC metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-grpc-v2.png)
+![PD Dashboard - gRPC metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-grpc-v2.png)
 
 ## etcd
 
@@ -112,14 +112,14 @@ aliases: ['/docs-cn/v3.0/grafana-pd-dashboard/','/docs-cn/v3.0/reference/key-mon
 - Raft committed index：最后一次 commit 的 Raft index
 - Raft applied index：最后一次 apply 的 Raft index
 
-![PD Dashboard - etcd metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-etcd-v2.png)
+![PD Dashboard - etcd metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-etcd-v2.png)
 
 ## TiDB
 
 - Handle requests count：TiDB 的请求数量
 - Handle requests duration：每个请求所花费的时间，99% 的情况下，应该小于 100ms
 
-![PD Dashboard - TiDB metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-tidb-v2.png)
+![PD Dashboard - TiDB metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-tidb-v2.png)
 
 ## Heartbeat
 
@@ -129,11 +129,11 @@ aliases: ['/docs-cn/v3.0/grafana-pd-dashboard/','/docs-cn/v3.0/reference/key-mon
 - Region schedule push：PD 向 TiKV 发送的调度命令的个数
 - 99% Region heartbeat latency：99% 的情况下，心跳的延迟
 
-![PD Dashboard - Heartbeat metrics](https://download.pingcap.com/images/docs-cn/pd-dashboard-heartbeat-v2.png)
+![PD Dashboard - Heartbeat metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-heartbeat-v2.png)
 
 ## Region storage
 
 - Syncer Index：Leader 记录 Region 变更历史的最大 index
 - history last index：Follower 成功同步的 Region 变更历史的 index
 
-![PD Dashboard - Region storage](https://download.pingcap.com/images/docs-cn/pd-dashboard-region-storage.png)
+![PD Dashboard - Region storage](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-region-storage.png)

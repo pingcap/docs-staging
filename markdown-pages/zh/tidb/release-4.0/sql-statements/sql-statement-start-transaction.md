@@ -14,7 +14,7 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-start-transaction/','/do
 
 **BeginTransactionStmt:**
 
-![BeginTransactionStmt](https://download.pingcap.com/images/docs-cn/sqlgram/BeginTransactionStmt.png)
+![BeginTransactionStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/BeginTransactionStmt.png)
 
 ## 示例
 

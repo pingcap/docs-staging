@@ -8,7 +8,7 @@ title: Data Migration Architecture
 
 DM は、DM-master、DM-worker、および dmctl の 3 つのコンポーネントで構成されています。
 
-![Data Migration architecture](https://download.pingcap.com/images/docs/dm/dm-architecture-2.0.png)
+![Data Migration architecture](https://docs-download.pingcap.com/media/images/docs/dm/dm-architecture-2.0.png)
 
 ## アーキテクチャコンポーネント {#architecture-components}
 

@@ -14,7 +14,7 @@ In the absence of a `BEGIN` or `START TRANSACTION` statement, the default behavi
 
 **CommitStmt:**
 
-![CommitStmt](https://download.pingcap.com/images/docs/sqlgram/CommitStmt.png)
+![CommitStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/CommitStmt.png)
 
 ## Examples
 

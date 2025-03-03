@@ -36,7 +36,7 @@ curl http://127.0.0.1:10080/status
 
 - PD API address: `http://${host}:${port}/pd/api/v1/${api_name}`
 - Default port: `2379`
-- Details about API names: see [PD API doc](https://download.pingcap.com/pd-api-v1.html)
+- Details about API names: see [PD API doc](https://docs-download.pingcap.com/api/pd-api/pd-api-v1.html)
 
 The PD interface provides the state of all the TiKV servers and the information about load balancing. See the following example for the information about a single-node TiKV cluster:
 
@@ -295,7 +295,7 @@ To import a Grafana dashboard for the PD server, the TiKV server, and the TiDB s
 
 Click **New dashboard** in the top menu and choose the dashboard you want to view.
 
-![view dashboard](https://download.pingcap.com/images/docs/view-dashboard.png)
+![view dashboard](https://docs-download.pingcap.com/media/images/docs/view-dashboard.png)
 
 You can get the following metrics for cluster components:
 

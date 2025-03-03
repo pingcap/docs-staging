@@ -12,7 +12,7 @@ The statements `SET NAMES`, `SET CHARACTER SET` and `SET CHARSET` modify the var
 
 **SetStmt:**
 
-![SetStmt](https://download.pingcap.com/images/docs/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetStmt.png)
 
 ## Examples
 

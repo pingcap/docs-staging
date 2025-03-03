@@ -13,7 +13,7 @@ TiSpark depends on the TiKV cluster and the PD cluster. You also need to set up 
 
 TiSpark is an OLAP solution that runs Spark SQL directly on TiKV, the distributed storage engine.
 
-![TiSpark architecture](https://download.pingcap.com/images/docs/tispark-architecture.png)
+![TiSpark architecture](https://docs-download.pingcap.com/media/images/docs/tispark-architecture.png)
 
 + TiSpark integrates with Spark Catalyst Engine deeply. It provides precise control of the computing, which allows Spark read data from TiKV efficiently. It also supports index seek, which improves the performance of the point query execution significantly.
 + It utilizes several strategies to push down the computing to reduce the size of dataset handling by Spark SQL, which accelerates the query execution. It also uses the TiDB built-in statistical information for the query plan optimization.

@@ -12,23 +12,23 @@ The `REPLACE` statement is semantically a combined `DELETE`+`INSERT` statement. 
 
 **ReplaceIntoStmt:**
 
-![ReplaceIntoStmt](https://download.pingcap.com/images/docs/sqlgram/ReplaceIntoStmt.png)
+![ReplaceIntoStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ReplaceIntoStmt.png)
 
 **PriorityOpt:**
 
-![PriorityOpt](https://download.pingcap.com/images/docs/sqlgram/PriorityOpt.png)
+![PriorityOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/PriorityOpt.png)
 
 **IntoOpt:**
 
-![IntoOpt](https://download.pingcap.com/images/docs/sqlgram/IntoOpt.png)
+![IntoOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/IntoOpt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 **InsertValues:**
 
-![InsertValues](https://download.pingcap.com/images/docs/sqlgram/InsertValues.png)
+![InsertValues](https://docs-download.pingcap.com/media/images/docs/sqlgram/InsertValues.png)
 
 ## Examples
 

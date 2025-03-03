@@ -7,7 +7,7 @@ summary: This document describes best practices for configuration and usage of H
 
 このドキュメントでは、TiDB での[HAProxy](https://github.com/haproxy/haproxy)の構成と使用に関するベスト プラクティスについて説明します。 HAProxy は、TCP ベースのアプリケーションの負荷分散を提供します。 TiDB クライアントからは、HAProxy が提供するフローティング仮想 IP アドレスに接続するだけでデータを操作できるため、TiDBサーバーレイヤーでの負荷分散に役立ちます。
 
-![HAProxy Best Practices in TiDB](https://download.pingcap.com/images/docs/haproxy.jpg)
+![HAProxy Best Practices in TiDB](https://docs-download.pingcap.com/media/images/docs/haproxy.jpg)
 
 ## HAProxy の概要 {#haproxy-overview}
 
@@ -77,21 +77,21 @@ HAProxy を使用すると、負荷分散されたデータベース環境を簡
 
 1.  HAProxy 2.5.0 ソース コードのパッケージをダウンロードします。
 
-    
+
     ```bash
     wget https://github.com/haproxy/haproxy/archive/refs/tags/v2.5.0.zip
     ```
 
 2.  パッケージを解凍します。
 
-    
+
     ```bash
     unzip v2.5.0.zip
     ```
 
 3.  ソース コードからアプリケーションをコンパイルします。
 
-    
+
     ```bash
     cd haproxy-2.5.0
     make clean
@@ -101,14 +101,14 @@ HAProxy を使用すると、負荷分散されたデータベース環境を簡
 
 4.  プロファイルを再構成します。
 
-    
+
     ```bash
     echo 'export PATH=/app/haproxy/bin:$PATH' >> /etc/profile
     ```
 
 5.  インストールが成功したかどうかを確認します。
 
-    
+
     ```bash
     which haproxy
     ```
@@ -200,7 +200,7 @@ listen tidb-cluster                        # Database load balancing.
 `SHOW PROCESSLIST`を使用して送信元 IP アドレスを確認するには、TiDB に接続するように[プロキシ プロトコル](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt)を構成する必要があります。
 
 ```yaml
-   server tidb-1 10.9.18.229:4000 send-proxy check inter 2000 rise 2 fall 3       
+   server tidb-1 10.9.18.229:4000 send-proxy check inter 2000 rise 2 fall 3
    server tidb-2 10.9.39.208:4000 send-proxy check inter 2000 rise 2 fall 3
    server tidb-3 10.9.64.166:4000 send-proxy check inter 2000 rise 2 fall 3
 ```
@@ -224,14 +224,14 @@ HAProxy を停止するには、 `kill -9`コマンドを使用します。
 
 1.  次のコマンドを実行します。
 
-    
+
     ```bash
     ps -ef | grep haproxy
     ```
 
 2.  HAProxy のプロセスを終了します。
 
-    
+
     ```bash
     kill -9 ${haproxy.pid}
     ```

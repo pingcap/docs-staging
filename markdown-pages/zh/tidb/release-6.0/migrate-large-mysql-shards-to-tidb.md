@@ -11,7 +11,7 @@ summary: 使用 Dumpling 和 TiDB Lightning 合并导入分表数据到 TiDB，�
 
 使用 TiDB Lightning 快速合并导入的原理如下图所示。
 
-![使用 Dumpling 和 TiDB Lightning 合并导入分表数据](https://download.pingcap.com/images/docs-cn/lightning/shard-merge-using-lightning.png)
+![使用 Dumpling 和 TiDB Lightning 合并导入分表数据](https://docs-download.pingcap.com/media/images/docs-cn/lightning/shard-merge-using-lightning.png)
 
 在这个示例中，假设有两个数据库 my_db1 和 my_db2 ，使用 Dumpling 分别从 my_db1 中导出 table1 和 table2 两个表，从 my_db2 中导出 table3 和 table4 两个表，然后再用 TiDB Lightning 把导出的 4 个表合并导入到下游 TiDB 中的同一个库 my_db 的同一个表格 table5 中。
 
@@ -136,7 +136,7 @@ CREATE TABLE `table5` (
 
 1. 编写配置文件`tidb-lightning.toml`。
 
-    
+
     ```
 
     [lightning]
@@ -184,7 +184,7 @@ CREATE TABLE `table5` (
 
     若从 S3 导入，则需将有权限访问该 Amazon S3 后端存储的账号的 SecretKey 和 AccessKey 作为环境变量传入 Lightning 节点。同时还支持从 `~/.aws/credentials` 读取凭证文件。
 
-    
+
     ```shell
     export AWS_ACCESS_KEY_ID=${access_key}
     export AWS_SECRET_ACCESS_KEY=${secret_key}

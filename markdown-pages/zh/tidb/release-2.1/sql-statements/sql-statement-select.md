@@ -12,51 +12,51 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-select/','/docs-cn/v2.1/re
 
 **SelectStmt:**
 
-![SelectStmt](https://download.pingcap.com/images/docs-cn/sqlgram/SelectStmt.png)
+![SelectStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SelectStmt.png)
 
 **FromDual:**
 
-![FromDual](https://download.pingcap.com/images/docs-cn/sqlgram/FromDual.png)
+![FromDual](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/FromDual.png)
 
 **WhereClauseOptional:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs-cn/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/WhereClauseOptional.png)
 
 **SelectStmtOpts:**
 
-![SelectStmtOpts](https://download.pingcap.com/images/docs-cn/sqlgram/SelectStmtOpts.png)
+![SelectStmtOpts](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SelectStmtOpts.png)
 
 **SelectStmtFieldList:**
 
-![SelectStmtFieldList](https://download.pingcap.com/images/docs-cn/sqlgram/SelectStmtFieldList.png)
+![SelectStmtFieldList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SelectStmtFieldList.png)
 
 **TableRefsClause:**
 
-![TableRefsClause](https://download.pingcap.com/images/docs-cn/sqlgram/TableRefsClause.png)
+![TableRefsClause](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableRefsClause.png)
 
 **WhereClauseOptional:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs-cn/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/WhereClauseOptional.png)
 
 **SelectStmtGroup:**
 
-![SelectStmtGroup](https://download.pingcap.com/images/docs-cn/sqlgram/SelectStmtGroup.png)
+![SelectStmtGroup](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SelectStmtGroup.png)
 
 **HavingClause:**
 
-![HavingClause](https://download.pingcap.com/images/docs-cn/sqlgram/HavingClause.png)
+![HavingClause](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/HavingClause.png)
 
 **OrderByOptional:**
 
-![OrderByOptional](https://download.pingcap.com/images/docs-cn/sqlgram/OrderByOptional.png)
+![OrderByOptional](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/OrderByOptional.png)
 
 **SelectStmtLimit:**
 
-![SelectStmtLimit](https://download.pingcap.com/images/docs-cn/sqlgram/SelectStmtLimit.png)
+![SelectStmtLimit](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SelectStmtLimit.png)
 
 **SelectLockOpt:**
 
-![SelectLockOpt](https://download.pingcap.com/images/docs-cn/sqlgram/SelectLockOpt.png)
+![SelectLockOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SelectLockOpt.png)
 
 ## 语法元素说明
 

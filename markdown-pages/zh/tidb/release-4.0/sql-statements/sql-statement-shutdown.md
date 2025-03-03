@@ -12,7 +12,7 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-shutdown/','/docs-cn/v4.
 
 **Statement:**
 
-![Statement](https://download.pingcap.com/images/docs-cn/sqlgram/ShutdownStmt.png)
+![Statement](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShutdownStmt.png)
 
 ## 示例
 

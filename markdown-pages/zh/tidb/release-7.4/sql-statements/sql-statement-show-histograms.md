@@ -11,15 +11,15 @@ summary: TiDB 数据库中 SHOW HISTOGRAMS 语句的简单说明。
 
 **ShowStmt**
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowStmt.png)
 
 **ShowTargetFiltertable**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTargetFilterable.png)
 
 **ShowLikeOrWhereOpt**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## 示例
 

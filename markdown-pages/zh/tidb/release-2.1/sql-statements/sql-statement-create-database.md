@@ -12,23 +12,23 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-create-database/','/docs-c
 
 **CreateDatabaseStmt:**
 
-![CreateDatabaseStmt](https://download.pingcap.com/images/docs-cn/sqlgram/CreateDatabaseStmt.png)
+![CreateDatabaseStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CreateDatabaseStmt.png)
 
 **DatabaseSym:**
 
-![DatabaseSym](https://download.pingcap.com/images/docs-cn/sqlgram/DatabaseSym.png)
+![DatabaseSym](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DatabaseSym.png)
 
 **IfNotExists:**
 
-![IfNotExists](https://download.pingcap.com/images/docs-cn/sqlgram/IfNotExists.png)
+![IfNotExists](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IfNotExists.png)
 
 **DBName:**
 
-![DBName](https://download.pingcap.com/images/docs-cn/sqlgram/DBName.png)
+![DBName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DBName.png)
 
 **DatabaseOptionListOpt:**
 
-![DatabaseOptionListOpt](https://download.pingcap.com/images/docs-cn/sqlgram/DatabaseOptionListOpt.png)
+![DatabaseOptionListOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DatabaseOptionListOpt.png)
 
 ## 语法说明
 

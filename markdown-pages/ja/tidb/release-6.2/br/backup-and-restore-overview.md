@@ -15,7 +15,7 @@ BR は、各 TiKV ノードにバックアップまたは復元コマンドを�
 
 各 TiKV ノードには、バックアップ操作で生成されたバックアップ ファイルが格納されるパスと、復元時に格納されたバックアップ ファイルが読み込まれるパスがあります。
 
-![br-arch](https://download.pingcap.com/images/docs/br-arch.png)
+![br-arch](https://docs-download.pingcap.com/media/images/docs/br-arch.png)
 
 BR 設計の詳細については、 [BR の設計原則](/br/backup-and-restore-design.md)を参照してください。
 

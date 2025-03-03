@@ -12,7 +12,7 @@ In TiFlash, the columnar replicas are asynchronously replicated according to the
 
 ## Architecture
 
-![TiFlash Architecture](https://download.pingcap.com/images/docs/tidb-storage-architecture.png)
+![TiFlash Architecture](https://docs-download.pingcap.com/media/images/docs/tidb-storage-architecture.png)
 
 The above figure is the architecture of TiDB in its HTAP form, including TiFlash nodes.
 
@@ -56,7 +56,7 @@ Every time TiFlash receives a read request, the Region replica sends a progress 
 
 ### Intelligent choice
 
-TiDB can automatically choose to use TiFlash (column-wise) or TiKV (row-wise), or use both of them in one query to ensure the best performance. 
+TiDB can automatically choose to use TiFlash (column-wise) or TiKV (row-wise), or use both of them in one query to ensure the best performance.
 
 This selection mechanism is similar to that of TiDB which chooses different indexes to execute query. TiDB optimizer makes the appropriate choice based on statistics of the read cost.
 

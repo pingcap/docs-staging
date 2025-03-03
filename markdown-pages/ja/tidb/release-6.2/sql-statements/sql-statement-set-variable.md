@@ -15,11 +15,11 @@ summary: An overview of the usage of SET [GLOBAL|SESSION] <variable> for the TiD
 
 **SetStmt:**
 
-![SetStmt](https://download.pingcap.com/images/docs/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetStmt.png)
 
 **変数割り当て:**
 
-![VariableAssignment](https://download.pingcap.com/images/docs/sqlgram/VariableAssignment.png)
+![VariableAssignment](https://docs-download.pingcap.com/media/images/docs/sqlgram/VariableAssignment.png)
 
 ## 例 {#examples}
 

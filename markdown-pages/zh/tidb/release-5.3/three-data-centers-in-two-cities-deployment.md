@@ -25,7 +25,7 @@ TiDB 分布式数据库通过 Raft 算法原生支持两地三中心架构的建
 - 集群采用 5 副本模式，其中 IDC1 和 IDC2 分别放 2 个副本，IDC3 放 1 个副本；TiKV 按机柜打 Label，既每个机柜上有一份副本。
 - 副本间通过 Raft 协议保证数据的一致性和高可用，对用户完全透明。
 
-![两地三中心集群架构图](https://download.pingcap.com/images/docs-cn/three-data-centers-in-two-cities-deployment-01.png)
+![两地三中心集群架构图](https://docs-download.pingcap.com/media/images/docs-cn/three-data-centers-in-two-cities-deployment-01.png)
 
 该架构具备高可用能力，同时通过 PD 调度限制了 Region Leader 尽量只出现在同城的两个数据中心，这相比于三数据中心，即 Region Leader 分布不受限制的方案有以下优缺点：
 
@@ -45,7 +45,7 @@ TiDB 分布式数据库通过 Raft 算法原生支持两地三中心架构的建
 
 北京、西安两地三中心配置详解：
 
-![两地三中心配置详图](https://download.pingcap.com/images/docs-cn/three-data-centers-in-two-cities-deployment-02.png)
+![两地三中心配置详图](https://docs-download.pingcap.com/media/images/docs-cn/three-data-centers-in-two-cities-deployment-02.png)
 
 - 如上图所示，北京有两个机房 IDC1 和 IDC2，机房 IDC1 中有三套机架 RAC1、RAC2、RAC3，机房 IDC2 有机架 RAC4、RAC5；西安机房 IDC3 有机架 RAC6。
 - 如上图中 RAC1 机架所示，TiDB、PD 服务部署在同一台服务器上，还有两台 TiKV 服务器；每台 TiKV 服务器部署 2 个 TiKV 实例 (tikv-server)，RAC2、RAC4、RAC5、RAC6 类似。
@@ -125,7 +125,7 @@ alertmanager_servers:
 
 在两地三中心部署方式下，对于 Labels 的设计需要充分考虑到系统的可用性和容灾能力，建议根据部署的物理结构来定义 DC、ZONE、RACK、HOST 四个等级。
 
-![Label 逻辑定义图](https://download.pingcap.com/images/docs-cn/three-data-centers-in-two-cities-deployment-03.png)
+![Label 逻辑定义图](https://docs-download.pingcap.com/media/images/docs-cn/three-data-centers-in-two-cities-deployment-03.png)
 
 PD 设置中添加 TiKV label 的等级配置。
 
@@ -184,7 +184,7 @@ tikv_servers:
     ```
     config set label-property reject-leader dc 3
     ```
-  
+
     > **注意：**
     >
     > TiDB 5.2 及以上版本默认不支持 `label-property` 配置。若要设置副本策略，请使用 [Placement Rules](/configure-placement-rules.md)。

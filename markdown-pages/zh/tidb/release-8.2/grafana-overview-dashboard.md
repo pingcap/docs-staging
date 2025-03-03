@@ -83,4 +83,4 @@ summary: TiUP 部署 TiDB 集群时，一键部署监控系统 (Prometheus & Gra
 
 ## 图例
 
-![overview](https://download.pingcap.com/images/docs-cn/grafana_monitor_overview.png)
+![overview](https://docs-download.pingcap.com/media/images/docs-cn/grafana_monitor_overview.png)

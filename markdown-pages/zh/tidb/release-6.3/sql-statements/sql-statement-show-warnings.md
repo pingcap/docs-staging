@@ -11,7 +11,7 @@ summary: TiDB 数据库中 SHOW WARNINGS 的使用概况。
 
 **ShowWarningsStmt:**
 
-![ShowWarningsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowWarningsStmt.png)
+![ShowWarningsStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowWarningsStmt.png)
 
 ## 示例
 

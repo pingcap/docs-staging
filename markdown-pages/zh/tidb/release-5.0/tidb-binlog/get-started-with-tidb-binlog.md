@@ -29,7 +29,7 @@ TiDB Binlog 支持以下功能场景：
 
 TiDB Binlog 集群由 **Pump** 和 **Drainer** 两个组件组成。一个 Pump 集群中有若干个 Pump 节点。TiDB 实例连接到各个 Pump 节点并发送 binlog 数据到 Pump 节点。Pump 集群连接到 Drainer 节点，Drainer 将接收到的更新数据转换到某个特定下游（例如 Kafka、另一个 TiDB 集群或 MySQL 或 MariaDB Server）指定的正确格式。
 
-![TiDB Binlog architecture](https://download.pingcap.com/images/docs-cn/tidb-binlog-cluster-architecture.png)
+![TiDB Binlog architecture](https://docs-download.pingcap.com/media/images/docs-cn/tidb-binlog-cluster-architecture.png)
 
 Pump 的集群架构能确保 TiDB 或 Pump 集群中有新的实例加入或退出时更新数据不会丢失。
 
@@ -62,7 +62,7 @@ cd tidb-latest-linux-amd64
 
 1. 填充配置文件：
 
-    
+
     ```bash
     printf > pd.toml %s\\n 'log-file="pd.log"' 'data-dir="pd.data"' &&
     printf > tikv.toml %s\\n 'log-file="tikv.log"' '[storage]' 'data-dir="tikv.data"' '[pd]' 'endpoints=["127.0.0.1:2379"]' '[rocksdb]' max-open-files=1024 '[raftdb]' max-open-files=1024 &&
@@ -73,7 +73,7 @@ cd tidb-latest-linux-amd64
 
 2. 查看配置细节：
 
-    
+
     ```bash
     for f in *.toml; do echo "$f:"; cat "$f"; echo; done
     ```
@@ -128,7 +128,7 @@ cd tidb-latest-linux-amd64
 
 1. 启动所有服务：
 
-    
+
     ```bash
     ./bin/pd-server --config=pd.toml &>pd.out &
     ```
@@ -137,7 +137,7 @@ cd tidb-latest-linux-amd64
     [1] 20935
     ```
 
-    
+
     ```bash
     ./bin/tikv-server --config=tikv.toml &>tikv.out &
     ```
@@ -146,7 +146,7 @@ cd tidb-latest-linux-amd64
     [2] 20944
     ```
 
-    
+
     ```bash
     ./bin/pump --config=pump.toml &>pump.out &
     ```
@@ -155,7 +155,7 @@ cd tidb-latest-linux-amd64
     [3] 21050
     ```
 
-    
+
     ```bash
     sleep 3 &&
     ./bin/tidb-server --config=tidb.toml &>tidb.out &
@@ -167,7 +167,7 @@ cd tidb-latest-linux-amd64
 
 2. 如果执行 `jobs`，可以看到后台正在运行的程序，列表如下：
 
-    
+
     ```bash
     jobs
     ```
@@ -208,7 +208,7 @@ Check Table Before Drop: false
 
 1. 启动 `drainer`：
 
-    
+
     ```bash
     sudo systemctl start mariadb &&
     ./bin/drainer --config=drainer.toml &>drainer.out &
@@ -216,7 +216,7 @@ Check Table Before Drop: false
 
     如果你的操作系统更易于安装 MySQL，只需保证监听 3306 端口。另外，可使用密码为空的 "root" 用户连接到 MySQL，或调整 `drainer.toml` 连接到 MySQL。
 
-    
+
     ```bash
     mysql -h 127.0.0.1 -P 3306 -u root
     ```
@@ -235,7 +235,7 @@ Check Table Before Drop: false
     MariaDB [(none)]>
     ```
 
-    
+
     ```sql
     show databases;
     ```
@@ -257,7 +257,7 @@ Check Table Before Drop: false
 
     如下表格是包含 `checkpoint` 表格的 `tidb_binlog` 数据库。`drainer` 使用 `checkpoint` 表格，记录 TiDB 集群中的 binlog 已经更新到了哪个位置。
 
-    
+
     ```sql
     use tidb_binlog;
     ```
@@ -266,7 +266,7 @@ Check Table Before Drop: false
     Database changed
     ```
 
-    
+
     ```sql
     select * from checkpoint;
     ```
@@ -282,12 +282,12 @@ Check Table Before Drop: false
 
     打开另一个连接到 TiDB 的客户端，创建一个表格并插入几行数据。建议在 GNU Screen 软件中操作，从而同时打开多个客户端。
 
-    
+
     ```bash
     mysql -h 127.0.0.1 -P 4000 --prompt='TiDB [\d]> ' -u root
     ```
 
-    
+
     ```sql
     create database tidbtest;
     ```
@@ -296,7 +296,7 @@ Check Table Before Drop: false
     Query OK, 0 rows affected (0.12 sec)
     ```
 
-    
+
     ```sql
     use tidbtest;
     ```
@@ -305,7 +305,7 @@ Check Table Before Drop: false
     Database changed
     ```
 
-    
+
     ```sql
     create table t1 (id int unsigned not null AUTO_INCREMENT primary key);
     ```
@@ -314,7 +314,7 @@ Check Table Before Drop: false
     Query OK, 0 rows affected (0.11 sec)
     ```
 
-    
+
     ```sql
     insert into t1 () values (),(),(),(),();
     ```
@@ -324,7 +324,7 @@ Check Table Before Drop: false
     Records: 5  Duplicates: 0  Warnings: 0
     ```
 
-    
+
     ```sql
     select * from t1;
     ```
@@ -344,7 +344,7 @@ Check Table Before Drop: false
 
     切换回 MariaDB 客户端可看到新的数据库、新的表格和最近插入的行数据。
 
-    
+
     ```sql
     use tidbtest;
     ```
@@ -356,7 +356,7 @@ Check Table Before Drop: false
     Database changed
     ```
 
-    
+
     ```sql
     show tables;
     ```
@@ -370,7 +370,7 @@ Check Table Before Drop: false
     1 row in set (0.00 sec)
     ```
 
-    
+
     ```sql
     select * from t1;
     ```

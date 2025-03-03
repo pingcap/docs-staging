@@ -12,11 +12,11 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-rename-index/','/docs-cn/v
 
 **AlterTableStmt:**
 
-![AlterTableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/AlterTableStmt.png)
+![AlterTableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/AlterTableStmt.png)
 
 **KeyOrIndex:**
 
-![KeyOrIndex](https://download.pingcap.com/images/docs-cn/sqlgram/KeyOrIndex.png)
+![KeyOrIndex](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/KeyOrIndex.png)
 
 ## 示例
 

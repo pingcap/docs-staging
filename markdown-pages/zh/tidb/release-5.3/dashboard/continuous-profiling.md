@@ -38,7 +38,7 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
 1. 检查 TiUP 版本：
 
-    
+
     ```shell
     tiup cluster --version
     ```
@@ -57,14 +57,14 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
     - 升级 TiUP：
 
-        
+
         ```shell
         tiup update --self
         ```
 
     - 升级 TiUP Cluster：
 
-        
+
         ```shell
         tiup update cluster
         ```
@@ -77,7 +77,7 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
     1. 使用集群中控机，使用 TiUP 工具，以编辑模式打开该集群的配置文件：
 
-        
+
         ```shell
         tiup cluster edit-config ${cluster-name}
         ```
@@ -92,7 +92,7 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
     3. 重启 Prometheus 节点：
 
-        
+
         ```shell
         tiup cluster reload ${cluster-name} --role prometheus
         ```
@@ -105,7 +105,7 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
     2. 点击**打开设置** (Open Settings)。在右侧**设置** (Settings) 页面，将**启用特性** (Enable Feature) 下方的开关打开。设置**保留时间** (Retention Period) 或保留默认值。
     3. 点击**保存** (Save)。
 
-    ![启用功能](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-start.png)
+    ![启用功能](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-start.png)
 
 ## 访问页面
 
@@ -113,7 +113,7 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
 - 登录后，左侧导航条点击**高级调试** (Advanced Debugging) > **实例性能分析** (Profile Instances) > **持续分析** (Continuous Profile)：
 
-  ![访问页面](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-access.png)
+  ![访问页面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-access.png)
 
 - 在浏览器中访问 <http://127.0.0.1:2379/dashboard/#/continuous_profiling>（将 `127.0.0.1:2379` 替换为实际 PD 实例地址和端口）。
 
@@ -121,7 +121,7 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
 开始持续性能分析后，可以在列表中看到已经完成的性能分析结果：
 
-![历史结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-history.png)
+![历史结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-history.png)
 
 性能分析会在后台运行，刷新或退出当前页面不会终止已经运行的性能分析任务。
 
@@ -129,11 +129,11 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 
 进入某次分析结果后，可点击右上角下载按钮 (Download Profiling Result) 打包下载所有性能分析结果：
 
-![下载某次分析结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-download.png)
+![下载某次分析结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-download.png)
 
 也可以点击列表中的单个实例，直接查看其性能分析结果：
 
-![查看单个实例分析结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-single.png)
+![查看单个实例分析结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-single.png)
 
 ## 停用持续性能分析
 
@@ -142,4 +142,4 @@ summary: TiDB Dashboard 持续性能分析功能 (Continuous Profiling)
 3. 在弹出的**停用持续分析** (Disable Continuous Profiling Feature) 对话框中，选择**停用** (Disable)。
 4. 点击**保存** (Save)。
 
-![停用功能](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-conprof-stop.png)
+![停用功能](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-conprof-stop.png)

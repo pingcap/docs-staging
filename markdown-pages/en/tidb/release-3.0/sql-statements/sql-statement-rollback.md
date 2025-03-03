@@ -12,7 +12,7 @@ This statement reverts all changes in the current transaction inside of TIDB.  I
 
 **Statement:**
 
-![Statement](https://download.pingcap.com/images/docs/sqlgram/Statement.png)
+![Statement](https://docs-download.pingcap.com/media/images/docs/sqlgram/Statement.png)
 
 ## Examples
 

@@ -19,23 +19,23 @@ SHOW TABLE [table_name] INDEX [index_name] REGIONS [WhereClauseOptional];
 
 **ShowTableRegionStmt:**
 
-![ShowTableRegionStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTableRegionStmt.png)
+![ShowTableRegionStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTableRegionStmt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 **PartitionNameListOpt:**
 
-![PartitionNameListOpt](https://download.pingcap.com/images/docs-cn/sqlgram/PartitionNameListOpt.png)
+![PartitionNameListOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/PartitionNameListOpt.png)
 
 **WhereClauseOptional:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs-cn/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/WhereClauseOptional.png)
 
 **WhereClause:**
 
-![WhereClause](https://download.pingcap.com/images/docs-cn/sqlgram/WhereClause.png)
+![WhereClause](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/WhereClause.png)
 
 `SHOW TABLE REGIONS` 会返回如下列：
 

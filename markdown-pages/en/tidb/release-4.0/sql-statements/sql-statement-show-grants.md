@@ -12,23 +12,23 @@ This statement shows a list of privileges associated with a user. As in MySQL, t
 
 **ShowGrantsStmt:**
 
-![ShowGrantsStmt](https://download.pingcap.com/images/docs/sqlgram/ShowGrantsStmt.png)
+![ShowGrantsStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowGrantsStmt.png)
 
 **Username:**
 
-![Username](https://download.pingcap.com/images/docs/sqlgram/Username.png)
+![Username](https://docs-download.pingcap.com/media/images/docs/sqlgram/Username.png)
 
 **UsingRoles:**
 
-![UsingRoles](https://download.pingcap.com/images/docs/sqlgram/UsingRoles.png)
+![UsingRoles](https://docs-download.pingcap.com/media/images/docs/sqlgram/UsingRoles.png)
 
 **RolenameList:**
 
-![RolenameList](https://download.pingcap.com/images/docs/sqlgram/RolenameList.png)
+![RolenameList](https://docs-download.pingcap.com/media/images/docs/sqlgram/RolenameList.png)
 
 **Rolename:**
 
-![Rolename](https://download.pingcap.com/images/docs/sqlgram/Rolename.png)
+![Rolename](https://docs-download.pingcap.com/media/images/docs/sqlgram/Rolename.png)
 
 ## Examples
 

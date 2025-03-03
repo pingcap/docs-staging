@@ -11,23 +11,23 @@ summary: TiDB 数据库中 SHOW INDEXES [FROM|IN] 的使用概况。
 
 **ShowIndexStmt:**
 
-![ShowIndexStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowIndexStmt.png)
+![ShowIndexStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowIndexStmt.png)
 
 **ShowIndexKwd:**
 
-![ShowIndexKwd](https://download.pingcap.com/images/docs-cn/sqlgram/ShowIndexKwd.png)
+![ShowIndexKwd](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowIndexKwd.png)
 
 **FromOrIn:**
 
-![FromOrIn](https://download.pingcap.com/images/docs-cn/sqlgram/FromOrIn.png)
+![FromOrIn](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/FromOrIn.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 **ShowLikeOrWhereOpt:**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## 示例
 
@@ -49,9 +49,9 @@ SHOW INDEXES FROM t1;
 +-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
 | Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible | Expression |
 +-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
-| t1    |          0 | PRIMARY  |            1 | id          | A         |           0 |     NULL | NULL   |      | BTREE      |         |               | YES 
+| t1    |          0 | PRIMARY  |            1 | id          | A         |           0 |     NULL | NULL   |      | BTREE      |         |               | YES
     | NULL       |
-| t1    |          1 | col1     |            1 | col1        | A         |           0 |     NULL | NULL   | YES  | BTREE      |         |               | YES 
+| t1    |          1 | col1     |            1 | col1        | A         |           0 |     NULL | NULL   | YES  | BTREE      |         |               | YES
     | NULL       |
 +-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
 2 rows in set (0.00 sec)
@@ -66,9 +66,9 @@ SHOW INDEX FROM t1;
 +-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
 | Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible | Expression |
 +-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
-| t1    |          0 | PRIMARY  |            1 | id          | A         |           0 |     NULL | NULL   |      | BTREE      |         |               | YES 
+| t1    |          0 | PRIMARY  |            1 | id          | A         |           0 |     NULL | NULL   |      | BTREE      |         |               | YES
     | NULL       |
-| t1    |          1 | col1     |            1 | col1        | A         |           0 |     NULL | NULL   | YES  | BTREE      |         |               | YES 
+| t1    |          1 | col1     |            1 | col1        | A         |           0 |     NULL | NULL   | YES  | BTREE      |         |               | YES
     | NULL       |
 +-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
 2 rows in set (0.00 sec)
@@ -83,9 +83,9 @@ SHOW KEYS FROM t1;
 +-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
 | Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible | Expression |
 +-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
-| t1    |          0 | PRIMARY  |            1 | id          | A         |           0 |     NULL | NULL   |      | BTREE      |         |               | YES 
+| t1    |          0 | PRIMARY  |            1 | id          | A         |           0 |     NULL | NULL   |      | BTREE      |         |               | YES
     | NULL       |
-| t1    |          1 | col1     |            1 | col1        | A         |           0 |     NULL | NULL   | YES  | BTREE      |         |               | YES 
+| t1    |          1 | col1     |            1 | col1        | A         |           0 |     NULL | NULL   | YES  | BTREE      |         |               | YES
     | NULL       |
 +-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
 2 rows in set (0.00 sec)

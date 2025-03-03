@@ -20,13 +20,13 @@ Prometheus consists of multiple components. Currently, TiDB uses the following o
 
 The diagram is as follows:
 
-![diagram](https://download.pingcap.com/images/docs/prometheus-in-tidb.png)
+![diagram](https://docs-download.pingcap.com/media/images/docs/prometheus-in-tidb.png)
 
 ## About Grafana in TiDB
 
 Grafana is an open source project for analyzing and visualizing metrics. TiDB uses Grafana to display the performance metrics as follows:
 
-![Grafana monitored_groups](https://download.pingcap.com/images/docs/grafana-monitored-groups.png)
+![Grafana monitored_groups](https://docs-download.pingcap.com/media/images/docs/grafana-monitored-groups.png)
 
 - {TiDB_Cluster_name}-Backup-Restore: Monitoring metrics related to backup and restore.
 - {TiDB_Cluster_name}-Binlog: Monitoring metrics related to TiDB Binlog.
@@ -50,4 +50,4 @@ Grafana is an open source project for analyzing and visualizing metrics. TiDB us
 
 Each group has multiple panel labels of monitoring metrics, and each panel contains detailed information of multiple monitoring metrics. For example, the **Overview** monitoring group has five panel labels, and each labels corresponds to a monitoring panel. See the following UI:
 
-![Grafana Overview](https://download.pingcap.com/images/docs/grafana-monitor-overview.png)
+![Grafana Overview](https://docs-download.pingcap.com/media/images/docs/grafana-monitor-overview.png)

@@ -12,7 +12,7 @@ The `SHOW PROFILES` statement currently only returns an empty result.
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStmt.png)
 
 ## Examples
 

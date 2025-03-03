@@ -12,31 +12,31 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-set-names/','/docs-cn/v4
 
 **SetNamesStmt:**
 
-![SetNamesStmt](https://download.pingcap.com/images/docs-cn/sqlgram/SetNamesStmt.png)
+![SetNamesStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SetNamesStmt.png)
 
 **VariableAssignmentList:**
 
-![VariableAssignmentList](https://download.pingcap.com/images/docs-cn/sqlgram/VariableAssignmentList.png)
+![VariableAssignmentList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/VariableAssignmentList.png)
 
 **VariableAssignment:**
 
-![VariableAssignment](https://download.pingcap.com/images/docs-cn/sqlgram/VariableAssignment.png)
+![VariableAssignment](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/VariableAssignment.png)
 
 **CharsetName:**
 
-![CharsetName](https://download.pingcap.com/images/docs-cn/sqlgram/CharsetName.png)
+![CharsetName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CharsetName.png)
 
 **StringName:**
 
-![StringName](https://download.pingcap.com/images/docs-cn/sqlgram/StringName.png)
+![StringName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/StringName.png)
 
 **CharsetKw:**
 
-![CharsetKw](https://download.pingcap.com/images/docs-cn/sqlgram/CharsetKw.png)
+![CharsetKw](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CharsetKw.png)
 
 **CharsetNameOrDefault:**
 
-![CharsetNameOrDefault](https://download.pingcap.com/images/docs-cn/sqlgram/CharsetNameOrDefault.png)
+![CharsetNameOrDefault](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CharsetNameOrDefault.png)
 
 ## 示例
 

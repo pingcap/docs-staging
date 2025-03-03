@@ -126,7 +126,7 @@ In the preceding example, the query cannot hit the cache because the non-prepare
 
 After enabling the non-prepared plan cache, you can monitor the memory usage, number of plans in the cache, and cache hit rate in the following panes:
 
-![non-prepare-plan-cache](https://download.pingcap.com/images/docs/tidb-non-prepared-plan-cache-metrics.png)
+![non-prepare-plan-cache](https://docs-download.pingcap.com/media/images/docs/tidb-non-prepared-plan-cache-metrics.png)
 
 You can also monitor the cache hit rate in the `statements_summary` table and slow query log. The following shows how to view the cache hit rate in the `statements_summary` table:
 

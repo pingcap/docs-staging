@@ -20,7 +20,7 @@ TiDB Binlog 支持以下功能场景:
 
 首先介绍 TiDB Binlog 的整体架构。
 
-![TiDB Binlog 架构](https://download.pingcap.com/images/docs-cn/tidb_binlog_kafka_architecture.png)
+![TiDB Binlog 架构](https://docs-download.pingcap.com/media/images/docs-cn/tidb_binlog_kafka_architecture.png)
 
 TiDB Binlog 集群主要分为三个组件：
 
@@ -85,7 +85,7 @@ cd tidb-binlog-kafka-linux-amd64
 
     设置 TiDB 启动参数 `binlog-socket` 为对应的 Pump 参数 `socket` 所指定的 unix socket 文件路径，最终部署结构如下图所示：
 
-    ![TiDB pump 模块部署结构](https://download.pingcap.com/images/docs-cn/tidb-pump-deployment.png)
+    ![TiDB pump 模块部署结构](https://docs-download.pingcap.com/media/images/docs-cn/tidb-pump-deployment.png)
 
 * Drainer 不支持对 ignore schemas（在过滤列表中的 schemas）的 table 进行 rename DDL 操作。
 
@@ -255,7 +255,7 @@ ZK3="192.168.0.11"
 
 3. 启动示例
 
-    
+
     ```bash
     ./bin/pump -config pump.toml
     ```
@@ -381,7 +381,7 @@ ZK3="192.168.0.11"
 
 3. 启动示例
 
-    
+
     ```bash
     ./bin/drainer -config drainer.toml
     ```

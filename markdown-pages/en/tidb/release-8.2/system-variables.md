@@ -701,7 +701,7 @@ This variable is an alias for [`last_insert_id`](#last_insert_id).
     - `UNSPECIFIED`: means unspecified. TiDB automatically selects the latest version `2`.
     - `0`: compatible with all TiDB cluster versions. Features with the MPP version greater than `0` do not take effect in this mode.
     - `1`: new in v6.6.0, used to enable data exchange with compression on TiFlash. For details, see [MPP version and exchange data compression](/explain-mpp.md#mpp-version-and-exchange-data-compression).
-    - `2`: new in v7.3.0, used to provide more accurate error messages when MPP tasks encounter errors on TiFlash. 
+    - `2`: new in v7.3.0, used to provide more accurate error messages when MPP tasks encounter errors on TiFlash.
 
 ### password_reuse_interval <span class="version-mark">New in v6.5.0</span>
 
@@ -1500,7 +1500,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
     - When setting `tidb_constraint_check_in_place_pessimistic` to `OFF` and using pessimistic transactions:
 
-        
+
         ```sql
         set @@tidb_constraint_check_in_place_pessimistic=OFF;
         create table t (i int key);
@@ -3849,7 +3849,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 - Unit: Rows
 - This variable is used to set the minimum number of rows during the coprocessor paging request process. Setting it to a too small value increases the RPC request count between TiDB and TiKV, while setting it to a too large value might cause a performance decrease when executing queries using IndexLookup with Limit. The default value of this variable brings better performance in OLTP scenarios than in OLAP scenarios. If the application only uses TiKV as the storage engine, consider increasing the value of this variable when executing OLAP workload queries, which might bring you better performance.
 
-![Paging size impact on TPCH](https://download.pingcap.com/images/docs/paging-size-impact-on-tpch.png)
+![Paging size impact on TPCH](https://docs-download.pingcap.com/media/images/docs/paging-size-impact-on-tpch.png)
 
 As shown in this diagram, when [`tidb_enable_paging`](#tidb_enable_paging-new-in-v540) is enabled, the performance of TPCH is affected by the settings of `tidb_min_paging_size` and [`tidb_max_paging_size`](#tidb_max_paging_size-new-in-v630). The vertical axis is the execution time, and it is the smaller the better.
 
@@ -4952,7 +4952,7 @@ SHOW WARNINGS;
 - Type: Boolean
 - Default value: Before v7.2.0, the default value is `OFF`. Starting from v7.2.0, the default value is `ON`.
 - Specifies whether to remove `ORDER BY` clause in a subquery.
-- In the ISO/IEC SQL standard, `ORDER BY` is mainly used to sort the results of top-level queries. For subqueries, the standard does not require that the results be sorted by `ORDER BY`. 
+- In the ISO/IEC SQL standard, `ORDER BY` is mainly used to sort the results of top-level queries. For subqueries, the standard does not require that the results be sorted by `ORDER BY`.
 - To sort subquery results, you can usually handle it in the outer query, such as using the window function or using `ORDER BY` again in the outer query. Doing so ensures the order of the final result set.
 
 ### tidb_replica_read <span class="version-mark">New in v4.0</span>

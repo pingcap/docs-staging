@@ -5,7 +5,7 @@ aliases: ['/zh/tidb/v6.0/get-started-with-tispark/']
 
 # TiSpark 用户指南
 
-![TiSpark 架构](https://download.pingcap.com/images/docs-cn/tispark-architecture.png)
+![TiSpark 架构](https://docs-download.pingcap.com/media/images/docs-cn/tispark-architecture.png)
 
 [TiSpark](https://github.com/pingcap/tispark) 是 PingCAP 为解决用户复杂 OLAP 需求而推出的产品。它借助 Spark 平台，同时融合 TiKV 分布式集群的优势，和 TiDB 一起为用户一站式解决 HTAP (Hybrid Transactional/Analytical Processing) 的需求。
 

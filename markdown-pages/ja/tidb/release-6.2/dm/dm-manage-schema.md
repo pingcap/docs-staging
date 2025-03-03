@@ -15,7 +15,7 @@ DM を使用してテーブルを移行する場合、DM はテーブル スキ�
 
 -   増分レプリケーションの場合、データ リンク全体に次のテーブル スキーマが含まれます。これらは同じ場合も異なる場合もあります。
 
-    ![schema](https://download.pingcap.com/images/docs/dm/operate-schema.png)
+    ![schema](https://docs-download.pingcap.com/media/images/docs/dm/operate-schema.png)
 
     -   `schema-U`として識別される、現時点でのアップストリーム テーブル スキーマ。
     -   `schema-B`として識別される、現在 DM によって消費されている binlog イベントのテーブル スキーマ。このスキーマは、過去の時点での上流のテーブル スキーマに対応しています。

@@ -12,35 +12,35 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-create-view/','/docs-cn/v3
 
 **CreateViewStmt:**
 
-![CreateViewStmt](https://download.pingcap.com/images/docs-cn/sqlgram/CreateViewStmt.png)
+![CreateViewStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CreateViewStmt.png)
 
 **OrReplace:**
 
-![OrReplace](https://download.pingcap.com/images/docs-cn/sqlgram/OrReplace.png)
+![OrReplace](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/OrReplace.png)
 
 **ViewAlgorithm:**
 
-![ViewAlgorithm](https://download.pingcap.com/images/docs-cn/sqlgram/ViewAlgorithm.png)
+![ViewAlgorithm](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ViewAlgorithm.png)
 
 **ViewDefiner:**
 
-![ViewDefiner](https://download.pingcap.com/images/docs-cn/sqlgram/ViewDefiner.png)
+![ViewDefiner](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ViewDefiner.png)
 
 **ViewSQLSecurity:**
 
-![ViewSQLSecurity](https://download.pingcap.com/images/docs-cn/sqlgram/ViewSQLSecurity.png)
+![ViewSQLSecurity](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ViewSQLSecurity.png)
 
 **ViewName:**
 
-![ViewName](https://download.pingcap.com/images/docs-cn/sqlgram/ViewName.png)
+![ViewName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ViewName.png)
 
 **ViewFieldList:**
 
-![ViewFieldList](https://download.pingcap.com/images/docs-cn/sqlgram/ViewFieldList.png)
+![ViewFieldList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ViewFieldList.png)
 
 **ViewCheckOption:**
 
-![ViewCheckOption](https://download.pingcap.com/images/docs-cn/sqlgram/ViewCheckOption.png)
+![ViewCheckOption](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ViewCheckOption.png)
 
 ## 示例
 

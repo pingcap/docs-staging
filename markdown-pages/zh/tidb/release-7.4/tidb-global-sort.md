@@ -45,7 +45,7 @@ TiDB 全局排序功能增强了数据导入和 DDL（数据定义语言）操�
 
 全局排序功能的算法如下图所示：
 
-![全局排序功能算法](https://download.pingcap.com/images/docs-cn/dist-task/global-sort.jpeg)
+![全局排序功能算法](https://docs-download.pingcap.com/media/images/docs-cn/dist-task/global-sort.jpeg)
 
 详细的实现原理如下：
 

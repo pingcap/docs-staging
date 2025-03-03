@@ -19,7 +19,7 @@ The TiDB Lightning tool set consists of two components:
 
 - **`tikv-importer`** (the "back end") combines and sorts the KV pairs and then imports these sorted pairs as a whole into the TiKV cluster.
 
-![Architecture of TiDB Lightning tool set](https://download.pingcap.com/images/docs/tidb-lightning-architecture-v2.1.png)
+![Architecture of TiDB Lightning tool set](https://docs-download.pingcap.com/media/images/docs/tidb-lightning-architecture-v2.1.png)
 
 The complete import process is as follows:
 

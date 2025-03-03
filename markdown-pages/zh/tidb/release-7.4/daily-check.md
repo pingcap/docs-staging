@@ -15,7 +15,7 @@ TiDB 作为分布式数据库，对比单机数据库机制更加复杂，其自
 
 ### 实例面板
 
-![实例面板](https://download.pingcap.com/images/docs-cn/instance-status-panel.png)
+![实例面板](https://docs-download.pingcap.com/media/images/docs-cn/instance-status-panel.png)
 
 以上实例面板的各指标说明如下：
 
@@ -25,19 +25,19 @@ TiDB 作为分布式数据库，对比单机数据库机制更加复杂，其自
 
 ### 主机面板
 
-![主机面板](https://download.pingcap.com/images/docs-cn/host-panel.png)
+![主机面板](https://docs-download.pingcap.com/media/images/docs-cn/host-panel.png)
 
 通过主机面板可以查看 CPU、内存、磁盘使用率。当任何资源的使用率超过 80% 时，推荐扩容对应组件。
 
 ### SQL 分析面板
 
-![SQL 分析面板](https://download.pingcap.com/images/docs-cn/sql-analysis-panel.png)
+![SQL 分析面板](https://docs-download.pingcap.com/media/images/docs-cn/sql-analysis-panel.png)
 
 通过 SQL 分析面板可以分析对集群影响较大的慢 SQL，然后进行对应的 SQL 优化。
 
 ### Region 信息面板
 
-![Region 信息面板](https://download.pingcap.com/images/docs-cn/region-panel.png)
+![Region 信息面板](https://docs-download.pingcap.com/media/images/docs-cn/region-panel.png)
 
 以上 Region 信息面板说明如下：
 
@@ -52,13 +52,13 @@ TiDB 作为分布式数据库，对比单机数据库机制更加复杂，其自
 
 ### KV Request Duration
 
-![TiKV 相应时间](https://download.pingcap.com/images/docs-cn/kv-duration-panel.png)
+![TiKV 相应时间](https://docs-download.pingcap.com/media/images/docs-cn/kv-duration-panel.png)
 
 TiKV 当前 .99（百分位）的响应时间。如果发现有明显高的节点，可以排查是否有热点，或者相关节点性能较差。
 
 ### PD TSO Wait Duration
 
-![TiDB 从 PD 获取 TSO 的时间](https://download.pingcap.com/images/docs-cn/pd-duration-panel.png)
+![TiDB 从 PD 获取 TSO 的时间](https://docs-download.pingcap.com/media/images/docs-cn/pd-duration-panel.png)
 
 TiDB 从 PD 获取 TSO 的时间。如果相关响应时间较高，一般常见原因如下：
 
@@ -68,18 +68,18 @@ TiDB 从 PD 获取 TSO 的时间。如果相关响应时间较高，一般常见
 
 ### Overview 面板
 
-![Overview 面板](https://download.pingcap.com/images/docs-cn/overview-panel.png)
+![Overview 面板](https://docs-download.pingcap.com/media/images/docs-cn/overview-panel.png)
 
 以上面板展示常见的负载、内存、网络、IO 监控。发现有瓶颈时，推荐扩容或者优化集群拓扑，优化 SQL、集群参数等。
 
 ### 异常监控面板
 
-![异常监控面板](https://download.pingcap.com/images/docs-cn/failed-query-panel.png)
+![异常监控面板](https://docs-download.pingcap.com/media/images/docs-cn/failed-query-panel.png)
 
 以上面板展示每个 TiDB 实例上，执行 SQL 语句发生的错误，并按照错误类型进行统计，例如语法错误、主键冲突等。
 
 ### GC 状态面板
 
-![GC 状态面板](https://download.pingcap.com/images/docs-cn/garbage-collation-panel.png)
+![GC 状态面板](https://docs-download.pingcap.com/media/images/docs-cn/garbage-collation-panel.png)
 
 以上面板展示最后 GC（垃圾清理）的时间，观察 GC 是否正常。如果 GC 发生异常，可能会造成历史数据存留过多，影响访问效率。

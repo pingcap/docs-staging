@@ -8,7 +8,7 @@ This document introduces the architecture of Data Migration (DM).
 
 DM consists of three components: DM-master, DM-worker, and dmctl.
 
-![Data Migration architecture](https://download.pingcap.com/images/tidb-data-migration/dm-architecture-2.0.png)
+![Data Migration architecture](https://docs-download.pingcap.com/media/images/tidb-data-migration/dm-architecture-2.0.png)
 
 ## Architecture components
 

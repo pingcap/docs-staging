@@ -17,7 +17,7 @@ Common components that interact with the TiDB database in Java applications incl
 - Data access framework: Applications usually use a data access framework such as [MyBatis](https://mybatis.org/mybatis-3/index.html) and [Hibernate](https://hibernate.org/) to further simplify and manage the database access operations.
 - Application implementation: The application logic controls when to send what commands to the database. Some applications use [Spring Transaction](https://docs.spring.io/spring/docs/4.2.x/spring-framework-reference/html/transaction.html) aspects to manage transactions' start and commit logics.
 
-![Java application components](https://download.pingcap.com/images/docs/best-practices/java-practice-1.png)
+![Java application components](https://docs-download.pingcap.com/media/images/docs/best-practices/java-practice-1.png)
 
 From the above diagram, you can see that a Java application might do the following things:
 
@@ -99,7 +99,7 @@ To verify that this setting already takes effect, you can do:
 - Go to TiDB monitoring dashboard and view the request command type through **Query Summary** > **QPS By Instance**.
 - If the number of `COM_STMT_EXECUTE` in the request is far more than the number of `COM_STMT_PREPARE`, it means this setting already takes effect.
 
-![QPS By Instance](https://download.pingcap.com/images/docs/java-practice-2.png)
+![QPS By Instance](https://docs-download.pingcap.com/media/images/docs/java-practice-2.png)
 
 In addition, configuring `useConfigs=maxPerformance` will configure multiple parameters at the same time, including `cachePrepStmts=true`.
 

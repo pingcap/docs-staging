@@ -12,19 +12,19 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-drop-index/','/docs-cn/v2.
 
 **AlterTableStmt:**
 
-![AlterTableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/AlterTableStmt.png)
+![AlterTableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/AlterTableStmt.png)
 
 **AlterTableSpec:**
 
-![AlterTableSpec](https://download.pingcap.com/images/docs-cn/sqlgram/AlterTableSpec.png)
+![AlterTableSpec](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/AlterTableSpec.png)
 
 **KeyOrIndex:**
 
-![KeyOrIndex](https://download.pingcap.com/images/docs-cn/sqlgram/KeyOrIndex.png)
+![KeyOrIndex](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/KeyOrIndex.png)
 
 **Identifier:**
 
-![Identifier](https://download.pingcap.com/images/docs-cn/sqlgram/Identifier.png)
+![Identifier](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Identifier.png)
 
 ## 示例
 

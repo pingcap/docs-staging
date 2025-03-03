@@ -69,7 +69,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
 
 5. Launch Navicat for MySQL, click **Connection** in the upper-left corner, and select **MySQL** from the drop-down list.
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs/develop/navicat-add-new-connection.jpg)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-add-new-connection.jpg)
 
 6. In the **New Connection (MySQL)** dialog, configure the following connection parameters:
 
@@ -79,11 +79,11 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
     - **User Name**: enter the `USERNAME` parameter from the TiDB Cloud connection dialog.
     - **Password**: enter the password of the TiDB Serverless cluster.
 
-    ![Navicat: configure connection general panel for TiDB Serverless](https://download.pingcap.com/images/docs/develop/navicat-connection-config-serverless-general.png)
+    ![Navicat: configure connection general panel for TiDB Serverless](https://docs-download.pingcap.com/media/images/docs/develop/navicat-connection-config-serverless-general.png)
 
 7. Click the **SSL** tab and select **Use SSL**, **Use authentication**, and **Verify server certificate against CA** checkboxes. Then, select the `CA` file from the TiDB Cloud connection dialog into the **CA Certificate** field.
 
-    ![Navicat: configure connection SSL panel for TiDB Serverless](https://download.pingcap.com/images/docs/develop/navicat-connection-config-serverless-ssl.png)
+    ![Navicat: configure connection SSL panel for TiDB Serverless](https://docs-download.pingcap.com/media/images/docs/develop/navicat-connection-config-serverless-ssl.png)
 
 8. Click **Test Connection** to validate the connection to the TiDB Serverless cluster.
 
@@ -104,7 +104,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
 
 5. Launch Navicat for MySQL, click **Connection** in the upper-left corner, and select **MySQL** from the drop-down list.
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs/develop/navicat-add-new-connection.jpg)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-add-new-connection.jpg)
 
 6. In the **New Connection (MySQL)** dialog, configure the following connection parameters:
 
@@ -114,11 +114,11 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
     - **User Name**: enter the `USERNAME` parameter from the TiDB Cloud connection dialog.
     - **Password**: enter the password of the TiDB Dedicated cluster.
 
-    ![Navicat: configure connection general panel for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/navicat-connection-config-dedicated-general.png)
+    ![Navicat: configure connection general panel for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/navicat-connection-config-dedicated-general.png)
 
 7. Click the **SSL** tab and select **Use SSL**, **Use authentication**, and **Verify server certificate against CA** checkboxes. Then, select the CA file downloaded in step 4 into the **CA Certificate** field.
 
-    ![Navicat: configure connection SSL panel for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/navicat-connection-config-dedicated-ssl.jpg)
+    ![Navicat: configure connection SSL panel for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/navicat-connection-config-dedicated-ssl.jpg)
 
 8. **Test Connection** to validate the connection to the TiDB Dedicated cluster.
 
@@ -129,7 +129,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
 
 1. Launch Navicat for MySQL, click **Connection** in the upper-left corner, and select **MySQL** from the drop-down list.
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs/develop/navicat-add-new-connection.jpg)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-add-new-connection.jpg)
 
 2. In the **New Connection (MySQL)** dialog, configure the following connection parameters:
 
@@ -139,7 +139,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
     - **User Name**: enter the username to use to connect to your TiDB.
     - **Password**: enter the password to use to connect to your TiDB.
 
-    ![Navicat: configure connection general panel for self-hosted TiDB](https://download.pingcap.com/images/docs/develop/navicat-connection-config-self-hosted-general.png)
+    ![Navicat: configure connection general panel for self-hosted TiDB](https://docs-download.pingcap.com/media/images/docs/develop/navicat-connection-config-self-hosted-general.png)
 
 3. Click **Test Connection** to validate the connection to the TiDB Self-Hosted cluster.
 

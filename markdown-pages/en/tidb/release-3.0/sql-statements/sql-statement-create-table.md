@@ -12,47 +12,47 @@ This statement creates a new table in the currently selected database. It behave
 
 **CreateTableStmt:**
 
-![CreateTableStmt](https://download.pingcap.com/images/docs/sqlgram/CreateTableStmt.png)
+![CreateTableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/CreateTableStmt.png)
 
 **IfNotExists:**
 
-![IfNotExists](https://download.pingcap.com/images/docs/sqlgram/IfNotExists.png)
+![IfNotExists](https://docs-download.pingcap.com/media/images/docs/sqlgram/IfNotExists.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 **TableElementListOpt:**
 
-![TableElementListOpt](https://download.pingcap.com/images/docs/sqlgram/TableElementListOpt.png)
+![TableElementListOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableElementListOpt.png)
 
 **TableElement:**
 
-![TableElement](https://download.pingcap.com/images/docs/sqlgram/TableElement.png)
+![TableElement](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableElement.png)
 
 **PartitionOpt:**
 
-![PartitionOpt](https://download.pingcap.com/images/docs/sqlgram/PartitionOpt.png)
+![PartitionOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/PartitionOpt.png)
 
 **ColumnDef:**
 
-![ColumnDef](https://download.pingcap.com/images/docs/sqlgram/ColumnDef.png)
+![ColumnDef](https://docs-download.pingcap.com/media/images/docs/sqlgram/ColumnDef.png)
 
 **ColumnName:**
 
-![ColumnName](https://download.pingcap.com/images/docs/sqlgram/ColumnName.png)
+![ColumnName](https://docs-download.pingcap.com/media/images/docs/sqlgram/ColumnName.png)
 
 **Type:**
 
-![Type](https://download.pingcap.com/images/docs/sqlgram/Type.png)
+![Type](https://docs-download.pingcap.com/media/images/docs/sqlgram/Type.png)
 
 **ColumnOptionListOpt:**
 
-![ColumnOptionListOpt](https://download.pingcap.com/images/docs/sqlgram/ColumnOptionListOpt.png)
+![ColumnOptionListOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ColumnOptionListOpt.png)
 
 **TableOptionListOpt:**
 
-![TableOptionListOpt](https://download.pingcap.com/images/docs/sqlgram/TableOptionListOpt.png)
+![TableOptionListOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableOptionListOpt.png)
 
 The following *table_options* are supported. Other options such as `AVG_ROW_LENGTH`, `CHECKSUM`, `COMPRESSION`, `CONNECTION`, `DELAY_KEY_WRITE`, `ENGINE`, `KEY_BLOCK_SIZE`, `MAX_ROWS`, `MIN_ROWS`, `ROW_FORMAT` and `STATS_PERSISTENT` are parsed but ignored.
 

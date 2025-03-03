@@ -12,31 +12,31 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-grant-privileges/','/docs-
 
 **GrantStmt:**
 
-![GrantStmt](https://download.pingcap.com/images/docs-cn/sqlgram/GrantStmt.png)
+![GrantStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/GrantStmt.png)
 
 **PrivElemList:**
 
-![PrivElemList](https://download.pingcap.com/images/docs-cn/sqlgram/PrivElemList.png)
+![PrivElemList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/PrivElemList.png)
 
 **PrivElem:**
 
-![PrivElem](https://download.pingcap.com/images/docs-cn/sqlgram/PrivElem.png)
+![PrivElem](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/PrivElem.png)
 
 **PrivType:**
 
-![PrivType](https://download.pingcap.com/images/docs-cn/sqlgram/PrivType.png)
+![PrivType](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/PrivType.png)
 
 **ObjectType:**
 
-![ObjectType](https://download.pingcap.com/images/docs-cn/sqlgram/ObjectType.png)
+![ObjectType](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ObjectType.png)
 
 **PrivLevel:**
 
-![PrivLevel](https://download.pingcap.com/images/docs-cn/sqlgram/PrivLevel.png)
+![PrivLevel](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/PrivLevel.png)
 
 **UserSpecList:**
 
-![UserSpecList](https://download.pingcap.com/images/docs-cn/sqlgram/UserSpecList.png)
+![UserSpecList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/UserSpecList.png)
 
 ## 示例
 

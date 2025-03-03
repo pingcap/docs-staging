@@ -16,7 +16,7 @@ aliases: ['/docs-cn/tidb-data-migration/','/docs-cn/tidb-data-migration/stable/'
 
 DM 主要包括三个组件：DM-master，DM-worker 和 dmctl。
 
-![Data Migration architecture](https://download.pingcap.com/images/tidb-data-migration/dm-architecture.png)
+![Data Migration architecture](https://docs-download.pingcap.com/media/images/tidb-data-migration/dm-architecture.png)
 
 ### DM-master
 

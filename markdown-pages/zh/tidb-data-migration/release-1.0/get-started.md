@@ -27,7 +27,7 @@ DM 功能如下：
 
 ## Data Migration 架构
 
-![TiDB Data Migration 架构](https://download.pingcap.com/images/tidb-data-migration/dm-architecture.png)
+![TiDB Data Migration 架构](https://docs-download.pingcap.com/media/images/tidb-data-migration/dm-architecture.png)
 
 TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl。
 
@@ -45,7 +45,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
 
 1. 安装 MySQL 5.7，下载或提取 TiDB v3.0 以及 DM v1.0.2 安装包：
 
-    
+
     ```bash
     sudo yum install -y http://repo.mysql.com/yum/mysql-5.7-community/el/7/x86_64/mysql57-community-release-el7-10.noarch.rpm &&
     sudo yum install -y mysql-community-server &&
@@ -56,7 +56,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
 
 2. 创建目录和符号链接：
 
-    
+
     ```bash
     mkdir -p bin data logs &&
     ln -sf -t bin/ "$HOME"/*/bin/* &&
@@ -65,7 +65,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
 
 3. 安装 3 个 MySQL Server 实例的配置：
 
-    
+
     ```bash
     tee -a "$HOME/.my.cnf" <<EoCNF
     [server]
@@ -94,7 +94,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
 
 4. 初始化并启动这些 MySQL 实例：
 
-    
+
     ```bash
     for i in 1 2 3
     do
@@ -106,7 +106,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
 
 5. 执行 `jobs` 和/或 `pgrep -a mysqld` 以确保 MySQL Server 实例都在运行状态。
 
-    
+
     ```bash
     jobs
     ```
@@ -117,7 +117,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
     [3]+  Running                 mysqld --defaults-group-suffix="$i" &
     ```
 
-    
+
     ```bash
     pgrep -a mysqld
     ```
@@ -136,7 +136,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
 
 1. 对于这 3 个 MySQL Server 实例，每个实例都分别创建数据库和表：
 
-    
+
     ```bash
     for i in 1 2 3
     do
@@ -149,7 +149,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
 
 2. 在每个 MySQL 实例中插入几百行数据：
 
-    
+
     ```bash
     for i in 1 2 3; do
         mysql -h 127.0.0.1 -P "$((3306+i))" -u root dmtest1 <<EoSQL
@@ -166,7 +166,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
 
 3. 查询上一步写入的所有行并排序，以确认写入数据是正确的：
 
-    
+
     ```bash
     for i in 1 2 3; do
         mysql -N -h 127.0.0.1 -P "$((3306+i))" -u root -e 'select * from dmtest1.t1'
@@ -202,7 +202,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
 
 1. 启动单个 `tidb-server` 实例、每个 MySQL Server 实例 （总共 3 个实例）的 DM-worker 进程和一个 DM-master 进程：
 
-    
+
     ```bash
     tidb-server --log-file=logs/tidb-server.log &
     for i in 1 2 3; do dm-worker --config=dm-cnf/dm-worker$i.toml & done
@@ -211,7 +211,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
 
 2. 执行 `jobs` 和/或 `ps -a`，确保这些进程都正在运行：
 
-    
+
     ```bash
     jobs
     ```
@@ -227,7 +227,7 @@ TiDB Data Migration 平台由 3 部分组成：DM-master、DM-worker 和 dmctl�
     [8]+  Running                 dm-master --config=dm-cnf/dm-master.toml &
     ```
 
-    
+
     ```bash
     ps -a
     ```

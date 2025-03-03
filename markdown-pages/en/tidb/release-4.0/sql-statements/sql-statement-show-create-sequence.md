@@ -12,11 +12,11 @@ The `SHOW CREATE SEQUENCE` shows the detailed information of a sequence, which i
 
 **ShowCreateSequenceStmt:**
 
-![ShowCreateSequenceStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCreateSequenceStmt.png)
+![ShowCreateSequenceStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowCreateSequenceStmt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 ## Examples
 

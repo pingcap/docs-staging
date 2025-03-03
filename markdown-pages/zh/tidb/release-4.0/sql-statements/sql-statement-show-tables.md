@@ -14,19 +14,19 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-tables/','/docs-cn/
 
 **ShowTablesStmt:**
 
-![ShowTablesStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTablesStmt.png)
+![ShowTablesStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTablesStmt.png)
 
 **OptFull:**
 
-![OptFull](https://download.pingcap.com/images/docs-cn/sqlgram/OptFull.png)
+![OptFull](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/OptFull.png)
 
 **ShowDatabaseNameOpt:**
 
-![ShowDatabaseNameOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowDatabaseNameOpt.png)
+![ShowDatabaseNameOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowDatabaseNameOpt.png)
 
 **ShowLikeOrWhereOpt:**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## 示例
 

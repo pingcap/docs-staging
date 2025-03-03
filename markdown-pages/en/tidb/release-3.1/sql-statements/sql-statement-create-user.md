@@ -12,27 +12,27 @@ This statement creates a new user, specified with a password. In the MySQL privi
 
 **CreateUserStmt:**
 
-![CreateUserStmt](https://download.pingcap.com/images/docs/sqlgram/CreateUserStmt.png)
+![CreateUserStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/CreateUserStmt.png)
 
 **IfNotExists:**
 
-![IfNotExists](https://download.pingcap.com/images/docs/sqlgram/IfNotExists.png)
+![IfNotExists](https://docs-download.pingcap.com/media/images/docs/sqlgram/IfNotExists.png)
 
 **UserSpecList:**
 
-![UserSpecList](https://download.pingcap.com/images/docs/sqlgram/UserSpecList.png)
+![UserSpecList](https://docs-download.pingcap.com/media/images/docs/sqlgram/UserSpecList.png)
 
 **UserSpec:**
 
-![UserSpec](https://download.pingcap.com/images/docs/sqlgram/UserSpec.png)
+![UserSpec](https://docs-download.pingcap.com/media/images/docs/sqlgram/UserSpec.png)
 
 **AuthOption:**
 
-![AuthOption](https://download.pingcap.com/images/docs/sqlgram/AuthOption.png)
+![AuthOption](https://docs-download.pingcap.com/media/images/docs/sqlgram/AuthOption.png)
 
 **StringName:**
 
-![StringName](https://download.pingcap.com/images/docs/sqlgram/StringName.png)
+![StringName](https://docs-download.pingcap.com/media/images/docs/sqlgram/StringName.png)
 
 ## Examples
 

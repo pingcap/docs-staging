@@ -41,7 +41,7 @@ Before enabling this feature, check the version of the TiUP cluster and ensure t
 
 1. Check the TiUP version:
 
-    
+
     ```shell
     tiup cluster --version
     ```
@@ -61,14 +61,14 @@ Before enabling this feature, check the version of the TiUP cluster and ensure t
 
     - Upgrade TiUP:
 
-        
+
         ```shell
         tiup update --self
         ```
 
     - Upgrade the TiUP cluster:
 
-        
+
         ```shell
         tiup update cluster
         ```
@@ -81,7 +81,7 @@ After TiUP and the TiUP cluster are upgraded to the latest version, version chec
 
     1. Open the configuration file of the cluster in the editing mode:
 
-        
+
         ```shell
         tiup cluster edit-config ${cluster-name}
         ```
@@ -96,7 +96,7 @@ After TiUP and the TiUP cluster are upgraded to the latest version, version chec
 
     3. Reload Prometheus:
 
-        
+
         ```shell
         tiup cluster reload ${cluster-name} --role prometheus
         ```
@@ -111,7 +111,7 @@ After TiUP and the TiUP cluster are upgraded to the latest version, version chec
 
     3. Click **Save** to enable this feature.
 
-    ![Enable the feature](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-start.png)
+    ![Enable the feature](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-start.png)
 
 ## Access the page
 
@@ -119,7 +119,7 @@ You can access the instance profiling page using either of the following methods
 
 - After logging into TiDB Dashboard, click **Advanced Debugging** > **Profile Instances** > **Continuous Profile** on the left navigation bar.
 
-    ![Access](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-access.png)
+    ![Access](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-access.png)
 
 - Visit <http://127.0.0.1:2379/dashboard/#/continuous_profiling> via your browser. Replace `127.0.0.1:2379` with the actual PD instance address and port.
 
@@ -127,7 +127,7 @@ You can access the instance profiling page using either of the following methods
 
 After starting continuous profiling, you can view the profiling result on the instance profiling page.
 
-![Profiling history](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-history.png)
+![Profiling history](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-history.png)
 
 Performance profiling runs in the background. Refreshing or exiting the current page will not terminate a running performance profiling task.
 
@@ -135,11 +135,11 @@ Performance profiling runs in the background. Refreshing or exiting the current 
 
 On the profiling result page, you can click **Download Profiling Result** in the upper-right corner to download all profiling results.
 
-![Download profiling result](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-download.png)
+![Download profiling result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-download.png)
 
 You can also click an individual instance to view its profiling result:
 
-![View the profiling result of an instance](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-single.png)
+![View the profiling result of an instance](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-single.png)
 
 ## Disable Continuous Profiling
 
@@ -151,4 +151,4 @@ You can also click an individual instance to view its profiling result:
 
 4. Click **Save**.
 
-    ![Disable the feature](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-stop.png)
+    ![Disable the feature](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-stop.png)

@@ -14,7 +14,7 @@ This document introduces the workflow of Raftstore (a core module of TiKV), expl
 
 A TiKV instance has multiple Regions on it. The Raftstore module drives the Raft state machine to process Region messages. These messages include processing read or write requests on Regions, persisting or replicating Raft logs, and processing Raft heartbeats. However, an increasing number of Regions can affect performance of the whole cluster. To understand this, it is necessary to learn the workflow of Raftstore shown as follows:
 
-![Raftstore Workflow](https://download.pingcap.com/images/docs/best-practices/raft-process.png)
+![Raftstore Workflow](https://docs-download.pingcap.com/media/images/docs/best-practices/raft-process.png)
 
 > **Note:**
 >
@@ -41,7 +41,7 @@ You can check the following monitoring metrics in Grafana's **TiKV Dashboard**:
 
     Reference value: lower than `raftstore.store-pool-size * 85%`. TiDB v2.1 does not have the `raftstore.store-pool-size`  configuration item, so you can take this item's value as `1` in v2.1 versions.
 
-    ![Check Raftstore CPU](https://download.pingcap.com/images/docs/best-practices/raft-store-cpu.png)
+    ![Check Raftstore CPU](https://docs-download.pingcap.com/media/images/docs/best-practices/raft-store-cpu.png)
 
 + `Propose wait duration` in the **Raft Propose** panel
 
@@ -49,7 +49,7 @@ You can check the following monitoring metrics in Grafana's **TiKV Dashboard**:
 
     Reference value: lower than 50~100 ms according to the cluster size
 
-    ![Check Propose wait duration](https://download.pingcap.com/images/docs/best-practices/propose-wait-duration.png)
+    ![Check Propose wait duration](https://docs-download.pingcap.com/media/images/docs/best-practices/propose-wait-duration.png)
 
 ## Performance tuning methods
 
@@ -137,7 +137,7 @@ In TiKV, pd-worker regularly reports Region Meta information to PD. When TiKV is
 
 You can check **Worker pending tasks** under **Task** in the **TiKV Grafana** panel to determine whether pd-worker has tasks piled up. Generally, `pending tasks` should be kept at a relatively low value.
 
-![Check pd-worker](https://download.pingcap.com/images/docs/best-practices/pd-worker-metrics.png)
+![Check pd-worker](https://docs-download.pingcap.com/media/images/docs/best-practices/pd-worker-metrics.png)
 
 Currently, pd-worker is optimized for better efficiency in [#5620](https://github.com/tikv/tikv/pull/5620) on [TiKV master](https://github.com/tikv/tikv/tree/master), which is applied since [v3.0.5](/releases/release-3.0.5.md#tikv). If you encounter a similar problem, it is recommended to upgrade to v3.0.5 or later versions.
 

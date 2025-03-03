@@ -14,15 +14,15 @@ To show tables in a different database, use `SHOW TABLES IN DatabaseName`.
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStmt.png)
 
 **ShowTargetFilterable:**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTargetFilterable.png)
 
 **ShowDatabaseNameOpt:**
 
-![ShowDatabaseNameOpt](https://download.pingcap.com/images/docs/sqlgram/ShowDatabaseNameOpt.png)
+![ShowDatabaseNameOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowDatabaseNameOpt.png)
 
 ## Examples
 

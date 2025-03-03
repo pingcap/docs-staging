@@ -12,15 +12,15 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-show-character-set/','/doc
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowStmt.png)
 
 **ShowTargetFilterable:**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTargetFilterable.png)
 
 **CharsetKw:**
 
-![CharsetKw](https://download.pingcap.com/images/docs-cn/sqlgram/CharsetKw.png)
+![CharsetKw](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CharsetKw.png)
 
 ## 示例
 

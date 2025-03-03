@@ -33,7 +33,7 @@ aliases: ['/docs-cn/stable/best-practices/high-concurrency-best-practices/','/do
 
 TiDB 以 Region 为单位对数据进行切分，每个 Region 有大小限制（默认 96M）。Region 的切分方式是范围切分。每个 Region 会有多副本，每一组副本，称为一个 Raft Group。每个 Raft Group 中由 Leader 负责执行这块数据的读 & 写（TiDB 即将支持 [Follower-Read](https://zhuanlan.zhihu.com/p/78164196)）。Leader 会自动地被 PD 组件均匀调度在不同的物理节点上，用以均分读写压力。
 
-![TiDB 数据概览](https://download.pingcap.com/images/docs-cn/best-practices/tidb-data-overview.png)
+![TiDB 数据概览](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/tidb-data-overview.png)
 
 只要业务的写入没有 `AUTO_INCREMENT` 的主键，或没有单调递增的索引（即没有业务上的写入热点，更多细节可参阅 [TiDB 正确使用方式](https://zhuanlan.zhihu.com/p/25574778)），从原理上来说，TiDB 依靠这个架构可具备线性扩展的读写能力，并且可以充分利用分布式资源。从这一点看，TiDB 尤其适合高并发批量写入场景的业务。
 
@@ -65,19 +65,19 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 
 部署拓扑 2 个 TiDB 节点，3 个 PD 节点，6 个 TiKV 节点。请忽略 QPS，因为测试只是为了阐述原理，并非 benchmark。
 
-![QPS1](https://download.pingcap.com/images/docs-cn/best-practices/QPS1.png)
+![QPS1](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS1.png)
 
 客户端在短时间内发起了“密集”的写入，TiDB 收到的请求是 3K QPS。理论上，压力应该均摊给 6 个 TiKV 节点。但是从 TiKV 节点的 CPU 使用情况上看，存在明显的写入倾斜（tikv - 3 节点是写入热点）：
 
-![QPS2](https://download.pingcap.com/images/docs-cn/best-practices/QPS2.png)
+![QPS2](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS2.png)
 
-![QPS3](https://download.pingcap.com/images/docs-cn/best-practices/QPS3.png)
+![QPS3](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS3.png)
 
 [Raft store CPU](/grafana-tikv-dashboard.md) 为 `raftstore` 线程的 CPU 使用率，通常代表写入的负载。在这个场景下 tikv-3 为 Raft Leader，tikv-0 和 tikv-1 是 Raft 的 Follower，其他的 TiKV 节点的负载几乎为空。
 
 从 PD 的监控中也可以证明热点的产生：
 
-![QPS4](https://download.pingcap.com/images/docs-cn/best-practices/QPS4.png)
+![QPS4](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS4.png)
 
 ## 热点问题产生的原因
 
@@ -89,13 +89,13 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 
 短时间内大量数据会持续写入到同一个 Region 上。
 
-![TiKV Region 分裂流程](https://download.pingcap.com/images/docs-cn/best-practices/tikv-Region-split.png)
+![TiKV Region 分裂流程](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/tikv-Region-split.png)
 
 上图简单描述了这个过程，随着数据持续写入，TiKV 会将一个 Region 切分为多个。但因为首先发起选举的是原 Leader 所在的 Store，所以新切分好的两个 Region 的 Leader 很可能还会在原 Store 上。新切分好的 Region 2，3 上，也会重复之前发生在 Region 1 上的过程。也就是压力会密集地集中在 TiKV-Node 1 上。
 
 在持续写入的过程中，PD 发现 Node 1 中产生了热点，会将 Leader 均分到其他的 Node 上。如果 TiKV 的节点数多于副本数的话，TiKV 会尽可能将 Region 迁移到空闲的节点上。这两个操作在数据插入的过程中，也能在 PD 监控中得到印证：
 
-![QPS5](https://download.pingcap.com/images/docs-cn/best-practices/QPS5.png)
+![QPS5](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS5.png)
 
 在持续写入一段时间后，整个集群会被 PD 自动地调度成一个压力均匀的状态，到那个时候整个集群的能力才会真正被利用起来。在大多数情况下，以上热点产生的过程是没有问题的，这个阶段属于表 Region 的预热阶段。
 
@@ -119,7 +119,7 @@ SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)]
 
 但是 TiDB 并不会自动提前完成这个切分操作。原因如下：
 
-![Table Region Range](https://download.pingcap.com/images/docs-cn/best-practices/table-Region-range.png)
+![Table Region Range](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/table-Region-range.png)
 
 从上图可知，根据行数据 key 的编码规则，行 ID (rowID) 是行数据中唯一可变的部分。在 TiDB 中，rowID 是一个 Int64 整型。但是用户不一定能将 Int64 整型范围均匀切分成需要的份数，然后均匀分布在不同的节点上，还需要结合实际情况。
 
@@ -154,11 +154,11 @@ SPLIT TABLE TEST_HOTSPOT BETWEEN (0) AND (9223372036854775807) REGIONS 128;
 
 再重新运行写入负载：
 
-![QPS6](https://download.pingcap.com/images/docs-cn/best-practices/QPS6.png)
+![QPS6](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS6.png)
 
-![QPS7](https://download.pingcap.com/images/docs-cn/best-practices/QPS7.png)
+![QPS7](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS7.png)
 
-![QPS8](https://download.pingcap.com/images/docs-cn/best-practices/QPS8.png)
+![QPS8](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS8.png)
 
 可以看到已经消除了明显的热点问题了。
 

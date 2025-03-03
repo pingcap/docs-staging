@@ -85,7 +85,7 @@ Scheduling is based on information collection. In short, the PD scheduling compo
     + **Offline**: A TiKV store is manually taken offline through PD Control. This is only an intermediate status for the store to go offline. The store in this status moves all its Regions to other "Up" stores that meet the relocation conditions. When `leader_count` and `region_count` (obtained through PD Control) both show `0`, the store status changes to "Tombstone" from "Offline". In the "Offline" status, **do not** disable the store service or the physical server where the store is located. During the process that the store goes offline, if the cluster does not have target stores to relocate the Regions (for example, inadequate stores to hold replicas in the cluster), the store is always in the "Offline" status.
     + **Tombstone**: The TiKV store is completely offline. You can use the `remove-tombstone` interface to safely clean up TiKV in this status.
 
-    ![TiKV store status relationship](https://download.pingcap.com/images/docs/tikv-store-status-relationship.png)
+    ![TiKV store status relationship](https://docs-download.pingcap.com/media/images/docs/tikv-store-status-relationship.png)
 
 - Information reported by Region leaders:
 

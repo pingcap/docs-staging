@@ -18,11 +18,11 @@ summary: 了解如何将 Grafana 监控数据导出为快照以及如何将快�
 
 * **导出快照**：提供一段在浏览器开发者工具上运行的用户脚本。你可以使用这个脚本在任意 Grafana v6.x.x 服务器上下载当前 Dashboard 中所有可见面板的快照。
 
-    ![运行用户脚本后的 MetricsTool Exporter 截图](https://download.pingcap.com/images/docs-cn/metricstool-export.png)
+    ![运行用户脚本后的 MetricsTool Exporter 截图](https://docs-download.pingcap.com/media/images/docs-cn/metricstool-export.png)
 
 * **快照可视化**：通过网页端可视化工具 Visualizer 将快照导出文件可视化。快照经过可视化后，操作起来与实际的 Grafana Dashboard 无异。
 
-    ![MetricsTool Visualizer 截图](https://download.pingcap.com/images/docs-cn/metricstool-visualize.png)
+    ![MetricsTool Visualizer 截图](https://docs-download.pingcap.com/media/images/docs-cn/metricstool-visualize.png)
 
 * **导入快照**：介绍如何将导出的快照重新导入到已有的 Grafana 实例中。
 

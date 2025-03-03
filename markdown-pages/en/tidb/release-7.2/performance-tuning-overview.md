@@ -24,7 +24,7 @@ To get a total user response time within a specified time range (`ΔT`), you can
 
 Total user response time in `ΔT` = Average TPS (Transactions Per Second) x Average user response time x `ΔT`.
 
-![user_response_time](https://download.pingcap.com/images/docs/performance/user_response_time_en.png)
+![user_response_time](https://docs-download.pingcap.com/media/images/docs/performance/user_response_time_en.png)
 
 ### Database time
 

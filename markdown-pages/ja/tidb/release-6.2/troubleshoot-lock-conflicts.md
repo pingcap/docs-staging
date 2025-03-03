@@ -11,7 +11,7 @@ TiDB は完全な分散トランザクションをサポートしています。
 
 TiDB のトランザクションは、Prewrite フェーズと Commit フェーズを含む 2 フェーズ コミット (2PC) を使用します。手順は次のとおりです。
 
-![two-phase commit in the optimistic transaction mode](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-01.png)
+![two-phase commit in the optimistic transaction mode](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-01.png)
 
 Percolator と TiDB のトランザクションのアルゴリズムの詳細については、 [Google のパーコレーター](https://ai.google/research/pubs/pub36726)を参照してください。
 
@@ -23,7 +23,7 @@ Prewrite フェーズでは、TiDB はプライマリ ロックとセカンダ�
 
 TiDBサーバーがクライアントから読み取り要求を受信すると、現在のトランザクションの start_ts として物理時間でグローバルに一意で増加するタイムスタンプを取得します。トランザクションは、start_ts より前の最新のデータ、つまり、start_ts より小さい最新の commit_ts のターゲット キーを読み取る必要があります。トランザクションが、ターゲット キーが別のトランザクションによってロックされていることを検出し、他のトランザクションがどのフェーズにあるかを認識できない場合、読み取りと書き込みの競合が発生します。回路図は以下の通りです：
 
-![read-write conflict](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-04.png)
+![read-write conflict](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-04.png)
 
 Txn0 はプリライト フェーズを完了し、コミット フェーズに入ります。このとき、Txn1 は同じターゲット キーの読み取りを要求します。 Txn1 は、その start_ts より小さい最新の commit_ts のターゲット キーを読み取る必要があります。 Txn1 の start_ts は Txn0 の lock_ts よりも大きいため、Txn1 はターゲット キーのロックがクリアされるまで待機する必要がありますが、クリアされていません。その結果、Txn1 は Txn0 がコミットされたかどうかを確認できません。したがって、Txn1 と Txn0 の間で読み取りと書き込みの競合が発生します。
 
@@ -35,7 +35,7 @@ Txn0 はプリライト フェーズを完了し、コミット フェーズに�
 
         TiDB ダッシュボードの`KV Errors`パネルには、トランザクションの読み取りと書き込みの競合をチェックするために使用できる 2 つのモニタリング メトリック`Lock Resolve OPS`と`KV Backoff OPS`があります。 `not_expired`と`resolve`の両方の値が`Lock Resolve OPS`未満で増加すると、多くの読み取りと書き込みの競合が発生する可能性があります。 `not_expired`の項目は、トランザクションのロックがタイムアウトしていないことを意味します。 `resolve`の項目は、他のトランザクションがロックをクリーンアップしようとしていることを意味します。 `KV Backoff OPS`の下の別の`txnLockFast`項目の値が増加すると、読み取りと書き込みの競合も発生する可能性があります。
 
-        ![KV-backoff-txnLockFast-optimistic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-09.png) ![KV-Errors-resolve-optimistic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-08.png)
+        ![KV-backoff-txnLockFast-optimistic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-09.png) ![KV-Errors-resolve-optimistic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-08.png)
 
     -   TiDBサーバーのログ
 
@@ -87,7 +87,7 @@ Grafana の TiDB モニタリングで「KeyIsLocked」エラーがあるかど�
 
 TiDB ダッシュボードの`KV Errors`パネルには、2 つのモニタリング メトリック`Lock Resolve OPS`と`KV Backoff OPS`があり、トランザクションによって発生した書き込みと書き込みの競合を確認するために使用できます。 `Lock Resolve OPS`を下回った`resolve`項目と`KV Backoff OPS`を下回った`txnLock`項目が明らかに上昇傾向にある場合、「KeyIsLocked」エラーが発生します。 `resolve`はロックをクリアしようとする操作を表し、 `txnLock`は書き込み競合を表します。
 
-![KV-backoff-txnLockFast-optimistic-01](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-07.png) ![KV-Errors-resolve-optimistic-01](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-08.png)
+![KV-backoff-txnLockFast-optimistic-01](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-07.png) ![KV-Errors-resolve-optimistic-01](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-08.png)
 
 ソリューション:
 
@@ -145,7 +145,7 @@ v3.0.8 より前では、TiDB はデフォルトで楽観的トランザクシ�
 
 TiDB の悲観的トランザクション モードと楽観的トランザクション モードのコミット フェーズは同じロジックを持ち、両方のコミットは 2PC モードです。悲観的なトランザクションの重要な適応は、DML の実行です。
 
-![TiDB pessimistic transaction commit logic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-05.png)
+![TiDB pessimistic transaction commit logic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-05.png)
 
 悲観的なトランザクションは、2PC の前に`Acquire Pessimistic Lock`フェーズを追加します。このフェーズには、次の手順が含まれます。
 
@@ -153,7 +153,7 @@ TiDB の悲観的トランザクション モードと楽観的トランザク�
 2.  TiDBサーバーがクライアントから`update`要求を受信すると、TiDB サーバーは TiKVサーバーに対してペシミスティック ロック要求を開始し、ロックは TiKVサーバーに保持されサーバー。
 3.  (楽観的トランザクションモードと同じ) クライアントがコミット要求を送信すると、TiDB は楽観的トランザクションモードと同様に 2PC の実行を開始します。
 
-![Pessimistic transactions in TiDB](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-06.png)
+![Pessimistic transactions in TiDB](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-06.png)
 
 詳細については、 [ペシミスティック トランザクション モード](/pessimistic-transaction.md)を参照してください。
 

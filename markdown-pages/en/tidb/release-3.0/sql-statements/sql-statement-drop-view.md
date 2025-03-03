@@ -12,15 +12,15 @@ This statement drops an view object from the currently selected database. It doe
 
 **DropViewStmt:**
 
-![DropViewStmt](https://download.pingcap.com/images/docs/sqlgram/DropViewStmt.png)
+![DropViewStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/DropViewStmt.png)
 
 **TableNameList:**
 
-![TableNameList](https://download.pingcap.com/images/docs/sqlgram/TableNameList.png)
+![TableNameList](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableNameList.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 ## Examples
 

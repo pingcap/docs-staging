@@ -21,7 +21,7 @@ You can use one of the following methods to access the cluster diagnostics page:
 
 - After logging into TiDB Dashboard, click **Cluster Diagnostics** on the left navigation menu:
 
-  ![Access Cluster Diagnostics page](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-access.png)
+  ![Access Cluster Diagnostics page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-access.png)
 
 - Visit `http://127.0.0.1:2379/dashboard/#/diagnose` in your browser. Replace `127.0.0.1:2379` with the actual PD address and port number.
 
@@ -33,7 +33,7 @@ To diagnose a cluster within a specified time range and check the cluster load, 
 2. Set the **Range Duration**, such as `10 min`.
 3. Click **Start**.
 
-![Generate diagnostic report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-gen-report.png)
+![Generate diagnostic report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-gen-report.png)
 
 > **Note:**
 >
@@ -41,7 +41,7 @@ To diagnose a cluster within a specified time range and check the cluster load, 
 
 The steps above generate a diagnostic report for the time range from `2020-05-21 14:40:00` to `2020-05-21 14:50:00`. After clicking **Start**, you can see the interface below. **Progress** is the progress bar of the diagnostic report. After the report is generated, click **View Full Report**.
 
-![Report progress](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-gen-process.png)
+![Report progress](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-gen-process.png)
 
 ## Generate comparison report
 
@@ -58,7 +58,7 @@ You can take the following steps to generate a comparison report for the two tim
 4. Set the **Baseline Range Start Time**, which is the start time of the range (to be compared with) in which the system is normal, such as `2020-05-21 14:30:00`.
 5. Click **Start**.
 
-![Generate comparison report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-gen-compare-report.png)
+![Generate comparison report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-gen-compare-report.png)
 
 Then wait for the report to be generated and click **View Full Report**.
 

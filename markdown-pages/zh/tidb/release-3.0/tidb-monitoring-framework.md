@@ -19,10 +19,10 @@ Prometheus 提供了多个组件供用户使用。目前，TiDB 使用了以下�
 
 其结构如下图所示：
 
-![Prometheus in TiDB](https://download.pingcap.com/images/docs-cn/prometheus-in-tidb.png)
+![Prometheus in TiDB](https://docs-download.pingcap.com/media/images/docs-cn/prometheus-in-tidb.png)
 
 ## Grafana 在 TiDB 中的应用
 
 Grafana 是一个开源的 metric 分析及可视化系统。TiDB 使用 Grafana 来展示 TiDB 的各项性能指标。如下图所示：
 
-![Grafana in TiDB](https://download.pingcap.com/images/docs-cn/grafana-screenshot.png)
+![Grafana in TiDB](https://docs-download.pingcap.com/media/images/docs-cn/grafana-screenshot.png)

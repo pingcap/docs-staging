@@ -54,7 +54,7 @@ PingCAP Clinic Server 云诊断平台（以下简称为 Clinic Server）可以�
 
 打开 Clinic Server 集群页，点击页面上的 **Benchmark Report**，在 **All Reports** 列表中点击 **View** 可以查看相应的报告，报告内容示例如下：
 
-![benchmark-report](https://download.pingcap.com/images/docs-cn/clinic-benchmark-report.png)
+![benchmark-report](https://docs-download.pingcap.com/media/images/docs-cn/clinic-benchmark-report.png)
 
 > **注意：**
 >
@@ -87,7 +87,7 @@ Comparison Report 会基于所选的两个时间段的 Metrics 和日志进行�
 
 打开 Clinic Server 集群页，点击页面上的 **Comparison Report**，在 **All Reports** 列表中点击 **View** 可以查看相应的报告，报告内容示例如下：
 
-![comparison-report](https://download.pingcap.com/images/docs-cn/clinic-comparison-report.png)
+![comparison-report](https://docs-download.pingcap.com/media/images/docs-cn/clinic-comparison-report.png)
 
 > **注意：**
 >

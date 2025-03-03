@@ -18,7 +18,7 @@ aliases: ['/docs/tidb-data-migration/stable/overview/','/docs/tidb-data-migratio
 
 The Data Migration tool includes three components: DM-master, DM-worker, and dmctl.
 
-![Data Migration architecture](https://download.pingcap.com/images/tidb-data-migration/dm-architecture.png)
+![Data Migration architecture](https://docs-download.pingcap.com/media/images/tidb-data-migration/dm-architecture.png)
 
 ### DM-master
 

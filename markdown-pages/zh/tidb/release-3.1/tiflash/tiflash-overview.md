@@ -9,7 +9,7 @@ TiFlash 是 TiDB HTAP 形态的关键组件，它是 TiKV 的列存扩展，在�
 
 ## 整体架构
 
-![TiFlash 架构](https://download.pingcap.com/images/docs-cn/tiflash/tiflash-architecture.png)
+![TiFlash 架构](https://docs-download.pingcap.com/media/images/docs-cn/tiflash/tiflash-architecture.png)
 
 上图为 TiDB HTAP 形态架构，其中包含 TiFlash 节点。
 

@@ -136,7 +136,7 @@ Adjust the following system variables related to Fast Online DDL:
 
 The architecture of the TiDB backend task distributed execution framework is as follows:
 
-![Architecture of the TiDB backend task distributed execution framework](https://download.pingcap.com/images/docs/dist-task/dist-task-architect.jpg)
+![Architecture of the TiDB backend task distributed execution framework](https://docs-download.pingcap.com/media/images/docs/dist-task/dist-task-architect.jpg)
 
 As shown in the preceding diagram, the execution of backend tasks in the distributed framework is mainly handled by the following modules:
 

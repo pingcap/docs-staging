@@ -133,7 +133,7 @@ TiDB 的 SQL 层，即 TiDB Server，负责将 SQL 翻译成 Key-Value 操作，
 
 **整个流程示意图如下：**
 
-![naive sql flow](https://download.pingcap.com/images/docs-cn/tidb-computing-native-sql-flow.jpeg)
+![naive sql flow](https://docs-download.pingcap.com/media/images/docs-cn/tidb-computing-native-sql-flow.jpeg)
 
 这个方案是直观且可行的，但是在分布式数据库的场景下有一些显而易见的问题：
 
@@ -147,12 +147,12 @@ TiDB 的 SQL 层，即 TiDB Server，负责将 SQL 翻译成 Key-Value 操作，
 
 以下是数据逐层返回的示意图：
 
-![dist sql flow](https://download.pingcap.com/images/docs-cn/tidb-computing-dist-sql-flow.png)
+![dist sql flow](https://docs-download.pingcap.com/media/images/docs-cn/tidb-computing-dist-sql-flow.png)
 
 ### SQL 层架构
 
 通过上面的例子，希望大家对 SQL 语句的处理有一个基本的了解。实际上 TiDB 的 SQL 层要复杂得多，模块以及层次非常多，下图列出了重要的模块以及调用关系：
 
-![tidb sql layer](https://download.pingcap.com/images/docs-cn/tidb-computing-tidb-sql-layer.png)
+![tidb sql layer](https://docs-download.pingcap.com/media/images/docs-cn/tidb-computing-tidb-sql-layer.png)
 
 用户的 SQL 请求会直接或者通过 `Load Balancer` 发送到 TiDB Server，TiDB Server 会解析 `MySQL Protocol Packet`，获取请求内容，对 SQL 进行语法解析和语义分析，制定和优化查询计划，执行查询计划并获取和处理数据。数据全部存储在 TiKV 集群中，所以在这个过程中 TiDB Server 需要和 TiKV 交互，获取数据。最后 TiDB Server 需要将查询结果返回给用户。

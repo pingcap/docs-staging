@@ -11,7 +11,7 @@ On the log search page of TiDB Dashboard, you can search logs of all nodes, prev
 
 After logging in to TiDB Dashboard, you can click **Search Logs** to enter this log search homepage.
 
-![Log Search Page](https://download.pingcap.com/images/docs/dashboard/dashboard-log-search-home.png)
+![Log Search Page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-home.png)
 
 This page provides the following search parameters:
 
@@ -26,7 +26,7 @@ After clicking the **Search** button, you enter the detail page of the search re
 
 The following image shows the page of the search results.
 
-![Search result](https://download.pingcap.com/images/docs/dashboard/dashboard-log-search-result.png)
+![Search result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-result.png)
 
 This page consists of the following three areas:
 
@@ -60,12 +60,12 @@ The search progress area has the following three control buttons:
 
 Click the **View search history** link on the log search homepage to enter page of search history list:
 
-![Search history entry](https://download.pingcap.com/images/docs/dashboard/dashboard-log-search-history-entry.png)
+![Search history entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-history-entry.png)
 
-![Search history list](https://download.pingcap.com/images/docs/dashboard/dashboard-log-search-history.png)
+![Search history list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-history.png)
 
 The history list shows the time range, log level, components, keywords, and search status of each search log. Click the **Detail** link in the **Action** column to see the search result details:
 
 You can delete the search history that you no longer need. Click **Delete All** in the upper right corner, or select the rows to be deleted and then click **Delete selected** to delete the history:
 
-![Delete search history](https://download.pingcap.com/images/docs/dashboard/dashboard-log-search-delete-history.png)
+![Delete search history](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-delete-history.png)

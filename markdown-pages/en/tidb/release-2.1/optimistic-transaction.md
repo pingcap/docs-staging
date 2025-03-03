@@ -14,7 +14,7 @@ In TiDB's optimistic transaction model, the two-phase commit begins right after 
 
 TiDB adopts Google's Percolator transaction model, a variant of two-phase commit (2PC) to ensure the correct completion of a distributed transaction. The procedure is as follows:
 
-![2PC in TiDB](https://download.pingcap.com/images/docs/2pc-in-tidb.png)
+![2PC in TiDB](https://docs-download.pingcap.com/media/images/docs/2pc-in-tidb.png)
 
 1. The client begins a transaction.
 
@@ -80,24 +80,24 @@ You can enable the automatic retry in either session level or global level:
 
 1. Session level:
 
-    
+
     ```sql
     set @@tidb_disable_txn_auto_retry = off;
     ```
 
-    
+
     ```sql
     set @@tidb_retry_limit = 10;
     ```
 
 2. Global level:
 
-    
+
     ```sql
     set @@global.tidb_disable_txn_auto_retry = off;
     ```
 
-    
+
     ```sql
     set @@global.tidb_retry_limit = 10;
     ```
@@ -161,6 +161,6 @@ scheduler-concurrency = 2048000
 
 In addition, TiKV supports monitoring the time spent on waiting latches in scheduler.
 
-![Scheduler latch wait duration](https://download.pingcap.com/images/docs/optimistic-transaction-metric.png)
+![Scheduler latch wait duration](https://docs-download.pingcap.com/media/images/docs/optimistic-transaction-metric.png)
 
 When `Scheduler latch wait duration` is high and there is no slow writes, it can be safely concluded that there are many write conflicts at this time.

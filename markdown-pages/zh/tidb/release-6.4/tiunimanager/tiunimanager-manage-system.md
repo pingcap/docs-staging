@@ -61,10 +61,10 @@ TiUniManager 告警设置支持钉钉、Email 等告警通道，具体见 [List 
 
 1. 打开 **Notification channels** 配置页面，点击 **New channel** 创建通道。
 
-    ![Notification channels - New channel](https://download.pingcap.com/images/docs-cn/tiunimanager/tiunimanager-notification-channels-new-channel.png)
+    ![Notification channels - New channel](https://docs-download.pingcap.com/media/images/docs-cn/tiunimanager/tiunimanager-notification-channels-new-channel.png)
 
 2. 配置消息接收方，示例如下：
 
-    ![Notification channels - Edit config](https://download.pingcap.com/images/docs-cn/tiunimanager/tiunimanager-notification-channels-edit-config.png)
+    ![Notification channels - Edit config](https://docs-download.pingcap.com/media/images/docs-cn/tiunimanager/tiunimanager-notification-channels-edit-config.png)
 
     若要接入钉钉自定义机器人，参考[钉钉文档 - 自定义机器人接入](https://open.dingtalk.com/document/group/custom-robot-access)。

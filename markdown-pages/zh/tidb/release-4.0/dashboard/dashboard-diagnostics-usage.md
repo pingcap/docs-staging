@@ -15,7 +15,7 @@ aliases: ['/docs-cn/stable/dashboard/dashboard-diagnostics-usage/','/docs-cn/v4.
 
 #### 示例 1
 
-![QPS 图](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-usage1.png)
+![QPS 图](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-usage1.png)
 
 上图是 go-ycsb 压测的监控。可以发现，在 `2020-03-10 13:24:30` 时，QPS 突然开始下降，3 分钟后，QPS 开始恢复正常。
 
@@ -28,7 +28,7 @@ aliases: ['/docs-cn/stable/dashboard/dashboard-diagnostics-usage/','/docs-cn/v4.
 
 生成报告后查看 **Compare Diagnose** 报表内容如下：
 
-![对比诊断结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-usage2.png)
+![对比诊断结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-usage2.png)
 
 上面诊断结果显示，在诊断的时间内可能有大查询，下面的每一行的含义是：
 
@@ -64,7 +64,7 @@ digest             | 24bd6d8a9b238086c9b8c3d240ad4ef32f79ce94cf5a468c0b8fe1eb5f8
 
 如果大查询一直没执行完，就不会记录慢日志，但仍可以进行诊断，示例如下：
 
-![QPS 图](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-usage3.png)
+![QPS 图](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-usage3.png)
 
 上图中，也是在跑 go-ycsb 的压测。可以发现，在 `2020-03-08 01:46:30` 时，QPS 突然开始下降，并且一直没有恢复。
 
@@ -75,7 +75,7 @@ digest             | 24bd6d8a9b238086c9b8c3d240ad4ef32f79ce94cf5a468c0b8fe1eb5f8
 
 生成报告后看 **Compare Diagnose** 报表的内容如下：
 
-![对比诊断结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-usage4.png)
+![对比诊断结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-usage4.png)
 
 上面诊断结果的最后一行显示可能有慢查询，并提示用 SQL 查询 TiDB 日志中的 expensive query。在 TiDB 中执行结果如下：
 
@@ -94,7 +94,7 @@ MESSAGE  | [expensivequery.go:167] [expensive_query] [cost_time=60.085949605s] [
 
 诊断有可能是误诊，使用对比报告或许可以帮助 DBA 更快速的定位问题。参考以下示例。
 
-![QPS 图](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-usage5.png)
+![QPS 图](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-usage5.png)
 
 上图中，也是在跑 go-ycsb 的压测，可以发现，在 `2020-05-22 22:14:00` 时，QPS 突然开始下降，大概在持续 3 分钟后恢复。
 
@@ -105,7 +105,7 @@ MESSAGE  | [expensivequery.go:167] [expensive_query] [cost_time=60.085949605s] [
 
 生成对比报告后，查看 **Max diff item** 报表，该报表对比两个时间段的监控项后，按照监控项的差异大小排序，这个表的结果如下：
 
-![对比结果](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-usage6.png)
+![对比结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-usage6.png)
 
 从上面结果可以看出 `t2` 时间段新增了很多 Coprocessor 请求，可以猜测可能是 `t2` 时间段出现了一些大查询，或者是查询较多的负载。
 

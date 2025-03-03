@@ -11,15 +11,15 @@ This statement creates a new role, which can be assigned to users as part of rol
 
 **CreateRoleStmt:**
 
-![CreateRoleStmt](https://download.pingcap.com/images/docs/sqlgram/CreateRoleStmt.png)
+![CreateRoleStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/CreateRoleStmt.png)
 
 **IfNotExists:**
 
-![IfNotExists](https://download.pingcap.com/images/docs/sqlgram/IfNotExists.png)
+![IfNotExists](https://docs-download.pingcap.com/media/images/docs/sqlgram/IfNotExists.png)
 
 **RoleSpec:**
 
-![RoleSpec](https://download.pingcap.com/images/docs/sqlgram/RoleSpec.png)
+![RoleSpec](https://docs-download.pingcap.com/media/images/docs/sqlgram/RoleSpec.png)
 
 ## Examples
 

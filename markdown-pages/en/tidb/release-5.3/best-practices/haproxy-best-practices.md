@@ -7,7 +7,7 @@ summary: This document describes best practices for configuration and usage of H
 
 This document describes best practices for configuration and usage of [HAProxy](https://github.com/haproxy/haproxy) in TiDB. HAProxy provides load balancing for TCP-based applications. From TiDB clients, you can manipulate data just by connecting to the floating virtual IP address provided by HAProxy, which helps to achieve load balance in the TiDB server layer.
 
-![HAProxy Best Practices in TiDB](https://download.pingcap.com/images/docs/haproxy.jpg)
+![HAProxy Best Practices in TiDB](https://docs-download.pingcap.com/media/images/docs/haproxy.jpg)
 
 ## HAProxy overview
 
@@ -76,21 +76,21 @@ You can easily use HAProxy to configure and set up a load-balanced database envi
 
 1. Download the package of the HAProxy 2.5.0 source code:
 
-    
+
     ```bash
     wget https://github.com/haproxy/haproxy/archive/refs/tags/v2.5.0.zip
     ```
 
 2. Unzip the package:
 
-    
+
     ```bash
     unzip v2.5.0.zip
     ```
 
 3. Compile the application from the source code:
 
-    
+
     ```bash
     cd haproxy-2.5.0
     make clean
@@ -100,14 +100,14 @@ You can easily use HAProxy to configure and set up a load-balanced database envi
 
 4. Reconfigure the profile:
 
-    
+
     ```bash
     echo 'export PATH=/app/haproxy/bin:$PATH' >> /etc/profile
     ```
 
 5. Check whether the installation is successful:
 
-    
+
     ```bash
     which haproxy
     ```
@@ -211,14 +211,14 @@ To stop HAProxy, use the `kill -9` command.
 
 1. Run the following command:
 
-    
+
     ```bash
     ps -ef | grep haproxy
     ```
 
 2. Terminate the process of HAProxy:
 
-    
+
     ```bash
     kill -9 ${haproxy.pid}
     ```

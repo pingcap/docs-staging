@@ -40,7 +40,7 @@ Currently, the DXF supports the distributed execution of the [`ADD INDEX`](/sql-
 
 ## Limitation
 
-The DXF can only schedule up to 16 tasks (including [`ADD INDEX`](/sql-statements/sql-statement-add-index.md) tasks and [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) tasks) simultaneously. 
+The DXF can only schedule up to 16 tasks (including [`ADD INDEX`](/sql-statements/sql-statement-add-index.md) tasks and [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) tasks) simultaneously.
 
 ## `ADD INDEX` limitation
 
@@ -109,7 +109,7 @@ By default, the DXF schedules all TiDB nodes to execute distributed tasks. Start
 
 The architecture of the DXF is as follows:
 
-![Architecture of the DXF](https://download.pingcap.com/images/docs/dist-task/dist-task-architect.jpg)
+![Architecture of the DXF](https://docs-download.pingcap.com/media/images/docs/dist-task/dist-task-architect.jpg)
 
 As shown in the preceding diagram, the execution of tasks in the DXF is mainly handled by the following modules:
 

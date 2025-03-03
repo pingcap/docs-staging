@@ -14,15 +14,15 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-explain/','/docs-cn/v3.1/r
 
 **ExplainSym:**
 
-![ExplainSym](https://download.pingcap.com/images/docs-cn/sqlgram/ExplainSym.png)
+![ExplainSym](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ExplainSym.png)
 
 **ExplainStmt:**
 
-![ExplainStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ExplainStmt.png)
+![ExplainStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ExplainStmt.png)
 
 **ExplainableStmt:**
 
-![ExplainableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ExplainableStmt.png)
+![ExplainableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ExplainableStmt.png)
 
 ## 示例
 
@@ -196,7 +196,7 @@ The `xx.dot` is the result returned by the above statement.
 
 如果你的计算机上未安装 `dot` 程序，可将结果复制到 [本网站](http://www.webgraphviz.com/) 以获取树形图：
 
-![Explain Dot](https://download.pingcap.com/images/docs-cn/explain_dot.png)
+![Explain Dot](https://docs-download.pingcap.com/media/images/docs-cn/explain_dot.png)
 
 ## MySQL 兼容性
 

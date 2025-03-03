@@ -41,11 +41,11 @@ This section introduces how to diagnose Stale Read issues using Grafana and `tik
 
 In the [Grafana > TiDB dashboard > **KV Request** dashboard](/grafana-tidb-dashboard.md#kv-request), the following panels show the hit rate, OPS, and traffic of Stale Read:
 
-![Stale Read Hit/Miss OPS](https://download.pingcap.com/images/docs/stale-read/metrics-hit-miss.png)
+![Stale Read Hit/Miss OPS](https://docs-download.pingcap.com/media/images/docs/stale-read/metrics-hit-miss.png)
 
-![Stale Read Req OPS](https://download.pingcap.com/images/docs/stale-read/metrics-ops.png)
+![Stale Read Req OPS](https://docs-download.pingcap.com/media/images/docs/stale-read/metrics-ops.png)
 
-![Stale Read Req Traffic](https://download.pingcap.com/images/docs/stale-read/traffic.png)
+![Stale Read Req Traffic](https://docs-download.pingcap.com/media/images/docs/stale-read/traffic.png)
 
 For more information about the preceding metrics, see [TiDB monitoring metrics](/grafana-tidb-dashboard.md#kv-request).
 
@@ -144,11 +144,11 @@ To address CheckLeader issues, you can check the network and the **Check Leader 
 
 If you observe an increasing miss rate of **Stale Read OPS** as follows:
 
-![Example: Stale Read OPS](https://download.pingcap.com/images/docs/stale-read/example-ops.png)
+![Example: Stale Read OPS](https://docs-download.pingcap.com/media/images/docs/stale-read/example-ops.png)
 
 You can first check the **Max Resolved TS gap** and **Min Resolved TS Region** metrics in the [**TiKV-Details** > **Resolved-TS** dashboard](/grafana-tikv-dashboard.md#resolved-ts):
 
-![Example: Max Resolved TS gap](https://download.pingcap.com/images/docs/stale-read/example-ts-gap.png)
+![Example: Max Resolved TS gap](https://docs-download.pingcap.com/media/images/docs/stale-read/example-ts-gap.png)
 
 From the preceding metrics, you can find that Region `3121` and some other Regions have not updated their resolved-ts in time.
 

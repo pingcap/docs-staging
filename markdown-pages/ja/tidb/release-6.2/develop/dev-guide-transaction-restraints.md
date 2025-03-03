@@ -11,7 +11,7 @@ summary: Learn about transaction restraints in TiDB.
 
 TiDB がサポートする分離レベルは**RC (Read Committed)**と<strong>SI (Snapshot Isolation)</strong>で、 <strong>SI</strong>は基本的に<strong>RR (Repeatable Read)</strong>分離レベルと同等です。
 
-![isolation level](https://download.pingcap.com/images/docs/develop/transaction_isolation_level.png)
+![isolation level](https://docs-download.pingcap.com/media/images/docs/develop/transaction_isolation_level.png)
 
 ## スナップショット分離はファントム読み取りを回避できます {#snapshot-isolation-can-avoid-phantom-reads}
 
@@ -360,7 +360,7 @@ mysql> SELECT * FROM doctors;
 
 どちらのトランザクションでも、アプリケーションは最初に 2 人以上の医師が待機しているかどうかを確認します。その場合、1 人の医師が安全に休暇を取ることができると想定しています。データベースはスナップショット分離を使用するため、両方のチェックで`2`が返され、両方のトランザクションが次の段階に進みます。 `Alice`は自分の記録を非番に更新し、 `Bob`も非番です。両方のトランザクションが正常にコミットされます。現在、少なくとも 1 人の医師が待機している必要があるという要件に違反する勤務中の医師はいません。次の図 ( ***Designing Data-Intensive Applications***から引用) は、実際に何が起こるかを示しています。
 
-![Write Skew](https://download.pingcap.com/images/docs/develop/write-skew.png)
+![Write Skew](https://docs-download.pingcap.com/media/images/docs/develop/write-skew.png)
 
 ここで、書き込みスキューの問題を回避するために、サンプル プログラムを`SELECT FOR UPDATE`を使用するように変更しましょう。
 
@@ -727,6 +727,6 @@ mysql> SELECT * FROM T2;
 
 現在、ロックは自動コミットされた`SELECT FOR UPDATE`ステートメントに追加されていません。この効果を次の図に示します。
 
-![The situation in TiDB](https://download.pingcap.com/images/docs/develop/autocommit_selectforupdate_nowaitlock.png)
+![The situation in TiDB](https://docs-download.pingcap.com/media/images/docs/develop/autocommit_selectforupdate_nowaitlock.png)
 
 これは、MySQL との既知の非互換性の問題です。この問題は、明示的な`BEGIN;COMMIT;`ステートメントを使用して解決できます。

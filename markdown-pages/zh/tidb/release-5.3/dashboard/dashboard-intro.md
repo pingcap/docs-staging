@@ -6,7 +6,7 @@ title: TiDB Dashboard 介绍
 
 TiDB Dashboard 是 TiDB 自 4.0 版本起提供的图形化界面，可用于监控及诊断 TiDB 集群。TiDB Dashboard 内置于 TiDB 的 PD 组件中，无需独立部署。
 
-![界面](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-intro.gif)
+![界面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-intro.gif)
 
 TiDB Dashboard 在 GitHub 上[开源](https://github.com/pingcap-incubator/tidb-dashboard)。
 

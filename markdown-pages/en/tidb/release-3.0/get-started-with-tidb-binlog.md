@@ -30,7 +30,7 @@ See [TiDB Binlog Cluster User Guide](/tidb-binlog/tidb-binlog-overview.md) for m
 
 TiDB Binlog comprises two components: the **Pump** and the **Drainer**. Several Pump nodes make up a pump cluster. Each Pump node connects to TiDB Server instances and receives updates made to each of the TiDB Server instances in a cluster. A Drainer connects to the Pump cluster and transforms the received updates into the correct format for a particular downstream destination, for example, Kafka, another TiDB Cluster or a MySQL/MariaDB server.
 
-![TiDB-Binlog architecture](https://download.pingcap.com/images/docs/tidb-binlog-cluster-architecture.png)
+![TiDB-Binlog architecture](https://docs-download.pingcap.com/media/images/docs/tidb-binlog-cluster-architecture.png)
 
 The clustered architecture of Pump ensures that updates won't be lost as new TiDB Server instances join or leave the TiDB Cluster or Pump nodes join or leave the Pump cluster.
 
@@ -400,7 +400,7 @@ There are 3 solutions to this issue:
 
 - Stop Drainer using `binlogctl` instead of killing the process:
 
-    
+
     ```bash
     ./bin/binlogctl --pd-urls=http://127.0.0.1:2379 --cmd=drainers &&
     ./bin/binlogctl --pd-urls=http://127.0.0.1:2379 --cmd=offline-drainer --node-id=localhost.localdomain:8249
@@ -409,7 +409,7 @@ There are 3 solutions to this issue:
 - Start Drainer _before_ starting Pump.
 - Use `binlogctl` after starting PD (but before starting Drainer and Pump) to update the state of the paused Drainer:
 
-    
+
     ```bash
     ./bin/binlogctl --pd-urls=http://127.0.0.1:2379 --cmd=update-drainer --node-id=localhost.localdomain:8249 --state=offline
     ```

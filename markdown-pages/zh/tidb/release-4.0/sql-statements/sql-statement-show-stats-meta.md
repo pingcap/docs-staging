@@ -27,15 +27,15 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-stats-meta/','/docs
 
 **ShowStmt**
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowStmt.png)
 
 **ShowTargetFiltertable**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTargetFilterable.png)
 
 **ShowLikeOrWhereOpt**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## 示例
 

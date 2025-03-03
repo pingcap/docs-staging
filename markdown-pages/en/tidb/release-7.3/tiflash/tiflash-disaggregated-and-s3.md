@@ -13,7 +13,7 @@ By default, TiFlash is deployed using the coupled storage and compute architectu
 
 ## Architecture overview
 
-![TiFlash Write and Compute Separation Architecture](https://download.pingcap.com/images/docs/tiflash/tiflash-s3.png)
+![TiFlash Write and Compute Separation Architecture](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash-s3.png)
 
 In the disaggregated storage and compute architecture, different functionalities of the TiFlash process are divided and allocated to two types of nodes: the Write Node and the Compute Node. These two types of nodes can be deployed separately and scaled independently, which means that you can decide the number of Write Nodes and Compute Nodes to be deployed as needed.
 
@@ -71,7 +71,7 @@ TiFlash disaggregated storage and compute architecture is suitable for cost-effe
         "And": {
             "Tags": [
                 {
-                    "Value": "tiflash_deleted", 
+                    "Value": "tiflash_deleted",
                     "Key": "true"
                 }
             ]

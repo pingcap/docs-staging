@@ -12,15 +12,15 @@ This statement is included for compatibility with MySQL. It has no effect on TiD
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStmt.png)
 
 **ShowTargetFilterable:**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTargetFilterable.png)
 
 **GlobalScope:**
 
-![GlobalScope](https://download.pingcap.com/images/docs/sqlgram/GlobalScope.png)
+![GlobalScope](https://docs-download.pingcap.com/media/images/docs/sqlgram/GlobalScope.png)
 
 ## Examples
 

@@ -12,15 +12,15 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-do/','/docs-cn/v3.0/refere
 
 **DoStmt:**
 
-![DoStmt](https://download.pingcap.com/images/docs-cn/sqlgram/DoStmt.png)
+![DoStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DoStmt.png)
 
 **ExpressionList:**
 
-![ExpressionList](https://download.pingcap.com/images/docs-cn/sqlgram/ExpressionList.png)
+![ExpressionList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ExpressionList.png)
 
 **Expression:**
 
-![Expression](https://download.pingcap.com/images/docs-cn/sqlgram/Expression.png)
+![Expression](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Expression.png)
 
 ## 示例
 

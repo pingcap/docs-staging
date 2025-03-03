@@ -17,7 +17,7 @@ TiDB Lightning 主要包含两个部分：
 - **`tidb-lightning`**（“前端”）：主要完成适配工作，通过读取数据源，在下游 TiDB 集群建表、将数据转换成键值对（KV 对）发送到 `tikv-importer`、检查数据完整性等。
 - **`tikv-importer`**（“后端”）：主要完成将数据导入 TiKV 集群的工作，对 `tidb-lightning` 写入的键值对进行缓存、排序、切分操作并导入到 TiKV 集群。
 
-![TiDB Lightning 整体架构](https://download.pingcap.com/images/docs-cn/tidb-lightning-architecture-v2.1.png)
+![TiDB Lightning 整体架构](https://docs-download.pingcap.com/media/images/docs-cn/tidb-lightning-architecture-v2.1.png)
 
 TiDB Lightning 整体工作原理如下：
 

@@ -12,11 +12,11 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-trace/','/docs-cn/v4.0/s
 
 **TraceStmt:**
 
-![TraceStmt](https://download.pingcap.com/images/docs-cn/sqlgram/TraceStmt.png)
+![TraceStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TraceStmt.png)
 
 **TraceableStmt:**
 
-![TraceableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/TraceableStmt.png)
+![TraceableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TraceableStmt.png)
 
 ## 示例
 
@@ -53,9 +53,9 @@ trace format='json' select * from mysql.user;
 
 可将 JSON 格式的跟踪文件粘贴到跟踪查看器中。查看器可通过 TiDB 状态端口访问：
 
-![TiDB Trace Viewer-1](https://download.pingcap.com/images/docs-cn/trace-paste.png)
+![TiDB Trace Viewer-1](https://docs-download.pingcap.com/media/images/docs-cn/trace-paste.png)
 
-![TiDB Trace Viewer-2](https://download.pingcap.com/images/docs-cn/trace-view.png)
+![TiDB Trace Viewer-2](https://docs-download.pingcap.com/media/images/docs-cn/trace-view.png)
 
 ## MySQL 兼容性
 

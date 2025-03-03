@@ -12,27 +12,27 @@ This statement is included for compatibility with MySQL. It has no effective usa
 
 **FlushStmt:**
 
-![FlushStmt](https://download.pingcap.com/images/docs/sqlgram/FlushStmt.png)
+![FlushStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/FlushStmt.png)
 
 **NoWriteToBinLogAliasOpt:**
 
-![NoWriteToBinLogAliasOpt](https://download.pingcap.com/images/docs/sqlgram/NoWriteToBinLogAliasOpt.png)
+![NoWriteToBinLogAliasOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/NoWriteToBinLogAliasOpt.png)
 
 **FlushOption:**
 
-![FlushOption](https://download.pingcap.com/images/docs/sqlgram/FlushOption.png)
+![FlushOption](https://docs-download.pingcap.com/media/images/docs/sqlgram/FlushOption.png)
 
 **TableOrTables:**
 
-![TableOrTables](https://download.pingcap.com/images/docs/sqlgram/TableOrTables.png)
+![TableOrTables](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableOrTables.png)
 
 **TableNameListOpt:**
 
-![TableNameListOpt](https://download.pingcap.com/images/docs/sqlgram/TableNameListOpt.png)
+![TableNameListOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableNameListOpt.png)
 
 **WithReadLockOpt:**
 
-![WithReadLockOpt](https://download.pingcap.com/images/docs/sqlgram/WithReadLockOpt.png)
+![WithReadLockOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/WithReadLockOpt.png)
 
 ## Examples
 

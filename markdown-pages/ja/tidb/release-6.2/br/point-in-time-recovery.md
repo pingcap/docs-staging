@@ -21,7 +21,7 @@ PITR を使用して、次のビジネス要件を満たすことができます
 
 ビジネスでPITRを使用する手順は次のとおりです。
 
-![Point-in-Time Recovery](https://download.pingcap.com/images/docs/br/pitr-usage.png)
+![Point-in-Time Recovery](https://docs-download.pingcap.com/media/images/docs/br/pitr-usage.png)
 
 ### バックアップデータ {#back-up-data}
 

@@ -10,7 +10,7 @@ To address the issue of slow queries, you need to take the following two steps:
 1. Among many queries, identify which type of queries are slow.
 2. Analyze why this type of queries are slow.
 
-You can easily perform step 1 using the [slow query log](/dashboard/dashboard-slow-query.md) and the [statement summary table](/statement-summary-tables.md) features. It is recommended to use [TiDB Dashboard](/dashboard/dashboard-intro.md), which integrates the two features and directly displays the slow queries in your browser. 
+You can easily perform step 1 using the [slow query log](/dashboard/dashboard-slow-query.md) and the [statement summary table](/statement-summary-tables.md) features. It is recommended to use [TiDB Dashboard](/dashboard/dashboard-intro.md), which integrates the two features and directly displays the slow queries in your browser.
 
 This document focuses on how to perform step 2 - analyze why this type of queries are slow.
 
@@ -31,7 +31,7 @@ The procedures above are explained in the following sections.
 
 ## Identify the performance bottleneck of the query
 
-First, you need to have a general understanding of the query process. The key stages of the query execution process in TiDB are illustrated in [TiDB performance map](https://download.pingcap.com/images/docs/performance-map.png).
+First, you need to have a general understanding of the query process. The key stages of the query execution process in TiDB are illustrated in [TiDB performance map](https://docs-download.pingcap.com/media/images/docs/performance-map.png).
 
 You can get the duration information using the following methods:
 

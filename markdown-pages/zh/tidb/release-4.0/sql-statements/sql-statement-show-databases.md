@@ -14,11 +14,11 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-databases/','/docs-
 
 **ShowDatabasesStmt:**
 
-![ShowDatabasesStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowDatabasesStmt.png)
+![ShowDatabasesStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowDatabasesStmt.png)
 
 **ShowLikeOrWhereOpt:**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## 示例
 

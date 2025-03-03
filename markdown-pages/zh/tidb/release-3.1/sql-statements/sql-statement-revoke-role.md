@@ -11,15 +11,15 @@ summary: TiDB 数据库中 REVOKE <role> 的使用概况。
 
 **RevokeRoleStmt:**
 
-![RevokeRoleStmt](https://download.pingcap.com/images/docs-cn/sqlgram/RevokeRoleStmt.png)
+![RevokeRoleStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/RevokeRoleStmt.png)
 
 **RolenameList:**
 
-![RolenameList](https://download.pingcap.com/images/docs-cn/sqlgram/RolenameList.png)
+![RolenameList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/RolenameList.png)
 
 **UsernameList:**
 
-![UsernameList](https://download.pingcap.com/images/docs-cn/sqlgram/UsernameList.png)
+![UsernameList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/UsernameList.png)
 
 ## 示例
 

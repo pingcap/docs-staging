@@ -17,7 +17,7 @@ Syncer 包含在 tidb-enterprise-tools 安装包中，可[在此下载](/downloa
 
 ## Syncer 架构
 
-![Syncer 架构](https://download.pingcap.com/images/docs-cn/syncer-architecture.png)
+![Syncer 架构](https://docs-download.pingcap.com/media/images/docs-cn/syncer-architecture.png)
 
 ## Syncer 部署位置
 
@@ -324,7 +324,7 @@ tbl-name = "~^2016_.*"
 
 暂时对 DDL 支持不完善。
 
-![sharding](https://download.pingcap.com/images/docs-cn/syncer-sharding.png)
+![sharding](https://docs-download.pingcap.com/media/images/docs-cn/syncer-sharding.png)
 
 #### 分库分表同步示例
 
@@ -384,7 +384,7 @@ target-table = "order_2017"
 
     可通过以下命令查看 `server-id`：
 
-    
+
     ```sql
     show global variables like 'server_id';
     ```
@@ -407,7 +407,7 @@ target-table = "order_2017"
 
         使用如下命令确认是否开启了 binlog：
 
-        
+
         ```sql
         show global variables like 'log_bin';
         ```
@@ -425,7 +425,7 @@ target-table = "order_2017"
 
     2. binlog 格式必须为 `ROW`，且参数 `binlog_row_image` 必须设置为 `FULL`，可使用如下命令查看参数设置：
 
-        
+
         ```sql
         select variable_name, variable_value from information_schema.global_variables where variable_name in ('binlog_format','binlog_row_image');
         ```
@@ -474,7 +474,7 @@ target-table = "order_2017"
 
         为所同步的数据库或者表，执行下面的 GRANT 语句：
 
-        
+
         ```sql
         GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,INDEX  ON db.table TO 'your_user'@'your_wildcard_of_host';
         ```
@@ -483,7 +483,7 @@ target-table = "order_2017"
 
     必须确认上下游的 SQL mode 一致；如果不一致，则会出现数据同步的错误。
 
-    
+
     ```sql
     show variables like '%sql_mode%';
     ```
@@ -509,7 +509,7 @@ target-table = "order_2017"
 
 Syncer 使用开源时序数据库 Prometheus 作为监控和性能指标信息存储方案，使用 Grafana 作为可视化组件进行展示，配合 AlertManager 来实现报警。其方案如下图所示：
 
-![monitor_scheme](https://download.pingcap.com/images/docs-cn/syncer-monitor-scheme.png)
+![monitor_scheme](https://docs-download.pingcap.com/media/images/docs-cn/syncer-monitor-scheme.png)
 
 ### 配置 Syncer 监控与告警
 

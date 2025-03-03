@@ -26,7 +26,7 @@ Currently, the DM documentation is independent of the TiDB documentation. To acc
 
 This section describes the basic data migration features provided by DM.
 
-![DM Core Features](https://download.pingcap.com/images/docs/dm/dm-core-features.png)
+![DM Core Features](https://docs-download.pingcap.com/media/images/docs/dm/dm-core-features.png)
 
 ### Block and allow lists migration at the schema and table levels
 

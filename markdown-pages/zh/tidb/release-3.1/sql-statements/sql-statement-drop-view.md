@@ -12,15 +12,15 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-drop-view/','/docs-cn/v3.1
 
 **DropViewStmt:**
 
-![DropViewStmt](https://download.pingcap.com/images/docs-cn/sqlgram/DropViewStmt.png)
+![DropViewStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DropViewStmt.png)
 
 **TableNameList:**
 
-![TableNameList](https://download.pingcap.com/images/docs-cn/sqlgram/TableNameList.png)
+![TableNameList](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableNameList.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 ## 示例
 

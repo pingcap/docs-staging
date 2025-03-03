@@ -7,7 +7,7 @@ summary: Learn about the logical and physical optimization of SQL in TiDB.
 
 In TiDB, the process from inputting a query to getting the execution result according to the final execution plan is illustrated as follows:
 
-![SQL Optimization Process](https://download.pingcap.com/images/docs/sql-optimization.png)
+![SQL Optimization Process](https://docs-download.pingcap.com/media/images/docs/sql-optimization.png)
 
 After parsing the original query text by `parser` and some simple validity checks, TiDB first makes some logically equivalent changes to the query. For detailed changes, see [SQL Logical Optimization](/sql-logical-optimization.md).
 

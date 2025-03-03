@@ -12,23 +12,23 @@ The statement `SHOW INDEXES [FROM|IN]` lists the indexes on a specified table.  
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStmt.png)
 
 **ShowTargetFilterable:**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTargetFilterable.png)
 
 **ShowIndexKwd:**
 
-![ShowIndexKwd](https://download.pingcap.com/images/docs/sqlgram/ShowIndexKwd.png)
+![ShowIndexKwd](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowIndexKwd.png)
 
 **FromOrIn:**
 
-![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
+![FromOrIn](https://docs-download.pingcap.com/media/images/docs/sqlgram/FromOrIn.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 ## Examples
 

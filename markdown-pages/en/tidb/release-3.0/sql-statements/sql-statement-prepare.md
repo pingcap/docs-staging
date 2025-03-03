@@ -12,7 +12,7 @@ The `PREPARE` statement provides an SQL interface to server-side prepared statem
 
 **PreparedStmt:**
 
-![PreparedStmt](https://download.pingcap.com/images/docs/sqlgram/PreparedStmt.png)
+![PreparedStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/PreparedStmt.png)
 
 ## Examples
 

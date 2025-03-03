@@ -152,7 +152,7 @@ Confluent 是一个兼容 Apache Kafka 的数据流平台，能够访问、存�
 
 2. 观察 Confluent 中数据传输情况。
 
-    ![Confluent topics](https://download.pingcap.com/images/docs-cn/integrate/confluent-topics.png)
+    ![Confluent topics](https://docs-download.pingcap.com/media/images/docs-cn/integrate/confluent-topics.png)
 
     在 Confluent 集群控制面板中，可以观察到相应的 Topic 已经被自动创建，并有数据正在写入。至此，TiDB 数据库中的增量数据就被成功输出到了 Confluent Cloud。
 
@@ -174,19 +174,19 @@ Snowflake 是一种云原生数据仓库。借助 Confluent 的能力，你只�
 
 2. 在 Confluent 集群控制面板中，选择 **Data integration** > **Connectors** > **Snowflake Sink**，进入如下页面：
 
-    ![Add snowflake sink connector](https://download.pingcap.com/images/docs-cn/integrate/add-snowflake-sink-connector.png)
+    ![Add snowflake sink connector](https://docs-download.pingcap.com/media/images/docs-cn/integrate/add-snowflake-sink-connector.png)
 
 3. 选择需要同步到 Snowflake 的 Topic 后，进入下一页面：
 
-    ![Credentials](https://download.pingcap.com/images/docs-cn/integrate/credentials.png)
+    ![Credentials](https://docs-download.pingcap.com/media/images/docs-cn/integrate/credentials.png)
 
 4. 填写 Snowflake 连接认证信息，其中 Database name 和 Schema name 填写在上一步创建的 Database 和 Schema 名，随后进入下一页面：
 
-    ![Configuration](https://download.pingcap.com/images/docs-cn/integrate/configuration.png)
+    ![Configuration](https://docs-download.pingcap.com/media/images/docs-cn/integrate/configuration.png)
 
 5. 在 **Configuration** 页面中，`record value format` 和 `record key format` 都选择 `AVRO`，点击 **Continue**，直到 Connector 创建完成。等待 Connector 状态变为 `RUNNING`，这个过程可能持续数分钟。
 
-    ![Data preview](https://download.pingcap.com/images/docs-cn/integrate/data-preview.png)
+    ![Data preview](https://docs-download.pingcap.com/media/images/docs-cn/integrate/data-preview.png)
 
 6. 在 Snowflake 控制面板中，选择 **Data** > **Database** > **TPCC** > **TiCDC**，可以观察到 TiDB 中的增量数据实时同步到了 Snowflake，如上图。但 Snowflake 中的表结构和 TiDB 中的表结构不同，数据也以“追加”的方式插入 Snowflake 表。在大多数业务场景中，都希望 Snowflake 中的表数据是 TiDB 表的一个副本，而不是存储 TiDB 表的变更日志。该问题将在下一章节解决。
 
@@ -238,25 +238,25 @@ create or replace TABLE TIDB_TEST_ITEM (
 
     ```
     --将数据合并到 TEST_ITEM 表
-    merge into TEST_ITEM n 
-      using 
+    merge into TEST_ITEM n
+      using
           -- 查询 TEST_ITEM_STREAM
-          (SELECT RECORD_METADATA:key as k, RECORD_CONTENT:val as v from TEST_ITEM_STREAM) stm 
+          (SELECT RECORD_METADATA:key as k, RECORD_CONTENT:val as v from TEST_ITEM_STREAM) stm
           -- 以 i_id 相等为条件将流和表做匹配
-          on k:i_id = n.i_id 
+          on k:i_id = n.i_id
       -- 如果 TEST_ITEM 表中存在匹配 i_id 的记录，并且 v 为空，则删除这条记录
-      when matched and IS_NULL_VALUE(v) = true then 
-          delete 
-      
+      when matched and IS_NULL_VALUE(v) = true then
+          delete
+
       -- 如果 TEST_ITEM 表中存在匹配 i_id 的记录，并且 v 不为空，则更新这条记录
-      when matched and IS_NULL_VALUE(v) = false then 
-          update set n.i_data = v:i_data, n.i_im_id = v:i_im_id, n.i_name = v:i_name, n.i_price = v:i_price 
-  
+      when matched and IS_NULL_VALUE(v) = false then
+          update set n.i_data = v:i_data, n.i_im_id = v:i_im_id, n.i_name = v:i_name, n.i_price = v:i_price
+
       -- 如果 TEST_ITEM 表中不存在匹配 i_id 的记录，则插入这条记录
-      when not matched then 
-          insert 
-              (i_data, i_id, i_im_id, i_name, i_price) 
-          values 
+      when not matched then
+          insert
+              (i_data, i_id, i_im_id, i_name, i_price)
+          values
               (v:i_data, v:i_id, v:i_im_id, v:i_name, v:i_price)
     ;
     ```
@@ -274,24 +274,24 @@ create or replace TABLE TIDB_TEST_ITEM (
     create or replace task STREAM_TO_ITEM
         warehouse = test
         -- 每分钟执行一次
-        schedule = '1 minute' 
+        schedule = '1 minute'
     when
         -- 当 TEST_ITEM_STREAM 中无数据时跳过
-        system$stream_has_data('TEST_ITEM_STREAM') 
+        system$stream_has_data('TEST_ITEM_STREAM')
     as
     -- 将数据合并到 TEST_ITEM 表，和上文中的 merge into 语句相同
-    merge into TEST_ITEM n 
-      using 
-          (select RECORD_METADATA:key as k, RECORD_CONTENT:val as v from TEST_ITEM_STREAM) stm 
-          on k:i_id = n.i_id 
-      when matched and IS_NULL_VALUE(v) = true then 
-          delete 
-      when matched and IS_NULL_VALUE(v) = false then 
-          update set n.i_data = v:i_data, n.i_im_id = v:i_im_id, n.i_name = v:i_name, n.i_price = v:i_price 
-      when not matched then 
-          insert 
-              (i_data, i_id, i_im_id, i_name, i_price) 
-          values 
+    merge into TEST_ITEM n
+      using
+          (select RECORD_METADATA:key as k, RECORD_CONTENT:val as v from TEST_ITEM_STREAM) stm
+          on k:i_id = n.i_id
+      when matched and IS_NULL_VALUE(v) = true then
+          delete
+      when matched and IS_NULL_VALUE(v) = false then
+          update set n.i_data = v:i_data, n.i_im_id = v:i_im_id, n.i_name = v:i_name, n.i_price = v:i_price
+      when not matched then
+          insert
+              (i_data, i_id, i_im_id, i_name, i_price)
+          values
               (v:i_data, v:i_id, v:i_im_id, v:i_name, v:i_price)
     ;
     ```
@@ -329,7 +329,7 @@ ksqlDB 是一种面向流式数据处理的数据库。你可以直接在 Conflu
     SELECT * FROM ORDERS EMIT CHANGES;
     ```
 
-    ![Select from orders](https://download.pingcap.com/images/docs-cn/integrate/select-from-orders.png)
+    ![Select from orders](https://docs-download.pingcap.com/media/images/docs-cn/integrate/select-from-orders.png)
 
 可以观察到 TiDB 中的增量数据实时同步到了 ksqlDB，如上图。至此，就完成了 TiDB 与 ksqlDB 的数据集成。
 
@@ -360,11 +360,11 @@ SQL Server 是 Microsoft 推出的关系型数据库软件。借助 Confluent �
 
 2. 在 Confluent 集群控制面板中，选择 **Data integration** > **Connectors** > **Microsoft SQL Server Sink**，进入如下页面：
 
-    ![Topic selection](https://download.pingcap.com/images/docs-cn/integrate/topic-selection.png)
+    ![Topic selection](https://docs-download.pingcap.com/media/images/docs-cn/integrate/topic-selection.png)
 
 3. 选择需要同步到 SQL Server 的 Topic 后，进入下一页面：
 
-    ![Authentication](https://download.pingcap.com/images/docs-cn/integrate/authentication.png)
+    ![Authentication](https://docs-download.pingcap.com/media/images/docs-cn/integrate/authentication.png)
 
 4. 在填写 SQL Server 的连接和认证信息后，进入下一页面。
 
@@ -382,6 +382,6 @@ SQL Server 是 Microsoft 推出的关系型数据库软件。借助 Confluent �
 
 6. 配置完成后，选择 **Continue**，等待 Connector 状态变为 **RUNNING**，这个过程可能持续数分钟。
 
-    ![Results](https://download.pingcap.com/images/docs-cn/integrate/results.png)
+    ![Results](https://docs-download.pingcap.com/media/images/docs-cn/integrate/results.png)
 
 7. 连接 SQL Server。观察 TiDB 中的增量数据实时同步到了 SQL Server，如上图。至此，就完成了 TiDB 与 SQL Server 的数据集成。

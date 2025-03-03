@@ -20,7 +20,7 @@ Currently, TiDB Lightning supports:
 
 ## TiDB Lightning architecture
 
-![Architecture of TiDB Lightning tool set](https://download.pingcap.com/images/docs/tidb-lightning-architecture.png)
+![Architecture of TiDB Lightning tool set](https://docs-download.pingcap.com/media/images/docs/tidb-lightning-architecture.png)
 
 The complete import process is as follows:
 

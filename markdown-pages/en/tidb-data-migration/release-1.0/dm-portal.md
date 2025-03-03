@@ -88,7 +88,7 @@ This feature is used to fill in the task name and select a task type.
 1. Fill in the task name.
 2. Choose a task type.
 
-![DM Portal BasicConfig](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-basicconfig-en.png)
+![DM Portal BasicConfig](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-basicconfig-en.png)
 
 ### Configure the instance information
 
@@ -108,7 +108,7 @@ This feature is used to configure the upstream and downstream instance informati
 2. Fill in the downstream instance information.
 3. Click **Next**.
 
-![DM Portal InstanceConfig](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-instanceconfig-en.png)
+![DM Portal InstanceConfig](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-instanceconfig-en.png)
 
 ### Configure the binlog filter
 
@@ -130,11 +130,11 @@ This feature is used to filter the upstream binlog. You can choose the DDL or DM
 
 2. Click the **Edit** button, and select the binlog types to be filtered.
 
-![DM Portal InstanceShow](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-instanceshow-en.png)
+![DM Portal InstanceShow](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-instanceshow-en.png)
 
-![DM Portal BinlogFilter 1](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-binlogfilter-1-en.png)
+![DM Portal BinlogFilter 1](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-binlogfilter-1-en.png)
 
-![DM Portal BinlogFilter 2](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-binlogfilter-2-en.png)
+![DM Portal BinlogFilter 2](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-binlogfilter-2-en.png)
 
 ### Configure table routing
 
@@ -161,42 +161,42 @@ The required binlog filter rules are configured.
 
 2. Click the **Move** button and move the selected databases and tables to **Downstream Instance**.
 
-    ![DM Portal TableRoute 1](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-tableroute-1-en.png)
+    ![DM Portal TableRoute 1](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-tableroute-1-en.png)
 
-    ![DM Portal TableRoute 2](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-tableroute-2-en.png)
+    ![DM Portal TableRoute 2](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-tableroute-2-en.png)
 
 3. Right click the databases and tables to rename them.
 
-    ![DM Portal ChangeTableName](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-changetablename-en.png)
+    ![DM Portal ChangeTableName](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-changetablename-en.png)
 
 4. Select the required table to perform the following operation:
 
     - To merge two tables, drag the table onto another table
 
-        ![DM Portal MergeTable 1](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-mergetable-1-en.png)
+        ![DM Portal MergeTable 1](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-mergetable-1-en.png)
 
-        ![DM Portal MergeTable 2](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-mergetable-2-en.png)
+        ![DM Portal MergeTable 2](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-mergetable-2-en.png)
 
     - To move the table to an existing database, drag the table onto the database
 
-        ![DM Portal MoveToDB 1](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-movetodb-1-en.png)
+        ![DM Portal MoveToDB 1](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-movetodb-1-en.png)
 
-        ![DM Portal MoveToDB 2](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-movetodb-2-en.png)
+        ![DM Portal MoveToDB 2](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-movetodb-2-en.png)
 
     - To move the table to a new database, drag the table onto the `target-instance` icon
 
-        ![DM Portal MoveToNewDB 1](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-movetonewdb-1-en.png)
+        ![DM Portal MoveToNewDB 1](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-movetonewdb-1-en.png)
 
-        ![DM Portal MoveToNewDB 2](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-movetonewdb-2-en.png)
+        ![DM Portal MoveToNewDB 2](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-movetonewdb-2-en.png)
 
 5. Click **Go Back** to undo the last operation.
 
-    ![DM Portal Revert](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-revert-en.png)
+    ![DM Portal Revert](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-revert-en.png)
 
 6. Click **Reset** to clear the downstream instance.
 
-    ![DM Portal Reset](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-reset-en.png)
+    ![DM Portal Reset](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-reset-en.png)
 
 7. Click **Finish & Download**. DM Portal automatically downloads the `task.yaml` file to the local computer, and creates a `task.yaml` configuration file in the `/tmp/` directory on the DM Portal server.
 
-    ![DM Portal GenerateConfig](https://download.pingcap.com/images/tidb-data-migration/en/dm-portal-generateconfig-en.png)
+    ![DM Portal GenerateConfig](https://docs-download.pingcap.com/media/images/tidb-data-migration/en/dm-portal-generateconfig-en.png)

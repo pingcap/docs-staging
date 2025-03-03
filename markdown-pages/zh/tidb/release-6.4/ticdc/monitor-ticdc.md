@@ -15,7 +15,7 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 下图显示了 TiCDC Dashboard 各监控面板：
 
-![TiCDC Dashboard - Overview](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-overview.png)
+![TiCDC Dashboard - Overview](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-overview.png)
 
 各监控面板说明如下：
 
@@ -28,7 +28,7 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 **Server** 面板示例如下：
 
-![TiCDC Dashboard - Server metrics](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-server.png)
+![TiCDC Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-server.png)
 
 **Server** 面板的各指标说明如下：
 
@@ -44,7 +44,7 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 **Changefeed** 面板示例如下：
 
-![TiCDC Dashboard - Changefeed metrics 1](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-changefeed-1.png)
+![TiCDC Dashboard - Changefeed metrics 1](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-changefeed-1.png)
 
 - Changefeed table count：一个同步任务中分配到各个 TiCDC 节点同步的数据表个数。
 - Processor resolved ts：TiCDC 节点内部状态中已同步的时间点。
@@ -55,20 +55,20 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 - Changefeed checkpoint lag：同步任务上下游数据的进度差（以时间计算）。
 - Processor resolved ts lag：TiCDC 节点内部同步状态与上游的进度差（以时间计算）。
 
-![TiCDC Dashboard - Changefeed metrics 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-changefeed-2.png)
+![TiCDC Dashboard - Changefeed metrics 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-changefeed-2.png)
 
 - Sink write duration：TiCDC 将一个事务的更改写到下游的耗时直方图。
 - Sink write duration percentile：每秒钟中 95%、99% 和 99.9% 的情况下，TiCDC 将一个事务的更改写到下游所花费的时间。
 - Flush sink duration：TiCDC 异步刷写数据入下游的耗时直方图。
 - Flush sink duration percentile：每秒钟中 95%、99% 和 99.9% 的情况下，TiCDC 异步刷写数据入下游所花费的时间。
 
-![TiCDC Dashboard - Changefeed metrics 3](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-changefeed-3.png)
+![TiCDC Dashboard - Changefeed metrics 3](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-changefeed-3.png)
 
 - MySQL sink conflict detect duration：MySQL 写入冲突检测耗时直方图。
 - MySQL sink conflict detect duration percentile：每秒钟中 95%、99% 和 99.9% 的情况下，MySQL 写入冲突检测耗时。
 - MySQL sink worker load：TiCDC 节点中写 MySQL 线程的负载情况。
 
-![TiCDC Dashboard - Changefeed metrics 4](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-changefeed-4.png)
+![TiCDC Dashboard - Changefeed metrics 4](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-changefeed-4.png)
 
 - Changefeed catch-up ETA：同步完上游写入的数据所需时间的估计值。当上游的写入速度大于 TiCDC 同步速度时，该值可能会异常的大。(由于 TiCDC 的同步速度受到较多因素制约，因此该值仅供参考，不能完全代表实际所需的同步时间。)
 
@@ -76,9 +76,9 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 **Events** 面板示例如下：
 
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-events-1.png)
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-events-2.png)
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-events-3.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-events-1.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-events-2.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-events-3.png)
 
 **Events** 面板的各指标说明如下：
 
@@ -106,8 +106,8 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 **TiKV** 面板示例如下：
 
-![TiCDC Dashboard - TiKV metrics 1](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-tikv-1.png)
-![TiCDC Dashboard - TiKV metrics 2](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-dashboard-tikv-2.png)
+![TiCDC Dashboard - TiKV metrics 1](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-tikv-1.png)
+![TiCDC Dashboard - TiKV metrics 2](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-dashboard-tikv-2.png)
 
 **TiKV** 面板的各指标说明如下：
 

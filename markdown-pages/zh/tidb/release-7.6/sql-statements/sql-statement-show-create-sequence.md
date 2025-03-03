@@ -11,11 +11,11 @@ summary: TiDB 数据库中 SHOW CREATE SEQUENCE 的使用概况。
 
 **ShowCreateSequenceStmt:**
 
-![ShowCreateSequenceStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowCreateSequenceStmt.png)
+![ShowCreateSequenceStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowCreateSequenceStmt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 ## 示例
 

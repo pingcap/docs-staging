@@ -14,11 +14,11 @@ This statement shows a list of databases that the current user has privileges to
 
 **ShowDatabasesStmt:**
 
-![ShowDatabasesStmt](https://download.pingcap.com/images/docs/sqlgram/ShowDatabasesStmt.png)
+![ShowDatabasesStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowDatabasesStmt.png)
 
 **ShowLikeOrWhereOpt:**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## Examples
 

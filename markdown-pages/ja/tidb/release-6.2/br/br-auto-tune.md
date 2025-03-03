@@ -81,6 +81,6 @@ tikv-ctl modify-tikv-config -n backup.enable-auto-tune -v <true|false>
 
 [**バックアップ CPU 使用率**] パネルで、自動調整によって調整されたスレッド プールのサイズを確認できます。
 
-![Grafana dashboard example of backup auto-tune metrics](https://download.pingcap.com/images/docs/br/br-auto-throttle.png)
+![Grafana dashboard example of backup auto-tune metrics](https://docs-download.pingcap.com/media/images/docs/br/br-auto-throttle.png)
 
 上の画像では、黄色の半透明の領域は、バックアップ タスクに使用できるスレッドを表しています。バックアップ タスクの CPU 使用率が黄色の領域を超えていないことがわかります。

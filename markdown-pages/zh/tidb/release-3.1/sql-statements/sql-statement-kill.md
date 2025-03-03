@@ -12,7 +12,7 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-kill/','/docs-cn/v3.1/refe
 
 **KillStmt:**
 
-![KillStmt](https://download.pingcap.com/images/docs-cn/sqlgram/KillStmt.png)
+![KillStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/KillStmt.png)
 
 ## 示例
 

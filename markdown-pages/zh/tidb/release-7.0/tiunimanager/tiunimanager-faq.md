@@ -25,7 +25,7 @@ TiUniManager 面向三类用户：IT 系统管理员、数据库管理员 DBA、
 
 TiUniManager 使用 TiDB 及其生态工具、API 提供数据库管理产品功能，TiUP 是 TiUniManager 使用的工具之一。TiUniManager 产品架构图如下：
 
-![TiUniManager 架构图](https://download.pingcap.com/images/docs-cn/tiunimanager/tiunimanager-architecture.png)
+![TiUniManager 架构图](https://docs-download.pingcap.com/media/images/docs-cn/tiunimanager/tiunimanager-architecture.png)
 
 ## 主机资源管理 FAQ
 

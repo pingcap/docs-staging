@@ -29,7 +29,7 @@ UUID 文本是一个包含 36 字符的字符串，如 `ab06f63e-8fe7-11ec-a514-
 
 在如下的[流量可视化页面](/dashboard/dashboard-key-visualizer.md)，你可以看到写入操作集中在 `uuid_demo_2` 表的单个 Region 中，而这个表中的二进制格式字段顺序被调换过。
 
-![Key Visualizer](https://download.pingcap.com/images/docs-cn/best-practices/uuid_keyviz.png)
+![Key Visualizer](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/uuid_keyviz.png)
 
 ```sql
 CREATE TABLE `uuid_demo_1` (

@@ -10,7 +10,7 @@ summary: Learn how to deploy TiDB Lightning and import full backup data to TiDB.
 -   **大量**の<strong>新しい</strong>データ<strong>をすばやく</strong>インポート
 -   すべてのデータのバックアップと復元
 
-![Architecture of TiDB Lightning tool set](https://download.pingcap.com/images/docs/tidb-lightning-architecture.png)
+![Architecture of TiDB Lightning tool set](https://docs-download.pingcap.com/media/images/docs/tidb-lightning-architecture.png)
 
 ## 前提条件 {#prerequisites}
 
@@ -94,7 +94,7 @@ TiDB Lightningインストール パッケージはTiDB Toolkitに含まれて�
 
 4.  パラメータを適切に設定したら、 `nohup`コマンドを使用して`tidb-lightning`プロセスを開始します。コマンドラインでコマンドを直接実行すると、SIGHUP シグナルを受信したためにプロセスが終了する場合があります。代わりに、 `nohup`コマンドを含む bash スクリプトを実行することをお勧めします。
 
-    
+
     ```sh
     #!/bin/bash
     nohup ./tidb-lightning -config tidb-lightning.toml > nohup.out &

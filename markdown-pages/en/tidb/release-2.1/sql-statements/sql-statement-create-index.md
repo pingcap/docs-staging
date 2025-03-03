@@ -12,35 +12,35 @@ This statement adds a new index to an existing table. It is an alternative synta
 
 **CreateIndexStmt:**
 
-![CreateIndexStmt](https://download.pingcap.com/images/docs/sqlgram/CreateIndexStmt.png)
+![CreateIndexStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/CreateIndexStmt.png)
 
 **CreateIndexStmtUnique:**
 
-![CreateIndexStmtUnique](https://download.pingcap.com/images/docs/sqlgram/CreateIndexStmtUnique.png)
+![CreateIndexStmtUnique](https://docs-download.pingcap.com/media/images/docs/sqlgram/CreateIndexStmtUnique.png)
 
 **Identifier:**
 
-![Identifier](https://download.pingcap.com/images/docs/sqlgram/Identifier.png)
+![Identifier](https://docs-download.pingcap.com/media/images/docs/sqlgram/Identifier.png)
 
 **IndexTypeOpt:**
 
-![IndexTypeOpt](https://download.pingcap.com/images/docs/sqlgram/IndexTypeOpt.png)
+![IndexTypeOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/IndexTypeOpt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 **IndexColNameList:**
 
-![IndexColNameList](https://download.pingcap.com/images/docs/sqlgram/IndexColNameList.png)
+![IndexColNameList](https://docs-download.pingcap.com/media/images/docs/sqlgram/IndexColNameList.png)
 
 **IndexOptionList:**
 
-![IndexOptionList](https://download.pingcap.com/images/docs/sqlgram/IndexOptionList.png)
+![IndexOptionList](https://docs-download.pingcap.com/media/images/docs/sqlgram/IndexOptionList.png)
 
 **IndexOption:**
 
-![IndexOption](https://download.pingcap.com/images/docs/sqlgram/IndexOption.png)
+![IndexOption](https://docs-download.pingcap.com/media/images/docs/sqlgram/IndexOption.png)
 
 ## Examples
 

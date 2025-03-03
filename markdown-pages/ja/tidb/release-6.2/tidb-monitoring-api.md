@@ -43,13 +43,13 @@ curl http://127.0.0.1:10080/schema_storage/mysql/stats_histograms
 
 ```
 {
-    "table_schema": "mysql", 
-    "table_name": "stats_histograms", 
-    "table_rows": 0, 
-    "avg_row_length": 0, 
-    "data_length": 0, 
-    "max_data_length": 0, 
-    "index_length": 0, 
+    "table_schema": "mysql",
+    "table_name": "stats_histograms",
+    "table_rows": 0,
+    "avg_row_length": 0,
+    "data_length": 0,
+    "max_data_length": 0,
+    "index_length": 0,
     "data_free": 0
 }
 ```
@@ -61,13 +61,13 @@ curl http://127.0.0.1:10080/schema_storage/test
 ```
 [
     {
-        "table_schema": "test", 
-        "table_name": "test", 
-        "table_rows": 0, 
-        "avg_row_length": 0, 
-        "data_length": 0, 
-        "max_data_length": 0, 
-        "index_length": 0, 
+        "table_schema": "test",
+        "table_name": "test",
+        "table_rows": 0,
+        "avg_row_length": 0,
+        "data_length": 0,
+        "max_data_length": 0,
+        "index_length": 0,
         "data_free": 0
     }
 ]
@@ -77,7 +77,7 @@ curl http://127.0.0.1:10080/schema_storage/test
 
 -   PD API アドレス: `http://${host}:${port}/pd/api/v1/${api_name}`
 -   デフォルトのポート: `2379`
--   API 名の詳細: [PD API ドキュメント](https://download.pingcap.com/pd-api-v1.html)を参照
+-   API 名の詳細: [PD API ドキュメント](https://docs-download.pingcap.com/api/pd-api/pd-api-v1.html)を参照
 
 PD インターフェイスは、すべての TiKV サーバーのステータスと負荷分散に関する情報を提供します。単一ノードの TiKV クラスターに関する情報については、次の例を参照してください。
 

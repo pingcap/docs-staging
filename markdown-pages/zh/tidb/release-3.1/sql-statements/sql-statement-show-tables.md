@@ -14,15 +14,15 @@ aliases: ['/docs-cn/v3.1/sql-statements/sql-statement-show-tables/','/docs-cn/v3
 
 **ShowStmt:**
 
-![ShowStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowStmt.png)
+![ShowStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowStmt.png)
 
 **ShowTargetFilterable:**
 
-![ShowTargetFilterable](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTargetFilterable.png)
+![ShowTargetFilterable](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTargetFilterable.png)
 
 **ShowDatabaseNameOpt:**
 
-![ShowDatabaseNameOpt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowDatabaseNameOpt.png)
+![ShowDatabaseNameOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowDatabaseNameOpt.png)
 
 ## 示例
 

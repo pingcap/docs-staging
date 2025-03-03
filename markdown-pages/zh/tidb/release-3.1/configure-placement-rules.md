@@ -18,7 +18,7 @@ Placement Rules 是 PD 在 4.0 版本引入的试验特性，它是一套副本�
 
 Placement Rules 示意图如下所示：
 
-![Placement rules overview](https://download.pingcap.com/images/docs-cn/placement-rules-1.png)
+![Placement rules overview](https://docs-download.pingcap.com/media/images/docs-cn/placement-rules-1.png)
 
 ### 规则字段
 

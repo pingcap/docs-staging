@@ -9,7 +9,7 @@ summary: 了解 TiCDC 软件的架构设计和运行原理。
 
 TiCDC 集群由多个 TiCDC 对等节点组成，是一种分布式无状态的架构设计。TiCDC 集群及节点内部组件的设计如下图所示：
 
-![TiCDC architecture](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-architecture-1.jpg)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-architecture-1.jpg)
 
 ## 组件介绍
 
@@ -19,7 +19,7 @@ TiCDC 集群由多个 TiCDC 对等节点组成，是一种分布式无状态的�
 
 每条 pipeline 包含 Puller、Sorter、Mounter 和 Sink 模块，如下图。
 
-![TiCDC architecture](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-architecture-2.jpg)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-architecture-2.jpg)
 
 各个模块之间是串行的关系，组合在一起完成从上游拉取、排序、加载和同步数据到下游的过程，其中：
 
@@ -30,7 +30,7 @@ TiCDC 集群由多个 TiCDC 对等节点组成，是一种分布式无状态的�
 
 为了实现高可用，每个 TiCDC 集群都包含多个 TiCDC 节点，这些节点定期向 PD 集群中的 etcd 集群汇报自己的状态，并选举出其中一个节点作为 TiCDC 集群的 Owner。Owner 采用 etcd 统一存储状态来进行调度，并将调度结果直接写入 etcd。Processor 按照状态完成对应的任务，如果 Processor 所在节点出现异常，集群会将表调度到其他节点。如果 Owner 节点出现异常，其他节点的 Capture 进程会选举出新的 Owner，如下图所示：
 
-![TiCDC architecture](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-architecture-3.PNG)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-architecture-3.PNG)
 
 ## Changefeed 和 Task
 
@@ -64,13 +64,13 @@ dispatchers = [
 
 如果将 Changefeed 和 Task 也包含到上文中提及的架构图，完整的 TiCDC 架构图如下：
 
-![TiCDC architecture](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-architecture-6.jpg)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-architecture-6.jpg)
 
 上图创建了一个 Changefeed，需要同步 4 张表，这个 Changefeed 被拆分成了 3 个任务，均匀的分发到了 TiCDC 集群的 3 个 Capture 节点上，在 TiCDC 对这些数据进行了处理之后，数据同步到了下游的系统。
 
 目前 TiCDC 支持的下游系统包含 MySQL、TiDB 和 Kafka。上面的过程只是讲解了 Changefeed 级别数据流转的基本过程，接下来，本文将以处理表 `table1` 的任务 Task1 为例，从更加详细的层面来描述 TiCDC 处理数据的过程：
 
-![TiCDC architecture](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-architecture-5.jpg)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-architecture-5.jpg)
 
 1. 推流：发生数据改变时，TiKV 集群将数据主动推送给 Puller 模块。
 2. 增量扫：Puller 模块在发现收到的数据改变不连续的时候，向 TiKV 节点主动拉取需要的数据。

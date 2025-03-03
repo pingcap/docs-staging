@@ -12,15 +12,15 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-flush-privileges/','/docs-
 
 **FlushStmt:**
 
-![FlushStmt](https://download.pingcap.com/images/docs-cn/sqlgram/FlushStmt.png)
+![FlushStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/FlushStmt.png)
 
 **NoWriteToBinLogAliasOpt:**
 
-![NoWriteToBinLogAliasOpt](https://download.pingcap.com/images/docs-cn/sqlgram/NoWriteToBinLogAliasOpt.png)
+![NoWriteToBinLogAliasOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/NoWriteToBinLogAliasOpt.png)
 
 **FlushOption:**
 
-![FlushOption](https://download.pingcap.com/images/docs-cn/sqlgram/FlushOption.png)
+![FlushOption](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/FlushOption.png)
 
 ## 示例
 

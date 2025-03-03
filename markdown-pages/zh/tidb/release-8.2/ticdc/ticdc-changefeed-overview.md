@@ -11,7 +11,7 @@ Changefeed 是 TiCDC 中的单个同步任务。Changefeed 将一个 TiDB 集群
 
 同步任务状态标识了同步任务的运行情况。在 TiCDC 运行过程中，同步任务可能会运行出错、手动暂停、恢复，或达到指定的 `TargetTs`，这些行为都可以导致同步任务状态发生变化。本节描述 TiCDC 同步任务的各状态以及状态之间的流转关系。
 
-![TiCDC state transfer](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-changefeed-state-transfer.png)
+![TiCDC state transfer](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-changefeed-state-transfer.png)
 
 以上状态流转图中的状态说明如下：
 
@@ -22,7 +22,7 @@ Changefeed 是 TiCDC 中的单个同步任务。Changefeed 将一个 TiDB 集群
 - Failed：同步任务失败。处于这个状态的 changefeed 不会自动尝试恢复。为了让用户有足够的时间处理故障，处于这个状态的 changefeed 会阻塞 GC 推进，阻塞时长为 `gc-ttl` 所设置的值，其默认值为 24 小时。在此期间，如果导致任务失败的问题被修复，用户可以手动恢复 changefeed。超过了 `gc-ttl` 时长后，如果 changefeed 仍然处于 Failed 状态，则同步任务无法恢复。
 
 > **注意：**
-> 
+>
 > - 如果是因为 changefeed 阻塞了 GC, 则 changefeed 最多阻塞 GC 推进 `gc-ttl` 所指定的时长，超过该时长后，changefeed 会被设置成 `failed` 状态，错误类型为 `ErrGCTTLExceeded`，不再阻塞 GC 推进。
 > - 如果 changefeed 遭遇错误码为 `ErrGCTTLExceeded`、`ErrSnapshotLostByGC` 或者 `ErrStartTsBeforeGC` 类型的错误，则不再阻塞 GC 推进。
 

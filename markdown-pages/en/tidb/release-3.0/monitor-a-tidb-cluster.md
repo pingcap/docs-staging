@@ -40,7 +40,7 @@ curl http://127.0.0.1:10080/status
 
 - PD API address: `http://${host}:${port}/pd/api/v1/${api_name}`
 - Default port: `2379`
-- Details about API names: see [PD API doc](https://download.pingcap.com/pd-api-v1.html)
+- Details about API names: see [PD API doc](https://docs-download.pingcap.com/api/pd-api/pd-api-v1.html)
 
 The PD interface provides the state of all the TiKV servers and the information about load balancing. See the following example for the information about a single-node TiKV cluster:
 
@@ -106,7 +106,7 @@ Assume that the TiDB cluster topology is as follows:
 
 1. Download the package.
 
-    
+
     ```bash
     wget https://download.pingcap.org/prometheus-2.8.1.linux-amd64.tar.gz
     wget https://download.pingcap.org/node_exporter-0.17.0.linux-amd64.tar.gz
@@ -115,7 +115,7 @@ Assume that the TiDB cluster topology is as follows:
 
 2. Extract the package.
 
-    
+
     ```bash
     tar -xzf prometheus-2.8.1.linux-amd64.tar.gz
     tar -xzf node_exporter-0.17.0.linux-amd64.tar.gz
@@ -126,14 +126,14 @@ Assume that the TiDB cluster topology is as follows:
 
 1. Enter the corresponding directory:
 
-    
+
     ```bash
     cd node_exporter-0.17.0.linux-amd64
     ```
 
 2. Start the node_exporter service.
 
-    
+
     ```bash
     ./node_exporter --web.listen-address=":9100" \
         --log.level="info" &
@@ -143,7 +143,7 @@ Assume that the TiDB cluster topology is as follows:
 
 1. Edit the Prometheus configuration file:
 
-    
+
     ```bash
     cd prometheus-2.8.1.linux-amd64 &&
     vi prometheus.yml
@@ -200,7 +200,7 @@ Assume that the TiDB cluster topology is as follows:
 
 2. Start the Prometheus service:
 
-    
+
     ```bash
     ./prometheus \
         --config.file="./prometheus.yml" \
@@ -216,7 +216,7 @@ Assume that the TiDB cluster topology is as follows:
 
 1. Edit the Grafana configuration file:
 
-    
+
     ```bash
     cd grafana-6.1.6 &&
     vi conf/grafana.ini
@@ -266,7 +266,7 @@ Assume that the TiDB cluster topology is as follows:
 
 2. Start the Grafana service:
 
-    
+
     ```bash
     ./bin/grafana-server \
         --config="./conf/grafana.ini" &
@@ -325,7 +325,7 @@ To import a Grafana dashboard for the PD server, the TiKV server, and the TiDB s
 
 Click **New dashboard** in the top menu and choose the dashboard you want to view.
 
-![view dashboard](https://download.pingcap.com/images/docs/view-dashboard.png)
+![view dashboard](https://docs-download.pingcap.com/media/images/docs/view-dashboard.png)
 
 You can get the following metrics for cluster components:
 

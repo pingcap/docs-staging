@@ -16,7 +16,7 @@ This statement provides a static list of collations, and is included to provide 
 
 **ShowCollationStmt:**
 
-![ShowCollationStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCollationStmt.png)
+![ShowCollationStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowCollationStmt.png)
 
 ## Examples
 

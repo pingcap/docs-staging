@@ -28,7 +28,7 @@ TiDB 对 SQL 的处理路径和数据库时间进行了完善的测量和记录�
 
 一个典型的 SQL 的处理流程如下所示，TiDB 的性能指标覆盖了绝大部分的处理路径，对数据库时间进行不同维度的分解和上色，用户可以快速的了解负载特性和数据库内部的瓶颈。
 
-![数据库时间分解图](https://download.pingcap.com/images/docs-cn/performance/dashboard-diagnostics-time-relation.png)
+![数据库时间分解图](https://docs-download.pingcap.com/media/images/docs-cn/performance/dashboard-diagnostics-time-relation.png)
 
 数据库时间是所有 SQL 处理时间的总和。通过以下三个维度对数据库时间进行分解，可以帮助你快速定位 TiDB 内部瓶颈：
 
@@ -74,7 +74,7 @@ Performance Overview 面板提供了以下三个面积堆叠图，帮助你了�
 
 **示例 1：TPC-C 负载**
 
-![TPC-C](https://download.pingcap.com/images/docs-cn/performance/tpcc_db_time.png)
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_db_time.png)
 
 - Database Time by SQL Type：主要消耗时间的语句为 commit、update、select 和 insert 语句。
 - Database Time by SQL Phase：主要消耗时间的阶段为绿色的 execute 阶段。
@@ -91,7 +91,7 @@ Performance Overview 面板提供了以下三个面积堆叠图，帮助你了�
 
 **示例 2：OLTP 读密集负载**
 
-![OLTP](https://download.pingcap.com/images/docs-cn/performance/oltp_normal_db_time.png)
+![OLTP](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_normal_db_time.png)
 
 - Database Time by SQL Type：主要消耗时间的语句为 select、commit、update 和 insert 语句。其中，select 占据绝大部分的数据库时间。
 - Database Time by SQL Phase：主要消耗时间的阶段为绿色的 execute 阶段。
@@ -99,7 +99,7 @@ Performance Overview 面板提供了以下三个面积堆叠图，帮助你了�
 
 **示例 3：只读 OLTP 负载**
 
-![OLTP](https://download.pingcap.com/images/docs-cn/performance/oltp_long_compile_db_time.png)
+![OLTP](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_long_compile_db_time.png)
 
 - Database Time by SQL Type：几乎所有语句为 select。
 - Database Time by SQL Phase：主要消耗时间的阶段为橙色的 compile 和绿色的 execute 阶段。compile 阶段延迟最高，代表着 TiDB 生成执行计划的过程耗时过长，需要根据后续的性能数据进一步确定根源。
@@ -111,7 +111,7 @@ Performance Overview 面板提供了以下三个面积堆叠图，帮助你了�
 
 **示例 4： 锁争用负载**
 
-![OLTP](https://download.pingcap.com/images/docs-cn/performance/oltp_lock_contention_db_time.png)
+![OLTP](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_lock_contention_db_time.png)
 
 - Database Time by SQL Type：主要为 Update 语句。
 - Database Time by SQL Phase：主要消耗时间的阶段为绿色的 execute 阶段。
@@ -119,7 +119,7 @@ Performance Overview 面板提供了以下三个面积堆叠图，帮助你了�
 
 **示例 5： HTAP CH-Benchmark 负载**
 
-![HTAP](https://download.pingcap.com/images/docs-cn/performance/htap_tiflash_mpp.png)
+![HTAP](https://docs-download.pingcap.com/media/images/docs-cn/performance/htap_tiflash_mpp.png)
 
 - Database Time by SQL Type：主要为 Select 语句。
 - Database Time by SQL Phase：主要消耗时间的阶段为绿色的 execute 阶段。
@@ -148,13 +148,13 @@ Performance Overview 面板提供了以下三个面积堆叠图，帮助你了�
 
 TPC-C 负载类型主要以 Update、Select 和 Insert 语句为主。总的 QPS 等于每秒 StmtExecute 的次数，并且 StmtExecute 每秒的数据基本等于 Queries Using Plan Cache OPS 面板的 `avg-hits`。这是 OLTP 负载理想的情况，客户端执行使用 prepared statement，并且在客户端缓存了 prepared statement 对象，执行每条 SQL 语句时直接调用 statement 执行。执行时都命中执行计划缓存，不需要重新 compile 生成执行计划。
 
-![TPC-C](https://download.pingcap.com/images/docs-cn/performance/tpcc_qps.png)
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_qps.png)
 
 **示例 2：只读 OLTP 负载，使用 query 命令无法使用执行计划缓存**
 
 这个负载中，Commit QPS = Rollback QPS = Select QPS。应用开启了 auto-commit 并发，每次从连接池获取连接都会执行 rollback，因此这三种语句的执行次数是相同的。
 
-![OLTP-Query](https://download.pingcap.com/images/docs-cn/performance/oltp_long_compile_qps.png)
+![OLTP-Query](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_long_compile_qps.png)
 
 - QPS 面板中出现的红色加粗线为 Failed Query，坐标的值为右边的 Y 轴。非 0 代表此负载中存在错误语句。
 - 总的 QPS 等于 CPS By Type 面板中的 Query，说明应用中使用了 query 命令。
@@ -171,13 +171,13 @@ StmtPrepare 次数 = StmtExecute 次数 = StmtClose 次数 ~= StmtFetch 次数�
 >
 > 从 TiDB v6.0.0 起，你可以通过全局变量 (`set global tidb_ignore_prepared_cache_close_stmt=on;`) 控制 StmtClose 命令不清理已被缓存的执行计划，使得下一次的 SQL 的执行不需要重新生成执行计划。
 
-![OLTP-Prepared](https://download.pingcap.com/images/docs-cn/performance/oltp_prepared_statement_no_plan_cache.png)
+![OLTP-Prepared](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_prepared_statement_no_plan_cache.png)
 
 **示例 4：Prepared Statement 存在资源泄漏**
 
 StmtPrepare 每秒执行次数远大于 StmtClose，说明应用程序存在 prepared statement 对象泄漏。
 
-![OLTP-Query](https://download.pingcap.com/images/docs-cn/performance/prepared_statement_leaking.png)
+![OLTP-Query](https://docs-download.pingcap.com/media/images/docs-cn/performance/prepared_statement_leaking.png)
 
 - QPS 面板中出现的红色加粗线为 Failed Query，坐标的值为右边的 Y 轴。每秒错误语句为 74.6 条。
 - CPS By Type 面板中的 StmtPrepare 每秒执行次数远大于 StmtClose，说明应用程序存在 prepared statement 对象泄漏。
@@ -192,7 +192,7 @@ StmtPrepare 每秒执行次数远大于 StmtClose，说明应用程序存在 pre
 
 **示例 1：繁忙的负载**
 
-![TPC-C](https://download.pingcap.com/images/docs-cn/performance/tpcc_source_sql.png)
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_source_sql.png)
 
 在此 TPC-C 负载中：
 
@@ -201,7 +201,7 @@ StmtPrepare 每秒执行次数远大于 StmtClose，说明应用程序存在 pre
 
 **示例 2：Analyze 负载**
 
-![OLTP](https://download.pingcap.com/images/docs-cn/performance/internal_stats.png)
+![OLTP](https://docs-download.pingcap.com/media/images/docs-cn/performance/internal_stats.png)
 
 集群中只有 analyze 语句运行：
 
@@ -219,7 +219,7 @@ StmtPrepare 每秒执行次数远大于 StmtClose，说明应用程序存在 pre
 
 下图负载中，每个 TiDB 和 TiKV 配置 8 CPU。
 
-![TPC-C](https://download.pingcap.com/images/docs-cn/performance/tidb_high_cpu.png)
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tidb_high_cpu.png)
 
 - TiDB 平均 CPU 为 575%。最大 CPU 为 643%，delta CPU 为 136%。
 - TiKV 平均 CPU 为 146%，最大 CPU 215%。delta CPU 为 118%。TiKV 的平均 IO 吞吐为 9.06 MB/s，最大 IO 吞吐为 19.7 MB/s，delta IO 吞吐为 17.1 MB/s。
@@ -230,7 +230,7 @@ StmtPrepare 每秒执行次数远大于 StmtClose，说明应用程序存在 pre
 
 下图 TPC-C 负载中，每个 TiDB 和 TiKV 配置 16 CPU。
 
-![TPC-C](https://download.pingcap.com/images/docs-cn/performance/tpcc_cpu_io.png)
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_cpu_io.png)
 
 - TiDB 平均 CPU 为 883%。最大 CPU 为 962%，delta CPU 为 153%。
 - TiKV 平均 CPU 为 1288%，最大 CPU 1360%。delta CPU 为 126%。TiKV 的平均 IO 吞吐为 130 MB/s，最大 IO 吞吐为 153 MB/s，delta IO 吞吐为 53.7 MB/s。
@@ -265,7 +265,7 @@ Duration 面板包含了所有语句的 99 延迟和每种 SQL 类型的平均�
 
 **示例 1：disconnection/s 过高**
 
-![high disconnection/s](https://download.pingcap.com/images/docs-cn/performance/high_disconnections.png)
+![high disconnection/s](https://docs-download.pingcap.com/media/images/docs-cn/performance/high_disconnections.png)
 
 在此负载中：
 
@@ -275,7 +275,7 @@ Duration 面板包含了所有语句的 99 延迟和每种 SQL 类型的平均�
 
 **示例 2：用户响应时间的瓶颈在 TiDB 中**
 
-![TiDB is the Bottleneck](https://download.pingcap.com/images/docs-cn/performance/tpcc_duration_idle.png)
+![TiDB is the Bottleneck](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_duration_idle.png)
 
 在此 TPC-C 负载中：
 
@@ -286,7 +286,7 @@ Duration 面板包含了所有语句的 99 延迟和每种 SQL 类型的平均�
 
 **示例 3：用户响应时间的瓶颈不在 TiDB 中**
 
-![TiDB is not the Bottleneck](https://download.pingcap.com/images/docs-cn/performance/cloud_query_long_idle.png)
+![TiDB is not the Bottleneck](https://docs-download.pingcap.com/media/images/docs-cn/performance/cloud_query_long_idle.png)
 
 在此负载中，平均 query 延迟为 1.69 ms，事务中连接空闲时间 `avg-in-txn` 为 18 ms。说明事务中，TiDB 平均花了 1.69 ms 处理完一个 SQL 语句之后，需要等待 18 ms 才能收到下一条语句。
 
@@ -316,13 +316,13 @@ avg Query Duration = avg Get Token + avg Parse Duration + avg Compile Duration +
 
 **示例 1：数据库瓶颈在 compile 阶段**
 
-![Compile](https://download.pingcap.com/images/docs-cn/performance/long_compile.png)
+![Compile](https://docs-download.pingcap.com/media/images/docs-cn/performance/long_compile.png)
 
 此图中 parse、compile 和 execute 阶段的平均时间分别为 17.1 us、729 us 和 681 us。因为应用使用 query 命令接口，无法使用执行计划缓存，所以 compile 阶段延迟高。
 
 **示例 2：数据库瓶颈在 execute 阶段**
 
-![Execute](https://download.pingcap.com/images/docs-cn/performance/long_execute.png)
+![Execute](https://docs-download.pingcap.com/media/images/docs-cn/performance/long_execute.png)
 
 在此 TPC-C 负载中，parse、compile 和 execute 阶段的平均时间分别为 7.39us、38.1us 和 12.8ms。query 延迟的瓶颈在于 execute 阶段。
 
@@ -338,7 +338,7 @@ TSO 等待的时间记录为 TSO WAIT，TSO 请求的网络时间记录为 TSO R
 - 读的 KV 请求常见类型：Get、BatchGet 和 Cop
 - 写的 KV 请求常见类型：PessimisticLock，二阶段提交的 Prewrite 和 Commit
 
-![Execute](https://download.pingcap.com/images/docs-cn/performance/execute_phase.png)
+![Execute](https://docs-download.pingcap.com/media/images/docs-cn/performance/execute_phase.png)
 
 这一部分的指标对应以下三个面板：
 
@@ -359,19 +359,19 @@ Avg TiDB KV Request Duration 和 Avg TiKV GRPC Duration 的差值跟网络流量
 
 **示例 1：同机器低负载的集群**
 
-![Same Data Center](https://download.pingcap.com/images/docs-cn/performance/oltp_kv_tso.png)
+![Same Data Center](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_kv_tso.png)
 
 在此负载中，TiDB 侧平均 Prewrite 请求延迟为 925 us，TiKV 内部 kv_prewrite 平均处理延迟为 720 us，相差 200 us 左右，是同机房内正常的延迟。TSO wait 平均延迟 206 us，rpc 时间为 144 us。
 
 **示例 2：公有云集群，负载正常**
 
-![Cloud Env ](https://download.pingcap.com/images/docs-cn/performance/cloud_kv_tso.png)
+![Cloud Env ](https://docs-download.pingcap.com/media/images/docs-cn/performance/cloud_kv_tso.png)
 
 在此示例中，TiDB 集群部署在同一个地区的不同机房。TiDB 侧平均 Commit 请求延迟为 12.7 ms，TiKV 内部 kv_commit 平均处理延迟为 10.2 ms，相差 2.5 ms 左右。TSO wait 平均延迟为 3.12 ms，rpc 时间为 693 us。
 
 **示例 3：公有云集群，资源严重过载**
 
-![Cloud Env, TiDB Overloaded](https://download.pingcap.com/images/docs-cn/performance/cloud_kv_tso_overloaded.png)
+![Cloud Env, TiDB Overloaded](https://docs-download.pingcap.com/media/images/docs-cn/performance/cloud_kv_tso_overloaded.png)
 
 在此示例中，TiDB 集群部署在同一个地区的不同机房，TiDB 网络和 CPU 资源严重过载。TiDB 侧平均 BatchGet 请求延迟为 38.6 ms，TiKV 内部 kv_batch_get 平均处理延迟为 6.15 ms，相差超过 32 ms，远高于正常值。TSO wait 平均延迟为 9.45 ms，rpc 时间为 14.3 ms。
 
@@ -387,7 +387,7 @@ TiKV 对于写请求的处理流程如下：
     - Store 线程负责处理 Raft 消息和新的 `proposals`。当收到新的 `proposals` 时，leader 节点的 store 线程会写入本地 Raft DB，并将消息复制到多个 follower 节点。当这个 `proposals` 在多数实例持久化成功之后，`proposals` 成功被提交。
     - Apply 线程负责将提交的数据写入到 KV DB 中。当写操作的数据被成功地写入 KV 数据库中时，Apply 线程会通知外层请求写请求已经完成。
 
-![TiKV Write](https://download.pingcap.com/images/docs-cn/performance/store_apply.png)
+![TiKV Write](https://docs-download.pingcap.com/media/images/docs-cn/performance/store_apply.png)
 
 Storage Async Write Duration 指标记录写请求进入 raftstore 之后的延迟，采集的粒度具体到每个请求的级别。
 
@@ -412,17 +412,17 @@ avg Storage Async Write Duration  = avg Store Duration + avg Apply Duration
 
 v5.3.0：
 
-![v5.3.0](https://download.pingcap.com/images/docs-cn/performance/v5.3.0_store_apply.png)
+![v5.3.0](https://docs-download.pingcap.com/media/images/docs-cn/performance/v5.3.0_store_apply.png)
 
 v5.4.0：
 
-![v5.4.0](https://download.pingcap.com/images/docs-cn/performance/v5.4.0_store_apply.png)
+![v5.4.0](https://docs-download.pingcap.com/media/images/docs-cn/performance/v5.4.0_store_apply.png)
 
 **示例 2：Store Duration 瓶颈明显**
 
 应用以上公式：10.1 ms ~= 9.81 ms + 0.304 ms，说明写请求的延迟瓶颈在 Store Duration。
 
-![Store](https://download.pingcap.com/images/docs-cn/performance/cloud_store_apply.png)
+![Store](https://docs-download.pingcap.com/media/images/docs-cn/performance/cloud_store_apply.png)
 
 #### Commit Log Duration、Append Log Duration 和 Apply Log Duration
 
@@ -459,15 +459,15 @@ v5.4.0 版本，一个写密集的 OLTP 负载 QPS 比 v5.3.0 提升了 14%。�
 
 v5.3.0：
 
-![v5.3.0](https://download.pingcap.com/images/docs-cn/performance/v5.3.0_commit_append_apply.png)
+![v5.3.0](https://docs-download.pingcap.com/media/images/docs-cn/performance/v5.3.0_commit_append_apply.png)
 
 v5.4.0：
 
-![v5.4.0](https://download.pingcap.com/images/docs-cn/performance/v5.4.0_commit_append_apply.png)
+![v5.4.0](https://docs-download.pingcap.com/media/images/docs-cn/performance/v5.4.0_commit_append_apply.png)
 
 **示例 2：Commit Log Duration 瓶颈明显的例子**
 
-![Store](https://download.pingcap.com/images/docs-cn/performance/cloud_append_commit_apply.png)
+![Store](https://docs-download.pingcap.com/media/images/docs-cn/performance/cloud_append_commit_apply.png)
 
 - 平均 Append Log Duration = 4.38 ms
 - 平均 Commit Log Duration = 7.92 ms
@@ -485,4 +485,4 @@ Store 线程的 Commit Log Duration 明显比 Apply Log Duration 高，并且 Ap
 
 导入方法如图所示：
 
-![Store](https://download.pingcap.com/images/docs-cn/performance/import_dashboard.png)
+![Store](https://docs-download.pingcap.com/media/images/docs-cn/performance/import_dashboard.png)

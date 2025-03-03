@@ -12,23 +12,23 @@ aliases: ['/docs-cn/v3.0/sql-statements/sql-statement-replace/','/docs-cn/v3.0/r
 
 **ReplaceIntoStmt:**
 
-![ReplaceIntoStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ReplaceIntoStmt.png)
+![ReplaceIntoStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ReplaceIntoStmt.png)
 
 **PriorityOpt:**
 
-![PriorityOpt](https://download.pingcap.com/images/docs-cn/sqlgram/PriorityOpt.png)
+![PriorityOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/PriorityOpt.png)
 
 **IntoOpt:**
 
-![IntoOpt](https://download.pingcap.com/images/docs-cn/sqlgram/IntoOpt.png)
+![IntoOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/IntoOpt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 **InsertValues:**
 
-![InsertValues](https://download.pingcap.com/images/docs-cn/sqlgram/InsertValues.png)
+![InsertValues](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/InsertValues.png)
 
 ## 示例
 

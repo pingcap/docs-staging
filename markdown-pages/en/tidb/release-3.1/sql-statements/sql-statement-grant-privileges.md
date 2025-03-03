@@ -12,31 +12,31 @@ This statement allocates privileges to a pre-existing user in TiDB. The privileg
 
 **GrantStmt:**
 
-![GrantStmt](https://download.pingcap.com/images/docs/sqlgram/GrantStmt.png)
+![GrantStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/GrantStmt.png)
 
 **PrivElemList:**
 
-![PrivElemList](https://download.pingcap.com/images/docs/sqlgram/PrivElemList.png)
+![PrivElemList](https://docs-download.pingcap.com/media/images/docs/sqlgram/PrivElemList.png)
 
 **PrivElem:**
 
-![PrivElem](https://download.pingcap.com/images/docs/sqlgram/PrivElem.png)
+![PrivElem](https://docs-download.pingcap.com/media/images/docs/sqlgram/PrivElem.png)
 
 **PrivType:**
 
-![PrivType](https://download.pingcap.com/images/docs/sqlgram/PrivType.png)
+![PrivType](https://docs-download.pingcap.com/media/images/docs/sqlgram/PrivType.png)
 
 **ObjectType:**
 
-![ObjectType](https://download.pingcap.com/images/docs/sqlgram/ObjectType.png)
+![ObjectType](https://docs-download.pingcap.com/media/images/docs/sqlgram/ObjectType.png)
 
 **PrivLevel:**
 
-![PrivLevel](https://download.pingcap.com/images/docs/sqlgram/PrivLevel.png)
+![PrivLevel](https://docs-download.pingcap.com/media/images/docs/sqlgram/PrivLevel.png)
 
 **UserSpecList:**
 
-![UserSpecList](https://download.pingcap.com/images/docs/sqlgram/UserSpecList.png)
+![UserSpecList](https://docs-download.pingcap.com/media/images/docs/sqlgram/UserSpecList.png)
 
 ## Examples
 

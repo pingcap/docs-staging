@@ -25,7 +25,7 @@ DM WebUI has the following pages:
 
 The interface is as follows:
 
-![webui](https://download.pingcap.com/images/docs/dm/dm-webui-preview-en.png)
+![webui](https://docs-download.pingcap.com/media/images/docs/dm/dm-webui-preview-en.png)
 
 ## Access method
 

@@ -43,7 +43,7 @@ For details about how to control and manage TiDB SQL users, see [TiDB User Accou
 
 If an SQL user does not meet the preceding privilege requirements, the user fails to sign in to TiDB Dashboard, as shown below.
 
-![insufficient-privileges](https://download.pingcap.com/images/docs/dashboard/dashboard-user-insufficient-privileges.png)
+![insufficient-privileges](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-user-insufficient-privileges.png)
 
 ## Example: Create a least-privileged SQL user to access TiDB Dashboard
 

@@ -21,7 +21,7 @@ PITR を使用して、次のビジネス要件を満たすことができます
 
 ビジネスでPITRを使用する手順は次のとおりです。
 
-![Point-in-Time Recovery](https://download.pingcap.com/images/docs/br/pitr-usage.png)
+![Point-in-Time Recovery](https://docs-download.pingcap.com/media/images/docs/br/pitr-usage.png)
 
 ### バックアップデータ {#back-up-data}
 
@@ -106,7 +106,7 @@ PITR は、スナップショットのバックアップと復元*、および*�
 
 ログのバックアップと復元は、次のように実装されます。
 
-![BR log backup and restore architecture](https://download.pingcap.com/images/docs/br/br-log-arch.png)
+![BR log backup and restore architecture](https://docs-download.pingcap.com/media/images/docs/br/br-log-arch.png)
 
 ログ バックアップ タスクが実行されると、次のようになります。
 

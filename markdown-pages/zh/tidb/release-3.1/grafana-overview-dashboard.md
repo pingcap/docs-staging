@@ -89,4 +89,4 @@ aliases: ['/docs-cn/v3.1/grafana-overview-dashboard/','/docs-cn/v3.1/reference/k
 
 ## 图例
 
-![overview](https://download.pingcap.com/images/docs-cn/grafana-monitor-overview.png)
+![overview](https://docs-download.pingcap.com/media/images/docs-cn/grafana-monitor-overview.png)

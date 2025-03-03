@@ -159,7 +159,7 @@ sysbench $testname \
 
 Compared with v5.2.2, the Point Select performance of v5.3.0 is reduced slightly by 0.81%.
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v522vsv530_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v522vsv530_point_select.png)
 
 ### Update Non-index performance
 
@@ -171,7 +171,7 @@ Compared with v5.2.2, the Point Select performance of v5.3.0 is reduced slightly
 
 Compared with v5.2.2, the Update Non-index performance of v5.3.0 is improved slightly by 0.95%.
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v522vsv530_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v522vsv530_update_non_index.png)
 
 ### Update Index performance
 
@@ -183,7 +183,7 @@ Compared with v5.2.2, the Update Non-index performance of v5.3.0 is improved sli
 
 Compared with v5.2.2, the Update Index performance of v5.3.0 is improved slightly by 1.83%.
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v522vsv530_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v522vsv530_update_index.png)
 
 ### Read Write performance
 
@@ -195,4 +195,4 @@ Compared with v5.2.2, the Update Index performance of v5.3.0 is improved slightl
 
 Compared with v5.2.2, the Read Write performance of v5.3.0 is reduced slightly by 0.62%.
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v522vsv530_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v522vsv530_read_write.png)

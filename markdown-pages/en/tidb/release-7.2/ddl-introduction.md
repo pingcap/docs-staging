@@ -43,7 +43,7 @@ TiDB uses the election mechanism of etcd to elect a node to host the Owner from 
 
 A simple illustration of the DDL Owner is as follows:
 
-![DDL Owner](https://download.pingcap.com/images/docs/ddl-owner.png)
+![DDL Owner](https://docs-download.pingcap.com/media/images/docs/ddl-owner.png)
 
 You can use the `ADMIN SHOW DDL` statement to view the current DDL owner:
 

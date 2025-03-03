@@ -154,7 +154,7 @@ After the preceding steps are done, TiCDC sends change logs of incremental data 
 
 2. Observe data in Confluent Cloud.
 
-    ![Confluent topics](https://download.pingcap.com/images/docs/integrate/confluent-topics.png)
+    ![Confluent topics](https://docs-download.pingcap.com/media/images/docs/integrate/confluent-topics.png)
 
     In the Confluent Cloud Console, click **Topics**. You can see that the target topics have been created and are receiving data. At this time, incremental data of the TiDB database is successfully replicated to Confluent Cloud.
 
@@ -175,19 +175,19 @@ Snowflake is a cloud native data warehouse. With Confluent, you can replicate Ti
 
 2. In the Confluent Cloud Console, choose **Data integration** > **Connectors** > **Snowflake Sink**. The page shown below is displayed.
 
-    ![Add snowflake sink connector](https://download.pingcap.com/images/docs/integrate/add-snowflake-sink-connector.png)
+    ![Add snowflake sink connector](https://docs-download.pingcap.com/media/images/docs/integrate/add-snowflake-sink-connector.png)
 
 3. Select the topic you want to replicate to Snowflake. Then go to the next page.
 
-    ![Configuration](https://download.pingcap.com/images/docs/integrate/configuration.png)
+    ![Configuration](https://docs-download.pingcap.com/media/images/docs/integrate/configuration.png)
 
 4. Specify the authentication information for connecting Snowflake. Fill in **Database name** and **Schema name** with the values you created in the previous step. Then go to the next page.
 
-    ![Configuration](https://download.pingcap.com/images/docs/integrate/configuration.png)
+    ![Configuration](https://docs-download.pingcap.com/media/images/docs/integrate/configuration.png)
 
 5. On the **Configuration** page, select `AVRO` for both **Input Kafka record value format** and **Input Kafka record key format**. Then click **Continue**. Wait until the connector is created and the status becomes **Running**, which might take several minutes.
 
-    ![Data preview](https://download.pingcap.com/images/docs/integrate/data-preview.png)
+    ![Data preview](https://docs-download.pingcap.com/media/images/docs/integrate/data-preview.png)
 
 6. In the Snowflake console, choose **Data** > **Database** > **TPCC** > **TiCDC**. You can see that TiDB incremental data has been replicated to Snowflake. Data integration with Snowflake is done (see the preceding figure). However, the table structure in Snowflake is different from that in TiDB, and data is inserted into Snowflake incrementally. In most scenarios, you expect the data in Snowflake to be a replica of the data in TiDB, rather than storing TiDB change logs. This problem will be addressed in the next section.
 
@@ -229,7 +229,7 @@ create or replace TABLE TIDB_TEST_ITEM (
     );
     ```
 
-2. Create a stream for `TIDB_TEST_ITEM` and set `append_only` to `true` as follows. 
+2. Create a stream for `TIDB_TEST_ITEM` and set `append_only` to `true` as follows.
 
     ```
     create or replace stream TEST_ITEM_STREAM on table TIDB_TEST_ITEM append_only=true;
@@ -334,7 +334,7 @@ ksqlDB is a database purpose-built for stream processing applications. You can c
     SELECT * FROM ORDERS EMIT CHANGES;
     ```
 
-    ![Select from orders](https://download.pingcap.com/images/docs/integrate/select-from-orders.png)
+    ![Select from orders](https://docs-download.pingcap.com/media/images/docs/integrate/select-from-orders.png)
 
     You can see that the incremental data has been replicated to ksqlDB, as shown in the preceding figure. Data integration with ksqlDB is done.
 
@@ -364,11 +364,11 @@ Microsoft SQL Server is a relational database management system (RDBMS) develope
 
 2. In the Confluent Cloud Console, choose **Data integration** > **Connectors** > **Microsoft SQL Server Sink**. The page shown below is displayed.
 
-    ![Topic selection](https://download.pingcap.com/images/docs/integrate/topic-selection.png)
+    ![Topic selection](https://docs-download.pingcap.com/media/images/docs/integrate/topic-selection.png)
 
 3. Select the topic you want to replicate to SQL Server. Then go to the next page.
 
-    ![Authentication](https://download.pingcap.com/images/docs/integrate/authentication.png)
+    ![Authentication](https://docs-download.pingcap.com/media/images/docs/integrate/authentication.png)
 
 4. Fill in the connection and authentication information. Then go to the next page.
 
@@ -386,6 +386,6 @@ Microsoft SQL Server is a relational database management system (RDBMS) develope
 
 6. After configuration, click **Continue**. Wait until the connector status becomes **Running**, which might take several minutes.
 
-    ![Results](https://download.pingcap.com/images/docs/integrate/results.png)
+    ![Results](https://docs-download.pingcap.com/media/images/docs/integrate/results.png)
 
 7. Connect SQL Server and observe the data. You can see that the incremental data has been replicated to SQL Server, as shown in the preceding figure. Data integration with SQL Server is done.

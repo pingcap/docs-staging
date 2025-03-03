@@ -26,7 +26,7 @@ The architecture of the cluster deployment is as follows:
 - The cluster has five replicas, two in IDC1, two in IDC2, and one in IDC3. For the TiKV component, each rack has a label, which means that each rack has a replica.
 - The Raft protocol is adopted to ensure consistency and high availability of data, which is transparent to users.
 
-![3-DC-in-2-city architecture](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-01.png)
+![3-DC-in-2-city architecture](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-01.png)
 
 This architecture is highly available. The distribution of Region leaders is restricted to the two DCs (IDC1 and IDC2) that are in the same city (Seattle). Compared with the three-DC solution in which the distribution of Region leaders is not restricted, this architecture has the following advantages and disadvantages:
 
@@ -46,7 +46,7 @@ This architecture is highly available. The distribution of Region leaders is res
 
 The configuration of the three DCs in two cities (Seattle and San Francisco) deployment plan is illustrated as follows:
 
-![3-DC-2-city](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-02.png)
+![3-DC-2-city](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-02.png)
 
 - From the illustration above, you can see that Seattle has two DCs: IDC1 and IDC2. IDC1 has three sets of racks: RAC1, RAC2, and RAC3. IDC2 has two racks: RAC4 and RAC5. The IDC3 DC in San Francisco has the RAC6 rack.
 - From the RAC1 rack illustrated above, TiDB and PD services are deployed on the same server. Each of the two TiKV servers are deployed with two TiKV instances (tikv-server). This is similar to RAC2, RAC4, RAC5, and RAC6.
@@ -127,7 +127,7 @@ alertmanager_servers:
 
 In the deployment of three DCs in two cities, the label design requires taking availability and disaster recovery into account. It is recommended that you define the four levels (`dc`, `zone`, `rack`, `host`) based on the physical structure of the deployment.
 
-![Label logical definition](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-03.png)
+![Label logical definition](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-03.png)
 
 In the PD configuration, add level information of TiKV labels:
 

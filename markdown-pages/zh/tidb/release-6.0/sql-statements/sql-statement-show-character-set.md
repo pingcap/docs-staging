@@ -11,11 +11,11 @@ summary: TiDB 数据库中 SHOW CHARACTER SET 的使用概况。
 
 **ShowCharsetStmt:**
 
-![ShowCharsetStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowCharsetStmt.png)
+![ShowCharsetStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowCharsetStmt.png)
 
 **CharsetKw:**
 
-![CharsetKw](https://download.pingcap.com/images/docs-cn/sqlgram/CharsetKw.png)
+![CharsetKw](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/CharsetKw.png)
 
 ## 示例
 

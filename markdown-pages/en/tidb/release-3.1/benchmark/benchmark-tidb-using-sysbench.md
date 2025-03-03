@@ -214,7 +214,7 @@ Sysbench test was carried on each of the tidb-servers. And the final result was 
 | point_select | 3\*64 | 195218.54 | 195218.54 | 0.98 | 2.14 | 21.82 |
 | point_select | 3\*128 | 208189.53 | 208189.53 | 1.84 | 4.33 | 31.02 |
 
-![oltp_point_select](https://download.pingcap.com/images/docs/oltp_point_select.png)
+![oltp_point_select](https://docs-download.pingcap.com/media/images/docs/oltp_point_select.png)
 
 ### oltp_update_index
 
@@ -227,7 +227,7 @@ Sysbench test was carried on each of the tidb-servers. And the final result was 
 | oltp_update_index | 3\*128 | 20446.81 | 20446.81 | 18.98 | 40.37 | 5394.75 |
 | oltp_update_index | 3\*256 | 23563.03 | 23563.03 | 32.86 | 78.60 | 5530.69 |
 
-![oltp_update_index](https://download.pingcap.com/images/docs/oltp_update_index.png)
+![oltp_update_index](https://docs-download.pingcap.com/media/images/docs/oltp_update_index.png)
 
 ### oltp_read_only
 
@@ -239,7 +239,7 @@ Sysbench test was carried on each of the tidb-servers. And the final result was 
 | oltp_read_only | 3\*64 | 5466.36 | 87461.81 | 34.65 | 63.20 | 231.19 |
 | oltp_read_only | 3\*128 | 6684.16 | 106946.59 | 57.29 | 97.55 | 180.85 |
 
-![oltp_read_only](https://download.pingcap.com/images/docs/oltp_read_only.png)
+![oltp_read_only](https://docs-download.pingcap.com/media/images/docs/oltp_read_only.png)
 
 ## Common issues
 

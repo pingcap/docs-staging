@@ -11,7 +11,7 @@ This statement changes the user password for a user account in the TiDB system d
 
 **SetStmt:**
 
-![SetStmt](https://download.pingcap.com/images/docs/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetStmt.png)
 
 ## Examples
 

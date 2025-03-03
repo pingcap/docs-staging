@@ -12,11 +12,11 @@ aliases: ['/docs-cn/v2.1/sql-statements/sql-statement-drop-user/','/docs-cn/v2.1
 
 **DropUserStmt:**
 
-![DropUserStmt](https://download.pingcap.com/images/docs-cn/sqlgram/DropUserStmt.png)
+![DropUserStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/DropUserStmt.png)
 
 **Username:**
 
-![Username](https://download.pingcap.com/images/docs-cn/sqlgram/Username.png)
+![Username](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/Username.png)
 
 ## 示例
 

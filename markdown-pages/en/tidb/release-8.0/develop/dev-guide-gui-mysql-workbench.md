@@ -68,7 +68,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
 
 5. Launch MySQL Workbench and click **+** near the **MySQL Connections** title.
 
-    ![MySQL Workbench: add new connection](https://download.pingcap.com/images/docs/develop/mysql-workbench-add-new-connection.png)
+    ![MySQL Workbench: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-add-new-connection.png)
 
 6. In the **Setup New Connection** dialog, configure the following connection parameters:
 
@@ -78,11 +78,11 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
     - **Username**: enter the `USERNAME` parameter from the TiDB Cloud connection dialog.
     - **Password**: click **Store in Keychain ...** or **Store in Vault**, enter the password of the TiDB Serverless cluster, and then click **OK** to store the password.
 
-        ![MySQL Workbench: store the password of TiDB Serverless in keychain](https://download.pingcap.com/images/docs/develop/mysql-workbench-store-password-in-keychain.png)
+        ![MySQL Workbench: store the password of TiDB Serverless in keychain](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-store-password-in-keychain.png)
 
     The following figure shows an example of the connection parameters:
 
-    ![MySQL Workbench: configure connection settings for TiDB Serverless](https://download.pingcap.com/images/docs/develop/mysql-workbench-connection-config-serverless-parameters.png)
+    ![MySQL Workbench: configure connection settings for TiDB Serverless](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-connection-config-serverless-parameters.png)
 
 7. Click **Test Connection** to validate the connection to the TiDB Serverless cluster.
 
@@ -101,7 +101,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
 
 4. Launch MySQL Workbench and click **+** near the **MySQL Connections** title.
 
-    ![MySQL Workbench: add new connection](https://download.pingcap.com/images/docs/develop/mysql-workbench-add-new-connection.png)
+    ![MySQL Workbench: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-add-new-connection.png)
 
 5. In the **Setup New Connection** dialog, configure the following connection parameters:
 
@@ -111,11 +111,11 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
     - **Username**: enter the `USERNAME` parameter from the TiDB Cloud connection dialog.
     - **Password**: click **Store in Keychain ...**, enter the password of the TiDB Dedicated cluster, and then click **OK** to store the password.
 
-        ![MySQL Workbench: store the password of TiDB Dedicated in keychain](https://download.pingcap.com/images/docs/develop/mysql-workbench-store-dedicated-password-in-keychain.png)
+        ![MySQL Workbench: store the password of TiDB Dedicated in keychain](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-store-dedicated-password-in-keychain.png)
 
     The following figure shows an example of the connection parameters:
 
-    ![MySQL Workbench: configure connection settings for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/mysql-workbench-connection-config-dedicated-parameters.png)
+    ![MySQL Workbench: configure connection settings for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-connection-config-dedicated-parameters.png)
 
 6. Click **Test Connection** to validate the connection to the TiDB Dedicated cluster.
 
@@ -126,7 +126,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
 
 1. Launch MySQL Workbench and click **+** near the **MySQL Connections** title.
 
-    ![MySQL Workbench: add new connection](https://download.pingcap.com/images/docs/develop/mysql-workbench-add-new-connection.png)
+    ![MySQL Workbench: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-add-new-connection.png)
 
 2. In the **Setup New Connection** dialog, configure the following connection parameters:
 
@@ -136,11 +136,11 @@ Connect to your TiDB cluster depending on the TiDB deployment option you have se
     - **Username**: enter the username to use to connect to your TiDB.
     - **Password**: click **Store in Keychain ...**, enter the password to use to connect to your TiDB cluster, and then click **OK** to store the password.
 
-        ![MySQL Workbench: store the password of TiDB Self-Hosted in keychain](https://download.pingcap.com/images/docs/develop/mysql-workbench-store-self-hosted-password-in-keychain.png)
+        ![MySQL Workbench: store the password of TiDB Self-Hosted in keychain](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-store-self-hosted-password-in-keychain.png)
 
     The following figure shows an example of the connection parameters:
 
-    ![MySQL Workbench: configure connection settings for TiDB Self-Hosted](https://download.pingcap.com/images/docs/develop/mysql-workbench-connection-config-self-hosted-parameters.png)
+    ![MySQL Workbench: configure connection settings for TiDB Self-Hosted](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-connection-config-self-hosted-parameters.png)
 
 3. Click **Test Connection** to validate the connection to the TiDB Self-Hosted cluster.
 
@@ -158,7 +158,7 @@ This error indicates that the query execution time exceeds the timeout limit. To
 1. Launch MySQL Workbench and navigate to the **Workbench Preferences** page.
 2. In the **SQL Editor** > **MySQL Session** section, configure the **DBMS connection read timeout interval (in seconds)** option. This sets the maximum amount of time (in seconds) that a query can take before MySQL Workbench disconnects from the server.
 
-    ![MySQL Workbench: adjust timeout option in SQL Editor settings](https://download.pingcap.com/images/docs/develop/mysql-workbench-adjust-sqleditor-read-timeout.jpg)
+    ![MySQL Workbench: adjust timeout option in SQL Editor settings](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-adjust-sqleditor-read-timeout.jpg)
 
 For more information, see [MySQL Workbench frequently asked questions](https://dev.mysql.com/doc/workbench/en/workbench-faq.html).
 

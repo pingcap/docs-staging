@@ -11,15 +11,15 @@ summary: TiDB 数据库中 SHOW TABLE STATUS 的使用概况。
 
 **ShowTableStatusStmt:**
 
-![ShowTableStatusStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTableStatusStmt.png)
+![ShowTableStatusStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTableStatusStmt.png)
 
 **FromOrIn:**
 
-![FromOrIn](https://download.pingcap.com/images/docs-cn/sqlgram/FromOrIn.png)
+![FromOrIn](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/FromOrIn.png)
 
 **StatusTableName:**
 
-![StatusTableName](https://download.pingcap.com/images/docs-cn/sqlgram/StatusTableName.png)
+![StatusTableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/StatusTableName.png)
 
 ## 示例
 

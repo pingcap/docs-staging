@@ -18,7 +18,7 @@ Before enabling optimistic transactions, make sure that your application correct
 
 To support distributed transactions, TiDB adopts two-phase commit (2PC) in optimistic transactions. The procedure is as follows:
 
-![2PC in TiDB](https://download.pingcap.com/images/docs/2pc-in-tidb.png)
+![2PC in TiDB](https://docs-download.pingcap.com/media/images/docs/2pc-in-tidb.png)
 
 1. The client begins a transaction.
 
@@ -83,24 +83,24 @@ You can enable the automatic retry in either session level or global level:
 
 1. Session level:
 
-    
+
     ```sql
     SET tidb_disable_txn_auto_retry = OFF;
     ```
 
-    
+
     ```sql
     SET tidb_retry_limit = 10;
     ```
 
 2. Global level:
 
-    
+
     ```sql
     SET GLOBAL tidb_disable_txn_auto_retry = OFF;
     ```
 
-    
+
     ```sql
     SET GLOBAL tidb_retry_limit = 10;
     ```
@@ -136,6 +136,6 @@ scheduler-concurrency = 2048000
 
 In addition, TiKV supports monitoring the time spent on waiting latches in the scheduler.
 
-![Scheduler latch wait duration](https://download.pingcap.com/images/docs/optimistic-transaction-metric.png)
+![Scheduler latch wait duration](https://docs-download.pingcap.com/media/images/docs/optimistic-transaction-metric.png)
 
 When `Scheduler latch wait duration` is high and there are no slow writes, it can be safely concluded that there are many write conflicts at this time.

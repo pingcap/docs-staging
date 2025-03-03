@@ -11,7 +11,7 @@ summary: TiDB 数据库中 SET PASSWORD 的使用概况。
 
 **SetStmt:**
 
-![SetStmt](https://download.pingcap.com/images/docs-cn/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SetStmt.png)
 
 ## 示例
 

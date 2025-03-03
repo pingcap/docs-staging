@@ -27,25 +27,25 @@ All data displayed on the slow query page comes from TiDB slow query system tabl
 
 You can filter slow queries based on the time range, the related database, SQL keywords, SQL types, the number of slow queries to be displayed. In the image below, 100 slow queries over the recent 30 minutes are displayed by default.
 
-![Modify list filters](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-list1-v620.png)
+![Modify list filters](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list1-v620.png)
 
 ### Display more columns
 
 Click **Columns** on the page and you can choose to see more columns. You can move your mouse to the **(i)** icon at the right side of a column name to view the description of this column:
 
-![Show more columns](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-list2-v620.png)
+![Show more columns](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list2-v620.png)
 
 ### Export slow queries locally
 
 Click ☰ (**More**) in the upper-right corner of the page to display the **Export** option. After you click **Export**, TiDB Dashboard exports slow queries in the current list as a CSV file.
 
-![Export slow queries locally](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-export-v651.png)
+![Export slow queries locally](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-export-v651.png)
 
 ### Sort by column
 
 By default, the list is sorted by **Finish Time** in the descending order. Click column headings to sort by the column or switch the sorting order:
 
-![Modify sorting basis](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-list3-v620.png)
+![Modify sorting basis](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list3-v620.png)
 
 ## View execution details
 
@@ -55,7 +55,7 @@ Click any item in the list to display detailed execution information of the slow
 - Plan: The execution plan of the slow query (area 2 in the following figure)
 - Other sorted SQL execution information (area 3 in the following figure)
 
-![View execution details](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-detail1-v620.png)
+![View execution details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail1-v620.png)
 
 ### SQL
 
@@ -69,7 +69,7 @@ On TiDB Dashboard, you can view execution plans in two ways: Graph and text. Vis
 
 The following figure shows a visual execution plan.
 
-![Visual execution plan](https://download.pingcap.com/images/docs/dashboard/dashboard-visual-plan-2.png)
+![Visual execution plan](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-visual-plan-2.png)
 
 - The graph shows the execution from left to right, and from top to bottom.
 - Upper nodes are parent operators and lower nodes are child operators.
@@ -78,10 +78,10 @@ The following figure shows a visual execution plan.
 
 Click the node area, and the detailed operator information is displayed on the right sidebar.
 
-![Visual execution plan - sidebar](https://download.pingcap.com/images/docs/dashboard/dashboard-visual-plan-popup.png)
+![Visual execution plan - sidebar](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-visual-plan-popup.png)
 
 ### SQL execution details
 
 Click the corresponding tab titles to switch information of SQL executions.
 
-![Show different execution information](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-detail2-v620.png)
+![Show different execution information](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail2-v620.png)

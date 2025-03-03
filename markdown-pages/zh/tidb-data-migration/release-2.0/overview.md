@@ -26,7 +26,7 @@ aliases: ['/docs-cn/dev/syncer-overview/','/docs-cn/dev/reference/tools/syncer/'
 
 本节介绍 DM 工具的核心功能模块。
 
-![DM Core Features](https://download.pingcap.com/images/tidb-data-migration/dm-core-features.png)
+![DM Core Features](https://docs-download.pingcap.com/media/images/tidb-data-migration/dm-core-features.png)
 
 ### Block & allow lists
 

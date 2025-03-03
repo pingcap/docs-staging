@@ -13,7 +13,7 @@ BR sends a backup or restoration command to each TiKV node. After receiving the 
 
 Each TiKV node has a path in which the backup files generated in the backup operation are stored and from which the stored backup files are read during the restoration.
 
-![br-arch](https://download.pingcap.com/images/docs/br-arch.png)
+![br-arch](https://docs-download.pingcap.com/media/images/docs/br-arch.png)
 
 ## Backup files
 

@@ -68,7 +68,7 @@ tiup cluster edit-config <cluster-name>
 
 - 查询 `capture` 列表：
 
-    
+
     ```shell
     cdc cli capture list --pd=http://10.0.10.25:2379
     ```
@@ -98,7 +98,7 @@ tiup cluster edit-config <cluster-name>
 
 同步任务状态标识了同步任务的运行情况。在 TiCDC 运行过程中，同步任务可能会运行出错、手动暂停、恢复，或达到指定的 `TargetTs`，这些行为都可以导致同步任务状态发生变化。本节描述 TiCDC 同步任务的各状态以及状态之间的流转关系。
 
-![TiCDC state transfer](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-state-transfer.png)
+![TiCDC state transfer](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-state-transfer.png)
 
 以上状态流转图中的状态说明如下：
 
@@ -137,7 +137,7 @@ Info: {"sink-uri":"mysql://root:123456@127.0.0.1:3306/","opts":{},"create-time":
 - `--changefeed-id`：同步任务的 ID，格式需要符合正则表达式 `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`。如果不指定该 ID，TiCDC 会自动生成一个 UUID（version 4 格式）作为 ID。
 - `--sink-uri`：同步任务下游的地址，需要按照以下格式进行配置，目前 scheme 支持 `mysql`/`tidb`/`kafka`/`pulsar`。
 
-    
+
     ```
     [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
     ```
@@ -468,7 +468,7 @@ cdc cli changefeed resume -c test-cf --pd=http://10.0.10.25:2379
 
 - 查询 `processor` 列表：
 
-    
+
     ```shell
     cdc cli processor list --pd=http://10.0.10.25:2379
     ```
@@ -485,7 +485,7 @@ cdc cli changefeed resume -c test-cf --pd=http://10.0.10.25:2379
 
 - 查询特定 `processor`，对应于某个节点处理的同步子任务信息和状态：
 
-    
+
     ```shell
     cdc cli processor query --pd=http://10.0.10.25:2379 --changefeed-id=simple-replication-task --capture-id=b293999a-4168-4988-a4f4-35d9589b226b
     ```

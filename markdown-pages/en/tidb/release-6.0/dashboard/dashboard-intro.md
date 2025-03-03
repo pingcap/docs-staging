@@ -7,7 +7,7 @@ summary: Introduce TiDB Dashboard.
 
 TiDB Dashboard is a Web UI for monitoring, diagnosing, and managing the TiDB cluster, which is available since v4.0. It is built into the PD component and does not require an independent deployment.
 
-![TiDB Dashboard interface](https://download.pingcap.com/images/docs/dashboard/dashboard-intro.gif)
+![TiDB Dashboard interface](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-intro.gif)
 
 TiDB Dashboard is open-sourced on [GitHub](https://github.com/pingcap-incubator/tidb-dashboard).
 

@@ -12,15 +12,15 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-set-role/','/docs-cn/v4.
 
 **SetRoleStmt:**
 
-![SetRoleStmt](https://download.pingcap.com/images/docs-cn/sqlgram/SetRoleStmt.png)
+![SetRoleStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SetRoleStmt.png)
 
 **SetRoleOpt:**
 
-![SetRoleOpt](https://download.pingcap.com/images/docs-cn/sqlgram/SetRoleOpt.png)
+![SetRoleOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SetRoleOpt.png)
 
 **SetDefaultRoleOpt:**
 
-![SetDefaultRoleOpt](https://download.pingcap.com/images/docs-cn/sqlgram/SetDefaultRoleOpt.png)
+![SetDefaultRoleOpt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/SetDefaultRoleOpt.png)
 
 ## 示例
 

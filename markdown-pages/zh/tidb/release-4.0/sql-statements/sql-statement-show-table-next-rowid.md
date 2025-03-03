@@ -17,11 +17,11 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-table-next-rowid/',
 
 **ShowTableNextRowIDStmt:**
 
-![ShowTableNextRowIDStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowTableNextRowIDStmt.png)
+![ShowTableNextRowIDStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowTableNextRowIDStmt.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 ## 示例
 

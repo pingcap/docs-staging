@@ -12,11 +12,11 @@ This statement renames an existing table to a new name.
 
 **RenameTableStmt:**
 
-![RenameTableStmt](https://download.pingcap.com/images/docs/sqlgram/RenameTableStmt.png)
+![RenameTableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/RenameTableStmt.png)
 
 **TableToTable:**
 
-![TableToTable](https://download.pingcap.com/images/docs/sqlgram/TableToTable.png)
+![TableToTable](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableToTable.png)
 
 ## Examples
 

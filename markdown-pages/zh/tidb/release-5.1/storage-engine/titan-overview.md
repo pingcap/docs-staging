@@ -34,7 +34,7 @@ Titan 适合在以下场景中使用：
 
 Titan 的基本架构如下图所示：
 
-![Architecture](https://download.pingcap.com/images/docs-cn/titan/titan-1.png)
+![Architecture](https://docs-download.pingcap.com/media/images/docs-cn/titan/titan-1.png)
 
 Titan 在 Flush 和 Compaction 的时候将 value 分离出 LSM-tree，这样写入流程可以和 RocksDB 保持一致，减少对 RocksDB 的侵入性改动。
 
@@ -42,7 +42,7 @@ Titan 在 Flush 和 Compaction 的时候将 value 分离出 LSM-tree，这样写
 
 BlobFile 是用来存放从 LSM-tree 中分离出来的 value 的文件，其格式如下图所示：
 
-![BlobFile](https://download.pingcap.com/images/docs-cn/titan/titan-2.png)
+![BlobFile](https://docs-download.pingcap.com/media/images/docs-cn/titan/titan-2.png)
 
 BlobFile 由 blob record 、meta block、meta index block 和 footer 组成。其中每个 blob record 用于存放一个 key-value 对；meta block 支持可扩展性，可以用来存放和 BlobFile 相关的一些属性；meta index block 用于检索 meta block。
 
@@ -54,7 +54,7 @@ BlobFile 的实现上有几点值得关注的地方：
 
 ### TitanTableBuilder
 
-![TitanTableBuilder](https://download.pingcap.com/images/docs-cn/titan/titan-3.png)
+![TitanTableBuilder](https://docs-download.pingcap.com/media/images/docs-cn/titan/titan-3.png)
 
 TitanTableBuilder 是实现分离 key-value 的关键，它通过判断 value size 的大小来决定是否将 value 分离到 BlobFile 中去。如果 value size 大于等于 `min_blob_size` 则将 value 分离到 BlobFile，并生成 index 写入 SST；如果 value size 小于 `min_blob_size` 则将 value 直接写入 SST。
 
@@ -75,7 +75,7 @@ Titan 使用 RocksDB 的 TablePropertiesCollector 和 EventListener 来收集 GC
 
 RocksDB 允许使用自定义的 TablePropertiesCollector 来搜集 SST 上的 properties 并写入到对应文件中去。Titan 通过一个自定义的 TablePropertiesCollector —— BlobFileSizeCollector 来搜集每个 SST 中有多少数据是存放在哪些 BlobFile 上的，将它收集到的 properties 命名为 BlobFileSizeProperties，它的工作流程和数据格式如下图所示：
 
-![BlobFileSizeProperties](https://download.pingcap.com/images/docs-cn/titan/titan-4.png)
+![BlobFileSizeProperties](https://docs-download.pingcap.com/media/images/docs-cn/titan/titan-4.png)
 
 左边 SST 中 Index 的格式为：第一列代表 BlobFile 的文件 ID，第二列代表 blob record 在 BlobFile 中的 offset，第三列代表 blob record 的 size。右边 BlobFileSizeProperties 中的每一行代表一个 BlobFile 以及 SST 中有多少数据保存在这个 BlobFile 中，第一列代表 BlobFile 的文件 ID，第二列代表数据大小。
 
@@ -83,7 +83,7 @@ RocksDB 允许使用自定义的 TablePropertiesCollector 来搜集 SST 上的 p
 
 RocksDB 是通过 Compaction 来丢弃旧版本数据以回收空间的，因此每次 Compaction 完成后 Titan 中的某些 BlobFile 中便可能有部分或全部数据过期。因此便可以通过监听 Compaction 事件来触发 GC，搜集比对 Compaction 中输入输出 SST 的 BlobFileSizeProperties 来决定挑选哪些 BlobFile 进行 GC。其流程大概如下图所示：
 
-![EventListener](https://download.pingcap.com/images/docs-cn/titan/titan-5.png)
+![EventListener](https://docs-download.pingcap.com/media/images/docs-cn/titan/titan-5.png)
 
 inputs 代表参与 Compaction 的所有 SST 的 BlobFileSizeProperties，outputs 代表 Compaction 生成的所有 SST 的 BlobFileSizeProperties，discardable size 是通过计算 inputs 和 outputs 得出的每个 BlobFile 被丢弃的数据大小，第一列代表 BlobFile 的文件 ID，第二列代表被丢弃的数据大小。
 
@@ -95,7 +95,7 @@ GC 的方式就是对于这些选中的 BlobFile 文件，依次通过查询其�
 
 Level Merge 是 Titan 新加入的一种策略，它的核心思想是 LSM-tree 在进行 Compaction 的同时，对 SST 文件对应的 BlobFile 进行归并重写产生新的 BlobFile。其流程大概如下图所示：
 
-![LevelMerge](https://download.pingcap.com/images/docs-cn/titan/titan-6.png)
+![LevelMerge](https://docs-download.pingcap.com/media/images/docs-cn/titan/titan-6.png)
 
 Level z-1 和 Level z 的 SST 进行 Compaction 时会对 KV 对有序读写一遍，这时就可以对这些 SST 中所涉及的 BlobFile 的 value 有序写到新的 BlobFile 中，并在生成新的 SST 时将 key 的 blob index 进行更新。对于 Compaction 中被删除的 key，相应的 value 也不会写到新的 BlobFile 中，相当于完成了 GC。
 
@@ -109,6 +109,6 @@ Range Merge 是基于 Level Merge 的一个优化。考虑如下两种情况，�
 
 - 某个 range 被频繁 Compaction 导致该 range 的 sorted runs 较多。
 
-![RangeMerge](https://download.pingcap.com/images/docs-cn/titan/titan-7.png)
+![RangeMerge](https://docs-download.pingcap.com/media/images/docs-cn/titan/titan-7.png)
 
 因此需要通过 Range Merge 操作维持 sorted run 在一定水平，即在 OnCompactionComplete 时统计该 range 的 sorted run 数量，若数量过多则将涉及的 BlobFile 标记为 ToMerge，在下一次的 Compaction 中进行重写。

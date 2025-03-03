@@ -41,11 +41,11 @@ Region leader 使用一个 resolver 来管理 resolved-ts。该 resolver 通过�
 
 在 [Grafana > TiDB dashboard > **KV Request** 监控面板](/grafana-tidb-dashboard.md#kv-request)中，以下面板显示了 Stale Read 的命中率、OPS 和流量：
 
-![Stale Read Hit/Miss OPS](https://download.pingcap.com/images/docs-cn/stale-read/metrics-hit-miss.png)
+![Stale Read Hit/Miss OPS](https://docs-download.pingcap.com/media/images/docs-cn/stale-read/metrics-hit-miss.png)
 
-![Stale Read Req OPS](https://download.pingcap.com/images/docs-cn/stale-read/metrics-ops.png)
+![Stale Read Req OPS](https://docs-download.pingcap.com/media/images/docs-cn/stale-read/metrics-ops.png)
 
-![Stale Read Req Traffic](https://download.pingcap.com/images/docs-cn/stale-read/traffic.png)
+![Stale Read Req Traffic](https://docs-download.pingcap.com/media/images/docs-cn/stale-read/traffic.png)
 
 关于上述监控项的更多信息，参考 [TiDB 监控指标](/grafana-tidb-dashboard.md#kv-request)。
 
@@ -166,11 +166,11 @@ TiKV 每 10 秒检查以下监控项：
 
 如果你观察到 **Stale Read OPS** 的 miss rate 增加，如下所示：
 
-![Example: Stale Read OPS](https://download.pingcap.com/images/docs-cn/stale-read/example-ops.png)
+![Example: Stale Read OPS](https://docs-download.pingcap.com/media/images/docs-cn/stale-read/example-ops.png)
 
 首先，你可以检查 [**TiKV-Details** > **Resolved-TS** 监控面板](/grafana-tikv-dashboard.md#resolved-ts)中的 **Max Resolved TS gap** 和 **Min Resolved TS Region** 指标：
 
-![Example: Max Resolved TS gap](https://download.pingcap.com/images/docs-cn/stale-read/example-ts-gap.png)
+![Example: Max Resolved TS gap](https://docs-download.pingcap.com/media/images/docs-cn/stale-read/example-ts-gap.png)
 
 从上述指标中，你可以发现 Region `3121` 和其他一些 Region 没有及时更新 resolved-ts。
 

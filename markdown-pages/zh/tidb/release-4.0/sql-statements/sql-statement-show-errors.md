@@ -14,7 +14,7 @@ aliases: ['/docs-cn/stable/sql-statements/sql-statement-show-errors/','/docs-cn/
 
 **ShowErrorsStmt:**
 
-![ShowErrorsStmt](https://download.pingcap.com/images/docs-cn/sqlgram/ShowErrorsStmt.png)
+![ShowErrorsStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/ShowErrorsStmt.png)
 
 ## 示例
 

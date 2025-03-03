@@ -12,23 +12,23 @@ This statement creates a new database in TiDB. The MySQL terminology for 'databa
 
 **CreateDatabaseStmt:**
 
-![CreateDatabaseStmt](https://download.pingcap.com/images/docs/sqlgram/CreateDatabaseStmt.png)
+![CreateDatabaseStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/CreateDatabaseStmt.png)
 
 **DatabaseSym:**
 
-![DatabaseSym](https://download.pingcap.com/images/docs/sqlgram/DatabaseSym.png)
+![DatabaseSym](https://docs-download.pingcap.com/media/images/docs/sqlgram/DatabaseSym.png)
 
 **IfNotExists:**
 
-![IfNotExists](https://download.pingcap.com/images/docs/sqlgram/IfNotExists.png)
+![IfNotExists](https://docs-download.pingcap.com/media/images/docs/sqlgram/IfNotExists.png)
 
 **DBName:**
 
-![DBName](https://download.pingcap.com/images/docs/sqlgram/DBName.png)
+![DBName](https://docs-download.pingcap.com/media/images/docs/sqlgram/DBName.png)
 
 **DatabaseOptionListOpt:**
 
-![DatabaseOptionListOpt](https://download.pingcap.com/images/docs/sqlgram/DatabaseOptionListOpt.png)
+![DatabaseOptionListOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/DatabaseOptionListOpt.png)
 
 ## Syntax
 

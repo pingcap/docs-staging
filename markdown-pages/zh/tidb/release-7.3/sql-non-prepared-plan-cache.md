@@ -101,7 +101,7 @@ TiDB 对参数化后形式相同的查询，只能缓存一个计划。例如，
 
 此时，你需要观察 Grafana 监控中的 **Queries Using Plan Cache OPS** 面板中的 `non-prepared` 指标和 **Plan Cache Miss OPS** 面板中的 `non-prepared-unsupported` 指标。如果大多数查询都无法被支持，只有少部分查询能命中 Plan Cache，此时你可以关闭此功能。
 
-![non-prepared-unsupported](https://download.pingcap.com/images/docs-cn/non-prepapred-plan-cache-unsupprot.png)
+![non-prepared-unsupported](https://docs-download.pingcap.com/media/images/docs-cn/non-prepapred-plan-cache-unsupprot.png)
 
 ## 诊断
 
@@ -144,7 +144,7 @@ SHOW warnings;
 
 开启 Non-Prepared Plan Cache 后，可以在以下几个面板中查看缓存的内存使用情况、缓存中计划的个数、缓存命中的情况等信息。
 
-![non-prepared-plan-cache](https://download.pingcap.com/images/docs-cn/tidb-non-prepared-plan-cache-metrics.png)
+![non-prepared-plan-cache](https://docs-download.pingcap.com/media/images/docs-cn/tidb-non-prepared-plan-cache-metrics.png)
 
 `statements_summary` 表和慢查询日志也会体现缓存的命中情况。下面是查看 `statements_summary` 表中缓存命中情况的例子：
 

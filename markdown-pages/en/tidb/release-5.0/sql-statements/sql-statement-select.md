@@ -11,67 +11,67 @@ The `SELECT` statement is used to read data from TiDB.
 
 **SelectStmt:**
 
-![SelectStmt](https://download.pingcap.com/images/docs/sqlgram/SelectStmt.png)
+![SelectStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectStmt.png)
 
 **FromDual:**
 
-![FromDual](https://download.pingcap.com/images/docs/sqlgram/FromDual.png)
+![FromDual](https://docs-download.pingcap.com/media/images/docs/sqlgram/FromDual.png)
 
 **WhereClauseOptional:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/WhereClauseOptional.png)
 
 **SelectStmtOpts:**
 
-![SelectStmtOpts](https://download.pingcap.com/images/docs/sqlgram/SelectStmtOpts.png)
+![SelectStmtOpts](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectStmtOpts.png)
 
 **SelectStmtFieldList:**
 
-![SelectStmtFieldList](https://download.pingcap.com/images/docs/sqlgram/SelectStmtFieldList.png)
+![SelectStmtFieldList](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectStmtFieldList.png)
 
 **TableRefsClause:**
 
-![TableRefsClause](https://download.pingcap.com/images/docs/sqlgram/TableRefsClause.png)
+![TableRefsClause](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableRefsClause.png)
 
 **WhereClauseOptional:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/WhereClauseOptional.png)
 
 **SelectStmtGroup:**
 
-![SelectStmtGroup](https://download.pingcap.com/images/docs/sqlgram/SelectStmtGroup.png)
+![SelectStmtGroup](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectStmtGroup.png)
 
 **HavingClause:**
 
-![HavingClause](https://download.pingcap.com/images/docs/sqlgram/HavingClause.png)
+![HavingClause](https://docs-download.pingcap.com/media/images/docs/sqlgram/HavingClause.png)
 
 **OrderByOptional:**
 
-![OrderByOptional](https://download.pingcap.com/images/docs/sqlgram/OrderByOptional.png)
+![OrderByOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/OrderByOptional.png)
 
 **SelectStmtLimit:**
 
-![SelectStmtLimit](https://download.pingcap.com/images/docs/sqlgram/SelectStmtLimit.png)
+![SelectStmtLimit](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectStmtLimit.png)
 
 **FirstOrNext:**
 
-![FirstOrNext](https://download.pingcap.com/images/docs/sqlgram/FirstOrNext.png)
+![FirstOrNext](https://docs-download.pingcap.com/media/images/docs/sqlgram/FirstOrNext.png)
 
 **FetchFirstOpt:**
 
-![FetchFirstOpt](https://download.pingcap.com/images/docs/sqlgram/FetchFirstOpt.png)
+![FetchFirstOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/FetchFirstOpt.png)
 
 **RowOrRows:**
 
-![RowOrRows](https://download.pingcap.com/images/docs/sqlgram/RowOrRows.png)
+![RowOrRows](https://docs-download.pingcap.com/media/images/docs/sqlgram/RowOrRows.png)
 
 **SelectLockOpt:**
 
-![SelectLockOpt](https://download.pingcap.com/images/docs/sqlgram/SelectLockOpt.png)
+![SelectLockOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectLockOpt.png)
 
 **WindowClauseOptional**
 
-![WindowClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WindowClauseOptional.png)
+![WindowClauseOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/WindowClauseOptional.png)
 
 ## Description of the syntax elements
 

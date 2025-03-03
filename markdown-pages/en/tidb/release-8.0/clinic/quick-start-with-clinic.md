@@ -55,7 +55,7 @@ Before using PingCAP Clinic, you need to install Diag and prepare an environment
 
     To get a token, click the icon in the lower-right corner of the Cluster page, select **Get Access Token For Diag Tool**, and click **+** in the pop-up window. Make sure that you have copied and saved the token that is displayed.
 
-    ![An example of a token](https://download.pingcap.com/images/docs/clinic-get-token.png)
+    ![An example of a token](https://docs-download.pingcap.com/media/images/docs/clinic-get-token.png)
 
     > **Note:**
     >
@@ -127,7 +127,7 @@ Before using PingCAP Clinic, you need to install Diag and prepare an environment
 
     - If the network where your cluster is located can access the internet, you can directly upload the folder with collected data using the following command:
 
-        
+
         ```bash
         tiup diag upload ${filepath}
         ```
