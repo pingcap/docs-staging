@@ -64,7 +64,7 @@ Perform a bulk update deleting approximately 30% of the records. Check the healt
 
 ```sql
 DELETE FROM t1 WHERE id BETWEEN 101010 AND 201010; # delete about 30% of records
-SHOW STATS_HEALTHY;
+SHOW STATS_HEALTHY; 
 ```
 
 ```sql

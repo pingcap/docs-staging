@@ -75,7 +75,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - Check the version of TiDB:
 
-
+    
     ```sql
     select tidb_version()\G
     ```
@@ -98,7 +98,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - Create a database named `pingcap`:
 
-
+    
     ```sql
     create database pingcap;
     ```
@@ -111,7 +111,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
     Switch to the `pingcap` database:
 
-
+    
     ```sql
     use pingcap;
     ```
@@ -124,7 +124,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - Create a table named `tab_tidb`:
 
-
+    
     ```sql
     CREATE TABLE `tab_tidb` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -143,7 +143,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - Insert data:
 
-
+    
     ```sql
     insert into `tab_tidb` values (1,'TiDB',5,'TiDB-v5.0.0');
     ```
@@ -156,7 +156,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - View the entries in `tab_tidb`:
 
-
+    
     ```sql
     select * from tab_tidb;
     ```
@@ -174,7 +174,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - View the store state, `store_id`, capacity, and uptime of TiKV:
 
-
+    
     ```sql
     select STORE_ID,ADDRESS,STORE_STATE,STORE_STATE_NAME,CAPACITY,AVAILABLE,UPTIME from INFORMATION_SCHEMA.TIKV_STORE_STATUS;
     ```
@@ -194,7 +194,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - Exit TiDB:
 
-
+    
     ```sql
     exit
     ```

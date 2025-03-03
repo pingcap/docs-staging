@@ -1249,7 +1249,7 @@ MPP is a distributed computing framework provided by the TiFlash engine, which a
 
     - When setting `tidb_constraint_check_in_place_pessimistic` to `OFF` and using pessimistic transactions:
 
-
+        
         ```sql
         set @@tidb_constraint_check_in_place_pessimistic=OFF;
         create table t (i int key);

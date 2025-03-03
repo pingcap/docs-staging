@@ -71,7 +71,7 @@ TiFlash disaggregated storage and compute architecture is suitable for cost-effe
         "And": {
             "Tags": [
                 {
-                    "Value": "tiflash_deleted",
+                    "Value": "tiflash_deleted", 
                     "Key": "true"
                 }
             ]
