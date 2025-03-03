@@ -37,7 +37,7 @@ Value: rowID
 
 Index data has two types: the unique index and the non-unique index.
 
-- For unique indexes, you can follow the coding rules above.
+- For unique indexes, you can follow the coding rules above. 
 - For non-unique indexes, a unique key cannot be constructed through this encoding, because the `tablePrefix{tableID}_indexPrefixSep{indexID}` of the same index is the same and the `ColumnsValue` of multiple rows might be the same. The encoding rule for non-unique indexes is as follows:
 
     ```

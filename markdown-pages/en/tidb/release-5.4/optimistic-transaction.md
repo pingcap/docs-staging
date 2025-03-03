@@ -82,24 +82,24 @@ You can enable the automatic retry in either session level or global level:
 
 1. Session level:
 
-
+    
     ```sql
     SET tidb_disable_txn_auto_retry = OFF;
     ```
 
-
+    
     ```sql
     SET tidb_retry_limit = 10;
     ```
 
 2. Global level:
 
-
+    
     ```sql
     SET GLOBAL tidb_disable_txn_auto_retry = OFF;
     ```
 
-
+    
     ```sql
     SET GLOBAL tidb_retry_limit = 10;
     ```

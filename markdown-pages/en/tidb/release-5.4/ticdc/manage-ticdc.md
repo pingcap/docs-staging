@@ -74,7 +74,7 @@ If you deploy TiCDC using TiUP, replace `cdc cli` in the following commands with
 
 - Query the `capture` list:
 
-
+    
     ```shell
     cdc cli capture list --pd=http://10.0.10.25:2379
     ```
@@ -143,7 +143,7 @@ Info: {"sink-uri":"mysql://root:123456@127.0.0.1:3306/","opts":{},"create-time":
 - `--changefeed-id`: The ID of the replication task. The format must match the `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$` regular expression. If this ID is not specified, TiCDC automatically generates a UUID (the version 4 format) as the ID.
 - `--sink-uri`: The downstream address of the replication task. Configure `--sink-uri` according to the following format. Currently, the scheme supports `mysql`/`tidb`/`kafka`/`pulsar`/`s3`/`local`.
 
-
+    
     ```
     [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
     ```
@@ -487,7 +487,7 @@ Currently, you can modify the following configuration items:
 
 - Query the `processor` list:
 
-
+    
     ```shell
     cdc cli processor list --pd=http://10.0.10.25:2379
     ```
@@ -504,7 +504,7 @@ Currently, you can modify the following configuration items:
 
 - Query a specific `changefeed` which corresponds to the status of a specific replication task:
 
-
+    
     ```shell
     cdc cli processor query --pd=http://10.0.10.25:2379 --changefeed-id=simple-replication-task --capture-id=b293999a-4168-4988-a4f4-35d9589b226b
     ```

@@ -77,21 +77,21 @@ You can easily use HAProxy to configure and set up a load-balanced database envi
 
 1. Download the package of the HAProxy 2.5.0 source code:
 
-
+    
     ```bash
     wget https://github.com/haproxy/haproxy/archive/refs/tags/v2.5.0.zip
     ```
 
 2. Unzip the package:
 
-
+    
     ```bash
     unzip v2.5.0.zip
     ```
 
 3. Compile the application from the source code:
 
-
+    
     ```bash
     cd haproxy-2.5.0
     make clean
@@ -101,14 +101,14 @@ You can easily use HAProxy to configure and set up a load-balanced database envi
 
 4. Reconfigure the profile:
 
-
+    
     ```bash
     echo 'export PATH=/app/haproxy/bin:$PATH' >> /etc/profile
     ```
 
 5. Check whether the installation is successful:
 
-
+    
     ```bash
     which haproxy
     ```
@@ -200,7 +200,7 @@ listen tidb-cluster                        # Database load balancing.
 To check the source IP address using `SHOW PROCESSLIST`, you need to configure the [PROXY protocol](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt) to connect to TiDB.
 
 ```yaml
-   server tidb-1 10.9.18.229:4000 send-proxy check inter 2000 rise 2 fall 3
+   server tidb-1 10.9.18.229:4000 send-proxy check inter 2000 rise 2 fall 3       
    server tidb-2 10.9.39.208:4000 send-proxy check inter 2000 rise 2 fall 3
    server tidb-3 10.9.64.166:4000 send-proxy check inter 2000 rise 2 fall 3
 ```
@@ -224,14 +224,14 @@ To stop HAProxy, use the `kill -9` command.
 
 1. Run the following command:
 
-
+    
     ```bash
     ps -ef | grep haproxy
     ```
 
 2. Terminate the process of HAProxy:
 
-
+    
     ```bash
     kill -9 ${haproxy.pid}
     ```

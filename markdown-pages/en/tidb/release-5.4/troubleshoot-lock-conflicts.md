@@ -213,7 +213,7 @@ Solutions:
 
     ```sh
     ./tidb-ctl decoder -f table_row -k "t\x00\x00\x00\x00\x00\x00\x00\x1c_r\x00\x00\x00\x00\x00\x00\x00\xfa"
-
+    
     table_id: -9223372036854775780
     row_id: -9223372036854775558
     ```
@@ -259,7 +259,7 @@ You can check whether there is any "LockNotFound" error in the following ways:
     ```log
     Error: KV error safe to retry restarts txn: Txn(Mvcc(TxnLockNotFound)) [ERROR [Kv.rs:708] ["KvService::batch_raft send response fail"] [err=RemoteStoped]
     ```
-
+ 
 Solutions:
 
 * By checking the time interval between start_ts and commit_ts, you can confirm whether the commit time exceeds the TTL time.
