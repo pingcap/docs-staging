@@ -15,21 +15,21 @@ summary: サポート チケットの Slack のやり取りに関する詳細情
 
     チケットを作成する必要があるメッセージの横にある絵文字アイコンをクリックします。検索ボックスに`ticket`と入力して🎫絵文字をすばやく見つけ、🎫をクリックします。
 
-    ![slack-ticket-interaction-1](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-1.png)
+    ![slack-ticket-interaction-1](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-1.png)
 
-    ![slack-ticket-interaction-2](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-2.png)
+    ![slack-ticket-interaction-2](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-2.png)
 
     **Assist**アプリから**、「リクエストを送信」**ボタンを含むメッセージが送信されます。その後、ボタンをクリックしてフォームに入力し、リクエストを送信します。
 
-    ![slack-ticket-interaction-3](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-3.png)
+    ![slack-ticket-interaction-3](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-3.png)
 
-    ![slack-ticket-interaction-4](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-4.png)
+    ![slack-ticket-interaction-4](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-4.png)
 
 -   **方法2: チケット作成のために、問題の説明とともに`/assist`または`/assist`入力します。**
 
     もう 1 つのより速い方法は、メッセージ ボックスに`/assist`または`/assist [problem description]`と入力して**Enter キー**を押すことです。入力して送信するためのリクエスト送信フォームが表示されます。
 
-    ![slack-ticket-interaction-5](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-5.png)
+    ![slack-ticket-interaction-5](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-5.png)
 
 送信後、Assist アプリはチケット リンクとチケット ステータスを含む確認メッセージをスレッドに送信します。
 
@@ -39,7 +39,7 @@ summary: サポート チケットの Slack のやり取りに関する詳細情
 
 これにより、**プレミアム**サポート プランに加入している顧客は、Slack を離れることなく、チケットをすばやく作成、応答、管理できるようになります。
 
-![slack-ticket-interaction-6](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-6.png)
+![slack-ticket-interaction-6](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-6.png)
 
 ## よくある質問 {#faqs}
 

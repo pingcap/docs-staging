@@ -9,7 +9,7 @@ TiDB Cloud provides you with an easy way to subscribe to alert notifications via
 
 The following screenshot shows two example alerts.
 
-![TiDB Cloud Alerts in Slack](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-alert-subscription.png)
+![TiDB Cloud Alerts in Slack](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-alert-subscription.png)
 
 ## Prerequisites
 

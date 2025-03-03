@@ -103,7 +103,7 @@ AWS マネジメントコンソールを使用して VPC インターフェイ�
 
     **エンドポイントの作成**ページが表示されます。
 
-    ![Verify endpoint service](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/create-endpoint-2.png)
+    ![Verify endpoint service](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/create-endpoint-2.png)
 
 3.  **エンドポイント設定**領域で、必要に応じて名前タグを入力し、 **NLB および GWLB を使用するエンドポイント サービス**オプションを選択します。
 
@@ -168,7 +168,7 @@ AWS マネジメントコンソールでプライベート DNS を有効にす�
 3.  **このエンドポイントに対して有効にする**チェックボックスをオンにします。
 4.  **「変更を保存」を**クリックします。
 
-    ![Enable private DNS](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/enable-private-dns.png)
+    ![Enable private DNS](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/enable-private-dns.png)
 
 </div>
 </SimpleTab>

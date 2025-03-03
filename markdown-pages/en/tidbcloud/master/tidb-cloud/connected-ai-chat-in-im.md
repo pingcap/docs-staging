@@ -13,4 +13,4 @@ Currently, the ticket support feature for [Lark](https://www.larksuite.com/) is 
 
 ## Example
 
-![ai-chat-example](https://download.pingcap.com/images/docs/tidb-cloud/connected-ai-chat-example.png)
+![ai-chat-example](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-ai-chat-example.png)

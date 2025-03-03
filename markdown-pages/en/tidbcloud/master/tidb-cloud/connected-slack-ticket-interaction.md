@@ -15,21 +15,21 @@ If an **Assist** app is added to the channel, you can use **Assist** to submit t
 
     Click the emoji icon next to the message that you need to create a ticket. Type `ticket` in the search box to quickly find the 🎫 emoji, and then click 🎫.
 
-    ![slack-ticket-interaction-1](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-1.png)
+    ![slack-ticket-interaction-1](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-1.png)
 
-    ![slack-ticket-interaction-2](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-2.png)
+    ![slack-ticket-interaction-2](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-2.png)
 
     The **Assist** app will send you a message with a **Raise a request** button. Then, you can click the button, fill out the form, and submit your request.
 
-    ![slack-ticket-interaction-3](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-3.png)
+    ![slack-ticket-interaction-3](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-3.png)
 
-    ![slack-ticket-interaction-4](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-4.png)
+    ![slack-ticket-interaction-4](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-4.png)
 
 - **Method 2: Type `/assist` or `/assist` along with the problem description for ticket creation**
 
     Another faster way is to type `/assist` or `/assist [problem description]` in the message box and press **Enter**. A request submission form will appear for you to complete and submit.
 
-    ![slack-ticket-interaction-5](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-5.png)
+    ![slack-ticket-interaction-5](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-5.png)
 
 After submission, the Assist app will send a confirmation message in the thread, which includes the ticket link and ticket status.
 
@@ -39,7 +39,7 @@ The support engineer's comments on the ticket will be synchronized to the Slack 
 
 In this way, customers subscribed to the **Premium** support plan can quickly create, respond, and manage tickets without leaving Slack.
 
-![slack-ticket-interaction-6](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-interaction-6.png)
+![slack-ticket-interaction-6](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-interaction-6.png)
 
 ## FAQs
 
@@ -49,4 +49,4 @@ In this way, customers subscribed to the **Premium** support plan can quickly cr
 
 ## Contact support
 
-For help or questions, please contact our support team at <a href="mailto:support@pingcap.com">support@pingcap.com</a>. 
+For help or questions, please contact our support team at <a href="mailto:support@pingcap.com">support@pingcap.com</a>.

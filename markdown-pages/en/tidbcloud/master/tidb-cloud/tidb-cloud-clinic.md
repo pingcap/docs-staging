@@ -7,7 +7,7 @@ summary: Learn how to use TiDB Cloud Clinic for advanced monitoring and diagnost
 
 TiDB Cloud Clinic offers advanced monitoring and diagnostic capabilities on the TiDB Cloud, designed to help you quickly identify performance issues, optimize your database, and enhance overall performance with detailed analysis and actionable insights.
 
-![tidb-cloud-clinic](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-clinic.png)
+![tidb-cloud-clinic](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-clinic.png)
 
 > **Note:**
 >
@@ -54,7 +54,7 @@ On the default [**Slow Queries**](/tidb-cloud/tune-performance.md#slow-query) pa
 
 Top Slow Queries displays the top 10 queries aggregated by SQL digest, sorted by the following dimensions:
 
-- Total latency 
+- Total latency
 - Maximum latency
 - Average latency
 - Total memory
@@ -92,7 +92,7 @@ To view TopSQL, take the following steps:
 
 4. Analyze the charts and tables displayed by TopSQL.
 
-For more information, see [TopSQL in TiDB Dashboard](https://docs.pingcap.com/tidb/stable/top-sql). 
+For more information, see [TopSQL in TiDB Dashboard](https://docs.pingcap.com/tidb/stable/top-sql).
 
 ## Generate benchmark reports
 

@@ -9,7 +9,7 @@ TiDB Cloud、 [スラック](https://slack.com/) 、 [メール](/tidb-cloud/mon
 
 次のスクリーンショットは、2 つのアラートの例を示しています。
 
-![TiDB Cloud Alerts in Slack](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-alert-subscription.png)
+![TiDB Cloud Alerts in Slack](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-alert-subscription.png)
 
 ## 前提条件 {#prerequisites}
 

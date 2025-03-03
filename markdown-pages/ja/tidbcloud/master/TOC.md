@@ -812,10 +812,10 @@
             -   [Zoomで登録する](/tidb-cloud/monitor-alert-zoom.md)
         -   接続: IM チケットの作成とサブスクリプションの更新
             -   [Slack 経由でチケットを作成し、チケットの更新を購読する](/tidb-cloud/connected-slack-ticket-creation.md)
-            -   [Lark 経由でチケットを作成し、チケットの更新を購読する](/tidb-cloud/connected-lark-ticket-creation.md) ![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+            -   [Lark 経由でチケットを作成し、チケットの更新を購読する](/tidb-cloud/connected-lark-ticket-creation.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
         -   接続: サポートチケットの IM 対話
             -   [Slack経由でサポートチケットとやり取りする](/tidb-cloud/connected-slack-ticket-interaction.md)
-            -   [Lark経由でサポートチケットとやり取りする](/tidb-cloud/connected-lark-ticket-interaction.md) ![BETA](https://download.pingcap.com/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+            -   [Lark経由でサポートチケットとやり取りする](/tidb-cloud/connected-lark-ticket-interaction.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   [サポートを受ける](/tidb-cloud/tidb-cloud-support.md)
 -   よくある質問
     -   [TiDB Cloudに関するよくある質問](/tidb-cloud/tidb-cloud-faq.md)

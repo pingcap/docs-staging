@@ -15,7 +15,7 @@ For customers subscribed to the **Premium** [support plan](/tidb-cloud/connected
 
 If Interaction for Support Tickets is enabled, **PingCAP Support Bot** will convert the **Support Ticket Created** message card to a thread to manage ticket interactions.
 
-![lark-ticket-interaction-1](https://download.pingcap.com/images/docs/tidb-cloud/connected-lark-ticket-interaction-1.png)
+![lark-ticket-interaction-1](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-interaction-1.png)
 
 When a PingCAP support engineer comments on the ticket, the comment will be automatically synchronized to the thread.
 

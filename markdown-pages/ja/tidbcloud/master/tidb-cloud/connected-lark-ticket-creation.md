@@ -15,21 +15,21 @@ summary: Lark チケットの作成と更新サブスクリプションに関す
 
 **カスタマー サポート グループ**の Lark グループで、メッセージに`@PingCAP Support Bot create ticket`入力します。すると、 **PingCAP サポート ボットが**チケット作成用の Lark メッセージ カードで返信します。
 
-![lark-ticket-creation-1](https://download.pingcap.com/images/docs/tidb-cloud/connected-lark-ticket-creation-1.png)
+![lark-ticket-creation-1](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-creation-1.png)
 
 必須フィールドに入力し、 **「送信」**をクリックします。送信すると、カードが**「チケット送信済み」**に更新され、リクエストが処理中であることが示されます。
 
-![lark-ticket-creation-2](https://download.pingcap.com/images/docs/tidb-cloud/connected-lark-ticket-creation-2.png)
+![lark-ticket-creation-2](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-creation-2.png)
 
 サポート チケットが作成されると、**チケット送信**カードが**サポート チケット作成**カードに更新され、チケット名とチケットを表示するためのリンクが提供されます。
 
-![lark-ticket-creation-3](https://download.pingcap.com/images/docs/tidb-cloud/connected-lark-ticket-creation-3.png)
+![lark-ticket-creation-3](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-creation-3.png)
 
 ## チケットの最新情報を購読する {#subscribe-to-ticket-updates}
 
 PingCAP サポート エンジニアがチケットにコメントするたびに、 **PingCAP サポート ボットは****チケットへの新しいコメント**カードを Lark グループに送信します。
 
-![connected-lark-ticket-creation-4](https://download.pingcap.com/images/docs/tidb-cloud/connected-lark-ticket-creation-4.png)
+![connected-lark-ticket-creation-4](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-creation-4.png)
 
 ## よくある質問 {#faqs}
 
