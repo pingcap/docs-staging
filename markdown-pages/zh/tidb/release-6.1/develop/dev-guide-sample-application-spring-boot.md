@@ -67,14 +67,14 @@ summary: 给出一个 Spring Boot 构建 TiDB 应用程序示例。
 
 - macOS 安装：
 
-
+    
     ```
     brew install maven
     ```
 
 - 基于 Debian 的 Linux 发行版上安装（如 Ubuntu 等）：
 
-
+    
     ```
     apt-get install maven
     ```
@@ -83,14 +83,14 @@ summary: 给出一个 Spring Boot 构建 TiDB 应用程序示例。
 
 - dnf 包管理器
 
-
+    
     ```
     dnf install maven
     ```
 
 - yum 包管理器
 
-
+    
     ```
     yum install maven
     ```

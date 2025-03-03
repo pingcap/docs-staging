@@ -75,7 +75,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 + 检查 TiDB 版本
 
-
+    
     ```sql
     select tidb_version()\G
     ```
@@ -98,7 +98,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 + 创建 PingCAP database
 
-
+    
     ```sql
     create database pingcap;
     ```
@@ -107,7 +107,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
     Query OK, 0 rows affected (0.10 sec)
     ```
 
-
+    
     ```sql
     use pingcap;
     ```
@@ -120,7 +120,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 + 创建 `tab_tidb` 表
 
-
+    
     ```sql
     CREATE TABLE `tab_tidb` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -139,7 +139,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 + 插入数据
 
-
+    
     ```sql
     insert into `tab_tidb` values (1,'TiDB',5,'TiDB-v5.0.0');
     ```
@@ -152,7 +152,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 + 查看 `tab_tidb` 结果
 
-
+    
     ```sql
     select * from tab_tidb;
     ```
@@ -170,7 +170,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 + 查看 TiKV store 状态、`store_id`、存储情况以及启动时间
 
-
+    
     ```sql
     select STORE_ID,ADDRESS,STORE_STATE,STORE_STATE_NAME,CAPACITY,AVAILABLE,UPTIME from INFORMATION_SCHEMA.TIKV_STORE_STATUS;
     ```
@@ -190,7 +190,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 + 退出
 
-
+    
     ```sql
     exit
     ```

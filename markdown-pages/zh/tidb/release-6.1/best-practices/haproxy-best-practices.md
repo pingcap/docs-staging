@@ -80,21 +80,21 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下部署操作具�
 
 1. 下载 HAProxy 2.6.2 的源码包：
 
-
+    
     ```bash
     wget https://www.haproxy.org/download/2.6/src/haproxy-2.6.2.tar.gz
     ```
 
 2. 解压源码包：
 
-
+    
     ```bash
     tar zxf haproxy-2.6.2.tar.gz
     ```
 
 3. 从源码编译 HAProxy 应用：
 
-
+    
     ```bash
     cd haproxy-2.6.2
     make clean
@@ -104,7 +104,7 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下部署操作具�
 
 4. 重新配置 `profile` 文件：
 
-
+    
     ```bash
     echo 'export PATH=/app/haproxy/bin:$PATH' >> /etc/profile
     . /etc/profile
@@ -112,7 +112,7 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下部署操作具�
 
 5. 检查 HAProxy 是否安装成功：
 
-
+    
     ```bash
     which haproxy
     ```
@@ -228,14 +228,14 @@ haproxy -f /etc/haproxy/haproxy.cfg
 
 1. 执行如下命令：
 
-
+    
     ```bash
     ps -ef | grep haproxy
     ```
 
 2. 终止 HAProxy 相关的 PID 进程：
 
-
+    
     ```bash
     kill -9 ${haproxy.pid}
     ```

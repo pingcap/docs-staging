@@ -218,7 +218,7 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
    http://DASHBOARD_IP:PORT/dashboard/?sso_callback=1
    ```
 
-   在以上内容中，将 `DASHBOARD_IP:PORT` 替换为你在浏览器中实际访问 TiDB Dashboard 所使用的域名（或 IP）及端口。
+   在以上内容中，将 `DASHBOARD_IP:PORT` 替换为你在浏览器中实际访问 TiDB Dashboard 所使用的域名（或 IP）及端口。   
 
    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-casdoor-settings-2.png)
 

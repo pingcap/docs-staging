@@ -266,7 +266,7 @@ TiUniManager 默认的集群备份路径相关配置参数如下：
 
 1. 登录 TiUniManager 获取 user token。
 
-
+    
     ```shell
     curl -X 'POST' \ 'http://172.16.6.206:4180/api/v1/user/login' \ -H 'accept: application/json' \ -H 'Content-Type: application/json' \ -d '{ "userName": "admin", "userPassword": "admin" }'
     ```
@@ -277,14 +277,14 @@ TiUniManager 默认的集群备份路径相关配置参数如下：
 
 2. 查看配置参数值。
 
-
+    
     ```shell
     curl -X GET "http://172.16.6.206:4100/api/v1/config/?configKey=BackupS3AccessKey" -H "Authorization: Bearer 6ea768e4-c0ec-4d48-b401-0f114ddc994c"
     ```
 
 3. 修改配置参数值。
 
-
+    
     ```shell
     curl -X POST "http://172.16.6.206:4100/api/v1/config/update" -d "{ \"configKey\": \"BackupS3AccessKey\", \"configValue\": \"newValue\"}" -H "Authorization: Bearer 6ea768e4-c0ec-4d48-b401-0f114ddc994c"
     ```
