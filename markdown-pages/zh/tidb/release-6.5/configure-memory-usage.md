@@ -98,7 +98,7 @@ SET GLOBAL tidb_server_memory_limit = "32GB";
 
 1. 配置报警比例为 `0.85`：
 
-
+    
     ```sql
     SET GLOBAL tidb_memory_usage_alarm_ratio = 0.85;
     ```
@@ -149,7 +149,7 @@ TiDB 支持对执行算子的数据落盘功能。当 SQL 的内存使用超过 
 
 1. 将 SQL 语句的 Memory Quota 配置为 1GB（默认 1GB）：
 
-
+    
     ```sql
     SET tidb_mem_quota_query = 1 << 30;
     ```
@@ -158,7 +158,7 @@ TiDB 支持对执行算子的数据落盘功能。当 SQL 的内存使用超过 
 
 3. 尝试执行以下 SQL 语句：
 
-
+    
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```
@@ -171,14 +171,14 @@ TiDB 支持对执行算子的数据落盘功能。当 SQL 的内存使用超过 
 
 4. 设置系统变量 `tidb_executor_concurrency` 将执行器的并发度调整为 1。在此配置下，内存不足时 HashAgg 会自动尝试触发落盘。
 
-
+    
     ```sql
     SET tidb_executor_concurrency = 1;
     ```
 
 5. 执行相同的 SQL 语句，不再返回错误，可以执行成功。从详细的执行计划可以看出，HashAgg 使用了 600MB 的硬盘空间。
 
-
+    
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```

@@ -828,7 +828,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
 
     - 乐观事务模型下将 `tidb_constraint_check_in_place` 设置为 `OFF`：
 
-
+        
         ```sql
         create table t (i int key);
         insert into t values (1);
@@ -840,7 +840,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
         Query OK, 1 row affected
         ```
 
-
+        
         ```sql
         tidb> commit; -- 事务提交时才检查
         ```
@@ -851,7 +851,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
 
     - 乐观事务模型下将 `tidb_constraint_check_in_place` 设置为 `ON`：
 
-
+        
         ```sql
         set @@tidb_constraint_check_in_place=ON;
         begin optimistic;
@@ -875,7 +875,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
 
     - 悲观事务模型下将 `tidb_constraint_check_in_place_pessimistic` 设置为 `OFF`：
 
-
+        
         ```sql
         set @@tidb_constraint_check_in_place_pessimistic=OFF;
         create table t (i int key);
@@ -2510,21 +2510,21 @@ mysql> desc select count(distinct a) from test.t;
 
     例如，打开这个优化规则后，会将下面子查询做如下变化：
 
-
+    
     ```sql
     select * from t where t.a in (select aa from t1);
     ```
 
     将子查询转成如下 join：
 
-
+    
     ```sql
     select t.* from t, (select aa from t1 group by aa) tmp_t where t.a = tmp_t.aa;
     ```
 
     如果 t1 在列 `aa` 上有 unique 且 not null 的限制，可以直接改写为如下，不需要添加 aggregation。
 
-
+    
     ```sql
     select t.* from t, t1 where t.a=t1.aa;
     ```
@@ -3423,7 +3423,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 是否持久化到集群：是
 - 默认值：`500`
 - 范围：`[1, 10240]`
-- 这个变量用于设置 TTL 任务中用来扫描过期数据的每个 `SELECT` 语句的 `LIMIT` 的值。
+- 这个变量用于设置 TTL 任务中用来扫描过期数据的每个 `SELECT` 语句的 `LIMIT` 的值。 
 
 ### `tidb_ttl_scan_worker_count` <span class="version-mark">从 v6.5.0 版本开始引入</span>
 

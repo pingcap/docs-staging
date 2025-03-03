@@ -115,7 +115,7 @@ dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o /tmp/test -r 200000
 
 + `metadata`：此文件包含导出的起始时间，以及 master binary log 的位置。
 
-
+    
     ```shell
     cat metadata
     ```
@@ -131,7 +131,7 @@ dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o /tmp/test -r 200000
 
 + `{schema}-schema-create.sql`：创建 schema 的 SQL 文件。
 
-
+    
     ```shell
     cat test-schema-create.sql
     ```
@@ -142,7 +142,7 @@ dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o /tmp/test -r 200000
 
 + `{schema}.{table}-schema.sql`：创建 table 的 SQL 文件
 
-
+    
     ```shell
     cat test.t1-schema.sql
     ```
@@ -155,7 +155,7 @@ dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o /tmp/test -r 200000
 
 + `{schema}.{table}.{0001}.{sql|csv}`：数据源文件
 
-
+    
     ```shell
     cat test.t1.0.sql
     ```

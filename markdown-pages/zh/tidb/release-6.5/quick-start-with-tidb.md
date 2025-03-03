@@ -33,7 +33,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
 1. 下载并安装 TiUP。
 
-
+    
     ```shell
     curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
     ```
@@ -58,7 +58,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
     >
     > TiUP 安装完成后会提示 Shell profile 文件的绝对路径。在执行以下 `source` 命令前，需要将 `${your_shell_profile}` 修改为 Shell profile 文件的实际位置。
 
-
+    
     ```shell
     source ${your_shell_profile}
     ```
@@ -67,14 +67,14 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
     - 直接执行 `tiup playground` 命令会运行最新版本的 TiDB 集群，其中 TiDB、TiKV、PD 和 TiFlash 实例各 1 个：
 
-
+        
         ```shell
         tiup playground
         ```
 
     - 也可以指定 TiDB 版本以及各组件实例个数，命令类似于：
 
-
+        
         ```shell
         tiup playground v6.5.12 --db 2 --pd 3 --kv 3
         ```
@@ -101,14 +101,14 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
     + 使用 TiUP `client` 连接 TiDB：
 
-
+        
         ```shell
         tiup client
         ```
 
     + 也可使用 MySQL 客户端连接 TiDB：
 
-
+        
         ```shell
         mysql --host 127.0.0.1 --port 4000 -u root
         ```
@@ -127,7 +127,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
     2. 等待服务退出操作完成后，执行以下命令：
 
-
+        
         ```shell
         tiup clean --all
         ```
@@ -143,7 +143,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
 1. 下载并安装 TiUP。
 
-
+    
     ```shell
     curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
     ```
@@ -168,7 +168,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
     >
     > TiUP 安装完成后会提示 Shell profile 文件的绝对路径。在执行以下 `source` 命令前，需要将 `${your_shell_profile}` 修改为 Shell profile 文件的实际位置。
 
-
+    
     ```shell
     source ${your_shell_profile}
     ```
@@ -177,14 +177,14 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
     - 直接运行 `tiup playground` 命令会运行最新版本的 TiDB 集群，其中 TiDB、TiKV、PD 和 TiFlash 实例各 1 个：
 
-
+        
         ```shell
         tiup playground
         ```
 
     - 也可以指定 TiDB 版本以及各组件实例个数，命令类似于：
 
-
+        
         ```shell
         tiup playground v6.5.12 --db 2 --pd 3 --kv 3
         ```
@@ -209,14 +209,14 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
     + 使用 TiUP `client` 连接 TiDB：
 
-
+        
         ```shell
         tiup client
         ```
 
     + 也可使用 MySQL 客户端连接 TiDB：
 
-
+        
         ```shell
         mysql --host 127.0.0.1 --port 4000 -u root
         ```
@@ -235,7 +235,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
     2. 等待服务退出操作完成后，执行以下命令：
 
-
+    
     ```shell
     tiup clean --all
     ```
@@ -290,7 +290,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
 1. 下载并安装 TiUP：
 
-
+    
     ```shell
     curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
     ```
@@ -301,21 +301,21 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
     >
     > TiUP 安装完成后会提示对应 Shell profile 文件的绝对路径。在执行以下 `source` 命令前，需要将 `${your_shell_profile}` 修改为 Shell profile 文件的实际位置。
 
-
+    
     ```shell
     source ${your_shell_profile}
     ```
 
 3. 安装 TiUP 的 cluster 组件：
 
-
+    
     ```shell
     tiup cluster
     ```
 
 4. 如果机器已经安装 TiUP cluster，需要更新软件版本：
 
-
+    
     ```shell
     tiup update --self && tiup update cluster
     ```
@@ -325,7 +325,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
     1. 修改 `/etc/ssh/sshd_config` 将 `MaxSessions` 调至 20。
     2. 重启 sshd 服务：
 
-
+        
         ```shell
         service sshd restart
         ```
@@ -340,7 +340,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
     配置模板如下：
 
-
+    
     ```yaml
     # # Global variables are applied to all deployments and used as the default value of
     # # the deployments if a specific deployment value is missing.
@@ -404,7 +404,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
 7. 执行集群部署命令：
 
-
+    
     ```shell
     tiup cluster deploy <cluster-name> <version> ./topo.yaml --user root -p
     ```
@@ -426,7 +426,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
 8. 启动集群：
 
-
+    
     ```shell
     tiup cluster start <cluster-name>
     ```
@@ -435,7 +435,7 @@ TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 Ti
 
     - 安装 MySQL 客户端。如果已安装 MySQL 客户端则可跳过这一步骤。
 
-
+        
         ```shell
         yum -y install mysql
         ```
