@@ -18,7 +18,7 @@ Google Cloud Private Service Connect を利用することで、エンドポイ�
 
 プライベート エンドポイントのアーキテクチャは次のとおりです。
 
-![Private Service Connect architecture](https://download.pingcap.com/images/docs/tidb-cloud/google-cloud-psc-endpoint-overview.png)
+![Private Service Connect architecture](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/google-cloud-psc-endpoint-overview.png)
 
 プライベート エンドポイントとエンドポイント サービスの詳細な定義については、次の Google Cloud ドキュメントをご覧ください。
 

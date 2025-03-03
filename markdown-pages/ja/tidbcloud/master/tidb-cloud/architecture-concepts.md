@@ -17,11 +17,11 @@ TiDB Cloud Serverless は、従来の TiDB と同様の HTAP 機能を提供す�
 
 デフォルトでは、ゾーン高可用性オプションを利用するクラスターでは、すべてのコンポーネントが同じ可用性ゾーン内に配置されるため、ネットワークのレイテンシーが短くなります。
 
-![TiDB Cloud Serverless zonal high availability](https://download.pingcap.com/images/docs/tidb-cloud/serverless-zonal-high-avaliability-aws.png)
+![TiDB Cloud Serverless zonal high availability](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-zonal-high-avaliability-aws.png)
 
 最大限のインフラストラクチャの分離と冗長性を必要とするアプリケーションの場合、リージョン高可用性オプションにより、複数の可用性ゾーンにノードが分散されます。
 
-![TiDB Cloud Serverless regional high availability](https://download.pingcap.com/images/docs/tidb-cloud/serverless-regional-high-avaliability-aws.png)
+![TiDB Cloud Serverless regional high availability](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-regional-high-avaliability-aws.png)
 
 ## TiDB Cloud専用 {#tidb-cloud-dedicated}
 
@@ -29,7 +29,7 @@ TiDB Cloud Dedicated は、ミッションクリティカルなビジネス向�
 
 VPC、VM、マネージド Kubernetes サービス、クラウドstorageなどの分離されたクラウド リソース上に構築されており、主要なクラウド プロバイダーのインフラストラクチャを活用します。TiDB TiDB Cloud Dedicated クラスターは、完全な TiDB 機能セットをサポートし、迅速なスケーリング、信頼性の高いバックアップ、特定の VPC 内での展開、地理的レベルの災害復旧を可能にします。
 
-![TiDB Cloud Dedicated Architecture](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-dedicated-architecture.png)
+![TiDB Cloud Dedicated Architecture](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-dedicated-architecture.png)
 
 ## TiDB Cloudコンソール {#tidb-cloud-console}
 

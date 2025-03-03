@@ -18,7 +18,7 @@ TiKV MVCC 内存引擎在内存中缓存最近写入的 MVCC 版本，并实现�
 
 下图为 TiKV 如何组织 MVCC 版本的示意图：
 
-![IME 通过缓存近期的版本以减少 CPU 开销](https://download.pingcap.com/images/docs-cn/tikv-ime-data-organization.png)
+![IME 通过缓存近期的版本以减少 CPU 开销](https://docs-download.pingcap.com/media/images/docs-cn/tikv-ime-data-organization.png)
 
 以上示意图中共有 2 行记录，每行记录各有 9 个 MVCC 版本。在开启内存引擎和未开启内存引擎的情况下，行为对比如下：
 

@@ -11,7 +11,7 @@ TiDB ダッシュボードは、TiDB クラスターを監視、診断、管理�
 >
 > TiDB v6.5.0（以降）およびTiDB Operator v1.4.0（以降）では、Kubernetes上の独立したポッドとしてTiDB Dashboardをデプロイすることがサポートされています。詳細については、 [TiDB ダッシュボードをTiDB Operatorに独立してデプロイ](https://docs.pingcap.com/tidb-in-kubernetes/dev/get-started#deploy-tidb-dashboard-independently)参照してください。
 
-![TiDB Dashboard interface](https://download.pingcap.com/images/docs/dashboard/dashboard-intro.gif)
+![TiDB Dashboard interface](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-intro.gif)
 
 TiDB ダッシュボードは[GitHub](https://github.com/pingcap-incubator/tidb-dashboard)でオープンソース化されています。
 

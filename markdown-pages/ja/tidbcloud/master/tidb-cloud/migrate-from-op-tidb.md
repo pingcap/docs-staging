@@ -145,9 +145,9 @@ AWS コンソールでアクセスキーを作成します。詳細は[アクセ
 
 3.  アクセス キーを作成するには、 **[アクセス キーの作成]**をクリックします。次に、 **[.csv ファイルのダウンロード**] を選択して、アクセス キー ID とシークレット アクセス キーをコンピューター上の CSV ファイルに保存します。ファイルは安全な場所に保存してください。このダイアログ ボックスを閉じると、シークレット アクセス キーに再度アクセスできなくなります。CSV ファイルをダウンロードしたら、 **[閉じる]**を選択します。アクセス キーを作成すると、キー ペアはデフォルトでアクティブになり、すぐに使用できます。
 
-    ![Create access key](https://download.pingcap.com/images/docs/tidb-cloud/op-to-cloud-create-access-key01.png)
+    ![Create access key](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/op-to-cloud-create-access-key01.png)
 
-    ![Download CSV file](https://download.pingcap.com/images/docs/tidb-cloud/op-to-cloud-create-access-key02.png)
+    ![Download CSV file](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/op-to-cloud-create-access-key02.png)
 
 #### ステップ 3. Dumplingを使用して上流の TiDB クラスターから Amazon S3 にデータをエクスポートする {#step-3-export-data-from-the-upstream-tidb-cluster-to-amazon-s3-using-dumpling}
 
@@ -164,11 +164,11 @@ Dumplingを使用してアップストリーム TiDB クラスターから Amazo
 
     次のスクリーンショットは、S3 バケット URI 情報を取得する方法を示しています。
 
-    ![Get the S3 URI](https://download.pingcap.com/images/docs/tidb-cloud/op-to-cloud-copy-s3-uri.png)
+    ![Get the S3 URI](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/op-to-cloud-copy-s3-uri.png)
 
     次のスクリーンショットは、地域情報を取得する方法を示しています。
 
-    ![Get the region information](https://download.pingcap.com/images/docs/tidb-cloud/op-to-cloud-copy-region-info.png)
+    ![Get the region information](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/op-to-cloud-copy-region-info.png)
 
 3.  Dumpling を実行して、データを Amazon S3 バケットにエクスポートします。
 
@@ -205,7 +205,7 @@ TiDB セルフマネージド クラスターから Amazon S3 にデータをエ
 
     次のスクリーンショットは、アカウント ID と外部 ID を取得する方法を示しています。
 
-    ![Get the Account ID and External ID](https://download.pingcap.com/images/docs/tidb-cloud/op-to-cloud-get-role-arn.png)
+    ![Get the Account ID and External ID](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/op-to-cloud-get-role-arn.png)
 
 2.  Amazon S3 のアクセス権限を設定します。通常、次の読み取り専用権限が必要です。
 
@@ -277,7 +277,7 @@ TiDB セルフマネージド クラスターから Amazon S3 にデータをエ
 
 1.  増分データ移行の開始時刻を取得します。たとえば、完全データ移行のメタデータ ファイルから取得できます。
 
-    ![Start Time in Metadata](https://download.pingcap.com/images/docs/tidb-cloud/start_ts_in_metadata.png)
+    ![Start Time in Metadata](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/start_ts_in_metadata.png)
 
 2.  TiCDC にTiDB Cloudへの接続を許可します。 [TiDB Cloudコンソール](https://tidbcloud.com/console/clusters)でクラスターを見つけて、 **「ネットワーク」**ページに移動します。 **「IP アドレスの追加」** &gt; **「IP アドレスの使用」**をクリックします。 **「IP アドレス」**フィールドに TiCDCコンポーネントのパブリック IP アドレスを入力し、 **「確認」**をクリックして保存します。これで、TiCDC はTiDB Cloud にアクセスできるようになります。詳細については、 [IPアクセスリストを構成する](/tidb-cloud/configure-ip-access-list.md)参照してください。
 
@@ -337,6 +337,6 @@ TiDB セルフマネージド クラスターから Amazon S3 にデータをエ
          tiup cdc cli changefeed list --pd=http://172.16.6.122:2379
         ```
 
-        ![Update Filter](https://download.pingcap.com/images/docs/tidb-cloud/normal_status_in_replication_task.png)
+        ![Update Filter](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/normal_status_in_replication_task.png)
 
     -   レプリケーションを確認します。アップストリーム クラスターに新しいレコードを書き込み、そのレコードがダウンストリームTiDB Cloudクラスターにレプリケートされているかどうかを確認します。

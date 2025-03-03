@@ -28,14 +28,14 @@ Vitess と TiDB はどちらも MySQL プロトコルと SQL 方言をサポー�
 
 -   この例では、 TiDB Lightning は[論理インポートモード](/tidb-lightning/tidb-lightning-logical-import-mode.md)使用します。これは、最初にデータを SQL ステートメントにエンコードし、次に SQL ステートメントを実行してデータをインポートします。
 
-    ![Vitess to TiDB Migration with TiDB backend](https://download.pingcap.com/images/docs/vitess_to_tidb.png)
+    ![Vitess to TiDB Migration with TiDB backend](https://docs-download.pingcap.com/media/images/docs/vitess_to_tidb.png)
 
 -   この例では、 TiDB Lightning は[物理インポートモード](/tidb-lightning/tidb-lightning-physical-import-mode.md)使用してデータを TiKV に直接取り込みます。
 
-    ![Vitess to TiDB Migration with local backend](https://download.pingcap.com/images/docs/vitess_to_tidb_dumpling_local.png)
+    ![Vitess to TiDB Migration with local backend](https://docs-download.pingcap.com/media/images/docs/vitess_to_tidb_dumpling_local.png)
 
 ### DM {#dm}
 
 次の例は、Vitess から TiDB にデータを移行する[DM](/dm/dm-overview.md)を示しています。
 
-![Vitess to TiDB with DM](https://download.pingcap.com/images/docs/vitess_to_tidb_dm.png)
+![Vitess to TiDB with DM](https://docs-download.pingcap.com/media/images/docs/vitess_to_tidb_dm.png)

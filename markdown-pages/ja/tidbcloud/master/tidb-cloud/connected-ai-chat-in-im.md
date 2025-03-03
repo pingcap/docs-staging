@@ -13,4 +13,4 @@ PingCAP を搭載したインスタント メッセージ (IM) の AI チャッ�
 
 ## 例 {#example}
 
-![ai-chat-example](https://download.pingcap.com/images/docs/tidb-cloud/connected-ai-chat-example.png)
+![ai-chat-example](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-ai-chat-example.png)

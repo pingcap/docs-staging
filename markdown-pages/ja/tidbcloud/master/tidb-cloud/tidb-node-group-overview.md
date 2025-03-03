@@ -1,5 +1,5 @@
 ---
-title: Overview of TiDB Node Group 
+title: Overview of TiDB Node Group
 summary: TiDB ノード グループ機能の実装と使用シナリオについて学習します。
 ---
 
@@ -21,7 +21,7 @@ TiDB ノード グループは、TiDB ノードのグループ化を管理し、
 
 次の図は、TiDB ノード グループ機能の実装を示しています。
 
-![The implementation of the TiDB Node Group feature](https://download.pingcap.com/images/docs/tidb-cloud/implementation-of-tidb-node-group.png)
+![The implementation of the TiDB Node Group feature](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/implementation-of-tidb-node-group.png)
 
 TiDB ノード グループ内のすべてのノードは、対応するエンドポイントからの要求に応答します。次のタスクを実行できます。
 

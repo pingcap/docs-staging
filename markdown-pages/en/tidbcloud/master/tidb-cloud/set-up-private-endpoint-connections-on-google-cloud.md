@@ -18,7 +18,7 @@ Powered by Google Cloud Private Service Connect, the endpoint connection is secu
 
 The architecture of the private endpoint is as follows:
 
-![Private Service Connect architecture](https://download.pingcap.com/images/docs/tidb-cloud/google-cloud-psc-endpoint-overview.png)
+![Private Service Connect architecture](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/google-cloud-psc-endpoint-overview.png)
 
 For more detailed definitions of the private endpoint and endpoint service, see the following Google Cloud documents:
 

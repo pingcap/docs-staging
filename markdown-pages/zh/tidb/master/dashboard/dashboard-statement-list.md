@@ -28,29 +28,29 @@ SQL 语句分析页面所展示的所有数据都来自于 TiDB Statement 系统
 
 页面顶部可修改显示的时间范围、按执行 SQL 所在数据库进行过滤，或按 SQL 类型进行过滤，如下所示。默认显示最近一个收集周期（默认最近 30 分钟）内的所有 SQL 语句执行情况。
 
-![修改过滤条件](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-statement-filter-options.png)
+![修改过滤条件](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-filter-options.png)
 
 ### 显示其他字段
 
 页面顶部**选择列** (Columns) 选项中可选择显示更多列，可将鼠标移动到列名右侧的 (i) 图标处查看列的说明：
 
-![选择列](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-statement-columns-selector.png)
+![选择列](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-columns-selector.png)
 
 ### 修改列表排序依据
 
 列表默认以**累计耗时** (Total Latency) 从高到低进行排序，点击不同的列标题可以修改排序依据或切换排序顺序：
 
-![修改列排序](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-statement-change-order.png)
+![修改列排序](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-change-order.png)
 
 ### 修改数据收集设置
 
 在列表页面，点击顶部右侧的**设置** (Settings) 按钮，即可对 SQL 语句分析功能进行设置：
 
-![设置入口](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-statement-setting-entry.png)
+![设置入口](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-setting-entry.png)
 
 点击后设置界面如下图所示：
 
-![设置](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-statement-settings.png)
+![设置](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-settings.png)
 
 在设置中可以选择关闭或开启 SQL 语句分析功能。在开启 SQL 语句分析功能时可以修改以下选项：
 
@@ -72,7 +72,7 @@ SQL 语句分析页面所展示的所有数据都来自于 TiDB Statement 系统
 
 [`tidb_stmt_summary_max_stmt_count`](/system-variables.md#tidb_stmt_summary_max_stmt_count-从-v40-版本开始引入) 控制 Statement Summary 系统表保存的 SQL 种类数量。当 SQL 种类超过该值时，会移除最近没有出现的 SQL。这些 SQL 将会被 `DIGEST` 为 `NULL` 的行数据统计。`DIGEST` 为 `NULL` 的行数据在 TiDB Dashboard SQL 语句分析列表页面中将会显示为 `Others`，如下所示：
 
-![Others 行](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-statement-other-row.png)
+![Others 行](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-other-row.png)
 
 ## 下一步
 

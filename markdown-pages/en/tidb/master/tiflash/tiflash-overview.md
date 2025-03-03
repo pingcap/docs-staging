@@ -18,7 +18,7 @@ With TiDB Cloud, you can create an HTAP cluster easily by specifying one or more
 
 ## Architecture
 
-![TiFlash Architecture](https://download.pingcap.com/images/docs/tidb-storage-architecture-1.png)
+![TiFlash Architecture](https://docs-download.pingcap.com/media/images/docs/tidb-storage-architecture-1.png)
 
 The above figure is the architecture of TiDB in its HTAP form, including TiFlash nodes.
 

@@ -38,7 +38,7 @@ scrape_configs:
 
 ### Row 1: Speed
 
-![Panels in first row](https://download.pingcap.com/images/docs/lightning-grafana-row-1.png)
+![Panels in first row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-1.png)
 
 | Panel | Series | Description |
 |:-----|:-----|:-----|
@@ -50,7 +50,7 @@ Sometimes the import speed will drop to zero allowing other parts to catch up. T
 
 ### Row 2: Progress
 
-![Panels in second row](https://download.pingcap.com/images/docs/lightning-grafana-row-2.png)
+![Panels in second row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-2.png)
 
 | Panel | Description |
 |:-----|:-----|
@@ -60,7 +60,7 @@ Sometimes the import speed will drop to zero allowing other parts to catch up. T
 
 ### Row 3: Resource
 
-![Panels in third row](https://download.pingcap.com/images/docs/lightning-grafana-row-3.png)
+![Panels in third row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-3.png)
 
 | Panel | Description |
 |:-----|:-----|
@@ -70,7 +70,7 @@ Sometimes the import speed will drop to zero allowing other parts to catch up. T
 
 ### Row 4: Quota
 
-![Panels in fourth row](https://download.pingcap.com/images/docs/lightning-grafana-row-4.png)
+![Panels in fourth row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-4.png)
 
 | Panel | Series | Description |
 |:-----|:-----|:-----|
@@ -84,7 +84,7 @@ Sometimes the import speed will drop to zero allowing other parts to catch up. T
 
 ### Row 5: Read speed
 
-![Panels in fifth row](https://download.pingcap.com/images/docs/lightning-grafana-row-5.png)
+![Panels in fifth row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-5.png)
 
 | Panel | Series | Description |
 |:-----|:-----|:-----|
@@ -97,7 +97,7 @@ If any of the duration is too high, it indicates that the disk used by TiDB Ligh
 
 ### Row 6: Storage
 
-![Panels in sixth row](https://download.pingcap.com/images/docs/lightning-grafana-row-6.png)
+![Panels in sixth row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-6.png)
 
 | Panel | Series | Description |
 |:-----|:-----|:-----|
@@ -111,7 +111,7 @@ If any of the duration is too high, it indicates that the disk used by TiDB Ligh
 
 ### Row 7: Import speed
 
-![Panels in seventh row](https://download.pingcap.com/images/docs/lightning-grafana-row-7.png)
+![Panels in seventh row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-7.png)
 
 | Panel | Series | Description |
 |:-----|:-----|:-----|

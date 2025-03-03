@@ -57,10 +57,10 @@ TiDB ダッシュボードでは次の言語がサポートされています。
 
 **SQL ユーザー サインイン**ページで、 **[言語の切り替え]**ドロップダウン リストをクリックしてインターフェイス言語を切り替えることができます。
 
-![Switch language](https://download.pingcap.com/images/docs/dashboard/dashboard-access-switch-language.png)
+![Switch language](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-access-switch-language.png)
 
 ## ログアウト {#logout}
 
 ログインしたら、左側のナビゲーション バーのログイン ユーザー名をクリックして、ユーザー ページに切り替えます。ユーザー ページの**[ログアウト]**ボタンをクリックすると、現在のユーザーがログアウトします。ログアウトした後は、ユーザー名とパスワードを再入力する必要があります。
 
-![Logout](https://download.pingcap.com/images/docs/dashboard/dashboard-access-logout.png)
+![Logout](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-access-logout.png)

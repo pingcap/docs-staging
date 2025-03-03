@@ -57,10 +57,10 @@ TiDB Dashboard 目前支持以下语言：
 
 在登录界面中，可点击 **Switch Language** 下拉框切换界面显示语言：
 
-![切换语言](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-access-switch-language.png)
+![切换语言](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-access-switch-language.png)
 
 ## 登出
 
 登录后，在左侧导航处点击登录用户名，可切换到用户页面。在用户页面点击**登出** (Logout) 按钮即可登出当前用户。登出后，需重新输入用户名密码。
 
-![登出](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-access-logout.png)
+![登出](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-access-logout.png)

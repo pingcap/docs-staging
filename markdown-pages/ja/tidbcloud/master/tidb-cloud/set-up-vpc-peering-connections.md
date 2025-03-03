@@ -35,7 +35,7 @@ VPC ピアリング リクエストをリージョンに追加する前に、そ
 
 4.  右上隅で、 **[CIDR の作成]**をクリックします。 **[AWS CIDR の作成]**または**[Google Cloud CIDR の作成]**ダイアログでリージョンと CIDR 値を指定し、 **[確認]**をクリックします。
 
-    ![Project-CIDR4](https://download.pingcap.com/images/docs/tidb-cloud/Project-CIDR4.png)
+    ![Project-CIDR4](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/Project-CIDR4.png)
 
     > **注記：**
     >
@@ -54,7 +54,7 @@ VPC ピアリング リクエストをリージョンに追加する前に、そ
 
     CIDR はデフォルトでは非アクティブです。CIDR をアクティブにするには、ターゲット リージョンにクラスターを作成する必要があります。リージョンの CIDR がアクティブな場合は、リージョンの VPC ピアリングを作成できます。
 
-    ![Project-CIDR2](https://download.pingcap.com/images/docs/tidb-cloud/Project-CIDR2.png)
+    ![Project-CIDR2](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/Project-CIDR2.png)
 
 ## AWS で VPC ピアリングを設定する {#set-up-vpc-peering-on-aws}
 
@@ -84,7 +84,7 @@ VPC ピアリング リクエストは、 TiDB Cloudコンソールのプロジ�
 
     このような情報は、 [AWS マネジメントコンソール](https://console.aws.amazon.com/)の VPC 詳細ページから取得できます。TiDB TiDB Cloud は、同じリージョン内または 2 つの異なるリージョンの VPC 間の VPC ピアリングの作成をサポートしています。
 
-    ![VPC peering](https://download.pingcap.com/images/docs/tidb-cloud/vpc-peering/vpc-peering-creating-infos.png)
+    ![VPC peering](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vpc-peering/vpc-peering-creating-infos.png)
 
 5.  **[作成]**をクリックして VPC ピアリング リクエストを送信し、 **[VPC ピアリング]** &gt; **[AWS]**タブで VPC ピアリング情報を表示します。新しく作成された VPC ピアリングのステータスは**[システム チェック中]**です。
 
@@ -114,7 +114,7 @@ VPC ピアリング リクエストは、 TiDB Cloudコンソールのプロジ�
 
     このような情報は、 [AWS マネジメントコンソール](https://console.aws.amazon.com/)の VPC 詳細ページから取得できます。TiDB TiDB Cloud は、同じリージョン内または 2 つの異なるリージョンの VPC 間の VPC ピアリングの作成をサポートしています。
 
-    ![VPC peering](https://download.pingcap.com/images/docs/tidb-cloud/vpc-peering/vpc-peering-creating-infos.png)
+    ![VPC peering](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vpc-peering/vpc-peering-creating-infos.png)
 
 4.  **「作成」**をクリックして VPC ピアリング リクエストを送信し、 **「ネットワーク」** &gt; **「AWS VPC ピアリング」**セクションで VPC ピアリング情報を表示します。新しく作成された VPC ピアリングのステータスは**「システム チェック中」**です。
 
@@ -199,13 +199,13 @@ AWS ダッシュボードを使用して VPC ピアリング接続を構成す�
 
     1.  [AWS マネジメントコンソール](https://console.aws.amazon.com/)にサインインし、上部のメニューバーで**[サービス] を**クリックします。検索ボックスに`VPC`と入力し、VPC サービス ページに移動します。
 
-        ![AWS dashboard](https://download.pingcap.com/images/docs/tidb-cloud/vpc-peering/aws-vpc-guide-1.jpg)
+        ![AWS dashboard](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vpc-peering/aws-vpc-guide-1.jpg)
 
     2.  左側のナビゲーション バーから、 **[ピアリング接続]**ページを開きます。 **[ピアリング接続の作成]**タブで、ピアリング接続は**[承認保留中]**ステータスになっています。
 
     3.  [TiDB Cloudコンソール](https://tidbcloud.com)の**VPC ピアリングの詳細**ページで、リクエスターの所有者とリクエスターのVPC が**TiDB Cloud AWS アカウント ID**と**TiDB Cloud VPC ID**と一致していることを確認します。ピアリング接続を右クリックし、 **[VPC ピアリング接続リクエストの承認]**ダイアログで**[リクエストの承認]**を選択してリクエストを承認します。
 
-        ![AWS VPC peering requests](https://download.pingcap.com/images/docs/tidb-cloud/vpc-peering/aws-vpc-guide-3.png)
+        ![AWS VPC peering requests](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vpc-peering/aws-vpc-guide-3.png)
 
 2.  各 VPC サブネット ルート テーブルに対して、 TiDB Cloud VPC へのルートを追加します。
 
@@ -213,11 +213,11 @@ AWS ダッシュボードを使用して VPC ピアリング接続を構成す�
 
     2.  アプリケーション VPC に属するすべてのルートテーブルを検索します。
 
-        ![Search all route tables related to VPC](https://download.pingcap.com/images/docs/tidb-cloud/vpc-peering/aws-vpc-guide-4.png)
+        ![Search all route tables related to VPC](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vpc-peering/aws-vpc-guide-4.png)
 
     3.  各ルート テーブルを右クリックし、 **[ルートの編集]**を選択します。編集ページで、 TiDB Cloud CIDR への宛先を持つルートを追加し ( TiDB Cloudコンソールの**VPC ピアリング**構成ページを確認して)、 **[ターゲット]**列にピアリング接続 ID を入力します。
 
-        ![Edit all route tables](https://download.pingcap.com/images/docs/tidb-cloud/vpc-peering/aws-vpc-guide-5.png)
+        ![Edit all route tables](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vpc-peering/aws-vpc-guide-5.png)
 
 3.  VPC のプライベート DNS ホストゾーンのサポートが有効になっていることを確認してください。
 

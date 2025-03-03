@@ -19,7 +19,7 @@ MPP クエリを処理する際、TiDB はクエリを 1 つ以上の MPP タス
 
 [背景](#background)で述べたように、 TiFlashタスク スケジューラを導入する当初の目的は、MPP クエリ実行中に使用されるスレッドの数を制御することです。簡単なスケジューリング戦略は、 TiFlash が要求できるスレッドの最大数を指定することです。各 MPP タスクについて、スケジューラは、システムで現在使用されているスレッドの数と、MPP タスクが使用すると予想されるスレッドの数に基づいて、MPP タスクをスケジュールできるかどうかを決定します。
 
-![TiFlash MinTSO Scheduler v1](https://download.pingcap.com/images/docs/tiflash/tiflash_mintso_v1.png)
+![TiFlash MinTSO Scheduler v1](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash_mintso_v1.png)
 
 前述のスケジューリング戦略ではシステム スレッドの数を効果的に制御できますが、MPP タスクは最小の独立した実行単位ではなく、異なる MPP タスク間には依存関係が存在します。
 
@@ -57,7 +57,7 @@ MinTSO スケジューラの目標は、システム スレッドの数を制御
 
 MinTSO スケジューラのスケジューリング プロセスは次のとおりです。
 
-![TiFlash MinTSO Scheduler v2](https://download.pingcap.com/images/docs/tiflash/tiflash_mintso_v2.png)
+![TiFlash MinTSO Scheduler v2](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash_mintso_v2.png)
 
 ソフト リミットとハード リミットを導入することで、MinTSO スケジューラはシステム スレッドの数を制御しながらシステム デッドロックを効果的に回避します。ただし、同時実行性の高いシナリオでは、ほとんどのクエリで MPP タスクの一部のみがスケジュールされる可能性があります。MPP タスクの一部のみがスケジュールされているクエリは正常に実行できず、システム実行効率が低下します。この状況を回避するために、 TiFlash は、active_set_soft_limit と呼ばれる MinTSO スケジューラのクエリ レベルの制限を導入しています。この制限により、active_set_soft_limit クエリまでの MPP タスクのみがスケジュールに参加できます。他のクエリの MPP タスクはスケジュールに参加せず、現在のクエリが終了した後にのみ新しいクエリがスケジュールに参加できます。この制限はソフト リミットに過ぎません。MinTSO クエリの場合、システム スレッドの数がハード リミットを超えない限り、すべての MPP タスクを直接スケジュールできるためです。
 

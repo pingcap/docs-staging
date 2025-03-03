@@ -23,7 +23,7 @@ Placement Rules 特性在 TiDB v5.0 及以上的版本中默认开启。如需�
 
 Placement Rules 示意图如下所示：
 
-![Placement rules overview](https://download.pingcap.com/images/docs-cn/placement-rules-1.png)
+![Placement rules overview](https://docs-download.pingcap.com/media/images/docs-cn/placement-rules-1.png)
 
 ### 规则字段
 

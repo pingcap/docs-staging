@@ -63,7 +63,7 @@ Google Cloud でセルフホスト型 Kafka に Private Service Connect を設�
 
 PSC ポート マッピング メカニズムを使用して、各 Kafka ブローカーを一意のポートでTiDB Cloud VPC に公開します。次の図は、その仕組みを示しています。
 
-![Connect to Google Cloud self-hosted Kafka Private Service Connect by port mapping](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/connect-to-google-cloud-self-hosted-kafka-private-service-connect-by-portmapping.jpeg)
+![Connect to Google Cloud self-hosted Kafka Private Service Connect by port mapping](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/connect-to-google-cloud-self-hosted-kafka-private-service-connect-by-portmapping.jpeg)
 
 ### ステップ1. Kafkaクラスターをセットアップする {#step-1-set-up-the-kafka-cluster}
 
@@ -272,7 +272,7 @@ VM をプロビジョニングするには、 [VMインスタンス](https://con
     mkdir -p $KAFKA_LOG_DIR
 
     # Magic id: BRl69zcmTFmiPaoaANybiw. You can use your own magic ID.
-    $KAFKA_STORAGE_CMD format -t "BRl69zcmTFmiPaoaANybiw" -c "$KAFKA_CONFIG_DIR/server.properties" > $KAFKA_LOG_DIR/server_format.log   
+    $KAFKA_STORAGE_CMD format -t "BRl69zcmTFmiPaoaANybiw" -c "$KAFKA_CONFIG_DIR/server.properties" > $KAFKA_LOG_DIR/server_format.log
     LOG_DIR=$KAFKA_LOG_DIR nohup $KAFKA_START_CMD "$KAFKA_CONFIG_DIR/server.properties" &
     ```
 
@@ -294,7 +294,7 @@ VM をプロビジョニングするには、 [VMインスタンス](https://con
     ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:39092
     # Expected output for the last 3 lines (the actual order might be different)
     # The difference in the output from "bootstrap from INTERNAL listener" is that exceptions or errors might occur because advertised listeners cannot be resolved in Kafka VPC.
-    # We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect. 
+    # We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect.
     b1.abc.us-west1.gcp.3199745.tidbcloud.com:9093 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b2.abc.us-west1.gcp.3199745.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
@@ -330,7 +330,7 @@ VM をプロビジョニングするには、 [VMインスタンス](https://con
     done
     }
     create_topic
-    produce_messages 
+    produce_messages
     ```
 
 3.  要塞ノードにコンシューマー スクリプト`consume.sh`を作成します。
@@ -359,7 +359,7 @@ VM をプロビジョニングするには、 [VMインスタンス](https://con
 4.  `produce.sh`と`consume.sh`を実行して、Kafka クラスターが実行中であることを確認します。これらのスクリプトは、後のネットワーク接続テストでも再利用されます。スクリプトは`--partitions 3 --replication-factor 3`でトピックを作成します。3 つのブローカーすべてにデータが含まれていることを確認します。スクリプトが 3 つのブローカーすべてに接続して、ネットワーク接続がテストされることを保証します。
 
     ```shell
-    # Test write message. 
+    # Test write message.
     ./produce.sh {one_of_broker_ip}:9092
     ```
 
@@ -457,8 +457,8 @@ export JAVA_HOME=~/jdk-22.0.2
 ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:39092
 
 # Expected output for the last 3 lines (the actual order might be different)
-# There will be some exceptions or errors because advertised listeners cannot be resolved in your Kafka network. 
-# We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect. 
+# There will be some exceptions or errors because advertised listeners cannot be resolved in your Kafka network.
+# We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect.
 b1.abc.us-west1.gcp.3199745.tidbcloud.com:9093 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
 b2.abc.us-west1.gcp.3199745.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
 b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
@@ -545,7 +545,7 @@ b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.
 
 Kafka プロキシの動的ポート マッピング メカニズムを使用して、各 Kafka ブローカーを一意のポートでTiDB Cloud VPC に公開します。次の図は、その仕組みを示しています。
 
-![Connect to Google Cloud self-hosted Kafka Private Service Connect by Kafka proxy](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/connect-to-google-cloud-self-hosted-kafka-private-service-connect-by-kafka-proxy.jpeg)
+![Connect to Google Cloud self-hosted Kafka Private Service Connect by Kafka proxy](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/connect-to-google-cloud-self-hosted-kafka-private-service-connect-by-kafka-proxy.jpeg)
 
 ### ステップ1. Kafka-proxyを設定する {#step-1-set-up-kafka-proxy}
 
@@ -572,7 +572,7 @@ TiDB クラスターと同じリージョンで Kafka クラスターがすで�
 2.  kafka-proxy-ig のノードの詳細ページに移動します。SSH**を**クリックしてノードにログインします。バイナリをダウンロードします。
 
     ```shell
-    # You can choose another version 
+    # You can choose another version
     wget https://github.com/grepplabs/kafka-proxy/releases/download/v0.3.11/kafka-proxy-v0.3.11-linux-amd64.tar.gz
     tar -zxf kafka-proxy-v0.3.11-linux-amd64.tar.gz
     ```
@@ -582,8 +582,8 @@ TiDB クラスターと同じリージョンで Kafka クラスターがすで�
     ```shell
     # There are three kinds of parameters that need to feed to the Kafka-proxy
     # 1. --bootstrap-server-mapping defines the bootstrap mapping. Suggest that you configure three mappings, one for each zone for resilience.
-    #   a) Kafka broker address; 
-    #   b) Local address for the broker in Kafka-proxy; 
+    #   a) Kafka broker address;
+    #   b) Local address for the broker in Kafka-proxy;
     #   c) Advertised listener for the broker if Kafka clients bootstrap from Kafka-proxy
     # 2. --dynamic-sequential-min-port defines the start port of the random mapping for other brokers
     # 3. --dynamic-advertised-listener defines advertised listener address for other brokers based on the pattern obtained from the "Prerequisites" section
@@ -613,7 +613,7 @@ TiDB クラスターと同じリージョンで Kafka クラスターがすで�
     ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server 0.0.0.0:9092
     # Expected output of the last few lines (the actual order might be different)
     # There might be exceptions or errors because advertised listeners cannot be resolved in your network.
-    # We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect. 
+    # We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect.
     b1.abc.us-west1.gcp.3199745.tidbcloud.com:9092 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b2.abc.us-west1.gcp.3199745.tidbcloud.com:9093 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b3.abc.us-west1.gcp.3199745.tidbcloud.com:9094 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException

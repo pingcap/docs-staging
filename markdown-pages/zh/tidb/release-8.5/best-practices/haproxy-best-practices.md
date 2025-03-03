@@ -7,7 +7,7 @@ summary: HAProxy 是 TiDB 中实现负载均衡的最佳实践。它提供 TCP �
 
 本文介绍 [HAProxy](https://github.com/haproxy/haproxy) 在 TiDB 中的最佳配置和使用方法。HAProxy 提供 TCP 协议下的负载均衡能力，TiDB 客户端通过连接 HAProxy 提供的浮动 IP 即可对数据进行操作，实现 TiDB Server 层的负载均衡。
 
-![HAProxy 在 TiDB 中的最佳实践](https://download.pingcap.com/images/docs-cn/haproxy.jpg)
+![HAProxy 在 TiDB 中的最佳实践](https://docs-download.pingcap.com/media/images/docs-cn/haproxy.jpg)
 
 > **注意：**
 >

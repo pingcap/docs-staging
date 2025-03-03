@@ -31,7 +31,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Region：每个 TiKV 实例 Region 的个数
 - Uptime：自上次重启以来 TiKV 正常运行的时间
 
-![TiKV Dashboard - Cluster metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-cluster.png)
+![TiKV Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-cluster.png)
 
 ### Errors
 
@@ -46,7 +46,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Leader missing：每个 TiKV 实例上 missing leader 的个数
 - Log Replication Rejected：每个 TiKV 实例上由于内存不足而拒绝 logappend 消息的个数
 
-![TiKV Dashboard - Errors metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-errors-v610.png)
+![TiKV Dashboard - Errors metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-errors-v610.png)
 
 ### Server
 
@@ -59,7 +59,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Region average written keys：每个 TiKV 实例上所有 Region 的平均 key 写入个数
 - Region average written bytes：每个 TiKV 实例上所有 Region 的平均写入大小
 
-![TiKV Dashboard - Server metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-server.png)
+![TiKV Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-server.png)
 
 ### gRPC
 
@@ -109,7 +109,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Commit log duration：Raft commit 日志所花费的时间
 - Commit log duration per server：每个 TiKV 实例上 Raft commit 日志所花费的时间
 
-![TiKV Dashboard - Raft IO metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-raftio.png)
+![TiKV Dashboard - Raft IO metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-raftio.png)
 
 ### Raft process
 
@@ -125,7 +125,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Replica read lock checking duration：处理 Replica Read 时检查 lock 所花费的时间
 - Peer msg length distribution：每个 TiKV 中每个 region 一次性处理 Peer 消息的个数，消息越多说明 peer 越繁忙。
 
-![TiKV Dashboard - Raft process metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-raft-process.png)
+![TiKV Dashboard - Raft process metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-raft-process.png)
 
 ### Raft message
 
@@ -136,7 +136,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Vote：Raft 投票消息发送的 ops
 - Raft dropped messages：每秒钟丢弃不同类型的 Raft 消息的个数
 
-![TiKV Dashboard - Raft message metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-raft-message.png)
+![TiKV Dashboard - Raft message metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-raft-message.png)
 
 ### Raft propose
 
@@ -150,7 +150,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Apply wait duration per server：每个 TiKV 实例上每个 apply 的等待时间的直方图
 - Raft log speed：peer propose 日志的平均速度
 
-![TiKV Dashboard - Raft propose metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-raft-propose.png)
+![TiKV Dashboard - Raft propose metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-raft-propose.png)
 
 ### Raft admin
 
@@ -159,13 +159,13 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Check split：split check 命令的 ops
 - 99.99% Check split duration：99.99% 的情况下，split check 所需花费的时间
 
-![TiKV Dashboard - Raft admin metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-raft-admin.png)
+![TiKV Dashboard - Raft admin metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-raft-admin.png)
 
 ### Local reader
 
 - Local reader requests：所有请求的总数以及 local read 线程拒绝的请求数量
 
-![TiKV Dashboard - Local reader metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-local-reader.png)
+![TiKV Dashboard - Local reader metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-local-reader.png)
 
 ### Unified Read Pool
 
@@ -180,7 +180,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Storage async snapshot duration：异步处理 snapshot 所花费的时间，99% 的情况下，应该小于 1s
 - Storage async write duration：异步写所花费的时间，99% 的情况下，应该小于 1s
 
-![TiKV Dashboard - Storage metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-storage.png)
+![TiKV Dashboard - Storage metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-storage.png)
 
 ### Flow Control
 
@@ -195,7 +195,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Txn command throttled duration：由于限流，与事务相关的命令的阻塞时间。正常情况下，该指标为 0
 - Non-txn command throttled duration：由于限流，非事务相关的命令的阻塞时间。正常情况下，该指标为 0
 
-![TiKV Dashboard - Flow Control metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-flow-control.png)
+![TiKV Dashboard - Flow Control metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-flow-control.png)
 
 ### Scheduler
 
@@ -204,7 +204,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Scheduler priority commands：不同优先级命令的 ops
 - Scheduler pending commands：每个 TiKV 实例上 pending 命令的 ops
 
-![TiKV Dashboard - Scheduler metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-scheduler.png)
+![TiKV Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-scheduler.png)
 
 ### Scheduler - commit
 
@@ -218,7 +218,7 @@ summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监�
 - Scheduler scan details [write]：执行 commit 命令时，扫描每个 write CF 中 key 的详细情况
 - Scheduler scan details [default]：执行 commit 命令时，扫描每个 default CF 中 key 的详细情况
 
-![TiKV Dashboard - Scheduler commit metrics](https://download.pingcap.com/images/docs-cn/tikv-dashboard-scheduler-commit.png)
+![TiKV Dashboard - Scheduler commit metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-scheduler-commit.png)
 
 ### Scheduler - pessimistic_rollback
 

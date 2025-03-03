@@ -160,6 +160,6 @@ summary: TiCDC を使用して TiDB データを Apache Kafka および Apache F
 
     このコマンドを実行すると、次の図に示すように、テーブルに新しいデータがあることがわかります。
 
-    ![SQL query result](https://download.pingcap.com/images/docs/integrate/sql-query-result.png)
+    ![SQL query result](https://docs-download.pingcap.com/media/images/docs/integrate/sql-query-result.png)
 
 Kafka とのデータ統合が完了しました。

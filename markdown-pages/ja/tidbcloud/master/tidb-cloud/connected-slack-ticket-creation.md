@@ -11,23 +11,23 @@ summary: Slack チケットの作成とサブスクリプションの更新に�
 
 Slack サポート チャネルでは、 **PingCAP サポート ボット**に言及し、メッセージで問題を説明するだけです。すると、チケット ボットが**[リクエストを送信]**ボタンを含むメッセージを送信します。
 
-![slack-ticket-creation-1](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-creation-1.png)
+![slack-ticket-creation-1](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-1.png)
 
 **「リクエストを送信」**をクリックしてフォームを開き、問題に応じて入力し、 **「作成」**をクリックしてチケットを送信します。
 
-![slack-ticket-creation-2](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-creation-2.png)
+![slack-ticket-creation-2](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-2.png)
 
 チケットが正常に作成されると、ボットはチケットリンクを返信します。リンクをクリックすると、 [PingCAP ヘルプセンター](https://tidb.support.pingcap.com/servicedesk/customer/portals)でチケットの詳細を表示できます。
 
-![slack-ticket-creation-3](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-creation-3.png)
+![slack-ticket-creation-3](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-3.png)
 
-![slack-ticket-creation-4](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-creation-4.png)
+![slack-ticket-creation-4](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-4.png)
 
 ## チケットの最新情報を購読する {#subscribe-to-ticket-updates}
 
 **エンタープライズ**サポート プランでは、Slack でのチケット更新のサブスクリプションがサポートされています。サポート エンジニアがチケットに応答すると、チケット更新メッセージが Slack チャネルに表示されます。メッセージには、チケットのタイトル、チケット リンク、最後のコメント内容などの情報が含まれます。
 
-![slack-ticket-creation-5](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-creation-5.png)
+![slack-ticket-creation-5](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-5.png)
 
 ## よくある質問 {#faqs}
 

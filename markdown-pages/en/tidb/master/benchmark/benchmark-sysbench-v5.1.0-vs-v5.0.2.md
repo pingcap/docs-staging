@@ -70,7 +70,7 @@ set global tidb_hashagg_partial_concurrency=1;
 set global tidb_enable_async_commit = 1;
 set global tidb_enable_1pc = 1;
 set global tidb_guarantee_linearizability = 0;
-set global tidb_enable_clustered_index = 1; 
+set global tidb_enable_clustered_index = 1;
 ```
 
 ## Test plan
@@ -133,7 +133,7 @@ sysbench $testname \
 
 Compared with v5.0.2, the Point Select performance of v5.1.0 is improved by 19.4%.
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v510vsv502_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v510vsv502_point_select.png)
 
 ### Update Non-index performance
 
@@ -148,7 +148,7 @@ Compared with v5.0.2, the Point Select performance of v5.1.0 is improved by 19.4
 
 Compared with v5.0.2, the Update Non-index performance of v5.1.0 is reduced by 0.8%.
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v510vsv502_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v510vsv502_update_non_index.png)
 
 ### Update Index performance
 
@@ -163,7 +163,7 @@ Compared with v5.0.2, the Update Non-index performance of v5.1.0 is reduced by 0
 
 Compared with v5.0.2, the Update Index performance of v5.1.0 is reduced by 1.8%.
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v510vsv502_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v510vsv502_update_index.png)
 
 ### Read Write performance
 
@@ -178,4 +178,4 @@ Compared with v5.0.2, the Update Index performance of v5.1.0 is reduced by 1.8%.
 
 Compared with v5.0.2, the Read Write performance of v5.1.0 is reduced by 2.7%.
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v510vsv502_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v510vsv502_read_write.png)

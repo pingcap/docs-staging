@@ -26,11 +26,11 @@ tiup cluster display tidb-test
 
 1. 通过 `{pd-ip}:{pd-port}/dashboard` 登录 TiDB Dashboard，登录用户和口令为 TiDB 数据库 `root` 用户和口令。如果你修改过数据库的 `root` 密码，则以修改后的密码为准，默认密码为空。
 
-    ![TiDB-Dashboard](https://download.pingcap.com/images/docs-cn/tiup/tidb-dashboard.png)
+    ![TiDB-Dashboard](https://docs-download.pingcap.com/media/images/docs-cn/tiup/tidb-dashboard.png)
 
 2. 主页面显示 TiDB 集群中节点信息
 
-    ![TiDB-Dashboard-status](https://download.pingcap.com/images/docs-cn/tiup/tidb-dashboard-status.png)
+    ![TiDB-Dashboard-status](https://docs-download.pingcap.com/media/images/docs-cn/tiup/tidb-dashboard-status.png)
 
 ### 查看 Grafana 监控 Overview 页面检查 TiDB 集群状态
 
@@ -38,7 +38,7 @@ tiup cluster display tidb-test
 
 - 点击 **Overview** 监控页面检查 TiDB 端口和负载监控信息。
 
-    ![Grafana-overview](https://download.pingcap.com/images/docs-cn/tiup/grafana-overview.png)
+    ![Grafana-overview](https://docs-download.pingcap.com/media/images/docs-cn/tiup/grafana-overview.png)
 
 ## 登录数据库执行简单 DML/DDL 操作和查询 SQL 语句
 

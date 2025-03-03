@@ -18,7 +18,7 @@ Powered by AWS PrivateLink, the endpoint connection is secure and private, and d
 
 The architecture of the private endpoint is as follows:
 
-![Private endpoint architecture](https://download.pingcap.com/images/docs/tidb-cloud/aws-private-endpoint-arch.png)
+![Private endpoint architecture](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-private-endpoint-arch.png)
 
 For more detailed definitions of the private endpoint and endpoint service, see the following AWS documents:
 
@@ -65,7 +65,7 @@ To use the AWS Management Console to create a VPC interface endpoint, perform th
 
     The **Create endpoint** page is displayed.
 
-    ![Verify endpoint service](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/create-endpoint-2.png)
+    ![Verify endpoint service](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/create-endpoint-2.png)
 
 3. Select **Endpoint services that use NLBs and GWLBs**.
 4. Enter the service name that you found in [step 1](#step-1-choose-a-tidb-cluster).
@@ -123,4 +123,4 @@ After you have created the interface endpoint, go back to the TiDB Cloud console
 
 You might need to properly set the security group for your VPC endpoint in the AWS Management Console. Go to **VPC** > **Endpoints**. Right-click your VPC endpoint and select the proper **Manage security groups**. A proper security group within your VPC that allows inbound access from your EC2 instances on Port 4000 or a customer-defined port.
 
-![Manage security groups](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/manage-security-groups.png)
+![Manage security groups](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/manage-security-groups.png)

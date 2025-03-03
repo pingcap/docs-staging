@@ -15,7 +15,7 @@ Currently, the TiDB Node Group feature is only available upon request. To reques
 
 1. Log in to the [TiDB Cloud console](https://tidbcloud.com).
 2. Click **?** in the lower-right corner.
-3. Click **Request Support**. 
+3. Click **Request Support**.
 4. In the **Subject** field, fill in **Apply for TiDB Node Group feature**.
 5. Click **Submit**.
 
@@ -23,10 +23,10 @@ Currently, the TiDB Node Group feature is only available upon request. To reques
 
 - TiDB Node Group: A TiDB node group manages the grouping of TiDB nodes and maintains the mapping between endpoints and TiDB nodes.
 
-    - Each TiDB node group has a unique endpoint. 
-    - When you delete a TiDB node group, the related network setting (such as private link and IP access list) will be deleted too. 
+    - Each TiDB node group has a unique endpoint.
+    - When you delete a TiDB node group, the related network setting (such as private link and IP access list) will be deleted too.
 
-- Default Group: When a cluster is created, a default TiDB node group is created. Therefore, each cluster has a default group. The default group cannot be deleted. 
+- Default Group: When a cluster is created, a default TiDB node group is created. Therefore, each cluster has a default group. The default group cannot be deleted.
 
 ## Prerequisites
 
@@ -45,20 +45,20 @@ To create a TiDB node group, perform the following steps:
     - TiDB
         - **vCPU + RAM**: choose the [TiDB size](/tidb-cloud/size-your-cluster.md#size-tidb) you need. Only TiDB nodes with 8 vCPU and 16 GiB memory or higher specifications are supported.
         - **Node Groups**: click **+** to create a new TiDB node group. You can also use the default group and enter the number of TiDB nodes in the **DefaultGroup** field.
-    
+
     - TiKV
         - **vCPU + RAM**: choose the [TiKV size](/tidb-cloud/size-your-cluster.md#size-tikv) you need.
         - **Storage x Nodes**: choose the storage size and the number of TiKV nodes.
-    
+
     - TiFlash (optional)
         - **vCPU + RAM**: choose the [TiFlash size](/tidb-cloud/size-your-cluster.md#size-tiflash) you need.
         - **Storage x Nodes**: choose the storage size and the number of TiFlash nodes.
 
-    ![Create TiDB Node Group](https://download.pingcap.com/images/docs/tidb-cloud/tidb-node-group-create.png)
+    ![Create TiDB Node Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-node-group-create.png)
 
 5. New TiDB nodes are added along with the new TiDB node group, which affects the cluster's billing. Review the cluster size in the right pane, then click **Confirm**.
 
-By default, you can create up to five TiDB node groups for a TiDB Cloud Dedicated cluster. If you need more groups, contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md). 
+By default, you can create up to five TiDB node groups for a TiDB Cloud Dedicated cluster. If you need more groups, contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md).
 
 If you create a TiDB node group but still use the endpoint of the default group to connect to the cluster, the TiDB nodes in the TiDB node group will not take any workload, which is a waste of the resource. You need to create new connection to the TiDB nodes in the new TiDB node group. See [Connect to a TiDB node group](#connect-to-a-tidb-node-group).
 
@@ -80,7 +80,7 @@ To enable public connection, do the following:
 5. Click **Enable** in the **Public Endpoint** section, then click **Add IP Address** in the **IP Access List** section.
 6. In the upper-right corner of the **Networking** page, click **Connect** to get the connection string.
 
-![Connect to the new TiDB node group via Public Endpoint](https://download.pingcap.com/images/docs/tidb-cloud/tidb-node-group-connect-public-endpoint.png)
+![Connect to the new TiDB node group via Public Endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-node-group-connect-public-endpoint.png)
 
 For more information, see [Connect to TiDB Cloud Dedicated via Public Connection](/tidb-cloud/connect-via-standard-connection.md).
 
@@ -94,7 +94,7 @@ For more information, see [Connect to TiDB Cloud Dedicated via Public Connection
 
     > **Note**:
     >
-    > If you use Private Link to connect different node groups, you need to create separated private endpoint connection for each node group. 
+    > If you use Private Link to connect different node groups, you need to create separated private endpoint connection for each node group.
 
 6. After creating the private endpoint connection, click **Connect** in the upper-right corner of the page to get the connection string.
 
@@ -102,9 +102,9 @@ For more information, see [Connect to TiDB Cloud Dedicated via Public Connection
 
 Because all TiDB node groups share the same VPC as the cluster, you only need to create one VPC peering connection to enable access for all groups.
 
-1. Follow the instructions in [Connect to TiDB Cloud Dedicated via VPC Peering](/tidb-cloud/set-up-vpc-peering-connections.md) to create a VPC peering for this cluster. 
+1. Follow the instructions in [Connect to TiDB Cloud Dedicated via VPC Peering](/tidb-cloud/set-up-vpc-peering-connections.md) to create a VPC peering for this cluster.
 2. Navigate to the [**Clusters**](https://tidbcloud.com/console/clusters) page, and then click the name of your target cluster to go to its overview page.
-3. In the left navigation pane, click **Networking**. 
+3. In the left navigation pane, click **Networking**.
 4. In the upper-right corner of the **Networking** page, click **Connect** to get the connection string.
 
 ## View TiDB node groups
@@ -141,7 +141,7 @@ To update TiDB, TiKV, or TiFlash node configurations in the group, perform the f
     - Add new node groups.
     - Update the size and **Storage x Nodes** configuration for TiKV and TiFlash nodes.
 
-![Change TiDB node group node count](https://download.pingcap.com/images/docs/tidb-cloud/tidb-node-group-change-node-count.png)
+![Change TiDB node group node count](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-node-group-change-node-count.png)
 
 ## Delete a TiDB node group
 
@@ -156,4 +156,4 @@ To delete a TiDB node group, perform the following steps:
 3. On the **Node Map** page, click **Modify** in the upper-right corner. The **Modify Cluster** page is displayed.
 4. On the **Modify Cluster** page, click <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 6V5.2C16 4.0799 16 3.51984 15.782 3.09202C15.5903 2.71569 15.2843 2.40973 14.908 2.21799C14.4802 2 13.9201 2 12.8 2H11.2C10.0799 2 9.51984 2 9.09202 2.21799C8.71569 2.40973 8.40973 2.71569 8.21799 3.09202C8 3.51984 8 4.0799 8 5.2V6M10 11.5V16.5M14 11.5V16.5M3 6H21M19 6V17.2C19 18.8802 19 19.7202 18.673 20.362C18.3854 20.9265 17.9265 21.3854 17.362 21.673C16.7202 22 15.8802 22 14.2 22H9.8C8.11984 22 7.27976 22 6.63803 21.673C6.07354 21.3854 5.6146 20.9265 5.32698 20.362C5 19.7202 5 18.8802 5 17.2V6" stroke="currentColor" stroke-width="inherit" stroke-linecap="round" stroke-linejoin="round"/></svg> to delete the TiDB node group.
 
-![Delete the TiDB node group](https://download.pingcap.com/images/docs/tidb-cloud/tidb-node-group-delete.png)
+![Delete the TiDB node group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-node-group-delete.png)

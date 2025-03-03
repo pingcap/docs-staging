@@ -28,14 +28,14 @@ summary: 介绍从 Vitess 迁移数据到 TiDB 所使用的工具。
 
 - 在此示例中，TiDB Lightning 使用[逻辑导入模式](/tidb-lightning/tidb-lightning-logical-import-mode.md)，先将数据编码为 SQL 语句，然后运行这些 SQL 语句来导入数据。
 
-    ![Vitess to TiDB Migration with TiDB backend](https://download.pingcap.com/images/docs-cn/vitess_to_tidb.png)
+    ![Vitess to TiDB Migration with TiDB backend](https://docs-download.pingcap.com/media/images/docs-cn/vitess_to_tidb.png)
 
 - 在此示例中，TiDB Lightning 使用[物理导入模式](/tidb-lightning/tidb-lightning-physical-import-mode.md)直接将数据导入 TiKV。
 
-    ![Vitess to TiDB Migration with local backend](https://download.pingcap.com/images/docs-cn/vitess_to_tidb_dumpling_local.png)
+    ![Vitess to TiDB Migration with local backend](https://docs-download.pingcap.com/media/images/docs-cn/vitess_to_tidb_dumpling_local.png)
 
 ### DM
 
 以下示例展示了 [DM](/dm/dm-overview.md) 如何将数据从 Vitess 迁移到 TiDB。
 
-![Vitess to TiDB with DM](https://download.pingcap.com/images/docs-cn/vitess_to_tidb_dm.png)
+![Vitess to TiDB with DM](https://docs-download.pingcap.com/media/images/docs-cn/vitess_to_tidb_dm.png)

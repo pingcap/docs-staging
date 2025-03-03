@@ -18,7 +18,7 @@ Powered by AWS PrivateLink, the endpoint connection is secure and private, and d
 
 The architecture of the private endpoint is as follows:
 
-![Private endpoint architecture](https://download.pingcap.com/images/docs/tidb-cloud/aws-private-endpoint-arch.png)
+![Private endpoint architecture](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-private-endpoint-arch.png)
 
 For more detailed definitions of the private endpoint and endpoint service, see the following AWS documents:
 
@@ -103,7 +103,7 @@ To use the AWS Management Console to create a VPC interface endpoint, perform th
 
     The **Create endpoint** page is displayed.
 
-    ![Verify endpoint service](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/create-endpoint-2.png)
+    ![Verify endpoint service](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/create-endpoint-2.png)
 
 3. In the **Endpoint settings** area, fill in a name tag if needed, and then select the **Endpoint services that use NLBs and GWLBs** option.
 4. In the **Service settings** area, enter the service name `${your_endpoint_service_name}` from the generated command (`--service-name ${your_endpoint_service_name}`).
@@ -164,7 +164,7 @@ To enable private DNS in your AWS Management Console:
 3. Select the **Enable for this endpoint** check box.
 4. Click **Save changes**.
 
-    ![Enable private DNS](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/enable-private-dns.png)
+    ![Enable private DNS](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/enable-private-dns.png)
 
 </div>
 </SimpleTab>
@@ -208,4 +208,4 @@ The possible statuses of a private endpoint service are explained as follows:
 
 You might need to properly set the security group for your VPC endpoint in the AWS Management Console. Go to **VPC** > **Endpoints**. Right-click your VPC endpoint and select the proper **Manage security groups**. A proper security group within your VPC that allows inbound access from your EC2 instances on Port 4000 or a customer-defined port.
 
-![Manage security groups](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/manage-security-groups.png)
+![Manage security groups](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/manage-security-groups.png)

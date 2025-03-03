@@ -18,7 +18,7 @@ TiKV MVCC インメモリ エンジンは、書き込まれた最新の MVCC バ
 
 次の図は、TiKV が MVCC バージョンを整理する方法を示しています。
 
-![IME caches recent versions to reduce CPU overhead](https://download.pingcap.com/images/docs/tikv-ime-data-organization.png)
+![IME caches recent versions to reduce CPU overhead](https://docs-download.pingcap.com/media/images/docs/tikv-ime-data-organization.png)
 
 上の図には、それぞれ 9 つの MVCC バージョンを持つ 2 行のレコードが表示されています。インメモリ エンジンを有効にした場合と無効にした場合の動作の比較は次のとおりです。
 

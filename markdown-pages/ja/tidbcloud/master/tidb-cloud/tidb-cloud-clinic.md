@@ -7,7 +7,7 @@ summary: 高度な監視と診断にTiDB Cloud Clinic を使用する方法を�
 
 TiDB Cloud Clinic は、 TiDB Cloud上で高度な監視および診断機能を提供します。詳細な分析と実用的な洞察により、パフォーマンスの問題を迅速に特定し、データベースを最適化し、全体的なパフォーマンスを向上できるように設計されています。
 
-![tidb-cloud-clinic](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-clinic.png)
+![tidb-cloud-clinic](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-clinic.png)
 
 > **注記：**
 >

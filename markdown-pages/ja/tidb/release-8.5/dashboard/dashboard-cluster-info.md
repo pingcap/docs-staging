@@ -19,7 +19,7 @@ summary: TiDB ダッシュボードのクラスタ情報ページでは、クラ
 
 インスタンスのリストを表示するには、 **「インスタンス」を**クリックします。
 
-![Instance list](https://download.pingcap.com/images/docs/dashboard/dashboard-cluster-info-instances-v650.png)
+![Instance list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-cluster-info-instances-v650.png)
 
 このインスタンス リストには、クラスター内の TiDB、TiKV、PD、およびTiFlashコンポーネントのすべてのインスタンスの概要情報が表示されます。
 
@@ -53,7 +53,7 @@ summary: TiDB ダッシュボードのクラスタ情報ページでは、クラ
 
 ホストのリストを表示するには、 **[ホスト] を**クリックします。
 
-![Host list](https://download.pingcap.com/images/docs/dashboard/dashboard-cluster-info-hosts-v650.png)
+![Host list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-cluster-info-hosts-v650.png)
 
 このホスト リストには、クラスター内の TiDB、TiKV、PD、およびTiFlashコンポーネントのすべてのインスタンスに対応するホストの実行ステータスが表示されます。
 
@@ -73,7 +73,7 @@ summary: TiDB ダッシュボードのクラスタ情報ページでは、クラ
 
 ディスクのリストを表示するには、 **[ディスク] を**クリックします。
 
-![Disk list](https://download.pingcap.com/images/docs/dashboard/dashboard-cluster-info-disks-v650.png)
+![Disk list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-cluster-info-disks-v650.png)
 
 このディスク リストには、TiDB、TiKV、PD、およびTiFlashインスタンスが実行されているディスクのステータスが表示されます。
 

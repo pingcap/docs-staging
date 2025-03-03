@@ -98,7 +98,7 @@ sql-mode = "STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"
 
 1. 删除断点文件。
 
-    
+
     ```sh
     tidb-lightning-ctl --config conf/tidb-lightning.toml --checkpoint-remove=all
     ```
@@ -116,7 +116,7 @@ sql-mode = "STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"
 
     使用下面命令清理元信息：
 
-    
+
     ```sql
     DROP DATABASE IF EXISTS `lightning_metadata`;
     ```
@@ -127,7 +127,7 @@ sql-mode = "STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"
 
     首先通过 `ps` 等命令获取 TiDB Lightning 的进程 PID，然后运行如下命令：
 
-    
+
     ```sh
     kill -USR1 <lightning-pid>
     ```
@@ -146,7 +146,7 @@ TiDB Lightning 不兼容 [Placement Rules in SQL](/placement-rules-in-sql.md)。
 
 假设源集群有如下拓扑结构：
 
-![TiDB Lightning FAQ - 源集群拓扑结构](https://download.pingcap.com/images/docs-cn/lightning-faq-source-cluster-topology.jpg)
+![TiDB Lightning FAQ - 源集群拓扑结构](https://docs-download.pingcap.com/media/images/docs-cn/lightning-faq-source-cluster-topology.jpg)
 
 源集群中设置了这样的放置策略：
 
@@ -156,11 +156,11 @@ CREATE PLACEMENT POLICY p1 PRIMARY_REGION="us-east" REGIONS="us-east,us-west";
 
 **场景 1：**目标集群中有 3 个副本，且拓扑结构与源集群不同。在这种情况下，当 TiDB Lightning 在目标集群中创建放置策略时，TiDB Lightning 不会报错，但目标集群中的语义是错误的。
 
-![TiDB Lightning FAQ - 场景 1](https://download.pingcap.com/images/docs-cn/lightning-faq-situation-1.jpg)
+![TiDB Lightning FAQ - 场景 1](https://docs-download.pingcap.com/media/images/docs-cn/lightning-faq-situation-1.jpg)
 
 **场景 2：**目标集群将 Follower 副本放置在区域 "us-mid" 的另一个 TiKV 节点上，且在拓扑结构中没有节点位于区域 "us-west" 中。在这种情况下，当 TiDB Lightning 在目标集群中创建放置策略时，TiDB Lightning 将报错。
 
-![TiDB Lightning FAQ - 场景 2](https://download.pingcap.com/images/docs-cn/lightning-faq-situation-2.jpg)
+![TiDB Lightning FAQ - 场景 2](https://docs-download.pingcap.com/media/images/docs-cn/lightning-faq-situation-2.jpg)
 
 **解决方法：**
 

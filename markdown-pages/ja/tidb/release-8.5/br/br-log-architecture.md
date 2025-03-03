@@ -11,13 +11,13 @@ summary: TiDB ログ バックアップと PITRアーキテクチャは、バッ
 
 ログ バックアップと PITR のアーキテクチャは次のとおりです。
 
-![BR log backup and PITR architecture](https://download.pingcap.com/images/docs/br/br-log-arch.png)
+![BR log backup and PITR architecture](https://docs-download.pingcap.com/media/images/docs/br/br-log-arch.png)
 
 ## ログバックアップのプロセス {#process-of-log-backup}
 
 クラスター ログ バックアップのプロセスは次のとおりです。
 
-![BR log backup process design](https://download.pingcap.com/images/docs/br/br-log-backup-ts.png)
+![BR log backup process design](https://docs-download.pingcap.com/media/images/docs/br/br-log-backup-ts.png)
 
 ログ バックアップ プロセスに関係するシステム コンポーネントと主要な概念:
 
@@ -57,7 +57,7 @@ summary: TiDB ログ バックアップと PITRアーキテクチャは、バッ
 
 PITR のプロセスは次のとおりです。
 
-![Point-in-time recovery process design](https://download.pingcap.com/images/docs/br/pitr-ts.png)
+![Point-in-time recovery process design](https://docs-download.pingcap.com/media/images/docs/br/pitr-ts.png)
 
 完全な PITR プロセスは次のとおりです。
 

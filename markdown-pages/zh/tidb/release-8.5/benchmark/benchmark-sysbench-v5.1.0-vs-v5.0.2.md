@@ -134,7 +134,7 @@ sysbench $testname \
 
 v5.1.0 对比 v5.0.2，Point Select 性能提升了 19.4%。
 
-![Point Select](https://download.pingcap.com/images/docs-cn/sysbench_v510vsv502_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v510vsv502_point_select.png)
 
 ### Update Non-index 性能
 
@@ -149,7 +149,7 @@ v5.1.0 对比 v5.0.2，Point Select 性能提升了 19.4%。
 
 v5.1.0 对比 v5.0.2，Update Non-index 性能下降了 0.8%。
 
-![Update Non-index](https://download.pingcap.com/images/docs-cn/sysbench_v510vsv502_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v510vsv502_update_non_index.png)
 
 ### Update Index 性能
 
@@ -164,7 +164,7 @@ v5.1.0 对比 v5.0.2，Update Non-index 性能下降了 0.8%。
 
 v5.1.0 对比 v5.0.2，Update Index 性能下降了 1.8%。
 
-![Update Index](https://download.pingcap.com/images/docs-cn/sysbench_v510vsv502_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v510vsv502_update_index.png)
 
 ### Read Write 性能
 
@@ -179,4 +179,4 @@ v5.1.0 对比 v5.0.2，Update Index 性能下降了 1.8%。
 
 v5.1.0 对比 v5.0.2，Read Write 性能下降了 2.7%。
 
-![Read Write](https://download.pingcap.com/images/docs-cn/sysbench_v510vsv502_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v510vsv502_read_write.png)

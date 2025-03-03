@@ -9,7 +9,7 @@ summary: TiDB Cloudのインポート データ サービスで CSV 構成を使
 
 以下は、 TiDB Cloudのデータインポート サービスを使用して CSV ファイルをインポートする場合の CSVコンフィグレーションウィンドウです。詳細については、 [Amazon S3 または GCS から CSV ファイルをTiDB Cloudにインポートする](/tidb-cloud/import-csv-files.md)参照してください。
 
-![CSV Configurations](https://download.pingcap.com/images/docs/tidb-cloud/import-data-csv-config.png)
+![CSV Configurations](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/import-data-csv-config.png)
 
 ## セパレータ {#separator}
 

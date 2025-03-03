@@ -85,7 +85,7 @@ DM は、シャーディング DDL と呼ばれるシャーディング テー�
 
 次の 3 つのシャード テーブルをマージして TiDB に移行します。
 
-![optimistic-ddl-fail-example-1](https://download.pingcap.com/images/docs/dm/optimistic-ddl-fail-example-1.png)
+![optimistic-ddl-fail-example-1](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-fail-example-1.png)
 
 `tbl01`に新しい列`Age`を追加し、列のデフォルト値を`0`に設定します。
 
@@ -93,7 +93,7 @@ DM は、シャーディング DDL と呼ばれるシャーディング テー�
 ALTER TABLE `tbl01` ADD COLUMN `Age` INT DEFAULT 0;
 ```
 
-![optimistic-ddl-fail-example-2](https://download.pingcap.com/images/docs/dm/optimistic-ddl-fail-example-2.png)
+![optimistic-ddl-fail-example-2](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-fail-example-2.png)
 
 `tbl00`に新しい列`Age`を追加し、列のデフォルト値を`-1`に設定します。
 
@@ -101,7 +101,7 @@ ALTER TABLE `tbl01` ADD COLUMN `Age` INT DEFAULT 0;
 ALTER TABLE `tbl00` ADD COLUMN `Age` INT DEFAULT -1;
 ```
 
-![optimistic-ddl-fail-example-3](https://download.pingcap.com/images/docs/dm/optimistic-ddl-fail-example-3.png)
+![optimistic-ddl-fail-example-3](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-fail-example-3.png)
 
 そうなると、 `DEFAULT 0`と`DEFAULT -1`互いに互換性がないため、 `tbl00`の`Age`列目は不整合になります。この状況では、DM はエラーを報告しますが、データの不整合を手動で修正する必要があります。
 
@@ -109,13 +109,13 @@ ALTER TABLE `tbl00` ADD COLUMN `Age` INT DEFAULT -1;
 
 楽観的モードでは、DM ワーカーはアップストリームから DDL ステートメントを受け取った後、更新されたテーブル スキーマを DM マスターに転送します。DM ワーカーは各シャード テーブルの現在のスキーマを追跡し、DM マスターはこれらのスキーマを、すべてのシャード テーブルの DML ステートメントと互換性のある複合スキーマにマージします。次に、DM マスターは対応する DDL ステートメントをダウンストリームに移行します。DML ステートメントはダウンストリームに直接移行されます。
 
-![optimistic-ddl-flow](https://download.pingcap.com/images/docs/dm/optimistic-ddl-flow.png)
+![optimistic-ddl-flow](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-flow.png)
 
 ### 例 {#examples}
 
 アップストリーム MySQL に 3 つのシャード テーブル ( `tbl00` 、 `tbl01` 、 `tbl02` ) があるとします。これらのシャード テーブルをダウンストリーム TiDB の`tbl`テーブルにマージして移行します。次の図を参照してください。
 
-![optimistic-ddl-example-1](https://download.pingcap.com/images/docs/dm/optimistic-ddl-example-1.png)
+![optimistic-ddl-example-1](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-1.png)
 
 アップストリームに`Level`列を追加します。
 
@@ -123,11 +123,11 @@ ALTER TABLE `tbl00` ADD COLUMN `Age` INT DEFAULT -1;
 ALTER TABLE `tbl00` ADD COLUMN `Level` INT;
 ```
 
-![optimistic-ddl-example-2](https://download.pingcap.com/images/docs/dm/optimistic-ddl-example-2.png)
+![optimistic-ddl-example-2](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-2.png)
 
 次に、TiDB は`tbl00` (列`Level`を含む) からの DML ステートメントと、 `tbl01`および`tbl02`テーブル (列`Level`を含まない) からの DML ステートメントを受け取ります。
 
-![optimistic-ddl-example-3](https://download.pingcap.com/images/docs/dm/optimistic-ddl-example-3.png)
+![optimistic-ddl-example-3](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-3.png)
 
 次の DML ステートメントは、変更せずにダウンストリームに移行できます。
 
@@ -136,7 +136,7 @@ UPDATE `tbl00` SET `Level` = 9 WHERE `ID` = 1;
 INSERT INTO `tbl02` (`ID`, `Name`) VALUES (27, 'Tony');
 ```
 
-![optimistic-ddl-example-4](https://download.pingcap.com/images/docs/dm/optimistic-ddl-example-4.png)
+![optimistic-ddl-example-4](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-4.png)
 
 `tbl01`に`Level`列を追加します。
 
@@ -144,7 +144,7 @@ INSERT INTO `tbl02` (`ID`, `Name`) VALUES (27, 'Tony');
 ALTER TABLE `tbl01` ADD COLUMN `Level` INT;
 ```
 
-![optimistic-ddl-example-5](https://download.pingcap.com/images/docs/dm/optimistic-ddl-example-5.png)
+![optimistic-ddl-example-5](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-5.png)
 
 この時点で、ダウンストリームにはすでに同じ`Level`列があるため、DM マスターはテーブル スキーマを比較した後、何も操作を実行しません。
 
@@ -154,7 +154,7 @@ ALTER TABLE `tbl01` ADD COLUMN `Level` INT;
 ALTER TABLE `tbl01` DROP COLUMN `Name`;
 ```
 
-![optimistic-ddl-example-6](https://download.pingcap.com/images/docs/dm/optimistic-ddl-example-6.png)
+![optimistic-ddl-example-6](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-6.png)
 
 その後、ダウンストリームは`Name`列を含む`tbl00`と`tbl02`からの DML ステートメントを受信するため、この列はすぐには削除されません。
 
@@ -165,7 +165,7 @@ INSERT INTO `tbl01` (`ID`, `Level`) VALUES (15, 7);
 UPDATE `tbl00` SET `Level` = 5 WHERE `ID` = 5;
 ```
 
-![optimistic-ddl-example-7](https://download.pingcap.com/images/docs/dm/optimistic-ddl-example-7.png)
+![optimistic-ddl-example-7](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-7.png)
 
 `tbl02`に`Level`列を追加します。
 
@@ -173,7 +173,7 @@ UPDATE `tbl00` SET `Level` = 5 WHERE `ID` = 5;
 ALTER TABLE `tbl02` ADD COLUMN `Level` INT;
 ```
 
-![optimistic-ddl-example-8](https://download.pingcap.com/images/docs/dm/optimistic-ddl-example-8.png)
+![optimistic-ddl-example-8](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-8.png)
 
 その時までに、すべてのシャード テーブルに`Level`列が存在します。
 
@@ -184,7 +184,7 @@ ALTER TABLE `tbl00` DROP COLUMN `Name`;
 ALTER TABLE `tbl02` DROP COLUMN `Name`;
 ```
 
-![optimistic-ddl-example-9](https://download.pingcap.com/images/docs/dm/optimistic-ddl-example-9.png)
+![optimistic-ddl-example-9](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-9.png)
 
 その時までに、 `Name`列はすべてのシャード テーブルから削除され、ダウンストリームで安全に削除できます。
 
@@ -192,4 +192,4 @@ ALTER TABLE `tbl02` DROP COLUMN `Name`;
 ALTER TABLE `tbl` DROP COLUMN `Name`;
 ```
 
-![optimistic-ddl-example-10](https://download.pingcap.com/images/docs/dm/optimistic-ddl-example-10.png)
+![optimistic-ddl-example-10](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-10.png)

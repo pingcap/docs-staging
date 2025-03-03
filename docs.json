@@ -194,6 +194,10 @@
       }
     }
   },
+  "redirect": {
+    "/ja/tidb/v6.2": "https://docs-archive.pingcap.com/ja/tidb/v6.2",
+    "/ja/tidb/v6.3": "https://docs-archive.pingcap.com/ja/tidb/v6.3"
+  },
   "ignore": [
     ".circleci",
     ".github",

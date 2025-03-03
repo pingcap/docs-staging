@@ -19,7 +19,7 @@ summary: プライマリ クラスターとセカンダリ クラスターに基
 
 次の図は、これら 2 つの概念を示しています。
 
-![RTO and RPO](https://download.pingcap.com/images/docs/dr/rto-rpo.png)
+![RTO and RPO](https://docs-download.pingcap.com/media/images/docs/dr/rto-rpo.png)
 
 -   エラー許容目標: 災害はさまざまな地域に影響を及ぼす可能性があるためです。このドキュメントでは、エラー許容目標という用語は、システムが許容できる災害の最大範囲を表すために使用されます。
 -   リージョン: このドキュメントは地域 DR に焦点を当てており、ここで言及されている「地域」は地理的なエリアまたは都市を指します。
@@ -30,7 +30,7 @@ summary: プライマリ クラスターとセカンダリ クラスターに基
 
 ### ティビ {#tidb}
 
-![TiDB architecture](https://download.pingcap.com/images/docs/dr/tidb-architecture.png)
+![TiDB architecture](https://docs-download.pingcap.com/media/images/docs/dr/tidb-architecture.png)
 
 TiDB は、コンピューティングとstorageを分離したアーキテクチャで設計されています。
 
@@ -42,7 +42,7 @@ TiDB は 3 つの完全なデータ レプリカを保存します。そのた�
 
 ### ティCDC {#ticdc}
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/cdc-architecture.png)
 
 TiDB の増分データ レプリケーション ツールである TiCDC は、PD の etcd を通じて高い可用性を実現します。TiCDC は、複数のキャプチャ プロセスを通じて TiKV ノードからデータ変更を取得し、内部でデータ変更をソートしてマージします。その後、TiCDC は複数のレプリケーション タスクを使用して、データを複数のダウンストリーム システムに複製します。上記のアーキテクチャ図では、次のようになっています。
 
@@ -53,7 +53,7 @@ TiDB の増分データ レプリケーション ツールである TiCDC は、
 
 ### BR {#br}
 
-![BR architecture](https://download.pingcap.com/images/docs/br/br-snapshot-arch.png)
+![BR architecture](https://docs-download.pingcap.com/media/images/docs/br/br-snapshot-arch.png)
 
 TiDB のバックアップおよび復元ツールとして、 BR は特定の時点に基づく完全なスナップショット バックアップと TiDB クラスターの継続的なログ バックアップを実行できます。TiDB クラスターが完全に使用できなくなった場合は、新しいクラスターでバックアップ ファイルを復元できます。BRは通常、データ セキュリティの最後の手段と見なされます。
 
@@ -61,7 +61,7 @@ TiDB のバックアップおよび復元ツールとして、 BR は特定の�
 
 ### プライマリおよびセカンダリ クラスタに基づく DR ソリューション {#dr-solution-based-on-primary-and-secondary-clusters}
 
-![Primary-secondary cluster DR](https://download.pingcap.com/images/docs/dr/ticdc-dr.png)
+![Primary-secondary cluster DR](https://docs-download.pingcap.com/media/images/docs/dr/ticdc-dr.png)
 
 上記のアーキテクチャには 2 つの TiDB クラスターが含まれており、クラスター 1 はリージョン 1 で実行され、読み取りおよび書き込み要求を処理します。クラスタ2 はリージョン 2 で実行され、セカンダリ クラスターとして機能します。クラスター 1 で災害が発生すると、クラスター 2 がサービスを引き継ぎます。データの変更は、TiCDC を使用して 2 つのクラスター間で複製されます。このアーキテクチャは、「1:1」DR ソリューションとも呼ばれます。
 
@@ -69,7 +69,7 @@ TiDB のバックアップおよび復元ツールとして、 BR は特定の�
 
 ### 単一クラスタ内の複数のレプリカに基づく DR ソリューション {#dr-solution-based-on-multiple-replicas-in-a-single-cluster}
 
-![Multi-replica cluster DR](https://download.pingcap.com/images/docs/dr/multi-replica-dr.png)
+![Multi-replica cluster DR](https://docs-download.pingcap.com/media/images/docs/dr/multi-replica-dr.png)
 
 前述のアーキテクチャでは、各リージョンに、異なる使用可能ゾーン (AZ) に配置された 2 つの完全なデータ レプリカがあります。クラスター全体は 3 つのリージョンにまたがっています。リージョン1 は、読み取りおよび書き込み要求を処理するプライマリ リージョンです。リージョン 1 が災害により完全に使用できなくなった場合は、リージョン 2 を DR リージョンとして使用できます。リージョン3 は、多数決プロトコルを満たすために使用されるレプリカです。このアーキテクチャは、「2-2-1」ソリューションとも呼ばれます。
 
@@ -79,7 +79,7 @@ TiDB のバックアップおよび復元ツールとして、 BR は特定の�
 
 前述の 2 つのソリューションは、地域 DR を提供します。ただし、複数の地域が同時に利用できない場合は機能しません。システムが非常に重要で、複数の地域をカバーするためにエラー許容目標が必要な場合は、これら 2 つのソリューションを組み合わせる必要があります。
 
-![TiCDC-based multi-replica cluster DR](https://download.pingcap.com/images/docs/dr/ticdc-multi-replica-dr.png)
+![TiCDC-based multi-replica cluster DR](https://docs-download.pingcap.com/media/images/docs/dr/ticdc-multi-replica-dr.png)
 
 前述のアーキテクチャには、2 つの TiDB クラスターがあります。クラスタ1 には、3 つのリージョンにまたがる 5 つのレプリカがあります。リージョン1 には、プライマリ リージョンとして機能し、書き込み要求を処理する 2 つのレプリカがあります。リージョン2 には、リージョン 1 の DR リージョンとして機能する 2 つのレプリカがあります。このリージョンは、レイテンシーの影響を受けない読み取りサービスを提供します。リージョン3 にある最後のレプリカは、投票に使用されます。
 
@@ -89,7 +89,7 @@ TiDB のバックアップおよび復元ツールとして、 BR は特定の�
 
 ### BRに基づくDRソリューション {#dr-solution-based-on-br}
 
-![BR-based cluster DR](https://download.pingcap.com/images/docs/dr/br-dr.png)
+![BR-based cluster DR](https://docs-download.pingcap.com/media/images/docs/dr/br-dr.png)
 
 このアーキテクチャでは、TiDB クラスター 1 がリージョン 1 にデプロイされています。BRはクラスター 1 のデータをリージョン 2 に定期的にバックアップし、このクラスターのデータ変更ログもリージョン 2 に継続的にバックアップします。リージョン 1 で災害が発生し、クラスター 1 を復旧できない場合は、バックアップ データとデータ変更ログを使用して、リージョン 2 に新しいクラスター (クラスター 2) を復元し、サービスを提供できます。
 

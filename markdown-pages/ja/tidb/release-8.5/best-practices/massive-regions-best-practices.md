@@ -13,7 +13,7 @@ TiDB では、データはリージョンに分割され、各リージョンに
 
 TiKV インスタンスには複数のリージョンがありRaftRaftstoreマシンを駆動してリージョンメッセージを処理します。これらのメッセージには、リージョンでの読み取りまたは書き込み要求の処理、 Raftログの永続化または複製、 Raftハートビートの処理が含まれます。ただし、リージョンの数が増えると、クラスター全体のパフォーマンスに影響する可能性があります。これを理解するには、次に示すRaftstoreのワークフローを理解する必要があります。
 
-![Raftstore Workflow](https://download.pingcap.com/images/docs/best-practices/raft-process.png)
+![Raftstore Workflow](https://docs-download.pingcap.com/media/images/docs/best-practices/raft-process.png)
 
 > **注記：**
 >
@@ -40,7 +40,7 @@ Grafana の**TiKV ダッシュボード**では、次の監視メトリックを
 
     基準値: `raftstore.store-pool-size * 85%`未満。
 
-    ![Check Raftstore CPU](https://download.pingcap.com/images/docs/best-practices/raft-store-cpu.png)
+    ![Check Raftstore CPU](https://docs-download.pingcap.com/media/images/docs/best-practices/raft-store-cpu.png)
 
 -   **Raft Propose**パネルの`Propose wait duration`
 
@@ -48,7 +48,7 @@ Grafana の**TiKV ダッシュボード**では、次の監視メトリックを
 
     基準値: クラスターサイズに応じて50～100ms未満
 
-    ![Check Propose wait duration](https://download.pingcap.com/images/docs/best-practices/propose-wait-duration.png)
+    ![Check Propose wait duration](https://docs-download.pingcap.com/media/images/docs/best-practices/propose-wait-duration.png)
 
 -   **Raft IO**パネルの`Commit log duration`
 
@@ -60,7 +60,7 @@ Grafana の**TiKV ダッシュボード**では、次の監視メトリックを
 
     基準値: 200〜500 ms未満。
 
-    ![Check Commit log duration](https://download.pingcap.com/images/docs/best-practices/commit-log-duration.png)
+    ![Check Commit log duration](https://docs-download.pingcap.com/media/images/docs/best-practices/commit-log-duration.png)
 
 ## パフォーマンスチューニング方法 {#performance-tuning-methods}
 
@@ -159,7 +159,7 @@ TiKV では、pd-worker が定期的にリージョンメタ情報を PD に報�
 
 **TiKV Grafana**パネルの**[タスク]**の下にある**[Worker の保留中のタスク]**をチェックして、pd-worker にタスクが積み重なっているかどうかを確認できます。通常、 `pending tasks`比較的低い値に維持する必要があります。
 
-![Check pd-worker](https://download.pingcap.com/images/docs/best-practices/pd-worker-metrics.png)
+![Check pd-worker](https://docs-download.pingcap.com/media/images/docs/best-practices/pd-worker-metrics.png)
 
 pd-worker は[バージョン3.0.5](/releases/release-3.0.5.md#tikv)以降、パフォーマンスが向上するように最適化されています。同様の問題が発生した場合は、最新バージョンにアップグレードすることをお勧めします。
 

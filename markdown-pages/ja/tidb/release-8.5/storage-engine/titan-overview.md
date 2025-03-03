@@ -39,7 +39,7 @@ Titan のパフォーマンスを向上させたい場合は、ブログ投稿[T
 
 次の図は Titan のアーキテクチャを示しています。
 
-![Titan Architecture](https://download.pingcap.com/images/docs/titan/titan-1.png)
+![Titan Architecture](https://docs-download.pingcap.com/media/images/docs/titan/titan-1.png)
 
 フラッシュおよび圧縮操作中、Titan は LSM ツリーから値を分離します。このアプローチの利点は、書き込みプロセスが RocksDB と一貫しているため、RocksDB への侵入的な変更の可能性が減ることです。
 
@@ -47,7 +47,7 @@ Titan のパフォーマンスを向上させたい場合は、ブログ投稿[T
 
 Titan は、値ファイルを LSM ツリーから分離すると、その値ファイルを BlobFile に保存します。次の図は、BlobFile 形式を示しています。
 
-![BlobFile Format](https://download.pingcap.com/images/docs/titan/titan-2.png)
+![BlobFile Format](https://docs-download.pingcap.com/media/images/docs/titan/titan-2.png)
 
 BLOB ファイルは主に、BLOB レコード、メタ ブロック、メタ インデックス ブロック、およびフッターで構成されます。各ブロック レコードには、キーと値のペアが格納されます。メタ ブロックはスケーラビリティのために使用され、BLOB ファイルに関連するプロパティを格納します。メタ インデックス ブロックは、メタ ブロックの検索に使用されます。
 
@@ -60,7 +60,7 @@ BLOB ファイルは主に、BLOB レコード、メタ ブロック、メタ �
 
 ### Titanテーブルビルダー {#titantablebuilder}
 
-![TitanTableBuilder](https://download.pingcap.com/images/docs/titan/titan-3.png)
+![TitanTableBuilder](https://docs-download.pingcap.com/media/images/docs/titan/titan-3.png)
 
 TitanTableBuilder は、キーと値の分離を実現するための鍵です。TitanTableBuilder は、キー ペアの値のサイズを決定し、それに基づいて、キーと値のペアから値を分離して BLOB ファイルに保存するかどうかを決定します。
 
@@ -84,7 +84,7 @@ Titan は、RocksDB の TablePropertiesCollector および EventListener コン�
 
 RocksDB は、カスタム テーブル プロパティ コレクターである BlobFileSizeCollector を使用して、対応する SST ファイルに書き込まれる SST からプロパティを収集することをサポートしています。収集されたプロパティは、BlobFileSizeProperties という名前になります。次の図は、BlobFileSizeCollector のワークフローとデータ形式を示しています。
 
-![BlobFileSizeProperties](https://download.pingcap.com/images/docs/titan/titan-4.png)
+![BlobFileSizeProperties](https://docs-download.pingcap.com/media/images/docs/titan/titan-4.png)
 
 左側は SST インデックス形式です。最初の列は BLOB ファイル ID、2 番目の列は BLOB ファイル内の BLOB レコードのオフセット、3 番目の列は BLOB レコードのサイズです。
 
@@ -94,7 +94,7 @@ RocksDB は、カスタム テーブル プロパティ コレクターである
 
 RocksDB は、圧縮を使用して古いデータを破棄し、スペースを再利用します。各圧縮の後、Titan の一部の BLOB ファイルに、部分的または完全に古いデータが含まれる場合があります。そのため、圧縮イベントをリッスンして GC をトリガーできます。圧縮中に、SST の入力/出力 BLOB ファイルのサイズ プロパティを収集して比較し、どの BLOB ファイルに GC が必要かを判断できます。次の図は、一般的なプロセスを示しています。
 
-![EventListener](https://download.pingcap.com/images/docs/titan/titan-5.png)
+![EventListener](https://docs-download.pingcap.com/media/images/docs/titan/titan-5.png)
 
 -   *inputs は、*圧縮に参加するすべての SST の BLOB ファイル サイズのプロパティを表します。
 -   *出力は、*圧縮で生成されたすべての SST の BLOB ファイル サイズのプロパティを表します。
@@ -108,7 +108,7 @@ Titan は、有効な BLOB ファイルごとに、メモリ内に破棄可能�
 
 レベル マージは Titan で新しく導入されたアルゴリズムです。レベル マージの実装原理に従って、Titan は SST ファイルに対応する BLOB ファイルをマージして書き換え、LSM ツリーで圧縮を実行しながら新しい BLOB ファイルを生成します。次の図は一般的なプロセスを示しています。
 
-![LevelMerge General Process](https://download.pingcap.com/images/docs/titan/titan-6.png)
+![LevelMerge General Process](https://docs-download.pingcap.com/media/images/docs/titan/titan-6.png)
 
 レベル z-1 およびレベル z の SST で圧縮を実行すると、Titan はキーと値のペアを順番に読み書きします。次に、選択した BLOB ファイルの値を新しい BLOB ファイルに順番に書き込み、新しい SST が生成されたときにキーの BLOB インデックスを更新します。圧縮で削除されたキーについては、対応する値は新しい BLOB ファイルに書き込まれません。これは GC と同様に機能します。
 
@@ -123,7 +123,7 @@ Titan は、有効な BLOB ファイルごとに、メモリ内に破棄可能�
 -   `level_compaction_dynamic_level_bytes`有効にすると、LSM ツリーの各レベルのデータ量が動的に増加し、最下位レベルでのソート実行が増加し続けます。
 -   特定の範囲のデータが頻繁に圧縮され、その範囲内でソートされた実行が多数発生します。
 
-![RangeMerge](https://download.pingcap.com/images/docs/titan/titan-7.png)
+![RangeMerge](https://docs-download.pingcap.com/media/images/docs/titan/titan-7.png)
 
 したがって、ソートされた実行回数を一定のレベル内に維持するには、Range Merge 操作が必要です。OnCompactionComplete の時点で、Titan は範囲内のソートされた実行回数をカウントします。その数が多い場合、Titan は対応する BLOB ファイルを ToMerge としてマークし、次のコンパクションでそれを書き換えます。
 

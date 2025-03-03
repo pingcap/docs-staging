@@ -17,7 +17,7 @@ Common components that interact with the TiDB database in Java applications incl
 - Data access framework: Applications usually use a data access framework such as [MyBatis](https://mybatis.org/mybatis-3/index.html) and [Hibernate](https://hibernate.org/) to further simplify and manage the database access operations.
 - Application implementation: The application logic controls when to send what commands to the database. Some applications use [Spring Transaction](https://docs.spring.io/spring/docs/4.2.x/spring-framework-reference/html/transaction.html) aspects to manage transactions' start and commit logics.
 
-![Java application components](https://download.pingcap.com/images/docs/best-practices/java-practice-1.png)
+![Java application components](https://docs-download.pingcap.com/media/images/docs/best-practices/java-practice-1.png)
 
 From the above diagram, you can see that a Java application might do the following things:
 

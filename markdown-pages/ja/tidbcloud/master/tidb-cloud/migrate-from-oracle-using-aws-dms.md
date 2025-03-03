@@ -29,7 +29,7 @@ PostgreSQL、Oracle、SQL Server などの異種データベースからTiDB Clo
 
 次の図は、高レベルのアーキテクチャを示しています。
 
-![Architecture](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-0.png)
+![Architecture](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-0.png)
 
 ## 前提条件 {#prerequisites}
 
@@ -48,7 +48,7 @@ PostgreSQL、Oracle、SQL Server などの異種データベースからTiDB Clo
 
 VPC を作成する方法については、 [VPC の作成](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html#Create-VPC)参照してください。
 
-![Create VPC](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-1.png)
+![Create VPC](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-1.png)
 
 ## ステップ2. Oracle DBインスタンスを作成する {#step-2-create-an-oracle-db-instance}
 
@@ -56,7 +56,7 @@ VPC を作成する方法については、 [VPC の作成](https://docs.aws.ama
 
 Oracle DB インスタンスを作成する方法については、 [Oracle DBインスタンスを作成し、Oracle DBインスタンス上のデータベースに接続する](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.Oracle.html)参照してください。
 
-![Create Oracle RDS](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-2.png)
+![Create Oracle RDS](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-2.png)
 
 ## ステップ3. Oracleでテーブルデータを準備する {#step-3-prepare-the-table-data-in-oracle}
 
@@ -67,7 +67,7 @@ Oracle DB インスタンスを作成する方法については、 [Oracle DB�
 
 SQL スクリプトの実行が完了したら、Oracle のデータを確認します。次の例では、 [DBeaver](https://dbeaver.io/)使用してデータを照会します。
 
-![Oracle RDS Data](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-3.png)
+![Oracle RDS Data](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-3.png)
 
 ## ステップ4. TiDB Cloud Serverlessクラスターを作成する {#step-4-create-a-tidb-cloud-serverless-cluster}
 
@@ -87,7 +87,7 @@ SQL スクリプトの実行が完了したら、Oracle のデータを確認し
 
 2.  VPC に`dms.t3.large`の AWS DMS レプリケーションインスタンスを作成します。
 
-    ![Create AWS DMS Instance](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-8.png)
+    ![Create AWS DMS Instance](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-8.png)
 
 > **注記：**
 >
@@ -101,11 +101,11 @@ SQL スクリプトの実行が完了したら、Oracle のデータを確認し
 
     次のスクリーンショットは、ソース エンドポイントの構成を示しています。
 
-    ![Create AWS DMS Source endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-9.png)
+    ![Create AWS DMS Source endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-9.png)
 
     次のスクリーンショットは、ターゲット エンドポイントの構成を示しています。
 
-    ![Create AWS DMS Target endpoint](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-10.png)
+    ![Create AWS DMS Target endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-10.png)
 
 > **注記：**
 >
@@ -123,25 +123,25 @@ AWS スキーマ変換ツールを使用してスキーマを移行する場合�
 
 1.  AWS DMS コンソールで、 [データ移行タスク](https://console.aws.amazon.com/dms/v2/home#tasks)ページに移動します。リージョンに切り替えます。次に、ウィンドウの右上隅にある**[タスクの作成]**をクリックします。
 
-    ![Create task](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-to-tidb-cloud-create-task.png)
+    ![Create task](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-to-tidb-cloud-create-task.png)
 
 2.  データベース移行タスクを作成し、**選択ルール**を指定します。
 
-    ![Create AWS DMS migration task](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-11.png)
+    ![Create AWS DMS migration task](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-11.png)
 
-    ![AWS DMS migration task selection rules](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-12.png)
+    ![AWS DMS migration task selection rules](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-12.png)
 
 3.  タスクを作成して開始し、タスクが完了するまで待機します。
 
 4.  **テーブル統計を**クリックしてテーブルを確認します。スキーマ名は`ADMIN`です。
 
-    ![Check AWS DMS migration task](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-13.png)
+    ![Check AWS DMS migration task](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-13.png)
 
 ## ステップ9. 下流のTiDBクラスタのデータを確認する {#step-9-check-data-in-the-downstream-tidb-cluster}
 
 [TiDB Cloudサーバーレス クラスター](https://tidbcloud.com/console/clusters/create-cluster)に接続し、 `admin.github_event`テーブルのデータを確認します。次のスクリーンショットに示すように、DMS はテーブル`github_events`と 10000 行のデータを正常に移行しました。
 
-![Check Data In TiDB](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-14.png)
+![Check Data In TiDB](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-14.png)
 
 ## まとめ {#summary}
 
@@ -149,7 +149,7 @@ AWS DMS を使用すると、このドキュメントの例に従って、任意
 
 移行中に問題や障害が発生した場合は、 [クラウドウォッチ](https://console.aws.amazon.com/cloudwatch/home)のログ情報を確認して問題のトラブルシューティングを行うことができます。
 
-![Troubleshooting](https://download.pingcap.com/images/docs/tidb-cloud/aws-dms-to-tidb-cloud-troubleshooting.png)
+![Troubleshooting](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-to-tidb-cloud-troubleshooting.png)
 
 ## 参照 {#see-also}
 

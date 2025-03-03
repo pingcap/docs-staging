@@ -20,7 +20,7 @@ aliases: ['/docs-cn/dev/dashboard/dashboard-cluster-info/']
 
 点击**实例** (Instances) 可查看实例列表：
 
-![实例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-cluster-info-instances-v650.png)
+![实例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-cluster-info-instances-v650.png)
 
 实例列表列出了该集群中 TiDB、TiKV、PD 和 TiFlash 组件所有实例的概况信息。
 
@@ -54,7 +54,7 @@ aliases: ['/docs-cn/dev/dashboard/dashboard-cluster-info/']
 
 点击**主机** (Hosts) 可查看主机列表：
 
-![主机](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-cluster-info-hosts-v650.png)
+![主机](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-cluster-info-hosts-v650.png)
 
 主机列表列出了该集群中 TiDB、TiKV、PD 和 TiFlash 组件所有实例对应主机的运行情况。
 
@@ -74,7 +74,7 @@ aliases: ['/docs-cn/dev/dashboard/dashboard-cluster-info/']
 
 点击**磁盘** (Disks) 可查看磁盘列表：
 
-![磁盘](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-cluster-info-disks-v650.png)
+![磁盘](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-cluster-info-disks-v650.png)
 
 磁盘列表列出了该集群中 TiDB、TiKV、PD 和 TiFlash 组件所有实例对应主机磁盘的情况。
 

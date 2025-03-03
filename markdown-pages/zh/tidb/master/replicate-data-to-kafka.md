@@ -163,6 +163,6 @@ aliases: ['/zh/tidb/dev/replicate-incremental-data-to-kafka/']
 
     执行成功后，可以观察到有数据输出，如下图：
 
-    ![SQL query result](https://download.pingcap.com/images/docs-cn/integrate/sql-query-result.png)
+    ![SQL query result](https://docs-download.pingcap.com/media/images/docs-cn/integrate/sql-query-result.png)
 
 至此，就完成了 TiDB 与 Flink 的数据集成。

@@ -149,8 +149,8 @@ tiup update playground
 
     以 Chrome 为例：
 
-    ![打开开发者工具](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-faq-devtools.png)
+    ![打开开发者工具](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-faq-devtools.png)
 
 3. 选中 **Application** 面板，展开 **Local Storage** 菜单并选中 **TiDB Dashboard 页面的域名**，点击 **Clear All**。
 
-    ![清理 Local Storage](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-faq-devtools-application.png)
+    ![清理 Local Storage](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-faq-devtools-application.png)

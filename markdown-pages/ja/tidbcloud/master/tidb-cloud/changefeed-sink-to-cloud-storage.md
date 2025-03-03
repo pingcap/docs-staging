@@ -27,7 +27,7 @@ summary: このドキュメントでは、 TiDB Cloudから Amazon S3 または 
 
 **Amazon S3**の場合、 **S3 エンドポイント**領域に`S3 URI` 、 `Access Key ID` 、 `Secret Access Key`を入力します。S3 バケットを TiDB クラスターと同じリージョンに作成します。
 
-![s3\_endpoint](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-s3-endpoint.jpg)
+![s3\_endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-s3-endpoint.jpg)
 
 </div>
 <div label="GCS">
@@ -36,7 +36,7 @@ summary: このドキュメントでは、 TiDB Cloudから Amazon S3 または 
 
 1.  TiDB Cloudコンソールで、**サービス アカウント ID**を記録します。この ID は、 TiDB Cloudに GCS バケットへのアクセスを許可するために使用されます。
 
-    ![gcs\_endpoint](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-endpoint.png)
+    ![gcs\_endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-endpoint.png)
 
 2.  Google Cloud コンソールで、GCS バケットのIAMロールを作成します。
 
@@ -44,7 +44,7 @@ summary: このドキュメントでは、 TiDB Cloudから Amazon S3 または 
 
     2.  [役割](https://console.cloud.google.com/iam-admin/roles)ページに移動し、 **[ロールの作成]**をクリックします。
 
-        ![Create a role](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-create-role.png)
+        ![Create a role](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-create-role.png)
 
     3.  ロールの名前、説明、ID、およびロール起動ステージを入力します。ロールの作成後は、ロール名を変更できません。
 
@@ -57,13 +57,13 @@ summary: このドキュメントでは、 TiDB Cloudから Amazon S3 または 
         -   storage.objects.list
         -   storage.objects.update
 
-    ![Add permissions](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-assign-permission.png)
+    ![Add permissions](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-assign-permission.png)
 
 3.  [バケツ](https://console.cloud.google.com/storage/browser)ページに移動し、 TiDB Cloud がアクセスする GCS バケットを選択します。GCS バケットは TiDB クラスターと同じリージョンにある必要があることに注意してください。
 
 4.  **バケットの詳細**ページで、「**権限」**タブをクリックし、 **「アクセス権の付与」**をクリックします。
 
-    ![Grant Access to the bucket ](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-grant-access-1.png)
+    ![Grant Access to the bucket ](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-grant-access-1.png)
 
 5.  バケットへのアクセスを許可するには次の情報を入力し、 **「保存」**をクリックします。
 
@@ -79,11 +79,11 @@ summary: このドキュメントでは、 TiDB Cloudから Amazon S3 または 
 
     -   バケットの gsutil URI を取得するには、コピー ボタンをクリックし、プレフィックスとして`gs://`を追加します。たとえば、バケット名が`test-sink-gcs`場合、URI は`gs://test-sink-gcs/`になります。
 
-        ![Get bucket URI](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-uri01.png)
+        ![Get bucket URI](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-uri01.png)
 
     -   フォルダの gsutil URI を取得するには、フォルダを開き、コピー ボタンをクリックし、プレフィックスとして`gs://`を追加します。たとえば、バケット名が`test-sink-gcs`でフォルダ名が`changefeed-xxx`の場合、URI は`gs://test-sink-gcs/changefeed-xxx/`になります。
 
-        ![Get bucket URI](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-uri02.png)
+        ![Get bucket URI](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-uri02.png)
 
 7.  TiDB Cloudコンソールで、Changefeed の**[宛先の構成]**ページに移動し、**バケットの gsutil URI**フィールドに入力します。
 
@@ -99,7 +99,7 @@ summary: このドキュメントでは、 TiDB Cloudから Amazon S3 または 
 
 1.  **テーブル フィルターを**カスタマイズして、複製するテーブルをフィルターします。ルール構文については、 [テーブルフィルタルール](https://docs.pingcap.com/tidb/stable/ticdc-filter#changefeed-log-filters)を参照してください。
 
-    ![the table filter of changefeed](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-s3-02-table-filter.jpg)
+    ![the table filter of changefeed](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/sink-to-s3-02-table-filter.jpg)
 
     -   **フィルター ルール**: この列でフィルター ルールを設定できます。デフォルトでは、すべてのテーブルを複製するルール`*.*`があります。新しいルールを追加すると、 TiDB Cloud はTiDB 内のすべてのテーブルを照会し、右側のボックスにルールに一致するテーブルのみを表示します。最大 100 個のフィルター ルールを追加できます。
     -   **有効なキーを持つテーブル**: この列には、主キーや一意のインデックスなど、有効なキーを持つテーブルが表示されます。
@@ -146,7 +146,7 @@ summary: このドキュメントでは、 TiDB Cloudから Amazon S3 または 
     -   **フラッシュ間隔**: デフォルトでは 60 秒に設定されていますが、2 秒から 10 分の範囲で調整可能です。
     -   **ファイル サイズ**: デフォルトでは 64 MB に設定されていますが、1 MB ～ 512 MB の範囲で調整可能です。
 
-    ![Flush Parameters](https://download.pingcap.com/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-flush-parameters.jpg)
+    ![Flush Parameters](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/sink-to-cloud-storage-flush-parameters.jpg)
 
     > **注記：**
     >

@@ -21,7 +21,7 @@ DM 中的 schema 信息来源包括以下几部分：
 
 增量迁移过程的 schema 信息维护较为复杂，在整个数据链路中包含以下几类可能相同或不同的表结构。
 
-![表结构](https://download.pingcap.com/images/docs-cn/dm/operate-schema.png)
+![表结构](https://docs-download.pingcap.com/media/images/docs-cn/dm/operate-schema.png)
 
 - 上游当前时刻的表结构（记为 `schema-U`）。
 - 当前 DM 正在消费的 binlog event 的表结构（记为 `schema-B`，其对应于上游某个历史时刻的表结构）。
