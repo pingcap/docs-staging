@@ -691,7 +691,7 @@ This variable is an alias for [`last_insert_id`](#last_insert_id).
     - `UNSPECIFIED`: means unspecified. TiDB automatically selects the latest version `2`.
     - `0`: compatible with all TiDB cluster versions. Features with the MPP version greater than `0` do not take effect in this mode.
     - `1`: new in v6.6.0, used to enable data exchange with compression on TiFlash. For details, see [MPP version and exchange data compression](/explain-mpp.md#mpp-version-and-exchange-data-compression).
-    - `2`: new in v7.3.0, used to provide more accurate error messages when MPP tasks encounter errors on TiFlash.
+    - `2`: new in v7.3.0, used to provide more accurate error messages when MPP tasks encounter errors on TiFlash. 
 
 ### password_reuse_interval <span class="version-mark">New in v6.5.0</span>
 
@@ -1464,7 +1464,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
     - When setting `tidb_constraint_check_in_place_pessimistic` to `OFF` and using pessimistic transactions:
 
-
+        
         ```sql
         set @@tidb_constraint_check_in_place_pessimistic=OFF;
         create table t (i int key);
