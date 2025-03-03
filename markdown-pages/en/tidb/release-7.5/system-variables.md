@@ -1658,7 +1658,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 - This variable is used to set the priority of executing the `ADD INDEX` operation in the `re-organize` phase.
 - You can set the value of this variable to `PRIORITY_LOW`, `PRIORITY_NORMAL` or `PRIORITY_HIGH`.
 
-### tidb_ddl_reorg_max_write_speed <span class="version-mark">New in v7.5.5</span>
+### tidb_ddl_reorg_max_write_speed <span class="version-mark">New in v6.5.12 and v7.5.5</span>
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -4999,6 +4999,16 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 </CustomContent>
+
+### tidb_slow_txn_log_threshold <span class="version-mark">New in v7.0.0</span>
+
+- Scope: SESSION
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
+- Type: Unsigned integer
+- Default value: `0`
+- Range: `[0, 9223372036854775807]`
+- Unit: Milliseconds
+- This variable sets the threshold for slow transaction logging. When the execution time of a transaction exceeds this threshold, TiDB logs detailed information about the transaction. When the value is set to `0`, this feature is disabled.
 
 ### tidb_snapshot
 

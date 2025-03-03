@@ -1,44 +1,22 @@
 ---
-title: Import Data into TiDB Cloud via MySQL CLI
-summary: MySQL CLI 経由でTiDB Cloudにデータをインポートする方法を学びます。
+title: Import Data into TiDB Cloud Dedicated via MySQL CLI
+summary: MySQL CLI 経由でTiDB Cloud Dedicated にデータをインポートする方法を学びます。
 ---
 
-# MySQL CLI 経由でTiDB Cloudにデータをインポートする {#import-data-into-tidb-cloud-via-mysql-cli}
+# MySQL CLI 経由でTiDB Cloud Dedicated にデータをインポートする {#import-data-into-tidb-cloud-dedicated-via-mysql-cli}
 
-このドキュメントでは、 [MySQL コマンドラインクライアント](https://dev.mysql.com/doc/refman/8.0/en/mysql.html)を介してTiDB Cloudにデータをインポートする方法について説明します。SQL ファイルまたは CSV ファイルからデータをインポートできます。次のセクションでは、各ファイル タイプからデータをインポートするための手順を順を追って説明します。
+このドキュメントでは、 [MySQL コマンドラインクライアント](https://dev.mysql.com/doc/refman/8.0/en/mysql.html)を介してTiDB Cloud Dedicated にデータをインポートする方法について説明します。SQL ファイルまたは CSV ファイルからデータをインポートできます。次のセクションでは、各ファイル タイプからデータをインポートするための手順を順を追って説明します。
 
 ## 前提条件 {#prerequisites}
 
-MySQL CLI 経由でTiDB Cloudにデータをインポートするには、次の前提条件を満たす必要があります。
+MySQL CLI 経由でTiDB Cloud Dedicated にデータをインポートするには、次の前提条件を満たす必要があります。
 
--   TiDB Cloudクラスターにアクセスできます。TiDB クラスターがない場合は、 [TiDB Cloudサーバーレスクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)の手順に従って作成してください。
+-   TiDB Cloud Dedicated クラスターにアクセスできます。アクセスできない場合は、 [TiDB Cloud専用クラスターを作成する](/tidb-cloud/create-tidb-cluster.md)手順に従って作成してください。
 -   ローカル コンピュータに MySQL CLI をインストールします。
 
-## ステップ1. TiDB Cloudクラスターに接続する {#step-1-connect-to-your-tidb-cloud-cluster}
+## ステップ1. TiDB Cloud Dedicatedクラスタに接続する {#step-1-connect-to-your-tidb-cloud-dedicated-cluster}
 
-選択した TiDB デプロイメント オプションに応じて、TiDB クラスターに接続します。
-
-<SimpleTab>
-<div label="TiDB Cloud Serverless">
-
-1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
-
-2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
-
-3.  接続ダイアログの構成が動作環境と一致していることを確認します。
-
-    -   **接続タイプは**`Public`に設定されています。
-    -   **Connect With は**`MySQL CLI`に設定されています。
-    -   **オペレーティング システムは**環境に適合します。
-
-4.  ランダムなパスワードを作成するには、 **「パスワードの生成」**をクリックします。
-
-    > **ヒント：**
-    >
-    > 以前にパスワードを作成したことがある場合は、元のパスワードを使用するか、 **「パスワードのリセット」**をクリックして新しいパスワードを生成します。
-
-</div>
-<div label="TiDB Cloud Dedicated">
+TiDB クラスターに接続します。
 
 1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
@@ -47,9 +25,6 @@ MySQL CLI 経由でTiDB Cloudにデータをインポートするには、次の
 3.  **[どこからでもアクセスを許可]**をクリックします。
 
     接続文字列を取得する方法の詳細については、 [パブリック接続経由​​でTiDB Cloud Dedicatedに接続する](/tidb-cloud/connect-via-standard-connection.md)参照してください。
-
-</div>
-</SimpleTab>
 
 ## ステップ2. テーブルを定義し、サンプルデータを挿入する {#step-2-define-the-table-and-insert-sample-data}
 

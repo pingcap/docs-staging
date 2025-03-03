@@ -1,17 +1,16 @@
 ---
-title: Import Apache Parquet Files from Amazon S3 or GCS into TiDB Cloud
-summary: Apache Parquet ファイルを Amazon S3 または GCS からTiDB Cloudにインポートする方法を学びます。
+title: Import Apache Parquet Files from Amazon S3 or GCS into TiDB Cloud Dedicated
+summary: Apache Parquet ファイルを Amazon S3 または GCS からTiDB Cloud Dedicated にインポートする方法を学びます。
 ---
 
-# Amazon S3 または GCS から Apache Parquet ファイルをTiDB Cloudにインポートする {#import-apache-parquet-files-from-amazon-s3-or-gcs-into-tidb-cloud}
+# Amazon S3 または GCS から Apache Parquet ファイルをTiDB Cloud Dedicated にインポートする {#import-apache-parquet-files-from-amazon-s3-or-gcs-into-tidb-cloud-dedicated}
 
-TiDB Cloudには、非圧縮データ ファイルと Snappy 圧縮[アパッチパーケット](https://parquet.apache.org/)形式のデータ ファイルの両方をインポートできます。このドキュメントでは、Amazon Simple Storage Service (Amazon S3) または Google Cloud Storage (GCS) からTiDB Cloudに Parquet ファイルをインポートする方法について説明します。
+TiDB Cloud Dedicated には、非圧縮データ ファイルと Snappy 圧縮[アパッチパーケット](https://parquet.apache.org/)形式のデータ ファイルの両方をインポートできます。このドキュメントでは、Amazon Simple Storage Service (Amazon S3) または Google Cloud Storage (GCS) からTiDB Cloud Dedicated に Parquet ファイルをインポートする方法について説明します。
 
 > **注記：**
 >
-> -   TiDB Cloud は、空のテーブルへの Parquet ファイルのインポートのみをサポートしています。すでにデータが含まれている既存のテーブルにデータをインポートするには、このドキュメントに従ってTiDB Cloud を使用して一時的な空のテーブルにデータをインポートし、 `INSERT SELECT`ステートメントを使用してデータを対象の既存のテーブルにコピーします。
-> -   TiDB Cloud Dedicated クラスターに変更フィードがある場合、現在のデータ インポート機能は[物理インポートモード](https://docs.pingcap.com/tidb/stable/tidb-lightning-physical-import-mode)使用するため、クラスターにデータをインポートできません ( **[データのインポート]**ボタンは無効になります)。このモードでは、インポートされたデータは変更ログを生成しないため、変更フィードはインポートされたデータを検出できません。
-> -   TiDB Cloud Dedicated クラスターのみが、GCS からの Parquet ファイルのインポートをサポートしています。
+> -   TiDB Cloud は、空のテーブルへの Parquet ファイルのインポートのみをサポートしています。すでにデータが含まれている既存のテーブルにデータをインポートするには、このドキュメントに従ってTiDB Cloudを使用して一時的な空のテーブルにデータをインポートし、 `INSERT SELECT`ステートメントを使用してデータを対象の既存のテーブルにコピーします。
+> -   TiDB Cloud Dedicated クラスターに変更フィードがある場合、現在のデータ インポート機能は[物理インポートモード](https://docs.pingcap.com/tidb/stable/tidb-lightning-physical-import-mode)使用するため、クラスターにデータをインポートできません ([**データのインポート]**ボタンは無効になります)。このモードでは、インポートされたデータは変更ログを生成しないため、変更フィードはインポートされたデータを検出できません。
 > -   Snappy 圧縮ファイルは[公式Snappyフォーマット](https://github.com/google/snappy)である必要があります。Snappy 圧縮の他のバリエーションはサポートされていません。
 
 ## ステップ1. Parquetファイルを準備する {#step-1-prepare-the-parquet-files}
@@ -77,7 +76,7 @@ Parquet ファイルにはスキーマ情報が含まれていないため、Par
 
         > **注記：**
         >
-        > 各ファイルには`${db_name}.${table_name}-schema.sql`つの DDL ステートメントのみを含める必要があります。ファイルに複数の DDL ステートメントが含まれている場合、最初のステートメントのみが有効になります。
+        > `${db_name}.${table_name}-schema.sql`ファイルには 1 つの DDL ステートメントのみを含める必要があります。ファイルに複数の DDL ステートメントが含まれている場合、最初のステートメントのみが有効になります。
 
 ## ステップ3. クロスアカウントアクセスを構成する {#step-3-configure-cross-account-access}
 
@@ -113,8 +112,8 @@ Parquet ファイルをTiDB Cloudにインポートするには、次の手順�
 3.  **「Amazon S3 からのデータのインポート」**ページで、ソース Parquet ファイルに関する次の情報を入力します。
 
     -   **インポート ファイル数**: 必要に応じて**1 つのファイル**または**複数のファイル**を選択します。
-    -   **含まれるスキーマ ファイル**: このフィールドは、複数のファイルをインポートする場合にのみ表示されます。ソース フォルダーにターゲット テーブル スキーマが含まれている場合は、 **[はい]**を選択します。それ以外の場合は、 **[いいえ]**を選択します。
-    -   **データ形式**: **Parquet を**選択します。
+    -   **含まれるスキーマ ファイル**: このフィールドは、複数のファイルをインポートする場合にのみ表示されます。ソース フォルダーにターゲット テーブル スキーマが含まれている場合は、 **[はい**] を選択します。それ以外の場合は、 **[いいえ]**を選択します。
+    -   **データ形式**: **Parquet**を選択します。
     -   **ファイルURI**または**フォルダーURI** :
         -   1 つのファイルをインポートする場合は、ソース ファイルの URI と名前を次の形式で入力します`s3://[bucket_name]/[data_source_folder]/[file_name].parquet` 。たとえば、 `s3://sampledata/ingest/TableName.01.parquet` 。
         -   複数のファイルをインポートする場合は、ソース ファイルの URI と名前を次の形式で入力します`s3://[bucket_name]/[data_source_folder]/` 。たとえば、 `s3://sampledata/ingest/` 。
@@ -128,7 +127,7 @@ Parquet ファイルをTiDB Cloudにインポートするには、次の手順�
 
     複数のファイルをインポートする場合は、 **[詳細設定]** &gt; **[マッピング設定]**を使用して、各ターゲット テーブルとそれに対応する Parquet ファイルのカスタム マッピング ルールを定義できます。その後、提供されたカスタム マッピング ルールを使用してデータ ソース ファイルが再スキャンされます。
 
-    ソース ファイルの URI と名前を**[ソース ファイルの URI と名前]**に入力するときは、次の形式`s3://[bucket_name]/[data_source_folder]/[file_name].parquet`になっていることを確認してください。たとえば、 `s3://sampledata/ingest/TableName.01.parquet`です。
+    ソース ファイルの URI と名前を**[ソース ファイルの URI と名前]**に入力するときは、次の形式`s3://[bucket_name]/[data_source_folder]/[file_name].parquet`になっていることを確認してください。たとえば、 `s3://sampledata/ingest/TableName.01.parquet` 。
 
     ソース ファイルを一致させるためにワイルドカードを使用することもできます。例:
 
@@ -144,7 +143,7 @@ Parquet ファイルをTiDB Cloudにインポートするには、次の手順�
 
 6.  **[インポートの開始]を**クリックします。
 
-7.  インポートの進行状況が**「完了」**と表示されたら、インポートされたテーブルを確認します。
+7.  インポートの進行状況が**「完了」と**表示されたら、インポートされたテーブルを確認します。
 
 </div>
 
@@ -160,15 +159,15 @@ Parquet ファイルをTiDB Cloudにインポートするには、次の手順�
 
     2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート]**をクリックします。
 
-2.  右上隅の**「データのインポート」を**クリックします。
+2.  右上隅の**「データのインポート」**をクリックします。
 
     このクラスタにデータを初めてインポートする場合は、 **[GCS からのインポート]**を選択します。
 
 3.  **GCS からのデータのインポート**ページで、ソース Parquet ファイルに関する次の情報を入力します。
 
     -   **インポート ファイル数**: 必要に応じて**1 つのファイル**または**複数のファイル**を選択します。
-    -   **含まれるスキーマ ファイル**: このフィールドは、複数のファイルをインポートする場合にのみ表示されます。ソース フォルダーにターゲット テーブル スキーマが含まれている場合は、 **[はい]**を選択します。それ以外の場合は、 **[いいえ]**を選択します。
-    -   **データ形式**: **Parquet を**選択します。
+    -   **含まれるスキーマ ファイル**: このフィールドは、複数のファイルをインポートする場合にのみ表示されます。ソース フォルダーにターゲット テーブル スキーマが含まれている場合は、 **[はい**] を選択します。それ以外の場合は、 **[いいえ]**を選択します。
+    -   **データ形式**: **Parquet**を選択します。
     -   **ファイルURI**または**フォルダーURI** :
         -   1 つのファイルをインポートする場合は、ソース ファイルの URI と名前を次の形式で入力します`gs://[bucket_name]/[data_source_folder]/[file_name].parquet` 。たとえば、 `gs://sampledata/ingest/TableName.01.parquet` 。
         -   複数のファイルをインポートする場合は、ソース ファイルの URI と名前を次の形式で入力します`gs://[bucket_name]/[data_source_folder]/` 。たとえば、 `gs://sampledata/ingest/` 。
@@ -180,7 +179,7 @@ Parquet ファイルをTiDB Cloudにインポートするには、次の手順�
 
     複数のファイルをインポートする場合は、 **[詳細設定]** &gt; **[マッピング設定]**を使用して、各ターゲット テーブルとそれに対応する Parquet ファイルのカスタム マッピング ルールを定義できます。その後、提供されたカスタム マッピング ルールを使用してデータ ソース ファイルが再スキャンされます。
 
-    ソース ファイルの URI と名前を**[ソース ファイルの URI と名前]**に入力するときは、次の形式`gs://[bucket_name]/[data_source_folder]/[file_name].parquet`になっていることを確認してください。たとえば、 `gs://sampledata/ingest/TableName.01.parquet`です。
+    ソース ファイルの URI と名前を**[ソース ファイルの URI と名前]**に入力するときは、次の形式`gs://[bucket_name]/[data_source_folder]/[file_name].parquet`になっていることを確認してください。たとえば、 `gs://sampledata/ingest/TableName.01.parquet` 。
 
     ソース ファイルを一致させるためにワイルドカードを使用することもできます。例:
 
@@ -196,7 +195,7 @@ Parquet ファイルをTiDB Cloudにインポートするには、次の手順�
 
 6.  **[インポートの開始]を**クリックします。
 
-7.  インポートの進行状況が**「完了」**と表示されたら、インポートされたテーブルを確認します。
+7.  インポートの進行状況が**「完了」と**表示されたら、インポートされたテーブルを確認します。
 
 </div>
 
@@ -218,7 +217,7 @@ Parquet ファイルをTiDB Cloudにインポートするには、次の手順�
 
 ## サポートされているデータ型 {#supported-data-types}
 
-次の表は、 TiDB Cloudにインポートできるサポートされている Parquet データ型を示しています。
+次の表は、TiDB Cloudにインポートできるサポートされている Parquet データ型を示しています。
 
 | 寄木細工プリミティブタイプ | Parquet 論理型  | TiDB または MySQL の型                                                                                                                                                |
 | ------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -241,10 +240,10 @@ Parquet ファイルをTiDB Cloudにインポートするには、次の手順�
 
 ### データのインポート中に警告を解決する {#resolve-warnings-during-data-import}
 
-**[インポートの開始]**をクリックした後、 `can't find the corresponding source files`などの警告メッセージが表示された場合は、正しいソース ファイルを指定するか、 [データインポートの命名規則](/tidb-cloud/naming-conventions-for-data-import.md)に従って既存のファイルの名前を変更するか、**詳細設定を**使用して変更を加えることで解決してください。
+**[インポートの開始]**をクリックした後、 `can't find the corresponding source files`などの警告メッセージが表示された場合は、正しいソース ファイルを指定するか、 [データインポートの命名規則](/tidb-cloud/naming-conventions-for-data-import.md)に従って既存のファイルの名前を変更するか、**詳細設定**を使用して変更を加えることで解決してください。
 
 これらの問題を解決した後、データを再度インポートする必要があります。
 
 ### インポートされたテーブルに行が 0 行あります {#zero-rows-in-the-imported-tables}
 
-インポートの進行状況が**「完了」**と表示されたら、インポートされたテーブルを確認します。行数がゼロの場合は、入力したバケット URI に一致するデータ ファイルがなかったことを意味します。この場合、正しいソース ファイルを指定するか、 [データインポートの命名規則](/tidb-cloud/naming-conventions-for-data-import.md)に従って既存のファイルの名前を変更するか、**詳細設定を**使用して変更を加えることで、この問題を解決します。その後、それらのテーブルを再度インポートします。
+インポートの進行状況が**「完了」**と表示されたら、インポートされたテーブルを確認します。行数がゼロの場合は、入力したバケット URI に一致するデータ ファイルがなかったことを意味します。この場合、正しいソース ファイルを指定するか、 [データインポートの命名規則](/tidb-cloud/naming-conventions-for-data-import.md)に従って既存のファイルの名前を変更するか、**詳細設定**を使用して変更を加えることで、この問題を解決します。その後、それらのテーブルを再度インポートします。
