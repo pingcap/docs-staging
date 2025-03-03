@@ -1299,7 +1299,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
     - 乐观事务模型下将 `tidb_constraint_check_in_place` 设置为 `OFF`：
 
-
+        
         ```sql
         create table t (i int key);
         insert into t values (1);
@@ -1311,7 +1311,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
         Query OK, 1 row affected
         ```
 
-
+        
         ```sql
         tidb> commit; -- 事务提交时才检查
         ```
@@ -1322,7 +1322,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
     - 乐观事务模型下将 `tidb_constraint_check_in_place` 设置为 `ON`：
 
-
+        
         ```sql
         set @@tidb_constraint_check_in_place=ON;
         begin optimistic;
@@ -1347,7 +1347,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
     - 悲观事务模型下将 `tidb_constraint_check_in_place_pessimistic` 设置为 `OFF`：
 
-
+        
         ```sql
         set @@tidb_constraint_check_in_place_pessimistic=OFF;
         create table t (i int key);
@@ -3589,21 +3589,21 @@ mysql> desc select count(distinct a) from test.t;
 
     例如，打开这个优化规则后，会将下面子查询做如下变化：
 
-
+    
     ```sql
     select * from t where t.a in (select aa from t1);
     ```
 
     将子查询转成如下 join：
 
-
+    
     ```sql
     select t.* from t, (select aa from t1 group by aa) tmp_t where t.a = tmp_t.aa;
     ```
 
     如果 t1 在列 `aa` 上有 unique 且 not null 的限制，可以直接改写为如下，不需要添加 aggregation。
 
-
+    
     ```sql
     select t.* from t, t1 where t.a=t1.aa;
     ```
@@ -4622,7 +4622,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 ### `tidb_slow_txn_log_threshold` <span class="version-mark">从 v7.0.0 版本开始引入</span>
 
 - 作用域：SESSION
-- 是否受 Hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value) 控制：否
+- 是否受 Hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value) 控制：否 
 - 类型：无符号整数型
 - 默认值：`0`
 - 范围：`[0, 9223372036854775807]`
