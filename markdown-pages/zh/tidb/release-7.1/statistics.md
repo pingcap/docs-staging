@@ -133,7 +133,7 @@ ANALYZE TABLE TableNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH
 
 - 如果要收集指定列的统计信息，请使用以下语法：
 
-
+    
     ```sql
     ANALYZE TABLE TableName COLUMNS ColumnNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -156,7 +156,7 @@ ANALYZE TABLE TableNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH
 
     2. 在业务的查询模式稳定以后，使用以下语法收集 `PREDICATE COLUMNS` 的统计信息。
 
-
+        
         ```sql
         ANALYZE TABLE TableName PREDICATE COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
         ```
@@ -170,7 +170,7 @@ ANALYZE TABLE TableNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH
 
 - 如果要收集所有列的统计信息以及所有索引的统计信息，可以使用以下语法：
 
-
+    
     ```sql
     ANALYZE TABLE TableName ALL COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -256,14 +256,14 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
 
 - 如果要收集 TableName 中所有的 PartitionNameList 中分区的统计信息，请使用以下语法：
 
-
+    
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
 
 - 如果要收集 TableName 中所有的 PartitionNameList 中分区的索引统计信息，请使用以下语法：
 
-
+    
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -274,7 +274,7 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
     >
     > 收集 `PREDICATE COLUMNS` 的统计信息目前为实验特性，不建议在生产环境中使用。
 
-
+    
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [COLUMNS ColumnNameList|PREDICATE COLUMNS|ALL COLUMNS] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -344,7 +344,7 @@ ANALYZE INCREMENTAL TABLE TableName PARTITION PartitionNameList INDEX [IndexName
 
 1. 执行以下 SQL 语句：
 
-
+    
     ```sql
     SHOW ANALYZE STATUS
     ```
@@ -355,7 +355,7 @@ ANALYZE INCREMENTAL TABLE TableName PARTITION PartitionNameList INDEX [IndexName
 
    - 如果 [`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-从-v610-版本开始引入) 的值为 `true` (默认为 `true`），你可以直接执行 `KILL TIDB ${id};` 语句。其中，${id} 为上一步中查询得到的后台 `ANALYZE` 任务的 `ID`。
    - 如果 `enable-global-kill` 的值为 `false`，你需要先使用客户端连接到执行后台 `ANALYZE` 任务的 TiDB 实例，然后再执行 `KILL TIDB ${id};` 语句。如果使用客户端连接到其他 TiDB 实例，或者客户端和 TiDB 中间有代理，`KILL` 语句不能终止后台的 `ANALYZE` 任务。
-
+  
 关于 `KILL` 语句的更多信息，请参考 [`KILL [TIDB]`](/sql-statements/sql-statement-kill.md)。
 
 ### 控制 ANALYZE 并发度
@@ -484,9 +484,9 @@ SHOW ANALYZE STATUS [ShowLikeOrWhere];
 ```sql
 mysql> SHOW ANALYZE STATUS [ShowLikeOrWhere];
 +--------------+------------+----------------+-------------------------------------------------------------------------------------------+----------------+---------------------+---------------------+----------+-------------------------------------------------------------------------------|
-| Table_schema | Table_name | Partition_name | Job_info                                                                                  | Processed_rows | Start_time          | End_time            | State    | Fail_reason                                                                   |
+| Table_schema | Table_name | Partition_name | Job_info                                                                                  | Processed_rows | Start_time          | End_time            | State    | Fail_reason                                                                   | 
 +--------------+------------+----------------+-------------------------------------------------------------------------------------------+----------------+---------------------+---------------------+----------+-------------------------------------------------------------------------------|
-| test         | sbtest1    |                | retry auto analyze table all columns with 100 topn, 0.055 samplerate                      |        2000000 | 2022-05-07 16:41:09 | 2022-05-07 16:41:20 | finished | NULL                                                                          |
+| test         | sbtest1    |                | retry auto analyze table all columns with 100 topn, 0.055 samplerate                      |        2000000 | 2022-05-07 16:41:09 | 2022-05-07 16:41:20 | finished | NULL                                                                          | 
 | test         | sbtest1    |                | auto analyze table all columns with 100 topn, 0.5 samplerate                              |              0 | 2022-05-07 16:40:50 | 2022-05-07 16:41:09 | failed   | analyze panic due to memory quota exceeds, please try with smaller samplerate |
 ```
 
@@ -697,21 +697,21 @@ DROP STATS TableName GLOBAL;
 
 + 通过以下接口可以获取数据库 `${db_name}` 中的表 `${table_name}` 的 JSON 格式的统计信息：
 
-
+    
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}
     ```
 
     示例如下：
 
-
+    
     ```
     curl -s http://127.0.0.1:10080/stats/dump/test/t1 -o /tmp/t1.json
     ```
 
 + 通过以下接口可以获取数据库 `${db_name}` 中的表 `${table_name}` 在指定时间上的 JSON 格式统计信息。指定的时间应在 GC SafePoint 之后。
 
-
+    
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}/${yyyyMMddHHmmss}
     ```
