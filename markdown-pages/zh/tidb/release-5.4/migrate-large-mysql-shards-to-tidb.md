@@ -136,7 +136,7 @@ CREATE TABLE `table5` (
 
 1. 编写配置文件`tidb-lightning.toml`。
 
-
+    
     ```
 
     [lightning]
@@ -184,7 +184,7 @@ CREATE TABLE `table5` (
 
     若从 S3 导入，则需将有权限访问该 Amazon S3 后端存储的账号的 SecretKey 和 AccessKey 作为环境变量传入 Lightning 节点。同时还支持从 `~/.aws/credentials` 读取凭证文件。
 
-
+    
     ```shell
     export AWS_ACCESS_KEY_ID=${access_key}
     export AWS_SECRET_ACCESS_KEY=${secret_key}

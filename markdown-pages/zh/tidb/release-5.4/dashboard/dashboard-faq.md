@@ -85,7 +85,7 @@ NgMonitoring 是 TiDB v5.4.0 及以上集群中内置的高级监控组件，用
 
   1. 检查 TiUP Cluster 版本，NgMonitoring 组件需要较高版本的部署工具支持（TiUP v1.9.0 及以上）：
 
-
+        
         ```shell
         tiup cluster --version
         ```
@@ -100,7 +100,7 @@ NgMonitoring 是 TiDB v5.4.0 及以上集群中内置的高级监控组件，用
 
   2. 如果 TiUP 版本低于 v1.9.0，升级 TiUP 和 TiUP Cluster 版本至最新。
 
-
+        
         ```shell
         tiup update --all
         ```
@@ -109,7 +109,7 @@ NgMonitoring 是 TiDB v5.4.0 及以上集群中内置的高级监控组件，用
 
   1. 以编辑模式打开集群的配置文件：
 
-
+        
         ```shell
         tiup cluster edit-config ${cluster-name}
         ```
@@ -124,7 +124,7 @@ NgMonitoring 是 TiDB v5.4.0 及以上集群中内置的高级监控组件，用
 
   3. 重启 Prometheus 节点：
 
-
+        
         ```shell
         tiup cluster reload ${cluster-name} --role prometheus
         ```

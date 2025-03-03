@@ -40,7 +40,7 @@ mysql -h 127.0.0.1 -uroot -P4000
 
 如需快速了解 TiDB 节点、TiKV 节点、PD 节点的配置文件、数据文件及日志文件的相关介绍与其存放位置，建议观看下面的培训视频（时长 9 分钟）。
 
-<video src="https://tidb-docs.s3.us-east-2.amazonaws.com/compressed+-+Lesson+12.mp4" width="100%" height="100%" controls="controls" poster="https://docs-download.pingcap.com/media/videos/docs-cn/poster_lesson12.png"></video>
+<video src="https://docs-download.pingcap.com/media/videos/docs-cn/Lesson12_log.mp4" width="100%" height="100%" controls="controls" poster="https://docs-download.pingcap.com/media/videos/docs-cn/poster_lesson12.png"></video>
 
 ### 如何规范停止 TiDB？
 
@@ -53,7 +53,7 @@ mysql -h 127.0.0.1 -uroot -P4000
 - Kill DML 语句：
 
     查询 `information_schema.cluster_processlist`，获取正在执行 DML 语句的 TiDB 实例地址和 session ID。然后将客户端连接到正在执行 DML 语句的 TiDB 实例，执行 `kill tidb session_id`。
-
+    
     如果客户端连接到其他 TiDB 实例或者客户端和 TiDB 集群之间有代理，`kill tidb session_id` 可能会被路由到其他的 TiDB 实例，从而错误地终止其他会话。具体可以参考 [`KILL`](/sql-statements/sql-statement-kill.md)。
 
 - Kill DDL 语句：执行 `admin show ddl jobs`，查找需要 kill 的 DDL job ID，然后执行 `admin cancel ddl jobs 'job_id' [, 'job_id'] ...`。具体可以参考 [`ADMIN`](/sql-statements/sql-statement-admin.md)。

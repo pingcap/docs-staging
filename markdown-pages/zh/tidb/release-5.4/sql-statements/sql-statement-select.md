@@ -32,7 +32,7 @@ summary: TiDB 数据库中 SELECT 的使用概况。
 **TableRefsClause:**
 
 ```ebnf+diagram
-TableRefsClause ::=
+TableRefsClause ::= 
     TableRef AsOfClause? ( ',' TableRef AsOfClause? )*
 
 AsOfClause ::=
@@ -74,7 +74,7 @@ AsOfClause ::=
 **SelectLockOpt:**
 
 ```ebnf+diagram
-SelectLockOpt ::=
+SelectLockOpt ::= 
     ( ( 'FOR' 'UPDATE' ( 'OF' TableList )? 'NOWAIT'? )
 |   ( 'LOCK' 'IN' 'SHARE' 'MODE' ) )?
 

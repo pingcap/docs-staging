@@ -156,21 +156,21 @@ TiDB 将密码存在 `mysql.user` 系统数据库里面。只有拥有 `CREATE U
 
 - 在 `CREATE USER` 创建用户时通过 `IDENTIFIED BY` 指定密码：
 
-
+    
     ```sql
     CREATE USER 'test'@'localhost' IDENTIFIED BY 'mypass';
     ```
 
 - 为一个已存在的账户修改密码，可以通过 `SET PASSWORD FOR` 或者 `ALTER USER` 语句完成：
 
-
+    
     ```sql
     SET PASSWORD FOR 'root'@'%' = 'xxx';
     ```
 
     或者：
 
-
+    
     ```sql
     ALTER USER 'test'@'localhost' IDENTIFIED BY 'mypass';
     ```
@@ -179,7 +179,7 @@ TiDB 将密码存在 `mysql.user` 系统数据库里面。只有拥有 `CREATE U
 
 1. 修改配置文件，在 `security` 部分添加 `skip-grant-table`：
 
-
+    
     ```
     [security]
     skip-grant-table = true
@@ -187,7 +187,7 @@ TiDB 将密码存在 `mysql.user` 系统数据库里面。只有拥有 `CREATE U
 
 2. 使用修改之后的配置启动 TiDB，然后使用 `root` 登录后修改密码：
 
-
+    
     ```bash
     mysql -h 127.0.0.1 -P 4000 -u root
     ```

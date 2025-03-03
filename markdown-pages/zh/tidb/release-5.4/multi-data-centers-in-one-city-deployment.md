@@ -11,7 +11,7 @@ summary: 本文档介绍同城多数据中心部署 TiDB 方案。
 
 Raft 是一种分布式一致性算法，在 TiDB 集群的多种组件中，PD 和 TiKV 都通过 Raft 实现了数据的容灾。Raft 的灾难恢复能力通过如下机制实现：
 
-- Raft 成员的本质是日志复制和状态机。Raft 成员之间通过复制日志来实现数据同步；Raft 成员在不同条件下切换自己的成员状态，其目标是选出 leader 以提供对外服务。
+- Raft 成员的本质是日志复制和状态机。Raft 成员之间通过复制日志来实现数据同步；Raft 成员在不同条件下切换自己的成员状态，其目标是选出 leader 以提供对外服务。 
 - Raft 是一个表决系统，它遵循多数派协议，在一个 Raft Group 中，某成员获得大多数投票，它的成员状态就会转变为 leader。也就是说，当一个 Raft Group 还保有大多数节点 (majority) 时，它就能够选出 leader 以提供对外服务。
 
 遵循 Raft 可靠性的特点，放到现实场景中：
@@ -105,7 +105,7 @@ TiKV 是一个 Multi-Raft 系统，其数据按 Region（默认 96M）切分，�
 server_configs:
   pd:
     replication.location-labels: ["zone","dc","rack","host"]
-
+    
 tikv_servers:
   - host: 10.63.10.30
     config:

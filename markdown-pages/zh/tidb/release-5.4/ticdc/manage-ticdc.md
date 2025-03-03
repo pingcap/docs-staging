@@ -68,7 +68,7 @@ tiup cluster edit-config <cluster-name>
 
 - 查询 `capture` 列表：
 
-
+    
     ```shell
     cdc cli capture list --pd=http://10.0.10.25:2379
     ```
@@ -137,7 +137,7 @@ Info: {"sink-uri":"mysql://root:123456@127.0.0.1:3306/","opts":{},"create-time":
 - `--changefeed-id`：同步任务的 ID，格式需要符合正则表达式 `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`。如果不指定该 ID，TiCDC 会自动生成一个 UUID（version 4 格式）作为 ID。
 - `--sink-uri`：同步任务下游的地址，需要按照以下格式进行配置，目前 scheme 支持 `mysql`/`tidb`/`kafka`/`pulsar`。
 
-
+    
     ```
     [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
     ```
@@ -479,7 +479,7 @@ cdc cli changefeed resume -c test-cf --pd=http://10.0.10.25:2379
 
 - 查询 `processor` 列表：
 
-
+    
     ```shell
     cdc cli processor list --pd=http://10.0.10.25:2379
     ```
@@ -496,7 +496,7 @@ cdc cli changefeed resume -c test-cf --pd=http://10.0.10.25:2379
 
 - 查询特定 `processor`，对应于某个节点处理的同步子任务信息和状态：
 
-
+    
     ```shell
     cdc cli processor query --pd=http://10.0.10.25:2379 --changefeed-id=simple-replication-task --capture-id=b293999a-4168-4988-a4f4-35d9589b226b
     ```
