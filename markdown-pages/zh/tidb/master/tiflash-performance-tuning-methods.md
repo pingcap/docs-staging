@@ -19,7 +19,7 @@ summary: 本文介绍了 Performance Overview 面板中 TiFlash 部分，帮助�
 
 该 TiFlash 集群包含两个节点，每个节点配置均为 16 核、48G 内存。当 CH-benCHmark 负载运行时，CPU 利用率最高可达到 1500%，内存占用最大可达 20 GB，IO 利用率达到 91%。这表明 TiFlash 节点资源接近饱和状态。
 
-![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs-cn/performance/tiflash/tiflash-resource-usage.png)
+![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs-cn/performance/tiflash/tiflash-resource-usage.png) 
 
 ## TiFlash 关键性能指标
 

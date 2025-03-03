@@ -87,24 +87,24 @@ tidb_retry_limit = 10
 
 - Session 级别设置：
 
-
+    
     ```sql
     SET tidb_disable_txn_auto_retry = OFF;
     ```
 
-
+    
     ```sql
     SET tidb_retry_limit = 10;
     ```
 
 - Global 级别设置：
 
-
+    
     ```sql
     SET GLOBAL tidb_disable_txn_auto_retry = OFF;
     ```
 
-
+    
     ```sql
     SET GLOBAL tidb_retry_limit = 10;
     ```
