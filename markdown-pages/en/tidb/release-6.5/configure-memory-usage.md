@@ -95,7 +95,7 @@ The following example constructs a memory-intensive SQL statement that triggers 
 
 1. Set `tidb_memory_usage_alarm_ratio` to `0.85`:
 
-
+    
     ```sql
     SET GLOBAL tidb_memory_usage_alarm_ratio = 0.85;
     ```
@@ -147,7 +147,7 @@ The following example uses a memory-consuming SQL statement to demonstrate the d
 
 1. Configure the memory quota of a SQL statement to 1GB (1 GB by default):
 
-
+    
     ```sql
     SET tidb_mem_quota_query = 1 << 30;
     ```
@@ -156,7 +156,7 @@ The following example uses a memory-consuming SQL statement to demonstrate the d
 
 3. Execute the following SQL statement:
 
-
+    
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```
@@ -169,14 +169,14 @@ The following example uses a memory-consuming SQL statement to demonstrate the d
 
 4. Configure the system variable `tidb_executor_concurrency` to 1. With this configuration, when out of memory, HashAgg automatically tries to trigger disk spill.
 
-
+    
     ```sql
     SET tidb_executor_concurrency = 1;
     ```
 
 5. Execute the same SQL statement. You can find that this time, the statement is successfully executed and no error message is returned. From the following detailed execution plan, you can see that HashAgg has used 600 MB of hard disk space.
 
-
+    
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```

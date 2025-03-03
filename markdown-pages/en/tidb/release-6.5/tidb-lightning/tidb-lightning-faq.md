@@ -127,7 +127,7 @@ See also [How to properly restart TiDB Lightning?](#how-to-properly-restart-tidb
 
 1. Delete the checkpoint file.
 
-
+    
     ```sh
     tidb-lightning-ctl --config conf/tidb-lightning.toml --checkpoint-remove=all
     ```
@@ -145,7 +145,7 @@ See also [How to properly restart TiDB Lightning?](#how-to-properly-restart-tidb
 
     Use the following command to clean up the metadata:
 
-
+    
     ```sql
     DROP DATABASE IF EXISTS `lightning_metadata`;
     ```
@@ -156,7 +156,7 @@ See also [How to properly restart TiDB Lightning?](#how-to-properly-restart-tidb
 
     Get the process ID (PID) of TiDB Lightning using commands like `ps`, and then run the following command:
 
-
+    
     ```sh
     kill -USR1 <lightning-pid>
     ```
@@ -219,19 +219,19 @@ If you want to copy both the schema definition and table data from one schema to
     host = "127.0.0.1"
     port = 4000
     user = "root"
-
+    
     [tikv-importer]
     backend = "tidb"
-
+    
     [mydumper]
     data-source-dir = "/tmp/bck1"
-
+    
     [[mydumper.files]]
     pattern = '^[a-z]*\.(.*)\.[0-9]*\.sql$'
     schema = 'test2'
     table = '$1'
     type = 'sql'
-
+    
     [[mydumper.files]]
     pattern = '^[a-z]*\.(.*)\-schema\.sql$'
     schema = 'test2'

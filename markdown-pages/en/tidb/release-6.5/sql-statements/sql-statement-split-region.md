@@ -47,7 +47,7 @@ There are two types of Split Region syntax:
 
 - The syntax of even split:
 
-
+    
     ```sql
     SPLIT TABLE table_name [INDEX index_name] BETWEEN (lower_value) AND (upper_value) REGIONS region_num
     ```
@@ -56,7 +56,7 @@ There are two types of Split Region syntax:
 
 - The syntax of uneven split:
 
-
+    
     ```sql
     SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)] ...
     ```
@@ -173,7 +173,7 @@ In the split method above, both data with the `y` and `z` prefixes are written i
 SPLIT TABLE t INDEX idx1 BETWEEN ("a") AND ("{") REGIONS 26;
 ```
 
-This statement splits index idx1 of the table `t` into 26 Regions from a~`{`. The range of Region 1 is `[minIndexValue, b)`; the range of Region 2 is `[b, c)`; … the range of Region 25 is `[y, z)`, and the range of Region 26 is `[z, maxIndexValue)`.
+This statement splits index idx1 of the table `t` into 26 Regions from a~`{`. The range of Region 1 is `[minIndexValue, b)`; the range of Region 2 is `[b, c)`; … the range of Region 25 is `[y, z)`, and the range of Region 26 is `[z, maxIndexValue)`. 
 
 If the column of index `idx2` is of time type like timestamp/datetime, and you want to split index Region by year:
 
@@ -245,14 +245,14 @@ Splitting Regions for partitioned tables is the same as splitting Regions for or
 
 + The syntax of even split:
 
-
+    
     ```sql
     SPLIT [PARTITION] TABLE t [PARTITION] [(partition_name_list...)] [INDEX index_name] BETWEEN (lower_value) AND (upper_value) REGIONS region_num
     ```
 
 + The syntax of uneven split:
 
-
+    
     ```sql
     SPLIT [PARTITION] TABLE table_name [PARTITION (partition_name_list...)] [INDEX index_name] BY (value_list) [, (value_list)] ...
     ```
@@ -261,14 +261,14 @@ Splitting Regions for partitioned tables is the same as splitting Regions for or
 
 1. Create a partitioned table `t`. Suppose that you want to create a Hash table divided into two partitions. The example statement is as follows:
 
-
+    
     ```sql
     create table t (a int,b int,index idx(a)) partition by hash(a) partitions 2;
     ```
 
     After creating the table `t`, a Region is split for each partition. Use the `SHOW TABLE REGIONS` syntax to view the Regions of this table:
 
-
+    
     ```sql
     show table t regions;
     ```
@@ -284,7 +284,7 @@ Splitting Regions for partitioned tables is the same as splitting Regions for or
 
 2. Use the `SPLIT` syntax to split a Region for each partition. Suppose that you want to split the data in the `[0,10000]` range of each partition into four Regions. The example statement is as follows:
 
-
+    
     ```sql
     split partition table t between (0) and (10000) regions 4;
     ```
@@ -297,7 +297,7 @@ Splitting Regions for partitioned tables is the same as splitting Regions for or
 
 3. Use the `SHOW TABLE REGIONS` syntax to view the Regions of this table again. You can see that this table now has ten Regions, each partition with five Regions, four of which are the row data and one is the index data.
 
-
+    
     ```sql
     show table t regions;
     ```
@@ -321,7 +321,7 @@ Splitting Regions for partitioned tables is the same as splitting Regions for or
 
 4. You can also split Regions for the index of each partition. For example, you can split the `[1000,10000]` range of the `idx` index into two Regions. The example statement is as follows:
 
-
+    
     ```sql
     split partition table t index idx between (1000) and (10000) regions 2;
     ```
@@ -332,7 +332,7 @@ You can specify the partition to be split.
 
 1. Create a partitioned table. Suppose that you want to create a Range partitioned table split into three partitions. The example statement is as follows:
 
-
+    
     ```sql
     create table t ( a int, b int, index idx(b)) partition by range( a ) (
         partition p1 values less than (10000),
@@ -342,21 +342,21 @@ You can specify the partition to be split.
 
 2. Suppose that you want to split the data in the `[0,10000]` range of the `p1` partition into two Regions. The example statement is as follows:
 
-
+    
     ```sql
     split partition table t partition (p1) between (0) and (10000) regions 2;
     ```
 
 3. Suppose that you want to split the data in the `[10000,20000]` range of the `p2` partition into two Regions. The example statement is as follows:
 
-
+    
     ```sql
     split partition table t partition (p2) between (10000) and (20000) regions 2;
     ```
 
 4. You can use the `SHOW TABLE REGIONS` syntax to view the Regions of this table:
 
-
+    
     ```sql
     show table t regions;
     ```
@@ -375,7 +375,7 @@ You can specify the partition to be split.
 
 5. Suppose that you want to split the `[0,20000]` range of the `idx` index of the `p1` and `p2` partitions into two Regions. The example statement is as follows:
 
-
+    
     ```sql
     split partition table t partition (p1,p2) index idx between (0) and (20000) regions 2;
     ```

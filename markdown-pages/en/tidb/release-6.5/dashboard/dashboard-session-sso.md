@@ -160,7 +160,7 @@ Similar to Okta, [Auth0](https://auth0.com/) also provides OIDC SSO identity ser
 
 2. Navigate on the left sidebar **Applications** > **Applications**.
 
-3. Click **Create App Integration**.
+3. Click **Create App Integration**. 
 
    ![Create Application](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-auth0-create-app.png)
 
@@ -222,7 +222,7 @@ Now TiDB Dashboard has been configured to use Auth0 SSO for sign-in.
    ```
 
    Replace `DASHBOARD_IP:PORT` with the actual domain (or IP address) and port that you use to access the TiDB Dashboard in your browser.
-
+   
    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-casdoor-settings-2.png)
 
 6. Keep the default values for other settings and click **Save & Exit**.
