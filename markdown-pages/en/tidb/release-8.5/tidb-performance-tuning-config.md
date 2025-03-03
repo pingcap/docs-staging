@@ -61,10 +61,10 @@ The following table outlines the impact of specific system variable configuratio
 | [`tidb_ignore_prepared_cache_close_stmt`](/system-variables.md#tidb_ignore_prepared_cache_close_stmt-new-in-v600)| Cache plans for applications that use prepared statements but close the plan after each execution. | N/A |
 | [`tidb_analyze_column_options`](/system-variables.md#tidb_analyze_column_options-new-in-v830)| Collect statistics for all columns to avoid suboptimal execution plans due to missing column statistics. By default, TiDB only collects statistics for [predicate columns](/statistics.md#collect-statistics-on-some-columns). | Setting this variable to `'ALL'` can cause more resource usage for the `ANALYZE TABLE` operation compared with the default value `'PREDICATE'`. |
 | [`tidb_stats_load_sync_wait`](/system-variables.md#tidb_stats_load_sync_wait-new-in-v540)| Increase the timeout for synchronously loading statistics from the default 100 milliseconds to 2 seconds. This ensures TiDB loads the necessary statistics before query compilation. | Increasing this value leads to a longer synchronization wait time before query compilation. |
-| [`tidb_opt_derive_topn`](/system-variables.md#tidb_opt_derive_topn-new-in-v700)| Enable the optimization rule of [Deriving TopN or Limit from window functions](/derive-topn-from-window.md). | This is limited to the `ROW_NUMBER()` window function. |
-| [`tidb_runtime_filter_mode`](/system-variables.md#tidb_runtime_filter_mode-new-in-v720)| Enable [Runtime Filter](/runtime-filter.md#runtime-filter-mode) in the local mode to improve hash join efficiency. | The variable is introduced in v7.2.0 and is disabled by default for safety. |
-| [`tidb_opt_enable_mpp_shared_cte_execution`](/system-variables.md#tidb_opt_enable_mpp_shared_cte_execution-new-in-v720)| Enable non-recursive [Common Table Expressions (CTE)](/sql-statements/sql-statement-with.md) pushdown to TiFlash. | This is an experimental feature. |
-| [`tidb_rc_read_check_ts`](/system-variables.md#tidb_rc_read_check_ts-new-in-v600)| For the read-committed isolation level, enabling this variable avoids the latency and cost of getting the global timestamp and optimizes transaction-level read latency. | This feature is incompatible with the Repeatable Read isolation level. |
+| [`tidb_opt_derive_topn`](/system-variables.md#tidb_opt_derive_topn-new-in-v700)| Enable the optimization rule of [Deriving TopN or Limit from window functions](/derive-topn-from-window.md). | This is limited to the `ROW_NUMBER()` window function. | 
+| [`tidb_runtime_filter_mode`](/system-variables.md#tidb_runtime_filter_mode-new-in-v720)| Enable [Runtime Filter](/runtime-filter.md#runtime-filter-mode) in the local mode to improve hash join efficiency. | The variable is introduced in v7.2.0 and is disabled by default for safety. | 
+| [`tidb_opt_enable_mpp_shared_cte_execution`](/system-variables.md#tidb_opt_enable_mpp_shared_cte_execution-new-in-v720)| Enable non-recursive [Common Table Expressions (CTE)](/sql-statements/sql-statement-with.md) pushdown to TiFlash. | This is an experimental feature. | 
+| [`tidb_rc_read_check_ts`](/system-variables.md#tidb_rc_read_check_ts-new-in-v600)| For the read-committed isolation level, enabling this variable avoids the latency and cost of getting the global timestamp and optimizes transaction-level read latency. | This feature is incompatible with the Repeatable Read isolation level. | 
 | [`tidb_guarantee_linearizability`](/system-variables.md#tidb_guarantee_linearizability-new-in-v50)| Improve performance by skipping the commit timestamp fetch from the PD server. | This sacrifices linearizability in favor of performance. Only causal consistency is guaranteed. It is not suitable for scenarios requiring strict linearizability. |
 | [`pd_enable_follower_handle_region`](/system-variables.md#pd_enable_follower_handle_region-new-in-v760)| Activate the PD Follower feature, allowing PD followers to process Region requests. This helps distribute load evenly across all PD servers and reduces CPU pressure on the PD leader. | This is an experimental feature. Test in non-production environments. |
 | [`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-new-in-v653-and-v710) | Enable advanced query optimization strategies to improve performance through additional optimization rules and heuristics. | Test thoroughly in your environment, as performance improvements vary by workload. |
@@ -122,7 +122,7 @@ snap-io-max-bytes-per-sec = "300MiB"
 | ---------| ---- | ----|
 | [`snap-io-max-bytes-per-sec`](/tikv-configuration-file.md#snap-io-max-bytes-per-sec) | Control the maximum allowable disk bandwidth for data replication from TiKV to TiFlash. Higher limits accelerate initial data loading and catch-up replication. | Higher bandwidth consumption might impact online transaction performance. Balance between replication speed and system stability. |
 
-## Benchmark
+## Benchmark 
 
 This section compares performance between default settings (baseline) and optimized settings based on the preceding [key settings for common loads](#key-settings-for-common-workloads).
 
@@ -493,7 +493,7 @@ You can disable auto analyze by setting the [`tidb_enable_auto_analyze`](/system
    ```sql
    -- Manually collect statistics
    ANALYZE TABLE your_table;
-
+   
    -- Re-enable auto analyze
    SET GLOBAL tidb_enable_auto_analyze = ON;
    ```
@@ -508,9 +508,9 @@ To improve TiKV performance, configure the thread pools based on your instance's
 
     ```toml
     [server]
-    # Increase gRPC thread pool
+    # Increase gRPC thread pool 
     grpc-concurrency = 10
-
+    
     [raftstore]
     # Optimize for write-intensive workloads
     apply-pool-size = 4
