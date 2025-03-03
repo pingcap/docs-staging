@@ -19,7 +19,7 @@ summary: Learn about the disaster recovery solutions provided by TiDB, including
 
 次の図は、これら 2 つの概念を示しています。
 
-![RTO and RPO](https://download.pingcap.com/images/docs/dr/rto-rpo.png)
+![RTO and RPO](https://docs-download.pingcap.com/media/images/docs/dr/rto-rpo.png)
 
 -   エラー トレランスの目標: 災害はさまざまな地域に影響を与える可能性があるためです。このドキュメントでは、エラー トレランス目標という用語は、システムが許容できる障害の最大範囲を表すために使用されます。
 -   リージョン: このドキュメントは地域の DR に焦点を当てており、ここで言及されている「地域」は地理的なエリアまたは都市を指します。
@@ -30,7 +30,7 @@ summary: Learn about the disaster recovery solutions provided by TiDB, including
 
 ### TiDB {#tidb}
 
-![TiDB architecture](https://download.pingcap.com/images/docs/dr/tidb-architecture.png)
+![TiDB architecture](https://docs-download.pingcap.com/media/images/docs/dr/tidb-architecture.png)
 
 TiDB は、コンピューティングとstorageを分離したアーキテクチャで設計されています。
 
@@ -42,7 +42,7 @@ TiDB は 3 つの完全なデータ レプリカを格納します。したが�
 
 ### TiCDC {#ticdc}
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/cdc-architecture.png)
 
 TiDB のインクリメンタル データ レプリケーション ツールとして、TiCDC は PD の etcd を介して高可用性を実現します。 TiCDC は、複数の Capture プロセスを介して TiKV ノードからデータの変更を取得し、データの変更を内部で並べ替えてマージします。その後、TiCDC は複数のレプリケーション タスクを使用して、複数のダウンストリーム システムにデータをレプリケートします。前のアーキテクチャ図では、次のようになります。
 
@@ -53,7 +53,7 @@ TiDB のインクリメンタル データ レプリケーション ツールと
 
 ### BR {#br}
 
-![BR architecture](https://download.pingcap.com/images/docs/br/br-snapshot-arch.png)
+![BR architecture](https://docs-download.pingcap.com/media/images/docs/br/br-snapshot-arch.png)
 
 BR は、TiDB のバックアップおよび復元ツールとして、特定の時点に基づくフル スナップショット バックアップと、TiDB クラスターの連続ログ バックアップを実行できます。 TiDB クラスターが完全に利用できない場合は、バックアップ ファイルを新しいクラスターに復元できます。通常、 BRはデータ セキュリティの最後の手段と考えられています。
 
@@ -61,7 +61,7 @@ BR は、TiDB のバックアップおよび復元ツールとして、特定の
 
 ### プライマリ クラスタとセカンダリ クラスタに基づく DR ソリューション {#dr-solution-based-on-primary-and-secondary-clusters}
 
-![Primary-secondary cluster DR](https://download.pingcap.com/images/docs/dr/ticdc-dr.png)
+![Primary-secondary cluster DR](https://docs-download.pingcap.com/media/images/docs/dr/ticdc-dr.png)
 
 上記のアーキテクチャには 2 つの TiDB クラスターが含まれており、クラスター 1 はリージョン 1 で実行され、読み取りおよび書き込み要求を処理します。クラスタ2 はリージョン 2 で実行され、セカンダリ クラスタとして機能します。クラスター 1 が災害に遭遇すると、クラスター 2 がサービスを引き継ぎます。データの変更は、TiCDC を使用して 2 つのクラスター間で複製されます。このアーキテクチャは、「1:1」DR ソリューションとも呼ばれます。
 
@@ -69,7 +69,7 @@ BR は、TiDB のバックアップおよび復元ツールとして、特定の
 
 ### 単一クラスター内の複数のレプリカに基づく DR ソリューション {#dr-solution-based-on-multiple-replicas-in-a-single-cluster}
 
-![Multi-replica cluster DR](https://download.pingcap.com/images/docs/dr/multi-replica-dr.png)
+![Multi-replica cluster DR](https://docs-download.pingcap.com/media/images/docs/dr/multi-replica-dr.png)
 
 前のアーキテクチャでは、各リージョンには、異なる利用可能なゾーン (AZ) に配置された 2 つの完全なデータ レプリカがあります。クラスター全体が 3 つのリージョンにまたがっています。リージョン1 は、読み取りおよび書き込み要求を処理するプライマリ リージョンです。災害によりリージョン 1 が完全に使用できなくなった場合、リージョン 2 を DR リージョンとして使用できます。リージョン3 は、マジョリティ プロトコルを満たすために使用されるレプリカです。このアーキテクチャは、「2-2-1」ソリューションとも呼ばれます。
 
@@ -79,7 +79,7 @@ BR は、TiDB のバックアップおよび復元ツールとして、特定の
 
 上記の 2 つのソリューションは、地域の DR を提供します。ただし、複数のリージョンが同時に利用できない場合、それらは機能しません。システムが非常に重要で、複数の領域をカバーするためにエラー トレランスの目標が必要な場合は、これら 2 つのソリューションを組み合わせる必要があります。
 
-![TiCDC-based multi-replica cluster DR](https://download.pingcap.com/images/docs/dr/ticdc-multi-replica-dr.png)
+![TiCDC-based multi-replica cluster DR](https://docs-download.pingcap.com/media/images/docs/dr/ticdc-multi-replica-dr.png)
 
 前述のアーキテクチャには、2 つの TiDB クラスターがあります。クラスタ1 には、3 つのリージョンにまたがる 5 つのレプリカがあります。リージョン1 には、プライマリ リージョンとして機能し、書き込み要求を処理する 2 つのレプリカが含まれています。リージョン2 には、リージョン 1 の DR リージョンとして機能する 2 つのレプリカがあります。このリージョンは、レイテンシーの影響を受けない読み取りサービスを提供します。リージョン3 にある最後のレプリカが投票に使用されます。
 
@@ -89,7 +89,7 @@ BR は、TiDB のバックアップおよび復元ツールとして、特定の
 
 ### BRに基づくDRソリューション {#dr-solution-based-on-br}
 
-![BR-based cluster DR](https://download.pingcap.com/images/docs/dr/br-dr.png)
+![BR-based cluster DR](https://docs-download.pingcap.com/media/images/docs/dr/br-dr.png)
 
 このアーキテクチャでは、TiDB クラスター 1 はリージョン 1 にデプロイされますBR は定期的にクラスター 1 のデータをリージョン 2 にバックアップし、このクラスターのデータ変更ログをリージョン 2 にも継続的にバックアップします。リージョン 1 で障害が発生し、クラスター 1 を回復できない場合、バックアップ データとデータ変更ログを使用して、リージョン 2 で新しいクラスター (クラスター 2) を復元し、サービスを提供できます。
 

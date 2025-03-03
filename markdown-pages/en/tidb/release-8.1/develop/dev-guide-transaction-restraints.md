@@ -11,7 +11,7 @@ This document briefly introduces the transaction restraints in TiDB.
 
 The isolation levels supported by TiDB are **RC (Read Committed)** and **SI (Snapshot Isolation)**, where **SI** is basically equivalent to the **RR (Repeatable Read)** isolation level.
 
-![isolation level](https://download.pingcap.com/images/docs/develop/transaction_isolation_level.png)
+![isolation level](https://docs-download.pingcap.com/media/images/docs/develop/transaction_isolation_level.png)
 
 ## Snapshot Isolation can avoid phantom reads
 
@@ -356,7 +356,7 @@ mysql> SELECT * FROM doctors;
 
 In both transactions, the application first checks if two or more doctors are on call; if so, it assumes that one doctor can safely take leave. Since the database uses the snapshot isolation, both checks return `2`, so both transactions move on to the next stage. `Alice` updates her record to be off duty, and so does `Bob`. Both transactions are successfully committed. Now there are no doctors on duty which violates the requirement that at least one doctor should be on call. The following diagram (quoted from **_Designing Data-Intensive Applications_**) illustrates what actually happens.
 
-![Write Skew](https://download.pingcap.com/images/docs/develop/write-skew.png)
+![Write Skew](https://docs-download.pingcap.com/media/images/docs/develop/write-skew.png)
 
 Now let's change the sample program to use `SELECT FOR UPDATE` to avoid the write skew problem:
 
@@ -714,7 +714,7 @@ The basic principle is to limit the size of the transaction. At the KV level, Ti
     - You can adjust it by using the [`performance.txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500) configuration parameter of tidb-server for TiDB v4.0.10 and later v4.0.x versions, TiDB v5.0.0 and later versions. The value is `6 MB` for versions earlier than v4.0.10.
     - Starting from v7.6.0, you can use the [`tidb_txn_entry_size_limit`](/system-variables.md#tidb_txn_entry_size_limit-new-in-v760) system variable to dynamically modify the value of this configuration item.
 
-- The maximum single transaction size supported is 1 TiB. 
+- The maximum single transaction size supported is 1 TiB.
 
     - For TiDB v4.0 and later versions, You can configure it by [`performance.txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit)). The value is `100 MB` for earlier versions.
     - For TiDB v6.5.0 and later versions, this configuration is no longer recommended. For more information, see [`performance.txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit)).
@@ -725,7 +725,7 @@ Note that for both the size restrictions and row restrictions, you should also c
 
 Currently locks are not added to auto-committed `SELECT FOR UPDATE` statements. The effect is shown in the following figure:
 
-![The situation in TiDB](https://download.pingcap.com/images/docs/develop/autocommit_selectforupdate_nowaitlock.png)
+![The situation in TiDB](https://docs-download.pingcap.com/media/images/docs/develop/autocommit_selectforupdate_nowaitlock.png)
 
 This is a known incompatibility issue with MySQL. You can solve this issue by using the explicit `BEGIN;COMMIT;` statements.
 

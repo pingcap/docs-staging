@@ -27,25 +27,25 @@ summary: 了解如何在 TiDB Dashboard 中查看慢查询。
 
 可按时间范围、慢查询语句关联的数据库、SQL 关键字、SQL 类型、显示的慢查询语句数量等条件过滤，筛选慢查询句。如下所示，默认显示 30 分钟内最近 100 条慢查询。
 
-![修改列表过滤条件](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-list1-v620.png)
+![修改列表过滤条件](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-list1-v620.png)
 
 ### 显示更多列信息
 
 页面顶部**选择列** (**Columns**) 选项中可选择显示更多列，可将鼠标移动到列名右侧的 **(i)** 图标处查看列的说明：
 
-![显示更多列信息](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-list2-v620.png)
+![显示更多列信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-list2-v620.png)
 
 ### 导出慢查询到本地
 
 点击页面右上角 ☰ (**更多**) 可以显示**导出** (**Export**) 选项。点击**导出** (**Export**) 后，TiDB Dashboard 会将当前列表中的慢查询以 CSV 文件的格式进行导出。
 
-![导出慢查询到本地](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-export-v651.png)
+![导出慢查询到本地](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-export-v651.png)
 
 ### 修改列表排序依据
 
 列表默认以**结束运行时间** (**Finish Time**) 逆序排序，点击不同的列标题可以修改排序依据或切换排序顺序：
 
-![修改列表排序依据](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-list3-v620.png)
+![修改列表排序依据](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-list3-v620.png)
 
 ## 查看执行详情
 
@@ -55,7 +55,7 @@ summary: 了解如何在 TiDB Dashboard 中查看慢查询。
 - 执行计划：慢查询的执行计划（下图中区域 2）
 - 其他分类好的 SQL 执行信息（下图中区域 3）
 
-![查看执行详情](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-detail1-v620.png)
+![查看执行详情](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail1-v620.png)
 
 ### SQL
 
@@ -73,7 +73,7 @@ TiDB Dashboard 提供两种方式查看执行计划：图形和文本。通过�
 
 下图为一个执行计划的图形化展示。
 
-![可视化执行计划弹窗](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-visual-plan-2.png)
+![可视化执行计划弹窗](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-visual-plan-2.png)
 
 - 执行计划的展示顺序是从左到右，从上到下。
 - 上面的节点是父算子，下面的节点是子算子。
@@ -82,10 +82,10 @@ TiDB Dashboard 提供两种方式查看执行计划：图形和文本。通过�
 
 点击节点区域，右侧将弹出算子的详细信息。
 
-![可视化执行计划弹窗-侧栏](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-visual-plan-popup.png)
+![可视化执行计划弹窗-侧栏](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-visual-plan-popup.png)
 
 ### SQL 执行相关信息
 
 点击标签页标题可切换显示不同分类的 SQL 执行信息：
 
-![显示不同分类执行信息](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-slow-queries-detail2-v620.png)
+![显示不同分类执行信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail2-v620.png)

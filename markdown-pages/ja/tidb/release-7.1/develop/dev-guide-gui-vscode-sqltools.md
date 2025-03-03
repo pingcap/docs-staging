@@ -74,7 +74,7 @@ TiDB は MySQL と互換性のあるデータベースであり、 [Visual Studi
 
 5.  VS Code を起動し、ナビゲーション ペインで**SQLTools**拡張機能を選択します。 **[接続]**セクションで、 **[新しい接続の追加]**をクリックし、データベース ドライバーとして**TiDB**を選択します。
 
-    ![VS Code SQLTools: add new connection](https://download.pingcap.com/images/docs/develop/vsc-sqltools-add-new-connection.jpg)
+    ![VS Code SQLTools: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/vsc-sqltools-add-new-connection.jpg)
 
 6.  設定ペインで、次の接続パラメータを構成します。
 
@@ -95,14 +95,14 @@ TiDB は MySQL と互換性のあるデータベースであり、 [Visual Studi
             >
             > Windows または GitHub コードスペースで実行している場合は、 **SSL を**空白のままにすることができます。デフォルトでは、SQLTools は Let&#39;s Encrypt によって厳選された有名な CA を信頼します。詳細については、 [TiDB サーバーレスのルート証明書管理](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters#root-certificate-management)を参照してください。
 
-    ![VS Code SQLTools: configure connection settings for TiDB Serverless](https://download.pingcap.com/images/docs/develop/vsc-sqltools-connection-config-serverless.jpg)
+    ![VS Code SQLTools: configure connection settings for TiDB Serverless](https://docs-download.pingcap.com/media/images/docs/develop/vsc-sqltools-connection-config-serverless.jpg)
 
 7.  **「接続のテスト」**をクリックして、TiDB サーバーレスクラスターへの接続を検証します。
 
     1.  ポップアップ ウィンドウで、 **[許可]**をクリックします。
     2.  **[SQLTools Driver Credentials]**ダイアログで、手順 4 で作成したパスワードを入力します。
 
-        ![VS Code SQLTools: enter password to connect to TiDB Serverless](https://download.pingcap.com/images/docs/develop/vsc-sqltools-password.jpg)
+        ![VS Code SQLTools: enter password to connect to TiDB Serverless](https://docs-download.pingcap.com/media/images/docs/develop/vsc-sqltools-password.jpg)
 
 8.  接続テストが成功すると、「**接続に成功しました!」**と表示されます。メッセージ。 「接続**を保存」**をクリックして接続構成を保存します。
 
@@ -119,7 +119,7 @@ TiDB は MySQL と互換性のあるデータベースであり、 [Visual Studi
 
 4.  VS Code を起動し、ナビゲーション ペインで**SQLTools**拡張機能を選択します。 **[接続]**セクションで、 **[新しい接続の追加]**をクリックし、データベース ドライバーとして**TiDB**を選択します。
 
-    ![VS Code SQLTools: add new connection](https://download.pingcap.com/images/docs/develop/vsc-sqltools-add-new-connection.jpg)
+    ![VS Code SQLTools: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/vsc-sqltools-add-new-connection.jpg)
 
 5.  設定ペインで、次の接続パラメータを構成します。
 
@@ -136,14 +136,14 @@ TiDB は MySQL と互換性のあるデータベースであり、 [Visual Studi
         -   **認証プロトコル**:**デフォルト**を選択します。
         -   **SSL** : **「無効」**を選択します。
 
-    ![VS Code SQLTools: configure connection settings for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/vsc-sqltools-connection-config-dedicated.jpg)
+    ![VS Code SQLTools: configure connection settings for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/vsc-sqltools-connection-config-dedicated.jpg)
 
 6.  **「接続のテスト」**をクリックして、TiDB 専用クラスターへの接続を検証します。
 
     1.  ポップアップ ウィンドウで、 **[許可]**をクリックします。
     2.  **[SQLTools Driver Credentials]**ダイアログで、TiDB 専用クラスターのパスワードを入力します。
 
-    ![VS Code SQLTools: enter password to connect to TiDB Dedicated](https://download.pingcap.com/images/docs/develop/vsc-sqltools-password.jpg)
+    ![VS Code SQLTools: enter password to connect to TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/vsc-sqltools-password.jpg)
 
 7.  接続テストが成功すると、「**接続に成功しました!」**と表示されます。メッセージ。 「接続**を保存」**をクリックして接続構成を保存します。
 
@@ -152,7 +152,7 @@ TiDB は MySQL と互換性のあるデータベースであり、 [Visual Studi
 
 1.  VS Code を起動し、ナビゲーション ペインで**SQLTools**拡張機能を選択します。 **[接続]**セクションで、 **[新しい接続の追加]**をクリックし、データベース ドライバーとして**TiDB**を選択します。
 
-    ![VS Code SQLTools: add new connection](https://download.pingcap.com/images/docs/develop/vsc-sqltools-add-new-connection.jpg)
+    ![VS Code SQLTools: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/vsc-sqltools-add-new-connection.jpg)
 
 2.  設定ペインで、次の接続パラメータを構成します。
 
@@ -180,13 +180,13 @@ TiDB は MySQL と互換性のあるデータベースであり、 [Visual Studi
         -   **認証プロトコル**:**デフォルト**を選択します。
         -   **SSL** : **「無効」**を選択します。
 
-    ![VS Code SQLTools: configure connection settings for TiDB Self-Hosted](https://download.pingcap.com/images/docs/develop/vsc-sqltools-connection-config-self-hosted.jpg)
+    ![VS Code SQLTools: configure connection settings for TiDB Self-Hosted](https://docs-download.pingcap.com/media/images/docs/develop/vsc-sqltools-connection-config-self-hosted.jpg)
 
 3.  **「接続のテスト」**をクリックして、TiDB セルフホストクラスターへの接続を検証します。
 
     パスワードが空でない場合は、ポップアップ ウィンドウで**[許可]**をクリックし、TiDB セルフホスト クラスターのパスワードを入力します。
 
-    ![VS Code SQLTools: enter password to connect to TiDB Self-Hosted](https://download.pingcap.com/images/docs/develop/vsc-sqltools-password.jpg)
+    ![VS Code SQLTools: enter password to connect to TiDB Self-Hosted](https://docs-download.pingcap.com/media/images/docs/develop/vsc-sqltools-password.jpg)
 
 4.  接続テストが成功すると、「**接続に成功しました!」**と表示されます。メッセージ。 「接続**を保存」**をクリックして接続構成を保存します。
 

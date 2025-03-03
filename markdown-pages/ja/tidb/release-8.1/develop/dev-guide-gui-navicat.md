@@ -64,7 +64,7 @@ TiDB は MySQL 互換のデータベースであり、 [ナビキャット](http
 
 5.  Navicat Premium を起動し、左上隅の**「接続」**をクリックし、 **Venfor フィルター**リストから**PingCAP**を選択して、右側のパネルで**TiDB を**ダブルクリックします。
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs/develop/navicat-premium-add-new-connection.png)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-add-new-connection.png)
 
 6.  [**新しい接続 (TiDB)]**ダイアログで、次の接続パラメータを構成します。
 
@@ -74,11 +74,11 @@ TiDB は MySQL 互換のデータベースであり、 [ナビキャット](http
     -   **ユーザー名**: TiDB Cloud接続ダイアログから`USERNAME`パラメータを入力します。
     -   **パスワード**: TiDB Cloud Serverless クラスターのパスワードを入力します。
 
-    ![Navicat: configure connection general panel for TiDB Cloud Serverless](https://download.pingcap.com/images/docs/develop/navicat-premium-connection-config-serverless-general.png)
+    ![Navicat: configure connection general panel for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-serverless-general.png)
 
 7.  **[SSL]**タブをクリックし、 **[SSL の使用]** 、 **[認証の使用]** 、 **[CA に対するサーバー証明書の検証**] チェックボックスをオンにします。次に、 TiDB Cloud接続ダイアログから`CA`ファイルを選択し、 **[CA 証明書]**フィールドに入力します。
 
-    ![Navicat: configure connection SSL panel for TiDB Cloud Serverless](https://download.pingcap.com/images/docs/develop/navicat-premium-connection-config-serverless-ssl.png)
+    ![Navicat: configure connection SSL panel for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-serverless-ssl.png)
 
 8.  **「テスト接続」**をクリックして、 TiDB Cloud Serverless クラスターへの接続を検証します。
 
@@ -101,7 +101,7 @@ TiDB は MySQL 互換のデータベースであり、 [ナビキャット](http
 
 5.  Navicat Premium を起動し、左上隅の**「接続」**をクリックし、 **Venfor フィルター**リストから**PingCAP**を選択して、右側のパネルで**TiDB を**ダブルクリックします。
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs/develop/navicat-premium-add-new-connection.png)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-add-new-connection.png)
 
 6.  [**新しい接続 (TiDB)]**ダイアログで、次の接続パラメータを構成します。
 
@@ -111,11 +111,11 @@ TiDB は MySQL 互換のデータベースであり、 [ナビキャット](http
     -   **ユーザー名**: TiDB Cloud接続ダイアログから`USERNAME`パラメータを入力します。
     -   **パスワード**: TiDB Cloud Dedicated クラスターのパスワードを入力します。
 
-    ![Navicat: configure connection general panel for TiDB Cloud Dedicated](https://download.pingcap.com/images/docs/develop/navicat-premium-connection-config-dedicated-general.png)
+    ![Navicat: configure connection general panel for TiDB Cloud Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-dedicated-general.png)
 
 7.  **[SSL]**タブをクリックし、 **[SSL の使用]** 、 **[認証の使用]** 、 **[CA に対するサーバー証明書の検証]**チェックボックスをオンにします。次に、手順 4 でダウンロードした CA ファイルを**[CA 証明書]**フィールドに選択します。
 
-    ![Navicat: configure connection SSL panel for TiDB Cloud Dedicated](https://download.pingcap.com/images/docs/develop/navicat-premium-connection-config-dedicated-ssl.png)
+    ![Navicat: configure connection SSL panel for TiDB Cloud Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-dedicated-ssl.png)
 
 8.  TiDB Cloud Dedicated クラスターへの接続を検証するための**テスト接続**。
 
@@ -126,7 +126,7 @@ TiDB は MySQL 互換のデータベースであり、 [ナビキャット](http
 
 1.  Navicat Premium を起動し、左上隅の**「接続」**をクリックし、 **Venfor フィルター**リストから**PingCAP**を選択して、右側のパネルで**TiDB を**ダブルクリックします。
 
-    ![Navicat: add new connection](https://download.pingcap.com/images/docs/develop/navicat-premium-add-new-connection.png)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-add-new-connection.png)
 
 2.  [**新しい接続 (TiDB)]**ダイアログで、次の接続パラメータを構成します。
 
@@ -136,7 +136,7 @@ TiDB は MySQL 互換のデータベースであり、 [ナビキャット](http
     -   **ユーザー名**: TiDB に接続するために使用するユーザー名を入力します。
     -   **パスワード**: TiDB に接続するために使用するパスワードを入力します。
 
-    ![Navicat: configure connection general panel for self-hosted TiDB](https://download.pingcap.com/images/docs/develop/navicat-premium-connection-config-self-hosted-general.png)
+    ![Navicat: configure connection general panel for self-hosted TiDB](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-self-hosted-general.png)
 
 3.  **「テスト接続」**をクリックして、TiDB セルフマネージド クラスターへの接続を検証します。
 

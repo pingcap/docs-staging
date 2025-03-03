@@ -11,7 +11,7 @@ summary: 介绍 TiDB 中的事务限制。
 
 TiDB 支持的隔离级别是 RC（Read Committed）与 SI（Snapshot Isolation），其中 SI 与 RR（Repeatable Read）隔离级别基本等价。
 
-![隔离级别](https://download.pingcap.com/images/docs-cn/develop/transaction_isolation_level.png)
+![隔离级别](https://docs-download.pingcap.com/media/images/docs-cn/develop/transaction_isolation_level.png)
 
 ## SI 可以克服幻读
 
@@ -356,7 +356,7 @@ mysql> SELECT * FROM doctors;
 
 在两个事务中，应用首先检查是否有两个或以上的医生正在值班；如果是的话，它就假定一名医生可以安全地休班。由于数据库使用快照隔离，两次检查都返回 2，所以两个事务都进入下一个阶段。Alice 更新自己的记录休班了，而 Bob 也做了一样的事情。两个事务都成功提交了，现在没有医生值班了。违反了至少有一名医生在值班的要求。下图(引用自《Designing Data-Intensive Application》)说明了实际发生的情况：
 
-![Write Skew](https://download.pingcap.com/images/docs-cn/develop/write-skew.png)
+![Write Skew](https://docs-download.pingcap.com/media/images/docs-cn/develop/write-skew.png)
 
 现在更改示例程序，使用 `SELECT FOR UPDATE` 来克服写偏斜问题：
 
@@ -724,7 +724,7 @@ mysql> SELECT * FROM T2;
 
 自动提交下的 SELECT FOR UPDATE 目前不会加锁。效果如下图所示：
 
-![TiDB中的情况](https://download.pingcap.com/images/docs-cn/develop/autocommit_selectforupdate_nowaitlock.png)
+![TiDB中的情况](https://docs-download.pingcap.com/media/images/docs-cn/develop/autocommit_selectforupdate_nowaitlock.png)
 
 这是已知的与 MySQL 不兼容的地方。
 

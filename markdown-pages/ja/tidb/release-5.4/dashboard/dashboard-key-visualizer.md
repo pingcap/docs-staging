@@ -13,7 +13,7 @@ TiDBダッシュボードのキービジュアライザーページは、TiDBの
 
 -   TiDBダッシュボードにログインした後、左側のナビゲーションメニューで[**キービジュア**ライザー]をクリックします。
 
-![Access Key Visualizer](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-access.png)
+![Access Key Visualizer](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-access.png)
 
 -   ブラウザで[http://127.0.0.1:2379/dashboard/#/keyviz](http://127.0.0.1:2379/dashboard/#/keyviz)にアクセスします。 `127.0.0.1:2379`を実際のPDインスタンスのアドレスとポートに置き換えます。
 
@@ -21,7 +21,7 @@ TiDBダッシュボードのキービジュアライザーページは、TiDBの
 
 次の画像は、KeyVisualizerページのデモンストレーションです。
 
-![Key Visualizer page](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-overview.png)
+![Key Visualizer page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-overview.png)
 
 上記のインターフェイスから、次のオブジェクトを確認できます。
 
@@ -66,19 +66,19 @@ TiDBクラスタには、最大で数十万のリージョンが含まれる場�
 
 Key Visualizerページを初めて使用するには、 **[設定]**ページでこの機能を手動で有効にする必要があります。ページガイドに従い、[<strong>設定</strong>を開く]をクリックして設定ページを開きます。
 
-![Feature disabled](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-not-enabled.png)
+![Feature disabled](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-not-enabled.png)
 
 この機能を有効にした後、右上隅にある**[設定]**アイコンをクリックして設定ページを開くことができます。
 
-![Settings icon](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-settings-button.png)
+![Settings icon](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-settings-button.png)
 
 設定ページは次のように表示されます。
 
-![Settings page](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-settings.png)
+![Settings page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-settings.png)
 
 スイッチを介してデータ収集を開始するかどうかを設定し、[**保存**]をクリックして有効にします。この機能を有効にすると、ツールバーが使用可能になっていることがわかります。
 
-![Toolbar](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-toolbar.png)
+![Toolbar](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-toolbar.png)
 
 この機能を有効にすると、バックエンドでデータ収集が行われます。すぐにヒートマップを見ることができます。
 
@@ -91,12 +91,12 @@ Key Visualizerを開くと、デフォルトで過去6時間のデータベー�
 
     -   [**選択してズーム**]ボタンをクリックします。次に、このボタンをクリックしてドラッグし、ズームインする領域を選択します。
 
-    ![Selection box](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-select-zoom.gif)
+    ![Selection box](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-select-zoom.gif)
 
     -   [**リセット**]ボタンをクリックして、リージョン範囲をデータベース全体にリセットします。
     -   **時間選択ボックス**（上のインターフェースの`6 hours`の位置）をクリックして、観測期間を再度選択します。
 
-    ![Select time](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-select-time.png)
+    ![Select time](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-select-time.png)
 
 > **ノート：**
 >
@@ -112,7 +112,7 @@ Key Visualizerを開くと、デフォルトで過去6時間のデータベー�
 
 ### 指標を選択 {#select-metrics}
 
-![Select metrics](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-select-type.png)
+![Select metrics](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-select-type.png)
 
 **メトリック選択ボックス**（上のインターフェイスの`Write (bytes)`の位置）でこのメトリックを選択すると、関心のあるメトリックを表示できます。
 
@@ -134,11 +134,11 @@ Key Visualizerを開くと、デフォルトで過去6時間のデータベー�
 
 関心のあるバケットにマウスを合わせると、このリージョン範囲の詳細情報が表示されます。以下の画像は、この情報の例です。
 
-![Bucket details](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-tooltip.png)
+![Bucket details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-tooltip.png)
 
 この情報をコピーする場合は、バケットをクリックします。次に、関連する詳細が記載されたページが一時的に固定されます。情報をクリックすると、クリップボードにコピーされます。
 
-![Copy Bucket details](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-tooltip-copy.png)
+![Copy Bucket details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-tooltip-copy.png)
 
 ## 一般的なヒートマップタイプ {#common-heatmap-types}
 
@@ -146,19 +146,19 @@ Key Visualizerを開くと、デフォルトで過去6時間のデータベー�
 
 ### 均等に分散されたワークロード {#evenly-distributed-workload}
 
-![Balanced](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-well-dist.png)
+![Balanced](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-well-dist.png)
 
 上記のヒートマップでは、明るい色と暗い色がきめ細かく混ざっています。これは、読み取りまたは書き込みが時間の経過とともにキー範囲間で均等に分散されていることを示しています。ワークロードはすべてのノードに均等に分散されます。これは分散データベースに最適です。
 
 ### 定期的に読み取りと書き込み {#periodically-reads-and-writes}
 
-![Periodically](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-period.png)
+![Periodically](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-period.png)
 
 上記のヒートマップでは、X軸（時間）に沿って明るさと暗さが交互になっていますが、明るさはY軸（領域）に沿って比較的均一です。これは、読み取りと書き込みが定期的に変更されることを示しています。これは、定期的にスケジュールされたタスクのシナリオで発生する可能性があります。たとえば、ビッグデータプラットフォームは、TiDBから毎日定期的にデータを抽出します。この種のシナリオでは、ピーク使用時にリソースが十分であるかどうかに注意してください。
 
 ### 集中的な読み取りまたは書き込み {#concentrated-reads-or-writes}
 
-![Concentrated](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-continue.png)
+![Concentrated](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-continue.png)
 
 上のヒートマップでは、いくつかの明るい線を見ることができます。 Y軸に沿って、明るい線の周りのフリンジは暗くなります。これは、明るい線に対応する領域の読み取りおよび書き込みトラフィックが多いことを示しています。アプリケーションでトラフィック分散が期待されているかどうかを確認できます。たとえば、すべてのサービスがユーザーテーブルに関連付けられている場合、ユーザーテーブルの全体的なトラフィックが高くなる可能性があるため、ヒートマップに明るい線を表示するのが妥当です。
 
@@ -166,7 +166,7 @@ Key Visualizerを開くと、デフォルトで過去6時間のデータベー�
 
 ### シーケンシャル読み取りまたは書き込み {#sequential-reads-or-writes}
 
-![Sequential](https://download.pingcap.com/images/docs/dashboard/dashboard-keyviz-sequential.png)
+![Sequential](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-keyviz-sequential.png)
 
 上のヒートマップでは、明るい線を見ることができます。これは、データの読み取りまたは書き込みがシーケンシャルであることを意味します。シーケンシャルデータの読み取りまたは書き込みの一般的なシナリオは、データのインポートまたはテーブルとインデックスのスキャンです。たとえば、自動インクリメントIDを使用してテーブルにデータを継続的に書き込みます。
 

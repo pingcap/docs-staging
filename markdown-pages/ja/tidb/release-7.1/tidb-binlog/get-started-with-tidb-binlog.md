@@ -29,7 +29,7 @@ TiDB Binlog は、MySQL または MariaDB から TiDB にデータを移行す�
 
 TiDB Binlog は、**Pump**と**Drainerの**2 つのコンポーネントで構成されます。いくつかのPumpノードがポンプ クラスターを構成します。各Pumpノードは TiDB サーバー インスタンスに接続し、クラスター内の各 TiDB サーバー インスタンスに対して行われた更新を受け取ります。 Drainer は、 Pumpクラスターに接続し、受信した更新を特定のダウンストリーム宛先 (たとえば、Kafka、別の TiDBクラスタ、または MySQL/MariaDBサーバー)用の正しい形式に変換します。
 
-![TiDB-Binlog architecture](https://download.pingcap.com/images/docs/tidb-binlog-cluster-architecture.png)
+![TiDB-Binlog architecture](https://docs-download.pingcap.com/media/images/docs/tidb-binlog-cluster-architecture.png)
 
 Pumpのクラスター化アーキテクチャ、新しい TiDB サーバー インスタンスが TiDBクラスタに参加または TiDB クラスターから離脱したり、PumpノードがPumpクラスターに参加または離脱したりしても、更新が失われることはありません。
 

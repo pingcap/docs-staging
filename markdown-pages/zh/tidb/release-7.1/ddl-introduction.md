@@ -43,7 +43,7 @@ TiDB 通过 etcd 的选举功能从多个 TiDB 节点中选举出一个节点来
 
 DDL Owner 的简单示意图如下：
 
-![DDL Owner](https://download.pingcap.com/images/docs-cn/ddl-owner.png)
+![DDL Owner](https://docs-download.pingcap.com/media/images/docs-cn/ddl-owner.png)
 
 你可以通过 `ADMIN SHOW DDL` 语句查看当前 DDL owner：
 

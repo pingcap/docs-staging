@@ -17,7 +17,7 @@ AWS PrivateLink を利用することで、エンドポイント接続は安全�
 
 プライベート エンドポイントのアーキテクチャは次のとおりです。
 
-![Private endpoint architecture](https://download.pingcap.com/images/docs/tidb-cloud/aws-private-endpoint-arch.png)
+![Private endpoint architecture](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-private-endpoint-arch.png)
 
 プライベートエンドポイントとエンドポイントサービスの詳細な定義については、次の AWS ドキュメントを参照してください。
 
@@ -103,7 +103,7 @@ AWS マネジメントコンソールを使用して VPC インターフェイ�
 
     **エンドポイントの作成**ページが表示されます。
 
-    ![Verify endpoint service](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/create-endpoint-2.png)
+    ![Verify endpoint service](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/create-endpoint-2.png)
 
 3.  **エンドポイント設定**領域で、必要に応じて名前タグを入力し、 **NLB および GWLB を使用するエンドポイント サービス**オプションを選択します。
 
@@ -168,7 +168,7 @@ AWS マネジメントコンソールでプライベート DNS を有効にす�
 3.  **このエンドポイントに対して有効にする**チェックボックスをオンにします。
 4.  **「変更を保存」を**クリックします。
 
-    ![Enable private DNS](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/enable-private-dns.png)
+    ![Enable private DNS](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/enable-private-dns.png)
 
 </div>
 </SimpleTab>
@@ -212,4 +212,4 @@ AWS マネジメントコンソールでプライベート DNS を有効にす�
 
 AWS マネジメントコンソールで、VPC エンドポイントのセキュリティグループを適切に設定する必要がある場合があります。 **[VPC]** &gt; **[エンドポイント]**に移動します。VPC エンドポイントを右クリックし、適切な**[セキュリティグループの管理]**を選択します。ポート 4000 または顧客定義のポートで EC2 インスタンスからのインバウンドアクセスを許可する、VPC 内の適切なセキュリティグループ。
 
-![Manage security groups](https://download.pingcap.com/images/docs/tidb-cloud/private-endpoint/manage-security-groups.png)
+![Manage security groups](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/private-endpoint/manage-security-groups.png)

@@ -11,15 +11,15 @@ summary: テーブルステータスを表示は、TiDB内のテーブルに関�
 
 **ShowTableStatusStmt:**
 
-![ShowTableStatusStmt](https://download.pingcap.com/images/docs/sqlgram/ShowTableStatusStmt.png)
+![ShowTableStatusStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTableStatusStmt.png)
 
 **送信者または受信者:**
 
-![FromOrIn](https://download.pingcap.com/images/docs/sqlgram/FromOrIn.png)
+![FromOrIn](https://docs-download.pingcap.com/media/images/docs/sqlgram/FromOrIn.png)
 
 **ステータステーブル名:**
 
-![StatusTableName](https://download.pingcap.com/images/docs/sqlgram/StatusTableName.png)
+![StatusTableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/StatusTableName.png)
 
 ## 例 {#examples}
 

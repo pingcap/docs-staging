@@ -98,7 +98,7 @@ TiDB2.0:
 | 21    | 31.466秒  | オーム      |
 | 22    | 31.539秒  | 125.471秒 |
 
-![TPC-H Query Result](https://download.pingcap.com/images/docs/tpch-query-result.png)
+![TPC-H Query Result](https://docs-download.pingcap.com/media/images/docs/tpch-query-result.png)
 
 以下の点に注意してください。
 

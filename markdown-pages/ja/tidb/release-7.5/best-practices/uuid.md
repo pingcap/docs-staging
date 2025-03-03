@@ -51,7 +51,7 @@ summary: UUIDは、AUTO_INCREMENT整数値の代わりに使用されると競�
 
 </CustomContent>
 
-![Key Visualizer](https://download.pingcap.com/images/docs/best-practices/uuid_keyviz.png)
+![Key Visualizer](https://docs-download.pingcap.com/media/images/docs/best-practices/uuid_keyviz.png)
 
 ```sql
 CREATE TABLE `uuid_demo_1` (

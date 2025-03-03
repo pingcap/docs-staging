@@ -27,7 +27,7 @@ summary: Learn the deployment solution to three availability zones in two region
 -   クラスターには 5 つのレプリカがあり、AZ1 に 2 つ、AZ2 に 2 つ、AZ3 に 1 つです。 TiKVコンポーネントの場合、各ラックにはラベルがあり、これは各ラックにレプリカがあることを意味します。
 -   Raftプロトコルは、データの一貫性と高可用性を確保するために採用されており、ユーザーに対して透過的です。
 
-![3-AZ-in-2-region architecture](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-01.png)
+![3-AZ-in-2-region architecture](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-01.png)
 
 このアーキテクチャは可用性が高いです。リージョンリーダーの配布は、同じリージョン (シアトル) にある 2 つの AZ (AZ1 と AZ2) に制限されています。リージョンリーダーの配布が制限されていない 3 AZ ソリューションと比較して、このアーキテクチャには次の利点と欠点があります。
 
@@ -47,7 +47,7 @@ summary: Learn the deployment solution to three availability zones in two region
 
 2 つのリージョン (シアトルとサンフランシスコ) の展開計画における 3 つの AZ の構成は、次のように示されています。
 
-![3-AZ-2-region](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-02.png)
+![3-AZ-2-region](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-02.png)
 
 前の図から、シアトルには AZ1 と AZ2 の 2 つの AZ があることがわかります。 AZ1 には、rac1、rac2、および rac3 の 3 セットのラックがあります。 AZ2 には、rac4 と rac5 の 2 つのラックがあります。サンフランシスコの AZ3 には rac6 ラックがあります。
 
@@ -130,7 +130,7 @@ alertmanager_servers:
 
 2 つのリージョンに 3 つの AZ をデプロイする場合、ラベルの設計では、可用性と災害復旧を考慮する必要があります。デプロイメントの物理構造に基づいて、4 つのレベル ( `az` 、 `replication zone` 、 `rack` 、および`host` ) を定義することをお勧めします。
 
-![Label logical definition](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-03.png)
+![Label logical definition](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-03.png)
 
 PD 構成で、TiKV ラベルのレベル情報を追加します。
 

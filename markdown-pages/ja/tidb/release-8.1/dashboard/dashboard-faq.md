@@ -137,8 +137,8 @@ tiup update playground
 
     次の例では、Chrome が使用されています。
 
-    ![Opening DevTools from Chrome's main menu](https://download.pingcap.com/images/docs/dashboard/dashboard-faq-devtools.png)
+    ![Opening DevTools from Chrome's main menu](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-faq-devtools.png)
 
 3.  **アプリケーション**パネルを選択し、**ローカル ストレージ**メニューを展開して、 **TiDB ダッシュボード ページ ドメイン**を選択します。**すべてクリア**ボタンをクリックします。
 
-    ![Clear the Local Storage](https://download.pingcap.com/images/docs/dashboard/dashboard-faq-devtools-application.png)
+    ![Clear the Local Storage](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-faq-devtools-application.png)

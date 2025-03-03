@@ -100,7 +100,7 @@ DXF を使用して`ADD INDEX`タスクを実行する前に、 [高速オンラ
 
 DXF のアーキテクチャは次のとおりです。
 
-![Architecture of the DXF](https://download.pingcap.com/images/docs/dist-task/dist-task-architect.jpg)
+![Architecture of the DXF](https://docs-download.pingcap.com/media/images/docs/dist-task/dist-task-architect.jpg)
 
 上の図に示すように、DXF でのタスクの実行は主に次のモジュールによって処理されます。
 

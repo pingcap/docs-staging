@@ -11,7 +11,7 @@ Click any item in the list to enter the detail page of the SQL statement to view
 - The execution plan list: If a SQL statement has multiple execution plans, this list is displayed. Besides text information of execution plans, TiDB v6.2.0 introduces visual execution plans, through which you can learn each operator of a statement and detailed information more intuitively. You can select different execution plans, and the details of the selected plans are displayed below the list (area 2 in the following figure).
 - Execution detail of plans, which displays the detailed information of the selected execution plans. See [Execution plan in details](#execution-details-of-plans) (area 3 in the following figure).
 
-![Details](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-detail-v660.png)
+![Details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-detail-v660.png)
 
 ## Fast plan binding
 
@@ -23,29 +23,29 @@ Starting from v6.6.0, TiDB introduces the fast plan binding feature. You can qui
 
 1. Click **Plan Binding**. The **Plan Binding** dialog box is displayed.
 
-    ![Fast plan binding - not bound - entry](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-entry-notbound.png)
+    ![Fast plan binding - not bound - entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-entry-notbound.png)
 
 2. Select a plan that you want to bind and click **Bind**.
 
-    ![Fast plan binding - popup](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-popup-notbound.png)
+    ![Fast plan binding - popup](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-notbound.png)
 
 3. After the binding is completed, you can see the **Bound** label.
 
-    ![Fast plan binding - popup - binding completed](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-popup-bound.png)
+    ![Fast plan binding - popup - binding completed](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-bound.png)
 
 #### Drop an existing binding
 
 1. On the page of a SQL statement that has an existing binding, click **Plan Binding**. The **Plan Binding** dialog box is displayed.
 
-    ![Fast plan binding - bound - entry](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-entry-bound.png)
+    ![Fast plan binding - bound - entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-entry-bound.png)
 
 2. Click **Drop**.
 
-    ![Fast plan binding - popup - bound](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-popup-bound.png)
+    ![Fast plan binding - popup - bound](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-bound.png)
 
 3. After the binding is dropped, you can see the **Not bound** label.
 
-    ![Fast plan binding - popup](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-popup-notbound.png)
+    ![Fast plan binding - popup](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-notbound.png)
 
 ### Limitation
 
@@ -66,13 +66,13 @@ The execution detail of plans includes the following information:
 - Execution plan: Complete information about execution plans, displayed in graph and text. For details of the execution plan, see [Understand the Query Execution Plan](/explain-overview.md). If multiple execution plans are selected, only (any) one of them is displayed.
 - For basic information, execution time, Coprocessor read, transaction, and slow query of the SQL statement, you can click the corresponding tab titles to switch among different information.
 
-![Execution details of plans](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-detail.png)
+![Execution details of plans](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-detail.png)
 
 ### Basic Tab
 
 The basic information of a SQL execution includes the table names, index name, execution count, and total latency. The **Description** column provides detailed description of each field.
 
-![Basic information](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-basic.png)
+![Basic information](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-basic.png)
 
 ### Time Tab
 
@@ -82,24 +82,24 @@ Click the **Time** tab, and you can see how long each stage of the execution pla
 >
 > Because some operations might be performed in parallel within a single SQL statement, the cumulative duration of each stage might exceed the actual execution time of the SQL statement.
 
-![Execution time](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-time.png)
+![Execution time](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-time.png)
 
 ### Coprocessor Read Tab
 
 Click the **Coprocessor Read** tab, and you can see information related to Coprocessor read.
 
-![Coprocessor read](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-cop-read.png)
+![Coprocessor read](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-cop-read.png)
 
 ### Transaction Tab
 
 Click the **Transaction** tab, and you can see information related to execution plans and transactions, such as the average number of written keys or the maximum number of written keys.
 
-![Transaction](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-transaction.png)
+![Transaction](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-transaction.png)
 
 ### Slow Query Tab
 
 If an execution plan is executed too slowly, you can see its associated slow query records under the **Slow Query** tab.
 
-![Slow Query](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-slow-queries.png)
+![Slow Query](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-slow-queries.png)
 
 The information displayed in this area has the same structure with the slow query page. See [TiDB Dashboard Slow Query Page](/dashboard/dashboard-slow-query.md) for details.

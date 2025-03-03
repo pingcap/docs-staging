@@ -42,11 +42,11 @@ useServerPrepStmts=false
 
 从以下 Dashboard 的 Top SQL 页面可以观察到，非业务 SQL 类型 `SELECT @@session.tx_isolation` 消耗的资源最多。虽然 TiDB 处理这类 SQL 语句的速度快，但由于执行次数最多导致总体 CPU 耗时最多。
 
-![dashboard-for-query-interface](https://download.pingcap.com/images/docs-cn/performance/case1.png)
+![dashboard-for-query-interface](https://docs-download.pingcap.com/media/images/docs-cn/performance/case1.png)
 
 观察以下 TiDB 的火焰图，可以发现，在 SQL 的执行过程中，Compile 和 Optimize 等函数的 CPU 消耗占比明显。因为应用使用了 Query 接口，TiDB 无法使用执行计划缓存，导致每个 SQL 都需要编译生成执行计划。
 
-![flame-graph-for-query-interface](https://download.pingcap.com/images/docs-cn/performance/7.1.png)
+![flame-graph-for-query-interface](https://docs-download.pingcap.com/media/images/docs-cn/performance/7.1.png)
 
 - ExecuteStmt cpu = 38% cpu time = 23.84s
 - Compile cpu = 27%  cpu time = 17.17s
@@ -56,7 +56,7 @@ useServerPrepStmts=false
 
 观察以下 Performance Overview 面板中数据库时间概览和 QPS 的数据：
 
-![performance-overview-1-for-query-interface](https://download.pingcap.com/images/docs-cn/performance/j-1.png)
+![performance-overview-1-for-query-interface](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-1.png)
 
 - Database Time by SQL Type 中 Select 语句耗时最多
 - Database Time by SQL Phase 中 execute 和 compile 占比最多
@@ -68,7 +68,7 @@ useServerPrepStmts=false
 
 观察集群的资源消耗，TiDB CPU 的平均利用率为 925%， TiKV CPU 的平均利用率为 201%， TiKV IO 平均吞吐为 18.7 MB/s。TiDB 的资源消耗明显更高。
 
-![performance-overview-2-for-query-interface](https://download.pingcap.com/images/docs-cn/performance/5.png)
+![performance-overview-2-for-query-interface](https://docs-download.pingcap.com/media/images/docs-cn/performance/5.png)
 
 ### 分析结论
 
@@ -90,11 +90,11 @@ useServerPrepStmts=false&useConfigs=maxPerformance
 
 在 Dashboard 的 Top SQL 页面，可以看到原本占比最多的 `SELECT @@session.tx_isolation` 已消失。
 
-![dashboard-for-maxPerformance](https://download.pingcap.com/images/docs-cn/performance/case2.png)
+![dashboard-for-maxPerformance](https://docs-download.pingcap.com/media/images/docs-cn/performance/case2.png)
 
 观察以下 TiDB 的火焰图，可以发现 SQL 语句执行中 Compile 和 Optimize 等函数 CPU 消耗占比高：
 
-![flame-graph-for-maxPerformance](https://download.pingcap.com/images/docs-cn/performance/20220507-145257.jpg)
+![flame-graph-for-maxPerformance](https://docs-download.pingcap.com/media/images/docs-cn/performance/20220507-145257.jpg)
 
 - ExecuteStmt cpu = 43% cpu time =35.84s
 - Compile cpu = 31% cpu time =25.61s
@@ -104,7 +104,7 @@ useServerPrepStmts=false&useConfigs=maxPerformance
 
 数据库时间概览和 QPS 的数据如下：
 
-![performance-overview-1-for-maxPerformance](https://download.pingcap.com/images/docs-cn/performance/j-2.png)
+![performance-overview-1-for-maxPerformance](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-2.png)
 
 - Database Time by SQL Type 中 select 语句耗时最多
 - Database Time by SQL Phase 中 execute 和 compile 占比最多
@@ -116,11 +116,11 @@ useServerPrepStmts=false&useConfigs=maxPerformance
 
 从场景 1 到场景 2，TiDB CPU 平均利用率从 925% 下降到 874%，TiKV CPU 平均利用率从 201% 上升到 250% 左右。
 
-![performance-overview-2-for-maxPerformance](https://download.pingcap.com/images/docs-cn/performance/9.1.1.png)
+![performance-overview-2-for-maxPerformance](https://docs-download.pingcap.com/media/images/docs-cn/performance/9.1.1.png)
 
 关键延迟指标变化如下：
 
-![performance-overview-3-for-maxPerformance](https://download.pingcap.com/images/docs-cn/performance/9.2.2.png)
+![performance-overview-3-for-maxPerformance](https://docs-download.pingcap.com/media/images/docs-cn/performance/9.2.2.png)
 
 - avg query duration = 1.12ms (479μs->1.12ms)
 - avg parse duration = 84.7μs (37.2μs->84.7μs)
@@ -149,7 +149,7 @@ useServerPrepStmts=true&useConfigs=maxPerformance"
 
 观察以下 TiDB 的火焰图，可以发现启用 Prepared Statement 接口之后，CompileExecutePreparedStmt 和 Optimize 的 CPU 占比依然明显。
 
-![flame-graph-for-PrepStmts](https://download.pingcap.com/images/docs-cn/performance/3.1.1.png)
+![flame-graph-for-PrepStmts](https://docs-download.pingcap.com/media/images/docs-cn/performance/3.1.1.png)
 
 - ExecutePreparedStmt cpu = 31%  cpu time = 23.10s
 - preparedStmtExec cpu = 30% cpu time = 22.92s
@@ -160,7 +160,7 @@ useServerPrepStmts=true&useConfigs=maxPerformance"
 
 使用 Prepared Statement 接口之后，数据库时间概览和 QPS 的数据如下：
 
-![performance-overview-1-for-PrepStmts](https://download.pingcap.com/images/docs-cn/performance/j-3.png)
+![performance-overview-1-for-PrepStmts](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-3.png)
 
 QPS 从 24.4k 下降到 19.7k，从 CPS By Type 面板可以看到应用程序使用了三种 Prepared 命令。Database Time Overview 出现了 general 的语句类型（包含了 StmtPrepare 和 StmtClose 等命令的执行耗时），占比排名第二。这说明，即使使用了 Prepared Statement 接口，执行计划缓存也没有命中，原因在于 TiDB 内部处理 StmtClose 命令时，会清理修改语句的执行计划缓存。
 
@@ -173,11 +173,11 @@ QPS 从 24.4k 下降到 19.7k，从 CPS By Type 面板可以看到应用程序�
 
 TiDB CPU 平均利用率从 874% 上升到 936%
 
-![performance-overview-1-for-PrepStmts](https://download.pingcap.com/images/docs-cn/performance/3-2.png)
+![performance-overview-1-for-PrepStmts](https://docs-download.pingcap.com/media/images/docs-cn/performance/3-2.png)
 
 主要延迟数据如下：
 
-![performance-overview-2-for-PrepStmts](https://download.pingcap.com/images/docs-cn/performance/3.4.png)
+![performance-overview-2-for-PrepStmts](https://docs-download.pingcap.com/media/images/docs-cn/performance/3.4.png)
 
 - avg query duration = 528μs (1.12ms->528μs)
 - avg parse duration = 14.9μs (84.7μs->14.9μs)
@@ -210,13 +210,13 @@ TiDB CPU 平均利用率从 874% 上升到 936%
 
 PreparseStmt cpu = 25% cpu time = 12.75s
 
-![flame-graph-for-3-commands](https://download.pingcap.com/images/docs-cn/performance/4.2.png)
+![flame-graph-for-3-commands](https://docs-download.pingcap.com/media/images/docs-cn/performance/4.2.png)
 
 #### Performance Overview 面板
 
 在 Performance Overview 面板种，最显著的变化来自于 Compile 阶段的占比，从场景 3 每秒消耗 8.95 秒降低为 1.18 秒。执行计划缓存的命中次数大致等于 StmtExecute 次数。在 QPS 上升的前提下，每秒 Select 语句消耗的数据库时间降低了，general 类型的语句消耗时间变长。
 
-![performance-overview-1-for-3-commands](https://download.pingcap.com/images/docs-cn/performance/j-4.png)
+![performance-overview-1-for-3-commands](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-4.png)
 
 - Database Time by SQL Type 中 select 语句耗时最多
 - Database Time by SQL Phase 中 execute 占比最多
@@ -228,11 +228,11 @@ PreparseStmt cpu = 25% cpu time = 12.75s
 
 TiDB CPU 平均利用率从 936% 下降到 827%。
 
-![performance-overview-2-for-3-commands](https://download.pingcap.com/images/docs-cn/performance/4.4.png)
+![performance-overview-2-for-3-commands](https://docs-download.pingcap.com/media/images/docs-cn/performance/4.4.png)
 
 Compile 平均时间显著下降，从 374 us 下降到 53.3 us，因为 QPS 的上升，平均 execute 时间有所上升。
 
-![performance-overview-3-for-3-commands](https://download.pingcap.com/images/docs-cn/performance/4.5.png)
+![performance-overview-3-for-3-commands](https://docs-download.pingcap.com/media/images/docs-cn/performance/4.5.png)
 
 - avg query duration = 426μs (528μs->426μs)
 - avg parse duration = 12.3μs (14.8μs->12.3μs)
@@ -269,13 +269,13 @@ useServerPrepStmts=true&cachePrepStmts=true&prepStmtCacheSize=1000&prepStmtCache
 
 - ExecutePreparedStmt cpu = 22% cpu time = 8.4s
 
-![flame-graph-for-1-command](https://download.pingcap.com/images/docs-cn/performance/5.1.1.png)
+![flame-graph-for-1-command](https://docs-download.pingcap.com/media/images/docs-cn/performance/5.1.1.png)
 
 #### Performance Overview 面板
 
 在 Performance Overview 面板中，最显著的变化是，CPS By Type 面板中三种 Stmt command 类型变成了一种，Database Time by SQL Type 面板中的 general 语句类型消失了， QPS 面板中 QPS 上升到了 30.9k。
 
-![performance-overview-for-1-command](https://download.pingcap.com/images/docs-cn/performance/j-5.png)
+![performance-overview-for-1-command](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-5.png)
 
 - Database Time by SQL Type 中 select 语句耗时最多，general 语句类型消失了
 - Database Time by SQL Phase 中主要为 execute
@@ -286,11 +286,11 @@ useServerPrepStmts=true&cachePrepStmts=true&prepStmtCacheSize=1000&prepStmtCache
 
 TiDB CPU 平均利用率从 827% 下降到 577%，随着 QPS 的上升，TiKV CPU 平均利用率上升为 313%。
 
-![performance-overview-for-2-command](https://download.pingcap.com/images/docs-cn/performance/j-5-cpu.png)
+![performance-overview-for-2-command](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-5-cpu.png)
 
 关键的延迟指标如下：
 
-![performance-overview-for-3-command](https://download.pingcap.com/images/docs-cn/performance/j-5-duration.png)
+![performance-overview-for-3-command](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-5-duration.png)
 
 - avg query duration = 690μs (426->690μs)
 - avg parse duration = 13.5μs (12.3μs->13.5μs )
@@ -322,13 +322,13 @@ TiDB 的 CPU 火焰图没有明显变化。
 
 - ExecutePreparedStmt cpu = 22% cpu time = 8.4s
 
-![flame-graph-for-rc-read](https://download.pingcap.com/images/docs-cn/performance/6.2.2.png)
+![flame-graph-for-rc-read](https://docs-download.pingcap.com/media/images/docs-cn/performance/6.2.2.png)
 
 #### Performance Overview 面板
 
 使用 RC read 之后，QPS 从 30.9k 上升到 34.9k，每秒消耗的 tso wait 时间从 5.46 s 下降到 456 ms。
 
-![performance-overview-1-for-rc-read](https://download.pingcap.com/images/docs-cn/performance/j-6.png)
+![performance-overview-1-for-rc-read](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-6.png)
 
 - Database Time by SQL Type 中 select 语句耗时最多
 - Database Time by SQL Phase 中 execute 占比最高
@@ -339,15 +339,15 @@ TiDB 的 CPU 火焰图没有明显变化。
 
 每秒 tso cmd 从 28.3k 下降到 2.7k。
 
-![performance-overview-2-for-rc-read](https://download.pingcap.com/images/docs-cn/performance/j-6-cmd.png)
+![performance-overview-2-for-rc-read](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-6-cmd.png)
 
 平均 TiDB CPU 上升为 603% (577%->603%)。
 
-![performance-overview-3-for-rc-read](https://download.pingcap.com/images/docs-cn/performance/j-6-cpu.png)
+![performance-overview-3-for-rc-read](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-6-cpu.png)
 
 关键延迟指标如下：
 
-![performance-overview-4-for-rc-read](https://download.pingcap.com/images/docs-cn/performance/j-6-duration.png)
+![performance-overview-4-for-rc-read](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-6-duration.png)
 
 - avg query duration = 533μs (690μs->533μs)
 - avg parse duration = 13.4μs (13.5μs->13.4μs )
@@ -373,13 +373,13 @@ TiDB 的 CPU 火焰图没有明显变化。
 
 TiDB CPU 火焰图没有明显变化。
 
-![flame-graph-for-table-cache](https://download.pingcap.com/images/docs-cn/performance/7.2.png)
+![flame-graph-for-table-cache](https://docs-download.pingcap.com/media/images/docs-cn/performance/7.2.png)
 
 #### Performance Overview 面板
 
 QPS 从 34.9k 上升到 40.9k，execute 时间中占比最高的 KV 请求类型变成了 Prewrite 和 Commit。Get 每秒的时间从 5.33 秒下降到 1.75 秒，Cop 每秒的时间从 3.87 下降到 1.09 秒。
 
-![performance-overview-1-for-table-cache](https://download.pingcap.com/images/docs-cn/performance/j-7.png)
+![performance-overview-1-for-table-cache](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-7.png)
 
 - Database Time by SQL Type 中 select 语句耗时最多
 - Database Time by SQL Phase 中 execute 和 compile 占比最多
@@ -390,11 +390,11 @@ QPS 从 34.9k 上升到 40.9k，execute 时间中占比最高的 KV 请求类型
 
 TiDB CPU 平均利用率从 603% 下降 到 478%，TiKV CPU 平均利用率从 346% 下降到 256%。
 
-![performance-overview-2-for-table-cache](https://download.pingcap.com/images/docs-cn/performance/j-7-cpu.png)
+![performance-overview-2-for-table-cache](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-7-cpu.png)
 
 Query 平均延迟从 533 us 下降到 313 us。execute 平均延迟从 466 us 下降到 250 us。
 
-![performance-overview-3-for-table-cache](https://download.pingcap.com/images/docs-cn/performance/j-7-duration.png)
+![performance-overview-3-for-table-cache](https://docs-download.pingcap.com/media/images/docs-cn/performance/j-7-duration.png)
 
 - avg query duration = 313μs (533μs->313μs)
 - avg parse duration = 11.9μs (13.4μs->11.9μs)

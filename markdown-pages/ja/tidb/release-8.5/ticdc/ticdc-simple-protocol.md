@@ -514,13 +514,13 @@ TiCDC Simple プロトコルは、DML メッセージを送信するときにテ
 
 このシナリオでは、コンシューマーはテーブルの作成から消費を開始するため、テーブルのすべての DDL および BOOTSTRAP メッセージを受信できます。この場合、コンシューマーは DML メッセージの`table`の名前と`schemaVersion`フィールドを通じてテーブルのスキーマ情報を取得できます。詳細なプロセスは次のとおりです。
 
-![TiCDC Simple Protocol consumer scene 1](https://download.pingcap.com/images/docs/ticdc/ticdc-simple-consumer-1.png)
+![TiCDC Simple Protocol consumer scene 1](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-simple-consumer-1.png)
 
 ### シナリオ2: 消費者が中間層から消費を始める {#scenario-2-the-consumer-starts-consuming-from-the-middle}
 
 新しいコンシューマーがコンシューマー グループに参加すると、途中から消費を開始する可能性があるため、テーブルの以前の DDL および BOOTSTRAP メッセージを見逃す可能性があります。この場合、コンシューマーはテーブルのスキーマ情報を取得する前にいくつかの DML メッセージを受信する可能性があります。したがって、コンシューマーはテーブルのスキーマ情報を取得するために DDL または BOOTSTRAP メッセージを受信するまで、一定期間待機する必要があります。TiCDC は定期的に BOOTSTRAP メッセージを送信するため、コンシューマーは常に一定期間内にテーブルのスキーマ情報を取得できます。詳細なプロセスは次のとおりです。
 
-![TiCDC Simple Protocol consumer scene 2](https://download.pingcap.com/images/docs/ticdc/ticdc-simple-consumer-2.png)
+![TiCDC Simple Protocol consumer scene 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-simple-consumer-2.png)
 
 ## 参照 {#reference}
 

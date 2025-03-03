@@ -11,11 +11,11 @@ summary: An overview of the usage of SHOW CREATE SEQUENCE for the TiDB database.
 
 **シーケンスステートメントを表示:**
 
-![ShowCreateSequenceStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCreateSequenceStmt.png)
+![ShowCreateSequenceStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowCreateSequenceStmt.png)
 
 **テーブル名:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 ## 例 {#examples}
 

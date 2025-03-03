@@ -153,7 +153,7 @@ sysbench $testname \
 
 v5.4.0と比較すると、v6.0.0のポイント選択のパフォーマンスは1.79％わずかに低下しています。
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v540vsv600_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v540vsv600_point_select.png)
 
 ### 非インデックスパフォーマンスの更新 {#update-non-index-performance}
 
@@ -165,7 +165,7 @@ v5.4.0と比較すると、v6.0.0のポイント選択のパフォーマンス�
 
 v5.4.0と比較すると、v6.0.0のインデックス以外の更新のパフォーマンスは1.98％わずかに低下しています。
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v540vsv600_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v540vsv600_update_non_index.png)
 
 ### インデックスのパフォーマンスを更新する {#update-index-performance}
 
@@ -177,7 +177,7 @@ v5.4.0と比較すると、v6.0.0のインデックス以外の更新のパフ�
 
 v5.4.0と比較すると、v6.0.0の更新インデックスのパフォーマンスは3.05％低下します。
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v540vsv600_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v540vsv600_update_index.png)
 
 ### 読み取り/書き込みパフォーマンス {#read-write-performance}
 
@@ -189,4 +189,4 @@ v5.4.0と比較すると、v6.0.0の更新インデックスのパフォーマ�
 
 v5.4.0と比較して、v6.0.0の読み取り/書き込みパフォーマンスは16.17％大幅に向上しています。
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v540vsv600_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v540vsv600_read_write.png)

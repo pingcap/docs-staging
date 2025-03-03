@@ -22,23 +22,23 @@ SHOW TABLE [table_name] INDEX [index_name] REGIONS [WhereClauseOptional];
 
 **ShowTableRegionStmt:**
 
-![ShowTableRegionStmt](https://download.pingcap.com/images/docs/sqlgram/ShowTableRegionStmt.png)
+![ShowTableRegionStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTableRegionStmt.png)
 
 **テーブル名:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 **パーティション名リストオプション:**
 
-![PartitionNameListOpt](https://download.pingcap.com/images/docs/sqlgram/PartitionNameListOpt.png)
+![PartitionNameListOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/PartitionNameListOpt.png)
 
 **WhereClauseオプション:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/WhereClauseOptional.png)
 
 **Where句:**
 
-![WhereClause](https://download.pingcap.com/images/docs/sqlgram/WhereClause.png)
+![WhereClause](https://docs-download.pingcap.com/media/images/docs/sqlgram/WhereClause.png)
 
 `SHOW TABLE REGIONS`を実行すると、次の列が返されます。
 

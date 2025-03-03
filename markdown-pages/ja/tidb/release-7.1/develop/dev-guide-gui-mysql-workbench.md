@@ -68,7 +68,7 @@ TiDB は MySQL と互換性のあるデータベースであり、 [MySQL ワー
 
 5.  MySQL Workbench を起動し、 **MySQL Connections**タイトルの近くにある**+**をクリックします。
 
-    ![MySQL Workbench: add new connection](https://download.pingcap.com/images/docs/develop/navicat-add-new-connection.png)
+    ![MySQL Workbench: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-add-new-connection.png)
 
 6.  **[新しい接続のセットアップ] ダイアログ**で、次の接続パラメータを構成します。
 
@@ -78,11 +78,11 @@ TiDB は MySQL と互換性のあるデータベースであり、 [MySQL ワー
     -   **ユーザー名**: TiDB Cloud接続ダイアログから`USERNAME`パラメータを入力します。
     -   **パスワード**: **[キーチェーンに保存...]**をクリックし、TiDB サーバーレス クラスターのパスワードを入力し、 **[OK]**をクリックしてパスワードを保存します。
 
-        ![MySQL Workbench: store the password of TiDB Serverless in keychain](https://download.pingcap.com/images/docs/develop/mysql-workbench-store-password-in-keychain.png)
+        ![MySQL Workbench: store the password of TiDB Serverless in keychain](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-store-password-in-keychain.png)
 
     次の図は、接続パラメータの例を示しています。
 
-    ![MySQL Workbench: configure connection settings for TiDB Serverless](https://download.pingcap.com/images/docs/develop/mysql-workbench-connection-config-serverless-parameters.png)
+    ![MySQL Workbench: configure connection settings for TiDB Serverless](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-connection-config-serverless-parameters.png)
 
 7.  **「接続のテスト」**をクリックして、TiDB サーバーレスクラスターへの接続を検証します。
 
@@ -101,7 +101,7 @@ TiDB は MySQL と互換性のあるデータベースであり、 [MySQL ワー
 
 4.  MySQL Workbench を起動し、 **MySQL Connections**タイトルの近くにある**+**をクリックします。
 
-    ![MySQL Workbench: add new connection](https://download.pingcap.com/images/docs/develop/navicat-add-new-connection.png)
+    ![MySQL Workbench: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-add-new-connection.png)
 
 5.  **[新しい接続のセットアップ] ダイアログ**で、次の接続パラメータを構成します。
 
@@ -111,11 +111,11 @@ TiDB は MySQL と互換性のあるデータベースであり、 [MySQL ワー
     -   **ユーザー名**: TiDB Cloud接続ダイアログから`user`パラメータを入力します。
     -   **パスワード**: **[キーチェーンに保存...]**をクリックし、TiDB 専用クラスターのパスワードを入力し、 **[OK]**をクリックしてパスワードを保存します。
 
-        ![MySQL Workbench: store the password of TiDB Dedicated in keychain](https://download.pingcap.com/images/docs/develop/mysql-workbench-store-dedicated-password-in-keychain.png)
+        ![MySQL Workbench: store the password of TiDB Dedicated in keychain](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-store-dedicated-password-in-keychain.png)
 
     次の図は、接続パラメータの例を示しています。
 
-    ![MySQL Workbench: configure connection settings for TiDB Dedicated](https://download.pingcap.com/images/docs/develop/mysql-workbench-connection-config-dedicated-parameters.png)
+    ![MySQL Workbench: configure connection settings for TiDB Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-connection-config-dedicated-parameters.png)
 
 6.  **「接続のテスト」**をクリックして、TiDB 専用クラスターへの接続を検証します。
 
@@ -126,7 +126,7 @@ TiDB は MySQL と互換性のあるデータベースであり、 [MySQL ワー
 
 1.  MySQL Workbench を起動し、 **MySQL Connections**タイトルの近くにある**+**をクリックします。
 
-    ![MySQL Workbench: add new connection](https://download.pingcap.com/images/docs/develop/navicat-add-new-connection.png)
+    ![MySQL Workbench: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-add-new-connection.png)
 
 2.  **[新しい接続のセットアップ] ダイアログ**で、次の接続パラメータを構成します。
 
@@ -136,11 +136,11 @@ TiDB は MySQL と互換性のあるデータベースであり、 [MySQL ワー
     -   **ユーザー名**: TiDB への接続に使用するユーザー名を入力します。
     -   **パスワード**: **[キーチェーンに保存...]**をクリックし、TiDB クラスターへの接続に使用するパスワードを入力し、 **[OK]**をクリックしてパスワードを保存します。
 
-        ![MySQL Workbench: store the password of TiDB Self-Hosted in keychain](https://download.pingcap.com/images/docs/develop/mysql-workbench-store-self-hosted-password-in-keychain.png)
+        ![MySQL Workbench: store the password of TiDB Self-Hosted in keychain](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-store-self-hosted-password-in-keychain.png)
 
     次の図は、接続パラメータの例を示しています。
 
-    ![MySQL Workbench: configure connection settings for TiDB Self-Hosted](https://download.pingcap.com/images/docs/develop/mysql-workbench-connection-config-self-hosted-parameters.png)
+    ![MySQL Workbench: configure connection settings for TiDB Self-Hosted](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-connection-config-self-hosted-parameters.png)
 
 3.  **[接続のテスト]**をクリックして、TiDB セルフホスト クラスターへの接続を検証します。
 

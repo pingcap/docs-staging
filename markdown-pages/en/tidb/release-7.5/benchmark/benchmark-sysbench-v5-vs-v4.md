@@ -167,7 +167,7 @@ sysbench $testname \
 
 Compared with v4.0, the Point Select performance of TiDB v5.0 has increased by 2.7%.
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v5vsv4_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v5vsv4_point_select.png)
 
 ### Update Non-index performance
 
@@ -182,7 +182,7 @@ Compared with v4.0, the Point Select performance of TiDB v5.0 has increased by 2
 
 Compared with v4.0, the Update Non-index performance of TiDB v5.0 has increased by 81%.
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v5vsv4_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v5vsv4_update_non_index.png)
 
 ### Update Index performance
 
@@ -197,7 +197,7 @@ Compared with v4.0, the Update Non-index performance of TiDB v5.0 has increased 
 
 Compared with v4.0, the Update Index performance of TiDB v5.0 has increased by 28%.
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v5vsv4_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v5vsv4_update_index.png)
 
 ### Read Write performance
 
@@ -212,4 +212,4 @@ Compared with v4.0, the Update Index performance of TiDB v5.0 has increased by 2
 
 Compared with v4.0, the read-write performance of TiDB v5.0 has increased by 9%.
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v5vsv4_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v5vsv4_read_write.png)

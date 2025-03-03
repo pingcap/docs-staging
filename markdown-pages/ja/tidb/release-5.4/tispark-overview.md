@@ -5,7 +5,7 @@ summary: Use TiSpark to provide an HTAP solution to serve as a one-stop solution
 
 # TiSparkユーザーガイド {#tispark-user-guide}
 
-![TiSpark architecture](https://download.pingcap.com/images/docs/tispark-architecture.png)
+![TiSpark architecture](https://docs-download.pingcap.com/media/images/docs/tispark-architecture.png)
 
 [TiSpark](https://github.com/pingcap/tispark)は、複雑なOLAPクエリに応答するためにTiDB/TiKV上でApacheSparkを実行するために構築されたシンレイヤーです。 Sparkプラットフォームと分散TiKVクラスタの両方を活用し、分散OLTPデータベースであるTiDBにシームレスに接着して、オンライントランザクションと分析の両方のワンストップソリューションとして機能するハイブリッドトランザクション/分析処理（HTAP）ソリューションを提供します。 。
 

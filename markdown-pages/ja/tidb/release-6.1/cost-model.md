@@ -7,7 +7,7 @@ summary: Learn how the cost model used by TiDB works during physical optimizatio
 
 TiDB はコスト モデルを使用して、 [物理的最適化](/sql-physical-optimization.md)の間にインデックスと演算子を選択します。このプロセスを次の図に示します。
 
-![CostModel](https://download.pingcap.com/images/docs/cost-model.png)
+![CostModel](https://docs-download.pingcap.com/media/images/docs/cost-model.png)
 
 TiDB は、プラン (HashJoin や IndexJoin など) 内の各インデックスのアクセス コストと各物理演算子の実行コストを計算し、最小コストのプランを選択します。
 

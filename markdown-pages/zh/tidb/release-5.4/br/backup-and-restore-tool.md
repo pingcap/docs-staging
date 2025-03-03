@@ -19,7 +19,7 @@ BR 将备份或恢复操作命令下发到各个 TiKV 节点。TiKV 收到命令
 
 在一次备份或恢复中，各个 TiKV 节点都会有一个对应的备份路径，TiKV 备份时产生的备份文件将会保存在该路径下，恢复时也会从该路径读取相应的备份文件。
 
-![br-arch](https://download.pingcap.com/images/docs-cn/br-arch.png)
+![br-arch](https://docs-download.pingcap.com/media/images/docs-cn/br-arch.png)
 
 更多信息请参阅[备份恢复设计方案](https://github.com/pingcap/br/blob/980627aa90e5d6f0349b423127e0221b4fa09ba0/docs/cn/2019-08-05-new-design-of-backup-restore.md)。
 
@@ -67,7 +67,7 @@ BR 和 TiDB 集群的兼容性问题分为以下两方面：
 + BR 部分版本和 TiDB 集群的接口不兼容
 
   BR 在 v5.4.0 之前不支持恢复 `charset=GBK` 的表。并且，任何版本的 BR 都不支持恢复 `charset=GBK` 的表到 5.4.0 之前的 TiDB 集群。
-  
+
 + 某些功能在开启或关闭状态下，会导致 KV 格式发生变化，因此备份和恢复期间如果没有统一开启或关闭，就会带来不兼容的问题
 
 下表整理了会导致 KV 格式发生变化的功能。

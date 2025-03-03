@@ -64,7 +64,7 @@ TiCDC は TiDB の増分データ レプリケーション ツールであり、
 
 TiCDC のアーキテクチャを次の図に示します。
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/cdc-architecture.png)
 
 アーキテクチャ図のコンポーネントは次のように説明されます。
 

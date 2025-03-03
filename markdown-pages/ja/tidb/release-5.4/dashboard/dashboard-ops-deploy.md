@@ -25,7 +25,7 @@ PDインスタンスが初めて実行されるとき、それらは自動的に
 
 TiDBダッシュボードを提供しないPDインスタンスにアクセスすると、ブラウザが自動的にリダイレクトされ、TiDBダッシュボードを提供するPDインスタンスにアクセスできるようになり、サービスに正常にアクセスできるようになります。このプロセスを下の画像に示します。
 
-![Process Schematic](https://download.pingcap.com/images/docs/dashboard/dashboard-ops-multiple-pd.png)
+![Process Schematic](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-ops-multiple-pd.png)
 
 > **ノート：**
 >

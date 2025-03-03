@@ -29,7 +29,7 @@ ProxySQL 的设计目标是快速、高效且易于使用。它完全兼容 MySQ
 
 将 ProxySQL 与 TiDB 集成的最直接方式是在应用层和 TiDB 之间添加 ProxySQL 作为独立中介。但是，这种方式无法保证可扩展性和容错性，而且可能因为网络跳转而增加延迟。为避免这些问题，一种替代部署架构是将 ProxySQL 作为附属容器部署，如下图所示：
 
-![proxysql-client-side-tidb-cloud](https://download.pingcap.com/images/docs-cn/develop/proxysql-client-side-tidb-cloud.png)
+![proxysql-client-side-tidb-cloud](https://docs-download.pingcap.com/media/images/docs-cn/develop/proxysql-client-side-tidb-cloud.png)
 
 > **注意：**
 >
@@ -85,7 +85,7 @@ systemctl start docker
     1. 从 [Download for Windows](https://git-scm.com/download/win) 页面下载 **64-bit Git for Windows Setup** 安装程序。
     2. 按照安装向导提示安装 Git。你可以多次点击 **Next** 使用默认的安装设置。
 
-        ![proxysql-windows-git-install](https://download.pingcap.com/images/docs-cn/develop/proxysql-windows-git-install.png)
+        ![proxysql-windows-git-install](https://docs-download.pingcap.com/media/images/docs-cn/develop/proxysql-windows-git-install.png)
 
 - 下载并安装 MySQL Shell。
 
@@ -109,7 +109,7 @@ systemctl start docker
     1. 从 [Docker Download](https://www.docker.com/products/docker-desktop/) 页面下载 Docker Desktop 安装程序。
     2. 双击安装程序运行。安装完成后，会提示你重新启动。
 
-        ![proxysql-windows-docker-install](https://download.pingcap.com/images/docs-cn/develop/proxysql-windows-docker-install.png)
+        ![proxysql-windows-docker-install](https://docs-download.pingcap.com/media/images/docs-cn/develop/proxysql-windows-docker-install.png)
 
 - 从 [Python Download](https://www.python.org/downloads/) 页面下载最新版的 Python 3 安装程序并运行。
 
@@ -799,7 +799,7 @@ systemctl start docker
 
 数据库可能会因为高流量、错误代码或恶意攻击而过载。因此，审核 SQL 是必要的。使用 ProxySQL 的查询规则，你可以有效地应对这些问题，例如通过重路由、改写 SQL 或者拒绝查询等方式。
 
-![proxysql-client-side-rules](https://download.pingcap.com/images/docs-cn/develop/proxysql-client-side-rules.png)
+![proxysql-client-side-rules](https://docs-download.pingcap.com/media/images/docs-cn/develop/proxysql-client-side-rules.png)
 
 > **注意：**
 >

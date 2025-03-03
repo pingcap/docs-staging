@@ -11,7 +11,7 @@ summary: View the execution details of a single SQL statement in TiDB Dashboard.
 -   実行計画リスト: SQL ステートメントに複数の実行計画がある場合、このリストが表示されます。さまざまな実行計画を選択でき、選択した計画の詳細がリストの下に表示されます。実行計画が 1 つしかない場合、リストは表示されません (以下の領域 2 を参照)。
 -   計画の実行の詳細。選択した実行計画の詳細情報が表示されます。 [実行計画の詳細](#execution-details-of-plans)を参照してください (下の画像の領域 3)。
 
-![Details](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-detail.png)
+![Details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-detail.png)
 
 ## 計画の実行内容 {#execution-details-of-plans}
 
@@ -21,13 +21,13 @@ summary: View the execution details of a single SQL statement in TiDB Dashboard.
 -   実行計画: 実行計画の詳細については、 [クエリ実行計画を理解する](/explain-overview.md)を参照してください。複数の実行計画が選択されている場合は、そのうちの 1 つ (いずれか) のみが表示されます。
 -   SQL ステートメントの基本情報、実行時間、コプロセッサー読み取り、トランザクション、およびスロー クエリについては、対応するタブ タイトルをクリックして、さまざまな情報に切り替えることができます。
 
-![Execution details of plans](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-detail.png)
+![Execution details of plans](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-detail.png)
 
 ### 基本タブ {#basic-tab}
 
 SQL 実行の基本情報には、テーブル名、インデックス名、実行回数、および合計レイテンシーが含まれます。 [**説明**] 列には、各フィールドの詳細な説明が表示されます。
 
-![Basic information](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-basic.png)
+![Basic information](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-basic.png)
 
 ### 時間タブ {#time-tab}
 
@@ -37,24 +37,24 @@ SQL 実行の基本情報には、テーブル名、インデックス名、実�
 >
 > 一部の操作は単一の SQL ステートメント内で並行して実行される可能性があるため、各ステージの累積期間が SQL ステートメントの実際の実行時間を超える場合があります。
 
-![Execution time](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-time.png)
+![Execution time](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-time.png)
 
 ### コプロセッサー読み取りタブ {#coprocessor-read-tab}
 
 **Coprocessor Read**タブをクリックすると、Coprocessor read に関する情報が表示されます。
 
-![Coprocessor read](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-cop-read.png)
+![Coprocessor read](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-cop-read.png)
 
 ### 取引タブ {#transaction-tab}
 
 [**トランザクション**] タブをクリックすると、平均書き込みキー数や最大書き込みキー数など、実行計画やトランザクションに関する情報が表示されます。
 
-![Transaction](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-transaction.png)
+![Transaction](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-transaction.png)
 
 ### スロークエリタブ {#slow-query-tab}
 
 実行プランの実行が遅すぎる場合、関連するスロー クエリ レコードが [**スロー クエリ**] タブに表示されます。
 
-![Slow Query](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-slow-queries.png)
+![Slow Query](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-slow-queries.png)
 
 このエリアに表示される情報は、スロー クエリ ページと同じ構造です。詳細は[TiDB ダッシュボードのスロー クエリ ページ](/dashboard/dashboard-slow-query.md)を参照してください。

@@ -1,6 +1,6 @@
 ---
 title: HTAP 深入探索指南
-summary: 本文介绍如何深入探索并使用 TiDB 的 HTAP 功能。 
+summary: 本文介绍如何深入探索并使用 TiDB 的 HTAP 功能。
 ---
 
 # HTAP 深入探索指南
@@ -92,7 +92,7 @@ TiFlash 部署完成后并不会自动同步数据，你需要指定需要同步
 使用 TiDB 时，你只需输入 SQL 语句进行查询或者写入需求。对于创建了 TiFlash 副本的表，TiDB 会依靠前端优化器自由选择最优的执行方式。
 
 > **注意：**
-> 
+>
 > TiFlash 的 MPP 模式默认开启。当执行 SQL 语句时，TiDB 会通过优化器自动判断并选择是否以 MPP 模式执行。
 >
 > - 如需关闭 MPP 模式，请将系统变量 [tidb_allow_mpp](/system-variables.md#tidb_allow_mpp-从-v50-版本开始引入) 的值设置为 OFF。

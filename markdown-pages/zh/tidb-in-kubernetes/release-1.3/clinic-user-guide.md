@@ -138,7 +138,7 @@ Access Token（以下简称为 Token）用于 Diag 上传数据时的用户认�
 
     进入组织的 Clusters 页面，点击右下角的上传图标，选择 **Get Access Token For Diag Tool**，在弹出窗口中点击 **+** 符号获取 Token 后，复制并保存 Token 信息。
 
-    ![获取 Token 截图](https://download.pingcap.com/images/tidb-in-kubernetes/clinic-get-token.png)
+    ![获取 Token 截图](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/clinic-get-token.png)
 
     > **注意：**
     >

@@ -20,7 +20,7 @@ AWS CloudFormation は、Secrets Manager、API Gateway、Lambda 関数など、�
 
 書店プロジェクトの構造は次のとおりです。
 
-![AWS Lambda structure overview](https://download.pingcap.com/images/docs/develop/aws-lambda-structure-overview.png)
+![AWS Lambda structure overview](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-structure-overview.png)
 
 ## 前提条件 {#prerequisites}
 
@@ -36,7 +36,7 @@ AWS CloudFormation は、Secrets Manager、API Gateway、Lambda 関数など、�
 
 -   [TiDB Cloud](https://tidbcloud.com)アカウントとTiDB Cloud Serverless クラスター。TiDB TiDB Cloud Serverless クラスターの接続情報を取得します。
 
-    ![TiDB Cloud connection information](https://download.pingcap.com/images/docs/develop/aws-lambda-tidbcloud-connection-info.png)
+    ![TiDB Cloud connection information](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-tidbcloud-connection-info.png)
 
 -   [郵便配達員](https://www.postman.com/)や[カール](https://curl.se/)などの API テスト ツール。このドキュメントのほとんどの例では cURL を使用しています。Windows ユーザーの場合は、Postman をお勧めします。
 
@@ -119,13 +119,13 @@ AWS CloudFormation を使用してブックショップ プロジェクトを設
 
         ファイルがまだない場合は、 [GitHub](https://github.com/pingcap/TiDB-Lambda-integration/releases/latest)からダウンロードしてください。ファイルには、プロジェクトに必要なリソースを作成する AWS CloudFormation テンプレートが含まれています。
 
-        ![Create a stack](https://download.pingcap.com/images/docs/develop/aws-lambda-cf-create-stack.png)
+        ![Create a stack](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-cf-create-stack.png)
 
     3.  スタックの詳細を指定します。
 
         -   クラスター リージョンとして`us-east-1`使用する場合は、次のスクリーンショットのようにフィールドに入力します。
 
-            ![Specify AWS Lambda stack details](https://download.pingcap.com/images/docs/develop/aws-lambda-cf-stack-config.png)
+            ![Specify AWS Lambda stack details](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-cf-stack-config.png)
 
             -   **スタック名**: スタック名を入力します。
             -   **S3Bucket** : zip ファイルを保存する S3 バケットを入力します。
@@ -144,11 +144,11 @@ AWS CloudFormation を使用してブックショップ プロジェクトを設
 
     4.  スタック オプションを構成します。デフォルトの構成を使用できます。
 
-        ![Configure stack options](https://download.pingcap.com/images/docs/develop/aws-lambda-cf-stack-config-option.png)
+        ![Configure stack options](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-cf-stack-config-option.png)
 
     5.  スタックを確認して作成します。
 
-        ![Review and create the stack](https://download.pingcap.com/images/docs/develop/aws-lambda-cf-stack-config-review.png)
+        ![Review and create the stack](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-cf-stack-config-review.png)
 
 ## ステップ2. 書店プロジェクトを使用する {#step-2-use-the-bookshop-project}
 
@@ -158,7 +158,7 @@ AWS CloudFormation を使用してブックショップ プロジェクトを設
 
 2.  **概要**ページから`Invoke URL`をコピーします。この URL は API エンドポイントとして機能します。
 
-    ![API Gateway Invoke URL](https://download.pingcap.com/images/docs/develop/aws-lambda-get-apigateway-invoke-url.png)
+    ![API Gateway Invoke URL](https://docs-download.pingcap.com/media/images/docs/develop/aws-lambda-get-apigateway-invoke-url.png)
 
 3.  API をテストするには、Postman や cURL などの API テスト ツールを使用してください。
 

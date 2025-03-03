@@ -9,7 +9,7 @@ summary: データ移行 (DM) のアーキテクチャは、DM マスター、DM
 
 DM は、DM マスター、DM ワーカー、および dmctl の 3 つのコンポーネントで構成されます。
 
-![Data Migration architecture](https://download.pingcap.com/images/docs/dm/dm-architecture-2.0.png)
+![Data Migration architecture](https://docs-download.pingcap.com/media/images/docs/dm/dm-architecture-2.0.png)
 
 ## アーキテクチャコンポーネント {#architecture-components}
 

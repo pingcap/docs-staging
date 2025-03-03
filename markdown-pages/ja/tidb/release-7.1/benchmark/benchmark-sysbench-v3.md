@@ -98,7 +98,7 @@ block-cache-size = "20GB"
 |  v2.0 |  512 | 121350.61 |       11.65      |
 |  v2.0 | 1024 | 150036.31 |       17.32      |
 
-![point select](https://download.pingcap.com/images/docs/sysbench_v3_point_select.png)
+![point select](https://docs-download.pingcap.com/media/images/docs/sysbench_v3_point_select.png)
 
 上記の統計によると、TiDB 2.1 の`Point Select`クエリ パフォーマンスは TiDB 2.0 より**50%**向上しています。
 
@@ -117,7 +117,7 @@ block-cache-size = "20GB"
 |  v2.0 |  512 | 25994.33 |       46.63      |
 |  v2.0 | 1024 | 27917.52 |       92.42      |
 
-![update non-index](https://download.pingcap.com/images/docs/sysbench_v3_update_non_index.png)
+![update non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v3_update_non_index.png)
 
 上記の統計によると、TiDB 2.1 と TiDB 2.0 の`Update Non-Index`の書き込みパフォーマンスはほぼ同じです。
 
@@ -136,6 +136,6 @@ block-cache-size = "20GB"
 |  v2.0 |  512 | 11162.63 |      104.84      |
 |  v2.0 | 1024 | 12067.63 |      179.94      |
 
-![update index](https://download.pingcap.com/images/docs/sysbench_v3_update_index.png)
+![update index](https://docs-download.pingcap.com/media/images/docs/sysbench_v3_update_index.png)
 
 上記の統計によると、TiDB 2.1 と TiDB 2.0 の`Update Index`の書き込みパフォーマンスはほぼ同じです。

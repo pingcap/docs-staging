@@ -30,13 +30,13 @@ TiDB Grafana パネルで、 **KV エラー**の下にある次の監視メト�
 
 -   **KV バックオフ OPS は、** TiKV によって返される 1 秒あたりのエラー メッセージの数を示します。
 
-    ![kv-backoff-ops](https://download.pingcap.com/images/docs/troubleshooting-write-conflict-kv-backoff-ops.png)
+    ![kv-backoff-ops](https://docs-download.pingcap.com/media/images/docs/troubleshooting-write-conflict-kv-backoff-ops.png)
 
     メトリック`txnlock`は書き込み-書き込み競合を示します。メトリック`txnLockFast`は読み取り-書き込み競合を示します。
 
 -   **ロック解決 OPS は、** 1 秒あたりのトランザクション競合に関連する項目の数を示します。
 
-    ![lock-resolve-ops](https://download.pingcap.com/images/docs/troubleshooting-write-conflict-lock-resolve-ops.png)
+    ![lock-resolve-ops](https://docs-download.pingcap.com/media/images/docs/troubleshooting-write-conflict-lock-resolve-ops.png)
 
     -   `not_expired`ロックの TTL が期限切れになっていないことを示します。競合トランザクションは、TTL が期限切れになるまでロックを解決できません。
     -   `wait_expired` 、トランザクションがロックの有効期限が切れるまで待機する必要があることを示します。
@@ -44,7 +44,7 @@ TiDB Grafana パネルで、 **KV エラー**の下にある次の監視メト�
 
 -   **KV 再試行期間は、** KV 要求を再送信する期間を示します。
 
-    ![kv-retry-duration](https://download.pingcap.com/images/docs/troubleshooting-write-conflict-kv-retry-duration.png)
+    ![kv-retry-duration](https://docs-download.pingcap.com/media/images/docs/troubleshooting-write-conflict-kv-retry-duration.png)
 
 また、TiDB ログで検索するためのキーワードとして`[kv:9007]Write conflict`使用することもできます。キーワードは、クラスター内に書き込み競合が存在することも示します。
 

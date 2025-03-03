@@ -21,7 +21,7 @@ TiDB の v5.0 以降のバージョンでは、配置ルール機能がデフォ
 
 さらに、異なるソースからのルールを相互に分離するという要件を満たすために、これらのルールをより柔軟な方法で編成できます。そこで「グループ」という概念が導入される。一般に、ユーザーはさまざまなソースに従ってルールをさまざまなグループに配置できます。
 
-![Placement rules overview](https://download.pingcap.com/images/docs/placement-rules-1.png)
+![Placement rules overview](https://docs-download.pingcap.com/media/images/docs/placement-rules-1.png)
 
 ### ルールフィールド {#rule-fields}
 
@@ -128,28 +128,28 @@ pd-ctl は、システム内のルールを表示する次のメソッドの使�
 
 -   すべてのルールのリストを表示するには:
 
-    
+
     ```bash
     pd-ctl config placement-rules show
     ```
 
 -   PD グループ内のすべてのルールのリストを表示するには、次の手順を実行します。
 
-    
+
     ```bash
     pd-ctl config placement-rules show --group=pd
     ```
 
 -   グループ内の特定の ID のルールを表示するには:
 
-    
+
     ```bash
     pd-ctl config placement-rules show --group=pd --id=default
     ```
 
 -   リージョンに一致するルールのリストを表示するには:
 
-    
+
     ```bash
     pd-ctl config placement-rules show --region=2
     ```
@@ -202,28 +202,28 @@ pd-ctl config placement save --in=rules.json
 
 -   すべてのルール グループのリストを表示するには、次の手順を実行します。
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group show
     ```
 
 -   特定の ID のルール グループを表示するには:
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group show pd
     ```
 
 -   ルール グループの`index`属性と`override`属性を設定するには、次の手順を実行します。
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group set pd 100 true
     ```
 
 -   ルール グループの設定を削除するには (グループ内にルールがある場合は、デフォルトのグループ設定を使用します):
 
-    
+
     ```bash
     pd-ctl config placement-rules rule-group delete pd
     ```

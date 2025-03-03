@@ -15,7 +15,7 @@ When the regional outage is resolved, the ability to reverse the replication fro
 
 Before performing a failover, a recovery group should have been created and be successfully replicating to the secondary cluster. For more information, see [Get Started with Recovery Groups](/tidb-cloud/recovery-group-get-started.md).
 
-![Protected Recovery Group](https://download.pingcap.com/images/docs/tidb-cloud/recovery-group/recovery-group-protected.png)
+![Protected Recovery Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/recovery-group/recovery-group-protected.png)
 
 ## Failover databases using a recovery group
 
@@ -37,7 +37,7 @@ In the event of a disaster, you can use the recovery group to failover databases
 
 6. Confirm that you understand the potentially disruptive nature of a failover by typing **Failover** into the confirmation entry and clicking **I understand, failover group** to begin the failover.
 
-    ![Fail Over Recovery Group](https://download.pingcap.com/images/docs/tidb-cloud/recovery-group/recovery-group-failover.png)
+    ![Fail Over Recovery Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/recovery-group/recovery-group-failover.png)
 
 ## Reprotect databases using a recovery group
 
@@ -45,7 +45,7 @@ After a failover completes, the replica databases on the secondary cluster are n
 
 If the original primary cluster that was affected by the disaster can be brought online again, you can re-establish replication from the recovery region back to the original region using the **Reprotect** action.
 
-![Unprotected Recovery Group](https://download.pingcap.com/images/docs/tidb-cloud/recovery-group/recovery-group-unprotected.png)
+![Unprotected Recovery Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/recovery-group/recovery-group-unprotected.png)
 
 1. In the [TiDB Cloud console](https://tidbcloud.com/), click <MDSvgIcon name="icon-left-projects" /> in the lower-left corner, switch to the target project if you have multiple projects, and then click **Project Settings**.
 
@@ -59,11 +59,11 @@ If the original primary cluster that was affected by the disaster can be brought
     > During the reprotect synchronization, due to the volume of data transferred, the online query performance at the primary or secondary clusters might be affected. It is recommended that you schedule the reprotection of databases for a less busy period.
 
     > **Warning**
-    > 
+    >
     > As part of the data replication necessary to perform the reprotect operation, the content of the selected databases will be replaced at the target cluster by the content of the databases from the (new) primary cluster. If you wish to preserve the unique content on the target cluster, complete a backup before performing the Reprotect operation.
 
 4. Click the **Action** menu for the recovery group, and then click **Reprotect**. The reprotect dialog is displayed.
 
 5. Confirm the reprotect operation by clicking **Reprotect** to begin the reprotect operation.
 
-    ![Reprotect Recovery Group](https://download.pingcap.com/images/docs/tidb-cloud/recovery-group/recovery-group-reprotected.png)
+    ![Reprotect Recovery Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/recovery-group/recovery-group-reprotected.png)

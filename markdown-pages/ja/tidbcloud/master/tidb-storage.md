@@ -7,7 +7,7 @@ summary: TiDB データベースのstorageレイヤーを理解します。
 
 このドキュメントでは、 [ティクヴ](https://github.com/tikv/tikv)の設計アイデアと主要な概念をいくつか紹介します。
 
-![storage-architecture](https://download.pingcap.com/images/docs/tidb-storage-architecture-1.png)
+![storage-architecture](https://docs-download.pingcap.com/media/images/docs/tidb-storage-architecture-1.png)
 
 ## キーと値のペア {#key-value-pairs}
 
@@ -38,7 +38,7 @@ Raft はコンセンサス アルゴリズムです。このドキュメント�
 
 TiKV はRaft を使用してデータ レプリケーションを実行します。各データの変更はRaftログとして記録されます。Raft ログ レプリケーションを通じて、データはRaftグループの複数のノードに安全かつ確実にレプリケートされます。ただし、 Raftプロトコルによると、書き込みが成功するには、データが大多数のノードにレプリケートされている必要があります。
 
-![Raft in TiDB](https://download.pingcap.com/images/docs/tidb-storage-1.png)
+![Raft in TiDB](https://docs-download.pingcap.com/media/images/docs/tidb-storage-1.png)
 
 要約すると、TiKV はスタンドアロン マシン RocksDB を介してディスクにデータをすばやく保存し、マシン障害が発生した場合にはRaftを介して複数のマシンにデータを複製できます。データは RocksDB ではなくRaftのインターフェイスを介して書き込まれます。Raft の実装により、TiKV は分散型キー値storageになります。マシンに障害が発生した場合でも、TiKV はネイティブのRaftプロトコルにより自動的にRaftを完了できるため、アプリケーションには影響しません。
 
@@ -51,7 +51,7 @@ TiKV はRaft を使用してデータ レプリケーションを実行します
 
 TiKV は、キー値空間全体を一連の連続するキー セグメントに分割する 2 番目のソリューションを選択します。各セグメントはリージョンと呼ばれます。各リージョンは、左が閉じ、右が開いている間隔である`[StartKey, EndKey)`で表すことができます。各リージョンのデフォルトのサイズ制限は 96 MiB で、サイズは構成できます。
 
-![Region in TiDB](https://download.pingcap.com/images/docs/tidb-storage-2.png)
+![Region in TiDB](https://docs-download.pingcap.com/media/images/docs/tidb-storage-2.png)
 
 ここでのリージョンはSQL のテーブルとは関係がないことに注意してください。このドキュメントでは、SQL については忘れて、今のところ KV に焦点を当てます。データをリージョンに分割した後、TiKV は次の 2 つの重要なタスクを実行します。
 
@@ -68,7 +68,7 @@ TiKV は、キー値空間全体を一連の連続するキー セグメント�
 
     レプリカの 1 つはグループのLeaderとして機能し、もう 1 つはFollowerとして機能します。デフォルトでは、すべての読み取りと書き込みはLeaderを介して処理され、読み取りはリーダーで実行され、書き込みはフォロワーに複製されます。次の図は、リージョンとRaftグループの全体像を示しています。
 
-![TiDB Storage](https://download.pingcap.com/images/docs/tidb-storage-3.png)
+![TiDB Storage](https://docs-download.pingcap.com/media/images/docs/tidb-storage-3.png)
 
 リージョン内でデータを分散および複製することで、ある程度の災害復旧能力を備えた分散型キー値システムが実現します。容量やディスク障害、データ損失について心配する必要がなくなります。
 

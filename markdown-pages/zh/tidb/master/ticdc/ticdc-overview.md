@@ -56,7 +56,7 @@ TiCDC 提供了以下核心能力：
 
 TiCDC 作为 TiDB 的增量数据同步工具，通过 PD 内部的 etcd 实现高可用，通过多个 TiCDC 进程获取 TiKV 节点上的数据改变，在内部进行排序、合并等处理之后，通过多个同步任务 (Changefeed)，同时向多个下游系统进行数据同步。
 
-![TiCDC architecture](https://download.pingcap.com/images/docs-cn/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/cdc-architecture.png)
 
 在以上架构图中：
 

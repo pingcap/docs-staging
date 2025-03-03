@@ -11,7 +11,7 @@ TiDB Cloudリカバリ グループを使用すると、 TiDB Cloud Dedicated �
 
 リカバリ グループは、2 つのTiDB Cloud Dedicated クラスター間で一緒にフェイルオーバーできるレプリケートされたデータベースのセットで構成されます。各リカバリ グループにはプライマリ クラスターが割り当てられ、このプライマリ クラスター上のデータベースはグループに関連付けられ、セカンダリ クラスターにレプリケートされます。
 
-![Recovery Group](https://download.pingcap.com/images/docs/tidb-cloud/recovery-group/recovery-group-overview.png)
+![Recovery Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/recovery-group/recovery-group-overview.png)
 
 -   リカバリグループ: 2つのクラスタ間で複製されるデータベースのグループ
 -   プライマリクラスタ: アプリケーションによってデータベースがアクティブに書き込まれるクラスター

@@ -15,31 +15,31 @@ TiDB で作成された新しいテーブルごとに、デフォルトで 1 つ
 
 **SplitRegionStmt:**
 
-![SplitRegionStmt](https://download.pingcap.com/images/docs/sqlgram/SplitRegionStmt.png)
+![SplitRegionStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SplitRegionStmt.png)
 
 **分割構文オプション:**
 
-![SplitSyntaxOption](https://download.pingcap.com/images/docs/sqlgram/SplitSyntaxOption.png)
+![SplitSyntaxOption](https://docs-download.pingcap.com/media/images/docs/sqlgram/SplitSyntaxOption.png)
 
 **テーブル名:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 **PartitionNameListOpt:**
 
-![PartitionNameListOpt](https://download.pingcap.com/images/docs/sqlgram/PartitionNameListOpt.png)
+![PartitionNameListOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/PartitionNameListOpt.png)
 
 **分割オプション:**
 
-![SplitOption](https://download.pingcap.com/images/docs/sqlgram/SplitOption.png)
+![SplitOption](https://docs-download.pingcap.com/media/images/docs/sqlgram/SplitOption.png)
 
 **行値:**
 
-![RowValue](https://download.pingcap.com/images/docs/sqlgram/RowValue.png)
+![RowValue](https://docs-download.pingcap.com/media/images/docs/sqlgram/RowValue.png)
 
 **Int64Num:**
 
-![Int64Num](https://download.pingcap.com/images/docs/sqlgram/Int64Num.png)
+![Int64Num](https://docs-download.pingcap.com/media/images/docs/sqlgram/Int64Num.png)
 
 ## スプリットリージョンの使い方 {#usage-of-split-region}
 
@@ -47,7 +47,7 @@ TiDB で作成された新しいテーブルごとに、デフォルトで 1 つ
 
 -   偶数分割の構文:
 
-    
+
     ```sql
     SPLIT TABLE table_name [INDEX index_name] BETWEEN (lower_value) AND (upper_value) REGIONS region_num
     ```
@@ -56,7 +56,7 @@ TiDB で作成された新しいテーブルごとに、デフォルトで 1 つ
 
 -   不等分割の構文:
 
-    
+
     ```sql
     SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)] ...
     ```
@@ -245,14 +245,14 @@ region4  [("c", "")                    , maxIndexValue               )
 
 -   偶数分割の構文:
 
-    
+
     ```sql
     SPLIT [PARTITION] TABLE t [PARTITION] [(partition_name_list...)] [INDEX index_name] BETWEEN (lower_value) AND (upper_value) REGIONS region_num
     ```
 
 -   不等分割の構文:
 
-    
+
     ```sql
     SPLIT [PARTITION] TABLE table_name [PARTITION (partition_name_list...)] [INDEX index_name] BY (value_list) [, (value_list)] ...
     ```
@@ -261,14 +261,14 @@ region4  [("c", "")                    , maxIndexValue               )
 
 1.  パーティションテーブルを作成する`t` . 2 つのパーティションに分割されたハッシュ テーブルを作成するとします。ステートメントの例は次のとおりです。
 
-    
+
     ```sql
     create table t (a int,b int,index idx(a)) partition by hash(a) partitions 2;
     ```
 
     テーブル`t`を作成した後、パーティションごとにリージョンが分割されます。 `SHOW TABLE REGIONS`構文を使用して、このテーブルのリージョンを表示します。
 
-    
+
     ```sql
     show table t regions;
     ```
@@ -284,7 +284,7 @@ region4  [("c", "")                    , maxIndexValue               )
 
 2.  `SPLIT`構文を使用して、パーティションごとにリージョンを分割します。各パーティションの`[0,10000]`範囲のデータを 4 つのリージョンに分割するとします。ステートメントの例は次のとおりです。
 
-    
+
     ```sql
     split partition table t between (0) and (10000) regions 4;
     ```
@@ -297,7 +297,7 @@ region4  [("c", "")                    , maxIndexValue               )
 
 3.  `SHOW TABLE REGIONS`構文を使用して、このテーブルの地域を再度表示します。このテーブルには 10 のリージョンがあり、各パーティションには 5 つのリージョンがあり、そのうちの 4 つは行データで、1 つはインデックス データです。
 
-    
+
     ```sql
     show table t regions;
     ```
@@ -321,7 +321,7 @@ region4  [("c", "")                    , maxIndexValue               )
 
 4.  各パーティションのインデックスに対してリージョンを分割することもできます。たとえば、 `idx`インデックスの`[1000,10000]`範囲を 2 つのリージョンに分割できます。ステートメントの例は次のとおりです。
 
-    
+
     ```sql
     split partition table t index idx between (1000) and (10000) regions 2;
     ```
@@ -332,7 +332,7 @@ region4  [("c", "")                    , maxIndexValue               )
 
 1.  パーティションテーブルを作成します。 3 つのパーティションに分割された範囲パーティションテーブルを作成するとします。ステートメントの例は次のとおりです。
 
-    
+
     ```sql
     create table t ( a int, b int, index idx(b)) partition by range( a ) (
         partition p1 values less than (10000),
@@ -342,21 +342,21 @@ region4  [("c", "")                    , maxIndexValue               )
 
 2.  `p1`のパーティションの`[0,10000]`範囲のデータを 2 つのリージョンに分割するとします。ステートメントの例は次のとおりです。
 
-    
+
     ```sql
     split partition table t partition (p1) between (0) and (10000) regions 2;
     ```
 
 3.  `p2`のパーティションの`[10000,20000]`範囲のデータを 2 つのリージョンに分割するとします。ステートメントの例は次のとおりです。
 
-    
+
     ```sql
     split partition table t partition (p2) between (10000) and (20000) regions 2;
     ```
 
 4.  `SHOW TABLE REGIONS`構文を使用して、このテーブルのリージョンを表示できます。
 
-    
+
     ```sql
     show table t regions;
     ```
@@ -375,7 +375,7 @@ region4  [("c", "")                    , maxIndexValue               )
 
 5.  `p1`および`p2`パーティションの`idx`のインデックスの`[0,20000]`の範囲を 2 つのリージョンに分割するとします。ステートメントの例は次のとおりです。
 
-    
+
     ```sql
     split partition table t partition (p1,p2) index idx between (0) and (20000) regions 2;
     ```

@@ -158,7 +158,7 @@ sysbench $testname \
 
 Compared with v5.3.0, the Point Select performance of v5.4.0 is slightly improved by 0.64%.
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v530vsv540_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v530vsv540_point_select.png)
 
 ### Update Non-index performance
 
@@ -170,7 +170,7 @@ Compared with v5.3.0, the Point Select performance of v5.4.0 is slightly improve
 
 Compared with v5.3.0, the Update Non-index performance of v5.4.0 is improved by 2.59%.
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v530vsv540_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v530vsv540_update_non_index.png)
 
 ### Update Index performance
 
@@ -182,7 +182,7 @@ Compared with v5.3.0, the Update Non-index performance of v5.4.0 is improved by 
 
 Compared with v5.3.0, the Update Index performance of v5.4.0 is improved by 4.85%.
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v530vsv540_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v530vsv540_update_index.png)
 
 ### Read Write performance
 
@@ -194,4 +194,4 @@ Compared with v5.3.0, the Update Index performance of v5.4.0 is improved by 4.85
 
 Compared with v5.3.0, the Read Write performance of v5.4.0 is improved by 3.30%.
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v530vsv540_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v530vsv540_read_write.png)

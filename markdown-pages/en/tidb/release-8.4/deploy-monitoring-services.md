@@ -253,7 +253,7 @@ To import a Grafana dashboard for the PD server, the TiKV server, and the TiDB s
 
 Click **New dashboard** in the top menu and choose the dashboard you want to view.
 
-![view dashboard](https://download.pingcap.com/images/docs/view-dashboard.png)
+![view dashboard](https://docs-download.pingcap.com/media/images/docs/view-dashboard.png)
 
 You can get the following metrics for cluster components:
 

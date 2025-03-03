@@ -148,7 +148,7 @@ sysbench $testname \
 
 v6.1.0 と比較すると、v6.2.0 の Point Select パフォーマンスはわずかに 3.58% 低下します。
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v610vsv620_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v610vsv620_point_select.png)
 
 ### 非インデックスパフォーマンスの更新 {#update-non-index-performance}
 
@@ -160,7 +160,7 @@ v6.1.0 と比較すると、v6.2.0 の Point Select パフォーマンスはわ�
 
 v6.1.0 と比較すると、v6.2.0 の Update Non-index パフォーマンスは基本的に変化せず、0.85% 減少しました。
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v610vsv620_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v610vsv620_update_non_index.png)
 
 ### インデックスのパフォーマンスを更新 {#update-index-performance}
 
@@ -172,7 +172,7 @@ v6.1.0 と比較すると、v6.2.0 の Update Non-index パフォーマンスは
 
 v6.1.0 と比較すると、v6.2.0 の Update Index のパフォーマンスは基本的に変化がなく、0.47% 減少しました。
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v610vsv620_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v610vsv620_update_index.png)
 
 ### 読み取り書き込みパフォーマンス {#read-write-performance}
 
@@ -184,4 +184,4 @@ v6.1.0 と比較すると、v6.2.0 の Update Index のパフォーマンスは�
 
 v6.1.0 と比較すると、v6.2.0 の読み取り書き込みパフォーマンスは 1.21% 低下します。
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v610vsv620_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v610vsv620_read_write.png)

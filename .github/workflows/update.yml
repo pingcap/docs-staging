@@ -50,7 +50,7 @@ jobs:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # docs-dm and docs-tidb-operator need specify language
-          if [ ${{ inputs.repo }} = "pingcap/docs-dm" ] || [ ${{ inputs.repo }} = "pingcap/docs-tidb-operator" ] 
+          if [ ${{ inputs.repo }} = "pingcap/docs-dm" ] || [ ${{ inputs.repo }} = "pingcap/docs-tidb-operator" ]
           then
           yarn download ${{ inputs.repo }} en --ref ${{ inputs.branch }}
           yarn download ${{ inputs.repo }} zh --ref ${{ inputs.branch }}

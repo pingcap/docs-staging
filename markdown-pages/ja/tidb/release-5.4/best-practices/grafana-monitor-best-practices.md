@@ -11,7 +11,7 @@ summary: Learn seven tips for efficiently using Grafana to monitor TiDB.
 
 [プロメテウス](https://prometheus.io/)は、多次元データモデルと柔軟なクエリ言語を備えた時系列データベースです。 [Grafana](https://grafana.com/)は、メトリックを分析および視覚化するためのオープンソースの監視システムです。
 
-![The monitoring architecture in the TiDB cluster](https://download.pingcap.com/images/docs/prometheus-in-tidb.png)
+![The monitoring architecture in the TiDB cluster](https://docs-download.pingcap.com/media/images/docs/prometheus-in-tidb.png)
 
 TiDB 2.1.3以降のバージョンでは、TiDBモニタリングはプル方式をサポートしています。これは、次の利点を備えた適切な調整です。
 
@@ -49,7 +49,7 @@ tidb_executor_statement_total{type="Use"} 466016
 
 上記のデータはPrometheusに保存され、Grafanaに表示されます。パネルを右クリックしてから、次の図に示す[**編集**]ボタンをクリックします（または<kbd>E</kbd>キーを直接押します）。
 
-![The Edit entry for the Metrics tab](https://download.pingcap.com/images/docs/best-practices/metric-board-edit-entry.png)
+![The Edit entry for the Metrics tab](https://docs-download.pingcap.com/media/images/docs/best-practices/metric-board-edit-entry.png)
 
 [**編集**]ボタンをクリックすると、[メトリック]タブに`tidb_executor_statement_total`のメトリック名のクエリ式が表示されます。パネル上のいくつかの項目の意味は次のとおりです。
 
@@ -61,7 +61,7 @@ tidb_executor_statement_total{type="Use"} 466016
 
 [**メトリック**]タブのクエリ式は次のとおりです。
 
-![The query expression on the Metrics tab](https://download.pingcap.com/images/docs/best-practices/metric-board-expression.jpeg)
+![The query expression on the Metrics tab](https://docs-download.pingcap.com/media/images/docs/best-practices/metric-board-expression.jpeg)
 
 Prometheusは、多くのクエリ式と関数をサポートしています。詳細については、 [プロメテウス公式サイト](https://prometheus.io/docs/prometheus/latest/querying)を参照してください。
 
@@ -73,11 +73,11 @@ Prometheusは、多くのクエリ式と関数をサポートしています。�
 
 [モニタリングデータのソースと表示](#source-and-display-of-monitoring-data)セクションに示されている例では、データはタイプごとにグループ化されています。他のディメンションでグループ化できるかどうかを知り、使用可能なディメンションをすばやく確認する場合は、次の方法を使用でき**ます。クエリ式にメトリック名のみを保持し、計算は行わず、[ `Legend format` ]フィールドは空白のままにします**。このようにして、元のメトリックが表示されます。たとえば、次の図は、 `type`つの次元（ `instance` 、および`job` ）があることを示しています。
 
-![Edit query expression and check all dimensions](https://download.pingcap.com/images/docs/best-practices/edit-expression-check-dimensions.jpg)
+![Edit query expression and check all dimensions](https://docs-download.pingcap.com/media/images/docs/best-practices/edit-expression-check-dimensions.jpg)
 
 次に、 `type`の後に`instance`ディメンションを追加し、 `Legend format`フィールドに`{{instance}}`を追加することで、クエリ式を変更できます。このようにして、各TiDBサーバーで実行されるさまざまなタイプのSQLステートメントのQPSを確認できます。
 
-![Add an instance dimension to the query expression](https://download.pingcap.com/images/docs/best-practices/add-instance-dimension.jpeg)
+![Add an instance dimension to the query expression](https://docs-download.pingcap.com/media/images/docs/best-practices/add-instance-dimension.jpeg)
 
 ### ヒント2：Y軸のスケールを切り替える {#tip-2-switch-the-scale-of-the-y-axis}
 
@@ -87,11 +87,11 @@ Prometheusは、多くのクエリ式と関数をサポートしています。�
 
 Y軸は、デフォルトで2進の対数目盛を使用します。
 
-![The Y-axis uses a binary logarithmic scale](https://download.pingcap.com/images/docs/best-practices/default-axes-scale.jpg)
+![The Y-axis uses a binary logarithmic scale](https://docs-download.pingcap.com/media/images/docs/best-practices/default-axes-scale.jpg)
 
 Y軸を線形スケールに切り替えます。
 
-![Switch to a linear scale](https://download.pingcap.com/images/docs/best-practices/axes-scale-linear.jpg)
+![Switch to a linear scale](https://docs-download.pingcap.com/media/images/docs/best-practices/axes-scale-linear.jpg)
 
 > **ヒント：**
 >
@@ -103,33 +103,33 @@ Y軸を線形スケールに切り替えます。
 
 ベースラインのデフォルトは`0`です。
 
-![Baseline defaults to 0](https://download.pingcap.com/images/docs/best-practices/default-y-min.jpeg)
+![Baseline defaults to 0](https://docs-download.pingcap.com/media/images/docs/best-practices/default-y-min.jpeg)
 
 ベースラインを`auto`に変更します。
 
-![Change the baseline to auto](https://download.pingcap.com/images/docs/best-practices/y-min-auto.jpg)
+![Change the baseline to auto](https://docs-download.pingcap.com/media/images/docs/best-practices/y-min-auto.jpg)
 
 ### ヒント4：共有十字線またはツールチップを使用する {#tip-4-use-shared-crosshair-or-tooltip}
 
 **[設定]**パネルには、デフォルトで[<strong>デフォルト</strong>]に設定されている<strong>グラフツールチップ</strong>パネルオプションがあります。
 
-![Graphic presentation tools](https://download.pingcap.com/images/docs/best-practices/graph-tooltip.jpeg)
+![Graphic presentation tools](https://docs-download.pingcap.com/media/images/docs/best-practices/graph-tooltip.jpeg)
 
 次の図に示すように、**共有十字線**と<strong>共有ツールチップ</strong>をそれぞれ使用して、効果をテストできます。次に、スケールがリンクして表示されます。これは、問題を診断するときに2つのメトリックの相関関係を確認するのに便利です。
 
 グラフィックプレゼンテーションツールを**共有十字線**に設定します。
 
-![Set the graphical presentation tool to Shared crosshair](https://download.pingcap.com/images/docs/best-practices/graph-tooltip-shared-crosshair.jpeg)
+![Set the graphical presentation tool to Shared crosshair](https://docs-download.pingcap.com/media/images/docs/best-practices/graph-tooltip-shared-crosshair.jpeg)
 
 グラフィックプレゼンテーションツールを**共有ツールチップ**に設定します。
 
-![Set the graphic presentation tool to Shared Tooltip](https://download.pingcap.com/images/docs/best-practices/graph-tooltip-shared-tooltip.jpg)
+![Set the graphic presentation tool to Shared Tooltip](https://docs-download.pingcap.com/media/images/docs/best-practices/graph-tooltip-shared-tooltip.jpg)
 
 ### ヒント5： <code>IP address:port number</code>を入力して、履歴のメトリックを確認します {#tip-5-enter-code-ip-address-port-number-code-to-check-the-metrics-in-history}
 
 PDのダッシュボードには、現在のリーダーの指標のみが表示されます。履歴内のPDリーダーのステータスを確認したいが、 `instance`フィールドのドロップダウンリストに存在しなくなった場合は、手動で`IP address:2379`を入力して、リーダーのデータを確認できます。
 
-![Check the metrics in history](https://download.pingcap.com/images/docs/best-practices/manually-input-check-metric.jpeg)
+![Check the metrics in history](https://docs-download.pingcap.com/media/images/docs/best-practices/manually-input-check-metric.jpeg)
 
 ### ヒント6： <code>Avg</code>関数を使用する {#tip-6-use-the-code-avg-code-function}
 
@@ -137,11 +137,11 @@ PDのダッシュボードには、現在のリーダーの指標のみが表示
 
 `Avg`関数などのサマリー関数を追加します。
 
-![Add summary functions such as Avg](https://download.pingcap.com/images/docs/best-practices/add-avg-function.jpeg)
+![Add summary functions such as Avg](https://docs-download.pingcap.com/media/images/docs/best-practices/add-avg-function.jpeg)
 
 次に、全体的な傾向を確認します。
 
-![Add Avg function to check the overall trend](https://download.pingcap.com/images/docs/best-practices/add-avg-function-check-trend.jpg)
+![Add Avg function to check the overall trend](https://docs-download.pingcap.com/media/images/docs/best-practices/add-avg-function-check-trend.jpg)
 
 ### ヒント7：PrometheusのAPIを使用して、クエリ式の結果を取得します {#tip-7-use-the-api-of-prometheus-to-obtain-the-result-of-query-expressions}
 
@@ -153,7 +153,7 @@ GrafanaはPrometheusのAPIを介してデータを取得し、このAPIを使用
 
 PrometheusのAPIは次のように表示されます。
 
-![The API of Prometheus](https://download.pingcap.com/images/docs/best-practices/prometheus-api-interface.jpg)
+![The API of Prometheus](https://docs-download.pingcap.com/media/images/docs/best-practices/prometheus-api-interface.jpg)
 
 
 ```bash

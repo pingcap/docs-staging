@@ -84,7 +84,7 @@ TiDB Dashboard is built in the PD component in TiDB 4.0 and later versions. You 
 
 2. After the cluster is created, expose TiDB Dashboard to the local machine by running the following command:
 
-    
+
     ```shell
     kubectl port-forward svc/basic-discovery -n ${namespace} 10262:10262
     ```
@@ -218,7 +218,7 @@ To enable this feature, you need to deploy TidbNGMonitoring CR using TiDB Operat
 
     Run the following command to deploy TidbNGMonitoring CR. In this command, `${cluster_name}` is the name of the TidbCluster CR and `${cluster_ns}` is the namespace of this CR.
 
-    
+
     ```bash
     cat << EOF | kubectl apply -n ${ns} -f -
     apiVersion: pingcap.com/v1alpha1
@@ -248,7 +248,7 @@ To enable this feature, you need to deploy TidbNGMonitoring CR using TiDB Operat
 
     3. Click **Save** to enable this feature.
 
-    ![Enable the feature](https://download.pingcap.com/images/tidb-in-kubernetes/dashboard-conprof-start.png)
+    ![Enable the feature](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/dashboard-conprof-start.png)
 
 For more operations of the Continuous Profiling function, see [TiDB Dashboard Instance Profiling - Continuous Profiling](https://docs.pingcap.com/zh/tidb/stable/continuous-profiling).
 

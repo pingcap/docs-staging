@@ -24,7 +24,7 @@ summary: This document introduces the basic concepts of performance tuning, such
 
 `ΔT`の合計ユーザー応答時間 = 平均 TPS (1 秒あたりのトランザクション数) x 平均ユーザー応答時間 x `ΔT` 。
 
-![user\_response\_time](https://download.pingcap.com/images/docs/performance/user_response_time_en.png)
+![user\_response\_time](https://docs-download.pingcap.com/media/images/docs/performance/user_response_time_en.png)
 
 ### データベース時間 {#database-time}
 

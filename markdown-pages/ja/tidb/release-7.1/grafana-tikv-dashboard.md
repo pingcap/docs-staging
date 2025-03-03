@@ -30,7 +30,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   リージョン: TiKV インスタンスごとのリージョンの数
 -   稼働時間: 前回の再起動以降の TiKV の実行時間
 
-![TiKV Dashboard - Cluster metrics](https://download.pingcap.com/images/docs/tikv-dashboard-cluster.png)
+![TiKV Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-cluster.png)
 
 ### エラー {#errors}
 
@@ -45,7 +45,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   欠落しているLeader: TiKV インスタンスごとの欠落しているリーダーの数
 -   ログ レプリケーション拒否: 各 TiKV インスタンスのメモリ不足により拒否された logappend メッセージの数
 
-![TiKV Dashboard - Errors metrics](https://download.pingcap.com/images/docs/tikv-dashboard-errors-v610.png)
+![TiKV Dashboard - Errors metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-errors-v610.png)
 
 ### サーバ {#server}
 
@@ -58,7 +58,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   リージョンの平均書き込みキー: TiKV インスタンスあたりのリージョンへの書き込みキーの平均数
 -   リージョンの平均書き込みバイト数: TiKV インスタンスごとのリージョンへの平均書き込みバイト数
 
-![TiKV Dashboard - Server metrics](https://download.pingcap.com/images/docs/tikv-dashboard-server.png)
+![TiKV Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-server.png)
 
 ### gRPC {#grpc}
 
@@ -108,7 +108,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   コミットログ期間: Raftがログをコミットするために費やした時間
 -   サーバーのコミットログ期間: TiKV インスタンスごとにログをコミットするためにRaftが消費した時間
 
-![TiKV Dashboard - Raft IO metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raftio.png)
+![TiKV Dashboard - Raft IO metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raftio.png)
 
 ### Raftプロセス {#raft-process}
 
@@ -127,7 +127,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   レプリカ読み取りロックのチェック期間: レプリカ読み取りの処理時にロックをチェックするために費やされる時間。
 -   ピア メッセージの長さの分布: 各 TiKV インスタンスの各リージョンによって一度に処理されるメッセージの数。メッセージが多いほど、ピアはビジーになります。
 
-![TiKV Dashboard - Raft process metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-process.png)
+![TiKV Dashboard - Raft process metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-process.png)
 
 ### Raftのメッセージ {#raft-message}
 
@@ -138,7 +138,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   Vote: Raftで送信される 1 秒あたりの Vote メッセージの数
 -   Raftドロップされたメッセージ: タイプごと、1 秒あたりにドロップされたRaftメッセージの数
 
-![TiKV Dashboard - Raft message metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-message.png)
+![TiKV Dashboard - Raft message metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-message.png)
 
 ### Raftが提案する {#raft-propose}
 
@@ -152,7 +152,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   サーバーごとの適用待機時間: TiKV インスタンスごとの各プロポーザルの適用時間のヒストグラム
 -   Raftログ速度: ピアがログを提案する平均速度
 
-![TiKV Dashboard - Raft propose metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-propose.png)
+![TiKV Dashboard - Raft propose metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-propose.png)
 
 ### Raft管理者 {#raft-admin}
 
@@ -161,13 +161,13 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   チェック スプリット: 1 秒あたりのRaftstoreスプリット チェック コマンドの数
 -   99.99% チェック分割期間: 分割チェック コマンドの実行にかかる時間 (P99.99)
 
-![TiKV Dashboard - Raft admin metrics](https://download.pingcap.com/images/docs/tikv-dashboard-raft-admin.png)
+![TiKV Dashboard - Raft admin metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-admin.png)
 
 ### ローカルリーダー {#local-reader}
 
 -   ローカル リーダー リクエスト: リクエストの総数とローカル読み取りスレッドからの拒否の数
 
-![TiKV Dashboard - Local reader metrics](https://download.pingcap.com/images/docs/tikv-dashboard-local-reader.png)
+![TiKV Dashboard - Local reader metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-local-reader.png)
 
 ### 統合読み取りプール {#unified-read-pool}
 
@@ -182,7 +182,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   ストレージ非同期スナップショット期間: 非同期スナップショット要求の処理にかかる時間。 `.99`の`1s`未満である必要があります。
 -   ストレージの非同期書き込み時間: 非同期書き込みリクエストの処理にかかる時間。 `.99`の`1s`未満である必要があります。
 
-![TiKV Dashboard - Storage metrics](https://download.pingcap.com/images/docs/tikv-dashboard-storage.png)
+![TiKV Dashboard - Storage metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-storage.png)
 
 ### フロー制御 {#flow-control}
 
@@ -197,7 +197,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   Txn コマンドのスロットル期間: スロットルによるトランザクションに関連するコマンドのブロック期間。通常の状況では、このメトリックは 0 です。
 -   非 txn コマンドのスロットル期間: スロットリングにより他のコマンドがブロックされた期間。通常の状況では、このメトリックは 0 です。
 
-![TiKV Dashboard - Flow Control metrics](https://download.pingcap.com/images/docs/tikv-dashboard-flow-control.png)
+![TiKV Dashboard - Flow Control metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-flow-control.png)
 
 ### スケジューラー {#scheduler}
 
@@ -206,7 +206,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   スケジューラ優先コマンド: 1 秒あたりのさまざまな優先コマンドの数
 -   スケジューラの保留中のコマンド: TiKV インスタンスごとの 1 秒あたりの保留中のコマンドの数
 
-![TiKV Dashboard - Scheduler metrics](https://download.pingcap.com/images/docs/tikv-dashboard-scheduler.png)
+![TiKV Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-scheduler.png)
 
 ### スケジューラ - コミット {#scheduler-commit}
 
@@ -220,7 +220,7 @@ Grafana ダッシュボードは、Overview、PD、TiDB、TiKV、Node_exporter�
 -   スケジューラスキャン詳細 [書き込み]: commit コマンド実行時にライト CF の詳細をスキャンします。
 -   スケジューラ スキャンの詳細 [デフォルト]: commit コマンドの実行時に、キーはデフォルトの CF の詳細をスキャンします。
 
-![TiKV Dashboard - Scheduler commit metrics](https://download.pingcap.com/images/docs/tikv-dashboard-scheduler-commit.png)
+![TiKV Dashboard - Scheduler commit metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-scheduler-commit.png)
 
 ### スケジューラ - pessimistic_rollback {#scheduler-pessimistic-rollback}
 

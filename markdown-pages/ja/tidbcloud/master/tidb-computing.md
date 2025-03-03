@@ -118,7 +118,7 @@ SQL コンピューティングの最も単純なソリューションは、前�
 
 **全体のプロセスは次のように示されます。**
 
-![naive sql flow](https://download.pingcap.com/images/docs/tidb-computing-native-sql-flow.jpeg)
+![naive sql flow](https://docs-download.pingcap.com/media/images/docs/tidb-computing-native-sql-flow.jpeg)
 
 このソリューションは直感的で実現可能ですが、分散データベースのシナリオでは明らかな問題がいくつかあります。
 
@@ -132,12 +132,12 @@ SQL コンピューティングの最も単純なソリューションは、前�
 
 次の画像は、データがレイヤーレイヤーに返される様子を示しています。
 
-![dist sql flow](https://download.pingcap.com/images/docs/tidb-computing-dist-sql-flow.png)
+![dist sql flow](https://docs-download.pingcap.com/media/images/docs/tidb-computing-dist-sql-flow.png)
 
 ### SQLレイヤーのアーキテクチャ {#architecture-of-sql-layer}
 
 前のセクションでは、SQLレイヤーの関数をいくつか紹介しました。SQL ステートメントの処理方法について基本的な理解が得られたことと思います。実際、TiDB の SQLレイヤーは、多くのモジュールとレイヤーがあり、はるかに複雑です。次の図は、重要なモジュールと呼び出し関係を示しています。
 
-![tidb sql layer](https://download.pingcap.com/images/docs/tidb-computing-tidb-sql-layer.png)
+![tidb sql layer](https://docs-download.pingcap.com/media/images/docs/tidb-computing-tidb-sql-layer.png)
 
 ユーザーの SQL 要求は、直接または`Load Balancer`経由で TiDB サーバーに送信されます。TiDB サーバーは`MySQL Protocol Packet`解析し、要求の内容を取得し、SQL 要求を構文的および意味的に解析し、クエリ プランを開発して最適化し、クエリ プランを実行し、データを取得して処理します。すべてのデータは TiKV クラスターに保存されるため、このプロセスでは、TiDB サーバーは TiKV と対話してデータを取得する必要があります。最後に、TiDB サーバーはクエリ結果をユーザーに返す必要があります。

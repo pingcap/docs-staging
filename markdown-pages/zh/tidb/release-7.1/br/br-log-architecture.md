@@ -11,13 +11,13 @@ summary: 了解 TiDB 的日志备份与 PITR 的架构设计。
 
 日志备份和 PITR 的架构如下：
 
-![BR log backup and PITR architecture](https://download.pingcap.com/images/docs-cn/br/br-log-arch.png)
+![BR log backup and PITR architecture](https://docs-download.pingcap.com/media/images/docs-cn/br/br-log-arch.png)
 
 ## 日志备份
 
 日志备份的流程如下：
 
-![BR log backup process design](https://download.pingcap.com/images/docs-cn/br/br-log-backup-ts.png)
+![BR log backup process design](https://docs-download.pingcap.com/media/images/docs-cn/br/br-log-backup-ts.png)
 
 系统组件和关键概念：
 
@@ -53,7 +53,7 @@ summary: 了解 TiDB 的日志备份与 PITR 的架构设计。
 
 PITR 的流程如下：
 
-![Point-in-time recovery process design](https://download.pingcap.com/images/docs-cn/br/pitr-ts.png)
+![Point-in-time recovery process design](https://docs-download.pingcap.com/media/images/docs-cn/br/pitr-ts.png)
 
 完整的 PITR 交互流程描述如下：
 

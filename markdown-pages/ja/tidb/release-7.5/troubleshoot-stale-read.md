@@ -41,11 +41,11 @@ resolved-ts は、この値より小さいタイムスタンプを持つすべ�
 
 [Grafana &gt; TiDB ダッシュボード &gt; **KV リクエスト**ダッシュボード](/grafana-tidb-dashboard.md#kv-request)では、次のパネルにステイル読み取りのヒット率、OPS、トラフィックが表示されます。
 
-![Stale Read Hit/Miss OPS](https://download.pingcap.com/images/docs/stale-read/metrics-hit-miss.png)
+![Stale Read Hit/Miss OPS](https://docs-download.pingcap.com/media/images/docs/stale-read/metrics-hit-miss.png)
 
-![Stale Read Req OPS](https://download.pingcap.com/images/docs/stale-read/metrics-ops.png)
+![Stale Read Req OPS](https://docs-download.pingcap.com/media/images/docs/stale-read/metrics-ops.png)
 
-![Stale Read Req Traffic](https://download.pingcap.com/images/docs/stale-read/traffic.png)
+![Stale Read Req Traffic](https://docs-download.pingcap.com/media/images/docs/stale-read/traffic.png)
 
 前述のメトリクスの詳細については、 [TiDB モニタリングメトリクス](/grafana-tidb-dashboard.md#kv-request)を参照してください。
 
@@ -168,11 +168,11 @@ CheckLeader の問題に対処するには、 [**TiKV-詳細**&gt;**解決済み
 
 次のように、 **ステイル読み取り OPS**のミス率が増加していることが観察された場合:
 
-![Example: Stale Read OPS](https://download.pingcap.com/images/docs/stale-read/example-ops.png)
+![Example: Stale Read OPS](https://docs-download.pingcap.com/media/images/docs/stale-read/example-ops.png)
 
 まず、 [**TiKV-詳細**&gt;**解決済み-TS**ダッシュボード](/grafana-tikv-dashboard.md#resolved-ts)で**最大解決 TS ギャップ**と**最小解決 TSリージョン**メトリクスを確認できます。
 
-![Example: Max Resolved TS gap](https://download.pingcap.com/images/docs/stale-read/example-ts-gap.png)
+![Example: Max Resolved TS gap](https://docs-download.pingcap.com/media/images/docs/stale-read/example-ts-gap.png)
 
 前述のメトリクスから、リージョン`3121`と他の一部のリージョンがresolved-ts を時間内に更新していないことがわかります。
 

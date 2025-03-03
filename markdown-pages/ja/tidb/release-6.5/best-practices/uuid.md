@@ -51,7 +51,7 @@ Universally Unique Identifier (UUID) を`AUTO_INCREMENT`整数値の代わりに
 
 </CustomContent>
 
-![Key Visualizer](https://download.pingcap.com/images/docs/best-practices/uuid_keyviz.png)
+![Key Visualizer](https://docs-download.pingcap.com/media/images/docs/best-practices/uuid_keyviz.png)
 
 ```sql
 CREATE TABLE `uuid_demo_1` (

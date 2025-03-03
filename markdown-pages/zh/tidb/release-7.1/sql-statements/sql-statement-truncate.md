@@ -13,15 +13,15 @@ summary: TiDB 数据库中 TRUNCATE 的使用概况。
 
 **TruncateTableStmt:**
 
-![TruncateTableStmt](https://download.pingcap.com/images/docs-cn/sqlgram/TruncateTableStmt.png)
+![TruncateTableStmt](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TruncateTableStmt.png)
 
 **OptTable:**
 
-![OptTable](https://download.pingcap.com/images/docs-cn/sqlgram/OptTable.png)
+![OptTable](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/OptTable.png)
 
 **TableName:**
 
-![TableName](https://download.pingcap.com/images/docs-cn/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs-cn/sqlgram/TableName.png)
 
 ## 示例
 

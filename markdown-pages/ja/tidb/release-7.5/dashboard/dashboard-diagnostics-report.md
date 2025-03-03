@@ -20,7 +20,7 @@ summary: TiDB ダッシュボード診断レポートは、診断レポートの
 
 診断レポートの例は次のとおりです。
 
-![Sample report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-example-table.png)
+![Sample report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-example-table.png)
 
 上の画像では、上部の青いボックスにある**合計時間消費が**レポート名です。以下の赤いボックス内の情報は、このレポートの内容とレポートの各フィールドの意味を説明しています。
 
@@ -42,13 +42,13 @@ summary: TiDB ダッシュボード診断レポートは、診断レポートの
 
 診断レポートを生成する時間範囲には、開始時刻と終了時刻が含まれます。
 
-![Report time range](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-report-time-range.png)
+![Report time range](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-report-time-range.png)
 
 #### クラスタのハードウェア情報 {#cluster-hardware-info}
 
 クラスタのハードウェア情報には、クラスター内の各サーバーの CPU、メモリ、ディスクなどの情報が含まれます。
 
-![Cluster hardware report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-cluster-hardware.png)
+![Cluster hardware report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-cluster-hardware.png)
 
 上の表のフィールドは次のように説明されています。
 
@@ -63,7 +63,7 @@ summary: TiDB ダッシュボード診断レポートは、診断レポートの
 
 表`Cluster Info`は、クラスター トポロジー情報を示します。この表の情報は、TiDB [information_schema.cluster_info](/information-schema/information-schema-cluster-info.md)システム テーブルからのものです。
 
-![Cluster info](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-cluster-info.png)
+![Cluster info](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-cluster-info.png)
 
 上の表のフィールドは次のように説明されています。
 
@@ -97,25 +97,25 @@ TiDB には自動診断結果が組み込まれています。各フィールド
 -   ノードによって使用されている TCP 接続の数
 -   ノードのすべての TCP 接続の数
 
-![Server Load Info report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-node-load-info.png)
+![Server Load Info report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-node-load-info.png)
 
 #### インスタンスの CPU 使用率 {#instance-cpu-usage}
 
 表`Instance CPU Usage`は、TiDB/PD/TiKVの各プロセスのCPU使用率の平均値(AVG)、最大値(MAX)、最小値(MIN)を示しています。プロセスの最大 CPU 使用率は`100% * the number of CPU logical cores`です。
 
-![Instance CPU Usage report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-process-cpu-usage.png)
+![Instance CPU Usage report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-process-cpu-usage.png)
 
 #### インスタンスのメモリ使用量 {#instance-memory-usage}
 
 表`Instance Memory Usage`は、各 TiDB/PD/TiKV プロセスが占有するメモリバイトの平均値 (AVG)、最大値 (MAX)、および最小値 (MIN) を示しています。
 
-![Instance memory usage report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-process-memory-usage.png)
+![Instance memory usage report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-process-memory-usage.png)
 
 #### TiKV スレッドの CPU 使用率 {#tikv-thread-cpu-usage}
 
 表`TiKV Thread CPU Usage`は、TiKVにおける各モジュールスレッドのCPU使用率の平均値(AVG)、最大値(MAX)、最小値(MIN)を示しています。プロセスの最大 CPU 使用率は`100% * the thread count of the corresponding configuration`です。
 
-![TiKV Thread CPU Usage report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-thread-cpu-usage.png)
+![TiKV Thread CPU Usage report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-thread-cpu-usage.png)
 
 上の表では、
 
@@ -130,7 +130,7 @@ TiDB には自動診断結果が組み込まれています。各フィールド
 
 表`TiDB/PD Goroutines Count`は、TiDBまたはPDゴルーチン数の平均値(AVG)、最大値(MAX)、最小値(MIN)を示しています。ゴルーチンの数が 2,000 を超えると、プロセスの同時実行性が高くなりすぎ、全体的なリクエストのレイテンシーに影響します。
 
-![TiDB/PD goroutines count report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-goroutines-count.png)
+![TiDB/PD goroutines count report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-goroutines-count.png)
 
 ### 概要情報 {#overview-information}
 
@@ -138,7 +138,7 @@ TiDB には自動診断結果が組み込まれています。各フィールド
 
 表`Time Consumed by Each Component`は、クラスター内の TiDB、PD、TiKV モジュールの監視された消費時間と時間比率を示しています。デフォルトの時間単位は秒です。このテーブルを使用すると、どのモジュールがより多くの時間を消費しているかをすばやく特定できます。
 
-![Time Consume report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-total-time-consume.png)
+![Time Consume report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-total-time-consume.png)
 
 上の表の列のフィールドは次のように説明されています。
 
@@ -154,7 +154,7 @@ TiDB には自動診断結果が組み込まれています。各フィールド
 
 次の図は、上記の監視メトリクスにおける関連モジュールの時間消費の関係を示しています。
 
-![Time-consumption relationship of each module](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-time-relation.png)
+![Time-consumption relationship of each module](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-time-relation.png)
 
 上の画像では、黄色のボックスは TiDB 関連のモニタリング メトリックです。青色のボックスは TiKV 関連のモニタリング メトリックで、灰色のボックスは一時的に特定のモニタリング メトリックに対応していません。
 
@@ -210,7 +210,7 @@ TiDB には自動診断結果が組み込まれています。各フィールド
 
 `Errors Occurred in Each Component`表は、 binlog、 `tikv server is busy` 、 `TiKV channel full` 、 `tikv write stall`への書き込み失敗など、TiDB と TiKV のエラーの合計数を示しています。各エラーの具体的な意味については、行のコメントを確認できます。
 
-![Errors Occurred in Each Component report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-error.png)
+![Errors Occurred in Each Component report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-error.png)
 
 #### 特定の TiDB/PD/TiKV モニタリング情報 {#specific-tidb-pd-tikv-monitoring-information}
 
@@ -230,7 +230,7 @@ TiDB には自動診断結果が組み込まれています。各フィールド
 
 この表は、トランザクション関連の監視メトリックを示しています。
 
-![Transaction report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-tidb-txn.png)
+![Transaction report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-tidb-txn.png)
 
 -   `TOTAL_VALUE` : レポート時間範囲内のすべての値の合計(SUM)。
 -   `TOTAL_COUNT` : この監視メトリックの合計発生数。
@@ -245,7 +245,7 @@ TiDB には自動診断結果が組み込まれています。各フィールド
 
 ##### DDL 所有者 {#ddl-owner}
 
-![TiDB DDL Owner Report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-tidb-ddl.png)
+![TiDB DDL Owner Report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-tidb-ddl.png)
 
 上の表は、 `2020-05-21 14:40:00`から、クラスターの`DDL OWNER` `10.0.1.13:10080`ノードにあることを示しています。所有者が変更されると、上の表には複数のデータ行が存在します`Min_Time`列は、対応する既知の所有者の最小時間を示します。
 
@@ -304,7 +304,7 @@ TiKV モジュールの監視情報に関連するテーブルは次のとおり
 
 例：
 
-![Scheduler Config Change History report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-config-change.png)
+![Scheduler Config Change History report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-config-change.png)
 
 上の表は、 `leader-schedule-limit`構成パラメータがレポート時間範囲内で変更されたことを示しています。
 
@@ -323,7 +323,7 @@ TiKV モジュールの監視情報に関連するテーブルは次のとおり
 
 まず、基本情報の`Compare Report Time Range`レポートには、比較のために 2 つの時間範囲が表示されます。
 
-![Compare Report Time Range report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-compare-time.png)
+![Compare Report Time Range report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-compare-time.png)
 
 上の表において、 `t1`は通常の時間範囲、または基準時間範囲を示します。 `t2`は異常な時間範囲です。
 
@@ -337,7 +337,7 @@ TiKV モジュールの監視情報に関連するテーブルは次のとおり
 
 ここでは、 `Instance CPU Usage`表を例に`DIFF_RATIO`を紹介します。
 
-![Compare Instance CPU Usage report](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-compare-instance-cpu-usage.png)
+![Compare Instance CPU Usage report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-compare-instance-cpu-usage.png)
 
 -   `t1.AVG` 、 `t1.MAX` 、 `t1.Min`は`t1`における CPU 使用率の平均値、最大値、最小値です。
 -   `t2.AVG` `t2.Min` `t2.MAX`中`t2` CPU使用率の平均値、最大値、最小値です。
@@ -358,7 +358,7 @@ TiKV モジュールの監視情報に関連するテーブルは次のとおり
 
 `Maximum Different Item`表は、2 つの時間範囲の監視メトリックを比較し、監視メトリックの違いに従って並べ替えています。このテーブルを使用すると、2 つの時間範囲でどの監視メトリクスに最も大きな違いがあるかをすぐに見つけることができます。次の例を参照してください。
 
-![Maximum Different Item table](https://download.pingcap.com/images/docs/dashboard/dashboard-diagnostics-maximum-different-item.png)
+![Maximum Different Item table](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-maximum-different-item.png)
 
 -   `Table` : この監視メトリックが比較レポートのどのテーブルから取得されたかを示します。たとえば、 `TiKV, coprocessor_info` TiKVコンポーネントの`coprocessor_info`テーブルを示します。
 -   `METRIC_NAME` : 監視メトリック名。 `expand`をクリックすると、メトリックのさまざまなラベルの比較が表示されます。

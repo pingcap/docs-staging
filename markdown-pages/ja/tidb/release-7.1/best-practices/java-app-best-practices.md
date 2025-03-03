@@ -17,7 +17,7 @@ Javaアプリケーションで TiDB データベースと対話する一般的�
 -   データ アクセス フレームワーク: アプリケーションは通常、 [マイバティス](https://mybatis.org/mybatis-3/index.html)や[休止状態](https://hibernate.org/)などのデータ アクセス フレームワークを使用して、データベース アクセス操作をさらに簡素化し、管理します。
 -   アプリケーションの実装: アプリケーション ロジックは、いつどのコマンドをデータベースに送信するかを制御します。一部のアプリケーションは、トランザクションの開始ロジックとコミットロジックを管理するために[春のトランザクション](https://docs.spring.io/spring/docs/4.2.x/spring-framework-reference/html/transaction.html)アスペクトを使用します。
 
-![Java application components](https://download.pingcap.com/images/docs/best-practices/java-practice-1.png)
+![Java application components](https://docs-download.pingcap.com/media/images/docs/best-practices/java-practice-1.png)
 
 上の図から、 Javaアプリケーションが次のことを実行する可能性があることがわかります。
 

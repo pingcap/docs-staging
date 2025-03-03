@@ -271,11 +271,11 @@ Flags:
 
 DM 增量校验（validator）的简要架构如下所示：
 
-![validator summary](https://download.pingcap.com/images/docs-cn/dm/dm-validator-summary.jpg)
+![validator summary](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-validator-summary.jpg)
 
 增量数据校验的工作生命周期如下所示：
 
-![validator lifecycle](https://download.pingcap.com/images/docs-cn/dm/dm-validator-lifecycle.jpg)
+![validator lifecycle](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-validator-lifecycle.jpg)
 
 增量数据校验的具体处理流程如下：
 

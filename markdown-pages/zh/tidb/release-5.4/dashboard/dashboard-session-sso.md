@@ -28,7 +28,7 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
     这是因为 TiDB Dashboard SSO 的原理是在 SSO 成功鉴权后，采用 TiDB Dashboard 内加密存储的 SQL 登录密码进行替代登录。
 
-    ![操作示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-enable-1.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-enable-1.png)
 
     > **注意：**
     >
@@ -36,11 +36,11 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
 6. 在对话框中填写完密码后，点击**授权并保存** (Authorize and Save)。
 
-    ![操作示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-enable-2.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-enable-2.png)
 
 7. 点击**更新** (Update) 保存配置。
 
-    ![操作示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-enable-3.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-enable-3.png)
 
 至此 TiDB Dashboard 中已经成功开启了 SSO 登录。
 
@@ -60,7 +60,7 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
 4. 点击**更新** (Update) 保存配置。
 
-    ![操作示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-disable.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-disable.png)
 
 ### 密码发生变更后重新录入密码
 
@@ -72,7 +72,7 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
 3. 在**单点登录** (Single Sign-On) 区域下，点击**授权登录为该用户** (Authorize Impersonation) 来录入新的密码。
 
-    ![操作示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-reauthorize.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-reauthorize.png)
 
 4. 在对话框中填写完毕密码后，点击**授权并保存** (Authorize and Save)。
 
@@ -82,7 +82,7 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
 1. 在 TiDB Dashboard 登录界面上，点击**使用公司账号 SSO 登录** (Sign in via Company Account)。
 
-    ![操作示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-signin.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-signin.png)
 
 2. 在配置 SSO 的系统中进行登录。
 
@@ -102,7 +102,7 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
 3. 点击 **Create App Integration**。
 
-    ![操作示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-okta-1.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-1.png)
 
 4. 在弹出的对话框中，**Sign-in method** 字段选择 **OIDC - OpenID Connect**。
 
@@ -110,7 +110,7 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
 6. 对话框中点击 **Next** 按钮。
 
-    ![操作示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-okta-2.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-2.png)
 
 7. **Sign-in redirect URIs** 字段填写如下内容：
 
@@ -128,25 +128,25 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
     类似地，将 `DASHBOARD_IP:PORT` 替换为实际的域名（或 IP）及端口。
 
-    ![操作示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-okta-3.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-3.png)
 
 9. 在 **Assignments** 中按你的实际需求配置组织中哪些用户可以通过这个 SSO 登录 TiDB Dashboard，然后点击 **Save** 保存配置。
 
-    ![操作示例](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-okta-4.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-4.png)
 
 ### 步骤二：获取 TiDB Dashboard 所需的配置参数并填入 TiDB Dashboard
 
 1. 在 Okta 创建的 App Integration 中，点击 **Sign On**。
 
-    ![操作示例 1](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-okta-info-1.png)
+    ![操作示例 1](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-info-1.png)
 
 2. **OpenID Connect ID Token** 区域中有 **Issuer** 和 **Audience** 字段，复制这两个字段的值。
 
-    ![操作示例 2](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-okta-info-2.png)
+    ![操作示例 2](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-info-2.png)
 
 3. 打开 TiDB Dashboard 配置界面，将上一步获取到的 **Issuer** 填入 **OIDC Client ID**，将 **Audience** 填入 **OIDC Discovery URL** 后，完成授权并保存配置。示例如下：
 
-    ![操作示例 3](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-okta-info-3.png)
+    ![操作示例 3](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-info-3.png)
 
 至此，TiDB Dashboard 已被配置为使用 Okta 进行 SSO 登录。
 
@@ -162,11 +162,11 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
 3. 点击 **Create Application**，在弹出窗口中输入 Name，例如 "TiDB Dashboard"。在 **Choose an application type** 下选择 "Single Page Web Application"。
 
-    ![Create Application](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-auth0-create-app.png)
+    ![Create Application](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-auth0-create-app.png)
 
 4. 点击 **Settings** 栏。
 
-    ![Settings](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-auth0-settings-1.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-auth0-settings-1.png)
 
 5. 在 **Allowed Callback URLs** 字段中填写如下内容：
 
@@ -184,7 +184,7 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
     类似地，将 `DASHBOARD_IP:PORT` 替换为实际的域名（或 IP）及端口。
 
-    ![Settings](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-auth0-settings-2.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-auth0-settings-2.png)
 
 7. 其它设置保持默认，点击 **Save Changes** 保存。
 
@@ -192,7 +192,7 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
 1. 将 Auth0 **Settings** 栏 **Basic Information** 项的 **Client ID** 字段的值填入 TiDB Dashboard 的 **OIDC Client ID**，将 **Domain** 字段的值，加上 `https://` 前缀和 `/` 后缀后填入 **OIDC Discovery URL** 中，例如 `https://example.us.auth0.com/`。完成授权并保存配置即可。
 
-    ![Settings](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-auth0-settings-3.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-auth0-settings-3.png)
 
 至此，TiDB Dashboard 已被配置为使用 Auth0 进行 SSO 登录。
 
@@ -208,7 +208,7 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
 3. 点击**添加**按钮。
 
-    ![Settings](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-casdoor-settings-1.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-casdoor-settings-1.png)
 
 4. 填写**名称**和**显示名称**，比如：**TiDB Dashboard** 。
 
@@ -218,9 +218,9 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
    http://DASHBOARD_IP:PORT/dashboard/?sso_callback=1
    ```
 
-   在以上内容中，将 `DASHBOARD_IP:PORT` 替换为你在浏览器中实际访问 TiDB Dashboard 所使用的域名（或 IP）及端口。   
+   在以上内容中，将 `DASHBOARD_IP:PORT` 替换为你在浏览器中实际访问 TiDB Dashboard 所使用的域名（或 IP）及端口。
 
-   ![Settings](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-casdoor-settings-2.png)
+   ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-casdoor-settings-2.png)
 
 6. 其他设置保留默认值，点击**保存 & 退出**。
 
@@ -232,6 +232,6 @@ TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点�
 
 2. 将 Casdoor 部署地址加上 `https://` 前缀和 `/` 后缀后填入 **OIDC Discovery URL** 中，例如 `https://casdoor.example.com/`。完成授权并保存配置即可。
 
-    ![Settings](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-session-sso-casdoor-settings-3.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-casdoor-settings-3.png)
 
 至此，TiDB Dashboard 已被配置为使用 Casdoor 进行 SSO 登录。

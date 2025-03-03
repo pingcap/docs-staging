@@ -7,7 +7,7 @@ summary: 介绍 TiDB 进行物理优化时所使用的代价模型的原理。
 
 TiDB 在进行[物理优化](/sql-physical-optimization.md)时会使用代价模型来进行索引选择和算子选择，如下图所示：
 
-![CostModel](https://download.pingcap.com/images/docs-cn/cost-model.png)
+![CostModel](https://docs-download.pingcap.com/media/images/docs-cn/cost-model.png)
 
 TiDB 会计算每个索引的访问代价和计划中每个物理算子的执行代价（如 HashJoin、IndexJoin 等），选择代价最低的计划。
 

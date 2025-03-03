@@ -19,7 +19,7 @@ summary: 了解 TiDB 提供的几种容灾方案，包括基于主备集群的�
 
 下面的图形描述了这两个概念：
 
-![RTO and RPO](https://download.pingcap.com/images/docs-cn/dr/rto-rpo.png)
+![RTO and RPO](https://docs-download.pingcap.com/media/images/docs-cn/dr/rto-rpo.png)
 
 - 错误容忍目标：由于灾难可能影响的地域范围是不同的，在本文中，使用“错误容忍目标”来描述系统能够容忍的灾难的最大范围。
 - 区域：本文主要讨论区域 (region) 级别的容灾方案，这里的区域通常是指一个物理世界中的地区或者城市。
@@ -30,7 +30,7 @@ summary: 了解 TiDB 提供的几种容灾方案，包括基于主备集群的�
 
 ### TiDB 架构
 
-![TiDB architecture](https://download.pingcap.com/images/docs-cn/dr/tidb-architecture.png)
+![TiDB architecture](https://docs-download.pingcap.com/media/images/docs-cn/dr/tidb-architecture.png)
 
 TiDB 的设计采用了计算、存储分离的架构：
 
@@ -42,7 +42,7 @@ TiDB 的设计采用了计算、存储分离的架构：
 
 ### TiCDC 架构
 
-![TiCDC architecture](https://download.pingcap.com/images/docs-cn/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/cdc-architecture.png)
 
 TiCDC 作为 TiDB 的增量数据同步工具，通过 PD 内部的 etcd 实现高可用，通过多个 Capture 进程获取 TiKV 节点上的数据改变，在内部进行排序、合并等处理之后，通过多个同步任务，同时向多个下游系统进行数据同步。在上面的架构中：
 
@@ -53,7 +53,7 @@ TiCDC 作为 TiDB 的增量数据同步工具，通过 PD 内部的 etcd 实现�
 
 ### BR 架构
 
-![BR architecture](https://download.pingcap.com/images/docs-cn/br/br-snapshot-arch.png)
+![BR architecture](https://docs-download.pingcap.com/media/images/docs-cn/br/br-snapshot-arch.png)
 
 BR 作为 TiDB 的备份恢复工具，可以对 TiDB 集群进行基于时间点的全量快照备份和持续的日志备份，从而保护 TiDB 集群的数据。当 TiDB 集群完全不可用时，可以通过备份文件，在全新的集群中进行恢复。备份恢复通常是数据安全的最后一道防线。
 
@@ -61,7 +61,7 @@ BR 作为 TiDB 的备份恢复工具，可以对 TiDB 集群进行基于时间�
 
 ### 基于 TiCDC 的主备集群容灾方案
 
-![Primary-secondary cluster DR](https://download.pingcap.com/images/docs-cn/dr/ticdc-dr.png)
+![Primary-secondary cluster DR](https://docs-download.pingcap.com/media/images/docs-cn/dr/ticdc-dr.png)
 
 在上面的架构中包含了两个 TiDB 集群，Cluster1 为主用集群，运行在区域 1 (Region 1)，包含 3 个副本，承担读写业务。Cluster2 作为灾备集群，运行在区域 2 (Region 2)。当 Cluster1 出现灾难时，Cluster2 继续对外提供服务。两个集群之间通过 TiCDC 进行数据改变的同步。这种架构，简称为“1:1”解决方案。
 
@@ -69,7 +69,7 @@ BR 作为 TiDB 的备份恢复工具，可以对 TiDB 集群进行基于时间�
 
 ### 基于多副本的单集群容灾方案
 
-![Multi-replica cluster DR](https://download.pingcap.com/images/docs-cn/dr/multi-replica-dr.png)
+![Multi-replica cluster DR](https://docs-download.pingcap.com/media/images/docs-cn/dr/multi-replica-dr.png)
 
 在上面的架构中，每个区域都包含两份完整的数据副本，它们位于不同的可用区 (Available Zone, AZ) 当中（通常情况下，两个可用区之间的网络速度和带宽条件较好，在同一个区域中的不同 AZ 中读写请求的延迟很低），整个集群横跨了三个区域。区域 1 通常是用来处理读写业务请求的主区域，当区域 1 出现灾难后完全不可用时，区域 2 可以作为灾难恢复的区域。而区域 3 (Region 3) 更多的是为了满足多数派协议而存在的一个副本。这种架构，简称为“2-2-1”解决方案。
 
@@ -79,7 +79,7 @@ BR 作为 TiDB 的备份恢复工具，可以对 TiDB 集群进行基于时间�
 
 以上两种容灾解决方案都可以实现区域级别的容灾，但是都无法解决多个区域同时不可用的问题。如果你的系统非常重要，需要“错误容忍目标”达到多个区域，就需要将以上两种容灾解决方案进行结合。
 
-![TiCDC-based multi-replica cluster DR](https://download.pingcap.com/images/docs-cn/dr/ticdc-multi-replica-dr.png)
+![TiCDC-based multi-replica cluster DR](https://docs-download.pingcap.com/media/images/docs-cn/dr/ticdc-multi-replica-dr.png)
 
 在上面的部署中存在两个 TiDB 集群。Cluster1 有 5 个副本，跨 3 个区域。区域 1 (Region 1) 包含两个副本作为主区域，用于服务写入。区域 2 (Region 2) 有两个副本作为区域 1 的容灾区域，可以提供一些延迟不敏感的读取服务。最后一个副本用于投票，位于区域 3 (Region 3) 中。
 
@@ -89,7 +89,7 @@ BR 作为 TiDB 的备份恢复工具，可以对 TiDB 集群进行基于时间�
 
 ### 基于备份与恢复的容灾解决方案
 
-![BR-based cluster DR](https://download.pingcap.com/images/docs-cn/dr/br-dr.png)
+![BR-based cluster DR](https://docs-download.pingcap.com/media/images/docs-cn/dr/br-dr.png)
 
 按照上面的部署，TiDB Cluster1 部署在区域 1 (Region 1)，BR 工具定期将集群的数据备份到区域 2 (Region 2)，并且持续将数据改变日志也备份到区域 2。当区域 1 出现灾难导致 Cluster1 无法恢复时，你可以使用备份的数据和数据改变在区域 2 恢复新的集群 Cluster2 对外提供服务。
 

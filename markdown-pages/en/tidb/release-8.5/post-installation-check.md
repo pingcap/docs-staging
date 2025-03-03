@@ -26,11 +26,11 @@ Expected output: If the `Status` information of each node is `Up`, the cluster r
 
 1. Log in to TiDB Dashboard at `${pd-ip}:${pd-port}/dashboard`. The username and password is the same as that of the TiDB `root` user. If you have modified the `root` password, enter the modified password. The password is empty by default.
 
-    ![TiDB-Dashboard](https://download.pingcap.com/images/docs/tiup/tidb-dashboard.png)
+    ![TiDB-Dashboard](https://docs-download.pingcap.com/media/images/docs/tiup/tidb-dashboard.png)
 
 2. The home page displays the node information in the TiDB cluster.
 
-    ![TiDB-Dashboard-status](https://download.pingcap.com/images/docs/tiup/tidb-dashboard-status.png)
+    ![TiDB-Dashboard-status](https://docs-download.pingcap.com/media/images/docs/tiup/tidb-dashboard-status.png)
 
 ### Use Grafana
 
@@ -38,7 +38,7 @@ Expected output: If the `Status` information of each node is `Up`, the cluster r
 
 2. To check the TiDB port status and load monitoring information, click **Overview**.
 
-    ![Grafana-overview](https://download.pingcap.com/images/docs/tiup/grafana-overview.png)
+    ![Grafana-overview](https://docs-download.pingcap.com/media/images/docs/tiup/grafana-overview.png)
 
 ## Log in to the database and perform simple operations
 
@@ -73,7 +73,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - Check the version of TiDB:
 
-    
+
     ```sql
     select tidb_version()\G
     ```
@@ -96,7 +96,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - Create a database named `pingcap`:
 
-    
+
     ```sql
     create database pingcap;
     ```
@@ -109,7 +109,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
     Switch to the `pingcap` database:
 
-    
+
     ```sql
     use pingcap;
     ```
@@ -122,7 +122,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - Create a table named `tab_tidb`:
 
-    
+
     ```sql
     CREATE TABLE `tab_tidb` (
     `id` int NOT NULL AUTO_INCREMENT,
@@ -141,7 +141,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - Insert data:
 
-    
+
     ```sql
     insert into `tab_tidb` values (1,'TiDB',5,'TiDB-v5.0.0');
     ```
@@ -154,7 +154,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - View the entries in `tab_tidb`:
 
-    
+
     ```sql
     select * from tab_tidb;
     ```
@@ -172,7 +172,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - View the store state, `store_id`, capacity, and uptime of TiKV:
 
-    
+
     ```sql
     select STORE_ID,ADDRESS,STORE_STATE,STORE_STATE_NAME,CAPACITY,AVAILABLE,UPTIME from INFORMATION_SCHEMA.TIKV_STORE_STATUS;
     ```
@@ -192,7 +192,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 - Exit TiDB:
 
-    
+
     ```sql
     exit
     ```

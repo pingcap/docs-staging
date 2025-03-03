@@ -140,7 +140,7 @@ When Diag uploads data, the access token is used to identify the user and ensure
 
     To get a token, enter the organization page and click the icon in the lower-right corner of the Clusters page, and select **Get Access Token For Diag Tool**. Make sure that you have copied and saved the displayed token information.
 
-    ![An example of a token](https://download.pingcap.com/images/tidb-in-kubernetes/clinic-get-token.png)
+    ![An example of a token](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/clinic-get-token.png)
 
     > **Note:**
     >

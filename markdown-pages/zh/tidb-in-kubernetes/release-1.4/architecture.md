@@ -11,7 +11,7 @@ summary: 了解 TiDB Operator 架构及其工作原理。
 
 下图是 TiDB Operator 的架构概览。
 
-![TiDB Operator Overview](https://download.pingcap.com/images/tidb-in-kubernetes/tidb-operator-overview-1.2.png)
+![TiDB Operator Overview](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-overview-1.2.png)
 
 其中，`TidbCluster`、`TidbMonitor`、`TidbInitializer`、`Backup`、`Restore`、`BackupSchedule`、`TidbClusterAutoScaler` 是由 CRD（`CustomResourceDefinition`）定义的自定义资源：
 
@@ -38,7 +38,7 @@ TiDB 集群的编排和调度逻辑则由下列组件负责：
 
 下图是 TiDB Operator 的控制流程解析。从 TiDB Operator v1.1 开始，TiDB 集群、监控、初始化、备份等组件，都通过 CR 进行部署、管理。
 
-![TiDB Operator Control Flow](https://download.pingcap.com/images/tidb-in-kubernetes/tidb-operator-control-flow-1.1.png)
+![TiDB Operator Control Flow](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-control-flow-1.1.png)
 
 整体的控制流程如下：
 

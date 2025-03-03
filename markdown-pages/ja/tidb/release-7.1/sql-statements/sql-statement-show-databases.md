@@ -13,11 +13,11 @@ summary: An overview of the usage of SHOW DATABASES for the TiDB database.
 
 **ShowDatabasesStmt:**
 
-![ShowDatabasesStmt](https://download.pingcap.com/images/docs/sqlgram/ShowDatabasesStmt.png)
+![ShowDatabasesStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowDatabasesStmt.png)
 
 **ShowLikeOrWhereOpt:**
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
 
 ## 例 {#examples}
 

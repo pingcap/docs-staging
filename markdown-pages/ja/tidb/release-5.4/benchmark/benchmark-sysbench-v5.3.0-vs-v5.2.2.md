@@ -158,7 +158,7 @@ sysbench $testname \
 
 v5.2.2と比較すると、v5.3.0のポイント選択のパフォーマンスは0.81％わずかに低下しています。
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v522vsv530_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v522vsv530_point_select.png)
 
 ### 非インデックスパフォーマンスの更新 {#update-non-index-performance}
 
@@ -170,7 +170,7 @@ v5.2.2と比較すると、v5.3.0のポイント選択のパフォーマンス�
 
 v5.2.2と比較して、v5.3.0の非インデックスの更新パフォーマンスは0.95％わずかに改善されています。
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v522vsv530_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v522vsv530_update_non_index.png)
 
 ### インデックスパフォーマンスの更新 {#update-index-performance}
 
@@ -182,7 +182,7 @@ v5.2.2と比較して、v5.3.0の非インデックスの更新パフォーマ�
 
 v5.2.2と比較すると、v5.3.0の更新インデックスのパフォーマンスは1.83％わずかに向上しています。
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v522vsv530_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v522vsv530_update_index.png)
 
 ### 読み取り/書き込みパフォーマンス {#read-write-performance}
 
@@ -194,4 +194,4 @@ v5.2.2と比較すると、v5.3.0の更新インデックスのパフォーマ�
 
 v5.2.2と比較すると、v5.3.0の読み取り/書き込みパフォーマンスは0.62％わずかに低下しています。
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v522vsv530_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v522vsv530_read_write.png)

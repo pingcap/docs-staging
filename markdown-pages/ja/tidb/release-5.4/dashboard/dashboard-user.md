@@ -38,7 +38,7 @@ TiDB SQLユーザーを制御および管理する方法の詳細については
 
 SQLユーザーが前述の特権要件を満たしていない場合、以下に示すように、ユーザーはTiDBダッシュボードへのサインインに失敗します。
 
-![insufficient-privileges](https://download.pingcap.com/images/docs/dashboard/dashboard-user-insufficient-privileges.png)
+![insufficient-privileges](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-user-insufficient-privileges.png)
 
 ## 例：TiDBダッシュボードにアクセスするための最小特権SQLユーザーを作成します {#example-create-a-least-privileged-sql-user-to-access-tidb-dashboard}
 

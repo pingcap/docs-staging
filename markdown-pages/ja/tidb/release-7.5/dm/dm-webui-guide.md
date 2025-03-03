@@ -25,7 +25,7 @@ DM WebUIには次のページがあります。
 
 インターフェースは次のとおりです。
 
-![webui](https://download.pingcap.com/images/docs/dm/dm-webui-preview-en.png)
+![webui](https://docs-download.pingcap.com/media/images/docs/dm/dm-webui-preview-en.png)
 
 ## アクセス方法 {#access-method}
 

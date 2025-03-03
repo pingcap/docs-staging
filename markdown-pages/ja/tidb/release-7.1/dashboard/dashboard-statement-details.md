@@ -11,7 +11,7 @@ summary: View the execution details of a single SQL statement in TiDB Dashboard.
 -   実行計画リスト: SQL ステートメントに複数の実行計画がある場合、このリストが表示されます。 TiDB v6.2.0 では、実行計画のテキスト情報に加えて、視覚的な実行計画が導入されており、これによりステートメントの各演算子や詳細情報をより直観的に学ぶことができます。さまざまな実行プランを選択でき、選択したプランの詳細がリストの下に表示されます (次の図の領域 2)。
 -   プランの実行の詳細。選択した実行プランの詳細情報が表示されます。 [実行計画の詳細](#execution-details-of-plans) (次の図の領域 3) を参照してください。
 
-![Details](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-detail-v660.png)
+![Details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-detail-v660.png)
 
 ## 高速プランバインディング {#fast-plan-binding}
 
@@ -23,29 +23,29 @@ v6.6.0 以降、TiDB には高速プラン バインディング機能が導入�
 
 1.  **「計画のバインド」**をクリックします。 **[プランのバインド]**ダイアログ ボックスが表示されます。
 
-    ![Fast plan binding - not bound - entry](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-entry-notbound.png)
+    ![Fast plan binding - not bound - entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-entry-notbound.png)
 
 2.  バインドするプランを選択し、 **「バインド」を**クリックします。
 
-    ![Fast plan binding - popup](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-popup-notbound.png)
+    ![Fast plan binding - popup](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-notbound.png)
 
 3.  バインドが完了すると、 **「Bound」**ラベルが表示されます。
 
-    ![Fast plan binding - popup - binding completed](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-popup-bound.png)
+    ![Fast plan binding - popup - binding completed](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-bound.png)
 
 #### 既存のバインディングを削除する {#drop-an-existing-binding}
 
 1.  既存のバインドがある SQL ステートメントのページで、 **「バインディングの計画」**をクリックします。 **[プランのバインド]**ダイアログ ボックスが表示されます。
 
-    ![Fast plan binding - bound - entry](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-entry-bound.png)
+    ![Fast plan binding - bound - entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-entry-bound.png)
 
 2.  **[ドロップ]**をクリックします。
 
-    ![Fast plan binding - popup - bound](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-popup-bound.png)
+    ![Fast plan binding - popup - bound](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-bound.png)
 
 3.  バインディングが削除されると、 **「未バインド」**ラベルが表示されます。
 
-    ![Fast plan binding - popup](https://download.pingcap.com/images/docs/dashboard/dashboard-quick-binding-popup-notbound.png)
+    ![Fast plan binding - popup](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-notbound.png)
 
 ### 制限 {#limitation}
 
@@ -66,13 +66,13 @@ v6.6.0 以降、TiDB には高速プラン バインディング機能が導入�
 -   実行計画: 実行計画に関する完全な情報がグラフとテキストで表示されます。実行計画の詳細については、 [クエリ実行計画を理解する](/explain-overview.md)を参照してください。複数の実行プランが選択されている場合は、そのうちの (いずれか) 1 つだけが表示されます。
 -   SQL ステートメントの基本情報、実行時間、コプロセッサー読み取り、トランザクション、低速クエリについては、対応するタブ タイトルをクリックしてさまざまな情報を切り替えることができます。
 
-![Execution details of plans](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-detail.png)
+![Execution details of plans](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-detail.png)
 
 ### 基本タブ {#basic-tab}
 
 SQL 実行の基本情報には、テーブル名、インデックス名、実行回数、合計レイテンシーが含まれます。 **「説明」**列には、各フィールドの詳細な説明が記載されています。
 
-![Basic information](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-basic.png)
+![Basic information](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-basic.png)
 
 ### 時間タブ {#time-tab}
 
@@ -82,24 +82,24 @@ SQL 実行の基本情報には、テーブル名、インデックス名、実�
 >
 > 一部の操作は 1 つの SQL ステートメント内で並行して実行される場合があるため、各ステージの累積所要時間は SQL ステートメントの実際の実行時間を超える可能性があります。
 
-![Execution time](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-time.png)
+![Execution time](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-time.png)
 
 ### コプロセッサー読み取りタブ {#coprocessor-read-tab}
 
 **[コプロセッサー読み取り]**タブをクリックすると、コプロセッサー読み取りに関連する情報が表示されます。
 
-![Coprocessor read](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-cop-read.png)
+![Coprocessor read](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-cop-read.png)
 
 ### トランザクションタブ {#transaction-tab}
 
 **「トランザクション」**タブをクリックすると、書き込まれたキーの平均数や書き込まれたキーの最大数など、実行計画とトランザクションに関連する情報が表示されます。
 
-![Transaction](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-transaction.png)
+![Transaction](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-transaction.png)
 
 ### 「スロークエリ」タブ {#slow-query-tab}
 
 実行プランの実行が遅すぎる場合は、 **[スロー クエリ]**タブに関連するスロー クエリ レコードが表示されます。
 
-![Slow Query](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-plans-slow-queries.png)
+![Slow Query](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-slow-queries.png)
 
 この領域に表示される情報は、スロー クエリ ページと同じ構造になっています。詳細については[TiDB ダッシュボードの低速クエリ ページ](/dashboard/dashboard-slow-query.md)を参照してください。

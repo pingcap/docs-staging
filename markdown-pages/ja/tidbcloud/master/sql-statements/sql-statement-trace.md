@@ -58,9 +58,9 @@ TRACE FORMAT='json' SELECT * FROM mysql.user;
 
 JSON 形式のトレースは、TiDB ステータス ポート経由でアクセスできるトレース ビューアーに貼り付けることができます。
 
-![TiDB Trace Viewer-1](https://download.pingcap.com/images/docs/trace-paste.png)
+![TiDB Trace Viewer-1](https://docs-download.pingcap.com/media/images/docs/trace-paste.png)
 
-![TiDB Trace Viewer-2](https://download.pingcap.com/images/docs/trace-view.png)
+![TiDB Trace Viewer-2](https://docs-download.pingcap.com/media/images/docs/trace-view.png)
 
 ### ログ {#log}
 

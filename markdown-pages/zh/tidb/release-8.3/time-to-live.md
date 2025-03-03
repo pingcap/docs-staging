@@ -251,7 +251,7 @@ TTL 功能能够与 TiDB 的迁移、备份、恢复工具一同使用。
 
     在 [Grafana `TiDB` 面板](/grafana-tidb-dashboard.md)中，监控项 `TTL Insert Rows Per Hour` 记录了前一小时总共插入数据的数量。相应的 `TTL Delete Rows Per Hour` 记录了前一小时 TTL 任务总共删除的数据总量。如果 `TTL Insert Rows Per Hour` 长期高于 `TTL Delete Rows Per Hour`， 说明插入的速度高于删除的速度，数据总量将会上升。例如：
 
-    ![insert fast example](https://download.pingcap.com/images/docs-cn/ttl/insert-fast.png)
+    ![insert fast example](https://docs-download.pingcap.com/media/images/docs-cn/ttl/insert-fast.png)
 
     值得注意的是，由于 TTL 并不能保证数据立即被删除，且当前插入的数据将会在将来的 TTL 任务中才会被删除，哪怕短时间内 TTL 删除的速度低于插入的速度，也不能说明 TTL 的效率一定过慢。需要结合具体情况分析。
 
@@ -259,11 +259,11 @@ TTL 功能能够与 TiDB 的迁移、备份、恢复工具一同使用。
 
     观察面板中 `TTL Scan Worker Time By Phase` 与 `TTL Delete Worker Time By Phase` 监控项。如果 scan worker 处于 `dispatch` 状态的时间有很大占比，且 delete worker 很少处于 `idle` 状态，那么说明 scan worker 在等待 delete worker 完成删除工作，如果此时集群资源仍然较为宽松，可以考虑提高 `tidb_ttl_delete_worker_count` 来提高删除的 worker 数量。例如：
 
-    ![scan fast example](https://download.pingcap.com/images/docs-cn/ttl/scan-fast.png)
+    ![scan fast example](https://docs-download.pingcap.com/media/images/docs-cn/ttl/scan-fast.png)
 
     与之相对，如果 scan worker 很少处于 `dispatch` 的状态，且 delete worker 长期处于 `idle` 阶段，那么说明 delete worker 闲置，且 scan worker 较为忙碌。例如：
 
-    ![delete fast example](https://download.pingcap.com/images/docs-cn/ttl/delete-fast.png)
+    ![delete fast example](https://docs-download.pingcap.com/media/images/docs-cn/ttl/delete-fast.png)
 
     TTL 任务中扫描与删除的占比与机器配置、数据分布都有关系，所以每一时刻的数据只能代表正在执行的 TTL Job 的情况。用户可以通过查询表 `mysql.tidb_ttl_job_history` 来判断某一时刻运行的 TTL Job 对应哪一张表。
 

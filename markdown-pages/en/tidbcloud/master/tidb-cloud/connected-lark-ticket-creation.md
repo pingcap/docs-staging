@@ -15,21 +15,21 @@ For customers subscribed to the **Enterprise** [support plan](/tidb-cloud/connec
 
 In the **Customer Support Group** Lark group, type `@PingCAP Support Bot create ticket` in a message. Then, **PingCAP Support Bot** will reply with a Lark message card for ticket creation.
 
-![lark-ticket-creation-1](https://download.pingcap.com/images/docs/tidb-cloud/connected-lark-ticket-creation-1.png)
+![lark-ticket-creation-1](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-creation-1.png)
 
 Fill in the required fields and click **Submit**. Once submitted, the card will be updated to **Ticket Submitted**, indicating that your request is being processed.
 
-![lark-ticket-creation-2](https://download.pingcap.com/images/docs/tidb-cloud/connected-lark-ticket-creation-2.png)
+![lark-ticket-creation-2](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-creation-2.png)
 
 After the support ticket is created, the **Ticket Submitted** card will be updated to the **Support Ticket Created** card, providing the ticket name and a link to view the ticket.
 
-![lark-ticket-creation-3](https://download.pingcap.com/images/docs/tidb-cloud/connected-lark-ticket-creation-3.png)
+![lark-ticket-creation-3](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-creation-3.png)
 
 ## Subscribe to ticket updates
 
 Whenever a PingCAP support engineer comments on the ticket, **PingCAP Support Bot** will send a **New Comment on Your Ticket** card to the Lark group.
 
-![connected-lark-ticket-creation-4](https://download.pingcap.com/images/docs/tidb-cloud/connected-lark-ticket-creation-4.png)
+![connected-lark-ticket-creation-4](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-creation-4.png)
 
 ## FAQs
 

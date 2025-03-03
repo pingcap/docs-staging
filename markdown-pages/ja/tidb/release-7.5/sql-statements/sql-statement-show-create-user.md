@@ -11,11 +11,11 @@ summary: このステートメントは、CREATE USER構文を使用してユー
 
 **ShowCreateUserStmt:**
 
-![ShowCreateUserStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCreateUserStmt.png)
+![ShowCreateUserStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowCreateUserStmt.png)
 
 **ユーザー名:**
 
-![Username](https://download.pingcap.com/images/docs/sqlgram/Username.png)
+![Username](https://docs-download.pingcap.com/media/images/docs/sqlgram/Username.png)
 
 ## 例 {#examples}
 

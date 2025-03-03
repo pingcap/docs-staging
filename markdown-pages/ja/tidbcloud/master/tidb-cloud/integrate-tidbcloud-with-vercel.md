@@ -95,7 +95,7 @@ TiDB Cloud Vercel 統合を介して接続するには、 [Vercel の統合マ�
     7.  プレビュー環境用の新しいブランチを作成するために**ブランチを**有効にするかどうかを選択します。
     8.  **「統合を追加」をクリックして、Vercel に戻ります**。
 
-![Vercel Integration Page](https://download.pingcap.com/images/docs/tidb-cloud/vercel/integration-link-cluster-page.png)
+![Vercel Integration Page](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vercel/integration-link-cluster-page.png)
 
 6.  Vercel ダッシュボードに戻り、Vercel プロジェクトに移動して、 **「設定」** &gt; **「環境変数」**をクリックし、ターゲット TiDB クラスターの環境変数が自動的に追加されているかどうかを確認します。
 
@@ -135,7 +135,7 @@ TiDB Cloud Vercel 統合を介して接続するには、 [Vercel の統合マ�
     4.  ターゲットの TiDB データ アプリを選択します。
     5.  **「統合を追加」をクリックして、Vercel に戻ります**。
 
-![Vercel Integration Page](https://download.pingcap.com/images/docs/tidb-cloud/vercel/integration-link-data-app-page.png)
+![Vercel Integration Page](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vercel/integration-link-data-app-page.png)
 
 6.  Vercel ダッシュボードに戻り、Vercel プロジェクトに移動して、 **「設定」** &gt; **「環境変数」**をクリックし、対象のデータ アプリの環境変数が自動的に追加されているかどうかを確認します。
 
@@ -159,7 +159,7 @@ TiDB Cloud Vercel 統合を介して接続するには、 [Vercel の統合マ�
 3.  **[構成]を**クリックします。
 4.  接続を追加または削除するには、 **「リンクの追加」**または**「削除」**をクリックします。
 
-    ![Vercel Integration Configuration Page](https://download.pingcap.com/images/docs/tidb-cloud/vercel/integration-vercel-configuration-page.png)
+    ![Vercel Integration Configuration Page](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vercel/integration-vercel-configuration-page.png)
 
     接続を削除すると、統合ワークフローによって設定された環境変数も Vercel プロジェクトから削除されます。ただし、このアクションはTiDB Cloud Serverless クラスターのデータには影響しません。
 
@@ -189,15 +189,15 @@ TiDB Cloud Serverless Branching を有効にするには、 [TiDB Cloud Vercel �
 
 3.  Vercel は新しいブランチのプレビュー展開をトリガーします。
 
-    ![Vercel Preview\_Deployment](https://download.pingcap.com/images/docs/tidb-cloud/vercel/vercel-preview-deployment.png)
+    ![Vercel Preview\_Deployment](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vercel/vercel-preview-deployment.png)
 
     1.  デプロイメント中に、 TiDB Cloud統合により、Git ブランチと同じ名前のTiDB Cloud Serverless ブランチが自動的に作成されます。TiDB TiDB Cloud Serverless ブランチがすでに存在する場合、 TiDB Cloud統合はこの手順をスキップします。
 
-        ![TiDB\_Cloud\_Branch\_Check](https://download.pingcap.com/images/docs/tidb-cloud/vercel/tidbcloud-branch-check.png)
+        ![TiDB\_Cloud\_Branch\_Check](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vercel/tidbcloud-branch-check.png)
 
     2.  TiDB Cloud Serverless ブランチの準備が整うと、 TiDB Cloud統合により、Vercel プロジェクトのプレビュー デプロイメントで環境変数が設定されます。
 
-        ![Preview\_Envs](https://download.pingcap.com/images/docs/tidb-cloud/vercel/preview-envs.png)
+        ![Preview\_Envs](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vercel/preview-envs.png)
 
     3.  TiDB Cloud統合では、 TiDB Cloud Serverless ブランチの準備ができるまで待機するためのブロッキング チェックも登録されます。チェックは手動で再実行できます。
 
@@ -222,7 +222,7 @@ TiDB Cloud Serverless Branching を有効にするには、 [TiDB Cloud Vercel �
 
 2.  Vercel ダッシュボード &gt; Vercel プロジェクト &gt;**設定**&gt;**環境変数**に移動し、TiDB クラスターの接続情報に従って[各環境変数の値を宣言する](https://vercel.com/docs/concepts/projects/environment-variables#declare-an-environment-variable)実行します。
 
-    ![Vercel Environment Variables](https://download.pingcap.com/images/docs/tidb-cloud/vercel/integration-vercel-environment-variables.png)
+    ![Vercel Environment Variables](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vercel/integration-vercel-environment-variables.png)
 
 ここでは、例として Prisma アプリケーションを使用します。以下は、 TiDB Cloud Serverless クラスターの Prisma スキーマ ファイルのデータ ソース設定です。
 
@@ -245,7 +245,7 @@ Vercel では、次のように環境変数を宣言できます。
 
 2.  Vercel ダッシュボード &gt; Vercel プロジェクト &gt;**設定**&gt;**環境変数**に移動し、データ アプリの接続情報に従って[各環境変数の値を宣言する](https://vercel.com/docs/concepts/projects/environment-variables#declare-an-environment-variable)実行します。
 
-    ![Vercel Environment Variables](https://download.pingcap.com/images/docs/tidb-cloud/vercel/integration-vercel-environment-variables.png)
+    ![Vercel Environment Variables](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vercel/integration-vercel-environment-variables.png)
 
     Vercel では、次のように環境変数を宣言できます。
 

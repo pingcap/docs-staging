@@ -11,27 +11,27 @@ The `UPDATE` statement is used to modify data in a specified table.
 
 **UpdateStmt:**
 
-![UpdateStmt](https://download.pingcap.com/images/docs/sqlgram/UpdateStmt.png)
+![UpdateStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/UpdateStmt.png)
 
 **PriorityOpt:**
 
-![PriorityOpt](https://download.pingcap.com/images/docs/sqlgram/PriorityOpt.png)
+![PriorityOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/PriorityOpt.png)
 
 **TableRef:**
 
-![TableRef](https://download.pingcap.com/images/docs/sqlgram/TableRef.png)
+![TableRef](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableRef.png)
 
 **TableRefs:**
 
-![TableRefs](https://download.pingcap.com/images/docs/sqlgram/TableRefs.png)
+![TableRefs](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableRefs.png)
 
 **AssignmentList:**
 
-![AssignmentList](https://download.pingcap.com/images/docs/sqlgram/AssignmentList.png)
+![AssignmentList](https://docs-download.pingcap.com/media/images/docs/sqlgram/AssignmentList.png)
 
 **WhereClauseOptional:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/WhereClauseOptional.png)
 
 > **Note:**
 >
@@ -82,7 +82,7 @@ INSERT INTO t VALUES (1,2);
 UPDATE t SET a = a+1,b=a;
 ```
 
-In MySQL, the column `b` is updated to 2 because it is set to the value of `a`, and the value of `a` (which is 1) is updated to `a+1` (which is 2) in the same statement. 
+In MySQL, the column `b` is updated to 2 because it is set to the value of `a`, and the value of `a` (which is 1) is updated to `a+1` (which is 2) in the same statement.
 
 TiDB follows the more standard SQL behavior, and updates `b` to 1.
 

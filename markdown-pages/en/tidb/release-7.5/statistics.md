@@ -62,7 +62,7 @@ A histogram is an approximate representation of the distribution of data. It div
 
 Here "equal-depth" means that the number of values ​​falling into each bucket is as equal as possible. For example, for a given set {1.6, 1.9, 1.9, 2.0, 2.4, 2.6, 2.7, 2.7, 2.8, 2.9, 3.4, 3.5}, you want to generate 4 buckets. The equal-depth histogram is as follows. It contains four buckets [1.6, 1.9], [2.0, 2.6], [2.7, 2.8], [2.9, 3.5]. The bucket depth is 3.
 
-![Equal-depth Histogram Example](https://download.pingcap.com/images/docs/statistics-1.png)
+![Equal-depth Histogram Example](https://docs-download.pingcap.com/media/images/docs/statistics-1.png)
 
 For details about the parameter that determines the upper limit to the number of histogram buckets, refer to [Manual Collection](#manual-collection). When the number of buckets is larger, the accuracy of the histogram is higher; however, higher accuracy is at the cost of the usage of memory resources. You can adjust this number appropriately according to the actual scenario.
 
@@ -94,7 +94,7 @@ You can perform full collection using the following syntax.
 
 + To collect statistics of all the tables in `TableNameList`:
 
-    
+
     ```sql
     ANALYZE TABLE TableNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -144,7 +144,7 @@ If a table has many columns, collecting statistics on all the columns can cause 
 
 - To collect statistics on specific columns, use the following syntax:
 
-    
+
     ```sql
     ANALYZE TABLE TableName COLUMNS ColumnNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -177,7 +177,7 @@ If a table has many columns, collecting statistics on all the columns can cause 
 
     2. After the query pattern of your business is relatively stable, collect statistics on `PREDICATE COLUMNS` by using the following syntax:
 
-        
+
         ```sql
         ANALYZE TABLE TableName PREDICATE COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
         ```
@@ -191,7 +191,7 @@ If a table has many columns, collecting statistics on all the columns can cause 
 
 - To collect statistics on all columns and indexes, use the following syntax:
 
-    
+
     ```sql
     ANALYZE TABLE TableName ALL COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -277,14 +277,14 @@ When `IndexNameList` is empty, this syntax collects statistics on all indexes in
 
 - To collect statistics on all partitions in `PartitionNameList` in `TableName`, use the following syntax:
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
 
 - To collect index statistics on all partitions in `PartitionNameList` in `TableName`, use the following syntax:
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -295,7 +295,7 @@ When `IndexNameList` is empty, this syntax collects statistics on all indexes in
     >
     > Currently, collecting statistics on `PREDICATE COLUMNS` is an experimental feature. It is not recommended that you use it in production environments.
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [COLUMNS ColumnNameList|PREDICATE COLUMNS|ALL COLUMNS] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -360,7 +360,7 @@ Since TiDB v6.0, TiDB supports using the `KILL` statement to terminate an `ANALY
 
 1. Execute the following SQL statement:
 
-    
+
     ```sql
     SHOW ANALYZE STATUS
     ```
@@ -390,7 +390,7 @@ When you run the `ANALYZE` statement, you can adjust the concurrency using syste
 
 The relationships of the relevant system variables are shown below:
 
-![analyze_concurrency](https://download.pingcap.com/images/docs/analyze_concurrency.png)
+![analyze_concurrency](https://docs-download.pingcap.com/media/images/docs/analyze_concurrency.png)
 
 `tidb_build_stats_concurrency`, `tidb_build_sampling_stats_concurrency`, and `tidb_analyze_partition_concurrency` are in an upstream-downstream relationship, as shown in the preceding diagram. The actual total concurrency is: `tidb_build_stats_concurrency` * (`tidb_build_sampling_stats_concurrency` + `tidb_analyze_partition_concurrency`). When modifying these variables, you need to consider their respective values at the same time. It is recommended to adjust them one by one in the order of `tidb_analyze_partition_concurrency`, `tidb_build_sampling_stats_concurrency`, `tidb_build_stats_concurrency`, and observe the impact on the system. The larger the values of these three variables, the greater the resource overhead on the system.
 
@@ -538,7 +538,7 @@ SHOW STATS_META [ShowLikeOrWhere];
 
 The syntax of `ShowLikeOrWhereOpt` is as follows:
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
 
 Currently, the `SHOW STATS_META` statement returns the following 6 columns:
 
@@ -568,7 +568,7 @@ SHOW STATS_HEALTHY [ShowLikeOrWhere];
 
 The synopsis of `SHOW STATS_HEALTHY` is:
 
-![ShowStatsHealthy](https://download.pingcap.com/images/docs/sqlgram/ShowStatsHealthy.png)
+![ShowStatsHealthy](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStatsHealthy.png)
 
 Currently, the `SHOW STATS_HEALTHY` statement returns the following 4 columns:
 
@@ -620,7 +620,7 @@ SHOW STATS_BUCKETS [ShowLikeOrWhere]
 
 The diagram is as follows:
 
-![SHOW STATS_BUCKETS](https://download.pingcap.com/images/docs/sqlgram/SHOW_STATS_BUCKETS.png)
+![SHOW STATS_BUCKETS](https://docs-download.pingcap.com/media/images/docs/sqlgram/SHOW_STATS_BUCKETS.png)
 
 This statement returns information about all the buckets. You can use `ShowLikeOrWhere` to filter the information you need.
 
@@ -744,21 +744,21 @@ The interface to export statistics is as follows:
 
 + To obtain the JSON format statistics of the `${table_name}` table in the `${db_name}` database:
 
-    
+
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}
     ```
 
     For example:
 
-    
+
     ```
     curl -s http://127.0.0.1:10080/stats/dump/test/t1 -o /tmp/t1.json
     ```
 
 + To obtain the JSON format statistics of the `${table_name}` table in the `${db_name}` database at specific time:
 
-    
+
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}/${yyyyMMddHHmmss}
     ```

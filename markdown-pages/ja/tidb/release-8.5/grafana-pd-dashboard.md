@@ -21,7 +21,7 @@ PD ダッシュボード メトリック項目の説明は次のとおりです�
 -   リージョン数: クラスターリージョンの合計数
 -   異常なストア: 不健全なストアの数。正常値は`0`です。数値が`0`より大きい場合、少なくとも 1 つのインスタンスが異常であることを意味します。
 -   リージョンの健全性: 保留中のピア、ダウンしているピア、余分なピア、オフラインのピア、欠落しているピア、学習者ピア、および不正な名前空間を含む異常なリージョンの数によって示されるリージョンの健全性状態。通常、保留中のピアの数は`100`未満である必要があります。欠落しているピアは、永続的に`0`を超えてはなりません。空のリージョンが多数存在する場合は、適時にリージョンのマージを有効にしてください。
--   現在のピア数: すべてのクラスタピアの現在の数![PD Dashboard - Header](https://download.pingcap.com/images/docs/pd-dashboard-header-v4.png)
+-   現在のピア数: すべてのクラスタピアの現在の数![PD Dashboard - Header](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-header-v4.png)
 
 ## 主要な指標の説明 {#key-metrics-description}
 
@@ -35,7 +35,7 @@ PD ダッシュボード メトリック項目の説明は次のとおりです�
 -   ラベルの配布: クラスター内のラベルの配布状況
 -   ストア制限: ストアでのスケジュールのフロー制御制限
 
-![PD Dashboard - Cluster metrics](https://download.pingcap.com/images/docs/pd-dashboard-cluster-v4.png)
+![PD Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-cluster-v4.png)
 
 ## オペレーター {#operator}
 
@@ -48,7 +48,7 @@ PD ダッシュボード メトリック項目の説明は次のとおりです�
 -   オペレータ終了時間: 終了したオペレータの最大時間
 -   オペレータステップの所要時間: 完了したオペレータステップの最大所要時間
 
-![PD Dashboard - Operator metrics](https://download.pingcap.com/images/docs/pd-dashboard-operator-v4.png)
+![PD Dashboard - Operator metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-operator-v4.png)
 
 ## 統計- バランス {#statistics-balance}
 
@@ -64,7 +64,7 @@ PD ダッシュボード メトリック項目の説明は次のとおりです�
 -   ストアリーダー数: TiKVインスタンスごとのリーダー数
 -   ストアリージョン数: TiKVインスタンスあたりのリージョン数
 
-![PD Dashboard - Balance metrics](https://download.pingcap.com/images/docs/pd-dashboard-balance-v4.png)
+![PD Dashboard - Balance metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-balance-v4.png)
 
 ## 統計- ホットライト {#statistics-hot-write}
 
@@ -79,7 +79,7 @@ PD ダッシュボード メトリック項目の説明は次のとおりです�
 -   ホットスポット移動リーダーの方向: ホットスポット スケジューリングにおけるリーダーの移動方向。正の数はインスタンスへのスケジューリングを意味します。負の数はインスタンスからのスケジューリングを意味します。
 -   ホットスポット移動ピアの方向: ホットスポット スケジューリングにおけるピアの移動方向。正の数はインスタンスへのスケジューリングを意味します。負の数はインスタンスからのスケジューリングを意味します。
 
-![PD Dashboard - Hot write metrics](https://download.pingcap.com/images/docs/pd-dashboard-hotwrite-v4.png)
+![PD Dashboard - Hot write metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-hotwrite-v4.png)
 
 ## 統計- ホットリード {#statistics-hot-read}
 
@@ -89,7 +89,7 @@ PD ダッシュボード メトリック項目の説明は次のとおりです�
 -   読み取りレートキーを保存: 各 TiKV インスタンスの合計読み取りキー
 -   ホットキャッシュ読み取りエントリ数: 各 TiKV インスタンスの読み取りホットスポット統計モジュールにあるピアの数
 
-![PD Dashboard - Hot read metrics](https://download.pingcap.com/images/docs/pd-dashboard-hotread-v4.png)
+![PD Dashboard - Hot read metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-hotread-v4.png)
 
 ## スケジューラ {#scheduler}
 
@@ -107,14 +107,14 @@ PD ダッシュボード メトリック項目の説明は次のとおりです�
 -   フィルターソース: ストアがスケジュールソースとして選択されたが、フィルターを通過できなかった試行回数
 -   バランス方向: ストアがスケジュールのターゲットまたはソースとして選択された回数
 
-![PD Dashboard - Scheduler metrics](https://download.pingcap.com/images/docs/pd-dashboard-scheduler-v4.png)
+![PD Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-scheduler-v4.png)
 
 ## GRPC とは {#grpc}
 
 -   完了コマンド率: gRPC コマンドが完了するコマンド タイプごとの率
 -   99% 完了コマンド期間: gRPC コマンドが完了するコマンド タイプごとの割合 (P99)
 
-![PD Dashboard - gRPC metrics](https://download.pingcap.com/images/docs/pd-dashboard-grpc-v2.png)
+![PD Dashboard - gRPC metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-grpc-v2.png)
 
 ## など {#etcd}
 
@@ -127,7 +127,7 @@ PD ダッシュボード メトリック項目の説明は次のとおりです�
 -   Raftコミットインデックス: Raftの最後のコミットインデックス
 -   Raft適用インデックス: Raftの最後に適用されたインデックス
 
-![PD Dashboard - etcd metrics](https://download.pingcap.com/images/docs/pd-dashboard-etcd-v2.png)
+![PD Dashboard - etcd metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-etcd-v2.png)
 
 ## ティビ {#tidb}
 
@@ -135,7 +135,7 @@ PD ダッシュボード メトリック項目の説明は次のとおりです�
 -   処理要求数: TiDB要求の数
 -   リクエスト処理時間: TiDB リクエストの処理にかかる時間。1 `100ms`である必要があります (P99)
 
-![PD Dashboard - TiDB metrics](https://download.pingcap.com/images/docs/pd-dashboard-tidb-v4.png)
+![PD Dashboard - TiDB metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-tidb-v4.png)
 
 ## ハートビート {#heartbeat}
 
@@ -146,11 +146,11 @@ PD ダッシュボード メトリック項目の説明は次のとおりです�
 -   リージョンスケジュールプッシュ: TiKVインスタンスごとにPDから送信された対応するスケジュールコマンドの数
 -   99%リージョンハートビートレイテンシー: TiKV インスタンスあたりのハートビートレイテンシー(P99)
 
-![PD Dashboard - Heartbeat metrics](https://download.pingcap.com/images/docs/pd-dashboard-heartbeat-v4.png)
+![PD Dashboard - Heartbeat metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-heartbeat-v4.png)
 
 ## リージョンstorage {#region-storage}
 
 -   Syncer Index: リーダーによって記録されたリージョン変更履歴の最大インデックス
 -   履歴最終インデックス:リージョン変更履歴がフォロワーと正常に同期された最後のインデックス
 
-![PD Dashboard - Region storage](https://download.pingcap.com/images/docs/pd-dashboard-region-storage.png)
+![PD Dashboard - Region storage](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-region-storage.png)

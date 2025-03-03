@@ -11,11 +11,11 @@ summary: An overview of the usage of USE for the TiDB database.
 
 **UseStmt：**
 
-![UseStmt](https://download.pingcap.com/images/docs/sqlgram/UseStmt.png)
+![UseStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/UseStmt.png)
 
 **DBName：**
 
-![DBName](https://download.pingcap.com/images/docs/sqlgram/DBName.png)
+![DBName](https://docs-download.pingcap.com/media/images/docs/sqlgram/DBName.png)
 
 ## 例 {#examples}
 

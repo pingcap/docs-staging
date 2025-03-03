@@ -17,7 +17,7 @@ summary: TiDB Dashboard 集群诊断页面是用于诊断集群问题并生成�
 
 * 登录 TiDB Dashboard 后，在左侧导航栏中点击**集群诊断** (Cluster Diagnostics)。
 
-    ![访问](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-access-v650.png)
+    ![访问](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-access-v650.png)
 
 * 在浏览器中访问 [http://127.0.0.1:2379/dashboard/#/diagnose](http://127.0.0.1:2379/dashboard/#/diagnose)（将 `127.0.0.1:2379` 替换为你的实际 PD 地址和端口）。
 
@@ -29,7 +29,7 @@ summary: TiDB Dashboard 集群诊断页面是用于诊断集群问题并生成�
 2. 设置区间长度。例如 10 min。
 3. 点击开始 (Start)。
 
-![生成单个时间段的诊断报告](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-gen-report-v650.png)
+![生成单个时间段的诊断报告](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-gen-report-v650.png)
 
 > **注意：**
 >
@@ -37,7 +37,7 @@ summary: TiDB Dashboard 集群诊断页面是用于诊断集群问题并生成�
 
 以上操作会生成 2022-05-21 14:40:00 至 2022-05-21 14:50:00 时间范围的诊断报告。点击**开始** (start) 后，会看到以下界面，**生成进度** (Progress) 是生成报告的进度条，生成报告完成后，点击**查看报告** (View Full Report) 即可。
 
-![生成报告的进度](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-gen-process-v650.png)
+![生成报告的进度](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-gen-process-v650.png)
 
 ## 生成对比诊断报告
 
@@ -54,7 +54,7 @@ summary: TiDB Dashboard 集群诊断页面是用于诊断集群问题并生成�
 4. 设置基线开始时间 (Baseline Range Start Time)，即想要对比的系统正常时段的开始时间，如 2022-05-21 14:30:00。
 5. 点击开始 (Start)。
 
-![生成对比报告](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-diagnostics-gen-compare-report-v650.png)
+![生成对比报告](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-gen-compare-report-v650.png)
 
 然后同样等报告生成完成后点击**查看报告** (View Full Report) 即可。
 

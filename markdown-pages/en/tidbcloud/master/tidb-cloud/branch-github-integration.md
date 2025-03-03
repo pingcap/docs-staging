@@ -1,9 +1,9 @@
 ---
-title: Integrate TiDB Cloud Serverless Branching (Beta) with GitHub 
+title: Integrate TiDB Cloud Serverless Branching (Beta) with GitHub
 summary: Learn how to integrate the TiDB Cloud Serverless branching feature with GitHub.
 ---
 
-# Integrate TiDB Cloud Serverless Branching (Beta) with GitHub 
+# Integrate TiDB Cloud Serverless Branching (Beta) with GitHub
 
 > **Note:**
 >
@@ -40,7 +40,7 @@ To integrate TiDB Cloud Serverless branching with your GitHub repository, take t
     - If you have not logged into GitHub, you will be asked to log into GitHub first.
     - If it is the first time you use the integration, you will be asked to authorize the **TiDB Cloud Branching** app.
 
-   <img src="https://download.pingcap.com/images/docs/tidb-cloud/branch/github-authorize.png" width="80%" />
+   <img src="https://docs-download.pingcap.com/media/images/docs/tidb-cloud/branch/github-authorize.png" width="80%" />
 
 4. In the **Connect to GitHub** dialog, select a GitHub account in the **GitHub Account** drop-down list.
 
@@ -50,7 +50,7 @@ To integrate TiDB Cloud Serverless branching with your GitHub repository, take t
 
 6. Click **Connect** to connect between your TiDB Cloud Serverless cluster and your GitHub repository.
 
-   <img src="https://download.pingcap.com/images/docs/tidb-cloud/branch/github-connect.png" width="40%" />
+   <img src="https://docs-download.pingcap.com/media/images/docs/tidb-cloud/branch/github-connect.png" width="40%" />
 
 ## TiDB Cloud Branching app behaviors
 
@@ -151,7 +151,7 @@ Here are the main steps to create the workflow:
            echo "The user is ${{ steps.wait-for-branch.outputs.user }}"
            echo "The password is ${{ steps.wait-for-branch.outputs.password }}"
    ```
-   
+
    - `token`: GitHub will automatically create a [GITHUB_TOKEN](https://docs.github.com/en/actions/security-guides/automatic-token-authentication) secret. You can use it directly.
    - `public-key` and `private-key`: The TiDB Cloud [API key](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management).
 

@@ -69,19 +69,19 @@ TiDBコーディング規則によれば、同じテーブルのデータは、T
 
 [TiDBダッシュボード](/dashboard/dashboard-intro.md)の**キービジュアライザー**機能は、ユーザーがホットスポットのトラブルシューティングの範囲をテーブルレベルに絞り込むのに役立ちます。以下は、 <strong>KeyVisualizer</strong>によって示される熱図の例です。グラフの横軸は時間、縦軸はさまざまな表や索引です。色が明るいほど、負荷が大きくなります。ツールバーで読み取りまたは書き込みフローを切り替えることができます。
 
-![Dashboard Example 1](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-1.png)
+![Dashboard Example 1](https://docs-download.pingcap.com/media/images/docs/troubleshoot-hot-spot-issues-1.png)
 
 次の明るい対角線（上向きまたは下向きに斜め）が書き込みフローグラフに表示されます。書き込みは最後にしか表示されないため、テーブルリージョンの数が増えると、ラダーとして表示されます。これは、書き込みホットスポットが次の表に表示されていることを示しています。
 
-![Dashboard Example 2](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-2.png)
+![Dashboard Example 2](https://docs-download.pingcap.com/media/images/docs/troubleshoot-hot-spot-issues-2.png)
 
 読み取りホットスポットの場合、通常、熱図に明るい水平線が表示されます。通常、これらは、次のように、アクセス数が多い小さなテーブルが原因で発生します。
 
-![Dashboard Example 3](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-3.png)
+![Dashboard Example 3](https://docs-download.pingcap.com/media/images/docs/troubleshoot-hot-spot-issues-3.png)
 
 明るいブロックにカーソルを合わせると、どのテーブルまたはインデックスに大きな負荷がかかっているかがわかります。例えば：
 
-![Dashboard Example 4](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-4.png)
+![Dashboard Example 4](https://docs-download.pingcap.com/media/images/docs/troubleshoot-hot-spot-issues-4.png)
 
 ## <code>SHARD_ROW_ID_BITS</code>を使用してホットスポットを処理します {#use-code-shard-row-id-bits-code-to-process-hotspots}
 
@@ -109,9 +109,9 @@ ALTER TABLE：ALTER TABLE t SHARD_ROW_ID_BITS = 4;
 
 次の2つの負荷図は、主キーのない2つのテーブルが`SHARD_ROW_ID_BITS`を使用してホットスポットを分散させる場合を示しています。最初の図はホットスポットを散乱させる前の状況を示し、2番目の図はホットスポットを散乱させた後の状況を示しています。
 
-![Dashboard Example 5](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-5.png)
+![Dashboard Example 5](https://docs-download.pingcap.com/media/images/docs/troubleshoot-hot-spot-issues-5.png)
 
-![Dashboard Example 6](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-6.png)
+![Dashboard Example 6](https://docs-download.pingcap.com/media/images/docs/troubleshoot-hot-spot-issues-6.png)
 
 上記の負荷図に示されているように、 `SHARD_ROW_ID_BITS`を設定する前は、負荷のホットスポットは単一の領域に集中しています。 `SHARD_ROW_ID_BITS`を設定すると、ロードホットスポットが分散します。
 
@@ -157,9 +157,9 @@ SELECT LAST_INSERT_ID();
 
 次の2つの負荷図は、ホットスポットを分散させるために`AUTO_INCREMENT`から`AUTO_RANDOM`を変更する前と後の両方の状況を示しています。最初のものは`AUTO_INCREMENT`を使用し、2番目のものは`AUTO_RANDOM`を使用します。
 
-![Dashboard Example 7](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-7.png)
+![Dashboard Example 7](https://docs-download.pingcap.com/media/images/docs/troubleshoot-hot-spot-issues-7.png)
 
-![Dashboard Example 8](https://download.pingcap.com/images/docs/troubleshoot-hot-spot-issues-8.png)
+![Dashboard Example 8](https://docs-download.pingcap.com/media/images/docs/troubleshoot-hot-spot-issues-8.png)
 
 上記の負荷図に示されているように、 `AUTO_RANDOM`を使用して`AUTO_INCREMENT`を置き換えると、ホットスポットが分散する可能性があります。
 

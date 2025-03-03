@@ -44,7 +44,7 @@ To enable Continuous Profiling on clusters deployed using TiUP, perform the foll
 
 3. Click **Save** to enable this feature.
 
-![Enable the feature](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-start.png)
+![Enable the feature](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-start.png)
 
 ### Clusters deployed using TiDB Operator
 
@@ -56,7 +56,7 @@ You can access the continuous profiling page using either of the following metho
 
 - After logging into TiDB Dashboard, click **Advanced Debugging** > **Profiling Instances** > **Continuous Profiling** on the left navigation bar.
 
-    ![Access](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-access.png)
+    ![Access](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-access.png)
 
 - Visit <http://127.0.0.1:2379/dashboard/#/continuous_profiling> via your browser. Replace `127.0.0.1:2379` with the actual PD instance address and port.
 
@@ -64,7 +64,7 @@ You can access the continuous profiling page using either of the following metho
 
 After starting continuous profiling, you can view the profiling result on the instance profiling page.
 
-![Profiling history](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-history.png)
+![Profiling history](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-history.png)
 
 Performance profiling runs in the background. Refreshing or exiting the current page will not terminate a running performance profiling task.
 
@@ -72,11 +72,11 @@ Performance profiling runs in the background. Refreshing or exiting the current 
 
 On the profiling result page, you can click **Download Profiling Result** in the upper-right corner to download all profiling results.
 
-![Download profiling result](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-download.png)
+![Download profiling result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-download.png)
 
 You can also click an individual instance in the table to view its profiling result (including flame charts, directed acyclic graphs, and texts). Alternatively, you can hover on ... to download raw data.
 
-![View the profiling result of an instance](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-single.png)
+![View the profiling result of an instance](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-single.png)
 
 ## Disable Continuous Profiling
 
@@ -90,4 +90,4 @@ You can also click an individual instance in the table to view its profiling res
 
 5. In the popped-up window, click **Disable**.
 
-![Disable the feature](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-stop.png)
+![Disable the feature](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-stop.png)

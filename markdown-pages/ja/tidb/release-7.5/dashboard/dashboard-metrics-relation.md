@@ -11,7 +11,7 @@ TiDB ダッシュボード メトリクス関係グラフは、v4.0.7 で導入�
 
 TiDB ダッシュボードにログインした後、左側のナビゲーション メニューで**[クラスタ診断]**をクリックすると、メトリック関係グラフを生成するページが表示されます。
 
-![Metrics relation graph homepage](https://download.pingcap.com/images/docs/dashboard/dashboard-metrics-relation-home-v650.png)
+![Metrics relation graph homepage](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-home-v650.png)
 
 **[範囲開始時刻]**と**[範囲期間]**を設定した後、 **[メトリクス関係の生成]**をクリックすると、メトリクス関係グラフのページが表示されます。
 
@@ -19,7 +19,7 @@ TiDB ダッシュボードにログインした後、左側のナビゲーショ
 
 次の画像は、メトリクス関係グラフの例です。このグラフは、2020-07-29 16:36:00 以降 5 分以内の TiDB クラスター内の合計クエリ継続時間に対する各モニタリング メトリクスの継続時間の割合を示しています。グラフには、各監視メトリックの関係も示されています。
 
-![Metrics relation graph example](https://download.pingcap.com/images/docs/dashboard/dashboard-metrics-relation-example.png)
+![Metrics relation graph example](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-example.png)
 
 たとえば、 `tidb_execute`監視メトリックのノードの意味は次のとおりです。
 
@@ -27,7 +27,7 @@ TiDB ダッシュボードにログインした後、左側のナビゲーショ
 -   `tidb_execute`ノード自体の継続時間は 9070.18 秒で、これは合計クエリ継続時間の 42% を占めます。
 -   ボックス領域にマウスを置くと、合計期間、平均期間、平均 P99 (99 パーセンタイル) 期間などのメトリクスの詳細情報が表示されます。
 
-![tidb\_execute node example](https://download.pingcap.com/images/docs/dashboard/dashboard-metrics-relation-node-example.png)
+![tidb\_execute node example](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-node-example.png)
 
 ### ノード情報 {#node-information}
 
@@ -39,7 +39,7 @@ TiDB ダッシュボードにログインした後、左側のナビゲーショ
 
 *メトリック ノードの合計期間*=*メトリック ノード自体の期間*+*その子ノードの期間*。したがって、一部のノードのメトリック グラフには、 `tidb_execute`のグラフなど、合計期間に対するノード自体の期間の割合が表示されます。
 
-![tidb\_execute node example1](https://download.pingcap.com/images/docs/dashboard/dashboard-metrics-relation-node-example1.png)
+![tidb\_execute node example1](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-node-example1.png)
 
 -   `tidb_execute`はモニタリング メトリックの名前で、TiDB 実行エンジンでの SQL クエリの実行時間を表します。
 -   `19306.46s` 、 `tidb_execute`メトリックの合計期間が 19306.46 秒であることを表します。 `89.40%` 19306.46 秒が、すべての SQL クエリ (ユーザー SQL クエリと TiDB の内部 SQL クエリを含む) に費やされる合計時間の 89.40% を占めることを表します。合計クエリ期間は`tidb_query`の合計期間です。
@@ -47,7 +47,7 @@ TiDB ダッシュボードにログインした後、左側のナビゲーショ
 
 マウスをボックス領域の上に置くと、 `tidb_execute`メトリック ノードの詳細が表示されます。
 
-![tidb\_execute node example2](https://download.pingcap.com/images/docs/dashboard/dashboard-metrics-relation-node-example2.png)
+![tidb\_execute node example2](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-node-example2.png)
 
 上の画像に表示されているテキスト情報は、合計期間、合計時間、平均期間、平均期間 P99、P90、および P80 を含むメトリック ノードの説明です。
 
@@ -55,7 +55,7 @@ TiDB ダッシュボードにログインした後、左側のナビゲーショ
 
 `tidb_execute`メトリック ノードを例として、このセクションではメトリックの子ノードを紹介します。
 
-![tidb\_execute node relation example1](https://download.pingcap.com/images/docs/dashboard/dashboard-metrics-relation-relation-example1.png)
+![tidb\_execute node relation example1](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-relation-example1.png)
 
 上のグラフから、 `tidb_execute`の 2 つの子ノードがわかります。
 
@@ -72,7 +72,7 @@ TiDB ダッシュボードにログインした後、左側のナビゲーショ
 
 ### <code>tidb_kv_request</code>とその親ノード {#code-tidb-kv-request-code-and-its-parent-nodes}
 
-![tidb\_execute node relation example2](https://download.pingcap.com/images/docs/dashboard/dashboard-metrics-relation-relation-example2.png)
+![tidb\_execute node relation example2](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-relation-example2.png)
 
 `tidb_kv_request`の親ノードである`tidb_cop`と`tidb_txn_cmd.get`両方とも`tidb_kv_request`を指す点線の矢印があり、これは次のことを示しています。
 

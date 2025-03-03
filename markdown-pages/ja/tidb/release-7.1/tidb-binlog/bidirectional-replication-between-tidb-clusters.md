@@ -21,11 +21,11 @@ summary: Learn how to perform the bidirectional replication between TiDB cluster
 
 ユーザーシナリオを以下に示します。
 
-![Architect](https://download.pingcap.com/images/docs/binlog/bi-repl1.jpg)
+![Architect](https://docs-download.pingcap.com/media/images/docs/binlog/bi-repl1.jpg)
 
 ## 実装の詳細 {#implementation-details}
 
-![Mark Table](https://download.pingcap.com/images/docs/binlog/bi-repl2.png)
+![Mark Table](https://docs-download.pingcap.com/media/images/docs/binlog/bi-repl2.png)
 
 クラスター A とクラスター B の間で双方向レプリケーションが有効になっている場合、クラスター A に書き込まれたデータはクラスター B にレプリケートされ、その後、これらのデータ変更はクラスター A にレプリケートされて戻されるため、レプリケーションの無限ループが発生します。上の図から、データ レプリケーション中に、 Drainer がbinlogイベントをマークし、マークされたイベントをフィルタリングして、そのようなレプリケーション ループを回避していることがわかります。
 

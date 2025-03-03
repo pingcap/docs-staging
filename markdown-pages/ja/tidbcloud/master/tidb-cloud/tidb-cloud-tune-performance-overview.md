@@ -22,7 +22,7 @@ summary: TiDB Cloudで SQL パフォーマンスを分析および調整する�
 
 `ΔT`での合計ユーザー応答時間 = 平均 TPS (1 秒あたりのトランザクション数) x 平均ユーザー応答時間 x `ΔT` 。
 
-![user\_response\_time](https://download.pingcap.com/images/docs/performance/user_response_time_en.png)
+![user\_response\_time](https://docs-download.pingcap.com/media/images/docs/performance/user_response_time_en.png)
 
 ## ユーザー応答時間とシステムスループットの関係 {#relationship-between-user-response-time-and-system-throughput}
 
@@ -80,19 +80,19 @@ SQL パフォーマンス チューニングの詳細については、 [SQL チ
 
 ホットスポットの問題は[キービジュアライザータブ](/tidb-cloud/tune-performance.md#key-visualizer)で確認できます。次のスクリーンショットは、サンプルのヒートマップを示しています。マップの水平座標は時間、垂直座標はテーブルとインデックスです。色が明るいほどトラフィックが多いことを示します。ツールバーで読み取りトラフィックまたは書き込みトラフィックの表示を切り替えることができます。
 
-![Hotspot issues](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-troubleshoot-hotspot.png)
+![Hotspot issues](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-troubleshoot-hotspot.png)
 
 次のスクリーンショットは、書き込みホットスポットの例を示しています。書き込みフロー グラフに明るい対角線 (斜め上または斜め下) が表示され、書き込みトラフィックは線の終わりにのみ表示されます。テーブル領域の数が増えるにつれて、階段状のパターンになります。これは、テーブルに書き込みホットスポットがあることを示しています。書き込みホットスポットが発生した場合は、自己増分主キーを使用しているか、主キーがないか、または時間依存の挿入ステートメントまたはインデックスを使用しているかを確認する必要があります。
 
-![Write hotspot](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-troubleshoot-write-hotspot.png)
+![Write hotspot](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-troubleshoot-write-hotspot.png)
 
 読み取りホットスポットは通常、ヒートマップでは明るい水平線として表され、通常は次のスクリーンショットに示すように、多数のクエリを含む小さなテーブルとして表されます。
 
-![Read hotspot](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-troubleshoot-read-hotspot-new.png)
+![Read hotspot](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-troubleshoot-read-hotspot-new.png)
 
 次のスクリーンショットに示すように、強調表示されたブロックにマウスを移動すると、トラフィックが多いテーブルまたはインデックスが表示されます。
 
-![Hotspot index](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-troubleshoot-hotspot-index.png)
+![Hotspot index](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-troubleshoot-hotspot-index.png)
 
 #### スケールアウト {#scale-out}
 

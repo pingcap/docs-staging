@@ -17,7 +17,7 @@ TiDB Cloudを使用すると、HTAP ワークロードに応じて 1 つ以上�
 
 ## アーキテクチャ {#architecture}
 
-![TiFlash Architecture](https://download.pingcap.com/images/docs/tidb-storage-architecture-1.png)
+![TiFlash Architecture](https://docs-download.pingcap.com/media/images/docs/tidb-storage-architecture-1.png)
 
 上の図は、 TiFlashノードを含む HTAP 形式の TiDB のアーキテクチャです。
 

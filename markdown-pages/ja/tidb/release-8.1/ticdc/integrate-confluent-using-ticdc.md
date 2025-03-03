@@ -146,7 +146,7 @@ TiDB v6.1.0 以降、TiCDC は Avro 形式で Confluent に増分データを複
 
 2.  Confluent Cloud でデータを観察します。
 
-    ![Confluent topics](https://download.pingcap.com/images/docs/integrate/confluent-topics.png)
+    ![Confluent topics](https://docs-download.pingcap.com/media/images/docs/integrate/confluent-topics.png)
 
     Confluent Cloud コンソールで、 **Topics**をクリックします。対象のトピックが作成され、データを受信していることがわかります。この時点で、TiDB データベースの増分データが Confluent Cloud に正常に複製されています。
 
@@ -167,19 +167,19 @@ Snowflake はクラウド ネイティブ データ ウェアハウスです。C
 
 2.  Confluent Cloud Console で、**データ統合**&gt;**コネクタ**&gt; **Snowflake Sink**を選択します。以下のページが表示されます。
 
-    ![Add snowflake sink connector](https://download.pingcap.com/images/docs/integrate/add-snowflake-sink-connector.png)
+    ![Add snowflake sink connector](https://docs-download.pingcap.com/media/images/docs/integrate/add-snowflake-sink-connector.png)
 
 3.  Snowflake に複製するトピックを選択します。次に、次のページに進みます。
 
-    ![Configuration](https://download.pingcap.com/images/docs/integrate/configuration.png)
+    ![Configuration](https://docs-download.pingcap.com/media/images/docs/integrate/configuration.png)
 
 4.  Snowflake に接続するための認証情報を指定します。**データベース名**と**スキーマ名**に、前の手順で作成した値を入力します。次に、次のページに進みます。
 
-    ![Configuration](https://download.pingcap.com/images/docs/integrate/configuration.png)
+    ![Configuration](https://docs-download.pingcap.com/media/images/docs/integrate/configuration.png)
 
 5.  **コンフィグレーション**ページで、**入力 Kafka レコード値の形式**と**入力 Kafka レコードキーの形式**の両方に`AVRO`選択します。次に、**続行を**クリックします。コネクタが作成され、ステータス**が実行中**になるまで待機します。これには数分かかる場合があります。
 
-    ![Data preview](https://download.pingcap.com/images/docs/integrate/data-preview.png)
+    ![Data preview](https://docs-download.pingcap.com/media/images/docs/integrate/data-preview.png)
 
 6.  Snowflake コンソールで、 **[データ]** &gt; **[データベース]** &gt; **[TPCC]** &gt; **[TiCDC]**を選択します。TiDB の増分データが Snowflake にレプリケートされていることがわかります。Snowflake とのデータ統合は完了しています (前の図を参照)。ただし、Snowflake のテーブル構造は TiDB のテーブル構造とは異なり、データは Snowflake に増分的に挿入されます。ほとんどのシナリオでは、Snowflake のデータは TiDB 変更ログを保存するのではなく、TiDB のデータのレプリカであることが期待されます。この問題については、次のセクションで説明します。
 
@@ -312,7 +312,7 @@ ksqlDB は、ストリーム処理アプリケーション専用に構築され�
     SELECT * FROM ORDERS EMIT CHANGES;
     ```
 
-    ![Select from orders](https://download.pingcap.com/images/docs/integrate/select-from-orders.png)
+    ![Select from orders](https://docs-download.pingcap.com/media/images/docs/integrate/select-from-orders.png)
 
     上図に示すように、増分データが ksqlDB に複製されたことがわかります。ksqlDB とのデータ統合が完了しました。
 
@@ -342,11 +342,11 @@ Microsoft SQL Server は、Microsoft が開発したリレーショナル デー
 
 2.  Confluent Cloud Console で、**データ統合**&gt;**コネクタ**&gt; **Microsoft SQL Server シンク**を選択します。以下のページが表示されます。
 
-    ![Topic selection](https://download.pingcap.com/images/docs/integrate/topic-selection.png)
+    ![Topic selection](https://docs-download.pingcap.com/media/images/docs/integrate/topic-selection.png)
 
 3.  SQL Server にレプリケートするトピックを選択します。次に、次のページに進みます。
 
-    ![Authentication](https://download.pingcap.com/images/docs/integrate/authentication.png)
+    ![Authentication](https://docs-download.pingcap.com/media/images/docs/integrate/authentication.png)
 
 4.  接続情報と認証情報を入力します。次に次のページに進みます。
 
@@ -364,6 +364,6 @@ Microsoft SQL Server は、Microsoft が開発したリレーショナル デー
 
 6.  設定後、 **「続行」**をクリックします。コネクタのステータスが**「実行中」**になるまで待ちます。これには数分かかる場合があります。
 
-    ![Results](https://download.pingcap.com/images/docs/integrate/results.png)
+    ![Results](https://docs-download.pingcap.com/media/images/docs/integrate/results.png)
 
 7.  SQL Server に接続してデータを観察します。上図に示すように、増分データが SQL Server にレプリケートされていることがわかります。SQL Server とのデータ統合が完了しました。

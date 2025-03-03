@@ -156,7 +156,7 @@ sysbench $testname \
 
 v6.0.0 对比 v5.4.0，Point Select 性能基本持平，略下降了 1.79%。
 
-![Point Select](https://download.pingcap.com/images/docs-cn/sysbench_v540vsv600_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v540vsv600_point_select.png)
 
 ### Update Non-index 性能
 
@@ -168,7 +168,7 @@ v6.0.0 对比 v5.4.0，Point Select 性能基本持平，略下降了 1.79%。
 
 v6.0.0 对比 v5.4.0，Update Non-index 性能基本持平，略下降了 1.98%。
 
-![Update Non-index](https://download.pingcap.com/images/docs-cn/sysbench_v540vsv600_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v540vsv600_update_non_index.png)
 
 ### Update Index 性能
 
@@ -180,7 +180,7 @@ v6.0.0 对比 v5.4.0，Update Non-index 性能基本持平，略下降了 1.98%�
 
 v6.0.0 对比 v5.4.0，Update Index 性能下降了 3.05%。
 
-![Update Index](https://download.pingcap.com/images/docs-cn/sysbench_v540vsv600_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v540vsv600_update_index.png)
 
 ### Read Write 性能
 
@@ -192,4 +192,4 @@ v6.0.0 对比 v5.4.0，Update Index 性能下降了 3.05%。
 
 v6.0.0 对比 v5.4.0，Read Write 性能有大幅提升，提升了 16.17%。
 
-![Read Write](https://download.pingcap.com/images/docs-cn/sysbench_v540vsv600_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v540vsv600_read_write.png)

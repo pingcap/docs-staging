@@ -65,7 +65,7 @@ Zapier の[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
     2.  ログインページで、公開鍵と秘密鍵を入力します。TiDB TiDB Cloud API キーを取得するには、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management)の手順に従ってください。
     3.  **「続行」**をクリックします。
 
-    ![Account](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-tidbcloud-account.png)
+    ![Account](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/zapier/zapier-tidbcloud-account.png)
 
 3.  アクションの設定
 
@@ -73,19 +73,19 @@ Zapier の[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
 
     1.  ドロップダウンリストからプロジェクト名とクラスター名を選択します。クラスターの接続情報が自動的に表示されます。
 
-        ![Set up project name and cluster name](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-set-up-tidbcloud-project-and-cluster.png)
+        ![Set up project name and cluster name](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/zapier/zapier-set-up-tidbcloud-project-and-cluster.png)
 
     2.  パスワードを入力してください。
 
     3.  ドロップダウンリストからデータベースを選択します。
 
-        ![Set up database name](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-set-up-tidbcloud-databse.png)
+        ![Set up database name](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/zapier/zapier-set-up-tidbcloud-databse.png)
 
         Zapier は、入力したパスワードを使用してTiDB Cloudからデータベースを照会します。クラスター内にデータベースが見つからない場合は、パスワードを再入力してページを更新してください。
 
     4.  **検索するテーブル**ボックスに`github_global_event`を入力します。テーブルが存在しない場合は、テンプレートは次の DDL を使用してテーブルを作成します。 **[続行]**をクリックします。
 
-        ![The create table DDL](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-tidbcloud-create-table-ddl.png)
+        ![The create table DDL](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/zapier/zapier-tidbcloud-create-table-ddl.png)
 
 4.  テストアクション
 
@@ -101,7 +101,7 @@ Zapier の[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
 
     `Find Table in TiDB Cloud`アクションの設定時に選択したアカウントを選択します。 **[続行]**をクリックします。
 
-    ![Choose account](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-tidbcloud-choose-account.png)
+    ![Choose account](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/zapier/zapier-tidbcloud-choose-account.png)
 
 3.  アクションの設定
 
@@ -109,11 +109,11 @@ Zapier の[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
 
     2.  **テーブル名**で、ドロップダウン リストから**github_global_event**テーブルを選択します。テーブルの列が表示されます。
 
-        ![Table columns](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-set-up-tidbcloud-columns.png)
+        ![Table columns](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/zapier/zapier-set-up-tidbcloud-columns.png)
 
     3.  **「列」**ボックスで、トリガーから対応するデータを選択します。すべての列に入力し、 **「続行」**をクリックします。
 
-        ![Fill in Columns](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-fill-in-tidbcloud-triggers-data.png)
+        ![Fill in Columns](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/zapier/zapier-fill-in-tidbcloud-triggers-data.png)
 
 4.  テストアクション
 
@@ -133,7 +133,7 @@ Zapier の[TiDB Cloudアプリ](https://zapier.com/apps/tidb-cloud/integrations)
 
 **「公開」**をクリックして、zap を公開します[ホームページ](https://zapier.com/app/zaps)で zap が実行されているのがわかります。
 
-![Publish the zap](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-tidbcloud-publish.png)
+![Publish the zap](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/zapier/zapier-tidbcloud-publish.png)
 
 これで、この zap は GitHub アカウントからのすべてのグローバル イベントをTiDB Cloudに自動的に記録します。
 
@@ -231,6 +231,6 @@ API 内の項目が複数の異なるポーリングに存在する場合にア�
 
 2.  `set up action`ステップで、 `Create TiDB Cloud Table if it doesn’t exist yet?`ボックスにチェックを入れて`find and create`有効にします。
 
-    ![Find and create](https://download.pingcap.com/images/docs/tidb-cloud/zapier/zapier-tidbcloud-find-and-create.png)
+    ![Find and create](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/zapier/zapier-tidbcloud-find-and-create.png)
 
 このワークフローは、テーブルがまだ存在しない場合にテーブルを作成します。アクションをテストすると、テーブルが直接作成されることに注意してください。

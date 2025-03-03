@@ -51,7 +51,7 @@ TiDBは統計を使用して[どのインデックスを選択するか](/choose
 
 ここで「等しい深さ」とは、各バケットに分類される値の数が可能な限り等しいことを意味します。たとえば、特定のセット{1.6、1.9、1.9、2.0、2.4、2.6、2.7、2.7、2.8、2.9、3.4、3.5}に対して、4つのバケットを生成するとします。等深ヒストグラムは次のとおりです。 4つのバケット[1.6、1.9]、[2.0、2.6]、[2.7、2.8]、[2.9、3.5]が含まれています。バケットの深さは3です。
 
-![Equal-depth Histogram Example](https://download.pingcap.com/images/docs/statistics-1.png)
+![Equal-depth Histogram Example](https://docs-download.pingcap.com/media/images/docs/statistics-1.png)
 
 ヒストグラムバケット数の上限を決定するパラメータの詳細については、 [手動コレクション](#manual-collection)を参照してください。バケットの数が多いほど、ヒストグラムの精度が高くなります。ただし、精度が高くなると、メモリリソースの使用量が犠牲になります。この数値は、実際のシナリオに応じて適切に調整できます。
 
@@ -90,7 +90,7 @@ Top-N値は、列またはインデックスの上位N個の値です。 TiDBは
 
 -   `TableNameList`のすべてのテーブルの統計を収集するには：
 
-    
+
     ```sql
     ANALYZE TABLE TableNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -132,7 +132,7 @@ v5.3.0より前では、TiDBはリザーバーサンプリング方式を使用�
 
 -   特定の列の統計を収集するには、次の構文を使用します。
 
-    
+
     ```sql
     ANALYZE TABLE TableName COLUMNS ColumnNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -165,7 +165,7 @@ v5.3.0より前では、TiDBはリザーバーサンプリング方式を使用�
 
     2.  ビジネスのクエリパターンが比較的安定したら、次の構文を使用して`PREDICATE COLUMNS`の統計を収集します。
 
-        
+
         ```sql
         ANALYZE TABLE TableName PREDICATE COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
         ```
@@ -179,7 +179,7 @@ v5.3.0より前では、TiDBはリザーバーサンプリング方式を使用�
 
 -   すべての列とインデックスの統計を収集するには、次の構文を使用します。
 
-    
+
     ```sql
     ANALYZE TABLE TableName ALL COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -265,14 +265,14 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
 
 -   `TableName`の`PartitionNameList`のすべてのパーティションの統計を収集するには、次の構文を使用します。
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
 
 -   `TableName`の`PartitionNameList`のすべてのパーティションのインデックス統計を収集するには、次の構文を使用します。
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -283,7 +283,7 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
     >
     > 現在、 `PREDICATE COLUMNS`に関する統計の収集は実験的機能です。実稼働環境で使用することはお勧めしません。
 
-    
+
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [COLUMNS ColumnNameList|PREDICATE COLUMNS|ALL COLUMNS] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -301,14 +301,14 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
 
 -   `TableName`分の`IndexNameLists`すべてのインデックス列の統計を段階的に収集するには：
 
-    
+
     ```sql
     ANALYZE INCREMENTAL TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
 
 -   `TableName`分の`PartitionNameLists`すべてのパーティションのインデックス列の統計を段階的に収集するには：
 
-    
+
     ```sql
     ANALYZE INCREMENTAL TABLE TableName PARTITION PartitionNameList INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -418,7 +418,7 @@ SHOW STATS_META [ShowLikeOrWhere];
 
 `ShowLikeOrWhereOpt`の構文は次のとおりです。
 
-![ShowLikeOrWhereOpt](https://download.pingcap.com/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
+![ShowLikeOrWhereOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowLikeOrWhereOpt.png)
 
 現在、 `SHOW STATS_META`ステートメントは次の6列を返します。
 
@@ -448,7 +448,7 @@ SHOW STATS_HEALTHY [ShowLikeOrWhere];
 
 `SHOW STATS_HEALTHY`の概要は次のとおりです。
 
-![ShowStatsHealthy](https://download.pingcap.com/images/docs/sqlgram/ShowStatsHealthy.png)
+![ShowStatsHealthy](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowStatsHealthy.png)
 
 現在、 `SHOW STATS_HEALTHY`ステートメントは次の4列を返します。
 
@@ -500,7 +500,7 @@ SHOW STATS_BUCKETS [ShowLikeOrWhere]
 
 回路図は以下の通りです：
 
-![SHOW STATS\_BUCKETS](https://download.pingcap.com/images/docs/sqlgram/SHOW_STATS_BUCKETS.png)
+![SHOW STATS\_BUCKETS](https://docs-download.pingcap.com/media/images/docs/sqlgram/SHOW_STATS_BUCKETS.png)
 
 このステートメントは、すべてのバケットに関する情報を返します。 `ShowLikeOrWhere`を使用して、必要な情報をフィルタリングできます。
 
@@ -605,21 +605,21 @@ v5.4.0以降、TiDBは同期ロード統計機能を導入しています。こ�
 
 -   `${db_name}`データベースの`${table_name}`テーブルのJSON形式の統計を取得するには：
 
-    
+
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}
     ```
 
     例えば：
 
-    
+
     ```
     curl -s http://127.0.0.1:10080/stats/dump/test/t1 -o /tmp/t1.json
     ```
 
 -   特定の時間に`${db_name}`データベースの`${table_name}`テーブルのJSON形式の統計を取得するには：
 
-    
+
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}/${yyyyMMddHHmmss}
     ```

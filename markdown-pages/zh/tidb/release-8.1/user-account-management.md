@@ -156,21 +156,21 @@ TiDB 将密码存在 [`mysql.user`](/mysql-schema/mysql-schema-user.md) 系统�
 
 - 在 `CREATE USER` 创建用户时通过 `IDENTIFIED BY` 指定密码：
 
-    
+
     ```sql
     CREATE USER 'test'@'localhost' IDENTIFIED BY 'mypass';
     ```
 
 - 为一个已存在的账户修改密码，可以通过 `SET PASSWORD FOR` 或者 `ALTER USER` 语句完成：
 
-    
+
     ```sql
     SET PASSWORD FOR 'root'@'%' = 'xxx';
     ```
 
     或者：
 
-    
+
     ```sql
     ALTER USER 'test'@'localhost' IDENTIFIED BY 'mypass';
     ```
@@ -200,7 +200,7 @@ TiDB 将密码存在 [`mysql.user`](/mysql-schema/mysql-schema-user.md) 系统�
 
         ```bash
         kill -9 <pid>
-        ```    
+        ```
 
 3. 使用修改之后的配置启动 TiDB：
 

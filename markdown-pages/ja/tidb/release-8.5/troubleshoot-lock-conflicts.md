@@ -165,7 +165,7 @@ CURRENT_SQL_DIGEST_TEXT: update `t` set `v` = `v` + ? where `id` = ? ;
 
 TiDBサーバーがクライアントから読み取り要求を受信すると、現在のトランザクションの start_ts として、物理時間でグローバルに一意で増加するタイムスタンプを取得します。トランザクションは、start_ts より前の最新のデータ、つまり start_ts より小さい最新の commit_ts のターゲット キーを読み取る必要があります。トランザクションがターゲット キーが別のトランザクションによってロックされていることを発見し、他のトランザクションがどのフェーズにあるかを知ることができない場合、読み取り/書き込み競合が発生します。図は次のとおりです。
 
-![read-write conflict](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-04.png)
+![read-write conflict](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-04.png)
 
 Txn0 は Prewrite フェーズを完了し、Commit フェーズに入ります。このとき、Txn1 は同じターゲット キーの読み取りを要求します。Txn1 は、start_ts よりも小さい最新の commit_ts のターゲット キーを読み取る必要があります。Txn1 の start_ts は Txn0 の lock_ts よりも大きいため、Txn1 はターゲット キーのロックが解除されるのを待つ必要がありますが、まだ解除されていません。その結果、Txn1 は Txn0 がコミットされたかどうかを確認できません。したがって、Txn1 と Txn0 の間で読み取りと書き込みの競合が発生します。
 
@@ -177,7 +177,7 @@ Txn0 は Prewrite フェーズを完了し、Commit フェーズに入ります�
 
         TiDB ダッシュボードの`KV Errors`パネルでは、 `Lock Resolve OPS`の`not_expired`と`KV Backoff OPS`の`tikvLockFast` 、トランザクションの読み取り/書き込み競合を確認する`resolve`に使用できる監視メトリックです。すべてのメトリックの値が増加すると、読み取り/書き込み競合が多く発生している可能性があります。13 `not_expired`項目は、トランザクションのロックがタイムアウトしていないことを意味します`resolve`項目は、他のトランザクションがロックをクリーンアップしようとしていることを意味します。17 `tikvLockFast`項目は、読み取り/書き込み競合が発生していることを意味します。
 
-        ![KV-backoff-txnLockFast-optimistic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-09.png) ![KV-Errors-resolve-optimistic](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-08.png)
+        ![KV-backoff-txnLockFast-optimistic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-09.png) ![KV-Errors-resolve-optimistic](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-08.png)
 
     -   TiDBサーバーのログ
 
@@ -229,7 +229,7 @@ Grafana の TiDB モニタリングで「KeyIsLocked」エラーがあるかど�
 
 TiDB ダッシュボードの`KV Errors`パネルには、トランザクションによって発生した書き込み間の競合を確認するために使用できる 2 つの監視メトリック`Lock Resolve OPS`と`KV Backoff OPS`あります。9 `Lock Resolve OPS`下の`resolve`項目と`KV Backoff OPS`の下の`txnLock`項目に明らかな上昇傾向が見られる場合、「KeyIsLocked」エラーが発生します。15 `resolve`ロックを解除しようとする操作を指し、 `txnLock`書き込みの競合を表します。
 
-![KV-backoff-txnLockFast-optimistic-01](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-07.png) ![KV-Errors-resolve-optimistic-01](https://download.pingcap.com/images/docs/troubleshooting-lock-pic-08.png)
+![KV-backoff-txnLockFast-optimistic-01](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-07.png) ![KV-Errors-resolve-optimistic-01](https://docs-download.pingcap.com/media/images/docs/troubleshooting-lock-pic-08.png)
 
 解決策:
 

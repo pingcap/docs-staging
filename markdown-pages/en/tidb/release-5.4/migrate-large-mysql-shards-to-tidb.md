@@ -13,7 +13,7 @@ If the data size of the MySQL shards is less than 1 TiB, you can follow the proc
 
 The following diagram shows how to migrate and merge MySQL sharded tables to TiDB using Dumpling and TiDB Lightning.
 
-![Use Dumpling and TiDB Lightning to migrate and merge MySQL shards to TiDB](https://download.pingcap.com/images/docs/shard-merge-using-lightning-en.png)
+![Use Dumpling and TiDB Lightning to migrate and merge MySQL shards to TiDB](https://docs-download.pingcap.com/media/images/docs/shard-merge-using-lightning-en.png)
 
 This example assumes that you have two databases, `my_db1` and `my_db2`. You use Dumpling to export two tables `table1` and `table2` from `my_db1`, and two tables `table3` and `table4` from `my_db2`, respectively. After that, you use TiDB Lighting to import and merge the four exported tables into the same `table5` from `mydb` in the target TiDB.
 
@@ -230,7 +230,7 @@ Follow these steps to start `tidb-lightning`:
 
 2. Run `tidb-lightning`. If you run the program by directly invoking the program name in a shell, the process may quit unexpectedly after receiving a SIGHUP signal. It is recommended that you run the program using tools such as `nohup` or `screen` or `tiup`, and put the process to the shell background. If you migrate from S3, the SecretKey and AccessKey of the account that has access to the Amazon S3 backend store needs to be passed into the Lightning node as environment variables. Reading credential files from `~/.aws/credentials` is also supported. For example:
 
-    
+
     ```shell
     export AWS_ACCESS_KEY_ID=${access_key}
     export AWS_SECRET_ACCESS_KEY=${secret_key}

@@ -12,7 +12,7 @@ In this tutorial, you can learn how to connect to your TiDB Cloud Serverless clu
 > **Note:**
 >
 > Most steps in this tutorial work with TiDB Cloud Dedicated as well. However, for TiDB Cloud Dedicated, you need to note the following:
-> 
+>
 > - Import your dataset following [Import data from files to TiDB Cloud](/tidb-cloud/tidb-cloud-migration-overview.md#import-data-from-files-to-tidb-cloud).
 > - Get the connection information for your cluster following [Connect to TiDB Cloud Dedicated](/tidb-cloud/connect-via-standard-connection.md). When connecting to TiDB Cloud Dedicated, you need to allow access from `142.251.74.0/23`. For more information about connections from Looker Studio, see [Looker Studio documentation](https://support.google.com/looker-studio/answer/7088031#zippy=%2Cin-this-article).
 
@@ -42,7 +42,7 @@ You can import the S&P 500 dataset provided in the interactive tutorial of TiDB 
 If you encounter any issues during import, you can cancel this import task as follows:
 
 1. On the [**Clusters**](https://tidbcloud.com/console/clusters) page, click the name of your TiDB Cloud Serverless cluster to go to its overview page.
-2. In the left navigation pane, click **Import**. 
+2. In the left navigation pane, click **Import**.
 3. Find the import task named **sp500-insight**, click **...** in the **Action** column, and then click **Cancel**.
 
 ## Step 2. Get the connection information for your cluster
@@ -78,7 +78,7 @@ If you encounter any issues during import, you can cancel this import task as fo
     - **Password**: enter the `PASSWORD` parameter from the TiDB Cloud Serverless connection dialog.
     - **Enable SSL**: select this option, and then click the upload icon to the right of **MySQL SSL Client Configuration Files** to upload the CA file downloaded from [Step 2](#step-2-get-the-connection-information-for-your-cluster).
 
-    ![Looker Studio: configure connection settings for TiDB Cloud Serverless](https://download.pingcap.com/images/docs/tidb-cloud/looker-studio-configure-connection.png)
+    ![Looker Studio: configure connection settings for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/looker-studio-configure-connection.png)
 
 4. Click **AUTHENTICATE**.
 
@@ -90,7 +90,7 @@ Now, you can use the TiDB cluster as a data source and create a simple chart wit
 
 1. In the right pane, click **CUSTOM QUERY**.
 
-    ![Looker Studio: custom query](https://download.pingcap.com/images/docs/tidb-cloud/looker-studio-custom-query.png)
+    ![Looker Studio: custom query](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/looker-studio-custom-query.png)
 
 2. Copy the following code to the **Enter Custom Query** area, and then click **Add** in the lower-right corner.
 
@@ -124,7 +124,7 @@ Now, you can use the TiDB cluster as a data source and create a simple chart wit
 
 Then, you can see a combo chart similar as follows:
 
-![Looker Studio: A simple Combo chart](https://download.pingcap.com/images/docs/tidb-cloud/looker-studio-simple-chart.png)
+![Looker Studio: A simple Combo chart](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/looker-studio-simple-chart.png)
 
 ## Next steps
 

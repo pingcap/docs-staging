@@ -26,7 +26,7 @@ summary: TiCDC に基づいてプライマリ/セカンダリ災害復旧を実�
 
 ### アーキテクチャ {#architecture}
 
-![TiCDC secondary cluster architecture](https://download.pingcap.com/images/docs/dr/dr-ticdc-secondary-cluster.png)
+![TiCDC secondary cluster architecture](https://docs-download.pingcap.com/media/images/docs/dr/dr-ticdc-secondary-cluster.png)
 
 上記のアーキテクチャには、プライマリ クラスターとセカンダリ クラスターの 2 つの TiDB クラスターが含まれています。
 
@@ -406,7 +406,7 @@ storage = "s3://redo?access-key=minio&secret-access-key=miniostorage&endpoint=ht
 
 この DR シナリオでは、2 つのリージョンの TiDB クラスターが互いの災害復旧クラスターとして機能できます。ビジネス トラフィックはリージョン構成に基づいて対応する TiDB クラスターに書き込まれ、2 つの TiDB クラスターは互いのデータをバックアップします。
 
-![TiCDC bidirectional replication](https://download.pingcap.com/images/docs/dr/bdr-ticdc.png)
+![TiCDC bidirectional replication](https://docs-download.pingcap.com/media/images/docs/dr/bdr-ticdc.png)
 
 双方向レプリケーション機能により、2 つのリージョンの TiDB クラスターは互いのデータを複製できます。この DR ソリューションは、データのセキュリティと信頼性を保証し、データベースの書き込みパフォーマンスも確保します。計画された DR スイッチオーバーでは、新しい変更フィードを開始する前に実行中の変更フィードを停止する必要がないため、操作とメンテナンスが簡素化されます。
 

@@ -11,23 +11,23 @@ For customers subscribed to the **Enterprise** [support plan](/tidb-cloud/connec
 
 In the Slack support channel, you only need to mention **PingCAP Support Bot** and describe the problem in a message. Then, the ticket bot will send you a message with a **Raise request** button.
 
-![slack-ticket-creation-1](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-creation-1.png)
+![slack-ticket-creation-1](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-1.png)
 
 Click **Raise request** to open a form, fill it out according to the problem, and then click **Create** to submit the ticket.
 
-![slack-ticket-creation-2](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-creation-2.png)
+![slack-ticket-creation-2](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-2.png)
 
 After successfully creating the ticket, the bot will reply with the ticket link. You can click the link to view the ticket details in the [PingCAP Help Center](https://tidb.support.pingcap.com/servicedesk/customer/portals).
 
-![slack-ticket-creation-3](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-creation-3.png)
+![slack-ticket-creation-3](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-3.png)
 
-![slack-ticket-creation-4](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-creation-4.png)
+![slack-ticket-creation-4](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-4.png)
 
 ## Subscribe to ticket updates
 
 The **Enterprise** support plan supports subscriptions to ticket updates in Slack. When a support engineer responds to a ticket, a ticket update message will appear in the Slack channel. The message includes information such as the ticket title, ticket link, and last comment content.
 
-![slack-ticket-creation-5](https://download.pingcap.com/images/docs/tidb-cloud/connected-slack-ticket-creation-5.png)
+![slack-ticket-creation-5](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-5.png)
 
 ## FAQs
 

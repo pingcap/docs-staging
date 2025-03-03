@@ -103,7 +103,7 @@ set global tidb_hashagg_partial_concurrency=1;
 set global tidb_enable_async_commit = 1;
 set global tidb_enable_1pc = 1;
 set global tidb_guarantee_linearizability = 0;
-set global tidb_enable_clustered_index = 1; 
+set global tidb_enable_clustered_index = 1;
 
 ```
 
@@ -167,7 +167,7 @@ sysbench $testname \
 
 v4.0と比較して、TiDB v5.0のポイント選択のパフォーマンスは2.7％向上しています。
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v5vsv4_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v5vsv4_point_select.png)
 
 ### 非インデックスパフォーマンスの更新 {#update-non-index-performance}
 
@@ -182,7 +182,7 @@ v4.0と比較して、TiDB v5.0のポイント選択のパフォーマンスは2
 
 v4.0と比較して、TiDB v5.0のインデックス以外の更新のパフォーマンスは81％向上しています。
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v5vsv4_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v5vsv4_update_non_index.png)
 
 ### インデックスのパフォーマンスを更新する {#update-index-performance}
 
@@ -197,7 +197,7 @@ v4.0と比較して、TiDB v5.0のインデックス以外の更新のパフォ�
 
 v4.0と比較して、TiDB v5.0の更新インデックスのパフォーマンスは28％向上しています。
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v5vsv4_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v5vsv4_update_index.png)
 
 ### 読み取り/書き込みパフォーマンス {#read-write-performance}
 
@@ -212,4 +212,4 @@ v4.0と比較して、TiDB v5.0の更新インデックスのパフォーマン�
 
 v4.0と比較して、TiDB v5.0の読み取り/書き込みパフォーマンスは9％向上しています。
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v5vsv4_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v5vsv4_read_write.png)

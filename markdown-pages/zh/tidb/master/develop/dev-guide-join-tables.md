@@ -18,7 +18,7 @@ aliases: ['/zh/tidb/dev/join-tables']
 
 例如，想要知道编写过最多书的作家是谁，需要将作家基础信息表 `authors` 与书籍作者表 `book_authors` 进行连接。
 
-![Inner Join](https://download.pingcap.com/images/docs-cn/develop/inner-join.png)
+![Inner Join](https://docs-download.pingcap.com/media/images/docs-cn/develop/inner-join.png)
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -91,7 +91,7 @@ public List<Author> getTop10AuthorsOrderByBooks() throws SQLException {
 
 左外连接会返回左表中的所有数据行，以及右表当中能够匹配连接条件的值，如果在右表当中没有找到能够匹配的行，则使用 `NULL` 填充。
 
-![Left Outer Join](https://download.pingcap.com/images/docs-cn/develop/left-outer-join.png)
+![Left Outer Join](https://docs-download.pingcap.com/media/images/docs-cn/develop/left-outer-join.png)
 
 在一些情况下，希望使用多张表来完成数据的查询，但是并不希望因为不满足连接条件而导致数据集变小。
 
@@ -196,7 +196,7 @@ public List<Book> getLatestBooksWithAverageScore() throws SQLException {
 
 右外连接返回右表中的所有记录，以及左表当中能够匹配连接条件的值，没有匹配的值则使用 `NULL` 填充。
 
-![Right Outer Join](https://download.pingcap.com/images/docs-cn/develop/right-outer-join.png)
+![Right Outer Join](https://docs-download.pingcap.com/media/images/docs-cn/develop/right-outer-join.png)
 
 ### 交叉连接 CROSS JOIN
 

@@ -19,11 +19,11 @@ PD と TiKV はどちらも情報をディスクに保存するため、ディ�
 
 以下の画像は、デフォルトのパラメーター構成を使用した 12 時間以内のクラスターの QPS モニターを示しています。画像から明らかなパフォーマンスのジッターを見ることができます。
 
-![QPS with default config](https://download.pingcap.com/images/docs/best-practices/three-nodes-default-config-qps.png)
+![QPS with default config](https://docs-download.pingcap.com/media/images/docs/best-practices/three-nodes-default-config-qps.png)
 
 パラメータ調整後、パフォーマンスが向上しました。
 
-![QPS with modified config](https://download.pingcap.com/images/docs/best-practices/three-nodes-final-config-qps.png)
+![QPS with modified config](https://docs-download.pingcap.com/media/images/docs/best-practices/three-nodes-final-config-qps.png)
 
 ## パラメータ調整 {#parameter-adjustment}
 
@@ -64,7 +64,7 @@ tikv:
 
 このテストでは、このパラメーターの値は`2`に設定されます。 **gRPC ポーリング CPU**パネルを観察すると、使用率が約 80% であることがわかります。
 
-![gRPC Pool CPU](https://download.pingcap.com/images/docs/best-practices/three-nodes-grpc-pool-usage.png)
+![gRPC Pool CPU](https://docs-download.pingcap.com/media/images/docs/best-practices/three-nodes-grpc-pool-usage.png)
 
 #### <code>storage.scheduler-worker-pool-size</code> {#code-storage-scheduler-worker-pool-size-code}
 
@@ -72,7 +72,7 @@ tikv:
 
 理想的には、スケジューラ スレッド プールの使用率は 50% から 75% の間に維持されます。 gRPC スレッド プールと同様に、ハイブリッド デプロイ中は`storage.scheduler-worker-pool-size`パラメーターの既定値が大きくなるため、リソースの使用が不十分になります。このテストでは、このパラメーターの値は`2`に設定されています。これは、ベスト プラクティスに沿ったものであり、 **Scheduler ワーカーの CPU**パネルで対応するメトリックを観察することによって導き出された結論です。
 
-![Scheduler Worker CPU](https://download.pingcap.com/images/docs/best-practices/three-nodes-scheduler-pool-usage.png)
+![Scheduler Worker CPU](https://docs-download.pingcap.com/media/images/docs/best-practices/three-nodes-scheduler-pool-usage.png)
 
 ### TiKV バックグラウンド タスクのリソース構成 {#resource-configuration-for-tikv-background-tasks}
 
@@ -101,7 +101,7 @@ RocksDB スレッド プールを最適化する方法は、圧縮スレッド �
 
 TiDB はマルチバージョン同時実行制御 (MVCC) モデルを使用するため、TiKV はバックグラウンドで古いバージョンのデータを定期的に消去します。使用可能なリソースが限られている場合、この操作によって定期的なパフォーマンスのジッターが発生します。 `gc.max_write_bytes_per_sec`パラメータを使用して、このような操作のリソース使用を制限できます。
 
-![GC Impact](https://download.pingcap.com/images/docs/best-practices/three-nodes-gc-impact.png)
+![GC Impact](https://docs-download.pingcap.com/media/images/docs/best-practices/three-nodes-gc-impact.png)
 
 構成ファイルでこのパラメーター値を設定するだけでなく、tikv-ctl でこの値を動的に調整することもできます。
 

@@ -51,7 +51,7 @@ summary: Learn best practice and strategy for using UUIDs with TiDB.
 
 </CustomContent>
 
-![Key Visualizer](https://download.pingcap.com/images/docs/best-practices/uuid_keyviz.png)
+![Key Visualizer](https://docs-download.pingcap.com/media/images/docs/best-practices/uuid_keyviz.png)
 
 ```sql
 CREATE TABLE `uuid_demo_1` (

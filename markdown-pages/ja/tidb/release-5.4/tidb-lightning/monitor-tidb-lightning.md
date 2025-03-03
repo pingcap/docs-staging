@@ -47,7 +47,7 @@ scrape_configs:
 
 ### 行1：速度 {#row-1-speed}
 
-![Panels in first row](https://download.pingcap.com/images/docs/lightning-grafana-row-1.png)
+![Panels in first row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-1.png)
 
 | パネル      | シリーズ                  | 説明                                                          |
 | :------- | :-------------------- | :---------------------------------------------------------- |
@@ -59,7 +59,7 @@ scrape_configs:
 
 ### 行2：進捗状況 {#row-2-progress}
 
-![Panels in second row](https://download.pingcap.com/images/docs/lightning-grafana-row-2.png)
+![Panels in second row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-2.png)
 
 | パネル         | 説明                               |
 | :---------- | :------------------------------- |
@@ -69,7 +69,7 @@ scrape_configs:
 
 ### 行3：リソース {#row-3-resource}
 
-![Panels in third row](https://download.pingcap.com/images/docs/lightning-grafana-row-3.png)
+![Panels in third row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-3.png)
 
 | パネル              | 説明                                      |
 | :--------------- | :-------------------------------------- |
@@ -79,7 +79,7 @@ scrape_configs:
 
 ### 行4：割り当て {#row-4-quota}
 
-![Panels in fourth row](https://download.pingcap.com/images/docs/lightning-grafana-row-4.png)
+![Panels in fourth row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-4.png)
 
 | パネル     | シリーズ       | 説明                                                                                                                                         |
 | :------ | :--------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -93,7 +93,7 @@ scrape_configs:
 
 ### 行5：読み取り速度 {#row-5-read-speed}
 
-![Panels in fifth row](https://download.pingcap.com/images/docs/lightning-grafana-row-5.png)
+![Panels in fifth row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-5.png)
 
 | パネル                 | シリーズ      | 説明                                  |
 | :------------------ | :-------- | :---------------------------------- |
@@ -106,7 +106,7 @@ scrape_configs:
 
 ### 行6：ストレージ {#row-6-storage}
 
-![Panels in sixth row](https://download.pingcap.com/images/docs/lightning-grafana-row-6.png)
+![Panels in sixth row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-6.png)
 
 | パネル        | シリーズ             | 説明                                    |
 | :--------- | :--------------- | :------------------------------------ |
@@ -120,7 +120,7 @@ scrape_configs:
 
 ### 行7：インポート速度 {#row-7-import-speed}
 
-![Panels in seventh row](https://download.pingcap.com/images/docs/lightning-grafana-row-7.png)
+![Panels in seventh row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-7.png)
 
 | パネル       | シリーズ      | 説明                               |
 | :-------- | :-------- | :------------------------------- |

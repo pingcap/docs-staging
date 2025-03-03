@@ -65,19 +65,19 @@ Value: null
 
 [TiDB Dashboard](/dashboard/dashboard-intro.md) 中的[流量可视化](/dashboard/dashboard-key-visualizer.md)功能可帮助用户缩小热点排查范围到表级别。以下是流量可视化功能展示的一个热力图样例，该图横坐标是时间，纵坐标是各个表和索引，颜色越亮代表其流量越大。可在工具栏中切换显示读或写流量。
 
-![Dashboard 示例1](https://download.pingcap.com/images/docs-cn/troubleshoot-hot-spot-issues-1.png)
+![Dashboard 示例1](https://docs-download.pingcap.com/media/images/docs-cn/troubleshoot-hot-spot-issues-1.png)
 
 当图中写入流量图出现以下明亮斜线（斜向上或斜向下）时，由于写入只出现在末端，随着表 Region 数量变多，呈现出阶梯状。此时说明该表构成了写入热点：
 
-![Dashboard 示例2](https://download.pingcap.com/images/docs-cn/troubleshoot-hot-spot-issues-2.png)
+![Dashboard 示例2](https://docs-download.pingcap.com/media/images/docs-cn/troubleshoot-hot-spot-issues-2.png)
 
 对于读热点，在热力图中一般表现为一条明亮的横线，通常是有大量访问的小表，如下图所示：
 
-![Dashboard 示例3](https://download.pingcap.com/images/docs-cn/troubleshoot-hot-spot-issues-3.png)
+![Dashboard 示例3](https://docs-download.pingcap.com/media/images/docs-cn/troubleshoot-hot-spot-issues-3.png)
 
 将鼠标移到亮色块上，即可看到是什么表或索引具有大流量，如下图所示：
 
-![Dashboard 示例4](https://download.pingcap.com/images/docs-cn/troubleshoot-hot-spot-issues-4.png)
+![Dashboard 示例4](https://docs-download.pingcap.com/media/images/docs-cn/troubleshoot-hot-spot-issues-4.png)
 
 ## 使用 SHARD_ROW_ID_BITS 处理热点表
 
@@ -104,9 +104,9 @@ ALTER TABLE：ALTER TABLE t SHARD_ROW_ID_BITS = 4;
 
 以下是两张无主键情况下使用 `SHARD_ROW_ID_BITS` 打散热点后的流量图，第一张展示了打散前的情况，第二张展示了打散后的情况。
 
-![Dashboard 示例5](https://download.pingcap.com/images/docs-cn/troubleshoot-hot-spot-issues-5.png)
+![Dashboard 示例5](https://docs-download.pingcap.com/media/images/docs-cn/troubleshoot-hot-spot-issues-5.png)
 
-![Dashboard 示例6](https://download.pingcap.com/images/docs-cn/troubleshoot-hot-spot-issues-6.png)
+![Dashboard 示例6](https://docs-download.pingcap.com/media/images/docs-cn/troubleshoot-hot-spot-issues-6.png)
 
 从流量图可见，设置 `SHARD_ROW_ID_BITS` 后，流量热点由之前的只在一个 Region 上变得很分散。
 
@@ -150,9 +150,9 @@ SELECT LAST_INSERT_ID();
 
 以下是将 `AUTO_INCREMENT` 表改为 `AUTO_RANDOM` 打散热点后的流量图，第一张是 `AUTO_INCREMENT`，第二张是 `AUTO_RANDOM`。
 
-![Dashboard 示例7](https://download.pingcap.com/images/docs-cn/troubleshoot-hot-spot-issues-7.png)
+![Dashboard 示例7](https://docs-download.pingcap.com/media/images/docs-cn/troubleshoot-hot-spot-issues-7.png)
 
-![Dashboard 示例8](https://download.pingcap.com/images/docs-cn/troubleshoot-hot-spot-issues-8.png)
+![Dashboard 示例8](https://docs-download.pingcap.com/media/images/docs-cn/troubleshoot-hot-spot-issues-8.png)
 
 由流量图可见，使用 `AUTO_RANDOM` 代替 `AUTO_INCREMENT` 能很好地打散热点。
 

@@ -7,7 +7,7 @@ summary: Understand the storage layer of a TiDB database.
 
 この文書では、いくつかの設計アイデアと[TiKV](https://github.com/tikv/tikv)の重要な概念を紹介します。
 
-![storage-architecture](https://download.pingcap.com/images/docs/tidb-storage-architecture-1.png)
+![storage-architecture](https://docs-download.pingcap.com/media/images/docs/tidb-storage-architecture-1.png)
 
 ## キーと値のペア {#key-value-pairs}
 
@@ -38,7 +38,7 @@ Raft はコンセンサス アルゴリズムです。このドキュメント�
 
 TiKV はRaft を使用してデータ レプリケーションを実行します。各データ変更はRaftログとして記録されます。 Raftログ レプリケーションを通じて、データはRaftグループの複数のノードに安全かつ確実にレプリケートされます。ただし、 Raftプロトコルによれば、書き込みが成功するには、データが大部分のノードに複製されるだけで済みます。
 
-![Raft in TiDB](https://download.pingcap.com/images/docs/tidb-storage-1.png)
+![Raft in TiDB](https://docs-download.pingcap.com/media/images/docs/tidb-storage-1.png)
 
 要約すると、TiKV はスタンドアロン マシン RocksDB を介してデータをディスクに迅速に保存し、マシンに障害が発生した場合にはRaftを介して複数のマシンにデータを複製できます。データは、RocksDB ではなくRaftのインターフェイスを通じて書き込まれます。 Raftの実装により、TiKV は分散型 Key-Valuestorageになります。いくつかのマシン障害があっても、TiKV はネイティブRaftプロトコルのおかげで自動的にレプリカを完成させることができ、アプリケーションには影響を与えません。
 
@@ -51,7 +51,7 @@ TiKV はRaft を使用してデータ レプリケーションを実行します
 
 TiKV は、Key-Value 空間全体を一連の連続するキー セグメントに分割する 2 番目のソリューションを選択します。各セグメントは「リージョン」と呼ばれます。各リージョンは、左が閉じた間隔と右が開いた間隔の`[StartKey, EndKey)`で表すことができます。各リージョンのデフォルトのサイズ制限は 96 MiB で、サイズは構成可能です。
 
-![Region in TiDB](https://download.pingcap.com/images/docs/tidb-storage-2.png)
+![Region in TiDB](https://docs-download.pingcap.com/media/images/docs/tidb-storage-2.png)
 
 ここでのリージョンはSQL のテーブルとは関係がないことに注意してください。このドキュメントでは、SQL のことは忘れて、当面は KV に焦点を当てます。データをリージョンに分割した後、TiKV は 2 つの重要なタスクを実行します。
 
@@ -68,7 +68,7 @@ TiKV は、Key-Value 空間全体を一連の連続するキー セグメント�
 
     レプリカの 1 つはグループのLeaderとして機能し、もう 1 つはFollowerとして機能します。デフォルトでは、すべての読み取りと書き込みはLeaderを通じて処理され、読み取りが実行され、書き込みがフォロワーに複製されます。以下の図はリージョンとRaftグループの全体像を示しています。
 
-![TiDB Storage](https://download.pingcap.com/images/docs/tidb-storage-3.png)
+![TiDB Storage](https://docs-download.pingcap.com/media/images/docs/tidb-storage-3.png)
 
 データをリージョンに分散および複製するため、ある程度の災害復旧機能を備えた分散 Key-Value システムが得られます。容量やディスク障害、データ損失について心配する必要はもうありません。
 

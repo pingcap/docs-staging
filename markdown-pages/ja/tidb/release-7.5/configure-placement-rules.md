@@ -21,7 +21,7 @@ v5.0 で導入された配置ルールは、PD がさまざまなタイプのデ
 
 さらに、異なるソースからのルールを互いに分離するという要件を満たすために、これらのルールをより柔軟な方法で編成できます。そのため、「グループ」の概念が導入されました。通常、ユーザーは異なるソースに応じてルールを異なるグループに配置できます。
 
-![Placement rules overview](https://download.pingcap.com/images/docs/placement-rules-1.png)
+![Placement rules overview](https://docs-download.pingcap.com/media/images/docs/placement-rules-1.png)
 
 ### ルールフィールド {#rule-fields}
 

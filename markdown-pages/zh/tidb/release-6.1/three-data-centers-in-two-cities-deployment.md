@@ -27,7 +27,7 @@ TiDB 分布式数据库采用 Raft 算法，可以原生支持双区域三 AZ �
 - 集群采用 5 副本模式，其中 AZ1 和 AZ2 分别放 2 份副本，AZ3 放 1 份副本；TiKV 按机柜设置 Label，即每个机柜上有 1 份副本。
 - 副本间通过 Raft 协议保证数据的一致性和高可用，对用户完全透明。
 
-![双区域三 AZ 集群架构图](https://download.pingcap.com/images/docs-cn/three-data-centers-in-two-cities-deployment-01.png)
+![双区域三 AZ 集群架构图](https://docs-download.pingcap.com/media/images/docs-cn/three-data-centers-in-two-cities-deployment-01.png)
 
 该架构具备高可用能力，同时通过 PD 调度保证 Region Leader 只出现在同区域的两个 AZ。相比于三 AZ，即 Region Leader 分布不受限制的方案，双区域三 AZ 方案有以下优缺点：
 
@@ -47,7 +47,7 @@ TiDB 分布式数据库采用 Raft 算法，可以原生支持双区域三 AZ �
 
 北京、西安双区域三 AZ 配置详解：
 
-![双区域三 AZ 配置详图](https://download.pingcap.com/images/docs-cn/three-data-centers-in-two-cities-deployment-02.png)
+![双区域三 AZ 配置详图](https://docs-download.pingcap.com/media/images/docs-cn/three-data-centers-in-two-cities-deployment-02.png)
 
 如上图所示，北京有两个可用区 AZ1 和 AZ2，可用区 AZ1 有三套机架 rac1、rac2 和 rac3，可用区 AZ2 有两套机架 rac4 和 rac5；西安可用区 AZ3 有一套机架 rac6。
 
@@ -130,7 +130,7 @@ alertmanager_servers:
 
 在双区域三 AZ 部署方式下，对于 Labels 的设计需要充分考虑到系统的可用性和容灾能力，建议根据部署的物理结构来定义 AZ、replication zone、rack 和 host 四个等级。
 
-![Label 逻辑定义图](https://download.pingcap.com/images/docs-cn/three-data-centers-in-two-cities-deployment-03.png)
+![Label 逻辑定义图](https://docs-download.pingcap.com/media/images/docs-cn/three-data-centers-in-two-cities-deployment-03.png)
 
 PD 设置中添加 TiKV label 的等级配置。
 

@@ -16,7 +16,7 @@ TiDB クラスターには複数のレプリカがあるため、単一のデー
 
 ## バックアップと復元を実行する {#perform-backup-and-restore}
 
-![BR log backup and PITR architecture](https://download.pingcap.com/images/docs/dr/dr-backup-and-restore.png)
+![BR log backup and PITR architecture](https://docs-download.pingcap.com/media/images/docs/dr/dr-backup-and-restore.png)
 
 前述のアーキテクチャに示されているように、他のリージョンにある DRstorageデバイスにデータをバックアップし、必要に応じてバックアップ データからデータを回復できます。つまり、クラスターは、最大 5 分の復旧ポイント目標 (RPO) と数十分から数時間の復旧時間目標 (RTO) で、単一リージョンの障害に耐えることができます。ただし、データベースのサイズが大きい場合は、RTO が長くなる可能性があります。
 

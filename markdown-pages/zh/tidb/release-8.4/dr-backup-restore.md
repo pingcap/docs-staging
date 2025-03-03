@@ -16,7 +16,7 @@ TiDB 集群自身的多副本特性可以让其容忍单个机房或地理区域
 
 ## 进行备份恢复
 
-![BR log backup and PITR architecture](https://download.pingcap.com/images/docs-cn/dr/dr-backup-and-restore.png)
+![BR log backup and PITR architecture](https://docs-download.pingcap.com/media/images/docs-cn/dr/dr-backup-and-restore.png)
 
 按照上述架构，你可以将数据备份到其他区域的灾备存储设备中，并在需要时将数据恢复回来。这样，系统就能够容忍单个区域的故障，并且 Recovery Point Objective (RPO) 可以达到 5 分钟，Recovery Time Objective (RTO) 通常在几十分钟到数小时之间。但是，如果数据库尺寸较大，RTO 时间可能会更长。
 

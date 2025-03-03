@@ -22,11 +22,11 @@ MetricsTool can be accessed from <https://metricstool.pingcap.net/>. It consists
 
 * **Export**: A user script running on the browser's Developer Tool, allowing you to download a snapshot of all visible panels in the current dashboard on any Grafana v6.x.x server.
 
-    ![Screenshot of MetricsTool Exporter after running the user script](https://download.pingcap.com/images/docs/metricstool-export.png)
+    ![Screenshot of MetricsTool Exporter after running the user script](https://docs-download.pingcap.com/media/images/docs/metricstool-export.png)
 
 * **Visualize**: A web page visualizing the exported snapshot files. The visualized snapshots can be operated in the same way as live Grafana dashboards.
 
-    ![Screenshot of MetricsTool Visualizer](https://download.pingcap.com/images/docs/metricstool-visualize.png)
+    ![Screenshot of MetricsTool Visualizer](https://docs-download.pingcap.com/media/images/docs/metricstool-visualize.png)
 
 * **Import**: Instructions to import the exported snapshot back into an actual Grafana instance.
 

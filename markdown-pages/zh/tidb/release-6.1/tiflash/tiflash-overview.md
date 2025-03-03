@@ -9,7 +9,7 @@ aliases: ['/zh/tidb/stable/use-tiflash','/zh/tidb/v6.1/use-tiflash']
 
 ## 整体架构
 
-![TiFlash 架构](https://download.pingcap.com/images/docs-cn/tidb-storage-architecture-1.png)
+![TiFlash 架构](https://docs-download.pingcap.com/media/images/docs-cn/tidb-storage-architecture-1.png)
 
 上图为 TiDB HTAP 形态架构，其中包含 TiFlash 节点。
 

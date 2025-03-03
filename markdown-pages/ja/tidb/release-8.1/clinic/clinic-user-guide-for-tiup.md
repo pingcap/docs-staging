@@ -71,7 +71,7 @@ PingCAPクリニック を使用する前に、 Diag ( PingCAPクリニックが
 
     -   クラスタページの右下隅にあるアイコンをクリックし、**診断ツールのアクセス トークンの取得**を選択して、ポップアップ ウィンドウで**+**をクリックします。表示されるトークンをコピーして保存したことを確認します。
 
-        ![Get the Token](https://download.pingcap.com/images/docs/clinic-get-token.png)
+        ![Get the Token](https://docs-download.pingcap.com/media/images/docs/clinic-get-token.png)
 
     > **注記：**
     >

@@ -13,7 +13,7 @@ TiDBでは、データはリージョンに分割され、各リージョンに�
 
 TiKVインスタンスには、複数のリージョンがあります。 Raftstoreモジュールは、Raftステートマシンを駆動してRegionメッセージを処理します。これらのメッセージには、リージョンでの読み取りまたは書き込み要求の処理、Raftログの永続化または複製、およびRaftハートビートの処理が含まれます。ただし、リージョンの数が増えると、クラスタ全体のパフォーマンスに影響を与える可能性があります。これを理解するには、次のようなRaftstoreのワークフローを学ぶ必要があります。
 
-![Raftstore Workflow](https://download.pingcap.com/images/docs/best-practices/raft-process.png)
+![Raftstore Workflow](https://docs-download.pingcap.com/media/images/docs/best-practices/raft-process.png)
 
 > **ノート：**
 >
@@ -40,7 +40,7 @@ Grafanaの**TiKVダッシュボード**で次のモニタリング指標を確�
 
     基準値： `raftstore.store-pool-size * 85%`未満。
 
-    ![Check Raftstore CPU](https://download.pingcap.com/images/docs/best-practices/raft-store-cpu.png)
+    ![Check Raftstore CPU](https://docs-download.pingcap.com/media/images/docs/best-practices/raft-store-cpu.png)
 
 -   **RaftPropose**パネルの`Propose wait duration`
 
@@ -48,7 +48,7 @@ Grafanaの**TiKVダッシュボード**で次のモニタリング指標を確�
 
     基準値：クラスタサイズに応じて50〜100ms未満
 
-    ![Check Propose wait duration](https://download.pingcap.com/images/docs/best-practices/propose-wait-duration.png)
+    ![Check Propose wait duration](https://docs-download.pingcap.com/media/images/docs/best-practices/propose-wait-duration.png)
 
 ## パフォーマンスチューニング方法 {#performance-tuning-methods}
 
@@ -136,7 +136,7 @@ TiKVでは、pd-workerはRegionMeta情報をPDに定期的に報告します。 
 
 **TiKV Grafana**パネルの<strong>[タスク</strong>]で[<strong>ワーカーの保留中のタスク</strong>]を確認して、pd-workerにタスクが積み上げられているかどうかを確認できます。一般に、 `pending tasks`は比較的低い値に保つ必要があります。
 
-![Check pd-worker](https://download.pingcap.com/images/docs/best-practices/pd-worker-metrics.png)
+![Check pd-worker](https://docs-download.pingcap.com/media/images/docs/best-practices/pd-worker-metrics.png)
 
 pd-workerは、 [v3.0.5](/releases/release-3.0.5.md#tikv)以降、パフォーマンスが向上するように最適化されています。同様の問題が発生した場合は、最新バージョンにアップグレードすることをお勧めします。
 

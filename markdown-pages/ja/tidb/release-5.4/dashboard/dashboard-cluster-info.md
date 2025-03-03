@@ -13,7 +13,7 @@ summary: View the running status of TiDB, TiKV, PD, TiFlash components in the en
 
 -   TiDBダッシュボードにログインした後、左側のナビゲーションメニューで[**クラスター情報**]をクリックします。
 
-    ![Access cluster information page](https://download.pingcap.com/images/docs/dashboard/dashboard-cluster-info-access.png)
+    ![Access cluster information page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-cluster-info-access.png)
 
 -   ブラウザで[http://127.0.0.1:2379/dashboard/#/cluster_info/instance](http://127.0.0.1:2379/dashboard/#/cluster_info/instance)にアクセスします。 `127.0.0.1:2379`を実際のPDインスタンスのアドレスとポートに置き換えます。
 
@@ -21,7 +21,7 @@ summary: View the running status of TiDB, TiKV, PD, TiFlash components in the en
 
 [**インスタンス**]をクリックして、インスタンスのリストを表示します。
 
-![Instance list](https://download.pingcap.com/images/docs/dashboard/dashboard-cluster-info-instances.png)
+![Instance list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-cluster-info-instances.png)
 
 このインスタンスリストには、クラスタのTiDB、TiKV、PD、およびTiFlashコンポーネントのすべてのインスタンスの概要情報が表示されます。
 
@@ -50,7 +50,7 @@ summary: View the running status of TiDB, TiKV, PD, TiFlash components in the en
 
 [**ホスト**]をクリックして、ホストのリストを表示します。
 
-![Host list](https://download.pingcap.com/images/docs/dashboard/dashboard-cluster-info-hosts.png)
+![Host list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-cluster-info-hosts.png)
 
 このホストリストには、クラスタのTiDB、TiKV、PD、およびTiFlashコンポーネントのすべてのインスタンスに対応するホストの実行ステータスが表示されます。
 

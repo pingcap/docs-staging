@@ -36,7 +36,7 @@ summary: このドキュメントでは、TiDB で同時書き込みの多いワ
 
 TiDB はデータをリージョンに分割します。各リージョンには複数のレプリカがあり、レプリカの各グループはRaftグループと呼ばれます。Raft グループでは、リージョンLeaderがデータ範囲内で読み取りおよび書き込みタスクを実行します (TiDB は[フォロワーを読む](/follower-read.md)をサポートします)。リージョンLeaderは、読み取りおよび書き込みの負荷を均等に分散するために、配置Driver(PD)コンポーネントによって異なる物理ノードに自動的にスケジュールされます。
 
-![TiDB Data Overview](https://download.pingcap.com/images/docs/best-practices/tidb-data-overview.png)
+![TiDB Data Overview](https://docs-download.pingcap.com/media/images/docs/best-practices/tidb-data-overview.png)
 
 理論上、アプリケーションに書き込みホットスポットがない場合、TiDB は、そのアーキテクチャのおかげで、読み取りおよび書き込み容量を線形に拡張できるだけでなく、分散リソースを最大限に活用することもできます。この観点から、TiDB は、同時実行性が高く、書き込みが集中するシナリオに特に適しています。
 
@@ -89,19 +89,19 @@ FROM
 
 クラスター トポロジーには、2 つの TiDB ノード、3 つの PD ノード、および 6 つの TiKV ノードが展開されています。このテストはベンチマークではなく原理を明らかにするためのものであるため、QPS パフォーマンスは無視します。
 
-![QPS1](https://download.pingcap.com/images/docs/best-practices/QPS1.png)
+![QPS1](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS1.png)
 
 クライアントは短時間で「集中的な」書き込み要求を開始します。これは、TiDB によって受信される 3K QPS です。理論上、負荷圧力は 6 つの TiKV ノードに均等に分散されるはずです。ただし、各 TiKV ノードの CPU 使用率から、負荷分散は不均一です。1 `tikv-3`ノードが書き込みホットスポットです。
 
-![QPS2](https://download.pingcap.com/images/docs/best-practices/QPS2.png)
+![QPS2](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS2.png)
 
-![QPS3](https://download.pingcap.com/images/docs/best-practices/QPS3.png)
+![QPS3](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS3.png)
 
 [RaftストアCPU](/grafana-tikv-dashboard.md)は`raftstore`番目のスレッドの CPU 使用率で、通常は書き込み負荷を表します。このシナリオでは、 `tikv-3`がこのRaftグループのLeaderで、 `tikv-0`と`tikv-1`フォロワーです。他のノードの負荷はほぼ空です。
 
 PD の監視メトリックでも、ホットスポットが発生したことが確認されています。
 
-![QPS4](https://download.pingcap.com/images/docs/best-practices/QPS4.png)
+![QPS4](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS4.png)
 
 ## ホットスポットの原因 {#hotspot-causes}
 
@@ -111,13 +111,13 @@ PD の監視メトリックでも、ホットスポットが発生したこと�
 
 短期間のうちに、同じリージョンに大量のデータが継続的に書き込まれます。
 
-![TiKV Region Split](https://download.pingcap.com/images/docs/best-practices/tikv-Region-split.png)
+![TiKV Region Split](https://docs-download.pingcap.com/media/images/docs/best-practices/tikv-Region-split.png)
 
 上の図は、リージョン分割プロセスを示しています。データが TiKV に継続的に書き込まれると、TiKV はリージョンを複数のリージョンに分割します。リーダー選出は、分割されるリージョンLeaderが配置されている元のストアで開始されるため、新しく分割された 2 つのリージョンのリーダーは同じストアに残っている可能性があります。この分割プロセスは、新しく分割されたリージョン2 とリージョン3 でも発生する可能性があります。このように、書き込み圧力は TiKV ノード 1 に集中します。
 
 継続的な書き込みプロセス中に、ノード 1 でホットスポットが発生していることを検出すると、PD は集中しているリーダーを他のノードに均等に分散します。TiKV ノードの数がリージョンレプリカの数より多い場合、TiKV はこれらのリージョンをアイドル ノードに移行しようとします。書き込みプロセス中のこれらの 2 つの操作は、PD の監視メトリックにも反映されます。
 
-![QPS5](https://download.pingcap.com/images/docs/best-practices/QPS5.png)
+![QPS5](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS5.png)
 
 一定期間の連続書き込みの後、PD は TiKV クラスター全体を、圧力が均等に分散される状態に自動的にスケジュールします。その時点で、クラスター全体の容量を完全に使用できます。
 
@@ -139,7 +139,7 @@ SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)]
 
 ただし、TiDB はこの事前分割操作を自動的に実行しません。その理由は、TiDB 内のデータ分散に関係しています。
 
-![Table Region Range](https://download.pingcap.com/images/docs/best-practices/table-Region-range.png)
+![Table Region Range](https://docs-download.pingcap.com/media/images/docs/best-practices/table-Region-range.png)
 
 上の図から、行のキーのエンコード規則によれば、 `rowID`唯一の可変部分です。TiDB では、 `rowID`は`Int64`整数です。ただし、リージョン分割も実際の状況に基づいて行う必要があるため、 `Int64`整数範囲を必要な数の範囲に均等に分割し、これらの範囲を異なるノードに分散する必要がない場合があります。
 
@@ -177,11 +177,11 @@ ORDER BY
 
 次に、書き込みロードを再度実行します。
 
-![QPS6](https://download.pingcap.com/images/docs/best-practices/QPS6.png)
+![QPS6](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS6.png)
 
-![QPS7](https://download.pingcap.com/images/docs/best-practices/QPS7.png)
+![QPS7](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS7.png)
 
-![QPS8](https://download.pingcap.com/images/docs/best-practices/QPS8.png)
+![QPS8](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS8.png)
 
 明らかなホットスポットの問題が解決されたことがわかります。
 

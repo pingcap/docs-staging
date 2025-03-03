@@ -133,7 +133,7 @@ sysbench $testname \
 
 Compared with v5.1.1, the Point Select performance of v5.2.0 is improved by 11.03%.
 
-![Point Select](https://download.pingcap.com/images/docs/sysbench_v511vsv520_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench_v511vsv520_point_select.png)
 
 ### Update Non-index performance
 
@@ -148,7 +148,7 @@ Compared with v5.1.1, the Point Select performance of v5.2.0 is improved by 11.0
 
 Compared with v5.1.1, the Update Non-index performance of v5.2.0 is reduced by 1.98%.
 
-![Update Non-index](https://download.pingcap.com/images/docs/sysbench_v511vsv520_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v511vsv520_update_non_index.png)
 
 ### Update Index performance
 
@@ -163,7 +163,7 @@ Compared with v5.1.1, the Update Non-index performance of v5.2.0 is reduced by 1
 
 Compared with v5.0.2, the Update Index performance of v5.1.0 is reduced by 4.33%.
 
-![Update Index](https://download.pingcap.com/images/docs/sysbench_v511vsv520_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench_v511vsv520_update_index.png)
 
 ### Read Write performance
 
@@ -178,4 +178,4 @@ Compared with v5.0.2, the Update Index performance of v5.1.0 is reduced by 4.33%
 
 Compared with v5.0.2, the Read Write performance of v5.1.0 is reduced by 1.24%.
 
-![Read Write](https://download.pingcap.com/images/docs/sysbench_v511vsv520_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench_v511vsv520_read_write.png)

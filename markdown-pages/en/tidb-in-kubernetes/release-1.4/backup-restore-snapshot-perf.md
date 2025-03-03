@@ -30,7 +30,7 @@ EBS snapshot backup using volumes consists of the following processes: creates a
 
 Time taken by snapshot backup using volumes depends on when the last volume snapshot is backed up, which is done by AWS EBS. For now, AWS does not provide quantitative metrics for volume snapshot backup. The time taken by the entire backup process is as follows under the recommended machine type and GP3 storage volume, with the configuration of 400 MiB/s and 7000 IOPS:
 
-![EBS Snapshot backup perf](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-backup-perf.png)
+![EBS Snapshot backup perf](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-backup-perf.png)
 
 | Volume data  | Total volume size  | Volume configuration             | Appropriate backup duration |
 | :------: | :-----: | :---------------: | :--------: |
@@ -50,7 +50,7 @@ Time taken by snapshot backup using volumes depends on when the last volume snap
 
 It is tested that the backup impact on clusters in less than 3% when GP3 volumes are used. In the following figure, the backup is initiated after 10:25.
 
-![EBS Snapshot backup impact](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-backup-impact.jpg)
+![EBS Snapshot backup impact](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-backup-impact.jpg)
 
 ## Restore performance
 
@@ -100,7 +100,7 @@ Time taken by snapshot restore using volumes mainly depends on the time taken by
 
 The data load latency results in high I/O operation latency when each block is accessed for the first time. Due to the impact of data load latency, TiKV startup and data restore consume most of the time in the whole process of snapshot restore using volumes. Test data is as follows under the recommended machine type and GP3 storage volume:
 
-![EBS Snapshot restore perf](https://download.pingcap.com/images/tidb-in-kubernetes/volume-snapshot-restore-perf.png)
+![EBS Snapshot restore perf](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/volume-snapshot-restore-perf.png)
 
 | Volume data  | Total volume size   | Volume configuration             | Appropriate restore duration |
 | :------: | :-----: | :---------------: | :--------: |

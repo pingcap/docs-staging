@@ -85,7 +85,7 @@ TiKV は、TiDB で使用される分散キー値storageエンジンです。TiK
     -   **オフライン**: TiKV ストアは、 PD Controlを通じて手動でオフラインにされます。これは、ストアがオフラインになるための中間ステータスにすぎません。このステータスのストアは、すべてのリージョンを、再配置条件を満たす他の「稼働中」ストアに移動します。2 と`region_count` ( PD Controlを通じて取得) `leader_count`両方が`0`示している場合、ストア ステータスは「オフライン」から「廃棄」に変わります。「オフライン」ステータスでは、ストア サービスまたはストアが配置されている物理サーバーを無効に**しないでください**。ストアがオフラインになるプロセス中に、クラスターにリージョンを再配置するターゲット ストアがない場合 (クラスター内にレプリカを保持するのにストアが不十分な場合など)、ストアは常に「オフライン」ステータスになります。
     -   **Tombstone** : TiKV ストアは完全にオフラインです。この状態では、 `remove-tombstone`インターフェイスを使用して TiKV を安全にクリーンアップできます。v6.5.0 以降では、手動で処理しない場合、ノードが Tombstone に変換されてから 1 か月後に、PD は内部に保存されている Tombstone レコードを自動的に削除します。
 
-    ![TiKV store status relationship](https://download.pingcap.com/images/docs/tikv-store-status-relationship.png)
+    ![TiKV store status relationship](https://docs-download.pingcap.com/media/images/docs/tikv-store-status-relationship.png)
 
 -   リージョンリーダーから報告された情報:
 

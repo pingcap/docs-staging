@@ -96,7 +96,7 @@ tidb-server インスタンスのメモリ使用量がメモリのしきい値 (
 
 1.  `tidb_memory_usage_alarm_ratio` ～ `0.85`を設定:
 
-    
+
     ```sql
     SET GLOBAL tidb_memory_usage_alarm_ratio = 0.85;
     ```
@@ -149,7 +149,7 @@ TiDB は、実行オペレーターのディスクスピルをサポートして
 
 1.  SQL ステートメントのメモリクォータを 1 GB (既定では 1 GB) に構成します。
 
-    
+
     ```sql
     SET tidb_mem_quota_query = 1 << 30;
     ```
@@ -158,7 +158,7 @@ TiDB は、実行オペレーターのディスクスピルをサポートして
 
 3.  次の SQL ステートメントを実行します。
 
-    
+
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```
@@ -171,14 +171,14 @@ TiDB は、実行オペレーターのディスクスピルをサポートして
 
 4.  システム変数を`tidb_executor_concurrency`から 1 に構成します。この構成では、メモリ不足になると、HashAgg は自動的にディスク スピルをトリガーしようとします。
 
-    
+
     ```sql
     SET tidb_executor_concurrency = 1;
     ```
 
 5.  同じ SQL ステートメントを実行します。今回は、ステートメントが正常に実行され、エラー メッセージが返されていないことがわかります。次の詳細な実行計画から、HashAgg が 600 MB のハード ディスク領域を使用したことがわかります。
 
-    
+
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```
@@ -208,14 +208,14 @@ GO 1.19 では、GC をトリガーするメモリ制限を設定する環境変
 
 v6.1.3 &lt;= TiDB &lt; v6.5.0 の場合、手動で`GOMEMLIMIT`を設定することにより、OOM の問題の典型的なカテゴリを軽減できます。 OOM の問題の典型的なカテゴリは次のとおりです。次の図に示すように、OOM が発生する前に、Grafana で使用中の推定メモリがメモリ全体の半分しか占めていません (TiDB ランタイム &gt; メモリ使用量 &gt; 推定使用中)。
 
-![normal OOM case example](https://download.pingcap.com/images/docs/configure-memory-usage-oom-example.png)
+![normal OOM case example](https://docs-download.pingcap.com/media/images/docs/configure-memory-usage-oom-example.png)
 
 `GOMEMLIMIT`のパフォーマンスを検証するために、特定のメモリ使用量を構成ありと`GOMEMLIMIT`なしで比較するテストが実行されます。
 
 -   TiDB v6.1.2 では、シミュレートされたワークロードが数分間実行された後、TiDBサーバーで OOM (システムメモリ: 約 48 GiB) が発生します。
 
-    ![v6.1.2 workload oom](https://download.pingcap.com/images/docs/configure-memory-usage-612-oom.png)
+    ![v6.1.2 workload oom](https://docs-download.pingcap.com/media/images/docs/configure-memory-usage-612-oom.png)
 
 -   TiDB v6.1.3 では、 `GOMEMLIMIT`は 40000 MiB に設定されます。シミュレートされたワークロードは長時間安定して動作し、TiDBサーバーで OOM は発生せず、プロセスの最大メモリ使用量は約 40.8 GiB で安定していることがわかりました。
 
-    ![v6.1.3 workload no oom with GOMEMLIMIT](https://download.pingcap.com/images/docs/configure-memory-usage-613-no-oom.png)
+    ![v6.1.3 workload no oom with GOMEMLIMIT](https://docs-download.pingcap.com/media/images/docs/configure-memory-usage-613-no-oom.png)

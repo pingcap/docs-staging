@@ -31,7 +31,7 @@ Gitpod 是一个开源 Kubernetes 应用程序（GitHub 仓库地址 <https://gi
 
 完成后，你将看到如下所示的页面。
 
-![playground gitpod workspace init](https://download.pingcap.com/images/docs-cn/develop/playground-gitpod-workspace-init.png)
+![playground gitpod workspace init](https://docs-download.pingcap.com/media/images/docs-cn/develop/playground-gitpod-workspace-init.png)
 
 页面中的这个场景使用了 [TiUP](https://docs.pingcap.com/zh/tidb/stable/tiup-overview) 来搭建一个 TiDB Playground。你可以在终端的左侧查看进度。
 
@@ -39,7 +39,7 @@ Gitpod 是一个开源 Kubernetes 应用程序（GitHub 仓库地址 <https://gi
 
 完成所有任务后，你可以看到如下所示的页面，并在左侧导航栏的 `REMOTE EXPLORER` 中找到你的端口 `8080` URL（Gitpod 支持基于 URL 的端口转发）。
 
-![playground gitpod workspace ready](https://download.pingcap.com/images/docs-cn/develop/playground-gitpod-workspace-ready.png)
+![playground gitpod workspace ready](https://docs-download.pingcap.com/media/images/docs-cn/develop/playground-gitpod-workspace-ready.png)
 
 ## 使用自定义的 Gitpod 配置和 Docker 镜像
 
@@ -165,4 +165,4 @@ ports:
 
 Gitpod 提供了完整的、自动化的、预配置的云原生开发环境。无需本地配置，你可以直接在浏览器中开发、运行、测试代码。
 
-![playground gitpod summary](https://download.pingcap.com/images/docs-cn/develop/playground-gitpod-summary.png)
+![playground gitpod summary](https://docs-download.pingcap.com/media/images/docs-cn/develop/playground-gitpod-summary.png)

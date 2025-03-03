@@ -69,7 +69,7 @@ set global tidb_hashagg_partial_concurrency=1;
 set global tidb_enable_async_commit = 1;
 set global tidb_enable_1pc = 1;
 set global tidb_guarantee_linearizability = 0;
-set global tidb_enable_clustered_index = 1; 
+set global tidb_enable_clustered_index = 1;
 ```
 
 #### HAProxy 配置 - haproxy.cfg 文件
@@ -160,7 +160,7 @@ sysbench $testname \
 
 v5.4.0 对比 v5.3.0，Point Select 性能基本持平，略提升了 0.64%。
 
-![Point Select](https://download.pingcap.com/images/docs-cn/sysbench_v530vsv540_point_select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v530vsv540_point_select.png)
 
 ### Update Non-index 性能
 
@@ -172,7 +172,7 @@ v5.4.0 对比 v5.3.0，Point Select 性能基本持平，略提升了 0.64%。
 
 v5.4.0 对比 v5.3.0，Update Non-index 性能提升了 2.59%。
 
-![Update Non-index](https://download.pingcap.com/images/docs-cn/sysbench_v530vsv540_update_non_index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v530vsv540_update_non_index.png)
 
 ### Update Index 性能
 
@@ -184,7 +184,7 @@ v5.4.0 对比 v5.3.0，Update Non-index 性能提升了 2.59%。
 
 v5.4.0 对比 v5.3.0，Update Index 性能提升了 4.85%。
 
-![Update Index](https://download.pingcap.com/images/docs-cn/sysbench_v530vsv540_update_index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v530vsv540_update_index.png)
 
 ### Read Write 性能
 
@@ -196,4 +196,4 @@ v5.4.0 对比 v5.3.0，Update Index 性能提升了 4.85%。
 
 v5.4.0 对比 v5.3.0，Read Write 性能提升了 3.30%。
 
-![Read Write](https://download.pingcap.com/images/docs-cn/sysbench_v530vsv540_read_write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v530vsv540_read_write.png)

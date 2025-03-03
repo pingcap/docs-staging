@@ -25,7 +25,7 @@ summary: Learn the deployment solution to three data centers in two cities.
 -   クラスタには5つのレプリカがあり、2つはIDC1に、2つはIDC2に、1つはIDC3にあります。 TiKVコンポーネントの場合、各ラックにはラベルがあります。これは、各ラックにレプリカがあることを意味します。
 -   Raftプロトコルは、データの一貫性と高可用性を確保するために採用されており、ユーザーには透過的です。
 
-![3-DC-in-2-city architecture](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-01.png)
+![3-DC-in-2-city architecture](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-01.png)
 
 このアーキテクチャは高可用性です。リージョンリーダーの配布は、同じ都市（シアトル）にある2つのDC（IDC1とIDC2）に制限されています。リージョンリーダーの分散が制限されていない3DCソリューションと比較すると、このアーキテクチャには次の長所と短所があります。
 
@@ -45,7 +45,7 @@ summary: Learn the deployment solution to three data centers in two cities.
 
 2つの都市（シアトルとサンフランシスコ）の展開計画における3つのDCの構成は、次のように示されています。
 
-![3-DC-2-city](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-02.png)
+![3-DC-2-city](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-02.png)
 
 -   上の図から、シアトルにはIDC1とIDC2の2つのDCがあることがわかります。 IDC1には、RAC1、RAC2、およびRAC3の3セットのラックがあります。 IDC2には、RAC4とRAC5の2つのラックがあります。サンフランシスコのIDC3DCにはRAC6ラックがあります。
 -   上記のRAC1ラックから、TiDBサービスとPDサービスが同じサーバーに展開されます。 2つのTiKVサーバーのそれぞれは、2つのTiKVインスタンス（tikv-server）とともにデプロイされます。これは、RAC2、RAC4、RAC5、およびRAC6に似ています。
@@ -126,7 +126,7 @@ alertmanager_servers:
 
 2つの都市に3つのDCを展開する場合、ラベルの設計では、可用性と災害復旧を考慮する必要があります。デプロイメントの物理構造に基づいて、 `zone` `host`のレベル（ `dc` ）を定義することをお勧めし`rack` 。
 
-![Label logical definition](https://download.pingcap.com/images/docs/three-data-centers-in-two-cities-deployment-03.png)
+![Label logical definition](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-03.png)
 
 PD構成で、TiKVラベルのレベル情報を追加します。
 

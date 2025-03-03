@@ -31,7 +31,7 @@ The procedures above are explained in the following sections.
 
 ## Identify the performance bottleneck of the query
 
-First, you need to have a general understanding of the query process. The key stages of the query execution process in TiDB are illustrated in [TiDB performance map](https://download.pingcap.com/images/docs/performance-map.png).
+First, you need to have a general understanding of the query process. The key stages of the query execution process in TiDB are illustrated in [TiDB performance map](https://docs-download.pingcap.com/media/images/docs/performance-map.png).
 
 You can get the duration information using the following methods:
 

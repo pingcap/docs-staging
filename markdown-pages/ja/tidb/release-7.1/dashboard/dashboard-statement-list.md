@@ -27,29 +27,29 @@ SQL ステートメントの概要ページに表示されるすべてのデー�
 
 SQL ステートメントの概要ページの上部で、表示する SQL 実行の時間範囲を変更できます。 SQL ステートメントが実行されるデータベース別、または SQL タイプ別にリストをフィルタリングすることもできます。次の図は、最近のデータ収集サイクル (デフォルトでは最近 30 分) にわたるすべての SQL 実行を示しています。
 
-![Modify filters](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-filter-options.png)
+![Modify filters](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-filter-options.png)
 
 ### さらに多くの列を表示 {#display-more-columns}
 
 ページ上の**[列]**をクリックすると、さらに列を表示することを選択できます。列名の右側にある**(i)**アイコンにマウスを移動すると、この列の説明が表示されます。
 
-![Choose columns](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-columns-selector.png)
+![Choose columns](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-columns-selector.png)
 
 ### カラムで並べ替え {#sort-by-column}
 
 デフォルトでは、リストは**合計レイテンシ**の高い順に並べ替えられます。別の列見出しをクリックして並べ替えの基準を変更するか、並べ替え順序を切り替えます。
 
-![Modify list sorting](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-change-order.png)
+![Modify list sorting](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-change-order.png)
 
 ### 設定を変更する {#change-settings}
 
 リスト ページで、右上の**[設定]**ボタンをクリックして、SQL ステートメント機能の設定を変更します。
 
-![Settings entry](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-setting-entry.png)
+![Settings entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-setting-entry.png)
 
 **「設定」**ボタンをクリックすると、次の設定ダイアログボックスが表示されます。
 
-![Settings](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-settings.png)
+![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-settings.png)
 
 設定ページでは、SQL ステートメント機能を無効または有効にすることができます。 SQL ステートメント機能が有効になっている場合、次の設定を変更できます。
 
@@ -68,7 +68,7 @@ SQL ステートメントの概要ページの上部で、表示する SQL 実�
 
 [`tidb_stmt_summary_max_stmt_count`](/system-variables.md#tidb_stmt_summary_max_stmt_count-new-in-v40)ステートメント概要テーブルに格納できる SQL ステートメントの数を制限します。制限を超えると、TiDB は最近未使用のままになっている SQL ステートメントをクリアします。これらのクリアされた SQL ステートメントは、 `DIGEST`が`NULL`に設定された行として表されます。 TiDB ダッシュボードの SQL ステートメント ページでは、これらの行の情報は`Others`として表示されます。
 
-![Others](https://download.pingcap.com/images/docs/dashboard/dashboard-statement-other-row.png)
+![Others](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-other-row.png)
 
 ## 次のステップ {#next-step}
 

@@ -35,7 +35,7 @@ Prometheus インスタンスがデプロイされたときにこの問題が引
 
 1.  TiUPおよびTiUPクラスタのアップグレード :
 
-    
+
     ```bash
     tiup update --self
     tiup update cluster --force
@@ -45,7 +45,7 @@ Prometheus インスタンスがデプロイされたときにこの問題が引
 
 3.  アップグレード後、既存のクラスターの場合、このクラスターを再起動してメトリクス アドレスを報告できます。 `CLUSTER_NAME`実際のクラスター名に置き換えます。
 
-    
+
     ```bash
     tiup cluster start CLUSTER_NAME
     ```
@@ -68,7 +68,7 @@ Web ページに`required component NgMonitoring is not started`表示されて�
 
 1.  TiUPクラスタのバージョンを確認してください。 NgMonitoring は、 TiUP がv1.9.0 以降の場合にのみデプロイされます。
 
-    
+
     ```shell
     tiup cluster --version
     ```
@@ -83,7 +83,7 @@ Web ページに`required component NgMonitoring is not started`表示されて�
 
 2.  TiUPクラスターのバージョンが v1.9.0 より前の場合は、 TiUPとTiUPクラスターを最新バージョンにアップグレードします。
 
-    
+
     ```shell
     tiup update --all
     ```
@@ -92,7 +92,7 @@ Web ページに`required component NgMonitoring is not started`表示されて�
 
 1.  クラスター構成ファイルを編集モードで開きます。
 
-    
+
     ```shell
     tiup cluster edit-config ${cluster-name}
     ```
@@ -107,7 +107,7 @@ Web ページに`required component NgMonitoring is not started`表示されて�
 
 3.  プロメテウスをリロードします。
 
-    
+
     ```shell
     tiup cluster reload ${cluster-name} --role prometheus
     ```
@@ -148,8 +148,8 @@ tiup update playground
 
     次の例では、Chrome が使用されています。
 
-    ![Opening DevTools from Chrome's main menu](https://download.pingcap.com/images/docs/dashboard/dashboard-faq-devtools.png)
+    ![Opening DevTools from Chrome's main menu](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-faq-devtools.png)
 
 3.  **[アプリケーション]**パネルを選択し、 <strong>[ローカル ストレージ]</strong>メニューを展開して、 <strong>TiDB ダッシュボード ページのドメイン</strong>を選択します。 <strong>[すべてクリア]</strong>ボタンをクリックします。
 
-    ![Clear the Local Storage](https://download.pingcap.com/images/docs/dashboard/dashboard-faq-devtools-application.png)
+    ![Clear the Local Storage](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-faq-devtools-application.png)

@@ -11,7 +11,7 @@ summary: Learn basic concepts, state definitions, and state transfer of changefe
 
 レプリケーション タスクの状態は、レプリケーション タスクの実行ステータスを表します。 TiCDC の実行中に、レプリケーション タスクがエラーで失敗したり、手動で一時停止または再開されたり、指定された`TargetTs`に達したりする可能性があります。これらの動作により、レプリケーション タスクの状態が変化する可能性があります。このセクションでは、TiCDC レプリケーション タスクの状態と状態間の転送関係について説明します。
 
-![TiCDC state transfer](https://download.pingcap.com/images/docs/ticdc/ticdc-changefeed-state-transfer.png)
+![TiCDC state transfer](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-changefeed-state-transfer.png)
 
 前述の状態遷移図の状態は次のように説明されています。
 

@@ -11,7 +11,7 @@ summary: An overview of the usage of SET PASSWORD for the TiDB database.
 
 **SetStmt：**
 
-![SetStmt](https://download.pingcap.com/images/docs/sqlgram/SetStmt.png)
+![SetStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SetStmt.png)
 
 ## 例 {#examples}
 

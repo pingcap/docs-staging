@@ -134,7 +134,7 @@ MySQL [test]> select @@last_plan_from_cache;
 
 以下は、Grafana の**Plan Cache Memory Usage**および<strong>Plan Cache Plan Num</strong>パネルの例です。
 
-![grafana\_panels](https://download.pingcap.com/images/docs/planCache-memoryUsage-planNum-panels.png)
+![grafana\_panels](https://docs-download.pingcap.com/media/images/docs/planCache-memoryUsage-planNum-panels.png)
 
 システム変数`tidb_prepared_plan_cache_size`を構成することにより、各セッションでキャッシュできるプランの最大数を制御できます。さまざまな環境での推奨値は次のとおりであり、監視パネルに従って調整できます。
 
@@ -286,7 +286,7 @@ mysql> select @@last_plan_from_cache;       -- Reuse the last plan
 
 **Executor**セクションの TiDB ページの[Grafana ダッシュボード](/grafana-tidb-dashboard.md)には、「プラン キャッシュ OPS を使用したクエリ」と「プラン キャッシュ ミス OPS」のグラフがあります。これらのグラフを使用して、TiDB とアプリケーションの両方が正しく構成され、SQL Plan Cache が正しく機能するかどうかを確認できます。同じページの<strong>サーバー</strong>セクションには、「Prepared Statement Count」グラフが表示されます。アプリケーションがプリペアド ステートメントを使用している場合、このグラフはゼロ以外の値を示します。これは、SQL プラン キャッシュが正しく機能するために必要です。
 
-![sql\_plan\_cache](https://download.pingcap.com/images/docs/performance/sql_plan_cache.png)
+![sql\_plan\_cache](https://docs-download.pingcap.com/media/images/docs/performance/sql_plan_cache.png)
 
 </CustomContent>
 

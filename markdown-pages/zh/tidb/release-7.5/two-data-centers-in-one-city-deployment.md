@@ -24,7 +24,7 @@ TiDB 通常采用多 AZ 部署方案保证集群高可用和容灾能力。多 A
 - 集群采用推荐的 6 副本模式，其中 AZ1 中放 3 个 Voter，AZ2 中放 2 个 Follower 副本和 1 个 Learner 副本。TiKV 按机房的实际情况打上合适的 Label。
 - 副本间通过 Raft 协议保证数据的一致性和高可用，对用户完全透明。
 
-![单区域双 AZ 集群架构图](https://download.pingcap.com/images/docs-cn/two-dc-replication-1.png)
+![单区域双 AZ 集群架构图](https://docs-download.pingcap.com/media/images/docs-cn/two-dc-replication-1.png)
 
 该部署方案定义了三种状态来控制和标示集群的同步状态，该状态约束了 TiKV 的同步方式。集群的复制模式可以自动在三种状态之间自适应切换。要了解切换过程，请参考[状态转换](#状态转换)。
 
@@ -207,7 +207,7 @@ cat default.json
 
 + 方法一：先配置 PD 的配置文件，然后部署集群。
 
-    
+
     ```toml
     [replication-mode]
     replication-mode = "dr-auto-sync"
@@ -223,7 +223,7 @@ cat default.json
 
 + 方法二：如果已经部署了集群，则使用 pd-ctl 命令修改 PD 的配置。
 
-    
+
     ```shell
     config set replication-mode dr-auto-sync
     config set replication-mode dr-auto-sync label-key az

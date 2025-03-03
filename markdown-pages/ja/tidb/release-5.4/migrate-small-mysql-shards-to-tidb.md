@@ -11,7 +11,7 @@ summary: Learn how to migrate and merge small datasets of shards from MySQL to T
 
 このドキュメントでは、移行手順を説明するための簡単な例を取り上げます。この例の2つのデータソースMySQLインスタンスのMySQLシャードは、ダウンストリームTiDBクラスタに移行されます。図を以下に示します。
 
-![Use DM to Migrate Sharded Tables](https://download.pingcap.com/images/docs/migrate-shard-tables-within-1tb-en.png)
+![Use DM to Migrate Sharded Tables](https://docs-download.pingcap.com/media/images/docs/migrate-shard-tables-within-1tb-en.png)
 
 MySQLインスタンス1とMySQLインスタンス2の両方に、次のスキーマとテーブルが含まれています。この例では、両方のインスタンスでプレフィックスが`sale`の`store_01`および`store_02`スキーマから、 `store`スキーマのダウンストリーム`sale`テーブルにテーブルを移行してマージします。
 

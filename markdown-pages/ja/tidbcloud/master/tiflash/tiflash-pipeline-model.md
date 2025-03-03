@@ -30,7 +30,7 @@ v7.2.0 以降、 TiFlash は新しい実行モデルであるパイプライン�
 
 パイプライン実行モデルのアーキテクチャは次のとおりです。
 
-![TiFlash pipeline execution model design](https://download.pingcap.com/images/docs/tiflash/tiflash-pipeline-model.png)
+![TiFlash pipeline execution model design](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash-pipeline-model.png)
 
 上の図に示すように、パイプライン実行モデルは、パイプライン クエリ エグゼキュータとタスク スケジューラという 2 つの主要コンポーネントで構成されます。
 

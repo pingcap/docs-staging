@@ -30,7 +30,7 @@ Gitpod は、コードへの直接開発環境用のオープンソース Kubern
 
 その後、次のようなページが表示されます。
 
-![playground gitpod workspace init](https://download.pingcap.com/images/docs/develop/playground-gitpod-workspace-init.png)
+![playground gitpod workspace init](https://docs-download.pingcap.com/media/images/docs/develop/playground-gitpod-workspace-init.png)
 
 このページのこのシナリオでは、 [TiUP](https://docs.pingcap.com/zh/tidb/stable/tiup-overview)を使用して TiDB プレイグラウンドを構築します。ターミナルエリアの左側で進捗状況を確認できます。
 
@@ -38,7 +38,7 @@ TiDB プレイグラウンドの準備が完了すると、別の`Spring JPA Hib
 
 これらのタスクがすべて完了すると、次のようなページが表示されます。このページで、左側のナビゲーション ペインの`REMOTE EXPLORER`領域 (Gitpod は URL ベースのポート転送をサポートしています) を確認し、ポート`8080`の URL を見つけます。
 
-![playground gitpod workspace ready](https://download.pingcap.com/images/docs/develop/playground-gitpod-workspace-ready.png)
+![playground gitpod workspace ready](https://docs-download.pingcap.com/media/images/docs/develop/playground-gitpod-workspace-ready.png)
 
 ## カスタム Gitpod 構成と Docker イメージの使用 {#using-custom-gitpod-configuration-and-docker-image}
 
@@ -164,4 +164,4 @@ ports:
 
 Gitpod は、完全で自動化された事前構成済みのクラウドネイティブ開発環境を提供します。ローカル構成を必要とせずに、ブラウザーで直接コードを開発、実行、テストできます。
 
-![playground gitpod summary](https://download.pingcap.com/images/docs/develop/playground-gitpod-summary.png)
+![playground gitpod summary](https://docs-download.pingcap.com/media/images/docs/develop/playground-gitpod-summary.png)

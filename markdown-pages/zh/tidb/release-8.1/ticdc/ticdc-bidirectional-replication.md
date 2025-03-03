@@ -17,7 +17,7 @@ TiCDC 复制功能只会将指定时间点之后的增量变更复制到下游�
 
 2. 在这两个 TiDB 集群之间部署两套 TiCDC 集群，集群的拓扑如下图所示，图中箭头所指的方向即为该 TiCDC 集群同步数据的流向。
 
-    ![TiCDC bidirectional replication](https://download.pingcap.com/images/docs-cn/ticdc/ticdc-bidirectional-replication.png)
+    ![TiCDC bidirectional replication](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-bidirectional-replication.png)
 
 3. 指定上下游集群的数据同步的开始时间点。
 

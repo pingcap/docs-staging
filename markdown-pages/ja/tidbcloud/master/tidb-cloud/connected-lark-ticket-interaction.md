@@ -15,7 +15,7 @@ summary: サポートチケットのLarkインタラクションに関する詳�
 
 サポート チケットのインタラクションが有効になっている場合、 **PingCAP サポート ボットは****サポート チケット作成**メッセージ カードをスレッドに変換して、チケットのインタラクションを管理します。
 
-![lark-ticket-interaction-1](https://download.pingcap.com/images/docs/tidb-cloud/connected-lark-ticket-interaction-1.png)
+![lark-ticket-interaction-1](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-interaction-1.png)
 
 PingCAP サポート エンジニアがチケットにコメントすると、そのコメントは自動的にスレッドに同期されます。
 

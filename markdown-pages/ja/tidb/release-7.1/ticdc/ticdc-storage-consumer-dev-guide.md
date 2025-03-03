@@ -19,7 +19,7 @@ TiCDC は、コンシューマーを実装するための標準的な方法を�
 
 次の図は、消費者の全体的な消費プロセスを示しています。
 
-![TiCDC storage consumer overview](https://download.pingcap.com/images/docs/ticdc/ticdc-storage-consumer-overview.png)
+![TiCDC storage consumer overview](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-storage-consumer-overview.png)
 
 コンシューマのコンポーネントとその機能は次のように説明されます。
 

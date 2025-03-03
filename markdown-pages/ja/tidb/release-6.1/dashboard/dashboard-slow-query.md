@@ -19,7 +19,7 @@ TiDB ダッシュボードの [スロー クエリ] ページで、クラスタ�
 
 -   TiDB ダッシュボードにログインした後、左側のナビゲーション メニューで [**スロー クエリ**] をクリックします。
 
-![Access slow query page](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-access.png)
+![Access slow query page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-access.png)
 
 -   ブラウザで[http://127.0.0.1:2379/dashboard/#/slow_query](http://127.0.0.1:2379/dashboard/#/slow_query)にアクセスします。 `127.0.0.1:2379`を実際の PD アドレスとポートに置き換えます。
 
@@ -29,19 +29,19 @@ TiDB ダッシュボードの [スロー クエリ] ページで、クラスタ�
 
 時間範囲、関連するデータベース、SQL キーワード、SQL タイプ、表示するスロー クエリの数に基づいて、スロー クエリをフィルタリングできます。下の画像では、最近 30 分間の 100 件のスロー クエリがデフォルトで表示されています。
 
-![Modify list filters](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-list1.png)
+![Modify list filters](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list1.png)
 
 ### より多くの列を表示 {#display-more-columns}
 
 ページの [**列]**をクリックすると、さらに列を表示するように選択できます。列名の右側にある<strong>(i)</strong>アイコンにマウスを移動すると、この列の説明が表示されます。
 
-![Show more columns](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-list2.png)
+![Show more columns](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list2.png)
 
 ### カラムで並べ替え {#sort-by-column}
 
 デフォルトでは、リストは**終了時間**の降順でソートされます。列見出しをクリックして、列で並べ替えるか、並べ替え順序を切り替えます。
 
-![Modify sorting basis](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-list3.png)
+![Modify sorting basis](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list3.png)
 
 ## 実行の詳細をビュー {#view-execution-details}
 
@@ -51,10 +51,10 @@ TiDB ダッシュボードの [スロー クエリ] ページで、クラスタ�
 -   プラン: スロー クエリの実行プラン。実行計画の読み方については、 [クエリ実行計画を理解する](/explain-overview.md)を参照してください (下の図の領域 2 を参照)。
 -   その他のソートされた SQL 実行情報 (下の画像の領域 3 を参照)。
 
-![View execution details](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-detail1.png)
+![View execution details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail1.png)
 
 [**展開]**リンクをクリックして、アイテムの詳細情報を表示します。 [<strong>コピー]</strong>リンクをクリックして、詳細情報をクリップボードにコピーします。
 
 対応するタブのタイトルをクリックして、ソートされたさまざまな SQL 実行の情報を切り替えます。
 
-![Show different sorted execution information](https://download.pingcap.com/images/docs/dashboard/dashboard-slow-queries-detail2.png)
+![Show different sorted execution information](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail2.png)

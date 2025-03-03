@@ -59,7 +59,7 @@ TiDB のインクリメンタル データ レプリケーション ツールと
 
 TiCDC のアーキテクチャを次の図に示します。
 
-![TiCDC architecture](https://download.pingcap.com/images/docs/ticdc/cdc-architecture.png)
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/cdc-architecture.png)
 
 前のアーキテクチャ図のコンポーネントは、次のように説明されています。
 

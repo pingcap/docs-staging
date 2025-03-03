@@ -42,11 +42,11 @@ useServerPrepStmts=false
 
 以下の TiDB ダッシュボードの[Top SQL]ページから、非ビジネス SQL タイプ`SELECT @@session.tx_isolation`最も多くのリソースを消費していることがわかります。 TiDB はこれらのタイプの SQL ステートメントを迅速に処理しますが、これらのタイプの SQL ステートメントは実行回数が最も多く、全体的な CPU 時間の消費量が最も多くなります。
 
-![dashboard-for-query-interface](https://download.pingcap.com/images/docs/performance/case1.png)
+![dashboard-for-query-interface](https://docs-download.pingcap.com/media/images/docs/performance/case1.png)
 
 以下の TiDB のフレーム チャートから、SQL 実行中に`Compile`や`Optimize`などの関数の CPU 消費量が大きくなることがわかります。アプリケーションはクエリ インターフェイスを使用するため、TiDB は実行プラン キャッシュを使用できません。 TiDB は、各 SQL ステートメントの実行プランをコンパイルして生成する必要があります。
 
-![flame-graph-for-query-interface](https://download.pingcap.com/images/docs/performance/7.1.png)
+![flame-graph-for-query-interface](https://docs-download.pingcap.com/media/images/docs/performance/7.1.png)
 
 -   ExecuteStmt CPU = 38% CPU 時間 = 23.84 秒
 -   コンパイル CPU = 27% CPU 時間 = 17.17 秒
@@ -56,7 +56,7 @@ useServerPrepStmts=false
 
 次のパフォーマンス概要ダッシュボードでデータベース時間の概要と QPS を確認してください。
 
-![performance-overview-1-for-query-interface](https://download.pingcap.com/images/docs/performance/j-1.png)
+![performance-overview-1-for-query-interface](https://docs-download.pingcap.com/media/images/docs/performance/j-1.png)
 
 -   SQL タイプ別のデータベース時間: `Select`ステートメント タイプがほとんどの時間を要します。
 -   SQL フェーズごとのデータベース時間: ほとんどの時間がかかるのは`execute`フェーズと`compile`フェーズです。
@@ -68,7 +68,7 @@ useServerPrepStmts=false
 
 クラスターのリソース消費量を確認します。TiDB CPU の平均使用率は 925%、TiKV CPU の平均使用率は 201%、TiKV IO の平均スループットは 18.7 MB/秒です。 TiDB のリソース消費量は大幅に多くなります。
 
-![performance-overview-2-for-query-interface](https://download.pingcap.com/images/docs/performance/5.png)
+![performance-overview-2-for-query-interface](https://docs-download.pingcap.com/media/images/docs/performance/5.png)
 
 ### 分析の結論 {#analysis-conclusion}
 
@@ -90,11 +90,11 @@ useServerPrepStmts=false&useConfigs=maxPerformance
 
 以下の TiDB ダッシュボードの[Top SQL]ページから、最も多くのリソースを消費した`SELECT @@session.tx_isolation`が消えていることがわかります。
 
-![dashboard-for-maxPerformance](https://download.pingcap.com/images/docs/performance/case2.png)
+![dashboard-for-maxPerformance](https://docs-download.pingcap.com/media/images/docs/performance/case2.png)
 
 次の TiDB のフレーム チャートから、 `Compile`や`Optimize`などの関数の CPU 消費量が SQL 実行中に依然として顕著であることがわかります。
 
-![flame-graph-for-maxPerformance](https://download.pingcap.com/images/docs/performance/20220507-145257.jpg)
+![flame-graph-for-maxPerformance](https://docs-download.pingcap.com/media/images/docs/performance/20220507-145257.jpg)
 
 -   ExecuteStmt CPU = 43% CPU 時間 =35.84 秒
 -   コンパイル CPU = 31% CPU 時間 =25.61 秒
@@ -104,7 +104,7 @@ useServerPrepStmts=false&useConfigs=maxPerformance
 
 データベース時間概要とQPSのデータは以下のとおりです。
 
-![performance-overview-1-for-maxPerformance](https://download.pingcap.com/images/docs/performance/j-2.png)
+![performance-overview-1-for-maxPerformance](https://docs-download.pingcap.com/media/images/docs/performance/j-2.png)
 
 -   SQL タイプ別のデータベース時間: `Select`ステートメント タイプがほとんどの時間を要します。
 -   SQL フェーズごとのデータベース時間: ほとんどの時間がかかるのは`execute`フェーズと`compile`フェーズです。
@@ -116,11 +116,11 @@ useServerPrepStmts=false&useConfigs=maxPerformance
 
 シナリオ 1 からシナリオ 2 にかけて、平均 TiDB CPU 使用率は 925% から 874% に低下し、平均 TiKV CPU 使用率は 201% から約 250% に増加します。
 
-![performance-overview-2-for-maxPerformance](https://download.pingcap.com/images/docs/performance/9.1.1.png)
+![performance-overview-2-for-maxPerformance](https://docs-download.pingcap.com/media/images/docs/performance/9.1.1.png)
 
 主要なレイテンシー指標の変更は次のとおりです。
 
-![performance-overview-3-for-maxPerformance](https://download.pingcap.com/images/docs/performance/9.2.2.png)
+![performance-overview-3-for-maxPerformance](https://docs-download.pingcap.com/media/images/docs/performance/9.2.2.png)
 
 -   平均クエリ時間 = 1.12ms (479μs から 1.12ms)
 -   平均解析時間 = 84.7μs (37.2μs から 84.7μs)
@@ -149,7 +149,7 @@ useServerPrepStmts=true&useConfigs=maxPerformance"
 
 次の TiDB のフレーム チャートから、Prepared Statement インターフェイスが有効になった後も、 `CompileExecutePreparedStmt`と`Optimize`の CPU 消費量が依然として顕著であることがわかります。
 
-![flame-graph-for-PrepStmts](https://download.pingcap.com/images/docs/performance/3.1.1.png)
+![flame-graph-for-PrepStmts](https://docs-download.pingcap.com/media/images/docs/performance/3.1.1.png)
 
 -   ExecutePreparedStmt CPU = 31% CPU 時間 = 23.10 秒
 -   prepareStmtExec CPU = 30% CPU 時間 = 22.92 秒
@@ -160,7 +160,7 @@ useServerPrepStmts=true&useConfigs=maxPerformance"
 
 Prepared Statement インターフェイスを使用した後のデータベース時間の概要と QPS のデータは次のようになります。
 
-![performance-overview-1-for-PrepStmts](https://download.pingcap.com/images/docs/performance/j-3.png)
+![performance-overview-1-for-PrepStmts](https://docs-download.pingcap.com/media/images/docs/performance/j-3.png)
 
 QPS は 24.4k から 19.7k に低下します。データベース時間の概要から、アプリケーションは 3 種類の準備済みコマンドを使用しており、 `general`ステートメント タイプ ( `StmtPrepare`や`StmtClose`などのコマンドの実行時間を含む) が SQL タイプ別のデータベース時間で 2 位になっていることがわかります。これは、Prepared Statement インターフェイスが使用されても、実行プラン キャッシュにヒットしないことを示しています。その理由は、 `StmtClose`コマンドが実行されると、TiDB が内部処理で SQL ステートメントの実行プラン キャッシュをクリアするためです。
 
@@ -173,11 +173,11 @@ QPS は 24.4k から 19.7k に低下します。データベース時間の概�
 
 TiDB の平均 CPU 使用率は 874% から 936% に増加しました。
 
-![performance-overview-1-for-PrepStmts](https://download.pingcap.com/images/docs/performance/3-2.png)
+![performance-overview-1-for-PrepStmts](https://docs-download.pingcap.com/media/images/docs/performance/3-2.png)
 
 主要なレイテンシーメトリクスは次のとおりです。
 
-![performance-overview-2-for-PrepStmts](https://download.pingcap.com/images/docs/performance/3.4.png)
+![performance-overview-2-for-PrepStmts](https://docs-download.pingcap.com/media/images/docs/performance/3.4.png)
 
 -   平均クエリ時間 = 528μs (1.12ms から 528μs)
 -   平均解析時間 = 14.9μs (84.7μs から 14.9μs)
@@ -210,13 +210,13 @@ TiDB CPU 使用率のフレーム チャートから、 `CompileExecutePreparedS
 
 PreparseStmt CPU = 25% CPU 時間 = 12.75 秒
 
-![flame-graph-for-3-commands](https://download.pingcap.com/images/docs/performance/4.2.png)
+![flame-graph-for-3-commands](https://docs-download.pingcap.com/media/images/docs/performance/4.2.png)
 
 #### パフォーマンス概要ダッシュボード {#performance-overview-dashboard}
 
 [パフォーマンス概要] ダッシュボードで最も重要な変更は`compile`フェーズの平均時間で、シナリオ 3 の 8.95 秒/秒から 1.18 秒/秒に短縮されます。実行プラン キャッシュを使用するクエリの数は、値`StmtExecute`にほぼ等しくなります。 QPS が増加すると、1 秒あたり`Select`ステートメントで消費されるデータベース時間が減少し、1 秒あたり`general`ステートメントのタイプで消費されるデータベース時間が増加します。
 
-![performance-overview-1-for-3-commands](https://download.pingcap.com/images/docs/performance/j-4.png)
+![performance-overview-1-for-3-commands](https://docs-download.pingcap.com/media/images/docs/performance/j-4.png)
 
 -   SQL タイプ別のデータベース時間: `Select`ステートメント タイプが最も時間がかかります。
 -   SQL フェーズごとのデータベース時間: `execute`フェーズにほとんどの時間がかかります。
@@ -228,11 +228,11 @@ PreparseStmt CPU = 25% CPU 時間 = 12.75 秒
 
 TiDB の平均 CPU 使用率は 936% から 827% に低下します。
 
-![performance-overview-2-for-3-commands](https://download.pingcap.com/images/docs/performance/4.4.png)
+![performance-overview-2-for-3-commands](https://docs-download.pingcap.com/media/images/docs/performance/4.4.png)
 
 平均`compile`時間は 374 us から 53.3 us へと大幅に減少しました。 QPSが上がるので平均`execute`回も伸びます。
 
-![performance-overview-3-for-3-commands](https://download.pingcap.com/images/docs/performance/4.5.png)
+![performance-overview-3-for-3-commands](https://docs-download.pingcap.com/media/images/docs/performance/4.5.png)
 
 -   平均クエリ時間 = 426μs (528μs から 426μs)
 -   平均解析時間 = 12.3μs (14.8μs から 12.3μs)
@@ -269,13 +269,13 @@ TiDB の次のフレーム チャートから、 `Prepare`コマンドによる�
 
 -   ExecutePreparedStmt CPU = 22% CPU 時間 = 8.4 秒
 
-![flame-graph-for-1-command](https://download.pingcap.com/images/docs/performance/5.1.1.png)
+![flame-graph-for-1-command](https://docs-download.pingcap.com/media/images/docs/performance/5.1.1.png)
 
 #### パフォーマンス概要ダッシュボード {#performance-overview-dashboard}
 
 [パフォーマンス概要] ダッシュボードでの最も注目すべき変更は、 **[タイプ別 CPS]**ペインの 3 つの Stmt コマンド タイプが 1 つのタイプに減り、 **[SQL タイプ別データベース時間]**ペインの`general`のステートメント タイプが消え、[ **QPS** ] ペインの QPS です。 30.9kまで増加します。
 
-![performance-overview-for-1-command](https://download.pingcap.com/images/docs/performance/j-5.png)
+![performance-overview-for-1-command](https://docs-download.pingcap.com/media/images/docs/performance/j-5.png)
 
 -   SQL タイプ別のデータベース時間: `Select`ステートメント タイプがほとんどの時間を要し、 `general`ステートメント タイプは消滅します。
 -   SQL フェーズごとのデータベース時間: `execute`フェーズにほとんどの時間がかかります。
@@ -286,11 +286,11 @@ TiDB の次のフレーム チャートから、 `Prepare`コマンドによる�
 
 TiDB の平均 CPU 使用率は 827% から 577% に低下します。 QPS が増加すると、平均 TiKV CPU 使用率は 313% まで増加します。
 
-![performance-overview-for-2-command](https://download.pingcap.com/images/docs/performance/j-5-cpu.png)
+![performance-overview-for-2-command](https://docs-download.pingcap.com/media/images/docs/performance/j-5-cpu.png)
 
 主要なレイテンシーメトリクスは次のとおりです。
 
-![performance-overview-for-3-command](https://download.pingcap.com/images/docs/performance/j-5-duration.png)
+![performance-overview-for-3-command](https://docs-download.pingcap.com/media/images/docs/performance/j-5-duration.png)
 
 -   平均クエリ時間 = 690μs (426μs から 690μs)
 -   平均解析時間 = 13.5μs (12.3μs から 13.5μs )
@@ -322,13 +322,13 @@ TiDB CPU のフレーム チャートには大きな変化はありません。
 
 -   ExecutePreparedStmt CPU = 22% CPU 時間 = 8.4 秒
 
-![flame-graph-for-rc-read](https://download.pingcap.com/images/docs/performance/6.2.2.png)
+![flame-graph-for-rc-read](https://docs-download.pingcap.com/media/images/docs/performance/6.2.2.png)
 
 #### パフォーマンス概要ダッシュボード {#performance-overview-dashboard}
 
 RC 読み取りを使用した後、QPS は 30.9k から 34.9k に増加し、1 秒あたりに消費される`tso wait`時間は 5.46 秒から 456 ミリ秒に減少しました。
 
-![performance-overview-1-for-rc-read](https://download.pingcap.com/images/docs/performance/j-6.png)
+![performance-overview-1-for-rc-read](https://docs-download.pingcap.com/media/images/docs/performance/j-6.png)
 
 -   SQL タイプ別のデータベース時間: `Select`ステートメント タイプがほとんどの時間を要します。
 -   SQL フェーズごとのデータベース時間: `execute`フェーズにほとんどの時間がかかります。
@@ -339,15 +339,15 @@ RC 読み取りを使用した後、QPS は 30.9k から 34.9k に増加し、1 
 
 `tso cmd`秒あたり 1 は 28.3k から 2.7k に減少します。
 
-![performance-overview-2-for-rc-read](https://download.pingcap.com/images/docs/performance/j-6-cmd.png)
+![performance-overview-2-for-rc-read](https://docs-download.pingcap.com/media/images/docs/performance/j-6-cmd.png)
 
 平均 TiDB CPU は 603% に増加します (577% から 603%)。
 
-![performance-overview-3-for-rc-read](https://download.pingcap.com/images/docs/performance/j-6-cpu.png)
+![performance-overview-3-for-rc-read](https://docs-download.pingcap.com/media/images/docs/performance/j-6-cpu.png)
 
 主要なレイテンシーメトリクスは次のとおりです。
 
-![performance-overview-4-for-rc-read](https://download.pingcap.com/images/docs/performance/j-6-duration.png)
+![performance-overview-4-for-rc-read](https://docs-download.pingcap.com/media/images/docs/performance/j-6-duration.png)
 
 -   平均クエリ時間 = 533μs (690μs から 533μs)
 -   平均解析時間 = 13.4μs (13.5μs から 13.4μs )
@@ -373,13 +373,13 @@ RC Read を`set global tidb_rc_read_check_ts=on;`で有効にすると、RC Read
 
 TiDB CPU のフレーム チャートには大きな変化はありません。
 
-![flame-graph-for-table-cache](https://download.pingcap.com/images/docs/performance/7.2.png)
+![flame-graph-for-table-cache](https://docs-download.pingcap.com/media/images/docs/performance/7.2.png)
 
 #### パフォーマンス概要ダッシュボード {#performance-overview-dashboard}
 
 QPS は 34.9k から 40.9k に増加し、KV 要求タイプは`execute`フェーズから`Prewrite`および`Commit`への変更に最も時間がかかります。 `Get`秒あたり 7 で消費されるデータベース時間は 5.33 秒から 1.75 秒に減少し、1 秒あたり`Cop`で消費されるデータベース時間は 3.87 秒から 1.09 秒に減少します。
 
-![performance-overview-1-for-table-cache](https://download.pingcap.com/images/docs/performance/j-7.png)
+![performance-overview-1-for-table-cache](https://docs-download.pingcap.com/media/images/docs/performance/j-7.png)
 
 -   SQL タイプ別のデータベース時間: `Select`ステートメント タイプがほとんどの時間を要します。
 -   SQL フェーズごとのデータベース時間: ほとんどの時間がかかるのは`execute`フェーズと`compile`フェーズです。
@@ -390,11 +390,11 @@ QPS は 34.9k から 40.9k に増加し、KV 要求タイプは`execute`フェ�
 
 TiDB の平均 CPU 使用率は 603% から 478% に低下し、TiKV の平均 CPU 使用率は 346% から 256% に低下しました。
 
-![performance-overview-2-for-table-cache](https://download.pingcap.com/images/docs/performance/j-7-cpu.png)
+![performance-overview-2-for-table-cache](https://docs-download.pingcap.com/media/images/docs/performance/j-7-cpu.png)
 
 平均クエリレイテンシーは533 マイクロ秒から 313 マイクロ秒に減少します。平均`execute`レイテンシーは466 マイクロ秒から 250 マイクロ秒に減少します。
 
-![performance-overview-3-for-table-cache](https://download.pingcap.com/images/docs/performance/j-7-duration.png)
+![performance-overview-3-for-table-cache](https://docs-download.pingcap.com/media/images/docs/performance/j-7-duration.png)
 
 -   平均クエリ時間 = 313μs (533μs から 313μs)
 -   平均解析時間 = 11.9μs (13.4μs から 11.9μs)

@@ -41,7 +41,7 @@ TiDB clusters can be deployed in three AZs in the same region. In this solution,
 
 TiDB, TiKV, and PD are distributed among three AZs, which is the most common deployment with the highest availability.
 
-![3-AZ Deployment Architecture](https://download.pingcap.com/images/docs/deploy-3dc.png)
+![3-AZ Deployment Architecture](https://docs-download.pingcap.com/media/images/docs/deploy-3dc.png)
 
 **Advantages:**
 
@@ -49,7 +49,7 @@ TiDB, TiKV, and PD are distributed among three AZs, which is the most common dep
 - No data will be lost if one AZ is down (RPO = 0).
 - Even if one AZ is down, the other two AZs will automatically start leader election and automatically resume services within a certain period (within 20 seconds in most cases). See the following diagram for more information:
 
-![Disaster Recovery for 3-AZ Deployment](https://download.pingcap.com/images/docs/deploy-3dc-dr.png)
+![Disaster Recovery for 3-AZ Deployment](https://docs-download.pingcap.com/media/images/docs/deploy-3dc-dr.png)
 
 **Disadvantages:**
 
@@ -63,7 +63,7 @@ The performance can be affected by the network latency.
 
 If not all of the three AZs need to provide services to the applications, you can dispatch all the requests to one AZ and configure the scheduling policy to migrate the TiKV Region leader and PD leader to the same AZ. In this way, neither obtaining TSO nor reading TiKV Regions will be impacted by the network latency across AZs. If this AZ is down, the PD leader and TiKV Region leader will be automatically elected in other surviving AZs, and you just need to switch the requests to the AZs that are still alive.
 
-![Read Performance Optimized 3-AZ Deployment](https://download.pingcap.com/images/docs/deploy-3dc-optimize.png)
+![Read Performance Optimized 3-AZ Deployment](https://docs-download.pingcap.com/media/images/docs/deploy-3dc-optimize.png)
 
 **Advantages:**
 
@@ -99,7 +99,7 @@ This section provides a topology example, and introduces TiKV labels and TiKV la
 
 The following example assumes that three AZs (AZ1, AZ2, and AZ3) are located in one region; each AZ has two sets of racks and each rack has three servers. The example ignores the hybrid deployment or the scenario where multiple instances are deployed on one machine. The deployment of a TiDB cluster (three replicas) on three AZs in one region is as follows:
 
-![3-AZ in One Region](https://download.pingcap.com/images/docs/multi-data-centers-in-one-city-deployment-sample.png)
+![3-AZ in One Region](https://docs-download.pingcap.com/media/images/docs/multi-data-centers-in-one-city-deployment-sample.png)
 
 #### TiKV labels
 

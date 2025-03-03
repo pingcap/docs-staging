@@ -40,7 +40,7 @@ summary: TiDB ダッシュボードの継続的プロファイリング機能は
 
 -   TiDB ダッシュボードにログインした後、左側のナビゲーション メニューで**[高度なデバッグ**] &gt; **[プロファイリング インスタンス]** &gt; **[継続的プロファイリング]**をクリックします。
 
-    ![Access page](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-access.png)
+    ![Access page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-access.png)
 
 -   ブラウザで[http://127.0.0.1:2379/dashboard/#/continuous_profiling](http://127.0.0.1:2379/dashboard/#/continuous_profiling)にアクセスしてください。 `127.0.0.1:2379`を実際の PD インスタンスのアドレスとポートに置き換えます。
 
@@ -58,7 +58,7 @@ summary: TiDB ダッシュボードの継続的プロファイリング機能は
 2.  **[設定を開く]**をクリックします。右側の**設定**領域で、**機能の有効化**をオンにし、必要に応じて**保存期間**のデフォルト値を変更します。
 3.  **「保存」**をクリックします。
 
-![Enable feature](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-start.png)
+![Enable feature](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-start.png)
 
 ## 現在のパフォーマンス データをビュー {#view-current-performance-data}
 
@@ -68,17 +68,17 @@ summary: TiDB ダッシュボードの継続的プロファイリング機能は
 
 リスト ページでは、この機能を有効にしてから収集されたすべてのパフォーマンス データを確認できます。
 
-![History results](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-history.png)
+![History results](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-history.png)
 
 ## パフォーマンスデータのダウンロード {#download-performance-data}
 
 プロファイリング結果ページで、右上隅にある**[プロファイリング結果のダウンロード]**をクリックして、すべてのプロファイリング結果をダウンロードできます。
 
-![Download profiling result](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-download.png)
+![Download profiling result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-download.png)
 
 テーブル内の個々のインスタンスをクリックして、そのプロファイリング結果を表示することもできます。または、... にカーソルを合わせると、生データをダウンロードできます。
 
-![View profiling result](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-single.png)
+![View profiling result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-single.png)
 
 ## 継続的プロファイリングを無効にする {#disable-continuous-profiling}
 
@@ -87,7 +87,7 @@ summary: TiDB ダッシュボードの継続的プロファイリング機能は
 3.  **「保存」**をクリックします。
 4.  ポップアップダイアログボックスで、 **「無効にする」**をクリックします。
 
-![Disable feature](https://download.pingcap.com/images/docs/dashboard/dashboard-conprof-stop.png)
+![Disable feature](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-conprof-stop.png)
 
 ## よくある質問 {#frequently-asked-questions}
 

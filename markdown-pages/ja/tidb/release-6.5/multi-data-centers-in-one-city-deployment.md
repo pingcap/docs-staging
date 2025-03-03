@@ -41,7 +41,7 @@ TiDB クラスターは、同じリージョン内の 3 つの AZ にデプロ�
 
 TiDB、TiKV、および PD は 3 つの AZ に分散されます。これは、最も高い可用性を備えた最も一般的な展開です。
 
-![3-AZ Deployment Architecture](https://download.pingcap.com/images/docs/deploy-3dc.png)
+![3-AZ Deployment Architecture](https://docs-download.pingcap.com/media/images/docs/deploy-3dc.png)
 
 **利点:**
 
@@ -49,7 +49,7 @@ TiDB、TiKV、および PD は 3 つの AZ に分散されます。これは、�
 -   1 つの AZ がダウンしても (RPO = 0)、データが失われることはありません。
 -   1 つの AZ がダウンしても、他の 2 つの AZ は自動的にリーダーの選出を開始し、一定期間内 (ほとんどの場合 20 秒以内) にサービスを自動的に再開します。詳細については、次の図を参照してください。
 
-![Disaster Recovery for 3-AZ Deployment](https://download.pingcap.com/images/docs/deploy-3dc-dr.png)
+![Disaster Recovery for 3-AZ Deployment](https://docs-download.pingcap.com/media/images/docs/deploy-3dc-dr.png)
 
 **短所:**
 
@@ -63,7 +63,7 @@ TiDB、TiKV、および PD は 3 つの AZ に分散されます。これは、�
 
 3 つの AZ のすべてがアプリケーションにサービスを提供する必要がない場合は、すべてのリクエストを 1 つの AZ にディスパッチし、スケジューリング ポリシーを構成して、TiKVリージョンリーダーと PD リーダーを同じ AZ に移行することができます。このようにして、TSO の取得も TiKV リージョンの読み取りも、AZ 間のネットワークレイテンシーの影響を受けません。この AZ がダウンしている場合、PD リーダーと TiKVリージョンリーダーは、他の生き残った AZ で自動的に選出され、まだ生きている AZ にリクエストを切り替えるだけで済みます。
 
-![Read Performance Optimized 3-AZ Deployment](https://download.pingcap.com/images/docs/deploy-3dc-optimize.png)
+![Read Performance Optimized 3-AZ Deployment](https://docs-download.pingcap.com/media/images/docs/deploy-3dc-optimize.png)
 
 **利点:**
 
@@ -99,7 +99,7 @@ member leader_priority pdName3 3
 
 次の例では、3 つの AZ (AZ1、AZ2、および AZ3) が 1 つのリージョンにあると想定しています。各 AZ には 2 セットのラックがあり、各ラックには 3 台のサーバーがあります。この例では、ハイブリッド デプロイまたは複数のインスタンスが 1 台のマシンにデプロイされるシナリオは無視されています。 1 つのリージョン内の 3 つの AZ での TiDB クラスター (3 つのレプリカ) のデプロイは次のとおりです。
 
-![3-AZ in One Region](https://download.pingcap.com/images/docs/multi-data-centers-in-one-city-deployment-sample.png)
+![3-AZ in One Region](https://docs-download.pingcap.com/media/images/docs/multi-data-centers-in-one-city-deployment-sample.png)
 
 #### TiKV ラベル {#tikv-labels}
 

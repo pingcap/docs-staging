@@ -34,11 +34,11 @@ TiDB 安装时默认包含 Grafana 组件，其默认的用户名密码通常为
 
 - 首次登录 Grafana 时，根据提示完成新密码的修改。
 
-    ![Grafana Password Reset Guide](https://download.pingcap.com/images/docs-cn/grafana-password-reset1.png)
+    ![Grafana Password Reset Guide](https://docs-download.pingcap.com/media/images/docs-cn/grafana-password-reset1.png)
 
 - 进入 Grafana 个人配置中心完成新密码的修改。
 
-    ![Grafana Password Reset Guide](https://download.pingcap.com/images/docs-cn/grafana-password-reset2.png)
+    ![Grafana Password Reset Guide](https://docs-download.pingcap.com/media/images/docs-cn/grafana-password-reset2.png)
 
 ## 提高 TiDB Dashboard 安全性
 

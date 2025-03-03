@@ -8,7 +8,7 @@ category: intro
 
 [TiDB Cloud](https://www.pingcap.com/tidb-cloud/)は、オープンソースのハイブリッド トランザクションおよび分析処理 (HTAP) データベースである[ティビ](https://docs.pingcap.com/tidb/stable/overview)クラウドに提供する、フルマネージドの Database-as-a-Service (DBaaS) です。TiDB TiDB Cloud は、データベースの複雑な部分ではなく、アプリケーションに集中できるように、データベースを簡単に導入および管理する方法を提供します。TiDB TiDB Cloudクラスターを作成して、Google Cloud と Amazon Web Services (AWS) でミッション クリティカルなアプリケーションを迅速に構築できます。
 
-![TiDB Cloud Overview](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-overview.png)
+![TiDB Cloud Overview](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-overview.png)
 
 ## TiDB Cloudを選ぶ理由 {#why-tidb-cloud}
 
@@ -76,7 +76,7 @@ TiDB Cloud Serverless とTiDB Cloud Dedicated の機能比較については、 
 
 ## アーキテクチャ {#architecture}
 
-![TiDB Cloud architecture](https://download.pingcap.com/images/docs/tidb-cloud/tidb-cloud-architecture.png)
+![TiDB Cloud architecture](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-cloud-architecture.png)
 
 -   TiDB VPC (仮想プライベートクラウド)
 

@@ -36,7 +36,7 @@ If your deployment tool is TiUP, take the following steps to solve this problem.
 
 1. Upgrade TiUP and TiUP Cluster:
 
-    
+
     ```bash
     tiup update --self
     tiup update cluster --force
@@ -46,7 +46,7 @@ If your deployment tool is TiUP, take the following steps to solve this problem.
 
 3. After the upgrade, for an existing cluster, you can restart this cluster to report the metrics addresses. Replace `CLUSTER_NAME` with the actual cluster name:
 
-    
+
     ```bash
     tiup cluster start CLUSTER_NAME
     ```
@@ -70,7 +70,7 @@ Step 1. Check versions
 
 1. Check the TiUP cluster version. NgMonitoring is deployed only when TiUP is v1.9.0 or later.
 
-    
+
     ```shell
     tiup cluster --version
     ```
@@ -85,7 +85,7 @@ Step 1. Check versions
 
 2. If the TiUP cluster version is earlier than v1.9.0, upgrade TiUP and TiUP cluster to the latest version:
 
-    
+
     ```shell
     tiup update --all
     ```
@@ -94,7 +94,7 @@ Step 2. Add the ng_port configuration item on the control machine by using TiUP.
 
 1. Open the cluster configuration file in editing mode:
 
-    
+
     ```shell
     tiup cluster edit-config ${cluster-name}
     ```
@@ -109,7 +109,7 @@ Step 2. Add the ng_port configuration item on the control machine by using TiUP.
 
 3. Reload Prometheus:
 
-    
+
     ```shell
     tiup cluster reload ${cluster-name} --role prometheus
     ```
@@ -152,8 +152,8 @@ If the `unknown field` error appears on the **Slow Queries** page after the clus
 
     In the following example, Chrome is used.
 
-    ![Opening DevTools from Chrome's main menu](https://download.pingcap.com/images/docs/dashboard/dashboard-faq-devtools.png)
+    ![Opening DevTools from Chrome's main menu](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-faq-devtools.png)
 
 3. Select the **Application** panel, expand the **Local Storage** menu and select the **TiDB Dashboard page domain**. Click the **Clear All** button.
 
-    ![Clear the Local Storage](https://download.pingcap.com/images/docs/dashboard/dashboard-faq-devtools-application.png)
+    ![Clear the Local Storage](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-faq-devtools-application.png)

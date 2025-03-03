@@ -17,7 +17,7 @@ summary: 本文介绍性能优化的基本概念，比如用户响应时间、�
 
 `ΔT` 时间内总的用户响应时间 = 平均 TPS (Transactions Per Second) x 用户平均响应时间 x `ΔT`。
 
-![用户响应时间](https://download.pingcap.com/images/docs-cn/performance/user_response_time_cn.png)
+![用户响应时间](https://docs-download.pingcap.com/media/images/docs-cn/performance/user_response_time_cn.png)
 
 ### 数据库时间
 

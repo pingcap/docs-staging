@@ -15,7 +15,7 @@ TiDBダッシュボードは、TiDBデータベースの操作と保守を簡素
 
 ### インスタンスパネル {#instance-panel}
 
-![Instance panel](https://download.pingcap.com/images/docs/instance-status-panel.png)
+![Instance panel](https://docs-download.pingcap.com/media/images/docs/instance-status-panel.png)
 
 -   **ステータス**：このインジケータは、ステータスが正常かどうかを確認するために使用されます。オンラインノードの場合、これは無視できます。
 -   **稼働時間**：重要な指標。 `Up Time`が変更されていることがわかった場合は、コンポーネントが再起動された理由を特定する必要があります。
@@ -23,19 +23,19 @@ TiDBダッシュボードは、TiDBデータベースの操作と保守を簡素
 
 ### ホストパネル {#host-panel}
 
-![Host panel](https://download.pingcap.com/images/docs/host-panel.png)
+![Host panel](https://docs-download.pingcap.com/media/images/docs/host-panel.png)
 
 CPU、メモリ、およびディスクの使用状況を表示できます。リソースの使用率が80％を超える場合は、それに応じて容量をスケールアウトすることをお勧めします。
 
 ### SQL分析パネル {#sql-analysis-panel}
 
-![SQL analysis panel](https://download.pingcap.com/images/docs/sql-analysis-panel.png)
+![SQL analysis panel](https://docs-download.pingcap.com/media/images/docs/sql-analysis-panel.png)
 
 クラスタで実行された遅いSQLステートメントを見つけることができます。次に、特定のSQLステートメントを最適化できます。
 
 ### 地域パネル {#region-panel}
 
-![Region panel](https://download.pingcap.com/images/docs/region-panel.png)
+![Region panel](https://docs-download.pingcap.com/media/images/docs/region-panel.png)
 
 -   `miss-peer-region-count` ：十分なレプリカがないリージョンの数。この値は常に`0`より大きいとは限りません。
 -   `extra-peer-region-count` ：追加のレプリカを持つリージョンの数。これらのリージョンは、スケジューリングプロセス中に生成されます。
@@ -48,13 +48,13 @@ CPU、メモリ、およびディスクの使用状況を表示できます。�
 
 ### KVリクエスト期間 {#kv-request-duration}
 
-![TiKV request duration](https://download.pingcap.com/images/docs/kv-duration-panel.png)
+![TiKV request duration](https://docs-download.pingcap.com/media/images/docs/kv-duration-panel.png)
 
 TiKVでのKV要求期間99。持続時間が長いノードを見つけた場合は、ホットスポットがあるかどうか、またはパフォーマンスの低いノードがあるかどうかを確認してください。
 
 ### PDTSO待機時間 {#pd-tso-wait-duration}
 
-![TiDB TSO Wait Duration](https://download.pingcap.com/images/docs/pd-duration-panel.png)
+![TiDB TSO Wait Duration](https://docs-download.pingcap.com/media/images/docs/pd-duration-panel.png)
 
 TiDBがPDからTSOを取得するのにかかる時間。待機時間が長い理由は次のとおりです。
 
@@ -64,18 +64,18 @@ TiDBがPDからTSOを取得するのにかかる時間。待機時間が長い�
 
 ### 概要パネル {#overview-panel}
 
-![Overview panel](https://download.pingcap.com/images/docs/overview-panel.png)
+![Overview panel](https://docs-download.pingcap.com/media/images/docs/overview-panel.png)
 
 負荷、使用可能なメモリ、ネットワークトラフィック、およびI/Oユーティリティを表示できます。ボトルネックが見つかった場合は、容量をスケールアウトするか、クラスタトポロジ、SQL、クラスタパラメーターなどを最適化することをお勧めします。
 
 ### 例外 {#exceptions}
 
-![Exceptions](https://download.pingcap.com/images/docs/failed-query-panel.png)
+![Exceptions](https://docs-download.pingcap.com/media/images/docs/failed-query-panel.png)
 
 各TiDBインスタンスでSQLステートメントの実行によってトリガーされたエラーを表示できます。これらには、構文エラー、主キーの競合などが含まれます。
 
 ### GCステータス {#gc-status}
 
-![GC status](https://download.pingcap.com/images/docs/garbage-collation-panel.png)
+![GC status](https://docs-download.pingcap.com/media/images/docs/garbage-collation-panel.png)
 
 最後のGCが発生した時刻を表示することで、GC（ガベージコレクション）ステータスが正常かどうかを確認できます。 GCが異常な場合、履歴データが過剰になり、アクセス効率が低下する可能性があります。

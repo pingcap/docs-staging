@@ -74,7 +74,7 @@ TiUPを使用してTiCDCを展開する場合は、次のコマンドの`cdc cli
 
 -   `capture`のリストを照会します。
 
-    
+
     ```shell
     cdc cli capture list --pd=http://10.0.10.25:2379
     ```
@@ -104,7 +104,7 @@ TiUPを使用してTiCDCを展開する場合は、次のコマンドの`cdc cli
 
 レプリケーションタスクの状態は、レプリケーションタスクの実行ステータスを表します。 TiCDCの実行中に、レプリケーションタスクがエラーで失敗したり、手動で一時停止、再開したり、指定された`TargetTs`に到達したりする場合があります。これらの動作は、レプリケーションタスクの状態の変化につながる可能性があります。このセクションでは、TiCDCレプリケーションタスクの状態と状態間の転送関係について説明します。
 
-![TiCDC state transfer](https://download.pingcap.com/images/docs/ticdc/ticdc-state-transfer.png)
+![TiCDC state transfer](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-state-transfer.png)
 
 上記の状態転送図の状態は、次のように説明されています。
 
@@ -144,7 +144,7 @@ Info: {"sink-uri":"mysql://root:123456@127.0.0.1:3306/","opts":{},"create-time":
 
 -   `--sink-uri` ：レプリケーションタスクのダウンストリームアドレス。次の形式に従って`--sink-uri`を構成します。現在、この`kafka`は`mysql` `local` `pulsar`して`s3` `tidb` 。
 
-    
+
     ```
     [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
     ```
@@ -490,7 +490,7 @@ cdc cli changefeed resume -c test-cf --pd=http://10.0.10.25:2379
 
 -   `processor`のリストを照会します。
 
-    
+
     ```shell
     cdc cli processor list --pd=http://10.0.10.25:2379
     ```
@@ -507,7 +507,7 @@ cdc cli changefeed resume -c test-cf --pd=http://10.0.10.25:2379
 
 -   特定のレプリケーションタスクのステータスに対応する特定の`changefeed`をクエリします。
 
-    
+
     ```shell
     cdc cli processor query --pd=http://10.0.10.25:2379 --changefeed-id=simple-replication-task --capture-id=b293999a-4168-4988-a4f4-35d9589b226b
     ```

@@ -17,7 +17,7 @@ summary: TiDB の楽観的トランザクション モデルについて学習�
 
 分散トランザクションをサポートするために、TiDB は楽観的トランザクションで 2 フェーズ コミット (2PC) を採用しています。手順は次のとおりです。
 
-![2PC in TiDB](https://download.pingcap.com/images/docs/2pc-in-tidb.png)
+![2PC in TiDB](https://docs-download.pingcap.com/media/images/docs/2pc-in-tidb.png)
 
 1.  クライアントがトランザクションを開始します。
 
@@ -135,6 +135,6 @@ scheduler-concurrency = 2048000
 
 さらに、TiKV はスケジューラ内のラッチの待機に費やされた時間の監視をサポートします。
 
-![Scheduler latch wait duration](https://download.pingcap.com/images/docs/optimistic-transaction-metric.png)
+![Scheduler latch wait duration](https://docs-download.pingcap.com/media/images/docs/optimistic-transaction-metric.png)
 
 `Scheduler latch wait duration`が高く、低速書き込みがない場合、現時点で書き込み競合が多数発生していると安全に結論付けることができます。

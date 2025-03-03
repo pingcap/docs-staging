@@ -165,7 +165,7 @@ Grafana ダッシュボードは、PD、TiDB、TiKV、Node_exporter、概要、�
 
 ### パフォーマンス概要パネルのインターフェイス {#interface-of-the-performance-overview-panels}
 
-![performance overview](https://download.pingcap.com/images/docs/performance/grafana_performance_overview.png)
+![performance overview](https://docs-download.pingcap.com/media/images/docs/performance/grafana_performance_overview.png)
 
 ## TiFlash {#tiflash}
 

@@ -32,7 +32,7 @@ TiDBダッシュボードにアクセスすると、次の画像に示すよう�
 -   `root`アカウントを使用してTiDBダッシュボードにサインインできます。
 -   [ユーザー定義のSQLユーザー](/dashboard/dashboard-user.md)を作成した場合は、このアカウントと対応するパスワードを使用してサインインできます。
 
-![Login interface](https://download.pingcap.com/images/docs/dashboard/dashboard-access-login.png)
+![Login interface](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-access-login.png)
 
 次のいずれかの状況が存在する場合、ログインが失敗する可能性があります。
 
@@ -52,10 +52,10 @@ TiDBダッシュボードでは次の言語がサポートされています。
 
 **[SQLユーザーサインイン**]ページで、[<strong>言語</strong>の切り替え]ドロップダウンリストをクリックして、インターフェイスの言語を切り替えることができます。
 
-![Switch language](https://download.pingcap.com/images/docs/dashboard/dashboard-access-switch-language.png)
+![Switch language](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-access-switch-language.png)
 
 ## ログアウト {#logout}
 
 ログインしたら、左側のナビゲーションバーにあるログインユーザー名をクリックして、ユーザーページに切り替えます。ユーザーページの[**ログアウト**]ボタンをクリックして、現在のユーザーをログアウトします。ログアウトした後、ユーザー名とパスワードを再入力する必要があります。
 
-![Logout](https://download.pingcap.com/images/docs/dashboard/dashboard-access-logout.png)
+![Logout](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-access-logout.png)

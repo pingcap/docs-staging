@@ -3695,7 +3695,7 @@ v5.0 以降では、上記のシステム変数を個別に変更することが
 -   単位: 行
 -   この変数は、コプロセッサ ページング要求プロセス中の最小行数を設定するために使用されます。この変数を小さすぎる値に設定すると、TiDB と TiKV 間の RPC 要求数が増加し、大きすぎる値に設定すると、IndexLookup と Limit を使用してクエリを実行するときにパフォーマンスが低下する可能性があります。この変数のデフォルト値では、OLAP シナリオよりも OLTP シナリオでパフォーマンスが向上します。アプリケーションがstorageエンジンとして TiKV のみを使用する場合は、OLAP ワークロード クエリを実行するときにこの変数の値を増やすことを検討してください。これにより、パフォーマンスが向上する可能性があります。
 
-![Paging size impact on TPCH](https://download.pingcap.com/images/docs/paging-size-impact-on-tpch.png)
+![Paging size impact on TPCH](https://docs-download.pingcap.com/media/images/docs/paging-size-impact-on-tpch.png)
 
 この図に示すように、 [`tidb_enable_paging`](#tidb_enable_paging-new-in-v540)有効になっている場合、 `tidb_min_paging_size`と[`tidb_max_paging_size`](#tidb_max_paging_size-new-in-v630)の設定によって TPCH のパフォーマンスが影響を受けます。縦軸は実行時間で、小さいほど優れています。
 

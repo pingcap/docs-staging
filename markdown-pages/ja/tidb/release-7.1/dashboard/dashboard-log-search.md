@@ -11,7 +11,7 @@ TiDB ダッシュボードのログ検索ページでは、すべてのノード
 
 TiDB ダッシュボードにログインした後、 **「ログの検索」を**クリックして、このログ検索ホームページにアクセスできます。
 
-![Log Search Page](https://download.pingcap.com/images/docs/dashboard/dashboard-log-search-home.png)
+![Log Search Page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-home.png)
 
 このページでは、次の検索パラメータが提供されます。
 
@@ -26,7 +26,7 @@ TiDB ダッシュボードにログインした後、 **「ログの検索」を
 
 次の画像は、検索結果のページを示しています。
 
-![Search result](https://download.pingcap.com/images/docs/dashboard/dashboard-log-search-result.png)
+![Search result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-result.png)
 
 このページは次の 3 つの領域で構成されます。
 
@@ -60,12 +60,12 @@ TiDB ダッシュボードにログインした後、 **「ログの検索」を
 
 ログ検索ホームページの**[検索履歴のビュー]**リンクをクリックして、検索履歴リストのページに入ります。
 
-![Search history entry](https://download.pingcap.com/images/docs/dashboard/dashboard-log-search-history-entry.png)
+![Search history entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-history-entry.png)
 
-![Search history list](https://download.pingcap.com/images/docs/dashboard/dashboard-log-search-history.png)
+![Search history list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-history.png)
 
 履歴リストには、各検索ログの時間範囲、ログレベル、構成要素、キーワード、検索ステータスが表示されます。 **「アクション」**列の**「詳細」**リンクをクリックして、検索結果の詳細を表示します。
 
 不要になった検索履歴は削除できます。右上隅の**「すべて削除」**をクリックするか、削除する行を選択してから**「選択項目を削除」**をクリックして履歴を削除します。
 
-![Delete search history](https://download.pingcap.com/images/docs/dashboard/dashboard-log-search-delete-history.png)
+![Delete search history](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-delete-history.png)

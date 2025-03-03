@@ -7,7 +7,7 @@ summary: TiDBのHAProxyのベストプラクティスについて説明します
 
 このドキュメントでは、TiDB の[HAプロキシ](https://github.com/haproxy/haproxy)の構成と使用に関するベスト プラクティスについて説明します。 HAProxy は、TCP ベースのアプリケーションの負荷分散を提供します。 TiDB クライアントからは、HAProxy によって提供されるフローティング仮想 IP アドレスに接続するだけでデータを操作できます。これは、TiDBサーバーレイヤーでの負荷分散の実現に役立ちます。
 
-![HAProxy Best Practices in TiDB](https://download.pingcap.com/images/docs/haproxy.jpg)
+![HAProxy Best Practices in TiDB](https://docs-download.pingcap.com/media/images/docs/haproxy.jpg)
 
 > **注記：**
 >

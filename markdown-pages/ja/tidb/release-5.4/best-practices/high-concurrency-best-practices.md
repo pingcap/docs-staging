@@ -36,7 +36,7 @@ summary: Learn best practices for highly-concurrent write-intensive workloads in
 
 TiDBは、データをリージョンに分割します。各リージョンは、デフォルトでサイズ制限が96Mのデータの範囲を表します。各リージョンには複数のレプリカがあり、レプリカの各グループはラフトグループと呼ばれます。ラフトグループでは、リージョンリーダーがデータ範囲内で読み取りおよび書き込みタスク（TiDBは[フォロワー-読む](/follower-read.md)をサポート）を実行します。リージョンリーダーは、配置ドライバー（PD）コンポーネントによって、読み取りと書き込みの圧力を均等に分散するために、さまざまな物理ノードに自動的にスケジュールされます。
 
-![TiDB Data Overview](https://download.pingcap.com/images/docs/best-practices/tidb-data-overview.png)
+![TiDB Data Overview](https://docs-download.pingcap.com/media/images/docs/best-practices/tidb-data-overview.png)
 
 理論的には、アプリケーションに書き込みホットスポットがない場合、TiDBは、そのアーキテクチャのおかげで、読み取りおよび書き込み容量を線形にスケーリングできるだけでなく、分散リソースを最大限に活用することもできます。この観点から、TiDBは、同時実行性が高く、書き込みが集中するシナリオに特に適しています。
 
@@ -73,19 +73,19 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 
 クラスタトポロジでは、2つのTiDBノード、3つのPDノード、および6つのTiKVノードが展開されます。このテストはベンチマークではなく原理を明確にするためのものであるため、QPSのパフォーマンスは無視してください。
 
-![QPS1](https://download.pingcap.com/images/docs/best-practices/QPS1.png)
+![QPS1](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS1.png)
 
 クライアントは短時間で「集中的な」書き込み要求を開始します。これは、TiDBが受信する3KQPSです。理論的には、負荷圧力は6つのTiKVノードに均等に分散される必要があります。ただし、各TiKVノードのCPU使用率から、負荷分散は不均一です。 `tikv-3`ノードは書き込みホットスポットです。
 
-![QPS2](https://download.pingcap.com/images/docs/best-practices/QPS2.png)
+![QPS2](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS2.png)
 
-![QPS3](https://download.pingcap.com/images/docs/best-practices/QPS3.png)
+![QPS3](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS3.png)
 
 [ラフトストアCPU](/grafana-tikv-dashboard.md)は`raftstore`スレッドのCPU使用率であり、通常は書き込み負荷を表します。このシナリオでは、 `tikv-3`がこのラフトグループのリーダーです。 `tikv-0`と`tikv-1`はフォロワーです。他のノードの負荷はほとんど空です。
 
 PDの監視メトリックは、ホットスポットが発生したことも確認します。
 
-![QPS4](https://download.pingcap.com/images/docs/best-practices/QPS4.png)
+![QPS4](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS4.png)
 
 ## ホットスポットの原因 {#hotspot-causes}
 
@@ -97,13 +97,13 @@ PDの監視メトリックは、ホットスポットが発生したことも確
 
 短期間で、大量のデータが同じリージョンに継続的に書き込まれます。
 
-![TiKV Region Split](https://download.pingcap.com/images/docs/best-practices/tikv-Region-split.png)
+![TiKV Region Split](https://docs-download.pingcap.com/media/images/docs/best-practices/tikv-Region-split.png)
 
 上の図は、リージョン分割プロセスを示しています。データは継続的にTiKVに書き込まれるため、TiKVはリージョンを複数のリージョンに分割します。リーダー選挙は、分割されるリージョンリーダーが配置されている元のストアで開始されるため、新しく分割された2つのリージョンのリーダーが同じストアに残っている可能性があります。この分割プロセスは、新しく分割されたリージョン2とリージョン3でも発生する可能性があります。このように、書き込み圧力はTiKVノード1に集中します。
 
 連続書き込みプロセス中に、ノード1でホットスポットが発生していることを検出した後、PDは集中したリーダーを他のノードに均等に分散します。 TiKVノードの数がリージョンレプリカの数よりも多い場合、TiKVはこれらのリージョンをアイドル状態のノードに移行しようとします。書き込みプロセス中のこれら2つの操作は、PDの監視メトリックにも反映されます。
 
-![QPS5](https://download.pingcap.com/images/docs/best-practices/QPS5.png)
+![QPS5](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS5.png)
 
 継続的な書き込みの期間の後、PDは、圧力が均等に分散される状態にTiKVクラスタ全体を自動的にスケジュールします。その時までに、クラスタ全体の容量を完全に使用することができます。
 
@@ -127,7 +127,7 @@ SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)]
 
 ただし、TiDBはこの事前分割操作を自動的に実行しません。その理由は、TiDBでのデータ分散に関連しています。
 
-![Table Region Range](https://download.pingcap.com/images/docs/best-practices/table-Region-range.png)
+![Table Region Range](https://docs-download.pingcap.com/media/images/docs/best-practices/table-Region-range.png)
 
 上の図から、行のキーのエンコード規則によれば、 `rowID`が唯一の可変部分です。 TiDBでは、 `rowID`は`Int64`の整数です。ただし、リージョン分割も実際の状況に基づいている必要があるため、 `Int64`の整数範囲を目的の範囲数に均等に分割してから、これらの範囲を異なるノードに分散する必要がない場合があります。
 
@@ -167,11 +167,11 @@ ORDER BY
 
 次に、書き込みロードを再度操作します。
 
-![QPS6](https://download.pingcap.com/images/docs/best-practices/QPS6.png)
+![QPS6](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS6.png)
 
-![QPS7](https://download.pingcap.com/images/docs/best-practices/QPS7.png)
+![QPS7](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS7.png)
 
-![QPS8](https://download.pingcap.com/images/docs/best-practices/QPS8.png)
+![QPS8](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS8.png)
 
 明らかなホットスポットの問題が解決されたことがわかります。
 

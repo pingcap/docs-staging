@@ -96,7 +96,7 @@ Run the `br backup` command to back up the single table data `--db batchmark --t
 
 The following diagram shows the typology of BR:
 
-![img](https://download.pingcap.com/images/docs/br/backup-nfs-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-nfs-deploy.png)
 
 ### Backup operation
 
@@ -118,19 +118,19 @@ During the backup process, pay attention to the following metrics on the monitor
 
 **Backup CPU Utilization**: the CPU usage rate of each working TiKV node in the backup operation (for example, backup-worker and backup-endpoint).
 
-![img](https://download.pingcap.com/images/docs/br/backup-cpu.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-cpu.png)
 
 **IO Utilization**: the I/O usage rate of each working TiKV node in the backup operation.
 
-![img](https://download.pingcap.com/images/docs/br/backup-io.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-io.png)
 
 **BackupSST Generation Throughput**: the backupSST generation throughput of each working TiKV node in the backup operation, which is normally around 150 MB/s.
 
-![img](https://download.pingcap.com/images/docs/br/backup-throughput.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-throughput.png)
 
 **One Backup Range Duration**: the duration of backing up a range, which is the total time cost of scanning KVs and storing the range as the backupSST file.
 
-![img](https://download.pingcap.com/images/docs/br/backup-range-duration.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-range-duration.png)
 
 **One Backup Subtask Duration**: the duration of each sub-task into which a backup task is divided.
 
@@ -139,15 +139,15 @@ During the backup process, pay attention to the following metrics on the monitor
 > - In this task, the single table to be backed up has three indexes and the task is normally divided into four sub-tasks.
 > - The panel in the following image has 20 points on it, 10 blue and 10 yellow, indicating that there are 10 sub-tasks. Region scheduling might occur during the backup process, so a few retries is normal.
 
-![img](https://download.pingcap.com/images/docs/br/backup-subtask-duration.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-subtask-duration.png)
 
 **Backup Errors**: the errors occurred during the backup process. No error occurs in normal situations. Even if a few errors occur, the backup operation has the retry mechanism which might increase the backup time but does not affect the operation correctness.
 
-![img](https://download.pingcap.com/images/docs/br/backup-errors.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-errors.png)
 
 **Checksum Request Duration**: the duration of the admin checksum request in the backup cluster.
 
-![img](https://download.pingcap.com/images/docs/br/checksum-duration.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/checksum-duration.png)
 
 ### Backup results explanation
 
@@ -202,9 +202,9 @@ bin/br backup table \
     --concurrency 16
 ```
 
-![img](https://download.pingcap.com/images/docs/br/backup-diff.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-diff.png)
 
-![img](https://download.pingcap.com/images/docs/br/backup-diff2.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-diff2.png)
 
 The tuned performance results are as follows (with the same data size):
 
@@ -224,7 +224,7 @@ Use the `br restore` command to restore the complete backup data to an offline c
 
 The following diagram shows the typology of BR:
 
-![img](https://download.pingcap.com/images/docs/br/restore-nfs-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-nfs-deploy.png)
 
 ### Restoration operation
 
@@ -241,31 +241,31 @@ During the restoration process, pay attention to the following metrics on the mo
 
 **CPU**: the CPU usage rate of each working TiKV node in the restoration operation.
 
-![img](https://download.pingcap.com/images/docs/br/restore-cpu.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-cpu.png)
 
 **IO Utilization**: the I/O usage rate of each working TiKV node in the restoration operation.
 
-![img](https://download.pingcap.com/images/docs/br/restore-io.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-io.png)
 
 **Region**: the Region distribution. The more even Regions are distributed, the better the restoration resources are used.
 
-![img](https://download.pingcap.com/images/docs/br/restore-region.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-region.png)
 
 **Process SST Duration**: the delay of processing the SST files. When restoring a table, if `tableID` is changed, you need to rewrite `tableID`. Otherwise, `tableID` is renamed. Generally, the delay of rewriting is longer than that of renaming.
 
-![img](https://download.pingcap.com/images/docs/br/restore-process-sst.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-process-sst.png)
 
 **DownLoad SST Throughput**: the throughput of downloading SST files from External Storage.
 
-![img](https://download.pingcap.com/images/docs/br/restore-download-sst.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-download-sst.png)
 
 **Restore Errors**: the errors occurred during the restoration process.
 
-![img](https://download.pingcap.com/images/docs/br/restore-errors.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-errors.png)
 
 **Checksum Request Duration**: the duration of the admin checksum request. This duration for the restoration is longer than that for the backup.
 
-![img](https://download.pingcap.com/images/docs/br/restore-checksum.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-checksum.png)
 
 ### Restoration results explanation
 
@@ -335,7 +335,7 @@ Run the `br backup` command to back up a single table `--db batchmark --table or
 
 The following diagram shows the typology of BR:
 
-![img](https://download.pingcap.com/images/docs/br/backup-local-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/backup-local-deploy.png)
 
 ### Backup operation
 
@@ -402,7 +402,7 @@ Before the restoration, follow these steps:
 
 The following diagram shows the typology of BR:
 
-![img](https://download.pingcap.com/images/docs/br/restore-local-deploy.png)
+![img](https://docs-download.pingcap.com/media/images/docs/br/restore-local-deploy.png)
 
 ### Restoration operation
 

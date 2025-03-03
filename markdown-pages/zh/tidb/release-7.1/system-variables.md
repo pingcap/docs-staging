@@ -1056,7 +1056,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
 
     - 乐观事务模型下将 `tidb_constraint_check_in_place` 设置为 `OFF`：
 
-        
+
         ```sql
         create table t (i int key);
         insert into t values (1);
@@ -1068,7 +1068,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
         Query OK, 1 row affected
         ```
 
-        
+
         ```sql
         tidb> commit; -- 事务提交时才检查
         ```
@@ -1079,7 +1079,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
 
     - 乐观事务模型下将 `tidb_constraint_check_in_place` 设置为 `ON`：
 
-        
+
         ```sql
         set @@tidb_constraint_check_in_place=ON;
         begin optimistic;
@@ -1103,7 +1103,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，允许节点之间的数�
 
     - 悲观事务模型下将 `tidb_constraint_check_in_place_pessimistic` 设置为 `OFF`：
 
-        
+
         ```sql
         set @@tidb_constraint_check_in_place_pessimistic=OFF;
         create table t (i int key);
@@ -2728,7 +2728,7 @@ v5.0 后，用户仍可以单独修改以上系统变量（会有废弃警告）
 - 单位：行
 - 这个变量用来设置 coprocessor 协议中 paging size 的最小的行数。请合理设置该值，设置过小，TiDB 与 TiKV 的 RPC 交互会更频繁；设置过大，IndexLookup 带 Limit 场景会出现性能下降。该变量的默认值对于 OLTP 场景较友好，如果业务只使用了 TiKV 作为存储引擎，当执行偏 OLAP 的负载时，可以考虑将变量值调大，有可能获得更好的性能。
 
-![Paging size impact on TPCH](https://download.pingcap.com/images/docs-cn/paging-size-impact-on-tpch.png)
+![Paging size impact on TPCH](https://docs-download.pingcap.com/media/images/docs-cn/paging-size-impact-on-tpch.png)
 
 开启 [`tidb_enable_paging`](#tidb_enable_paging-从-v540-版本开始引入) 时，`tidb_min_paging_size` 和 [`tidb_max_paging_size`](#tidb_max_paging_size-从-v630-版本开始引入) 对 TPCH 的性能影响如上图所示，纵轴是执行时间，越小越好。
 
@@ -2960,21 +2960,21 @@ mysql> desc select count(distinct a) from test.t;
 
     例如，打开这个优化规则后，会将下面子查询做如下变化：
 
-    
+
     ```sql
     select * from t where t.a in (select aa from t1);
     ```
 
     将子查询转成如下 join：
 
-    
+
     ```sql
     select t.* from t, (select aa from t1 group by aa) tmp_t where t.a = tmp_t.aa;
     ```
 
     如果 t1 在列 `aa` 上有 unique 且 not null 的限制，可以直接改写为如下，不需要添加 aggregation。
 
-    
+
     ```sql
     select t.* from t, t1 where t.a=t1.aa;
     ```

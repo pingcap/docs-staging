@@ -15,7 +15,7 @@ cdc cli changefeed create --pd=http://10.0.10.25:2379 --sink-uri="mysql://root:1
 
 TiCDCダッシュボードには、4つの監視パネルが含まれています。次のスクリーンショットを参照してください。
 
-![TiCDC Dashboard - Overview](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-overview.png)
+![TiCDC Dashboard - Overview](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-overview.png)
 
 各パネルの説明は次のとおりです。
 
@@ -28,7 +28,7 @@ TiCDCダッシュボードには、4つの監視パネルが含まれていま�
 
 次に、**サーバー**パネルの例を示します。
 
-![TiCDC Dashboard - Server metrics](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-server.png)
+![TiCDC Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-server.png)
 
 **サーバー**パネルの各メトリックの説明は次のとおりです。
 
@@ -44,7 +44,7 @@ TiCDCダッシュボードには、4つの監視パネルが含まれていま�
 
 次に、 **Changefeed**パネルの例を示します。
 
-![TiCDC Dashboard - Changefeed metrics 1](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-changefeed-1.png) ![TiCDC Dashboard - Changefeed metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-changefeed-2.png) ![TiCDC Dashboard - Changefeed metrics 3](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-changefeed-3.png)
+![TiCDC Dashboard - Changefeed metrics 1](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-changefeed-1.png) ![TiCDC Dashboard - Changefeed metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-changefeed-2.png) ![TiCDC Dashboard - Changefeed metrics 3](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-changefeed-3.png)
 
 [**チェンジフィード**]パネルの各メトリックの説明は次のとおりです。
 
@@ -68,7 +68,7 @@ TiCDCダッシュボードには、4つの監視パネルが含まれていま�
 
 次に、[**イベント**]パネルの例を示します。
 
-![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-events-1.png) ![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-events-2.png) ![TiCDC Dashboard - Events metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-events-3.png)
+![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-events-1.png) ![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-events-2.png) ![TiCDC Dashboard - Events metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-events-3.png)
 
 [**イベント**]パネルの各メトリックの説明は次のとおりです。
 
@@ -96,7 +96,7 @@ TiCDCダッシュボードには、4つの監視パネルが含まれていま�
 
 以下は、 **TiKV**パネルの例です。
 
-![TiCDC Dashboard - TiKV metrics 2](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-tikv-2.png) ![TiCDC Dashboard - TiKV metrics 1](https://download.pingcap.com/images/docs/ticdc/ticdc-dashboard-tikv-1.png)
+![TiCDC Dashboard - TiKV metrics 2](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-tikv-2.png) ![TiCDC Dashboard - TiKV metrics 1](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-dashboard-tikv-1.png)
 
 **TiKV**パネルの各メトリックの説明は次のとおりです。
 

@@ -70,7 +70,7 @@ TiDB グローバル ソート機能は、データ インポートおよび DDL
 
 グローバル ソート機能のアルゴリズムは次のとおりです。
 
-![Algorithm of Global Sort](https://download.pingcap.com/images/docs/dist-task/global-sort.jpeg)
+![Algorithm of Global Sort](https://docs-download.pingcap.com/media/images/docs/dist-task/global-sort.jpeg)
 
 詳細な実装原則は次のとおりです。
 

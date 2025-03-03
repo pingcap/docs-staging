@@ -29,7 +29,7 @@ Universally Unique Identifier (UUID) を`AUTO_INCREMENT`の整数値の代わり
 
 以下の[キー ビジュアライザー](/dashboard/dashboard-key-visualizer.md)のスクリーンショットでは、バイナリ形式でフィールドの順序が入れ替わっている`uuid_demo_2`テーブルの 1 つの領域に書き込みが集中していることがわかります。
 
-![Key Visualizer](https://download.pingcap.com/images/docs/best-practices/uuid_keyviz.png)
+![Key Visualizer](https://docs-download.pingcap.com/media/images/docs/best-practices/uuid_keyviz.png)
 
 ```sql
 CREATE TABLE `uuid_demo_1` (

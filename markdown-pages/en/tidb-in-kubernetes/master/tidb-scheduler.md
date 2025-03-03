@@ -82,7 +82,7 @@ Scheduling rule 2: If the number of Kubernetes nodes is less than three (in this
 
 ## How TiDB Scheduler works
 
-![TiDB Scheduler Overview](https://download.pingcap.com/images/tidb-in-kubernetes/tidb-scheduler-overview.png)
+![TiDB Scheduler Overview](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-scheduler-overview.png)
 
 TiDB Scheduler adds customized scheduling rules by implementing Kubernetes [Scheduler extender](https://github.com/kubernetes/design-proposals-archive/blob/main/scheduling/scheduler_extender.md).
 

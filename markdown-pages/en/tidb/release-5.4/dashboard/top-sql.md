@@ -31,7 +31,7 @@ The Top SQL feature is disabled by default. You can enable the feature for the e
 
 Once Top SQL is enabled, you can log into TiDB Dashboard, and then click **Top SQL** in the left pane to use it.
 
-![Top SQL](https://download.pingcap.com/images/docs/dashboard/top-sql-overview.png)
+![Top SQL](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-overview.png)
 
 Usage tips：
 
@@ -40,4 +40,4 @@ Usage tips：
 * The chart shows the top 5 types of queries that contribute the most to the load of the selected node in the selected time range.
 * You can select a query type in the list to view the execution plan of that query type on this node and the execution details such as the Call/sec, Scan Rows/sec, Scan Indexes/sec, and Latency/call.
 
-![Top SQL Details](https://download.pingcap.com/images/docs/dashboard/top-sql-details.png)
+![Top SQL Details](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-details.png)

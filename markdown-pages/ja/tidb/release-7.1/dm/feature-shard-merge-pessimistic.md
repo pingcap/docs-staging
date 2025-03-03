@@ -39,7 +39,7 @@ DM には、悲観的モードで次のシャーディング DDL 使用制限が
 
 簡単な例を次に示します。
 
-![shard-ddl-example-1](https://download.pingcap.com/images/docs/dm/shard-ddl-example-1.png)
+![shard-ddl-example-1](https://docs-download.pingcap.com/media/images/docs/dm/shard-ddl-example-1.png)
 
 上記の例では、マージ プロセスが簡略化されており、上流に MySQL インスタンスが 2 つだけ存在し、各インスタンスにはテーブルが 1 つだけあります。移行が開始されると、2 つのシャード テーブルのテーブル スキーマ バージョンは`schema V1`としてマークされ、DDL ステートメントの実行後のテーブル スキーマ バージョンは`schema V2`としてマークされます。
 
@@ -57,7 +57,7 @@ DM には、悲観的モードで次のシャーディング DDL 使用制限が
 
 このセクションでは、悲観的モードでの上記の例に基づいて、シャード テーブルをマージするプロセスで DM が DDL ステートメントを移行する方法を示します。
 
-![shard-ddl-flow](https://download.pingcap.com/images/docs/dm/shard-ddl-flow.png)
+![shard-ddl-flow](https://docs-download.pingcap.com/media/images/docs/dm/shard-ddl-flow.png)
 
 この例では、 `DM-worker-1` MySQL インスタンス 1 からデータを移行し、 `DM-worker-2` MySQL インスタンス 2 からデータを移行します`DM-master`は複数の DM ワーカー間の DDL 移行を調整します。 DDL ステートメントを受信する`DM-worker-1`以降、DDL 移行プロセスは次のように簡素化されます。
 
@@ -81,7 +81,7 @@ DM には、悲観的モードで次のシャーディング DDL 使用制限が
 
 1 つの MySQL インスタンスにマージされる 2 つのシャード テーブル ( `table_1`と`table_2`があると仮定します。
 
-![shard-ddl-example-2](https://download.pingcap.com/images/docs/dm/shard-ddl-example-2.png)
+![shard-ddl-example-2](https://docs-download.pingcap.com/media/images/docs/dm/shard-ddl-example-2.png)
 
 データは同じ MySQL インスタンスから取得されるため、すべてのデータは同じbinlogストリームから取得されます。この場合、時系列は次のようになります。
 

@@ -54,7 +54,7 @@ DM のワークフロー:
 
 -   下流に記録された DDL を適用します。
 
-![dm-online-ddl](https://download.pingcap.com/images/docs/dm/dm-online-ddl.png)
+![dm-online-ddl](https://docs-download.pingcap.com/media/images/docs/dm/dm-online-ddl.png)
 
 ワークフローの変更により、次の利点がもたらされます。
 

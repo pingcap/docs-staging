@@ -11,19 +11,19 @@ summary: An overview of the usage of SELECT for the TiDB database.
 
 **選択Stmt:**
 
-![SelectStmt](https://download.pingcap.com/images/docs/sqlgram/SelectStmt.png)
+![SelectStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectStmt.png)
 
 **デュアルから:**
 
-![FromDual](https://download.pingcap.com/images/docs/sqlgram/FromDual.png)
+![FromDual](https://docs-download.pingcap.com/media/images/docs/sqlgram/FromDual.png)
 
 **StmtOpts を選択:**
 
-![SelectStmtOpts](https://download.pingcap.com/images/docs/sqlgram/SelectStmtOpts.png)
+![SelectStmtOpts](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectStmtOpts.png)
 
 **選択StmtFieldList:**
 
-![SelectStmtFieldList](https://download.pingcap.com/images/docs/sqlgram/SelectStmtFieldList.png)
+![SelectStmtFieldList](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectStmtFieldList.png)
 
 **TableRefsClause:**
 
@@ -37,40 +37,40 @@ AsOfClause ::=
 
 **WhereClauseオプション:**
 
-![WhereClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WhereClauseOptional.png)
+![WhereClauseOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/WhereClauseOptional.png)
 
 **選択StmtGroup:**
 
-![SelectStmtGroup](https://download.pingcap.com/images/docs/sqlgram/SelectStmtGroup.png)
+![SelectStmtGroup](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectStmtGroup.png)
 
 **所有条項:**
 
-![HavingClause](https://download.pingcap.com/images/docs/sqlgram/HavingClause.png)
+![HavingClause](https://docs-download.pingcap.com/media/images/docs/sqlgram/HavingClause.png)
 
 **OrderByオプション:**
 
-![OrderByOptional](https://download.pingcap.com/images/docs/sqlgram/OrderByOptional.png)
+![OrderByOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/OrderByOptional.png)
 
 **選択StmtLimit:**
 
-![SelectStmtLimit](https://download.pingcap.com/images/docs/sqlgram/SelectStmtLimit.png)
+![SelectStmtLimit](https://docs-download.pingcap.com/media/images/docs/sqlgram/SelectStmtLimit.png)
 
 **最初または次:**
 
-![FirstOrNext](https://download.pingcap.com/images/docs/sqlgram/FirstOrNext.png)
+![FirstOrNext](https://docs-download.pingcap.com/media/images/docs/sqlgram/FirstOrNext.png)
 
 **FetchFirstOpt:**
 
-![FetchFirstOpt](https://download.pingcap.com/images/docs/sqlgram/FetchFirstOpt.png)
+![FetchFirstOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/FetchFirstOpt.png)
 
 **行または行:**
 
-![RowOrRows](https://download.pingcap.com/images/docs/sqlgram/RowOrRows.png)
+![RowOrRows](https://docs-download.pingcap.com/media/images/docs/sqlgram/RowOrRows.png)
 
 **ロックオプションを選択:**
 
 ```ebnf+diagram
-SelectLockOpt ::= 
+SelectLockOpt ::=
     ( ( 'FOR' 'UPDATE' ( 'OF' TableList )? 'NOWAIT'? )
 |   ( 'LOCK' 'IN' 'SHARE' 'MODE' ) )?
 
@@ -80,7 +80,7 @@ TableList ::=
 
 **WindowClauseオプション**
 
-![WindowClauseOptional](https://download.pingcap.com/images/docs/sqlgram/WindowClauseOptional.png)
+![WindowClauseOptional](https://docs-download.pingcap.com/media/images/docs/sqlgram/WindowClauseOptional.png)
 
 **テーブルサンプルオプション**
 

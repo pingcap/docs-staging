@@ -21,7 +21,7 @@ summary: Learn the deployment solution of two data centers in one city.
 -   クラスタには4つのレプリカがあります。IDC1に2つの投票者レプリカ、IDC2に1つの投票者レプリカと1つの学習者レプリカです。 TiKVコンポーネントの場合、各ラックには適切なラベルが付いています。
 -   Raftプロトコルは、データの一貫性と高可用性を確保するために採用されており、ユーザーには透過的です。
 
-![2-DC-in-1-city architecture](https://download.pingcap.com/images/docs/two-dc-replication-1.png)
+![2-DC-in-1-city architecture](https://docs-download.pingcap.com/media/images/docs/two-dc-replication-1.png)
 
 この展開ソリューションは、クラスタのレプリケーションステータスを制御および識別するための3つのステータスを定義します。これにより、TiKVのレプリケーションモードが制限されます。クラスタのレプリケーションモードは、3つのステータスを自動的かつ適応的に切り替えることができます。詳細については、 [ステータススイッチ](#status-switch)セクションを参照してください。
 
@@ -198,7 +198,7 @@ cat default.json
 
 -   方法1：PD構成ファイルを構成してから、クラスタをデプロイします。
 
-    
+
     ```toml
     [replication-mode]
     replication-mode = "dr-auto-sync"
@@ -214,7 +214,7 @@ cat default.json
 
 -   方法2：クラスタをデプロイした場合は、pd-ctlコマンドを使用してPDの構成を変更します。
 
-    
+
     ```shell
     config set replication-mode dr-auto-sync
     config set replication-mode dr-auto-sync label-key zone

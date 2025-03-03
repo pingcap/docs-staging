@@ -43,7 +43,7 @@ TiDB は etcd の選出メカニズムを使用して、複数の TiDB ノード
 
 DDL 所有者の簡単な図は次のとおりです。
 
-![DDL Owner](https://download.pingcap.com/images/docs/ddl-owner.png)
+![DDL Owner](https://docs-download.pingcap.com/media/images/docs/ddl-owner.png)
 
 `ADMIN SHOW DDL`ステートメントを使用すると、現在の DDL 所有者を表示できます。
 

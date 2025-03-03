@@ -19,31 +19,31 @@ TiDB に作成された新しいテーブルごとに、このテーブルのデ
 
 **分割領域ステートメント:**
 
-![SplitRegionStmt](https://download.pingcap.com/images/docs/sqlgram/SplitRegionStmt.png)
+![SplitRegionStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/SplitRegionStmt.png)
 
 **分割構文オプション:**
 
-![SplitSyntaxOption](https://download.pingcap.com/images/docs/sqlgram/SplitSyntaxOption.png)
+![SplitSyntaxOption](https://docs-download.pingcap.com/media/images/docs/sqlgram/SplitSyntaxOption.png)
 
 **テーブル名:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 **パーティション名リストオプション:**
 
-![PartitionNameListOpt](https://download.pingcap.com/images/docs/sqlgram/PartitionNameListOpt.png)
+![PartitionNameListOpt](https://docs-download.pingcap.com/media/images/docs/sqlgram/PartitionNameListOpt.png)
 
 **分割オプション:**
 
-![SplitOption](https://download.pingcap.com/images/docs/sqlgram/SplitOption.png)
+![SplitOption](https://docs-download.pingcap.com/media/images/docs/sqlgram/SplitOption.png)
 
 **行値:**
 
-![RowValue](https://download.pingcap.com/images/docs/sqlgram/RowValue.png)
+![RowValue](https://docs-download.pingcap.com/media/images/docs/sqlgram/RowValue.png)
 
 **整数64数値:**
 
-![Int64Num](https://download.pingcap.com/images/docs/sqlgram/Int64Num.png)
+![Int64Num](https://docs-download.pingcap.com/media/images/docs/sqlgram/Int64Num.png)
 
 ## 分割リージョンの使用 {#usage-of-split-region}
 

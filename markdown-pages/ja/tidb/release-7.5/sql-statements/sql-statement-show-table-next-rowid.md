@@ -16,11 +16,11 @@ summary: テーブルのNEXT_ROW_IDを表示するSHOW TABLE NEXT_ROW_IDは、�
 
 **ShowTableNextRowIDStmt:**
 
-![ShowTableNextRowIDStmt](https://download.pingcap.com/images/docs/sqlgram/ShowTableNextRowIDStmt.png)
+![ShowTableNextRowIDStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowTableNextRowIDStmt.png)
 
 **テーブル名:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 ## 例 {#examples}
 

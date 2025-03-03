@@ -32,23 +32,23 @@ t1 と t3 はデータ量と分布が異なるため、これら 2 つの実行�
 
 まず、TiDB は結合操作に参加するすべてのノードを取得し、ノードを行番号の昇順に並べ替えます。
 
-![join-reorder-1](https://download.pingcap.com/images/docs/join-reorder-1.png)
+![join-reorder-1](https://docs-download.pingcap.com/media/images/docs/join-reorder-1.png)
 
 その後、行数が最も少ないテーブルが選択され、他の 2 つのテーブルとそれぞれ結合されます。出力結果セットのサイズを比較することにより、TiDB は結果セットが小さいペアを選択します。
 
-![join-reorder-2](https://download.pingcap.com/images/docs/join-reorder-2.png)
+![join-reorder-2](https://docs-download.pingcap.com/media/images/docs/join-reorder-2.png)
 
 その後、TiDB は次の選択ラウンドに入ります。 4 つのテーブルを結合しようとすると、TiDB は引き続き出力結果セットのサイズを比較し、結果セットが小さいペアを選択します。
 
 この場合、3 つのテーブルのみが結合されるため、TiDB は最終的な結合結果を取得します。
 
-![join-reorder-3](https://download.pingcap.com/images/docs/join-reorder-3.png)
+![join-reorder-3](https://docs-download.pingcap.com/media/images/docs/join-reorder-3.png)
 
 ## 例: 結合したテーブルの再配置の動的計画法アルゴリズム {#example-the-dynamic-programming-algorithm-of-join-reorder}
 
 前述の 3 つのテーブル (t1、t2、および t3) を再度例に取ると、動的計画法アルゴリズムはすべての可能性を列挙できます。したがって、 `t1`のテーブル (行数が最も少ないテーブル) から開始する必要がある貪欲なアルゴリズムと比較すると、動的計画法アルゴリズムは次のように結合順序を列挙できます。
 
-![join-reorder-4](https://download.pingcap.com/images/docs/join-reorder-4.png)
+![join-reorder-4](https://docs-download.pingcap.com/media/images/docs/join-reorder-4.png)
 
 この選択が欲張りアルゴリズムよりも優れている場合、動的計画法アルゴリズムはより適切な結合順序を選択できます。
 

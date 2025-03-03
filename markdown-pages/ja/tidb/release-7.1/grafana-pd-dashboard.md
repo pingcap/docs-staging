@@ -21,7 +21,7 @@ Grafana ダッシュボードは、概要、PD、TiDB、TiKV、Node_exporter、D
 -   領域の数: クラスター領域の合計数
 -   異常店舗: 異常店舗の数。通常の値は`0`です。数値が`0`より大きい場合は、少なくとも 1 つのインスタンスが異常であることを意味します。
 -   リージョンの健全性: 保留中のピア、ダウンしているピア、余分なピア、オフライン ピア、欠落しているピア、学習者ピア、不正な名前空間など、異常なリージョンの数によって示されるリージョンの健全性ステータス。一般に、保留中のピアの数は`100`未満である必要があります。欠落しているピアは常に`0`を超えてはなりません。多くの空のリージョンが存在する場合は、時間内にリージョンの結合を有効にしてください。
--   現在のピア数: すべてのクラスター ピアの現在の数![PD Dashboard - Header](https://download.pingcap.com/images/docs/pd-dashboard-header-v4.png)
+-   現在のピア数: すべてのクラスター ピアの現在の数![PD Dashboard - Header](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-header-v4.png)
 
 ## 主要な指標の説明 {#key-metrics-description}
 
@@ -35,7 +35,7 @@ Grafana ダッシュボードは、概要、PD、TiDB、TiKV、Node_exporter、D
 -   ラベルの分布: クラスタ内のラベルの分布状況
 -   ストア制限: ストアでのスケジュールのフロー制御制限
 
-![PD Dashboard - Cluster metrics](https://download.pingcap.com/images/docs/pd-dashboard-cluster-v4.png)
+![PD Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-cluster-v4.png)
 
 ## オペレーター {#operator}
 
@@ -48,7 +48,7 @@ Grafana ダッシュボードは、概要、PD、TiDB、TiKV、Node_exporter、D
 -   オペレータ終了期間: 終了したオペレータの最大期間
 -   オペレーター ステップの継続時間: 完了したオペレーター ステップの最大継続時間
 
-![PD Dashboard - Operator metrics](https://download.pingcap.com/images/docs/pd-dashboard-operator-v4.png)
+![PD Dashboard - Operator metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-operator-v4.png)
 
 ## 統計- 残高 {#statistics-balance}
 
@@ -64,7 +64,7 @@ Grafana ダッシュボードは、概要、PD、TiDB、TiKV、Node_exporter、D
 -   ストア リーダー数: TiKV インスタンスごとのリーダー数
 -   ストアリージョン数: TiKV インスタンスごとのリージョン数
 
-![PD Dashboard - Balance metrics](https://download.pingcap.com/images/docs/pd-dashboard-balance-v4.png)
+![PD Dashboard - Balance metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-balance-v4.png)
 
 ## 統計- ホットライト {#statistics-hot-write}
 
@@ -79,7 +79,7 @@ Grafana ダッシュボードは、概要、PD、TiDB、TiKV、Node_exporter、D
 -   ホットスポット移動リーダーの方向: ホットスポット スケジュールにおけるリーダーの移動の方向。正の数は、インスタンスへのスケジュールを意味します。負の数は、インスタンスの外でスケジュールを設定することを意味します
 -   ホットスポット移動ピアの方向: ホットスポット スケジューリングにおけるピアの移動の方向。正の数は、インスタンスへのスケジュールを意味します。負の数はインスタンス外でスケジュールすることを意味します
 
-![PD Dashboard - Hot write metrics](https://download.pingcap.com/images/docs/pd-dashboard-hotwrite-v4.png)
+![PD Dashboard - Hot write metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-hotwrite-v4.png)
 
 ## 統計- ホットリード {#statistics-hot-read}
 
@@ -89,7 +89,7 @@ Grafana ダッシュボードは、概要、PD、TiDB、TiKV、Node_exporter、D
 -   読み取りレート キーのストア: 各 TiKV インスタンスの読み取りキーの合計
 -   ホット キャッシュ読み取りエントリ番号: 各 TiKV インスタンスの読み取りホットスポット統計モジュール内のピアの数
 
-![PD Dashboard - Hot read metrics](https://download.pingcap.com/images/docs/pd-dashboard-hotread-v4.png)
+![PD Dashboard - Hot read metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-hotread-v4.png)
 
 ## スケジューラ {#scheduler}
 
@@ -107,14 +107,14 @@ Grafana ダッシュボードは、概要、PD、TiDB、TiKV、Node_exporter、D
 -   フィルター ソース: ストアがスケジュール ソースとして選択されたものの、フィルターを通過できなかった試行回数
 -   バランスの方向: ストアがスケジュールのターゲットまたはソースとして選択された回数
 
-![PD Dashboard - Scheduler metrics](https://download.pingcap.com/images/docs/pd-dashboard-scheduler-v4.png)
+![PD Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-scheduler-v4.png)
 
 ## gRPC {#grpc}
 
 -   完了したコマンドの割合: gRPC コマンドが完了したコマンド タイプごとの割合
 -   99% 完了したコマンドの継続時間: gRPC コマンドが完了したコマンド タイプごとの割合 (P99)
 
-![PD Dashboard - gRPC metrics](https://download.pingcap.com/images/docs/pd-dashboard-grpc-v2.png)
+![PD Dashboard - gRPC metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-grpc-v2.png)
 
 ## etcd {#etcd}
 
@@ -127,7 +127,7 @@ Grafana ダッシュボードは、概要、PD、TiDB、TiKV、Node_exporter、D
 -   Raft がコミットしたインデックス: Raftの最後にコミットされたインデックス
 -   Raft適用インデックス: Raftの最後に適用されたインデックス
 
-![PD Dashboard - etcd metrics](https://download.pingcap.com/images/docs/pd-dashboard-etcd-v2.png)
+![PD Dashboard - etcd metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-etcd-v2.png)
 
 ## TiDB {#tidb}
 
@@ -135,7 +135,7 @@ Grafana ダッシュボードは、概要、PD、TiDB、TiKV、Node_exporter、D
 -   ハンドル リクエスト数: TiDB リクエストの数
 -   リクエストの処理時間: TiDB リクエストの処理に費やされた時間。 `100ms`未満である必要があります(P99)
 
-![PD Dashboard - TiDB metrics](https://download.pingcap.com/images/docs/pd-dashboard-tidb-v4.png)
+![PD Dashboard - TiDB metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-tidb-v4.png)
 
 ## ハートビート {#heartbeat}
 
@@ -146,11 +146,11 @@ Grafana ダッシュボードは、概要、PD、TiDB、TiKV、Node_exporter、D
 -   リージョンスケジュール プッシュ: TiKV インスタンスごとの PD から送信された対応するスケジュール コマンドの数
 -   99%リージョンのハートビートレイテンシー: TiKV インスタンスごとのハートビートレイテンシー(P99)
 
-![PD Dashboard - Heartbeat metrics](https://download.pingcap.com/images/docs/pd-dashboard-heartbeat-v4.png)
+![PD Dashboard - Heartbeat metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-heartbeat-v4.png)
 
 ## リージョンstorage {#region-storage}
 
 -   Syncer Index: リーダーによって記録されたリージョン変更履歴の最大インデックス
 -   履歴の最後のインデックス:リージョン変更履歴がフォロワーと正常に同期された最後のインデックス
 
-![PD Dashboard - Region storage](https://download.pingcap.com/images/docs/pd-dashboard-region-storage.png)
+![PD Dashboard - Region storage](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-region-storage.png)

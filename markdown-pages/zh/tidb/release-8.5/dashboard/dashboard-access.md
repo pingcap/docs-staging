@@ -33,7 +33,7 @@ TiDB Dashboard 可在常见的、更新及时的桌面浏览器中使用，具�
 
 ## 登录
 
-访问 TiDB Dashboard 将会显示用户登录界面。 
+访问 TiDB Dashboard 将会显示用户登录界面。
 
 - 可使用 TiDB 的 root 用户登录。
 - 也可以使用单点登录 (Single Sign-On, SSO)。详情参见[配置 TiDB Dashboard 使用 SSO 登录](/dashboard/dashboard-session-sso.md)。
@@ -57,10 +57,10 @@ TiDB Dashboard 目前支持以下语言：
 
 在登录界面中，可点击 **Switch Language** 下拉框切换界面显示语言：
 
-![切换语言](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-access-switch-language.png)
+![切换语言](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-access-switch-language.png)
 
 ## 登出
 
 登录后，在左侧导航处点击登录用户名，可切换到用户页面。在用户页面点击**登出** (Logout) 按钮即可登出当前用户。登出后，需重新输入用户名密码。
 
-![登出](https://download.pingcap.com/images/docs-cn/dashboard/dashboard-access-logout.png)
+![登出](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-access-logout.png)

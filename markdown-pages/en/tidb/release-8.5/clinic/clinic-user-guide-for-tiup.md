@@ -71,7 +71,7 @@ Before using PingCAP Clinic, you need to install Diag (a component to collect da
 
     - Click the icon in the lower-right corner of the Cluster page, select **Get Access Token For Diag Tool**, and click **+** in the pop-up window. Make sure that you have copied and saved the token that is displayed.
 
-        ![Get the Token](https://download.pingcap.com/images/docs/clinic-get-token.png)
+        ![Get the Token](https://docs-download.pingcap.com/media/images/docs/clinic-get-token.png)
 
     > **Note:**
     >
@@ -175,7 +175,7 @@ With Diag, you can collect data from the TiDB clusters and the DM clusters deplo
     - `--include`: only collects specific types of data. The optional values are `system`, `monitor`, `log`, `config`, and `db_vars`. To include two or more types, you can use `,` as a separator between the types.
     - `--exclude`: does not collect specific types of data. The optional values are `system`, `monitor`, `log`, `config`, and `db_vars`. To exclude two or more types, you can use `,` as a separator between the types.
     - `--metricsfilter`: only collects specified Prometheus metrics. You can specify metrics using a comma-separated list of metric prefixes. For example, `--metricsfilter=tidb,pd` collects metrics that start with `tidb` and metrics that start with `pd`.
-    
+
         > **Tip:**
         >
         > To get available metric prefixes, you can query the TiDB monitoring API using the following command:

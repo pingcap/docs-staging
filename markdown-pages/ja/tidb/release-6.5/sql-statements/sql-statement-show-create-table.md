@@ -11,11 +11,11 @@ summary: An overview of the usage of SHOW CREATE TABLE for the TiDB database.
 
 **ShowCreateTableStmt:**
 
-![ShowCreateTableStmt](https://download.pingcap.com/images/docs/sqlgram/ShowCreateTableStmt.png)
+![ShowCreateTableStmt](https://docs-download.pingcap.com/media/images/docs/sqlgram/ShowCreateTableStmt.png)
 
 **テーブル名:**
 
-![TableName](https://download.pingcap.com/images/docs/sqlgram/TableName.png)
+![TableName](https://docs-download.pingcap.com/media/images/docs/sqlgram/TableName.png)
 
 ## 例 {#examples}
 

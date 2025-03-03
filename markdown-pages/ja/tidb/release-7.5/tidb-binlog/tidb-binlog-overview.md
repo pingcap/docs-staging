@@ -24,7 +24,7 @@ TiDB Binlog には次の機能があります。
 
 TiDB Binlogアーキテクチャは次のとおりです。
 
-![TiDB Binlog architecture](https://download.pingcap.com/images/docs/tidb-binlog-cluster-architecture.png)
+![TiDB Binlog architecture](https://docs-download.pingcap.com/media/images/docs/tidb-binlog-cluster-architecture.png)
 
 TiDB Binlogクラスターは、 PumpとDrainerで構成されます。
 

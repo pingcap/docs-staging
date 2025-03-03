@@ -273,7 +273,7 @@ The xx.dot is the result returned by the above statement.
 
 If your computer has no `dot` program, copy the result to [this website](http://www.webgraphviz.com/) to get a tree diagram:
 
-![Explain Dot](https://download.pingcap.com/images/docs/explain_dot.png)
+![Explain Dot](https://docs-download.pingcap.com/media/images/docs/explain_dot.png)
 
 </div>
 

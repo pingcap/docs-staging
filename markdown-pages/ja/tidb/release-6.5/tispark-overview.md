@@ -5,7 +5,7 @@ summary: Use TiSpark to provide an HTAP solution to serve as a one-stop solution
 
 # TiSpark ユーザーガイド {#tispark-user-guide}
 
-![TiSpark architecture](https://download.pingcap.com/images/docs/tispark-architecture.png)
+![TiSpark architecture](https://docs-download.pingcap.com/media/images/docs/tispark-architecture.png)
 
 ## TiSpark 対TiFlash {#tispark-vs-tiflash}
 
