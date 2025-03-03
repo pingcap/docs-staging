@@ -127,7 +127,7 @@ Before using PingCAP Clinic, you need to install Diag and prepare an environment
 
     - If the network where your cluster is located can access the internet, you can directly upload the folder with collected data using the following command:
 
-
+        
         ```bash
         tiup diag upload ${filepath}
         ```
