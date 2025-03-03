@@ -107,7 +107,7 @@ You can perform full collection using the following syntax.
 
 + To collect statistics of all the tables in `TableNameList`:
 
-
+    
     ```sql
     ANALYZE TABLE TableNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -156,7 +156,7 @@ If a table has many columns, collecting statistics on all the columns can cause 
 
 - To collect statistics on specific columns, use the following syntax:
 
-
+    
     ```sql
     ANALYZE TABLE TableName COLUMNS ColumnNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -189,7 +189,7 @@ If a table has many columns, collecting statistics on all the columns can cause 
 
     2. After the query pattern of your business is relatively stable, collect statistics on `PREDICATE COLUMNS` by using the following syntax:
 
-
+        
         ```sql
         ANALYZE TABLE TableName PREDICATE COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
         ```
@@ -203,7 +203,7 @@ If a table has many columns, collecting statistics on all the columns can cause 
 
 - To collect statistics on all columns and indexes, use the following syntax:
 
-
+    
     ```sql
     ANALYZE TABLE TableName ALL COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -289,14 +289,14 @@ When `IndexNameList` is empty, this syntax collects statistics on all indexes in
 
 - To collect statistics on all partitions in `PartitionNameList` in `TableName`, use the following syntax:
 
-
+    
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
 
 - To collect index statistics on all partitions in `PartitionNameList` in `TableName`, use the following syntax:
 
-
+    
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -307,7 +307,7 @@ When `IndexNameList` is empty, this syntax collects statistics on all indexes in
     >
     > Currently, collecting statistics on `PREDICATE COLUMNS` is an experimental feature. It is not recommended that you use it in production environments.
 
-
+    
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [COLUMNS ColumnNameList|PREDICATE COLUMNS|ALL COLUMNS] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -338,14 +338,14 @@ You can perform incremental collection using the following syntax.
 
 + To incrementally collect statistics on index columns in all `IndexNameLists` in `TableName`:
 
-
+    
     ```sql
     ANALYZE INCREMENTAL TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
 
 + To incrementally collect statistics on index columns for partitions in all `PartitionNameLists` in `TableName`:
 
-
+    
     ```sql
     ANALYZE INCREMENTAL TABLE TableName PARTITION PartitionNameList INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
@@ -376,7 +376,7 @@ Since TiDB v6.0, TiDB supports using the `KILL` statement to terminate an `ANALY
 
 1. Execute the following SQL statement:
 
-
+    
     ```sql
     SHOW ANALYZE STATUS
     ```
@@ -739,21 +739,21 @@ The interface to export statistics is as follows:
 
 + To obtain the JSON format statistics of the `${table_name}` table in the `${db_name}` database:
 
-
+    
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}
     ```
 
     For example:
 
-
+    
     ```
     curl -s http://127.0.0.1:10080/stats/dump/test/t1 -o /tmp/t1.json
     ```
 
 + To obtain the JSON format statistics of the `${table_name}` table in the `${db_name}` database at specific time:
 
-
+    
     ```
     http://${tidb-server-ip}:${tidb-server-status-port}/stats/dump/${db_name}/${table_name}/${yyyyMMddHHmmss}
     ```

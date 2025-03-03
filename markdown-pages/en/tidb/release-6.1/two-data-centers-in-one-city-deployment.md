@@ -207,7 +207,7 @@ The replication mode is controlled by PD. You can configure the replication mode
 
 - Method 1: Configure the PD configuration file, and then deploy a cluster.
 
-
+    
     ```toml
     [replication-mode]
     replication-mode = "dr-auto-sync"
@@ -222,7 +222,7 @@ The replication mode is controlled by PD. You can configure the replication mode
 
 - Method 2: If you have deployed a cluster, use pd-ctl commands to modify the configurations of PD.
 
-
+    
     ```shell
     config set replication-mode dr-auto-sync
     config set replication-mode dr-auto-sync label-key az

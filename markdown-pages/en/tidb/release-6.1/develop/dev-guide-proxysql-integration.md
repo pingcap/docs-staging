@@ -688,11 +688,11 @@ To use ProxySQL as a proxy for TiDB, you need to configure ProxySQL. To do so, y
 2. Configure the TiDB clusters to be used, where you can add one or multiple TiDB clusters to ProxySQL. The following statement will add one TiDB Dedicated cluster for example. You need to replace `<tidb cloud dedicated cluster host>` and `<tidb cloud dedicated cluster port>` with your TiDB Cloud endpoint and port (the default port is `4000`).
 
     ```sql
-    INSERT INTO mysql_servers(hostgroup_id, hostname, port)
-    VALUES
+    INSERT INTO mysql_servers(hostgroup_id, hostname, port) 
+    VALUES 
       (
         0,
-        '<tidb cloud dedicated cluster host>',
+        '<tidb cloud dedicated cluster host>', 
         <tidb cloud dedicated cluster port>
       );
     LOAD mysql servers TO runtime;
@@ -709,13 +709,13 @@ To use ProxySQL as a proxy for TiDB, you need to configure ProxySQL. To do so, y
 
     ```sql
     INSERT INTO mysql_users(
-      username, password, active, default_hostgroup,
+      username, password, active, default_hostgroup, 
       transaction_persistent
-    )
-    VALUES
+    ) 
+    VALUES 
       (
-        '<tidb cloud dedicated cluster username>',
-        '<tidb cloud dedicated cluster password>',
+        '<tidb cloud dedicated cluster username>', 
+        '<tidb cloud dedicated cluster password>', 
         1, 0, 1
       );
     LOAD mysql users TO runtime;

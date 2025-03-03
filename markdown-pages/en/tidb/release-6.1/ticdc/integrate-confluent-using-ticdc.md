@@ -229,7 +229,7 @@ create or replace TABLE TIDB_TEST_ITEM (
     );
     ```
 
-2. Create a stream for `TIDB_TEST_ITEM` and set `append_only` to `true` as follows.
+2. Create a stream for `TIDB_TEST_ITEM` and set `append_only` to `true` as follows. 
 
     ```
     create or replace stream TEST_ITEM_STREAM on table TIDB_TEST_ITEM append_only=true;
