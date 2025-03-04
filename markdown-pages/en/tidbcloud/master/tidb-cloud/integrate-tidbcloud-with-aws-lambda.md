@@ -42,7 +42,7 @@ Before getting started, ensure that you have the following:
 
 > **Note:**
 >
-> - When you create the AWS resources, it is recommended to use `us-east-1` as your cluster region. This is because the Lambda function code in this demo hardcodes the region as `us-east-1`, and the code bundle is stored in the `us-east-1` region.
+> - When you create the AWS resources, it is recommended to use `us-east-1` as your cluster region. This is because the Lambda function code in this demo hardcodes the region as `us-east-1`, and the code bundle is stored in the `us-east-1` region. 
 > - If you use a different region, you need to follow the following instructions to modify the Lambda function code, rebuild it, and upload the code bundle to your own S3 bucket.
 
 <details>
@@ -198,5 +198,5 @@ After the stack has been created, you can use the project as follows:
 
 To avoid unnecessary charges, clean up all resources that have been created.
 
-1. Access the [AWS Management Console](https://console.aws.amazon.com/cloudformation).
+1. Access the [AWS Management Console](https://console.aws.amazon.com/cloudformation). 
 2. Delete the AWS CloudFormation stack that you created.

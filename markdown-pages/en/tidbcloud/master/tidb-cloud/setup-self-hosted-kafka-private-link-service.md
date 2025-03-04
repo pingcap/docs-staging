@@ -14,7 +14,7 @@ The mechanism works as follows:
 3. Each Kafka broker is mapped to a unique port of endpoints within the TiDB Cloud VPC.
 4. Leverage the Kafka bootstrap mechanism and AWS resources to achieve the mapping.
 
-The following diagram shows the mechanism.
+The following diagram shows the mechanism. 
 
 ![Connect to AWS Self-Hosted Kafka Private Link Service](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/changefeed/connect-to-aws-self-hosted-kafka-privatelink-service.jpeg)
 
@@ -22,7 +22,7 @@ The document provides an example of connecting to a Kafka Private Link service d
 
 ## Prerequisites
 
-1. Ensure that you have the following authorization to set up a Kafka Private Link service in your own AWS account.
+1. Ensure that you have the following authorization to set up a Kafka Private Link service in your own AWS account. 
 
     - Manage EC2 nodes
     - Manage VPC
@@ -45,13 +45,13 @@ The document provides an example of connecting to a Kafka Private Link service d
     5. Select **Number of AZs**. In this example, select **3 AZs**. Note down the IDs of the AZs in which you want to deploy your Kafka cluster. If you want to know the relationship between your AZ names and AZ IDs, see [Availability Zone IDs for your AWS resources](https://docs.aws.amazon.com/ram/latest/userguide/working-with-az-ids.html) to find it.
     6. Enter a unique **Kafka Advertised Listener Pattern** for your Kafka Private Link service.
         1. Input a unique random string. It can only include numbers or lowercase letters. You will use it to generate **Kafka Advertised Listener Pattern** later.
-        2. Click **Check usage and generate** to check if the random string is unique and generate **Kafka Advertised Listener Pattern** that will be used to assemble the EXTERNAL advertised listener for Kafka brokers.
+        2. Click **Check usage and generate** to check if the random string is unique and generate **Kafka Advertised Listener Pattern** that will be used to assemble the EXTERNAL advertised listener for Kafka brokers. 
 
 Note down all the deployment information. You need to use it to configure your Kafka Private Link service later.
 
 The following table shows an example of the deployment information.
 
-| Information     | Value    | Note    |
+| Information     | Value    | Note    | 
 |--------|-----------------|---------------------------|
 | Region    | Oregon (`us-west-2`)    |  N/A |
 | Principal of TiDB Cloud AWS Account | `arn:aws:iam::<account_id>:root`     |    N/A  |
@@ -62,7 +62,7 @@ The following table shows an example of the deployment information.
 
 If you need to deploy a new cluster, follow the instructions in [Deploy a new Kafka cluster](#deploy-a-new-kafka-cluster).
 
-If you need to expose an existing cluster, follow the instructions in [Reconfigure a running Kafka cluster](#reconfigure-a-running-kafka-cluster).
+If you need to expose an existing cluster, follow the instructions in [Reconfigure a running Kafka cluster](#reconfigure-a-running-kafka-cluster). 
 
 ### Deploy a new Kafka cluster
 
@@ -70,7 +70,7 @@ If you need to expose an existing cluster, follow the instructions in [Reconfigu
 
 The Kafka VPC requires the following:
 
-- Three private subnets for brokers, one for each AZ.
+- Three private subnets for brokers, one for each AZ. 
 - One public subnet in any AZ with a bastion node that can connect to the internet and three private subnets, which makes it easy to set up the Kafka cluster. In a production environment, you might have your own bastion node that can connect to the Kafka VPC.
 
 Before creating subnets, create subnets in AZs based on the mappings of AZ IDs and AZ names. Take the following mapping as an example.
@@ -79,7 +79,7 @@ Before creating subnets, create subnets in AZs based on the mappings of AZ IDs a
 - `usw2-az2` => `us-west-2c`
 - `usw2-az3` => `us-west-2b`
 
-Create private subnets in the following AZs:
+Create private subnets in the following AZs: 
 
 - `us-west-2a`
 - `us-west-2c`
@@ -141,7 +141,7 @@ Take the following steps to create the Kafka VPC.
 
        - **Name**: `kafka-vpc-igw-route-table`
        - **VPC**: `Kafka VPC`
-       - **Route**:
+       - **Route**: 
            - **Destination**: `0.0.0.0/0`
            - **Target**: `Internet Gateway`, `kafka-vpc-igw`
 
@@ -264,7 +264,7 @@ Go to the [EC2 Listing page](https://console.aws.amazon.com/ec2/home#Instances:)
 
 Each node will act as a broker and controller role. Do the following for each broker:
 
-1. For the `listeners` item, all three brokers are the same and act as broker and controller roles:
+1. For the `listeners` item, all three brokers are the same and act as broker and controller roles: 
 
     1. Configure the same CONTROLLER listener for all **controller** role nodes. If you only want to add the **broker** role nodes, you do not need the CONTROLLER listener in `server.properties`.
     2. Configure two **broker** listeners, `INTERNAL` for internal access and `EXTERNAL` for external access from TiDB Cloud.
@@ -276,7 +276,7 @@ Each node will act as a broker and controller role. Do the following for each br
 
         - `<port>` differentiates brokers from Kafka Private Link Service access points. Plan a port range for EXTERNAL advertised listeners of all brokers. These ports do not have to be actual ports listened to by brokers. They are ports listened to by the load balancer for Private Link Service that will forward requests to different brokers.
         - `AZ ID` in **Kafka Advertised Listener Pattern** indicates where the broker is deployed. TiDB Cloud will route requests to different endpoint DNS names based on the AZ ID.
-
+     
       It is recommended to configure different broker IDs for different brokers to make it easy for troubleshooting.
 
 3. The planning values are as follows:
@@ -288,7 +288,7 @@ Each node will act as a broker and controller role. Do the following for each br
 
 **2.4.2. Create a configuration file**
 
-Use SSH to log in to every broker node. Create a configuration file `~/config/server.properties` with the following content.
+Use SSH to log in to every broker node. Create a configuration file `~/config/server.properties` with the following content.  
 
 ```properties
 # brokers in usw2-az1
@@ -390,7 +390,7 @@ rm -rf $KAFKA_LOG_DIR
 mkdir -p $KAFKA_LOG_DIR
 
 # Magic id: BRl69zcmTFmiPaoaANybiw, you can use your own
-$KAFKA_STORAGE_CMD format -t "BRl69zcmTFmiPaoaANybiw" -c "$KAFKA_CONFIG_DIR/server.properties" > $KAFKA_LOG_DIR/server_format.log
+$KAFKA_STORAGE_CMD format -t "BRl69zcmTFmiPaoaANybiw" -c "$KAFKA_CONFIG_DIR/server.properties" > $KAFKA_LOG_DIR/server_format.log   
 LOG_DIR=$KAFKA_LOG_DIR nohup $KAFKA_START_CMD "$KAFKA_CONFIG_DIR/server.properties" &
 ```
 
@@ -412,7 +412,7 @@ LOG_DIR=$KAFKA_LOG_DIR nohup $KAFKA_START_CMD "$KAFKA_CONFIG_DIR/server.properti
     ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:39092
     # Expected output for the last 3 lines (the actual order might be different)
     # The difference in the output from "bootstrap from INTERNAL listener" is that exceptions or errors might occur because advertised listeners cannot be resolved in Kafka VPC.
-    # We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Link.
+    # We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Link. 
     b1.usw2-az1.abc.us-west-2.aws.3199015.tidbcloud.com:9093 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b2.usw2-az2.abc.us-west-2.aws.3199015.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b3.usw2-az3.abc.us-west-2.aws.3199015.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
@@ -448,7 +448,7 @@ LOG_DIR=$KAFKA_LOG_DIR nohup $KAFKA_START_CMD "$KAFKA_CONFIG_DIR/server.properti
     done
     }
     create_topic
-    produce_messages
+    produce_messages 
     ```
 
 3. Create a consumer script `consume.sh` in the bastion node.
@@ -477,7 +477,7 @@ LOG_DIR=$KAFKA_LOG_DIR nohup $KAFKA_START_CMD "$KAFKA_CONFIG_DIR/server.properti
 4. Execute `produce.sh` and `consume.sh` to verify that the Kafka cluster is running. These scripts will also be reused for later network connection testing. The script will create a topic with `--partitions 3 --replication-factor 3`. Ensure that all these three brokers contain data. Ensure that the script will connect to all three brokers to guarantee that network connection will be tested.
 
     ```shell
-    # Test write message.
+    # Test write message. 
     ./produce.sh {one_of_broker_ip}:9092
     ```
 
@@ -536,7 +536,7 @@ The following configuration applies to a Kafka KRaft cluster. The ZK mode config
 
         - `<port>` differentiates brokers from Kafka Private Link Service access points. Plan a port range for EXTERNAL advertised listeners of all brokers, for example, `range from 9093`. These ports do not have to be actual ports listened to by brokers. They are ports listened to by the load balancer for Private Link Service that will forward requests to different brokers.
         - `AZ ID` in **Kafka Advertised Listener Pattern** indicates where the broker is deployed. TiDB Cloud will route requests to different endpoint DNS names based on the AZ ID.
-
+      
       It is recommended to configure different broker IDs for different brokers to make it easy for troubleshooting.
 
 2. Use SSH to log in to each broker node. Modify the configuration file of each broker with the following content:
@@ -549,13 +549,13 @@ The following configuration applies to a Kafka KRaft cluster. The ZK mode config
 
     # Add EXTERNAL advertised listeners based on the "Kafka Advertised Listener Pattern" in "Prerequisites" section
     # 1. The pattern for AZ(ID: usw2-az1) is "<broker_id>.usw2-az1.abc.us-west-2.aws.3199015.tidbcloud.com:<port>"
-    # 2. So the EXTERNAL can be "b1.usw2-az1.abc.us-west-2.aws.3199015.tidbcloud.com:9093", replace <broker_id> with "b" prefix plus "node.id" properties, replace <port> with a unique port(9093) in EXTERNAL advertised listener ports range
+    # 2. So the EXTERNAL can be "b1.usw2-az1.abc.us-west-2.aws.3199015.tidbcloud.com:9093", replace <broker_id> with "b" prefix plus "node.id" properties, replace <port> with a unique port(9093) in EXTERNAL advertised listener ports range 
     advertised.listeners=...,EXTERNAL://b1.usw2-az1.abc.us-west-2.aws.3199015.tidbcloud.com:9093
 
     # Configure EXTERNAL map
     listener.security.protocol.map=...,EXTERNAL:PLAINTEXT
     ```
-
+ 
     ```properties
     # brokers in usw2-az2
 
@@ -609,8 +609,8 @@ export JAVA_HOME=/home/ec2-user/jdk-22.0.2
 ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:39092
 
 # Expected output for the last 3 lines (the actual order might be different)
-# There will be some exceptions or errors because advertised listeners cannot be resolved in your Kafka network.
-# We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Link.
+# There will be some exceptions or errors because advertised listeners cannot be resolved in your Kafka network. 
+# We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Link. 
 b1.usw2-az1.abc.us-west-2.aws.3199015.tidbcloud.com:9093 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
 b2.usw2-az2.abc.us-west-2.aws.3199015.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
 b3.usw2-az3.abc.us-west-2.aws.3199015.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
@@ -633,7 +633,7 @@ Do the following to set up the load balancer:
 
 1. Go to [Target groups](https://console.aws.amazon.com/ec2/home#CreateTargetGroup:) to create four target groups.
 
-    - Bootstrap target group
+    - Bootstrap target group 
 
         - **Target type**: `Instances`
         - **Target group name**: `bootstrap-target-group`
@@ -683,7 +683,7 @@ Do the following to set up the load balancer:
     - **Schema**: `Internal`
     - **Load balancer IP address type**: `IPv4`
     - **VPC**: `Kafka VPC`
-    - **Availability Zones**:
+    - **Availability Zones**: 
         - `usw2-az1` with `broker-usw2-az1 subnet`
         - `usw2-az2` with `broker-usw2-az2 subnet`
         - `usw2-az3` with `broker-usw2-az3 subnet`
@@ -708,7 +708,7 @@ Do the following to set up the load balancer:
     b2.usw2-az2.abc.us-west-2.aws.3199015.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b3.usw2-az3.abc.us-west-2.aws.3199015.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
 
-    # You can also try bootstrap in other ports 9093/9094/9095. It will succeed probabilistically because NLB in AWS resolves LB DNS to the IP address of any availability zone and disables cross-zone load balancing by default.
+    # You can also try bootstrap in other ports 9093/9094/9095. It will succeed probabilistically because NLB in AWS resolves LB DNS to the IP address of any availability zone and disables cross-zone load balancing by default. 
     # If you enable cross-zone load balancing in LB, it will succeed. However, it is unnecessary and might cause additional cross-AZ traffic.
     ```
 
@@ -748,7 +748,7 @@ Now you have successfully finished the task.
 
 If you have already followed this document to successfully set up the connection from the first project, you can connect to the same Kafka Private Link service from the second project as follows:
 
-1. Follow instructions from the beginning of this document.
+1. Follow instructions from the beginning of this document. 
 
 2. When you proceed to [Step 1. Set up a Kafka cluster](#step-1-set-up-a-kafka-cluster), follow [Reconfigure a running Kafka cluster](#reconfigure-a-running-kafka-cluster) to create another group of EXTERNAL listeners and advertised listeners. You can name it as **EXTERNAL2**. Note that the port range of **EXTERNAL2** cannot overlap with the **EXTERNAL**.
 

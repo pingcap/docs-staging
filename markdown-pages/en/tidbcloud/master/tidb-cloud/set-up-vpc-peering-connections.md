@@ -127,7 +127,7 @@ You can approve and configure the VPC peering connection using AWS CLI or AWS da
 
 1. Install AWS Command Line Interface (AWS CLI).
 
-
+    
     ```bash
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
     unzip awscliv2.zip
@@ -136,14 +136,14 @@ You can approve and configure the VPC peering connection using AWS CLI or AWS da
 
 2. Configure AWS CLI according to your account information. To get the information required by AWS CLI, see [AWS CLI configuration basics](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).
 
-
+    
     ```bash
     aws configure
     ```
 
 3. Replace the following variable values with your account information.
 
-
+    
     ```bash
     # Sets up the related variables.
     pcx_tidb_to_app_id="<TiDB peering id>"
@@ -164,13 +164,13 @@ You can approve and configure the VPC peering connection using AWS CLI or AWS da
 
 4. Run the following commands.
 
-
+    
     ```bash
     # Accepts the VPC peering connection request.
     aws ec2 accept-vpc-peering-connection --vpc-peering-connection-id "$pcx_tidb_to_app_id"
     ```
 
-
+    
     ```bash
     # Creates route table rules.
     aws ec2 describe-route-tables --region "$app_region" --filters Name=vpc-id,Values="$app_vpc_id" --query 'RouteTables[*].RouteTableId' --output text | tr "\t" "\n" | while read row
@@ -184,7 +184,7 @@ You can approve and configure the VPC peering connection using AWS CLI or AWS da
     >
     > Sometimes, even if the route table rules are successfully created, you might still get the `An error occurred (MissingParameter) when calling the CreateRoute operation: The request must contain the parameter routeTableId` error. In this case, you can check the created rules and ignore the error.
 
-
+    
     ```bash
     # Modifies the VPC attribute to enable DNS-hostname and DNS-support.
     aws ec2 modify-vpc-attribute --vpc-id "$app_vpc_id" --enable-dns-hostnames
