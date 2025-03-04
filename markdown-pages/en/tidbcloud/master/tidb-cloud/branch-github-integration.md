@@ -1,9 +1,9 @@
 ---
-title: Integrate TiDB Cloud Serverless Branching (Beta) with GitHub
+title: Integrate TiDB Cloud Serverless Branching (Beta) with GitHub 
 summary: Learn how to integrate the TiDB Cloud Serverless branching feature with GitHub.
 ---
 
-# Integrate TiDB Cloud Serverless Branching (Beta) with GitHub
+# Integrate TiDB Cloud Serverless Branching (Beta) with GitHub 
 
 > **Note:**
 >
@@ -151,7 +151,7 @@ Here are the main steps to create the workflow:
            echo "The user is ${{ steps.wait-for-branch.outputs.user }}"
            echo "The password is ${{ steps.wait-for-branch.outputs.password }}"
    ```
-
+   
    - `token`: GitHub will automatically create a [GITHUB_TOKEN](https://docs.github.com/en/actions/security-guides/automatic-token-authentication) secret. You can use it directly.
    - `public-key` and `private-key`: The TiDB Cloud [API key](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management).
 

@@ -15,7 +15,7 @@ Currently, the TiDB Node Group feature is only available upon request. To reques
 
 1. Log in to the [TiDB Cloud console](https://tidbcloud.com).
 2. Click **?** in the lower-right corner.
-3. Click **Request Support**.
+3. Click **Request Support**. 
 4. In the **Subject** field, fill in **Apply for TiDB Node Group feature**.
 5. Click **Submit**.
 
@@ -23,10 +23,10 @@ Currently, the TiDB Node Group feature is only available upon request. To reques
 
 - TiDB Node Group: A TiDB node group manages the grouping of TiDB nodes and maintains the mapping between endpoints and TiDB nodes.
 
-    - Each TiDB node group has a unique endpoint.
-    - When you delete a TiDB node group, the related network setting (such as private link and IP access list) will be deleted too.
+    - Each TiDB node group has a unique endpoint. 
+    - When you delete a TiDB node group, the related network setting (such as private link and IP access list) will be deleted too. 
 
-- Default Group: When a cluster is created, a default TiDB node group is created. Therefore, each cluster has a default group. The default group cannot be deleted.
+- Default Group: When a cluster is created, a default TiDB node group is created. Therefore, each cluster has a default group. The default group cannot be deleted. 
 
 ## Prerequisites
 
@@ -45,11 +45,11 @@ To create a TiDB node group, perform the following steps:
     - TiDB
         - **vCPU + RAM**: choose the [TiDB size](/tidb-cloud/size-your-cluster.md#size-tidb) you need. Only TiDB nodes with 8 vCPU and 16 GiB memory or higher specifications are supported.
         - **Node Groups**: click **+** to create a new TiDB node group. You can also use the default group and enter the number of TiDB nodes in the **DefaultGroup** field.
-
+    
     - TiKV
         - **vCPU + RAM**: choose the [TiKV size](/tidb-cloud/size-your-cluster.md#size-tikv) you need.
         - **Storage x Nodes**: choose the storage size and the number of TiKV nodes.
-
+    
     - TiFlash (optional)
         - **vCPU + RAM**: choose the [TiFlash size](/tidb-cloud/size-your-cluster.md#size-tiflash) you need.
         - **Storage x Nodes**: choose the storage size and the number of TiFlash nodes.
@@ -58,7 +58,7 @@ To create a TiDB node group, perform the following steps:
 
 5. New TiDB nodes are added along with the new TiDB node group, which affects the cluster's billing. Review the cluster size in the right pane, then click **Confirm**.
 
-By default, you can create up to five TiDB node groups for a TiDB Cloud Dedicated cluster. If you need more groups, contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md).
+By default, you can create up to five TiDB node groups for a TiDB Cloud Dedicated cluster. If you need more groups, contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md). 
 
 If you create a TiDB node group but still use the endpoint of the default group to connect to the cluster, the TiDB nodes in the TiDB node group will not take any workload, which is a waste of the resource. You need to create new connection to the TiDB nodes in the new TiDB node group. See [Connect to a TiDB node group](#connect-to-a-tidb-node-group).
 
@@ -94,7 +94,7 @@ For more information, see [Connect to TiDB Cloud Dedicated via Public Connection
 
     > **Note**:
     >
-    > If you use Private Link to connect different node groups, you need to create separated private endpoint connection for each node group.
+    > If you use Private Link to connect different node groups, you need to create separated private endpoint connection for each node group. 
 
 6. After creating the private endpoint connection, click **Connect** in the upper-right corner of the page to get the connection string.
 
@@ -102,9 +102,9 @@ For more information, see [Connect to TiDB Cloud Dedicated via Public Connection
 
 Because all TiDB node groups share the same VPC as the cluster, you only need to create one VPC peering connection to enable access for all groups.
 
-1. Follow the instructions in [Connect to TiDB Cloud Dedicated via VPC Peering](/tidb-cloud/set-up-vpc-peering-connections.md) to create a VPC peering for this cluster.
+1. Follow the instructions in [Connect to TiDB Cloud Dedicated via VPC Peering](/tidb-cloud/set-up-vpc-peering-connections.md) to create a VPC peering for this cluster. 
 2. Navigate to the [**Clusters**](https://tidbcloud.com/console/clusters) page, and then click the name of your target cluster to go to its overview page.
-3. In the left navigation pane, click **Networking**.
+3. In the left navigation pane, click **Networking**. 
 4. In the upper-right corner of the **Networking** page, click **Connect** to get the connection string.
 
 ## View TiDB node groups

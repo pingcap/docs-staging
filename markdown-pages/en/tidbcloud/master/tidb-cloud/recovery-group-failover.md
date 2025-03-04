@@ -59,7 +59,7 @@ If the original primary cluster that was affected by the disaster can be brought
     > During the reprotect synchronization, due to the volume of data transferred, the online query performance at the primary or secondary clusters might be affected. It is recommended that you schedule the reprotection of databases for a less busy period.
 
     > **Warning**
-    >
+    > 
     > As part of the data replication necessary to perform the reprotect operation, the content of the selected databases will be replaced at the target cluster by the content of the databases from the (new) primary cluster. If you wish to preserve the unique content on the target cluster, complete a backup before performing the Reprotect operation.
 
 4. Click the **Action** menu for the recovery group, and then click **Reprotect**. The reprotect dialog is displayed.

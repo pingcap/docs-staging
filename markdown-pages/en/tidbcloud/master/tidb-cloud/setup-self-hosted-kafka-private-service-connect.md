@@ -24,7 +24,7 @@ The document provides an example of connecting to a Kafka Private Service Connec
 
 ## Prerequisites
 
-1. Ensure that you have the following authorization to set up Kafka Private Service Connect in your own Google Cloud account.
+1. Ensure that you have the following authorization to set up Kafka Private Service Connect in your own Google Cloud account. 
 
     - Manage VM nodes
     - Manage VPC
@@ -46,7 +46,7 @@ The document provides an example of connecting to a Kafka Private Service Connec
     5. Note down the **Zones of TiDB Cluster**. You will deploy your TiDB cluster in these zones. It is recommended that you deploy Kafka in these zones to reduce cross-zone traffic.
     6. Pick a unique **Kafka Advertised Listener Pattern** for your Kafka Private Service Connect service.
         1. Input a unique random string. It can only include numbers or lowercase letters. You will use it to generate **Kafka Advertised Listener Pattern** later.
-        2. Click **Check usage and generate** to check if the random string is unique and generate **Kafka Advertised Listener Pattern** that will be used to assemble the EXTERNAL advertised listener for Kafka brokers, or configure Kafka-proxy.
+        2. Click **Check usage and generate** to check if the random string is unique and generate **Kafka Advertised Listener Pattern** that will be used to assemble the EXTERNAL advertised listener for Kafka brokers, or configure Kafka-proxy. 
 
 Note down all the deployment information. You need to use it to configure your Kafka Private Service Connect service later.
 
@@ -69,7 +69,7 @@ Expose each Kafka broker to TiDB Cloud VPC with a unique port by using the PSC p
 
 If you need to deploy a new cluster, follow the instructions in [Deploy a new Kafka cluster](#deploy-a-new-kafka-cluster).
 
-If you need to expose an existing cluster, follow the instructions in [Reconfigure a running Kafka cluster](#reconfigure-a-running-kafka-cluster).
+If you need to expose an existing cluster, follow the instructions in [Reconfigure a running Kafka cluster](#reconfigure-a-running-kafka-cluster). 
 
 #### Deploy a new Kafka cluster
 
@@ -170,13 +170,13 @@ Go to the [VM instances](https://console.cloud.google.com/compute/instances) pag
     1. For `listeners`, all three brokers are the same and act as brokers and controller roles:
         1. Configure the same CONTROLLER listener for all **controller** role nodes. If you only want to add the **broker** role nodes, you do not need the CONTROLLER listener in `server.properties`.
         2. Configure two **broker** listeners. INTERNAL for internal access; EXTERNAL for external access from TiDB Cloud.
-
+    
     2. For `advertised.listeners`, do the following:
         1. Configure an INTERNAL advertised listener for each broker using the internal IP address of the broker node, which allows internal Kafka clients to connect to the broker via the advertised address.
         2. Configure an EXTERNAL advertised listener based on **Kafka Advertised Listener Pattern** you get from TiDB Cloud for every broker node to help TiDB Cloud differentiate between different brokers. Different EXTERNAL advertised listeners help Kafka clients from TiDB Cloud side route requests to the right broker.
             - `<port>` differentiates brokers from Kafka Private Service Connect access points. Plan a port range for EXTERNAL advertised listeners of all brokers. These ports do not have to be actual ports listened to by brokers. They are ports listened to by the load balancer for Private Service Connect that will forward requests to different brokers.
             - It is recommended to configure different broker IDs for different brokers to make it easy for troubleshooting.
-
+    
     3. The planning values:
         - CONTROLLER port: `29092`
         - INTERNAL port: `9092`
@@ -274,7 +274,7 @@ Go to the [VM instances](https://console.cloud.google.com/compute/instances) pag
     mkdir -p $KAFKA_LOG_DIR
 
     # Magic id: BRl69zcmTFmiPaoaANybiw. You can use your own magic ID.
-    $KAFKA_STORAGE_CMD format -t "BRl69zcmTFmiPaoaANybiw" -c "$KAFKA_CONFIG_DIR/server.properties" > $KAFKA_LOG_DIR/server_format.log
+    $KAFKA_STORAGE_CMD format -t "BRl69zcmTFmiPaoaANybiw" -c "$KAFKA_CONFIG_DIR/server.properties" > $KAFKA_LOG_DIR/server_format.log   
     LOG_DIR=$KAFKA_LOG_DIR nohup $KAFKA_START_CMD "$KAFKA_CONFIG_DIR/server.properties" &
     ```
 
@@ -296,7 +296,7 @@ Go to the [VM instances](https://console.cloud.google.com/compute/instances) pag
     ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:39092
     # Expected output for the last 3 lines (the actual order might be different)
     # The difference in the output from "bootstrap from INTERNAL listener" is that exceptions or errors might occur because advertised listeners cannot be resolved in Kafka VPC.
-    # We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect.
+    # We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect. 
     b1.abc.us-west1.gcp.3199745.tidbcloud.com:9093 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b2.abc.us-west1.gcp.3199745.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
@@ -332,7 +332,7 @@ Go to the [VM instances](https://console.cloud.google.com/compute/instances) pag
     done
     }
     create_topic
-    produce_messages
+    produce_messages 
     ```
 
 3. Create a consumer script `consume.sh` in the bastion node.
@@ -361,7 +361,7 @@ Go to the [VM instances](https://console.cloud.google.com/compute/instances) pag
 4. Execute `produce.sh` and `consume.sh` to verify that the Kafka cluster is running. These scripts will also be reused for later network connection testing. The script will create a topic with `--partitions 3 --replication-factor 3`. Ensure that all three brokers contain data. Ensure that the scripts will connect to all three brokers to guarantee that network connection will be tested.
 
     ```shell
-    # Test write message.
+    # Test write message. 
     ./produce.sh {one_of_broker_ip}:9092
     ```
 
@@ -459,8 +459,8 @@ export JAVA_HOME=~/jdk-22.0.2
 ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:39092
 
 # Expected output for the last 3 lines (the actual order might be different)
-# There will be some exceptions or errors because advertised listeners cannot be resolved in your Kafka network.
-# We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect.
+# There will be some exceptions or errors because advertised listeners cannot be resolved in your Kafka network. 
+# We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect. 
 b1.abc.us-west1.gcp.3199745.tidbcloud.com:9093 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
 b2.abc.us-west1.gcp.3199745.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
 b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
@@ -574,7 +574,7 @@ Assume that you already have a Kafka cluster running in the same region as the T
 2. Go to the detail page of the node in kafka-proxy-ig. Click **SSH** to log in to the node. Download the binaries:
 
     ```shell
-    # You can choose another version
+    # You can choose another version 
     wget https://github.com/grepplabs/kafka-proxy/releases/download/v0.3.11/kafka-proxy-v0.3.11-linux-amd64.tar.gz
     tar -zxf kafka-proxy-v0.3.11-linux-amd64.tar.gz
     ```
@@ -584,8 +584,8 @@ Assume that you already have a Kafka cluster running in the same region as the T
     ```shell
     # There are three kinds of parameters that need to feed to the Kafka-proxy
     # 1. --bootstrap-server-mapping defines the bootstrap mapping. Suggest that you configure three mappings, one for each zone for resilience.
-    #   a) Kafka broker address;
-    #   b) Local address for the broker in Kafka-proxy;
+    #   a) Kafka broker address; 
+    #   b) Local address for the broker in Kafka-proxy; 
     #   c) Advertised listener for the broker if Kafka clients bootstrap from Kafka-proxy
     # 2. --dynamic-sequential-min-port defines the start port of the random mapping for other brokers
     # 3. --dynamic-advertised-listener defines advertised listener address for other brokers based on the pattern obtained from the "Prerequisites" section
@@ -615,7 +615,7 @@ Assume that you already have a Kafka cluster running in the same region as the T
     ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server 0.0.0.0:9092
     # Expected output of the last few lines (the actual order might be different)
     # There might be exceptions or errors because advertised listeners cannot be resolved in your network.
-    # We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect.
+    # We will make them resolvable in TiDB Cloud side and make it route to the right broker when you create a changefeed connect to this Kafka cluster by Private Service Connect. 
     b1.abc.us-west1.gcp.3199745.tidbcloud.com:9092 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b2.abc.us-west1.gcp.3199745.tidbcloud.com:9093 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b3.abc.us-west1.gcp.3199745.tidbcloud.com:9094 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException

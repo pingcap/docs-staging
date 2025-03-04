@@ -49,4 +49,4 @@ In this way, customers subscribed to the **Premium** support plan can quickly cr
 
 ## Contact support
 
-For help or questions, please contact our support team at <a href="mailto:support@pingcap.com">support@pingcap.com</a>.
+For help or questions, please contact our support team at <a href="mailto:support@pingcap.com">support@pingcap.com</a>. 
