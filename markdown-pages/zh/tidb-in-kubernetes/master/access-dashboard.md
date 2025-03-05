@@ -216,7 +216,7 @@ spec:
 
     执行以下命令部署 TidbNGMonitoring CR。其中， `${cluster_name}` 为 TidbCluster CR 的名称，`${cluster_ns}` 为 TidbCluster CR 所在的命名空间。
 
-
+    
     ```bash
     cat << EOF | kubectl apply -n ${ns} -f -
     apiVersion: pingcap.com/v1alpha1
