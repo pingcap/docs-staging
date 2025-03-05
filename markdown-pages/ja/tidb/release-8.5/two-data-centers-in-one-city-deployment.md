@@ -213,7 +213,7 @@ pd-ctl config placement-rules rule-bundle save --in="rule.json"
     dr-replicas = 2
     wait-store-timeout = "1m"
     wait-recover-timeout = "0s"
-    pause-region-split = false
+    pause-region-split = false  
     ```
 
 -   方法 2: クラスターをデプロイしている場合は、pd-ctl コマンドを使用して PD の構成を変更します。

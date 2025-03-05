@@ -137,7 +137,7 @@
     -   [インポートのベストプラクティス](/tidb-lightning/data-import-best-practices.md)
     -   移行シナリオ
         -   [Auroraからの移行](/migrate-aurora-to-tidb.md)
-        -   [MySQL から小さなデータセットを移行する](/migrate-small-mysql-to-tidb.md)
+        -   [MySQL から小規模データセットを移行する](/migrate-small-mysql-to-tidb.md)
         -   [MySQL から大規模なデータセットを移行する](/migrate-large-mysql-to-tidb.md)
         -   [小さなデータセットの MySQL シャードの移行とマージ](/migrate-small-mysql-shards-to-tidb.md)
         -   [大規模データセットの MySQL シャードの移行とマージ](/migrate-large-mysql-shards-to-tidb.md)
@@ -200,7 +200,7 @@
             -   [RawKV のバックアップと復元](/br/rawkv-backup-and-restore.md)
             -   [増分バックアップと復元](/br/br-incremental-guide.md)
     -   クラスタ災害復旧 (DR)
-        -   [DRソリューションの概要](/dr-solution-introduction.md)
+        -   [DR ソリューションの概要](/dr-solution-introduction.md)
         -   [プライマリ-セカンダリ DR](/dr-secondary-cluster.md)
         -   [マルチレプリカクラスタDR](/dr-multi-replica.md)
         -   [BRベースのDR](/dr-backup-restore.md)
@@ -307,7 +307,7 @@
             -   [準備されていない実行プランのキャッシュ](/sql-non-prepared-plan-cache.md)
         -   制御実行計画
             -   [概要](/control-execution-plan.md)
-            -   [オプティマイザーのヒント](/optimizer-hints.md)
+            -   [オプティマイザのヒント](/optimizer-hints.md)
             -   [SQL プラン管理](/sql-plan-management.md)
             -   [最適化ルールのブロックリストと式のプッシュダウン](/blocklist-control-plan.md)
             -   [オプティマイザー修正コントロール](/optimizer-fix-controls.md)
@@ -490,7 +490,7 @@
             -   データソースの管理
                 -   [移行するMySQLインスタンスを切り替える](/dm/usage-scenario-master-slave-switch.md)
             -   タスクの管理
-                -   [失敗したDDL文の処理](/dm/handle-failed-ddl-statements.md)
+                -   [失敗したDDLステートメントの処理](/dm/handle-failed-ddl-statements.md)
                 -   [移行するテーブルのスキーマを管理する](/dm/dm-manage-schema.md)
             -   [クラスターのデータソースとタスク構成のエクスポートとインポート](/dm/dm-export-import-config.md)
             -   [アラートを処理する](/dm/dm-handle-alerts.md)
@@ -645,7 +645,7 @@
         -   [コンフィグレーション](/tiproxy/tiproxy-configuration.md)
         -   [コマンドラインパラメータ](/tiproxy/tiproxy-command-line-flags.md)
         -   [監視メトリクス](/tiproxy/tiproxy-grafana.md)
-        -   [翻訳](/tiproxy/tiproxy-api.md)
+        -   [API](/tiproxy/tiproxy-api.md)
         -   [トラブルシューティング](/tiproxy/troubleshoot-tiproxy.md)
         -   [パフォーマンステスト](/tiproxy/tiproxy-performance-test.md)
 -   参照
@@ -1103,6 +1103,7 @@
     -   バージョン6.6
         -   [6.6.0-DMR](/releases/release-6.6.0.md)
     -   バージョン6.5
+        -   [6.5.12](/releases/release-6.5.12.md)
         -   [6.5.11](/releases/release-6.5.11.md)
         -   [6.5.10](/releases/release-6.5.10.md)
         -   [6.5.9](/releases/release-6.5.9.md)
