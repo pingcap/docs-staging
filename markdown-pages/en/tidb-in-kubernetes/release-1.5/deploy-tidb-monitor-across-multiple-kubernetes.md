@@ -40,7 +40,7 @@ For the deployment instructions of Thanos Receiver, refer to [kube-thanos](https
     - `storageclass_name`: the storage of the current Kubernetes cluster.
     - `remote_write_url`: the host of the `thanos-receiver` component, or the host of other components compatible with the Prometheus remote write API.
 
-
+    
     ```shell
     cluster_name="cluster1"
     cluster_namespace="pingcap"
@@ -51,7 +51,7 @@ For the deployment instructions of Thanos Receiver, refer to [kube-thanos](https
 
 2. Create a `TidbMonitor` component by running the following command:
 
-
+    
     ```shell
     cat << EOF | kubectl apply -n ${cluster_namespace} -f -
     apiVersion: pingcap.com/v1alpha1
@@ -125,7 +125,7 @@ For the deployment instructions of Thanos Query, refer to [kube-thanos](https://
     - `cluster_domain`: the current cluster's [cluster domain](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#introduction).
     - `storageclass_name`: the storage of the current Kubernetes cluster.
 
-
+    
     ```shell
     cluster_name="cluster1"
     cluster_namespace="pingcap"
@@ -136,7 +136,7 @@ For the deployment instructions of Thanos Query, refer to [kube-thanos](https://
 
 2. Create a `TidbMonitor` component by running the following command:
 
-
+    
     ```shell
     cat <<EOF | kubectl apply -n ${cluster_namespace} -f -
     apiVersion: pingcap.com/v1alpha1
@@ -213,7 +213,7 @@ You need to configure the network and DNS of the Kubernetes clusters so that the
     - `kubernetes_cluster_name`: the custom Kubernetes cluster name, which is used in the `externallabels` of Prometheus.
     - `storageclass_name`: the storage of the current Kubernetes cluster.
 
-
+    
     ```shell
     cluster_name="cluster1"
     cluster_namespace="pingcap"
@@ -223,7 +223,7 @@ You need to configure the network and DNS of the Kubernetes clusters so that the
 
 2. Create a `TidbMonitor` component by running the following command:
 
-
+    
     ```shell
     cat << EOF | kubectl apply -n ${cluster_namespace} -f -
     apiVersion: pingcap.com/v1alpha1
@@ -292,7 +292,7 @@ After collecting data using Prometheus, you can visualize multi-cluster monitori
 
 1. Obtain the Grafana dashboard configuration files related to TiDB components by running the following command:
 
-
+    
     ```shell
     # set tidb version here
     version=v7.5.5
@@ -310,7 +310,7 @@ After collecting data using Prometheus, you can visualize multi-cluster monitori
 
     To keep the configuration consistent with the dashboard JSON files obtained in the previous step, you need to set the `Name` field of the data source to `tidb-cluster`. If you want to use the existing data source, run the following command to replace the data source name in the dashboard JSON files. In the command, `$DS_NAME` is the name of the data source.
 
-
+    
     ```shell
     # define your datasource name here.
     DS_NAME=thanos
