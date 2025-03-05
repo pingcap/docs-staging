@@ -1,5 +1,5 @@
 ---
-title: Overview of TiDB Node Group
+title: Overview of TiDB Node Group 
 summary: TiDB ノード グループ機能の実装と使用シナリオについて学習します。
 ---
 

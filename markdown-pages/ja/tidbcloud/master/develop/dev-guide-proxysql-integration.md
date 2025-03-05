@@ -685,11 +685,11 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
 2.  使用する TiDB クラスターを構成します。ここでは、1 つまたは複数の TiDB クラスターを ProxySQL に追加できます。次のステートメントは、たとえば 1 つのTiDB Cloud Dedicated クラスターを追加します。1 と`<tidb cloud dedicated cluster port>` `<tidb cloud dedicated cluster host>` TiDB Cloudエンドポイントとポートに置き換える必要があります (デフォルトのポートは`4000`です)。
 
     ```sql
-    INSERT INTO mysql_servers(hostgroup_id, hostname, port)
-    VALUES
+    INSERT INTO mysql_servers(hostgroup_id, hostname, port) 
+    VALUES 
       (
         0,
-        '<tidb cloud dedicated cluster host>',
+        '<tidb cloud dedicated cluster host>', 
         <tidb cloud dedicated cluster port>
       );
     LOAD mysql servers TO runtime;
@@ -706,13 +706,13 @@ ProxySQL を TiDB のプロキシとして使用するには、ProxySQL を構�
 
     ```sql
     INSERT INTO mysql_users(
-      username, password, active, default_hostgroup,
+      username, password, active, default_hostgroup, 
       transaction_persistent
-    )
-    VALUES
+    ) 
+    VALUES 
       (
-        '<tidb cloud dedicated cluster username>',
-        '<tidb cloud dedicated cluster password>',
+        '<tidb cloud dedicated cluster username>', 
+        '<tidb cloud dedicated cluster password>', 
         1, 0, 1
       );
     LOAD mysql users TO runtime;
