@@ -222,7 +222,7 @@ To enable this feature, you need to deploy TidbNGMonitoring CR using TiDB Operat
 
     Run the following command to deploy TidbNGMonitoring CR. In this command, `${cluster_name}` is the name of the TidbCluster CR and `${cluster_ns}` is the namespace of this CR.
 
-
+    
     ```bash
     cat << EOF | kubectl apply -n ${ns} -f -
     apiVersion: pingcap.com/v1alpha1
