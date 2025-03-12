@@ -250,11 +250,13 @@
     -   チューニングガイド
         -   [性能チューニングの概要](/performance-tuning-overview.md)
         -   [最適なパフォーマンスを得るための TiDB の設定](/tidb-performance-tuning-config.md)
-        -   [パフォーマンス分析とチューニング](/performance-tuning-methods.md)
-        -   [OLTP シナリオの性能チューニングプラクティス](/performance-tuning-practices.md)
-        -   [TiFlashパフォーマンス分析方法](/tiflash-performance-tuning-methods.md)
-        -   [TiCDC パフォーマンス分析方法](/ticdc-performance-tuning-methods.md)
-        -   [レイテンシーの内訳](/latency-breakdown.md)
+        -   [SQL チューニングの実践ガイド](/sql-tuning-best-practice.md)
+        -   メトリクスによるチューニング
+            -   [パフォーマンス分析とチューニング](/performance-tuning-methods.md)
+            -   [OLTP シナリオの性能チューニングプラクティス](/performance-tuning-practices.md)
+            -   [TiFlashパフォーマンス分析方法](/tiflash-performance-tuning-methods.md)
+            -   [TiCDC パフォーマンス分析方法](/ticdc-performance-tuning-methods.md)
+            -   [レイテンシーの内訳](/latency-breakdown.md)
         -   [パブリッククラウドにおける TiDB のベストプラクティス](/best-practices-on-public-cloud.md)
     -   コンフィグレーションの調整
         -   [オペレーティングシステムのパフォーマンスを調整する](/tune-operating-system.md)
@@ -886,7 +888,7 @@
             -   [概要](/data-type-overview.md)
             -   [デフォルト値](/data-type-default-values.md)
             -   [数値型](/data-type-numeric.md)
-            -   [日付と時刻の種類](/data-type-date-and-time.md)
+            -   [日付と時刻の型](/data-type-date-and-time.md)
             -   [文字列型](/data-type-string.md)
             -   [JSON型](/data-type-json.md)
         -   関数と演算子
