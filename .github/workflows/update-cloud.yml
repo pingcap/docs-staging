@@ -13,6 +13,11 @@ on:
         description: "Source branch"
         type: string
         required: true
+      full:
+        description: "Full update"
+        type: boolean
+        default: false
+        required: false
 
 concurrency: ${{ github.workflow }}-${{ inputs.repo }}-${{ inputs.branch }}
 
