@@ -99,7 +99,7 @@ The following example constructs a memory-intensive SQL statement that triggers 
 
 1. Set `tidb_memory_usage_alarm_ratio` to `0.85`:
 
-
+    
     ```sql
     SET GLOBAL tidb_memory_usage_alarm_ratio = 0.85;
     ```
@@ -145,7 +145,7 @@ TiDB supports disk spill for execution operators. When the memory usage of a SQL
 - The disk spill behavior is jointly controlled by the following parameters: [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query), [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom), [`tmp-storage-path`](/tidb-configuration-file.md#tmp-storage-path), and [`tmp-storage-quota`](/tidb-configuration-file.md#tmp-storage-quota).
 - When the disk spill is triggered, TiDB outputs a log containing the keywords `memory exceeds quota, spill to disk now` or `memory exceeds quota, set aggregate mode to spill-mode`.
 - Disk spill for the Sort, MergeJoin, and HashJoin operators is introduced in v4.0.0; disk spill for the non-parallel algorithm of the HashAgg operator is introduced in v5.2.0; disk spill for the parallel algorithm of the HashAgg operator is introduced in v8.0.0.
-- When the SQL executions containing Sort, MergeJoin, HashJoin, or HashAgg cause OOM, TiDB triggers disk spill by default.
+- When the SQL executions containing Sort, MergeJoin, HashJoin, or HashAgg cause OOM, TiDB triggers disk spill by default. 
 
 > **Note:**
 >
@@ -155,7 +155,7 @@ The following example uses a memory-consuming SQL statement to demonstrate the d
 
 1. Configure the memory quota of a SQL statement to 1GB (1 GB by default):
 
-
+    
     ```sql
     SET tidb_mem_quota_query = 1 << 30;
     ```
@@ -164,7 +164,7 @@ The following example uses a memory-consuming SQL statement to demonstrate the d
 
 3. Execute the following SQL statement:
 
-
+    
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```
@@ -177,7 +177,7 @@ The following example uses a memory-consuming SQL statement to demonstrate the d
 
 4. Execute the same SQL statement. You can find that this time, the statement is successfully executed and no error message is returned. From the following detailed execution plan, you can see that HashAgg has used 600 MB of hard disk space.
 
-
+    
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```

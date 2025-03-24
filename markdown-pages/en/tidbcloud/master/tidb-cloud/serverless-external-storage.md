@@ -11,13 +11,12 @@ If you need to configure these external storages for a TiDB Cloud Dedicated clus
 
 ## Configure Amazon S3 access
 
-To allow a TiDB Cloud Serverless cluster to access your Amazon S3 bucket, you need to configure the bucket access for the cluster. You can use either of the following methods to configure the bucket access:
+To allow a TiDB Cloud Serverless cluster to access the source data in your Amazon S3 bucket, configure the bucket access for the cluster using either of the following methods:
 
-- Use a Role ARN: use a Role ARN to access your Amazon S3 bucket.
-- Use an AWS access key: use the access key of an IAM user to access your Amazon S3 bucket.
+- [Use a Role ARN](#configure-amazon-s3-access-using-a-role-arn): use a Role ARN to access your Amazon S3 bucket.
+- [Use an AWS access key](#configure-amazon-s3-access-using-an-aws-access-key): use the access key of an IAM user to access your Amazon S3 bucket.
 
-<SimpleTab>
-<div label="Role ARN">
+### Configure Amazon S3 access using a Role ARN
 
 It is recommended that you use [AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to create a role ARN. Take the following steps to create one:
 
@@ -109,7 +108,7 @@ If you have any trouble creating a role ARN with AWS CloudFormation, you can tak
 
         In the policy text field, replace the following configurations with your own values.
 
-        - `"Resource": "<Your S3 bucket ARN>/<Directory of the source data>/*"`. For example,
+        - `"Resource": "<Your S3 bucket ARN>/<Directory of the source data>/*"`. For example:
 
             - If your source data is stored in the root directory of the `tidb-cloud-source-data` bucket, use `"Resource": "arn:aws:s3:::tidb-cloud-source-data/*"`.
             - If your source data is stored in the `mydata` directory of the bucket, use `"Resource": "arn:aws:s3:::tidb-cloud-source-data/mydata/*"`.
@@ -159,9 +158,7 @@ If you have any trouble creating a role ARN with AWS CloudFormation, you can tak
 
 </details>
 
-</div>
-
-<div label="Access Key">
+### Configure Amazon S3 access using an AWS access key
 
 It is recommended that you use an IAM user (instead of the AWS account root user) to create an access key.
 
@@ -176,9 +173,6 @@ Take the following steps to configure an access key:
 > **Note:**
 >
 > TiDB Cloud does not store your access keys. It is recommended that you [delete the access key](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey) after the import or export is complete.
-
-</div>
-</SimpleTab>
 
 ## Configure GCS access
 
@@ -212,7 +206,7 @@ Take the following steps to configure a service account key:
 
 To allow TiDB Cloud Serverless to access your Azure Blob container, you need to create a service SAS token for the container.
 
-You can create a SAS token either using an [Azure ARM template](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/overview) (recommended) or manual configuration.
+You can create a SAS token either using an [Azure ARM template](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/overview) (recommended) or manual configuration. 
 
 To create a SAS token using an Azure ARM template, take the following steps:
 
@@ -223,15 +217,15 @@ To create a SAS token using an Azure ARM template, take the following steps:
     2. Click the name of your target cluster to go to its overview page, and then click **Import** in the left navigation pane.
 
 2. Open the **Generate New SAS Token via ARM Template Deployment** dialog.
-
+        
     1. Click **Export data to...**  > **Azure Blob Storage**. If your cluster has neither imported nor exported any data before, click **Click here to export data to...** > **Azure Blob Storage** at the bottom of the page.
-
-    2. Scroll down to the **Azure Blob Storage Settings** area, and then click **Click here to create a new one with Azure ARM template** under the SAS Token field.
-
+   
+    2. Scroll down to the **Azure Blob Storage Settings** area, and then click **Click here to create a new one with Azure ARM template** under the SAS Token field. 
+   
 3. Create a SAS token with the Azure ARM template.
 
     1. In the **Generate New SAS Token via ARM Template Deployment** dialog, click **Click to open the Azure Portal with the pre-configured ARM template**.
-
+   
     2. After logging in to Azure, you will be redirected to the Azure **Custom deployment** page.
 
     3. Fill in the **Resource group** and **Storage Account Name** in the **Custom deployment** page. You can get all the information from the storage account overview page where the container is located.
@@ -239,7 +233,7 @@ To create a SAS token using an Azure ARM template, take the following steps:
         ![azure-storage-account-overview](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-external-storage/azure-storage-account-overview.png)
 
     4. Click **Review + create** or **Next** to review the deployment. Click **Create** to start the deployment.
-
+   
     5. After it completes, you will be redirected to the deployment overview page. Navigate to the **Outputs** section to get the SAS token.
 
 If you have any trouble creating a SAS token with the Azure ARM template, take the following steps to create one manually:
@@ -248,7 +242,7 @@ If you have any trouble creating a SAS token with the Azure ARM template, take t
 <summary>Click here to see details</summary>
 
 1. On the [Azure Storage account](https://portal.azure.com/#browse/Microsoft.Storage%2FStorageAccounts) page, click your storage account to which the container belongs.
-
+   
 2. On your **Storage account** page, click the **Security+network**, and then click **Shared access signature**.
 
    ![sas-position](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-external-storage/azure-sas-position.png)

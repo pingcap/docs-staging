@@ -177,7 +177,7 @@ Vercel's [Preview Deployments](https://vercel.com/docs/deployments/preview-deplo
 
 To enable TiDB Cloud Serverless Branching, you need to ensure the following in the [TiDB Cloud Vercel integration workflow](#integration-workflow):
 
-1. Select **Cluster** as your connection type.
+1. Select **Cluster** as your connection type. 
 2. Enable **Branching** to create new branches for preview environments.
 
 After you push changes to the Git repository, Vercel will trigger a preview deployment. TiDB Cloud integration will automatically create a TiDB Cloud Serverless branch for the Git branch and set environment variables. The detailed steps are as follows:

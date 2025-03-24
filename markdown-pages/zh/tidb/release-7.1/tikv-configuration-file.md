@@ -465,9 +465,9 @@ TiKV 配置文件比命令行参数支持更多的选项。你可以在 [etc/con
 > **警告：**
 >
 > - 你**只能**在部署新的 TiKV 集群时将 `enable-ttl` 的值设置为 `true` 或 `false`，**不能**在已有的 TiKV 集群中修改该配置项的值。由于该配置项为 `true` 和 `false` 的 TiKV 集群所存储的数据格式不相同，如果你在已有的 TiKV 集群中修改该配置项的值，会造成不同格式的数据存储在同一个集群，导致重启对应的 TiKV 集群时 TiKV 报 "can't enable ttl on a non-ttl instance" 错误。
-> - 你**只能**在 TiKV 集群中使用 `enable-ttl`，**不能**在有 TiDB 节点的集群中使用该配置项（即在此类集群中把 `enable-ttl` 设置为 `true`），否则会导致数据损坏、TiDB 集群升级失败等严重后果。
+> - 你**只能**在 TiKV 集群中使用 `enable-ttl`。只有在配置了 `storage.api-version = 2` 的情况下，才能在有 TiDB 节点的集群中使用该配置项（即在此类集群中把 `enable-ttl` 设置为 `true`），否则会导致数据损坏、TiDB 集群升级失败等严重后果。
 
-+ TTL 即 Time to live。数据超过 TTL 时间后会被自动删除。用户需在客户端写入请求中指定 TTL。不指定 TTL 即表明相应数据不会被自动删除。
++ [TTL](/time-to-live.md) 即 Time to live。数据超过 TTL 时间后会被自动删除。用户需在客户端写入请求中指定 TTL。不指定 TTL 即表明相应数据不会被自动删除。
 + 默认值：false
 
 ### `ttl-check-poll-interval`
@@ -491,7 +491,7 @@ TiKV 配置文件比命令行参数支持更多的选项。你可以在 [etc/con
     + `2`：使用 API V2：
         + 数据采用多版本并发控制 (MVCC) 方式存储，其中时间戳由 tikv-server 从 PD 获取（即 TSO）。
         + 数据根据使用方式划分范围，支持单一集群 TiDB、事务 KV、RawKV 应用共存。
-        + 需要同时设置 `storage.enable-ttl = true`。由于 API V2 支持 TTL 特性，因此强制要求打开 `enable-ttl` 以避免这个参数出现歧义。
+        + 需要同时设置 `storage.enable-ttl = true`。由于 API V2 支持 TTL 特性，因此强制要求打开 [`enable-ttl`](#enable-ttl) 以避免这个参数出现歧义。
         + 启用 API V2 后需要在集群中额外部署至少一个 tidb-server 以回收过期数据。该 tidb-server 可同时提供数据库读写服务。可以部署多个 tidb-server 以保证高可用。
         + 需要客户端的支持。请参考对应客户端的 API V2 使用说明。
         + 从 v6.2.0 版本开始，你可以通过 [RawKV CDC](https://tikv.org/docs/latest/concepts/explore-tikv-features/cdc/cdc-cn/) 组件实现 RawKV 的 Change Data Capture (CDC)。
@@ -1010,6 +1010,21 @@ raftstore 相关的配置项。
 + 最小值：0
 + 单位：秒
 
+### `request-voter-replicated-index-interval` <span class="version-mark">从 v6.6.0 版本开始引入</span>
+
++ 控制 Witness 节点定期从投票节点获取已复制的 Raft 日志位置的时间间隔。
++ 默认值：5m（即 5 分钟）。
+
+### `slow-trend-unsensitive-cause` <span class="version-mark">从 v6.6.0 版本开始引入</span>
+
++ TiKV 采用 SlowTrend 检测算法时，延时检测的敏感性。值越高表示敏感度越低。
++ 默认值：10
+
+### `slow-trend-unsensitive-result` <span class="version-mark">从 v6.6.0 版本开始引入</span>
+
++ TiKV 采用 SlowTrend 检测算法时，QPS 侧检测的敏感性。值越高表示敏感度越低。
++ 默认值：0.5
+
 ## coprocessor
 
 Coprocessor 相关的配置项。
@@ -1301,6 +1316,11 @@ RocksDB 相关的配置项。
     + `true`：在 MANIFEST 文件中记录 WAL 文件的信息，并在启动时验证 WAL 文件的完整性。
     + `false`：不在 MANIFEST 文件中记录 WAL 文件的信息，而且不在启动时验证 WAL 文件的完整性。
 
+### `enable-multi-batch-write` <span class="version-mark">从 v6.2.0 版本开始引入</span>
+
++ 控制是否开启 RocksDB 写入优化，将 WriteBatch 中的内容并发写入到 memtable 中，缩短写入耗时。
++ 默认值：无，但在默认情况下会自动开启，除非手动设置成 `false` 或者开启 `rocksdb.enable-pipelined-write` 或 `rocksdb.enable-unordered-write`。
+
 ## rocksdb.titan
 
 Titan 相关的配置项。
@@ -1326,7 +1346,7 @@ Titan 相关的配置项。
 + 默认值：4
 + 最小值：1
 
-## rocksdb.defaultcf | rocksdb.writecf | rocksdb.lockcf
+## rocksdb.defaultcf | rocksdb.writecf | rocksdb.lockcf | rocksdb.raftcf
 
 rocksdb defaultcf、rocksdb writecf 和 rocksdb lockcf 相关的配置项。
 
@@ -1574,6 +1594,11 @@ rocksdb defaultcf、rocksdb writecf 和 rocksdb lockcf 相关的配置项。
 + 设置周期性 compaction 的时间。更新时间超过此值的 SST 文件将被选中进行 compaction，并被重新写入这些 SST 文件所在的层级。
 + 默认值：`"0s"`，表示默认不触发此 compaction。
 + 单位：s(second)|h(hour)|d(day)
+
+### `max-compactions` <span class="version-mark">从 v6.6.0 版本开始引入</span>
+
++ 最大 compaction 任务并发数。0 表示不限制。
++ 默认值：0
 
 ## rocksdb.defaultcf.titan
 

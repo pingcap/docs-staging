@@ -11,7 +11,7 @@ summary: Learn how to configure Placement Rules.
 
 Placement Rules, introduced in v5.0, is a replica rule system that guides PD to generate corresponding schedules for different types of data. By combining different scheduling rules, you can finely control the attributes of any continuous data range, such as the number of replicas, the storage location, the host type, whether to participate in Raft election, and whether to act as the Raft leader.
 
-The Placement Rules feature is enabled by default in v5.0 and later versions of TiDB. To disable it, refer to [Disable Placement Rules](#disable-placement-rules).
+The Placement Rules feature is enabled by default in v5.0 and later versions of TiDB. To disable it, refer to [Disable Placement Rules](#disable-placement-rules). 
 
 ## Rule system
 
@@ -129,28 +129,28 @@ pd-ctl supports using the following methods to view rules in the system, and the
 
 - To view the list of all rules:
 
-
+    
     ```bash
     pd-ctl config placement-rules show
     ```
 
 - To view the list of all rules in a PD Group:
 
-
+    
     ```bash
     pd-ctl config placement-rules show --group=pd
     ```
 
 - To view the rule of a specific ID in a Group:
 
-
+    
     ```bash
     pd-ctl config placement-rules show --group=pd --id=default
     ```
 
 - To view the rule list that matches a Region:
 
-
+    
     ```bash
     pd-ctl config placement-rules show --region=2
     ```
@@ -207,28 +207,28 @@ Success!
 
 - To view the list of all rule groups:
 
-
+    
     ```bash
     pd-ctl config placement-rules rule-group show
     ```
 
 - To view the rule group of a specific ID:
 
-
+    
     ```bash
     pd-ctl config placement-rules rule-group show pd
     ```
 
 - To set the `index` and `override` attributes of the rule group:
 
-
+    
     ```bash
     pd-ctl config placement-rules rule-group set pd 100 true
     ```
 
 - To delete the configuration of a rule group (use the default group configuration if there is any rule in the group):
 
-
+    
     ```bash
     pd-ctl config placement-rules rule-group delete pd
     ```

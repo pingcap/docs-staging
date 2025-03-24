@@ -137,7 +137,7 @@
     -   [インポートのベストプラクティス](/tidb-lightning/data-import-best-practices.md)
     -   移行シナリオ
         -   [Auroraからの移行](/migrate-aurora-to-tidb.md)
-        -   [MySQL から小さなデータセットを移行する](/migrate-small-mysql-to-tidb.md)
+        -   [MySQL から小規模データセットを移行する](/migrate-small-mysql-to-tidb.md)
         -   [MySQL から大規模なデータセットを移行する](/migrate-large-mysql-to-tidb.md)
         -   [小さなデータセットの MySQL シャードの移行とマージ](/migrate-small-mysql-shards-to-tidb.md)
         -   [大規模データセットの MySQL シャードの移行とマージ](/migrate-large-mysql-shards-to-tidb.md)
@@ -188,7 +188,7 @@
             -   [バックアップストレージ](/br/backup-and-restore-storages.md)
         -   BR CLI マニュアル
             -   [概要](/br/use-br-command-line-tool.md)
-            -   [スナップショットのバックアップと復元コマンドマニュアル](/br/br-snapshot-manual.md)
+            -   [スナップショットのバックアップと復元のコマンドマニュアル](/br/br-snapshot-manual.md)
             -   [ログバックアップとPITRコマンドマニュアル](/br/br-pitr-manual.md)
         -   参考文献
             -   BR機能
@@ -200,7 +200,7 @@
             -   [RawKV のバックアップと復元](/br/rawkv-backup-and-restore.md)
             -   [増分バックアップと復元](/br/br-incremental-guide.md)
     -   クラスタ災害復旧 (DR)
-        -   [DRソリューションの概要](/dr-solution-introduction.md)
+        -   [DR ソリューションの概要](/dr-solution-introduction.md)
         -   [プライマリ-セカンダリ DR](/dr-secondary-cluster.md)
         -   [マルチレプリカクラスタDR](/dr-multi-replica.md)
         -   [BRベースのDR](/dr-backup-restore.md)
@@ -250,11 +250,13 @@
     -   チューニングガイド
         -   [性能チューニングの概要](/performance-tuning-overview.md)
         -   [最適なパフォーマンスを得るための TiDB の設定](/tidb-performance-tuning-config.md)
-        -   [パフォーマンス分析とチューニング](/performance-tuning-methods.md)
-        -   [OLTP シナリオの性能チューニングプラクティス](/performance-tuning-practices.md)
-        -   [TiFlashパフォーマンス分析方法](/tiflash-performance-tuning-methods.md)
-        -   [TiCDC パフォーマンス分析方法](/ticdc-performance-tuning-methods.md)
-        -   [レイテンシーの内訳](/latency-breakdown.md)
+        -   [SQL チューニングの実践ガイド](/sql-tuning-best-practice.md)
+        -   メトリクスによるチューニング
+            -   [パフォーマンス分析とチューニング](/performance-tuning-methods.md)
+            -   [OLTP シナリオの性能チューニングプラクティス](/performance-tuning-practices.md)
+            -   [TiFlashパフォーマンス分析方法](/tiflash-performance-tuning-methods.md)
+            -   [TiCDC パフォーマンス分析方法](/ticdc-performance-tuning-methods.md)
+            -   [レイテンシーの内訳](/latency-breakdown.md)
         -   [パブリッククラウドにおける TiDB のベストプラクティス](/best-practices-on-public-cloud.md)
     -   コンフィグレーションの調整
         -   [オペレーティングシステムのパフォーマンスを調整する](/tune-operating-system.md)
@@ -1078,6 +1080,7 @@
     -   バージョン7.6
         -   [7.6.0-DMR](/releases/release-7.6.0.md)
     -   バージョン7.5
+        -   [7.5.6](/releases/release-7.5.6.md)
         -   [7.5.5](/releases/release-7.5.5.md)
         -   [7.5.4](/releases/release-7.5.4.md)
         -   [7.5.3](/releases/release-7.5.3.md)
@@ -1103,6 +1106,7 @@
     -   バージョン6.6
         -   [6.6.0-DMR](/releases/release-6.6.0.md)
     -   バージョン6.5
+        -   [6.5.12](/releases/release-6.5.12.md)
         -   [6.5.11](/releases/release-6.5.11.md)
         -   [6.5.10](/releases/release-6.5.10.md)
         -   [6.5.9](/releases/release-6.5.9.md)
@@ -1189,7 +1193,7 @@
         -   [4.0.0-ベータ.2](/releases/release-4.0.0-beta.2.md)
         -   [4.0.0-ベータ.1](/releases/release-4.0.0-beta.1.md)
         -   [4.0.0-ベータ](/releases/release-4.0.0-beta.md)
-    -   v3.1
+    -   バージョン3.1
         -   [3.1.2](/releases/release-3.1.2.md)
         -   [3.1.1](/releases/release-3.1.1.md)
         -   [3.1.0 正式版](/releases/release-3.1.0-ga.md)

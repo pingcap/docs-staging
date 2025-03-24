@@ -37,7 +37,7 @@ TiDB のパフォーマンスを最適化するために、次の設定が一般
 推奨設定を適用するには、次の SQL コマンドを実行します。
 
 ```sql
-SET GLOBAL tidb_session_plan_cache_size=200;
+SET GLOBAL tidb_session_plan_cache_size=200; 
 SET GLOBAL tidb_enable_non_prepared_plan_cache=on;
 SET GLOBAL tidb_ignore_prepared_cache_close_stmt=on;
 SET GLOBAL tidb_stats_load_sync_wait=2000;
@@ -380,7 +380,7 @@ TiKV のパフォーマンスを向上させるには、インスタンスの CP
 
     ```toml
     [server]
-    # Increase gRPC thread pool
+    # Increase gRPC thread pool 
     grpc-concurrency = 10
 
     [raftstore]

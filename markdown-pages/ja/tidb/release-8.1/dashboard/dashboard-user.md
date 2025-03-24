@@ -94,7 +94,7 @@ SQL ユーザーが前述の権限要件を満たしていない場合、以下�
     GRANT SHOW DATABASES ON *.* TO 'dashboard_access'@'%';
     GRANT DASHBOARD_CLIENT ON *.* TO 'dashboard_access'@'%';
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboard_access'@'%';
-    GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';
+    GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';    
     ```
 
 2.  `dashboard_access`ロールを他のユーザーに付与し、 `dashboard_access`デフォルトのロールとして設定します。

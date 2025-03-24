@@ -28,8 +28,8 @@ To view the **Cluster** page, take the following steps:
 3. Click the name of your target cluster. The cluster overview page is displayed, where you can view detailed information about your cluster, including:
 
     - Advanced Metrics
-    - Top Slow Queries
-    - TopSQL
+    - Top Slow Queries (only supported when the TiDB version of the cluster is v8.1.1 or later, v7.5.4 or later)
+    - TopSQL (only supported when the TiDB version of the cluster is v8.1.1 or later, v7.5.4 or later)
     - Benchmark Report
 
 ## Monitor advanced metrics
@@ -54,7 +54,7 @@ On the default [**Slow Queries**](/tidb-cloud/tune-performance.md#slow-query) pa
 
 Top Slow Queries displays the top 10 queries aggregated by SQL digest, sorted by the following dimensions:
 
-- Total latency
+- Total latency 
 - Maximum latency
 - Average latency
 - Total memory
@@ -92,7 +92,7 @@ To view TopSQL, take the following steps:
 
 4. Analyze the charts and tables displayed by TopSQL.
 
-For more information, see [TopSQL in TiDB Dashboard](https://docs.pingcap.com/tidb/stable/top-sql).
+For more information, see [TopSQL in TiDB Dashboard](https://docs.pingcap.com/tidb/stable/top-sql). 
 
 ## Generate benchmark reports
 

@@ -1,5 +1,5 @@
 ---
-title: Overview of TiDB Node Group
+title: Overview of TiDB Node Group 
 summary: Learn about the implementation and usage scenarios of the TiDB Node Group feature.
 ---
 
@@ -37,7 +37,7 @@ With this feature, you can:
 
 - Consolidate multiple applications from different systems into a single TiDB Cloud Dedicated cluster. As an application's workload grows, it will not affect the normal operation of other applications. The TiDB Node Group feature ensures that the response time of transactional applications is not impacted by data analysis or batch applications.
 
-- Perform import or DDL tasks on the TiDB Cloud Dedicated cluster without affecting the performance of existing production workloads. You can create a separate TiDB node group for importing or DDL tasks. Even though these tasks consume significant CPU or memory resources, they only use the resources in their own TiDB node group, ensuring the workloads in other TiDB node groups are not impacted.
+- Perform import or DDL tasks on the TiDB Cloud Dedicated cluster without affecting the performance of existing production workloads. You can create a separate TiDB node group for importing or DDL tasks. Even though these tasks consume significant CPU or memory resources, they only use the resources in their own TiDB node group, ensuring the workloads in other TiDB node groups are not impacted. 
 
 - Combine all test environments into a single TiDB cluster or group resource-intensive batch tasks into a dedicated TiDB node group. This approach improves hardware utilization, reduces operating costs, and ensures that critical applications always have access to necessary resources.
 
@@ -47,13 +47,13 @@ In addition, TiDB node groups are easy to scale in or out. For key applications 
 
 Currently, the TiDB Node Group feature is free of charge. The following are limitations and quotas:
 
-- You can only create TiDB node groups for TiDB Cloud Dedicated clusters on AWS. Support for other cloud providers is planned for the near future.
+- You can only create TiDB node groups for TiDB Cloud Dedicated clusters on AWS or Google Cloud. Support for other cloud providers is planned for the near future.
 - TiDB clusters with 4 vCPUs and 16 GiB of memory do not support the TiDB Node Group feature.
-- By default, you can create up to five TiDB node groups for a TiDB Cloud Dedicated cluster. If you need more groups, contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md).
+- By default, you can create up to five TiDB node groups for a TiDB Cloud Dedicated cluster. If you need more groups, contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md). 
 - Each TiDB node group must contain at least one TiDB node. While there is no limit to the number of nodes in a group, the total number of TiDB nodes in a TiDB Cloud Dedicated cluster must not exceed 150.
 
 ## SLA impact
 
-According to TiDB Cloud [Service Level Agreement (SLA)](https://www.pingcap.com/legal/service-level-agreement-for-tidb-cloud-services/), the Monthly Uptime Percentage of TiDB Cloud Dedicated clusters with multiple TiDB nodes deployment can reach up to 99.99%. However, after introducing TiDB Node Group, if you create multiple TiDB Node Groups with only 1 TiDB node in each group, you will lose the high availability for the groups and your cluster's monthly uptime percentage will downgrade to a single TiDB node deployment model (namely, up to 99.9%).
+According to TiDB Cloud [Service Level Agreement (SLA)](https://www.pingcap.com/legal/service-level-agreement-for-tidb-cloud-services/), the Monthly Uptime Percentage of TiDB Cloud Dedicated clusters with multiple TiDB nodes deployment can reach up to 99.99%. However, after introducing TiDB Node Group, if you create multiple TiDB Node Groups with only 1 TiDB node in each group, you will lose the high availability for the groups and your cluster's monthly uptime percentage will downgrade to a single TiDB node deployment model (namely, up to 99.9%).  
 
 For high availability, it is recommended that you configure at least two TiDB nodes for each TiDB node group.

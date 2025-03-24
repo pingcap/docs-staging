@@ -80,7 +80,7 @@
     -   サーバーレスDriver![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
         -   [TiDB CloudサーバーレスDriver](/tidb-cloud/serverless-driver.md)
         -   [Node.jsの例](/tidb-cloud/serverless-driver-node-example.md)
-        -   [プリズマの例](/tidb-cloud/serverless-driver-prisma-example.md)
+        -   [Prismaの例](/tidb-cloud/serverless-driver-prisma-example.md)
         -   [Kyselyの例](/tidb-cloud/serverless-driver-kysely-example.md)
         -   [霧雨の例](/tidb-cloud/serverless-driver-drizzle-example.md)
 -   開発リファレンス
@@ -126,7 +126,7 @@
         -   [タイムアウト](/develop/dev-guide-timeouts-in-tidb.md)
     -   開発ガイドライン
         -   [オブジェクトの命名規則](/develop/dev-guide-object-naming-guidelines.md)
-        -   [SQL開発仕様](/develop/dev-guide-sql-development-specification.md)
+        -   [SQL 開発仕様](/develop/dev-guide-sql-development-specification.md)
     -   [書店のサンプルアプリケーション](/develop/dev-guide-bookshop-schema-design.md)
     -   サードパーティのサポート
         -   [TiDB がサポートするサードパーティ ツール](/develop/dev-guide-third-party-support.md)
@@ -182,7 +182,7 @@
         -   [組み込みアラート](/tidb-cloud/monitor-built-in-alerting.md)
         -   アラート通知を購読する
             -   [メールで購読する](/tidb-cloud/monitor-alert-email.md)
-            -   [Slackで登録する](/tidb-cloud/monitor-alert-slack.md)
+            -   [Slackで購読する](/tidb-cloud/monitor-alert-slack.md)
             -   [Zoomで登録する](/tidb-cloud/monitor-alert-zoom.md)
         -   [クラスタイベント](/tidb-cloud/tidb-cloud-events.md)
         -   [サードパーティのメトリクスの統合](/tidb-cloud/third-party-monitoring-integrations.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
@@ -232,7 +232,7 @@
                 -   [準備されていない実行プランのキャッシュ](/sql-non-prepared-plan-cache.md)
             -   制御実行計画
                 -   [概要](/control-execution-plan.md)
-                -   [オプティマイザーのヒント](/optimizer-hints.md)
+                -   [オプティマイザのヒント](/optimizer-hints.md)
                 -   [SQL プラン管理](/sql-plan-management.md)
                 -   [最適化ルールのブロックリストと式のプッシュダウン](/blocklist-control-plan.md)
                 -   [オプティマイザー修正コントロール](/optimizer-fix-controls.md)
@@ -341,10 +341,11 @@
         -   [標準SSO認証](/tidb-cloud/tidb-cloud-sso-authentication.md)
         -   [組織のSSO認証](/tidb-cloud/tidb-cloud-org-sso-authentication.md)
         -   [アイデンティティアクセス管理](/tidb-cloud/manage-user-access.md)
-        -   [認証局2.0](/tidb-cloud/oauth2.md)
+        -   [OAuth2.0 とは](/tidb-cloud/oauth2.md)
     -   ネットワークアクセス制御
         -   TiDB Cloudサーバーレス
             -   [プライベートエンドポイント経由で接続](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
+            -   [パブリックエンドポイントのファイアウォールルールを構成する](/tidb-cloud/configure-serverless-firewall-rules-for-public-endpoints.md)
             -   [TiDB Cloud ServerlessへのTLS接続](/tidb-cloud/secure-connections-to-serverless-clusters.md)
         -   TiDB Cloud専用
             -   [IPアクセスリストを構成する](/tidb-cloud/configure-ip-access-list.md)
@@ -808,14 +809,14 @@
         -   [コネクテッド：クリニックサービス](/tidb-cloud/tidb-cloud-clinic.md)
         -   [接続: IM での AI チャット](/tidb-cloud/connected-ai-chat-in-im.md)
         -   接続: TiDB Cloudアラートの IM サブスクリプション
-            -   [Slackで登録する](/tidb-cloud/monitor-alert-slack.md)
+            -   [Slackで購読する](/tidb-cloud/monitor-alert-slack.md)
             -   [Zoomで登録する](/tidb-cloud/monitor-alert-zoom.md)
         -   接続: IM チケットの作成とサブスクリプションの更新
             -   [Slack 経由でチケットを作成し、チケットの更新を購読する](/tidb-cloud/connected-slack-ticket-creation.md)
-            -   [Lark 経由でチケットを作成し、チケットの更新を購読する](/tidb-cloud/connected-lark-ticket-creation.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+            -   [Lark 経由でチケットを作成し、チケットの更新を購読する](/tidb-cloud/connected-lark-ticket-creation.md)
         -   接続: サポートチケットの IM 対話
             -   [Slack経由でサポートチケットとやり取りする](/tidb-cloud/connected-slack-ticket-interaction.md)
-            -   [Lark経由でサポートチケットとやり取りする](/tidb-cloud/connected-lark-ticket-interaction.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+            -   [Lark経由でサポートチケットとやり取りする](/tidb-cloud/connected-lark-ticket-interaction.md)
     -   [サポートを受ける](/tidb-cloud/tidb-cloud-support.md)
 -   よくある質問
     -   [TiDB Cloudに関するよくある質問](/tidb-cloud/tidb-cloud-faq.md)
