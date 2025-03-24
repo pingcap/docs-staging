@@ -27,7 +27,7 @@ Before you start, you need:
 
 - A [Zapier account](https://zapier.com/app/login).
 - A [GitHub account](https://github.com/login).
-- A [TiDB Cloud account](https://tidbcloud.com/signup) and a TiDB Cloud Serverless cluster on TiDB Cloud. For more details, see [TiDB Cloud Quick Start](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart#step-1-create-a-tidb-cluster).
+- A [TiDB Cloud account](https://tidbcloud.com/signup) and a TiDB Cloud Serverless cluster on TiDB Cloud. For more details, see [TiDB Cloud Quick Start](https://docs.tidb.io/tidbcloud/tidb-cloud-quickstart#step-1-create-a-tidb-cluster).
 
 ### Step 1: Get the template
 
@@ -160,7 +160,7 @@ The following table lists the actions supported by TiDB Cloud App. Note that som
 
 | Action | Description | Resource |
 |---|---|---|
-| Find Cluster | Finds an existing TiDB Cloud Serverless or TiDB Cloud Dedicated cluster. | None |
+| Find Cluster | Finds an existing TiDB Cloud Serverless cluster. | None |
 | Create Cluster | Creates a new cluster. Only supports creating a TiDB Cloud Serverless cluster. | None |
 | Find Database | Finds an existing database. | A TiDB Cloud Serverless cluster |
 | Create Database | Creates a new database. | A TiDB Cloud Serverless cluster |

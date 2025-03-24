@@ -39,17 +39,11 @@ You can use `LOCAL` to specify data files on the client to be imported, where th
 
 If you are using TiDB Cloud, to use the `LOAD DATA` statement to load local data files, you need to add the `--local-infile` option to the connection string when you connect to TiDB Cloud. 
 
-- The following is an example connection string for TiDB Cloud Serverless:
+The following is an example connection string for TiDB Cloud Serverless:
 
-    ```
-    mysql --connect-timeout 15 -u '<user_name>' -h <host_name> -P 4000 -D test --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/cert.pem -p<your_password> --local-infile
-    ```
-
-- The following is an example connection string for TiDB Cloud Dedicated:
-
-    ```
-    mysql --connect-timeout 15 --ssl-mode=VERIFY_IDENTITY --ssl-ca=<CA_path> --tls-version="TLSv1.2" -u root -h <host_name> -P 4000 -D test -p<your_password> --local-infile
-    ```
+```
+mysql --connect-timeout 15 -u '<user_name>' -h <host_name> -P 4000 -D test --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/cert.pem -p<your_password> --local-infile
+```
 
 ### S3 and GCS storage
 
@@ -172,7 +166,7 @@ The syntax of the `LOAD DATA` statement is compatible with that of MySQL, except
 > - For versions earlier than TiDB v4.0.0, `LOAD DATA` commits every 20000 rows, which cannot be configured.
 > - For versions from TiDB v4.0.0 to v6.6.0, TiDB commits all rows in one transaction by default. But if you need the `LOAD DATA` statement to commit every fixed number of rows, you can set [`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size) to the desired number of rows.
 > - Starting from v7.0.0, `tidb_dml_batch_size` no longer takes effect on `LOAD DATA`, and TiDB commits all rows in one transaction.
-> - After upgrading from TiDB v4.0.0 or earlier versions, `ERROR 8004 (HY000) at line 1: Transaction is too large, size: 100000058` might occur. To resolve this error, you can contact [TiDB Cloud Support](https://docs.pingcap.com/tidbcloud/tidb-cloud-support) to increase the [`txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit) value.
+> - After upgrading from TiDB v4.0.0 or earlier versions, `ERROR 8004 (HY000) at line 1: Transaction is too large, size: 100000058` might occur. To resolve this error, you can contact [TiDB Cloud Support](https://docs.tidb.io/tidbcloud/tidb-cloud-support) to increase the [`txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit) value.
 > - For versions earlier than TiDB v7.6.0, no matter how many rows are committed in a transaction, `LOAD DATA` is not rolled back by the [`ROLLBACK`](/sql-statements/sql-statement-rollback.md) statement in an explicit transaction.
 > - For versions earlier than TiDB v7.6.0, the `LOAD DATA` statement is always executed in optimistic transaction mode, regardless of the TiDB transaction mode configuration.
 > - Starting from v7.6.0, TiDB processes `LOAD DATA` in transactions in the same way as other DML statements:

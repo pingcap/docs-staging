@@ -9,7 +9,7 @@ This tutorial walks you through how to use [peewee](https://docs.peewee-orm.com/
 
 > **Note**
 >
-> TiDB Vector Search is only available for TiDB Self-Managed (TiDB >= v8.4) and [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless). It is not available for [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated).
+> TiDB Vector Search is only available for TiDB Self-Managed (TiDB >= v8.4) and [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless).
 
 ## Prerequisites
 
@@ -149,7 +149,7 @@ connect_kwargs = {
 #     'ssl_mode': 'VERIFY_IDENTITY',
 #     'ssl': {
 #         # Root certificate default path
-#         # https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters/#root-certificate-default-path
+#         # https://docs.tidb.io/tidbcloud/secure-connections-to-serverless-clusters/#root-certificate-default-path
 #         'ca': os.environ.get('TIDB_CA_PATH', '/path/to/ca.pem'),
 #     },
 # }
