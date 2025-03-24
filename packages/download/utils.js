@@ -222,6 +222,8 @@ export async function retrieveTiDBMDsFromZip(
   }
 }
 
+const CONST_FILE_LIST = ["/_docHome.md"];
+
 export async function retrieveCloudMDsFromZip(
   metaInfo,
   destDir,
@@ -246,7 +248,10 @@ export async function retrieveCloudMDsFromZip(
       entry.entryName.endsWith(`/TOC-tidb-cloud.md`)
     );
 
-    const cloudFileList = getFileListFromToc(cloudTocZipEntry.getData());
+    const cloudFileList = [
+      ...CONST_FILE_LIST,
+      ...getFileListFromToc(cloudTocZipEntry.getData()),
+    ];
 
     // console.log(cloudFileList);
 
