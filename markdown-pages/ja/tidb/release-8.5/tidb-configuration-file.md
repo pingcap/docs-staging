@@ -53,7 +53,7 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 
 > **注記：**
 >
-> ディレクトリが存在しない場合は、TiDB は起動時に自動的に作成します。ディレクトリの作成に失敗した場合、または TiDB にそのディレクトリに対する読み取りおよび書き込み権限がない場合は、予期しない問題が発生する可能[`Fast Online DDL`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630)があります。
+> ディレクトリが存在しない場合は、TiDB は起動時に自動的にディレクトリを作成します。ディレクトリの作成に失敗した場合、または TiDB にそのディレクトリに対する読み取りおよび書き込み権限がない場合は、予期しない問題が発生する可能[`Fast Online DDL`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630)があります。
 
 ### <code>oom-use-tmp-storage</code> {#code-oom-use-tmp-storage-code}
 
@@ -138,7 +138,7 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 
 -   `repair-table-list` 、 [`repair-mode`](#repair-mode) `true`に設定されている場合にのみ有効です。 `repair-table-list` 、インスタンスで修復する必要がある不良テーブルのリストです。 リストの例: [&quot;db.table1&quot;,&quot;db.table2&quot;...]。
 -   デフォルト値: []
--   デフォルトではリストは空です。これは、修復する必要がある不良テーブルがないことを意味します。
+-   リストはデフォルトでは空です。つまり、修復が必要な不良テーブルは存在しないということです。
 
 ### <code>new_collations_enabled_on_first_bootstrap</code> {#code-new-collations-enabled-on-first-bootstrap-code}
 
@@ -150,7 +150,7 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 
 -   TiDB で許可される同時クライアント接続の最大数。リソースを制御するために使用されます。
 -   デフォルト値: `0`
--   デフォルトでは、TiDB は同時クライアント接続の数に制限を設定しません。この構成項目の値が`0`より大きく、実際のクライアント接続数がこの値に達すると、TiDBサーバーは新しいクライアント接続を拒否します。
+-   デフォルトでは、TiDB は同時クライアント接続の数に制限を設定しません。この構成項目の値が`0`より大きく、実際のクライアント接続の数がこの値に達すると、TiDBサーバーは新しいクライアント接続を拒否します。
 -   v6.2.0 以降、TiDB 構成項目[`instance.max_connections`](/tidb-configuration-file.md#max_connections)またはシステム変数[`max_connections`](/system-variables.md#max_connections)使用して、TiDB で許可される同時クライアント接続の最大数を設定します。5 `max-server-connections`引き続き有効です。ただし、 `max-server-connections`と`instance.max_connections`同時に設定されている場合、後者が有効になります。
 
 ### <code>max-index-length</code> {#code-max-index-length-code}
@@ -190,7 +190,7 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 
 -   TCP4 のみのリッスンを有効または無効にします。
 -   デフォルト値: `false`
--   このオプションを有効にすると、 [TCP ヘッダーからの実際のクライアント IP](https://github.com/alibaba/LVS/tree/master/kernel/net/toa) 「tcp4」プロトコルによって正しく解析されるため、負荷分散のために TiDB が LVS と共に使用される場合に便利です。
+-   このオプションを有効にすると、 [TCP ヘッダーからの実際のクライアント IP](https://github.com/alibaba/LVS/tree/master/kernel/net/toa) 「tcp4」プロトコルによって正しく解析できるため、負荷分散のために TiDB が LVS と共に使用される場合に便利です。
 
 ### <code>enable-enum-length-limit</code> <span class="version-mark">v5.0 の新機能</span> {#code-enable-enum-length-limit-code-span-class-version-mark-new-in-v5-0-span}
 
@@ -329,7 +329,7 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 
 -   `expensive`操作の行数のしきい値を出力します。
 -   デフォルト値: `10000`
--   クエリ行数（統計に基づく中間結果を含む）がこの値より大きい場合は、 `expensive`操作となり、 `[EXPENSIVE_QUERY]`プレフィックスが付いたログを出力します。
+-   クエリ行数（統計に基づく中間結果を含む）がこの値より大きい場合、 `expensive`操作となり、 `[EXPENSIVE_QUERY]`プレフィックスが付いたログが出力されます。
 
 ### <code>general-log-file</code> <span class="version-mark">v8.0.0 の新機能</span> {#code-general-log-file-code-span-class-version-mark-new-in-v8-0-0-span}
 
@@ -425,6 +425,11 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 -   TLS を使用して TiKV または PD を接続するために使用される SSL 秘密キー ファイルのパス。
 -   デフォルト値: &quot;&quot;
 
+### <code>cluster-verify-cn</code> {#code-cluster-verify-cn-code}
+
+-   クライアントによって提示された証明書内の許容可能な X.509 共通名のリスト。提示された共通名がリスト内のエントリの 1 つと完全に一致する場合にのみ、要求が許可されます。
+-   デフォルト値: []、クライアント証明書の CN チェックが無効であることを意味します。
+
 ### <code>spilled-file-encryption-method</code> {#code-spilled-file-encryption-method-code}
 
 -   流出したファイルをディスクに保存するために使用される暗号化方法を決定します。
@@ -496,7 +501,7 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 
 ### <code>max-txn-ttl</code> {#code-max-txn-ttl-code}
 
--   単一のトランザクションがロックを保持できる最長時間。この時間を超えると、トランザクションのロックが他のトランザクションによってクリアされ、このトランザクションを正常にコミットできなくなる可能性があります。
+-   単一のトランザクションがロックを保持できる最長時間。この時間を超えると、トランザクションのロックが他のトランザクションによって解除され、このトランザクションを正常にコミットできなくなる可能性があります。
 -   デフォルト値: `3600000`
 -   単位: ミリ秒
 -   この時間より長くロックを保持するトランザクションは、コミットまたはロールバックのみ可能です。コミットは成功しない可能性があります。
@@ -522,9 +527,9 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 
 -   TiDB における単一トランザクションのサイズ制限。
 -   デフォルト値: `104857600` (バイト単位)
--   1 回のトランザクションで、キー値レコードの合計サイズはこの値を超えることはできません。このパラメータの最大値は`1099511627776` (1 TB) です。下流のコンシューマー Kafka にサービスを提供するためにbinlogを使用している場合、このパラメータの値は`1073741824` (1 GB) 以下にする必要があります。これは、1 GB が Kafka が処理できる単一のメッセージ サイズの上限であるためです。それ以外の場合、この制限を超えるとエラーが返されます。
+-   1 回のトランザクションで、キー値レコードの合計サイズはこの値を超えることはできません。このパラメータの最大値は`1099511627776` (1 TB) です。下流のコンシューマー Kafka にサービスを提供するためにbinlogを使用している場合、このパラメータの値は`1073741824` (1 GB) 以下である必要があります。これは、1 GB が Kafka が処理できる単一のメッセージ サイズの上限であるためです。それ以外の場合、この制限を超えるとエラーが返されます。
 -   TiDB v6.5.0 以降のバージョンでは、この構成は推奨されなくなりました。トランザクションのメモリサイズはセッションのメモリ使用量に累積され、セッションメモリしきい値を超えると[`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query)変数が有効になります。以前のバージョンとの互換性を保つために、以前のバージョンから TiDB v6.5.0 以降にアップグレードする場合、この構成は次のように機能します。
-    -   この設定が設定されていないか、デフォルト値 ( `104857600` ) に設定されている場合、アップグレード後にトランザクションのメモリサイズがセッションのメモリ使用量に累積され、 `tidb_mem_quota_query`変数が有効になります。
+    -   この設定が設定されていないか、デフォルト値 ( `104857600` ) に設定されている場合、アップグレード後にトランザクションのメモリサイズがセッションのメモリ使用量に蓄積され、 `tidb_mem_quota_query`変数が有効になります。
     -   この設定がデフォルト（ `104857600` ）になっていない場合でも、設定は有効であり、単一トランザクションのサイズを制御する動作はアップグレードの前後で変更されません。つまり、トランザクションのメモリサイズは`tidb_mem_quota_query`変数によって制御されません。
 -   TiDB が[`tidb_dml_type`](/system-variables.md#tidb_dml_type-new-in-v800) `"bulk"`モードでトランザクションを実行する場合、トランザクション サイズは TiDB 構成項目[`txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit)によって制限されません。
 
@@ -551,7 +556,7 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 
 -   統計の再読み込み、テーブル行数の更新、自動分析を実行する必要があるかどうかの確認、フィードバックを使用した統計の更新、列の統計の読み込みの時間間隔。
 -   デフォルト値: `3s`
-    -   TiDB は`stats-lease`回の間隔で統計情報をチェックし、更新が存在する場合はそれをメモリに更新します。
+    -   TiDB は`stats-lease`間隔で統計情報をチェックし、更新が存在する場合はそれをメモリに更新します。
     -   TiDB は、 `20 * stats-lease`時間間隔で、DML によって生成された行の合計数と変更された行の数をシステム テーブルに更新します。
     -   TiDB は`stats-lease`間隔で、自動的に分析する必要があるテーブルとインデックスをチェックします。
     -   `stats-lease`間隔で、TiDB はメモリにロードする必要がある列統計をチェックします。
@@ -564,7 +569,7 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 
 ### <code>pseudo-estimate-ratio</code> {#code-pseudo-estimate-ratio-code}
 
--   テーブル内の (変更された行数)/(合計行数) の比率。この値を超えると、統計の有効期限が切れたとシステムが判断し、疑似統計が使用されます。
+-   テーブル内の (変更された行数)/(合計行数) の比率。この値を超えると、統計が期限切れであるとシステムが判断し、疑似統計が使用されます。
 -   デフォルト値: `0.8`
 -   最小値は`0` 、最大値は`1`です。
 
@@ -577,7 +582,7 @@ TiDB 構成ファイルは、コマンドライン パラメータよりも多�
 
 > **注記：**
 >
-> v6.6.0 以降、TiDB は[リソース管理](/tidb-resource-control.md)サポートします。この機能を使用すると、異なるリソース グループで異なる優先度の SQL ステートメントを実行できます。これらのリソース グループに適切なクォータと優先度を構成することで、異なる優先度の SQL ステートメントのスケジュール制御を向上させることができます。リソース制御を有効にすると、ステートメントの優先度は適用されなくなります。異なる SQL ステートメントのリソース使用を管理するには、 [リソース管理](/tidb-resource-control.md)使用することをお勧めします。
+> v6.6.0 以降、TiDB は[リソース管理](/tidb-resource-control.md)サポートします。この機能を使用すると、異なるリソース グループで異なる優先度の SQL ステートメントを実行できます。これらのリソース グループに適切なクォータと優先度を設定することで、異なる優先度の SQL ステートメントのスケジュール制御を向上させることができます。リソース制御を有効にすると、ステートメントの優先度は無効になります。異なる SQL ステートメントのリソース使用を管理するには、 [リソース管理](/tidb-resource-control.md)使用することをお勧めします。
 
 ### <code>distinct-agg-push-down</code> {#code-distinct-agg-push-down-code}
 
@@ -699,7 +704,7 @@ opentracing.reporter に関連するコンフィグレーション項目。
 -   レポーターが jaeger エージェントにスパンを送信するアドレス。
 -   デフォルト値: `""`
 
-## tikv クライアント {#tikv-client}
+## tikvクライアント {#tikv-client}
 
 ### <code>grpc-connection-count</code> {#code-grpc-connection-count-code}
 
@@ -732,7 +737,7 @@ opentracing.reporter に関連するコンフィグレーション項目。
 
 ### <code>max-batch-size</code> {#code-max-batch-size-code}
 
--   バッチで送信される RPC パケットの最大数。値が`0`以外の場合、 `BatchCommands` API を使用して TiKV にリクエストが送信され、同時実行性が高い場合に RPCレイテンシーが短縮される可能性があります。この値を変更しないことをお勧めします。
+-   バッチで送信される RPC パケットの最大数。値が`0`でない場合、 `BatchCommands` API を使用して TiKV にリクエストが送信され、同時実行性が高い場合に RPCレイテンシーが短縮される可能性があります。この値を変更しないことをお勧めします。
 -   デフォルト値: `128`
 
 ### <code>max-batch-wait-time</code> {#code-max-batch-wait-time-code}
@@ -768,7 +773,7 @@ opentracing.reporter に関連するコンフィグレーション項目。
 >
 > この構成パラメータは将来のバージョンでは廃止される可能性があります。値を変更し**ないでください**。
 
--   RPC リクエストを TiKV に送信するときに、リージョンレプリカ セレクターの新しいバージョンを使用するかどうか。
+-   RPC 要求を TiKV に送信するときに、リージョンレプリカ セレクターの新しいバージョンを使用するかどうか。
 -   デフォルト値: `true`
 
 ## tikv-client.copr-cache <span class="version-mark">v4.0.0 の新機能</span> {#tikv-client-copr-cache-span-class-version-mark-new-in-v4-0-0-span}
@@ -865,15 +870,15 @@ TiDB サービスのステータスに関連するコンフィグレーション
 
 ### deadlock-history-collect-retryable {#deadlock-history-collect-retryable}
 
--   [`INFORMATION_SCHEMA.DEADLOCKS`](/information-schema/information-schema-deadlocks.md)テーブルが再試行可能なデッドロック エラーの情報を収集するかどうかを制御します。再試行可能なデッドロック エラーの説明については、 [再試行可能なデッドロックエラー](/information-schema/information-schema-deadlocks.md#retryable-deadlock-errors)参照してください。
+-   [`INFORMATION_SCHEMA.DEADLOCKS`](/information-schema/information-schema-deadlocks.md)テーブルが再試行可能なデッドロック エラーの情報を収集するかどうかを制御します。再試行可能なデッドロック エラーの説明については、 [再試行可能なデッドロック エラー](/information-schema/information-schema-deadlocks.md#retryable-deadlock-errors)参照してください。
 -   デフォルト値: `false`
 
 ### pessimistic-auto-commit<span class="version-mark">v6.0.0 の新機能</span> {#pessimistic-auto-commit-span-class-version-mark-new-in-v6-0-0-span}
 
--   悲観的トランザクション モードがグローバルに有効になっている場合 ( `tidb_txn_mode='pessimistic'` ) に、自動コミット トランザクションが使用するトランザクション モードを決定します。デフォルトでは、悲観的トランザクション モードがグローバルに有効になっている場合でも、自動コミット トランザクションは引き続き楽観的トランザクション モードを使用します。 `pessimistic-auto-commit`有効にすると ( `true`に設定)、自動コミット トランザクションも悲観的モードを使用します。これは、他の明示的にコミットされた悲観的トランザクションと一致します。
+-   悲観的トランザクション モードがグローバルに有効になっている場合 ( `tidb_txn_mode='pessimistic'` ) に、自動コミット トランザクションが使用するトランザクション モードを決定します。デフォルトでは、悲観的トランザクション モードがグローバルに有効になっている場合でも、自動コミット トランザクションは楽観的トランザクション モードを使用します。 `pessimistic-auto-commit`有効にすると ( `true`に設定)、自動コミット トランザクションも悲観的モードを使用します。これは、他の明示的にコミットされた悲観的トランザクションと一致します。
 -   競合が発生するシナリオでは、この構成を有効にすると、TiDB は自動コミット トランザクションをグローバル ロック待機管理に組み込み、デッドロックを回避し、デッドロックの原因となる競合によって生じるレイテンシーの急増を軽減します。
 -   競合のないシナリオでは、自動コミット トランザクションが多数あり (具体的な数は実際のシナリオによって決まります。たとえば、自動コミット トランザクションの数がアプリケーションの総数の半分以上を占める場合など)、単一のトランザクションで大量のデータを操作する場合は、この構成を有効にするとパフォーマンスが低下します。たとえば、auto-commit `INSERT INTO SELECT`ステートメントなどです。
--   セッション レベルのシステム変数[`tidb_dml_type`](/system-variables.md#tidb_dml_type-new-in-v800) `"bulk"`に設定されている場合、セッションでのこの構成の効果は、 `false`に設定するのと同等になります。
+-   セッション レベルのシステム変数[`tidb_dml_type`](/system-variables.md#tidb_dml_type-new-in-v800) `"bulk"`に設定すると、セッションでのこの構成の効果は`false`に設定するのと同じになります。
 -   デフォルト値: `false`
 
 ### constraint-check-in-place-pessimistic<span class="version-mark">v6.4.0 の新機能</span> {#constraint-check-in-place-pessimistic-span-class-version-mark-new-in-v6-4-0-span}
@@ -889,7 +894,7 @@ TiDB サービスのステータスに関連するコンフィグレーション
 
 -   TiDB がどのエンジンからデータを読み取ることを許可するかを制御します。
 -   デフォルト値: [&quot;tikv&quot;, &quot;tiflash&quot;, &quot;tidb&quot;]。エンジンがオプティマイザーによって自動的に選択されることを示します。
--   値のオプション: 「tikv」、「tiflash」、「tidb」の任意の組み合わせ。例: [&quot;tikv&quot;, &quot;tidb&quot;] または [&quot;tiflash&quot;, &quot;tidb&quot;]
+-   値のオプション: 「tikv」、「tiflash」、「tidb」の任意の組み合わせ。たとえば、[&quot;tikv&quot;, &quot;tidb&quot;] または [&quot;tiflash&quot;, &quot;tidb&quot;]
 
 ## 実例 {#instance}
 
@@ -917,7 +922,7 @@ TiDB サービスのステータスに関連するコンフィグレーション
 
 ### <code>in-mem-slow-query-topn-num</code> <span class="version-mark">v7.3.0 の新機能</span> {#code-in-mem-slow-query-topn-num-code-span-class-version-mark-new-in-v7-3-0-span}
 
--   この構成では、メモリにキャッシュされる最も遅いクエリの数を制御します。
+-   構成により、メモリにキャッシュされる最も遅いクエリの数を制御します。
 -   デフォルト値: 30
 
 ### <code>in-mem-slow-query-recent-num</code> <span class="version-mark">v7.3.0 の新機能</span> {#code-in-mem-slow-query-recent-num-code-span-class-version-mark-new-in-v7-3-0-span}
@@ -952,7 +957,7 @@ TiDB サービスのステータスに関連するコンフィグレーション
 
 > **注記：**
 >
-> v6.6.0 以降、TiDB は[リソース管理](/tidb-resource-control.md)サポートします。この機能を使用すると、異なるリソース グループで異なる優先度の SQL ステートメントを実行できます。これらのリソース グループに適切なクォータと優先度を構成することで、異なる優先度の SQL ステートメントのスケジュール制御を向上させることができます。リソース制御を有効にすると、ステートメントの優先度は適用されなくなります。異なる SQL ステートメントのリソース使用を管理するには、 [リソース管理](/tidb-resource-control.md)使用することをお勧めします。
+> v6.6.0 以降、TiDB は[リソース管理](/tidb-resource-control.md)サポートします。この機能を使用すると、異なるリソース グループで異なる優先度の SQL ステートメントを実行できます。これらのリソース グループに適切なクォータと優先度を設定することで、異なる優先度の SQL ステートメントのスケジュール制御を向上させることができます。リソース制御を有効にすると、ステートメントの優先度は無効になります。異なる SQL ステートメントのリソース使用を管理するには、 [リソース管理](/tidb-resource-control.md)使用することをお勧めします。
 
 ### <code>max_connections</code> {#code-max-connections-code}
 
