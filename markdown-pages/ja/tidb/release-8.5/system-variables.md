@@ -25,7 +25,7 @@ SET GLOBAL tidb_distsql_scan_concurrency = 10;
 >
 > いくつかの`GLOBAL`変数は TiDB クラスターに保持されます。このドキュメントの一部の変数には`Persists to cluster`設定があり、これを`Yes`または`No`に設定できます。
 >
-> -   `Persists to cluster: Yes`に設定されている変数の場合、グローバル変数が変更されると、すべての TiDB サーバーに通知が送信され、システム変数キャッシュが更新されます。追加の TiDB サーバーを追加するか、既存の TiDB サーバーを再起動すると、永続化された構成値が自動的に使用されます。
+> -   `Persists to cluster: Yes`に設定されている変数の場合、グローバル変数が変更されると、すべての TiDB サーバーにシステム変数キャッシュを更新する通知が送信されます。追加の TiDB サーバーを追加するか、既存の TiDB サーバーを再起動すると、永続化された構成値が自動的に使用されます。
 > -   `Persists to cluster: No`に設定されている変数の場合、変更は接続しているローカル TiDB インスタンスにのみ適用されます。設定された値を保持するには、 `tidb.toml`構成ファイルで変数を指定する必要があります。
 >
 > さらに、TiDB はいくつかの MySQL 変数を読み取り可能かつ設定可能として提示します。これは互換性のために必要です。アプリケーションとコネクタの両方が MySQL 変数を読み取るのが一般的だからです。たとえば、JDBC コネクタは、動作に依存していないにもかかわらず、クエリ キャッシュ設定の読み取りと設定の両方を行います。
@@ -863,7 +863,7 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 -   クラスターに存続: はい
 -   ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に該当: いいえ
 -   タイプ: ブール値
--   デフォルト値: TiDBセルフマネージドの場合は`OFF` `ON` [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)は[TiDB Cloud専用](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated)
+-   デフォルト値: TiDBセルフマネージド[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)場合は`OFF` `ON`場合は[TiDB Cloud専用](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated)
 
 <CustomContent platform="tidb">
 
@@ -2672,7 +2672,7 @@ Query OK, 0 rows affected (0.09 sec)
 -   デフォルト値: `ON`
 -   この変数は、 `INSERT` 、 `DELETE` 、および`UPDATE`を含む SQL ステートメントの読み取り操作をTiFlashにプッシュダウンできるかどうかを制御します。例:
 
-    -   `INSERT INTO SELECT`ステートメントに`SELECT`クエリ (一般的な使用シナリオ: [TiFlashクエリ結果の具体化](/tiflash/tiflash-results-materialization.md) )
+    -   `INSERT INTO SELECT`ステートメントに`SELECT`クエリ (一般的な使用シナリオ: [TiFlashクエリ結果の実現](/tiflash/tiflash-results-materialization.md) )
     -   `UPDATE`と`DELETE`文の`WHERE`条件フィルタリング
 -   v7.1.0 以降、この変数は非推奨です。 [`tidb_allow_mpp = ON`](/system-variables.md#tidb_allow_mpp-new-in-v50)場合、オプティマイザーは、 [SQL モード](/sql-mode.md)とTiFlashレプリカのコスト見積もりに基づいて、クエリをTiFlashにプッシュダウンするかどうかをインテリジェントに決定します。TiDB では、現在のセッションの[SQL モード](/sql-mode.md)が厳密でない場合にのみ、 `INSERT` 、 `DELETE` 、および`UPDATE` ( `INSERT INTO SELECT`など) を含む SQL ステートメントの読み取り操作をTiFlashにプッシュダウンできることに注意してください。つまり、 `sql_mode`値に`STRICT_TRANS_TABLES`と`STRICT_ALL_TABLES`が含まれません。
 
@@ -3048,7 +3048,16 @@ v5.0 以降では、上記のシステム変数を個別に変更することが
 
 -   この変数は、 [ログ](/tidb-configuration-file.md#logfile)内のすべての SQL 文を記録するかどうかを設定するために使用されます。この機能はデフォルトでは無効になっています。保守担当者が問題を見つけるときにすべての SQL 文をトレースする必要がある場合は、この機能を有効にすることができます。
 
+-   設定項目を[`log.general-log-file`](/tidb-configuration-file.md#general-log-file-new-in-v800)指定すると、一般ログが指定ファイルに別途書き込まれます。
+
+-   [`log.format`](/tidb-configuration-file.md#format)構成項目を使用すると、一般ログを別のファイルにするか、他のログと組み合わせるかなど、ログ メッセージの形式を構成できます。
+
+-   [`tidb_redact_log`](#tidb_redact_log)変数を使用すると、一般ログに記録された SQL ステートメントを編集できます。
+
+-   正常に実行されたステートメントのみが一般ログに記録されます。失敗したステートメントは一般ログには記録されませんが、代わりに`command dispatched failed`メッセージとともに TiDB ログに記録されます。
+
 -   ログ内のこの機能のすべてのレコードを表示するには、TiDB 構成項目[`log.level`](/tidb-configuration-file.md#level) `"info"`または`"debug"`に設定し、文字列`"GENERAL_LOG"`をクエリする必要があります。次の情報が記録されます。
+    -   `time` : イベントの時刻。
     -   `conn` : 現在のセッションの ID。
     -   `user` : 現在のセッションユーザー。
     -   `schemaVersion` : 現在のスキーマ バージョン。
@@ -5104,8 +5113,8 @@ SHOW WARNINGS;
 -   ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に該当: いいえ
 -   デフォルト値: `80%`
 -   範囲：
-    -   値はパーセンテージ形式で設定できます。これは、メモリ使用量を総メモリに対してパーセンテージで表したものです。値の範囲は`[1%, 99%]`です。
-    -   メモリサイズの値も設定できます。値の範囲はバイト単位で`0` ～ `[536870912, 9223372036854775807]`です。「KiB|MiB|GiB|TiB」単位のメモリ形式がサポートされています。5 `0`メモリ制限がないことを意味します。
+    -   値はパーセンテージ形式で設定できます。これは、メモリ使用量を総メモリに対してパーセンテージで表すものです。値の範囲は`[1%, 99%]`です。
+    -   メモリサイズの値も設定できます。値の範囲はバイト単位で`0` ～ `[536870912, 9223372036854775807]`です。単位が「KiB|MiB|GiB|TiB」のメモリ形式がサポートされています。5 `0`メモリ制限がないことを意味します。
     -   この変数が 512 MiB 未満で`0`以外のメモリサイズに設定されている場合、TiDB は実際のサイズとして 512 MiB を使用します。
 -   この変数は、TiDB インスタンスのメモリ制限を指定します。TiDB のメモリ使用量が制限に達すると、TiDB はメモリ使用量が最も高い現在実行中の SQL ステートメントをキャンセルします。SQL ステートメントが正常にキャンセルされると、TiDB はGolang GC を呼び出してメモリをすぐに再利用し、できるだけ早くメモリのストレスを軽減しようとします。
 -   メモリ使用量が[`tidb_server_memory_limit_sess_min_size`](/system-variables.md#tidb_server_memory_limit_sess_min_size-new-in-v640)制限を超える SQL ステートメントのみが、最初にキャンセルされる SQL ステートメントとして選択されます。
@@ -5726,7 +5735,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **警告：**
 >
-> この変数を無効にすると、TiDB はメモリ使用量を正確に追跡できず、対応する SQL ステートメントのメモリ使用量を制御できなくなる可能性があります。
+> この変数を無効にすると、TiDB はメモリ使用量を正確に追跡できず、対応する SQL ステートメントのメモリ使用量を制御できなくなります。
 
 ### tidb_tso_client_batch_max_wait_time <span class="version-mark">v5.3.0 の新機能</span> {#tidb-tso-client-batch-max-wait-time-span-class-version-mark-new-in-v5-3-0-span}
 
@@ -5885,7 +5894,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 -   `FAST` `STRICT`値: `OFF`
 
--   この変数はアサーション レベルを制御するために使用されます。アサーションは、データとインデックス間の一貫性チェックであり、書き込まれるキーがトランザクション コミット プロセス内に存在するかどうかをチェックします。詳細については、 [データとインデックス間の不整合のトラブルシューティング](/troubleshoot-data-inconsistency-errors.md)参照してください。
+-   この変数はアサーション レベルを制御するために使用されます。アサーションは、データとインデックス間の一貫性チェックであり、書き込まれるキーがトランザクション コミット プロセスに存在するかどうかをチェックします。詳細については、 [データとインデックス間の不整合のトラブルシューティング](/troubleshoot-data-inconsistency-errors.md)参照してください。
 
     -   `OFF` : このチェックを無効にします。
     -   `FAST` : ほとんどのチェック項目を有効にしますが、パフォーマンスにはほとんど影響しません。
@@ -6110,7 +6119,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 > **注記：**
 >
 > -   通常、通常のクエリには数ミリ秒かかりますが、TiKV ノードが不安定なネットワークにある場合や I/O ジッターが発生する場合、クエリに 1 秒以上、場合によっては 10 秒以上かかることがあります。この場合、オプティマイザ ヒント`/*+ SET_VAR(TIKV_CLIENT_READ_TIMEOUT=100) */`を使用して、特定のクエリの TiKV RPC 読み取り要求タイムアウトを 100 ミリ秒に設定できます。このようにすると、TiKV ノードの応答が遅い場合でも、TiDB はすぐにタイムアウトし、次の TiKVリージョンピアが配置されている TiKV ノードに RPC 要求を再送信できます。2 つの TiKV ノードが同時に I/O ジッターが発生する可能性は低いため、クエリは通常、数ミリ秒から 110 ミリ秒以内に完了します。
-> -   `tikv_client_read_timeout`にあまり小さい値 (たとえば、1 ミリ秒) を設定しないでください。そうしないと、TiDB クラスターのワークロードが高いときに要求が簡単にタイムアウトし、その後の再試行によって TiDB クラスターの負荷がさらに増加する可能性があります。
+> -   `tikv_client_read_timeout`には小さすぎる値（たとえば 1 ミリ秒）を設定しないでください。小さすぎると、TiDB クラスターのワークロードが高いときにリクエストが簡単にタイムアウトし、その後の再試行によって TiDB クラスターの負荷がさらに増加する可能性があります。
 > -   異なるタイプのクエリに異なるタイムアウト値を設定する必要がある場合は、オプティマイザーヒントを使用することをお勧めします。
 
 ### タイムゾーン {#time-zone}

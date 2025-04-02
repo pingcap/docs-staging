@@ -170,6 +170,7 @@
         -   [TiUPを使用する](/upgrade-tidb-using-tiup.md)
         -   [TiDB Operatorを使用する](https://docs.pingcap.com/tidb-in-kubernetes/stable/upgrade-a-tidb-cluster)
         -   [TiDB スムーズアップグレード](/smooth-upgrade-tidb.md)
+        -   [TiDBクラスタの移行とアップグレード](/tidb-upgrade-migration-guide.md)
         -   [TiFlashアップグレード ガイド](/tiflash-upgrade-guide.md)
     -   規模
         -   [TiUPを使用する（推奨）](/scale-tidb-using-tiup.md)
@@ -188,7 +189,7 @@
             -   [バックアップストレージ](/br/backup-and-restore-storages.md)
         -   BR CLI マニュアル
             -   [概要](/br/use-br-command-line-tool.md)
-            -   [スナップショットのバックアップと復元のコマンドマニュアル](/br/br-snapshot-manual.md)
+            -   [スナップショットのバックアップと復元コマンドマニュアル](/br/br-snapshot-manual.md)
             -   [ログバックアップとPITRコマンドマニュアル](/br/br-pitr-manual.md)
         -   参考文献
             -   BR機能
@@ -309,7 +310,7 @@
             -   [準備されていない実行プランのキャッシュ](/sql-non-prepared-plan-cache.md)
         -   制御実行計画
             -   [概要](/control-execution-plan.md)
-            -   [オプティマイザーのヒント](/optimizer-hints.md)
+            -   [オプティマイザのヒント](/optimizer-hints.md)
             -   [SQL プラン管理](/sql-plan-management.md)
             -   [最適化ルールのブロックリストと式のプッシュダウン](/blocklist-control-plan.md)
             -   [オプティマイザー修正コントロール](/optimizer-fix-controls.md)
@@ -647,7 +648,7 @@
         -   [コンフィグレーション](/tiproxy/tiproxy-configuration.md)
         -   [コマンドラインパラメータ](/tiproxy/tiproxy-command-line-flags.md)
         -   [監視メトリクス](/tiproxy/tiproxy-grafana.md)
-        -   [翻訳](/tiproxy/tiproxy-api.md)
+        -   [API](/tiproxy/tiproxy-api.md)
         -   [トラブルシューティング](/tiproxy/troubleshoot-tiproxy.md)
         -   [パフォーマンステスト](/tiproxy/tiproxy-performance-test.md)
 -   参照
@@ -1039,7 +1040,7 @@
                 -   [診断レポートをビュー](/dashboard/dashboard-diagnostics-report.md)
                 -   [診断を使用する](/dashboard/dashboard-diagnostics-usage.md)
             -   [監視ページ](/dashboard/dashboard-monitoring.md)
-            -   [ログ検索ページ](/dashboard/dashboard-log-search.md)
+            -   [検索ログページ](/dashboard/dashboard-log-search.md)
             -   [リソース マネージャー ページ](/dashboard/dashboard-resource-manager.md)
             -   インスタンスプロファイリング
                 -   [手動プロファイリング](/dashboard/dashboard-profiling.md)
@@ -1079,7 +1080,7 @@
         -   [8.0.0-DMR](/releases/release-8.0.0.md)
     -   バージョン7.6
         -   [7.6.0-DMR](/releases/release-7.6.0.md)
-    -   バージョン7.5
+    -   v7.5
         -   [7.5.6](/releases/release-7.5.6.md)
         -   [7.5.5](/releases/release-7.5.5.md)
         -   [7.5.4](/releases/release-7.5.4.md)
