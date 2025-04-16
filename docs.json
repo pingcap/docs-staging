@@ -201,6 +201,7 @@
   "ignore": [
     ".circleci",
     ".github",
+    ".vaunt",
     "CONTRIBUTING.md",
     "README.md",
     "assets",
