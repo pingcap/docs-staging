@@ -175,7 +175,7 @@ Expected output:
 +-------------------+
 ```
 
-If your actual output is similar to the expected output, congratulations, you have successfully execute a SQL statement on TiDB Cloud.
+If your actual output is similar to the expected output, congratulations, you have successfully executed a SQL statement on TiDB Cloud.
 
 ## Need help?
 
