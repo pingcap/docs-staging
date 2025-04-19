@@ -62,7 +62,7 @@ Query OK, 0 rows affected (0.08 sec)
 - ACCOUNT
 - ACTION
 - ADD (R)
-- ADMIN (R)
+- ADMIN
 - ADVISE
 - AFTER
 - AGAINST
@@ -77,6 +77,8 @@ Query OK, 0 rows affected (0.08 sec)
 - AS (R)
 - ASC (R)
 - ASCII
+- ATTRIBUTE
+- ATTRIBUTES
 - AUTO_ID_CACHE
 - AUTO_INCREMENT
 - AUTO_RANDOM
@@ -89,12 +91,15 @@ Query OK, 0 rows affected (0.08 sec)
 - BACKEND
 - BACKUP
 - BACKUPS
+- BATCH
 - BEGIN
+- BERNOULLI
 - BETWEEN (R)
 - BIGINT (R)
 - BINARY (R)
 - BINDING
 - BINDINGS
+- BINDING_CACHE
 - BINLOG
 - BIT
 - BLOB (R)
@@ -103,8 +108,8 @@ Query OK, 0 rows affected (0.08 sec)
 - BOOLEAN
 - BOTH (R)
 - BTREE
-- BUCKETS (R)
-- BUILTINS (R)
+- BUCKETS
+- BUILTINS
 - BY (R)
 - BYTE
 
@@ -112,11 +117,13 @@ Query OK, 0 rows affected (0.08 sec)
 
 - CACHE
 - CALL (R)
-- CANCEL (R)
+- CANCEL
 - CAPTURE
+- CARDINALITY
 - CASCADE (R)
 - CASCADED
 - CASE (R)
+- CAUSAL
 - CHAIN
 - CHANGE (R)
 - CHAR (R)
@@ -128,13 +135,17 @@ Query OK, 0 rows affected (0.08 sec)
 - CIPHER
 - CLEANUP
 - CLIENT
-- CMSKETCH (R)
+- CLIENT_ERRORS_SUMMARY
+- CLUSTER
+- CLUSTERED
+- CMSKETCH
 - COALESCE
 - COLLATE (R)
 - COLLATION
 - COLUMN (R)
 - COLUMNS
 - COLUMN_FORMAT
+- COLUMN_STATS_USAGE
 - COMMENT
 - COMMIT
 - COMMITTED
@@ -144,10 +155,12 @@ Query OK, 0 rows affected (0.08 sec)
 - CONCURRENCY
 - CONFIG
 - CONNECTION
+- CONSISTENCY
 - CONSISTENT
 - CONSTRAINT (R)
 - CONTEXT
 - CONVERT (R)
+- CORRELATION
 - CPU
 - CREATE (R)
 - CROSS (R)
@@ -179,7 +192,7 @@ Query OK, 0 rows affected (0.08 sec)
 - DAY_MICROSECOND (R)
 - DAY_MINUTE (R)
 - DAY_SECOND (R)
-- DDL (R)
+- DDL
 - DEALLOCATE
 - DECIMAL (R)
 - DEFAULT (R)
@@ -188,11 +201,14 @@ Query OK, 0 rows affected (0.08 sec)
 - DELAY_KEY_WRITE
 - DELETE (R)
 - DENSE_RANK (R-Window)
-- DEPTH (R)
+- DEPENDENCY
+- DEPTH
 - DESC (R)
 - DESCRIBE (R)
+- DIGEST
 - DIRECTORY
 - DISABLE
+- DISABLED
 - DISCARD
 - DISK
 - DISTINCT (R)
@@ -200,8 +216,9 @@ Query OK, 0 rows affected (0.08 sec)
 - DIV (R)
 - DO
 - DOUBLE (R)
-- DRAINER (R)
+- DRAINER
 - DROP (R)
+- DRY
 - DUAL (R)
 - DUPLICATE
 - DYNAMIC
@@ -210,6 +227,7 @@ Query OK, 0 rows affected (0.08 sec)
 
 - ELSE (R)
 - ENABLE
+- ENABLED
 - ENCLOSED (R)
 - ENCRYPTION
 - END
@@ -236,6 +254,7 @@ Query OK, 0 rows affected (0.08 sec)
 
 <a id="F" class="letter" href="#F">F</a>
 
+- FAILED_LOGIN_ATTEMPTS
 - FALSE (R)
 - FAULTS
 - FETCH (R)
@@ -270,7 +289,10 @@ Query OK, 0 rows affected (0.08 sec)
 
 - HASH
 - HAVING (R)
+- HELP
 - HIGH_PRIORITY (R)
+- HISTOGRAM
+- HISTOGRAMS_IN_FLIGHT
 - HISTORY
 - HOSTS
 - HOUR
@@ -315,8 +337,8 @@ Query OK, 0 rows affected (0.08 sec)
 
 <a id="J" class="letter" href="#J">J</a>
 
-- JOB (R)
-- JOBS (R)
+- JOB
+- JOBS
 - JOIN (R)
 - JSON
 
@@ -352,6 +374,7 @@ Query OK, 0 rows affected (0.08 sec)
 - LOCALTIMESTAMP (R)
 - LOCATION
 - LOCK (R)
+- LOCKED
 - LOGS
 - LONG (R)
 - LONGBLOB (R)
@@ -400,10 +423,11 @@ Query OK, 0 rows affected (0.08 sec)
 - NOCACHE
 - NOCYCLE
 - NODEGROUP
-- NODE_ID (R)
-- NODE_STATE (R)
+- NODE_ID
+- NODE_STATE
 - NOMAXVALUE
 - NOMINVALUE
+- NONCLUSTERED
 - NONE
 - NOT (R)
 - NOWAIT
@@ -418,15 +442,17 @@ Query OK, 0 rows affected (0.08 sec)
 <a id="O" class="letter" href="#O">O</a>
 
 - OF (R)
+- OFF
 - OFFSET
 - ON (R)
 - ONLINE
 - ONLY
 - ON_DUPLICATE
 - OPEN
-- OPTIMISTIC (R)
+- OPTIMISTIC
 - OPTIMIZE (R)
 - OPTION (R)
+- OPTIONAL
 - OPTIONALLY (R)
 - OR (R)
 - ORDER (R)
@@ -444,15 +470,19 @@ Query OK, 0 rows affected (0.08 sec)
 - PARTITIONING
 - PARTITIONS
 - PASSWORD
+- PASSWORD_LOCK_TIME
+- PERCENT
 - PERCENT_RANK (R-Window)
 - PER_DB
 - PER_TABLE
-- PESSIMISTIC (R)
+- PESSIMISTIC
 - PLACEMENT (S)
 - PLUGINS
+- POLICY
 - PRECEDING
 - PRECISION (R)
 - PREPARE
+- PRESERVE
 - PRE_SPLIT_REGIONS
 - PRIMARY (R)
 - PRIVILEGES
@@ -461,7 +491,9 @@ Query OK, 0 rows affected (0.08 sec)
 - PROCESSLIST
 - PROFILE
 - PROFILES
-- PUMP (R)
+- PROXY
+- PUMP
+- PURGE
 
 <a id="Q" class="letter" href="#Q">Q</a>
 
@@ -483,8 +515,8 @@ Query OK, 0 rows affected (0.08 sec)
 - REDUNDANT
 - REFERENCES (R)
 - REGEXP (R)
-- REGION (R)
-- REGIONS (R)
+- REGION
+- REGIONS
 - RELEASE (R)
 - RELOAD
 - REMOVE
@@ -495,12 +527,18 @@ Query OK, 0 rows affected (0.08 sec)
 - REPEATABLE
 - REPLACE (R)
 - REPLICA
+- REPLICAS
 - REPLICATION
 - REQUIRE (R)
+- REQUIRED
+- RESET
 - RESPECT
+- RESTART
 - RESTORE
 - RESTORES
 - RESTRICT (R)
+- RESUME
+- REUSE
 - REVERSE
 - REVOKE (R)
 - RIGHT (R)
@@ -514,10 +552,14 @@ Query OK, 0 rows affected (0.08 sec)
 - ROW_FORMAT
 - ROW_NUMBER (R-Window)
 - RTREE
+- RUN
 
 <a id="S" class="letter" href="#S">S</a>
 
-- SAMPLES (R)
+- SAMPLERATE
+- SAMPLES
+- SAN
+- SAVEPOINT
 - SECOND
 - SECONDARY_ENGINE
 - SECONDARY_LOAD
@@ -531,6 +573,7 @@ Query OK, 0 rows affected (0.08 sec)
 - SERIAL
 - SERIALIZABLE
 - SESSION
+- SESSION_STATES
 - SET (R)
 - SETVAL
 - SHARD_ROW_ID_BITS
@@ -540,6 +583,7 @@ Query OK, 0 rows affected (0.08 sec)
 - SHUTDOWN
 - SIGNED
 - SIMPLE
+- SKIP
 - SKIP_SCHEMA_FILES
 - SLAVE
 - SLOW
@@ -548,7 +592,7 @@ Query OK, 0 rows affected (0.08 sec)
 - SOME
 - SOURCE
 - SPATIAL (R)
-- SPLIT (R)
+- SPLIT
 - SQL (R)
 - SQL_BIG_RESULT (R)
 - SQL_BUFFER_RESULT
@@ -567,15 +611,22 @@ Query OK, 0 rows affected (0.08 sec)
 - SSL (R)
 - START
 - STARTING (R)
-- STATS (R)
+- STATISTICS
+- STATS
 - STATS_AUTO_RECALC
-- STATS_BUCKETS (R)
+- STATS_BUCKETS
+- STATS_COL_CHOICE
+- STATS_COL_LIST
 - STATS_EXTENDED (R)
-- STATS_HEALTHY (R)
-- STATS_HISTOGRAMS (R)
-- STATS_META (R)
+- STATS_HEALTHY
+- STATS_HISTOGRAMS
+- STATS_LOCKED
+- STATS_META
+- STATS_OPTIONS
 - STATS_PERSISTENT
 - STATS_SAMPLE_PAGES
+- STATS_SAMPLE_RATE
+- STATS_TOPN
 - STATUS
 - STORAGE
 - STORED (R)
@@ -587,6 +638,7 @@ Query OK, 0 rows affected (0.08 sec)
 - SUPER
 - SWAPS
 - SWITCHES
+- SYSTEM
 - SYSTEM_TIME
 
 <a id="T" class="letter" href="#T">T</a>
@@ -596,15 +648,16 @@ Query OK, 0 rows affected (0.08 sec)
 - TABLESAMPLE (R)
 - TABLESPACE
 - TABLE_CHECKSUM
+- TELEMETRY
+- TELEMETRY_ID
 - TEMPORARY
 - TEMPTABLE
 - TERMINATED (R)
 - TEXT
 - THAN
 - THEN (R)
-- TIDB (R)
-- TiDB_CURRENT_TSO (R)
-- TIFLASH (R)
+- TIDB
+- TIFLASH
 - TIKV_IMPORTER
 - TIME
 - TIMESTAMP
@@ -613,7 +666,7 @@ Query OK, 0 rows affected (0.08 sec)
 - TINYTEXT (R)
 - TO (R)
 - TOKEN_ISSUER
-- TOPN (R)
+- TOPN
 - TRACE
 - TRADITIONAL
 - TRAILING (R)
@@ -622,7 +675,11 @@ Query OK, 0 rows affected (0.08 sec)
 - TRIGGERS
 - TRUE (R)
 - TRUNCATE
+- TSO
+- TTL
+- TTL_ENABLE
 - TYPE
+- TiDB_CURRENT_TSO (R)
 
 <a id="U" class="letter" href="#U">U</a>
 
@@ -660,12 +717,13 @@ Query OK, 0 rows affected (0.08 sec)
 
 <a id="W" class="letter" href="#W">W</a>
 
+- WAIT
 - WARNINGS
 - WEEK
 - WEIGHT_STRING
 - WHEN (R)
 - WHERE (R)
-- WIDTH (R)
+- WIDTH
 - WINDOW (R-Window)
 - WITH (R)
 - WITHOUT
