@@ -40,7 +40,7 @@ Push 方式指利用 Prometheus remote-write 的特性，使位于不同 Kuberne
     - `storageclass_name`：当前集群中的存储。
     - `remote_write_url`：`thanos-receiver` 组件的 host，或其他兼容 Prometheus remote API 组件的 host 。
 
-
+    
     ```shell
     cluster_name="cluster1"
     cluster_namespace="pingcap"
@@ -51,7 +51,7 @@ Push 方式指利用 Prometheus remote-write 的特性，使位于不同 Kuberne
 
 2. 执行以下指令，创建 `TidbMonitor`：
 
-
+    
     ```shell
     cat << EOF | kubectl apply -n ${cluster_namespace} -f -
     apiVersion: pingcap.com/v1alpha1
@@ -122,7 +122,7 @@ Pull 方式是指从不同 Kubernetes 集群的 Prometheus 实例中拉取监控
     - `cluster_domain`：当前 Kubernetes 集群的 [Cluster Domain](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#introduction)。
     - `storageclass_name`：当前 Kubernetes 集群中的存储。
 
-
+    
     ```shell
     cluster_name="cluster1"
     cluster_namespace="pingcap"
@@ -133,7 +133,7 @@ Pull 方式是指从不同 Kubernetes 集群的 Prometheus 实例中拉取监控
 
 2. 执行以下指令，创建 `TidbMonitor`：
 
-
+    
     ```shell
     cat <<EOF | kubectl apply -n ${cluster_namespace} -f -
     apiVersion: pingcap.com/v1alpha1
@@ -207,7 +207,7 @@ Pull 方式是指从不同 Kubernetes 集群的 Prometheus 实例中拉取监控
     - `kubernetes_cluster_name`：自定义的 Kubernetes 集群名称，在标识 Prometheus 的 `externallabels` 中使用。
     - `storageclass_name`：当前集群中的存储。
 
-
+    
     ```shell
     cluster_name="cluster1"
     cluster_namespace="pingcap"
@@ -217,7 +217,7 @@ Pull 方式是指从不同 Kubernetes 集群的 Prometheus 实例中拉取监控
 
 2. 执行以下指令，创建 `TidbMonitor` ：
 
-
+    
     ```shell
     cat << EOF | kubectl apply -n ${cluster_namespace} -f -
     apiVersion: pingcap.com/v1alpha1
@@ -283,7 +283,7 @@ scrape_configs:
 
 1. 执行以下指令，获取 TiDB 相关组件的 Grafana Dashboards：
 
-
+    
     ```shell
     # set tidb version here
     version=v7.5.0
@@ -301,7 +301,7 @@ scrape_configs:
 
     为了与上一步中获得的 dashboard JSON 定义文件保持一致，需将数据源 `Name` 字段值配置为 `tidb-cluster`。如果你希望使用已有的数据源，请执行以下指令，对上述 dashboard JSON 文件中的数据源名称进行替换，其中 `$DS_NAME` 变量的值为数据源的名称。
 
-
+    
     ```shell
     # define your datasource name here.
     DS_NAME=thanos
