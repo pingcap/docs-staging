@@ -80,7 +80,7 @@ spec:
 
 2. 当集群创建完毕时，可以通过以下命令将 TiDB Dashboard 暴露在本地机器:
 
-
+    
     ```shell
     kubectl port-forward svc/basic-discovery -n ${namespace} 10262:10262
     ```
@@ -208,7 +208,7 @@ spec:
 
     执行以下命令部署 TidbNGMonitoring CR。其中， `${cluster_name}` 为 TidbCluster CR 的名称，`${cluster_ns}` 为 TidbCluster CR 所在的命名空间。
 
-
+    
     ```bash
     cat << EOF | kubectl apply -n ${ns} -f -
     apiVersion: pingcap.com/v1alpha1
