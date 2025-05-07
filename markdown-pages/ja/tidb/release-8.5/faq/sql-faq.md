@@ -361,7 +361,7 @@ TiDB v7.4以降、 `connectionCollation`が設定されておらず、JDBC URL�
 
 以下は、TiDB v6.5 での一般的な JDBC URL 構成です。
 
-    spring.datasource.url=JDBC:mysql://{TiDBIP}:{TiDBPort}/{DBName}?characterEncoding=UTF-8&useSSL=false&useServerPrepStmts=true&cachePrepStmts=true&prepStmtCacheSqlLimit=10000&prepStmtCacheSize=1000&useConfigs=maxPerformance&rewriteBatchedStatements=true&defaultfetchsize=-2147483648&allowMultiQueries=true
+    spring.datasource.url=JDBC:mysql://{TiDBIP}:{TiDBPort}/{DBName}?characterEncoding=UTF-8&useSSL=false&useServerPrepStmts=true&cachePrepStmts=true&prepStmtCacheSqlLimit=10000&prepStmtCacheSize=1000&useConfigs=maxPerformance&rewriteBatchedStatements=true&defaultFetchSize=-2147483648&allowMultiQueries=true
 
 TiDB v7.5 以降のバージョンにアップグレードした後は、JDBC URL に`connectionCollation`パラメータを設定することをお勧めします。
 

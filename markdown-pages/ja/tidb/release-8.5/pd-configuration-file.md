@@ -94,6 +94,22 @@ PD設定ファイルは、コマンドラインパラメータよりも多くの
 -   `auto-compaction-retention`が`periodic`場合、メタ情報データベースの自動圧縮間隔。圧縮モードが`revision`に設定されている場合、このパラメータは自動圧縮のバージョン番号を示します。
 -   デフォルト値: 1時間
 
+### <code>tick-interval</code> {#code-tick-interval-code}
+
+-   etcdの設定項目`heartbeat-interval`に相当します。異なるPDノードに埋め込まれたetcdインスタンス間のRaftハートビート間隔を制御します。値を小さくすると障害検出が高速化されますが、ネットワーク負荷が増加します。
+-   デフォルト値: `500ms`
+
+### <code>election-interval</code> {#code-election-interval-code}
+
+-   etcdの`election-timeout`設定項目に相当します。PDノードに組み込まれたetcdインスタンスの選出タイムアウトを制御します。etcdインスタンスがこの期間内に他のetcdインスタンスから有効なハートビートを受信しない場合、 Raft選出を開始します。
+-   デフォルト値: `3000ms`
+-   この値は[`tick-interval`](#tick-interval) 5倍以上でなければなりません。例えば、 `tick-interval`が`500ms`場合、 `election-interval` `2500ms`以上でなければなりません。
+
+### <code>enable-prevote</code> {#code-enable-prevote-code}
+
+-   etcdの`pre-vote`設定項目に相当します。PDノードに組み込まれたetcdがRaft事前投票を有効にするかどうかを制御します。有効にすると、etcdは追加の選挙フェーズを実行し、選挙に勝つのに十分な票数を得られるかどうかを確認します。これにより、サービスの中断を最小限に抑えることができます。
+-   デフォルト値: `true`
+
 ### <code>force-new-cluster</code> {#code-force-new-cluster-code}
 
 -   PDを強制的に新しいクラスタとして起動し、 Raftメンバーの数を`1`に変更するかどうかを決定します。
@@ -156,7 +172,7 @@ pd-server関連のコンフィグレーション項目
 ### <code>flow-round-by-digit</code> <span class="version-mark">TiDB 5.1 の新機能</span> {#code-flow-round-by-digit-code-span-class-version-mark-new-in-tidb-5-1-span}
 
 -   デフォルト値: 3
--   PDはフロー番号の最下位桁を丸めることで、リージョンフロー情報の変更に伴う統計情報の更新を削減します。この設定項目は、リージョンフロー情報の最小桁数を指定します。例えば、フロー`100512`デフォルト値が`3`あるため、 `101000`に丸められます。この設定により、 `trace-region-flow`置き換えられます。
+-   PDはフロー番号の最下位桁を丸めることで、リージョンフロー情報の変更に伴う統計情報の更新を削減します。この設定項目は、リージョンフロー情報の最小桁数を指定します。例えば、フロー`100512`デフォルト値が`3`であるため、 `101000`に丸められます。この設定により、 `trace-region-flow`置き換えられます。
 
 > **注記：**
 >
@@ -404,6 +420,16 @@ pd-server関連のコンフィグレーション項目
 -   ホットリージョン情報を保持する日数を指定します。
 -   デフォルト値: `7`
 
+### <code>enable-heartbeat-breakdown-metrics</code> <span class="version-mark">v8.0.0 の新機能</span> {#code-enable-heartbeat-breakdown-metrics-code-span-class-version-mark-new-in-v8-0-0-span}
+
+-   リージョンハートビートの内訳メトリクスを有効にするかどうかを制御します。これらのメトリクスは、リージョンハートビート処理の各段階で消費された時間を測定し、監視による分析を容易にします。
+-   デフォルト値: `true`
+
+### <code>enable-heartbeat-concurrent-runner</code><span class="version-mark">バージョン8.0.0の新機能</span> {#code-enable-heartbeat-concurrent-runner-code-span-class-version-mark-new-in-v8-0-0-span}
+
+-   リージョンハートビートの非同期同時処理を有効にするかどうかを制御します。有効にすると、独立したエグゼキューターがリージョンハートビートリクエストを非同期かつ同時に処理するため、ハートビート処理のスループットが向上し、レイテンシーが短縮されます。
+-   デフォルト値: `true`
+
 ## <code>replication</code> {#code-replication-code}
 
 レプリカに関連するコンフィグレーション項目
@@ -427,7 +453,7 @@ pd-server関連のコンフィグレーション項目
 
 ### <code>strictly-match-label</code> {#code-strictly-match-label-code}
 
--   TiKV ラベルが PD `location-labels`と一致するかどうかを厳密にチェックできるようにします。
+-   TiKV ラベルが PD `location-labels`一致するかどうかを厳密にチェックできるようにします。
 -   デフォルト値: `false`
 
 ### <code>enable-placement-rules</code> {#code-enable-placement-rules-code}
