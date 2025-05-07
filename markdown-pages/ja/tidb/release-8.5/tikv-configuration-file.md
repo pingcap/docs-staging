@@ -54,7 +54,7 @@ TiKV設定ファイルは、コマンドラインパラメータよりも多く�
 
 -   ログに関するコンフィグレーション項目。
 
--   バージョン5.4.0以降、TiKVとTiDBのログ設定項目の整合性を保つため、TiKVは以前の設定項目`log-rotation-timespan`廃止し、 `log-level` `log-file`以下の設定`log-format`に変更`log-rotation-size`ました。古い設定項目のみを設定し、その値をデフォルト以外の値に設定した場合、古い設定項目と新しい設定項目の互換性は維持されます。古い設定項目と新しい設定項目の両方を設定した場合、新しい設定項目が有効になります。
+-   バージョン5.4.0以降、TiKVとTiDBのログ設定項目の整合性`log-file`保つため、TiKVは以前の設定項目`log-rotation-timespan`廃止し、 `log-level` `log-format`以下の設定項目に変更`log-rotation-size`ました。古い設定項目のみを設定し、その値をデフォルト以外の値に設定した場合、古い設定項目と新しい設定項目の互換性は維持されます。古い設定項目と新しい設定項目の両方を設定した場合、新しい設定項目が有効になります。
 
 ### <code>level</code> <span class="version-mark">v5.4.0 の新機能</span> {#code-level-code-span-class-version-mark-new-in-v5-4-0-span}
 
@@ -223,6 +223,19 @@ TiKV設定ファイルは、コマンドラインパラメータよりも多く�
 -   デフォルト値: `"100MiB"`
 -   単位: KiB|MiB|GiB
 -   最小値: `"1KiB"`
+
+### <code>snap-min-ingest-size</code> <span class="version-mark">v8.1.2 の新機能</span> {#code-snap-min-ingest-size-code-span-class-version-mark-new-in-v8-1-2-span}
+
+-   TiKV がスナップショットを処理するときに取り込み方式を採用するかどうかの最小しきい値を指定します。
+
+    -   スナップショットのサイズがこのしきい値を超えると、TiKVはスナップショットからSSTファイルをRocksDBにインポートする取り込み方式を採用します。この方式は、大きなファイルの場合、より高速です。
+    -   スナップショットのサイズがこのしきい値を超えない場合、TiKVは直接書き込み方式を採用し、各データをRocksDBに個別に書き込みます。この方式は、小さなファイルの場合により効率的です。
+
+-   デフォルト値: `"2MiB"`
+
+-   単位: KiB|MiB|GiB
+
+-   最小値: `0`
 
 ### <code>enable-request-batch</code> {#code-enable-request-batch-code}
 
@@ -521,6 +534,11 @@ storageに関するコンフィグレーション項目。
     -   `storage.engine="partitioned-raft-kv"`場合、デフォルト値はシステムメモリの合計サイズの 30% になります。
 
 -   単位: KiB|MiB|GiB
+
+### <code>low-pri-pool-ratio</code> <span class="version-mark">v8.0.0 の新機能</span> {#code-low-pri-pool-ratio-code-span-class-version-mark-new-in-v8-0-0-span}
+
+-   Titanコンポーネントが使用できるブロックキャッシュ全体の割合を制御します。
+-   デフォルト値: `0.2`
 
 ## storage.フロー制御 {#storage-flow-control}
 
@@ -830,6 +848,17 @@ Raftstoreに関連するコンフィグレーション項目。
 -   デフォルト値: `"10s"`
 -   最小値: `0`
 
+### <code>pd-report-min-resolved-ts-interval</code><span class="version-mark">バージョン7.6.0の新機能</span> {#code-pd-report-min-resolved-ts-interval-code-span-class-version-mark-new-in-v7-6-0-span}
+
+> **注記：**
+>
+> この設定項目の名前は[`report-min-resolved-ts-interval`](https://docs.pingcap.com/tidb/v7.5/tikv-configuration-file/#report-min-resolved-ts-interval-new-in-v600)から変更されました。v7.6.0以降、 `report-min-resolved-ts-interval`無効になりました。
+
+-   TiKVがPDリーダーに解決済みTSを報告する最小間隔を指定します`0`に設定すると、報告は無効になります。
+-   デフォルト値： `"1s"` （正の最小値）。v6.3.0より前のバージョンでは、デフォルト値は`"0s"`です。
+-   最小値: `0`
+-   単位：秒
+
 ### <code>snap-mgr-gc-tick-interval</code> {#code-snap-mgr-gc-tick-interval-code}
 
 -   期限切れのスナップショット ファイルのリサイクルがトリガーされる時間間隔。1 `0` 、この機能が無効であることを意味します。
@@ -940,7 +969,7 @@ Raftstoreに関連するコンフィグレーション項目。
 
 ### <code>merge-max-log-gap</code> {#code-merge-max-log-gap-code}
 
--   `merge`実行した場合に許容されるログの最大欠落数
+-   `merge`実行した場合に許容される欠落ログの最大数
 -   デフォルト値: `10`
 -   最小値: `raft-log-gc-count-limit`より大きい
 
@@ -1030,13 +1059,6 @@ Raftstoreに関連するコンフィグレーション項目。
 -   デフォルト値: `1MiB`
 -   最小値: `0`
 
-### <code>report-min-resolved-ts-interval</code><span class="version-mark">バージョン6.0.0の新機能</span> {#code-report-min-resolved-ts-interval-code-span-class-version-mark-new-in-v6-0-0-span}
-
--   PDリーダーに最小解決タイムスタンプを報告する間隔を決定します。この値が`0`に設定されている場合、報告は無効になります。
--   デフォルト値: v6.3.0 より前のバージョンでは、デフォルト値は`"0s"`です。v6.3.0 以降では、デフォルト値は`"1s"` （最小の正の値）です。
--   最小値: `0`
--   単位：秒
-
 ### <code>evict-cache-on-memory-ratio</code><span class="version-mark">バージョン 7.5.0 の新機能</span> {#code-evict-cache-on-memory-ratio-code-span-class-version-mark-new-in-v7-5-0-span}
 
 -   TiKV のメモリ使用量がシステム使用可能メモリの 90% を超え、 Raftエントリ キャッシュが占有するメモリが使用メモリ* `evict-cache-on-memory-ratio`を超えると、TiKV はRaftエントリ キャッシュを排除します。
@@ -1051,7 +1073,7 @@ Raftstoreに関連するコンフィグレーション項目。
 > 定期的なフルコンパクションは実験的です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される可能性があります。バグを発見した場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
 
 -   TiKVが定期的なフルコンパクションを開始する特定の時刻を設定します。配列で複数のスケジュールを指定できます。例：
-    -   `periodic-full-compact-start-times = ["03:00", "23:00"]` 、TiKV ノードのローカル タイム ゾーンに基づいて、TiKV が毎日午前 3 時と午後 11 時に完全圧縮を実行することを示します。
+    -   `periodic-full-compact-start-times = ["03:00", "23:00"]` TiKV ノードのローカル タイム ゾーンに基づいて、TiKV が毎日午前 3 時と午後 11 時に完全圧縮を実行することを示します。
     -   `periodic-full-compact-start-times = ["03:00 +0000", "23:00 +0000"]` 、TiKV が UTC タイムゾーンで毎日午前 3:00 と午後 11:00 に完全圧縮を実行することを示します。
     -   `periodic-full-compact-start-times = ["03:00 +0800", "23:00 +0800"]` 、TiKV が UTC+08:00 タイムゾーンで毎日午前 3:00 と午後 11:00 に完全圧縮を実行することを示します。
 -   デフォルト値: `[]` 。定期的な完全圧縮はデフォルトで無効になっていることを意味します。
@@ -1433,7 +1455,7 @@ Titan に関連するコンフィグレーション項目。
 ### <code>max-background-gc</code> {#code-max-background-gc-code}
 
 -   Titan の GC スレッドの最大数。TiKV**の「詳細」** &gt; **「スレッド CPU」** &gt; **「RocksDB CPU」**パネルで、Titan GC スレッドが長時間にわたって満杯になっていることが確認された場合は、Titan GC スレッドプールのサイズを増やすことを検討してください。
--   デフォルト値: `4`
+-   デフォルト値: `1` 。v8.0.0 より前では、デフォルト値は`4`です。
 -   最小値: `1`
 
 ## rocksdb.defaultcf | rocksdb.writecf | rocksdb.lockcf | rocksdb.raftcf {#rocksdb-defaultcf-rocksdb-writecf-rocksdb-lockcf-rocksdb-raftcf}
@@ -1743,7 +1765,7 @@ Titan に関連するコンフィグレーション項目。
 -   BLOBファイルのキャッシュサイズ
 -   デフォルト値: `"0GiB"`
 -   最小値: `0`
--   推奨値: `0` 。TiKV v8.0.0以降、設定項目`shared-blob-cache`導入され、デフォルトで有効になっているため、 `blob-cache-size`別途設定する必要はありません。7 `blob-cache-size`設定は、 `shared-blob-cache` `false`に設定されている場合にのみ有効になります。
+-   推奨値: `0` 。TiKV v8.0.0以降、設定項目`shared-blob-cache`が導入され、デフォルトで有効になっているため、 `blob-cache-size`別途設定する必要はありません。7 `blob-cache-size`設定は、 `shared-blob-cache` `false`に設定されている場合にのみ有効になります。
 -   単位: KiB|MiB|GiB
 
 ### <code>shared-blob-cache</code> (v8.0.0 の新機能) {#code-shared-blob-cache-code-new-in-v8-0-0}
@@ -2068,7 +2090,7 @@ Raft Engineに関連するコンフィグレーション項目。
 >
 > この構成項目は、 [`enable-log-recycle`](#enable-log-recycle-new-in-v630) `true`に設定されている場合にのみ有効になります。
 
--   Raft Engineのログリサイクル用に空のログファイルを生成するかどうかを決定します。有効にすると、 Raft Engineは初期化中にログリサイクル用の空のログファイルを自動的にバッチ処理し、初期化直後にログリサイクルを有効にします。
+-   Raft Engineのログリサイクル用に空のログファイルを生成するかどうかを決定します。有効にすると、 Raft Engineは初期化中にログリサイクル用の空のログファイルを自動的にバッチ処理し、初期化直後にログリサイクルが有効になります。
 -   デフォルト値: `false`
 
 ### <code>compression-level</code> <span class="version-mark">v7.4.0 の新機能</span> {#code-compression-level-code-span-class-version-mark-new-in-v7-4-0-span}
@@ -2320,6 +2342,12 @@ TiCDC に関連するコンフィグレーション項目。
 -   デフォルト値: `6` 。最大 6 つのタスクを同時に実行できることを意味します。
 -   注意: `incremental-scan-concurrency`の値は`incremental-scan-threads`の値以上である必要があります。そうでない場合、TiKV は起動時にエラーを報告します。
 
+### <code>incremental-scan-concurrency-limit</code> <span class="version-mark">v7.6.0 の新機能</span> {#code-incremental-scan-concurrency-limit-code-span-class-version-mark-new-in-v7-6-0-span}
+
+-   実行待ちの履歴データの増分スキャンタスクの最大キュー長。実行待ちのタスク数がこの制限を超えると、新しいタスクは拒否されます。
+-   デフォルト値: `10000` 。これは、最大 10000 個のタスクを実行キューに入れることができることを意味します。
+-   注意: `incremental-scan-concurrency-limit` [`incremental-scan-concurrency`](#incremental-scan-concurrency)である必要があります。そうでない場合、TiKV は`incremental-scan-concurrency`使用してこの構成を上書きします。
+
 ## resolved-ts {#resolved-ts}
 
 ステイル読み取り要求に対応するために解決済みの TS を維持することに関連するコンフィグレーション項目。
@@ -2468,7 +2496,7 @@ TiKV API V2が有効な場合にタイムスタンプの取得に関連するコ
 ### <code>renew-batch-min-size</code> {#code-renew-batch-min-size-code}
 
 -   タイムスタンプ要求内の TSO の最小数。
--   TiKVは、前期間のタイムスタンプ消費量に応じて、キャッシュされるタイムスタンプの数を調整します。必要なTSOが少数の場合、TiKVは要求されるTSOの数を`renew-batch-min-size`達するまで減らします。アプリケーションで大規模なバースト書き込みトラフィックが頻繁に発生する場合は、このパラメータを必要に応じて大きな値に設定できます。このパラメータは、単一のtikvサーバーのキャッシュサイズであることに注意してください。パラメータを大きすぎる値に設定し、クラスターに多数のtikvサーバーが含まれている場合、TSOの消費が急激に増加します。
+-   TiKVは、前期間のタイムスタンプ消費量に応じて、キャッシュされるタイムスタンプの数を調整します。必要なTSOが少数の場合、TiKVは要求されるTSOの数を`renew-batch-min-size`達するまで減らします。アプリケーションで大規模なバースト書き込みトラフィックが頻繁に発生する場合は、必要に応じてこのパラメータを大きく設定できます。このパラメータは、単一のtikvサーバーのキャッシュサイズであることに注意してください。パラメータを大きすぎる値に設定し、クラスターに多数のtikvサーバーが含まれている場合、TSOの消費が急激に増加します。
 -   Grafanaの**TiKV-RAW** &gt; **Causal timestamp**パネルでは、 **TSOバッチサイズは**、アプリケーションのワークロードに応じて動的に調整された、ローカルにキャッシュされたタイムスタンプの数です。このメトリックを参照して`renew-batch-min-size`調整できます。
 -   デフォルト値: `100`
 
@@ -2527,3 +2555,8 @@ TiKVstorageレイヤーのリソース制御に関するコンフィグレーシ
 
 -   ヒープ プロファイリングによって毎回サンプリングされるデータの量を、最も近い 2 の累乗に切り上げて指定します。
 -   デフォルト値: `512KiB`
+
+### <code>enable-thread-exclusive-arena</code> <span class="version-mark">v8.1.0 の新機能</span> {#code-enable-thread-exclusive-arena-code-span-class-version-mark-new-in-v8-1-0-span}
+
+-   各 TiKV スレッドのメモリ使用量を追跡するために、TiKV スレッド レベルでメモリ割り当てステータスを表示するかどうかを制御します。
+-   デフォルト値: `true`
