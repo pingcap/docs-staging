@@ -9,7 +9,9 @@ export const getVariablesFromZip = (zip, filePath) => {
       entry.entryName.endsWith(filePath)
     );
     variables = JSON.parse(variablesEntry.getData().toString());
-  } catch {}
+  } catch (error) {
+    console.error("Read variables error: ", error);
+  }
 
   return variables;
 };
