@@ -13,7 +13,7 @@ import { gfm } from "micromark-extension-gfm";
 import { mdxFromMarkdown } from "mdast-util-mdx";
 import { gfmFromMarkdown } from "mdast-util-gfm";
 import { visit } from "unist-util-visit";
-
+import { getVariablesFromZip, variablesReplaceStream } from "./variable.js";
 const IMAGE_CDN_PREFIX = "https://docs-download.pingcap.com/media/images";
 export const imageCDNs = {
   docs: IMAGE_CDN_PREFIX + "/docs",
@@ -179,6 +179,8 @@ export async function retrieveTiDBMDsFromZip(
     // Unzip archive
     const zip = new AdmZip(archiveFileName);
     const zipEntries = zip.getEntries();
+    const variables = getVariablesFromZip(zip, "/variables.json");
+    const ppls = [...pipelines, variablesReplaceStream(variables)];
 
     zipEntries.forEach(function (zipEntry) {
       // console.log(zipEntry.toString()) // outputs zip entries information
@@ -208,7 +210,7 @@ export async function retrieveTiDBMDsFromZip(
       writeFile(
         `${destDir}/${relativePathNameList.join("/")}`,
         zipEntry.getData(),
-        pipelines
+        ppls
       );
     });
   } catch (error) {
@@ -241,6 +243,8 @@ export async function retrieveCloudMDsFromZip(
     // Unzip archive
     const zip = new AdmZip(archiveFileName);
     const zipEntries = zip.getEntries();
+    const variables = getVariablesFromZip(zip, "/variables-cloud.json");
+    const ppls = [...pipelines, variablesReplaceStream(variables)];
 
     const cloudTocZipEntry = zipEntries.find((entry) =>
       entry.entryName.endsWith(`/TOC-tidb-cloud.md`)
@@ -279,12 +283,12 @@ export async function retrieveCloudMDsFromZip(
         return;
       }
       if (relativePathInZip === `TOC-tidb-cloud.md`) {
-        writeFile(`${destDir}/TOC.md`, zipEntry.getData(), pipelines);
+        writeFile(`${destDir}/TOC.md`, zipEntry.getData(), ppls);
       } else {
         writeFile(
           `${destDir}/${relativePathNameList.join("/")}`,
           zipEntry.getData(),
-          pipelines
+          ppls
         );
       }
     });
