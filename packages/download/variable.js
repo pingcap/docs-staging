@@ -9,7 +9,6 @@ export const getVariablesFromZip = (zip, filePath) => {
       entry.entryName.endsWith(filePath)
     );
     variables = JSON.parse(variablesEntry.getData().toString());
-    console.log(variables);
   } catch {}
 
   return variables;
@@ -21,8 +20,9 @@ function getValueByPath(obj, path) {
 const variablePattern = /{{\s*\.(.+?)\s*}}/g;
 
 export const variablesReplaceStream = (variables) => {
-  return replaceStream(variablePattern, (match, path) => {
-    const value = getValueByPath(variables, path.trim());
-    return String(value);
-  });
+  return () =>
+    replaceStream(variablePattern, (match, path) => {
+      const value = getValueByPath(variables, path.trim());
+      return String(value);
+    });
 };
