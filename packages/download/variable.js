@@ -1,4 +1,4 @@
-const replaceStream = require("replacestream");
+import replaceStream from "replacestream";
 
 export const getVariablesFromZip = (zip, filePath) => {
   let variables = {};
