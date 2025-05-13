@@ -243,7 +243,7 @@ export async function retrieveCloudMDsFromZip(
     // Unzip archive
     const zip = new AdmZip(archiveFileName);
     const zipEntries = zip.getEntries();
-    const variables = getVariablesFromZip(zip, "/variables-cloud.json");
+    const variables = getVariablesFromZip(zip, "/variables.json");
     const ppls = [...pipelines, variablesReplaceStream(variables)];
 
     const cloudTocZipEntry = zipEntries.find((entry) =>
