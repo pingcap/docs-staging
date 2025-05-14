@@ -118,7 +118,7 @@ When you export data to CSV files, you can use `--sql <SQL>` to filter the recor
 
 
 ```shell
-tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'select * from `test`.`sbtest1` where id < 100' -F 100MiB --output-filename-template 'test.sbtest1.'
+tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'select * from `test`.`sbtest1` where id < 100' -F 100MiB --output-filename-template 'test.sbtest1.{{.Index}}'
 ```
 
 In the command above:
@@ -127,13 +127,13 @@ In the command above:
 
 <CustomContent platform="tidb">
 
-- When you use the `--sql` option, Dumpling cannot obtain the exported table and schema information. You can specify the file name format of the CSV files using the `--output-filename-template` option, which facilitates the subsequent use of [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) to import the data file. For example, `--output-filename-template='test.sbtest1.'` specifies that the exported CSV files are named as `test.sbtest1.000000000` or `test.sbtest1.000000001`.
+- When you use the `--sql` option, Dumpling cannot obtain the exported table and schema information. You can specify the file name format of the CSV files using the `--output-filename-template` option, which facilitates the subsequent use of [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) to import the data file. For example, `--output-filename-template='test.sbtest1.{{.Index}}'` specifies that the exported CSV files are named as `test.sbtest1.000000000` or `test.sbtest1.000000001`.
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-- When you use the `--sql` option, Dumpling cannot obtain the exported table and schema information. You can specify the file name format of the CSV files using the `--output-filename-template` option. For example, `--output-filename-template='test.sbtest1.'` specifies that the exported CSV files are named as `test.sbtest1.000000000` or `test.sbtest1.000000001`.
+- When you use the `--sql` option, Dumpling cannot obtain the exported table and schema information. You can specify the file name format of the CSV files using the `--output-filename-template` option. For example, `--output-filename-template='test.sbtest1.{{.Index}}'` specifies that the exported CSV files are named as `test.sbtest1.000000000` or `test.sbtest1.000000001`.
 
 </CustomContent>
 
@@ -395,7 +395,7 @@ SET GLOBAL tidb_gc_life_time = '10m';
 | `--csv-line-terminator`      | The terminator at the end of a line for CSV files. When exporting data to a CSV file, you can specify the desired terminator with this option. This option supports "\\r\\n" and "\\n". The default value is "\\r\\n", which is consistent with the earlier versions. Because quotes in bash have different escaping rules, if you want to specify LF (linefeed) as a terminator, you can use a syntax similar to `--csv-line-terminator $'\n'`. | "\\r\\n" |
 | `--csv-output-dialect`      | Indicates that the source data can be exported to a CSV file in a specific required format for the database. The option value can be `""`, `"snowflake"`, `"redshift"`, or `"bigquery"`.  The default value is `""`, which means to encode and export the source data according to UTF-8. If you set the option to `"snowflake"` or `"redshift"`, the binary data type in the source data will be converted to hexadecimal, but the `0x` prefix will be removed. For example, `0x61` will be represented as `61`. If you set the option to `"bigquery"`, the binary data type will be encoded using base64. In some cases, the binary strings might contain garbled characters. | `""`  |
 | `--escape-backslash`         | Use backslash (`\`) to escape special characters in the export file                                                                                                                                                                                                                                                                | true                                       |
-| `--output-filename-template` | The filename templates represented in the format of [golang template](https://golang.org/pkg/text/template/#hdr-Arguments) <br/> Support the ``, ``, and `` arguments <br/> The three arguments represent the database name, table name, and chunk ID of the data file                                  | `..`            |
+| `--output-filename-template` | The filename templates represented in the format of [golang template](https://golang.org/pkg/text/template/#hdr-Arguments) <br/> Support the `{{.DB}}`, `{{.Table}}`, and `{{.Index}}` arguments <br/> The three arguments represent the database name, table name, and chunk ID of the data file                                  | `{{.DB}}.{{.Table}}.{{.Index}}`            |
 | `--status-addr`              | Dumpling's service address, including the address for Prometheus to pull metrics and pprof debugging                                                                                                                                                                                                                               | ":8281"                                    |
 | `--tidb-mem-quota-query`     | The memory limit of exporting SQL statements by a single line of Dumpling command, and the unit is byte. For v4.0.10 or later versions, if you do not set this parameter, TiDB uses the value of the `mem-quota-query` configuration item as the memory limit value by default. For versions earlier than v4.0.10, the parameter value defaults to 32 GB.  | 34359738368 |
 | `--params`                   | Specifies the session variable for the connection of the database to be exported. The required format is `"character_set_client=latin1,character_set_connection=latin1"`                                                                                                                                                           |
