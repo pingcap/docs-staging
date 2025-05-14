@@ -25,6 +25,9 @@ export const variablesReplaceStream = (variables) => {
   return () =>
     replaceStream(variablePattern, (match, path) => {
       const value = getValueByPath(variables, path.trim());
-      return String(value);
+      if (value) {
+        return String(value);
+      }
+      return match;
     });
 };
