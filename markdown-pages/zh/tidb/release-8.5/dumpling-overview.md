@@ -101,13 +101,13 @@ tiup dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o /tmp/test -r 2
 
 
 ```shell
-tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'select * from `test`.`sbtest1` where id < 100' -F 100MiB --output-filename-template 'test.sbtest1.'
+tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'select * from `test`.`sbtest1` where id < 100' -F 100MiB --output-filename-template 'test.sbtest1.{{.Index}}'
 ```
 
 以上命令中：
 
 - `--sql` 选项仅仅可用于导出 CSV 文件的场景。上述命令将在要导出的所有表上执行 `SELECT * FROM <table-name> WHERE id < 100` 语句。如果部分表没有指定的字段，那么导出会失败。
-- 使用 `--sql` 配置导出时，Dumpling 无法获知导出的表库信息，此时可以使用 `--output-filename-template` 选项来指定 CSV 文件的文件名格式，以方便后续使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 导入数据文件。例如 `--output-filename-template='test.sbtest1.'` 指定导出的 CSV 文件为 `test.sbtest1.000000000`、`test.sbtest1.000000001` 等。
+- 使用 `--sql` 配置导出时，Dumpling 无法获知导出的表库信息，此时可以使用 `--output-filename-template` 选项来指定 CSV 文件的文件名格式，以方便后续使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 导入数据文件。例如 `--output-filename-template='test.sbtest1.{{.Index}}'` 指定导出的 CSV 文件为 `test.sbtest1.000000000`、`test.sbtest1.000000001` 等。
 - 你可以使用 `--csv-separator`、`--csv-delimiter` 等选项，配置 CSV 文件的格式。具体信息可查阅 [Dumpling 主要选项表](#dumpling-主要选项表)。
 
 > **注意：**
@@ -130,7 +130,7 @@ tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'se
 
 + `metadata`：此文件包含导出的起始时间，以及 master binary log 的位置。
 
-    
+
     ```shell
     cat metadata
     ```
@@ -146,7 +146,7 @@ tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'se
 
 + `{schema}-schema-create.sql`：创建 schema 的 SQL 文件。
 
-    
+
     ```shell
     cat test-schema-create.sql
     ```
@@ -157,7 +157,7 @@ tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'se
 
 + `{schema}.{table}-schema.sql`：创建 table 的 SQL 文件
 
-    
+
     ```shell
     cat test.t1-schema.sql
     ```
@@ -170,7 +170,7 @@ tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'se
 
 + `{schema}.{table}.{0001}.{sql|csv}`：数据源文件
 
-    
+
     ```shell
     cat test.t1.0.sql
     ```
@@ -366,7 +366,7 @@ SET GLOBAL tidb_gc_life_time = '10m';
 | --csv-line-terminator | CSV 文件中表示行尾的换行符。将数据导出为 CSV 文件时，可以通过该选项传入所需的换行符。该选项支持 "\\r\\n" 和 "\\n"，默认值为 "\\r\\n"，和历史版本保持一致。由于 bash 中不同的引号会应用不同的转义规则，如需指定 LF 为换行符，可使用类似 `--csv-line-terminator $'\n'` 的语法。| "\\r\\n" |
 | --csv-output-dialect | 表示可以将源数据导出成数据库所需的格式存储到 CSV。该选项取值可为 `""`，`"snowflake"`、`"redshift"`、`"bigquery"`。默认值为 `""`，表示会按 UTF-8 进行编码并导出数据。如果设置为 `"snowflake"` 或 `"redshift"`，会把 Binary 数据类型转换成十六进制，但会丢失十六进制数的前缀 `0x`，例如 `0x61` 将被表示成 `61`。如果设置为 `"bigquery"`，会使用 base64 对 Binary 数据类型进行编码。在某些情况下，Binary 字符串会出现乱码。| `""` |
 | --escape-backslash | 使用反斜杠 (`\`) 来转义导出文件中的特殊字符 | true |
-| --output-filename-template | 以 [golang template](https://golang.org/pkg/text/template/#hdr-Arguments) 格式表示的数据文件名格式 <br/> 支持 ``、``、`` 三个参数 <br/> 分别表示数据文件的库名、表名、分块 ID | '..' |
+| --output-filename-template | 以 [golang template](https://golang.org/pkg/text/template/#hdr-Arguments) 格式表示的数据文件名格式 <br/> 支持 `{{.DB}}`、`{{.Table}}`、`{{.Index}}` 三个参数 <br/> 分别表示数据文件的库名、表名、分块 ID | '{{.DB}}.{{.Table}}.{{.Index}}' |
 | --status-addr | Dumpling 的服务地址，包含了 Prometheus 拉取 metrics 信息及 pprof 调试的地址 | ":8281" |
 | --tidb-mem-quota-query | 单条 dumpling 命令导出 SQL 语句的内存限制，单位为 byte。对于 v4.0.10 或以上版本，若不设置该参数，默认使用 TiDB 中的 `mem-quota-query` 配置项值作为内存限制值。对于 v4.0.10 以下版本，该参数值默认为 32 GB | 34359738368 |
 | --params | 为需导出的数据库连接指定 session 变量，可接受的格式: "character_set_client=latin1,character_set_connection=latin1" |
@@ -395,7 +395,7 @@ SET GLOBAL tidb_gc_life_time = '10m';
 
 | 名称 | 内容 |
 |------|---------|
-| data | `{{fn .DB}}.{{fn .Table}}.` |
+| data | `{{fn .DB}}.{{fn .Table}}.{{.Index}}` |
 | schema | `{{fn .DB}}-schema-create` |
 | table | `{{fn .DB}}.{{fn .Table}}-schema` |
 | event | `{{fn .DB}}.{{fn .Table}}-schema-post` |
