@@ -160,7 +160,7 @@ You can use the `--compress <format>` option to compress the CSV and SQL data an
 
 - `metadata`: The start time of the exported files and the position of the master binary log.
 
-
+    
     ```shell
     cat metadata
     ```
@@ -175,7 +175,7 @@ You can use the `--compress <format>` option to compress the CSV and SQL data an
 
 - `{schema}-schema-create.sql`: The SQL file used to create the schema
 
-
+    
     ```shell
     cat test-schema-create.sql
     ```
@@ -186,7 +186,7 @@ You can use the `--compress <format>` option to compress the CSV and SQL data an
 
 - `{schema}.{table}-schema.sql`: The SQL file used to create the table
 
-
+    
     ```shell
     cat test.t1-schema.sql
     ```
@@ -199,7 +199,7 @@ You can use the `--compress <format>` option to compress the CSV and SQL data an
 
 - `{schema}.{table}.{0001}.{sql|csv}`: The date source file
 
-
+    
     ```shell
     cat test.t1.0.sql
     ```
