@@ -19,7 +19,7 @@ export const getVariablesFromZip = (zip, filePath) => {
 function getValueByPath(obj, path) {
   return path.split(".").reduce((acc, key) => (acc ? acc[key] : ""), obj) ?? "";
 }
-const variablePattern = /{{\s*\.(.+?)\s*}}/g;
+const variablePattern = /{{{\s*\.(.+?)\s*}}}/g;
 
 export const variablesReplaceStream = (variables) => {
   return () =>
