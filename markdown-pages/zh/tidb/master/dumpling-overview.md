@@ -131,7 +131,7 @@ tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'se
 
 + `metadata`：此文件包含导出的起始时间，以及 master binary log 的位置。
 
-
+    
     ```shell
     cat metadata
     ```
@@ -147,7 +147,7 @@ tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'se
 
 + `{schema}-schema-create.sql`：创建 schema 的 SQL 文件。
 
-
+    
     ```shell
     cat test-schema-create.sql
     ```
@@ -158,7 +158,7 @@ tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'se
 
 + `{schema}.{table}-schema.sql`：创建 table 的 SQL 文件
 
-
+    
     ```shell
     cat test.t1-schema.sql
     ```
@@ -171,7 +171,7 @@ tiup dumpling -u root -P 4000 -h 127.0.0.1 -o /tmp/test --filetype csv --sql 'se
 
 + `{schema}.{table}.{0001}.{sql|csv}`：数据源文件
 
-
+    
     ```shell
     cat test.t1.0.sql
     ```
