@@ -69,7 +69,6 @@ HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，�
 
 执行如下命令安装依赖包：
 
-
 ```bash
 yum -y install epel-release gcc systemd-devel
 ```
@@ -80,25 +79,22 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下部署操作具�
 
 ### 安装 HAProxy
 
-1. 下载 HAProxy 2.6.2 的源码包：
+1. 下载 HAProxy 2.6.21 的源码包：
 
-    
     ```bash
-    wget https://www.haproxy.org/download/2.6/src/haproxy-2.6.2.tar.gz
+    wget https://www.haproxy.org/download/2.6/src/haproxy-2.6.21.tar.gz
     ```
 
 2. 解压源码包：
 
-    
     ```bash
-    tar zxf haproxy-2.6.2.tar.gz
+    tar zxf haproxy-2.6.21.tar.gz
     ```
 
 3. 从源码编译 HAProxy 应用：
 
-    
     ```bash
-    cd haproxy-2.6.2
+    cd haproxy-2.6.21
     make clean
     make -j 8 TARGET=linux-glibc USE_THREAD=1
     make PREFIX=${/app/haproxy} SBINDIR=${/app/haproxy/bin} install  # 将 `${/app/haproxy}` 和 `${/app/haproxy/bin}` 替换为自定义的实际路径。
@@ -106,7 +102,6 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下部署操作具�
 
 4. 重新配置 `profile` 文件：
 
-    
     ```bash
     echo 'export PATH=/app/haproxy/bin:$PATH' >> /etc/profile
     . /etc/profile
@@ -114,7 +109,6 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下部署操作具�
 
 5. 检查 HAProxy 是否安装成功：
 
-    
     ```bash
     which haproxy
     ```
@@ -122,7 +116,6 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下部署操作具�
 #### HAProxy 命令介绍
 
 执行如下命令查看命令行参数及基本用法：
-
 
 ```bash
 haproxy --help
@@ -219,7 +212,6 @@ listen tidb-cluster                        # 配置 database 负载均衡。
 
 要启动 HAProxy，执行 `haproxy` 命令。默认读取 `/etc/haproxy/haproxy.cfg`（推荐）。
 
-
 ```bash
 haproxy -f /etc/haproxy/haproxy.cfg
 ```
@@ -230,14 +222,12 @@ haproxy -f /etc/haproxy/haproxy.cfg
 
 1. 执行如下命令：
 
-    
     ```bash
     ps -ef | grep haproxy
     ```
 
 2. 终止 HAProxy 相关的 PID 进程：
 
-    
     ```bash
     kill -9 ${haproxy.pid}
     ```
