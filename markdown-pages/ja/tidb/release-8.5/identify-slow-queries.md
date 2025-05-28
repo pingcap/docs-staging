@@ -134,8 +134,8 @@ TiKVコプロセッサータスク フィールド:
 -   `Cop_wait_p90` : copタスクのP90待機時間。
 -   `Cop_wait_max` : cop タスクの最大待機時間。
 -   `Cop_wait_addr` : 待機時間が最も長い cop-task のアドレス。
--   `Rocksdb_delete_skipped_count` : RocksDB 読み取り中に削除されたキーをスキャンする回数。
--   `Rocksdb_key_skipped_count` : RocksDB がデータをスキャンするときに検出する削除された (tombstone) キーの数。
+-   `Rocksdb_delete_skipped_count` : RocksDB がデータをスキャンするときに検出する削除された (tombstone) キーの数。
+-   `Rocksdb_key_skipped_count` : RocksDB がデータをスキャンするときに検出するすべてのキーの数。
 -   `Rocksdb_block_cache_hit_count` : RocksDB がブロックキャッシュからデータを読み取る回数。
 -   `Rocksdb_block_read_count` : RocksDB がファイル システムからデータを読み取る回数。
 -   `Rocksdb_block_read_byte` : RocksDB がファイル システムから読み取るデータの量。
@@ -193,7 +193,7 @@ TiKVコプロセッサータスク フィールド:
 set @@tidb_enable_collect_execution_info=0;
 ```
 
-`Plan`フィールドに返される結果は、 `EXPLAIN`または`EXPLAIN ANALYZE`結果とほぼ同じ形式です。実行プランの詳細については、 [`EXPLAIN`](/sql-statements/sql-statement-explain.md)または[`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md)参照してください。
+`Plan`フィールドに返される結果は、 `EXPLAIN`または`EXPLAIN ANALYZE`結果とほぼ同じ形式になります。実行プランの詳細については、 [`EXPLAIN`](/sql-statements/sql-statement-explain.md)または[`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md)参照してください。
 
 詳細については[TiDB固有の変数と構文](/system-variables.md)参照してください。
 
