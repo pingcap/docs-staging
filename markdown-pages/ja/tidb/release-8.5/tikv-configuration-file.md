@@ -54,7 +54,7 @@ TiKV設定ファイルは、コマンドラインパラメータよりも多く�
 
 -   ログに関するコンフィグレーション項目。
 
--   バージョン5.4.0以降、TiKVとTiDBのログ設定項目の整合性を保つため、TiKVは以前の設定項目`log-rotation-timespan`廃止し、 `log-level` `log-file`以下の設定`log-format`に変更`log-rotation-size`ました。古い設定項目のみを設定し、その値をデフォルト以外の値に設定した場合、古い設定項目と新しい設定項目の互換性は維持されます。古い設定項目と新しい設定項目の両方を設定した場合、新しい設定項目が有効になります。
+-   バージョン5.4.0以降、TiKVとTiDBのログ設定項目の整合性を保つため、TiKVは以前の設定項目`log-rotation-timespan`廃止し、 `log-level` `log-file`以下の設定`log-format`に変更`log-rotation-size`ました。以前の設定項目のみを設定し、その値をデフォルト以外の値に設定した場合、以前の設定項目は新しい設定項目との互換性を維持します。以前の設定項目と新しい設定項目の両方を設定した場合、新しい設定項目が有効になります。
 
 ### <code>level</code> <span class="version-mark">v5.4.0 の新機能</span> {#code-level-code-span-class-version-mark-new-in-v5-4-0-span}
 
@@ -139,8 +139,14 @@ TiKV設定ファイルは、コマンドラインパラメータよりも多く�
 
 ### <code>grpc-compression-type</code> {#code-grpc-compression-type-code}
 
--   gRPCメッセージの圧縮アルゴリズム
+-   gRPCメッセージの圧縮アルゴリズム。TiKVノード間のgRPCメッセージに影響します。v6.5.11、v7.1.6、v7.5.3、v8.1.1以降では、TiKVからTiDBに送信されるgRPC応答メッセージにも影響します。
+
 -   `"deflate"` `"gzip"` : `"none"`
+
+    > **注記：**
+    >
+    > TiDBは`"deflate"`サポートしていません。そのため、TiKVからTiDBに送信されるgRPC応答メッセージを圧縮したい場合は、この設定項目を`"gzip"`に設定してください。
+
 -   デフォルト値: `"none"`
 
 ### <code>grpc-concurrency</code> {#code-grpc-concurrency-code}
@@ -2095,7 +2101,7 @@ Raft Engineに関連するコンフィグレーション項目。
 
 ### <code>compression-level</code> <span class="version-mark">v7.4.0 の新機能</span> {#code-compression-level-code-span-class-version-mark-new-in-v7-4-0-span}
 
--   Raftログファイルを書き込む際にRaft Engineが使用するLZ4アルゴリズムの圧縮効率を設定します。値が小さいほど圧縮速度は速くなりますが、圧縮率は低くなります。
+-   Raft EngineがRaftログファイルを書き込む際に使用するLZ4アルゴリズムの圧縮効率を設定します。値が小さいほど圧縮速度は速くなりますが、圧縮率は低くなります。
 -   範囲: `[1, 16]`
 -   デフォルト値: `1`
 
@@ -2472,7 +2478,7 @@ TiKV API V2が有効な場合にタイムスタンプの取得に関連するコ
 -   TiKV がこの設定項目で指定された期間に基づいて TSO キャッシュを事前割り当てすることを示します。TiKV は前回の期間に基づいて TSO の使用量を推定し、 `alloc-ahead-buffer`満たす TSO をローカルに要求してキャッシュします。
 -   この設定項目は、TiKV API V2が有効になっている場合にPD障害に対する許容度を高めるためによく使用されます（ `storage.api-version = 2` ）。
 -   この設定項目の値を大きくすると、TSO消費量とTiKVのメモリオーバーヘッドが増加する可能性があります。十分なTSOを確保するには、PDの[`tso-update-physical-interval`](/pd-configuration-file.md#tso-update-physical-interval)設定項目を減らすことをお勧めします。
--   テストによると、デフォルト値が`alloc-ahead-buffer`場合、PD リーダーが失敗して別のノードに切り替わると、書き込み要求のレイテンシーが短期的に増加し、QPS が減少 (約 15%) します。
+-   テストによると、 `alloc-ahead-buffer`がデフォルト値のときに PD リーダーが失敗して別のノードに切り替わると、書き込み要求のレイテンシーが短期的に増加し、QPS が減少 (約 15%) します。
 -   業務への影響を回避するには、PD で`tso-update-physical-interval = "1ms"`設定し、TiKV で次の設定項目を設定します。
     -   `causal-ts.alloc-ahead-buffer = "6s"`
     -   `causal-ts.renew-batch-max-size = 65536`

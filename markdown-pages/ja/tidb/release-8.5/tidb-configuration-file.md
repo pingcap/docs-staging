@@ -339,7 +339,7 @@ TiDB 設定ファイルは、コマンドラインパラメータよりも多く
 
 ### <code>timeout</code> <span class="version-mark">v7.1.0 の新機能</span> {#code-timeout-code-span-class-version-mark-new-in-v7-1-0-span}
 
--   TiDBにおけるログ書き込み操作のタイムアウトを設定します。ディスク障害によりログの書き込みができない場合、この設定項目によりTiDBプロセスがハングアップする代わりにpanicになる可能性があります。
+-   TiDB におけるログ書き込み操作のタイムアウトを設定します。ディスク障害によりログの書き込みが不可能になった場合、この設定項目により TiDB プロセスがハングアップする代わりにpanicになる可能性があります。
 -   デフォルト値: `0` 、タイムアウトが設定されていないことを示します。
 -   単位：秒
 -   一部のユーザーシナリオでは、TiDB ログがホットプラグ対応ディスクまたはネットワーク接続ディスクに保存され、恒久的に利用できなくなる可能性があります。このような場合、TiDB はそのような障害から自動的に回復できず、ログ書き込み操作は恒久的にブロックされます。TiDB プロセスは実行されているように見えますが、要求に応答しません。この設定項目は、このような状況に対処するために設計されています。
@@ -725,9 +725,13 @@ opentracing.reporter に関連するコンフィグレーション項目。
 
 ### <code>grpc-compression-type</code> {#code-grpc-compression-type-code}
 
--   TiDBノードとTiKVノード間のデータ転送に使用する圧縮タイプを指定します。デフォルト値は`"none"`で、圧縮なしを意味します。gzip圧縮を有効にするには、この値を`"gzip"`に設定してください。
+-   TiDBノードからTiKVノードへのデータ転送に使用する圧縮タイプを指定します。デフォルト値は`"none"`で、圧縮なしを意味します。gzip圧縮を有効にするには、この値を`"gzip"`に設定してください。
 -   デフォルト値: `"none"`
 -   値`"gzip"`オプション: `"none"`
+
+> **注記：**
+>
+> TiKV ノードから TiDB ノードに返される応答メッセージの圧縮アルゴリズムは、TiKV 構成項目[`grpc-compression-type`](/tikv-configuration-file.md#grpc-compression-type)によって制御されます。
 
 ### <code>commit-timeout</code> {#code-commit-timeout-code}
 
@@ -742,7 +746,7 @@ opentracing.reporter に関連するコンフィグレーション項目。
 
 ### <code>max-batch-wait-time</code> {#code-max-batch-wait-time-code}
 
--   `max-batch-wait-time`を待機すると、データパケットが大きなパケットに一括カプセル化され、TiKVノードに送信されます。これは、 `tikv-client.max-batch-size`の値が`0`より大きい場合にのみ有効です。この値を変更しないことを推奨します。
+-   `max-batch-wait-time`待機すると、データパケットが大きなパケットに一括カプセル化され、TiKVノードに送信されます。これは、 `tikv-client.max-batch-size`の値が`0`より大きい場合にのみ有効です。この値を変更しないことを推奨します。
 -   デフォルト値: `0`
 -   単位: ナノ秒
 
@@ -917,7 +921,7 @@ TiDB サービスのステータスに関連するコンフィグレーション
 -   デフォルト値: `300`
 -   範囲: `[-1, 9223372036854775807]`
 -   単位: ミリ秒
--   クエリの消費時間がこの値を超える場合、そのクエリはスロークエリとみなされ、スロークエリログにログが出力されます。なお、出力レベル[`log.level`](#level)が`"debug"`の場合、このパラメータの設定に関わらず、すべてのクエリがスロークエリログに記録されます。
+-   クエリの消費時間がこの値を超えると、そのクエリはスロークエリとみなされ、スロークエリログにログが出力されます。なお、出力レベル[`log.level`](#level)が`"debug"`の場合、このパラメータの設定に関わらず、すべてのクエリがスロークエリログに記録されます。
 -   v6.1.0 より前では、この構成は`slow-threshold`で設定されます。
 
 ### <code>in-mem-slow-query-topn-num</code> <span class="version-mark">v7.3.0 の新機能</span> {#code-in-mem-slow-query-topn-num-code-span-class-version-mark-new-in-v7-3-0-span}
