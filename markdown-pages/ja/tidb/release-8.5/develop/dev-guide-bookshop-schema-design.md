@@ -91,11 +91,11 @@ tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --rati
 
 1.  ターゲット クラスターの**インポート**ページを開きます。
 
-    1.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
+    1.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、プロジェクトの[**クラスター**](https://tidbcloud.com/project/clusters)ページに移動します。
 
         > **ヒント：**
         >
-        > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅にある をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
+        > 左上隅のコンボ ボックスを使用して、組織、プロジェクト、クラスターを切り替えることができます。
 
     2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート]**をクリックします。
 
@@ -138,7 +138,7 @@ FROM
 WHERE table_schema LIKE 'bookshop';
 ```
 
-結果は次のようになります。
+結果は次のとおりです。
 
     +-----------------------+----------------+-----------+------------+---------+
     | Table Name            | Number of Rows | Data Size | Index Size | Total   |
