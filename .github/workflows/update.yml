@@ -65,6 +65,9 @@ jobs:
           elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "i18n-ja-release-8.1" ]
           then
           yarn download:tidb-cloud:ja --ref ${{ inputs.branch }}
+          elif [ ${{ inputs.repo }} = "pingcap/docs-cn" ] && [ ${{ inputs.branch }} = "release-8.1" ]
+          then
+          yarn download:tidb-cloud:zh --ref ${{ inputs.branch }}
           fi
 
       - name: Update all folder
@@ -78,6 +81,7 @@ jobs:
           yarn download:tidb:zh:all
           yarn download:tidb:ja:all
           yarn download:tidb-cloud:ja
+          yarn download:tidb-cloud:zh
           yarn download:dm:all
           yarn download:tidb-operator:all
 
