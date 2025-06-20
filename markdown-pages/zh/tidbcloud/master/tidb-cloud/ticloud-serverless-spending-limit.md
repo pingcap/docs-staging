@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless spending-limit
-summary: `ticloud serverless spending-limit` 命令的参考。
+summary: "`ticloud serverless spending-limit` 命令的参考。"
 ---
 
 # ticloud serverless spending-limit

@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless authorized-network list
-summary: `ticloud serverless authorized-network list` 命令的参考文档。
+summary: "`ticloud serverless authorized-network list` 命令的参考文档。"
 ---
 
 # ticloud serverless authorized-network list

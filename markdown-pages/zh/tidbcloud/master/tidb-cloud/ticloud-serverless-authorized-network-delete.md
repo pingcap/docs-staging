@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless authorized-network delete
-summary: `ticloud serverless authorized-network delete` 命令的参考。
+summary: "`ticloud serverless authorized-network delete` 命令的参考。"
 ---
 
 # ticloud serverless authorized-network delete

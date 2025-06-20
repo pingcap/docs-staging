@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless sql-user delete
-summary: `ticloud serverless sql-user delete` 命令的参考。
+summary: "`ticloud serverless sql-user delete` 命令的参考。"
 ---
 
 # ticloud serverless sql-user delete

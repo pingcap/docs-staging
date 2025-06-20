@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless branch delete
-summary: `ticloud serverless branch delete` 命令的参考。
+summary: "`ticloud serverless branch delete` 命令的参考。"
 ---
 
 # ticloud serverless branch delete

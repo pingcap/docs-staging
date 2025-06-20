@@ -1,6 +1,6 @@
 ---
 title: ticloud config list
-summary: `ticloud config list` 命令的参考。
+summary: "`ticloud config list` 命令的参考。"
 ---
 
 # ticloud config list

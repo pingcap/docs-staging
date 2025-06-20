@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless import cancel
-summary: `ticloud serverless import cancel` 命令的参考。
+summary: "`ticloud serverless import cancel` 命令的参考。"
 ---
 
 # ticloud serverless import cancel

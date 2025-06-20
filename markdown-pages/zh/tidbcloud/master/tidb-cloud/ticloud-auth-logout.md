@@ -1,6 +1,6 @@
 ---
 title: ticloud auth logout
-summary: `ticloud auth logout` 命令的参考。
+summary: "`ticloud auth logout` 命令的参考。"
 ---
 
 # ticloud auth logout

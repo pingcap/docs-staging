@@ -1,6 +1,6 @@
 ---
 title: ticloud ai
-summary: `ticloud ai` 命令的参考文档。
+summary: "`ticloud ai` 命令的参考文档。"
 ---
 
 # ticloud ai

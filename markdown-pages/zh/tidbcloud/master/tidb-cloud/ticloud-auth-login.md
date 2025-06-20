@@ -1,6 +1,6 @@
 ---
 title: ticloud auth login
-summary: `ticloud auth login` 命令的参考。
+summary: "`ticloud auth login` 命令的参考。"
 ---
 
 # ticloud auth login

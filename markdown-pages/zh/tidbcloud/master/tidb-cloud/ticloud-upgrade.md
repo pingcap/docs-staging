@@ -1,6 +1,6 @@
 ---
 title: ticloud upgrade
-summary: `ticloud upgrade` 命令的参考。
+summary: "`ticloud upgrade` 命令的参考。"
 aliases: ['/tidbcloud/ticloud-update']
 ---
 

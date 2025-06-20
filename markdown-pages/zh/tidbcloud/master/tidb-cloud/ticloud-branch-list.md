@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless branch list
-summary: `ticloud serverless branch list` 命令的参考。
+summary: "`ticloud serverless branch list` 命令的参考。"
 ---
 
 # ticloud serverless branch list

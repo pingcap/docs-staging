@@ -1,6 +1,6 @@
 ---
 title: TiDB 查询执行计划概览
-summary: 了解 TiDB 中 `EXPLAIN` 语句返回的执行计划信息。
+summary: "了解 TiDB 中 `EXPLAIN` 语句返回的执行计划信息。"
 ---
 
 # TiDB 查询执行计划概览
@@ -97,7 +97,7 @@ Records: 2  Duplicates: 0  Warnings: 0
 > |       └─Limit_20                | 1.00     | cop[tikv] |                       | offset:0, count:1                                                            |
 > |         └─IndexRangeScan_19     | 1.00     | cop[tikv] | table:t2, index:ia(a) | range: decided by [eq(test.t2.a, test.t1.b)], keep order:false, stats:pseudo |
 > +---------------------------------+----------+-----------+-----------------------+------------------------------------------------------------------------------+
-> 
+>
 > -- 从 v6.4.0 开始：
 >
 > -- 您可以发现从 v6.4.0 开始，`IndexLookUp_11`、`Selection_10`、`IndexRangeScan_8` 和 `TableRowIDScan_9` 的 `estRows` 列值与 v6.4.0 之前不同。

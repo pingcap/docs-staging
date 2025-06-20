@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless cluster list
-summary: `ticloud serverless list` 命令的参考。
+summary: "`ticloud serverless list` 命令的参考。"
 ---
 
 # ticloud serverless list

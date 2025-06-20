@@ -1,6 +1,6 @@
 ---
 title: ticloud config create
-summary: `ticloud config create` 命令的参考。
+summary: "`ticloud config create` 命令的参考。"
 ---
 
 # ticloud config create

@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless cluster describe
-summary: `ticloud serverless describe` 命令的参考。
+summary: "`ticloud serverless describe` 命令的参考。"
 ---
 
 # ticloud serverless describe

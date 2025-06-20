@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless sql-user create
-summary: `ticloud serverless sql-user create` 命令的参考。
+summary: "`ticloud serverless sql-user create` 命令的参考。"
 ---
 
 # ticloud serverless sql-user create

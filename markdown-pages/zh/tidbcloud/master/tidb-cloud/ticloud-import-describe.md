@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless import describe
-summary: `ticloud serverless import describe` 命令的参考。
+summary: "`ticloud serverless import describe` 命令的参考。"
 ---
 
 # ticloud serverless import describe

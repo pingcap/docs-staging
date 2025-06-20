@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless cluster delete
-summary: `ticloud serverless delete` 命令的参考。
+summary: "`ticloud serverless delete` 命令的参考。"
 ---
 
 # ticloud serverless delete

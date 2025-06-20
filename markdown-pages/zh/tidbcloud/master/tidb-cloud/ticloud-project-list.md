@@ -1,6 +1,6 @@
 ---
 title: ticloud project list
-summary: `ticloud project list` 命令的参考。
+summary: "`ticloud project list` 命令的参考。"
 ---
 
 # ticloud project list

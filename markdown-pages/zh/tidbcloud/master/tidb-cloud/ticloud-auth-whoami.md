@@ -1,6 +1,6 @@
 ---
 title: ticloud auth whoami
-summary: `ticloud auth whoami` 命令的参考文档。
+summary: "`ticloud auth whoami` 命令的参考文档。"
 ---
 
 # ticloud auth whoami

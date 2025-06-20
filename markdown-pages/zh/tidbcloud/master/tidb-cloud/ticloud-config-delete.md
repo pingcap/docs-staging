@@ -1,6 +1,6 @@
 ---
 title: ticloud config delete
-summary: `ticloud config delete` 命令的参考。
+summary: "`ticloud config delete` 命令的参考。"
 ---
 
 # ticloud config delete

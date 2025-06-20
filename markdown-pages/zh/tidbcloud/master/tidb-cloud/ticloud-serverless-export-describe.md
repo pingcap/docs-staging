@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless export describe
-summary: `ticloud serverless export describe` 命令的参考。
+summary: "`ticloud serverless export describe` 命令的参考。"
 ---
 
 # ticloud serverless export describe

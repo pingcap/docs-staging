@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless authorized-network update
-summary: `ticloud serverless authorized-network update` 命令的参考。
+summary: "`ticloud serverless authorized-network update` 命令的参考。"
 ---
 
 # ticloud serverless authorized-network update

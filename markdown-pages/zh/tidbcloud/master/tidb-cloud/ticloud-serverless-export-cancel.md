@@ -1,6 +1,6 @@
 ---
 title: ticloud serverless export cancel
-summary: `ticloud serverless export cancel` 命令的参考文档。
+summary: "`ticloud serverless export cancel` 命令的参考文档。"
 ---
 
 # ticloud serverless export cancel

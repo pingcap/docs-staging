@@ -1,6 +1,6 @@
 ---
 title: ticloud completion
-summary: `ticloud completion` 命令的参考。
+summary: "`ticloud completion` 命令的参考。"
 ---
 
 # ticloud completion
