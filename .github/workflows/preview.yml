@@ -39,6 +39,7 @@ jobs:
           mkdir -p ./preview/markdown-pages/en/tidb
           mkdir -p ./preview/markdown-pages/ja/tidb
           mkdir -p ./preview/markdown-pages/en/tidbcloud
+          mkdir -p ./preview/markdown-pages/zh/tidbcloud
           mkdir -p ./preview/markdown-pages/zh/tidb
 
           cp -rip ./main/markdown-pages/en/tidb/master ./preview/markdown-pages/en/tidb/master
@@ -47,6 +48,7 @@ jobs:
 
           cp -rip ./main/markdown-pages/zh/tidb/release-8.5 ./preview/markdown-pages/zh/tidb/release-8.5
           cp -rip ./main/markdown-pages/zh/tidb/master ./preview/markdown-pages/zh/tidb/master
+          cp -rip ./main/markdown-pages/zh/tidbcloud ./preview/markdown-pages/zh/
 
           cp -rip ./main/markdown-pages/ja/tidb/master ./preview/markdown-pages/ja/tidb/master
           cp -rip ./main/markdown-pages/ja/tidb/release-8.5 ./preview/markdown-pages/ja/tidb/release-8.5
