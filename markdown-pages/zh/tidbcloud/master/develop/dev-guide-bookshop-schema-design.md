@@ -1,25 +1,25 @@
 ---
 title: Bookshop 示例应用程序
-summary: "Bookshop 是一个用于购买和评价图书的在线书店应用程序。您可以通过 TiUP 或 TiDB Cloud 导入表结构和数据。方法 1 使用 TiUP 快速生成和导入示例数据，而方法 2 从 Amazon S3 导入数据到 TiDB Cloud。数据库表包括 books、authors、users、ratings、book_authors 和 orders。数据库初始化脚本 `dbinit.sql` 创建 Bookshop 应用程序的表结构。"
+summary: "Bookshop 是一个用于购买和评价图书的在线书店应用程序。你可以通过 TiUP 或 TiDB Cloud 导入表结构和数据。方法 1 使用 TiUP 快速生成和导入示例数据，而方法 2 从 Amazon S3 导入数据到 TiDB Cloud。数据库表包括 books、authors、users、ratings、book_authors 和 orders。数据库初始化脚本 `dbinit.sql` 创建 Bookshop 应用程序的表结构。"
 ---
 
 # Bookshop 示例应用程序
 
-Bookshop 是一个虚拟的在线书店应用程序，通过它您可以购买各种类别的图书并对您读过的图书进行评分。
+Bookshop 是一个虚拟的在线书店应用程序，通过它你可以购买各种类别的图书并对你读过的图书进行评分。
 
-为了使您更顺利地阅读应用程序开发者指南，我们基于 Bookshop 应用程序的[表结构](#表说明)和数据展示示例 SQL 语句。本文重点介绍导入表结构和数据的方法以及表结构的定义。
+为了使你更顺利地阅读应用程序开发者指南，我们基于 Bookshop 应用程序的[表结构](#表说明)和数据展示示例 SQL 语句。本文重点介绍导入表结构和数据的方法以及表结构的定义。
 
 ## 导入表结构和数据
 
 <CustomContent platform="tidb">
 
-您可以通过 [TiUP](#方法-1通过-tiup-demo) 或 [TiDB Cloud 的导入功能](#方法-2通过-tidb-cloud-导入)导入 Bookshop 表结构和数据。
+你可以通过 [TiUP](#方法-1通过-tiup-demo) 或 [TiDB Cloud 的导入功能](#方法-2通过-tidb-cloud-导入)导入 Bookshop 表结构和数据。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-对于 TiDB Cloud，您可以跳过[方法 1：通过 `tiup demo`](#方法-1通过-tiup-demo)，直接[通过 TiDB Cloud 的导入功能](#方法-2通过-tidb-cloud-导入)导入 Bookshop 表结构。
+对于 TiDB Cloud，你可以跳过[方法 1：通过 `tiup demo`](#方法-1通过-tiup-demo)，直接[通过 TiDB Cloud 的导入功能](#方法-2通过-tidb-cloud-导入)导入 Bookshop 表结构。
 
 </CustomContent>
 
@@ -27,13 +27,13 @@ Bookshop 是一个虚拟的在线书店应用程序，通过它您可以购买�
 
 <CustomContent platform="tidb">
 
-如果您的 TiDB 集群是使用 [TiUP](/tiup/tiup-reference.md#tiup-reference) 部署的，或者您可以连接到您的 TiDB 服务器，您可以通过运行以下命令快速生成和导入 Bookshop 应用程序的示例数据：
+如果你的 TiDB 集群是使用 [TiUP](/tiup/tiup-reference.md#tiup-reference) 部署的，或者你可以连接到你的 TiDB 服务器，你可以通过运行以下命令快速生成和导入 Bookshop 应用程序的示例数据：
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-如果您的 TiDB 集群是使用 [TiUP](https://docs.pingcap.com/tidb/stable/tiup-reference) 部署的，或者您可以连接到您的 TiDB 服务器，您可以通过运行以下命令快速生成和导入 Bookshop 应用程序的示例数据：
+如果你的 TiDB 集群是使用 [TiUP](https://docs.pingcap.com/tidb/stable/tiup-reference) 部署的，或者你可以连接到你的 TiDB 服务器，你可以通过运行以下命令快速生成和导入 Bookshop 应用程序的示例数据：
 
 </CustomContent>
 
@@ -41,11 +41,11 @@ Bookshop 是一个虚拟的在线书店应用程序，通过它您可以购买�
 tiup demo bookshop prepare
 ```
 
-默认情况下，此命令使您的应用程序能够连接到地址 `127.0.0.1` 的端口 `4000`，使您能够以无密码的 `root` 用户身份登录，并在名为 `bookshop` 的数据库中创建[表结构](#表说明)。
+默认情况下，此命令使你的应用程序能够连接到地址 `127.0.0.1` 的端口 `4000`，使你能够以无密码的 `root` 用户身份登录，并在名为 `bookshop` 的数据库中创建[表结构](#表说明)。
 
 #### 配置连接信息
 
-下表列出了连接参数。您可以更改它们的默认设置以匹配您的环境。
+下表列出了连接参数。你可以更改它们的默认设置以匹配你的环境。
 
 | 参数名称     | 缩写 | 默认值       | 描述           |
 | ------------ | ---- | ----------- | -------------- |
@@ -55,7 +55,7 @@ tiup demo bookshop prepare
 | `--db`       | `-D` | `bookshop`  | 数据库名称     |
 | `--user`     | `-U` | `root`      | 数据库用户     |
 
-例如，如果您想连接到 TiDB Cloud 上的数据库，可以按如下方式指定连接信息：
+例如，如果你想连接到 TiDB Cloud 上的数据库，可以按如下方式指定连接信息：
 
 ```shell
 tiup demo bookshop prepare -U <username> -H <endpoint> -P 4000 -p <password>
@@ -63,7 +63,7 @@ tiup demo bookshop prepare -U <username> -H <endpoint> -P 4000 -p <password>
 
 #### 设置数据量
 
-您可以通过配置以下参数来指定在每个数据库表中生成的数据量：
+你可以通过配置以下参数来指定在每个数据库表中生成的数据量：
 
 | 参数名称     | 默认值     | 描述                              |
 | ----------- | -------- | --------------------------------- |
@@ -85,7 +85,7 @@ tiup demo bookshop prepare -U <username> -H <endpoint> -P 4000 -p <password>
 tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --ratings=1000000 --orders=1000000 --drop-tables
 ```
 
-您可以通过 `--drop-tables` 参数删除原有的表结构。有关更多参数说明，请运行 `tiup demo bookshop --help` 命令。
+你可以通过 `--drop-tables` 参数删除原有的表结构。有关更多参数说明，请运行 `tiup demo bookshop --help` 命令。
 
 ### 方法 2：通过 TiDB Cloud 导入
 
@@ -95,7 +95,7 @@ tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --rati
 
         > **提示：**
         >
-        > 您可以使用左上角的组合框在组织、项目和集群之间切换。
+        > 你可以使用左上角的组合框在组织、项目和集群之间切换。
 
     2. 点击目标集群的名称进入其概览页面，然后点击左侧导航栏中的**导入**。
 
@@ -124,7 +124,7 @@ tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --rati
 
 ### 查看数据导入状态
 
-导入完成后，您可以通过执行以下 SQL 语句查看每个表的数据量信息：
+导入完成后，你可以通过执行以下 SQL 语句查看每个表的数据量信息：
 
 ```sql
 SELECT
@@ -227,7 +227,7 @@ WHERE table_schema LIKE 'bookshop';
 
 ## 数据库初始化脚本 `dbinit.sql`
 
-如果您想手动创建 Bookshop 应用程序的数据库表结构，请运行以下 SQL 语句：
+如果你想手动创建 Bookshop 应用程序的数据库表结构，请运行以下 SQL 语句：
 
 ```sql
 CREATE DATABASE IF NOT EXISTS `bookshop`;

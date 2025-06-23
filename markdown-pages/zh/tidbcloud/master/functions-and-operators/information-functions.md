@@ -214,7 +214,7 @@ TABLE t1;
 
 > **注意**
 >
-> - 在 TiDB 中，[`AUTO_ID_CACHE`](/auto-increment.md#auto_id_cache) 可能导致结果与 MySQL 返回的结果不同。这种差异是因为 TiDB 在每个节点上缓存 ID，可能导致 ID 不按顺序或有间隔。如果您的应用程序需要严格的 ID 顺序，可以启用 [MySQL 兼容模式](/auto-increment.md#mysql-compatibility-mode)。
+> - 在 TiDB 中，[`AUTO_ID_CACHE`](/auto-increment.md#auto_id_cache) 可能导致结果与 MySQL 返回的结果不同。这种差异是因为 TiDB 在每个节点上缓存 ID，可能导致 ID 不按顺序或有间隔。如果你的应用程序需要严格的 ID 顺序，可以启用 [MySQL 兼容模式](/auto-increment.md#mysql-compatibility-mode)。
 >
 > - 在上面的示例中，ID 增加了 2，而 MySQL 在相同情况下会生成增加 1 的 ID。有关更多兼容性信息，请参见[自增 ID](/mysql-compatibility.md#auto-increment-id)。
 

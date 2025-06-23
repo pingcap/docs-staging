@@ -5,15 +5,15 @@ summary: 了解 TiDB 数据库的基本 SQL 语句。
 
 # 使用 TiDB 探索 SQL
 
-TiDB 与 MySQL 兼容，在大多数情况下您可以直接使用 MySQL 语句。有关不支持的功能，请参阅[与 MySQL 的兼容性](/mysql-compatibility.md#unsupported-features)。
+TiDB 与 MySQL 兼容，在大多数情况下你可以直接使用 MySQL 语句。有关不支持的功能，请参阅[与 MySQL 的兼容性](/mysql-compatibility.md#unsupported-features)。
 
 <CustomContent platform="tidb">
 
-要试验 SQL 并测试 TiDB 与 MySQL 查询的兼容性，您可以尝试使用 [TiDB Playground](https://play.tidbcloud.com/?utm_source=docs&utm_medium=basic-sql-operations)。您也可以先部署一个 TiDB 集群，然后在其中运行 SQL 语句。
+要试验 SQL 并测试 TiDB 与 MySQL 查询的兼容性，你可以尝试使用 [TiDB Playground](https://play.tidbcloud.com/?utm_source=docs&utm_medium=basic-sql-operations)。你也可以先部署一个 TiDB 集群，然后在其中运行 SQL 语句。
 
 </CustomContent>
 
-本页将指导您了解基本的 TiDB SQL 语句，如 DDL、DML 和 CRUD 操作。有关 TiDB 语句的完整列表，请参阅 [SQL 语句概览](/sql-statements/sql-statement-overview.md)。
+本页将指导你了解基本的 TiDB SQL 语句，如 DDL、DML 和 CRUD 操作。有关 TiDB 语句的完整列表，请参阅 [SQL 语句概览](/sql-statements/sql-statement-overview.md)。
 
 ## 分类
 
@@ -178,7 +178,7 @@ ALTER TABLE person DROP INDEX person_unique_id;
 ```
 
 > **注意：**
-> 
+>
 > DDL 操作不是事务。执行 DDL 操作时不需要运行 `COMMIT` 语句。
 
 ## 插入、更新和删除数据
@@ -218,7 +218,7 @@ DELETE FROM person WHERE id=2;
 ```
 
 > **注意：**
-> 
+>
 > 没有 `WHERE` 子句作为过滤器的 `UPDATE` 和 `DELETE` 语句会对整个表进行操作。
 
 ## 查询数据

@@ -9,7 +9,7 @@ summary: 介绍 Lark 工单创建和更新订阅的详细信息。
 
 > **注意：**
 >
-> Lark 的工单支持功能需要申请才能使用。如果您有兴趣尝试此功能，请通过 <a href="mailto:support@pingcap.com">support@pingcap.com</a> 联系 TiDB Cloud 支持团队，或联系您的技术客户经理（TAM）。
+> Lark 的工单支持功能需要申请才能使用。如果你有兴趣尝试此功能，请通过 <a href="mailto:support@pingcap.com">support@pingcap.com</a> 联系 TiDB Cloud 支持团队，或联系你的技术客户经理（TAM）。
 
 ## 创建支持工单
 
@@ -17,7 +17,7 @@ summary: 介绍 Lark 工单创建和更新订阅的详细信息。
 
 ![lark-ticket-creation-1](/media/tidb-cloud/connected-lark-ticket-creation-1.png)
 
-填写必填字段并点击**提交**。提交后，卡片将更新为**工单已提交**，表示您的请求正在处理中。
+填写必填字段并点击**提交**。提交后，卡片将更新为**工单已提交**，表示你的请求正在处理中。
 
 ![lark-ticket-creation-2](/media/tidb-cloud/connected-lark-ticket-creation-2.png)
 
@@ -35,7 +35,7 @@ summary: 介绍 Lark 工单创建和更新订阅的详细信息。
 
 - 如何查看我的工单状态？
 
-    使用创建工单时使用的电子邮件地址登录 [PingCAP 帮助中心](https://tidb.support.pingcap.com/servicedesk/customer/user/requests)。您可以查看当前账户的所有历史工单及其状态。
+    使用创建工单时使用的电子邮件地址登录 [PingCAP 帮助中心](https://tidb.support.pingcap.com/servicedesk/customer/user/requests)。你可以查看当前账户的所有历史工单及其状态。
 
 ## 联系支持
 

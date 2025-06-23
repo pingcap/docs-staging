@@ -3,10 +3,10 @@ title: TiDB Cloud 文档
 aliases: ['/tidbcloud/privacy-policy', '/tidbcloud/terms-of-service', '/tidbcloud/service-level-agreement']
 hide_sidebar: true
 hide_commit: true
-summary: TiDB Cloud 是一款全托管的数据库即服务（DBaaS），将 TiDB 的强大能力带入您的云端。它提供丰富的指南、示例和参考资料，帮助您学习、试用、开发、运维、迁移、监控、调优、安全管理、计费、集成和查阅。
+summary: TiDB Cloud 是一款全托管的数据库即服务（DBaaS），将 TiDB 的强大能力带入你的云端。它提供丰富的指南、示例和参考资料，帮助你学习、试用、开发、运维、迁移、监控、调优、安全管理、计费、集成和查阅。
 ---
 
-<LearningPathContainer platform="tidb-cloud" title="TiDB Cloud" subTitle="TiDB Cloud 是一款全托管的数据库即服务（DBaaS），将 TiDB 的所有强大特性无缝带入您的云端。在这里，您可以找到使用 TiDB Cloud 所需的各类指南、示例和参考资料，助您高效上手、开发与运维。">
+<LearningPathContainer platform="tidb-cloud" title="TiDB Cloud" subTitle="TiDB Cloud 是一款全托管的数据库即服务（DBaaS），将 TiDB 的所有强大特性无缝带入你的云端。在这里，你可以找到使用 TiDB Cloud 所需的各类指南、示例和参考资料，助你高效上手、开发与运维。">
 
 <LearningPath label="学习" icon="cloud1">
 

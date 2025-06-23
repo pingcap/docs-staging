@@ -38,7 +38,7 @@ desc cluster_info;
 
 * `TYPE`：实例类型。可选值为 `tidb`、`pd` 和 `tikv`。
 * `INSTANCE`：实例地址，格式为 `IP:PORT` 的字符串。
-* `STATUS_ADDRESS`：HTTP API 的服务地址。tikv-ctl、pd-ctl 或 tidb-ctl 中的某些命令可能会使用此 API 和地址。您还可以通过此地址获取更多集群信息。详情请参考 [TiDB HTTP API 文档](https://github.com/pingcap/tidb/blob/release-8.1/docs/tidb_http_api.md)。
+* `STATUS_ADDRESS`：HTTP API 的服务地址。tikv-ctl、pd-ctl 或 tidb-ctl 中的某些命令可能会使用此 API 和地址。你还可以通过此地址获取更多集群信息。详情请参考 [TiDB HTTP API 文档](https://github.com/pingcap/tidb/blob/release-8.1/docs/tidb_http_api.md)。
 * `VERSION`：对应实例的语义版本号。为了与 MySQL 版本号兼容，TiDB 版本以 `${mysql-version}-${tidb-version}` 的格式显示。
 * `GIT_HASH`：编译实例版本时的 Git Commit Hash，用于标识两个实例是否为完全一致的版本。
 * `START_TIME`：对应实例的启动时间。

@@ -5,18 +5,18 @@ summary: 了解如何使用扩展统计信息来指导优化器。
 
 # 扩展统计信息简介
 
-TiDB 可以收集以下两种类型的统计信息。本文介绍如何使用扩展统计信息来指导优化器。在阅读本文之前，建议您先阅读[统计信息简介](/statistics.md)。
+TiDB 可以收集以下两种类型的统计信息。本文介绍如何使用扩展统计信息来指导优化器。在阅读本文之前，建议你先阅读[统计信息简介](/statistics.md)。
 
 - 基本统计信息：如直方图和 Count-Min Sketch 等统计信息，主要关注单个列。它们对优化器估算查询成本至关重要。详情请参见[统计信息简介](/statistics.md)。
 - 扩展统计信息：关注指定列之间数据相关性的统计信息，当查询的列之间存在相关性时，可以指导优化器更精确地估算查询成本。
 
 当手动或自动执行 `ANALYZE` 语句时，TiDB 默认只收集基本统计信息，不收集扩展统计信息。这是因为扩展统计信息仅在特定场景下用于优化器估算，且收集它们需要额外的开销。
 
-扩展统计信息默认是禁用的。要收集扩展统计信息，您需要先启用扩展统计信息，然后逐个创建所需的扩展统计信息对象。创建对象后，下次执行 `ANALYZE` 语句时，TiDB 会同时收集基本统计信息和已创建对象的相应扩展统计信息。
+扩展统计信息默认是禁用的。要收集扩展统计信息，你需要先启用扩展统计信息，然后逐个创建所需的扩展统计信息对象。创建对象后，下次执行 `ANALYZE` 语句时，TiDB 会同时收集基本统计信息和已创建对象的相应扩展统计信息。
 
 > **警告：**
 >
-> 此功能是实验性的。不建议在生产环境中使用。此功能可能会在没有预先通知的情况下进行更改或删除。如果您发现 bug，可以在 GitHub 上提交[问题](https://github.com/pingcap/tidb/issues)。
+> 此功能是实验性的。不建议在生产环境中使用。此功能可能会在没有预先通知的情况下进行更改或删除。如果你发现 bug，可以在 GitHub 上提交[问题](https://github.com/pingcap/tidb/issues)。
 
 ## 限制
 
@@ -40,7 +40,7 @@ SET GLOBAL tidb_enable_extended_stats = ON;
 
 ### 创建扩展统计信息对象
 
-创建扩展统计信息对象不是一次性任务。您需要为每个扩展统计信息对象重复创建。
+创建扩展统计信息对象不是一次性任务。你需要为每个扩展统计信息对象重复创建。
 
 要创建扩展统计信息对象，请使用 SQL 语句 `ALTER TABLE ADD STATS_EXTENDED`。语法如下：
 
@@ -48,7 +48,7 @@ SET GLOBAL tidb_enable_extended_stats = ON;
 ALTER TABLE table_name ADD STATS_EXTENDED IF NOT EXISTS stats_name stats_type(column_name, column_name...);
 ```
 
-在语法中，您可以指定要收集扩展统计信息的表名、统计信息名称、统计信息类型和列名。
+在语法中，你可以指定要收集扩展统计信息的表名、统计信息名称、统计信息类型和列名。
 
 - `table_name` 指定从中收集扩展统计信息的表的名称。
 - `stats_name` 指定统计信息对象的名称，对于每个表必须是唯一的。
@@ -68,7 +68,7 @@ TiDB 定期加载 `mysql.stats_extended` 以确保缓存与表中的数据保持
 >
 > **不建议**直接操作 `mysql.stats_extended` 系统表。否则，不同 TiDB 节点上会出现不一致的缓存。
 >
-> 如果您错误地操作了该表，可以在每个 TiDB 节点上执行以下语句。然后当前缓存将被清除，并且 `mysql.stats_extended` 表将被完全重新加载：
+> 如果你错误地操作了该表，可以在每个 TiDB 节点上执行以下语句。然后当前缓存将被清除，并且 `mysql.stats_extended` 表将被完全重新加载：
 >
 > ```sql
 > ADMIN RELOAD STATS_EXTENDED;
@@ -95,7 +95,7 @@ ALTER TABLE table_name DROP STATS_EXTENDED stats_name;
 >
 > **不建议**直接操作 `mysql.stats_extended` 系统表。否则，不同 TiDB 节点上会出现不一致的缓存。
 >
-> 如果您错误地操作了该表，可以在每个 TiDB 节点上使用以下语句。然后当前缓存将被清除，并且 `mysql.stats_extended` 表将被完全重新加载：
+> 如果你错误地操作了该表，可以在每个 TiDB 节点上使用以下语句。然后当前缓存将被清除，并且 `mysql.stats_extended` 表将被完全重新加载：
 >
 > ```sql
 > ADMIN RELOAD STATS_EXTENDED;
@@ -156,6 +156,6 @@ ALTER TABLE t ADD STATS_EXTENDED s1 correlation(col1, col2);
 SELECT * FROM t WHERE col1 <= 1 OR col1 IS NULL;
 ```
 
-上述查询结果加一将是最终的行数估算。这样，您就不需要使用独立性假设，并且**避免了显著的估算误差**。
+上述查询结果加一将是最终的行数估算。这样，你就不需要使用独立性假设，并且**避免了显著的估算误差**。
 
 如果相关因子（在本例中为 `1`）小于系统变量 `tidb_opt_correlation_threshold` 的值，优化器将使用独立性假设，但也会启发式地增加估算。`tidb_opt_correlation_exp_factor` 的值越大，估算结果越大。相关因子的绝对值越大，估算结果越大。

@@ -13,7 +13,7 @@ summary: 介绍 TiDB Cloud 和 TiDB Self-Managed 的开发者指南概览。
 
 ## 按语言和框架分类的指南
 
-按照带有示例代码的指南，使用您熟悉的语言构建应用程序。
+按照带有示例代码的指南，使用你熟悉的语言构建应用程序。
 
 <DevLangAccordion label="JavaScript" defaultExpanded>
 <DevToolCard title="Serverless 驱动（测试版）" logo="tidb" docLink="/tidbcloud/serverless-driver" githubLink="https://github.com/tidbcloud/serverless-js">
@@ -144,7 +144,7 @@ summary: 介绍 TiDB Cloud 和 TiDB Self-Managed 的开发者指南概览。
 
 ## 使用 MySQL 客户端软件
 
-由于 TiDB 是一个兼容 MySQL 的数据库，您可以使用许多客户端工具连接到 TiDB Cloud 并像以前一样管理数据库。或者，使用我们的<a href="/tidbcloud/get-started-with-cli">命令行工具</a>连接和管理您的数据库。
+由于 TiDB 是一个兼容 MySQL 的数据库，你可以使用许多客户端工具连接到 TiDB Cloud 并像以前一样管理数据库。或者，使用我们的<a href="/tidbcloud/get-started-with-cli">命令行工具</a>连接和管理你的数据库。
 
 <DevToolGroup>
 <DevToolCard title="MySQL Workbench" logo="mysql-1" docLink="/tidbcloud/dev-guide-gui-mysql-workbench">
@@ -173,7 +173,7 @@ summary: 介绍 TiDB Cloud 和 TiDB Self-Managed 的开发者指南概览。
 
 了解使用 TiDB Cloud 开发的其他主题。
 
-- 使用 <a href="/tidbcloud/get-started-with-cli">TiDB Cloud CLI</a> 开发、管理和部署您的应用程序。
+- 使用 <a href="/tidbcloud/get-started-with-cli">TiDB Cloud CLI</a> 开发、管理和部署你的应用程序。
 - 探索 TiDB Cloud 与流行<a href="/tidbcloud/integrate-tidbcloud-with-airbyte">服务的集成</a>。
 - 使用 [TiDB 数据库开发参考](/develop/dev-guide-schema-design-overview.md)来设计、交互、优化和排查数据和模式问题。
 - 学习免费在线课程 [TiDB 入门](https://eng.edu.pingcap.com/catalog/info/id:203/?utm_source=docs-dev-guide)。
@@ -182,15 +182,15 @@ summary: 介绍 TiDB Cloud 和 TiDB Self-Managed 的开发者指南概览。
 
 <CustomContent platform="tidb">
 
-本指南是为应用程序开发人员编写的，但如果您对 TiDB 的内部工作原理感兴趣或想参与 TiDB 开发，请阅读 [TiDB 内核开发指南](https://pingcap.github.io/tidb-dev-guide/)以获取更多信息。
+本指南是为应用程序开发人员编写的，但如果你对 TiDB 的内部工作原理感兴趣或想参与 TiDB 开发，请阅读 [TiDB 内核开发指南](https://pingcap.github.io/tidb-dev-guide/)以获取更多信息。
 
 本教程展示了如何使用 TiDB 快速构建应用程序、TiDB 的可能用例以及如何处理常见问题。
 
-在阅读本页之前，建议您阅读 [TiDB 数据库平台快速入门指南](/quick-start-with-tidb.md)。
+在阅读本页之前，建议你阅读 [TiDB 数据库平台快速入门指南](/quick-start-with-tidb.md)。
 
 ## TiDB 基础知识
 
-在开始使用 TiDB 之前，您需要了解 TiDB 工作原理的一些重要机制：
+在开始使用 TiDB 之前，你需要了解 TiDB 工作原理的一些重要机制：
 
 - 阅读 [TiDB 事务概述](/transaction-overview.md)以了解 TiDB 中事务的工作原理，或查看[应用程序开发人员的事务说明](/develop/dev-guide-transaction-overview.md)以了解应用程序开发所需的事务知识。
 - 了解[应用程序与 TiDB 交互的方式](#应用程序与-tidb-交互的方式)。
@@ -198,17 +198,17 @@ summary: 介绍 TiDB Cloud 和 TiDB Self-Managed 的开发者指南概览。
 
 ## TiDB 事务机制
 
-TiDB 支持分布式事务，并提供[乐观事务](/optimistic-transaction.md)和[悲观事务](/pessimistic-transaction.md)模式。当前版本的 TiDB 默认使用**悲观事务**模式，这使您可以像使用传统单体数据库（例如 MySQL）一样与 TiDB 进行事务操作。
+TiDB 支持分布式事务，并提供[乐观事务](/optimistic-transaction.md)和[悲观事务](/pessimistic-transaction.md)模式。当前版本的 TiDB 默认使用**悲观事务**模式，这使你可以像使用传统单体数据库（例如 MySQL）一样与 TiDB 进行事务操作。
 
-您可以使用 [`BEGIN`](/sql-statements/sql-statement-begin.md) 开始事务，使用 `BEGIN PESSIMISTIC` 显式指定**悲观事务**，或使用 `BEGIN OPTIMISTIC` 显式指定**乐观事务**。之后，您可以提交（[`COMMIT`](/sql-statements/sql-statement-commit.md)）或回滚（[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)）事务。
+你可以使用 [`BEGIN`](/sql-statements/sql-statement-begin.md) 开始事务，使用 `BEGIN PESSIMISTIC` 显式指定**悲观事务**，或使用 `BEGIN OPTIMISTIC` 显式指定**乐观事务**。之后，你可以提交（[`COMMIT`](/sql-statements/sql-statement-commit.md)）或回滚（[`ROLLBACK`](/sql-statements/sql-statement-rollback.md)）事务。
 
 TiDB 保证 `BEGIN` 开始到 `COMMIT` 或 `ROLLBACK` 结束期间所有语句的原子性，即在此期间执行的所有语句要么全部成功，要么全部失败。这用于确保应用程序开发所需的数据一致性。
 
-如果您不确定什么是**乐观事务**，请**_不要_**使用它。因为**乐观事务**要求应用程序能够正确处理 `COMMIT` 语句返回的[所有错误](/error-codes.md)。如果您不确定您的应用程序如何处理这些错误，请改用**悲观事务**。
+如果你不确定什么是**乐观事务**，请**_不要_**使用它。因为**乐观事务**要求应用程序能够正确处理 `COMMIT` 语句返回的[所有错误](/error-codes.md)。如果你不确定你的应用程序如何处理这些错误，请改用**悲观事务**。
 
 ## 应用程序与 TiDB 交互的方式
 
-TiDB 高度兼容 MySQL 协议并支持[大多数 MySQL 语法和功能](/mysql-compatibility.md)，因此大多数 MySQL 连接库都与 TiDB 兼容。如果您的应用程序框架或语言没有来自 PingCAP 的官方适配，建议您使用 MySQL 的客户端库。越来越多的第三方库正在积极支持 TiDB 的不同功能。
+TiDB 高度兼容 MySQL 协议并支持[大多数 MySQL 语法和功能](/mysql-compatibility.md)，因此大多数 MySQL 连接库都与 TiDB 兼容。如果你的应用程序框架或语言没有来自 PingCAP 的官方适配，建议你使用 MySQL 的客户端库。越来越多的第三方库正在积极支持 TiDB 的不同功能。
 
 由于 TiDB 兼容 MySQL 协议和 MySQL 语法，大多数支持 MySQL 的 ORM 也与 TiDB 兼容。
 

@@ -67,7 +67,7 @@ COMMIT;
 
 > **提示：**
 >
-> 在启用[乐观事务](/optimistic-transaction.md)之前，请确保您的应用程序正确处理 `COMMIT` 语句可能返回错误的情况。如果您不确定应用程序如何处理这种情况，建议使用默认的[悲观事务](/pessimistic-transaction.md)。
+> 在启用[乐观事务](/optimistic-transaction.md)之前，请确保你的应用程序正确处理 `COMMIT` 语句可能返回错误的情况。如果你不确定应用程序如何处理这种情况，建议使用默认的[悲观事务](/pessimistic-transaction.md)。
 
 ### 回滚事务
 

@@ -5,7 +5,7 @@ summary: 了解如何将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使
 
 # TiDB Cloud Serverless 驱动程序 Drizzle 教程
 
-[Drizzle ORM](https://orm.drizzle.team/) 是一个轻量级且高性能的 TypeScript ORM，专注于开发者体验。从 `drizzle-orm@0.31.2` 开始，它支持 [drizzle-orm/tidb-serverless](https://orm.drizzle.team/docs/get-started-mysql#tidb-serverless)，使您能够通过 HTTPS 使用 [TiDB Cloud serverless 驱动程序](/tidb-cloud/serverless-driver.md)。
+[Drizzle ORM](https://orm.drizzle.team/) 是一个轻量级且高性能的 TypeScript ORM，专注于开发者体验。从 `drizzle-orm@0.31.2` 开始，它支持 [drizzle-orm/tidb-serverless](https://orm.drizzle.team/docs/get-started-mysql#tidb-serverless)，使你能够通过 HTTPS 使用 [TiDB Cloud serverless 驱动程序](/tidb-cloud/serverless-driver.md)。
 
 本教程介绍如何在 Node.js 环境和边缘环境中将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使用。
 
@@ -15,11 +15,11 @@ summary: 了解如何将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使
 
 ### 开始之前
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
 - [Node.js](https://nodejs.org/en) >= 18.0.0。
-- [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) 或您首选的包管理器。
-- 一个 TiDB Cloud Serverless 集群。如果您还没有，可以[创建一个 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
+- [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) 或你首选的包管理器。
+- 一个 TiDB Cloud Serverless 集群。如果你还没有，可以[创建一个 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
 
 ### 步骤 1. 创建项目
 
@@ -75,7 +75,7 @@ summary: 了解如何将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使
 
     > **提示：**
     >
-    > 如果您之前已经创建了密码，您可以使用原始密码，也可以点击**重置密码**生成一个新密码。
+    > 如果你之前已经创建了密码，你可以使用原始密码，也可以点击**重置密码**生成一个新密码。
 
     连接字符串的格式如下：
 
@@ -83,7 +83,7 @@ summary: 了解如何将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使
     mysql://[username]:[password]@[host]/[database]
     ```
 
-3. 在本地环境中设置环境变量 `DATABASE_URL`。例如，在 Linux 或 macOS 中，您可以运行以下命令：
+3. 在本地环境中设置环境变量 `DATABASE_URL`。例如，在 Linux 或 macOS 中，你可以运行以下命令：
 
     ```shell
     export DATABASE_URL='mysql://[username]:[password]@[host]/[database]'
@@ -91,9 +91,9 @@ summary: 了解如何将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使
 
 ### 步骤 3. 使用 Drizzle 查询数据
 
-1. 在您的 TiDB Cloud Serverless 集群中创建一个表。
+1. 在你的 TiDB Cloud Serverless 集群中创建一个表。
 
-   您可以使用 [TiDB Cloud 控制台中的 SQL 编辑器](/tidb-cloud/explore-data-with-chat2query.md)执行 SQL 语句。以下是示例：
+   你可以使用 [TiDB Cloud 控制台中的 SQL 编辑器](/tidb-cloud/explore-data-with-chat2query.md)执行 SQL 语句。以下是示例：
 
    ```sql
    CREATE TABLE `test`.`users` (
@@ -151,11 +151,11 @@ summary: 了解如何将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使
 
 ### 开始之前
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
 - 一个提供边缘环境的 [Vercel](https://vercel.com/docs) 账户。
-- [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) 或您首选的包管理器。
-- 一个 TiDB Cloud Serverless 集群。如果您还没有，可以[创建一个 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
+- [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) 或你首选的包管理器。
+- 一个 TiDB Cloud Serverless 集群。如果你还没有，可以[创建一个 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
 
 ### 步骤 1. 创建项目
 
@@ -191,7 +191,7 @@ summary: 了解如何将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使
 
     > **提示：**
     >
-    > 如果您之前已经创建了密码，您可以使用原始密码，也可以点击**重置密码**生成一个新密码。
+    > 如果你之前已经创建了密码，你可以使用原始密码，也可以点击**重置密码**生成一个新密码。
 
     连接字符串的格式如下：
 
@@ -201,9 +201,9 @@ summary: 了解如何将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使
 
 ### 步骤 3. 创建边缘函数
 
-1. 在您的 TiDB Cloud Serverless 集群中创建一个表。
+1. 在你的 TiDB Cloud Serverless 集群中创建一个表。
 
-   您可以使用 [TiDB Cloud 控制台中的 SQL 编辑器](/tidb-cloud/explore-data-with-chat2query.md)执行 SQL 语句。以下是示例：
+   你可以使用 [TiDB Cloud 控制台中的 SQL 编辑器](/tidb-cloud/explore-data-with-chat2query.md)执行 SQL 语句。以下是示例：
 
    ```sql
    CREATE TABLE `test`.`users` (
@@ -245,7 +245,7 @@ summary: 了解如何将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使
    }
    ```
 
-3. 在本地测试您的代码：
+3. 在本地测试你的代码：
 
    ```shell
    export DATABASE_URL='mysql://[username]:[password]@[host]/[database]'
@@ -262,7 +262,7 @@ summary: 了解如何将 TiDB Cloud serverless 驱动程序与 Drizzle 配合使
    vercel -e DATABASE_URL='mysql://[username]:[password]@[host]/[database]' --prod
    ```
 
-   部署完成后，您将获得项目的 URL。
+   部署完成后，你将获得项目的 URL。
 
 2. 导航到 `${Your-URL}/api/edge-function-example` 页面以获取路由的响应。
 

@@ -5,7 +5,7 @@ summary: 了解如何将 TiDB Vector Search 与 Django ORM 集成以存储嵌入
 
 # 将 TiDB Vector Search 与 Django ORM 集成
 
-本教程将指导您如何使用 [Django](https://www.djangoproject.com/) ORM 与 [TiDB Vector Search](/tidb-cloud/vector-search-overview.md) 交互，存储嵌入向量并执行向量搜索查询。
+本教程将指导你如何使用 [Django](https://www.djangoproject.com/) ORM 与 [TiDB Vector Search](/tidb-cloud/vector-search-overview.md) 交互，存储嵌入向量并执行向量搜索查询。
 
 > **注意**
 >
@@ -17,11 +17,11 @@ summary: 了解如何将 TiDB Vector Search 与 Django ORM 集成以存储嵌入
 
 - 安装 [Python 3.8 或更高版本](https://www.python.org/downloads/)。
 - 安装 [Git](https://git-scm.com/downloads)。
-- 一个 TiDB Cloud Serverless 集群。如果您还没有，请按照[创建 TiDB Cloud Serverless 集群](/tidb-cloud/create-tidb-cluster-serverless.md)的说明创建您自己的 TiDB Cloud 集群。
+- 一个 TiDB Cloud Serverless 集群。如果你还没有，请按照[创建 TiDB Cloud Serverless 集群](/tidb-cloud/create-tidb-cluster-serverless.md)的说明创建你自己的 TiDB Cloud 集群。
 
 ## 运行示例应用
 
-您可以通过以下步骤快速了解如何将 TiDB Vector Search 与 Django ORM 集成。
+你可以通过以下步骤快速了解如何将 TiDB Vector Search 与 Django ORM 集成。
 
 ### 步骤 1. 克隆代码仓库
 
@@ -33,7 +33,7 @@ git clone https://github.com/pingcap/tidb-vector-python.git
 
 ### 步骤 2. 创建虚拟环境
 
-为您的项目创建虚拟环境：
+为你的项目创建虚拟环境：
 
 ```bash
 cd tidb-vector-python/examples/orm-django-quickstart
@@ -49,7 +49,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-或者，您可以为您的项目安装以下包：
+或者，你可以为你的项目安装以下包：
 
 ```bash
 pip install Django django-tidb mysqlclient numpy python-dotenv
@@ -61,7 +61,7 @@ pip install Django django-tidb mysqlclient numpy python-dotenv
 
 `django-tidb` 是 Django 的 TiDB 方言，它增强了 Django ORM 以支持 TiDB 特定功能（例如 TiDB Vector Search）并解决了 TiDB 和 Django 之间的兼容性问题。
 
-安装 `django-tidb` 时，请选择与您的 Django 版本匹配的版本。例如，如果您使用的是 `django==4.2.*`，请安装 `django-tidb==4.2.*`。次要版本不需要相同。建议使用最新的次要版本。
+安装 `django-tidb` 时，请选择与你的 Django 版本匹配的版本。例如，如果你使用的是 `django==4.2.*`，请安装 `django-tidb==4.2.*`。次要版本不需要相同。建议使用最新的次要版本。
 
 更多信息，请参考 [django-tidb 代码仓库](https://github.com/pingcap/django-tidb)。
 
@@ -71,22 +71,22 @@ pip install Django django-tidb mysqlclient numpy python-dotenv
 
 2. 点击右上角的 **Connect**。将显示连接对话框。
 
-3. 确保连接对话框中的配置与您的操作环境匹配。
+3. 确保连接对话框中的配置与你的操作环境匹配。
 
    - **Connection Type** 设置为 `Public`
    - **Branch** 设置为 `main`
    - **Connect With** 设置为 `General`
-   - **Operating System** 与您的环境匹配。
+   - **Operating System** 与你的环境匹配。
 
    > **提示：**
    >
-   > 如果您的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换到相应的 Linux 发行版。
+   > 如果你的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换到相应的 Linux 发行版。
 
 4. 从连接对话框复制连接参数。
 
    > **提示：**
    >
-   > 如果您还没有设置密码，请点击 **Generate Password** 生成随机密码。
+   > 如果你还没有设置密码，请点击 **Generate Password** 生成随机密码。
 
 5. 在 Python 项目的根目录下创建一个 `.env` 文件，并将连接参数粘贴到相应的环境变量中。
 
@@ -132,7 +132,7 @@ python manage.py runserver
 
 ## 示例代码片段
 
-您可以参考以下示例代码片段来完成您自己的应用程序开发。
+你可以参考以下示例代码片段来完成你自己的应用程序开发。
 
 ### 连接到 TiDB 集群
 
@@ -164,7 +164,7 @@ if TIDB_CA_PATH:
     }
 ```
 
-您可以在项目根目录下创建一个 `.env` 文件，并使用 TiDB 集群的实际值设置环境变量 `TIDB_HOST`、`TIDB_PORT`、`TIDB_USERNAME`、`TIDB_PASSWORD`、`TIDB_DATABASE` 和 `TIDB_CA_PATH`。
+你可以在项目根目录下创建一个 `.env` 文件，并使用 TiDB 集群的实际值设置环境变量 `TIDB_HOST`、`TIDB_PORT`、`TIDB_USERNAME`、`TIDB_PASSWORD`、`TIDB_DATABASE` 和 `TIDB_CA_PATH`。
 
 ### 创建向量表
 

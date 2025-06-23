@@ -13,9 +13,9 @@ summary: 了解如何通过 Azure Private Link 连接到 TiDB Cloud Dedicated �
 > - 要了解如何通过 Google Cloud 私有端点连接到 TiDB Cloud Dedicated 集群，请参见[通过 Google Cloud Private Service Connect 连接到 TiDB Cloud Dedicated 集群](/tidb-cloud/set-up-private-endpoint-connections-on-google-cloud.md)。
 > - 要了解如何通过私有端点连接到 TiDB Cloud Serverless 集群，请参见[通过私有端点连接到 TiDB Cloud Serverless](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)。
 
-TiDB Cloud 支持通过 [Azure Private Link](https://learn.microsoft.com/en-us/azure/private-link/private-link-overview) 对托管在 Azure 虚拟网络中的 TiDB Cloud 服务进行高度安全和单向访问，就像该服务在您自己的虚拟网络中一样。您可以在您的虚拟网络中创建私有端点，然后通过具有权限的端点连接到 TiDB Cloud 服务。
+TiDB Cloud 支持通过 [Azure Private Link](https://learn.microsoft.com/en-us/azure/private-link/private-link-overview) 对托管在 Azure 虚拟网络中的 TiDB Cloud 服务进行高度安全和单向访问，就像该服务在你自己的虚拟网络中一样。你可以在你的虚拟网络中创建私有端点，然后通过具有权限的端点连接到 TiDB Cloud 服务。
 
-在 Azure Private Link 的支持下，端点连接是安全和私密的，不会将您的数据暴露在公共互联网上。此外，端点连接支持 CIDR 重叠，并且更易于网络管理。
+在 Azure Private Link 的支持下，端点连接是安全和私密的，不会将你的数据暴露在公共互联网上。此外，端点连接支持 CIDR 重叠，并且更易于网络管理。
 
 Azure Private Link 的架构如下：[^1]
 
@@ -41,7 +41,7 @@ Azure Private Link 的架构如下：[^1]
 3. [接受端点](#步骤-3-接受端点)
 4. [连接到 TiDB 集群](#步骤-4-连接到-tidb-集群)
 
-如果您有多个集群，则需要对每个要使用 Azure Private Link 连接的集群重复这些步骤。
+如果你有多个集群，则需要对每个要使用 Azure Private Link 连接的集群重复这些步骤。
 
 ### 步骤 1. 选择 TiDB 集群
 
@@ -51,7 +51,7 @@ Azure Private Link 的架构如下：[^1]
 
 > **注意：**
 >
-> 如果您已经创建了私有端点连接，活动端点将显示在连接对话框中。要创建其他私有端点连接，请点击左侧导航栏中的**设置** > **网络**导航到**网络**页面。
+> 如果你已经创建了私有端点连接，活动端点将显示在连接对话框中。要创建其他私有端点连接，请点击左侧导航栏中的**设置** > **网络**导航到**网络**页面。
 
 ### 步骤 2. 创建 Azure 私有端点
 
@@ -61,7 +61,7 @@ Azure Private Link 的架构如下：[^1]
     >
     > 对于每个 TiDB Cloud Dedicated 集群，相应的端点服务会在集群创建后 3 到 4 分钟自动创建。
 
-2. 登录 [Azure 门户](https://portal.azure.com/)，然后使用复制的 TiDB Cloud 资源 ID 为您的集群创建私有端点，具体步骤如下：
+2. 登录 [Azure 门户](https://portal.azure.com/)，然后使用复制的 TiDB Cloud 资源 ID 为你的集群创建私有端点，具体步骤如下：
 
     1. 在 Azure 门户中，搜索**私有端点**，然后在结果中选择**私有端点**。
     2. 在**私有端点**页面，点击**+ 创建**。
@@ -87,11 +87,11 @@ Azure Private Link 的架构如下：[^1]
 
 ### 步骤 4. 连接到 TiDB 集群
 
-接受端点连接后，您将被重定向回连接对话框。
+接受端点连接后，你将被重定向回连接对话框。
 
 1. 等待私有端点连接状态变为**活动**（大约 5 分钟）。要检查状态，请点击左侧导航栏中的**设置** > **网络**导航到**网络**页面。
-2. 在**连接方式**下拉列表中，选择您首选的连接方法。对话框底部将显示相应的连接字符串。
-3. 使用连接字符串连接到您的集群。
+2. 在**连接方式**下拉列表中，选择你首选的连接方法。对话框底部将显示相应的连接字符串。
+3. 使用连接字符串连接到你的集群。
 
 ### 私有端点状态参考
 
@@ -101,9 +101,9 @@ Azure Private Link 的架构如下：[^1]
 
 - **已发现**：TiDB Cloud 可以在接受请求之前自动检测与端点服务关联的私有端点，以避免需要创建另一个端点。
 - **等待中**：等待处理。
-- **活动**：您的私有端点已准备就绪可以使用。您无法编辑此状态的私有端点。
+- **活动**：你的私有端点已准备就绪可以使用。你无法编辑此状态的私有端点。
 - **删除中**：正在删除私有端点。
-- **失败**：私有端点创建失败。您可以点击该行的**编辑**重试创建。
+- **失败**：私有端点创建失败。你可以点击该行的**编辑**重试创建。
 
 私有端点服务的可能状态说明如下：
 
@@ -114,10 +114,10 @@ Azure Private Link 的架构如下：[^1]
 
 ### TiDB Cloud 无法创建端点服务。我该怎么办？
 
-端点服务在您打开**创建 Azure 私有端点**页面并选择 TiDB 集群后自动创建。如果显示失败或长时间保持在**创建中**状态，请[提交支持工单](/tidb-cloud/tidb-cloud-support.md)寻求帮助。
+端点服务在你打开**创建 Azure 私有端点**页面并选择 TiDB 集群后自动创建。如果显示失败或长时间保持在**创建中**状态，请[提交支持工单](/tidb-cloud/tidb-cloud-support.md)寻求帮助。
 
 ### 如果我在设置过程中取消操作，在接受私有端点之前应该怎么做？
 
-Azure 私有端点连接功能可以自动检测您的私有端点。这意味着在 Azure 门户中[创建 Azure 私有端点](#步骤-2-创建-azure-私有端点)后，如果您在 TiDB Cloud 控制台的**创建 Azure 私有端点连接**对话框中点击**取消**，您仍然可以在**网络**页面上查看已创建的端点。如果取消是无意的，您可以继续配置端点以完成设置。如果取消是有意的，您可以直接在 TiDB Cloud 控制台中删除端点。
+Azure 私有端点连接功能可以自动检测你的私有端点。这意味着在 Azure 门户中[创建 Azure 私有端点](#步骤-2-创建-azure-私有端点)后，如果你在 TiDB Cloud 控制台的**创建 Azure 私有端点连接**对话框中点击**取消**，你仍然可以在**网络**页面上查看已创建的端点。如果取消是无意的，你可以继续配置端点以完成设置。如果取消是有意的，你可以直接在 TiDB Cloud 控制台中删除端点。
 
 [^1]: Azure Private Link 架构图来自 Azure 文档中的 [What is Azure Private Link service](https://learn.microsoft.com/en-us/azure/private-link/private-link-service-overview) 文档（[GitHub 上的源文件](https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/private-link/private-link-service-overview.md)），根据 Creative Commons Attribution 4.0 International 许可证授权。

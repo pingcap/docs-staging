@@ -59,7 +59,7 @@ MySQL 中 GBK 字符集的默认排序规则是 `gbk_chinese_ci`。TiDB 中 GBK 
     - MySQL 对读写操作中的非法 GBK 字符集处理方式不同。
     - TiDB 对读写操作中的非法 GBK 字符集处理方式相同。在 SQL 严格模式下，TiDB 在读写非法 GBK 字符时都会报错。在非严格模式下，TiDB 在读写非法 GBK 字符时都会将非法 GBK 字符替换为 `?`。
 
-例如，在执行 `SET NAMES gbk` 后，如果您分别在 MySQL 和 TiDB 中使用 `CREATE TABLE gbk_table(a VARCHAR(32) CHARACTER SET gbk)` 语句创建表，然后执行下表中的 SQL 语句，您可以看到详细的差异。
+例如，在执行 `SET NAMES gbk` 后，如果你分别在 MySQL 和 TiDB 中使用 `CREATE TABLE gbk_table(a VARCHAR(32) CHARACTER SET gbk)` 语句创建表，然后执行下表中的 SQL 语句，你可以看到详细的差异。
 
 | 数据库    | 如果配置的 SQL 模式包含 `STRICT_ALL_TABLES` 或 `STRICT_TRANS_TABLES` 中的任一个                                               | 如果配置的 SQL 模式既不包含 `STRICT_ALL_TABLES` 也不包含 `STRICT_TRANS_TABLES`                                                                     |
 |-------|-------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|

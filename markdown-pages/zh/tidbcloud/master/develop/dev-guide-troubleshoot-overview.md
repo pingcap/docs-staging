@@ -9,22 +9,22 @@ summary: 了解如何排查应用程序开发过程中可能出现的 SQL 或事
 
 ## 排查 SQL 查询问题
 
-如果您想提高 SQL 查询性能，请按照 [SQL 性能调优](/develop/dev-guide-optimize-sql-overview.md) 中的说明解决全表扫描和缺少索引等性能问题。
+如果你想提高 SQL 查询性能，请按照 [SQL 性能调优](/develop/dev-guide-optimize-sql-overview.md) 中的说明解决全表扫描和缺少索引等性能问题。
 
 <CustomContent platform="tidb">
 
-如果您仍然遇到性能问题，请参见以下文档：
+如果你仍然遇到性能问题，请参见以下文档：
 
 - [分析慢查询](/analyze-slow-queries.md)
 - [使用 Top SQL 识别高开销查询](/dashboard/top-sql.md)
 
-如果您对 SQL 操作有疑问，请参见 [SQL 常见问题](/faq/sql-faq.md)。
+如果你对 SQL 操作有疑问，请参见 [SQL 常见问题](/faq/sql-faq.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-如果您对 SQL 操作有疑问，请参见 [SQL 常见问题](https://docs.pingcap.com/tidb/stable/sql-faq)。
+如果你对 SQL 操作有疑问，请参见 [SQL 常见问题](https://docs.pingcap.com/tidb/stable/sql-faq)。
 
 </CustomContent>
 

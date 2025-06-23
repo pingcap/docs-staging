@@ -35,7 +35,7 @@ Query OK, 0 rows affected (0.00 sec)
 
 ## MySQL 兼容性
 
-TiDB 中的 `ALTER DATABASE` 语句与 MySQL 完全兼容。如果您发现任何兼容性差异，请[报告问题](https://docs.pingcap.com/tidb/stable/support)。
+TiDB 中的 `ALTER DATABASE` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，请[报告问题](https://docs.pingcap.com/tidb/stable/support)。
 
 ## 另请参见
 

@@ -17,7 +17,7 @@ TiDB 需要进行这种重写的原因是，相关子查询每次执行时都会
 
 这种重写的缺点是，当关联没有被去除时，优化器可以使用相关列上的索引。也就是说，虽然这个子查询可能重复多次，但每次都可以使用索引来过滤数据。使用重写规则后，相关列的位置通常会发生变化。虽然子查询只执行一次，但单次执行时间可能会比不去关联化时更长。
 
-因此，当外部值较少时，不执行去关联化可能会带来更好的执行性能。在这种情况下，您可以使用 [`NO_DECORRELATE`](/optimizer-hints.md#no_decorrelate) 优化器提示或在[优化规则和表达式下推的黑名单](/blocklist-control-plan.md)中禁用"子查询去关联化"优化规则。在大多数情况下，建议将优化器提示与 [SQL 计划管理](/sql-plan-management.md)结合使用来禁用去关联化。
+因此，当外部值较少时，不执行去关联化可能会带来更好的执行性能。在这种情况下，你可以使用 [`NO_DECORRELATE`](/optimizer-hints.md#no_decorrelate) 优化器提示或在[优化规则和表达式下推的黑名单](/blocklist-control-plan.md)中禁用"子查询去关联化"优化规则。在大多数情况下，建议将优化器提示与 [SQL 计划管理](/sql-plan-management.md)结合使用来禁用去关联化。
 
 ## 示例
 
@@ -48,7 +48,7 @@ explain select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.
 
 上面是优化生效的示例。`HashJoin_11` 是一个普通的 `inner join`。
 
-然后，您可以使用 `NO_DECORRELATE` 优化器提示来告诉优化器不要对子查询进行去关联化：
+然后，你可以使用 `NO_DECORRELATE` 优化器提示来告诉优化器不要对子查询进行去关联化：
 
 {{< copyable "sql" >}}
 
@@ -100,4 +100,4 @@ explain select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.
 +------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
 ```
 
-禁用子查询去关联化规则后，您可以在 `IndexRangeScan_42(Build)` 的 `operator info` 中看到 `range: decided by [eq(test.t2.b, test.t1.b)]`。这意味着没有执行相关子查询的去关联化，TiDB 使用了索引范围查询。
+禁用子查询去关联化规则后，你可以在 `IndexRangeScan_42(Build)` 的 `operator info` 中看到 `range: decided by [eq(test.t2.b, test.t1.b)]`。这意味着没有执行相关子查询的去关联化，TiDB 使用了索引范围查询。

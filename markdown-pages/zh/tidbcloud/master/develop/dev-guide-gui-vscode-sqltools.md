@@ -7,7 +7,7 @@ summary: 了解如何使用 Visual Studio Code 或 GitHub Codespaces 连接 TiDB
 
 TiDB 是一个兼容 MySQL 的数据库，而 [Visual Studio Code (VS Code)](https://code.visualstudio.com/) 是一个轻量级但功能强大的源代码编辑器。本教程使用 [SQLTools](https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools) 扩展，该扩展将 TiDB 作为[官方驱动程序](https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools-driver-mysql)支持。
 
-在本教程中，您将学习如何使用 Visual Studio Code 连接到您的 TiDB 集群。
+在本教程中，你将学习如何使用 Visual Studio Code 连接到你的 TiDB 集群。
 
 > **注意：**
 >
@@ -16,10 +16,10 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Visual Studio Code (VS Code)](htt
 
 ## 前提条件
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
 - [Visual Studio Code](https://code.visualstudio.com/#alt-downloads) **1.72.0** 或更高版本。
-- Visual Studio Code 的 [SQLTools MySQL/MariaDB/TiDB](https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools-driver-mysql) 扩展。要安装它，您可以使用以下方法之一：
+- Visual Studio Code 的 [SQLTools MySQL/MariaDB/TiDB](https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools-driver-mysql) 扩展。要安装它，你可以使用以下方法之一：
     - 点击<a href="vscode:extension/mtxr.sqltools-driver-mysql">此链接</a>直接启动 VS Code 并安装扩展。
     - 导航到 [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools-driver-mysql) 并点击**安装**。
     - 在 VS Code 的**扩展**标签页中，搜索 `mtxr.sqltools-driver-mysql` 找到 **SQLTools MySQL/MariaDB/TiDB** 扩展，然后点击**安装**。
@@ -27,24 +27,24 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Visual Studio Code (VS Code)](htt
 
 <CustomContent platform="tidb">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](/production-deployment-using-tiup.md)的说明创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)的说明创建本地集群。
 
 </CustomContent>
 
 ## 连接到 TiDB
 
-根据您选择的 TiDB 部署选项连接到您的 TiDB 集群。
+根据你选择的 TiDB 部署选项连接到你的 TiDB 集群。
 
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
@@ -53,22 +53,22 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Visual Studio Code (VS Code)](htt
 
 2. 点击右上角的**连接**。此时会显示一个连接对话框。
 
-3. 确保连接对话框中的配置与您的操作环境相匹配。
+3. 确保连接对话框中的配置与你的操作环境相匹配。
 
     - **连接类型**设置为 `Public`。
     - **分支**设置为 `main`。
     - **连接方式**设置为 `VS Code`。
-    - **操作系统**与您的环境匹配。
+    - **操作系统**与你的环境匹配。
 
     > **提示：**
     >
-    > 如果您的 VS Code 运行在远程开发环境中，请从列表中选择远程操作系统。例如，如果您使用的是 Windows Subsystem for Linux (WSL)，请切换到相应的 Linux 发行版。如果您使用的是 GitHub Codespaces，则无需这样做。
+    > 如果你的 VS Code 运行在远程开发环境中，请从列表中选择远程操作系统。例如，如果你使用的是 Windows Subsystem for Linux (WSL)，请切换到相应的 Linux 发行版。如果你使用的是 GitHub Codespaces，则无需这样做。
 
 4. 点击**生成密码**创建一个随机密码。
 
     > **提示：**
     >
-    > 如果您之前已经创建了密码，您可以使用原始密码，也可以点击**重置密码**生成一个新密码。
+    > 如果你之前已经创建了密码，你可以使用原始密码，也可以点击**重置密码**生成一个新密码。
 
 5. 启动 VS Code 并在导航窗格中选择 **SQLTools** 扩展。在 **CONNECTIONS** 部分下，点击 **Add New Connection** 并选择 **TiDB** 作为数据库驱动程序。
 
@@ -91,18 +91,18 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Visual Studio Code (VS Code)](htt
 
             > **注意：**
             >
-            > 如果您在 Windows 或 GitHub Codespaces 上运行，可以将 **SSL** 留空。默认情况下，SQLTools 信任由 Let's Encrypt 策划的知名 CA。更多信息，请参见 [TiDB Cloud Serverless 根证书管理](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters#root-certificate-management)。
+            > 如果你在 Windows 或 GitHub Codespaces 上运行，可以将 **SSL** 留空。默认情况下，SQLTools 信任由 Let's Encrypt 策划的知名 CA。更多信息，请参见 [TiDB Cloud Serverless 根证书管理](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters#root-certificate-management)。
 
     ![VS Code SQLTools：配置 TiDB Cloud Serverless 的连接设置](/media/develop/vsc-sqltools-connection-config-serverless.jpg)
 
 7. 点击 **TEST CONNECTION** 以验证与 TiDB Cloud Serverless 集群的连接。
 
     1. 在弹出窗口中，点击 **Allow**。
-    2. 在 **SQLTools Driver Credentials** 对话框中，输入您在步骤 4 中创建的密码。
+    2. 在 **SQLTools Driver Credentials** 对话框中，输入你在步骤 4 中创建的密码。
 
         ![VS Code SQLTools：输入密码连接到 TiDB Cloud Serverless](/media/develop/vsc-sqltools-password.jpg)
 
-8. 如果连接测试成功，您会看到 **Successfully connected!** 消息。点击 **SAVE CONNECTION** 保存连接配置。
+8. 如果连接测试成功，你会看到 **Successfully connected!** 消息。点击 **SAVE CONNECTION** 保存连接配置。
 
 </div>
 <div label="TiDB Cloud Dedicated">
@@ -113,9 +113,9 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Visual Studio Code (VS Code)](htt
 
 3. 在连接对话框中，从**连接类型**下拉列表中选择**公共**，然后点击 **CA 证书**下载 CA 证书。
 
-    如果您尚未配置 IP 访问列表，请点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤在首次连接之前进行配置。
+    如果你尚未配置 IP 访问列表，请点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤在首次连接之前进行配置。
 
-    除了**公共**连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**连接类型。更多信息，请参见[连接到您的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+    除了**公共**连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**连接类型。更多信息，请参见[连接到你的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
 4. 启动 VS Code 并在导航窗格中选择 **SQLTools** 扩展。在 **CONNECTIONS** 部分下，点击 **Add New Connection** 并选择 **TiDB** 作为数据库驱动程序。
 
@@ -145,7 +145,7 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Visual Studio Code (VS Code)](htt
 
     ![VS Code SQLTools：输入密码连接到 TiDB Cloud Dedicated](/media/develop/vsc-sqltools-password.jpg)
 
-7. 如果连接测试成功，您会看到 **Successfully connected!** 消息。点击 **SAVE CONNECTION** 保存连接配置。
+7. 如果连接测试成功，你会看到 **Successfully connected!** 消息。点击 **SAVE CONNECTION** 保存连接配置。
 
 </div>
 <div label="TiDB Self-Managed">
@@ -159,10 +159,10 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Visual Studio Code (VS Code)](htt
     - **Connection name**：为此连接指定一个有意义的名称。
     - **Connection group**：（可选）为此连接组指定一个有意义的名称。具有相同组名的连接将被分组在一起。
     - **Connect using**：选择 **Server and Port**。
-    - **Server Address**：输入您的 TiDB Self-Managed 集群的 IP 地址或域名。
-    - **Port**：输入您的 TiDB Self-Managed 集群的端口号。
+    - **Server Address**：输入你的 TiDB Self-Managed 集群的 IP 地址或域名。
+    - **Port**：输入你的 TiDB Self-Managed 集群的端口号。
     - **Database**：输入要连接的数据库。
-    - **Username**：输入用于连接到您的 TiDB Self-Managed 集群的用户名。
+    - **Username**：输入用于连接到你的 TiDB Self-Managed 集群的用户名。
     - **Password mode**：
 
         - 如果密码为空，选择 **Use empty password**。
@@ -181,7 +181,7 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Visual Studio Code (VS Code)](htt
 
     ![VS Code SQLTools：输入密码连接到 TiDB Self-Managed](/media/develop/vsc-sqltools-password.jpg)
 
-4. 如果连接测试成功，您会看到 **Successfully connected!** 消息。点击 **SAVE CONNECTION** 保存连接配置。
+4. 如果连接测试成功，你会看到 **Successfully connected!** 消息。点击 **SAVE CONNECTION** 保存连接配置。
 
 </div>
 </SimpleTab>

@@ -5,7 +5,7 @@ summary: "SQL 逻辑优化章节解释了 TiDB 查询计划生成中的关键逻
 
 # SQL 逻辑优化
 
-本章节解释了一些关键的逻辑重写，帮助您理解 TiDB 如何生成最终的查询计划。例如，当您在 TiDB 中执行 `select * from t where t.a in (select t1.a from t1 where t1.b=t.b)` 查询时，您会发现 `IN` 子查询 `t.a in (select t1.a from t1 where t1.b=t.b)` 不存在，这是因为 TiDB 在这里进行了一些重写。
+本章节解释了一些关键的逻辑重写，帮助你理解 TiDB 如何生成最终的查询计划。例如，当你在 TiDB 中执行 `select * from t where t.a in (select t1.a from t1 where t1.b=t.b)` 查询时，你会发现 `IN` 子查询 `t.a in (select t1.a from t1 where t1.b=t.b)` 不存在，这是因为 TiDB 在这里进行了一些重写。
 
 本章节介绍以下关键重写：
 

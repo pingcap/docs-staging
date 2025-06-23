@@ -11,7 +11,7 @@ summary: 了解 TiFlash 的架构和主要特性。
 
 <CustomContent platform="tidb-cloud">
 
-使用 TiDB Cloud，您可以根据 HTAP 工作负载轻松创建 HTAP 集群，只需指定一个或多个 TiFlash 节点即可。如果在创建集群时未指定 TiFlash 节点数量，或者您想添加更多 TiFlash 节点，可以通过[扩展集群](/tidb-cloud/scale-tidb-cluster.md)来更改节点数量。
+使用 TiDB Cloud，你可以根据 HTAP 工作负载轻松创建 HTAP 集群，只需指定一个或多个 TiFlash 节点即可。如果在创建集群时未指定 TiFlash 节点数量，或者你想添加更多 TiFlash 节点，可以通过[扩展集群](/tidb-cloud/scale-tidb-cluster.md)来更改节点数量。
 
 </CustomContent>
 
@@ -29,13 +29,13 @@ TiFlash 以低成本实时复制 TiKV 节点中的数据，不会阻塞 TiKV 中
 
 <CustomContent platform="tidb">
 
-TiFlash 同时兼容 TiDB 和 TiSpark，使您可以在这两个计算引擎之间自由选择。
+TiFlash 同时兼容 TiDB 和 TiSpark，使你可以在这两个计算引擎之间自由选择。
 
 </CustomContent>
 
 建议将 TiFlash 部署在与 TiKV 不同的节点上，以确保工作负载隔离。如果不需要业务隔离，也可以将 TiFlash 和 TiKV 部署在同一节点上。
 
-目前，数据不能直接写入 TiFlash。您需要先将数据写入 TiKV，然后复制到 TiFlash，因为它作为 Learner 角色连接到 TiDB 集群。TiFlash 支持以表为单位进行数据复制，但部署后默认不会复制任何数据。要复制指定表的数据，请参见[为表创建 TiFlash 副本](/tiflash/create-tiflash-replicas.md#为表创建-tiflash-副本)。
+目前，数据不能直接写入 TiFlash。你需要先将数据写入 TiKV，然后复制到 TiFlash，因为它作为 Learner 角色连接到 TiDB 集群。TiFlash 支持以表为单位进行数据复制，但部署后默认不会复制任何数据。要复制指定表的数据，请参见[为表创建 TiFlash 副本](/tiflash/create-tiflash-replicas.md#为表创建-tiflash-副本)。
 
 TiFlash 由两个主要组件组成：列式存储组件和 TiFlash 代理组件。TiFlash 代理组件负责使用多 Raft 共识算法进行通信。
 
@@ -57,11 +57,11 @@ TiFlash 中的副本作为特殊角色 Raft Learner 进行异步复制。这意�
 这种复制机制继承了 TiKV 的两个优点：自动负载均衡和高可用性。
 
 - TiFlash 不依赖额外的复制通道，而是直接以多对多的方式从 TiKV 接收数据。
-- 只要数据在 TiKV 中没有丢失，您随时都可以在 TiFlash 中恢复副本。
+- 只要数据在 TiKV 中没有丢失，你随时都可以在 TiFlash 中恢复副本。
 
 ### 一致性
 
-TiFlash 提供与 TiKV 相同的快照隔离级别一致性，并确保读取最新数据，这意味着您可以读取之前写入 TiKV 的数据。这种一致性是通过验证数据复制进度来实现的。
+TiFlash 提供与 TiKV 相同的快照隔离级别一致性，并确保读取最新数据，这意味着你可以读取之前写入 TiKV 的数据。这种一致性是通过验证数据复制进度来实现的。
 
 每次 TiFlash 收到读取请求时，Region 副本都会向 Leader 副本发送进度验证请求（一个轻量级的 RPC 请求）。只有在当前复制进度包含读取请求时间戳所覆盖的数据后，TiFlash 才会执行读取操作。
 
@@ -82,17 +82,17 @@ TiFlash 以与 TiKV 协处理器相同的方式分担计算工作负载：TiDB �
 
 ## 使用 TiFlash
 
-部署 TiFlash 后，数据复制不会自动开始。您需要手动指定要复制的表。
+部署 TiFlash 后，数据复制不会自动开始。你需要手动指定要复制的表。
 
 <CustomContent platform="tidb">
 
-您可以根据自己的需求，使用 TiDB 读取 TiFlash 副本进行中等规模的分析处理，或使用 TiSpark 读取 TiFlash 副本进行大规模的分析处理。详情请参见以下章节：
+你可以根据自己的需求，使用 TiDB 读取 TiFlash 副本进行中等规模的分析处理，或使用 TiSpark 读取 TiFlash 副本进行大规模的分析处理。详情请参见以下章节：
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-您可以使用 TiDB 读取 TiFlash 副本进行分析处理。详情请参见以下章节：
+你可以使用 TiDB 读取 TiFlash 副本进行分析处理。详情请参见以下章节：
 
 </CustomContent>
 

@@ -7,41 +7,41 @@ summary: 了解如何使用 Looker Studio 连接 TiDB Cloud Serverless。
 
 TiDB 是一个兼容 MySQL 的数据库，TiDB Cloud Serverless 是一个全托管的 TiDB 服务，而 [Looker Studio](https://lookerstudio.google.com/) 是一个免费的基于 Web 的 BI 工具，可以可视化来自各种来源的数据。
 
-在本教程中，您可以学习如何使用 Looker Studio 连接到 TiDB Cloud Serverless 集群。
+在本教程中，你可以学习如何使用 Looker Studio 连接到 TiDB Cloud Serverless 集群。
 
 > **注意：**
 >
-> 本教程中的大多数步骤也适用于 TiDB Cloud Dedicated。但是，对于 TiDB Cloud Dedicated，您需要注意以下事项：
-> 
-> - 按照[从文件导入数据到 TiDB Cloud](/tidb-cloud/tidb-cloud-migration-overview.md#import-data-from-files-to-tidb-cloud) 导入您的数据集。
-> - 按照[连接到 TiDB Cloud Dedicated](/tidb-cloud/connect-via-standard-connection.md) 获取集群的连接信息。连接到 TiDB Cloud Dedicated 时，您需要允许来自 `142.251.74.0/23` 的访问。有关来自 Looker Studio 的连接的更多信息，请参见 [Looker Studio 文档](https://support.google.com/looker-studio/answer/7088031#zippy=%2Cin-this-article)。
+> 本教程中的大多数步骤也适用于 TiDB Cloud Dedicated。但是，对于 TiDB Cloud Dedicated，你需要注意以下事项：
+>
+> - 按照[从文件导入数据到 TiDB Cloud](/tidb-cloud/tidb-cloud-migration-overview.md#import-data-from-files-to-tidb-cloud) 导入你的数据集。
+> - 按照[连接到 TiDB Cloud Dedicated](/tidb-cloud/connect-via-standard-connection.md) 获取集群的连接信息。连接到 TiDB Cloud Dedicated 时，你需要允许来自 `142.251.74.0/23` 的访问。有关来自 Looker Studio 的连接的更多信息，请参见 [Looker Studio 文档](https://support.google.com/looker-studio/answer/7088031#zippy=%2Cin-this-article)。
 
 ## 前提条件
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
 - 一个 Google 账号
 - 一个 TiDB Cloud Serverless 集群
 
-**如果您还没有 TiDB Cloud Serverless 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB Cloud Serverless 集群，可以按照以下方式创建：**
 
 - [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-serverless-cluster)
 
 ## 步骤 1. 导入数据集
 
-您可以导入 TiDB Cloud Serverless 交互式教程中提供的标准普尔 500 指数数据集。
+你可以导入 TiDB Cloud Serverless 交互式教程中提供的标准普尔 500 指数数据集。
 
 1. 导航到[**集群**](https://tidbcloud.com/project/clusters)页面，点击右下角的 **?**。将显示**帮助**对话框。
 
 2. 在对话框中，点击**交互式教程**，然后点击 **S&P 500 分析**。
 
-3. 选择您的 TiDB Cloud Serverless 集群，然后点击**导入数据集**将标准普尔 500 指数数据集导入到您的集群。
+3. 选择你的 TiDB Cloud Serverless 集群，然后点击**导入数据集**将标准普尔 500 指数数据集导入到你的集群。
 
 4. 导入状态变为**已导入**后，点击**退出教程**关闭此对话框。
 
-如果在导入过程中遇到任何问题，您可以按照以下方式取消此导入任务：
+如果在导入过程中遇到任何问题，你可以按照以下方式取消此导入任务：
 
-1. 在[**集群**](https://tidbcloud.com/project/clusters)页面，点击您的 TiDB Cloud Serverless 集群的名称进入其概览页面。
+1. 在[**集群**](https://tidbcloud.com/project/clusters)页面，点击你的 TiDB Cloud Serverless 集群的名称进入其概览页面。
 2. 在左侧导航栏中，点击**数据** > **导入**。
 3. 找到名为 **sp500-insight** 的导入任务，点击**操作**列中的 **...**，然后点击**取消**。
 
@@ -55,13 +55,13 @@ TiDB 是一个兼容 MySQL 的数据库，TiDB Cloud Serverless 是一个全托�
 
     > **提示：**
     >
-    > 如果您之前已经创建了密码，请使用原始密码或点击**重置密码**生成新密码。
+    > 如果你之前已经创建了密码，请使用原始密码或点击**重置密码**生成新密码。
 
 4. 下载 [CA 证书](https://letsencrypt.org/certs/isrgrootx1.pem)。
 
     > **提示：**
     >
-    > TiDB Cloud Serverless 要求客户端和集群之间建立安全的 TLS 连接，因此您需要在 Looker Studio 的连接设置中使用此 CA 证书。
+    > TiDB Cloud Serverless 要求客户端和集群之间建立安全的 TLS 连接，因此你需要在 Looker Studio 的连接设置中使用此 CA 证书。
 
 ## 步骤 3. 使用 Looker Studio 连接到 TiDB 集群
 
@@ -82,11 +82,11 @@ TiDB 是一个兼容 MySQL 的数据库，TiDB Cloud Serverless 是一个全托�
 
 4. 点击**验证**。
 
-如果验证成功，您可以看到数据库中的表。
+如果验证成功，你可以看到数据库中的表。
 
 ## 步骤 4. 创建简单图表
 
-现在，您可以使用 TiDB 集群作为数据源，并使用数据创建简单的图表。
+现在，你可以使用 TiDB 集群作为数据源，并使用数据创建简单的图表。
 
 1. 在右侧面板中，点击**自定义查询**。
 
@@ -108,7 +108,7 @@ TiDB 是一个兼容 MySQL 的数据库，TiDB Cloud Serverless 是一个全托�
     ORDER BY 5 ASC;
     ```
 
-    如果看到**您即将向此报告添加数据**对话框，请点击**添加到报告**。然后，报告中将显示一个表格。
+    如果看到**你即将向此报告添加数据**对话框，请点击**添加到报告**。然后，报告中将显示一个表格。
 
 3. 在报告的工具栏中，点击**添加图表**，然后在 `折线图` 类别中选择 `组合图表`。
 
@@ -122,7 +122,7 @@ TiDB 是一个兼容 MySQL 的数据库，TiDB Cloud Serverless 是一个全托�
       - 系列 #2：选择 `柱状图` 选项和 `左` 轴。
     - 其他字段保持默认值。
 
-然后，您可以看到类似如下的组合图表：
+然后，你可以看到类似如下的组合图表：
 
 ![Looker Studio：简单的组合图表](/media/tidb-cloud/looker-studio-simple-chart.png)
 

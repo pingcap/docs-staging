@@ -5,7 +5,7 @@ summary: 了解 TiDB Cloud 中的关键概念。
 
 # 关键概念概述
 
-本文档提供了 [TiDB Cloud](https://www.pingcap.com/tidb-cloud/) 中关键概念的概述。理解这些概念有助于您更好地使用 TiDB Cloud 的功能和特性。
+本文档提供了 [TiDB Cloud](https://www.pingcap.com/tidb-cloud/) 中关键概念的概述。理解这些概念有助于你更好地使用 TiDB Cloud 的功能和特性。
 
 ## 架构
 
@@ -13,7 +13,7 @@ TiDB Cloud 基于云原生分布式架构构建，实现了计算与存储分离
 
 ## 数据库模式
 
-TiDB Cloud 使您能够使用数据库、表、列、索引和约束等对象来组织和构建数据。它还支持临时表、向量索引和缓存表等高级功能。[了解更多数据库模式信息](/tidb-cloud/database-schema-concepts.md)。
+TiDB Cloud 使你能够使用数据库、表、列、索引和约束等对象来组织和构建数据。它还支持临时表、向量索引和缓存表等高级功能。[了解更多数据库模式信息](/tidb-cloud/database-schema-concepts.md)。
 
 ## 事务
 
@@ -25,15 +25,15 @@ TiDB 高度兼容 MySQL 协议以及 MySQL 5.7 和 MySQL 8.0 的常用功能和�
 
 ## AI 功能
 
-TiDB Cloud 中的 AI 功能使您能够充分利用先进技术进行数据探索、搜索和集成。[了解更多 AI 功能信息](/tidb-cloud/ai-feature-concepts.md)。
+TiDB Cloud 中的 AI 功能使你能够充分利用先进技术进行数据探索、搜索和集成。[了解更多 AI 功能信息](/tidb-cloud/ai-feature-concepts.md)。
 
 ## 数据服务（Beta）
 
-数据服务使您能够通过自定义 API 端点使用 HTTPS 请求访问 TiDB Cloud 数据。[了解更多数据服务信息](/tidb-cloud/data-service-concepts.md)。
+数据服务使你能够通过自定义 API 端点使用 HTTPS 请求访问 TiDB Cloud 数据。[了解更多数据服务信息](/tidb-cloud/data-service-concepts.md)。
 
 ## 可扩展性
 
-TiDB Cloud Dedicated 让您可以根据数据量或工作负载的变化分别调整其计算和存储资源。[了解更多可扩展性信息](/tidb-cloud/scalability-concepts.md)。
+TiDB Cloud Dedicated 让你可以根据数据量或工作负载的变化分别调整其计算和存储资源。[了解更多可扩展性信息](/tidb-cloud/scalability-concepts.md)。
 
 ## 高可用性
 
@@ -48,7 +48,7 @@ TiDB Cloud 为集群性能和健康状况提供全面的监控功能。[了解�
 
 ## 数据流
 
-TiDB Cloud 允许您将数据变更从 TiDB 集群流式传输到 Kafka、MySQL 和对象存储等其他系统。[了解更多数据流信息](/tidb-cloud/data-streaming-concepts.md)。
+TiDB Cloud 允许你将数据变更从 TiDB 集群流式传输到 Kafka、MySQL 和对象存储等其他系统。[了解更多数据流信息](/tidb-cloud/data-streaming-concepts.md)。
 
 ## 备份和恢复
 

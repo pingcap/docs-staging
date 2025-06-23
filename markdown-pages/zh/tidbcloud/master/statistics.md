@@ -40,8 +40,8 @@ TiDB 每 60 秒持久化一次更新信息。
 
 当表 `tbl` 中修改的行数与总行数的比率大于 `tidb_auto_analyze_ratio`，并且当前时间在 `tidb_auto_analyze_start_time` 和 `tidb_auto_analyze_end_time` 之间时，TiDB 会在后台执行 `ANALYZE TABLE tbl` 语句，自动更新这个表的统计信息。
 
-为了避免频繁修改小表数据触发自动更新的情况，当表的行数少于 1000 行时，修改不会触发 TiDB 的自动更新。您可以使用 `SHOW STATS_META` 语句查看表中的行数。
+为了避免频繁修改小表数据触发自动更新的情况，当表的行数少于 1000 行时，修改不会触发 TiDB 的自动更新。你可以使用 `SHOW STATS_META` 语句查看表中的行数。
 
 > **注意：**
 >
-> 目前，自动更新不会记录手动 `ANALYZE` 时输入的配置项。因此，当您使用 [`WITH`](/sql-statements/sql-statement-analyze-table.md) 语法控制 `ANALYZE` 的收集行为时，您需要手动设置定时任务来收集统计信息。
+> 目前，自动更新不会记录手动 `ANALYZE` 时输入的配置项。因此，当你使用 [`WITH`](/sql-statements/sql-statement-analyze-table.md) 语法控制 `ANALYZE` 的收集行为时，你需要手动设置定时任务来收集统计信息。

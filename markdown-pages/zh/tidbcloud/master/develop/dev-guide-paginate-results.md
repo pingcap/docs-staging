@@ -5,11 +5,11 @@ summary: 介绍 TiDB 中的分页结果功能。
 
 # 分页结果
 
-要对大型查询结果进行分页，您可以以"分页"方式获取所需的部分。
+要对大型查询结果进行分页，你可以以"分页"方式获取所需的部分。
 
 ## 分页查询结果
 
-在 TiDB 中，您可以使用 `LIMIT` 语句对查询结果进行分页。例如：
+在 TiDB 中，你可以使用 `LIMIT` 语句对查询结果进行分页。例如：
 
 ```sql
 SELECT * FROM table_a t ORDER BY gmt_modified DESC LIMIT offset, row_count;
@@ -22,7 +22,7 @@ SELECT * FROM table_a t ORDER BY gmt_modified DESC LIMIT offset, row_count;
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-例如，要让 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 应用程序的用户以分页方式查看最新发布的书籍，您可以使用 `LIMIT 0, 10` 语句，该语句返回结果列表的第一页，每页最多 10 条记录。要获取第二页，您可以将语句改为 `LIMIT 10, 10`。
+例如，要让 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 应用程序的用户以分页方式查看最新发布的书籍，你可以使用 `LIMIT 0, 10` 语句，该语句返回结果列表的第一页，每页最多 10 条记录。要获取第二页，你可以将语句改为 `LIMIT 10, 10`。
 
 ```sql
 SELECT *
@@ -70,7 +70,7 @@ public List<Book> getLatestBooksPage(Long pageNumber, Long pageSize) throws SQLE
 
 ## 单字段主键表的分页批处理
 
-通常，您可以使用主键或唯一索引对结果进行排序，并在 `LIMIT` 子句中使用 `offset` 关键字按指定行数分页来编写分页 SQL 语句。然后将这些页面包装到独立的事务中，以实现灵活的分页更新。但是，缺点也很明显。由于需要对主键或唯一索引进行排序，较大的偏移量会消耗更多的计算资源，特别是在数据量较大的情况下。
+通常，你可以使用主键或唯一索引对结果进行排序，并在 `LIMIT` 子句中使用 `offset` 关键字按指定行数分页来编写分页 SQL 语句。然后将这些页面包装到独立的事务中，以实现灵活的分页更新。但是，缺点也很明显。由于需要对主键或唯一索引进行排序，较大的偏移量会消耗更多的计算资源，特别是在数据量较大的情况下。
 
 以下介绍一种更高效的分页批处理方法：
 
@@ -110,7 +110,7 @@ ORDER BY page_num;
 20 rows in set (0.01 sec)
 ```
 
-接下来，使用 `WHERE id BETWEEN start_key AND end_key` 语句查询每个分片的数据。为了更高效地更新数据，您可以在修改数据时使用上述分片信息。
+接下来，使用 `WHERE id BETWEEN start_key AND end_key` 语句查询每个分片的数据。为了更高效地更新数据，你可以在修改数据时使用上述分片信息。
 
 要删除第 1 页的所有图书基本信息，请将上述结果中第 1 页的 `start_key` 和 `end_key` 替换：
 
@@ -217,7 +217,7 @@ pageMetaList.forEach((pageMeta) -> {
 
 > **提示：**
 >
-> 您可以使用 `SHOW CREATE TABLE users;` 语句检查表主键是否使用[聚簇索引](/clustered-indexes.md)。
+> 你可以使用 `SHOW CREATE TABLE users;` 语句检查表主键是否使用[聚簇索引](/clustered-indexes.md)。
 
 例如：
 
@@ -257,11 +257,11 @@ ORDER BY page_num;
 
 ### 聚簇索引表
 
-对于聚簇索引表（也称为"索引组织表"），您可以使用 `concat` 函数将多个列的值连接为一个键，然后使用窗口函数查询分页信息。
+对于聚簇索引表（也称为"索引组织表"），你可以使用 `concat` 函数将多个列的值连接为一个键，然后使用窗口函数查询分页信息。
 
 需要注意的是，此时键是一个字符串，必须确保字符串的长度始终相同，以通过 `min` 和 `max` 聚合函数在分片中获得正确的 `start_key` 和 `end_key`。如果用于字符串连接的字段长度不固定，可以使用 `LPAD` 函数进行填充。
 
-例如，您可以按以下方式对 `ratings` 表中的数据进行分页批处理：
+例如，你可以按以下方式对 `ratings` 表中的数据进行分页批处理：
 
 使用以下语句创建元信息表。由于 `book_id` 和 `user_id` 是 `bigint` 类型，它们连接成的键无法转换为相同的长度，因此使用 `LPAD` 函数根据 `bigint` 的最大位数 19 用 `0` 填充长度。
 
@@ -283,7 +283,7 @@ ORDER BY page_num;
 
 > **注意：**
 >
-> 上述 SQL 语句执行为 `TableFullScan`。当数据量较大时，查询会很慢，您可以[使用 TiFlash](/tiflash/tiflash-overview.md#使用-tiflash) 加速。
+> 上述 SQL 语句执行为 `TableFullScan`。当数据量较大时，查询会很慢，你可以[使用 TiFlash](/tiflash/tiflash-overview.md#使用-tiflash) 加速。
 
 结果如下：
 

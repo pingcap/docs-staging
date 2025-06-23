@@ -11,7 +11,7 @@ TiFlash 在以下情况下与 TiDB 不兼容：
     * 不支持检查数值溢出。例如，对两个 `BIGINT` 类型的最大值进行相加 `9223372036854775807 + 9223372036854775807`。在 TiDB 中，此计算的预期行为是返回 `ERROR 1690 (22003): BIGINT value is out of range` 错误。但是，如果在 TiFlash 中执行此计算，则会返回溢出值 `-2` 而不会报错。
     * 不支持窗口函数。
     * 不支持从 TiKV 读取数据。
-    * 目前，TiFlash 中的 `sum` 函数不支持字符串类型参数。但是 TiDB 在编译期间无法识别是否有字符串类型参数传入 `sum` 函数。因此，当您执行类似 `select sum(string_col) from t` 的语句时，TiFlash 会返回 `[FLASH:Coprocessor:Unimplemented] CastStringAsReal is not supported.` 错误。要避免这种情况下的错误，您需要将此 SQL 语句修改为 `select sum(cast(string_col as double)) from t`。
+    * 目前，TiFlash 中的 `sum` 函数不支持字符串类型参数。但是 TiDB 在编译期间无法识别是否有字符串类型参数传入 `sum` 函数。因此，当你执行类似 `select sum(string_col) from t` 的语句时，TiFlash 会返回 `[FLASH:Coprocessor:Unimplemented] CastStringAsReal is not supported.` 错误。要避免这种情况下的错误，你需要将此 SQL 语句修改为 `select sum(cast(string_col as double)) from t`。
     * 目前，TiFlash 的 decimal 除法计算与 TiDB 不兼容。例如，在进行 decimal 除法时，TiFlash 始终使用从编译推断出的类型进行计算。但是，TiDB 使用比编译推断出的类型更精确的类型进行计算。因此，一些涉及 decimal 除法的 SQL 语句在 TiDB + TiKV 和 TiDB + TiFlash 中执行时会返回不同的结果。例如：
 
         ```sql

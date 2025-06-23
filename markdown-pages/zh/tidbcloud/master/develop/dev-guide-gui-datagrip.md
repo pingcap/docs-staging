@@ -5,46 +5,46 @@ summary: 了解如何使用 JetBrains DataGrip 连接 TiDB。本教程同样适�
 
 # 使用 JetBrains DataGrip 连接 TiDB
 
-TiDB 是一个兼容 MySQL 的数据库，而 [JetBrains DataGrip](https://www.jetbrains.com/help/datagrip/getting-started.html) 是一个功能强大的数据库和 SQL 集成开发环境（IDE）。本教程将指导您使用 DataGrip 连接到 TiDB 集群。
+TiDB 是一个兼容 MySQL 的数据库，而 [JetBrains DataGrip](https://www.jetbrains.com/help/datagrip/getting-started.html) 是一个功能强大的数据库和 SQL 集成开发环境（IDE）。本教程将指导你使用 DataGrip 连接到 TiDB 集群。
 
 > **注意：**
 >
 > 本教程适用于 TiDB Cloud Serverless、TiDB Cloud Dedicated 和 TiDB Self-Managed。
 
-您可以通过两种方式使用 DataGrip：
+你可以通过两种方式使用 DataGrip：
 
 - 作为独立工具使用 [DataGrip IDE](https://www.jetbrains.com/datagrip/download)。
 - 在 JetBrains IDE（如 IntelliJ、PhpStorm 和 PyCharm）中使用 [Database Tools and SQL 插件](https://www.jetbrains.com/help/idea/relational-databases.html)。
 
-本教程主要关注独立的 DataGrip IDE。使用 JetBrains IDE 中的 Database Tools and SQL 插件连接 TiDB 的步骤类似。当您从任何 JetBrains IDE 连接到 TiDB 时，也可以参考本文档中的步骤。
+本教程主要关注独立的 DataGrip IDE。使用 JetBrains IDE 中的 Database Tools and SQL 插件连接 TiDB 的步骤类似。当你从任何 JetBrains IDE 连接到 TiDB 时，也可以参考本文档中的步骤。
 
 ## 前提条件
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
 - [DataGrip **2023.2.1** 或更高版本](https://www.jetbrains.com/datagrip/download/)或非社区版的 [JetBrains](https://www.jetbrains.com/) IDE。
 - 一个 TiDB 集群。
 
 <CustomContent platform="tidb">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](/production-deployment-using-tiup.md)创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)创建本地集群。
 
 </CustomContent>
 
 ## 连接到 TiDB
 
-根据您选择的 TiDB 部署选项连接到 TiDB 集群。
+根据你选择的 TiDB 部署选项连接到 TiDB 集群。
 
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
@@ -53,20 +53,20 @@ TiDB 是一个兼容 MySQL 的数据库，而 [JetBrains DataGrip](https://www.j
 
 2. 点击右上角的**连接**。将显示连接对话框。
 
-3. 确保连接对话框中的配置与您的操作环境匹配。
+3. 确保连接对话框中的配置与你的操作环境匹配。
 
     - **连接类型**设置为 `Public`
     - **分支**设置为 `main`
     - **连接方式**设置为 `DataGrip`
-    - **操作系统**与您的环境匹配。
+    - **操作系统**与你的环境匹配。
 
 4. 点击**生成密码**创建随机密码。
 
     > **提示：**
     >
-    > 如果您之前已经创建了密码，可以使用原始密码或点击**重置密码**生成新密码。
+    > 如果你之前已经创建了密码，可以使用原始密码或点击**重置密码**生成新密码。
 
-5. 启动 DataGrip 并创建一个项目来管理您的连接。
+5. 启动 DataGrip 并创建一个项目来管理你的连接。
 
     ![在 DataGrip 中创建项目](/media/develop/datagrip-create-project.jpg)
 
@@ -95,11 +95,11 @@ TiDB 是一个兼容 MySQL 的数据库，而 [JetBrains DataGrip](https://www.j
 
 3. 在连接对话框中，从**连接类型**下拉列表中选择 **Public**，然后点击 **CA 证书**下载 CA 证书。
 
-    如果您尚未配置 IP 访问列表，请点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤在首次连接之前进行配置。
+    如果你尚未配置 IP 访问列表，请点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤在首次连接之前进行配置。
 
-    除了 **Public** 连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**连接类型。更多信息，请参见[连接到您的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+    除了 **Public** 连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**连接类型。更多信息，请参见[连接到你的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
-4. 启动 DataGrip 并创建一个项目来管理您的连接。
+4. 启动 DataGrip 并创建一个项目来管理你的连接。
 
     ![在 DataGrip 中创建项目](/media/develop/datagrip-create-project.jpg)
 
@@ -139,7 +139,7 @@ TiDB 是一个兼容 MySQL 的数据库，而 [JetBrains DataGrip](https://www.j
 </div>
 <div label="TiDB Self-Managed">
 
-1. 启动 DataGrip 并创建一个项目来管理您的连接。
+1. 启动 DataGrip 并创建一个项目来管理你的连接。
 
     ![在 DataGrip 中创建项目](/media/develop/datagrip-create-project.jpg)
 
@@ -149,8 +149,8 @@ TiDB 是一个兼容 MySQL 的数据库，而 [JetBrains DataGrip](https://www.j
 
 3. 配置以下连接参数：
 
-    - **Host**：您的 TiDB Self-Managed 集群的 IP 地址或域名。
-    - **Port**：您的 TiDB Self-Managed 集群的端口号。
+    - **Host**：你的 TiDB Self-Managed 集群的 IP 地址或域名。
+    - **Port**：你的 TiDB Self-Managed 集群的端口号。
     - **User**：用于连接到 TiDB Self-Managed 集群的用户名。
     - **Password**：用户名的密码。
 

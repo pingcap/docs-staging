@@ -57,7 +57,7 @@ SELECT ANY_VALUE(id),GROUP_CONCAT(id),name FROM fruits GROUP BY name;
 4 rows in set (0.00 sec)
 ```
 
-在上述示例中，第一个 `SELECT` 语句返回错误，因为 `id` 列是非聚合的且未包含在 `GROUP BY` 子句中。为解决此问题，第二个 `SELECT` 查询使用 `ANY_VALUE()` 从每个组中获取任意值，并使用 `GROUP_CONCAT()` 将每个组内 `id` 列的所有值连接成单个字符串。这种方法使您能够在不更改非聚合列的 SQL 模式的情况下，获取每个组的一个值和该组的所有值。
+在上述示例中，第一个 `SELECT` 语句返回错误，因为 `id` 列是非聚合的且未包含在 `GROUP BY` 子句中。为解决此问题，第二个 `SELECT` 查询使用 `ANY_VALUE()` 从每个组中获取任意值，并使用 `GROUP_CONCAT()` 将每个组内 `id` 列的所有值连接成单个字符串。这种方法使你能够在不更改非聚合列的 SQL 模式的情况下，获取每个组的一个值和该组的所有值。
 
 ### BIN_TO_UUID()
 

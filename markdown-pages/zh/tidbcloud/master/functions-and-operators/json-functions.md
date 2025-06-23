@@ -5,7 +5,7 @@ summary: 了解 JSON 函数。
 
 # JSON 函数
 
-您可以使用 JSON 函数来处理 [JSON 数据类型](/data-type-json.md) 中的数据。
+你可以使用 JSON 函数来处理 [JSON 数据类型](/data-type-json.md) 中的数据。
 
 ## 创建 JSON 值的函数
 
@@ -99,10 +99,10 @@ summary: 了解 JSON 函数。
             {
                 "version": "v8.1.2",
                 "type": "lts",
-                "release_date": "2024-12-26" 
+                "release_date": "2024-12-26"
             },
             {
-                "version": "v8.0.0",        
+                "version": "v8.0.0",
                 "type": "dmr",
                 "release_date": "2024-03-29"
             }
@@ -111,7 +111,7 @@ summary: 了解 JSON 函数。
     "migration_tool": {
         "name": "TiDB Data Migration",
         "features": [
-            "MySQL compatible",            
+            "MySQL compatible",
             "Shard merging"
         ],
         "license": "Apache-2.0 license"
@@ -119,7 +119,7 @@ summary: 了解 JSON 函数。
 }
 ```
 
-| JSONPath                              | 描述                             | 使用 [`JSON_EXTRACT()`](/functions-and-operators/json-functions/json-functions-search.md#json_extract) 的示例 | 
+| JSONPath                              | 描述                             | 使用 [`JSON_EXTRACT()`](/functions-and-operators/json-functions/json-functions-search.md#json_extract) 的示例 |
 |-------------------------------------- |-----------------------------------------|-------------------------------|
 | `$`                                   | 文档的根                | 返回完整文档                              |
 | `$.database`                          | `database` 对象                  | 返回以 `"database"` 开始的完整结构。不包括 `"migration_tool"` 及其下的结构。                             |

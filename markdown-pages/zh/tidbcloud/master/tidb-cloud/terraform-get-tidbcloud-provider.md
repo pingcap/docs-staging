@@ -13,9 +13,9 @@ summary: 了解如何获取 TiDB Cloud Terraform Provider。
 
 ## 步骤 1. 安装 Terraform
 
-TiDB Cloud Terraform Provider 已发布到 [Terraform Registry](https://registry.terraform.io/)。您只需要安装 Terraform (>=1.0)。
+TiDB Cloud Terraform Provider 已发布到 [Terraform Registry](https://registry.terraform.io/)。你只需要安装 Terraform (>=1.0)。
 
-对于 macOS，您可以按照以下步骤使用 Homebrew 安装 Terraform。
+对于 macOS，你可以按照以下步骤使用 Homebrew 安装 Terraform。
 
 1. 安装 HashiCorp tap，这是一个包含所有必需 Homebrew 包的仓库。
 
@@ -33,9 +33,9 @@ TiDB Cloud Terraform Provider 已发布到 [Terraform Registry](https://registry
 
 ## 步骤 2. 创建 API 密钥
 
-TiDB Cloud API 使用 HTTP 摘要认证。它可以防止您的私钥在网络上传输。
+TiDB Cloud API 使用 HTTP 摘要认证。它可以防止你的私钥在网络上传输。
 
-目前，TiDB Cloud Terraform Provider 不支持管理 API 密钥。因此，您需要在 [TiDB Cloud 控制台](https://tidbcloud.com/project/clusters)中创建 API 密钥。
+目前，TiDB Cloud Terraform Provider 不支持管理 API 密钥。因此，你需要在 [TiDB Cloud 控制台](https://tidbcloud.com/project/clusters)中创建 API 密钥。
 
 详细步骤，请参阅 [TiDB Cloud API 文档](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management)。
 
@@ -83,7 +83,7 @@ TiDB Cloud API 使用 HTTP 摘要认证。它可以防止您的私钥在网络�
 
 ## 步骤 4. 使用 API 密钥配置 TiDB Cloud Terraform Provider
 
-您可以按如下方式配置 `main.tf` 文件：
+你可以按如下方式配置 `main.tf` 文件：
 
 ```
 terraform {
@@ -100,20 +100,20 @@ provider "tidbcloud" {
 }
 ```
 
-`public_key` 和 `private_key` 是 API 密钥的公钥和私钥。您也可以通过环境变量传递它们：
+`public_key` 和 `private_key` 是 API 密钥的公钥和私钥。你也可以通过环境变量传递它们：
 
 ```
 export TIDBCLOUD_PUBLIC_KEY=${public_key}
 export TIDBCLOUD_PRIVATE_KEY=${private_key}
 ```
 
-现在，您可以使用 TiDB Cloud Terraform Provider 了。
+现在，你可以使用 TiDB Cloud Terraform Provider 了。
 
 ## 步骤 5. 使用同步配置配置 TiDB Cloud Terraform Provider
 
 Terraform provider (>= 0.3.0) 支持一个可选参数 `sync`。
 
-通过将 `sync` 设置为 `true`，您可以同步创建、更新或删除资源。以下是一个示例：
+通过将 `sync` 设置为 `true`，你可以同步创建、更新或删除资源。以下是一个示例：
 
 ```
 provider "tidbcloud" {
@@ -123,7 +123,7 @@ provider "tidbcloud" {
 }
 ```
 
-建议将 `sync` 设置为 `true`，但请注意，`sync` 目前仅适用于集群资源。如果您需要对其他资源进行同步操作，请[联系 TiDB Cloud 支持](/tidb-cloud/tidb-cloud-support.md)。
+建议将 `sync` 设置为 `true`，但请注意，`sync` 目前仅适用于集群资源。如果你需要对其他资源进行同步操作，请[联系 TiDB Cloud 支持](/tidb-cloud/tidb-cloud-support.md)。
 
 ## 下一步
 

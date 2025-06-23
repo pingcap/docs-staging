@@ -12,19 +12,19 @@ summary: 了解如何更新数据和批量更新数据。
 
 ## 开始之前
 
-在阅读本文档之前，您需要准备以下内容：
+在阅读本文档之前，你需要准备以下内容：
 
 - [构建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
 - 阅读[架构设计概述](/develop/dev-guide-schema-design-overview.md)、[创建数据库](/develop/dev-guide-create-database.md)、[创建表](/develop/dev-guide-create-table.md)和[创建二级索引](/develop/dev-guide-create-secondary-indexes.md)。
-- 如果您想要 `UPDATE` 数据，需要先[插入数据](/develop/dev-guide-insert-data.md)。
+- 如果你想要 `UPDATE` 数据，需要先[插入数据](/develop/dev-guide-insert-data.md)。
 
 ## 使用 `UPDATE`
 
-要更新表中的现有行，您需要使用带有 `WHERE` 子句的 [`UPDATE` 语句](/sql-statements/sql-statement-update.md)来过滤要更新的列。
+要更新表中的现有行，你需要使用带有 `WHERE` 子句的 [`UPDATE` 语句](/sql-statements/sql-statement-update.md)来过滤要更新的列。
 
 > **注意：**
 >
-> 如果您需要更新大量行，例如超过一万行，建议**_不要_**一次性完全更新，而是每次更新一部分，直到所有行都更新完成。您可以编写脚本或程序来循环执行此操作。
+> 如果你需要更新大量行，例如超过一万行，建议**_不要_**一次性完全更新，而是每次更新一部分，直到所有行都更新完成。你可以编写脚本或程序来循环执行此操作。
 > 详情请参见[批量更新](#批量更新)。
 
 ### `UPDATE` SQL 语法
@@ -65,7 +65,7 @@ UPDATE {table} SET {update_column} = {update_value} WHERE {filter_column} = {fil
 
 ### `UPDATE` 示例
 
-假设一位作者将她的名字改为 **Helen Haruki**。您需要更改 [authors](/develop/dev-guide-bookshop-schema-design.md#authors-table) 表。假设她的唯一 `id` 是 **1**，过滤条件应为：`id = 1`。
+假设一位作者将她的名字改为 **Helen Haruki**。你需要更改 [authors](/develop/dev-guide-bookshop-schema-design.md#authors-table) 表。假设她的唯一 `id` 是 **1**，过滤条件应为：`id = 1`。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -95,7 +95,7 @@ try (Connection connection = ds.getConnection()) {
 
 ## 使用 `INSERT ON DUPLICATE KEY UPDATE`
 
-如果您需要向表中插入新数据，但如果存在唯一键（主键也是唯一键）冲突，则会更新第一个冲突的记录。您可以使用 `INSERT ... ON DUPLICATE KEY UPDATE ...` 语句来插入或更新。
+如果你需要向表中插入新数据，但如果存在唯一键（主键也是唯一键）冲突，则会更新第一个冲突的记录。你可以使用 `INSERT ... ON DUPLICATE KEY UPDATE ...` 语句来插入或更新。
 
 ### `INSERT ON DUPLICATE KEY UPDATE` SQL 语法
 
@@ -116,12 +116,12 @@ INSERT INTO {table} ({columns}) VALUES ({values})
 
 ### `INSERT ON DUPLICATE KEY UPDATE` 最佳实践
 
-- 仅对具有一个唯一键的表使用 `INSERT ON DUPLICATE KEY UPDATE`。此语句在检测到任何**_唯一键_**（包括主键）冲突时都会更新数据。如果存在多行冲突，只会更新一行。因此，除非您能保证只有一行冲突，否则不建议在具有多个唯一键的表中使用 `INSERT ON DUPLICATE KEY UPDATE` 语句。
+- 仅对具有一个唯一键的表使用 `INSERT ON DUPLICATE KEY UPDATE`。此语句在检测到任何**_唯一键_**（包括主键）冲突时都会更新数据。如果存在多行冲突，只会更新一行。因此，除非你能保证只有一行冲突，否则不建议在具有多个唯一键的表中使用 `INSERT ON DUPLICATE KEY UPDATE` 语句。
 - 在创建数据或更新数据时使用此语句。
 
 ### `INSERT ON DUPLICATE KEY UPDATE` 示例
 
-例如，您需要更新 [ratings](/develop/dev-guide-bookshop-schema-design.md#ratings-table) 表以包含用户对图书的评分。如果用户尚未对图书进行评分，将创建新的评分。如果用户已经评分，将更新他之前的评分。
+例如，你需要更新 [ratings](/develop/dev-guide-bookshop-schema-design.md#ratings-table) 表以包含用户对图书的评分。如果用户尚未对图书进行评分，将创建新的评分。如果用户已经评分，将更新他之前的评分。
 
 在以下示例中，主键是 `book_id` 和 `user_id` 的联合主键。用户 `user_id = 1` 给图书 `book_id = 1000` 评分为 `5`。
 
@@ -161,17 +161,17 @@ VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `score` = ?, `rated_at` = NOW()"
 
 ## 批量更新
 
-当您需要更新表中的多行数据时，可以使用带有 `WHERE` 子句的 [`INSERT ON DUPLICATE KEY UPDATE`](#使用-insert-on-duplicate-key-update) 来过滤需要更新的数据。
+当你需要更新表中的多行数据时，可以使用带有 `WHERE` 子句的 [`INSERT ON DUPLICATE KEY UPDATE`](#使用-insert-on-duplicate-key-update) 来过滤需要更新的数据。
 
 <CustomContent platform="tidb">
 
-但是，如果您需要更新大量行（例如超过一万行），建议您迭代更新数据，即每次只更新一部分数据，直到更新完成。这是因为 TiDB 限制单个事务的大小（[txn-total-size-limit](/tidb-configuration-file.md#txn-total-size-limit)，默认为 100 MB）。一次性更新太多数据会导致锁定时间过长（[悲观事务](/pessimistic-transaction.md)）或引起冲突（[乐观事务](/optimistic-transaction.md)）。您可以在程序或脚本中使用循环来完成操作。
+但是，如果你需要更新大量行（例如超过一万行），建议你迭代更新数据，即每次只更新一部分数据，直到更新完成。这是因为 TiDB 限制单个事务的大小（[txn-total-size-limit](/tidb-configuration-file.md#txn-total-size-limit)，默认为 100 MB）。一次性更新太多数据会导致锁定时间过长（[悲观事务](/pessimistic-transaction.md)）或引起冲突（[乐观事务](/optimistic-transaction.md)）。你可以在程序或脚本中使用循环来完成操作。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-但是，如果您需要更新大量行（例如超过一万行），建议您迭代更新数据，即每次只更新一部分数据，直到更新完成。这是因为 TiDB 默认限制单个事务的大小为 100 MB。一次性更新太多数据会导致锁定时间过长（[悲观事务](/pessimistic-transaction.md)）或引起冲突（[乐观事务](/optimistic-transaction.md)）。您可以在程序或脚本中使用循环来完成操作。
+但是，如果你需要更新大量行（例如超过一万行），建议你迭代更新数据，即每次只更新一部分数据，直到更新完成。这是因为 TiDB 默认限制单个事务的大小为 100 MB。一次性更新太多数据会导致锁定时间过长（[悲观事务](/pessimistic-transaction.md)）或引起冲突（[乐观事务](/optimistic-transaction.md)）。你可以在程序或脚本中使用循环来完成操作。
 
 </CustomContent>
 
@@ -179,15 +179,15 @@ VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `score` = ?, `rated_at` = NOW()"
 
 ### 编写批量更新循环
 
-首先，您应该在应用程序或脚本的循环中编写一个 `SELECT` 查询。此查询的返回值可以用作需要更新的行的主键。请注意，在定义此 `SELECT` 查询时，需要使用 `WHERE` 子句来过滤需要更新的行。
+首先，你应该在应用程序或脚本的循环中编写一个 `SELECT` 查询。此查询的返回值可以用作需要更新的行的主键。请注意，在定义此 `SELECT` 查询时，需要使用 `WHERE` 子句来过滤需要更新的行。
 
 ### 示例
 
-假设在过去一年中，您的 `bookshop` 网站收到了大量用户对图书的评分，但原来的 5 分制设计导致图书评分缺乏区分度。大多数图书的评分都是 `3` 分。您决定从 5 分制改为 10 分制，以区分评分。
+假设在过去一年中，你的 `bookshop` 网站收到了大量用户对图书的评分，但原来的 5 分制设计导致图书评分缺乏区分度。大多数图书的评分都是 `3` 分。你决定从 5 分制改为 10 分制，以区分评分。
 
-您需要将 `ratings` 表中之前 5 分制的数据乘以 `2`，并在评分表中添加一个新列来指示行是否已更新。使用此列，您可以在 `SELECT` 中过滤出已更新的行，这将防止脚本崩溃并多次更新行，导致数据不合理。
+你需要将 `ratings` 表中之前 5 分制的数据乘以 `2`，并在评分表中添加一个新列来指示行是否已更新。使用此列，你可以在 `SELECT` 中过滤出已更新的行，这将防止脚本崩溃并多次更新行，导致数据不合理。
 
-例如，您创建一个名为 `ten_point` 的列，数据类型为 [BOOL](/data-type-numeric.md#boolean-type)，作为是否为 10 分制的标识符：
+例如，你创建一个名为 `ten_point` 的列，数据类型为 [BOOL](/data-type-numeric.md#boolean-type)，作为是否为 10 分制的标识符：
 
 ```sql
 ALTER TABLE `bookshop`.`ratings` ADD COLUMN `ten_point` BOOL NOT NULL DEFAULT FALSE;

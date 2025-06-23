@@ -7,9 +7,9 @@ summary: 了解如何创建、查看、查询和删除临时表。
 
 临时表可以被视为重用查询结果的一种技术。
 
-如果您想了解 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 应用程序中年龄最大的作者的相关信息，您可能会编写多个使用年龄最大作者列表的查询。
+如果你想了解 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 应用程序中年龄最大的作者的相关信息，你可能会编写多个使用年龄最大作者列表的查询。
 
-例如，您可以使用以下语句从 `authors` 表中获取年龄最大的前 50 位作者：
+例如，你可以使用以下语句从 `authors` 表中获取年龄最大的前 50 位作者：
 
 ```sql
 SELECT a.id, a.name, (IFNULL(a.death_year, YEAR(NOW())) - a.birth_year) AS age
@@ -37,11 +37,11 @@ LIMIT 50;
 50 rows in set (0.01 sec)
 ```
 
-为了便于后续查询，您需要缓存此查询的结果。当使用普通表进行存储时，您应该注意如何避免不同会话之间的表名重复问题，以及需要及时清理中间结果，因为这些表在批量查询后可能不会再被使用。
+为了便于后续查询，你需要缓存此查询的结果。当使用普通表进行存储时，你应该注意如何避免不同会话之间的表名重复问题，以及需要及时清理中间结果，因为这些表在批量查询后可能不会再被使用。
 
 ## 创建临时表
 
-为了缓存中间结果，TiDB v5.3.0 引入了临时表功能。TiDB 会在会话结束后自动删除本地临时表，这使您不必担心中间结果增加带来的管理麻烦。
+为了缓存中间结果，TiDB v5.3.0 引入了临时表功能。TiDB 会在会话结束后自动删除本地临时表，这使你不必担心中间结果增加带来的管理麻烦。
 
 ### 临时表的类型
 
@@ -52,12 +52,12 @@ TiDB 中的临时表分为两种类型：本地临时表和全局临时表。
 
 ### 创建本地临时表
 
-在创建本地临时表之前，您需要为当前数据库用户添加 `CREATE TEMPORARY TABLES` 权限。
+在创建本地临时表之前，你需要为当前数据库用户添加 `CREATE TEMPORARY TABLES` 权限。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-您可以使用 `CREATE TEMPORARY TABLE <table_name>` 语句创建临时表。默认类型是本地临时表，仅对当前会话可见。
+你可以使用 `CREATE TEMPORARY TABLE <table_name>` 语句创建临时表。默认类型是本地临时表，仅对当前会话可见。
 
 ```sql
 CREATE TEMPORARY TABLE top_50_eldest_authors (
@@ -68,7 +68,7 @@ CREATE TEMPORARY TABLE top_50_eldest_authors (
 );
 ```
 
-创建临时表后，您可以使用 `INSERT INTO table_name SELECT ...` 语句将上述查询的结果插入到刚刚创建的临时表中。
+创建临时表后，你可以使用 `INSERT INTO table_name SELECT ...` 语句将上述查询的结果插入到刚刚创建的临时表中。
 
 ```sql
 INSERT INTO top_50_eldest_authors
@@ -133,7 +133,7 @@ public List<Author> getTop50EldestAuthorInfo() throws SQLException {
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-要创建全局临时表，您可以添加 `GLOBAL` 关键字并以 `ON COMMIT DELETE ROWS` 结尾，这表示表将在当前事务结束后被删除。
+要创建全局临时表，你可以添加 `GLOBAL` 关键字并以 `ON COMMIT DELETE ROWS` 结尾，这表示表将在当前事务结束后被删除。
 
 ```sql
 CREATE GLOBAL TEMPORARY TABLE IF NOT EXISTS top_50_eldest_authors_global (
@@ -149,7 +149,7 @@ CREATE GLOBAL TEMPORARY TABLE IF NOT EXISTS top_50_eldest_authors_global (
 </div>
 <div label="Java" value="java">
 
-使用全局临时表时，您需要先关闭自动提交模式。在 Java 中，您可以使用 `conn.setAutoCommit(false);` 语句来实现，并可以使用 `conn.commit();` 显式提交事务。事务期间添加到全局临时表的数据将在事务提交或取消后被清除。
+使用全局临时表时，你需要先关闭自动提交模式。在 Java 中，你可以使用 `conn.setAutoCommit(false);` 语句来实现，并可以使用 `conn.commit();` 显式提交事务。事务期间添加到全局临时表的数据将在事务提交或取消后被清除。
 
 ```java
 public List<Author> getTop50EldestAuthorInfo() throws SQLException {
@@ -196,9 +196,9 @@ public List<Author> getTop50EldestAuthorInfo() throws SQLException {
 
 ## 查看临时表
 
-使用 `SHOW [FULL] TABLES` 语句，您可以查看现有的全局临时表列表，但在列表中看不到任何本地临时表。目前，TiDB 没有类似 `information_schema.INNODB_TEMP_TABLE_INFO` 的系统表来存储临时表信息。
+使用 `SHOW [FULL] TABLES` 语句，你可以查看现有的全局临时表列表，但在列表中看不到任何本地临时表。目前，TiDB 没有类似 `information_schema.INNODB_TEMP_TABLE_INFO` 的系统表来存储临时表信息。
 
-例如，您可以在表列表中看到全局临时表 `top_50_eldest_authors_global`，但看不到 `top_50_eldest_authors` 表。
+例如，你可以在表列表中看到全局临时表 `top_50_eldest_authors_global`，但看不到 `top_50_eldest_authors` 表。
 
 ```
 +-------------------------------+------------+
@@ -217,13 +217,13 @@ public List<Author> getTop50EldestAuthorInfo() throws SQLException {
 
 ## 查询临时表
 
-临时表准备就绪后，您可以像查询普通数据表一样查询它：
+临时表准备就绪后，你可以像查询普通数据表一样查询它：
 
 ```sql
 SELECT * FROM top_50_eldest_authors;
 ```
 
-您可以通过[多表联接查询](/develop/dev-guide-join-tables.md)在查询中引用临时表中的数据：
+你可以通过[多表联接查询](/develop/dev-guide-join-tables.md)在查询中引用临时表中的数据：
 
 ```sql
 EXPLAIN SELECT ANY_VALUE(ta.id) AS author_id, ANY_VALUE(ta.age), ANY_VALUE(ta.name), COUNT(*) AS books

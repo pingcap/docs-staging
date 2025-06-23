@@ -5,15 +5,15 @@ summary: 了解如何在特定条件下使用历史读取来加速查询。
 
 # 历史读取
 
-历史读取（Stale Read）是 TiDB 用于读取存储在 TiDB 中的历史版本数据的机制。使用此机制，您可以读取特定时间或指定时间范围内的相应历史数据，从而节省存储节点之间数据复制造成的延迟。当您使用历史读取时，TiDB 会随机选择一个副本进行数据读取，这意味着所有副本都可用于数据读取。
+历史读取（Stale Read）是 TiDB 用于读取存储在 TiDB 中的历史版本数据的机制。使用此机制，你可以读取特定时间或指定时间范围内的相应历史数据，从而节省存储节点之间数据复制造成的延迟。当你使用历史读取时，TiDB 会随机选择一个副本进行数据读取，这意味着所有副本都可用于数据读取。
 
-在实践中，请根据[使用场景](/stale-read.md#usage-scenarios-of-stale-read)仔细考虑是否适合在 TiDB 中启用历史读取。如果您的应用程序不能容忍读取非实时数据，请不要启用历史读取。
+在实践中，请根据[使用场景](/stale-read.md#usage-scenarios-of-stale-read)仔细考虑是否适合在 TiDB 中启用历史读取。如果你的应用程序不能容忍读取非实时数据，请不要启用历史读取。
 
 TiDB 提供了三个级别的历史读取：语句级别、事务级别和会话级别。
 
 ## 简介
 
-在 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 应用程序中，您可以通过以下 SQL 语句查询最新发布的图书及其价格：
+在 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 应用程序中，你可以通过以下 SQL 语句查询最新发布的图书及其价格：
 
 ```sql
 SELECT id, title, type, price FROM books ORDER BY published_at DESC LIMIT 5;
@@ -49,7 +49,7 @@ Query OK, 1 row affected (0.00 sec)
 Rows matched: 1  Changed: 1  Warnings: 0
 ```
 
-通过查询最新的图书列表，您可以看到这本书的价格已经上涨。
+通过查询最新的图书列表，你可以看到这本书的价格已经上涨。
 
 ```
 +------------+------------------------------+-----------------------+--------+
@@ -64,7 +64,7 @@ Rows matched: 1  Changed: 1  Warnings: 0
 5 rows in set (0.01 sec)
 ```
 
-如果不需要使用最新数据，您可以使用历史读取进行查询，这可能会返回过期数据，以避免强一致性读取期间数据复制造成的延迟。
+如果不需要使用最新数据，你可以使用历史读取进行查询，这可能会返回过期数据，以避免强一致性读取期间数据复制造成的延迟。
 
 假设在 Bookshop 应用程序中，图书列表页面不需要实时价格，只在图书详情和订单页面需要实时价格。这时可以使用历史读取来提高应用程序的吞吐量。
 
@@ -94,15 +94,15 @@ SELECT id, title, type, price FROM books AS OF TIMESTAMP '2022-04-20 15:20:00' O
 5 rows in set (0.01 sec)
 ```
 
-除了指定确切时间外，您还可以指定以下内容：
+除了指定确切时间外，你还可以指定以下内容：
 
 - `AS OF TIMESTAMP NOW() - INTERVAL 10 SECOND` 查询 10 秒前的最新数据。
 - `AS OF TIMESTAMP TIDB_BOUNDED_STALENESS('2016-10-08 16:45:26', '2016-10-08 16:45:29')` 查询 `2016-10-08 16:45:26` 和 `2016-10-08 16:45:29` 之间的最新数据。
 - `AS OF TIMESTAMP TIDB_BOUNDED_STALENESS(NOW() -INTERVAL 20 SECOND, NOW())` 查询 20 秒内的最新数据。
 
-请注意，指定的时间戳或间隔不能太早或晚于当前时间。此外，`NOW()` 默认为秒精度。要实现更高精度，您可以添加参数，例如使用 `NOW(3)` 获取毫秒精度。更多信息，请参见 [MySQL 文档](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_now)。
+请注意，指定的时间戳或间隔不能太早或晚于当前时间。此外，`NOW()` 默认为秒精度。要实现更高精度，你可以添加参数，例如使用 `NOW(3)` 获取毫秒精度。更多信息，请参见 [MySQL 文档](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_now)。
 
-过期数据将被 TiDB 中的[垃圾回收](/garbage-collection-overview.md)回收，数据在被清除前会保留一段时间。这段时间称为 [GC Life Time（默认 10 分钟）](/system-variables.md#tidb_gc_life_time-new-in-v50)。当 GC 启动时，当前时间减去这段时间将被用作 **GC Safe Point**。如果您尝试读取 GC Safe Point 之前的数据，TiDB 将报告以下错误：
+过期数据将被 TiDB 中的[垃圾回收](/garbage-collection-overview.md)回收，数据在被清除前会保留一段时间。这段时间称为 [GC Life Time（默认 10 分钟）](/system-variables.md#tidb_gc_life_time-new-in-v50)。当 GC 启动时，当前时间减去这段时间将被用作 **GC Safe Point**。如果你尝试读取 GC Safe Point 之前的数据，TiDB 将报告以下错误：
 
 ```
 ERROR 9006 (HY000): GC life time is shorter than transaction duration...
@@ -224,7 +224,7 @@ WARN: GC life time is shorter than transaction duration.
 
 ## 事务级别
 
-使用 `START TRANSACTION READ ONLY AS OF TIMESTAMP` 语句，您可以基于历史时间启动一个只读事务，该事务从指定的历史时间戳读取历史数据。
+使用 `START TRANSACTION READ ONLY AS OF TIMESTAMP` 语句，你可以基于历史时间启动一个只读事务，该事务从指定的历史时间戳读取历史数据。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -235,7 +235,7 @@ WARN: GC life time is shorter than transaction duration.
 START TRANSACTION READ ONLY AS OF TIMESTAMP NOW() - INTERVAL 5 SECOND;
 ```
 
-通过查询图书的最新价格，您可以看到《The Story of Droolius Caesar》的价格仍然是 100.0，这是更新前的值。
+通过查询图书的最新价格，你可以看到《The Story of Droolius Caesar》的价格仍然是 100.0，这是更新前的值。
 
 ```sql
 SELECT id, title, type, price FROM books ORDER BY published_at DESC LIMIT 5;
@@ -256,7 +256,7 @@ SELECT id, title, type, price FROM books ORDER BY published_at DESC LIMIT 5;
 5 rows in set (0.01 sec)
 ```
 
-在使用 `COMMIT;` 语句提交事务后，您可以读取最新数据。
+在使用 `COMMIT;` 语句提交事务后，你可以读取最新数据。
 
 ```
 +------------+------------------------------+-----------------------+--------+
@@ -274,7 +274,7 @@ SELECT id, title, type, price FROM books ORDER BY published_at DESC LIMIT 5;
 </div>
 <div label="Java" value="java">
 
-您可以定义一个事务的辅助类，该类将在事务级别启用历史读取的命令封装为辅助方法。
+你可以定义一个事务的辅助类，该类将在事务级别启用历史读取的命令封装为辅助方法。
 
 ```java
 public static class StaleReadHelper {
@@ -367,12 +367,12 @@ The latest book price (after the transaction commit): 150
 </div>
 </SimpleTab>
 
-使用 `SET TRANSACTION READ ONLY AS OF TIMESTAMP` 语句，您可以将已打开的事务或下一个事务设置为基于指定历史时间的只读事务。该事务将基于提供的历史时间读取历史数据。
+使用 `SET TRANSACTION READ ONLY AS OF TIMESTAMP` 语句，你可以将已打开的事务或下一个事务设置为基于指定历史时间的只读事务。该事务将基于提供的历史时间读取历史数据。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-例如，您可以使用以下 `AS OF TIMESTAMP` 语句将正在进行的事务切换到只读模式，并读取 5 秒前的历史数据。
+例如，你可以使用以下 `AS OF TIMESTAMP` 语句将正在进行的事务切换到只读模式，并读取 5 秒前的历史数据。
 
 ```sql
 SET TRANSACTION READ ONLY AS OF TIMESTAMP NOW() - INTERVAL 5 SECOND;
@@ -381,7 +381,7 @@ SET TRANSACTION READ ONLY AS OF TIMESTAMP NOW() - INTERVAL 5 SECOND;
 </div>
 <div label="Java" value="java">
 
-您可以定义一个事务的辅助类，该类将在事务级别启用历史读取的命令封装为辅助方法。
+你可以定义一个事务的辅助类，该类将在事务级别启用历史读取的命令封装为辅助方法。
 
 ```java
 public static class TxnHelper {
@@ -446,7 +446,7 @@ public class BookDAO {
 
 ## 会话级别
 
-为了支持读取历史数据，TiDB 从 v5.4 开始引入了一个新的系统变量 `tidb_read_staleness`。您可以使用它来设置当前会话允许读取的历史数据范围。其数据类型为 `int`，作用域为 `SESSION`。
+为了支持读取历史数据，TiDB 从 v5.4 开始引入了一个新的系统变量 `tidb_read_staleness`。你可以使用它来设置当前会话允许读取的历史数据范围。其数据类型为 `int`，作用域为 `SESSION`。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">

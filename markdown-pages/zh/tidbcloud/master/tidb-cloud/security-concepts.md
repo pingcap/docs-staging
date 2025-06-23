@@ -128,7 +128,7 @@ TiDB Cloud 使用分层结构管理用户和资源：组织、项目和集群。
 ### 示例结构
 
 ```
-- 您的组织
+- 你的组织
     - 项目 1
         - 集群 1
         - 集群 2
@@ -164,7 +164,7 @@ TiDB Cloud 通过强大的网络访问控制确保集群连接和数据传输的
 
 ### 私有端点
 
-- 使您的虚拟私有云（VPC）中的 SQL 客户端能够安全连接到 TiDB Cloud Dedicated 集群。
+- 使你的虚拟私有云（VPC）中的 SQL 客户端能够安全连接到 TiDB Cloud Dedicated 集群。
 
 - 支持 [AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections.md)、[Azure Private Link](/tidb-cloud/set-up-private-endpoint-connections-on-azure.md) 和 [Google Cloud Private Service Connect](/tidb-cloud/set-up-private-endpoint-connections-on-google-cloud.md)。
 

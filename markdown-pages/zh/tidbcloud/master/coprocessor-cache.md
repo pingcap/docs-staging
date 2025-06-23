@@ -11,7 +11,7 @@ summary: 了解 Coprocessor 缓存的功能特性。
 
 <CustomContent platform="tidb">
 
-您可以通过 TiDB 配置文件中的 `tikv-client.copr-cache` 配置项配置 Coprocessor 缓存。有关如何启用和配置 Coprocessor 缓存的详细信息，请参见 [TiDB 配置文件](/tidb-configuration-file.md#tikv-clientcopr-cache-new-in-v400)。
+你可以通过 TiDB 配置文件中的 `tikv-client.copr-cache` 配置项配置 Coprocessor 缓存。有关如何启用和配置 Coprocessor 缓存的详细信息，请参见 [TiDB 配置文件](/tidb-configuration-file.md#tikv-clientcopr-cache-new-in-v400)。
 
 </CustomContent>
 
@@ -45,11 +45,11 @@ Coprocessor 缓存功能默认启用。可以缓存的数据的最大大小为 1
 
 ## 检查缓存效果
 
-您可以通过执行 `EXPLAIN ANALYZE` 或查看 Grafana 监控面板来检查 Coprocessor 的缓存效果。
+你可以通过执行 `EXPLAIN ANALYZE` 或查看 Grafana 监控面板来检查 Coprocessor 的缓存效果。
 
 ### 使用 `EXPLAIN ANALYZE`
 
-您可以使用 [`EXPLAIN ANALYZE` 语句](/sql-statements/sql-statement-explain-analyze.md)在[访问表的算子](/choose-index.md#访问表的算子)中查看缓存命中率。请看以下示例：
+你可以使用 [`EXPLAIN ANALYZE` 语句](/sql-statements/sql-statement-explain-analyze.md)在[访问表的算子](/choose-index.md#访问表的算子)中查看缓存命中率。请看以下示例：
 
 ```sql
 EXPLAIN ANALYZE SELECT * FROM t USE INDEX(a);
@@ -67,4 +67,4 @@ EXPLAIN ANALYZE SELECT * FROM t USE INDEX(a);
 
 ### 查看 Grafana 监控面板
 
-在 Grafana 中，您可以在 `tidb` 命名空间下的 `distsql` 子系统中看到 **copr-cache** 面板。此面板监控整个集群中 Coprocessor 缓存的命中次数、未命中次数和缓存丢弃次数。
+在 Grafana 中，你可以在 `tidb` 命名空间下的 `distsql` 子系统中看到 **copr-cache** 面板。此面板监控整个集群中 Coprocessor 缓存的命中次数、未命中次数和缓存丢弃次数。

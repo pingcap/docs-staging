@@ -7,11 +7,11 @@ summary: 了解如何将 TiDB Cloud Serverless 分支功能与 GitHub 集成。
 
 > **注意：**
 >
-> 此集成基于 [TiDB Cloud Serverless 分支功能](/tidb-cloud/branch-overview.md)构建。在阅读本文档之前，请确保您已熟悉 TiDB Cloud Serverless 分支功能。
+> 此集成基于 [TiDB Cloud Serverless 分支功能](/tidb-cloud/branch-overview.md)构建。在阅读本文档之前，请确保你已熟悉 TiDB Cloud Serverless 分支功能。
 
-如果您使用 GitHub 进行应用程序开发，您可以将 TiDB Cloud Serverless 分支功能集成到 GitHub CI/CD 流程中，这样您就可以使用分支自动测试您的拉取请求，而不会影响生产数据库。
+如果你使用 GitHub 进行应用程序开发，你可以将 TiDB Cloud Serverless 分支功能集成到 GitHub CI/CD 流程中，这样你就可以使用分支自动测试你的拉取请求，而不会影响生产数据库。
 
-在集成过程中，系统会提示您安装 [TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) GitHub 应用程序。该应用程序可以根据 GitHub 仓库中的拉取请求自动管理 TiDB Cloud Serverless 分支。例如，当您创建拉取请求时，应用程序会为您的 TiDB Cloud Serverless 集群创建相应的分支，您可以在其中独立开发新功能或修复错误，而不会影响生产数据库。
+在集成过程中，系统会提示你安装 [TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) GitHub 应用程序。该应用程序可以根据 GitHub 仓库中的拉取请求自动管理 TiDB Cloud Serverless 分支。例如，当你创建拉取请求时，应用程序会为你的 TiDB Cloud Serverless 集群创建相应的分支，你可以在其中独立开发新功能或修复错误，而不会影响生产数据库。
 
 本文档涵盖以下主题：
 
@@ -21,10 +21,10 @@ summary: 了解如何将 TiDB Cloud Serverless 分支功能与 GitHub 集成。
 
 ## 开始之前
 
-在进行集成之前，请确保您具备以下条件：
+在进行集成之前，请确保你具备以下条件：
 
 - GitHub 账号
-- 用于您应用程序的 GitHub 仓库
+- 用于你应用程序的 GitHub 仓库
 - [TiDB Cloud Serverless 集群](/tidb-cloud/create-tidb-cluster-serverless.md)
 
 ## 将 TiDB Cloud Serverless 分支功能与 GitHub 仓库集成
@@ -37,16 +37,16 @@ summary: 了解如何将 TiDB Cloud Serverless 分支功能与 GitHub 集成。
 
 3. 在**分支**页面的右上角，点击**连接到 GitHub**。
 
-    - 如果您尚未登录 GitHub，系统会要求您先登录 GitHub。
-    - 如果这是您第一次使用此集成，系统会要求您授权 **TiDB Cloud Branching** 应用程序。
+    - 如果你尚未登录 GitHub，系统会要求你先登录 GitHub。
+    - 如果这是你第一次使用此集成，系统会要求你授权 **TiDB Cloud Branching** 应用程序。
 
    <img src="https://docs-download.pingcap.com/media/images/docs/tidb-cloud/branch/github-authorize.png" width="80%" />
 
 4. 在**连接到 GitHub**对话框中，从**GitHub 账号**下拉列表中选择一个 GitHub 账号。
 
-    如果列表中没有您的账号，请点击**安装其他账号**，然后按照屏幕上的说明安装账号。
+    如果列表中没有你的账号，请点击**安装其他账号**，然后按照屏幕上的说明安装账号。
 
-5. 从**GitHub 仓库**下拉列表中选择您的目标仓库。如果列表较长，您可以通过输入名称来搜索仓库。
+5. 从**GitHub 仓库**下拉列表中选择你的目标仓库。如果列表较长，你可以通过输入名称来搜索仓库。
 
 6. 点击**连接**以建立 TiDB Cloud Serverless 集群与 GitHub 仓库之间的连接。
 
@@ -58,14 +58,14 @@ summary: 了解如何将 TiDB Cloud Serverless 分支功能与 GitHub 集成。
 
 | 拉取请求变更 | TiDB Cloud Branching 应用程序行为 |
 |------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 创建拉取请求 | 当您在仓库中创建拉取请求时，[TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) 应用程序会为您的 TiDB Cloud Serverless 集群创建一个分支。当 `branch.mode` 设置为 `reset` 时，分支名称遵循 `${github_branch_name}_${pr_id}` 格式。当 `branch.mode` 设置为 `reserve` 时，分支名称遵循 `${github_branch_name}_${pr_id}_${commit_sha}` 格式。请注意，分支数量有[限制](/tidb-cloud/branch-overview.md#limitations-and-quotas)。 |
-| 向拉取请求推送新提交 | 当 `branch.mode` 设置为 `reset` 时，每次您向仓库的拉取请求推送新提交时，[TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) 应用程序都会重置 TiDB Cloud Serverless 分支。当 `branch.mode` 设置为 `reserve` 时，应用程序会为最新提交创建一个新分支。 |
-| 关闭或合并拉取请求 | 当您关闭或合并拉取请求时，[TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) 应用程序会删除该拉取请求的分支。 |
-| 重新打开拉取请求 | 当您重新打开拉取请求时，[TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) 应用程序会为该拉取请求的最新提交创建一个分支。 |
+| 创建拉取请求 | 当你在仓库中创建拉取请求时，[TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) 应用程序会为你的 TiDB Cloud Serverless 集群创建一个分支。当 `branch.mode` 设置为 `reset` 时，分支名称遵循 `${github_branch_name}_${pr_id}` 格式。当 `branch.mode` 设置为 `reserve` 时，分支名称遵循 `${github_branch_name}_${pr_id}_${commit_sha}` 格式。请注意，分支数量有[限制](/tidb-cloud/branch-overview.md#limitations-and-quotas)。 |
+| 向拉取请求推送新提交 | 当 `branch.mode` 设置为 `reset` 时，每次你向仓库的拉取请求推送新提交时，[TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) 应用程序都会重置 TiDB Cloud Serverless 分支。当 `branch.mode` 设置为 `reserve` 时，应用程序会为最新提交创建一个新分支。 |
+| 关闭或合并拉取请求 | 当你关闭或合并拉取请求时，[TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) 应用程序会删除该拉取请求的分支。 |
+| 重新打开拉取请求 | 当你重新打开拉取请求时，[TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) 应用程序会为该拉取请求的最新提交创建一个分支。 |
 
 ## 配置 TiDB Cloud Branching 应用程序
 
-要配置 [TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) 应用程序的行为，您可以在仓库的根目录中添加一个 `tidbcloud.yml` 文件，然后根据以下说明将所需的配置添加到该文件中。
+要配置 [TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) 应用程序的行为，你可以在仓库的根目录中添加一个 `tidbcloud.yml` 文件，然后根据以下说明将所需的配置添加到该文件中。
 
 ### branch.blockList
 
@@ -101,7 +101,7 @@ github:
 指定 TiDB Cloud Branching 应用程序如何处理分支更新：
 
 - 如果设置为 `reset`，TiDB Cloud Branching 应用程序将使用最新数据更新现有分支。
-- 如果设置为 `reserve`，TiDB Cloud Branching 应用程序将为您的最新提交创建一个新分支。
+- 如果设置为 `reserve`，TiDB Cloud Branching 应用程序将为你的最新提交创建一个新分支。
 
 ```yaml
 github:
@@ -123,15 +123,15 @@ github:
 
 ## 创建分支 CI 工作流
 
-使用分支的最佳实践之一是创建分支 CI 工作流。通过该工作流，您可以在合并拉取请求之前使用 TiDB Cloud Serverless 分支而不是生产集群来测试您的代码。您可以在[这里](https://github.com/shiyuhang0/tidbcloud-branch-gorm-example)找到一个实际示例。
+使用分支的最佳实践之一是创建分支 CI 工作流。通过该工作流，你可以在合并拉取请求之前使用 TiDB Cloud Serverless 分支而不是生产集群来测试你的代码。你可以在[这里](https://github.com/shiyuhang0/tidbcloud-branch-gorm-example)找到一个实际示例。
 
 以下是创建工作流的主要步骤：
 
-1. [将 TiDB Cloud Serverless 分支功能与您的 GitHub 仓库集成](#将-tidb-cloud-serverless-分支功能与-github-仓库集成)。
+1. [将 TiDB Cloud Serverless 分支功能与你的 GitHub 仓库集成](#将-tidb-cloud-serverless-分支功能与-github-仓库集成)。
 
 2. 获取分支连接信息。
 
-   您可以使用 [wait-for-tidbcloud-branch](https://github.com/tidbcloud/wait-for-tidbcloud-branch) action 来等待 TiDB Cloud Serverless 分支就绪并获取分支的连接信息。
+   你可以使用 [wait-for-tidbcloud-branch](https://github.com/tidbcloud/wait-for-tidbcloud-branch) action 来等待 TiDB Cloud Serverless 分支就绪并获取分支的连接信息。
 
     示例用法：
 
@@ -151,13 +151,13 @@ github:
            echo "The user is ${{ steps.wait-for-branch.outputs.user }}"
            echo "The password is ${{ steps.wait-for-branch.outputs.password }}"
    ```
-   
-   - `token`：GitHub 会自动创建一个 [GITHUB_TOKEN](https://docs.github.com/en/actions/security-guides/automatic-token-authentication) 密钥。您可以直接使用它。
+
+   - `token`：GitHub 会自动创建一个 [GITHUB_TOKEN](https://docs.github.com/en/actions/security-guides/automatic-token-authentication) 密钥。你可以直接使用它。
    - `public-key` 和 `private-key`：TiDB Cloud [API 密钥](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management)。
 
-3. 修改您的测试代码。
+3. 修改你的测试代码。
 
-   修改您的测试代码以接受来自 GitHub Actions 的连接信息。例如，您可以通过环境变量接受连接信息，如[实际示例](https://github.com/shiyuhang0/tidbcloud-branch-gorm-example)所示。
+   修改你的测试代码以接受来自 GitHub Actions 的连接信息。例如，你可以通过环境变量接受连接信息，如[实际示例](https://github.com/shiyuhang0/tidbcloud-branch-gorm-example)所示。
 
 ## 下一步
 
@@ -167,4 +167,4 @@ github:
 - [branching-django-example](https://github.com/tidbcloud/branching-django-example)
 - [branching-rails-example](https://github.com/tidbcloud/branching-rails-example)
 
-您也可以在不使用分支 GitHub 集成的情况下构建分支 CI/CD 工作流。例如，您可以使用 [`setup-tidbcloud-cli`](https://github.com/tidbcloud/setup-tidbcloud-cli) 和 GitHub Actions 来自定义您的 CI/CD 工作流。
+你也可以在不使用分支 GitHub 集成的情况下构建分支 CI/CD 工作流。例如，你可以使用 [`setup-tidbcloud-cli`](https://github.com/tidbcloud/setup-tidbcloud-cli) 和 GitHub Actions 来自定义你的 CI/CD 工作流。

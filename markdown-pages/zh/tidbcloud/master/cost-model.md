@@ -44,7 +44,7 @@ TiDB v6.2.0 引入了成本模型版本 2，这是一个新的成本模型。
 
 成本模型版本 2 对成本公式进行了更准确的回归校准，调整了一些成本公式，比之前版本的成本公式更准确。
 
-要切换成本模型的版本，您可以设置 [`tidb_cost_model_version`](/system-variables.md#tidb_cost_model_version-new-in-v620) 变量。
+要切换成本模型的版本，你可以设置 [`tidb_cost_model_version`](/system-variables.md#tidb_cost_model_version-new-in-v620) 变量。
 
 > **注意：**
 >

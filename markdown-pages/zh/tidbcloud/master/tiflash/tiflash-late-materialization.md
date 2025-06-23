@@ -9,7 +9,7 @@ summary: 介绍如何使用 TiFlash 延迟物化功能加速 OLAP 场景下的�
 >
 > TiFlash 延迟物化在[快速扫描模式](/tiflash/use-fastscan.md)下不生效。
 
-TiFlash 延迟物化是一种用于加速 OLAP 场景查询的优化方法。您可以使用 [`tidb_opt_enable_late_materialization`](/system-variables.md#tidb_opt_enable_late_materialization-new-in-v700) 系统变量来控制是否启用或禁用 TiFlash 延迟物化。
+TiFlash 延迟物化是一种用于加速 OLAP 场景查询的优化方法。你可以使用 [`tidb_opt_enable_late_materialization`](/system-variables.md#tidb_opt_enable_late_materialization-new-in-v700) 系统变量来控制是否启用或禁用 TiFlash 延迟物化。
 
 - 当禁用时，为了处理带有过滤条件（`WHERE` 子句）的 `SELECT` 语句，TiFlash 会读取查询所需的所有列的数据，然后根据查询条件进行过滤和聚合。
 - 当启用时，TiFlash 支持将部分过滤条件下推到 TableScan 算子。也就是说，TiFlash 首先扫描与下推到 TableScan 算子的过滤条件相关的列数据，过滤出满足条件的行，然后再扫描这些行的其他列数据进行进一步计算，从而减少数据处理的 IO 扫描和计算。
@@ -36,7 +36,7 @@ EXPLAIN SELECT a, b, c FROM t1 WHERE a < 1;
 
 ## 启用或禁用 TiFlash 延迟物化
 
-默认情况下，`tidb_opt_enable_late_materialization` 系统变量在会话和全局级别都为 `ON`，这意味着 TiFlash 延迟物化功能已启用。您可以使用以下语句查看相应的变量信息：
+默认情况下，`tidb_opt_enable_late_materialization` 系统变量在会话和全局级别都为 `ON`，这意味着 TiFlash 延迟物化功能已启用。你可以使用以下语句查看相应的变量信息：
 
 ```sql
 SHOW VARIABLES LIKE 'tidb_opt_enable_late_materialization';
@@ -62,7 +62,7 @@ SHOW GLOBAL VARIABLES LIKE 'tidb_opt_enable_late_materialization';
 +--------------------------------------+-------+
 ```
 
-您可以在会话级别或全局级别修改 `tidb_opt_enable_late_materialization` 变量。
+你可以在会话级别或全局级别修改 `tidb_opt_enable_late_materialization` 变量。
 
 - 要在当前会话中禁用 TiFlash 延迟物化，使用以下语句：
 

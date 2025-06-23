@@ -9,7 +9,7 @@ TiDB Cloud 是一个全托管的数据库即服务（DBaaS），它将开源 HTA
 
 TiDB 兼容 MySQL，这使得迁移和使用现有应用程序变得容易，同时提供无缝扩展能力，可以处理从小型工作负载到大规模高性能集群的各种场景。它在一个系统中同时支持事务处理（OLTP）和分析处理（OLAP）工作负载，简化了运维并实现了实时数据洞察。
 
-TiDB Cloud 提供两种部署选项：**TiDB Cloud Serverless**，用于自动扩展、成本效益高的工作负载，以及 **TiDB Cloud Dedicated**，用于具有专用资源和高级功能的企业级应用。TiDB Cloud 让您能够轻松扩展数据库、处理复杂的管理任务，并专注于开发可靠、高性能的应用程序。
+TiDB Cloud 提供两种部署选项：**TiDB Cloud Serverless**，用于自动扩展、成本效益高的工作负载，以及 **TiDB Cloud Dedicated**，用于具有专用资源和高级功能的企业级应用。TiDB Cloud 让你能够轻松扩展数据库、处理复杂的管理任务，并专注于开发可靠、高性能的应用程序。
 
 ## TiDB Cloud Serverless
 
@@ -37,7 +37,7 @@ TiDB Cloud Dedicated 专为关键业务而设计，提供跨多个可用区的�
 
 ## TiDB Cloud CLI（Beta）
 
-TiDB Cloud CLI（`ticloud`）允许您通过简单的命令直接从终端管理 TiDB Cloud Serverless 和 TiDB Cloud Dedicated。您可以执行以下任务：
+TiDB Cloud CLI（`ticloud`）允许你通过简单的命令直接从终端管理 TiDB Cloud Serverless 和 TiDB Cloud Dedicated。你可以执行以下任务：
 
 - 创建、删除和列出集群。
 - 向集群导入数据。
@@ -55,14 +55,14 @@ TiDB Cloud API 是一个基于 REST 的接口，提供了对 TiDB Cloud Serverle
 
 在 TiDB Cloud 中，每个集群由 TiDB、TiKV 和 TiFlash 节点组成。
 
-- 在 TiDB Cloud Dedicated 集群中，您可以根据性能需求完全管理专用 TiDB、TiKV 和 TiFlash 节点的数量和大小。更多信息，请参见[可扩展性](/tidb-cloud/scalability-concepts.md)。
+- 在 TiDB Cloud Dedicated 集群中，你可以根据性能需求完全管理专用 TiDB、TiKV 和 TiFlash 节点的数量和大小。更多信息，请参见[可扩展性](/tidb-cloud/scalability-concepts.md)。
 - 在 TiDB Cloud Serverless 集群中，TiDB、TiKV 和 TiFlash 节点的数量和大小是自动管理的。这确保了无缝扩展，无需用户处理节点配置或管理任务。
 
 ### TiDB 节点
 
 [TiDB 节点](/tidb-computing.md)是一个无状态的 SQL 层，使用 MySQL 兼容的端点连接应用程序。它处理 SQL 查询的解析、优化和创建分布式执行计划等任务。
 
-您可以部署多个 TiDB 节点以实现水平扩展并管理更高的工作负载。这些节点与负载均衡器（如 TiProxy 或 HAProxy）配合使用，提供无缝接口。TiDB 节点本身不存储数据——它们将数据请求转发到 TiKV 节点进行行式存储或 TiFlash 节点进行列式存储。
+你可以部署多个 TiDB 节点以实现水平扩展并管理更高的工作负载。这些节点与负载均衡器（如 TiProxy 或 HAProxy）配合使用，提供无缝接口。TiDB 节点本身不存储数据——它们将数据请求转发到 TiKV 节点进行行式存储或 TiFlash 节点进行列式存储。
 
 ### TiKV 节点
 

@@ -20,9 +20,9 @@ summary: 介绍 TiDB Cloud 的 Connected Care 支持服务的详细信息。
 <tbody>
   <tr>
     <td>功能和服务</td>
-    <td>适合个人入门项目，通过活跃的社区和 AI 支持为您提供基本支持需求。</td>
-    <td>适合开发和测试阶段，提供直接连接和无限技术支持访问，帮助您开启云端之旅。</td>
-    <td>专为生产工作负载设计，通过高级监控、及时警报和全天候快速响应，为您提供无缝体验。</td>
+    <td>适合个人入门项目，通过活跃的社区和 AI 支持为你提供基本支持需求。</td>
+    <td>适合开发和测试阶段，提供直接连接和无限技术支持访问，帮助你开启云端之旅。</td>
+    <td>专为生产工作负载设计，通过高级监控、及时警报和全天候快速响应，为你提供无缝体验。</td>
     <td>为关键业务工作负载打造，通过指定的技术客户经理提供最快的响应时间、主动支持和专属连接。</td>
   </tr>
   <tr>
@@ -141,4 +141,4 @@ summary: 介绍 TiDB Cloud 的 Connected Care 支持服务的详细信息。
 
 - 工作时间：当地时间周一至周五上午 9 点至下午 6 点
 - IM：即时通讯。目前支持 [Slack](https://slack.com/) 和 [Lark](https://www.larksuite.com/)。我们计划在未来支持 [Microsoft Teams](https://www.microsoft.com/en-us/microsoft-teams/group-chat-software)。
-- [Clinic](https://clinic.pingcap.com/)：一个现代化的监控服务，为您的 TiDB Cloud 集群提供高级监控和诊断功能。
+- [Clinic](https://clinic.pingcap.com/)：一个现代化的监控服务，为你的 TiDB Cloud 集群提供高级监控和诊断功能。

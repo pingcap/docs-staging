@@ -5,7 +5,7 @@ summary: TiDB Cloud Dedicated 通过多可用区部署支持高可用性。
 
 # TiDB Cloud Dedicated 中的高可用性
 
-TiDB 使用 Raft 共识算法确保数据在 Raft 组中的存储具有高可用性和安全复制。数据在存储节点之间冗余复制，并放置在不同的可用区中，以防止机器或数据中心故障。通过自动故障转移，TiDB 确保您的服务始终在线。
+TiDB 使用 Raft 共识算法确保数据在 Raft 组中的存储具有高可用性和安全复制。数据在存储节点之间冗余复制，并放置在不同的可用区中，以防止机器或数据中心故障。通过自动故障转移，TiDB 确保你的服务始终在线。
 
 TiDB Cloud Dedicated 集群由三个主要组件组成：TiDB 节点、TiKV 节点和 TiFlash 节点。TiDB Cloud Dedicated 中各组件的高可用性实现如下：
 
@@ -15,7 +15,7 @@ TiDB Cloud Dedicated 集群由三个主要组件组成：TiDB 节点、TiKV 节�
 
 * **TiKV 节点**
 
-    [TiKV](https://docs.pingcap.com/tidb/stable/tikv-overview) 是 TiDB Cloud Dedicated 集群的行存储层，支持水平扩展。TiDB Cloud Dedicated 集群的最小 TiKV 节点数为 3。TiDB Cloud Dedicated 将 TiKV 节点均匀部署到您选择的区域中的所有可用区（至少 3 个）以实现持久性和高可用性。在典型的 3 副本设置中，您的数据在所有可用区的 TiKV 节点之间均匀分布，并持久化到每个 TiKV 节点的磁盘中。
+    [TiKV](https://docs.pingcap.com/tidb/stable/tikv-overview) 是 TiDB Cloud Dedicated 集群的行存储层，支持水平扩展。TiDB Cloud Dedicated 集群的最小 TiKV 节点数为 3。TiDB Cloud Dedicated 将 TiKV 节点均匀部署到你选择的区域中的所有可用区（至少 3 个）以实现持久性和高可用性。在典型的 3 副本设置中，你的数据在所有可用区的 TiKV 节点之间均匀分布，并持久化到每个 TiKV 节点的磁盘中。
 
 * **TiFlash 节点**
 

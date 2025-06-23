@@ -1,15 +1,15 @@
 ---
 title: 使用 SQL 进行全文搜索
-summary: 全文搜索允许您通过精确关键词检索文档。在检索增强生成（RAG）场景中，您可以将全文搜索与向量搜索结合使用，以提高检索质量。
+summary: 全文搜索允许你通过精确关键词检索文档。在检索增强生成（RAG）场景中，你可以将全文搜索与向量搜索结合使用，以提高检索质量。
 ---
 
 # 使用 SQL 进行全文搜索
 
-与专注于语义相似度的[向量搜索](/tidb-cloud/vector-search-overview.md)不同，全文搜索允许您通过精确关键词检索文档。在检索增强生成（RAG）场景中，您可以将全文搜索与向量搜索结合使用，以提高检索质量。
+与专注于语义相似度的[向量搜索](/tidb-cloud/vector-search-overview.md)不同，全文搜索允许你通过精确关键词检索文档。在检索增强生成（RAG）场景中，你可以将全文搜索与向量搜索结合使用，以提高检索质量。
 
 TiDB 的全文搜索功能提供以下能力：
 
-- **直接查询文本数据**：您可以直接搜索任何字符串列，无需进行嵌入处理。
+- **直接查询文本数据**：你可以直接搜索任何字符串列，无需进行嵌入处理。
 
 - **支持多种语言**：无需指定语言即可实现高质量搜索。TiDB 中的文本分析器支持在同一个表中混合使用多种语言的文档，并自动为每个文档选择最佳的分析器。
 
@@ -29,7 +29,7 @@ TiDB 的全文搜索功能提供以下能力：
 
 - TiDB Cloud Serverless：`法兰克福 (eu-central-1)` 和 `新加坡 (ap-southeast-1)`
 
-在使用全文搜索之前，请确保您的 TiDB Cloud Serverless 集群创建在支持的地区。如果您还没有集群，请按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建一个。
+在使用全文搜索之前，请确保你的 TiDB Cloud Serverless 集群创建在支持的地区。如果你还没有集群，请按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建一个。
 
 要执行全文搜索，请按照以下步骤操作：
 
@@ -61,7 +61,7 @@ CREATE TABLE stock_items(
     title TEXT
 );
 
--- 您可能在这里插入一些数据。
+-- 你可能在这里插入一些数据。
 -- 即使表中已经有数据，也可以创建全文索引。
 
 ALTER TABLE stock_items ADD FULLTEXT INDEX (title) WITH PARSER MULTILINGUAL ADD_COLUMNAR_REPLICA_ON_DEMAND;
@@ -77,7 +77,7 @@ ALTER TABLE stock_items ADD FULLTEXT INDEX (title) WITH PARSER MULTILINGUAL ADD_
 
 向带有全文索引的表中插入数据与向其他表插入数据完全相同。
 
-例如，您可以执行以下 SQL 语句来插入多种语言的数据。TiDB 的多语言解析器会自动处理文本。
+例如，你可以执行以下 SQL 语句来插入多种语言的数据。TiDB 的多语言解析器会自动处理文本。
 
 ```sql
 INSERT INTO stock_items VALUES (1, "イヤホン bluetooth ワイヤレスイヤホン ");
@@ -99,7 +99,7 @@ INSERT INTO stock_items VALUES (15, "皎月银 国家补贴 心率血氧监测 �
 
 ### 执行全文搜索
 
-要执行全文搜索，您可以使用 `FTS_MATCH_WORD()` 函数。
+要执行全文搜索，你可以使用 `FTS_MATCH_WORD()` 函数。
 
 **示例：搜索最相关的 10 个文档**
 
@@ -153,9 +153,9 @@ SELECT COUNT(*) FROM stock_items
 
 ## 高级示例：连接搜索结果与其他表
 
-您可以将全文搜索与其他 SQL 功能（如连接和子查询）结合使用。
+你可以将全文搜索与其他 SQL 功能（如连接和子查询）结合使用。
 
-假设您有一个 `users` 表和一个 `tickets` 表，想要根据作者姓名的全文搜索来查找他们创建的工单：
+假设你有一个 `users` 表和一个 `tickets` 表，想要根据作者姓名的全文搜索来查找他们创建的工单：
 
 ```sql
 CREATE TABLE users(
@@ -178,7 +178,7 @@ INSERT INTO tickets VALUES (2, "Ticket 2", 1);
 INSERT INTO tickets VALUES (3, "Ticket 3", 2);
 ```
 
-您可以使用子查询根据作者姓名查找匹配的用户 ID，然后在外部查询中使用这些 ID 来检索和连接相关的工单信息：
+你可以使用子查询根据作者姓名查找匹配的用户 ID，然后在外部查询中使用这些 ID 来检索和连接相关的工单信息：
 
 ```sql
 SELECT t.title AS TICKET_TITLE, u.id AS AUTHOR_ID, u.name AS AUTHOR_NAME FROM tickets t
@@ -203,7 +203,7 @@ WHERE t.author_id IN
 
 ## 反馈与帮助
 
-全文搜索仍处于早期阶段，可用性有限。如果您想在尚未开放的地区尝试全文搜索，或者如果您有反馈或需要帮助，请随时联系我们：
+全文搜索仍处于早期阶段，可用性有限。如果你想在尚未开放的地区尝试全文搜索，或者如果你有反馈或需要帮助，请随时联系我们：
 
 <CustomContent platform="tidb">
 

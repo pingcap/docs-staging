@@ -11,17 +11,17 @@ summary: 了解 dbt 在 TiDB Cloud 中的使用场景。
 
 ## 步骤 1：安装 dbt 和 dbt-tidb
 
-您可以使用一个命令安装 dbt 和 dbt-tidb。在以下命令中，当您安装 dbt-tidb 时，dbt 会作为依赖项安装。
+你可以使用一个命令安装 dbt 和 dbt-tidb。在以下命令中，当你安装 dbt-tidb 时，dbt 会作为依赖项安装。
 
 ```shell
 pip install dbt-tidb
 ```
 
-您也可以单独安装 dbt。请参阅 dbt 文档中的[如何安装 dbt](https://docs.getdbt.com/docs/get-started/installation)。
+你也可以单独安装 dbt。请参阅 dbt 文档中的[如何安装 dbt](https://docs.getdbt.com/docs/get-started/installation)。
 
 ## 步骤 2：创建演示项目
 
-要试用 dbt 功能，您可以使用 dbt-lab 提供的演示项目 [jaffle_shop](https://github.com/dbt-labs/jaffle_shop)。您可以直接从 GitHub 克隆该项目：
+要试用 dbt 功能，你可以使用 dbt-lab 提供的演示项目 [jaffle_shop](https://github.com/dbt-labs/jaffle_shop)。你可以直接从 GitHub 克隆该项目：
 
 ```shell
 git clone https://github.com/dbt-labs/jaffle_shop && \
@@ -61,7 +61,7 @@ cd jaffle_shop
 
 - `models` 目录包含项目的 SQL 模型和表结构。请注意，这部分由数据分析师编写。有关模型的更多信息，请参阅 [SQL 模型](https://docs.getdbt.com/docs/build/sql-models)。
 
-- `seeds` 目录存储由数据库导出工具导出的 CSV 文件。例如，您可以通过 Dumpling [导出 TiDB Cloud 数据](https://docs.pingcap.com/tidbcloud/export-data-from-tidb-cloud)到 CSV 文件。在 `jaffle_shop` 项目中，这些 CSV 文件用作要处理的原始数据。
+- `seeds` 目录存储由数据库导出工具导出的 CSV 文件。例如，你可以通过 Dumpling [导出 TiDB Cloud 数据](https://docs.pingcap.com/tidbcloud/export-data-from-tidb-cloud)到 CSV 文件。在 `jaffle_shop` 项目中，这些 CSV 文件用作要处理的原始数据。
 
 ## 步骤 3：配置项目
 
@@ -69,7 +69,7 @@ cd jaffle_shop
 
 1. 完成全局配置。
 
-    您可以参考[配置字段说明](#配置字段说明)并编辑默认的全局配置文件 `~/.dbt/profiles.yml` 来配置与 TiDB Cloud 的连接：
+    你可以参考[配置字段说明](#配置字段说明)并编辑默认的全局配置文件 `~/.dbt/profiles.yml` 来配置与 TiDB Cloud 的连接：
 
     ```shell
     sudo vi ~/.dbt/profiles.yml
@@ -90,7 +90,7 @@ cd jaffle_shop
           password: "your_password"                                   # 用于向 TiDB Cloud 集群进行身份验证的密码
     ```
 
-    您可以从集群的连接对话框中获取 `server`、`port` 和 `username` 的值。要打开此对话框，请转到项目的[**集群**](https://tidbcloud.com/project/clusters)页面，点击目标集群的名称以进入其概览页面，然后点击右上角的**连接**。
+    你可以从集群的连接对话框中获取 `server`、`port` 和 `username` 的值。要打开此对话框，请转到项目的[**集群**](https://tidbcloud.com/project/clusters)页面，点击目标集群的名称以进入其概览页面，然后点击右上角的**连接**。
 
 2. 完成项目配置。
 
@@ -143,9 +143,9 @@ cd jaffle_shop
 
 > **注意：**
 >
-> 此步骤是可选的。如果要处理的数据已经在目标数据库中，您可以跳过此步骤。
+> 此步骤是可选的。如果要处理的数据已经在目标数据库中，你可以跳过此步骤。
 
-现在您已成功创建并配置了项目，是时候加载 CSV 数据并将 CSV 实体化为目标数据库中的表了。
+现在你已成功创建并配置了项目，是时候加载 CSV 数据并将 CSV 实体化为目标数据库中的表了。
 
 1. 加载 CSV 数据并将 CSV 实体化为目标数据库中的表。
 
@@ -174,7 +174,7 @@ cd jaffle_shop
 
 2. 在 TiDB Cloud 中验证结果。
 
-    `show databases` 命令列出了 dbt 创建的新 `analytics` 数据库。`show tables` 命令表明 `analytics` 数据库中有三个表，对应于您创建的表。
+    `show databases` 命令列出了 dbt 创建的新 `analytics` 数据库。`show tables` 命令表明 `analytics` 数据库中有三个表，对应于你创建的表。
 
     ```sql
     mysql> SHOW DATABASES;
@@ -222,7 +222,7 @@ cd jaffle_shop
 
 ## 步骤 5：转换数据
 
-现在您已准备好运行配置的项目并完成数据转换。
+现在你已准备好运行配置的项目并完成数据转换。
 
 1. 运行 dbt 项目以完成数据转换：
 
@@ -299,7 +299,7 @@ cd jaffle_shop
 
 ## 步骤 6：生成文档
 
-dbt 允许您生成显示项目整体结构并描述所有表和视图的可视化文档。
+dbt 允许你生成显示项目整体结构并描述所有表和视图的可视化文档。
 
 要生成可视化文档，请执行以下步骤：
 
@@ -331,7 +331,7 @@ dbt 允许您生成显示项目整体结构并描述所有表和视图的可视�
 
 ## 支持的函数
 
-您可以在 dbt-tidb 中直接使用以下函数。有关如何使用它们的信息，请参阅 [dbt-util](https://github.com/dbt-labs/dbt-utils)。
+你可以在 dbt-tidb 中直接使用以下函数。有关如何使用它们的信息，请参阅 [dbt-util](https://github.com/dbt-labs/dbt-utils)。
 
 支持以下函数：
 

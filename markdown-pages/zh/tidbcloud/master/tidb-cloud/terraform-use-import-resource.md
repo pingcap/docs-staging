@@ -20,7 +20,7 @@ summary: 了解如何使用导入资源管理导入任务。
 
 ## 创建并运行导入任务
 
-您可以使用导入资源管理本地导入任务或 Amazon S3 导入任务。
+你可以使用导入资源管理本地导入任务或 Amazon S3 导入任务。
 
 ### 创建并运行本地导入任务
 
@@ -68,7 +68,7 @@ summary: 了解如何使用导入资源管理导入任务。
     }
     ```
 
-   用您自己的值替换文件中的资源值（如项目 ID、集群 ID 和 CSV 路径）。您可以在[配置页面](https://registry.terraform.io/providers/tidbcloud/tidbcloud/latest/docs/resources/import#nested-schema-for-csv_format)上找到 `csv_format` 的详细信息。
+   用你自己的值替换文件中的资源值（如项目 ID、集群 ID 和 CSV 路径）。你可以在[配置页面](https://registry.terraform.io/providers/tidbcloud/tidbcloud/latest/docs/resources/import#nested-schema-for-csv_format)上找到 `csv_format` 的详细信息。
 
 3. 运行 `terraform apply` 命令创建导入任务，然后输入 `yes` 确认创建并开始导入：
 
@@ -189,7 +189,7 @@ summary: 了解如何使用导入资源管理导入任务。
 
 > **注意：**
 >
-> 要允许 TiDB Cloud 访问您 Amazon S3 存储桶中的文件，您需要先[配置 Amazon S3 访问权限](/tidb-cloud/dedicated-external-storage.md#configure-amazon-s3-access)。
+> 要允许 TiDB Cloud 访问你 Amazon S3 存储桶中的文件，你需要先[配置 Amazon S3 访问权限](/tidb-cloud/dedicated-external-storage.md#configure-amazon-s3-access)。
 
 1. 创建一个 `import` 目录，然后在其中创建一个 `main.tf`。例如：
 
@@ -255,7 +255,7 @@ summary: 了解如何使用导入资源管理导入任务。
 
 对于 Terraform，删除导入任务意味着取消相应的导入资源。
 
-您无法取消 `COMPLETED` 状态的导入任务。否则，您将收到如下示例中的 `Delete Error`：
+你无法取消 `COMPLETED` 状态的导入任务。否则，你将收到如下示例中的 `Delete Error`：
 
 ```
 $ terraform destroy
@@ -277,7 +277,7 @@ tidbcloud_import.example_local: Destroying... [id=781074]
 ╵
 ```
 
-您可以取消状态为 `IMPORTING` 的导入任务。例如：
+你可以取消状态为 `IMPORTING` 的导入任务。例如：
 
 ```
 $ terraform destroy

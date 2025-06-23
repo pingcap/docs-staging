@@ -7,11 +7,11 @@ summary: 了解如何使用 Ruby mysql2 连接 TiDB。本教程提供使用 mysq
 
 TiDB 是一个兼容 MySQL 的数据库，而 [mysql2](https://github.com/brianmario/mysql2) 是 Ruby 最流行的 MySQL 驱动程序之一。
 
-在本教程中，您可以学习如何使用 TiDB 和 mysql2 完成以下任务：
+在本教程中，你可以学习如何使用 TiDB 和 mysql2 完成以下任务：
 
 - 设置环境。
 - 使用 mysql2 连接到 TiDB 集群。
-- 构建并运行应用程序。您也可以查看基本 CRUD 操作的[示例代码片段](#示例代码片段)。
+- 构建并运行应用程序。你也可以查看基本 CRUD 操作的[示例代码片段](#示例代码片段)。
 
 > **注意：**
 >
@@ -19,24 +19,24 @@ TiDB 是一个兼容 MySQL 的数据库，而 [mysql2](https://github.com/brianm
 
 ## 前提条件
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
-- 在您的机器上安装 [Ruby](https://www.ruby-lang.org/en/) >= 3.0
-- 在您的机器上安装 [Bundler](https://bundler.io/)
-- 在您的机器上安装 [Git](https://git-scm.com/downloads)
+- 在你的机器上安装 [Ruby](https://www.ruby-lang.org/en/) >= 3.0
+- 在你的机器上安装 [Bundler](https://bundler.io/)
+- 在你的机器上安装 [Git](https://git-scm.com/downloads)
 - 一个正在运行的 TiDB 集群
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
 <CustomContent platform="tidb">
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](/production-deployment-using-tiup.md)创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)创建本地集群。
 
 </CustomContent>
@@ -65,7 +65,7 @@ bundle install
 <details>
 <summary><b>为现有项目安装依赖</b></summary>
 
-对于您的现有项目，运行以下命令安装包：
+对于你的现有项目，运行以下命令安装包：
 
 ```shell
 bundle add mysql2 dotenv
@@ -75,7 +75,7 @@ bundle add mysql2 dotenv
 
 ### 步骤 3：配置连接信息
 
-根据您选择的 TiDB 部署选项连接到您的 TiDB 集群。
+根据你选择的 TiDB 部署选项连接到你的 TiDB 集群。
 
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
@@ -84,14 +84,14 @@ bundle add mysql2 dotenv
 
 2. 点击右上角的**连接**。将显示连接对话框。
 
-3. 确保连接对话框中的配置与您的操作环境匹配。
+3. 确保连接对话框中的配置与你的操作环境匹配。
 
    - **连接类型**设置为 `Public`。
    - **分支**设置为 `main`。
    - **连接工具**设置为 `General`。
-   - **操作系统**与您运行应用程序的操作系统匹配。
+   - **操作系统**与你运行应用程序的操作系统匹配。
 
-4. 如果您还没有设置密码，点击**生成密码**生成随机密码。
+4. 如果你还没有设置密码，点击**生成密码**生成随机密码。
 
 5. 运行以下命令复制 `.env.example` 并将其重命名为 `.env`：
 
@@ -125,9 +125,9 @@ bundle add mysql2 dotenv
 
 3. 在连接对话框中，从**连接类型**下拉列表中选择**公共**，然后点击 **CA 证书**下载 CA 证书。
 
-    如果您尚未配置 IP 访问列表，请在首次连接之前点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
+    如果你尚未配置 IP 访问列表，请在首次连接之前点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
 
-    除了**公共**连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**类型。更多信息，请参见[连接到您的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+    除了**公共**连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**类型。更多信息，请参见[连接到你的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
 4. 运行以下命令复制 `.env.example` 并将其重命名为 `.env`：
 
@@ -164,7 +164,7 @@ bundle add mysql2 dotenv
     cp .env.example .env
     ```
 
-2. 编辑 `.env` 文件，按如下设置环境变量，并将相应的占位符 `{}` 替换为您自己的 TiDB 连接信息：
+2. 编辑 `.env` 文件，按如下设置环境变量，并将相应的占位符 `{}` 替换为你自己的 TiDB 连接信息：
 
     ```dotenv
     DATABASE_HOST={host}
@@ -174,7 +174,7 @@ bundle add mysql2 dotenv
     DATABASE_NAME=test
     ```
 
-   如果您在本地运行 TiDB，默认主机地址为 `127.0.0.1`，密码为空。
+   如果你在本地运行 TiDB，默认主机地址为 `127.0.0.1`，密码为空。
 
 3. 保存 `.env` 文件。
 
@@ -204,7 +204,7 @@ ruby app.rb
 
 ## 示例代码片段
 
-您可以参考以下示例代码片段来完成自己的应用程序开发。
+你可以参考以下示例代码片段来完成自己的应用程序开发。
 
 有关完整的示例代码和如何运行它，请查看 [tidb-samples/tidb-ruby-mysql2-quickstart](https://github.com/tidb-samples/tidb-ruby-mysql2-quickstart) 仓库。
 
@@ -231,7 +231,7 @@ client = Mysql2::Client.new(options)
 
 > **注意**
 >
-> 对于 TiDB Cloud Serverless，使用公共端点时，您**必须**通过 `DATABASE_ENABLE_SSL` 启用 TLS 连接，但您**不需要**通过 `DATABASE_SSL_CA` 指定 SSL CA 证书，因为 mysql2 gem 会按特定顺序搜索现有的 CA 证书，直到找到一个文件。
+> 对于 TiDB Cloud Serverless，使用公共端点时，你**必须**通过 `DATABASE_ENABLE_SSL` 启用 TLS 连接，但你**不需要**通过 `DATABASE_SSL_CA` 指定 SSL CA 证书，因为 mysql2 gem 会按特定顺序搜索现有的 CA 证书，直到找到一个文件。
 
 ### 插入数据
 

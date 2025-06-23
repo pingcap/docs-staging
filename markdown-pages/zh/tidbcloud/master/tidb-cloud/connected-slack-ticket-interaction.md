@@ -9,19 +9,19 @@ summary: 介绍 Slack 支持工单交互的详细信息。
 
 > **注意：**
 >
-> Slack 的工单支持功能需要申请才能使用。如果您有兴趣尝试此功能，请通过 <a href="mailto:support@pingcap.com">support@pingcap.com</a> 联系 TiDB Cloud 支持团队，或联系您的技术客户经理（TAM）。
+> Slack 的工单支持功能需要申请才能使用。如果你有兴趣尝试此功能，请通过 <a href="mailto:support@pingcap.com">support@pingcap.com</a> 联系 TiDB Cloud 支持团队，或联系你的技术客户经理（TAM）。
 
-您可以使用 **PingCAP Support Bot** 在 Slack 中创建支持工单：
+你可以使用 **PingCAP Support Bot** 在 Slack 中创建支持工单：
 
 ![在 Slack 中创建支持工单](/media/tidb-cloud/connected-slack-ticket-interaction-creation.gif)
 
-您也可以直接在 Slack 中回复支持工单：
+你也可以直接在 Slack 中回复支持工单：
 
 ![在 Slack 中回复支持工单](/media/tidb-cloud/connected-slack-ticket-interaction-reply.gif)
 
 ## 与支持工单交互
 
-在 Slack 支持频道中，您只需要在消息中提及 **PingCAP Support Bot** 并描述问题。然后，机器人会向您发送一条带有**提出请求**按钮的消息。
+在 Slack 支持频道中，你只需要在消息中提及 **PingCAP Support Bot** 并描述问题。然后，机器人会向你发送一条带有**提出请求**按钮的消息。
 
 ![slack-ticket-interaction-1](/media/tidb-cloud/connected-slack-ticket-interaction-1.png)
 
@@ -45,7 +45,7 @@ summary: 介绍 Slack 支持工单交互的详细信息。
 
 - 如何查看我的工单状态？
 
-    使用创建工单时使用的电子邮件地址登录 [PingCAP 帮助中心](https://tidb.support.pingcap.com/servicedesk/customer/user/requests)。您可以查看当前账户的所有历史工单及其状态。
+    使用创建工单时使用的电子邮件地址登录 [PingCAP 帮助中心](https://tidb.support.pingcap.com/servicedesk/customer/user/requests)。你可以查看当前账户的所有历史工单及其状态。
 
 ## 联系支持
 

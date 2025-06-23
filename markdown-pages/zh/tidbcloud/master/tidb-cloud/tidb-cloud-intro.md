@@ -6,13 +6,13 @@ category: intro
 
 # 什么是 TiDB Cloud
 
-[TiDB Cloud](https://www.pingcap.com/tidb-cloud/) 是一个全托管的数据库即服务（DBaaS），它将开源的混合事务和分析处理（HTAP）数据库 [TiDB](https://docs.pingcap.com/tidb/stable/overview) 带入云端。TiDB Cloud 提供了一种简单的方式来部署和管理数据库，让您可以专注于应用程序开发，而不是数据库的复杂性。您可以创建 TiDB Cloud 集群，在 Amazon Web Services (AWS)、Google Cloud 和 Microsoft Azure 上快速构建关键任务应用。
+[TiDB Cloud](https://www.pingcap.com/tidb-cloud/) 是一个全托管的数据库即服务（DBaaS），它将开源的混合事务和分析处理（HTAP）数据库 [TiDB](https://docs.pingcap.com/tidb/stable/overview) 带入云端。TiDB Cloud 提供了一种简单的方式来部署和管理数据库，让你可以专注于应用程序开发，而不是数据库的复杂性。你可以创建 TiDB Cloud 集群，在 Amazon Web Services (AWS)、Google Cloud 和 Microsoft Azure 上快速构建关键任务应用。
 
 ![TiDB Cloud 概览](/media/tidb-cloud/tidb-cloud-overview.png)
 
 ## 为什么选择 TiDB Cloud
 
-TiDB Cloud 使您无需或仅需少量培训就能轻松处理复杂的任务，如基础设施管理和集群部署。
+TiDB Cloud 使你无需或仅需少量培训就能轻松处理复杂的任务，如基础设施管理和集群部署。
 
 - 开发人员和数据库管理员（DBA）可以轻松处理大量在线流量，并快速分析跨多个数据集的大量数据。
 
@@ -22,11 +22,11 @@ TiDB Cloud 使您无需或仅需少量培训就能轻松处理复杂的任务，
 
 <iframe width="600" height="450" src="https://www.youtube.com/embed/skCV9BEmjbo?enablejsapi=1" title="Why TiDB Cloud?" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-使用 TiDB Cloud，您可以获得以下关键特性：
+使用 TiDB Cloud，你可以获得以下关键特性：
 
 - **快速且可定制的扩展**
 
-    在保持 ACID 事务的同时，可以弹性且透明地扩展到数百个节点以支持关键工作负载。无需考虑分片。您可以根据业务需求分别扩展性能节点和存储节点。
+    在保持 ACID 事务的同时，可以弹性且透明地扩展到数百个节点以支持关键工作负载。无需考虑分片。你可以根据业务需求分别扩展性能节点和存储节点。
 
 - **MySQL 兼容性**
 
@@ -42,7 +42,7 @@ TiDB Cloud 使您无需或仅需少量培训就能轻松处理复杂的任务，
 
 - **企业级安全**
 
-    在专用网络和机器中保护您的数据，支持传输中和静态数据加密。TiDB Cloud 已通过 SOC 2 Type 2、ISO 27001:2013、ISO 27701 认证，并完全符合 GDPR。
+    在专用网络和机器中保护你的数据，支持传输中和静态数据加密。TiDB Cloud 已通过 SOC 2 Type 2、ISO 27001:2013、ISO 27701 认证，并完全符合 GDPR。
 
 - **全托管服务**
 
@@ -54,7 +54,7 @@ TiDB Cloud 使您无需或仅需少量培训就能轻松处理复杂的任务，
 
 - **简单的定价方案**
 
-    只需为您使用的部分付费，价格透明且无隐藏费用。
+    只需为你使用的部分付费，价格透明且无隐藏费用。
 
 - **世界级支持**
 
@@ -84,8 +84,8 @@ TiDB Cloud 提供以下两种部署选项：
 
 - TiDB Cloud 中央服务
 
-    中央服务（包括计费、告警、元数据存储、仪表板 UI）是独立部署的。您可以通过互联网访问仪表板 UI 来操作 TiDB 集群。
+    中央服务（包括计费、告警、元数据存储、仪表板 UI）是独立部署的。你可以通过互联网访问仪表板 UI 来操作 TiDB 集群。
 
-- 您的 VPC
+- 你的 VPC
 
-    您可以通过私有端点连接或 VPC 对等连接来连接您的 TiDB 集群。详情请参阅[设置私有端点连接](/tidb-cloud/set-up-private-endpoint-connections.md)或[设置 VPC 对等连接](/tidb-cloud/set-up-vpc-peering-connections.md)。
+    你可以通过私有端点连接或 VPC 对等连接来连接你的 TiDB 集群。详情请参阅[设置私有端点连接](/tidb-cloud/set-up-private-endpoint-connections.md)或[设置 VPC 对等连接](/tidb-cloud/set-up-vpc-peering-connections.md)。

@@ -14,7 +14,7 @@ aliases: ['/tidbcloud/connected-care-announcement']
 
 ## Connected Care
 
-Connected Care 服务旨在通过现代通信工具、主动支持和先进的 AI 功能加强您与 TiDB Cloud 的连接，提供无缝和以客户为中心的体验。
+Connected Care 服务旨在通过现代通信工具、主动支持和先进的 AI 功能加强你与 TiDB Cloud 的连接，提供无缝和以客户为中心的体验。
 
 在 Connected Care 服务中，有四种支持计划：**Basic**、**Developer**（对应传统的 **Standard** 计划）、**Enterprise** 和 **Premium**。
 
@@ -47,23 +47,23 @@ Connected Care 服务中的支持计划引入了一套全新的功能，如下�
 
 - Connected：诊所服务
 
-    此功能提供先进的监控和诊断服务 Clinic，旨在帮助您通过详细分析和可操作的见解快速识别性能问题、优化数据库并提高整体性能。更多信息，请参见 [Connected：诊所服务](/tidb-cloud/tidb-cloud-clinic.md)。
+    此功能提供先进的监控和诊断服务 Clinic，旨在帮助你通过详细分析和可操作的见解快速识别性能问题、优化数据库并提高整体性能。更多信息，请参见 [Connected：诊所服务](/tidb-cloud/tidb-cloud-clinic.md)。
 
 - Connected：即时通讯中的 AI 聊天
 
-    此功能使您能够通过即时通讯（IM）工具与 AI 助手聊天，立即获得问题的答案。更多信息，请参见 [Connected：即时通讯中的 AI 聊天](/tidb-cloud/connected-ai-chat-in-im.md)。
+    此功能使你能够通过即时通讯（IM）工具与 AI 助手聊天，立即获得问题的答案。更多信息，请参见 [Connected：即时通讯中的 AI 聊天](/tidb-cloud/connected-ai-chat-in-im.md)。
 
 - Connected：TiDB Cloud 告警的即时通讯订阅
 
-    此功能为您提供了一种通过即时通讯工具订阅告警通知的简便方法，让您随时了解重要更新。更多信息，请参见[通过 Slack 订阅](/tidb-cloud/monitor-alert-slack.md)和[通过 Zoom 订阅](/tidb-cloud/monitor-alert-zoom.md)。
+    此功能为你提供了一种通过即时通讯工具订阅告警通知的简便方法，让你随时了解重要更新。更多信息，请参见[通过 Slack 订阅](/tidb-cloud/monitor-alert-slack.md)和[通过 Zoom 订阅](/tidb-cloud/monitor-alert-zoom.md)。
 
 - Connected：工单创建和更新订阅
 
-    此功能使您能够通过即时通讯工具创建支持工单并订阅工单更新。更多信息，请参见[通过 Slack 创建工单和订阅工单更新](/tidb-cloud/connected-slack-ticket-creation.md)和[通过 Lark 创建工单和订阅工单更新](/tidb-cloud/connected-lark-ticket-creation.md)。
+    此功能使你能够通过即时通讯工具创建支持工单并订阅工单更新。更多信息，请参见[通过 Slack 创建工单和订阅工单更新](/tidb-cloud/connected-slack-ticket-creation.md)和[通过 Lark 创建工单和订阅工单更新](/tidb-cloud/connected-lark-ticket-creation.md)。
 
 - Connected：支持工单的即时通讯交互
 
-    此功能使您能够通过即时通讯工具快速创建和处理支持工单，实现流畅的沟通。更多信息，请参见[通过 Slack 与支持工单交互](/tidb-cloud/connected-slack-ticket-interaction.md)和[通过 Lark 与支持工单交互](/tidb-cloud/connected-lark-ticket-interaction.md)。
+    此功能使你能够通过即时通讯工具快速创建和处理支持工单，实现流畅的沟通。更多信息，请参见[通过 Slack 与支持工单交互](/tidb-cloud/connected-slack-ticket-interaction.md)和[通过 Lark 与支持工单交互](/tidb-cloud/connected-lark-ticket-interaction.md)。
 
 通过这些新功能，Connected Care 服务为不同客户需求提供更好的连接性、更个性化的支持和更具成本效益的解决方案。
 
@@ -83,20 +83,20 @@ Connected Care 服务中的支持计划引入了一套全新的功能，如下�
 | 传统 **Standard** 计划                           | 2025 年 2 月 17 日  |
 | 传统 **Enterprise** 和 **Premium** 计划 | 2026 年 1 月 15 日  |
 
-一旦传统支持计划关闭，TiDB Cloud 将不再支持它。如果您在相关关闭日期之前没有迁移到 Connected Care 中的任何支持计划，您将自动迁移到 Connected Care 中的 **Basic** 支持计划。
+一旦传统支持计划关闭，TiDB Cloud 将不再支持它。如果你在相关关闭日期之前没有迁移到 Connected Care 中的任何支持计划，你将自动迁移到 Connected Care 中的 **Basic** 支持计划。
 
 ## 常见问题
 
 ### 如何查看或更改我当前的支持计划？
 
-在 [TiDB Cloud 控制台](https://tidbcloud.com/)中，点击左下角的**支持**。将显示**支持**页面，您当前的支持计划会用 **CURRENT** 标签突出显示。
+在 [TiDB Cloud 控制台](https://tidbcloud.com/)中，点击左下角的**支持**。将显示**支持**页面，你当前的支持计划会用 **CURRENT** 标签突出显示。
 
-您可以在**支持**页面上迁移到新的支持计划，但 **Premium** 支持计划除外。要升级到 **Premium** 计划，请[联系销售](https://www.pingcap.com/contact-us)。
+你可以在**支持**页面上迁移到新的支持计划，但 **Premium** 支持计划除外。要升级到 **Premium** 计划，请[联系销售](https://www.pingcap.com/contact-us)。
 
 ### 我需要为类似的服务支付更多费用吗？
 
-虽然新的 Connected Care 服务提供了更全面和功能更丰富的支持体验，但定价仍与之前的产品保持一致。TiDB Cloud 仍然致力于提供更多价值，以更好地支持您的发展历程。
+虽然新的 Connected Care 服务提供了更全面和功能更丰富的支持体验，但定价仍与之前的产品保持一致。TiDB Cloud 仍然致力于提供更多价值，以更好地支持你的发展历程。
 
 ### 传统 **Basic** 计划关闭后，我如何获得技术支持？
 
-您仍然可以获得[账单和账户支持](/tidb-cloud/tidb-cloud-support.md#create-an-account-or-billing-support-ticket)。对于技术支持，请考虑购买 Connected Care 服务中的支持计划。建议您从包含一个月免费试用的 **Developer** 计划开始。
+你仍然可以获得[账单和账户支持](/tidb-cloud/tidb-cloud-support.md#create-an-account-or-billing-support-ticket)。对于技术支持，请考虑购买 Connected Care 服务中的支持计划。建议你从包含一个月免费试用的 **Developer** 计划开始。

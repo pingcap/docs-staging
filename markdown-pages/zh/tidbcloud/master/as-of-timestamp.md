@@ -7,7 +7,7 @@ summary: "了解如何使用 `AS OF TIMESTAMP` 语句子句读取历史数据。
 
 本文档介绍如何使用 `AS OF TIMESTAMP` 子句执行[历史读取](/stale-read.md)功能来读取 TiDB 中的历史数据，包括具体的使用示例和保存历史数据的策略。
 
-TiDB 支持通过标准 SQL 接口读取历史数据，即 `AS OF TIMESTAMP` SQL 子句，无需特殊的客户端或驱动程序。在数据更新或删除后，您可以使用此 SQL 接口读取更新或删除之前的历史数据。
+TiDB 支持通过标准 SQL 接口读取历史数据，即 `AS OF TIMESTAMP` SQL 子句，无需特殊的客户端或驱动程序。在数据更新或删除后，你可以使用此 SQL 接口读取更新或删除之前的历史数据。
 
 > **注意：**
 >
@@ -15,15 +15,15 @@ TiDB 支持通过标准 SQL 接口读取历史数据，即 `AS OF TIMESTAMP` SQL
 
 ## 语法
 
-您可以通过以下三种方式使用 `AS OF TIMESTAMP` 子句：
+你可以通过以下三种方式使用 `AS OF TIMESTAMP` 子句：
 
 - [`SELECT ... FROM ... AS OF TIMESTAMP`](/sql-statements/sql-statement-select.md)
 - [`START TRANSACTION READ ONLY AS OF TIMESTAMP`](/sql-statements/sql-statement-start-transaction.md)
 - [`SET TRANSACTION READ ONLY AS OF TIMESTAMP`](/sql-statements/sql-statement-set-transaction.md)
 
-如果要指定精确的时间点，可以在 `AS OF TIMESTAMP` 子句中设置日期时间值或使用时间函数。日期时间的格式类似于 "2016-10-08 16:45:26.999"，最小时间单位为毫秒，但大多数情况下，秒级的时间单位足以指定日期时间，例如 "2016-10-08 16:45:26"。您也可以使用 `NOW(3)` 函数获取精确到毫秒的当前时间。如果要读取几秒前的数据，**建议**使用 `NOW() - INTERVAL 10 SECOND` 这样的表达式。
+如果要指定精确的时间点，可以在 `AS OF TIMESTAMP` 子句中设置日期时间值或使用时间函数。日期时间的格式类似于 "2016-10-08 16:45:26.999"，最小时间单位为毫秒，但大多数情况下，秒级的时间单位足以指定日期时间，例如 "2016-10-08 16:45:26"。你也可以使用 `NOW(3)` 函数获取精确到毫秒的当前时间。如果要读取几秒前的数据，**建议**使用 `NOW() - INTERVAL 10 SECOND` 这样的表达式。
 
-如果要指定时间范围，可以在子句中使用 [`TIDB_BOUNDED_STALENESS()`](/functions-and-operators/tidb-functions.md#tidb_bounded_staleness) 函数。使用此函数时，TiDB 会在指定的时间范围内选择一个合适的时间戳。"合适"意味着在访问的副本上没有在此时间戳之前开始且尚未提交的事务，即 TiDB 可以在访问的副本上执行读取操作，且读取操作不会被阻塞。您需要使用 `TIDB_BOUNDED_STALENESS(t1, t2)` 来调用此函数。`t1` 和 `t2` 是时间范围的两端，可以使用日期时间值或时间函数指定。
+如果要指定时间范围，可以在子句中使用 [`TIDB_BOUNDED_STALENESS()`](/functions-and-operators/tidb-functions.md#tidb_bounded_staleness) 函数。使用此函数时，TiDB 会在指定的时间范围内选择一个合适的时间戳。"合适"意味着在访问的副本上没有在此时间戳之前开始且尚未提交的事务，即 TiDB 可以在访问的副本上执行读取操作，且读取操作不会被阻塞。你需要使用 `TIDB_BOUNDED_STALENESS(t1, t2)` 来调用此函数。`t1` 和 `t2` 是时间范围的两端，可以使用日期时间值或时间函数指定。
 
 以下是 `AS OF TIMESTAMP` 子句的一些示例：
 
@@ -38,7 +38,7 @@ TiDB 支持通过标准 SQL 接口读取历史数据，即 `AS OF TIMESTAMP` SQL
 >
 > 使用历史读取时，需要为 TiDB 和 PD 节点部署 NTP 服务。这可以避免 TiDB 使用的指定时间戳超前于最新的 TSO 分配进度（例如超前几秒的时间戳），或晚于 GC 安全点时间戳的情况。当指定的时间戳超出服务范围时，TiDB 会返回错误。
 >
-> 为了减少延迟并提高历史读取数据的时效性，您可以修改 TiKV 的 `advance-ts-interval` 配置项。详情请参见[减少历史读取延迟](/stale-read.md#reduce-stale-read-latency)。
+> 为了减少延迟并提高历史读取数据的时效性，你可以修改 TiKV 的 `advance-ts-interval` 配置项。详情请参见[减少历史读取延迟](/stale-read.md#reduce-stale-read-latency)。
 
 ## 使用示例
 
@@ -125,7 +125,7 @@ select * from t;
 
 ### 使用 `SELECT` 语句读取历史数据
 
-您可以使用 [`SELECT ... FROM ... AS OF TIMESTAMP`](/sql-statements/sql-statement-select.md) 语句读取过去某个时间点的数据。
+你可以使用 [`SELECT ... FROM ... AS OF TIMESTAMP`](/sql-statements/sql-statement-select.md) 语句读取过去某个时间点的数据。
 
 ```sql
 select * from t as of timestamp '2021-05-26 16:45:26';
@@ -148,7 +148,7 @@ select * from t as of timestamp '2021-05-26 16:45:26';
 
 ### 使用 `START TRANSACTION READ ONLY AS OF TIMESTAMP` 语句读取历史数据
 
-您可以使用 [`START TRANSACTION READ ONLY AS OF TIMESTAMP`](/sql-statements/sql-statement-start-transaction.md) 语句基于过去的某个时间点启动只读事务。该事务读取给定时间的历史数据。
+你可以使用 [`START TRANSACTION READ ONLY AS OF TIMESTAMP`](/sql-statements/sql-statement-start-transaction.md) 语句基于过去的某个时间点启动只读事务。该事务读取给定时间的历史数据。
 
 ```sql
 start transaction read only as of timestamp '2021-05-26 16:45:26';
@@ -181,7 +181,7 @@ commit;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-事务提交后，您可以读取最新数据。
+事务提交后，你可以读取最新数据。
 
 ```sql
 select * from t;
@@ -204,7 +204,7 @@ select * from t;
 
 ### 使用 `SET TRANSACTION READ ONLY AS OF TIMESTAMP` 语句读取历史数据
 
-您可以使用 [`SET TRANSACTION READ ONLY AS OF TIMESTAMP`](/sql-statements/sql-statement-set-transaction.md) 语句将下一个事务设置为基于过去某个时间点的只读事务。该事务读取给定时间的历史数据。
+你可以使用 [`SET TRANSACTION READ ONLY AS OF TIMESTAMP`](/sql-statements/sql-statement-set-transaction.md) 语句将下一个事务设置为基于过去某个时间点的只读事务。该事务读取给定时间的历史数据。
 
 ```sql
 set transaction read only as of timestamp '2021-05-26 16:45:26';
@@ -245,7 +245,7 @@ commit;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-事务提交后，您可以读取最新数据。
+事务提交后，你可以读取最新数据。
 
 ```sql
 select * from t;

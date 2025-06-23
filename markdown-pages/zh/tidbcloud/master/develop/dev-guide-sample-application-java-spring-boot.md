@@ -7,11 +7,11 @@ summary: 了解如何使用 Spring Boot 连接 TiDB。本教程提供使用 Spri
 
 TiDB 是一个兼容 MySQL 的数据库，而 [Spring](https://spring.io/) 是一个流行的开源 Java 容器框架。本文档使用 [Spring Boot](https://spring.io/projects/spring-boot) 作为使用 Spring 的方式。
 
-在本教程中，您将学习如何使用 TiDB 以及 [Spring Data JPA](https://spring.io/projects/spring-data-jpa) 和作为 JPA 提供者的 [Hibernate](https://hibernate.org/orm/) 来完成以下任务：
+在本教程中，你将学习如何使用 TiDB 以及 [Spring Data JPA](https://spring.io/projects/spring-data-jpa) 和作为 JPA 提供者的 [Hibernate](https://hibernate.org/orm/) 来完成以下任务：
 
 - 设置环境。
-- 使用 Hibernate 和 Spring Data JPA 连接到您的 TiDB 集群。
-- 构建并运行您的应用程序。您也可以查看[示例代码片段](#示例代码片段)以了解基本的 CRUD 操作。
+- 使用 Hibernate 和 Spring Data JPA 连接到你的 TiDB 集群。
+- 构建并运行你的应用程序。你也可以查看[示例代码片段](#示例代码片段)以了解基本的 CRUD 操作。
 
 > **注意：**
 >
@@ -19,26 +19,26 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Spring](https://spring.io/) 是�
 
 ## 前提条件
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
-- **Java Development Kit (JDK) 17** 或更高版本。您可以根据您的业务和个人需求选择 [OpenJDK](https://openjdk.org/) 或 [Oracle JDK](https://www.oracle.com/hk/java/technologies/downloads/)。
+- **Java Development Kit (JDK) 17** 或更高版本。你可以根据你的业务和个人需求选择 [OpenJDK](https://openjdk.org/) 或 [Oracle JDK](https://www.oracle.com/hk/java/technologies/downloads/)。
 - [Maven](https://maven.apache.org/install.html) **3.8** 或更高版本。
 - [Git](https://git-scm.com/downloads)。
 - 一个 TiDB 集群。
 
 <CustomContent platform="tidb">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](/production-deployment-using-tiup.md)的说明创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)的说明创建本地集群。
 
 </CustomContent>
@@ -58,7 +58,7 @@ cd tidb-java-springboot-jpa-quickstart
 
 ### 步骤 2：配置连接信息
 
-根据您选择的 TiDB 部署选项连接到您的 TiDB 集群。
+根据你选择的 TiDB 部署选项连接到你的 TiDB 集群。
 
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
@@ -67,22 +67,22 @@ cd tidb-java-springboot-jpa-quickstart
 
 2. 点击右上角的**连接**。此时会显示一个连接对话框。
 
-3. 确保连接对话框中的配置与您的操作环境相匹配。
+3. 确保连接对话框中的配置与你的操作环境相匹配。
 
     - **连接类型**设置为 `Public`
     - **分支**设置为 `main`
     - **连接方式**设置为 `General`
-    - **操作系统**与您的环境匹配。
+    - **操作系统**与你的环境匹配。
 
     > **提示：**
     >
-    > 如果您的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换到相应的 Linux 发行版。
+    > 如果你的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换到相应的 Linux 发行版。
 
 4. 点击**生成密码**创建一个随机密码。
 
     > **提示：**
     >
-    > 如果您之前已经创建了密码，您可以使用原始密码，也可以点击**重置密码**生成一个新密码。
+    > 如果你之前已经创建了密码，你可以使用原始密码，也可以点击**重置密码**生成一个新密码。
 
 5. 运行以下命令复制 `env.sh.example` 并将其重命名为 `env.sh`：
 
@@ -103,7 +103,7 @@ cd tidb-java-springboot-jpa-quickstart
 
     请确保将占位符 `{}` 替换为从连接对话框获得的连接参数。
 
-    TiDB Cloud Serverless 需要安全连接。因此，您需要将 `USE_SSL` 的值设置为 `true`。
+    TiDB Cloud Serverless 需要安全连接。因此，你需要将 `USE_SSL` 的值设置为 `true`。
 
 7. 保存 `env.sh` 文件。
 
@@ -116,9 +116,9 @@ cd tidb-java-springboot-jpa-quickstart
 
 3. 在连接对话框中，从**连接类型**下拉列表中选择**公共**，然后点击 **CA 证书**下载 CA 证书。
 
-    如果您尚未配置 IP 访问列表，请点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤在首次连接之前进行配置。
+    如果你尚未配置 IP 访问列表，请点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤在首次连接之前进行配置。
 
-    除了**公共**连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**连接类型。更多信息，请参见[连接到您的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+    除了**公共**连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**连接类型。更多信息，请参见[连接到你的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
 4. 运行以下命令复制 `env.sh.example` 并将其重命名为 `env.sh`：
 
@@ -161,7 +161,7 @@ cd tidb-java-springboot-jpa-quickstart
     export USE_SSL='false'
     ```
 
-    请确保将占位符 `{}` 替换为连接参数，并将 `USE_SSL` 设置为 `false`。如果您在本地运行 TiDB，默认主机地址是 `127.0.0.1`，密码为空。
+    请确保将占位符 `{}` 替换为连接参数，并将 `USE_SSL` 设置为 `false`。如果你在本地运行 TiDB，默认主机地址是 `127.0.0.1`，密码为空。
 
 3. 保存 `env.sh` 文件。
 
@@ -186,7 +186,7 @@ cd tidb-java-springboot-jpa-quickstart
 
 ## 示例代码片段
 
-您可以参考以下示例代码片段来完成您自己的应用程序开发。
+你可以参考以下示例代码片段来完成你自己的应用程序开发。
 
 有关完整的示例代码及其运行方法，请查看 [tidb-samples/tidb-java-springboot-jpa-quickstart](https://github.com/tidb-samples/tidb-java-springboot-jpa-quickstart) 仓库。
 
@@ -208,7 +208,7 @@ spring:
       ddl-auto: create-drop
 ```
 
-配置完成后，将环境变量 `TIDB_JDBC_URL`、`TIDB_USER` 和 `TIDB_PASSWORD` 设置为您的 TiDB 集群的实际值。配置文件为这些环境变量提供了默认设置。如果您不配置环境变量，默认值如下：
+配置完成后，将环境变量 `TIDB_JDBC_URL`、`TIDB_USER` 和 `TIDB_PASSWORD` 设置为你的 TiDB 集群的实际值。配置文件为这些环境变量提供了默认设置。如果你不配置环境变量，默认值如下：
 
 - `TIDB_JDBC_URL`：`"jdbc:mysql://localhost:4000/test"`
 - `TIDB_USER`：`"root"`
@@ -216,7 +216,7 @@ spring:
 
 ### 数据管理：`@Repository`
 
-Spring Data JPA 通过 `@Repository` 接口管理数据。要使用 `JpaRepository` 提供的 CRUD 操作，您需要扩展 `JpaRepository` 接口：
+Spring Data JPA 通过 `@Repository` 接口管理数据。要使用 `JpaRepository` 提供的 CRUD 操作，你需要扩展 `JpaRepository` 接口：
 
 ```java
 @Repository
@@ -224,7 +224,7 @@ public interface PlayerRepository extends JpaRepository<PlayerBean, Long> {
 }
 ```
 
-然后，您可以在任何需要 `PlayerRepository` 的类中使用 `@Autowired` 进行自动依赖注入。这使您可以直接使用 CRUD 函数。示例如下：
+然后，你可以在任何需要 `PlayerRepository` 的类中使用 `@Autowired` 进行自动依赖注入。这使你可以直接使用 CRUD 函数。示例如下：
 
 ```java
 @Autowired

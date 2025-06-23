@@ -11,7 +11,7 @@ summary: 了解 SHARD_ROW_ID_BITS 属性。
 
 对于非聚簇主键或没有主键的表，TiDB 使用隐式自增行 ID。当执行大量 `INSERT` 操作时，数据会写入单个 Region，导致写入热点。
 
-为了缓解热点问题，您可以配置 `SHARD_ROW_ID_BITS`。行 ID 会被打散，数据会写入多个不同的 Region。
+为了缓解热点问题，你可以配置 `SHARD_ROW_ID_BITS`。行 ID 会被打散，数据会写入多个不同的 Region。
 
 - `SHARD_ROW_ID_BITS = 4` 表示 16 个分片
 - `SHARD_ROW_ID_BITS = 6` 表示 64 个分片

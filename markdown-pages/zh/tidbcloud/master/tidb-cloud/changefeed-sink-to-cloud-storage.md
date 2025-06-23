@@ -9,7 +9,7 @@ summary: 本文介绍如何创建 changefeed 将数据从 TiDB Cloud 流式传�
 
 > **注意：**
 >
-> - 要将数据流式传输到云存储，请确保您的 TiDB 集群版本为 v7.1.1 或更高版本。要将 TiDB Cloud Dedicated 集群升级到 v7.1.1 或更高版本，请[联系 TiDB Cloud 支持团队](/tidb-cloud/tidb-cloud-support.md)。
+> - 要将数据流式传输到云存储，请确保你的 TiDB 集群版本为 v7.1.1 或更高版本。要将 TiDB Cloud Dedicated 集群升级到 v7.1.1 或更高版本，请[联系 TiDB Cloud 支持团队](/tidb-cloud/tidb-cloud-support.md)。
 > - 对于 [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) 集群，changefeed 功能不可用。
 
 ## 限制
@@ -20,25 +20,25 @@ summary: 本文介绍如何创建 changefeed 将数据从 TiDB Cloud 流式传�
 
 ## 步骤 1. 配置目标
 
-导航到目标 TiDB 集群的集群概览页面。在左侧导航栏中点击**数据** > **Changefeed**，点击**创建 Changefeed**，然后选择 **Amazon S3** 或 **GCS** 作为目标。配置过程根据您选择的目标而有所不同。
+导航到目标 TiDB 集群的集群概览页面。在左侧导航栏中点击**数据** > **Changefeed**，点击**创建 Changefeed**，然后选择 **Amazon S3** 或 **GCS** 作为目标。配置过程根据你选择的目标而有所不同。
 
 <SimpleTab>
 <div label="Amazon S3">
 
-对于 **Amazon S3**，填写 **S3 端点**区域：`S3 URI`、`Access Key ID` 和 `Secret Access Key`。确保 S3 存储桶与您的 TiDB 集群在同一区域。
+对于 **Amazon S3**，填写 **S3 端点**区域：`S3 URI`、`Access Key ID` 和 `Secret Access Key`。确保 S3 存储桶与你的 TiDB 集群在同一区域。
 
 ![s3_endpoint](/media/tidb-cloud/changefeed/sink-to-cloud-storage-s3-endpoint.jpg)
 
 </div>
 <div label="GCS">
 
-对于 **GCS**，在填写 **GCS 端点**之前，您需要先授予 GCS 存储桶访问权限。请按照以下步骤操作：
+对于 **GCS**，在填写 **GCS 端点**之前，你需要先授予 GCS 存储桶访问权限。请按照以下步骤操作：
 
-1. 在 TiDB Cloud 控制台中，记录**服务账号 ID**，该 ID 将用于授予 TiDB Cloud 访问您的 GCS 存储桶的权限。
+1. 在 TiDB Cloud 控制台中，记录**服务账号 ID**，该 ID 将用于授予 TiDB Cloud 访问你的 GCS 存储桶的权限。
 
     ![gcs_endpoint](/media/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-endpoint.png)
 
-2. 在 Google Cloud 控制台中，为您的 GCS 存储桶创建 IAM 角色。
+2. 在 Google Cloud 控制台中，为你的 GCS 存储桶创建 IAM 角色。
 
     1. 登录 [Google Cloud 控制台](https://console.cloud.google.com/)。
     2. 转到[角色](https://console.cloud.google.com/iam-admin/roles)页面，然后点击**创建角色**。
@@ -57,7 +57,7 @@ summary: 本文介绍如何创建 changefeed 将数据从 TiDB Cloud 流式传�
 
     ![添加权限](/media/tidb-cloud/changefeed/sink-to-cloud-storage-gcs-assign-permission.png)
 
-3. 转到[存储桶](https://console.cloud.google.com/storage/browser)页面，选择您希望 TiDB Cloud 访问的 GCS 存储桶。请注意，GCS 存储桶必须与您的 TiDB 集群在同一区域。
+3. 转到[存储桶](https://console.cloud.google.com/storage/browser)页面，选择你希望 TiDB Cloud 访问的 GCS 存储桶。请注意，GCS 存储桶必须与你的 TiDB 集群在同一区域。
 
 4. 在**存储桶详情**页面，点击**权限**标签，然后点击**授予访问权限**。
 
@@ -65,12 +65,12 @@ summary: 本文介绍如何创建 changefeed 将数据从 TiDB Cloud 流式传�
 
 5. 填写以下信息以授予存储桶访问权限，然后点击**保存**。
 
-    - 在**新主体**字段中，粘贴您之前记录的目标 TiDB 集群的**服务账号 ID**。
-    - 在**选择角色**下拉列表中，输入您刚刚创建的 IAM 角色名称，然后从筛选结果中选择该名称。
+    - 在**新主体**字段中，粘贴你之前记录的目标 TiDB 集群的**服务账号 ID**。
+    - 在**选择角色**下拉列表中，输入你刚刚创建的 IAM 角色名称，然后从筛选结果中选择该名称。
 
     > **注意：**
     >
-    > 要移除 TiDB Cloud 的访问权限，只需移除您已授予的访问权限即可。
+    > 要移除 TiDB Cloud 的访问权限，只需移除你已授予的访问权限即可。
 
 6. 在**存储桶详情**页面，点击**对象**标签。
 
@@ -89,8 +89,8 @@ summary: 本文介绍如何创建 changefeed 将数据从 TiDB Cloud 流式传�
 
 点击**下一步**以建立从 TiDB Cloud Dedicated 集群到 Amazon S3 或 GCS 的连接。TiDB Cloud 将自动测试并验证连接是否成功。
 
-- 如果成功，您将进入下一步配置。
-- 如果失败，将显示连接错误，您需要处理该错误。错误解决后，点击**下一步**重试连接。
+- 如果成功，你将进入下一步配置。
+- 如果失败，将显示连接错误，你需要处理该错误。错误解决后，点击**下一步**重试连接。
 
 ## 步骤 2. 配置复制
 
@@ -98,14 +98,14 @@ summary: 本文介绍如何创建 changefeed 将数据从 TiDB Cloud 流式传�
 
     ![changefeed 的表过滤器](/media/tidb-cloud/changefeed/sink-to-s3-02-table-filter.jpg)
 
-    - **过滤规则**：您可以在此列设置过滤规则。默认有一个规则 `*.*`，表示复制所有表。添加新规则时，TiDB Cloud 会查询 TiDB 中的所有表，并在右侧框中仅显示匹配规则的表。您最多可以添加 100 个过滤规则。
+    - **过滤规则**：你可以在此列设置过滤规则。默认有一个规则 `*.*`，表示复制所有表。添加新规则时，TiDB Cloud 会查询 TiDB 中的所有表，并在右侧框中仅显示匹配规则的表。你最多可以添加 100 个过滤规则。
     - **具有有效键的表**：此列显示具有有效键（包括主键或唯一索引）的表。
-    - **没有有效键的表**：此列显示缺少主键或唯一键的表。这些表在复制过程中会带来挑战，因为缺少唯一标识符可能会导致在处理下游重复事件时出现数据不一致。为确保数据一致性，建议在开始复制之前为这些表添加唯一键或主键。或者，您可以使用过滤规则排除这些表。例如，您可以使用规则 `"!test.tbl1"` 排除表 `test.tbl1`。
+    - **没有有效键的表**：此列显示缺少主键或唯一键的表。这些表在复制过程中会带来挑战，因为缺少唯一标识符可能会导致在处理下游重复事件时出现数据不一致。为确保数据一致性，建议在开始复制之前为这些表添加唯一键或主键。或者，你可以使用过滤规则排除这些表。例如，你可以使用规则 `"!test.tbl1"` 排除表 `test.tbl1`。
 
 2. 自定义**事件过滤器**以过滤要复制的事件。
 
-    - **匹配表**：您可以在此列设置事件过滤器将应用于哪些表。规则语法与前面的**表过滤器**区域使用的语法相同。每个 changefeed 最多可以添加 10 个事件过滤规则。
-    - **忽略的事件**：您可以设置事件过滤器将从 changefeed 中排除哪些类型的事件。
+    - **匹配表**：你可以在此列设置事件过滤器将应用于哪些表。规则语法与前面的**表过滤器**区域使用的语法相同。每个 changefeed 最多可以添加 10 个事件过滤规则。
+    - **忽略的事件**：你可以设置事件过滤器将从 changefeed 中排除哪些类型的事件。
 
 3. 在**开始复制位置**区域，选择以下复制位置之一：
 
@@ -120,7 +120,7 @@ summary: 本文介绍如何创建 changefeed 将数据从 TiDB Cloud 流式传�
 
     要配置 **CSV** 格式，请填写以下字段：
 
-    - **二进制编码方法**：二进制数据的编码方法。您可以选择 **base64**（默认）或 **hex**。如果要与 AWS DMS 集成，请使用 **hex**。
+    - **二进制编码方法**：二进制数据的编码方法。你可以选择 **base64**（默认）或 **hex**。如果要与 AWS DMS 集成，请使用 **hex**。
     - **日期分隔符**：根据年、月、日轮换数据，或选择不轮换。
     - **分隔符**：指定用于分隔 CSV 文件中值的字符。逗号（`,`）是最常用的分隔符。
     - **引号**：指定用于包围包含分隔符或特殊字符的值的字符。通常使用双引号（`"`）作为引号字符。
@@ -138,7 +138,7 @@ summary: 本文介绍如何创建 changefeed 将数据从 TiDB Cloud 流式传�
     </div>
     </SimpleTab>
 
-5. 在**刷新参数**区域，您可以配置两个项目：
+5. 在**刷新参数**区域，你可以配置两个项目：
 
     - **刷新间隔**：默认设置为 60 秒，可在 2 秒到 10 分钟范围内调整；
     - **文件大小**：默认设置为 64 MB，可在 1 MB 到 512 MB 范围内调整。
@@ -147,11 +147,11 @@ summary: 本文介绍如何创建 changefeed 将数据从 TiDB Cloud 流式传�
 
     > **注意：**
     >
-    > 这两个参数将影响每个数据库表在云存储中生成的对象数量。如果有大量表，使用相同的配置将增加生成的对象数量，从而增加调用云存储 API 的成本。因此，建议根据您的恢复点目标（RPO）和成本要求适当配置这些参数。
+    > 这两个参数将影响每个数据库表在云存储中生成的对象数量。如果有大量表，使用相同的配置将增加生成的对象数量，从而增加调用云存储 API 的成本。因此，建议根据你的恢复点目标（RPO）和成本要求适当配置这些参数。
 
 ## 步骤 3. 配置规格
 
-点击**下一步**以配置您的 changefeed 规格。
+点击**下一步**以配置你的 changefeed 规格。
 
 1. 在 **Changefeed 规格**区域，指定 changefeed 将使用的复制容量单位（RCU）数量。
 2. 在 **Changefeed 名称**区域，为 changefeed 指定一个名称。
@@ -160,9 +160,9 @@ summary: 本文介绍如何创建 changefeed 将数据从 TiDB Cloud 流式传�
 
 点击**下一步**以查看 changefeed 配置。
 
-- 如果您已验证所有配置都正确，点击**创建**以继续创建 changefeed。
-- 如果您需要修改任何配置，点击**上一步**返回并进行必要的更改。
+- 如果你已验证所有配置都正确，点击**创建**以继续创建 changefeed。
+- 如果你需要修改任何配置，点击**上一步**返回并进行必要的更改。
 
-导出将很快开始，您将看到导出状态从**创建中**变为**运行中**。
+导出将很快开始，你将看到导出状态从**创建中**变为**运行中**。
 
-点击 changefeed 的名称以转到其详情页面。在此页面上，您可以查看有关 changefeed 的更多信息，包括检查点状态、复制延迟和其他相关指标。
+点击 changefeed 的名称以转到其详情页面。在此页面上，你可以查看有关 changefeed 的更多信息，包括检查点状态、复制延迟和其他相关指标。

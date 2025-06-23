@@ -7,11 +7,11 @@ summary: 了解如何使用 Go-MySQL-Driver 连接 TiDB。本教程提供使用 
 
 TiDB 是一个兼容 MySQL 的数据库，而 [Go-MySQL-Driver](https://github.com/go-sql-driver/mysql) 是 [database/sql](https://pkg.go.dev/database/sql) 接口的 MySQL 实现。
 
-在本教程中，您可以学习如何使用 TiDB 和 Go-MySQL-Driver 完成以下任务：
+在本教程中，你可以学习如何使用 TiDB 和 Go-MySQL-Driver 完成以下任务：
 
 - 设置环境。
 - 使用 Go-MySQL-Driver 连接到 TiDB 集群。
-- 构建并运行应用程序。您也可以查看基本 CRUD 操作的[示例代码片段](#示例代码片段)。
+- 构建并运行应用程序。你也可以查看基本 CRUD 操作的[示例代码片段](#示例代码片段)。
 
 > **注意：**
 >
@@ -19,7 +19,7 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Go-MySQL-Driver](https://github.c
 
 ## 前提条件
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
 - [Go](https://go.dev/) **1.20** 或更高版本。
 - [Git](https://git-scm.com/downloads)。
@@ -27,17 +27,17 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Go-MySQL-Driver](https://github.c
 
 <CustomContent platform="tidb">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](/production-deployment-using-tiup.md)创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)创建本地集群。
 
 </CustomContent>
@@ -57,7 +57,7 @@ cd tidb-golang-sql-driver-quickstart
 
 ### 步骤 2：配置连接信息
 
-根据您选择的 TiDB 部署选项连接到您的 TiDB 集群。
+根据你选择的 TiDB 部署选项连接到你的 TiDB 集群。
 
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
@@ -66,22 +66,22 @@ cd tidb-golang-sql-driver-quickstart
 
 2. 点击右上角的**连接**。将显示连接对话框。
 
-3. 确保连接对话框中的配置与您的操作环境匹配。
+3. 确保连接对话框中的配置与你的操作环境匹配。
 
     - **连接类型**设置为 `Public`
     - **分支**设置为 `main`
     - **连接工具**设置为 `General`
-    - **操作系统**与您的环境匹配。
+    - **操作系统**与你的环境匹配。
 
     > **提示：**
     >
-    > 如果您的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换到相应的 Linux 发行版。
+    > 如果你的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换到相应的 Linux 发行版。
 
 4. 点击**生成密码**创建随机密码。
 
     > **提示：**
-    > 
-    > 如果您之前已经创建了密码，您可以使用原始密码或点击**重置密码**生成新密码。
+    >
+    > 如果你之前已经创建了密码，你可以使用原始密码或点击**重置密码**生成新密码。
 
 5. 运行以下命令复制 `.env.example` 并将其重命名为 `.env`：
 
@@ -102,7 +102,7 @@ cd tidb-golang-sql-driver-quickstart
 
     请确保将占位符 `{}` 替换为从连接对话框获得的连接参数。
 
-    TiDB Cloud Serverless 需要安全连接。因此，您需要将 `USE_SSL` 的值设置为 `true`。
+    TiDB Cloud Serverless 需要安全连接。因此，你需要将 `USE_SSL` 的值设置为 `true`。
 
 7. 保存 `.env` 文件。
 
@@ -115,9 +115,9 @@ cd tidb-golang-sql-driver-quickstart
 
 3. 在连接对话框中，从**连接类型**下拉列表中选择**公共**，然后点击 **CA 证书**下载 CA 证书。
 
-    如果您尚未配置 IP 访问列表，请在首次连接之前点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
+    如果你尚未配置 IP 访问列表，请在首次连接之前点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
 
-    除了**公共**连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**类型。更多信息，请参见[连接到您的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+    除了**公共**连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**类型。更多信息，请参见[连接到你的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
 4. 运行以下命令复制 `.env.example` 并将其重命名为 `.env`：
 
@@ -160,7 +160,7 @@ cd tidb-golang-sql-driver-quickstart
     USE_SSL='false'
     ```
 
-    请确保将占位符 `{}` 替换为连接参数，并将 `USE_SSL` 设置为 `false`。如果您在本地运行 TiDB，默认主机地址为 `127.0.0.1`，密码为空。
+    请确保将占位符 `{}` 替换为连接参数，并将 `USE_SSL` 设置为 `false`。如果你在本地运行 TiDB，默认主机地址为 `127.0.0.1`，密码为空。
 
 3. 保存 `.env` 文件。
 
@@ -179,7 +179,7 @@ cd tidb-golang-sql-driver-quickstart
 
 ## 示例代码片段
 
-您可以参考以下示例代码片段来完成自己的应用程序开发。
+你可以参考以下示例代码片段来完成自己的应用程序开发。
 
 有关完整的示例代码和如何运行它，请查看 [tidb-samples/tidb-golang-sql-driver-quickstart](https://github.com/tidb-samples/tidb-golang-sql-driver-quickstart) 仓库。
 
@@ -199,7 +199,7 @@ func openDB(driverName string, runnable func(db *sql.DB)) {
 }
 ```
 
-使用此函数时，您需要将 `${tidb_host}`、`${tidb_port}`、`${tidb_user}`、`${tidb_password}` 和 `${tidb_db_name}` 替换为您的 TiDB 集群的实际值。TiDB Cloud Serverless 需要安全连接。因此，您需要将 `${use_ssl}` 的值设置为 `true`。
+使用此函数时，你需要将 `${tidb_host}`、`${tidb_port}`、`${tidb_user}`、`${tidb_password}` 和 `${tidb_db_name}` 替换为你的 TiDB 集群的实际值。TiDB Cloud Serverless 需要安全连接。因此，你需要将 `${use_ssl}` 的值设置为 `true`。
 
 ### 插入数据
 
@@ -281,7 +281,7 @@ Golang 驱动程序提供对数据库的低级访问，但它要求开发人员�
 - 手动管理数据库事务。
 - 手动将数据行映射到数据对象。
 
-除非您需要编写复杂的 SQL 语句，否则建议使用 [ORM](https://en.wikipedia.org/w/index.php?title=Object-relational_mapping) 框架进行开发，例如 [GORM](/develop/dev-guide-sample-application-golang-gorm.md)。它可以帮助您：
+除非你需要编写复杂的 SQL 语句，否则建议使用 [ORM](https://en.wikipedia.org/w/index.php?title=Object-relational_mapping) 框架进行开发，例如 [GORM](/develop/dev-guide-sample-application-golang-gorm.md)。它可以帮助你：
 
 - 减少管理连接和事务的[样板代码](https://en.wikipedia.org/wiki/Boilerplate_code)。
 - 使用数据对象而不是大量 SQL 语句来操作数据。

@@ -5,7 +5,7 @@ summary: 了解 TiDB Cloud 性能测试结果。
 
 # TiDB Cloud 性能参考
 
-本文档提供了不同规模 TiDB 集群的 [Sysbench](https://github.com/akopytov/sysbench) 性能测试结果，可作为您[确定集群规模](/tidb-cloud/size-your-cluster.md)时的参考。
+本文档提供了不同规模 TiDB 集群的 [Sysbench](https://github.com/akopytov/sysbench) 性能测试结果，可作为你[确定集群规模](/tidb-cloud/size-your-cluster.md)时的参考。
 
 > **注意：**
 >

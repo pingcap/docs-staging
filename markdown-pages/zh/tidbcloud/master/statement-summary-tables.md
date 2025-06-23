@@ -46,7 +46,7 @@ select * from employee where id in (...) and salary between ? and ?;
 
 `statements_summary` 存储 SQL 监控指标的聚合结果。通常，每个监控指标都包括最大值和平均值。例如，执行延迟指标对应两个字段：`AVG_LATENCY`（平均延迟）和 `MAX_LATENCY`（最大延迟）。
 
-为确保监控指标保持最新，`statements_summary` 表中的数据会定期清除，只保留和显示最近的聚合结果。定期数据清除由 `tidb_stmt_summary_refresh_interval` 系统变量控制。如果您恰好在清除后立即查询，显示的数据可能会很少。
+为确保监控指标保持最新，`statements_summary` 表中的数据会定期清除，只保留和显示最近的聚合结果。定期数据清除由 `tidb_stmt_summary_refresh_interval` 系统变量控制。如果你恰好在清除后立即查询，显示的数据可能会很少。
 
 以下是查询 `statements_summary` 的示例输出：
 
@@ -89,7 +89,7 @@ select * from employee where id in (...) and salary between ? and ?;
 > - 从 v7.5.1 和 v7.6.0 开始，对于启用了[资源控制](/tidb-resource-control.md)的集群，`statements_summary` 将按资源组进行聚合，例如，在不同资源组中执行的相同语句将被收集为不同的记录。
 ## `statements_summary_history`
 
-`statements_summary_history` 的表结构与 `statements_summary` 相同。`statements_summary_history` 保存一定时间范围内的历史数据。通过检查历史数据，您可以排查异常并比较不同时间范围的监控指标。
+`statements_summary_history` 的表结构与 `statements_summary` 相同。`statements_summary_history` 保存一定时间范围内的历史数据。通过检查历史数据，你可以排查异常并比较不同时间范围的监控指标。
 
 字段 `SUMMARY_BEGIN_TIME` 和 `SUMMARY_END_TIME` 表示历史时间范围的开始时间和结束时间。
 
@@ -105,7 +105,7 @@ select * from employee where id in (...) and salary between ? and ?;
 
 </CustomContent>
 
-`statements_summary_evicted` 表记录了发生淘汰的时间段以及在该时间段内淘汰的 SQL 指纹数量。此表可帮助您评估 `tidb_stmt_summary_max_stmt_count` 是否针对您的工作负载进行了适当配置。如果此表包含记录，则表明在某个时间点 SQL 指纹数量超过了 `tidb_stmt_summary_max_stmt_count`。
+`statements_summary_evicted` 表记录了发生淘汰的时间段以及在该时间段内淘汰的 SQL 指纹数量。此表可帮助你评估 `tidb_stmt_summary_max_stmt_count` 是否针对你的工作负载进行了适当配置。如果此表包含记录，则表明在某个时间点 SQL 指纹数量超过了 `tidb_stmt_summary_max_stmt_count`。
 
 <CustomContent platform="tidb">
 
@@ -121,7 +121,7 @@ select * from employee where id in (...) and salary between ? and ?;
 
 ## statement summary 的集群表
 
-`statements_summary`、`statements_summary_history` 和 `statements_summary_evicted` 表仅显示单个 TiDB 服务器的 statement summary。要查询整个集群的数据，您需要查询 `cluster_statements_summary`、`cluster_statements_summary_history` 或 `cluster_statements_summary_evicted` 表。
+`statements_summary`、`statements_summary_history` 和 `statements_summary_evicted` 表仅显示单个 TiDB 服务器的 statement summary。要查询整个集群的数据，你需要查询 `cluster_statements_summary`、`cluster_statements_summary_history` 或 `cluster_statements_summary_evicted` 表。
 
 `cluster_statements_summary` 显示每个 TiDB 服务器的 `statements_summary` 数据。`cluster_statements_summary_history` 显示每个 TiDB 服务器的 `statements_summary_history` 数据。`cluster_statements_summary_evicted` 显示每个 TiDB 服务器的 `statements_summary_evicted` 数据。这些表使用 `INSTANCE` 字段表示 TiDB 服务器的地址。其他字段与 `statements_summary`、`statements_summary_history` 和 `statements_summary_evicted` 中的字段相同。
 ## 参数配置
@@ -159,10 +159,10 @@ set global tidb_stmt_summary_history_size = 24;
 > **注意：**
 >
 > - 如果一个 SQL 类型每分钟都出现，则 `statements_summary_history` 存储最近 12 小时的数据。如果一个 SQL 类型每天只在 00:00 到 00:30 出现，则 `statements_summary_history` 存储最近 24 个时间段的数据，每个时间段为 1 天。因此，对于这个 SQL 类型，`statements_summary_history` 存储最近 24 天的数据。
-> - `tidb_stmt_summary_history_size`、`tidb_stmt_summary_max_stmt_count` 和 `tidb_stmt_summary_max_sql_length` 配置项会影响内存使用。建议您根据需求、SQL 大小、SQL 数量和机器配置来调整这些配置。不建议设置过大的值。您可以使用 `tidb_stmt_summary_history_size` \* `tidb_stmt_summary_max_stmt_count` \* `tidb_stmt_summary_max_sql_length` \* `3` 来计算内存使用量。
+> - `tidb_stmt_summary_history_size`、`tidb_stmt_summary_max_stmt_count` 和 `tidb_stmt_summary_max_sql_length` 配置项会影响内存使用。建议你根据需求、SQL 大小、SQL 数量和机器配置来调整这些配置。不建议设置过大的值。你可以使用 `tidb_stmt_summary_history_size` \* `tidb_stmt_summary_max_stmt_count` \* `tidb_stmt_summary_max_sql_length` \* `3` 来计算内存使用量。
 ### 为 statement summary 设置合适的大小
 
-系统运行一段时间后（取决于系统负载），您可以检查 `statement_summary` 表以查看是否发生了 SQL 淘汰。例如：
+系统运行一段时间后（取决于系统负载），你可以检查 `statement_summary` 表以查看是否发生了 SQL 淘汰。例如：
 
 ```sql
 select @@global.tidb_stmt_summary_max_stmt_count;
@@ -185,7 +185,7 @@ select count(*) from information_schema.statements_summary;
 1 row in set (0.001 sec)
 ```
 
-您可以看到 `statements_summary` 表已经充满记录。然后从 `statements_summary_evicted` 表中检查被淘汰的数据：
+你可以看到 `statements_summary` 表已经充满记录。然后从 `statements_summary_evicted` 表中检查被淘汰的数据：
 
 ```sql
 select * from information_schema.statements_summary_evicted;
@@ -202,4 +202,4 @@ select * from information_schema.statements_summary_evicted;
 2 row in set (0.001 sec)
 ```
 
-从上述结果可以看出，最多有 59 个 SQL 类别被淘汰。在这种情况下，建议您至少增加 59 条记录的 `statement_summary` 表大小，这意味着将大小增加到至少 3059 条记录。
+从上述结果可以看出，最多有 59 个 SQL 类别被淘汰。在这种情况下，建议你至少增加 59 条记录的 `statement_summary` 表大小，这意味着将大小增加到至少 3059 条记录。

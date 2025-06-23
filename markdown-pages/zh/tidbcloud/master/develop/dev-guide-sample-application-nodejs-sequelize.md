@@ -7,11 +7,11 @@ summary: 了解如何使用 Sequelize 连接 TiDB。本教程提供使用 Sequel
 
 TiDB 是一个兼容 MySQL 的数据库，而 [Sequelize](https://sequelize.org/) 是一个流行的 Node.js ORM 框架。
 
-在本教程中，您将学习如何使用 TiDB 和 Sequelize 完成以下任务：
+在本教程中，你将学习如何使用 TiDB 和 Sequelize 完成以下任务：
 
 - 设置环境。
 - 使用 Sequelize 连接到 TiDB 集群。
-- 构建并运行应用程序。您也可以查看基本 CRUD 操作的[示例代码片段](#示例代码片段)。
+- 构建并运行应用程序。你也可以查看基本 CRUD 操作的[示例代码片段](#示例代码片段)。
 
 > **注意**
 >
@@ -19,7 +19,7 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Sequelize](https://sequelize.org/
 
 ## 前提条件
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
 - [Node.js **18**](https://nodejs.org/en/download/) 或更高版本。
 - [Git](https://git-scm.com/downloads)。
@@ -27,17 +27,17 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Sequelize](https://sequelize.org/
 
 <CustomContent platform="tidb">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](/production-deployment-using-tiup.md)的说明创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)的说明创建本地集群。
 
 </CustomContent>
@@ -69,7 +69,7 @@ npm install
 
 ### 步骤 3：配置连接信息
 
-根据您选择的 TiDB 部署选项连接到 TiDB 集群。
+根据你选择的 TiDB 部署选项连接到 TiDB 集群。
 
 <SimpleTab>
 
@@ -79,22 +79,22 @@ npm install
 
 2. 点击右上角的**连接**。将显示连接对话框。
 
-3. 确保连接对话框中的配置与您的操作环境匹配。
+3. 确保连接对话框中的配置与你的操作环境匹配。
 
     - **连接类型**设置为 `Public`
     - **分支**设置为 `main`
     - **连接方式**设置为 `General`
-    - **操作系统**与您的环境匹配。
+    - **操作系统**与你的环境匹配。
 
     > **注意**
     >
-    > 在 Node.js 应用程序中，您不必提供 SSL CA 证书，因为 Node.js 在建立 TLS (SSL) 连接时默认使用内置的 [Mozilla CA 证书](https://wiki.mozilla.org/CA/Included_Certificates)。
+    > 在 Node.js 应用程序中，你不必提供 SSL CA 证书，因为 Node.js 在建立 TLS (SSL) 连接时默认使用内置的 [Mozilla CA 证书](https://wiki.mozilla.org/CA/Included_Certificates)。
 
 4. 点击**生成密码**创建随机密码。
 
     > **提示**
     >
-    > 如果您之前已经生成过密码，可以使用原密码，也可以点击**重置密码**生成新密码。
+    > 如果你之前已经生成过密码，可以使用原密码，也可以点击**重置密码**生成新密码。
 
 5. 运行以下命令复制 `.env.example` 并将其重命名为 `.env`：
 
@@ -125,7 +125,7 @@ npm install
 
 3. 在连接对话框中，从**连接类型**下拉列表中选择**公共端点**，然后点击 **CA 证书**下载 CA 证书。
 
-    如果您尚未配置 IP 访问列表，请在首次连接之前点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
+    如果你尚未配置 IP 访问列表，请在首次连接之前点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
 
     除了**公共端点**连接类型外，TiDB Cloud Dedicated 还支持**专用端点**和 **VPC 对等连接**连接类型。更多信息，请参见[连接到 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
@@ -169,7 +169,7 @@ npm install
     TIDB_DB_NAME='test'
     ```
 
-    如果您在本地运行 TiDB，默认主机地址是 `127.0.0.1`，密码为空。
+    如果你在本地运行 TiDB，默认主机地址是 `127.0.0.1`，密码为空。
 
 3. 保存 `.env` 文件。
 
@@ -204,7 +204,7 @@ Executing (default): DELETE FROM `players` WHERE `id` = 6
 
 ## 示例代码片段
 
-您可以参考以下示例代码片段来完成自己的应用程序开发。
+你可以参考以下示例代码片段来完成自己的应用程序开发。
 
 有关完整的示例代码和运行方法，请查看 [tidb-samples/tidb-nodejs-sequelize-quickstart](https://github.com/tidb-samples/tidb-nodejs-sequelize-quickstart) 仓库。
 

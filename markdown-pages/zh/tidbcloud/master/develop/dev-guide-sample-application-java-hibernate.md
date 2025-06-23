@@ -7,11 +7,11 @@ summary: 了解如何使用 Hibernate 连接 TiDB。本教程提供使用 Hibern
 
 TiDB 是一个兼容 MySQL 的数据库，而 [Hibernate](https://hibernate.org/orm/) 是一个流行的开源 Java ORM。从 `6.0.0.Beta2` 版本开始，Hibernate 支持 TiDB 方言，能很好地适配 TiDB 特性。
 
-在本教程中，您可以学习如何使用 TiDB 和 Hibernate 完成以下任务：
+在本教程中，你可以学习如何使用 TiDB 和 Hibernate 完成以下任务：
 
 - 设置环境。
 - 使用 Hibernate 连接到 TiDB 集群。
-- 构建并运行应用程序。您也可以查看[示例代码片段](#示例代码片段)，了解基本的 CRUD 操作。
+- 构建并运行应用程序。你也可以查看[示例代码片段](#示例代码片段)，了解基本的 CRUD 操作。
 
 > **注意：**
 >
@@ -19,26 +19,26 @@ TiDB 是一个兼容 MySQL 的数据库，而 [Hibernate](https://hibernate.org/
 
 ## 前提条件
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
-- **Java Development Kit (JDK) 17** 或更高版本。您可以根据业务和个人需求选择 [OpenJDK](https://openjdk.org/) 或 [Oracle JDK](https://www.oracle.com/hk/java/technologies/downloads/)。
+- **Java Development Kit (JDK) 17** 或更高版本。你可以根据业务和个人需求选择 [OpenJDK](https://openjdk.org/) 或 [Oracle JDK](https://www.oracle.com/hk/java/technologies/downloads/)。
 - [Maven](https://maven.apache.org/install.html) **3.8** 或更高版本。
 - [Git](https://git-scm.com/downloads)。
 - 一个 TiDB 集群。
 
 <CustomContent platform="tidb">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](/production-deployment-using-tiup.md)创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)创建本地集群。
 
 </CustomContent>
@@ -58,7 +58,7 @@ cd tidb-java-hibernate-quickstart
 
 ### 步骤 2：配置连接信息
 
-根据您选择的 TiDB 部署选项连接到 TiDB 集群。
+根据你选择的 TiDB 部署选项连接到 TiDB 集群。
 
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
@@ -67,22 +67,22 @@ cd tidb-java-hibernate-quickstart
 
 2. 点击右上角的**连接**。将显示连接对话框。
 
-3. 确保连接对话框中的配置与您的操作环境匹配。
+3. 确保连接对话框中的配置与你的操作环境匹配。
 
     - **连接类型**设置为 `Public`
     - **分支**设置为 `main`
     - **连接方式**设置为 `General`
-    - **操作系统**与您的环境匹配。
+    - **操作系统**与你的环境匹配。
 
     > **提示：**
     >
-    > 如果您的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换到相应的 Linux 发行版。
+    > 如果你的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换到相应的 Linux 发行版。
 
 4. 点击**生成密码**创建随机密码。
 
     > **提示：**
     >
-    > 如果您之前已经创建了密码，可以使用原始密码或点击**重置密码**生成新密码。
+    > 如果你之前已经创建了密码，可以使用原始密码或点击**重置密码**生成新密码。
 
 5. 运行以下命令复制 `env.sh.example` 并将其重命名为 `env.sh`：
 
@@ -103,7 +103,7 @@ cd tidb-java-hibernate-quickstart
 
     请确保将占位符 `{}` 替换为从连接对话框获得的连接参数。
 
-    TiDB Cloud Serverless 需要安全连接。因此，您需要将 `USE_SSL` 的值设置为 `true`。
+    TiDB Cloud Serverless 需要安全连接。因此，你需要将 `USE_SSL` 的值设置为 `true`。
 
 7. 保存 `env.sh` 文件。
 
@@ -116,9 +116,9 @@ cd tidb-java-hibernate-quickstart
 
 3. 在连接对话框中，从**连接类型**下拉列表中选择 **Public**，然后点击 **CA 证书**下载 CA 证书。
 
-    如果您尚未配置 IP 访问列表，请点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤在首次连接之前进行配置。
+    如果你尚未配置 IP 访问列表，请点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤在首次连接之前进行配置。
 
-    除了 **Public** 连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**连接类型。更多信息，请参见[连接到您的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+    除了 **Public** 连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**连接类型。更多信息，请参见[连接到你的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
 4. 运行以下命令复制 `env.sh.example` 并将其重命名为 `env.sh`：
 
@@ -161,7 +161,7 @@ cd tidb-java-hibernate-quickstart
     export USE_SSL='false'
     ```
 
-    请确保将占位符 `{}` 替换为连接参数，并将 `USE_SSL` 设置为 `false`。如果您在本地运行 TiDB，默认主机地址为 `127.0.0.1`，密码为空。
+    请确保将占位符 `{}` 替换为连接参数，并将 `USE_SSL` 设置为 `false`。如果你在本地运行 TiDB，默认主机地址为 `127.0.0.1`，密码为空。
 
 3. 保存 `env.sh` 文件。
 
@@ -180,7 +180,7 @@ cd tidb-java-hibernate-quickstart
 
 ## 示例代码片段
 
-您可以参考以下示例代码片段来完成自己的应用程序开发。
+你可以参考以下示例代码片段来完成自己的应用程序开发。
 
 有关完整的示例代码和运行方法，请查看 [tidb-samples/tidb-java-hibernate-quickstart](https://github.com/tidb-samples/tidb-java-hibernate-quickstart) 仓库。
 
@@ -225,7 +225,7 @@ public SessionFactory getSessionFactory() {
 }
 ```
 
-使用此函数时，您需要将 `${your_entity_class}` 替换为您自己的数据实体类。对于多个实体类，您需要为每个类添加一个 `.addAnnotatedClass(${your_entity_class})` 语句。上述函数只是配置 Hibernate 的一种方式。如果您在配置过程中遇到任何问题或想了解更多关于 Hibernate 的信息，请参考 [Hibernate 官方文档](https://hibernate.org/orm/documentation)。
+使用此函数时，你需要将 `${your_entity_class}` 替换为你自己的数据实体类。对于多个实体类，你需要为每个类添加一个 `.addAnnotatedClass(${your_entity_class})` 语句。上述函数只是配置 Hibernate 的一种方式。如果你在配置过程中遇到任何问题或想了解更多关于 Hibernate 的信息，请参考 [Hibernate 官方文档](https://hibernate.org/orm/documentation)。
 
 ### 插入或更新数据
 

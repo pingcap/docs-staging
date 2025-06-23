@@ -312,7 +312,7 @@ SELECT JSON_UNQUOTE('"foo"');
 1 row in set (0.00 sec)
 ```
 
-此函数通常与 [`JSON_EXTRACT()`](/functions-and-operators/json-functions/json-functions-search.md#json_extract) 一起使用。对于以下示例，您可以在第一个示例中提取带引号的 JSON 值，然后在第二个示例中一起使用这两个函数来取消引用该值。请注意，您可以使用 [`->>`](/functions-and-operators/json-functions/json-functions-search.md#--1) 运算符代替 `JSON_UNQUOTE(JSON_EXTRACT(...))`。
+此函数通常与 [`JSON_EXTRACT()`](/functions-and-operators/json-functions/json-functions-search.md#json_extract) 一起使用。对于以下示例，你可以在第一个示例中提取带引号的 JSON 值，然后在第二个示例中一起使用这两个函数来取消引用该值。请注意，你可以使用 [`->>`](/functions-and-operators/json-functions/json-functions-search.md#--1) 运算符代替 `JSON_UNQUOTE(JSON_EXTRACT(...))`。
 
 ```sql
 SELECT JSON_EXTRACT('{"database": "TiDB"}', '$.database');

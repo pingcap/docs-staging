@@ -7,7 +7,7 @@ summary: 了解如何通过使用 Chat2Query 知识库 API 来改进 Chat2Query 
 
 知识库是一组结构化数据的集合，可用于增强 Chat2Query 的 SQL 生成能力。
 
-从 v3 版本开始，Chat2Query API 允许您通过调用 Chat2Query Data App 的知识库相关端点来添加或修改知识库。
+从 v3 版本开始，Chat2Query API 允许你通过调用 Chat2Query Data App 的知识库相关端点来添加或修改知识库。
 
 > **注意：**
 >
@@ -15,7 +15,7 @@ summary: 了解如何通过使用 Chat2Query 知识库 API 来改进 Chat2Query 
 
 ## 开始之前
 
-在为数据库创建知识库之前，请确保您已经具备以下条件：
+在为数据库创建知识库之前，请确保你已经具备以下条件：
 
 - 一个 [Chat2Query Data App](/tidb-cloud/use-chat2query-api.md#create-a-chat2query-data-app)
 - 一个 [Chat2Query Data App 的 API 密钥](/tidb-cloud/use-chat2query-api.md#create-an-api-key)
@@ -24,9 +24,9 @@ summary: 了解如何通过使用 Chat2Query 知识库 API 来改进 Chat2Query 
 
 > **注意：**
 >
-> Chat2Query 使用的知识是**按数据库维度进行组织的**。您可以将多个 Chat2Query Data App 连接到同一个数据库，但每个 Chat2Query Data App 只能使用其关联数据库的知识。
+> Chat2Query 使用的知识是**按数据库维度进行组织的**。你可以将多个 Chat2Query Data App 连接到同一个数据库，但每个 Chat2Query Data App 只能使用其关联数据库的知识。
 
-在您的 Chat2Query Data App 中，您可以通过调用 `/v3/knowledgeBases` 端点为特定数据库创建知识库。创建完成后，您将获得一个用于后续知识管理的 `knowledge_base_id`。
+在你的 Chat2Query Data App 中，你可以通过调用 `/v3/knowledgeBases` 端点为特定数据库创建知识库。创建完成后，你将获得一个用于后续知识管理的 `knowledge_base_id`。
 
 以下是调用此端点的通用代码示例。
 
@@ -40,7 +40,7 @@ curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<regio
  --data-raw '{
     "cluster_id": "<数据库所属集群的 ID>",
     "database": "<目标数据库的名称>",
-    "description": "<您的知识库描述>"
+    "description": "<你的知识库描述>"
 }'
 ```
 
@@ -63,7 +63,7 @@ curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<regio
 
 ## 步骤 2. 选择知识类型
 
-每个数据库的知识库可以包含多种类型的知识。在向知识库添加知识之前，您需要选择最适合您使用场景的知识类型。
+每个数据库的知识库可以包含多种类型的知识。在向知识库添加知识之前，你需要选择最适合你使用场景的知识类型。
 
 目前，Chat2Query 知识库支持以下知识类型。每种类型都是为不同场景专门设计的，并具有独特的知识结构。
 
@@ -125,9 +125,9 @@ curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<regio
 
 术语表解释主要用于提高 Chat2Query 对用户查询的理解，特别是在以下情况下：
 
-- **处理行业特定术语或缩写**：当您的查询包含可能不被普遍认知的行业特定术语或缩写时，使用术语表解释可以帮助 Chat2Query 理解这些术语的含义和用法。
-- **处理用户查询中的歧义**：当您的查询包含令人困惑的模糊概念时，使用术语表解释可以帮助 Chat2Query 澄清这些歧义。
-- **处理具有多种含义的术语**：当您的查询包含在不同上下文中具有不同含义的术语时，使用术语表解释可以帮助 Chat2Query 辨别正确的解释。
+- **处理行业特定术语或缩写**：当你的查询包含可能不被普遍认知的行业特定术语或缩写时，使用术语表解释可以帮助 Chat2Query 理解这些术语的含义和用法。
+- **处理用户查询中的歧义**：当你的查询包含令人困惑的模糊概念时，使用术语表解释可以帮助 Chat2Query 澄清这些歧义。
+- **处理具有多种含义的术语**：当你的查询包含在不同上下文中具有不同含义的术语时，使用术语表解释可以帮助 Chat2Query 辨别正确的解释。
 
 ### 指令
 
@@ -152,18 +152,18 @@ curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<regio
 
 #### 使用场景
 
-指令可以在许多场景中用于指导 Chat2Query 按照您的要求输出，包括但不限于以下情况：
+指令可以在许多场景中用于指导 Chat2Query 按照你的要求输出，包括但不限于以下情况：
 
-- **限制查询范围**：如果您希望 SQL 只考虑某些表或列，可以使用指令来指定这一点。
-- **指导 SQL 结构**：如果您对 SQL 结构有特定要求，可以使用指令来指导 Chat2Query。
+- **限制查询范围**：如果你希望 SQL 只考虑某些表或列，可以使用指令来指定这一点。
+- **指导 SQL 结构**：如果你对 SQL 结构有特定要求，可以使用指令来指导 Chat2Query。
 
 ## 步骤 3. 向新创建的知识库添加知识
 
-要添加新知识，您可以调用 `/v3/knowledgeBases/{knowledge_base_id}/data` 端点。
+要添加新知识，你可以调用 `/v3/knowledgeBases/{knowledge_base_id}/data` 端点。
 
 ### 添加少样本示例类型的知识
 
-例如，如果您希望 Chat2Query 以特定结构生成计算表中行数的 SQL 语句，您可以通过调用 `/v3/knowledgeBases/{knowledge_base_id}/data` 添加少样本示例类型的知识，如下所示：
+例如，如果你希望 Chat2Query 以特定结构生成计算表中行数的 SQL 语句，你可以通过调用 `/v3/knowledgeBases/{knowledge_base_id}/data` 添加少样本示例类型的知识，如下所示：
 
 ```bash
 curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<region>.data.tidbcloud.com/api/v1beta/app/chat2query-<ID>/endpoint/v3/knowledgeBases/<knowledge_base_id>/data'\
@@ -182,7 +182,7 @@ curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<regio
 
 ### 添加术语表解释类型的知识
 
-例如，如果您希望 Chat2Query 使用您提供的解释来理解术语 `OSS` 的含义，您可以通过调用 `/v3/knowledgeBases/{knowledge_base_id}/data` 添加术语表解释类型的知识，如下所示：
+例如，如果你希望 Chat2Query 使用你提供的解释来理解术语 `OSS` 的含义，你可以通过调用 `/v3/knowledgeBases/{knowledge_base_id}/data` 添加术语表解释类型的知识，如下所示：
 
 ```bash
 curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<region>.data.tidbcloud.com/api/v1beta/app/chat2query-<ID>/endpoint/v3/knowledgeBases/<knowledge_base_id>/data'\
@@ -201,7 +201,7 @@ curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<regio
 
 ### 添加指令类型的知识
 
-例如，如果您希望 Chat2Query 在处理有关环比增长率计算的问题时始终使用带有 `OVER` 子句的 `LAG` 函数，您可以通过调用 `/v3/knowledgeBases/{knowledge_base_id}/data` 添加指令类型的知识，如下所示：
+例如，如果你希望 Chat2Query 在处理有关环比增长率计算的问题时始终使用带有 `OVER` 子句的 `LAG` 函数，你可以通过调用 `/v3/knowledgeBases/{knowledge_base_id}/data` 添加指令类型的知识，如下所示：
 
 ```bash
 curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<region>.data.tidbcloud.com/api/v1beta/app/chat2query-<ID>/endpoint/v3/knowledgeBases/<knowledge_base_id>/data'\

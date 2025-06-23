@@ -5,30 +5,30 @@ summary: 了解如何通过 Datadog 集成监控 TiDB 集群。
 
 # 将 TiDB Cloud 与 Datadog 集成（Beta）
 
-TiDB Cloud 支持 Datadog 集成（beta）。您可以配置 TiDB Cloud 将 TiDB 集群的指标数据发送到 [Datadog](https://www.datadoghq.com/)。之后，您可以直接在 Datadog 仪表板中查看这些指标。
+TiDB Cloud 支持 Datadog 集成（beta）。你可以配置 TiDB Cloud 将 TiDB 集群的指标数据发送到 [Datadog](https://www.datadoghq.com/)。之后，你可以直接在 Datadog 仪表板中查看这些指标。
 
 ## 前提条件
 
-- 要将 TiDB Cloud 与 Datadog 集成，您必须拥有 Datadog 账户和 [Datadog API 密钥](https://app.datadoghq.com/organization-settings/api-keys)。首次创建 Datadog 账户时，Datadog 会授予您一个 API 密钥。
+- 要将 TiDB Cloud 与 Datadog 集成，你必须拥有 Datadog 账户和 [Datadog API 密钥](https://app.datadoghq.com/organization-settings/api-keys)。首次创建 Datadog 账户时，Datadog 会授予你一个 API 密钥。
 
-    如果您没有 Datadog 账户，请在 [https://app.datadoghq.com/signup](https://app.datadoghq.com/signup) 注册。
+    如果你没有 Datadog 账户，请在 [https://app.datadoghq.com/signup](https://app.datadoghq.com/signup) 注册。
 
-- 要编辑 TiDB Cloud 的第三方集成设置，您必须在 TiDB Cloud 中拥有组织的 `Organization Owner` 访问权限或目标项目的 `Project Member` 访问权限。
+- 要编辑 TiDB Cloud 的第三方集成设置，你必须在 TiDB Cloud 中拥有组织的 `Organization Owner` 访问权限或目标项目的 `Project Member` 访问权限。
 
 ## 限制
 
-- 您不能在 [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) 集群中使用 Datadog 集成。
+- 你不能在 [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) 集群中使用 Datadog 集成。
 
 - 当集群状态为 **CREATING**、**RESTORING**、**PAUSED** 或 **RESUMING** 时，Datadog 集成不可用。
 
 ## 步骤
 
-### 步骤 1. 与您的 Datadog API 密钥集成
+### 步骤 1. 与你的 Datadog API 密钥集成
 
 1. 在 [TiDB Cloud 控制台](https://tidbcloud.com)中，使用左上角的组合框切换到目标项目。
 2. 在左侧导航栏中，点击**项目设置** > **集成**。
 3. 在**集成**页面上，点击 **Datadog 集成（BETA）**。
-4. 输入您的 Datadog API 密钥并选择 Datadog 的站点。
+4. 输入你的 Datadog API 密钥并选择 Datadog 的站点。
 5. 点击**测试集成**。
 
     - 如果测试成功，将显示**确认**按钮。
@@ -40,11 +40,11 @@ TiDB Cloud 支持 Datadog 集成（beta）。您可以配置 TiDB Cloud 将 TiDB
 
 1. 登录 [Datadog](https://app.datadoghq.com)。
 2. 在 Datadog 中转到 **TiDB Cloud 集成**页面（[https://app.datadoghq.com/account/settings#integrations/tidb-cloud](https://app.datadoghq.com/account/settings#integrations/tidb-cloud)）。
-3. 在**配置**标签中，点击**安装集成**。[**TiDBCloud 集群概览**](https://app.datadoghq.com/dash/integration/30586/tidbcloud-cluster-overview)仪表板将显示在您的[**仪表板列表**](https://app.datadoghq.com/dashboard/lists)中。
+3. 在**配置**标签中，点击**安装集成**。[**TiDBCloud 集群概览**](https://app.datadoghq.com/dash/integration/30586/tidbcloud-cluster-overview)仪表板将显示在你的[**仪表板列表**](https://app.datadoghq.com/dashboard/lists)中。
 
 ## 预构建仪表板
 
-点击集成中 **Datadog** 卡片的**仪表板**链接。您可以看到 TiDB 集群的预构建仪表板。
+点击集成中 **Datadog** 卡片的**仪表板**链接。你可以看到 TiDB 集群的预构建仪表板。
 
 ## Datadog 可用的指标
 

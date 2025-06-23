@@ -9,13 +9,13 @@ SQL 执行计划管理是一组用于手动干预 SQL 执行计划的功能。�
 
 ## SQL 绑定
 
-SQL 绑定是 SPM 的基础。[优化器提示](/optimizer-hints.md)文档介绍了如何使用提示选择特定的执行计划。但是，有时您需要在不修改 SQL 语句的情况下干预执行计划的选择。通过 SQL 绑定，您可以在不修改 SQL 语句的情况下选择指定的执行计划。
+SQL 绑定是 SPM 的基础。[优化器提示](/optimizer-hints.md)文档介绍了如何使用提示选择特定的执行计划。但是，有时你需要在不修改 SQL 语句的情况下干预执行计划的选择。通过 SQL 绑定，你可以在不修改 SQL 语句的情况下选择指定的执行计划。
 
 <CustomContent platform="tidb">
 
 > **注意：**
 >
-> 要使用 SQL 绑定，您需要具有 `SUPER` 权限。如果 TiDB 提示您没有足够的权限，请参见[权限管理](/privilege-management.md)添加所需的权限。
+> 要使用 SQL 绑定，你需要具有 `SUPER` 权限。如果 TiDB 提示你没有足够的权限，请参见[权限管理](/privilege-management.md)添加所需的权限。
 
 </CustomContent>
 
@@ -23,13 +23,13 @@ SQL 绑定是 SPM 的基础。[优化器提示](/optimizer-hints.md)文档介绍
 
 > **注意：**
 >
-> 要使用 SQL 绑定，您需要具有 `SUPER` 权限。如果 TiDB 提示您没有足够的权限，请参见[权限管理](https://docs.pingcap.com/tidb/stable/privilege-management)添加所需的权限。
+> 要使用 SQL 绑定，你需要具有 `SUPER` 权限。如果 TiDB 提示你没有足够的权限，请参见[权限管理](https://docs.pingcap.com/tidb/stable/privilege-management)添加所需的权限。
 
 </CustomContent>
 
 ### 创建绑定
 
-您可以根据 SQL 语句或历史执行计划为 SQL 语句创建绑定。
+你可以根据 SQL 语句或历史执行计划为 SQL 语句创建绑定。
 
 #### 根据 SQL 语句创建绑定
 
@@ -48,7 +48,7 @@ CREATE GLOBAL BINDING FOR SELECT * FROM orders USING SELECT /*+ use_index(orders
 
 > **注意：**
 >
-> 绑定的优先级高于手动添加的提示。因此，当您执行包含提示的语句而存在相应绑定时，控制优化器行为的提示不会生效。但是，其他类型的提示仍然有效。
+> 绑定的优先级高于手动添加的提示。因此，当你执行包含提示的语句而存在相应绑定时，控制优化器行为的提示不会生效。但是，其他类型的提示仍然有效。
 
 具体来说，由于语法冲突，以下两类语句无法绑定执行计划。在创建绑定时会报语法错误。请参见以下示例：
 
@@ -66,7 +66,7 @@ USING
     DELETE FROM users USING users JOIN orders ON users.id = orders.user_id;
 ```
 
-您可以通过使用等效语句来绕过语法冲突。例如，您可以按以下方式重写上述语句：
+你可以通过使用等效语句来绕过语法冲突。例如，你可以按以下方式重写上述语句：
 
 ```sql
 -- 第一类语句的重写：删除 `JOIN` 关键字，用逗号替代。
@@ -126,14 +126,14 @@ SELECT * FROM bookshop . users WHERE balance > ?
 > SELECT * FROM bookshop . books WHERE type IN ( ... )
 > ```
 >
-> 规范化后，不同长度的 `IN` 谓词被识别为相同的语句，因此您只需要创建一个适用于所有这些谓词的绑定。
+> 规范化后，不同长度的 `IN` 谓词被识别为相同的语句，因此你只需要创建一个适用于所有这些谓词的绑定。
 >
 > 例如：
 >
 > ```sql
 > CREATE TABLE t (a INT, KEY(a));
 > CREATE BINDING FOR SELECT * FROM t WHERE a IN (?) USING SELECT /*+ use_index(t, idx_a) */ * FROM t WHERE a in (?);
-> 
+>
 > SELECT * FROM t WHERE a IN (1);
 > SELECT @@LAST_PLAN_FROM_BINDING;
 > +--------------------------+
@@ -220,4 +220,4 @@ explain SELECT * FROM t1, t2 WHERE t1.id = t2.id;
 
 > **注意：**
 >
-> 对于 `PREPARE` / `EXECUTE` 语句和使用二进制协议执行的查询，您需要为实际的查询语句创建执行计划绑定，而不是为 `PREPARE` / `EXECUTE` 语句创建绑定。
+> 对于 `PREPARE` / `EXECUTE` 语句和使用二进制协议执行的查询，你需要为实际的查询语句创建执行计划绑定，而不是为 `PREPARE` / `EXECUTE` 语句创建绑定。

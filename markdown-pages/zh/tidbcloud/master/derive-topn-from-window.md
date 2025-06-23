@@ -5,7 +5,7 @@ summary: 介绍从窗口函数推导 TopN 或 Limit 的优化规则以及如何�
 
 # 从窗口函数推导 TopN 或 Limit
 
-[窗口函数](/functions-and-operators/window-functions.md)是一种常见的 SQL 函数。当您使用窗口函数进行行编号时，例如 `ROW_NUMBER()` 或 `RANK()`，通常会在窗口函数计算后对结果进行过滤。例如：
+[窗口函数](/functions-and-operators/window-functions.md)是一种常见的 SQL 函数。当你使用窗口函数进行行编号时，例如 `ROW_NUMBER()` 或 `RANK()`，通常会在窗口函数计算后对结果进行过滤。例如：
 
 ```sql
 SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY a) AS rownumber FROM t) dt WHERE rownumber <= 3
@@ -21,9 +21,9 @@ WITH t_topN AS (SELECT a FROM t1 ORDER BY a LIMIT 3) SELECT * FROM (SELECT ROW_N
 
 重写后，TiDB 可以从窗口函数和后续的过滤条件推导出 TopN 运算符。与原始 SQL 中的 Sort 运算符（`ORDER BY`）相比，TopN 运算符具有更高的执行效率。此外，TiKV 和 TiFlash 都支持下推 TopN 运算符，这进一步提高了重写后 SQL 的性能。
 
-从窗口函数推导 TopN 或 Limit 默认是禁用的。要启用此功能，您可以将会话变量 [tidb_opt_derive_topn](/system-variables.md#tidb_opt_derive_topn-new-in-v700) 设置为 `ON`。
+从窗口函数推导 TopN 或 Limit 默认是禁用的。要启用此功能，你可以将会话变量 [tidb_opt_derive_topn](/system-variables.md#tidb_opt_derive_topn-new-in-v700) 设置为 `ON`。
 
-启用此功能后，您可以通过执行以下操作之一来禁用它：
+启用此功能后，你可以通过执行以下操作之一来禁用它：
 
 * 将会话变量 [tidb_opt_derive_topn](/system-variables.md#tidb_opt_derive_topn-new-in-v700) 设置为 `OFF`。
 * 按照[优化规则和表达式下推的黑名单](/blocklist-control-plan.md)中描述的步骤操作。

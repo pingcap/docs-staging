@@ -5,13 +5,13 @@ summary: 了解如何从 TiDB Cloud Serverless 集群导出数据。
 
 # 从 TiDB Cloud Serverless 导出数据
 
-TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据从 TiDB Cloud Serverless 集群导出到本地文件或外部存储服务。您可以将导出的数据用于备份、迁移、数据分析或其他用途。
+TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让你将数据从 TiDB Cloud Serverless 集群导出到本地文件或外部存储服务。你可以将导出的数据用于备份、迁移、数据分析或其他用途。
 
-虽然您也可以使用 [mysqldump](https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html) 和 TiDB [Dumpling](https://docs.pingcap.com/tidb/dev/dumpling-overview) 等工具导出数据，但 TiDB Cloud Serverless 导出功能提供了一种更便捷、高效的方式来从 TiDB Cloud Serverless 集群导出数据。它具有以下优势：
+虽然你也可以使用 [mysqldump](https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html) 和 TiDB [Dumpling](https://docs.pingcap.com/tidb/dev/dumpling-overview) 等工具导出数据，但 TiDB Cloud Serverless 导出功能提供了一种更便捷、高效的方式来从 TiDB Cloud Serverless 集群导出数据。它具有以下优势：
 
 - 便捷性：导出服务提供了一种简单易用的方式来从 TiDB Cloud Serverless 集群导出数据，无需额外的工具或资源。
-- 隔离性：导出服务使用独立的计算资源，确保与您的在线服务资源隔离。
-- 一致性：导出服务确保导出数据的一致性，且不会造成锁定，不影响您的在线服务。
+- 隔离性：导出服务使用独立的计算资源，确保与你的在线服务资源隔离。
+- 一致性：导出服务确保导出数据的一致性，且不会造成锁定，不影响你的在线服务。
 
 > **注意：**
 >
@@ -19,7 +19,7 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
 
 ## 导出位置
 
-您可以将数据导出到以下位置：
+你可以将数据导出到以下位置：
 
 - 本地文件
 - 外部存储，包括：
@@ -35,17 +35,17 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
 
 ### 本地文件
 
-要将数据从 TiDB Cloud Serverless 集群导出到本地文件，您需要[使用 TiDB Cloud 控制台](#导出数据到本地文件)或[使用 TiDB Cloud CLI](/tidb-cloud/ticloud-serverless-export-create.md) 导出数据，然后使用 TiDB Cloud CLI 下载导出的数据。
+要将数据从 TiDB Cloud Serverless 集群导出到本地文件，你需要[使用 TiDB Cloud 控制台](#导出数据到本地文件)或[使用 TiDB Cloud CLI](/tidb-cloud/ticloud-serverless-export-create.md) 导出数据，然后使用 TiDB Cloud CLI 下载导出的数据。
 
 导出数据到本地文件有以下限制：
 
 - 不支持使用 TiDB Cloud 控制台下载导出的数据。
-- 导出的数据保存在 TiDB Cloud 的暂存区域，两天后过期。您需要及时下载导出的数据。
-- 如果暂存区域的存储空间已满，您将无法导出数据到本地文件。
+- 导出的数据保存在 TiDB Cloud 的暂存区域，两天后过期。你需要及时下载导出的数据。
+- 如果暂存区域的存储空间已满，你将无法导出数据到本地文件。
 
 ### Amazon S3
 
-要导出数据到 Amazon S3，您需要提供以下信息：
+要导出数据到 Amazon S3，你需要提供以下信息：
 
 - URI：`s3://<bucket-name>/<folder-path>/`
 - 以下访问凭证之一：
@@ -56,7 +56,7 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
 
 ### Google Cloud Storage
 
-要导出数据到 Google Cloud Storage，您需要提供以下信息：
+要导出数据到 Google Cloud Storage，你需要提供以下信息：
 
 - URI：`gs://<bucket-name>/<folder-path>/`
 - 访问凭证：存储桶的 **base64 编码**[服务账号密钥](https://cloud.google.com/iam/docs/creating-managing-service-account-keys)。确保服务账号密钥具有 `storage.objects.create` 权限。
@@ -65,7 +65,7 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
 
 ### Azure Blob Storage
 
-要导出数据到 Azure Blob Storage，您需要提供以下信息：
+要导出数据到 Azure Blob Storage，你需要提供以下信息：
 
 - URI：`azure://<account-name>.blob.core.windows.net/<container-name>/<folder-path>/` 或 `https://<account-name>.blob.core.windows.net/<container-name>/<folder-path>/`
 - 访问凭证：Azure Blob Storage 容器的[共享访问签名（SAS）令牌](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview)。确保 SAS 令牌对 `Container` 和 `Object` 资源具有 `Read` 和 `Write` 权限。
@@ -74,7 +74,7 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
 
 ### 阿里云 OSS
 
-要导出数据到阿里云 OSS，您需要提供以下信息：
+要导出数据到阿里云 OSS，你需要提供以下信息：
 
 - URI：`oss://<bucket-name>/<folder-path>/`
 - 访问凭证：阿里云账号的 [AccessKey 对](https://www.alibabacloud.com/help/en/ram/user-guide/create-an-accesskey-pair)。确保 AccessKey 对具有 `oss:PutObject`、`oss:ListBuckets` 和 `oss:GetBucketInfo` 权限，以允许将数据导出到 OSS 存储桶。
@@ -90,10 +90,10 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
 
 ### 数据格式
 
-您可以将数据导出为以下格式：
+你可以将数据导出为以下格式：
 
 - `SQL`：以 SQL 格式导出数据。
-- `CSV`：以 CSV 格式导出数据。您可以指定以下选项：
+- `CSV`：以 CSV 格式导出数据。你可以指定以下选项：
     - `delimiter`：指定导出数据中使用的分隔符。默认分隔符为 `"`。
     - `separator`：指定导出数据中用于分隔字段的字符。默认分隔符为 `,`。
     - `header`：指定是否在导出数据中包含标题行。默认值为 `true`。
@@ -110,14 +110,14 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
 
 ### 数据压缩
 
-您可以使用以下算法压缩导出的 CSV 和 SQL 数据：
+你可以使用以下算法压缩导出的 CSV 和 SQL 数据：
 
 - `gzip`（默认）：使用 `gzip` 压缩导出的数据。
 - `snappy`：使用 `snappy` 压缩导出的数据。
 - `zstd`：使用 `zstd` 压缩导出的数据。
 - `none`：不压缩导出的数据。
 
-您可以使用以下算法压缩导出的 Parquet 数据：
+你可以使用以下算法压缩导出的 Parquet 数据：
 
 - `zstd`（默认）：使用 `zstd` 压缩 Parquet 文件。
 - `gzip`：使用 `gzip` 压缩 Parquet 文件。
@@ -179,7 +179,7 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
 
    > **提示：**
    >
-   > 您可以使用左上角的组合框在组织、项目和集群之间切换。
+   > 你可以使用左上角的组合框在组织、项目和集群之间切换。
 
 2. 点击目标集群的名称进入其概览页面，然后在左侧导航栏中点击**数据** > **导入**。
 
@@ -192,11 +192,11 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
 
    > **提示：**
    >
-   > 如果您的集群之前没有导入或导出任何数据，您需要点击页面底部的**点击此处导出数据到...**来导出数据。
+   > 如果你的集群之前没有导入或导出任何数据，你需要点击页面底部的**点击此处导出数据到...**来导出数据。
 
 4. 点击**导出**。
 
-5. 导出任务成功后，您可以复制导出任务详情中显示的下载命令，然后在 [TiDB Cloud CLI](/tidb-cloud/cli-reference.md) 中运行该命令下载导出的数据。
+5. 导出任务成功后，你可以复制导出任务详情中显示的下载命令，然后在 [TiDB Cloud CLI](/tidb-cloud/cli-reference.md) 中运行该命令下载导出的数据。
 
 </div>
 
@@ -208,7 +208,7 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
     ticloud serverless export create -c <cluster-id>
     ```
 
-    您将从输出中获得导出 ID。
+    你将从输出中获得导出 ID。
 
 2. 导出任务成功后，将导出的数据下载到本地文件：
 
@@ -217,7 +217,7 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
     ```
 
     有关下载命令的更多信息，请参见 [ticloud serverless export download](/tidb-cloud/ticloud-serverless-export-download.md)。
- 
+
 </div>
 </SimpleTab>
 
@@ -230,7 +230,7 @@ TiDB Cloud Serverless 导出功能（Beta）是一项服务，可让您将数据
 
    > **提示：**
    >
-   > 您可以使用左上角的组合框在组织、项目和集群之间切换。
+   > 你可以使用左上角的组合框在组织、项目和集群之间切换。
 
 2. 点击目标集群的名称进入其概览页面，然后在左侧导航栏中点击**数据** > **导入**。
 
@@ -274,7 +274,7 @@ ticloud serverless export create -c <cluster-id> --target-type S3 --s3.uri <uri>
 
    > **提示：**
    >
-   > 您可以使用左上角的组合框在组织、项目和集群之间切换。
+   > 你可以使用左上角的组合框在组织、项目和集群之间切换。
 
 2. 点击目标集群的名称进入其概览页面，然后在左侧导航栏中点击**数据** > **导入**。
 
@@ -312,7 +312,7 @@ ticloud serverless export create -c <cluster-id> --target-type GCS --gcs.uri <ur
 
    > **提示：**
    >
-   > 您可以使用左上角的组合框在组织、项目和集群之间切换。
+   > 你可以使用左上角的组合框在组织、项目和集群之间切换。
 
 2. 点击目标集群的名称进入其概览页面，然后在左侧导航栏中点击**数据** > **导入**。
 
@@ -350,7 +350,7 @@ ticloud serverless export create -c <cluster-id> --target-type AZURE_BLOB --azbl
 
    > **提示：**
    >
-   > 您可以使用左上角的组合框在组织、项目和集群之间切换。
+   > 你可以使用左上角的组合框在组织、项目和集群之间切换。
 
 2. 点击目标集群的名称进入其概览页面，然后在左侧导航栏中点击**数据** > **导入**。
 
@@ -393,7 +393,7 @@ ticloud serverless export create -c <cluster-id> --target-type OSS --oss.uri <ur
 
    > **提示：**
    >
-   > 您可以使用左上角的组合框在组织、项目和集群之间切换。
+   > 你可以使用左上角的组合框在组织、项目和集群之间切换。
 
 2. 点击目标集群的名称进入其概览页面，然后在左侧导航栏中点击**数据** > **导入**。
 
@@ -401,7 +401,7 @@ ticloud serverless export create -c <cluster-id> --target-type OSS --oss.uri <ur
 
 4. 选择要取消的导出任务，然后点击**操作**。
 
-5. 从下拉列表中选择**取消**。注意，您只能取消处于**运行中**状态的导出任务。
+5. 从下拉列表中选择**取消**。注意，你只能取消处于**运行中**状态的导出任务。
 
 </div>
 
@@ -416,7 +416,7 @@ ticloud serverless export cancel -c <cluster-id> -e <export-id>
 
 ## 导出速度
 
-导出速度取决于您的[集群套餐](/tidb-cloud/select-cluster-tier.md#cluster-plans)。详情请参见下表：
+导出速度取决于你的[集群套餐](/tidb-cloud/select-cluster-tier.md#cluster-plans)。详情请参见下表：
 
 | 套餐               | 导出速度       |
 |:-------------------|:-------------------|
@@ -425,4 +425,4 @@ ticloud serverless export cancel -c <cluster-id> -e <export-id>
 
 ## 定价
 
-导出服务在 beta 期间免费。您只需为成功或已取消的导出任务过程中产生的[请求单元（RU）](/tidb-cloud/tidb-cloud-glossary.md#request-unit)付费。对于失败的导出任务，您将不会被收费。
+导出服务在 beta 期间免费。你只需为成功或已取消的导出任务过程中产生的[请求单元（RU）](/tidb-cloud/tidb-cloud-glossary.md#request-unit)付费。对于失败的导出任务，你将不会被收费。

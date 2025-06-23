@@ -123,15 +123,15 @@ mysql> SHOW WARNINGS;
 
 1. 估计的行数不准确？
 
-    这通常是由于统计信息过期或不准确导致的。您可以重新执行 `ANALYZE TABLE` 语句或修改 `ANALYZE TABLE` 语句的参数。
+    这通常是由于统计信息过期或不准确导致的。你可以重新执行 `ANALYZE TABLE` 语句或修改 `ANALYZE TABLE` 语句的参数。
 
 2. 统计信息准确，从 TiFlash 读取更快，但为什么优化器选择从 TiKV 读取？
 
-    目前，区分 TiFlash 和 TiKV 的成本模型仍然比较粗糙。您可以降低 [`tidb_opt_seek_factor`](/system-variables.md#tidb_opt_seek_factor) 参数的值，这样优化器会倾向于选择 TiFlash。
+    目前，区分 TiFlash 和 TiKV 的成本模型仍然比较粗糙。你可以降低 [`tidb_opt_seek_factor`](/system-variables.md#tidb_opt_seek_factor) 参数的值，这样优化器会倾向于选择 TiFlash。
 
 3. 统计信息准确，索引 A 需要从表中检索行，但实际执行速度比不需要从表中检索行的索引 B 更快。为什么优化器选择索引 B？
 
-    在这种情况下，可能是从表中检索行的成本估算过大。您可以降低 [`tidb_opt_network_factor`](/system-variables.md#tidb_opt_network_factor) 参数的值来减少从表中检索行的成本。
+    在这种情况下，可能是从表中检索行的成本估算过大。你可以降低 [`tidb_opt_network_factor`](/system-variables.md#tidb_opt_network_factor) 参数的值来减少从表中检索行的成本。
 
 ## 控制索引选择
 
@@ -148,7 +148,7 @@ mysql> SHOW WARNINGS;
 
 ### 支持的场景
 
-目前，TiDB 支持使用 IndexMerge 访问由 `json_member_of`、`json_contains` 和 `json_overlaps` 条件自动转换的多值索引。您可以依赖优化器基于成本自动选择 IndexMerge，或通过优化器提示 [`use_index_merge`](/optimizer-hints.md#use_index_merget1_name-idx1_name--idx2_name-) 或 [`use_index`](/optimizer-hints.md#use_indext1_name-idx1_name--idx2_name-) 指定选择多值索引。请参见以下示例：
+目前，TiDB 支持使用 IndexMerge 访问由 `json_member_of`、`json_contains` 和 `json_overlaps` 条件自动转换的多值索引。你可以依赖优化器基于成本自动选择 IndexMerge，或通过优化器提示 [`use_index_merge`](/optimizer-hints.md#use_index_merget1_name-idx1_name--idx2_name-) 或 [`use_index`](/optimizer-hints.md#use_indext1_name-idx1_name--idx2_name-) 指定选择多值索引。请参见以下示例：
 
 ```sql
 mysql> CREATE TABLE t1 (j JSON, INDEX idx((CAST(j->'$.path' AS SIGNED ARRAY)))); -- 使用 '$.path' 作为路径创建多值索引
@@ -302,7 +302,7 @@ CREATE TABLE t4(a INT, j JSON, INDEX mvi1((CAST(j->'$.a' AS UNSIGNED ARRAY))), I
     |   ├─IndexRangeScan_9(Build)      | 10.00   | cop[tikv] | table:t4, index:mvi1(cast(json_extract(`j`, _utf8'$.a') as unsigned array)) | range:[4,4], keep order:false, stats:pseudo                                                                                                                |
     |   └─TableRowIDScan_10(Probe)     | 39.94   | cop[tikv] | table:t4                                                                    | keep order:false, stats:pseudo                                                                                                                             |
     +----------------------------------+---------+-----------+-----------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
-    
+
     -- json_length(j->'$.a') = 3 不能直接用 IndexMerge 访问，所以 TiDB 不能为这个 SQL 语句使用 IndexMerge。
     > EXPLAIN SELECT /*+ use_index_merge(t4, mvi1) */ * FROM t4 WHERE json_overlaps(j->'$.a', '[1, 2]') OR json_length(j->'$.a') = 3;
     +-------------------------+----------+-----------+---------------+------------------------------------------------------------------------------------------------------------------------------------+
@@ -312,7 +312,7 @@ CREATE TABLE t4(a INT, j JSON, INDEX mvi1((CAST(j->'$.a' AS UNSIGNED ARRAY))), I
     | └─TableReader_7         | 10000.00 | root      |               | data:TableFullScan_6                                                                                                               |
     |   └─TableFullScan_6     | 10000.00 | cop[tikv] | table:t4      | keep order:false, stats:pseudo                                                                                                     |
     +-------------------------+----------+-----------+---------------+------------------------------------------------------------------------------------------------------------------------------------+
-    
+
     > SHOW WARNINGS;
     +---------+------+----------------------------+
     | Level   | Code | Message                    |
@@ -340,7 +340,7 @@ CREATE TABLE t4(a INT, j JSON, INDEX mvi1((CAST(j->'$.a' AS UNSIGNED ARRAY))), I
     | ├─IndexRangeScan_8(Build)     | 10.00   | cop[tikv] | table:t4, index:mvi1(cast(json_extract(`j`, _utf8'$.a') as unsigned array)) | range:[4,4], keep order:false, stats:pseudo |
     | └─TableRowIDScan_9(Probe)     | 0.00    | cop[tikv] | table:t4                                                                    | keep order:false, stats:pseudo              |
     +-------------------------------+---------+-----------+-----------------------------------------------------------------------------+---------------------------------------------+
-    
+
     -- json_length(j->'$.a') = 3 不能直接用 IndexMerge 访问，所以 TiDB 使用 IndexMerge 访问其他两个 json_contains 条件，而 json_length(j->'$.a') = 3 成为一个 Selection 操作符。
     > EXPLAIN SELECT /*+ use_index_merge(t4, mvi1) */ * FROM t4 WHERE json_contains(j->'$.a', '[1, 2]') AND json_contains(j->'$.a', '[3, 4]') AND json_length(j->'$.a') = 2;
     +-------------------------------+---------+-----------+-----------------------------------------------------------------------------+----------------------------------------------------+
@@ -406,7 +406,7 @@ CREATE TABLE t4(a INT, j JSON, INDEX mvi1((CAST(j->'$.a' AS UNSIGNED ARRAY))), I
         |   ├─IndexRangeScan_8(Build)     | 10.00   | cop[tikv] | table:t4, index:mvi2(cast(json_extract(`j`, _utf8'$.b') as unsigned array)) | range:[3,3], keep order:false, stats:pseudo                                                                                                             |
         |   └─TableRowIDScan_9(Probe)     | 29.97   | cop[tikv] | table:t4                                                                    | keep order:false, stats:pseudo                                                                                                                          |
         +---------------------------------+---------+-----------+-----------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-        
+
         -- 条件不匹配语义，所以 TiDB 只能为这个 SQL 语句的部分条件使用 IndexMerge，如上所述。
         > EXPLAIN SELECT /*+ use_index_merge(t4, mvi1, mvi2) */ * FROM t4 WHERE json_overlaps(j->'$.a', '[1]') AND json_overlaps(j->'$.b', '[2, 3]');
         +---------------------------------+---------+-----------+-----------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -420,7 +420,7 @@ CREATE TABLE t4(a INT, j JSON, INDEX mvi1((CAST(j->'$.a' AS UNSIGNED ARRAY))), I
         ```
 
     - 如果 `json_member_of` 用 `OR` 或 `AND` 连接，它匹配语义。例如：
-        
+
         ```sql
         EXPLAIN SELECT /*+ use_index_merge(t4, mvi1, mvi2) */ * FROM t4 WHERE 1 member of (j->'$.a') AND 2 member of (j->'$.b') AND 3 member of (j->'$.a');
         EXPLAIN SELECT /*+ use_index_merge(t4, mvi1, mvi2) */ * FROM t4 WHERE 1 member of (j->'$.a') OR 2 member of (j->'$.b') OR 3 member of (j->'$.a');
@@ -451,7 +451,7 @@ CREATE TABLE t4(a INT, j JSON, INDEX mvi1((CAST(j->'$.a' AS UNSIGNED ARRAY))), I
         ```
 
     - 如果包含多个值的 `json_contains` 条件用 `OR` 连接，或包含多个值的 `json_overlaps` 条件用 `AND` 连接，它们不匹配语义，但如果它们只包含一个值，则匹配语义。例如：
-        
+
         ```sql
         -- 参考前面的示例了解不匹配语义的条件。以下仅提供匹配语义的条件示例。
         EXPLAIN SELECT /*+ use_index_merge(t4, mvi1, mvi2) */ * FROM t4 WHERE json_overlaps(j->'$.a', '[1]') AND json_overlaps(j->'$.b', '[2]');
@@ -469,7 +469,7 @@ CREATE TABLE t4(a INT, j JSON, INDEX mvi1((CAST(j->'$.a' AS UNSIGNED ARRAY))), I
         |   ├─IndexRangeScan_7(Build)     | 10.00   | cop[tikv] | table:t4, index:mvi2(cast(json_extract(`j`, _utf8'$.b') as unsigned array)) | range:[2,2], keep order:false, stats:pseudo                                                                                                      |
         |   └─TableRowIDScan_8(Probe)     | 0.01    | cop[tikv] | table:t4                                                                    | keep order:false, stats:pseudo                                                                                                                   |
         +---------------------------------+---------+-----------+-----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
-        
+
         > EXPLAIN SELECT /*+ use_index_merge(t4, mvi1, mvi2) */ * FROM t4 WHERE json_contains(j->'$.a', '[1]') OR json_contains(j->'$.b', '[2]');
         +-------------------------------+---------+-----------+-----------------------------------------------------------------------------+---------------------------------------------+
         | id                            | estRows | task      | access object                                                               | operator info                               |
@@ -481,7 +481,7 @@ CREATE TABLE t4(a INT, j JSON, INDEX mvi1((CAST(j->'$.a' AS UNSIGNED ARRAY))), I
         +-------------------------------+---------+-----------+-----------------------------------------------------------------------------+---------------------------------------------+
         ```
     - 当同时使用 `OR` 和 `AND` 连接条件（本质上是嵌套的 `OR` 和 `AND`）时，构成 IndexMerge 的条件必须要么全部匹配 `OR` 的语义，要么全部匹配 `AND` 的语义，不能部分匹配 `OR` 的语义，部分匹配 `AND` 的语义。例如：
-        
+
         ```sql
         EXPLAIN SELECT /*+ use_index_merge(t4, mvi1, mvi2) */ * FROM t4 WHERE 1 member of (j->'$.a') AND (2 member of (j->'$.b') OR 3 member of (j->'$.a'));
         EXPLAIN SELECT /*+ use_index_merge(t4, mvi1, mvi2) */ * FROM t4 WHERE 1 member of (j->'$.a') OR (2 member of (j->'$.b') AND 3 member of (j->'$.a'));
@@ -593,7 +593,7 @@ EXPLAIN SELECT /*+ use_index_merge(t6, idx, idx2) */ * FROM t6 WHERE a=1 AND ((1
 +-------------------------------+---------+-----------+-------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-受多值索引当前实现的限制，使用 [`use_index`](/optimizer-hints.md#use_indext1_name-idx1_name--idx2_name-) 可能会返回 `Can't find a proper physical plan for this query` 错误，而使用 [`use_index_merge`](/optimizer-hints.md#use_index_merget1_name-idx1_name--idx2_name-) 不会返回这样的错误。因此，如果您想使用多值索引，建议使用 `use_index_merge`。
+受多值索引当前实现的限制，使用 [`use_index`](/optimizer-hints.md#use_indext1_name-idx1_name--idx2_name-) 可能会返回 `Can't find a proper physical plan for this query` 错误，而使用 [`use_index_merge`](/optimizer-hints.md#use_index_merget1_name-idx1_name--idx2_name-) 不会返回这样的错误。因此，如果你想使用多值索引，建议使用 `use_index_merge`。
 
 ```sql
 mysql> EXPLAIN SELECT /*+ use_index(t3, idx) */ * FROM t3 WHERE ((1 member of (j)) AND (2 member of (j))) OR ((3 member of (j)) AND (4 member of (j)));

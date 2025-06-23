@@ -1,32 +1,32 @@
 ---
 title: 将 TiDB Cloud 与 New Relic 集成（Beta）
-summary: 了解如何使用 New Relic 集成监控您的 TiDB 集群。
+summary: 了解如何使用 New Relic 集成监控你的 TiDB 集群。
 ---
 
 # 将 TiDB Cloud 与 New Relic 集成（Beta）
 
-TiDB Cloud 支持 New Relic 集成（beta）。您可以配置 TiDB Cloud 将 TiDB 集群的指标数据发送到 [New Relic](https://newrelic.com/)。之后，您可以直接在 New Relic 仪表板中查看这些指标。
+TiDB Cloud 支持 New Relic 集成（beta）。你可以配置 TiDB Cloud 将 TiDB 集群的指标数据发送到 [New Relic](https://newrelic.com/)。之后，你可以直接在 New Relic 仪表板中查看这些指标。
 
 ## 前提条件
 
-- 要将 TiDB Cloud 与 New Relic 集成，您必须拥有 New Relic 账号和 [New Relic API 密钥](https://one.newrelic.com/admin-portal/api-keys/home?)。首次创建 New Relic 账号时，New Relic 会授予您一个 API 密钥。
+- 要将 TiDB Cloud 与 New Relic 集成，你必须拥有 New Relic 账号和 [New Relic API 密钥](https://one.newrelic.com/admin-portal/api-keys/home?)。首次创建 New Relic 账号时，New Relic 会授予你一个 API 密钥。
 
-    如果您没有 New Relic 账号，请在[此处](https://newrelic.com/signup)注册。
+    如果你没有 New Relic 账号，请在[此处](https://newrelic.com/signup)注册。
 
-- 要编辑 TiDB Cloud 的第三方集成设置，您必须拥有组织的**组织所有者**访问权限或目标项目的**项目成员**访问权限。
+- 要编辑 TiDB Cloud 的第三方集成设置，你必须拥有组织的**组织所有者**访问权限或目标项目的**项目成员**访问权限。
 
 ## 限制
 
-您不能在 [TiDB Cloud Serverless 集群](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)中使用 New Relic 集成。
+你不能在 [TiDB Cloud Serverless 集群](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)中使用 New Relic 集成。
 
 ## 步骤
 
-### 步骤 1. 与您的 New Relic API 密钥集成
+### 步骤 1. 与你的 New Relic API 密钥集成
 
 1. 在 [TiDB Cloud 控制台](https://tidbcloud.com)中，使用左上角的组合框切换到目标项目。
 2. 在左侧导航栏中，点击**项目设置** > **集成**。
 3. 在**集成**页面上，点击 **New Relic 集成（BETA）**。
-4. 输入您的 New Relic API 密钥并选择 New Relic 的站点。
+4. 输入你的 New Relic API 密钥并选择 New Relic 的站点。
 5. 点击**测试集成**。
 
     - 如果测试成功，将显示**确认**按钮。
@@ -37,16 +37,16 @@ TiDB Cloud 支持 New Relic 集成（beta）。您可以配置 TiDB Cloud 将 Ti
 ### 步骤 2. 在 New Relic 中添加 TiDB Cloud 仪表板
 
 1. 登录 [New Relic](https://one.newrelic.com/)。
-2. 点击**添加数据**，搜索 `TiDB Cloud`，然后转到 **TiDB Cloud 监控**页面。或者，您可以点击[链接](https://one.newrelic.com/marketplace?state=79bf274b-0c01-7960-c85c-3046ca96568e)直接访问该页面。
-3. 选择您的账号 ID 并在 New Relic 中创建仪表板。
+2. 点击**添加数据**，搜索 `TiDB Cloud`，然后转到 **TiDB Cloud 监控**页面。或者，你可以点击[链接](https://one.newrelic.com/marketplace?state=79bf274b-0c01-7960-c85c-3046ca96568e)直接访问该页面。
+3. 选择你的账号 ID 并在 New Relic 中创建仪表板。
 
 ## 预构建仪表板
 
-点击集成中 **New Relic** 卡片中的**仪表板**链接。您可以看到 TiDB 集群的预构建仪表板。
+点击集成中 **New Relic** 卡片中的**仪表板**链接。你可以看到 TiDB 集群的预构建仪表板。
 
 ## New Relic 可用的指标
 
-New Relic 跟踪您的 TiDB 集群的以下指标数据。
+New Relic 跟踪你的 TiDB 集群的以下指标数据。
 
 | 指标名称  | 指标类型 | 标签 | 描述                                   |
 | :------------| :---------- | :------| :----------------------------------------------------- |

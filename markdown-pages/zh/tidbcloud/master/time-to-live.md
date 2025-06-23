@@ -1,11 +1,11 @@
 ---
 title: 使用 TTL（生存时间）定期删除数据
-summary: 生存时间（TTL）是一个允许您在行级别管理 TiDB 数据生命周期的功能。在本文档中，您可以了解如何使用 TTL 自动使数据过期并删除旧数据。
+summary: 生存时间（TTL）是一个允许你在行级别管理 TiDB 数据生命周期的功能。在本文档中，你可以了解如何使用 TTL 自动使数据过期并删除旧数据。
 ---
 
 # 使用 TTL（生存时间）定期删除过期数据
 
-生存时间（TTL）是一个允许您在行级别管理 TiDB 数据生命周期的功能。对于具有 TTL 属性的表，TiDB 会自动检查数据生命周期并在行级别删除过期数据。此功能在某些场景下可以有效节省存储空间并提升性能。
+生存时间（TTL）是一个允许你在行级别管理 TiDB 数据生命周期的功能。对于具有 TTL 属性的表，TiDB 会自动检查数据生命周期并在行级别删除过期数据。此功能在某些场景下可以有效节省存储空间并提升性能。
 
 以下是 TTL 的一些常见使用场景：
 
@@ -17,7 +17,7 @@ TTL 的设计目的是帮助用户定期及时清理不必要的数据，而不�
 
 ## 语法
 
-您可以使用 [`CREATE TABLE`](/sql-statements/sql-statement-create-table.md) 或 [`ALTER TABLE`](/sql-statements/sql-statement-alter-table.md) 语句配置表的 TTL 属性。
+你可以使用 [`CREATE TABLE`](/sql-statements/sql-statement-create-table.md) 或 [`ALTER TABLE`](/sql-statements/sql-statement-alter-table.md) 语句配置表的 TTL 属性。
 
 ### 创建具有 TTL 属性的表
 
@@ -43,7 +43,7 @@ TTL 的设计目的是帮助用户定期及时清理不必要的数据，而不�
 
     如果 `TTL_ENABLE` 设置为 `OFF`，即使设置了其他 TTL 选项，TiDB 也不会自动清理此表中的过期数据。对于具有 TTL 属性的表，`TTL_ENABLE` 默认为 `ON`。
 
-- 为了与 MySQL 兼容，您可以使用注释设置 TTL 属性：
+- 为了与 MySQL 兼容，你可以使用注释设置 TTL 属性：
 
     ```sql
     CREATE TABLE t1 (
@@ -62,7 +62,7 @@ TTL 的设计目的是帮助用户定期及时清理不必要的数据，而不�
     ALTER TABLE t1 TTL = `created_at` + INTERVAL 1 MONTH;
     ```
 
-    您可以使用上述语句修改已有 TTL 属性的表，或为没有 TTL 属性的表添加 TTL 属性。
+    你可以使用上述语句修改已有 TTL 属性的表，或为没有 TTL 属性的表添加 TTL 属性。
 
 - 修改具有 TTL 属性的表的 `TTL_ENABLE` 值：
 
@@ -78,7 +78,7 @@ TTL 的设计目的是帮助用户定期及时清理不必要的数据，而不�
 
 ### TTL 和数据类型的默认值
 
-您可以将 TTL 与[数据类型的默认值](/data-type-default-values.md)一起使用。以下是两个常见的使用示例：
+你可以将 TTL 与[数据类型的默认值](/data-type-default-values.md)一起使用。以下是两个常见的使用示例：
 
 * 使用 `DEFAULT CURRENT_TIMESTAMP` 将列的默认值指定为当前创建时间，并使用此列作为 TTL 时间戳列。3 个月前创建的记录将过期：
 
@@ -100,7 +100,7 @@ TTL 的设计目的是帮助用户定期及时清理不必要的数据，而不�
 
 ### TTL 和生成列
 
-您可以将 TTL 与[生成列](/generated-columns.md)一起使用来配置复杂的过期规则。例如：
+你可以将 TTL 与[生成列](/generated-columns.md)一起使用来配置复杂的过期规则。例如：
 
 ```sql
 CREATE TABLE message (
@@ -116,7 +116,7 @@ CREATE TABLE message (
 
 上述语句使用 `expire_at` 列作为 TTL 时间戳列，并根据消息类型设置过期时间。如果消息是图片，则 5 天后过期。否则，30 天后过期。
 
-您可以将 TTL 与 [JSON 类型](/data-type-json.md)一起使用。例如：
+你可以将 TTL 与 [JSON 类型](/data-type-json.md)一起使用。例如：
 
 ```sql
 CREATE TABLE orders (
@@ -128,7 +128,7 @@ CREATE TABLE orders (
 
 ## TTL 任务
 
-对于每个具有 TTL 属性的表，TiDB 内部会调度一个后台任务来清理过期数据。您可以通过为表设置 `TTL_JOB_INTERVAL` 属性来自定义这些任务的执行周期。以下示例将表 `orders` 的后台清理任务设置为每 24 小时运行一次：
+对于每个具有 TTL 属性的表，TiDB 内部会调度一个后台任务来清理过期数据。你可以通过为表设置 `TTL_JOB_INTERVAL` 属性来自定义这些任务的执行周期。以下示例将表 `orders` 的后台清理任务设置为每 24 小时运行一次：
 
 ```sql
 ALTER TABLE orders TTL_JOB_INTERVAL = '24h';
@@ -136,15 +136,15 @@ ALTER TABLE orders TTL_JOB_INTERVAL = '24h';
 
 `TTL_JOB_INTERVAL` 默认设置为 `1h`。
 
-在执行 TTL 任务时，TiDB 会将表分割成最多 64 个任务，以 Region 为最小单位。这些任务将被分布式执行。您可以通过设置系统变量 [`tidb_ttl_running_tasks`](/system-variables.md#tidb_ttl_running_tasks-new-in-v700) 来限制整个集群中并发 TTL 任务的数量。但是，并非所有表的 TTL 任务都可以被分割成任务。有关哪些类型的表的 TTL 任务不能被分割成任务的更多详细信息，请参考[限制](#限制)部分。
+在执行 TTL 任务时，TiDB 会将表分割成最多 64 个任务，以 Region 为最小单位。这些任务将被分布式执行。你可以通过设置系统变量 [`tidb_ttl_running_tasks`](/system-variables.md#tidb_ttl_running_tasks-new-in-v700) 来限制整个集群中并发 TTL 任务的数量。但是，并非所有表的 TTL 任务都可以被分割成任务。有关哪些类型的表的 TTL 任务不能被分割成任务的更多详细信息，请参考[限制](#限制)部分。
 
-要禁用 TTL 任务的执行，除了设置表选项 `TTL_ENABLE='OFF'` 外，您还可以通过设置 [`tidb_ttl_job_enable`](/system-variables.md#tidb_ttl_job_enable-new-in-v650) 全局变量来禁用整个集群中 TTL 任务的执行：
+要禁用 TTL 任务的执行，除了设置表选项 `TTL_ENABLE='OFF'` 外，你还可以通过设置 [`tidb_ttl_job_enable`](/system-variables.md#tidb_ttl_job_enable-new-in-v650) 全局变量来禁用整个集群中 TTL 任务的执行：
 
 ```sql
 SET @@global.tidb_ttl_job_enable = OFF;
 ```
 
-在某些场景下，您可能希望只允许 TTL 任务在特定时间窗口内运行。在这种情况下，您可以设置 [`tidb_ttl_job_schedule_window_start_time`](/system-variables.md#tidb_ttl_job_schedule_window_start_time-new-in-v650) 和 [`tidb_ttl_job_schedule_window_end_time`](/system-variables.md#tidb_ttl_job_schedule_window_end_time-new-in-v650) 全局变量来指定时间窗口。例如：
+在某些场景下，你可能希望只允许 TTL 任务在特定时间窗口内运行。在这种情况下，你可以设置 [`tidb_ttl_job_schedule_window_start_time`](/system-variables.md#tidb_ttl_job_schedule_window_start_time-new-in-v650) 和 [`tidb_ttl_job_schedule_window_end_time`](/system-variables.md#tidb_ttl_job_schedule_window_end_time-new-in-v650) 全局变量来指定时间窗口。例如：
 
 ```sql
 SET @@global.tidb_ttl_job_schedule_window_start_time = '01:00 +0000';
@@ -163,7 +163,7 @@ SET @@global.tidb_ttl_job_schedule_window_end_time = '05:00 +0000';
 
 </CustomContent>
 
-TiDB 定期收集 TTL 的运行时信息，并在 Grafana 中提供这些指标的可视化图表。您可以在 Grafana 的 TiDB -> TTL 面板中查看这些指标。
+TiDB 定期收集 TTL 的运行时信息，并在 Grafana 中提供这些指标的可视化图表。你可以在 Grafana 的 TiDB -> TTL 面板中查看这些指标。
 
 <CustomContent platform="tidb">
 
@@ -238,16 +238,16 @@ TTL 可以与其他 TiDB 迁移、备份和恢复工具一起使用。
 
 | 工具名称 | 最低支持版本 | 说明 |
 | --- | --- | --- |
-| Backup & Restore (BR) | v6.6.0 | 使用 BR 恢复数据后，表的 `TTL_ENABLE` 属性将被设置为 `OFF`。这可以防止 TiDB 在备份和恢复后立即删除过期数据。您需要手动打开每个表的 `TTL_ENABLE` 属性以重新启用 TTL。 |
-| TiDB Lightning | v6.6.0 | 使用 TiDB Lightning 导入数据后，导入表的 `TTL_ENABLE` 属性将被设置为 `OFF`。这可以防止 TiDB 在导入后立即删除过期数据。您需要手动打开每个表的 `TTL_ENABLE` 属性以重新启用 TTL。 |
+| Backup & Restore (BR) | v6.6.0 | 使用 BR 恢复数据后，表的 `TTL_ENABLE` 属性将被设置为 `OFF`。这可以防止 TiDB 在备份和恢复后立即删除过期数据。你需要手动打开每个表的 `TTL_ENABLE` 属性以重新启用 TTL。 |
+| TiDB Lightning | v6.6.0 | 使用 TiDB Lightning 导入数据后，导入表的 `TTL_ENABLE` 属性将被设置为 `OFF`。这可以防止 TiDB 在导入后立即删除过期数据。你需要手动打开每个表的 `TTL_ENABLE` 属性以重新启用 TTL。 |
 | TiCDC | v7.0.0 | 下游的 `TTL_ENABLE` 属性将自动设置为 `OFF`。上游的 TTL 删除操作将同步到下游。因此，为了防止重复删除，下游表的 `TTL_ENABLE` 属性将被强制设置为 `OFF`。 |
 
 ## 与 SQL 的兼容性
 
 | 功能名称 | 说明 |
 | :-- | :---- |
-| [`FLASHBACK TABLE`](/sql-statements/sql-statement-flashback-table.md) | `FLASHBACK TABLE` 将把表的 `TTL_ENABLE` 属性设置为 `OFF`。这可以防止 TiDB 在闪回后立即删除过期数据。您需要手动打开每个表的 `TTL_ENABLE` 属性以重新启用 TTL。 |
-| [`FLASHBACK DATABASE`](/sql-statements/sql-statement-flashback-database.md) | `FLASHBACK DATABASE` 将把表的 `TTL_ENABLE` 属性设置为 `OFF`，且不会修改 `TTL_ENABLE` 属性。这可以防止 TiDB 在闪回后立即删除过期数据。您需要手动打开每个表的 `TTL_ENABLE` 属性以重新启用 TTL。 |
+| [`FLASHBACK TABLE`](/sql-statements/sql-statement-flashback-table.md) | `FLASHBACK TABLE` 将把表的 `TTL_ENABLE` 属性设置为 `OFF`。这可以防止 TiDB 在闪回后立即删除过期数据。你需要手动打开每个表的 `TTL_ENABLE` 属性以重新启用 TTL。 |
+| [`FLASHBACK DATABASE`](/sql-statements/sql-statement-flashback-database.md) | `FLASHBACK DATABASE` 将把表的 `TTL_ENABLE` 属性设置为 `OFF`，且不会修改 `TTL_ENABLE` 属性。这可以防止 TiDB 在闪回后立即删除过期数据。你需要手动打开每个表的 `TTL_ENABLE` 属性以重新启用 TTL。 |
 | [`FLASHBACK CLUSTER`](/sql-statements/sql-statement-flashback-cluster.md) | `FLASHBACK CLUSTER` 将把系统变量 [`TIDB_TTL_JOB_ENABLE`](/system-variables.md#tidb_ttl_job_enable-new-in-v650) 设置为 `OFF`，且不会更改 `TTL_ENABLE` 属性的值。 |
 
 ## 限制
@@ -269,7 +269,7 @@ TTL 可以与其他 TiDB 迁移、备份和恢复工具一起使用。
 
     ![insert fast example](/media/ttl/insert-fast.png)
 
-    值得注意的是，由于 TTL 不保证过期行会立即被删除，而且当前插入的行将在未来的 TTL 任务中被删除，即使在短时间内 TTL 删除速度低于插入速度，也不一定意味着 TTL 速度太慢。您需要结合具体情况来考虑。
+    值得注意的是，由于 TTL 不保证过期行会立即被删除，而且当前插入的行将在未来的 TTL 任务中被删除，即使在短时间内 TTL 删除速度低于插入速度，也不一定意味着 TTL 速度太慢。你需要结合具体情况来考虑。
 
 - 如何判断 TTL 任务的瓶颈是在扫描还是删除？
 
@@ -281,14 +281,14 @@ TTL 可以与其他 TiDB 迁移、备份和恢复工具一起使用。
 
     ![delete fast example](/media/ttl/delete-fast.png)
 
-    TTL 任务中扫描和删除的比例与机器配置和数据分布有关，因此每个时刻的监控数据只能代表当时正在执行的 TTL 任务。您可以通过查看 `mysql.tidb_ttl_job_history` 表来确定某个时刻正在运行的是哪个 TTL 任务以及该任务对应的表。
+    TTL 任务中扫描和删除的比例与机器配置和数据分布有关，因此每个时刻的监控数据只能代表当时正在执行的 TTL 任务。你可以通过查看 `mysql.tidb_ttl_job_history` 表来确定某个时刻正在运行的是哪个 TTL 任务以及该任务对应的表。
 
 - 如何合理配置 `tidb_ttl_scan_worker_count` 和 `tidb_ttl_delete_worker_count`？
 
     1. 参考"如何判断 TTL 任务的瓶颈是在扫描还是删除？"来考虑是否需要增加 `tidb_ttl_scan_worker_count` 或 `tidb_ttl_delete_worker_count` 的值。
     2. 如果 TiKV 节点数量较多，增加 `tidb_ttl_scan_worker_count` 的值可以使 TTL 任务的工作负载更加均衡。
 
-   由于过多的 TTL 工作线程会造成较大压力，您需要结合评估 TiDB 的 CPU 水平以及 TiKV 的磁盘和 CPU 使用情况。根据不同的场景和需求（是否需要尽可能加快 TTL 速度，或者是否需要减少 TTL 对其他查询的影响），可以调整 `tidb_ttl_scan_worker_count` 和 `tidb_ttl_delete_worker_count` 的值来提高 TTL 扫描和删除的速度或减少 TTL 任务带来的性能影响。
+   由于过多的 TTL 工作线程会造成较大压力，你需要结合评估 TiDB 的 CPU 水平以及 TiKV 的磁盘和 CPU 使用情况。根据不同的场景和需求（是否需要尽可能加快 TTL 速度，或者是否需要减少 TTL 对其他查询的影响），可以调整 `tidb_ttl_scan_worker_count` 和 `tidb_ttl_delete_worker_count` 的值来提高 TTL 扫描和删除的速度或减少 TTL 任务带来的性能影响。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
@@ -297,6 +297,6 @@ TTL 可以与其他 TiDB 迁移、备份和恢复工具一起使用。
 
    如果 TiKV 节点数量较多，增加 `tidb_ttl_scan_worker_count` 的值可以使 TTL 任务的工作负载更加均衡。
 
-   但是过多的 TTL 工作线程会造成较大压力，您需要结合评估 TiDB 的 CPU 水平以及 TiKV 的磁盘和 CPU 使用情况。根据不同的场景和需求（是否需要尽可能加快 TTL 速度，或者是否需要减少 TTL 对其他查询的影响），可以调整 `tidb_ttl_scan_worker_count` 和 `tidb_ttl_delete_worker_count` 的值来提高 TTL 扫描和删除的速度或减少 TTL 任务带来的性能影响。
+   但是过多的 TTL 工作线程会造成较大压力，你需要结合评估 TiDB 的 CPU 水平以及 TiKV 的磁盘和 CPU 使用情况。根据不同的场景和需求（是否需要尽可能加快 TTL 速度，或者是否需要减少 TTL 对其他查询的影响），可以调整 `tidb_ttl_scan_worker_count` 和 `tidb_ttl_delete_worker_count` 的值来提高 TTL 扫描和删除的速度或减少 TTL 任务带来的性能影响。
 
 </CustomContent>

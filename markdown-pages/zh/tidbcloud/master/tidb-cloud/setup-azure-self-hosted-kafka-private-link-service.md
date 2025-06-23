@@ -22,7 +22,7 @@ summary: 本文档说明如何在 Azure 中为自托管 Kafka 设置 Private Lin
 
 ## 前提条件
 
-1. 确保您有以下授权来在自己的 Azure 账户中设置 Kafka Private Link 服务。
+1. 确保你有以下授权来在自己的 Azure 账户中设置 Kafka Private Link 服务。
 
     - 管理虚拟机
     - 管理虚拟网络
@@ -30,21 +30,21 @@ summary: 本文档说明如何在 Azure 中为自托管 Kafka 设置 Private Lin
     - 管理私有链接服务
     - 连接到虚拟机以配置 Kafka 节点
 
-2. 如果您还没有在 Azure 上的 [TiDB Cloud Dedicated 集群](/tidb-cloud/create-tidb-cluster.md)，请创建一个。
+2. 如果你还没有在 Azure 上的 [TiDB Cloud Dedicated 集群](/tidb-cloud/create-tidb-cluster.md)，请创建一个。
 
-3. 从您的 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 集群获取 Kafka 部署信息。
+3. 从你的 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 集群获取 Kafka 部署信息。
 
     1. 在 [TiDB Cloud 控制台](https://tidbcloud.com)中，导航到[**集群**](https://tidbcloud.com/project/clusters)页面，然后点击目标集群的名称以进入其概览页面。
     2. 在左侧导航栏中，点击**数据** > **变更数据捕获**。
     3. 在**变更数据捕获**页面，点击右上角的**创建变更数据捕获**，然后提供以下信息：
         1. 在**目标**中，选择 **Kafka**。
         2. 在**连接方式**中，选择 **Private Link**。
-    4. 记下**继续之前的提醒**中的区域信息和 TiDB Cloud Azure 账户的订阅信息。您将使用它来授权 TiDB Cloud 访问 Kafka Private Link 服务。
-    5. 通过提供唯一的随机字符串为您的 Kafka Private Link 服务生成 **Kafka 广播监听器模式**。
-        1. 输入唯一的随机字符串。它只能包含数字或小写字母。您稍后将使用它来生成 **Kafka 广播监听器模式**。
+    4. 记下**继续之前的提醒**中的区域信息和 TiDB Cloud Azure 账户的订阅信息。你将使用它来授权 TiDB Cloud 访问 Kafka Private Link 服务。
+    5. 通过提供唯一的随机字符串为你的 Kafka Private Link 服务生成 **Kafka 广播监听器模式**。
+        1. 输入唯一的随机字符串。它只能包含数字或小写字母。你稍后将使用它来生成 **Kafka 广播监听器模式**。
         2. 点击**检查使用情况并生成**以检查随机字符串是否唯一并生成 **Kafka 广播监听器模式**，该模式将用于组装 Kafka broker 的 EXTERNAL 广播监听器。
 
-记下所有部署信息。您稍后需要使用它来配置 Kafka Private Link 服务。
+记下所有部署信息。你稍后需要使用它来配置 Kafka Private Link 服务。
 
 下表显示了部署信息的示例。
 
@@ -56,16 +56,16 @@ summary: 本文档说明如何在 Azure 中为自托管 Kafka 设置 Private Lin
 
 ## 步骤 1. 设置 Kafka 集群
 
-如果您需要部署新集群，请按照[部署新的 Kafka 集群](#部署新的-kafka-集群)中的说明进行操作。
+如果你需要部署新集群，请按照[部署新的 Kafka 集群](#部署新的-kafka-集群)中的说明进行操作。
 
-如果您需要暴露现有集群，请按照[重新配置运行中的 Kafka 集群](#重新配置运行中的-kafka-集群)中的说明进行操作。
+如果你需要暴露现有集群，请按照[重新配置运行中的 Kafka 集群](#重新配置运行中的-kafka-集群)中的说明进行操作。
 
 ### 部署新的 Kafka 集群
 
 #### 1. 设置 Kafka 虚拟网络
 
 1. 登录 [Azure 门户](https://portal.azure.com/)，转到[虚拟网络](https://portal.azure.com/#browse/Microsoft.Network%2FvirtualNetworks)页面，然后点击**+ 创建**以创建虚拟网络。
-2. 在**基本信息**选项卡中，选择您的**订阅**、**资源组**和**区域**，在**虚拟网络名称**字段中输入名称（例如 `kafka-pls-vnet`），然后点击**下一步**。
+2. 在**基本信息**选项卡中，选择你的**订阅**、**资源组**和**区域**，在**虚拟网络名称**字段中输入名称（例如 `kafka-pls-vnet`），然后点击**下一步**。
 3. 在**安全性**选项卡中，启用 Azure Bastion，然后点击**下一步**。
 4. 在 **IP 地址**选项卡中，执行以下操作：
 
@@ -85,7 +85,7 @@ summary: 本文档说明如何在 Azure 中为自托管 Kafka 设置 Private Lin
 **2.1. 创建 broker 节点**
 
 1. 登录 [Azure 门户](https://portal.azure.com/)，转到[虚拟机](https://portal.azure.com/#view/Microsoft_Azure_ComputeHub/ComputeHubMenuBlade/~/virtualMachinesBrowse)页面，点击**+ 创建**，然后选择 **Azure 虚拟机**。
-2. 在**基本信息**选项卡中，选择您的**订阅**、**资源组**和**区域**，填写以下信息，然后点击**下一步：磁盘**。
+2. 在**基本信息**选项卡中，选择你的**订阅**、**资源组**和**区域**，填写以下信息，然后点击**下一步：磁盘**。
     - **虚拟机名称**：`broker-node`
     - **可用性选项**：`可用性区域`
     - **区域选项**：`自选区域`
@@ -109,13 +109,13 @@ summary: 本文档说明如何在 Azure 中为自托管 Kafka 设置 Private Lin
     - **负载均衡选项**：`无`
 4. 点击**查看 + 创建**以验证信息。
 5. 点击**创建**。将显示**生成新的密钥对**消息。
-6. 点击**下载私钥并创建资源**将私钥下载到本地计算机。您可以看到虚拟机创建的进度。
+6. 点击**下载私钥并创建资源**将私钥下载到本地计算机。你可以看到虚拟机创建的进度。
 
 **2.2. 准备 Kafka 运行时二进制文件**
 
 虚拟机部署完成后，执行以下步骤：
 
-1. 在 [Azure 门户](https://portal.azure.com/)中，转到[**资源组**](https://portal.azure.com/#view/HubsExtension/BrowseResourceGroups.ReactView)页面，点击您的资源组名称，然后导航到每个 broker 节点（`broker-node-1`、`broker-node-2` 和 `broker-node-3`）的页面。
+1. 在 [Azure 门户](https://portal.azure.com/)中，转到[**资源组**](https://portal.azure.com/#view/HubsExtension/BrowseResourceGroups.ReactView)页面，点击你的资源组名称，然后导航到每个 broker 节点（`broker-node-1`、`broker-node-2` 和 `broker-node-3`）的页面。
 
 2. 在每个 broker 节点的页面上，点击左侧导航栏中的**连接 > Bastion**，然后填写以下信息：
 
@@ -124,12 +124,12 @@ summary: 本文档说明如何在 Azure 中为自托管 Kafka 设置 Private Lin
     - **本地文件**：选择之前下载的私钥文件
     - 选择**在新的浏览器标签页中打开**选项
 
-3. 在每个 broker 节点的页面上，点击**连接**以打开带有 Linux 终端的新浏览器标签页。对于三个 broker 节点，您需要打开三个带有 Linux 终端的浏览器标签页。
+3. 在每个 broker 节点的页面上，点击**连接**以打开带有 Linux 终端的新浏览器标签页。对于三个 broker 节点，你需要打开三个带有 Linux 终端的浏览器标签页。
 
 4. 在每个 Linux 终端中，运行以下命令以在每个 broker 节点中下载二进制文件。
 
     ```shell
-    # 下载 Kafka 和 OpenJDK，然后解压文件。您可以根据偏好选择二进制版本。
+    # 下载 Kafka 和 OpenJDK，然后解压文件。你可以根据偏好选择二进制版本。
     wget https://archive.apache.org/dist/kafka/3.7.1/kafka_2.13-3.7.1.tgz
     tar -zxf kafka_2.13-3.7.1.tgz
     wget https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz
@@ -141,7 +141,7 @@ summary: 本文档说明如何在 Azure 中为自托管 Kafka 设置 Private Lin
 1. 使用三个节点设置 KRaft Kafka 集群。每个节点同时作为 broker 和控制器。对于每个 broker 节点：
 
     1. 配置 `listeners`。所有三个 broker 都相同，并作为 broker 和控制器角色。
-        1. 为所有**控制器**角色节点配置相同的 CONTROLLER 监听器。如果您只想添加 broker 角色节点，可以在 `server.properties` 中省略 CONTROLLER 监听器。
+        1. 为所有**控制器**角色节点配置相同的 CONTROLLER 监听器。如果你只想添加 broker 角色节点，可以在 `server.properties` 中省略 CONTROLLER 监听器。
         2. 配置两个 broker 监听器：**INTERNAL** 用于内部 Kafka 客户端访问，**EXTERNAL** 用于从 TiDB Cloud 访问。
 
     2. 对于 `advertised.listeners`，执行以下操作：
@@ -259,7 +259,7 @@ summary: 本文档说明如何在 Azure 中为自托管 Kafka 设置 Private Lin
     ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:39092
     # 最后 3 行的预期输出（实际顺序可能不同）
     # 与"从 INTERNAL 监听器引导"的输出不同之处在于，由于广播监听器无法在 kafka-pls-vnet 中解析，可能会出现异常或错误。
-    # 当您创建通过 Private Link Service 连接到此 Kafka 集群的变更数据捕获时，TiDB Cloud 将使这些地址可解析并将请求路由到正确的 broker。
+    # 当你创建通过 Private Link Service 连接到此 Kafka 集群的变更数据捕获时，TiDB Cloud 将使这些地址可解析并将请求路由到正确的 broker。
     b1.abc.eastus.azure.3199745.tidbcloud.com:9093 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b2.abc.eastus.azure.3199745.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
     b3.abc.eastus.azure.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
@@ -356,7 +356,7 @@ summary: 本文档说明如何在 Azure 中为自托管 Kafka 设置 Private Lin
     ```
 ### 重新配置运行中的 Kafka 集群
 
-确保您的 Kafka 集群部署在与 TiDB 集群相同的区域。
+确保你的 Kafka 集群部署在与 TiDB 集群相同的区域。
 
 **1. 为 broker 配置 EXTERNAL 监听器**
 
@@ -385,14 +385,14 @@ summary: 本文档说明如何在 Azure 中为自托管 Kafka 设置 Private Lin
     listener.security.protocol.map=...,EXTERNAL:PLAINTEXT
      ```
 
-3. 重新配置所有 broker 后，逐个重启您的 Kafka broker。
+3. 重新配置所有 broker 后，逐个重启你的 Kafka broker。
 
 **2. 在内部网络中测试 EXTERNAL 监听器设置**
 
-您可以在 Kafka 客户端节点中下载 Kafka 和 OpenJDK。
+你可以在 Kafka 客户端节点中下载 Kafka 和 OpenJDK。
 
 ```shell
-# 下载 Kafka 和 OpenJDK，然后解压文件。您可以根据偏好选择二进制版本。
+# 下载 Kafka 和 OpenJDK，然后解压文件。你可以根据偏好选择二进制版本。
 wget https://archive.apache.org/dist/kafka/3.7.1/kafka_2.13-3.7.1.tgz
 tar -zxf kafka_2.13-3.7.1.tgz
 wget https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz
@@ -408,8 +408,8 @@ export JAVA_HOME=~/jdk-22.0.2
 ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:39092
 
 # 最后 3 行的预期输出（实际顺序可能不同）
-# 由于广播监听器无法在您的 Kafka 网络中解析，将会出现一些异常或错误。
-# 当您创建通过 Private Link Service 连接到此 Kafka 集群的变更数据捕获时，TiDB Cloud 将使这些地址可解析并将请求路由到正确的 broker。
+# 由于广播监听器无法在你的 Kafka 网络中解析，将会出现一些异常或错误。
+# 当你创建通过 Private Link Service 连接到此 Kafka 集群的变更数据捕获时，TiDB Cloud 将使这些地址可解析并将请求路由到正确的 broker。
 b1.abc.eastus.azure.3199745.tidbcloud.com:9093 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
 b2.abc.eastus.azure.3199745.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
 b3.abc.eastus.azure.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
@@ -419,7 +419,7 @@ b3.abc.eastus.azure.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.
 ### 1. 设置负载均衡器
 
 1. 登录 [Azure 门户](https://portal.azure.com/)，转到[负载均衡](https://portal.azure.com/#view/Microsoft_Azure_Network/LoadBalancingHubMenuBlade/~/loadBalancers)页面，然后点击**+ 创建**以创建负载均衡器。
-2. 在**基本信息**选项卡中，选择您的**订阅**、**资源组**和**区域**，填写以下实例信息，然后点击**下一步：前端 IP 配置 >**。
+2. 在**基本信息**选项卡中，选择你的**订阅**、**资源组**和**区域**，填写以下实例信息，然后点击**下一步：前端 IP 配置 >**。
 
     - **名称**：`kafka-lb`
     - **SKU**：`标准`
@@ -493,7 +493,7 @@ b3.abc.eastus.azure.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.
 
 1. 登录 [Azure 门户](https://portal.azure.com/)，转到[私有链接服务](https://portal.azure.com/#view/Microsoft_Azure_Network/PrivateLinkCenterBlade/~/privatelinkservices)页面，然后点击**+ 创建**以为 Kafka 负载均衡器创建 Private Link Service。
 
-2. 在**基本信息**选项卡中，选择您的**订阅**、**资源组**和**区域**，在**名称**字段中填写 `kafka-pls`，然后点击**下一步：出站设置 >**。
+2. 在**基本信息**选项卡中，选择你的**订阅**、**资源组**和**区域**，在**名称**字段中填写 `kafka-pls`，然后点击**下一步：出站设置 >**。
 
 3. 在**出站设置**选项卡中，填写参数如下，然后点击**下一步：访问安全性 >**。
 
@@ -503,8 +503,8 @@ b3.abc.eastus.azure.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.
 
 4. 在**访问安全性**选项卡中，执行以下操作：
 
-    - 对于**可见性**，选择**按订阅限制**或**具有您别名的任何人**。
-    - 对于**订阅级别访问和自动批准**，点击**添加订阅**以添加您在[前提条件](#前提条件)中获取的 TiDB Cloud Azure 账户的订阅。
+    - 对于**可见性**，选择**按订阅限制**或**具有你别名的任何人**。
+    - 对于**订阅级别访问和自动批准**，点击**添加订阅**以添加你在[前提条件](#前提条件)中获取的 TiDB Cloud Azure 账户的订阅。
 
 5. 点击**下一步：标记 >**，然后点击**下一步：查看 + 创建 >**以验证信息。
 
@@ -513,25 +513,25 @@ b3.abc.eastus.azure.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.
 
 1. 返回 [TiDB Cloud 控制台](https://tidbcloud.com)，通过**私有链接**为集群创建变更数据捕获以连接到 Kafka 集群。更多信息，请参阅[导出到 Apache Kafka](/tidb-cloud/changefeed-sink-to-apache-kafka.md)。
 
-2. 当您进入**配置变更数据捕获目标 > 连接方式 > Private Link**时，使用相应的值填写以下字段和其他所需字段。
+2. 当你进入**配置变更数据捕获目标 > 连接方式 > Private Link**时，使用相应的值填写以下字段和其他所需字段。
 
-    - **Kafka 广播监听器模式**：您在[前提条件](#前提条件)中用于生成 **Kafka 广播监听器模式**的唯一随机字符串。
-    - **Private Link Service 的别名**：您在[2. 设置 Private Link Service](#2-设置-private-link-service)中获取的 Private Link Service 的别名。
+    - **Kafka 广播监听器模式**：你在[前提条件](#前提条件)中用于生成 **Kafka 广播监听器模式**的唯一随机字符串。
+    - **Private Link Service 的别名**：你在[2. 设置 Private Link Service](#2-设置-private-link-service)中获取的 Private Link Service 的别名。
     - **引导端口**：`9093,9094,9095`。
 
 3. 按照[导出到 Apache Kafka](/tidb-cloud/changefeed-sink-to-apache-kafka.md)中的步骤继续操作。
 
-现在您已成功完成任务。
+现在你已成功完成任务。
 
 ## 常见问题
 
 ### 如何从两个不同的 TiDB Cloud 项目连接到同一个 Kafka Private Link Service？
 
-如果您已按照本文档成功设置了从第一个项目的连接，您可以按照以下步骤从第二个项目连接到同一个 Kafka Private Link Service：
+如果你已按照本文档成功设置了从第一个项目的连接，你可以按照以下步骤从第二个项目连接到同一个 Kafka Private Link Service：
 
 1. 按照本文档从头开始操作。
 
-2. 当您进入[步骤 1. 设置 Kafka 集群](#步骤-1-设置-kafka-集群)时，按照[重新配置运行中的 Kafka 集群](#重新配置运行中的-kafka-集群)创建另一组 EXTERNAL 监听器和广播监听器。您可以将其命名为 **EXTERNAL2**。注意，**EXTERNAL2** 的端口范围可以与 **EXTERNAL** 重叠。
+2. 当你进入[步骤 1. 设置 Kafka 集群](#步骤-1-设置-kafka-集群)时，按照[重新配置运行中的 Kafka 集群](#重新配置运行中的-kafka-集群)创建另一组 EXTERNAL 监听器和广播监听器。你可以将其命名为 **EXTERNAL2**。注意，**EXTERNAL2** 的端口范围可以与 **EXTERNAL** 重叠。
 
 3. 重新配置 broker 后，创建新的负载均衡器和新的 Private Link Service。
 

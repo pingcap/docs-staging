@@ -5,7 +5,7 @@ summary: 结合全文搜索和向量搜索来提升检索质量。
 
 # 混合搜索
 
-通过使用全文搜索，您可以基于精确关键词检索文档。通过使用向量搜索，您可以基于语义相似度检索文档。我们能否结合这两种搜索方法来提升检索质量并处理更多场景？是的，这种方法被称为混合搜索，在 AI 应用中被广泛使用。
+通过使用全文搜索，你可以基于精确关键词检索文档。通过使用向量搜索，你可以基于语义相似度检索文档。我们能否结合这两种搜索方法来提升检索质量并处理更多场景？是的，这种方法被称为混合搜索，在 AI 应用中被广泛使用。
 
 TiDB 中混合搜索的一般工作流程如下：
 
@@ -14,7 +14,7 @@ TiDB 中混合搜索的一般工作流程如下：
 
 ![混合搜索](/media/vector-search/hybrid-search-overview.svg)
 
-本教程演示如何使用 [pytidb](https://github.com/pingcap/pytidb) Python SDK 在 TiDB 中使用混合搜索，该 SDK 内置支持嵌入和重排序功能。使用 pytidb 完全是可选的 — 您可以直接使用 SQL 执行搜索，并根据需要使用自己的重排序模型。
+本教程演示如何使用 [pytidb](https://github.com/pingcap/pytidb) Python SDK 在 TiDB 中使用混合搜索，该 SDK 内置支持嵌入和重排序功能。使用 pytidb 完全是可选的 — 你可以直接使用 SQL 执行搜索，并根据需要使用自己的重排序模型。
 
 ## 前提条件
 
@@ -22,7 +22,7 @@ TiDB 中混合搜索的一般工作流程如下：
 
 - TiDB Cloud Serverless：`法兰克福 (eu-central-1)` 和 `新加坡 (ap-southeast-1)`
 
-要完成本教程，请确保您在支持的地区有一个 TiDB Cloud Serverless 集群。如果您还没有，请按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建一个。
+要完成本教程，请确保你在支持的地区有一个 TiDB Cloud Serverless 集群。如果你还没有，请按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)的说明创建一个。
 
 ## 开始使用
 
@@ -31,7 +31,7 @@ TiDB 中混合搜索的一般工作流程如下：
 ```shell
 pip install "pytidb[models]"
 
-# (替代方案) 如果您不想使用内置的嵌入函数和重排序器：
+# (替代方案) 如果你不想使用内置的嵌入函数和重排序器：
 # pip install pytidb
 
 # (可选) 要将查询结果转换为 pandas DataFrame：
@@ -52,7 +52,7 @@ db = TiDBClient.connect(
 )
 ```
 
-您可以从 [TiDB Cloud 控制台](https://tidbcloud.com)获取这些连接参数：
+你可以从 [TiDB Cloud 控制台](https://tidbcloud.com)获取这些连接参数：
 
 1. 导航到[**集群**](https://tidbcloud.com/project/clusters)页面，然后点击目标集群的名称进入其概览页面。
 
@@ -81,7 +81,7 @@ db = TiDBClient.connect(
    )
    ```
 
-   请注意，上述示例仅用于演示目的。您需要使用自己的值填充参数并确保它们的安全性。
+   请注意，上述示例仅用于演示目的。你需要使用自己的值填充参数并确保它们的安全性。
 
 ### 步骤 3. 创建表
 
@@ -118,7 +118,7 @@ table.bulk_insert(
     [
         Chunk(id=2, text="bar", user_id=2),   # 👈 文本字段将被自动嵌入为向量
         Chunk(id=3, text="baz", user_id=3),   # 并存储在 "text_vec" 字段中。
-        Chunk(id=4, text="qux", user_id=4),   # 
+        Chunk(id=4, text="qux", user_id=4),   #
     ]
 )
 ```
@@ -150,7 +150,7 @@ df = (
 
 ## 反馈与帮助
 
-全文搜索仍处于早期阶段，可访问性有限。如果您想在尚未提供服务的地区尝试全文搜索，或者如果您有反馈或需要帮助，请随时联系我们：
+全文搜索仍处于早期阶段，可访问性有限。如果你想在尚未提供服务的地区尝试全文搜索，或者如果你有反馈或需要帮助，请随时联系我们：
 
 <CustomContent platform="tidb">
 

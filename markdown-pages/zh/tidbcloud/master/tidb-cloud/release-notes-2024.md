@@ -13,11 +13,11 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - TiDB Cloud Serverless 备份和恢复变更
 
-    - 支持将数据恢复到新集群，提供更大的灵活性，并确保您当前集群的运营不受中断。
+    - 支持将数据恢复到新集群，提供更大的灵活性，并确保你当前集群的运营不受中断。
 
-    - 优化备份和恢复策略，使其与您的集群计划保持一致。 更多信息，请参见 [备份和恢复 TiDB Cloud Serverless 数据](/tidb-cloud/backup-and-restore-serverless.md#learn-about-the-backup-setting)。
+    - 优化备份和恢复策略，使其与你的集群计划保持一致。 更多信息，请参见 [备份和恢复 TiDB Cloud Serverless 数据](/tidb-cloud/backup-and-restore-serverless.md#learn-about-the-backup-setting)。
 
-    - 应用以下兼容性策略，以帮助您顺利过渡：
+    - 应用以下兼容性策略，以帮助你顺利过渡：
 
         - 在 2024-12-17T10:00:00Z 之前创建的备份将在所有集群中遵循之前的保留期限。
         - 可扩展集群的备份时间将保留当前配置，而免费集群的备份时间将重置为默认设置。
@@ -28,7 +28,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 推出恢复组功能（beta），用于在 AWS 上部署的 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 集群的灾难恢复。
 
-    此功能使您能够在 TiDB Cloud Dedicated 集群之间复制数据库，从而确保在发生区域性灾难时能够快速恢复。如果您是项目所有者角色，则可以通过创建新的恢复组并将数据库分配给该组来启用此功能。通过使用恢复组复制数据库，您可以提高灾难准备能力，满足更严格的可用性 SLA，并实现更积极的恢复点目标 (RPO) 和恢复时间目标 (RTO)。
+    此功能使你能够在 TiDB Cloud Dedicated 集群之间复制数据库，从而确保在发生区域性灾难时能够快速恢复。如果你是项目所有者角色，则可以通过创建新的恢复组并将数据库分配给该组来启用此功能。通过使用恢复组复制数据库，你可以提高灾难准备能力，满足更严格的可用性 SLA，并实现更积极的恢复点目标 (RPO) 和恢复时间目标 (RTO)。
 
     有关更多信息，请参阅 [恢复组入门](/tidb-cloud/recovery-group-get-started.md)。
 
@@ -52,9 +52,9 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - [TiDB Cloud Serverless 分支（beta）](/tidb-cloud/branch-overview.md) 引入了以下分支管理方面的改进：
 
-    - **灵活的分支创建**：创建分支时，您可以选择特定的集群或分支作为父级，并指定要从父级使用的精确时间点。这使您可以精确控制分支中的数据。
+    - **灵活的分支创建**：创建分支时，你可以选择特定的集群或分支作为父级，并指定要从父级使用的精确时间点。这使你可以精确控制分支中的数据。
 
-    - **分支重置**：您可以重置分支，使其与父级的最新状态同步。
+    - **分支重置**：你可以重置分支，使其与父级的最新状态同步。
 
     - **改进的 GitHub 集成**：[TiDB Cloud Branching](https://github.com/apps/tidb-cloud-branching) GitHub App 引入了 [`branch.mode`](/tidb-cloud/branch-github-integration.md#branchmode) 参数，该参数控制拉取请求同步期间的行为。在默认模式 `reset` 下，该应用程序会重置分支以匹配拉取请求中的最新更改。
 
@@ -66,7 +66,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 为 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 集群添加暂停时长限制。
 
-    TiDB Cloud Dedicated 现在限制最大暂停时长为 7 天。如果您未在 7 天内手动恢复集群，TiDB Cloud 将自动恢复它。
+    TiDB Cloud Dedicated 现在限制最大暂停时长为 7 天。如果你未在 7 天内手动恢复集群，TiDB Cloud 将自动恢复它。
 
     此更改仅适用于**2024 年 11 月 12 日之后创建的组织**。在此日期或之前创建的组织将逐步过渡到新的暂停行为，并会事先收到通知。
 
@@ -96,7 +96,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 **API 变更**
 
-* [MSP](https://docs.pingcap.com/tidbcloud/api/v1beta1/msp) 自 2024 年 10 月 15 日起已弃用，并将在未来移除。如果您目前正在使用 MSP API，请迁移到 [TiDB Cloud Partner](https://partner-console.tidbcloud.com/signin) 中的 Partner Management API。
+* [MSP](https://docs.pingcap.com/tidbcloud/api/v1beta1/msp) 自 2024 年 10 月 15 日起已弃用，并将在未来移除。如果你目前正在使用 MSP API，请迁移到 [TiDB Cloud Partner](https://partner-console.tidbcloud.com/signin) 中的 Partner Management API。
 
 ## 2024 年 9 月 24 日
 
@@ -127,7 +127,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
   TiDB Cloud CLI 替换或删除了以下功能：
 
     - [`ticloud serverless export create`](/tidb-cloud/ticloud-serverless-export-create.md) 中的 `--s3.bucket-uri` 标志被 `--s3.uri` 替换。
-    - [`ticloud serverless export create`](/tidb-cloud/ticloud-serverless-export-create.md) 中删除了 `--database` 和 `--table` 标志。相反，您可以使用 `--sql`、`--where` 和 `--filter` 标志。
+    - [`ticloud serverless export create`](/tidb-cloud/ticloud-serverless-export-create.md) 中删除了 `--database` 和 `--table` 标志。相反，你可以使用 `--sql`、`--where` 和 `--filter` 标志。
     - [`ticloud serverless update`](/tidb-cloud/ticloud-serverless-update.md) 无法再更新 annotations 字段。
 
 ## 2024 年 9 月 10 日
@@ -146,7 +146,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 支持使用 [TiDB Cloud 控制台](https://tidbcloud.com/) 从 TiDB Cloud Serverless 集群导出数据。
 
-    此前，TiDB Cloud 仅支持使用 [TiDB Cloud CLI](/tidb-cloud/cli-reference.md) 导出数据。现在，您可以轻松地将 TiDB Cloud Serverless 集群中的数据导出到本地文件和 Amazon S3，通过 [TiDB Cloud 控制台](https://tidbcloud.com/)。
+    此前，TiDB Cloud 仅支持使用 [TiDB Cloud CLI](/tidb-cloud/cli-reference.md) 导出数据。现在，你可以轻松地将 TiDB Cloud Serverless 集群中的数据导出到本地文件和 Amazon S3，通过 [TiDB Cloud 控制台](https://tidbcloud.com/)。
 
     有关更多信息，请参阅 [从 TiDB Cloud Serverless 导出数据](/tidb-cloud/serverless-export.md) 和 [为 TiDB Cloud Serverless 配置外部存储访问](/tidb-cloud/serverless-external-storage.md)。
 
@@ -182,7 +182,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
     从 2024 年 8 月 1 日起，TiDB Cloud Dedicated 的账单将包含新的 AWS 公共 IPv4 地址费用，与 [AWS 自 2024 年 2 月 1 日起生效的定价变更](https://aws.amazon.com/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights/)保持一致。 每个公共 IPv4 地址的费用为每小时 0.005 美元，这将导致每个托管在 AWS 上的 TiDB Cloud Dedicated 集群每月大约 10 美元。
 
-    此费用将显示在您[账单详情](/tidb-cloud/tidb-cloud-billing.md#billing-details)中现有的 **TiDB Cloud Dedicated - 数据传输 - 负载均衡** 服务下。
+    此费用将显示在你[账单详情](/tidb-cloud/tidb-cloud-billing.md#billing-details)中现有的 **TiDB Cloud Dedicated - 数据传输 - 负载均衡** 服务下。
 
 - 将新的 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 集群的默认 TiDB 版本从 [v7.5.2](https://docs.pingcap.com/tidb/v7.5/release-7.5.2) 升级到 [v7.5.3](https://docs.pingcap.com/tidb/v7.5/release-7.5.3)。
 
@@ -190,7 +190,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 增强 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 的集群大小配置体验。
 
-    优化 [**创建集群**](/tidb-cloud/create-tidb-cluster.md) 和 [**修改集群**](/tidb-cloud/scale-tidb-cluster.md) 页面上 TiDB Cloud Dedicated 集群的 **集群大小** 部分的布局。 此外，**集群大小** 部分现在包含指向节点大小推荐文档的链接，这有助于您选择合适的集群大小。
+    优化 [**创建集群**](/tidb-cloud/create-tidb-cluster.md) 和 [**修改集群**](/tidb-cloud/scale-tidb-cluster.md) 页面上 TiDB Cloud Dedicated 集群的 **集群大小** 部分的布局。 此外，**集群大小** 部分现在包含指向节点大小推荐文档的链接，这有助于你选择合适的集群大小。
 
 ## 2024 年 7 月 23 日
 
@@ -198,15 +198,15 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - [数据服务（beta）](https://tidbcloud.com/project/data-service) 支持自动生成向量搜索端点。
 
-    如果您的表包含[向量数据类型](/tidb-cloud/vector-search-data-types.md)，您可以自动生成一个向量搜索端点，该端点会根据您选择的距离函数计算向量距离。
+    如果你的表包含[向量数据类型](/tidb-cloud/vector-search-data-types.md)，你可以自动生成一个向量搜索端点，该端点会根据你选择的距离函数计算向量距离。
 
-    此功能实现了与 AI 平台（例如 [Dify](https://docs.dify.ai/guides/tools) 和 [GPTs](https://openai.com/blog/introducing-gpts)）的无缝集成，通过先进的自然语言处理和 AI 功能增强您的应用程序，从而实现更复杂的任务和智能解决方案。
+    此功能实现了与 AI 平台（例如 [Dify](https://docs.dify.ai/guides/tools) 和 [GPTs](https://openai.com/blog/introducing-gpts)）的无缝集成，通过先进的自然语言处理和 AI 功能增强你的应用程序，从而实现更复杂的任务和智能解决方案。
 
     有关更多信息，请参阅[自动生成端点](/tidb-cloud/data-service-manage-endpoint.md#generate-an-endpoint-automatically)和[将数据应用与第三方工具集成](/tidb-cloud/data-service-integrations.md)。
 
-- 引入预算功能，帮助您跟踪 TiDB Cloud 的实际成本与计划支出，防止意外成本。
+- 引入预算功能，帮助你跟踪 TiDB Cloud 的实际成本与计划支出，防止意外成本。
 
-    要访问此功能，您必须是您组织的 `Organization Owner` 或 `Organization Billing Admin` 角色。
+    要访问此功能，你必须是你组织的 `Organization Owner` 或 `Organization Billing Admin` 角色。
 
     有关更多信息，请参阅[管理 TiDB Cloud 的预算](/tidb-cloud/tidb-cloud-budget.md)。
 
@@ -226,9 +226,9 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 **通用变更**
 
-- [数据服务（beta）](https://tidbcloud.com/project/data-service) 提供了一个端点库，其中包含预定义的系统端点，您可以直接将其添加到您的数据应用中，从而减少端点开发的工作量。
+- [数据服务（beta）](https://tidbcloud.com/project/data-service) 提供了一个端点库，其中包含预定义的系统端点，你可以直接将其添加到你的数据应用中，从而减少端点开发的工作量。
 
-    目前，该库仅包含 `/system/query` 端点，您只需在预定义的 `sql` 参数中传递 SQL 语句即可执行任何 SQL 语句。 此端点有助于立即执行 SQL 查询，从而提高灵活性和效率。
+    目前，该库仅包含 `/system/query` 端点，你只需在预定义的 `sql` 参数中传递 SQL 语句即可执行任何 SQL 语句。 此端点有助于立即执行 SQL 查询，从而提高灵活性和效率。
 
     有关更多信息，请参阅 [添加预定义的系统端点](/tidb-cloud/data-service-manage-endpoint.md#add-a-predefined-system-endpoint)。
 
@@ -253,11 +253,11 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) 现在为组织所有者提供每周电子邮件报告。
 
-    这些报告提供了有关集群性能和活动的见解。 通过接收自动每周更新，您可以随时了解集群的信息，并做出数据驱动的决策来优化集群。
+    这些报告提供了有关集群性能和活动的见解。 通过接收自动每周更新，你可以随时了解集群的信息，并做出数据驱动的决策来优化集群。
 
 - 发布 Chat2Query API v3 端点并弃用 Chat2Query API v1 端点 `/v1/chat2data`。
 
-    使用 Chat2Query API v3 端点，您可以使用会话启动多轮 Chat2Query。
+    使用 Chat2Query API v3 端点，你可以使用会话启动多轮 Chat2Query。
 
     有关更多信息，请参阅 [Chat2Query API 入门](/tidb-cloud/use-chat2query-api.md)。
 
@@ -265,12 +265,12 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 将 Chat2Query（beta）重命名为 SQL Editor（beta）。
 
-    先前称为 Chat2Query 的界面已重命名为 SQL Editor。 此更改阐明了手动 SQL 编辑和 AI 辅助查询生成之间的区别，从而增强了可用性和您的整体体验。
+    先前称为 Chat2Query 的界面已重命名为 SQL Editor。 此更改阐明了手动 SQL 编辑和 AI 辅助查询生成之间的区别，从而增强了可用性和你的整体体验。
 
     - **SQL Editor**：用于在 TiDB Cloud 控制台中手动编写和执行 SQL 查询的默认界面。
-    - **Chat2Query**：AI 辅助的文本到查询功能，使您能够使用自然语言与数据库进行交互，以生成、重写和优化 SQL 查询。
+    - **Chat2Query**：AI 辅助的文本到查询功能，使你能够使用自然语言与数据库进行交互，以生成、重写和优化 SQL 查询。
 
-  有关更多信息，请参阅 [使用 AI 辅助的 SQL Editor 探索您的数据](/tidb-cloud/explore-data-with-chat2query.md)。
+  有关更多信息，请参阅 [使用 AI 辅助的 SQL Editor 探索你的数据](/tidb-cloud/explore-data-with-chat2query.md)。
 
 ## 2024 年 6 月 18 日
 
@@ -290,7 +290,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 推出恢复组功能（beta），用于在 AWS 上部署的 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 集群的灾难恢复。
 
-    此功能使您能够在 TiDB Cloud Dedicated 集群之间复制数据库，从而确保在发生区域性灾难时快速恢复。如果您具有 `Project Owner` 角色，则可以通过创建新的恢复组并将数据库分配给该组来启用此功能。通过使用恢复组复制数据库，您可以提高灾难准备能力，满足更严格的可用性 SLA，并实现更积极的恢复点目标 (RPO) 和恢复时间目标 (RTO)。
+    此功能使你能够在 TiDB Cloud Dedicated 集群之间复制数据库，从而确保在发生区域性灾难时快速恢复。如果你具有 `Project Owner` 角色，则可以通过创建新的恢复组并将数据库分配给该组来启用此功能。通过使用恢复组复制数据库，你可以提高灾难准备能力，满足更严格的可用性 SLA，并实现更积极的恢复点目标 (RPO) 和恢复时间目标 (RTO)。
 
     有关更多信息，请参阅 [恢复组入门](/tidb-cloud/recovery-group-get-started.md)。
 
@@ -308,7 +308,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - Google Cloud `台湾 (asia-east1)` 区域支持 [数据迁移](/tidb-cloud/migrate-from-mysql-using-data-migration.md) 功能。
 
-    托管在 Google Cloud `台湾 (asia-east1)` 区域的 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 集群现在支持数据迁移 (DM) 功能。如果您的上游数据存储在该区域或附近，您现在可以利用更快、更可靠的数据迁移，从 Google Cloud 迁移到 TiDB Cloud。
+    托管在 Google Cloud `台湾 (asia-east1)` 区域的 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 集群现在支持数据迁移 (DM) 功能。如果你的上游数据存储在该区域或附近，你现在可以利用更快、更可靠的数据迁移，从 Google Cloud 迁移到 TiDB Cloud。
 
 - 为托管在 AWS 和 Google Cloud 上的 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 集群提供新的 [TiDB 节点大小](/tidb-cloud/size-your-cluster.md#tidb-vcpu-and-ram)：`16 vCPU, 64 GiB`
 
@@ -316,11 +316,11 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 引入 TiDB Cloud Data Service API，用于自动高效地管理以下资源：
 
-    * **Data App (数据应用)**：一组端点，您可以使用这些端点来访问特定应用程序的数据。
+    * **Data App (数据应用)**：一组端点，你可以使用这些端点来访问特定应用程序的数据。
     * **Data Source (数据源)**：链接到数据应用以进行数据操作和检索的集群。
-    * **Endpoint (端点)**：一个 Web API，您可以自定义它来执行 SQL 语句。
+    * **Endpoint (端点)**：一个 Web API，你可以自定义它来执行 SQL 语句。
     * **Data API Key (数据 API 密钥)**：用于安全地访问端点。
-    * **OpenAPI Specification (OpenAPI 规范)**：Data Service 支持为每个数据应用生成 OpenAPI 规范 3.0，使您能够以标准化格式与您的端点进行交互。
+    * **OpenAPI Specification (OpenAPI 规范)**：Data Service 支持为每个数据应用生成 OpenAPI 规范 3.0，使你能够以标准化格式与你的端点进行交互。
 
   这些 TiDB Cloud Data Service API 端点在 TiDB Cloud API v1beta1 中发布，这是 TiDB Cloud 的最新 API 版本。
 
@@ -338,7 +338,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 扩展了[**时区**](/tidb-cloud/manage-user-access.md#set-the-time-zone-for-your-organization)部分中的时区选择，以更好地适应来自不同地区的客户。
 
-- 支持[创建VPC对等连接](/tidb-cloud/set-up-vpc-peering-connections.md)，即使您的VPC与TiDB Cloud的VPC位于不同的区域。
+- 支持[创建VPC对等连接](/tidb-cloud/set-up-vpc-peering-connections.md)，即使你的VPC与TiDB Cloud的VPC位于不同的区域。
 
 - [数据服务 (beta)](https://tidbcloud.com/project/data-service) 除了查询参数外，还支持路径参数。
 
@@ -357,7 +357,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
     - [通过 OAuth 认证](/tidb-cloud/ticloud-auth-login.md)
     - [通过 TiDB Bot 提问](/tidb-cloud/ticloud-ai.md)
 
-  在升级您的 TiDB Cloud CLI 之前，请注意这个新的 CLI 与之前的版本不兼容。 例如，CLI 命令中的 `ticloud cluster` 现在更新为 `ticloud serverless`。 更多信息，请参阅 [TiDB Cloud CLI 参考](/tidb-cloud/cli-reference.md)。
+  在升级你的 TiDB Cloud CLI 之前，请注意这个新的 CLI 与之前的版本不兼容。 例如，CLI 命令中的 `ticloud cluster` 现在更新为 `ticloud serverless`。 更多信息，请参阅 [TiDB Cloud CLI 参考](/tidb-cloud/cli-reference.md)。
 
 ## 2024 年 4 月 9 日
 
@@ -371,7 +371,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 为 [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) 集群引入两种服务计划：**免费** 和 **可扩展**。
 
-    为了满足不同的用户需求，TiDB Cloud Serverless 提供免费和可扩展的服务计划。无论您是刚开始使用还是扩展以满足不断增长的应用程序需求，这些计划都能提供您需要的灵活性和功能。
+    为了满足不同的用户需求，TiDB Cloud Serverless 提供免费和可扩展的服务计划。无论你是刚开始使用还是扩展以满足不断增长的应用程序需求，这些计划都能提供你需要的灵活性和功能。
 
     更多信息，请参阅 [集群计划](/tidb-cloud/select-cluster-tier.md#cluster-plans)。
 
@@ -387,9 +387,9 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 **控制台变更**
 
-- 在 [**账单**](https://tidbcloud.com/org-settings/billing/payments) 页面引入 **成本探索器** 标签，该标签提供了一个直观的界面，用于分析和自定义您组织随时间的成本报告。
+- 在 [**账单**](https://tidbcloud.com/org-settings/billing/payments) 页面引入 **成本探索器** 标签，该标签提供了一个直观的界面，用于分析和自定义你组织随时间的成本报告。
 
-    要使用此功能，请导航到您组织的 **账单** 页面，然后单击 **成本探索器** 标签。
+    要使用此功能，请导航到你组织的 **账单** 页面，然后单击 **成本探索器** 标签。
 
     有关更多信息，请参见 [成本探索器](/tidb-cloud/tidb-cloud-billing.md#cost-explorer)。
 
@@ -413,8 +413,8 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 支持在 Google Cloud 上创建更多 TiDB Cloud 节点。
 
-    - 通过为 Google Cloud [配置区域 CIDR 大小](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-cidr-for-a-region) 为 `/19`，您现在可以在项目的任何区域内创建最多 124 个 TiDB Cloud 节点。
-    - 如果您想在项目的任何区域中创建超过 124 个节点，您可以联系 [TiDB Cloud 支持](/tidb-cloud/tidb-cloud-support.md)，以获得定制 IP 范围大小（范围从 `/16` 到 `/18`）的帮助。
+    - 通过为 Google Cloud [配置区域 CIDR 大小](/tidb-cloud/set-up-vpc-peering-connections.md#prerequisite-set-a-cidr-for-a-region) 为 `/19`，你现在可以在项目的任何区域内创建最多 124 个 TiDB Cloud 节点。
+    - 如果你想在项目的任何区域中创建超过 124 个节点，你可以联系 [TiDB Cloud 支持](/tidb-cloud/tidb-cloud-support.md)，以获得定制 IP 范围大小（范围从 `/16` 到 `/18`）的帮助。
 
 ## 2024 年 1 月 23 日
 
@@ -435,8 +435,8 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 增强了项目的 CIDR 配置。
 
-    - 您可以直接为每个项目设置区域级别的 CIDR。
-    - 您可以从更广泛的 CIDR 值范围中选择您的 CIDR 配置。
+    - 你可以直接为每个项目设置区域级别的 CIDR。
+    - 你可以从更广泛的 CIDR 值范围中选择你的 CIDR 配置。
 
     注意：先前项目的全局级别 CIDR 设置已停用，但所有处于活动状态的现有区域 CIDR 均不受影响。现有集群的网络不会受到影响。
 
@@ -448,7 +448,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - [数据服务 (beta)](https://tidbcloud.com/project/data-service) 支持配置自定义域名以访问数据应用中的端点。
 
-    默认情况下，TiDB Cloud 数据服务提供域名 `<region>.data.tidbcloud.com` 以访问每个数据应用的端点。为了增强个性化和灵活性，您现在可以为您的数据应用配置自定义域名，而不是使用默认域名。此功能使您能够为您的数据库服务使用品牌 URL 并增强安全性。
+    默认情况下，TiDB Cloud 数据服务提供域名 `<region>.data.tidbcloud.com` 以访问每个数据应用的端点。为了增强个性化和灵活性，你现在可以为你的数据应用配置自定义域名，而不是使用默认域名。此功能使你能够为你的数据库服务使用品牌 URL 并增强安全性。
 
     有关更多信息，请参阅[数据服务中的自定义域名](/tidb-cloud/data-service-custom-domain.md)。
 
@@ -458,7 +458,7 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - 支持[组织单点登录 (SSO)](https://tidbcloud.com/org-settings/authentication)，以简化企业身份验证流程。
 
-    借助此功能，您可以使用[安全断言标记语言 (SAML)](https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language) 或 [OpenID Connect (OIDC)](https://openid.net/developers/how-connect-works/) 将 TiDB Cloud 与任何身份提供商 (IdP) 无缝集成。
+    借助此功能，你可以使用[安全断言标记语言 (SAML)](https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language) 或 [OpenID Connect (OIDC)](https://openid.net/developers/how-connect-works/) 将 TiDB Cloud 与任何身份提供商 (IdP) 无缝集成。
 
     有关更多信息，请参阅[组织单点登录身份验证](/tidb-cloud/tidb-cloud-org-sso-authentication.md)。
 
@@ -466,6 +466,6 @@ summary: 了解 2024 年 TiDB Cloud 的发布说明。
 
 - [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 的双区域备份功能现已正式发布 (GA)。
 
-    通过使用此功能，您可以在 AWS 或 Google Cloud 内的地理区域之间复制备份。 此功能提供了额外的数据保护层和灾难恢复能力。
+    通过使用此功能，你可以在 AWS 或 Google Cloud 内的地理区域之间复制备份。 此功能提供了额外的数据保护层和灾难恢复能力。
 
     有关更多信息，请参阅[双区域备份](/tidb-cloud/backup-and-restore.md#turn-on-dual-region-backup)。

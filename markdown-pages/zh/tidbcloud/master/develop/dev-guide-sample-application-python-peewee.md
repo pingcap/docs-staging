@@ -7,11 +7,11 @@ summary: 了解如何使用 peewee 连接 TiDB。本教程提供使用 peewee �
 
 TiDB 是一个兼容 MySQL 的数据库，而 [peewee](https://docs.peewee-orm.com/) 是一个流行的 Python 对象关系映射器（ORM）。
 
-在本教程中，您可以学习如何使用 TiDB 和 peewee 完成以下任务：
+在本教程中，你可以学习如何使用 TiDB 和 peewee 完成以下任务：
 
 - 设置环境。
 - 使用 peewee 连接到 TiDB 集群。
-- 构建并运行应用程序。您也可以查看基本 CRUD 操作的示例代码片段。
+- 构建并运行应用程序。你也可以查看基本 CRUD 操作的示例代码片段。
 
 > **注意：**
 >
@@ -19,7 +19,7 @@ TiDB 是一个兼容 MySQL 的数据库，而 [peewee](https://docs.peewee-orm.c
 
 ## 前提条件
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
 - [Python 3.8 或更高版本](https://www.python.org/downloads/)。
 - [Git](https://git-scm.com/downloads)。
@@ -27,17 +27,17 @@ TiDB 是一个兼容 MySQL 的数据库，而 [peewee](https://docs.peewee-orm.c
 
 <CustomContent platform="tidb">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](/production-deployment-using-tiup.md)创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)创建本地集群。
 
 </CustomContent>
@@ -65,11 +65,11 @@ pip install -r requirements.txt
 
 #### 为什么使用 PyMySQL？
 
-peewee 是一个可以与多个数据库一起工作的 ORM 库。它提供了数据库的高级抽象，帮助开发人员以更面向对象的方式编写 SQL 语句。但是，peewee 不包含数据库驱动程序。要连接到数据库，您需要安装数据库驱动程序。本示例应用程序使用 PyMySQL 作为数据库驱动程序，它是一个纯 Python MySQL 客户端库，与 TiDB 兼容，并且可以在所有平台上安装。更多信息，请参考 [peewee 官方文档](https://docs.peewee-orm.com/en/latest/peewee/database.html?highlight=mysql#using-mysql)。
+peewee 是一个可以与多个数据库一起工作的 ORM 库。它提供了数据库的高级抽象，帮助开发人员以更面向对象的方式编写 SQL 语句。但是，peewee 不包含数据库驱动程序。要连接到数据库，你需要安装数据库驱动程序。本示例应用程序使用 PyMySQL 作为数据库驱动程序，它是一个纯 Python MySQL 客户端库，与 TiDB 兼容，并且可以在所有平台上安装。更多信息，请参考 [peewee 官方文档](https://docs.peewee-orm.com/en/latest/peewee/database.html?highlight=mysql#using-mysql)。
 
 ### 步骤 3：配置连接信息
 
-根据您选择的 TiDB 部署选项连接到您的 TiDB 集群。
+根据你选择的 TiDB 部署选项连接到你的 TiDB 集群。
 
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
@@ -78,22 +78,22 @@ peewee 是一个可以与多个数据库一起工作的 ORM 库。它提供了�
 
 2. 点击右上角的**连接**。将显示连接对话框。
 
-3. 确保连接对话框中的配置与您的操作环境匹配。
+3. 确保连接对话框中的配置与你的操作环境匹配。
 
     - **连接类型**设置为 `Public`
     - **分支**设置为 `main`
     - **连接工具**设置为 `General`
-    - **操作系统**与您的环境匹配。
+    - **操作系统**与你的环境匹配。
 
     > **提示：**
     >
-    > 如果您的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换到相应的 Linux 发行版。
+    > 如果你的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换到相应的 Linux 发行版。
 
 4. 点击**生成密码**创建随机密码。
 
     > **提示：**
-    > 
-    > 如果您之前已经创建了密码，您可以使用原始密码或点击**重置密码**生成新密码。
+    >
+    > 如果你之前已经创建了密码，你可以使用原始密码或点击**重置密码**生成新密码。
 
 5. 运行以下命令复制 `.env.example` 并将其重命名为 `.env`：
 
@@ -125,9 +125,9 @@ peewee 是一个可以与多个数据库一起工作的 ORM 库。它提供了�
 
 3. 在连接对话框中，从**连接类型**下拉列表中选择**公共**，然后点击 **CA 证书**下载 CA 证书。
 
-    如果您尚未配置 IP 访问列表，请在首次连接之前点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
+    如果你尚未配置 IP 访问列表，请在首次连接之前点击**配置 IP 访问列表**或按照[配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
 
-    除了**公共**连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**类型。更多信息，请参见[连接到您的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+    除了**公共**连接类型外，TiDB Cloud Dedicated 还支持**私有端点**和 **VPC 对等连接**类型。更多信息，请参见[连接到你的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
 4. 运行以下命令复制 `.env.example` 并将其重命名为 `.env`：
 
@@ -169,7 +169,7 @@ peewee 是一个可以与多个数据库一起工作的 ORM 库。它提供了�
     TIDB_DB_NAME='test'
     ```
 
-    请确保将占位符 `{}` 替换为连接参数，并删除 `CA_PATH` 行。如果您在本地运行 TiDB，默认主机地址为 `127.0.0.1`，密码为空。
+    请确保将占位符 `{}` 替换为连接参数，并删除 `CA_PATH` 行。如果你在本地运行 TiDB，默认主机地址为 `127.0.0.1`，密码为空。
 
 3. 保存 `.env` 文件。
 
@@ -188,7 +188,7 @@ peewee 是一个可以与多个数据库一起工作的 ORM 库。它提供了�
 
 ## 示例代码片段
 
-您可以参考以下示例代码片段来完成自己的应用程序开发。
+你可以参考以下示例代码片段来完成自己的应用程序开发。
 
 有关完整的示例代码和如何运行它，请查看 [tidb-samples/tidb-python-peewee-quickstart](https://github.com/tidb-samples/tidb-python-peewee-quickstart) 仓库。
 
@@ -216,7 +216,7 @@ def get_db_engine():
     )
 ```
 
-使用此函数时，您需要将 `${tidb_host}`、`${tidb_port}`、`${tidb_user}`、`${tidb_password}`、`${tidb_db_name}` 和 `${ca_path}` 替换为您的 TiDB 集群的实际值。
+使用此函数时，你需要将 `${tidb_host}`、`${tidb_port}`、`${tidb_user}`、`${tidb_password}`、`${tidb_db_name}` 和 `${ca_path}` 替换为你的 TiDB 集群的实际值。
 
 ### 定义表
 

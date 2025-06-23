@@ -7,11 +7,11 @@ summary: 本文介绍如何在 AWS Lambda 函数中使用 TiDB 和 mysql2 构建
 
 TiDB 是一个兼容 MySQL 的数据库，[AWS Lambda 函数](https://aws.amazon.com/lambda/)是一个计算服务，而 [mysql2](https://github.com/sidorares/node-mysql2) 是一个流行的 Node.js 开源驱动程序。
 
-在本教程中，您可以学习如何在 AWS Lambda 函数中使用 TiDB 和 mysql2 完成以下任务：
+在本教程中，你可以学习如何在 AWS Lambda 函数中使用 TiDB 和 mysql2 完成以下任务：
 
 - 设置环境。
 - 使用 mysql2 连接到 TiDB 集群。
-- 构建并运行应用程序。您也可以查看[示例代码片段](#示例代码片段)，了解基本的 CRUD 操作。
+- 构建并运行应用程序。你也可以查看[示例代码片段](#示例代码片段)，了解基本的 CRUD 操作。
 - 部署 AWS Lambda 函数。
 
 > **注意**
@@ -20,7 +20,7 @@ TiDB 是一个兼容 MySQL 的数据库，[AWS Lambda 函数](https://aws.amazon
 
 ## 前提条件
 
-要完成本教程，您需要：
+要完成本教程，你需要：
 
 - [Node.js **18**](https://nodejs.org/en/download/) 或更高版本。
 - [Git](https://git-scm.com/downloads)。
@@ -31,22 +31,22 @@ TiDB 是一个兼容 MySQL 的数据库，[AWS Lambda 函数](https://aws.amazon
 
 <CustomContent platform="tidb">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](/production-deployment-using-tiup.md)创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-**如果您还没有 TiDB 集群，可以按照以下方式创建：**
+**如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建您自己的 TiDB Cloud 集群。
+- （推荐）按照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)创建你自己的 TiDB Cloud 集群。
 - 按照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)或[部署生产 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)创建本地集群。
 
 </CustomContent>
 
-如果您没有 AWS 账号或用户，可以按照 [Lambda 入门](https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html)指南中的步骤创建。
+如果你没有 AWS 账号或用户，可以按照 [Lambda 入门](https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html)指南中的步骤创建。
 
 ## 运行示例程序连接 TiDB
 
@@ -75,7 +75,7 @@ npm install
 
 ### 步骤 3：配置连接信息
 
-根据您选择的 TiDB 部署选项连接到 TiDB 集群。
+根据你选择的 TiDB 部署选项连接到 TiDB 集群。
 
 <SimpleTab>
 
@@ -85,22 +85,22 @@ npm install
 
 2. 点击右上角的**连接**。将显示连接对话框。
 
-3. 确保连接对话框中的配置与您的操作环境匹配。
+3. 确保连接对话框中的配置与你的操作环境匹配。
 
     - **连接类型**设置为 `Public`
     - **分支**设置为 `main`
     - **连接方式**设置为 `General`
-    - **操作系统**与您的环境匹配。
+    - **操作系统**与你的环境匹配。
 
     > **注意**
     >
-    > 在 Node.js 应用程序中，您不必提供 SSL CA 证书，因为 Node.js 在建立 TLS (SSL) 连接时默认使用内置的 [Mozilla CA 证书](https://wiki.mozilla.org/CA/Included_Certificates)。
+    > 在 Node.js 应用程序中，你不必提供 SSL CA 证书，因为 Node.js 在建立 TLS (SSL) 连接时默认使用内置的 [Mozilla CA 证书](https://wiki.mozilla.org/CA/Included_Certificates)。
 
 4. 点击**生成密码**创建随机密码。
 
     > **提示**
     >
-    > 如果您之前已经生成了密码，可以使用原始密码或点击**重置密码**生成新密码。
+    > 如果你之前已经生成了密码，可以使用原始密码或点击**重置密码**生成新密码。
 
 5. 将相应的连接字符串复制并粘贴到 `env.json` 中。示例如下：
 
@@ -162,11 +162,11 @@ npm install
     {"statusCode":200,"body":"{\"results\":[{\"Hello World\":\"Hello World\"}]}"}
     ```
 
-确认连接成功后，您可以按照[下一节](#部署-aws-lambda-函数)部署 AWS Lambda 函数。
+确认连接成功后，你可以按照[下一节](#部署-aws-lambda-函数)部署 AWS Lambda 函数。
 
 ## 部署 AWS Lambda 函数
 
-您可以使用 [SAM CLI](#sam-cli-部署推荐) 或 [AWS Lambda 控制台](#web-控制台部署)部署 AWS Lambda 函数。
+你可以使用 [SAM CLI](#sam-cli-部署推荐) 或 [AWS Lambda 控制台](#web-控制台部署)部署 AWS Lambda 函数。
 
 ### SAM CLI 部署（推荐）
 
@@ -263,7 +263,7 @@ npm install
 
 ## 示例代码片段
 
-您可以参考以下示例代码片段来完成自己的应用程序开发。
+你可以参考以下示例代码片段来完成自己的应用程序开发。
 
 有关完整的示例代码和运行方法，请查看 [tidb-samples/tidb-aws-lambda-quickstart](https://github.com/tidb-samples/tidb-aws-lambda-quickstart) 仓库。
 
@@ -359,7 +359,7 @@ console.log(rsh.affectedRows);
 
 ## 下一步
 
-- 有关如何在 AWS Lambda 函数中使用 TiDB 的更多详细信息，请参见我们的 [TiDB-Lambda-integration/aws-lambda-bookstore Demo](https://github.com/pingcap/TiDB-Lambda-integration/blob/main/aws-lambda-bookstore/README.md)。您还可以使用 AWS API Gateway 为您的应用程序构建 RESTful API。
+- 有关如何在 AWS Lambda 函数中使用 TiDB 的更多详细信息，请参见我们的 [TiDB-Lambda-integration/aws-lambda-bookstore Demo](https://github.com/pingcap/TiDB-Lambda-integration/blob/main/aws-lambda-bookstore/README.md)。你还可以使用 AWS API Gateway 为你的应用程序构建 RESTful API。
 - 从 [`mysql2` 文档](https://sidorares.github.io/node-mysql2/docs/documentation)了解更多 `mysql2` 的用法。
 - 从 [`Lambda` 的 AWS 开发者指南](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)了解更多 AWS Lambda 的用法。
 - 通过[开发者指南](/develop/dev-guide-overview.md)中的章节了解 TiDB 应用程序开发的最佳实践，例如[插入数据](/develop/dev-guide-insert-data.md)、[更新数据](/develop/dev-guide-update-data.md)、[删除数据](/develop/dev-guide-delete-data.md)、[单表读取](/develop/dev-guide-get-data-from-single-table.md)、[事务](/develop/dev-guide-transaction-overview.md)和 [SQL 性能优化](/develop/dev-guide-optimize-sql-overview.md)。

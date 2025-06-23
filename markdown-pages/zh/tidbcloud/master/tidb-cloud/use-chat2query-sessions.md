@@ -5,11 +5,11 @@ summary: 了解如何使用 Chat2Query 会话相关的 API 开始多轮对话。
 
 # 开始多轮 Chat2Query 对话
 
-从 v3 版本开始，Chat2Query API 支持通过调用会话相关的端点来进行多轮对话。您可以使用 `/v3/chat2data` 端点返回的 `session_id` 在下一轮对话中继续会话。
+从 v3 版本开始，Chat2Query API 支持通过调用会话相关的端点来进行多轮对话。你可以使用 `/v3/chat2data` 端点返回的 `session_id` 在下一轮对话中继续会话。
 
 ## 开始之前
 
-在开始多轮 Chat2Query 对话之前，请确保您已经具备以下条件：
+在开始多轮 Chat2Query 对话之前，请确保你已经具备以下条件：
 
 - 一个 [Chat2Query Data App](/tidb-cloud/use-chat2query-api.md#create-a-chat2query-data-app)。
 - 一个 [Chat2Query Data App 的 API 密钥](/tidb-cloud/use-chat2query-api.md#create-an-api-key)。
@@ -17,7 +17,7 @@ summary: 了解如何使用 Chat2Query 会话相关的 API 开始多轮对话。
 
 ## 步骤 1. 开始会话
 
-要开始会话，您可以调用 Chat2Query Data App 的 `/v3/sessions` 端点。
+要开始会话，你可以调用 Chat2Query Data App 的 `/v3/sessions` 端点。
 
 以下是调用此端点的通用代码示例。
 
@@ -63,7 +63,7 @@ curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<regio
 
 ## 步骤 2. 使用会话调用 Chat2Data 端点
 
-开始会话后，您可以调用 `/v3/sessions/{session_id}/chat2data` 在下一轮对话中继续会话。
+开始会话后，你可以调用 `/v3/sessions/{session_id}/chat2data` 在下一轮对话中继续会话。
 
 以下是通用代码示例：
 
@@ -80,10 +80,10 @@ curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://eu-cen
 
 在上述代码中，请求体是一个具有以下属性的 JSON 对象：
 
-- `question`：_string_。用自然语言描述您想要的查询的问题。
+- `question`：_string_。用自然语言描述你想要的查询的问题。
 - `feedback_answer_id`：_string_。反馈答案 ID。此字段是可选的，仅用于反馈。
 - `feedback_task_id`：_string_。反馈任务 ID。此字段是可选的，仅用于反馈。
-- `sql_generate_mode`：_string_。生成 SQL 语句的模式。值可以是 `direct` 或 `auto_breakdown`。如果设置为 `direct`，API 将直接根据您提供的 `question` 生成 SQL 语句。如果设置为 `auto_breakdown`，API 将把 `question` 分解为多个任务，并为每个任务生成 SQL 语句。
+- `sql_generate_mode`：_string_。生成 SQL 语句的模式。值可以是 `direct` 或 `auto_breakdown`。如果设置为 `direct`，API 将直接根据你提供的 `question` 生成 SQL 语句。如果设置为 `auto_breakdown`，API 将把 `question` 分解为多个任务，并为每个任务生成 SQL 语句。
 
 以下是一个响应示例：
 
@@ -98,4 +98,4 @@ curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://eu-cen
 }
 ```
 
-此响应与 `/v3/chat2data` 端点的响应类似。您可以通过调用 `/v2/jobs/{job_id}` 端点来检查作业状态。更多信息，请参见[通过调用 `/v2/jobs/{job_id}` 检查分析状态](/tidb-cloud/use-chat2query-api.md#2-check-the-analysis-status-by-calling-v2jobsjob_id)。
+此响应与 `/v3/chat2data` 端点的响应类似。你可以通过调用 `/v2/jobs/{job_id}` 端点来检查作业状态。更多信息，请参见[通过调用 `/v2/jobs/{job_id}` 检查分析状态](/tidb-cloud/use-chat2query-api.md#2-check-the-analysis-status-by-calling-v2jobsjob_id)。
