@@ -133,16 +133,16 @@
 ## 指南
 
 - 管理集群
-  - 规划您的集群
-    - [选择您的集群层级](/tidb-cloud/select-cluster-tier.md)
+  - 规划集群
+    - [选择集群套餐](/tidb-cloud/select-cluster-tier.md)
     - [确定 TiDB 的大小](/tidb-cloud/size-your-cluster.md)
     - [TiDB Cloud 性能参考](/tidb-cloud/tidb-cloud-performance-reference.md)
   - 管理 TiDB Cloud Serverless 集群
     - [创建 TiDB Cloud Serverless 集群](/tidb-cloud/create-tidb-cluster-serverless.md)
-    - 连接到您的 TiDB Cloud Serverless 集群
+    - 连接到 TiDB Cloud Serverless 集群
       - [连接概览](/tidb-cloud/connect-to-tidb-cluster-serverless.md)
-      - [通过公共端点连接](/tidb-cloud/connect-via-standard-connection-serverless.md)
-      - [通过私有端点连接](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
+      - [通过 Public Endpoint 连接](/tidb-cloud/connect-via-standard-connection-serverless.md)
+      - [通过 Private Endpoint 连接](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
     - 分支 ![BETA](/media/tidb-cloud/blank_transparent_placeholder.png)
       - [概览](/tidb-cloud/branch-overview.md)
       - [管理分支](/tidb-cloud/branch-manage.md)
@@ -152,13 +152,13 @@
     - [从 TiDB Cloud Serverless 导出数据](/tidb-cloud/serverless-export.md)
   - 管理 TiDB Cloud Dedicated 集群
     - [创建 TiDB Cloud Dedicated 集群](/tidb-cloud/create-tidb-cluster.md)
-    - 连接到您的 TiDB Cloud Dedicated 集群
+    - 连接到 TiDB Cloud Dedicated 集群
       - [连接方法概览](/tidb-cloud/connect-to-tidb-cluster.md)
-      - [通过公共连接连接](/tidb-cloud/connect-via-standard-connection.md)
-      - [通过 AWS 的私有端点连接](/tidb-cloud/set-up-private-endpoint-connections.md)
-      - [通过 Azure 的私有端点连接](/tidb-cloud/set-up-private-endpoint-connections-on-azure.md)
-      - [通过 Google Cloud 的私有端点连接](/tidb-cloud/set-up-private-endpoint-connections-on-google-cloud.md)
-      - [通过 VPC 对等连接](/tidb-cloud/set-up-vpc-peering-connections.md)
+      - [通过 Public Endpoint 连接](/tidb-cloud/connect-via-standard-connection.md)
+      - [通过 AWS 的 Private Endpoint 连接](/tidb-cloud/set-up-private-endpoint-connections.md)
+      - [通过 Azure 的 Private Endpoint 连接](/tidb-cloud/set-up-private-endpoint-connections-on-azure.md)
+      - [通过 Google Cloud 的 Private Endpoint 连接](/tidb-cloud/set-up-private-endpoint-connections-on-google-cloud.md)
+      - [通过 VPC Peering 连接](/tidb-cloud/set-up-vpc-peering-connections.md)
       - [通过 SQL Shell 连接](/tidb-cloud/connect-via-sql-shell.md)
     - [伸缩 TiDB Cloud Dedicated 集群](/tidb-cloud/scale-tidb-cluster.md)
     - [备份和恢复 TiDB Cloud Dedicated 数据](/tidb-cloud/backup-and-restore.md)
@@ -257,7 +257,7 @@
     - [迁移和合并大型数据集的 MySQL 分片](/tidb-cloud/migrate-sql-shards.md)
     - [从 TiDB 自管理迁移到 TiDB Cloud](/tidb-cloud/migrate-from-op-tidb.md)
     - [使用 AWS DMS 从 MySQL 兼容数据库迁移](/tidb-cloud/migrate-from-mysql-using-aws-dms.md)
-- [使用 AWS DMS 从 Amazon RDS for Oracle 迁移](/tidb-cloud/migrate-from-oracle-using-aws-dms.md)
+    - [使用 AWS DMS 从 Amazon RDS for Oracle 迁移](/tidb-cloud/migrate-from-oracle-using-aws-dms.md)
   - 将数据导入 TiDB Cloud Dedicated
     - [导入示例数据](/tidb-cloud/import-sample-data.md)
     - [从云存储导入 CSV 文件](/tidb-cloud/import-csv-files.md)
@@ -351,15 +351,15 @@
     - [OAuth 2.0](/tidb-cloud/oauth2.md)
   - 网络访问控制
     - TiDB Cloud Serverless
-      - [通过私有终端节点连接](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
-      - [为公共端点配置防火墙规则](/tidb-cloud/configure-serverless-firewall-rules-for-public-endpoints.md)
+      - [通过 Private Endpoint 连接](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
+      - [为 Public Endpoint 配置防火墙规则](/tidb-cloud/configure-serverless-firewall-rules-for-public-endpoints.md)
       - [到 TiDB Cloud Serverless 的 TLS 连接](/tidb-cloud/secure-connections-to-serverless-clusters.md)
     - TiDB Cloud Dedicated
       - [配置 IP 访问列表](/tidb-cloud/configure-ip-access-list.md)
-      - [通过 AWS 上的私有终端节点连接](/tidb-cloud/set-up-private-endpoint-connections.md)
-      - [通过 Azure 上的私有终端节点连接](/tidb-cloud/set-up-private-endpoint-connections-on-azure.md)
-      - [通过 Google Cloud 上的私有终端节点连接](/tidb-cloud/set-up-private-endpoint-connections-on-google-cloud.md)
-      - [通过 VPC 对等连接](/tidb-cloud/set-up-vpc-peering-connections.md)
+      - [通过 AWS Private Link 连接到 TiDB Cloud Dedicated 集群](/tidb-cloud/set-up-private-endpoint-connections.md)
+      - [通过 Azure Private Link 连接到 TiDB Cloud Dedicated 集群](/tidb-cloud/set-up-private-endpoint-connections-on-azure.md)
+      - [通过 Google Cloud Private Service Connect 连接到 TiDB Cloud Dedicated 集群](/tidb-cloud/set-up-private-endpoint-connections-on-google-cloud.md)
+      - [通过 VPC Peering 连接](/tidb-cloud/set-up-vpc-peering-connections.md)
       - [到 TiDB Cloud Dedicated 的 TLS 连接](/tidb-cloud/tidb-cloud-tls-connect-to-dedicated.md)
   - 数据访问控制
       - [使用客户管理的加密密钥进行静态加密](/tidb-cloud/tidb-cloud-encrypt-cmek.md)
@@ -373,7 +373,7 @@
   - [账单详情](/tidb-cloud/tidb-cloud-billing.md#billing-details)
   - [成本资源管理器](/tidb-cloud/tidb-cloud-billing.md#cost-explorer)
   - [账单资料](/tidb-cloud/tidb-cloud-billing.md#billing-profile)
-- [抵扣金](/tidb-cloud/tidb-cloud-billing.md#credits)
+  - [抵扣金](/tidb-cloud/tidb-cloud-billing.md#credits)
   - [支付方式设置](/tidb-cloud/tidb-cloud-billing.md#payment-method)
   - [来自 AWS、Azure 或 Google Cloud Marketplace 的账单](/tidb-cloud/tidb-cloud-billing.md#billing-from-aws-marketplace-azure-marketplace-or-google-cloud-marketplace)
   - [Changefeed 计费](/tidb-cloud/tidb-cloud-billing-ticdc-rcu.md)
@@ -765,9 +765,9 @@
   - TiDB 集群架构
     - [概述](/tidb-architecture.md)
     - [存储](/tidb-storage.md)
-- [计算](/tidb-computing.md)
-- [调度](/tidb-scheduling.md)
-- [TSO](/tso.md)
+    - [计算](/tidb-computing.md)
+    - [调度](/tidb-scheduling.md)
+    - [TSO](/tso.md)
   - 存储引擎
     - TiKV
         - [TiKV 概览](/tikv-overview.md)
