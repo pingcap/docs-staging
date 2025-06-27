@@ -22,6 +22,10 @@ on:
         default: false
         required: false
 
+env:
+  JA_CLOUD_BRANCH: i18n-ja-release-8.1
+  ZH_CLOUD_BRANCH: i18n-zh-release-8.1
+
 concurrency: ${{ github.workflow }}-${{ inputs.repo }}-${{ inputs.branch }}
 
 jobs:
@@ -62,10 +66,10 @@ jobs:
           if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "release-8.1" ]
           then
           yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
-          elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "i18n-ja-release-8.1" ]
+          elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.JA_CLOUD_BRANCH }} ]
           then
           yarn download:tidb-cloud:ja --ref ${{ inputs.branch }}
-          elif [ ${{ inputs.repo }} = "pingcap/docs-cn" ] && [ ${{ inputs.branch }} = "release-8.1" ]
+          elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.ZH_CLOUD_BRANCH }} ]
           then
           yarn download:tidb-cloud:zh --ref ${{ inputs.branch }}
           fi
