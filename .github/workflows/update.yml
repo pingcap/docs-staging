@@ -53,6 +53,17 @@ jobs:
         env:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          # handle tidb doc based on specified ja/cn doc branch
+          if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.JA_CLOUD_BRANCH }} ]
+          then
+          yarn download:tidb-cloud:ja --ref ${{ inputs.branch }}
+          exit 0
+          elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.ZH_CLOUD_BRANCH }} ]
+          then
+          yarn download:tidb-cloud:zh --ref ${{ inputs.branch }}
+          exit 0
+          fi
+
           # docs-dm and docs-tidb-operator need specify language
           if [ ${{ inputs.repo }} = "pingcap/docs-dm" ] || [ ${{ inputs.repo }} = "pingcap/docs-tidb-operator" ]
           then
@@ -62,16 +73,10 @@ jobs:
           yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
           fi
 
-          # handle tidb-cloud doc based on specified en/ja doc branch
+          # handle tidb-cloud doc based on specified en doc branch
           if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "release-8.1" ]
           then
           yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
-          elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.JA_CLOUD_BRANCH }} ]
-          then
-          yarn download:tidb-cloud:ja --ref ${{ inputs.branch }}
-          elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.ZH_CLOUD_BRANCH }} ]
-          then
-          yarn download:tidb-cloud:zh --ref ${{ inputs.branch }}
           fi
 
       - name: Update all folder
