@@ -1,106 +1,73 @@
 ---
-title: 挂起 TiDB 集群
-summary: 了解如何通过配置挂起 Kubernetes 上的 TiDB 集群。
+title: 挂起和恢复 Kubernetes 上的 TiDB 集群
+summary: 了解如何通过配置挂起和恢复 Kubernetes 上的 TiDB 集群。
 ---
 
-# 挂起 TiDB 集群
+# 挂起和恢复 Kubernetes 上的 TiDB 集群
 
-本文介绍如何通过配置 `TidbCluster` 对象来挂起 Kubernetes 上的 TiDB 集群，或挂起 TiDB 集群组件。挂起集群后，你可以停止所有组件或某个组件的 Pod，保留 `TidbCluster` 对象以及其他资源（例如 Service、PVC 等）。
+本文介绍如何通过配置 `Cluster` 对象来挂起和恢复 Kubernetes 上的 TiDB 集群。挂起操作会停止集群中所有组件的 Pod，但不会删除 `Cluster` 对象及其相关资源（例如 Service、PVC 等），从而保留集群的数据和配置，便于后续恢复。
 
-在某些测试场景下，如果你需要节省资源，你可以在不使用 TiDB 集群时挂起集群。
+## 使用场景
 
-> **注意：**
->
-> 挂起 TiDB 集群，要求 TiDB Operator 版本 >= 1.3.7。
+挂起 TiDB 集群适用于以下场景：
 
-## 配置挂起 TiDB 集群
+- 临时释放测试环境中的计算资源
+- 停止长期不使用的开发集群
+- 临时停止集群但保留数据和配置
+
+## 注意事项
+
+挂起 TiDB 集群前，需要注意以下事项：
+
+- 挂起操作将中断集群服务
+- 已有的连接会被强制断开
+- PVC 和数据仍会保留并占用存储空间
+- 集群相关的 Service 和配置保持不变
+
+## 挂起 TiDB 集群
 
 如果你需要挂起 TiDB 集群，执行以下步骤：
 
-1. 在 `TidbCluster` 对象中，配置 `spec.suspendAction` 字段，挂起整个 TiDB 集群：
+1. 在 `Cluster` 对象中，将 `spec.suspendAction.suspendCompute` 字段设置为 `true`，以挂起整个 TiDB 集群：
 
     ```yaml
-    apiVersion: pingcap.com/v1alpha1
-    kind: TidbCluster
+    apiVersion: core.pingcap.com/v1alpha1
+    kind: Cluster
     metadata:
       name: ${cluster_name}
       namespace: ${namespace}
     spec:
       suspendAction:
-        suspendStatefulSet: true
+        suspendCompute: true
       # ...
     ```
 
-    TiDB Operator 也支持挂起一个或多个 TiDB 集群的组件。以 TiKV 为例，通过配置 `TidbCluster` 对象的 `spec.tikv.suspendAction` 字段来挂起 TiDB 集群中的 TiKV。
-
-    ```yaml
-    apiVersion: pingcap.com/v1alpha1
-    kind: TidbCluster
-    metadata:
-      name: ${cluster_name}
-      namespace: ${namespace}
-    spec:
-      tikv:
-        suspendAction:
-          suspendStatefulSet: true
-      # ...
-    ```
-
-2. 挂起 TiDB 集群后，通过以下命令观察到挂起的组件的 Pod 逐步被删除。
+2. 挂起 TiDB 集群后，通过以下命令观察到 TiDB 集群的 Pod 逐步被删除：
 
     ```shell
-    kubectl -n ${namespace} get pods
+    kubectl -n ${namespace} get pods -w
     ```
-
-    每个挂起的组件的 Pod 会按照以下的顺序被删除：
-
-    * TiDB
-    * TiFlash
-    * TiCDC
-    * TiKV
-    * Pump
-    * TiProxy
-    * PD
-
-> **注意：**
->
-> 如果集群中部署了 [PD 微服务](https://docs.pingcap.com/zh/tidb/dev/pd-microservices)（从 TiDB v8.0.0 版本开始支持），PD 微服务组件的 Pod 会在删除 PD 之后被删除。
 
 ## 恢复 TiDB 集群
 
-在 TiDB 集群或组件被挂起后，如果你需要恢复 TiDB 集群，执行以下步骤：
+在 TiDB 集群被挂起后，如果需要恢复 TiDB 集群，执行以下步骤：
 
-1. 在 `TidbCluster` 对象中，配置 `spec.suspendAction` 字段，恢复被挂起的整个 TiDB 集群：
+1. 在 `Cluster` 对象中，将 `spec.suspendAction.suspendCompute` 字段设置为 `false`，以恢复被挂起的整个 TiDB 集群：
 
     ```yaml
-    apiVersion: pingcap.com/v1alpha1
-    kind: TidbCluster
+    apiVersion: core.pingcap.com/v1alpha1
+    kind: Cluster
     metadata:
       name: ${cluster_name}
       namespace: ${namespace}
     spec:
       suspendAction:
-        suspendStatefulSet: false
+        suspendCompute: false
       # ...
     ```
 
-    TiDB Operator 也支持恢复一个或多个 TiDB 集群的组件。以 TiKV 为例，通过配置 `TidbCluster` 对象的 `spec.tikv.suspendAction` 字段来恢复 TiDB 集群中的 TiKV。
-
-    ```yaml
-    apiVersion: pingcap.com/v1alpha1
-    kind: TidbCluster
-    metadata:
-      name: ${cluster_name}
-      namespace: ${namespace}
-    spec:
-      tikv:
-        suspendAction:
-          suspendStatefulSet: false
-      # ...
-    ```
-
-2. 恢复 TiDB 集群后，通过以下命令观察到挂起的组件的 Pod 逐步被创建。
+2. 恢复 TiDB 集群后，通过以下命令观察到 TiDB 集群的 Pod 逐步被创建：
 
     ```shell
-    kubectl -n ${namespace} get pods
+    kubectl -n ${namespace} get pods -w
     ```

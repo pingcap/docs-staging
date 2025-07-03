@@ -1,61 +1,47 @@
 ---
 title: 重启 Kubernetes 上的 TiDB 集群
-summary: 了解如何重启 Kubernetes 集群上的 TiDB 集群。
-aliases: ['/docs-cn/tidb-in-kubernetes/dev/restart-a-tidb-cluster/']
+summary: 了解如何重启 Kubernetes 集群上的 TiDB 集群，包括优雅滚动重启 TiDB 集群中某个组件的所有 Pod，以及单独重启某个 Pod。
 ---
 
 # 重启 Kubernetes 上的 TiDB 集群
 
-在使用 TiDB 集群的过程中，如果你发现某个 Pod 存在内存泄漏等问题，需要对集群进行重启，本文描述了如何优雅滚动重启 TiDB 集群内某个组件的所有 Pod，或优雅重启单个 TiKV Pod。
+在使用 TiDB 集群的过程中，如果某个 Pod 存在内存泄漏等问题，可能需要重启集群。本文介绍如何优雅滚动重启 TiDB 集群中某个组件的所有 Pod，或单独优雅重启某个 Pod。
 
 > **警告：**
 >
-> 在生产环境中，未经过优雅重启而手动删除某个 TiDB 集群 Pod 节点是一件极其危险的事情，虽然 StatefulSet 控制器会将 Pod 节点再次拉起，但这依旧可能会引起部分访问 TiDB 集群的请求失败。
+> 在生产环境中，强烈建议不要强制删除 TiDB 集群的 Pod。虽然 TiDB Operator 会自动重新创建被删除的 Pod，但这仍可能会导致部分访问 TiDB 集群的请求失败。
 
-## 优雅滚动重启 TiDB 集群组件的所有 Pod
+## 优雅滚动重启某个组件的所有 Pod
 
-[在标准 Kubernetes 上部署 TiDB 集群](deploy-on-general-kubernetes.md)之后，通过 `kubectl edit tc ${name} -n ${namespace}` 修改集群配置，为期望优雅滚动重启的 TiDB 集群组件 Spec 添加 annotation `tidb.pingcap.com/restartedAt`，Value 设置为当前时间。以下示例中，为组件 `pd`、`tikv`、`tidb` 都设置了 annotation，表示将优雅滚动重启以上三个 TiDB 集群组件的所有 Pod。可以根据实际情况，只为某个组件设置 annotation。
+要优雅滚动重启某个组件（例如 PD、TiKV 或 TiDB）的所有 Pod，需要修改该组件对应的 Component Group Custom Resource (CR) 配置，在 `.spec.template.metadata` 部分添加 `pingcap.com/restartedAt` 的 label 或 annotation，并将其值设置为一个保证幂等性的字符串，例如当前时间。
+
+以下示例展示如何为 PD 组件添加一个 annotation，从而触发对该 `PDGroup` 下所有 PD Pod 的优雅滚动重启：
 
 ```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbCluster
+apiVersion: core.pingcap.com/v1alpha1
+kind: PDGroup
 metadata:
-  name: basic
+  name: pd
 spec:
-  version: v8.5.0
-  timezone: UTC
-  pvReclaimPolicy: Delete
-  pd:
-    ...
-    annotations:
-      tidb.pingcap.com/restartedAt: 2020-04-20T12:00
-  tikv:
-    ...
-    annotations:
-      tidb.pingcap.com/restartedAt: 2020-04-20T12:00
-  tidb:
-    ...
-    annotations:
-      tidb.pingcap.com/restartedAt: 2020-04-20T12:00
+  replicas: 3
+  template:
+    metadata:
+      annotations:
+        pingcap.com/restartedAt: 2025-06-30T12:00
 ```
 
-## 优雅重启单个 TiKV Pod
+## 优雅重启某个组件的单个 Pod
 
-从 v1.2.5 起，TiDB Operator 支持给 TiKV Pod 添加 annotation 来触发优雅重启单个 TiKV Pod。
+你可以单独重启 TiDB 集群中的特定 Pod。不同组件的 Pod，操作略有不同。
 
-添加一个 key 为 `tidb.pingcap.com/evict-leader` 的 annotation，触发优雅重启：
-
+对于 TiKV Pod，为确保有足够时间驱逐 Region leader，在删除 Pod 时需要指定 `--grace-period` 选项，否则操作可能失败。以下示例为 TiKV Pod 设置了 60 秒的宽限期：
 
 ```shell
-kubectl -n ${namespace} annotate pod ${tikv_pod_name} tidb.pingcap.com/evict-leader="delete-pod"
+kubectl -n ${namespace} delete pod ${pod_name} --grace-period=60
 ```
 
-当 TiKV region leader 数掉到 0 时，根据 annotation 的不同值，TiDB Operator 会采取不同的行为。合法的 annotation 值如下：
+其他组件的 Pod 可以直接删除，TiDB Operator 会自动优雅重启这些 Pod：
 
-- `none`: 无对应行为。
-- `delete-pod`: 删除 Pod，TiDB Operator 的具体行为如下：
-    1. 调用 PD API，为对应 TiKV store 添加 evict-leader-scheduler。
-    2. 当 TiKV region leader 数掉到 0 时，删除 Pod 并重建 Pod。
-    3. 当新的 Pod Ready 后，调用 PD API 删除对应 TiKV store 的 evict-leader-scheduler。
-
-在删除 Pod 之前，如果检测到有日志备份任务正在运行，TiDB Operator 会尝试强制将备份日志写出到外部存储。若要禁用此功能，你可以在 TidbCluster CR 中添加 annotation `tidb.pingcap.com/tikv-restart-without-flush-log-backup` 并设置为任意值。
+```shell
+kubectl -n ${namespace} delete pod ${pod_name}
+```

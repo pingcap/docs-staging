@@ -10,9 +10,9 @@ This document describes how to restore the backup data stored in Azure Blob Stor
 - Full restoration. This method takes the backup data of snapshot backup and restores a TiDB cluster to the time point of the snapshot backup.
 - Point-in-time recovery (PITR). This method takes the backup data of both snapshot backup and log backup and restores a TiDB cluster to any point in time.
 
-The restore method described in this document is implemented based on CustomResourceDefinition (CRD) in TiDB Operator. For the underlying implementation, [BR](https://docs.pingcap.com/tidb/stable/backup-and-restore-overview) is used to restore the data. BR stands for Backup & Restore, which is a command-line tool for distributed backup and recovery of the TiDB cluster data.
+The restore method described in this document is implemented based on Custom Resource Definition (CRD) in TiDB Operator. For the underlying implementation, [BR](https://docs.pingcap.com/tidb/stable/backup-and-restore-overview) is used to restore the data. BR stands for Backup & Restore, which is a command-line tool for distributed backup and recovery of the TiDB cluster data.
 
-PITR allows you to restore a new TiDB cluster to any point in time of the backup cluster. To use PITR, you need the backup data of snapshot backup and log backup. During the restoration, the snapshot backup data is first restored to the TiDB cluster, and then the log backup data between the snapshot backup time point and the specified point in time is restored to the TiDB cluster.
+PITR enables you to restore a new TiDB cluster to any point in time of the backup cluster. To use PITR, you need the backup data of snapshot backup and log backup. During the restoration, the snapshot backup data is first restored to the TiDB cluster, and then the log backup data between the snapshot backup time point and the specified point in time is restored to the TiDB cluster.
 
 > **Note:**
 >
@@ -32,50 +32,65 @@ In this example, the `my-full-backup-folder` folder in the `my-container` bucket
 
 Before restoring backup data on Azure Blob Storage to TiDB using BR, take the following steps to prepare the restore environment:
 
-1. Create a namespace for managing restoration. The following example creates a `restore-test` namespace:
+1. Create the required role-based access control (RBAC) resources:
 
     ```shell
-    kubectl create namespace restore-test
+    kubectl apply -n test2 -f - <<EOF
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: tidb-backup-manager
+      labels:
+        app.kubernetes.io/component: tidb-backup-manager
+    rules:
+    - apiGroups: [""]
+      resources: ["events"]
+      verbs: ["*"]
+    - apiGroups: ["br.pingcap.com"]
+      resources: ["backups", "restores"]
+      verbs: ["get", "watch", "list", "update"]
+    ---
+    kind: ServiceAccount
+    apiVersion: v1
+    metadata:
+      name: tidb-backup-manager
+    ---
+    kind: RoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: tidb-backup-manager
+      labels:
+        app.kubernetes.io/component: tidb-backup-manager
+    subjects:
+    - kind: ServiceAccount
+      name: tidb-backup-manager
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: tidb-backup-manager
+    EOF
     ```
 
-2. Download [backup-rbac.yaml](https://github.com/pingcap/tidb-operator/blob/v1.6.1/manifests/backup/backup-rbac.yaml), and execute the following command to create the role-based access control (RBAC) resources in the `restore-test` namespace:
-
-    ```shell
-    kubectl apply -f backup-rbac.yaml -n restore-test
-    ```
-
-3. Grant permissions to the remote storage for the `restore-test` namespace. You can grant permissions to Azure Blob Storage by two methods. For details, refer to [Azure account permissions](grant-permissions-to-remote-storage.md#azure-account-permissions). After you grant the permissions, the `restore-test` namespace has a secret object named `azblob-secret` or `azblob-secret-ad`.
+2. Refer to [Grant permissions to an Azure account](grant-permissions-to-remote-storage.md#grant-permissions-to-an-azure-account) to grant access to remote storage. Azure provides two methods for granting permissions. After successful authorization, a Secret object named `azblob-secret` or `azblob-secret-ad` should exist in the namespace.
 
     > **Note:**
     >
-    > The role owned by the account must have the permission to modify blob at least (for example, a [contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#contributor)).
-    >
-    > When you create a secret object, you can use a customized name for the object. In this document, the name is `azblob-secret`.
-
-4. For a TiDB version earlier than v4.0.8, you also need to complete the following preparation steps. For TiDB v4.0.8 or a later version, skip these preparation steps.
-
-    1. Make sure that you have the `SELECT` and `UPDATE` privileges on the `mysql.tidb` table of the target database so that the `Restore` CR can adjust the GC time before and after the restore.
-
-    2. Create the `restore-demo2-tidb-secret` secret to store the account and password to access the TiDB cluster:
-
-        
-        ```shell
-        kubectl create secret generic restore-demo2-tidb-secret --from-literal=password=${password} --namespace=test2
-        ```
+    > - The authorized account must have at least write access to Blob data, such as the [Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#contributor) role.
+    > - When creating the Secret object, you can customize its name. For demonstration purposes, this document uses `azblob-secret` as the example Secret name.
 
 ### Step 2: Restore the backup data to a TiDB cluster
 
-Create a `Restore` CR named `demo2-restore-azblob` in the `restore-test` namespace to restore cluster data as described below:
+Create a `Restore` CR named `demo2-restore-azblob` in the `test2` namespace to restore cluster data as follows:
 
 ```shell
-kubectl apply -f restore-full-azblob.yaml
+kubectl apply -n test2 -f restore-full-azblob.yaml
 ```
 
 The content of `restore-full-azblob.yaml` is as follows:
 
 ```yaml
 ---
-apiVersion: pingcap.com/v1alpha1
+apiVersion: br.pingcap.com/v1alpha1
 kind: Restore
 metadata:
   name: demo2-restore-azblob
@@ -83,7 +98,6 @@ metadata:
 spec:
   br:
     cluster: demo2
-    clusterNamespace: test2
     # logLevel: info
     # statusAddr: ${status_addr}
     # concurrency: 4
@@ -94,21 +108,20 @@ spec:
   azblob:
     secretName: azblob-secret
     container: my-container
-    prefix: my-folder
+    prefix: my-full-backup-folder
 ```
 
-When configuring `restore-azblob.yaml`, note the following:
+When configuring `restore-full-azblob.yaml`, note the following:
 
 - For more information about Azure Blob Storage configuration, refer to [Azure Blob Storage fields](backup-restore-cr.md#azure-blob-storage-fields).
 - Some parameters in `.spec.br` are optional, such as `logLevel`, `statusAddr`, `concurrency`, `rateLimit`, `checksum`, `timeAgo`, and `sendCredToTikv`. For more information about BR configuration, refer to [BR fields](backup-restore-cr.md#br-fields).
-- `spec.azblob.secretName`: fill in the name of the secret object, such as `azblob-secret`.
-- For v4.0.8 or a later version, BR can automatically adjust `tikv_gc_life_time`. You do not need to configure the `spec.to` fields in the `Restore` CR.
+- `.spec.azblob.secretName`: fill in the name you specified when creating the Secret object, such as `azblob-secret`.
 - For more information about the `Restore` CR fields, refer to [Restore CR fields](backup-restore-cr.md#restore-cr-fields).
 
 After creating the `Restore` CR, execute the following command to check the restore status:
 
 ```shell
-kubectl get restore -n restore-test -o wide
+kubectl get restore -n test2 -o wide
 ```
 
 ```
@@ -140,54 +153,31 @@ For detailed steps of how to perform data backup, refer to [Back up data to Azur
 
 ### Step 1: Prepare the restoration environment
 
-Before restoring backup data on Azure Blob Storage to TiDB using BR, take the following steps to prepare the restoration environment:
-
-1. Create a namespace for managing restoration. The following example creates a `restore-test` namespace:
-
-    ```shell
-    kubectl create namespace restore-test
-    ```
-
-2. Download [backup-rbac.yaml](https://github.com/pingcap/tidb-operator/blob/v1.6.1/manifests/backup/backup-rbac.yaml), and execute the following command to create the role-based access control (RBAC) resources in the `restore-test` namespace:
-
-    ```shell
-    kubectl apply -f backup-rbac.yaml -n restore-test
-    ```
-
-3. Grant permissions to the remote storage for the `restore-test` namespace. You can grant permissions to Azure Blob Storage by two methods. For details, refer to [Azure account permissions](grant-permissions-to-remote-storage.md#azure-account-permissions). After you grant the permissions, the `restore-test` namespace has a secret object named `azblob-secret` or `azblob-secret-ad`.
-
-    > **Note:**
-    >
-    > The role owned by the account must have the permission to access blob at least (for example, a [reader](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#reader)).
-    >
-    > When you create a secret object, you can use a customized name for the object. In this document, the name is `azblob-secret`.
+The steps to prepare for a PITR are the same as those of [Full restoration](#full-restoration).
 
 ### Step 2: Restore the backup data to a TiDB cluster
 
-The example in this section restores the snapshot backup data to the cluster. The specified restoration time point must be between [the time point of snapshot backup](backup-to-azblob-using-br.md#view-the-snapshot-backup-status) and the [`Log Checkpoint Ts` of log backup](backup-to-azblob-using-br.md#view-the-log-backup-status).
+The example in this section restores the snapshot backup data to the cluster. The specified restoration time point must be between [the time point of snapshot backup](backup-to-azblob-using-br.md#view-the-snapshot-backup-status) and the [`Log Checkpoint Ts` of log backup](backup-to-azblob-using-br.md#view-the-log-backup-status). The detailed steps are as follows:
 
-The detailed steps are as follows:
-
-1. Create a `Restore` CR named `demo3-restore-azblob` in the `restore-test` namespace and specify the restoration time point as `2022-10-10T17:21:00+08:00`:
+1. Create a `Restore` CR named `demo3-restore-azblob` in the `test3` namespace and specify the restoration time point as `2022-10-10T17:21:00+08:00`:
 
     ```shell
-    kubectl apply -f restore-point-azblob.yaml
+    kubectl apply -n test3 -f restore-point-azblob.yaml
     ```
 
     The content of `restore-point-azblob.yaml` is as follows:
 
     ```yaml
     ---
-    apiVersion: pingcap.com/v1alpha1
+    apiVersion: br.pingcap.com/v1alpha1
     kind: Restore
     metadata:
       name: demo3-restore-azblob
-      namespace: restore-test
+      namespace: test3
     spec:
       restoreMode: pitr
       br:
         cluster: demo3
-        clusterNamespace: test3
       azblob:
         secretName: azblob-secret
         container: my-container
@@ -207,7 +197,7 @@ The detailed steps are as follows:
 2. Wait for the restoration operation to complete:
 
     ```shell
-    kubectl get jobs -n restore-test
+    kubectl get jobs -n test3
     ```
 
     ```
@@ -218,7 +208,7 @@ The detailed steps are as follows:
     You can also check the restoration status by using the following command:
 
     ```shell
-    kubectl get restore -n restore-test -o wide
+    kubectl get restore -n test3 -o wide
     ```
 
     ```

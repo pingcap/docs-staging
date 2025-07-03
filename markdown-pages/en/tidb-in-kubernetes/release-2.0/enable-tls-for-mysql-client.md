@@ -1,49 +1,43 @@
 ---
 title: Enable TLS for the MySQL Client
-summary: Learn how to enable TLS for MySQL client of the TiDB cluster on Kubernetes.
-aliases: ['/docs/tidb-in-kubernetes/dev/enable-tls-for-mysql-client/']
+summary: Learn how to enable TLS for the MySQL client of the TiDB cluster on Kubernetes.
 ---
 
 # Enable TLS for the MySQL Client
 
-This document describes how to enable TLS for MySQL client of the TiDB cluster on Kubernetes. Starting from TiDB Operator v1.1, TLS for the MySQL client of the TiDB cluster on Kubernetes is supported.
+This document describes how to enable TLS for MySQL client of the TiDB cluster on Kubernetes. To enable TLS for the MySQL client, perform the following steps:
 
-To enable TLS for the MySQL client, perform the following steps:
-
-1. [Issue two sets of certificates](#issue-two-sets-of-certificates-for-the-tidb-cluster): a set of server-side certificates for TiDB server, and a set of client-side certificates for MySQL client. Create two Secret objects, `${cluster_name}-tidb-server-secret` and `${cluster_name}-tidb-client-secret`, respectively including these two sets of certificates.
+1. Issue two sets of certificates: a set of server-side certificates for the TiDB server, and a set of client-side certificates for the MySQL client. Create two Secret objects, `${tidb_group_name}-tidb-server-secret` and `${tidb_group_name}-tidb-client-secret`, respectively including these two sets of certificates.
 
     > **Note:**
     >
-    > The Secret objects you created must follow the above naming convention. Otherwise, the deployment of the TiDB cluster will fail.
+    > - The Secret objects you created must follow the preceding naming convention. Otherwise, the deployment of the TiDB cluster will fail.
+    > - Explicitly specifying the MySQL TLS Secret will be supported in a future release.
+    > - The default naming convention for Secrets differs between TiDB Operator v2 and v1:
+    >     - For TiDB clusters created by TiDB Operator v1, the default Secret names are `${cluster_name}-tidb-server-secret` and `${cluster_name}-tidb-client-secret`.
+    >     - In TiDB Operator v2, different `TiDBGroup` objects support different TLS certificates. Therefore, the default Secret names are `${tidb_group_name}-tidb-server-secret` and `${tidb_group_name}-tidb-client-secret`.
 
-    Certificates can be issued in multiple methods. This document describes two methods. You can choose either of them to issue certificates for the TiDB cluster:
-
-    - [Using the `cfssl` system](#using-cfssl)
-    - [Using the `cert-manager` system](#using-cert-manager)
-
-2. [Deploy the cluster](#deploy-the-tidb-cluster), and set `.spec.tidb.tlsClient.enabled` to `true`.
-
-    * To skip TLS authentication for internal components that serve as the MySQL client (such as TidbInitializer, Dashboard, Backup, and Restore), you can add the `tidb.tidb.pingcap.com/skip-tls-when-connect-tidb="true"` annotation to the cluster's corresponding `TidbCluster`.
-    * To disable the client CA certificate authentication on the TiDB server, you can set `.spec.tidb.tlsClient.disableClientAuthn` to `true`. This means skipping setting the `ssl-ca` parameter when you [configure TiDB server to enable secure connections](https://docs.pingcap.com/tidb/stable/enable-tls-between-clients-and-servers#configure-tidb-server-to-use-secure-connections).
-    * To skip the CA certificate authentication for internal components that serve as the MySQL client, you can set `.spec.tidb.tlsClient.skipInternalClientCA` to `true`.
+2. Deploy the cluster, and set the `.spec.template.spec.security.tls.mysql.enabled` field in `TiDBGroup` to `true`.
 
     > **Note:**
     >
-    > For an existing cluster, if you change `.spec.tidb.tlsClient.enabled` from `false` to `true`, the TiDB Pods will be rolling restarted.
+    > Enabling or modifying the TLS configuration of a running `TiDBGroup` triggers a rolling restart of TiDB Pods. Perform this operation with caution.
 
-3. [Configure the MySQL client to use an encrypted connection](#configure-the-mysql-client-to-use-an-encrypted-connection).
+3. Configure the MySQL client to use an encrypted connection.
 
-If you need to renew the existing TLS certificate, refer to [Renew and Replace the TLS Certificate](renew-tls-certificate.md).
+There are multiple ways to issue certificates. This document provides two methods, and you can also issue certificates for TiDB clusters as needed. The two methods are:
 
-## Issue two sets of certificates for the TiDB cluster
+- Use the `cfssl` system to issue certificates
+- (Recommended) Use the `cert-manager` system to issue certificates
 
-This section describes how to issue certificates for the TiDB cluster using two methods: `cfssl` and `cert-manager`.
+To renew existing TLS certificates, see [Renew and Replace the TLS Certificate](renew-tls-certificate.md).
 
-### Using `cfssl`
+## Step 1: Issue two sets of certificates for the TiDB cluster
+
+### Use `cfssl` to issue certificates
 
 1. Download `cfssl` and initialize the certificate issuer:
 
-    
     ```shell
     mkdir -p ~/bin
     curl -s -L -o ~/bin/cfssl https://pkg.cfssl.org/R1.2/cfssl_linux-amd64
@@ -113,7 +107,6 @@ This section describes how to issue certificates for the TiDB cluster using two 
 
 4. Generate CA by the configured option:
 
-    
     ```shell
     cfssl gencert -initca ca-csr.json | cfssljson -bare ca -
     ```
@@ -122,38 +115,36 @@ This section describes how to issue certificates for the TiDB cluster using two 
 
     First, create the default `server.json` file:
 
-    
-    ``` shell
+    ```shell
     cfssl print-defaults csr > server.json
     ```
 
-    Then, edit this file to change the `CN`, `hosts` attributes:
+    Then, edit this file to change the `CN` and `hosts` attributes:
 
-    ``` json
+    ```json
     ...
         "CN": "TiDB Server",
         "hosts": [
           "127.0.0.1",
           "::1",
-          "${cluster_name}-tidb",
-          "${cluster_name}-tidb.${namespace}",
-          "${cluster_name}-tidb.${namespace}.svc",
-          "*.${cluster_name}-tidb",
-          "*.${cluster_name}-tidb.${namespace}",
-          "*.${cluster_name}-tidb.${namespace}.svc",
-          "*.${cluster_name}-tidb-peer",
-          "*.${cluster_name}-tidb-peer.${namespace}",
-          "*.${cluster_name}-tidb-peer.${namespace}.svc"
+          "${tidb_group_name}-tidb",
+          "${tidb_group_name}-tidb.${namespace}",
+          "${tidb_group_name}-tidb.${namespace}.svc",
+          "*.${tidb_group_name}-tidb",
+          "*.${tidb_group_name}-tidb.${namespace}",
+          "*.${tidb_group_name}-tidb.${namespace}.svc",
+          "*.${tidb_group_name}-tidb-peer",
+          "*.${tidb_group_name}-tidb-peer.${namespace}",
+          "*.${tidb_group_name}-tidb-peer.${namespace}.svc"
         ],
     ...
     ```
 
-    `${cluster_name}` is the name of the cluster. `${namespace}` is the namespace in which the TiDB cluster is deployed. You can also add your customized `hosts`.
+    `${tidb_group_name}` is the name of `TiDBGroup`. `${namespace}` is the namespace in which the TiDB cluster is deployed. You can also add your customized `hosts`.
 
     Finally, generate the server-side certificate:
 
-    
-    ``` shell
+    ```shell
     cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server server.json | cfssljson -bare server
     ```
 
@@ -161,14 +152,13 @@ This section describes how to issue certificates for the TiDB cluster using two 
 
     First, create the default `client.json` file:
 
-    
-    ``` shell
+    ```shell
     cfssl print-defaults csr > client.json
     ```
 
-    Then, edit this file to change the `CN`, `hosts` attributes. You can leave the `hosts` empty:
+    Then, edit this file to change the `CN` and `hosts` attributes. You can leave the `hosts` empty:
 
-    ``` json
+    ```json
     ...
         "CN": "TiDB Client",
         "hosts": [],
@@ -177,8 +167,7 @@ This section describes how to issue certificates for the TiDB cluster using two 
 
     Finally, generate the client-side certificate:
 
-    
-    ``` shell
+    ```shell
     cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=client client.json | cfssljson -bare client
     ```
 
@@ -186,20 +175,19 @@ This section describes how to issue certificates for the TiDB cluster using two 
 
     If you have already generated two sets of certificates as described in the above steps, create the Secret object for the TiDB cluster by the following command:
 
-    
     ```shell
-    kubectl create secret generic ${cluster_name}-tidb-server-secret --namespace=${namespace} --from-file=tls.crt=server.pem --from-file=tls.key=server-key.pem --from-file=ca.crt=ca.pem
-    kubectl create secret generic ${cluster_name}-tidb-client-secret --namespace=${namespace} --from-file=tls.crt=client.pem --from-file=tls.key=client-key.pem --from-file=ca.crt=ca.pem
+    kubectl create secret generic ${tidb_group_name}-tidb-server-secret --namespace=${namespace} --from-file=tls.crt=server.pem --from-file=tls.key=server-key.pem --from-file=ca.crt=ca.pem
+    kubectl create secret generic ${tidb_group_name}-tidb-client-secret --namespace=${namespace} --from-file=tls.crt=client.pem --from-file=tls.key=client-key.pem --from-file=ca.crt=ca.pem
     ```
 
     You have created two Secret objects for the server-side and client-side certificates:
 
     - The TiDB server loads one Secret object when it starts
-    - The MySQL client uses another Secret object when it connects to the TiDB cluster
+    - The MySQL client uses the other Secret object when it connects to the TiDB cluster
 
-You can generate multiple sets of client-side certificates. At least one set of client-side certificates is needed for the internal components of TiDB Operator to access the TiDB server. Currently, `TidbInitializer` accesses the TiDB server to set the password or perform initialization.
+You can generate multiple sets of client-side certificates. At least one set of client-side certificates is needed for the internal components of TiDB Operator to access the TiDB server.
 
-### Using `cert-manager`
+### Use `cert-manager` to issue certificates
 
 1. Install `cert-manager`.
 
@@ -209,10 +197,9 @@ You can generate multiple sets of client-side certificates. At least one set of 
 
     To configure `cert-manager`, create the Issuer resources.
 
-    First, create a directory which saves the files that `cert-manager` needs to create certificates:
+    First, create a directory to save the files that `cert-manager` needs to create certificates:
 
-    
-    ``` shell
+    ```shell
     mkdir -p cert-manager
     cd cert-manager
     ```
@@ -246,7 +233,7 @@ You can generate multiple sets of client-side certificates. At least one set of 
     apiVersion: cert-manager.io/v1
     kind: Issuer
     metadata:
-      name: ${cluster_name}-tidb-issuer
+      name: ${cluster_name}-cert-issuer
       namespace: ${namespace}
     spec:
       ca:
@@ -255,14 +242,13 @@ You can generate multiple sets of client-side certificates. At least one set of 
 
     This `.yaml` file creates three objects:
 
-    - An Issuer object of SelfSigned class, used to generate the CA certificate needed by Issuer of CA class
+    - An Issuer object of SelfSigned class, used to generate the CA certificate needed by the Issuer of the CA class
     - A Certificate object, whose `isCa` is set to `true`
     - An Issuer, used to issue TLS certificates for the TiDB server
 
     Finally, execute the following command to create an Issuer:
 
-    
-    ``` shell
+    ```shell
     kubectl apply -f tidb-server-issuer.yaml
     ```
 
@@ -272,99 +258,98 @@ You can generate multiple sets of client-side certificates. At least one set of 
 
     First, create a `tidb-server-cert.yaml` file with the following content:
 
-    ``` yaml
+    ```yaml
     apiVersion: cert-manager.io/v1
     kind: Certificate
     metadata:
-      name: ${cluster_name}-tidb-server-secret
+      name: ${tidb_group_name}-tidb-server-secret
       namespace: ${namespace}
     spec:
-      secretName: ${cluster_name}-tidb-server-secret
+      secretName: ${tidb_group_name}-tidb-server-secret
       duration: 8760h # 365d
       renewBefore: 360h # 15d
       subject:
         organizations:
         - PingCAP
-      commonName: "TiDB Server"
+      commonName: "TiDB"
       usages:
         - server auth
       dnsNames:
-        - "${cluster_name}-tidb"
-        - "${cluster_name}-tidb.${namespace}"
-        - "${cluster_name}-tidb.${namespace}.svc"
-        - "*.${cluster_name}-tidb"
-        - "*.${cluster_name}-tidb.${namespace}"
-        - "*.${cluster_name}-tidb.${namespace}.svc"
-        - "*.${cluster_name}-tidb-peer"
-        - "*.${cluster_name}-tidb-peer.${namespace}"
-        - "*.${cluster_name}-tidb-peer.${namespace}.svc"
+        - "${tidb_group_name}-tidb"
+        - "${tidb_group_name}-tidb.${namespace}"
+        - "${tidb_group_name}-tidb.${namespace}.svc"
+        - "*.${tidb_group_name}-tidb"
+        - "*.${tidb_group_name}-tidb.${namespace}"
+        - "*.${tidb_group_name}-tidb.${namespace}.svc"
+        - "*.${tidb_group_name}-tidb-peer"
+        - "*.${tidb_group_name}-tidb-peer.${namespace}"
+        - "*.${tidb_group_name}-tidb-peer.${namespace}.svc"
       ipAddresses:
         - 127.0.0.1
         - ::1
       issuerRef:
-        name: ${cluster_name}-tidb-issuer
+        name: ${cluster_name}-cert-issuer
         kind: Issuer
         group: cert-manager.io
     ```
 
-    `${cluster_name}` is the name of the cluster. Configure the items as follows:
+    `${cluster_name}` is the name of the cluster. `${tidb_group_name}` is the name of `TiDBGroup`:
 
-    - Set `spec.secretName` to `${cluster_name}-tidb-server-secret`
-    - Add `server auth` in `usages`
-    - Add the following 6 DNSs in `dnsNames`. You can also add other DNSs according to your needs:
-        - `${cluster_name}-tidb`
-        - `${cluster_name}-tidb.${namespace}`
-        - `${cluster_name}-tidb.${namespace}.svc`
-        - `*.${cluster_name}-tidb`
-        - `*.${cluster_name}-tidb.${namespace}`
-        - `*.${cluster_name}-tidb.${namespace}.svc`
-        - `*.${cluster_name}-tidb-peer`
-        - `*.${cluster_name}-tidb-peer.${namespace}`
-        - `*.${cluster_name}-tidb-peer.${namespace}.svc`
-    - Add the following 2 IPs in `ipAddresses`. You can also add other IPs according to your needs:
-        - `127.0.0.1`
-        - `::1`
-    - Add the Issuer created above in the `issuerRef`
+    - Set `spec.secretName` to `${tidb_group_name}-tidb-server-secret`
+    - Add `server auth` in `usages`.
+    - Add the following six DNSs in `dnsNames`. You can also add other DNSs according to your needs:
+      - `${tidb_group_name}-tidb`
+      - `${tidb_group_name}-tidb.${namespace}`
+      - `${tidb_group_name}-tidb.${namespace}.svc`
+      - `*.${tidb_group_name}-tidb`
+      - `*.${tidb_group_name}-tidb.${namespace}`
+      - `*.${tidb_group_name}-tidb.${namespace}.svc`
+      - `*.${tidb_group_name}-tidb-peer`
+      - `*.${tidb_group_name}-tidb-peer.${namespace}`
+      - `*.${tidb_group_name}-tidb-peer.${namespace}.svc`
+    - Add the following two IPs in `ipAddresses`. You can also add other IPs according to your needs:
+      - `127.0.0.1`
+      - `::1`
+    - Add the preceding created Issuer in the `issuerRef`
     - For other attributes, refer to [cert-manager API](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec).
 
     Execute the following command to generate the certificate:
 
-    
-    ``` shell
+    ```shell
     kubectl apply -f tidb-server-cert.yaml
     ```
 
-    After the object is created, cert-manager generates a `${cluster_name}-tidb-server-secret` Secret object to be used by the TiDB server.
+    After the object is created, cert-manager generates a `${tidb_group_name}-tidb-server-secret` Secret object to be used by the TiDB server.
 
 4. Generate the client-side certificate:
 
     Create a `tidb-client-cert.yaml` file with the following content:
 
-    ``` yaml
+    ```yaml
     apiVersion: cert-manager.io/v1
     kind: Certificate
     metadata:
-      name: ${cluster_name}-tidb-client-secret
+      name: ${tidb_group_name}-tidb-client-secret
       namespace: ${namespace}
     spec:
-      secretName: ${cluster_name}-tidb-client-secret
+      secretName: ${tidb_group_name}-tidb-client-secret
       duration: 8760h # 365d
       renewBefore: 360h # 15d
       subject:
         organizations:
         - PingCAP
-      commonName: "TiDB Client"
+      commonName: "TiDB"
       usages:
         - client auth
       issuerRef:
-        name: ${cluster_name}-tidb-issuer
+        name: ${cluster_name}-cert-issuer
         kind: Issuer
         group: cert-manager.io
     ```
 
-    `${cluster_name}` is the name of the cluster. Configure the items as follows:
+    `${cluster_name}` is the name of the cluster. `${tidb_group_name}` is the name of `TiDBGroup`:
 
-    - Set `spec.secretName` to `${cluster_name}-tidb-client-secret`
+    - Set `spec.secretName` to `${tidb_group_name}-tidb-client-secret`
     - Add `client auth` in `usages`
     - `dnsNames` and `ipAddresses` are not required
     - Add the Issuer created above in the `issuerRef`
@@ -372,306 +357,56 @@ You can generate multiple sets of client-side certificates. At least one set of 
 
     Execute the following command to generate the certificate:
 
-    
-    ``` shell
+    ```shell
     kubectl apply -f tidb-client-cert.yaml
     ```
 
-    After the object is created, cert-manager generates a `${cluster_name}-tidb-client-secret` Secret object to be used by the TiDB client.
-
-5. Create multiple sets of client-side certificates (optional).
-
-    Four components in the TiDB Operator cluster need to request the TiDB server. When TLS is enabled, these components can use certificates to request the TiDB server, each with a separate certificate. The four components are listed as follows:
-
-    - TidbInitializer
-    - PD Dashboard
-    - Backup (when using Dumpling)
-    - Restore (when using TiDB Lightning)
-
-    If you need to [restore data using TiDB Lightning](restore-data-using-tidb-lightning.md), you need to generate a server-side certificate for the TiDB Lightning component.
-
-    To create certificates for these components, take the following steps:
-
-    1. Create a `tidb-components-client-cert.yaml` file with the following content:
-
-        ```yaml
-        apiVersion: cert-manager.io/v1
-        kind: Certificate
-        metadata:
-          name: ${cluster_name}-tidb-initializer-client-secret
-          namespace: ${namespace}
-        spec:
-          secretName: ${cluster_name}-tidb-initializer-client-secret
-          duration: 8760h # 365d
-          renewBefore: 360h # 15d
-          subject:
-            organizations:
-            - PingCAP
-          commonName: "TiDB Initializer client"
-          usages:
-            - client auth
-          issuerRef:
-            name: ${cluster_name}-tidb-issuer
-            kind: Issuer
-            group: cert-manager.io
-        ---
-        apiVersion: cert-manager.io/v1
-        kind: Certificate
-        metadata:
-          name: ${cluster_name}-pd-dashboard-client-secret
-          namespace: ${namespace}
-        spec:
-          secretName: ${cluster_name}-pd-dashboard-client-secret
-          duration: 8760h # 365d
-          renewBefore: 360h # 15d
-          subject:
-            organizations:
-            - PingCAP
-          commonName: "PD Dashboard client"
-          usages:
-            - client auth
-          issuerRef:
-            name: ${cluster_name}-tidb-issuer
-            kind: Issuer
-            group: cert-manager.io
-        ---
-        apiVersion: cert-manager.io/v1
-        kind: Certificate
-        metadata:
-          name: ${cluster_name}-backup-client-secret
-          namespace: ${namespace}
-        spec:
-          secretName: ${cluster_name}-backup-client-secret
-          duration: 8760h # 365d
-          renewBefore: 360h # 15d
-          subject:
-            organizations:
-            - PingCAP
-          commonName: "Backup client"
-          usages:
-            - client auth
-          issuerRef:
-            name: ${cluster_name}-tidb-issuer
-            kind: Issuer
-            group: cert-manager.io
-        ---
-        apiVersion: cert-manager.io/v1
-        kind: Certificate
-        metadata:
-          name: ${cluster_name}-restore-client-secret
-          namespace: ${namespace}
-        spec:
-          secretName: ${cluster_name}-restore-client-secret
-          duration: 8760h # 365d
-          renewBefore: 360h # 15d
-          subject:
-            organizations:
-            - PingCAP
-          commonName: "Restore client"
-          usages:
-            - client auth
-          issuerRef:
-            name: ${cluster_name}-tidb-issuer
-            kind: Issuer
-            group: cert-manager.io
-        ```
-
-        In the `.yaml` file above, `${cluster_name}` is the name of the cluster. Configure the items as follows:
-
-        - Set the value of `spec.secretName` to `${cluster_name}-${component}-client-secret`.
-        - Add `client auth` in `usages`.
-        - `dnsNames` and `ipAddresses` are not required.
-        - Add the Issuer created above in the `issuerRef`.
-        - For other attributes, refer to [cert-manager API](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec).
-
-        To generate a client-side certificate for TiDB Lightning, use the following content and set `tlsCluster.tlsClientSecretName` to `${cluster_name}-lightning-client-secret` in TiDB Lightning's `values.yaml` file.
-
-        ```yaml
-        apiVersion: cert-manager.io/v1
-        kind: Certificate
-        metadata:
-          name: ${cluster_name}-lightning-client-secret
-          namespace: ${namespace}
-        spec:
-          secretName: ${cluster_name}-lightning-client-secret
-          duration: 8760h # 365d
-          renewBefore: 360h # 15d
-          subject:
-            organizations:
-            - PingCAP
-          commonName: "Lightning client"
-          usages:
-            - client auth
-          issuerRef:
-            name: ${cluster_name}-tidb-issuer
-            kind: Issuer
-            group: cert-manager.io
-        ```
-
-    2. Create the certificate by running the following command:
-
-        
-        ``` shell
-        kubectl apply -f tidb-components-client-cert.yaml
-        ```
-
-    3. After creating these objects, cert-manager will generate four secret objects for the four components.
+    After the object is created, cert-manager generates a `${tidb_group_name}-tidb-client-secret` Secret object to be used by the TiDB client.
 
     > **Note:**
     >
-    > TiDB server's TLS is compatible with the MySQL protocol. When the certificate content is changed, the administrator needs to manually execute the SQL statement `alter instance reload tls` to refresh the content.
+    > - The `ca.crt` included in the Secret issued by cert-manager is the CA that signed the certificate, not the CA used to validate the peer's mTLS certificate.
+    > - In this example, the client and server TLS certificates are issued by the same CA, so they can be used directly. If the client and server certificates are issued by different CAs, it is recommended to use the [Trust Manager](https://cert-manager.io/docs/trust/trust-manager/) to distribute the appropriate `ca.crt`.
 
-## Deploy the TiDB cluster
+## Step 2: Deploy the TiDBGroup
 
-In this step, you create a TiDB cluster and perform the following operations:
+The following configuration example shows how to create a `TiDBGroup` with MySQL TLS enabled:
 
-- Enable TLS for the MySQL client
-- Initialize the cluster (an `app` database is created for demonstration)
-- Create a Backup object to back up the cluster
-- Create a Restore object to restore the cluster
-- Use separate client-side certificates for `TidbInitializer`, PD Dashboard, Backup, and Restore (specified by `tlsClientSecretName`)
+```yaml
+apiVersion: core.pingcap.com/v1alpha1
+kind: TiDBGroup
+metadata:
+  name: tidb
+spec:
+  cluster:
+    name: tls
+  version: v8.1.0
+  replicas: 1
+  template:
+    spec:
+      security:
+        tls:
+          mysql:
+            enabled: true
+      config: |
+        [security]
+        cluster-verify-cn = ["TiDB"]
+```
 
-1. Create three `.yaml` files:
+## Step 3: Configure the MySQL client to use an encrypted connection
 
-    - `tidb-cluster.yaml` file:
-
-        ```yaml
-        apiVersion: pingcap.com/v1alpha1
-        kind: TidbCluster
-        metadata:
-          name: ${cluster_name}
-          namespace: ${namespace}
-        spec:
-          version: v8.5.0
-          timezone: UTC
-          pvReclaimPolicy: Retain
-          pd:
-            baseImage: pingcap/pd
-            maxFailoverCount: 0
-            replicas: 1
-            requests:
-              storage: "10Gi"
-            config: {}
-            tlsClientSecretName: ${cluster_name}-pd-dashboard-client-secret
-          tikv:
-            baseImage: pingcap/tikv
-            maxFailoverCount: 0
-            replicas: 1
-            requests:
-              storage: "100Gi"
-            config: {}
-          tidb:
-            baseImage: pingcap/tidb
-            maxFailoverCount: 0
-            replicas: 1
-            service:
-              type: ClusterIP
-            config: {}
-            tlsClient:
-              enabled: true
-        ---
-        apiVersion: pingcap.com/v1alpha1
-        kind: TidbInitializer
-        metadata:
-          name: ${cluster_name}-init
-          namespace: ${namespace}
-        spec:
-          image: tnir/mysqlclient
-          cluster:
-            namespace: ${namespace}
-            name: ${cluster_name}
-          initSql: |-
-            create database app;
-          tlsClientSecretName: ${cluster_name}-tidb-initializer-client-secret
-        ```
-
-    - `backup.yaml`:
-
-        ```
-        apiVersion: pingcap.com/v1alpha1
-        kind: Backup
-        metadata:
-          name: ${cluster_name}-backup
-          namespace: ${namespace}
-        spec:
-          backupType: full
-          br:
-            cluster: ${cluster_name}
-            clusterNamespace: ${namespace}
-            sendCredToTikv: true
-          s3:
-            provider: aws
-            region: ${my_region}
-            secretName: ${s3_secret}
-            bucket: ${my_bucket}
-            prefix: ${my_folder}
-        ```
-
-    - `restore.yaml`:
-
-        ```
-        apiVersion: pingcap.com/v1alpha1
-        kind: Restore
-        metadata:
-          name: ${cluster_name}-restore
-          namespace: ${namespace}
-        spec:
-          backupType: full
-          br:
-            cluster: ${cluster_name}
-            clusterNamespace: ${namespace}
-            sendCredToTikv: true
-          s3:
-            provider: aws
-            region: ${my_region}
-            secretName: ${s3_secret}
-            bucket: ${my_bucket}
-            prefix: ${my_folder}
-        ```
-
-    In the above file, `${cluster_name}` is the name of the cluster, and `${namespace}` is the namespace in which the TiDB cluster is deployed. To enable TLS for the MySQL client, set `spec.tidb.tlsClient.enabled` to `true`.
-
-2. Deploy the TiDB cluster:
-
-    
-    ``` shell
-    kubectl apply -f tidb-cluster.yaml
-    ```
-
-3. Back up the cluster:
-
-    
-    ``` shell
-    kubectl apply -f backup.yaml
-    ```
-
-4. Restore the cluster:
-
-    
-    ``` shell
-    kubectl apply -f restore.yaml
-    ```
-
-## Configure the MySQL client to use an encrypted connection
-
-To connect the MySQL client with the TiDB cluster, use the client-side certificate created above and take the following methods. For details, refer to [Configure the MySQL client to use encrypted connections](https://docs.pingcap.com/tidb/stable/enable-tls-between-clients-and-servers#configure-the-mysql-client-to-use-encrypted-connections).
+To connect the MySQL client with the TiDB cluster, use the client-side certificate created above and take the following methods. For details, refer to [Configure the MySQL client to use TLS connections](https://docs.pingcap.com/tidb/stable/enable-tls-between-clients-and-servers/#configure-the-mysql-client-to-use-tls-connections).
 
 Execute the following command to acquire the client-side certificate and connect to the TiDB server:
 
-
-``` shell
-kubectl get secret -n ${namespace} ${cluster_name}-tidb-client-secret  -ojsonpath='{.data.tls\.crt}' | base64 --decode > client-tls.crt
-kubectl get secret -n ${namespace} ${cluster_name}-tidb-client-secret  -ojsonpath='{.data.tls\.key}' | base64 --decode > client-tls.key
-kubectl get secret -n ${namespace} ${cluster_name}-tidb-client-secret  -ojsonpath='{.data.ca\.crt}'  | base64 --decode > client-ca.crt
+```shell
+kubectl get secret -n ${namespace} ${tidb_group_name}-tidb-client-secret  -ojsonpath='{.data.tls\.crt}' | base64 --decode > client-tls.crt
+kubectl get secret -n ${namespace} ${tidb_group_name}-tidb-client-secret  -ojsonpath='{.data.tls\.key}' | base64 --decode > client-tls.key
+kubectl get secret -n ${namespace} ${tidb_group_name}-tidb-client-secret  -ojsonpath='{.data.ca\.crt}'  | base64 --decode > client-ca.crt
 ```
 
-
-``` shell
+```shell
 mysql --comments -uroot -p -P 4000 -h ${tidb_host} --ssl-cert=client-tls.crt --ssl-key=client-tls.key --ssl-ca=client-ca.crt
 ```
 
-> **Note:**
->
-> [The default authentication plugin of MySQL 8.0](https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin) is updated from `mysql_native_password` to `caching_sha2_password`. Therefore, if you use MySQL client from MySQL 8.0 to access the TiDB service (TiDB version < v4.0.7), and if the user account has a password, you need to explicitly specify the `--default-auth=mysql_native_password` parameter.
-
-Finally, to verify whether TLS is successfully enabled, refer to [checking the current connection](https://docs.pingcap.com/tidb/stable/enable-tls-between-clients-and-servers#check-whether-the-current-connection-uses-encryption).
+Finally, to verify whether TLS is successfully enabled, refer to [Check whether the current connection uses encryption](https://docs.pingcap.com/tidb/stable/enable-tls-between-clients-and-servers/#check-whether-the-current-connection-uses-encryption).

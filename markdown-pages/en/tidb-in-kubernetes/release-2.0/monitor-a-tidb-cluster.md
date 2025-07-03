@@ -1,372 +1,266 @@
 ---
 title: Deploy Monitoring and Alerts for a TiDB Cluster
 summary: Learn how to monitor a TiDB cluster on Kubernetes.
-aliases: ['/docs/tidb-in-kubernetes/dev/monitor-a-tidb-cluster/','/docs/tidb-in-kubernetes/dev/monitor-using-tidbmonitor/','/tidb-in-kubernetes/dev/monitor-using-tidbmonitor/']
 ---
 
 # Deploy Monitoring and Alerts for a TiDB Cluster
 
-This document describes how to monitor a TiDB cluster deployed using TiDB Operator and configure alerts for the cluster.
+This document describes how to monitor a TiDB cluster deployed using TiDB Operator and how to configure alerts for the cluster.
 
 ## Monitor the TiDB cluster
 
-You can monitor the TiDB cluster with Prometheus and Grafana. When you create a new TiDB cluster using TiDB Operator, you can deploy a separate monitoring system for the TiDB cluster. The monitoring system must run in the same namespace as the TiDB cluster, and includes two components: Prometheus and Grafana.
-
-For configuration details on the monitoring system, refer to [TiDB Cluster Monitoring](https://docs.pingcap.com/tidb/stable/deploy-monitoring-services).
-
-In TiDB Operator v1.1 or later versions, you can monitor a TiDB cluster on a Kubernetes cluster by using a simple Custom Resource (CR) file called `TidbMonitor`.
-
-> **Note:**
->
-> * `spec.clusters[].name` should be set to the `TidbCluster` name of the corresponding TiDB cluster.
-
-### Persist monitoring data
-
-The monitoring data is not persisted by default. To persist the monitoring data, you can set `spec.persistent` to `true` in `TidbMonitor`. When you enable this option, you need to set `spec.storageClassName` to an existing storage in the current cluster. This storage must support persisting data; otherwise, there is a risk of data loss.
-
-A configuration example is as follows:
-
-
-```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbMonitor
-metadata:
-  name: basic
-spec:
-  clusters:
-    - name: basic
-  persistent: true
-  storageClassName: ${storageClassName}
-  storage: 5G
-  prometheus:
-    baseImage: prom/prometheus
-    version: v2.27.1
-    service:
-      type: NodePort
-  grafana:
-    baseImage: grafana/grafana
-    version: 7.5.11
-    service:
-      type: NodePort
-  initializer:
-    baseImage: pingcap/tidb-monitor-initializer
-    version: v8.5.0
-  reloader:
-    baseImage: pingcap/tidb-monitor-reloader
-    version: v1.0.1
-  prometheusReloader:
-    baseImage: quay.io/prometheus-operator/prometheus-config-reloader
-    version: v0.49.0
-  imagePullPolicy: IfNotPresent
-```
-
-To verify the PVC status, run the following command:
-
-
-```shell
-kubectl get pvc -l app.kubernetes.io/instance=basic,app.kubernetes.io/component=monitor -n ${namespace}
-```
-
-```
-NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-basic-monitor   Bound    pvc-6db79253-cc9e-4730-bbba-ba987c29db6f   5G         RWO            standard       51s
-```
-
-### Customize the Prometheus configuration
-
-You can customize the Prometheus configuration by using a customized configuration file or by adding extra options to the command.
-
-#### Use a customized configuration file
-
-1. Create a ConfigMap for your customized configuration, and set the key name of `data` to `prometheus-config`.
-2. Set `spec.prometheus.config.configMapRef.name` and `spec.prometheus.config.configMapRef.namespace` to the name and namespace of the customized ConfigMap respectively.
-3. Check if TidbMonitor has enabled [dynamic configuration](enable-monitor-dynamic-configuration.md). If not, you need to restart TidbMonitor's pod to reload the configuration.
-
-For the complete configuration, refer to the [tidb-operator example](https://github.com/pingcap/tidb-operator/blob/v1.6.1/examples/monitor-with-externalConfigMap/prometheus/README.md).
-
-#### Add extra options to the command
-
-To add extra options to the command that starts Prometheus, configure `spec.prometheus.config.commandOptions`.
-
-For the complete configuration, refer to the [tidb-operator example](https://github.com/pingcap/tidb-operator/blob/v1.6.1/examples/monitor-with-externalConfigMap/prometheus/README.md).
-
-> **Note:**
->
-> The following options are automatically configured by the TidbMonitor controller and cannot be specified again via `commandOptions`.
->
-> - `config.file`
-> - `log.level`
-> - `web.enable-admin-api`
-> - `web.enable-lifecycle`
-> - `storage.tsdb.path`
-> - `storage.tsdb.retention`
-> - `storage.tsdb.max-block-duration`
-> - `storage.tsdb.min-block-duration`
-
-### Access the Grafana monitoring dashboard
-
-You can run the `kubectl port-forward` command to access the Grafana monitoring dashboard:
-
-
-```shell
-kubectl port-forward -n ${namespace} svc/${cluster_name}-grafana 3000:3000 &>/tmp/portforward-grafana.log &
-```
-
-Then open [http://localhost:3000](http://localhost:3000) in your browser and log on with the default username and password `admin`.
-
-You can also set `spec.grafana.service.type` to `NodePort` or `LoadBalancer`, and then view the monitoring dashboard through `NodePort` or `LoadBalancer`.
-
-If there is no need to use Grafana, you can delete the part of `spec.grafana` in `TidbMonitor` during deployment. In this case, you need to use other existing or newly deployed data visualization tools to directly access the monitoring data.
-
-### Access the Prometheus monitoring data
-
-To access the monitoring data directly, run the `kubectl port-forward` command to access Prometheus:
-
-
-```shell
-kubectl port-forward -n ${namespace} svc/${cluster_name}-prometheus 9090:9090 &>/tmp/portforward-prometheus.log &
-```
-
-Then open [http://localhost:9090](http://localhost:9090) in your browser or access this address via a client tool.
-
-You can also set `spec.prometheus.service.type` to `NodePort` or `LoadBalancer`, and then view the monitoring data through `NodePort` or `LoadBalancer`.
-
-### Set kube-prometheus and AlertManager
-
-Nodes-Info and Pods-Info monitoring dashboards are built into TidbMonitor Grafana by default to view the corresponding monitoring metrics of Kubernetes.
-
-To view these monitoring metrics in TidbMonitor Grafana, take the following steps:
-
-1. Deploy Kubernetes cluster monitoring manually.
-
-   There are multiple ways to deploy Kubernetes cluster monitoring. To use kube-prometheus for deployment, see the [kube-prometheus documentation](https://github.com/coreos/kube-prometheus).
-
-2. Set the `TidbMonitor.spec.kubePrometheusURL` to obtain Kubernetes monitoring data.
-
-Similarly, you can configure TidbMonitor to push the monitoring alert to [AlertManager](https://prometheus.io/docs/alerting/alertmanager/).
-
-
-```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbMonitor
-metadata:
-  name: basic
-spec:
-  clusters:
-    - name: basic
-  kubePrometheusURL: http://prometheus-k8s.monitoring:9090
-  alertmanagerURL: alertmanager-main.monitoring:9093
-  prometheus:
-    baseImage: prom/prometheus
-    version: v2.27.1
-    service:
-      type: NodePort
-  grafana:
-    baseImage: grafana/grafana
-    version: 7.5.11
-    service:
-      type: NodePort
-  initializer:
-    baseImage: pingcap/tidb-monitor-initializer
-    version: v8.5.0
-  reloader:
-    baseImage: pingcap/tidb-monitor-reloader
-    version: v1.0.1
-  prometheusReloader:
-    baseImage: quay.io/prometheus-operator/prometheus-config-reloader
-    version: v0.49.0
-  imagePullPolicy: IfNotPresent
-```
-
-## Enable Ingress
-
-This section introduces how to enable Ingress for TidbMonitor. [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) is an API object that exposes HTTP and HTTPS routes from outside the cluster to services within the cluster.
-
-### Prerequisites
-
-Before using Ingress, you need to install the Ingress controller. Simply creating the Ingress resource does not take effect.
-
-You need to deploy the [NGINX Ingress controller](https://kubernetes.github.io/ingress-nginx/deploy/), or choose from various [Ingress controllers](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/).
-
-For more information, see [Ingress Prerequisites](https://kubernetes.io/docs/concepts/services-networking/ingress/#prerequisites).
-
-### Access TidbMonitor using Ingress
-
-Currently, TidbMonitor provides a method to expose the Prometheus/Grafana service through Ingress. For details about Ingress, see [Ingress official documentation](https://kubernetes.io/docs/concepts/services-networking/ingress/).
-
-The following example shows how to enable Prometheus and Grafana in TidbMonitor:
-
-
-```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbMonitor
-metadata:
-  name: ingress-demo
-spec:
-  clusters:
-    - name: demo
-  persistent: false
-  prometheus:
-    baseImage: prom/prometheus
-    version: v2.27.1
-    ingress:
-      hosts:
-      - example.com
-      annotations:
-        foo: "bar"
-  grafana:
-    baseImage: grafana/grafana
-    version: 7.5.11
-    service:
-      type: ClusterIP
-    ingress:
-      hosts:
-        - example.com
-      annotations:
-        foo: "bar"
-  initializer:
-    baseImage: pingcap/tidb-monitor-initializer
-    version: v8.5.0
-  reloader:
-    baseImage: pingcap/tidb-monitor-reloader
-    version: v1.0.1
-  prometheusReloader:
-    baseImage: quay.io/prometheus-operator/prometheus-config-reloader
-    version: v0.49.0
-  imagePullPolicy: IfNotPresent
-```
-
-To modify the setting of Ingress Annotations, configure `spec.prometheus.ingress.annotations` and `spec.grafana.ingress.annotations`. If you use the default NGINX Ingress, see [NGINX Ingress Controller Annotation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/) for details.
-
-The TidbMonitor Ingress setting also supports TLS. The following example shows how to configure TLS for Ingress. See [Ingress TLS](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) for details.
-
-
-```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbMonitor
-metadata:
-  name: ingress-demo
-spec:
-  clusters:
-    - name: demo
-  persistent: false
-  prometheus:
-    baseImage: prom/prometheus
-    version: v2.27.1
-    ingress:
-      hosts:
-      - example.com
-      tls:
-      - hosts:
-        - example.com
-        secretName: testsecret-tls
-  grafana:
-    baseImage: grafana/grafana
-    version: 7.5.11
-    service:
-      type: ClusterIP
-  initializer:
-    baseImage: pingcap/tidb-monitor-initializer
-    version: v8.5.0
-  reloader:
-    baseImage: pingcap/tidb-monitor-reloader
-    version: v1.0.1
-  prometheusReloader:
-    baseImage: quay.io/prometheus-operator/prometheus-config-reloader
-    version: v0.49.0
-  imagePullPolicy: IfNotPresent
-```
-
-TLS Secret must include the `tls.crt` and `tls.key` keys, which include the certificate and private key used for TLS. For example:
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: testsecret-tls
-  namespace: ${namespace}
-data:
-  tls.crt: base64 encoded cert
-  tls.key: base64 encoded key
-type: kubernetes.io/tls
-```
-
-In a public cloud-deployed Kubernetes cluster, you can usually [configure Loadbalancer](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/) to access Ingress through a domain name. If you cannot configure the Loadbalancer service (for example, when you use NodePort as the service type of Ingress), you can access the service in a way equivalent to the following command:
-
-```shell
-curl -H "Host: example.com" ${node_ip}:${NodePort}
-```
-
-## Configure alert
-
-When Prometheus is deployed with a TiDB cluster, some default alert rules are automatically imported. You can view all alert rules and statuses in the current system by accessing the Alerts page of Prometheus through a browser.
-
-The custom configuration of alert rules is supported. You can modify the alert rules by taking the following steps:
-
-1. When deploying the monitoring system for the TiDB cluster, set `spec.reloader.service.type` to `NodePort` or `LoadBalancer`.
-2. Access the `reloader` service through `NodePort` or `LoadBalancer`. Click the `Files` button above to select the alert rule file to be modified, and make the custom configuration. Click `Save` after the modification.
-
-The default Prometheus and alert configuration do not support sending alert messages. To send an alert message, you can integrate Prometheus with any tool that supports Prometheus alerts. It is recommended to manage and send alert messages via [AlertManager](https://prometheus.io/docs/alerting/alertmanager/).
-
-- If you already have an available AlertManager service in your existing infrastructure, you can set the value of `spec.alertmanagerURL` to the address of `AlertManager`, which will be used by Prometheus. For details, refer to [Set kube-prometheus and AlertManager](#set-kube-prometheus-and-alertmanager).
-
-- If no AlertManager service is available, or if you want to deploy a separate AlertManager service, refer to the [Prometheus official document](https://github.com/prometheus/alertmanager).
-
-## Monitor multiple clusters
-
-Starting from TiDB Operator 1.2, TidbMonitor supports monitoring multiple clusters across namespaces.
-
-### Configure the monitoring of multiple clusters using YAML files
-
-For the clusters to be monitored, regardless of whether `TLS` is enabled or not, you can monitor them by configuring TidbMonitor's YAML file.
-
-A configuration example is as follows:
-
-
-```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbMonitor
-metadata:
-  name: basic
-spec:
-  clusterScoped: true
-  clusters:
-    - name: ns1
-      namespace: ns1
-    - name: ns2
-      namespace: ns2
-  persistent: true
-  storage: 5G
-  prometheus:
-    baseImage: prom/prometheus
-    version: v2.27.1
-    service:
-      type: NodePort
-  grafana:
-    baseImage: grafana/grafana
-    version: 7.5.11
-    service:
-      type: NodePort
-  initializer:
-    baseImage: pingcap/tidb-monitor-initializer
-    version: v8.5.0
-  reloader:
-    baseImage: pingcap/tidb-monitor-reloader
-    version: v1.0.1
-  prometheusReloader:
-    baseImage: quay.io/prometheus-operator/prometheus-config-reloader
-    version: v0.49.0
-  imagePullPolicy: IfNotPresent
-```
-
-For a complete configuration example, refer to [Example](https://github.com/pingcap/tidb-operator/tree/v1.6.1/examples/monitor-multiple-cluster-non-tls) in the TiDB Operator repository.
-
-### Monitor multiple clusters using Grafana
-
-If the `tidb-monitor-initializer` image is earlier than v4.0.14 or v5.0.3, to monitor multiple clusters, you can take the following steps in each Grafana Dashboard:
-
-1. On Grafana Dashboard, click **Dashboard settings** to open the **Settings** panel.
-2. On the **Settings** panel, select the **tidb_cluster** variable from **Variables**, and then set the **Hide** property of the **tidb_cluster** variable to the null option in the drop-down list.
-3. Get back to the current Grafana Dashboard (changes to the **Hide** property cannot be saved currently), and you can see the drop-down list for cluster selection. The cluster name in the drop-down list is in the `${namespace}-${name}` format.
-
-If you need to save changes to the Grafana Dashboard, Grafana must be `6.5` or later, and TiDB Operator must be v1.2.0-rc.2 or later.
+TiDB cluster monitoring consists of two parts: [monitoring data](#collect-monitoring-data) and [dashboards](#configure-monitoring-dashboards). You can collect metrics using open-source tools such as [Prometheus](https://prometheus.io/) or [VictoriaMetrics](https://victoriametrics.com/), and display the metrics using [Grafana](https://grafana.com/).
+
+![Monitoring architecture of TiDB clusters](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/overview-of-monitoring-tidb-clusters.png)
+
+### Collect monitoring data
+
+#### Collect monitoring data using Prometheus
+
+To collect monitoring data using Prometheus, perform the following steps:
+
+1. Deploy Prometheus Operator in your Kubernetes cluster by following the [Prometheus Operator official documentation](https://prometheus-operator.dev/docs/getting-started/installation/). This document uses version `v0.82.0` as an example.
+
+2. Create a `PodMonitor` Custom Resource (CR) in the namespace of your TiDB cluster:
+
+    ```yaml
+    apiVersion: monitoring.coreos.com/v1
+    kind: PodMonitor
+    metadata:
+      name: tidb-cluster-pod-monitor
+      namespace: ${tidb_cluster_namespace}
+      labels:
+        monitor: tidb-cluster
+    spec:
+      jobLabel: "pingcap.com/component"
+      namespaceSelector:
+        matchNames:
+          - ${tidb_cluster_namespace}
+      selector:
+        matchLabels:
+          app.kubernetes.io/managed-by: tidb-operator
+      podMetricsEndpoints:
+        - interval: 15s
+          # If TLS is enabled in the TiDB cluster, set the scheme to https. Otherwise, set it to http.
+          scheme: https
+          honorLabels: true
+          # Configure tlsConfig only if TLS is enabled in the TiDB cluster.
+          tlsConfig:
+            ca:
+              secret:
+                name: db-cluster-client-secret
+                key: ca.crt
+            cert:
+              secret:
+                name: db-cluster-client-secret
+                key: tls.crt
+            keySecret:
+              name: db-cluster-client-secret
+              key: tls.key
+          metricRelabelings:
+            - action: labeldrop
+              regex: container
+          relabelings:
+            - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: "true"
+            - sourceLabels:
+                - __meta_kubernetes_pod_name
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+                - __meta_kubernetes_pod_label_app_kubernetes_io_component
+                - __meta_kubernetes_namespace
+                - __meta_kubernetes_pod_annotation_prometheus_io_port
+              action: replace
+              regex: (.+);(.+);(.+);(.+);(.+)
+              replacement: $1.$2-$3-peer.$4:$5
+              targetLabel: __address__
+            - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              targetLabel: __metrics_path__
+            - sourceLabels: [__meta_kubernetes_namespace]
+              targetLabel: kubernetes_namespace
+            - sourceLabels: [__meta_kubernetes_pod_label_app_kubernetes_io_instance]
+              targetLabel: cluster
+            - sourceLabels: [__meta_kubernetes_pod_name]
+              targetLabel: instance
+            - sourceLabels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+              targetLabel: component
+            - sourceLabels:
+                - __meta_kubernetes_namespace
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+              separator: '-'
+              targetLabel: tidb_cluster
+    ```
+
+3. Create a `Prometheus` CR to collect metrics. Follow the [Prometheus Operator official documentation](https://prometheus-operator.dev/docs/platform/platform-guide/#deploying-prometheus) and make sure the appropriate permissions are granted to the ServiceAccount:
+
+    ```yaml
+    apiVersion: monitoring.coreos.com/v1
+    kind: Prometheus
+    metadata:
+      name: prometheus
+      namespace: monitoring
+    spec:
+      serviceAccountName: prometheus
+      externalLabels:
+        k8s_cluster: ${your_k8s_cluster_name}
+      podMonitorSelector:
+        matchLabels:
+          monitor: tidb-cluster
+      # An empty podMonitorNamespaceSelector means PodMonitors in all namespaces are collected.
+      podMonitorNamespaceSelector: {}
+    ```
+
+4. Execute the following `kubectl port-forward` command to access Prometheus through port forwarding:
+
+    ```shell
+    kubectl port-forward -n monitoring prometheus-prometheus-0 9090:9090 &>/tmp/portforward-prometheus.log &
+    ```
+
+    Then, you can access <http://localhost:9090/targets> in your browser view the monitoring data collection status.
+
+#### Collect monitoring data using VictoriaMetrics
+
+To collect monitoring data using VictoriaMetrics, perform the following steps:
+
+1. Deploy VictoriaMetrics Operator in your Kubernetes cluster by following the [VictoriaMetrics official documentation](https://docs.victoriametrics.com/operator/quick-start/). This document uses version `v0.58.1` as an example.
+
+2. Create a `VMSingle` Custom Resource (CR) to store monitoring data:
+
+    ```yaml
+    apiVersion: victoriametrics.com/v1beta1
+    kind: VMSingle
+    metadata:
+      name: demo
+      namespace: monitoring
+    ```
+
+3. Create a `VMAgent` CR to collect monitoring data:
+
+    ```yaml
+    apiVersion: victoriametrics.com/v1beta1
+    kind: VMAgent
+    metadata:
+      name: demo
+      namespace: monitoring
+    spec:
+      # Configure remoteWrite to write collected monitoring metrics to VMSingle.
+      remoteWrite:
+        - url: "http://vmsingle-demo.monitoring.svc:8429/api/v1/write"
+      externalLabels:
+        k8s_cluster: ${your_k8s_cluster_name}
+      selectAllByDefault: true
+    ```
+
+4. Create a `VMPodScrape` CR in the TiDB cluster namespace to discover Pods and generate scrape configs for VMAgent:
+
+    ```yaml
+    apiVersion: victoriametrics.com/v1beta1
+    kind: VMPodScrape
+    metadata:
+      name: tidb-cluster-pod-scrape
+      namespace: ${tidb_cluster_namespace}
+    spec:
+      jobLabel: "pingcap.com/component"
+      namespaceSelector:
+        matchNames:
+          - ${tidb_cluster_namespace}
+      selector:
+        matchLabels:
+          app.kubernetes.io/managed-by: tidb-operator
+      podMetricsEndpoints:
+        - interval: 15s
+          # If TLS is enabled in the TiDB cluster, set the scheme to https. Otherwise, set it to http.
+          scheme: https
+          honorLabels: true
+          # Configure tlsConfig only if TLS is enabled in the TiDB cluster.
+          tlsConfig:
+            ca:
+              secret:
+                name: db-cluster-client-secret
+                key: ca.crt
+            cert:
+              secret:
+                name: db-cluster-client-secret
+                key: tls.crt
+            keySecret:
+              name: db-cluster-client-secret
+              key: tls.key
+          metricRelabelConfigs:
+            - action: labeldrop
+              regex: container
+          relabelConfigs:
+            - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: "true"
+            - sourceLabels:
+                - __meta_kubernetes_pod_name
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+                - __meta_kubernetes_pod_label_app_kubernetes_io_component
+                - __meta_kubernetes_namespace
+                - __meta_kubernetes_pod_annotation_prometheus_io_port
+              action: replace
+              regex: (.+);(.+);(.+);(.+);(.+)
+              replacement: $1.$2-$3-peer.$4:$5
+              targetLabel: __address__
+            - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              targetLabel: __metrics_path__
+            - sourceLabels: [__meta_kubernetes_namespace]
+              targetLabel: kubernetes_namespace
+            - sourceLabels: [__meta_kubernetes_pod_label_app_kubernetes_io_instance]
+              targetLabel: cluster
+            - sourceLabels: [__meta_kubernetes_pod_name]
+              targetLabel: instance
+            - sourceLabels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+              targetLabel: component
+            - sourceLabels:
+                - __meta_kubernetes_namespace
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+              separator: '-'
+              targetLabel: tidb_cluster
+    ```
+
+5. Execute the following `kubectl port-forward` command to access VMAgent through port forwarding:
+
+    ```shell
+    kubectl port-forward -n monitoring svc/vmagent-demo 8429:8429 &>/tmp/portforward-vmagent.log &
+    ```
+
+    Then, you can access <http://localhost:8429/targets> in your browser view the monitoring data collection status.
+
+### Configure monitoring dashboards
+
+To configure the monitoring dashboard, perform the following steps:
+
+1. Follow the [Grafana official documentation](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/#deploy-grafana-on-kubernetes) to deploy Grafana. This document uses version `12.0.0-security-01` as an example.
+
+2. Execute the following `kubectl port-forward` command to access Grafana through port forwarding:
+
+    ```shell
+    kubectl port-forward -n ${namespace} ${grafana_pod_name} 3000:3000 &>/tmp/portforward-grafana.log &
+    ```
+
+3. Then, you can access <http://localhost:3000> in your browser. The default username and password are both `admin`. If you install Grafana using Helm, execute the following command to get the password of `admin`:
+
+    ```shell
+    kubectl get secret --namespace ${namespace} ${grafana_secret_name} -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+    ```
+
+4. Add a data source of type Prometheus in Grafana and set the Prometheus Server URL based on your monitoring setup:
+
+    - For Prometheus, set the URL to `http://prometheus-operated.monitoring.svc:9090`.
+    - For VictoriaMetrics, set the URL to `http://vmsingle-demo.monitoring.svc:8429`.
+
+5. Download Grafana dashboards for TiDB components using the [`get-grafana-dashboards.sh`](https://github.com/pingcap/tidb-operator/blob/feature/v2/hack/get-grafana-dashboards.sh) script and import them manually into Grafana. <!--TODO: update the GitHub link later -->
+
+## Configure alerts
+
+You can manage and send alerts using [Alertmanager](https://github.com/prometheus/alertmanager). For specific deployment and configuration steps, refer to the [Alertmanager official documentation](https://prometheus.io/docs/alerting/alertmanager/).
+
+## Monitor multiple clusters using Grafana
+
+To monitor multiple clusters in Grafana, perform the following steps:
+
+1. In the Grafana dashboard, click **Dashboard settings** to open the **Settings** page.
+2. On the **Settings** page, select the **tidb_cluster** variable under **Variables**, and set the **Hide** property of the **tidb_cluster** variable to empty.
+3. Return to the dashboard. You will see a cluster selector dropdown. Each option follows the `${namespace}-${tidb_cluster_name}` format.
+4. Click **Save dashboard** to apply the changes.

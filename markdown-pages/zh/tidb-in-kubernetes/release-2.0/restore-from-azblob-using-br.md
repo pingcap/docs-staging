@@ -32,58 +32,72 @@ PITR 全称为 Point-in-time recovery，该功能可以让你在新集群上恢�
 
 使用 BR 将 Azure Blob Storage 上的备份数据恢复到 TiDB 前，请按照以下步骤准备恢复环境。
 
-1. 创建一个用于管理恢复的 namespace，这里创建了名为 `restore-test` 的 namespace。
+1. 创建恢复需要的 RBAC 相关资源：
 
     ```shell
-    kubectl create namespace restore-test
+    kubectl apply -n test2 -f - <<EOF
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: tidb-backup-manager
+      labels:
+        app.kubernetes.io/component: tidb-backup-manager
+    rules:
+    - apiGroups: [""]
+      resources: ["events"]
+      verbs: ["*"]
+    - apiGroups: ["br.pingcap.com"]
+      resources: ["backups", "restores"]
+      verbs: ["get", "watch", "list", "update"]
+    ---
+    kind: ServiceAccount
+    apiVersion: v1
+    metadata:
+      name: tidb-backup-manager
+    ---
+    kind: RoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: tidb-backup-manager
+      labels:
+        app.kubernetes.io/component: tidb-backup-manager
+    subjects:
+    - kind: ServiceAccount
+      name: tidb-backup-manager
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: tidb-backup-manager
+    EOF
     ```
 
-2. 下载文件 [backup-rbac.yaml](https://github.com/pingcap/tidb-operator/blob/v1.6.1/manifests/backup/backup-rbac.yaml)，并执行以下命令在 `restore-test` 这个 namespace 中创建备份需要的 RBAC 相关资源：
-
-    ```shell
-    kubectl apply -f backup-rbac.yaml -n restore-test
-    ```
-
-3. 为刚创建的 namespace `restore-test` 授予远程存储访问权限，可以使用两种方式授予权限，可参考文档 [Azure 账号授权](grant-permissions-to-remote-storage.md#azure-账号授权)。创建成功后, namespace `restore-test` 就拥有了名为 `azblob-secret` 或 `azblob-secret-ad` 的 secret 对象。
+2. 参考 [Azure 账号授权](grant-permissions-to-remote-storage.md#azure-账号授权)授予远程存储访问权限。Azure 提供两种方式进行授权。授权成功后，namespace 中应存在名为 `azblob-secret` 或 `azblob-secret-ad` 的 Secret 对象。
 
     > **注意：**
     >
-    > 授予的账户所拥有的角色至少拥有对 blob 修改的权限（例如[参与者](https://learn.microsoft.com/zh-cn/azure/role-based-access-control/built-in-roles#contributor)）。
-    >
-    > 在创建 secret 对象时，你可以自定义 secret 对象的名字。下文为了叙述简洁，统一使用名为 `azblob-secret` 的 secret 对象。
-
-4. 如果你使用的 TiDB 版本低于 v4.0.8，你还需要进行以下操作。如果你使用的 TiDB 为 v4.0.8 及以上版本，请跳过此步骤。
-
-    1. 确保你拥有恢复数据库 `mysql.tidb` 表的 `SELECT` 和 `UPDATE` 权限，用于恢复前后调整 GC 时间。
-
-    2. 创建 `restore-demo2-tidb-secret` secret 用于存放访问 TiDB 集群的 root 账号和密钥。
-
-        
-        ```shell
-        kubectl create secret generic restore-demo2-tidb-secret --from-literal=password=${password} --namespace=test2
-        ```
+    > - 授权账户应至少具备对 Blob 数据的写入权限，例如具备[参与者](https://learn.microsoft.com/zh-cn/azure/role-based-access-control/built-in-roles#contributor)角色。
+    > - 在创建 Secret 对象时，你可以自定义其名称。为便于说明，本文统一使用 `azblob-secret` 作为示例 Secret 对象名称。
 
 ### 第 2 步：将指定备份数据恢复到 TiDB 集群
 
-在 `restore-test` 这个 namespace 中产生一个名为 `demo2-restore-azblob` 的 `Restore` CR，用于恢复快照备份产生的数据：
+在 `test2` 这个 namespace 中创建一个名为 `demo2-restore-azblob` 的 `Restore` CR，用于恢复快照备份产生的数据：
 
 ```shell
-kubectl apply -f restore-full-azblob.yaml
+kubectl apply -n test2 -f restore-full-azblob.yaml
 ```
 
 `restore-full-azblob.yaml` 文件内容如下：
 
 ```yaml
 ---
-apiVersion: pingcap.com/v1alpha1
+apiVersion: br.pingcap.com/v1alpha1
 kind: Restore
 metadata:
   name: demo2-restore-azblob
-  namespace: restore-test
+  namespace: test2
 spec:
   br:
     cluster: demo2
-    clusterNamespace: test2
     # logLevel: info
     # statusAddr: ${status_addr}
     # concurrency: 4
@@ -97,18 +111,17 @@ spec:
     prefix: my-full-backup-folder
 ```
 
-在配置 `restore-azblob.yaml` 文件时，请参考以下信息：
+在配置 `restore-full-azblob.yaml` 文件时，请参考以下信息：
 
 - 关于 Azure Blob Storage 相关配置，请参考 [Azure Blob Storage 存储字段介绍](backup-restore-cr.md#azure-blob-storage-存储字段介绍)。
 - `.spec.br` 中的一些参数为可选项，如 `logLevel`、`statusAddr`、`concurrency`、`rateLimit`、`checksum`、`timeAgo`、`sendCredToTikv`。更多 `.spec.br` 字段的详细解释，请参考 [BR 字段介绍](backup-restore-cr.md#br-字段介绍)。
-- `spec.azblob.secretName`：填写你在创建 secret 对象时自定义的 secret 对象的名字，例如 `azblob-secret`。
-- 如果你使用的 TiDB 为 v4.0.8 及以上版本，BR 会自动调整 `tikv_gc_life_time` 参数，不需要在 Restore CR 中配置 `spec.to` 字段。
+- `.spec.azblob.secretName`：填写你在创建 Secret 对象时设置的名称，例如 `azblob-secret`。
 - 更多 `Restore` CR 字段的详细解释，请参考 [Restore CR 字段介绍](backup-restore-cr.md#restore-cr-字段介绍)。
 
 创建好 `Restore` CR 后，可通过以下命令查看恢复的状态：
 
 ```shell
-kubectl get restore -n restore-test -o wide
+kubectl get restore -n test2 -o wide
 ```
 
 ```
@@ -140,52 +153,31 @@ demo2-restore-azblob   Complete   ...
 
 ### 第 1 步：准备恢复环境
 
-使用 BR 将 Azure Blob Storage 上的备份数据恢复到 TiDB 前，请按照以下步骤准备恢复环境。
-
-1. 创建一个用于管理恢复的 namespace，这里创建了名为 `restore-test` 的 namespace。
-
-    ```shell
-    kubectl create namespace restore-test
-    ```
-
-2. 下载文件 [backup-rbac.yaml](https://github.com/pingcap/tidb-operator/blob/v1.6.1/manifests/backup/backup-rbac.yaml)，并执行以下命令在 `restore-test` 这个 namespace 中创建备份需要的 RBAC 相关资源：
-
-    ```shell
-    kubectl apply -f backup-rbac.yaml -n restore-test
-    ```
-
-3. 为刚创建的 namespace `restore-test` 授予远程存储访问权限，可以使用两种方式授予权限，可参考文档 [Azure 账号授权](grant-permissions-to-remote-storage.md#azure-账号授权)。创建成功后, namespace `restore-test` 就拥有了名为 `azblob-secret` 或 `azblob-secret-ad` 的 secret 对象。
-
-    > **注意：**
-    >
-    > 授予的账户所拥有的角色至少拥有对 blob 访问的权限（例如[读取器](https://learn.microsoft.com/zh-cn/azure/role-based-access-control/built-in-roles#reader)）。
-    >
-    > 在创建 secret 对象的时候，你可以自定义它的名字。下文为了叙述简洁，统一使用名为 `azblob-secret` 的 secret 对象。
+与[全量恢复](#全量恢复)的准备步骤相同。
 
 ### 第 2 步：将指定备份数据恢复到 TiDB 集群
 
 本节示例中首先将快照备份恢复到集群中，因此 PITR 的恢复时刻点需要在[快照备份的时刻点](backup-to-azblob-using-br.md#查看快照备份的状态)之后，并在[日志备份的最新恢复点](backup-to-azblob-using-br.md#查看日志备份的状态)之前。具体步骤如下：
 
-1. 在 `restore-test` 这个 namespace 中产生一个名为 `demo3-restore-azblob` 的 `Restore` CR，并指定恢复到 `2022-10-10T17:21:00+08:00`:
+1. 在 `test3` 这个 namespace 中创建一个名为 `demo3-restore-azblob` 的 `Restore` CR，并指定恢复到 `2022-10-10T17:21:00+08:00`：
 
     ```shell
-    kubectl apply -f restore-point-azblob.yaml
+    kubectl apply -n test3 -f restore-point-azblob.yaml
     ```
 
     `restore-point-azblob.yaml` 文件内容如下：
 
     ```yaml
     ---
-    apiVersion: pingcap.com/v1alpha1
+    apiVersion: br.pingcap.com/v1alpha1
     kind: Restore
     metadata:
       name: demo3-restore-azblob
-      namespace: restore-test
+      namespace: test3
     spec:
       restoreMode: pitr
       br:
         cluster: demo3
-        clusterNamespace: test3
       azblob:
         secretName: azblob-secret
         container: my-container
@@ -205,7 +197,7 @@ demo2-restore-azblob   Complete   ...
 2. 查看恢复的状态，等待恢复操作完成：
 
     ```shell
-    kubectl get jobs -n restore-test
+    kubectl get jobs -n test3
     ```
 
     ```
@@ -216,7 +208,7 @@ demo2-restore-azblob   Complete   ...
     也可通过以下命令查看恢复的状态：
 
     ```shell
-    kubectl get restore -n restore-test -o wide
+    kubectl get restore -n test3 -o wide
     ```
 
     ```

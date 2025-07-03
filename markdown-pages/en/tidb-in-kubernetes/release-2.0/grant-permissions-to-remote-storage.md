@@ -1,205 +1,330 @@
 ---
 title: Grant Permissions to Remote Storage
-summary: Learn how to grant permissions to access remote storage for backup and restore.
+summary: Learn how to grant permissions to remote storage to enable backup and restore for TiDB clusters.
 ---
 
 # Grant Permissions to Remote Storage
 
 This document describes how to grant permissions to access remote storage for backup and restore. During the backup process, TiDB cluster data is backed up to the remote storage. During the restore process, the backup data is restored from the remote storage to the TiDB cluster.
 
-## AWS account permissions
+## Grant permissions to an AWS account
 
-Amazon Web Service (AWS) provides different methods to grant permissions for different types of Kubernetes clusters. This document describes the following three methods.
+Amazon Web Services (AWS) provides different methods to grant permissions for different types of Kubernetes clusters. This document introduces the following three methods:
+
+- [Grant permissions by AccessKey and SecretKey](#grant-permissions-by-accesskey-and-secretkey): applicable to self-managed Kubernetes clusters and AWS EKS clusters.
+- [Grant permissions by associating IAM with Pod](#grant-permissions-by-associating-iam-with-pod): applicable to self-managed Kubernetes clusters.
+- [Grant permissions by associating IAM with ServiceAccount](#grant-permissions-by-associating-iam-with-serviceaccount): applicable only to AWS EKS clusters.
 
 ### Grant permissions by AccessKey and SecretKey
 
-The AWS client can read `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` from the process environment variables to obtain the associated user or role permissions.
+To grant permissions to S3-compatible storage using AccessKey and SecretKey, perform the following steps:
 
-Create the `s3-secret` secret by running the following command. Use the AWS account's AccessKey and SecretKey. The secret stores the credential used for accessing S3-compatible storage.
+1. Create an IAM user by following [Create an IAM user in your AWS account](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) and grant the required permissions. Because backup and restore operations require access to AWS S3 storage, grant the `AmazonS3FullAccess` permission to the IAM user.
 
+2. Create an access key by following [Create an access key for yourself (console)](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-key-self-managed.html#Using_CreateAccessKey). After completion, you can obtain the AccessKey and SecretKey.
 
-```shell
-kubectl create secret generic s3-secret --from-literal=access_key=xxx --from-literal=secret_key=yyy --namespace=test1
-```
+3. Create a Kubernetes Secret named `s3-secret` using the following command and enter the AccessKey and SecretKey obtained in the previous step. This Secret stores the credentials required to access S3-compatible storage services.
+
+    ```shell
+    kubectl create secret generic s3-secret --from-literal=access_key=<your-access-key> --from-literal=secret_key=<your-secret-key> --namespace=<your-namespace>
+    ```
+
+4. AWS clients support obtaining associated user permissions through the process environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. Therefore, you can grant pods access to S3-compatible storage services by setting the corresponding environment variables.
+
+    The following example shows how to configure environment variables for TiKVGroup using [Overlay](overlay.md) (the configuration method for TiFlashGroup is the same):
+
+    ```yaml
+    apiVersion: core.pingcap.com/v1alpha1
+    kind: TiKVGroup
+    metadata:
+      name: tikv
+      labels:
+        pingcap.com/group: tikv
+        pingcap.com/component: tikv
+        pingcap.com/cluster: demo
+    spec:
+      template:
+        spec:
+          overlay:
+            pod:
+              spec:
+                containers:
+                  - name: tikv
+                    env:
+                      - name: "AWS_ACCESS_KEY_ID"
+                        valueFrom:
+                          secretKeyRef:
+                            name: "s3-secret"
+                            key: "access_key"
+                      - name: "AWS_SECRET_ACCESS_KEY"
+                        valueFrom:
+                          secretKeyRef:
+                            name: "s3-secret"
+                            key: "secret_key"
+    ```
+
+    The following example shows how to configure environment variables for the Backup resource:
+
+    ```yaml
+    apiVersion: br.pingcap.com/v1alpha1
+    kind: Backup
+    metadata:
+      name: backup-s3
+    spec:
+      env:
+        - name: "AWS_ACCESS_KEY_ID"
+          valueFrom:
+            secretKeyRef:
+              name: "s3-secret"
+              key: "access_key"
+        - name: "AWS_SECRET_ACCESS_KEY"
+          valueFrom:
+            secretKeyRef:
+              name: "s3-secret"
+              key: "secret_key"
+    ```
+
+    The following example shows how to configure environment variables for the Restore resource:
+
+    ```yaml
+    apiVersion: br.pingcap.com/v1alpha1
+    kind: Restore
+    metadata:
+      name: restore-s3
+    spec:
+      env:
+        - name: "AWS_ACCESS_KEY_ID"
+          valueFrom:
+            secretKeyRef:
+              name: "s3-secret"
+              key: "access_key"
+        - name: "AWS_SECRET_ACCESS_KEY"
+          valueFrom:
+            secretKeyRef:
+              name: "s3-secret"
+              key: "secret_key"
+    ```
 
 ### Grant permissions by associating IAM with Pod
 
-If you associate the user's [IAM](https://aws.amazon.com/cn/iam/) role with the resources of the running Pods, the processes running in the Pods can have the permissions of the role. This method is provided by [`kube2iam`](https://github.com/jtblin/kube2iam).
+The method of granting permissions by associating IAM with a Pod is supported by the open-source tool [kube2iam](https://github.com/jtblin/kube2iam). It enables processes within a Pod to inherit the permissions of an [IAM role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) by associating the role with the Pod.
 
 > **Note:**
 >
-> - When you use this method to grant permissions, you can [create the `kube2iam` environment](https://github.com/jtblin/kube2iam#usage) in the Kubernetes cluster and deploy TiDB Operator and the TiDB cluster.
-> - This method is not applicable to the [`hostNetwork`](https://kubernetes.io/docs/concepts/policy/pod-security-policy) mode. Make sure the value of `spec.tikv.hostNetwork` is set to `false`.
+> - kube2iam is only applicable to Kubernetes clusters running on AWS EC2 instances. It does not support other types of nodes.
+> - To use this authorization method, see the [kube2iam documentation](https://github.com/jtblin/kube2iam#usage) to set up the kube2iam environment in your Kubernetes cluster, and deploy TiDB Operator and the TiDB cluster.
+> - This method is not compatible with Pods that use the [`hostNetwork`](https://kubernetes.io/docs/concepts/policy/pod-security-policy) network mode.
 
-1. Create an IAM role.
+To grant permissions by associating IAM with a Pod, perform the following steps:
 
-    First, [create an IAM User](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) for your account.
+1. Follow the [IAM role creation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create.html) document to create an IAM role in your AWS account and grant it the `AmazonS3FullAccess` policy.
 
-    Then, Give the required permission to the IAM role you have created. Refer to [Adding and Removing IAM Identity Permissions](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_manage-attach-detach.html) for details.
+2. Use the [Overlay](overlay.md) feature to associate the IAM role with the target component (TiKV or TiFlash). The following example shows how to associate the role with a TiKVGroup:
 
-    Because the `Backup` CR needs to access the Amazon S3 storage, the IAM role is granted the `AmazonS3FullAccess` permission.
-
-    When backing up a TiDB cluster using EBS volume snapshots, besides the `AmazonS3FullAccess` permission, the following permissions are also required:
-
-    ```json
-            {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:AttachVolume",
-                "ec2:CreateSnapshot",
-                "ec2:CreateSnapshots",
-                "ec2:CreateTags",
-                "ec2:CreateVolume",
-                "ec2:DeleteSnapshot",
-                "ec2:DeleteTags",
-                "ec2:DeleteVolume",
-                "ec2:DescribeInstances",
-                "ec2:DescribeSnapshots",
-                "ec2:DescribeTags",
-                "ec2:DescribeVolumes",
-                "ec2:DetachVolume",
-                "ebs:ListSnapshotBlocks",
-                "ebs:ListChangedBlocks"
-            ],
-            "Resource": "*"
-        }
+    ```yaml
+    apiVersion: core.pingcap.com/v1alpha1
+    kind: TiKVGroup
+    metadata:
+      name: tikv
+    spec:
+      template:
+        spec:
+          overlay:
+            pod:
+              annotations:
+                iam.amazonaws.com/role: arn:aws:iam::123456789012:role/user
     ```
 
-2. Associate IAM with the TiKV Pod:
-
-    When you use BR to back up TiDB data, the TiKV Pod also needs to perform read and write operations on S3-compatible storage as the BR Pod does. Therefore, you need to add annotations to the TiKV Pod to associate it with the IAM role.
-
-    
-    ```shell
-    kubectl patch tc demo1 -n test1 --type merge -p '{"spec":{"tikv":{"annotations":{"iam.amazonaws.com/role":"arn:aws:iam::123456789012:role/user"}}}}'
-    ```
-
-    After the TiKV Pod is restarted, check whether the Pod has the annotation.
-
-> **Note:**
->
-> `arn:aws:iam::123456789012:role/user` is the IAM role created in Step 1.
+    > **Note:**
+    >
+    > Replace `arn:aws:iam::123456789012:role/user` with the actual ARN of the IAM role you created in step 1.
 
 ### Grant permissions by associating IAM with ServiceAccount
 
-If you associate the user's [IAM](https://aws.amazon.com/cn/iam/) role with [`serviceAccount`](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#serviceaccount) of Kubernetes, the Pods using the `serviceAccount` can have the permissions of the role. This method is provided by [`EKS Pod Identity Webhook`](https://github.com/aws/amazon-eks-pod-identity-webhook).
+By associating a user's [IAM](https://aws.amazon.com/iam/) role with a [`ServiceAccount`](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#serviceaccount) resource in Kubernetes, any Pod using that ServiceAccount will inherit the permissions of the IAM role.
 
-When you use this method to grant permissions, you can [create the EKS cluster](https://docs.aws.amazon.com/zh_cn/eks/latest/userguide/create-cluster.html) and deploy TiDB Operator and the TiDB cluster.
+To grant permissions by associating IAM with a ServiceAccount, perform the following steps:
 
-1. Enable the IAM role for the `serviceAccount` in the cluster:
+1. Follow the [IAM role creation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create.html) document to create an IAM role in your AWS account and grant it the `AmazonS3FullAccess` policy.
 
-    Refer to [AWS documentation](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html).
+2. Follow the instructions in [Create an IAM OIDC provider for your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) to create an IAM OIDC provider for your EKS cluster.
 
-2. Create the IAM role:
+3. Create a Kubernetes ServiceAccount named `br-s3`, and assign the IAM role to it as described in [Assign IAM roles to Kubernetes service accounts](https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html).
 
-    [Create an IAM role](https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html) and grant the `AmazonS3FullAccess` permissions to the role. Edit the role's `Trust relationships` to grant tidb-backup-manager the access to this IAM role.
+4. Use the [Overlay](overlay.md) feature to associate the ServiceAccount with the Pod in the TiKVGroup or TiFlashGroup. The following example shows how to associate it in a TiKVGroup:
 
-     When backing up a TiDB cluster using EBS volume snapshots, besides the `AmazonS3FullAccess` permission, the following permissions are also required:
-
-    ```json
-            {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:AttachVolume",
-                "ec2:CreateSnapshot",
-                "ec2:CreateSnapshots",
-                "ec2:CreateTags",
-                "ec2:CreateVolume",
-                "ec2:DeleteSnapshot",
-                "ec2:DeleteTags",
-                "ec2:DeleteVolume",
-                "ec2:DescribeInstances",
-                "ec2:DescribeSnapshots",
-                "ec2:DescribeTags",
-                "ec2:DescribeVolumes",
-                "ec2:DetachVolume",
-                "ebs:ListSnapshotBlocks",
-                "ebs:ListChangedBlocks"
-            ],
-            "Resource": "*"
-        }
+    ```yaml
+    apiVersion: core.pingcap.com/v1alpha1
+    kind: TiKVGroup
+    metadata:
+      name: tikv
+    spec:
+      template:
+        spec:
+          overlay:
+            pod:
+              spec:
+                serviceAccountName: br-s3
     ```
 
-    At the same time, edit the role's `Trust relationships` to grant tidb-controller-manager the access to this IAM role.
+5. Specify the `serviceAccount` in the backup or restore configuration. The following example shows how to specify it in a Backup resource:
 
-3. Associate the IAM role with the `ServiceAccount` resources.
-
-    
-    ```shell
-    kubectl annotate sa tidb-backup-manager eks.amazonaws.com/role-arn=arn:aws:iam::123456789012:role/user --namespace=test1
+    ```yaml
+    apiVersion: br.pingcap.com/v1alpha1
+    kind: Backup
+    metadata:
+      name: backup-s3
+    spec:
+      serviceAccount: br-s3
     ```
 
-    When backing up or restoring a TiDB cluster using EBS volume snapshots, you need to associate the IAM role with the `ServiceAccount` resources of tidb-controller-manager.
-
-     ```shell
-     kubectl annotate sa tidb-controller-manager eks.amazonaws.com/role-arn=arn:aws:iam::123456789012:role/user --namespace=tidb-admin
-     ```
-
-     Restart the tidb-controller-manager Pod of TiDB Operator to make the configured `ServiceAccount` take effect.
-
-4. Associate the `ServiceAccount` with the TiKV Pod:
-
-    
-    ```shell
-    kubectl patch tc demo1 -n test1 --type merge -p '{"spec":{"tikv":{"serviceAccount": "tidb-backup-manager"}}}'
-    ```
-
-    Modify the value of `spec.tikv.serviceAccount` to `tidb-backup-manager`. After the TiKV Pod is restarted, check whether the Pod's `serviceAccountName` is changed.
-
-5. (Optional) If your cluster includes TiFlash Pods, repeat step 4 to associate the `ServiceAccount` with the TiFlash Pod.
-
-    ```shell
-    kubectl patch tc demo1 -n test1 --type merge -p '{"spec":{"tiflash":{"serviceAccount": "tidb-backup-manager"}}}'
-    ```
-
-> **Note:**
->
-> `arn:aws:iam::123456789012:role/user` is the IAM role created in Step 2.
-
-## GCS account permissions
+## Grant permissions to a Google Cloud account
 
 ### Grant permissions by the service account
 
-Create the `gcs-secret` secret which stores the credential used to access GCS. The `google-credentials.json` file stores the service account key that you have downloaded from the Google Cloud console. Refer to [Google Cloud documentation](https://cloud.google.com/docs/authentication/getting-started) for details.
+To grant permissions using a Google Cloud service account key, perform the following steps:
 
+1. Follow the [Create service accounts](https://cloud.google.com/iam/docs/service-accounts-create) document to create a service account and generate a service account key file. Save the file as `google-credentials.json`.
 
-```shell
-kubectl create secret generic gcs-secret --from-file=credentials=./google-credentials.json -n test1
-```
+2. Create a Kubernetes Secret named `gcp-secret` to store the credentials for accessing Google Cloud Storage:
 
-## Azure account permissions
+    ```shell
+    kubectl create secret generic gcp-secret --from-file=credentials=./google-credentials.json -n <your-namespace>
+    ```
 
-Azure provides different methods to grant permissions for different types of Kubernetes clusters. This document describes the following two methods.
+3. Follow the instructions in [Add a principal to a bucket-level policy](https://cloud.google.com/storage/docs/access-control/using-iam-permissions#bucket-add) to grant the service account created in step 1 access to the target storage bucket, and assign the `roles/storage.objectUser` role.
+
+4. Set environment variables for the Pod. The following example shows how to configure it for a TiKVGroup:
+
+    ```yaml
+    apiVersion: core.pingcap.com/v1alpha1
+    kind: TiKVGroup
+    metadata:
+      name: tikv
+    spec:
+      template:
+        spec:
+          overlay:
+            pod:
+              spec:
+                containers:
+                  - name: tikv
+                    env:
+                      - name: "GOOGLE_APPLICATION_CREDENTIALS"
+                        valueFrom:
+                          secretKeyRef:
+                            name: "gcp-secret"
+                            key: "credentials"
+    ```
+
+   The following example shows how to configure the Backup resource to use the Secret:
+
+    ```yaml
+    apiVersion: br.pingcap.com/v1alpha1
+    kind: Backup
+    metadata:
+      name: backup-gcp
+    spec:
+      gcs:
+        secretName: gcp-secret
+    ```
+
+   The following example shows how to configure the Restore resource to use the Secret:
+
+    ```yaml
+    apiVersion: br.pingcap.com/v1alpha1
+    kind: Restore
+    metadata:
+      name: restore-gcp
+    spec:
+      gcs:
+        secretName: gcp-secret
+    ```
+
+## Grant permissions to an Azure account
+
+Azure Blob Storage provides different methods to grant permissions for different types of Kubernetes clusters. This document introduces the following two methods:
+
+- [Grant permissions by access key](#grant-permissions-by-access-key): applicable to all types of Kubernetes clusters.
+- [Grant permissions by Azure AD](#grant-permissions-by-azure-ad): suitable for scenarios requiring fine-grained access control and key rotation.
 
 ### Grant permissions by access key
 
-The Azure client can read `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_KEY` from the process environment variables to obtain the associated user or role permissions.
+Azure clients can read credentials from the environment variables `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_KEY`. To grant permissions using this method, perform the following steps:
 
-Run the following command to create the `azblob-secret` secret and use your Azure account access key to grant permissions. The secret stores the credential used for accessing Azure Blob Storage.
+1. Create a Kubernetes Secret named `azblob-secret` that stores the storage account name and key:
 
+    ```shell
+    kubectl create secret generic azblob-secret \
+      --from-literal=AZURE_STORAGE_ACCOUNT=<your-storage-account> \
+      --from-literal=AZURE_STORAGE_KEY=<your-storage-key> \
+      --namespace=<your-namespace>
+    ```
 
-```shell
-kubectl create secret generic azblob-secret --from-literal=AZURE_STORAGE_ACCOUNT=xxx --from-literal=AZURE_STORAGE_KEY=yyy --namespace=test1
-```
+2. Use the [Overlay](overlay.md) feature to inject the Secret as environment variables into the TiKVGroup or TiFlashGroup Pod. The following example shows how to configure it for a TiKVGroup:
+
+    ```yaml
+    apiVersion: core.pingcap.com/v1alpha1
+    kind: TiKVGroup
+    metadata:
+      name: tikv
+    spec:
+      template:
+        spec:
+          overlay:
+            pod:
+              spec:
+                containers:
+                  - name: tikv
+                    env:
+                      - name: "AZURE_STORAGE_ACCOUNT"
+                        valueFrom:
+                          secretKeyRef:
+                            name: "azblob-secret"
+                            key: "AZURE_STORAGE_ACCOUNT"
+                      - name: "AZURE_STORAGE_KEY"
+                        valueFrom:
+                          secretKeyRef:
+                            name: "azblob-secret"
+                            key: "AZURE_STORAGE_KEY"
+    ```
 
 ### Grant permissions by Azure AD
 
-The Azure client can read `AZURE_STORAGE_ACCOUNT`, `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_CLIENT_SECRET` to obtain the associated user or role permissions.
+Azure clients can obtain access through the environment variables `AZURE_STORAGE_ACCOUNT`, `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_CLIENT_SECRET`. This method is ideal for higher security and automatic key rotation.
 
-1. Create the `azblob-secret-ad` secret by running the following command. Use the Active Directory (AD) of your Azure account. The secret stores the credential used for accessing Azure Blob Storage.
+1. Create a Kubernetes Secret named `azblob-secret-ad` to store credentials for accessing Azure Blob Storage:
 
-    
     ```shell
-    kubectl create secret generic azblob-secret-ad --from-literal=AZURE_STORAGE_ACCOUNT=xxx --from-literal=AZURE_CLIENT_ID=yyy --from-literal=AZURE_TENANT_ID=zzz --from-literal=AZURE_CLIENT_SECRET=aaa --namespace=test1
+    kubectl create secret generic azblob-secret-ad \
+      --from-literal=AZURE_STORAGE_ACCOUNT=<your-storage-account> \
+      --from-literal=AZURE_CLIENT_ID=<your-client-id> \
+      --from-literal=AZURE_TENANT_ID=<your-tenant-id> \
+      --from-literal=AZURE_CLIENT_SECRET=<your-client-secret> \
+      --namespace=<your-namespace>
     ```
 
-2. Associate the secret with the TiKV Pod:
+2. Use the [Overlay](overlay.md) feature to inject the Secret as environment variables into the TiKVGroup or TiFlashGroup Pod. The following example shows how to configure it for a TiKVGroup:
 
-    When you use BR to back up TiDB data, the TiKV Pod also needs to perform read and write operations on Azure Blob Storage as the BR Pod does. Therefore, you need to associate the TiKV Pod with the secret.
+    > **Note:**
+    >
+    > - When granting permissions by Azure AD, ensure the service principal has access to the target storage account.
+    > - Restart the Pods after modifying the Secret to apply updated environment variables.
 
-    
-    ```shell
-    kubectl patch tc demo1 -n test1 --type merge -p '{"spec":{"tikv":{"envFrom":[{"secretRef":{"name":"azblob-secret-ad"}}]}}}'
+    ```yaml
+    apiVersion: core.pingcap.com/v1alpha1
+    kind: TiKVGroup
+    metadata:
+      name: tikv
+    spec:
+      template:
+        spec:
+          overlay:
+            pod:
+              spec:
+                containers:
+                  - name: tikv
+                    envFrom:
+                      secretRef:
+                        name: "azblob-secret-ad"
     ```
-
-    After the TiKV Pod is restarted, check whether the Pod has the environment variables.

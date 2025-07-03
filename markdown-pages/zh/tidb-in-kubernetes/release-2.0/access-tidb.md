@@ -1,66 +1,107 @@
 ---
 title: 访问 Kubernetes 上的 TiDB 集群
 summary: 介绍如何访问 Kubernetes 上的 TiDB 集群。
-aliases: ['/docs-cn/tidb-in-kubernetes/dev/access-tidb/']
 ---
 
-# 访问 TiDB 集群
+# 访问 Kubernetes 上的 TiDB 集群
 
-Service 可以根据场景配置不同的类型，比如 `ClusterIP`、`NodePort`、`LoadBalancer` 等，对于不同的类型可以有不同的访问方式。
+本文介绍如何通过 Kubernetes [Service](https://kubernetes.io/zh-cn/docs/concepts/services-networking/service/) 访问 TiDB 集群。根据不同的访问场景需求，你可以将 Service 配置为以下类型：
 
-可以通过如下命令获取 TiDB Service 信息：
-
-
-```shell
-kubectl get svc ${serviceName} -n ${namespace}
-```
-
-示例：
-
-```
-# kubectl get svc basic-tidb -n default
-NAME         TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)                          AGE
-basic-tidb   NodePort   10.233.6.240   <none>        4000:32498/TCP,10080:30171/TCP   61d
-```
-
-上述示例描述了 `default` namespace 下 `basic-tidb` 服务的信息，类型为 `NodePort`，ClusterIP 为 `10.233.6.240`，ServicePort 为 `4000` 和 `10080`，对应的 NodePort 分别为 `32498` 和 `30171`。
-
-> **注意：**
->
-> [MySQL 8.0 默认认证插件](https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin)从 `mysql_native_password` 更新为 `caching_sha2_password`，因此如果使用 MySQL 8.0 客户端访问 TiDB 服务（TiDB 版本 < v4.0.7），并且用户账户有配置密码，需要显示指定 `--default-auth=mysql_native_password` 参数。
+- [`ClusterIP`](#clusterip)：仅限 Kubernetes 集群内部访问
+- [`NodePort`](#nodeport)：允许从集群外部访问（适用于测试环境）
+- [`LoadBalancer`](#loadbalancer)：通过云平台的 LoadBalancer 特性访问（推荐用于生产环境）
 
 ## ClusterIP
 
-`ClusterIP` 是通过集群的内部 IP 暴露服务，选择该类型的服务时，只能在集群内部访问，可以通过如下方式访问：
+`ClusterIP` 类型的 Service 通过集群的内部 IP 暴露服务，仅支持在 Kubernetes 集群内部访问 TiDB 集群。
 
-* ClusterIP + ServicePort
-* Service 域名 (`${serviceName}.${namespace}`) + ServicePort
+你可以使用以下格式之一访问 TiDB 集群：
+
+- `basic-tidb`：仅限在同一 Namespace 内访问
+- `basic-tidb.default`：支持跨 Namespace 访问
+- `basic-tidb.default.svc`：支持跨 Namespace 访问
+
+其中，`basic-tidb` 是 Service 的名称，`default` 是 Namespace 的名称，详见 [Service 与 Pod 的 DNS](https://kubernetes.io/zh-cn/docs/concepts/services-networking/dns-pod-service/#namespaces-of-services)。
+
+每个 TiDBGroup 会自动创建一个能够访问该 TiDBGroup 所有 TiDB 的 Service。例如，TiDBGroup `tidb-0` 会创建一个内部 Service `tidb-0-tidb`。
+
+你可以直接使用默认创建的 Service 访问 TiDB，也可以根据需要自行创建 Service。
+
+以下 YAML 示例用于创建一个能够访问 Cluster `db` 下所有 TiDB 节点的 Service：
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: tidb
+spec:
+  selector:
+    pingcap.com/managed-by: tidb-operator
+    pingcap.com/cluster: db
+    pingcap.com/component: tidb
+  ports:
+    - name: mysql
+      protocol: TCP
+      port: 4000
+      targetPort: mysql-client
+```
+
+以下 YAML 示例用于创建一个能够访问 Cluster `db` 下特定 TiDBGroup `tidb-0` 所有 TiDB 节点的 Service：
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: tidb-0
+spec:
+  selector:
+    pingcap.com/managed-by: tidb-operator
+    pingcap.com/cluster: db
+    pingcap.com/component: tidb
+    pingcap.com/group: tidb-0
+  ports:
+    - name: mysql
+      protocol: TCP
+      port: 4000
+      targetPort: mysql-client
+```
 
 ## NodePort
 
-在没有 LoadBalancer 时，可选择通过 NodePort 暴露。NodePort 是通过节点的 IP 和静态端口暴露服务。通过请求 `NodeIP + NodePort`，可以从集群的外部访问一个 NodePort 服务。
+在没有 LoadBalancer 的环境中，可以使用 `NodePort` 类型的 Service 将 TiDB 集群暴露到集群外部，允许通过节点 IP 和指定端口访问 TiDB 集群。有关详细说明，请参阅 [NodePort](https://kubernetes.io/zh-cn/docs/concepts/services-networking/service/#type-nodeport)。
 
-查看 Service 分配的 Node Port，可通过获取 TiDB 的 Service 对象来获知：
+> **注意：**
+>
+> 不建议在生产环境中使用 NodePort 类型。对于云平台上的生产环境，推荐使用 LoadBalancer 类型。
 
+配置示例如下：
 
-```shell
-kubectl -n ${namespace} get svc ${cluster_name}-tidb -ojsonpath="{.spec.ports[?(@.name=='mysql-client')].nodePort}{'\n'}"
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: tidb-0
+spec:
+  type: NodePort
+  selector:
+    pingcap.com/managed-by: tidb-operator
+    pingcap.com/cluster: db
+    pingcap.com/component: tidb
+    pingcap.com/group: tidb-0
+  ports:
+    - name: mysql
+      protocol: TCP
+      port: 4000
+      targetPort: mysql-client
 ```
-
-查看可通过哪些节点的 IP 访问 TiDB 服务，有两种情况：
-
-- `externalTrafficPolicy` 为 `Cluster` 时，所有节点 IP 均可
-- `externalTrafficPolicy` 为 `Local` 时，可通过以下命令获取指定集群的 TiDB 实例所在的节点
-
-    
-    ```shell
-    kubectl -n ${namespace} get pods -l "app.kubernetes.io/component=tidb,app.kubernetes.io/instance=${cluster_name}" -ojsonpath="{range .items[*]}{.spec.nodeName}{'\n'}{end}"
-    ```
 
 ## LoadBalancer
 
-若运行在有 LoadBalancer 的环境，比如 Google Cloud、AWS 平台，建议使用云平台的 LoadBalancer 特性。
+在支持 LoadBalancer 的云平台（如 Google Cloud 或 AWS）上，建议使用云平台提供的 LoadBalancer 特性暴露 TiDB 服务，以获得更好的可用性和负载均衡能力。
 
-参考 [EKS](deploy-on-aws-eks.md#安装-mysql-客户端并连接) 和 [GKE](deploy-on-gcp-gke.md#安装-mysql-客户端并连接) 文档，通过 LoadBalancer 访问 TiDB 服务。
+你可以参考以下官方文档，通过创建 LoadBalancer Service 访问 TiDB 服务：
 
-访问 [Kubernetes Service 文档](https://kubernetes.io/docs/concepts/services-networking/service/)，了解更多 Service 特性以及云平台 Load Balancer 支持。
+- [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/)
+- [Google Cloud LoadBalancer Service](https://cloud.google.com/kubernetes-engine/docs/concepts/service-load-balancer)
+
+访问 [Kubernetes Service 文档](https://kubernetes.io/zh-cn/docs/concepts/services-networking/service/)，了解更多 Service 特性以及云平台 Load Balancer 支持。

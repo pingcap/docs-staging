@@ -1,106 +1,73 @@
 ---
-title: Suspend TiDB cluster
-summary: Learn how to suspend the TiDB cluster on Kubernetes through configuration.
+title: Suspend and Resume a TiDB Cluster on Kubernetes
+summary: Learn how to suspend and resume a TiDB cluster on Kubernetes by configuring the cluster.
 ---
 
-# Suspend TiDB cluster
+# Suspend and Resume a TiDB Cluster on Kubernetes
 
-This document introduces how to suspend the TiDB cluster or suspend the TiDB cluster components on Kubernetes by configuring the `TidbCluster` object. After suspending the cluster, you can stop the Pods of all components or one specific component and retain the `TidbCluster` object and other resources (such as Service and PVC).
+This document describes how to suspend and resume a TiDB cluster on Kubernetes by configuring the `Cluster` object. When you suspend a cluster, all component Pods are stopped, but the `Cluster` object and associated resources (such as Services and PVCs) are retained. This preserves the cluster's data and configuration for later recovery.
 
-In some test scenarios, if you need to save resources, you can suspend the TiDB cluster when you are not using it.
+## Usage scenarios
 
-> **Note:**
->
-> To suspend the TiDB cluster, the TiDB Operator version must be >= v1.3.7.
+You can suspend a TiDB cluster in the following scenarios:
 
-## Configure TiDB cluster suspending
+- Temporarily release compute resources in a test environment.
+- Stop a development cluster that is unused for an extended period.
+- Pause a cluster temporarily while retaining its data and configuration.
 
-If you need to suspend the TiDB cluster, take the following steps:
+## Before you begin
 
-1. In the `TidbCluster` object, configure `spec.suspendAction` field to suspend the entire TiDB cluster:
+Before you suspend a TiDB cluster, consider the following:
+
+- Suspending the cluster interrupts cluster services.
+- Existing client connections are terminated forcefully.
+- PVCs and data are retained and continue to occupy storage space.
+- Services and configurations associated with the cluster remain unchanged.
+
+## Suspend a TiDB cluster
+
+To suspend a TiDB cluster, perform the following steps:
+
+1. In the `Cluster` object, set the `spec.suspendAction.suspendCompute` field to `true` to suspend the entire TiDB cluster:
 
     ```yaml
-    apiVersion: pingcap.com/v1alpha1
-    kind: TidbCluster
+    apiVersion: core.pingcap.com/v1alpha1
+    kind: Cluster
     metadata:
       name: ${cluster_name}
       namespace: ${namespace}
     spec:
       suspendAction:
-        suspendStatefulSet: true
+        suspendCompute: true
       # ...
     ```
 
-    TiDB Operator also supports suspending one or more components in TiDB clusters. Taking TiKV as an example, you can suspend TiKV in the TiDB cluster by configuring `spec.tikv.suspendAction` field in the `TidbCluster` object:
-
-    ```yaml
-    apiVersion: pingcap.com/v1alpha1
-    kind: TidbCluster
-    metadata:
-      name: ${cluster_name}
-      namespace: ${namespace}
-    spec:
-      tikv:
-        suspendAction:
-          suspendStatefulSet: true
-      # ...
-    ```
-
-2. After suspending the TiDB cluster, you can run the following command to observe that the Pods of the suspended component are gradually deleted.
+2. After the cluster is suspended, run the following command to observe the Pods being gradually deleted:
 
     ```shell
-    kubectl -n ${namespace} get pods
+    kubectl -n ${namespace} get pods -w
     ```
 
-    Pods of each suspended component will be deleted in the following order:
+## Resume a TiDB cluster
 
-    * TiDB
-    * TiFlash
-    * TiCDC
-    * TiKV
-    * Pump
-    * TiProxy
-    * PD
+To resume a suspended TiDB cluster, perform the following steps:
 
-> **Note:**
->
-> If [PD microservices](https://docs.pingcap.com/tidb/dev/pd-microservices) (introduced in TiDB v8.0.0) are deployed in a cluster, the Pods of PD microservices are deleted after the PD Pods are deleted.
-
-## Restore TiDB cluster
-
-After a TiDB cluster or its component is suspended, if you need to restore the TiDB cluster, take the following steps:
-
-1. In the `TidbCluster` object, configure the `spec.suspendAction` field to restore the entire suspended TiDB cluster:
+1. In the `Cluster` object, set the `spec.suspendAction.suspendCompute` field to `false` to resume the suspended TiDB cluster:
 
     ```yaml
-    apiVersion: pingcap.com/v1alpha1
-    kind: TidbCluster
+    apiVersion: core.pingcap.com/v1alpha1
+    kind: Cluster
     metadata:
       name: ${cluster_name}
       namespace: ${namespace}
     spec:
       suspendAction:
-        suspendStatefulSet: false
+        suspendCompute: false
       # ...
     ```
 
-    TiDB Operator also supports restoring one or more components in the TiDB cluster. Taking TiKV as an example, you can restore TiKV in the TiDB cluster by configuring `spec.tikv.suspendAction` field in the `TidbCluster` object.
-
-    ```yaml
-    apiVersion: pingcap.com/v1alpha1
-    kind: TidbCluster
-    metadata:
-      name: ${cluster_name}
-      namespace: ${namespace}
-    spec:
-      tikv:
-        suspendAction:
-          suspendStatefulSet: false
-      # ...
-    ```
-
-2. After restoring the TiDB cluster, you can run the following command to observe that the Pods of the suspended component are gradually created.
+2. After the cluster is resumed, run the following command to observe the Pods being gradually created:
 
     ```shell
-    kubectl -n ${namespace} get pods
+    kubectl -n ${namespace} get pods -w
     ```

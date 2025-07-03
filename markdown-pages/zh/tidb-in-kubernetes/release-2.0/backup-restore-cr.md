@@ -5,7 +5,7 @@ summary: 介绍用于备份与恢复的 Custom Resource (CR) 资源的各字段�
 
 # 备份与恢复 CR 介绍
 
-本文档介绍用于备份与恢复的 `Backup`、`Restore` 及 `BackupSchedule` Custom Resource (CR) 资源的各字段，确保更好地对 Kubernetes 上的 TiDB 集群进行数据备份和数据恢复。
+本文档介绍用于备份与恢复的 `Backup`、`CompactBackup`、`Restore` 及 `BackupSchedule` 等 Custom Resource (CR) 资源的各字段，确保更好地对 Kubernetes 上的 TiDB 集群进行数据备份和数据恢复。
 
 ## Backup CR 字段介绍
 
@@ -13,74 +13,31 @@ summary: 介绍用于备份与恢复的 Custom Resource (CR) 资源的各字段�
 
 ### 通用字段介绍
 
-* `.spec.metadata.namespace`：`Backup` CR 所在的 namespace。
-* `.spec.toolImage`：用于指定 `Backup` 使用的工具镜像。TiDB Operator 从 v1.1.9 起支持这项配置。
-
-    - 使用 BR 备份时，可以用该字段指定 BR 的版本:
-        - 如果未指定或者为空，默认使用镜像 `pingcap/br:${tikv_version}` 进行备份。
-        - 如果指定了 BR 的版本，例如 `.spec.toolImage: pingcap/br:v5.3.0`，那么使用指定的版本镜像进行备份。
-        - 如果指定了镜像但未指定版本，例如 `.spec.toolImage: private/registry/br`，那么使用镜像 `private/registry/br:${tikv_version}` 进行备份。
-    - 使用 Dumpling 备份时，可以用该字段指定 Dumpling 的版本：
-        - 如果指定了 Dumpling 的版本，例如 `spec.toolImage: pingcap/dumpling:v5.3.0`，那么使用指定的版本镜像进行备份。
-        - 如果未指定，默认使用 [Backup Manager Dockerfile](https://github.com/pingcap/tidb-operator/blob/v1.6.1/images/tidb-backup-manager/Dockerfile) 文件中 `TOOLKIT_VERSION` 指定的 Dumpling 版本进行备份。
+* `.spec.toolImage`：用于指定 `Backup` 使用的工具镜像。
+    * 如果未指定或者为空，默认使用镜像 `pingcap/br:${tikv_version}` 进行备份。
+    * 如果指定了 BR 的版本，例如 `.spec.toolImage: pingcap/br:v5.3.0`，那么使用指定的版本镜像进行备份。
+    * 如果指定了镜像但未指定版本，例如 `.spec.toolImage: private/registry/br`，那么使用镜像 `private/registry/br:${tikv_version}` 进行备份。
 
 * `.spec.backupType`：指定 Backup 类型，该字段仅在使用 BR 备份时有效，目前支持以下三种类型，可以结合 `.spec.tableFilter` 配置表库过滤规则：
     * `full`：对 TiDB 集群所有的 database 数据执行备份。
     * `db`：对 TiDB 集群一个 database 的数据执行备份。
     * `table`：对 TiDB 集群中指定表的数据执行备份。
 
-* `.spec.backupMode`：指定 Backup 的模式，默认为 `snapshot`，即基于 KV 层的快照备份。该字段仅在备份时有效，目前支持以下三种类型：
+* `.spec.backupMode`：指定 Backup 的模式，默认为 `snapshot`。目前支持以下两种类型：
     * `snapshot`：基于 KV 层的快照备份。
-    * `volume-snapshot`：基于卷快照的备份。
     * `log`：从 KV 层备份实时数据变更日志数据。
 
 * `.spec.logSubcommand`：指定日志备份任务的子命令，用于控制日志备份任务的状态。该字段支持以下三个选项：
     * `log-start`：启动一个新的日志备份任务，或恢复一个已暂停的任务。使用此命令可以开始日志备份流程，或从暂停状态恢复任务。
-    * `log-pause`：暂停当前正在进行的日志备份任务。暂停任务后，你可以使用 `log-start` 命令恢复任务。
     * `log-stop`：永久停止日志备份任务。执行此命令后，Backup CR 会进入停止状态，且无法再次启动。
+    * `log-pause`：暂停当前正在进行的日志备份任务。暂停任务后，你可以使用 `log-start` 命令恢复任务。
 
-  对于 v1.5.5 之前的版本，请使用 `logStop` 字段（布尔值 `true`/`false`）控制日志备份操作。虽然 v1.5.5 和 v1.6.1 版本仍支持 `logStop`，但建议使用 `logSubcommand`。
-
-* `.spec.restoreMode`：指定 Restore 的模式，默认为 `snapshot`，即基于 KV 层的快照恢复。该字段仅在恢复时有效，目前支持以下三种类型：
-    * `snapshot`：基于 KV 层的快照恢复。
-    * `volume-snapshot`：基于卷快照的 TiDB 集群恢复。
-    * `pitr`：基于备份的快照数据和日志数据将 TiDB 集群数据恢复到指定时间点。
-
-* `.spec.tikvGCLifeTime`：备份中的临时 `tikv_gc_life_time` 时间设置，默认为 `72h`。
-
-    在备份开始之前，若 TiDB 集群的 `tikv_gc_life_time` 小于用户设置的 `spec.tikvGCLifeTime`，为了保证备份的数据不被 TiKV GC 掉，TiDB Operator 会在备份前[调节 `tikv_gc_life_time`](https://docs.pingcap.com/zh/tidb/stable/dumpling-overview#导出大规模数据时的-tidb-gc-设置) 为 `spec.tikvGCLifeTime`。
-
-    备份结束后，不论成功或者失败，如果旧的 `tikv_gc_life_time` 小于设置的 `.spec.tikvGCLifeTime`，TiDB Operator 会尝试恢复 `tikv_gc_life_time` 为备份前的旧值。在极端情况下，如果 TiDB Operator 访问数据库失败，TiDB Operator 将无法自动恢复 `tikv_gc_life_time` 并认为备份失败。
-
-    此时，可以通过下述语句查看当前 TiDB 集群的 `tikv_gc_life_time`：
-
-    ```sql
-    select VARIABLE_NAME, VARIABLE_VALUE from mysql.tidb where VARIABLE_NAME like "tikv_gc_life_time";
-    ```
-
-    如果发现 `tikv_gc_life_time` 值过大（通常为 10m），则需要按照[调节 `tikv_gc_life_time`](https://docs.pingcap.com/zh/tidb/stable/dumpling-overview#导出大规模数据时的-tidb-gc-设置) 将 `tikv_gc_life_time` 调回原样。
-
-* `.spec.cleanPolicy`：备份集群后删除 Backup CR 时的备份文件清理策略。目前支持三种清理策略：
-
+* `.spec.cleanPolicy`：备份集群后删除 Backup CR 时的备份文件清理策略。如果不配置该字段，或者配置该字段的值为以下三种以外的值，均会保留备份出的文件。目前支持三种清理策略：
     * `Retain`：任何情况下，删除 Backup CR 时会保留备份出的文件。
     * `Delete`：任何情况下，删除 Backup CR 时会删除备份出的文件。
     * `OnFailure`：如果备份中失败，删除 Backup CR 时会删除备份出的文件。
 
-    如果不配置该字段，或者配置该字段的值为上述三种以外的值，均会保留备份出的文件。值得注意的是，在 v1.1.2 以及之前版本不存在该字段，且默认在删除 CR 的同时删除备份的文件。若 v1.1.3 及之后版本的用户希望保持该行为，需要设置该字段为 `Delete`。
-
-* `.spec.cleanOption`：备份集群后删除 Backup CR 时的备份文件清理行为。更多说明请参阅[清理备份文件](backup-restore-overview.md#清理备份文件)
-* `.spec.from.host`：待备份 TiDB 集群的访问地址，为需要导出的 TiDB 的 service name，例如 `basic-tidb`。
-* `.spec.from.port`：待备份 TiDB 集群的访问端口。
-* `.spec.from.user`：待备份 TiDB 集群的访问用户。
-* `.spec.from.secretName`：存储 `.spec.from.user` 用户的密码的 Secret。
-* `.spec.from.tlsClientSecretName`：指定备份使用的存储证书的 Secret。
-
-    如果 TiDB 集群开启了 [TLS](enable-tls-between-components.md)，但是不想使用[文档](enable-tls-between-components.md)中创建的 `${cluster_name}-cluster-client-secret` 进行备份，可以通过这个参数为备份指定一个 Secret，可以通过如下命令生成：
-
-    
-    ```shell
-    kubectl create secret generic ${secret_name} --namespace=${namespace} --from-file=tls.crt=${cert_path} --from-file=tls.key=${key_path} --from-file=ca.crt=${ca_path}
-    ```
+* `.spec.cleanOption`：备份集群后删除 Backup CR 时的备份文件清理行为。更多说明请参阅[清理备份文件](backup-restore-overview.md#清理备份文件)。
 
 * `.spec.storageClassName`：备份时所需的 persistent volume (PV) 类型。
 * `.spec.storageSize`：备份时指定所需的 PV 大小，默认为 100 GiB。该值应大于备份 TiDB 集群数据的大小。一个 TiDB 集群的 Backup CR 对应的 PVC 名字是确定的，如果集群命名空间中已存在该 PVC 并且其大小小于 `.spec.storageSize`，这时需要先删除该 PVC 再运行 Backup job。
@@ -90,20 +47,10 @@ summary: 介绍用于备份与恢复的 Custom Resource (CR) 资源的各字段�
 * `.spec.tolerations`：指定运行备份任务的 Pod 能够调度到带有与之匹配的[污点](https://kubernetes.io/docs/reference/glossary/?all=true#term-taint) (Taint) 的节点上。关于污点与容忍度的更多说明，请参阅 [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)。
 * `.spec.podSecurityContext`：指定运行备份任务的 Pod 的安全上下文配置，允许 Pod 以非 root 用户的方式运行，关于 podSecurityContext 的更多说明，请参阅[以非 root 用户运行容器](containers-run-as-non-root-user.md)。
 * `.spec.priorityClassName`：指定运行备份任务的 Pod 的 priorityClass 的名称，以设置运行优先级，关于 priorityClass 的更多说明，请参阅 [Pod Priority and Preemption](https://kubernetes.io/zh/docs/concepts/scheduling-eviction/pod-priority-preemption/)。
-* `.spec.imagePullSecrets`：指定运行备份任务的 Pod 的 [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod)
+* `.spec.imagePullSecrets`：指定运行备份任务的 Pod 的 [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod)。
 * `.spec.serviceAccount`：备份时指定所使用的 ServiceAccount 名称。
 * `.spec.useKMS`：备份时指定是否使用 AWS-KMS 解密备份使用的 S3 存储密钥。
-* `.spec.tableFilter`：备份时指定让 Dumpling 或者 BR 备份符合 [table-filter 规则](https://docs.pingcap.com/zh/tidb/stable/table-filter/)的表。默认情况下该字段可以不用配置。
-
-    当不配置时，如果使用 Dumpling 备份，`tableFilter` 字段的默认值如下：
-
-    ```bash
-    tableFilter:
-    - "*.*"
-    - "!/^(mysql|test|INFORMATION_SCHEMA|PERFORMANCE_SCHEMA|METRICS_SCHEMA|INSPECTION_SCHEMA)$/.*"
-    ```
-
-    当不配置时，如果使用 BR 备份，BR 会备份除系统库以外的所有数据库。
+* `.spec.tableFilter`：备份时指定让 BR 备份符合 [table-filter 规则](https://docs.pingcap.com/zh/tidb/stable/table-filter/)的表。默认情况下该字段可以不用配置。当不配置时，BR 会备份除系统库以外的所有数据库。
 
     > **注意：**
     >
@@ -132,7 +79,7 @@ summary: 介绍用于备份与恢复的 Custom Resource (CR) 资源的各字段�
 * `.spec.br.timeAgo`：备份 timeAgo 以前的数据，默认为空（备份当前数据），[支持](https://golang.org/pkg/time/#ParseDuration) "1.5h"，"2h45m" 等数据。
 * `.spec.br.sendCredToTikv`：BR 进程是否将自己的 AWS 权限、Google Cloud 权限或者 Azure 权限传输给 TiKV 进程。默认为 `true`。
 * `.spec.br.onLine`：restore 时是否启用[在线恢复功能](https://docs.pingcap.com/zh/tidb/stable/use-br-command-line-tool#在线恢复实验性功能)。
-* `.spec.br.options`：BR 工具支持的额外参数，需要以字符串数组的形式传入。自 v1.1.6 版本起支持该参数。可用于指定 `lastbackupts` 以进行增量备份。
+* `.spec.br.options`：BR 工具支持的额外参数，需要以字符串数组的形式传入。可用于指定 `lastbackupts` 以进行增量备份。
 
 ### S3 存储字段介绍
 
@@ -230,7 +177,7 @@ summary: 介绍用于备份与恢复的 Custom Resource (CR) 资源的各字段�
 * `.spec.azblob.secretName`：指定存储 Azure Blob Storage 用户账号认证信息的 Secret 名称。
 * `.spec.azblob.container`：存储数据的 container 名字。
 * `.spec.azblob.prefix`：如果设置了这个字段，则会使用这个字段来拼接在远端存储的存储路径 `azure://${.spec.azblob.container}/${.spec.azblob.prefix}/backupName`。
-* `.spec.azblob.accessTier`：上传对象的存储类别.
+* `.spec.azblob.accessTier`：上传对象的存储类别。
 
     Azure Blob Storage 支持以下几种 `accessTier` 类型：
 
@@ -255,10 +202,9 @@ summary: 介绍用于备份与恢复的 Custom Resource (CR) 资源的各字段�
 * `.spec.concurrency`：指定同时进行的压缩日志任务的最大数量，默认值为 `4`。
 * `.spec.maxRetryTimes`：指定压缩任务失败的最大重试次数，默认值为 `6`。
 * `.spec.toolImage`：指定 `CompactBackup` 使用的工具镜像。在 `CompactBackup` 中，唯一使用的工具镜像为 BR。使用 BR 备份时，你可以使用该字段指定 BR 的版本：
-
-    - 如果未指定或者为空，默认使用镜像 `pingcap/br:${tikv_version}` 进行备份。
-    - 如果指定了 BR 的版本，例如 `.spec.toolImage: pingcap/br:v9.0.0`，那么使用指定的版本镜像进行备份。
-    - 如果指定了镜像但未指定版本，例如 `.spec.toolImage: private/registry/br`，那么使用镜像 `private/registry/br:${tikv_version}` 进行备份。
+    * 如果未指定或者为空，默认使用镜像 `pingcap/br:${tikv_version}` 进行备份。
+    * 如果指定了 BR 的版本，例如 `.spec.toolImage: pingcap/br:v9.0.0`，那么使用指定的版本镜像进行备份。
+    * 如果指定了镜像但未指定版本，例如 `.spec.toolImage: private/registry/br`，那么使用镜像 `private/registry/br:${tikv_version}` 进行备份。
 
 * `.spec.env`：指定运行压缩备份任务的 Pod 的环境变量信息。
 * `.spec.affinity`：指定运行备份任务的 Pod 亲和性 (affinity) 配置。关于亲和性的详细说明，请参阅[亲和性与反亲和性](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)。
@@ -277,42 +223,12 @@ summary: 介绍用于备份与恢复的 Custom Resource (CR) 资源的各字段�
 
 为了对 Kubernetes 上的 TiDB 集群进行数据恢复，用户可以通过创建一个自定义的 `Restore` CR 对象来描述一次恢复，具体恢复过程可参考[备份与恢复简介](backup-restore-overview.md#数据恢复)中列出的文档。以下介绍 Restore CR 各个字段的具体含义。
 
-* `.spec.metadata.namespace`：`Restore` CR 所在的 namespace。
-* `.spec.toolImage`：用于指定 `Restore` 使用的工具镜像。TiDB Operator 从 v1.1.9 版本起支持这项配置。
-    - 使用 BR 恢复时，可以用该字段指定 BR 的版本。例如，`spec.toolImage: pingcap/br:v5.3.0`。如果不指定，默认使用 `pingcap/br:${tikv_version}` 进行恢复。
-    - 使用 Lightning 恢复时，可以用该字段指定 Lightning 的版本，例如`spec.toolImage: pingcap/lightning:v5.3.0`。如果不指定，默认使用 [Backup Manager Dockerfile](https://github.com/pingcap/tidb-operator/blob/v1.6.1/images/tidb-backup-manager/Dockerfile) 文件中 `TOOLKIT_VERSION` 指定的 Lightning 版本进行恢复。
+* `.spec.toolImage`：用于指定 `Restore` 使用的工具镜像，例如，`spec.toolImage: pingcap/br:v5.3.0`。如果不指定，默认使用 `pingcap/br:${tikv_version}` 进行恢复。
 
 * `.spec.backupType`：指定 Restore 类型，该字段仅在使用 BR 恢复时有效，目前支持以下三种类型，可以结合 `.spec.tableFilter` 配置表库过滤规则：
     * `full`：对 TiDB 集群所有的 database 数据执行备份。
     * `db`：对 TiDB 集群一个 database 的数据执行备份。
     * `table`：对 TiDB 集群表的数据执行备份。
-
-* `.spec.tikvGCLifeTime`：数据恢复中的临时 `tikv_gc_life_time` 时间设置，默认为 72h。
-
-    在数据恢复开始之前，若 TiDB 集群的 `tikv_gc_life_time` 小于用户设置的 `spec.tikvGCLifeTime`，为了保证恢复的数据不被 TiKV GC 掉，TiDB Operator 会在恢复前[调节 `tikv_gc_life_time`](https://docs.pingcap.com/zh/tidb/stable/dumpling-overview#导出大规模数据时的-tidb-gc-设置) 为 `spec.tikvGCLifeTime`。
-
-    数据恢复结束后，不论成功或者失败，如果旧的 `tikv_gc_life_time` 小于设置的 `.spec.tikvGCLifeTime`，TiDB Operator 会尝试设置 `tikv_gc_life_time` 为恢复前的旧值。在极端情况下，如果 TiDB Operator 访问数据库失败，TiDB Operator 将无法自动恢复 `tikv_gc_life_time` 并认为数据恢复失败。
-
-    此时，可以通过下述语句查看当前 TiDB 集群的 `tikv_gc_life_time`：
-
-    ```sql
-    select VARIABLE_NAME, VARIABLE_VALUE from mysql.tidb where VARIABLE_NAME like "tikv_gc_life_time";
-    ```
-
-    如果发现 `tikv_gc_life_time` 值过大（通常为 10m），则需要按照[调节 `tikv_gc_life_time`](https://docs.pingcap.com/zh/tidb/stable/dumpling-overview#导出大规模数据时的-tidb-gc-设置) 将 `tikv_gc_life_time` 调回原样。
-
-* `.spec.to.host`：待恢复 TiDB 集群的访问地址。
-* `.spec.to.port`：待恢复 TiDB 集群的访问端口。
-* `.spec.to.user`：待恢复 TiDB 集群的访问用户。
-* `.spec.to.secretName`：存储 `.spec.to.user` 用户的密码的 secret。
-* `.spec.to.tlsClientSecretName`：指定恢复备份使用的存储证书的 Secret。
-
-    如果 TiDB 集群开启了 [TLS](enable-tls-between-components.md)，但是不想使用[文档](enable-tls-between-components.md)中创建的 `${cluster_name}-cluster-client-secret` 恢复备份，可以通过这个参数为恢复备份指定一个 Secret，可以通过如下命令生成：
-
-    
-    ```shell
-    kubectl create secret generic ${secret_name} --namespace=${namespace} --from-file=tls.crt=${cert_path} --from-file=tls.key=${key_path} --from-file=ca.crt=${ca_path}
-    ```
 
 * `.spec.resources`：指定运行恢复任务的 Pod 的资源请求与上限值。
 * `.spec.env`：指定运行恢复任务的 Pod 的环境变量信息。
@@ -325,17 +241,7 @@ summary: 介绍用于备份与恢复的 Custom Resource (CR) 资源的各字段�
 * `.spec.useKMS`：指定恢复时是否使用 AWS-KMS 解密备份使用的 S3 存储密钥。
 * `.spec.storageClassName`：指定恢复时所需的 PV 类型。
 * `.spec.storageSize`：指定恢复集群时所需的 PV 大小。该值应大于 TiDB 集群备份的数据大小。
-* `.spec.tableFilter`：恢复时指定让 BR 恢复符合 [table-filter 规则](https://docs.pingcap.com/zh/tidb/stable/table-filter/) 的表。默认情况下该字段可以不用配置。
-
-    当不配置时，如果使用 TiDB Lightning 恢复，`tableFilter` 字段的默认值如下：
-
-    ```bash
-    tableFilter:
-    - "*.*"
-    - "!/^(mysql|test|INFORMATION_SCHEMA|PERFORMANCE_SCHEMA|METRICS_SCHEMA|INSPECTION_SCHEMA)$/.*"
-    ```
-
-    当不配置时，如果使用 BR 恢复，BR 会恢复备份文件中的所有数据库。
+* `.spec.tableFilter`：恢复时指定让 BR 恢复符合 [table-filter 规则](https://docs.pingcap.com/zh/tidb/stable/table-filter/) 的表。默认情况下该字段可以不用配置。当不配置时，BR 会恢复备份文件中的所有数据库。
 
     > **注意：**
     >
@@ -369,5 +275,4 @@ summary: 介绍用于备份与恢复的 Custom Resource (CR) 资源的各字段�
     + `.spec.maxBackups`：一种备份保留策略，决定定时备份最多可保留的备份个数。超过该数目，就会将过时的备份删除。如果将该项设置为 `0`，则表示保留所有备份。
     + `.spec.maxReservedTime`：一种备份保留策略，按时间保留备份。例如将该参数设置为 `24h`，表示只保留最近 24 小时内的备份条目。超过这个时间的备份都会被清除。时间设置格式参考 [`func ParseDuration`](https://golang.org/pkg/time/#ParseDuration)。如果同时设置 `.spec.maxBackups` 和 `.spec.maxReservedTime`，则以 `.spec.maxReservedTime` 为准。
     + `.spec.schedule`：Cron 的时间调度格式。具体格式可参考 [Cron](https://en.wikipedia.org/wiki/Cron)。
-    + `.spec.compactInterval`：用于触发新压缩任务的时间间隔。
     + `.spec.pause`：是否暂停定时备份，默认为 `false`。如果将该值设置为 `true`，表示暂停定时备份，此时即使到了指定时间点，也不会进行备份。在定时备份暂停期间，备份 Garbage Collection (GC) 仍然正常进行。如需重新开启定时快照备份，将 `true` 改为`false`。由于目前日志备份暂不支持暂停，因此该配置对日志备份无效。

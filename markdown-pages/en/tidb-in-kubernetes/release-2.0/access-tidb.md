@@ -1,68 +1,107 @@
 ---
 title: Access the TiDB Cluster on Kubernetes
 summary: Learn how to access the TiDB cluster on Kubernetes.
-aliases: ['/docs/tidb-in-kubernetes/dev/access-tidb/']
 ---
 
-# Access the TiDB Cluster
+# Access the TiDB Cluster on Kubernetes
 
-This document describes how to access the TiDB cluster.
+This document describes how to access a TiDB cluster through a Kubernetes [Service](https://kubernetes.io/docs/concepts/services-networking/service/). You can configure the Service as one of the following types, depending on your access requirements:
 
-You can configure Service with different types according to the scenarios, such as `ClusterIP`, `NodePort`, `LoadBalancer`, etc., and use different access methods for different types.
-
-You can obtain TiDB Service information by running the following command:
-
-
-```shell
-kubectl get svc ${serviceName} -n ${namespace}
-```
-
-For example:
-
-```
-# kubectl get svc basic-tidb -n default
-NAME         TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)                          AGE
-basic-tidb   NodePort   10.233.6.240   <none>        4000:32498/TCP,10080:30171/TCP   61d
-```
-
-The above example describes the information of the `basic-tidb` service in the `default` namespace. The type is `NodePort`, ClusterIP is `10.233.6.240`, ServicePort is `4000` and `10080`, and the corresponding NodePort is `32498` and `30171`.
-
-> **Note:**
->
-> [The default authentication plugin of MySQL 8.0](https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin) is updated from `mysql_native_password` to `caching_sha2_password`. Therefore, if you use MySQL client from MySQL 8.0 to access the TiDB service (TiDB version earlier than v4.0.7), and if the user account has a password, you need to explicitly specify the `--default-auth=mysql_native_password` parameter.
+* [`ClusterIP`](#clusterip): for access from within the Kubernetes cluster only.
+* [`NodePort`](#nodeport): for access from outside the cluster (recommended for test environments).
+* [`LoadBalancer`](#loadbalancer): for access through your cloud provider's LoadBalancer feature (recommended for production environments).
 
 ## ClusterIP
 
-`ClusterIP` exposes services through the internal IP of the cluster. When selecting this type of service, you can only access it within the cluster by the following methods:
+The `ClusterIP` Service type exposes the TiDB cluster using an internal IP address. It is only accessible from within the Kubernetes cluster.
 
-* ClusterIP + ServicePort
-* Service domain name (`${serviceName}.${namespace}`) + ServicePort
+You can access the TiDB cluster using one of the following DNS formats:
+
+* `basic-tidb`: access is limited to the same namespace.
+* `basic-tidb.default`: support cross-namespace access.
+* `basic-tidb.default.svc`: support cross-namespace access.
+
+In these formats, `basic-tidb` is the Service name, and `default` is the namespace. For more information, see [DNS for Services and Pods](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#namespaces-of-services).
+
+Each TiDBGroup automatically creates a Service that provides access to all TiDB instances in that group. For example, the TiDBGroup `tidb-0` creates an internal Service named `tidb-0-tidb`.
+
+You can directly use the default Service to access TiDB, or create a custom Service as needed.
+
+The following YAML example defines a Service that provides access to all TiDB nodes in the `db` cluster:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: tidb
+spec:
+  selector:
+    pingcap.com/managed-by: tidb-operator
+    pingcap.com/cluster: db
+    pingcap.com/component: tidb
+  ports:
+    - name: mysql
+      protocol: TCP
+      port: 4000
+      targetPort: mysql-client
+```
+
+The following YAML example defines a Service that provides access to all TiDB nodes in the TiDBGroup `tidb-0` of the cluster `db`:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: tidb-0
+spec:
+  selector:
+    pingcap.com/managed-by: tidb-operator
+    pingcap.com/cluster: db
+    pingcap.com/component: tidb
+    pingcap.com/group: tidb-0
+  ports:
+    - name: mysql
+      protocol: TCP
+      port: 4000
+      targetPort: mysql-client
+```
 
 ## NodePort
 
-If there is no LoadBalancer, you can choose to expose the service through NodePort. NodePort exposes services through the node's IP and static port. You can access a NodePort service from outside of the cluster by requesting `NodeIP + NodePort`.
+In environments without a LoadBalancer, you can use a `NodePort` Service to expose TiDB outside the Kubernetes cluster. This allows access using the node's IP address and a specific port. For more information, see [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport).
 
-To view the Node Port assigned by Service, run the following commands to obtain the Service object of TiDB:
+> **Note:**
+>
+> It is not recommended to use `NodePort` in production environments. For production environments on cloud platforms, use the `LoadBalancer` type instead.
 
+The following is an example:
 
-```shell
-kubectl -n ${namespace} get svc ${cluster_name}-tidb -ojsonpath="{.spec.ports[?(@.name=='mysql-client')].nodePort}{'\n'}"
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: tidb-0
+spec:
+  type: NodePort
+  selector:
+    pingcap.com/managed-by: tidb-operator
+    pingcap.com/cluster: db
+    pingcap.com/component: tidb
+    pingcap.com/group: tidb-0
+  ports:
+    - name: mysql
+      protocol: TCP
+      port: 4000
+      targetPort: mysql-client
 ```
-
-To check you can access TiDB services by using the IP of what nodes, see the following two cases:
-
-- When `externalTrafficPolicy` is configured as `Cluster`, you can use the IP of any node to access TiDB services.
-- When `externalTrafficPolicy` is configured as `Local`, use the following commands to get the nodes where the TiDB instance of a specified cluster is located:
-
-    
-    ```shell
-    kubectl -n ${namespace} get pods -l "app.kubernetes.io/component=tidb,app.kubernetes.io/instance=${cluster_name}" -ojsonpath="{range .items[*]}{.spec.nodeName}{'\n'}{end}"
-    ```
 
 ## LoadBalancer
 
-If the TiDB cluster runs in an environment with LoadBalancer, such as on Google Cloud or AWS, it is recommended to use the LoadBalancer feature of these cloud platforms by setting `tidb.service.type=LoadBalancer`.
+On cloud platforms that support LoadBalancer (such as Google Cloud or AWS), it is recommended to use the platform's LoadBalancer feature to expose TiDB. This approach provides higher availability and better load balancing.
 
-To access TiDB Service through LoadBalancer, refer to [EKS](deploy-on-aws-eks.md#install-the-mysql-client-and-connect) and [GKE](deploy-on-gcp-gke.md#install-the-mysql-client-and-connect).
+For more information, see the following documents:
 
-See [Kubernetes Service Documentation](https://kubernetes.io/docs/concepts/services-networking/service/) to know more about the features of Service and what LoadBalancer in the cloud platform supports.
+- [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/)
+- [Google Cloud LoadBalancer Service](https://cloud.google.com/kubernetes-engine/docs/concepts/service-load-balancer)
+
+To learn more about Kubernetes Service types and cloud provider support for LoadBalancer, see the [Kubernetes Service documentation](https://kubernetes.io/docs/concepts/services-networking/service/).

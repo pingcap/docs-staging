@@ -1,7 +1,6 @@
 ---
 title: 使用 BR 恢复 S3 兼容存储上的备份数据
 summary: 介绍如何使用 BR 恢复 Amazon S3 兼容存储上的备份数据。
-aliases: ['/docs-cn/tidb-in-kubernetes/dev/restore-from-aws-s3-using-br/']
 ---
 
 # 使用 BR 恢复 S3 兼容存储上的备份数据
@@ -23,7 +22,7 @@ PITR 全称为 Point-in-time recovery，该功能可以让你在新集群上恢�
 
 ## 全量恢复
 
-本节示例将存储在 Amazon S3 上指定路径 `spec.s3.bucket` 存储桶中 `spec.s3.prefix` 文件夹下的快照备份数据恢复到 namespace `test2` 中的 TiDB 集群 `demo2`。以下是具体的操作过程。
+本节示例将存储在 Amazon S3 上指定路径 `spec.s3.bucket` 存储桶中 `spec.s3.prefix` 文件夹下的快照备份数据恢复到 namespace `test1` 中的 TiDB 集群 `demo2`。以下是具体的操作过程。
 
 ### 前置条件：完成数据备份
 
@@ -33,42 +32,68 @@ PITR 全称为 Point-in-time recovery，该功能可以让你在新集群上恢�
 
 使用 BR 将 S3 兼容存储上的备份数据恢复到 TiDB 前，请按照以下步骤准备恢复环境。
 
-1. 创建一个用于管理恢复的 namespace，这里创建了名为 `restore-test` 的 namespace。
+> **注意：**
+>
+> - BR 使用的 ServiceAccount 名称为固定值，必须为 `tidb-backup-manager`。
+> - 从 TiDB Operator v2 开始，`Backup`、`Restore` 等资源的 `apiGroup` 从 `pingcap.com` 修改为 `br.pingcap.com`。
 
-    ```shell
-    kubectl create namespace restore-test
+1. 将以下内容保存为 `backup-rbac.yaml` 文件，用于创建所需的 RBAC 资源：
+
+    ```yaml
+    ---
+    kind: Role
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: tidb-backup-manager
+      labels:
+        app.kubernetes.io/component: tidb-backup-manager
+    rules:
+    - apiGroups: [""]
+      resources: ["events"]
+      verbs: ["*"]
+    - apiGroups: ["br.pingcap.com"]
+      resources: ["backups", "restores"]
+      verbs: ["get", "watch", "list", "update"]
+
+    ---
+    kind: ServiceAccount
+    apiVersion: v1
+    metadata:
+      name: tidb-backup-manager
+
+    ---
+    kind: RoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: tidb-backup-manager
+      labels:
+        app.kubernetes.io/component: tidb-backup-manager
+    subjects:
+    - kind: ServiceAccount
+      name: tidb-backup-manager
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: tidb-backup-manager
     ```
 
-2. 下载文件 [backup-rbac.yaml](https://github.com/pingcap/tidb-operator/blob/v1.6.1/manifests/backup/backup-rbac.yaml)，并执行以下命令在 `restore-test` 这个 namespace 中创建恢复需要的 RBAC 相关资源：
+2. 执行以下命令在 namespace `test1` 中创建备份需要的 RBAC 相关资源：
 
-    
     ```shell
-    kubectl apply -f backup-rbac.yaml -n restore-test
+    kubectl apply -f backup-rbac.yaml -n test1
     ```
 
-3. 为刚创建的 namespace `restore-test` 授予远程存储访问权限。
+3. 为 namespace `test1` 授予远程存储访问权限：
 
-    - 如果要恢复的数据在 Amazon S3 上，可以使用三种权限授予方式授予权限，可参考文档 [AWS 账号授权](grant-permissions-to-remote-storage.md#aws-账号授权)。
-    - 如果要恢复的数据在其他兼容 S3 的存储上，例如 Ceph、MinIO，可以使用 AccessKey 和 SecretKey 模式授权，可参考文档[通过 AccessKey 和 SecretKey 授权](grant-permissions-to-remote-storage.md#通过-accesskey-和-secretkey-授权)。
-
-4. 如果你使用的 TiDB 版本低于 v4.0.8，你还需要进行以下操作。如果你使用的 TiDB 为 v4.0.8 及以上版本，请跳过此步骤。
-
-    1. 确保你拥有恢复数据库 `mysql.tidb` 表的 `SELECT` 和 `UPDATE` 权限，用于恢复前后调整 GC 时间。
-
-    2. 创建 `restore-demo2-tidb-secret` secret 用于存放访问 TiDB 集群的 root 账号和密钥。
-
-        
-        ```shell
-        kubectl create secret generic restore-demo2-tidb-secret --from-literal=password=${password} --namespace=test2
-        ```
+    - 如果使用 Amazon S3 来备份集群，可以使用三种方式授予权限，可参考文档 [AWS 账号授权](grant-permissions-to-remote-storage.md#aws-账号授权)。
+    - 如果使用其他兼容 S3 的存储来备份集群，例如 Ceph、MinIO，可以使用 AccessKey 和 SecretKey 授权的方式，可参考文档[通过 AccessKey 和 SecretKey 授权](grant-permissions-to-remote-storage.md#通过-accesskey-和-secretkey-授权)。
 
 ### 第 2 步：将指定备份数据恢复到 TiDB 集群
 
 根据上一步选择的远程存储访问授权方式，你需要使用下面对应的方法将备份数据恢复到 TiDB：
 
-+ 方法 1: 如果通过了 accessKey 和 secretKey 的方式授权，你可以按照以下说明创建 `Restore` CR 恢复集群数据：
++ 方法 1：如果通过了 accessKey 和 secretKey 的方式授权，你可以按照以下说明创建 `Restore` CR 恢复集群数据：
 
-    
     ```shell
     kubectl apply -f restore-full-s3.yaml
     ```
@@ -77,15 +102,14 @@ PITR 全称为 Point-in-time recovery，该功能可以让你在新集群上恢�
 
     ```yaml
     ---
-    apiVersion: pingcap.com/v1alpha1
+    apiVersion: br.pingcap.com/v1alpha1
     kind: Restore
     metadata:
       name: demo2-restore-s3
-      namespace: restore-test
+      namespace: test1
     spec:
       br:
         cluster: demo2
-        clusterNamespace: test2
         # logLevel: info
         # statusAddr: ${status_addr}
         # concurrency: 4
@@ -101,9 +125,8 @@ PITR 全称为 Point-in-time recovery，该功能可以让你在新集群上恢�
         prefix: my-full-backup-folder
     ```
 
-+ 方法 2: 如果通过了 IAM 绑定 Pod 的方式授权，你可以按照以下说明创建 `Restore` CR 恢复集群数据：
++ 方法 2：如果通过了 IAM 绑定 Pod 的方式授权，你可以按照以下说明创建 `Restore` CR 恢复集群数据：
 
-    
     ```shell
     kubectl apply -f restore-full-s3.yaml
     ```
@@ -112,18 +135,17 @@ PITR 全称为 Point-in-time recovery，该功能可以让你在新集群上恢�
 
     ```yaml
     ---
-    apiVersion: pingcap.com/v1alpha1
+    apiVersion: br.pingcap.com/v1alpha1
     kind: Restore
     metadata:
       name: demo2-restore-s3
-      namespace: restore-test
+      namespace: test1
       annotations:
         iam.amazonaws.com/role: arn:aws:iam::123456789012:role/user
     spec:
       br:
         cluster: demo2
         sendCredToTikv: false
-        clusterNamespace: test2
         # logLevel: info
         # statusAddr: ${status_addr}
         # concurrency: 4
@@ -137,9 +159,8 @@ PITR 全称为 Point-in-time recovery，该功能可以让你在新集群上恢�
         prefix: my-full-backup-folder
     ```
 
-+ 方法 3: 如果通过了 IAM 绑定 ServiceAccount 的方式授权，你可以按照以下说明创建 `Restore` CR 恢复集群数据：
++ 方法 3：如果通过了 IAM 绑定 ServiceAccount 的方式授权，你可以按照以下说明创建 `Restore` CR 恢复集群数据：
 
-    
     ```shell
     kubectl apply -f restore-full-s3.yaml
     ```
@@ -148,17 +169,16 @@ PITR 全称为 Point-in-time recovery，该功能可以让你在新集群上恢�
 
     ```yaml
     ---
-    apiVersion: pingcap.com/v1alpha1
+    apiVersion: br.pingcap.com/v1alpha1
     kind: Restore
     metadata:
       name: demo2-restore-s3
-      namespace: restore-test
+      namespace: test1
     spec:
       serviceAccount: tidb-backup-manager
       br:
         cluster: demo2
         sendCredToTikv: false
-        clusterNamespace: test2
         # logLevel: info
         # statusAddr: ${status_addr}
         # concurrency: 4
@@ -181,7 +201,6 @@ PITR 全称为 Point-in-time recovery，该功能可以让你在新集群上恢�
 
 创建好 `Restore` CR 后，可通过以下命令查看恢复的状态：
 
-
 ```shell
 kubectl get restore -n restore-test -o wide
 ```
@@ -193,7 +212,7 @@ demo2-restore-s3   Complete   ...
 
 ## PITR 恢复
 
-本节示例在 namespace `test3` 中的 TiDB 集群 `demo3` 上执行 PITR 恢复，分为以下两步：
+本节示例在 namespace `test1` 中的 TiDB 集群 `demo3` 上执行 PITR 恢复，分为以下两步：
 
 1. 使用 `spec.pitrFullBackupStorageProvider.s3.bucket` 存储桶中 `spec.pitrFullBackupStorageProvider.s3.prefix` 文件夹下的快照备份数据，将集群恢复到快照备份的时刻点。
 2. 使用 `spec.s3.bucket` 存储桶中 `spec.s3.prefix` 文件夹下的日志备份的增量数据，将集群恢复到备份集群的历史任意时刻点。
@@ -215,30 +234,13 @@ demo2-restore-s3   Complete   ...
 
 ### 第 1 步：准备恢复环境
 
-使用 BR 将 S3 兼容存储上的备份数据恢复到 TiDB 前，请按照以下步骤准备恢复环境。
-
-1. 创建一个用于管理恢复的 namespace，这里创建了名为 `restore-test` 的 namespace。
-
-    ```shell
-    kubectl create namespace restore-test
-    ```
-
-2. 下载文件 [backup-rbac.yaml](https://github.com/pingcap/tidb-operator/blob/v1.6.1/manifests/backup/backup-rbac.yaml)，并执行以下命令在 `restore-test` 这个 namespace 中创建备份需要的 RBAC 相关资源：
-
-    ```shell
-    kubectl apply -f backup-rbac.yaml -n restore-test
-    ```
-
-3. 为刚创建的 namespace `restore-test` 授予远程存储访问权限。
-
-    - 如果要恢复的数据在 Amazon S3 上，可以使用三种权限授予方式授予权限，可参考文档 [AWS 账号授权](grant-permissions-to-remote-storage.md#aws-账号授权)。
-    - 如果要恢复的数据在其他兼容 S3 的存储上，例如 Ceph、MinIO，可以使用 AccessKey 和 SecretKey 模式授权，可参考文档[通过 AccessKey 和 SecretKey 授权](grant-permissions-to-remote-storage.md#通过-accesskey-和-secretkey-授权)。
+参考[使用 BR 恢复 S3 兼容存储上的备份数据](#第-1-步准备恢复环境)。
 
 ### 第 2 步：将指定备份数据恢复到 TiDB 集群
 
 本节示例中首先将快照备份恢复到集群中，因此 PITR 的恢复时刻点需要在[快照备份的时刻点](backup-to-aws-s3-using-br.md#查看快照备份的状态)之后，并在[日志备份的最新恢复点](backup-to-aws-s3-using-br.md#查看日志备份的状态)之前。PITR 恢复对远程存储访问授权方式与快照备份恢复一致。本节示例对远程存储访问授权方式仅以通过 accessKey 和 secretKey 的方式为例，具体步骤如下：
 
-1. 在 `restore-test` 这个 namespace 中产生一个名为 `demo3-restore-s3` 的 `Restore` CR，并指定恢复到 `2022-10-10T17:21:00+08:00`:
+1. 在 `restore-test` 这个 namespace 中产生一个名为 `demo3-restore-s3` 的 `Restore` CR，并指定恢复到 `2022-10-10T17:21:00+08:00`：
 
     ```shell
     kubectl apply -f restore-point-s3.yaml
@@ -248,16 +250,15 @@ demo2-restore-s3   Complete   ...
 
     ```yaml
     ---
-    apiVersion: pingcap.com/v1alpha1
+    apiVersion: br.pingcap.com/v1alpha1
     kind: Restore
     metadata:
       name: demo3-restore-s3
-      namespace: restore-test
+      namespace: test1
     spec:
       restoreMode: pitr
       br:
         cluster: demo3
-        clusterNamespace: test3
       s3:
         provider: aws
         region: us-west-1

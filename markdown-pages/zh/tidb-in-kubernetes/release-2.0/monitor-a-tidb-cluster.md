@@ -1,7 +1,6 @@
 ---
 title: TiDB 集群的监控与告警
 summary: 介绍如何监控 TiDB 集群。
-aliases: ['/docs-cn/tidb-in-kubernetes/dev/monitor-a-tidb-cluster/', '/docs-cn/tidb-in-kubernetes/dev/monitor-using-tidbmonitor/', '/zh/tidb-in-kubernetes/dev/monitor-using-tidbmonitor/']
 ---
 
 # TiDB 集群的监控与告警
@@ -10,357 +9,258 @@ aliases: ['/docs-cn/tidb-in-kubernetes/dev/monitor-a-tidb-cluster/', '/docs-cn/t
 
 ## TiDB 集群的监控
 
-TiDB 通过 Prometheus 和 Grafana 监控 TiDB 集群。在通过 TiDB Operator 创建新的 TiDB 集群时，可以对于每个 TiDB 集群，创建、配置一套独立的监控系统，与 TiDB 集群运行在同一 Namespace，包括 Prometheus 和 Grafana 两个组件。
+TiDB 集群的监控包括两部分：[监控数据采集](#监控数据采集)和[监控面板](#监控面板)。你可以使用 [Prometheus](https://prometheus.io/) 或 [VictoriaMetrics](https://victoriametrics.com/) 等开源组件采集监控数据，然后通过 [Grafana](https://grafana.com/) 实现监控面板的展示。
 
-在 [TiDB 集群监控](https://docs.pingcap.com/zh/tidb/stable/deploy-monitoring-services)中有一些监控系统配置的细节可供参考。
+![TiDB 集群的监控架构](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/overview-of-monitoring-tidb-clusters.png)
 
-在 v1.1 及更高版本的 TiDB Operator 中，可以通过简单的 CR 文件（即 TidbMonitor，可参考 [tidb-operator 中的示例](https://github.com/pingcap/tidb-operator/blob/v1.6.1/manifests/monitor/tidb-monitor.yaml)）来快速建立对 Kubernetes 集群上的 TiDB 集群的监控。
+### 监控数据采集
 
-> **注意：**
->
-> * `spec.clusters[].name` 需要配置为 TiDB 集群 TidbCluster 的名字。
+#### 使用 Prometheus 采集监控数据
 
-### 持久化监控数据
+使用 Prometheus 采集监控数据的步骤如下：
 
-可以在 `TidbMonitor` 中设置 `spec.persistent` 为 `true` 来持久化监控数据。开启此选项时应将 `spec.storageClassName` 设置为一个当前集群中已有的存储，并且此存储应当支持将数据持久化，否则会存在数据丢失的风险。配置示例如下：
+1. 参考 [Prometheus Operator 官方文档](https://prometheus-operator.dev/docs/getting-started/installation/)，在 Kubernetes 集群中部署 Prometheus Operator，本文档以 `v0.82.0` 版本为例。
 
+2. 在每个 TiDB 集群所在的命名空间中创建一个 `PodMonitor` Custom Resource (CR)：
 
-```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbMonitor
-metadata:
-  name: basic
-spec:
-  clusters:
-    - name: basic
-  persistent: true
-  storageClassName: ${storageClassName}
-  storage: 5G
-  prometheus:
-    baseImage: prom/prometheus
-    version: v2.27.1
-    service:
-      type: NodePort
-  grafana:
-    baseImage: grafana/grafana
-    version: 7.5.11
-    service:
-      type: NodePort
-  initializer:
-    baseImage: pingcap/tidb-monitor-initializer
-    version: v8.5.0
-  reloader:
-    baseImage: pingcap/tidb-monitor-reloader
-    version: v1.0.1
-  prometheusReloader:
-    baseImage: quay.io/prometheus-operator/prometheus-config-reloader
-    version: v0.49.0
-  imagePullPolicy: IfNotPresent
-```
+    ```yaml
+    apiVersion: monitoring.coreos.com/v1
+    kind: PodMonitor
+    metadata:
+      name: tidb-cluster-pod-monitor
+      namespace: ${tidb_cluster_namespace}
+      labels:
+        monitor: tidb-cluster
+    spec:
+      jobLabel: "pingcap.com/component"
+      namespaceSelector:
+        matchNames:
+          - ${tidb_cluster_namespace}
+      selector:
+        matchLabels:
+          app.kubernetes.io/managed-by: tidb-operator
+      podMetricsEndpoints:
+        - interval: 15s
+          # 若 TiDB 集群启用了 TLS，则设置为 https，否则设置为 http
+          scheme: https
+          honorLabels: true
+          # 若 TiDB 集群启用了 TLS，则需配置 tlsConfig，否则无需配置
+          tlsConfig:
+            ca:
+              secret:
+                name: db-cluster-client-secret
+                key: ca.crt
+            cert:
+              secret:
+                name: db-cluster-client-secret
+                key: tls.crt
+            keySecret:
+              name: db-cluster-client-secret
+              key: tls.key
+          metricRelabelings:
+            - action: labeldrop
+              regex: container
+          relabelings:
+            - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: "true"
+            - sourceLabels:
+                - __meta_kubernetes_pod_name
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+                - __meta_kubernetes_pod_label_app_kubernetes_io_component
+                - __meta_kubernetes_namespace
+                - __meta_kubernetes_pod_annotation_prometheus_io_port
+              action: replace
+              regex: (.+);(.+);(.+);(.+);(.+)
+              replacement: $1.$2-$3-peer.$4:$5
+              targetLabel: __address__
+            - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              targetLabel: __metrics_path__
+            - sourceLabels: [__meta_kubernetes_namespace]
+              targetLabel: kubernetes_namespace
+            - sourceLabels: [__meta_kubernetes_pod_label_app_kubernetes_io_instance]
+              targetLabel: cluster
+            - sourceLabels: [__meta_kubernetes_pod_name]
+              targetLabel: instance
+            - sourceLabels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+              targetLabel: component
+            - sourceLabels:
+                - __meta_kubernetes_namespace
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+              separator: '-'
+              targetLabel: tidb_cluster
+    ```
 
-你可以通过以下命令来确认 PVC 情况:
+3. 参考 [Prometheus Operator 官方文档](https://prometheus-operator.dev/docs/platform/platform-guide/#deploying-prometheus)，创建一个 `Prometheus` CR 用来采集监控指标，确保为 ServiceAccount 分配必要权限：
 
+    ```yaml
+    apiVersion: monitoring.coreos.com/v1
+    kind: Prometheus
+    metadata:
+      name: prometheus
+      namespace: monitoring
+    spec:
+      serviceAccountName: prometheus
+      externalLabels:
+        k8s_cluster: ${your_k8s_cluster_name}
+      podMonitorSelector:
+        matchLabels:
+          monitor: tidb-cluster
+      # podMonitorNamespaceSelector 设置为空，表示采集所有命名空间中的 PodMonitor
+      podMonitorNamespaceSelector: {}
+    ```
 
-```shell
-kubectl get pvc -l app.kubernetes.io/instance=basic,app.kubernetes.io/component=monitor -n ${namespace}
-```
+4. 运行以下 `kubectl port-forward` 命令，通过端口转发访问 Prometheus：
 
-```
-NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-basic-monitor   Bound    pvc-6db79253-cc9e-4730-bbba-ba987c29db6f   5G         RWO            standard       51s
-```
+    ```shell
+    kubectl port-forward -n monitoring prometheus-prometheus-0 9090:9090 &>/tmp/portforward-prometheus.log &
+    ```
 
-### 自定义 Prometheus 配置
+    然后在浏览器中访问 <http://localhost:9090/targets> 查看监控数据采集状态。
 
-用户可以通过自定义配置文件或增加额外的命令行参数，来自定义 Prometheus 配置。
+#### 使用 VictoriaMetrics 采集监控数据
 
-#### 使用自定义配置文件
+使用 VictoriaMetrics 部署监控数据采集的步骤如下：
 
-1. 为用户自定义配置创建 ConfigMap 并将 `data` 部分的键名设置为 `prometheus-config`。
-2. 设置 `spec.prometheus.config.configMapRef.name` 与 `spec.prometheus.config.configMapRef.namespace` 为自定义 ConfigMap 的名称与所属的 namespace。
-3. 确认 TidbMonitor 是否已开启[动态配置功能](enable-monitor-dynamic-configuration.md)，如果未开启该功能，需要重启 TidbMonitor 的 pod 重新加载配置。
+1. 参考 [VictoriaMetrics 官方文档](https://docs.victoriametrics.com/operator/quick-start/)，在 Kubernetes 集群中部署 VictoriaMetrics Operator，本文档以 `v0.58.1` 版本为例。
 
-如需了解完整的配置示例，可参考 [tidb-operator 中的示例](https://github.com/pingcap/tidb-operator/blob/v1.6.1/examples/monitor-with-externalConfigMap/prometheus/README.md)。
+2. 创建一个 `VMSingle` Custom Resource (CR) 用来存储监控指标：
 
-#### 增加额外的命令行参数
+    ```yaml
+    apiVersion: victoriametrics.com/v1beta1
+    kind: VMSingle
+    metadata:
+      name: demo
+      namespace: monitoring
+    ```
 
-设置 `spec.prometheus.config.commandOptions` 为用于启动 Prometheus 的额外的命令行参数。
+3. 创建一个 `VMAgent` CR 用来采集监控指标：
 
-如需了解完整的配置示例，可参考 [tidb-operator 中的示例](https://github.com/pingcap/tidb-operator/blob/v1.6.1/examples/monitor-with-externalConfigMap/prometheus/README.md)。
+    ```yaml
+    apiVersion: victoriametrics.com/v1beta1
+    kind: VMAgent
+    metadata:
+      name: demo
+      namespace: monitoring
+    spec:
+      # 配置远程写入，将采集到的监控指标写入 VMSingle
+      remoteWrite:
+        - url: "http://vmsingle-demo.monitoring.svc:8429/api/v1/write"
+      externalLabels:
+        k8s_cluster: ${your_k8s_cluster_name}
+      selectAllByDefault: true
+    ```
 
-> **注意：**
->
-> 以下参数已由 TidbMonitor controller 自动设置，不支持通过 `commandOptions` 重复指定：
->
-> - `config.file`
-> - `log.level`
-> - `web.enable-admin-api`
-> - `web.enable-lifecycle`
-> - `storage.tsdb.path`
-> - `storage.tsdb.retention`
-> - `storage.tsdb.max-block-duration`
-> - `storage.tsdb.min-block-duration`
+4. 在每个 TiDB 集群所在的命名空间中创建一个 `VMPodScrape` CR，用来发现 TiDB 集群的 Pod，并为 `VMAgent` 生成相应的 scrape 配置：
 
-### 访问 Grafana 监控面板
+    ```yaml
+    apiVersion: victoriametrics.com/v1beta1
+    kind: VMPodScrape
+    metadata:
+      name: tidb-cluster-pod-scrape
+      namespace: ${tidb_cluster_namespace}
+    spec:
+      jobLabel: "pingcap.com/component"
+      namespaceSelector:
+        matchNames:
+          - ${tidb_cluster_namespace}
+      selector:
+        matchLabels:
+          app.kubernetes.io/managed-by: tidb-operator
+      podMetricsEndpoints:
+        - interval: 15s
+          # 若 TiDB 集群启用了 TLS，则设置为 https，否则设置为 http
+          scheme: https
+          honorLabels: true
+          # 若 TiDB 集群启用了 TLS，则需配置 TLS 认证，否则无需配置
+          tlsConfig:
+            ca:
+              secret:
+                name: db-cluster-client-secret
+                key: ca.crt
+            cert:
+              secret:
+                name: db-cluster-client-secret
+                key: tls.crt
+            keySecret:
+              name: db-cluster-client-secret
+              key: tls.key
+          metricRelabelConfigs:
+            - action: labeldrop
+              regex: container
+          relabelConfigs:
+            - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: "true"
+            - sourceLabels:
+                - __meta_kubernetes_pod_name
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+                - __meta_kubernetes_pod_label_app_kubernetes_io_component
+                - __meta_kubernetes_namespace
+                - __meta_kubernetes_pod_annotation_prometheus_io_port
+              action: replace
+              regex: (.+);(.+);(.+);(.+);(.+)
+              replacement: $1.$2-$3-peer.$4:$5
+              targetLabel: __address__
+            - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              targetLabel: __metrics_path__
+            - sourceLabels: [__meta_kubernetes_namespace]
+              targetLabel: kubernetes_namespace
+            - sourceLabels: [__meta_kubernetes_pod_label_app_kubernetes_io_instance]
+              targetLabel: cluster
+            - sourceLabels: [__meta_kubernetes_pod_name]
+              targetLabel: instance
+            - sourceLabels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+              targetLabel: component
+            - sourceLabels:
+                - __meta_kubernetes_namespace
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+              separator: '-'
+              targetLabel: tidb_cluster
+    ```
 
-可以通过 `kubectl port-forward` 访问 Grafana 监控面板：
+5. 运行以下 `kubectl port-forward` 命令，通过端口转发访问 VMAgent：
 
+    ```shell
+    kubectl port-forward -n monitoring svc/vmagent-demo 8429:8429 &>/tmp/portforward-vmagent.log &
+    ```
 
-```shell
-kubectl port-forward -n ${namespace} svc/${cluster_name}-grafana 3000:3000 &>/tmp/portforward-grafana.log &
-```
+    然后在浏览器中访问 <http://localhost:8429/targets> 查看监控数据采集状态。
 
-然后在浏览器中打开 [http://localhost:3000](http://localhost:3000)，默认用户名和密码都为 `admin`。
+### 监控面板
 
-也可以设置 `spec.grafana.service.type` 为 `NodePort` 或者 `LoadBalancer`，通过 `NodePort` 或者 `LoadBalancer` 查看监控面板。
+配置监控面板的步骤如下：
 
-如果不需要使用 Grafana，可以在部署时将 `TidbMonitor` 中的 `spec.grafana` 部分删除。这一情况下需要使用其他已有或新部署的数据可视化工具直接访问监控数据来完成可视化。
+1. 参考 [Grafana 官方文档](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/#deploy-grafana-on-kubernetes)，在 Kubernetes 集群中部署 Grafana，本文档以 `12.0.0-security-01` 版本为例。
 
-### 访问 Prometheus 监控数据
+2. 运行以下 `kubectl port-forward` 命令，通过端口转发访问 Grafana 监控面板：
 
-对于需要直接访问监控数据的情况，可以通过 `kubectl port-forward` 来访问 Prometheus：
+    ```shell
+    kubectl port-forward -n ${namespace} ${grafana_pod_name} 3000:3000 &>/tmp/portforward-grafana.log &
+    ```
 
+3. 在浏览器中访问 <http://localhost:3000>，默认用户名和密码都为 `admin`。如果是通过 Helm 安装，可以使用以下命令查看 `admin` 密码：
 
-```shell
-kubectl port-forward -n ${namespace} svc/${cluster_name}-prometheus 9090:9090 &>/tmp/portforward-prometheus.log &
-```
+    ```shell
+    kubectl get secret --namespace ${namespace} ${grafana_secret_name} -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+    ```
 
-然后在浏览器中打开 [http://localhost:9090](http://localhost:9090)，或通过客户端工具访问此地址即可。
+4. 在 Grafana 中添加 Prometheus 类型的数据源，并配置 Prometheus Server URL：
 
-也可以设置 `spec.prometheus.service.type` 为 `NodePort` 或者 `LoadBalancer`，通过 `NodePort` 或者 `LoadBalancer` 访问监控数据。
+    - 如果使用 Prometheus 采集监控指标，设置 URL 为 `http://prometheus-operated.monitoring.svc:9090`。
+    - 如果使用 VictoriaMetrics 采集监控指标，设置 URL 为 `http://vmsingle-demo.monitoring.svc:8429`。
 
-### 设置 kube-prometheus 与 AlertManager
-
-TidbMonitor Grafana 默认内置了 Nodes-Info 与 Pods-Info 监控面板，用于查看 Kubernetes 对应的监控指标。
-
-如需在 TidbMonitor Grafana 中查看这些监控指标，请进行以下操作：
-
-1. 手动部署 Kubernetes 集群监控。
-
-    Kubernetes 集群监控有多种部署方式。如果要使用 kube-prometheus 部署, 可以参考 [kube-prometheus 文档](https://github.com/coreos/kube-prometheus)。
-
-2. 设置 `TidbMonitor.spec.kubePrometheusURL` 获取 Kubernetes 监控数据。
-
-同样的，你可以通过设置 TidbMonitor 来将监控推送警报至指定的 [AlertManager](https://prometheus.io/docs/alerting/alertmanager/)。
-
-
-```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbMonitor
-metadata:
-  name: basic
-spec:
-  clusters:
-    - name: basic
-  kubePrometheusURL: http://prometheus-k8s.monitoring:9090
-  alertmanagerURL: alertmanager-main.monitoring:9093
-  prometheus:
-    baseImage: prom/prometheus
-    version: v2.27.1
-    service:
-      type: NodePort
-  grafana:
-    baseImage: grafana/grafana
-    version: 7.5.11
-    service:
-      type: NodePort
-  initializer:
-    baseImage: pingcap/tidb-monitor-initializer
-    version: v8.5.0
-  reloader:
-    baseImage: pingcap/tidb-monitor-reloader
-    version: v1.0.1
-  prometheusReloader:
-    baseImage: quay.io/prometheus-operator/prometheus-config-reloader
-    version: v0.49.0
-  imagePullPolicy: IfNotPresent
-```
-
-## 开启 Ingress
-
-本节介绍如何为 TidbMonitor 开启 Ingress。[Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) 是一个 API 对象，负责管理集群中服务的外部访问。
-
-### 环境准备
-
-使用 `Ingress` 前，需要在 Kubernetes 集群中安装 `Ingress` 控制器，否则仅创建 `Ingress` 资源无效。你可能需要部署 `Ingress` 控制器，例如 [ingress-nginx](https://kubernetes.github.io/ingress-nginx/deploy/)。你可以从许多 [Ingress 控制器](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/)中进行选择。
-
-更多关于 `Ingress` 环境准备，可以参考 [Ingress 环境准备](https://kubernetes.io/zh/docs/concepts/services-networking/ingress/#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87)
-
-### 使用 Ingress 访问 TidbMonitor
-
-目前, `TidbMonitor` 提供了通过 Ingress 将 Prometheus/Grafana 服务暴露出去的方式，你可以通过 [Ingress 文档](https://kubernetes.io/zh/docs/concepts/services-networking/ingress/)了解更多关于 Ingress 的详情。
-
-以下是一个开启了 Prometheus 与 Grafana Ingress 的 `TidbMonitor` 例子：
-
-
-```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbMonitor
-metadata:
-  name: ingress-demo
-spec:
-  clusters:
-    - name: demo
-  persistent: false
-  prometheus:
-    baseImage: prom/prometheus
-    version: v2.27.1
-    ingress:
-      hosts:
-      - example.com
-      annotations:
-        foo: "bar"
-  grafana:
-    baseImage: grafana/grafana
-    version: 7.5.11
-    service:
-      type: ClusterIP
-    ingress:
-      hosts:
-        - example.com
-      annotations:
-        foo: "bar"
-  initializer:
-    baseImage: pingcap/tidb-monitor-initializer
-    version: v8.5.0
-  reloader:
-    baseImage: pingcap/tidb-monitor-reloader
-    version: v1.0.1
-  prometheusReloader:
-    baseImage: quay.io/prometheus-operator/prometheus-config-reloader
-    version: v0.49.0
-  imagePullPolicy: IfNotPresent
-```
-
-你可以通过 `spec.prometheus.ingress.annotations` 与 `spec.grafana.ingress.annotations` 来设置对应的 Ingress Annotations 的设置。如果你使用的是默认的 NGINX Ingress 方案，你可以在 [NGINX Ingress Controller Annotation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/) 了解更多关于 Annotations 的详情。
-
-`TidbMonitor` 的 Ingress 设置同样支持设置 TLS，以下是一个为 Ingress 设置 TLS 的例子。你可以通过 [Ingress TLS](https://kubernetes.io/zh/docs/concepts/services-networking/ingress/#tls) 来了解更多关于 Ingress TLS 的资料。
-
-
-```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbMonitor
-metadata:
-  name: ingress-demo
-spec:
-  clusters:
-    - name: demo
-  persistent: false
-  prometheus:
-    baseImage: prom/prometheus
-    version: v2.27.1
-    ingress:
-      hosts:
-      - example.com
-      tls:
-      - hosts:
-        - example.com
-        secretName: testsecret-tls
-  grafana:
-    baseImage: grafana/grafana
-    version: 7.5.11
-    service:
-      type: ClusterIP
-  initializer:
-    baseImage: pingcap/tidb-monitor-initializer
-    version: v8.5.0
-  reloader:
-    baseImage: pingcap/tidb-monitor-reloader
-    version: v1.0.1
-  prometheusReloader:
-    baseImage: quay.io/prometheus-operator/prometheus-config-reloader
-    version: v0.49.0
-  imagePullPolicy: IfNotPresent
-```
-
-TLS Secret 必须包含名为 tls.crt 和 tls.key 的密钥，这些密钥包含用于 TLS 的证书和私钥，例如：
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: testsecret-tls
-  namespace: ${namespace}
-data:
-  tls.crt: base64 encoded cert
-  tls.key: base64 encoded key
-type: kubernetes.io/tls
-```
-
-在公有云 Kubernetes 集群中，通常可以[配置 Loadbalancer](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/) 通过域名访问 Ingress。如果无法配置 Loadbalancer 服务，比如使用了 NodePort 作为 Ingress 的服务类型，可通过与如下命令等价的方式访问服务：
-
-```shell
-curl -H "Host: example.com" ${node_ip}:${NodePort}
-```
+5. 可以使用 [`get-grafana-dashboards.sh`](https://github.com/pingcap/tidb-operator/blob/feature/v2/hack/get-grafana-dashboards.sh) 脚本下载各组件的监控面板，然后手动导入到 Grafana 中。<!--TODO: update the GitHub link later -->
 
 ## 告警配置
 
-在随 TiDB 集群部署 Prometheus 时，会自动导入一些默认的告警规则，可以通过浏览器访问 Prometheus 的 Alerts 页面查看当前系统中的所有告警规则和状态。
+你可以通过 [AlertManager](https://github.com/prometheus/alertmanager) 管理与发送告警信息，具体的部署和配置步骤请参考 [Alertmanager 官方文档](https://prometheus.io/docs/alerting/alertmanager/)。
 
-目前支持自定义配置告警规则，可以参考下面步骤修改告警规则：
+## 使用 Grafana 查看多集群监控
 
-1. 在为 TiDB 集群部署监控的过程中，设置 `spec.reloader.service.type` 为 `NodePort` 或者 `LoadBalancer`。
-2. 通过 `NodePort` 或者 `LoadBalancer` 访问 reloader 服务，点击上方 `Files` 选择要修改的告警规则文件进行修改，修改完成后 `Save`。
+要使用 Grafana 查看多个集群的监控，请在每个 Grafana Dashboard 中进行以下操作：
 
-默认的 Prometheus 和告警配置不能发送告警消息，如需发送告警消息，可以使用任意支持 Prometheus 告警的工具与其集成。推荐通过 [AlertManager](https://prometheus.io/docs/alerting/alertmanager/) 管理与发送告警消息。
-
-如果在你的现有基础设施中已经有可用的 AlertManager 服务，可以参考[设置 kube-prometheus 与 AlertManager](#设置-kube-prometheus-与-alertmanager) 设置 `spec.alertmanagerURL` 配置其地址供 Prometheus 使用；如果没有可用的 AlertManager 服务，或者希望部署一套独立的服务，可以参考官方的[说明](https://github.com/prometheus/alertmanager)部署。
-
-## 多集群监控
-
-从 TiDB Operator 1.2 版本起，TidbMonitor 支持跨命名空间的多集群监控。
-
-### 使用 YAML 文件配置多集群监控
-
-无论要监控的集群是否已开启 `TLS`，你都可以通过配置 TidbMonitor 的 YAML 文件实现。
-
-配置示例如下:
-
-
-```yaml
-apiVersion: pingcap.com/v1alpha1
-kind: TidbMonitor
-metadata:
-  name: basic
-spec:
-  clusterScoped: true
-  clusters:
-    - name: ns1
-      namespace: ns1
-    - name: ns2
-      namespace: ns2
-  persistent: true
-  storage: 5G
-  prometheus:
-    baseImage: prom/prometheus
-    version: v2.27.1
-    service:
-      type: NodePort
-  grafana:
-    baseImage: grafana/grafana
-    version: 7.5.11
-    service:
-      type: NodePort
-  initializer:
-    baseImage: pingcap/tidb-monitor-initializer
-    version: v8.5.0
-  reloader:
-    baseImage: pingcap/tidb-monitor-reloader
-    version: v1.0.1
-  prometheusReloader:
-    baseImage: quay.io/prometheus-operator/prometheus-config-reloader
-    version: v0.49.0
-  imagePullPolicy: IfNotPresent
-```
-
-如需了解完整的配置示例，可参考 TiDB Operator 仓库中的[示例](https://github.com/pingcap/tidb-operator/tree/v1.6.1/examples/monitor-multiple-cluster-non-tls)。
-
-### 使用 Grafana 查看多集群监控
-
-当 `tidb-monitor-initializer` 镜像版本在 `< v4.0.14`、`< v5.0.3` 范围时，要使用 Grafana 查看多个集群的监控，请在每个 Grafana Dashboard 中进行以下操作：
-
-1. 点击 Grafana Dashboard 中的 **Dashboard settings** 选项，打开 **Settings** 面板。
-2. 在 **Settings** 面板中，选择 **Variables** 中的 **tidb_cluster** 变量，将 **tidb_cluster** 变量的 **Hide** 属性设置为空选项。
-3. 返回当前 Grafana Dashboard (目前无法保存对于 **Hide** 属性的修改)，即可看到集群选择下拉框。下拉框中的集群名称格式为 `${namespace}-${name}`。
-
-如果需要保存对 Grafana Dashboard 的修改， Grafana 必须为 `6.5` 及以上版本，TiDB Operator 必须为 v1.2.0-rc.2 及以上版本。
+1. 在 Grafana Dashboard 中，点击 **Dashboard settings** 选项，打开 **Settings** 页面。
+2. 在 **Settings** 页面中，选择 **Variables** 中的 **tidb_cluster** 变量，将 **tidb_cluster** 变量的 **Hide** 属性设置为空选项。
+3. 返回当前 Grafana Dashboard，即可看到集群选择下拉框。下拉框中的集群名称格式为 `${namespace}-${tidb_cluster_name}`。
+4. 点击 **Save dashboard** 保存对该 Dashboard 的修改。

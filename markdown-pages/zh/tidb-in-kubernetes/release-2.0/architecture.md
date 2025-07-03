@@ -1,7 +1,6 @@
 ---
 title: TiDB Operator 架构
 summary: 了解 TiDB Operator 架构及其工作原理。
-aliases: ['/docs-cn/tidb-in-kubernetes/dev/architecture/']
 ---
 
 # TiDB Operator 架构
@@ -12,40 +11,40 @@ aliases: ['/docs-cn/tidb-in-kubernetes/dev/architecture/']
 
 下图是 TiDB Operator 的架构概览。
 
-![TiDB Operator Overview](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-overview-1.2.png)
+![TiDB Operator Architecture](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-architecture.png)
 
-其中，`TidbCluster`、`TidbMonitor`、`TidbInitializer`、`Backup`、`Restore`、`BackupSchedule`、`TidbClusterAutoScaler` 是由 CRD（`CustomResourceDefinition`）定义的自定义资源：
+图中包含多个由 [Custom Resource Definition (CRD)](https://kubernetes.io/zh-cn/docs/concepts/extend-kubernetes/api-extension/custom-resources/) 定义的资源对象，例如 `Cluster`、`PDGroup`、`PD`、`TiKVGroup`、`TiKV`、`TiDBGroup`、`TiDB`、`Backup`、`Restore` 等。部分资源的说明如下：
 
-* `TidbCluster` 用于描述用户期望的 TiDB 集群
-* `TidbMonitor` 用于描述用户期望的 TiDB 集群监控组件
-* `TidbInitializer` 用于描述用户期望的 TiDB 集群初始化 Job
-* `Backup` 用于描述用户期望的 TiDB 集群备份
-* `Restore` 用于描述用户期望的 TiDB 集群恢复
-* `BackupSchedule` 用于描述用户期望的 TiDB 集群周期性备份
-* `TidbClusterAutoScaler` 用于描述用户期望的 TiDB 集群自动伸缩
+- `Cluster`：表示一个完整的 TiDB 集群，它包含了 TiDB 集群的一些通用配置和功能开关，并反映集群的整体状态。该 CRD 被设计为 TiDB 集群的“命名空间”，TiDB 集群的所有组件都必须引用一个 `Cluster` CR。
+- `ComponentGroup`：用于描述一组具有相同配置的 TiDB 集群组件，例如：
 
-TiDB 集群的编排和调度逻辑则由下列组件负责：
+    - `PDGroup` 表示一组具有相同配置的 PD 实例
+    - `TiKVGroup` 表示一组具有相同配置的 TiKV 实例
+    - `TiDBGroup` 表示一组具有相同配置的 TiDB 实例
 
-* `tidb-controller-manager` 是一组 Kubernetes 上的自定义控制器。这些控制器会不断对比 `TidbCluster` 对象中记录的期望状态与 TiDB 集群的实际状态，并调整 Kubernetes 中的资源以驱动 TiDB 集群满足期望状态，并根据其他 CR 完成相应的控制逻辑；
-* `tidb-scheduler` 是一个 Kubernetes 调度器扩展，它为 Kubernetes 调度器注入 TiDB 集群特有的调度逻辑。
-* `tidb-admission-webhook` 是一个 Kubernetes 动态准入控制器，完成 Pod、StatefulSet 等相关资源的修改、验证与运维。
-* `discovery` 是一个用于组件间发现的服务。每一个 TiDB 集群会对应存在一个 discovery Pod，用于该集群中组件发现其他已经创建的组件。
-  
-> **注意：**
->
-> `tidb-scheduler` 并不是必须使用，详情可以参考 [tidb-scheduler 与 default-scheduler](tidb-scheduler.md#tidb-scheduler-与-default-scheduler)。
+- `Component`：用于描述一个 TiDB 集群组件，例如：
+
+    - `PD` 表示一个 PD 实例
+    - `TiKV` 表示一个 TiKV 实例
+    - `TiDB` 表示一个 TiDB 实例
+
+- `Backup`：用于描述用户期望执行的 TiDB 集群备份任务。
+- `Restore`：用于描述用户期望执行的 TiDB 集群恢复任务。
 
 ## 流程解析
 
-下图是 TiDB Operator 的控制流程解析。从 TiDB Operator v1.1 开始，TiDB 集群、监控、初始化、备份等组件，都通过 CR 进行部署、管理。
+TiDB Operator 采用声明式 API，通过监控用户定义的资源对象实现自动化控制。其核心流程如下：
 
-![TiDB Operator Control Flow](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-control-flow-1.1.png)
+1. 用户通过 `kubectl` 创建 `Cluster` 以及其他组件的自定义资源 (Custom Resource, CR) 对象，例如 `PDGroup`、`TiKVGroup` 和 `TiDBGroup` 等。
+2. TiDB Operator 持续监控 (Watch) 这些 CR，根据集群实际状态动态调整各组件对应的 `Pod`、`PVC` 和 `ConfigMap` 等对象。
 
-整体的控制流程如下：
+通过这种控制（协调）循环，TiDB Operator 能够自动进行集群节点健康检查和故障恢复。部署、升级、扩缩容等操作也可以通过修改 `Cluster` 和其他组件的 CR 对象“一键”完成。
 
-1. 用户通过 kubectl 创建 `TidbCluster` 和其他 CR 对象，比如 `TidbMonitor` 等；
-2. TiDB Operator 会 watch `TidbCluster` 以及其它相关对象，基于集群的实际状态不断调整 PD、TiKV、TiDB 或者 Monitor 等组件的 `StatefulSet`、`Deployment` 和 `Service` 等对象；
-3. Kubernetes 的原生控制器根据 `StatefulSet`、`Deployment`、`Job` 等对象创建更新或删除对应的 `Pod`；
-4. 如果 `TidbCluster` 中配置组件使用 `tidb-scheduler`，PD、TiKV、TiDB 的 `Pod` 声明中会指定使用 `tidb-scheduler` 调度器。在调度对应 `Pod` 时，`tidb-scheduler` 会应用 TiDB 的特定调度逻辑。
+以下是以 TiKV 为例的控制流程图：
 
-基于上述的声明式控制流程，TiDB Operator 能够自动进行集群节点健康检查和故障恢复。部署、升级、扩缩容等操作也可以通过修改 `TidbCluster` 对象声明“一键”完成。
+![TiDB Operator Control Flow](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-control-flow.png)
+
+在该流程中：
+
+- TiKVGroup Controller：监听 `TiKVGroup` CR，并根据 CR 中的配置创建或更新对应的 `TiKV` CR。
+- TiKV Controller：监听 `TiKV` CR，并根据 CR 中的配置创建或更新 TiKV 相关的 Pod、PVC 和 ConfigMap 等资源。

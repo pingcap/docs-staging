@@ -1,51 +1,50 @@
 ---
 title: TiDB Operator Architecture
-summary: Learn the architecture of TiDB Operator and how it works.
-aliases: ['/docs/tidb-in-kubernetes/dev/architecture/']
+summary: Learn about the architecture of TiDB Operator and how it works.
 ---
 
 # TiDB Operator Architecture
 
-This document describes the architecture of TiDB Operator and how it works.
+This document introduces the architecture of TiDB Operator and how it works.
 
 ## Architecture
 
-The following diagram is an overview of the architecture of TiDB Operator.
+The following diagram shows an overview of the TiDB Operator architecture:
 
-![TiDB Operator Overview](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-overview-1.2.png)
+![TiDB Operator Architecture](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-architecture.png)
 
-`TidbCluster`, `TidbMonitor`, `TidbInitializer`, `Backup`, `Restore`, `BackupSchedule`, and `TidbClusterAutoScaler` are custom resources defined by CRD (`CustomResourceDefinition`).
+The diagram includes several resource objects defined by [Custom Resource Definitions (CRDs)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/), such as `Cluster`, `PDGroup`, `PD`, `TiKVGroup`, `TiKV`, `TiDBGroup`, `TiDB`, `Backup`, and `Restore`. The following describes some of these resources:
 
-* `TidbCluster` describes the desired state of the TiDB cluster.
-* `TidbMonitor` describes the monitoring components of the TiDB cluster.
-* `TidbInitializer` describes the desired initialization Job of the TiDB cluster.
-* `Backup` describes the desired backup of the TiDB cluster.
-* `Restore` describes the desired restoration of the TiDB cluster.
-* `BackupSchedule` describes the scheduled backup of the TiDB cluster.
-* `TidbClusterAutoScaler` describes the automatic scaling of the TiDB cluster.
+- `Cluster`: represents a complete TiDB cluster. It contains shared configuration and feature flags for the TiDB cluster and reflects the overall cluster status. This CRD is designed as the "namespace" for the TiDB cluster, and all components in the cluster must reference a `Cluster` CR.
+- `ComponentGroup`: describes a group of TiDB cluster components with the same configuration. For example:
 
-The following components are responsible for the orchestration and scheduling logic in a TiDB cluster:
+    - `PDGroup`: a group of PD instances with the same configuration.
+    - `TiKVGroup`: a group of TiKV instances with the same configuration.
+    - `TiDBGroup`: a group of TiDB instances with the same configuration.
 
-* `tidb-controller-manager` is a set of custom controllers in Kubernetes. These controllers constantly compare the desired state recorded in the `TidbCluster` object with the actual state of the TiDB cluster. They adjust the resources in Kubernetes to drive the TiDB cluster to meet the desired state and complete the corresponding control logic according to other CRs;
-* `tidb-scheduler` is a Kubernetes scheduler extension that injects the TiDB specific scheduling policies to the Kubernetes scheduler;
-* `tidb-admission-webhook` is a dynamic admission controller in Kubernetes, which completes the modification, verification, operation, and maintenance of Pod, StatefulSet, and other related resources.
-* `discovery` is a service for inter-components discovery. Each TiDB cluster contains a discovery Pod which is used for the components to discover other existing components in the same cluster.
+- `Component`: describes an individual TiDB cluster component. For example:
 
-> **Note:**
->
-> `tidb-scheduler` is not mandatory. Refer to [tidb-scheduler and default-scheduler](tidb-scheduler.md#tidb-scheduler-and-default-scheduler) for details.
+    - `PD`: a single PD instance.
+    - `TiKV`: a single TiKV instance.
+    - `TiDB`: a single TiDB instance.
+
+- `Backup`: describes a backup task for the TiDB cluster.
+- `Restore`: describes a restore task for the TiDB cluster.
 
 ## Control flow
 
-The following diagram is the analysis of the control flow of TiDB Operator. Starting from TiDB Operator v1.1, the TiDB cluster, monitoring, initialization, backup, and other components are deployed and managed using CR.
+TiDB Operator uses a declarative API to automate cluster management by continuously monitoring user-defined resources. The core workflow is as follows:
 
-![TiDB Operator Control Flow](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-control-flow-1.1.png)
+1. The user creates `Cluster` and other component Custom Resource (CR) objects through `kubectl`, such as `PDGroup`, `TiKVGroup`, and `TiDBGroup`.
+2. TiDB Operator continuously watches these CRs and dynamically adjusts the corresponding `Pod`, `PVC`, and `ConfigMap` objects based on the actual cluster state.
 
-The overall control flow is described as follows:
+Through this control (reconciliation) loop, TiDB Operator can automatically perform cluster node health checks and failure recovery. Operations such as deployment, upgrades, and scaling can also be completed with one action by modifying the `Cluster` and other component CRs.
 
-1. The user creates a `TidbCluster` object and other CR objects through kubectl, such as `TidbMonitor`;
-2. TiDB Operator watches `TidbCluster` and other related objects, and constantly adjust the `StatefulSet`, `Deployment`, `Service`, and other objects of PD, TiKV, TiDB, Monitor or other components based on the actual state of the cluster;
-3. Kubernetes' native controllers create, update, or delete the corresponding `Pod` based on objects such as `StatefulSet`, `Deployment`, and `Job`;
-4. If you configure the components to use `tidb-scheduler` in the `TidbCluster` CR, the `Pod` declaration of PD, TiKV, and TiDB specifies `tidb-scheduler` as the scheduler. `tidb-scheduler` applies the specific scheduling logic of TiDB when scheduling the corresponding `Pod`.
+The following diagram shows the control flow using TiKV as an example:
 
-Based on the above declarative control flow, TiDB Operator automatically performs health check and fault recovery for the cluster nodes. You can easily modify the `TidbCluster` object declaration to perform operations such as deployment, upgrade, and scaling.
+![TiDB Operator Control Flow](https://docs-download.pingcap.com/media/images/tidb-in-kubernetes/tidb-operator-control-flow.png)
+
+In this workflow:
+
+- TiKVGroup Controller: watches the `TiKVGroup` CR and creates or updates the corresponding `TiKV` CR based on its configuration.
+- TiKV Controller: watches the `TiKV` CR and creates or updates related resources such as Pod, PVC, and ConfigMap based on the configuration in the CR.
