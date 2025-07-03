@@ -1,4 +1,5 @@
 yarn download:tidb-operator zh
+yarn download:tidb-operator zh release-2.0
 yarn download:tidb-operator zh release-1.6
 yarn download:tidb-operator zh release-1.5
 yarn download:tidb-operator zh release-1.4
