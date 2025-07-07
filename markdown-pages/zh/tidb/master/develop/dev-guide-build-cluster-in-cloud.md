@@ -8,11 +8,11 @@ aliases: ['/zh/tidb/dev/build-cluster-in-cloud']
 
 # 使用 TiDB Cloud Serverless 构建 TiDB 集群
 
-本文将介绍如何以最快的方式开始使用 TiDB。你将创建并启动一个 [TiDB Cloud Serverless](https://www.pingcap.com/tidb-serverless/) 集群，使用 TiDB SQL 客户端，插入数据。随后将从示例程序读取出数据。
+本文将介绍如何以最快的方式开始使用 TiDB。你将创建并启动一个 [TiDB Cloud Serverless](https://www.pingcap.com/tidb-cloud-serverless/) 集群，使用 TiDB SQL 客户端，插入数据。随后将从示例程序读取出数据。
 
 若你需要在本地计算机上启动 TiDB，请参阅[本地启动 TiDB](/quick-start-with-tidb.md)。
 
-## 第 1 步：创建 TiDB Cloud Serverless 集群
+## 第 1 步：创建 TiDB Cloud Serverless 集群 {#step-1-create-a-tidb-cloud-cluster}
 
 1. 如果你还未拥有 TiDB Cloud 账号，请先在此[注册](https://tidbcloud.com/free-trial)。
 2. 使用你的 TiDB Cloud 账号[登录](https://tidbcloud.com/)。
