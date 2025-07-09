@@ -380,7 +380,7 @@ metadata:
 spec:
   cluster:
     name: tls
-  version: v8.1.0
+  version: v8.5.2
   replicas: 1
   template:
     spec:
