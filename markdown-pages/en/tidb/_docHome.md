@@ -20,6 +20,8 @@ hide_leftNav: true
 
 | Release    | Archived documentation                                         | Archive date     |
 | ---------- | -------------------------------------------------------------- | ---------------- |
+| v8.4 (DMR) | [TiDB v8.4 documentation](https://docs-archive.pingcap.com/tidb/v8.4/) | July 11, 2025 |
+| v8.3 (DMR) | [TiDB v8.3 documentation](https://docs-archive.pingcap.com/tidb/v8.3/) | July 11, 2025 |
 | v8.2 (DMR) | [TiDB v8.2 documentation](https://docs-archive.pingcap.com/tidb/v8.2/) | December 30, 2024 |
 | v8.0 (DMR) | [TiDB v8.0 documentation](https://docs-archive.pingcap.com/tidb/v8.0/) | August 30, 2024 |
 | v7.6 (DMR) | [TiDB v7.6 documentation](https://docs-archive.pingcap.com/tidb/v7.6/) | July 19, 2024 |
