@@ -124,6 +124,7 @@
           "path": "en",
           "versions": [
             "master",
+            "release-2.0",
             "release-1.6",
             "release-1.5",
             "release-1.4",
@@ -135,6 +136,7 @@
           "path": "zh",
           "versions": [
             "master",
+            "release-2.0",
             "release-1.6",
             "release-1.5",
             "release-1.4",
