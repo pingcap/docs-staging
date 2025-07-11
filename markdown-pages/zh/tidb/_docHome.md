@@ -20,6 +20,8 @@ hide_leftNav: true
 
 | 版本        | 归档文档链接                                             | 归档日期 |
 | ---------- | ------------------------------------------------------ | ----------------- |
+| v8.4 (DMR) | [TiDB v8.4 文档](https://docs-archive.pingcap.com/zh/tidb/v8.4/) | 2025 年 7 月 11 日 |
+| v8.3 (DMR) | [TiDB v8.3 文档](https://docs-archive.pingcap.com/zh/tidb/v8.3/) | 2025 年 7 月 11 日 |
 | v8.2 (DMR) | [TiDB v8.2 文档](https://docs-archive.pingcap.com/zh/tidb/v8.2) | 2024 年 12 月 30 日 |
 | v8.0 (DMR) | [TiDB v8.0 文档](https://docs-archive.pingcap.com/zh/tidb/v8.0) | 2024 年 8 月 30 日 |
 | v7.6 (DMR) | [TiDB v7.6 文档](https://docs-archive.pingcap.com/zh/tidb/v7.6) | 2024 年 7 月 19 日 |

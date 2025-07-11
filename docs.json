@@ -8,8 +8,6 @@
           "versions": [
             "master",
             "release-8.5",
-            "release-8.4",
-            "release-8.3",
             "release-8.1",
             "release-7.5",
             "release-7.1",
@@ -23,8 +21,6 @@
           "versions": [
             "master",
             "release-8.5",
-            "release-8.4",
-            "release-8.3",
             "release-8.1",
             "release-7.5",
             "release-7.1",
@@ -74,6 +70,8 @@
         "v6.0"
       ],
       "archived": [
+        "v8.4",
+        "v8.3",
         "v8.2",
         "v8.0",
         "v7.6",
@@ -96,8 +94,8 @@
         "v2.1"
       ],
       "searchIndex": {
-        "en": ["v8.5", "v8.1"],
-        "zh": ["v8.5", "v8.1", "v7.5", "v6.5", "v5.4"]
+        "en": ["v8.5"],
+        "zh": ["v8.5", "v7.5", "v6.5"]
       }
     },
     "tidb-data-migration": {
@@ -124,6 +122,7 @@
           "path": "en",
           "versions": [
             "master",
+            "release-2.0",
             "release-1.6",
             "release-1.5",
             "release-1.4",
@@ -135,6 +134,7 @@
           "path": "zh",
           "versions": [
             "master",
+            "release-2.0",
             "release-1.6",
             "release-1.5",
             "release-1.4",
@@ -152,6 +152,10 @@
           "repo": "pingcap/docs",
           "versions": ["master"]
         },
+        "zh": {
+          "repo": "pingcap/docs",
+          "versions": ["master"]
+        },
         "ja": {
           "repo": "pingcap/docs",
           "versions": ["master"]
@@ -163,32 +167,32 @@
           {
             "id": "v1beta",
             "pathname": "v1beta",
-            "production": "/openapi/tidbcloud-oas.json",
-            "preview": "https://download.pingcap.org/tidbcloud-oas-preview.json"
+            "production": "https://docs-download.pingcap.com/api/tidbcloud-oas.json",
+            "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas.json"
           },
           {
             "id": "v1beta1",
             "pathname": "v1beta1/billing",
-            "production": "/openapi/tidbcloud-oas-v1beta1-billing.swagger.json",
-            "preview": "/openapi/tidbcloud-oas-v1beta1-billing.swagger.json"
+            "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-billing.swagger.json",
+            "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-billing.swagger.json"
           },
           {
             "id": "v1beta1",
             "pathname": "v1beta1/dataservice",
-            "production": "/openapi/tidbcloud-oas-v1beta1-dataservice.swagger.json",
-            "preview": "/openapi/tidbcloud-oas-v1beta1-dataservice.swagger.json"
+            "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-dataservice.swagger.json",
+            "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-dataservice.swagger.json"
           },
           {
             "id": "v1beta1",
             "pathname": "v1beta1/iam",
-            "production": "/openapi/tidbcloud-oas-v1beta1-iam.swagger.json",
-            "preview": "/openapi/tidbcloud-oas-v1beta1-iam.swagger.json"
+            "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-iam.swagger.json",
+            "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-iam.swagger.json"
           },
           {
             "id": "msp",
             "pathname": "v1beta1/msp",
-            "production": "/openapi/tidbcloud-oas-v1beta1-msp.json",
-            "preview": "/openapi/tidbcloud-oas-v1beta1-msp.json"
+            "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-msp.json",
+            "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-msp.json"
           }
         ]
       }
@@ -197,6 +201,7 @@
   "ignore": [
     ".circleci",
     ".github",
+    ".vaunt",
     "CONTRIBUTING.md",
     "README.md",
     "assets",
