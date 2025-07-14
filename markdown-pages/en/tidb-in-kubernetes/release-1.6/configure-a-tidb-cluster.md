@@ -23,7 +23,7 @@ If you are using a NUMA-based CPU, you need to enable `Static`'s CPU management 
 
 ## Configure TiDB deployment
 
-To configure a TiDB deployment, you need to configure the `TiDBCluster` CR. Refer to the [TidbCluster example](https://github.com/pingcap/tidb-operator/blob/v1.6.1/examples/advanced/tidb-cluster.yaml) for an example. For the complete configurations of `TiDBCluster` CR, refer to [API documentation](https://github.com/pingcap/tidb-operator/blob/v1.6.1/docs/api-references/docs.md).
+To configure a TiDB deployment, you need to configure the `TiDBCluster` CR. Refer to the [TidbCluster example](<https://github.com/pingcap/tidb-operator/blob/v1.6.2/examples/advanced/tidb-cluster.yaml>) for an example. For the complete configurations of `TiDBCluster` CR, refer to [API documentation](<https://github.com/pingcap/tidb-operator/blob/v1.6.2/docs/api-references/docs.md>).
 
 > **Note:**
 >
@@ -40,11 +40,11 @@ Usually, components in a cluster are in the same version. It is recommended to c
 
 Here are the formats of the parameters:
 
-- `spec.version`: the format is `imageTag`, such as `v8.5.0`
+- `spec.version`: the format is `imageTag`, such as `v8.5.2`
 
 - `spec.<pd/tidb/tikv/pump/tiflash/ticdc>.baseImage`: the format is `imageName`, such as `pingcap/tidb`
 
-- `spec.<pd/tidb/tikv/pump/tiflash/ticdc>.version`: the format is `imageTag`, such as `v8.5.0`
+- `spec.<pd/tidb/tikv/pump/tiflash/ticdc>.version`: the format is `imageTag`, such as `v8.5.2`
 
 ### Recommended configuration
 

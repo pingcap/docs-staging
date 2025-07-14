@@ -100,7 +100,7 @@ spec:
 
 ```shell
 export name=dumpling
-export version=v8.5.1
+export version=v8.5.2
 export namespace=tidb-cluster
 
 envsubst < dumpling_job.yaml | kubectl apply -f -

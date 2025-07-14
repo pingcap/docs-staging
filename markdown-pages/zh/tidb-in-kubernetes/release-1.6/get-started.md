@@ -163,7 +163,7 @@ TiDB Operator 包含许多实现 TiDB 集群不同组件的自定义资源类型
 
 
 ```shell
-kubectl create -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.1/manifests/crd.yaml
+kubectl create -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.2/manifests/crd.yaml
 ```
 
 <details>
@@ -221,16 +221,16 @@ customresourcedefinition.apiextensions.k8s.io/tidbclusterautoscalers.pingcap.com
 
     
     ```shell
-    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.6.1
+    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.6.2
     ```
 
     如果访问 Docker Hub 网速较慢，可以使用阿里云上的镜像：
 
     
     ```
-    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.6.1 \
-        --set operatorImage=registry.cn-beijing.aliyuncs.com/tidb/tidb-operator:v1.6.1 \
-        --set tidbBackupManagerImage=registry.cn-beijing.aliyuncs.com/tidb/tidb-backup-manager:v1.6.1
+    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.6.2 \
+        --set operatorImage=registry.cn-beijing.aliyuncs.com/tidb/tidb-operator:v1.6.2 \
+        --set tidbBackupManagerImage=registry.cn-beijing.aliyuncs.com/tidb/tidb-backup-manager:v1.6.2
     ```
 
     <details>
@@ -279,7 +279,7 @@ tidb-controller-manager-6d8d5c6d64-b8lv4   1/1     Running   0          2m22s
 
 ``` shell
 kubectl create namespace tidb-cluster && \
-    kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.1/examples/basic/tidb-cluster.yaml
+    kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.2/examples/basic/tidb-cluster.yaml
 ```
 
 如果访问 Docker Hub 网速较慢，可以使用 UCloud 上的镜像：
@@ -287,7 +287,7 @@ kubectl create namespace tidb-cluster && \
 
 ```
 kubectl create namespace tidb-cluster && \
-    kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.1/examples/basic-cn/tidb-cluster.yaml
+    kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.2/examples/basic-cn/tidb-cluster.yaml
 ```
 
 <details>
@@ -308,7 +308,7 @@ tidbcluster.pingcap.com/basic created
 >
 > ``` shell
 > kubectl create namespace tidb-cluster && \
->     kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.1/examples/basic/pd-micro-service-cluster.yaml
+>     kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.2/examples/basic/pd-micro-service-cluster.yaml
 > ```
 >
 > 查看 Pod 状态：
@@ -332,14 +332,14 @@ tidbcluster.pingcap.com/basic created
 
 
 ``` shell
-kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.1/examples/basic/tidb-dashboard.yaml
+kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.2/examples/basic/tidb-dashboard.yaml
 ```
 
 如果访问 Docker Hub 网速较慢，可以使用 UCloud 上的镜像：
 
 
 ```
-kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.1/examples/basic-cn/tidb-dashboard.yaml
+kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.2/examples/basic-cn/tidb-dashboard.yaml
 ```
 
 <details>
@@ -355,14 +355,14 @@ tidbdashboard.pingcap.com/basic created
 
 
 ``` shell
-kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.1/examples/basic/tidb-monitor.yaml
+kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.2/examples/basic/tidb-monitor.yaml
 ```
 
 如果访问 Docker Hub 网速较慢，可以使用 UCloud 上的镜像：
 
 
 ```
-kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.1/examples/basic-cn/tidb-monitor.yaml
+kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.2/examples/basic-cn/tidb-monitor.yaml
 ```
 
 <details>
@@ -462,7 +462,7 @@ mysql --comments -h 127.0.0.1 -P 14000 -u root
 ```
 Welcome to the MariaDB monitor.  Commands end with ; or \g.
 Your MySQL connection id is 178505
-Server version: 8.0.11-TiDB-v8.5.0 TiDB Server (Apache License 2.0) Community Edition, MySQL 8.0 compatible
+Server version: 8.0.11-TiDB-v8.5.2 TiDB Server (Apache License 2.0) Community Edition, MySQL 8.0 compatible
 
 Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
 
@@ -511,10 +511,10 @@ mysql> select * from information_schema.tikv_region_status where db_name=databas
 ```sql
 mysql> select tidb_version()\G
 *************************** 1. row ***************************
-         tidb_version(): Release Version: v8.5.0
+         tidb_version(): Release Version: v8.5.2
                 Edition: Community
         Git Commit Hash: d13e52ed6e22cc5789bed7c64c861578cd2ed55b
-             Git Branch: heads/refs/tags/v8.5.0
+             Git Branch: heads/refs/tags/v8.5.2
          UTC Build Time: 2024-12-19 14:38:24
               GoVersion: go1.23.2
            Race Enabled: false
@@ -700,10 +700,10 @@ mysql --comments -h 127.0.0.1 -P 24000 -u root -e 'select tidb_version()\G'
 
 ```
 *************************** 1. row ***************************
-tidb_version(): Release Version: v8.5.0
+tidb_version(): Release Version: v8.5.2
 Edition: Community
 Git Commit Hash: d13e52ed6e22cc5789bed7c64c861578cd2ed55b
-Git Branch: heads/refs/tags/v8.5.0
+Git Branch: heads/refs/tags/v8.5.2
 UTC Build Time: 2024-12-19 14:38:24
 GoVersion: go1.23.2
 Race Enabled: false
