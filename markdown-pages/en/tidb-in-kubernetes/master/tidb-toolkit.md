@@ -178,8 +178,8 @@ helm search repo pingcap
 
 ```
 NAME                    CHART VERSION   APP VERSION     DESCRIPTION
-pingcap/tidb-lightning  v1.6.1                          A Helm chart for TiDB Lightning
-pingcap/tidb-operator   v1.6.1          v1.6.1          tidb-operator Helm chart for Kubernetes
+pingcap/tidb-lightning  v1.6.2                          A Helm chart for TiDB Lightning
+pingcap/tidb-operator   v1.6.2          v1.6.2          tidb-operator Helm chart for Kubernetes
 ```
 
 When a new version of chart has been released, you can use `helm repo update` to update the repository cached locally:
@@ -235,15 +235,15 @@ Use the following command to download the chart file required for cluster instal
 
 
 ```shell
-wget http://charts.pingcap.org/tidb-operator-v1.6.1.tgz
-wget http://charts.pingcap.org/tidb-lightning-v1.6.1.tgz
+wget http://charts.pingcap.org/tidb-operator-v1.6.2.tgz
+wget http://charts.pingcap.org/tidb-lightning-v1.6.2.tgz
 ```
 
 Copy these chart files to the server and decompress them. You can use these charts to install the corresponding components by running the `helm install` command. Take `tidb-operator` as an example:
 
 
 ```shell
-tar zxvf tidb-operator.v1.6.1.tgz
+tar zxvf tidb-operator.v1.6.2.tgz
 helm install ${release_name} ./tidb-operator --namespace=${namespace}
 ```
 
