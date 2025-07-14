@@ -73,7 +73,7 @@ Push 方式指利用 Prometheus remote-write 的特性，使位于不同 Kuberne
         #region: us-east-1
       initializer:
         baseImage: pingcap/tidb-monitor-initializer
-        version: v8.5.0
+        version: v8.5.2
       persistent: true
       storage: 100Gi
       storageClassName: ${storageclass_name}
@@ -155,7 +155,7 @@ Pull 方式是指从不同 Kubernetes 集群的 Prometheus 实例中拉取监控
         #region: us-east-1
       initializer:
         baseImage: pingcap/tidb-monitor-initializer
-        version: v8.5.0
+        version: v8.5.2
       persistent: true
       storage: 20Gi
       storageClassName: ${storageclass_name}
@@ -239,7 +239,7 @@ Pull 方式是指从不同 Kubernetes 集群的 Prometheus 实例中拉取监控
         #region: us-east-1
       initializer:
         baseImage: pingcap/tidb-monitor-initializer
-        version: v8.5.0
+        version: v8.5.2
       persistent: true
       storage: 20Gi
       storageClassName: ${storageclass_name}
@@ -286,7 +286,7 @@ scrape_configs:
     
     ```shell
     # set tidb version here
-    version=v8.5.0
+    version=v8.5.2
     docker run --rm -i -v ${PWD}/dashboards:/dashboards/ pingcap/tidb-monitor-initializer:${version} && \
     cd dashboards
     ```
