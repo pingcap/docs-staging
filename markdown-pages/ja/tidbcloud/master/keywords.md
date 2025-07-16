@@ -312,7 +312,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   アイライク（R）
 -   輸入
 -   輸入品
--   IN（R）
+-   イン（R）
 -   インクリメント
 -   増分
 -   インデックス（R）
@@ -567,7 +567,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   行数
 -   行フォーマット
 -   ROW_NUMBER (Rウィンドウ)
--   ROWS (Rウィンドウ)
+-   ROWS（Rウィンドウ）
 -   RTREE
 -   走る
 
@@ -682,7 +682,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   時間
 -   タイムスタンプ
 -   タイニーブロブ（R）
--   タイニーント（R）
+-   タイニーイント（R）
 -   タイニーテキスト（R）
 -   宛先（右）
 -   トークン発行者

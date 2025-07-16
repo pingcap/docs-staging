@@ -94,7 +94,7 @@ cd jaffle_shop
 
 2.  プロジェクトの構成を完了します。
 
-    jaffle_shopプロジェクトディレクトリにあるプロジェクト設定ファイル`dbt_project.yml`を編集し、 `profile`フィールドを`jaffle_shop_tidb`に変更します。この設定により、プロジェクトは`~/.dbt/profiles.yml`ファイルで指定されたデータベースからクエリを実行できるようになります。
+    jaffle_shopプロジェクトディレクトリ内のプロジェクト設定ファイル`dbt_project.yml`を編集し、 `profile`フィールドを`jaffle_shop_tidb`に変更します。この設定により、プロジェクトは`~/.dbt/profiles.yml`ファイルで指定されたデータベースからクエリを実行できるようになります。
 
     ```shell
     vi dbt_project.yml

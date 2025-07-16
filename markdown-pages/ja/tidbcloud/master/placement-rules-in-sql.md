@@ -248,7 +248,7 @@ CREATE PLACEMENT POLICY five_replicas FOLLOWERS=4;
 ALTER RANGE global PLACEMENT POLICY five_replicas;
 ```
 
-TiDB ではリーダーの数がデフォルトで`1`に設定されているので、 `five replicas`フォロワーが`4` 、Leaderが`1`あることを意味します。
+TiDB ではリーダーの数がデフォルトで`1`に設定されているので、 `five replicas`フォロワーが`4` 、Leaderが`1`あることを意味することに注意してください。
 
 ### データベースのデフォルトの配置ポリシーを指定する {#specify-a-default-placement-policy-for-a-database}
 

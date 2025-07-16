@@ -81,7 +81,7 @@ summary: tidb_read_staleness` システム変数を使用して履歴データ�
         +------+
         3 rows in set (0.00 sec)
 
-5.  `tidb_read_staleness`システム変数を設定します。
+5.  システム変数`tidb_read_staleness`を設定します。
 
     この変数のスコープは`SESSION`です。値を設定すると、TiDB は値で設定された時間より前に最新バージョンのデータを読み取ります。
 

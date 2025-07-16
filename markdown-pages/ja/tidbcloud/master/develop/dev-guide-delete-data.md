@@ -172,7 +172,7 @@ with connection:
 
 <CustomContent platform="tidb">
 
-`rated_at`フィールドは[日付と時刻の型](/data-type-date-and-time.md)の`DATETIME`型です。これは、タイムゾーンとは無関係に、TiDB にリテラル値として格納されていると想定できます。一方、 `TIMESTAMP`型はタイムスタンプを格納するため、異なる[タイムゾーン](/configure-time-zone.md)には異なる時刻文字列が表示されます。
+`rated_at`フィールドは[日付と時刻の型](/data-type-date-and-time.md)の`DATETIME`型です。これは、タイムゾーンに関係なく、TiDB にリテラル値として保存されていると想定できます。一方、 `TIMESTAMP`型はタイムスタンプを保存するため、異なる[タイムゾーン](/configure-time-zone.md)には異なる時刻文字列が表示されます。
 
 </CustomContent>
 
@@ -206,7 +206,7 @@ TiDBは[統計情報](/statistics.md)使用してインデックスの選択を�
 
 <CustomContent platform="tidb">
 
-ただし、大量の行（1万行以上）を削除する必要がある場合は、データを繰り返し削除することをお勧めします。つまり、削除が完了するまで、各反復でデータの一部を削除していく方法です。これは、TiDBが単一トランザクションのサイズ（デフォルトでは[`txn-total-size-limit`](/tidb-configuration-file.md#txn-total-size-limit) ）に制限を設けているためです。プログラムやスクリプトでループを使用することで、このような操作を実行できます。
+ただし、大量の行（1万行以上）を削除する必要がある場合は、反復的にデータを削除することをお勧めします。つまり、各反復でデータの一部を削除し、削除が完了するまで繰り返します。これは、TiDBが単一トランザクションのサイズ（デフォルトでは[`txn-total-size-limit`](/tidb-configuration-file.md#txn-total-size-limit) ）に制限があるためです。プログラムやスクリプトでループを使用することで、このような操作を実行できます。
 
 </CustomContent>
 

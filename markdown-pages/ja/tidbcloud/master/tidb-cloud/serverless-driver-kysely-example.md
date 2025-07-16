@@ -79,7 +79,7 @@ summary: Kysely でTiDB Cloudサーバーレス ドライバーを使用する�
     export DATABASE_URL='mysql://[username]:[password]@[host]/[database]'
     ```
 
-### ステップ3. Kyselyを使用してデータをクエリする {#step-3-use-kysely-to-query-data}
+### ステップ3. Kyselyを使用してデータを照会する {#step-3-use-kysely-to-query-data}
 
 1.  TiDB Cloud Serverless クラスターにテーブルを作成し、データを挿入します。
 

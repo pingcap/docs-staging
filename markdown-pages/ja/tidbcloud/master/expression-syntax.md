@@ -17,7 +17,7 @@ summary: TiDB の式構文について学習します。
 
 -   ParamMarker（ `?` ）、システム変数、ユーザー変数、CASE式。
 
-以下のルールは、TiDB パーサーの[`parser.y`](https://github.com/pingcap/tidb/blob/release-8.1/pkg/parser/parser.y)ルールに基づいた式構文です。
+以下のルールは、TiDB パーサーの[`parser.y`](https://github.com/pingcap/tidb/blob/release-8.5/pkg/parser/parser.y)ルールに基づいた式構文です。
 
 ```ebnf+diagram
 Expression ::=

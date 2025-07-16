@@ -43,7 +43,7 @@ datasource db {
 
 Prisma Client を使用する前に、 `@tidbcloud/prisma-adapter`で初期化する必要があります。
 
-v6.6.0 より前のバージョン`@tidbcloud/prisma-adapter`場合:
+v6.6.0 より前の`@tidbcloud/prisma-adapter`場合:
 
 ```js
 import { connect } from '@tidbcloud/serverless';
@@ -118,7 +118,7 @@ const prisma = new PrismaClient({ adapter });
 
         mysql://[username]:[password]@[host]:4000/[database]?sslaccept=strict
 
-2.  プロジェクトのルート ディレクトリに`.env`という名前のファイルを作成し、次のように`DATABASE_URL`名前の環境変数を定義して、この変数内のプレースホルダー`[]`接続文字列内の対応するパラメーターに置き換えます。
+2.  プロジェクトのルート ディレクトリに`.env`という名前のファイルを作成し、次のように`DATABASE_URL`名前の環境変数を定義して、この変数のプレースホルダー`[]`接続文字列内の対応するパラメーターに置き換えます。
 
     ```dotenv
     DATABASE_URL='mysql://[username]:[password]@[host]:4000/[database]?sslaccept=strict'

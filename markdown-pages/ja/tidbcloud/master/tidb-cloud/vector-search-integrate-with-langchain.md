@@ -3,7 +3,7 @@ title: Integrate Vector Search with LangChain
 summary: TiDB Cloudの Vector Search を LangChain と統合する方法を学びます。
 ---
 
-# LangChainとベクトル検索を統合する {#integrate-vector-search-with-langchain}
+# ベクトル検索をLangChainと統合する {#integrate-vector-search-with-langchain}
 
 このチュートリアルでは、 TiDB Cloudの[ベクトル検索](/tidb-cloud/vector-search-overview.md)機能を[ランチェーン](https://python.langchain.com/)と統合する方法を説明します。
 

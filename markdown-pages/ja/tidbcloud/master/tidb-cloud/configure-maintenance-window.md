@@ -13,7 +13,7 @@ summary: クラスターのメンテナンス ウィンドウを構成する方�
 
 > **注記：**
 >
-> メンテナンス ウィンドウ機能は[TiDB Cloud専用クラスタ](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)のみで使用できます。
+> メンテナンス ウィンドウ機能は[TiDB Cloud専用クラスター](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)のみで使用できます。
 
 ## メンテナンス期間中に許可される操作と許可されない操作 {#allowed-and-disallowed-operations-during-a-maintenance-window}
 

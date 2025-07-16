@@ -633,7 +633,7 @@ TiDB クラスターと同じリージョンで既に Kafka クラスターが�
     -   **リージョン**: `us-west1`
     -   **ネットワーク**: あなたのネットワーク
     -   バックエンド構成
-        -   **バックエンドタイプ**： `Instance group`
+        -   **バックエンドタイプ**: `Instance group`
         -   **プロトコル**： `TCP`
         -   **インスタンスグループ**: `kafka-proxy-ig`
     -   フロントエンド構成
@@ -654,7 +654,7 @@ TiDB クラスターと同じリージョンで既に Kafka クラスターが�
         -   **名前**: `proxy-psc-subnet`
         -   **VPCネットワーク**: あなたのネットワーク
         -   **リージョン**: `us-west1`
-        -   **IPv4範囲**: ネットワーク計画に基づいてCIDRを設定します
+        -   **IPv4 範囲**: ネットワーク計画に基づいて CIDR を設定します
     -   **承認されたプロジェクト**: [前提条件](#prerequisites)で取得したTiDB Cloudの Google Cloud プロジェクト (例: `tidbcloud-prod-000` )。
 
 3.  **kafka-proxy-psc**の詳細ページに移動します。3 （例： `projects/tidbcloud-dp-stg-000/regions/us-west1/serviceAttachments/kafka-proxy-psc` ） `Service attachment`メモします。これは、 TiDB Cloudがこの PSC に接続する際に使用されます。

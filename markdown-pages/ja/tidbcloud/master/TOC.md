@@ -161,7 +161,7 @@
             -   [AWS のプライベートエンドポイント経由で接続する](/tidb-cloud/set-up-private-endpoint-connections.md)
             -   [Azure のプライベート エンドポイント経由で接続する](/tidb-cloud/set-up-private-endpoint-connections-on-azure.md)
             -   [プライベートエンドポイント経由で Google Cloud に接続する](/tidb-cloud/set-up-private-endpoint-connections-on-google-cloud.md)
-            -   [VPC ピアリング経由で接続](/tidb-cloud/set-up-vpc-peering-connections.md)
+            -   [VPCピアリング経由で接続](/tidb-cloud/set-up-vpc-peering-connections.md)
             -   [SQL シェル経由で接続する](/tidb-cloud/connect-via-sql-shell.md)
         -   [TiDB Cloud専用クラスタのスケール](/tidb-cloud/scale-tidb-cluster.md)
         -   [TiDB Cloud専用データのバックアップと復元](/tidb-cloud/backup-and-restore.md)

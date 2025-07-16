@@ -47,15 +47,15 @@ Javaアプリケーションで次のエラーが頻繁に表示される場合:
 
     The last packet sent successfully to the server was 3600000 milliseconds ago. The driver has not received any packets from the server. com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
 
-`n milliseconds ago`分の`n`が`0`または非常に小さい値である場合、通常は実行された SQL 操作によって TiDB が異常終了したためです。原因を見つけるには、TiDB の stderr ログを確認することをお勧めします。
+`n milliseconds ago`分の`n` `0`または非常に小さい値である場合、通常は実行された SQL 操作によって TiDB が異常終了したためです。原因を見つけるには、TiDB の stderr ログを確認することをお勧めします。
 
-`n`非常に大きな値の場合 (上記の例では`3600000`など)、この接続は長時間アイドル状態だった後、プロキシによって閉じられた可能性があります。通常の解決策は、プロキシのアイドル構成の値を増やし、接続プールで次の操作を行うことです。
+`n`非常に大きな値の場合 (上記の例では`3600000`など)、この接続は長時間アイドル状態だった後、プロキシによって閉じられた可能性があります。通常の解決策は、プロキシのアイドル構成の値を増やし、接続プールで次の操作を実行できるようにすることです。
 
 -   毎回接続を使用する前に、接続が利用可能かどうかを確認してください。
 -   別のスレッドを使用して、接続が利用可能かどうかを定期的に確認します。
 -   接続を維持するために定期的にテスト クエリを送信します。
 
-さまざまな接続プールの実装では、上記の方法の 1 つ以上がサポートされている場合があります。対応する構成を見つけるには、接続プールのドキュメントを確認してください。
+異なる接続プールの実装では、上記の方法の 1 つ以上がサポートされる場合があります。対応する構成を見つけるには、接続プールのドキュメントを確認してください。
 
 ### 経験に基づいた公式 {#formulas-based-on-experience}
 
@@ -135,17 +135,21 @@ OLTP (オンライン トランザクション処理) シナリオの場合、�
 
 ほとんどのシナリオでは、実行効率を向上させるために、JDBC はクエリ結果を事前に取得し、デフォルトでクライアントメモリに保存します。ただし、クエリが非常に大きな結果セットを返す場合、クライアントはデータベースサーバーが一度に返すレコードの数を減らすことを希望し、クライアントのメモリが準備されて次のバッチを要求するまで待機します。
 
-通常、JDBC には 2 種類の処理方法があります。
+JDBC では通常、次の 2 つの処理方法が使用されます。
 
--   [**FetchSize を**`Integer.MIN_VALUE`に設定する](https://dev.mysql.com/doc/connector-j/en/connector-j-reference-implementation-notes.html#ResultSet) 、クライアントがキャッシュしないようにします。クライアントは、 `StreamingResult`を介してネットワーク接続から実行結果を読み取ります。
+-   最初の方法: [**FetchSize を**`Integer.MIN_VALUE`に設定する](https://dev.mysql.com/doc/connector-j/en/connector-j-reference-implementation-notes.html#ResultSet)クライアントがキャッシュしないようにします。クライアントは`StreamingResult`を介してネットワーク接続から実行結果を読み取ります。
 
     クライアントがストリーミング読み取りメソッドを使用する場合、クエリを実行するためにステートメントを引き続き使用する前に、読み取りを終了するか`resultset`閉じる必要があります。そうしないと、エラー`No statements may be issued when any streaming result sets are open and in use on a given connection. Ensure that you have called .close() on any active streaming result sets before attempting more queries.`が返されます。
 
     クライアントが読み取りを完了するか`resultset`閉じる前にクエリでこのようなエラーを回避するには、URL に`clobberStreamingResults=true`パラメータを追加します。すると、 `resultset`自動的に閉じられますが、前のストリーミング クエリで読み取られる結果セットは失われます。
 
--   カーソル フェッチを使用するには、まず正の整数として[`FetchSize`を設定する](http://makejavafaster.blogspot.com/2015/06/jdbc-fetch-size-performance.html)設定し、JDBC URL で`useCursorFetch=true`設定します。
+-   2 番目の方法: 最初に正の整数として[`FetchSize`設定](http://makejavafaster.blogspot.com/2015/06/jdbc-fetch-size-performance.html)設定し、次に JDBC URL で`useCursorFetch = true`設定してカーソル フェッチを使用します。
 
-TiDB は両方の方法をサポートしていますが、実装が簡単で実行効率が優れているため、最初の方法を使用することをお勧めします。
+TiDB は両方の方法をサポートしていますが、実装が簡単で実行効率が優れているため、 `FetchSize` `Integer.MIN_VALUE`に設定する最初の方法を使用することをお勧めします。
+
+2 番目の方法では、 TiDB はまずすべてのデータを TiDB ノードにロードし、次に`FetchSize`に従ってデータをクライアントに返します。そのため、通常は最初の方法よりも多くのメモリを消費します。 [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom) `ON`に設定すると、 TiDB は結果を一時的にハードディスクに書き込む場合があります。
+
+[`tidb_enable_lazy_cursor_fetch`](/system-variables.md#tidb_enable_lazy_cursor_fetch-new-in-v830)システム変数が`ON`に設定されている場合、TiDB はクライアントがデータをフェッチしたときにのみデータの一部を読み取ろうとするため、メモリの使用量が少なくなります。詳細と制限については、 [`tidb_enable_lazy_cursor_fetch`システム変数の完全な説明](/system-variables.md#tidb_enable_lazy_cursor_fetch-new-in-v830)を参照してください。
 
 ### MySQL JDBCパラメータ {#mysql-jdbc-parameters}
 

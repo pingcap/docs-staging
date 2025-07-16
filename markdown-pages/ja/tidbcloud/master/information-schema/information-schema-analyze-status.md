@@ -57,7 +57,7 @@ SELECT * FROM information_schema.analyze_status;
 6 rows in set (0.00 sec)
 ```
 
-`ANALYZE_STATUS`のテーブル内のフィールドは次のように説明されます。
+`ANALYZE_STATUS`テーブル内のフィールドは次のように説明されます。
 
 -   `TABLE_SCHEMA` : テーブルが属するデータベースの名前。
 -   `TABLE_NAME` : テーブルの名前。

@@ -255,7 +255,7 @@ PARTITION BY RANGE COLUMNS (report_date)
 INTERVAL (1 MONTH) FIRST PARTITION LESS THAN ('2000-01-01') LAST PARTITION LESS THAN ('2025-01-01')
 ```
 
-次のテーブルが作成されます。
+次のテーブルが作成されます:
 
     CREATE TABLE `monthly_report_status` (
       `report_id` int(11) NOT NULL,
@@ -270,7 +270,7 @@ INTERVAL (1 MONTH) FIRST PARTITION LESS THAN ('2000-01-01') LAST PARTITION LESS 
      PARTITION `P_LT_2024-12-01` VALUES LESS THAN ('2024-12-01'),
      PARTITION `P_LT_2025-01-01` VALUES LESS THAN ('2025-01-01'))
 
-オプションのパラメータ`NULL PARTITION`は、定義が`PARTITION P_NULL VALUES LESS THAN (<minimum value of the column type>)`のパーティションを作成します。これは、パーティション式が`NULL`に評価される場合にのみ一致します。 `NULL`他のどの値よりも小さいと見なされることを説明している[範囲分割による NULL の処理](#handling-of-null-with-range-partitioning)を参照してください。
+オプションのパラメータ`NULL PARTITION`は、定義が`PARTITION P_NULL VALUES LESS THAN (<minimum value of the column type>)`のパーティションを作成します。これは、パーティション式が`NULL`に評価される場合にのみ一致します。 `NULL`他のどの値よりも小さいと見なされることを説明している[範囲分割による NULL の扱い](#handling-of-null-with-range-partitioning)を参照してください。
 
 オプションパラメータ`MAXVALUE PARTITION`は、最後のパーティションを`PARTITION P_MAXVALUE VALUES LESS THAN (MAXVALUE)`として作成します。
 
@@ -558,7 +558,7 @@ PARTITIONS 4;
 
 たとえば、 `date_col`タイプが`DATE`である列であり、 `TO_DAYS(date_col)`式の値は`date_col`の値によって変化します。 `YEAR(date_col)`は`TO_DAYS(date_col)`とは異なります。これは、 `date_col`のすべての可能な変更が`YEAR(date_col)`の同等の変更を生成するとは限らないためです。
 
-対照的に、 `INT`型の`int_col`列があると仮定します。ここで、式`POW(5-int_col,3) + 6`について考えてみましょう。ただし、 `int_col`の値が変わっても、式の結果は比例して変化しないため、これは適切なハッシュ関数ではありません。 `int_col`の値が変わると、式の結果が大きく変わる可能性があります。たとえば、 `int_col` 5 から 6 に変わると、式の結果の変化は -1 になります。しかし、 `int_col` 6 から 7 に変わると、結果の変化は -7 になる可能性があります。
+対照的に、 `INT`型の`int_col`列があるとします。ここで、式`POW(5-int_col,3) + 6`について考えてみましょう。ただし、 `int_col`の値が変わっても、式の結果は比例して変化しないため、これは適切なハッシュ関数ではありません。 `int_col`の値が変わると、式の結果が大きく変わる可能性があります。たとえば、 `int_col` 5 から 6 に変わると、式の結果の変化は -1 になります。しかし、 `int_col` 6 から 7 に変わると、結果の変化は -7 になる可能性があります。
 
 結論として、式が`y = cx`に近い形式である場合、ハッシュ関数に適しています。式が非線形であるほど、パーティション間でデータが不均一に分散される傾向があるためです。
 
@@ -584,7 +584,7 @@ v7.0.0 以降、TiDB はキー パーティションをサポートします。v
 
 キー パーティショニングとハッシュ パーティショニングはどちらも、一定数のパーティションにデータを均等に分散できます。違いは、ハッシュ パーティショニングは指定された整数式または整数列に基づいてデータを分散することしかサポートしていないのに対し、キー パーティショニングは列リストに基づいてデータを分散することをサポートしており、キー パーティショニングのパーティション列は整数型に限定されていないことです。TiDB のキー パーティショニングのハッシュ アルゴリズムは MySQL のハッシュ アルゴリズムとは異なるため、テーブル データの分散も異なります。
 
-キーパーティションテーブルを作成するには、 `CREATE TABLE`ステートメントに`PARTITION BY KEY (columnList)`句を追加する必要があります。 `columnList` 、1 つ以上の列名を含む列リストです。リスト内の各列のデータ型は、 `BLOB` 、 `JSON` 、 `GEOMETRY`除く任意の型にすることができます (TiDB は`GEOMETRY`サポートしていないことに注意してください)。さらに、 `PARTITIONS num` ( `num`はテーブルが分割されているパーティションの数を示す正の整数) を追加したり、パーティション名の定義を追加したりする必要がある場合もあります。たとえば、 `(PARTITION p0, PARTITION p1)`追加すると、テーブルが`p0`と`p1`という名前の 2 つのパーティションに分割されます。
+キーパーティションテーブルを作成するには、 `CREATE TABLE`ステートメントに`PARTITION BY KEY (columnList)`句を追加する必要があります。 `columnList` 、1 つ以上の列名を含む列リストです。リスト内の各列のデータ型は、 `BLOB` 、 `JSON` 、および`GEOMETRY`除く任意の型にすることができます (TiDB は`GEOMETRY`サポートしていないことに注意してください)。さらに、 `PARTITIONS num` ( `num`はテーブルがいくつのパーティションに分割されているかを示す正の整数) を追加したり、パーティション名の定義を追加したりする必要がある場合もあります。たとえば、 `(PARTITION p0, PARTITION p1)`追加すると、テーブルが`p0`と`p1`名前の 2 つのパーティションに分割されます。
 
 次の操作は、 `store_id`ずつ 4 つのパーティションに分割されたキーパーティションテーブルを作成します。
 
@@ -1532,7 +1532,7 @@ CREATE TABLE t (a varchar(20), b blob,
 ERROR 1503 (HY000): A UNIQUE INDEX must include all columns in the table's partitioning function
 ```
 
-### 関数に関するパーティションの制限 {#partitioning-limitations-relating-to-functions}
+### 関数に関するパーティション分割の制限 {#partitioning-limitations-relating-to-functions}
 
 パーティション式では、次のリストに示す関数のみが許可されます。
 

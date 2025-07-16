@@ -241,7 +241,7 @@ summary: TiDB Cloud Dedicated クラスター リソースを使用して、 TiD
     Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
     ```
 
-    通常、 TiDB Cloud Dedicated クラスターを作成するには少なくとも 10 分かかります。
+    通常、 TiDB Cloud Dedicated クラスターの作成には少なくとも 10 分かかります。
 
 5.  リソースの状態を確認するには、コマンド`terraform show`または`terraform state show tidbcloud_dedicated_cluster.${resource-name}`使用します。コマンド 1 は、すべてのリソースとデータソースの状態を表示します。
 
@@ -652,7 +652,7 @@ TiDB Cloud Dedicated クラスターの場合、Terraform を使用して次の�
 
         Apply complete! Resources: 0 added, 1 changed, 0 destroyed.
 
-プロセスが完了するまでお待ちください。スケーリングが完了すると、状態が`ACTIVE`に変わります。
+プロセスが完了するまでお待ちください。スケーリングが完了すると状態が`ACTIVE`に変わります。
 
 ### クラスターを一時停止または再開する {#pause-or-resume-a-cluster}
 
@@ -1053,7 +1053,7 @@ Terraform で管理されていない TiDB クラスターの場合は、イン�
 
     生成された構成ファイルを確認し、ニーズを満たしていることを確認してください。必要に応じて、このファイルの内容を任意の場所に移動することもできます。
 
-    次に、 `terraform apply`を実行してインフラストラクチャをインポートします。適用後の出力例は次のとおりです。
+    次に、 `terraform apply`実行してインフラストラクチャをインポートします。適用後の出力例は次のとおりです。
 
     ```shell
     tidbcloud_dedicated_cluster.example_cluster: Importing... 

@@ -12,9 +12,9 @@ summary: TiDB データベースの ADMIN の使用法の概要。
 ```ebnf+diagram
 AdminShowDDLStmt ::=
     'ADMIN' 'SHOW' 'DDL'
-    ( 
-        'JOBS' Int64Num? WhereClauseOptional 
-    |   'JOB' 'QUERIES' NumList 
+    (
+        'JOBS' Int64Num? WhereClauseOptional
+    |   'JOB' 'QUERIES' NumList
     |   'JOB' 'QUERIES' 'LIMIT' m ( ('OFFSET' | ',') n )?
     )?
 
@@ -47,15 +47,15 @@ ADMIN SHOW DDL\G;
    SCHEMA_VER: 26
      OWNER_ID: 2d1982af-fa63-43ad-a3d5-73710683cc63
 OWNER_ADDRESS: 0.0.0.0:4000
- RUNNING_JOBS: 
+ RUNNING_JOBS:
       SELF_ID: 2d1982af-fa63-43ad-a3d5-73710683cc63
-        QUERY: 
+        QUERY:
 1 row in set (0.00 sec)
 ```
 
 ### <code>ADMIN SHOW DDL JOBS</code> {#code-admin-show-ddl-jobs-code}
 
-`ADMIN SHOW DDL JOBS`ステートメントは、実行中およびキューイング中のタスクを含む現在の DDL ジョブ キュー内のすべての結果と、完了した DDL ジョブ キュー内の最新の 10 件の結果を表示するために使用されます。返される結果フィールドは次のように説明されます。
+`ADMIN SHOW DDL JOBS`ステートメントは、実行中および保留中のジョブ (ある場合) を含む現在の DDL ジョブ キュー内の 10 個のジョブと、実行された DDL ジョブ キュー内の最後の 10 個のジョブ (ある場合) を表示するために使用されます。返される結果フィールドは、次のように説明されます。
 
 <CustomContent platform="tidb">
 
@@ -66,9 +66,7 @@ OWNER_ADDRESS: 0.0.0.0:4000
     -   `create schema` : [`CREATE SCHEMA`](/sql-statements/sql-statement-create-database.md)操作の場合。
     -   `create table` : [`CREATE TABLE`](/sql-statements/sql-statement-create-table.md)操作の場合。
     -   `create view` : [`CREATE VIEW`](/sql-statements/sql-statement-create-view.md)操作の場合。
-    -   `ingest` : [`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630)で設定された高速インデックスバックフィルによる取り込み。
-    -   `txn` : 基本的なトランザクションのバックフィル。
-    -   `add index /* txn-merge */` : バックフィルが完了すると元のインデックスとマージされる一時インデックスを使用したトランザクション バックフィル。
+    -   `add index` : [`ADD INDEX`](/sql-statements/sql-statement-add-index.md)操作の場合。
 -   `SCHEMA_STATE` : DDL が操作するスキーマ オブジェクトの現在の状態。 `JOB_TYPE`が`ADD INDEX`の場合はインデックスの状態、 `JOB_TYPE`が`ADD COLUMN`の場合は列の状態、 `JOB_TYPE`が`CREATE TABLE`場合はテーブルの状態です。一般的な状態は次のとおりです。
     -   `none` : 存在しないことを示します。通常、 `DROP`の操作の後、または`CREATE`操作が失敗してロールバックした後は、 `none`番目の状態になります。
     -   `delete only` : これらの 4 つ`write only`状態は中間状態です。それぞれの意味については、 [TiDB でのオンライン DDL 非同期変更の仕組み](/ddl-introduction.md#how-the-online-ddl-asynchronous-change-works-in-tidb) `write reorganization`してください。中間状態の変換は高速であるため、これらの状態`delete reorganization`通常、操作中に表示されません`ADD INDEX`操作を実行している場合にのみ、インデックス データが追加されていることを示す`write reorganization`状態が表示されます。
@@ -91,6 +89,15 @@ OWNER_ADDRESS: 0.0.0.0:4000
     -   `pausing` : 操作が一時停止されていることを示します。
     -   `paused` : 操作が一時停止されていることを示します。この状態は、 [`ADMIN PAUSED DDL JOBS`](/sql-statements/sql-statement-admin-pause-ddl.md)コマンドを使用して DDL ジョブを一時停止した場合にのみ表示されます。4 コマンドを使用して[`ADMIN RESUME DDL JOBS`](/sql-statements/sql-statement-admin-resume-ddl.md)ジョブを再開できます。
     -   `done` : 操作は TiDB 所有者ノードで正常に実行されたが、他の TiDB ノードはこの DDL ジョブによって実行された変更をまだ同期していないことを示します。
+-   `COMMENTS` : 診断目的の追加情報が含まれます。
+    -   `ingest` : [`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630)で構成された高速化されたインデックスバックフィルの追加のための取り込みタスク。
+    -   `txn` : [`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630)以降のトランザクションベースのインデックス バックフィルは無効になります。
+    -   `txn-merge` : バックフィルが完了すると元のインデックスとマージされる一時インデックスを使用したトランザクション バックフィル。
+    -   `DXF` : [`tidb_enable_dist_task`](/system-variables.md#tidb_enable_dist_task-new-in-v710)を介して構成された Distributed eXecution Framework (DXF) を使用して実行されるタスク。
+    -   `service_scope` : [`tidb_service_scope`](/system-variables.md#tidb_service_scope-new-in-v740)で設定された TiDB ノードのサービス スコープ。
+    -   `thread` : バックフィルタスクの同時実行性。初期値は`tidb_ddl_reorg_worker_cnt`に設定できます。 [`ADMIN ALTER DDL JOBS`](/sql-statements/sql-statement-admin-alter-ddl.md)による動的な変更をサポートします。
+    -   `batch_size` : バックフィルタスクのバッチサイズ。初期値は`tidb_ddl_reorg_batch_size`で設定できます。 `ADMIN ALTER DDL JOBS`による動的な変更をサポートします。
+    -   `max_write_speed` : インジェストタスクのインポート中のフロー制御。初期値は`tidb_ddl_reorg_max_write_speed`で設定できます。 `ADMIN ALTER DDL JOBS`による動的な変更をサポートします。
 
 </CustomContent>
 
@@ -102,7 +109,7 @@ OWNER_ADDRESS: 0.0.0.0:4000
 -   `JOB_TYPE` : DDL 操作のタイプ。
 -   `SCHEMA_STATE` : DDL が操作するスキーマ オブジェクトの現在の状態。 `JOB_TYPE`が`ADD INDEX`の場合はインデックスの状態、 `JOB_TYPE`が`ADD COLUMN`の場合は列の状態、 `JOB_TYPE`が`CREATE TABLE`場合はテーブルの状態です。一般的な状態は次のとおりです。
     -   `none` : 存在しないことを示します。通常、 `DROP`の操作の後、または`CREATE`操作が失敗してロールバックした後は、 `none`番目の状態になります。
-    -   `delete only` : これらの 4 つ`write only`状態は中間状態です。それぞれの意味については、 [TiDB でのオンライン DDL 非同期変更の仕組み](https://docs.pingcap.com/tidb/stable/ddl-introduction#how-the-online-ddl-asynchronous-change-works-in-tidb) `write reorganization`してください。中間状態の変換は高速であるため、これらの状態`delete reorganization`通常、操作中に表示されません`ADD INDEX`操作を実行している場合にのみ、インデックス データが追加されていることを示す`write reorganization`状態が表示されます。
+    -   `delete only` : これら 4 つ`write only`状態は中間状態です。具体的な意味については、 [TiDB でのオンライン DDL 非同期変更の仕組み](https://docs.pingcap.com/tidb/stable/ddl-introduction#how-the-online-ddl-asynchronous-change-works-in-tidb) `write reorganization`してください。中間状態の変換は高速であるため、これらの状態`delete reorganization`通常、操作中に表示されません`ADD INDEX`操作を実行している場合にのみ、インデックス データが追加されていることを示す`write reorganization`状態が表示されます。
     -   `public` : 存在し、ユーザーが利用できることを示します。通常、 `CREATE TABLE`と`ADD INDEX` (または`ADD COLUMN` ) の操作が完了すると、 `public`状態になり、新しく作成されたテーブル、列、およびインデックスを正常に読み書きできることを示します。
 -   `SCHEMA_ID` : DDL 操作が実行されるデータベースの ID。
 -   `TABLE_ID` : DDL 操作が実行されるテーブルの ID。
@@ -126,31 +133,32 @@ ADMIN SHOW DDL JOBS;
 ```
 
 ```sql
-mysql> ADMIN SHOW DDL JOBS;
-+--------+---------+--------------------+--------------+----------------------+-----------+----------+-----------+-----------------------------------------------------------------+---------+
-| JOB_ID | DB_NAME | TABLE_NAME         | JOB_TYPE     | SCHEMA_STATE         | SCHEMA_ID | TABLE_ID | ROW_COUNT | CREATE_TIME         | START_TIME          | END_TIME            | STATE   |
-+--------+---------+--------------------+--------------+----------------------+-----------+----------+-----------+---------------------+-------------------------------------------+---------+
-|     59 | test    | t1                 | add index    | write reorganization |         1 |       55 |     88576 | 2020-08-17 07:51:58 | 2020-08-17 07:51:58 | NULL                | running |
-|     60 | test    | t2                 | add index    | none                 |         1 |       57 |         0 | 2020-08-17 07:51:59 | 2020-08-17 07:51:59 | NULL                | none    |
-|     58 | test    | t2                 | create table | public               |         1 |       57 |         0 | 2020-08-17 07:41:28 | 2020-08-17 07:41:28 | 2020-08-17 07:41:28 | synced  |
-|     56 | test    | t1                 | create table | public               |         1 |       55 |         0 | 2020-08-17 07:41:02 | 2020-08-17 07:41:02 | 2020-08-17 07:41:02 | synced  |
-|     54 | test    | t1                 | drop table   | none                 |         1 |       50 |         0 | 2020-08-17 07:41:02 | 2020-08-17 07:41:02 | 2020-08-17 07:41:02 | synced  |
-|     53 | test    | t1                 | drop index   | none                 |         1 |       50 |         0 | 2020-08-17 07:35:44 | 2020-08-17 07:35:44 | 2020-08-17 07:35:44 | synced  |
-|     52 | test    | t1                 | add index    | public               |         1 |       50 |    451010 | 2020-08-17 07:34:43 | 2020-08-17 07:34:43 | 2020-08-17 07:35:16 | synced  |
-|     51 | test    | t1                 | create table | public               |         1 |       50 |         0 | 2020-08-17 07:34:02 | 2020-08-17 07:34:02 | 2020-08-17 07:34:02 | synced  |
-|     49 | test    | t1                 | drop table   | none                 |         1 |       47 |         0 | 2020-08-17 07:34:02 | 2020-08-17 07:34:02 | 2020-08-17 07:34:02 | synced  |
-|     48 | test    | t1                 | create table | public               |         1 |       47 |         0 | 2020-08-17 07:33:37 | 2020-08-17 07:33:37 | 2020-08-17 07:33:37 | synced  |
-|     46 | mysql   | stats_extended     | create table | public               |         3 |       45 |         0 | 2020-08-17 06:42:38 | 2020-08-17 06:42:38 | 2020-08-17 06:42:38 | synced  |
-|     44 | mysql   | opt_rule_blacklist | create table | public               |         3 |       43 |         0 | 2020-08-17 06:42:38 | 2020-08-17 06:42:38 | 2020-08-17 06:42:38 | synced  |
-+--------+---------+--------------------+--------------+----------------------+-----------+----------+-----------+---------------------+---------------------+-------------------------------+
-12 rows in set (0.00 sec)
++--------+---------+------------+---------------------------------+----------------------+-----------+----------+-----------+----------------------------+----------------------------+----------------------------+----------+-------------+
+| JOB_ID | DB_NAME | TABLE_NAME | JOB_TYPE                        | SCHEMA_STATE         | SCHEMA_ID | TABLE_ID | ROW_COUNT | CREATE_TIME                | START_TIME                 | END_TIME                   | STATE    | COMMENTS    |
++--------+---------+------------+---------------------------------+----------------------+-----------+----------+-----------+----------------------------+----------------------------+----------------------------+----------+-------------+
+|    565 | test    | sbtest1    | add index                       | write reorganization |       554 |      556 |         0 | 2024-11-22 12:39:25.475000 | 2024-11-22 12:39:25.524000 | NULL                       | running  | ingest, DXF |
+|    566 | test    | sbtest1    | add index                       | none                 |       554 |      556 |         0 | 2024-11-22 12:39:26.425000 | NULL                       | NULL                       | queueing |             |
+|    564 | test    | sbtest1    | alter table multi-schema change | none                 |       554 |      556 |         0 | 2024-11-22 12:39:02.925000 | 2024-11-22 12:39:02.925000 | 2024-11-22 12:39:03.275000 | synced   |             |
+|    564 | test    | sbtest1    | drop index /* subjob */         | none                 |       554 |      556 |         0 | 2024-11-22 12:39:02.925000 | 2024-11-22 12:39:02.925000 | 2024-11-22 12:39:03.275000 | done     |             |
+|    564 | test    | sbtest1    | drop index /* subjob */         | none                 |       554 |      556 |         0 | 2024-11-22 12:39:02.925000 | 2024-11-22 12:39:02.975000 | 2024-11-22 12:39:03.275000 | done     |             |
+|    563 | test    | sbtest1    | modify column                   | public               |       554 |      556 |         0 | 2024-11-22 12:38:35.624000 | 2024-11-22 12:38:35.624000 | 2024-11-22 12:38:35.674000 | synced   |             |
+|    562 | test    | sbtest1    | add index                       | public               |       554 |      556 |   1580334 | 2024-11-22 12:36:58.471000 | 2024-11-22 12:37:05.271000 | 2024-11-22 12:37:13.374000 | synced   | ingest, DXF |
+|    561 | test    | sbtest1    | add index                       | public               |       554 |      556 |   1580334 | 2024-11-22 12:36:57.771000 | 2024-11-22 12:36:57.771000 | 2024-11-22 12:37:04.671000 | synced   | ingest, DXF |
+|    560 | test    | sbtest1    | add index                       | public               |       554 |      556 |   1580334 | 2024-11-22 12:34:53.314000 | 2024-11-22 12:34:53.314000 | 2024-11-22 12:34:57.114000 | synced   | ingest      |
+|    559 | test    | sbtest1    | drop index                      | none                 |       554 |      556 |         0 | 2024-11-22 12:34:43.565000 | 2024-11-22 12:34:43.565000 | 2024-11-22 12:34:43.764000 | synced   |             |
+|    558 | test    | sbtest1    | add index                       | public               |       554 |      556 |   1580334 | 2024-11-22 12:34:06.215000 | 2024-11-22 12:34:06.215000 | 2024-11-22 12:34:14.314000 | synced   | ingest, DXF |
+|    557 | test    | sbtest1    | create table                    | public               |       554 |      556 |         0 | 2024-11-22 12:32:09.515000 | 2024-11-22 12:32:09.915000 | 2024-11-22 12:32:10.015000 | synced   |             |
+|    555 | test    |            | create schema                   | public               |       554 |        0 |         0 | 2024-11-22 12:31:51.215000 | 2024-11-22 12:31:51.264000 | 2024-11-22 12:31:51.264000 | synced   |             |
+|    553 | test    |            | drop schema                     | none                 |         2 |        0 |         0 | 2024-11-22 12:31:48.615000 | 2024-11-22 12:31:48.615000 | 2024-11-22 12:31:48.865000 | synced   |             |
++--------+---------+------------+---------------------------------+----------------------+-----------+----------+-----------+----------------------------+----------------------------+----------------------------+----------+-------------+
+14 rows in set (0.00 sec)
 ```
 
 上記の出力から:
 
--   ジョブ 59 は現在進行中です ( `STATE` )。スキーマの状態は現在`write reorganization`ですが、タスクが完了すると`public`に切り替わり`running`ユーザー セッションによって変更が公開されることに注意してください。9 列も`end_time`になっており`NULL`ジョブの完了時間が現在不明であることを示しています。
+-   ジョブ 565 は現在進行中です ( `STATE` )。スキーマの状態は現在`write reorganization`ですが、ジョブが完了すると`public`に切り替わり`running`ユーザー セッションによって変更が公開されることに注意してください。9 列も`end_time`になっており`NULL`ジョブの完了時刻が現在不明であることを示しています。
 
--   ジョブ 60 は`add index`ジョブであり、現在キューに入れられてジョブ 59 の完了を待機しています。ジョブ 59 が完了すると、ジョブ 60 の`STATE` `running`に切り替わります。
+-   `job_id` 566 の`STATE`は`queueing`として表示され、キューイングされていることを示します。ジョブ 565 が完了し、ジョブ 566 の実行が開始されると、ジョブ 566 の`STATE` `running`に変わります。
 
 -   インデックスの削除やテーブルの削除などの破壊的な変更の場合、ジョブが完了すると`SCHEMA_STATE`が`none`に変わります。追加的な変更の場合、 `SCHEMA_STATE`が`public`に変わります。
 

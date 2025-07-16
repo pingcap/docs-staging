@@ -1,7 +1,6 @@
 ---
 title: SHOW STATS_HISTOGRAMS
-aliases: ['/tidb/stable/sql-statement-show-histograms']
-summary: TiDB データベースの SHOW HISTOGRAMS の使用法の概要。
+summary: TiDB データベースの SHOW STATS_HISTOGRAMS の使用法の概要。
 ---
 
 # 統計ヒストグラムを表示 {#show-stats-histograms}

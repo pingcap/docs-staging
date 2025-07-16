@@ -1,7 +1,6 @@
 ---
 title: TiDB Cloud Serverless Driver (Beta)
 summary: サーバーレス環境およびエッジ環境からTiDB Cloud Serverless に接続する方法を学習します。
-aliases: ['/tidbcloud/serverless-driver-config']
 ---
 
 # TiDB CloudサーバーレスDriver(ベータ版) {#tidb-cloud-serverless-driver-beta}
@@ -123,7 +122,7 @@ export default async () => {
 <div label="Deno">
 
 ```ts
-import { connect } from "npm:@tidbcloud/serverless"
+import { connect } from "npm:@tidbcloud/serverless-js"
 
 const conn = connect({url: Deno.env.get('DATABASE_URL')})
 const result = await conn.execute('show tables')
@@ -134,7 +133,7 @@ const result = await conn.execute('show tables')
 <div label="Bun">
 
 ```ts
-import { connect } from "@tidbcloud/serverless"
+import { connect } from "@tidbcloud/serverless-js"
 
 const conn = connect({url: Bun.env.DATABASE_URL})
 const result = await conn.execute('show tables')
@@ -254,7 +253,7 @@ conn.execute(`select ...`, [], {
 
 > **注記：**
 >
-> TiDB Cloudサーバーレス ドライバー構成の変更:
+> TiDB Cloudサーバーレス ドライバーの構成の変更:
 >
 > -   v0.0.7: SQL レベル オプション`isolation`を追加します。
 > -   v0.0.10: 接続レベルの構成`decoders`と SQL レベル オプション`decoders`を追加します。

@@ -67,7 +67,7 @@ Bookshop アプリケーションでは、書籍のリアルタイム価格は�
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-特定の時間より前の書籍の価格を照会するには、上記のクエリ ステートメントに`AS OF TIMESTAMP <datetime>`句を追加します。
+特定の時間以前の書籍の価格を照会するには、上記のクエリ ステートメントに`AS OF TIMESTAMP <datetime>`句を追加します。
 
 ```sql
 SELECT id, title, type, price FROM books AS OF TIMESTAMP '2022-04-20 15:20:00' ORDER BY published_at DESC LIMIT 5;

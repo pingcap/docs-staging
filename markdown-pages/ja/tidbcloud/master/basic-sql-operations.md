@@ -83,7 +83,7 @@ CREATE TABLE table_name column_name data_type constraint;
 
 ```sql
 CREATE TABLE person (
-    id INT(11),
+    id INT,
     name VARCHAR(255),
     birthday DATE
     );
@@ -109,7 +109,7 @@ DROP TABLE person;
 CREATE INDEX person_id ON person (id);
 ```
 
-または、次の`ALTER TABLE`ステートメントを使用します。
+または、 `ALTER TABLE`ステートメントを使用します。
 
 ```sql
 ALTER TABLE person ADD INDEX person_id (id);

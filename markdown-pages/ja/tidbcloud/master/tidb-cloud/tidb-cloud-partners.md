@@ -1,7 +1,6 @@
 ---
 title: TiDB Cloud Partner Web Console
 summary: 再販業者およびマネージド サービス プロバイダー (MSP) としてTiDB Cloud Partner Web コンソールを使用する方法を学習します。
-aliases: ['/tidbcloud/managed-service-provider']
 ---
 
 # TiDB Cloudパートナー Web コンソール {#tidb-cloud-partner-web-console}
@@ -57,7 +56,7 @@ MSP プログラムにご興味があり、パートナーとして参加した�
 TiDB Cloud MSP パートナーとして、日常の管理タスクを管理するには 2 つの方法があります。
 
 -   [TiDB Cloudパートナー コンソール](https://partner-console.tidbcloud.com)
--   [MSP 管理 API (非推奨)](https://docs.pingcap.com/tidbcloud/api/v1beta1/msp)
+-   [MSP 管理 API](https://docs.pingcap.com/tidbcloud/api/v1beta1/msp)
 
 TiDB Cloudパートナーとしての登録が完了すると、 TiDB Cloudパートナー コンソールでアカウントをアクティブ化するための電子メール通知が届き、MSP 管理 API の API キーが送信されます。
 

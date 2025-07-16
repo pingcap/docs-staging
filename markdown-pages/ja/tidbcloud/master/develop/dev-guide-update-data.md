@@ -15,7 +15,7 @@ summary: データを更新する方法とデータを一括更新する方法�
 このドキュメントを読む前に、次のものを準備する必要があります。
 
 -   [{{{ .starter }}}クラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
--   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) [データベースを作成する](/develop/dev-guide-create-database.md) [セカンダリインデックスを作成する](/develop/dev-guide-create-secondary-indexes.md)でください[テーブルを作成する](/develop/dev-guide-create-table.md)
+-   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) [データベースを作成する](/develop/dev-guide-create-database.md)読ん[セカンダリインデックスを作成する](/develop/dev-guide-create-secondary-indexes.md)ください[テーブルを作成する](/develop/dev-guide-create-table.md)
 -   `UPDATE`データが必要な場合は、まず[データを挿入する](/develop/dev-guide-insert-data.md)が必要です。
 
 ## <code>UPDATE</code>を使用する {#use-code-update-code}

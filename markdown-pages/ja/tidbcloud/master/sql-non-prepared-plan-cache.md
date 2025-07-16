@@ -142,7 +142,7 @@ SHOW warnings;
 
 ## 監視 {#monitoring}
 
-準備されていないプラン キャッシュを有効にすると、次のペインでメモリ使用量、キャッシュ内のプランの数、キャッシュ ヒット率を監視できます。
+準備されていないプラン キャッシュを有効にすると、次のペインでメモリ使用量、キャッシュ内のプラン数、キャッシュ ヒット率を監視できます。
 
 ![non-prepare-plan-cache](https://docs-download.pingcap.com/media/images/docs/tidb-non-prepared-plan-cache-metrics.png)
 

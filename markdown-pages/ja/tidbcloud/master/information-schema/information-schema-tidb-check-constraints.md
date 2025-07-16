@@ -49,7 +49,7 @@ CONSTRAINT_CATALOG: def
 1 row in set (0.02 sec)
 ```
 
-`TIDB_CHECK_CONSTRAINTS`のテーブル内のフィールドは次のように説明されます。
+`TIDB_CHECK_CONSTRAINTS`テーブル内のフィールドは次のように説明されます。
 
 -   `CONSTRAINT_CATALOG` : 制約のカタログ。常に`def`です。
 -   `CONSTRAINT_SCHEMA` : 制約のスキーマ。

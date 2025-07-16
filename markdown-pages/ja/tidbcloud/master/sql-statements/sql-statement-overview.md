@@ -289,18 +289,14 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 | [`SHOW GRANTS`](/sql-statements/sql-statement-show-grants.md)                    | ユーザーに関連付けられた権限を表示します。       |
 | [`SHOW PRIVILEGES`](/sql-statements/sql-statement-show-privileges.md)            | 利用可能な権限を表示します。              |
 
-## TiCDC および TiDBBinlog {#ticdc-x26-tidb-binlog}
+## ティCDC {#ticdc}
 
 <CustomContent platform="tidb">
 
-| SQL文                                                                                 | 説明                                 |
-| ------------------------------------------------------------------------------------ | ---------------------------------- |
-| [`ADMIN [SET|SHOW|UNSET] BDR ROLE`](/sql-statements/sql-statement-admin-bdr-role.md) | BDR ロールを管理します。                     |
-| [`CHANGE DRAINER`](/sql-statements/sql-statement-change-drainer.md)                  | クラスター内のDrainerのステータス情報を変更します。      |
-| [`CHANGE PUMP`](/sql-statements/sql-statement-change-pump.md)                        | クラスター内のPumpのステータス情報を変更します。         |
-| [`SHOW DRAINER STATUS`](/sql-statements/sql-statement-show-drainer-status.md)        | クラスター内のすべてのDrainerノードのステータスを表示します。 |
-| [`SHOW MASTER STATUS`](/sql-statements/sql-statement-show-master-status.md)          | クラスター内の最新の TSO を表示します。             |
-| [`SHOW PUMP STATUS`](/sql-statements/sql-statement-show-pump-status.md)              | クラスター内のすべてのPumpノードのステータス情報を表示します。  |
+| SQL文                                                                                 | 説明                     |
+| ------------------------------------------------------------------------------------ | ---------------------- |
+| [`ADMIN [SET|SHOW|UNSET] BDR ROLE`](/sql-statements/sql-statement-admin-bdr-role.md) | BDR ロールを管理します。         |
+| [`SHOW MASTER STATUS`](/sql-statements/sql-statement-show-master-status.md)          | クラスター内の最新の TSO を表示します。 |
 
 </CustomContent>
 
@@ -308,7 +304,7 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 
 > **注記：**
 >
-> [ティCDC](https://docs.pingcap.com/tidb/stable/ticdc-overview)と[TiDBBinlog](https://docs.pingcap.com/tidb/stable/tidb-binlog-overview) 、TiDB Self-Managed のアップストリームに TiDB データを複製するためのツールです。TiCDC と TiDB Binlogのほとんどの SQL ステートメントは、TiDB Cloudには適用できません。TiDB TiDB Cloudでは、代わりに[TiDB Cloudコンソール](https://tidbcloud.com)の[チェンジフィード](/tidb-cloud/changefeed-overview.md)機能を使用してデータをストリーミングできます。
+> [ティCDC](https://docs.pingcap.com/tidb/stable/ticdc-overview)と[TiDBBinlog](https://docs.pingcap.com/tidb/v8.3/tidb-binlog-overview) 、TiDB Self-Managed のアップストリームに TiDB データを複製するためのツールです。TiCDC と TiDB Binlogのほとんどの SQL ステートメントは、 TiDB Cloudには適用できません。TiDB TiDB Cloudでは、代わりに[TiDB Cloudコンソール](https://tidbcloud.com)の[チェンジフィード](/tidb-cloud/changefeed-overview.md)機能を使用してデータをストリーミングできます。
 
 | SQL文                                                                        | 説明                     |
 | --------------------------------------------------------------------------- | ---------------------- |

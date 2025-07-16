@@ -12,7 +12,7 @@ summary: MySQL CLI 経由でTiDB Cloud Dedicated にデータをインポート�
 MySQL CLI 経由でTiDB Cloud Dedicated にデータをインポートする前に、次の前提条件を満たす必要があります。
 
 -   TiDB Cloud Dedicated クラスターへのアクセス権をお持ちです。お持ちでない場合は、 [TiDB Cloud専用クラスタを作成する](/tidb-cloud/create-tidb-cluster.md)手順に従ってクラスターを作成してください。
--   ローカルコンピュータに MySQL CLI をインストールします。
+-   ローカル コンピュータに MySQL CLI をインストールします。
 
 ## ステップ1. TiDB Cloud Dedicatedクラスタに接続する {#step-1-connect-to-your-tidb-cloud-dedicated-cluster}
 

@@ -1,31 +1,29 @@
 ---
-title: ticloud auth whoami
-summary: ticloud auth whoami` のリファレンス。
+title: ticloud update
+summary: ticloud update` のリファレンス。
 ---
 
-# ticloud 認証 誰だ {#ticloud-auth-whoami}
+# ticloud アップデート {#ticloud-update}
 
-現在のユーザーに関する情報を表示します:
+TiDB Cloud CLI を最新バージョンに更新します。
 
 ```shell
-ticloud auth whoami [flags]
+ticloud update [flags]
 ```
 
 ## 例 {#examples}
 
-現在のユーザーに関する情報を表示するには:
+TiDB Cloud CLI を最新バージョンに更新します。
 
 ```shell
-ticloud auth whoami
+ticloud update
 ```
 
 ## 旗 {#flags}
 
-非対話型モードでは、必要なフラグを手動で入力する必要があります。対話型モードでは、CLI プロンプトに従ってフラグを入力するだけです。
-
-| フラグ        | 説明                  | 必須  | 注記                       |
-| ---------- | ------------------- | --- | ------------------------ |
-| -h, --help | このコマンドのヘルプ情報を表示します。 | いいえ | 非対話型モードと対話型モードの両方で動作します。 |
+| フラグ        | 説明                  |
+| ---------- | ------------------- |
+| -h, --help | このコマンドのヘルプ情報を表示します。 |
 
 ## 継承されたフラグ {#inherited-flags}
 

@@ -36,13 +36,21 @@ SELECT count(1) FROM t GROUP BY a,b,c WITH ROLLUP;
 
 ## 前提条件 {#prerequisites}
 
-現在、TiDB は、 TiFlash MPP モードでのみ、 `WITH ROLLUP`構文の有効な実行プランの生成をサポートしています。したがって、TiDB クラスターがTiFlashノードでデプロイされていること、およびターゲット ファクト テーブルがTiFlashレプリカで適切に構成されていることを確認してください。
-
 <CustomContent platform="tidb">
 
-詳細については[TiFlashクラスターをスケールアウトする](/scale-tidb-using-tiup.md#scale-out-a-tiflash-cluster)参照してください。
+v8.3.0 より前の TiDB では、 [TiFlash MPP モード](/tiflash/use-tiflash-mpp-mode.md)の`WITH ROLLUP`構文に対してのみ有効な実行プランの生成がサポートされています。したがって、TiDB クラスターにはTiFlashノードが含まれている必要があり、ターゲット テーブルは正しいTiFlashレプリカで構成されている必要があります。詳細については、 [TiFlashクラスターをスケールアウトする](/scale-tidb-using-tiup.md#scale-out-a-tiflash-cluster)参照してください。
 
 </CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+v8.3.0 より前の TiDB では、 [TiFlash MPP モード](/tiflash/use-tiflash-mpp-mode.md)の`WITH ROLLUP`構文に対してのみ有効な実行プランの生成がサポートされています。したがって、TiDB クラスターにはTiFlashノードが含まれている必要があり、ターゲット テーブルは正しいTiFlashレプリカで構成されている必要があります。詳細については、 [ノード番号を変更する](/tidb-cloud/scale-tidb-cluster.md#change-node-number)参照してください。
+
+</CustomContent>
+
+v8.3.0 以降では、上記の制限はなくなりました。TiDB クラスターにTiFlashノードが含まれているかどうかに関係なく、TiDB は`WITH ROLLUP`構文の有効な実行プランの生成をサポートします。
+
+TiDB またはTiFlash が`Expand`演算子を実行するかどうかを識別するには、実行プランで`Expand`演算子の`task`属性を確認します。詳細については、 [ROLLUP実行プランの解釈方法](#how-to-interpret-the-rollup-execution-plan)参照してください。
 
 ## 例 {#examples}
 
@@ -57,7 +65,7 @@ CREATE TABLE bank
     profit  DECIMAL(13, 7)
 );
 
-ALTER TABLE bank SET TIFLASH REPLICA 1; -- Add a TiFlash replica for the table
+ALTER TABLE bank SET TIFLASH REPLICA 1; -- Add a TiFlash replica for the table in TiFlash MPP mode.
 
 INSERT INTO bank VALUES(2000, "Jan", 1, 10.3),(2001, "Feb", 2, 22.4),(2000,"Mar", 3, 31.6)
 ```
@@ -162,14 +170,31 @@ SELECT year, month, SUM(profit) AS profit, grouping(year) as grp_year, grouping(
 
 ## ROLLUP実行プランの解釈方法 {#how-to-interpret-the-rollup-execution-plan}
 
-多次元グループ化の要件を満たすために、多次元データ集約では`Expand`演算子を使用してデータを複製します。各レプリカは特定の次元のグループに対応します。MPP のデータシャッフル機能により、 `Expand`演算子は複数のTiFlashノード間で大量のデータを迅速に再編成および計算し、各ノードの計算能力を最大限に活用できます。
+多次元データ集約では、 `Expand`演算子を使用してデータをコピーし、多次元グループ化のニーズに対応します。各データコピーは、特定の次元のグループ化に対応します。MPP モードでは、 `Expand`演算子はデータシャッフルを容易にし、複数のノード間で大量のデータを迅速に再編成および計算し、各ノードの計算能力を最大限に活用します。TiFlashTiFlashのない TiDB クラスターでは、 `Expand`演算子は単一の TiDB ノードでのみ実行されるため、次元グループ化の数 ( `grouping set` ) が増えるにつれてデータの冗長性が増加します。
 
 `Expand`演算子の実装は、 `Projection`演算子の実装と似ています。違いは、 `Expand`複数レベルの`Projection`であり、複数のレベルの射影演算式が含まれていることです。生データの各行に対して、 `Projection`演算子は結果に 1 行のみを生成しますが、 `Expand`演算子は結果に複数の行を生成します (行数は射影演算式のレベル数に等しくなります)。
 
-実行プランの例を次に示します。
+次の例は、 TiFlashノードのない TiDB クラスターの実行プランを示しています。3 `Expand`演算子のうち`task`が`root`であり、 `Expand`演算子が TiDB で実行されることを示しています。
 
 ```sql
-explain SELECT year, month, grouping(year), grouping(month), SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP;
+EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP;
++--------------------------------+---------+-----------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| id                             | estRows | task      | access object | operator info                                                                                                                                                                                                                        |
++--------------------------------+---------+-----------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Projection_7                   | 2.40    | root      |               | Column#6->Column#12, Column#7->Column#13, grouping(gid)->Column#14, grouping(gid)->Column#15, Column#9->Column#16                                                                                                                    |
+| └─HashAgg_8                    | 2.40    | root      |               | group by:Column#6, Column#7, gid, funcs:sum(test.bank.profit)->Column#9, funcs:firstrow(Column#6)->Column#6, funcs:firstrow(Column#7)->Column#7, funcs:firstrow(gid)->gid                                                            |
+|   └─Expand_12                  | 3.00    | root      |               | level-projection:[test.bank.profit, <nil>->Column#6, <nil>->Column#7, 0->gid],[test.bank.profit, Column#6, <nil>->Column#7, 1->gid],[test.bank.profit, Column#6, Column#7, 3->gid]; schema: [test.bank.profit,Column#6,Column#7,gid] |
+|     └─Projection_14            | 3.00    | root      |               | test.bank.profit, test.bank.year->Column#6, test.bank.month->Column#7                                                                                                                                                                |
+|       └─TableReader_16         | 3.00    | root      |               | data:TableFullScan_15                                                                                                                                                                                                                |
+|         └─TableFullScan_15     | 3.00    | cop[tikv] | table:bank    | keep order:false, stats:pseudo                                                                                                                                                                                                       |
++--------------------------------+---------+-----------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+6 rows in set (0.00 sec)
+```
+
+次の例は、 TiFlash MPP モードでの実行プランを示しています。ここで、 `Expand`演算子のうち`task`は`mpp[tiflash]`であり、 `Expand`演算子がTiFlashで実行されることを示しています。
+
+```sql
+EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP;
 +----------------------------------------+---------+--------------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | id                                     | estRows | task         | access object | operator info                                                                                                                                                                                                                        |
 +----------------------------------------+---------+--------------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+

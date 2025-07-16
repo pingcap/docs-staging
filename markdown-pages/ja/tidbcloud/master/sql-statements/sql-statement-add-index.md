@@ -42,6 +42,8 @@ IndexOption
            | 'COMMENT' stringLit
            | 'VISIBLE'
            | 'INVISIBLE'
+           | 'GLOBAL'
+           | 'LOCAL'
 
 IndexType
          ::= 'BTREE'
@@ -89,6 +91,7 @@ mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 -   TiDB は`FULLTEXT`の構文の解析をサポートしていますが、 `FULLTEXT`インデックスの使用はサポートしていません。
 -   降順インデックスはサポートされていません ( MySQL 5.7と同様)。
 -   `CLUSTERED`タイプの主キーをテーブルに追加することはサポートされていません。 `CLUSTERED`タイプの主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
+-   `GLOBAL`インデックス オプションを使用して`PRIMARY KEY`または`UNIQUE INDEX` [グローバルインデックス](/partitioned-table.md#global-indexes)として設定することは、 [パーティションテーブル](/partitioned-table.md)の TiDB 拡張であり、MySQL と互換性がありません。
 
 ## 参照 {#see-also}
 

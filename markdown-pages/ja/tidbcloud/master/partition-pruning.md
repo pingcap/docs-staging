@@ -226,6 +226,7 @@ explain select * from t where x between 7 and 14;
 
 -   [`UNIX_TIMESTAMP()`](/functions-and-operators/date-and-time-functions.md)
 -   [`TO_DAYS()`](/functions-and-operators/date-and-time-functions.md)
+-   `DATE`と`DATETIME`列の場合、 `YEAR`と`YEAR_MONTH`時間単位は単調関数と見なされます。10 列の場合、 `HOUR` 、 `HOUR_MINUTE` 、 `HOUR_SECOND` 、および`HOUR_MICROSECOND`単調関数と見なされます。パーティション[`EXTRACT(&#x3C;time unit> FROM &#x3C;DATETIME/DATE/TIME column>)`](/functions-and-operators/date-and-time-functions.md)では、 `EXTRACT`では`WEEK`時間単位として`TIME`されていないことに注意してください。
 
 たとえば、パーティションプルーニングは、パーティション式が`fn(col)`の形式であり、 `fn`単調関数`to_days`である場合に有効になります。
 

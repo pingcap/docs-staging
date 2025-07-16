@@ -5,7 +5,7 @@ summary: Lark チケットの作成と更新サブスクリプションに関す
 
 # Lark 経由でチケットを作成し、チケットの更新を購読する {#create-tickets-and-subscribe-to-ticket-updates-via-lark}
 
-**Enterprise** [サポートプラン](/tidb-cloud/connected-care-detail.md)に加入している顧客向けに、 TiDB Cloud は[ラーク](https://www.larksuite.com/)で**PingCAP Support Bot**と呼ばれるチケット ボットを提供し、サポート チケット システムからのチケットの作成と更新を管理します。
+**Enterprise** [サポートプラン](/tidb-cloud/connected-care-detail.md)に加入している顧客の場合、 TiDB Cloud は[ラーク](https://www.larksuite.com/)で**PingCAP Support Bot**と呼ばれるチケット ボットを提供し、サポート チケット システムからのチケットの作成と更新を管理します。
 
 > **注記：**
 >

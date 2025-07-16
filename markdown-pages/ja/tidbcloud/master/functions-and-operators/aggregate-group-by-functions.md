@@ -91,7 +91,7 @@ v7.4.0 以降、TiDB の`GROUP BY`句は`WITH ROLLUP`修飾子をサポートし
 
 ## SQL モードのサポート {#sql-mode-support}
 
-TiDB は SQL モード`ONLY_FULL_GROUP_BY`をサポートしており、有効にすると、あいまいな非集計列を含むクエリが拒否されます。たとえば、次のクエリは、 `SELECT`リストの非集計列「b」が`GROUP BY`ステートメントに表示されないため、 `ONLY_FULL_GROUP_BY`有効にすると無効になります。
+TiDB は SQL モード`ONLY_FULL_GROUP_BY`をサポートしており、有効にすると、あいまいな非集計列を含むクエリが拒否されます。たとえば、次のクエリは、 `SELECT`リストの非集計列「b」が`GROUP BY`ステートメントに表示されないため、 `ONLY_FULL_GROUP_BY`有効になっている場合は無効です。
 
 ```sql
 drop table if exists t;

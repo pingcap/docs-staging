@@ -37,7 +37,7 @@ TiDB Cloudコンソールでは、次のようなさまざまな種類の通知�
 
 | 通知                             | トリガーイベント                                                                                    | 通知受信者                                                                                             |
 | ------------------------------ | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| TiDB Cloudサーバーレス クラスターの作成      | [TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターが作成されます。   | プロジェクトメンバー全員                                                                                      |
+| TiDB Cloud Serverless クラスターの作成 | [TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターが作成されます。   | プロジェクトメンバー全員                                                                                      |
 | TiDB Cloud Serverless クラスターの削除 | TiDB Cloud Serverless クラスターが削除されます。                                                         | プロジェクトメンバー全員                                                                                      |
 | TiDB Cloud専用クラスタの作成            | [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターが作成されます。        | プロジェクトメンバー全員                                                                                      |
 | TiDB Cloud専用クラスタの削除            | TiDB Cloud Dedicated クラスターが削除されます。                                                          | プロジェクトメンバー全員                                                                                      |

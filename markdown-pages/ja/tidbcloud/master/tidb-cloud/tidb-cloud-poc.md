@@ -139,7 +139,7 @@ TiDB Cloudにはさまざまな形式のデータをインポートできます�
 -   クラスターの[**診断**](/tidb-cloud/tune-performance.md#view-the-diagnosis-page)ページに移動し、 **「Key Visualizer」**タブを確認します。ここで、TiDBのデータアクセスパターンとデータホットスポットを確認できます。5 [キービジュアライザー](/tidb-cloud/tune-performance.md#key-visualizer)参照してください。
 -   これらのメトリクスを、お客様独自のDatadogおよびPrometheusに統合することも可能です。1 [サードパーティの監視統合](/tidb-cloud/third-party-monitoring-integrations.md)ご覧ください。
 
-次はテスト結果を評価する時です。
+次はテスト結果を評価するときです。
 
 より正確な評価を行うには、テスト前にメトリクスのベースラインを決定し、各実行のテスト結果を適切に記録してください。結果を分析することで、 TiDB Cloudがアプリケーションに適しているかどうかを判断できます。また、これらの結果はシステムの実行状態を示しており、メトリクスに応じてシステムを調整できます。例えば、
 

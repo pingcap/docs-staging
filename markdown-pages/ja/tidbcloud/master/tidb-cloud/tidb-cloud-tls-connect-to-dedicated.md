@@ -121,7 +121,7 @@ jdbc:mysql://tidb.srgnqxji5bc.clusters.staging.tidb-cloud.com:4000/test?user=roo
 
 <div label="Python">
 
-ここでは、 [mysqlクライアント](https://pypi.org/project/mysqlclient/)の TLS 接続構成を例として使用します。
+ここでは、 [mysqlクライアント](https://pypi.org/project/mysqlclient/)の TLS 接続構成が例として使用されています。
 
     host="tidb.srgnqxji5bc.clusters.staging.tidb-cloud.com", user="root", password="<your_password>", port=4000, database="test", ssl_mode="VERIFY_IDENTITY", ssl={"ca": "ca.pem"}
 

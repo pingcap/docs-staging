@@ -77,7 +77,7 @@ curl --digest --user ${PUBLIC_KEY}:${PRIVATE_KEY} --request POST 'https://<regio
 
 > **注記：**
 >
-> 新しく追加された例の正確さを確認してください。例の品質は Chat2Query の学習の質に影響します。質問と回答が一致しないなどの質の悪い例は、新しいタスクでの Chat2Query のパフォーマンスを低下させる可能性があります。
+> 新しく追加された例の正確さを確認してください。例の品質は Chat2Query の学習の質に影響します。質問と回答が一致しないなどの質の低い例は、新しいタスクでの Chat2Query のパフォーマンスを低下させる可能性があります。
 
 #### 知識構造 {#knowledge-structure}
 

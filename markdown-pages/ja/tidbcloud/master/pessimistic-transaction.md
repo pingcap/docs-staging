@@ -104,7 +104,9 @@ TiDB の悲観的トランザクションは、MySQL の悲観的トランザク
 
 2.  TiDB は`SELECT LOCK IN SHARE MODE`サポートしていません。
 
-    `SELECT LOCK IN SHARE MODE`実行すると、ロックなしと同じ効果が得られるため、他のトランザクションの読み取りまたは書き込み操作はブロックされません。
+    TiDB はデフォルトでは`SELECT LOCK IN SHARE MODE`構文をサポートしていません。3 [`tidb_enable_noop_functions`](/system-variables.md#tidb_enable_noop_functions-new-in-v40)有効にすると、TiDB を`SELECT LOCK IN SHARE MODE`構文と互換性のあるものにすることができます`SELECT LOCK IN SHARE MODE`実行すると、ロックなしの場合と同じ効果が得られるため、他のトランザクションの読み取りまたは書き込み操作がブロックされることはありません。
+
+    v8.3.0 以降、TiDB は[`tidb_enable_shared_lock_promotion`](/system-variables.md#tidb_enable_shared_lock_promotion-new-in-v830)システム変数を使用して`SELECT LOCK IN SHARE MODE`ステートメントを有効にし、ロックを追加できるようになりました。ただし、今回追加されたロックは真の共有ロックではなく、 `SELECT FOR UPDATE`と一致する排他ロックであることに注意してください。TiDB と`SELECT LOCK IN SHARE MODE`構文の互換性を維持しながら、読み取り中に並行して書き込みトランザクションによってデータが変更されるのを防ぐために書き込みをブロックする場合は、この変数を有効にできます。この変数を有効にすると、 [`tidb_enable_noop_functions`](/system-variables.md#tidb_enable_noop_functions-new-in-v40)が有効かどうかに関係なく、 `SELECT LOCK IN SHARE MODE`ステートメントで有効になります。
 
 3.  DDL により、悲観的トランザクション コミットが失敗する可能性があります。
 
@@ -189,7 +191,17 @@ set config tikv pessimistic-txn.pipelined='false';
 
 v6.0.0 では、TiKV にメモリ内悲観的ロックの機能が導入されています。この機能を有効にすると、悲観的ロックは通常、リージョンリーダーのメモリにのみ保存され、ディスクに保持されたり、 Raftを介して他のレプリカに複製されたりすることはありません。この機能により、悲観的ロックの取得にかかるオーバーヘッドが大幅に削減され、悲観的トランザクションのスループットが向上します。
 
-インメモリ悲観的ロックのメモリ使用量がリージョンまたは TiKV ノードのメモリしきい値を超えると、悲観的ロックの取得は[パイプライン化されたロック処理](#pipelined-locking-process)になります。リージョンがマージされるかリーダーが転送されると、悲観的ロックが失われるのを避けるために、TiKV はインメモリ悲観的ロックをディスクに書き込み、他のレプリカに複製します。
+<CustomContent platform="tidb">
+
+インメモリ悲観的ロックのメモリ使用量が[リージョン](/tikv-configuration-file.md#in-memory-peer-size-limit-new-in-v840)または[TiKVノード](/tikv-configuration-file.md#in-memory-instance-size-limit-new-in-v840)のメモリしきい値を超えると、悲観的悲観的ロックの取得は[パイプライン化されたロック処理](#pipelined-locking-process)に切り替わります。リージョンがマージされるか、リーダーが転送されると、悲観的ロックが失われるのを避けるために、TiKV はインメモリ悲観的ロックをディスクに書き込み、それを他のレプリカに複製します。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+インメモリ悲観的ロックのメモリ使用量が[リージョン](https://docs.pingcap.com/tidb/dev/tikv-configuration-file#in-memory-peer-size-limit-new-in-v840)または[TiKVノード](https://docs.pingcap.com/tidb/dev/tikv-configuration-file#in-memory-instance-size-limit-new-in-v840)のメモリしきい値を超えると、悲観的悲観的ロックの取得は[パイプライン化されたロック処理](#pipelined-locking-process)に切り替わります。リージョンがマージされるか、リーダーが転送されると、悲観的ロックが失われるのを避けるために、TiKV はインメモリ悲観的ロックをディスクに書き込み、それを他のレプリカに複製します。
+
+</CustomContent>
 
 メモリ内悲観的ロックはパイプライン ロック プロセスと同様に実行され、クラスターが正常な場合はロックの取得に影響しません。ただし、TiKV でネットワーク分離が発生したり、TiKV ノードがダウンしたりすると、取得した悲観的ロックが失われる可能性があります。
 
@@ -207,3 +219,22 @@ in-memory = false
 ```sql
 set config tikv pessimistic-txn.in-memory='false';
 ```
+
+<CustomContent platform="tidb">
+
+v8.4.0 以降では、 [`pessimistic-txn.in-memory-peer-size-limit`](/tikv-configuration-file.md#in-memory-peer-size-limit-new-in-v840)または[`pessimistic-txn.in-memory-instance-size-limit`](/tikv-configuration-file.md#in-memory-instance-size-limit-new-in-v840)使用して、リージョンまたは TiKV インスタンス内のメモリ内悲観的ロックのメモリ使用量制限を設定できます。
+
+```toml
+[pessimistic-txn]
+in-memory-peer-size-limit = "512KiB"
+in-memory-instance-size-limit = "100MiB"
+```
+
+これらの制限を動的に変更するには、 [TiKV設定を動的に変更する](/dynamic-config.md#modify-tikv-configuration-dynamically)のようにします。
+
+```sql
+SET CONFIG tikv `pessimistic-txn.in-memory-peer-size-limit`="512KiB";
+SET CONFIG tikv `pessimistic-txn.in-memory-instance-size-limit`="100MiB";
+```
+
+</CustomContent>

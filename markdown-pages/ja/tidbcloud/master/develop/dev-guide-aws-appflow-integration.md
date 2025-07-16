@@ -164,7 +164,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
     ![complete flow](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-complete-flow.png)
 
-8.  **「エラー処理」**エリアで、 **「現在のフロー実行を停止」**を選択します。「**フロートリガー」**エリアで、 **「オンデマンド実行**」トリガータイプを選択します。これは、フローを手動で実行する必要があることを意味します。「**次へ」**をクリックします。
+8.  **「エラー処理」**エリアで、 **「現在のフロー実行を停止」**を選択します。 **「フロートリガー」**エリアで、 **「オンデマンド実行**」トリガータイプを選択します。これは、フローを手動で実行する必要があることを意味します。「**次へ」**をクリックします。
 
     ![complete step1](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-complete-step1.png)
 

@@ -19,10 +19,10 @@ ticloud help [command] [flags]
 ticloud help auth
 ```
 
-`serverless create`コマンドのヘルプを取得するには:
+`serveless create`コマンドのヘルプを取得するには:
 
 ```shell
-ticloud help serverless create
+ticloud help serveless create
 ```
 
 ## 旗 {#flags}

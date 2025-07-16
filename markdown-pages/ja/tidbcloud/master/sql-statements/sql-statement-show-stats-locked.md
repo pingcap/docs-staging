@@ -1,6 +1,6 @@
 ---
 title: SHOW STATS_LOCKED
-summary: TiDB データベースに対する SHOW STATS_LOCKED の使用法の概要。
+summary: TiDB データベースの SHOW STATS_LOCKED の使用法の概要。
 ---
 
 # STATS_LOCKED を表示 {#show-stats-locked}

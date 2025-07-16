@@ -126,6 +126,8 @@ MySQL [test]> select @@last_plan_from_cache;
 
 ## プリペアドプランキャッシュの診断 {#diagnostics-of-prepared-plan-cache}
 
+### <code>SHOW WARNINGS</code>使用して診断する {#use-code-show-warnings-code-to-diagnose}
+
 一部のクエリまたはプランはキャッシュできません`SHOW WARNINGS`ステートメントを使用して、クエリまたはプランがキャッシュされているかどうかを確認できます。キャッシュされていない場合は、結果で失敗の理由を確認できます。例:
 
 ```sql
@@ -133,7 +135,7 @@ mysql> PREPARE st FROM 'SELECT * FROM t WHERE a > (SELECT MAX(a) FROM t)';  -- T
 
 Query OK, 0 rows affected, 1 warning (0.01 sec)
 
-mysql> show warnings;  -- Checks the reason why the query plan cannot be cached.
+mysql> SHOW WARNINGS;  -- Checks the reason why the query plan cannot be cached.
 
 +---------+------+-----------------------------------------------+
 | Level   | Code | Message                                       |
@@ -154,7 +156,7 @@ mysql> execute st using @a;  -- The optimization converts a non-INT type to an I
 
 Empty set, 1 warning (0.01 sec)
 
-mysql> show warnings;
+mysql> SHOW WARNINGS;
 
 +---------+------+----------------------------------------------+
 | Level   | Code | Message                                      |
@@ -162,6 +164,25 @@ mysql> show warnings;
 | Warning | 1105 | skip plan-cache: '1' may be converted to INT |
 +---------+------+----------------------------------------------+
 1 row in set (0.00 sec)
+```
+
+### 診断には<code>Statements Summary</code>を使用する {#use-code-statements-summary-code-to-diagnose}
+
+`Statements Summary`テーブルには`plan_cache_unqualified`と`plan_cache_unqualified_last_reason` 2 つのフィールドが含まれており、それぞれ対応するクエリがプラン キャッシュを使用できなかった回数とその理由を示します。これらの 2 つのフィールドは診断目的で使用できます。
+
+```sql
+mysql> SELECT digest_text, plan_cache_unqualified, plan_cache_unqualified_last_reason FROM information_schema.statements_summary WHERE plan_cache_unqualified > 0 ORDER BY plan_cache_unqualified DESC
+LIMIT 10;
+
++---------------------------------+------------------------+----------------------------------------+
+| digest_text                     | plan_cache_unqualified | plan_cache_unqualified_last_reason     |
++---------------------------------+------------------------+----------------------------------------+
+| select * from `t` where `a` < ? |                     10 | '1' may be converted to INT            |
+| select * from `t` order by ?    |                      4 | query has 'order by ?' is un-cacheable |
+| select database ( ) from `t`    |                      2 | query has 'database()' is un-cacheable |
+...
++---------------------------------+------------------------+----------------------------------------+
+10 row in set (0.01 sec)
 ```
 
 ## プリペアドプランキャッシュのメモリ管理 {#memory-management-of-prepared-plan-cache}

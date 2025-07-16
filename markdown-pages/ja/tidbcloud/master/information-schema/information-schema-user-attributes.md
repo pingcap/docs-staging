@@ -23,7 +23,7 @@ DESC user_attributes;
 3 rows in set (0.00 sec)
 ```
 
-`USER_ATTRIBUTES`テーブル内のフィールドは次のように説明されます。
+`USER_ATTRIBUTES`のテーブル内のフィールドは次のように説明されます。
 
 -   `USER` : ユーザー名。
 -   `HOST` : ユーザーが TiDB に接続できるホスト。このフィールドの値が`％`の場合、ユーザーはどのホストからでも TiDB に接続できることを意味します。

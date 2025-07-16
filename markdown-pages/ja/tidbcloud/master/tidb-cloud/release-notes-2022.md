@@ -239,7 +239,7 @@ summary: 2022 年のTiDB Cloudのリリース ノートについて説明しま�
 
 **ドキュメントの変更**
 
--   [ドキュメント](/tidb-cloud/terraform-tidbcloud-provider-overview.md)足して[TiDB CloudTerraform プロバイダー](https://registry.terraform.io/providers/tidbcloud/tidbcloud)になります。
+-   [ドキュメント](/tidb-cloud/terraform-tidbcloud-provider-overview.md)足して[TiDB CloudTerraform プロバイダー](https://registry.terraform.io/providers/tidbcloud/tidbcloud)にします。
 
     TiDB Cloud Terraform Providerは、 [テラフォーム](https://www.terraform.io/)使用してクラスタ、バックアップ、リストアなどのTiDB Cloudリソースを管理できるプラグインです。リソースのプロビジョニングとインフラストラクチャワークフローを自動化するシンプルな方法をお探しの場合は、 [ドキュメント](/tidb-cloud/terraform-tidbcloud-provider-overview.md)に従ってTiDB Cloud Terraform Providerをお試しください。
 

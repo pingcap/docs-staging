@@ -26,7 +26,7 @@ summary: TiDB Cloud Serverless クラスター リソースを使用して、 Ti
 
 利用可能なすべてのプロジェクトに関する情報を取得するには、次のように`tidbcloud_projects`データ ソースを使用します。
 
-1.  [TiDB Cloud Terraform プロバイダーを入手する](/tidb-cloud/terraform-get-tidbcloud-provider.md)で作成された`main.tf`ファイルに、次のように`data`と`output`ブロックを追加します。
+1.  [TiDB Cloud Terraform プロバイダーを入手する](/tidb-cloud/terraform-get-tidbcloud-provider.md)で作成した`main.tf`ファイルに、次のように`data`と`output`ブロックを追加します。
 
         terraform {
           required_providers {

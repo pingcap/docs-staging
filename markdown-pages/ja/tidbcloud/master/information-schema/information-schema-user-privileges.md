@@ -120,7 +120,7 @@ SELECT * FROM USER_PRIVILEGES;
 
 </CustomContent>
 
-`USER_PRIVILEGES`テーブル内のフィールドは次のように説明されます。
+`USER_PRIVILEGES`のテーブル内のフィールドは次のように説明されます。
 
 -   `GRANTEE` : 許可されたユーザーの名前。形式は`'user_name'@'host_name'`です。
 -   `TABLE_CATALOG` : テーブルが属するカタログの名前。この値は常に`def`です。

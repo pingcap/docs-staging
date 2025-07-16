@@ -66,7 +66,7 @@ TiDB の`CHECK`制約の構文は MySQL の構文と同じです。
 
 ### <code>CHECK</code>制約を追加する {#add-code-check-code-constraints}
 
-TiDB では、 [`CREATE TABLE`](/sql-statements/sql-statement-create-table.md)または[`ALTER TABLE`](/sql-statements/sql-statement-modify-column.md)ステートメントのいずれかを使用して、テーブルに`CHECK`制約を追加できます。
+TiDB では、 [`CREATE TABLE`](/sql-statements/sql-statement-create-table.md)または[`ALTER TABLE`](/sql-statements/sql-statement-modify-column.md)ステートメントを使用して、テーブルに`CHECK`制約を追加できます。
 
 -   `CREATE TABLE`ステートメントを使用して`CHECK`制約を追加する例:
 
@@ -94,9 +94,9 @@ SHOW CREATE TABLE t;
 | Table | Create Table                                                                                                                                                                                                                                                                                                     |
 +-------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | t     | CREATE TABLE `t` (
-  `a` int(11) DEFAULT NULL,
-  `b` int(11) DEFAULT NULL,
-  `c` int(11) DEFAULT NULL,
+  `a` int DEFAULT NULL,
+  `b` int DEFAULT NULL,
+  `c` int DEFAULT NULL,
 CONSTRAINT `c1` CHECK ((`b` > `c`)),
 CONSTRAINT `t_chk_1` CHECK ((`a` > 10)) /*!80016 NOT ENFORCED */,
 CONSTRAINT `t_chk_2` CHECK ((1 < `c`))
@@ -373,7 +373,7 @@ ALTER TABLE t5 DROP PRIMARY KEY;
 
 > **注記：**
 >
-> v6.6.0 以降、TiDB は[FOREIGN KEY制約](/foreign-key.md)を実験的機能としてサポートします。v6.6.0 より前の TiDB は外部キー制約の作成と削除をサポートしていますが、制約は実際には有効ではありません。TiDB を v6.6.0 にアップグレードした後、無効な外部キーを削除して新しい外部キーを作成し、外部キー制約を有効にすることができます。
+> v6.6.0 以降、TiDB は[FOREIGN KEY制約](/foreign-key.md)をサポートします。v6.6.0 より前の TiDB は外部キー制約の作成と削除をサポートしますが、制約は実際には有効ではありません。TiDB を v6.6.0 以降にアップグレードすると、無効な外部キーを削除して新しい外部キーを作成し、外部キー制約を有効にすることができます。この機能は、v8.5.0 で一般提供が開始されます。
 
 TiDB は、DDL コマンドで`FOREIGN KEY`制約の作成をサポートしています。
 

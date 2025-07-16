@@ -57,7 +57,7 @@ SELECT * FROM authors a1
 WHERE (IFNULL(a1.death_year, YEAR(NOW())) - a1.birth_year) > 34;
 ```
 
-結果は次のとおりです。
+結果は次のようになります。
 
     +--------+-------------------+--------+------------+------------+
     | id     | name              | gender | birth_year | death_year |

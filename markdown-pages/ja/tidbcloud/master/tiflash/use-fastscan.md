@@ -3,7 +3,7 @@ title: Use FastScan
 summary: FastScan を使用して OLAP シナリオでのクエリを高速化する方法を紹介します。
 ---
 
-# FastScanを使用する {#use-fastscan}
+# ファストスキャンを使用する {#use-fastscan}
 
 このドキュメントでは、FastScan を使用してオンライン分析処理 (OLAP) シナリオでのクエリを高速化する方法について説明します。
 

@@ -221,7 +221,7 @@ WHERE table_schema LIKE 'bookshop';
 | 書籍ID   | ビッグイント(20) | 書籍の一意のID（ [本](#books-table)にリンク）           |
 | ユーザーID | ビッグイント(20) | ユーザー固有識別子（ [ユーザー](#users-table)に関連付けられている） |
 | 量      | タイニーイント(4) | 購入数量                                       |
-| 注文時    | 日時         | 購入時間                                       |
+| 注文した日時 | 日時         | 購入時間                                       |
 
 ## データベース初期化スクリプト<code>dbinit.sql</code> {#database-initialization-script-code-dbinit-sql-code}
 
