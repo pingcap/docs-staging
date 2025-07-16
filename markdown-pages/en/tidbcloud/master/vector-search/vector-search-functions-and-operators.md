@@ -7,18 +7,34 @@ summary: Learn about functions and operators available for Vector data types.
 
 This document lists the functions and operators available for Vector data types.
 
-> **Note**
+<CustomContent platform="tidb">
+
+> **Warning:**
 >
-> TiDB Vector Search is only available for TiDB Self-Managed (TiDB >= v8.4) and [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless). It is not available for [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated).
+> This feature is experimental. It is not recommended that you use it in the production environment. This feature might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **Note:**
+>
+> This feature is in beta. It might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+> **Note:**
+>
+> Vector data types and these vector functions are available on TiDB Self-Managed, [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
 
 ## Vector functions
 
-The following functions are designed specifically for [Vector data types](/tidb-cloud/vector-search-data-types.md).
+The following functions are designed specifically for [Vector data types](/vector-search/vector-search-data-types.md).
 
 **Vector distance functions:**
 
-| Function Name                                               | Description                                                      |
-| ----------------------------------------------------------- | ---------------------------------------------------------------- |
+| Function Name                                             | Description                                                      |
+| --------------------------------------------------------- | ---------------------------------------------------------------- |
 | [`VEC_L2_DISTANCE`](#vec_l2_distance)                       | Calculates L2 distance (Euclidean distance) between two vectors  |
 | [`VEC_COSINE_DISTANCE`](#vec_cosine_distance)               | Calculates the cosine distance between two vectors               |
 | [`VEC_NEGATIVE_INNER_PRODUCT`](#vec_negative_inner_product) | Calculates the negative of the inner product between two vectors |
@@ -26,8 +42,8 @@ The following functions are designed specifically for [Vector data types](/tidb-
 
 **Other vector functions:**
 
-| Function Name                     | Description                                         |
-| --------------------------------- | --------------------------------------------------- |
+| Function Name                   | Description                                         |
+| ------------------------------- | --------------------------------------------------- |
 | [`VEC_DIMS`](#vec_dims)           | Returns the dimension of a vector                   |
 | [`VEC_L2_NORM`](#vec_l2_norm)     | Calculates the L2 norm (Euclidean norm) of a vector |
 | [`VEC_FROM_TEXT`](#vec_from_text) | Converts a string into a vector                     |
@@ -35,7 +51,7 @@ The following functions are designed specifically for [Vector data types](/tidb-
 
 ## Extended built-in functions and operators
 
-The following built-in functions and operators are extended to support operations on [Vector data types](/tidb-cloud/vector-search-data-types.md).
+The following built-in functions and operators are extended to support operations on [Vector data types](/vector-search/vector-search-data-types.md).
 
 **Arithmetic operators:**
 
@@ -44,12 +60,12 @@ The following built-in functions and operators are extended to support operation
 | [`+`](https://dev.mysql.com/doc/refman/8.0/en/arithmetic-functions.html#operator_plus)  | Vector element-wise addition operator    |
 | [`-`](https://dev.mysql.com/doc/refman/8.0/en/arithmetic-functions.html#operator_minus) | Vector element-wise subtraction operator |
 
-For more information about how vector arithmetic works, see [Vector Data Type | Arithmetic](/tidb-cloud/vector-search-data-types.md#arithmetic).
+For more information about how vector arithmetic works, see [Vector Data Type | Arithmetic](/vector-search/vector-search-data-types.md#arithmetic).
 
 **Aggregate (GROUP BY) functions:**
 
-| Name                                                                                                          | Description                                      |
-| :------------------------------------------------------------------------------------------------------------ | :----------------------------------------------- |
+| Name                              | Description                                      |
+| :----------------------- | :----------------------------------------------- |
 | [`COUNT()`](https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html#function_count)                  | Return a count of the number of rows returned    |
 | [`COUNT(DISTINCT)`](https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html#function_count-distinct) | Return the count of a number of different values |
 | [`MAX()`](https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html#function_max)                      | Return the maximum value                         |
@@ -57,8 +73,8 @@ For more information about how vector arithmetic works, see [Vector Data Type | 
 
 **Comparison functions and operators:**
 
-| Name                                                                                                                | Description                                           |
-| ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Name                                  | Description                                           |
+| ---------------------------------------- | ----------------------------------------------------- |
 | [`BETWEEN ... AND ...`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_between)         | Check whether a value is within a range of values     |
 | [`COALESCE()`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#function_coalesce)                 | Return the first non-NULL argument                    |
 | [`=`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_equal)                             | Equal operator                                        |
@@ -67,8 +83,8 @@ For more information about how vector arithmetic works, see [Vector Data Type | 
 | [`>=`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_greater-than-or-equal)            | Greater than or equal operator                        |
 | [`GREATEST()`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#function_greatest)                 | Return the largest argument                           |
 | [`IN()`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_in)                             | Check whether a value is within a set of values       |
-| [`IS NULL`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_is-null)                     | Test whether a value is `NULL`                        |
-| [`ISNULL()`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#function_isnull)                     | Test whether the argument is `NULL`                   |
+| [`IS NULL`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_is-null)                     | Test whether a value is `NULL`                                     |
+| [`ISNULL()`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#function_isnull)                     | Test whether the argument is `NULL`                     |
 | [`LEAST()`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#function_least)                       | Return the smallest argument                          |
 | [`<`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_less-than)                         | Less than operator                                    |
 | [`<=`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_less-than-or-equal)               | Less than or equal operator                           |
@@ -76,25 +92,25 @@ For more information about how vector arithmetic works, see [Vector Data Type | 
 | [`!=`, `<>`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_not-equal)                  | Not equal operator                                    |
 | [`NOT IN()`](https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_not-in)                     | Check whether a value is not within a set of values   |
 
-For more information about how vectors are compared, see [Vector Data Type | Comparison](/tidb-cloud/vector-search-data-types.md#comparison).
+For more information about how vectors are compared, see [Vector Data Type | Comparison](/vector-search/vector-search-data-types.md#comparison).
 
 **Control flow functions:**
 
-| Name                                                                                              | Description                    |
-| :------------------------------------------------------------------------------------------------ | :----------------------------- |
-| [`CASE`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#operator_case)       | Case operator                  |
-| [`IF()`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_if)         | If/else construct              |
-| [`IFNULL()`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_ifnull) | Null if/else construct         |
+| Name                                                                                              | Description                  |
+| :------------------------------------------------------------------------------------------------ | :--------------------------- |
+| [`CASE`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#operator_case)       | Case operator                |
+| [`IF()`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_if)         | If/else construct            |
+| [`IFNULL()`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_ifnull) | Null if/else construct       |
 | [`NULLIF()`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_nullif) | Return `NULL` if expr1 = expr2 |
 
 **Cast functions:**
 
-| Name                                                                                        | Description                        |
-| :------------------------------------------------------------------------------------------ | :--------------------------------- |
+| Name                                                                                        | Description                    |
+| :------------------------------------------------------------------------------------------ | :----------------------------- |
 | [`CAST()`](https://dev.mysql.com/doc/refman/8.0/en/cast-functions.html#function_cast)       | Cast a value as a string or vector |
-| [`CONVERT()`](https://dev.mysql.com/doc/refman/8.0/en/cast-functions.html#function_convert) | Cast a value as a string           |
+| [`CONVERT()`](https://dev.mysql.com/doc/refman/8.0/en/cast-functions.html#function_convert) | Cast a value as a string |
 
-For more information about how to use `CAST()`, see [Vector Data Type | Cast](/tidb-cloud/vector-search-data-types.md#cast).
+For more information about how to use `CAST()`, see [Vector Data Type | Cast](/vector-search/vector-search-data-types.md#cast).
 
 ## Full references
 
@@ -222,7 +238,7 @@ Examples:
 VEC_L2_NORM(vector)
 ```
 
-Calculates the [L2 norm](<https://en.wikipedia.org/wiki/Norm_(mathematics)>) (Euclidean norm) of a vector using the following formula:
+Calculates the [L2 norm](https://en.wikipedia.org/wiki/Norm_(mathematics)) (Euclidean norm) of a vector using the following formula:
 
 $NORM(p)=\sqrt {\sum \limits _{i=1}^{n}{p_{i}^{2}}}$
 
@@ -281,4 +297,4 @@ The vector functions and the extended usage of built-in functions and operators 
 
 ## See also
 
-- [Vector Data Types](/tidb-cloud/vector-search-data-types.md)
+- [Vector Data Types](/vector-search/vector-search-data-types.md)

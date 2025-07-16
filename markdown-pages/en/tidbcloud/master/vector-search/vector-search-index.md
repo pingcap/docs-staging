@@ -5,38 +5,70 @@ summary: Learn how to build and use the vector search index to accelerate K-Near
 
 # Vector Search Index
 
-As described in the [Vector Search](/tidb-cloud/vector-search-overview.md) document, vector search identifies the Top K-Nearest Neighbors (KNN) to a given vector by calculating the distance between the given vector and all vectors stored in the database. While this approach provides accurate results, it can be slow when the table contains a large number of vectors because it involves a full table scan. [^1]
+As described in the [Vector Search](/vector-search/vector-search-overview.md) document, vector search identifies the Top K-Nearest Neighbors (KNN) to a given vector by calculating the distance between the given vector and all vectors stored in the database. While this approach provides accurate results, it can be slow when the table contains a large number of vectors because it involves a full table scan. [^1]
 
 To improve search efficiency, you can create vector search indexes in TiDB for approximate KNN (ANN) search. When using vector indexes for vector search, TiDB can greatly improve query performance with only a slight reduction in accuracy, generally maintaining a search recall rate above 90%.
 
+<CustomContent platform="tidb">
+
+> **Warning:**
+>
+> The vector search feature is experimental. It is not recommended that you use it in the production environment. This feature might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **Note:**
+>
+> The vector search feature is in beta. It might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+> **Note:**
+>
+> The vector search feature is available on TiDB Self-Managed, [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
+
 Currently, TiDB supports the [HNSW (Hierarchical Navigable Small World)](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world) vector search index algorithm.
+
+## Restrictions
+
+- TiFlash nodes must be deployed in your cluster in advance.
+- Vector search indexes cannot be used as primary keys or unique indexes.
+- Vector search indexes can only be created on a single vector column and cannot be combined with other columns (such as integers or strings) to form composite indexes.
+- A distance function must be specified when creating and using vector search indexes. Currently, only cosine distance `VEC_COSINE_DISTANCE()` and L2 distance `VEC_L2_DISTANCE()` functions are supported.
+- For the same column, creating multiple vector search indexes using the same distance function is not supported.
+- Directly dropping columns with vector search indexes is not supported. You can drop such a column by first dropping the vector search index on that column and then dropping the column itself.
+- Modifying the type of a column with a vector index is not supported.
+- Setting vector search indexes as [invisible](/sql-statements/sql-statement-alter-index.md) is not supported.
+- Building vector search indexes on TiFlash nodes with [encryption at rest](https://docs.pingcap.com/tidb/stable/encryption-at-rest) enabled is not supported.
 
 ## Create the HNSW vector index
 
 [HNSW](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world) is one of the most popular vector indexing algorithms. The HNSW index provides good performance with relatively high accuracy, up to 98% in specific cases.
 
-In TiDB, you can create an HNSW index for a column with a [vector data type](/tidb-cloud/vector-search-data-types.md) in either of the following ways:
+In TiDB, you can create an HNSW index for a column with a [vector data type](/vector-search/vector-search-data-types.md) in either of the following ways:
 
 - When creating a table, use the following syntax to specify the vector column for the HNSW index:
 
-  ```sql
-  CREATE TABLE foo (
-      id       INT PRIMARY KEY,
-      embedding     VECTOR(5),
-      VECTOR INDEX idx_embedding ((VEC_COSINE_DISTANCE(embedding)))
-  );
-  ```
+    ```sql
+    CREATE TABLE foo (
+        id       INT PRIMARY KEY,
+        embedding     VECTOR(5),
+        VECTOR INDEX idx_embedding ((VEC_COSINE_DISTANCE(embedding)))
+    );
+    ```
 
 - For an existing table that already contains a vector column, use the following syntax to create an HNSW index for the vector column:
 
-  ```sql
-  CREATE VECTOR INDEX idx_embedding ON foo ((VEC_COSINE_DISTANCE(embedding)));
-  ALTER TABLE foo ADD VECTOR INDEX idx_embedding ((VEC_COSINE_DISTANCE(embedding)));
+    ```sql
+    CREATE VECTOR INDEX idx_embedding ON foo ((VEC_COSINE_DISTANCE(embedding)));
+    ALTER TABLE foo ADD VECTOR INDEX idx_embedding ((VEC_COSINE_DISTANCE(embedding)));
 
-  -- You can also explicitly specify "USING HNSW" to build the vector search index.
-  CREATE VECTOR INDEX idx_embedding ON foo ((VEC_COSINE_DISTANCE(embedding))) USING HNSW;
-  ALTER TABLE foo ADD VECTOR INDEX idx_embedding ((VEC_COSINE_DISTANCE(embedding))) USING HNSW;
-  ```
+    -- You can also explicitly specify "USING HNSW" to build the vector search index.
+    CREATE VECTOR INDEX idx_embedding ON foo ((VEC_COSINE_DISTANCE(embedding))) USING HNSW;
+    ALTER TABLE foo ADD VECTOR INDEX idx_embedding ((VEC_COSINE_DISTANCE(embedding))) USING HNSW;
+    ```
 
 > **Note:**
 >
@@ -52,7 +84,7 @@ When creating an HNSW vector index, you need to specify the distance function fo
 
 The vector index can only be created for fixed-dimensional vector columns, such as a column defined as `VECTOR(3)`. It cannot be created for non-fixed-dimensional vector columns (such as a column defined as `VECTOR`) because vector distances can only be calculated between vectors with the same dimension.
 
-For other limitations, see [Vector index limitations](/tidb-cloud/vector-search-limitations.md#vector-index-limitations).
+For restrictions and limitations of vector search indexes, see [Restrictions](#restrictions).
 
 ## Use the vector index
 
@@ -114,17 +146,17 @@ SELECT * FROM INFORMATION_SCHEMA.TIFLASH_INDEXES;
 
 - You can check the `ROWS_STABLE_INDEXED` and `ROWS_STABLE_NOT_INDEXED` columns for the index build progress. When `ROWS_STABLE_NOT_INDEXED` becomes 0, the index build is complete.
 
-  As a reference, indexing a 500 MiB vector dataset with 768 dimensions might take up to 20 minutes. The indexer can run in parallel for multiple tables. Currently, adjusting the indexer priority or speed is not supported.
+    As a reference, indexing a 500 MiB vector dataset with 768 dimensions might take up to 20 minutes. The indexer can run in parallel for multiple tables. Currently, adjusting the indexer priority or speed is not supported.
 
 - You can check the `ROWS_DELTA_NOT_INDEXED` column for the number of rows in the Delta layer. Data in the storage layer of TiFlash is stored in two layers: Delta layer and Stable layer. The Delta layer stores recently inserted or updated rows and is periodically merged into the Stable layer according to the write workload. This merge process is called Compaction.
 
-  The Delta layer is always not indexed. To achieve optimal performance, you can force the merge of the Delta layer into the Stable layer so that all data can be indexed:
+    The Delta layer is always not indexed. To achieve optimal performance, you can force the merge of the Delta layer into the Stable layer so that all data can be indexed:
 
-  ```sql
-  ALTER TABLE <TABLE_NAME> COMPACT;
-  ```
+    ```sql
+    ALTER TABLE <TABLE_NAME> COMPACT;
+    ```
 
-  For more information, see [`ALTER TABLE ... COMPACT`](/sql-statements/sql-statement-alter-table-compact.md).
+    For more information, see [`ALTER TABLE ... COMPACT`](/sql-statements/sql-statement-alter-table-compact.md).
 
 In addition, you can monitor the execution progress of the DDL job by executing `ADMIN SHOW DDL JOBS;` and checking the `row count`. However, this method is not fully accurate, because the `row count` value is obtained from the `rows_stable_indexed` field in `TIFLASH_INDEXES`. You can use this approach as a reference for tracking the progress of indexing.
 
@@ -233,13 +265,9 @@ Explanation of some important fields:
 
 See [`EXPLAIN`](/sql-statements/sql-statement-explain.md), [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md), and [EXPLAIN Walkthrough](/explain-walkthrough.md) for interpreting the output.
 
-## Limitations
-
-See [Vector index limitations](/tidb-cloud/vector-search-limitations.md#vector-index-limitations).
-
 ## See also
 
-- [Improve Vector Search Performance](/tidb-cloud/vector-search-improve-performance.md)
-- [Vector Data Types](/tidb-cloud/vector-search-data-types.md)
+- [Improve Vector Search Performance](/vector-search/vector-search-improve-performance.md)
+- [Vector Data Types](/vector-search/vector-search-data-types.md)
 
 [^1]: The explanation of KNN search is adapted from the [Approximate Nearest Neighbor Search Indexes](https://github.com/ClickHouse/ClickHouse/pull/50661/files#diff-7ebd9e71df96e74230c9a7e604fa7cb443be69ba5e23bf733fcecd4cc51b7576) document authored by [rschu1ze](https://github.com/rschu1ze) in ClickHouse documentation, licensed under the Apache License 2.0.

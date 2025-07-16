@@ -84,7 +84,7 @@ The following is a sample output of querying `statements_summary`:
 > **Note:**
 >
 > - In TiDB, the time unit of fields in statement summary tables is nanosecond (ns), whereas in MySQL the time unit is picosecond (ps).
-> - Starting from v7.5.1 and v7.6.0, for clusters with [resource control](/tidb-resource-control.md) enabled, `statements_summary` will be aggregated by resource group, for example, the same statements executed in different resource groups will be collected as different records.
+> - Starting from v7.5.1 and v7.6.0, for clusters with [resource control](/tidb-resource-control-ru-groups.md) enabled, `statements_summary` will be aggregated by resource group, for example, the same statements executed in different resource groups will be collected as different records.
 
 ## `statements_summary_history`
 
@@ -336,6 +336,8 @@ Basic fields:
 - `BINARY_PLAN`: The original execution plan encoded in binary format. If there are multiple statements, the plan of only one statement is taken. Execute the [`SELECT tidb_decode_binary_plan('xxx...')`](/functions-and-operators/tidb-functions.md#tidb_decode_binary_plan) statement to parse the specific execution plan.
 - `PLAN_CACHE_HITS`: The total number of times that SQL statements of this category hit the plan cache.
 - `PLAN_IN_CACHE`: Indicates whether the previous execution of SQL statements of this category hit the plan cache.
+- `PLAN_CACHE_UNQUALIFIED`: The number of times that the SQL statements of this category fail to hit the plan cache.
+- `PLAN_CACHE_UNQUALIFIED_LAST_REASON`: The reason why the SQL statements of this category fail to hit the plan cache last time.
 
 Fields related to execution time:
 
@@ -343,6 +345,8 @@ Fields related to execution time:
 - `SUMMARY_END_TIME`: The ending time of the current summary period.
 - `FIRST_SEEN`: The time when SQL statements of this category are seen for the first time.
 - `LAST_SEEN`: The time when SQL statements of this category are seen for the last time.
+
+<CustomContent platform="tidb">
 
 Fields related to TiDB server:
 
@@ -361,6 +365,32 @@ Fields related to TiDB server:
 - `MAX_MEM`: The maximum memory (byte) used.
 - `AVG_DISK`: The average disk space (byte) used.
 - `MAX_DISK`: The maximum disk space (byte) used.
+- `AVG_TIDB_CPU_TIME`: The average TiDB server CPU time that SQL statements of this category consume. It shows meaningful values only when the [Top SQL](/dashboard/top-sql.md) feature is enabled. Otherwise the value is always `0`.
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+Fields related to TiDB server:
+
+- `EXEC_COUNT`: Total execution times of SQL statements of this category.
+- `SUM_ERRORS`: The sum of errors occurred during execution.
+- `SUM_WARNINGS`: The sum of warnings occurred during execution.
+- `SUM_LATENCY`: The total execution latency of SQL statements of this category.
+- `MAX_LATENCY`: The maximum execution latency of SQL statements of this category.
+- `MIN_LATENCY`: The minimum execution latency of SQL statements of this category.
+- `AVG_LATENCY`: The average execution latency of SQL statements of this category.
+- `AVG_PARSE_LATENCY`: The average latency of the parser.
+- `MAX_PARSE_LATENCY`: The maximum latency of the parser.
+- `AVG_COMPILE_LATENCY`: The average latency of the compiler.
+- `MAX_COMPILE_LATENCY`: The maximum latency of the compiler.
+- `AVG_MEM`: The average memory (byte) used.
+- `MAX_MEM`: The maximum memory (byte) used.
+- `AVG_DISK`: The average disk space (byte) used.
+- `MAX_DISK`: The maximum disk space (byte) used.
+- `AVG_TIDB_CPU_TIME`: The average TiDB server CPU time that SQL statements of this category consume. It shows meaningful values only when the Top SQL feature is enabled. Otherwise the value is always `0`.
+
+</CustomContent>
 
 Fields related to TiKV Coprocessor task:
 
@@ -379,6 +409,7 @@ Fields related to TiKV Coprocessor task:
 - `MAX_TOTAL_KEYS`: The maximum number of keys that Coprocessor has scanned.
 - `AVG_PROCESSED_KEYS`: The average number of keys that Coprocessor has processed. Compared with `avg_total_keys`, `avg_processed_keys` does not include the old versions of MVCC. A great difference between `avg_total_keys` and `avg_processed_keys` indicates that many old versions exist.
 - `MAX_PROCESSED_KEYS`: The maximum number of keys that Coprocessor has processed.
+- `AVG_TIKV_CPU_TIME`: The average TiKV server CPU time that SQL statements of this category consume.
 
 Transaction-related fields:
 

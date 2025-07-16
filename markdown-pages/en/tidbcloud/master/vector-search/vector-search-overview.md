@@ -1,15 +1,31 @@
 ---
-title: Vector Search (Beta) Overview
+title: Vector Search Overview
 summary: Learn about Vector Search in TiDB. This feature provides an advanced search solution for performing semantic similarity searches across various data types, including documents, images, audio, and video.
 ---
 
-# Vector Search (Beta) Overview
+# Vector Search Overview
 
-TiDB Vector Search (beta) provides an advanced search solution for performing semantic similarity searches across various data types, including documents, images, audio, and video. This feature enables developers to easily build scalable applications with generative artificial intelligence (AI) capabilities using familiar MySQL skills.
+Vector search offers a powerful solution for semantic similarity searches across diverse data types, such as documents, images, audio, and video. It allows developers to leverage their MySQL expertise to build scalable applications enriched with generative AI capabilities, simplifying the integration of advanced search functionality.
 
-> **Note**
+<CustomContent platform="tidb">
+
+> **Warning:**
 >
-> TiDB Vector Search is only available for TiDB Self-Managed (TiDB >= v8.4) and [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless). It is not available for [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated).
+> The vector search feature is experimental. It is not recommended that you use it in the production environment. This feature might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **Note:**
+>
+> The vector search feature is in beta. It might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+> **Note:**
+>
+> The vector search feature is available on TiDB Self-Managed, [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
 
 ## Concepts
 
@@ -27,7 +43,7 @@ A vector embedding, also known as an embedding, is a sequence of numbers that re
 
 Vector embeddings are essential in machine learning and serve as the foundation for semantic similarity searches.
 
-TiDB introduces [Vector data types](/tidb-cloud/vector-search-data-types.md) and [Vector search index](/tidb-cloud/vector-search-index.md) designed to optimize the storage and retrieval of vector embeddings, enhancing their use in AI applications. You can store vector embeddings in TiDB and perform vector search queries to find the most relevant data using these data types.
+TiDB introduces [Vector data types](/vector-search/vector-search-data-types.md) and [Vector search index](/vector-search/vector-search-index.md) designed to optimize the storage and retrieval of vector embeddings, enhancing their use in AI applications. You can store vector embeddings in TiDB and perform vector search queries to find the most relevant data using these data types.
 
 ### Embedding model
 
@@ -41,7 +57,7 @@ To learn how to generate vector embeddings for your specific data types, refer t
 
 After converting raw data into vector embeddings and storing them in TiDB, your application can execute vector search queries to find the data most semantically or contextually relevant to a user's query.
 
-TiDB Vector Search identifies the top-k nearest neighbor (KNN) vectors by using a [distance function](/tidb-cloud/vector-search-functions-and-operators.md) to calculate the distance between the given vector and vectors stored in the database. The vectors closest to the given vector in the query represent the most similar data in meaning.
+TiDB vector search identifies the top-k nearest neighbor (KNN) vectors by using a [distance function](/vector-search/vector-search-functions-and-operators.md) to calculate the distance between the given vector and vectors stored in the database. The vectors closest to the given vector in the query represent the most similar data in meaning.
 
 ![The Schematic TiDB Vector Search](https://docs-download.pingcap.com/media/images/docs/vector-search/embedding-search.png)
 
@@ -68,5 +84,5 @@ A recommendation engine is a system that proactively suggests content, products,
 
 To get started with TiDB Vector Search, see the following documents:
 
-- [Get started with vector search using Python](/tidb-cloud/vector-search-get-started-using-python.md)
-- [Get started with vector search using SQL](/tidb-cloud/vector-search-get-started-using-sql.md)
+- [Get started with vector search using Python](/vector-search/vector-search-get-started-using-python.md)
+- [Get started with vector search using SQL](/vector-search/vector-search-get-started-using-sql.md)
