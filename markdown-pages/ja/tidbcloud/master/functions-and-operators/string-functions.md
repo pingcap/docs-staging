@@ -637,7 +637,7 @@ mysql> SELECT FROM_BASE64('MTIzNDU2');
 
 > **注記：**
 >
-> MySQLクライアントでは、インタラクティブモードではデフォルトで[`--binary-as-hex`](https://dev.mysql.com/doc/refman/8.0/en/mysql-command-options.html#option_mysql_binary-as-hex)オプションが有効になっているため、クライアントは不明な文字セットのデータを[16進数リテラル](https://dev.mysql.com/doc/refman/8.0/en/hexadecimal-literals.html)として表示します。この動作を無効にするには、 `--skip-binary-as-hex`オプションを使用します。
+> MySQLクライアントでは、インタラクティブモードではデフォルトで[`--binary-as-hex`](https://dev.mysql.com/doc/refman/8.0/en/mysql-command-options.html#option_mysql_binary-as-hex)オプションが有効になっており、不明な文字セットを持つデータは[16進数リテラル](https://dev.mysql.com/doc/refman/8.0/en/hexadecimal-literals.html)として表示されます。この動作を無効にするには、 `--skip-binary-as-hex`オプションを使用します。
 
 例（ `mysql --skip-binary-as-hex`件）:
 
@@ -1185,7 +1185,7 @@ SELECT LOCATE('🍺', '🍣🍣🍣🍺🍺');
 +----------------------------------------+
 ```
 
-次のマルチバイト文字列およびバイナリ文字列の例では、 `utf8mb4_bin`照合順序が使用されています。
+次のマルチバイト文字列とバイナリ文字列の例では、 `utf8mb4_bin`照合順序が使用されています。
 
 ```sql
 SET collation_connection='utf8mb4_bin';

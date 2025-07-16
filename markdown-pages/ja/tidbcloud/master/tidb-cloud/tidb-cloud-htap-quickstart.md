@@ -1,7 +1,6 @@
 ---
 title: TiDB Cloud HTAP Quick Start
 summary: TiDB Cloudで HTAP を使い始める方法を学習します。
-aliases: ['/tidbcloud/use-htap-cluster']
 ---
 
 # TiDB Cloud HTAP クイックスタート {#tidb-cloud-htap-quick-start}
@@ -18,7 +17,7 @@ HTAP 機能を体験する前に、 [TiDB Cloudクイック スタート](/tidb-
 
 ### ステップ1. サンプルデータを列指向storageエンジンに複製する {#step-1-replicate-the-sample-data-to-the-columnar-storage-engine}
 
-TiFlashノードを含むクラスターが作成された後、TiKV はデフォルトでデータをTiFlashに複製しません。複製するテーブルを指定するには、TiDB の MySQL クライアントで DDL ステートメントを実行する必要があります。その後、TiDB は指定されたテーブル レプリカをTiFlashに作成します。
+TiFlashノードを含むクラスターが作成された後、TiKV はデフォルトではデータをTiFlashに複製しません。複製するテーブルを指定するには、TiDB の MySQL クライアントで DDL ステートメントを実行する必要があります。その後、TiDB は指定されたテーブル レプリカをTiFlashに作成します。
 
 たとえば、 `games`テーブル ( **Steam Game Stats**サンプル データセット内) をTiFlashに複製するには、次のステートメントを実行します。
 

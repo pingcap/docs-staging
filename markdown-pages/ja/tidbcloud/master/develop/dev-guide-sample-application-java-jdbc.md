@@ -18,7 +18,7 @@ TiDB は MySQL 互換のデータベースであり、JDBC (Java Database Connec
 > **注記：**
 >
 > -   このチュートリアルは、{{{ .starter }}}、 TiDB Cloud Dedicated、および TiDB Self-Managed で動作します。
-> -   TiDB v7.4以降、JDBC URLで`connectionCollation`設定されておらず、 `characterEncoding`設定されていないか`UTF-8`に設定されている場合、JDBC接続で使用される照合順序はJDBCドライバーのバージョンによって異なります。詳細については、 [JDBC接続で使用される照合順序](/faq/sql-faq.md#collation-used-in-jdbc-connections)参照してください。
+> -   TiDB v7.4以降、JDBC URLで`connectionCollation`が設定されておらず、 `characterEncoding`設定されていないか`UTF-8`に設定されている場合、JDBC接続で使用される照合順序はJDBCドライバーのバージョンによって異なります。詳細については、 [JDBC接続で使用される照合順序](/faq/sql-faq.md#collation-used-in-jdbc-connections)参照してください。
 
 </CustomContent>
 
@@ -27,7 +27,7 @@ TiDB は MySQL 互換のデータベースであり、JDBC (Java Database Connec
 > **注記：**
 >
 > -   このチュートリアルは、{{{ .starter }}}、 TiDB Cloud Dedicated、および TiDB Self-Managed で動作します。
-> -   TiDB v7.4以降、JDBC URLで`connectionCollation`が設定されておらず、 `characterEncoding`設定されていないか`UTF-8`に設定されている場合、JDBC接続で使用される照合順序はJDBCドライバーのバージョンによって異なります。詳細については、 [JDBC接続で使用される照合順序](https://docs.pingcap.com/tidb/stable/sql-faq#collation-used-in-jdbc-connections)参照してください。
+> -   TiDB v7.4以降、JDBC URLで`connectionCollation`設定されておらず、 `characterEncoding`設定されていないか`UTF-8`に設定されている場合、JDBC接続で使用される照合順序はJDBCドライバーのバージョンによって異なります。詳細については、 [JDBC接続で使用される照合順序](https://docs.pingcap.com/tidb/stable/sql-faq#collation-used-in-jdbc-connections)参照してください。
 
 </CustomContent>
 

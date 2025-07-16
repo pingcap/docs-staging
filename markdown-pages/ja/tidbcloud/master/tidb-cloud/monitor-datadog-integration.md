@@ -5,7 +5,7 @@ summary: Datadog 統合を使用して TiDB クラスターを監視する方法
 
 # TiDB Cloudと Datadog の統合 (ベータ版) {#integrate-tidb-cloud-with-datadog-beta}
 
-TiDB CloudはDatadogとの連携（ベータ版）をサポートしています。TiDB TiDB Cloudを設定して、TiDBクラスターのメトリクスデータを[データドッグ](https://www.datadoghq.com/)に送信できます。その後、これらのメトリクスをDatadogダッシュボードで直接確認できるようになります。
+TiDB CloudはDatadogとの連携（ベータ版）をサポートしています。TiDB TiDB Cloudを設定して、TiDBクラスターのメトリクスデータを[データドッグ](https://www.datadoghq.com/)に送信することができます。その後、これらのメトリクスをDatadogダッシュボードで直接確認できるようになります。
 
 ## 前提条件 {#prerequisites}
 

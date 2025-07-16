@@ -32,7 +32,7 @@ CommonTableExpr ::=
         Identifier IdentListWithParenOpt "AS" SubSelect
 ```
 
-**親オプション付き識別子リスト:**
+**IdentListWithParenOpt:**
 
 ```ebnf+diagram
 IdentListWithParenOpt ::=

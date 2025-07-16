@@ -3,7 +3,7 @@ title: Response and HTTP Status Codes of Data Service
 summary: このドキュメントでは、 TiDB Cloudのデータ サービスの応答コードと HTTP ステータス コードについて説明します。
 ---
 
-# データサービスの応答と HTTP ステータス コード {#response-and-http-status-codes-of-data-service}
+# データ サービスの応答と HTTP ステータス コード {#response-and-http-status-codes-of-data-service}
 
 [データサービス](/tidb-cloud/data-service-overview.md)で定義された API エンドポイントを呼び出すと、データ サービスは HTTP 応答を返します。この応答の構造とステータス コードの意味を理解することは、データ サービス エンドポイントによって返されるデータを解釈するために不可欠です。
 
@@ -19,7 +19,7 @@ summary: このドキュメントでは、 TiDB Cloudのデータ サービス�
 
 レスポンス本文には次のフィールドが含まれます。
 
--   `type` :*文字列*。このエンドポイントのタイプ。値は`"sql_endpoint"`または`"chat2data_endpoint"`になります。エンドポイントによって返される応答のタイプは異なります。
+-   `type` :*文字列*。このエンドポイントのタイプ。値は`"sql_endpoint"`または`"chat2data_endpoint"`になります。エンドポイントによって返される応答のタイプが異なります。
 -   `data` :*オブジェクト*。実行結果には 3 つの部分が含まれます。
 
     -   `columns` :*配列*。返されるフィールドのスキーマ情報。

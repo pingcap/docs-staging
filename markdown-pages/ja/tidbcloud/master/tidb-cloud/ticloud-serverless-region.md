@@ -1,7 +1,6 @@
 ---
 title: ticloud serverless region
 summary: ticloud serverless region` のリファレンス。
-aliases: ['/tidbcloud/ticloud-serverless-regions']
 ---
 
 # ticloud サーバーレスリージョン {#ticloud-serverless-region}
@@ -28,7 +27,7 @@ ticloud serverless region -o json
 
 ## 旗 {#flags}
 
-非対話型モードでは、必要なフラグを手動で入力する必要があります。対話型モードでは、CLI プロンプトに従って入力するだけです。
+非対話型モードでは、必要なフラグを手動で入力する必要があります。対話型モードでは、CLI プロンプトに従ってフラグを入力するだけです。
 
 | フラグ         | 説明                                                                              | 必須  | 注記                       |
 | ----------- | ------------------------------------------------------------------------------- | --- | ------------------------ |

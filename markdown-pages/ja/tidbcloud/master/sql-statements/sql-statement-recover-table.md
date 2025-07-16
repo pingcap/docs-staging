@@ -33,31 +33,7 @@ NUM ::= intLit
 
 > **注記：**
 >
-> -   テーブルが削除され、GC の有効期間が過ぎた場合、 `RECOVER TABLE`ではテーブルを回復できません。このシナリオで`RECOVER TABLE`実行すると、 `snapshot is older than GC safe point 2019-07-10 13:45:57 +0800 CST`のようなエラーが返されます。
->
-> -   TiDB バージョンが 3.0.0 以降の場合、TiDB Binlogを使用するときは`RECOVER TABLE`使用することはお勧めしません。
->
-> -   `RECOVER TABLE`はBinlogバージョン 3.0.1 でサポートされているため、次の 3 つの状況では`RECOVER TABLE`使用できます。
->
->     -   Binlogのバージョンは3.0.1以降です。
->     -   TiDB 3.0 は、アップストリーム クラスターとダウンストリーム クラスターの両方で使用されます。
->     -   セカンダリ クラスターの GC ライフタイムは、プライマリ クラスターの GC ライフタイムよりも長くする必要があります。ただし、上流データベースと下流データベース間のデータ レプリケーション中にレイテンシーが発生するため、下流でのデータ回復が失敗する可能性があります。
-
-<CustomContent platform="tidb">
-
-**TiDB Binlogレプリケーション中のエラーのトラブルシューティング**
-
-TiDB Binlogレプリケーション中にアップストリーム TiDB で`RECOVER TABLE`使用すると、次の 3 つの状況で TiDB Binlogが中断される可能性があります。
-
--   ダウンストリーム データベースは`RECOVER TABLE`ステートメントをサポートしていません。エラー インスタンス: `check the manual that corresponds to your MySQL server version for the right syntax to use near 'RECOVER TABLE table_name'` 。
-
--   GC の有効期間は、アップストリーム データベースとダウンストリーム データベース間で一貫していません。エラー インスタンス: `snapshot is older than GC safe point 2019-07-10 13:45:57 +0800 CST` 。
-
--   アップストリーム データベースとダウンストリーム データベース間のレプリケーション中に遅延が発生します。エラー インスタンス: `snapshot is older than GC safe point 2019-07-10 13:45:57 +0800 CST` 。
-
-上記の 3 つの状況では、 [削除されたテーブルの完全インポート](/ecosystem-tool-user-guide.md#backup-and-restore---backup--restore-br)使用して TiDB Binlogからのデータ レプリケーションを再開できます。
-
-</CustomContent>
+> テーブルが削除され、GC の有効期間が過ぎた場合、 `RECOVER TABLE`ではテーブルを回復できません。このシナリオで`RECOVER TABLE`実行すると、 `snapshot is older than GC safe point 2019-07-10 13:45:57 +0800 CST`のようなエラーが返されます。
 
 ## 例 {#examples}
 

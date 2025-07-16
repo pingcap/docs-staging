@@ -52,7 +52,7 @@ SQL ユーザーに組み込みロールと複数のカスタム ロールの両
 
 クラスターの SQL ユーザーを作成するには、次の手順を実行します。
 
-1.  クラスターの[**SQLユーザー**](/tidb-cloud/configure-sql-users.md#view-sql-users)ページに移動します。
+1.  クラスターの[**SQL ユーザー**](/tidb-cloud/configure-sql-users.md#view-sql-users)ページに移動します。
 
 2.  右上隅の**「SQL ユーザーの作成」を**クリックします。
 
@@ -76,7 +76,7 @@ SQL ユーザーに組み込みロールと複数のカスタム ロールの両
 
 SQL ユーザーのパスワードまたはロールを編集するには、次の手順を実行します。
 
-1.  クラスターの[**SQLユーザー**](/tidb-cloud/configure-sql-users.md#view-sql-users)ページに移動します。
+1.  クラスターの[**SQL ユーザー**](/tidb-cloud/configure-sql-users.md#view-sql-users)ページに移動します。
 
 2.  編集する SQL ユーザーの行で、 **[アクション**] 列の**[...]**をクリックし、 **[編集] を**クリックします。
 
@@ -92,7 +92,7 @@ SQL ユーザーのパスワードまたはロールを編集するには、次�
 
 SQL ユーザーを削除するには、次の手順を実行します。
 
-1.  クラスターの[**SQLユーザー**](/tidb-cloud/configure-sql-users.md#view-sql-users)ページに移動します。
+1.  クラスターの[**SQL ユーザー**](/tidb-cloud/configure-sql-users.md#view-sql-users)ページに移動します。
 
 2.  削除する SQL ユーザーの行で、 **[アクション**] 列の**[...]**をクリックし、 **[削除]**をクリックします。
 

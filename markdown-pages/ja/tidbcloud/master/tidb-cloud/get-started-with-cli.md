@@ -5,7 +5,7 @@ summary: TiDB Cloud CLI を使用してTiDB Cloudリソースを管理する方�
 
 # TiDB CloudCLI クイック スタート {#tidb-cloud-cli-quick-start}
 
-TiDB Cloud は、数行のコマンドで端末からTiDB Cloudと対話するためのコマンドライン インターフェイス (CLI) [`ticloud`](https://github.com/tidbcloud/tidbcloud-cli)を提供します。たとえば、 `ticloud`使用して次の操作を簡単に実行できます。
+TiDB Cloud は、数行のコマンドで端末からTiDB Cloudを操作できるコマンドライン インターフェイス (CLI) [`ticloud`](https://github.com/tidbcloud/tidbcloud-cli)を提供します。たとえば、 `ticloud`使用して次の操作を簡単に実行できます。
 
 -   クラスターを作成、削除、および一覧表示します。
 -   クラスターにデータをインポートします。

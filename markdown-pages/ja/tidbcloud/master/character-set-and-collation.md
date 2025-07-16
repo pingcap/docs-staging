@@ -202,7 +202,7 @@ SELECT char_length(c), length(c), c FROM utf8m4_test;
 1 row in set (0.00 sec)
 ```
 
-## 異なるレイヤーでの文字セットと照合順序 {#character-set-and-collation-in-different-layers}
+## 異なるレイヤーにおける文字セットと照合順序 {#character-set-and-collation-in-different-layers}
 
 文字セットと照合順序は異なるレイヤーで設定できます。
 
@@ -575,4 +575,4 @@ SELECT 'a' = _utf8mb4 'A' collate utf8mb4_general_ci;
 1 row in set (0.00 sec)
 ```
 
-詳細は[接続文字セットと照合順序](https://dev.mysql.com/doc/refman/8.0/en/charset-connection.html)参照。
+詳細については[接続文字セットと照合順序](https://dev.mysql.com/doc/refman/8.0/en/charset-connection.html)参照してください。

@@ -13,7 +13,7 @@ TiDB Cloudは、お客様のニーズに合わせて段階的にカスタマイ�
 
 ## PingCAPヘルプセンターにアクセスする {#access-pingcap-help-center}
 
-[PingCAPヘルプセンター](https://tidb.support.pingcap.com/servicedesk/customer/portals) 、 TiDB Cloudユーザーがサポート サービスにアクセスし、サポート チケットを管理するための中心的なハブです。
+[PingCAPヘルプセンター](https://tidb.support.pingcap.com/servicedesk/customer/portals) 、TiDB Cloudユーザーがサポート サービスにアクセスし、サポート チケットを管理するための中心的なハブです。
 
 PingCAP ヘルプ センターには、 [https://tidb.support.pingcap.com/servicedesk/customer/portals](https://tidb.support.pingcap.com/servicedesk/customer/portals)から直接アクセスすることも、次の[TiDB Cloudコンソール](https://tidbcloud.com/)の方法でアクセスすることもできます。
 
@@ -77,7 +77,7 @@ PingCAP ヘルプ センターには、 [https://tidb.support.pingcap.com/servic
 
     -   **影響を受けるバージョン**: 問題に関連するTiDB Cloudクラスターのバージョンを指定します。
 
-4.  **[送信]**をクリックします。
+4.  **［送信］**をクリックします。
 
 ## サポートチケットをビュー {#view-support-tickets}
 

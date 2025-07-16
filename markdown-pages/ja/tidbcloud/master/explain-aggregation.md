@@ -109,7 +109,7 @@ EXPLAIN SELECT /*+ HASH_AGG() */ count(*) FROM t1;
 
 ## ストリーム集計 {#stream-aggregation}
 
-ストリーム集計アルゴリズムは通常、ハッシュ集計よりもメモリ消費量が少なくなります。ただし、この演算子では、到着した値に集約を適用して*ストリーミング*できるように、データが順序どおりに送信されることが必要です。
+ストリーム集計アルゴリズムは通常、ハッシュ集計よりもメモリ消費量が少なくなります。ただし、この演算子では、データが到着すると*ストリームし*て集約を適用できるように、データが順序どおりに送信されることが必要です。
 
 次の例を考えてみましょう。
 
@@ -167,7 +167,7 @@ v7.4.0 以降、TiDB の`GROUP BY`句は`WITH ROLLUP`修飾子をサポートし
 
 > **注記：**
 >
-> 現在、TiDB は Cube 構文をサポートしておらず、TiDB はTiFlash MPP モードでのみ`WITH ROLLUP`構文の有効な実行プランの生成をサポートしています。
+> 現在、TiDB は Cube 構文をサポートしていません。
 
 ```sql
 explain SELECT year, month, grouping(year), grouping(month), SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP;

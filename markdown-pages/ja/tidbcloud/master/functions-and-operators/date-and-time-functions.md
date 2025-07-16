@@ -37,7 +37,7 @@ TiDB は、MySQL 8.0 で利用可能な[日付と時刻関数](https://dev.mysql
 | [`EXTRACT()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_extract)                                           | 日付の一部を抽出する                                         |
 | [`FROM_DAYS()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_from-days)                                       | 日数を日付に変換する                                         |
 | [`FROM_UNIXTIME()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_from-unixtime)                               | Unixタイムスタンプを日付としてフォーマットする                          |
-| [`GET_FORMAT()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_get-format)                                     | 日付形式の文字列を返す                                        |
+| [`GET_FORMAT()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_get-format)                                     | 日付フォーマット文字列を返す                                     |
 | [`HOUR()`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_hour)                                                 | 時間を抽出                                              |
 | [`LAST_DAY`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_last-day)                                           | 引数の月の最終日を返す                                        |
 | [`LOCALTIME()` 、 `LOCALTIME`](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_localtime)                         | NOW() の同義語                                         |

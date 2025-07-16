@@ -40,7 +40,7 @@ TiDB には`test`という名前のデフォルトのデータベースが付属
 
 > **注記：**
 >
-> TiDB では、**主キー**のデフォルト定義が[翻訳](https://dev.mysql.com/doc/refman/8.0/en/innodb-storage-engine.html) (MySQL の共通storageエンジン) とは異なります。
+> TiDB では、**主キー**のデフォルト定義が[インノDB](https://dev.mysql.com/doc/refman/8.0/en/innodb-storage-engine.html) (MySQL の共通storageエンジン) とは異なります。
 >
 > -   InnoDB では、**主キー**の定義は一意であり、null ではなく、**クラスター化されたインデックス**です。
 > -   TiDB では、**主キー**の定義は一意であり、null ではありません。ただし、主キーがクラスター**化インデックス**であるとは限りません。主キーがクラスター化インデックスであるかどうかを指定するには、 `CREATE TABLE`ステートメントの`PRIMARY KEY`の後に非予約キーワード`CLUSTERED`または`NONCLUSTERED`追加できます。ステートメントでこれらのキーワードを明示的に指定しない場合、デフォルトの動作はシステム変数`@@global.tidb_enable_clustered_index`によって制御されます。詳細については、 [クラスター化インデックス](/clustered-indexes.md)参照してください。

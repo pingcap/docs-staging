@@ -199,9 +199,9 @@ SELECT PARTITION_NAME, TOTAL_DELTA_ROWS, TOTAL_STABLE_ROWS
 
 `ALTER TABLE ... COMPACT`構文は TiDB 固有のもので、標準 SQL 構文の拡張です。同等の MySQL 構文はありませんが、MySQL クライアントまたは MySQL プロトコルに準拠するさまざまなデータベース ドライバーを使用してこのステートメントを実行できます。
 
-### TiDB Binlogと TiCDC の互換性 {#tidb-binlog-and-ticdc-compatibility}
+### TiCDC 互換性 {#ticdc-compatibility}
 
-`ALTER TABLE ... COMPACT`ステートメントでは論理データの変更は発生しないため、TiDB Binlogまたは TiCDC によってダウンストリームに複製されません。
+`ALTER TABLE ... COMPACT`ステートメントでは論理データの変更は発生しないため、TiCDC によってダウンストリームに複製されません。
 
 ## 参照 {#see-also}
 

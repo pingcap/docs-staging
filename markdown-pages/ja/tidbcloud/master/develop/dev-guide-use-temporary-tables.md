@@ -55,7 +55,7 @@ TiDB の一時テーブルは、ローカル一時テーブルとグローバル
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-`CREATE TEMPORARY TABLE <table_name>`ステートメントを使用して一時テーブルを作成できます。デフォルトのタイプはローカル一時テーブルであり、現在のセッションでのみ表示されます。
+`CREATE TEMPORARY TABLE <table_name>`ステートメントを使用して一時テーブルを作成できます。デフォルトのタイプはローカル一時テーブルで、現在のセッションでのみ表示されます。
 
 ```sql
 CREATE TEMPORARY TABLE top_50_eldest_authors (

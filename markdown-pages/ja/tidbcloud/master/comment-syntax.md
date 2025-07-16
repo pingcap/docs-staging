@@ -109,7 +109,7 @@ SELECT STRAIGHT_JOIN col1 FROM table1,table2 WHERE ...
 TiDB には独自のコメント構文 (つまり、TiDB 固有のコメント構文) があり、次の 2 つのタイプに分けられます。
 
 -   `/*T! Specific code */` : この構文は TiDB によってのみ解析および実行され、他のデータベースでは無視されます。
--   `/*T![feature_id] Specific code */` : この構文は、TiDB の異なるバージョン間の互換性を確保するために使用されます。TiDB は、現在のバージョンで`feature_id`の対応する機能を実装している場合にのみ、このコメントの SQL フラグメントを解析できます。たとえば、 `AUTO_RANDOM`機能は v3.1.1 で導入されているため、このバージョンの TiDB は`/*T![auto_rand] auto_random */` `auto_random`に解析できます。10 `AUTO_RANDOM`機能は v3.0.0 で実装されていないため、上記の SQL ステートメント フラグメントは無視されます。/* **`/*T![`文字内にスペースを残さないでください**。
+-   `/*T![feature_id] Specific code */` : この構文は、異なるバージョンの TiDB 間の互換性を確保するために使用されます。TiDB は、現在のバージョンで`feature_id`の対応する機能を実装している場合にのみ、このコメントの SQL フラグメントを解析できます。たとえば、 `AUTO_RANDOM`機能は v3.1.1 で導入されているため、このバージョンの TiDB は`/*T![auto_rand] auto_random */` `auto_random`に解析できます。10 `AUTO_RANDOM`機能は v3.0.0 で実装されていないため、上記の SQL ステートメント フラグメントは無視されます。/* **`/*T![`文字内にスペースを残さないでください**。
 
 ## オプティマイザコメント構文 {#optimizer-comment-syntax}
 

@@ -9,7 +9,7 @@ TiDB は MySQL 互換のデータベースであり、 [MySQLワークベンチ]
 
 > **警告：**
 >
-> -   MySQL WorkbenchはMySQLとの互換性があるため、TiDBに接続できますが、MySQL WorkbenchはTiDBを完全にサポートしているわけではありません。TiDBをMySQLとして扱うため、使用中に問題が発生する可能性があります。
+> -   MySQL WorkbenchはMySQLとの互換性があるため、TiDBに接続できますが、MySQL WorkbenchはTiDBを完全にサポートしていません。TiDBをMySQLとして扱うため、使用中に問題が発生する可能性があります。
 > -   TiDB [VS Code SQLツール](/develop/dev-guide-gui-vscode-sqltools.md)公式にサポートしている他のGUIツール（ [データグリップ](/develop/dev-guide-gui-datagrip.md)など[DBeaver](/develop/dev-guide-gui-dbeaver.md)の使用をお勧めします。TiDBで完全にサポートされているGUIツールの完全なリストについては、 [TiDB でサポートされているサードパーティ ツール](/develop/dev-guide-third-party-support.md#gui)参照してください。
 
 このチュートリアルでは、MySQL Workbench を使用して TiDB クラスターに接続する方法を学習します。
@@ -70,7 +70,7 @@ TiDB は MySQL 互換のデータベースであり、 [MySQLワークベンチ]
 
     ![MySQL Workbench: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-add-new-connection.png)
 
-6.  [**新しい接続のセットアップ**] ダイアログで、次の接続パラメータを構成します。
+6.  **[新しい接続のセットアップ**] ダイアログで、次の接続パラメータを構成します。
 
     -   **接続名**: この接続に意味のある名前を付けます。
     -   **ホスト名**: TiDB Cloud接続ダイアログから`HOST`パラメータを入力します。

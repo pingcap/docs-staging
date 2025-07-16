@@ -72,7 +72,7 @@ MEDIUMTEXT [CHARACTER SET charset_name] [COLLATE collation_name]
 
 <CustomContent platform="tidb">
 
-`LONGTEXT`型は[`TEXT`タイプ](#text-type)と似ています。違いは、 `LONGTEXT`の最大列長が 4,294,967,295 であることです。ただし、 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500)の制限により、TiDB の単一行の最大storageサイズはデフォルトで 6 MiB であり、構成を変更することで 120 MiB まで増やすことができます。
+`LONGTEXT`型は[`TEXT`タイプ](#text-type)型と似ています。違いは、 `LONGTEXT`の最大列長が 4,294,967,295 であることです。ただし、 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500)の制限により、TiDB の単一行の最大storageサイズはデフォルトで 6 MiB であり、構成を変更することで 120 MiB まで増やすことができます。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">

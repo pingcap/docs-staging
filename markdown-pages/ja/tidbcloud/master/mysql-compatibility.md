@@ -77,7 +77,7 @@ TiDB は MySQL レプリケーション プロトコルをサポートしてい�
 
 ### 自動増分ID {#auto-increment-id}
 
--   TiDB では、自動増分列の値 (ID) は、単一の TiDBサーバー内でグローバルに一意かつ増分されます。複数の TiDB サーバー間で ID を増分するには、 [`AUTO_INCREMENT` MySQL 互換モード](/auto-increment.md#mysql-compatibility-mode)使用できます。ただし、ID は必ずしも順番に割り当てられるわけではないため、 `Duplicated Error`メッセージが発生しないように、既定値とカスタム値を混在させないようにすることをお勧めします。
+-   TiDB では、自動増分列の値 (ID) は、単一の TiDBサーバー内でグローバルに一意かつ増分されます。複数の TiDB サーバー間で ID を増分するには、 [`AUTO_INCREMENT` MySQL互換モード](/auto-increment.md#mysql-compatibility-mode)使用できます。ただし、ID は必ずしも順番に割り当てられるわけではないため、 `Duplicated Error`メッセージが発生しないように、既定値とカスタム値を混在させないようにすることをお勧めします。
 
 -   `tidb_allow_remove_auto_inc`システム変数を使用して、 `AUTO_INCREMENT`列属性の削除を許可または禁止できます。列属性を削除するには、 `ALTER TABLE MODIFY`または`ALTER TABLE CHANGE`構文を使用します。
 

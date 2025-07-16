@@ -27,20 +27,3 @@ SHOW MASTER STATUS;
 `SHOW MASTER STATUS`の出力はMySQLと一致するように設計されていますが、MySQLの結果はbinlogの位置情報であり、TiDBの結果は最新のTSO情報である点で実行結果が異なります。
 
 `SHOW BINARY LOG STATUS`ステートメントは、MySQL 8.2.0 以降のバージョンでは非推奨となっている`SHOW MASTER STATUS`のエイリアスとして TiDB に追加されました。
-
-## 参照 {#see-also}
-
-<CustomContent platform="tidb">
-
--   [ポンプの状態を表示](/sql-statements/sql-statement-show-pump-status.md)
--   [ドレイナーステータスを表示](/sql-statements/sql-statement-show-drainer-status.md)
--   [ポンプステータスの変更](/sql-statements/sql-statement-change-pump.md)
--   [ドレイナーステータスの変更](/sql-statements/sql-statement-change-drainer.md)
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
--   [`SHOW TABLE STATUS`](/sql-statements/sql-statement-show-table-status.md)
-
-</CustomContent>

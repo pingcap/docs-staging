@@ -17,6 +17,22 @@ TiDB は、 `INTEGER` / `INT` 、 `TINYINT` 、 `SMALLINT` 、 `MEDIUMINT` 、 `
 
 次の表はフィールドの説明をまとめたものです。
 
+<CustomContent platform="tidb">
+
+> **警告：**
+>
+> v8.5.0 以降、整数の表示幅は非推奨です (デフォルトでは[`deprecate-integer-display-length`](/tidb-configuration-file.md#deprecate-integer-display-length)が`true`です)。整数型の表示幅を指定することは推奨されません。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **警告：**
+>
+> v8.5.0 以降では、整数の表示幅は非推奨です。整数型の表示幅を指定することは推奨されません。
+
+</CustomContent>
+
 | 構文要素  | 説明                                                   |
 | ----- | ---------------------------------------------------- |
 | ま     | タイプの表示幅。オプション。                                       |
@@ -97,7 +113,7 @@ BIGINT[(M)] [UNSIGNED] [ZEROFILL]
 
 ## 浮動小数点型 {#floating-point-types}
 
-TiDB は、 `FLOAT` 、 `DOUBLE`を含むすべての MySQL 浮動小数点型をサポートしています。詳細については、 [浮動小数点型 (近似値) - MySQL の FLOAT、DOUBLE](https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html)参照してください。
+TiDB は、 `FLOAT` 、 `DOUBLE`を含むすべての MySQL 浮動小数点型をサポートしています。詳細については、 [浮動小数点型（近似値） - MySQL の FLOAT、DOUBLE](https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html)参照してください。
 
 次の表はフィールドの説明をまとめたものです。
 

@@ -57,7 +57,7 @@ SELECT ANY_VALUE(id),GROUP_CONCAT(id),name FROM fruits GROUP BY name;
 4 rows in set (0.00 sec)
 ```
 
-上記の例では、最初の`SELECT`のステートメントでTiDBはエラーを返します。これは、 `id`番目の列が非集計列であり、 `GROUP BY`句に含まれていないためです。この問題に対処するため、2番目の`SELECT`クエリでは、 `ANY_VALUE()`の列を使用して各グループから任意の値を取得し、 `GROUP_CONCAT()`の列を使用して各グループ内の`id`番目の列のすべての値を1つの文字列に連結します。このアプローチにより、非集計列のSQLモードを変更することなく、各グループから1つの値とグループ内のすべての値を取得できます。
+上の例では、最初の`SELECT`のステートメントでTiDBはエラーを返します。これは、 `id`番目の列が非集計列であり、 `GROUP BY`句に含まれていないためです。この問題に対処するため、2番目の`SELECT`クエリでは、 `ANY_VALUE()`の列を使用して各グループから任意の値を取得し、 `GROUP_CONCAT()`の列を使用して各グループ内の`id`番目の列のすべての値を1つの文字列に連結します。このアプローチにより、非集計列のSQLモードを変更することなく、各グループから1つの値とグループ内のすべての値を取得できます。
 
 ### BIN_TO_UUID() {#bin-to-uuid}
 
@@ -305,7 +305,7 @@ SELECT NAME_CONST('column name', 'value') UNION ALL SELECT 'another value';
     +---------------+
     2 rows in set (0.00 sec)
 
-前のステートメントでは`NAME_CONST()`使用され、次のステートメントでは列のエイリアス設定の推奨される方法が使用されます。
+前のステートメントでは`NAME_CONST()`使用され、次のステートメントでは列のエイリアスに推奨される方法が使用されます。
 
 ```sql
 SELECT 'value' AS 'column name' UNION ALL SELECT 'another value';

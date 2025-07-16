@@ -8,6 +8,26 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
 このページには、2025 年の[TiDB Cloud](https://www.pingcap.com/tidb-cloud/)のリリース ノートが記載されています。
 
+## 2025年7月15日 {#july-15-2025}
+
+**一般的な変更**
+
+-   新しい[TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターのデフォルトの TiDB バージョンを[バージョン8.1.2](https://docs.pingcap.com/tidb/stable/release-8.1.2/)から[バージョン8.5.2](https://docs.pingcap.com/tidb/stable/release-8.5.2/)にアップグレードします。
+
+    v8.1.2 と比較して、v8.5.2 には、 [v8.2.0-DMR](https://docs.pingcap.com/tidb/stable/release-8.2.0/) [v8.3.0-DMR](https://docs.pingcap.com/tidb/stable/release-8.3.0/) [バージョン8.5.0](https://docs.pingcap.com/tidb/stable/release-8.5.0/)および[バージョン8.5.2](https://docs.pingcap.com/tidb/stable/release-8.5.2/)でリリースされた新機能、改善[v8.4.0-DMR](https://docs.pingcap.com/tidb/stable/release-8.4.0/) 、バグ修正が含まれています[バージョン8.5.1](https://docs.pingcap.com/tidb/stable/release-8.5.1/)
+
+-   バックアップ アクティビティのコンソール監査ログを強化するために、 `BackupCompleted`イベントの監査をサポートします。
+
+    この機能強化により、セキュリティとコンプライアンスの要件を満たすためにバックアップ完了アクティビティをログに記録できます。
+
+    詳細については[コンソール監査ログ](/tidb-cloud/tidb-cloud-console-auditing.md)参照してください。
+
+-   [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)変更フィード内の列値のフィルタリングをサポートします。
+
+    式を使用して変更フィード内の特定の列値をフィルタリングし、ソースで無関係なデータを除外できるようになりました。この機能により、DMLイベントのきめ細かなフィルタリングが可能になり、リソース消費を削減し、パフォーマンスを向上させることができます。
+
+    詳細については[チェンジフィード](/tidb-cloud/changefeed-overview.md)参照してください。
+
 ## 2025年6月24日 {#june-24-2025}
 
 **一般的な変更**

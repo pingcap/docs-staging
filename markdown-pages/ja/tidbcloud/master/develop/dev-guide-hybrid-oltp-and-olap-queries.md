@@ -156,7 +156,7 @@ SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'bookshop'
 SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'bookshop' and TABLE_NAME = 'orders';
 ```
 
-`PROGRESS`列目の 1 は進行状況が 100% 完了していることを示し、 `AVAILABLE`列目の 1 はレプリカが現在利用可能であることを示します。
+`PROGRESS`列目が 1 の場合は進行状況が 100% 完了していることを示し、 `AVAILABLE`列目が 1 の場合はレプリカが現在利用可能であることを示します。
 
     +--------------+------------+----------+---------------+-----------------+-----------+----------+
     | TABLE_SCHEMA | TABLE_NAME | TABLE_ID | REPLICA_COUNT | LOCATION_LABELS | AVAILABLE | PROGRESS |
@@ -240,7 +240,7 @@ TiDBがTiFlashをどのように使用するかについての詳細は、 [TiDB
 
 <CustomContent platform="tidb">
 
--   [HTAP のクイック スタート](/quick-start-with-htap.md)
+-   [TiDB HTAPのクイック スタート](/quick-start-with-htap.md)
 -   [HTAPを探索する](/explore-htap.md)
 
 </CustomContent>

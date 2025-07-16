@@ -12,7 +12,7 @@ summary: MySQL CLI 経由でTiDB Cloud Serverless にデータをインポート
 MySQL CLI 経由でTiDB Cloud Serverless にデータをインポートするには、次の前提条件を満たす必要があります。
 
 -   TiDB Cloud Serverlessクラスターへのアクセス権をお持ちです。まだお持ちでない場合は、 [TiDB Cloudサーバーレスクラスタの構築](/develop/dev-guide-build-cluster-in-cloud.md)の手順に従って作成してください。
--   ローカル コンピュータに MySQL CLI をインストールします。
+-   ローカルコンピュータに MySQL CLI をインストールします。
 
 ## ステップ1. TiDB Cloud Serverlessクラスターに接続する {#step-1-connect-to-your-tidb-cloud-serverless-cluster}
 

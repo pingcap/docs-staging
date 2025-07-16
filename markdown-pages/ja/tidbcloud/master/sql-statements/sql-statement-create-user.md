@@ -20,8 +20,8 @@ UserSpecList ::=
     UserSpec ( ',' UserSpec )*
 
 RequireClauseOpt ::=
-    ( 'REQUIRE' 'NONE' | 'REQUIRE' 'SSL' | 'REQUIRE' 'X509' | 'REQUIRE' RequireList )?  
-    
+    ( 'REQUIRE' 'NONE' | 'REQUIRE' 'SSL' | 'REQUIRE' 'X509' | 'REQUIRE' RequireList )?
+
 RequireList ::=
     ( "ISSUER" stringLit | "SUBJECT" stringLit | "CIPHER" stringLit | "SAN" stringLit | "TOKEN_ISSUER" stringLit )*
 
@@ -35,7 +35,12 @@ StringName ::=
     stringLit
 |   Identifier
 
-PasswordOption ::= ( 'PASSWORD' 'EXPIRE' ( 'DEFAULT' | 'NEVER' | 'INTERVAL' N 'DAY' )? | 'PASSWORD' 'HISTORY' ( 'DEFAULT' | N ) | 'PASSWORD' 'REUSE' 'INTERVAL' ( 'DEFAULT' | N 'DAY' ) | 'FAILED_LOGIN_ATTEMPTS' N | 'PASSWORD_LOCK_TIME' ( N | 'UNBOUNDED' ) )*
+PasswordOption ::= ( 'PASSWORD' 'EXPIRE' ( 'DEFAULT' | 'NEVER' | 'INTERVAL' N 'DAY' )?
+| 'PASSWORD' 'HISTORY' ( 'DEFAULT' | N )
+| 'PASSWORD' 'REUSE' 'INTERVAL' ( 'DEFAULT' | N 'DAY' )
+| 'PASSWORD' 'REQUIRE' 'CURRENT' 'DEFAULT'
+| 'FAILED_LOGIN_ATTEMPTS' N
+| 'PASSWORD_LOCK_TIME' ( N | 'UNBOUNDED' ) )*
 
 LockOption ::= ( 'ACCOUNT' 'LOCK' | 'ACCOUNT' 'UNLOCK' )?
 
@@ -152,8 +157,15 @@ SELECT USER, HOST, USER_ATTRIBUTES FROM MYSQL.USER WHERE USER='newuser7';
 
 次の`CREATE USER`のオプションは TiDB ではまだサポートされていないため、解析されますが無視されます。
 
--   TiDB は`WITH MAX_QUERIES_PER_HOUR` 、 `WITH MAX_UPDATES_PER_HOUR` 、および`WITH MAX_USER_CONNECTIONS`オプションをサポートしていません。
--   TiDB は`DEFAULT ROLE`オプションをサポートしていません。
+-   `PASSWORD REQUIRE CURRENT DEFAULT`
+-   `WITH MAX_QUERIES_PER_HOUR`
+-   `WITH MAX_UPDATES_PER_HOUR`
+-   `WITH MAX_USER_CONNECTIONS`
+
+次の`CREATE USER`オプションも TiDB ではサポートされておらず、パーサーでは受け入れられ*ません*。
+
+-   `DEFAULT ROLE`
+-   `PASSWORD REQUIRE CURRENT OPTIONAL`
 
 ## 参照 {#see-also}
 
@@ -165,5 +177,5 @@ SELECT USER, HOST, USER_ATTRIBUTES FROM MYSQL.USER WHERE USER='newuser7';
 </CustomContent>
 
 -   [ユーザーを削除](/sql-statements/sql-statement-drop-user.md)
--   [表示 ユーザーの作成](/sql-statements/sql-statement-show-create-user.md)
+-   [ユーザーの作成を表示](/sql-statements/sql-statement-show-create-user.md)
 -   [ユーザーの変更](/sql-statements/sql-statement-alter-user.md)

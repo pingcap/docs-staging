@@ -15,8 +15,7 @@ RELEASE SAVEPOINT identifier
 
 > **警告：**
 >
-> -   TiDB Binlogが有効になっている場合は`SAVEPOINT`使用できません。
-> -   [`tidb_constraint_check_in_place_pessimistic`](/system-variables.md#tidb_constraint_check_in_place_pessimistic-new-in-v630)が無効になっている場合、悲観的トランザクションでは`SAVEPOINT`使用できません。
+> [`tidb_constraint_check_in_place_pessimistic`](/system-variables.md#tidb_constraint_check_in_place_pessimistic-new-in-v630)が無効になっている場合、悲観的トランザクションでは`SAVEPOINT`使用できません。
 
 -   `SAVEPOINT` 、現在のトランザクションで指定された名前のセーブポイントを設定するために使用されます。同じ名前のセーブポイントがすでに存在する場合は、削除され、同じ名前の新しいセーブポイントが設定されます。
 
@@ -123,7 +122,7 @@ ROLLBACK TO SAVEPOINT sp1;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-トランザクションをコミットし、テーブルをクエリします。1 `sp1`前に挿入されたデータのみが返されます。
+トランザクションをコミットし、テーブルをクエリ`sp1`ます。1 より前に挿入されたデータのみが返されます。
 
 ```sql
 COMMIT;

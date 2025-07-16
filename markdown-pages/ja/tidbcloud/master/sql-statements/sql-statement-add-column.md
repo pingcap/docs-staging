@@ -28,8 +28,8 @@ ColumnType
 ColumnOption
          ::= 'NOT'? 'NULL'
            | 'AUTO_INCREMENT'
-           | 'PRIMARY'? 'KEY' ( 'CLUSTERED' | 'NONCLUSTERED' )?
-           | 'UNIQUE' 'KEY'?
+           | 'PRIMARY'? 'KEY' ( 'CLUSTERED' | 'NONCLUSTERED' )? ( 'GLOBAL' | 'LOCAL' )?
+           | 'UNIQUE' 'KEY'? ( 'GLOBAL' | 'LOCAL' )?
            | 'DEFAULT' ( NowSymOptionFraction | SignedLiteral | NextValueForSequence )
            | 'SERIAL' 'DEFAULT' 'VALUE'
            | 'ON' 'UPDATE' NowSymOptionFraction
@@ -88,6 +88,7 @@ mysql> SELECT * FROM t1;
 -   新しい列を追加して`PRIMARY KEY`に設定することはサポートされていません。
 -   新しい列を追加して`AUTO_INCREMENT`に設定することはサポートされていません。
 -   生成された列の追加には制限があります[生成された列の制限](/generated-columns.md#limitations)を参照してください。
+-   新しい列を追加するときに`PRIMARY KEY`または`UNIQUE INDEX` `GLOBAL`として指定して[グローバルインデックス](/partitioned-table.md#global-indexes)設定することは、 [パーティションテーブル](/partitioned-table.md)の TiDB 拡張であり、MySQL と互換性がありません。
 
 ## 参照 {#see-also}
 

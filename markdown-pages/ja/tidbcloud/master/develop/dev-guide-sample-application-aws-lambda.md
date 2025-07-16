@@ -171,7 +171,7 @@ npm install
 
 [SAM CLI](#sam-cli-deployment-recommended)または[AWS Lambdaコンソール](#web-console-deployment)いずれかを使用して AWS Lambda 関数をデプロイできます。
 
-### SAM CLI の展開 (推奨) {#sam-cli-deployment-recommended}
+### SAM CLI の展開（推奨） {#sam-cli-deployment-recommended}
 
 1.  （ [前提条件](#prerequisites) ） [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)をインストールします。
 

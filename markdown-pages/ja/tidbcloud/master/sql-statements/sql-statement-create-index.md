@@ -43,6 +43,7 @@ IndexOption ::=
 |   'WITH' 'PARSER' Identifier
 |   'COMMENT' stringLit
 |   ("VISIBLE" | "INVISIBLE")
+|   ("GLOBAL" | "LOCAL")
 
 IndexTypeName ::=
     'BTREE'
@@ -381,6 +382,7 @@ TiDB v8.0.0 以降では、システム変数[`tidb_opt_use_invisible_indexes`](
 -   式インデックスはビューと互換性がありません。ビューを使用してクエリを実行する場合、式インデックスを同時に使用することはできません。
 -   式インデックスには、バインディングとの互換性の問題があります。式インデックスの式に定数がある場合、対応するクエリに対して作成されたバインディングのスコープが拡張されます。たとえば、式インデックスの式が`a+1`で、対応するクエリ条件が`a+1 > 2`あるとします。この場合、作成されたバインディングは`a+? > ?`です。つまり、 `a+2 > 2`などの条件を持つクエリでも式インデックスの使用が強制され、実行プランが不十分になります。さらに、これは SQL プラン管理 (SPM) のベースライン キャプチャとベースラインの進化にも影響します。
 -   複数値インデックスで書き込まれるデータは、定義されたデータ型と完全に一致する必要があります。一致しない場合、データの書き込みは失敗します。詳細については、 [複数値インデックスを作成する](/sql-statements/sql-statement-create-index.md#create-multi-valued-indexes)参照してください。
+-   `GLOBAL`インデックス オプションを使用して`UNIQUE KEY`を[グローバルインデックス](/partitioned-table.md#global-indexes)として設定することは、 [パーティションテーブル](/partitioned-table.md)の TiDB 拡張であり、MySQL とは互換性がありません。
 
 ## 参照 {#see-also}
 

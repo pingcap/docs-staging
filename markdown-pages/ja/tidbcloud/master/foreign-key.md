@@ -5,12 +5,11 @@ summary: TiDB データベースの FOREIGN KEY 制約の使用法の概要。
 
 # 外部キー制約 {#foreign-key-constraints}
 
-v6.6.0 以降、TiDB は、関連データのテーブル間参照を可能にする外部キー機能と、データの一貫性を維持するための外部キー制約をサポートします。
+外部キーを使用すると、関連データのテーブル間参照が可能になります。一方、外部キー制約は、関連データの一貫性を保証します。v6.6.0 以降、TiDB は外部キーと外部キー制約をサポートします。v8.5.0 以降、この機能は一般に利用可能になります。
 
 > **警告：**
 >
-> -   現在、外部キー機能は実験的です。本番環境での使用は推奨されません。この機能は予告なしに変更または削除される可能性があります。バグを見つけた場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)報告できます。
-> -   外部キー機能は通常、 [参照整合性](https://en.wikipedia.org/wiki/Referential_integrity)制約チェックを強制するために使用されます。パフォーマンスの低下を引き起こす可能性があるため、パフォーマンスが重要なシナリオで使用する前に徹底的なテストを実施することをお勧めします。
+> 外部キー機能は通常、 [参照整合性](https://en.wikipedia.org/wiki/Referential_integrity)制約チェックを強制するために使用されます。パフォーマンスの低下を引き起こす可能性があるため、パフォーマンスが重要なシナリオで使用する前に徹底的なテストを実施することをお勧めします。
 
 外部キーは子テーブルで定義されます。構文は次のとおりです。
 
@@ -158,8 +157,8 @@ mysql> SHOW CREATE TABLE child\G
 *************************** 1. row ***************************
        Table: child
 Create Table: CREATE TABLE `child` (
-  `id` int(11) DEFAULT NULL,
-  `pid` int(11) DEFAULT NULL,
+  `id` int DEFAULT NULL,
+  `pid` int DEFAULT NULL,
   KEY `idx_pid` (`pid`),
   CONSTRAINT `fk_1` FOREIGN KEY (`pid`) REFERENCES `test`.`parent` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
@@ -197,8 +196,8 @@ mysql> SHOW CREATE TABLE child\G
 *************************** 1. row ***************************
        Table: child
 Create Table: CREATE TABLE `child` (
-  `id` int(11) DEFAULT NULL,
-  `pid` int(11) DEFAULT NULL,
+  `id` int DEFAULT NULL,
+  `pid` int DEFAULT NULL,
   KEY `idx_pid` (`pid`),
   CONSTRAINT `fk_1` FOREIGN KEY (`pid`) REFERENCES `test`.`parent` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
@@ -299,8 +298,8 @@ mysql> SHOW CREATE TABLE child\G
 ***************************[ 1. row ]***************************
 Table        | child
 Create Table | CREATE TABLE `child` (
-  `id` int(11) DEFAULT NULL,
-  `pid` int(11) DEFAULT NULL,
+  `id` int DEFAULT NULL,
+  `pid` int DEFAULT NULL,
   KEY `idx_pid` (`pid`),
   CONSTRAINT `fk_1` FOREIGN KEY (`pid`) REFERENCES `test`.`parent` (`id`) ON DELETE CASCADE /* FOREIGN KEY INVALID */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
@@ -310,7 +309,6 @@ Create Table | CREATE TABLE `child` (
 
 <CustomContent platform="tidb">
 
--   [TiDBBinlog](/tidb-binlog/tidb-binlog-overview.md)外部キーをサポートしません。
 -   [DM](/dm/dm-overview.md)外部キーをサポートしていません。DM は、データを TiDB に複製するときに、下流の TiDB の[`foreign_key_checks`](/system-variables.md#foreign_key_checks)無効にします。そのため、外部キーによって発生するカスケード操作は上流から下流に複製されず、データの不整合が発生する可能性があります。
 -   [ティCDC](/ticdc/ticdc-overview.md) v6.6.0 は外部キーと互換性があります。以前のバージョンの TiCDC では、外部キーを持つテーブルを複製するときにエラーが報告される可能性があります。v6.6.0 より前のバージョンの TiCDC を使用する場合は、ダウンストリーム TiDB クラスターの`foreign_key_checks`無効にすることをお勧めします。
 -   [BR](/br/backup-and-restore-overview.md) v6.6.0 は外部キーと互換性があります。以前のバージョンのBRでは、外部キーを持つテーブルを v6.6.0 以降のクラスターに復元するときにエラーが報告される可能性があります。v6.6.0 より前のBR を使用する場合は、クラスターを復元する前に、ダウンストリーム TiDB クラスターの`foreign_key_checks`無効にすることをお勧めします。
@@ -352,8 +350,8 @@ SHOW CREATE TABLE child;
 | Table | Create Table                                                |
 +-------+-------------------------------------------------------------+
 | child | CREATE TABLE `child` (                                      |
-|       |   `id` int(11) DEFAULT NULL,                                |
-|       |   `pid` int(11) DEFAULT NULL                                |
+|       |   `id` int DEFAULT NULL,                                |
+|       |   `pid` int DEFAULT NULL                                |
 |       | ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin |
 +-------+-------------------------------------------------------------+
 ```
