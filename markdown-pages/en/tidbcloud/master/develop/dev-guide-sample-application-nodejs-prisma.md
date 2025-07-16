@@ -79,7 +79,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you've sele
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
 
-1. Navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page, and then click the name of your target cluster to go to its overview page.
+1. Navigate to the [**Clusters**](https://tidbcloud.com/console/clusters) page, and then click the name of your target cluster to go to its overview page.
 
 2. Click **Connect** in the upper-right corner. A connection dialog is displayed.
 
@@ -121,7 +121,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you've sele
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1. Navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page, and then click the name of your target cluster to go to its overview page.
+1. Navigate to the [**Clusters**](https://tidbcloud.com/console/clusters) page, and then click the name of your target cluster to go to its overview page.
 
 2. Click **Connect** in the upper-right corner. A connection dialog is displayed.
 
@@ -129,7 +129,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you've sele
 
     If you have not configured the IP access list, click **Configure IP Access List** or follow the steps in [Configure an IP Access List](https://docs.pingcap.com/tidbcloud/configure-ip-access-list) to configure it before your first connection.
 
-    In addition to the **Public** connection type, TiDB Cloud Dedicated supports **Private Endpoint** and **VPC Peering** connection types. For more information, see [Connect to Your TiDB Cloud Dedicated Cluster](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster).
+    In addition to the **Public** connection type, TiDB Dedicated supports **Private Endpoint** and **VPC Peering** connection types. For more information, see [Connect to Your TiDB Dedicated Cluster](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster).
 
 4. Run the following command to copy `.env.example` and rename it to `.env`:
 
@@ -270,7 +270,7 @@ void main();
 If the connection is successful, the terminal will output the version of the TiDB cluster as follows:
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.1.2)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.2)
 🆕 Created a new player with ID 1.
 ℹ️ Got Player 1: Player { id: 1, coins: 100, goods: 100 }
 🔢 Added 50 coins and 50 goods to player 1, now player 1 has 150 coins and 150 goods.
@@ -356,7 +356,7 @@ For more information, refer to [Delete data](/develop/dev-guide-delete-data.md).
 
 To check [referential integrity](https://en.wikipedia.org/wiki/Referential_integrity?useskin=vector), you can use foreign key constraints or Prisma relation mode:
 
-- [Foreign key](https://docs.pingcap.com/tidb/stable/foreign-key) is an experimental feature supported starting from TiDB v6.6.0, which allows cross-table referencing of related data, and foreign key constraints to maintain data consistency.
+- [Foreign key](https://docs.pingcap.com/tidb/stable/foreign-key) is a feature supported starting from TiDB v6.6.0, and generally available starting from v8.5.0. Foreign keys allow cross-table references of related data, while foreign key constraints ensure the consistency of related data.
 
     > **Warning:**
     >

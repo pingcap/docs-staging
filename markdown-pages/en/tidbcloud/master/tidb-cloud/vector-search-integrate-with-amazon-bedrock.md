@@ -5,11 +5,19 @@ summary: Learn how to integrate TiDB Vector Search with Amazon Bedrock to build 
 
 # Integrate TiDB Vector Search with Amazon Bedrock
 
-This tutorial demonstrates how to integrate the [vector search](/tidb-cloud/vector-search-overview.md) feature of TiDB with [Amazon Bedrock](https://aws.amazon.com/bedrock/) to build a Retrieval-Augmented Generation (RAG) Q&A bot.
+This tutorial demonstrates how to integrate the [vector search](/vector-search/vector-search-overview.md) feature of TiDB with [Amazon Bedrock](https://aws.amazon.com/bedrock/) to build a Retrieval-Augmented Generation (RAG) Q&A bot.
+
+<CustomContent platform="tidb-cloud">
+
+> **Note:**
+>
+> The vector search feature is in beta. It might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
 
 > **Note**
 >
-> TiDB Vector Search is only available for TiDB Self-Managed (TiDB >= v8.4) and [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless). It is not available for [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated).
+> The vector search feature is available on TiDB Self-Managed, [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
 
 > **Tip**
 >
@@ -309,5 +317,5 @@ def save_entities_with_embedding(session, contents):
 
 ## See also
 
-- [Vector Data Types](/tidb-cloud/vector-search-data-types.md)
-- [Vector Search Index](/tidb-cloud/vector-search-index.md)
+- [Vector Data Types](/vector-search/vector-search-data-types.md)
+- [Vector Search Index](/vector-search/vector-search-index.md)

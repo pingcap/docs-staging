@@ -64,7 +64,7 @@ SHOW CREATE TABLE users;
 | Table | Create Table                                                                                                                                                                                                               |
 +-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | users | CREATE TABLE `users` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint NOT NULL,
   `name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin /* CACHED ON */ |
@@ -170,10 +170,10 @@ SHOW CREATE TABLE mysql.table_cache_meta\G
 *************************** 1. row ***************************
        Table: table_cache_meta
 Create Table: CREATE TABLE `table_cache_meta` (
-  `tid` bigint(11) NOT NULL DEFAULT '0',
+  `tid` bigint NOT NULL DEFAULT '0',
   `lock_type` enum('NONE','READ','INTEND','WRITE') NOT NULL DEFAULT 'NONE',
-  `lease` bigint(20) NOT NULL DEFAULT '0',
-  `oldReadLease` bigint(20) NOT NULL DEFAULT '0',
+  `lease` bigint NOT NULL DEFAULT '0',
+  `oldReadLease` bigint NOT NULL DEFAULT '0',
   PRIMARY KEY (`tid`) /*T![clustered_index] CLUSTERED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
 1 row in set (0.00 sec)
@@ -215,7 +215,7 @@ Query OK, 0 rows affected (0.00 sec)
 
 Cached tables are only suitable for scenarios with small tables, because TiDB loads the data of an entire table into memory, and the cached data becomes invalid after modification and needs to be reloaded.
 
-Currently, the size limit of a cached table is 64 MB in TiDB. If the table data exceeds 64 MB, executing `ALTER TABLE t CACHE` will fail.
+Currently, the size limit of a cached table is 64 MiB in TiDB. If the table data exceeds 64 MiB, executing `ALTER TABLE t CACHE` will fail.
 
 ## Compatibility restrictions with other TiDB features
 

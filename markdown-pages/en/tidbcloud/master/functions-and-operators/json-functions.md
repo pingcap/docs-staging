@@ -69,6 +69,12 @@ You can use JSON functions to work with data in the [JSON data type](/data-type-
 | [JSON_ARRAYAGG()](/functions-and-operators/json-functions/json-functions-aggregate.md#json_arrayagg) | Provides an aggregation of keys. |
 | [JSON_OBJECTAGG()](/functions-and-operators/json-functions/json-functions-aggregate.md#json_objectagg) | Provides an aggregation of values for a given key. |
 
+## Validation functions
+    
+| Function Name                     | Description |
+| --------------------------------- | ----------- |
+| [JSON_SCHEMA_VALID()](/functions-and-operators/json-functions/json-functions-validate.md#json_schema_valid) | Validates a JSON document against a schema to ensure data integrity and consistency. |
+
 ## JSONPath
 
 Many of JSON functions use [JSONPath](https://www.rfc-editor.org/rfc/rfc9535.html) to select parts of a JSON document.
@@ -97,9 +103,9 @@ The subsequent content takes the following JSON document as an example to demons
         "license": "Apache-2.0 license",
         "versions": [
             {
-                "version": "v8.1.2",
+                "version": "v8.1.0",
                 "type": "lts",
-                "release_date": "2024-12-26" 
+                "release_date": "2024-05-24" 
             },
             {
                 "version": "v8.0.0",        
@@ -128,9 +134,9 @@ The subsequent content takes the following JSON document as an example to demons
 | `$.database.features[0]`              | The first database feature.             | `"distributed"`               |
 | `$.database.features[2]`              | The third database feature.             | `"relational"`                |
 | `$.database.versions[0].type`         | The type of the first database version. | `"lts"`                       |
-| `$.database.versions[*].release_date` | The release date for all versions.      | `["2024-12-26","2024-03-29"]` |
+| `$.database.versions[*].release_date` | The release date for all versions.      | `["2024-05-24","2024-03-29"]` |
 | `$.*.features`                        | Two array's of features                 | `[["distributed", "scalable", "relational", "cloud native"], ["MySQL compatible", "Shard merging"]]`                              |
-| `$**.version`                         | All versions, with path wildcard        | `["v8.1.2","v8.0.0"]`         |
+| `$**.version`                         | All versions, with path wildcard        | `["v8.1.0","v8.0.0"]`         |
 | `$.database.features[0 to 2]`         | Range of database features from the first to the third.             | `["scalable","relational"]`   |
 
 For more information, see [the IETF draft for JSONPath](https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html).
@@ -141,7 +147,6 @@ For more information, see [the IETF draft for JSONPath](https://www.ietf.org/arc
 
 ## Unsupported functions
 
-- `JSON_SCHEMA_VALID()`
 - `JSON_SCHEMA_VALIDATION_REPORT()`
 - `JSON_TABLE()`
 - `JSON_VALUE()`

@@ -5,7 +5,7 @@ summary: Learn how to quickly get started with Vector Search in TiDB using SQL s
 
 # Get Started with Vector Search via SQL
 
-TiDB extends MySQL syntax to support [Vector Search](/tidb-cloud/vector-search-overview.md) and introduce new [Vector data types](/tidb-cloud/vector-search-data-types.md) and several [vector functions](/tidb-cloud/vector-search-functions-and-operators.md).
+TiDB extends MySQL syntax to support [Vector Search](/vector-search/vector-search-overview.md) and introduce new [Vector data types](/vector-search/vector-search-data-types.md) and several [vector functions](/vector-search/vector-search-functions-and-operators.md).
 
 This tutorial demonstrates how to get started with TiDB Vector Search just using SQL statements. You will learn how to use the [MySQL command-line client](https://dev.mysql.com/doc/refman/8.4/en/mysql.html) to complete the following operations:
 
@@ -14,22 +14,60 @@ This tutorial demonstrates how to get started with TiDB Vector Search just using
 - Store vector embeddings.
 - Perform vector search queries.
 
-> **Note**
+<CustomContent platform="tidb">
+
+> **Warning:**
 >
-> TiDB Vector Search is only available for TiDB Self-Managed (TiDB >= v8.4) and [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless). It is not available for [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated).
+> The vector search feature is experimental. It is not recommended that you use it in the production environment. This feature might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **Note:**
+>
+> The vector search feature is in beta. It might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+> **Note:**
+>
+> The vector search feature is available on TiDB Self-Managed, [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
 
 ## Prerequisites
 
 To complete this tutorial, you need:
 
 - [MySQL command-line client](https://dev.mysql.com/doc/refman/8.4/en/mysql.html) (MySQL CLI) installed on your machine.
-- A TiDB Cloud Serverless cluster. Follow [creating a TiDB Cloud Serverless cluster](/tidb-cloud/create-tidb-cluster-serverless.md) to create your own TiDB Cloud cluster if you don't have one.
+- A TiDB cluster.
+
+<CustomContent platform="tidb">
+
+**If you don't have a TiDB cluster, you can create one as follows:**
+
+- Follow [Deploy a local test TiDB cluster](/quick-start-with-tidb.md#deploy-a-local-test-cluster) or [Deploy a production TiDB cluster](/production-deployment-using-tiup.md) to create a local cluster.
+- Follow [Creating a TiDB Cloud Serverless cluster](/develop/dev-guide-build-cluster-in-cloud.md) to create your own TiDB Cloud cluster.
+
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
+**If you don't have a TiDB cluster, you can create one as follows:**
+
+- (Recommended) Follow [Creating a TiDB Cloud Serverless cluster](/develop/dev-guide-build-cluster-in-cloud.md) to create your own TiDB Cloud cluster.
+- Follow [Deploy a local test TiDB cluster](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) or [Deploy a production TiDB cluster](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) to create a local cluster of v8.4.0 or a later version.
+
+</CustomContent>
 
 ## Get started
 
 ### Step 1. Connect to the TiDB cluster
 
-1. Navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page, and then click the name of your target cluster to go to its overview page.
+Connect to your TiDB cluster depending on the TiDB deployment option you've selected.
+
+<SimpleTab>
+<div label="TiDB Cloud Serverless">
+
+1. Navigate to the [**Clusters**](https://tidbcloud.com/console/clusters) page, and then click the name of your target cluster to go to its overview page.
 
 2. Click **Connect** in the upper-right corner. A connection dialog is displayed.
 
@@ -39,13 +77,28 @@ To complete this tutorial, you need:
 
 5. Copy the connection command and paste it into your terminal. The following is an example for macOS:
 
-   ```bash
-   mysql -u '<prefix>.root' -h '<host>' -P 4000 -D 'test' --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/cert.pem -p'<password>'
-   ```
+    ```bash
+    mysql -u '<prefix>.root' -h '<host>' -P 4000 -D 'test' --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/cert.pem -p'<password>'
+    ```
+
+</div>
+<div label="TiDB Self-Managed">
+
+After your TiDB Self-Managed cluster is started, execute your cluster connection command in the terminal.
+
+The following is an example connection command for macOS:
+
+```bash
+mysql --comments --host 127.0.0.1 --port 4000 -u root
+```
+
+</div>
+
+</SimpleTab>
 
 ### Step 2. Create a vector table
 
-When creating a table, you can define a column as a [vector](/tidb-cloud/vector-search-overview.md#vector-embedding) column by specifying the `VECTOR` data type.
+When creating a table, you can define a column as a [vector](/vector-search/vector-search-overview.md#vector-embedding) column by specifying the `VECTOR` data type.
 
 For example, to create a table `embedded_documents` with a three-dimensional `VECTOR` column, execute the following SQL statements using your MySQL CLI:
 
@@ -68,7 +121,7 @@ Query OK, 0 rows affected (0.27 sec)
 
 ### Step 3. Insert vector embeddings to the table
 
-Insert three documents with their [vector embeddings](/tidb-cloud/vector-search-overview.md#vector-embedding) into the `embedded_documents` table:
+Insert three documents with their [vector embeddings](/vector-search/vector-search-overview.md#vector-embedding) into the `embedded_documents` table:
 
 ```sql
 INSERT INTO embedded_documents
@@ -89,7 +142,7 @@ Records: 3  Duplicates: 0  Warnings: 0
 >
 > This example simplifies the dimensions of the vector embeddings and uses only 3-dimensional vectors for demonstration purposes.
 >
-> In real-world applications, [embedding models](/tidb-cloud/vector-search-overview.md#embedding-model) often produce vector embeddings with hundreds or thousands of dimensions.
+> In real-world applications, [embedding models](/vector-search/vector-search-overview.md#embedding-model) often produce vector embeddings with hundreds or thousands of dimensions.
 
 ### Step 4. Query the vector table
 
@@ -146,5 +199,5 @@ Therefore, according to the output, the swimming animal is most likely a fish, o
 
 ## See also
 
-- [Vector Data Types](/tidb-cloud/vector-search-data-types.md)
-- [Vector Search Index](/tidb-cloud/vector-search-index.md)
+- [Vector Data Types](/vector-search/vector-search-data-types.md)
+- [Vector Search Index](/vector-search/vector-search-index.md)

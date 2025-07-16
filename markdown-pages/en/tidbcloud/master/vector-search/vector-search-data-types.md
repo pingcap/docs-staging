@@ -7,6 +7,26 @@ summary: Learn about the Vector data types in TiDB.
 
 A vector is a sequence of floating-point numbers, such as `[0.3, 0.5, -0.1, ...]`. TiDB offers Vector data types, specifically optimized for efficiently storing and querying vector embeddings widely used in AI applications.
 
+<CustomContent platform="tidb">
+
+> **Warning:**
+>
+> This feature is experimental. It is not recommended that you use it in the production environment. This feature might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **Note:**
+>
+> This feature is in beta. It might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+> **Note:**
+>
+> Vector data types are available on TiDB Self-Managed, [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
+
 The following Vector data types are currently available:
 
 - `VECTOR`: A sequence of single-precision floating-point numbers with any dimension.
@@ -14,13 +34,9 @@ The following Vector data types are currently available:
 
 Using vector data types provides the following advantages over using the [`JSON`](/data-type-json.md) type:
 
-- Vector index support: You can build a [vector search index](/tidb-cloud/vector-search-index.md) to speed up vector searching.
+- Vector index support: You can build a [vector search index](/vector-search/vector-search-index.md) to speed up vector searching.
 - Dimension enforcement: You can specify a dimension to forbid inserting vectors with different dimensions.
 - Optimized storage format: Vector data types are optimized for handling vector data, offering better space efficiency and performance compared to `JSON` types.
-
-> **Note**
->
-> TiDB Vector Search is only available for TiDB Self-Managed (TiDB >= v8.4) and [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless). It is not available for [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated).
 
 ## Syntax
 
@@ -57,9 +73,9 @@ In the following example, because dimension `3` is enforced for the `embedding` 
 ERROR 1105 (HY000): vector has 2 dimensions, does not fit VECTOR(3)
 ```
 
-For available functions and operators over the vector data types, see [Vector Functions and Operators](/tidb-cloud/vector-search-functions-and-operators.md).
+For available functions and operators over the vector data types, see [Vector Functions and Operators](/vector-search/vector-search-functions-and-operators.md).
 
-For more information about building and using a vector search index, see [Vector Search Index](/tidb-cloud/vector-search-index.md).
+For more information about building and using a vector search index, see [Vector Search Index](/vector-search/vector-search-index.md).
 
 ## Store vectors with different dimensions
 
@@ -75,11 +91,11 @@ INSERT INTO vector_table VALUES (1, '[0.3, 0.5, -0.1]'); -- 3 dimensions vector,
 INSERT INTO vector_table VALUES (2, '[0.3, 0.5]');       -- 2 dimensions vector, OK
 ```
 
-However, note that you cannot build a [vector search index](/tidb-cloud/vector-search-index.md) for this column, as vector distances can be only calculated between vectors with the same dimensions.
+However, note that you cannot build a [vector search index](/vector-search/vector-search-index.md) for this column, as vector distances can be only calculated between vectors with the same dimensions.
 
 ## Comparison
 
-You can compare vector data types using [comparison operators](/functions-and-operators/operators.md) such as `=`, `!=`, `<`, `>`, `<=`, and `>=`. For a complete list of comparison operators and functions for vector data types, see [Vector Functions and Operators](/tidb-cloud/vector-search-functions-and-operators.md).
+You can compare vector data types using [comparison operators](/functions-and-operators/operators.md) such as `=`, `!=`, `<`, `>`, `<=`, and `>=`. For a complete list of comparison operators and functions for vector data types, see [Vector Functions and Operators](/vector-search/vector-search-functions-and-operators.md).
 
 Vector data types are compared element-wise numerically. For example:
 
@@ -223,7 +239,7 @@ You can also explicitly cast a vector to its string representation. Take using t
 1 row in set (0.01 sec)
 ```
 
-For additional cast functions, see [Vector Functions and Operators](/tidb-cloud/vector-search-functions-and-operators.md).
+For additional cast functions, see [Vector Functions and Operators](/vector-search/vector-search-functions-and-operators.md).
 
 ### Cast between Vector ⇔ other data types
 
@@ -231,9 +247,9 @@ Currently, direct casting between Vector and other data types (such as `JSON`) i
 
 Note that vector data type columns stored in a table cannot be converted to other data types using `ALTER TABLE ... MODIFY COLUMN ...`.
 
-## Limitations
+## Restrictions
 
-See [Vector data type limitations](/tidb-cloud/vector-search-limitations.md#vector-data-type-limitations).
+For restrictions on vector data types, see [Vector search limitations](/vector-search/vector-search-limitations.md) and [Vector index restrictions](/vector-search/vector-search-index.md#restrictions).
 
 ## MySQL compatibility
 
@@ -241,6 +257,6 @@ Vector data types are TiDB specific, and are not supported in MySQL.
 
 ## See also
 
-- [Vector Functions and Operators](/tidb-cloud/vector-search-functions-and-operators.md)
-- [Vector Search Index](/tidb-cloud/vector-search-index.md)
-- [Improve Vector Search Performance](/tidb-cloud/vector-search-improve-performance.md)
+- [Vector Functions and Operators](/vector-search/vector-search-functions-and-operators.md)
+- [Vector Search Index](/vector-search/vector-search-index.md)
+- [Improve Vector Search Performance](/vector-search/vector-search-improve-performance.md)

@@ -1,15 +1,31 @@
 ---
 title: Integrate Vector Search with LangChain
-summary: Learn how to integrate Vector Search in TiDB Cloud with LangChain.
+summary: Learn how to integrate TiDB Vector Search with LangChain.
 ---
 
 # Integrate Vector Search with LangChain
 
-This tutorial demonstrates how to integrate the [vector search](/tidb-cloud/vector-search-overview.md) feature in TiDB Cloud with [LangChain](https://python.langchain.com/).
+This tutorial demonstrates how to integrate the [vector search](/vector-search/vector-search-overview.md) feature of TiDB with [LangChain](https://python.langchain.com/).
 
-> **Note**
+<CustomContent platform="tidb">
+
+> **Warning:**
 >
-> TiDB Vector Search is only available for TiDB Self-Managed (TiDB >= v8.4) and [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless). It is not available for [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated).
+> The vector search feature is experimental. It is not recommended that you use it in the production environment. This feature might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **Note:**
+>
+> The vector search feature is in beta. It might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+
+</CustomContent>
+
+> **Note:**
+>
+> The vector search feature is available on TiDB Self-Managed, [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
 
 > **Tip**
 >
@@ -22,7 +38,24 @@ To complete this tutorial, you need:
 - [Python 3.8 or higher](https://www.python.org/downloads/) installed.
 - [Jupyter Notebook](https://jupyter.org/install) installed.
 - [Git](https://git-scm.com/downloads) installed.
-- A TiDB Cloud Serverless cluster. Follow [creating a TiDB Cloud Serverless cluster](/tidb-cloud/create-tidb-cluster-serverless.md) to create your own TiDB Cloud cluster if you don't have one.
+- A TiDB cluster.
+
+<CustomContent platform="tidb">
+
+**If you don't have a TiDB cluster, you can create one as follows:**
+
+- Follow [Deploy a local test TiDB cluster](/quick-start-with-tidb.md#deploy-a-local-test-cluster) or [Deploy a production TiDB cluster](/production-deployment-using-tiup.md) to create a local cluster.
+- Follow [Creating a TiDB Cloud Serverless cluster](/develop/dev-guide-build-cluster-in-cloud.md) to create your own TiDB Cloud cluster.
+
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
+**If you don't have a TiDB cluster, you can create one as follows:**
+
+- (Recommended) Follow [Creating a TiDB Cloud Serverless cluster](/develop/dev-guide-build-cluster-in-cloud.md) to create your own TiDB Cloud cluster.
+- Follow [Deploy a local test TiDB cluster](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) or [Deploy a production TiDB cluster](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) to create a local cluster of v8.4.0 or a later version.
+
+</CustomContent>
 
 ## Get started
 
@@ -58,41 +91,84 @@ from langchain_text_splitters import CharacterTextSplitter
 
 ### Step 3. Set up your environment
 
-Take the following steps to obtain the cluster connection string and configure environment variables:
+Configure the environment variables depending on the TiDB deployment option you've selected.
 
-1. Navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page, and then click the name of your target cluster to go to its overview page.
+<SimpleTab>
+<div label="TiDB Cloud Serverless">
+
+For a TiDB Cloud Serverless cluster, take the following steps to obtain the cluster connection string and configure environment variables:
+
+1. Navigate to the [**Clusters**](https://tidbcloud.com/console/clusters) page, and then click the name of your target cluster to go to its overview page.
 
 2. Click **Connect** in the upper-right corner. A connection dialog is displayed.
 
 3. Ensure the configurations in the connection dialog match your operating environment.
 
-   - **Connection Type** is set to `Public`.
-   - **Branch** is set to `main`.
-   - **Connect With** is set to `SQLAlchemy`.
-   - **Operating System** matches your environment.
+    - **Connection Type** is set to `Public`.
+    - **Branch** is set to `main`.
+    - **Connect With** is set to `SQLAlchemy`.
+    - **Operating System** matches your environment.
 
 4. Click the **PyMySQL** tab and copy the connection string.
 
-   > **Tip:**
-   >
-   > If you have not set a password yet, click **Generate Password** to generate a random password.
+    > **Tip:**
+    >
+    > If you have not set a password yet, click **Generate Password** to generate a random password.
 
 5. Configure environment variables.
 
-   This document uses [OpenAI](https://platform.openai.com/docs/introduction) as the embedding model provider. In this step, you need to provide the connection string obtained from the previous step and your [OpenAI API key](https://platform.openai.com/docs/quickstart/step-2-set-up-your-api-key).
+    This document uses [OpenAI](https://platform.openai.com/docs/introduction) as the embedding model provider. In this step, you need to provide the connection string obtained from the previous step and your [OpenAI API key](https://platform.openai.com/docs/quickstart/step-2-set-up-your-api-key).
 
-   To configure the environment variables, run the following code. You will be prompted to enter your connection string and OpenAI API key:
+    To configure the environment variables, run the following code. You will be prompted to enter your connection string and OpenAI API key:
 
-   ```python
-   # Use getpass to securely prompt for environment variables in your terminal.
-   import getpass
-   import os
+    ```python
+    # Use getpass to securely prompt for environment variables in your terminal.
+    import getpass
+    import os
 
-   # Copy your connection string from the TiDB Cloud console.
-   # Connection string format: "mysql+pymysql://<USER>:<PASSWORD>@<HOST>:4000/<DB>?ssl_ca=/etc/ssl/cert.pem&ssl_verify_cert=true&ssl_verify_identity=true"
-   tidb_connection_string = getpass.getpass("TiDB Connection String:")
-   os.environ["OPENAI_API_KEY"] = getpass.getpass("OpenAI API Key:")
-   ```
+    # Copy your connection string from the TiDB Cloud console.
+    # Connection string format: "mysql+pymysql://<USER>:<PASSWORD>@<HOST>:4000/<DB>?ssl_ca=/etc/ssl/cert.pem&ssl_verify_cert=true&ssl_verify_identity=true"
+    tidb_connection_string = getpass.getpass("TiDB Connection String:")
+    os.environ["OPENAI_API_KEY"] = getpass.getpass("OpenAI API Key:")
+    ```
+
+</div>
+<div label="TiDB Self-Managed">
+
+This document uses [OpenAI](https://platform.openai.com/docs/introduction) as the embedding model provider. In this step, you need to provide the connection string obtained from the previous step and your [OpenAI API key](https://platform.openai.com/docs/quickstart/step-2-set-up-your-api-key).
+
+To configure the environment variables, run the following code. You will be prompted to enter your connection string and OpenAI API key:
+
+```python
+# Use getpass to securely prompt for environment variables in your terminal.
+import getpass
+import os
+
+# Connection string format: "mysql+pymysql://<USER>:<PASSWORD>@<HOST>:4000/<DB>?ssl_ca=/etc/ssl/cert.pem&ssl_verify_cert=true&ssl_verify_identity=true"
+tidb_connection_string = getpass.getpass("TiDB Connection String:")
+os.environ["OPENAI_API_KEY"] = getpass.getpass("OpenAI API Key:")
+```
+
+Taking macOS as an example, the cluster connection string is as follows:
+
+```dotenv
+TIDB_DATABASE_URL="mysql+pymysql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>"
+# For example: TIDB_DATABASE_URL="mysql+pymysql://root@127.0.0.1:4000/test"
+```
+
+You need to modify the values of the connection parameters according to your TiDB cluster. If you are running TiDB on your local machine, `<HOST>` is `127.0.0.1` by default. The initial `<PASSWORD>` is empty, so if you are starting the cluster for the first time, you can omit this field.
+
+The following are descriptions for each parameter:
+
+- `<USERNAME>`: The username to connect to the TiDB cluster.
+- `<PASSWORD>`: The password to connect to the TiDB cluster.
+- `<HOST>`: The host of the TiDB cluster.
+- `<PORT>`: The port of the TiDB cluster.
+- `<DATABASE>`: The name of the database you want to connect to.
+
+</div>
+
+</SimpleTab>
 
 ### Step 4. Load the sample document
 
@@ -582,5 +658,5 @@ The expected output is as follows:
 
 ## See also
 
-- [Vector Data Types](/tidb-cloud/vector-search-data-types.md)
-- [Vector Search Index](/tidb-cloud/vector-search-index.md)
+- [Vector Data Types](/vector-search/vector-search-data-types.md)
+- [Vector Search Index](/vector-search/vector-search-index.md)

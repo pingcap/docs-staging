@@ -49,6 +49,8 @@ Query OK, 0 rows affected (0.08 sec)
 
 Starting from v7.5.3 and v7.6.0, TiDB provides a full list of keywords in the [`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/information-schema-keywords.md) table.
 
+You can use the [`tidb_enable_window_function`](/system-variables.md#tidb_enable_window_function) system variable to control whether the keywords in the [window function](/functions-and-operators/window-functions.md) take effect in the syntax tree. If you set `tidb_enable_window_function` to `OFF`, the words in the window function will no longer be treated as keywords.
+
 ## Keyword list
 
 The following list shows the keywords in TiDB. Reserved keywords are marked with `(R)`. Reserved keywords for [Window Functions](/functions-and-operators/window-functions.md) are marked with `(R-Window)`.
@@ -72,6 +74,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - ANALYZE (R)
 - AND (R)
 - ANY
+- APPLY
 - ARRAY (R)
 - AS (R)
 - ASC (R)
@@ -133,6 +136,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - CHECK (R)
 - CHECKPOINT
 - CHECKSUM
+- CHECKSUM_CONCURRENCY
 - CIPHER
 - CLEANUP
 - CLIENT
@@ -154,6 +158,8 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - COMPACT
 - COMPRESSED
 - COMPRESSION
+- COMPRESSION_LEVEL
+- COMPRESSION_TYPE
 - CONCURRENCY
 - CONFIG
 - CONNECTION
@@ -236,6 +242,8 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - ENABLED
 - ENCLOSED (R)
 - ENCRYPTION
+- ENCRYPTION_KEYFILE
+- ENCRYPTION_METHOD
 - END
 - ENFORCED
 - ENGINE
@@ -317,6 +325,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - IDENTIFIED
 - IF (R)
 - IGNORE (R)
+- IGNORE_STATS
 - ILIKE (R)
 - IMPORT
 - IMPORTS
@@ -385,6 +394,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - LINES (R)
 - LIST
 - LOAD (R)
+- LOAD_STATS
 - LOCAL
 - LOCALTIME (R)
 - LOCALTIMESTAMP (R)
@@ -533,6 +543,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - READ (R)
 - REAL (R)
 - REBUILD
+- RECOMMEND
 - RECOVER
 - RECURSIVE (R)
 - REDUNDANT
@@ -646,7 +657,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - STATS_BUCKETS
 - STATS_COL_CHOICE
 - STATS_COL_LIST
-- STATS_EXTENDED (R)
+- STATS_EXTENDED
 - STATS_HEALTHY
 - STATS_HISTOGRAMS
 - STATS_LOCKED
@@ -684,7 +695,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - THAN
 - THEN (R)
 - TIDB
-- TiDB_CURRENT_TSO (R)
+- TIDB_CURRENT_TSO (R)
 - TIFLASH
 - TIKV_IMPORTER
 - TIME
@@ -743,6 +754,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - VARCHARACTER (R)
 - VARIABLES
 - VARYING (R)
+- VECTOR
 - VIEW
 - VIRTUAL (R)
 - VISIBLE
@@ -750,6 +762,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 <a id="W" class="letter" href="#W">W</a>
 
 - WAIT
+- WAIT_TIFLASH_READY
 - WARNINGS
 - WEEK
 - WEIGHT_STRING
@@ -759,6 +772,7 @@ The following list shows the keywords in TiDB. Reserved keywords are marked with
 - WIDTH
 - WINDOW (R-Window)
 - WITH (R)
+- WITH_SYS_TABLE
 - WITHOUT
 - WORKLOAD
 - WRITE (R)

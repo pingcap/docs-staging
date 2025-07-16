@@ -27,7 +27,7 @@ This document walks you through the quickest way to get started with TiDB Cloud.
 
 2. [Log in](https://tidbcloud.com/) to your TiDB Cloud account.
 
-3. On the [**Clusters**](https://tidbcloud.com/project/clusters) page, click **Create Cluster**.
+3. On the [**Clusters**](https://tidbcloud.com/console/clusters) page, click **Create Cluster**.
 
 4. On the **Create Cluster** page, **Serverless** is selected by default. Update the default cluster name if necessary, and then select the region where you want to create your cluster.
 
@@ -108,10 +108,10 @@ mysql  Ver 8.0.28 for macos12.0 on arm64 (Homebrew)
 
 <div label="Linux">
 
-For Linux, the following takes CentOS 7 as an example:
+For Linux, the following takes Ubuntu as an example:
 
 ```shell
-yum install mysql
+apt-get install mysql-client
 ```
 
 Then, verify that the MySQL client is installed successfully:

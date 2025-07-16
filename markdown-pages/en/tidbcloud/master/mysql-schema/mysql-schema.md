@@ -91,8 +91,8 @@ Currently, the `help_topic` is NULL.
 
 ## System tables related to metadata locks
 
-* `tidb_mdl_view`: a view of metadata locks. You can use it to view information about the currently blocked DDL statements
-* `tidb_mdl_info`: used internally by TiDB to synchronize metadata locks across nodes
+* [`tidb_mdl_view`](/mysql-schema/mysql-schema-tidb-mdl-view.md): a view of metadata locks. You can use it to view the information about the currently blocked DDL statements. See also [Metadata Lock](/metadata-lock.md).
+* `tidb_mdl_info`: used internally by TiDB to synchronize metadata locks across nodes.
 
 ## System tables related to DDL statements
 
@@ -111,6 +111,10 @@ Currently, the `help_topic` is NULL.
 ## System tables related to Resource Control
 
 * `request_unit_by_group`: the history records of consumed resource units (RUs) of all resource groups
+
+## System tables related to backup and restore
+
+* `tidb_pitr_id_map`: the ID mapping information for point-in-time recovery (PITR) operations
 
 ## Miscellaneous system tables
 

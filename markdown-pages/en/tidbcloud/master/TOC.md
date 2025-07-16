@@ -10,7 +10,7 @@
   - [MySQL Compatibility](/mysql-compatibility.md)
 - Get Started with TiDB Cloud
   - [Try Out TiDB Cloud Serverless](/tidb-cloud/tidb-cloud-quickstart.md)
-  - [Try Out TiDB + AI](/tidb-cloud/vector-search-get-started-using-python.md)
+  - [Try Out TiDB + AI](/vector-search/vector-search-get-started-using-python.md)
   - [Try Out HTAP](/tidb-cloud/tidb-cloud-htap-quickstart.md)
   - [Try Out TiDB Cloud CLI](/tidb-cloud/get-started-with-cli.md)
   - [Perform a PoC](/tidb-cloud/tidb-cloud-poc.md)
@@ -237,6 +237,7 @@
         - [SQL Plan Management](/sql-plan-management.md)
         - [The Blocklist of Optimization Rules and Expression Pushdown](/blocklist-control-plan.md)
         - [Optimizer Fix Controls](/optimizer-fix-controls.md)
+      - [Index Advisor](/index-advisor.md)
     - [TiKV Follower Read](/follower-read.md)
     - [Coprocessor Cache](/coprocessor-cache.md)
     - Garbage Collection (GC)
@@ -244,8 +245,10 @@
        - [Configuration](/garbage-collection-configuration.md)
     - [Tune TiFlash Performance](/tiflash/tune-tiflash-performance.md)
   - Optimize Resource Allocation
-    - [Overview of Resource Allocation](/tidb-cloud/optimize-resource-allocation.md)
-    - [Resource Control](/tidb-resource-control.md)
+    - Resource Manager
+      - [Use Resource Control to Achieve Resource Group Limitation and Flow Control](/tidb-resource-control-ru-groups.md)
+      - [Manage Runaway Queries](/tidb-resource-control-runaway-queries.md)
+      - [Manage Background Tasks](/tidb-resource-control-background-tasks.md)
     - TiDB Node Group
       - [Overview of TiDB Node Group](/tidb-cloud/tidb-node-group-overview.md)
       - [Manage TiDB Node Groups](/tidb-cloud/tidb-node-group-management.md)
@@ -283,33 +286,33 @@
   - [Chat2Query in SQL Editor](/tidb-cloud/explore-data-with-chat2query.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
   - [SQL Proxy Account](/tidb-cloud/sql-proxy-account.md)
 - Vector Search ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
-  - [Overview](/tidb-cloud/vector-search-overview.md)
+  - [Overview](/vector-search/vector-search-overview.md)
   - Get Started
-    - [Get Started with SQL](/tidb-cloud/vector-search-get-started-using-sql.md)
-    - [Get Started with Python](/tidb-cloud/vector-search-get-started-using-python.md)
+    - [Get Started with SQL](/vector-search/vector-search-get-started-using-sql.md)
+    - [Get Started with Python](/vector-search/vector-search-get-started-using-python.md)
   - Integrations
-    - [Overview](/tidb-cloud/vector-search-integration-overview.md)
+    - [Overview](/vector-search/vector-search-integration-overview.md)
     - AI Frameworks
-      - [LlamaIndex](/tidb-cloud/vector-search-integrate-with-llamaindex.md)
-      - [Langchain](/tidb-cloud/vector-search-integrate-with-langchain.md)
+      - [LlamaIndex](/vector-search/vector-search-integrate-with-llamaindex.md)
+      - [Langchain](/vector-search/vector-search-integrate-with-langchain.md)
     - AI Services
       - [Amazon Bedrock](/tidb-cloud/vector-search-integrate-with-amazon-bedrock.md)
     - Embedding Models/Services
-      - [Jina AI](/tidb-cloud/vector-search-integrate-with-jinaai-embedding.md)
+      - [Jina AI](/vector-search/vector-search-integrate-with-jinaai-embedding.md)
     - ORM Libraries
-      - [SQLAlchemy](/tidb-cloud/vector-search-integrate-with-sqlalchemy.md)
-      - [peewee](/tidb-cloud/vector-search-integrate-with-peewee.md)
-      - [Django ORM](/tidb-cloud/vector-search-integrate-with-django-orm.md)
+      - [SQLAlchemy](/vector-search/vector-search-integrate-with-sqlalchemy.md)
+      - [peewee](/vector-search/vector-search-integrate-with-peewee.md)
+      - [Django ORM](/vector-search/vector-search-integrate-with-django-orm.md)
   - Text Search
     - [Full-Text Search with SQL](/tidb-cloud/vector-search-full-text-search-sql.md)
     - [Full-Text Search with Python](/tidb-cloud/vector-search-full-text-search-python.md)
     - [Hybrid Search](/tidb-cloud/vector-search-hybrid-search.md)
   - Reference
-    - [Vector Data Types](/tidb-cloud/vector-search-data-types.md)
-    - [Vector Functions and Operators](/tidb-cloud/vector-search-functions-and-operators.md)
-    - [Vector Index](/tidb-cloud/vector-search-index.md)
-  - [Improve Performance](/tidb-cloud/vector-search-improve-performance.md)
-  - [Limitations](/tidb-cloud/vector-search-limitations.md)
+    - [Vector Data Types](/vector-search/vector-search-data-types.md)
+    - [Vector Functions and Operators](/vector-search/vector-search-functions-and-operators.md)
+    - [Vector Index](/vector-search/vector-search-index.md)
+  - [Improve Performance](/vector-search/vector-search-improve-performance.md)
+  - [Limitations](/vector-search/vector-search-limitations.md)
   - [Changelogs](/tidb-cloud/vector-search-changelogs.md)
 - Data Service ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
   - [Overview](/tidb-cloud/data-service-overview.md)
@@ -434,6 +437,7 @@
   - SQL Statements
     - [Overview](/sql-statements/sql-statement-overview.md)
     - [`ADMIN`](/sql-statements/sql-statement-admin.md)
+    - [`ADMIN ALTER DDL JOBS`](/sql-statements/sql-statement-admin-alter-ddl.md)
     - [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md)
     - [`ADMIN CHECKSUM TABLE`](/sql-statements/sql-statement-admin-checksum-table.md)
     - [`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md)
@@ -609,6 +613,7 @@
       - [Functions That Return JSON](/functions-and-operators/json-functions/json-functions-return.md)
       - [JSON Utility Functions](/functions-and-operators/json-functions/json-functions-utility.md)
       - [Functions That Aggregate JSON](/functions-and-operators/json-functions/json-functions-aggregate.md)
+      - [Functions That Validate JSON](/functions-and-operators/json-functions/json-functions-validate.md)
     - [Aggregate (GROUP BY) Functions](/functions-and-operators/aggregate-group-by-functions.md)
     - [GROUP BY Modifiers](/functions-and-operators/group-by-modifier.md)
     - [Window Functions](/functions-and-operators/window-functions.md)
@@ -616,6 +621,7 @@
     - [Utility Functions](/functions-and-operators/utility-functions.md)
     - [Miscellaneous Functions](/functions-and-operators/miscellaneous-functions.md)
     - [TiDB Specific Functions](/functions-and-operators/tidb-functions.md)
+    - [Utility Functions](/functions-and-operators/utility-functions.md)
     - [Precision Math](/functions-and-operators/precision-math.md)
     - [Set Operations](/functions-and-operators/set-operators.md)
     - [List of Expressions for Pushdown](/functions-and-operators/expressions-pushed-down.md)
@@ -630,6 +636,7 @@
     - [Optimistic Transactions](/optimistic-transaction.md)
     - [Pessimistic Transactions](/pessimistic-transaction.md)
     - [Non-Transactional DML Statements](/non-transactional-dml.md)
+    - [Pipelined DML](/pipelined-dml.md)
   - [Views](/views.md)
   - [Partitioning](/partitioned-table.md)
   - [Temporary Tables](/temporary-tables.md)
@@ -649,6 +656,7 @@
   - System Tables
     - `mysql` Schema
       - [Overview](/mysql-schema/mysql-schema.md)
+      - [`tidb_mdl_view`](/mysql-schema/mysql-schema-tidb-mdl-view.md)
       - [`user`](/mysql-schema/mysql-schema-user.md)
     - INFORMATION_SCHEMA
       - [Overview](/information-schema/information-schema.md)
@@ -709,6 +717,7 @@
   - [Metadata Lock](/metadata-lock.md)
   - [Use UUIDs](/best-practices/uuid.md)
   - [TiDB Accelerated Table Creation](/accelerated-table-creation.md)
+  - [Schema Cache](/schema-cache.md)
 - API Reference ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)   
   - [Overview](/tidb-cloud/api-overview.md) 
   - v1beta1
@@ -829,14 +838,9 @@
   - [System Variables](/system-variables.md)
   - [Server Status Variables](/status-variables.md)
   - [Table Filter](/table-filter.md)
-  - Optimize Resource Allocation
-    - [Overview of Resource Allocation](/tidb-cloud/optimize-resource-allocation.md)
-    - [Resource Control](/tidb-resource-control.md)
-    - TiDB Node Group
-      - [Overview of TiDB Node Group](/tidb-cloud/tidb-node-group-overview.md)
-      - [Manage TiDB Node Groups](/tidb-cloud/tidb-node-group-management.md)
   - [URI Formats of External Storage Services](/external-storage-uri.md)
   - [DDL Execution Principles and Best Practices](/ddl-introduction.md)
+  - [Batch Processing](/batch-processing.md)
   - [Troubleshoot Inconsistency Between Data and Indexes](/troubleshoot-data-inconsistency-errors.md)
   - [Notifications](/tidb-cloud/notifications.md)
   - [Glossary](/tidb-cloud/tidb-cloud-glossary.md)
