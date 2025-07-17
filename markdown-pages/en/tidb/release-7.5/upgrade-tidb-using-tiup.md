@@ -126,7 +126,7 @@ Now, the offline mirror has been upgraded successfully. If an error occurs durin
 > Skip this step if one of the following situations applies:
 >
 > + You have not modified the configuration parameters of the original cluster. Or you have modified the configuration parameters using `tiup cluster` but no more modification is needed.
-> + After the upgrade, you want to use v7.5.6's default parameter values for the unmodified configuration items.
+> + After the upgrade, you want to use the default parameter values of v7.5.6 for the unmodified configuration items.
 
 1. Enter the `vi` editing mode to edit the topology file:
 
