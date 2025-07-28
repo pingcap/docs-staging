@@ -67,7 +67,7 @@ peewee is an ORM library that works with multiple databases. It provides a high-
 
 Connect to your TiDB cluster depending on the TiDB deployment option you've selected.
 
-1. Navigate to the [**Clusters**](https://{{{.console-url}}}/project/clusters) page, and then click the name of your target cluster to go to its overview page.
+1. Navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page, and then click the name of your target cluster to go to its overview page.
 
 2. Click **Connect** in the upper-right corner. A connection dialog is displayed.
 
@@ -85,7 +85,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you've sele
 4. Click **Generate Password** to create a random password.
 
     > **Tip:**
-    > 
+    >
     > If you have created a password before, you can either use the original password or click **Reset Password** to generate a new one.
 
 5. Run the following command to copy `.env.example` and rename it to `.env`:
