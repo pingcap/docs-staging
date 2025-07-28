@@ -1,16 +1,16 @@
-import axios from 'axios'
-import dotenv from 'dotenv'
-import nPath, { resolve } from 'path'
-import sig from 'signale'
-import fs from 'fs'
+import axios from "axios";
+import dotenv from "dotenv";
+import nPath, { resolve } from "path";
+import sig from "signale";
+import fs from "fs";
 
-dotenv.config()
+dotenv.config();
 
-const GITHUB_AUTHORIZATION_TOKEN = process.env.GITHUB_AUTHORIZATION_TOKEN
-const baseURL = 'https://api.github.com'
+const GITHUB_AUTHORIZATION_TOKEN = process.env.GITHUB_AUTHORIZATION_TOKEN;
+const baseURL = "https://api.github.com";
 const defaultHeaders = {
-  Accept: 'application/vnd.github.v3+json',
-}
+  Accept: "application/vnd.github.v3+json",
+};
 
 export const http = axios.create({
   baseURL,
@@ -20,33 +20,33 @@ export const http = axios.create({
         Authorization: `token ${GITHUB_AUTHORIZATION_TOKEN}`,
       }
     : defaultHeaders,
-})
+});
 
 export function getContent(repo, ref, path) {
-  const url = nPath.join(`/repos/${repo}/contents`, path)
+  const url = nPath.join(`/repos/${repo}/contents`, path);
 
-  sig.start(`Get content(ref: ${ref}) from:`, url)
+  sig.start(`Get content(ref: ${ref}) from:`, url);
 
   return http.get(url, {
     params: {
       ref,
     },
-  })
+  });
 }
 
 export function compare(repo, base, head) {
-  const url = `/repos/${repo}/compare/${base}...${head}`
+  const url = `/repos/${repo}/compare/${base}...${head}`;
 
-  sig.info(`Compare: ${base}...${head}`)
+  sig.info(`Compare: ${base}...${head}`);
 
-  return http.get(url)
+  return http.get(url);
 }
 
-export function downloadFile(reqUrl, fileName = '') {
+export function downloadFile(reqUrl, fileName = "") {
   return axios({
-    method: 'GET',
+    method: "GET",
     url: reqUrl,
-    responseType: 'stream',
+    responseType: "stream",
     headers: GITHUB_AUTHORIZATION_TOKEN
       ? {
           ...defaultHeaders,
@@ -54,33 +54,39 @@ export function downloadFile(reqUrl, fileName = '') {
         }
       : defaultHeaders,
   })
-    .then(res => {
+    .then((res) => {
       if (res.status == 200) {
-        fileName = fileName || reqUrl.split('/').pop()
-        const dir = resolve(fileName)
-        sig.start(`Download file(fileName: ${fileName}) reqUrl:${reqUrl}`)
-        res.data.pipe(fs.createWriteStream(dir))
-        // res.data.on('end', () => {
-        //   sig.success('download completed')
-        // })
-        return new Promise((resolve, reject) => {
-          res.data.on('end', () => {
-            sig.success('download completed')
-            resolve()
-          })
+        fileName = fileName || reqUrl.split("/").pop();
+        const dir = resolve(fileName);
+        sig.start(`Download file(fileName: ${fileName}) reqUrl:${reqUrl}`);
 
-          res.data.on('error', (err) => {
-            sig.error('Failed to save file: ', err)
-            reject()
-          })
-        })
+        const writeStream = fs.createWriteStream(dir);
+
+        res.data.pipe(writeStream);
+
+        return new Promise((resolve, reject) => {
+          writeStream.on("finish", () => {
+            sig.success("download completed");
+            resolve();
+          });
+
+          writeStream.on("error", (err) => {
+            sig.error("Failed to save file: ", err);
+            reject(err);
+          });
+
+          res.data.on("error", (err) => {
+            sig.error("Failed to download data: ", err);
+            reject(err);
+          });
+        });
       } else {
-        sig.error(`ERROR >> ${res.status}`)
+        sig.error(`ERROR >> ${res.status}`);
       }
     })
-    .catch(err => {
-      sig.error('Error ', err)
-    })
+    .catch((err) => {
+      sig.error("Error ", err);
+    });
 }
 
 /**
@@ -91,7 +97,7 @@ export function downloadFile(reqUrl, fileName = '') {
  * @returns Promise
  */
 export function getArchiveFile(repo, ref, fileName) {
-  const url = `https://api.github.com/repos/${repo}/zipball/${ref}`
-  sig.start(`Get content(ref: ${ref}) from:`, url)
-  return downloadFile(url, fileName)
+  const url = `https://api.github.com/repos/${repo}/zipball/${ref}`;
+  sig.start(`Get content(ref: ${ref}) from:`, url);
+  return downloadFile(url, fileName);
 }

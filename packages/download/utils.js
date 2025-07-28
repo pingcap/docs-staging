@@ -13,7 +13,7 @@ import { gfm } from "micromark-extension-gfm";
 import { mdxFromMarkdown } from "mdast-util-mdx";
 import { gfmFromMarkdown } from "mdast-util-gfm";
 import { visit } from "unist-util-visit";
-
+import { getVariablesFromZip, variablesReplaceStream } from "./variable.js";
 const IMAGE_CDN_PREFIX = "https://docs-download.pingcap.com/media/images";
 export const imageCDNs = {
   docs: IMAGE_CDN_PREFIX + "/docs",
@@ -36,9 +36,37 @@ export const imageCDNs = {
  * @param {string[]} [options.ignore] - Specify the files to be ignored
  * @param {Array} [options.pipelines]
  */
-export async function retrieveAllMDs(metaInfo, destDir, options) {
+export async function retrieveAllMDs(
+  metaInfo,
+  destDir,
+  options,
+  defaultVariables
+) {
   const { repo, ref, path = "" } = metaInfo;
   const { ignore = [], pipelines = [] } = options;
+
+  // Get variables.json from root directory
+  let variables = defaultVariables;
+  if (!defaultVariables) {
+    try {
+      const variablesResponse = await getContent(repo, ref, "variables.json");
+      if (variablesResponse.data && variablesResponse.data.content) {
+        const content = Buffer.from(
+          variablesResponse.data.content,
+          "base64"
+        ).toString();
+        variables = JSON.parse(content);
+      }
+    } catch (error) {
+      sig.warn(
+        "Failed to get variables.json from root directory:",
+        error.message
+      );
+    }
+  }
+
+  // Add variablesReplaceStream to pipelines
+  const ppls = [...pipelines, variablesReplaceStream(variables)];
 
   const data = (await getContent(repo, ref, path)).data;
 
@@ -59,11 +87,12 @@ export async function retrieveAllMDs(metaInfo, destDir, options) {
             path: `${path}/${name}`,
           },
           nextDest,
-          options
+          options,
+          variables
         );
       } else {
         if (name.endsWith(".md")) {
-          writeContent(download_url, nextDest, pipelines);
+          writeContent(download_url, nextDest, ppls);
         }
       }
     });
@@ -72,7 +101,7 @@ export async function retrieveAllMDs(metaInfo, destDir, options) {
       writeContent(
         data.download_url,
         destDir.endsWith(".md") ? destDir : `${destDir}/${data.name}`,
-        pipelines
+        ppls
       );
     }
   }
@@ -179,6 +208,8 @@ export async function retrieveTiDBMDsFromZip(
     // Unzip archive
     const zip = new AdmZip(archiveFileName);
     const zipEntries = zip.getEntries();
+    const variables = getVariablesFromZip(zip, "/variables.json");
+    const ppls = [...pipelines, variablesReplaceStream(variables)];
 
     zipEntries.forEach(function (zipEntry) {
       // console.log(zipEntry.toString()) // outputs zip entries information
@@ -208,7 +239,7 @@ export async function retrieveTiDBMDsFromZip(
       writeFile(
         `${destDir}/${relativePathNameList.join("/")}`,
         zipEntry.getData(),
-        pipelines
+        ppls
       );
     });
   } catch (error) {
@@ -221,8 +252,6 @@ export async function retrieveTiDBMDsFromZip(
     return retrieveTiDBMDsFromZip(metaInfo, destDir, options, retry - 1);
   }
 }
-
-const CONST_FILE_LIST = ["/_docHome.md"];
 
 export async function retrieveCloudMDsFromZip(
   metaInfo,
@@ -243,15 +272,14 @@ export async function retrieveCloudMDsFromZip(
     // Unzip archive
     const zip = new AdmZip(archiveFileName);
     const zipEntries = zip.getEntries();
+    const variables = getVariablesFromZip(zip, "/variables.json");
+    const ppls = [...pipelines, variablesReplaceStream(variables)];
 
     const cloudTocZipEntry = zipEntries.find((entry) =>
       entry.entryName.endsWith(`/TOC-tidb-cloud.md`)
     );
 
-    const cloudFileList = [
-      ...CONST_FILE_LIST,
-      ...getFileListFromToc(cloudTocZipEntry.getData()),
-    ];
+    const cloudFileList = getFileListFromToc(cloudTocZipEntry.getData());
 
     // console.log(cloudFileList);
 
@@ -284,12 +312,12 @@ export async function retrieveCloudMDsFromZip(
         return;
       }
       if (relativePathInZip === `TOC-tidb-cloud.md`) {
-        writeFile(`${destDir}/TOC.md`, zipEntry.getData(), pipelines);
+        writeFile(`${destDir}/TOC.md`, zipEntry.getData(), ppls);
       } else {
         writeFile(
           `${destDir}/${relativePathNameList.join("/")}`,
           zipEntry.getData(),
-          pipelines
+          ppls
         );
       }
     });
