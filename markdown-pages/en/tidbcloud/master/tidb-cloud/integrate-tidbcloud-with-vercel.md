@@ -167,7 +167,7 @@ If you have installed [TiDB Cloud Vercel integration](https://vercel.com/integra
 
     When you remove a connection, the environment variables set by the integration workflow are removed from the Vercel project, too. However, this action does not affect the data of the TiDB Cloud Serverless cluster.
 
-### Connect with TiDB Cloud Serverless branching
+### Connect with TiDB Cloud Serverless branching {#connect-with-branching}
 
 Vercel's [Preview Deployments](https://vercel.com/docs/deployments/preview-deployments) feature allows you to preview changes to your app in a live deployment without merging those changes to your Git project's production branch. With [TiDB Cloud Serverless Branching](/tidb-cloud/branch-overview.md), you can create a new instance for each branch of your Vercel project. This allows you to preview app changes in a live deployment without affecting your production data.
 
