@@ -11,7 +11,7 @@ summary: セカンダリ インデックスを作成する手順、ルール、�
 
 セカンダリ インデックスを作成する前に、次の操作を実行します。
 
--   [{{{ .starter }}}クラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
+-   [TiDB Cloud Serverlessクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md)読んでください。
 -   [データベースを作成する](/develop/dev-guide-create-database.md) 。
 -   [テーブルを作成する](/develop/dev-guide-create-table.md) 。

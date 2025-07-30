@@ -11,7 +11,7 @@ summary: データを削除するための SQL 構文、ベスト プラクテ�
 
 このドキュメントを読む前に、次のものを準備する必要があります。
 
--   [{{{ .starter }}}クラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
+-   [TiDB Cloud Serverlessクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) [データベースを作成する](/develop/dev-guide-create-database.md) [セカンダリインデックスを作成する](/develop/dev-guide-create-secondary-indexes.md) [テーブルを作成する](/develop/dev-guide-create-table.md)
 -   [データの挿入](/develop/dev-guide-insert-data.md)
 
