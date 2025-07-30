@@ -9,7 +9,7 @@ summary: TiDB の CRUD SQL の簡単な紹介。
 
 ## 始める前に {#before-you-start}
 
-TiDB クラスターに接続していることを確認してください。接続されていない場合は、 [{{{ .starter }}}クラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-cluster)を参照して {{{ .starter }}} クラスターを作成してください。
+TiDB クラスターに接続していることを確認してください。接続されていない場合は、 [TiDB Cloud Serverlessクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-cluster)を参照して TiDB Cloud Serverless クラスターを作成してください。
 
 ## TiDB で SQL を探索する {#explore-sql-with-tidb}
 
