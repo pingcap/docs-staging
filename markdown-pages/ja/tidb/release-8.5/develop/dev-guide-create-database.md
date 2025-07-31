@@ -11,7 +11,7 @@ summary: データベースを作成する手順、ルール、および例を�
 
 データベースを作成する前に、次の操作を行います。
 
--   [{{{ .starter }}}クラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
+-   [TiDB Cloud Serverlessクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md)読んでください。
 
 ## データベースとは {#what-is-database}

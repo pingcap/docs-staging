@@ -20,7 +20,7 @@
 -   開発する
     -   [概要](/develop/dev-guide-overview.md)
     -   クイックスタート
-        -   [{{{ .starter }}}クラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
+        -   [TiDB Cloud Serverlessクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
         -   [TiDB の CRUD SQL](/develop/dev-guide-tidb-crud-sql.md)
     -   アプリケーション例
         -   Java

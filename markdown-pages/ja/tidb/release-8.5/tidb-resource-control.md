@@ -7,7 +7,7 @@ summary: リソース制御機能を使用してアプリケーション リソ�
 
 > **注記：**
 >
-> この機能は[{{{ .スターター }}}](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
 
 クラスター管理者は、リソース制御機能を使用して、リソース グループを作成したり、リソース グループのクォータを設定したり、ユーザーをそれらのグループにバインドしたりできます。
 
@@ -63,7 +63,7 @@ TiDBリソース制御機能は、TiDBレイヤーのフロー制御機能とTiK
 > **注記：**
 >
 > -   各書き込み操作は最終的にすべてのレプリカに複製されます（デフォルトでは、TiKV には 3 つのレプリカがあります）。各レプリケーション操作はそれぞれ異なる書き込み操作とみなされます。
-> -   上記の表には、TiDBセルフマネージドクラスターのRU計算に関係するリソースのみが記載されています（ネットワークとstorageの消費は除く）。{{{ .starter }}} RUについては、 [{{{ .starter }}} 価格の詳細](https://www.pingcap.com/tidb-cloud-serverless-pricing-details/)参照してください。
+> -   上記の表には、TiDBセルフマネージドクラスターのRU計算に関係するリソースのみが記載されています（ネットワークとstorageの消費は除く）。TiDB Cloud Serverless RUについては、 [TiDB Cloud Serverless 価格の詳細](https://www.pingcap.com/tidb-cloud-serverless-pricing-details/)参照してください。
 > -   現在、 TiFlashリソース制御では、クエリのパイプライン タスクの実行によって消費される CPU 時間である SQL CPU と、読み取り要求ペイロードのみが考慮されます。
 
 ## リソース制御のパラメータ {#parameters-for-resource-control}
