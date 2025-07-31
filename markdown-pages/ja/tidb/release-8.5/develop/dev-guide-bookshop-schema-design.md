@@ -103,7 +103,7 @@ tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --rati
 
 3.  **「Amazon S3 からのデータのインポート」**ページで、次のソースデータ情報を設定します。
 
-    -   **インポートファイル数**：{{{.starter}}}の場合は**「複数ファイル」**を選択してください。このフィールドはTiDB Cloud Dedicatedでは使用できません。
+    -   **インポートファイル数**：TiDB Cloud Serverlessの場合は**「複数ファイル」**を選択してください。このフィールドはTiDB Cloud Dedicatedでは使用できません。
     -   **含まれるスキーマ ファイル**:**はいを**選択します。
     -   **データ形式**: **SQL**を選択します。
     -   **フォルダー URI** : `s3://developer.pingcap.com/bookshop/`を入力します。
