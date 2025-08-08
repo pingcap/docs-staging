@@ -11,7 +11,7 @@ summary: データを削除するための SQL 構文、ベスト プラクテ�
 
 このドキュメントを読む前に、次のものを準備する必要があります。
 
--   [TiDB Cloud Serverlessクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md)
+-   [TiDB Cloudサーバーレスクラスタの構築](/develop/dev-guide-build-cluster-in-cloud.md)
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md) [データベースを作成する](/develop/dev-guide-create-database.md) [セカンダリインデックスを作成する](/develop/dev-guide-create-secondary-indexes.md) [テーブルを作成する](/develop/dev-guide-create-table.md)
 -   [データの挿入](/develop/dev-guide-insert-data.md)
 
@@ -172,7 +172,7 @@ with connection:
 
 <CustomContent platform="tidb">
 
-`rated_at`フィールドは[日付と時刻の型](/data-type-date-and-time.md)の`DATETIME`型です。これは、タイムゾーンに関係なく、TiDB にリテラル値として保存されていると想定できます。一方、 `TIMESTAMP`型はタイムスタンプを保存するため、異なる[タイムゾーン](/configure-time-zone.md)には異なる時刻文字列が表示されます。
+`rated_at`フィールドは[日付と時刻の型](/data-type-date-and-time.md)の`DATETIME`型です。これは、タイムゾーンとは無関係に、TiDB にリテラル値として格納されていると想定できます。一方、 `TIMESTAMP`型はタイムスタンプを格納するため、異なる[タイムゾーン](/configure-time-zone.md)には異なる時刻文字列が表示されます。
 
 </CustomContent>
 
@@ -212,7 +212,7 @@ TiDBは[統計情報](/statistics.md)使用してインデックスの選択を�
 
 <CustomContent platform="tidb-cloud">
 
-ただし、多数の行（1万行以上）を削除する必要がある場合は、反復的にデータを削除することをお勧めします。つまり、各反復処理でデータの一部を削除し、削除が完了するまで繰り返し実行します。これは、TiDBがデフォルトで1トランザクションのサイズを100MBに制限しているためです。プログラムやスクリプトでループを使用することで、このような操作を実行できます。
+ただし、多数の行（1万行以上）を削除する必要がある場合は、反復的にデータを削除することをお勧めします。つまり、各反復処理でデータの一部を削除し、削除が完了するまで繰り返します。これは、TiDBがデフォルトで1トランザクションのサイズを100MBに制限しているためです。プログラムやスクリプトでループを使用することで、このような操作を実行できます。
 
 </CustomContent>
 

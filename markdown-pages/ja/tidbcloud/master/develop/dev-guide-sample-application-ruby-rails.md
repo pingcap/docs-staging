@@ -15,7 +15,7 @@ TiDB は MySQL 互換のデータベース、 [レール](https://github.com/rai
 
 > **注記：**
 >
-> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed で動作します。
+> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed で機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -79,7 +79,7 @@ bundle add mysql2 dotenv
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -101,14 +101,14 @@ bundle add mysql2 dotenv
 
     > **注記**
     >
-    > TiDB Cloud Serverless の場合、パブリックエンドポイントを使用するときは、 `ssl_mode=verify_identity`クエリパラメータを使用して TLS 接続を有効にする**必要があります**。
+    > TiDB Cloud Serverless の場合、パブリック エンドポイントを使用するときは、 `ssl_mode=verify_identity`クエリ パラメータを使用して TLS 接続を有効にする**必要があります**。
 
 7.  `.env`ファイルを保存します。
 
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -183,7 +183,7 @@ bundle add mysql2 dotenv
 
 接続が成功すると、コンソールに次のように TiDB クラスターのバージョンが出力されます。
 
-    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.1.2)
+    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.2)
     ⏳ Loading sample game data...
     ✅ Loaded sample game data.
 
@@ -222,7 +222,7 @@ production:
 
 > **注記**
 >
-> TiDB Cloud Serverless の場合、パブリックエンドポイントを使用するときは、 `DATABASE_URL`で`ssl_mode`クエリパラメータを`verify_identity`に設定して TLS 接続を有効にする**必要**がありますが、mysql2 gem はファイルが見つかるまで特定の順序で既存の CA 証明書を検索するため、 `DATABASE_URL`で SSL CA 証明書を指定する必要**はあり**ません。
+> TiDB Cloud Serverless の場合、パブリック エンドポイントを使用するときに、 `DATABASE_URL`で`ssl_mode`クエリ パラメータを`verify_identity`に設定して TLS 接続を有効にする**必要**がありますが、mysql2 gem はファイルが見つかるまで特定の順序で既存の CA 証明書を検索するため、 `DATABASE_URL`で SSL CA 証明書を指定する必要は**ありません**。
 
 ### データを挿入する {#insert-data}
 

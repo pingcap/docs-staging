@@ -5,17 +5,49 @@ summary: ベクトル検索インデックスを構築して使用し、TiDB で
 
 # ベクター検索インデックス {#vector-search-index}
 
-[ベクトル検索](/tidb-cloud/vector-search-overview.md)文書で説明されているように、ベクトル検索は、与えられたベクトルとデータベースに格納されているすべてのベクトルとの距離を計算することで、与えられたベクトルの上位K近傍（KNN）を特定します。このアプローチは正確な結果をもたらしますが、テーブルに多数のベクトルが含まれている場合、テーブル全体のスキャンが必要となるため、処理速度が低下する可能性があります[^1]
+[ベクトル検索](/vector-search/vector-search-overview.md)文書で説明されているように、ベクトル検索は、与えられたベクトルとデータベースに格納されているすべてのベクトルとの距離を計算することで、与えられたベクトルの上位K近傍（KNN）を特定します。このアプローチは正確な結果をもたらしますが、テーブルに多数のベクトルが含まれている場合、テーブル全体のスキャンが必要となるため、処理速度が低下する可能性があります[^1]
 
 検索効率を向上させるために、TiDBでは近似KNN（ANN）検索用のベクトル検索インデックスを作成できます。ベクトル検索にベクトルインデックスを使用すると、TiDBは精度をわずかに低下させるだけでクエリパフォーマンスを大幅に向上させ、通常90%以上の検索再現率を維持できます。
 
+<CustomContent platform="tidb">
+
+> **警告：**
+>
+> ベクトル検索機能は実験的です。本番環境での使用は推奨されません。この機能は予告なく変更される可能性があります。バグを発見した場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **注記：**
+>
+> ベクター検索機能はベータ版です。予告なく変更される可能性があります。バグを見つけた場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
+
+</CustomContent>
+
+> **注記：**
+>
+> ベクトル検索機能は、TiDB Self-Managed、 [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) [TiDB Cloud専用](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated)利用できます。TiDB Self-ManagedおよびTiDB Cloud Dedicatedの場合、TiDBバージョンはv8.4.0以降である必要があります（v8.5.0以降を推奨）。
+
 現在、TiDB は[HNSW（階層的ナビゲート可能なスモールワールド）](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world)ベクトル検索インデックス アルゴリズムをサポートしています。
+
+## 制限 {#restrictions}
+
+-   事前にTiFlashノードをクラスターにデプロイする必要があります。
+-   ベクトル検索インデックスは、主キーまたは一意のインデックスとして使用することはできません。
+-   ベクトル検索インデックスは単一のベクトル列にのみ作成でき、他の列 (整数や文字列など) と組み合わせて複合インデックスを形成することはできません。
+-   ベクトル検索インデックスの作成および使用時には、距離関数を指定する必要があります。現在、コサイン距離`VEC_COSINE_DISTANCE()`とL2距離`VEC_L2_DISTANCE()`関数のみがサポートされています。
+-   同じ列に対して、同じ距離関数を使用して複数のベクトル検索インデックスを作成することはサポートされていません。
+-   ベクトル検索インデックスが設定された列を直接削除することはサポートされていません。このような列を削除するには、まずその列のベクトル検索インデックスを削除し、次に列自体を削除します。
+-   ベクトル インデックスを持つ列の型の変更はサポートされていません。
+-   ベクトル検索インデックスを[見えない](/sql-statements/sql-statement-alter-index.md)に設定することはサポートされていません。
+-   [保存時の暗号化](https://docs.pingcap.com/tidb/stable/encryption-at-rest)有効になっているTiFlashノード上でのベクター検索インデックスの構築はサポートされていません。
 
 ## HNSWベクトルインデックスを作成する {#create-the-hnsw-vector-index}
 
 [HNSW](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world)は、最も人気のあるベクトルインデックスアルゴリズムの1つです。HNSWインデックスは、特定のケースでは最大98%という比較的高い精度で優れたパフォーマンスを提供します。
 
-TiDB では、次のいずれかの方法で、 [ベクトルデータ型](/tidb-cloud/vector-search-data-types.md)の列に対して HNSW インデックスを作成できます。
+TiDB では、次のいずれかの方法で、 [ベクトルデータ型](/vector-search/vector-search-data-types.md)の列に対して HNSW インデックスを作成できます。
 
 -   テーブルを作成するときは、次の構文を使用して HNSW インデックスのベクター列を指定します。
 
@@ -52,7 +84,7 @@ HNSW ベクトル インデックスを作成するときは、ベクトルの�
 
 ベクトルインデックスは、固定次元のベクトル列（例えば、 `VECTOR(3)`と定義された列）に対してのみ作成できます。ベクトル距離は、同じ次元のベクトル間でのみ計算できるため、非固定次元のベクトル列（例えば、 `VECTOR`と定義された列）には作成できません。
 
-その他の制限については[ベクトルインデックスの制限](/tidb-cloud/vector-search-limitations.md#vector-index-limitations)参照してください。
+ベクター検索インデックスの制限事項と制約については、 [制限](#restrictions)参照してください。
 
 ## ベクトルインデックスを使用する {#use-the-vector-index}
 
@@ -233,13 +265,9 @@ LIMIT 10;
 
 出力の解釈については、 [`EXPLAIN`](/sql-statements/sql-statement-explain.md) 、 [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md) 、および[EXPLAIN コマンド](/explain-walkthrough.md)参照してください。
 
-## 制限事項 {#limitations}
-
-[ベクトルインデックスの制限](/tidb-cloud/vector-search-limitations.md#vector-index-limitations)参照。
-
 ## 参照 {#see-also}
 
--   [ベクトル検索のパフォーマンスを向上させる](/tidb-cloud/vector-search-improve-performance.md)
--   [ベクトルデータ型](/tidb-cloud/vector-search-data-types.md)
+-   [ベクトル検索のパフォーマンスを向上させる](/vector-search/vector-search-improve-performance.md)
+-   [ベクトルデータ型](/vector-search/vector-search-data-types.md)
 
 [^1]: KNN 検索の説明は、ClickHouse ドキュメントの[rschu1ze](https://github.com/rschu1ze)が作成した[近似最近傍検索インデックス](https://github.com/ClickHouse/ClickHouse/pull/50661/files#diff-7ebd9e71df96e74230c9a7e604fa7cb443be69ba5e23bf733fcecd4cc51b7576)ドキュメントに基づいており、Apache License 2.0 に基づいてライセンスされています。

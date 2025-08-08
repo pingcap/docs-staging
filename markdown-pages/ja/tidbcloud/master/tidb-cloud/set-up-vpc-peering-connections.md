@@ -180,7 +180,7 @@ AWS CLI または AWS ダッシュボードを使用して、VPC ピアリング
 
     > **注記：**
     >
-    > ルートテーブルルールが正常に作成されたにもかかわらず、エラー`An error occurred (MissingParameter) when calling the CreateRoute operation: The request must contain the parameter routeTableId`発生する場合があります。その場合は、作成されたルールを確認し、エラーを無視してください。
+    > ルートテーブルルールが正常に作成されたにもかかわらず、エラー`An error occurred (MissingParameter) when calling the CreateRoute operation: The request must contain the parameter routeTableId`が発生する場合があります。その場合は、作成されたルールを確認し、エラーを無視してください。
 
     ```bash
     # Modifies the VPC attribute to enable DNS-hostname and DNS-support.

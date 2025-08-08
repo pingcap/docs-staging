@@ -5,11 +5,27 @@ summary: TiDB Vector Search を peewee と統合して埋め込みを保存し�
 
 # TiDBベクトル検索をpeeweeと統合する {#integrate-tidb-vector-search-with-peewee}
 
-このチュートリアルでは、 [ピーウィー](https://docs.peewee-orm.com/)使用して[TiDBベクトル検索](/tidb-cloud/vector-search-overview.md)と対話し、埋め込みを保存し、ベクトル検索クエリを実行する方法について説明します。
+このチュートリアルでは、 [ピーウィー](https://docs.peewee-orm.com/)使用して[TiDBベクトル検索](/vector-search/vector-search-overview.md)と対話し、埋め込みを保存し、ベクトル検索クエリを実行する方法について説明します。
 
-> **注記**
+<CustomContent platform="tidb">
+
+> **警告：**
 >
-> TiDB Vector Searchは、TiDB Self-Managed (TiDB &gt;= v8.4)および[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)のみ利用できます。 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)では利用できません。
+> ベクトル検索機能は実験的です。本番環境での使用は推奨されません。この機能は予告なく変更される可能性があります。バグを発見した場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **注記：**
+>
+> ベクター検索機能はベータ版です。予告なく変更される可能性があります。バグを見つけた場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
+
+</CustomContent>
+
+> **注記：**
+>
+> ベクトル検索機能は、TiDB Self-Managed、 [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) [TiDB Cloud専用](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated)利用できます。TiDB Self-ManagedおよびTiDB Cloud Dedicatedの場合、TiDBバージョンはv8.4.0以降である必要があります（v8.5.0以降を推奨）。
 
 ## 前提条件 {#prerequisites}
 
@@ -17,7 +33,24 @@ summary: TiDB Vector Search を peewee と統合して埋め込みを保存し�
 
 -   [Python 3.8以上](https://www.python.org/downloads/)個インストールされました。
 -   [ギット](https://git-scm.com/downloads)個インストールされました。
--   TiDB Cloud Serverless クラスター。TiDB Cloud クラスターがまだない場合は、 [TiDB Cloud Serverless クラスターの作成](/tidb-cloud/create-tidb-cluster-serverless.md)に従って独自のTiDB Cloudクラスターを作成してください。
+-   TiDB クラスター。
+
+<CustomContent platform="tidb">
+
+**TiDB クラスターがない場合は、次のように作成できます。**
+
+-   [ローカルテストTiDBクラスタをデプロイ](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](/production-deployment-using-tiup.md)に従ってローカル クラスターを作成します。
+-   [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
+**TiDB クラスターがない場合は、次のように作成できます。**
+
+-   (推奨) [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   [ローカルテストTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)に従って、v8.4.0 以降のバージョンのローカル クラスターを作成します。
+
+</CustomContent>
 
 ## サンプルアプリを実行する {#run-the-sample-app}
 
@@ -57,7 +90,14 @@ pip install peewee pymysql python-dotenv tidb-vector
 
 ### ステップ4.環境変数を設定する {#step-4-configure-the-environment-variables}
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+選択した TiDB デプロイメント オプションに応じて環境変数を構成します。
+
+<SimpleTab>
+<div label="TiDB Cloud Serverless">
+
+TiDB Cloud Serverless クラスターの場合、次の手順に従ってクラスター接続文字列を取得し、環境変数を構成します。
+
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -100,6 +140,33 @@ pip install peewee pymysql python-dotenv tidb-vector
     TIDB_DATABASE=test
     TIDB_CA_PATH=/etc/ssl/cert.pem
     ```
+
+</div>
+<div label="TiDB Self-Managed">
+
+TiDBセルフマネージドクラスタの場合、Pythonプロジェクトのルートディレクトリに`.env`ファイルを作成します。以下の内容を`.env`ファイルにコピーし、TiDBクラスタの接続パラメータに応じて環境変数の値を変更します。
+
+```dotenv
+TIDB_HOST=127.0.0.1
+TIDB_PORT=4000
+TIDB_USERNAME=root
+TIDB_PASSWORD=
+TIDB_DATABASE=test
+```
+
+ローカルマシンでTiDBを実行している場合、デフォルトでは`TIDB_HOST`が`127.0.0.1`なります。初期の`TIDB_PASSWORD`空なので、クラスターを初めて起動する場合はこのフィールドを省略できます。
+
+各パラメータの説明は次のとおりです。
+
+-   `TIDB_HOST` : TiDB クラスターのホスト。
+-   `TIDB_PORT` : TiDB クラスターのポート。
+-   `TIDB_USERNAME` : TiDB クラスターに接続するためのユーザー名。
+-   `TIDB_PASSWORD` : TiDB クラスターに接続するためのパスワード。
+-   `TIDB_DATABASE` : 接続するデータベースの名前。
+
+</div>
+
+</SimpleTab>
 
 ### ステップ5.デモを実行する {#step-5-run-the-demo}
 
@@ -169,7 +236,7 @@ db = MySQLDatabase(
 
 #### ベクトル列を定義する {#define-a-vector-column}
 
-3 次元ベクトルを格納する`peewee_demo_documents`名前の列を持つテーブルを作成します。
+3 次元ベクトルを格納する`peewee_demo_documents`という名前の列を持つテーブルを作成します。
 
 ```python
 class Document(Model):
@@ -210,5 +277,5 @@ results = Document.select(Document, distance).where(distance_expression < 0.2).o
 
 ## 参照 {#see-also}
 
--   [ベクトルデータ型](/tidb-cloud/vector-search-data-types.md)
--   [ベクター検索インデックス](/tidb-cloud/vector-search-index.md)
+-   [ベクトルデータ型](/vector-search/vector-search-data-types.md)
+-   [ベクター検索インデックス](/vector-search/vector-search-index.md)

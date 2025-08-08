@@ -9,14 +9,14 @@ summary: TiDB でビューを使用する方法を学習します。
 
 ## 概要 {#overview}
 
-TiDB はビューをサポートします。ビューは仮想テーブルとして機能し、そのスキーマはビューを作成する`SELECT`ステートメントによって定義されます。
+TiDBはビューをサポートしています。ビューは仮想テーブルとして機能し、そのスキーマはビューを作成する`SELECT`ステートメントによって定義されます。
 
 -   安全なフィールドとデータのみをユーザーに公開するビューを作成することで、基になるテーブル内の機密フィールドとデータのセキュリティを確保できます。
 -   頻繁に使用される複雑なクエリのビューを作成して、複雑なクエリをより簡単に、より便利に実行できます。
 
 ## ビューを作成する {#create-a-view}
 
-TiDB では、複雑なクエリを`CREATE VIEW`ステートメントを持つビューとして定義できます。構文は次のとおりです。
+TiDBでは、複雑なクエリを`CREATE VIEW`ステートメントでビューとして定義できます。構文は次のとおりです。
 
 ```sql
 CREATE VIEW view_name AS query;
@@ -24,7 +24,7 @@ CREATE VIEW view_name AS query;
 
 既存のビューまたはテーブルと同じ名前のビューを作成することはできないことに注意してください。
 
-たとえば、 [複数テーブル結合クエリ](/develop/dev-guide-join-tables.md)は、 `JOIN`ステートメントを介して`books`テーブルと`ratings`テーブルを結合することで、平均評価を持つ書籍のリストを取得します。
+たとえば、 [複数テーブル結合クエリ](/develop/dev-guide-join-tables.md) 、 `JOIN`ステートメントを介して`books`テーブルと`ratings`テーブルを結合し、平均評価を持つ書籍のリストを取得します。
 
 後続のクエリの便宜を図るため、次のステートメントを使用してクエリをビューとして定義できます。
 
@@ -48,7 +48,7 @@ TiDB がビューをクエリする場合、ビューに関連付けられた`SE
 
 ## ビューの更新 {#update-views}
 
-現在、TiDB のビューは`ALTER VIEW view_name AS query;`をサポートしていませんが、次の 2 つの方法でビューを「更新」できます。
+現在、TiDB のビューは`ALTER VIEW view_name AS query;`サポートしていませんが、次の 2 つの方法でビューを「更新」できます。
 
 -   `DROP VIEW view_name;`ステートメントで古いビューを削除し、 `CREATE VIEW view_name AS query;`ステートメントで新しいビューを作成してビューを更新します。
 -   同じ名前の既存のビューを上書きするには、 `CREATE OR REPLACE VIEW view_name AS query;`ステートメントを使用します。
@@ -69,7 +69,7 @@ GROUP BY b.id;
 SHOW CREATE VIEW book_with_ratings\G
 ```
 
-結果は以下のようになります。
+結果は次のとおりです。
 
     *************************** 1. row ***************************
                     View: book_with_ratings
@@ -84,7 +84,7 @@ SHOW CREATE VIEW book_with_ratings\G
 SELECT * FROM information_schema.views WHERE TABLE_NAME = 'book_with_ratings'\G
 ```
 
-結果は以下のようになります。
+結果は次のとおりです。
 
     *************************** 1. row ***************************
            TABLE_CATALOG: def
@@ -114,7 +114,7 @@ TiDB のビューの制限については、 [ビューの制限](/views.md#limi
 ## 続きを読む {#read-more}
 
 -   [ビュー](/views.md)
--   [CREATE VIEW ステートメント](/sql-statements/sql-statement-create-view.md)
+-   [CREATE VIEWステートメント](/sql-statements/sql-statement-create-view.md)
 -   [DROP VIEW ステートメント](/sql-statements/sql-statement-drop-view.md)
 -   [ビューを使用したEXPLAINステートメント](/explain-views.md)
 -   [TiFlink: TiKV と Flink を使用した強整合性マテリアライズド ビュー](https://github.com/tiflink/tiflink)
@@ -123,12 +123,12 @@ TiDB のビューの制限については、 [ビューの制限](/views.md#limi
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

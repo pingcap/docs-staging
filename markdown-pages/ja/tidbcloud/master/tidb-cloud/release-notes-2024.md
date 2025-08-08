@@ -84,7 +84,7 @@ summary: 2024 年のTiDB Cloudのリリース ノートについて説明しま�
 
 -   新しいメトリック: Prometheus 統合に`tidbcloud_changefeed_checkpoint_ts`追加します。
 
-    この指標は、チェンジフィードのチェックポイントタイムスタンプを追跡します。これは、ダウンストリームに正常に書き込まれた最大のTSO（Timestamp Oracle）を表します。利用可能な指標の詳細については、 [TiDB Cloud をPrometheus および Grafana と統合する (ベータ版)](/tidb-cloud/monitor-prometheus-and-grafana-integration.md#metrics-available-to-prometheus)参照してください。
+    この指標は、チェンジフィードのチェックポイントタイムスタンプを追跡します。これは、下流に正常に書き込まれた最大のTSO（Timestamp Oracle）を表します。利用可能な指標の詳細については、 [TiDB Cloud をPrometheus および Grafana と統合する (ベータ版)](/tidb-cloud/monitor-prometheus-and-grafana-integration.md#metrics-available-to-prometheus)参照してください。
 
 ## 2024年10月22日 {#october-22-2024}
 
@@ -198,7 +198,7 @@ summary: 2024 年のTiDB Cloudのリリース ノートについて説明しま�
 
 -   [データサービス（ベータ版）](https://tidbcloud.com/project/data-service) 、ベクター検索エンドポイントの自動生成をサポートします。
 
-    テーブルに[ベクトルデータ型](/tidb-cloud/vector-search-data-types.md)が含まれている場合は、選択した距離関数に基づいてベクトル距離を計算するベクトル検索エンドポイントを自動的に生成できます。
+    テーブルに[ベクトルデータ型](/vector-search/vector-search-data-types.md)が含まれている場合は、選択した距離関数に基づいてベクトル距離を計算するベクトル検索エンドポイントを自動的に生成できます。
 
     この機能により、 [ディファイ](https://docs.dify.ai/guides/tools)や[GPT](https://openai.com/blog/introducing-gpts)などの AI プラットフォームとのシームレスな統合が可能になり、高度な自然言語処理と AI 機能によってアプリケーションが強化され、より複雑なタスクやインテリジェントなソリューションが実現します。
 
@@ -244,12 +244,12 @@ summary: 2024 年のTiDB Cloudのリリース ノートについて説明しま�
 
     ベクター検索（ベータ版）機能は、ドキュメント、画像、音声、動画など、様々なデータタイプを対象に、セマンティックな類似性検索を実行するための高度な検索ソリューションを提供します。この機能により、開発者は使い慣れたMySQLスキルを活用して、生成型人工知能（AI）機能を備えたスケーラブルなアプリケーションを容易に構築できます。主な機能は以下のとおりです。
 
-    -   [ベクトルデータ型](/tidb-cloud/vector-search-data-types.md) 、 [ベクトルインデックス](/tidb-cloud/vector-search-index.md) 、および[ベクトル関数と演算子](/tidb-cloud/vector-search-functions-and-operators.md) 。
-    -   [ランチェーン](/tidb-cloud/vector-search-integrate-with-langchain.md) [ラマインデックス](/tidb-cloud/vector-search-integrate-with-llamaindex.md)のエコシステム[ジナAI](/tidb-cloud/vector-search-integrate-with-jinaai-embedding.md) 。
-    -   Python のプログラミング言語サポート: [SQLアルケミー](/tidb-cloud/vector-search-integrate-with-sqlalchemy.md) 、および[Django ORM](/tidb-cloud/vector-search-integrate-with-django-orm.md) [ピーウィー](/tidb-cloud/vector-search-integrate-with-peewee.md)
-    -   サンプルアプリケーションとチュートリアル: [パイソン](/tidb-cloud/vector-search-get-started-using-python.md)または[SQL](/tidb-cloud/vector-search-get-started-using-sql.md)使用してドキュメントのセマンティック検索を実行します。
+    -   [ベクトルデータ型](/vector-search/vector-search-data-types.md) 、 [ベクトルインデックス](/vector-search/vector-search-index.md) 、および[ベクトル関数と演算子](/vector-search/vector-search-functions-and-operators.md) 。
+    -   [ランチェーン](/vector-search/vector-search-integrate-with-langchain.md) [ラマインデックス](/vector-search/vector-search-integrate-with-llamaindex.md)のエコシステム[ジナAI](/vector-search/vector-search-integrate-with-jinaai-embedding.md) 。
+    -   Python のプログラミング言語サポート: [SQLアルケミー](/vector-search/vector-search-integrate-with-sqlalchemy.md) 、および[Django ORM](/vector-search/vector-search-integrate-with-django-orm.md) [ピーウィー](/vector-search/vector-search-integrate-with-peewee.md)
+    -   サンプルアプリケーションとチュートリアル: [パイソン](/vector-search/vector-search-get-started-using-python.md)または[SQL](/vector-search/vector-search-get-started-using-sql.md)使用してドキュメントのセマンティック検索を実行します。
 
-    詳細については[ベクトル検索（ベータ版）の概要](/tidb-cloud/vector-search-overview.md)参照してください。
+    詳細については[ベクトル検索（ベータ版）の概要](/vector-search/vector-search-overview.md)参照してください。
 
 -   [TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)では、組織の所有者に毎週の電子メールレポートが提供されるようになりました。
 

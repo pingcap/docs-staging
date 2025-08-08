@@ -5,7 +5,7 @@ summary: TiDB データベースの ALTER INDEX の使用法の概要。
 
 # インデックスの変更 {#alter-index}
 
-`ALTER INDEX`ステートメントは、インデックスの可視性を`Visible`または`Invisible`に変更するために使用されます。非表示のインデックスは DML ステートメントによって維持されますが、クエリ オプティマイザーでは使用されません。これは、インデックスを永続的に削除する前に再確認したいシナリオで役立ちます。TiDB v8.0.0 以降では、システム変数[`tidb_opt_use_invisible_indexes`](/system-variables.md#tidb_opt_use_invisible_indexes-new-in-v800)変更することで、オプティマイザーが非表示のインデックスを選択するようにすることができます。
+`ALTER INDEX`文は、インデックスの可視性を`Visible`または`Invisible`に変更するために使用されます。非表示のインデックスはDML文によって維持されますが、クエリオプティマイザでは使用されません。これは、インデックスを恒久的に削除する前に二重チェックを行いたい場合に便利です。TiDB v8.0.0以降では、システム変数[`tidb_opt_use_invisible_indexes`](/system-variables.md#tidb_opt_use_invisible_indexes-new-in-v800)変更することで、オプティマイザが非表示のインデックスを選択するように設定できます。
 
 ## 概要 {#synopsis}
 
@@ -92,7 +92,7 @@ ERROR 1176 (42000): Key 'c1' doesn't exist in table 't1'
 
 > **注記：**
 >
-> ここでの「非表示」とは、オプティマイザに対してのみ非表示であることを意味します。非表示のインデックスを変更または削除することは可能です。
+> ここでの「不可視」とは、オプティマイザに対してのみ不可視であることを意味します。不可視インデックスを変更または削除することは可能です。
 
 ```sql
 ALTER TABLE t1 DROP INDEX c1;
@@ -102,7 +102,7 @@ ALTER TABLE t1 DROP INDEX c1;
 Query OK, 0 rows affected (0.02 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 -   TiDB の非表示インデックスは、MySQL 8.0 の同等の機能に基づいてモデル化されています。
 -   MySQL と同様に、TiDB では`PRIMARY KEY`インデックスを非表示にすることはできません。
@@ -112,5 +112,5 @@ Query OK, 0 rows affected (0.02 sec)
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [インデックスの作成](/sql-statements/sql-statement-create-index.md)
 -   [インデックスを追加](/sql-statements/sql-statement-add-index.md)
--   [インデックスを削除](/sql-statements/sql-statement-drop-index.md)
+-   [インデックスの削除](/sql-statements/sql-statement-drop-index.md)
 -   [インデックス名の変更](/sql-statements/sql-statement-rename-index.md)

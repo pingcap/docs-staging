@@ -25,7 +25,7 @@ TiDB Cloud、 [スラック](https://slack.com/) [ズーム](/tidb-cloud/monitor
 
 ### ステップ1. SlackのWebhook URLを生成する {#step-1-generate-a-slack-webhook-url}
 
-1.  [Slackアプリを作成する](https://api.slack.com/apps/new) （まだ作成していない場合は）を選択します。 **「Create New App（新規アプリの作成）」**をクリックし、「 **From Scratch（最初から****作成）」を選択します。名前を入力し、アプリを関連付けるワークスペースを選択して、「Create App（アプリの作成）」**をクリックします。
+1.  [Slackアプリを作成する](https://api.slack.com/apps/new) （まだ作成していない場合は）を選択します。 **「Create New App（新規アプリの作成）」**をクリックし、「 **From Scratch（最初から**作成）」を選択します。名前を入力し、アプリを関連付けるワークスペースを選択して、 **「Create App（アプリの作成）」**をクリックします。
 2.  アプリの設定ページに移動します。1 から設定を読み込むことができます[アプリの管理ダッシュボード](https://api.slack.com/apps)
 3.  **[Incoming Webhooks]**タブをクリックし、 **[Activate Incoming Webhooks]**を**[ON]**に切り替えます。
 4.  **「ワークスペースに新しい Webhook を追加」**をクリックします。

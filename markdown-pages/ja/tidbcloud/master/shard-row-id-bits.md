@@ -3,18 +3,18 @@ title: SHARD_ROW_ID_BITS
 summary: SHARD_ROW_ID_BITS 属性について学習します。
 ---
 
-# シャード行IDビット {#shard-row-id-bits}
+# SHARD_ROW_ID_BITS {#shard-row-id-bits}
 
-このドキュメントでは、暗黙の`_tidb_rowid`シャードされた後のシャードのビット数を設定するために使用される`SHARD_ROW_ID_BITS`テーブル属性について説明します。
+このドキュメントでは、暗黙の`_tidb_rowid`シャードされた後のシャードのビット数を設定するために使用される`SHARD_ROW_ID_BITS`テーブル属性を紹介します。
 
 ## コンセプト {#concept}
 
-クラスター化されていない主キーを持つテーブル、または主キーのないテーブルの場合、TiDB は暗黙的な自動増分行 ID を使用します。 `INSERT`操作が大量に実行されると、データは単一のリージョンに書き込まれ、書き込みホットスポットが発生します。
+非クラスター化主キーを持つテーブル、または主キーを持たないテーブルの場合、TiDBは暗黙的な自動インクリメント行IDを使用します。大量の`INSERT`操作が実行されると、データは単一のリージョンに書き込まれ、書き込みホットスポットが発生します。
 
-ホットスポットの問題を軽減するには、 `SHARD_ROW_ID_BITS`設定します。行 ID が分散され、データが複数の異なるリージョンに書き込まれます。
+To mitigate the hot spot issue, you can configure `SHARD_ROW_ID_BITS`. The row IDs are scattered and the data are written into multiple different Regions.
 
 -   `SHARD_ROW_ID_BITS = 4` 16個の破片を示す
--   `SHARD_ROW_ID_BITS = 6` 64個の破片を示す
+-   `SHARD_ROW_ID_BITS = 6` indicates 64 shards
 -   `SHARD_ROW_ID_BITS = 0`デフォルトの1シャードを示します
 
 <CustomContent platform="tidb">

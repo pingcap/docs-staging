@@ -10,7 +10,7 @@ TiDB は、MySQL 8.0 で利用可能な[制御フロー関数](https://dev.mysql
 | 名前                    | 説明                        |
 | :-------------------- | :------------------------ |
 | [`CASE`](#case)       | ケース演算子                    |
-| [`IF()`](#if)         | If/else構文                 |
+| [`IF()`](#if)         | if/else構文                 |
 | [`IFNULL()`](#ifnull) | null if/else 構文           |
 | [`NULLIF()`](#nullif) | expr1 = expr2の場合は`NULL`返す |
 
@@ -54,7 +54,7 @@ SELECT n, CASE WHEN n MOD 2 THEN "odd" ELSE "even" END FROM d;
 
 ## もし（） {#if}
 
-[`IF()`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_if)関数を使用すると、値または式が真であるかどうかに基づいてさまざまなアクションを実行できます。
+[`IF()`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_if)関数を使用すると、値または式が真かどうかに基づいてさまざまなアクションを実行できます。
 
 構文：
 
@@ -87,7 +87,7 @@ SELECT n, IF(n MOD 2, "odd", "even") FROM d;
 
 ## IFNULL() {#ifnull}
 
-[`IFNULL(expr1,expr2)`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_ifnull)関数は、クエリ内の NULL 値を処理するために使用されます。 `expr1`が`NULL`でない場合は`expr1`返し、それ以外の場合は`expr2`返します。
+[`IFNULL(expr1,expr2)`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_ifnull)関数は、クエリ内の NULL 値を処理するために使用されます。3 `expr1` `NULL`でない場合は`expr1`返し、そうでない場合は`expr2`返します。
 
 例：
 
@@ -106,7 +106,7 @@ SELECT x, IFNULL(x,'x has no value') FROM data;
 
 ## NULLIF() {#nullif}
 
-[`NULLIF(expr1,expr2)`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_nullif)関数は、両方の引数が同じか、最初の引数が`NULL`の場合に`NULL`返します。それ以外の場合は、最初の引数を返します。
+[`NULLIF(expr1,expr2)`](https://dev.mysql.com/doc/refman/8.0/en/flow-control-functions.html#function_nullif)関数は、両方の引数が同じ場合、または最初の引数が`NULL`場合に`NULL`返します。それ以外の場合は、最初の引数を返します。
 
 例：
 
@@ -131,4 +131,4 @@ SELECT n, NULLIF(n+n, n+2) FROM d;
     +----+------------------+
     10 rows in set (0.00 sec)
 
-この例では、 `n` `2`に等しい場合、 `n+n`と`n+2`両方とも`4`に等しくなり、両方の引数が同じになり、関数は`NULL`返します。
+この例では、 `n` `2`等しい場合、 `n+n`と`n+2`両方とも`4`等しくなり、両方の引数が同じになり、関数は`NULL`返します。

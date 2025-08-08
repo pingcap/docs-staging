@@ -9,7 +9,7 @@ summary: TiDB での SHOW PLACEMENT FOR の使用法。
 
 > **注記：**
 >
-> この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
 
 このステートメントは、配置Driver(PD) が配置のスケジュールで行った現在の進行状況を示す`Scheduling_State`フィールドを含む結果セットを返します。
 
@@ -65,7 +65,7 @@ SHOW PLACEMENT FOR TABLE t3 PARTITION p1\G
     ***************************[ 1. row ]***************************
     Table        | t1
     Create Table | CREATE TABLE `t1` (
-      `a` int(11) DEFAULT NULL
+      `a` int DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin /*T![placement] PLACEMENT POLICY=`p1` */
     1 row in set (0.00 sec)
 

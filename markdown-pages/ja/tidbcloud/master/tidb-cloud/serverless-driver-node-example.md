@@ -1,6 +1,6 @@
 ---
 title: TiDB Cloud Serverless Driver Node.js Tutorial
-summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス ドライバーを使用する方法を学習します。
+summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス ドライバーを使用する方法を学びます。
 ---
 
 # TiDB CloudサーバーレスDriverNode.js チュートリアル {#tidb-cloud-serverless-driver-node-js-tutorial}
@@ -17,8 +17,8 @@ summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス 
 このステップバイステップのチュートリアルを完了するには、次のものが必要です。
 
 -   [Node.js](https://nodejs.org/en) &gt;= 18.0.0。
--   [ネプ](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)またはお好みのパッケージ マネージャーを使用します。
--   TiDB Cloud Serverless クラスター。ない場合は、 [TiDB Cloud Serverless クラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md)使用できます。
+-   [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)またはお好みのパッケージ マネージャーを使用します。
+-   TiDB Cloud Serverless クラスター。お持ちでない場合は、 [TiDB Cloud Serverless クラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md)ご利用ください。
 
 ## ステップ1. ローカルNode.jsプロジェクトを作成する {#step-1-create-a-local-node-js-project}
 
@@ -29,17 +29,17 @@ summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス 
     cd node-example
     ```
 
-2.  npm または任意のパッケージ マネージャーを使用して、 TiDB Cloudサーバーレス ドライバーをインストールします。
+2.  npm またはお好みのパッケージ マネージャーを使用して、 TiDB Cloudサーバーレス ドライバーをインストールします。
 
-    次のコマンドは、npm を使用したインストールを例にしています。このコマンドを実行すると、プロジェクト ディレクトリに`node_modules`ディレクトリと`package.json`ファイルが作成されます。
+    次のコマンドは、npm を使ったインストールを例にしています。このコマンドを実行すると、プロジェクトディレクトリに`node_modules`ディレクトリと`package.json`ファイルが作成されます。
 
         npm install @tidbcloud/serverless
 
 ## ステップ2. サーバーレスドライバーを使用する {#step-2-use-the-serverless-driver}
 
-サーバーレス ドライバーは、CommonJS モジュールと ES モジュールの両方をサポートしています。次の手順では、ES モジュールの使用例を示します。
+サーバーレスドライバーはCommonJSとESモジュールの両方をサポートしています。以下の手順では、ESモジュールの使用例を示します。
 
-1.  TiDB Cloud Serverless クラスターの概要ページで、右上隅の**[接続]**をクリックし、表示されるダイアログからデータベースの接続文字列を取得します。接続文字列は次のようになります。
+1.  TiDB Cloud Serverlessクラスターの概要ページで、右上隅の**「接続」**をクリックし、表示されるダイアログからデータベースの接続文字列を取得します。接続文字列は以下のようになります。
 
         mysql://[username]:[password]@[host]/[database]
 
@@ -69,9 +69,9 @@ summary: ローカル Node.js プロジェクトでTiDB Cloudサーバーレス 
 
         node index.js
 
-## Node.js の以前のバージョンとの互換性 {#compatibility-with-earlier-versions-of-node-js}
+## 以前のバージョンの Node.js との互換性 {#compatibility-with-earlier-versions-of-node-js}
 
-グローバル`fetch`関数を持たない Node.js 18.0.0 より前のバージョンを使用している場合は、次の手順で`fetch`取得できます。
+グローバル`fetch`関数がない Node.js 18.0.0 より前のバージョンを使用している場合は、次の手順で`fetch`取得できます。
 
 1.  `fetch` `undici`など）を提供するパッケージをインストールします。
 

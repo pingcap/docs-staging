@@ -5,7 +5,7 @@ summary: SESSION_CONNECT_ATTRS` パフォーマンス スキーマ テーブル�
 
 # セッション接続属性 {#session-connect-attrs}
 
-`SESSION_CONNECT_ATTRS`の表は、接続属性に関する情報を提供します。セッション属性は、接続を確立するときにクライアントによって送信されるキーと値のペアです。
+表`SESSION_CONNECT_ATTRS`は接続属性に関する情報を提供します。セッション属性は、接続を確立する際にクライアントから送信されるキーと値のペアです。
 
 共通の属性:
 
@@ -18,23 +18,23 @@ summary: SESSION_CONNECT_ATTRS` パフォーマンス スキーマ テーブル�
 | `_platform`       | `x86_64`   | CPUアーキテクチャ        |
 | `program_name`    | `mysqlsh`  | プログラム名            |
 
-`SESSION_CONNECT_ATTRS`のテーブルの列は次のように表示できます。
+`SESSION_CONNECT_ATTRS`テーブルの列は次のように表示できます。
 
 ```sql
 USE performance_schema;
 DESCRIBE session_connect_attrs;
 ```
 
-    +------------------+---------------------+------+-----+---------+-------+
-    | Field            | Type                | Null | Key | Default | Extra |
-    +------------------+---------------------+------+-----+---------+-------+
-    | PROCESSLIST_ID   | bigint(20) unsigned | NO   |     | NULL    |       |
-    | ATTR_NAME        | varchar(32)         | NO   |     | NULL    |       |
-    | ATTR_VALUE       | varchar(1024)       | YES  |     | NULL    |       |
-    | ORDINAL_POSITION | int(11)             | YES  |     | NULL    |       |
-    +------------------+---------------------+------+-----+---------+-------+
+    +------------------+-----------------+------+------+---------+-------+
+    | Field            | Type            | Null | Key  | Default | Extra |
+    +------------------+-----------------+------+------+---------+-------+
+    | PROCESSLIST_ID   | bigint unsigned | NO   |      | NULL    |       |
+    | ATTR_NAME        | varchar(32)     | NO   |      | NULL    |       |
+    | ATTR_VALUE       | varchar(1024)   | YES  |      | NULL    |       |
+    | ORDINAL_POSITION | int             | YES  |      | NULL    |       |
+    +------------------+-----------------+------+------+---------+-------+
 
-`SESSION_CONNECT_ATTRS`テーブルに保存されているセッション属性の情報は、次のように表示できます。
+`SESSION_CONNECT_ATTRS`テーブルに保存されているセッション属性の情報は、次のようにして表示できます。
 
 ```sql
 USE performance_schema;
@@ -45,14 +45,14 @@ TABLE SESSION_CONNECT_ATTRS;
     | PROCESSLIST_ID | ATTR_NAME       | ATTR_VALUE | ORDINAL_POSITION |
     +----------------+-----------------+------------+------------------+
     |        2097154 | _client_name    | libmysql   |                0 |
-    |        2097154 | _client_version | 8.1.2      |                1 |
+    |        2097154 | _client_version | 8.5.1      |                1 |
     |        2097154 | _os             | Linux      |                2 |
     |        2097154 | _pid            | 1299203    |                3 |
     |        2097154 | _platform       | x86_64     |                4 |
     |        2097154 | program_name    | mysqlsh    |                5 |
     +----------------+-----------------+------------+------------------+
 
-`SESSION_CONNECT_ATTRS`のテーブル内のフィールドは次のように説明されます。
+`SESSION_CONNECT_ATTRS`テーブル内のフィールドは次のように説明されます。
 
 -   `PROCESSLIST_ID` : セッションのプロセスリスト ID。
 -   `ATTR_NAME` : 属性名。

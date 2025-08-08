@@ -15,7 +15,7 @@ TiDB は MySQL 互換のデータベースであり、 [ピーウィー](https:/
 
 > **注記：**
 >
-> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed クラスターで機能します。
+> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed クラスターで機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -74,7 +74,7 @@ peeweeは複数のデータベースに対応するORMライブラリです。�
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**](https://%7B%7B%7B.console-url%7D%7D%7D/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -122,7 +122,7 @@ peeweeは複数のデータベースに対応するORMライブラリです。�
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -219,7 +219,7 @@ def get_db_engine():
     )
 ```
 
-この関数を使用する場合、 `${tidb_host}` 、 `${tidb_port}` 、 `${tidb_user}` 、 `${tidb_password}` 、 `${tidb_db_name}` 、 `${ca_path}` TiDB クラスターの実際の値に置き換える必要があります。
+この関数を使用する場合は、 `${tidb_host}` 、 `${tidb_port}` 、 `${tidb_user}` 、 `${tidb_password}` 、 `${tidb_db_name}` 、 `${ca_path}` TiDB クラスターの実際の値に置き換える必要があります。
 
 ### テーブルを定義する {#define-a-table}
 

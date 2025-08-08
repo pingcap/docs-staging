@@ -1,9 +1,9 @@
 ---
 title: ticloud serverless export cancel
-summary: ticloud serverless export cancel` のリファレンス。
+summary: ticloud serverless export cancel` の参照。
 ---
 
-# ticloud サーバーレス エクスポート キャンセル {#ticloud-serverless-export-cancel}
+# ticloud サーバーレスエクスポートのキャンセル {#ticloud-serverless-export-cancel}
 
 データ エクスポート タスクをキャンセルします。
 
@@ -19,7 +19,7 @@ ticloud serverless export cancel [flags]
 ticloud serverless export cancel
 ```
 
-非対話モードでエクスポート タスクをキャンセルします。
+非対話型モードでエクスポート タスクをキャンセルします。
 
 ```shell
 ticloud serverless export cancel -c <cluster-id> -e <export-id>
@@ -27,7 +27,7 @@ ticloud serverless export cancel -c <cluster-id> -e <export-id>
 
 ## 旗 {#flags}
 
-非対話型モードでは、必要なフラグを手動で入力する必要があります。対話型モードでは、CLI プロンプトに従ってフラグを入力するだけです。
+非対話型モードでは、必要なフラグを手動で入力する必要があります。対話型モードでは、CLIプロンプトに従って入力するだけです。
 
 | フラグ                  | 説明                      | 必須  | 注記                       |
 | -------------------- | ----------------------- | --- | ------------------------ |
@@ -38,12 +38,12 @@ ticloud serverless export cancel -c <cluster-id> -e <export-id>
 
 ## 継承されたフラグ {#inherited-flags}
 
-| フラグ               | 説明                                                                             | 必須  | 注記                                                             |
-| ----------------- | ------------------------------------------------------------------------------ | --- | -------------------------------------------------------------- |
-| --色なし             | 出力のカラーを無効にします。                                                                 | いいえ | 非対話型モードでのみ機能します。対話型モードでは、一部の UI コンポーネントで色を無効にしても機能しない可能性があります。 |
-| -P, --profile 文字列 | このコマンドで使用するアクティブ[ユーザープロフィール](/tidb-cloud/cli-reference.md#user-profile)を指定します。 | いいえ | 非対話型モードと対話型モードの両方で動作します。                                       |
-| -D、--デバッグ         | デバッグ モードを有効にします。                                                               | いいえ | 非対話型モードと対話型モードの両方で動作します。                                       |
+| フラグ               | 説明                                                                             | 必須  | 注記                                                      |
+| ----------------- | ------------------------------------------------------------------------------ | --- | ------------------------------------------------------- |
+| --色なし             | 出力のカラーを無効にします。                                                                 | いいえ | 非対話モードでのみ機能します。対話モードでは、一部のUIコンポーネントで色の無効化が機能しない場合があります。 |
+| -P, --profile 文字列 | このコマンドで使用するアクティブ[ユーザープロフィール](/tidb-cloud/cli-reference.md#user-profile)を指定します。 | いいえ | 非対話型モードと対話型モードの両方で動作します。                                |
+| -D, --debug       | デバッグ モードを有効にします。                                                               | いいえ | 非対話型モードと対話型モードの両方で動作します。                                |
 
 ## フィードバック {#feedback}
 
-TiDB Cloud CLI に関してご質問やご提案がございましたら、お気軽に[問題](https://github.com/tidbcloud/tidbcloud-cli/issues/new/choose)作成してください。また、あらゆる貢献を歓迎します。
+TiDB Cloud CLI についてご質問やご提案がございましたら、お気軽に[問題](https://github.com/tidbcloud/tidbcloud-cli/issues/new/choose)作成してください。また、皆様からの貢献も歓迎いたします。

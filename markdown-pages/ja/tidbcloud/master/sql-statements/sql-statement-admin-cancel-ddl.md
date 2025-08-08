@@ -4,11 +4,11 @@ summary: TiDB データベースの ADMIN CANCEL DDL の使用法の概要。
 category: reference
 ---
 
-# 管理者はDDLをキャンセルします {#admin-cancel-ddl}
+# 管理者によるDDLのキャンセル {#admin-cancel-ddl}
 
-`ADMIN CANCEL DDL`ステートメントを使用すると、実行中の DDL ジョブをキャンセルできます。 `job_id`は、 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)実行することで見つかります。
+`ADMIN CANCEL DDL`文は実行中のDDLジョブをキャンセルします。3 `job_id` [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)実行することで確認できます。
 
-`ADMIN CANCEL DDL`ステートメントを使用すると、コミットされているがまだ実行が完了していない DDL ジョブをキャンセルすることもできます。キャンセル後、DDL ジョブを実行する SQL ステートメントは`ERROR 8214 (HY000): Cancelled DDL job`エラーを返します。すでに完了している DDL ジョブをキャンセルすると、 `RESULT`列に`DDL Job:90 not found`エラーが表示されます。これは、ジョブが DDL 待機キューから削除されたことを示します。
+`ADMIN CANCEL DDL`文を使用すると、コミットされているもののまだ実行が完了していないDDLジョブをキャンセルすることもできます。キャンセル後、DDLジョブを実行するSQL文は`ERROR 8214 (HY000): Cancelled DDL job`エラーを返します。すでに完了しているDDLジョブをキャンセルした場合は、 `RESULT`列に`DDL Job:90 not found`エラーが表示されます。これは、ジョブがDDL待機キューから削除されたことを示します。
 
 ## 概要 {#synopsis}
 
@@ -28,15 +28,15 @@ NumList ::=
 ADMIN CANCEL DDL JOBS job_id [, job_id] ...;
 ```
 
-ジョブをキャンセルする操作が失敗した場合は、具体的な理由が表示されます。
+ジョブをキャンセルする操作が失敗した場合、具体的な理由が表示されます。
 
 > **注記：**
 >
-> -   v6.2.0 より前では、この操作のみが DDL ジョブをキャンセルでき、他のすべての操作や環境変更 (マシンの再起動やクラスターの再起動など) ではこれらのジョブをキャンセルできませんでした。v6.2.0 以降では、 [`KILL`](/sql-statements/sql-statement-kill.md)ステートメントを使用して、進行中の DDL ジョブを強制終了してキャンセルすることもできます。
-> -   この操作では、複数の DDL ジョブを同時にキャンセルできます。1 ステートメントを使用して、DDL ジョブの ID [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)取得できます。
+> -   バージョン6.2.0より前では、この操作のみがDDLジョブをキャンセルでき、他のすべての操作や環境変更（マシンの再起動やクラスタの再起動など）ではこれらのジョブをキャンセルできませんでした。バージョン6.2.0以降では、 [`KILL`](/sql-statements/sql-statement-kill.md)ステートメントを使用して実行中のDDLジョブを強制終了することでキャンセルできるようになりました。
+> -   この操作では、複数のDDLジョブを同時にキャンセルできます。1 ステートメントを使用して、 [`ADMIN SHOW DDL JOBS`](/sql-statements/sql-statement-admin-show-ddl.md)ジョブのIDを取得できます。
 > -   キャンセルするジョブが完了している場合、キャンセル操作は失敗します。
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。
 

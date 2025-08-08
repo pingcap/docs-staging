@@ -5,7 +5,7 @@ summary: TiDB データベースの ALTER USER の使用法の概要。
 
 # ユーザーの変更 {#alter-user}
 
-このステートメントは、TiDB 権限システム内の既存のユーザーを変更します。MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。したがって、IP アドレス`192.168.1.1`からのみ接続できるユーザー`'newuser2'@'192.168.1.1'`作成できます。また、2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
+この文は、TiDB権限システム内の既存のユーザーを変更します。MySQL権限システムでは、ユーザーはユーザー名と接続元ホストの組み合わせです。したがって、IPアドレス`192.168.1.1`からのみ接続できるユーザー`'newuser2'@'192.168.1.1'`作成することが可能です。また、2人のユーザーが同じユーザー領域を持ち、異なるホストからログインするため、異なる権限を持つことも可能になります。
 
 ## 概要 {#synopsis}
 
@@ -61,7 +61,7 @@ mysql> SHOW CREATE USER 'newuser';
 
 ### 基本的なユーザー情報を変更する {#modify-basic-user-information}
 
-ユーザー`newuser`のパスワードを変更します:
+ユーザー`newuser`のパスワードを変更します。
 
     mysql> ALTER USER 'newuser' IDENTIFIED BY 'newnewpassword';
     Query OK, 0 rows affected (0.02 sec)
@@ -74,7 +74,7 @@ mysql> SHOW CREATE USER 'newuser';
     +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
     1 row in set (0.00 sec)
 
-ユーザー`newuser`ロックする:
+ユーザー`newuser`をロックする:
 
 ```sql
 ALTER USER 'newuser' ACCOUNT LOCK;
@@ -98,7 +98,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-`ALTER USER ... COMMENT`使用して`newuser`のコメントを変更します。
+`ALTER USER ... COMMENT`を使用して`newuser`のコメントを変更します。
 
 ```sql
 ALTER USER 'newuser' COMMENT 'Here is the comment';
@@ -114,7 +114,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-`ALTER USER ... ATTRIBUTE`使用して`newuser`のコメントを削除します。
+`ALTER USER ... ATTRIBUTE`を使用して`newuser`のコメントを削除します。
 
 ```sql
 ALTER USER 'newuser' ATTRIBUTE '{"comment": null}';
@@ -138,7 +138,7 @@ ALTER USER 'newuser' PASSWORD EXPIRE NEVER;
 
     Query OK, 0 rows affected (0.02 sec)
 
-`ALTER USER ... PASSWORD REUSE INTERVAL ... DAY`使用して、過去 90 日以内に使用されたパスワードの再利用を禁止するように`newuser`パスワード再利用ポリシーを変更します。
+`ALTER USER ... PASSWORD REUSE INTERVAL ... DAY`使用して、 `newuser`のパスワード再利用ポリシーを変更し、過去 90 日以内に使用されたパスワードの再利用を禁止します。
 
 ```sql
 ALTER USER 'newuser' PASSWORD REUSE INTERVAL 90 DAY;
@@ -188,10 +188,10 @@ SELECT USER, JSON_EXTRACT(User_attributes, "$.resource_group") FROM mysql.user W
 <CustomContent platform="tidb">
 
 -   [TiDB ユーザーアカウント管理](/user-account-management.md)
--   [MySQL とのSecurity互換性](/security-compatibility-with-mysql.md)
+-   [MySQLとのSecurity互換性](/security-compatibility-with-mysql.md)
 
 </CustomContent>
 
--   [ユーザーを作成](/sql-statements/sql-statement-create-user.md)
+-   [ユーザーの作成](/sql-statements/sql-statement-create-user.md)
 -   [ユーザーを削除](/sql-statements/sql-statement-drop-user.md)
 -   [表示 ユーザーの作成](/sql-statements/sql-statement-show-create-user.md)

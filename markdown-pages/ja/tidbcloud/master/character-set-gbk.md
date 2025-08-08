@@ -11,22 +11,26 @@ TiDB v6.0.0以降、デフォルトで[照合のための新しいフレーム�
 
 ```sql
 SHOW CHARACTER SET WHERE CHARSET = 'gbk';
-+---------+-------------------------------------+-------------------+--------+
-| Charset | Description                         | Default collation | Maxlen |
-+---------+-------------------------------------+-------------------+--------+
-| gbk     | Chinese Internal Code Specification | gbk_chinese_ci    |      2 |
-+---------+-------------------------------------+-------------------+--------+
-1 row in set (0.00 sec)
-
-SHOW COLLATION WHERE CHARSET = 'gbk';
-+----------------+---------+------+---------+----------+---------+
-| Collation      | Charset | Id   | Default | Compiled | Sortlen |
-+----------------+---------+------+---------+----------+---------+
-| gbk_bin        | gbk     |   87 |         | Yes      |       1 |
-| gbk_chinese_ci | gbk     |   28 | Yes     | Yes      |       1 |
-+----------------+---------+------+---------+----------+---------+
-2 rows in set (0.00 sec)
 ```
+
+    +---------+-------------------------------------+-------------------+--------+
+    | Charset | Description                         | Default collation | Maxlen |
+    +---------+-------------------------------------+-------------------+--------+
+    | gbk     | Chinese Internal Code Specification | gbk_chinese_ci    |      2 |
+    +---------+-------------------------------------+-------------------+--------+
+    1 row in set (0.00 sec)
+
+```sql
+SHOW COLLATION WHERE CHARSET = 'gbk';
+```
+
+    +----------------+---------+----+---------+----------+---------+---------------+
+    | Collation      | Charset | Id | Default | Compiled | Sortlen | Pad_attribute |
+    +----------------+---------+----+---------+----------+---------+---------------+
+    | gbk_bin        | gbk     | 87 |         | Yes      |       1 | PAD SPACE     |
+    | gbk_chinese_ci | gbk     | 28 | Yes     | Yes      |       1 | PAD SPACE     |
+    +----------------+---------+----+---------+----------+---------+---------------+
+    2 rows in set (0.00 sec)
 
 ## MySQLの互換性 {#mysql-compatibility}
 
@@ -61,10 +65,10 @@ MySQLにおけるGBK文字セットのデフォルトの照合順序は`gbk_chin
 
 例えば、 `SET NAMES gbk`後、MySQL と TiDB でそれぞれ`CREATE TABLE gbk_table(a VARCHAR(32) CHARACTER SET gbk)`ステートメントを使用してテーブルを作成し、次の表の SQL ステートメントを実行すると、詳細な違いを確認できます。
 
-| データベース | 設定されたSQLモードに`STRICT_ALL_TABLES`または`STRICT_TRANS_TABLES`含まれている場合                                                   | 設定されたSQLモードに`STRICT_ALL_TABLES`も`STRICT_TRANS_TABLES`も含まれていない場合                                                                      |
-| ------ | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| MySQL  | `SELECT HEX('一a');`<br/> `e4b88061`<br/><br/> `INSERT INTO gbk_table values('一a');`<br/> `Incorrect Error`        | `SELECT HEX('一a');`<br/> `e4b88061`<br/><br/> `INSERT INTO gbk_table VALUES('一a');`<br/> `SELECT HEX(a) FROM gbk_table;`<br/> `e4b8` |
-| TiDB   | `SELECT HEX('一a');`<br/> `Incorrect Error`<br/><br/> `INSERT INTO gbk_table VALUES('一a');`<br/> `Incorrect Error` | `SELECT HEX('一a');`<br/> `e4b83f`<br/><br/> `INSERT INTO gbk_table VALUES('一a');`<br/> `SELECT HEX(a) FROM gbk_table;`<br/> `e4b83f` |
+| データベース | 設定されたSQLモードに`STRICT_ALL_TABLES`または`STRICT_TRANS_TABLES`含まれている場合                                                   | 設定されたSQLモードに`STRICT_ALL_TABLES`も`STRICT_TRANS_TABLES`も含まれていない場合                                                                     |
+| ------ | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| MySQL  | `SELECT HEX('一a');` <br/> `e4b88061`<br/><br/>`INSERT INTO gbk_table values('一a');`<br/> `Incorrect Error`        | `SELECT HEX('一a');` <br/> `e4b88061`<br/><br/>`INSERT INTO gbk_table VALUES('一a');`<br/>`SELECT HEX(a) FROM gbk_table;`<br/> `e4b8` |
+| TiDB   | `SELECT HEX('一a');` <br/> `Incorrect Error`<br/><br/>`INSERT INTO gbk_table VALUES('一a');`<br/> `Incorrect Error` | `SELECT HEX('一a');` <br/> `e4b83f`<br/><br/>`INSERT INTO gbk_table VALUES('一a');`<br/>`SELECT HEX(a) FROM gbk_table;`<br/> `e4b83f` |
 
 上記の表では、 `utf8mb4`バイト セットの`SELECT HEX('a');`の結果は`e4b88061`なります。
 
@@ -80,8 +84,9 @@ MySQLにおけるGBK文字セットのデフォルトの照合順序は`gbk_chin
     CREATE TABLE t(a CHAR(10) CHARSET BINARY);
     Query OK, 0 rows affected (0.00 sec)
     INSERT INTO t VALUES (_gbk'啊');
-    ERROR 1115 (42000): Unsupported character introducer: 'gbk'
     ```
+
+        ERROR 1115 (42000): Unsupported character introducer: 'gbk'
 
 <!---->
 
@@ -98,3 +103,8 @@ MySQLにおけるGBK文字セットのデフォルトの照合順序は`gbk_chin
 -   TiCDCバージョン6.1.0より前のバージョンでは、 `charset=GBK`テーブルのレプリケーションはサポートされていません。TiCDCのバージョン6.1.0より前のバージョンでは、TiDBクラスターへの`charset=GBK`テーブルのレプリケーションはサポートされていません。
 
 -   バックアップ＆リストア（BR）バージョン5.4.0より前のバージョンでは、 `charset=GBK`テーブルのリカバリはサポートされていません。また、 BRのバージョン5.4.0より前のバージョンでは、TiDBクラスターへの`charset=GBK`テーブルのリカバリはサポートされていません。
+
+## 参照 {#see-also}
+
+-   [`SHOW CHARACTER SET`](/sql-statements/sql-statement-show-character-set.md)
+-   [文字セットと照合順序](/character-set-and-collation.md)

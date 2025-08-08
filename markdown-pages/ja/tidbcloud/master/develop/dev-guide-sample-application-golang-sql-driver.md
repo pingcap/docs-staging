@@ -15,7 +15,7 @@ TiDB は MySQL 互換データベースであり、 [Go-MySQL-ドライバー](h
 
 > **注記：**
 >
-> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed で動作します。
+> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed で機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -62,7 +62,7 @@ cd tidb-golang-sql-driver-quickstart
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -105,14 +105,14 @@ cd tidb-golang-sql-driver-quickstart
 
     プレースホルダー`{}` 、接続ダイアログから取得した接続パラメータに置き換えてください。
 
-    TiDB Cloud Serverless は安全な接続を必要とします。そのため、 `USE_SSL`の値を`true`に設定する必要があります。
+    TiDB Cloud Serverless は安全な接続を必要とします。そのため、 `USE_SSL`値を`true`に設定する必要があります。
 
 7.  `.env`ファイルを保存します。
 
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -202,7 +202,7 @@ func openDB(driverName string, runnable func(db *sql.DB)) {
 }
 ```
 
-この関数を使用する場合、 `${tidb_host}` 、 `${tidb_port}` 、 `${tidb_user}` 、 `${tidb_password}` 、 `${tidb_db_name}` TiDBクラスタの実際の値に置き換える必要があります。 TiDB Cloud Serverless は安全な接続を必要とするため、 `${use_ssl}`の値を`true`に設定する必要があります。
+この関数を使用する場合、 `${tidb_host}` 、 `${tidb_port}` 、 `${tidb_user}` 、 `${tidb_password}` 、 `${tidb_db_name}` TiDBクラスタの実際の値に置き換える必要があります。TiDB TiDB Cloud Serverlessは安全な接続を必要とするため、 `${use_ssl}`を`true`に設定する必要があります。
 
 ### データを挿入する {#insert-data}
 

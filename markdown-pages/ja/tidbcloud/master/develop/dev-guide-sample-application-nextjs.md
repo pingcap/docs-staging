@@ -15,7 +15,7 @@ TiDB は MySQL 互換のデータベースであり、 [MySQL2](https://github.c
 
 > **注記**
 >
-> このチュートリアルは TiDB Cloud Serverless と TiDB Self-Managed を使用します。
+> このチュートリアルは、TiDB Cloud Serverless と TiDB Self-Managed で機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -75,7 +75,7 @@ npm install
 
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**ページ](https://tidbcloud.com/project/clusters)に移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**ページ](https://tidbcloud.com/console/clusters)に移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 

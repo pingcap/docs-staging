@@ -5,17 +5,17 @@ summary: TiDB の EXPLAIN` ステートメントによって返される実行�
 
 # ビューを使用したEXPLAINステートメント {#explain-statements-using-views}
 
-`EXPLAIN` 、ビュー自体の名前ではなく、 [ビュー](/views.md)参照するテーブルとインデックスを表示します。これは、ビューが仮想テーブルにすぎず、それ自体にデータを格納しないためです。ビューの定義とステートメントの残りの部分は、SQL の最適化中に結合されます。
+`EXPLAIN` 、 [ビュー](/views.md)参照するテーブルとインデックスを表示しますが、ビュー自体の名前は表示しません。これは、ビューが仮想テーブルに過ぎず、それ自体にはデータを格納しないためです。ビューの定義と残りの文は、SQL最適化中にマージされます。
 
 <CustomContent platform="tidb">
 
-[バイクシェアのサンプルデータベース](/import-example-data.md)から、次の 2 つのクエリが同様の方法で実行されていることがわかります。
+[自転車シェアリングのサンプルデータベース](/import-example-data.md)から、次の 2 つのクエリが同様の方法で実行されていることがわかります。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[バイクシェアのサンプルデータベース](/tidb-cloud/import-sample-data.md)から、次の 2 つのクエリが同様の方法で実行されていることがわかります。
+[自転車シェアリングのサンプルデータベース](/tidb-cloud/import-sample-data.md)から、次の 2 つのクエリが同様の方法で実行されていることがわかります。
 
 </CustomContent>
 
@@ -50,7 +50,7 @@ Query OK, 0 rows affected (0.13 sec)
 3 rows in set (0.00 sec)
 ```
 
-同様に、ビューからの述語はベース テーブルにプッシュダウンされます。
+同様に、ビューからの述語は基本テーブルにプッシュダウンされます。
 
 ```sql
 EXPLAIN SELECT * FROM long_trips WHERE bike_number = 'W00950';
@@ -78,9 +78,9 @@ EXPLAIN SELECT * FROM trips WHERE bike_number = 'W00950';
 3 rows in set (0.00 sec)
 ```
 
-上記の最初のステートメントでは、ビュー定義を満たすためにインデックスが使用され、TiDB がテーブル行を読み取るときに`bike_number = 'W00950'`適用されていることがわかります。2 番目のステートメントでは、ステートメントを満たすインデックスがないため、 `TableFullScan`使用されています。
+上記の最初の文では、ビュー定義を満たすためにインデックスが使用され、TiDBがテーブル行を読み取る際に`bike_number = 'W00950'`適用されていることがわかります。2番目の文では、文を満たすインデックスがないため、 `TableFullScan`使用されています。
 
-TiDB は、ビュー定義とステートメント自体の両方を満たすインデックスを使用します。次の複合インデックスを検討してください。
+TiDBは、ビュー定義とステートメント自体の両方を満たすインデックスを使用します。次の複合インデックスを考えてみましょう。
 
 ```sql
 ALTER TABLE trips ADD INDEX (bike_number, duration);
@@ -110,4 +110,4 @@ Query OK, 0 rows affected (2 min 31.20 sec)
 3 rows in set (0.00 sec)
 ```
 
-最初のステートメントでは、TiDB は複合インデックス`(bike_number, duration)`の両方の部分を使用できます。2 番目のステートメントでは、インデックス`(bike_number, duration)`の最初の部分`bike_number`のみが使用されます。
+最初の文では、TiDBは複合インデックス`(bike_number, duration)`の両方の部分を使用できます。2番目の文では、インデックス`(bike_number, duration)`の最初の部分である`bike_number`のみが使用されます。

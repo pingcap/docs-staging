@@ -5,20 +5,20 @@ summary: PROCESSLIST` information_schema テーブルについて学習します
 
 # プロセスリスト {#processlist}
 
-`PROCESSLIST`は[`SHOW PROCESSLIST`](/sql-statements/sql-statement-show-processlist.md)と同様に、処理中のリクエストを表示するために使用されます。
+`PROCESSLIST` 、 [`SHOW PROCESSLIST`](/sql-statements/sql-statement-show-processlist.md)と同様に、処理中のリクエストを表示するために使用されます。
 
 `PROCESSLIST`テーブルには`SHOW PROCESSLIST`にはない追加の列があります。
 
 <CustomContent platform="tidb">
 
 -   SQL ステートメントのダイジェストを表示する`DIGEST`列。
--   処理中のリクエストによって使用されるメモリをバイト単位で表示する`MEM`列。
+-   処理中のリクエストによって使用されているメモリをバイト単位で表示する`MEM`列。
 -   ディスク使用量をバイト単位で表示する`DISK`列。
 -   トランザクションの開始時刻を表示する`TxnStart`列。
 -   リソース グループ名を表示する`RESOURCE_GROUP`列。
 -   現在のセッションのエイリアスを表示する`SESSION_ALIAS`列。
 -   ステートメントによって現在影響を受けている行数を示す`ROWS_AFFECTED`列。
--   `TIDB_CPU`列は、ステートメントが TiDBサーバーのCPU を消費する時間をナノ秒単位で表示します。この列には、 [Top SQL](/dashboard/top-sql.md)機能が有効な場合にのみ意味のある値が表示されます。それ以外の場合、値は`0`になります。
+-   `TIDB_CPU`列は、ステートメントがTiDBサーバーのCPUを消費した時間をナノ秒単位で示します。この列は、 [Top SQL](/dashboard/top-sql.md)機能が有効な場合にのみ意味のある値を表示します。それ以外の場合は、値は`0`になります。
 -   ステートメントが TiKVサーバーCPU を消費する時間をナノ秒単位で表示する`TIKV_CPU`列。
 
 </CustomContent>
@@ -26,13 +26,13 @@ summary: PROCESSLIST` information_schema テーブルについて学習します
 <CustomContent platform="tidb-cloud">
 
 -   SQL ステートメントのダイジェストを表示する`DIGEST`列。
--   処理中のリクエストによって使用されるメモリをバイト単位で表示する`MEM`列。
+-   処理中のリクエストによって使用されているメモリをバイト単位で表示する`MEM`列。
 -   ディスク使用量をバイト単位で表示する`DISK`列。
 -   トランザクションの開始時刻を表示する`TxnStart`列。
 -   リソース グループ名を表示する`RESOURCE_GROUP`列。
 -   現在のセッションのエイリアスを表示する`SESSION_ALIAS`列。
 -   ステートメントによって現在影響を受けている行数を示す`ROWS_AFFECTED`列。
--   `TIDB_CPU`列は、ステートメントが TiDBサーバーのCPU を消費する時間をナノ秒単位で表示します。この列には、 [Top SQL](https://docs.pingcap.com/tidb/stable/top-sql)機能が有効な場合にのみ意味のある値が表示されます。それ以外の場合、値は`0`になります。
+-   `TIDB_CPU`列は、ステートメントがTiDBサーバーのCPUを消費した時間をナノ秒単位で示します。この列は、 [Top SQL](https://docs.pingcap.com/tidb/stable/top-sql)機能が有効な場合にのみ意味のある値を表示します。それ以外の場合は、値は`0`になります。
 -   ステートメントが TiKVサーバーCPU を消費する時間をナノ秒単位で表示する`TIKV_CPU`列。
 
 </CustomContent>
@@ -100,7 +100,7 @@ RESOURCE_GROUP: default
 -   `HOST` : ユーザーが接続しているアドレス。
 -   `DB` : 現在接続されているデフォルト データベースの名前。
 -   `COMMAND` : `PROCESS`が実行しているコマンドの種類。
--   `TIME` : 現在の実行時間`PROCESS` (秒単位)。
+-   `TIME` : 現在の実行時間`PROCESS` (秒)。
 -   `STATE` : 現在の接続状態。
 -   `INFO` : 処理中の要求されたステートメント。
 -   `DIGEST` : SQL ステートメントのダイジェスト。
@@ -109,8 +109,8 @@ RESOURCE_GROUP: default
 -   `TxnStart` : トランザクションの開始時刻。
 -   `RESOURCE_GROUP` : リソース グループ名。
 -   `SESSION_ALIAS` : 現在のセッションのエイリアス。
--   `ROWS_AFFECTED` : 現在ステートメントによって影響を受けている行の数。
--   `TIDB_CPU` : ステートメントが TiDBサーバーのCPU を消費する時間 (ナノ秒単位)。この列には、 [Top SQL](/dashboard/top-sql.md)機能が有効な場合にのみ意味のある値が表示されます。それ以外の場合、値は`0`になります。
+-   `ROWS_AFFECTED` : 現在ステートメントによって影響を受けている行数。
+-   `TIDB_CPU` : ステートメントがTiDBサーバーのCPUを消費する時間（ナノ秒単位）。この列は、 [Top SQL](/dashboard/top-sql.md)機能が有効な場合にのみ意味のある値を表示します。それ以外の場合は、値は`0`になります。
 -   `TIKV_CPU` : ステートメントが TiKVサーバーCPU を消費する時間 (ナノ秒単位)。
 
 </CustomContent>
@@ -122,7 +122,7 @@ RESOURCE_GROUP: default
 -   `HOST` : ユーザーが接続しているアドレス。
 -   `DB` : 現在接続されているデフォルト データベースの名前。
 -   `COMMAND` : `PROCESS`が実行しているコマンドの種類。
--   `TIME` : 現在の実行時間`PROCESS` (秒単位)。
+-   `TIME` : 現在の実行時間`PROCESS` (秒)。
 -   `STATE` : 現在の接続状態。
 -   `INFO` : 処理中の要求されたステートメント。
 -   `DIGEST` : SQL ステートメントのダイジェスト。
@@ -131,15 +131,15 @@ RESOURCE_GROUP: default
 -   `TxnStart` : トランザクションの開始時刻。
 -   `RESOURCE_GROUP` : リソース グループ名。
 -   `SESSION_ALIAS` : 現在のセッションのエイリアス。
--   `ROWS_AFFECTED` : 現在ステートメントによって影響を受けている行の数。
--   `TIDB_CPU` : ステートメントが TiDBサーバーのCPU を消費する時間 (ナノ秒単位)。この列には、 [Top SQL](https://docs.pingcap.com/tidb/stable/top-sql)機能が有効な場合にのみ意味のある値が表示されます。それ以外の場合、値は`0`になります。
+-   `ROWS_AFFECTED` : 現在ステートメントによって影響を受けている行数。
+-   `TIDB_CPU` : ステートメントがTiDBサーバーのCPUを消費する時間（ナノ秒単位）。この列は、 [Top SQL](https://docs.pingcap.com/tidb/stable/top-sql)機能が有効な場合にのみ意味のある値を表示します。それ以外の場合は、値は`0`になります。
 -   `TIKV_CPU` : ステートメントが TiKVサーバーCPU を消費する時間 (ナノ秒単位)。
 
 </CustomContent>
 
 ## クラスタープロセスリスト {#cluster-processlist}
 
-`CLUSTER_PROCESSLIST` `PROCESSLIST`に対応するクラスター システム テーブルです。クラスター内のすべての TiDB ノードの`PROCESSLIST`情報を照会するために使用されます。 `CLUSTER_PROCESSLIST`のテーブル スキーマには`PROCESSLIST`よりも 1 つ多い列、つまり`INSTANCE`列があり、このデータ行の元の TiDB ノードのアドレスが格納されます。
+`CLUSTER_PROCESSLIST`は`PROCESSLIST`に対応するクラスタシステムテーブルです。これは、クラスタ内のすべての TiDB ノードの`PROCESSLIST`情報を照会するために使用されます。 `CLUSTER_PROCESSLIST`のテーブルスキーマには`PROCESSLIST`よりも1つ多い列、つまり`INSTANCE`列があり、このデータ行の元となる TiDB ノードのアドレスが格納されます。
 
 ```sql
 SELECT * FROM information_schema.cluster_processlist;

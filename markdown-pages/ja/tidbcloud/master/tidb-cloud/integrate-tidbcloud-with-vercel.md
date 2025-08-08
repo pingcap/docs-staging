@@ -97,7 +97,7 @@ TiDB Cloud Vercel統合を介して接続するには、 [Vercelの統合マー�
 
 ![Vercel Integration Page](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/vercel/integration-link-cluster-page.png)
 
-6.  Vercel ダッシュボードに戻り、Vercel プロジェクトに移動して、 **「設定」** &gt; **「環境変数」**をクリックし、ターゲット TiDB クラスターの環境変数が自動的に追加されているかどうかを確認します。
+6.  Vercel ダッシュボードに戻り、Vercel プロジェクトに移動して、 **[設定]** &gt; **[環境変数]**をクリックし、ターゲット TiDB クラスターの環境変数が自動的に追加されているかどうかを確認します。
 
     以下の変数が追加されていれば統合は完了です。
 
@@ -163,7 +163,7 @@ TiDB Cloud Vercel統合を介して接続するには、 [Vercelの統合マー�
 
     接続を削除すると、統合ワークフローによって設定された環境変数もVercelプロジェクトから削除されます。ただし、このアクションはTiDB Cloud Serverlessクラスターのデータには影響しません。
 
-### TiDB Cloud Serverless ブランチに接続 {#connect-with-tidb-cloud-serverless-branching}
+### TiDB Cloud Serverless ブランチに接続する {#connect-with-branching} {#connect-with-branching}
 
 Vercel の[プレビュー展開](https://vercel.com/docs/deployments/preview-deployments)機能を使用すると、Git プロジェクトの本番ブランチに変更をマージすることなく、ライブデプロイメントでアプリの変更をプレビューできます。 [TiDB Cloudサーバーレス ブランチ](/tidb-cloud/branch-overview.md)では、Vercel プロジェクトのブランチごとに新しいインスタンスを作成できます。これにより、本番データに影響を与えることなく、ライブデプロイメントでアプリの変更をプレビューできます。
 
@@ -218,7 +218,7 @@ Gitリポジトリに変更をプッシュすると、Vercelはプレビュー�
 
 1.  TiDB クラスターの接続情報を取得します。
 
-    接続情報は、クラスターの接続ダイアログから取得できます。ダイアログを開くには、プロジェクトの[**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲットクラスターの名前をクリックして概要ページに移動し、右上隅の**「接続」**をクリックします。
+    接続情報は、クラスターの接続ダイアログから取得できます。ダイアログを開くには、プロジェクトの[**クラスター**](https://tidbcloud.com/project/clusters)ページ目に移動し、ターゲットクラスターの名前をクリックして概要ページに移動し、右上隅の**「接続」**をクリックします。
 
 2.  Vercel ダッシュボード &gt; Vercel プロジェクト &gt;**設定**&gt;**環境変数**に移動し、TiDB クラスターの接続情報に応じて[各環境変数の値を宣言する](https://vercel.com/docs/concepts/projects/environment-variables#declare-an-environment-variable)実行します。
 

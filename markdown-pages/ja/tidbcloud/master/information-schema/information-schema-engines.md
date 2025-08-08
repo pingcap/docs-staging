@@ -40,7 +40,7 @@ SELECT * FROM engines;
 `ENGINES`表の列の説明は次のとおりです。
 
 -   `ENGINES` :storageエンジンの名前。
--   `SUPPORT` :サーバーがstorageエンジンに対して持つサポート レベル。TiDB では、値は常に`DEFAULT`です。
+-   `SUPPORT` :サーバーがstorageエンジンに対して持つサポートレベル。TiDBでは、この値は常に`DEFAULT`です。
 -   `COMMENT` :storageエンジンに関する簡単なコメント。
 -   `TRANSACTIONS` :storageエンジンがトランザクションをサポートするかどうか。
 -   `XA` :storageエンジンが XA トランザクションをサポートするかどうか。

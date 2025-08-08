@@ -1,31 +1,35 @@
 ---
-title: UUID Best Practices
-summary: UUID を主キーとして使用すると、ネットワーク トリップの削減、ほとんどのプログラミング言語とデータベースのサポート、列挙攻撃からの保護などの利点が得られます。UUID は BINARY(16)` 列にバイナリとして保存することをお勧めします。また、ホットスポットを防ぐために、TiDB で `swap_flag` を設定しないようにすることをお勧めします。UUID には MySQL 互換性があります。
+title: Best Practices for Using UUIDs as Primary Keys
+summary: UUIDを主キーとして使用すると、ネットワーク通信の削減、ほとんどのプログラミング言語とデータベースでのサポート、列挙攻撃からの保護などの利点があります。UUIDはバイナリ形式でBINARY(16)`列に格納することをお勧めします。また、ホットスポットの発生を防ぐため、TiDBでは`swap_flag`の設定を避けることをお勧めします。UUIDはMySQLと互換性があります。
 ---
 
-# UUID のベスト プラクティス {#uuid-best-practices}
+# UUIDを主キーとして使用するベストプラクティス {#best-practices-for-using-uuids-as-primary-keys}
+
+UUID（Universally Unique Identifiers）は、分散データベースにおける主キーとして、自動増分整数の代替として広く利用されています。このドキュメントでは、TiDBでUUIDを使用するメリットを概説し、UUIDを効率的に保存およびインデックス化するためのベストプラクティスを紹介します。
 
 ## UUIDの概要 {#overview-of-uuids}
 
-[`AUTO_INCREMENT`](/auto-increment.md)整数値の代わりに主キーとして使用すると、ユニバーサル一意識別子 (UUID) には次の利点があります。
+UUID を主キーとして使用すると、 [`AUTO_INCREMENT`](/auto-increment.md)整数と比較して次の利点があります。
 
--   UUID は、競合のリスクなしに複数のシステムで生成できます。場合によっては、これにより TiDB へのネットワーク トリップの回数が減り、パフォーマンスが向上します。
+-   UUIDは複数のシステムで競合のリスクなく生成できます。場合によっては、TiDBへのネットワーク通信回数が削減され、パフォーマンスが向上する可能性があります。
 -   UUID は、ほとんどのプログラミング言語とデータベース システムでサポートされています。
--   URL の一部として使用される場合、UUID は列挙攻撃に対して脆弱ではありません。比較すると、 `AUTO_INCREMENT`数字の場合、請求書 ID またはユーザー ID を推測することが可能です。
+-   URLの一部として使用される場合、UUIDは列挙攻撃に対して脆弱ではありません。一方、 `AUTO_INCREMENT`数字を使用すると、請求書IDやユーザーIDを推測される可能性があります。
 
 ## ベストプラクティス {#best-practices}
 
+このセクションでは、TiDB で UUID を保存およびインデックス作成するためのベスト プラクティスについて説明します。
+
 ### バイナリとして保存 {#store-as-binary}
 
-テキスト UUID 形式は次のようになります: `ab06f63e-8fe7-11ec-a514-5405db7aad56` 、これは 36 文字の文字列です。 [`UUID_TO_BIN()`](/functions-and-operators/miscellaneous-functions.md#uuid_to_bin)使用すると、テキスト形式を 16 バイトのバイナリ形式に変換できます。これにより、テキストを[`BINARY(16)`](/data-type-string.md#binary-type)列に格納できます。 UUID を取得するときは、 [`BIN_TO_UUID()`](/functions-and-operators/miscellaneous-functions.md#bin_to_uuid)関数を使用してテキスト形式に戻すことができます。
+テキスト形式のUUID形式は次のようになります`ab06f63e-8fe7-11ec-a514-5405db7aad56`は36文字の文字列です。3 [`UUID_TO_BIN()`](/functions-and-operators/miscellaneous-functions.md#uuid_to_bin)使用すると、テキスト形式を16バイトのバイナリ形式に変換できます。これにより、テキストを[`BINARY(16)`](/data-type-string.md#binary-type)列に格納できます。UUIDを取得する際には、 [`BIN_TO_UUID()`](/functions-and-operators/miscellaneous-functions.md#bin_to_uuid)関数を使用してテキスト形式に戻すことができます。
 
-### UUID形式のバイナリ順序とクラスター化されたPK {#uuid-format-binary-order-and-a-clustered-pk}
+### UUID形式のバイナリ順序とクラスター化された主キー {#uuid-format-binary-order-and-clustered-primary-keys}
 
-`UUID_TO_BIN()`関数は、 1 つの引数 (UUID) または 2 つの引数 (2 番目の引数が`swap_flag`とともに使用できます。
+`UUID_TO_BIN()`関数は、 1 つの引数 (UUID)、または 2 つの引数 (2 番目の引数は`swap_flag`とともに使用できます。
 
 <CustomContent platform="tidb">
 
-[ホットスポット](/best-practices/high-concurrency-best-practices.md)回避するために、 TiDB で`swap_flag`設定しないことをお勧めします。
+[ホットスポット](/best-practices/high-concurrency-best-practices.md)回避するために、 TiDB では`swap_flag`設定しないことをお勧めします。
 
 </CustomContent>
 
@@ -37,7 +41,7 @@ summary: UUID を主キーとして使用すると、ネットワーク トリ�
 
 ホットスポットを回避するために、UUID ベースの主キーに[`CLUSTERED`オプション](/clustered-indexes.md)明示的に設定することもできます。
 
-`swap_flag`の効果を示すために、同じ構造を持つ 2 つのテーブルを示します。違いは、 `uuid_demo_1`に挿入されたデータは`UUID_TO_BIN(?, 0)`使用し、 `uuid_demo_2` `UUID_TO_BIN(?, 1)`使用することです。
+`swap_flag`の効果を示すために、同一の構造を持つ2つのテーブルを示します。違いは、 `uuid_demo_1`に挿入されるデータは`UUID_TO_BIN(?, 0)`を使用し、 `uuid_demo_2` `UUID_TO_BIN(?, 1)`使用する点です。
 
 <CustomContent platform="tidb">
 
@@ -69,6 +73,6 @@ CREATE TABLE `uuid_demo_2` (
 )
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-UUID は MySQL でも使用できます。1 `UUID_TO_BIN()` `BIN_TO_UUID()`はMySQL 8.0 で導入されました。5 関数`UUID()`以前のバージョンの MySQL でも使用できます。
+UUIDはMySQLでも使用できます。1と`BIN_TO_UUID()` `UUID_TO_BIN()`関数はMySQL 8.0で導入されました。5 `UUID()`関数はそれ以前のMySQLバージョンでも使用できます。

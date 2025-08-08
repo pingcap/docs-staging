@@ -9,7 +9,7 @@ summary: 一時テーブルを作成、表示、クエリ、および削除す�
 
 [書店](/develop/dev-guide-bookshop-schema-design.md)アプリケーションにおける最年長の著者について何かを知りたい場合は、最年長の著者のリストを使用する複数のクエリを記述する場合があります。
 
-たとえば、次のステートメントを使用して、 `authors`テーブルから最年長の著者上位 50 人を取得できます。
+たとえば、次のステートメントを使用して、 `authors`テーブルから上位 50 人の最年長著者を取得できます。
 
 ```sql
 SELECT a.id, a.name, (IFNULL(a.death_year, YEAR(NOW())) - a.birth_year) AS age
@@ -18,7 +18,7 @@ ORDER BY age DESC
 LIMIT 50;
 ```
 
-結果は以下のようになります。
+結果は次のとおりです。
 
     +------------+---------------------+------+
     | id         | name                | age  |
@@ -35,18 +35,18 @@ LIMIT 50;
     +------------+---------------------+------+
     50 rows in set (0.01 sec)
 
-後続のクエリの利便性のために、このクエリの結果をキャッシュする必要があります。storageに一般的なテーブルを使用する場合は、異なるセッション間でのテーブル名の重複の問題を回避する方法と、バッチクエリ後にこれらのテーブルが使用されない場合があるため、中間結果を時間内にクリーンアップする必要性に注意する必要があります。
+後続のクエリの利便性のために、このクエリの結果をキャッシュする必要があります。汎用テーブルをstorageとして使用する場合は、異なるセッション間でのテーブル名の重複問題を回避する方法と、バッチクエリ後にこれらのテーブルが使用されない場合があるため、中間結果を適時にクリーンアップする必要があることに注意する必要があります。
 
 ## 一時テーブルを作成する {#create-a-temporary-table}
 
-中間結果をキャッシュするために、TiDB v5.3.0 で一時テーブル機能が導入されました。TiDB はセッション終了後にローカル一時テーブルを自動的に削除するため、中間結果の増加によって生じる管理上のトラブルを心配する必要がなくなります。
+中間結果をキャッシュするために、TiDB v5.3.0 で一時テーブル機能が導入されました。TiDB はセッション終了後にローカル一時テーブルを自動的に削除するため、中間結果の増加に伴う管理上の煩わしさから解放されます。
 
 ### 一時テーブルの種類 {#types-of-temporary-tables}
 
 TiDB の一時テーブルは、ローカル一時テーブルとグローバル一時テーブルの 2 種類に分かれています。
 
--   ローカル一時テーブルの場合、テーブル定義とテーブル内のデータは現在のセッションでのみ表示されます。このタイプは、セッションで中間データを一時的に保存するのに適しています。
--   グローバル一時テーブルの場合、テーブル定義は TiDB クラスター全体に表示され、テーブル内のデータは現在のトランザクションにのみ表示されます。このタイプは、トランザクション内の中間データを一時的に保存するのに適しています。
+-   ローカル一時テーブルの場合、テーブル定義とテーブル内のデータは現在のセッションでのみ参照可能です。このタイプは、セッション中の中間データを一時的に保存するのに適しています。
+-   グローバル一時テーブルの場合、テーブル定義はTiDBクラスタ全体から参照可能で、テーブル内のデータは現在のトランザクションからのみ参照可能です。このタイプは、トランザクション内の中間データを一時的に保存するのに適しています。
 
 ### ローカル一時テーブルを作成する {#create-a-local-temporary-table}
 
@@ -76,7 +76,7 @@ ORDER BY age DESC
 LIMIT 50;
 ```
 
-結果は以下のようになります。
+結果は次のとおりです。
 
     Query OK, 50 rows affected (0.03 sec)
     Records: 50  Duplicates: 0  Warnings: 0
@@ -140,12 +140,12 @@ CREATE GLOBAL TEMPORARY TABLE IF NOT EXISTS top_50_eldest_authors_global (
 ) ON COMMIT DELETE ROWS;
 ```
 
-グローバル一時テーブルにデータを挿入する場合、 `BEGIN`でトランザクションの開始を明示的に宣言する必要があります。そうしないと、 `INSERT INTO`ステートメントの実行後にデータがクリアされます。自動コミット モードでは、 `INSERT INTO`ステートメントの実行後にトランザクションが自動的にコミットされ、トランザクションが終了するとグローバル一時テーブルがクリアされるためです。
+グローバル一時テーブルにデータを挿入する際は、 `BEGIN`でトランザクションの開始を明示的に宣言する必要があります。そうしないと、 `INSERT INTO`ステートメントの実行後にデータがクリアされます。自動コミットモードでは、 `INSERT INTO`ステートメントの実行後にトランザクションが自動的にコミットされ、トランザクションの終了時にグローバル一時テーブルがクリアされるためです。
 
 </div>
 <div label="Java" value="java">
 
-グローバル一時テーブルを使用する場合は、まず自動コミット モードをオフにする必要があります。Java では、`conn.setAutoCommit(false);`ステートメントでこれを行うことができ、 `conn.commit();`でトランザクションを明示的にコミットできます。トランザクション中にグローバル一時テーブルに追加されたデータは、トランザクションがコミットまたはキャンセルされた後にクリアされます。
+グローバル一時テーブルを使用する場合は、まず自動コミットモードをオフにする必要があります。JavaJava、 `conn.setAutoCommit(false);`文でこれを行うことができ、 `conn.commit();`でトランザクションを明示的にコミットできます。トランザクション中にグローバル一時テーブルに追加されたデータは、トランザクションがコミットまたはキャンセルされた後にクリアされます。
 
 ```java
 public List<Author> getTop50EldestAuthorInfo() throws SQLException {
@@ -192,9 +192,9 @@ public List<Author> getTop50EldestAuthorInfo() throws SQLException {
 
 ## 一時テーブルをビュー {#view-temporary-tables}
 
-`SHOW [FULL] TABLES`ステートメントでは、既存のグローバル一時テーブルのリストを表示できますが、リストにローカル一時テーブルは表示されません。現時点では、TiDB には一時テーブル情報を格納するための同様の`information_schema.INNODB_TEMP_TABLE_INFO`システム テーブルはありません。
+`SHOW [FULL] TABLES`文では既存のグローバル一時テーブルのリストを表示できますが、リストにローカル一時テーブルは表示されません。現時点では、TiDB には一時テーブル情報を格納するための同様の`information_schema.INNODB_TEMP_TABLE_INFO`システムテーブルはありません。
 
-たとえば、テーブル リストにはグローバル一時テーブル`top_50_eldest_authors_global`表示されますが、テーブル`top_50_eldest_authors`は表示されません。
+たとえば、テーブル リストにはグローバル一時テーブル`top_50_eldest_authors_global`表示されますが、テーブル`top_50_eldest_authors`表示されません。
 
     +-------------------------------+------------+
     | Tables_in_bookshop            | Table_type |
@@ -226,11 +226,11 @@ LEFT JOIN book_authors ba ON ta.id = ba.author_id
 GROUP BY ta.id;
 ```
 
-[ビュー](/develop/dev-guide-use-views.md)とは異なり、一時テーブルをクエリすると、データ挿入で使用された元のクエリを実行するのではなく、一時テーブルから直接データが取得されます。場合によっては、これによりクエリのパフォーマンスが向上することがあります。
+[ビュー](/develop/dev-guide-use-views.md)とは異なり、一時テーブルへのクエリは、データ挿入時に使用した元のクエリを実行するのではなく、一時テーブルから直接データを取得します。場合によっては、これによりクエリのパフォーマンスが向上することがあります。
 
 ## 一時テーブルを削除する {#drop-a-temporary-table}
 
-セッション内のローカル一時テーブルは、**セッション**の終了後、データとテーブル スキーマの両方とともに自動的に削除されます。トランザクション内のグローバル一時テーブルは、**トランザクション**の終了時に自動的にクリアされますが、テーブル スキーマは残るため、手動で削除する必要があります。
+セッション内のローカル一時テーブルは、**セッション**終了後にデータとテーブルスキーマとともに自動的に削除されます。トランザクション内のグローバル一時テーブルは、**トランザクション**終了時に自動的にクリアされますが、テーブルスキーマは保持されるため、手動で削除する必要があります。
 
 ローカル一時テーブルを手動で削除するには、 `DROP TABLE`または`DROP TEMPORARY TABLE`構文を使用します。例:
 
@@ -256,12 +256,12 @@ TiDB の一時テーブルの制限については、 [他の TiDB 機能との�
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

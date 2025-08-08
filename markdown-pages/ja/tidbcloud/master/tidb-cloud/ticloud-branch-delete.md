@@ -3,7 +3,7 @@ title: ticloud serverless branch delete
 summary: ticloud serverless branch delete` のリファレンス。
 ---
 
-# ticloud サーバーレス ブランチ削除 {#ticloud-serverless-branch-delete}
+# ticloud サーバーレスブランチの削除 {#ticloud-serverless-branch-delete}
 
 TiDB Cloud Serverless クラスターからブランチを削除します。
 
@@ -25,7 +25,7 @@ ticloud serverless branch rm [flags]
 ticloud serverless branch delete
 ```
 
-非対話モードでTiDB Cloud Serverless ブランチを削除します。
+非対話型モードでTiDB Cloud Serverless ブランチを削除します。
 
 ```shell
 ticloud branch delete --branch-id <branch-id> --cluster-id <cluster-id>
@@ -33,7 +33,7 @@ ticloud branch delete --branch-id <branch-id> --cluster-id <cluster-id>
 
 ## 旗 {#flags}
 
-非対話型モードでは、必要なフラグを手動で入力する必要があります。対話型モードでは、CLI プロンプトに従ってフラグを入力するだけです。
+非対話型モードでは、必要なフラグを手動で入力する必要があります。対話型モードでは、CLIプロンプトに従って入力するだけです。
 
 | フラグ                  | 説明                   | 必須  | 注記                       |
 | -------------------- | -------------------- | --- | ------------------------ |
@@ -44,12 +44,12 @@ ticloud branch delete --branch-id <branch-id> --cluster-id <cluster-id>
 
 ## 継承されたフラグ {#inherited-flags}
 
-| フラグ               | 説明                                                                             | 必須  | 注記                                                             |
-| ----------------- | ------------------------------------------------------------------------------ | --- | -------------------------------------------------------------- |
-| --色なし             | 出力のカラーを無効にします。                                                                 | いいえ | 非対話型モードでのみ機能します。対話型モードでは、一部の UI コンポーネントで色を無効にしても機能しない可能性があります。 |
-| -P, --profile 文字列 | このコマンドで使用するアクティブ[ユーザープロフィール](/tidb-cloud/cli-reference.md#user-profile)を指定します。 | いいえ | 非対話型モードと対話型モードの両方で動作します。                                       |
-| -D、--デバッグ         | デバッグ モードを有効にします。                                                               | いいえ | 非対話型モードと対話型モードの両方で動作します。                                       |
+| フラグ               | 説明                                                                             | 必須  | 注記                                                      |
+| ----------------- | ------------------------------------------------------------------------------ | --- | ------------------------------------------------------- |
+| --色なし             | 出力のカラーを無効にします。                                                                 | いいえ | 非対話モードでのみ機能します。対話モードでは、一部のUIコンポーネントで色の無効化が機能しない場合があります。 |
+| -P, --profile 文字列 | このコマンドで使用するアクティブ[ユーザープロフィール](/tidb-cloud/cli-reference.md#user-profile)を指定します。 | いいえ | 非対話型モードと対話型モードの両方で動作します。                                |
+| -D, --debug       | デバッグ モードを有効にします。                                                               | いいえ | 非対話型モードと対話型モードの両方で動作します。                                |
 
 ## フィードバック {#feedback}
 
-TiDB Cloud CLI に関してご質問やご提案がございましたら、お気軽に[問題](https://github.com/tidbcloud/tidbcloud-cli/issues/new/choose)作成してください。また、あらゆる貢献を歓迎します。
+TiDB Cloud CLI についてご質問やご提案がございましたら、お気軽に[問題](https://github.com/tidbcloud/tidbcloud-cli/issues/new/choose)作成してください。また、皆様からの貢献も歓迎いたします。

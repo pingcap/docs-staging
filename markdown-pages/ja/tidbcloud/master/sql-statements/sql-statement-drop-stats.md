@@ -19,7 +19,7 @@ TableName ::=
 
 ## 使用法 {#usage}
 
-次の文は、 `TableName`のすべての統計情報を削除します。パーティションテーブルが指定されている場合、この文は、このテーブル内のすべてのパーティションの統計情報と[動的プルーニングモードで生成されたグローバル統計](/statistics.md#collect-statistics-of-partitioned-tables-in-dynamic-pruning-mode)削除します。
+次の文は、 `TableName`のすべての統計情報を削除します。パーティションテーブルが指定されている場合、この文は[動的プルーニングモードで生成されたグローバル統計](/statistics.md#collect-statistics-of-partitioned-tables-in-dynamic-pruning-mode)でなく、このテーブル内のすべてのパーティションの統計情報も削除します。
 
 ```sql
 DROP STATS TableName
@@ -74,7 +74,7 @@ SHOW STATS_META WHERE db_name='test' and table_name='t';
 
     Empty set (0.00 sec)
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。
 

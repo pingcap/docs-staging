@@ -124,7 +124,7 @@ summary: 2023 年のTiDB Cloudのリリース ノートについて説明しま�
 
 -   TiDB Cloud Vercel 統合により、 [Vercel プレビュー デプロイメント](https://vercel.com/docs/deployments/preview-deployments)でのTiDB Cloud Serverless ブランチの使用をサポートします。
 
-    詳細については[TiDB Cloud Serverless ブランチに接続](/tidb-cloud/integrate-tidbcloud-with-vercel.md#connect-with-tidb-cloud-serverless-branching)参照してください。
+    詳細については[TiDB Cloud Serverless ブランチに接続](/tidb-cloud/integrate-tidbcloud-with-vercel.md#connect-with-branching)参照してください。
 
 ## 2023年9月28日 {#september-28-2023}
 
@@ -144,7 +144,7 @@ summary: 2023 年のTiDB Cloudのリリース ノートについて説明しま�
 
 -   JavaScript のリリース[TiDB Cloudサーバーレス ドライバー (ベータ版)](/tidb-cloud/serverless-driver.md) 。
 
-    TiDB CloudのJavaScript用サーバーレスドライバーを使用すると、HTTPS経由で[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターに接続できます。特に、TCP接続数が[Vercelエッジ関数](https://vercel.com/docs/functions/edge-functions)や[Cloudflareワーカー](https://workers.cloudflare.com/)など制限されているエッジ環境で役立ちます。
+    TiDB CloudのJavaScript用サーバーレスドライバーを使用すると、HTTPS経由で[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターに接続できます。特に、TCP接続数が[Vercelエッジ関数](https://vercel.com/docs/functions/edge-functions)や[Cloudflareワーカー](https://workers.cloudflare.com/)などに制限されているエッジ環境で役立ちます。
 
     詳細については[TiDB Cloudサーバーレス ドライバー (ベータ版)](/tidb-cloud/serverless-driver.md)参照してください。
 
@@ -184,7 +184,7 @@ summary: 2023 年のTiDB Cloudのリリース ノートについて説明しま�
     -   クラスターのプライベート エンドポイント サービス情報を取得する
     -   クラスターのプライベートエンドポイントを作成する
     -   クラスターのすべてのプライベートエンドポイントを一覧表示する
-    -   プロジェクト内のすべてのプライベート エンドポイントを一覧表示する
+    -   プロジェクト内のすべてのプライベートエンドポイントを一覧表示する
     -   クラスターのプライベートエンドポイントを削除する
 
     詳細については、 [APIドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta#tag/Cluster)を参照してください。
@@ -410,7 +410,7 @@ summary: 2023 年のTiDB Cloudのリリース ノートについて説明しま�
 
 -   changefeed を使用してデータを Amazon S3 にストリーミングすることをサポートします。
 
-    これにより、 TiDB CloudとAmazon S3のシームレスな統合が可能になります。1 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスタからAmazon S3へのリアルタイムのデータキャプチャとレプリケーションが可能になり、下流のアプリケーションと分析が最新のデータにアクセスできるようになります。
+    これにより、 TiDB CloudとAmazon S3のシームレスな統合が可能になります。1 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスタからAmazon S3へのリアルタイムのデータキャプチャとレプリケーションが可能になり、下流のアプリケーションと分析機能が最新のデータにアクセスできるようになります。
 
     詳細については[クラウドストレージにstorage](/tidb-cloud/changefeed-sink-to-cloud-storage.md)参照してください。
 
@@ -428,7 +428,7 @@ summary: 2023 年のTiDB Cloudのリリース ノートについて説明しま�
 
 -   [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターの[**キービジュアライザー**](/tidb-cloud/tune-performance.md#key-visualizer)ページ用の新しいネイティブ Web インフラストラクチャをリリースします。
 
-    新しいインフラストラクチャにより、 **Key Visualizer**ページ内を簡単にナビゲートし、より直感的かつ効率的に必要な情報にアクセスできるようになりました。また、新しいインフラストラクチャはUXに関する多くの問題を解決し、SQL診断プロセスをよりユーザーフレンドリーなものにしています。
+    新しいインフラストラクチャにより、 **Key Visualizer**ページ内を簡単にナビゲートし、より直感的かつ効率的に必要な情報にアクセスできるようになります。また、新しいインフラストラクチャはUXに関する多くの問題を解決し、SQL診断プロセスをよりユーザーフレンドリーなものにします。
 
 ## 2023年6月6日 {#june-6-2023}
 
@@ -584,7 +584,7 @@ summary: 2023 年のTiDB Cloudのリリース ノートについて説明しま�
 
     2023年5月31日まで、Serverless Tierのクラスターは引き続き無料で、100%割引となります。それ以降は、無料枠を超えた使用量に対して料金が発生します。
 
-    クラスターの**概要**ページの**「今月の使用量」**エリアで簡単に[クラスターの使用状況を監視するか、使用量の割り当てを増やす](/tidb-cloud/manage-serverless-spend-limit.md#manage-spending-limit-for-tidb-cloud-serverless-scalable-clusters)確認できます。クラスターの無料クォータに達すると、クォータを増やすか、新しい月の開始時に使用量がリセットされるまで、このクラスターの読み取りおよび書き込み操作は制限されます。
+    クラスターの**概要**ページの**「今月の使用量」**エリアで簡単に[クラスターの使用状況を監視するか、使用量の割り当てを増やす](/tidb-cloud/manage-serverless-spend-limit.md)確認できます。クラスターの無料クォータに達すると、クォータを増やすか、新しい月の開始時に使用量がリセットされるまで、このクラスターの読み取りおよび書き込み操作は制限されます。
 
     さまざまなリソース (読み取り、書き込み、SQL CPU、ネットワーク送信など) の RU 消費量、価格の詳細、スロットル情報の詳細については、 [TiDB CloudServerless Tierの料金詳細](https://www.pingcap.com/tidb-cloud-serverless-pricing-details)参照してください。
 
@@ -697,7 +697,7 @@ summary: 2023 年のTiDB Cloudのリリース ノートについて説明しま�
 
     詳細については[TiDB Cloud組み込みアラート](/tidb-cloud/monitor-built-in-alerting.md)参照してください。
 
--   TiDB Cloudのヘルプ関連の情報とアクションを 1 か所に統合​​します。
+-   TiDB Cloudのヘルプ関連の情報とアクションを 1 か所に統合します。
 
     これで、 [TiDB Cloudコンソール](https://tidbcloud.com/)右下隅にある**[?]**をクリックして、 [TiDB Cloudヘルプ情報](/tidb-cloud/tidb-cloud-support.md)すべて取得し、サポートに問い合わせることができます。
 
@@ -918,7 +918,7 @@ summary: 2023 年のTiDB Cloudのリリース ノートについて説明しま�
 
     `ticloud`使用すると、ターミナルやその他の自動ワークフローから数行のコマンドでTiDB Cloudリソースを簡単に管理できます。特にGitHub Actionsについては、 `ticloud`簡単に設定できるように[`setup-tidbcloud-cli`](https://github.com/marketplace/actions/set-up-tidbcloud-cli)提供しています。
 
-    詳細については、 [TiDB Cloud CLI クイックスタート](/tidb-cloud/get-started-with-cli.md)および[TiDB Cloud CLI リファレンス](/tidb-cloud/cli-reference.md)参照してください。
+    詳細については、 [TiDB Cloud CLI クイックスタート](/tidb-cloud/get-started-with-cli.md)および[TiDB CloudCLI リファレンス](/tidb-cloud/cli-reference.md)参照してください。
 
 ## 2023年1月18日 {#january-18-2023}
 

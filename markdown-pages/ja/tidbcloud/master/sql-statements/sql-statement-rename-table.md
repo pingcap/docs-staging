@@ -53,7 +53,7 @@ SHOW TABLES;
     +----------------+
     1 row in set (0.00 sec)
 
-次の例は、データベース`db1` `db2`既に存在し、テーブル`db1.t1`と`db4` `db3.t3`既に存在していることを前提として、データベース間で複数のテーブル`db3`名前を変更する方法を示しています。
+次の例は、 `db3` `db1` `db2`既に存在し、テーブル`db1.t1`と`db4` `db3.t3`既に存在していることを前提として、データベース間で複数のテーブルの名前を変更する方法を示しています。
 
 ```sql
 RENAME TABLE db1.t1 To db2.t2, db3.t3 To db4.t4;
@@ -99,7 +99,7 @@ USE db4; SHOW TABLES;
     +---------------+
     1 row in set (0.00 sec)
 
-アトミック名前変更を使用すると、テーブルが存在しない瞬間を発生させることなく、テーブルをスワップアウトできます。
+アトミック名前変更を使用すると、テーブルが存在しない瞬間を発生させずにテーブルをスワップアウトできます。
 
 ```sql
 CREATE TABLE t1(id int PRIMARY KEY);
@@ -132,9 +132,9 @@ SHOW CREATE TABLE t1\G
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
     1 row in set (0.00 sec)
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`RENAME TABLE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`RENAME TABLE`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

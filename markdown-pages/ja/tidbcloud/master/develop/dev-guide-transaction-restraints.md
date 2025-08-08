@@ -5,33 +5,33 @@ summary: TiDB のトランザクション制約について学習します。
 
 # トランザクション制限 {#transaction-restraints}
 
-このドキュメントでは、TiDB のトランザクション制約について簡単に説明します。
+このドキュメントでは、TiDB におけるトランザクションの制約について簡単に説明します。
 
-## 隔離レベル {#isolation-levels}
+## 分離レベル {#isolation-levels}
 
-TiDB でサポートされている分離レベルは**RC (Read Committed)**と**SI (Snapshot Isolation)**です。SI**は**基本的に**RR (Repeatable Read)**分離レベルと同等です。
+TiDB でサポートされている分離レベルは**RC (Read Committed)**と**SI** **(Snapshot Isolation)**です。SI は基本的に**RR (Repeatable Read)**分離レベルに相当します。
 
 ![isolation level](https://docs-download.pingcap.com/media/images/docs/develop/transaction_isolation_level.png)
 
 ## スナップショット分離によりファントムリードを回避できる {#snapshot-isolation-can-avoid-phantom-reads}
 
-TiDB の分離レベル`SI`では**ファントム リード**を回避できますが、ANSI/ISO SQL 標準の`RR`では回避できません。
+TiDB の分離レベル`SI`では**ファントム リード**は回避できますが、ANSI/ISO SQL 標準の分離レベル`RR`では回避できません。
 
-次の 2 つの例は、**ファントム リード**が何であるかを示しています。
+次の 2 つの例は**、ファントム リードが**何であるかを示しています。
 
--   例 1:**トランザクションA は**最初にクエリに従って`n`行を取得し、次に**トランザクションB は**これらの`n`行以外の`m`行を変更するか、**トランザクションA**のクエリに一致する`m`行を追加します。**トランザクションA が**再度クエリを実行すると、条件に一致する行が`n+m`行あることがわかります。これはファントムのようなもので、**ファントム リード**と呼ばれます。
+-   例1：**トランザクションAは**まずクエリに従って`n`行を取得します。その後、**トランザクションBは**これらの`n`行以外の`m`行を変更するか、**トランザクションA**のクエリに一致する`m`行を追加します。**トランザクションAが**再度クエリを実行すると、条件に一致する行が`n+m`行あることがわかります。これはファントムリードに似ているため、**ファントムリード**と呼ばれます。
 
--   例 2:**管理者 A は、**データベース内のすべての生徒の成績を特定のスコアから ABCDE の成績に変更しますが、**管理者 B は**、この時点で特定のスコアのレコードを挿入します。**管理者 A が**変更を終了し、まだ変更されていないレコード (**管理者 B**によって挿入されたレコード) が残っていることに気付きます。これが**ファントム リード**です。
+-   例2：**管理者Aが**データベース内のすべての生徒の成績を特定スコアからABCDEスコアに変更しましたが、**管理者Bは**同時に特定のスコアを持つレコードを挿入しました。**管理者A**が変更を終えると、まだ変更されていないレコード（**管理者B**が挿入したレコード）が残っていることに気づきます。これが**ファントムリード**です。
 
 ## SIは書き込みスキューを回避できない {#si-cannot-avoid-write-skew}
 
-TiDB の SI 分離レベルでは、**書き込みスキュー**例外を回避できません。**書き込みスキュー**例外を回避するには、 `SELECT FOR UPDATE`構文を使用します。
+TiDBのSI分離レベルでは**、書き込みスキュー**例外を回避できません。3構文`SELECT FOR UPDATE`使用することで、**書き込みスキュー**例外を回避できます。
 
-**書き込みスキュー**例外は、2 つの同時トランザクションが異なるが関連するレコードを読み取り、各トランザクションが読み取ったデータを更新して最終的にトランザクションをコミットするときに発生します。これらの関連レコード間に、複数のトランザクションによって同時に変更できない制約がある場合、最終結果は制約に違反します。
+**書き込みスキュー**例外は、2つの同時トランザクションが異なるものの関連するレコードを読み取り、各トランザクションが読み取ったデータを更新し、最終的にトランザクションをコミットしたときに発生します。これらの関連レコード間に、複数のトランザクションによる同時変更が不可能な制約がある場合、最終結果はその制約に違反することになります。
 
-たとえば、病院の医師シフト管理プログラムを作成するとします。病院では通常、複数の医師が同時に待機する必要がありますが、最低要件は少なくとも 1 人の医師が待機していることです。医師は、そのシフト中に少なくとも 1 人の医師が待機している限り、シフトを中止できます (たとえば、体調が悪い場合)。
+例えば、病院の医師シフト管理プログラムを作成するとします。病院では通常、複数の医師が同時にオンコール対応することが求められますが、最低要件として、少なくとも1人の医師がオンコール対応していることが挙げられます。医師は、例えば体調が優れない場合など、そのシフト中に少なくとも1人の医師がオンコール対応していれば、シフトを中断することができます。
 
-ここで、医師`Alice`と`Bob`が待機している状況があります。2 人とも体調が悪く、病気休暇を取ることにしました。偶然、2 人は同時にボタンをクリックします。次のプログラムでこのプロセスをシミュレートしてみましょう。
+今、医師`Alice`と`Bob`オンコール中です。二人とも体調が悪く、病気休暇を取ることにしました。そして、偶然にも同時にボタンをクリックしてしまいました。このプロセスを次のプログラムでシミュレートしてみましょう。
 
 <SimpleTab groupId="language">
 
@@ -354,7 +354,7 @@ mysql> SELECT * FROM doctors;
 +----+-------+---------+----------+
 ```
 
-どちらのトランザクションでも、アプリケーションは最初に 2 人以上の医師が待機中かどうかをチェックします。待機中の場合、1 人の医師は安全に休暇を取ることができると想定します。データベースはスナップショット分離を使用しているため、両方のチェックで`2`が返され、両方のトランザクションが次の段階に進みます。 `Alice`彼女の記録を非番として更新し、 `Bob`同様に更新します。両方のトランザクションが正常にコミットされました。これで、少なくとも 1 人の医師が待機中であるという要件に違反する、勤務中の医師がいなくなりました。次の図 ( ***Designing Data-Intensive Applications***から引用) は、実際に何が起こるかを示しています。
+どちらのトランザクションでも、アプリケーションはまず2人以上の医師が待機中かどうかを確認します。待機中の場合、1人の医師は安全に休暇を取得できると想定します。データベースはスナップショット分離を使用しているため、両方のチェックで`2`返され、両方のトランザクションが次の段階に進みます。3 `Alice`自身のレコードを非番として更新し、 `Bob`同様に更新します。両方のトランザクションが正常にコミットされました。これで、待機中の医師がいなくなり、少なくとも1人の医師が待機中であるという要件に違反します。次の図（ ***『Designing Data-Intensive Applications*** 』より引用）は、実際に何が起こるかを示しています。
 
 ![Write Skew](https://docs-download.pingcap.com/media/images/docs/develop/write-skew.png)
 
@@ -683,9 +683,9 @@ mysql> SELECT * FROM doctors;
 
 > **注記：**
 >
-> v6.2.0 以降、TiDB は[`savepoint`](/sql-statements/sql-statement-savepoint.md)機能をサポートします。TiDB クラスターが v6.2.0 より前の場合、TiDB クラスターは`PROPAGATION_NESTED`動作をサポートしません。v6.2.0 以降のバージョンにアップグレードすることをお勧めします。TiDB のアップグレードが不可能で、アプリケーションが`PROPAGATION_NESTED`伝播動作を使用する**Java Spring**フレームワークに基づいている場合は、アプリケーション側でそれを適応させて、ネストされたトランザクションのロジックを削除する必要があります。
+> TiDBはv6.2.0以降、 [`savepoint`](/sql-statements/sql-statement-savepoint.md)機能をサポートします。v6.2.0より前のバージョンのTiDBクラスタでは、 `PROPAGATION_NESTED`動作はサポートされません。v6.2.0以降のバージョンへのアップグレードをお勧めします。TiDBのアップグレードが不可能で、アプリケーションが`PROPAGATION_NESTED`伝播動作を使用する**Java Spring**フレームワークをベースにしている場合は、アプリケーション側でネストされたトランザクションのロジックを削除する必要があります。
 
-**Spring**がサポートする`PROPAGATION_NESTED`伝播動作は、ネストされたトランザクションをトリガーします。ネストされたトランザクションは、現在のトランザクションとは独立して開始される子トランザクションです。ネストされたトランザクションが開始すると、 `savepoint`が記録されます。ネストされたトランザクションが失敗すると、トランザクションは`savepoint`状態にロールバックされます。ネストされたトランザクションは外部トランザクションの一部であり、外部トランザクションと一緒にコミットされます。
+**Spring**がサポートする`PROPAGATION_NESTED`伝播動作は、ネストされたトランザクション（現在のトランザクションとは独立して開始される子トランザクション）をトリガーします。ネストされたトランザクションの開始時に`savepoint`記録されます。ネストされたトランザクションが失敗した場合、トランザクションは`savepoint`番目の状態にロールバックされます。ネストされたトランザクションは外側のトランザクションの一部であり、外側のトランザクションと同時にコミットされます。
 
 次の例は、 `savepoint`メカニズムを示しています。
 
@@ -707,38 +707,38 @@ mysql> SELECT * FROM T2;
 
 ## 大規模取引制限 {#large-transaction-restrictions}
 
-基本的な原則は、トランザクションのサイズを制限することです。KV レベルでは、TiDB は単一のトランザクションのサイズに制限を設けています。SQL レベルでは、1 行のデータに 1 つの KV エントリがマップされ、インデックスを追加するごとに 1 つの KV エントリが追加されます。SQL レベルでの制限は次のとおりです。
+基本原則は、トランザクションのサイズを制限することです。TiDBはKVレベルでは、単一トランザクションのサイズに制限を設けています。SQLレベルでは、1行のデータに1つのKVエントリがマッピングされ、インデックスを追加するごとに1つのKVエントリが追加されます。SQLレベルでの制限は以下のとおりです。
 
 -   単一行レコードの最大サイズは 120 MiB です。
 
-    -   TiDB v4.0.10 以降の v4.0.x バージョン、TiDB v5.0.0 以降のバージョンでは、tidb-server の[`performance.txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500)構成パラメータを使用して調整できます。v4.0.10 より前のバージョンでは、値は`6 MB`です。
+    -   TiDB v4.0.10以降のv4.0.xバージョン、およびTiDB v5.0.0以降のバージョンでは、tidb-serverの設定パラメータ[`performance.txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500)使用して調整できます。v4.0.10より前のバージョンでは、値は`6 MB`です。
     -   v7.6.0 以降では、 [`tidb_txn_entry_size_limit`](/system-variables.md#tidb_txn_entry_size_limit-new-in-v760)システム変数を使用して、この構成項目の値を動的に変更できます。
 
 -   サポートされる単一トランザクションの最大サイズは 1 TiB です。
 
-    -   TiDB v4.0 以降のバージョンでは、 [`performance.txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit)で設定できます。それより前のバージョンでは、値は`100 MB`です。
-    -   TiDB v6.5.0 以降のバージョンでは、この構成は推奨されません。詳細については、 [`performance.txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit) ) を参照してください。
+    -   TiDB v4.0 以降のバージョンでは、 [`performance.txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit)に設定できます。それより前のバージョンでは、値は`100 MB`です。
+    -   TiDB v6.5.0以降のバージョンでは、この構成は推奨されません。詳細については、 [`performance.txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit) )を参照してください。
 
-サイズ制限と行制限の両方について、トランザクション実行中にトランザクションのエンコードと追加キーのオーバーヘッドも考慮する必要があることに注意してください。最適なパフォーマンスを実現するには、100〜500行ごとに1つのトランザクションを書き込むことをお勧めします。
+サイズ制限と行制限の両方において、トランザクション実行中のエンコードと追加キーのオーバーヘッドも考慮する必要があります。最適なパフォーマンスを得るには、100～500行ごとに1つのトランザクションを書き込むことをお勧めします。
 
 ## 自動コミットされた<code>SELECT FOR UPDATE</code>文はロックを待機しません。 {#auto-committed-code-select-for-update-code-statements-do-not-wait-for-locks}
 
-現在、自動コミットされた`SELECT FOR UPDATE`ステートメントにはロックは追加されません。その効果は次の図に示されています。
+現在、自動コミットされた`SELECT FOR UPDATE`文にはロックは追加されません。その影響は次の図に示されています。
 
 ![The situation in TiDB](https://docs-download.pingcap.com/media/images/docs/develop/autocommit_selectforupdate_nowaitlock.png)
 
-これは MySQL との既知の非互換性の問題です。明示的な`BEGIN;COMMIT;`ステートメントを使用することでこの問題を解決できます。
+これはMySQLとの既知の非互換性問題です。明示的な`BEGIN;COMMIT;`文を使用することでこの問題を解決できます。
 
 ## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

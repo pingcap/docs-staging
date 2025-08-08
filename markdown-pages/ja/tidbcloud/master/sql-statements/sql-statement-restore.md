@@ -5,12 +5,12 @@ summary: TiDB データベースの RESTORE の使用法の概要。
 
 # 復元する {#restore}
 
-このステートメントは、 [`BACKUP`ステートメント](/sql-statements/sql-statement-backup.md)によって以前に作成されたバックアップ アーカイブからの分散復元を実行します。
+このステートメントは、以前に[`BACKUP`ステートメント](/sql-statements/sql-statement-backup.md)によって作成されたバックアップ アーカイブからの分散復元を実行します。
 
 > **警告：**
 >
 > -   この機能は実験的です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される可能性があります。バグを発見した場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
-> -   この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> -   この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
 
 `RESTORE`ステートメントは[BRツール](https://docs.pingcap.com/tidb/stable/backup-and-restore-overview)と同じエンジンを使用しますが、リストアプロセスは別のBRツールではなく TiDB 自体によって実行されます。BRの利点と注意事項はすべてここにも適用されます。特に、 **`RESTORE`現在ACID準拠ではありません**。 `RESTORE`実行する前に、以下の要件が満たされていることを確認してください。
 
@@ -37,10 +37,14 @@ BRIETables ::=
 |   "TABLE" TableNameList
 
 RestoreOption ::=
-    "RATE_LIMIT" '='? LengthNum "MB" '/' "SECOND"
+    "CHECKSUM_CONCURRENCY" '='? LengthNum
 |   "CONCURRENCY" '='? LengthNum
 |   "CHECKSUM" '='? Boolean
+|   "LOAD_STATS" '='? Boolean
+|   "RATE_LIMIT" '='? LengthNum "MB" '/' "SECOND"
 |   "SEND_CREDENTIALS_TO_TIKV" '='? Boolean
+|   "WAIT_TIFLASH_READY" '='? Boolean
+|   "WITH_SYS_TABLE" '='? Boolean
 
 Boolean ::=
     NUM | "TRUE" | "FALSE"
@@ -108,7 +112,23 @@ RESTORE DATABASE * FROM 's3://example-bucket-2020/backup-05/'
 
 `RATE_LIMIT`使用すると、TiKV ノードあたりの平均ダウンロード速度が制限され、ネットワーク帯域幅が削減されます。
 
-復元が完了する前に、 `RESTORE`バックアップファイルのデータに対してチェックサムを実行し、正確性を検証します。この検証が不要であると確信できる場合は、 `CHECKSUM`パラメータを`FALSE`に設定することでチェックを無効にすることができます。
+復元が完了する前に、 `RESTORE`指定すると、バックアップファイルのデータに対してチェックサムが実行され、データの正確性が検証されます。単一テーブルに対するチェックサムタスクのデフォルトの同時実行数は 4 ですが、 `CHECKSUM_CONCURRENCY`パラメータを使用して調整できます。データ検証が不要であると確信できる場合は、 `CHECKSUM`パラメータを`FALSE`に設定することでチェックを無効化できます。
+
+統計情報がバックアップされている場合、復元時にデフォルトで復元されます。統計情報を復元する必要がない場合は、 `LOAD_STATS`パラメータを`FALSE`に設定できます。
+
+<CustomContent platform="tidb">
+
+システム[権限テーブル](/privilege-management.md#privilege-table)デフォルトで復元されます。システム権限テーブルを復元する必要がない場合は、パラメータ`WITH_SYS_TABLE` `FALSE`に設定できます。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+システム[権限テーブル](https://docs.pingcap.com/tidb/stable/privilege-management#privilege-table)デフォルトで復元されます。システム権限テーブルを復元する必要がない場合は、パラメータ`WITH_SYS_TABLE` `FALSE`に設定できます。
+
+</CustomContent>
+
+デフォルトでは、復元タスクはTiFlashレプリカが完全に作成されるまで待機せずに完了します。復元タスクを待機させる必要がある場合は、パラメータ`WAIT_TIFLASH_READY` `TRUE`に設定できます。
 
 ```sql
 RESTORE DATABASE * FROM 's3://example-bucket-2020/backup-06/'

@@ -1,13 +1,13 @@
 ---
-title: Basic SSO Authentication
+title: Standard SSO Authentication
 summary: Google、GitHub、または Microsoft アカウントを使用してTiDB Cloudコンソールにログインする方法を学びます。
 ---
 
-# 基本的なSSO認証 {#basic-sso-authentication}
+# 標準SSO認証 {#standard-sso-authentication}
 
 このドキュメントでは、迅速かつ便利な基本的なシングル サインオン (SSO) 認証を使用して[TiDB Cloudコンソール](https://tidbcloud.com/)にログインする方法について説明します。
 
-TiDB Cloud は、 Google、GitHub、Microsoft アカウントの SSO 認証をサポートしています。SSO 認証を使用してTiDB Cloudにログインする場合、ID と資格情報はサードパーティの Google、GitHub、Microsoft プラットフォームに保存されるため、TiDB コンソールを使用してアカウント パスワードを変更したり、多要素認証 (MFA) を有効にしたりすることはできません。
+TiDB Cloudは、Google、GitHub、MicrosoftアカウントのSSO認証をサポートしています。SSO認証を使用してTiDB Cloudにログインする場合、IDと認証情報はサードパーティのGoogle、GitHub、Microsoftプラットフォームに保存されるため、TiDBコンソールを使用してアカウントのパスワードを変更したり、多要素認証（MFA）を有効にしたりすることはできません。
 
 > **注記：**
 >
@@ -19,7 +19,7 @@ Google アカウントでサインインするには、次の手順に従いま�
 
 1.  TiDB Cloud [ログイン](https://tidbcloud.com/)ページに移動します。
 
-2.  **「Google でログイン」を**クリックします。Google ログイン ページに移動します。
+2.  **「Googleでサインイン」**をクリックします。Googleのログインページに移動します。
 
 3.  画面の指示に従って、Google のユーザー名とパスワードを入力します。
 
@@ -27,8 +27,8 @@ Google アカウントでサインインするには、次の手順に従いま�
 
     > **注記：**
     >
-    > -   Google で初めてサインインする場合は、 TiDB Cloud の利用規約に同意するかどうかを尋ねられます。利用規約を読んで同意すると、 TiDB Cloud のウェルカム ページが表示され、その後TiDB Cloudコンソールに移動します。
-    > -   Google アカウントで 2 段階認証プロセス (2 要素認証とも呼ばれます) を有効にしている場合は、ユーザー名とパスワードを入力した後、確認コードも入力する必要があります。
+    > -   Googleアカウントで初めてログインする場合は、 TiDB Cloudの利用規約に同意するかどうかを尋ねられます。利用規約をお読みいただき、同意すると、 TiDB Cloudのウェルカムページが表示され、その後TiDB Cloudコンソールに移動します。
+    > -   Google アカウントで 2 段階認証プロセス（2 要素認証とも呼ばれます）を有効にしている場合は、ユーザー名とパスワードを入力した後に確認コードも入力する必要があります。
 
 ## GitHub SSOでサインイン {#sign-in-with-github-sso}
 
@@ -36,15 +36,15 @@ GitHub アカウントでサインインするには、次の手順を実行し�
 
 1.  TiDB Cloud [ログイン](https://tidbcloud.com/)ページに移動します。
 
-2.  **「GitHub でサインイン」を**クリックします。GitHub ログイン ページに移動します。
+2.  **「GitHubでサインイン」**をクリックします。GitHubのログインページに移動します。
 
-3.  画面の指示に従って、GitHub のユーザー名とパスワードを入力します。
+3.  画面上の指示に従って、GitHub のユーザー名とパスワードを入力します。
 
     ログインが成功すると、 TiDB Cloudコンソールに移動します。
 
     > **注記：**
     >
-    > -   GitHub で初めてサインインする場合は、 TiDB Cloud の利用規約に同意するかどうかを尋ねられます。利用規約を読んで同意すると、 TiDB Cloud のウェルカム ページが表示され、その後TiDB Cloudコンソールに移動します。
+    > -   GitHub に初めてサインインする場合は、 TiDB Cloud の利用規約に同意するかどうかを尋ねられます。利用規約をお読みになり、同意すると、 TiDB Cloud のウェルカムページが表示され、その後TiDB Cloudコンソールに移動します。
     > -   GitHub アカウントに 2 要素認証を設定している場合は、ユーザー名とパスワードを入力した後、確認コードも入力する必要があります。
 
 ## Microsoft SSO でサインイン {#sign-in-with-microsoft-sso}
@@ -53,7 +53,7 @@ Microsoft アカウントでサインインするには、次の手順を実行�
 
 1.  TiDB Cloud [ログイン](https://tidbcloud.com/)ページに移動します。
 
-2.  **「Microsoft でサインイン」**をクリックします。Microsoft のログイン ページに移動します。
+2.  **「Microsoftでサインイン」**をクリックします。Microsoftのログインページに移動します。
 
 3.  画面の指示に従って、Microsoft のユーザー名とパスワードを入力します。
 
@@ -61,5 +61,5 @@ Microsoft アカウントでサインインするには、次の手順を実行�
 
     > **注記：**
     >
-    > -   初めて Microsoft にサインインする場合は、 TiDB Cloud の利用規約に同意するかどうかを尋ねられます。利用規約を読んで同意すると、 TiDB Cloud のウェルカム ページが表示され、その後TiDB Cloudコンソールに移動します。
+    > -   Microsoft に初めてサインインする場合は、 TiDB Cloud の利用規約に同意するかどうかを尋ねられます。利用規約をお読みになり、同意すると、 TiDB Cloud のウェルカムページが表示され、その後TiDB Cloudコンソールに移動します。
     > -   Microsoft アカウントに 2 段階認証を設定している場合は、ユーザー名とパスワードを入力した後、確認コードも入力する必要があります。

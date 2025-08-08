@@ -5,15 +5,15 @@ summary: サポートチケットのLarkインタラクションに関する詳�
 
 # Lark経由でサポートチケットとやり取りする {#interact-with-support-tickets-via-lark}
 
-**Premium** [サポートプラン](/tidb-cloud/connected-care-detail.md)に加入している顧客向けに、 TiDB Cloud は[ラーク](https://www.larksuite.com/)で**PingCAP Support Bot**と呼ばれるチケット ボットを提供し、サポート チケットのより包括的なやり取りと管理をサポートします。
+**Premium** [サポートプラン](/tidb-cloud/connected-care-detail.md)に加入している顧客向けに、 TiDB Cloud は、サポート チケットのより包括的なやり取りと管理をサポートするために、 [ラーク](https://www.larksuite.com/)で**PingCAP Support Bot**と呼ばれるチケット ボットを提供します。
 
 > **注記：**
 >
-> Lark のチケット サポート機能は、リクエストに応じてご利用いただけます。この機能を試してみたい場合は、 TiDB Cloudサポート ( <a href="mailto:support@pingcap.com">[サポート](mailto:support@pingcap.com)</a>にお問い合わせいただくか、テクニカル アカウント マネージャー (TAM) にご連絡ください。
+> Larkのチケットサポート機能はリクエストに応じてご利用いただけます。この機能をご利用になりたい場合は、 TiDB Cloudサポート<a href="mailto:support@pingcap.com">[support@pingcap.com](mailto:support@pingcap.com)</a>までご連絡いただくか、担当のテクニカルアカウントマネージャー（TAM）までお問い合わせください。
 
-## サポートチケットとのやり取り {#interact-with-support-tickets}
+## サポートチケットでやり取りする {#interact-with-support-tickets}
 
-サポート チケットのインタラクションが有効になっている場合、 **PingCAP サポート ボットは****サポート チケット作成**メッセージ カードをスレッドに変換して、チケットのインタラクションを管理します。
+サポート チケットのインタラクションが有効になっている場合、 **PingCAP サポート ボットは****サポート チケット作成**メッセージ カードをスレッドに変換し、チケットのインタラクションを管理します。
 
 ![lark-ticket-interaction-1](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-lark-ticket-interaction-1.png)
 
@@ -25,8 +25,8 @@ PingCAP サポート エンジニアがチケットにコメントすると、�
 
 -   チケットのステータスを確認するにはどうすればいいですか?
 
-    チケットの作成に使用したメール アドレスで[PingCAP ヘルプセンター](https://tidb.support.pingcap.com/servicedesk/customer/user/requests)にログインします。現在のアカウントのすべての過去のチケットとそのステータスを表示できます。
+    チケット作成時に使用したメールアドレスで[PingCAPヘルプセンター](https://tidb.support.pingcap.com/servicedesk/customer/user/requests)にログインしてください。現在のアカウントのすべての過去のチケットとそのステータスを確認できます。
 
-## サポートに問い合わせる {#contact-support}
+## サポートにお問い合わせください {#contact-support}
 
-ご質問やご不明な点がございましたら、サポート チーム<a href="mailto:support@pingcap.com">[サポート](mailto:support@pingcap.com)</a>までお問い合わせください。
+ヘルプや質問がある場合は、 <a href="mailto:support@pingcap.com">[support@pingcap.com](mailto:support@pingcap.com)</a>のサポート チームにお問い合わせください。

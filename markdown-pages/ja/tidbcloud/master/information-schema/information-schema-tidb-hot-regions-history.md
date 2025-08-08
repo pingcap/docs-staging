@@ -9,7 +9,7 @@ summary: TIDB_HOT_REGIONS_HISTORY` information_schema テーブルについて�
 
 > **注記：**
 >
-> このテーブルは[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 <CustomContent platform="tidb">
 

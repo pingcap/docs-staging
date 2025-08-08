@@ -95,7 +95,7 @@ TiDB Cloud Serverless への WordPress データベース接続を構成しま�
     docker compose up -d
     ```
 
-2.  ローカル マシンでコンテナーを起動する場合は[ローカルホスト](http://localhost/)アクセスし、WordPress がリモート マシンで実行されている場合は`http://<your_instance_ip>`アクセスして、WordPress サイトをセットアップします。
+2.  ローカル マシンでコンテナーを起動する場合は[ローカルホスト](http://localhost/)にアクセスし、WordPress がリモート マシンで実行されている場合は`http://<your_instance_ip>`アクセスして、WordPress サイトをセットアップします。
 
 ### ステップ5: データベース接続を確認する {#step-5-confirm-the-database-connection}
 

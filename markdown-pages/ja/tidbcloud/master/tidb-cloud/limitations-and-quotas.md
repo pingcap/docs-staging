@@ -5,7 +5,7 @@ summary: TiDB Cloudの制限と割り当てについて説明します。
 
 # TiDB Cloud専用制限とクォータ {#tidb-cloud-dedicated-limitations-and-quotas}
 
-TiDB Cloud、 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターで作成できる各種類のコンポーネントの数と、TiDB の一般的な使用上の制限が制限されています。さらに、実際に必要な量を超えるリソースが作成されないように、ユーザーが作成するリソースの量を制限する組織レベルのクォータもいくつかあります。次の表は、制限とクォータの概要を示しています。
+TiDB Cloud、 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスター内で作成できる各コンポーネントの数と、TiDBの一般的な使用制限が制限されています。さらに、組織レベルのクォータによってユーザーが作成できるリソースの量を制限し、実際に必要な量を超えるリソースの作成を防ぐことができます。以下の表は、制限とクォータの概要を示しています。
 
 > **注記：**
 >
@@ -13,10 +13,10 @@ TiDB Cloud、 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-d
 
 ## クラスタの制限 {#cluster-limits}
 
-| 成分                                                        | 制限 |
-| :-------------------------------------------------------- | :- |
-| [データ領域](/tidb-cloud/tidb-cloud-glossary.md#region)部あたりの部数 | 3  |
-| クロスゾーン展開のアベイラビリティゾーンの数                                    | 3  |
+| 成分                                                          | 制限 |
+| :---------------------------------------------------------- | :- |
+| [データ領域](/tidb-cloud/tidb-cloud-glossary.md#region)部あたりのコピー数 | 3  |
+| クロスゾーン展開のアベイラビリティゾーンの数                                      | 3  |
 
 > **注記：**
 >

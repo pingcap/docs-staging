@@ -29,11 +29,11 @@ ALTER DATABASE test DEFAULT CHARACTER SET = utf8mb4;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-現在、TiDB は一部の文字セットと照合順序のみをサポートしています。詳細については[文字セットと照合順序のサポート](/character-set-and-collation.md)参照してください。
+現在、TiDBは一部の文字セットと照合順序のみをサポートしています。詳細は[文字セットと照合順序のサポート](/character-set-and-collation.md)ご覧ください。
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`ALTER DATABASE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`ALTER DATABASE`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

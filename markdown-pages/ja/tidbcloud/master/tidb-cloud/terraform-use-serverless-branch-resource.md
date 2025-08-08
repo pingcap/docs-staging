@@ -185,7 +185,7 @@ Terraform で管理されていないTiDB Cloud Serverless ブランチの場合
 
     生成された構成ファイルを確認し、ニーズを満たしていることを確認してください。必要に応じて、このファイルの内容を任意の場所に移動することもできます。
 
-    次に、 `terraform apply`実行してインフラストラクチャをインポートします。適用後の出力例は次のとおりです。
+    次に、 `terraform apply`を実行してインフラストラクチャをインポートします。適用後の出力例は次のとおりです。
 
     ```shell
     tidbcloud_serverless_branch.example: Importing... 

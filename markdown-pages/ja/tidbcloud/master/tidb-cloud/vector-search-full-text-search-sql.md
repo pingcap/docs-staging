@@ -6,7 +6,7 @@ aliases: ['/tidb/stable/vector-search-full-text-search-sql']
 
 # SQLによる全文検索 {#full-text-search-with-sql}
 
-意味的類似性に重点を置く[ベクトル検索](/tidb-cloud/vector-search-overview.md)とは異なり、全文検索では正確なキーワードで文書を検索できます。検索拡張生成（RAG）シナリオでは、全文検索とベクトル検索を併用することで、検索品質を向上させることができます。
+意味的類似性に重点を置く[ベクトル検索](/vector-search/vector-search-overview.md)とは異なり、全文検索では正確なキーワードで文書を検索できます。検索拡張生成（RAG）シナリオでは、全文検索とベクトル検索を併用することで、検索品質を向上させることができます。
 
 TiDB の全文検索機能は、次の機能を提供します。
 

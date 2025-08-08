@@ -94,7 +94,7 @@ TiDB Cloudでは常時稼働していないTiDB Cloud Dedicated クラスター�
 
 4.  ダイアログで、 **「一時停止」**をクリックして選択を確認します。
 
-    **「一時停止」**をクリックすると、クラスターはまず「**一時停止中」**状態になります。一時停止操作が完了すると、クラスターは**「一時停止」**状態に遷移します。
+    **「一時停止」**をクリックすると、クラスターはまず「**一時停止中」**状態になります。一時停止操作が完了すると、クラスターは「**一時停止」**状態に遷移します。
 
 TiDB Cloud APIを使用してクラスターを一時停止することもできます。現在、 TiDB Cloud APIはまだベータ版です。詳細については、 [TiDB CloudAPI ドキュメント](https://docs.pingcap.com/tidbcloud/api/v1beta)ご覧ください。
 
@@ -104,7 +104,7 @@ TiDB Cloud APIを使用してクラスターを一時停止することもでき
 
 -   TiDB Cloud はクラスターの監視情報の収集を再開し、クラスターからデータを読み取ったり、クラスターにデータを書き込んだりできるようになります。
 -   TiDB Cloud はコンピューティングとstorageの両方のコストの課金を再開します。
--   TiDB Cloud はクラスターの[自動バックアップ](/tidb-cloud/backup-and-restore.md#turn-on-auto-backup)再開します。
+-   TiDB Cloud はクラスターの[自動バックアップ](/tidb-cloud/backup-and-restore.md#turn-on-auto-backup)を再開します。
 
 一時停止したクラスターを再開するには、次の手順を実行します。
 

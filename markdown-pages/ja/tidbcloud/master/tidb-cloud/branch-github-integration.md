@@ -27,7 +27,7 @@ summary: TiDB Cloud Serverless ブランチ機能を GitHub と統合する方�
 -   アプリケーション用のGitHubリポジトリ
 -   A [TiDB Cloudサーバーレス クラスター](/tidb-cloud/create-tidb-cluster-serverless.md)
 
-## TiDB Cloud ServerlessブランチをGitHubリポジトリに統合する {#integrate-tidb-cloud-serverless-branching-with-your-github-repository}
+## TiDB Cloud Serverless ブランチを GitHub リポジトリに統合します {#integrate-branching-with-your-github-repository} {#integrate-branching-with-your-github-repository}
 
 TiDB Cloud Serverless ブランチを GitHub リポジトリに統合するには、次の手順を実行します。
 
@@ -127,7 +127,7 @@ github:
 
 ワークフローを作成する主な手順は次のとおりです。
 
-1.  [TiDB Cloud ServerlessブランチをGitHubリポジトリに統合する](#integrate-tidb-cloud-serverless-branching-with-your-github-repository) 。
+1.  [TiDB Cloud ServerlessブランチをGitHubリポジトリに統合する](#integrate-branching-with-your-github-repository) 。
 
 2.  ブランチ接続情報を取得します。
 
@@ -163,7 +163,7 @@ github:
 
 次の例を使用して、ブランチング GitHub 統合の使用方法を学習します。
 
--   [分岐-gorm-例](https://github.com/tidbcloud/branching-gorm-example)
+-   [分岐ゴームの例](https://github.com/tidbcloud/branching-gorm-example)
 -   [分岐-Django-例](https://github.com/tidbcloud/branching-django-example)
 -   [分岐レールの例](https://github.com/tidbcloud/branching-rails-example)
 

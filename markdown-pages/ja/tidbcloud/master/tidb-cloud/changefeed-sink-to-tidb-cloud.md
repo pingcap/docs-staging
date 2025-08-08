@@ -108,7 +108,7 @@ summary: このドキュメントでは、 TiDB Cloud Dedicated クラスター�
 
     変更フィード名をクリックすると、チェックポイント、レプリケーションのレイテンシー、その他のメトリックなど、変更フィードに関する詳細が表示されます。
 
-11. シンクが作成された後、 [tidb_gc_life_time](https://docs.pingcap.com/tidb/stable/system-variables#tidb_gc_life_time-new-in-v50)元の値 (デフォルト値は`10m` ) に戻します。
+11. シンクが作成された後、 [tidb_gc_life_time](https://docs.pingcap.com/tidb/stable/system-variables#tidb_gc_life_time-new-in-v50)元の値（デフォルト値は`10m` ）に戻します。
 
     ```sql
     SET GLOBAL tidb_gc_life_time = '10m';

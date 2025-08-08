@@ -5,7 +5,7 @@ summary: TiDB データベースでの REPLACE の使用法の概要。
 
 # 交換する {#replace}
 
-`REPLACE`ステートメントは意味的には`DELETE` + `INSERT`ステートメントを組み合わせたものです。これを使用して、アプリケーション コードを簡素化できます。
+`REPLACE`文は意味的には`DELETE`文と`INSERT`文を組み合わせたものになります。これにより、アプリケーションコードを簡素化できます。
 
 ## 概要 {#synopsis}
 
@@ -34,7 +34,7 @@ InsertValues ::=
 
 > **注記：**
 >
-> v6.6.0 以降、TiDB は[リソース管理](/tidb-resource-control.md)サポートします。この機能を使用すると、異なるリソース グループで異なる優先度の SQL 文を実行できます。これらのリソース グループに適切なクォータと優先度を設定することで、異なる優先度の SQL 文のスケジュール制御を向上させることができます。リソース制御を有効にすると、文の優先度 ( `PriorityOpt` ) は無効になります。異なる SQL 文のリソース使用を管理するには、 [リソース管理](/tidb-resource-control.md)使用することをお勧めします。
+> TiDB v6.6.0以降、 [リソース管理](/tidb-resource-control-ru-groups.md)サポートします。この機能を使用すると、異なるリソースグループで異なる優先度のSQL文を実行できます。これらのリソースグループに適切なクォータと優先度を設定することで、優先度の異なるSQL文のスケジュールをより適切に制御できます。リソース制御を有効にすると、文の優先度（ `PriorityOpt` ）は無効になります。異なるSQL文のリソース使用量を管理するには、 [リソース管理](/tidb-resource-control-ru-groups.md)使用することをお勧めします。
 
 ## 例 {#examples}
 
@@ -70,9 +70,9 @@ mysql> SELECT * FROM t1;
 3 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`REPLACE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`REPLACE`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

@@ -8,6 +8,53 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
 このページには、2025 年の[TiDB Cloud](https://www.pingcap.com/tidb-cloud/)のリリース ノートが記載されています。
 
+## 2025年7月31日 {#july-31-2025}
+
+**一般的な変更**
+
+-   強化された Datadog と New Relic の統合がプレビューで利用できるようになりました。
+
+    主な機能強化:
+
+    -   メトリックのギャップを最小限に抑えるために、最適化された分離アーキテクチャを使用して統合バックエンドを再構築します。
+    -   ユーザーのニーズに基づいて監視メトリックを追加します。
+    -   一貫性を高めるためにメトリック ルールを調整します。
+
+    これらの機能強化により、より正確な監視が可能になり、Datadog と New Relic の統合の信頼性が強化されます。
+
+    展開計画:
+
+    このプレビュー版は、Datadog または New Relic との連携をまだ行っていない組織にご利用いただけます。既に Datadog または New Relic との連携を行っている組織には、来月、適切な移行プランとスケジュールを調整するために、積極的にご連絡いたします。
+
+    詳細については、 [TiDB Cloudと Datadog の統合 (プレビュー)](/tidb-cloud/monitor-datadog-integration.md)および[TiDB Cloudと New Relic の統合（プレビュー）](/tidb-cloud/monitor-new-relic-integration.md)参照してください。
+
+## 2025年7月22日 {#july-22-2025}
+
+**一般的な変更**
+
+-   Google Cloud でホストされている[TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスタに新しいノード サイズ`32 vCPU, 128 GiB`指定します。
+
+    この新しいサイズは、TiDB、TiKV、およびTiFlashノードで使用できます。
+
+-   [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)の TiKV スケーリング プロセスを改善して、クラスターの安定性を強化します。
+
+    TiKV ノードの[vCPUとRAMのサイズを変更する](/tidb-cloud/scale-tidb-cluster.md#change-vcpu-and-ram)追加すると、 TiDB Cloud は、クラスターの内部サービスに新しい構成をサポートするために追加の容量が必要かどうかを自動的に確認します。
+
+    -   拡張が必要な場合は、 TiDB Cloud は続行する前に確認を求めます。
+    -   スケーリング後の現在の内部サービス容量がすでに必要なサイズよりも大きい場合、 TiDB Cloud は、クラスターの安定性に影響を与える可能性のある不要な変更を回避するために、内部サービスの既存の構成を保持します。
+
+**コンソールの変更**
+
+-   [TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターのクラウドstorageデータのインポート エクスペリエンスを強化します。
+
+    インポートプロセスは、インテリジェントな事前チェック機能を備えた3ステップのウィザードに簡素化されました。この新しいウィザードは、接続設定、ファイルマッピング、バケットスキャンをガイドします。スキャン機能により、 TiDB Cloudはインポートされるファイルとそのインポート先をインポート前に正確に表示するため、設定の複雑さが大幅に軽減され、インポートの失敗を防止できます。
+
+    詳細については、次のドキュメントを参照してください。
+
+    -   [サンプルデータをTiDB Cloud Serverlessにインポートする](/tidb-cloud/import-sample-data-serverless.md)
+    -   [クラウド ストレージからTiDB Cloud Serverless に CSV ファイルをインポートする](/tidb-cloud/import-csv-files-serverless.md)
+    -   [Cloud Storage からTiDB Cloud Serverless に Apache Parquet ファイルをインポートする](/tidb-cloud/import-parquet-files-serverless.md)
+
 ## 2025年7月15日 {#july-15-2025}
 
 **一般的な変更**
@@ -161,6 +208,8 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
     [TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターは、 [アクセスキーペア](https://www.alibabacloud.com/help/en/ram/user-guide/create-an-accesskey-pair)使用して[Alibaba Cloud オブジェクト ストレージ サービス (OSS)](https://www.alibabacloud.com/en/product/object-storage-service)にデータをエクスポートできるようになりました。
 
     詳細については[TiDB Cloud Serverlessからデータをエクスポート](/tidb-cloud/serverless-export.md#alibaba-cloud-oss)参照してください。
+
+-   [TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)クラスターの TiDB バージョンを[バージョン7.1.3](https://docs.pingcap.com/tidb/v7.1/release-7.1.3)から[バージョン7.5.2](https://docs.pingcap.com/tidb/v7.5/release-7.5.2)にアップグレードします。
 
 ## 2025年4月15日 {#april-15-2025}
 

@@ -33,16 +33,12 @@ TiDB Cloudでは、イベントはTiDB Cloudクラスターの変化を示しま
 
 詳細については[TiDB Cloudクラスタイベント](/tidb-cloud/tidb-cloud-events.md)参照してください。
 
-## サードパーティの指標統合（ベータ版） {#third-party-metrics-integrations-beta}
+## サードパーティの指標の統合 {#third-party-metrics-integrations}
 
 TiDB Cloud を使用すると、次のサードパーティ メトリック サービスを統合して、 TiDB Cloudアラートを受信し、TiDB クラスターのパフォーマンス メトリックを表示できます。
 
--   Datadog統合
+-   [Datadog 統合（プレビュー）](/tidb-cloud/monitor-datadog-integration.md)
 
--   PrometheusとGrafanaの統合
+-   [Prometheus と Grafana の統合 (ベータ版)](/tidb-cloud/monitor-prometheus-and-grafana-integration.md)
 
--   New Relicとの統合
-
-現在、これらのサードパーティ メトリックの統合はベータ版です。
-
-詳細については[サードパーティメトリクス統合（ベータ版）](/tidb-cloud/third-party-monitoring-integrations.md)参照してください。
+-   [New Relic 統合（プレビュー）](/tidb-cloud/monitor-new-relic-integration.md)

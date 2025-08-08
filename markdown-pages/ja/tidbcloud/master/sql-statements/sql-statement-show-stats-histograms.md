@@ -17,8 +17,8 @@ summary: TiDB データベースの SHOW STATS_HISTOGRAMS の使用法の概要�
 | `Column_name`     | 列名（ `is_index`が`0`場合）またはインデックス名（ `is_index`が`1`場合） |
 | `Is_index`        | インデックス列であるかどうか                                     |
 | `Update_time`     | 更新時間                                               |
-| `Distinct_count`  | 個別のカウント                                            |
-| `Null_count`      | NULL カウント                                          |
+| `Distinct_count`  | 個別カウント                                             |
+| `Null_count`      | NULLカウント                                           |
 | `Avg_col_size`    | 平均コルサイズ                                            |
 | `Correlation`     | この列と整数主キー列の間のピアソン相関係数。2つの列間の関連の度合いを示します。           |
 | `Load_status`     | 負荷ステータス（ `allEvicted`など`allLoaded`                 |
@@ -69,11 +69,11 @@ SHOW STATS_HISTOGRAMS WHERE table_name = 't2';
 2 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。
 
 ## 参照 {#see-also}
 
--   [分析する](/sql-statements/sql-statement-analyze-table.md)
+-   [分析](/sql-statements/sql-statement-analyze-table.md)
 -   [統計入門](/statistics.md)

@@ -3,18 +3,18 @@ title: SHOW STATS_LOCKED
 summary: TiDB データベースの SHOW STATS_LOCKED の使用法の概要。
 ---
 
-# STATS_LOCKED を表示 {#show-stats-locked}
+# 統計を表示_ロック済み {#show-stats-locked}
 
 `SHOW STATS_LOCKED`統計がロックされているテーブルを表示します。
 
 現在、 `SHOW STATS_LOCKED`ステートメントは次の列を返します。
 
-| カラム名             | 説明                   |
-| ---------------- | -------------------- |
-| `Db_name`        | データベース名              |
-| `Table_name`     | テーブル名                |
-| `Partition_name` | パーティション名             |
-| `Status`         | 統計ステータス（ `locked`など） |
+| カラム名             | 説明                  |
+| ---------------- | ------------------- |
+| `Db_name`        | データベース名             |
+| `Table_name`     | テーブル名               |
+| `Partition_name` | パーティション名            |
+| `Status`         | 統計ステータス（例： `locked` |
 
 ## 概要 {#synopsis}
 
@@ -26,7 +26,7 @@ ShowLikeOrWhereOpt ::= 'LIKE' SimpleExpr | 'WHERE' Expression
 
 ## 例 {#examples}
 
-テーブル`t`を作成し、そこにデータを挿入します。テーブル`t`の統計がロックされていない場合、 `ANALYZE`ステートメントは正常に実行できます。
+テーブル`t`を作成し、そこにデータを挿入します。テーブル`t`の統計情報がロックされていない場合、 `ANALYZE`文は正常に実行できます。
 
 ```sql
 mysql> CREATE TABLE t(a INT, b INT);
@@ -48,7 +48,7 @@ mysql> SHOW WARNINGS;
 1 row in set (0.00 sec)
 ```
 
-テーブル`t`の統計をロックし、 `SHOW STATS_LOCKED`実行します。出力には、テーブル`t`の統計がロックされたことが示されます。
+テーブル`t`の統計情報をロックし、 `SHOW STATS_LOCKED`実行します。出力には、テーブル`t`の統計情報がロックされたことが示されます。
 
 ```sql
 mysql> LOCK STATS t;
@@ -63,7 +63,7 @@ mysql> SHOW STATS_LOCKED;
 1 row in set (0.01 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。
 
@@ -71,4 +71,4 @@ mysql> SHOW STATS_LOCKED;
 
 -   [統計](/statistics.md#lock-statistics)
 -   [ロック統計](/sql-statements/sql-statement-lock-stats.md)
--   [統計情報のロックを解除](/sql-statements/sql-statement-unlock-stats.md)
+-   [統計情報をアンロック](/sql-statements/sql-statement-unlock-stats.md)

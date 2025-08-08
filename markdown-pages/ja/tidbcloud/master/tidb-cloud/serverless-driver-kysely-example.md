@@ -5,12 +5,12 @@ summary: Kysely でTiDB Cloudサーバーレス ドライバーを使用する�
 
 # TiDB CloudサーバーレスDriverKysely チュートリアル {#tidb-cloud-serverless-driver-kysely-tutorial}
 
-[キセリ](https://kysely.dev/docs/intro) 、型安全で自動補完対応の TypeScript SQL クエリ ビルダーです。TiDB TiDB Cloud は[翻訳:](https://github.com/tidbcloud/kysely)提供し、 [TiDB Cloudサーバーレス ドライバー](/tidb-cloud/serverless-driver.md)を使用して HTTPS 経由で Kysely を使用できます。従来の TCP 方式と比較して、 [翻訳:](https://github.com/tidbcloud/kysely)は次の利点があります。
+[キセリー](https://kysely.dev/docs/intro) 、型安全で自動補完に対応した TypeScript SQL クエリビルダーです。TiDB TiDB Cloud は[@tidbcloud/kysely](https://github.com/tidbcloud/kysely)提供しており、 [TiDB Cloudサーバーレス ドライバー](/tidb-cloud/serverless-driver.md)で HTTPS 経由で Kysely を利用できます。従来の TCP 方式と比較して、 [@tidbcloud/kysely](https://github.com/tidbcloud/kysely)は以下の利点があります。
 
 -   サーバーレス環境でのパフォーマンスが向上します。
 -   エッジ環境で Kysely を使用する機能。
 
-このチュートリアルでは、Node.js 環境とエッジ環境で Kysely とTiDB Cloudサーバーレス ドライバーを使用する方法について説明します。
+このチュートリアルでは、Node.js 環境およびエッジ環境で Kysely とTiDB Cloudサーバーレス ドライバーを使用する方法について説明します。
 
 ## Node.js環境でTiDB Cloud Kysely方言を使用する {#use-tidb-cloud-kysely-dialect-in-node-js-environments}
 
@@ -21,8 +21,8 @@ summary: Kysely でTiDB Cloudサーバーレス ドライバーを使用する�
 このチュートリアルを完了するには、次のものが必要です。
 
 -   [Node.js](https://nodejs.org/en) &gt;= 18.0.0。
--   [ネプ](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)またはお好みのパッケージ マネージャーを使用します。
--   TiDB Cloud Serverless クラスター。ない場合は、 [TiDB Cloud Serverless クラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md)使用できます。
+-   [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)またはお好みのパッケージ マネージャーを使用します。
+-   TiDB Cloud Serverless クラスター。お持ちでない場合は、 [TiDB Cloud Serverless クラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md)ご利用ください。
 
 ### ステップ1. プロジェクトを作成する {#step-1-create-a-project}
 
@@ -31,7 +31,7 @@ summary: Kysely でTiDB Cloudサーバーレス ドライバーを使用する�
         mkdir kysely-node-example
         cd kysely-node-example
 
-2.  `kysely`パッケージ`@tidbcloud/kysely` `@tidbcloud/serverless`します。
+2.  `kysely` 、および`@tidbcloud/serverless`パッケージ`@tidbcloud/kysely`インストールします。
 
         npm install kysely @tidbcloud/kysely @tidbcloud/serverless
 
@@ -48,7 +48,7 @@ summary: Kysely でTiDB Cloudサーバーレス ドライバーを使用する�
     }
     ```
 
-4.  プロジェクトのルート ディレクトリに、TypeScript コンパイラ オプションを定義する`tsconfig.json`ファイルを追加します。次にサンプル ファイルを示します。
+4.  プロジェクトのルートディレクトリに、TypeScriptコンパイラオプションを定義するファイル`tsconfig.json`追加します。以下にサンプルファイルを示します。
 
     ```json
     {
@@ -69,21 +69,21 @@ summary: Kysely でTiDB Cloudサーバーレス ドライバーを使用する�
 
 ### ステップ2. 環境を設定する {#step-2-set-the-environment}
 
-1.  TiDB Cloud Serverless クラスターの概要ページで、右上隅の**[接続]**をクリックし、表示されるダイアログからデータベースの接続文字列を取得します。接続文字列は次のようになります。
+1.  TiDB Cloud Serverlessクラスターの概要ページで、右上隅の**「接続」**をクリックし、表示されるダイアログからデータベースの接続文字列を取得します。接続文字列は以下のようになります。
 
         mysql://[username]:[password]@[host]/[database]
 
-2.  ローカル環境で環境変数`DATABASE_URL`設定します。たとえば、Linux または macOS では、次のコマンドを実行できます。
+2.  ローカル環境で環境変数`DATABASE_URL`設定します。例えば、LinuxまたはmacOSでは、次のコマンドを実行できます。
 
     ```bash
     export DATABASE_URL='mysql://[username]:[password]@[host]/[database]'
     ```
 
-### ステップ3. Kyselyを使用してデータを照会する {#step-3-use-kysely-to-query-data}
+### ステップ3. Kyselyを使ってデータをクエリする {#step-3-use-kysely-to-query-data}
 
 1.  TiDB Cloud Serverless クラスターにテーブルを作成し、データを挿入します。
 
-    [TiDB Cloudコンソールの SQL エディター](/tidb-cloud/explore-data-with-chat2query.md)使用して SQL ステートメントを実行できます。次に例を示します。
+    [TiDB Cloudコンソールの SQL エディター](/tidb-cloud/explore-data-with-chat2query.md)使用するとSQL文を実行できます。以下に例を示します。
 
     ```sql
     CREATE TABLE `test`.`person`  (
@@ -96,7 +96,7 @@ summary: Kysely でTiDB Cloudサーバーレス ドライバーを使用する�
     insert into test.person values (1,'pingcap','male')
     ```
 
-2.  プロジェクトのルート ディレクトリに`hello-world.ts`という名前のファイルを作成し、次のコードを追加します。
+2.  プロジェクトのルート ディレクトリに`hello-world.ts`名前のファイルを作成し、次のコードを追加します。
 
     ```ts
     import { Kysely,GeneratedAlways,Selectable } from 'kysely'
@@ -148,15 +148,15 @@ summary: Kysely でTiDB Cloudサーバーレス ドライバーを使用する�
 
 ## エッジ環境でTiDB Cloud Kysely 方言を使用する {#use-tidb-cloud-kysely-dialect-in-edge-environments}
 
-このセクションでは、Vercel Edge Function のTiDB Cloud Kysely 方言を例に説明します。
+このセクションでは、Vercel Edge Function のTiDB Cloud Kysely 方言を例に挙げます。
 
 ### 始める前に {#before-you-begin}
 
 このチュートリアルを完了するには、次のものが必要です。
 
 -   エッジ環境を提供する[ヴェルセル](https://vercel.com/docs)アカウント。
--   [ネプ](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)またはお好みのパッケージ マネージャーを使用します。
--   TiDB Cloud Serverless クラスター。ない場合は、 [TiDB Cloud Serverless クラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md)使用できます。
+-   [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)またはお好みのパッケージ マネージャーを使用します。
+-   TiDB Cloud Serverless クラスター。お持ちでない場合は、 [TiDB Cloud Serverless クラスターを作成する](/develop/dev-guide-build-cluster-in-cloud.md)ご利用ください。
 
 ### ステップ1. プロジェクトを作成する {#step-1-create-a-project}
 
@@ -164,18 +164,18 @@ summary: Kysely でTiDB Cloudサーバーレス ドライバーを使用する�
 
         npm i -g vercel@latest
 
-2.  次のターミナル コマンドを使用して、 `kysely-example`という[次](https://nextjs.org/)プロジェクトを作成します。
+2.  次のターミナル コマンドを使用して、 `kysely-example`という[ネクスト.js](https://nextjs.org/)プロジェクトを作成します。
 
         npx create-next-app@latest kysely-example --ts --no-eslint --tailwind --no-src-dir --app --import-alias "@/*"
         cd kysely-example
 
-3.  `kysely`パッケージ`@tidbcloud/kysely` `@tidbcloud/serverless`します。
+3.  `kysely` 、および`@tidbcloud/serverless`パッケージ`@tidbcloud/kysely`インストールします。
 
         npm install kysely @tidbcloud/kysely @tidbcloud/serverless
 
 ### ステップ2. 環境を設定する {#step-2-set-the-environment}
 
-TiDB Cloud Serverless クラスターの概要ページで、右上隅の**[接続]**をクリックし、表示されるダイアログからデータベースの接続文字列を取得します。接続文字列は次のようになります。
+TiDB Cloud Serverlessクラスターの概要ページで、右上隅の**「接続」**をクリックし、表示されるダイアログからデータベースの接続文字列を取得します。接続文字列は以下のようになります。
 
     mysql://[username]:[password]@[host]/[database]
 
@@ -183,7 +183,7 @@ TiDB Cloud Serverless クラスターの概要ページで、右上隅の**[接�
 
 1.  TiDB Cloud Serverless クラスターにテーブルを作成し、データを挿入します。
 
-    [TiDB Cloudコンソールの SQL エディター](/tidb-cloud/explore-data-with-chat2query.md)使用して SQL ステートメントを実行できます。次に例を示します。
+    [TiDB Cloudコンソールの SQL エディター](/tidb-cloud/explore-data-with-chat2query.md)使用するとSQL文を実行できます。以下に例を示します。
 
     ```sql
     CREATE TABLE `test`.`person`  (
@@ -252,7 +252,7 @@ TiDB Cloud Serverless クラスターの概要ページで、右上隅の**[接�
     }
     ```
 
-    上記のコードはクエリ パラメータ`query`を受け入れ、クエリの結果を返します。クエリ パラメータが指定されていない場合は、テーブル`person`内のすべてのレコードを返します。
+    上記のコードはクエリパラメータ`query`を受け取り、クエリの結果を返します。クエリパラメータが指定されていない場合は、テーブル`person`のすべてのレコードを返します。
 
 3.  コードをローカルでテストします。
 
@@ -271,7 +271,7 @@ TiDB Cloud Serverless クラスターの概要ページで、右上隅の**[接�
 
 2.  ルートからの応答を取得するには、 `${Your-URL}/api/edge-function-example`ページに移動します。
 
-## 次は何か {#what-s-next}
+## 次は何？ {#what-s-next}
 
--   [キセリ](https://kysely.dev/docs/intro)と[翻訳:](https://github.com/tidbcloud/kysely)について詳しく見る
--   方法を学ぶ[TiDB CloudとVercelを統合する](/tidb-cloud/integrate-tidbcloud-with-vercel.md)
+-   [キセリー](https://kysely.dev/docs/intro)と[@tidbcloud/kysely](https://github.com/tidbcloud/kysely)について詳しく見る
+-   [TiDB CloudとVercelを統合する](/tidb-cloud/integrate-tidbcloud-with-vercel.md)やり方を学ぶ

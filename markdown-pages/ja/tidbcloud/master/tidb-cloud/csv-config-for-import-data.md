@@ -9,7 +9,7 @@ summary: TiDB Cloudのインポート データ サービスで CSV 構成を使
 
 以下は、 TiDB Cloudのデータインポートサービスを使用してCSVファイルをインポートする際のCSVコンフィグレーションウィンドウです。詳細については、 [クラウドストレージからTiDB Cloud DedicatedにCSVファイルをインポートする](/tidb-cloud/import-csv-files.md)参照してください。
 
-![CSV Configurations](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/import-data-csv-config.png)
+<img src="https://docs-download.pingcap.com/media/images/docs/tidb-cloud/import-data-csv-config.png" width="500" />
 
 ## セパレーター {#separator}
 
@@ -33,9 +33,15 @@ summary: TiDB Cloudのインポート データ サービスで CSV 構成を使
 
 -   デフォルト: `"`
 
+## NULL値 {#null-value}
+
+-   定義: CSV ファイル内の`NULL`値を表す文字列を定義します。
+
+-   デフォルト: `\N`
+
 ## バックスラッシュエスケープ {#backslash-escape}
 
--   定義: フィールド内のバックスラッシュをエスケープ文字として解析するかどうか。**バックスラッシュエスケープ**が`True`場合、以下のシーケンスが認識され、変換されます。
+-   定義: フィールド内のバックスラッシュをエスケープ文字として解析するかどうかを制御します。**バックスラッシュエスケープ**が有効になっている場合、以下のシーケンスが認識され、変換されます。
 
     | シーケンス | 変換された                    |
     | ----- | ------------------------ |
@@ -46,7 +52,7 @@ summary: TiDB Cloudのインポート データ サービスで CSV 構成を使
     | `\t`  | タブ ( `U+0009` )          |
     | `\Z`  | Windows EOF ( `U+001A` ) |
 
-    その他の場合（例えば`\"` ）には、バックスラッシュは削除され、次の文字（ `"` ）がフィールドに残ります。残った文字は特別な役割（例えば区切り文字）を持たず、通常の文字として扱われます。引用符で囲んでも、バックスラッシュがエスケープ文字として解析されるかどうかは影響を受けません。
+    その他の場合（例えば`\"` ）には、バックスラッシュは削除され、次の文字（ `"` ）がフィールドに残ります。残った文字には特別な役割（例えば区切り文字）はなく、通常の文字として扱われます。引用符で囲んでも、バックスラッシュがエスケープ文字として解析されるかどうかは影響を受けません。
 
     次のフィールドを例に挙げます。
 
@@ -65,12 +71,10 @@ summary: TiDB Cloudのインポート データ サービスで CSV 構成を使
 
     `"{\"key1\": \"val1\", \"key2\":\"val2\" }"`
 
--   デフォルト: `True`
+-   デフォルト: 有効
 
-## NULL値 {#null-value}
+## ヘッダーをスキップ {#skip-header}
 
--   定義: CSV ファイル内の`NULL`値を表す文字列を定義します。
+-   定義: CSVファイルのヘッダー行をスキップするかどうかを制御します。 **「ヘッダーをスキップ」**が有効になっている場合、インポート時にCSVファイルの最初の行がスキップされます。
 
--   デフォルト: `\N`
-
--   コンソールではカスタムnull値はサポートされていません。代わりに[TiDB CloudCLI](/tidb-cloud/get-started-with-cli.md)使用してください。詳細については[`ticloud serverless import start`](/tidb-cloud/ticloud-import-start.md)ご覧ください。
+-   デフォルト: 無効

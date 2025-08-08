@@ -21,7 +21,7 @@ TiDB Cloud上にTiDB Cloud Cloud Dedicated クラスターが作成されたら�
 
     -   [パブリック接続](/tidb-cloud/connect-via-standard-connection.md)
 
-        パブリック接続はトラフィックフィルター付きのパブリックエンドポイントを公開するため、ノートパソコンからSQLクライアント経由でTiDBクラスタに接続できます。TiDBクラスタへの接続にはTLSを使用できるため、アプリケーションからTiDBクラスタへのデータ転送のセキュリティが確保されます。詳細については、 [パブリック接続経由​​でTiDB Cloud Dedicated に接続](/tidb-cloud/connect-via-standard-connection.md)ご覧ください。
+        パブリック接続はトラフィックフィルター付きのパブリックエンドポイントを公開するため、ノートパソコンからSQLクライアント経由でTiDBクラスタに接続できます。TiDBクラスタへの接続にはTLSを使用できるため、アプリケーションからTiDBクラスタへのデータ転送のセキュリティが確保されます。詳細については、 [パブリック接続経由でTiDB Cloud Dedicated に接続](/tidb-cloud/connect-via-standard-connection.md)ご覧ください。
 
     -   プライベートエンドポイント（推奨）
 

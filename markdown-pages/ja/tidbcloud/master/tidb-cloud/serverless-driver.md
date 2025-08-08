@@ -1,23 +1,24 @@
 ---
 title: TiDB Cloud Serverless Driver (Beta)
 summary: サーバーレス環境およびエッジ環境からTiDB Cloud Serverless に接続する方法を学習します。
+aliases: ['/tidbcloud/serverless-driver-config']
 ---
 
 # TiDB CloudサーバーレスDriver(ベータ版) {#tidb-cloud-serverless-driver-beta}
 
 ## TiDB Cloud Serverless Driver (ベータ版) を使用する理由 {#why-use-tidb-cloud-serverless-driver-beta}
 
-従来の TCP ベースの MySQL ドライバーは、長寿命で永続的な TCP 接続を期待しているため、サーバーレス関数には適していません。これは、サーバーレス関数の短寿命の性質と矛盾しています。さらに、包括的な TCP サポートと完全な Node.js 互換性が欠如している可能性のある[Vercel エッジ機能](https://vercel.com/docs/functions/edge-functions)や[Cloudflare ワーカー](https://workers.cloudflare.com/)などのエッジ環境では、これらのドライバーがまったく機能しない可能性があります。
+従来のTCPベースのMySQLドライバは、長寿命で永続的なTCP接続を前提としており、サーバーレス関数の短寿命な性質と矛盾するため、サーバーレス関数には適していません。さらに、包括的なTCPサポートと完全なNode.js互換性が欠如している可能性のある[Vercelエッジ関数](https://vercel.com/docs/functions/edge-functions)や[Cloudflareワーカー](https://workers.cloudflare.com/)などのエッジ環境では、これらのドライバが全く動作しない可能性があります。
 
-JavaScript 用の[TiDB Cloudサーバーレス ドライバー (ベータ版)](https://github.com/tidbcloud/serverless-js)使用すると、サーバーレス環境で一般的にサポートされている HTTP 経由でTiDB Cloud Serverless クラスターに接続できます。これにより、従来の TCP ベースの MySQL ドライバーと同様の開発エクスペリエンスを維持しながら、エッジ環境からTiDB Cloud Serverless クラスターに接続し、TCP による接続オーバーヘッドを削減できるようになりました。
+JavaScript 版[TiDB Cloudサーバーレス ドライバー (ベータ版)](https://github.com/tidbcloud/serverless-js)使用すると、サーバーレス環境で一般的にサポートされている HTTP 経由でTiDB Cloud Serverless クラスターに接続できるようになります。これにより、従来の TCP ベースの MySQL ドライバーと同様の開発エクスペリエンスを維持しながら、エッジ環境からTiDB Cloud Serverless クラスターに接続し、TCP による接続オーバーヘッドを削減することが可能になります。
 
 > **注記：**
 >
-> SQL や ORM ではなく RESTful API でプログラミングしたい場合は、 [データ サービス (ベータ版)](/tidb-cloud/data-service-overview.md)使用できます。
+> SQL や ORM ではなく RESTful API を使用してプログラミングしたい場合は、 [データサービス（ベータ版）](/tidb-cloud/data-service-overview.md)使用できます。
 
 ## サーバーレスドライバーをインストールする {#install-the-serverless-driver}
 
-npm を使用してドライバーをインストールできます。
+ドライバーは npm でインストールできます:
 
 ```bash
 npm install @tidbcloud/serverless
@@ -25,11 +26,11 @@ npm install @tidbcloud/serverless
 
 ## サーバーレスドライバーを使用する {#use-the-serverless-driver}
 
-サーバーレス ドライバーを使用して、 TiDB Cloud Serverless クラスターのデータを照会したり、対話型トランザクションを実行したりできます。
+サーバーレス ドライバーを使用すると、 TiDB Cloud Serverless クラスターのデータを照会したり、対話型トランザクションを実行したりできます。
 
 ### クエリ {#query}
 
-TiDB Cloud Serverless クラスターからデータをクエリするには、まず接続を作成する必要があります。次に、接続を使用して生の SQL クエリを実行できます。例:
+TiDB Cloud Serverless クラスターからデータをクエリするには、まず接続を作成する必要があります。その後、その接続を使用して生の SQL クエリを実行できます。例:
 
 ```ts
 import { connect } from '@tidbcloud/serverless'
@@ -40,7 +41,7 @@ const results = await conn.execute('select * from test where id = ?',[1])
 
 ### トランザクション（実験的） {#transaction-experimental}
 
-サーバーレス ドライバーを使用して対話型トランザクションを実行することもできます。例:
+サーバーレスドライバーを使用して対話型トランザクションを実行することもできます。例:
 
 ```ts
 import { connect } from '@tidbcloud/serverless'
@@ -60,7 +61,7 @@ try {
 
 ## エッジの例 {#edge-examples}
 
-エッジ環境でサーバーレス ドライバーを使用する例をいくつか示します。完全な例については、こちら[ライブデモ](https://github.com/tidbcloud/car-sales-insight)も試してください。
+エッジ環境でサーバーレスドライバーを使用する例をいくつかご紹介します。より詳細な例については、こちら[ライブデモ](https://github.com/tidbcloud/car-sales-insight)もご覧ください。
 
 <SimpleTab>
 
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest) {
 }
 ```
 
-[Vercel でTiDB Cloudサーバーレス ドライバーを使用する](/tidb-cloud/integrate-tidbcloud-with-vercel.md)について詳しく学びます。
+[VercelでTiDB Cloudサーバーレスドライバーを使用する](/tidb-cloud/integrate-tidbcloud-with-vercel.md)について詳しくご覧ください。
 
 </div>
 
@@ -99,7 +100,7 @@ export default {
 };
 ```
 
-[Cloudflare Workers でTiDB Cloudサーバーレス ドライバーを使用する](/tidb-cloud/integrate-tidbcloud-with-cloudflare.md)について詳しく学びます。
+[Cloudflare WorkersでTiDB Cloudサーバーレスドライバーを使用する](/tidb-cloud/integrate-tidbcloud-with-cloudflare.md)について詳しくご覧ください。
 
 </div>
 
@@ -115,14 +116,14 @@ export default async () => {
 }
 ```
 
-[Netlify でTiDB Cloudサーバーレス ドライバーを使用する](/tidb-cloud/integrate-tidbcloud-with-netlify.md#use-the-edge-function)について詳しく学びます。
+[NetlifyでTiDB Cloudサーバーレスドライバーを使用する](/tidb-cloud/integrate-tidbcloud-with-netlify.md#use-the-edge-function)について詳しくご覧ください。
 
 </div>
 
 <div label="Deno">
 
 ```ts
-import { connect } from "npm:@tidbcloud/serverless-js"
+import { connect } from "npm:@tidbcloud/serverless"
 
 const conn = connect({url: Deno.env.get('DATABASE_URL')})
 const result = await conn.execute('show tables')
@@ -133,7 +134,7 @@ const result = await conn.execute('show tables')
 <div label="Bun">
 
 ```ts
-import { connect } from "@tidbcloud/serverless-js"
+import { connect } from "@tidbcloud/serverless"
 
 const conn = connect({url: Bun.env.DATABASE_URL})
 const result = await conn.execute('show tables')
@@ -151,25 +152,25 @@ TiDB Cloudサーバーレス ドライバーは、接続レベルと SQL レベ�
 
 接続レベルでは、次の構成を行うことができます。
 
-| 名前           | タイプ | デフォルト値    | 説明                                                                                                                                                           |
-| ------------ | --- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `username`   | 弦   | 該当なし      | TiDB Cloud Serverlessのユーザー名                                                                                                                                  |
-| `password`   | 弦   | 該当なし      | TiDB Cloud Serverlessのパスワード                                                                                                                                  |
-| `host`       | 弦   | 該当なし      | TiDB Cloud Serverlessのホスト名                                                                                                                                   |
-| `database`   | 弦   | `test`    | TiDB Cloud Serverlessのデータベース                                                                                                                                 |
-| `url`        | 弦   | 該当なし      | データベースの URL は`mysql://[username]:[password]@[host]/[database]`形式で、デフォルトのデータベースに接続する場合は`database`スキップできます。                                                    |
-| `fetch`      | 関数  | グローバルフェッチ | カスタム フェッチ関数。たとえば、node.js の`undici`フェッチを使用できます。                                                                                                               |
-| `arrayMode`  | ブール | `false`   | 結果をオブジェクトではなく配列として返すかどうか。パフォーマンスを向上させるには、 `true`に設定します。                                                                                                      |
-| `fullResult` | ブール | `false`   | 行だけではなく完全な結果オブジェクトを返すかどうか。より詳細な結果を取得するには、 `true`に設定します。                                                                                                      |
-| `decoders`   | 物体  | `{}`      | キーと値のペアのコレクション。これにより、さまざまな列タイプのデコード プロセスをカスタマイズできます。各ペアでは、列タイプをキーとして指定し、対応する関数を値として指定できます。この関数は、 TiDB Cloudサーバーレス ドライバーから受信した生の文字列値を引数として受け取り、デコードされた値を返します。 |
+| 名前           | タイプ | デフォルト値    | 説明                                                                                                                                                      |
+| ------------ | --- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `username`   | 弦   | 該当なし      | TiDB Cloud Serverlessのユーザー名                                                                                                                             |
+| `password`   | 弦   | 該当なし      | TiDB Cloud Serverlessのパスワード                                                                                                                             |
+| `host`       | 弦   | 該当なし      | TiDB Cloud Serverlessのホスト名                                                                                                                              |
+| `database`   | 弦   | `test`    | TiDB Cloud Serverlessのデータベース                                                                                                                            |
+| `url`        | 弦   | 該当なし      | データベースの URL は`mysql://[username]:[password]@[host]/[database]`形式で、デフォルトのデータベースに接続する場合は`database`スキップできます。                                               |
+| `fetch`      | 関数  | グローバルフェッチ | カスタムフェッチ関数。例えば、node.jsの`undici` fetch関数を使うことができます。                                                                                                      |
+| `arrayMode`  | ブール | `false`   | 結果をオブジェクトではなく配列として返すかどうか。パフォーマンスを向上させるには、 `true`に設定してください。                                                                                              |
+| `fullResult` | ブール | `false`   | 行だけでなく、完全な結果オブジェクトを返すかどうか。より詳細な結果を取得するには、 `true`に設定してください。                                                                                              |
+| `decoders`   | 物体  | `{}`      | キーと値のペアのコレクション。これにより、異なる列の型に応じてデコード処理をカスタマイズできます。各ペアでは、列の型をキーとして指定し、対応する関数を値として指定できます。この関数は、 TiDB Cloudサーバーレスドライバーから受信した生の文字列値を引数として受け取り、デコードされた値を返します。 |
 
 **データベースURL**
 
 > **注記：**
 >
-> ユーザー名、パスワード、またはデータベース名に特殊文字が含まれている場合は、URL で渡すときにこれらの文字を[パーセンテージエンコード](https://en.wikipedia.org/wiki/Percent-encoding)エンコードする必要があります。たとえば、パスワード`password1@//?` 、URL では`password1%40%2F%2F%3F`としてエンコードする必要があります。
+> ユーザー名、パスワード、またはデータベース名に特殊文字が含まれている場合は、URLで渡す際にこれらの文字[パーセンテージエンコード](https://en.wikipedia.org/wiki/Percent-encoding)エンコードする必要があります。例えば、パスワードが`password1@//?`場合、URLでは`password1%40%2F%2F%3F`にエンコードする必要があります。
 
-`url`設定されている場合、 `host` 、 `username` 、 `password` 、および`database`個別に設定する必要はありません。次のコードは同等です。
+`url`設定されている場合、 `host` 、 `username` 、 `password` 、 `database`個別に設定する必要はありません。以下のコードは同等です。
 
 ```ts
 const config = {
@@ -192,7 +193,7 @@ const config = {
 const conn = connect(config)
 ```
 
-### SQL レベル オプション {#sql-level-options}
+### SQLレベルオプション {#sql-level-options}
 
 > **注記：**
 >
@@ -200,16 +201,16 @@ const conn = connect(config)
 
 SQL レベルでは、次のオプションを構成できます。
 
-| オプション        | タイプ | デフォルト値            | 説明                                                                                                                                                                                                                                                                                                  |
-| ------------ | --- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `arrayMode`  | ブール | `false`           | 結果をオブジェクトではなく配列として返すかどうか。パフォーマンスを向上させるには、 `true`に設定します。                                                                                                                                                                                                                                             |
-| `fullResult` | ブール | `false`           | 行だけではなく、完全な結果オブジェクトを返すかどうか。より詳細な結果を取得するには、 `true`に設定します。                                                                                                                                                                                                                                            |
-| `isolation`  | 弦   | `REPEATABLE READ` | トランザクション分離レベル。 `READ COMMITTED`または`REPEATABLE READ`に設定できます。                                                                                                                                                                                                                                         |
-| `decoders`   | 物体  | `{}`              | キーと値のペアのコレクション。これにより、さまざまな列の種類のデコード処理をカスタマイズできます。各ペアでは、列の種類をキーとして指定し、対応する関数を値として指定できます。この関数は、 TiDB Cloudサーバーレス ドライバーから受け取った生の文字列値を引数として受け取り、デコードされた値を返します。接続レベルと SQL レベルの両方で`decoders`設定した場合、接続レベルで設定された異なるキーを持つキーと値のペアは、SQL レベルにマージされて有効になります。両方のレベルで同じキー (つまり、列の種類) が指定されている場合は、SQL レベルの値が優先されます。 |
+| オプション        | タイプ | デフォルト値            | 説明                                                                                                                                                                                                                                                                                         |
+| ------------ | --- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `arrayMode`  | ブール | `false`           | 結果をオブジェクトではなく配列として返すかどうか。パフォーマンスを向上させるには、 `true`に設定してください。                                                                                                                                                                                                                                 |
+| `fullResult` | ブール | `false`           | 行だけでなく、完全な結果オブジェクトを返すかどうか。より詳細な結果を取得するには、 `true`に設定してください。                                                                                                                                                                                                                                 |
+| `isolation`  | 弦   | `REPEATABLE READ` | トランザクション分離レベル。 `READ COMMITTED`または`REPEATABLE READ`に設定できます。                                                                                                                                                                                                                                |
+| `decoders`   | 物体  | `{}`              | キーと値のペアのコレクション。これにより、異なる列タイプに対するデコード処理をカスタマイズできます。各ペアでは、列タイプをキーとして指定し、対応する関数を値として指定できます。この関数は、 TiDB Cloudサーバーレスドライバーから受信した生の文字列値を引数として受け取り、デコードされた値を返します。接続レベルと SQL レベルの両方で`decoders`設定した場合、接続レベルで異なるキーが設定されたキーと値のペアは、SQL レベルにマージされて有効になります。両方のレベルで同じキー（列タイプ）が指定されている場合は、SQL レベルの値が優先されます。 |
 
 **arrayMode と fullResult**
 
-完全な結果オブジェクトを配列として返すには、オプション`arrayMode`と`fullResult`次のように構成します。
+完全な結果オブジェクトを配列として返すには、 `arrayMode`と`fullResult`オプションを次のように構成します。
 
 ```ts
 const conn = connect({url: process.env['DATABASE_URL'] || 'mysql://[username]:[password]@[host]/[database]'})
@@ -255,28 +256,28 @@ conn.execute(`select ...`, [], {
 >
 > TiDB Cloudサーバーレス ドライバーの構成の変更:
 >
-> -   v0.0.7: SQL レベル オプション`isolation`を追加します。
-> -   v0.0.10: 接続レベルの構成`decoders`と SQL レベル オプション`decoders`を追加します。
+> -   v0.0.7: SQL レベル オプション`isolation`追加します。
+> -   v0.0.10: 接続レベルの構成`decoders`と SQL レベル オプション`decoders`追加します。
 
 ## 特徴 {#features}
 
 ### サポートされているSQL文 {#supported-sql-statements}
 
-DDL がサポートされ`DELETE` `UPDATE` 、次の`SET`ステートメント`EXPLAIN`サポートされ`SHOW` `USE` `INSERT` `COMMIT` `SELECT` `BEGIN`および`ROLLBACK` 。
+DDL がサポートされており、次の SQL ステートメントがサポートされています: `SELECT` 、 `SHOW` 、 `EXPLAIN` 、 `USE` 、 `INSERT` 、 `UPDATE` 、 `DELETE` 、 `BEGIN` 、 `COMMIT` 、 `ROLLBACK` 、および`SET` 。
 
-### データ型マッピング {#data-type-mapping}
+### データ型のマッピング {#data-type-mapping}
 
 TiDB Cloud Serverless と Javascript 間の型マッピングは次のとおりです。
 
 | TiDB Cloudサーバーレスタイプ | Javascriptタイプ |
 | ------------------- | ------------- |
-| 小さな                 | 番号            |
+| タイニーイント             | 番号            |
 | 符号なし TINYINT        | 番号            |
 | ブール                 | 番号            |
 | スモールイント             | 番号            |
-| 符号なし小整数             | 番号            |
+| 符号なしスモール整数          | 番号            |
 | ミディアムミント            | 番号            |
-| 内部                  | 番号            |
+| INT                 | 番号            |
 | 符号なし整数              | 番号            |
 | 年                   | 番号            |
 | フロート                | 番号            |
@@ -284,10 +285,10 @@ TiDB Cloud Serverless と Javascript 間の型マッピングは次のとおり�
 | ビッグイント              | 弦             |
 | 符号なしBIGINT          | 弦             |
 | 小数点                 | 弦             |
-| 文字                  | 弦             |
-| バルチャー               | 弦             |
+| チャー                 | 弦             |
+| 可変長文字               | 弦             |
 | バイナリ                | Uint8配列       |
-| バイナリ                | Uint8配列       |
+| VARBINARY           | Uint8配列       |
 | 小さなテキスト             | 弦             |
 | TEXT                | 弦             |
 | 中テキスト               | 弦             |
@@ -295,27 +296,27 @@ TiDB Cloud Serverless と Javascript 間の型マッピングは次のとおり�
 | タイニーブロブ             | Uint8配列       |
 | ブロブ                 | Uint8配列       |
 | ミディアムブロブ            | Uint8配列       |
-| ロングロブ               | Uint8配列       |
+| ロングブロブ              | Uint8配列       |
 | 日付                  | 弦             |
 | 時間                  | 弦             |
 | 日時                  | 弦             |
 | タイムスタンプ             | 弦             |
-| 列挙                  | 弦             |
+| 列挙型                 | 弦             |
 | セット                 | 弦             |
 | 少し                  | Uint8配列       |
-| 翻訳                  | 物体            |
-| NULL                | ヌル            |
+| JSON                | 物体            |
+| ヌル                  | ヌル            |
 | その他                 | 弦             |
 
 > **注記：**
 >
-> TiDB Cloudサーバーレス ドライバーは UTF-8 エンコーディングを使用して JavaScript 文字列を文字列にデコードするため、JavaScript 文字列への型変換にはTiDB Cloudサーバーレスのデフォルトの`utf8mb4`文字セットを使用するようにしてください。
+> TiDB Cloud Cloud サーバーレス ドライバーは UTF-8 エンコードを使用して JavaScript 文字列を文字列にデコードするため、JavaScript 文字列への型変換にはTiDB Cloud Serverless のデフォルトの`utf8mb4`文字セットを使用するようにしてください。
 
 > **注記：**
 >
 > TiDB Cloudサーバーレス ドライバーのデータ型マッピングの変更:
 >
-> -   v0.1.0: `BINARY` 、 `VARBINARY` 、 `TINYBLOB` 、 `BLOB` 、 `MEDIUMBLOB` 、 `LONGBLOB` 、および`BIT`タイプは、 `string`ではなく`Uint8Array`として返されるようになりました。
+> -   v0.1.0: `BINARY` 、 `VARBINARY` 、 `TINYBLOB` 、 `BLOB` 、 `MEDIUMBLOB` 、 `LONGBLOB` 、 `BIT`型は、 `string`ではなく`Uint8Array`として返されるようになりました。
 
 ### ORM統合 {#orm-integrations}
 
@@ -326,16 +327,16 @@ TiDB Cloudサーバーレス ドライバーは、次の ORM と統合されて�
 
 ## 価格 {#pricing}
 
-サーバーレス ドライバー自体は無料ですが、ドライバーを使用してデータにアクセスすると[リクエストユニット (RU)](/tidb-cloud/tidb-cloud-glossary.md#request-unit)とstorage使用量が発生します。価格は[TiDB Cloud Serverless の価格](https://www.pingcap.com/tidb-serverless-pricing-details/)モデルに従います。
+サーバーレスドライバー自体は無料ですが、ドライバーを使用してデータにアクセスすると[リクエストユニット（RU）](/tidb-cloud/tidb-cloud-glossary.md#request-unit)とstorage使用量が発生します。料金は[TiDB Cloud Serverless の価格](https://www.pingcap.com/tidb-serverless-pricing-details/)モデルに従います。
 
 ## 制限事項 {#limitations}
 
 現在、サーバーレス ドライバーの使用には次の制限があります。
 
 -   1 回のクエリで最大 10,000 行を取得できます。
--   一度に実行できる SQL ステートメントは 1 つだけです。1 つのクエリで複数の SQL ステートメントを実行することはまだサポートされていません。
+-   一度に実行できるSQL文は1つだけです。1つのクエリで複数のSQL文を実行することはまだサポートされていません。
 -   [プライベートエンドポイント](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)との接続はまだサポートされていません。
 
-## 次は何か {#what-s-next}
+## 次は何？ {#what-s-next}
 
--   [ローカル Node.js プロジェクトでTiDB Cloudサーバーレス ドライバーを使用する](/tidb-cloud/serverless-driver-node-example.md)方法を学びます。
+-   [ローカル Node.js プロジェクトでTiDB Cloudサーバーレス ドライバーを使用する](/tidb-cloud/serverless-driver-node-example.md)方法を学習します。

@@ -39,7 +39,7 @@ TiDBのトランザクション実装では、MVCC（Multiple Version Concurrenc
 >
 > このようなシナリオでは、エクスポート プロセス中の GC によるエクスポートの失敗を回避するために、事前に GC 時間を手動で延長する必要があります。
 >
-> 詳細は[TiDB GC時間を手動で設定する](/dumpling-overview.md#manually-set-the-tidb-gc-time)参照。
+> 詳細については[TiDB GC時間を手動で設定する](/dumpling-overview.md#manually-set-the-tidb-gc-time)参照してください。
 
 </CustomContent>
 
@@ -56,7 +56,7 @@ TiDBのトランザクション実装では、MVCC（Multiple Version Concurrenc
 >
 > このようなシナリオでは、エクスポート プロセス中の GC によるエクスポートの失敗を回避するために、事前に GC 時間を手動で延長する必要があります。
 >
-> 詳細は[TiDB GC時間を手動で設定する](https://docs.pingcap.com/tidb/stable/dumpling-overview#manually-set-the-tidb-gc-time)参照。
+> 詳細については[TiDB GC時間を手動で設定する](https://docs.pingcap.com/tidb/stable/dumpling-overview#manually-set-the-tidb-gc-time)参照してください。
 
 </CustomContent>
 

@@ -41,8 +41,8 @@ TiDB Cloudは現在、Amazon Web Services (AWS)、Google Cloud、Microsoft Azure
 
 ### TiDB Cloudではどのバージョンの TiDB がサポートされていますか? {#what-versions-of-tidb-are-supported-on-tidb-cloud}
 
--   2025 年 1 月 2 日以降、新しいTiDB Cloud Dedicated クラスターのデフォルトの TiDB バージョンは[バージョン8.1.2](https://docs.pingcap.com/tidb/v8.1/release-8.1.2)なります。
--   2024 年 2 月 21 日以降、 TiDB Cloud Serverless クラスターの TiDB バージョンは[バージョン7.1.3](https://docs.pingcap.com/tidb/v7.1/release-7.1.3)なります。
+-   新しいTiDB Cloud Dedicated クラスターの場合、2025 年 7 月 15 日以降、デフォルトの TiDB バージョンは[バージョン8.5.2](https://docs.pingcap.com/tidb/v8.5/release-8.5.2)なります。
+-   TiDB Cloud Serverless クラスターの場合、2025 年 4 月 22 日から TiDB バージョンは[バージョン7.5.2](https://docs.pingcap.com/tidb/v7.5/release-7.5.2)なります。
 
 詳細については[TiDB Cloudリリースノート](/tidb-cloud/tidb-cloud-release-notes.md)参照してください。
 

@@ -15,7 +15,7 @@ TiDB は MySQL 互換のデータベースであり、Ruby 用の最も人気の
 
 > **注記：**
 >
-> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed で動作します。
+> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed で機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -79,7 +79,7 @@ bundle add mysql2 dotenv
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -111,14 +111,14 @@ bundle add mysql2 dotenv
 
     > **注記**
     >
-    > TiDB Cloud Serverless の場合、パブリックエンドポイントを使用する場合は、 `DATABASE_ENABLE_SSL`経由で TLS 接続を有効にする**必要があります**。
+    > TiDB Cloud Serverless の場合、パブリック エンドポイントを使用するときは、 `DATABASE_ENABLE_SSL`経由で TLS 接続を有効にする**必要があります**。
 
 7.  `.env`ファイルを保存します。
 
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -190,7 +190,7 @@ ruby app.rb
 
 接続が成功すると、コンソールに次のように TiDB クラスターのバージョンが出力されます。
 
-    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.1.2)
+    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.2)
     ⏳ Loading sample game data...
     ✅ Loaded sample game data.
 
@@ -228,7 +228,7 @@ client = Mysql2::Client.new(options)
 
 > **注記**
 >
-> TiDB Cloud Serverless の場合、パブリックエンドポイントを使用するときは`DATABASE_ENABLE_SSL`で TLS 接続を有効にする**必要が**ありますが、mysql2 gem はファイルが見つかるまで特定の順序で既存の CA 証明書を検索するため、 `DATABASE_SSL_CA`で SSL CA 証明書を指定する必要は**ありません**。
+> TiDB Cloud Serverless の場合、パブリック エンドポイントを使用するときは`DATABASE_ENABLE_SSL`で TLS 接続を有効にする**必要があります**が、mysql2 gem はファイルが見つかるまで特定の順序で既存の CA 証明書を検索するため、 `DATABASE_SSL_CA`で SSL CA 証明書を指定する必要は**ありません**。
 
 ### データを挿入する {#insert-data}
 

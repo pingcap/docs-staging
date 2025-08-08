@@ -55,11 +55,11 @@ Empty set (0.00 sec)
 
 ## 分割前の地域 {#pre-split-region}
 
-コピー元のテーブルに`PRE_SPLIT_REGIONS`属性が定義されている場合、 `CREATE TABLE LIKE`ステートメントで作成されたテーブルはこの属性を継承し、新しいテーブルのリージョン は分割されます。 `PRE_SPLIT_REGIONS`の詳細については[`CREATE TABLE`ステートメント](/sql-statements/sql-statement-create-table.md)参照してください。
+コピー元のテーブルに`PRE_SPLIT_REGIONS`属性が定義されている場合、 `CREATE TABLE LIKE`文で作成されたテーブルはこの属性を継承し、新しいテーブルのリージョンは分割されます。5の詳細については、 `PRE_SPLIT_REGIONS` [`CREATE TABLE`文](/sql-statements/sql-statement-create-table.md)参照してください。
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`CREATE TABLE LIKE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`CREATE TABLE LIKE`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

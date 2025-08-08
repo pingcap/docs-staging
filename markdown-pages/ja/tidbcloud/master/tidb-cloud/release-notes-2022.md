@@ -116,7 +116,7 @@ summary: 2022 年のTiDB Cloudのリリース ノートについて説明しま�
 
 **一般的な変更**
 
--   Amazon Aurora MySQL、Amazon Relational Database Service (RDS) MySQL、またはセルフホスト型 MySQL 互換データベースからTiDB Cloud online (ベータ版) への​​データの直接移行をサポートします。
+-   Amazon Aurora MySQL、Amazon Relational Database Service (RDS) MySQL、またはセルフホスト型 MySQL 互換データベースからTiDB Cloud online (ベータ版) へのデータの直接移行をサポートします。
 
     これまでは、業務を一時停止してオフラインでデータをインポートするか、サードパーティ製のツールを使用してTiDB Cloudにデータを移行する必要があり、これは煩雑でした。しかし、**データ移行**機能を使用すると、 TiDB Cloudコンソールで操作するだけで、最小限のダウンタイムで安全にデータをTiDB Cloudに移行できます。
 
@@ -199,7 +199,7 @@ summary: 2022 年のTiDB Cloudのリリース ノートについて説明しま�
 
     変数がレベル`GLOBAL`で設定された場合、その変数はクラスターに適用され、永続的（サーバーの再起動またはリロード後も有効）になります。レベル`SESSION`の変数は永続的ではなく、現在のセッションでのみ有効です。
 
-    **この機能はまだベータ版であり**、サポートされている変数は限られています。副作用が不確実なため、他の[システム変数](/system-variables.md)変数を変更することは推奨されません。TiDB v6.1に基づいてサポートされているすべての変数については、以下のリストをご覧ください。
+    **この機能はまだベータ版であり**、サポートされている変数の数は限られています。副作用が不確実なため、他の[システム変数](/system-variables.md)変数の変更は推奨されません。TiDB v6.1に基づいてサポートされているすべての変数については、以下のリストをご覧ください。
 
     -   [`require_secure_transport`](/system-variables.md#require_secure_transport-new-in-v610)
     -   [`tidb_committer_concurrency`](/system-variables.md#tidb_committer_concurrency-new-in-v610)
@@ -340,7 +340,7 @@ summary: 2022 年のTiDB Cloudのリリース ノートについて説明しま�
 
 **APIの変更**
 
--   [TiDB CloudAPI](/tidb-cloud/api-overview.md)を介して TiKV またはTiFlashノードのstorageを増やすことができます。スケーリングには API エンドポイントの`storage_size_gib`フィールドを使用できます。
+-   [TiDB CloudAPI](/tidb-cloud/api-overview.md)介して TiKV またはTiFlashノードのstorageを増やすことができます。スケーリングには API エンドポイントの`storage_size_gib`フィールドを使用できます。
 
     現在、 TiDB Cloud API はまだベータ版であり、リクエストに応じてのみ利用可能です。
 
@@ -570,7 +570,7 @@ TiDB Cloudが一般提供を開始しました。1 [サインアップ](https://
 
 一般的な変更点:
 
--   固定サイズのクラスタ層はもうありません。TiDB、TiKV、 TiFlashのいずれか[クラスターサイズ](/tidb-cloud/size-your-cluster.md)簡単にカスタマイズできます。
+-   固定サイズのクラスタ層はもうありません。TiDB、TiKV、 TiFlashのいずれか[クラスターサイズ](/tidb-cloud/size-your-cluster.md)を簡単にカスタマイズできます。
 -   TiFlashのない既存のクラスターに[TiFlash](/tiflash/tiflash-overview.md)ノードを追加することをサポートします。
 -   [新しいクラスターを作成する](/tidb-cloud/create-tidb-cluster.md)場合、storageサイズ（500～2048 GiB）の指定をサポートします。クラスターの作成後はstorageサイズを変更できません。
 -   新しいパブリック リージョンを導入します`eu-central-1` 。

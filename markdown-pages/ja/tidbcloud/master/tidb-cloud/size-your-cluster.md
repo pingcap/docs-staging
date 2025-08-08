@@ -252,7 +252,7 @@ TiFlashノードの最小数: `min((800 GiB * 2 + 100 GiB * 1) / 1024 GiB, max(2
 >
 > クラスターの作成後にTiFlashノードのstorageを減らすことはできません。
 
-### TiFlashノードのstorageタイプ {#tiflash-node-storage-types}
+### TiFlashノードstorageタイプ {#tiflash-node-storage-types}
 
 TiDB Cloud は、 AWS でホストされる[TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターに対して次のTiFlashstorageタイプを提供します。
 

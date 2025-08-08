@@ -36,12 +36,12 @@ DROP SEQUENCE seq, seq2;
 
     Query OK, 0 rows affected (0.03 sec)
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは TiDB の拡張機能です。実装は MariaDB で利用可能なシーケンスに基づいてモデル化されています。
+このステートメントはTiDBの拡張機能です。実装はMariaDBで利用可能なシーケンスをモデルにしています。
 
 ## 参照 {#see-also}
 
 -   [シーケンスを作成](/sql-statements/sql-statement-create-sequence.md)
 -   [シーケンスの変更](/sql-statements/sql-statement-alter-sequence.md)
--   [表示シーケンスの作成](/sql-statements/sql-statement-show-create-sequence.md)
+-   [シーケンスの作成を表示](/sql-statements/sql-statement-show-create-sequence.md)

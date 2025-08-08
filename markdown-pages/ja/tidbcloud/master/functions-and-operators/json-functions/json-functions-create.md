@@ -3,13 +3,13 @@ title: JSON Functions That Create JSON Values
 summary: JSON 値を作成する JSON関数について学習します。
 ---
 
-# JSON 値を作成する JSON 関数 {#json-functions-that-create-json-values}
+# JSON値を作成するJSON関数 {#json-functions-that-create-json-values}
 
 このドキュメントでは、JSON 値を作成する JSON関数について説明します。
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-creation-functions.html#function_json-array">JSON_ARRAY()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-creation-functions-html-function-json-array-json-array-a}
 
-`JSON_ARRAY([val[, val] ...])`関数は、(空の可能性のある) 値のリストを評価し、それらの値を含む JSON 配列を返します。
+`JSON_ARRAY([val[, val] ...])`関数は、(空の可能性のある)値のリストを評価し、それらの値を含む JSON 配列を返します。
 
 ```sql
 SELECT JSON_ARRAY(1,2,3,4,5), JSON_ARRAY("foo", "bar");
@@ -54,5 +54,5 @@ SELECT JSON_QUOTE('The name is "O\'Neil"');
 
 ## 参照 {#see-also}
 
--   [JSON 関数の概要](/functions-and-operators/json-functions.md)
--   [JSON データ型](/data-type-json.md)
+-   [JSON関数の概要](/functions-and-operators/json-functions.md)
+-   [JSONデータ型](/data-type-json.md)

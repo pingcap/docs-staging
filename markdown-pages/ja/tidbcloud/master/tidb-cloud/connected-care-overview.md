@@ -95,7 +95,7 @@ Connected Care サービスのサポート プランでは、次のようなま�
 
 ### 同様のサービスに追加料金を支払う必要がありますか? {#do-i-need-to-pay-more-for-similar-services}
 
-新しいConnected Careサービスは、より包括的で豊富な機能を備えたサポートエクスペリエンスを提供しますが、価格は従来のサービスとほぼ同水準です。TiDB TiDB Cloudは、お客様のビジネスをより良くサポートするために、付加価値の提供に引き続き尽力してまいります。
+新しいConnected Careサービスは、より包括的で豊富な機能を備えたサポートエクスペリエンスを提供しますが、価格は従来のサービスとほぼ同等です。TiDB TiDB Cloudは、お客様のビジネスをより良くサポートするために、付加価値の提供に引き続き尽力してまいります。
 
 ### 従来の<strong>ベーシック</strong>プランが終了した後、テクニカル サポートを受けるにはどうすればよいですか? {#how-can-i-get-technical-support-after-the-legacy-strong-basic-strong-plan-shuts-down}
 
