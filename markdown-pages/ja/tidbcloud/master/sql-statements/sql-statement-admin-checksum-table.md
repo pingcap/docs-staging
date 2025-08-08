@@ -1,24 +1,24 @@
 ---
 title: ADMIN CHECKSUM TABLE | TiDB SQL Statement Reference
-summary: TiDB データベースの ADMIN の使用法の概要。
+summary: TiDB データベースにおける ADMIN の使用法の概要。
 category: reference
 ---
 
 # 管理者チェックサムテーブル {#admin-checksum-table}
 
-`ADMIN CHECKSUM TABLE`ステートメントは、テーブルのデータとインデックスの CRC64 チェックサムを計算します。
+`ADMIN CHECKSUM TABLE`のステートメントは、テーブルのデータとインデックスの CRC64 チェックサムを計算します。
 
 <CustomContent platform="tidb">
 
-[チェックサム](/tidb-lightning/tidb-lightning-glossary.md#checksum)は、テーブル データと`table_id`などのプロパティに基づいて計算されます。つまり、データは同じだが`table_id`値が異なる 2 つのテーブルでは、チェックサムが異なります。
+[チェックサム](/tidb-lightning/tidb-lightning-glossary.md#checksum) 、テーブルのデータと`table_id`などのプロパティに基づいて計算されます。つまり、同じデータを持ちながらも`table_id`値が異なる 2 つのテーブルでは、チェックサムは異なります。
 
-[TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 、 [TiDB データ移行](/dm/dm-overview.md) 、または[`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)を使用してテーブルをインポートした後、データの整合性を検証するためにデフォルトで`ADMIN CHECKSUM TABLE <table>`実行されます。
+[TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 、 [TiDBデータ移行](/dm/dm-overview.md) 、または[`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)を使用してテーブルをインポートした後、データの整合性を検証するためにデフォルトで`ADMIN CHECKSUM TABLE <table>`実行されます。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[チェックサム](https://docs.pingcap.com/tidb/stable/tidb-lightning-glossary#checksum)は、 `table_id`などのテーブル データとプロパティに基づいて計算されます。つまり、データは同じだが`table_id`値が異なる 2 つのテーブルでは、チェックサムが異なります。
+[チェックサム](https://docs.pingcap.com/tidb/stable/tidb-lightning-glossary#checksum)テーブルのデータと`table_id`などのプロパティに基づいて計算されます。つまり、同じデータを持ちながらも`table_id`値が異なる 2 つのテーブルでは、チェックサムは異なります。
 
 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)使用してテーブルをインポートした後、データの整合性を検証するためにデフォルトで`ADMIN CHECKSUM TABLE <table>`実行されます。
 
@@ -65,6 +65,6 @@ ADMIN CHECKSUM TABLE t1;
 1 row in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。

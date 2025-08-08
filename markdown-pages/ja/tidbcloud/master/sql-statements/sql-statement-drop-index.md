@@ -3,7 +3,7 @@ title: DROP INDEX | TiDB SQL Statement Reference
 summary: TiDB データベースの DROP INDEX の使用法の概要。
 ---
 
-# インデックスを削除 {#drop-index}
+# インデックスの削除 {#drop-index}
 
 このステートメントは、指定されたテーブルからインデックスを削除し、TiKV 内の領域を空きとしてマークします。
 
@@ -56,9 +56,9 @@ mysql> DROP INDEX c1 ON t1;
 Query OK, 0 rows affected (0.30 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   `CLUSTERED`タイプの主キーの削除はサポートされていません。 `CLUSTERED`タイプの主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
+-   `CLUSTERED`型`CLUSTERED`主キーの削除はサポートされていません。3 型の主キーの詳細については、 [クラスター化インデックス](/clustered-indexes.md)を参照してください。
 
 ## 参照 {#see-also}
 

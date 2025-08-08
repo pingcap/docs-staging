@@ -34,7 +34,7 @@ Index Insight機能を有効にする前に、 TiDB Cloud Dedicatedクラスタ�
 
 2.  **「Index Insight BETA」**タブをクリックします。Index **Insightの概要**ページが表示されます。
 
-3.  Index Insight機能を使用するには、専用のSQLユーザーを作成する必要があります。このユーザーは、機能のトリガーとインデックスの推奨事項の受信に使用されます。以下のSQL文は、必要な権限（ `information_schema`と`mysql`の読み取り権限、およびすべてのデータベースに対する`PROCESS`と`REFERENCES`権限を含む）を持つ新しいSQLユーザーを作成します。9と`'random_password'` `'index_insight_user'`お客様の値に置き換えてください。
+3.  Index Insight機能を使用するには、専用のSQLユーザーを作成する必要があります。このユーザーは、機能のトリガーとインデックスの推奨事項の受信に使用されます。以下のSQL文は、必要な権限`information_schema`と`mysql`の読み取り権限、およびすべてのデータベースに対する`PROCESS`と`REFERENCES`権限）を持つ新しいSQLユーザーを作成します。9と`'random_password'` `'index_insight_user'`お客様の値に置き換えてください。
 
     ```sql
     CREATE user 'index_insight_user'@'%' IDENTIFIED by 'random_password';

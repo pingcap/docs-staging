@@ -11,7 +11,7 @@ TiDBはMySQL互換のデータベースであり、 [ビジュアルスタジオ
 
 > **注記：**
 >
-> -   このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed と互換性があります。
+> -   このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed と互換性があります。
 > -   このチュートリアルは、 [GitHub コードスペース](https://github.com/features/codespaces) 、 [Visual Studio Code 開発コンテナ](https://code.visualstudio.com/docs/devcontainers/containers) 、 [ビジュアルスタジオコード WSL](https://code.visualstudio.com/docs/remote/wsl)などの Visual Studio Code リモート開発環境でも機能します。
 
 ## 前提条件 {#prerequisites}
@@ -49,7 +49,7 @@ TiDBはMySQL互換のデータベースであり、 [ビジュアルスタジオ
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -65,7 +65,7 @@ TiDBはMySQL互換のデータベースであり、 [ビジュアルスタジオ
 
     > **ヒント：**
     >
-    > VS Code をリモート開発環境で実行している場合は、リストからリモートオペレーティングシステムを選択してください。例えば、Windows Subsystem for Linux (WSL) を使用している場合は、対応する Linux ディストリビューションに切り替えてください。GitHub Codespaces を使用している場合は、この操作は不要です。
+    > VS Code がリモート開発環境で実行されている場合は、リストからリモートオペレーティングシステムを選択してください。例えば、Windows Subsystem for Linux (WSL) を使用している場合は、対応する Linux ディストリビューションに切り替えてください。GitHub Codespaces を使用している場合は、この操作は不要です。
 
 4.  ランダムなパスワードを作成するには、 **「パスワードの生成」を**クリックします。
 
@@ -90,15 +90,15 @@ TiDBはMySQL互換のデータベースであり、 [ビジュアルスタジオ
     -   **MySQL ドライバー固有のオプション**領域で、次のパラメータを設定します。
 
         -   **認証プロトコル**:**デフォルト**を選択します。
-        -   **SSL** ：**有効を**選択します。TiDB Cloud Serverless は安全な接続を必要とします。 **「SSLオプション（node.TLSSocket）」**領域で、 **「証明機関（CA）証明書ファイル」**フィールドをTiDB Cloud接続ダイアログの`CA`パラメータとして設定します。
+        -   **SSL** ：**有効を**選択します。TiDB TiDB Cloud Serverlessでは安全な接続が必要です。 **「SSLオプション（node.TLSSocket）」**領域で、 **「証明機関（CA）証明書ファイル」**フィールドをTiDB Cloud接続ダイアログの`CA`のパラメータとして設定します。
 
             > **注記：**
             >
-            > WindowsまたはGitHub Codespacesで実行している場合は、 **SSLを**空白のままにすることができます。SQLToolsはデフォルトでLet&#39;s Encryptが管理する既知のCAを信頼します。詳細については、 [TiDB Cloud Serverless ルート証明書管理](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters#root-certificate-management)ご覧ください。
+            > WindowsまたはGitHub Codespacesで実行している場合は、 **SSLを**空白のままにすることができます。SQLToolsはデフォルトでLet&#39;s Encryptが管理する既知のCAを信頼します。詳細については、 [TiDB Cloudサーバーレスルート証明書管理](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters#root-certificate-management)ご覧ください。
 
     ![VS Code SQLTools: configure connection settings for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs/develop/vsc-sqltools-connection-config-serverless.jpg)
 
-7.  **「テスト接続」**をクリックして、TiDB Cloud Serverless クラスターへの接続を検証します。
+7.  **「テスト接続」**をクリックして、 TiDB Cloud Serverless クラスターへの接続を検証します。
 
     1.  ポップアップウィンドウで、 **[許可]**をクリックします。
     2.  **SQLToolsDriver資格情報**ダイアログで、手順 4 で作成したパスワードを入力します。
@@ -110,7 +110,7 @@ TiDBはMySQL互換のデータベースであり、 [ビジュアルスタジオ
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 

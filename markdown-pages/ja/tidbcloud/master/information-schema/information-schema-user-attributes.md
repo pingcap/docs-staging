@@ -5,7 +5,7 @@ summary: USER_ATTRIBUTES` INFORMATION_SCHEMA テーブルについて学習し�
 
 # ユーザー属性 {#user-attributes}
 
-`USER_PRIVILEGES`テーブルは、ユーザー コメントとユーザー属性に関する情報を提供します。この情報は、 `mysql.user`システム テーブルから取得されます。
+`USER_PRIVILEGES`テーブルは、ユーザーのコメントとユーザー属性に関する情報を提供します。この情報は`mysql.user`システムテーブルから取得されます。
 
 ```sql
 USE information_schema;
@@ -23,11 +23,11 @@ DESC user_attributes;
 3 rows in set (0.00 sec)
 ```
 
-`USER_ATTRIBUTES`のテーブル内のフィールドは次のように説明されます。
+`USER_ATTRIBUTES`テーブル内のフィールドは次のように説明されます。
 
 -   `USER` : ユーザー名。
--   `HOST` : ユーザーが TiDB に接続できるホスト。このフィールドの値が`％`の場合、ユーザーはどのホストからでも TiDB に接続できることを意味します。
--   `ATTRIBUTE` : [`CREATE USER`](/sql-statements/sql-statement-create-user.md)または[`ALTER USER`](/sql-statements/sql-statement-alter-user.md)ステートメントで設定されたユーザーのコメントと属性。
+-   `HOST` : ユーザーがTiDBに接続できるホスト。このフィールドの値が`％`の場合、ユーザーはどのホストからでもTiDBに接続できます。
+-   `ATTRIBUTE` : [`CREATE USER`](/sql-statements/sql-statement-create-user.md)または[`ALTER USER`](/sql-statements/sql-statement-alter-user.md)ステートメントで設定されるユーザーのコメントと属性。
 
 次に例を示します。
 

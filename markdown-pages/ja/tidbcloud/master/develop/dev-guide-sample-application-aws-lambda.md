@@ -16,7 +16,7 @@ TiDB は MySQL 互換のデータベース、 [AWS Lambda関数](https://aws.ama
 
 > **注記**
 >
-> このチュートリアルは TiDB Cloud Serverless と TiDB Self-Managed を使用します。
+> このチュートリアルは、TiDB Cloud Serverless と TiDB Self-Managed で機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -81,7 +81,7 @@ npm install
 
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -171,7 +171,7 @@ npm install
 
 [SAM CLI](#sam-cli-deployment-recommended)または[AWS Lambdaコンソール](#web-console-deployment)いずれかを使用して AWS Lambda 関数をデプロイできます。
 
-### SAM CLI の展開（推奨） {#sam-cli-deployment-recommended}
+### SAM CLI の展開 (推奨) {#sam-cli-deployment-recommended}
 
 1.  （ [前提条件](#prerequisites) ） [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)をインストールします。
 
@@ -358,7 +358,7 @@ console.log(rsh.affectedRows);
 -   SQL インジェクションを回避するには、 [準備された文](https://github.com/sidorares/node-mysql2#using-prepared-statements)使用することをお勧めします。
 -   複雑な SQL ステートメントがあまり含まれないシナリオでは、 [続編](https://sequelize.org/) 、 [タイプORM](https://typeorm.io/) 、 [プリズマ](https://www.prisma.io/)などの ORM フレームワークを使用すると、開発効率が大幅に向上します。
 -   アプリケーション用の RESTful API を構築するには、 [API GatewayでAWS Lambdaを使用する](https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html)をお勧めします。
--   TiDB Cloud Serverless と AWS Lambda を使用して高パフォーマンスなアプリケーションを設計するには、 [このブログ](https://aws.amazon.com/blogs/apn/designing-high-performance-applications-using-serverless-tidb-cloud-and-aws-lambda/)を参照してください。
+-   TiDB Cloud Serverless と AWS Lambda を使用して高パフォーマンス アプリケーションを設計するには、 [このブログ](https://aws.amazon.com/blogs/apn/designing-high-performance-applications-using-serverless-tidb-cloud-and-aws-lambda/)を参照してください。
 
 ## 次のステップ {#next-steps}
 

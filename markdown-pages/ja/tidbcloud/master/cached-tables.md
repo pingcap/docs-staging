@@ -64,7 +64,7 @@ SHOW CREATE TABLE users;
 | Table | Create Table                                                                                                                                                                                                               |
 +-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | users | CREATE TABLE `users` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint NOT NULL,
   `name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin /* CACHED ON */ |
@@ -170,10 +170,10 @@ SHOW CREATE TABLE mysql.table_cache_meta\G
 *************************** 1. row ***************************
        Table: table_cache_meta
 Create Table: CREATE TABLE `table_cache_meta` (
-  `tid` bigint(11) NOT NULL DEFAULT '0',
+  `tid` bigint NOT NULL DEFAULT '0',
   `lock_type` enum('NONE','READ','INTEND','WRITE') NOT NULL DEFAULT 'NONE',
-  `lease` bigint(20) NOT NULL DEFAULT '0',
-  `oldReadLease` bigint(20) NOT NULL DEFAULT '0',
+  `lease` bigint NOT NULL DEFAULT '0',
+  `oldReadLease` bigint NOT NULL DEFAULT '0',
   PRIMARY KEY (`tid`) /*T![clustered_index] CLUSTERED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
 1 row in set (0.00 sec)
@@ -215,7 +215,7 @@ Query OK, 0 rows affected (0.00 sec)
 
 キャッシュされたテーブルは、TiDB がテーブル全体のデータをメモリにロードし、キャッシュされたデータが変更後に無効になり、再ロードが必要になるため、小さなテーブルのシナリオにのみ適しています。
 
-現在、TiDBではキャッシュテーブルのサイズ制限は64MBです。テーブルデータが64MBを超える場合、 `ALTER TABLE t CACHE`実行は失敗します。
+現在、TiDBではキャッシュテーブルのサイズ制限は64MiBです。テーブルデータが64MiBを超える場合、 `ALTER TABLE t CACHE`実行は失敗します。
 
 ## 他の TiDB 機能との互換性の制限 {#compatibility-restrictions-with-other-tidb-features}
 

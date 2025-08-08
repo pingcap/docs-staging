@@ -3,9 +3,9 @@ title: SHOW CREATE SEQUENCE
 summary: TiDB データベースの SHOW CREATE SEQUENCE の使用法の概要。
 ---
 
-# 表示シーケンスの作成 {#show-create-sequence}
+# シーケンスの作成を表示 {#show-create-sequence}
 
-`SHOW CREATE SEQUENCE`は`SHOW CREATE TABLE`と同様にシーケンスの詳細情報を表示します。
+`SHOW CREATE SEQUENCE` `SHOW CREATE TABLE`と同様にシーケンスの詳細情報を表示します。
 
 ## 概要 {#synopsis}
 
@@ -33,9 +33,9 @@ SHOW CREATE SEQUENCE seq;
     +-------+----------------------------------------------------------------------------------------------------------------------------+
     1 row in set (0.00 sec)
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは TiDB の拡張機能です。実装は MariaDB で利用可能なシーケンスに基づいてモデル化されています。
+このステートメントはTiDBの拡張機能です。実装はMariaDBで利用可能なシーケンスをモデルにしています。
 
 ## 参照 {#see-also}
 

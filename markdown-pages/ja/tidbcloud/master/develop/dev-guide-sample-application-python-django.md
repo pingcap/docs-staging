@@ -15,7 +15,7 @@ TiDB は MySQL 互換のデータベースであり、 [ジャンゴ](https://ww
 
 > **注記：**
 >
-> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed クラスターで機能します。
+> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed クラスターで機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -80,7 +80,7 @@ mysqlclient のインストールで問題が発生した場合は、 [mysqlclie
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -123,14 +123,14 @@ mysqlclient のインストールで問題が発生した場合は、 [mysqlclie
 
     プレースホルダー`{}` 、接続ダイアログから取得した接続パラメータに置き換えてください。
 
-    TiDB Cloud Serverless は安全な接続を必要とします。mysqlclient の`ssl_mode`デフォルトで`PREFERRED`に設定されているため、 `CA_PATH`手動で指定する必要はありません。空のままにしておいてください。ただし、特別な理由により`CA_PATH`手動で指定する必要がある場合は、 [TiDB Cloud Serverless への TLS 接続](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)を参照して、さまざまなオペレーティングシステムの証明書パスを取得できます。
+    TiDB Cloud Serverless は安全な接続を必要とします。mysqlclient の`ssl_mode`デフォルトで`PREFERRED`に設定されているため、 `CA_PATH`手動で指定する必要はありません。空のままにしておいてください。ただし、特別な理由により`CA_PATH`手動で指定する必要がある場合は、 [TiDB Cloud ServerlessへのTLS接続](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)を参照して、さまざまなオペレーティングシステムの証明書パスを取得できます。
 
 7.  `.env`ファイルを保存します。
 
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -222,7 +222,7 @@ python manage.py migrate
 
 次のサンプル コード スニペットを参照して、独自のアプリケーション開発を完了することができます。
 
-完全なサンプル コードとその実行方法については、 [tidb-samples/tidb-python-django-quickstart](https://github.com/tidb-samples/tidb-python-django-quickstart)リポジトリを参照してください。
+完全なサンプル コードとその実行方法については、 [tidb-サンプル/tidb-python-django-quickstart](https://github.com/tidb-samples/tidb-python-django-quickstart)リポジトリを参照してください。
 
 ### TiDBに接続する {#connect-to-tidb}
 

@@ -3,12 +3,12 @@ title: Recovery Group Billing
 summary: TiDB Cloudのリカバリ グループの課金について説明します。
 ---
 
-# リカバリーグループ請求 {#recovery-group-billing}
+# リカバリグループ請求 {#recovery-group-billing}
 
-TiDB Cloud は、リカバリ グループのプライマリ クラスター内の TiKV ノードの展開サイズに基づいてリカバリ グループに対して課金します。クラスターを[回復グループを作成する](/tidb-cloud/recovery-group-get-started.md)にすると、リカバリ グループのプライマリ クラスターを選択できます。TiKV 構成が大きいほど、リカバリ グループの保護にかかるコストが高くなります。
+TiDB Cloudは、リカバリグループのプライマリクラスターにデプロイされたTiKVノードのサイズに基づいて、リカバリグループの料金を請求します。クラスターを[回復グループを作成する](/tidb-cloud/recovery-group-get-started.md)アップグレードする際に、リカバリグループのプライマリクラスターを選択できます。TiKV構成が大きいほど、リカバリグループの保護コストが高くなります。
 
-TiDB Cloud、データ処理に対しても GiB 単位で課金されます。データ処理料金は、データが別のリージョンのセカンダリ クラスターに複製されるか、同じリージョン内に複製されるかによって異なります。
+TiDB Cloud、データ処理もGiB単位で課金されます。データ処理料金は、データが別のリージョンのセカンダリクラスターに複製されるか、同じリージョン内で複製されるかによって異なります。
 
 ## 価格 {#pricing}
 
-TiDB Cloudリカバリ グループでサポートされているリージョンと価格については、 [回復グループコスト](https://www.pingcap.com/tidb-cloud-pricing-details/#recovery-group-cost)参照してください。
+TiDB Cloudリカバリ グループがサポートされているリージョンと価格については、 [回復グループコスト](https://www.pingcap.com/tidb-cloud-pricing-details/#recovery-group-cost)参照してください。

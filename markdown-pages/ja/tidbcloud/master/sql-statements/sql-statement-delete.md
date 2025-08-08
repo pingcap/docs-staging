@@ -1,6 +1,6 @@
 ---
 title: DELETE | TiDB SQL Statement Reference
-summary: TiDB データベースでの DELETE の使用法の概要。
+summary: TiDB データベースにおける DELETE の使用法の概要。
 ---
 
 # 消去 {#delete}
@@ -51,9 +51,9 @@ mysql> SELECT * FROM t1;
 4 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`DELETE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`DELETE`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

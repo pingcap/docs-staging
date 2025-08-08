@@ -3,9 +3,9 @@ title: SCHEMATA
 summary: SCHEMATA` information_schema テーブルについて学習します。
 ---
 
-# スキーマ {#schemata}
+# スキーマタ {#schemata}
 
-`SCHEMATA`テーブルはデータベースに関する情報を提供します。テーブル データは[`SHOW DATABASES`](/sql-statements/sql-statement-show-databases.md)ステートメントの結果に相当します。
+`SCHEMATA`のテーブルはデータベースに関する情報を提供します。テーブルのデータは[`SHOW DATABASES`](/sql-statements/sql-statement-show-databases.md)ステートメントの結果に相当します。
 
 ```sql
 USE information_schema;
@@ -44,4 +44,4 @@ SELECT * FROM SCHEMATA;
 -   `SCHEMA_NAME` : データベース名。
 -   `DEFAULT_CHARACTER_SET_NAME` : データベースのデフォルトの文字セット。
 -   `DEFAULT_COLLATION_NAME` : データベースのデフォルトの照合照合順序。
--   `SQL_PATH` : この項目の値は常に`NULL`です。
+-   `SQL_PATH` : この項目の値は常に`NULL` 。

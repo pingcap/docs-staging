@@ -1,16 +1,16 @@
 ---
 title: Prepared Statements
-summary: TiDB 準備済みステートメントの使用方法について学習します。
+summary: TiDB 準備済みステートメントの使用方法について説明します。
 ---
 
 # 準備された声明 {#prepared-statements}
 
-[プリペアドステートメント](/sql-statements/sql-statement-prepare.md)パラメータのみが異なる複数の SQL 文をテンプレート化します。SQL 文とパラメータを分離します。これを使用して、SQL 文の次の側面を改善できます。
+A [プリペアドステートメント](/sql-statements/sql-statement-prepare.md) 、パラメータのみが異なる複数のSQL文をテンプレート化します。SQL文とパラメータを分離します。これにより、SQL文の以下の側面を改善できます。
 
--   **Security**: パラメータとステートメントが分離されているため、 [SQLインジェクション](https://en.wikipedia.org/wiki/SQL_injection)攻撃のリスクを回避できます。
+-   **Security**: パラメータとステートメントが分離されているため、 [SQLインジェクション](https://en.wikipedia.org/wiki/SQL_injection)攻撃のリスクを回避します。
 -   **パフォーマンス**: ステートメントは TiDBサーバー上で事前に解析されるため、後続の実行ではパラメータのみが渡され、SQL ステートメント全体の解析、SQL ステートメント文字列の結合、およびネットワーク転送のコストが節約されます。
 
-ほとんどのアプリケーションでは、SQL ステートメントを列挙できます。限られた数の SQL ステートメントを使用して、アプリケーション全体のデータ クエリを完了できます。そのため、プリペアドステートメントを使用するのがベスト プラクティスです。
+ほとんどのアプリケーションでは、SQL文を列挙できます。限られた数のSQL文で、アプリケーション全体のデータクエリを完了できます。そのため、プリペアドステートメントの使用がベストプラクティスです。
 
 ## SQL構文 {#sql-syntax}
 
@@ -27,22 +27,22 @@ PREPARE {prepared_statement_name} FROM '{prepared_statement_sql}';
 | `{prepared_statement_name}` |          プリペアドステートメントの名前         |
 |  `{prepared_statement_sql}` | プレースホルダとして疑問符が付いたプリペアドステートメントSQL |
 
-詳細については[PREPARE ステートメント](/sql-statements/sql-statement-prepare.md)参照してください。
+詳細については[PREPARE文](/sql-statements/sql-statement-prepare.md)参照してください。
 
 ### プリペアドステートメントを使用する {#use-the-prepared-statement}
 
-プリペアドステートメントは、**ユーザー変数**のみをパラメーターとして使用できるため、 [`EXECUTE`ステートメント](/sql-statements/sql-statement-execute.md)がプリペアドステートメントを呼び出す前に、 [`SET`ステートメント](/sql-statements/sql-statement-set-variable.md)を使用して変数を設定します。
+プリペアドステートメントでは、パラメータとして**ユーザー変数**のみを使用できます。そのため、 [`EXECUTE`ステートメント](/sql-statements/sql-statement-execute.md)プリペアドステートメントを呼び出す前に、 [`SET`文](/sql-statements/sql-statement-set-variable.md)使用して変数を設定します。
 
 ```sql
 SET @{parameter_name} = {parameter_value};
 EXECUTE {prepared_statement_name} USING @{parameter_name};
 ```
 
-|            パラメータ名           |                                          説明                                          |
-| :-------------------------: | :----------------------------------------------------------------------------------: |
-|      `{parameter_name}`     |                                        ユーザー変数名                                       |
-|     `{parameter_value}`     |                                        ユーザー変数値                                       |
-| `{prepared_statement_name}` | 前処理ステートメントの名前[プリペアドステートメントを作成する](#create-a-prepared-statement)で定義された名前と同じである必要があります。 |
+|            パラメータ名           |                                       説明                                       |
+| :-------------------------: | :----------------------------------------------------------------------------: |
+|      `{parameter_name}`     |                                     ユーザー変数名                                    |
+|     `{parameter_value}`     |                                     ユーザー変数値                                    |
+| `{prepared_statement_name}` | 前処理文の名前[プリペアドステートメントを作成する](#create-a-prepared-statement)で定義された名前と同じである必要があります。 |
 
 詳細については[`EXECUTE`ステートメント](/sql-statements/sql-statement-execute.md)参照してください。
 
@@ -52,9 +52,9 @@ EXECUTE {prepared_statement_name} USING @{parameter_name};
 DEALLOCATE PREPARE {prepared_statement_name};
 ```
 
-|            パラメータ名           |                                          説明                                          |
-| :-------------------------: | :----------------------------------------------------------------------------------: |
-| `{prepared_statement_name}` | 前処理ステートメントの名前[プリペアドステートメントを作成する](#create-a-prepared-statement)で定義された名前と同じである必要があります。 |
+|            パラメータ名           |                                       説明                                       |
+| :-------------------------: | :----------------------------------------------------------------------------: |
+| `{prepared_statement_name}` | 前処理文の名前[プリペアドステートメントを作成する](#create-a-prepared-statement)で定義された名前と同じである必要があります。 |
 
 詳細については[`DEALLOCATE`ステートメント](/sql-statements/sql-statement-deallocate.md)参照してください。
 
@@ -129,7 +129,7 @@ try (Connection connection = ds.getConnection()) {
 
 ### <code>INSERT</code>例 {#code-insert-code-example}
 
-[`books`](/develop/dev-guide-bookshop-schema-design.md#books-table)例にすると、 `title = TiDB Developer Guide` 、 `type = Science & Technology` 、 `stock = 100` 、 `price = 0.0` 、 `published_at = NOW()` (挿入時の現在時刻) を含む本を挿入する必要があります。 `books`テーブルの**主キー**に`AUTO_RANDOM`属性を指定する必要がないことに注意してください。データの挿入の詳細については、 [データの挿入](/develop/dev-guide-insert-data.md)参照してください。
+[`books`](/develop/dev-guide-bookshop-schema-design.md#books-table)例に挙げると、 `title = TiDB Developer Guide` 、 `type = Science & Technology` 、 `stock = 100` 、 `price = 0.0` 、 `published_at = NOW()` （挿入時の現在時刻）の書籍を挿入する必要があります`books`テーブルの**主キー**に`AUTO_RANDOM`属性を指定する必要がないことに注意してください。データの挿入に関する詳細は、 [データの挿入](/develop/dev-guide-insert-data.md)参照してください。
 
 <SimpleTab groupId="language">
 
@@ -184,7 +184,7 @@ try (Connection connection = ds.getConnection()) {
 }
 ```
 
-ご覧のとおり、JDBC を使用すると準備済みステートメントのライフ サイクルを制御でき、アプリケーションで準備済みステートメントを手動で作成、使用、または削除する必要がありません。ただし、TiDB は MySQL と互換性があるため、クライアント側で MySQL JDBCDriverを使用するためのデフォルト構成では、***サーバー側の***プリペアドステートメントオプションを有効にするのではなく、クライアント側のプリペアドステートメントを使用することに注意してください。
+ご覧のとおり、JDBC はプリペアドステートメントのライフサイクルを制御するのに役立ち、アプリケーション内でプリペアドステートメントを手動で作成、使用、または削除する必要はありません。ただし、TiDB は MySQL と互換性があるため、クライアント側で MySQL JDBCDriverを使用する場合のデフォルト設定では、***サーバー側***プリペアドステートメントオプションが有効にならず、クライアント側プリペアドステートメントが使用されることに注意してください。
 
 次の構成は、JDBC で TiDB サーバー側の準備済みステートメントを使用するのに役立ちます。
 
@@ -193,19 +193,19 @@ try (Connection connection = ds.getConnection()) {
 |   `useServerPrepStmts`  |   サーバー側を使用して準備済みステートメントを有効にするかどうか  | プリペアドステートメントを複数回使用する必要がある場合 |             `true`            |
 |     `cachePrepStmts`    |   クライアントが準備されたステートメントをキャッシュするかどうか  |  `useServerPrepStmts=true`  |             `true`            |
 | `prepStmtCacheSqlLimit` | プリペアドステートメントの最大サイズ（デフォルトでは 256 文字） |   プリペアドステートメントが256文字を超える場合  | プリペアドステートメントの実際のサイズに応じて構成されます |
-|   `prepStmtCacheSize`   |    準備されたステートメントの最大数（デフォルトでは 25）    |   準備されたステートメントの数が25を超える場合   |  準備されたステートメントの実際の数に応じて構成されます  |
+|   `prepStmtCacheSize`   |    準備されたステートメントの最大数（デフォルトでは 25）    |      準備された文の数が25を超える場合      |  準備されたステートメントの実際の数に応じて構成されます  |
 
-以下は、JDBC 接続文字列構成の一般的なシナリオです。ホスト: `127.0.0.1` 、ポート: `4000` 、ユーザー名: `root` 、パスワード: null、デフォルト データベース: `test` :
+以下は、JDBC接続文字列構成の一般的なシナリオです。ホスト: `127.0.0.1` 、ポート: `4000` 、ユーザー名: `root` 、パスワード: null、デフォルトデータベース: `test` :
 
     jdbc:mysql://127.0.0.1:4000/test?user=root&useConfigs=maxPerformance&useServerPrepStmts=true&prepStmtCacheSqlLimit=2048&prepStmtCacheSize=256&rewriteBatchedStatements=true&allowMultiQueries=true
 
 データを挿入するときに他の JDBC パラメータを変更する必要がある場合は、第[行を挿入する](/develop/dev-guide-insert-data.md#insert-rows)章も参照してください。
 
-Javaでの完全な例については、以下を参照してください。
+Javaの完全な例については、以下を参照してください。
 
 -   [JDBC で TiDB に接続する](/develop/dev-guide-sample-application-java-jdbc.md)
 -   [Hibernate で TiDB に接続する](/develop/dev-guide-sample-application-java-hibernate.md)
--   [Spring Boot で TiDB に接続する](/develop/dev-guide-sample-application-java-spring-boot.md)
+-   [Spring BootでTiDBに接続する](/develop/dev-guide-sample-application-java-spring-boot.md)
 
 </div>
 
@@ -215,12 +215,12 @@ Javaでの完全な例については、以下を参照してください。
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

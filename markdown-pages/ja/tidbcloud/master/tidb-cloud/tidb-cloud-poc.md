@@ -13,7 +13,7 @@ TiDB Cloudがお客様のビジネスニーズに最適かどうかを判断す�
 
 PoCにご興味をお持ちでしたら、開始前に<a href="mailto:tidbcloud-support@pingcap.com">PingCAP</a>までお気軽にお問い合わせください。サポートチームがテストプランの作成をお手伝いし、PoCの手順をスムーズに進めていきます。
 
-あるいは、 [TiDB Cloudサーバーレスを作成する](/tidb-cloud/tidb-cloud-quickstart.md#step-1-create-a-tidb-cluster) TiDB Cloudに慣れて、すぐに評価することもできます。TiDB TiDB Cloud Serverless には[特別な利用規約](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless-special-terms-and-conditions)制限があることにご注意ください。
+あるいは、 [TiDB Cloudサーバーレスを作成する](/tidb-cloud/tidb-cloud-quickstart.md#step-1-create-a-tidb-cluster) TiDB Cloudに慣れて、すぐに評価することもできます。TiDB TiDB Cloud Serverless には[特別な利用規約](/tidb-cloud/serverless-limitations.md)制限があることにご注意ください。
 
 ## PoC手順の概要 {#overview-of-the-poc-procedures}
 
@@ -69,16 +69,6 @@ PoC 用の[TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedic
 
 2.  PoC 用のTiDB Cloud Dedicated クラスターを作成するには、 [TiDB Cloud専用クラスタを作成する](/tidb-cloud/create-tidb-cluster.md)を参照してください。
 
-    > **注記：**
-    >
-    > TiDB Cloud Dedicated クラスターを作成する前に、次のいずれかの支払い方法を追加する必要があります。
-    >
-    > -   クラスター作成ページの画面上の指示に従って、クレジットカードを追加します。
-    > -   電信送金で支払うには、 TiDB Cloudサポート チームにお問い合わせください。
-    > -   クラウド マーケットプレイス (AWS、Azure、または Google Cloud) を通じてTiDB Cloudにサインアップし、クラウド プロバイダー アカウントを使用して支払います。
-    >
-    > PoC クレジットは、PoC 期間中に発生した対象費用を相殺するために自動的に使用されます。
-
 クラスタを作成する前に、クラスタのサイズを決定するためのキャパシティプランニングを行うことをお勧めします。TiDB、TiKV、またはTiFlashノードの数を概算し、パフォーマンス要件に合わせてクラスタをスケールアウトすることも可能です。詳細については、以下のドキュメントをご覧いただくか、サポートチームにお問い合わせください。
 
 -   見積りの実践の詳細については、 [TiDBのサイズ](/tidb-cloud/size-your-cluster.md)参照してください。
@@ -91,7 +81,7 @@ PoC 用の[TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedic
 新しく作成されたクラスターの場合は、次の構成に注意してください。
 
 -   デフォルトのタイムゾーン（ダッシュボードの**「作成時間」**列）はUTCです。以下の手順[ローカルタイムゾーンを設定する](/tidb-cloud/manage-user-access.md#set-the-time-zone-for-your-organization)で、ローカルタイムゾーンに変更できます。
--   新しいクラスタのデフォルトのバックアップ設定は、毎日データベース全体のバックアップです。希望するバックアップ時間を指定するか、手動でデータをバックアップすることもできます。デフォルトのバックアップ時間および詳細については、 [TiDBクラスタデータのバックアップと復元](/tidb-cloud/backup-and-restore.md#turn-on-auto-backup)参照してください。
+-   新しいクラスタのデフォルトのバックアップ設定は、毎日データベース全体のバックアップです。希望するバックアップ時間を指定するか、手動でデータをバックアップすることもできます。デフォルトのバックアップ時間と詳細については、 [TiDBクラスタデータのバックアップと復元](/tidb-cloud/backup-and-restore.md#turn-on-auto-backup)参照してください。
 
 ## ステップ4. スキーマとSQLを適応させる {#step-4-adapt-your-schemas-and-sql}
 
@@ -191,7 +181,7 @@ TiDB Cloudにはさまざまな形式のデータをインポートできます�
 
 実際のワークロードを使用してTiDB Cloudをテストし、テスト結果を取得することで、PoCサイクル全体が完了しました。これらの結果は、 TiDB Cloudが期待どおりに機能しているかどうかを判断するのに役立ちます。同時に、 TiDB Cloudの活用に関するベストプラクティスも蓄積されました。
 
-TiDB Cloud をより大規模に試してみたい場合、TiDB Cloudが提供する他のノードstorageサイズを使用してデプロイするなど、新しい一連のデプロイとテストを行う場合は、 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターを作成してTiDB Cloudへのフル アクセスを取得してください。
+TiDB Cloud をより大規模に試してみたい場合、つまりTiDB Cloudが提供する他のノードstorageサイズを使用してデプロイするなど、新しい一連のデプロイとテストを行う場合は、 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターを作成してTiDB Cloudへのフル アクセスを取得してください。
 
 クレジットがなくなり、PoC を継続したい場合は、 [TiDB Cloudサポート](/tidb-cloud/tidb-cloud-support.md)連絡してご相談ください。
 

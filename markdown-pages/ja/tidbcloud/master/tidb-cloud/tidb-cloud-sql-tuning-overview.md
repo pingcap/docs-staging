@@ -15,7 +15,7 @@ summary: TiDB Cloudで SQL パフォーマンスを調整する方法につい�
 SQL ステートメントのパフォーマンスを向上させるには、次の原則を考慮してください。
 
 -   スキャンするデータの範囲を最小限に抑えます。常に、最小限の範囲のデータのみをスキャンし、すべてのデータをスキャンしないようにすることがベストプラクティスです。
--   適切なインデックスを使用してください。SQL文の`WHERE`番目の句の各列には、対応するインデックスが設定されていることを確認してください。そうでない場合、 `WHERE`の句はテーブル全体をスキャンしてしまい、パフォーマンスが低下します。
+-   適切なインデックスを使用してください。SQL文の`WHERE`番目の句の各列には、対応するインデックスが設定されていることを確認してください。そうでないと、 `WHERE`番目の句でテーブル全体がスキャンされ、パフォーマンスが低下します。
 -   適切な結合タイプを使用してください。クエリ内の各テーブルのサイズと相関関係に応じて、適切な結合タイプを選択することが非常に重要です。通常、TiDBのコストベースオプティマイザは最適な結合タイプを自動的に選択します。ただし、場合によっては、結合タイプを手動で指定する必要があります。詳細については、 [テーブル結合を使用する文を説明する](/explain-joins.md)参照してください。
 -   適切なstorageエンジンを使用してください。ハイブリッドトランザクションおよび分析処理（HTAP）ワークロードには、 TiFlashstorageエンジンの使用をお勧めします[HTAPクエリ](/develop/dev-guide-hybrid-oltp-and-olap-queries.md)参照してください。
 
@@ -23,7 +23,7 @@ TiDB Cloudは、クラスター上のスロークエリの分析に役立つツ�
 
 ### 診断ページのステートメントを使用する {#use-statement-on-the-diagnosis-page}
 
-TiDB Cloudコンソールの[**診断**](/tidb-cloud/tune-performance.md#view-the-diagnosis-page)ページ目にはタブ[**SQL文**](/tidb-cloud/tune-performance.md#statement-analysis)があります。このタブは、クラスター上のすべてのデータベースのSQL文の実行統計を収集します。これにより、合計または1回の実行で長時間かかるSQL文を特定し、分析することができます。
+TiDB Cloudコンソールの[**診断**](/tidb-cloud/tune-performance.md#view-the-diagnosis-page)ページ目にタブ[**SQL文**](/tidb-cloud/tune-performance.md#statement-analysis)があります。このタブでは、クラスター上のすべてのデータベースのSQL文の実行統計を収集します。これにより、合計または1回の実行で長時間かかるSQL文を特定し、分析することができます。
 
 このページでは、同じ構造を持つSQLクエリ（クエリパラメータが一致していなくても）は、同じSQL文にグループ化されていることに注意してください。例えば、 `SELECT * FROM employee WHERE id IN (1, 2, 3)`と`select * from EMPLOYEE where ID in (4, 5)`どちらも同じSQL文`select * from employee where id in (...)`の一部です。
 

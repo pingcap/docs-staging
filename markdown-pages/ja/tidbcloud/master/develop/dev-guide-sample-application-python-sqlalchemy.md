@@ -15,7 +15,7 @@ TiDB は MySQL 互換のデータベースであり、 [SQLアルケミー](http
 
 > **注記：**
 >
-> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed クラスターで機能します。
+> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed クラスターで機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -78,9 +78,9 @@ SQLAlchemyは、複数のデータベースに対応するORMライブラリで�
 
 > **注記：**
 >
-> 現在、TiDB Cloud Serverless クラスターには制限があります。アクティブな接続が5分間ない場合、クラスターはシャットダウンし、すべての接続が閉じられます。そのため、TiDB Cloud Serverless クラスターでSQLAlchemyを使用する場合、プールされた接続で`OperationalError` （ `Lost connection to MySQL server during query`や`MySQL Connection not available`など）が発生する可能性があります。このエラーを回避するには、 `pool_recycle`パラメータを`300`に設定してください。詳細については、SQLAlchemyドキュメントの[切断への対処](https://docs.sqlalchemy.org/en/20/core/pooling.html#dealing-with-disconnects)参照してください。
+> 現在、 TiDB Cloud Serverless クラスターには制限があります。アクティブな接続が5分間ない場合、クラスターはシャットダウンし、すべての接続が閉じられます。そのため、 TiDB Cloud Serverless クラスターでSQLAlchemyを使用する場合、プールされた接続で`OperationalError` （ `Lost connection to MySQL server during query`や`MySQL Connection not available`など）が発生する可能性があります。このエラーを回避するには、 `pool_recycle`パラメータを`300`に設定してください。詳細については、SQLAlchemy ドキュメントの[切断への対処](https://docs.sqlalchemy.org/en/20/core/pooling.html#dealing-with-disconnects)参照してください。
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -128,7 +128,7 @@ SQLAlchemyは、複数のデータベースに対応するORMライブラリで�
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 

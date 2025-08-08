@@ -11,7 +11,7 @@ summary: パブリック エンドポイント経由でTiDB Cloud Serverless ク
 
 > **ヒント：**
 >
-> パブリック エンドポイント経由でTiDB Cloud Dedicated クラスターに接続する方法については、 [パブリック接続経由​​でTiDB Cloud Dedicated に接続](/tidb-cloud/connect-via-standard-connection.md)参照してください。
+> パブリック エンドポイント経由でTiDB Cloud Dedicated クラスターに接続する方法については、 [パブリック接続経由でTiDB Cloud Dedicated に接続](/tidb-cloud/connect-via-standard-connection.md)参照してください。
 
 パブリック エンドポイント経由でTiDB Cloud Serverless クラスターに接続するには、次の手順を実行します。
 
@@ -48,7 +48,7 @@ TiDB Cloud Serverless クラスターのパブリック エンドポイントを
 
 4.  確認ダイアログで**「無効にする」を**クリックします。
 
-パブリックエンドポイントを無効化すると、接続ダイアログの「**接続タイプ」**ドロップダウンリストの`Public`のエントリが無効化されます。ユーザーが引き続きパブリックエンドポイントからクラスターにアクセスしようとすると、エラーが発生します。
+パブリックエンドポイントを無効化すると、接続ダイアログの「**接続タイプ」**ドロップダウンリストの「 `Public`エントリが無効化されます。ユーザーがパブリックエンドポイントからクラスターにアクセスしようとすると、エラーが表示されます。
 
 > **注記：**
 >

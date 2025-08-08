@@ -9,7 +9,7 @@ summary: TiDB で SHOW TABLE REGIONS を使用する方法を学習します。
 
 > **注記：**
 >
-> この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
 
 ## 構文 {#syntax}
 
@@ -62,7 +62,7 @@ TableName ::=
 
 ## 例 {#examples}
 
-いくつかのリージョンを満たすのに十分なデータを含むサンプル テーブルを作成します。
+いくつかのリージョンを埋めるのに十分なデータを含むサンプル テーブルを作成します。
 
 ```sql
 CREATE TABLE t1 (

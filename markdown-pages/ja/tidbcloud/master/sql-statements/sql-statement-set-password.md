@@ -54,13 +54,13 @@ mysql> SHOW CREATE USER 'newuser';
 1 row in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SET PASSWORD`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SET PASSWORD`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 
--   [ユーザーを作成](/sql-statements/sql-statement-create-user.md)
+-   [ユーザーの作成](/sql-statements/sql-statement-create-user.md)
 
 <CustomContent platform="tidb">
 

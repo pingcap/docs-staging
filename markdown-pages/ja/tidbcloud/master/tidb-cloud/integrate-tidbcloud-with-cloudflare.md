@@ -3,13 +3,13 @@ title: Integrate TiDB Cloud with Cloudflare
 summary: TiDB Cloudを使用して Cloudflare Workers をデプロイする方法を学びます。
 ---
 
-# TiDB Cloud をCloudflare Workers と統合する {#integrate-tidb-cloud-with-cloudflare-workers}
+# TiDB CloudとCloudflare Workersを統合する {#integrate-tidb-cloud-with-cloudflare-workers}
 
-[Cloudflare ワーカー](https://workers.cloudflare.com/)は、HTTP リクエストやデータベースの変更など、特定のイベントに応じてコードを実行できるプラットフォームです。Cloudflare Workers は使いやすく、カスタム API、サーバーレス関数、マイクロサービスなど、さまざまなアプリケーションの構築に使用できます。特に、低レイテンシーのパフォーマンスが必要なアプリケーションや、迅速に拡張する必要があるアプリケーションに役立ちます。
+Cloudflare Workersは、HTTPリクエストやデータベースへの変更など、特定のイベントに応じてコードを実行できるプラットフォーム[Cloudflareワーカー](https://workers.cloudflare.com/) 。Cloudflare Workersは使いやすく、カスタムAPI、サーバーレス関数、マイクロサービスなど、さまざまなアプリケーションの構築に使用できます。特に、低レイテンシーのパフォーマンスが求められるアプリケーションや、迅速なスケーリングが必要なアプリケーションに便利です。
 
-Cloudflare Workers は直接 TCP 接続できない V8 エンジンで実行されるため、Cloudflare Workers からTiDB Cloudに接続するのは難しい場合があります。1 [TiDB Cloudサーバーレス ドライバー](/tidb-cloud/serverless-driver.md)使用すると、HTTP 接続を介して Cloudflare Workers に接続できます。
+Cloudflare WorkersはV8エンジンで動作しており、直接TCP接続ができないため、 TiDB Cloudへの接続が難しい場合があります。1 [TiDB Cloudサーバーレス ドライバー](/tidb-cloud/serverless-driver.md)使用すると、HTTP接続経由でCloudflare Workersに接続できます。
 
-このドキュメントでは、 TiDB Cloudサーバーレス ドライバーを使用して Cloudflare Workers に接続する方法を段階的に説明します。
+このドキュメントでは、TiDB Cloudサーバーレス ドライバーを使用して Cloudflare Workers に接続する方法を段階的に説明します。
 
 > **注記：**
 >
@@ -19,13 +19,13 @@ Cloudflare Workers は直接 TCP 接続できない V8 エンジンで実行さ�
 
 この記事の手順を試す前に、次のものを準備する必要があります。
 
--   TiDB CloudアカウントとTiDB Cloud上のTiDB Cloud Serverless クラスター。詳細については、 [TiDB Cloudクイック スタート](/tidb-cloud/tidb-cloud-quickstart.md#step-1-create-a-tidb-cluster)参照してください。
--   A [Cloudflare Workers アカウント](https://dash.cloudflare.com/login) 。
--   [ネプ](https://docs.npmjs.com/about-npm)インストールされています。
+-   TiDB CloudアカウントとTiDB Cloud上のTiDB Cloud Serverlessクラスター。詳細については、 [TiDB Cloudクイックスタート](/tidb-cloud/tidb-cloud-quickstart.md#step-1-create-a-tidb-cluster)ご覧ください。
+-   A [Cloudflare Workersアカウント](https://dash.cloudflare.com/login) 。
+-   [npm](https://docs.npmjs.com/about-npm)がインストールされています。
 
 ## ステップ1: Wranglerを設定する {#step-1-set-up-wrangler}
 
-[ラングラー](https://developers.cloudflare.com/workers/wrangler/)は公式の Cloudflare Worker CLI です。これを使用して、Worker を生成、構築、プレビュー、公開できます。
+[ラングラー](https://developers.cloudflare.com/workers/wrangler/)はCloudflareの公式Worker CLIです。Workerの生成、ビルド、プレビュー、公開に使用できます。
 
 1.  Wrangler をインストールします。
 
@@ -39,7 +39,7 @@ Cloudflare Workers は直接 TCP 接続できない V8 エンジンで実行さ�
 
         wrangler init tidb-cloud-cloudflare
 
-4.  ターミナルでは、プロジェクトに関連する一連の質問が表示されます。すべての質問に対してデフォルト値を選択します。
+4.  ターミナルでは、プロジェクトに関連する一連の質問が表示されます。すべての質問に対してデフォルト値を選択してください。
 
 ## ステップ2: サーバーレスドライバーをインストールする {#step-2-install-the-serverless-driver}
 
@@ -53,9 +53,9 @@ Cloudflare Workers は直接 TCP 接続できない V8 エンジンで実行さ�
 
     これにより、 `package.json`にサーバーレス ドライバーの依存関係が追加されます。
 
-## ステップ3: Cloudflare Worker機能を開発する {#step-3-develop-the-cloudflare-worker-function}
+## ステップ3: Cloudflare Worker関数を開発する {#step-3-develop-the-cloudflare-worker-function}
 
-必要に応じて`src/index.ts`を変更する必要があります。
+必要に応じて`src/index.ts`変更する必要があります。
 
 たとえば、すべてのデータベースを表示する場合は、次のコードを使用できます。
 
@@ -76,15 +76,15 @@ export default {
 };
 ```
 
-## ステップ4: 環境でDATABASE_URLを設定する {#step-4-set-the-database-url-in-your-environment}
+## ステップ4: 環境内でDATABASE_URLを設定する {#step-4-set-the-database-url-in-your-environment}
 
-`DATABASE_URL`は`mysql://username:password@host/database`形式に従います。環境変数は wrangler cli で設定できます。
+`DATABASE_URL` `mysql://username:password@host/database`形式に従います。環境変数はwrangler cliで設定できます。
 
     wrangler secret put <DATABASE_URL>
 
 Cloudflare Workers ダッシュボードから`DATABASE_URL`シークレットを編集することもできます。
 
-## ステップ5: Cloudflare Workersに公開する {#step-5-publish-to-cloudflare-workers}
+## ステップ5：Cloudflare Workersに公開する {#step-5-publish-to-cloudflare-workers}
 
 これで、Cloudflare Workers にデプロイする準備が整いました。
 
@@ -92,9 +92,9 @@ Cloudflare Workers ダッシュボードから`DATABASE_URL`シークレット�
 
     npx wrangler publish
 
-## ステップ6: Cloudflare Workersを試す {#step-6-try-your-cloudflare-workers}
+## ステップ6：Cloudflare Workersを試す {#step-6-try-your-cloudflare-workers}
 
-1.  [Cloudflareダッシュボード](https://dash.cloudflare.com)に進み、ワーカーを見つけます。ワーカーの URL は概要ページで確認できます。
+1.  [Cloudflareダッシュボード](https://dash.cloudflare.com)に進み、ワーカーを見つけてください。ワーカーの URL は概要ページで確認できます。
 
 2.  URL にアクセスすると結果が表示されます。
 

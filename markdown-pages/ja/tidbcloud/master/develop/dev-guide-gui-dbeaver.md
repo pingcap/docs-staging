@@ -44,7 +44,7 @@ summary: DBeaver Community を使用して TiDB に接続する方法を学習�
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -71,7 +71,7 @@ summary: DBeaver Community を使用して TiDB に接続する方法を学習�
 
     ![Configure connection settings for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-connection-settings-serverless.jpg)
 
-8.  **「テスト接続」**をクリックして、TiDB Cloud Serverless クラスターへの接続を検証します。
+8.  **「テスト接続」**をクリックして、 TiDB Cloud Serverless クラスターへの接続を検証します。
 
     **ドライバー ファイルのダウンロード**ダイアログが表示された場合は、 **[ダウンロード]**をクリックしてドライバー ファイルを取得します。
 
@@ -86,7 +86,7 @@ summary: DBeaver Community を使用して TiDB に接続する方法を学習�
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 

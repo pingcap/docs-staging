@@ -7,7 +7,7 @@ summary: Prometheus と Grafana の統合を使用して TiDB クラスターを
 
 TiDB Cloudは[プロメテウス](https://prometheus.io/) APIエンドポイント（ベータ版）を提供しています。Prometheusサービスをお持ちの場合は、エンドポイントからTiDB Cloudの主要なメトリクスを簡単に監視できます。
 
-このドキュメントでは、TiDB Cloudエンドポイントから主要なメトリックを読み取るように Prometheus サービスを構成する方法と、 [グラファナ](https://grafana.com/)使用してメトリックを表示する方法について説明します。
+このドキュメントでは、 TiDB Cloudエンドポイントから主要なメトリックを読み取るように Prometheus サービスを構成する方法と、 [グラファナ](https://grafana.com/)使用してメトリックを表示する方法について説明します。
 
 ## 前提条件 {#prerequisites}
 
@@ -101,11 +101,11 @@ Prometheus は、TiDB クラスターの次のメトリック データを追跡
 | tidbcloud_disk_read_latency                                 | ヒストグラム   | インスタンス: `tidb-0\|tidb-1\|...`<br/>コンポーネント: `tikv\|tiflash`<br/>クラスター名: `<cluster name>`<br/> `device`時`nvme.*\|dm.*`         | storageあたりの読み取りレイテンシー（秒）                                                                                              |
 | tidbcloud_disk_write_latency                                | ヒストグラム   | インスタンス: `tidb-0\|tidb-1\|...`<br/>コンポーネント: `tikv\|tiflash`<br/>クラスター名: `<cluster name>`<br/> `device`時`nvme.*\|dm.*`         | storageデバイスあたりの書き込みレイテンシー（秒）                                                                                          |
 | tidbcloud_kv_request_duration                               | ヒストグラム   | インスタンス: `tidb-0\|tidb-1\|...`<br/>コンポーネント: `tikv`<br/>クラスター名: `<cluster name>`<br/> `type`時`BatchGet\|Commit\|Prewrite\|...` | タイプ別の TiKV リクエストの継続時間（秒）                                                                                              |
-| tidbcloud_component_uptime                                  | ヒストグラム   | インスタンス: `tidb-0\|tidb-1\|...`<br/>コンポーネント: `tidb\|tikv\|pd\|...`<br/>クラスター名: `<cluster name>`                                | TiDBコンポーネントの稼働時間（秒）                                                                                                   |
+| tidbcloud_component_uptime                                  | ヒストグラム   | インスタンス: `tidb-0\|tidb-1\|...`<br/>コンポーネント: `tidb\|tikv\|tiflash`<br/>クラスター名: `<cluster name>`                                | TiDBコンポーネントの稼働時間（秒）                                                                                                   |
 | tidbcloud_ticdc_owner_resolved_ts_lag                       | ゲージ      | チェンジフィードID: `<changefeed-id>`<br/>クラスター名: `<cluster name>`                                                                   | チェンジフィード所有者の解決されたタイムスタンプの遅延（秒）                                                                                        |
 | tidbcloud_changefeed_status                                 | ゲージ      | チェンジフィードID: `<changefeed-id>`<br/>クラスター名: `<cluster name>`                                                                   | チェンジフィードステータス:<br/> `-1` ：不明<br/>`0` ：正常<br/>`1` : 警告<br/>`2` : 失敗<br/>`3` : 停止<br/>`4` ：終了<br/>`6` ：警告<br/>`7` : その他 |
 | tidbcloud_resource_manager_resource_unit_read_request_unit  | ゲージ      | クラスター名: `<cluster name>`<br/>リソースグループ: `<group-name>`                                                                        | リソースマネージャによって消費される読み取り要求単位                                                                                            |
-| tidbcloud_resource_manager_resource_unit_write_request_unit | ゲージ      | クラスター名: `<cluster name>`<br/>リソースグループ: `<group-name>`                                                                        | リソースマネージャによって消費される書き込み要求ユニット                                                                                          |
+| tidbcloud_resource_manager_resource_unit_write_request_unit | ゲージ      | クラスター名: `<cluster name>`<br/>リソースグループ: `<group-name>`                                                                        | リソースマネージャによって消費される書き込み要求単位                                                                                            |
 
 ## FAQ {#faq}
 

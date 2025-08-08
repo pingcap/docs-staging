@@ -5,7 +5,7 @@ summary: TiDB データベースの SHOW [GLOBAL|SESSION] VARIABLES の使用法
 
 # [グローバル|セッション]変数を表示 {#show-global-session-variables}
 
-このステートメントは、スコープ`GLOBAL`または`SESSION`の変数のリストを表示します。スコープが指定されていない場合は、デフォルトのスコープ`SESSION`が適用されます。
+この文は、スコープ`GLOBAL`または`SESSION`の変数のリストを表示します。スコープが指定されていない場合は、デフォルトのスコープ`SESSION`が適用されます。
 
 ## 概要 {#synopsis}
 
@@ -20,7 +20,7 @@ ShowLikeOrWhere ::=
 
 ## 例 {#examples}
 
-TiDB 固有の変数をすべて一覧表示します。詳細な説明については、 [システム変数](/system-variables.md)を参照してください。
+TiDB固有の変数をすべて一覧表示します。詳細な説明については[システム変数](/system-variables.md)を参照してください。
 
 ```sql
 mysql> SHOW GLOBAL VARIABLES LIKE 'tidb%';
@@ -166,9 +166,9 @@ mysql> SHOW VARIABLES WHERE Value=300;
 7 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SHOW [GLOBAL|SESSION] VARIABLES`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SHOW [GLOBAL|SESSION] VARIABLES`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

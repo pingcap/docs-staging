@@ -3,15 +3,15 @@ title: Schema Object Names
 summary: TiDB SQLステートメントのスキーマ オブジェクト名について学習します。
 ---
 
-# スキーマオブジェクト名 {#schema-object-names}
+# Schema Object Names {#schema-object-names}
 
 <!-- markdownlint-disable MD038 -->
 
-このドキュメントでは、 TiDB SQLステートメントのスキーマ オブジェクト名について説明します。
+このドキュメントでは、TiDB SQLステートメントのスキーマ オブジェクト名について説明します。
 
-スキーマ オブジェクト名は、データベース、テーブル、インデックス、列、エイリアスなど、TiDB 内のすべてのスキーマ オブジェクトに名前を付けるために使用されます。SQL ステートメントでは、識別子を使用してこれらのオブジェクトを引用符で囲むことができます。
+スキーマオブジェクト名は、データベース、テーブル、インデックス、列、エイリアスなど、TiDB内のすべてのスキーマオブジェクトの名前として使用されます。SQL文では、識別子を使用してこれらのオブジェクトを引用符で囲むことができます。
 
-バックティックを使用して識別子を囲むことができます。たとえば、 `SELECT * FROM t` `` SELECT * FROM `t` ``と記述することもできます。ただし、識別子に 1 つ以上の特殊文字が含まれている場合、または識別子が予約キーワードである場合は、それが表すスキーマ オブジェクトを引用するためにバックティックで囲む必要があります。
+識別子をバッククォートで囲むことができます。例えば、 `SELECT * FROM t` `` SELECT * FROM `t` ``と表記することもできます。ただし、識別子に特殊文字が1つ以上含まれている場合、または予約語である場合は、それが表すスキーマオブジェクトを引用符で囲むために、バッククォートで囲む必要があります。
 
 ```sql
 SELECT * FROM `table` WHERE `table`.id = 20;
@@ -43,13 +43,13 @@ CREATE TABLE "test" (a varchar(10));
 Query OK, 0 rows affected (0.012 sec)
 ```
 
-引用符で囲まれた識別子でバックティック文字を使用する場合は、バックティックを 2 回繰り返します。たとえば、テーブル a`b を作成するには、次のようにします。
+引用符で囲まれた識別子でバッククォート文字を使用する場合は、バッククォートを2回繰り返します。例えば、テーブル a`b を作成するには、次のようにします。
 
 ```sql
 CREATE TABLE `a``b` (a int);
 ```
 
-`SELECT`ステートメントでは、識別子または文字列を使用してエイリアスを指定できます。
+In a `SELECT` statement, you can use an identifier or a string to specify an alias:
 
 ```sql
 SELECT 1 AS `identifier`, 2 AS 'string';
@@ -64,23 +64,23 @@ SELECT 1 AS `identifier`, 2 AS 'string';
 1 row in set (0.00 sec)
 ```
 
-詳細については[MySQL スキーマ オブジェクト名](https://dev.mysql.com/doc/refman/8.0/en/identifiers.html)参照してください。
+詳細については[MySQLスキーマオブジェクト名](https://dev.mysql.com/doc/refman/8.0/en/identifiers.html)参照してください。
 
 ## 識別子修飾子 {#identifier-qualifiers}
 
-オブジェクト名は修飾されても修飾されてなくてもかまいません。たとえば、次のステートメントは修飾名のないテーブルを作成します。
+オブジェクト名は修飾名でも修飾名でも構いません。例えば、次の文は修飾名のないテーブルを作成します。
 
 ```sql
 CREATE TABLE t (i int);
 ```
 
-データベースを構成するために`USE`ステートメントまたは接続パラメータを使用していない場合、 `ERROR 1046 (3D000): No database selected`エラーが表示されます。この時点で、データベース修飾名を指定できます。
+データベースの設定に`USE`ステートメントまたは接続パラメータを使用していない場合、 `ERROR 1046 (3D000): No database selected`エラーが表示されます。この場合、データベース修飾名を指定できます。
 
 ```sql
 CREATE TABLE test.t (i int);
 ```
 
-`.`周りには空白が存在できます`table_name.col_name`と`table_name . col_name`は同等です。
+`.`周囲に空白が存在できます`table_name.col_name`と`table_name . col_name`同等です。
 
 この識別子を引用するには、次のようにします。
 

@@ -1,23 +1,24 @@
 ---
 title: TiDB Cloud HTAP Quick Start
 summary: TiDB Cloudで HTAP を使い始める方法を学習します。
+aliases: ['/tidbcloud/use-htap-cluster']
 ---
 
 # TiDB Cloud HTAP クイックスタート {#tidb-cloud-htap-quick-start}
 
-[HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing) 、ハイブリッド トランザクションおよび分析処理を意味します。TiDB TiDB Cloudの HTAP クラスターは、トランザクション処理用に設計された行ベースのstorageエンジンである[ティクヴ](https://tikv.org)と、分析処理用に設計された列指向storageである[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)で構成されています。アプリケーション データは最初に TiKV に保存され、次にRaftコンセンサス アルゴリズムを介してTiFlashに複製されます。つまり、行ベースのstorageから列指向storageへのリアルタイムのレプリケーションです。
+[HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing) 、ハイブリッドトランザクションおよび分析処理を意味します。TiDB TiDB Cloudの HTAP クラスターは、トランザクション処理用に設計された行ベースstorageエンジン[TiKV](https://tikv.org)と、分析処理用に設計された列指向storage[TiFlash](https://docs.pingcap.com/tidb/stable/tiflash-overview)で構成されています。アプリケーションデータはまず TiKV に保存され、その後Raftコンセンサスアルゴリズムを介してTiFlashに複製されます。つまり、行ベースstorageから列指向storageへのリアルタイムレプリケーションです。
 
-このチュートリアルでは、 TiDB Cloudのハイブリッド トランザクションおよび分析処理 (HTAP) 機能を簡単に体験する方法を説明します。内容には、テーブルをTiFlashに複製する方法、 TiFlashを使用してクエリを実行する方法、パフォーマンスの向上を体験する方法などが含まれます。
+このチュートリアルでは、 TiDB Cloudのハイブリッドトランザクションおよび分析処理（HTAP）機能を簡単に体験する方法をご案内します。TiFlashへのテーブルのレプリケーション方法、 TiFlashを使用したクエリの実行方法、そしてパフォーマンス向上の体験方法などについて説明します。
 
 ## 始める前に {#before-you-begin}
 
-HTAP 機能を体験する前に、 [TiDB Cloudクイック スタート](/tidb-cloud/tidb-cloud-quickstart.md)に従ってTiDB Cloud Serverless クラスターを作成し、 **Steam Game Stats**サンプル データセットをクラスターにインポートします。
+HTAP 機能を体験する前に、 [TiDB Cloudクイックスタート](/tidb-cloud/tidb-cloud-quickstart.md)に従ってTiDB Cloud Serverless クラスターを作成し、 **Steam Game Stats**サンプル データセットをクラスターにインポートします。
 
 ## 手順 {#steps}
 
 ### ステップ1. サンプルデータを列指向storageエンジンに複製する {#step-1-replicate-the-sample-data-to-the-columnar-storage-engine}
 
-TiFlashノードを含むクラスターが作成された後、TiKV はデフォルトではデータをTiFlashに複製しません。複製するテーブルを指定するには、TiDB の MySQL クライアントで DDL ステートメントを実行する必要があります。その後、TiDB は指定されたテーブル レプリカをTiFlashに作成します。
+TiFlashノードを含むクラスターを作成した後、TiKVはデフォルトではTiFlashにデータを複製しません。複製するテーブルを指定するには、TiDBのMySQLクライアントでDDL文を実行する必要があります。その後、TiDBは指定されたテーブルのレプリカをTiFlashに作成します。
 
 たとえば、 `games`テーブル ( **Steam Game Stats**サンプル データセット内) をTiFlashに複製するには、次のステートメントを実行します。
 
@@ -46,8 +47,8 @@ SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_ID, REPLICA_COUNT, LOCATION_LABELS, AVAIL
 
 上記のステートメントの結果は次のようになります。
 
--   `AVAILABLE`特定のテーブルのTiFlashレプリカが使用可能かどうかを示します。2 `1`使用可能、 `0`使用不可を意味します。レプリカが使用可能になると、このステータスは変更されなくなります。
--   `PROGRESS`レプリケーションの進行状況を意味します。値は`0`から`1`間です。6 `1`少なくとも 1 つのレプリカがレプリケートされていることを意味します。
+-   `AVAILABLE` 、特定のテーブルのTiFlashレプリカが利用可能かどうかを示します。2 `1`利用可能、 `0`利用不可を意味します。レプリカが利用可能になると、このステータスは変更されません。
+-   `PROGRESS`レプリケーションの進行状況を表します。値は`0`から`1`までです。6 `1`少なくとも1つのレプリカがレプリケートされていることを意味します。
 
 ### ステップ2. HTAPを使用してデータをクエリする {#step-2-query-data-using-htap}
 
@@ -71,7 +72,7 @@ ORDER BY
 
 ### ステップ3. 行ベースのstorageと列ベースのstorageのクエリパフォーマンスを比較する {#step-3-compare-the-query-performance-between-row-based-storage-and-columnar-storage}
 
-このステップでは、TiKV (行ベースのstorage) とTiFlash (列ベースのstorage) の実行統計を比較できます。
+このステップでは、TiKV (行ベースのstorage) とTiFlash (列ベースのstorage) 間の実行統計を比較できます。
 
 -   TiKV を使用してこのクエリの実行統計を取得するには、次のステートメントを実行します。
 
@@ -89,11 +90,11 @@ ORDER BY
       `release_year` DESC;
     ```
 
-    TiFlashレプリカを持つテーブルの場合、TiDB オプティマイザーはコスト見積もりに基づいて TiKV レプリカとTiFlashレプリカのどちらを使用するかを自動的に決定します。前の`EXPLAIN ANALYZE`文では、 `/*+ READ_FROM_STORAGE(TIKV[games]) */`ヒントを使用してオプティマイザーに TiKV を選択させ、TiKV の実行統計を確認できるようにしています。
+    TiFlashレプリカを持つテーブルの場合、TiDBオプティマイザーはコスト見積もりに基づいて、TiKVレプリカとTiFlashレプリカのどちらを使用するかを自動的に決定します。前述の`EXPLAIN ANALYZE`の文では、 `/*+ READ_FROM_STORAGE(TIKV[games]) */`ヒントを使用してオプティマイザーにTiKVを選択させ、TiKVの実行統計を確認できるようにしています。
 
     > **注記：**
     >
-    > 5.7.7 より前の MySQL コマンドライン クライアントは、デフォルトでオプティマイザ ヒントを削除します。これらの以前のバージョンで`Hint`構文を使用している場合は、クライアントの起動時に`--comments`オプションを追加します。例: `mysql -h 127.0.0.1 -P 4000 -uroot --comments` 。
+    > MySQL 5.7.7より前のコマンドラインクライアントは、デフォルトでオプティマイザヒントを削除します。これらの以前のバージョンで`Hint`構文を使用している場合は、クライアントの起動時に`--comments`オプションを追加してください。例： `mysql -h 127.0.0.1 -P 4000 -uroot --comments`
 
     出力では、 `execution info`列目から実行時間を取得できます。
 
@@ -109,7 +110,7 @@ ORDER BY
     (6 rows)
     ```
 
--   TiFlash を使用してこのクエリの実行統計を取得するには、次のステートメントを実行します。
+-   TiFlashを使用してこのクエリの実行統計を取得するには、次のステートメントを実行します。
 
     ```sql
     EXPLAIN ANALYZE SELECT
@@ -146,7 +147,7 @@ ORDER BY
 
 > **注記：**
 >
-> サンプル データのサイズが小さく、このドキュメントのクエリは非常に単純なため、このクエリに対してオプティマイザーに TiKV を選択させてから同じクエリを再度実行すると、TiKV はキャッシュを再利用するため、クエリの速度が大幅に向上する可能性があります。データが頻繁に更新されると、キャッシュが失われます。
+> サンプルデータのサイズが小さく、このドキュメントのクエリは非常に単純なため、このクエリに対してオプティマイザーにTiKVを選択させ、同じクエリを再度実行すると、TiKVはキャッシュを再利用するため、クエリの速度が大幅に向上する可能性があります。ただし、データが頻繁に更新される場合は、キャッシュが失われる可能性があります。
 
 ## もっと詳しく知る {#learn-more}
 

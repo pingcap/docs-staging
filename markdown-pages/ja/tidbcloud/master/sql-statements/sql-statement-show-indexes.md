@@ -1,11 +1,11 @@
 ---
 title: SHOW INDEXES [FROM|IN] | TiDB SQL Statement Reference
-summary: TiDB データベースに対する SHOW INDEXES [FROM|IN] の使用法の概要。
+summary: TiDB データベースの SHOW INDEXES [FROM|IN] の使用法の概要。
 ---
 
 # インデックスを表示 [FROM|IN] {#show-indexes-from-in}
 
-ステートメント`SHOW INDEXES [FROM|IN]` 、指定されたテーブルのインデックスを一覧表示します。ステートメント`SHOW INDEX [FROM|IN]` `SHOW KEYS [FROM|IN]`このステートメントのエイリアスであり、MySQL との互換性のために含まれています。
+文`SHOW INDEXES [FROM|IN]` 、指定されたテーブルのインデックスを一覧表示します。文`SHOW INDEX [FROM|IN]`と`SHOW KEYS [FROM|IN]`この文のエイリアスであり、MySQLとの互換性のために用意されています。
 
 ## 概要 {#synopsis}
 
@@ -52,16 +52,16 @@ mysql> SHOW KEYS FROM t1;
 2 rows in set (0.00 sec)
 ```
 
-TiDB `RTREE` `HASH`のインデックス タイプを受け入れますが、無視されることに`BTREE`してください。
+TiDB `BTREE` `HASH`のインデックス タイプを`RTREE`ますが、無視されることに注意してください。
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SHOW INDEXES [FROM|IN]`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SHOW INDEXES [FROM|IN]`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 
 -   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)
--   [インデックスを削除](/sql-statements/sql-statement-drop-index.md)
+-   [インデックスの削除](/sql-statements/sql-statement-drop-index.md)
 -   [インデックスの作成](/sql-statements/sql-statement-create-index.md)
 -   [`information_schema.TIDB_INDEXES`](/information-schema/information-schema-tidb-indexes.md)
 -   [`information_schema.TIDB_INDEX_USAGE`](/information-schema/information-schema-tidb-index-usage.md)

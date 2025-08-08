@@ -11,7 +11,7 @@
     -   [MySQLの互換性](/mysql-compatibility.md)
 -   TiDB Cloudを使い始める
     -   [TiDB Cloud Serverless を試してみる](/tidb-cloud/tidb-cloud-quickstart.md)
-    -   [TiDB + AIを試す](/tidb-cloud/vector-search-get-started-using-python.md)
+    -   [TiDB + AIを試す](/vector-search/vector-search-get-started-using-python.md)
     -   [HTAPを試してみる](/tidb-cloud/tidb-cloud-htap-quickstart.md)
     -   [TiDB Cloud CLI を試す](/tidb-cloud/get-started-with-cli.md)
     -   [PoCを実行する](/tidb-cloud/tidb-cloud-poc.md)
@@ -187,7 +187,7 @@
             -   [Slackで購読する](/tidb-cloud/monitor-alert-slack.md)
             -   [Zoomで登録する](/tidb-cloud/monitor-alert-zoom.md)
         -   [クラスタイベント](/tidb-cloud/tidb-cloud-events.md)
-        -   [サードパーティのメトリクス統合](/tidb-cloud/third-party-monitoring-integrations.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
+        -   [サードパーティのメトリクス統合](/tidb-cloud/third-party-monitoring-integrations.md)
         -   [TiDB Cloudクリニック](/tidb-cloud/tidb-cloud-clinic.md)
     -   パフォーマンスの調整
         -   [概要](/tidb-cloud/tidb-cloud-tune-performance-overview.md)
@@ -238,6 +238,7 @@
                 -   [SQLプラン管理](/sql-plan-management.md)
                 -   [最適化ルールのブロックリストと式プッシュダウン](/blocklist-control-plan.md)
                 -   [オプティマイザー修正コントロール](/optimizer-fix-controls.md)
+            -   [インデックスアドバイザー](/index-advisor.md)
         -   [TiKV Follower Readの調整](/follower-read.md)
         -   [コプロセッサーキャッシュ](/coprocessor-cache.md)
         -   ガベージコレクション（GC）
@@ -245,8 +246,10 @@
             -   [コンフィグレーション](/garbage-collection-configuration.md)
         -   [TiFlash のパフォーマンスを調整する](/tiflash/tune-tiflash-performance.md)
     -   リソース割り当ての最適化
-        -   [リソース割り当ての概要](/tidb-cloud/optimize-resource-allocation.md)
-        -   [リソース管理](/tidb-resource-control.md)
+        -   リソースマネージャー
+            -   [リソース制御を使用してリソースグループの制限とフロー制御を実現する](/tidb-resource-control-ru-groups.md)
+            -   [ランナウェイクエリの管理](/tidb-resource-control-runaway-queries.md)
+            -   [バックグラウンドタスクの管理](/tidb-resource-control-background-tasks.md)
         -   TiDBノードグループ
             -   [TiDBノードグループの概要](/tidb-cloud/tidb-node-group-overview.md)
             -   [TiDBノードグループの管理](/tidb-cloud/tidb-node-group-management.md)
@@ -284,33 +287,33 @@
     -   [SQLエディタでのChat2Query](/tidb-cloud/explore-data-with-chat2query.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   [SQL プロキシアカウント](/tidb-cloud/sql-proxy-account.md)
 -   ベクトル検索![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
-    -   [概要](/tidb-cloud/vector-search-overview.md)
+    -   [概要](/vector-search/vector-search-overview.md)
     -   始める
-        -   [SQLを始めよう](/tidb-cloud/vector-search-get-started-using-sql.md)
-        -   [Pythonを始めよう](/tidb-cloud/vector-search-get-started-using-python.md)
+        -   [SQLを始めよう](/vector-search/vector-search-get-started-using-sql.md)
+        -   [Pythonを始めよう](/vector-search/vector-search-get-started-using-python.md)
     -   統合
-        -   [概要](/tidb-cloud/vector-search-integration-overview.md)
+        -   [概要](/vector-search/vector-search-integration-overview.md)
         -   AIフレームワーク
-            -   [ラマインデックス](/tidb-cloud/vector-search-integrate-with-llamaindex.md)
-            -   [ランチェイン](/tidb-cloud/vector-search-integrate-with-langchain.md)
+            -   [ラマインデックス](/vector-search/vector-search-integrate-with-llamaindex.md)
+            -   [ランチェイン](/vector-search/vector-search-integrate-with-langchain.md)
         -   AIサービス
             -   [アマゾンの岩盤](/tidb-cloud/vector-search-integrate-with-amazon-bedrock.md)
         -   モデル/サービスの埋め込み
-            -   [ジナ・アイ](/tidb-cloud/vector-search-integrate-with-jinaai-embedding.md)
+            -   [ジナ・アイ](/vector-search/vector-search-integrate-with-jinaai-embedding.md)
         -   ORMライブラリ
-            -   [SQLアルケミー](/tidb-cloud/vector-search-integrate-with-sqlalchemy.md)
-            -   [ピーウィー](/tidb-cloud/vector-search-integrate-with-peewee.md)
-            -   [Django ORM](/tidb-cloud/vector-search-integrate-with-django-orm.md)
+            -   [SQLアルケミー](/vector-search/vector-search-integrate-with-sqlalchemy.md)
+            -   [ピーウィー](/vector-search/vector-search-integrate-with-peewee.md)
+            -   [Django ORM](/vector-search/vector-search-integrate-with-django-orm.md)
     -   テキスト検索
         -   [SQLによる全文検索](/tidb-cloud/vector-search-full-text-search-sql.md)
         -   [Pythonによる全文検索](/tidb-cloud/vector-search-full-text-search-python.md)
         -   [ハイブリッド検索](/tidb-cloud/vector-search-hybrid-search.md)
     -   参照
-        -   [ベクトルデータ型](/tidb-cloud/vector-search-data-types.md)
-        -   [ベクトル関数と演算子](/tidb-cloud/vector-search-functions-and-operators.md)
-        -   [ベクトルインデックス](/tidb-cloud/vector-search-index.md)
-    -   [パフォーマンスの向上](/tidb-cloud/vector-search-improve-performance.md)
-    -   [制限事項](/tidb-cloud/vector-search-limitations.md)
+        -   [ベクトルデータ型](/vector-search/vector-search-data-types.md)
+        -   [ベクトル関数と演算子](/vector-search/vector-search-functions-and-operators.md)
+        -   [ベクトルインデックス](/vector-search/vector-search-index.md)
+    -   [パフォーマンスの向上](/vector-search/vector-search-improve-performance.md)
+    -   [制限事項](/vector-search/vector-search-limitations.md)
     -   [変更ログ](/tidb-cloud/vector-search-changelogs.md)
 -   データサービス![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   [概要](/tidb-cloud/data-service-overview.md)
@@ -435,6 +438,7 @@
     -   SQL文
         -   [概要](/sql-statements/sql-statement-overview.md)
         -   [`ADMIN`](/sql-statements/sql-statement-admin.md)
+        -   [`ADMIN ALTER DDL JOBS`](/sql-statements/sql-statement-admin-alter-ddl.md)
         -   [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md)
         -   [`ADMIN CHECKSUM TABLE`](/sql-statements/sql-statement-admin-checksum-table.md)
         -   [`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md)
@@ -610,6 +614,7 @@
             -   [JSONを返す関数](/functions-and-operators/json-functions/json-functions-return.md)
             -   [JSONユーティリティ関数](/functions-and-operators/json-functions/json-functions-utility.md)
             -   [JSONを集約する関数](/functions-and-operators/json-functions/json-functions-aggregate.md)
+            -   [JSONを検証する関数](/functions-and-operators/json-functions/json-functions-validate.md)
         -   [集計（GROUP BY）関数](/functions-and-operators/aggregate-group-by-functions.md)
         -   [GROUP BY 修飾子](/functions-and-operators/group-by-modifier.md)
         -   [ウィンドウ関数](/functions-and-operators/window-functions.md)
@@ -617,6 +622,7 @@
         -   [ユーティリティ関数](/functions-and-operators/utility-functions.md)
         -   [その他の機能](/functions-and-operators/miscellaneous-functions.md)
         -   [TiDB固有の機能](/functions-and-operators/tidb-functions.md)
+        -   [ユーティリティ関数](/functions-and-operators/utility-functions.md)
         -   [精密計算](/functions-and-operators/precision-math.md)
         -   [集合演算](/functions-and-operators/set-operators.md)
         -   [プッシュダウンの式のリスト](/functions-and-operators/expressions-pushed-down.md)
@@ -631,6 +637,7 @@
         -   [楽観的トランザクション](/optimistic-transaction.md)
         -   [悲観的な取引](/pessimistic-transaction.md)
         -   [非トランザクションDMLステートメント](/non-transactional-dml.md)
+        -   [パイプラインDML](/pipelined-dml.md)
     -   [ビュー](/views.md)
     -   [パーティショニング](/partitioned-table.md)
     -   [一時テーブル](/temporary-tables.md)
@@ -650,6 +657,7 @@
     -   システムテーブル
         -   `mysql`スキーマ
             -   [概要](/mysql-schema/mysql-schema.md)
+            -   [`tidb_mdl_view`](/mysql-schema/mysql-schema-tidb-mdl-view.md)
             -   [`user`](/mysql-schema/mysql-schema-user.md)
         -   情報スキーマ
             -   [概要](/information-schema/information-schema.md)
@@ -710,6 +718,7 @@
     -   [メタデータロック](/metadata-lock.md)
     -   [UUIDを使用する](/best-practices/uuid.md)
     -   [TiDB 高速テーブル作成](/accelerated-table-creation.md)
+    -   [スキーマキャッシュ](/schema-cache.md)
 -   APIリファレンス![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
     -   [概要](/tidb-cloud/api-overview.md)
     -   v1ベータ1
@@ -816,28 +825,23 @@
             -   [TPC-C パフォーマンステストレポート](/tidb-cloud/v8.5-performance-benchmarking-with-tpcc.md)
             -   [Sysbenchパフォーマンステストレポート](/tidb-cloud/v8.5-performance-benchmarking-with-sysbench.md)
         -   TiDB v8.1
-            -   [TPC-C パフォーマンステストレポート](/tidb-cloud/v8.1-performance-benchmarking-with-tpcc.md)
+            -   [TPC-Cパフォーマンステストレポート](/tidb-cloud/v8.1-performance-benchmarking-with-tpcc.md)
             -   [Sysbenchパフォーマンステストレポート](/tidb-cloud/v8.1-performance-benchmarking-with-sysbench.md)
         -   TiDB v7.5
-            -   [TPC-C パフォーマンステストレポート](/tidb-cloud/v7.5-performance-benchmarking-with-tpcc.md)
+            -   [TPC-Cパフォーマンステストレポート](/tidb-cloud/v7.5-performance-benchmarking-with-tpcc.md)
             -   [Sysbenchパフォーマンステストレポート](/tidb-cloud/v7.5-performance-benchmarking-with-sysbench.md)
         -   TiDB v7.1
-            -   [TPC-C パフォーマンステストレポート](/tidb-cloud/v7.1-performance-benchmarking-with-tpcc.md)
+            -   [TPC-Cパフォーマンステストレポート](/tidb-cloud/v7.1-performance-benchmarking-with-tpcc.md)
             -   [Sysbenchパフォーマンステストレポート](/tidb-cloud/v7.1-performance-benchmarking-with-sysbench.md)
         -   TiDB v6.5
-            -   [TPC-C パフォーマンステストレポート](/tidb-cloud/v6.5-performance-benchmarking-with-tpcc.md)
+            -   [TPC-Cパフォーマンステストレポート](/tidb-cloud/v6.5-performance-benchmarking-with-tpcc.md)
             -   [Sysbenchパフォーマンステストレポート](/tidb-cloud/v6.5-performance-benchmarking-with-sysbench.md)
     -   [システム変数](/system-variables.md)
     -   [サーバーステータス変数](/status-variables.md)
     -   [テーブルフィルター](/table-filter.md)
-    -   リソース割り当ての最適化
-        -   [リソース割り当ての概要](/tidb-cloud/optimize-resource-allocation.md)
-        -   [リソース管理](/tidb-resource-control.md)
-        -   TiDBノードグループ
-            -   [TiDBノードグループの概要](/tidb-cloud/tidb-node-group-overview.md)
-            -   [TiDBノードグループの管理](/tidb-cloud/tidb-node-group-management.md)
     -   [外部ストレージサービスのURI形式](/external-storage-uri.md)
     -   [DDL実行の原則とベストプラクティス](/ddl-introduction.md)
+    -   [バッチ処理](/batch-processing.md)
     -   [データとインデックス間の不整合のトラブルシューティング](/troubleshoot-data-inconsistency-errors.md)
     -   [通知](/tidb-cloud/notifications.md)
     -   [用語集](/tidb-cloud/tidb-cloud-glossary.md)

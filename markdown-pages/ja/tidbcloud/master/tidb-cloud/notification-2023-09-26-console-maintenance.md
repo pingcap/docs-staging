@@ -3,11 +3,11 @@ title: 2023-09-26 TiDB Cloud Console Maintenance Notification
 summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 (メンテナンス期間、理由、影響など) について説明します。
 ---
 
-# [2023-09-26] TiDB Cloudコンソールメンテナンス通知 {#2023-09-26-tidb-cloud-console-maintenance-notification}
+# [2023-09-26] TiDB Cloudコンソールメンテナンスのお知らせ {#2023-09-26-tidb-cloud-console-maintenance-notification}
 
-この通知では、2023 年 9 月 26 日の[TiDB Cloudコンソール](https://tidbcloud.com/)メンテナンスについて知っておく必要のある詳細について説明します。
+この通知では、2023 年 9 月 26 日の[TiDB Cloudコンソール](https://tidbcloud.com/)目のメンテナンスについて知っておく必要のある詳細について説明します。
 
-## メンテナンス期間 {#maintenance-window}
+## メンテナンスウィンドウ {#maintenance-window}
 
 -   日付: 2023-09-26
 -   開始時間: 8:00 (UTC+0)
@@ -20,11 +20,11 @@ summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 
 
 ## メンテナンスの理由 {#reason-for-maintenance}
 
-当社は、パフォーマンスと効率性を向上させ、すべてのユーザーに優れたエクスペリエンスを提供するために、 TiDB Cloud Serverless の管理インフラストラクチャをアップグレードしています。これは、高品質なサービスを提供するという当社の継続的な取り組みの一環です。
+TiDB Cloud Serverlessの管理インフラストラクチャをアップグレードし、パフォーマンスと効率性を向上させ、すべてのユーザーに優れたエクスペリエンスを提供します。これは、高品質なサービスを提供するという当社の継続的な取り組みの一環です。
 
 ## インパクト {#impact}
 
-メンテナンス期間中、 TiDB Cloudコンソール UI および API 内での作成と更新に関連する機能に断続的な中断が発生する可能性があります。ただし、TiDB クラスターはデータの読み取りと書き込みの通常の操作を維持し、オンライン ビジネスに悪影響が及ばないようにします。
+メンテナンス期間中、 TiDB Cloudコンソールの UI および API 内での作成および更新に関連する機能に断続的な中断が発生する可能性があります。ただし、TiDB クラスターは通常通りデータの読み取りと書き込みを行うため、オンラインビジネスに悪影響は発生しません。
 
 ### TiDB Cloudコンソール UI の影響を受ける機能 {#affected-features-of-tidb-cloud-console-ui}
 
@@ -35,7 +35,7 @@ summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 
         -   スケールクラスター
         -   クラスターをビュー
         -   クラスターを一時停止または再開する
-        -   クラスターのパスワードを変更する
+        -   クラスターパスワードを変更する
         -   クラスタートラフィックフィルターを変更する
     -   輸入
         -   インポートジョブを作成する
@@ -57,7 +57,7 @@ summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 
     -   ネットワークアクセス
         -   プライベートエンドポイントを作成する
         -   プライベートエンドポイントを削除する
-        -   VPC ピアリングを追加する
+        -   VPCピアリングを追加する
         -   VPC ピアリングの削除
     -   メンテナンス
         -   メンテナンスウィンドウを変更する
@@ -69,7 +69,7 @@ summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 
 
 ### TiDB Cloud API の影響を受ける機能 {#affected-features-of-tidb-cloud-api}
 
--   [APIリクエスト](https://docs.pingcap.com/tidbcloud/api/v1beta)すべてに500で応答します。
+-   全て[APIリクエスト](https://docs.pingcap.com/tidbcloud/api/v1beta)つで500が返されます。
 -   [データサービスAPI](https://docs.pingcap.com/tidbcloud/data-service-overview)影響を受けません。
 
 ## 完了と再開 {#completion-and-resumption}
@@ -78,4 +78,4 @@ summary: 2023 年 9 月 26 日のTiDB Cloud Console メンテナンスの詳細 
 
 ## サポートを受ける {#get-support}
 
-ご質問やサポートが必要な場合は、 [サポートチーム](/tidb-cloud/tidb-cloud-support.md)ご連絡ください。お客様の懸念に対処し、必要なガイダンスを提供いたします。
+ご質問やサポートが必要な場合は、 [サポートチーム](/tidb-cloud/tidb-cloud-support.md)お問い合わせください。お客様のご懸念にお答えし、必要なサポートを提供させていただきます。

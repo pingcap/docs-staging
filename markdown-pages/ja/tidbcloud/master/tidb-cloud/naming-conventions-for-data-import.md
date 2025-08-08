@@ -5,14 +5,14 @@ summary: データのインポート時の CSV、Parquet、 Aurora Snapshot、SQ
 
 # データインポートの命名規則 {#naming-conventions-for-data-import}
 
-TiDB Cloudには、CSV、Parquet、 Aurora Snapshot、SQL のファイル形式でデータをインポートできます。データが正常にインポートされるようにするには、次の 2 種類のファイルを準備する必要があります。
+TiDB Cloudには、CSV、Parquet、 Aurora Snapshot、SQL 形式のデータをインポートできます。データを確実にインポートするには、以下の 2 種類のファイルを準備する必要があります。
 
--   **スキーマファイル**。データベーススキーマファイル（オプション）とテーブルスキーマファイルをSQL形式（ `.sql` ）で準備します。テーブルスキーマファイルが提供されていない場合は、事前にターゲットデータベースに対応するテーブルを手動で作成する必要があります。
--   **データ ファイル**。データをインポートするための命名規則に準拠したデータ ファイルを準備します。データ ファイル名が要件を満たせない場合は、 [**ファイルパターン**](#file-pattern)使用してインポート タスクを実行することをお勧めします。そうしないと、インポート タスクはインポートするデータ ファイルをスキャンできません。
+-   **スキーマファイル**。データベーススキーマファイル（オプション）とテーブルスキーマファイルをSQL形式（ `.sql` ）で用意します。テーブルスキーマファイルが提供されていない場合は、事前に対象データベースに対応するテーブルを手動で作成する必要があります。
+-   **データファイル**。データのインポートに使用する命名規則に準拠したデータファイルを用意してください。データファイル名が要件を満たしていない場合は、 [**ファイルパターン**](#file-pattern)使用してインポートタスクを実行することをお勧めします。そうでない場合、インポートタスクはインポートするデータファイルをスキャンできません。
 
 ## スキーマファイルの命名規則 {#naming-conventions-for-schema-files}
 
-このセクションでは、データベースおよびテーブル スキーマ ファイルの命名規則について説明します。スキーマ ファイルの命名規則は、CSV、Parquet、 Aurora Snapshot、SQL のすべての種類のソース ファイルで同じです。
+このセクションでは、データベースとテーブルのスキーマファイルの命名規則について説明します。スキーマファイルの命名規則は、CSV、Parquet、 Aurora Snapshot、SQL のすべてのソースファイルで共通です。
 
 スキーマ ファイルの命名規則は次のとおりです。
 
@@ -42,21 +42,21 @@ TiDB Cloudには、CSV、Parquet、 Aurora Snapshot、SQL のファイル形式�
 
 ## データファイルの命名規則 {#naming-conventions-for-data-files}
 
-このセクションでは、データ ファイルの命名規則について説明します。ソース ファイルの種類に応じて、データ ファイルの命名規則は異なります。
+このセクションでは、データファイルの命名規則について説明します。ソースファイルの種類に応じて、データファイルの命名規則は異なります。
 
-### CSVファイル {#csv}
+### CSV {#csv}
 
-CSV ファイルをインポートするときは、データ ファイルに次のように名前を付けます。
+CSV ファイルをインポートする場合は、データ ファイルに次のように名前を付けます。
 
 `${db_name}.${table_name}${suffix}.csv.${compress}`
 
-`${suffix}`はオプションであり、次のいずれかの形式にすることができます。xxx *`xxx`*任意の数字にすることができます。
+`${suffix}`はオプションであり、次のいずれかの形式を指定できます。xxx *`xxx`*任意の数字です。
 
--   *`.xxx`* 、例えば`.01`
--   *`._xxx_xxx_xxx`* 、例えば`._0_0_01`
--   *`_xxx_xxx_xxx`* 、例えば`_0_0_01`
+-   *`.xxx`* （例： `.01`
+-   *`._xxx_xxx_xxx`* （例： `._0_0_01`
+-   *`_xxx_xxx_xxx`* （例： `_0_0_01`
 
-`${compress}`圧縮形式で、オプションです。TiDB TiDB Cloud は、 `.gzip` 、 `.gz` 、 `.zstd` 、 `.zst` 、 `.snappy`の形式をサポートしています。
+`${compress}`は圧縮形式で、オプションです。TiDB TiDB Cloud は`.gzip` 、 `.gz` 、 `.zstd` 、 `.zst` 、 `.snappy`の形式をサポートしています。
 
 たとえば、次のすべてのファイルのターゲット データベースとテーブルは`import_db`と`test_table`です。
 
@@ -68,13 +68,13 @@ CSV ファイルをインポートするときは、データ ファイルに次
 
 > **注記：**
 >
-> Snappy 圧縮ファイルは[公式Snappyフォーマット](https://github.com/google/snappy)である必要があります。Snappy 圧縮の他のバリエーションはサポートされていません。
+> Snappy 圧縮ファイルは[公式Snappyフォーマット](https://github.com/google/snappy)である必要があります。その他の Snappy 圧縮形式はサポートされていません。
 
 ### 寄木細工 {#parquet}
 
 Parquet ファイルをインポートするときは、データ ファイルに次のように名前を付けます。
 
-`${db_name}.${table_name}${suffix}.parquet` ( `${suffix}`はオプション)
+`${db_name}.${table_name}${suffix}.parquet` （ `${suffix}`はオプション）
 
 例えば：
 
@@ -83,7 +83,7 @@ Parquet ファイルをインポートするときは、データ ファイル�
 
 ### Auroraスナップショット {#aurora-snapshot}
 
-Auroraスナップショット ファイルの場合、 `${db_name}.${table_name}/`フォルダー内の`.parquet`サフィックスを持つすべてのファイルは命名規則に準拠しています。データ ファイル名には、「az、0-9、-、_、.」で構成される任意のプレフィックスと「.parquet」サフィックスを含めることができます。
+Aurora Snapshotファイルの場合、 `${db_name}.${table_name}/`フォルダ内のサフィックスが`.parquet`であるすべてのファイルは命名規則に準拠しています。データファイル名には、「az、0-9、-、_、.」からなる任意のプレフィックスと「.parquet」サフィックスを含めることができます。
 
 例えば：
 
@@ -91,19 +91,19 @@ Auroraスナップショット ファイルの場合、 `${db_name}.${table_name
 -   `import_db.test_table/part001/mydata.parquet`
 -   `import_db.test_table/part002/mydata-part002.parquet`
 
-### 構文 {#sql}
+### SQL {#sql}
 
 SQL ファイルをインポートするときは、データ ファイルに次のように名前を付けます。
 
 `${db_name}.${table_name}${suffix}.sql.${compress}`
 
-`${suffix}`はオプションであり、次のいずれかの形式にすることができます。xxx *`xxx`*任意の数字にすることができます。
+`${suffix}`はオプションであり、次のいずれかの形式を指定できます。xxx *`xxx`*任意の数字です。
 
 -   *`.xxx`* 、例えば`.01`
--   *`._xxx_xxx_xxx`* 、例えば`._0_0_01`
--   *`_xxx_xxx_xxx`* 、例えば`_0_0_01`
+-   *`._xxx_xxx_xxx`* （例： `._0_0_01`
+-   *`_xxx_xxx_xxx`* （例： `_0_0_01`
 
-`${compress}`圧縮形式で、オプションです。TiDB TiDB Cloud は、 `.gzip` 、 `.gz` 、 `.zstd` 、 `.zst` 、 `.snappy`の形式をサポートしています。
+`${compress}`は圧縮形式で、オプションです。TiDB TiDB Cloud は`.gzip` 、 `.gz` 、 `.zstd` 、 `.zst` 、 `.snappy`の形式をサポートしています。
 
 例えば：
 
@@ -111,15 +111,15 @@ SQL ファイルをインポートするときは、データ ファイルに次
 -   `import_db.test_table.01.sql`
 -   `import_db.test_table.01.sql.gz`
 
-SQL ファイルがデフォルト設定で TiDB Dumpling を介してエクスポートされる場合、デフォルトで命名規則に準拠します。
+SQL ファイルがデフォルト設定で TiDB Dumplingを介してエクスポートされる場合、デフォルトで命名規則に準拠します。
 
 > **注記：**
 >
-> Snappy 圧縮ファイルは[公式Snappyフォーマット](https://github.com/google/snappy)である必要があります。Snappy 圧縮の他のバリエーションはサポートされていません。
+> Snappy 圧縮ファイルは[公式Snappyフォーマット](https://github.com/google/snappy)である必要があります。その他の Snappy 圧縮形式はサポートされていません。
 
 ## ファイルパターン {#file-pattern}
 
-CSV または Parquet のソース データ ファイルが命名規則に準拠していない場合は、ファイル パターン機能を使用して、ソース データ ファイルとターゲット テーブル間の名前マッピング関係を確立できます。この機能は、 Auroraスナップショットおよび SQL データ ファイルをサポートしていません。
+CSVまたはParquetのソースデータファイルが命名規則に準拠していない場合、ファイルパターン機能を使用して、ソースデータファイルとターゲットテーブル間の名前マッピング関係を確立できます。この機能は、 Aurora SnapshotおよびSQLデータファイルはサポートしていません。
 
--   CSVファイルについては、 [ステップ4. CSVファイルをTiDB Cloudにインポートする](/tidb-cloud/import-csv-files.md#step-4-import-csv-files-to-tidb-cloud)の**詳細設定**&gt;**マッピング設定**を参照してください。
--   Parquetファイルについては、 [ステップ4. ParquetファイルをTiDB Cloudにインポートする](/tidb-cloud/import-parquet-files.md#step-4-import-parquet-files-to-tidb-cloud)の**詳細設定**&gt;**マッピング設定**を参照してください。
+-   CSVファイルについては、 [ステップ4. CSVファイルをTiDB Cloudにインポートする](/tidb-cloud/import-csv-files.md#step-4-import-csv-files-to-tidb-cloud)の**「詳細設定」** &gt; **「マッピング設定」**を参照してください。
+-   Parquetファイルについては、 [ステップ4. ParquetファイルをTiDB Cloudにインポートする](/tidb-cloud/import-parquet-files.md#step-4-import-parquet-files-to-tidb-cloud)の**「詳細設定」** &gt; **「マッピング設定」**を参照してください。

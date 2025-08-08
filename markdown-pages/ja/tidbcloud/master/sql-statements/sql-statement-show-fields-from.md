@@ -5,4 +5,4 @@ summary: TiDB データベースの SHOW [FULL] FIELDS FROM の使用法の概�
 
 # [FULL]フィールドを表示 {#show-full-fields-from}
 
-このステートメントは[`SHOW [FULL] COLUMNS FROM`](/sql-statements/sql-statement-show-columns-from.md)のエイリアスです。MySQL との互換性のために含まれています。
+この文は[`SHOW [FULL] COLUMNS FROM`](/sql-statements/sql-statement-show-columns-from.md)のエイリアスです。MySQLとの互換性のために用意されています。

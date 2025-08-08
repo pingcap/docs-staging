@@ -20,7 +20,7 @@ TiDB v7.0.0 以降、 `LOAD DATA` SQL ステートメントは次の機能をサ
 
 > **注記：**
 >
-> `LOAD DATA INFILE`ステートメントの場合、 TiDB Cloud Dedicated は Amazon S3 または Google Cloud Storage から`LOAD DATA LOCAL INFILE` 、 `LOAD DATA INFILE`サポートしますが、 TiDB Cloud Serverless は`LOAD DATA LOCAL INFILE`のみをサポートします。
+> `LOAD DATA INFILE`ステートメントでは、 TiDB Cloud Dedicated は Amazon S3 または Google Cloud Storage から`LOAD DATA LOCAL INFILE` `LOAD DATA INFILE`サポートしますが、 TiDB Cloud Serverless は`LOAD DATA LOCAL INFILE`のみをサポートします。
 
 </CustomContent>
 
@@ -47,7 +47,7 @@ Fields ::=
 
 TiDB Cloudを使用している場合、 `LOAD DATA`ステートメントを使用してローカル データ ファイルをロードするには、 TiDB Cloudに接続するときに接続文字列に`--local-infile`オプションを追加する必要があります。
 
--   {TiDB Cloud Serverless の接続文字列の例を次に示します。
+-   以下は、 TiDB Cloud Serverless の接続文字列の例です。
 
         mysql --connect-timeout 15 -u '<user_name>' -h <host_name> -P 4000 -D test --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/cert.pem -p<your_password> --local-infile
 
@@ -75,7 +75,7 @@ TiDB Cloudを使用している場合、 `LOAD DATA`ステートメントを使�
 -   指定されたパス内のすべてのファイルをインポート: `s3://<bucket-name>/path/to/data/*`
 -   指定されたパスの下にある`.csv`で終わるすべてのファイルをインポートします: `s3://<bucket-name>/path/to/data/*.csv`
 -   指定されたパスの下にある`foo`で始まるすべてのファイルをインポートします: `s3://<bucket-name>/path/to/data/foo*`
--   指定されたパスの下にある、先頭が`foo`で末尾が`.csv`すべてのファイルをインポートします: `s3://<bucket-name>/path/to/data/foo*.csv`
+-   指定されたパスの下にある、先頭が`foo`で終わり、末尾が`.csv`であるすべてのファイルをインポートします: `s3://<bucket-name>/path/to/data/foo*.csv`
 
 ### <code>Fields</code> 、 <code>Lines</code> 、 <code>Ignore Lines</code> {#code-fields-code-code-lines-code-and-code-ignore-lines-code}
 

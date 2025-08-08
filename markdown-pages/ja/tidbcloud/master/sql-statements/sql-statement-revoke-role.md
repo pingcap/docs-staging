@@ -105,7 +105,7 @@ Query OK, 0 rows affected (0.02 sec)
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-この後、ユーザー`jennifer`ロール`analyticsteam`に関連付けられた権限を持ち、 `jennifer`ステートメント`SET ROLE`を実行する必要がなくなります。
+この後、ユーザー`jennifer`ロール`analyticsteam`に関連付け`jennifer`た権限を持ち、ステートメント`SET ROLE`実行する必要がなくなります。
 
 ```sql
 SHOW GRANTS;
@@ -158,9 +158,9 @@ SHOW GRANTS;
 1 row in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`REVOKE <role>`ステートメントは、MySQL 8.0 のロール機能と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`REVOKE <role>`文はMySQL 8.0のロール機能と完全に互換性があります。互換性に関する相違点が見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 
@@ -172,6 +172,6 @@ TiDB の`REVOKE <role>`ステートメントは、MySQL 8.0 のロール機能�
 
 <CustomContent platform="tidb">
 
--   [ロールベースのアクセス制御](/role-based-access-control.md)
+-   [ロールベースアクセス制御](/role-based-access-control.md)
 
 </CustomContent>

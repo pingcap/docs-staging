@@ -29,7 +29,7 @@ summary: Amazon S3、GCS、Azure Blob Storage、または Alibaba Cloud Object S
     >
     > -   パフォーマンスを向上させるには、各圧縮ファイルのサイズを 100 MiB に制限することをお勧めします。
     > -   Snappy 圧縮ファイルは[公式Snappyフォーマット](https://github.com/google/snappy)である必要があります。その他の Snappy 圧縮形式はサポートされていません。
-    > -   非圧縮ファイルの場合、前述のルールに従って CSV ファイル名を更新できないケース (たとえば、CSV ファイル リンクが他のプログラムでも使用されている場合) は、ファイル名を変更せずに、 [ステップ4](#step-4-import-csv-files-to-tidb-cloud-serverless)の**マッピング設定**を使用してソース データを単一のターゲット テーブルにインポートできます。
+    > -   非圧縮ファイルの場合、前述のルールに従って CSV ファイル名を更新できないケース (たとえば、CSV ファイル リンクが他のプログラムでも使用されている場合) は、ファイル名を変更せずに、 [ステップ4](#step-4-import-csv-files)の**マッピング設定**を使用してソース データを単一のターゲット テーブルにインポートできます。
 
 ## ステップ2. ターゲットテーブルスキーマを作成する {#step-2-create-the-target-table-schemas}
 
@@ -76,7 +76,7 @@ TiDB Cloud Serverless が Amazon S3、GCS、Azure Blob Storage、または Aliba
 
 -   CSV ファイルが Amazon S3 にある場合は、 [TiDB Cloud Serverless の外部storageアクセスを構成する](/tidb-cloud/serverless-external-storage.md#configure-amazon-s3-access) 。
 
-    バケットにアクセスするには、AWS アクセスキーまたはロール ARN のいずれかを使用できます。完了したら、アクセスキー（アクセスキー ID とシークレットアクセスキーを含む）またはロール ARN の値をメモしておいてください。これらは[ステップ4](#step-4-import-csv-files-to-tidb-cloud-serverless)で必要になります。
+    バケットにアクセスするには、AWS アクセスキーまたはロール ARN のいずれかを使用できます。完了したら、アクセスキー（アクセスキー ID とシークレットアクセスキーを含む）またはロール ARN の値をメモしておいてください。これらは[ステップ4](#step-4-import-csv-files)で必要になります。
 
 -   CSV ファイルが GCS にある場合は、 [TiDB Cloud Serverless の外部storageアクセスを構成する](/tidb-cloud/serverless-external-storage.md#configure-gcs-access) 。
 
@@ -84,7 +84,7 @@ TiDB Cloud Serverless が Amazon S3、GCS、Azure Blob Storage、または Aliba
 
 -   CSV ファイルが Alibaba Cloud Object Storage Service (OSS) にある場合は、 [TiDB Cloud Serverless の外部storageアクセスを構成する](/tidb-cloud/serverless-external-storage.md#configure-alibaba-cloud-object-storage-service-oss-access) 。
 
-## ステップ4. CSVファイルをTiDB Cloud Serverlessにインポートする {#step-4-import-csv-files-to-tidb-cloud-serverless}
+## ステップ4.CSVファイルをインポートする {#step-4-import-csv-files}
 
 CSV ファイルをTiDB Cloud Serverless にインポートするには、次の手順を実行します。
 
@@ -107,8 +107,8 @@ CSV ファイルをTiDB Cloud Serverless にインポートするには、次の
 
     -   **ストレージプロバイダー**: **Amazon S3**を選択します。
     -   **ソースファイルURI** :
-        -   1つのファイルをインポートする場合は、ソースファイルのURIと名前を次の形式で入力します`s3://[bucket_name]/[data_source_folder]/[file_name].csv` 。たとえば、 `s3://sampledata/ingest/TableName.01.csv` 。
-        -   複数のファイルをインポートする場合は、ソースファイルのURIと名前を次の形式で入力します`s3://[bucket_name]/[data_source_folder]/` 。たとえば、 `s3://sampledata/ingest/` 。
+        -   1つのファイルをインポートする場合は、ソースファイルのURIを次の形式で入力します`s3://[bucket_name]/[data_source_folder]/[file_name].csv` 。たとえば、 `s3://sampledata/ingest/TableName.01.csv` 。
+        -   複数のファイルをインポートする場合は、ソースフォルダのURIを次の形式で入力します`s3://[bucket_name]/[data_source_folder]/` 。たとえば、 `s3://sampledata/ingest/` 。
     -   **認証情報**: バケットにアクセスするには、AWS ロール ARN または AWS アクセスキーのいずれかを使用できます。詳細については、 [Amazon S3 アクセスを構成する](/tidb-cloud/serverless-external-storage.md#configure-amazon-s3-access)参照してください。
         -   **AWS ロール ARN** : AWS ロール ARN 値を入力します。
         -   **AWS アクセスキー**: AWS アクセスキー ID と AWS シークレットアクセスキーを入力します。
@@ -160,8 +160,8 @@ CSV ファイルをTiDB Cloud Serverless にインポートするには、次の
 
     -   **ストレージ プロバイダー**: **Google Cloud Storage**を選択します。
     -   **ソースファイルURI** :
-        -   1つのファイルをインポートする場合は、ソースファイルのURIと名前を次の形式で入力します`[gcs|gs]://[bucket_name]/[data_source_folder]/[file_name].csv` 。たとえば、 `[gcs|gs]://sampledata/ingest/TableName.01.csv` 。
-        -   複数のファイルをインポートする場合は、ソースファイルのURIと名前を次の形式で入力します`[gcs|gs]://[bucket_name]/[data_source_folder]/` 。たとえば、 `[gcs|gs]://sampledata/ingest/` 。
+        -   1つのファイルをインポートする場合は、ソースファイルのURIを次の形式で入力します`[gcs|gs]://[bucket_name]/[data_source_folder]/[file_name].csv` 。たとえば、 `[gcs|gs]://sampledata/ingest/TableName.01.csv` 。
+        -   複数のファイルをインポートする場合は、ソースフォルダのURIを次の形式で入力します`[gcs|gs]://[bucket_name]/[data_source_folder]/` 。たとえば、 `[gcs|gs]://sampledata/ingest/` 。
     -   **認証情報**: GCS IAMロールのサービスアカウントキーを使用してバケットにアクセスできます。詳細については、 [GCS アクセスを構成する](/tidb-cloud/serverless-external-storage.md#configure-gcs-access)ご覧ください。
 
 4.  **「次へ」**をクリックします。
@@ -211,9 +211,9 @@ CSV ファイルをTiDB Cloud Serverless にインポートするには、次の
 
     -   **ストレージ プロバイダー**: **Azure Blob Storage**を選択します。
     -   **ソースファイルURI** :
-        -   1つのファイルをインポートする場合は、ソースファイルのURIと名前を次の形式で入力します`[azure|https]://[bucket_name]/[data_source_folder]/[file_name].csv` 。たとえば、 `[azure|https]://sampledata/ingest/TableName.01.csv` 。
-        -   複数のファイルをインポートする場合は、ソースファイルのURIと名前を次の形式で入力します`[azure|https]://[bucket_name]/[data_source_folder]/` 。たとえば、 `[azure|https]://sampledata/ingest/` 。
-    -   **認証情報**：バケットへのアクセスには、Shared Access Signature（SAS）トークンを使用できます。詳細については、 [Azure Blob Storage アクセスを構成する](/tidb-cloud/serverless-external-storage.md#configure-azure-blob-storage-access)ご覧ください。
+        -   1つのファイルをインポートする場合は、ソースファイルのURIを次の形式で入力します`[azure|https]://[bucket_name]/[data_source_folder]/[file_name].csv` 。たとえば、 `[azure|https]://sampledata/ingest/TableName.01.csv` 。
+        -   複数のファイルをインポートする場合は、ソースフォルダのURIを次の形式で入力します`[azure|https]://[bucket_name]/[data_source_folder]/` 。たとえば、 `[azure|https]://sampledata/ingest/` 。
+    -   **認証情報**：バケットにアクセスするには、Shared Access Signature（SAS）トークンを使用できます。詳細については、 [Azure Blob Storage アクセスを構成する](/tidb-cloud/serverless-external-storage.md#configure-azure-blob-storage-access)ご覧ください。
 
 4.  **「次へ」**をクリックします。
 
@@ -256,14 +256,14 @@ CSV ファイルをTiDB Cloud Serverless にインポートするには、次の
 
     2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[データ]** &gt; **[インポート]**をクリックします。
 
-2.  **Cloud Storage からデータをインポート**をクリックします。
+2.  **「Cloud Storage からデータをインポート」**をクリックします。
 
 3.  **「クラウド ストレージからデータをインポート」**ページで、次の情報を入力します。
 
     -   **ストレージプロバイダー**: **Alibaba Cloud OSS**を選択します。
     -   **ソースファイルURI** :
-        -   1つのファイルをインポートする場合は、ソースファイルのURIと名前を次の形式で入力します`oss://[bucket_name]/[data_source_folder]/[file_name].csv` 。たとえば、 `oss://sampledata/ingest/TableName.01.csv` 。
-        -   複数のファイルをインポートする場合は、ソースファイルのURIと名前を次の形式で入力します`oss://[bucket_name]/[data_source_folder]/` 。たとえば、 `oss://sampledata/ingest/` 。
+        -   1つのファイルをインポートする場合は、ソースファイルのURIを次の形式で入力します`oss://[bucket_name]/[data_source_folder]/[file_name].csv` 。たとえば、 `oss://sampledata/ingest/TableName.01.csv` 。
+        -   複数のファイルをインポートする場合は、ソースフォルダのURIを次の形式で入力します`oss://[bucket_name]/[data_source_folder]/` 。たとえば、 `oss://sampledata/ingest/` 。
     -   **認証情報**: アクセスキーペアを使用してバケットにアクセスできます。詳細については、 [Alibaba Cloud Object Storage Service (OSS) アクセスを構成する](/tidb-cloud/serverless-external-storage.md#configure-alibaba-cloud-object-storage-service-oss-access)ご覧ください。
 
 4.  **「次へ」**をクリックします。

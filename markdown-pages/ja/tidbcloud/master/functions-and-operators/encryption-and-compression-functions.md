@@ -5,13 +5,13 @@ summary: 暗号化と圧縮の関数について学びます。
 
 # 暗号化と圧縮機能 {#encryption-and-compression-functions}
 
-TiDB は、MySQL 8.0 で利用可能な[暗号化および圧縮関数](https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html)のほとんどをサポートしています。
+TiDB は、MySQL 8.0 で利用可能な[暗号化および圧縮関数](https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html)ほとんどをサポートしています。
 
 ## サポートされている関数 {#supported-functions}
 
 | 名前                                                            | 説明                      |
 | :------------------------------------------------------------ | :---------------------- |
-| [`AES_DECRYPT()`](#aes_decrypt)                               | AESを使用して復号化する           |
+| [`AES_DECRYPT()`](#aes_decrypt)                               | AESを使用して復号する            |
 | [`AES_ENCRYPT()`](#aes_encrypt)                               | AESを使用して暗号化する           |
 | [`COMPRESS()`](#compress)                                     | 結果を圧縮してバイナリ文字列として返す     |
 | [`MD5()`](#md5)                                               | MD5チェックサムを計算する          |
@@ -27,9 +27,9 @@ TiDB は、MySQL 8.0 で利用可能な[暗号化および圧縮関数](https://
 
 ### <a href="https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_aes-decrypt"><code>AES_DECRYPT()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-encryption-functions-html-function-aes-decrypt-code-aes-decrypt-code-a}
 
-`AES_DECRYPT(data, key [,iv])`関数は、同じ`key`使用して[`AES_ENCRYPT()`](#aes_encrypt)関数を使用して以前に暗号化された`data`復号化します。
+`AES_DECRYPT(data, key [,iv])`関数は、同じ`key`を使用して[`AES_ENCRYPT()`](#aes_encrypt)関数を使用して以前に暗号化された`data`復号化します。
 
-[`block_encryption_mode`](/system-variables.md#block_encryption_mode)システム変数を使用して[高度暗号化規格 (AES)](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)暗号化モードを選択できます。
+[`block_encryption_mode`](/system-variables.md#block_encryption_mode)システム変数を使用して[高度暗号化規格（AES）](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)暗号化モードを選択できます。
 
 初期化ベクトルを必要とする暗号化モードの場合は、 `iv`引数で設定します。デフォルト値は`NULL`です。
 
@@ -46,9 +46,9 @@ SELECT AES_DECRYPT(0x28409970815CD536428876175F1A4923, 'secret');
 
 ### <a href="https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_aes-encrypt"><code>AES_ENCRYPT()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-encryption-functions-html-function-aes-encrypt-code-aes-encrypt-code-a}
 
-`AES_ENCRYPT(data, key [,iv])`関数は、 [高度暗号化規格 (AES)](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)アルゴリズムを使用して`data` `key`で暗号化します。
+`AES_ENCRYPT(data, key [,iv])`関数は、 [高度暗号化規格（AES）](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)アルゴリズムを使用して`data` `key`で暗号化します。
 
-[`block_encryption_mode`](/system-variables.md#block_encryption_mode)システム変数を使用して AES 暗号化モードを選択できます。
+[`block_encryption_mode`](/system-variables.md#block_encryption_mode)システム変数を使用して、AES 暗号化モードを選択できます。
 
 初期化ベクトルを必要とする暗号化モードの場合は、 `iv`引数で設定します。デフォルト値は`NULL`です。
 
@@ -72,8 +72,8 @@ SELECT AES_ENCRYPT(0x616263,'secret');
 
 長さがゼロ以外の引数の場合、関数は次の構造を持つバイナリ文字列を返します。
 
--   バイト0～3: 圧縮されていない長さ
--   4バイト目から最後まで: zlib圧縮データ
+-   バイト0～3: 非圧縮時の長さ
+-   バイト4から最後まで: zlib圧縮データ
 
 ```sql
 SELECT COMPRESS(0x414243);
@@ -86,7 +86,7 @@ SELECT COMPRESS(0x414243);
     +------------------------------------------+
     1 row in set (0.00 sec)
 
-この出力では、 `0x03000000`圧縮されていない長さ (3) を表し、 `0x789C72747206040000FFFF018D00C7` zlib 圧縮されたデータを表します。
+この出力では、 `0x03000000`圧縮されていない長さ (3) を表し、 `0x789C72747206040000FFFF018D00C7` zlib で圧縮されたデータを表します。
 
 Python を使用して TiDB の外部でこれをデコードする例:
 
@@ -99,7 +99,7 @@ print(int.from_bytes(data[:4], byteorder='little'))  # 3
 print(zlib.decompress(data[4:]))  # b'ABC'
 ```
 
-短い文字列の場合、 `COMPRESS()`入力よりも多くのバイトを返す可能性があります。次の例は、100 `a`文字の文字列が 19 バイトに圧縮されることを示しています。
+短い文字列の場合、 `COMPRESS()`入力よりも多くのバイト数を返す可能性があります。次の例では、 `a`文字の文字列が 19 バイトに圧縮されることを示しています。
 
 ```sql
 WITH x AS (SELECT REPEAT('a',100) 'a')
@@ -115,7 +115,7 @@ SELECT LENGTH(a),LENGTH(COMPRESS(a)) FROM x;
 
 ### <a href="https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_md5"><code>MD5()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-encryption-functions-html-function-md5-code-md5-code-a}
 
-`MD5(expr)`関数は、指定された引数`expr`に対して 128 ビットの[MD5](https://en.wikipedia.org/wiki/MD5)ハッシュを計算します。
+`MD5(expr)`関数は、指定された引数`expr`に対して 128 ビット[MD5](https://en.wikipedia.org/wiki/MD5)ハッシュを計算します。
 
 ```sql
 SELECT MD5('abc');
@@ -132,7 +132,7 @@ SELECT MD5('abc');
 
 > **警告：**
 >
-> この関数はMySQL 5.7では非推奨となり、MySQL 8.0 では削除されました。TiDB でも非推奨です。この関数の使用はお勧めしません。
+> この関数はMySQL 5.7で非推奨となり、MySQL 8.0で削除されました。TiDBでも非推奨です。この関数の使用は推奨されません。
 
 `PASSWORD(str)`関数は、 `mysql_native_password`認証方法で使用できるパスワード ハッシュを計算します。
 
@@ -166,11 +166,11 @@ SELECT RANDOM_BYTES(3);
 
 ### <a href="https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_sha1"><code>SHA()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-encryption-functions-html-function-sha1-code-sha-code-a}
 
-`SHA()`関数は[`SHA1`](#sha1)の別名です。
+`SHA()`関数は[`SHA1`](#sha1)エイリアスです。
 
 ### <a href="https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_sha1"><code>SHA1()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-encryption-functions-html-function-sha1-code-sha1-code-a}
 
-`SHA1(expr)`関数は、指定された引数`expr`に対して 160 ビットの[SHA-1](https://en.wikipedia.org/wiki/SHA-1)ハッシュを計算します。
+`SHA1(expr)`関数は、指定された引数`expr`に対して 160 ビット[SHA-1](https://en.wikipedia.org/wiki/SHA-1)ハッシュを計算します。
 
 ```sql
 SELECT SHA1('abc');
@@ -185,17 +185,17 @@ SELECT SHA1('abc');
 
 ### <a href="https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_sha2"><code>SHA2()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-encryption-functions-html-function-sha2-code-sha2-code-a}
 
-`SHA2(str, n)`関数は、 [SHA-2](https://en.wikipedia.org/wiki/SHA-2)ファミリのアルゴリズムを使用してハッシュを計算します。5 引数はアルゴリズムを選択するために使用されます。7 `SHA2()`引数のいずれかが`NULL`の場合、または`n`によって`n`されたアルゴリズムが不明またはサポートされていない場合に`NULL`返します。
+`SHA2(str, n)`関数は、 [SHA-2](https://en.wikipedia.org/wiki/SHA-2)ファミリーのアルゴリズムを使用してハッシュを計算します。5 引数`n`アルゴリズムを選択するために使用されます。7 `SHA2()` 、引数のいずれかが`NULL`の場合、または`n`で選択されたアルゴリズムが不明またはサポートされていない場合、 `NULL`返します。
 
-サポートされているアルゴリズムは次のとおりです。
+サポートされているアルゴリズムを次に示します。
 
-| ん   | アルゴリズム  |
+| n   | アルゴリズム  |
 | --- | ------- |
 | 0   | SHA-256 |
 | 224 | SHA-224 |
 | 256 | SHA-256 |
 | 384 | SHA-384 |
-| 512 | 512ハッシュ |
+| 512 | SHA-512 |
 
 ```sql
 SELECT SHA2('abc',224);
@@ -212,9 +212,9 @@ SELECT SHA2('abc',224);
 
 > **注記：**
 >
-> `SM3()`関数は TiDB 拡張機能であり、MySQL には実装されていません。
+> `SM3()`関数は TiDB 拡張機能であり、MySQL では実装されていません。
 
-`SM3(str)`関数は、指定された引数`str`に対して 256 ビットの[シャンミ3（SM3）](https://en.wikipedia.org/wiki/SM3_(hash_function))ハッシュを計算します。
+`SM3(str)`関数は、指定された引数`str`に対して 256 ビット[シャンミ 3 (SM3)](https://en.wikipedia.org/wiki/SM3_(hash_function))ハッシュを計算します。
 
 ```sql
 SELECT SM3('abc');
@@ -229,7 +229,7 @@ SELECT SM3('abc');
 
 ### <a href="https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_uncompress"><code>UNCOMPRESS()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-encryption-functions-html-function-uncompress-code-uncompress-code-a}
 
-`UNCOMPRESS(data)`関数は、 [`COMPRESS()`](#compress)関数で圧縮されたデータを解凍します。
+`UNCOMPRESS(data)`関数は[`COMPRESS()`](#compress)関数で圧縮されたデータを解凍します。
 
 ```sql
 SELECT UNCOMPRESS(0x03000000789C72747206040000FFFF018D00C7);
@@ -261,17 +261,17 @@ SELECT UNCOMPRESSED_LENGTH(0x03000000789C72747206040000FFFF018D00C7);
 
 <CustomContent platform="tidb">
 
-`VALIDATE_PASSWORD_STRENGTH(str)`関数は[パスワード管理](/password-management.md)の一部として使用されます。パスワードの強度を計算し、0 から 100 までの値を返します。
+`VALIDATE_PASSWORD_STRENGTH(str)`関数は[パスワード管理](/password-management.md)の一部として使用されます。パスワードの強度を計算し、0から100までの値を返します。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-`VALIDATE_PASSWORD_STRENGTH(str)`関数はパスワード管理の一部として使用されます。パスワードの強度を計算し、0 から 100 までの値を返します。
+`VALIDATE_PASSWORD_STRENGTH(str)`関数はパスワード管理の一部として使用されます。パスワードの強度を計算し、0から100までの値を返します。
 
 </CustomContent>
 
-[`validate_password.*`](/system-variables.md)システム変数は`VALIDATE_PASSWORD_STRENGTH()`関数の動作に影響します。
+[`validate_password.*`](/system-variables.md)システム変数は、 `VALIDATE_PASSWORD_STRENGTH()`関数の動作に影響します。
 
 例:
 
@@ -314,7 +314,7 @@ SELECT UNCOMPRESSED_LENGTH(0x03000000789C72747206040000FFFF018D00C7);
         +--------------------------------+
         1 row in set (0.00 sec)
 
--   短い文字列`abcdef`のパスワード強度をチェックすると、 `25`返されます。
+-   短い文字列`abcdef`のパスワードの強度をチェックすると、 `25`返されます。
 
     ```sql
     SELECT VALIDATE_PASSWORD_STRENGTH('abcdef');
@@ -383,7 +383,7 @@ SELECT UNCOMPRESSED_LENGTH(0x03000000789C72747206040000FFFF018D00C7);
 
 -   TiDB は、MySQL Enterprise [問題 #2632](https://github.com/pingcap/tidb/issues/2632)でのみ利用可能な関数をサポートしていません。
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 -   TiDB は`STATEMENT_DIGEST()`および`STATEMENT_DIGEST_TEXT()`関数をサポートしていません。
 -   TiDB は、MySQL 8.0.30 で追加された[`AES_ENCRYPT()`](#aes_encrypt)と[`AES_DECRYPT`](#aes_decrypt)の`kdf_name` 、 `salt` 、 `iterations`引数をサポートしていません。

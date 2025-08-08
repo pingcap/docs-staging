@@ -1,11 +1,11 @@
 ---
 title: TRUNCATE | TiDB SQL Statement Reference
-summary: TiDB データベースでの TRUNCATE の使用法の概要。
+summary: TiDB データベースにおける TRUNCATE の使用法の概要。
 ---
 
 # 切り捨て {#truncate}
 
-`TRUNCATE`ステートメントは、非トランザクション方式でテーブルからすべてのデータを削除します。3 `TRUNCATE`前の定義の`DROP TABLE` + `CREATE TABLE`と意味的に同じであると考えることができます。
+`TRUNCATE`ステートメントは、非トランザクション方式でテーブルからすべてのデータを削除します。3 `TRUNCATE` 、前の定義の`DROP TABLE` + `CREATE TABLE`と意味的に同じであると考えることができます。
 
 `TRUNCATE TABLE tableName`と`TRUNCATE tableName`どちらも有効な構文です。
 
@@ -55,9 +55,9 @@ mysql> TRUNCATE TABLE t1;
 Query OK, 0 rows affected (0.11 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`TRUNCATE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`TRUNCATE`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

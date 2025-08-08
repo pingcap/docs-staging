@@ -5,11 +5,11 @@ summary: RESOURCE_GROUPS` information_schema テーブルについて学習し�
 
 # リソースグループ {#resource-groups}
 
-`RESOURCE_GROUPS`表にはすべてのリソースグループに関する情報が表示されます。詳細については、 [リソース制御を使用してリソースの分離を実現する](/tidb-resource-control.md)参照してください。
+`RESOURCE_GROUPS`表にはすべてのリソースグループに関する情報が表示されます。詳細については、 [リソース制御を使用してリソースグループの制限とフロー制御を実現する](/tidb-resource-control-ru-groups.md)参照してください。
 
 > **注記：**
 >
-> このテーブルは[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ```sql
 USE information_schema;
@@ -79,7 +79,7 @@ SELECT * FROM information_schema.resource_groups WHERE NAME = 'rg1'; -- View the
 `RESOURCE_GROUPS`表の列の説明は次のとおりです。
 
 -   `NAME` : リソース グループの名前。
--   `RU_PER_SEC` : リソースグループのバックフィル速度。単位はRU/秒で、RUは[リクエストユニット](/tidb-resource-control.md#what-is-request-unit-ru)意味します。
+-   `RU_PER_SEC` : リソースグループのバックフィル速度。単位はRU/秒で、RUは[リクエストユニット](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru)意味します。
 -   `PRIORITY` : TiKVで処理されるタスクの絶対的な優先度。異なるリソースは`PRIORITY`設定に従ってスケジュールされます`PRIORITY`が高いタスクが最初にスケジュールされます。同じ`PRIORITY`のリソースグループの場合、タスクは`RU_PER_SEC`設定に従って比例的にスケジュールされます。10 `PRIORITY`指定されていない場合、デフォルトの優先度は`MEDIUM`です。
 -   `BURSTABLE` : リソース グループが利用可能なシステム リソースを過剰に使用することを許可するかどうか。
 

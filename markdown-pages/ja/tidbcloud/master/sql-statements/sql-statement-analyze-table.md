@@ -3,13 +3,13 @@ title: ANALYZE | TiDB SQL Statement Reference
 summary: TiDB データベースに対する ANALYZE の使用法の概要。
 ---
 
-# 分析する {#analyze}
+# 分析 {#analyze}
 
-このステートメントは、TiDB がテーブルとインデックスに構築する統計を更新します。レコードの大規模なバッチ更新またはインポートを実行した後、またはクエリ実行プランが最適ではないことに気付いた場合は、 `ANALYZE`実行することをお勧めします。
+このステートメントは、TiDBがテーブルとインデックスに対して構築する統計情報を更新します。大規模なバッチ更新またはレコードのインポートを実行した後、またはクエリ実行プランが最適ではないことに気付いた場合は、 `ANALYZE`実行することをお勧めします。
 
-TiDB は、統計が自身の推定値と一致しないことを発見すると、時間の経過とともに統計を自動的に更新します。
+TiDB は、統計が自身の推定値と一致していないことが判明すると、時間の経過とともに統計を自動的に更新します。
 
-現在、TiDB は`ANALYZE TABLE`ステートメントを使用して完全なコレクションとして統計情報を収集します。詳細については、 [統計学入門](/statistics.md)参照してください。
+現在、TiDBは`ANALYZE TABLE`文を使用して完全なコレクションとして統計情報を収集します。詳細については、 [統計学入門](/statistics.md)参照してください。
 
 ## 概要 {#synopsis}
 
@@ -92,14 +92,14 @@ mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 
 統計が正しく更新され、読み込まれるようになりました。
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB は、収集する統計と、クエリ実行中に統計を利用する方法の**両方**において MySQL とは異なります。このステートメントは構文的には MySQL に似ていますが、次の違いがあります。
+TiDBは、収集する統計情報と、クエリ実行時に統計情報を利用する方法の**両方**においてMySQLとは異なります。この文は構文的にはMySQLに似ていますが、以下の違いがあります。
 
--   `ANALYZE TABLE`実行すると、TiDB は最近コミットされた変更を含まない場合があります。行のバッチ更新後、統計更新でこれらの変更を反映するには、 `ANALYZE TABLE`実行する前に`sleep(1)`を実行する必要がある場合があります[＃16570](https://github.com/pingcap/tidb/issues/16570)参照してください。
+-   TiDBは、 `ANALYZE TABLE`実行時に、ごく最近コミットされた変更を反映させない可能性があります。行のバッチ更新後、統計情報の更新にこれらの変更を反映させるには、 `ANALYZE TABLE`実行する前に`sleep(1)`実行する必要がある場合があります[＃16570](https://github.com/pingcap/tidb/issues/16570)参照してください。
 -   `ANALYZE TABLE` 、MySQL よりも TiDB で実行するのに大幅に時間がかかります。
 
 ## 参照 {#see-also}
 
 -   [EXPLAIN](/sql-statements/sql-statement-explain.md)
--   [EXPLAIN](/sql-statements/sql-statement-explain-analyze.md)
+-   [EXPLAIN分析](/sql-statements/sql-statement-explain-analyze.md)

@@ -3,13 +3,13 @@ title: JSON Functions That Aggregate JSON Values
 summary: JSON 値を集約する JSON関数について学習します。
 ---
 
-# JSON 値を集約する JSON 関数 {#json-functions-that-aggregate-json-values}
+# JSON値を集約するJSON関数 {#json-functions-that-aggregate-json-values}
 
 このページにリストされている関数は、TiDB がサポートする[集計関数](/functions-and-operators/aggregate-group-by-functions.md)の一部ですが、JSON の操作に特化しています。
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html#function_json-arrayagg">JSON_ARRAYAGG()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-aggregate-functions-html-function-json-arrayagg-json-arrayagg-a}
 
-`JSON_ARRAYAGG(key)`関数は、指定された`key`に従ってキーの値を JSON 配列に集約します。 `key`は通常、式または列名です。
+`JSON_ARRAYAGG(key)`関数は、指定された`key`に従ってキーの値を JSON 配列に集約します。5 `key`通常、式または列名です。
 
 例：
 
@@ -26,9 +26,9 @@ SELECT JSON_ARRAYAGG(v) FROM (SELECT 1 'v' UNION SELECT 2);
     +------------------+
     1 row in set (0.00 sec)
 
-## <a href="https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html#function_json-objectagg">JSON_OBJECTAG() は、</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-aggregate-functions-html-function-json-objectagg-json-objectagg-a}
+## <a href="https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html#function_json-objectagg">JSON_OBJECTAGG()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-aggregate-functions-html-function-json-objectagg-json-objectagg-a}
 
-`JSON_OBJECTAGG(key,value)`関数は、指定された`key`と`value`に従って、キーとキーの値を JSON オブジェクトに集約します。 `key`と`value`どちらも通常、式または列名です。
+`JSON_OBJECTAGG(key,value)`関数は、指定された`key`と`value`に従って、キーとキーの値をJSONオブジェクトに集約します。7 と`value` `key` 、式または列名です。
 
 例：
 
@@ -96,7 +96,7 @@ TABLE plant_attributes;
     +----+----------+------------+--------+
     7 rows in set (0.00 sec)
 
-このデータには`JSON_OBJECTAGG()`関数を使用できます。ここでは、グループごとに複数のキー/値のペアが JSON オブジェクトに集約されていることがわかります。
+このデータには`JSON_OBJECTAGG()`関数を使用できます。ここでは、グループごとに複数のキーと値のペアがJSONオブジェクトに集約されていることがわかります。
 
 ```sql
 SELECT
@@ -120,5 +120,5 @@ GROUP BY
 
 ## 参照 {#see-also}
 
--   [JSON 関数の概要](/functions-and-operators/json-functions.md)
--   [JSON データ型](/data-type-json.md)
+-   [JSON関数の概要](/functions-and-operators/json-functions.md)
+-   [JSONデータ型](/data-type-json.md)

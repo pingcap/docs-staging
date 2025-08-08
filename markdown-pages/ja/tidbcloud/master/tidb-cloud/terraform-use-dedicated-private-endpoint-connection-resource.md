@@ -171,7 +171,7 @@ Terraform によって管理されていないTiDB Cloud Dedicated プライベ�
 
     生成された構成ファイルを確認し、ニーズを満たしていることを確認してください。必要に応じて、このファイルの内容を任意の場所に移動することもできます。
 
-    次に、 `terraform apply`実行してインフラストラクチャをインポートします。適用後の出力例は次のとおりです。
+    次に、 `terraform apply`を実行してインフラストラクチャをインポートします。適用後の出力例は次のとおりです。
 
     ```shell
     tidbcloud_dedicated_private_endpoint_connection.example: Importing... [id=aws-1934187953894000000,example]

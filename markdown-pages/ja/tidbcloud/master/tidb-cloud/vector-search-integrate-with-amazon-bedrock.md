@@ -5,11 +5,19 @@ summary: TiDB Vector Search を Amazon Bedrock と統合して、検索拡張生
 
 # TiDB Vector Search を Amazon Bedrock に統合する {#integrate-tidb-vector-search-with-amazon-bedrock}
 
-このチュートリアルでは、TiDB の[ベクトル検索](/tidb-cloud/vector-search-overview.md)機能を[アマゾンの岩盤](https://aws.amazon.com/bedrock/)と統合して、検索拡張生成 (RAG) Q&amp;A ボットを構築する方法を説明します。
+このチュートリアルでは、TiDB の[ベクトル検索](/vector-search/vector-search-overview.md)機能を[アマゾンの岩盤](https://aws.amazon.com/bedrock/)と統合して、検索拡張生成 (RAG) Q&amp;A ボットを構築する方法を説明します。
+
+<CustomContent platform="tidb-cloud">
+
+> **注記：**
+>
+> ベクター検索機能はベータ版です。予告なく変更される可能性があります。バグを見つけた場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
+
+</CustomContent>
 
 > **注記**
 >
-> TiDB Vector Searchは、TiDB Self-Managed (TiDB &gt;= v8.4)および[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)のみ利用できます。 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)では利用できません。
+> ベクトル検索機能は、TiDB Self-Managed、 [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) [TiDB Cloud専用](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated)利用できます。TiDB Self-ManagedおよびTiDB Cloud Dedicatedの場合、TiDBバージョンはv8.4.0以降である必要があります（v8.5.0以降を推奨）。
 
 > **ヒント**
 >
@@ -312,5 +320,5 @@ def save_entities_with_embedding(session, contents):
 
 ## 参照 {#see-also}
 
--   [ベクトルデータ型](/tidb-cloud/vector-search-data-types.md)
--   [ベクター検索インデックス](/tidb-cloud/vector-search-index.md)
+-   [ベクトルデータ型](/vector-search/vector-search-data-types.md)
+-   [ベクター検索インデックス](/vector-search/vector-search-index.md)

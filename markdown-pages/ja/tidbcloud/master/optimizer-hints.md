@@ -74,38 +74,6 @@ SELECT /*+ QB_NAME(QB1) */ * FROM (SELECT * FROM t) t1, (SELECT * FROM t) t2;
 >
 > 上記の例では、ヒントが`QB_NAME`から`sel_2`指定し、元の 2 番目のクエリ ブロック`SELECT`に新しい`QB_NAME`指定していない場合、2 番目のクエリ ブロック`SELECT`に対して`sel_2`無効な名前になります。
 
-### SET_VAR(変数名=変数値) {#set-var-var-name-var-value}
-
-`SET_VAR(VAR_NAME=VAR_VALUE)`ヒントを使用すると、文の実行中にシステム変数の値を一時的に変更できます。文の実行後、現在のセッションにおけるシステム変数の値は自動的に元の値に戻ります。このヒントは、オプティマイザとエグゼキュータに関連する一部のシステム変数を変更するために使用できます。このヒントを使用して変更できるシステム変数のリストについては、 [システム変数](/system-variables.md)を参照してください。
-
-> **警告：**
->
-> 予期しない動作が発生する可能性があるため、明示的にサポートされていない変数を変更しないことを強くお勧めします。
-
-次に例を示します。
-
-```sql
-SELECT /*+ SET_VAR(MAX_EXECUTION_TIME=1234) */ @@MAX_EXECUTION_TIME;
-SELECT @@MAX_EXECUTION_TIME;
-```
-
-上記のSQL文を実行すると、最初のクエリはデフォルト値`MAX_EXECUTION_TIME`ではなく、ヒントに設定された値`1234`を返します。2番目のクエリは変数のデフォルト値を返します。
-
-```sql
-+----------------------+
-| @@MAX_EXECUTION_TIME |
-+----------------------+
-|                 1234 |
-+----------------------+
-1 row in set (0.00 sec)
-+----------------------+
-| @@MAX_EXECUTION_TIME |
-+----------------------+
-|                    0 |
-+----------------------+
-1 row in set (0.00 sec)
-```
-
 ### MERGE_JOIN(t1_name [, tl_name ...]) {#merge-join-t1-name-tl-name}
 
 ヒント`MERGE_JOIN(t1_name [, tl_name ...])`は、指定されたテーブルに対してソートマージ結合アルゴリズムを使用するようオプティマイザに指示します。一般的に、このアルゴリズムはメモリ消費量が少なくなりますが、処理時間は長くなります。データ量が非常に多い場合やシステムメモリが不足している場合は、このヒントを使用することをお勧めします。例：
@@ -508,7 +476,7 @@ select /*+ READ_FROM_STORAGE(TIFLASH[t1], TIKV[t2]) */ t1.a from t t1, t t2 wher
 SELECT /*+ USE_INDEX_MERGE(t1, idx_a, idx_b, idx_c) */ * FROM t1 WHERE t1.a > 10 OR t1.b > 10;
 ```
 
-同じテーブルに複数の`USE_INDEX_MERGE`ヒントが作成されると、オプティマイザーはこれらのヒントによって指定されたインデックス セットの結合からインデックスを選択しようとします。
+同じテーブルに複数の`USE_INDEX_MERGE`ヒントが指定されている場合、オプティマイザーはこれらのヒントによって指定されたインデックス セットの結合からインデックスを選択しようとします。
 
 > **注記：**
 >
@@ -557,7 +525,7 @@ SHOW WARNINGS;
 
 ### マージ（） {#merge}
 
-共通テーブル式（CTE）を含むクエリでヒント`MERGE()`を使用すると、サブクエリのマテリアライゼーションを無効にし、サブクエリをCTEにインライン展開できます。このヒントは非再帰CTEにのみ適用されます。シナリオによっては、ヒント`MERGE()`使用すると、一時領域を割り当てるデフォルトの動作よりも実行効率が向上します。例えば、クエリ条件のプッシュダウンやCTEクエリのネストなどです。
+共通テーブル式（CTE）を含むクエリでヒント`MERGE()`を使用すると、サブクエリのマテリアライゼーションを無効にし、サブクエリをCTEにインライン展開できます。このヒントは非再帰CTEにのみ適用されます。シナリオによっては、ヒント`MERGE()`使用すると、一時領域を割り当てるデフォルトの動作よりも実行効率が向上します。例えば、クエリ条件をプッシュダウンする場合や、CTEクエリをネストする場合などです。
 
 ```sql
 -- Uses the hint to push down the predicate of the outer query.
@@ -756,6 +724,39 @@ select /*+ READ_CONSISTENT_REPLICA() */ * from t;
 prepare stmt from 'select  /*+ IGNORE_PLAN_CACHE() */ * from t where t.id = ?';
 ```
 
+### SET_VAR(変数名=変数値) {#set-var-var-name-var-value}
+
+`SET_VAR(VAR_NAME=VAR_VALUE)`ヒントを使用すると、文の実行中にシステム変数の値を一時的に変更できます。文の実行後、現在のセッションにおけるシステム変数の値は自動的に元の値に戻ります。このヒントは、オプティマイザとエグゼキュータに関連する一部のシステム変数を変更するために使用できます。このヒントを使用して変更できるシステム変数のリストについては、 [システム変数](/system-variables.md)を参照してください。
+
+> **警告：**
+>
+> -   予期しない動作が発生する可能性があるため、明示的にサポートされていない変数を変更しないことを強くお勧めします。
+> -   サブクエリに`SET_VAR`記述しないでください。記述すると、効果がない可能性があります。詳細については、 [`SET_VAR`サブクエリに記述すると効果を発揮しません](#set_var-does-not-take-effect-when-written-in-subqueries)参照してください。
+
+次に例を示します。
+
+```sql
+SELECT /*+ SET_VAR(MAX_EXECUTION_TIME=1234) */ @@MAX_EXECUTION_TIME;
+SELECT @@MAX_EXECUTION_TIME;
+```
+
+上記のSQL文を実行すると、最初のクエリはデフォルト値`MAX_EXECUTION_TIME`ではなく、ヒントに設定された値`1234`を返します。2番目のクエリは変数のデフォルト値を返します。
+
+```sql
++----------------------+
+| @@MAX_EXECUTION_TIME |
++----------------------+
+|                 1234 |
++----------------------+
+1 row in set (0.00 sec)
++----------------------+
+| @@MAX_EXECUTION_TIME |
++----------------------+
+|                    0 |
++----------------------+
+1 row in set (0.00 sec)
+```
+
 ### ストレート結合() {#straight-join}
 
 `STRAIGHT_JOIN()`のヒントは、結合プランを生成するときに、 `FROM`番目の句のテーブル名の順序でテーブルを結合するようにオプティマイザーに通知します。
@@ -789,13 +790,17 @@ SELECT /*+ NTH_PLAN(3) */ count(*) from t where a > 5;
 
 ### RESOURCE_GROUP(リソースグループ名) {#resource-group-resource-group-name}
 
-`RESOURCE_GROUP(resource_group_name)` [リソース管理](/tidb-resource-control.md)でリソースを分離するために使用されます。このヒントは、指定されたリソースグループを使用して現在のステートメントを一時的に実行します。指定されたリソースグループが存在しない場合、このヒントは無視されます。
+`RESOURCE_GROUP(resource_group_name)` [リソース管理](/tidb-resource-control-ru-groups.md)でリソースを分離するために使用されます。このヒントは、指定されたリソースグループを使用して現在のステートメントを一時的に実行します。指定されたリソースグループが存在しない場合、このヒントは無視されます。
 
 例：
 
 ```sql
 SELECT /*+ RESOURCE_GROUP(rg1) */ * FROM t limit 10;
 ```
+
+> **注記：**
+>
+> TiDB v8.2.0以降、このヒントに対する権限制御が導入されました。システム変数[`tidb_resource_control_strict_mode`](/system-variables.md#tidb_resource_control_strict_mode-new-in-v820) `ON`に設定されている場合、このヒントを使用するには`SUPER` 、 `RESOURCE_GROUP_ADMIN` 、または`RESOURCE_GROUP_USER`権限が必要です。必要な権限がない場合、このヒントは無視され、TiDBは警告を返します。クエリ実行後に`SHOW WARNINGS;`実行すると、詳細を確認できます。
 
 ## ヒントが効かない一般的な問題のトラブルシューティング {#troubleshoot-common-issues-that-hints-do-not-take-effect}
 
@@ -1039,4 +1044,32 @@ CREATE TABLE t2 (a INT);
 set tidb_opt_enable_hash_join=off;
 EXPLAIN SELECT /*+ NO_MERGE_JOIN(t1) */ * FROM t1, t2 WHERE t1.a=t2.a;
 ERROR 1815 (HY000): Internal : Can't find a proper physical plan for this query
+```
+
+### <code>SET_VAR</code>サブクエリに記述すると効果を発揮しません {#code-set-var-code-does-not-take-effect-when-written-in-subqueries}
+
+`SET_VAR` 、現在のステートメントのシステム変数の値を変更するために使用されます。サブクエリでは 0 を記述しないでください。サブクエリで 0 を記述した場合、サブクエリの特殊な処理により`SET_VAR`反映されない可能性があります。
+
+以下の例ではサブクエリに`SET_VAR`記述されているため効果がありません。
+
+```sql
+mysql> SELECT @@MAX_EXECUTION_TIME, a FROM (SELECT /*+ SET_VAR(MAX_EXECUTION_TIME=123) */ 1 as a) t;
++----------------------+---+
+| @@MAX_EXECUTION_TIME | a |
++----------------------+---+
+|                    0 | 1 |
++----------------------+---+
+1 row in set (0.00 sec)
+```
+
+以下の例では、サブクエリに`SET_VAR`が記述されていないため、有効になります。
+
+```sql
+mysql> SELECT /*+ SET_VAR(MAX_EXECUTION_TIME=123) */ @@MAX_EXECUTION_TIME, a FROM (SELECT 1 as a) t;
++----------------------+---+
+| @@MAX_EXECUTION_TIME | a |
++----------------------+---+
+|                  123 | 1 |
++----------------------+---+
+1 row in set (0.00 sec)
 ```

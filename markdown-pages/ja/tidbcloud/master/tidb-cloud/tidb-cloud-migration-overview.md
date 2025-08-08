@@ -41,7 +41,7 @@ SQL、CSV、Parquet、またはAurora Snapshot形式のデータファイルを�
 
 -   サンプルデータ（SQLファイル）をTiDB Cloudにインポートする
 
-    TiDB Cloudにサンプルデータ（SQL ファイル）をインポートすることで、 TiDB Cloud のインターフェースとインポートプロセスをすぐに理解することができます。詳細については、 [サンプルデータをTiDB Cloud Serverlessにインポートする](/tidb-cloud/import-sample-data-serverless.md)と[サンプルデータをTiDB Cloud Dedicatedにインポート](/tidb-cloud/import-sample-data.md)ご覧ください。
+    TiDB Cloudにサンプルデータ（SQL ファイル）をインポートすることで、 TiDB Cloud のインターフェースとインポートプロセスをすぐに理解することができます。詳細については、 [サンプルデータをTiDB Cloud Serverlessにインポートする](/tidb-cloud/import-sample-data-serverless.md)と[TiDB Cloud Dedicatedへのサンプルデータのインポート](/tidb-cloud/import-sample-data.md)ご覧ください。
 
 -   Amazon S3、Google Cloud Storage (GCS)、または Azure Blob Storage から CSV ファイルをTiDB Cloudにインポートします。
 

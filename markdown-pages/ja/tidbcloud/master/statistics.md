@@ -27,16 +27,19 @@ TiDB は 60 秒ごとに更新情報を保持します。
 
 </CustomContent>
 
-テーブルへの変更回数に基づいて、TiDBは自動的に[`ANALYZE`](/sql-statements/sql-statement-analyze-table.md)テーブル統計収集スケジュールを設定します。これは、 [`tidb_enable_auto_analyze`](/system-variables.md#tidb_enable_auto_analyze-new-in-v610)システム変数と以下の`tidb_auto_analyze%`変数によって制御されます。
+テーブルへの変更回数に基づいて、TiDBは自動的にそのテーブルの統計情報を収集する[`ANALYZE`](/sql-statements/sql-statement-analyze-table.md)を設定します。これは以下のシステム変数によって制御されます。
 
-| システム変数                                                                                                                | デフォルト値        | 説明                                                                                                                                                                            |
-| --------------------------------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`tidb_enable_auto_analyze`](/system-variables.md#tidb_enable_auto_analyze-new-in-v610)                               | `ON`          | TiDB が`ANALYZE`自動的に実行するかどうかを制御します。                                                                                                                                            |
-| [`tidb_auto_analyze_ratio`](/system-variables.md#tidb_auto_analyze_ratio)                                             | `0.5`         | 自動更新のしきい値。                                                                                                                                                                    |
-| [`tidb_auto_analyze_start_time`](/system-variables.md#tidb_auto_analyze_start_time)                                   | `00:00 +0000` | TiDB が自動更新を実行できる 1 日の開始時刻。                                                                                                                                                    |
-| [`tidb_auto_analyze_end_time`](/system-variables.md#tidb_auto_analyze_end_time)                                       | `23:59 +0000` | TiDB が自動更新を実行できる 1 日の終了時刻。                                                                                                                                                    |
-| [`tidb_auto_analyze_partition_batch_size`](/system-variables.md#tidb_auto_analyze_partition_batch_size-new-in-v640)   | `128`         | パーティションテーブルを分析するときに TiDB が自動的に分析するパーティションの数 (つまり、パーティションテーブルの統計を自動的に更新するときに)。                                                                                                 |
-| [`tidb_enable_auto_analyze_priority_queue`](/system-variables.md#tidb_enable_auto_analyze_priority_queue-new-in-v800) | `ON`          | 優先キューを有効にして、統計情報の自動収集タスクをスケジュールするかどうかを制御します。この変数を有効にすると、TiDBは、新しく作成されたインデックスやパーティションが変更されたパーティションテーブルなど、収集する価値の高いテーブルの統計情報を優先的に収集します。さらに、TiDBはヘルススコアが低いテーブルを優先し、キューの先頭に配置します。 |
+| システム変数                                                                                                                | デフォルト値         | 説明                                                                                                                                                                            |
+| --------------------------------------------------------------------------------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`tidb_auto_analyze_concurrency`](/system-variables.md#tidb_auto_analyze_concurrency-new-in-v840)                     | `1`            | TiDB クラスター内の自動分析操作の同時実行性。                                                                                                                                                     |
+| [`tidb_auto_analyze_end_time`](/system-variables.md#tidb_auto_analyze_end_time)                                       | `23:59 +0000`  | TiDB が自動更新を実行できる 1 日の終了時刻。                                                                                                                                                    |
+| [`tidb_auto_analyze_partition_batch_size`](/system-variables.md#tidb_auto_analyze_partition_batch_size-new-in-v640)   | `8192`         | パーティションテーブルを分析するときに TiDB が自動的に分析するパーティションの数 (つまり、パーティションテーブルの統計を自動的に更新するときに)。                                                                                                 |
+| [`tidb_auto_analyze_ratio`](/system-variables.md#tidb_auto_analyze_ratio)                                             | `0.5`          | 自動更新のしきい値。                                                                                                                                                                    |
+| [`tidb_auto_analyze_start_time`](/system-variables.md#tidb_auto_analyze_start_time)                                   | `00:00 +0000`  | TiDB が自動更新を実行できる 1 日の開始時刻。                                                                                                                                                    |
+| [`tidb_enable_auto_analyze`](/system-variables.md#tidb_enable_auto_analyze-new-in-v610)                               | `ON`           | TiDB が`ANALYZE`自動的に実行するかどうかを制御します。                                                                                                                                            |
+| [`tidb_enable_auto_analyze_priority_queue`](/system-variables.md#tidb_enable_auto_analyze_priority_queue-new-in-v800) | `ON`           | 優先キューを有効にして、統計情報の自動収集タスクをスケジュールするかどうかを制御します。この変数を有効にすると、TiDBは、新しく作成されたインデックスやパーティションが変更されたパーティションテーブルなど、収集する価値の高いテーブルの統計情報を優先的に収集します。さらに、TiDBはヘルススコアが低いテーブルを優先し、キューの先頭に配置します。 |
+| [`tidb_enable_stats_owner`](/system-variables.md#tidb_enable_stats_owner-new-in-v840)                                 | `ON`           | 対応する TiDB インスタンスが自動統計更新タスクを実行できるかどうかを制御します。                                                                                                                                   |
+| [`tidb_max_auto_analyze_time`](/system-variables.md#tidb_max_auto_analyze_time-new-in-v610)                           | `43200` (12時間) | 自動タスク`ANALYZE`の最大実行時間。単位は秒です。                                                                                                                                                 |
 
 テーブル内の変更された行数と`tbl`の行の合計数の比率が`tidb_auto_analyze_ratio`より大きく、現在の時刻が`tidb_auto_analyze_start_time`から`tidb_auto_analyze_end_time`間である場合、TiDB はバックグラウンドで`ANALYZE TABLE tbl`ステートメントを実行し、このテーブルの統計を自動的に更新します。
 
@@ -127,13 +130,13 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
 
 > **注記：**
 >
-> 収集前後の統計情報の一貫性を確保するために、 `tidb_analyze_version`が`2`場合、この構文はインデックスだけでなく、テーブル全体 (すべての列とインデックスを含む) の統計を収集します。
+> 収集前後の統計情報の一貫性を確保するために、 `tidb_analyze_version`が`2`場合、この構文はインデックス付き列とすべてのインデックスの統計を収集します。
 
 ### いくつかの列の統計を収集する {#collect-statistics-on-some-columns}
 
-ほとんどの場合、オプティマイザは`WHERE` 、 `JOIN` 、 `ORDER BY` 、および`GROUP BY`文の列の統計のみを使用します。これらの列は`PREDICATE COLUMNS`として参照できます。
+TiDBがSQL文を実行する際、オプティマイザはほとんどの場合、列のサブセットのみの統計情報を使用します。例えば、 `WHERE` 、 `JOIN` 、 `ORDER BY` 、 `GROUP BY`節に出現する列などです。これらの列は述語列と呼ばれます。
 
-テーブルに多数の列がある場合、すべての列の統計情報を収集すると大きなオーバーヘッドが発生する可能性があります。オーバーヘッドを削減するには、特定の列（選択した列）のみ、またはオプティマイザで使用する`PREDICATE COLUMNS`の統計を収集することができます。列のサブセットの列リストを永続化して将来再利用できるようにするには、 [列構成を永続化する](#persist-column-configurations)参照してください。
+テーブルに多数の列がある場合、すべての列の統計情報を収集すると大きなオーバーヘッドが発生する可能性があります。オーバーヘッドを削減するには、特定の列（選択した列）のみの統計を収集するか、オプティマイザで使用する列`PREDICATE COLUMNS`収集することができます。列のサブセットの列リストを永続化して将来再利用できるようにするには、 [列構成を永続化する](#persist-column-configurations)参照してください。
 
 > **注記：**
 >
@@ -148,38 +151,30 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
 
     この構文では、 `ColumnNameList`対象列の名前リストを指定します。複数の列を指定する必要がある場合は、列名をカンマ`,`で区切ります。例: `ANALYZE table t columns a, b` 。この構文は、特定のテーブルの特定の列の統計情報を収集するだけでなく、インデックスが付けられた列とそのテーブル内のすべてのインデックスの統計も同時に収集します。
 
--   `PREDICATE COLUMNS`の統計を収集するには、次の手順を実行します。
+-   `PREDICATE COLUMNS`の統計を収集するには、次の構文を使用します。
 
-    > **警告：**
+    ```sql
+    ANALYZE TABLE TableName PREDICATE COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
+    ```
+
+    <CustomContent platform="tidb">
+
+    TiDB は常に 100 * [`stats-lease`](/tidb-configuration-file.md#stats-lease)ごとに`PREDICATE COLUMNS`情報を[`mysql.column_stats_usage`](/mysql-schema/mysql-schema.md#statistics-system-tables)システム テーブルに書き込みます。
+
+    </CustomContent>
+
+    <CustomContent platform="tidb-cloud">
+
+    TiDB は常に 300 秒ごとに`PREDICATE COLUMNS`情報を[`mysql.column_stats_usage`](/mysql-schema/mysql-schema.md#statistics-system-tables)システム テーブルに書き込みます。
+
+    </CustomContent>
+
+    この構文は、特定のテーブル内の`PREDICATE COLUMNS`に関する統計を収集するだけでなく、そのテーブル内のインデックス付き列とすべてのインデックスに関する統計も同時に収集します。
+
+    > **注記：**
     >
-    > 現在、 `PREDICATE COLUMNS`の統計情報の収集は実験的機能です。本番環境での使用は推奨されません。
-
-    1.  TiDB が`PREDICATE COLUMNS`を収集できるようにするには、 [`tidb_enable_column_tracking`](/system-variables.md#tidb_enable_column_tracking-new-in-v540)システム変数の値を`ON`に設定します。
-
-        <CustomContent platform="tidb">
-
-        設定後、TiDB は 100 * [`stats-lease`](/tidb-configuration-file.md#stats-lease)ごとに`PREDICATE COLUMNS`情報を[`mysql.column_stats_usage`](/mysql-schema/mysql-schema.md#statistics-system-tables)システム テーブルに書き込みます。
-
-        </CustomContent>
-
-        <CustomContent platform="tidb-cloud">
-
-        設定後、TiDB は 300 秒ごとに`PREDICATE COLUMNS`情報を[`mysql.column_stats_usage`](/mysql-schema/mysql-schema.md#statistics-system-tables)システム テーブルに書き込みます。
-
-        </CustomContent>
-
-    2.  ビジネスのクエリ パターンが比較的安定したら、次の構文を使用して`PREDICATE COLUMNS`の統計を収集します。
-
-        ```sql
-        ANALYZE TABLE TableName PREDICATE COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
-        ```
-
-        この構文は、特定のテーブル内の`PREDICATE COLUMNS`の統計を収集するだけでなく、そのテーブル内のインデックス付き列とすべてのインデックスの統計を同時に収集します。
-
-        > **注記：**
-        >
-        > -   [`mysql.column_stats_usage`](/mysql-schema/mysql-schema.md#statistics-system-tables)システム テーブルにそのテーブルに対して記録された`PREDICATE COLUMNS`含まれていない場合、上記の構文ではそのテーブル内のすべての列とすべてのインデックスの統計が収集されます。
-        > -   手動で列をリストするか、 `PREDICATE COLUMNS`使用することで収集から除外された列の統計情報は上書きされません。新しいタイプのSQLクエリを実行する際、オプティマイザは、そのような列に古い統計情報が存在する場合はそれを使用し、統計情報が収集されていない列の場合は擬似列統計情報を使用します。次に`PREDICATE COLUMNS`使用したANALYZEを実行すると、それらの列の統計情報が収集されます。
+    > -   [`mysql.column_stats_usage`](/mysql-schema/mysql-schema.md#statistics-system-tables)システム テーブルにそのテーブルに対して記録された`PREDICATE COLUMNS`含まれていない場合、上記の構文は、そのテーブル内のインデックス付き列とすべてのインデックスに関する統計を収集します。
+    > -   手動で列をリストするか、 `PREDICATE COLUMNS`使用することで収集から除外された列の統計情報は上書きされません。新しいタイプのSQLクエリを実行する際、オプティマイザは、そのような列に古い統計情報が存在する場合はそれを使用し、統計情報が収集されていない列の場合は擬似列統計情報を使用します。次に`PREDICATE COLUMNS`使用したANALYZEを実行すると、それらの列の統計情報が収集されます。
 
 -   すべての列とインデックスの統計を収集するには、次の構文を使用します。
 
@@ -187,7 +182,7 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
     ANALYZE TABLE TableName ALL COLUMNS [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
 
-### パーティションの統計を収集する {#collect-statistics-on-partitions}
+### パーティションの統計情報を収集する {#collect-statistics-on-partitions}
 
 -   `PartitionNameList` in `TableName`内のすべてのパーティションの統計を収集するには、次の構文を使用します。
 
@@ -203,29 +198,25 @@ ANALYZE TABLE TableName INDEX [IndexNameList] [WITH NUM BUCKETS|TOPN|CMSKETCH DE
 
 -   テーブル内の一部のパーティションの[いくつかの列の統計を収集する](/statistics.md#collect-statistics-on-some-columns)だけが必要な場合は、次の構文を使用します。
 
-    > **警告：**
-    >
-    > 現在、 `PREDICATE COLUMNS`の統計情報の収集は実験的機能です。本番環境での使用は推奨されません。
-
     ```sql
     ANALYZE TABLE TableName PARTITION PartitionNameList [COLUMNS ColumnNameList|PREDICATE COLUMNS|ALL COLUMNS] [WITH NUM BUCKETS|TOPN|CMSKETCH DEPTH|CMSKETCH WIDTH]|[WITH NUM SAMPLES|WITH FLOATNUM SAMPLERATE];
     ```
 
 #### 動的プルーニングモードでパーティションテーブルの統計を収集する {#collect-statistics-of-partitioned-tables-in-dynamic-pruning-mode}
 
-パーティションテーブルに[動的剪定モード](/partitioned-table.md#dynamic-pruning-mode) （v6.3.0以降のデフォルト）でアクセスする場合、TiDBはテーブルレベルの統計情報を収集します。これはGlobalStatsと呼ばれます。現在、GlobalStatsはすべてのパーティションの統計情報を集約して集計されます。動的プルーニングモードでは、テーブルのいずれかのパーティションで統計情報が更新されると、そのテーブルのGlobalStatsも更新される可能性があります。
+[動的剪定モード](/partitioned-table.md#dynamic-pruning-mode) （v6.3.0以降のデフォルト）でパーティションテーブルにアクセスする場合、TiDBはテーブルレベルの統計、つまりパーティションテーブルのグローバル統計を収集します。現在、グローバル統計はすべてのパーティションの統計から集約されています。動的プルーニングモードでは、テーブルのいずれかのパーティションの統計が更新されると、そのテーブルのグローバル統計も更新される可能性があります。
 
 一部のパーティションの統計が空の場合、または一部のパーティションの一部の列の統計が欠落している場合、コレクションの動作は[`tidb_skip_missing_partition_stats`](/system-variables.md#tidb_skip_missing_partition_stats-new-in-v730)変数によって制御されます。
 
--   GlobalStatsの更新がトリガーされ、 [`tidb_skip_missing_partition_stats`](/system-variables.md#tidb_skip_missing_partition_stats-new-in-v730)が`OFF`場合:
+-   グローバル統計の更新がトリガーされ、 [`tidb_skip_missing_partition_stats`](/system-variables.md#tidb_skip_missing_partition_stats-new-in-v730)が`OFF`場合:
 
-    -   一部のパーティションに統計がない場合 (分析されたことのない新しいパーティションなど)、GlobalStats の生成が中断され、パーティションに統計がないことを示す警告メッセージが表示されます。
+    -   一部のパーティションに統計がない場合 (分析されたことのない新しいパーティションなど)、グローバル統計の生成が中断され、パーティションに統計がないことを示す警告メッセージが表示されます。
 
-    -   特定のパーティションに一部の列の統計情報がない場合 (これらのパーティションでは分析用に異なる列が指定されている)、これらの列の統計情報が集計されるときに GlobalStats の生成が中断され、特定のパーティションに一部の列の統計情報が存在しないことを示す警告メッセージが表示されます。
+    -   特定のパーティションに一部の列の統計が存在しない場合（これらのパーティションでは分析用に異なる列が指定されている）、これらの列の統計を集計するときにグローバル統計の生成が中断され、特定のパーティションに一部の列の統計が存在しないことを示す警告メッセージが表示されます。
 
--   GlobalStatsの更新がトリガーされ、 [`tidb_skip_missing_partition_stats`](/system-variables.md#tidb_skip_missing_partition_stats-new-in-v730)が`ON`場合:
+-   グローバル統計の更新がトリガーされ、 [`tidb_skip_missing_partition_stats`](/system-variables.md#tidb_skip_missing_partition_stats-new-in-v730)が`ON`場合:
 
-    -   一部のパーティションのすべての列または一部の列の統計が欠落している場合、TiDB は GlobalStats を生成するときにこれらの欠落しているパーティション統計をスキップするため、GlobalStats の生成には影響しません。
+    -   一部のパーティションのすべての列または一部の列の統計が欠落している場合、TiDB はグローバル統計を生成するときにこれらの欠落しているパーティション統計をスキップするため、グローバル統計の生成には影響しません。
 
 動的プルーニングモードでは、パーティションとテーブルの`ANALYZE`構成は同じである必要があります。したがって、 `ANALYZE TABLE TableName PARTITION PartitionNameList`文の後に`COLUMNS`構成を指定した場合、または`WITH`の後に`OPTIONS`構成を指定した場合、TiDB はそれらを無視し、警告を返します。
 
@@ -333,9 +324,6 @@ TiDBは、最新の`ANALYZE`ステートメントで指定された新しい設�
 次の例では、 `ANALYZE TABLE t PREDICATE COLUMNS;`実行した後、 TiDB は列`b` 、 `c` 、 `d`の統計を収集します。ここで、列`b` `PREDICATE COLUMN`であり、列`c`と`d`インデックス列です。
 
 ```sql
-SET GLOBAL tidb_enable_column_tracking = ON;
-Query OK, 0 rows affected (0.00 sec)
-
 CREATE TABLE t (a INT, b INT, c INT, d INT, INDEX idx_c_d(c, d));
 Query OK, 0 rows affected (0.00 sec)
 
@@ -412,7 +400,7 @@ WHERE db_name = 'test' AND table_name = 't' AND last_analyzed_at IS NOT NULL;
 
     ```sql
     SELECT DISTINCT(CONCAT('DROP STATS ', table_schema, '.', table_name, ';'))
-    FROM information_schema.tables ON mysql.stats_histograms
+    FROM information_schema.tables JOIN mysql.stats_histograms
     ON table_id = tidb_table_id
     WHERE stats_ver = 2;
     ```
@@ -477,7 +465,7 @@ mysql> SHOW ANALYZE STATUS [ShowLikeOrWhere];
 
 > **注記：**
 >
-> [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは読み込み統計は利用できません。
+> [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは読み込み統計は利用できません。
 
 デフォルトでは、列統計のサイズに応じて、TiDB は次のように異なる方法で統計をロードします。
 
@@ -493,7 +481,7 @@ v5.4.0以降、TiDBは統計情報の同期ロード機能を導入しました�
 統計の同期読み込み機能を有効にした後、次のように機能をさらに構成できます。
 
 -   SQL最適化の待機時間がタイムアウトに達した際のTiDBの動作を制御するには、システム変数[`tidb_stats_load_pseudo_timeout`](/system-variables.md#tidb_stats_load_pseudo_timeout-new-in-v540)の値を変更します。この変数のデフォルト値は`ON`で、タイムアウト後、SQL最適化プロセスはどの列に対してもヒストグラム、TopN、CMSketch統計を使用しません。この変数を`OFF`に設定すると、タイムアウト後にSQL実行が失敗します。
--   同期ロード統計機能で同時に処理できる列の最大数を指定するには、TiDB設定ファイルの[`stats-load-concurrency`](/tidb-configuration-file.md#stats-load-concurrency-new-in-v540)オプションの値を変更します。デフォルト値は`5`です。
+-   同期ロード統計機能で同時に処理できる列の最大数を指定するには、TiDB構成ファイルの[`stats-load-concurrency`](/tidb-configuration-file.md#stats-load-concurrency-new-in-v540)オプションの値を変更します。v8.2.0以降、このオプションのデフォルト値は`0`で、TiDBはサーバー構成に基づいて同時実行性を自動的に調整します。
 -   同期ロード統計機能がキャッシュできる列リクエストの最大数を指定するには、TiDB設定ファイルの[`stats-load-queue-size`](/tidb-configuration-file.md#stats-load-queue-size-new-in-v540)オプションの値を変更します。デフォルト値は`1000`です。
 
 TiDBの起動時、初期統計情報が完全にロードされる前に実行されるSQL文は、最適ではない実行プランを持つ可能性があり、パフォーマンスの問題を引き起こす可能性があります。このような問題を回避するために、TiDB v7.1.0では構成パラメータ[`force-init-stats`](/tidb-configuration-file.md#force-init-stats-new-in-v657-and-v710)が導入されました。このオプションを使用すると、起動時に統計情報の初期化が完了した後にのみTiDBがサービスを提供するかどうかを制御できます。v7.2.0以降では、このパラメータはデフォルトで有効になっています。

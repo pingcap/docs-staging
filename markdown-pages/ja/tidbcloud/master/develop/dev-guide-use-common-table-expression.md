@@ -5,21 +5,21 @@ summary: SQL ステートメントをより効率的に記述するのに役立�
 
 # 共通テーブル式 {#common-table-expression}
 
-一部のトランザクション シナリオでは、アプリケーションの複雑さにより、最大 2,000 行の単一の SQL ステートメントを記述する必要がある場合があります。ステートメントには、多数の集計と複数レベルのサブクエリのネストが含まれる可能性があります。このような長い SQL ステートメントを維持することは、開発者にとって悪夢になる可能性があります。
+トランザクションのシナリオによっては、アプリケーションの複雑さにより、最大2,000行にも及ぶSQL文を1つ記述しなければならない場合があります。このSQL文には、多数の集計や複数レベルのサブクエリのネストが含まれる可能性があります。このような長いSQL文を管理するのは、開発者にとって悪夢となる可能性があります。
 
-このような長い SQL 文を回避するには、 [ビュー](/develop/dev-guide-use-views.md)使用してクエリを簡略化するか、 [一時テーブル](/develop/dev-guide-use-temporary-tables.md)使用して中間クエリ結果をキャッシュします。
+このような長い SQL 文を回避するには、 [ビュー](/develop/dev-guide-use-views.md)使用してクエリを簡略化するか、 [一時テーブル](/develop/dev-guide-use-temporary-tables.md)を使用して中間クエリ結果をキャッシュします。
 
 このドキュメントでは、クエリ結果を再利用するためのより便利な方法である、TiDB の共通テーブル式 (CTE) 構文を紹介します。
 
-TiDB v5.1 以降、TiDB は ANSI SQL99 標準の CTE と再帰をサポートしています。CTE を使用すると、複雑なアプリケーション ロジックの SQL ステートメントをより効率的に記述でき、コードの保守がはるかに簡単になります。
+TiDB v5.1以降、TiDBはANSI SQL99標準のCTEと再帰をサポートしています。CTEを使用すると、複雑なアプリケーションロジックのSQL文をより効率的に記述でき、コードの保守も大幅に容易になります。
 
 ## 基本的な使い方 {#basic-use}
 
-共通テーブル式 (CTE) は、SQL ステートメント内で複数回参照できる一時的な結果セットであり、ステートメントの読みやすさと実行効率を向上させます。CTE を使用するには、 [`WITH`](/sql-statements/sql-statement-with.md)ステートメントを適用できます。
+共通テーブル式（CTE）は、SQL文内で複数回参照できる一時的な結果セットであり、文の可読性と実行効率を向上させます。CTEを使用するには、 [`WITH`](/sql-statements/sql-statement-with.md)文を適用します。
 
-共通テーブル式は、非再帰 CTE と再帰 CTE の 2 つのタイプに分類できます。
+共通テーブル式は、非再帰 CTE と再帰 CTE の 2 種類に分類できます。
 
-### 非再帰的 CTE {#non-recursive-cte}
+### 非再帰CTE {#non-recursive-cte}
 
 非再帰 CTE は次の構文を使用して定義できます。
 
@@ -54,7 +54,7 @@ LEFT JOIN book_authors ba ON ta.id = ba.author_id
 GROUP BY ta.id;
 ```
 
-結果は以下のようになります。
+結果は次のようになります。
 
     +------------+------------+---------------------+-------+
     | author_id  | author_age | author_name         | books |
@@ -107,7 +107,7 @@ public List<Author> getTop50EldestAuthorInfoByCTE() throws SQLException {
 </div>
 </SimpleTab>
 
-著者「Ray Macejkovic」は 4 冊の本を執筆したことがわかります。CTE クエリを使用すると、次のようにして、これら 4 冊の本の順序と評価情報をさらに取得できます。
+著者「Ray Macejkovic」は4冊の本を執筆していることがわかります。CTEクエリを使用すると、これらの4冊の本の順序と評価情報を次のように取得できます。
 
 ```sql
 WITH books_authored_by_rm AS (
@@ -142,7 +142,7 @@ FROM
 ;
 ```
 
-結果は以下のようになります。
+結果は次のようになります。
 
     +------------+-------------------------+----------------+--------+
     | book_id    | book_title              | average_rating | orders |
@@ -156,9 +156,9 @@ FROM
 
 この SQL ステートメントでは、 `,`で区切られた 3 つの CTE ブロックが定義されています。
 
-まず、CTE ブロック`books_authored_by_rm`で著者 (ID は`2299112019` ) が書いた本を調べます。次に、 `books_with_average_ratings`と`books_with_orders`でこれらの本の平均評価と順位をそれぞれ調べます。最後に、 `JOIN`ステートメントで結果を集計します。
+まず、CTEブロック`books_authored_by_rm`で著者（ID `2299112019` ）が執筆した書籍を調べます。次に、 `books_with_average_ratings`と`books_with_orders`でそれぞれこれらの書籍の平均評価と順位を調べます。最後に、 `JOIN`ステートメントで結果を集計します。
 
-`books_authored_by_rm`のクエリは 1 回だけ実行され、その後 TiDB はその結果をキャッシュするための一時領域を作成することに注意してください。 `books_with_average_ratings`と`books_with_orders`のクエリが`books_authored_by_rm`を参照する場合、TiDB はこの一時領域から直接結果を取得します。
+`books_authored_by_rm`のクエリは一度だけ実行され、その後 TiDB は結果をキャッシュするための一時領域を作成することに注意してください。3 と`books_with_average_ratings` `books_with_orders`クエリが`books_authored_by_rm`を参照する場合、TiDB はこの一時領域から直接結果を取得します。
 
 > **ヒント：**
 >
@@ -187,7 +187,7 @@ WITH RECURSIVE fibonacci (n, fib_n, next_fib_n) AS
 SELECT * FROM fibonacci;
 ```
 
-結果は以下のようになります。
+結果は次のようになります。
 
     +------+-------+------------+
     | n    | fib_n | next_fib_n |
@@ -213,12 +213,12 @@ SELECT * FROM fibonacci;
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

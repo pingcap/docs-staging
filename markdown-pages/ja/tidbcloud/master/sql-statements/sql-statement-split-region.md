@@ -13,7 +13,7 @@ TiDBに新しいテーブルが作成されると、デフォルトで[リージ
 
 > **注記：**
 >
-> この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
 
 ## 概要 {#synopsis}
 
@@ -358,7 +358,7 @@ SPLIT TABLE t1 INDEX idx4 BY ("a", "2000-01-01 00:00:01"), ("b", "2019-04-17 14:
 >
 > `PRE_SPLIT_REGIONS`の値は`SHARD_ROW_ID_BITS`または`AUTO_RANDOM`の値以下でなければなりません。
 
-グローバル変数`tidb_scatter_region` `PRE_SPLIT_REGIONS`動作に影響します。この変数は、テーブル作成後に結果を返す前に、リージョンが事前に分割され、分散されるまで待機するかどうかを制御します。テーブル作成後に書き込みが集中する場合は、この変数の値を`1`に設定する必要があります。そうしないと、TiDBはすべてのリージョンが分割され、分散されるまでクライアントに結果を返しません。そうでない場合、TiDBは分散が完了する前にデータを書き込むため、書き込みパフォーマンスに大きな影響が出ます。
+グローバル変数[`tidb_scatter_region`](/system-variables.md#tidb_scatter_region) `PRE_SPLIT_REGIONS`動作に影響します。この変数は、テーブル作成後に結果を返す前に、リージョンが事前に分割され、分散されるまで待機するかどうかを制御します。テーブル作成後に書き込みが集中する場合は、この変数の値を`global`に設定する必要があります。そうしないと、TiDBはクラスター全体のデータ分布に従って、新しく作成されたテーブルのリージョンを分散します。そうでない場合、TiDBは分散が完了する前にデータを書き込んでしまい、書き込みパフォーマンスに大きな影響を与えます。
 
 ### pre_split_regionsの例 {#examples-of-pre-split-regions}
 

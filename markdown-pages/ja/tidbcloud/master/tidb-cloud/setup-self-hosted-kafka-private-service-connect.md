@@ -56,7 +56,7 @@ Google Cloud でセルフホスト型 Kafka に Private Service Connect を設�
 | ------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | リージョン                           | オレゴン州 ( `us-west1` )                                                                                   |
 | TiDB Cloudの Google Cloud プロジェクト | `tidbcloud-prod-000`                                                                                   |
-| ゾーン                             | <li>`us-west1-a`</li><li> `us-west1-b`</li><li> `us-west1-c`</li>                                      |
+| ゾーン                             | <li> `us-west1-a` </li><li> `us-west1-b` </li><li> `us-west1-c` </li>                                  |
 | Kafka アドバタイズド リスナー パターン         | 一意のランダム文字列: `abc`<br/>生成されたパターン: &lt;broker_id&gt;.abc.us-west1.gcp.3199745.tidbcloud.com:&lt;port&gt; |
 
 ## PSC ポート マッピングによるセルフホスト型 Kafka Private Service Connect サービスの設定 {#set-up-self-hosted-kafka-private-service-connect-service-by-psc-port-mapping}
@@ -498,7 +498,7 @@ b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.
     -   **リージョン**: `us-west1`
     -   **ネットワーク**: `kafka-vpc`
     -   バックエンド構成
-        -   **バックエンドタイプ**: `Port mapping network endpoint group`
+        -   **バックエンドタイプ**： `Port mapping network endpoint group`
         -   **プロトコル**： `TCP`
         -   **ポートマッピングネットワークエンドポイントグループ**: `kafka-neg`
     -   フロントエンド構成
@@ -633,7 +633,7 @@ TiDB クラスターと同じリージョンで既に Kafka クラスターが�
     -   **リージョン**: `us-west1`
     -   **ネットワーク**: あなたのネットワーク
     -   バックエンド構成
-        -   **バックエンドタイプ**: `Instance group`
+        -   **バックエンドタイプ**： `Instance group`
         -   **プロトコル**： `TCP`
         -   **インスタンスグループ**: `kafka-proxy-ig`
     -   フロントエンド構成

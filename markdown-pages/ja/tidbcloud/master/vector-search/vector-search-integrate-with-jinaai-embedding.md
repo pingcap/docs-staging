@@ -7,9 +7,25 @@ summary: TiDB Vector Search を Jina AI Embeddings API と統合して埋め込�
 
 このチュートリアルでは、 [ジナ・アイ](https://jina.ai/)使用してテキスト データの埋め込みを生成し、その埋め込みを TiDB ベクトルstorageに保存して、埋め込みに基づいて類似のテキストを検索する方法について説明します。
 
-> **注記**
+<CustomContent platform="tidb">
+
+> **警告：**
 >
-> TiDB Vector Searchは、TiDB Self-Managed (TiDB &gt;= v8.4)および[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)のみ利用できます。 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)では利用できません。
+> ベクトル検索機能は実験的です。本番環境での使用は推奨されません。この機能は予告なく変更される可能性があります。バグを発見した場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **注記：**
+>
+> ベクター検索機能はベータ版です。予告なく変更される可能性があります。バグを見つけた場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
+
+</CustomContent>
+
+> **注記：**
+>
+> ベクトル検索機能は、TiDB Self-Managed、 [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) [TiDB Cloud専用](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated)利用できます。TiDB Self-ManagedおよびTiDB Cloud Dedicatedの場合、TiDBバージョンはv8.4.0以降である必要があります（v8.5.0以降を推奨）。
 
 ## 前提条件 {#prerequisites}
 
@@ -17,7 +33,24 @@ summary: TiDB Vector Search を Jina AI Embeddings API と統合して埋め込�
 
 -   [Python 3.8以上](https://www.python.org/downloads/)個インストールされました。
 -   [ギット](https://git-scm.com/downloads)個インストールされました。
--   TiDB Cloud Serverless クラスター。TiDB Cloud クラスターがまだない場合は、 [TiDB Cloud Serverless クラスターの作成](/tidb-cloud/create-tidb-cluster-serverless.md)に従って独自のTiDB Cloudクラスターを作成してください。
+-   TiDB クラスター。
+
+<CustomContent platform="tidb">
+
+**TiDB クラスターがない場合は、次のように作成できます。**
+
+-   [ローカルテストTiDBクラスタをデプロイ](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](/production-deployment-using-tiup.md)に従ってローカル クラスターを作成します。
+-   [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
+**TiDB クラスターがない場合は、次のように作成できます。**
+
+-   (推奨) [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   [ローカルテストTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)に従って、v8.4.0 以降のバージョンのローカル クラスターを作成します。
+
+</CustomContent>
 
 ## サンプルアプリを実行する {#run-the-sample-app}
 
@@ -51,9 +84,14 @@ pip install -r requirements.txt
 
 ### ステップ4.環境変数を設定する {#step-4-configure-the-environment-variables}
 
-[Jina AI 埋め込み API](https://jina.ai/embeddings/)ページ目からJina AI APIキーを取得します。次に、クラスター接続文字列を取得し、環境変数を以下のように設定します。
+[Jina AI 埋め込み API](https://jina.ai/embeddings/)ページから Jina AI API キーを取得し、選択した TiDB デプロイメント オプションに応じて環境変数を構成します。
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+<SimpleTab>
+<div label="TiDB Cloud Serverless">
+
+TiDB Cloud Serverless クラスターの場合、次の手順に従ってクラスター接続文字列を取得し、環境変数を構成します。
+
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -89,6 +127,31 @@ pip install -r requirements.txt
     ```dotenv
     TIDB_DATABASE_URL="mysql+pymysql://<prefix>.root:<password>@gateway01.<region>.prod.aws.tidbcloud.com:4000/test?ssl_ca=/etc/ssl/cert.pem&ssl_verify_cert=true&ssl_verify_identity=true"
     ```
+
+</div>
+<div label="TiDB Self-Managed">
+
+TiDB セルフマネージド クラスターの場合は、ターミナルで TiDB クラスターに接続するための環境変数を次のように設定します。
+
+```shell
+export JINA_API_KEY="****"
+export TIDB_DATABASE_URL="mysql+pymysql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE>"
+# For example: export TIDB_DATABASE_URL="mysql+pymysql://root@127.0.0.1:4000/test"
+```
+
+上記のコマンドのパラメータは、TiDB クラスターに応じて変更する必要があります。ローカルマシンで TiDB を実行している場合、デフォルトでは`<HOST>`が`127.0.0.1`設定されます。初期の`<PASSWORD>`空なので、クラスターを初めて起動する場合はこのフィールドを省略できます。
+
+各パラメータの説明は次のとおりです。
+
+-   `<USERNAME>` : TiDB クラスターに接続するためのユーザー名。
+-   `<PASSWORD>` : TiDB クラスターに接続するためのパスワード。
+-   `<HOST>` : TiDB クラスターのホスト。
+-   `<PORT>` : TiDB クラスターのポート。
+-   `<DATABASE>` : 接続するデータベースの名前。
+
+</div>
+
+</SimpleTab>
 
 ### ステップ5.デモを実行する {#step-5-run-the-demo}
 
@@ -239,5 +302,5 @@ with Session(engine) as session:
 
 ## 参照 {#see-also}
 
--   [ベクトルデータ型](/tidb-cloud/vector-search-data-types.md)
--   [ベクター検索インデックス](/tidb-cloud/vector-search-index.md)
+-   [ベクトルデータ型](/vector-search/vector-search-data-types.md)
+-   [ベクター検索インデックス](/vector-search/vector-search-index.md)

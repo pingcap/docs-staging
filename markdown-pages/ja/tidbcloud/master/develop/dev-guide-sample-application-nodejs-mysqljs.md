@@ -15,7 +15,7 @@ TiDB は MySQL 互換データベースであり、 [mysql.js](https://github.co
 
 > **注記：**
 >
-> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed で動作します。
+> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed で機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -78,7 +78,7 @@ npm install mysql dotenv --save
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -110,14 +110,14 @@ npm install mysql dotenv --save
 
     > **注記**
     >
-    > TiDB Cloud Serverless の場合、パブリックエンドポイントを使用する場合は、 `TIDB_ENABLE_SSL`経由で TLS 接続を有効にする**必要があります**。
+    > TiDB Cloud Serverless の場合、パブリック エンドポイントを使用するときは、 `TIDB_ENABLE_SSL`経由で TLS 接続を有効にする**必要があります**。
 
 7.  `.env`ファイルを保存します。
 
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -189,7 +189,7 @@ npm start
 
 接続が成功すると、コンソールに次のように TiDB クラスターのバージョンが出力されます。
 
-    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.1.2)
+    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.2)
     ⏳ Loading sample game data...
     ✅ Loaded sample game data.
 
@@ -239,7 +239,7 @@ conn.end();
 
 > **注記**
 >
-> TiDB Cloud Serverless では、パブリックエンドポイントを使用する場合、 `TIDB_ENABLE_SSL`で TLS 接続を有効にする**必要があります**。ただし、Node.js はデフォルトで組み込みの[Mozilla CA証明書](https://wiki.mozilla.org/CA/Included_Certificates)使用し、これは TiDB Cloud Serverless によって信頼されているため、 `TIDB_CA_PATH`で SSL CA 証明書を指定する必要は**ありません**。
+> TiDB Cloud Serverlessでは、パブリックエンドポイントを使用する場合、 `TIDB_ENABLE_SSL`でTLS接続を有効にする**必要があります**。ただし、Node.jsはデフォルトで組み込みの[Mozilla CA証明書](https://wiki.mozilla.org/CA/Included_Certificates)使用しており、 TiDB Cloud Serverlessはこれを信頼しているため、 `TIDB_CA_PATH`でSSL CA証明書を指定する必要は**ありません**。
 
 ### データを挿入する {#insert-data}
 

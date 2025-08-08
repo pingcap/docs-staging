@@ -5,7 +5,7 @@ summary: TiDB データベースでの SHOW CREATE DATABASE の使用の概要�
 
 # 表示データベースの作成 {#show-create-database}
 
-`SHOW CREATE DATABASE` 、既存のデータベースを再作成するための正確な SQL ステートメントを表示するために使用されます`SHOW CREATE SCHEMA`はそれの同義語です。
+`SHOW CREATE DATABASE`は、既存のデータベースを再作成するための正確な SQL ステートメントを表示するために使用されます。2 `SHOW CREATE SCHEMA`その同義語です。
 
 ## 概要 {#synopsis}
 
@@ -52,9 +52,9 @@ SHOW CREATE SCHEMA IF NOT EXISTS test;
 1 row in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-`SHOW CREATE DATABASE` MySQL と完全に互換性があると予想されます。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)実行できます。
+`SHOW CREATE DATABASE` MySQL と完全に互換性があると予想されます。互換性に違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

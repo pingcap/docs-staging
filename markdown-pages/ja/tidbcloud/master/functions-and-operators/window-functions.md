@@ -5,35 +5,35 @@ summary: このドキュメントでは、TiDB でサポートされているウ
 
 # ウィンドウ関数 {#window-functions}
 
-TiDB でのウィンドウ関数の使用方法は、MySQL 8.0 の場合と同様です。詳細については、 [MySQL ウィンドウ関数](https://dev.mysql.com/doc/refman/8.0/en/window-functions.html)参照してください。
+TiDBにおけるウィンドウ関数の使用方法はMySQL 8.0と同様です。詳細については[MySQL ウィンドウ関数](https://dev.mysql.com/doc/refman/8.0/en/window-functions.html)参照してください。
 
 TiDB では、次のシステム変数を使用してウィンドウ関数を制御できます。
 
--   [`tidb_enable_window_function`](/system-variables.md#tidb_enable_window_function) : ウィンドウ関数はパーサー内で追加の[キーワード](/keywords.md)予約するため、TiDB はウィンドウ関数を無効にするためにこの変数を提供します。TiDB をアップグレードした後に SQL ステートメントの解析エラーが発生する場合は、この変数を`OFF`に設定してみてください。
--   [`tidb_enable_pipelined_window_function`](/system-variables.md#tidb_enable_pipelined_window_function) : この変数を使用すると、ウィンドウ関数のパイプライン実行アルゴリズムを無効にすることができます。
--   [`windowing_use_high_precision`](/system-variables.md#windowing_use_high_precision) : この変数を使用すると、ウィンドウ関数の高精度モードを無効にすることができます。
+-   [`tidb_enable_window_function`](/system-variables.md#tidb_enable_window_function) : ウィンドウ関数はパーサー内で追加の[キーワード](/keywords.md)予約するため、TiDB はこの変数を使用してウィンドウ関数を無効化します。TiDB のアップグレード後に SQL 文の解析エラーが発生する場合は、この変数を`OFF`に設定してみてください。
+-   [`tidb_enable_pipelined_window_function`](/system-variables.md#tidb_enable_pipelined_window_function) : この変数を使用して、ウィンドウ関数のパイプライン実行アルゴリズムを無効にすることができます。
+-   [`windowing_use_high_precision`](/system-variables.md#windowing_use_high_precision) : この変数を使用して、ウィンドウ関数の高精度モードを無効にすることができます。
 
-ウィンドウ関数[ここに記載](/tiflash/tiflash-supported-pushdown-calculations.md)はTiFlashにプッシュダウンできます。
+ウィンドウ関数[ここに記載](/tiflash/tiflash-supported-pushdown-calculations.md) TiFlashにプッシュダウンできます。
 
-`GROUP_CONCAT()`と`APPROX_PERCENTILE()`を除き、 TiDB は[`GROUP BY`集計関数](/functions-and-operators/aggregate-group-by-functions.md)つすべてをウィンドウ関数として使用することをサポートしています。 さらに、 TiDB は次のウィンドウ関数をサポートしています。
+TiDBは、 `GROUP_CONCAT()`と`APPROX_PERCENTILE()`除く[`GROUP BY`集計関数](/functions-and-operators/aggregate-group-by-functions.md)つすべてをウィンドウ関数として使用できます。さらに、TiDBは以下のウィンドウ関数もサポートしています。
 
 | 関数名                               | 機能の説明                                                                    |
 | :-------------------------------- | :----------------------------------------------------------------------- |
 | [`CUME_DIST()`](#cume_dist)       | 値のグループ内の値の累積分布を返します。                                                     |
 | [`DENSE_RANK()`](#dense_rank)     | パーティション内の現在の行のランクを返します。ランクにはギャップはありません。                                  |
 | [`FIRST_VALUE()`](#first_value)   | 現在のウィンドウの最初の行の式の値を返します。                                                  |
-| [`LAG()`](#lag)                   | パーティション内の現在の行の N 行前の行から式の値を返します。                                         |
+| [`LAG()`](#lag)                   | パーティション内の現在の行の N 行前にある行の式の値を返します。                                        |
 | [`LAST_VALUE()`](#last_value)     | 現在のウィンドウの最後の行の式の値を返します。                                                  |
 | [`LEAD()`](#lead)                 | パーティション内の現在の行から N 行後の行の式の値を返します。                                         |
 | [`NTH_VALUE()`](#nth_value)       | 現在のウィンドウの N 行目から式の値を返します。                                                |
 | [`NTILE()`](#ntile)               | パーティションを N 個のバケットに分割し、パーティション内の各行にバケット番号を割り当て、パーティション内の現在の行のバケット番号を返します。 |
 | [`PERCENT_RANK()`](#percent_rank) | 現在の行の値より小さいパーティション値の割合を返します。                                             |
-| [`RANK()`](#rank)                 | パーティション内の現在の行のランクを返します。ランクにはギャップがある場合があります。                              |
+| [`RANK()`](#rank)                 | パーティション内の現在の行の順位を返します。順位にはギャップがある場合があります。                                |
 | [`ROW_NUMBER()`](#row_number)     | パーティション内の現在の行番号を返します。                                                    |
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_cume-dist"><code>CUME_DIST()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-window-function-descriptions-html-function-cume-dist-code-cume-dist-code-a}
 
-`CUME_DIST()` 、値のグループ内の値の累積分布を計算します。値のグループをソートするには、 `ORDER BY`節と`CUME_DIST()`使用する必要があることに注意してください。そうしないと、この関数は期待される値を返しません。
+`CUME_DIST()` 、値のグループ内における値の累積分布を計算します。値のグループをソートするには、 `ORDER BY`節と`CUME_DIST()`を使用する必要があります。そうしないと、この関数は期待される値を返しません。
 
 ```sql
 WITH RECURSIVE cte(n) AS (
@@ -65,7 +65,7 @@ FROM
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_dense-rank"><code>DENSE_RANK()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-window-function-descriptions-html-function-dense-rank-code-dense-rank-code-a}
 
-`DENSE_RANK()`関数は、現在の行の順位を返します[`RANK()`](#rank)と似ていますが、同順位 (同じ値と順序条件を共有する行) の場合はギャップを残しません。
+`DENSE_RANK()`関数は現在行の順位を返します。3 [`RANK()`](#rank)と似ていますが、同順位（同じ値と順序条件を持つ行）の場合に順位の差が残りません。
 
 ```sql
 SELECT
@@ -99,12 +99,12 @@ FROM (
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_first-value"><code>FIRST_VALUE()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-window-function-descriptions-html-function-first-value-code-first-value-code-a}
 
-`FIRST_VALUE(expr)`ウィンドウ内の最初の値を返します。
+`FIRST_VALUE(expr)`はウィンドウ内の最初の値を返します。
 
-次の例では、2 つの異なるウィンドウ定義を使用しています。
+次の例では、 2 つの異なるウィンドウ定義を使用しています。
 
--   `PARTITION BY n MOD 2 ORDER BY n`テーブル`a`のデータを`1, 3`と`2, 4` 2 つのグループに分割します。したがって、これらのグループの最初の値である`1`または`2`返されます。
--   `PARTITION BY n <= 2 ORDER BY n`テーブル`a`のデータを`1, 2`と`3, 4` 2 つのグループに分割します。したがって、 `n`どのグループに属しているかに応じて、 `1`または`3`返します。
+-   `PARTITION BY n MOD 2 ORDER BY n`テーブル`a`のデータを`1, 3`と`2, 4` 2つのグループに分割します。したがって、これらのグループの最初の値である`1`または`2`返されます。
+-   `PARTITION BY n <= 2 ORDER BY n`テーブル`a`のデータを`1, 2`と`3, 4` 2 つのグループに分割します。したがって、 `n`どのグループに属しているかに応じて`1`または`3`返します。
 
 ```sql
 SELECT
@@ -136,9 +136,9 @@ ORDER BY
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_lag"><code>LAG()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-window-function-descriptions-html-function-lag-code-lag-code-a}
 
-`LAG(expr [, num [, default]])`関数は、現在の行の`num`行前の行から`expr`の値を返します。そのような行が存在しない場合は、 `default`が返されます。デフォルトでは、指定されていない場合、 `num`は`1` `default` `NULL`になります。
+`LAG(expr [, num [, default]])`関数は、現在行の`num`行前にある行の値`expr`返します。そのような行が存在しない場合は、 `default`返されます。デフォルトでは、 `num`は`1`は`default` `NULL`扱われます。
 
-次の例では、 `num`指定されていないため、 `LAG(n)`前の行の`n`の値を返します。 `n`が 1 の場合、前の行が存在せず、 `default`指定されていないため、 `LAG(1)` `NULL`返します。
+次の例では、 `num`が指定されていないため、 `LAG(n)`前の行の`n`の値を返します。7が`n`の場合、前の行は存在せず、 `default`指定されていないため、 `LAG(1)` `NULL`返します。
 
 ```sql
 WITH RECURSIVE cte(n) AS (
@@ -217,9 +217,9 @@ ORDER BY
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_lead"><code>LEAD()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-window-function-descriptions-html-function-lead-code-lead-code-a}
 
-`LEAD(expr [, num [,default]])`関数は、現在の行から`num`行後の行から`expr`の値を返します。そのような行が存在しない場合は、 `default`が返されます。デフォルトでは、指定されていない場合、 `num`は`1` `default` `NULL`になります。
+`LEAD(expr [, num [,default]])`関数は`default`現在行から`num`行後の行の値`expr`返します。そのような行が存在しない場合は、 `default`が返されます。デフォルトでは、 `num`は`1`は`NULL`扱われます。
 
-次の例では、 `num`が指定されていないため、 `LEAD(n)`現在の行の次の行の`n`の値を返します。 `n`が 10 の場合、次の行が存在せず、 `default`が指定されていないため、 `LEAD(10)` `NULL`返します。
+次の例では、 `num`が指定されていないため、 `LEAD(n)`現在行の次の行の値`n`を返します`n`が10の場合、次の行は存在せず、 `default`指定されていないため、 `LEAD(10)` `NULL`返します。
 
 ```sql
 WITH RECURSIVE cte(n) AS (
@@ -382,7 +382,7 @@ FROM (
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_rank"><code>RANK()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-window-function-descriptions-html-function-rank-code-rank-code-a}
 
-`RANK()`関数は[`DENSE_RANK()`](#dense_rank)に似ていますが、同点の場合 (同じ値と順序条件を共有する行) にはギャップを残します。つまり、絶対的な順位付けが提供されます。たとえば、順位が 7 の場合、それより低い順位の行が 6 つあることを意味します。
+`RANK()`関数は[`DENSE_RANK()`](#dense_rank)に似ていますが、同点（同じ値と順序条件を持つ行）の場合は空白を残します。つまり、絶対的な順位付けを提供します。例えば、順位が 7 の場合、それより低い順位の行が 6 行あることを意味します。
 
 ```sql
 SELECT

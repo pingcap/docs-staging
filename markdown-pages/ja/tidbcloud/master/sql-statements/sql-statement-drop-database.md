@@ -1,11 +1,11 @@
 ---
 title: DROP DATABASE | TiDB SQL Statement Reference
-summary: TiDB データベースに対する DROP DATABASE の使用法の概要。
+summary: TiDB データベースの DROP DATABASE の使用法の概要。
 ---
 
 # データベースの削除 {#drop-database}
 
-`DROP DATABASE`ステートメントは、指定されたデータベース スキーマと、その中に作成されたすべてのテーブルおよびビューを完全に削除します。削除されたデータベースに関連付けられているユーザー権限は影響を受けません。
+`DROP DATABASE`文は、指定されたデータベーススキーマと、その中に作成されたすべてのテーブルとビューを永久に削除します。削除されたデータベースに関連付けられているユーザー権限は影響を受けません。
 
 ## 概要 {#synopsis}
 
@@ -44,9 +44,9 @@ mysql> SHOW DATABASES;
 3 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`DROP DATABASE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`DROP DATABASE`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

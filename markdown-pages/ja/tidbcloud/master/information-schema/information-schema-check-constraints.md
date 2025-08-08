@@ -3,9 +3,9 @@ title: CHECK_CONSTRAINTS
 summary: CHECK_CONSTRAINTS` INFORMATION_SCHEMA テーブルについて学習します。
 ---
 
-# 制約のチェック {#check-constraints}
+# CHECK_CONSTRAINTS {#check-constraints}
 
-`CHECK_CONSTRAINTS`表には、 [`CHECK`制約](/constraints.md#check)の表に関する情報が示されています。
+`CHECK_CONSTRAINTS`表には、 [`CHECK`制約](/constraints.md#check)表に関する情報が示されています。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -45,7 +45,7 @@ CONSTRAINT_CATALOG: def
 1 row in set (0.00 sec)
 ```
 
-`CHECK_CONSTRAINTS`のテーブル内のフィールドは次のように説明されます。
+`CHECK_CONSTRAINTS`テーブル内のフィールドは次のように説明されます。
 
 -   `CONSTRAINT_CATALOG` : 制約のカタログ。常に`def`です。
 -   `CONSTRAINT_SCHEMA` : 制約のスキーマ。

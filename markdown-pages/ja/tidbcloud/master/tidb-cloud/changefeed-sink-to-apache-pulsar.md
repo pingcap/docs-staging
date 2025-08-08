@@ -135,7 +135,7 @@ Apache Pulsar サービスにパブリック IP アクセスを提供する場�
 
 4.  **「データ形式」**領域で、希望する Pulsar メッセージの形式を選択します。
 
-    -   Canal-JSONは、解析が容易なプレーンなJSONテキスト形式です。詳細については、 [TiCDC Canal-JSON プロトコル](https://docs.pingcap.com/tidb/stable/ticdc-canal-json/)ご覧ください。
+    -   Canal-JSONは、解析が容易なプレーンなJSONテキスト形式です。詳細については、 [TiCDC Canal- JSON プロトコル](https://docs.pingcap.com/tidb/stable/ticdc-canal-json/)ご覧ください。
 
     -   Pulsarメッセージ本文にTiDB拡張フィールドを追加するには、 **「TiDB拡張」**オプションを有効にしてください。詳細については、 [TiCDC Canal-JSON プロトコルの TiDB 拡張フィールド](https://docs.pingcap.com/tidb/stable/ticdc-canal-json/#tidb-extension-field)参照してください。
 

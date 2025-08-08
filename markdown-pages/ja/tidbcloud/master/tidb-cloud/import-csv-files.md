@@ -26,7 +26,7 @@ aliases: ['/tidbcloud/migrate-from-amazon-s3-or-gcs','/tidbcloud/migrate-from-au
 
     -   1つのテーブルのデータが複数のCSVファイルに分割されている場合は、これらのCSVファイルに数値のサフィックスを追加してください。例： `${db_name}.${table_name}.000001.csv`と`${db_name}.${table_name}.000002.csv`数値のサフィックスは連続していなくても構いませんが、昇順である必要があります。また、すべてのサフィックスの長さを揃えるため、数値の前にゼロを追加する必要があります。
 
-    -   TiDB Cloudは`.gz` `.zst` `.zstd`形式の圧縮ファイルのインポートをサポートしています： `.gzip` 。圧縮されたCSVファイルをインポートする場合`.snappy` 、ファイル名を`${db_name}.${table_name}.${suffix}.csv.${compress}`形式にしてください`${suffix}`はオプションで、「000001」などの任意の整数にすることができます。例えば、 `trips.000001.csv.gz`ファイルを`bikeshare.trips`テーブルにインポートする場合は、ファイル名を`bikeshare.trips.000001.csv.gz`に変更する必要があります。
+    -   TiDB Cloudは`.gz` `.zst`の形式の圧縮ファイルのインポートをサポートしています： `.gzip` 。圧縮さ`.zstd`たCSVファイルをインポートする場合`.snappy` 、ファイル名を`${db_name}.${table_name}.${suffix}.csv.${compress}`形式にしてください`${suffix}`はオプションで、「000001」などの任意の整数にすることができます。例えば、 `trips.000001.csv.gz`ファイルを`bikeshare.trips`テーブルにインポートする場合は、ファイル名を`bikeshare.trips.000001.csv.gz`に変更する必要があります。
 
     > **注記：**
     >
@@ -149,7 +149,7 @@ CSV ファイルをTiDB Cloudにインポートするには、次の手順を実
 
 2.  **Cloud Storage からデータをインポート**を選択します。
 
-3.  **「Google Cloud Storage からデータをインポート」**ページで、ソース CSV ファイルについて次の情報を入力します。
+3.  **「Cloud Storage からデータをインポート」**ページで、ソース CSV ファイルについて次の情報を入力します。
 
     -   **含まれるスキーマファイル**: ソースフォルダにターゲットテーブルのスキーマファイル（例： `${db_name}-schema-create.sql` ）が含まれている場合は**「はい」**を選択します。含まれていない場合は**「いいえ」**を選択します。
     -   **データ形式**: **CSV**を選択します。

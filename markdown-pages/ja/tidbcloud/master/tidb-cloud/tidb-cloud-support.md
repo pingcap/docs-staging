@@ -77,7 +77,7 @@ PingCAP ヘルプ センターには、 [https://tidb.support.pingcap.com/servic
 
     -   **影響を受けるバージョン**: 問題に関連するTiDB Cloudクラスターのバージョンを指定します。
 
-4.  **［送信］**をクリックします。
+4.  **[送信]**をクリックします。
 
 ## サポートチケットをビュー {#view-support-tickets}
 

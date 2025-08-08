@@ -8,7 +8,7 @@ category: quick start
 
 *推定所要時間: 20 分*
 
-このチュートリアルでは、TiDB Cloudを使い始めるための簡単な方法をご案内します。また、 TiDB Cloudコンソールの[**はじめる**](https://tidbcloud.com/getting-started)ページにあるステップバイステップのチュートリアルもご利用いただけます。
+このチュートリアルでは、 TiDB Cloudを使い始めるための簡単な方法を説明します。
 
 さらに、 [TiDB プレイグラウンド](https://play.tidbcloud.com/?utm_source=docs&#x26;utm_medium=tidb_cloud_quick_start)で TiDB 機能を試すこともできます。
 
@@ -27,7 +27,7 @@ category: quick start
 3.  新規サインアップ ユーザーの場合、 TiDB Cloud は`Cluster0`名前のデフォルトのTiDB Cloud Serverless クラスターを自動的に作成します。
 
     -   このデフォルトのクラスターでTiDB Cloud機能をすぐに試すには、 [ステップ2: AI支援SQLエディターを試す](#step-2-try-ai-assisted-sql-editor)に進みます。
-    -   新しいTiDB Cloud Serverless クラスターを独自に作成するには、次の手順に従います。
+    -   独自に新しいTiDB Cloud Serverless クラスターを作成するには、次の手順に従います。
 
         1.  **[クラスタの作成]を**クリックします。
         2.  **「クラスタの作成」**ページでは、デフォルトで**「Serverless」**が選択されています。クラスターのターゲットリージョンを選択し、必要に応じてデフォルトのクラスター名を更新し、 [クラスタープラン](/tidb-cloud/select-cluster-tier.md#cluster-plans)を選択して**「作成**」をクリックします。TiDB TiDB Cloud Serverless クラスターは約30秒で作成されます。

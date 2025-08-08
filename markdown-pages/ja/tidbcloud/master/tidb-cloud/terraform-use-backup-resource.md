@@ -14,8 +14,8 @@ summary: バックアップ リソースを使用してTiDB Cloudクラスター
 
 ## 前提条件 {#prerequisites}
 
--   [TiDB Cloud Terraform プロバイダーを入手](/tidb-cloud/terraform-get-tidbcloud-provider.md) 。
--   バックアップと復元機能は、 TiDB Cloud Serverless クラスターでは使用できません。バックアップ リソースを使用するには、 TiDB Cloud Dedicated クラスターを作成していることを確認してください。
+-   [TiDB Cloud Terraform プロバイダーを入手する](/tidb-cloud/terraform-get-tidbcloud-provider.md) 。
+-   バックアップと復元機能は、 TiDB Cloud Serverless クラスターではご利用いただけません。バックアップリソースを使用するには、 TiDB Cloud Dedicated クラスターを作成してください。
 
 ## バックアップリソースを使用してバックアップを作成する {#create-a-backup-with-the-backup-resource}
 
@@ -44,7 +44,7 @@ summary: バックアップ リソースを使用してTiDB Cloudクラスター
           description = "create by terraform"
         }
 
-    ファイル内のリソース値 (プロジェクト ID やクラスター ID など) を独自のものに置き換える必要があります。
+    ファイル内のリソース値 (プロジェクト ID やクラスタ ID など) を独自のものに置き換える必要があります。
 
     Terraform を使用してクラスター リソース (たとえば、 `example_cluster` ) を管理している場合は、実際のプロジェクト ID とクラスター ID を指定せずに、次のようにバックアップ リソースを構成することもできます。
 
@@ -116,7 +116,7 @@ summary: バックアップ リソースを使用してTiDB Cloudクラスター
             type             = "MANUAL"
         }
 
-6.  数分間お待ちください。その後、 `terraform refersh`使用してステータスを更新します。
+6.  数分お待ちください。その後、 `terraform refersh`を使用してステータスを更新します。
 
         $ terraform refresh
         tidbcloud_cluster.example_cluster: Refreshing state... [id=1379661944630234067]
@@ -137,7 +137,7 @@ summary: バックアップ リソースを使用してTiDB Cloudクラスター
 
 ステータスが`SUCCESS`に変わると、クラスターのバックアップが作成されたことを示します。作成後はバックアップを更新できないことに注意してください。
 
-これで、クラスターのバックアップが作成されました。バックアップを使用してクラスターを復元する場合は、 [復元リソースを使用する](/tidb-cloud/terraform-use-restore-resource.md)実行します。
+これで、クラスターのバックアップが作成されました。このバックアップを使用してクラスターを復元する場合は、 [復元リソースを使用する](/tidb-cloud/terraform-use-restore-resource.md)実行できます。
 
 ## バックアップを更新する {#update-a-backup}
 
@@ -157,6 +157,6 @@ summary: バックアップ リソースを使用してTiDB Cloudクラスター
 
     Enter a value: yes
 
-ここで、 `terraform show`コマンドを実行すると、リソースがクリアされているため何も表示されません。
+ここで、コマンド`terraform show`実行すると、リソースがクリアされているため何も表示されません。
 
     $ terraform show

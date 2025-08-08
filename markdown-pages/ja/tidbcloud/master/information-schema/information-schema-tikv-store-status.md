@@ -9,7 +9,7 @@ summary: TIKV_STORE_STATUS` INFORMATION_SCHEMA テーブルについて学習し
 
 > **注記：**
 >
-> このテーブルは[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> このテーブルは[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
 
 ```sql
 USE INFORMATION_SCHEMA;

@@ -1,6 +1,6 @@
 ---
 title: Migrate MySQL-Compatible Databases to TiDB Cloud Using Data Migration
-summary: データ移行機能を使用して、最小限のダウンタイムで、MySQL データベースを Amazon Aurora MySQL、Amazon RDS、Azure Database for MySQL - Flexible Server、Google Cloud SQL for MySQL、またはセルフマネージド MySQL インスタンスからTiDB Cloudにシームレスに移行する方法について説明します。
+summary: データ移行機能を使用して、ダウンタイムを最小限に抑えながら、MySQL データベースを Amazon Aurora MySQL、Amazon RDS、Azure Database for MySQL - Flexible Server、Google Cloud SQL for MySQL、またはセルフマネージド MySQL インスタンスからTiDB Cloudにシームレスに移行する方法について説明します。
 aliases: ['/tidbcloud/migrate-data-into-tidb','/tidbcloud/migrate-incremental-data-from-mysql']
 ---
 
@@ -483,7 +483,7 @@ GRANT CREATE, SELECT, INSERT, UPDATE, DELETE, ALTER, DROP, INDEX ON *.* TO 'dm_t
 
 TiDB Cloud は、さまざまなシナリオでのパフォーマンスとコストの要件を満たすために、移行ジョブ仕様のスケールアップまたはスケールダウンをサポートしています。
 
-移行仕様によってパフォーマンスは異なります。また、移行段階によってパフォーマンス要件も変化する可能性があります。例えば、既存データの移行中は、可能な限り高速なパフォーマンスを求めるため、8 RCUなど、より大きな仕様の移行ジョブを選択します。既存データの移行が完了すると、増分移行ではそれほど高いパフォーマンスは必要なくなります。そのため、ジョブ仕様をスケールダウンし、例えば8 RCUから2 RCUにすることでコストを削減できます。
+移行仕様によってパフォーマンスは異なります。また、移行段階によってパフォーマンス要件も変化する可能性があります。例えば、既存データの移行中は、可能な限り高速なパフォーマンスを求めるため、8 RCUなど、より大きな仕様の移行ジョブを選択します。既存データの移行が完了すると、増分移行ではそれほど高いパフォーマンスは必要ないため、ジョブ仕様をスケールダウン（例えば、8 RCUから2 RCUへ）してコストを削減できます。
 
 移行ジョブの仕様をスケーリングする場合は、次の点に注意してください。
 

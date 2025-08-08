@@ -3,7 +3,7 @@ title: Deploy Data App Automatically with GitHub
 summary: GitHub を使用してデータ アプリを自動的にデプロイする方法を学びます。
 ---
 
-# GitHub でデータ アプリを自動デプロイ {#deploy-data-app-automatically-with-github}
+# GitHub でデータアプリを自動デプロイ {#deploy-data-app-automatically-with-github}
 
 TiDB Cloud は、 JSON 構文を使用してデータ アプリの構成全体をコードとして表現する、 コンフィグレーション as Code (CaC) アプローチを提供します。
 
@@ -96,7 +96,7 @@ GitHub接続で**自動同期とデプロイ**が有効になっている場合�
 | `data_source/cluster.json`                      | このファイルを更新する際は、リンクされたクラスターにアクセスできることを確認してください。クラスターIDはクラスターURLから取得できます。例えば、クラスターURLが`https://tidbcloud.com/clusters/1234567891234567890/overview`の場合、クラスターIDは`1234567891234567890`です。 |
 | `http_endpoints/config.json`                    | エンドポイントを変更するときは、 [HTTPエンドポイント構成](/tidb-cloud/data-service-app-config-files.md#http-endpoint-configuration)で説明されているルールに従ってください。                                                       |
 | `http_endpoints/sql/method-<endpoint-path>.sql` | `http_endpoints/sql`ディレクトリ内の SQL ファイルを追加または削除するには、対応するエンドポイント構成も更新する必要があります。                                                                                                         |
-| `datapp_config.json`                            | このファイルの`app_id`フィールドは変更しないでください。ただし、 `dataapp_config.json`ファイルが別のデータアプリからコピーされたもので、現在のデータアプリの ID に更新する必要がある場合は除きます。変更しないと、この変更によってトリガーされるデプロイが失敗します。                                 |
+| `datapp_config.json`                            | このファイルの`app_id`フィールドは変更しないでください。ただし、 `dataapp_config.json`ファイルが別のデータアプリからコピーされたもので、現在のデータアプリの ID に更新する必要がある場合は除きます。変更しないと、この変更によってトリガーされるデプロイは失敗します。                                 |
 
 これらのファイル内のフィールド構成の詳細については、 [データアプリの構成ファイル](/tidb-cloud/data-service-app-config-files.md)参照してください。
 

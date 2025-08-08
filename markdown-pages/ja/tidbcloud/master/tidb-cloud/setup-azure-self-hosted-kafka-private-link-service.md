@@ -161,7 +161,7 @@ summary: このドキュメントでは、Azure でセルフホスト型 Kafka �
         -   外部ポート: `39092`
         -   EXTERNALアドバタイズリスナーポートの範囲: `9093~9095`
 
-2.  SSHを使用して各ブローカーノードにログインします。各ブローカーノードごとに、以下の内容を含む設定ファイル`~/config/server.properties`作成します。
+2.  SSHを使用して各ブローカーノードにログインします。各ブローカーノードごとに、以下の内容を含む設定ファイル`~/config/server.properties`を作成します。
 
     ```properties
     # broker-node-1 ~/config/server.properties

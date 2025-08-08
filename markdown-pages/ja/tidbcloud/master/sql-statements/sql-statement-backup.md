@@ -10,7 +10,7 @@ summary: TiDB データベースの BACKUP の使用法の概要。
 > **警告：**
 >
 > -   この機能は実験的です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される可能性があります。バグを発見した場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
-> -   この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> -   この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
 
 `BACKUP`ステートメントは[BRツール](https://docs.pingcap.com/tidb/stable/backup-and-restore-overview)と同じエンジンを使用しますが、バックアッププロセスは別のBRツールではなく TiDB 自体によって実行されますBRの利点と警告はすべてこのステートメントにも適用されます。
 
@@ -33,11 +33,15 @@ BRIETables ::=
 |   "TABLE" TableNameList
 
 BackupOption ::=
-    "RATE_LIMIT" '='? LengthNum "MB" '/' "SECOND"
+    "CHECKSUM" '='? Boolean
+|   "CHECKSUM_CONCURRENCY" '='? LengthNum
+|   "COMPRESSION_LEVEL" '='? LengthNum
+|   "COMPRESSION_TYPE" '='? stringLit
 |   "CONCURRENCY" '='? LengthNum
-|   "CHECKSUM" '='? Boolean
-|   "SEND_CREDENTIALS_TO_TIKV" '='? Boolean
+|   "IGNORE_STATS" '='? Boolean
 |   "LAST_BACKUP" '='? BackupTSO
+|   "RATE_LIMIT" '='? LengthNum "MB" '/' "SECOND"
+|   "SEND_CREDENTIALS_TO_TIKV" '='? Boolean
 |   "SNAPSHOT" '='? ( BackupTSO | LengthNum TimestampUnit "AGO" )
 
 Boolean ::=
@@ -115,11 +119,15 @@ BACKUP DATABASE `test` TO 's3://example-bucket-2020/backup-05/'
 
 `RATE_LIMIT`使用すると、TiKV ノードあたりの平均アップロード速度が制限され、ネットワーク帯域幅が削減されます。
 
-バックアップが完了する前に、 `BACKUP`クラスタ上のデータに対してチェックサムを実行し、正確性を検証します。この検証が不要であると確信できる場合は、 `CHECKSUM`パラメータを`FALSE`に設定することでチェックを無効にすることができます。
+バックアップが完了する前に、 `BACKUP`指定すると、クラスタ上のデータに対してチェックサムが実行され、データの正確性が検証されます。デフォルトでは、単一テーブルに対するチェックサムタスクの同時実行数は4ですが、 `CHECKSUM_CONCURRENCY`パラメータを使用して調整できます。データ検証が不要であると確信できる場合は、 `CHECKSUM`パラメータを`FALSE`に設定することで、チェックを無効にすることができます。
 
 BR がテーブルとインデックスのバックアップに同時に実行できるタスク数を指定するには、パラメータ`CONCURRENCY`使用します。このパラメータはBR内のスレッドプールサイズを制御し、バックアップ操作のパフォーマンスと効率を最適化します。
 
 1つのタスクは、バックアップスキーマに応じて、1つのテーブル範囲または1つのインデックス範囲を表します。1つのテーブルと1つのインデックスの場合、このテーブルのバックアップには2つのタスクが使用されます。デフォルト値は`CONCURRENCY`で、 `4`です。多数のテーブルまたはインデックスをバックアップする必要がある場合は、この値を増やしてください。
+
+統計はデフォルトではバックアップされません。統計情報をバックアップするには、 `IGNORE_STATS`パラメータを`FALSE`に設定する必要があります。
+
+デフォルトでは、バックアップによって生成されるSSTファイルは`zstd`圧縮アルゴリズムを使用します。必要に応じて、 `COMPRESSION_TYPE`パラメータを使用して別の圧縮アルゴリズムを指定できます。サポートされているアルゴリズムは`lz4` `zstd` 。また、 `COMPRESSION_LEVEL`パラメータを使用して圧縮レベルを調整することもできます。レベル番号が大きいほど圧縮率は高くなりますが、CPU消費量`snappy`増加します。
 
 ```sql
 BACKUP DATABASE `test` TO 's3://example-bucket-2020/backup-06/'

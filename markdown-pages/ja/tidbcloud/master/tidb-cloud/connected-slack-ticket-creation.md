@@ -9,11 +9,11 @@ summary: Slack チケットの作成と更新サブスクリプションに関�
 
 > **注記：**
 >
-> Slack のチケット サポート機能は、リクエストに応じてご利用いただけます。この機能を試してみたい場合は、 TiDB Cloudサポート ( <a href="mailto:support@pingcap.com">[サポート](mailto:support@pingcap.com)</a>にお問い合わせいただくか、テクニカル アカウント マネージャー (TAM) にご連絡ください。
+> Slackのチケットサポート機能はリクエストに応じてご利用いただけます。この機能をご利用になりたい場合は、 TiDB Cloudサポート<a href="mailto:support@pingcap.com">[support@pingcap.com](mailto:support@pingcap.com)</a>までご連絡いただくか、担当のテクニカルアカウントマネージャー（TAM）までお問い合わせください。
 
 ## サポートチケットを作成する {#create-a-support-ticket}
 
-Slack サポート チャネルでは、 **PingCAP サポート ボット**に言及し、メッセージで問題を説明するだけです。すると、チケット ボットが**[リクエストを送信]**ボタンを含むメッセージを送信します。
+Slackのサポートチャンネルで、 **PingCAP Support Bot**をメンションし、メッセージで問題を説明してください。すると、チケットボットが**「リクエストを送信」**ボタン付きのメッセージを送信します。
 
 ![slack-ticket-creation-1](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-1.png)
 
@@ -21,7 +21,7 @@ Slack サポート チャネルでは、 **PingCAP サポート ボット**に�
 
 ![slack-ticket-creation-2](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-2.png)
 
-チケットが正常に作成されると、ボットはチケットリンクを返信します。リンクをクリックすると、 [PingCAP ヘルプセンター](https://tidb.support.pingcap.com/servicedesk/customer/portals)でチケットの詳細を表示できます。
+チケットの作成が完了すると、ボットからチケットリンクが返信されます。リンクをクリックすると、 [PingCAPヘルプセンター](https://tidb.support.pingcap.com/servicedesk/customer/portals)でチケットの詳細を確認できます。
 
 ![slack-ticket-creation-3](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-3.png)
 
@@ -29,7 +29,7 @@ Slack サポート チャネルでは、 **PingCAP サポート ボット**に�
 
 ## チケットの最新情報を購読する {#subscribe-to-ticket-updates}
 
-**エンタープライズ**サポート プランでは、Slack でのチケット更新のサブスクリプションがサポートされています。サポート エンジニアがチケットに応答すると、チケット更新メッセージが Slack チャネルに表示されます。メッセージには、チケットのタイトル、チケット リンク、最後のコメント内容などの情報が含まれます。
+**エンタープライズ**サポートプランでは、Slack でのチケット更新の購読がサポートされています。サポートエンジニアがチケットに返信すると、Slack チャンネルにチケット更新メッセージが表示されます。メッセージには、チケットのタイトル、チケットリンク、最新のコメント内容などの情報が含まれます。
 
 ![slack-ticket-creation-5](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/connected-slack-ticket-creation-5.png)
 
@@ -37,8 +37,8 @@ Slack サポート チャネルでは、 **PingCAP サポート ボット**に�
 
 -   チケットのステータスを確認するにはどうすればいいですか?
 
-    チケットの作成に使用したメール アドレスで[PingCAP ヘルプセンター](https://tidb.support.pingcap.com/servicedesk/customer/user/requests)にログインします。現在のアカウントのすべての過去のチケットとそのステータスを表示できます。
+    チケット作成時に使用したメールアドレスで[PingCAPヘルプセンター](https://tidb.support.pingcap.com/servicedesk/customer/user/requests)にログインしてください。現在のアカウントのすべての過去のチケットとそのステータスを確認できます。
 
-## サポートに問い合わせる {#contact-support}
+## サポートにお問い合わせください {#contact-support}
 
-ご質問やご不明な点がございましたら、サポート チーム<a href="mailto:support@pingcap.com">[サポート](mailto:support@pingcap.com)</a>までお問い合わせください。
+ヘルプや質問がある場合は、 <a href="mailto:support@pingcap.com">[support@pingcap.com](mailto:support@pingcap.com)</a>のサポート チームにお問い合わせください。

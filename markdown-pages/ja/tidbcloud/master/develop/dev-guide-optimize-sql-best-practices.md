@@ -33,7 +33,7 @@ DELETE FROM t WHERE id = 2;
 DELETE FROM t WHERE id = 3;
 ```
 
-### <code>PREPARE</code>使用する {#use-code-prepare-code}
+### <code>PREPARE</code>を使用する {#use-code-prepare-code}
 
 SQL ステートメントを複数回実行する必要がある場合は、SQL 構文を繰り返し解析するオーバーヘッドを回避するために、 `PREPARE`ステートメントを使用することをお勧めします。
 
@@ -82,13 +82,13 @@ public void batchInsert(Connection connection) throws SQLException {
 
 ### 必要な列のみをクエリする {#only-query-the-columns-you-need}
 
-すべての列のデータが必要ない場合は、 `SELECT *`使用してすべての列のデータを返さないでください。次のクエリは非効率的です。
+すべての列のデータが必要ない場合は、 `SELECT *`使用してすべての列のデータを取得しないでください。次のクエリは非効率的です。
 
 ```sql
 SELECT * FROM books WHERE title = 'Marian Yost';
 ```
 
-必要な列のみをクエリする必要があります。例:
+必要な列のみをクエリしてください。例:
 
 ```sql
 SELECT title, price FROM books WHERE title = 'Marian Yost';
@@ -96,13 +96,13 @@ SELECT title, price FROM books WHERE title = 'Marian Yost';
 
 ### 一括削除を使用する {#use-bulk-delete}
 
-大量のデータを削除する場合は[一括削除](/develop/dev-guide-delete-data.md#bulk-delete)使用することをお勧めします。
+大量のデータを削除する場合は、 [一括削除](/develop/dev-guide-delete-data.md#bulk-delete)使用することをお勧めします。
 
 ### 一括更新を使用する {#use-bulk-update}
 
-大量のデータを更新する場合は[一括更新](/develop/dev-guide-update-data.md#bulk-update)使用することをお勧めします。
+大量のデータを更新する場合は、 [一括更新](/develop/dev-guide-update-data.md#bulk-update)使用することをお勧めします。
 
-### テーブルデータ全体に対しては<code>DELETE</code>ではなく<code>TRUNCATE</code>使用します。 {#use-code-truncate-code-instead-of-code-delete-code-for-full-table-data}
+### テーブル全体のデータには、 <code>DELETE</code>ではなく<code>TRUNCATE</code>使用します。 {#use-code-truncate-code-instead-of-code-delete-code-for-full-table-data}
 
 テーブルからすべてのデータを削除する必要がある場合は、 `TRUNCATE`ステートメントを使用することをお勧めします。
 
@@ -130,19 +130,19 @@ DELETE FROM t;
 
 ### インデックスのベストプラクティスを追加する {#add-index-best-practices}
 
-TiDB は、オンライン インデックス追加操作をサポートしています。1 または[インデックスを追加](/sql-statements/sql-statement-add-index.md) [インデックスの作成](/sql-statements/sql-statement-create-index.md)ステートメントを使用してインデックスを追加できます。テーブル内のデータの読み取りと書き込みはブロックされません。次のシステム変数を変更することで、インデックス追加操作の`re-organize`フェーズ中に同時実行性とバッチ サイズを調整できます。
+TiDBはオンラインのインデックス追加操作をサポートしています。1 [インデックスを追加](/sql-statements/sql-statement-add-index.md)または[インデックスの作成](/sql-statements/sql-statement-create-index.md)文でインデックスを追加できます。テーブルへのデータの読み取りと書き込みはブロックされません。以下のシステム変数を変更することで、インデックス追加操作のフェーズ`re-organize`における同時実行性とバッチサイズを調整できます。
 
 -   [`tidb_ddl_reorg_worker_cnt`](/system-variables.md#tidb_ddl_reorg_worker_cnt)
 -   [`tidb_ddl_reorg_batch_size`](/system-variables.md#tidb_ddl_reorg_batch_size)
 
-オンライン アプリケーションへの影響を減らすために、インデックス追加操作のデフォルトの速度は遅くなっています。インデックス追加操作の対象列に読み取り負荷のみが含まれる場合、またはオンライン ワークロードに直接関連していない場合は、上記の変数の値を適切に増やして、インデックス追加操作を高速化できます。
+オンラインアプリケーションへの影響を軽減するため、インデックス追加操作のデフォルトの速度は低速に設定されています。インデックス追加操作の対象列が読み取り負荷のみ、またはオンラインワークロードに直接関連していない場合は、上記の変数の値を適切に増やすことで、インデックス追加操作を高速化できます。
 
 ```sql
 SET @@global.tidb_ddl_reorg_worker_cnt = 16;
 SET @@global.tidb_ddl_reorg_batch_size = 4096;
 ```
 
-インデックス追加操作のターゲット列が頻繁に更新される場合 ( `UPDATE` 、 `INSERT` 、 `DELETE`を含む)、上記の変数を増やすと書き込み競合が増え、オンライン ワークロードに影響します。したがって、再試行が頻繁に行われるため、インデックス追加操作の完了に時間がかかる場合があります。この場合、オンライン アプリケーションとの書き込み競合を回避するために、上記の変数の値を減らすことをお勧めします。
+インデックス追加操作の対象列が頻繁に更新される場合（ `UPDATE`など）、上記の変数`INSERT`値を増やすと書き込み競合が増加し、オンラインワークロード`DELETE`影響を与えます。そのため、再試行が頻繁に発生するため、インデックス追加操作の完了に時間がかかる可能性があります。このような場合は、オンラインアプリケーションとの書き込み競合を回避するために、上記の変数の値を減らすことをお勧めします。
 
 ```sql
 SET @@global.tidb_ddl_reorg_worker_cnt = 4;
@@ -153,13 +153,13 @@ SET @@global.tidb_ddl_reorg_batch_size = 128;
 
 <CustomContent platform="tidb">
 
-トランザクションの競合を特定して解決する方法については、 [ロック競合のトラブルシューティング](/troubleshoot-lock-conflicts.md)参照してください。
+トランザクションの競合を見つけて解決する方法については、 [ロックの競合のトラブルシューティング](/troubleshoot-lock-conflicts.md)参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-トランザクションの競合を特定して解決する方法については、 [ロック競合のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts)参照してください。
+トランザクションの競合を見つけて解決する方法については、 [ロックの競合のトラブルシューティング](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts)参照してください。
 
 </CustomContent>
 
@@ -181,13 +181,13 @@ SET @@global.tidb_ddl_reorg_batch_size = 128;
 
 <CustomContent platform="tidb">
 
--   [高度な同時書き込みのベストプラクティス](/best-practices/high-concurrency-best-practices.md)
+-   [高同時書き込みのベストプラクティス](/best-practices/high-concurrency-best-practices.md)
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
--   [高度な同時書き込みのベストプラクティス](https://docs.pingcap.com/tidb/stable/high-concurrency-best-practices)
+-   [高同時書き込みのベストプラクティス](https://docs.pingcap.com/tidb/stable/high-concurrency-best-practices)
 
 </CustomContent>
 
@@ -195,12 +195,12 @@ SET @@global.tidb_ddl_reorg_batch_size = 128;
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

@@ -5,11 +5,11 @@ summary: TiDB データベースの CHANGE COLUMN の使用法の概要。
 
 # 列の変更 {#change-column}
 
-`ALTER TABLE.. CHANGE COLUMN`ステートメントは、既存のテーブルの列を変更します。変更には、列の名前の変更と、互換性のある型へのデータ型の変更の両方が含まれます。
+`ALTER TABLE.. CHANGE COLUMN`のステートメントは、既存のテーブルの列を変更します。変更には、列名の変更と、互換性のあるデータ型への変更の両方が含まれます。
 
-v5.1.0 以降、TiDB は Reorg データ型の変更をサポートしています。これには以下が含まれますが、これらに限定されません。
+v5.1.0 以降、TiDB は、次のような Reorg データ型の変更をサポートしています。
 
--   `VARCHAR` `BIGINT`に変更
+-   `VARCHAR`を`BIGINT`に変更
 -   `DECIMAL`精度の変更
 -   `VARCHAR(10)`の長さを`VARCHAR(5)`に圧縮する
 
@@ -110,17 +110,17 @@ ALTER TABLE t CHANGE COLUMN a a DATETIME;
 
     ERROR 8200 (HY000): Unsupported modify column: change from original type decimal(13,7) to datetime is currently unsupported yet
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 -   主キー列の[再編成データ](/sql-statements/sql-statement-modify-column.md#reorg-data-change)種類の変更はサポートされていません。
 -   パーティション化されたテーブル上の列タイプの変更はサポートされていません。
 -   生成された列の列タイプの変更はサポートされていません。
--   TiDB と MySQL 間の`CAST`の関数の動作の互換性の問題により、一部のデータ型 (TIME、BIT、SET、ENUM、JSON 型など) から他の型への変更はサポートされていません。
+-   TiDB と MySQL 間の`CAST`関数の動作の互換性の問題により、一部のデータ型 (TIME、BIT、SET、ENUM、JSON 型など) から他の型への変更はサポートされていません。
 
 ## 参照 {#see-also}
 
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)
 -   [列を追加](/sql-statements/sql-statement-add-column.md)
--   [ドロップコラム](/sql-statements/sql-statement-drop-column.md)
+-   [ドロップカラム](/sql-statements/sql-statement-drop-column.md)
 -   [列の変更](/sql-statements/sql-statement-modify-column.md)

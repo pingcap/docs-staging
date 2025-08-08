@@ -3,11 +3,11 @@ title: TiDB Cloud CLI Quick Start
 summary: TiDB Cloud CLI を使用してTiDB Cloudリソースを管理する方法を学習します。
 ---
 
-# TiDB CloudCLI クイック スタート {#tidb-cloud-cli-quick-start}
+# TiDB Cloud CLI クイックスタート {#tidb-cloud-cli-quick-start}
 
-TiDB Cloud は、数行のコマンドで端末からTiDB Cloudを操作できるコマンドライン インターフェイス (CLI) [`ticloud`](https://github.com/tidbcloud/tidbcloud-cli)を提供します。たとえば、 `ticloud`使用して次の操作を簡単に実行できます。
+TiDB Cloudは、ターミナルから数行のコマンドでTiDB Cloudを操作できるコマンドラインインターフェース（CLI） [`ticloud`](https://github.com/tidbcloud/tidbcloud-cli)提供しています。例えば、 `ticloud`使用して以下の操作を簡単に実行できます。
 
--   クラスターを作成、削除、および一覧表示します。
+-   クラスターを作成、削除、一覧表示します。
 -   クラスターにデータをインポートします。
 -   クラスターからデータをエクスポートします。
 
@@ -40,13 +40,13 @@ macOS または Linux の場合、次のいずれかの方法で`ticloud`イン�
 
 -   手動でインストールする
 
-    [リリース](https://github.com/tidbcloud/tidbcloud-cli/releases/latest)ページからコンパイル済みバイナリをダウンロードし、インストール先の場所にコピーします。
+    [リリース](https://github.com/tidbcloud/tidbcloud-cli/releases/latest)ページからコンパイル済みのバイナリをダウンロードし、インストール先の場所にコピーします。
 
 -   GitHub Actionsにインストール
 
     GitHub Action で`ticloud`設定するには、 [`setup-tidbcloud-cli`](https://github.com/tidbcloud/setup-tidbcloud-cli)使用します。
 
-MySQL コマンドライン クライアントがない場合はインストールしてください。パッケージ マネージャーを使用してインストールできます。
+MySQLコマンドラインクライアントがインストールされていない場合はインストールしてください。パッケージマネージャーからインストールできます。
 
 -   Debian ベースのディストリビューション:
 
@@ -74,26 +74,26 @@ Windows の場合、次のいずれかの方法で`ticloud`インストールで
 
 -   手動でインストールする
 
-    [リリース](https://github.com/tidbcloud/tidbcloud-cli/releases/latest)ページから事前コンパイルされたバイナリをダウンロードし、インストール先の場所にコピーします。
+    [リリース](https://github.com/tidbcloud/tidbcloud-cli/releases/latest)ページからコンパイル済みのバイナリをダウンロードし、インストール先の場所にコピーします。
 
 -   GitHub Actionsにインストール
 
     GitHub Actions で`ticloud`設定するには、 [`setup-tidbcloud-cli`](https://github.com/tidbcloud/setup-tidbcloud-cli)使用します。
 
-MySQL コマンドライン クライアントがインストールされていない場合はインストールしてください。インストール方法については[Windows 用 MySQL インストーラ](https://dev.mysql.com/doc/refman/8.0/en/mysql-installer.html)の手順を参照してください。Windows で`ticloud connect`起動するには、PATH 環境変数に`mysql.exe`含むディレクトリが含まれている必要があります。
+MySQLコマンドラインクライアントがインストールされていない場合は、インストールしてください。インストール手順については、 [Windows用MySQLインストーラ](https://dev.mysql.com/doc/refman/8.0/en/mysql-installer.html)の手順を参照してください。Windowsで`ticloud connect`起動するには、PATH環境変数に`mysql.exe`含むディレクトリを追加する必要があります。
 
 </div>
 </SimpleTab>
 
 ## クイックスタート {#quick-start}
 
-[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) TiDB Cloudを使い始めるのに最適な方法です。このセクションでは、 TiDB Cloud CLI を使用してTiDB Cloud Serverless クラスターを作成する方法を学習します。
+[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) TiDB Cloudを使い始めるのに最適な方法です。このセクションでは、 TiDB Cloud CLIを使用してTiDB Cloud Serverlessクラスターを作成する方法を学びます。
 
-### ユーザープロファイルを作成するか、 TiDB Cloudにログインします {#create-a-user-profile-or-log-into-tidb-cloud}
+### ユーザープロファイルを作成するか、 TiDB Cloudにログインしてください {#create-a-user-profile-or-log-into-tidb-cloud}
 
 TiDB Cloud CLI を使用してクラスターを作成する前に、ユーザー プロファイルを作成するか、 TiDB Cloudにログインする必要があります。
 
--   [TiDB CloudAPI キー](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management)でユーザープロファイルを作成します:
+-   [TiDB CloudAPIキー](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management)でユーザープロフィールを作成します:
 
     ```shell
     ticloud config create
@@ -109,11 +109,11 @@ TiDB Cloud CLI を使用してクラスターを作成する前に、ユーザ�
     ticloud auth login
     ```
 
-    ログインに成功すると、OAuth トークンが現在のプロファイルに割り当てられます。プロファイルが存在しない場合は、トークンは`default`名前のプロファイルに割り当てられます。
+    ログインに成功すると、OAuthトークンが現在のプロファイルに割り当てられます。プロファイルが存在しない場合は、トークンは`default`名前のプロファイルに割り当てられます。
 
 > **注記：**
 >
-> 前述の 2 つの方法では、 TiDB Cloud API キーが OAuth トークンよりも優先されます。両方が利用可能な場合は、API キーが使用されます。
+> 上記の2つの方法では、 TiDB Cloud APIキーがOAuthトークンよりも優先されます。両方利用可能な場合は、APIキーが使用されます。
 
 ### TiDB Cloud Serverless クラスターを作成する {#create-a-tidb-cloud-serverless-cluster}
 
@@ -131,7 +131,7 @@ ticloud serverless create
 ticloud --help
 ```
 
-最新バージョンを使用していることを確認してください:
+最新バージョンを使用していることを確認してください。
 
 ```shell
 ticloud version
@@ -153,7 +153,7 @@ TiDB Cloud CLI は、コンポーネント名が`cloud`の[TiUP](https://tiup.io
 tiup cloud --help
 ```
 
-`tiup cloud <command>`でコマンドを実行します。例:
+`tiup cloud <command>`を付けてコマンドを実行します。例:
 
 ```shell
 tiup cloud serverless create
@@ -165,10 +165,10 @@ TiUPによる最新バージョンへのアップデート:
 tiup update cloud
 ```
 
-## 次は何か {#what-s-next}
+## 次は何？ {#what-s-next}
 
-TiDB Cloud CLI のその他の機能については、 [CLI リファレンス](/tidb-cloud/cli-reference.md)をご覧ください。
+TiDB Cloud CLI のその他の機能については、 [CLIリファレンス](/tidb-cloud/cli-reference.md)ご覧ください。
 
 ## フィードバック {#feedback}
 
-TiDB Cloud CLI に関してご質問やご提案がございましたら、お気軽に[問題](https://github.com/tidbcloud/tidbcloud-cli/issues/new/choose)作成してください。また、あらゆる貢献を歓迎します。
+TiDB Cloud CLI についてご質問やご提案がございましたら、お気軽に[問題](https://github.com/tidbcloud/tidbcloud-cli/issues/new/choose)作成してください。また、皆様からの貢献も歓迎いたします。

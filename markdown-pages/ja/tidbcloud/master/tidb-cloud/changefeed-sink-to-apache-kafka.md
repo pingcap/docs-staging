@@ -58,7 +58,7 @@ TiDB Cloudは現在、セルフホスト型KafkaのPrivate Connectのみをサ�
     -   エンドポイントサービス名
     -   ブートストラップポート
 
--   Apache Kafka サービスが Google Cloud でホストされている場合は、手順[Google Cloud でセルフホスト型 Kafka プライベート サービス接続を設定する](/tidb-cloud/setup-self-hosted-kafka-private-service-connect.md)に従ってネットワーク接続が適切に構成されていることを確認してください。セットアップ後、 TiDB Cloudコンソールで以下の情報を入力して、変更フィードを作成します。
+-   Apache Kafka サービスが Google Cloud でホストされている場合は、手順[Google Cloud でセルフホスト型 Kafka プライベート サービス接続を設定する](/tidb-cloud/setup-self-hosted-kafka-private-service-connect.md)に従ってネットワーク接続が適切に構成されていることを確認してください。セットアップ後、 TiDB Cloudコンソールで以下の情報を入力して変更フィードを作成してください。
 
     -   Kafka アドバタイズドリスナーパターンの ID
     -   サービスアタッチメント

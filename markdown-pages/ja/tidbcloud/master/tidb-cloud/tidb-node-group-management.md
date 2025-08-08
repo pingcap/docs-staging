@@ -85,7 +85,7 @@ TiDBノードグループを作成しても、デフォルトグループのエ�
 
 ![Connect to the new TiDB node group via Public Endpoint](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/tidb-node-group-connect-public-endpoint.png)
 
-詳細については[パブリック接続経由​​でTiDB Cloud Dedicated に接続](/tidb-cloud/connect-via-standard-connection.md)参照してください。
+詳細については[パブリック接続経由でTiDB Cloud Dedicated に接続](/tidb-cloud/connect-via-standard-connection.md)参照してください。
 
 ### プライベートエンドポイント経由で接続 {#connect-via-private-endpoint}
 

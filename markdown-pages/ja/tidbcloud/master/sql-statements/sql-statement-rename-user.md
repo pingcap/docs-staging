@@ -70,12 +70,12 @@ SHOW GRANTS FOR 'newuser';
 ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%'
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-`RENAME USER` MySQL と完全に互換性があると予想されます。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)実行できます。
+`RENAME USER` MySQL と完全に互換性があると予想されます。互換性に違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 
--   [ユーザーを作成](/sql-statements/sql-statement-create-user.md)
+-   [ユーザーの作成](/sql-statements/sql-statement-create-user.md)
 -   [ショーグラント](/sql-statements/sql-statement-show-grants.md)
 -   [ユーザーを削除](/sql-statements/sql-statement-drop-user.md)

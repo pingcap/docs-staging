@@ -5,7 +5,7 @@ summary: TiDB データベースの SHOW GRANTS の使用法の概要。
 
 # ショーグラント {#show-grants}
 
-このステートメントは、ユーザーに関連付けられた権限のリストを表示します。MySQL と同様に、権限`USAGE`は TiDB にログインできることを示します。
+このステートメントは、ユーザーに関連付けられた権限のリストを表示します。MySQLと同様に、権限`USAGE` TiDBにログインする権限を示します。
 
 ## 概要 {#synopsis}
 
@@ -50,9 +50,9 @@ mysql> SHOW GRANTS FOR u1;
 2 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SHOW GRANTS`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SHOW GRANTS`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

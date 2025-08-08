@@ -7,11 +7,27 @@ summary: Python と TiDB Vector Search を使用してセマンティック検�
 
 このチュートリアルでは、**セマンティック検索**機能を備えたシンプルなAIアプリケーションの開発方法を説明します。従来のキーワード検索とは異なり、セマンティック検索はクエリの背後にある意味をインテリジェントに理解し、最も関連性の高い結果を返します。例えば、「犬」、「魚」、「木」というタイトルのドキュメントがあり、「泳ぐ動物」を検索すると、アプリケーションは「魚」を最も関連性の高い結果として特定します。
 
-このチュートリアルでは、 [TiDBベクトル検索](/tidb-cloud/vector-search-overview.md) 、Python、 [Python 用 TiDB ベクター SDK](https://github.com/pingcap/tidb-vector-python) 、および AI モデルを使用してこの AI アプリケーションを開発します。
+このチュートリアルでは、 [TiDBベクトル検索](/vector-search/vector-search-overview.md) 、Python、 [Python 用 TiDB ベクター SDK](https://github.com/pingcap/tidb-vector-python) 、および AI モデルを使用してこの AI アプリケーションを開発します。
 
-> **注記**
+<CustomContent platform="tidb">
+
+> **警告：**
 >
-> TiDB Vector Searchは、TiDB Self-Managed (TiDB &gt;= v8.4)および[TiDB Cloudサーバーレス](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless)のみ利用できます。 [TiDB Cloud専用](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)では利用できません。
+> ベクトル検索機能は実験的です。本番環境での使用は推奨されません。この機能は予告なく変更される可能性があります。バグを発見した場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **注記：**
+>
+> ベクター検索機能はベータ版です。予告なく変更される可能性があります。バグを見つけた場合は、GitHubで[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
+
+</CustomContent>
+
+> **注記：**
+>
+> ベクトル検索機能は、TiDB Self-Managed、 [TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) [TiDB Cloud専用](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated)利用できます。TiDB Self-ManagedおよびTiDB Cloud Dedicatedの場合、TiDBバージョンはv8.4.0以降である必要があります（v8.5.0以降を推奨）。
 
 ## 前提条件 {#prerequisites}
 
@@ -19,7 +35,24 @@ summary: Python と TiDB Vector Search を使用してセマンティック検�
 
 -   [Python 3.8以上](https://www.python.org/downloads/)個インストールされました。
 -   [ギット](https://git-scm.com/downloads)個インストールされました。
--   TiDB Cloud Serverless クラスター。TiDB Cloud クラスターがまだない場合は、 [TiDB Cloud Serverless クラスターの作成](/tidb-cloud/create-tidb-cluster-serverless.md)に従って独自のTiDB Cloudクラスターを作成してください。
+-   TiDB クラスター。
+
+<CustomContent platform="tidb">
+
+**TiDB クラスターがない場合は、次のように作成できます。**
+
+-   [ローカルテストTiDBクラスタをデプロイ](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](/production-deployment-using-tiup.md)に従ってローカル クラスターを作成します。
+-   [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
+**TiDB クラスターがない場合は、次のように作成できます。**
+
+-   (推奨) [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   [ローカルテストTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)に従って、v8.4.0 以降のバージョンのローカル クラスターを作成します。
+
+</CustomContent>
 
 ## 始めましょう {#get-started}
 
@@ -43,12 +76,19 @@ touch example.py
 pip install sqlalchemy pymysql sentence-transformers tidb-vector python-dotenv
 ```
 
--   `tidb-vector` : TiDB Vector Search と対話するための Python クライアント。
--   [`sentence-transformers`](https://sbert.net) : テキストから[ベクトル埋め込み](/tidb-cloud/vector-search-overview.md#vector-embedding)生成するための事前トレーニング済みモデルを提供する Python ライブラリ。
+-   `tidb-vector` : TiDB ベクトル検索と対話するための Python クライアント。
+-   [`sentence-transformers`](https://sbert.net) : テキストから[ベクトル埋め込み](/vector-search/vector-search-overview.md#vector-embedding)生成するための事前トレーニング済みモデルを提供する Python ライブラリ。
 
 ### ステップ3. TiDBクラスターへの接続文字列を構成する {#step-3-configure-the-connection-string-to-the-tidb-cluster}
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+選択した TiDB デプロイメント オプションに応じて、クラスター接続文字列を構成します。
+
+<SimpleTab>
+<div label="TiDB Cloud Serverless">
+
+TiDB Cloud Serverless クラスターの場合、次の手順に従ってクラスター接続文字列を取得し、環境変数を構成します。
+
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -80,9 +120,33 @@ pip install sqlalchemy pymysql sentence-transformers tidb-vector python-dotenv
     TIDB_DATABASE_URL="mysql+pymysql://<prefix>.root:<password>@gateway01.<region>.prod.aws.tidbcloud.com:4000/test?ssl_ca=/etc/ssl/cert.pem&ssl_verify_cert=true&ssl_verify_identity=true"
     ```
 
+</div>
+<div label="TiDB Self-Managed">
+
+TiDBセルフマネージドクラスタの場合、Pythonプロジェクトのルートディレクトリに`.env`ファイルを作成します。以下の内容を`.env`ファイルにコピーし、TiDBクラスタの接続パラメータに応じて環境変数の値を変更します。
+
+```dotenv
+TIDB_DATABASE_URL="mysql+pymysql://<USER>:<PASSWORD>@<HOST>:<PORT>/<DATABASE>"
+# For example: TIDB_DATABASE_URL="mysql+pymysql://root@127.0.0.1:4000/test"
+```
+
+ローカルマシンでTiDBを実行している場合、デフォルトでは`<HOST>`が`127.0.0.1`なります。初期の`<PASSWORD>`空なので、クラスターを初めて起動する場合はこのフィールドを省略できます。
+
+各パラメータの説明は次のとおりです。
+
+-   `<USER>` : TiDB クラスターに接続するためのユーザー名。
+-   `<PASSWORD>` : TiDB クラスターに接続するためのパスワード。
+-   `<HOST>` : TiDB クラスターのホスト。
+-   `<PORT>` : TiDB クラスターのポート。
+-   `<DATABASE>` : 接続するデータベースの名前。
+
+</div>
+
+</SimpleTab>
+
 ### ステップ4. 埋め込みモデルの初期化 {#step-4-initialize-the-embedding-model}
 
-[埋め込みモデル](/tidb-cloud/vector-search-overview.md#embedding-model)データを[ベクトル埋め込み](/tidb-cloud/vector-search-overview.md#vector-embedding)に変換します。この例では、テキスト埋め込みに事前学習済みのモデル[**msmarco-MiniLM-L12-cos-v5**](https://huggingface.co/sentence-transformers/msmarco-MiniLM-L12-cos-v5)使用します。7 `sentence-transformers`が提供するこの軽量モデルは、テキストデータを 384 次元のベクトル埋め込みに変換します。
+[埋め込みモデル](/vector-search/vector-search-overview.md#embedding-model)データを[ベクトル埋め込み](/vector-search/vector-search-overview.md#vector-embedding)に変換します。この例では、テキスト埋め込みに事前学習済みのモデル[**msmarco-MiniLM-L12-cos-v5**](https://huggingface.co/sentence-transformers/msmarco-MiniLM-L12-cos-v5)使用します。7 `sentence-transformers`が提供するこの軽量モデルは、テキストデータを 384 次元のベクトル埋め込みに変換します。
 
 モデルをセットアップするには、次のコードを`example.py`ファイルにコピーします。このコードは`SentenceTransformer`インスタンスを初期化し、後で使用する`text_to_embedding()`関数を定義します。
 
@@ -194,5 +258,5 @@ Search result ("a swimming animal"):
 
 ## 参照 {#see-also}
 
--   [ベクトルデータ型](/tidb-cloud/vector-search-data-types.md)
--   [ベクター検索インデックス](/tidb-cloud/vector-search-index.md)
+-   [ベクトルデータ型](/vector-search/vector-search-data-types.md)
+-   [ベクター検索インデックス](/vector-search/vector-search-index.md)

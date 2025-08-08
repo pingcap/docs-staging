@@ -20,7 +20,7 @@ summary: TiDB Cloudは、TiDBの優れた機能すべてをクラウドに提供
 
 <LearningPath label="Try" icon="cloud5">
 
-[TiDB Cloud Serverless を試してみる](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart)
+[TiDB Cloudを試してみる](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart)
 
 [TiDB + AIを試す](https://docs.pingcap.com/tidbcloud/vector-search-get-started-using-python)
 

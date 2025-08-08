@@ -1,13 +1,14 @@
 ---
-title: Use Resource Control to Achieve Resource Isolation
+title: Use Resource Control to Achieve Resource Group Limitation and Flow Control
 summary: リソース制御機能を使用してアプリケーション リソースを制御およびスケジュールする方法を学習します。
+aliases: ['/tidb/v8.5/tidb-resource-control/','/tidb/stable/tidb-resource-control/']
 ---
 
-# リソース制御を使用してリソースの分離を実現する {#use-resource-control-to-achieve-resource-isolation}
+# リソース制御を使用してリソースグループの制限とフロー制御を実現する {#use-resource-control-to-achieve-resource-group-limitation-and-flow-control}
 
 > **注記：**
 >
-> この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> この機能は[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
 
 クラスター管理者は、リソース制御機能を使用して、リソース グループを作成したり、リソース グループのクォータを設定したり、ユーザーをそれらのグループにバインドしたりできます。
 
@@ -32,6 +33,11 @@ TiDBリソース制御機能は、TiDBレイヤーのフロー制御機能とTiK
 -   TiFlashスケジューリング：システムリソースが不足している場合、 TiFlash は複数のリソースグループ間で、優先度に基づいてパイプラインタスクをスケジューリングします。具体的なロジックは次のとおりです。まず、 TiFlash はリソースグループの`PRIORITY`評価し、次に CPU 使用率と`RU_PER_SEC`考慮します。その結果、 `rg1`と`rg2`の`PRIORITY`は同じですが、 `rg2`の`RU_PER_SEC`が`rg1`の 2 倍の場合、 `rg2`の CPU 使用率は`rg1`の 2 倍になります。
 
 </CustomContent>
+
+バックグラウンド タスクを管理し、リソースを大量に消費するクエリ (ランナウェイ クエリ) を処理する方法については、次のドキュメントを参照してください。
+
+-   [リソース制御を使用してバックグラウンドタスクを管理する](/tidb-resource-control-background-tasks.md)
+-   [予想よりも多くのリソースを消費するクエリ（ランナウェイクエリ）を管理する](/tidb-resource-control-runaway-queries.md)
 
 ## リソース管理のシナリオ {#scenarios-for-resource-control}
 
@@ -63,7 +69,7 @@ TiDBリソース制御機能は、TiDBレイヤーのフロー制御機能とTiK
 > **注記：**
 >
 > -   各書き込み操作は最終的にすべてのレプリカに複製されます（デフォルトでは、TiKV には 3 つのレプリカがあります）。各レプリケーション操作はそれぞれ異なる書き込み操作とみなされます。
-> -   上記の表には、TiDBセルフマネージドクラスターのRU計算に関係するリソースのみが記載されています（ネットワークとstorageの消費は除く）。TiDB Cloud Serverless RUについては、 [TiDB Cloud Serverless 価格の詳細](https://www.pingcap.com/tidb-cloud-serverless-pricing-details/)参照してください。
+> -   上記の表は、TiDBセルフマネージドクラスターのRU計算に関係するリソースのみを示しており、ネットワークとstorageの消費量は含まれていません。TiDB TiDB Cloud ServerlessのRUについては、 [TiDB Cloud Serverless の価格詳細](https://www.pingcap.com/tidb-cloud-serverless-pricing-details/)参照してください。
 > -   現在、 TiFlashリソース制御では、クエリのパイプライン タスクの実行によって消費される CPU 時間である SQL CPU と、読み取り要求ペイロードのみが考慮されます。
 
 ## リソース制御のパラメータ {#parameters-for-resource-control}
@@ -105,7 +111,7 @@ v7.4.0以降、 TiFlash設定項目`enable_resource_control`デフォルトで�
 
 </CustomContent>
 
-リソース制御のメカニズムとパラメータの詳細については、 [RFC: TiDB におけるグローバル リソース制御](https://github.com/pingcap/tidb/blob/release-8.1/docs/design/2022-11-25-global-resource-control.md)と[TiFlashリソース制御](https://github.com/pingcap/tiflash/blob/release-8.1/docs/design/2023-09-21-tiflash-resource-control.md)参照してください。
+リソース制御のメカニズムとパラメータの詳細については、 [RFC: TiDB におけるグローバル リソース制御](https://github.com/pingcap/tidb/blob/release-8.5/docs/design/2022-11-25-global-resource-control.md)と[TiFlashリソース制御](https://github.com/pingcap/tiflash/blob/release-8.5/docs/design/2023-09-21-tiflash-resource-control.md)参照してください。
 
 ## リソース制御の使い方 {#how-to-use-resource-control}
 
@@ -120,7 +126,7 @@ v7.4.0以降、 TiFlash設定項目`enable_resource_control`デフォルトで�
 -   [実際の作業負荷に基づいて容量を見積もる](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-actual-workload)
 -   [ハードウェアの展開に基づいて容量を見積もる](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-hardware-deployment)
 
-[リソースマネージャーページ](/dashboard/dashboard-resource-manager.md) TiDBダッシュボードで確認できます。詳細については[`CALIBRATE RESOURCE`](/sql-statements/sql-statement-calibrate-resource.md#methods-for-estimating-capacity)ご覧ください。
+[リソースマネージャーページ](/dashboard/dashboard-resource-manager.md) TiDB ダッシュボードで確認できます。詳細については[`CALIBRATE RESOURCE`](/sql-statements/sql-statement-calibrate-resource.md#methods-for-estimating-capacity)ご覧ください。
 
 </CustomContent>
 
@@ -201,11 +207,13 @@ ALTER USER usr2 RESOURCE GROUP rg2;
 ALTER USER 'usr3'@'%' RESOURCE GROUP `default`;
 ```
 
-詳細は[`ALTER USER ... RESOURCE GROUP`](/sql-statements/sql-statement-alter-user.md#modify-the-resource-group-bound-to-the-user)参照。
+詳細については[`ALTER USER ... RESOURCE GROUP`](/sql-statements/sql-statement-alter-user.md#modify-the-resource-group-bound-to-the-user)参照してください。
 
 #### 現在のセッションをリソースグループにバインドする {#bind-the-current-session-to-a-resource-group}
 
-セッションをリソース グループにバインドすると、対応するセッションのリソース使用量は指定された使用量 (RU) によって制限されます。
+[`SET RESOURCE GROUP`](/sql-statements/sql-statement-set-resource-group.md)ステートメントを使用すると、現在のセッションにバインドされているリソースグループを変更できます。セッションをリソースグループにバインドすると、対応するセッションのリソース使用量は指定された使用量（RU）に制限されます。
+
+システム変数[`tidb_resource_control_strict_mode`](/system-variables.md#tidb_resource_control_strict_mode-new-in-v820) `ON`に設定されている場合、このステートメントを実行するには`SUPER` 、 `RESOURCE_GROUP_ADMIN` 、または`RESOURCE_GROUP_USER`権限が必要です。
 
 次の例では、現在のセッションをリソース グループ`rg1`にバインドします。
 
@@ -217,239 +225,13 @@ SET RESOURCE GROUP rg1;
 
 SQL文に[`RESOURCE_GROUP(resource_group_name)`](/optimizer-hints.md#resource_groupresource_group_name)ヒントを追加することで、文がバインドされるリソースグループを指定できます。このヒントは、 `SELECT` 、 `INSERT` 、 `UPDATE` 、および`DELETE`文をサポートします。
 
+システム変数[`tidb_resource_control_strict_mode`](/system-variables.md#tidb_resource_control_strict_mode-new-in-v820) `ON`に設定されている場合、このヒントを使用するには`SUPER` 、 `RESOURCE_GROUP_ADMIN` 、または`RESOURCE_GROUP_USER`権限が必要です。
+
 次の例では、現在のステートメントをリソース グループ`rg1`にバインドします。
 
 ```sql
 SELECT /*+ RESOURCE_GROUP(rg1) */ * FROM t limit 10;
 ```
-
-### 予想よりも多くのリソースを消費するクエリ（ランナウェイクエリ）を管理する {#manage-queries-that-consume-more-resources-than-expected-runaway-queries}
-
-ランナウェイクエリとは、予想よりも多くの時間やリソースを消費するクエリ（ `SELECT`文のみ）のことです。以下では、ランナウェイクエリを管理する機能を説明するために「ランナ**ウェイクエリ」**という用語を使用します。
-
--   バージョン7.2.0以降、リソース制御機能にランナウェイクエリの管理機能が導入されました。リソースグループに対してランナウェイクエリを特定するための条件を設定し、ランナウェイクエリによるリソースの枯渇や他のクエリへの影響を防ぐためのアクションを自動的に実行できます。3 または[`ALTER RESOURCE GROUP`](/sql-statements/sql-statement-alter-resource-group.md) [`CREATE RESOURCE GROUP`](/sql-statements/sql-statement-create-resource-group.md) `QUERY_LIMIT`フィールドを含めることで、リソースグループのランナウェイクエリを管理できます。
--   バージョン7.3.0以降、リソース制御機能にランナウェイ・ウォッチの手動管理が導入され、特定のSQL文またはダイジェストに対するランナウェイ・クエリを迅速に特定できるようになりました。ステートメント[`QUERY WATCH`](/sql-statements/sql-statement-query-watch.md)実行することで、リソースグループ内のランナウェイ・クエリ・ウォッチリストを手動で管理できます。
-
-#### <code>QUERY_LIMIT</code>パラメータ {#code-query-limit-code-parameters}
-
-サポートされている条件設定:
-
--   `EXEC_ELAPSED` : クエリ実行時間がこの制限を超えると、クエリはランナウェイ クエリとして識別されます。
-
-サポートされている操作（ `ACTION` ）：
-
--   `DRYRUN` ：アクションは実行されません。ランナウェイクエリのレコードが追加されます。これは主に、条件設定が適切かどうかを観察するために使用されます。
--   `COOLDOWN` : クエリの実行優先度が最低レベルに下げられます。クエリは最低優先度で実行を継続し、他の操作のリソースを占有しません。
--   `KILL` : 識別されたクエリは自動的に終了され、エラー`Query execution was interrupted, identified as runaway query`が報告されます。
-
-システムリソースを枯渇させる過剰な同時実行のランナウェイクエリを回避するために、リソース制御機能では、ランナウェイクエリを迅速に識別して分離できる迅速な識別メカニズムを導入しています。 `WATCH`句を通じてこの機能を使用できます。クエリがランナウェイクエリとして識別されると、このメカニズムはクエリの一致する特徴 ( `WATCH`後のパラメータで定義) を抽出します。次の期間 ( `DURATION`で定義) に、ランナウェイクエリの一致する特徴が監視リストに追加され、TiDB インスタンスはクエリを監視リストと照合します。一致したクエリは、条件によって識別されるのを待つのではなく、直接ランナウェイクエリとしてマークされ、対応するアクションに従って分離されます。 `KILL`操作はクエリを終了し、エラー`Quarantined and interrupted because of being in runaway watch list`を報告します。
-
-`WATCH`素早く識別するために一致させる方法は 3 つあります。
-
--   `EXACT` 、まったく同じ SQL テキストを持つ SQL ステートメントのみが迅速に識別されることを示します。
--   `SIMILAR` 、同じパターンを持つすべての SQL ステートメントが SQL ダイジェストに一致し、リテラル値が無視されることを示します。
--   `PLAN` 、同じパターンを持つすべての SQL ステートメントがプラン ダイジェストに一致することを示します。
-
-`WATCH`の`DURATION`オプションは識別項目の有効期間を示し、デフォルトでは無期限です。
-
-監視項目を追加した後、 `QUERY_LIMIT`設定が変更または削除されても、対応する機能と`ACTION`変更または削除されません。監視項目を削除するには`QUERY WATCH REMOVE`使用します。
-
-`QUERY_LIMIT`のパラメータは次のとおりです。
-
-| パラメータ          | 説明                                                                       | 注記                                                                                           |
-| -------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| `EXEC_ELAPSED` | クエリ実行時間がこの値を超えると、暴走クエリとして識別されます。                                         | EXEC_ELAPSED = `60s` 、クエリの実行に 60 秒以上かかる場合、クエリがランナウェイ クエリとして識別されることを意味します。                    |
-| `ACTION`       | 暴走クエリが特定された場合に実行されるアクション                                                 | オプションの値は`DRYRUN` 、 `COOLDOWN` 、 `KILL`です。                                                    |
-| `WATCH`        | 特定されたランナウェイクエリを迅速に照合します。一定時間内に同一または類似のクエリが再度検出された場合、対応するアクションが直ちに実行されます。 | オプション。たとえば、 `WATCH=SIMILAR DURATION '60s'` 、 `WATCH=EXACT DURATION '1m'` 、 `WATCH=PLAN`などです。 |
-
-#### 例 {#examples}
-
-1.  1 秒あたり 500 RU のクォータを持つリソース グループ`rg1`を作成し、60 秒を超えるクエリをランナウェイ クエリとして定義し、ランナウェイ クエリの優先順位を下げます。
-
-    ```sql
-    CREATE RESOURCE GROUP IF NOT EXISTS rg1 RU_PER_SEC = 500 QUERY_LIMIT=(EXEC_ELAPSED='60s', ACTION=COOLDOWN);
-    ```
-
-2.  `rg1`リソース グループを変更してランナウェイ クエリを終了し、次の 10 分以内に同じパターンのクエリをランナウェイ クエリとして直ちにマークします。
-
-    ```sql
-    ALTER RESOURCE GROUP rg1 QUERY_LIMIT=(EXEC_ELAPSED='60s', ACTION=KILL, WATCH=SIMILAR DURATION='10m');
-    ```
-
-3.  ランナウェイ クエリ チェックをキャンセルするには、 `rg1`リソース グループを変更します。
-
-    ```sql
-    ALTER RESOURCE GROUP rg1 QUERY_LIMIT=NULL;
-    ```
-
-#### <code>QUERY WATCH</code>パラメータ {#code-query-watch-code-parameters}
-
-`QUERY WATCH`のあらすじについては[`QUERY WATCH`](/sql-statements/sql-statement-query-watch.md)ご覧ください。
-
-パラメータは次のとおりです。
-
--   `RESOURCE GROUP`リソースグループを指定します。このステートメントによって追加されたランナウェイクエリの一致する特徴は、リソースグループのウォッチリストに追加されます。このパラメータは省略可能です。省略した場合、 `default`リソースグループに適用されます。
-
--   `ACTION`の意味は`QUERY LIMIT`と同じです。このパラメータは省略可能です。省略した場合、識別後の対応するアクションは、リソースグループ内の`QUERY LIMIT`で設定された`ACTION`採用し、 `QUERY LIMIT`設定によってアクションは変更されません。リソースグループ内に`ACTION`が設定されていない場合は、エラーが報告されます。
-
--   `QueryWatchTextOption`パラメータには、 `SQL DIGEST` 、 `PLAN DIGEST` 、 `SQL TEXT` 3 つのオプションがあります。
-    -   `SQL DIGEST`は`SIMILAR`と同じです。以下のパラメータは、文字列、ユーザー定義変数、または文字列を返すその他の式を受け入れます。文字列の長さは、TiDBのダイジェスト定義と同じ64文字である必要があります。
-    -   `PLAN DIGEST`は`PLAN`と同じです。次のパラメータはダイジェスト文字列です。
-    -   `SQL TEXT`入力SQLを生の文字列（ `EXACT` ）として一致するか、または次のパラメータに応じてそれを解析して`SQL DIGEST` （ `SIMILAR` ）または`PLAN DIGEST` （ `PLAN` ）にコンパイルします。
-
--   デフォルトのリソース グループのランナウェイ クエリ監視リストに一致する機能を追加します (事前にデフォルトのリソース グループに`QUERY LIMIT`設定する必要があります)。
-
-    ```sql
-    QUERY WATCH ADD ACTION KILL SQL TEXT EXACT TO 'select * from test.t2';
-    ```
-
--   SQLをSQLダイジェストに解析することで、リソースグループ`rg1`ランナウェイクエリ監視リストに一致する機能を追加します。3 `ACTION`指定されていない場合は、リソースグループ`rg1`に既に設定されているオプション`ACTION`使用されます。
-
-    ```sql
-    QUERY WATCH ADD RESOURCE GROUP rg1 SQL TEXT SIMILAR TO 'select * from test.t2';
-    ```
-
--   `PLAN DIGEST`使用して、 `rg1`リソース グループのランナウェイ クエリ監視リストに一致する機能を追加します。
-
-    ```sql
-    QUERY WATCH ADD RESOURCE GROUP rg1 ACTION KILL PLAN DIGEST 'd08bc323a934c39dc41948b0a073725be3398479b6fa4f6dd1db2a9b115f7f57';
-    ```
-
--   `INFORMATION_SCHEMA.RUNAWAY_WATCHES`クエリしてウォッチ アイテム ID を取得し、ウォッチ アイテムを削除します。
-
-    ```sql
-    SELECT * from information_schema.runaway_watches ORDER BY id;
-    ```
-
-    ```sql
-    *************************** 1. row ***************************
-                    ID: 20003
-    RESOURCE_GROUP_NAME: rg2
-            START_TIME: 2023-07-28 13:06:08
-            END_TIME: UNLIMITED
-                WATCH: Similar
-            WATCH_TEXT: 5b7fd445c5756a16f910192ad449c02348656a5e9d2aa61615e6049afbc4a82e
-                SOURCE: 127.0.0.1:4000
-                ACTION: Kill
-    1 row in set (0.00 sec)
-    ```
-
-    ```sql
-    QUERY WATCH REMOVE 20003;
-    ```
-
-#### 可観測性 {#observability}
-
-ランナウェイ クエリに関する詳細情報は、次のシステム テーブルと`INFORMATION_SCHEMA`から取得できます。
-
--   `mysql.tidb_runaway_queries`テーブルには、過去 7 日間に特定されたすべてのランナウェイクエリの履歴レコードが含まれています。例として、1 つの行を見てみましょう。
-
-    ```sql
-    MySQL [(none)]> SELECT * FROM mysql.tidb_runaway_queries LIMIT 1\G
-    *************************** 1. row ***************************
-    resource_group_name: rg1
-                   time: 2023-06-16 17:40:22
-             match_type: identify
-                 action: kill
-           original_sql: select * from sbtest.sbtest1
-            plan_digest: 5b7d445c5756a16f910192ad449c02348656a5e9d2aa61615e6049afbc4a82e
-            tidb_server: 127.0.0.1:4000
-    ```
-
-    上記の出力で、 `match_type`ランナウェイクエリの識別方法を示しています。値は次のいずれかになります。
-
-    -   `identify`ランナウェイクエリの条件に一致することを意味します。
-    -   `watch` 、監視リスト内のクイック識別ルールに一致することを意味します。
-
--   `information_schema.runaway_watches`表には、ランナウェイクエリのクイック識別ルールの記録が含まれています。詳細については、 [`RUNAWAY_WATCHES`](/information-schema/information-schema-runaway-watches.md)参照してください。
-
-### バックグラウンドタスクを管理する {#manage-background-tasks}
-
-> **警告：**
->
-> この機能は実験的です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される可能性があります。バグを発見した場合は、GitHubで[問題](https://docs.pingcap.com/tidb/stable/support)報告を行ってください。
->
-> リソース制御におけるバックグラウンドタスク管理は、TiKVによるCPU/IO使用率のリソースクォータの動的調整に基づいています。そのため、各インスタンスの利用可能なリソースクォータに依存します。複数のコンポーネントまたはインスタンスを単一のサーバーにデプロイする場合、 `cgroup`を通して各インスタンスに適切なリソースクォータを設定する必要があります。TiUP Playgroundのような共有リソースを持つデプロイメントでは、期待される効果を得ることが困難です。
-
-データのバックアップや自動統計収集などのバックグラウンドタスクは、優先度が低いにもかかわらず、多くのリソースを消費します。これらのタスクは通常、定期的または不定期に実行されます。実行中は多くのリソースを消費するため、オンラインの高優先度タスクのパフォーマンスに影響を与えます。
-
-バージョン7.4.0以降、TiDBのリソース制御機能はバックグラウンドタスクの管理をサポートします。タスクがバックグラウンドタスクとしてマークされると、TiKVは他のフォアグラウンドタスクのパフォーマンスへの影響を回避するため、このタイプのタスクで使用されるリソースを動的に制限します。TiKVは、すべてのフォアグラウンドタスクによって消費されるCPUリソースとIOリソースをリアルタイムで監視し、インスタンスの合計リソース制限に基づいて、バックグラウンドタスクで使用できるリソースのしきい値を計算します。すべてのバックグラウンドタスクは、実行中にこのしきい値によって制限されます。
-
-#### <code>BACKGROUND</code>パラメータ {#code-background-code-parameters}
-
-`TASK_TYPES` : バックグラウンドタスクとして管理する必要があるタスクの種類を指定します。複数のタスクの種類を指定する場合は、カンマ ( `,` ) で区切ります。
-
-TiDB は次の種類のバックグラウンド タスクをサポートしています。
-
-<CustomContent platform="tidb">
-
--   `lightning` : [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)を使用してインポートタスクを実行します。TiDB TiDB Lightningの物理インポートモードと論理インポートモードの両方がサポートされています。
--   `br` : [BR](/br/backup-and-restore-overview.md)を使用してバックアップおよび復元タスクを実行します。PITR はサポートされていません。
--   `ddl` : Reorg DDL のバッチ データ書き戻しフェーズ中のリソース使用量を制御します。
--   `stats` : 手動で実行されるか、TiDB によって自動的にトリガーされる[統計を収集する](/statistics.md#collect-statistics)タスク。
--   `background` : 予約済みのタスクタイプ。システム変数[`tidb_request_source_type`](/system-variables.md#tidb_request_source_type-new-in-v740)使用して、現在のセッションのタスクタイプを`background`に指定できます。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
--   `lightning` : [TiDB Lightning](https://docs.pingcap.com/tidb/stable/tidb-lightning-overview)を使用してインポートタスクを実行します。TiDB TiDB Lightningの物理インポートモードと論理インポートモードの両方がサポートされています。
--   `br` : [BR](https://docs.pingcap.com/tidb/stable/backup-and-restore-overview)を使用してバックアップおよび復元タスクを実行します。PITR はサポートされていません。
--   `ddl` : Reorg DDL のバッチ データ書き戻しフェーズ中のリソース使用量を制御します。
--   `stats` : 手動で実行されるか、TiDB によって自動的にトリガーされる[統計を収集する](/statistics.md#collect-statistics)タスク。
--   `background` : 予約済みのタスクタイプ。システム変数[`tidb_request_source_type`](/system-variables.md#tidb_request_source_type-new-in-v740)使用して、現在のセッションのタスクタイプを`background`に指定できます。
-
-</CustomContent>
-
-デフォルトでは、バックグラウンドタスクとしてマークされているタスクタイプは`""`で、バックグラウンドタスクの管理は無効になっています。バックグラウンドタスクの管理を有効にするには、リソースグループ`default`のバックグラウンドタスクタイプを手動で変更する必要があります。バックグラウンドタスクが識別され、マッチングされると、リソース制御が自動的に実行されます。つまり、システムリソースが不足している場合、バックグラウンドタスクの優先度は自動的に最低に下げられ、フォアグラウンドタスクの実行が確保されます。
-
-> **注記：**
->
-> 現在、すべてのリソースグループのバックグラウンドタスクは`default`リソースグループにバインドされています。3 を通じてバックグラウンドタスクの種類をグローバルに管理できます。他`default`リソースグループへのバックグラウンドタスクのバインドは現在サポートされていません。
-
-#### 例 {#examples}
-
-1.  `default`リソース グループを変更し、 `br`と`ddl`バックグラウンド タスクとしてマークします。
-
-    ```sql
-    ALTER RESOURCE GROUP `default` BACKGROUND=(TASK_TYPES='br,ddl');
-    ```
-
-2.  `default`リソース グループを変更して、バックグラウンド タスクの種類を既定値に戻します。
-
-    ```sql
-    ALTER RESOURCE GROUP `default` BACKGROUND=NULL;
-    ```
-
-3.  `default`リソースグループを変更して、バックグラウンドタスクの種類を空に設定します。この場合、このリソースグループのすべてのタスクはバックグラウンドタスクとして扱われません。
-
-    ```sql
-    ALTER RESOURCE GROUP `default` BACKGROUND=(TASK_TYPES="");
-    ```
-
-4.  `default`リソース グループのバックグラウンド タスクの種類をビュー。
-
-    ```sql
-    SELECT * FROM information_schema.resource_groups WHERE NAME="default";
-    ```
-
-    出力は次のようになります。
-
-        +---------+------------+----------+-----------+-------------+---------------------+
-        | NAME    | RU_PER_SEC | PRIORITY | BURSTABLE | QUERY_LIMIT | BACKGROUND          |
-        +---------+------------+----------+-----------+-------------+---------------------+
-        | default | UNLIMITED  | MEDIUM   | YES       | NULL        | TASK_TYPES='br,ddl' |
-        +---------+------------+----------+-----------+-------------+---------------------+
-
-5.  現在のセッションのタスクを明示的にバックグラウンドタイプとしてマークするには、 `tidb_request_source_type`使用してタスクタイプを明示的に指定します。例を以下に示します。
-
-    ```sql
-    SET @@tidb_request_source_type="background";
-    /* Add background task type */
-    ALTER RESOURCE GROUP `default` BACKGROUND=(TASK_TYPES="background");
-    /* Execute LOAD DATA in the current session */
-    LOAD DATA INFILE "s3://resource-control/Lightning/test.customer.aaaa.csv"
-    ```
 
 ## リソース制御を無効にする {#disable-resource-control}
 
@@ -587,7 +369,7 @@ TiDBダッシュボードの現在の[`RESOURCE_GROUPS`](/information-schema/inf
 
 > **注記：**
 >
-> このセクションはTiDBセルフマネージドにのみ適用されます。現在、 TiDB Cloudはリソース制御メトリックを提供していません。
+> このセクションはTiDBセルフマネージドにのみ適用されます。現在、 TiDB Cloudはリソース制御メトリクスを提供していません。
 
 TiDB は、リソース制御に関する実行時情報を定期的に収集し、Grafana の**TiDB** &gt;**リソース制御**ダッシュボードにメトリックの視覚的なグラフを提供します。
 
@@ -618,4 +400,4 @@ TiKV は、Grafana の**TiKV**ダッシュボード内のさまざまなリソ�
 -   [リソースグループの作成](/sql-statements/sql-statement-create-resource-group.md)
 -   [リソースグループの変更](/sql-statements/sql-statement-alter-resource-group.md)
 -   [リソースグループの削除](/sql-statements/sql-statement-drop-resource-group.md)
--   [リソースグループ RFC](https://github.com/pingcap/tidb/blob/release-8.1/docs/design/2022-11-25-global-resource-control.md)
+-   [リソースグループ RFC](https://github.com/pingcap/tidb/blob/release-8.5/docs/design/2022-11-25-global-resource-control.md)

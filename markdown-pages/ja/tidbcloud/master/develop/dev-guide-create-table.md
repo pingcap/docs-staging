@@ -11,7 +11,7 @@ summary: テーブル作成における定義、ルール、ガイドライン�
 
 このドキュメントを読む前に、次のタスクが完了していることを確認してください。
 
--   [TiDB Cloud Serverlessクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
+-   [TiDB Cloudサーバーレスクラスタの構築](/develop/dev-guide-build-cluster-in-cloud.md) 。
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md)読んでください。
 -   [データベースを作成する](/develop/dev-guide-create-database.md) 。
 
@@ -143,7 +143,7 @@ TiDBはバージョン5.0以降、 [クラスター化インデックス](/clust
 -   `CLUSTERED` : テーブルの主キーはクラスター化インデックスです。クラスター化インデックスを持つテーブルでは、行データのキーはユーザーが指定した主キーデータで構成されます。したがって、クラスター化インデックスを持つテーブルでは、行を格納するために必要なキーと値のペアは1つだけです。これは次のようになります。
     -   主キーデータ（キー） - 行データ（値）
 
-[主キーを選択](#select-primary-key)で説明したように、**クラスター化インデックス**は TiDB ではキーワード`CLUSTERED`と`NONCLUSTERED`使用して制御されます。
+[主キーを選択](#select-primary-key)で説明したように、**クラスター化インデックスは**TiDB ではキーワード`CLUSTERED`と`NONCLUSTERED`使用して制御されます。
 
 > **注記：**
 >
@@ -255,7 +255,7 @@ CREATE TABLE `bookshop`.`users` (
 
 現在、TiDBは**TiFlash**と**TiSpark**という2つのデータ分析エンジンをサポートしています。大規模データシナリオ（100 TB）の場合、HTAPの主要ソリューションとして**TiFlash MPPを**推奨し、補完ソリューションとして**TiSparkを**推奨します。
 
-TiDB HTAP機能の詳細については、次のドキュメントを参照してください: [TiDB HTAPクイックスタートガイド](/quick-start-with-htap.md)および[HTAPを探索する](/explore-htap.md) 。
+TiDB HTAP機能の詳細については、次のドキュメントを参照してください: [TiDB HTAPのクイックスタート](/quick-start-with-htap.md)および[HTAPを探索する](/explore-htap.md) 。
 
 </CustomContent>
 
@@ -290,7 +290,7 @@ ALTER TABLE `bookshop`.`ratings` SET TIFLASH REPLICA 1;
 
 > **注記：**
 >
-> クラスターに**TiFlash**ノードが含まれていない場合、この SQL 文はエラー`1105 - the tiflash replica count: 1 should be less than the total tiflash server count: 0`報告します。5 [TiDB Cloud Serverlessクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-cluster)使用すると、 **TiFlash**を含む TiDB Cloud Serverless クラスターを作成できます。
+> クラスターに**TiFlash**ノードが含まれていない場合、この SQL 文はエラー`1105 - the tiflash replica count: 1 should be less than the total tiflash server count: 0`報告します。5 [TiDB Cloudサーバーレスクラスタの構築](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-cluster)使用して、 **TiFlash**を含むTiDB Cloud Serverless クラスターを作成できます。
 
 次に、次のクエリを実行できます。
 

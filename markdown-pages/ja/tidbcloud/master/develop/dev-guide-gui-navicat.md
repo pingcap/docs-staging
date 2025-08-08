@@ -11,7 +11,7 @@ TiDBはMySQL互換データベースで、 [ナビキャット](https://www.navi
 
 > **注記：**
 >
-> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed と互換性があります。
+> このチュートリアルは、 TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed と互換性があります。
 
 ## 前提条件 {#prerequisites}
 
@@ -45,7 +45,7 @@ TiDBはMySQL互換データベースで、 [ナビキャット](https://www.navi
 <SimpleTab>
 <div label="TiDB Cloud Serverless">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -80,14 +80,14 @@ TiDBはMySQL互換データベースで、 [ナビキャット](https://www.navi
 
     ![Navicat: configure connection SSL panel for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-serverless-ssl.png)
 
-8.  **「テスト接続」**をクリックして、TiDB Cloud Serverless クラスターへの接続を検証します。
+8.  **「テスト接続」**をクリックして、 TiDB Cloud Serverless クラスターへの接続を検証します。
 
 9.  接続テストが成功すると、「**接続成功」という**メッセージが表示されます。 **「OK」**をクリックして接続設定を完了してください。
 
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -140,7 +140,7 @@ TiDBはMySQL互換データベースで、 [ナビキャット](https://www.navi
 
 3.  **「テスト接続」**をクリックして、TiDB セルフマネージド クラスターへの接続を検証します。
 
-4.  接続テストが成功すると、「**接続成功」**メッセージが表示されます。 **「OK」**をクリックして接続設定を完了してください。
+4.  接続テストが成功すると、「**接続成功」という**メッセージが表示されます。 **「OK」**をクリックして接続設定を完了してください。
 
 </div>
 </SimpleTab>

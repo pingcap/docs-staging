@@ -3,11 +3,11 @@ title: SQL Statement Overview
 summary: TiDB でサポートされている SQL ステートメントについて学習します。
 ---
 
-# SQL ステートメントの概要 {#sql-statement-overview}
+# SQL文の概要 {#sql-statement-overview}
 
 TiDB は、必要に応じて MySQL および TiDB 固有のステートメントの拡張機能を使用して、ISO/IEC SQL 標準に準拠することを目的とした SQL ステートメントを使用します。
 
-## スキーマ管理 / データ定義ステートメント (DDL) {#schema-management-data-definition-statements-ddl}
+## スキーマ管理 / データ定義文（DDL） {#schema-management-data-definition-statements-ddl}
 
 | SQL文                                                                               | 説明                                                    |
 | ---------------------------------------------------------------------------------- | ----------------------------------------------------- |
@@ -48,7 +48,7 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 | [`SHOW TABLES`](/sql-statements/sql-statement-show-tables.md)                      | データベース内のテーブルを表示します。                                   |
 | [`TRUNCATE`](/sql-statements/sql-statement-truncate.md)                            | テーブルからすべてのデータを切り捨てます。                                 |
 
-## データ操作ステートメント (DML) {#data-manipulation-statements-dml}
+## データ操作ステートメント（DML） {#data-manipulation-statements-dml}
 
 | SQL文                                                  | 説明                                        |
 | ----------------------------------------------------- | ----------------------------------------- |
@@ -61,18 +61,18 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 | [`UPDATE`](/sql-statements/sql-statement-update.md)   | テーブル内の既存の行を更新します。                         |
 | [`WITH`](/sql-statements/sql-statement-with.md)       | 共通テーブル式を定義します。                            |
 
-## トランザクション明細 {#transaction-statements}
+## トランザクション明細書 {#transaction-statements}
 
-| SQL文                                                                      | 説明                                     |
-| ------------------------------------------------------------------------- | -------------------------------------- |
-| [`BEGIN`](/sql-statements/sql-statement-begin.md)                         | 新しいトランザクションを開始します。                     |
-| [`COMMIT`](/sql-statements/sql-statement-commit.md)                       | 現在のトランザクションをコミットします。                   |
-| [`ROLLBACK`](/sql-statements/sql-statement-rollback.md)                   | 現在のトランザクションをロールバックします。                 |
-| [`SAVEPOINT`](/sql-statements/sql-statement-savepoint.md)                 | トランザクション内にセーブポイントを設定します。               |
-| [`SET TRANSACTION`](/sql-statements/sql-statement-set-transaction.md)     | 現在の分離レベルを`GLOBAL`または`SESSION`単位で変更します。 |
-| [`START TRANSACTION`](/sql-statements/sql-statement-start-transaction.md) | 新しいトランザクションを開始します。                     |
+| SQL文                                                                      | 説明                                      |
+| ------------------------------------------------------------------------- | --------------------------------------- |
+| [`BEGIN`](/sql-statements/sql-statement-begin.md)                         | 新しいトランザクションを開始します。                      |
+| [`COMMIT`](/sql-statements/sql-statement-commit.md)                       | 現在のトランザクションをコミットします。                    |
+| [`ROLLBACK`](/sql-statements/sql-statement-rollback.md)                   | 現在のトランザクションをロールバックします。                  |
+| [`SAVEPOINT`](/sql-statements/sql-statement-savepoint.md)                 | トランザクション内にセーブポイントを設定します。                |
+| [`SET TRANSACTION`](/sql-statements/sql-statement-set-transaction.md)     | 現在の分離レベルを`GLOBAL`または`SESSION`ベースで変更します。 |
+| [`START TRANSACTION`](/sql-statements/sql-statement-start-transaction.md) | 新しいトランザクションを開始します。                      |
 
-## 準備されたステートメント {#prepared-statements}
+## 準備された声明 {#prepared-statements}
 
 | SQL文                                                        | 説明                                    |
 | ----------------------------------------------------------- | ------------------------------------- |
@@ -80,12 +80,13 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 | [`EXECUTE`](/sql-statements/sql-statement-execute.md)       | 特定のパラメータ値を使用してプリペアドステートメントを実行します。     |
 | [`PREPARE`](/sql-statements/sql-statement-prepare.md)       | プレースホルダーを使用してプリペアドステートメントを作成します。      |
 
-## 行政上の声明 {#administrative-statements}
+## 行政声明 {#administrative-statements}
 
 <CustomContent platform="tidb">
 
 | SQL文                                                                                    | 説明                                                                 |
 | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [`ADMIN ALTER DDL JOBS`](/sql-statements/sql-statement-admin-alter-ddl.md)              | 実行中の単一の DDL ジョブのパラメータを変更します。                                       |
 | [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md)                 | DDL ジョブをキャンセルします。                                                  |
 | [`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md) | テーブルまたはインデックスの整合性をチェックします。                                         |
 | [`ADMIN CHECKSUM TABLE`](/sql-statements/sql-statement-admin-checksum-table.md)         | テーブルのチェックサムを計算します。                                                 |
@@ -94,10 +95,10 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 | [`ADMIN RESUME DDL`](/sql-statements/sql-statement-admin-resume-ddl.md)                 | DDL 操作を再開します。                                                      |
 | [`ADMIN SHOW DDL [JOBS|JOB QUERIES]`](/sql-statements/sql-statement-admin-show-ddl.md)  | DDL ジョブまたはジョブ クエリを表示します。                                           |
 | [`ADMIN`](/sql-statements/sql-statement-admin.md)                                       | さまざまな管理タスクを実行します。                                                  |
-| [`FLUSH TABLES`](/sql-statements/sql-statement-flush-tables.md)                         | [MySQL 互換性](/mysql-compatibility.md)に含まれています。TiDB では有効な使用方法はありません。 |
+| [`FLUSH TABLES`](/sql-statements/sql-statement-flush-tables.md)                         | [MySQLの互換性](/mysql-compatibility.md)に含まれています。TiDB では有効な使用方法はありません。 |
 | [`SET &#x3C;variable>`](/sql-statements/sql-statement-set-variable.md)                  | システム変数またはユーザー変数を変更します。                                             |
 | [`SET [NAMES|CHARACTER SET]`](/sql-statements/sql-statement-set-names.md)               | 文字セットと照合順序を設定します。                                                  |
-| [`SPLIT REGION`](/sql-statements/sql-statement-split-region.md)                         | リージョンを小さなリージョンに分割します。                                              |
+| [`SPLIT REGION`](/sql-statements/sql-statement-split-region.md)                         | リージョンを小さな領域に分割します。                                                 |
 
 </CustomContent>
 
@@ -105,6 +106,7 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 
 | SQL文                                                                                    | 説明                                                                 |
 | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [`ADMIN ALTER DDL JOBS`](/sql-statements/sql-statement-admin-alter-ddl.md)              | 実行中の単一の DDL ジョブのパラメータを変更します。                                       |
 | [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md)                 | DDL ジョブをキャンセルします。                                                  |
 | [`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md) | テーブルまたはインデックスの整合性をチェックします。                                         |
 | [`ADMIN CHECKSUM TABLE`](/sql-statements/sql-statement-admin-checksum-table.md)         | テーブルのチェックサムを計算します。                                                 |
@@ -114,10 +116,10 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 | [`ADMIN RESUME DDL`](/sql-statements/sql-statement-admin-resume-ddl.md)                 | DDL 操作を再開します。                                                      |
 | [`ADMIN SHOW DDL [JOBS|JOB QUERIES]`](/sql-statements/sql-statement-admin-show-ddl.md)  | DDL ジョブまたはジョブ クエリを表示します。                                           |
 | [`ADMIN`](/sql-statements/sql-statement-admin.md)                                       | さまざまな管理タスクを実行します。                                                  |
-| [`FLUSH TABLES`](/sql-statements/sql-statement-flush-tables.md)                         | [MySQL 互換性](/mysql-compatibility.md)に含まれています。TiDB では有効な使用方法はありません。 |
+| [`FLUSH TABLES`](/sql-statements/sql-statement-flush-tables.md)                         | [MySQLの互換性](/mysql-compatibility.md)に含まれています。TiDB では有効な使用方法はありません。 |
 | [`SET &#x3C;variable>`](/sql-statements/sql-statement-set-variable.md)                  | システム変数またはユーザー変数を変更します。                                             |
 | [`SET [NAMES|CHARACTER SET]`](/sql-statements/sql-statement-set-names.md)               | 文字セットと照合順序を設定します。                                                  |
-| [`SPLIT REGION`](/sql-statements/sql-statement-split-region.md)                         | リージョンを小さなリージョンに分割します。                                              |
+| [`SPLIT REGION`](/sql-statements/sql-statement-split-region.md)                         | リージョンを小さな領域に分割します。                                                 |
 
 </CustomContent>
 
@@ -156,19 +158,19 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 | [`SHOW PLACEMENT LABELS`](/sql-statements/sql-statement-show-placement-labels.md)               | 使用可能な配置ラベルを表示します。             |
 | [`SHOW PLACEMENT`](/sql-statements/sql-statement-show-placement.md)                             | 配置ルールを表示します。                  |
 
-## リソース グループ {#resource-groups}
+## リソースグループ {#resource-groups}
 
 <CustomContent platform="tidb">
 
-| SQL文                                                                                        | 説明                                                                                        |
-| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [`ALTER RESOURCE GROUP`](/sql-statements/sql-statement-alter-resource-group.md)             | リソース グループを変更します。                                                                          |
-| [`CALIBRATE RESOURCE`](/sql-statements/sql-statement-calibrate-resource.md)                 | 現在のクラスターの[リクエストユニット (RU)](/tidb-resource-control.md#what-is-request-unit-ru)容量を推定して出力します。 |
-| [`CREATE RESOURCE GROUP`](/sql-statements/sql-statement-create-resource-group.md)           | 新しいリソース グループを作成します。                                                                       |
-| [`DROP RESOURCE GROUP`](/sql-statements/sql-statement-drop-resource-group.md)               | リソース グループを削除します。                                                                          |
-| [`QUERY WATCH`](/sql-statements/sql-statement-query-watch.md)                               | ランナウェイ クエリ監視リストを管理します。                                                                    |
-| [`SET RESOURCE GROUP`](/sql-statements/sql-statement-set-resource-group.md)                 | リソース グループを設定します。                                                                          |
-| [`SHOW CREATE RESOURCE GROUP`](/sql-statements/sql-statement-show-create-resource-group.md) | リソース グループの`CREATE`ステートメントを表示します。                                                          |
+| SQL文                                                                                        | 説明                                                                                                 |
+| ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [`ALTER RESOURCE GROUP`](/sql-statements/sql-statement-alter-resource-group.md)             | リソース グループを変更します。                                                                                   |
+| [`CALIBRATE RESOURCE`](/sql-statements/sql-statement-calibrate-resource.md)                 | 現在のクラスターの[リクエストユニット（RU）](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru)容量を推定して出力します。 |
+| [`CREATE RESOURCE GROUP`](/sql-statements/sql-statement-create-resource-group.md)           | 新しいリソース グループを作成します。                                                                                |
+| [`DROP RESOURCE GROUP`](/sql-statements/sql-statement-drop-resource-group.md)               | リソース グループを削除します。                                                                                   |
+| [`QUERY WATCH`](/sql-statements/sql-statement-query-watch.md)                               | ランナウェイ クエリ監視リストを管理します。                                                                             |
+| [`SET RESOURCE GROUP`](/sql-statements/sql-statement-set-resource-group.md)                 | リソース グループを設定します。                                                                                   |
+| [`SHOW CREATE RESOURCE GROUP`](/sql-statements/sql-statement-show-create-resource-group.md) | リソース グループの`CREATE`ステートメントを表示します。                                                                   |
 
 </CustomContent>
 
@@ -187,14 +189,14 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 
 ## ユーティリティステートメント {#utility-statements}
 
-| SQL文                                                    | 説明                          |
-| ------------------------------------------------------- | --------------------------- |
-| [`DESC`](/sql-statements/sql-statement-desc.md)         | テーブルの構造を示す`DESCRIBE`のエイリアス。 |
-| [`DESCRIBE`](/sql-statements/sql-statement-describe.md) | テーブルの構造を表示します。              |
-| [`DO`](/sql-statements/sql-statement-do.md)             | 式を実行しますが、結果は返しません。          |
-| [`EXPLAIN`](/sql-statements/sql-statement-explain.md)   | クエリの実行プランを表示します。            |
-| [`TRACE`](/sql-statements/sql-statement-trace.md)       | クエリ実行に関する詳細情報を提供します。        |
-| [`USE`](/sql-statements/sql-statement-use.md)           | 現在のデータベースを設定します。            |
+| SQL文                                                    | 説明                           |
+| ------------------------------------------------------- | ---------------------------- |
+| [`DESC`](/sql-statements/sql-statement-desc.md)         | `DESCRIBE`別名で、テーブルの構造を表示します。 |
+| [`DESCRIBE`](/sql-statements/sql-statement-describe.md) | テーブルの構造を表示します。               |
+| [`DO`](/sql-statements/sql-statement-do.md)             | 式を実行しますが、結果は返しません。           |
+| [`EXPLAIN`](/sql-statements/sql-statement-explain.md)   | クエリの実行プランを表示します。             |
+| [`TRACE`](/sql-statements/sql-statement-trace.md)       | クエリ実行に関する詳細情報を提供します。         |
+| [`USE`](/sql-statements/sql-statement-use.md)           | 現在のデータベースを設定します。             |
 
 ## ステートメントを表示 {#show-statements}
 
@@ -205,24 +207,24 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 | [`SHOW BUILTINS`](/sql-statements/sql-statement-show-builtins.md)           | 組み込み関数を一覧表示します。                                                                                                                                    |
 | [`SHOW CHARACTER SET`](/sql-statements/sql-statement-show-character-set.md) | 文字セットを一覧表示します。                                                                                                                                     |
 | [`SHOW COLLATIONS`](/sql-statements/sql-statement-show-collation.md)        | 照合を一覧表示します。                                                                                                                                        |
-| [`SHOW ERRORS`](/sql-statements/sql-statement-show-errors.md)               | 以前に実行されたステートメントのエラーを表示します。                                                                                                                         |
+| [`SHOW ERRORS`](/sql-statements/sql-statement-show-errors.md)               | 以前実行されたステートメントのエラーを表示します。                                                                                                                          |
 | [`SHOW STATUS`](/sql-statements/sql-statement-show-status.md)               | [MySQLとの互換性](/mysql-compatibility.md)に含まれています。TiDB は、ほとんどのメトリックに対して`SHOW STATUS`ではなく、集中メトリック収集に[プロメテウスとグラファナ](/tidb-monitoring-framework.md)使用します。 |
 | [`SHOW VARIABLES`](/sql-statements/sql-statement-show-variables.md)         | システム変数を表示します。                                                                                                                                      |
-| [`SHOW WARNINGS`](/sql-statements/sql-statement-show-warnings.md)           | 以前に実行されたステートメントからの警告とメモを表示します。                                                                                                                     |
+| [`SHOW WARNINGS`](/sql-statements/sql-statement-show-warnings.md)           | 以前実行されたステートメントからの警告とメモを表示します。                                                                                                                      |
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-| SQL文                                                                        | 説明                                                                                                                                                           |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [`SHOW BUILTINS`](/sql-statements/sql-statement-show-builtins.md)           | 組み込み関数を一覧表示します。                                                                                                                                              |
-| [`SHOW CHARACTER SET`](/sql-statements/sql-statement-show-character-set.md) | 文字セットを一覧表示します。                                                                                                                                               |
-| [`SHOW COLLATIONS`](/sql-statements/sql-statement-show-collation.md)        | 照合を一覧表示します。                                                                                                                                                  |
-| [`SHOW ERRORS`](/sql-statements/sql-statement-show-errors.md)               | 以前に実行されたステートメントのエラーを表示します。                                                                                                                                   |
-| [`SHOW STATUS`](/sql-statements/sql-statement-show-status.md)               | [MySQLとの互換性](/mysql-compatibility.md)に含まれています。TiDB TiDB Cloud は、ほとんどのメトリックに対して`SHOW STATUS`ではなく、集中メトリック収集に対して[監視](/tidb-cloud/monitor-tidb-cluster.md)提供します。 |
-| [`SHOW VARIABLES`](/sql-statements/sql-statement-show-variables.md)         | システム変数を表示します。                                                                                                                                                |
-| [`SHOW WARNINGS`](/sql-statements/sql-statement-show-warnings.md)           | 以前に実行されたステートメントからの警告とメモを表示します。                                                                                                                               |
+| SQL文                                                                        | 説明                                                                                                                                                         |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`SHOW BUILTINS`](/sql-statements/sql-statement-show-builtins.md)           | 組み込み関数を一覧表示します。                                                                                                                                            |
+| [`SHOW CHARACTER SET`](/sql-statements/sql-statement-show-character-set.md) | 文字セットを一覧表示します。                                                                                                                                             |
+| [`SHOW COLLATIONS`](/sql-statements/sql-statement-show-collation.md)        | 照合を一覧表示します。                                                                                                                                                |
+| [`SHOW ERRORS`](/sql-statements/sql-statement-show-errors.md)               | 以前実行されたステートメントのエラーを表示します。                                                                                                                                  |
+| [`SHOW STATUS`](/sql-statements/sql-statement-show-status.md)               | [MySQLとの互換性](/mysql-compatibility.md)に含まれています。TiDB TiDB Cloud は、ほとんどのメトリックに対して`SHOW STATUS`ではなく、集中メトリック収集用に[監視](/tidb-cloud/monitor-tidb-cluster.md)提供します。 |
+| [`SHOW VARIABLES`](/sql-statements/sql-statement-show-variables.md)         | システム変数を表示します。                                                                                                                                              |
+| [`SHOW WARNINGS`](/sql-statements/sql-statement-show-warnings.md)           | 以前実行されたステートメントからの警告とメモを表示します。                                                                                                                              |
 
 </CustomContent>
 
@@ -246,15 +248,15 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 
 <CustomContent platform="tidb-cloud">
 
-| SQL文                                                                    | 説明                                                                                                                                                           |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [`ALTER INSTANCE`](/sql-statements/sql-statement-alter-instance.md)     | インスタンスを変更します。                                                                                                                                                |
-| [`FLUSH STATUS`](/sql-statements/sql-statement-flush-status.md)         | [MySQLとの互換性](/mysql-compatibility.md)に含まれています。TiDB TiDB Cloud は、ほとんどのメトリックに対して`SHOW STATUS`ではなく、集中メトリック収集に対して[監視](/tidb-cloud/monitor-tidb-cluster.md)提供します。 |
-| [`KILL`](/sql-statements/sql-statement-kill.md)                         | 現在の TiDB クラスター内の任意の TiDB インスタンスの接続を切断します。                                                                                                                    |
-| [`SHOW ENGINES`](/sql-statements/sql-statement-show-engines.md)         | 使用可能なstorageエンジンを表示します。                                                                                                                                      |
-| [`SHOW PLUGINS`](/sql-statements/sql-statement-show-plugins.md)         | インストールされているプラグインを表示します。                                                                                                                                      |
-| [`SHOW PROCESSLIST`](/sql-statements/sql-statement-show-processlist.md) | 同じ TiDBサーバーに接続されている現在のセッションを表示します。                                                                                                                           |
-| [`SHOW PROFILES`](/sql-statements/sql-statement-show-profiles.md)       | クエリ プロファイルを表示します。 [MySQLとの互換性](/mysql-compatibility.md)に含まれます。現在は空の結果のみが返されます。                                                                               |
+| SQL文                                                                    | 説明                                                                                                                                                         |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`ALTER INSTANCE`](/sql-statements/sql-statement-alter-instance.md)     | インスタンスを変更します。                                                                                                                                              |
+| [`FLUSH STATUS`](/sql-statements/sql-statement-flush-status.md)         | [MySQLとの互換性](/mysql-compatibility.md)に含まれています。TiDB TiDB Cloud は、ほとんどのメトリックに対して`SHOW STATUS`ではなく、集中メトリック収集用に[監視](/tidb-cloud/monitor-tidb-cluster.md)提供します。 |
+| [`KILL`](/sql-statements/sql-statement-kill.md)                         | 現在の TiDB クラスター内の任意の TiDB インスタンスの接続を切断します。                                                                                                                  |
+| [`SHOW ENGINES`](/sql-statements/sql-statement-show-engines.md)         | 使用可能なstorageエンジンを表示します。                                                                                                                                    |
+| [`SHOW PLUGINS`](/sql-statements/sql-statement-show-plugins.md)         | インストールされているプラグインを表示します。                                                                                                                                    |
+| [`SHOW PROCESSLIST`](/sql-statements/sql-statement-show-processlist.md) | 同じ TiDBサーバーに接続されている現在のセッションを表示します。                                                                                                                         |
+| [`SHOW PROFILES`](/sql-statements/sql-statement-show-profiles.md)       | クエリプロファイルを表示します。 [MySQLとの互換性](/mysql-compatibility.md)に含まれます。現在は空の結果のみを返します。                                                                               |
 
 </CustomContent>
 
@@ -289,7 +291,7 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 | [`SHOW GRANTS`](/sql-statements/sql-statement-show-grants.md)                    | ユーザーに関連付けられた権限を表示します。       |
 | [`SHOW PRIVILEGES`](/sql-statements/sql-statement-show-privileges.md)            | 利用可能な権限を表示します。              |
 
-## ティCDC {#ticdc}
+## TiCDC {#ticdc}
 
 <CustomContent platform="tidb">
 
@@ -304,7 +306,7 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 
 > **注記：**
 >
-> [ティCDC](https://docs.pingcap.com/tidb/stable/ticdc-overview)と[TiDBBinlog](https://docs.pingcap.com/tidb/v8.3/tidb-binlog-overview) 、TiDB Self-Managed のアップストリームに TiDB データを複製するためのツールです。TiCDC と TiDB Binlogのほとんどの SQL ステートメントは、 TiDB Cloudには適用できません。TiDB TiDB Cloudでは、代わりに[TiDB Cloudコンソール](https://tidbcloud.com)の[チェンジフィード](/tidb-cloud/changefeed-overview.md)機能を使用してデータをストリーミングできます。
+> [TiCDC](https://docs.pingcap.com/tidb/stable/ticdc-overview)と[TiDBBinlog](https://docs.pingcap.com/tidb/v8.3/tidb-binlog-overview) 、TiDB Self-Managed のアップストリームに TiDB データを複製するためのツールです。TiCDC および TiDB Binlogのほとんどの SQL 文はTiDB Cloudには適用できません。TiDB TiDB Cloudでは、代わりに[TiDB Cloudコンソール](https://tidbcloud.com)の[チェンジフィード](/tidb-cloud/changefeed-overview.md)機能を使用してデータをストリーミングできます。
 
 | SQL文                                                                        | 説明                     |
 | --------------------------------------------------------------------------- | ---------------------- |
@@ -314,17 +316,20 @@ TiDB は、必要に応じて MySQL および TiDB 固有のステートメン�
 
 ## 統計と計画管理 {#statistics-and-plan-management}
 
-| SQL文                                                                              | 説明                                             |
-| --------------------------------------------------------------------------------- | ---------------------------------------------- |
-| [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)                 | テーブルに関する統計を収集します。                              |
-| [`CREATE BINDING`](/sql-statements/sql-statement-create-binding.md)               | SQL ステートメントの実行プラン バインディングを作成します。               |
-| [`DROP BINDING`](/sql-statements/sql-statement-drop-binding.md)                   | SQL ステートメントから実行プラン バインディングを削除します。              |
-| [`DROP STATS`](/sql-statements/sql-statement-drop-stats.md)                       | テーブルから統計を削除します。                                |
-| [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md)             | `EXPLAIN`と同様に動作しますが、ステートメントを実行するという大きな違いがあります。 |
-| [`LOAD STATS`](/sql-statements/sql-statement-load-stats.md)                       | 統計を TiDB に読み込みます。                              |
-| [`SHOW ANALYZE STATUS`](/sql-statements/sql-statement-show-analyze-status.md)     | 統計収集タスクを表示します。                                 |
-| [`SHOW BINDINGS`](/sql-statements/sql-statement-show-bindings.md)                 | 作成された SQL バインディングを表示します。                       |
-| [`SHOW STATS_HEALTHY`](/sql-statements/sql-statement-show-stats-healthy.md)       | 統計がどの程度正確であると考えられるかの推定値を示します。                  |
-| [`SHOW STATS_HISTOGRAMS`](/sql-statements/sql-statement-show-stats-histograms.md) | 統計のヒストグラム情報を表示します。                             |
-| [`SHOW STATS_LOCKED`](/sql-statements/sql-statement-show-stats-locked.md)         | 統計がロックされているテーブルを表示します。                         |
-| [`SHOW STATS_META`](/sql-statements/sql-statement-show-stats-meta.md)             | テーブル内の行数と、そのテーブル内で変更された行数を表示します。               |
+| SQL文                                                                                  | 説明                                             |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)                     | テーブルに関する統計を収集します。                              |
+| [`CREATE BINDING`](/sql-statements/sql-statement-create-binding.md)                   | SQL ステートメントの実行プラン バインディングを作成します。               |
+| [`DROP BINDING`](/sql-statements/sql-statement-drop-binding.md)                       | SQL ステートメントから実行プラン バインディングを削除します。              |
+| [`DROP STATS`](/sql-statements/sql-statement-drop-stats.md)                           | テーブルから統計を削除します。                                |
+| [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md)                 | `EXPLAIN`と同様に動作しますが、ステートメントを実行するという大きな違いがあります。 |
+| [`LOAD STATS`](/sql-statements/sql-statement-load-stats.md)                           | 統計を TiDB に読み込みます。                              |
+| [`SHOW ANALYZE STATUS`](/sql-statements/sql-statement-show-analyze-status.md)         | 統計収集タスクを表示します。                                 |
+| [`SHOW BINDINGS`](/sql-statements/sql-statement-show-bindings.md)                     | 作成された SQL バインディングを表示します。                       |
+| [`SHOW COLUMN_STATS_USAGE`](/sql-statements/sql-statement-show-column-stats-usage.md) | 列統計の最終使用時間と収集時間を表示します。                         |
+| [`SHOW STATS_BUCKETS`](/sql-statements/sql-statement-show-stats-buckets.md)           | 統計にバケット情報を表示します。                               |
+| [`SHOW STATS_HEALTHY`](/sql-statements/sql-statement-show-stats-healthy.md)           | 統計がどの程度正確であると考えられるかの推定値を示します。                  |
+| [`SHOW STATS_HISTOGRAMS`](/sql-statements/sql-statement-show-stats-histograms.md)     | 統計のヒストグラム情報を表示します。                             |
+| [`SHOW STATS_LOCKED`](/sql-statements/sql-statement-show-stats-locked.md)             | 統計がロックされているテーブルを表示します。                         |
+| [`SHOW STATS_META`](/sql-statements/sql-statement-show-stats-meta.md)                 | テーブル内の行数と、そのテーブル内で変更された行数を表示します。               |
+| [`SHOW STATS_TOPN`](/sql-statements/sql-statement-show-stats-topn.md)                 | 統計の上位 N 情報を表示します。                              |

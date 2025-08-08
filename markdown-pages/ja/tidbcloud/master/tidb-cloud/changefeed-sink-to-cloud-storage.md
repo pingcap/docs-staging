@@ -15,7 +15,7 @@ summary: このドキュメントでは、 TiDB Cloudから Amazon S3 または 
 ## 制限 {#restrictions}
 
 -   TiDB Cloudクラスターごとに、最大 100 個の変更フィードを作成できます。
--   TiDB Cloud は変更フィードを確立するために TiCDC を使用するため、同じ[TiCDCとしての制限](https://docs.pingcap.com/tidb/stable/ticdc-overview#unsupported-scenarios)持ちます。
+-   TiDB Cloud は、変更フィードを確立するために TiCDC を使用するため、同じ[TiCDCとしての制限](https://docs.pingcap.com/tidb/stable/ticdc-overview#unsupported-scenarios)持ちます。
 -   レプリケートするテーブルに主キーまたは NULL 以外の一意のインデックスがない場合、レプリケーション中に一意の制約がないと、再試行シナリオによっては下流に重複したデータが挿入される可能性があります。
 
 ## ステップ1. 宛先を設定する {#step-1-configure-destination}

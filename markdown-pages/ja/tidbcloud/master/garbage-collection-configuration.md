@@ -16,17 +16,17 @@ summary: GC 構成パラメータについて学習します。
 
 システム変数の値を変更する方法の詳細については、 [システム変数](/system-variables.md)参照してください。
 
-## GC I/O 制限 {#gc-i-o-limit}
+## GC I/O制限 {#gc-i-o-limit}
 
 <CustomContent platform="tidb-cloud">
 
 > **注記：**
 >
-> このセクションは、TiDB Self-Managed にのみ適用されます。TiDB TiDB Cloud には、デフォルトでは GC I/O 制限がありません。
+> このセクションは TiDB Self-Managed にのみ適用されます。TiDB TiDB Cloud には、デフォルトでは GC I/O 制限はありません。
 
 </CustomContent>
 
-TiKV は GC I/O 制限をサポートしています。1 `gc.max-write-bytes-per-sec`設定すると、GC ワーカーの 1 秒あたりの書き込みを制限し、通常のリクエストへの影響を軽減できます。
+TiKVはGC I/O制限をサポートしています。1 `gc.max-write-bytes-per-sec`設定すると、GCワーカーの1秒あたりの書き込み回数が制限され、通常のリクエストへの影響を軽減できます。
 
 `0`この機能を無効にすることを示します。
 
@@ -38,27 +38,27 @@ tikv-ctl --host=ip:port modify-tikv-config -n gc.max-write-bytes-per-sec -v 10MB
 
 ## TiDB 5.0 の変更点 {#changes-in-tidb-5-0}
 
-以前のリリースの TiDB では、ガベージコレクションは`mysql.tidb`システム テーブルを介して構成されていました。このテーブルへの変更は引き続きサポートされますが、提供されているシステム変数を使用することをお勧めします。これにより、構成の変更が検証され、予期しない動作を防ぐことができます ( [＃20655](https://github.com/pingcap/tidb/issues/20655) )。
+TiDBの以前のリリースでは、ガベージコレクションは`mysql.tidb`システムテーブルを介して設定されていました。このテーブルへの変更は引き続きサポートされますが、提供されているシステム変数を使用することをお勧めします。これにより、設定の変更が確実に検証され、予期しない動作を防ぐことができます( [＃20655](https://github.com/pingcap/tidb/issues/20655) )。
 
-`CENTRAL` GC モードはサポートされなくなりました。代わりに、 `DISTRIBUTED` GC モード (TiDB 3.0 以降のデフォルト) が自動的に使用されます。このモードは、TiDB がガベージコレクションをトリガーするために各 TiKV 領域に要求を送信する必要がなくなったため、より効率的です。
+`CENTRAL`ガベージコレクションはサポートされなくなりました。代わりに、TiDB 3.0以降のデフォルトである`DISTRIBUTED` GCモードが自動的に使用されます。このモードは、TiDBがガベージコレクションを開始するために各TiKVリージョンにリクエストを送信する必要がなくなるため、より効率的です。
 
-以前のリリースの変更点については、左側のメニューにある*TIDB バージョン セレクターを*使用して、このドキュメントの以前のバージョンを参照してください。
+以前のリリースの変更点については、左側のメニューにある*TIDB バージョン セレクター*を使用して、このドキュメントの以前のバージョンを参照してください。
 
 ## TiDB 6.1.0 の変更点 {#changes-in-tidb-6-1-0}
 
-TiDB v6.1.0 より前では、TiDB 内のトランザクションは GC セーフ ポイントに影響を与えませんでした。v6.1.0 以降では、TiDB は GC セーフ ポイントを計算するときにトランザクションの startTS を考慮し、アクセス対象のデータがクリアされている問題を解決します。トランザクションが長すぎると、セーフ ポイントが長時間ブロックされ、アプリケーションのパフォーマンスに影響します。
+TiDB v6.1.0より前のバージョンでは、TiDBのトランザクションはGCセーフポイントに影響を与えませんでした。v6.1.0以降、TiDBはGCセーフポイントを計算する際にトランザクションの開始TSを考慮するようになりました。これにより、アクセス対象のデータがクリアされてしまうという問題が解決されます。トランザクションが長すぎると、セーフポイントが長時間ブロックされ、アプリケーションのパフォーマンスに影響を及ぼします。
 
-TiDB v6.1.0 では、アクティブなトランザクションが GC セーフ ポイントをブロックする最大時間を制御するシステム変数[`tidb_gc_max_wait_time`](/system-variables.md#tidb_gc_max_wait_time-new-in-v610)が導入されました。この値を超えると、GC セーフ ポイントは強制的に転送されます。
+TiDB v6.1.0では、アクティブなトランザクションがGCセーフポイントをブロックする最大時間を制御するためのシステム変数[`tidb_gc_max_wait_time`](/system-variables.md#tidb_gc_max_wait_time-new-in-v610)導入されました。この値を超えると、GCセーフポイントは強制的に転送されます。
 
-### 圧縮フィルターのGC {#gc-in-compaction-filter}
+### 圧縮フィルター内のGC {#gc-in-compaction-filter}
 
-`DISTRIBUTED` GC モードに基づいて、Compaction Filter の GC のメカニズムは、別の GC ワーカー スレッドではなく、RocksDB の圧縮プロセスを使用して GC を実行します。この新しい GC メカニズムは、GC による余分なディスク読み取りを回避するのに役立ちます。また、古いデータをクリアした後、シーケンシャル スキャンのパフォーマンスを低下させる大量のトゥームストーン マークが残るのを回避します。
+`DISTRIBUTED` GCモードをベースに、Compaction FilterのGCメカニズムは、独立したGCワーカースレッドではなく、RocksDBのコンパクションプロセスを利用してGCを実行します。この新しいGCメカニズムは、GCによる余分なディスク読み取りを回避します。また、古いデータをクリアした後、シーケンシャルスキャンのパフォーマンスを低下させる大量のトゥームストーンマークが残るのを防ぎます。
 
 <CustomContent platform="tidb-cloud">
 
 > **注記：**
 >
-> TiKV 構成を変更する次の例は、TiDB Self-Managed にのみ適用されます。TiDB TiDB Cloudの場合、Compaction Filter の GC メカニズムはデフォルトで有効になっています。
+> 以下のTiKV構成の変更例は、TiDB Self-Managedにのみ適用されます。TiDB TiDB Cloudでは、Compaction FilterのGCメカニズムがデフォルトで有効になっています。
 
 </CustomContent>
 
@@ -69,7 +69,7 @@ TiDB v6.1.0 では、アクティブなトランザクションが GC セーフ 
 enable-compaction-filter = true
 ```
 
-構成を動的に変更することで、この GC メカニズムを有効にすることもできます。次の例を参照してください。
+このGCメカニズムは、設定を動的に変更することでも有効にできます。次の例をご覧ください。
 
 ```sql
 show config where type = 'tikv' and name like '%enable-compaction-filter%';

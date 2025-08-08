@@ -5,7 +5,7 @@ summary: TiDB データベースの TABLE の使用法の概要。
 
 # テーブル {#table}
 
-集計や複雑なフィルタリングが不要な場合は、 `SELECT * FROM`の代わりに`TABLE`ステートメントを使用できます。
+集計や複雑なフィルタリングが不要な場合は、 `SELECT * FROM`代わりに`TABLE`ステートメントを使用できます。
 
 ## 概要 {#synopsis}
 
@@ -45,7 +45,7 @@ TABLE t1;
 3 rows in set (0.01 sec)
 ```
 
-クエリ`t1`実行し、結果を`id`フィールドで降順で並べ替えます。
+クエリ`t1`実行し、結果を`id`フィールドで降順に並べ替えます。
 
 ```sql
 TABLE t1 ORDER BY id DESC;
@@ -77,11 +77,11 @@ TABLE t1 LIMIT 1;
 1 row in set (0.01 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 `TABLE`ステートメントは MySQL 8.0.19 で導入されました。
 
 ## 参照 {#see-also}
 
 -   [`SELECT`](/sql-statements/sql-statement-select.md)
--   [MySQL の`TABLE`ステートメント](https://dev.mysql.com/doc/refman/8.0/en/table.html)
+-   [MySQLの`TABLE`文](https://dev.mysql.com/doc/refman/8.0/en/table.html)

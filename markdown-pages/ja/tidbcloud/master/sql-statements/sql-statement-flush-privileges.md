@@ -5,7 +5,7 @@ summary: TiDB データベースの FLUSH PRIVILEGES の使用法の概要。
 
 # フラッシュ権限 {#flush-privileges}
 
-ステートメント`FLUSH PRIVILEGES`は、権限テーブルから権限のメモリ内コピーを再ロードするように TiDB に指示します。 `mysql.user`などのテーブルを手動で編集した後は、このステートメントを実行する必要があります。ただし、 `GRANT`や`REVOKE`などの権限ステートメントを使用した後は、このステートメントを実行する必要はありません。このステートメントを実行するには、 `RELOAD`権限が必要です。
+文`FLUSH PRIVILEGES` 、TiDB に権限テーブルからメモリ内の権限コピーを再ロードするよう指示します。 `mysql.user`のようなテーブルを手動で編集した後は、この文を実行する必要があります。ただし、 `GRANT`や`REVOKE`ような権限文を使用した後は、この文を実行する必要はありません。この文を実行するには、 `RELOAD`権限が必要です。
 
 ## 概要 {#synopsis}
 
@@ -32,9 +32,9 @@ mysql> FLUSH PRIVILEGES;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`FLUSH PRIVILEGES`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`FLUSH PRIVILEGES`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 
