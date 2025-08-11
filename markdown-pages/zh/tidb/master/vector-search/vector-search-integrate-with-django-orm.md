@@ -100,7 +100,7 @@ TIDB_DATABASE=test
 
 </div>
 
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Serverless 或 Essential">
 
 对于 TiDB Cloud Serverless 集群，请按照以下步骤获取集群的连接字符串，然后配置环境变量：
 
