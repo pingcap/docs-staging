@@ -11,7 +11,7 @@ In this tutorial, you can learn how to connect to your TiDB cluster using DBeave
 
 > **Note:**
 >
-> This tutorial is compatible with TiDB Cloud Starter, TiDB Cloud Dedicated, and TiDB Self-Managed.
+> This tutorial is compatible with TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated, and TiDB Self-Managed.
 
 ## Prerequisites
 
@@ -42,7 +42,7 @@ To complete this tutorial, you need:
 Connect to your TiDB cluster depending on the TiDB deployment option you've selected.
 
 <SimpleTab>
-<div label="TiDB Cloud Starter">
+<div label="TiDB Cloud Starter or Essential">
 
 1. Navigate to the [**Clusters**](https://tidbcloud.com/console/clusters) page, and then click the name of your target cluster to go to its overview page.
 

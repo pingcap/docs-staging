@@ -14,7 +14,7 @@ To solve the hotspot problem in the above scenario, TiDB introduces the pre-spli
 
 > **Note:**
 >
-> This feature is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) clusters.
+> This feature is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
 
 ## Synopsis
 
