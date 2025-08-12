@@ -7,7 +7,7 @@ summary: An overview of the usage of `ADMIN ALTER DDL JOBS` for the TiDB databas
 
 > **Note:**
 >
-> Currently, this feature is not available on [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) clusters.
+> Currently, this feature is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
 
 The `ADMIN ALTER DDL JOBS` statement allows you to modify the parameter of a single running DDL job. For example:
 

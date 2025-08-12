@@ -5,7 +5,7 @@ summary: The reference of `ticloud serverless sql-user create`.
 
 # ticloud serverless sql-user create
 
-Create a TiDB Cloud Serverless SQL user:
+Create a SQL user in a TiDB Cloud Starter or TiDB Cloud Essential cluster:
 
 ```shell
 ticloud serverless sql-user create [flags]
@@ -13,13 +13,13 @@ ticloud serverless sql-user create [flags]
 
 ## Examples
 
-Create a TiDB Cloud Serverless SQL user in interactive mode:
+Create a SQL user in a TiDB Cloud Starter or TiDB Cloud Essential cluster in interactive mode:
 
 ```shell
 ticloud serverless sql-user create
 ```
 
-Create a TiDB Cloud Serverless SQL user in non-interactive mode:
+Create a SQL user in a TiDB Cloud Starter or TiDB Cloud Essential cluster in non-interactive mode:
 
 ```shell
 ticloud serverless sql-user create --user <user-name> --password <password> --role <role> --cluster-id <cluster-id>

@@ -17,7 +17,7 @@ This tutorial demonstrates how to integrate the [vector search](/vector-search/v
 
 > **Note**
 >
-> The vector search feature is available on TiDB Self-Managed, [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
+> The vector search feature is available on TiDB Self-Managed, [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-essential), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
 
 > **Tip**
 >
@@ -37,9 +37,9 @@ To complete this tutorial, you need:
     aws configure set region <your-region>
     ```
 
-- A TiDB Cloud Serverless cluster
+- A TiDB Cloud Starter cluster
 
-    Follow [creating a TiDB Cloud Serverless cluster](/tidb-cloud/create-tidb-cluster-serverless.md) to create your own TiDB Cloud cluster if you don't have one.
+    Follow [creating a TiDB Cloud Starter cluster](/tidb-cloud/create-tidb-cluster-serverless.md) to create your own TiDB Cloud cluster if you don't have one.
 
 - An AWS account with the [required permissions for Amazon Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/security_iam_id-based-policy-examples.html) and access to the following models:
 
@@ -242,14 +242,14 @@ class Entity(Base):
 Base.metadata.create_all(engine)
 ```
 
-### Step 7. Save the vector data to TiDB Cloud Serverless
+### Step 7. Save the vector data to TiDB Cloud Starter
 
-In `demo.py`, add the following code to save the vector data to your TiDB Cloud Serverless cluster:
+In `demo.py`, add the following code to save the vector data to your TiDB Cloud Starter cluster:
 
 ```python
 # ---- Saving Vectors to TiDB ----
 def save_entities_with_embedding(session, contents):
-    """Save multiple entities with their embeddings to the TiDB Serverless database."""
+    """Save multiple entities with their embeddings to the TiDB database."""
     for content in contents:
         entity = Entity(content=content, content_vec=embedding(content))
         session.add(entity)

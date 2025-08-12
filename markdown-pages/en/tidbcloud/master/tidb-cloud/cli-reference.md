@@ -24,12 +24,12 @@ To use the `ticloud` CLI in your terminal, run `ticloud [command] [subcommand]`.
 | Command               | Subcommand                                                            | Description                                    |
 |-----------------------|-----------------------------------------------------------------------|------------------------------------------------|
 | auth                  | login, logout, whoami                                                 | Login and logout                               |
-| serverless (alias: s) | create, delete, describe, list, update, spending-limit, region, shell | Manage TiDB Cloud Serverless clusters          |
-| serverless branch     | create, delete, describe, list, shell                                 | Manage TiDB Cloud Serverless branches          |
-| serverless import     | cancel, describe, list, start                                         | Manage TiDB Cloud Serverless import tasks      |
-| serverless export     | create, describe, list, cancel, download                              | Manage TiDB Cloud Serverless export tasks      |
-| serverless sql-user   | create, list, delete, update                                          | Manage TiDB Cloud Serverless SQL users         |
-| serverless audit-log  | config, describe, filter-rule (alias: filter), download                                    | Manage TiDB Cloud Serverless database audit logging         |
+| serverless (alias: s) | create, delete, describe, list, update, spending-limit, region, shell | Manage TiDB Cloud Starter or TiDB Cloud Essential cluster          |
+| serverless branch     | create, delete, describe, list, shell                                 | Manage branches for your TiDB Cloud Starter or TiDB Cloud Essential cluster          |
+| serverless import     | cancel, describe, list, start                                         | Manage import tasks for your TiDB Cloud Starter or TiDB Cloud Essential cluster      |
+| serverless export     | create, describe, list, cancel, download                              | Manage export tasks for your TiDB Cloud Starter or TiDB Cloud Essential cluster      |
+| serverless sql-user   | create, list, delete, update                                          | Manage SQL users for your TiDB Cloud Starter or TiDB Cloud Essential cluster         |
+| serverless audit-log  | config, describe, filter-rule (alias: filter), download                                    | Manage database audit logging for your TiDB Cloud Starter or TiDB Cloud Essential cluster         |
 | ai                    | -                                                                     | Chat with TiDB Bot                             |
 | completion            | bash, fish, powershell, zsh                                           | Generate completion script for specified shell |
 | config                | create, delete, describe, edit, list, set, use                        | Configure user profiles                        |
