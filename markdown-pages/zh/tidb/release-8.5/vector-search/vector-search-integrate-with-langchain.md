@@ -102,7 +102,7 @@ TIDB_DATABASE_URL="mysql+pymysql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE
 
 </div>
 
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Serverless 或 Essential">
 
 对于 TiDB Cloud Serverless 集群，请按照以下步骤获取集群的连接字符串，然后配置环境变量：
 
