@@ -9,7 +9,7 @@ In some multi-tenant scenarios, there might be hundreds of thousands or even mil
 
 > **Note:**
 >
-> Currently, this feature is not available on [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) clusters.
+> Currently, this feature is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) clusters.
 
 ## Configure schema cache
 
