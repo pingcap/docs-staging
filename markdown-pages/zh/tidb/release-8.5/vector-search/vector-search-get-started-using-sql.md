@@ -50,7 +50,7 @@ mysql --comments --host 127.0.0.1 --port 4000 -u root
 
 </div>
 
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Serverless 或 Essential">
 
 对于 TiDB Cloud Serverless 集群，可以按照以下步骤连接到集群：
 
