@@ -15,7 +15,7 @@ In this tutorial, you can learn how to use TiDB and SQLAlchemy to accomplish the
 
 > **Note:**
 >
-> This tutorial works with TiDB Cloud Serverless, TiDB Cloud Dedicated, and TiDB Self-Managed clusters.
+> This tutorial works with TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated, and TiDB Self-Managed clusters.
 
 ## Prerequisites
 
@@ -74,7 +74,7 @@ You can also use other database drivers, such as [mysqlclient](https://github.co
 Connect to your TiDB cluster depending on the TiDB deployment option you've selected.
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Serverless or Essential">
 
 > **Note:**
 >

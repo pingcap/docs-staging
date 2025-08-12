@@ -15,7 +15,7 @@ In this tutorial, you can learn how to use TiDB and peewee to accomplish the fol
 
 > **Note:**
 >
-> This tutorial works with TiDB Cloud Serverless, TiDB Cloud Dedicated, and TiDB Self-Managed clusters.
+> This tutorial works with TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated, and TiDB Self-Managed clusters.
 
 ## Prerequisites
 
@@ -72,7 +72,7 @@ peewee is an ORM library that works with multiple databases. It provides a high-
 Connect to your TiDB cluster depending on the TiDB deployment option you've selected.
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Serverless or Essential">
 
 1. Navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page, and then click the name of your target cluster to go to its overview page.
 
