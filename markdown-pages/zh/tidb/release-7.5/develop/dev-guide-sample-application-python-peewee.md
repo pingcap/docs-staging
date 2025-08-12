@@ -15,7 +15,7 @@ TiDB 是一个兼容 MySQL 的数据库。[peewee](https://github.com/coleifer/p
 
 > **注意**
 >
-> 本文档适用于 TiDB Cloud Serverless、TiDB Cloud Dedicated 和本地部署的 TiDB。
+> 本文档适用于 TiDB Cloud Serverless、TiDB Cloud Essential、TiDB Cloud Dedicated 和本地部署的 TiDB。
 
 ## 前置需求
 
@@ -56,7 +56,7 @@ peewee 是一个支持多种数据库的 ORM 库。它是对数据库的高层�
 
 <SimpleTab>
 
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Serverless 或 Essential">
 
 1. 在 TiDB Cloud 的 [**Clusters**](https://tidbcloud.com/project/clusters) 页面中，选择你的 TiDB Cloud Serverless 集群，进入集群的 **Overview** 页面。
 
