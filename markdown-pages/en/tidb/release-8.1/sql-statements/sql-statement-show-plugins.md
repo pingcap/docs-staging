@@ -9,7 +9,7 @@ summary: An overview of the usage of SHOW PLUGINS for the TiDB database.
 
 > **Note:**
 >
-> This feature is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) clusters.
+> This feature is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
 
 ## Synopsis
 

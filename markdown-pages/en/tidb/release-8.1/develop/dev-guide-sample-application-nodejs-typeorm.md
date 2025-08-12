@@ -15,7 +15,7 @@ In this tutorial, you can learn how to use TiDB and TypeORM to accomplish the fo
 
 > **Note**
 >
-> This tutorial works with TiDB Cloud Starter, TiDB Cloud Dedicated, and TiDB Self-Managed.
+> This tutorial works with TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated, and TiDB Self-Managed.
 
 ## Prerequisites
 
@@ -85,7 +85,7 @@ npm install @types/node ts-node typescript --save-dev
 Connect to your TiDB cluster depending on the TiDB deployment option you've selected.
 
 <SimpleTab>
-<div label="TiDB Cloud Starter">
+<div label="TiDB Cloud Starter or Essential">
 
 1. Navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page, and then click the name of your target cluster to go to its overview page.
 
@@ -119,7 +119,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you've sele
 
     > **Note**
     >
-    > For TiDB Cloud Starter, you **MUST** enable TLS connection via `TIDB_ENABLE_SSL` when using public endpoint.
+    > For TiDB Cloud Starter and TiDB Cloud Essential, you **MUST** enable TLS connection via `TIDB_ENABLE_SSL` when using public endpoint.
 
 7. Save the `.env` file.
 
@@ -276,9 +276,9 @@ export const AppDataSource = new DataSource({
 
 > **Note**
 >
-> For TiDB Cloud Starter, you MUST enable TLS connection when using public endpoint. In this sample code, please set up the environment variable `TIDB_ENABLE_SSL` in the `.env` file to `true`.
+> For TiDB Cloud Starter and TiDB Cloud Essential, you MUST enable TLS connection when using public endpoint. In this sample code, please set up the environment variable `TIDB_ENABLE_SSL` in the `.env` file to `true`.
 >
-> However, you **don't** have to specify an SSL CA certificate via `TIDB_CA_PATH`, because Node.js uses the built-in [Mozilla CA certificate](https://wiki.mozilla.org/CA/Included_Certificates) by default, which is trusted by TiDB Cloud Starter.
+> However, you **don't** have to specify an SSL CA certificate via `TIDB_CA_PATH`, because Node.js uses the built-in [Mozilla CA certificate](https://wiki.mozilla.org/CA/Included_Certificates) by default, which is trusted by TiDB Cloud Starter and TiDB Cloud Essential.
 
 ### Insert data
 
