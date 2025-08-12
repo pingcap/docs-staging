@@ -24,7 +24,7 @@ TiDB Cloud has supported Datadog integration (Beta) since March 04, 2022. Starti
 
 ## Limitation
 
-- You cannot use the Datadog integration in [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) clusters.
+- You cannot use the Datadog integration in [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) or [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) clusters.
 
 - Datadog integrations are not available when the cluster status is **CREATING**, **RESTORING**, **PAUSED**, or **RESUMING**.
 

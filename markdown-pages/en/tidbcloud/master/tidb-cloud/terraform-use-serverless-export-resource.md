@@ -1,32 +1,32 @@
 ---
-title: Use TiDB Cloud Serverless Export Resource
-summary: Learn how to use the TiDB Cloud Serverless export resource to create and modify a TiDB Cloud Serverless export task.
+title: Use `tidbcloud_serverless_export` Resource
+summary: Learn how to use the `tidbcloud_serverless_export` resource to create and modify a TiDB Cloud Starter export task.
 ---
 
-# Use TiDB Cloud Serverless Export Resource
+# Use `tidbcloud_serverless_export` Resource
 
-This document describes how to manage a [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) data export task using the `tidbcloud_serverless_export` resource.
+This document describes how to manage a [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) data export task using the `tidbcloud_serverless_export` resource.
 
 The features of the `tidbcloud_serverless_export` resource include the following:
 
-- Create TiDB Cloud Serverless data export tasks.
-- Import TiDB Cloud Serverless data export tasks.
-- Delete TiDB Cloud Serverless data export tasks.
+- Create TiDB Cloud Starter data export tasks.
+- Import TiDB Cloud Starter data export tasks.
+- Delete TiDB Cloud Starter data export tasks.
 
 > **Note:**
 >
-> TiDB Cloud Serverless export resource cannot be modified. If you want to change the configuration of a TiDB Cloud Serverless export resource, you need to delete the existing one, and then create a new one.
+> The `tidbcloud_serverless_export` resource cannot be modified. If you want to change the configuration of the `tidbcloud_serverless_export` resource, you need to delete the existing one, and then create a new one.
 
 ## Prerequisites
 
 - [Get TiDB Cloud Terraform Provider](/tidb-cloud/terraform-get-tidbcloud-provider.md) v0.4.0 or later.
-- [Create a TiDB Cloud Serverless cluster](/tidb-cloud/create-tidb-cluster-serverless.md).
+- [Create a TiDB Cloud Starter cluster](/tidb-cloud/create-tidb-cluster-serverless.md).
 
-## Create a TiDB Cloud Serverless data export task
+## Create a TiDB Cloud Starter data export task
 
-You can create a TiDB Cloud Serverless data export task using the `tidbcloud_serverless_export` resource.
+You can create a TiDB Cloud Starter data export task using the `tidbcloud_serverless_export` resource.
 
-The following example shows how to create a TiDB Cloud Serverless data export task.
+The following example shows how to create a TiDB Cloud Starter data export task.
 
 1. Create a directory for the export and enter it.
 
@@ -142,13 +142,13 @@ The following example shows how to create a TiDB Cloud Serverless data export ta
     }
     ```
 
-## Import a TiDB Cloud Serverless data export task
+## Import a TiDB Cloud Starter data export task
 
-For a TiDB Serverless data export task that is not managed by Terraform, you can use Terraform to manage it just by importing it.
+For a TiDB Cloud Starter data export task that is not managed by Terraform, you can use Terraform to manage it just by importing it.
 
-Import a TiDB Cloud Serverless data export task that is not created by Terraform as follows:
+Import a TiDB Cloud Starter data export task that is not created by Terraform as follows:
 
-1. Add an import block for the new TiDB Cloud Serverless export resource.
+1. Add an import block for the new `tidbcloud_serverless_export` resource.
 
     Add the following import block to your `.tf` file, replace `example` with a desired resource name, and replace `${id}` with the format of `cluster_id,export_id`:
 
@@ -184,9 +184,9 @@ Import a TiDB Cloud Serverless data export task that is not created by Terraform
 
 Now you can manage the imported export with Terraform.
 
-## Delete a TiDB Cloud Serverless data export task
+## Delete a TiDB Cloud Starter data export task
 
-To delete a TiDB Cloud Serverless data export task, you can delete the configuration of the `tidbcloud_serverless_export` resource, then use the `terraform apply` command to destroy the resource:
+To delete a TiDB Cloud Starter data export task, you can delete the configuration of the `tidbcloud_serverless_export` resource, then use the `terraform apply` command to destroy the resource:
 
 ```shell
 $ terraform apply

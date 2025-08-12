@@ -9,6 +9,10 @@ summary: Learn how to use TiDB Cloud serverless driver with Drizzle.
 
 This tutorial describes how to use TiDB Cloud serverless driver with Drizzle in Node.js environments and edge environments.
 
+> **Tip:**
+>
+> In addition to TiDB Cloud Starter clusters, the steps in this document also work with TiDB Cloud Essential clusters.
+
 ## Use Drizzle and TiDB Cloud serverless driver in Node.js environments
 
 This section describes how to use TiDB Cloud serverless driver with Drizzle in Node.js environments.
@@ -19,7 +23,7 @@ To complete this tutorial, you need the following:
 
 - [Node.js](https://nodejs.org/en) >= 18.0.0.
 - [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) or your preferred package manager.
-- A TiDB Cloud Serverless cluster. If you don't have any, you can [create a TiDB Cloud Serverless cluster](/develop/dev-guide-build-cluster-in-cloud.md).
+- A TiDB Cloud Starter cluster. If you don't have any, you can [create a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md).
 
 ### Step 1. Create a project
 
@@ -69,7 +73,7 @@ To complete this tutorial, you need the following:
 
 ### Step 2. Set the environment
 
-1. In the [TiDB Cloud console](https://tidbcloud.com/), navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page of your project, and then click the name of your target TiDB Cloud Serverless cluster to go to its overview page.
+1. In the [TiDB Cloud console](https://tidbcloud.com/), navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page of your project, and then click the name of your target TiDB Cloud Starter cluster to go to its overview page.
 
 2. On the overview page, click **Connect** in the upper-right corner, select `Serverless Driver` in the **Connect With** drop-down list, and then click **Generate Password** to create a random password.
 
@@ -91,7 +95,7 @@ To complete this tutorial, you need the following:
 
 ### Step 3. Use Drizzle to query data
 
-1. Create a table in your TiDB Cloud Serverless cluster.
+1. Create a table in your TiDB Cloud Starter cluster.
 
    You can use [SQL Editor in the TiDB Cloud console](/tidb-cloud/explore-data-with-chat2query.md) to execute SQL statements. Here is an example:
 
@@ -155,7 +159,7 @@ To complete this tutorial, you need the following:
 
 - A [Vercel](https://vercel.com/docs) account that provides edge environment.
 - [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) or your preferred package manager.
-- A TiDB Cloud Serverless cluster. If you don't have any, you can [create a TiDB Cloud Serverless cluster](/develop/dev-guide-build-cluster-in-cloud.md).
+- A TiDB Cloud Starter cluster. If you don't have any, you can [create a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md).
 
 ### Step 1. Create a project
 
@@ -185,7 +189,7 @@ To complete this tutorial, you need the following:
 
 ### Step 2. Set the environment
 
-1. In the [TiDB Cloud console](https://tidbcloud.com/), navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page of your project, and then click the name of your target TiDB Cloud Serverless cluster to go to its overview page.
+1. In the [TiDB Cloud console](https://tidbcloud.com/), navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page of your project, and then click the name of your target TiDB Cloud Starter cluster to go to its overview page.
 
 2. On the overview page, click **Connect** in the upper-right corner, select `Serverless Driver` in the **Connect With** drop-down list, and then click **Generate Password** to create a random password.
 
@@ -201,7 +205,7 @@ To complete this tutorial, you need the following:
 
 ### Step 3. Create an edge function
 
-1. Create a table in your TiDB Cloud Serverless cluster.
+1. Create a table in your TiDB Cloud Starter cluster.
 
    You can use [SQL Editor in the TiDB Cloud console](/tidb-cloud/explore-data-with-chat2query.md) to execute SQL statements. Here is an example:
 
