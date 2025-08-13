@@ -196,7 +196,8 @@
   },
   "redirect": {
     "/ja/tidb/v6.2": "https://docs-archive.pingcap.com/ja/tidb/v6.2",
-    "/ja/tidb/v6.3": "https://docs-archive.pingcap.com/ja/tidb/v6.3"
+    "/ja/tidb/v6.3": "https://docs-archive.pingcap.com/ja/tidb/v6.3",
+    "/tidbcloud/tidb-cloud-quickstart*": "https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart/?plan=essential"
   },
   "ignore": [
     ".circleci",
