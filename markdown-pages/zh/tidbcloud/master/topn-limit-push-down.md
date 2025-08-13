@@ -1,23 +1,23 @@
 ---
-title: TopN 和 Limit 算子下推
-summary: 了解 TopN 和 Limit 算子下推的实现。
+title: TopN and Limit Operator Push Down
+summary: 了解 TopN 和 Limit 操作符下推的实现方式。
 ---
 
-# TopN 和 Limit 算子下推
+# TopN 和 Limit 操作符下推
 
-本文档描述了 TopN 和 Limit 算子下推的实现。
+本文档描述了 TopN 和 Limit 操作符下推的实现。
 
-在 TiDB 执行计划树中，SQL 中的 `LIMIT` 子句对应 Limit 算子节点，`ORDER BY` 子句对应 Sort 算子节点。相邻的 Limit 算子和 Sort 算子会被合并为 TopN 算子节点，表示按照某种排序规则返回前 N 条记录。也就是说，Limit 算子等价于一个没有排序规则的 TopN 算子节点。
+在 TiDB 执行计划树中，SQL 中的 `LIMIT` 子句对应 Limit 操作符节点，`ORDER BY` 子句对应 Sort 操作符节点。相邻的 Limit 操作符和 Sort 操作符会合并为 TopN 操作符节点，表示根据某种排序规则返回前 N 条记录。也就是说，Limit 操作符等同于一个排序规则为空的 TopN 操作符节点。
 
-类似于谓词下推，TopN 和 Limit 在执行计划树中被下推到尽可能靠近数据源的位置，以便在早期阶段过滤所需数据。通过这种方式，下推显著减少了数据传输和计算的开销。
+类似于谓词下推，TopN 和 Limit 会被下推到执行计划树中尽可能靠近数据源的位置，以便在早期对所需数据进行过滤。这样，推下可以显著减少数据传输和计算的开销。
 
-要禁用此规则，请参考[表达式下推的优化规则和黑名单](/blocklist-control-plan.md)。
+若要禁用此规则，请参考 [Expression Pushdown 的优化规则和黑名单](/blocklist-control-plan.md)。
 
 ## 示例
 
-本节通过一些示例说明 TopN 下推。
+本节通过一些示例说明 TopN 下推的过程。
 
-### 示例 1：下推到存储层的 Coprocessor
+### 示例 1：下推到存储层的协处理器（Coprocessors）
 
 
 ```sql
@@ -34,12 +34,11 @@ explain select * from t order by a limit 10;
 |   └─TopN_14                | 10.00    | cop[tikv] |               | test.t.a, offset:0, count:10   |
 |     └─TableFullScan_13     | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo |
 +----------------------------+----------+-----------+---------------+--------------------------------+
-4 rows in set (0.00 sec)
 ```
 
-在这个查询中，TopN 算子节点被下推到 TiKV 进行数据过滤，每个 Coprocessor 只向 TiDB 返回 10 条记录。TiDB 聚合数据后，执行最终的过滤。
+在此查询中，TopN 操作符节点被下推到 TiKV 进行数据过滤，每个协处理器（Coprocessor）只返回 10 条记录到 TiDB。TiDB 汇总数据后，进行最终过滤。
 
-### 示例 2：TopN 可以下推到 Join 中（排序规则仅依赖外表的列）
+### 示例 2：TopN 可以下推到 Join（排序规则仅依赖外表中的列）
 
 
 ```sql
@@ -61,12 +60,11 @@ explain select * from t left join s on t.a = s.a order by t.a limit 10;
 |   └─TableReader_30(Probe)        | 10000.00 | root      |               | data:TableFullScan_29                           |
 |     └─TableFullScan_29           | 10000.00 | cop[tikv] | table:s       | keep order:false, stats:pseudo                  |
 +----------------------------------+----------+-----------+---------------+-------------------------------------------------+
-8 rows in set (0.01 sec)
 ```
 
-在这个查询中，TopN 算子的排序规则仅依赖外表 `t` 的列，因此可以在下推 TopN 到 Join 之前进行计算，以减少 Join 操作的计算成本。此外，TiDB 还将 TopN 下推到存储层。
+在此查询中，TopN 操作符的排序规则仅依赖于外表 `t` 中的列，因此可以在下推 TopN 之前先进行计算，以减少 Join 操作的计算成本。此外，TiDB 也会将 TopN 下推到存储层。
 
-### 示例 3：TopN 不能下推到 Join 之前
+### 示例 3：TopN 不能在 Join 之前下推
 
 
 ```sql
@@ -86,12 +84,11 @@ explain select * from t join s on t.a = s.a order by t.id limit 10;
 |   └─TableReader_19(Probe)     | 10000.00 | root      |               | data:TableFullScan_18                      |
 |     └─TableFullScan_18        | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo             |
 +-------------------------------+----------+-----------+---------------+--------------------------------------------+
-6 rows in set (0.00 sec)
 ```
 
-TopN 不能下推到 `Inner Join` 之前。以上面的查询为例，如果 Join 后得到 100 条记录，然后经过 TopN 后剩下 10 条记录。但如果先执行 TopN 得到 10 条记录，Join 后可能只剩下 5 条记录。在这种情况下，下推会导致不同的结果。
+TopN 不能在 `Inner Join` 之前下推。以上述查询为例，如果 Join 后得到 100 条记录，TopN 后剩 10 条；但如果先执行 TopN 获取 10 条，再进行 Join，最后只剩 5 条。在这种情况下，下推会导致结果不同。
 
-同样，TopN 既不能下推到 Outer Join 的内表，也不能在其排序规则涉及多个表的列时下推，比如 `t.a+s.a`。只有当 TopN 的排序规则完全依赖于外表的列时，才能进行下推。
+类似地，TopN 既不能下推到外连接（Outer Join）的内表，也不能在排序规则涉及多表列（如 `t.a + s.a`）时下推。只有当 TopN 的排序规则完全依赖于外表的列时，才能进行下推。
 
 ### 示例 4：将 TopN 转换为 Limit
 
@@ -115,7 +112,6 @@ explain select * from t left join s on t.a = s.a order by t.id limit 10;
 |   └─TableReader_35(Probe)        | 10000.00 | root      |               | data:TableFullScan_34                           |
 |     └─TableFullScan_34           | 10000.00 | cop[tikv] | table:s       | keep order:false, stats:pseudo                  |
 +----------------------------------+----------+-----------+---------------+-------------------------------------------------+
-8 rows in set (0.00 sec)
 ```
 
-在上面的查询中，TopN 首先被下推到外表 `t`。TopN 需要按 `t.id` 排序，而这是主键并且可以直接按顺序读取（`keep order: true`），无需在 TopN 中额外排序。因此，TopN 被简化为 Limit。
+在上述查询中，TopN 首先被下推到外表 `t`。由于 TopN 需要根据 `t.id` 排序，而 `t.id` 是主键，可以直接按顺序读取（`keep order: true`），无需在 TopN 中额外排序。因此，TopN 被简化为 Limit。

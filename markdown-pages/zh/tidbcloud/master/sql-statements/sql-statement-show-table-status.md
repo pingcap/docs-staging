@@ -1,13 +1,13 @@
 ---
 title: SHOW TABLE STATUS | TiDB SQL 语句参考
-summary: TiDB 数据库中 SHOW TABLE STATUS 的使用概述。
+summary: 关于 TiDB 数据库中使用 SHOW TABLE STATUS 的概述。
 ---
 
 # SHOW TABLE STATUS
 
-此语句显示 TiDB 中表的各种统计信息。如果统计信息看起来已过期，建议运行 [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)。
+此语句显示 TiDB 中表的各种统计信息。如果统计信息看起来过时，建议运行 [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)。
 
-## 语法概要
+## 概要
 
 ```ebnf+diagram
 ShowTableStatusStmt ::=
@@ -78,9 +78,9 @@ Max_data_length: 0
 
 ## MySQL 兼容性
 
-TiDB 中的 `SHOW TABLE STATUS` 语句与 MySQL 完全兼容。如果发现任何兼容性差异，请[报告 bug](https://docs.pingcap.com/tidb/stable/support)。
+TiDB 中的 `SHOW TABLE STATUS` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [SHOW TABLES](/sql-statements/sql-statement-show-tables.md)
 * [CREATE TABLE](/sql-statements/sql-statement-create-table.md)

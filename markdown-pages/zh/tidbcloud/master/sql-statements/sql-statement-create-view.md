@@ -1,13 +1,13 @@
 ---
 title: CREATE VIEW | TiDB SQL 语句参考
-summary: TiDB 数据库中 CREATE VIEW 的使用概述。
+summary: 关于在 TiDB 数据库中使用 CREATE VIEW 的概述。
 ---
 
 # CREATE VIEW
 
-`CREATE VIEW` 语句将 `SELECT` 语句保存为可查询对象，类似于表。TiDB 中的视图是非物化的。这意味着在查询视图时，TiDB 会在内部重写查询，将视图定义与 SQL 查询组合在一起。
+`CREATE VIEW` 语句将一个 `SELECT` 语句保存为一个可查询的对象，类似于一个表。TiDB 中的视图是非物化的。这意味着在查询视图时，TiDB 会在内部重写查询，将视图定义与 SQL 查询合并。
 
-## 语法概要
+## 概要
 
 ```ebnf+diagram
 CreateViewStmt ::=
@@ -89,11 +89,11 @@ ERROR 1105 (HY000): insert into view v1 is not supported now.
 
 ## MySQL 兼容性
 
-* 目前，TiDB 中的任何视图都不能进行插入或更新操作（即不支持 `INSERT VIEW` 和 `UPDATE VIEW`）。`WITH CHECK OPTION` 仅在语法上兼容但不生效。
-* 目前，TiDB 中的视图不支持 `ALTER VIEW`，但你可以使用 `CREATE OR REPLACE` 代替。
-* 目前，`ALGORITHM` 字段在 TiDB 中仅在语法上兼容但不生效。TiDB 目前仅支持 MERGE 算法。
+* 目前，TiDB 中的任何视图都不能进行插入或更新（即不支持 `INSERT VIEW` 和 `UPDATE VIEW`）。`WITH CHECK OPTION` 仅在语法上兼容，但不生效。
+* 目前，TiDB 中的视图不支持 `ALTER VIEW`，但可以使用 `CREATE OR REPLACE` 代替。
+* 目前，`ALGORITHM` 字段在 TiDB 中仅在语法上兼容，但不生效。TiDB 目前只支持 MERGE 算法。
 
-## 另请参阅
+## 相关链接
 
 * [DROP VIEW](/sql-statements/sql-statement-drop-view.md)
 * [CREATE TABLE](/sql-statements/sql-statement-create-table.md)

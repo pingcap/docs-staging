@@ -1,32 +1,32 @@
 ---
-title: 视图
-summary: 了解如何在 TiDB 中使用视图。
+title: Views
+summary: 学习如何在 TiDB 中使用视图。
 ---
 
-# 视图
+# Views
 
-本文档介绍如何在 TiDB 中使用视图。
+本文档描述了如何在 TiDB 中使用视图。
 
 ## 概述
 
-TiDB 支持视图。视图充当虚拟表，其架构由创建视图的 `SELECT` 语句定义。
+TiDB 支持视图。视图充当虚拟表，其模式由创建视图的 `SELECT` 语句定义。
 
-- 你可以创建视图来仅向用户公开安全的字段和数据，这确保了底层表中敏感字段和数据的安全性。
-- 你可以为经常使用的复杂查询创建视图，使复杂查询更简单和方便。
+- 你可以创建视图以仅向用户暴露安全的字段和数据，从而确保底层表中敏感字段和数据的安全。
+- 你可以为经常使用的复杂查询创建视图，以简化和方便复杂查询的操作。
 
 ## 创建视图
 
-在 TiDB 中，可以使用 `CREATE VIEW` 语句将复杂查询定义为视图。语法如下：
+在 TiDB 中，复杂查询可以通过 `CREATE VIEW` 语句定义为视图。语法如下：
 
 ```sql
 CREATE VIEW view_name AS query;
 ```
 
-注意，你不能创建与现有视图或表同名的视图。
+注意，不能创建与已有视图或表同名的视图。
 
-例如，[多表联接查询](/develop/dev-guide-join-tables.md)通过 `JOIN` 语句联接 `books` 表和 `ratings` 表，获取带有平均评分的书籍列表。
+例如，[多表连接查询](/develop/dev-guide-join-tables.md) 通过连接 `books` 表和 `ratings` 表，使用 `JOIN` 语句获取书籍的平均评分列表。
 
-为了便于后续查询，你可以使用以下语句将查询定义为视图：
+为了后续查询的方便，可以使用以下语句将查询定义为视图：
 
 ```sql
 CREATE VIEW book_with_ratings AS
@@ -38,20 +38,20 @@ GROUP BY b.id;
 
 ## 查询视图
 
-创建视图后，你可以像查询普通表一样使用 `SELECT` 语句查询视图。
+一旦创建了视图，可以像查询普通表一样使用 `SELECT` 语句查询视图。
 
 ```sql
 SELECT * FROM book_with_ratings LIMIT 10;
 ```
 
-当 TiDB 查询视图时，它会查询与该视图关联的 `SELECT` 语句。
+当 TiDB 查询视图时，它会查询与视图关联的 `SELECT` 语句。
 
 ## 更新视图
 
-目前，TiDB 中的视图不支持 `ALTER VIEW view_name AS query;`，你可以通过以下两种方式"更新"视图：
+目前，TiDB 中的视图不支持 `ALTER VIEW view_name AS query;`，你可以通过以下两种方式“更新”视图：
 
-- 使用 `DROP VIEW view_name;` 语句删除旧视图，然后使用 `CREATE VIEW view_name AS query;` 语句创建新视图来更新视图。
-- 使用 `CREATE OR REPLACE VIEW view_name AS query;` 语句覆盖同名的现有视图。
+- 使用 `DROP VIEW view_name;` 语句删除旧的视图，然后通过创建新视图的 `CREATE VIEW view_name AS query;` 语句更新视图。
+- 使用 `CREATE OR REPLACE VIEW view_name AS query;` 语句覆盖同名的已有视图。
 
 ```sql
 CREATE OR REPLACE VIEW book_with_ratings AS
@@ -113,26 +113,26 @@ DROP VIEW book_with_ratings;
 
 ## 限制
 
-有关 TiDB 中视图的限制，请参见[视图的限制](/views.md#limitations)。
+关于 TiDB 中视图的限制，请参见 [Limitations of Views](/views.md#limitations)。
 
 ## 阅读更多
 
-- [视图](/views.md)
+- [Views](/views.md)
 - [CREATE VIEW 语句](/sql-statements/sql-statement-create-view.md)
 - [DROP VIEW 语句](/sql-statements/sql-statement-drop-view.md)
 - [使用视图的 EXPLAIN 语句](/explain-views.md)
-- [TiFlink：使用 TiKV 和 Flink 的强一致性物化视图](https://github.com/tiflink/tiflink)
+- [TiFlink：使用 TiKV 和 Flink 实现强一致性物化视图](https://github.com/tiflink/tiflink)
 
 ## 需要帮助？
 
 <CustomContent platform="tidb">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](/support.md)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](/support.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](https://tidb.support.pingcap.com/)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
 
 </CustomContent>

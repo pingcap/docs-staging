@@ -1,11 +1,11 @@
 ---
 title: COLLATION_CHARACTER_SET_APPLICABILITY
-summary: "了解 `COLLATION_CHARACTER_SET_APPLICABILITY` INFORMATION_SCHEMA 表。"
+summary: 了解 `COLLATION_CHARACTER_SET_APPLICABILITY` INFORMATION_SCHEMA 表。
 ---
 
 # COLLATION_CHARACTER_SET_APPLICABILITY
 
-`COLLATION_CHARACTER_SET_APPLICABILITY` 表将排序规则映射到适用的字符集名称。与 `COLLATIONS` 表类似，它仅为了与 MySQL 兼容而包含。
+`COLLATION_CHARACTER_SET_APPLICABILITY` 表将排序规则映射到适用的字符集名称。与 `COLLATIONS` 表类似，它仅为兼容 MySQL 而包含。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -43,12 +43,12 @@ SELECT * FROM COLLATION_CHARACTER_SET_APPLICABILITY WHERE character_set_name='ut
 3 rows in set (0.00 sec)
 ```
 
-`COLLATION_CHARACTER_SET_APPLICABILITY` 表中各列的说明如下：
+`COLLATION_CHARACTER_SET_APPLICABILITY` 表中列的说明如下：
 
 * `COLLATION_NAME`：排序规则的名称。
 * `CHARACTER_SET_NAME`：排序规则所属的字符集名称。
 
-## 另请参阅
+## 相关链接
 
 - [`SHOW CHARACTER SET`](/sql-statements/sql-statement-show-character-set.md)
 - [`SHOW COLLATION`](/sql-statements/sql-statement-show-collation.md)

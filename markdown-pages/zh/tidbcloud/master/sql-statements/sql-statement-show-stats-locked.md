@@ -1,22 +1,22 @@
 ---
 title: SHOW STATS_LOCKED
-summary: TiDB 数据库中 SHOW STATS_LOCKED 的使用概览。
+summary: 关于 TiDB 数据库中 SHOW STATS_LOCKED 的使用概述。
 ---
 
 # SHOW STATS_LOCKED
 
-`SHOW STATS_LOCKED` 显示统计信息被锁定的表。
+`SHOW STATS_LOCKED` 用于显示统计信息已被锁定的表。
 
 目前，`SHOW STATS_LOCKED` 语句返回以下列：
 
-| 列名 | 描述            |
+| 列名 | 描述 |
 | -------- | ------------- |
 | `Db_name` | 数据库名称 |
 | `Table_name` | 表名称 |
 | `Partition_name` | 分区名称 |
-| `Status` | 统计信息状态，如 `locked` |
+| `Status` | 统计状态，例如 `locked` |
 
-## 语法图
+## 概述
 
 ```ebnf+diagram
 ShowStatsLockedStmt ::= 'SHOW' 'STATS_LOCKED' ShowLikeOrWhereOpt
@@ -26,7 +26,7 @@ ShowLikeOrWhereOpt ::= 'LIKE' SimpleExpr | 'WHERE' Expression
 
 ## 示例
 
-创建表 `t` 并向其中插入数据。当表 `t` 的统计信息未被锁定时，可以成功执行 `ANALYZE` 语句。
+创建表 `t`，并插入数据。当表 `t` 的统计信息未被锁定时，可以成功执行 `ANALYZE` 语句。
 
 ```sql
 mysql> CREATE TABLE t(a INT, b INT);
@@ -67,8 +67,8 @@ mysql> SHOW STATS_LOCKED;
 
 该语句是 TiDB 对 MySQL 语法的扩展。
 
-## 另请参阅
+## 相关链接
 
-* [统计信息](/statistics.md#lock-statistics)
+* [Statistics](/statistics.md#lock-statistics)
 * [LOCK STATS](/sql-statements/sql-statement-lock-stats.md)
 * [UNLOCK STATS](/sql-statements/sql-statement-unlock-stats.md)

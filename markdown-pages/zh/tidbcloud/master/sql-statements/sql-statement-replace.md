@@ -1,13 +1,13 @@
 ---
 title: REPLACE | TiDB SQL 语句参考
-summary: TiDB 数据库中 REPLACE 的使用概览。
+summary: 关于 TiDB 数据库中 REPLACE 的用法概述。
 ---
 
 # REPLACE
 
-`REPLACE` 语句在语义上是一个组合的 `DELETE`+`INSERT` 语句。它可以用来简化应用程序代码。
+`REPLACE` 语句在语义上是一个结合了 `DELETE`+`INSERT` 的语句。它可以用来简化应用程序代码。
 
-## 语法图
+## 语法概要
 
 ```ebnf+diagram
 ReplaceIntoStmt ::=
@@ -32,9 +32,9 @@ InsertValues ::=
 |   'SET' ColumnSetValue? ( ',' ColumnSetValue )*
 ```
 
-> **注意：**
+> **Note:**
 >
-> 从 v6.6.0 开始，TiDB 支持[资源控制](/tidb-resource-control.md)。你可以使用此功能在不同的资源组中以不同的优先级执行 SQL 语句。通过为这些资源组配置适当的配额和优先级，你可以更好地控制不同优先级 SQL 语句的调度。当启用资源控制时，语句优先级（`PriorityOpt`）将不再生效。建议你使用[资源控制](/tidb-resource-control.md)来管理不同 SQL 语句的资源使用。
+> 从 v6.6.0 版本开始，TiDB 支持 [Resource Control](/tidb-resource-control-ru-groups.md)。你可以利用此功能在不同的资源组中以不同优先级执行 SQL 语句。通过为这些资源组配置合适的配额和优先级，可以获得更好的调度控制。当启用资源控制后，语句优先级（`PriorityOpt`）将不再生效。建议你使用 [Resource Control](/tidb-resource-control-ru-groups.md) 来管理不同 SQL 语句的资源使用。
 
 ## 示例
 
@@ -72,9 +72,9 @@ mysql> SELECT * FROM t1;
 
 ## MySQL 兼容性
 
-TiDB 中的 `REPLACE` 语句与 MySQL 完全兼容。如果发现任何兼容性差异，请[报告问题](https://docs.pingcap.com/tidb/stable/support)。
+TiDB 中的 `REPLACE` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [DELETE](/sql-statements/sql-statement-delete.md)
 * [INSERT](/sql-statements/sql-statement-insert.md)

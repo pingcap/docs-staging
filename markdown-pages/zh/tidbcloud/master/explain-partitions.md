@@ -1,13 +1,13 @@
 ---
-title: 使用分区的 EXPLAIN 语句
+title: 使用分区解释语句
 summary: 了解 TiDB 中 EXPLAIN 语句返回的执行计划信息。
 ---
 
-# 使用分区的 EXPLAIN 语句
+# 使用分区解释语句
 
-`EXPLAIN` 语句显示 TiDB 执行查询时需要访问的分区。由于[分区裁剪](/partition-pruning.md)的存在，显示的分区通常只是整体分区的一个子集。本文档描述了常见分区表的一些优化，以及如何解释 `EXPLAIN` 的输出。
+`EXPLAIN` 语句显示 TiDB 在执行查询时需要访问的分区。由于 [partition pruning](/partition-pruning.md)，显示的分区通常只是全部分区的一个子集。本文档描述了一些针对常见分区表的优化方法，以及如何解读 `EXPLAIN` 的输出。
 
-本文档使用的示例数据：
+本文档中使用的示例数据：
 
 
 ```sql
@@ -52,7 +52,7 @@ SELECT SLEEP(1);
 ANALYZE TABLE t1;
 ```
 
-以下示例展示了对新创建的分区表执行的语句：
+以下示例展示了对新建分区表的查询语句：
 
 
 ```sql
@@ -72,14 +72,14 @@ EXPLAIN SELECT COUNT(*) FROM t1 WHERE d = '2017-06-01';
 5 rows in set (0.01 sec)
 ```
 
-从最内层（`└─TableFullScan_19`）算子开始，向上到根算子（`StreamAgg_21`）：
+从最内层（`└─TableFullScan_19`）操作符开始，逐步向根操作符（`StreamAgg_21`）回溯：
 
-* TiDB 成功识别出只需要访问一个分区（`p2017`）。这在 `access object` 下有标注。
-* 在算子 `└─TableFullScan_19` 中扫描分区本身，然后应用 `└─Selection_20` 来过滤出开始日期为 `2017-06-01 00:00:00.000000` 的行。
-* 匹配 `└─Selection_20` 的行然后在协处理器中进行流式聚合，协处理器原生支持 `count` 函数。
-* 每个协处理器请求然后将一行数据发送回 TiDB 内部的 `└─TableReader_22`，然后在 `StreamAgg_21` 下进行流式聚合，最后向客户端返回一行数据。
+* TiDB 成功识别出只需要访问一个分区（`p2017`）。这在 `access object` 中有所体现。
+* 该分区在操作符 `└─TableFullScan_19` 中被扫描，然后 `└─Selection_20` 被应用，用于筛选出开始日期为 `2017-06-01 00:00:00.000000` 的行。
+* 匹配 `└─Selection_20` 的行随后在协处理器中进行流式聚合，协处理器原生支持 `count` 函数。
+* 每个协处理请求返回一行数据到 TiDB 内部的 `└─TableReader_22`，然后在 `StreamAgg_21` 中进行流式聚合，最后将一行结果返回给客户端。
 
-在以下示例中，分区裁剪没有消除任何分区：
+在以下示例中，分区修剪未能排除任何分区：
 
 
 ```sql
@@ -121,9 +121,9 @@ EXPLAIN SELECT COUNT(*) FROM t1 WHERE YEAR(d) = 2017;
 27 rows in set (0.00 sec)
 ```
 
-从上面的输出可以看出：
+从上述输出可以看出：
 
-* TiDB 认为需要访问所有分区（`p2016..pMax`）。这是因为谓词 `YEAR(d) = 2017` 被认为是[非可查询参数化](https://en.wikipedia.org/wiki/Sargable)的。这个问题不是 TiDB 特有的。
-* 在扫描每个分区时，`Selection` 算子过滤掉不匹配 2017 年的行。
-* 在每个分区上执行流式聚合来计算匹配的行数。
-* 算子 `└─PartitionUnion_21` 将访问每个分区的结果进行合并。
+* TiDB 认为需要访问所有分区（`p2016..pMax`）。这是因为谓词 `YEAR(d) = 2017` 被认为是 [non-sargable](https://en.wikipedia.org/wiki/Sargable)。这个问题并非 TiDB 独有。
+* 每个分区在扫描时，`Selection` 操作符会筛选出年份不为 2017 的行。
+* 对每个分区进行流式聚合，统计匹配的行数。
+* 操作符 `└─PartitionUnion_21` 将访问每个分区的结果合并。

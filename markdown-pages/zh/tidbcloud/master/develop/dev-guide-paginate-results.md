@@ -5,7 +5,7 @@ summary: 介绍 TiDB 中的分页结果功能。
 
 # 分页结果
 
-要对大型查询结果进行分页，你可以以"分页"方式获取所需的部分。
+为了对大量查询结果进行分页，你可以以“分页”的方式获取你想要的部分。
 
 ## 分页查询结果
 
@@ -15,14 +15,14 @@ summary: 介绍 TiDB 中的分页结果功能。
 SELECT * FROM table_a t ORDER BY gmt_modified DESC LIMIT offset, row_count;
 ```
 
-`offset` 表示记录的起始编号，`row_count` 表示每页的记录数。TiDB 也支持 `LIMIT row_count OFFSET offset` 语法。
+其中，`offset` 表示起始记录数，`row_count` 表示每页的记录数。TiDB 也支持 `LIMIT row_count OFFSET offset` 语法。
 
-使用分页时，建议使用 `ORDER BY` 语句对查询结果进行排序，除非需要随机显示数据。
+在使用分页时，建议你使用 `ORDER BY` 语句对查询结果进行排序，除非需要以随机方式显示数据。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-例如，要让 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 应用程序的用户以分页方式查看最新发布的书籍，你可以使用 `LIMIT 0, 10` 语句，该语句返回结果列表的第一页，每页最多 10 条记录。要获取第二页，你可以将语句改为 `LIMIT 10, 10`。
+例如，为了让 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 应用的用户以分页方式查看最新发布的书籍，可以使用 `LIMIT 0, 10` 语句，返回结果列表的第一页，每页最多 10 条记录。若要获取第二页，可以将语句改为 `LIMIT 10, 10`。
 
 ```sql
 SELECT *
@@ -34,7 +34,7 @@ LIMIT 0, 10;
 </div>
 <div label="Java" value="java">
 
-在应用程序开发中，后端程序从前端接收 `page_number` 参数（表示请求的页码）和 `page_size` 参数（控制每页显示多少条记录），而不是 `offset` 参数。因此，在查询之前需要进行一些转换。
+在应用开发中，后端程序会从前端接收 `page_number`（请求的页码）和 `page_size`（每页的记录数）参数，而不是 `offset` 参数。因此，在查询之前需要进行一些转换。
 
 ```java
 public List<Book> getLatestBooksPage(Long pageNumber, Long pageSize) throws SQLException {
@@ -68,16 +68,16 @@ public List<Book> getLatestBooksPage(Long pageNumber, Long pageSize) throws SQLE
 </div>
 </SimpleTab>
 
-## 单字段主键表的分页批处理
+## 单字段主键表的分页批次
 
-通常，你可以使用主键或唯一索引对结果进行排序，并在 `LIMIT` 子句中使用 `offset` 关键字按指定行数分页来编写分页 SQL 语句。然后将这些页面包装到独立的事务中，以实现灵活的分页更新。但是，缺点也很明显。由于需要对主键或唯一索引进行排序，较大的偏移量会消耗更多的计算资源，特别是在数据量较大的情况下。
+通常，你可以使用主键或唯一索引编写分页 SQL 语句，通过对结果排序和在 `LIMIT` 子句中使用 `offset` 关键字，将分页拆分为指定行数的多个页面，然后将每个页面封装成独立的事务，以实现灵活的分页更新。然而，这种方式的缺点也很明显。由于主键或唯一索引需要排序，较大的 offset 会消耗更多的计算资源，尤其是在数据量较大的情况下。
 
-以下介绍一种更高效的分页批处理方法：
+以下介绍一种更高效的分页批次方法：
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-首先，按主键排序并调用窗口函数 `row_number()` 为每一行生成行号。然后，调用聚合函数按指定的页面大小对行号进行分组，并计算每页的最小值和最大值。
+首先，按主键排序数据，调用窗口函数 `row_number()` 为每一行生成行号。然后，调用聚合函数，将行号按指定的页面大小分组，计算每组的最小值和最大值。
 
 ```sql
 SELECT
@@ -107,12 +107,11 @@ ORDER BY page_num;
 ...
 |       20 | 4077418867 | 4294004213 |      1000 |
 +----------+------------+------------+-----------+
-20 rows in set (0.01 sec)
 ```
 
-接下来，使用 `WHERE id BETWEEN start_key AND end_key` 语句查询每个分片的数据。为了更高效地更新数据，你可以在修改数据时使用上述分片信息。
+接下来，使用 `WHERE id BETWEEN start_key AND end_key` 语句查询每个切片的数据。为了更高效地更新数据，可以在修改数据时使用上述切片信息。
 
-要删除第 1 页的所有图书基本信息，请将上述结果中第 1 页的 `start_key` 和 `end_key` 替换：
+例如，要删除第 1 页的所有书籍基本信息，将 `start_key` 和 `end_key` 替换为上述结果中第 1 页的值：
 
 ```sql
 DELETE FROM books
@@ -124,7 +123,7 @@ ORDER BY id;
 </div>
 <div label="Java" value="java">
 
-在 Java 中，定义一个 `PageMeta` 类来存储页面元信息。
+在 Java 中，定义一个 `PageMeta` 类用来存储分页元信息。
 
 ```java
 public class PageMeta<K> {
@@ -133,12 +132,11 @@ public class PageMeta<K> {
     private K endKey;
     private Long pageSize;
 
-    // 跳过 getter 和 setter。
-
+    // 省略 getter 和 setter
 }
 ```
 
-定义一个 `getPageMetaList()` 方法来获取页面元信息列表，然后定义一个 `deleteBooksByPageMeta()` 方法根据页面元信息批量删除数据。
+定义一个 `getPageMetaList()` 方法获取分页元信息列表，然后定义一个 `deleteBooksByPageMeta()` 方法，根据分页元信息批量删除数据。
 
 ```java
 public class BookDAO {
@@ -191,7 +189,7 @@ if (pageMetaList.size() > 0) {
 }
 ```
 
-以下语句用于按分页批量删除所有图书数据：
+以下语句用于按分页批量删除所有书籍数据：
 
 ```java
 List<PageMeta<Long>> pageMetaList = bookDAO.getPageMetaList();
@@ -207,17 +205,17 @@ pageMetaList.forEach((pageMeta) -> {
 </div>
 </SimpleTab>
 
-这种方法通过避免频繁数据排序操作造成的计算资源浪费，显著提高了批处理效率。
+该方法通过避免频繁排序操作，大大提升了批量处理的效率。
 
-## 复合主键表的分页批处理
+## 复合主键表的分页批次
 
 ### 非聚簇索引表
 
-对于非聚簇索引表（也称为"非索引组织表"），可以使用内部字段 `_tidb_rowid` 作为分页键，分页方法与单字段主键表相同。
+对于非聚簇索引表（也称为“非索引组织表”），可以使用内部字段 `_tidb_rowid` 作为分页键，分页方法与单字段主键表相同。
 
-> **提示：**
+> **Tip:**
 >
-> 你可以使用 `SHOW CREATE TABLE users;` 语句检查表主键是否使用[聚簇索引](/clustered-indexes.md)。
+> 你可以使用 `SHOW CREATE TABLE users;` 语句检查表的主键是否使用了 [clustered index](/clustered-indexes.md)。
 
 例如：
 
@@ -228,7 +226,7 @@ SELECT
     max(t._tidb_rowid) AS end_key,
     count(*) AS page_size
 FROM (
-    SELECT _tidb_rowid, row_number () OVER (ORDER BY _tidb_rowid) AS row_num
+    SELECT _tidb_rowid, row_number() OVER (ORDER BY _tidb_rowid) AS row_num
     FROM users
 ) t
 GROUP BY page_num
@@ -252,18 +250,17 @@ ORDER BY page_num;
 |        9 |      8001 |    9000 |      1000 |
 |       10 |      9001 |    9990 |       990 |
 +----------+-----------+---------+-----------+
-10 rows in set (0.00 sec)
 ```
 
 ### 聚簇索引表
 
-对于聚簇索引表（也称为"索引组织表"），你可以使用 `concat` 函数将多个列的值连接为一个键，然后使用窗口函数查询分页信息。
+对于聚簇索引表（也称为“索引组织表”），可以使用 `concat` 函数将多个列的值拼接为一个键，然后用窗口函数查询分页信息。
 
-需要注意的是，此时键是一个字符串，必须确保字符串的长度始终相同，以通过 `min` 和 `max` 聚合函数在分片中获得正确的 `start_key` 和 `end_key`。如果用于字符串连接的字段长度不固定，可以使用 `LPAD` 函数进行填充。
+需要注意的是，此时的键是字符串，必须确保字符串长度始终相同，才能通过 `min` 和 `max` 聚合函数正确获取切片中的 `start_key` 和 `end_key`。如果拼接字段的长度不固定，可以使用 `LPAD` 函数进行补齐。
 
-例如，你可以按以下方式对 `ratings` 表中的数据进行分页批处理：
+例如，可以如下实现 `ratings` 表数据的分页批次：
 
-使用以下语句创建元信息表。由于 `book_id` 和 `user_id` 是 `bigint` 类型，它们连接成的键无法转换为相同的长度，因此使用 `LPAD` 函数根据 `bigint` 的最大位数 19 用 `0` 填充长度。
+使用以下语句创建元信息表。由于由 `bigint` 类型的 `book_id` 和 `user_id` 拼接的键无法转换为相同长度，因此使用 `LPAD` 函数根据 `bigint` 的最大位数 19 进行补齐。
 
 ```sql
 SELECT
@@ -281,9 +278,9 @@ GROUP BY page_num
 ORDER BY page_num;
 ```
 
-> **注意：**
+> **Note:**
 >
-> 上述 SQL 语句执行为 `TableFullScan`。当数据量较大时，查询会很慢，你可以[使用 TiFlash](/tiflash/tiflash-overview.md#使用-tiflash) 加速。
+> 上述 SQL 语句作为 `TableFullScan` 执行。当数据量较大时，查询会较慢，可以[使用 TiFlash](/tiflash/tiflash-overview.md#use-tiflash) 来加速。
 
 结果如下：
 
@@ -300,10 +297,9 @@ ORDER BY page_num;
 |       29 | (0000000004002523918,0000000000902930986) | (0000000004147203315,0000000004090920746) |     10000 |
 |       30 | (0000000004147421329,0000000000319181561) | (0000000004294004213,0000000003586311166) |      9972 |
 +----------+-------------------------------------------+-------------------------------------------+-----------+
-30 rows in set (0.28 sec)
 ```
 
-要删除第 1 页的所有评分记录，请将上述结果中第 1 页的 `start_key` 和 `end_key` 替换：
+要删除第 1 页的所有评分记录，将 `start_key` 和 `end_key` 替换为上述结果中第 1 页的值：
 
 ```sql
 SELECT *
@@ -338,12 +334,12 @@ ORDER BY book_id, user_id;
 
 <CustomContent platform="tidb">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](/support.md)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或[提交支持工单](/support.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](https://tidb.support.pingcap.com/)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或[提交支持工单](https://tidb.support.pingcap.com/)。
 
 </CustomContent>

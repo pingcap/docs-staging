@@ -1,21 +1,21 @@
 ---
 title: CLIENT_ERRORS_SUMMARY_GLOBAL
-summary: "了解 `CLIENT_ERRORS_SUMMARY_GLOBAL` INFORMATION_SCHEMA 表。"
+summary: 了解关于 `CLIENT_ERRORS_SUMMARY_GLOBAL` INFORMATION_SCHEMA 表的信息。
 ---
 
 # CLIENT_ERRORS_SUMMARY_GLOBAL
 
-`CLIENT_ERRORS_SUMMARY_GLOBAL` 表提供了连接到 TiDB 服务器的客户端收到的所有 SQL 错误和警告的全局汇总。这些包括：
+表 `CLIENT_ERRORS_SUMMARY_GLOBAL` 提供了连接到 TiDB 服务器的所有客户端返回的 SQL 错误和警告的全局摘要。这些包括：
 
 * 格式错误的 SQL 语句。
 * 除零错误。
-* 尝试插入超出范围或重复的键值。
+* 尝试插入超出范围的重复键值。
 * 权限错误。
 * 表不存在。
 
-客户端错误通过 MySQL 服务器协议返回给客户端，应用程序需要采取适当的操作。`INFORMATION_SCHEMA.CLIENT_ERRORS_SUMMARY_GLOBAL` 表提供了一个高层次的概览，在应用程序没有正确处理（或记录）TiDB 服务器返回的错误的情况下特别有用。
+客户端错误通过 MySQL 服务器协议返回给客户端，应用程序应采取适当的措施。`INFORMATION_SCHEMA.CLIENT_ERRORS_SUMMARY_GLOBAL` 表提供了一个高级概览，在应用程序未正确处理（或记录） TiDB 服务器返回的错误的场景中非常有用。
 
-可以使用 `FLUSH CLIENT_ERRORS_SUMMARY` 语句重置汇总计数。该汇总信息对每个 TiDB 服务器都是本地的，并且仅保存在内存中。如果 TiDB 服务器重启，汇总信息将会丢失。
+可以使用语句 `FLUSH CLIENT_ERRORS_SUMMARY` 重置汇总计数。该摘要仅在每个 TiDB 服务器本地生效，并且只保留在内存中。重启 TiDB 服务器后，摘要将会丢失。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -40,14 +40,14 @@ DESC CLIENT_ERRORS_SUMMARY_GLOBAL;
 
 字段说明：
 
-* `ERROR_NUMBER`：返回的 MySQL 兼容错误号。
-* `ERROR_MESSAGE`：与错误号匹配的错误消息（以预处理语句形式）。
-* `ERROR_COUNT`：此错误返回的次数。
-* `WARNING_COUNT`：此警告返回的次数。
-* `FIRST_SEEN`：首次发送此错误（或警告）的时间。
-* `LAST_SEEN`：最近一次发送此错误（或警告）的时间。
+* `ERROR_NUMBER`：返回的 MySQL 兼容错误编号。
+* `ERROR_MESSAGE`：与错误编号对应的错误信息（以预处理语句形式）。
+* `ERROR_COUNT`：该错误被返回的次数。
+* `WARNING_COUNT`：该警告被返回的次数。
+* `FIRST_SEEN`：首次发送该错误（或警告）的时间。
+* `LAST_SEEN`：最近一次发送该错误（或警告）的时间。
 
-以下示例展示了连接到本地 TiDB 服务器时生成的警告。执行 `FLUSH CLIENT_ERRORS_SUMMARY` 后重置汇总信息：
+以下示例显示在连接到本地 TiDB 服务器时生成的警告。执行 `FLUSH CLIENT_ERRORS_SUMMARY` 后，摘要会被重置：
 
 ```sql
 SELECT 0/0;

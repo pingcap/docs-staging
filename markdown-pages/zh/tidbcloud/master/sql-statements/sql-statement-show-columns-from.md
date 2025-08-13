@@ -1,17 +1,17 @@
 ---
-title: SHOW [FULL] COLUMNS FROM | TiDB SQL 语句参考
-summary: TiDB 数据库中 SHOW [FULL] COLUMNS FROM 的使用概述。
+title: SHOW [FULL] COLUMNS FROM | TiDB SQL Statement Reference
+summary: 关于在 TiDB 数据库中使用 SHOW [FULL] COLUMNS FROM 的概述。
 ---
 
 # SHOW [FULL] COLUMNS FROM
 
-`SHOW [FULL] COLUMNS FROM <table_name>` 语句以有用的表格格式描述表或视图的列。可选关键字 `FULL` 显示当前用户对该列的权限，以及来自表定义的 `comment`。
+语句 `SHOW [FULL] COLUMNS FROM <table_name>` 以有用的表格格式描述了表或视图的列。可选的关键字 `FULL` 会显示当前用户对该列的权限，以及表定义中的 `comment`。
 
-语句 `SHOW [FULL] FIELDS FROM <table_name>`、`DESC <table_name>`、`DESCRIBE <table_name>` 和 `EXPLAIN <table_name>` 都是此语句的别名。
+语句 `SHOW [FULL] FIELDS FROM <table_name>`、`DESC <table_name>`、`DESCRIBE <table_name>` 和 `EXPLAIN <table_name>` 是该语句的别名。
 
-> **注意：**
+> **Note:**
 >
-> `DESC TABLE <table_name>`、`DESCRIBE TABLE <table_name>` 和 `EXPLAIN TABLE <table_name>` 与上述语句不等价。它们是 [`DESC SELECT * FROM <table_name>`](/sql-statements/sql-statement-explain.md) 的别名。
+> `DESC TABLE <table_name>`、`DESCRIBE TABLE <table_name>` 和 `EXPLAIN TABLE <table_name>` 不等同于上述语句。它们是 [`DESC SELECT * FROM <table_name>`](/sql-statements/sql-statement-explain.md) 的别名。
 
 ## 语法概要
 
@@ -34,51 +34,51 @@ mysql> CREATE VIEW v1 AS SELECT 1;
 Query OK, 0 rows affected (0.11 sec)
 
 mysql> SHOW COLUMNS FROM v1;
-+-------+-----------+------+------+---------+-------+
-| Field | Type      | Null | Key  | Default | Extra |
-+-------+-----------+------+------+---------+-------+
-| 1     | bigint(1) | YES  |      | NULL    |       |
-+-------+-----------+------+------+---------+-------+
++-------+--------+------+------+---------+-------+
+| Field | Type   | Null | Key  | Default | Extra |
++-------+--------+------+------+---------+-------+
+| 1     | bigint | YES  |      | NULL    |       |
++-------+--------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
 mysql> DESC v1;
-+-------+-----------+------+------+---------+-------+
-| Field | Type      | Null | Key  | Default | Extra |
-+-------+-----------+------+------+---------+-------+
-| 1     | bigint(1) | YES  |      | NULL    |       |
-+-------+-----------+------+------+---------+-------+
++-------+--------+------+------+---------+-------+
+| Field | Type   | Null | Key  | Default | Extra |
++-------+--------+------+------+---------+-------+
+| 1     | bigint | YES  |      | NULL    |       |
++-------+--------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
 mysql> DESCRIBE v1;
-+-------+-----------+------+------+---------+-------+
-| Field | Type      | Null | Key  | Default | Extra |
-+-------+-----------+------+------+---------+-------+
-| 1     | bigint(1) | YES  |      | NULL    |       |
-+-------+-----------+------+------+---------+-------+
++-------+--------+------+------+---------+-------+
+| Field | Type   | Null | Key  | Default | Extra |
++-------+--------+------+------+---------+-------+
+| 1     | bigint | YES  |      | NULL    |       |
++-------+--------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
 mysql> EXPLAIN v1;
-+-------+-----------+------+------+---------+-------+
-| Field | Type      | Null | Key  | Default | Extra |
-+-------+-----------+------+------+---------+-------+
-| 1     | bigint(1) | YES  |      | NULL    |       |
-+-------+-----------+------+------+---------+-------+
++-------+--------+------+------+---------+-------+
+| Field | Type   | Null | Key  | Default | Extra |
++-------+--------+------+------+---------+-------+
+| 1     | bigint | YES  |      | NULL    |       |
++-------+--------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
 mysql> SHOW FIELDS FROM v1;
-+-------+-----------+------+------+---------+-------+
-| Field | Type      | Null | Key  | Default | Extra |
-+-------+-----------+------+------+---------+-------+
-| 1     | bigint(1) | YES  |      | NULL    |       |
-+-------+-----------+------+------+---------+-------+
++-------+--------+------+------+---------+-------+
+| Field | Type   | Null | Key  | Default | Extra |
++-------+--------+------+------+---------+-------+
+| 1     | bigint | YES  |      | NULL    |       |
++-------+--------+------+------+---------+-------+
 1 row in set (0.00 sec)
 
 mysql> SHOW FULL COLUMNS FROM v1;
-+-------+-----------+-----------+------+------+---------+-------+---------------------------------+---------+
-| Field | Type      | Collation | Null | Key  | Default | Extra | Privileges                      | Comment |
-+-------+-----------+-----------+------+------+---------+-------+---------------------------------+---------+
-| 1     | bigint(1) | NULL      | YES  |      | NULL    |       | select,insert,update,references |         |
-+-------+-----------+-----------+------+------+---------+-------+---------------------------------+---------+
++-------+--------+-----------+------+------+---------+-------+---------------------------------+---------+
+| Field | Type   | Collation | Null | Key  | Default | Extra | Privileges                      | Comment |
++-------+--------+-----------+------+------+---------+-------+---------------------------------+---------+
+| 1     | bigint | NULL      | YES  |      | NULL    |       | select,insert,update,references |         |
++-------+--------+-----------+------+------+---------+-------+---------------------------------+---------+
 1 row in set (0.00 sec)
 
 mysql> SHOW FULL COLUMNS FROM mysql.user;
@@ -129,8 +129,8 @@ mysql> SHOW FULL COLUMNS FROM mysql.user;
 
 ## MySQL 兼容性
 
-TiDB 中的 `SHOW [FULL] COLUMNS FROM` 语句与 MySQL 完全兼容。如果发现任何兼容性差异，请[报告 bug](https://docs.pingcap.com/tidb/stable/support)。
+TiDB 中的 `SHOW [FULL] COLUMNS FROM` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [SHOW CREATE TABLE](/sql-statements/sql-statement-show-create-table.md)

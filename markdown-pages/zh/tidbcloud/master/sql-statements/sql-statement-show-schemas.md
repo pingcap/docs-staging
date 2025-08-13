@@ -1,6 +1,6 @@
 ---
-title: SHOW SCHEMAS | TiDB SQL 语句参考
-summary: TiDB 数据库中 SHOW SCHEMAS 的使用概述。
+title: SHOW SCHEMAS | TiDB SQL Statement Reference
+summary: 对 TiDB 数据库中 SHOW SCHEMAS 的用法进行概述。
 ---
 
 # SHOW SCHEMAS

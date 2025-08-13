@@ -1,17 +1,17 @@
 ---
-title: 非事务 DML 语句
-summary: 了解 TiDB 中的非事务 DML 语句。通过牺牲原子性和隔离性，将一个 DML 语句拆分为多个语句按顺序执行，从而提高批量数据处理场景下的稳定性和易用性。
+title: 非事务性 DML 语句
+summary: 了解 TiDB 中的非事务性 DML 语句。在牺牲原子性和隔离性的情况下，将一个 DML 语句拆分成多个语句依次执行，从而提升批量数据处理场景中的稳定性和易用性。
 ---
 
-# 非事务 DML 语句
+# 非事务性 DML 语句
 
-本文档介绍 TiDB 中非事务 DML 语句的使用场景、使用方法和限制。此外，还说明了实现原理和常见问题。
+本文档描述了 TiDB 中非事务性 DML 语句的使用场景、使用方法及限制。此外，还将说明其实现原理和常见问题。
 
-非事务 DML 语句是将一个 DML 语句拆分成多个 SQL 语句（即多个批次）按顺序执行。它以牺牲事务的原子性和隔离性为代价，提高了批量数据处理的性能和易用性。
+非事务性 DML 语句是将一个 DML 语句拆分成多个 SQL 语句（即多个批次）依次执行的方式。它在提升批量数据处理性能和易用性的同时，牺牲了事务的原子性和隔离性。
 
-通常，内存消耗较大的事务需要拆分成多个 SQL 语句以绕过事务大小限制。非事务 DML 语句将这个过程集成到 TiDB 内核中以实现相同的效果。通过拆分 SQL 语句来理解非事务 DML 语句的效果会很有帮助。可以使用 `DRY RUN` 语法来预览拆分后的语句。
+通常，内存占用较大的事务需要拆分成多个 SQL 语句以绕过事务大小限制。非事务性 DML 将这一过程集成到 TiDB 内核中，实现相同效果。理解通过拆分 SQL 语句的非事务性 DML 语句的效果，有助于优化批量操作。可以使用 `DRY RUN` 语法预览拆分后的语句。
 
-非事务 DML 语句包括：
+非事务性 DML 语句包括：
 
 - `INSERT INTO ... SELECT`
 - `REPLACE INTO .. SELECT`
@@ -22,38 +22,38 @@ summary: 了解 TiDB 中的非事务 DML 语句。通过牺牲原子性和隔离
 
 > **注意：**
 >
-> - 非事务 DML 语句不保证语句的原子性和隔离性，且与原始 DML 语句不等价。
-> - 将 DML 语句重写为非事务 DML 语句后，不能假设其行为与原始语句一致。
-> - 在使用非事务 DML 之前，需要分析拆分后的语句是否会相互影响。
+> - 非事务性 DML 语句不保证语句的原子性和隔离性，不等同于原始的 DML 语句。
+> - 将 DML 语句重写为非事务性 DML 后，不应假设其行为与原始语句完全一致。
+> - 在使用非事务性 DML 前，需要分析拆分的语句是否会相互影响。
 
 ## 使用场景
 
-在大数据处理场景中，你可能经常需要对大批量数据执行相同的操作。如果直接使用单个 SQL 语句执行操作，事务大小可能会超出限制并影响执行性能。
+在大数据处理场景中，常常需要对大量数据执行相同操作。如果直接用单个 SQL 语句执行，可能会超出事务大小限制，影响执行性能。
 
-批量数据处理通常与在线应用操作在时间或数据上没有重叠。当不存在并发操作时，隔离性（ACID 中的 I）是不必要的。如果批量数据操作是幂等的或容易重试，原子性也是不必要的。如果你的应用程序既不需要数据隔离也不需要原子性，可以考虑使用非事务 DML 语句。
+批量数据处理通常与线上应用操作没有时间或数据上的重叠。在没有并发操作的情况下，隔离（ACID 中的 I）是不必要的。如果批量数据操作是幂等的或易于重试，也不需要保证原子性。如果你的应用不需要数据隔离或原子性，可以考虑使用非事务性 DML。
 
-非事务 DML 语句用于在某些场景下绕过大事务的大小限制。使用一条语句完成原本需要手动拆分事务的任务，具有更高的执行效率和更少的资源消耗。
+非事务性 DML 主要用于绕过某些场景下的大事务大小限制。用一条语句完成本需手动拆分事务的任务，提升执行效率，减少资源消耗。
 
-例如，要删除过期数据，如果你确保没有应用程序会访问过期数据，可以使用非事务 DML 语句来提高 `DELETE` 性能。
+例如，为了删除过期数据，如果确保没有应用访问过期数据，可以用非事务性 DML 提高 `DELETE` 的性能。
 
 ## 前提条件
 
-在使用非事务 DML 语句之前，请确保满足以下条件：
+在使用非事务性 DML 语句前，请确保满足以下条件：
 
-- 语句不需要原子性，允许在执行结果中有些行被修改而有些行保持不变。
-- 语句是幂等的，或者你准备根据错误消息对部分数据进行重试。如果系统变量设置为 `tidb_redact_log = 1` 和 `tidb_nontransactional_ignore_error = 1`，则此语句必须是幂等的。否则，当语句部分失败时，无法准确定位失败的部分。
-- 要操作的数据没有其他并发写入，即同时不会被其他语句更新。否则，可能会出现漏写、错写、多次修改同一行等意外结果。
-- 语句不修改语句本身要读取的数据。否则，后续批次将读取到前一批次写入的数据，容易造成意外结果。
+- 语句不需要原子性，允许部分行被修改，部分行保持不变。
+- 语句是幂等的，或你已准备好根据错误信息对部分数据进行重试。如果系统变量 `tidb_redact_log = 1` 和 `tidb_nontransactional_ignore_error = 1`，则此语句必须是幂等的，否则部分失败时无法准确定位失败部分。
+- 操作的数据没有其他并发写入，即不会被其他语句同时更新，否则可能出现遗漏写入、错误写入或多次修改同一行的情况。
+- 语句不修改自己要读取的数据，否则后续批次会读取前一批写入的数据，容易导致意外结果。
 
-    - 在非事务 `INSERT INTO ... SELECT` 语句中从同一个表中选择并修改时，避免修改分片列。否则，多个批次可能会读取同一行并多次插入数据：
-        - 不建议使用 `BATCH ON test.t.id LIMIT 10000 INSERT INTO t SELECT id+1, value FROM t;`
-        - 建议使用 `BATCH ON test.t.id LIMIT 10000 INSERT INTO t SELECT id, value FROM t;`
-        - 如果分片列 `id` 具有 `AUTO_INCREMENT` 属性，建议使用 `BATCH ON test.t.id LIMIT 10000 INSERT INTO t(value) SELECT value FROM t;`
-    - 避免在非事务 `UPDATE`、`INSERT ... ON DUPLICATE KEY UPDATE` 或 `REPLACE INTO` 语句中更新分片列：
-        - 例如，对于非事务 `UPDATE` 语句，拆分的 SQL 语句按顺序执行。前一批次的修改在提交后被下一批次读取，导致同一行数据被多次修改。
-        - 这些语句不支持 `BATCH ON test.t.id LIMIT 10000 UPDATE t SET test.t.id = test.t.id-1;`
-        - 不建议使用 `BATCH ON test.t.id LIMIT 1 INSERT INTO t SELECT id+1, value FROM t ON DUPLICATE KEY UPDATE id = id + 1;`
-    - 分片列不应该用作 Join 键。例如，以下示例使用分片列 `test.t.id` 作为 Join 键，导致非事务 `UPDATE` 语句多次修改同一行：
+    - 避免在非事务性 `INSERT INTO ... SELECT` 语句中同时修改同一表的分片列，否则多批次可能读取相同的行并多次插入：
+        - 不建议使用 `BATCH ON test.t.id LIMIT 10000 INSERT INTO t SELECT id+1, value FROM t;`。
+        - 推荐使用 `BATCH ON test.t.id LIMIT 10000 INSERT INTO t SELECT id, value FROM t;`。
+        - 如果分片列 `id` 具有 `AUTO_INCREMENT` 属性，建议使用 `BATCH ON test.t.id LIMIT 10000 INSERT INTO t(value) SELECT value FROM t;`。
+    - 避免在非事务性 `UPDATE`、`INSERT ... ON DUPLICATE KEY UPDATE` 或 `REPLACE INTO` 语句中修改分片列：
+        - 例如，非事务性 `UPDATE` 语句，拆分的 SQL 语句依次执行，前一批的修改在下一批提交后被读取，导致同一行数据被多次修改。
+        - 这些语句不支持 `BATCH ON test.t.id LIMIT 10000 UPDATE t SET test.t.id = test.t.id-1;`。
+        - 不建议使用 `BATCH ON test.t.id LIMIT 1 INSERT INTO t SELECT id+1, value FROM t ON DUPLICATE KEY UPDATE id = id + 1;`。
+    - 分片列不应作为 Join 键。例如，以下示例使用 `test.t.id` 作为 Join 键，导致非事务性 `UPDATE` 多次修改同一行：
 
         ```sql
         CREATE TABLE t(id int, v int, key(id));
@@ -64,20 +64,20 @@ summary: 了解 TiDB 中的非事务 DML 语句。通过牺牲原子性和隔离
         SELECT * FROM t2; -- (4, 1) (4, 2) (4, 4)
         ```
 
-- 语句满足[限制条件](#限制条件)。
-- 不建议对该 DML 语句要读取或写入的表执行并发 DDL 操作。
+- 语句符合 [`restrictions`](#restrictions)。
+- 不建议对将被此 DML 语句读写的表进行并发 DDL 操作。
 
-> **警告：**
+> **Warning:**
 >
-> 如果同时启用 `tidb_redact_log` 和 `tidb_nontransactional_ignore_error`，你可能无法获得每个批次的完整错误信息，也无法仅重试失败的批次。因此，如果这两个系统变量都打开，非事务 DML 语句必须是幂等的。
+> 如果同时开启 `tidb_redact_log` 和 `tidb_nontransactional_ignore_error`，可能无法获取每个批次的完整错误信息，也不能只重试失败的批次。因此，两个系统变量同时开启时，非事务性 DML 语句必须是幂等的。
 
 ## 使用示例
 
-### 使用非事务 DML 语句
+### 使用非事务性 DML 语句
 
-以下各节通过示例说明非事务 DML 语句的使用：
+以下部分介绍非事务性 DML 语句的使用方法及示例：
 
-创建一个具有以下模式的表 `t`：
+创建表 `t`，结构如下：
 
 
 ```sql
@@ -88,7 +88,7 @@ CREATE TABLE t (id INT, v INT, KEY(id));
 Query OK, 0 rows affected
 ```
 
-向表 `t` 中插入一些数据。
+向表 `t` 插入一些数据。
 
 
 ```sql
@@ -99,7 +99,7 @@ INSERT INTO t VALUES (1, 2), (2, 3), (3, 4), (4, 5), (5, 6);
 Query OK, 5 rows affected
 ```
 
-以下操作使用非事务 DML 语句删除表 `t` 的列 `v` 上小于整数 6 的行。此语句被拆分为两个 SQL 语句，批次大小为 2，按 `id` 列分片并执行。
+以下操作使用非事务性 DML 语句删除 `v` 列值小于 6 的行。此语句拆分为两个 SQL 语句，批次大小为 2，按 `id` 列分片执行。
 
 
 ```sql
@@ -115,7 +115,7 @@ BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6;
 1 row in set
 ```
 
-检查上述非事务 DML 语句的删除结果。
+检查上述非事务性 DML 语句的删除结果。
 
 
 ```sql
@@ -131,14 +131,14 @@ SELECT * FROM t;
 1 row in set
 ```
 
-以下示例说明如何使用多表连接。首先，创建表 `t2` 并插入数据：
+以下示例描述如何使用多表连接。首先，创建表 `t2` 并插入数据：
 
 ```sql
 CREATE TABLE t2(id int, v int, key(id));
 INSERT INTO t2 VALUES (1,1), (3,3), (5,5);
 ```
 
-然后，通过连接表 `t` 和 `t2` 更新表 `t2` 的数据。注意需要指定分片列的完整数据库名、表名和列名（`test.t.id`）：
+然后，通过连接表 `t` 和 `t2` 更新 `t2` 中的数据。注意需要指定分片列以及完整的数据库名、表名和列名（`test.t.id`）：
 
 ```sql
 BATCH ON test.t._tidb_rowid LIMIT 1 UPDATE t JOIN t2 ON t.id = t2.id SET t2.id = t2.id+1;
@@ -162,7 +162,7 @@ SELECT * FROM t2;
 
 ### 查看执行进度
 
-在非事务 DML 语句执行期间，可以使用 `SHOW PROCESSLIST` 查看进度。返回结果中的 `Time` 字段表示当前批次执行的时间消耗。日志和慢日志也会记录非事务 DML 执行过程中每个拆分语句的进度。例如：
+在执行非事务性 DML 语句期间，可以使用 `SHOW PROCESSLIST` 查看进度。返回结果中的 `Time` 字段表示当前批次执行的耗时。日志和慢日志也会记录每个拆分语句的执行进度。例如：
 
 
 ```sql
@@ -178,17 +178,17 @@ SHOW PROCESSLIST;
 +------+------+--------------------+--------+---------+------+------------+----------------------------------------------------------------------------------------------------+
 ```
 
-### 终止非事务 DML 语句
+### 终止非事务性 DML 语句
 
-要终止非事务 DML 语句，可以使用 `KILL TIDB <processlist_id>`。然后 TiDB 将取消当前正在执行的批次之后的所有批次。你可以从日志中获取执行结果。
+可以使用 `KILL TIDB <processlist_id>` 来终止非事务性 DML 语句。TiDB 会取消当前正在执行的批次之后的所有批次。可以从日志中获取执行结果。
 
-有关 `KILL TIDB` 的更多信息，请参见参考 [`KILL`](/sql-statements/sql-statement-kill.md)。
+关于 `KILL TIDB` 的更多信息，请参见参考 [`KILL`](/sql-statements/sql-statement-kill.md)。
 
 ### 查询批次划分语句
 
-在非事务 DML 语句执行期间，内部使用一个语句将 DML 语句划分为多个批次。要查询此批次划分语句，可以在此非事务 DML 语句中添加 `DRY RUN QUERY`。然后 TiDB 将不执行此查询和后续的 DML 操作。
+在执行非事务性 DML 语句期间，系统会内部使用一条语句将 DML 语句拆分成多个批次。可以在此非事务性 DML 语句中添加 `DRY RUN QUERY` 来查询此批次划分语句。这样 TiDB 不会执行此查询及后续的 DML 操作。
 
-以下语句查询执行 `BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6` 期间的批次划分语句：
+例如，查询 `BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6` 执行期间的批次划分语句：
 
 
 ```sql
@@ -204,10 +204,11 @@ BATCH ON id LIMIT 2 DRY RUN QUERY DELETE FROM t WHERE v < 6;
 1 row in set
 ```
 
-### 查询第一个和最后一个批次对应的语句
+### 查询对应第一个和最后一个批次的语句
 
-要查询非事务 DML 语句中第一个和最后一个批次对应的实际 DML 语句，可以在此非事务 DML 语句中添加 `DRY RUN`。然后，TiDB 只划分批次而不执行这些 SQL 语句。由于可能有很多批次，不显示所有批次，只显示第一个和最后一个。
+要查询非事务性 DML 语句中第一个和最后一个批次对应的实际 DML 语句，可以在此非事务性 DML 语句中添加 `DRY RUN`。这样 TiDB 只会拆分批次，不会执行这些 SQL 语句。由于批次数量可能较多，只会显示第一个和最后一个批次。
 
+例如：
 
 ```sql
 BATCH ON id LIMIT 2 DRY RUN DELETE FROM t WHERE v < 6;
@@ -225,7 +226,7 @@ BATCH ON id LIMIT 2 DRY RUN DELETE FROM t WHERE v < 6;
 
 ### 使用优化器提示
 
-如果 `DELETE` 语句中原本支持优化器提示，则非事务 `DELETE` 语句中也支持优化器提示。提示的位置与普通 `DELETE` 语句中的位置相同：
+如果在 `DELETE` 语句中原本支持优化器提示，则在非事务性 `DELETE` 语句中也支持。提示的位置与普通 `DELETE` 语句相同：
 
 
 ```sql
@@ -234,95 +235,94 @@ BATCH ON id LIMIT 2 DELETE /*+ USE_INDEX(t)*/ FROM t WHERE v < 6;
 
 ## 最佳实践
 
-要使用非事务 DML 语句，建议按以下步骤操作：
+为了使用非事务性 DML 语句，建议按照以下步骤操作：
 
-1. 选择合适的[分片列](#参数说明)。建议使用整数或字符串类型。
-2. 在非事务 DML 语句中添加 `DRY RUN QUERY`，手动执行查询，并确认 DML 语句影响的数据范围大致正确。
-3. 在非事务 DML 语句中添加 `DRY RUN`，手动执行查询，并检查拆分语句和执行计划。需要注意以下几点：
+1. 选择合适的 [`shard column`](#parameter-description)。推荐使用整数或字符串类型。
+2. 在非事务性 DML 语句中添加 `DRY RUN QUERY`，手动执行查询，确认 DML 语句影响的数据范围大致正确。
+3. 在非事务性 DML 语句中添加 `DRY RUN`，手动执行查询，检查拆分的语句和执行计划。注意以下几点：
 
-    - 拆分语句是否能读取前一条语句写入的结果，这可能会导致异常。
-    - 索引选择性。
+    - 拆分的语句是否能读取到前一批写入的结果，可能引发异常。
+    - 索引的选择性。
     - TiDB 自动选择的分片列是否会被修改。
 
-4. 执行非事务 DML 语句。
-5. 如果报错，从错误消息或日志中获取具体失败的数据范围，重试或手动处理。
+4. 执行非事务性 DML 语句。
+5. 如果出现错误，从错误信息或日志中获取具体失败的数据范围，进行重试或手动处理。
 
 ## 参数说明
 
-| 参数 | 说明 | 默认值 | 是否必需 | 建议值 |
+| 参数 | 描述 | 默认值 | 必填 | 推荐值 |
 | :-- | :-- | :-- | :-- | :-- |
-| 分片列 | 用于分片批次的列，例如上述非事务 DML 语句 `BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6` 中的 `id` 列。 | TiDB 尝试自动选择分片列（不推荐）。 | 否 | 选择能以最高效方式满足 `WHERE` 条件的列。 |
-| 批次大小 | 用于控制每个批次的大小。批次数是 DML 操作被拆分成的 SQL 语句数，例如上述非事务 DML 语句 `BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6` 中的 `LIMIT 2`。批次越多，批次大小越小。 | 不适用 | 是 | 1000-1000000。批次太小或太大都会导致性能下降。 |
+| Shard column | 用于分片批次的列，例如上述非事务性 DML 语句 `BATCH ON id LIMIT 2 DELETE FROM t WHERE v < 6` 中的 `id` 列。 | TiDB 尝试自动选择分片列（不推荐）。 | 否 | 选择一个能满足 `WHERE` 条件且效率较高的列。 |
+| Batch size | 用于控制每个批次的大小。拆分成的 SQL 语句数量即为 DML 操作的批次数，例如上述非事务性 DML 语句中的 `LIMIT 2`。批次越多，单个批次越小。 | N/A | 是 | 1000-1000000。批次过小或过大都会导致性能下降。 |
 
 ### 如何选择分片列
 
-非事务 DML 语句使用一列作为数据分批的依据，即分片列。为了提高执行效率，分片列需要使用索引。不同索引和分片列带来的执行效率可能相差几十倍。选择分片列时，请考虑以下建议：
+非事务性 DML 语句以某列作为数据拆分的依据，即分片列。为了提高执行效率，分片列应使用索引。不同索引和分片列带来的执行效率可能相差数十倍。在选择分片列时，建议考虑以下建议：
 
-- 如果你了解应用程序的数据分布，根据 `WHERE` 条件，选择分批后数据范围较小的列。
-    - 理想情况下，`WHERE` 条件可以利用分片列的索引来减少每个批次需要扫描的数据量。例如，有一个记录每个事务开始和结束时间的事务表，你想删除所有结束时间在一个月之前的事务记录。如果事务的开始时间有索引，并且事务的开始和结束时间相对接近，那么可以选择开始时间列作为分片列。
-    - 不太理想的情况是，分片列的数据分布与 `WHERE` 条件完全独立，分片列的索引不能用于减少数据扫描范围。
-- 当存在聚簇索引时，建议使用主键（包括 `INT` 主键和 `_tidb_rowid`）作为分片列，这样执行效率更高。
+- 如果你了解应用的数据分布，根据 `WHERE` 条件，选择拆分后范围较小的列。
+    - 理想情况下，`WHERE` 条件能利用分片列的索引，减少每批扫描的数据量。例如，有一张事务表记录每笔事务的开始和结束时间，你想删除所有结束时间在一个月前的事务记录。如果事务的开始时间有索引，且开始和结束时间相对接近，可以选择开始时间列作为分片列。
+    - 在不理想的情况下，分片列的数据分布与 `WHERE` 条件完全无关，索引无法减少扫描范围。
+- 存在聚簇索引时，建议使用主键（包括 `INT` 主键和 `_tidb_rowid`）作为分片列，以提升效率。
 - 选择重复值较少的列。
 
-你也可以选择不指定分片列。然后，TiDB 将默认使用 `handle` 的第一列作为分片列。但如果聚簇索引的第一列是非事务 DML 语句不支持的数据类型（即 `ENUM`、`BIT`、`SET`、`JSON`），TiDB 将报错。你可以根据应用程序需求选择合适的分片列。
+你也可以选择不指定分片列。此时，TiDB 默认使用 `handle` 的第一个列作为分片列。但如果主键的第一个列类型不支持非事务性 DML（如 `ENUM`、`BIT`、`SET`、`JSON`），则会报错。可以根据应用需求选择合适的分片列。
 
 ### 如何设置批次大小
 
-在非事务 DML 语句中，批次大小越大，拆分的 SQL 语句越少，每个 SQL 语句的执行速度越慢。最佳批次大小取决于工作负载。建议从 50000 开始。批次大小太小或太大都会导致执行效率降低。
+在非事务性 DML 语句中，批次越大，拆分的 SQL 语句越少，每个 SQL 执行越慢。最优批次大小依赖于工作负载。建议从 50000 开始。批次过小或过大都可能导致性能下降。
 
-每个批次的信息存储在内存中，因此太多批次会显著增加内存消耗。这就解释了为什么批次大小不能太小。非事务语句存储批次信息消耗的内存上限与 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 相同，超过此限制时触发的操作由配置项 [`tidb_mem_oom_action`](/system-variables.md#tidb_mem_oom_action-new-in-v610) 决定。
+每个批次的信息存储在内存中，批次数过多会显著增加内存消耗。这也是为什么批次不能太小的原因。存储批次信息的最大内存限制与 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 相同，超出此限制会触发 [`tidb_mem_oom_action`](/system-variables.md#tidb_mem_oom_action-new-in-v610) 的配置行为。
 
-## 限制条件
+## 限制
 
-以下是非事务 DML 语句的硬性限制。如果不满足这些限制，TiDB 将报错。
+以下是对非事务性 DML 语句的硬性限制。如果不满足这些限制，TiDB 会报错。
 
 - DML 语句不能包含 `ORDER BY` 或 `LIMIT` 子句。
 - 不支持子查询或集合操作。
-- 分片列必须有索引。索引可以是单列索引，也可以是联合索引的第一列。
+- 分片列必须有索引。索引可以是单列索引，也可以是联合索引的第一个列。
 - 必须在 [`autocommit`](/system-variables.md#autocommit) 模式下使用。
-- 启用 batch-dml 时不能使用。
-- 设置 [`tidb_snapshot`](/read-historical-data.md) 时不能使用。
-- 不能与 `prepare` 语句一起使用。
-- 不支持将 `ENUM`、`BIT`、`SET`、`JSON` 类型作为分片列。
-- 不支持[临时表](/temporary-tables.md)。
-- 不支持[公用表表达式](/develop/dev-guide-use-common-table-expression.md)。
+- 在启用批量 DML 时不能使用。
+- 在设置了 [`tidb_snapshot`](/read-historical-data.md) 时不能使用。
+- 不能与 `prepare` 语句配合使用。
+- 不支持 `ENUM`、`BIT`、`SET`、`JSON` 类型作为分片列。
+- 不支持 [临时表](/temporary-tables.md)。
+- 不支持 [公共表表达式](/develop/dev-guide-use-common-table-expression.md)。
 
 ## 控制批次执行失败
 
-非事务 DML 语句不满足原子性。有些批次可能成功，有些可能失败。系统变量 [`tidb_nontransactional_ignore_error`](/system-variables.md#tidb_nontransactional_ignore_error-new-in-v610) 控制非事务 DML 语句如何处理错误。
+非事务性 DML 语句不满足原子性，部分批次可能成功，部分批次失败。系统变量 [`tidb_nontransactional_ignore_error`](/system-variables.md#tidb_nontransactional_ignore_error-new-in-v610) 控制非事务性 DML 语句的错误处理方式。
 
-一个例外是，如果第一个批次失败，很可能是语句本身有错误。在这种情况下，整个非事务语句将直接返回错误。
+例外情况是，若第一批次失败，很可能语句本身有误，此时整个非事务性语句会直接返回错误。
 
 ## 工作原理
 
-非事务 DML 语句的工作原理是将 SQL 语句的自动拆分构建到 TiDB 中。如果没有非事务 DML 语句，你需要手动拆分 SQL 语句。要理解非事务 DML 语句的行为，可以将其视为执行以下任务的用户脚本：
+非事务性 DML 语句的工作原理是将 SQL 语句的自动拆分功能内置到 TiDB 中。没有非事务性 DML 时，你需要手动拆分 SQL 语句。理解非事务性 DML 的行为，可以将其视为用户脚本执行以下任务：
 
-对于非事务 DML `BATCH ON $C$ LIMIT $N$ DELETE FROM ... WHERE $P$`，$C$ 是用于划分的列，$N$ 是批次大小，$P$ 是过滤条件。
+对于非事务性 DML `BATCH ON $C$ LIMIT $N$ DELETE FROM ... WHERE $P$`，$C$ 为拆分列，$N$ 为批次大小，$P$ 为过滤条件。
 
-1. 根据原始语句的过滤条件 $P$ 和指定的划分列 $C$，TiDB 查询所有满足 $P$ 的 $C$。TiDB 根据 $N$ 将这些 $C$ 分组为 $B_1 \dots B_k$。对于所有 $B_i$，TiDB 保留其第一个和最后一个 $C$ 作为 $S_i$ 和 $E_i$。可以通过 [`DRY RUN QUERY`](/non-transactional-dml.md#查询批次划分语句) 查看此步骤执行的查询语句。
-2. $B_i$ 涉及的数据是满足 $P_i$ 的子集：$C$ BETWEEN $S_i$ AND $E_i$。你可以使用 $P_i$ 缩小每个批次需要处理的数据范围。
-3. 对于 $B_i$，TiDB 将上述条件嵌入原始语句的 `WHERE` 条件中，使其成为 WHERE ($P_i$) AND ($P$)。可以通过 [`DRY RUN`](/non-transactional-dml.md#查询第一个和最后一个批次对应的语句) 查看此步骤的执行结果。
-4. 对于所有批次，按顺序执行新语句。收集并组合每个分组的错误，在所有分组完成后作为整个非事务 DML 语句的结果返回。
+1. 根据原始语句的过滤条件 $P$ 和指定的拆分列 $C$，TiDB 查询满足 $P$ 的所有 $C$。TiDB 根据 $N$ 将这些 $C$ 分组为 $B_1 \dots B_k$，并在每个组中保留第一个和最后一个 $C$，记为 $S_i$ 和 $E_i$。此步骤执行的查询语句可通过 [`DRY RUN QUERY`](/non-transactional-dml.md#query-the-batch-dividing-statement) 查看。
+2. $B_i$ 涉及的数据是满足 $P_i$：$C$ BETWEEN $S_i$ AND $E_i$ 的子集。可以用 $P_i$ 缩小每个批次需要处理的数据范围。
+3. 对于 $B_i$，将上述条件嵌入到原始语句的 `WHERE` 条件中，即变为 WHERE ($P_i$) AND ($P$)。此步骤的执行结果可通过 [`DRY RUN`](/non-transactional-dml.md#query-the-statements-corresponding-to-the-first-and-the-last-batches) 查看。
+4. 对所有批次依次执行新语句。每个分组的错误会被收集并合并，作为所有分组完成后的整个非事务性 DML 语句的结果返回。
 
-## 与 batch-dml 的比较
+## 与 batch-dml 的对比
 
-batch-dml 是在执行 DML 语句期间将事务拆分为多个事务提交的机制。
+batch-dml 是在执行 DML 语句期间，将事务拆分成多个事务提交的机制。
 
-> **注意：**
+> **Note:**
 >
-> 不建议使用已弃用的 batch-dml。当 batch-dml 功能使用不当时，存在数据索引不一致的风险。
+> 不建议使用已废弃的 batch-dml。当 batch-dml 功能未正确使用时，存在数据索引不一致的风险。
 
-非事务 DML 语句尚未替代所有 batch-dml 使用场景。它们的主要区别如下：
+非事务性 DML 语句尚不能完全取代所有 batch-dml 使用场景。它们的主要区别如下：
 
-- 性能：当[分片列](#如何选择分片列)高效时，非事务 DML 语句的性能接近 batch-dml。当分片列效率较低时，非事务 DML 语句的性能显著低于 batch-dml。
-
-- 稳定性：batch-dml 由于使用不当容易导致数据索引不一致。非事务 DML 语句不会导致数据索引不一致。但是，当使用不当时，非事务 DML 语句与原始语句不等价，应用程序可能会观察到意外行为。详见[常见问题部分](#非事务-delete-有不等价于普通-delete-的异常行为)。
+- 性能：当 [`shard column`](#how-to-select-a-shard-column) 高效时，非事务性 DML 的性能接近 batch-dml；当 shard column 效率较低时，性能明显低于 batch-dml。
+- 稳定性：batch-dml 容易因不当使用导致数据索引不一致。非事务性 DML 不会引发数据索引不一致，但不当使用时，行为可能与原始语句不符，应用可能观察到异常行为。详见 [常见问题部分](#non-transactional-delete-has-exceptional-behavior-that-is-not-equivalent-to-ordinary-delete)。
 
 ## 常见问题
 
 ### 执行多表连接语句时出现 `Unknown column xxx in 'where clause'` 错误
 
-当 `WHERE` 子句中连接的查询涉及除[分片列](#参数说明)定义表之外的其他表时，会出现此错误。例如，在以下 SQL 语句中，分片列是 `t2.id` 并在表 `t2` 中定义，但 `WHERE` 子句涉及表 `t2` 和 `t3`。
+当查询中的 `WHERE` 子句涉及除定义了 [shard column](#parameter-description) 的表之外的其他表时，会出现此错误。例如，以下 SQL 语句中，分片列为 `t2.id`，定义在表 `t2`，但 `WHERE` 子句涉及 `t2` 和 `t3`。
 
 ```sql
 BATCH ON test.t2.id LIMIT 1 
@@ -334,7 +334,7 @@ SELECT t2.id, t2.v, t3.id FROM t2, t3 WHERE t2.id = t3.id
 (1054, "Unknown column 't3.id' in 'where clause'")
 ```
 
-如果出现错误，可以使用 `DRY RUN QUERY` 打印查询语句进行确认。例如：
+出现此错误时，可以用 `DRY RUN QUERY` 打印确认查询语句，例如：
 
 ```sql
 BATCH ON test.t2.id LIMIT 1 
@@ -342,7 +342,7 @@ DRY RUN QUERY INSERT INTO t
 SELECT t2.id, t2.v, t3.id FROM t2, t3 WHERE t2.id = t3.id
 ```
 
-要避免错误，可以将 `WHERE` 子句中与其他表相关的条件移到 `JOIN` 子句的 `ON` 条件中。例如：
+为避免此错误，可以将涉及其他表的条件移到 `JOIN` 的 `ON` 条件中，例如：
 
 ```sql
 BATCH ON test.t2.id LIMIT 1 
@@ -358,44 +358,44 @@ SELECT t2.id, t2.v, t3.id FROM t2 JOIN t3 ON t2.id = t3.id
 +----------------+---------------+
 ```
 
-### 实际批次大小与指定的批次大小不同
+### 实际批次大小与指定批次大小不一致
 
-在非事务 DML 语句执行期间，最后一个批次要处理的数据大小可能小于指定的批次大小。
+在执行非事务性 DML 语句时，最后一个批次处理的数据可能少于指定的批次大小。
 
-当**分片列中存在重复值**时，每个批次将包含该批次中分片列最后一个元素的所有重复值。因此，此批次中的行数可能大于指定的批次大小。
+当**分片列存在重复值**时，每个批次会包含该批次最后一个元素的所有重复值，因此此批次的行数可能大于指定的批次大小。
 
-此外，当发生其他并发写入时，每个批次处理的行数可能与指定的批次大小不同。
+此外，当存在其他并发写入时，每个批次处理的行数也可能与指定的批次大小不同。
 
-### 执行时出现 `Failed to restore the delete statement, probably because of unsupported type of the shard column` 错误
+### 执行过程中出现 `Failed to restore the delete statement, probably because of unsupported type of the shard column` 错误
 
-分片列不支持 `ENUM`、`BIT`、`SET`、`JSON` 类型。尝试指定新的分片列。建议使用整数或字符串类型列。
+分片列不支持 `ENUM`、`BIT`、`SET`、`JSON` 类型。建议指定新的分片列，推荐使用整数或字符串类型。
 
 <CustomContent platform="tidb">
 
-如果在选择的分片列不是这些不支持的类型时出现错误，请从 PingCAP 或社区[获取支持](/support.md)。
+如果在选择的分片列不是上述不支持类型时出现此错误，可以 [获取支持](/support.md) 来自 PingCAP 或社区。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-如果在选择的分片列不是这些不支持的类型时出现错误，请[联系 TiDB Cloud 支持](/tidb-cloud/tidb-cloud-support.md)。
+如果在选择的分片列不是上述不支持类型时出现此错误，可以 [联系 TiDB Cloud 支持](/tidb-cloud/tidb-cloud-support.md)。
 
 </CustomContent>
 
-### 非事务 `DELETE` 有不等价于普通 `DELETE` 的异常行为
+### 非事务性 `DELETE` 存在“异常”行为，不等同于普通 `DELETE`
 
-非事务 DML 语句与此 DML 语句的原始形式不等价，可能有以下原因：
+非事务性 DML 语句不等同于原始的 DML 语句，可能存在以下原因：
 
 - 存在其他并发写入。
-- 非事务 DML 语句修改了语句本身将要读取的值。
-- 每个批次执行的 SQL 语句可能因为 `WHERE` 条件改变而导致不同的执行计划和表达式计算顺序。因此，执行结果可能与原始语句不同。
+- 非事务性 DML 语句修改了语句自身会读取的值。
+- 每个批次执行的 SQL 语句可能导致不同的执行计划和表达式计算顺序，因此执行结果可能与原始语句不同。
 - DML 语句包含非确定性操作。
 
 ## MySQL 兼容性
 
-非事务语句是 TiDB 特有的，与 MySQL 不兼容。
+非事务性语句为 TiDB 特有，不兼容 MySQL。
 
-## 另请参阅
+## 相关链接
 
 * [`BATCH`](/sql-statements/sql-statement-batch.md) 语法
 * [`tidb_nontransactional_ignore_error`](/system-variables.md#tidb_nontransactional_ignore_error-new-in-v610)

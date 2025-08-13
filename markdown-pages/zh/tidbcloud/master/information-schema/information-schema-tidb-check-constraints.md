@@ -1,11 +1,11 @@
 ---
 title: TIDB_CHECK_CONSTRAINTS
-summary: "了解 `TIDB_CHECK_CONSTRAINTS` INFORMATION_SCHEMA 表。"
+summary: 了解 `TIDB_CHECK_CONSTRAINTS` INFORMATION_SCHEMA 表。
 ---
 
 # TIDB\_CHECK\_CONSTRAINTS
 
-`TIDB_CHECK_CONSTRAINTS` 表提供了表上 [`CHECK` 约束](/constraints.md#check)的信息。除了 [`CHECK_CONSTRAINTS`](/information-schema/information-schema-check-constraints.md) 中的列外，`TIDB_CHECK_CONSTRAINTS` 还提供了定义 `CHECK` 约束的表的名称和 ID。
+`TIDB_CHECK_CONSTRAINTS` 表提供关于表上的 [`CHECK` 约束](/constraints.md#check) 的信息。除了 [`CHECK_CONSTRAINTS`](/information-schema/information-schema-check-constraints.md) 中的列之外，`TIDB_CHECK_CONSTRAINTS` 还提供定义 `CHECK` 约束的表的名称和 ID。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -51,9 +51,9 @@ CONSTRAINT_CATALOG: def
 
 `TIDB_CHECK_CONSTRAINTS` 表中的字段说明如下：
 
-* `CONSTRAINT_CATALOG`：约束的目录，始终为 `def`。
-* `CONSTRAINT_SCHEMA`：约束的模式。
-* `CONSTRAINT_NAME`：约束的名称。
-* `CHECK_CLAUSE`：检查约束的子句。
-* `TABLE_NAME`：约束所在表的名称。
-* `TABLE_ID`：约束所在表的 ID。
+* `CONSTRAINT_CATALOG`: 约束的目录，始终为 `def`。
+* `CONSTRAINT_SCHEMA`: 约束所在的模式。
+* `CONSTRAINT_NAME`: 约束的名称。
+* `CHECK_CLAUSE`: 约束的条件子句。
+* `TABLE_NAME`: 约束所在的表的名称。
+* `TABLE_ID`: 约束所在的表的 ID。

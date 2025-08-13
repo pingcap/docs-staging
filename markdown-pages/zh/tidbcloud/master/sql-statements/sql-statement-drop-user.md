@@ -1,13 +1,13 @@
 ---
 title: DROP USER | TiDB SQL 语句参考
-summary: TiDB 数据库中 DROP USER 的使用概览。
+summary: 关于在 TiDB 数据库中使用 DROP USER 的概述。
 ---
 
 # DROP USER
 
-该语句从 TiDB 系统数据库中删除用户。可以使用可选关键字 `IF EXISTS` 来在用户不存在时静默错误。该语句需要 `CREATE USER` 权限。
+此语句用于从 TiDB 系统数据库中删除一个用户。可选的关键字 `IF EXISTS` 可以用来避免在用户不存在时产生错误。执行此操作需要拥有 `CREATE USER` 权限。
 
-## 语法图
+## 概述
 
 ```ebnf+diagram
 DropUserStmt ::=
@@ -61,9 +61,9 @@ ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%
 
 ## MySQL 兼容性
 
-* 在 TiDB 中，使用 `IF EXISTS` 删除不存在的用户不会产生警告。[问题 #10196](https://github.com/pingcap/tidb/issues/10196)。
+* 使用 `IF EXISTS` 删除不存在的用户在 TiDB 中不会产生警告。[Issue #10196](https://github.com/pingcap/tidb/issues/10196)。
 
-## 另请参阅
+## 相关链接
 
 * [CREATE USER](/sql-statements/sql-statement-create-user.md)
 * [ALTER USER](/sql-statements/sql-statement-alter-user.md)
@@ -71,6 +71,6 @@ ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%
 
 <CustomContent platform="tidb">
 
-* [权限管理](/privilege-management.md)
+* [Privilege Management](/privilege-management.md)
 
 </CustomContent>

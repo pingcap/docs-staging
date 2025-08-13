@@ -1,12 +1,11 @@
 ---
 title: KEY_COLUMN_USAGE
-summary: "了解 `KEY_COLUMN_USAGE` information_schema 表。"
+summary: 了解 `KEY_COLUMN_USAGE` information_schema 表。
 ---
 
 # KEY_COLUMN_USAGE
 
-`KEY_COLUMN_USAGE` 表描述了列的键约束，例如主键约束。
-
+`KEY_COLUMN_USAGE` 表描述了列的键约束信息，例如主键约束。
 
 ```sql
 USE information_schema;
@@ -68,17 +67,17 @@ POSITION_IN_UNIQUE_CONSTRAINT: NULL
 2 rows in set (0.00 sec)
 ```
 
-`KEY_COLUMN_USAGE` 表中各列的描述如下：
+`KEY_COLUMN_USAGE` 表中各字段的描述如下：
 
-* `CONSTRAINT_CATALOG`：约束所属的目录名称。该值始终为 `def`。
-* `CONSTRAINT_SCHEMA`：约束所属的数据库（schema）名称。
-* `CONSTRAINT_NAME`：约束的名称。
-* `TABLE_CATALOG`：表所属的目录名称。该值始终为 `def`。
-* `TABLE_SCHEMA`：表所属的数据库（schema）名称。
-* `TABLE_NAME`：具有约束的表名。
-* `COLUMN_NAME`：具有约束的列名。
-* `ORDINAL_POSITION`：列在约束中的位置，而不是在表中的位置。位置编号从 `1` 开始。
-* `POSITION_IN_UNIQUE_CONSTRAINT`：唯一约束和主键约束为空。对于外键约束，此列是被引用表的键的位置。
-* `REFERENCED_TABLE_SCHEMA`：约束引用的数据库（schema）名称。目前在 TiDB 中，除外键约束外，所有约束中该列的值都为 `nil`。
-* `REFERENCED_TABLE_NAME`：约束引用的表名。目前在 TiDB 中，除外键约束外，所有约束中该列的值都为 `nil`。
-* `REFERENCED_COLUMN_NAME`：约束引用的列名。目前在 TiDB 中，除外键约束外，所有约束中该列的值都为 `nil`。
+* `CONSTRAINT_CATALOG`: 约束所属的目录名，值始终为 `def`。
+* `CONSTRAINT_SCHEMA`: 约束所属的模式（schema）名。
+* `CONSTRAINT_NAME`: 约束的名称。
+* `TABLE_CATALOG`: 表所属的目录名，值始终为 `def`。
+* `TABLE_SCHEMA`: 表所属的模式（schema）名。
+* `TABLE_NAME`: 具有约束的表名。
+* `COLUMN_NAME`: 具有约束的列名。
+* `ORDINAL_POSITION`: 该列在约束中的位置，而非在表中的位置。位置编号从 `1` 开始。
+* `POSITION_IN_UNIQUE_CONSTRAINT`: 唯一约束和主键约束为空。对于外键约束，此列表示被引用表的键位置。
+* `REFERENCED_TABLE_SCHEMA`: 约束引用的模式（schema）名。目前在 TiDB 中，除外键约束外，此列在所有约束中的值均为 `nil`。
+* `REFERENCED_TABLE_NAME`: 约束引用的表名。目前在 TiDB 中，除外键约束外，此列在所有约束中的值均为 `nil`。
+* `REFERENCED_COLUMN_NAME`: 约束引用的列名。目前在 TiDB 中，除外键约束外，此列在所有约束中的值均为 `nil`。

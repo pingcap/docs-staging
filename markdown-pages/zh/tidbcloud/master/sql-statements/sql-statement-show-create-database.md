@@ -1,13 +1,13 @@
 ---
 title: SHOW CREATE DATABASE
-summary: TiDB 数据库中 SHOW CREATE DATABASE 的使用概览。
+summary: 关于在 TiDB 数据库中使用 SHOW CREATE DATABASE 的概述。
 ---
 
 # SHOW CREATE DATABASE
 
-`SHOW CREATE DATABASE` 用于显示重新创建现有数据库所需的精确 SQL 语句。`SHOW CREATE SCHEMA` 是它的同义词。
+`SHOW CREATE DATABASE` 用于显示重新创建现有数据库的确切 SQL 语句。`SHOW CREATE SCHEMA` 是它的同义词。
 
-## 语法图
+## 语法
 
 **ShowCreateDatabaseStmt:**
 
@@ -54,9 +54,9 @@ SHOW CREATE SCHEMA IF NOT EXISTS test;
 
 ## MySQL 兼容性
 
-`SHOW CREATE DATABASE` 预期与 MySQL 完全兼容。如果发现任何兼容性差异，请[报告问题](https://docs.pingcap.com/tidb/stable/support)。
+`SHOW CREATE DATABASE` 预计与 MySQL 完全兼容。如果你发现任何兼容性差异，可以 [report a bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [CREATE TABLE](/sql-statements/sql-statement-create-table.md)
 * [DROP TABLE](/sql-statements/sql-statement-drop-table.md)

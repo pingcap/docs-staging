@@ -5,15 +5,15 @@ summary: 介绍 TiDB 性能调优的最佳实践。
 
 # 性能调优最佳实践
 
-本文介绍使用 TiDB 数据库的一些最佳实践。
+本文档介绍了一些使用 TiDB 数据库的最佳实践。
 
 ## DML 最佳实践
 
-本节介绍在使用 TiDB 的 DML 时涉及的最佳实践。
+本节描述在使用 TiDB 进行 DML 操作时的最佳实践。
 
 ### 使用多行语句
 
-当你需要修改表的多行数据时，建议使用多行语句：
+当需要修改多行数据时，建议使用多行语句：
 
 ```sql
 INSERT INTO t VALUES (1, 'a'), (2, 'b'), (3, 'c');
@@ -21,7 +21,7 @@ INSERT INTO t VALUES (1, 'a'), (2, 'b'), (3, 'c');
 DELETE FROM t WHERE id IN (1, 2, 3);
 ```
 
-不建议使用多个单行语句：
+不建议使用多条单行语句：
 
 ```sql
 INSERT INTO t VALUES (1, 'a');
@@ -35,7 +35,7 @@ DELETE FROM t WHERE id = 3;
 
 ### 使用 `PREPARE`
 
-当你需要多次执行同一个 SQL 语句时，建议使用 `PREPARE` 语句以避免重复解析 SQL 语法的开销。
+当需要多次执行某条 SQL 语句时，建议使用 `PREPARE` 语句，以避免重复解析 SQL 语法带来的开销。
 
 <SimpleTab>
 <div label="Golang">
@@ -78,17 +78,17 @@ public void batchInsert(Connection connection) throws SQLException {
 </div>
 </SimpleTab>
 
-不要重复执行 `PREPARE` 语句。否则，执行效率无法得到提升。
+不要反复执行 `PREPARE` 语句，否则无法提升执行效率。
 
 ### 只查询需要的列
 
-如果你不需要所有列的数据，不要使用 `SELECT *` 返回所有列数据。以下查询效率不高：
+如果不需要所有列的数据，不要使用 `SELECT *` 返回全部列。以下查询效率较低：
 
 ```sql
 SELECT * FROM books WHERE title = 'Marian Yost';
 ```
 
-你应该只查询需要的列。例如：
+应只查询需要的列，例如：
 
 ```sql
 SELECT title, price FROM books WHERE title = 'Marian Yost';
@@ -96,21 +96,21 @@ SELECT title, price FROM books WHERE title = 'Marian Yost';
 
 ### 使用批量删除
 
-当你删除大量数据时，建议使用[批量删除](/develop/dev-guide-delete-data.md#bulk-delete)。
+当需要删除大量数据时，建议使用 [bulk delete](/develop/dev-guide-delete-data.md#bulk-delete)。
 
 ### 使用批量更新
 
-当你更新大量数据时，建议使用[批量更新](/develop/dev-guide-update-data.md#bulk-update)。
+当需要更新大量数据时，建议使用 [bulk update](/develop/dev-guide-update-data.md#bulk-update)。
 
-### 使用 `TRUNCATE` 而不是 `DELETE` 删除全表数据
+### 使用 `TRUNCATE` 替代 `DELETE` 进行全表数据删除
 
-当你需要删除表中的所有数据时，建议使用 `TRUNCATE` 语句：
+当需要删除表中的所有数据时，建议使用 `TRUNCATE` 语句：
 
 ```sql
 TRUNCATE TABLE t;
 ```
 
-不建议使用 `DELETE` 删除全表数据：
+不建议使用 `DELETE` 进行全表删除：
 
 ```sql
 DELETE FROM t;
@@ -118,31 +118,31 @@ DELETE FROM t;
 
 ## DDL 最佳实践
 
-本节介绍使用 TiDB 的 DDL 时涉及的最佳实践。
+本节描述在使用 TiDB 的 DDL 时的最佳实践。
 
 ### 主键最佳实践
 
-请参阅[选择主键时需要遵循的规则](/develop/dev-guide-create-table.md#guidelines-to-follow-when-selecting-primary-key)。
+请参阅 [选择主键的规则](/develop/dev-guide-create-table.md#guidelines-to-follow-when-selecting-primary-key)。
 
 ## 索引最佳实践
 
-请参阅[索引的最佳实践](/develop/dev-guide-index-best-practice.md)。
+请参阅 [索引最佳实践](/develop/dev-guide-index-best-practice.md)。
 
-### 添加索引最佳实践
+### 添加索引的最佳实践
 
-TiDB 支持在线添加索引操作。你可以使用 [ADD INDEX](/sql-statements/sql-statement-add-index.md) 或 [CREATE INDEX](/sql-statements/sql-statement-create-index.md) 语句添加索引。这不会阻塞表中的数据读写。你可以通过修改以下系统变量来调整索引添加操作的 `re-organize` 阶段的并发度和批量大小：
+TiDB 支持在线添加索引操作。你可以使用 [ADD INDEX](/sql-statements/sql-statement-add-index.md) 或 [CREATE INDEX](/sql-statements/sql-statement-create-index.md) 语句添加索引。此操作不会阻塞表中的数据读写。在索引添加的 `re-organize` 阶段，你可以通过修改以下系统变量调整并发度和批次大小：
 
 * [`tidb_ddl_reorg_worker_cnt`](/system-variables.md#tidb_ddl_reorg_worker_cnt)
 * [`tidb_ddl_reorg_batch_size`](/system-variables.md#tidb_ddl_reorg_batch_size)
 
-为了减少对在线应用的影响，添加索引操作的默认速度较慢。当添加索引操作的目标列只涉及读取负载或与在线工作负载没有直接关系时，你可以适当增加上述变量的值来加快添加索引操作：
+为了减少对线上应用的影响，默认索引添加速度较慢。当索引目标列只涉及读负载或与线上工作负载关系不大时，可以适当提高上述变量的值以加快索引添加速度：
 
 ```sql
 SET @@global.tidb_ddl_reorg_worker_cnt = 16;
 SET @@global.tidb_ddl_reorg_batch_size = 4096;
 ```
 
-当添加索引操作的目标列经常被更新（包括 `UPDATE`、`INSERT` 和 `DELETE`）时，增加上述变量会导致更多的写入冲突，这会影响在线工作负载。相应地，由于不断重试，添加索引操作可能需要很长时间才能完成。在这种情况下，建议减小上述变量的值以避免与在线应用发生写入冲突：
+当索引目标列频繁更新（包括 `UPDATE`、`INSERT` 和 `DELETE`）时，增大上述变量会导致更多写冲突，影响线上工作负载。因此，索引添加可能会因为不断重试而耗时较长。此时，建议降低上述变量的值以避免与线上应用的写冲突：
 
 ```sql
 SET @@global.tidb_ddl_reorg_worker_cnt = 4;
@@ -153,27 +153,27 @@ SET @@global.tidb_ddl_reorg_batch_size = 128;
 
 <CustomContent platform="tidb">
 
-关于如何定位和解决事务冲突，请参阅[故障诊断：锁冲突](/troubleshoot-lock-conflicts.md)。
+关于如何定位和解决事务冲突，参见 [Troubleshoot Lock Conflicts](/troubleshoot-lock-conflicts.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-关于如何定位和解决事务冲突，请参阅[故障诊断：锁冲突](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts)。
+关于如何定位和解决事务冲突，参见 [Troubleshoot Lock Conflicts](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts)。
 
 </CustomContent>
 
-## 使用 TiDB 开发 Java 应用程序的最佳实践
+## 使用 TiDB 开发 Java 应用的最佳实践
 
 <CustomContent platform="tidb">
 
-请参阅[使用 TiDB 开发 Java 应用程序的最佳实践](/best-practices/java-app-best-practices.md)。
+请参阅 [使用 TiDB 开发 Java 应用的最佳实践](/best-practices/java-app-best-practices.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-请参阅[使用 TiDB 开发 Java 应用程序的最佳实践](https://docs.pingcap.com/tidb/stable/java-app-best-practices)。
+请参阅 [使用 TiDB 开发 Java 应用的最佳实践](https://docs.pingcap.com/tidb/stable/java-app-best-practices)。
 
 </CustomContent>
 
@@ -181,13 +181,13 @@ SET @@global.tidb_ddl_reorg_batch_size = 128;
 
 <CustomContent platform="tidb">
 
-- [高并发写入最佳实践](/best-practices/high-concurrency-best-practices.md)
+- [高并发写入的最佳实践](/best-practices/high-concurrency-best-practices.md)
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-- [高并发写入最佳实践](https://docs.pingcap.com/tidb/stable/high-concurrency-best-practices)
+- [高并发写入的最佳实践](https://docs.pingcap.com/tidb/stable/high-concurrency-best-practices)
 
 </CustomContent>
 
@@ -195,12 +195,12 @@ SET @@global.tidb_ddl_reorg_batch_size = 128;
 
 <CustomContent platform="tidb">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](/support.md)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或 [提交支持工单](/support.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](https://tidb.support.pingcap.com/)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
 
 </CustomContent>

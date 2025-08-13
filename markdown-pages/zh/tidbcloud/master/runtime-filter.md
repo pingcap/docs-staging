@@ -1,28 +1,28 @@
 ---
-title: 运行时过滤器
-summary: 了解运行时过滤器的工作原理及其使用方法。
+title: Runtime Filter
+summary: 了解 Runtime Filter 的工作原理及其使用方法。
 ---
 
-# 运行时过滤器
+# Runtime Filter
 
-运行时过滤器（Runtime Filter）是 TiDB v7.3 中引入的新特性，旨在提高 MPP 场景下哈希连接的性能。通过动态生成过滤器来预先过滤哈希连接的数据，TiDB 可以减少运行时的数据扫描量和哈希连接的计算量，最终提升查询性能。
+Runtime Filter 是在 TiDB v7.3 中引入的一项新功能，旨在提升在 MPP 场景下的 hash join 性能。通过在运行时动态生成过滤器，提前过滤 hash join 的数据，TiDB 可以减少扫描的数据量和 hash join 的计算量，最终提升查询性能。
 
 ## 概念
 
-- 哈希连接（Hash join）：实现连接关系代数的一种方式。通过在一侧建立哈希表，另一侧持续匹配哈希表来获得连接结果。
-- 构建侧（Build side）：哈希连接中用于构建哈希表的一侧。在本文档中，默认哈希连接的右表称为构建侧。
-- 探测侧（Probe side）：哈希连接中用于持续匹配哈希表的一侧。在本文档中，默认哈希连接的左表称为探测侧。
-- 过滤器（Filter）：也称为谓词（predicate），在本文档中指过滤条件。
+- Hash join：一种实现关系代数连接的方法。它通过在一侧构建哈希表，并在另一侧不断匹配哈希表来获得连接结果。
+- Build side：hash join 中用来构建哈希表的一侧。在本文档中，默认将 hash join 的右表称为 build side。
+- Probe side：hash join 中用来持续匹配哈希表的一侧。在本文档中，默认将 hash join 的左表称为 probe side。
+- Filter：也称为 predicate，指本文档中的过滤条件。
 
-## 运行时过滤器的工作原理
+## Runtime Filter 的工作原理
 
-哈希连接通过基于右表构建哈希表并使用左表持续探测哈希表来执行连接操作。如果在探测过程中某些连接键值无法命中哈希表，这意味着该数据在右表中不存在，也不会出现在最终的连接结果中。因此，如果 TiDB 能够在扫描过程中**预先过滤掉连接键数据**，就会减少扫描时间和网络开销，从而大大提高连接效率。
+Hash join 通过在右表（build side）建立哈希表，并用左表（probe side）不断探测哈希表来执行连接操作。如果在探测过程中某些连接键值无法命中哈希表，意味着这些数据在右表中不存在，不会出现在最终的连接结果中。因此，如果 TiDB 能在扫描阶段**提前过滤掉连接键数据**，就能减少扫描时间和网络开销，从而大幅提升连接效率。
 
-运行时过滤器是在查询规划阶段生成的**动态谓词**。这个谓词与 TiDB Selection 算子中的其他谓词具有相同的功能。这些谓词都应用于 Table Scan 操作以过滤掉不符合谓词的行。唯一的区别是运行时过滤器中的参数值来自哈希连接构建过程中生成的结果。
+Runtime Filter 是在查询计划阶段生成的**动态谓词**。该谓词具有与 TiDB 选择操作符中的其他谓词相同的功能。这些谓词都应用于 Table Scan 操作，用于过滤不符合条件的行。唯一的区别在于，Runtime Filter 中的参数值来自于 hash join 构建过程中生成的结果。
 
 ### 示例
 
-假设在 `store_sales` 表和 `date_dim` 表之间有一个连接查询，连接方式是哈希连接。`store_sales` 是一个事实表，主要存储商店的销售数据，行数为 100 万。`date_dim` 是一个时间维度表，主要存储日期信息。你想查询 2001 年的销售数据，因此 `date_dim` 表中有 365 行参与连接操作。
+假设存在一个 `store_sales` 表与 `date_dim` 表的连接查询，连接方式为 hash join。`store_sales` 是主要存储门店销售数据的事实表，行数为 100 万。`date_dim` 是时间维度表，主要存储日期信息。你希望查询 2001 年的销售数据，因此在连接操作中涉及 `date_dim` 表的 365 行数据。
 
 ```sql
 SELECT * FROM store_sales, date_dim
@@ -30,7 +30,7 @@ WHERE ss_date_sk = d_date_sk
     AND d_year = 2001;
 ```
 
-哈希连接的执行计划通常如下：
+hash join 的执行计划通常如下：
 
 ```
                  +-------------------+
@@ -48,23 +48,23 @@ WHERE ss_date_sk = d_date_sk
 +---------------+                   +----------------+
 ```
 
-*（上图省略了 exchange 节点和其他节点。）*
+*(上述图省略了 exchange 节点及其他节点)*
 
-运行时过滤器的执行过程如下：
+Runtime Filter 的执行流程如下：
 
 1. 扫描 `date_dim` 表的数据。
-2. `PhysicalHashJoin` 根据构建侧的数据计算出一个过滤条件，如 `date_dim in (2001/01/01~2001/12/31)`。
-3. 将过滤条件发送给正在等待扫描 `store_sales` 的 `TableFullScan` 算子。
-4. 过滤条件应用于 `store_sales`，过滤后的数据传递给 `PhysicalHashJoin`，从而减少探测侧扫描的数据量和匹配哈希表的计算量。
+2. `PhysicalHashJoin` 根据 build side 的数据计算过滤条件，例如 `date_dim in (2001/01/01~2001/12/31)`。
+3. 将过滤条件传递给等待扫描 `store_sales` 的 `TableFullScan` 操作符。
+4. 过滤条件应用于 `store_sales`，过滤后数据传递给 `PhysicalHashJoin`，从而减少 probe side 扫描的数据量和匹配哈希表的计算量。
 
 ```
-                         2. Build RF values
+                         2. 构建 RF 值
             +-------->+-------------------+
             |         |PhysicalHashJoin   |<-----+
             |    +----+                   |      |
-4. After RF |    |    +-------------------+      | 1. Scan T2
-    5000    |    |3. Send RF                     |      365
-            |    | filter data                   |
+4. 生成 RF |    |    +-------------------+      | 1. 扫描 T2
+    5000    |    |3. 传递 RF                     |      365
+            |    | 过滤数据                       |
             |    |                               |
       +-----+----v------+                +-------+--------+
       |  TableFullScan  |                | TableFullScan  |
@@ -72,25 +72,26 @@ WHERE ss_date_sk = d_date_sk
       +-----------------+                +----------------+
 ```
 
-*（RF 是 Runtime Filter 的缩写）*
+*(RF 为 Runtime Filter 的缩写)*
 
-从上面两个图中可以看到，`store_sales` 扫描的数据量从 100 万减少到了 5000。通过减少 `TableFullScan` 扫描的数据量，运行时过滤器可以减少匹配哈希表的次数，避免不必要的 I/O 和网络传输，从而显著提高连接操作的效率。
-## 使用运行时过滤器
+从上图可以看出，`store_sales` 扫描的数据量由 100 万减少到 5000。通过减少 `TableFullScan` 扫描的数据量，Runtime Filter 可以降低匹配哈希表的次数，避免不必要的 I/O 和网络传输，从而显著提升连接操作的效率。
 
-要使用运行时过滤器，你需要创建带有 TiFlash 副本的表，并将 [`tidb_runtime_filter_mode`](/system-variables.md#tidb_runtime_filter_mode-new-in-v720) 设置为 `LOCAL`。
+## 使用 Runtime Filter
 
-以 TPC-DS 数据集为例，本节使用 `catalog_sales` 表和 `date_dim` 表进行连接操作，说明运行时过滤器如何提高查询效率。
+要使用 Runtime Filter，你需要为表创建 TiFlash 副本，并将 [`tidb_runtime_filter_mode`](/system-variables.md#tidb_runtime_filter_mode-new-in-v720) 设置为 `LOCAL`。
 
-### 步骤 1. 为要连接的表创建 TiFlash 副本
+以 TPC-DS 数据集为例，本节使用 `catalog_sales` 表和 `date_dim` 表的连接操作，说明 Runtime Filter 如何提升查询效率。
 
-为 `catalog_sales` 表和 `date_dim` 表各添加一个 TiFlash 副本。
+### 步骤 1. 为待连接的表创建 TiFlash 副本
+
+为 `catalog_sales` 表和 `date_dim` 表添加 TiFlash 副本。
 
 ```sql
 ALTER TABLE catalog_sales SET tiflash REPLICA 1;
 ALTER TABLE date_dim SET tiflash REPLICA 1;
 ```
 
-等待两个表的 TiFlash 副本就绪，即副本的 `AVAILABLE` 和 `PROGRESS` 字段都为 `1`。
+等待两个表的 TiFlash 副本准备就绪，即其 `AVAILABLE` 和 `PROGRESS` 字段均为 `1`。
 
 ```sql
 SELECT * FROM INFORMATION_SCHEMA.TIFLASH_REPLICA WHERE TABLE_NAME='catalog_sales';
@@ -108,15 +109,15 @@ SELECT * FROM INFORMATION_SCHEMA.TIFLASH_REPLICA WHERE TABLE_NAME='date_dim';
 +--------------+------------+----------+---------------+-----------------+-----------+----------+
 ```
 
-### 步骤 2. 启用运行时过滤器
+### 步骤 2. 开启 Runtime Filter
 
-要启用运行时过滤器，需要将系统变量 [`tidb_runtime_filter_mode`](/system-variables.md#tidb_runtime_filter_mode-new-in-v720) 的值设置为 `LOCAL`。
+将系统变量 [`tidb_runtime_filter_mode`](/system-variables.md#tidb_runtime_filter_mode-new-in-v720) 设置为 `LOCAL`。
 
 ```sql
 SET tidb_runtime_filter_mode="LOCAL";
 ```
 
-检查更改是否成功：
+确认设置成功：
 
 ```sql
 SHOW VARIABLES LIKE "tidb_runtime_filter_mode";
@@ -127,10 +128,11 @@ SHOW VARIABLES LIKE "tidb_runtime_filter_mode";
 +--------------------------+-------+
 ```
 
-如果系统变量的值为 `LOCAL`，则运行时过滤器已启用。
+如果值为 `LOCAL`，说明 Runtime Filter 已开启。
+
 ### 步骤 3. 执行查询
 
-在执行查询之前，使用 [`EXPLAIN` 语句](/sql-statements/sql-statement-explain.md)显示执行计划并检查运行时过滤器是否已生效。
+在执行查询前，使用 [`EXPLAIN` 语句](/sql-statements/sql-statement-explain.md) 查看执行计划，确认 Runtime Filter 是否生效。
 
 ```sql
 EXPLAIN SELECT cs_ship_date_sk FROM catalog_sales, date_dim
@@ -138,14 +140,14 @@ WHERE d_date = '2002-2-01' AND
      cs_ship_date_sk = d_date_sk;
 ```
 
-当运行时过滤器生效时，相应的运行时过滤器会挂载在 `HashJoin` 节点和 `TableScan` 节点上，表示运行时过滤器已成功应用。
+当 Runtime Filter 生效时，会在 `HashJoin` 节点和 `TableScan` 节点挂载对应的 Runtime Filter，表示过滤器已成功应用。
 
 ```
 TableFullScan: runtime filter:0[IN] -> tpcds50.catalog_sales.cs_ship_date_sk
 HashJoin: runtime filter:0[IN] <- tpcds50.date_dim.d_date_sk |
 ```
 
-完整的查询执行计划如下：
+完整的执行计划如下：
 
 ```
 +----------------------------------------+-------------+--------------+---------------------+-----------------------------------------------------------------------------------------------------------------------------------------------+
@@ -164,18 +166,19 @@ HashJoin: runtime filter:0[IN] <- tpcds50.date_dim.d_date_sk |
 9 rows in set (0.01 sec)
 ```
 
-现在，执行 SQL 查询，运行时过滤器将被应用。
+执行查询，Runtime Filter 已应用。
 
 ```sql
 SELECT cs_ship_date_sk FROM catalog_sales, date_dim
 WHERE d_date = '2002-2-01' AND
      cs_ship_date_sk = d_date_sk;
 ```
+
 ### 步骤 4. 性能对比
 
-本示例使用 50 GB 的 TPC-DS 数据。启用运行时过滤器后，查询时间从 0.38 秒减少到 0.17 秒，效率提升了 50%。你可以使用 `ANALYZE` 语句查看运行时过滤器生效后各个算子的执行时间。
+本例使用 50 GB 的 TPC-DS 数据。开启 Runtime Filter 后，查询时间由 0.38 秒缩短至 0.17 秒，效率提升约 50%。你可以使用 `ANALYZE` 语句查看 Runtime Filter 生效后各操作符的执行时间。
 
-以下是未启用运行时过滤器时查询的执行信息：
+未开启 Runtime Filter 时的执行信息如下：
 
 ```sql
 EXPLAIN ANALYZE SELECT cs_ship_date_sk FROM catalog_sales, date_dim WHERE d_date = '2002-2-01' AND cs_ship_date_sk = d_date_sk;
@@ -188,67 +191,46 @@ EXPLAIN ANALYZE SELECT cs_ship_date_sk FROM catalog_sales, date_dim WHERE d_date
 |     └─HashJoin_48                      | 37343.19    | 59574    | mpp[tiflash] |                     | tiflash_task:{proc max:377ms, min:375.3ms, avg: 376.1ms, p80:377ms, p95:377ms, iters:1160, tasks:2, threads:16}                                                                                                                                                                                                                                                                                   | inner join, equal:[eq(tpcds50.date_dim.d_date_sk, tpcds50.catalog_sales.cs_ship_date_sk)]    | N/A     | N/A  |
 |       ├─ExchangeReceiver_29(Build)     | 1.00        | 2        | mpp[tiflash] |                     | tiflash_task:{proc max:291.3ms, min:290ms, avg: 290.6ms, p80:291.3ms, p95:291.3ms, iters:2, tasks:2, threads:16}                                                                                                                                                                                                                                                                                  |                                                                                              | N/A     | N/A  |
 |       │ └─ExchangeSender_28            | 1.00        | 1        | mpp[tiflash] |                     | tiflash_task:{proc max:290.9ms, min:0s, avg: 145.4ms, p80:290.9ms, p95:290.9ms, iters:1, tasks:2, threads:1}                                                                                                                                                                                                                                                                                      | ExchangeType: Broadcast, Compression: FAST                                                   | N/A     | N/A  |
-|       │   └─TableFullScan_26           | 1.00        | 1        | mpp[tiflash] | table:date_dim      | tiflash_task:{proc max:3.88ms, min:0s, avg: 1.94ms, p80:3.88ms, p95:3.88ms, iters:1, tasks:2, threads:1}, tiflash_scan:{dtfile:{total_scanned_packs:2, total_skipped_packs:12, total_scanned_rows:16384, total_skipped_rows:97625, total_rs_index_load_time: 0ms, total_read_time: 0ms}, total_create_snapshot_time: 0ms, total_local_region_num: 1, total_remote_region_num: 0}                  | pushed down filter:eq(tpcds50.date_dim.d_date, 2002-02-01 00:00:00.000000), keep order:false | N/A     | N/A  |
+|       │   └─TableFullScan_26           | 1.00        | 1        | mpp[tiflash] | table:date_dim      | tiflash_task:{proc max:3.88ms, min:0s, avg: 1.94ms, p80:3.88ms, p95:3.88ms, iters:1, tasks:2, threads:1}, tiflash_scan:{dtfile:{total_scanned_packs:2, total_skipped_packs:12, total_scanned_rows:16384, total_skipped_rows:97625, total_rs_index_load_time: 0ms, total_read_time: 0ms}, total_create_snapshot_time: 0ms, total_local_region_num: 1, total_remote_region_num: 0}                     | pushed down filter:eq(tpcds50.date_dim.d_date, 2002-02-01 00:00:00.000000), keep order:false | N/A     | N/A  |
 |       └─Selection_31(Probe)            | 71638034.00 | 71638034 | mpp[tiflash] |                     | tiflash_task:{proc max:47ms, min:34.3ms, avg: 40.6ms, p80:47ms, p95:47ms, iters:1160, tasks:2, threads:16}                                                                                                                                                                                                                                                                                        | not(isnull(tpcds50.catalog_sales.cs_ship_date_sk))                                           | N/A     | N/A  |
 |         └─TableFullScan_30             | 71997669.00 | 71997669 | mpp[tiflash] | table:catalog_sales | tiflash_task:{proc max:34ms, min:17.3ms, avg: 25.6ms, p80:34ms, p95:34ms, iters:1160, tasks:2, threads:16}, tiflash_scan:{dtfile:{total_scanned_packs:8893, total_skipped_packs:4007, total_scanned_rows:72056474, total_skipped_rows:32476901, total_rs_index_load_time: 8ms, total_read_time: 579ms}, total_create_snapshot_time: 0ms, total_local_region_num: 194, total_remote_region_num: 0} | pushed down filter:empty, keep order:false                                                   | N/A     | N/A  |
-+----------------------------------------+-------------+----------+--------------+---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------+---------+------+
++----------------------------------------+-------------+----------+--------------+---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------+---------+------+
 9 rows in set (0.38 sec)
 ```
 
-以下是启用运行时过滤器时查询的执行信息：
+对比两次查询的执行信息，可以发现以下改进：
 
-```sql
-EXPLAIN ANALYZE SELECT cs_ship_date_sk FROM catalog_sales, date_dim
-    -> WHERE d_date = '2002-2-01' AND
-    ->      cs_ship_date_sk = d_date_sk;
-+----------------------------------------+-------------+---------+--------------+---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------+---------+------+
-| id                                     | estRows     | actRows | task         | access object       | execution info                                                                                                                                                                                                                                                                                                                                                                                       | operator info                                                                                                                                 | memory  | disk |
-+----------------------------------------+-------------+---------+--------------+---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------+---------+------+
-| TableReader_53                         | 37343.19    | 59574   | root         |                     | time:162.1ms, loops:82, RU:0.000000, cop_task: {num: 47, max: 0s, min: 0s, avg: 0s, p95: 0s, copr_cache_hit_ratio: 0.00}                                                                                                                                                                                                                                                                             | MppVersion: 1, data:ExchangeSender_52                                                                                                         | 12.7 KB | N/A  |
-| └─ExchangeSender_52                    | 37343.19    | 59574   | mpp[tiflash] |                     | tiflash_task:{proc max:160.8ms, min:154.3ms, avg: 157.6ms, p80:160.8ms, p95:160.8ms, iters:86, tasks:2, threads:16}                                                                                                                                                                                                                                                                                  | ExchangeType: PassThrough                                                                                                                     | N/A     | N/A  |
-|   └─Projection_51                      | 37343.19    | 59574   | mpp[tiflash] |                     | tiflash_task:{proc max:160.8ms, min:154.3ms, avg: 157.6ms, p80:160.8ms, p95:160.8ms, iters:86, tasks:2, threads:16}                                                                                                                                                                                                                                                                                  | tpcds50.catalog_sales.cs_ship_date_sk                                                                                                         | N/A     | N/A  |
-|     └─HashJoin_48                      | 37343.19    | 59574   | mpp[tiflash] |                     | tiflash_task:{proc max:160.8ms, min:154.3ms, avg: 157.6ms, p80:160.8ms, p95:160.8ms, iters:86, tasks:2, threads:16}                                                                                                                                                                                                                                                                                  | inner join, equal:[eq(tpcds50.date_dim.d_date_sk, tpcds50.catalog_sales.cs_ship_date_sk)], runtime filter:0[IN] <- tpcds50.date_dim.d_date_sk | N/A     | N/A  |
-|       ├─ExchangeReceiver_29(Build)     | 1.00        | 2       | mpp[tiflash] |                     | tiflash_task:{proc max:132.3ms, min:130.8ms, avg: 131.6ms, p80:132.3ms, p95:132.3ms, iters:2, tasks:2, threads:16}                                                                                                                                                                                                                                                                                   |                                                                                                                                               | N/A     | N/A  |
-|       │ └─ExchangeSender_28            | 1.00        | 1       | mpp[tiflash] |                     | tiflash_task:{proc max:131ms, min:0s, avg: 65.5ms, p80:131ms, p95:131ms, iters:1, tasks:2, threads:1}                                                                                                                                                                                                                                                                                                | ExchangeType: Broadcast, Compression: FAST                                                                                                    | N/A     | N/A  |
-|       │   └─TableFullScan_26           | 1.00        | 1       | mpp[tiflash] | table:date_dim      | tiflash_task:{proc max:3.01ms, min:0s, avg: 1.51ms, p80:3.01ms, p95:3.01ms, iters:1, tasks:2, threads:1}, tiflash_scan:{dtfile:{total_scanned_packs:2, total_skipped_packs:12, total_scanned_rows:16384, total_skipped_rows:97625, total_rs_index_load_time: 0ms, total_read_time: 0ms}, total_create_snapshot_time: 0ms, total_local_region_num: 1, total_remote_region_num: 0}                     | pushed down filter:eq(tpcds50.date_dim.d_date, 2002-02-01 00:00:00.000000), keep order:false                                                  | N/A     | N/A  |
-|       └─Selection_31(Probe)            | 71638034.00 | 5308995 | mpp[tiflash] |                     | tiflash_task:{proc max:39.8ms, min:24.3ms, avg: 32.1ms, p80:39.8ms, p95:39.8ms, iters:86, tasks:2, threads:16}                                                                                                                                                                                                                                                                                       | not(isnull(tpcds50.catalog_sales.cs_ship_date_sk))                                                                                            | N/A     | N/A  |
-|         └─TableFullScan_30             | 71997669.00 | 5335549 | mpp[tiflash] | table:catalog_sales | tiflash_task:{proc max:36.8ms, min:23.3ms, avg: 30.1ms, p80:36.8ms, p95:36.8ms, iters:86, tasks:2, threads:16}, tiflash_scan:{dtfile:{total_scanned_packs:660, total_skipped_packs:12451, total_scanned_rows:5335549, total_skipped_rows:100905778, total_rs_index_load_time: 2ms, total_read_time: 47ms}, total_create_snapshot_time: 0ms, total_local_region_num: 194, total_remote_region_num: 0} | pushed down filter:empty, keep order:false, runtime filter:0[IN] -> tpcds50.catalog_sales.cs_ship_date_sk                                     | N/A     | N/A  |
-+----------------------------------------+-------------+---------+--------------+---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------+---------+------+
-9 rows in set (0.17 sec)
-```
-
-通过比较两个查询的执行信息，你可以发现以下改进：
-
-* IO 减少：通过比较 TableFullScan 算子的 `total_scanned_rows`，可以看到启用运行时过滤器后 `TableFullScan` 的扫描量减少了 2/3。
-* 哈希连接性能提升：`HashJoin` 算子的执行时长从 376.1 ms 减少到 157.6 ms。
+* IO 减少：通过比较 `TableFullScan` 操作符的 `total_scanned_rows`，可以看到开启 Runtime Filter 后，扫描量减少了三分之二。
+* Hash join 性能提升：`HashJoin` 操作符的执行时间由 376.1 ms 降至 157.6 ms。
 
 ### 最佳实践
 
-运行时过滤器适用于大表和小表连接的场景，例如事实表和维度表的连接查询。当维度表的命中数据量较小时，意味着过滤器的值较少，因此可以更有效地过滤掉事实表中不满足条件的数据。与默认扫描整个事实表的场景相比，这显著提高了查询性能。
+Runtime Filter 适用于大表与小表连接的场景，例如事实表与维度表的连接查询。当维度表的命中数据较少时，意味着过滤值较少，因此可以更有效地过滤掉不符合条件的数据。相比默认扫描整个事实表的方式，这可以显著提升查询性能。
 
-TPC-DS 中 `Sales` 表和 `date_dim` 表的连接操作就是一个典型的例子。
-## 配置运行时过滤器
+以 TPC-DS 中 `Sales` 表与 `date_dim` 表的连接操作为典型示例。
 
-在使用运行时过滤器时，你可以配置运行时过滤器的模式和谓词类型。
+## 配置 Runtime Filter
 
-### 运行时过滤器模式
+在使用 Runtime Filter 时，可以配置 Runtime Filter 的模式和谓词类型。
 
-运行时过滤器的模式是**过滤器发送算子**和**过滤器接收算子**之间的关系。有三种模式：`OFF`、`LOCAL` 和 `GLOBAL`。在 v7.3.0 中，仅支持 `OFF` 和 `LOCAL` 模式。运行时过滤器模式由系统变量 [`tidb_runtime_filter_mode`](/system-variables.md#tidb_runtime_filter_mode-new-in-v720) 控制。
+### Runtime Filter 模式
 
-- `OFF`：运行时过滤器被禁用。禁用后，查询行为与之前版本相同。
-- `LOCAL`：运行时过滤器以本地模式启用。在本地模式下，**过滤器发送算子**和**过滤器接收算子**在同一个 MPP 任务中。换句话说，运行时过滤器可以应用于 HashJoin 算子和 TableScan 算子在同一任务中的场景。目前，运行时过滤器仅支持本地模式。要启用此模式，请将其设置为 `LOCAL`。
-- `GLOBAL`：目前不支持全局模式。你不能将运行时过滤器设置为此模式。
+Runtime Filter 的模式是**过滤器发送端操作符**与**过滤器接收端操作符**之间的关系。共有三种模式：`OFF`、`LOCAL` 和 `GLOBAL`。在 v7.3.0 版本中，仅支持 `OFF` 和 `LOCAL` 模式。Runtime Filter 的模式由系统变量 [`tidb_runtime_filter_mode`](/system-variables.md#tidb_runtime_filter_mode-new-in-v720) 控制。
 
-### 运行时过滤器类型
+- `OFF`：关闭 Runtime Filter。关闭后，查询行为与之前版本相同。
+- `LOCAL`：启用本地模式的 Runtime Filter。在本地模式下，**过滤器发送端操作符**和**过滤器接收端操作符**处于同一 MPP 任务中。换句话说，Runtime Filter 可应用于 HashJoin 和 TableScan 在同一任务中的场景。目前，Runtime Filter 仅支持本地模式。要启用此模式，将其设置为 `LOCAL`。
+- `GLOBAL`：目前不支持全局模式，不能将 Runtime Filter 设置为此模式。
 
-运行时过滤器的类型是生成的过滤器算子使用的谓词类型。目前仅支持一种类型：`IN`，这意味着生成的谓词类似于 `k1 in (xxx)`。运行时过滤器类型由系统变量 [`tidb_runtime_filter_type`](/system-variables.md#tidb_runtime_filter_type-new-in-v720) 控制。
+### Runtime Filter 类型
 
-- `IN`：默认类型。表示生成的运行时过滤器使用 `IN` 类型谓词。
+Runtime Filter 的类型是由生成的 Filter 操作符所使用的谓词类型。目前仅支持一种类型：`IN`，表示生成的谓词类似于 `k1 in (xxx)`。Runtime Filter 的类型由系统变量 [`tidb_runtime_filter_type`](/system-variables.md#tidb_runtime_filter_type-new-in-v720) 控制。
+
+- `IN`：默认类型。表示生成的 Runtime Filter 使用 `IN` 类型的谓词。
 
 ## 限制
 
-- 运行时过滤器是 MPP 架构中的优化，只能应用于下推到 TiFlash 的查询。
-- 连接类型：Left outer、Full outer 和 Anti join（当左表是探测侧时）不支持运行时过滤器。因为运行时过滤器会预先过滤参与连接的数据，而上述连接类型不会丢弃不匹配的数据，所以不能使用运行时过滤器。
-- 等值连接表达式：当等值连接表达式中的探测列是复杂表达式时，或者当探测列类型是 JSON、Blob、Array 或其他复杂数据类型时，不会生成运行时过滤器。主要原因是上述类型的列很少用作连接列。即使生成了过滤器，过滤率通常也很低。
+- Runtime Filter 是在 MPP 架构中的一种优化，只能应用于推送到 TiFlash 的查询。
+- 连接类型：左外连接、全外连接和 Anti 连接（左表为 probe side）不支持 Runtime Filter。因为 Runtime Filter 会提前过滤连接涉及的数据，前述类型的连接不会丢弃不匹配的数据，因此不能使用 Runtime Filter。
+- 相等连接表达式：当等值连接表达式中的 probe 列为复杂表达式，或 probe 列类型为 JSON、Blob、Array 或其他复杂数据类型时，不会生成 Runtime Filter。主要原因是上述类型的列很少作为连接列使用，即使生成了过滤器，过滤率也通常较低。
 
-对于上述限制，如果你需要确认运行时过滤器是否正确生成，可以使用 [`EXPLAIN` 语句](/sql-statements/sql-statement-explain.md)验证执行计划。
+对于上述限制，如果你需要确认 Runtime Filter 是否正确生成，可以使用 [`EXPLAIN` 语句](/sql-statements/sql-statement-explain.md) 来验证执行计划。

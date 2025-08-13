@@ -1,17 +1,17 @@
 ---
-title: 成本模型
-summary: 了解 TiDB 在物理优化过程中使用的成本模型是如何工作的。
+title: Cost Model
+summary: 了解 TiDB 在物理优化过程中使用的成本模型的工作原理。
 ---
 
-# 成本模型
+# Cost Model
 
-TiDB 在[物理优化](/sql-physical-optimization.md)过程中使用成本模型来选择索引和运算符。该过程如下图所示：
+TiDB 使用成本模型在 [物理优化](/sql-physical-optimization.md) 过程中选择索引和操作符。该过程在下图中进行了示意：
 
 ![CostModel](https://docs-download.pingcap.com/media/images/docs/cost-model.png)
 
-TiDB 计算计划中每个索引的访问成本和每个物理运算符（如 HashJoin 和 IndexJoin）的执行成本，并选择成本最小的计划。
+TiDB 计算计划中每个索引的访问成本和每个物理操作符（如 HashJoin 和 IndexJoin）的执行成本，并选择成本最低的计划。
 
-以下是一个简化的示例，用于解释成本模型的工作原理。假设有一个表 `t`：
+以下是一个简化的示例，用于说明成本模型的工作原理。假设有一张表 `t`：
 
 ```sql
 mysql> SHOW CREATE TABLE t;
@@ -19,9 +19,9 @@ mysql> SHOW CREATE TABLE t;
 | Table | Create Table                                                                                                                                                                                        |
 +-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | t     | CREATE TABLE `t` (
-  `a` int(11) DEFAULT NULL,
-  `b` int(11) DEFAULT NULL,
-  `c` int(11) DEFAULT NULL,
+  `a` int DEFAULT NULL,
+  `b` int DEFAULT NULL,
+  `c` int DEFAULT NULL,
   KEY `b` (`b`),
   KEY `c` (`c`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin |
@@ -29,23 +29,23 @@ mysql> SHOW CREATE TABLE t;
 1 row in set (0.00 sec)
 ```
 
-在执行 `SELECT * FROM t WHERE b < 100 and c < 100` 语句时，假设 TiDB 估计有 20 行满足 `b < 100` 条件，500 行满足 `c < 100`，且 `INT` 类型索引的长度为 8。那么 TiDB 计算两个索引的成本：
+在执行 `SELECT * FROM t WHERE b < 100 and c < 100` 语句时，假设 TiDB 估算满足 `b < 100` 条件的行数为 20 行，满足 `c < 100` 条件的行数为 500 行，且 `INT` 类型索引的长度为 8。然后，TiDB 计算两个索引的成本：
 
-+ 索引 `b` 的成本 = `b < 100` 的行数 \* 索引 `b` 的长度 = 20 * 8 = 160
-+ 索引 `c` 的成本 = `c < 100` 的行数 \* 索引 `c` 的长度 = 500 * 8 = 4000
++ 索引 `b` 的成本 = 行数 `b < 100` \* 索引 `b` 的长度 = 20 \* 8 = 160
++ 索引 `c` 的成本 = 行数 `c < 100` \* 索引 `c` 的长度 = 500 \* 8 = 4000
 
-因为索引 `b` 的成本较低，TiDB 选择 `b` 作为索引。
+由于索引 `b` 的成本较低，TiDB 选择 `b` 作为索引。
 
-上述示例是简化的，仅用于解释基本原理。在实际的 SQL 执行中，TiDB 成本模型更为复杂。
+上述示例为简化示意，仅用以说明基本原理。在实际 SQL 执行中，TiDB 的成本模型会更加复杂。
 
-## 成本模型版本 2
+## Cost Model Version 2
 
-TiDB v6.2.0 引入了成本模型版本 2，这是一个新的成本模型。
+TiDB v6.2.0 引入了 Cost Model Version 2，这是一个新的成本模型。
 
-成本模型版本 2 对成本公式进行了更准确的回归校准，调整了一些成本公式，比之前版本的成本公式更准确。
+Cost Model Version 2 提供了更为准确的成本公式回归校准，调整了部分成本公式，优于之前版本的成本公式的准确性。
 
-要切换成本模型的版本，你可以设置 [`tidb_cost_model_version`](/system-variables.md#tidb_cost_model_version-new-in-v620) 变量。
+要切换成本模型的版本，可以设置 [`tidb_cost_model_version`](/system-variables.md#tidb_cost_model_version-new-in-v620) 变量。
 
-> **注意：**
+> **Note:**
 >
-> 切换成本模型的版本可能会导致查询计划发生变化。
+> 切换成本模型的版本可能会导致查询计划的变化。

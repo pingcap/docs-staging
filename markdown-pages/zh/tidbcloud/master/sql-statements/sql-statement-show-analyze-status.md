@@ -1,34 +1,34 @@
 ---
 title: SHOW ANALYZE STATUS
-summary: TiDB 数据库中 SHOW ANALYZE STATUS 的使用概述。
+summary: 关于 TiDB 数据库中 SHOW ANALYZE STATUS 使用情况的概述。
 ---
 
 # SHOW ANALYZE STATUS
 
-`SHOW ANALYZE STATUS` 语句显示 TiDB 正在执行的统计信息收集任务和有限数量的历史任务记录。
+`SHOW ANALYZE STATUS` 语句显示 TiDB 正在执行的统计信息采集任务以及有限的历史任务记录。
 
-从 TiDB v6.1.0 开始，`SHOW ANALYZE STATUS` 语句支持显示集群级别的任务。即使在 TiDB 重启后，你仍然可以使用此语句查看重启前的任务记录。在 TiDB v6.1.0 之前，`SHOW ANALYZE STATUS` 语句只能显示实例级别的任务，且任务记录会在 TiDB 重启后被清除。
+从 TiDB v6.1.0 开始，`SHOW ANALYZE STATUS` 语句支持显示集群级别的任务。即使在重启 TiDB 后，仍然可以通过此语句查看重启前的任务记录。在 TiDB v6.1.0 之前，`SHOW ANALYZE STATUS` 语句只能显示实例级别的任务，任务记录在重启后会被清除。
 
-从 TiDB v6.1.0 开始，你可以通过系统表 `mysql.analyze_jobs` 查看最近 7 天的历史任务。
+从 TiDB v6.1.0 开始，可以通过系统表 `mysql.analyze_jobs` 查看最近 7 天内的历史任务。
 
-从 TiDB v7.3.0 开始，你可以通过系统表 `mysql.analyze_jobs` 或 `SHOW ANALYZE STATUS` 查看当前 `ANALYZE` 任务的进度。
+从 TiDB v7.3.0 开始，可以通过系统表 `mysql.analyze_jobs` 或 `SHOW ANALYZE STATUS` 查看当前 `ANALYZE` 任务的进度。
 
 目前，`SHOW ANALYZE STATUS` 语句返回以下列：
 
-| 列名            | 描述 |
+| 列名             | 描述 |
 | :--------------- | :------------- |
-| `Table_schema`   | 数据库名 |
+| `Table_schema`   | 数据库名称 |
 | `Table_name`     | 表名 |
-| `Partition_name` | 分区名 |
-| `Job_info`       | 任务信息。如果分析了索引，此信息将包括索引名。当 `tidb_analyze_version =2` 时，此信息将包括采样率等配置项。 |
+| `Partition_name` | 分区名称 |
+| `Job_info`       | 任务信息。如果分析的是索引，此信息将包含索引名。当 `tidb_analyze_version =2` 时，此信息还会包括采样率等配置项。 |
 | `Processed_rows` | 已分析的行数 |
 | `Start_time`     | 任务开始时间 |
 | `State`          | 任务状态，包括 `pending`、`running`、`finished` 和 `failed` |
-| `Fail_reason`    | 任务失败的原因。如果执行成功，该值为 `NULL`。 |
+| `Fail_reason`    | 任务失败原因。如果执行成功，值为 `NULL`。 |
 | `Instance`       | 执行任务的 TiDB 实例 |
 | `Process_id`     | 执行任务的进程 ID |
 
-## 语法概要
+## 概要
 
 ```ebnf+diagram
 ShowAnalyzeStatusStmt ::= 'SHOW' 'ANALYZE' 'STATUS' ShowLikeOrWhereOpt
@@ -84,6 +84,6 @@ mysql> show analyze status;
 
 此语句是 TiDB 对 MySQL 语法的扩展。
 
-## 另请参阅
+## 另请参见
 
-* [ANALYZE_STATUS 表](/information-schema/information-schema-analyze-status.md)
+* [ANALYZE_STATUS table](/information-schema/information-schema-analyze-status.md)

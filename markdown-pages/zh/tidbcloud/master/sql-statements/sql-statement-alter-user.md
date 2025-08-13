@@ -1,13 +1,13 @@
 ---
 title: ALTER USER | TiDB SQL 语句参考
-summary: TiDB 数据库中 ALTER USER 的使用概述。
+summary: 关于在 TiDB 数据库中使用 ALTER USER 的概述。
 ---
 
 # ALTER USER
 
-此语句用于在 TiDB 权限系统中修改现有用户。在 MySQL 权限系统中，用户是用户名和连接来源主机的组合。因此，可以创建一个只能从 IP 地址 `192.168.1.1` 连接的用户 `'newuser2'@'192.168.1.1'`。同时也可以让两个用户具有相同的用户部分，但由于从不同主机登录而具有不同的权限。
+此语句用于修改 TiDB 权限系统中的现有用户。在 MySQL 权限系统中，用户是用户名和连接来源主机的组合。因此，可以创建一个 `'newuser2'@'192.168.1.1'` 用户，该用户只能从 IP 地址 `192.168.1.1` 连接。也可以让两个用户具有相同的用户部分，但登录自不同的主机时拥有不同的权限。
 
-## 语法概要
+## 概述
 
 ```ebnf+diagram
 AlterUserStmt ::=
@@ -20,8 +20,8 @@ UserSpec ::=
     Username AuthOption
 
 RequireClauseOpt ::=
-    ( 'REQUIRE' 'NONE' | 'REQUIRE' 'SSL' | 'REQUIRE' 'X509' | 'REQUIRE' RequireList )?  
-    
+    ( 'REQUIRE' 'NONE' | 'REQUIRE' 'SSL' | 'REQUIRE' 'X509' | 'REQUIRE' RequireList )?
+
 RequireList ::=
     ( "ISSUER" stringLit | "SUBJECT" stringLit | "CIPHER" stringLit | "SAN" stringLit | "TOKEN_ISSUER" stringLit )*
 
@@ -63,7 +63,7 @@ mysql> SHOW CREATE USER 'newuser';
 
 更改用户 `newuser` 的密码：
 
-```sql
+```
 mysql> ALTER USER 'newuser' IDENTIFIED BY 'newnewpassword';
 Query OK, 0 rows affected (0.02 sec)
 
@@ -102,7 +102,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-使用 `ALTER USER ... COMMENT` 修改 `newuser` 的注释：
+使用 `ALTER USER ... COMMENT` 修改 `newuser` 的备注：
 
 ```sql
 ALTER USER 'newuser' COMMENT 'Here is the comment';
@@ -118,7 +118,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-使用 `ALTER USER ... ATTRIBUTE` 删除 `newuser` 的注释：
+使用 `ALTER USER ... ATTRIBUTE` 移除 `newuser` 的备注：
 
 ```sql
 ALTER USER 'newuser' ATTRIBUTE '{"comment": null}';
@@ -134,7 +134,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-通过 `ALTER USER ... PASSWORD EXPIRE NEVER` 将 `newuser` 的自动密码过期策略更改为永不过期：
+通过 `ALTER USER ... PASSWORD EXPIRE NEVER` 改变 `newuser` 的密码自动过期策略为永不过期：
 
 ```sql
 ALTER USER 'newuser' PASSWORD EXPIRE NEVER;
@@ -144,7 +144,7 @@ ALTER USER 'newuser' PASSWORD EXPIRE NEVER;
 Query OK, 0 rows affected (0.02 sec)
 ```
 
-使用 `ALTER USER ... PASSWORD REUSE INTERVAL ... DAY` 修改 `newuser` 的密码重用策略，禁止重用最近 90 天内使用过的任何密码：
+通过 `ALTER USER ... PASSWORD REUSE INTERVAL ... DAY` 设置 `newuser` 的密码重用策略，不允许在过去 90 天内使用相同密码：
 
 ```sql
 ALTER USER 'newuser' PASSWORD REUSE INTERVAL 90 DAY;
@@ -181,7 +181,7 @@ SELECT USER, JSON_EXTRACT(User_attributes, "$.resource_group") FROM mysql.user W
 1 row in set (0.02 sec)
 ```
 
-解除用户与资源组的绑定，即绑定用户到 `default` 资源组。
+取消用户的资源组绑定，即将用户绑定到 `default` 资源组。
 
 ```sql
 ALTER USER 'newuser' RESOURCE GROUP `default`;
@@ -197,11 +197,12 @@ SELECT USER, JSON_EXTRACT(User_attributes, "$.resource_group") FROM mysql.user W
 1 row in set (0.02 sec)
 ```
 
-## 另请参阅
+## 相关链接
 
 <CustomContent platform="tidb">
 
-* [与 MySQL 的安全特性兼容性](/security-compatibility-with-mysql.md)
+* [TiDB 用户账户管理](/user-account-management.md)
+* [与 MySQL 的安全兼容性](/security-compatibility-with-mysql.md)
 
 </CustomContent>
 

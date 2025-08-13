@@ -1,29 +1,29 @@
 ---
-title: ADD INDEX | TiDB SQL 语句参考
-summary: TiDB 数据库中 ADD INDEX 的使用概述。
+title: ADD INDEX | TiDB SQL Statement Reference
+summary: 关于在 TiDB 数据库中使用 ADD INDEX 的概述。
 ---
 
 # ADD INDEX
 
-`ALTER TABLE.. ADD INDEX` 语句用于向现有表添加索引。在 TiDB 中，这是一个在线操作，这意味着添加索引时不会阻塞对表的读取或写入操作。
+`ALTER TABLE.. ADD INDEX` 语句在现有表中添加索引。这个操作在 TiDB 中是在线进行的，意味着添加索引时不会阻塞对表的读写操作。
 
-> **提示：**
+> **Tip:**
 >
-> 可以使用 [TiDB 分布式执行框架 (DXF)](/tidb-distributed-execution-framework.md) 来加速此语句的执行。
+> [TiDB Distributed eXecution Framework (DXF)](/tidb-distributed-execution-framework.md) 可以用来加快此语句的执行速度。
 
 <CustomContent platform="tidb">
 
-> **警告：**
+> **Warning:**
 >
-> - 在集群中执行 DDL 语句时（通常是耗时的 DDL 语句，如 `ADD INDEX` 和列类型更改），**不要**升级 TiDB 集群。
-> - 在升级之前，建议使用 [`ADMIN SHOW DDL`](/sql-statements/sql-statement-admin-show-ddl.md) 命令检查 TiDB 集群是否有正在进行的 DDL 任务。如果集群有 DDL 任务，要升级集群，请等待 DDL 执行完成，或使用 [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md) 命令取消 DDL 任务后再升级集群。
-> - 此外，在集群升级期间，**不要**执行任何 DDL 语句。否则，可能会出现未定义行为的问题。
+> - **请勿** 在集群中执行 DDL 语句时升级 TiDB 集群（通常针对耗时较长的 DDL 语句，如 `ADD INDEX` 和列类型变更）。
+> - 在升级前，建议使用 [`ADMIN SHOW DDL`](/sql-statements/sql-statement-admin-show-ddl.md) 命令检查 TiDB 集群是否存在正在进行的 DDL 任务。如果集群有 DDL 任务，为了升级集群，应等待 DDL 执行完成或使用 [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md) 命令取消 DDL 任务后再进行升级。
+> - 此外，在集群升级期间，**请勿** 执行任何 DDL 语句，否则可能会出现未定义行为的问题。
 >
 > 当你将 TiDB 从 v7.1.0 升级到更高版本时，可以忽略上述限制。详情请参见 [TiDB 平滑升级的限制](/smooth-upgrade-tidb.md)。
 
 </CustomContent>
 
-## 语法
+## 概要
 
 ```ebnf+diagram
 AlterTableStmt
@@ -37,11 +37,13 @@ IndexPartSpecification
 
 IndexOption
          ::= 'KEY_BLOCK_SIZE' '='? LengthNum
-           | IndexType
+           | 'USING' IndexType
            | 'WITH' 'PARSER' Identifier
            | 'COMMENT' stringLit
            | 'VISIBLE'
            | 'INVISIBLE'
+           | 'GLOBAL'
+           | 'LOCAL'
 
 IndexType
          ::= 'BTREE'
@@ -84,16 +86,17 @@ mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 
 ## MySQL 兼容性
 
-* TiDB 在语法上接受 `HASH`、`BTREE` 和 `RTREE` 等索引类型以与 MySQL 兼容，但会忽略这些类型。
+* TiDB 支持 `HASH`、`BTREE` 和 `RTREE` 等索引类型的语法以兼容 MySQL，但会忽略它们。
 * 不支持 `SPATIAL` 索引。
-* TiDB 支持解析 `FULLTEXT` 语法但不支持使用 `FULLTEXT` 索引。
-* 不支持降序索引（类似于 MySQL 5.7）。
-* 不支持向表添加 `CLUSTERED` 类型的主键。关于 `CLUSTERED` 类型的主键的更多详情，请参考[聚簇索引](/clustered-indexes.md)。
+* TiDB 支持解析 `FULLTEXT` 语法，但不支持使用 `FULLTEXT` 索引。
+* 不支持降序索引（与 MySQL 5.7 类似）。
+* 不支持向表中添加 `CLUSTERED` 类型的主键。关于 `CLUSTERED` 类型主键的更多细节，请参见 [clustered index](/clustered-indexes.md)。
+* 设置 `PRIMARY KEY` 或 `UNIQUE INDEX` 为带有 `GLOBAL` 索引选项的 [全局索引](/partitioned-table.md#global-indexes) 是 TiDB 针对 [分区表](/partitioned-table.md) 的扩展，不兼容 MySQL。
 
-## 另请参阅
+## 相关链接
 
-* [索引选择](/choose-index.md)
-* [错误索引解决方案](/wrong-index-solution.md)
+* [Index Selection](/choose-index.md)
+* [Wrong Index Solution](/wrong-index-solution.md)
 * [CREATE INDEX](/sql-statements/sql-statement-create-index.md)
 * [DROP INDEX](/sql-statements/sql-statement-drop-index.md)
 * [RENAME INDEX](/sql-statements/sql-statement-rename-index.md)
@@ -101,4 +104,4 @@ mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 * [ADD COLUMN](/sql-statements/sql-statement-add-column.md)
 * [CREATE TABLE](/sql-statements/sql-statement-create-table.md)
 * [EXPLAIN](/sql-statements/sql-statement-explain.md)
-* [TiDB 分布式执行框架 (DXF)](/tidb-distributed-execution-framework.md)
+* [TiDB Distributed eXecution Framework (DXF)](/tidb-distributed-execution-framework.md)

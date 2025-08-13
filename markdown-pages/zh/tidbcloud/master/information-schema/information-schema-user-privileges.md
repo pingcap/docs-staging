@@ -1,18 +1,18 @@
 ---
 title: USER_PRIVILEGES
-summary: "了解 `USER_PRIVILEGES` information_schema 表。"
+summary: 了解 `USER_PRIVILEGES` information_schema 表。
 ---
 
 # USER_PRIVILEGES
 
-`USER_PRIVILEGES` 表提供全局权限的信息。这些信息来自 `mysql.user` 系统表：
+`USER_PRIVILEGES` 表提供关于全局权限的信息。这些信息来自 `mysql.user` 系统表：
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC USER_PRIVILEGES;
 ```
 
-输出结果如下：
+输出如下：
 
 ```sql
 +----------------+--------------+------+------+---------+-------+
@@ -32,7 +32,7 @@ DESC USER_PRIVILEGES;
 SELECT * FROM USER_PRIVILEGES;
 ```
 
-输出结果如下：
+输出如下：
 
 <CustomContent platform="tidb">
 
@@ -79,7 +79,7 @@ SELECT * FROM USER_PRIVILEGES;
 
 <CustomContent platform="tidb-cloud">
 
-<!--与 TiDB 自托管版本相比，TiDB Cloud 中的 root 用户没有 SHUTDOWN 和 CONFIG 权限。-->
+<!--Compared with TiDB Self-Managed, the root user in TiDB Cloud does not have the SHUTDOWN and CONFIG privileges.-->
 
 ```sql
 +------------+---------------+-------------------------+--------------+
@@ -122,11 +122,11 @@ SELECT * FROM USER_PRIVILEGES;
 
 `USER_PRIVILEGES` 表中的字段说明如下：
 
-* `GRANTEE`：被授予权限的用户名，格式为 `'user_name'@'host_name'`。
-* `TABLE_CATALOG`：表所属的目录名称。此值始终为 `def`。
-* `PRIVILEGE_TYPE`：要授予的权限类型。每行仅显示一种权限类型。
-* `IS_GRANTABLE`：如果你具有 `GRANT OPTION` 权限，则值为 `YES`；否则，值为 `NO`。
+* `GRANTEE`：被授权用户的名称，格式为 `'user_name'@'host_name'`。
+* `TABLE_CATALOG`：所属表的目录名称，该值始终为 `def`。
+* `PRIVILEGE_TYPE`：被授予的权限类型，每行只显示一种权限类型。
+* `IS_GRANTABLE`：如果你拥有 `GRANT OPTION` 权限，值为 `YES`；否则，值为 `NO`。
 
-## 另请参阅
+## 相关链接
 
 - [`SHOW GRANTS`](/sql-statements/sql-statement-show-grants.md)

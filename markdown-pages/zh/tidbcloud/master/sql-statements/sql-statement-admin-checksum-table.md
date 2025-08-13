@@ -1,6 +1,6 @@
 ---
 title: ADMIN CHECKSUM TABLE | TiDB SQL 语句参考
-summary: TiDB 数据库中 ADMIN 的使用概览。
+summary: 关于 TiDB 数据库中 ADMIN 的用法概述。
 category: reference
 ---
 
@@ -10,21 +10,21 @@ category: reference
 
 <CustomContent platform="tidb">
 
-[校验和](/tidb-lightning/tidb-lightning-glossary.md#checksum)是基于表数据和属性（如 `table_id`）计算的。这意味着具有相同数据但 `table_id` 值不同的两个表将得到不同的校验和。
+[checksum](/tidb-lightning/tidb-lightning-glossary.md#checksum) 是基于表数据及其属性（如 `table_id`）计算得出的。这意味着即使两个表的数据相同，但 `table_id` 不同，它们的校验和也会不同。
 
-使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)、[TiDB Data Migration](/dm/dm-overview.md) 或 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) 导入表后，默认会执行 `ADMIN CHECKSUM TABLE <table>` 来验证数据完整性。
+在使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)、[TiDB Data Migration](/dm/dm-overview.md) 或 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) 导入表后，默认会执行 `ADMIN CHECKSUM TABLE <table>` 以验证数据完整性。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[校验和](https://docs.pingcap.com/tidb/stable/tidb-lightning-glossary#checksum)是基于表数据和属性（如 `table_id`）计算的。这意味着具有相同数据但 `table_id` 值不同的两个表将得到不同的校验和。
+[checksum](https://docs.pingcap.com/tidb/stable/tidb-lightning-glossary#checksum) 是基于表数据及其属性（如 `table_id`）计算得出的。这意味着即使两个表的数据相同，但 `table_id` 不同，它们的校验和也会不同。
 
-使用 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) 导入表后，默认会执行 `ADMIN CHECKSUM TABLE <table>` 来验证数据完整性。
+在使用 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) 导入表后，默认会执行 `ADMIN CHECKSUM TABLE <table>` 以验证数据完整性。
 
 </CustomContent>
 
-## 语法
+## 概要
 
 ```ebnf+diagram
 AdminChecksumTableStmt ::=

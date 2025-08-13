@@ -15,13 +15,16 @@ summary: 了解如何通过规划机器资源和调整 TiDB 参数来调优 TiFl
 
 本节介绍如何通过调整 TiDB 参数来提高 TiFlash 性能，包括：
 
-- [强制启用 MPP 模式](#强制启用-mpp-模式)
-- [将聚合函数下推到 Join 或 Union 之前](#将聚合函数下推到-join-或-union-之前)
-- [启用 Distinct 优化](#启用-distinct-优化)
-- [使用 `ALTER TABLE ... COMPACT` 语句压缩数据](#使用-alter-table--compact-语句压缩数据)
-- [用广播哈希连接替换分散哈希连接](#用广播哈希连接替换分散哈希连接)
-- [设置更大的执行并发度](#设置更大的执行并发度)
-- [配置 `tiflash_fine_grained_shuffle_stream_count`](#配置-tiflash_fine_grained_shuffle_stream_count)
+- [调优 TiFlash 性能](#调优-tiflash-性能)
+	- [规划资源](#规划资源)
+	- [调整 TiDB 参数](#调整-tidb-参数)
+		- [强制启用 MPP 模式](#强制启用-mpp-模式)
+		- [将聚合函数下推到 Join 或 Union 之前](#将聚合函数下推到-join-或-union-之前)
+		- [启用 Distinct 优化](#启用-distinct-优化)
+		- [使用 `ALTER TABLE ... COMPACT` 语句压缩数据](#使用-alter-table--compact-语句压缩数据)
+		- [用广播哈希连接替换分散哈希连接](#用广播哈希连接替换分散哈希连接)
+		- [设置更大的执行并发度](#设置更大的执行并发度)
+		- [配置 `tiflash_fine_grained_shuffle_stream_count`](#配置-tiflash_fine_grained_shuffle_stream_count)
 
 ### 强制启用 MPP 模式
 
