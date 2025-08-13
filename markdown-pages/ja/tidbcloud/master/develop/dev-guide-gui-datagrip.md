@@ -9,7 +9,7 @@ TiDBはMySQL互換のデータベースであり、データベースとSQLの�
 
 > **注記：**
 >
-> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed と互換性があります。
+> このチュートリアルは、 TiDB Cloud Starter、 TiDB Cloud Essential、 TiDB Cloud Dedicated、および TiDB Self-Managed と互換性があります。
 
 DataGrip は次の 2 つの方法で使用できます。
 
@@ -29,7 +29,7 @@ DataGrip は次の 2 つの方法で使用できます。
 
 **TiDB クラスターがない場合は、次のように作成できます。**
 
--   (推奨) [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   (推奨) [TiDB Cloud Starter クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
 -   [ローカルテストTiDBクラスタをデプロイ](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](/production-deployment-using-tiup.md)に従ってローカル クラスターを作成します。
 
 </CustomContent>
@@ -37,7 +37,7 @@ DataGrip は次の 2 つの方法で使用できます。
 
 **TiDB クラスターがない場合は、次のように作成できます。**
 
--   (推奨) [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   (推奨) [TiDB Cloud Starter クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
 -   [ローカルテストTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)に従ってローカル クラスターを作成します。
 
 </CustomContent>
@@ -47,7 +47,7 @@ DataGrip は次の 2 つの方法で使用できます。
 選択した TiDB デプロイメント オプションに応じて、TiDB クラスターに接続します。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Starter or Essential">
 
 1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
@@ -76,13 +76,13 @@ DataGrip は次の 2 つの方法で使用できます。
 
 7.  TiDB Cloud接続ダイアログから接続文字列をコピーします。それを**URL**フィールドに貼り付けると、残りのパラメータが自動的に入力されます。結果の例は次のとおりです。
 
-    ![Configure the URL field for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-url-paste.jpg)
+    ![Configure the URL field for TiDB Cloud Starter](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-url-paste.jpg)
 
     **不足しているドライバー ファイルをダウンロードするという**警告が表示された場合は、 **[ダウンロード]**をクリックしてドライバー ファイルを取得します。
 
-8.  **「テスト接続」**をクリックして、 TiDB Cloud Serverless クラスターへの接続を検証します。
+8.  **「テスト接続」**をクリックして、 TiDB Cloud Starter クラスターへの接続を検証します。
 
-    ![Test the connection to a TiDB Cloud Serverless cluster](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-test-connection.jpg)
+    ![Test the connection to a TiDB Cloud Starter cluster](https://docs-download.pingcap.com/media/images/docs/develop/datagrip-test-connection.jpg)
 
 9.  **[OK]**をクリックして接続構成を保存します。
 
