@@ -24,9 +24,9 @@ export const imageCDNs = {
 };
 
 const CLOUD_TOC_LIST = [
-  "TOC-tidb-cloud.md",
-  "TOC-tidb-cloud-starter.md",
-  "TOC-tidb-cloud-essential.md",
+  "/TOC-tidb-cloud.md",
+  "/TOC-tidb-cloud-starter.md",
+  "/TOC-tidb-cloud-essential.md",
 ];
 
 const isCloudTOC = (relativePathInZip) => {
@@ -297,6 +297,8 @@ export async function retrieveCloudMDsFromZip(
           .flat()
       ),
     ];
+
+    console.log(cloudFileList);
 
     zipEntries.forEach(function (zipEntry) {
       // console.log(zipEntry.toString()) // outputs zip entries information
