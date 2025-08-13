@@ -184,6 +184,12 @@
           },
           {
             "id": "v1beta1",
+            "pathname": "v1beta1/dedicated",
+            "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-dedicated.swagger.json",
+            "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-dedicated.swagger.json"
+          },
+          {
+            "id": "v1beta1",
             "pathname": "v1beta1/iam",
             "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-iam.swagger.json",
             "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-iam.swagger.json"
@@ -193,6 +199,12 @@
             "pathname": "v1beta1/msp",
             "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-msp.json",
             "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-msp.json"
+          },
+          {
+            "id": "v1beta1",
+            "pathname": "v1beta1/serverless",
+            "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-serverless.swagger.json",
+            "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-serverless.swagger.json"
           }
         ]
       }
