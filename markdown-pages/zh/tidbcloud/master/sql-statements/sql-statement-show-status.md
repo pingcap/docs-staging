@@ -1,15 +1,15 @@
 ---
 title: SHOW [GLOBAL|SESSION] STATUS | TiDB SQL 语句参考
-summary: TiDB 数据库中 SHOW [GLOBAL|SESSION] STATUS 的使用概览。
+summary: 关于 TiDB 数据库中使用 SHOW [GLOBAL|SESSION] STATUS 的概述。
 ---
 
 # SHOW [GLOBAL|SESSION] STATUS
 
-此语句是为了与 MySQL 兼容而包含的。对于大多数指标，TiDB 使用 Prometheus 和 Grafana 进行集中指标收集，而不是使用 `SHOW STATUS`。
+此语句是为了与 MySQL 兼容而包含的。TiDB 使用 Prometheus 和 Grafana 进行集中式指标收集，而不是大部分指标使用 `SHOW STATUS`。
 
-变量的完整描述可以在这里找到：[状态变量](/status-variables.md)
+变量的完整描述可以在这里找到： [status variables](/status-variables.md)
 
-## 语法
+## 概述
 
 ```ebnf+diagram
 ShowStatusStmt ::=
@@ -67,7 +67,7 @@ mysql> SHOW GLOBAL STATUS;
 
 * 此语句与 MySQL 兼容。
 
-## 另请参阅
+## 相关链接
 
 * [FLUSH STATUS](/sql-statements/sql-statement-flush-status.md)
-* [服务器状态变量](/status-variables.md)
+* [Server Status Variables](/status-variables.md)

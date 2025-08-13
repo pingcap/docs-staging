@@ -1,13 +1,13 @@
 ---
 title: USE | TiDB SQL 语句参考
-summary: TiDB 数据库中 USE 的使用概述。
+summary: 关于在 TiDB 中使用 USE 的概述。
 ---
 
 # USE
 
-`USE` 语句为用户会话选择当前数据库。
+`USE` 语句用于选择当前会话的数据库。
 
-## 语法
+## 概要
 
 ```ebnf+diagram
 UseStmt ::=
@@ -74,9 +74,9 @@ mysql> SHOW TABLES;
 
 ## MySQL 兼容性
 
-TiDB 中的 `USE` 语句与 MySQL 完全兼容。如果发现任何兼容性差异，请[报告问题](https://docs.pingcap.com/tidb/stable/support)。
+TiDB 中的 `USE` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [CREATE DATABASE](/sql-statements/sql-statement-create-database.md)
 * [SHOW TABLES](/sql-statements/sql-statement-show-tables.md)

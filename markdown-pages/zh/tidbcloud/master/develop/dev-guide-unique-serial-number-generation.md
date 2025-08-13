@@ -1,65 +1,65 @@
 ---
-title: 唯一序列号生成
-summary: 为需要生成自己的唯一 ID 的开发者提供唯一序列号生成方案。
+title: Unique Serial Number Generation
+summary: 面向开发者的唯一 ID 生成方案，用于生成自己的唯一序列号。
 ---
 
-# 唯一序列号生成
+# Unique Serial Number Generation
 
-本文介绍唯一序列号生成方案，帮助需要生成自己的唯一 ID 的开发者。
+本文介绍了唯一序列号生成方案，帮助开发者自行生成唯一 ID。
 
-## 自增列
+## Auto-increment column
 
-`AUTO_INCREMENT` 是许多兼容 MySQL 协议的关系型数据库管理系统的列属性。通过 `AUTO_INCREMENT` 属性，数据库可以在无需用户干预的情况下自动为该列分配值。随着表中记录数量的增加，该列的值会自动递增并保证唯一。在大多数场景中，`AUTO_INCREMENT` 列被用作没有实际意义的代理主键。
+`AUTO_INCREMENT` 是许多兼容 MySQL 协议的关系型数据库管理系统（RDBMS）中的列属性。通过 `AUTO_INCREMENT` 属性，数据库可以在无需用户干预的情况下自动为该列分配值。随着表中记录数的增加，该列的值会自动递增，并保证唯一性。在大多数场景中，`AUTO_INCREMENT` 列用作代理主键，没有实际含义。
 
-`AUTO_INCREMENT` 列的限制是该列必须是整数类型，并且分配给它们的值必须是整数。如果应用程序需要的序列号由字母、数字和其他字符组成，用户很难通过 `AUTO_INCREMENT` 列获取序列号中需要的自增数字。
+`AUTO_INCREMENT` 列的限制在于，列必须是整数类型，且分配的值必须是整数。如果应用所需的序列号包含字母、数字或其他字符，用户很难通过 `AUTO_INCREMENT` 列获得所需的自动递增数字。
 
-## 序列
+## Sequence
 
-**序列（Sequence）**是一个数据库对象，应用程序可以调用它来生成递增的序列值。应用程序可以灵活地使用序列值为一个或多个表分配值。应用程序还可以使用序列值进行更复杂的处理，生成文本和数字的组合。这种方法为代理键赋予了一些跟踪和分类的意义。
+**Sequence** 是一种数据库对象，应用可以调用它来生成递增的序列值。应用可以灵活地使用序列值为一个或多个表赋值，也可以结合文本和数字进行更复杂的处理，从而赋予代理键一些追踪和分类的意义。
 
-序列功能从 TiDB v4.0 开始提供。详细信息，请参考[序列文档](/sql-statements/sql-statement-create-sequence.md#create-sequence)。
+Sequence 从 TiDB v4.0 开始支持。详细信息请参考 [sequence documentation](/sql-statements/sql-statement-create-sequence.md#create-sequence)。
 
-## 雪花算法类解决方案
+## Snowflake-like solutions
 
-雪花（Snowflake）是 Twitter 提出的分布式 ID 生成解决方案。它有多种实现，比较流行的有百度的 **uid-generator** 和美团的 **leaf**。本节以 `uid-generator` 为例。
+Snowflake 是 Twitter 提出的一种分布式 ID 生成方案。现有几种实现方式，其中较为流行的有百度的 **uid-generator** 和美团的 **leaf**。本文以 `uid-generator` 为例。
 
 `uid-generator` 生成的 64 位 ID 结构如下：
 
 ```
-| 符号位 | 相对时间差 | 工作节点 ID | 序列号 |
-|------|-----------|------------|--------|
-| 1bit |   28bits  |   22bits   | 13bits |
+| sign | delta seconds | worker node id | sequencs |
+|------|---------------|----------------|----------|
+| 1bit |     28bits    | 22bits         | 13bits   |
 ```
 
-- 符号位：固定长度为 1 位。固定为 `0`，表示生成的 ID 始终是正数。
-- 相对时间差：默认 28 位。当前时间，表示为相对于预设时间基准（默认为 `2016-05-20`）的秒级增量值。28 位最多可以支持约 8.7 年。
-- 工作节点 ID：默认 22 位。表示机器 ID，通常在应用程序进程启动时从中央 ID 生成器获取。常见的中央 ID 生成器包括自增列和 ZooKeeper。默认分配策略是用完即弃，进程重启时重新获取新的工作节点 ID。22 位最多可以支持约 420 万次启动。
-- 序列号：默认 13 位。每秒内的并发序列。13 位每秒可以支持 8192 个并发序列。
+- sign：固定长度 1 位，固定为 `0`，表示生成的 ID 始终为正数。
+- delta seconds：默认 28 位。当前时间，以相对于预设时间基准（默认为 `2016-05-20`）的秒数递增值表示。28 位支持大约 8.7 年。
+- worker node id：默认 22 位。表示机器 ID，通常在应用进程启动时由集中式 ID 生成器获取。常用的集中式 ID 生成器包括自增列和 ZooKeeper。默认分配策略为“丢弃即用”，重启时会重新获取新的 worker node id。22 位支持大约 420 万台机器。
+- sequence：默认 13 位。每秒的并发序列数。13 位支持每秒 8192 个并发序列。
 
-## 号段分配方案
+## Number allocation solution
 
-号段分配方案可以理解为从数据库批量获取自增 ID。这个方案需要一个序列号生成表，每一行代表一个序列对象。表定义示例如下：
+数字分配方案可以理解为从数据库批量获取自增 ID。该方案需要一个序列号生成表，每行代表一个序列对象。表定义示例如下：
 
-| 字段名 | 字段类型 | 字段说明 |
+| Field Name | Field Type | Field Description |
 | -------- | ------------ | ---------------------------- |
-| `SEQ_NAME` | varchar(128) | 序列名称，用于区分不同的应用。 |
-| `MAX_ID` | bigint(20) | 当前已分配的序列的最大值。 |
-| `STEP` | int(11) | 步长，表示每次分配的号段长度。 |
+| `SEQ_NAME` | varchar(128) | 序列名称，用于区分不同应用。 |
+| `MAX_ID` | bigint | 当前已分配的最大值。 |
+| `STEP` | int | 步长，表示每次分配的段长度。 |
 
-每次应用程序按照配置的步长获取一段序列号。同时更新数据库以持久化当前已分配的序列的最大值。序列号的处理和分配在应用程序的内存中完成。一段序列号用完后，应用程序获取新的一段序列号，这有效地缓解了数据库写入压力。在实践中，你还可以调整步长来控制数据库更新的频率。
+每次，应用从配置的步长中获取一段序列号，同时更新数据库以持久化已分配的最大值。序列号的处理和分配在应用的内存中完成。当一段序列号用完后，应用会获取新的一段，从而有效减轻数据库写入压力。实际操作中，也可以调整步长以控制数据库更新的频率。
 
-最后需要注意的是，上述两种方案生成的 ID 随机性不够，不能直接用作 TiDB 表的**主键**。在实践中，你可以对生成的 ID 进行位反转以获得更随机的新 ID。例如，对 `00000010100101000001111010011100` 进行位反转后变成 `00111001011110000010100101000000`，对 `11111111111111111111111111111101` 进行位反转后变成 `10111111111111111111111111111111`。
+最后，注意上述两种方案生成的 ID 不够随机，不能直接作为 TiDB 表的 **primary keys**。在实际应用中，可以对生成的 ID 进行位反转，以获得更随机的新 ID。例如，位反转后，ID `00000010100101000001111010011100` 变为 `00111001011110000010100101000000`，而 `11111111111111111111111111111101` 变为 `10111111111111111111111111111111`。
 
-## 需要帮助？
+## Need help?
 
 <CustomContent platform="tidb">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](/support.md)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](/support.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](https://tidb.support.pingcap.com/)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
 
 </CustomContent>

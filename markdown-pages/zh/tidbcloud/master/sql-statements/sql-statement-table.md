@@ -1,13 +1,13 @@
 ---
 title: TABLE | TiDB SQL 语句参考
-summary: TiDB 数据库中 TABLE 的使用概述。
+summary: 关于 TiDB 数据库中 TABLE 的用法概述。
 ---
 
 # TABLE
 
-当不需要聚合或复杂过滤时，可以使用 `TABLE` 语句代替 `SELECT * FROM`。
+当不需要聚合或复杂筛选时，可以使用 `TABLE` 语句代替 `SELECT * FROM`。
 
-## 语法图
+## 概述
 
 ```ebnf+diagram
 TableStmt ::=
@@ -45,7 +45,7 @@ TABLE t1;
 3 rows in set (0.01 sec)
 ```
 
-查询 `t1` 并按 `id` 字段降序排序：
+查询 `t1` 并按 `id` 字段降序排序结果：
 
 ```sql
 TABLE t1 ORDER BY id DESC;
@@ -79,9 +79,9 @@ TABLE t1 LIMIT 1;
 
 ## MySQL 兼容性
 
-`TABLE` 语句在 MySQL 8.0.19 中引入。
+`TABLE` 语句在 MySQL 8.0.19 版本中引入。
 
-## 另请参阅
+## 相关链接
 
 - [`SELECT`](/sql-statements/sql-statement-select.md)
-- [MySQL 中的 `TABLE` 语句](https://dev.mysql.com/doc/refman/8.0/en/table.html)
+- [`TABLE` statements in MySQL](https://dev.mysql.com/doc/refman/8.0/en/table.html)

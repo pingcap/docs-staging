@@ -1,17 +1,17 @@
 ---
-title: 谓词下推
-summary: 介绍 TiDB 的一个逻辑优化规则——谓词下推（Predicate Push Down，PPD）。
+title: Predicates Push Down
+summary: 介绍 TiDB 的一种逻辑优化规则——Predicate Push Down (PPD)。
 ---
 
-# 谓词下推（PPD）
+# Predicates Push Down (PPD)
 
-本文介绍 TiDB 的一个逻辑优化规则——谓词下推（Predicate Push Down，PPD）。本文旨在帮助你理解谓词下推以及了解其适用和不适用的场景。
+本文介绍 TiDB 的一种逻辑优化规则——Predicate Push Down (PPD)。旨在帮助你理解谓词下推，并了解其适用和不适用的场景。
 
-PPD 将选择算子尽可能下推到数据源，以尽早完成数据过滤，这可以显著降低数据传输或计算的成本。
+PPD 将筛选操作符尽可能下推到数据源，尽早完成数据过滤，从而显著降低数据传输或计算的开销。
 
 ## 示例
 
-以下案例描述了 PPD 的优化。案例 1、2 和 3 是 PPD 适用的场景，案例 4、5 和 6 是 PPD 不适用的场景。
+以下案例描述了 PPD 的优化过程。案例 1、2 和 3 是 PPD 适用的场景，案例 4、5 和 6 是 PPD 不适用的场景。
 
 ### 案例 1：将谓词下推到存储层
 
@@ -28,7 +28,7 @@ explain select * from t where a < 1;
 3 rows in set (0.00 sec)
 ```
 
-在这个查询中，将谓词 `a < 1` 下推到 TiKV 层进行数据过滤可以减少网络传输的开销。
+在此查询中，将谓词 `a < 1` 下推到 TiKV 层进行数据过滤，可以减少网络传输的开销。
 
 ### 案例 2：将谓词下推到存储层
 
@@ -44,9 +44,9 @@ explain select * from t where a < substring('123', 1, 1);
 +-------------------------+----------+-----------+---------------+--------------------------------+
 ```
 
-这个查询与案例 1 的执行计划相同，因为谓词 `a < substring('123', 1, 1)` 中 `substring` 的输入参数都是常量，所以可以提前计算。然后谓词被简化为等价的谓词 `a < 1`。之后，TiDB 可以将 `a < 1` 下推到 TiKV。
+此查询的执行计划与案例 1 相同，因为谓词 `a < substring('123', 1, 1)` 的输入参数是常量，可以提前计算。计算后，谓词简化为等价的 `a < 1`，然后 TiDB 可以将其下推到 TiKV。
 
-### 案例 3：将谓词下推到连接算子之下
+### 案例 3：将谓词下推到连接操作符以下
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -66,11 +66,11 @@ explain select * from t join s on t.a = s.a where t.a < 1;
 7 rows in set (0.00 sec)
 ```
 
-在这个查询中，谓词 `t.a < 1` 被下推到连接之下以提前过滤，这可以减少连接的计算开销。
+在此查询中，将谓词 `t.a < 1` 下推到连接操作符以下进行提前过滤，可以减少连接的计算开销。
 
-此外，这条 SQL 语句执行了一个内连接，`ON` 条件是 `t.a = s.a`。可以从 `t.a < 1` 推导出谓词 `s.a < 1` 并将其下推到连接算子之下的 `s` 表。过滤 `s` 表可以进一步减少连接的计算开销。
+此外，该 SQL 语句执行了内连接，`ON` 条件为 `t.a = s.a`。由 `t.a < 1` 推导出的谓词 `s.a < 1` 也可以下推到连接操作符下的 `s` 表，从而进一步减少连接的计算开销。
 
-### 案例 4：存储层不支持的谓词无法下推
+### 案例 4：存储层不支持的谓词不能下推
 
 ```sql
 create table t(id int primary key, a varchar(10) not null);
@@ -84,11 +84,11 @@ desc select * from t where truncate(a, " ") = '1';
 +-------------------------+----------+-----------+---------------+---------------------------------------------------+
 ```
 
-在这个查询中，有一个谓词 `truncate(a, " ") = '1'`。
+在此查询中，存在谓词 `truncate(a, " ") = '1'`。
 
-从 `explain` 结果可以看出，该谓词没有被下推到 TiKV 进行计算。这是因为 TiKV 协处理器不支持内置函数 `truncate`。
+从 `explain` 结果可以看出，该谓词未被下推到 TiKV 进行计算。这是因为 TiKV 的协处理器不支持内置函数 `truncate`。
 
-### 案例 5：外连接内表上的谓词不能下推
+### 案例 5：内表在外连接中的谓词不能下推
 
 ```sql
 create table t(id int primary key, a int not null);
@@ -101,15 +101,15 @@ explain select * from t left join s on t.a = s.a where s.a is null;
 | └─HashJoin_8                  | 12500.00 | root      |               | left outer join, equal:[eq(test.t.a, test.s.a)] |
 |   ├─TableReader_13(Build)     | 10000.00 | root      |               | data:TableFullScan_12                           |
 |   │ └─TableFullScan_12        | 10000.00 | cop[tikv] | table:s       | keep order:false, stats:pseudo                  |
-|   └─TableReader_11(Probe)     | 10000.00 | root      |               | data:TableFullScan_10                           |
+|   └─TableReader_11(Probe)     | 10000.00 | root      |               | data:TableFullScan_10                          |
 |     └─TableFullScan_10        | 10000.00 | cop[tikv] | table:t       | keep order:false, stats:pseudo                  |
 +-------------------------------+----------+-----------+---------------+-------------------------------------------------+
 6 rows in set (0.00 sec)
 ```
 
-在这个查询中，内表 `s` 上有一个谓词 `s.a is null`。
+在此查询中，存在谓词 `s.a is null`，作用于内表 `s`。
 
-从 `explain` 结果可以看出，该谓词没有被下推到连接算子之下。这是因为当 `on` 条件不满足时，外连接会用 `NULL` 值填充内表，而谓词 `s.a is null` 用于在连接之后过滤结果。如果将其下推到连接之下的内表，执行计划就不等价于原始计划了。
+从 `explain` 结果可以看出，该谓词未被下推到连接操作符以下。这是因为外连接在未满足 `on` 条件时，会用 `NULL` 填充内表的对应列，`s.a is null` 用于在连接后过滤结果。如果将其下推到内表以下，得到的执行计划将不等同于原始计划。
 
 ### 案例 6：包含用户变量的谓词不能下推
 
@@ -127,11 +127,11 @@ explain select * from t where a < @a;
 3 rows in set (0.00 sec)
 ```
 
-在这个查询中，表 `t` 上有一个谓词 `a < @a`。谓词中的 `@a` 是一个用户变量。
+在此查询中，存在谓词 `a < @a`，其中 `@a` 为用户变量。
 
-从 `explain` 结果可以看出，该谓词不像案例 2 那样被简化为 `a < 1` 并下推到 TiKV。这是因为用户变量 `@a` 的值可能在计算过程中发生变化，而 TiKV 无法感知这些变化。所以 TiDB 不会将 `@a` 替换为 `1`，也不会将其下推到 TiKV。
+从 `explain` 结果可以看出，该谓词未像案例 2 那样被简化为 `a < 1` 并下推到 TiKV。这是因为用户变量 `@a` 的值在计算过程中可能会发生变化，TiKV 不会感知到这些变化。因此，TiDB 不会用具体值替换 `@a`，也不会将其下推到 TiKV。
 
-下面是一个帮助理解的示例：
+一个示例帮助理解如下：
 
 ```sql
 create table t(id int primary key, a int);
@@ -147,4 +147,4 @@ select id, a, @a:=@a+1 from t where a = @a;
 2 rows in set (0.00 sec)
 ```
 
-从这个查询可以看出，`@a` 的值会在查询过程中发生变化。所以如果将 `a = @a` 替换为 `a = 1` 并下推到 TiKV，就不是一个等价的执行计划了。
+由此可见，`@a` 的值在查询过程中会发生变化。因此，如果将 `a = @a` 替换为 `a = 1` 并下推到 TiKV，得到的执行计划将不等同于原始计划。

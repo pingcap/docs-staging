@@ -1,39 +1,39 @@
 ---
-title: 窗口函数
-summary: 本文档介绍 TiDB 支持的窗口函数。
+title: Window Functions
+summary: 本文档介绍了 TiDB 支持的窗口函数。
 ---
 
-# 窗口函数
+# Window Functions
 
-TiDB 中窗口函数的用法与 MySQL 8.0 类似。详情请参见 [MySQL 窗口函数](https://dev.mysql.com/doc/refman/8.0/en/window-functions.html)。
+TiDB 中窗口函数的用法与 MySQL 8.0 类似。详情请参见 [MySQL Window Functions](https://dev.mysql.com/doc/refman/8.0/en/window-functions.html)。
 
-在 TiDB 中，你可以使用以下系统变量来控制窗口函数：
+在 TiDB 中，你可以通过以下系统变量控制窗口函数的行为：
 
-- [`tidb_enable_window_function`](/system-variables.md#tidb_enable_window_function)：由于窗口函数在解析器中保留了额外的[关键字](/keywords.md)，TiDB 提供此变量来禁用窗口函数。如果在升级 TiDB 后解析 SQL 语句时出现错误，请尝试将此变量设置为 `OFF`。
-- [`tidb_enable_pipelined_window_function`](/system-variables.md#tidb_enable_pipelined_window_function)：你可以使用此变量来禁用窗口函数的流水线执行算法。
-- [`windowing_use_high_precision`](/system-variables.md#windowing_use_high_precision)：你可以使用此变量来禁用窗口函数的高精度模式。
+- [`tidb_enable_window_function`](/system-variables.md#tidb_enable_window_function)：由于窗口函数在解析器中会保留额外的 [keywords](/keywords.md)，TiDB 提供此变量以禁用窗口函数。如果在升级 TiDB 后解析 SQL 语句时遇到错误，可以尝试将此变量设置为 `OFF`。
+- [`tidb_enable_pipelined_window_function`](/system-variables.md#tidb_enable_pipelined_window_function)：你可以使用此变量禁用窗口函数的流水线执行算法。
+- [`windowing_use_high_precision`](/system-variables.md#windowing_use_high_precision)：你可以使用此变量禁用窗口函数的高精度模式。
 
-[此处列出的](/tiflash/tiflash-supported-pushdown-calculations.md)窗口函数可以下推到 TiFlash。
+支持下述 [列出在此处](/tiflash/tiflash-supported-pushdown-calculations.md) 的窗口函数可以下推到 TiFlash。
 
-除了 `GROUP_CONCAT()` 和 `APPROX_PERCENTILE()` 外，TiDB 支持将所有 [`GROUP BY` 聚合函数](/functions-and-operators/aggregate-group-by-functions.md)用作窗口函数。此外，TiDB 还支持以下窗口函数：
+除了 `GROUP_CONCAT()` 和 `APPROX_PERCENTILE()` 之外，TiDB 支持所有 [`GROUP BY` 聚合函数](/functions-and-operators/aggregate-group-by-functions.md) 作为窗口函数使用。此外，TiDB 还支持以下窗口函数：
 
-| 函数名                     | 功能描述 |
-| :-------------------------------- | :------------------------------------- |
-| [`CUME_DIST()`](#cume_dist)       | 返回一组值中某个值的累积分布。 |
-| [`DENSE_RANK()`](#dense_rank)     | 返回当前行在分区内的排名，排名是连续的（无间隔）。 |
-| [`FIRST_VALUE()`](#first_value)   | 返回当前窗口中第一行的表达式值。 |
-| [`LAG()`](#lag)                   | 返回分区内当前行前 N 行的表达式值。 |
-| [`LAST_VALUE()`](#last_value)     | 返回当前窗口中最后一行的表达式值。 |
-| [`LEAD()`](#lead)                 | 返回分区内当前行后 N 行的表达式值。 |
-| [`NTH_VALUE()`](#nth_value)       | 返回当前窗口中第 N 行的表达式值。 |
-| [`NTILE()`](#ntile)               | 将分区划分为 N 个桶，为分区中的每一行分配桶号，并返回当前行在分区内的桶号。 |
-| [`PERCENT_RANK()`](#percent_rank) | 返回小于当前行值的分区值的百分比。 |
-| [`RANK()`](#rank)                 | 返回当前行在分区内的排名。排名可能有间隔。 |
-| [`ROW_NUMBER()`](#row_number)     | 返回分区中当前行的编号。 |
+| 函数名 | 功能描述 |
+| :------------------------------ | :------------------------------------------------- |
+| [`CUME_DIST()`](#cume_dist) | 计算值在组内的累积分布。注意，使用 `CUME_DIST()` 时需要配合 `ORDER BY` 子句对组内值进行排序，否则不会返回预期的值。 |
+| [`DENSE_RANK()`](#dense_rank) | 返回当前行在分区中的排名，排名中没有空缺（并列的行排名相同，后续排名连续递增）。 |
+| [`FIRST_VALUE()`](#first_value) | 返回当前窗口中第一行的表达式值。 |
+| [`LAG()`](#lag) | 返回在分区中，当前行之前第 N 行的表达式值。如果不存在，则返回 `default`，默认情况下 `num` 为 1，`default` 为 `NULL`。 |
+| [`LAST_VALUE()`](#last_value) | 返回当前窗口中的最后一行的表达式值。 |
+| [`LEAD()`](#lead) | 返回在分区中，当前行之后第 N 行的表达式值。如果不存在，则返回 `default`，默认情况下 `num` 为 1，`default` 为 `NULL`。 |
+| [`NTH_VALUE()`](#nth_value) | 返回当前窗口中的第 N 行的表达式值。 |
+| [`NTILE()`](#ntile) | 将分区划分为 N 个桶，为每行分配桶编号，并返回当前行所在的桶编号。 |
+| [`PERCENT_RANK()`](#percent_rank) | 返回分区中，值小于当前行值的比例（百分比）。 |
+| [`RANK()`](#rank) | 返回当前行在分区中的排名，排名可能存在空缺（并列的行排名相同，后续排名跳跃）。 |
+| [`ROW_NUMBER()`](#row_number) | 返回当前行在分区中的行号。 |
 
 ## [`CUME_DIST()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_cume-dist)
 
-`CUME_DIST()` 计算一组值中某个值的累积分布。注意，你需要使用 `ORDER BY` 子句与 `CUME_DIST()` 一起使用来对值组进行排序。否则，此函数将不会返回预期的值。
+`CUME_DIST()` 计算值在组内的累积分布。注意，使用 `CUME_DIST()` 时需要配合 `ORDER BY` 子句对组内值进行排序，否则不会返回预期的值。
 
 ```sql
 WITH RECURSIVE cte(n) AS (
@@ -67,7 +67,7 @@ FROM
 
 ## [`DENSE_RANK()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_dense-rank)
 
-`DENSE_RANK()` 函数返回当前行的排名。它类似于 [`RANK()`](#rank)，但在出现并列（共享相同值和排序条件的行）时不会留下间隔。
+`DENSE_RANK()` 返回当前行的排名。它类似于 [`RANK()`](#rank)，但在并列（值相同且排序条件相同）时不会出现空缺。
 
 ```sql
 SELECT
@@ -103,12 +103,12 @@ FROM (
 
 ## [`FIRST_VALUE()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_first-value)
 
-`FIRST_VALUE(expr)` 返回窗口中的第一个值。
+`FIRST_VALUE(expr)` 返回窗口中的第一行的表达式值。
 
 以下示例使用了两种不同的窗口定义：
 
-- `PARTITION BY n MOD 2 ORDER BY n` 将表 `a` 中的数据分为两组：`1, 3` 和 `2, 4`。因此它返回 `1` 或 `2`，因为这些是这些组的第一个值。
-- `PARTITION BY n <= 2 ORDER BY n` 将表 `a` 中的数据分为两组：`1, 2` 和 `3, 4`。因此它返回 `1` 或 `3`，具体取决于 `n` 属于哪个组。
+- `PARTITION BY n MOD 2 ORDER BY n` 将表 `a` 中的数据划分为两个组：`1, 3` 和 `2, 4`，因此返回这两个组的第一个值，即 `1` 或 `2`。
+- `PARTITION BY n <= 2 ORDER BY n` 将表 `a` 中的数据划分为两个组：`1, 2` 和 `3, 4`，因此返回 `1` 或 `3`，取决于 `n` 所属的组。
 
 ```sql
 SELECT
@@ -142,9 +142,9 @@ ORDER BY
 
 ## [`LAG()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_lag)
 
-`LAG(expr [, num [, default]])` 函数返回当前行前 `num` 行的 `expr` 值。如果该行不存在，则返回 `default`。默认情况下，当未指定时，`num` 为 `1`，`default` 为 `NULL`。
+`LAG(expr [, num [, default]])` 返回在分区中，当前行之前第 `num` 行的表达式值。如果不存在，则返回 `default`，默认情况下 `num` 为 1，`default` 为 `NULL`。
 
-在以下示例中，由于未指定 `num`，`LAG(n)` 返回前一行的 `n` 值。当 `n` 为 1 时，由于前一行不存在且未指定 `default`，`LAG(1)` 返回 `NULL`。
+在以下示例中，由于未指定 `num`，`LAG(n)` 返回前一行的 `n` 值。当 `n` 为 1 时，因为前一行不存在且未指定 `default`，所以 `LAG(1)` 返回 `NULL`。
 
 ```sql
 WITH RECURSIVE cte(n) AS (
@@ -184,7 +184,7 @@ FROM
 
 ## [`LAST_VALUE()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_last-value)
 
-`LAST_VALUE()` 函数返回窗口中的最后一个值。
+`LAST_VALUE()` 返回窗口中的最后一行的值。
 
 ```sql
 WITH RECURSIVE cte(n) AS (
@@ -227,9 +227,9 @@ ORDER BY
 
 ## [`LEAD()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_lead)
 
-`LEAD(expr [, num [,default]])` 函数返回当前行后 `num` 行的 `expr` 值。如果该行不存在，则返回 `default`。默认情况下，当未指定时，`num` 为 `1`，`default` 为 `NULL`。
+`LEAD(expr [, num [,default]])` 返回在分区中，当前行之后第 `num` 行的表达式值。如果不存在，则返回 `default`，默认情况下 `num` 为 1，`default` 为 `NULL`。
 
-在以下示例中，由于未指定 `num`，`LEAD(n)` 返回下一行的 `n` 值。当 `n` 为 10 时，由于下一行不存在且未指定 `default`，`LEAD(10)` 返回 `NULL`。
+在以下示例中，由于未指定 `num`，`LEAD(n)` 返回下一行的 `n` 值。当 `n` 为 10 时，因为下一行不存在且未指定 `default`，所以 `LEAD(10)` 返回 `NULL`。
 
 ```sql
 WITH RECURSIVE cte(n) AS (
@@ -270,7 +270,7 @@ FROM
 
 ## [`NTH_VALUE()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_nth-value)
 
-`NTH_VALUE(expr, n)` 函数返回窗口中的第 `n` 个值。
+`NTH_VALUE(expr, n)` 返回窗口中的第 `n` 个值。
 
 ```sql
 WITH RECURSIVE cte(n) AS (
@@ -318,7 +318,7 @@ ORDER BY
 
 ## [`NTILE()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_ntile)
 
-`NTILE(n)` 函数将窗口分成 `n` 组，并返回每行所属的组号。
+`NTILE(n)` 将窗口划分为 `n` 个组，并返回每行所属的组编号。
 
 ```sql
 WITH RECURSIVE cte(n) AS (
@@ -360,7 +360,7 @@ FROM
 
 ## [`PERCENT_RANK()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_percent-rank)
 
-`PERCENT_RANK()` 函数返回一个介于 0 和 1 之间的数字，表示小于当前行值的行的百分比。
+`PERCENT_RANK()` 返回一个 0 到 1 之间的数字，表示值小于当前行值的行所占的比例。
 
 ```sql
 SELECT
@@ -397,7 +397,7 @@ FROM (
 
 ## [`RANK()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_rank)
 
-`RANK()` 函数类似于 [`DENSE_RANK()`](#dense_rank)，但在出现并列（共享相同值和排序条件的行）时会留下间隔。这意味着它提供了一个绝对排名。例如，排名 7 意味着有 6 个排名较低的行。
+`RANK()` 类似于 [`DENSE_RANK()`](#dense_rank)，但在存在并列（值相同且排序条件相同时）时会出现空缺。这意味着它提供绝对排名。例如，排名为 7 表示有 6 行的排名低于它。
 
 ```sql
 SELECT
@@ -434,7 +434,7 @@ FROM (
 
 ## [`ROW_NUMBER()`](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_row-number)
 
-`ROW_NUMBER()` 返回结果集中当前行的行号。
+`ROW_NUMBER()` 返回当前行在结果集中的行号。
 
 ```sql
 WITH RECURSIVE cte(n) AS (

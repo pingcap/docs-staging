@@ -1,27 +1,27 @@
 ---
 title: AUTO_RANDOM
-summary: 了解 AUTO_RANDOM 属性。
+summary: 学习 AUTO_RANDOM 属性。
 ---
 
-# AUTO_RANDOM <span class="version-mark">v3.1.0 新功能</span>
+# AUTO_RANDOM <span class="version-mark">新特性于 v3.1.0</span>
 
-## 使用场景
+## 用户场景
 
-由于 `AUTO_RANDOM` 的值是随机且唯一的，`AUTO_RANDOM` 通常用于替代 [`AUTO_INCREMENT`](/auto-increment.md)，以避免 TiDB 分配连续 ID 导致单个存储节点出现写入热点。如果当前 `AUTO_INCREMENT` 列是主键且类型为 `BIGINT`，你可以执行 `ALTER TABLE t MODIFY COLUMN id BIGINT AUTO_RANDOM(5);` 语句将其从 `AUTO_INCREMENT` 切换为 `AUTO_RANDOM`。
+由于 `AUTO_RANDOM` 的值是随机且唯一的，`AUTO_RANDOM` 常用于替代 [`AUTO_INCREMENT`](/auto-increment.md)，以避免 TiDB 为连续 ID 分配而导致的单个存储节点的写入热点。如果当前的 `AUTO_INCREMENT` 列是主键且类型为 `BIGINT`，可以执行 `ALTER TABLE t MODIFY COLUMN id BIGINT AUTO_RANDOM(5);` 语句，将其从 `AUTO_INCREMENT` 转换为 `AUTO_RANDOM`。
 
 <CustomContent platform="tidb">
 
-有关如何在 TiDB 中处理高并发写入工作负载的更多信息，请参见[高并发写入最佳实践](/best-practices/high-concurrency-best-practices.md)。
+关于在 TiDB 中处理高并发写入密集型工作负载的更多信息，参见 [高并发写入的最佳实践](/best-practices/high-concurrency-best-practices.md)。
 
 </CustomContent>
 
-[CREATE TABLE](/sql-statements/sql-statement-create-table.md) 语句中的 `AUTO_RANDOM_BASE` 参数用于设置 `auto_random` 的初始增量部分值。此选项可以视为内部接口的一部分。你可以忽略此参数。
+在 [CREATE TABLE](/sql-statements/sql-statement-create-table.md) 语句中，`AUTO_RANDOM_BASE` 参数用于设置 `auto_random` 的初始递增部分值。此选项可以视为内部接口的一部分，你可以忽略此参数。
 
 ## 基本概念
 
-`AUTO_RANDOM` 是一个用于自动为 `BIGINT` 列分配值的列属性。自动分配的值是**随机**且**唯一**的。
+`AUTO_RANDOM` 是一种列属性，用于自动为 `BIGINT` 列分配值。自动分配的值是 **随机** 且 **唯一** 的。
 
-要创建带有 `AUTO_RANDOM` 列的表，你可以使用以下语句。`AUTO_RANDOM` 列必须包含在主键中，且 `AUTO_RANDOM` 列是主键中的第一列。
+要创建带有 `AUTO_RANDOM` 列的表，可以使用以下语句。`AUTO_RANDOM` 列必须包含在主键中，并且 `AUTO_RANDOM` 列必须是主键的第一列。
 
 ```sql
 CREATE TABLE t (a BIGINT AUTO_RANDOM, b VARCHAR(255), PRIMARY KEY (a));
@@ -31,7 +31,7 @@ CREATE TABLE t (a BIGINT AUTO_RANDOM(5, 54), b VARCHAR(255), PRIMARY KEY (a));
 CREATE TABLE t (a BIGINT AUTO_RANDOM(5, 54), b VARCHAR(255), PRIMARY KEY (a, b));
 ```
 
-你可以将关键字 `AUTO_RANDOM` 包装在可执行注释中。有关更多详细信息，请参考 [TiDB 特定注释语法](/comment-syntax.md#tidb-specific-comment-syntax)。
+你可以将关键字 `AUTO_RANDOM` 包裹在可执行注释中。更多细节请参考 [TiDB 特定注释语法](/comment-syntax.md#tidb-specific-comment-syntax)。
 
 ```sql
 CREATE TABLE t (a bigint /*T![auto_rand] AUTO_RANDOM */, b VARCHAR(255), PRIMARY KEY (a));
@@ -40,10 +40,10 @@ CREATE TABLE t (a BIGINT /*T![auto_rand] AUTO_RANDOM(6) */, b VARCHAR(255), PRIM
 CREATE TABLE t (a BIGINT  /*T![auto_rand] AUTO_RANDOM(5, 54) */, b VARCHAR(255), PRIMARY KEY (a));
 ```
 
-当你执行 `INSERT` 语句时：
+在执行 `INSERT` 语句时：
 
-- 如果你显式指定 `AUTO_RANDOM` 列的值，它将按原样插入表中。
-- 如果你未显式指定 `AUTO_RANDOM` 列的值，TiDB 将生成一个随机值并将其插入表中。
+- 如果你明确指定了 `AUTO_RANDOM` 列的值，则会按原样插入表中。
+- 如果没有明确指定 `AUTO_RANDOM` 列的值，TiDB 会生成一个随机值并插入表中。
 
 ```sql
 tidb> CREATE TABLE t (a BIGINT PRIMARY KEY AUTO_RANDOM, b VARCHAR(255)) /*T! PRE_SPLIT_REGIONS=2 */ ;
@@ -81,7 +81,7 @@ tidb> SHOW CREATE TABLE t;
 | Table | Create Table                                                                                                                                                                                                                                                    |
 +-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | t     | CREATE TABLE `t` (
-  `a` bigint(20) NOT NULL /*T![auto_rand] AUTO_RANDOM(5) */,
+  `a` bigint NOT NULL /*T![auto_rand] AUTO_RANDOM(5) */,
   `b` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`a`) /*T![clustered_index] CLUSTERED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin /*T! PRE_SPLIT_REGIONS=2 */ |
@@ -100,55 +100,55 @@ tidb> SHOW TABLE t REGIONS;
 4 rows in set (0.00 sec)
 ```
 
-TiDB 自动分配的 `AUTO_RANDOM(S, R)` 列值总共有 64 位：
+由 TiDB 自动分配的 `AUTO_RANDOM(S, R)` 列值总共占用 64 位：
 
-- `S` 是分片位数。值范围从 `1` 到 `15`。默认值为 `5`。
-- `R` 是自动分配范围的总长度。值范围从 `32` 到 `64`。默认值为 `64`。
+- `S` 是分片位数，范围为 `1` 到 `15`，默认值为 `5`。
+- `R` 是自动分配范围的总长度，范围为 `32` 到 `64`，默认值为 `64`。
 
-带有符号位的 `AUTO_RANDOM` 值的结构如下：
+带符号位的 `AUTO_RANDOM` 值结构如下：
 
-| 符号位 | 保留位 | 分片位 | 自增位 |
+| Signed bit | Reserved bits | Shard bits | Auto-increment bits |
 |---------|-------------|--------|--------------|
-| 1 位 | `64-R` 位 | `S` 位 | `R-1-S` 位 |
+| 1 bit | `64-R` bits | `S` bits | `R-1-S` bits |
 
-不带符号位的 `AUTO_RANDOM` 值的结构如下：
+无符号位的 `AUTO_RANDOM` 值结构如下：
 
-| 保留位 | 分片位 | 自增位 |
+| Reserved bits | Shard bits | Auto-increment bits |
 |-------------|--------|--------------|
-| `64-R` 位 | `S` 位 | `R-S` 位 |
+| `64-R` bits | `S` bits | `R-S` bits |
 
-- 值是否有符号位取决于相应列是否有 `UNSIGNED` 属性。
-- 符号位的长度由是否存在 `UNSIGNED` 属性决定。如果有 `UNSIGNED` 属性，长度为 `0`。否则，长度为 `1`。
-- 保留位的长度为 `64-R`。保留位始终为 `0`。
-- 分片位的内容是通过计算当前事务开始时间的哈希值获得的。要使用不同长度的分片位（例如 10），可以在创建表时指定 `AUTO_RANDOM(10)`。
-- 自增位的值存储在存储引擎中并按顺序分配。每次分配新值时，该值增加 1。自增位确保 `AUTO_RANDOM` 的值在全局范围内是唯一的。当自增位用尽时，再次分配值时会报错 `Failed to read auto-increment value from storage engine`。
-- 值范围：最终生成值的最大位数 = 分片位 + 自增位。有符号列的范围是 `[-(2^(R-1))+1, (2^(R-1))-1]`，无符号列的范围是 `[0, (2^R)-1]`。
-- 你可以将 `AUTO_RANDOM` 与 `PRE_SPLIT_REGIONS` 一起使用。当表创建成功时，`PRE_SPLIT_REGIONS` 会将表中的数据预先分割为 `2^(PRE_SPLIT_REGIONS)` 个 Region。
+- 是否有符号位，取决于对应列是否具有 `UNSIGNED` 属性。
+- 符号位的长度由是否存在 `UNSIGNED` 属性决定。如果存在，长度为 `0`；否则为 `1`。
+- 保留位的长度为 `64-R`，且始终为 `0`。
+- 分片位的内容通过计算当前事务起始时间的哈希值获得。若需使用不同长度的分片位（如 10 位），可以在创建表时指定 `AUTO_RANDOM(10)`。
+- 自动递增位的值存储在存储引擎中，并按顺序分配。每次分配新值时，值会加 1。自动递增位确保 `AUTO_RANDOM` 的值在全局范围内唯一。当自动递增位耗尽时，再次分配值会报错 `Failed to read auto-increment value from storage engine`。
+- 值范围：最终生成值的最大位数 = 分片位数 + 自动递增位数。带符号列的范围为 `[-(2^(R-1))+1, (2^(R-1))-1]`，无符号列的范围为 `[0, (2^R)-1]`。
+- 你可以在创建表时使用 `AUTO_RANDOM` 搭配 `PRE_SPLIT_REGIONS`。当表创建成功后，`PRE_SPLIT_REGIONS` 会将表中的数据预先分割成 `2^(PRE_SPLIT_REGIONS)` 个 Region。
 
 > **注意：**
 >
 > 分片位（`S`）的选择：
 >
-> - 由于总共有 64 个可用位，分片位长度会影响自增位长度。也就是说，随着分片位长度的增加，自增位长度会减少，反之亦然。因此，你需要平衡分配值的随机性和可用空间。
-> - 最佳实践是将分片位设置为 `log(2, x)`，其中 `x` 是当前存储引擎的数量。例如，如果 TiDB 集群中有 16 个 TiKV 节点，你可以将分片位设置为 `log(2, 16)`，即 `4`。在所有 Region 均匀调度到每个 TiKV 节点后，批量写入的负载可以均匀分布到不同的 TiKV 节点，以最大化资源利用率。
+> - 由于总共有 64 位可用，分片位长度影响自动递增位的长度。即，分片位越长，自动递增位越短，反之亦然。因此，你需要在随机性和空间利用之间权衡。
+> - 最佳实践是将分片位设置为 `log(2, x)`，其中 `x` 为当前存储引擎的数量。例如，如果 TiDB 集群中有 16 个 TiKV 节点，可以将分片位设置为 `log(2, 16)`，即 `4`。所有 Region 均匀调度到每个 TiKV 节点后，批量写入的负载可以均匀分布，最大化资源利用率。
 >
-> 范围（`R`）的选择：
+> 选择范围（`R`）：
 >
-> - 通常，当应用程序的数值类型无法表示完整的 64 位整数时，需要设置 `R` 参数。
-> - 例如，JSON 数字的范围是 `[-(2^53)+1, (2^53)-1]`。TiDB 可以轻松地为定义为 `AUTO_RANDOM(5)` 的列分配超出此范围的整数，导致应用程序读取该列时出现意外行为。在这种情况下，你可以将有符号列的 `AUTO_RANDOM(5)` 替换为 `AUTO_RANDOM(5, 54)`，将无符号列的 `AUTO_RANDOM(5)` 替换为 `AUTO_RANDOM(5, 53)`，确保 TiDB 不会为该列分配大于 `9007199254740991`（2^53-1）的整数。
+> - 通常，当应用的数值类型不能表示完整的 64 位整数时，需要设置 `R` 参数。
+> - 例如，JSON 数字的范围为 `[-(2^53)+1, (2^53)-1]`。TiDB 可以轻松为定义为 `AUTO_RANDOM(5)` 的列分配超出此范围的整数，导致应用在读取列时出现意外行为。在这种情况下，可以将 `AUTO_RANDOM(5)` 替换为 `AUTO_RANDOM(5, 54)`（有符号列），将 `AUTO_RANDOM(5)` 替换为 `AUTO_RANDOM(5, 53)`（无符号列），确保 TiDB 不会为列分配大于 `9007199254740991`（2^53-1）的整数。
 
-隐式分配给 `AUTO_RANDOM` 列的值会影响 `last_insert_id()`。要获取 TiDB 最后隐式分配的 ID，你可以使用 `SELECT last_insert_id ()` 语句。
+隐式分配给 `AUTO_RANDOM` 列的值会影响 `last_insert_id()`。你可以使用 `SELECT last_insert_id()` 来获取 TiDB 最后隐式分配的 ID。
 
-要查看带有 `AUTO_RANDOM` 列的表的分片位数，你可以执行 `SHOW CREATE TABLE` 语句。你还可以在 `information_schema.tables` 系统表的 `TIDB_ROW_ID_SHARDING_INFO` 列中看到 `PK_AUTO_RANDOM_BITS=x` 模式的值。`x` 是分片位数。
+要查看带有 `AUTO_RANDOM` 列的表的分片位数，可以执行 `SHOW CREATE TABLE`。你也可以在 `information_schema.tables` 系统表中的 `TIDB_ROW_ID_SHARDING_INFO` 列看到 `PK_AUTO_RANDOM_BITS=x` 模式的值，其中 `x` 为分片位数。
 
-创建带有 `AUTO_RANDOM` 列的表后，你可以使用 `SHOW WARNINGS` 查看最大隐式分配次数：
+在创建带有 `AUTO_RANDOM` 列的表后，可以使用 `SHOW WARNINGS` 查看最大隐式分配次数：
 
 ```sql
 CREATE TABLE t (a BIGINT AUTO_RANDOM, b VARCHAR(255), PRIMARY KEY (a));
 SHOW WARNINGS;
 ```
 
-输出如下：
+输出示例：
 
 ```sql
 +-------+------+---------------------------------------------------------+
@@ -161,17 +161,53 @@ SHOW WARNINGS;
 
 ## ID 的隐式分配规则
 
-TiDB 对 `AUTO_RANDOM` 列的隐式分配值与 `AUTO_INCREMENT` 列类似。它们也受会话级系统变量 [`auto_increment_increment`](/system-variables.md#auto_increment_increment) 和 [`auto_increment_offset`](/system-variables.md#auto_increment_offset) 的控制。隐式分配值的自增位（ID）符合方程 `(ID - auto_increment_offset) % auto_increment_increment == 0`。
+TiDB 对 `AUTO_RANDOM` 列的隐式分配值，类似于 `AUTO_INCREMENT` 列。它们也受会话级系统变量 [`auto_increment_increment`](/system-variables.md#auto_increment_increment) 和 [`auto_increment_offset`](/system-variables.md#auto_increment_offset) 控制。隐式分配值的自动递增位（ID）满足方程 `(ID - auto_increment_offset) % auto_increment_increment == 0`。
 
-## 限制
+## 清除 auto-increment ID 缓存
 
-使用 `AUTO_RANDOM` 时请注意以下限制：
+当你在多 TiDB 服务器实例的部署中，向 `AUTO_RANDOM` 列插入显式值时，可能会发生 ID 冲突，类似于 `AUTO_INCREMENT` 列。如果显式插入的 ID 值与 TiDB 用于自动生成的内部计数器冲突，可能会导致错误。
 
-- 要显式插入值，你需要将 `@@allow_auto_random_explicit_insert` 系统变量的值设置为 `1`（默认为 `0`）。**不建议**在插入数据时显式指定具有 `AUTO_RANDOM` 属性的列的值。否则，此表可自动分配的数值可能会提前用尽。
-- 仅为 `BIGINT` 类型的主键列指定此属性。否则，会出现错误。此外，当主键的属性为 `NONCLUSTERED` 时，即使在整数主键上也不支持 `AUTO_RANDOM`。有关 `CLUSTERED` 类型的主键的更多详细信息，请参考[聚簇索引](/clustered-indexes.md)。
-- 你不能使用 `ALTER TABLE` 修改 `AUTO_RANDOM` 属性，包括添加或删除此属性。
-- 如果最大值接近列类型的最大值，则不能使用 `ALTER TABLE` 从 `AUTO_INCREMENT` 更改为 `AUTO_RANDOM`。
-- 你不能更改指定了 `AUTO_RANDOM` 属性的主键列的列类型。
-- 你不能同时为同一列指定 `AUTO_RANDOM` 和 `AUTO_INCREMENT`。
-- 你不能同时为同一列指定 `AUTO_RANDOM` 和 `DEFAULT`（列的默认值）。
-- 当在列上使用 `AUTO_RANDOM` 时，很难将列属性改回 `AUTO_INCREMENT`，因为自动生成的值可能会很大。
+冲突发生的原因如下：每个 `AUTO_RANDOM` ID 由随机位和自动递增部分组成。TiDB 使用内部计数器管理自动递增部分。如果你显式插入的 ID 的自动递增部分与计数器的下一个值相同，TiDB 在后续自动生成时可能会遇到重复键错误。更多细节请参见 [AUTO_INCREMENT 唯一性](/auto-increment.md#uniqueness)。
+
+在单个 TiDB 实例中，不会出现此问题，因为节点在处理显式插入时会自动调整其内部计数器，避免未来冲突。而在多个 TiDB 节点中，每个节点维护自己的 ID 缓存，显式插入后需要清除这些缓存以防止冲突。为清除未分配的缓存 ID，避免潜在冲突，你有两个选项：
+
+### 选项 1：自动重置（推荐）
+
+```sql
+ALTER TABLE t AUTO_RANDOM_BASE=0;
+```
+
+此语句会自动确定一个合适的基值。虽然会产生类似 `Can't reset AUTO_INCREMENT to 0 without FORCE option, using XXX instead` 的警告信息，但基值 **会** 改变，你可以安全忽略此警告。
+
+> **注意：**
+>
+> 不能用 `FORCE` 关键字将 `AUTO_RANDOM_BASE` 设置为 `0`，否则会报错。
+
+### 选项 2：手动设置特定的基值
+
+如果你需要设置特定的基值（例如 `1000`），可以使用 `FORCE` 关键字：
+
+```sql
+ALTER TABLE t FORCE AUTO_RANDOM_BASE = 1000;
+```
+
+这种方式不太方便，因为你需要自己确定合适的基值。
+
+> **注意：**
+>
+> 使用 `FORCE` 时，必须指定非零的正整数。
+
+这两个命令会修改后续所有 TiDB 节点中 `AUTO_RANDOM` 值生成的起点，但不会影响已分配的 ID。
+
+## 限制条件
+
+使用 `AUTO_RANDOM` 时，请注意以下限制：
+
+- 要插入显式值，你需要将系统变量 `@@allow_auto_random_explicit_insert` 设置为 `1`（默认为 `0`）。**不建议**在插入数据时显式指定带有 `AUTO_RANDOM` 属性的列的值，否则可能会提前用完此表可自动分配的数值。
+- 仅能将此属性指定在主键列的 `BIGINT` 类型上，否则会报错。此外，当主键属性为 `NONCLUSTERED` 时，即使是整数主键，也不支持 `AUTO_RANDOM`。关于 `CLUSTERED` 类型主键的更多细节，请参考 [聚簇索引](/clustered-indexes.md)。
+- 不能使用 `ALTER TABLE` 来修改 `AUTO_RANDOM` 属性，包括添加或删除此属性。
+- 当最大值接近列类型最大值时，不能将 `AUTO_INCREMENT` 转为 `AUTO_RANDOM`。
+- 不能更改带有 `AUTO_RANDOM` 属性的主键列的列类型。
+- 不能同时为同一列指定 `AUTO_RANDOM` 和 `AUTO_INCREMENT`。
+- 不能同时为同一列指定 `AUTO_RANDOM` 和 `DEFAULT`（列的默认值）。
+- 当列使用 `AUTO_RANDOM` 时，若要将列属性改回 `AUTO_INCREMENT`，较为困难，因为自动生成的值可能非常大。

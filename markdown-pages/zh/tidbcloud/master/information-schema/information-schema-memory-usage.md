@@ -1,6 +1,6 @@
 ---
 title: MEMORY_USAGE
-summary: "了解 `MEMORY_USAGE` information_schema 系统表。"
+summary: 了解 `MEMORY_USAGE` information_schema 系统表。
 ---
 
 # MEMORY_USAGE
@@ -28,7 +28,7 @@ DESC memory_usage;
 | DISK_USAGE         | bigint(21)  | NO   |      | NULL    |       |
 | QUERY_FORCE_DISK   | bigint(21)  | NO   |      | NULL    |       |
 +--------------------+-------------+------+------+---------+-------+
-11 rows in set (0.000 sec)
+11 行，耗时 0.000 秒
 ```
 
 
@@ -42,35 +42,35 @@ SELECT * FROM information_schema.memory_usage;
 +--------------+--------------+----------------+-----------------+-------------+---------------------+--------------------+---------------------+----------+------------+------------------+
 |  33674170368 |  10737418240 |     5097644032 |     10826604544 | NULL        | 2022-10-17 22:47:47 |                  1 | 2022-10-17 22:47:47 |       20 |          0 |                0 |
 +--------------+--------------+----------------+-----------------+-------------+---------------------+--------------------+---------------------+----------+------------+------------------+
-2 rows in set (0.002 sec)
+2 行，耗时 0.002 秒
 ```
 
-`MEMORY_USAGE` 表中各列的描述如下：
+`MEMORY_USAGE` 表中的列说明如下：
 
-* MEMORY_TOTAL：TiDB 可用的总内存，单位为字节。
+* MEMORY_TOTAL：TiDB 的总可用内存，单位为字节。
 * MEMORY_LIMIT：TiDB 的内存使用限制，单位为字节。该值与系统变量 [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-new-in-v640) 的值相同。
 * MEMORY_CURRENT：TiDB 当前的内存使用量，单位为字节。
-* MEMORY_MAX_USED：从 TiDB 启动到当前时间的最大内存使用量，单位为字节。
-* CURRENT_OPS："shrinking" | null。"shrinking" 表示 TiDB 正在执行收缩内存使用的操作。
-* SESSION_KILL_LAST：最后一次终止会话的时间戳。
-* SESSION_KILL_TOTAL：从 TiDB 启动到当前时间，终止会话的总次数。
-* GC_LAST：最后一次由内存使用触发 Golang GC 的时间戳。
-* GC_TOTAL：从 TiDB 启动到当前时间，由内存使用触发 Golang GC 的总次数。
+* MEMORY_MAX_USED：TiDB 从启动到当前的最大内存使用量，单位为字节。
+* CURRENT_OPS： "shrinking" | null。 "shrinking" 表示 TiDB 正在执行缩减内存的操作。
+* SESSION_KILL_LAST：上次终止会话的时间戳。
+* SESSION_KILL_TOTAL：自 TiDB 启动以来，终止会话的次数。
+* GC_LAST：上次由内存使用触发的 Golang 垃圾回收（GC）时间戳。
+* GC_TOTAL：自 TiDB 启动以来，由内存使用触发的 Golang 垃圾回收（GC）次数。
 * DISK_USAGE：当前数据溢出操作的磁盘使用量，单位为字节。
-* QUERY_FORCE_DISK：从 TiDB 启动到当前时间，数据溢出到磁盘的总次数。
+* QUERY_FORCE_DISK：自 TiDB 启动以来，数据溢出到磁盘的次数。
 
-## 另请参阅
+## 相关链接
 
 <CustomContent platform="tidb">
 
-- [TiDB 内存控制](/configure-memory-usage.md)
-- [调优 TiKV 内存参数性能](/tune-tikv-memory-performance.md)
+- [TiDB memory control](/configure-memory-usage.md)
+- [Tune TiKV memory parameter performance](/tune-tikv-memory-performance.md)
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-- [TiDB 内存控制](https://docs.pingcap.com/tidb/stable/configure-memory-usage)
-- [调优 TiKV 内存参数性能](https://docs.pingcap.com/tidb/stable/tune-tikv-memory-performance)
+- [TiDB memory control](https://docs.pingcap.com/tidb/stable/configure-memory-usage)
+- [Tune TiKV memory parameter performance](https://docs.pingcap.com/tidb/stable/tune-tikv-memory-performance)
 
 </CustomContent>

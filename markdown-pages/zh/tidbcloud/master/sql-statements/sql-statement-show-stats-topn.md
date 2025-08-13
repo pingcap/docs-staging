@@ -1,25 +1,25 @@
 ---
 title: SHOW STATS_TOPN
-summary: TiDB 数据库中 SHOW STATS_TOPN 的使用概览。
+summary: 关于 TiDB 数据库中 SHOW STATS_TOPN 的用法概述。
 ---
 
 # SHOW STATS_TOPN
 
-`SHOW STATS_TOPN` 语句显示[统计信息](/statistics.md)中的 Top-N 信息。
+`SHOW STATS_TOPN` 语句显示 [统计信息](/statistics.md) 中的 Top-N 信息。
 
 目前，`SHOW STATS_TOPN` 语句返回以下列：
 
 | 列名 | 描述 |
 | ---- | ----|
 | `Db_name` | 数据库名称 |
-| `Table_name` | 表名 |
+| `Table_name` | 表名称 |
 | `Partition_name` | 分区名称 |
-| `Column_name` | 列名（当 `is_index` 为 `0` 时）或索引名（当 `is_index` 为 `1` 时） |
+| `Column_name` | 列名称（当 `is_index` 为 `0` 时）或索引名称（当 `is_index` 为 `1` 时） |
 | `Is_index` | 是否为索引列 |
 | `Value` | 该列的值 |
 | `Count` | 该值出现的次数 |
 
-## 语法
+## 概要
 
 ```ebnf+diagram
 ShowStatsTopnStmt ::=
@@ -52,9 +52,9 @@ SHOW STATS_TOPN WHERE Table_name='t';
 
 ## MySQL 兼容性
 
-此语句是 TiDB 对 MySQL 语法的扩展。
+该语句是 TiDB 对 MySQL 语法的扩展。
 
-## 另请参阅
+## 相关链接
 
 * [`ANALYZE`](/sql-statements/sql-statement-analyze-table.md)
 * [统计信息简介](/statistics.md)

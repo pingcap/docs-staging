@@ -1,15 +1,15 @@
 ---
 title: SHOW ERRORS | TiDB SQL 语句参考
-summary: TiDB 数据库中 SHOW ERRORS 的使用概述。
+summary: 关于 TiDB 数据库中 SHOW ERRORS 的用法概述。
 ---
 
 # SHOW ERRORS
 
-此语句显示之前执行的语句中的错误。当语句成功执行时，错误缓冲区会被清除。在这种情况下，`SHOW ERRORS` 将返回一个空集。
+该语句显示之前执行的语句中的错误。当语句成功执行后，错误缓冲区会被清空。在这种情况下，`SHOW ERRORS` 将返回一个空集。
 
-哪些语句生成错误而不是警告的行为很大程度上受当前 `sql_mode` 的影响。
+哪些语句会生成错误与警告的行为，受到当前 `sql_mode` 设置的高度影响。
 
-## 语法概要
+## 概要
 
 ```ebnf+diagram
 ShowErrorsStmt ::=
@@ -52,8 +52,8 @@ Empty set (0.00 sec)
 
 ## MySQL 兼容性
 
-TiDB 中的 `SHOW ERRORS` 语句与 MySQL 完全兼容。如果发现任何兼容性差异，请[报告 bug](https://docs.pingcap.com/tidb/stable/support)。
+TiDB 中的 `SHOW ERRORS` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 另请参见
 
 * [SHOW WARNINGS](/sql-statements/sql-statement-show-warnings.md)

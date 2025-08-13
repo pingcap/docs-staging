@@ -1,13 +1,13 @@
 ---
 title: TRACE | TiDB SQL 语句参考
-summary: TiDB 数据库中 TRACE 的使用概述。
+summary: 关于在 TiDB 数据库中使用 TRACE 的概述。
 ---
 
 # TRACE
 
-`TRACE` 语句提供查询执行的详细信息。它旨在通过 TiDB 服务器状态端口暴露的图形界面进行查看。
+`TRACE` 语句提供了关于查询执行的详细信息。它旨在通过 TiDB 服务器的状态端口暴露的图形界面进行查看。
 
-## 语法
+## 概述
 
 ```ebnf+diagram
 TraceStmt ::=
@@ -17,11 +17,11 @@ TracableStmt ::=
     ( SelectStmt | DeleteFromStmt | UpdateStmt | InsertIntoStmt | ReplaceIntoStmt | UnionStmt | LoadDataStmt | BeginTransactionStmt | CommitStmt | RollbackStmt | SetStmt )
 ```
 
-| 格式 | 描述 |
-|--------|------------------------------------|
-| row    | 以树形格式输出 |
-| json   | 以 JSON 格式结构化输出 |
-| log    | 基于日志的输出 |
+| 格式 | 描述                         |
+|--------|------------------------------|
+| row    | 以树状结构输出               |
+| json   | 以 JSON 格式的结构化输出      |
+| log    | 基于日志的输出               |
 
 ## 示例
 
@@ -58,7 +58,7 @@ TRACE FORMAT='row' SELECT * FROM mysql.user;
 TRACE FORMAT='json' SELECT * FROM mysql.user;
 ```
 
-JSON 格式的跟踪信息可以粘贴到跟踪查看器中，该查看器可通过 TiDB 状态端口访问：
+可以将 JSON 格式的追踪信息粘贴到追踪查看器中，访问方式为通过 TiDB 状态端口：
 
 ![TiDB Trace Viewer-1](https://docs-download.pingcap.com/media/images/docs/trace-paste.png)
 
@@ -94,8 +94,8 @@ TRACE FORMAT='log' SELECT * FROM mysql.user;
 
 ## MySQL 兼容性
 
-此语句是 TiDB 对 MySQL 语法的扩展。
+该语句是 TiDB 对 MySQL 语法的扩展。
 
-## 另请参阅
+## 相关链接
 
 * [EXPLAIN ANALYZE](/sql-statements/sql-statement-explain-analyze.md)

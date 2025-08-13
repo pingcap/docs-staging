@@ -1,13 +1,13 @@
 ---
 title: LOCK STATS
-summary: TiDB 数据库中 LOCK STATS 的使用概述。
+summary: 关于 TiDB 数据库中 LOCK STATS 使用情况的概述。
 ---
 
 # LOCK STATS
 
-`LOCK STATS` 用于锁定表或分区的统计信息。当统计信息被锁定时，TiDB 不会自动更新表或分区的统计信息。有关具体行为的详细信息，请参见[锁定统计信息的行为](/statistics.md#behaviors-of-locking-statistics)。
+`LOCK STATS` 用于锁定表或分区的统计信息。当统计信息被锁定后，TiDB 不会自动更新该表或分区的统计信息。关于其行为的详细信息，请参见 [Behaviors of locking statistics](/statistics.md#behaviors-of-locking-statistics)。
 
-## 语法图
+## 概述
 
 ```ebnf+diagram
 LockStatsStmt ::=
@@ -25,7 +25,7 @@ PartitionNameList ::=
 
 ## 示例
 
-创建表 `t` 并向其中插入数据。当表 `t` 的统计信息未被锁定时，`ANALYZE` 语句可以成功执行。
+创建表 `t`，并插入数据。当表 `t` 的统计信息未被锁定时，可以成功执行 `ANALYZE` 语句。
 
 ```sql
 mysql> CREATE TABLE t(a INT, b INT);
@@ -47,7 +47,7 @@ mysql> SHOW WARNINGS;
 1 row in set (0.00 sec)
 ```
 
-锁定表 `t` 的统计信息并执行 `ANALYZE`。从 `SHOW STATS_LOCKED` 的输出可以看到表 `t` 的统计信息已被锁定。警告信息显示 `ANALYZE` 语句已跳过表 `t`。
+锁定表 `t` 的统计信息并执行 `ANALYZE`。从 `SHOW STATS_LOCKED` 的输出可以看到，表 `t` 的统计信息已被锁定。警告信息显示 `ANALYZE` 语句已跳过表 `t`。
 
 ```sql
 mysql> LOCK STATS t;
@@ -74,9 +74,9 @@ mysql> SHOW WARNINGS;
 2 rows in set (0.00 sec)
 ```
 
-此外，你还可以使用 `LOCK STATS` 锁定分区的统计信息。例如：
+此外，你还可以使用 `LOCK STATS` 来锁定分区的统计信息。例如：
 
-创建分区表 `t` 并向其中插入数据。当分区 `p1` 的统计信息未被锁定时，`ANALYZE` 语句可以成功执行。
+创建分区表 `t`，并插入数据。当分区 `p1` 的统计信息未被锁定时，可以成功执行 `ANALYZE`。
 
 ```sql
 mysql> CREATE TABLE t(a INT, b INT) PARTITION BY RANGE (a) (PARTITION p0 VALUES LESS THAN (10), PARTITION p1 VALUES LESS THAN (20), PARTITION p2 VALUES LESS THAN (30));
@@ -130,14 +130,14 @@ mysql> SHOW WARNINGS;
 2 rows in set (0.00 sec)
 ```
 
-有关解锁统计信息的信息，请参见 [UNLOCK STATS](/sql-statements/sql-statement-unlock-stats.md)。
+关于解锁统计信息的内容，请参见 [UNLOCK STATS](/sql-statements/sql-statement-unlock-stats.md)。
 
 ## MySQL 兼容性
 
-该语句是 TiDB 对 MySQL 语法的扩展。
+此语句是 TiDB 对 MySQL 语法的扩展。
 
-## 另请参阅
+## 相关链接
 
-* [统计信息](/statistics.md#lock-statistics)
+* [Statistics](/statistics.md#lock-statistics)
 * [UNLOCK STATS](/sql-statements/sql-statement-unlock-stats.md)
 * [SHOW STATS_LOCKED](/sql-statements/sql-statement-show-stats-locked.md)

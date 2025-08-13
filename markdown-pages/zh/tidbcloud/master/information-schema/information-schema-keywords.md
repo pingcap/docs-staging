@@ -1,11 +1,11 @@
 ---
 title: KEYWORDS
-summary: "了解 `KEYWORDS` INFORMATION_SCHEMA 表。"
+summary: 了解 `KEYWORDS` INFORMATION_SCHEMA 表。
 ---
 
 # KEYWORDS
 
-从 v7.5.3 和 v7.6.0 版本开始，TiDB 提供了 `KEYWORDS` 表。你可以使用此表获取 TiDB 中[关键字](/keywords.md)的相关信息。
+从 v7.5.3 和 v7.6.0 版本开始，TiDB 提供了 `KEYWORDS` 表。你可以使用此表获取关于 [keywords](/keywords.md) 在 TiDB 中的信息。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -27,7 +27,7 @@ DESC keywords;
 字段说明：
 
 - `WORD`：关键字。
-- `RESERVED`：表示该关键字是否为保留关键字。
+- `RESERVED`：该关键字是否为保留字。
 
 以下语句查询 `ADD` 和 `USER` 关键字的信息：
 
@@ -35,7 +35,7 @@ DESC keywords;
 SELECT * FROM INFORMATION_SCHEMA.KEYWORDS WHERE WORD IN ('ADD','USER');
 ```
 
-从输出结果可以看出，`ADD` 是保留关键字，而 `USER` 是非保留关键字。
+从输出中可以看到，`ADD` 是保留关键字，`USER` 是非保留关键字。
 
 ```
 +------+----------+

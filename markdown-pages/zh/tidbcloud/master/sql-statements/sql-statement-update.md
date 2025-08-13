@@ -1,13 +1,13 @@
 ---
 title: UPDATE | TiDB SQL 语句参考
-summary: TiDB 数据库中 UPDATE 的使用概述。
+summary: TiDB 数据库中 UPDATE 的用法概述。
 ---
 
 # UPDATE
 
 `UPDATE` 语句用于修改指定表中的数据。
 
-## 语法图
+## 概述
 
 ```ebnf+diagram
 UpdateStmt ::=
@@ -28,7 +28,7 @@ TableRefs ::=
 
 > **注意：**
 >
-> 从 v6.6.0 开始，TiDB 支持[资源控制](/tidb-resource-control.md)。你可以使用此功能在不同的资源组中以不同的优先级执行 SQL 语句。通过为这些资源组配置适当的配额和优先级，你可以更好地控制不同优先级 SQL 语句的调度。当启用资源控制时，语句优先级（`LOW_PRIORITY` 和 `HIGH_PRIORITY`）将不再生效。建议你使用[资源控制](/tidb-resource-control.md)来管理不同 SQL 语句的资源使用。
+> 从 v6.6.0 版本开始，TiDB 支持 [Resource Control](/tidb-resource-control-ru-groups.md)。你可以使用此功能在不同的资源组中以不同的优先级执行 SQL 语句。通过为这些资源组配置合适的配额和优先级，可以获得更好的 SQL 调度控制。当启用资源控制后，语句优先级（`LOW_PRIORITY` 和 `HIGH_PRIORITY`）将不再生效。建议你使用 [Resource Control](/tidb-resource-control-ru-groups.md) 来管理不同 SQL 语句的资源使用。
 
 ## 示例
 
@@ -67,7 +67,7 @@ mysql> SELECT * FROM t1;
 
 ## MySQL 兼容性
 
-TiDB 在计算表达式时始终使用列的原始值。例如：
+TiDB 在评估表达式时总是使用列的原始值。例如：
 
 ```sql
 CREATE TABLE t (a int, b int);
@@ -75,11 +75,11 @@ INSERT INTO t VALUES (1,2);
 UPDATE t SET a = a+1,b=a;
 ```
 
-在 MySQL 中，列 `b` 被更新为 2，因为它被设置为 `a` 的值，而 `a` 的值（1）在同一语句中被更新为 `a+1`（即 2）。
+在 MySQL 中，列 `b` 会被更新为 2，因为它被设置为 `a` 的值，而在同一条语句中，`a` 的值（为 1）会被更新为 `a+1`（为 2）。
 
-TiDB 遵循更标准的 SQL 行为，将 `b` 更新为 1。
+TiDB 遵循更标准的 SQL 行为，会将 `b` 更新为 1。
 
-## 另请参阅
+## 相关链接
 
 * [INSERT](/sql-statements/sql-statement-insert.md)
 * [SELECT](/sql-statements/sql-statement-select.md)

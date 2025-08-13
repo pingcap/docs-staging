@@ -1,13 +1,13 @@
 ---
 title: RENAME USER
-summary: TiDB 数据库中 RENAME USER 的使用概览。
+summary: 关于 TiDB 数据库中 RENAME USER 用法的概述。
 ---
 
 # RENAME USER
 
 `RENAME USER` 用于重命名现有用户。
 
-## 语法
+## 概要
 
 ```ebnf+diagram
 RenameUserStmt ::=
@@ -72,9 +72,9 @@ ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%
 
 ## MySQL 兼容性
 
-`RENAME USER` 预期与 MySQL 完全兼容。如果发现任何兼容性差异，你可以[报告问题](https://docs.pingcap.com/tidb/stable/support)。
+`RENAME USER` 预计与 MySQL 完全兼容。如果你发现任何兼容性差异，可以 [report a bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [CREATE USER](/sql-statements/sql-statement-create-user.md)
 * [SHOW GRANTS](/sql-statements/sql-statement-show-grants.md)

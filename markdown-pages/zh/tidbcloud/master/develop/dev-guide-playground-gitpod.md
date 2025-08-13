@@ -1,51 +1,51 @@
 ---
 title: Gitpod
-summary: Gitpod 提供了一个完整的、自动化的、预配置的云原生开发环境。你可以直接在浏览器中开发、运行和测试代码，无需任何本地配置。
+summary: Gitpod 提供一个完整的、自动化的、预配置的云原生开发环境。你可以直接在浏览器中开发、运行和测试代码，无需任何本地配置。
 ---
 
 <!-- markdownlint-disable MD029 -->
 
 # Gitpod
 
-通过 [Gitpod](https://www.gitpod.io/)，你只需点击一个按钮或链接，就可以在浏览器中获得一个完整的开发环境，并立即开始编写代码。
+通过 [Gitpod](https://www.gitpod.io/)，你可以只需点击一个按钮或链接，即可在浏览器中获得完整的开发环境，并立即开始编写代码。
 
-Gitpod 是一个用于直接编码开发环境的开源 Kubernetes 应用程序（GitHub 仓库地址：<https://github.com/gitpod-io/gitpod>），它可以在几秒钟内在云端为每个任务启动全新的、自动化的开发环境。它使你能够将开发环境描述为代码，并直接从浏览器或桌面 IDE 启动即时、远程和基于云的开发环境。
+Gitpod 是一个开源的 Kubernetes 应用（GitHub 仓库地址：<https://github.com/gitpod-io/gitpod>），用于直接编码的开发环境，它在云端为每个任务快速启动全新、自动化的开发环境。它允许你将开发环境描述为代码，并可以直接从浏览器或桌面 IDE 启动即时的远程云端开发环境。
 
 ## 快速开始
 
-1. Fork TiDB 应用程序开发的示例代码仓库 [pingcap-inc/tidb-example-java](https://github.com/pingcap-inc/tidb-example-java)。
+1.  Fork 用于 TiDB 应用开发的示例代码仓库 [pingcap-inc/tidb-example-java](https://github.com/pingcap-inc/tidb-example-java)。
 
-2. 在浏览器的地址栏中，在示例代码仓库的 URL 前加上 `https://gitpod.io/#` 来启动你的 Gitpod 工作区。
+2.  在浏览器地址栏中，将示例代码仓库的 URL 前缀改为 `https://gitpod.io/#`，启动你的 Gitpod 工作区。
 
-   - 例如，`https://gitpod.io/#https://github.com/pingcap-inc/tidb-example-java`。
+   -  例如，`https://gitpod.io/#https://github.com/pingcap-inc/tidb-example-java`。
 
-   - 你可以在 URL 中配置环境变量。例如，`https://gitpod.io/#targetFile=spring-jpa-hibernate_Makefile,targetMode=spring-jpa-hibernate/https://github.com/pingcap-inc/tidb-example-java`。
+   -  你可以在 URL 中配置环境变量。例如，`https://gitpod.io/#targetFile=spring-jpa-hibernate_Makefile,targetMode=spring-jpa-hibernate/https://github.com/pingcap-inc/tidb-example-java`。
 
-3. 使用列出的提供商之一登录并启动工作区。例如，`Github`。
+3.  登录并使用列出的提供商之一启动工作区。例如，`Github`。
 
 ## 使用默认的 Gitpod 配置和环境
 
-完成[快速开始](#快速开始)步骤后，Gitpod 需要一段时间来设置你的工作区。
+完成 [快速开始](#quick-start) 步骤后，Gitpod 需要一些时间来设置你的工作区。
 
-以 [Spring Boot Web](/develop/dev-guide-sample-application-java-spring-boot.md) 应用程序为例。你可以通过 `https://gitpod.io/#targetFile=spring-jpa-hibernate_Makefile,targetMode=spring-jpa-hibernate/https://github.com/pingcap-inc/tidb-example-java` URL 创建一个新的工作区。
+以 [Spring Boot Web](/develop/dev-guide-sample-application-java-spring-boot.md) 应用为例，你可以通过 URL `https://gitpod.io/#targetFile=spring-jpa-hibernate_Makefile,targetMode=spring-jpa-hibernate/https://github.com/pingcap-inc/tidb-example-java` 创建一个新的工作区。
 
-之后，你将看到类似以下的页面：
+之后，你会看到类似如下的页面：
 
 ![playground gitpod workspace init](https://docs-download.pingcap.com/media/images/docs/develop/playground-gitpod-workspace-init.png)
 
-页面中的这个场景使用 [TiUP](https://docs.pingcap.com/tidb/stable/tiup-overview) 来构建 TiDB Playground。你可以在终端区域的左侧查看进度。
+页面中的场景使用 [TiUP](https://docs.pingcap.com/tidb/stable/tiup-overview) 构建 TiDB Playground。你可以在终端区域左侧查看进度。
 
-当 TiDB Playground 准备就绪后，另一个 `Spring JPA Hibernate` 任务将运行。你可以在终端区域的右侧查看进度。
+当 TiDB Playground 准备就绪后，另一个 `Spring JPA Hibernate` 任务将会运行。你可以在终端区域右侧查看进度。
 
-所有这些任务完成后，你将看到类似以下的页面。在此页面上，查看左侧导航栏中的 `REMOTE EXPLORER` 区域（Gitpod 支持基于 URL 的端口转发）并找到你的端口 `8080` 的 URL。
+所有任务完成后，你会看到类似如下的页面。在左侧导航栏的 `REMOTE EXPLORER` 区域（Gitpod 支持基于 URL 的端口转发）中，找到端口 `8080` 的 URL。
 
 ![playground gitpod workspace ready](https://docs-download.pingcap.com/media/images/docs/develop/playground-gitpod-workspace-ready.png)
 
-## 使用自定义 Gitpod 配置和 Docker 镜像
+## 使用自定义的 Gitpod 配置和 Docker 镜像
 
 ### 自定义 Gitpod 配置
 
-参考 [example.gitpod.yml](https://github.com/pingcap-inc/tidb-example-java/blob/main/.gitpod.yml)，在项目的根目录下创建一个 `.gitpod.yml` 文件来配置 Gitpod 工作区。
+参考 [example.gitpod.yml](https://github.com/pingcap-inc/tidb-example-java/blob/main/.gitpod.yml)，在你的项目根目录创建 `.gitpod.yml` 文件，以配置 Gitpod 工作区。
 
 ```yml
 # This configuration file was automatically generated by Gitpod.
@@ -93,11 +93,11 @@ ports:
 
 ### 自定义 Gitpod Docker 镜像
 
-默认情况下，Gitpod 使用名为 Workspace-Full 的标准 Docker 镜像作为工作区的基础。从此默认镜像启动的工作区预装了 Docker、Go、Java、Node.js、C/C++、Python、Ruby、Rust、PHP 以及 Homebrew、Tailscale 和 Nginx 等工具。
+默认情况下，Gitpod 使用名为 Workspace-Full 的标准 Docker 镜像作为工作区基础。由此镜像启动的工作区预装有 Docker、Go、Java、Node.js、C/C++、Python、Ruby、Rust、PHP 以及 Homebrew、Tailscale 和 Nginx 等工具。
 
-你可以使用公共 Docker 镜像或 Dockerfile，并安装项目所需的任何依赖项。
+你可以使用公共 Docker 镜像或 Dockerfile，并安装项目所需的任何依赖。
 
-例如，你可以使用 Dockerfile（另请参见[示例 `.gitpod.Dockerfile`](https://github.com/pingcap-inc/tidb-example-java/blob/main/.gitpod.Dockerfile)）如下：
+例如，可以使用如下的 Dockerfile（另见 [示例 `.gitpod.Dockerfile`](https://github.com/pingcap-inc/tidb-example-java/blob/main/.gitpod.Dockerfile)）：
 
 ```dockerfile
 FROM gitpod/workspace-java-17
@@ -106,7 +106,7 @@ RUN sudo apt install mysql-client -y
 RUN curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
 ```
 
-然后，你需要更新 `.gitpod.yml`：
+然后，更新你的 `.gitpod.yml` 文件：
 
 ```yml
 # This configuration file was automatically generated by Gitpod.
@@ -155,15 +155,15 @@ ports:
 
 ### 应用更改
 
-完成 `.gitpod.yml` 文件的配置后，确保最新代码在你相应的 GitHub 仓库中可用。
+完成 `.gitpod.yml` 文件的配置后，确保最新的代码已推送到你的对应 GitHub 仓库。
 
-访问 `https://gitpod.io/#<YOUR_REPO_URL>` 以使用应用了最新代码的新 Gitpod 工作区。
+访问 `https://gitpod.io/#<YOUR_REPO_URL>`，即可创建一个应用了最新代码的 Gitpod 工作区。
 
 访问 `https://gitpod.io/workspaces` 查看所有已建立的工作区。
 
-## 总结
+## 概要
 
-Gitpod 提供了一个完整的、自动化的、预配置的云原生开发环境。你可以直接在浏览器中开发、运行和测试代码，无需任何本地配置。
+Gitpod 提供一个完整的、自动化的、预配置的云原生开发环境。你可以直接在浏览器中开发、运行和测试代码，无需任何本地配置。
 
 ![playground gitpod summary](https://docs-download.pingcap.com/media/images/docs/develop/playground-gitpod-summary.png)
 
@@ -171,12 +171,12 @@ Gitpod 提供了一个完整的、自动化的、预配置的云原生开发环�
 
 <CustomContent platform="tidb">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或[提交支持工单](/support.md)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](/support.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或[提交支持工单](https://tidb.support.pingcap.com/)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
 
 </CustomContent>

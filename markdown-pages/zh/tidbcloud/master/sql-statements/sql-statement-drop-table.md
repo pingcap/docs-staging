@@ -1,13 +1,13 @@
 ---
 title: DROP TABLE | TiDB SQL 语句参考
-summary: TiDB 数据库中 DROP TABLE 的使用概览。
+summary: 关于 TiDB 数据库中 DROP TABLE 的用法概述。
 ---
 
 # DROP TABLE
 
-此语句从当前选择的数据库中删除一个表。如果表不存在，将返回错误，除非使用 `IF EXISTS` 修饰符。
+该语句用于从当前选择的数据库中删除一个表。如果表不存在，除非使用了 `IF EXISTS` 修饰符，否则会返回错误。
 
-## 语法
+## 概要
 
 ```ebnf+diagram
 DropTableStmt ::=
@@ -26,11 +26,11 @@ TableNameList ::=
 
 ## 删除临时表
 
-你可以使用以下语法来删除普通表和临时表：
+你可以使用以下语法删除普通表和临时表：
 
-- 使用 `DROP TEMPORARY TABLE` 删除本地临时表。
-- 使用 `DROP GLOBAL TEMPORARY TABLE` 删除全局临时表。
-- 使用 `DROP TABLE` 删除普通表或临时表。
+- 使用 `DROP TEMPORARY TABLE` 来删除本地临时表。
+- 使用 `DROP GLOBAL TEMPORARY TABLE` 来删除全局临时表。
+- 使用 `DROP TABLE` 来删除普通表或临时表。
 
 ## 示例
 
@@ -66,7 +66,7 @@ Query OK, 0 rows affected (0.23 sec)
 
 目前，`RESTRICT` 和 `CASCADE` 仅在语法上支持。
 
-## 另请参阅
+## 相关链接
 
 * [CREATE TABLE](/sql-statements/sql-statement-create-table.md)
 * [SHOW CREATE TABLE](/sql-statements/sql-statement-show-create-table.md)

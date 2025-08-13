@@ -1,11 +1,11 @@
 ---
 title: TIDB_TRX
-summary: "了解 `TIDB_TRX` INFORMATION_SCHEMA 表。"
+summary: 了解 `TIDB_TRX` INFORMATION_SCHEMA 表。
 ---
 
 # TIDB_TRX
 
-`TIDB_TRX` 表提供 TiDB 节点上当前正在执行的事务信息。
+`TIDB_TRX` 表提供关于当前在 TiDB 节点上执行的事务的信息。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -34,35 +34,35 @@ DESC TIDB_TRX;
 +-------------------------+-----------------------------------------------------------------+------+------+---------+-------+
 ```
 
-`TIDB_TRX` 表中各列字段的含义如下：
+`TIDB_TRX` 表中每个字段的含义如下：
 
 * `ID`：事务 ID，即事务的 `start_ts`（开始时间戳）。
-* `START_TIME`：事务的开始时间，即事务的 `start_ts` 对应的物理时间。
-* `CURRENT_SQL_DIGEST`：事务中当前正在执行的 SQL 语句的摘要。
-* `CURRENT_SQL_DIGEST_TEXT`：事务当前正在执行的 SQL 语句的规范化形式，即不含参数和格式的 SQL 语句。它与 `CURRENT_SQL_DIGEST` 相对应。
-* `STATE`：事务的当前状态。可能的值包括：
-    * `Idle`：事务处于空闲状态，即正在等待用户输入查询。
+* `START_TIME`：事务的开始时间，即对应事务的 `start_ts` 的物理时间。
+* `CURRENT_SQL_DIGEST`：事务当前正在执行的 SQL 语句的 digest。
+* `CURRENT_SQL_DIGEST_TEXT`：事务当前执行的 SQL 语句的规范化形式，即不带参数和格式的 SQL 语句。它对应 `CURRENT_SQL_DIGEST`。
+* `STATE`：事务的当前状态。可能的取值包括：
+    * `Idle`：事务处于空闲状态，即等待用户输入查询。
     * `Running`：事务正在执行查询。
-    * `LockWaiting`：事务正在等待获取悲观锁。注意，事务在悲观锁定操作开始时就会进入此状态，无论是否被其他事务阻塞。
-    * `Committing`：事务正在提交过程中。
-    * `RollingBack`：事务正在回滚中。
-* `WAITING_START_TIME`：当 `STATE` 的值为 `LockWaiting` 时，此列显示等待的开始时间。
-* `MEM_BUFFER_KEYS`：当前事务写入内存缓冲区的键的数量。
-* `MEM_BUFFER_BYTES`：当前事务写入内存缓冲区的键值对的总字节数。
-* `SESSION_ID`：此事务所属会话的 ID。
-* `USER`：执行事务的用户名。
-* `DB`：执行事务的会话当前默认的数据库名。
-* `ALL_SQL_DIGESTS`：事务已执行的语句的摘要列表。列表以 JSON 格式的字符串数组形式显示。每个事务最多记录前 50 条语句。使用 [`TIDB_DECODE_SQL_DIGESTS`](/functions-and-operators/tidb-functions.md#tidb_decode_sql_digests) 函数，可以将此列中的信息转换为相应的规范化 SQL 语句列表。
-* `RELATED_TABLE_IDS`：事务访问的表、视图和其他对象的 ID。
+    * `LockWaiting`：事务正在等待获取悲观锁。注意，事务在开始悲观锁操作时，无论是否被其他事务阻塞，都会进入此状态。
+    * `Committing`：事务正在提交中。
+    * `RollingBack`：事务正在回滚。
+* `WAITING_START_TIME`：当 `STATE` 为 `LockWaiting` 时，此列显示等待开始的时间。
+* `MEM_BUFFER_KEYS`：当前事务写入内存缓冲区的键数量。
+* `MEM_BUFFER_BYTES`：当前事务写入内存缓冲区的键值对总字节数。
+* `SESSION_ID`：所属会话的 ID。
+* `USER`：执行事务的用户名称。
+* `DB`：事务执行时的当前默认数据库名称。
+* `ALL_SQL_DIGESTS`：事务已执行的语句的 digest 列表。以 JSON 格式的字符串数组显示。每个事务最多记录前 50 条语句。可以使用 [`TIDB_DECODE_SQL_DIGESTS`](/functions-and-operators/tidb-functions.md#tidb_decode_sql_digests) 函数，将此列中的信息转换为对应的规范化 SQL 语句列表。
+* `RELATED_TABLE_IDS`：事务访问的表、视图及其他对象的 ID 列表。
 
-> **注意：**
+> **Note:**
 >
-> * 只有具有 [PROCESS](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#priv_process) 权限的用户才能获取此表中的完整信息。没有 PROCESS 权限的用户只能查询当前用户执行的事务的信息。
-> * `CURRENT_SQL_DIGEST` 和 `ALL_SQL_DIGESTS` 列中的信息（SQL 摘要）是从规范化 SQL 语句计算得出的哈希值。`CURRENT_SQL_DIGEST_TEXT` 列中的信息和 `TIDB_DECODE_SQL_DIGESTS` 函数返回的结果是从语句概要表内部查询的，因此可能找不到相应的语句。有关 SQL 摘要和语句概要表的详细说明，请参见[语句概要表](/statement-summary-tables.md)。
-> * [`TIDB_DECODE_SQL_DIGESTS`](/functions-and-operators/tidb-functions.md#tidb_decode_sql_digests) 函数调用开销较高。如果对大量事务查询历史 SQL 语句，调用此函数可能需要较长时间。如果集群较大且并发事务较多，在查询 `TIDB_TRX` 的完整表时，避免直接在 `ALL_SQL_DIGEST` 列上使用此函数。这意味着要避免使用类似 ``SELECT *, tidb_decode_sql_digests(all_sql_digests) FROM TIDB_TRX`` 的 SQL 语句。
+> * 只有具有 [PROCESS](https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#priv_process) 权限的用户才能获取此表的完整信息。没有 PROCESS 权限的用户只能查询自己执行的事务信息。
+> * `CURRENT_SQL_DIGEST` 和 `ALL_SQL_DIGESTS` 列中的信息（SQL digest）是由规范化 SQL 语句计算得到的哈希值。`CURRENT_SQL_DIGEST_TEXT` 列中的信息以及通过 `TIDB_DECODE_SQL_DIGESTS` 函数返回的结果，是从语句摘要表内部查询得到的，因此可能找不到对应的语句。关于 SQL digest 和语句摘要表的详细说明，请参见 [Statement Summary Tables](/statement-summary-tables.md)。
+> * 调用 [`TIDB_DECODE_SQL_DIGESTS`](/functions-and-operators/tidb-functions.md#tidb_decode_sql_digests) 函数的开销较大。如果在查询大量事务的历史 SQL 语句时调用此函数，可能会导致查询耗时较长。集群中存在大量并发事务时，避免在查询完整的 `TIDB_TRX` 表时直接使用此函数。
 > * 目前 `TIDB_TRX` 表不支持显示 TiDB 内部事务的信息。
 
-## 示例
+## Example
 
 查看 `TIDB_TRX` 表：
 
@@ -102,7 +102,7 @@ CURRENT_SQL_DIGEST_TEXT: update `t` set `v` = `v` + ? where `id` = ?
 2 rows in set (0.01 sec)
 ```
 
-从这个示例的查询结果可以看出：当前节点有两个正在进行的事务。一个事务处于空闲状态（`STATE` 为 `Idle` 且 `CURRENT_SQL_DIGEST` 为 `NULL`），这个事务已经执行了 3 条语句（`ALL_SQL_DIGESTS` 列表中有三条记录，是已执行的三条 SQL 语句的摘要）。另一个事务正在执行语句并等待锁（`STATE` 为 `LockWaiting`，`WAITING_START_TIME` 显示等待锁的开始时间）。该事务已执行 2 条语句，当前正在执行的语句形式为 ``"update `t` set `v` = `v` + ? where `id` = ?"``。
+从此示例的查询结果可以看出：当前节点有两个正在进行的事务。一个事务处于空闲状态（`STATE` 为 `Idle`，`CURRENT_SQL_DIGEST` 为 `NULL`），该事务已执行了 3 条语句（`ALL_SQL_DIGESTS` 列表中有三条记录，分别是已执行的三条 SQL 语句的 digest）。另一个事务正在执行语句并等待锁（`STATE` 为 `LockWaiting`，`WAITING_START_TIME` 显示等待锁的开始时间）。该事务已执行 2 条语句，当前正在执行的语句为 ``"update `t` set `v` = `v` + ? where `id` = ?"``。
 
 ```sql
 SELECT id, all_sql_digests, tidb_decode_sql_digests(all_sql_digests) AS all_sqls FROM INFORMATION_SCHEMA.TIDB_TRX\G
@@ -121,7 +121,7 @@ all_sql_digests: ["e6f07d43b5c21db0fbb9a31feac2dc599787763393dd5acbfad80e247eb02
        all_sqls: ["begin","update `t` set `v` = `v` + ? where `id` = ?"]
 ```
 
-此查询在 `TIDB_TRX` 表的 `ALL_SQL_DIGESTS` 列上调用 [`TIDB_DECODE_SQL_DIGESTS`](/functions-and-operators/tidb-functions.md#tidb_decode_sql_digests) 函数，通过系统内部查询将 SQL 摘要数组转换为规范化 SQL 语句数组。这有助于你直观地获取事务历史执行的语句信息。但是请注意，上述查询扫描了 `TIDB_TRX` 的整个表，并对每一行调用 `TIDB_DECODE_SQL_DIGESTS` 函数。调用 `TIDB_DECODE_SQL_DIGESTS` 函数的开销较高。因此，如果集群中存在许多并发事务，请尽量避免这种类型的查询。
+此查询调用了 [`TIDB_DECODE_SQL_DIGESTS`](/functions-and-operators/tidb-functions.md#tidb_decode_sql_digests) 函数，将 `TIDB_TRX` 表中 `ALL_SQL_DIGESTS` 列的 SQL digest 数组转换为规范化 SQL 语句数组，通过系统内部查询帮助你直观获取事务历史执行的语句信息。然而，注意上述查询会扫描整个 `TIDB_TRX` 表，并对每一行调用 `TIDB_DECODE_SQL_DIGESTS` 函数，调用此函数的开销较大。因此，如果集群中存在大量并发事务，建议避免使用此类查询。
 
 ## CLUSTER_TIDB_TRX
 

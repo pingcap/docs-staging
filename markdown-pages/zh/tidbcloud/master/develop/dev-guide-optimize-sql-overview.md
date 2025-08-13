@@ -1,53 +1,53 @@
 ---
-title: SQL 性能优化概述
-summary: 为 TiDB 应用程序开发人员提供 SQL 性能调优的概述。
+title: 优化 SQL 性能概述
+summary: 提供 TiDB 应用开发者关于 SQL 性能调优的概述。
 ---
 
-# SQL 性能优化概述
+# 优化 SQL 性能概述
 
-本文介绍如何在 TiDB 中优化 SQL 语句的性能。要获得良好的性能，你可以从以下方面入手：
+本文介绍了如何优化 TiDB 中 SQL 语句的性能。为了获得良好的性能，你可以从以下几个方面入手：
 
 * SQL 性能调优
-* 模式设计：根据你的应用程序工作负载模式，你可能需要更改表模式以避免事务冲突或热点。
+* 架构设计：根据你的应用负载模式，可能需要调整表结构以避免事务冲突或热点问题。
 
 ## SQL 性能调优
 
-要获得良好的 SQL 语句性能，你可以遵循以下准则：
+为了获得良好的 SQL 语句性能，你可以遵循以下指南：
 
 * 扫描尽可能少的行。建议只扫描你需要的数据，避免扫描多余的数据。
-* 使用正确的索引。确保 SQL 中 `WHERE` 子句中的列有相应的索引。如果没有，语句会进行全表扫描，从而导致性能不佳。
-* 使用正确的连接类型。根据查询中涉及的表的相对大小选择正确的连接类型很重要。通常，TiDB 的基于成本的优化器会选择性能最佳的连接类型。但是，在少数情况下，你可能需要手动指定更好的连接类型。
-* 使用正确的存储引擎。对于混合 OLTP 和 OLAP 工作负载，建议使用 TiFlash 引擎。详情请参见 [HTAP 查询](/develop/dev-guide-hybrid-oltp-and-olap-queries.md)。
+* 使用合适的索引。确保在 SQL 的 `WHERE` 子句中的列上有对应的索引。如果没有，语句将涉及全表扫描，从而导致性能下降。
+* 使用合适的连接类型。根据查询中涉及的表的相对大小，选择合适的连接类型。一般来说，TiDB 的基于成本的优化器会选择性能最优的连接类型。但在少数情况下，你可能需要手动指定更优的连接类型。
+* 使用合适的存储引擎。对于混合 OLTP 和 OLAP 负载，推荐使用 TiFlash 引擎。详情请参见 [HTAP Query](/develop/dev-guide-hybrid-oltp-and-olap-queries.md)。
 
-## 模式设计
+## 架构设计
 
-在[调优 SQL 性能](#sql-性能调优)之后，如果你的应用程序仍然无法获得良好的性能，你可能需要检查你的模式设计和数据访问模式，以避免以下问题：
+在 [调优 SQL 性能](#sql-performance-tuning) 后，如果你的应用仍然无法获得良好的性能，可能需要检查你的架构设计和数据访问模式，以避免以下问题：
 
 <CustomContent platform="tidb">
 
-* 事务冲突。有关如何诊断和解决事务冲突，请参见[排查锁冲突问题](/troubleshoot-lock-conflicts.md)。
-* 热点。有关如何诊断和解决热点问题，请参见[排查热点问题](/troubleshoot-hot-spot-issues.md)。
+* Transaction contention. 有关如何诊断和解决事务冲突，参见 [Troubleshoot Lock Conflicts](/troubleshoot-lock-conflicts.md)。
+* Hot spots. 有关如何诊断和解决热点问题，参见 [Troubleshoot Hotspot Issues](/troubleshoot-hot-spot-issues.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-* 事务冲突。有关如何诊断和解决事务冲突，请参见[排查锁冲突问题](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts)。
-* 热点。有关如何诊断和解决热点问题，请参见[排查热点问题](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues)。
+* Transaction contention. 有关如何诊断和解决事务冲突，参见 [Troubleshoot Lock Conflicts](https://docs.pingcap.com/tidb/stable/troubleshoot-lock-conflicts)。
+* Hot spots. 有关如何诊断和解决热点问题，参见 [Troubleshoot Hotspot Issues](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues)。
 
 </CustomContent>
 
-### 另请参阅
+### 另请参见
 
 <CustomContent platform="tidb">
 
-* [SQL 性能调优](/sql-tuning-overview.md)
+* [SQL Performance Tuning](/sql-tuning-overview.md)
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-* [SQL 性能调优](/tidb-cloud/tidb-cloud-sql-tuning-overview.md)
+* [SQL Performance Tuning](/tidb-cloud/tidb-cloud-sql-tuning-overview.md)
 
 </CustomContent>
 
@@ -55,12 +55,12 @@ summary: 为 TiDB 应用程序开发人员提供 SQL 性能调优的概述。
 
 <CustomContent platform="tidb">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](/support.md)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](/support.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](https://tidb.support.pingcap.com/)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
 
 </CustomContent>

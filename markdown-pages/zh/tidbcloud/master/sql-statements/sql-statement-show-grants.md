@@ -1,13 +1,13 @@
 ---
 title: SHOW GRANTS | TiDB SQL 语句参考
-summary: TiDB 数据库中 SHOW GRANTS 的使用概述。
+summary: 关于 TiDB 数据库中 SHOW GRANTS 的用法概述。
 ---
 
 # SHOW GRANTS
 
-此语句显示与用户关联的权限列表。与 MySQL 一样，`USAGE` 权限表示登录 TiDB 的能力。
+此语句显示与某个用户相关联的权限列表。与 MySQL 一样，`USAGE` 权限表示登录 TiDB 的能力。
 
-## 语法图
+## 概要
 
 ```ebnf+diagram
 ShowGrantsStmt ::=
@@ -52,9 +52,9 @@ mysql> SHOW GRANTS FOR u1;
 
 ## MySQL 兼容性
 
-TiDB 中的 `SHOW GRANTS` 语句与 MySQL 完全兼容。如果发现任何兼容性差异，请[报告问题](https://docs.pingcap.com/tidb/stable/support)。
+TiDB 中的 `SHOW GRANTS` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [SHOW CREATE USER](/sql-statements/sql-statement-show-create-user.md)
 * [GRANT](/sql-statements/sql-statement-grant-privileges.md)

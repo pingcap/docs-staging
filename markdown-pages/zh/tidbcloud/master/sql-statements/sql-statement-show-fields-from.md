@@ -1,6 +1,6 @@
 ---
-title: SHOW [FULL] FIELDS FROM | TiDB SQL 语句参考
-summary: TiDB 数据库中 SHOW [FULL] FIELDS FROM 的使用概览。
+title: SHOW [FULL] FIELDS FROM | TiDB SQL Statement Reference
+summary: 关于 TiDB 数据库中 SHOW [FULL] FIELDS FROM 的用法概述。
 ---
 
 # SHOW [FULL] FIELDS FROM

@@ -1,11 +1,11 @@
 ---
-title: 使用聚合的 EXPLAIN 语句
-summary: "了解 TiDB 中 `EXPLAIN` 语句返回的执行计划信息。"
+title: Explain Statements That Use Aggregation
+summary: 了解 TiDB 中 `EXPLAIN` 语句返回的执行计划信息。
 ---
 
-# 使用聚合的 EXPLAIN 语句
+# 使用聚合的 Explain 语句
 
-在进行数据聚合时，SQL 优化器会选择使用 Hash 聚合或者流式聚合操作符。为了提高查询效率，聚合操作会同时在 coprocessor 和 TiDB 层进行。考虑以下示例：
+在进行数据聚合时，SQL 优化器会选择 Hash Aggregation 或 Stream Aggregation 操作符。为了提高查询效率，聚合操作会在 coprocessor 和 TiDB 层同时执行。考虑以下示例：
 
 
 ```sql
@@ -30,7 +30,7 @@ SELECT SLEEP(1);
 ANALYZE TABLE t1;
 ```
 
-从 [`SHOW TABLE REGIONS`](/sql-statements/sql-statement-show-table-regions.md) 的输出可以看到，该表被分割成多个 Region：
+从 [`SHOW TABLE REGIONS`](/sql-statements/sql-statement-show-table-regions.md) 的输出可以看到，这个表被划分成了多个 Regions：
 
 
 ```sql
@@ -46,10 +46,10 @@ SHOW TABLE t1 REGIONS;
 |        68 | t_64_r_63531 | t_64_r_95296 |        69 |               1 | 69    |          0 |          1325 |          0 |                  104 |            95433 |
 |         2 | t_64_r_95296 |              |         3 |               1 | 3     |          0 |          1501 |          0 |                   81 |            63211 |
 +-----------+--------------+--------------+-----------+-----------------+-------+------------+---------------+------------+----------------------+------------------+
-4 rows in set (0.00 sec)
+4 行，耗时 0.00 秒
 ```
 
-使用 `EXPLAIN` 查看以下聚合语句，可以看到 `└─StreamAgg_8` 首先在 TiKV 的每个 Region 内执行。然后每个 TiKV Region 会向 TiDB 返回一行数据，TiDB 在 `StreamAgg_16` 中聚合来自每个 Region 的数据：
+使用以下聚合语句结合 `EXPLAIN`，可以看到 `└─StreamAgg_8` 首先在每个 Region 内部的 TiKV 上执行。每个 TiKV Region 会向 TiDB 发送一行数据，之后在 `StreamAgg_16` 中对每个 Region 的数据进行汇总：
 
 
 ```sql
@@ -65,10 +65,11 @@ EXPLAIN SELECT COUNT(*) FROM t1;
 |   └─StreamAgg_8            | 1.00      | cop[tikv] |               | funcs:count(1)->Column#7        |
 |     └─TableFullScan_15     | 242020.00 | cop[tikv] | table:t1      | keep order:false                |
 +----------------------------+-----------+-----------+---------------+---------------------------------+
-4 rows in set (0.00 sec)
+4 行，耗时 0.00 秒
 ```
 
-这在 `EXPLAIN ANALYZE` 中最容易观察到，其中 `actRows` 与 `SHOW TABLE REGIONS` 中的 Region 数量匹配，因为使用了 `TableFullScan` 且没有二级索引：
+在 `EXPLAIN ANALYZE` 中观察效果最为直观，其中的 `actRows` 数量与 `SHOW TABLE REGIONS` 中的 Region 数量一致，因为此处使用了 `TableFullScan`，且没有二级索引：
+
 
 ```sql
 EXPLAIN ANALYZE SELECT COUNT(*) FROM t1;
@@ -83,12 +84,12 @@ EXPLAIN ANALYZE SELECT COUNT(*) FROM t1;
 |   └─StreamAgg_8            | 1.00      | 4       | cop[tikv] |               | proc max:12ms, min:12ms, p80:12ms, p95:12ms, iters:122, tasks:4                                                                                                                                                                                 | funcs:count(1)->Column#7        | N/A       | N/A  |
 |     └─TableFullScan_15     | 242020.00 | 121010  | cop[tikv] | table:t1      | proc max:12ms, min:12ms, p80:12ms, p95:12ms, iters:122, tasks:4                                                                                                                                                                                 | keep order:false                | N/A       | N/A  |
 +----------------------------+-----------+---------+-----------+---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------+-----------+------+
-4 rows in set (0.01 sec)
+4 行，耗时 0.01 秒
 ```
 
-## Hash 聚合
+## Hash Aggregation
 
-Hash 聚合算法使用哈希表来存储执行聚合时的中间结果。它使用多个线程并行执行，但比流式聚合消耗更多内存。
+Hash Aggregation 算法在执行聚合时会使用哈希表存储中间结果。它可以并行执行，使用多个线程，但比 Stream Aggregation 消耗更多内存。
 
 以下是 `HashAgg` 操作符的示例：
 
@@ -106,14 +107,14 @@ EXPLAIN SELECT /*+ HASH_AGG() */ count(*) FROM t1;
 |   └─HashAgg_5             | 1.00      | cop[tikv] |               | funcs:count(1)->Column#6        |
 |     └─TableFullScan_8     | 242020.00 | cop[tikv] | table:t1      | keep order:false                |
 +---------------------------+-----------+-----------+---------------+---------------------------------+
-4 rows in set (0.00 sec)
+4 行，耗时 0.00 秒
 ```
 
-`operator info` 显示用于聚合数据的哈希函数是 `funcs:count(1)->Column#6`。
+`operator info` 显示用于聚合数据的哈希函数为 `funcs:count(1)->Column#6`。
 
-## 流式聚合
+## Stream Aggregation
 
-流式聚合算法通常比 Hash 聚合消耗更少的内存。但是，这个操作符要求数据是有序发送的，这样它才能在数据到达时进行流式处理并应用聚合。
+Stream Aggregation 算法通常比 Hash Aggregation 消耗更少的内存。然而，该操作符要求数据是有序传输的，以便可以 _stream_ 并在值到达时应用聚合。
 
 考虑以下示例：
 
@@ -139,10 +140,10 @@ Records: 5  Duplicates: 0  Warnings: 0
 |     └─TableReader_12         | 10000.00 | root      |               | data:TableFullScan_11                                                                       |
 |       └─TableFullScan_11     | 10000.00 | cop[tikv] | table:t2      | keep order:false, stats:pseudo                                                              |
 +------------------------------+----------+-----------+---------------+---------------------------------------------------------------------------------------------+
-5 rows in set (0.00 sec)
+5 行，耗时 0.00 秒
 ```
 
-在这个示例中，通过在 `col1` 上添加索引可以消除 `└─Sort_13` 操作符。一旦添加了索引，数据就可以按顺序读取，`└─Sort_13` 操作符就被消除了：
+在此示例中，`└─Sort_13` 操作符可以通过在 `col1` 上添加索引来省略。一旦添加索引，数据可以按顺序读取，`└─Sort_13` 操作符也会被省略：
 
 
 ```sql
@@ -162,21 +163,24 @@ Query OK, 0 rows affected (0.28 sec)
 |     └─StreamAgg_8            | 4.00    | cop[tikv] |                            | group by:test.t2.col1, funcs:count(1)->Column#4                                                    |
 |       └─IndexFullScan_13     | 5.00    | cop[tikv] | table:t2, index:col1(col1) | keep order:true, stats:pseudo                                                                      |
 +------------------------------+---------+-----------+----------------------------+----------------------------------------------------------------------------------------------------+
-5 rows in set (0.00 sec)
+5 行，耗时 0.00 秒
 ```
 
 ## 使用 ROLLUP 进行多维数据聚合
 
 从 v7.4.0 版本开始，TiDB 的 `GROUP BY` 子句支持 `WITH ROLLUP` 修饰符。
 
-在 `GROUP BY` 子句中，你可以指定一个或多个列作为分组列表，并在列表后添加 `WITH ROLLUP` 修饰符。然后，TiDB 将基于分组列表中的列进行多维度降序分组，并在输出中为你提供每个分组的汇总结果。
+在 `GROUP BY` 子句中，可以指定一个或多个列作为分组列表，并在列表后添加 `WITH ROLLUP` 修饰符。然后，TiDB 会基于分组列表中的列进行多维降序分组，并在输出中为每个分组提供汇总结果。
 
-> **注意：**
+> **Note:**
 >
-> 目前，TiDB 不支持 Cube 语法，并且 TiDB 仅在 TiFlash MPP 模式下支持为 `WITH ROLLUP` 语法生成有效的执行计划。
+> 目前，TiDB 不支持 Cube 语法。
 
 ```sql
 explain SELECT year, month, grouping(year), grouping(month), SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP;
+```
+
+```sql
 +----------------------------------------+---------+--------------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | id                                     | estRows | task         | access object | operator info                                                                                                                                                                                                                        |
 +----------------------------------------+---------+--------------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -191,9 +195,9 @@ explain SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 |               └─Projection_16          | 3.00    | mpp[tiflash] |               | test.bank.profit, test.bank.year->Column#6, test.bank.month->Column#7                                                                                                                                                                |
 |                 └─TableFullScan_17     | 3.00    | mpp[tiflash] | table:bank    | keep order:false, stats:pseudo                                                                                                                                                                                                       |
 +----------------------------------------+---------+--------------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-10 rows in set (0.05 sec)
+10 行，耗时 0.05 秒
 ```
 
-根据上述语句中的 `GROUP BY year, month WITH ROLLUP` 语法，该 SQL 语句的聚合结果可以按照 `{year, month}`、`{year}` 和 `{}` 三个分组分别计算并连接。
+根据前述语句中的 `GROUP BY year, month WITH ROLLUP` 语法，该 SQL 聚合结果可以被计算并按 `{year, month}`、`{year}` 和 `{}` 三个分组进行拼接。
 
-更多信息，请参见 [GROUP BY 修饰符](/functions-and-operators/group-by-modifier.md)。
+更多信息请参见 [GROUP BY modifiers](/functions-and-operators/group-by-modifier.md)。

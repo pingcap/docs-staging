@@ -5,14 +5,14 @@ summary: 了解 TiDB 中 EXPLAIN 语句返回的执行计划信息。
 
 # 解释使用索引的语句
 
-TiDB 支持几种使用索引来加速查询执行的算子：
+TiDB 支持多种操作符，这些操作符利用索引来加快查询执行速度：
 
 + [`IndexLookup`](#indexlookup)
 + [`IndexReader`](#indexreader)
-+ [`Point_Get` 和 `Batch_Point_Get`](#point_get-和-batch_point_get)
++ [`Point_Get` 和 `Batch_Point_Get`](#point_get-and-batch_point_get)
 + [`IndexFullScan`](#indexfullscan)
 
-本文档中的示例基于以下示例数据：
+本文中的示例基于以下样例数据：
 
 
 ```sql
@@ -31,7 +31,7 @@ INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1024), RANDOM_BYTES(1024) FROM t1 a JOI
 
 ## IndexLookup
 
-TiDB 在从二级索引检索数据时使用 `IndexLookup` 算子。在这种情况下，以下查询都将在 `intkey` 索引上使用 `IndexLookup` 算子：
+当从二级索引中检索数据时，TiDB 使用 `IndexLookup` 操作符。在这种情况下，以下查询都将对 `intkey` 索引使用 `IndexLookup` 操作符：
 
 
 ```sql
@@ -89,12 +89,12 @@ EXPLAIN SELECT * FROM t1 WHERE intkey >= 99 AND intkey <= 103;
 3 rows in set (0.00 sec)
 ```
 
-`IndexLookup` 算子有两个子节点：
+`IndexLookup` 操作符有两个子节点：
 
-* `├─IndexRangeScan_8(Build)` 算子在 `intkey` 索引上执行范围扫描，并检索内部 `RowID`（对于此表，即主键）的值。
-* `└─TableRowIDScan_9(Probe)` 算子然后从表数据中检索完整的行。
+* `├─IndexRangeScan_8(Build)` 操作符对 `intkey` 索引执行范围扫描，并检索内部的 `RowID`（对于此表，即主键）。
+* `└─TableRowIDScan_9(Probe)` 操作符随后从表数据中检索完整行。
 
-因为 `IndexLookup` 任务需要两个步骤，在匹配大量行的场景中，SQL 优化器可能会根据[统计信息](/statistics.md)选择 `TableFullScan` 算子。在以下示例中，大量行匹配条件 `intkey > 100`，因此选择了 `TableFullScan`：
+由于 `IndexLookup` 任务需要两个步骤，SQL 优化器可能会根据 [statistics](/statistics.md) 在匹配大量行的场景下选择 `TableFullScan` 操作符。在以下示例中，`intkey > 100` 条件匹配大量行，因此选择了 `TableFullScan`：
 
 
 ```sql
@@ -112,7 +112,7 @@ EXPLAIN SELECT * FROM t1 WHERE intkey > 100;
 3 rows in set (0.00 sec)
 ```
 
-`IndexLookup` 算子还可以用于有效地优化索引列上的 `LIMIT`：
+`IndexLookup` 操作符也可以用来高效优化对索引列的 `LIMIT`：
 
 
 ```sql
@@ -128,15 +128,13 @@ EXPLAIN SELECT * FROM t1 ORDER BY intkey DESC LIMIT 10;
 | │ └─IndexFullScan_18           | 10.00   | cop[tikv] | table:t1, index:intkey(intkey) | keep order:true, desc              |
 | └─TableRowIDScan_19(Probe)     | 10.00   | cop[tikv] | table:t1                       | keep order:false, stats:pseudo     |
 +--------------------------------+---------+-----------+--------------------------------+------------------------------------+
-4 rows in set (0.00 sec)
-
 ```
 
-在上面的示例中，从索引 `intkey` 中读取最后 10 行。然后从表数据中检索这些 `RowID` 值。
+在上述示例中，从索引 `intkey` 读取最后 10 行。这些 `RowID` 值随后从表数据中检索。
 
 ## IndexReader
 
-TiDB 支持_覆盖索引优化_。如果所有行都可以从索引中检索，TiDB 将跳过 `IndexLookup` 中通常需要的第二个步骤。考虑以下两个示例：
+TiDB 支持 _covering index optimization_（覆盖索引优化）。如果所有行都能从索引中检索出来，TiDB 会跳过通常在 `IndexLookup` 中需要的第二步。考虑以下两个示例：
 
 
 ```sql
@@ -164,11 +162,11 @@ EXPLAIN SELECT id FROM t1 WHERE intkey = 123;
 3 rows in set (0.00 sec)
 ```
 
-因为 `id` 也是内部 `RowID`，所以它存储在 `intkey` 索引中。在使用 `intkey` 索引作为 `└─IndexRangeScan_5` 的一部分后，可以直接返回 `RowID` 的值。
+因为 `id` 也是内部的 `RowID`，它存储在 `intkey` 索引中。使用 `└─IndexRangeScan_5` 后，可以直接返回 `RowID` 的值。
 
 ## Point_Get 和 Batch_Point_Get
 
-TiDB 在直接从主键或唯一键检索数据时使用 `Point_Get` 或 `Batch_Point_Get` 算子。这些算子比 `IndexLookup` 更高效。例如：
+当直接从主键或唯一键检索数据时，TiDB 使用 `Point_Get` 或 `Batch_Point_Get` 操作符。这些操作符比 `IndexLookup` 更高效。例如：
 
 
 ```sql
@@ -222,7 +220,7 @@ Query OK, 0 rows affected (0.37 sec)
 
 ## IndexFullScan
 
-因为索引是有序的，所以 `IndexFullScan` 算子可以用来优化常见查询，例如索引值的 `MIN` 或 `MAX` 值：
+由于索引是有序的，`IndexFullScan` 操作符可以用来优化常见的查询，例如索引值的 `MIN` 或 `MAX`：
 
 
 ```sql
@@ -254,9 +252,9 @@ EXPLAIN SELECT MAX(intkey) FROM t1;
 5 rows in set (0.00 sec)
 ```
 
-在上述语句中，在每个 TiKV Region 上执行 `IndexFullScan` 任务。尽管名称为 `FullScan`，但只需要读取第一行（`└─Limit_28`）。每个 TiKV Region 将其 `MIN` 或 `MAX` 值返回给 TiDB，然后 TiDB 执行流式聚合以过滤出单行。带有聚合函数 `MAX` 或 `MIN` 的流式聚合还确保在表为空时返回 `NULL`。
+在上述语句中，对每个 TiKV Region 执行 `IndexFullScan` 任务。尽管名字叫做 `FullScan`，但实际上只需要读取第一行（`└─Limit_28`）。每个 TiKV Region 会将其 `MIN` 或 `MAX` 值返回给 TiDB，之后执行流式聚合以筛选出单行。带有 `MAX` 或 `MIN` 聚合函数的流式聚合还确保在表为空时返回 `NULL`。
 
-相比之下，在未索引值上执行 `MIN` 函数将导致 `TableFullScan`。查询将需要扫描 TiKV 中的所有行，但执行 `TopN` 计算以确保每个 TiKV Region 只向 TiDB 返回一行。虽然 `TopN` 防止了 TiKV 和 TiDB 之间传输过多的行，但与上面的示例相比，这个语句仍然被认为效率低得多，因为 `MIN` 能够利用索引。
+相比之下，在未建立索引的值上执行 `MIN` 函数会导致 `TableFullScan`。此查询需要扫描 TiKV 中的所有行，但会执行 `TopN` 计算以确保每个 TiKV Region 只返回一行到 TiDB。虽然 `TopN` 避免了过多行在 TiKV 和 TiDB 之间传输，但此语句的效率远远低于上述利用索引的 `MIN` 示例。
 
 
 ```sql
@@ -273,11 +271,11 @@ EXPLAIN SELECT MIN(pad1) FROM t1;
 |     └─TopN_22                  | 1.00    | cop[tikv] |               | test.t1.pad1, offset:0, count:1   |
 |       └─Selection_21           | 1008.99 | cop[tikv] |               | not(isnull(test.t1.pad1))         |
 |         └─TableFullScan_20     | 1010.00 | cop[tikv] | table:t1      | keep order:false                  |
-+--------------------------------+---------+-----------+---------------+-----------------------------------+
++------------------------------+---------+-----------+---------------+-----------------------------------+
 6 rows in set (0.00 sec)
 ```
 
-以下语句将使用 `IndexFullScan` 算子扫描索引中的每一行：
+以下语句会使用 `IndexFullScan` 操作符扫描索引中的每一行：
 
 
 ```sql
@@ -307,9 +305,9 @@ EXPLAIN SELECT AVG(intkey) FROM t1;
 4 rows in set (0.00 sec)
 ```
 
-在上面的示例中，`IndexFullScan` 比 `TableFullScan` 更高效，因为 `(intkey + RowID)` 索引中的值宽度小于完整行的宽度。
+在上述示例中，`IndexFullScan` 比 `TableFullScan` 更高效，因为 `(intkey + RowID)` 索引中的值宽度小于整行的宽度。
 
-以下语句不支持使用 `IndexFullScan` 算子，因为需要从表中获取额外的列：
+以下语句不支持使用 `IndexFullScan` 操作符，因为需要从表中获取额外的列：
 
 
 ```sql
@@ -326,5 +324,4 @@ EXPLAIN SELECT AVG(intkey), ANY_VALUE(pad1) FROM t1;
 |     └─StreamAgg_8            | 1.00    | cop[tikv] |               | funcs:count(test.t1.intkey)->Column#10, funcs:sum(test.t1.intkey)->Column#11, funcs:firstrow(test.t1.pad1)->Column#12 |
 |       └─TableFullScan_15     | 1010.00 | cop[tikv] | table:t1      | keep order:false                                                                                                      |
 +------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------------------------------------------------------+
-5 rows in set (0.00 sec)
 ```

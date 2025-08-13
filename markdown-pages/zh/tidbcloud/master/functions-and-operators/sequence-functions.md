@@ -1,18 +1,18 @@
 ---
-title: 序列函数
-summary: 本文档介绍 TiDB 支持的序列函数。
+title: Sequence Functions
+summary: 本文档介绍了 TiDB 支持的序列函数。
 ---
 
-# 序列函数
+# Sequence Functions
 
 TiDB 中的序列函数用于返回或设置使用 [`CREATE SEQUENCE`](/sql-statements/sql-statement-create-sequence.md) 语句创建的序列对象的值。
 
-| 函数名 | 描述 |
+| Function name | Description |
 | :-------------- | :------------------------------------- |
 | [`NEXTVAL()`](#nextval) | 返回序列的下一个值。 |
 | [`NEXT VALUE FOR`](#next-value-for) | 返回序列的下一个值（`NEXTVAL()` 的别名）。 |
 | [`SETVAL()`](#setval) | 设置序列的当前值。 |
-| [`LASTVAL()`](#lastval) | 返回序列在当前会话中生成的最后一个值。 |
+| [`LASTVAL()`](#lastval) | 返回当前会话中由序列生成的最后一个值。 |
 
 ## `NEXTVAL()`
 
@@ -26,7 +26,7 @@ TiDB 中的序列函数用于返回或设置使用 [`CREATE SEQUENCE`](/sql-stat
 CREATE SEQUENCE s1;
 ```
 
-获取 `s1` 的下一个值：
+从 `s1` 获取下一个值：
 
 ```sql
 SELECT NEXTVAL(s1);
@@ -89,7 +89,7 @@ SELECT NEXT VALUE FOR s1;
 
 示例：
 
-获取 `s1` 的下一个值：
+从 `s1` 获取下一个值：
 
 ```sql
 SELECT NEXTVAL(s1);
@@ -142,11 +142,11 @@ SELECT NEXTVAL(s1);
 
 ## `LASTVAL()`
 
-`LASTVAL()` 函数返回序列在**当前会话**中生成的最后一个值。
+`LASTVAL()` 函数返回**在当前会话中**由序列生成的最后一个值。
 
 示例：
 
-获取 `s1` 在当前会话中生成的最后一个值：
+获取当前会话中由 `s1` 生成的最后一个值：
 
 ```sql
 SELECT LASTVAL(s1);
@@ -163,6 +163,6 @@ SELECT LASTVAL(s1);
 1 row in set (0.00 sec)
 ```
 
-## MySQL 兼容性
+## MySQL compatibility
 
-MySQL 不支持 [ISO/IEC 9075-2](https://www.iso.org/standard/76584.html) 中定义的用于创建和操作序列的函数和语句。
+MySQL 不支持按照 [ISO/IEC 9075-2](https://www.iso.org/standard/76584.html) 定义的创建和操作序列的函数和语句。

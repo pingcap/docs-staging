@@ -1,11 +1,11 @@
 ---
-title: JSON 实用函数
-summary: 了解 JSON 实用函数。
+title: JSON Utility Functions
+summary: 了解 JSON 工具函数。
 ---
 
-# JSON 实用函数
+# JSON Utility Functions
 
-本文档描述了 JSON 实用函数。
+本文档描述了 JSON 工具函数。
 
 ## [JSON_PRETTY()](https://dev.mysql.com/doc/refman/8.0/en/json-utility-functions.html#function_json-pretty)
 
@@ -31,11 +31,11 @@ JSON_PRETTY('{"person":{"name":{"first":"John","last":"Doe"},"age":23}}'): {
 
 ## [JSON_STORAGE_FREE()](https://dev.mysql.com/doc/refman/8.0/en/json-utility-functions.html#function_json-storage-free)
 
-`JSON_STORAGE_FREE(json_doc)` 函数返回 JSON 值在原地更新后其二进制表示中释放的存储空间大小。
+`JSON_STORAGE_FREE(json_doc)` 函数返回在就地更新后，二进制表示的 JSON 值释放的存储空间大小（以字节为单位）。
 
 > **注意：**
 >
-> 由于 TiDB 的存储架构与 MySQL 不同，此函数对于有效的 JSON 值始终返回 `0`，它的实现是为了[与 MySQL 8.0 兼容](/mysql-compatibility.md)。请注意，TiDB 不进行原地更新。更多信息，请参见 [RocksDB 空间使用](/storage-engine/rocksdb-overview.md#rocksdb-space-usage)。
+> 由于 TiDB 的存储架构与 MySQL 不同，此函数对于有效的 JSON 值总是返回 `0`，并且它是为了 [兼容 MySQL 8.0](/mysql-compatibility.md) 而实现的。请注意，TiDB 不进行就地更新。更多信息请参见 [RocksDB 空间使用情况](/storage-engine/rocksdb-overview.md#rocksdb-space-usage)。
 
 ```sql
 SELECT JSON_STORAGE_FREE('{}');
@@ -52,7 +52,7 @@ SELECT JSON_STORAGE_FREE('{}');
 
 ## [JSON_STORAGE_SIZE()](https://dev.mysql.com/doc/refman/8.0/en/json-utility-functions.html#function_json-storage-size)
 
-`JSON_STORAGE_SIZE(json_doc)` 函数返回存储 JSON 值所需的大致字节数。由于此大小没有考虑 TiKV 使用压缩的情况，因此该函数的输出与 MySQL 并不严格兼容。
+`JSON_STORAGE_SIZE(json_doc)` 函数返回存储 JSON 值所需的近似字节数。由于此大小未考虑 TiKV 使用压缩，故此函数的输出与 MySQL 不完全兼容。
 
 ```sql
 SELECT JSON_STORAGE_SIZE('{}');
@@ -67,7 +67,7 @@ SELECT JSON_STORAGE_SIZE('{}');
 1 row in set (0.00 sec)
 ```
 
-## 另请参阅
+## 相关链接
 
-- [JSON 函数概览](/functions-and-operators/json-functions.md)
-- [JSON 数据类型](/data-type-json.md)
+- [JSON Functions Overview](/functions-and-operators/json-functions.md)
+- [JSON Data Type](/data-type-json.md)

@@ -1,13 +1,13 @@
 ---
 title: SHOW CHARACTER SET | TiDB SQL 语句参考
-summary: TiDB 数据库中 SHOW CHARACTER SET 的使用概述。
+summary: 关于在 TiDB 数据库中使用 SHOW CHARACTER SET 的概述。
 ---
 
 # SHOW CHARACTER SET
 
-此语句提供 TiDB 中可用字符集的静态列表。输出不反映当前连接或用户的任何属性。
+此语句提供了 TiDB 中可用字符集的静态列表。输出不反映当前连接或用户的任何属性。
 
-## 语法图
+## 概要
 
 ```ebnf+diagram
 ShowCharsetStmt ::=
@@ -68,9 +68,9 @@ SHOW CHARACTER SET WHERE Description='UTF-8 Unicode';
 
 ## MySQL 兼容性
 
-TiDB 中 `SHOW CHARACTER SET` 语句的用法与 MySQL 完全兼容。但是，TiDB 中的字符集可能与 MySQL 相比具有不同的默认排序规则。详情请参考[与 MySQL 的兼容性](/mysql-compatibility.md)。如果发现任何兼容性差异，请[报告问题](https://docs.pingcap.com/tidb/stable/support)。
+TiDB 中 `SHOW CHARACTER SET` 语句的用法与 MySQL 完全兼容。然而，TiDB 中的字符集可能具有与 MySQL 不同的默认排序规则。详情请参阅 [Compatibility with MySQL](/mysql-compatibility.md)。如果你发现任何兼容性差异，请 [report a bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [SHOW COLLATION](/sql-statements/sql-statement-show-collation.md)
-* [字符集和排序规则](/character-set-and-collation.md)
+* [Character Set and Collation](/character-set-and-collation.md)

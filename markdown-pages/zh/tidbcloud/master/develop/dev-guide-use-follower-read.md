@@ -1,43 +1,43 @@
 ---
 title: Follower Read
-summary: 了解如何使用 Follower Read 优化查询性能。
+summary: 学习如何使用 Follower Read 来优化查询性能。
 ---
 
 # Follower Read
 
-本文档介绍如何使用 Follower Read 优化查询性能。
+本文介绍如何使用 Follower Read 来优化查询性能。
 
-## 简介
+## 介绍
 
-TiDB 使用 [Region](/tidb-storage.md#region) 作为基本单位将数据分布到集群中的所有节点。一个 Region 可以有多个副本，这些副本分为一个 leader 和多个 follower。当 leader 上的数据发生变化时，TiDB 会同步更新数据到 follower。
+TiDB 使用 [Region](/tidb-storage.md#region) 作为基础单元，将数据分布到集群中的所有节点。一个 Region 可以有多个副本，副本分为 leader 和多个 followers。当 leader 上的数据发生变化时，TiDB 会同步更新到 followers。
 
-默认情况下，TiDB 只在同一个 Region 的 leader 上读写数据。当 Region 出现读热点时，Region leader 可能成为整个系统的读取瓶颈。在这种情况下，启用 Follower Read 功能可以通过在多个 follower 之间平衡负载来显著减少 leader 的负载并提高整个系统的吞吐量。
+默认情况下，TiDB 只在同一 Region 的 leader 上进行读写操作。当某个 Region 出现读热点时，Region 的 leader 可能成为整个系统的读瓶颈。在这种情况下，启用 Follower Read 功能可以显著减轻 leader 的负载，并通过在多个 followers 之间平衡负载，提高整个系统的吞吐量。
 
-## 使用场景
+## 何时使用
 
 ### 减少读热点
 
 <CustomContent platform="tidb">
 
-你可以在 [TiDB Dashboard 的 Key Visualizer 页面](/dashboard/dashboard-key-visualizer.md)上直观地分析你的应用程序是否存在热点 Region。你可以通过选择"指标选择框"为 `Read (bytes)` 或 `Read (keys)` 来检查是否出现读热点。
+你可以在 [TiDB Dashboard Key Visualizer Page](/dashboard/dashboard-key-visualizer.md) 上直观分析你的应用是否存在热点 Region。通过选择“指标选择框”到 `Read (bytes)` 或 `Read (keys)`，可以检查是否发生了读热点。
 
-有关处理热点的更多信息，请参阅 [TiDB 热点问题处理](/troubleshoot-hot-spot-issues.md)。
+关于热点问题的处理方法，详见 [TiDB Hotspot Problem Handling](/troubleshoot-hot-spot-issues.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-你可以在 [TiDB Cloud 的 Key Visualizer 页面](/tidb-cloud/tune-performance.md#key-visualizer)上直观地分析你的应用程序是否存在热点 Region。你可以通过选择"指标选择框"为 `Read (bytes)` 或 `Read (keys)` 来检查是否出现读热点。
+你可以在 [TiDB Cloud Key Visualizer Page](/tidb-cloud/tune-performance.md#key-visualizer) 上直观分析你的应用是否存在热点 Region。通过选择“指标选择框”到 `Read (bytes)` 或 `Read (keys)`，可以检查是否发生了读热点。
 
-有关处理热点的更多信息，请参阅 [TiDB 热点问题处理](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues)。
+关于热点问题的处理方法，详见 [TiDB Hotspot Problem Handling](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues)。
 
 </CustomContent>
 
-如果读热点不可避免或更改成本很高，你可以尝试使用 Follower Read 功能，将读取请求更好地负载均衡到 follower Region。
+如果读热点无法避免或变化成本很高，你可以尝试使用 Follower Read 功能，更好地将读取请求的负载分散到 follower Region。
 
-### 减少地理分布部署的延迟
+### 降低地理分布部署的延迟
 
-如果你的 TiDB 集群跨区域或数据中心部署，Region 的不同副本分布在不同的区域或数据中心。在这种情况下，你可以将 Follower Read 配置为 `closest-adaptive` 或 `closest-replicas`，允许 TiDB 优先从当前数据中心读取，这可以显著减少读取操作的延迟和流量开销。有关实现细节，请参阅 [Follower Read](/follower-read.md)。
+如果你的 TiDB 集群部署在不同的地区或数据中心，不同副本的 Region 分布在不同地区或数据中心。在这种情况下，可以将 Follower Read 配置为 `closest-adaptive` 或 `closest-replicas`，让 TiDB 优先从当前数据中心读取，从而显著降低读取操作的延迟和流量开销。具体实现细节，见 [Follower Read](/follower-read.md)。
 
 ## 启用 Follower Read
 
@@ -50,12 +50,12 @@ TiDB 使用 [Region](/tidb-storage.md#region) 作为基本单位将数据分布�
 SET [GLOBAL] tidb_replica_read = 'follower';
 ```
 
-有关此变量的更多详细信息，请参阅 [Follower Read 使用方法](/follower-read.md#usage)。
+关于此变量的更多信息，见 [Follower Read Usage](/follower-read.md#usage)。
 
 </div>
 <div label="Java" value="java">
 
-在 Java 中，要启用 Follower Read，定义一个 `FollowerReadHelper` 类。
+在 Java 中，要启用 Follower Read，可以定义一个 `FollowerReadHelper` 类。
 
 ```java
 public enum FollowReadMode {
@@ -100,7 +100,7 @@ public class FollowerReadHelper {
 }
 ```
 
-从 Follower 节点读取数据时，使用 `setSessionReplicaRead(conn, FollowReadMode.LEADER_AND_FOLLOWER)` 方法启用 Follower Read 功能，可以在当前会话中平衡 Leader 节点和 Follower 节点之间的负载。当连接断开时，它将恢复到原始模式。
+在从 follower 节点读取数据时，使用 `setSessionReplicaRead(conn, FollowReadMode.LEADER_AND_FOLLOWER)` 方法启用 Follower Read 功能，可以在当前会话中在 leader 和 follower 之间平衡负载。当连接断开时，会恢复到原始模式。
 
 ```java
 public static class AuthorDAO {
@@ -112,7 +112,7 @@ public static class AuthorDAO {
             // 启用 follower read 功能。
             FollowerReadHelper.setSessionReplicaRead(conn, FollowReadMode.LEADER_AND_FOLLOWER);
 
-            // 读取作者列表 100000 次。
+            // 读取作者列表 10 万次。
             Random random = new Random();
             for (int i = 0; i < 100000; i++) {
                 Integer birthYear = 1920 + random.nextInt(100);
@@ -149,15 +149,15 @@ public static class AuthorDAO {
 
 <CustomContent platform="tidb">
 
-- [热点问题处理](/troubleshoot-hot-spot-issues.md)
-- [TiDB Dashboard - Key Visualizer 页面](/dashboard/dashboard-key-visualizer.md)
+- [Troubleshoot Hotspot Issues](/troubleshoot-hot-spot-issues.md)
+- [TiDB Dashboard - Key Visualizer Page](/dashboard/dashboard-key-visualizer.md)
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-- [热点问题处理](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues)
-- [TiDB Cloud Key Visualizer 页面](/tidb-cloud/tune-performance.md#key-visualizer)
+- [Troubleshoot Hotspot Issues](https://docs.pingcap.com/tidb/stable/troubleshoot-hot-spot-issues)
+- [TiDB Cloud Key Visualizer Page](/tidb-cloud/tune-performance.md#key-visualizer)
 
 </CustomContent>
 
@@ -165,12 +165,12 @@ public static class AuthorDAO {
 
 <CustomContent platform="tidb">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](/support.md)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](/support.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上询问社区，或[提交支持工单](https://tidb.support.pingcap.com/)。
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
 
 </CustomContent>

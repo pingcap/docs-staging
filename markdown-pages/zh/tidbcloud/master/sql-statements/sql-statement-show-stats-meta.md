@@ -1,28 +1,28 @@
 ---
 title: SHOW STATS_META
-summary: TiDB 数据库中 SHOW STATS_META 的使用概述。
+summary: 关于 TiDB 数据库中 SHOW STATS_META 使用情况的概述。
 ---
 
 # SHOW STATS_META
 
-你可以使用 `SHOW STATS_META` 来查看表中有多少行以及该表中有多少行被更改。使用此语句时，你可以通过 `ShowLikeOrWhere` 子句过滤所需信息。
+你可以使用 `SHOW STATS_META` 来查看一个表中的行数以及该表中被修改的行数。在使用此语句时，可以通过 `ShowLikeOrWhere` 子句过滤所需的信息。
 
 目前，`SHOW STATS_META` 语句输出 6 列：
 
-| 列名 | 描述 |
+| Column name | Description            |
 | -------- | ------------- |
-| db_name  | 数据库名称 |
-| table_name | 表名 |
-| partition_name | 分区名称 |
+| db_name  |  数据库名称    |
+| table_name | 表名称 |
+| partition_name| 分区名称 |
 | update_time | 最后更新时间 |
-| modify_count | 修改的行数 |
+| modify_count | 被修改的行数 |
 | row_count | 总行数 |
 
-> **注意：**
+> **Note:**
 >
-> `update_time` 是在 TiDB 根据 DML 语句更新 `modify_count` 和 `row_count` 字段时更新的。因此 `update_time` 不是 `ANALYZE` 语句的最后执行时间。
+> `update_time` 在 TiDB 根据 DML 语句更新 `modify_count` 和 `row_count` 字段时会被更新。因此，`update_time` 并不代表 `ANALYZE` 语句的最后执行时间。
 
-## 语法图
+## Synopsis
 
 ```ebnf+diagram
 ShowStatsMetaStmt ::=
@@ -33,7 +33,7 @@ ShowLikeOrWhere ::=
 |   "WHERE" Expression
 ```
 
-## 示例
+## Examples
 
 ```sql
 SHOW STATS_META;
@@ -65,11 +65,11 @@ SHOW STATS_META WHERE table_name = 't2';
 1 row in set (0.00 sec)
 ```
 
-## MySQL 兼容性
+## MySQL compatibility
 
-该语句是 TiDB 对 MySQL 语法的扩展。
+此语句是 TiDB 对 MySQL 语法的扩展。
 
-## 另请参阅
+## See also
 
 * [ANALYZE](/sql-statements/sql-statement-analyze-table.md)
-* [统计信息简介](/statistics.md)
+* [Introduction to Statistics](/statistics.md)

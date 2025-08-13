@@ -1,23 +1,23 @@
 ---
-title: 表过滤器
-summary: TiDB 工具中表过滤器功能的使用。
+title: Table Filter
+summary: 在 TiDB 工具中使用表过滤功能。
 ---
 
-# 表过滤器
+# Table Filter
 
-TiDB 迁移工具默认操作所有数据库，但通常只需要处理其中的一部分。例如，你可能只想处理形如 `foo*` 和 `bar*` 的 schema，而不需要其他的。
+TiDB 迁移工具默认对所有数据库进行操作，但 oftentimes 只需要其中的子集。例如，你可能只想处理以 `foo*` 和 `bar*` 形式的 schema，而不涉及其他。
 
-从 TiDB 4.0 开始，所有 TiDB 迁移工具共享一个通用的过滤器语法来定义子集。本文描述如何使用表过滤器功能。
+自 TiDB 4.0 版本起，所有 TiDB 迁移工具共享一种通用的过滤语法，用于定义子集。本文件描述如何使用表过滤功能。
 
-## 使用方法
+## Usage
 
-### 命令行界面
+### CLI
 
-可以使用多个 `-f` 或 `--filter` 命令行参数对工具应用表过滤器。每个过滤器的形式为 `db.table`，其中每个部分都可以是通配符（在[下一节](#通配符)中进一步解释）。以下列出了示例用法。
+可以通过多个 `-f` 或 `--filter` 命令行参数对工具应用表过滤。每个过滤规则的格式为 `db.table`，其中每一部分可以是通配符（在[下一节](#wildcards)中进一步说明）。以下列出示例用法。
 
 <CustomContent platform="tidb">
 
-* [BR](/br/backup-and-restore-overview.md)：
+* [BR](/br/backup-and-restore-overview.md):
 
     ```shell
     tiup br backup full -f 'foo*.*' -f 'bar*.*' -s 'local:///tmp/backup'
@@ -29,7 +29,7 @@ TiDB 迁移工具默认操作所有数据库，但通常只需要处理其中的
 
 </CustomContent>
 
-* [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview)：
+* [Dumpling](https://docs.pingcap.com/tidb/stable/dumpling-overview):
 
     ```shell
     tiup dumpling -f 'foo*.*' -f 'bar*.*' -P 3306 -o /tmp/data/
@@ -37,7 +37,7 @@ TiDB 迁移工具默认操作所有数据库，但通常只需要处理其中的
 
 <CustomContent platform="tidb">
 
-* [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)：
+* [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md):
 
     ```shell
     tiup tidb-lightning -f 'foo*.*' -f 'bar*.*' -d /tmp/data/ --backend tidb
@@ -47,7 +47,7 @@ TiDB 迁移工具默认操作所有数据库，但通常只需要处理其中的
 
 <CustomContent platform="tidb-cloud">
 
-* [TiDB Lightning](https://docs.pingcap.com/tidb/stable/tidb-lightning-overview)：
+* [TiDB Lightning](https://docs.pingcap.com/tidb/stable/tidb-lightning-overview):
 
     ```shell
     tiup tidb-lightning -f 'foo*.*' -f 'bar*.*' -d /tmp/data/ --backend tidb
@@ -57,9 +57,9 @@ TiDB 迁移工具默认操作所有数据库，但通常只需要处理其中的
 
 ### TOML 配置文件
 
-TOML 文件中的表过滤器被指定为[字符串数组](https://toml.io/en/v1.0.0-rc.1#section-15)。以下列出了示例用法。
+TOML 文件中的表过滤规则以 [字符串数组](https://toml.io/en/v1.0.0-rc.1#section-15) 形式指定。以下列出示例用法。
 
-* TiDB Lightning：
+* TiDB Lightning:
 
     ```toml
     [mydumper]
@@ -68,7 +68,7 @@ TOML 文件中的表过滤器被指定为[字符串数组](https://toml.io/en/v1
 
 <CustomContent platform="tidb">
 
-* [TiCDC](/ticdc/ticdc-overview.md)：
+* [TiCDC](/ticdc/ticdc-overview.md):
 
     ```toml
     [filter]
@@ -85,7 +85,7 @@ TOML 文件中的表过滤器被指定为[字符串数组](https://toml.io/en/v1
 
 ### 普通表名
 
-每个表过滤器规则由一个"schema 模式"和一个"表模式"组成，用点号 (`.`) 分隔。完全限定名称匹配规则的表会被接受。
+每个表过滤规则由“schema 模式”和“表 模式”组成，用点（`.`）分隔。完全限定名匹配规则的表将被接受。
 
 ```
 db1.tbl1
@@ -93,7 +93,7 @@ db2.tbl2
 db3.tbl3
 ```
 
-普通名称必须只包含有效的[标识符字符](/schema-object-names.md)，例如：
+普通名称必须仅由有效的 [标识符字符](/schema-object-names.md) 组成，例如：
 
 * 数字（`0` 到 `9`）
 * 字母（`a` 到 `z`，`A` 到 `Z`）
@@ -101,16 +101,16 @@ db3.tbl3
 * `_`
 * 非 ASCII 字符（U+0080 到 U+10FFFF）
 
-所有其他 ASCII 字符都是保留的。某些标点符号具有特殊含义，将在下一节中描述。
+所有其他 ASCII 字符为保留字符。某些标点符号具有特殊含义，详见下一节。
 
 ### 通配符
 
-名称的每个部分都可以是 [fnmatch(3)](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_13) 中描述的通配符符号：
+名称的每一部分可以是 [fnmatch(3)] 中描述的通配符符号：
 
 * `*` — 匹配零个或多个字符
 * `?` — 匹配一个字符
-* `[a-z]` — 匹配一个在 "a" 到 "z" 范围内的字符（包含边界）
-* `[!a-z]` — 匹配一个不在 "a" 到 "z" 范围内的字符
+* `[a-z]` — 匹配范围在 “a” 到 “z” 之间的一个字符
+* `[!a-z]` — 匹配除 “a” 到 “z” 之外的一个字符
 
 ```
 db[0-9].tbl[0-9a-f][0-9a-f]
@@ -118,87 +118,87 @@ data.*
 *.backup_*
 ```
 
-这里的"字符"指 Unicode 码点，例如：
+这里的“字符”指的是 Unicode 码点，例如：
 
-* U+00E9 (é) 是 1 个字符。
-* U+0065 U+0301 (é) 是 2 个字符。
-* U+1F926 U+1F3FF U+200D U+2640 U+FE0F (🤦🏿‍♀️) 是 5 个字符。
+* U+00E9（é）是 1 个字符。
+* U+0065 U+0301（é）是 2 个字符。
+* U+1F926 U+1F3FF U+200D U+2640 U+FE0F（🤦🏿‍♀️）是 5 个字符。
 
 ### 文件导入
 
-要将文件作为过滤器规则导入，在规则开头加上 `@` 来指定文件名。表过滤器解析器将导入文件的每一行作为额外的过滤器规则。
+若要将文件作为过滤规则导入，在规则前加上 `@` 来指定文件名。表过滤解析器会将导入文件的每一行视为额外的过滤规则。
 
-例如，如果文件 `config/filter.txt` 有以下内容：
+例如，文件 `config/filter.txt` 内容如下：
 
 ```
 employees.*
 *.WorkOrder
 ```
 
-以下两种调用方式是等效的：
+以下两个调用等价：
 
 ```bash
 tiup dumpling -f '@config/filter.txt'
 tiup dumpling -f 'employees.*' -f '*.WorkOrder'
 ```
 
-过滤器文件不能再导入其他文件。
+一个过滤文件不能再导入其他文件。
 
-### 注释和空行
+### 注释与空行
 
-在过滤器文件中，每行的前导和尾随空白都会被删除。此外，空行（空字符串）会被忽略。
+在过滤文件中，每行的前后空白字符会被裁剪。空白行（空字符串）会被忽略。
 
-行首的 `#` 标记为注释并被忽略。不在行首的 `#` 被视为语法错误。
+以 `#` 开头的行为注释行，系统会忽略。`#` 不在行首则视为语法错误。
 
 ```
-# 这行是注释
-db.table   # 但这部分不是注释，可能会导致错误
+# this line is a comment
+db.table   # but this part is not comment and may cause error
 ```
 
-### 排除
+### 排除规则
 
-规则开头的 `!` 表示其后的模式用于排除表不被处理。这实际上将过滤器转变为阻止列表。
+以 `!` 开头的规则表示其后模式用于排除不处理的表。这实际上将过滤器变成了一个阻止列表。
 
 ```
 *.*
-#^ 注意：必须先添加 *.* 以包含所有表
+#^ note: must add the *.* to include all tables first
 !*.Password
 !employees.salaries
 ```
 
 ### 转义字符
 
-要将特殊字符转换为标识符字符，在其前面加上反斜杠 `\`。
+若要将特殊字符作为标识符字符使用，在其前面加上反斜杠 `\`。
 
 ```
 db\.with\.dots.*
 ```
 
-为了简单和未来的兼容性，以下序列是禁止的：
+为简便起见及未来兼容，禁止使用以下序列：
 
-* 在删除空白后行尾的 `\`（使用 `[ ]` 来匹配行尾的字面空白）。
-* `\` 后跟任何 ASCII 字母数字字符（`[0-9a-zA-Z]`）。特别是，C 风格的转义序列如 `\0`、`\r`、`\n` 和 `\t` 目前没有意义。
+* 行尾的 `\`（在裁剪空白后）——请用 `[ ]` 来匹配字面空白字符
+* `\` 后跟任何 ASCII 字母数字字符（`[0-9a-zA-Z]`）。特别是，类似 C 语言的转义序列如 `\0`、`\r`、`\n` 和 `\t` 目前无意义。
 
-### 引用标识符
+### 引号标识符
 
-除了 `\`，特殊字符也可以通过使用 `"` 或 `` ` `` 引用来抑制。
+除了 `\`，还可以用 `"` 或 `` ` `` 引用特殊字符以抑制其特殊含义。
 
 ```
 "db.with.dots"."tbl\1"
 `db.with.dots`.`tbl\2`
 ```
 
-引号可以通过在标识符中重复自身来包含。
+引号可以在标识符中通过重复自身来包含。
 
 ```
 "foo""bar".`foo``bar`
-# 等效于：
+# 等价于：
 foo\"bar.foo\`bar
 ```
 
-引用的标识符不能跨多行。
+引号标识符不能跨多行。
 
-部分引用标识符是无效的：
+部分引号的标识符是无效的，例如：
 
 ```
 "this is "invalid*.*
@@ -206,41 +206,41 @@ foo\"bar.foo\`bar
 
 ### 正则表达式
 
-如果需要非常复杂的规则，每个模式可以写成用 `/` 分隔的正则表达式：
+如果需要非常复杂的规则，可以用 `/` 包裹的正则表达式定义每个模式：
 
 ```
 /^db\d{2,}$/./^tbl\d{2,}$/
 ```
 
-这些正则表达式使用 [Go 方言](https://pkg.go.dev/regexp/syntax?tab=doc)。如果标识符包含匹配正则表达式的子字符串，则该模式匹配。例如，`/b/` 匹配 `db01`。
+这些正则表达式使用 [Go 方言](https://pkg.go.dev/regexp/syntax?tab=doc)。如果标识符中包含匹配正则表达式的子串，则匹配。例如，`/b/` 会匹配 `db01`。
 
-> **注意：**
+> **Note:**
 >
-> 正则表达式中的每个 `/` 都必须转义为 `\/`，包括在 `[…]` 内。你不能在 `\Q…\E` 之间放置未转义的 `/`。
+> 每个 `/` 在正则表达式中都必须用 `\/` 转义，包括在 `[ ]` 内。不能在 `\Q…\E` 之间放置未转义的 `/`。
 
 ## 多个规则
 
 <CustomContent platform="tidb-cloud">
 
-> **注意：**
+> **Note:**
 >
-> 本节不适用于 TiDB Cloud。目前，TiDB Cloud 仅支持一个表过滤器规则。
+> 这部分内容不适用于 TiDB Cloud。目前，TiDB Cloud 仅支持一个表过滤规则。
 
 </CustomContent>
 
-当表名不匹配过滤器列表中的任何规则时，默认行为是忽略这些未匹配的表。
+当表名未匹配过滤列表中的任何规则时，默认行为是忽略这些未匹配的表。
 
-要构建阻止列表，必须将 `*.*` 作为第一条规则显式使用，否则所有表都将被排除。
+若要建立阻止列表，必须在第一个规则中明确使用 `*.*`，否则所有表都将被排除。
 
 ```bash
-# 每个表都会被过滤掉
+# 所有表都将被过滤
 tiup dumpling -f '!*.Password'
 
-# 只有 "Password" 表被过滤掉，其余的都包含在内
+# 仅过滤掉 “Password” 表，其余都包含
 tiup dumpling -f '*.*' -f '!*.Password'
 ```
 
-在过滤器列表中，如果表名匹配多个模式，最后一个匹配决定结果。例如：
+在过滤列表中，如果一个表名匹配多个模式，最后匹配的规则决定结果。例如：
 
 ```
 # 规则 1
@@ -261,9 +261,9 @@ employees.*
 | employees.departments | ✓      | ✓      | ✓      | 规则 3（接受）   |
 | else.departments      |        | ✓      | ✓      | 规则 3（接受）   |
 
-> **注意：**
+> **Note:**
 >
-> 在 TiDB 工具中，系统 schema 在默认配置中始终被排除。系统 schema 包括：
+> 在 TiDB 工具中，系统 schema 默认不包含在过滤中。系统 schema 有：
 >
 > * `INFORMATION_SCHEMA`
 > * `PERFORMANCE_SCHEMA`

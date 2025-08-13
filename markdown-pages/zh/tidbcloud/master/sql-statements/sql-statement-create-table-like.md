@@ -1,13 +1,13 @@
 ---
 title: CREATE TABLE LIKE | TiDB SQL 语句参考
-summary: TiDB 数据库中 CREATE TABLE LIKE 的使用概述。
+summary: 关于在 TiDB 数据库中使用 CREATE TABLE LIKE 的概述。
 ---
 
 # CREATE TABLE LIKE
 
-此语句用于复制现有表的定义，但不复制任何数据。
+此语句复制现有表的定义，但不复制任何数据。
 
-## 语法
+## 概述
 
 ```ebnf+diagram
 CreateTableLikeStmt ::=
@@ -53,15 +53,15 @@ mysql> SELECT * FROM t2;
 Empty set (0.00 sec)
 ```
 
-## 预切分 Region
+## 预分割区域
 
-如果要复制的表定义了 `PRE_SPLIT_REGIONS` 属性，使用 `CREATE TABLE LIKE` 语句创建的表会继承这个属性，并且新表上的 Region 会被切分。关于 `PRE_SPLIT_REGIONS` 的详细信息，请参见 [`CREATE TABLE` 语句](/sql-statements/sql-statement-create-table.md)。
+如果被复制的表定义了 `PRE_SPLIT_REGIONS` 属性，使用 `CREATE TABLE LIKE` 语句创建的表会继承此属性，并且新表上的 Region 将会被分割。关于 `PRE_SPLIT_REGIONS` 的详细信息，请参见 [`CREATE TABLE` 语句](/sql-statements/sql-statement-create-table.md)。
 
 ## MySQL 兼容性
 
-TiDB 中的 `CREATE TABLE LIKE` 语句与 MySQL 完全兼容。如果发现任何兼容性差异，请[报告问题](https://docs.pingcap.com/tidb/stable/support)。
+TiDB 中的 `CREATE TABLE LIKE` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [CREATE TABLE](/sql-statements/sql-statement-create-table.md)
 * [SHOW CREATE TABLE](/sql-statements/sql-statement-show-create-table.md)

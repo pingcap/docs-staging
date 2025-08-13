@@ -1,15 +1,15 @@
 ---
-title: 关键字
-summary: 关键字和保留字
+title: 关键词
+summary: 关键词和保留字
 ---
 
-# 关键字
+# 关键词
 
-本文介绍 TiDB 中的关键字、保留字和非保留字之间的区别，并总结了所有可查询的关键字。
+本文介绍了 TiDB 中的关键词，保留字与非保留字的区别，并总结了所有用于查询的关键词。
 
-关键字是在 SQL 语句中具有特殊含义的词，例如 [`SELECT`](/sql-statements/sql-statement-select.md)、[`UPDATE`](/sql-statements/sql-statement-update.md) 和 [`DELETE`](/sql-statements/sql-statement-delete.md)。其中一些可以直接用作标识符，这些被称为**非保留关键字**。另一些在用作标识符之前需要特殊处理，这些被称为**保留关键字**。
+关键词是在 SQL 语句中具有特殊含义的词，例如 [`SELECT`](/sql-statements/sql-statement-select.md)、[`UPDATE`](/sql-statements/sql-statement-update.md) 和 [`DELETE`](/sql-statements/sql-statement-delete.md)。其中一些可以直接用作标识符，称为 **非保留关键词**。一些在用作标识符之前需要特殊处理，称为 **保留关键词**。
 
-要将保留关键字用作标识符，你必须将它们用反引号 `` ` `` 括起来：
+要将保留关键词用作标识符，必须用反引号 `` ` `` 将其括起来：
 
 ```sql
 CREATE TABLE select (a INT);
@@ -27,7 +27,7 @@ CREATE TABLE `select` (a INT);
 Query OK, 0 rows affected (0.09 sec)
 ```
 
-非保留关键字不需要反引号，例如 `BEGIN` 和 `END`，可以在以下语句中成功用作标识符：
+非保留关键词不需要用反引号，例如 `BEGIN` 和 `END`，在以下语句中可以成功用作标识符：
 
 ```sql
 CREATE TABLE `select` (BEGIN int, END int);
@@ -37,7 +37,7 @@ CREATE TABLE `select` (BEGIN int, END int);
 Query OK, 0 rows affected (0.09 sec)
 ```
 
-在特殊情况下，如果保留关键字与 `.` 分隔符一起使用，则不需要反引号：
+在特殊情况下，如果保留关键词与 `.` 分隔符一起使用，则不需要用反引号：
 
 ```sql
 CREATE TABLE test.select (BEGIN int, END int);
@@ -47,11 +47,13 @@ CREATE TABLE test.select (BEGIN int, END int);
 Query OK, 0 rows affected (0.08 sec)
 ```
 
-从 v7.5.3 和 v7.6.0 版本开始，TiDB 在 [`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/information-schema-keywords.md) 表中提供了完整的关键字列表。
+从 v7.5.3 和 v7.6.0 版本开始，TiDB 在 [`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/information-schema-keywords.md) 表中提供了完整的关键词列表。
 
-## 关键字列表
+你可以通过设置 [`tidb_enable_window_function`](/system-variables.md#tidb_enable_window_function) 系统变量，控制 [窗口函数](/functions-and-operators/window-functions.md) 中的关键词是否在语法树中生效。如果将 `tidb_enable_window_function` 设置为 `OFF`，窗口函数中的词将不再被视为关键词。
 
-以下列表显示了 TiDB 中的关键字。保留关键字标记为 `(R)`。[窗口函数](/functions-and-operators/window-functions.md)的保留关键字标记为 `(R-Window)`。
+## 关键词列表
+
+以下列出了 TiDB 中的关键词。保留关键词标记为 `(R)`。用于 [窗口函数](/functions-and-operators/window-functions.md) 的保留关键词标记为 `(R-Window)`。
 
 <TabsPanel letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ" />
 
@@ -72,6 +74,7 @@ Query OK, 0 rows affected (0.08 sec)
 - ANALYZE (R)
 - AND (R)
 - ANY
+- APPLY
 - ARRAY (R)
 - AS (R)
 - ASC (R)
@@ -133,6 +136,7 @@ Query OK, 0 rows affected (0.08 sec)
 - CHECK (R)
 - CHECKPOINT
 - CHECKSUM
+- CHECKSUM_CONCURRENCY
 - CIPHER
 - CLEANUP
 - CLIENT
@@ -154,6 +158,8 @@ Query OK, 0 rows affected (0.08 sec)
 - COMPACT
 - COMPRESSED
 - COMPRESSION
+- COMPRESSION_LEVEL
+- COMPRESSION_TYPE
 - CONCURRENCY
 - CONFIG
 - CONNECTION
@@ -236,6 +242,8 @@ Query OK, 0 rows affected (0.08 sec)
 - ENABLED
 - ENCLOSED (R)
 - ENCRYPTION
+- ENCRYPTION_KEYFILE
+- ENCRYPTION_METHOD
 - END
 - ENFORCED
 - ENGINE
@@ -317,6 +325,7 @@ Query OK, 0 rows affected (0.08 sec)
 - IDENTIFIED
 - IF (R)
 - IGNORE (R)
+- IGNORE_STATS
 - ILIKE (R)
 - IMPORT
 - IMPORTS
@@ -385,6 +394,7 @@ Query OK, 0 rows affected (0.08 sec)
 - LINES (R)
 - LIST
 - LOAD (R)
+- LOAD_STATS
 - LOCAL
 - LOCALTIME (R)
 - LOCALTIMESTAMP (R)
@@ -533,6 +543,7 @@ Query OK, 0 rows affected (0.08 sec)
 - READ (R)
 - REAL (R)
 - REBUILD
+- RECOMMEND
 - RECOVER
 - RECURSIVE (R)
 - REDUNDANT
@@ -646,7 +657,7 @@ Query OK, 0 rows affected (0.08 sec)
 - STATS_BUCKETS
 - STATS_COL_CHOICE
 - STATS_COL_LIST
-- STATS_EXTENDED (R)
+- STATS_EXTENDED
 - STATS_HEALTHY
 - STATS_HISTOGRAMS
 - STATS_LOCKED
@@ -684,7 +695,7 @@ Query OK, 0 rows affected (0.08 sec)
 - THAN
 - THEN (R)
 - TIDB
-- TiDB_CURRENT_TSO (R)
+- TIDB_CURRENT_TSO (R)
 - TIFLASH
 - TIKV_IMPORTER
 - TIME
@@ -743,6 +754,7 @@ Query OK, 0 rows affected (0.08 sec)
 - VARCHARACTER (R)
 - VARIABLES
 - VARYING (R)
+- VECTOR
 - VIEW
 - VIRTUAL (R)
 - VISIBLE
@@ -750,6 +762,7 @@ Query OK, 0 rows affected (0.08 sec)
 <a id="W" class="letter" href="#W">W</a>
 
 - WAIT
+- WAIT_TIFLASH_READY
 - WARNINGS
 - WEEK
 - WEIGHT_STRING
@@ -759,6 +772,7 @@ Query OK, 0 rows affected (0.08 sec)
 - WIDTH
 - WINDOW (R-Window)
 - WITH (R)
+- WITH_SYS_TABLE
 - WITHOUT
 - WORKLOAD
 - WRITE (R)

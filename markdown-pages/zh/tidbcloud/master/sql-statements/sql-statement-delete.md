@@ -1,13 +1,13 @@
 ---
 title: DELETE | TiDB SQL 语句参考
-summary: TiDB 数据库中 DELETE 的使用概述。
+summary: 关于在 TiDB 数据库中使用 DELETE 的概述。
 ---
 
 # DELETE
 
-`DELETE` 语句用于从指定表中删除行。
+`DELETE` 语句用于从指定的表中删除行。
 
-## 语法图
+## 概述
 
 ```ebnf+diagram
 DeleteFromStmt ::=
@@ -53,9 +53,9 @@ mysql> SELECT * FROM t1;
 
 ## MySQL 兼容性
 
-TiDB 中的 `DELETE` 语句与 MySQL 完全兼容。如果发现任何兼容性差异，请[报告问题](https://docs.pingcap.com/tidb/stable/support)。
+TiDB 中的 `DELETE` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [INSERT](/sql-statements/sql-statement-insert.md)
 * [SELECT](/sql-statements/sql-statement-select.md)
