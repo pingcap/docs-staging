@@ -23,6 +23,14 @@ export const imageCDNs = {
   "dbaas-docs": IMAGE_CDN_PREFIX + "/tidbcloud",
 };
 
+const isCloudTOC = (relativePathInZip) => {
+  return (
+    relativePathInZip === `TOC-tidb-cloud.md` ||
+    relativePathInZip === `TOC-tidb-cloud-starter.md` ||
+    relativePathInZip === `TOC-tidb-cloud-essential.md`
+  );
+};
+
 /**
  * Retrieve all MDs recursively.
  *
@@ -225,7 +233,7 @@ export async function retrieveTiDBMDsFromZip(
       // Ignore if cloud file
       if (
         relativePathInZip.startsWith(`tidb-cloud/`) ||
-        relativePathInZip === `TOC-tidb-cloud.md`
+        isCloudTOC(relativePathInZip)
       ) {
         return;
       }
@@ -299,7 +307,7 @@ export async function retrieveCloudMDsFromZip(
         !(
           relativePathInZip.startsWith(`tidb-cloud/`) ||
           cloudFileList.includes(`/${relativePathInZip}`) ||
-          relativePathInZip === `TOC-tidb-cloud.md`
+          isCloudTOC(relativePathInZip)
         )
       ) {
         return;
