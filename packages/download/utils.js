@@ -23,12 +23,14 @@ export const imageCDNs = {
   "dbaas-docs": IMAGE_CDN_PREFIX + "/tidbcloud",
 };
 
+const CLOUD_TOC_LIST = [
+  "TOC-tidb-cloud.md",
+  "TOC-tidb-cloud-starter.md",
+  "TOC-tidb-cloud-essential.md",
+];
+
 const isCloudTOC = (relativePathInZip) => {
-  return (
-    relativePathInZip === `TOC-tidb-cloud.md` ||
-    relativePathInZip === `TOC-tidb-cloud-starter.md` ||
-    relativePathInZip === `TOC-tidb-cloud-essential.md`
-  );
+  return CLOUD_TOC_LIST.includes(relativePathInZip);
 };
 
 /**
@@ -283,13 +285,18 @@ export async function retrieveCloudMDsFromZip(
     const variables = getVariablesFromZip(zip, "/variables.json");
     const ppls = [...pipelines, variablesReplaceStream(variables)];
 
-    const cloudTocZipEntry = zipEntries.find((entry) =>
-      entry.entryName.endsWith(`/TOC-tidb-cloud.md`)
+    const cloudTocZipEntry = zipEntries.filter((entry) =>
+      CLOUD_TOC_LIST.includes(entry.entryName)
     );
 
-    const cloudFileList = getFileListFromToc(cloudTocZipEntry.getData());
-
-    // console.log(cloudFileList);
+    const cloudFileList = [
+      ...new Set(
+        cloudTocZipEntry
+          .map((entry) => entry.getData())
+          .map((data) => getFileListFromToc(data))
+          .flat()
+      ),
+    ];
 
     zipEntries.forEach(function (zipEntry) {
       // console.log(zipEntry.toString()) // outputs zip entries information
