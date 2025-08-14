@@ -2771,21 +2771,23 @@ Query OK, 0 rows affected (0.09 sec)
 - Default value: `ON`
 - This variable is deprecated since v8.4.0. Its value will be fixed to the default value `ON`, that is, [table partitioning](/partitioned-table.md) is enabled by default.
 
-### tidb_enable_telemetry <span class="version-mark">New in v4.0.2 and deprecated in v8.1.0</span>
+### tidb_enable_telemetry <span class="version-mark">New in v4.0.2</span>
 
 > **Warning:**
 >
-> Starting from v8.1.0, the telemetry feature in TiDB is removed, and this variable is no longer functional. It is retained solely for compatibility with earlier versions.
+> - For versions earlier than v8.1.0, TiDB periodically reports telemetry data to PingCAP.
+> - For versions from v8.1.0 to v8.5.1, TiDB removes the telemetry feature and the `tidb_enable_telemetry` variable no longer takes effect. It is retained solely for compatibility with earlier versions.
+> - Starting from v8.5.3, TiDB reintroduces the telemetry feature. However, it only logs telemetry-related information locally and no longer sends data to PingCAP over the network.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
 - Type: Boolean
-- Default value: `OFF`
+- Default value: `ON`. Starting from v8.5.3, the default value is changed from `OFF` to `ON`.
 
 <CustomContent platform="tidb">
 
-- Before v8.1.0, this variable controls whether to enable the telemetry collection in TiDB.
+- This variable controls whether the telemetry feature is enabled in TiDB. Starting from v8.5.3, this variable only takes effect when the [`enable-telemetry`](/tidb-configuration-file.md#enable-telemetry-new-in-v402) configuration item of the TiDB instance is set to `true`.
 
 </CustomContent>
 
@@ -4155,7 +4157,7 @@ As shown in this diagram, when [`tidb_enable_paging`](#tidb_enable_paging-new-in
 - Type: Float
 - Range: `[0, 18446744073709551615]`
 - Default value: `3.0`
-- Indicates the CPU cost of starting a Golang goroutine in TiDB. This variable is internally used in the [Cost Model](/cost-model.md), and it is **NOT** recommended to modify its value.
+- Indicates the CPU cost of starting a Golang goroutine in TiDB. This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
 
 ### tidb_opt_copcpu_factor
 
@@ -4165,7 +4167,7 @@ As shown in this diagram, when [`tidb_enable_paging`](#tidb_enable_paging-new-in
 - Type: Float
 - Range: `[0, 18446744073709551615]`
 - Default value: `3.0`
-- Indicates the CPU cost for TiKV Coprocessor to process one row. This variable is internally used in the [Cost Model](/cost-model.md), and it is **NOT** recommended to modify its value.
+- Indicates the CPU cost for TiKV Coprocessor to process one row. This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
 
 ### tidb_opt_correlation_exp_factor
 
@@ -4199,7 +4201,7 @@ As shown in this diagram, when [`tidb_enable_paging`](#tidb_enable_paging-new-in
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `3.0`
-- Indicates the CPU cost for TiDB to process one row. This variable is internally used in the [Cost Model](/cost-model.md), and it is **NOT** recommended to modify its value.
+- Indicates the CPU cost for TiDB to process one row. This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
 
 ### `tidb_opt_derive_topn` <span class="version-mark">New in v7.0.0</span>
 
@@ -4218,7 +4220,7 @@ As shown in this diagram, when [`tidb_enable_paging`](#tidb_enable_paging-new-in
 - Type: Float
 - Range: `[0, 18446744073709551615]`
 - Default value: `3.0`
-- Indicates the cost for TiKV to scan one row from the disk in descending order. This variable is internally used in the [Cost Model](/cost-model.md), and it is **NOT** recommended to modify its value.
+- Indicates the cost for TiKV to scan one row from the disk in descending order. This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
 
 ### tidb_opt_disk_factor
 
@@ -4228,7 +4230,7 @@ As shown in this diagram, when [`tidb_enable_paging`](#tidb_enable_paging-new-in
 - Type: Float
 - Range: `[0, 18446744073709551615]`
 - Default value: `1.5`
-- Indicates the I/O cost for TiDB to read or write one byte of data from or to the temporary disk. This variable is internally used in the [Cost Model](/cost-model.md), and it is **NOT** recommended to modify its value.
+- Indicates the I/O cost for TiDB to read or write one byte of data from or to the temporary disk. This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
 
 ### tidb_opt_distinct_agg_push_down
 
@@ -4433,7 +4435,7 @@ mysql> desc select count(distinct a) from test.t;
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `0.001`
-- Indicates the memory cost for TiDB to store one row. This variable is internally used in the [Cost Model](/cost-model.md), and it is **NOT** recommended to modify its value.
+- Indicates the memory cost for TiDB to store one row. This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
 
 ### tidb_opt_mpp_outer_join_fixed_build_side <span class="version-mark">New in v5.1.0</span>
 
@@ -4452,7 +4454,7 @@ mysql> desc select count(distinct a) from test.t;
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `1.0`
-- Indicates the net cost of transferring 1 byte of data through the network. This variable is internally used in the [Cost Model](/cost-model.md), and it is **NOT** recommended to modify its value.
+- Indicates the net cost of transferring 1 byte of data through the network. This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
 
 ### tidb_opt_objective <span class="version-mark">New in v7.4.0</span>
 
@@ -4866,7 +4868,7 @@ SHOW WARNINGS;
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `1.5`
-- Indicates the cost for TiKV to scan one row of data from the disk in ascending order. This variable is internally used in the [Cost Model](/cost-model.md), and it is **NOT** recommended to modify its value.
+- Indicates the cost for TiKV to scan one row of data from the disk in ascending order. This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
 
 ### tidb_opt_seek_factor
 
@@ -4876,7 +4878,7 @@ SHOW WARNINGS;
 - Type: Float
 - Range: `[0, 2147483647]`
 - Default value: `20`
-- Indicates the start-up cost for TiDB to request data from TiKV. This variable is internally used in the [Cost Model](/cost-model.md), and it is **NOT** recommended to modify its value.
+- Indicates the start-up cost for TiDB to request data from TiKV. This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
 
 ### tidb_opt_skew_distinct_agg <span class="version-mark">New in v6.2.0</span>
 
@@ -4930,6 +4932,210 @@ SHOW WARNINGS;
 - Type: Boolean
 - Default value: `OFF`
 - This variable is used to control whether to allow `INSERT`, `REPLACE`, and `UPDATE` statements to operate on the `_tidb_rowid` column. This variable can be used only when you import data using TiDB tools.
+
+### tidb_opt_hash_agg_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_hash_join_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_index_join_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_index_lookup_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_index_merge_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_index_reader_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_index_scan_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_limit_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_merge_join_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_sort_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_stream_agg_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_table_full_scan_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_table_range_scan_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_table_reader_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_table_rowid_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_table_tiflash_scan_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
+
+### tidb_opt_topn_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+
+> **Warning:**
+>
+> This variable is used internally by the [cost model](/cost-model.md), and it is **NOT** recommended to modify its value.
+
+- Scope: SESSION | GLOBAL
+- Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
+- Type: Float
+- Range: `[0, 2147483647]`
+- Default value: `1`
 
 ### tidb_optimizer_selectivity_level
 
