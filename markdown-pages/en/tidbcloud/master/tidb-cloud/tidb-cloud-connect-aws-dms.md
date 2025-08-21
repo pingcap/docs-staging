@@ -33,6 +33,8 @@ Before creating DMS resources, you need to configure network properly to ensure 
 
 For TiDB Cloud Starter or TiDB Cloud Essential, your clients can connect to clusters via public endpoint or private endpoint.
 
+<CustomContent language="en,zh">
+
 - To [connect to a TiDB Cloud Starter or Essential cluster via public endpoint](/tidb-cloud/connect-via-standard-connection-serverless.md), do one of the following to make sure that the DMS replication instance can access the internet.
 
     - Deploy the replication instance in public subnets and enable **Public accessible**. For more information, see [Configuration for internet access](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html#vpc-igw-internet-access).
@@ -43,6 +45,20 @@ For TiDB Cloud Starter or TiDB Cloud Essential, your clients can connect to clus
 
     - [Connect to TiDB Cloud Starter via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
     - [Connect to TiDB Cloud Starter or Essential via Alibaba Cloud Private Endpoint](/tidb-cloud/set-up-private-endpoint-connections-on-alibaba-cloud.md)
+
+</CustomContent>
+
+<CustomContent language="ja">
+
+- To [connect to a TiDB Cloud Starter or Essential cluster via public endpoint](/tidb-cloud/connect-via-standard-connection-serverless.md), do one of the following to make sure that the DMS replication instance can access the internet.
+
+    - Deploy the replication instance in public subnets and enable **Public accessible**. For more information, see [Configuration for internet access](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html#vpc-igw-internet-access).
+
+    - Deploy the replication instance in private subnets and route traffic in the private subnets to public subnets. In this case, you need at least three subnets, two private subnets, and one public subnet. The two private subnets form a subnet group where the replication instance lives. Then you need to create a NAT gateway in the public subnet and route traffic of the two private subnets to the NAT gateway. For more information, see [Access the internet from a private subnet](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html#public-nat-internet-access).
+
+- To connect to a TiDB Cloud Starter or TiDB Cloud Essential cluster via private endpoint, refer to [Connect to TiDB Cloud Starter via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections-serverless.md) to set up a private endpoint first and deploy the replication instance in private subnets.
+
+</CustomContent>
 
 </div>
 
