@@ -4125,7 +4125,7 @@ SHOW WARNINGS;
 >
 > This TiDB variable is not applicable to TiDB Cloud.
 
-- Scope: SESSION | GLOBAL
+- Scope: GLOBAL
 - Persists to cluster: Yes
 - Type: Boolean
 - Default value: `OFF`
