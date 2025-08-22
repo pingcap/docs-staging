@@ -162,9 +162,21 @@ TiDB Cloudは、堅牢なネットワークアクセス制御により、安全�
 
 ### プライベートエンドポイント {#private-endpoints}
 
+<CustomContent language="en,zh">
+
 -   仮想プライベート クラウド (VPC) 内の SQL クライアントからTiDB Cloud Dedicated クラスターへの安全な接続を有効にします。
 
 -   [AWS プライベートリンク](/tidb-cloud/set-up-private-endpoint-connections.md) 、 [Azure プライベート リンク](/tidb-cloud/set-up-private-endpoint-connections-on-azure.md) 、 [Google Cloud プライベート サービス接続](/tidb-cloud/set-up-private-endpoint-connections-on-google-cloud.md) 、 [Alibaba Cloud プライベートエンドポイント](/tidb-cloud/set-up-private-endpoint-connections-on-alibaba-cloud.md)でサポートされています。
+
+</CustomContent>
+
+<CustomContent language="ja">
+
+-   仮想プライベート クラウド (VPC) 内の SQL クライアントからTiDB Cloud Dedicated クラスターへの安全な接続を有効にします。
+
+-   [AWS プライベートリンク](/tidb-cloud/set-up-private-endpoint-connections.md) 、 [Azure プライベート リンク](/tidb-cloud/set-up-private-endpoint-connections-on-azure.md) 、 [Google Cloud プライベート サービス接続](/tidb-cloud/set-up-private-endpoint-connections-on-google-cloud.md)でサポートされています。
+
+</CustomContent>
 
 **ベスト プラクティス:**本番ではプライベート エンドポイントを使用して公開を最小限に抑え、構成を定期的に確認します。
 
@@ -205,7 +217,7 @@ TiDB Cloud は、高度な暗号化機能を使用して静的データを保護
 
 -   有効にすると、静的データとバックアップが CMEK キーで暗号化されます。
 
--   CMEK のないTiDB Cloud Dedicated クラスターの場合、 TiDB Cloud はエスクロー キーを使用します。TiDB TiDB Cloud Starter およびTiDB Cloud Essential クラスターはエスクロー キーのみに依存します。
+-   CMEK のないTiDB Cloud Dedicated クラスターの場合、 TiDB Cloud はエスクロー キーを使用します。TiDB Cloud Starter および TiDB Cloud Essential クラスターはエスクロー キーのみに依存します。
 
 **ベストプラクティス:**
 
