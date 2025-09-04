@@ -20,7 +20,7 @@ summary: TiDB 数据库中 LOAD DATA 的用法概述。
 
 > **Note:**
 >
-> 对于 `LOAD DATA INFILE` 语句，TiDB Cloud Dedicated 支持 `LOAD DATA LOCAL INFILE`，以及从 Amazon S3 或 Google Cloud Storage 的 `LOAD DATA INFILE`，而 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 仅支持 `LOAD DATA LOCAL INFILE`。
+> 对于 `LOAD DATA INFILE` 语句，TiDB Cloud Dedicated 支持 `LOAD DATA LOCAL INFILE`，以及从 Amazon S3 或 Google Cloud Storage 的 `LOAD DATA INFILE`，而 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 仅支持 `LOAD DATA LOCAL INFILE`。
 
 </CustomContent>
 
@@ -47,7 +47,7 @@ Fields ::=
 
 如果你在使用 TiDB Cloud，想通过 `LOAD DATA` 语句加载本地数据文件，连接 TiDB Cloud 时需要在连接字符串中添加 `--local-infile` 选项。
 
-- 以下是 TiDB Cloud Serverless 的连接字符串示例：
+- 以下是 TiDB Cloud Starter 的连接字符串示例：
 
     ```
     mysql --connect-timeout 15 -u '<user_name>' -h <host_name> -P 4000 -D test --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/cert.pem -p<your_password> --local-infile

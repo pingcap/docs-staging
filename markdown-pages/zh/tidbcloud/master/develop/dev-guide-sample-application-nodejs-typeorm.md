@@ -15,7 +15,7 @@ TiDB 是一个兼容 MySQL 的数据库，[TypeORM](https://github.com/TypeORM/T
 
 > **Note**
 >
-> 本教程适用于 TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
+> 本教程适用于 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
 
 ## 前置条件
 
@@ -29,13 +29,13 @@ TiDB 是一个兼容 MySQL 的数据库，[TypeORM](https://github.com/TypeORM/T
 
 <CustomContent platform="tidb">
 
-- （推荐）参考 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建属于你自己的 TiDB Cloud 集群。
+- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建属于你自己的 TiDB Cloud 集群。
 - 参考 [部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-- （推荐）参考 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建属于你自己的 TiDB Cloud 集群。
+- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建属于你自己的 TiDB Cloud 集群。
 - 参考 [部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
 
 </CustomContent>
@@ -85,7 +85,7 @@ npm install @types/node ts-node typescript --save-dev
 根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless or Essential">
+<div label="TiDB Cloud Starter or Essential">
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页。
 
@@ -119,7 +119,7 @@ npm install @types/node ts-node typescript --save-dev
 
     > **Note**
     >
-    > 对于 TiDB Cloud Serverless 和 TiDB Cloud Essential, 使用公网连接时你**必须**通过 `TIDB_ENABLE_SSL` 启用 TLS 连接。
+    > 对于 TiDB Cloud Starter 和 TiDB Cloud Essential, 使用公网连接时你**必须**通过 `TIDB_ENABLE_SSL` 启用 TLS 连接。
 
 7. 保存 `.env` 文件。
 
@@ -233,7 +233,7 @@ npm start
 如果连接成功，终端会输出 TiDB 集群的版本信息，如下所示：
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-vv8.5.2)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.3)
 🆕 Created a new player with ID 2.
 ℹ️ Got Player 2: Player { id: 2, coins: 100, goods: 100 }
 🔢 Added 50 coins and 50 goods to player 2, now player 2 has 100 coins and 150 goods.
@@ -276,9 +276,9 @@ export const AppDataSource = new DataSource({
 
 > **Note**
 >
-> 对于 TiDB Cloud Serverless 和 TiDB Cloud Essential, 使用公网连接时你必须启用 TLS 连接。在本示例代码中，请在 `.env` 文件中将环境变量 `TIDB_ENABLE_SSL` 设置为 `true`。
+> 对于 TiDB Cloud Starter 和 TiDB Cloud Essential, 使用公网连接时你必须启用 TLS 连接。在本示例代码中，请在 `.env` 文件中将环境变量 `TIDB_ENABLE_SSL` 设置为 `true`。
 >
-> 但你**不需要**通过 `TIDB_CA_PATH` 指定 SSL CA 证书，因为 Node.js 默认使用内置的 [Mozilla CA 证书](https://wiki.mozilla.org/CA/Included_Certificates)，该证书已被 TiDB Cloud Serverless 和 TiDB Cloud Essential 信任。
+> 但你**不需要**通过 `TIDB_CA_PATH` 指定 SSL CA 证书，因为 Node.js 默认使用内置的 [Mozilla CA 证书](https://wiki.mozilla.org/CA/Included_Certificates)，该证书已被 TiDB Cloud Starter 和 TiDB Cloud Essential 信任。
 
 ### 插入数据
 

@@ -11,7 +11,7 @@ TiDB v6.4.0 引入了 `FLASHBACK CLUSTER TO TIMESTAMP` 语法。你可以使用�
 
 > **Warning:**
 >
-> `FLASHBACK CLUSTER TO [TIMESTAMP|TSO]` 语法不适用于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 集群。为避免出现不可预期的结果，请不要在 TiDB Cloud Serverless 和 TiDB Cloud Essential 集群上执行该语句。
+> `FLASHBACK CLUSTER TO [TIMESTAMP|TSO]` 语法不适用于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 集群。为避免出现不可预期的结果，请不要在 TiDB Cloud Starter 和 TiDB Cloud Essential 集群上执行该语句。
 
 > **Warning:**
 >

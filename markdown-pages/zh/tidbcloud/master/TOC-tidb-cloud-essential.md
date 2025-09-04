@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD007 -->
 <!-- markdownlint-disable MD041 -->
 
-# 目录
+# 目录 <!--Corresponding EN commit: 68fed3b6508cb56dc77800008c1d13ef40b1a8a6-->
 
 ## 快速开始
 
@@ -635,7 +635,7 @@
     - [TiDB Cloud 合作伙伴](/tidb-cloud/tidb-cloud-partners.md)
     - [MSP 客户](/tidb-cloud/managed-service-provider-customer.md)
     - [经销商的客户](/tidb-cloud/cppo-customer.md)
-  - [TiDB Cloud Serverless 和 Essential 的使用限制](/tidb-cloud/serverless-limitations.md)
+  - [TiDB Cloud Starter 和 Essential 的使用限制](/tidb-cloud/serverless-limitations.md)
   - [TiDB Cloud 上的 SQL 功能限制](/tidb-cloud/limited-sql-features.md)
   - [TiDB 限制](/tidb-limitations.md)
   - [系统变量](/system-variables.md)

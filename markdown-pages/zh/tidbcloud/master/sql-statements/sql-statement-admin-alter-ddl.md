@@ -7,7 +7,7 @@ summary: 关于 TiDB 数据库中 `ADMIN ALTER DDL JOBS` 用法的概述。
 
 > **Note:**
 >
-> 目前，该功能在 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 集群上不可用。
+> 目前，该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 集群上不可用。
 
 `ADMIN ALTER DDL JOBS` 语句允许你修改单个正在运行的 DDL 任务的参数。例如：
 

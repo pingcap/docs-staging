@@ -27,7 +27,7 @@ summary: 学习如何使用 Python 和 TiDB Vector Search 快速开发一个执�
 
 > **Note:**
 >
-> 向量搜索功能在 TiDB Self-Managed、[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 上均可使用。对于 TiDB Self-Managed 和 TiDB Cloud Dedicated，TiDB 版本必须为 v8.4.0 及以上（建议使用 v8.5.0 及以上版本）。
+> 向量搜索功能在 TiDB Self-Managed、[TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 上均可使用。对于 TiDB Self-Managed 和 TiDB Cloud Dedicated，TiDB 版本必须为 v8.4.0 及以上（建议使用 v8.5.0 及以上版本）。
 
 ## 前提条件
 
@@ -42,14 +42,14 @@ summary: 学习如何使用 Python 和 TiDB Vector Search 快速开发一个执�
 **如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
 - 参考 [部署本地测试用 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产用 TiDB 集群](/production-deployment-using-tiup.md) 来创建本地集群。
-- 参考 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
+- 参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
 **如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）参考 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
+- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
 - 参考 [部署本地测试用 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产用 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 来创建版本为 v8.4.0 或更高版本的本地集群。
 
 </CustomContent>
@@ -84,9 +84,9 @@ pip install sqlalchemy pymysql sentence-transformers tidb-vector python-dotenv
 根据你选择的 TiDB 部署方式，配置集群连接字符串。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Starter">
 
-对于 TiDB Cloud Serverless 集群，按照以下步骤获取集群连接字符串并配置环境变量：
+对于 TiDB Cloud Starter 集群，按照以下步骤获取集群连接字符串并配置环境变量：
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入概览页面。
 

@@ -391,7 +391,7 @@ mysql> SELECT * FROM t1;
 
 > **注意：**
 >
-> 此变量在 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 上不受支持。
+> 此变量在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 上不受支持。
 
 <CustomContent platform="tidb">
 
@@ -592,7 +592,7 @@ mysql> SELECT * FROM t1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：SESSION | GLOBAL
 - 是否持久化到集群：是
@@ -655,7 +655,7 @@ mysql> SELECT * FROM t1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：SESSION | GLOBAL
 - 是否持久化到集群：是
@@ -804,7 +804,7 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 
 > **注意：**
 >
-> [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 不支持此变量。
+> [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 不支持此变量。
 
 - 作用域：GLOBAL
 - 持久化到集群：否，仅适用于你当前连接的 TiDB 实例。
@@ -816,7 +816,7 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 
 > **注意：**
 >
-> [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 不支持此变量。
+> [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 不支持此变量。
 
 - 作用域：GLOBAL
 - 持久化到集群：否，仅适用于你当前连接的 TiDB 实例。
@@ -863,7 +863,7 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 - 持久化到集群：是
 - 适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
 - 类型：布尔值
-- 默认值：对于 TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `OFF`，对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `ON`
+- 默认值：对于 TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `OFF`，对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `ON`
 
 <CustomContent platform="tidb">
 
@@ -885,7 +885,7 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 范围：GLOBAL
 - 持久化到集群：是
@@ -916,7 +916,7 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'max_prepared_stmt_count';
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 范围：SESSION | GLOBAL
 - 持久化到集群：是
@@ -1384,7 +1384,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：SESSION
 - 是否持久化到集群：否
@@ -1563,7 +1563,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量是只读的。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -1579,7 +1579,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 > **注意：**
 >
 > - 如果你使用的是 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 集群，要使用此变量提高索引创建速度，请确保你的 TiDB 集群托管在 AWS 上，并且你的 TiDB 节点大小至少为 8 vCPU。
-> - 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群，此变量是只读的。
+> - 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群，此变量是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -1639,7 +1639,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -1653,7 +1653,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -1667,7 +1667,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -1684,7 +1684,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：SESSION
 - 是否支持 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
@@ -1698,7 +1698,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -1836,7 +1836,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：SESSION | GLOBAL
 - 持久化到集群：是
@@ -1869,7 +1869,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：SESSION | GLOBAL
 - 持久化到集群：是
@@ -1888,7 +1888,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 范围：全局
 - 是否持久化到集群：是
@@ -1976,7 +1976,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 范围：全局
 - 是否持久化到集群：否，仅适用于你当前连接的 TiDB 实例。
@@ -2119,7 +2119,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -2165,7 +2165,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -2246,7 +2246,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -2552,7 +2552,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -2597,7 +2597,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -2711,7 +2711,7 @@ Query OK, 0 rows affected (0.09 sec)
 
 > **注意：**
 >
-> 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量是只读的。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -2932,7 +2932,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -2947,7 +2947,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -2963,7 +2963,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
 - 类型：Duration
 - 默认值：`10m0s`
-- 范围：对于 TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `[10m0s, 8760h0m0s]`，对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `[10m0s, 168h0m0s]`
+- 范围：对于 TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `[10m0s, 8760h0m0s]`，对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `[10m0s, 168h0m0s]`
 - 每次 GC 保留数据的时间限制，格式为 Go Duration。发生 GC 时，当前时间减去此值即为安全点。
 
 > **注意：**
@@ -2977,7 +2977,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -2992,7 +2992,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -3010,7 +3010,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -3095,7 +3095,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -3130,7 +3130,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -3143,7 +3143,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：SESSION | GLOBAL
 - 持久化到集群：是
@@ -3363,7 +3363,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域: SESSION
 - 适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): 是
@@ -3464,7 +3464,7 @@ MPP 是 TiFlash 引擎提供的分布式计算框架，支持节点间的数据�
 
 > **注意：**
 >
-> 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量是只读的。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：否，仅适用于你当前连接的 TiDB 实例。
@@ -4769,7 +4769,7 @@ SHOW WARNINGS;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域: SESSION | GLOBAL
 - 持久化到集群: 是
@@ -5076,7 +5076,7 @@ SHOW WARNINGS;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5115,7 +5115,7 @@ SHOW WARNINGS;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5133,7 +5133,7 @@ SHOW WARNINGS;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -5146,7 +5146,7 @@ SHOW WARNINGS;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -5202,7 +5202,7 @@ SHOW WARNINGS;
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -5360,7 +5360,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/zh/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/zh/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：SESSION | GLOBAL
 - 是否持久化到集群：是
@@ -5507,7 +5507,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5521,7 +5521,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5534,7 +5534,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5560,7 +5560,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5582,7 +5582,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5655,7 +5655,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域: GLOBAL
 - 持久化到集群: 是
@@ -5758,7 +5758,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域: GLOBAL
 - 持久化到集群: 是
@@ -5783,7 +5783,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5796,7 +5796,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5809,7 +5809,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5822,7 +5822,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5835,7 +5835,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5848,7 +5848,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5861,7 +5861,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
@@ -5874,7 +5874,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
@@ -5887,7 +5887,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：GLOBAL
 - 持久化到集群：是
@@ -5965,7 +5965,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量为只读。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量为只读。
 
 - 作用域：SESSION | GLOBAL
 - 是否持久化到集群：是
@@ -5990,7 +5990,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量为只读。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量为只读。
 
 - 作用域：SESSION
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
@@ -6005,7 +6005,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量为只读。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)，此变量为只读。
 
 - 作用域：SESSION
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
@@ -6185,7 +6185,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：SESSION
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
@@ -6220,7 +6220,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量始终为 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 启用。
+> 此变量始终为 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 启用。
 
 - 作用域：GLOBAL
 - 是否持久化到集群：是
@@ -6236,7 +6236,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
 - 类型：Integer
 - 默认值：`8`
-- 范围：对于 TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `[0, 2147483647]`，对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `[8, 2147483647]`
+- 范围：对于 TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `[0, 2147483647]`，对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `[8, 2147483647]`
 - 此变量是密码复杂度检查中的一个检查项。它检查密码长度是否足够。默认情况下，最小密码长度为 `8`。此变量仅在启用 [`validate_password.enable`](#validate_passwordenable-new-in-v650) 时生效。
 - 此变量的值不得小于表达式：`validate_password.number_count + validate_password.special_char_count + (2 * validate_password.mixed_case_count)`。
 - 如果你修改了 `validate_password.number_count`、`validate_password.special_char_count` 或 `validate_password.mixed_case_count` 的值，使得表达式的值大于 `validate_password.length`，那么 `validate_password.length` 的值会自动更改以匹配表达式的值。
@@ -6248,7 +6248,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
 - 类型：Integer
 - 默认值：`1`
-- 范围：TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `[0, 2147483647]`，[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `[1, 2147483647]`
+- 范围：TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `[0, 2147483647]`，[TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `[1, 2147483647]`
 - 此变量是密码复杂度检查中的一个检查项。它检查密码是否包含足够的大写和小写字母。此变量仅在启用 [`validate_password.enable`](#validate_passwordenable-new-in-v650) 且 [`validate_password.policy`](#validate_passwordpolicy-new-in-v650) 设置为 `1` (MEDIUM) 或更大时生效。
 - 密码中的大写字母数量和小写字母数量都不能少于 `validate_password.mixed_case_count` 的值。例如，当该变量设置为 `1` 时，密码必须至少包含一个大写字母和一个小写字母。
 
@@ -6259,7 +6259,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
 - 类型：Integer
 - 默认值：`1`
-- 范围：TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `[0, 2147483647]`，[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `[1, 2147483647]`
+- 范围：TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `[0, 2147483647]`，[TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `[1, 2147483647]`
 - 此变量是密码复杂度检查中的一个检查项。它检查密码是否包含足够的数字。此变量仅在启用 [`validate_password.enable`](#password_reuse_interval-new-in-v650) 且 [`validate_password.policy`](#validate_passwordpolicy-new-in-v650) 设置为 `1` (MEDIUM) 或更大时生效。
 
 ### validate_password.policy <span class="version-mark">v6.5.0 新增</span>
@@ -6269,7 +6269,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
 - 类型：Enumeration
 - 默认值：`1`
-- 可选值：TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `0`、`1` 和 `2`；[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `1` 和 `2`
+- 可选值：TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `0`、`1` 和 `2`；[TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `1` 和 `2`
 - 此变量控制密码复杂度检查的策略。此变量仅在启用 [`validate_password.enable`](#password_reuse_interval-new-in-v650) 时生效。此变量的值决定了除了 `validate_password.check_user_name` 之外，其他 `validate-password` 变量是否在密码复杂度检查中生效。
 - 此变量的值可以是 `0`、`1` 或 `2`（分别对应于 LOW、MEDIUM 或 STRONG）。不同的策略级别有不同的检查：
     - 0 或 LOW：密码长度。
@@ -6283,7 +6283,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
 - 类型：Integer
 - 默认值：`1`
-- 范围：TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `[0, 2147483647]`，[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `[1, 2147483647]`
+- 范围：TiDB Self-Managed 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 为 `[0, 2147483647]`，[TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 为 `[1, 2147483647]`
 - 此变量是密码复杂度检查中的一个检查项。它检查密码是否包含足够的特殊字符。此变量仅在启用 [`validate_password.enable`](#password_reuse_interval-new-in-v650) 且 [`validate_password.policy`](#validate_passwordpolicy-new-in-v650) 设置为 `1` (MEDIUM) 或更大时生效。
 
 ### version
@@ -6291,7 +6291,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 作用域：NONE
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
 - 默认值：`8.0.11-TiDB-`(tidb 版本)
-- 此变量返回 MySQL 版本，后跟 TiDB 版本。例如 '8.0.11-TiDB-v8.5.2'。
+- 此变量返回 MySQL 版本，后跟 TiDB 版本。例如 '8.0.11-TiDB-8.5.3'。
 
 ### version_comment
 
@@ -6318,7 +6318,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **注意：**
 >
-> 此变量对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
+> 此变量对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 是只读的。
 
 - 作用域：SESSION | GLOBAL
 - 是否持久化到集群：是

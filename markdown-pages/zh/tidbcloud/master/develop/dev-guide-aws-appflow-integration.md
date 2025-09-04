@@ -7,9 +7,9 @@ summary: 逐步介绍如何将 TiDB 与 Amazon AppFlow 集成。
 
 [Amazon AppFlow](https://aws.amazon.com/appflow/) 是一项完全托管的 API 集成服务，您可以使用它将您的软件即服务（SaaS）应用程序连接到 AWS 服务，并安全地传输数据。通过 Amazon AppFlow，您可以将数据从 TiDB 导入或导出到多种数据提供商，例如 Salesforce、Amazon S3、LinkedIn 和 GitHub。更多信息，请参见 AWS 文档中的 [Supported source and destination applications](https://docs.aws.amazon.com/appflow/latest/userguide/app-specific.html)。
 
-本文档描述了如何将 TiDB 与 Amazon AppFlow 集成，并以集成 TiDB Cloud Serverless 集群为例。
+本文档描述了如何将 TiDB 与 Amazon AppFlow 集成，并以集成 TiDB Cloud Starter 集群为例。
 
-如果你没有 TiDB 集群，可以创建一个 [TiDB Cloud Serverless](https://tidbcloud.com/console/clusters) 集群，该集群免费且大约在 30 秒内即可创建完成。
+如果你没有 TiDB 集群，可以创建一个 [TiDB Cloud Starter](https://tidbcloud.com/console/clusters) 集群，该集群免费且大约在 30 秒内即可创建完成。
 
 ## 前提条件
 
@@ -66,7 +66,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
     >
     > - `--guided` 选项会使用提示引导你完成部署。你的输入会被存储在配置文件中，默认为 `samconfig.toml`。
     > - `stack_name` 指定你要部署的 AWS Lambda 的名称。
-    > - 该引导流程假设使用 AWS 作为 TiDB Cloud Serverless 的云提供商。若要使用 Amazon S3 作为源或目标，你需要将 AWS Lambda 的 `region` 设置为与 Amazon S3 相同。
+    > - 该引导流程假设使用 AWS 作为 TiDB Cloud Starter 的云提供商。若要使用 Amazon S3 作为源或目标，你需要将 AWS Lambda 的 `region` 设置为与 Amazon S3 相同。
     > - 如果你之前已运行过 `sam deploy --guided`，可以直接运行 `sam deploy`，SAM CLI 会使用 `samconfig.toml` 配置文件简化操作。
 
     如果看到类似如下的输出，说明 Lambda 已成功部署。
@@ -149,7 +149,7 @@ git clone https://github.com/pingcap-inc/tidb-appflow-integration
 
 5. `sf_account` 表创建完成后，点击 **Connect**。会显示连接对话框。
 
-6. 在 **Connect to TiDB-Connector** 对话框中，输入 TiDB 集群的连接属性。如果使用 TiDB Cloud Serverless 集群，需要将 **TLS** 选项设置为 `Yes`，以启用 TLS 连接。然后点击 **Connect**。
+6. 在 **Connect to TiDB-Connector** 对话框中，输入 TiDB 集群的连接属性。如果使用 TiDB Cloud Starter 集群，需要将 **TLS** 选项设置为 `Yes`，以启用 TLS 连接。然后点击 **Connect**。
 
     ![tidb connection message](https://docs-download.pingcap.com/media/images/docs/develop/aws-appflow-step-tidb-connection-message.png)
 
@@ -245,7 +245,7 @@ test> SELECT * FROM sf_account;
 
 - 如果出现问题，可以在 [CloudWatch](https://console.aws.amazon.com/cloudwatch/home) 页面查看日志。
 - 本文档中的步骤基于 [Building custom connectors using the Amazon AppFlow Custom Connector SDK](https://aws.amazon.com/blogs/compute/building-custom-connectors-using-the-amazon-appflow-custom-connector-sdk/)。
-- [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) **不是** 生产环境。
+- [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) **不是** 生产环境。
 - 为了避免篇幅过长，本文中的示例仅展示了 `Insert` 策略，但 `Update` 和 `Upsert` 策略也已测试，可以使用。
 
 ## 需要帮助？

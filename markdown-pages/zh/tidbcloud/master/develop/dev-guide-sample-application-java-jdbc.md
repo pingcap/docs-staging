@@ -17,7 +17,7 @@ TiDB 是一个兼容 MySQL 的数据库，JDBC（Java Database Connectivity）�
 
 > **Note:**
 >
-> - 本教程适用于 TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated 和 TiDB 自建集群。
+> - 本教程适用于 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 和 TiDB 自建集群。
 > - 从 TiDB v7.4 开始，如果在 JDBC URL 中未配置 `connectionCollation`，且 `characterEncoding` 未配置或设置为 `UTF-8`，则 JDBC 连接中使用的排序规则取决于 JDBC 驱动版本。更多信息请参见 [JDBC 连接中使用的排序规则](/faq/sql-faq.md#collation-used-in-jdbc-connections)。
 
 </CustomContent>
@@ -26,7 +26,7 @@ TiDB 是一个兼容 MySQL 的数据库，JDBC（Java Database Connectivity）�
 
 > **Note:**
 >
-> - 本教程适用于 TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated 和 TiDB 自建集群。
+> - 本教程适用于 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 和 TiDB 自建集群。
 > - 从 TiDB v7.4 开始，如果在 JDBC URL 中未配置 `connectionCollation`，且 `characterEncoding` 未配置或设置为 `UTF-8`，则 JDBC 连接中使用的排序规则取决于 JDBC 驱动版本。更多信息请参见 [JDBC 连接中使用的排序规则](https://docs.pingcap.com/tidb/stable/sql-faq#collation-used-in-jdbc-connections)。
 
 </CustomContent>
@@ -44,7 +44,7 @@ TiDB 是一个兼容 MySQL 的数据库，JDBC（Java Database Connectivity）�
 
 **如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐）参考 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参考 [部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
 </CustomContent>
@@ -52,11 +52,11 @@ TiDB 是一个兼容 MySQL 的数据库，JDBC（Java Database Connectivity）�
 
 > **Note:**
 >
-> 出于安全考虑，建议你在通过互联网连接 TiDB 集群时，使用 `VERIFY_IDENTITY` 建立 TLS 连接。TiDB Cloud Serverless, TiDB Cloud Essential, 以及 TiDB Cloud Dedicated 使用 Subject Alternative Name (SAN) 证书，这要求 MySQL Connector/J 版本大于等于 [8.0.22](https://dev.mysql.com/doc/relnotes/connector-j/en/news-8-0-22.html)。
+> 出于安全考虑，建议你在通过互联网连接 TiDB 集群时，使用 `VERIFY_IDENTITY` 建立 TLS 连接。TiDB Cloud Starter, TiDB Cloud Essential, 以及 TiDB Cloud Dedicated 使用 Subject Alternative Name (SAN) 证书，这要求 MySQL Connector/J 版本大于等于 [8.0.22](https://dev.mysql.com/doc/relnotes/connector-j/en/news-8-0-22.html)。
 
 **如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐）参考 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参考 [部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
 
 </CustomContent>
@@ -79,7 +79,7 @@ cd tidb-java-jdbc-quickstart
 根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless or Essential">
+<div label="TiDB Cloud Starter or Essential">
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，然后点击目标集群名称进入其概览页面。
 
@@ -121,7 +121,7 @@ cd tidb-java-jdbc-quickstart
 
     请务必将 `{}` 占位符替换为连接对话框中获得的连接参数。
 
-    TiDB Cloud Serverless 需要安全连接，因此你需要将 `USE_SSL` 的值设置为 `true`。
+    TiDB Cloud Starter 需要安全连接，因此你需要将 `USE_SSL` 的值设置为 `true`。
 
 7. 保存 `env.sh` 文件。
 

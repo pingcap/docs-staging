@@ -161,7 +161,7 @@ OptionItem ::=
 
 ## `IMPORT INTO ... FROM FILE` 用法
 
-对于自建 TiDB，`IMPORT INTO ... FROM FILE` 支持从 Amazon S3、GCS 及 TiDB 本地存储导入数据文件。对于 [TiDB Cloud 专业版](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated)，`IMPORT INTO ... FROM FILE` 支持从 Amazon S3 和 GCS 导入数据文件。对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，`IMPORT INTO ... FROM FILE` 支持从 Amazon S3 和阿里云 OSS 导入数据文件。
+对于自建 TiDB，`IMPORT INTO ... FROM FILE` 支持从 Amazon S3、GCS 及 TiDB 本地存储导入数据文件。对于 [TiDB Cloud 专业版](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated)，`IMPORT INTO ... FROM FILE` 支持从 Amazon S3 和 GCS 导入数据文件。对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，`IMPORT INTO ... FROM FILE` 支持从 Amazon S3 和阿里云 OSS 导入数据文件。
 
 - 对于存储在 Amazon S3 或 GCS 的数据文件，`IMPORT INTO ... FROM FILE` 支持在 [TiDB 分布式执行框架（DXF）](/tidb-distributed-execution-framework.md) 下运行。
 
@@ -189,7 +189,7 @@ OptionItem ::=
 
 > **Note:**
 >
-> Global Sort 不支持在 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 集群上使用。
+> Global Sort 不支持在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 集群上使用。
 
 `IMPORT INTO ... FROM FILE` 会将源数据文件的导入任务拆分为多个子任务，每个子任务独立编码、排序后导入数据。如果这些子任务编码后的 KV 范围有较大重叠（关于 TiDB 如何将数据编码为 KV，参见 [TiDB 计算](/tidb-computing.md)），则 TiKV 在导入过程中需要持续进行 compaction，导致导入性能和稳定性下降。
 

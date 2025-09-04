@@ -15,7 +15,7 @@ TiDB 是一个兼容 MySQL 的数据库，[Rails](https://github.com/rails/rails
 
 > **Note:**
 >
-> 本教程适用于 TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
+> 本教程适用于 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
 
 ## 前置条件
 
@@ -30,13 +30,13 @@ TiDB 是一个兼容 MySQL 的数据库，[Rails](https://github.com/rails/rails
 
 <CustomContent platform="tidb">
 
-- （推荐）参考 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参考 [部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-- （推荐）参考 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参考 [部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
 
 </CustomContent>
@@ -78,7 +78,7 @@ bundle add mysql2 dotenv
 根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless or Essential">
+<div label="TiDB Cloud Starter or Essential">
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页。
 
@@ -102,7 +102,7 @@ bundle add mysql2 dotenv
 
    > **Note**
    >
-   > 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，使用公共连接地址时，**必须** 通过 `ssl_mode=verify_identity` 参数启用 TLS 连接。
+   > 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，使用公共连接地址时，**必须** 通过 `ssl_mode=verify_identity` 参数启用 TLS 连接。
 
 7. 保存 `.env` 文件。
 
@@ -185,7 +185,7 @@ bundle add mysql2 dotenv
 如果连接成功，控制台会输出 TiDB 集群的版本信息，如下所示：
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-vv8.5.2)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.3)
 ⏳ Loading sample game data...
 ✅ Loaded sample game data.
 
@@ -225,7 +225,7 @@ production:
 
 > **Note**
 >
-> 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，使用公共连接地址时，**必须** 在 `DATABASE_URL` 中通过设置 `ssl_mode` 参数为 `verify_identity` 启用 TLS 连接，但**不需要**通过 `DATABASE_URL` 指定 SSL CA 证书，因为 mysql2 gem 会按特定顺序自动查找本地已存在的 CA 证书文件。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，使用公共连接地址时，**必须** 在 `DATABASE_URL` 中通过设置 `ssl_mode` 参数为 `verify_identity` 启用 TLS 连接，但**不需要**通过 `DATABASE_URL` 指定 SSL CA 证书，因为 mysql2 gem 会按特定顺序自动查找本地已存在的 CA 证书文件。
 
 ### 插入数据
 

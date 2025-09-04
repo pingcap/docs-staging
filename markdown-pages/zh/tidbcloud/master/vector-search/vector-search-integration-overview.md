@@ -25,7 +25,7 @@ summary: 关于 TiDB 向量搜索集成的概述，包括支持的 AI 框架、�
 
 > **Note:**
 >
-> The vector search feature is available on TiDB Self-Managed, [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB 版本必须是 v8.4.0 或更高（建议 v8.5.0 或更高）。
+> The vector search feature is available on TiDB Self-Managed, [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), and [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated). For TiDB Self-Managed and TiDB Cloud Dedicated, the TiDB 版本必须是 v8.4.0 或更高（建议 v8.5.0 或更高）。
 
 ## AI 框架
 

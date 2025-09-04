@@ -550,11 +550,11 @@ SELECT TIDB_VERSION()\G
 
 ```sql
 *************************** 1. row ***************************
-TIDB_VERSION(): Release Version: vv8.5.2
+TIDB_VERSION(): Release Version: v8.5.3
 Edition: Community
 Git Commit Hash: 821e491a20fbab36604b36b647b5bae26a2c1418
 Git Branch: HEAD
-UTC Build Time: 2025-06-12 19:16:25
+UTC Build Time: 2025-08-14 19:16:25
 GoVersion: go1.21.10
 Race Enabled: false
 Check Table Before Drop: false

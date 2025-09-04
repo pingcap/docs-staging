@@ -16,7 +16,7 @@ TiDB 是一个与 MySQL 兼容的数据库，[AWS Lambda 函数](https://aws.ama
 
 > **Note**
 >
-> 本教程适用于 TiDB Cloud Serverless 和 TiDB 自托管版本。
+> 本教程适用于 TiDB Cloud Starter 和 TiDB 自托管版本。
 
 ## 前提条件
 
@@ -33,7 +33,7 @@ TiDB 是一个与 MySQL 兼容的数据库，[AWS Lambda 函数](https://aws.ama
 
 **如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- (推荐) 参考 [Creating a TiDB Cloud Serverless cluster](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
+- (推荐) 参考 [Creating a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
 - 参考 [Deploy a local test TiDB cluster](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [Deploy a production TiDB cluster](/production-deployment-using-tiup.md) 来创建本地集群。
 
 </CustomContent>
@@ -41,7 +41,7 @@ TiDB 是一个与 MySQL 兼容的数据库，[AWS Lambda 函数](https://aws.ama
 
 **如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- (推荐) 参考 [Creating a TiDB Cloud Serverless cluster](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
+- (推荐) 参考 [Creating a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
 - 参考 [Deploy a local test TiDB cluster](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [Deploy a production TiDB cluster](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 来创建本地集群。
 
 </CustomContent>
@@ -79,7 +79,7 @@ npm install
 
 <SimpleTab>
 
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Starter">
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，然后点击目标集群的名称，进入其概览页面。
 
@@ -346,7 +346,7 @@ console.log(rsh.affectedRows);
 - 为了避免 SQL 注入，建议使用 [prepared statements](https://github.com/sidorares/node-mysql2#using-prepared-statements)。
 - 在涉及不多复杂 SQL 语句的场景中，使用 ORM 框架如 [Sequelize](https://sequelize.org/)、[TypeORM](https://typeorm.io/)、或 [Prisma](https://www.prisma.io/) 可以大大提高开发效率。
 - 构建应用的 RESTful API 时，建议 [使用 AWS Lambda 搭配 API Gateway](https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html)。
-- 关于使用 TiDB Cloud Serverless 和 AWS Lambda 构建高性能应用的最佳实践，参考 [这篇博客](https://aws.amazon.com/blogs/apn/designing-high-performance-applications-using-serverless-tidb-cloud-and-aws-lambda/)。
+- 关于使用 TiDB Cloud Starter 和 AWS Lambda 构建高性能应用的最佳实践，参考 [这篇博客](https://aws.amazon.com/blogs/apn/designing-high-performance-applications-using-serverless-tidb-cloud-and-aws-lambda/)。
 
 ## 后续步骤
 

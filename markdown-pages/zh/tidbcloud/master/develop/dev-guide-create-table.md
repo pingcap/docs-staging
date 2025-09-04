@@ -11,7 +11,7 @@ summary: 了解表创建中的定义、规则和指南。
 
 在阅读本文档之前，请确保已完成以下任务：
 
-- [构建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
+- [构建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
 - 阅读 [Schema 设计概述](/develop/dev-guide-schema-design-overview.md)。
 - [创建数据库](/develop/dev-guide-create-database.md)。
 
@@ -292,7 +292,7 @@ ALTER TABLE `bookshop`.`ratings` SET TIFLASH REPLICA 1;
 
 > **Note:**
 >
-> 如果你的集群中没有 **TiFlash** 节点，此 SQL 语句会报错：`1105 - the tiflash replica count: 1 should be less than the total tiflash server count: 0`。你可以使用 [构建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-cluster) 来创建包含 **TiFlash** 的 TiDB Cloud Serverless 集群。
+> 如果你的集群中没有 **TiFlash** 节点，此 SQL 语句会报错：`1105 - the tiflash replica count: 1 should be less than the total tiflash server count: 0`。你可以使用 [构建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-cluster) 来创建包含 **TiFlash** 的 TiDB Cloud Starter 集群。
 
 然后，你可以执行以下查询：
 

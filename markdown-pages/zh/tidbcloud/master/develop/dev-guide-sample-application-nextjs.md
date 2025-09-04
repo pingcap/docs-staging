@@ -15,7 +15,7 @@ TiDB 是一个与 MySQL 兼容的数据库，[mysql2](https://github.com/sidorar
 
 > **Note**
 >
-> 本教程适用于 TiDB Cloud Serverless 和 TiDB 自托管版本。
+> 本教程适用于 TiDB Cloud Starter 和 TiDB 自托管版本。
 
 ## 前提条件
 
@@ -29,7 +29,7 @@ TiDB 是一个与 MySQL 兼容的数据库，[mysql2](https://github.com/sidorar
 
 **如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- (推荐) 参考 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB 云集群。
+- (推荐) 参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB 云集群。
 - 也可以参考 [部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 来搭建本地集群。
 
 </CustomContent>
@@ -37,7 +37,7 @@ TiDB 是一个与 MySQL 兼容的数据库，[mysql2](https://github.com/sidorar
 
 **如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- (推荐) 参考 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB 云集群。
+- (推荐) 参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB 云集群。
 - 也可以参考 [部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 来搭建本地集群。
 
 </CustomContent>
@@ -73,7 +73,7 @@ npm install
 
 <SimpleTab>
 
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Starter">
 
 1. 进入 [**Clusters** 页面](https://tidbcloud.com/console/clusters)，点击目标集群的名称，进入其概览页面。
 

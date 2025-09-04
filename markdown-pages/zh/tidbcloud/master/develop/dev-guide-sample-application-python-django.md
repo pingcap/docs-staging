@@ -15,7 +15,7 @@ TiDB 是一个兼容 MySQL 的数据库，[Django](https://www.djangoproject.com
 
 > **Note:**
 >
-> 本教程适用于 TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
+> 本教程适用于 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
 
 ## 前置条件
 
@@ -29,7 +29,7 @@ TiDB 是一个兼容 MySQL 的数据库，[Django](https://www.djangoproject.com
 
 **如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐）参照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参照[创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或[部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
 </CustomContent>
@@ -37,7 +37,7 @@ TiDB 是一个兼容 MySQL 的数据库，[Django](https://www.djangoproject.com
 
 **如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐）参照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参照[创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或[部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
 
 </CustomContent>
@@ -78,7 +78,7 @@ pip install -r requirements.txt
 根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless or Essential">
+<div label="TiDB Cloud Starter or Essential">
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页。
 
@@ -120,7 +120,7 @@ pip install -r requirements.txt
 
     请务必将 `{}` 占位符替换为连接对话框中获取的连接参数。
 
-    TiDB Cloud Serverless 需要安全连接。由于 mysqlclient 的 `ssl_mode` 默认是 `PREFERRED`，你无需手动指定 `CA_PATH`，只需留空即可。但如果你有特殊需求需要手动指定 `CA_PATH`，可参考 [TLS 连接到 TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters) 获取不同操作系统的证书路径。
+    TiDB Cloud Starter 需要安全连接。由于 mysqlclient 的 `ssl_mode` 默认是 `PREFERRED`，你无需手动指定 `CA_PATH`，只需留空即可。但如果你有特殊需求需要手动指定 `CA_PATH`，可参考 [TLS 连接到 TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters) 获取不同操作系统的证书路径。
 
 7. 保存 `.env` 文件。
 

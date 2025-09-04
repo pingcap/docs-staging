@@ -15,7 +15,7 @@ TiDB 是兼容 MySQL 的数据库，[Prisma](https://github.com/prisma/prisma) �
 
 > **Note:**
 >
-> 本教程适用于 TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
+> 本教程适用于 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
 
 ## 前置条件
 
@@ -29,13 +29,13 @@ TiDB 是兼容 MySQL 的数据库，[Prisma](https://github.com/prisma/prisma) �
 
 <CustomContent platform="tidb">
 
-- （推荐）参照 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参照 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参照 [部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-- （推荐）参照 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参照 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参照 [部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
 
 </CustomContent>
@@ -77,7 +77,7 @@ npm install prisma typescript ts-node @types/node --save-dev
 根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless or Essential">
+<div label="TiDB Cloud Starter or Essential">
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页。
 
@@ -106,7 +106,7 @@ npm install prisma typescript ts-node @types/node --save-dev
 
     > **Note**
     >
-    > 对于 TiDB Cloud Serverless，使用公网地址时，**必须** 通过设置 `sslaccept=strict` 启用 TLS 连接。
+    > 对于 TiDB Cloud Starter，使用公网地址时，**必须** 通过设置 `sslaccept=strict` 启用 TLS 连接。
 
 7. 保存 `.env` 文件。
 8. 在 `prisma/schema.prisma` 文件中，将 `mysql` 设置为连接 provider，将 `env("DATABASE_URL")` 作为连接 URL：
@@ -145,7 +145,7 @@ npm install prisma typescript ts-node @types/node --save-dev
 
     > **Note**
     >
-    > 对于 TiDB Cloud Serverless，**推荐** 在使用公网地址时通过设置 `sslaccept=strict` 启用 TLS 连接。当你设置 `sslaccept=strict` 启用 TLS 连接时，**必须** 通过 `sslcert=/path/to/ca.pem` 指定从连接对话框下载的 CA 证书文件路径。
+    > 对于 TiDB Cloud Starter，**推荐** 在使用公网地址时通过设置 `sslaccept=strict` 启用 TLS 连接。当你设置 `sslaccept=strict` 启用 TLS 连接时，**必须** 通过 `sslcert=/path/to/ca.pem` 指定从连接对话框下载的 CA 证书文件路径。
 
 6. 保存 `.env` 文件。
 7. 在 `prisma/schema.prisma` 文件中，将 `mysql` 设置为连接 provider，将 `env("DATABASE_URL")` 作为连接 URL：
@@ -270,7 +270,7 @@ void main();
 如果连接成功，终端会输出 TiDB 集群的版本信息，如下所示：
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-vv8.5.2)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.3)
 🆕 Created a new player with ID 1.
 ℹ️ Got Player 1: Player { id: 1, coins: 100, goods: 100 }
 🔢 Added 50 coins and 50 goods to player 1, now player 1 has 150 coins and 150 goods.
