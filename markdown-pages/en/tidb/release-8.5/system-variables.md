@@ -4898,7 +4898,7 @@ SHOW WARNINGS;
 - Default value: `OFF`
 - This variable is used to control whether to allow `INSERT`, `REPLACE`, and `UPDATE` statements to operate on the `_tidb_rowid` column. This variable can be used only when you import data using TiDB tools.
 
-### tidb_opt_hash_agg_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_hash_agg_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -4910,7 +4910,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_hash_join_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_hash_join_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -4922,7 +4922,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_index_join_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_index_join_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -4934,7 +4934,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_index_lookup_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_index_lookup_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -4946,7 +4946,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_index_merge_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_index_merge_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -4958,7 +4958,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_index_reader_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_index_reader_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -4970,7 +4970,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_index_scan_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_index_scan_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -4982,7 +4982,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_limit_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_limit_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -4994,7 +4994,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_merge_join_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_merge_join_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -5006,7 +5006,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_sort_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_sort_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -5018,7 +5018,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_stream_agg_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_stream_agg_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -5030,7 +5030,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_table_full_scan_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_table_full_scan_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -5042,7 +5042,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_table_range_scan_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_table_range_scan_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -5054,7 +5054,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_table_reader_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_table_reader_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -5066,7 +5066,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_table_rowid_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_table_rowid_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -5078,7 +5078,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_table_tiflash_scan_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_table_tiflash_scan_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
@@ -5090,7 +5090,7 @@ SHOW WARNINGS;
 - Range: `[0, 2147483647]`
 - Default value: `1`
 
-### tidb_opt_topn_cost_factor <span class="version-mark">New in v8.5.3 and v9.0.0</span>
+### tidb_opt_topn_cost_factor <span class="version-mark">New in v8.5.3</span>
 
 > **Warning:**
 >
