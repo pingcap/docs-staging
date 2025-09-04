@@ -119,11 +119,11 @@ systemctl start docker
 
 ### Option 1: 将 TiDB Cloud 与 ProxySQL 集成
 
-此方案中，你将使用 [ProxySQL Docker 镜像](https://hub.docker.com/r/proxysql/proxysql) 和一个 TiDB Cloud Serverless 集群。以下步骤将会在端口 `16033` 上部署 ProxySQL，请确保此端口可用。
+此方案中，你将使用 [ProxySQL Docker 镜像](https://hub.docker.com/r/proxysql/proxysql) 和一个 TiDB Cloud Starter 集群。以下步骤将会在端口 `16033` 上部署 ProxySQL，请确保此端口可用。
 
-#### 步骤 1. 创建 TiDB Cloud Serverless 集群
+#### 步骤 1. 创建 TiDB Cloud Starter 集群
 
-1. [创建一个免费 TiDB Cloud Serverless 集群](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart#step-1-create-a-tidb-cluster)。记住你为集群设置的 root 密码。
+1. [创建一个免费 TiDB Cloud Starter 集群](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart#step-1-create-a-tidb-cluster)。记住你为集群设置的 root 密码。
 2. 获取你的集群主机名、端口和用户名，备用。
 
     1. 在 [Clusters](https://tidbcloud.com/console/clusters) 页面，点击你的集群名称进入集群概览页面。
@@ -327,12 +327,12 @@ systemctl start docker
     >
     > 1. 添加一个用户，使用你的集群用户名和密码。
     > 2. 将用户分配到监控账户。
-    > 3. 将你的 TiDB Cloud Serverless 集群添加到主机列表中。
-    > 4. 在 ProxySQL 和 TiDB Cloud Serverless 集群之间启用安全连接。
+    > 3. 将你的 TiDB Cloud Starter 集群添加到主机列表中。
+    > 4. 在 ProxySQL 和 TiDB Cloud Starter 集群之间启用安全连接。
     >
     > 为了更好理解，强烈建议你查看 `proxysql-prepare.sql` 文件。关于 ProxySQL 配置的更多信息，请参见 [ProxySQL 文档](https://proxysql.com/documentation/proxysql-configuration/)。
 
-    以下为示例输出。你会看到输出中显示了你的集群主机名，表示 ProxySQL 与 TiDB Cloud Serverless 集群的连接已建立。
+    以下为示例输出。你会看到输出中显示了你的集群主机名，表示 ProxySQL 与 TiDB Cloud Starter 集群的连接已建立。
 
     ```
     *************************** 1. row ***************************
@@ -388,7 +388,7 @@ systemctl start docker
     SELECT VERSION();
     ```
 
-    如果显示了 TiDB 版本信息，说明你已成功通过 ProxySQL 连接到你的 TiDB Cloud Serverless 集群。随时可以输入 `quit` 并按 <kbd>enter</kbd> 退出 MySQL 客户端。
+    如果显示了 TiDB 版本信息，说明你已成功通过 ProxySQL 连接到你的 TiDB Cloud Starter 集群。随时可以输入 `quit` 并按 <kbd>enter</kbd> 退出 MySQL 客户端。
 
     > **Note:**
     >

@@ -13,7 +13,7 @@ summary: 了解如何插入数据。
 
 在阅读本文档之前，你需要准备以下内容：
 
-- [搭建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
+- [搭建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
 - 阅读 [Schema 设计概述](/develop/dev-guide-schema-design-overview.md)、[创建数据库](/develop/dev-guide-create-database.md)、[创建表](/develop/dev-guide-create-table.md) 和 [创建二级索引](/develop/dev-guide-create-secondary-indexes.md)。
 
 ## 插入行

@@ -15,7 +15,7 @@ TiDB 是一个兼容 MySQL 的数据库，[SQLAlchemy](https://www.sqlalchemy.or
 
 > **Note:**
 >
-> 本教程适用于 TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
+> 本教程适用于 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
 
 ## 前置条件
 
@@ -29,7 +29,7 @@ TiDB 是一个兼容 MySQL 的数据库，[SQLAlchemy](https://www.sqlalchemy.or
 
 **如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐）参照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参照[创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
 </CustomContent>
@@ -37,7 +37,7 @@ TiDB 是一个兼容 MySQL 的数据库，[SQLAlchemy](https://www.sqlalchemy.or
 
 **如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐）参照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参照[创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
 
 </CustomContent>
@@ -74,11 +74,11 @@ SQLAlchemy 是一个支持多种数据库的 ORM 库。它为数据库提供了�
 根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless or Essential">
+<div label="TiDB Cloud Starter or Essential">
 
 > **Note:**
 >
-> 目前，TiDB Cloud Serverless 集群有一个限制：如果 5 分钟内没有活跃连接，集群会自动关闭，所有连接会被断开。因此，当你在 TiDB Cloud Serverless 集群上使用 SQLAlchemy 时，连接池可能会遇到 `OperationalError`，如 `Lost connection to MySQL server during query` 或 `MySQL Connection not available`。为避免此类错误，你可以将 `pool_recycle` 参数设置为 `300`。更多信息请参见 SQLAlchemy 文档中的 [Dealing with Disconnects](https://docs.sqlalchemy.org/en/20/core/pooling.html#dealing-with-disconnects)。
+> 目前，TiDB Cloud Starter 集群有一个限制：如果 5 分钟内没有活跃连接，集群会自动关闭，所有连接会被断开。因此，当你在 TiDB Cloud Starter 集群上使用 SQLAlchemy 时，连接池可能会遇到 `OperationalError`，如 `Lost connection to MySQL server during query` 或 `MySQL Connection not available`。为避免此类错误，你可以将 `pool_recycle` 参数设置为 `300`。更多信息请参见 SQLAlchemy 文档中的 [Dealing with Disconnects](https://docs.sqlalchemy.org/en/20/core/pooling.html#dealing-with-disconnects)。
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称，进入集群概览页面。
 

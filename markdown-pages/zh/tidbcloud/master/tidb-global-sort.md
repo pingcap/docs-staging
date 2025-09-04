@@ -15,7 +15,7 @@ summary: 了解 TiDB Global Sort 的使用场景、限制、用法和实现原�
 
 > **Note:**
 >
-> 该功能在 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群上不可用。
+> 该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群上不可用。
 
 ## 概述
 

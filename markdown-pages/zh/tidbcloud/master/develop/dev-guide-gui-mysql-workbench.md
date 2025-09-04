@@ -16,7 +16,7 @@ TiDB 是兼容 MySQL 的数据库，[MySQL Workbench](https://www.mysql.com/prod
 
 > **Note:**
 >
-> 本教程兼容 TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
+> 本教程兼容 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
 
 ## 前提条件
 
@@ -29,7 +29,7 @@ TiDB 是兼容 MySQL 的数据库，[MySQL Workbench](https://www.mysql.com/prod
 
 **如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐）按照 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）按照 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 按照 [部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
 </CustomContent>
@@ -37,7 +37,7 @@ TiDB 是兼容 MySQL 的数据库，[MySQL Workbench](https://www.mysql.com/prod
 
 **如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐）按照 [创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）按照 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 按照 [部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
 
 </CustomContent>
@@ -47,7 +47,7 @@ TiDB 是兼容 MySQL 的数据库，[MySQL Workbench](https://www.mysql.com/prod
 根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless 或 Essential">
+<div label="TiDB Cloud Starter 或 Essential">
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入其概览页面。
 
@@ -76,15 +76,15 @@ TiDB 是兼容 MySQL 的数据库，[MySQL Workbench](https://www.mysql.com/prod
     - **Hostname**：输入 TiDB Cloud 连接对话框中的 `HOST` 参数。
     - **Port**：输入 TiDB Cloud 连接对话框中的 `PORT` 参数。
     - **Username**：输入 TiDB Cloud 连接对话框中的 `USERNAME` 参数。
-    - **Password**：点击 **Store in Keychain ...** 或 **Store in Vault**，输入 TiDB Cloud Serverless 集群的密码，然后点击 **OK** 存储密码。
+    - **Password**：点击 **Store in Keychain ...** 或 **Store in Vault**，输入 TiDB Cloud Starter 集群的密码，然后点击 **OK** 存储密码。
 
-        ![MySQL Workbench: store the password of TiDB Cloud Serverless in keychain](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-store-password-in-keychain.png)
+        ![MySQL Workbench: store the password of TiDB Cloud Starter in keychain](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-store-password-in-keychain.png)
 
     下图展示了连接参数的示例：
 
-    ![MySQL Workbench: configure connection settings for TiDB Cloud Serverless](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-connection-config-serverless-parameters.png)
+    ![MySQL Workbench: configure connection settings for TiDB Cloud Starter](https://docs-download.pingcap.com/media/images/docs/develop/mysql-workbench-connection-config-serverless-parameters.png)
 
-7. 点击 **Test Connection** 验证与 TiDB Cloud Serverless 集群的连接。
+7. 点击 **Test Connection** 验证与 TiDB Cloud Starter 集群的连接。
 
 8. 如果连接测试成功，你会看到 **Successfully made the MySQL connection** 消息。点击 **OK** 保存连接配置。
 

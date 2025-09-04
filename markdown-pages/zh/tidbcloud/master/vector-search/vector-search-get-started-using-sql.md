@@ -32,7 +32,7 @@ TiDB 扩展了 MySQL 语法，支持 [Vector Search](/vector-search/vector-searc
 
 > **Note:**
 >
-> 向量搜索功能在 TiDB Self-Managed、[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 上均可用。对于 TiDB Self-Managed 和 TiDB Cloud Dedicated，TiDB 版本必须为 v8.4.0 或更高（建议使用 v8.5.0 或更高版本）。
+> 向量搜索功能在 TiDB Self-Managed、[TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) 上均可用。对于 TiDB Self-Managed 和 TiDB Cloud Dedicated，TiDB 版本必须为 v8.4.0 或更高（建议使用 v8.5.0 或更高版本）。
 
 ## 前提条件
 
@@ -46,14 +46,14 @@ TiDB 扩展了 MySQL 语法，支持 [Vector Search](/vector-search/vector-searc
 **如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
 - 参考 [Deploy a local test TiDB cluster](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [Deploy a production TiDB cluster](/production-deployment-using-tiup.md) 来创建本地集群。
-- 参考 [Creating a TiDB Cloud Serverless cluster](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
+- 参考 [Creating a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
 **如果你还没有 TiDB 集群，可以按照以下方式创建：**
 
-- （推荐）参考 [Creating a TiDB Cloud Serverless cluster](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
+- （推荐）参考 [Creating a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
 - 参考 [Deploy a local test TiDB cluster](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [Deploy a production TiDB cluster](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 来创建版本为 v8.4.0 或更高的本地集群。
 
 </CustomContent>
@@ -65,7 +65,7 @@ TiDB 扩展了 MySQL 语法，支持 [Vector Search](/vector-search/vector-searc
 根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Starter">
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，然后点击目标集群的名称，进入其概览页面。
 

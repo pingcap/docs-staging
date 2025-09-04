@@ -11,7 +11,7 @@ summary: 了解创建二级索引的步骤、规则和示例。
 
 在创建二级索引之前，请完成以下操作：
 
-- [构建一个 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
+- [构建一个 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
 - 阅读 [Schema 设计概述](/develop/dev-guide-schema-design-overview.md)。
 - [创建数据库](/develop/dev-guide-create-database.md)。
 - [创建表](/develop/dev-guide-create-table.md)。

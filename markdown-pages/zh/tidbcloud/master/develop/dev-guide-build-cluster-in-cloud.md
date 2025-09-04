@@ -1,15 +1,15 @@
 ---
-title: 搭建一个 TiDB Cloud Serverless 集群
-summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Serverless 集群并连接到它。
+title: 搭建一个 TiDB Cloud Starter 集群
+summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Starter 集群并连接到它。
 ---
 
 <!-- markdownlint-disable MD029 -->
 
-# 搭建一个 TiDB Cloud Serverless 集群
+# 搭建一个 TiDB Cloud Starter 集群
 
 <CustomContent platform="tidb">
 
-本文档将带你快速上手 TiDB。你将使用 [TiDB Cloud](https://www.pingcap.com/tidb-cloud) 创建一个 TiDB Cloud Serverless（原 Serverless）集群，连接到该集群，并在其上运行一个示例应用程序。
+本文档将带你快速上手 TiDB。你将使用 [TiDB Cloud](https://www.pingcap.com/tidb-cloud) 创建一个 TiDB Cloud Starter（原 Serverless）集群，连接到该集群，并在其上运行一个示例应用程序。
 
 如果你需要在本地机器上运行 TiDB，请参见 [本地启动 TiDB](/quick-start-with-tidb.md)。
 
@@ -21,7 +21,7 @@ summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Serverless 集群
 
 </CustomContent>
 
-## 第 1 步：创建一个 TiDB Cloud Serverless 集群 {#step-1-create-a-tidb-cloud-cluster}
+## 第 1 步：创建一个 TiDB Cloud Starter 集群 {#step-1-create-a-tidb-cloud-cluster}
 
 1. 如果你还没有 TiDB Cloud 账号，请点击[这里](https://tidbcloud.com/free-trial)注册账号。
 
@@ -31,7 +31,7 @@ summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Serverless 集群
 
 4. 在 **Create Cluster** 页面，**Starter** 默认已选中。如有需要，可修改默认集群名称，并选择你希望创建集群的区域。
 
-5. 点击 **Create** 创建一个 TiDB Cloud Serverless 集群。
+5. 点击 **Create** 创建一个 TiDB Cloud Starter 集群。
 
     你的 TiDB Cloud 集群将在大约 30 秒内创建完成。
 
@@ -45,7 +45,7 @@ summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Serverless 集群
 
 > **注意：**
 >
-> 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群，连接集群时，必须在用户名中包含集群的前缀，并用引号包裹用户名。详细信息请参见 [用户名前缀](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix)。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群，连接集群时，必须在用户名中包含集群的前缀，并用引号包裹用户名。详细信息请参见 [用户名前缀](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix)。
 
 </CustomContent>
 
@@ -53,7 +53,7 @@ summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Serverless 集群
 
 > **注意：**
 >
-> 对于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群，连接集群时，必须在用户名中包含集群的前缀，并用引号包裹用户名。详细信息请参见 [用户名前缀](/tidb-cloud/select-cluster-tier.md#user-name-prefix)。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群，连接集群时，必须在用户名中包含集群的前缀，并用引号包裹用户名。详细信息请参见 [用户名前缀](/tidb-cloud/select-cluster-tier.md#user-name-prefix)。
 
 </CustomContent>
 
@@ -141,8 +141,8 @@ mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
 
 > **注意：**
 >
-> - 连接 TiDB Cloud Serverless 集群时，必须[使用 TLS 连接](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)。
-> - 如果在连接 TiDB Cloud Serverless 集群时遇到问题，可以参考 [安全连接到 TiDB Cloud Serverless 集群](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters) 获取更多信息。
+> - 连接 TiDB Cloud Starter 集群时，必须[使用 TLS 连接](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)。
+> - 如果在连接 TiDB Cloud Starter 集群时遇到问题，可以参考 [安全连接到 TiDB Cloud Starter 集群](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters) 获取更多信息。
 
 </CustomContent>
 
@@ -150,8 +150,8 @@ mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
 
 > **注意：**
 >
-> - 连接 TiDB Cloud Serverless 集群时，必须[使用 TLS 连接](/tidb-cloud/secure-connections-to-serverless-clusters.md)。
-> - 如果在连接 TiDB Cloud Serverless 集群时遇到问题，可以参考 [安全连接到 TiDB Cloud Serverless 集群](/tidb-cloud/secure-connections-to-serverless-clusters.md) 获取更多信息。
+> - 连接 TiDB Cloud Starter 集群时，必须[使用 TLS 连接](/tidb-cloud/secure-connections-to-serverless-clusters.md)。
+> - 如果在连接 TiDB Cloud Starter 集群时遇到问题，可以参考 [安全连接到 TiDB Cloud Starter 集群](/tidb-cloud/secure-connections-to-serverless-clusters.md) 获取更多信息。
 
 </CustomContent>
 

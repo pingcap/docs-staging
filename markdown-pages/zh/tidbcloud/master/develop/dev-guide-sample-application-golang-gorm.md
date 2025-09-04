@@ -15,7 +15,7 @@ TiDB 是一个兼容 MySQL 的数据库，[GORM](https://gorm.io/index.html) 是
 
 > **Note:**
 >
-> 本教程适用于 TiDB Cloud Serverless, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
+> 本教程适用于 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
 
 ## 前置条件
 
@@ -29,7 +29,7 @@ TiDB 是一个兼容 MySQL 的数据库，[GORM](https://gorm.io/index.html) 是
 
 **如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐）参照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参照[创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或[部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
 </CustomContent>
@@ -37,7 +37,7 @@ TiDB 是一个兼容 MySQL 的数据库，[GORM](https://gorm.io/index.html) 是
 
 **如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐）参照[创建 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参照[创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
 - 参照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或[部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
 
 </CustomContent>
@@ -60,7 +60,7 @@ cd tidb-golang-gorm-quickstart
 根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless or Essential">
+<div label="TiDB Cloud Starter or Essential">
 
 1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页面。
 
@@ -102,7 +102,7 @@ cd tidb-golang-gorm-quickstart
 
     请务必将 `{}` 占位符替换为连接对话框中获取的连接参数。
 
-    TiDB Cloud Serverless 需要安全连接，因此你需要将 `USE_SSL` 设置为 `true`。
+    TiDB Cloud Starter 需要安全连接，因此你需要将 `USE_SSL` 设置为 `true`。
 
 7. 保存 `.env` 文件。
 
@@ -201,7 +201,7 @@ func createDB() *gorm.DB {
 }
 ```
 
-使用该函数时，你需要将 `${tidb_host}`、`${tidb_port}`、`${tidb_user}`、`${tidb_password}` 和 `${tidb_db_name}` 替换为你 TiDB 集群的实际值。TiDB Cloud Serverless 需要安全连接，因此你需要将 `${use_ssl}` 设置为 `true`。
+使用该函数时，你需要将 `${tidb_host}`、`${tidb_port}`、`${tidb_user}`、`${tidb_password}` 和 `${tidb_db_name}` 替换为你 TiDB 集群的实际值。TiDB Cloud Starter 需要安全连接，因此你需要将 `${use_ssl}` 设置为 `true`。
 
 ### 插入数据
 

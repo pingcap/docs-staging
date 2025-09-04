@@ -13,7 +13,7 @@ C#（发音为 “C-Sharp”）是 .NET 家族中的一种编程语言，由 Mic
 
 - 下载 [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download)。
 - 本教程使用 `dotnet` 命令行工具。你也可以使用 Visual Studio Code IDE 来编写 C# 代码。
-- 要完成本教程，你需要有一个 TiDB 实例的访问权限。你可以使用 TiDB Cloud 上的 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier/#tidb-cloud-serverless) 或 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier/#tidb-cloud-dedicated) 集群，或者使用 `tiup playground` 启动的 TiDB 自建集群。
+- 要完成本教程，你需要有一个 TiDB 实例的访问权限。你可以使用 TiDB Cloud 上的 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier/#tidb-cloud-serverless) 或 [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier/#tidb-cloud-dedicated) 集群，或者使用 `tiup playground` 启动的 TiDB 自建集群。
 
 ## 步骤 1. 创建控制台项目
 
@@ -107,10 +107,10 @@ public class Tutorial1
 $ dotnet run
 Connecting to TiDB...
 
-Connected to: 8.0.11-TiDB-vv8.5.2
+Connected to: 8.0.11-TiDB-v8.5.3
 
 Version details:
-Release Version: vv8.5.2
+Release Version: v8.5.3
 Edition: Community
 Git Commit Hash: f43a13324440f92209e2a9f04c0bbe9cf763978d
 Git Branch: HEAD

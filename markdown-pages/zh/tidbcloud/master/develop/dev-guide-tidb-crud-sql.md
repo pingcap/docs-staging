@@ -9,7 +9,7 @@ summary: 对 TiDB 的 CRUD SQL 的简要介绍。
 
 ## 在开始之前
 
-请确保你已连接到一个 TiDB 集群。如果没有，参考 [Build a TiDB Cloud Serverless Cluster](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-cluster) 来创建一个 TiDB Cloud Serverless 集群。
+请确保你已连接到一个 TiDB 集群。如果没有，参考 [Build a TiDB Cloud Starter Cluster](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-cluster) 来创建一个 TiDB Cloud Starter 集群。
 
 ## 使用 TiDB 探索 SQL
 

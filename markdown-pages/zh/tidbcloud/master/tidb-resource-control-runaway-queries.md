@@ -7,7 +7,7 @@ summary: 介绍如何通过资源管理能力控制和降级资源消耗过多�
 
 > **Note:**
 >
-> 该功能在 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群上不可用。
+> 该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群上不可用。
 
 Runaway query 指的是消耗时间或资源超出预期的查询。以下将使用 **runaway queries** 一词来描述管理 runaway query 的功能。
 

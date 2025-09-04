@@ -13,7 +13,7 @@ summary: 介绍如何通过资源控制管理后台任务。
 
 > **Note:**
 >
-> 该功能在 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群上不可用。
+> 该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群上不可用。
 
 后台任务，例如数据备份和自动统计信息收集，优先级较低但会消耗大量资源。这些任务通常周期性或不定期触发。在执行过程中，它们会占用大量资源，从而影响线上高优先级任务的性能。
 

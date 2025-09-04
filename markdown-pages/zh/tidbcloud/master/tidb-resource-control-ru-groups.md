@@ -8,7 +8,7 @@ aliases: ['/tidb/v8.5/tidb-resource-control/','/tidb/stable/tidb-resource-contro
 
 > **Note:**
 >
-> 该功能在 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群上不可用。
+> 该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群上不可用。
 
 作为集群管理员，你可以使用资源控制功能创建资源组，设置资源组配额，并绑定用户到这些资源组。
 
@@ -102,7 +102,7 @@ Request Unit (RU) 是 TiDB 中对系统资源的统一抽象单位，目前包�
 > **Note:**
 >
 > - 每次写操作最终会复制到所有副本（默认 TiKV 有 3 个副本）。每次复制操作视为不同的写操作。
-> - 上表仅列出 TiDB 自管理集群中 RU 计算涉及的资源，不包括网络和存储消耗。关于 TiDB Cloud Serverless 的 RU，请参见 [TiDB Cloud Serverless Pricing Details](https://www.pingcap.com/tidb-cloud-serverless-pricing-details/)。
+> - 上表仅列出 TiDB 自管理集群中 RU 计算涉及的资源，不包括网络和存储消耗。关于 TiDB Cloud Starter 的 RU，请参见 [TiDB Cloud Starter Pricing Details](https://www.pingcap.com/tidb-cloud-serverless-pricing-details/)。
 > - 目前，TiFlash 资源控制仅考虑 SQL CPU，即查询管道任务的 CPU 时间和读请求负载。
 
 ## 资源控制参数

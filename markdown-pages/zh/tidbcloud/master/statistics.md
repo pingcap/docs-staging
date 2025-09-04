@@ -460,7 +460,7 @@ mysql> SHOW ANALYZE STATUS [ShowLikeOrWhere];
 
 > **注意：**
 >
-> 加载统计信息不适用于 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 集群。
+> 加载统计信息不适用于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 集群。
 
 默认情况下，TiDB 会根据列统计信息的大小采用不同的加载方式：
 

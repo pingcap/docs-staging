@@ -7,7 +7,7 @@ summary: 了解 TiDB 分布式执行框架（DXF）的使用场景、限制、�
 
 > **Note:**
 >
-> 该功能在 [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群上不可用。
+> 该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群上不可用。
 
 TiDB 采用计算存储分离架构，具有出色的可扩展性和弹性。从 v7.1.0 版本开始，TiDB 引入了 **Distributed eXecution Framework (DXF)**，以进一步发挥分布式架构的资源优势。DXF 的目标是实现任务的统一调度和分布式执行，并为整体和单个任务提供统一的资源管理能力，更好地满足用户对资源使用的预期。
 

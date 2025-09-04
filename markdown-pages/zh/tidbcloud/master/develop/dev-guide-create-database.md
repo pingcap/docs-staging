@@ -11,7 +11,7 @@ summary: 了解创建数据库的步骤、规则和示例。
 
 在创建数据库之前，请完成以下操作：
 
-- [构建一个 TiDB Cloud Serverless 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
+- [构建一个 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
 - 阅读 [Schema Design Overview](/develop/dev-guide-schema-design-overview.md)。
 
 ## 什么是数据库
