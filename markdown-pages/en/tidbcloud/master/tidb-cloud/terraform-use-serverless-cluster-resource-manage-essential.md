@@ -1,28 +1,28 @@
 ---
 title: Use the `tidbcloud_serverless_cluster` Resource
-summary: Learn how to use the `tidbcloud_serverless_cluster` resource to create and modify a TiDB Cloud Starter cluster.
+summary: Learn how to use the `tidbcloud_serverless_cluster` resource to create and modify a TiDB Cloud Essential cluster.
 ---
 
 # Use the `tidbcloud_serverless_cluster` Resource
 
-This document describes how to manage a [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) cluster with the `tidbcloud_serverless_cluster` resource.
+This document describes how to manage a [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) cluster with the `tidbcloud_serverless_cluster` resource.
 
 You will also learn how to get the necessary information with the `tidbcloud_projects` data source.
 
 The features of the `tidbcloud_serverless_cluster` resource include the following:
 
-- Create TiDB Cloud Starter clusters.
-- Modify TiDB Cloud Starter clusters.
-- Import TiDB Cloud Starter clusters.
-- Delete TiDB Cloud Starter clusters.
+- Create TiDB Cloud Essential clusters.
+- Modify TiDB Cloud Essential clusters.
+- Import TiDB Cloud Essential clusters.
+- Delete TiDB Cloud Essential clusters.
 
 ## Prerequisites
 
-- [Get TiDB Cloud Terraform Provider](/tidb-cloud/terraform-get-tidbcloud-provider.md) v0.4.0 or later.
+- [Get TiDB Cloud Terraform Provider](/tidb-cloud/terraform-get-tidbcloud-provider.md) v0.4.2 or later.
 
 ## Get project IDs using the `tidbcloud_projects` data source
 
-Each TiDB cluster belongs to a project. Before creating a TiDB Cloud Starter cluster, you need to obtain the ID of the project where you want to create the cluster. If no `project_id` is specified, the default project will be used.
+Each TiDB cluster belongs to a project. Before creating a TiDB Cloud Essential cluster, you need to obtain the ID of the project where you want to create the cluster. If no `project_id` is specified, the default project will be used.
 
 To retrieve the information about all available projects, use the `tidbcloud_projects` data source as follows:
 
@@ -119,9 +119,9 @@ To retrieve the information about all available projects, use the `tidbcloud_pro
 
 Now, you can get all the available projects from the output. Copy one of the project IDs that you need.
 
-## Create a TiDB Cloud Starter cluster
+## Create a TiDB Cloud Essential cluster
 
-You can create a TiDB Cloud Starter cluster using the `tidbcloud_serverless_cluster` resource.
+You can create a TiDB Cloud Essential cluster using the `tidbcloud_serverless_cluster` resource.
 
 1. Create a directory for the cluster and enter it.
 
@@ -146,8 +146,9 @@ You can create a TiDB Cloud Starter cluster using the `tidbcloud_serverless_clus
     resource "tidbcloud_serverless_cluster" "example" {
       project_id = "1372813089454000000"
       display_name = "test-tf"
-      spending_limit = {
-        monthly = 1
+      auto_scaling = {
+        min_rcu = 3000
+        max_rcu = 4000
       }
       region = {
         name = "regions/aws-us-east-1"
@@ -159,7 +160,7 @@ You can create a TiDB Cloud Starter cluster using the `tidbcloud_serverless_clus
 
     - To use the `tidbcloud_serverless_cluster` resource, set the resource type as `tidbcloud_serverless_cluster`.
     - For the resource name, you can define it as needed. For example, `example`.
-    - For resource details, you can configure them according to the Project ID and the [`tidbcloud_serverless_cluster` specification](https://registry.terraform.io/providers/tidbcloud/tidbcloud/latest/docs/resources/serverless_cluster).
+    - For resource details, you can configure them according to the Project ID and the [`tidbcloud_serverless_cluster` specification](https://registry.terraform.io/providers/tidbcloud/tidbcloud/latest/docs/resources/serverless_cluster). To create a TiDB Cloud Essential cluster, you must specify the `auto_scaling` attribute in resource details.
 
 3. Run the `terraform apply` command. It is not recommended to use `terraform apply --auto-approve` when you apply a resource.
 
@@ -189,8 +190,9 @@ You can create a TiDB Cloud Starter cluster using the `tidbcloud_serverless_clus
                 + name           = "regions/aws-us-east-1"
                 + region_id      = (known after apply)
             }
-            + spending_limit          = {
-                + monthly = 1
+            + auto_scaling            = {
+                + max_rcu = 4000
+                + min_rcu = 3000
             }
             + state                   = (known after apply)
             + update_time             = (known after apply)
@@ -278,8 +280,9 @@ You can create a TiDB Cloud Starter cluster using the `tidbcloud_serverless_clus
             name           = "regions/aws-us-east-1"
             region_id      = "us-east-1"
         }
-        spending_limit          = {
-            monthly = 1
+        auto_scaling = {
+            min_rcu = 3000
+            max_rcu = 4000
         }
         state                   = "ACTIVE"
         update_time             = "2025-06-16T07:04:48Z"
@@ -288,23 +291,24 @@ You can create a TiDB Cloud Starter cluster using the `tidbcloud_serverless_clus
     }
     ```
 
-## Modify a TiDB Cloud Starter cluster
+## Modify a TiDB Cloud Essential cluster
 
-For a TiDB Cloud Starter cluster, you can use Terraform to manage resources. The arguments that you can modify include:
+For a TiDB Cloud Essential cluster, you can use Terraform to manage resources. The arguments that you can modify include:
 
 - `display_name`: The display name of the cluster.
-- `spending_limit`: The spending limit of the cluster.
+- `auto_scaling`: The auto scaling configuration of the cluster.
 - `endpoints.public.disabled`: Whether to disable the public endpoint.
 - `automated_backup_policy.start_time`: The UTC time of day in `HH:mm` format when the automated backup starts.
 
-To modify a TiDB Cloud Starter cluster, you can modify the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to apply the changes. For example, you can modify the `display_name` and `spending_limit` as follows:
+To modify a TiDB Cloud Essential cluster, you can modify the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to apply the changes. For example, you can modify the `display_name` and `auto_scaling` as follows:
 
 ```
 resource "tidbcloud_serverless_cluster" "example" {
   project_id = "1372813089454000000"
   display_name = "test-tf-modified"
-  spending_limit = {
-    monthly = 2
+  auto_scaling = {
+    min_rcu = 4000
+    max_rcu = 5000
   }
   region = {
     name = "regions/aws-us-east-1"
@@ -335,8 +339,9 @@ Terraform will perform the following actions:
           - "tidb.cloud/organization" = "1372813089187041280"
           - "tidb.cloud/project"      = "1372813089454543324"
         } -> (known after apply)
-      ~ spending_limit          = {
-          ~ monthly = 1 -> 2
+      ~ auto_scaling            = {
+          ~ min_rcu = 3000 -> 4000
+          ~ max_rcu = 4000 -> 5000
         }
       ~ state                   = "ACTIVE" -> (known after apply)
       ~ update_time             = "2025-06-16T07:04:57Z" -> (known after apply)
@@ -407,8 +412,9 @@ resource "tidbcloud_serverless_cluster" "example" {
         name           = "regions/aws-us-east-1"
         region_id      = "us-east-1"
     }
-    spending_limit          = {
-        monthly = 2
+    auto_scaling = {
+        min_rcu = 4000
+        max_rcu = 5000
     }
     state                   = "ACTIVE"
     update_time             = "2025-06-16T07:04:57Z"
@@ -417,9 +423,9 @@ resource "tidbcloud_serverless_cluster" "example" {
 }
 ```
 
-## Import a TiDB Cloud Starter cluster
+## Import a TiDB Cloud Essential cluster
 
-For a TiDB Cloud Starter cluster that is not managed by Terraform, you can bring it under Terraform management by importing it.
+For a TiDB Cloud Essential cluster that is not managed by Terraform, you can bring it under Terraform management by importing it.
 
 1. Add an import block for the new `tidbcloud_serverless_cluster` resource.
 
@@ -457,9 +463,9 @@ For a TiDB Cloud Starter cluster that is not managed by Terraform, you can bring
 
 Now you can manage the imported cluster with Terraform.
 
-## Delete a TiDB Cloud Starter cluster
+## Delete a TiDB Cloud Essential cluster
 
-To delete a TiDB Cloud Starter cluster, you can delete the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to destroy the resource:
+To delete a TiDB Cloud Essential cluster, you can delete the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to destroy the resource:
 
 ```shell
 $ terraform apply
@@ -516,8 +522,9 @@ Terraform will perform the following actions:
           - name           = "regions/aws-us-east-1" -> null
           - region_id      = "us-east-1" -> null
         } -> null
-      - spending_limit          = {
-          - monthly = 2 -> null
+      - auto_scaling            = {
+          - min_rcu = 4000 -> null
+          - max_rcu = 5000 -> null
         } -> null
       - state                   = "ACTIVE" -> null
       - update_time             = "2025-06-16T07:04:57Z" -> null
