@@ -97,7 +97,7 @@ export function downloadFile(reqUrl, fileName = "") {
  * @returns Promise
  */
 export function getArchiveFile(repo, ref, fileName) {
-  const url = `https://api.github.com/repos/${repo}/zipball/${ref}`;
+  const url = `https://github.com/${repo}/archive/refs/heads/${ref}.zip`;
   sig.start(`Get content(ref: ${ref}) from:`, url);
   return downloadFile(url, fileName);
 }
