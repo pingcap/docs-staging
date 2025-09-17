@@ -23,11 +23,7 @@ export const imageCDNs = {
   "dbaas-docs": IMAGE_CDN_PREFIX + "/tidbcloud",
 };
 
-const CLOUD_TOC_LIST = [
-  "TOC-tidb-cloud.md",
-  "TOC-tidb-cloud-starter.md",
-  "TOC-tidb-cloud-essential.md",
-];
+const CLOUD_TOC_LIST = ["TOC-tidb-cloud-premium.md"];
 
 const isCloudTOC = (relativePathInZip) => {
   return CLOUD_TOC_LIST.includes(relativePathInZip);
