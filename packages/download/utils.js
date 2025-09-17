@@ -268,10 +268,7 @@ export async function retrieveCloudMDsFromZip(
   const { repo, ref } = metaInfo;
   const { ignore = [], pipelines = [] } = options;
 
-  const archiveFileName = `archive-${ref.replace(
-    "/",
-    "-"
-  )}-${new Date().getTime()}.zip`;
+  const archiveFileName = `archive-${ref}-${new Date().getTime()}.zip`;
   // Download archive
   await getArchiveFile(repo, ref, archiveFileName);
   sig.success("download archive file", archiveFileName);
