@@ -20,7 +20,7 @@ This document shows how to connect to Cloudflare Workers with TiDB Cloud serverl
 Before you try the steps in this article, you need to prepare the following things:
 
 - A [TiDB Cloud account](https://tidbcloud.com/signup).
-- A TiDB Cloud Starter or TiDB Cloud Essential cluster. If you do not have one, see [Create a TiDB Cloud Starter or Essential Cluster](/tidb-cloud/create-tidb-cluster-serverless.md).
+- A TiDB Cloud Starter or TiDB Cloud Essential cluster. If you do not have one, see [Create a TiDB Cloud Starter, Essential, or Premium Cluster](/tidb-cloud/create-tidb-cluster-serverless.md).
 - A [Cloudflare Workers account](https://dash.cloudflare.com/login).
 - [npm](https://docs.npmjs.com/about-npm) is installed.
 

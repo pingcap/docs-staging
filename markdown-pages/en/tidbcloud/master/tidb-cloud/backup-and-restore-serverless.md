@@ -1,10 +1,10 @@
 ---
-title: Back Up and Restore Data on TiDB Cloud Starter or Essential
+title: Back Up and Restore Data on TiDB Cloud Starter, Essential, or Premium
 summary: Learn how to back up and restore your TiDB Cloud Starter or TiDB Cloud Essential clusters.
 aliases: ['/tidbcloud/restore-deleted-tidb-cluster']
 ---
 
-# Back Up and Restore Data on TiDB Cloud Starter or Essential
+# Back Up and Restore Data on TiDB Cloud Starter, Essential, or Premium
 
 This document describes how to back up and restore your data on TiDB Cloud Starter or TiDB Cloud Essential clusters.
 

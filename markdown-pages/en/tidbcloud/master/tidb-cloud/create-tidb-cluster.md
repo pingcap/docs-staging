@@ -9,7 +9,7 @@ This tutorial guides you through signing up and creating a TiDB Cloud Dedicated 
 
 > **Tip:**
 >
-> To learn how to create a TiDB Cloud Starter or TiDB Cloud Essential cluster, see [Create a TiDB Cloud Starter or Essential Cluster](/tidb-cloud/create-tidb-cluster-serverless.md).
+> To learn how to create a TiDB Cloud Starter or TiDB Cloud Essential cluster, see [Create a TiDB Cloud Starter, Essential, or Premium Cluster](/tidb-cloud/create-tidb-cluster-serverless.md).
 
 ## Before you begin
 

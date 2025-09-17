@@ -20,7 +20,6 @@
   - [Transactions](/tidb-cloud/transaction-concepts.md)
   - [SQL](/tidb-cloud/sql-concepts.md)
   - [AI Features](/tidb-cloud/ai-feature-concepts.md)
-  - [Data Service](/tidb-cloud/data-service-concepts.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
   - [Scalability](/tidb-cloud/scalability-concepts.md)
   - [High Availability](/tidb-cloud/serverless-high-availability.md)
   - [Monitoring](/tidb-cloud/monitoring-concepts.md)
@@ -66,7 +65,6 @@
     - [Sequelize](/develop/dev-guide-sample-application-nodejs-sequelize.md)
     - [TypeORM](/develop/dev-guide-sample-application-nodejs-typeorm.md)
     - [Next.js](/develop/dev-guide-sample-application-nextjs.md)
-    - [AWS Lambda](/develop/dev-guide-sample-application-aws-lambda.md)
   - Ruby
     - [mysql2](/develop/dev-guide-sample-application-ruby-mysql2.md)
     - [Rails](/develop/dev-guide-sample-application-ruby-rails.md)
@@ -137,15 +135,8 @@
     - Connect to Your TiDB Cloud Cluster
       - [Connection Overview](/tidb-cloud/connect-to-tidb-cluster-serverless.md)
       - [Connect via Public Endpoint](/tidb-cloud/connect-via-standard-connection-serverless.md)
-      - [Connect via Private Endpoint with AWS](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
       - [Connect via Private Endpoint with Alibaba Cloud](/tidb-cloud/set-up-private-endpoint-connections-on-alibaba-cloud.md)
-    - Branch ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
-      - [Overview](/tidb-cloud/branch-overview.md)
-      - [Manage Branches](/tidb-cloud/branch-manage.md)
-      - [GitHub Integration](/tidb-cloud/branch-github-integration.md)
-    - [Manage Spending Limit](/tidb-cloud/manage-serverless-spend-limit.md)
     - [Back Up and Restore TiDB Cloud Data](/tidb-cloud/backup-and-restore-serverless.md)
-    - [Export Data from TiDB Cloud](/tidb-cloud/serverless-export.md)
   - Use an HTAP Cluster with TiFlash
     - [TiFlash Overview](/tiflash/tiflash-overview.md)
     - [Create TiFlash Replicas](/tiflash/create-tiflash-replicas.md)
@@ -160,7 +151,6 @@
   - Monitor and Alert
     - [Overview](/tidb-cloud/monitor-tidb-cluster.md)
     - [Built-in Metrics](/tidb-cloud/built-in-monitoring.md)
-    - [Cluster Events](/tidb-cloud/tidb-cloud-events.md)
   - Tune Performance
     - [Overview](/tidb-cloud/tidb-cloud-tune-performance-overview.md)
     - [Analyze Performance](/tidb-cloud/tune-performance.md)
@@ -209,11 +199,7 @@
         - [Optimizer Fix Controls](/optimizer-fix-controls.md)
     - [TiKV Follower Read](/follower-read.md)
     - [Coprocessor Cache](/coprocessor-cache.md)
-    - Garbage Collection (GC)
-      - [Overview](/garbage-collection-overview.md)
-      - [Configuration](/garbage-collection-configuration.md)
     - [Tune TiFlash Performance](/tiflash/tune-tiflash-performance.md)
-  - [Upgrade a TiDB Cluster](/tidb-cloud/upgrade-tidb-cluster.md)
   - [Delete a TiDB Cluster](/tidb-cloud/delete-tidb-cluster.md)
 - Migrate or Import Data
   - [Overview](/tidb-cloud/tidb-cloud-migration-overview.md)
@@ -222,7 +208,6 @@
     - [Migrate and Merge MySQL Shards of Large Datasets](/tidb-cloud/migrate-sql-shards.md)
     - [Migrate from Amazon RDS for Oracle Using AWS DMS](/tidb-cloud/migrate-from-oracle-using-aws-dms.md)
   - Import Data into TiDB Cloud
-    - [Import Local Files](/tidb-cloud/tidb-cloud-import-local-files.md)
     - [Import Sample Data (SQL Files) from Cloud Storage](/tidb-cloud/import-sample-data-serverless.md)
     - [Import CSV Files from Cloud Storage](/tidb-cloud/import-csv-files-serverless.md)
     - [Import Parquet Files from Cloud Storage](/tidb-cloud/import-parquet-files-serverless.md)
@@ -233,63 +218,6 @@
     - [CSV Configurations for Importing Data](/tidb-cloud/csv-config-for-import-data.md)
     - [Troubleshoot Access Denied Errors during Data Import from Amazon S3](/tidb-cloud/troubleshoot-import-access-denied-error.md)
     - [Connect AWS DMS to TiDB Cloud clusters](/tidb-cloud/tidb-cloud-connect-aws-dms.md)
-- Explore Data
-  - [Chat2Query in SQL Editor](/tidb-cloud/explore-data-with-chat2query.md) ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
-  - [SQL Proxy Account](/tidb-cloud/sql-proxy-account.md)
-- Vector Search ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
-  - [Overview](/vector-search/vector-search-overview.md)
-  - Get Started
-    - [Get Started with SQL](/vector-search/vector-search-get-started-using-sql.md)
-    - [Get Started with Python](/vector-search/vector-search-get-started-using-python.md)
-  - Auto Embedding
-    - [Overview](/tidb-cloud/vector-search-auto-embedding-overview.md)
-    - [Amazon Titan Embeddings](/tidb-cloud/vector-search-auto-embedding-amazon-titan.md)
-    - [Cohere Embeddings](/tidb-cloud/vector-search-auto-embedding-cohere.md)
-    - [Jina AI Embeddings](/tidb-cloud/vector-search-auto-embedding-jina-ai.md)
-    - [OpenAI Embeddings](/tidb-cloud/vector-search-auto-embedding-openai.md)
-    - [Gemini Embeddings](/tidb-cloud/vector-search-auto-embedding-gemini.md)
-    - [HuggingFace Embeddings](/tidb-cloud/vector-search-auto-embedding-huggingface.md)
-    - [NVIDIA NIM Embeddings](/tidb-cloud/vector-search-auto-embedding-nvidia-nim.md)
-  - Integrations
-    - [Overview](/vector-search/vector-search-integration-overview.md)
-    - AI Frameworks
-      - [LlamaIndex](/vector-search/vector-search-integrate-with-llamaindex.md)
-      - [Langchain](/vector-search/vector-search-integrate-with-langchain.md)
-    - AI Services
-      - [Amazon Bedrock](/tidb-cloud/vector-search-integrate-with-amazon-bedrock.md)
-    - Embedding Models/Services
-      - [Jina AI](/vector-search/vector-search-integrate-with-jinaai-embedding.md)
-    - ORM Libraries
-      - [SQLAlchemy](/vector-search/vector-search-integrate-with-sqlalchemy.md)
-      - [peewee](/vector-search/vector-search-integrate-with-peewee.md)
-      - [Django ORM](/vector-search/vector-search-integrate-with-django-orm.md)
-  - Text Search
-    - [Full-Text Search with SQL](/tidb-cloud/vector-search-full-text-search-sql.md)
-    - [Full-Text Search with Python](/tidb-cloud/vector-search-full-text-search-python.md)
-    - [Hybrid Search](/tidb-cloud/vector-search-hybrid-search.md)
-  - Reference
-    - [Vector Data Types](/vector-search/vector-search-data-types.md)
-    - [Vector Functions and Operators](/vector-search/vector-search-functions-and-operators.md)
-    - [Vector Index](/vector-search/vector-search-index.md)
-  - [Improve Performance](/vector-search/vector-search-improve-performance.md)
-  - [Limitations](/vector-search/vector-search-limitations.md)
-- Data Service ![BETA](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/blank_transparent_placeholder.png)
-  - [Overview](/tidb-cloud/data-service-overview.md)
-  - [Get Started](/tidb-cloud/data-service-get-started.md)
-  - Chat2Query API
-    - [Get Started](/tidb-cloud/use-chat2query-api.md)
-    - [Start Multi-round Chat2Query](/tidb-cloud/use-chat2query-sessions.md)
-    - [Use Knowledge Bases](/tidb-cloud/use-chat2query-knowledge.md)
-  - [Manage Data App](/tidb-cloud/data-service-manage-data-app.md)
-  - [Manage Endpoint](/tidb-cloud/data-service-manage-endpoint.md)
-  - [API Key](/tidb-cloud/data-service-api-key.md)
-  - [Custom Domain](/tidb-cloud/data-service-custom-domain.md)
-  - [Integrations](/tidb-cloud/data-service-integrations.md)
-  - [Run in Postman](/tidb-cloud/data-service-postman-integration.md)
-  - [Deploy Automatically with GitHub](/tidb-cloud/data-service-manage-github-connection.md)
-  - [Use OpenAPI Specification with Next.js](/tidb-cloud/data-service-oas-with-nextjs.md)
-  - [Data App Configuration Files](/tidb-cloud/data-service-app-config-files.md)
-  - [Response and Status Code](/tidb-cloud/data-service-response-and-status-code.md)
 - Security
   - Identity Access Control
     - [Password Authentication](/tidb-cloud/tidb-cloud-password-authentication.md)
@@ -298,7 +226,6 @@
     - [Identity Access Management](/tidb-cloud/manage-user-access.md)
     - [OAuth 2.0](/tidb-cloud/oauth2.md)
   - Network Access Control
-    - [Connect via Private Endpoint with AWS](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
     - [Connect via Private Endpoint with Alibaba Cloud](/tidb-cloud/set-up-private-endpoint-connections-on-alibaba-cloud.md)
     - [Configure Firewall Rules for Public Endpoints](/tidb-cloud/configure-serverless-firewall-rules-for-public-endpoints.md)
     - [TLS Connections to TiDB Cloud](/tidb-cloud/secure-connections-to-serverless-clusters.md)
@@ -315,8 +242,6 @@
   - [Manage Budgets](/tidb-cloud/tidb-cloud-budget.md)
 - Integrations
   - [Airbyte](/tidb-cloud/integrate-tidbcloud-with-airbyte.md)
-  - [Amazon AppFlow](/develop/dev-guide-aws-appflow-integration.md)
-  - [AWS Lambda](/tidb-cloud/integrate-tidbcloud-with-aws-lambda.md)
   - [Cloudflare](/tidb-cloud/integrate-tidbcloud-with-cloudflare.md)
   - [dbt](/tidb-cloud/integrate-tidbcloud-with-dbt.md)
   - [Gitpod](/develop/dev-guide-playground-gitpod.md)
@@ -668,8 +593,8 @@
     - [TSO](/tso.md)
   - Storage Engines
     - TiKV
-      - [TiKV Overview](/tikv-overview.md)
-      - [RocksDB Overview](/storage-engine/rocksdb-overview.md)
+        - [TiKV Overview](/tikv-overview.md)
+        - [RocksDB Overview](/storage-engine/rocksdb-overview.md)
     - TiFlash
       - [TiFlash Overview](/tiflash/tiflash-overview.md)
       - [Spill to Disk](/tiflash/tiflash-spill-disk.md)
@@ -702,7 +627,6 @@
   - [Get Support](/tidb-cloud/tidb-cloud-support.md)
 - FAQs
   - [TiDB Cloud FAQs](/tidb-cloud/tidb-cloud-faq.md)
-  - [TiDB Cloud Starter FAQs](/tidb-cloud/serverless-faqs.md)
 
 ## RELEASES
 

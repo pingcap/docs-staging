@@ -188,7 +188,7 @@ TiDB Cloud ensures secure cluster connectivity and data transmission through rob
 
 - Setup guides:
 
-    - [TLS Connections to TiDB Cloud Starter or Essential](/tidb-cloud/secure-connections-to-serverless-clusters.md)
+    - [TLS Connections to TiDB Cloud Starter, Essential, or Premium](/tidb-cloud/secure-connections-to-serverless-clusters.md)
     - [TLS Connections to TiDB Cloud Dedicated](/tidb-cloud/tidb-cloud-tls-connect-to-dedicated.md)
 
 **Best practices:** Ensure TLS certificates are current and rotate them periodically.
@@ -229,7 +229,7 @@ TiDB Cloud safeguards static data with advanced encryption capabilities, ensurin
 
 - Leverage CMEK for industries requiring strict compliance, such as HIPAA and GDPR.
 
-For more information, see [Encryption at Rest Using Customer-Managed Encryption Keys on AWS](/tidb-cloud/tidb-cloud-encrypt-cmek-aws.md) and [Encryption at Rest Using Customer-Managed Encryption Keys on Azure](/tidb-cloud/tidb-cloud-encrypt-cmek-azure.md).
+For more information, see [Encryption at Rest Using Customer-Managed Encryption Keys](/tidb-cloud/tidb-cloud-encrypt-cmek.md).
 
 ## Audit logging
 

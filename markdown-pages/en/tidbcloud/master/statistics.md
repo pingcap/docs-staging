@@ -460,7 +460,7 @@ You can run the [`DROP STATS`](/sql-statements/sql-statement-drop-stats.md) stat
 
 > **Note:**
 >
-> Loading statistics is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> Loading statistics is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless), [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential), and TiDB Cloud Premium clusters.
 
 By default, depending on the size of column statistics, TiDB loads statistics differently as follows:
 

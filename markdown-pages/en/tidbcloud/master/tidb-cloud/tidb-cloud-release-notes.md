@@ -8,28 +8,6 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
 This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-cloud/) in 2025.
 
-## September 16, 2025
-
-**General changes**
-
-- **TiDB Cloud Dedicated**
-
-    - Encryption at Rest with Customer-Managed Encryption Keys (CMEK) is available for [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters hosted on Azure.
-  
-        This feature enables you to secure your data at rest by using an encryption key that you control. CMEK provides the following benefits:
-  
-        - Data security: you own and manage the encryption key, which ensures that your data is protected and under your control.
-        - Compliance: using CMEK helps you meet regulatory and compliance requirements for data encryption.
-        - Flexibility: you can enable CMEK when you create a project and complete CMEK configurations before you create a cluster.
-  
-      To enable this feature, perform the following steps:
-  
-        1. In the [TiDB Cloud console](https://tidbcloud.com), create a CMEK-enabled project.
-        2. Complete the CMEK configuration for the project.
-        3. Create a TiDB Cloud Dedicated cluster hosted on Azure in the same region as your CMEK configuration.
-  
-      For more information, see [Encryption at Rest Using Customer-Managed Encryption Keys on Azure](/tidb-cloud/tidb-cloud-encrypt-cmek-azure.md).
-
 ## September 9, 2025
 
 **High availability changes**
@@ -183,7 +161,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
 - Introduce TiDB Cloud Starter and Essential API (v1beta1) for managing the following resources automatically and efficiently:
 
-    - **Cluster**: manage your TiDB Cloud Starter or Essential clusters with greater flexibility.
+    - **Cluster**: manage your TiDB Cloud Starter, Essential, or Premium clusters with greater flexibility.
     - **Branch**: manage the branches of your clusters.
     - **Export**: manage data export tasks for your clusters.
     - **Import**: manage data import tasks for your clusters.
@@ -283,7 +261,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
     This feature enables you to secure your data at rest by leveraging a symmetric encryption key that you manage through Key Management Service (KMS).
 
-    For more information, see [Encryption at Rest Using Customer-Managed Encryption Keys on AWS](/tidb-cloud/tidb-cloud-encrypt-cmek-aws.md).
+    For more information, see [Encryption at Rest Using Customer-Managed Encryption Keys](/tidb-cloud/tidb-cloud-encrypt-cmek.md).
 
 ## June 17, 2025
 

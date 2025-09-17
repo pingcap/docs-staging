@@ -1,9 +1,9 @@
 ---
-title: Import Apache Parquet Files from Cloud Storage into TiDB Cloud Starter or Essential
+title: Import Apache Parquet Files from Cloud Storage into TiDB Cloud Starter, Essential, or Premium
 summary: Learn how to import Apache Parquet files from Amazon S3, GCS, Azure Blob Storage, or Alibaba Cloud Object Storage Service (OSS) into TiDB Cloud Starter or TiDB Cloud Essential.
 ---
 
-# Import Apache Parquet Files from Cloud Storage into TiDB Cloud Starter or Essential
+# Import Apache Parquet Files from Cloud Storage into TiDB Cloud Starter, Essential, or Premium
 
 You can import both uncompressed and Snappy compressed [Apache Parquet](https://parquet.apache.org/) format data files to TiDB Cloud Starter or TiDB Cloud Essential. This document describes how to import Parquet files from Amazon Simple Storage Service (Amazon S3), Google Cloud Storage (GCS), Azure Blob Storage, or Alibaba Cloud Object Storage Service (OSS) into TiDB Cloud Starter or TiDB Cloud Essential.
 

@@ -1,17 +1,17 @@
 ---
 title: Use `tidbcloud_serverless_branch` Resource
-summary: Learn how to use the serverless branch resource to create and modify a TiDB Cloud Starter or TiDB Cloud Essential branch.
+summary: Learn how to use the serverless branch resource to create and modify a TiDB Cloud Starter branch.
 ---
 
 # Use the `tidbcloud_serverless_branch` Resource
 
-This document describes how to manage a [TiDB Cloud Starter or TiDB Cloud Essential branch](/tidb-cloud/branch-manage.md) using the `tidbcloud_serverless_branch` resource.
+This document describes how to manage a [TiDB Cloud Starter branch](/tidb-cloud/branch-manage.md) using the `tidbcloud_serverless_branch` resource.
 
 The features of the `tidbcloud_serverless_branch` resource include the following:
 
-- Create TiDB Cloud Starter or TiDB Cloud Essential branches.
-- Import TiDB Cloud Starter or TiDB Cloud Essential branches.
-- Delete TiDB Cloud Starter or TiDB Cloud Essential branches.
+- Create TiDB Cloud Starter branches.
+- Import TiDB Cloud Starter branches.
+- Delete TiDB Cloud Starter branches.
 
 > **Note:**
 >
@@ -20,13 +20,13 @@ The features of the `tidbcloud_serverless_branch` resource include the following
 ## Prerequisites
 
 - [Get TiDB Cloud Terraform Provider](/tidb-cloud/terraform-get-tidbcloud-provider.md) v0.4.0 or later.
-- [Create a TiDB Cloud Starter or TiDB Cloud Essential cluster](/tidb-cloud/create-tidb-cluster-serverless.md).
+- [Create a TiDB Cloud Starter cluster](/tidb-cloud/create-tidb-cluster-serverless.md).
 
-## Create a TiDB Cloud Starter or TiDB Cloud Essential branch
+## Create a TiDB Cloud Starter branch
 
-You can create a TiDB Cloud Starter or TiDB Cloud Essential branch using the `tidbcloud_serverless_branch` resource.
+You can create a TiDB Cloud Starter branch using the `tidbcloud_serverless_branch` resource.
 
-The following example shows how to create a TiDB Cloud Starter or TiDB Cloud Essential branch.
+The following example shows how to create a TiDB Cloud Starter branch.
 
 1. Create a directory for the branch and enter it.
 
@@ -158,11 +158,11 @@ The following example shows how to create a TiDB Cloud Starter or TiDB Cloud Ess
     }
     ```
 
-## Import a TiDB Cloud Starter or TiDB Cloud Essential branch
+## Import a TiDB Cloud Starter branch
 
-For a TiDB Cloud Starter or TiDB Cloud Essential branch that is not managed by Terraform, you can bring it under Terraform management by importing it.
+For a TiDB Cloud Starter branch that is not managed by Terraform, you can use Terraform to manage it just by importing it.
 
-Import a TiDB Cloud Starter or TiDB Cloud Essential branch that is not created by Terraform as follows:
+Import a TiDB Cloud Starter branch that is not created by Terraform as follows:
 
 1. Add an import block for the new `tidbcloud_serverless_branch` resource.
 
@@ -200,9 +200,9 @@ Import a TiDB Cloud Starter or TiDB Cloud Essential branch that is not created b
 
 Now you can manage the imported branch with Terraform.
 
-## Delete a TiDB Cloud Starter or TiDB Cloud Essential branch
+## Delete a TiDB Cloud Starter branch
 
-To delete a TiDB Cloud Starter or TiDB Cloud Essential branch, you can delete the configuration of the `tidbcloud_serverless_branch` resource, then use the `terraform apply` command to destroy the resource:
+To delete a TiDB Cloud Starter branch, you can delete the configuration of the `tidbcloud_serverless_branch` resource, then use the `terraform apply` command to destroy the resource:
 
 ```shell
 $ terraform apply

@@ -17,7 +17,7 @@ The features of the `tidbcloud_import` resource include the following:
 
 - [Get TiDB Cloud Terraform Provider](/tidb-cloud/terraform-get-tidbcloud-provider.md).
 - Refer to one of the following documents to create a TiDB Cloud cluster:
-    - [Create a TiDB Cloud Starter or Essential cluster](/tidb-cloud/create-tidb-cluster-serverless.md) 
+    - [Create a TiDB Cloud Starter, Essential, or Premium cluster](/tidb-cloud/create-tidb-cluster-serverless.md) 
     - [Create a TiDB Cloud Dedicated cluster](/tidb-cloud/create-tidb-cluster.md).
 
 ## Create and run an import task
