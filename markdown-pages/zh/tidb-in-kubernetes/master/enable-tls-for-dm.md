@@ -508,7 +508,7 @@ spec:
 
 
 ``` shell
-kubectl exec -it ${cluster_name}-dm-master-0 -n ${namespace} sh
+kubectl exec -it ${cluster_name}-dm-master-0 -n ${namespace} -- sh
 ```
 
 使用 `dmctl`：
