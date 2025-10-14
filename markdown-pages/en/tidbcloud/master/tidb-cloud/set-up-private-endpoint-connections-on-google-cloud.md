@@ -14,7 +14,7 @@ This document describes how to connect to your TiDB Cloud Dedicated cluster via 
 > - To learn how to connect to a TiDB Cloud Dedicated cluster via private endpoint with AWS, see [Connect to a TiDB Cloud Dedicated Cluster via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections.md).
 > - To learn how to connect to a TiDB Cloud Dedicated cluster via private endpoint with Azure, see [Connect to a TiDB Cloud Dedicated Cluster via Azure Private Link](/tidb-cloud/set-up-private-endpoint-connections-on-azure.md).
 > - To learn how to connect to a TiDB Cloud Starter or TiDB Cloud Essential cluster via private endpoint, see the following documents:
->     - [Connect to TiDB Cloud Starter via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
+>     - [Connect to TiDB Cloud Starter or Essential via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
 >     - [Connect to TiDB Cloud Starter or Essential via Alibaba Cloud Private Endpoint](/tidb-cloud/set-up-private-endpoint-connections-on-alibaba-cloud.md)
 
 </CustomContent>
@@ -25,7 +25,7 @@ This document describes how to connect to your TiDB Cloud Dedicated cluster via 
 >
 > - To learn how to connect to a TiDB Cloud Dedicated cluster via private endpoint with AWS, see [Connect to a TiDB Cloud Dedicated Cluster via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections.md).
 > - To learn how to connect to a TiDB Cloud Dedicated cluster via private endpoint with Azure, see [Connect to a TiDB Cloud Dedicated Cluster via Azure Private Link](/tidb-cloud/set-up-private-endpoint-connections-on-azure.md).
-> - To learn how to connect to a TiDB Cloud Starter or TiDB Cloud Essential cluster via private endpoint, see [Connect to TiDB Cloud Starter via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections-serverless.md).
+> - To learn how to connect to a TiDB Cloud Starter or TiDB Cloud Essential cluster via private endpoint, see [Connect to TiDB Cloud Starter or Essential via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections-serverless.md).
 
 </CustomContent>
 
