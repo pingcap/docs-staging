@@ -90,7 +90,15 @@ TiDB Cloud provides the following deployment options:
 
     <CustomContent language="en,zh">
 
-    Currently, TiDB Cloud Essential is in public preview on Alibaba Cloud. For feature comparison between TiDB Cloud Starter and TiDB Cloud Essential, see [TiDB on Alibaba Cloud](https://www.pingcap.com/partners/alibaba-cloud/).
+    Currently, TiDB Cloud Essential is in public preview on AWS and Alibaba Cloud.
+
+    For feature comparison between TiDB Cloud Starter and TiDB Cloud Essential on Alibaba Cloud, see [TiDB on Alibaba Cloud](https://www.pingcap.com/partners/alibaba-cloud/).
+
+    </CustomContent>
+
+    <CustomContent language="ja">
+
+    Currently, TiDB Cloud Essential is in public preview on AWS.
 
     </CustomContent>
 

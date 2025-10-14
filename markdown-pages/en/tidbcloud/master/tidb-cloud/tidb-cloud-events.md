@@ -43,7 +43,7 @@ TiDB Cloud logs the following types of cluster events:
 | FailedChangefeed |   Changefeed failures |  
 | ImportData |   Import data to a cluster |  
 | UpdateSpendingLimit |   Update spending limit of a TiDB Cloud Starter cluster |  
-| ResourceLimitation |   Update resource limitation of a TiDB Cloud Starter cluster |  
+| ResourceLimitation |   Update resource limitation of a TiDB Cloud Starter or TiDB Cloud Essential cluster |  
 
 For each event, the following information is logged:
 

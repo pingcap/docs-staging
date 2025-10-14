@@ -15,8 +15,8 @@ TiDB Cloud extends these capabilities with zonal high availability and regional 
 
 > **Note:**
 >
-> - For TiDB Cloud Starter clusters, only zonal high availability is enabled, and is not configurable.
-> - For TiDB Cloud Essential clusters, regional high availability is enabled by default, and you can change it to zonal high availability as needed during cluster creation.
+> - For TiDB Cloud Starter clusters, only zonal high availability is enabled, and it is not configurable.
+> - For TiDB Cloud Essential clusters hosted in the AWS Tokyo (ap-northeast-1) region or any Alibaba Cloud region, regional high availability is enabled by default. You can change it to zonal high availability as needed during cluster creation. For TiDB Cloud Essential clusters hosted in other regions, only zonal high availability is enabled, and it is not configurable.
 
 - **Zonal high availability**: This option places all nodes within a single availability zone, reducing network latency. It ensures high availability without requiring application-level redundancy across zones, making it suitable for applications that prioritize low latency within a single zone. For more information, see [Zonal high availability architecture](#zonal-high-availability-architecture).
 
@@ -84,22 +84,33 @@ When you create a cluster with regional high availability, critical OLTP (Online
 
 > **Note:**
 >
-> - Regional high availability is currently in beta.
-> - Regional high availability is enabled by default, and you can change it to zonal high availability as needed when you create a TiDB Cloud Essential cluster.
+> Regional high availability is currently in beta.
 
 <CustomContent language="en,zh">
 
-The following diagram shows the architecture of regional high availability on Alibaba Cloud:
+- The following diagram shows the architecture of regional high availability on AWS:
 
-![regional high availability](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/regional-high-avaliability-alibaba-cloud.png)
+    ![regional high availability on AWS](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/regional-high-avaliability-aws.png)
+
+- The following diagram shows the architecture of regional high availability on Alibaba Cloud:
+
+    ![regional high availability on Alibaba Cloud](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/regional-high-avaliability-alibaba-cloud.png)
+
+</CustomContent>
+
+<CustomContent language="ja">
+
+The following diagram shows the architecture of regional high availability on AWS:
+
+![regional high availability](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/regional-high-avaliability-aws.png)
+
+</CustomContent>
 
 In regional high availability architecture:
 
 - The Placement Driver (PD) and TiKV are deployed across multiple availability zones, and data is always replicated redundantly across zones to ensure the highest level of availability.
 - Data is replicated across TiFlash write nodes within the primary availability zone.
 - TiDB servers and TiFlash compute nodes read from and write to these TiKV and TiFlash write nodes, which are safeguarded by storage-level replication.
-
-</CustomContent>
 
 ### Failover process
 
