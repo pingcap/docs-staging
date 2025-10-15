@@ -5,17 +5,17 @@ summary: TiUPによって管理される監視サーバーの構成をカスタ�
 
 # 監視サーバーの構成をカスタマイズする {#customize-configurations-of-monitoring-servers}
 
-TiUP を使用して TiDB クラスターをデプロイすると、 TiUP はPrometheus、Grafana、Alertmanager などの監視サーバーもデプロイします。その間に、このクラスターをスケールアウトすると、 TiUP は新しいノードを監視範囲に追加します。
+TiUPを使用して TiDB クラスターをデプロイすると、 TiUP はPrometheus、Grafana、Alertmanager などの監視サーバーもデプロイします。また、このクラスターをスケールアウトすると、 TiUP は新しいノードを監視範囲に追加します。
 
 上記の監視サーバーの構成をカスタマイズするには、以下の手順に従って、TiDB クラスターの topology.yaml に関連する構成項目を追加します。
 
 > **注記：**
 >
-> -   監視サーバーの構成ファイルを直接変更しないでください。これらの変更は、デプロイメント、スケールアウト、スケールイン、再ロードなどの後のTiUP操作によって上書きされるためです。
+> -   監視サーバーの構成ファイルを直接変更しないでください。これらの変更は、デプロイメント、スケールアウト、スケールイン、リロードなどの後続のTiUP操作によって上書きされるためです。
 >
 > -   監視サーバーがTiUPによって展開および管理されていない場合は、このドキュメントを参照する代わりに、監視サーバーの構成ファイルを直接変更できます。
 >
-> -   この機能はTiUP v1.9.0 以降でサポートされています。したがって、この機能を使用する前にTiUP のバージョンを確認してください。
+> -   この機能はTiUP v1.9.0以降でサポートされています。そのため、この機能を使用する前にTiUPのバージョンをご確認ください。
 
 ## Prometheusの設定をカスタマイズする {#customize-prometheus-configurations}
 
@@ -27,7 +27,7 @@ TiUP を使用して TiDB クラスターをデプロイすると、 TiUP はPro
 
 2.  topology.yaml ファイルで、カスタマイズされたルール構成ファイルのディレクトリに`rule_dir`設定します。
 
-    以下は、topology.yaml ファイル内の monitoring_servers の構成例です。
+    以下は、topology.yaml ファイル内の monitored_servers の構成例です。
 
         # # Server configs are used to specify the configuration of Prometheus Server.
         monitoring_servers:
@@ -35,15 +35,15 @@ TiUP を使用して TiDB クラスターをデプロイすると、 TiUP はPro
         - host: 127.0.0.1
           rule_dir: /home/tidb/prometheus_rule   # prometheus rule dir on TiUP machine
 
-上記の構成が完了したら、TiDB クラスターをデプロイ、スケールアウト、スケールイン、またはリロードすると、 TiUPは`rule_dir` (たとえば`/home/tidb/prometheus_rule` ) からカスタマイズされたルール構成をロードし、それを Prometheus サーバーに送信してデフォルトのルール構成を置き換えます。
+上記の構成が完了したら、TiDB クラスターをデプロイ、スケールアウト、スケールイン、またはリロードすると、 TiUPは`rule_dir` (たとえば、 `/home/tidb/prometheus_rule` ) からカスタマイズされたルール構成をロードし、それを Prometheus サーバーに送信してデフォルトのルール構成を置き換えます。
 
-### Prometheus スクレイプ設定をカスタマイズする {#customize-prometheus-scrape-configuration}
+### Prometheusのスクレイプ設定をカスタマイズする {#customize-prometheus-scrape-configuration}
 
 1.  TiDB クラスターの topology.yaml ファイルを開きます。
 
 2.  `monitoring_servers`構成で、 `additional_scrape_conf`フィールドを追加します。
 
-    以下は、topology.yaml ファイル内の monitoring_servers の構成例です。
+    以下は、topology.yaml ファイル内の monitored_servers の構成例です。
 
         monitoring_servers:
         - host: xxxxxxx
@@ -68,17 +68,17 @@ TiUP を使用して TiDB クラスターをデプロイすると、 TiUP はPro
 
 上記の構成が完了したら、TiDB クラスターをデプロイ、スケールアウト、スケールイン、またはリロードすると、 TiUP は`additional_scrape_conf`フィールドの内容を Prometheus 構成ファイルの対応するパラメーターに追加します。
 
-## Grafana 設定をカスタマイズする {#customize-grafana-configurations}
+## Grafanaの設定をカスタマイズする {#customize-grafana-configurations}
 
 現在、 TiUP はGrafana ダッシュボードやその他の構成のカスタマイズをサポートしています。
 
 ### Grafanaダッシュボードをカスタマイズする {#customize-grafana-dashboard}
 
-1.  Grafana ダッシュボードの構成ファイルをカスタマイズし、 TiUP が配置されているマシンのディレクトリの下に配置します。
+1.  Grafana ダッシュボードの構成ファイルをカスタマイズし、 TiUPが配置されているマシンのディレクトリの下に配置します。
 
 2.  topology.yaml ファイルで、カスタマイズされたダッシュボード構成ファイルのディレクトリに`dashboard_dir`設定します。
 
-    以下は、topology.yaml ファイル内の grafana_servers の設定例です。
+    以下は、topology.yaml ファイル内の grafana_servers の構成例です。
 
         # # Server configs are used to specify the configuration of Grafana Servers.
         grafana_servers:
@@ -86,7 +86,7 @@ TiUP を使用して TiDB クラスターをデプロイすると、 TiUP はPro
          - host: 127.0.0.1
          dashboard_dir: /home/tidb/dashboards   # grafana dashboard dir on TiUP machine
 
-上記の構成が完了したら、TiDB クラスターをデプロイ、スケールアウト、スケールイン、またはリロードすると、 TiUPは`dashboard_dir` (たとえば`/home/tidb/dashboards` ) からカスタマイズされたダッシュボード構成をロードし、その構成を Grafana サーバーに送信してデフォルトのダッシュボード構成を置き換えます。
+上記の構成が完了したら、TiDB クラスターをデプロイ、スケールアウト、スケールイン、またはリロードすると、 TiUPは`dashboard_dir` (たとえば、 `/home/tidb/dashboards` ) からカスタマイズされたダッシュボード構成をロードし、その構成を Grafana サーバーに送信してデフォルトのダッシュボード構成を置き換えます。
 
 ### その他のGrafana設定をカスタマイズする {#customize-other-grafana-configurations}
 
@@ -110,11 +110,11 @@ TiUP を使用して TiDB クラスターをデプロイすると、 TiUP はPro
 
 上記の構成が完了したら、TiDB クラスターをデプロイ、スケールアウト、スケールイン、またはリロードすると、 TiUP は`config`フィールドの内容を Grafana 構成ファイル`grafana.ini`に追加します。
 
-## Alertmanager 設定をカスタマイズする {#customize-alertmanager-configurations}
+## Alertmanager の設定をカスタマイズする {#customize-alertmanager-configurations}
 
 現在、 TiUP はAlertmanager のリスニング アドレスのカスタマイズをサポートしています。
 
-TiUPによってデプロイされた Alertmanager は、デフォルトで`alertmanager_servers.host`をリッスンします。プロキシを使用すると、Alertmanager にアクセスできません。この問題に対処するには、クラスター構成ファイル topology.yaml に`listen_host`追加して、リッスン アドレスを指定します。推奨値は 0.0.0.0 です。
+TiUPによってデプロイされた Alertmanager は、デフォルトで`alertmanager_servers.host`をリッスンします。プロキシを使用している場合は Alertmanager にアクセスできません。この問題に対処するには、クラスター設定ファイル topology.yaml に`listen_host`追加してリッスンアドレスを指定します。推奨値は 0.0.0.0 です。
 
 次の例では、 `listen_host`フィールドを 0.0.0.0 に設定します。
 

@@ -1,20 +1,20 @@
 ---
 title: Continuous Replication from Databases that Use gh-ost or pt-osc
-summary: DM を使用して、オンライン DDL ツール gh-ost または pt-osc を使用するデータベースから増分データを複製する方法を学びます。
+summary: オンライン DDL ツール gh-ost または pt-osc を使用するデータベースから増分データを複製するために DM を使用する方法を学びます
 ---
 
 # gh-ost または pt-osc を使用するデータベースからの継続的なレプリケーション {#continuous-replication-from-databases-that-use-gh-ost-or-pt-osc}
 
-実本番シナリオでは、DDL 実行中のテーブル ロックによって、データベースからの読み取りまたはデータベースへの書き込みがある程度ブロックされる可能性があります。そのため、読み取りと書き込みへの影響を最小限に抑えるために、オンライン DDL ツールを使用して DDL を実行することがよくあります。一般的な DDL ツールは[おばけ](https://github.com/github/gh-ost)と[pt-osc](https://www.percona.com/doc/percona-toolkit/3.0/pt-online-schema-change.html)です。
+本番環境では、DDL実行中のテーブルロックによって、データベースからの読み取りまたは書き込みがある程度ブロックされる可能性があります。そのため、読み取りと書き込みへの影響を最小限に抑えるため、オンラインDDLツールを使用してDDLを実行することがよくあります。一般的なDDLツールは[おばけ](https://github.com/github/gh-ost)と[pt-osc](https://www.percona.com/doc/percona-toolkit/3.0/pt-online-schema-change.html)です。
 
 DM を使用して MySQL から TiDB にデータを移行する場合、 `online-ddl`有効にして DM と gh-ost または pt-osc の連携を許可できます。
 
 詳細なレプリケーション手順については、シナリオごとに次のドキュメントを参照してください。
 
--   [小規模データセットを MySQL から TiDB に移行する](/migrate-small-mysql-to-tidb.md)
--   [大規模なデータセットをMySQLからTiDBに移行する](/migrate-large-mysql-to-tidb.md)
+-   [小規模データセットをMySQLからTiDBに移行する](/migrate-small-mysql-to-tidb.md)
+-   [大規模データセットをMySQLからTiDBに移行する](/migrate-large-mysql-to-tidb.md)
 -   [小さなデータセットの MySQL シャードを TiDB に移行してマージする](/migrate-small-mysql-shards-to-tidb.md)
--   [大規模データセットの MySQL シャードを TiDB に移行してマージする](/migrate-large-mysql-shards-to-tidb.md)
+-   [大規模データセットの MySQL シャードを TiDB に移行およびマージする](/migrate-large-mysql-shards-to-tidb.md)
 
 ## DM でオンライン DDL を有効にする {#enable-online-ddl-on-dm}
 
@@ -42,7 +42,7 @@ gh-ost または pt-osc のワークフロー:
 
 -   DDL 実テーブルのデータをゴースト テーブルに複製します。
 
--   2 つのテーブル間でデータの整合性が取れたら、名前変更ステートメントを使用して実際のテーブルをゴースト テーブルに置き換えます。
+-   2 つのテーブル間でデータの一貫性が保たれたら、名前変更ステートメントを使用して実際のテーブルをゴースト テーブルに置き換えます。
 
 DM のワークフロー:
 
@@ -60,7 +60,7 @@ DM のワークフロー:
 
 -   ダウンストリーム TiDB はゴースト テーブルを作成して複製する必要がないため、storageスペースとネットワーク転送のオーバーヘッドが節約されます。
 
--   シャード化されたテーブルからデータを移行およびマージする場合、レプリケーションの正確性を確保するために、シャード化されたゴースト テーブルごとに RENAME 操作は無視されます。
+-   シャード テーブルからデータを移行およびマージする場合、レプリケーションの正確性を確保するために、シャード ゴースト テーブルごとに RENAME 操作は無視されます。
 
 ## 参照 {#see-also}
 

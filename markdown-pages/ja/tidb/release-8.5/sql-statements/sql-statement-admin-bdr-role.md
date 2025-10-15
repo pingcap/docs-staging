@@ -5,8 +5,8 @@ summary: TiDB データベースの ADMIN [SET|SHOW|UNSET] BDR ROLE の使用法
 
 # 管理者 [設定|表示|設定解除] BDR ロール {#admin-set-show-unset-bdr-role}
 
--   `ADMIN SET BDR ROLE`使用して、クラスターの BDR ロールを設定します。現在、TiDB クラスターには次の BDR ロールを設定できます: `PRIMARY`および`SECONDARY` 。BDR ロールの詳細については、 [TiCDC 双方向レプリケーションにおける DDL 同期](/ticdc/ticdc-bidirectional-replication.md#ddl-replication)参照してください。
--   クラスターの BDR ロールを表示するには`ADMIN SHOW BDR ROLE`使用します。
+-   クラスターのBDRロールを設定するには、 `ADMIN SET BDR ROLE`使用します。現在、TiDBクラスターには`PRIMARY`と`SECONDARY` BDRロールを設定できます。BDRロールの詳細については、 [TiCDC 双方向レプリケーションにおける DDL 同期](/ticdc/ticdc-bidirectional-replication.md#ddl-replication)参照してください。
+-   クラスターの BDR ロールを表示するには、 `ADMIN SHOW BDR ROLE`使用します。
 -   クラスターの BDR ロールを設定解除するには、 `ADMIN UNSET BDR ROLE`使用します。
 
 ## 概要 {#synopsis}
@@ -79,6 +79,6 @@ ADMIN SHOW BDR ROLE;
 1 row in set (0.01 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。

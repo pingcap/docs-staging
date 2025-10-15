@@ -1,11 +1,11 @@
 ---
 title: Maintain DM Clusters Using OpenAPI
-summary: OpenAPI インターフェースを使用してクラスターのステータスとデータのレプリケーションを管理する方法について学習します。
+summary: OpenAPI インターフェースを使用してクラスターのステータスとデータのレプリケーションを管理する方法について説明します。
 ---
 
 # OpenAPI を使用して DM クラスターを管理 {#maintain-dm-clusters-using-openapi}
 
-DM は、 [dmctl ツール](/dm/dmctl-introduction.md)の機能と同様に、 DM クラスターを簡単に照会および操作するための OpenAPI 機能を提供します。
+DM は、 [dmctlツール](/dm/dmctl-introduction.md)の機能と同様に、DM クラスターを簡単に照会および操作するための OpenAPI 機能を提供します。
 
 OpenAPI を有効にするには、次のいずれかの操作を実行します。
 
@@ -25,11 +25,11 @@ OpenAPI を有効にするには、次のいずれかの操作を実行します
 
 > **注記：**
 >
-> -   DM は、OpenAPI 3.0.0 標準に準拠した[仕様書](https://github.com/pingcap/tiflow/blob/release-8.5/dm/openapi/spec/dm.yaml)を提供します。このドキュメントには、すべてのリクエスト パラメータと戻り値が含まれています。ドキュメント yaml をコピーして、 [Swagger エディター](https://editor.swagger.io/)でプレビューできます。
+> -   DMはOpenAPI 3.0.0標準に準拠した[仕様書](https://github.com/pingcap/tiflow/blob/release-8.5/dm/openapi/spec/dm.yaml)提供します。このドキュメントには、すべてのリクエストパラメータと戻り値が含まれています。このドキュメントのyamlをコピーして、 [Swaggerエディター](https://editor.swagger.io/)でプレビューできます。
 >
 > -   DM マスター ノードを展開した後、 `http://{master-addr}/api/v1/docs`アクセスしてドキュメントをオンラインでプレビューできます。
 >
-> -   構成ファイルでサポートされている一部の機能は、OpenAPI ではサポートされていません。それらの機能は完全には一致していません。本番環境では、 [設定ファイル](/dm/dm-config-overview.md)を使用することをお勧めします。
+> -   設定ファイルでサポートされている一部の機能は、OpenAPIではサポートされていません。これらの機能は完全には連携されていません。本番環境では、 [設定ファイル](/dm/dm-config-overview.md)使用することをお勧めします。
 
 API を使用して、DM クラスターで次のメンテナンス操作を実行できます。
 
@@ -55,7 +55,7 @@ API を使用して、DM クラスターで次のメンテナンス操作を実�
 -   [不要になったリレーログファイルを消去する](#purge-relay-log-files-that-are-no-longer-required)
 -   [データソースとDMワーカー間のバインディングを変更する](#change-the-bindings-between-the-data-source-and-dm-workers)
 -   [データソースのスキーマ名のリストを取得する](#get-the-list-of-schema-names-of-a-data-source)
--   [データソース内の指定されたスキーマのテーブル名のリストを取得します。](#get-the-list-of-table-names-of-a-specified-schema-in-a-data-source)
+-   [データソース内の指定されたスキーマのテーブル名のリストを取得します](#get-the-list-of-table-names-of-a-specified-schema-in-a-data-source)
 
 ## レプリケーションタスクを管理するためのAPI {#apis-for-managing-replication-tasks}
 
@@ -68,17 +68,17 @@ API を使用して、DM クラスターで次のメンテナンス操作を実�
 -   [レプリケーションタスクの情報を取得する](#get-the-information-of-a-replication-task)
 -   [レプリケーションタスクリストを取得する](#get-the-replication-task-list)
 -   [レプリケーションタスクの移行ルールを取得する](#get-the-migration-rules-of-a-replication-task)
--   [レプリケーションタスクに関連付けられているデータソースのスキーマ名のリストを取得します。](#get-the-list-of-schema-names-of-the-data-source-that-is-associated-with-a-replication-task)
--   [レプリケーションタスクに関連付けられているデータソース内の指定されたスキーマのテーブル名のリストを取得します。](#get-the-list-of-table-names-of-a-specified-schema-in-the-data-source-that-is-associated-with-a-replication-task)
--   [レプリケーションタスクに関連付けられているデータソースのスキーマのCREATEステートメントを取得します。](#get-the-create-statement-for-schemas-of-the-data-source-that-is-associated-with-a-replication-task)
--   [レプリケーションタスクに関連付けられているデータソースのスキーマのCREATEステートメントを更新します。](#update-the-create-statement-for-schemas-of-the-data-source-that-is-associated-with-a-replication-task)
+-   [レプリケーションタスクに関連付けられているデータソースのスキーマ名のリストを取得します](#get-the-list-of-schema-names-of-the-data-source-that-is-associated-with-a-replication-task)
+-   [レプリケーションタスクに関連付けられたデータソース内の指定されたスキーマのテーブル名のリストを取得します。](#get-the-list-of-table-names-of-a-specified-schema-in-the-data-source-that-is-associated-with-a-replication-task)
+-   [レプリケーションタスクに関連付けられているデータソースのスキーマの CREATE ステートメントを取得します。](#get-the-create-statement-for-schemas-of-the-data-source-that-is-associated-with-a-replication-task)
+-   [レプリケーションタスクに関連付けられているデータソースのスキーマのCREATEステートメントを更新します](#update-the-create-statement-for-schemas-of-the-data-source-that-is-associated-with-a-replication-task)
 -   [レプリケーションタスクに関連付けられているデータソースのスキーマを削除します](#delete-a-schema-of-the-data-source-that-is-associated-with-a-replication-task)
 
 次のセクションでは、API の具体的な使用方法について説明します。
 
-## API エラー メッセージ テンプレート {#api-error-message-template}
+## APIエラーメッセージテンプレート {#api-error-message-template}
 
-API リクエストを送信した後、エラーが発生した場合、返されるエラー メッセージは次の形式になります。
+API リクエストの送信後にエラーが発生した場合、返されるエラー メッセージは次の形式になります。
 
 ```json
 {
@@ -91,7 +91,7 @@ API リクエストを送信した後、エラーが発生した場合、返さ�
 
 ## DMマスターノードの情報を取得する {#get-the-information-of-a-dm-master-node}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するノードの情報が返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するノードの情報が返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -121,7 +121,7 @@ curl -X 'GET' \
 
 ## DMマスターノードを停止する {#stop-a-dm-master-node}
 
-この API は同期インターフェースです。リクエストが成功した場合、返される本文のステータス コードは 204 です。
+このAPIは同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは204です。
 
 ### リクエストURI {#request-uri}
 
@@ -137,7 +137,7 @@ curl -X 'DELETE' \
 
 ## DMワーカーノードの情報を取得する {#get-the-information-of-a-dm-worker-node}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するノードの情報が返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するノードの情報が返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -167,7 +167,7 @@ curl -X 'GET' \
 
 ## DMワーカーノードを停止する {#stop-a-dm-worker-node}
 
-この API は同期インターフェースです。リクエストが成功した場合、返される本文のステータス コードは 204 です。
+このAPIは同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは204です。
 
 ### リクエストURI {#request-uri}
 
@@ -183,7 +183,7 @@ curl -X 'DELETE' \
 
 ## データソースを作成する {#create-a-data-source}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するデータ ソースの情報が返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するデータソースの情報が返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -262,7 +262,7 @@ curl -X 'POST' \
 
 ## データソースを取得する {#get-a-data-source}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するデータ ソースの情報が返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するデータソースの情報が返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -328,7 +328,7 @@ curl -X 'GET' \
 
 ## データソースを削除する {#delete-the-data-source}
 
-この API は同期インターフェースです。リクエストが成功した場合、返される本文のステータス コードは 204 です。
+このAPIは同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは204です。
 
 ### リクエストURI {#request-uri}
 
@@ -344,7 +344,7 @@ curl -X 'DELETE' \
 
 ## データソースを更新する {#update-a-data-source}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するデータ ソースの情報が返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するデータソースの情報が返されます。
 
 > **注記：**
 >
@@ -458,7 +458,7 @@ curl -X 'POST' \
 
 ## データソースリストを取得する {#get-the-data-source-list}
 
-この API は同期インターフェースです。リクエストが成功すると、データ ソース リストが返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、データソースリストが返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -510,7 +510,7 @@ curl -X 'GET' \
 
 ## データソースの情報を取得する {#get-the-information-of-a-data-source}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するノードの情報が返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するノードの情報が返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -547,7 +547,7 @@ curl -X 'GET' \
 
 ## データソースのリレーログ機能を開始する {#start-the-relay-log-feature-for-data-sources}
 
-この API は非同期インターフェースです。リクエストが成功した場合、返されるボディのステータス コードは 200 です。最新のステータスを確認するには、 [データソースの情報を取得する](#get-the-information-of-a-data-source)参照してください。
+このAPIは非同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは200です。最新のステータスを確認するには、 [データソースの情報を取得する](#get-the-information-of-a-data-source)参照してください。
 
 ### リクエストURI {#request-uri}
 
@@ -572,7 +572,7 @@ curl -X 'POST' \
 
 ## データソースのリレーログ機能を停止する {#stop-the-relay-log-feature-for-data-sources}
 
-この API は非同期インターフェースです。リクエストが成功した場合、返されるボディのステータス コードは 200 です。最新のステータスを確認するには、 [データソースの情報を取得する](#get-the-information-of-a-data-source)参照してください。
+このAPIは非同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは200です。最新のステータスを確認するには、 [データソースの情報を取得する](#get-the-information-of-a-data-source)参照してください。
 
 ### リクエストURI {#request-uri}
 
@@ -594,7 +594,7 @@ curl -X 'POST' \
 
 ## 不要になったリレーログファイルを消去する {#purge-relay-log-files-that-are-no-longer-required}
 
-この API は非同期インターフェースです。リクエストが成功した場合、返されるボディのステータス コードは 200 です。最新のステータスを確認するには、 [データソースの情報を取得する](#get-the-information-of-a-data-source)参照してください。
+このAPIは非同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは200です。最新のステータスを確認するには、 [データソースの情報を取得する](#get-the-information-of-a-data-source)参照してください。
 
 ### リクエストURI {#request-uri}
 
@@ -615,7 +615,7 @@ curl -X 'POST' \
 
 ## データソースとDMワーカー間のバインディングを変更する {#change-the-bindings-between-the-data-source-and-dm-workers}
 
-この API は非同期インターフェースです。リクエストが成功した場合、返されるボディのステータス コードは 200 です。最新のステータスを確認するには、 [DMワーカーノードの情報を取得する](#get-the-information-of-a-dm-worker-node)参照してください。
+このAPIは非同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは200です。最新のステータスを確認するには、 [DMワーカーノードの情報を取得する](#get-the-information-of-a-dm-worker-node)参照してください。
 
 ### リクエストURI {#request-uri}
 
@@ -635,7 +635,7 @@ curl -X 'POST' \
 
 ## データソースのスキーマ名のリストを取得する {#get-the-list-of-schema-names-of-a-data-source}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するリストが返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するリストが返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -655,9 +655,9 @@ curl -X 'GET' \
 ]
 ```
 
-## データソース内の指定されたスキーマのテーブル名のリストを取得します。 {#get-the-list-of-table-names-of-a-specified-schema-in-a-data-source}
+## データソース内の指定されたスキーマのテーブル名のリストを取得します {#get-the-list-of-table-names-of-a-specified-schema-in-a-data-source}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するリストが返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するリストが返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -679,7 +679,7 @@ curl -X 'GET' \
 
 ## レプリケーションタスクを作成する {#create-a-replication-task}
 
-この API は同期インターフェースです。リクエストが成功した場合、返される本体のステータス コードは 200 です。リクエストが成功すると、対応するレプリケーション タスクの情報が返されます。
+このAPIは同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは200です。リクエストが成功すると、対応するレプリケーションタスクの情報が返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -893,7 +893,7 @@ curl -X 'POST' \
 
 ## レプリケーションタスクを取得する {#get-a-replication-task}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するレプリケーション タスクの情報が返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するレプリケーションタスクの情報が返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -1242,7 +1242,7 @@ curl -X 'PUT' \
 
 ## レプリケーションタスクを開始する {#start-a-replication-task}
 
-この API は非同期インターフェースです。リクエストが成功した場合、返されるボディのステータス コードは 204 です。タスクの最新のステータスを確認するには、 [レプリケーションタスクの情報を取得する](#get-the-information-of-a-replication-task)実行します。
+このAPIは非同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは204です。タスクの最新のステータスを確認するには、 [レプリケーションタスクの情報を取得する](#get-the-information-of-a-replication-task)実行してください。
 
 ### リクエストURI {#request-uri}
 
@@ -1258,7 +1258,7 @@ curl -X 'POST' \
 
 ## レプリケーションタスクを停止する {#stop-a-replication-task}
 
-この API は非同期インターフェースです。リクエストが成功した場合、返されるボディのステータス コードは 200 です。タスクの最新のステータスを確認するには、 [レプリケーションタスクの情報を取得する](#get-the-information-of-a-replication-task)実行します。
+このAPIは非同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは200です。タスクの最新のステータスを確認するには、 [レプリケーションタスクの情報を取得する](#get-the-information-of-a-replication-task)実行してください。
 
 ### リクエストURI {#request-uri}
 
@@ -1274,7 +1274,7 @@ curl -X 'POST' \
 
 ## レプリケーションタスクの情報を取得する {#get-the-information-of-a-replication-task}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するノードの情報が返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するノードの情報が返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -1343,7 +1343,7 @@ curl -X 'GET' \
 
 ## レプリケーションタスクリストを取得する {#get-the-replication-task-list}
 
-この API は同期インターフェースであり、リクエストが成功すると対応するタスクのリストが返されます。
+この API は同期インターフェースであり、リクエストが成功すると、対応するタスクのリストが返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -1491,9 +1491,9 @@ curl -X 'GET' \
 }
 ```
 
-## レプリケーションタスクに関連付けられているデータソースのスキーマ名のリストを取得します。 {#get-the-list-of-schema-names-of-the-data-source-that-is-associated-with-a-replication-task}
+## レプリケーションタスクに関連付けられているデータソースのスキーマ名のリストを取得します {#get-the-list-of-schema-names-of-the-data-source-that-is-associated-with-a-replication-task}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するリストが返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するリストが返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -1513,9 +1513,9 @@ curl -X 'GET' \
 ]
 ```
 
-## レプリケーションタスクに関連付けられているデータソース内の指定されたスキーマのテーブル名のリストを取得します。 {#get-the-list-of-table-names-of-a-specified-schema-in-the-data-source-that-is-associated-with-a-replication-task}
+## レプリケーションタスクに関連付けられたデータソース内の指定されたスキーマのテーブル名のリストを取得します。 {#get-the-list-of-table-names-of-a-specified-schema-in-the-data-source-that-is-associated-with-a-replication-task}
 
-この API は同期インターフェースです。リクエストが成功すると、対応するリストが返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するリストが返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -1535,9 +1535,9 @@ curl -X 'GET' \
 ]
 ```
 
-## レプリケーションタスクに関連付けられているデータソースのスキーマのCREATEステートメントを取得します。 {#get-the-create-statement-for-schemas-of-the-data-source-that-is-associated-with-a-replication-task}
+## レプリケーションタスクに関連付けられているデータソースのスキーマの CREATE ステートメントを取得します。 {#get-the-create-statement-for-schemas-of-the-data-source-that-is-associated-with-a-replication-task}
 
-この API は同期インターフェースです。リクエストが成功すると、対応する CREATE ステートメントが返されます。
+このAPIは同期インターフェースです。リクエストが成功すると、対応するCREATEステートメントが返されます。
 
 ### リクエストURI {#request-uri}
 
@@ -1559,9 +1559,9 @@ curl -X 'GET' \
 }
 ```
 
-## レプリケーションタスクに関連付けられているデータソースのスキーマのCREATEステートメントを更新します。 {#update-the-create-statement-for-schemas-of-the-data-source-that-is-associated-with-a-replication-task}
+## レプリケーションタスクに関連付けられているデータソースのスキーマのCREATEステートメントを更新します {#update-the-create-statement-for-schemas-of-the-data-source-that-is-associated-with-a-replication-task}
 
-この API は同期インターフェースです。リクエストが成功した場合、返される本体のステータス コードは 200 です。
+このAPIは同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは200です。
 
 ### リクエストURI {#request-uri}
 
@@ -1583,7 +1583,7 @@ curl -X 'PUT' \
 
 ## レプリケーションタスクに関連付けられているデータソースのスキーマを削除します {#delete-a-schema-of-the-data-source-that-is-associated-with-a-replication-task}
 
-この API は同期インターフェースです。リクエストが成功した場合、返される本体のステータス コードは 200 です。
+このAPIは同期インターフェースです。リクエストが成功した場合、返されるボディのステータスコードは200です。
 
 ### リクエストURI {#request-uri}
 

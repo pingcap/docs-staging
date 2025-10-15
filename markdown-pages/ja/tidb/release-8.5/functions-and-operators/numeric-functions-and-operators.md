@@ -32,7 +32,7 @@ TiDB は、MySQL 8.0 で利用可能な[数値関数と演算子](https://dev.my
 | [`CEILING()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_ceiling)     | 引数より小さくない最小の整数値を返す  |
 | [`CONV()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_conv)           | 異なる基数間で数値を変換する      |
 | [`COS()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_cos)             | コサインを返す             |
-| [`COT()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_cot)             | 余弦を返す               |
+| [`COT()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_cot)             | 余接を返す               |
 | [`CRC32()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_crc32)         | 巡回冗長検査値を計算する        |
 | [`DEGREES()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_degrees)     | ラジアンを度に変換する         |
 | [`EXP()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_exp)             | 累乗する                |
@@ -43,8 +43,8 @@ TiDB は、MySQL 8.0 で利用可能な[数値関数と演算子](https://dev.my
 | [`LOG2()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_log2)           | 引数の2を底とする対数を返す      |
 | [`MOD()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_mod)             | 残りを返す               |
 | [`PI()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_pi)               | 円周率の値を返す            |
-| [`POW()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_pow)             | 引数を指定された累乗で返す       |
-| [`POWER()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_power)         | 引数を指定された累乗で返す       |
+| [`POW()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_pow)             | 引数を指定されたべき乗で返す      |
+| [`POWER()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_power)         | 引数を指定されたべき乗で返す      |
 | [`RADIANS()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_radians)     | ラジアンに変換された引数を返す     |
 | [`RAND()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_rand)           | ランダムな浮動小数点値を返す      |
 | [`ROUND()`](https://dev.mysql.com/doc/refman/8.0/en/mathematical-functions.html#function_round)         | 議論を迂回する             |
@@ -56,4 +56,4 @@ TiDB は、MySQL 8.0 で利用可能な[数値関数と演算子](https://dev.my
 
 ## 関連するシステム変数 {#related-system-variables}
 
-[`div_precision_increment`](/system-variables.md#div_precision_increment-new-in-v800) `/`演算子の精度を設定するために使用されます。
+[`div_precision_increment`](/system-variables.md#div_precision_increment-new-in-v800)は`/`演算子の精度を設定するために使用されます。

@@ -5,11 +5,11 @@ summary: CLUSTER_CONFIG` information_schema テーブルについて学習しま
 
 # クラスター構成 {#cluster-config}
 
-`CLUSTER_CONFIG`クラスター構成テーブルを使用すると、クラスター内のすべてのサーバーコンポーネントの現在の構成を取得できます。これにより、同様の情報を取得するには各インスタンスの HTTP API エンドポイントにアクセスする必要があった以前のリリースの TiDB よりも使用が簡単になります。
+`CLUSTER_CONFIG`クラスタ構成テーブルを使用すると、クラスタ内のすべてのサーバーコンポーネントの現在の構成を取得できます。これにより、以前のリリースの TiDB では同様の情報を取得するために各インスタンスの HTTP API エンドポイントにアクセスする必要がありましたが、より使いやすくなります。
 
 > **注記：**
 >
-> この表は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> このテーブルは TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 ```sql
 USE information_schema;

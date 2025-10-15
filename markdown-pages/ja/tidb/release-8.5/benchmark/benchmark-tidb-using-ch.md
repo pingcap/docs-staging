@@ -1,17 +1,17 @@
 ---
 title: How to Run CH-benCHmark Test on TiDB
-summary: TiDB で CH-benCHmark テストを実行する方法を学習します。
+summary: TiDB で CH-benCHmark テストを実行する方法を学びます。
 ---
 
-# TiDB で CH-benCHmark テストを実行する方法 {#how-to-run-ch-benchmark-test-on-tidb}
+# TiDBでCH-benCHmarkテストを実行する方法 {#how-to-run-ch-benchmark-test-on-tidb}
 
 このドキュメントでは、CH-benCHmark を使用して TiDB をテストする方法について説明します。
 
-CH-benCHmark は、 [TPC-C](http://www.tpc.org/tpcc/)と[TPC-H](http://www.tpc.org/tpch/)両方のテストを含む混合ワークロードです。これは、HTAP システムをテストするための最も一般的なワークロードです。詳細については、 [混合ワークロードCH-benCHmark](https://dl.acm.org/doi/10.1145/1988842.1988850)参照してください。
+CH-benCHmarkは、テスト[TPC-C](http://www.tpc.org/tpcc/)とテスト[TPC-H](http://www.tpc.org/tpch/)両方を含む混合ワークロードです。HTAPシステムのテストで最も一般的なワークロードです。詳細については、 [混合ワークロードCH-benCHmark](https://dl.acm.org/doi/10.1145/1988842.1988850)参照してください。
 
-CH-benCHmark テストを実行する前に、まず TiDB の HTAPコンポーネントである[TiFlash](/tiflash/tiflash-overview.md)展開する必要があります。TiFlash と[TiFlashレプリカを作成する](#create-tiflash-replicas)TiFlashすると、TiKV は TPC-C オンライン トランザクションの最新データをリアルタイムでTiFlashに複製し、TiDB オプティマイザーは TPC-H ワークロードからの OLAP クエリをTiFlashの MPP エンジンに自動的にプッシュダウンして効率的に実行します。
+CH-benCHmarkテストを実行する前に、まずTiDBのHTAPコンポーネントである[TiFlash](/tiflash/tiflash-overview.md)導入する必要があります。TiFlashと[TiFlashレプリカを作成する](#create-tiflash-replicas)TiFlashすると、TiKVがTPC-Cオンライントランザクションの最新データをTiFlashにリアルタイムで複製し、TiDBオプティマイザーがTPC-HワークロードからTiFlashのMPPエンジンにOLAPクエリを自動的にプッシュダウンして効率的に実行します。
 
-このドキュメントの CH-benCHmark テストは[ゴーTPC](https://github.com/pingcap/go-tpc)に基づいて実装されています。テスト プログラムは次の[TiUP](/tiup/tiup-overview.md)コマンドを使用してダウンロードできます。
+このドキュメントのCH-benCHmarkテストは[ゴーTPC](https://github.com/pingcap/go-tpc)に基づいて実装されています。テストプログラムは以下の[TiUP](/tiup/tiup-overview.md)のコマンドでダウンロードできます。
 
 ```shell
 tiup install bench
@@ -25,15 +25,15 @@ TiUP Benchコンポーネントの詳細な使用方法については、 [TiUP�
 
 **データのロードは通常、TPC-C テスト全体の中で最も時間がかかり、問題が発生する段階です。**
 
-1000 のウェアハウスを例にとると、データのロードとテストのためにシェルで次のTiUPコマンドを実行できます。このドキュメントの`172.16.5.140`と`4000` TiDB のホストとポートの値に置き換える必要があることに注意してください。
+1,000個のウェアハウスを例に挙げると、以下のTiUPコマンドをシェルで実行してデータのロードとテストを行うことができます。なお、このドキュメントの`172.16.5.140`と`4000` 、実際のTiDBのホストとポートの値に置き換えてください。
 
 ```shell
 tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 1000 prepare -T 32
 ```
 
-マシンの構成によっては、この読み込みプロセスに数時間かかる場合があります。クラスターのサイズが小さい場合は、テストに小さいウェアハウス値を使用できます。
+マシンの構成によっては、この読み込みプロセスに数時間かかる場合があります。クラスターサイズが小さい場合は、テストに小さいウェアハウス値を使用できます。
 
-データがロードされたら、 `tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 1000 check`コマンドを実行してデータの正確性を検証できます。
+After the data is loaded, you can execute the `tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 1000 check` command to validate the data correctness.
 
 ### TPC-Hに必要な追加のテーブルとビューをロードします {#load-additional-tables-and-views-required-for-tpc-h}
 
@@ -58,24 +58,24 @@ tiup bench ch -H 172.16.5.140 -P 4000 -D tpcc prepare
 
 ## TiFlashレプリカを作成する {#create-tiflash-replicas}
 
-TiFlashがデプロイされた後、 TiFlash はTiKV データを自動的に複製しません。1 `tpcc`データベースのTiFlashレプリカを作成するには、次の SQL ステートメントを実行する必要があります。指定されたTiFlashレプリカが作成されると、TiKV は最新のデータをリアルタイムでTiFlashに自動的に複製します。次の例では、クラスターに 2 つのTiFlashノードがデプロイされ、レプリカ数が 2 に設定されています。
+TiFlashをデプロイした後、 TiFlash はTiKV データを自動的に複製しません。1 `tpcc`のTiFlashレプリカを作成するには、次の SQL 文を実行する必要があります。指定されたTiFlashレプリカが作成されると、TiKV は最新のデータをリアルタイムでTiFlashに自動的に複製します。次の例では、クラスターに 2 つのTiFlashノードをデプロイし、レプリカ数を 2 に設定しています。
 
     ALTER DATABASE tpcc SET tiflash replica 2;
 
-`tpcc`データベース内のすべてのテーブルのレプリケーションが完了しているかどうかを確認するには、次のステートメントを実行します。このステートメントでは、 `WHERE`句を使用して、チェックするデータベースとテーブルを指定します。すべてのデータベースのレプリケーション ステータスを確認する場合は、ステートメントから`WHERE`句を削除します。
+`tpcc`データベース内のすべてのテーブルのレプリケーションが完了しているかどうかを確認するには、次のステートメントを実行します。3 句は、確認するデータベースとテーブルを指定します。すべてのデータベースのレプリケーション状態を確認する場合は、ステートメントから`WHERE`句`WHERE`削除します。
 
 ```sql
 SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'tpcc';
 ```
 
-上記のステートメントの結果:
+上記のステートメントの結果は次のようになります。
 
--   `AVAILABLE`特定のテーブルのTiFlashレプリカが使用可能かどうかを示します。2 `1`使用可能、 `0`使用不可を意味します。レプリカが使用可能になると、このステータスは変更されなくなります。
--   `PROGRESS`レプリケーションの進行状況を意味します。値は`0` ～ `1`です。6 `1` TiFlashレプリカのレプリケーションが完了したことを意味します。
+-   `AVAILABLE` 、特定のテーブルのTiFlashレプリカが利用可能かどうかを示します。2 `1`利用可能、 `0`利用不可を意味します。レプリカが利用可能になると、このステータスは変更されません。
+-   `PROGRESS`レプリケーションの進行状況を示します。値は`0`から`1`までです。6 `1` TiFlashレプリカのレプリケーションが完了したことを意味します。
 
 ## 統計を収集する {#collect-statistics}
 
-TiDB オプティマイザーが最適な実行プランを生成できるようにするには、次の SQL ステートメントを実行して事前に統計を収集します。 **<a href="/system-variables.md#tidb_analyze_column_options-new-in-v830">`tidb_analyze_column_options`</a> `ALL`に設定してください。そうしないと、統計を収集するとクエリのパフォーマンスが大幅に低下する可能性があります。**
+TiDBオプティマイザが最適な実行プランを生成できるようにするには、事前に以下のSQL文を実行して統計情報を収集してください。tidb_analyze_column_options **<a href="/system-variables.md#tidb_analyze_column_options-new-in-v830">`tidb_analyze_column_options`</a> `ALL`に設定してください。設定しないと、統計情報を収集するとクエリのパフォーマンスが大幅に低下する可能性があります。**
 
     set global tidb_analyze_column_options='ALL';
     analyze table customer;
@@ -99,7 +99,7 @@ TiDB オプティマイザーが最適な実行プランを生成できるよう
 tiup bench ch --host 172.16.5.140 -P4000 --warehouses 1000 run -D tpcc -T 50 -t 1 --time 1h
 ```
 
-テスト中、テスト結果はコンソールに継続的に表示されます。例:
+テスト中は、テスト結果がコンソールに継続的に表示されます。例:
 
 ```text
 [Current] NEW_ORDER - Takes(s): 10.0, Count: 13524, TPM: 81162.0, Sum(ms): 998317.6, Avg(ms): 73.9, 50th(ms): 71.3, 90th(ms): 100.7, 95th(ms): 113.2, 99th(ms): 159.4, 99.9th(ms): 209.7, Max(ms): 243.3
@@ -117,7 +117,7 @@ tiup bench ch --host 172.16.5.140 -P4000 --warehouses 1000 run -D tpcc -T 50 -t 
 ...
 ```
 
-テストが終了すると、テストの概要結果が印刷されます。例:
+テストが終了すると、テストの概要結果が出力されます。例:
 
 ```text
 Finished: 50 OLTP workers, 1 OLAP workers

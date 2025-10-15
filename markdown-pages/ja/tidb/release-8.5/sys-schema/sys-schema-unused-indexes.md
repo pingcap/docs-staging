@@ -5,7 +5,7 @@ summary: sys` スキーマの `schema_unused_indexes` テーブルについて�
 
 # <code>schema_unused_indexes</code> {#code-schema-unused-indexes-code}
 
-`schema_unused_indexes` 、TiDB の最後の起動以降に使用されていないインデックスを記録します。次の列が含まれます。
+`schema_unused_indexes` 、TiDB の前回の起動以降使用されていないインデックスを記録します。以下の列が含まれます。
 
 -   `OBJECT_SCHEMA` : インデックスを含むテーブルが属するデータベースの名前。
 -   `OBJECT_NAME` : インデックスを含むテーブルの名前。
@@ -31,7 +31,7 @@ DESC SCHEMA_UNUSED_INDEXES;
 
 ## <code>schema_unused_indexes</code>ビューを手動で作成する {#manually-create-the-code-schema-unused-indexes-code-view}
 
-v8.0.0 より前のバージョンからアップグレードされたクラスターの場合、 `sys`スキーマとその中のビューは自動的に作成されません。次の SQL ステートメントを使用して手動で作成できます。
+v8.0.0より前のバージョンからアップグレードされたクラスターの場合、 `sys`スキーマとその中のビューは自動的には作成されません。以下のSQL文を使用して手動で作成できます。
 
 ```sql
 CREATE DATABASE IF NOT EXISTS sys;

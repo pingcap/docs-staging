@@ -9,25 +9,35 @@ summary: TiDB データベースの QUERY WATCH の使用法の概要。
 
 > **注記：**
 >
-> この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> この機能は、クラスター[TiDB Cloudスターター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)および[TiDB Cloudエッセンシャル](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)では利用できません。
 
 ## 概要 {#synopsis}
 
 ```ebnf+diagram
 AddQueryWatchStmt ::=
     "QUERY" "WATCH" "ADD" QueryWatchOptionList
+
 QueryWatchOptionList ::=
     QueryWatchOption
 |   QueryWatchOptionList QueryWatchOption
 |   QueryWatchOptionList ',' QueryWatchOption
+
 QueryWatchOption ::=
     "RESOURCE" "GROUP" ResourceGroupName
 |   "RESOURCE" "GROUP" UserVariable
 |   "ACTION" EqOpt ResourceGroupRunawayActionOption
 |   QueryWatchTextOption
+
 ResourceGroupName ::=
     Identifier
 |   "DEFAULT"
+
+ResourceGroupRunawayActionOption ::=
+    DRYRUN
+|   COOLDOWN
+|   KILL
+|   "SWITCH_GROUP" '(' ResourceGroupName ')'
+
 QueryWatchTextOption ::=
     "SQL" "DIGEST" SimpleExpr
 |   "PLAN" "DIGEST" SimpleExpr
@@ -44,7 +54,7 @@ DropQueryWatchStmt ::=
 
 ## パラメータ {#parameters}
 
-[`QUERY WATCH`パラメータ](/tidb-resource-control.md#query-watch-parameters)参照。
+[`QUERY WATCH`パラメータ](/tidb-resource-control-runaway-queries.md#query-watch-parameters)参照。
 
 ## MySQLの互換性 {#mysql-compatibility}
 
@@ -52,4 +62,4 @@ DropQueryWatchStmt ::=
 
 ## 参照 {#see-also}
 
--   [ランナウェイクエリ](/tidb-resource-control.md#manage-queries-that-consume-more-resources-than-expected-runaway-queries)
+-   [ランナウェイクエリ](/tidb-resource-control-runaway-queries.md)

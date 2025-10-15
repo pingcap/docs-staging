@@ -9,7 +9,7 @@ summary: CLUSTER_HARDWARE` information_schema テーブルについて学習し�
 
 > **注記：**
 >
-> この表は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> このテーブルは TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 ```sql
 USE information_schema;
@@ -32,15 +32,15 @@ DESC cluster_hardware;
 
 フィールドの説明:
 
--   `TYPE` : [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md)テーブルの`TYPE`フィールドに対応します。オプションの値は`tidb` 、 `pd` 、および`tikv`です。
--   `INSTANCE` : [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md)クラスタ情報テーブルの`INSTANCE`番目のフィールドに対応します。
--   `DEVICE_TYPE` : ハードウェア タイプ。現在、 `cpu` 、 `memory` 、 `disk` 、 `net`タイプを照会できます。
--   `DEVICE_NAME` : ハードウェア名`DEVICE_NAME`の値は`DEVICE_TYPE`によって異なります。
+-   `TYPE` : 表[`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md)のフィールド`TYPE`に対応します。オプションの値は`tidb` 、 `pd` 、 `tikv`です。
+-   `INSTANCE` : [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md)クラスター情報テーブルの`INSTANCE`フィールドに対応します。
+-   `DEVICE_TYPE` : ハードウェアタイプ。現在、 `cpu` 、 `memory` 、 `disk` 、 `net`タイプを照会できます。
+-   `DEVICE_NAME` : ハードウェア名`DEVICE_NAME`の値は`DEVICE_TYPE`に応じて変化します。
     -   `cpu` : ハードウェア名は cpu です。
     -   `memory` : ハードウェア名はメモリです。
     -   `disk` : ディスク名。
     -   `net` : ネットワーク カード名。
--   `NAME` : ハードウェアの異なる情報名。たとえば、 cpu には`cpu-logical-cores`と`cpu-physical-cores`という 2 つの情報名があり、それぞれ論理コア番号と物理コア番号を意味します。
+-   `NAME` : ハードウェアの異なる情報名。例えば、CPUには`cpu-logical-cores`と`cpu-physical-cores`という2つの情報名があり、それぞれ論理コア番号と物理コア番号を意味します。
 -   `VALUE` : ディスクボリュームや CPU コア数などの対応するハードウェア情報の値。
 
 次の例は、 `CLUSTER_HARDWARE`テーブルを使用して CPU 情報を照会する方法を示しています。

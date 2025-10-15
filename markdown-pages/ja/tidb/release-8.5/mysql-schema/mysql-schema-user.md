@@ -5,7 +5,7 @@ summary: mysql` スキーマの `user` テーブルについて学習します�
 
 # <code>mysql.user</code> {#code-mysql-user-code}
 
-`mysql.user`表には、ユーザー アカウントとその権限に関する情報が示されています。
+`mysql.user`表は、ユーザー アカウントとその権限に関する情報を提供します。
 
 `mysql.user`の構造を表示するには、次の SQL ステートメントを使用します。
 
@@ -75,10 +75,10 @@ DESC mysql.user;
 
 -   特権：
 
-    `_priv`または`_Priv`で終わるフィールドは、ユーザー アカウントに付与される権限を定義します。たとえば、 `Select_priv` 、ユーザーがグローバル`Select`権限を持っていることを意味します。詳細については、 [TiDB操作に必要な権限](/privilege-management.md#privileges-required-for-tidb-operations)参照してください。
+    `_priv`または`_Priv`で終わるフィールドは、ユーザーアカウントに付与される権限を定義します。例えば、 `Select_priv`ユーザーがグローバル権限`Select`を持つことを意味します。詳細については、 [TiDB操作に必要な権限](/privilege-management.md#privileges-required-for-tidb-operations)参照してください。
 
 -   Security：
-    -   `authentication_string`および`plugin` : `authentication_string`には、ユーザー アカウントの資格情報が保存されます。資格情報は、 `plugin`フィールドで指定された認証プラグインに基づいて解釈されます。
+    -   `authentication_string`と`plugin` ： `authentication_string`にはユーザーアカウントの認証情報が保存されます。認証情報は、 `plugin`フィールドで指定された認証プラグインに基づいて解釈されます。
     -   `Account_locked` : ユーザー アカウントがロックされているかどうかを示します。
     -   `Password_reuse_history`と`Password_reuse_time` : [パスワード再利用ポリシー](/password-management.md#password-reuse-policy)に使用されます。
     -   `User_attributes` : ユーザーのコメントとユーザー属性に関する情報を提供します。
@@ -95,10 +95,10 @@ DESC mysql.user;
 
 -   特権：
 
-    `_priv`または`_Priv`で終わるフィールドは、ユーザー アカウントに付与される権限を定義します。たとえば、 `Select_priv` 、ユーザーがグローバル`Select`権限を持っていることを意味します。詳細については、 [TiDB操作に必要な権限](https://docs.pingcap.com/tidb/stable/privilege-management#privileges-required-for-tidb-operations)参照してください。
+    `_priv`または`_Priv`で終わるフィールドは、ユーザーアカウントに付与される権限を定義します。例えば、 `Select_priv`ユーザーがグローバル権限`Select`を持つことを意味します。詳細については、 [TiDB操作に必要な権限](https://docs.pingcap.com/tidb/stable/privilege-management#privileges-required-for-tidb-operations)参照してください。
 
 -   Security：
-    -   `authentication_string`および`plugin` : `authentication_string`には、ユーザー アカウントの資格情報が保存されます。資格情報は、 `plugin`フィールドで指定された認証プラグインに基づいて解釈されます。
+    -   `authentication_string`と`plugin` ： `authentication_string`にはユーザーアカウントの認証情報が保存されます。認証情報は、 `plugin`フィールドで指定された認証プラグインに基づいて解釈されます。
     -   `Account_locked` : ユーザー アカウントがロックされているかどうかを示します。
     -   `Password_reuse_history`と`Password_reuse_time` : [パスワード再利用ポリシー](https://docs.pingcap.com/tidb/stable/password-management#password-reuse-policy)に使用されます。
     -   `User_attributes` : ユーザーのコメントとユーザー属性に関する情報を提供します。
@@ -107,4 +107,4 @@ DESC mysql.user;
 
 </CustomContent>
 
-TiDB `mysql.user`テーブルのフィールドのほとんどは MySQL `mysql.user`テーブルにも存在しますが、 `Token_issuer`フィールドは TiDB に固有です。
+TiDB `mysql.user`テーブルのほとんどのフィールドは MySQL `mysql.user`テーブルにも存在しますが、 `Token_issuer`フィールドは TiDB に固有です。

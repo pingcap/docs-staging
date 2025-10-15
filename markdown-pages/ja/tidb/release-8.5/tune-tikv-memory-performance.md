@@ -3,29 +3,29 @@ title: Tune TiKV Memory Parameter Performance
 summary: 最適なパフォーマンスを得るために TiKV パラメータを調整する方法を学びます。
 ---
 
-# TiKV メモリ パラメータのパフォーマンスを調整する {#tune-tikv-memory-parameter-performance}
+# TiKVメモリパラメータのパフォーマンスを調整する {#tune-tikv-memory-parameter-performance}
 
-このドキュメントでは、最適なパフォーマンスを得るために TiKV パラメータを調整する方法について説明します。 デフォルトの構成ファイルは[etc/config-template.toml](https://github.com/tikv/tikv/blob/release-8.5/etc/config-template.toml)にあります。 構成を変更するには、構成項目の限定セットに対して[TiUPを使用する](/maintain-tidb-using-tiup.md#modify-the-configuration)または[TiKVを動的に変更する](/dynamic-config.md#modify-tikv-configuration-dynamically)実行します。 完全な構成については、 [TiKV 設定ファイル](/tikv-configuration-file.md)参照してください。
+このドキュメントでは、TiKVパラメータを調整して最適なパフォーマンスを得る方法について説明します。デフォルトの設定ファイルは[etc/config-template.toml](https://github.com/tikv/tikv/blob/release-8.5/etc/config-template.toml)にあります。設定を変更するには、 [TiUPを使用する](/maintain-tidb-using-tiup.md#modify-the-configuration)または[TiKVを動的に変更する](/dynamic-config.md#modify-tikv-configuration-dynamically)で一部の設定項目を選択できます。完全な設定については、 [TiKV設定ファイル](/tikv-configuration-file.md)ご覧ください。
 
-TiKV は、TiKVアーキテクチャの最下位レベルで永続storageとして RocksDB を使用します。そのため、パフォーマンス パラメータの多くは RocksDB に関連しています。TiKV は 2 つの RocksDB インスタンスを使用します。デフォルトの RocksDB インスタンスは KV データを格納し、 Raft RocksDB インスタンス (RaftDB) はRaftログを格納します。
+TiKVは、TiKVアーキテクチャの最下層にある永続storageとしてRocksDBを使用します。そのため、多くのパフォーマンスパラメータはRocksDBに関連しています。TiKVは2つのRocksDBインスタンスを使用します。デフォルトのRocksDBインスタンスはKVデータを保存し、 Raft RocksDBインスタンス（RaftDB）はRaftログを保存します。
 
 TiKV は RocksDB から`Column Families` (CF) を実装します。
 
--   デフォルトの RocksDB インスタンスは、KV データを`default` `write`および`lock` CF に保存します。
+-   デフォルトの RocksDB インスタンスは`write` KV データを`default` 、および`lock` CF に保存します。
 
-    -   `default` CF には実際のデータが格納されます。対応するパラメータは`[rocksdb.defaultcf]`にあります。
-    -   `write` CF には、マルチバージョン同時実行制御 (MVCC) のバージョン情報とインデックス関連のデータが格納されます。対応するパラメータは`[rocksdb.writecf]`にあります。
-    -   `lock` CF にはロック情報が保存されます。システムはデフォルトのパラメータを使用します。
+    -   `default` CFには実際のデータが保存されます。対応するパラメータは`[rocksdb.defaultcf]`にあります。
+    -   `write` CF は、マルチバージョン同時実行制御（MVCC）のバージョン情報とインデックス関連データを格納します。対応するパラメータは`[rocksdb.writecf]`にあります。
+    -   `lock`はロック情報を保存します。システムはデフォルトのパラメータを使用します。
 
 -   Raft RocksDB (RaftDB) インスタンスはRaftログを保存します。
 
-    -   `default` CF にはRaftログが格納されます。対応するパラメータは`[raftdb.defaultcf]`にあります。
+    -   `default` CF にはRaftログが保存されます。対応するパラメータは`[raftdb.defaultcf]`にあります。
 
-TiKV 3.0 以降では、デフォルトではすべての CF が 1 つのブロックキャッシュインスタンスを共有します。 `[storage.block-cache]`未満の`capacity`パラメータを設定することで、キャッシュのサイズを構成できます。ブロックキャッシュが大きいほど、より多くのホット データをキャッシュでき、データの読み取りが容易になりますが、その一方で、システムメモリの占有量も大きくなります。
+TiKV 3.0以降、デフォルトではすべてのCFが1つのブロックキャッシュインスタンスを共有します。キャッシュのサイズは、 `[storage.block-cache]`未満の`capacity`パラメータを設定することで調整できます。ブロックキャッシュが大きいほど、より多くのホットデータをキャッシュでき、データの読み取りが容易になりますが、同時にシステムメモリの占有量も増加します。
 
 TiKV 3.0 より前では、共有ブロックキャッシュはサポートされていないため、各 CF ごとにブロックキャッシュを個別に構成する必要があります。
 
-各 CF には個別の`write buffer`もあります。 `write-buffer-size`パラメータを設定することでサイズを設定できます。
+各 CF にはそれぞれ`write buffer`あります。3 パラメータ`write-buffer-size`設定することでサイズを設定できます。
 
 ## パラメータ仕様 {#parameter-specification}
 
@@ -241,15 +241,15 @@ target-file-size-base = "32MiB"
 
 ## TiKVメモリ使用量 {#tikv-memory-usage}
 
-システムメモリを占有する`block cache`と`write buffer`他に、次のシナリオでもシステムメモリが占​​有されます。
+システムメモリを占有する`block cache`と`write buffer`他に、次のシナリオでもシステムメモリが占有されます。
 
 -   メモリの一部はシステムのページ キャッシュとして予約されています。
 
--   TiKV が`select * from ...`ような大きなクエリを処理する場合、データを読み取り、対応するデータ構造をメモリ内に生成し、この構造を TiDB に返します。このプロセス中、TiKV はメモリの一部を占有します。
+-   TiKVは`select * from ...`ような大規模なクエリを処理する際、データを読み取り、対応するデータ構造をメモリ上に生成し、この構造をTiDBに返します。この処理中、TiKVはメモリの一部を占有します。
 
 ## TiKVの推奨構成 {#recommended-configuration-of-tikv}
 
--   本番環境では、CPU コアが 8 未満、またはメモリが 32 GiB 未満のマシンに TiKV をデプロイすることは推奨されません。
+-   本番環境では、CPU コアが 8 個未満、またはメモリが 32 GiB 未満のマシンに TiKV を展開することは推奨されません。
 
 -   高い書き込みスループットが求められる場合は、スループット容量の優れたディスクを使用することをお勧めします。
 

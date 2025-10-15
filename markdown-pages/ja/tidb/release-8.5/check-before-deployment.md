@@ -9,7 +9,7 @@ summary: TiDB をデプロイする前に環境チェック操作について学
 
 ## TiKVを展開するターゲットマシンにオプション付きでデータディスクのext4ファイルシステムをマウントします。 {#mount-the-data-disk-ext4-filesystem-with-options-on-the-target-machines-that-deploy-tikv}
 
-本番環境では、TiKVデータの保存にEXT4ファイルシステムのNVMe SSDを使用することをお勧めします。この構成はベストプラクティスであり、その信頼性、セキュリティ、安定性は多数のオンラインシナリオで実証されています。
+本番環境では、TiKVデータの保存にEXT4ファイルシステムのNVMe SSDを使用することをお勧めします。この構成はベストプラクティスであり、その信頼性、セキュリティ、安定性は数多くのオンラインシナリオで実証されています。
 
 `root`ユーザー アカウントを使用してターゲット マシンにログインします。
 
@@ -17,7 +17,7 @@ summary: TiDB をデプロイする前に環境チェック操作について学
 
 > **注記：**
 >
-> データ ディスクが ext4 にフォーマットされていて、マウント オプションが追加されている場合は、 `umount /dev/nvme0n1p1`コマンドを実行してアンインストールし、以下の 5 番目の手順に直接進んで`/etc/fstab`ファイルを編集し、オプションをファイル システムに再度追加することができます。
+> データ ディスクが ext4 にフォーマットされ、マウント オプションが追加されている場合は、 `umount /dev/nvme0n1p1`コマンドを実行してアンインストールし、以下の 5 番目の手順に直接進んで`/etc/fstab`ファイルを編集し、オプションをファイル システムに再度追加できます。
 
 `/dev/nvme0n1`データ ディスクを例に挙げます。
 
@@ -127,7 +127,7 @@ TiDBの一部の操作では、サーバーへの一時ファイルの書き込�
 
 -   `Fast Online DDL`作業領域
 
-    変数[`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630) `ON` (v6.5.0 以降のバージョンではデフォルト値) に設定されている場合、 `Fast Online DDL`有効になり、一部の DDL 操作ではファイルシステム内の一時ファイルの読み取りと書き込みが必要になります。この場所は設定項目[`temp-dir`](/tidb-configuration-file.md#temp-dir-new-in-v630)で定義されます。TiDB を実行するユーザーには、オペレーティングシステムのそのディレクトリに対する読み取りおよび書き込み権限があることを確認する必要があります。デフォルトのディレクトリ`/tmp/tidb` tmpfs (一時ファイルシステム) を使用します。ディスクディレクトリを明示的に指定することをお勧めします。以下は、例として`/data/tidb-deploy/tempdir`使用しています。
+    変数[`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630) `ON` (v6.5.0 以降のバージョンではデフォルト値) に設定されている場合、 `Fast Online DDL`有効になり、一部の DDL 操作ではファイルシステム内の一時ファイルの読み取りと書き込みが必要になります。場所は設定項目[`temp-dir`](/tidb-configuration-file.md#temp-dir-new-in-v630)で定義されます。TiDB を実行するユーザーには、オペレーティングシステムのそのディレクトリに対する読み取りおよび書き込み権限があることを確認する必要があります。デフォルトのディレクトリ`/tmp/tidb` tmpfs (一時ファイルシステム) を使用します。ディスクディレクトリを明示的に指定することをお勧めします。以下は、例として`/data/tidb-deploy/tempdir`使用しています。
 
     > **注記：**
     >
@@ -456,7 +456,7 @@ sudo systemctl enable ntpd.service
 
     > **注記：**
     >
-    > `The governor "powersave"`出力された場合、 cpufreq モジュールの電源ポリシーは`powersave`です。これを`performance`に変更する必要があります。仮想マシンまたはクラウドホストを使用している場合、通常は出力は`Unable to determine current policy`となり、何も変更する必要はありません。
+    > `The governor "powersave"`出力された場合、 cpufreq モジュールの電源ポリシーは`powersave`です。これを`performance`に変更する必要があります。仮想マシンまたはクラウドホストを使用している場合、通常は`Unable to determine current policy`出力され、何も変更する必要はありません。
 
 5.  オペレーティング システムの最適なパラメータを構成します。
 
@@ -539,7 +539,7 @@ sudo systemctl enable ntpd.service
 
             > **注記：**
             >
-            > `--update-kernel`後に実際のバージョン番号を指定することもできます (例: `--update-kernel /boot/vmlinuz-3.10.0-957.el7.x86_64` )。
+            > `--update-kernel`後に実際のバージョン番号（ `--update-kernel /boot/vmlinuz-3.10.0-957.el7.x86_64`や`ALL` ）を指定することもできます。
 
         3.  変更されたデフォルトのカーネル構成を確認するには、 `grubby --info`実行します。
 
@@ -663,10 +663,12 @@ sudo systemctl enable ntpd.service
 
     ```bash
     cat << EOF >>/etc/security/limits.conf
-    tidb           soft    nofile          1000000
-    tidb           hard    nofile          1000000
+    tidb           soft    nofile         1000000
+    tidb           hard    nofile         1000000
     tidb           soft    stack          32768
     tidb           hard    stack          32768
+    tidb           soft    core           unlimited
+    tidb           hard    core           unlimited
     EOF
     ```
 
@@ -704,7 +706,7 @@ sudo systemctl enable ntpd.service
 
         [tidb@10.0.1.1 ~]$
 
-5.  `tidb`ユーザーでターゲットマシンにログインした後、以下のコマンドを実行します。パスワードを入力する必要がなく、 `root`ユーザーに切り替えることができれば、 `tidb`ユーザーでパスワードなしのsudoが正常に設定されています。
+5.  `tidb`ユーザーでターゲットマシンにログインした後、以下のコマンドを実行します。パスワードを入力する必要がなく、 `root`ユーザーに切り替えられる場合は、 `tidb`ユーザーでパスワードなしのsudoが正常に設定されています。
 
     ```bash
     sudo -su root

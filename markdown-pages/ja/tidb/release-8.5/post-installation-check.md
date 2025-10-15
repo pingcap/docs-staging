@@ -5,7 +5,7 @@ summary: TiDB クラスターの実行ステータスを確認する方法を学
 
 # クラスタのステータスを確認する {#check-cluster-status}
 
-TiDB クラスターをデプロイした後は、クラスターが正常に動作しているかどうかを確認する必要があります。このドキュメントでは、 TiUPコマンド[TiDBダッシュボード](/dashboard/dashboard-intro.md)と Grafana を使用してクラスターの状態を確認する方法と、TiDB データベースにログインして簡単な SQL 操作を実行する方法を紹介します。
+TiDBクラスタをデプロイした後、クラスタが正常に動作しているかどうかを確認する必要があります。このドキュメントでは、 TiUPコマンド[TiDBダッシュボード](/dashboard/dashboard-intro.md)とGrafanaを使用してクラスタの状態を確認する方法と、TiDBデータベースにログインして簡単なSQL操作を実行する方法を紹介します。
 
 ## TiDBクラスタのステータスを確認する {#check-the-tidb-cluster-status}
 
@@ -13,29 +13,29 @@ TiDB クラスターをデプロイした後は、クラスターが正常に動
 
 ### TiUPを使用する {#use-tiup}
 
-クラスターのステータスを確認するには、 `tiup cluster display <cluster-name>`コマンドを使用します。例:
+`tiup cluster display <cluster-name>`コマンドを使用してクラスタのステータスを確認します。例:
 
 ```shell
 tiup cluster display tidb-test
 ```
 
-期待される出力: 各ノードの`Status`情報が`Up`場合、クラスターは正常に実行されます。
+期待される出力: 各ノードの`Status`情報が`Up`の場合、クラスターは正常に実行されます。
 
 ### TiDBダッシュボードを使用する {#use-tidb-dashboard}
 
-1.  `${pd-ip}:${pd-port}/dashboard`で TiDB ダッシュボードにログインします。ユーザー名とパスワードは TiDB `root`ユーザーと同じです。5 `root`を変更した場合は、変更したパスワードを入力します。デフォルトではパスワードは空です。
+1.  `${pd-ip}:${pd-port}/dashboard`で TiDB ダッシュボードにログインします。ユーザー名とパスワードは TiDB `root`ユーザーと同じです。5 `root`パスワードを変更した場合は、変更後のパスワードを入力してください。デフォルトではパスワードは空です。
 
     ![TiDB-Dashboard](https://docs-download.pingcap.com/media/images/docs/tiup/tidb-dashboard.png)
 
-2.  ホームページには、TiDB クラスター内のノード情報が表示されます。
+2.  ホーム ページには、TiDB クラスター内のノード情報が表示されます。
 
     ![TiDB-Dashboard-status](https://docs-download.pingcap.com/media/images/docs/tiup/tidb-dashboard-status.png)
 
 ### Grafanaを使用する {#use-grafana}
 
-1.  `${Grafana-ip}:3000`で Grafana モニタリングにログインします。デフォルトのユーザー名とパスワードはどちらも`admin`です。
+1.  `${Grafana-ip}:3000`でGrafanaモニタリングにログインします。デフォルトのユーザー名とパスワードはどちらも`admin`です。
 
-2.  TiDB ポートのステータスと負荷監視情報を確認するには、 **[概要]**をクリックします。
+2.  TiDB ポートの状態と負荷監視情報を確認するには、 **[概要]**をクリックします。
 
     ![Grafana-overview](https://docs-download.pingcap.com/media/images/docs/tiup/grafana-overview.png)
 
@@ -51,14 +51,14 @@ tiup cluster display tidb-test
 mysql -u root -h ${tidb_server_host_IP_address} -P 4000
 ```
 
-`${tidb_server_host_IP_address}` 、 `10.0.1.7`などの[クラスタトポロジファイルを初期化する](/production-deployment-using-tiup.md#step-3-initialize-cluster-topology-file)の場合に`tidb_servers`に設定される IP アドレスの 1 つです。
+`${tidb_server_host_IP_address}` 、 `10.0.1.7`などの[クラスタトポロジファイルを初期化する](/production-deployment-using-tiup.md#step-3-initialize-the-cluster-topology-file)の場合に`tidb_servers`に設定される IP アドレスの 1 つです。
 
 次の情報はログインが成功したことを示します。
 
 ```sql
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 3
-Server version: 8.0.11-TiDB-v8.1.2 TiDB Server (Apache License 2.0) Community Edition, MySQL 8.0 compatible
+Server version: 8.0.11-TiDB-v8.5.3 TiDB Server (Apache License 2.0) Community Edition, MySQL 8.0 compatible
 Copyright (c) 2000, 2023, Oracle and/or its affiliates. All rights reserved.
 Oracle is a registered trademark of Oracle Corporation and/or its
 affiliates. Other names may be trademarks of their respective
@@ -119,9 +119,9 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
     ```sql
     CREATE TABLE `tab_tidb` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `id` int NOT NULL AUTO_INCREMENT,
     `name` varchar(20) NOT NULL DEFAULT '',
-    `age` int(11) NOT NULL DEFAULT 0,
+    `age` int NOT NULL DEFAULT 0,
     `version` varchar(20) NOT NULL DEFAULT '',
     PRIMARY KEY (`id`),
     KEY `idx_age` (`age`));
@@ -181,7 +181,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
     3 rows in set (0.00 sec)
     ```
 
--   TiDB を終了:
+-   TiDB を終了します:
 
     ```sql
     exit

@@ -1,11 +1,11 @@
 ---
 title: tiup dm help
-summary: tiup-dm コマンドライン インターフェイスは、help` コマンドまたは `--help` オプションを使用してアクセスできる豊富なヘルプ情報を提供します。ヘルプにアクセスするための構文は `tiup dm help [command] [flags]` です。ここで、`[command]` はヘルプ情報が必要なコマンドを指定します。`-h` または `--help` オプションはヘルプ情報を出力。出力は、指定されたコマンドまたは `tiup-dm` のヘルプ情報です。
+summary: tiup-dm コマンドラインインターフェースは豊富なヘルプ情報を提供しており、help` コマンドまたは `--help` オプションを使用してアクセスできます。ヘルプにアクセスするための構文は `tiup dm help [command] [flags]` です。`[command]` には、ヘルプ情報が必要なコマンドを指定します。`-h` または `--help` オプションはヘルプ情報を出力。出力は、指定されたコマンドまたは `tiup-dm` のヘルプ情報です。
 ---
 
 # tiup dm help {#tiup-dm-help}
 
-tiup-dm コマンドライン インターフェイスは、ユーザーに豊富なヘルプ情報を提供します。 `help`コマンドまたは`--help`オプションで表示できます。基本的に、 `tiup dm help <command>` `tiup dm <command> --help`に相当します。
+tiup-dm コマンドラインインターフェースは、豊富なヘルプ情報を提供します。ヘルプ情報は、コマンド`help`またはオプション`--help`で表示できます。基本的に、 `tiup dm help <command>` `tiup dm <command> --help`に相当します。
 
 ## 構文 {#syntax}
 

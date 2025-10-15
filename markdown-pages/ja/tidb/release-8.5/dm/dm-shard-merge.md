@@ -11,11 +11,11 @@ TiDB データ移行 (DM) は、アップストリーム MySQL/MariaDB シャー
 
 ## 制限 {#restrictions}
 
-現在、シャードマージ機能は限られたシナリオでのみサポートされています。詳細については、 [シャーディング DDL の使用悲観的モードでの制限](/dm/feature-shard-merge-pessimistic.md#restrictions)と[シャーディング DDL の使用楽観的モードでの制限](/dm/feature-shard-merge-optimistic.md#restrictions)を参照してください。
+現在、シャードマージ機能は限られたシナリオでのみサポートされています。詳細については、 [シャーディングDDLの使用悲観的モードでの制限](/dm/feature-shard-merge-pessimistic.md#restrictions)と[シャーディングDDLの使用楽観的モードでの制限](/dm/feature-shard-merge-optimistic.md#restrictions)を参照してください。
 
 ## パラメータを設定する {#configure-parameters}
 
-タスク設定ファイルで、 `shard-mode` `pessimistic`に設定します。
+タスク設定ファイルで、 `shard-mode`を`pessimistic`に設定します。
 
 ```yaml
 shard-mode: "pessimistic"
@@ -27,4 +27,4 @@ shard-mode: "pessimistic"
 
 ## シャーディングDDLロックを手動で処理する {#handle-sharding-ddl-locks-manually}
 
-異常なシナリオでは、 [シャーディングDDLロックを手動で処理する](/dm/manually-handling-sharding-ddl-locks.md)必要になります。
+異常なシナリオでは、 [シャーディングDDLロックを手動で処理する](/dm/manually-handling-sharding-ddl-locks.md)実行する必要があります。

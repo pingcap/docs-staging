@@ -5,13 +5,13 @@ summary: TiDB ユーザー アカウントを管理する方法を学習しま�
 
 # TiDB ユーザーアカウント管理 {#tidb-user-account-management}
 
-このドキュメントでは、TiDB ユーザー アカウントを管理する方法について説明します。
+This document describes how to manage a TiDB user account.
 
 ## ユーザー名とパスワード {#user-names-and-passwords}
 
-TiDB は、ユーザー アカウントを[`mysql.user`](/mysql-schema/mysql-schema-user.md)システム テーブルのテーブルに保存します。各アカウントは、ユーザー名とクライアント ホストによって識別されます。各アカウントにはパスワードがある場合があります。
+TiDBは、ユーザーアカウントをシステムテーブル[`mysql.user`](/mysql-schema/mysql-schema-user.md)に格納します。各アカウントはユーザー名とクライアントホストによって識別されます。各アカウントにはパスワードが設定されている場合があります。
 
-MySQL クライアントを使用して TiDBサーバーに接続し、指定されたアカウントとパスワードを使用してログインできます。各ユーザー名は、32 文字以下であることを確認してください。
+MySQLクライアントを使用してTiDBサーバーに接続し、指定されたアカウントとパスワードでログインできます。ユーザー名は32文字以内である必要があります。
 
 ```shell
 mysql --port 4000 --user xxx --password
@@ -25,10 +25,10 @@ mysql -P 4000 -u xxx -p
 
 ## ユーザーアカウントを追加する {#add-user-accounts}
 
-TiDB アカウントは次の 2 つの方法で作成できます。
+You can create TiDB accounts in two ways:
 
--   [`CREATE USER`](/sql-statements/sql-statement-create-user.md)や[`GRANT`](/sql-statements/sql-statement-grant-privileges.md)など、アカウントを作成して権限を確立するための標準のアカウント管理 SQL ステートメントを使用します。
--   [`INSERT`](/sql-statements/sql-statement-insert.md) 、 [`UPDATE`](/sql-statements/sql-statement-update.md) 、 [`DELETE`](/sql-statements/sql-statement-delete.md)などのステートメントを使用して権限テーブルを直接操作し、 [`FLUSH PRIVILEGES`](/sql-statements/sql-statement-flush-privileges.md)実行します。この方法では更新が不完全になる可能性があるため、アカウントの作成または変更にはこの方法を使用しないことをお勧めします。
+-   アカウントを作成して権限を確立するための標準のアカウント管理 SQL ステートメント ( [`CREATE USER`](/sql-statements/sql-statement-create-user.md)や[`GRANT`](/sql-statements/sql-statement-grant-privileges.md)など) を使用します。
+-   [`INSERT`](/sql-statements/sql-statement-insert.md)などのステートメントを使用して権限テーブルを直接操作し、 [`DELETE`](/sql-statements/sql-statement-delete.md) [`FLUSH PRIVILEGES`](/sql-statements/sql-statement-flush-privileges.md)実行します。この方法で[`UPDATE`](/sql-statements/sql-statement-update.md)更新が不完全になる可能性があるため、アカウントの作成または変更にはこの方法を使用しないことをお勧めします。
 
 [サードパーティのGUIツール](/develop/dev-guide-third-party-support.md#gui)使用してアカウントを作成することもできます。
 
@@ -36,19 +36,19 @@ TiDB アカウントは次の 2 つの方法で作成できます。
 CREATE USER [IF NOT EXISTS] user [IDENTIFIED BY 'auth_string'];
 ```
 
-パスワードを割り当てると、TiDB は`auth_string`をハッシュして[`mysql.user`](/mysql-schema/mysql-schema-user.md)テーブルに保存します。
+パスワードを割り当てると、TiDB は`auth_string`ハッシュして[`mysql.user`](/mysql-schema/mysql-schema-user.md)テーブルに保存します。
 
 ```sql
 CREATE USER 'test'@'127.0.0.1' IDENTIFIED BY 'xxx';
 ```
 
-TiDB アカウントの名前は、ユーザー名とホスト名で構成されます。アカウント名の構文は、「user_name」@「host_name」です。
+TiDBアカウント名はユーザー名とホスト名で構成されます。アカウント名の構文は「user_name@host_name」です。
 
--   `user_name`大文字と小文字が区別されます。
+-   `user_name`は大文字と小文字が区別されます。
 
--   `host_name`はホスト名または IP アドレスであり、ワイルドカード`%`または`_`サポートします。たとえば、ホスト名`'%'`すべてのホストに一致し、ホスト名`'192.168.1.%'`サブネット内のすべてのホストに一致します。
+-   `host_name`はホスト名またはIPアドレスで、ワイルドカード`%`または`_`サポートします。例えば、ホスト名`'%'`すべてのホストに一致し、ホスト名`'192.168.1.%'`サブネット内のすべてのホストに一致します。
 
-ホストはファジーマッチングをサポートしています:
+ホストはあいまい一致をサポートします:
 
 ```sql
 CREATE USER 'test'@'192.168.10.%';
@@ -56,7 +56,7 @@ CREATE USER 'test'@'192.168.10.%';
 
 `test`ユーザーは、 `192.168.10`サブネット上の任意のホストからログインできます。
 
-ホストが指定されていない場合、ユーザーはどの IP からでもログインできます。パスワードが指定されていない場合、デフォルトは空のパスワードです。
+ホストが指定されていない場合、ユーザーはどのIPアドレスからでもログインできます。パスワードが指定されていない場合、デフォルトは空のパスワードです。
 
 ```sql
 CREATE USER 'test';
@@ -68,9 +68,9 @@ CREATE USER 'test';
 CREATE USER 'test'@'%' IDENTIFIED BY '';
 ```
 
-指定されたユーザーが存在しない場合、ユーザーを自動的に作成する動作は[`sql_mode`](/system-variables.md#sql_mode)によって異なります。 `sql_mode`に`NO_AUTO_CREATE_USER`含まれている場合、 `GRANT`ステートメントはユーザーを作成せず、エラーが返されます。
+指定されたユーザーが存在しない場合、ユーザーの自動作成の動作は[`sql_mode`](/system-variables.md#sql_mode)に依存します。 `sql_mode`に`NO_AUTO_CREATE_USER`含まれる場合、 `GRANT`ステートメントはユーザーを作成せず、エラーが返されます。
 
-たとえば、 `sql_mode`に`NO_AUTO_CREATE_USER`含まれず、次の`CREATE USER`と`GRANT`ステートメントを使用して 4 つのアカウントを作成するとします。
+For example, assume that the `sql_mode` does not include `NO_AUTO_CREATE_USER`, and you use the following `CREATE USER` and `GRANT` statements to create four accounts:
 
 ```sql
 CREATE USER 'finley'@'localhost' IDENTIFIED BY 'some_pass';
@@ -112,7 +112,7 @@ SHOW GRANTS FOR 'admin'@'localhost';
     | GRANT RELOAD, PROCESS ON *.* TO 'admin'@'localhost' |
     +-----------------------------------------------------+
 
-アカウントのアカウント定義を表示するには、次の[`SHOW CREATE USER`](/sql-statements/sql-statement-show-create-user.md)ステートメントを使用します。
+To see the account definition for an account, use the [`SHOW CREATE USER`](/sql-statements/sql-statement-show-create-user.md) statement:
 
 ```sql
 SHOW CREATE USER 'admin'@'localhost';
@@ -127,7 +127,7 @@ SHOW CREATE USER 'admin'@'localhost';
 
 ## ユーザーアカウントを削除する {#remove-user-accounts}
 
-ユーザー アカウントを削除するには、次の[`DROP USER`](/sql-statements/sql-statement-drop-user.md)ステートメントを使用します。
+ユーザー アカウントを削除するには、次[`DROP USER`](/sql-statements/sql-statement-drop-user.md)ステートメントを使用します。
 
 ```sql
 DROP USER 'test'@'localhost';
@@ -141,11 +141,11 @@ TiDB は、データベースの初期化中に`'root'@'%'`デフォルト ア�
 
 ## アカウントのリソース制限を設定する {#set-account-resource-limits}
 
-TiDB は、リソース グループを使用してユーザーが消費するリソースを制限できます。詳細については、 [リソース制御を使用してリソースの分離を実現する](/tidb-resource-control.md)参照してください。
+TiDBは、リソースグループを使用してユーザーが消費するリソースを制限できます。詳細については、 [リソース制御を使用してリソースグループの制限とフロー制御を実現する](/tidb-resource-control-ru-groups.md)参照してください。
 
 ## アカウントパスワードの割り当て {#assign-account-passwords}
 
-TiDB は、パスワードを[`mysql.user`](/mysql-schema/mysql-schema-user.md)システム テーブルに保存します。パスワードの割り当てまたは更新の操作は、 `CREATE USER`権限、または`mysql`データベースの権限(新しいアカウントを作成する`INSERT`権限、既存のアカウントを更新する`UPDATE`権限) を持つユーザーのみに許可されます。
+TiDBはパスワードを[`mysql.user`](/mysql-schema/mysql-schema-user.md)システムテーブルに保存します。パスワードの割り当てまたは更新操作は、 `CREATE USER`権限、または`mysql`データベース権限（新規アカウント作成の`INSERT`権限、既存アカウント更新の`UPDATE`権限）を持つユーザーのみに許可されます。
 
 -   新しいアカウントを作成するときにパスワードを割り当てるには、 [`CREATE USER`](/sql-statements/sql-statement-create-user.md)使用し、 `IDENTIFIED BY`句を含めます。
 
@@ -153,7 +153,7 @@ TiDB は、パスワードを[`mysql.user`](/mysql-schema/mysql-schema-user.md)�
     CREATE USER 'test'@'localhost' IDENTIFIED BY 'mypass';
     ```
 
--   既存のアカウントのパスワードを割り当てたり変更したりするには、 [`SET PASSWORD FOR`](/sql-statements/sql-statement-set-password.md)または[`ALTER USER`](/sql-statements/sql-statement-alter-user.md)使用します。
+-   To assign or change a password for an existing account, use [`SET PASSWORD FOR`](/sql-statements/sql-statement-set-password.md) or [`ALTER USER`](/sql-statements/sql-statement-alter-user.md):
 
     ```sql
     SET PASSWORD FOR 'root'@'%' = 'xxx';
@@ -171,7 +171,7 @@ TiDB は、パスワードを[`mysql.user`](/mysql-schema/mysql-schema-user.md)�
 
     1.  tidb-server インスタンスの 1 つが配置されているマシンにログインします。
     2.  TiDB ノードのデプロイメント ディレクトリの下の`conf`ディレクトリに入り、 `tidb.toml`構成ファイルを見つけます。
-    3.  構成ファイルの[`security`](/tidb-configuration-file.md#security)セクションに設定項目[`skip-grant-table`](/tidb-configuration-file.md)を追加します。 `security`セクションがない場合は、 `tidb.toml`構成ファイルの末尾に次の 2 行を追加します。
+    3.  設定ファイルの[`security`](/tidb-configuration-file.md#security)セクションに設定項目[`skip-grant-table`](/tidb-configuration-file.md)追加します。5 `security`がない場合は、 `tidb.toml`設定ファイルの末尾に次の2行を追加します。
 
             [security]
             skip-grant-table = true
@@ -194,10 +194,10 @@ TiDB は、パスワードを[`mysql.user`](/mysql-schema/mysql-schema-user.md)�
 
     > **注記：**
     >
-    > TiDB プロセスを開始する前に`skip-grant-table`設定すると、オペレーティング システム ユーザーのチェックが開始されます。オペレーティング システムの`root`ユーザーのみが TiDB プロセスを開始できます。
+    > TiDBプロセスを開始する前に`skip-grant-table`設定すると、オペレーティングシステムのユーザーチェックが開始されます。オペレーティングシステムの`root`ユーザーのみがTiDBプロセスを開始できます。
 
     1.  TiDB ノードのデプロイメント ディレクトリの下の`scripts`ディレクトリを入力します。
-    2.  オペレーティング システムの`root`アカウントに切り替えます。
+    2.  Switch to the `root` account of the operating system.
     3.  ディレクトリ内の`run_tidb.sh`スクリプトをフォアグラウンドで実行します。
     4.  新しいターミナル ウィンドウで`root`としてログインし、パスワードを変更します。
 
@@ -205,12 +205,12 @@ TiDB は、パスワードを[`mysql.user`](/mysql-schema/mysql-schema-user.md)�
         mysql -h 127.0.0.1 -P 4000 -u root
         ```
 
-4.  `run_tidb.sh`スクリプトの実行を停止し、手順 1 で TiDB 構成ファイルに追加されたコンテンツを削除し、tidb-server が自動的に起動するのを待ちます。
+4.  `run_tidb.sh`スクリプトの実行を停止し、手順 1 で TiDB 構成ファイルに追加された内容を削除し、tidb-server が自動的に起動するのを待ちます。
 
 ## <code>FLUSH PRIVILEGES</code> {#code-flush-privileges-code}
 
-ユーザーや権限に関する情報は TiKVサーバーに保存され、TiDB はプロセス内にこの情報をキャッシュします。通常、 [`CREATE USER`](/sql-statements/sql-statement-create-user.md)などのステートメントによる関連情報の[`GRANT`](/sql-statements/sql-statement-grant-privileges.md)は、クラスター全体にすぐに反映されます。一時的にネットワークが利用できなくなるなどの要因によって操作が影響を受ける場合は、TiDB が定期的にキャッシュ情報を再読み込みするため、変更は約 15 分後に反映されます。
+ユーザーと権限に関する情報はTiKVサーバーに保存され、TiDBはこれらの情報をプロセス内にキャッシュします。通常、 [`CREATE USER`](/sql-statements/sql-statement-create-user.md) 、その他[`GRANT`](/sql-statements/sql-statement-grant-privileges.md)ステートメントによる関連情報の変更は、クラスター全体に迅速に反映されます。一時的なネットワーク利用不可などの要因によって操作が影響を受ける場合、TiDBは定期的にキャッシュ情報を再読み込みするため、変更は約15分後に反映されます。
 
-権限テーブルを直接変更した場合は、 [`FLUSH PRIVILEGES`](/sql-statements/sql-statement-flush-privileges.md)を実行して変更をすぐに適用します。
+権限テーブルを直接変更した場合は、 [`FLUSH PRIVILEGES`](/sql-statements/sql-statement-flush-privileges.md)実行して変更をすぐに適用します。
 
 詳細は[権限管理](/privilege-management.md)参照。

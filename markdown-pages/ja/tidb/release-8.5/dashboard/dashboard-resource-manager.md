@@ -5,7 +5,7 @@ summary: TiDBダッシュボードのリソースマネージャページは、�
 
 # TiDBダッシュボードリソースマネージャーページ {#tidb-dashboard-resource-manager-page}
 
-[リソース管理](/tidb-resource-control.md)機能を使用してリソース分離を実装するには、クラスタ管理者がリソースグループを作成し、各グループにクォータを設定する必要があります。リソース計画を行う前に、クラスタ全体の容量を把握しておく必要があります。このドキュメントでは、リソース制御に関する情報を参照することで、リソース計画前にクラスタの容量を見積もり、より効果的にリソースを割り当てることができます。
+[リソース管理](/tidb-resource-control-ru-groups.md)機能を使用してリソース分離を実装するには、クラスタ管理者がリソースグループを作成し、各グループにクォータを設定する必要があります。リソースプランニングを行う前に、クラスタ全体の容量を把握しておく必要があります。このドキュメントでは、リソース制御に関する情報を参照することで、リソースプランニング前にクラスタの容量を見積もり、より効果的にリソースを割り当てることができます。
 
 ## ページにアクセスする {#access-the-page}
 
@@ -34,7 +34,7 @@ summary: TiDBダッシュボードのリソースマネージャページは、�
 
 ## 容量の見積もり {#estimate-capacity}
 
-リソース計画を立てる前に、クラスター全体の容量を把握しておく必要があります。TiDBは、現在のクラスターの[リクエストユニット（RU）](/tidb-resource-control.md#what-is-request-unit-ru#what-is-request-unit-ru)の容量を見積もる2つの方法を提供しています。
+リソース計画を立てる前に、クラスター全体の容量を把握しておく必要があります。TiDBは、現在のクラスターの[リクエストユニット（RU）](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru#what-is-request-unit-ru)の容量を見積もる2つの方法を提供しています。
 
 -   [ハードウェアの展開に基づいて容量を見積もる](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-hardware-deployment)
 

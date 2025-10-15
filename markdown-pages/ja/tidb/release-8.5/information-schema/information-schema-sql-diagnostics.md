@@ -28,7 +28,7 @@ SQL 診断システムは、次の 3 つの主要部分で構成されます。
 
 クラスタ情報テーブルは、すべてのインスタンスとクラスタ内のインスタンスの情報を集約します。これらのテーブルを使用すると、1つのSQL文だけですべてのクラスタ情報を照会できます。以下はクラスタ情報テーブルの一覧です。
 
--   クラスタートポロジテーブル[`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md)からは、クラスターの現在のトポロジ情報、各インスタンスのバージョン、バージョンに対応する Git ハッシュ、各インスタンスの開始時刻、および各インスタンスの実行時刻を取得できます。
+-   クラスタートポロジテーブル[`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md)からは、クラスターの現在のトポロジ情報、各インスタンスのバージョン、バージョンに対応する Git ハッシュ、各インスタンスの開始時刻、および各インスタンスの実行時間を取得できます。
 -   クラスター構成テーブル[`information_schema.cluster_config`](/information-schema/information-schema-cluster-config.md)から、クラスター内のすべてのインスタンスの構成を取得できます。4.0より前のバージョンでは、これらの構成情報を取得するには、各インスタンスのHTTP APIに個別にアクセスする必要があります。
 -   クラスター ハードウェア テーブル[`information_schema.cluster_hardware`](/information-schema/information-schema-cluster-hardware.md)では、クラスター ハードウェア情報を簡単に照会できます。
 -   クラスター負荷テーブル[`information_schema.cluster_load`](/information-schema/information-schema-cluster-load.md)では、クラスターのさまざまなインスタンスとハードウェア タイプの負荷情報を照会できます。

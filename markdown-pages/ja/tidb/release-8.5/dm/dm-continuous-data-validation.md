@@ -64,7 +64,7 @@ validators:
           --start-time string   specify the start time of binlog for validation, e.g. '2021-10-21 00:01:00' or 2021-10-21T00:01:00
 
 -   `--mode` : 検証モードを指定します。指定できる値は`fast`と`full`です。
--   `--start-time` : 検証の開始時刻を指定します。形式は`2021-10-21 00:01:00`または`2021-10-21T00:01:00`従います。
+-   `--start-time` : 検証の開始時刻を指定します。形式は`2021-10-21 00:01:00`または`2021-10-21T00:01:00`に従います。
 -   `task` : 継続的検証を有効にするタスク名を指定します。2 `--all-task`指定すると、すべてのタスクに対して検証が有効になります。
 
 例えば：
@@ -153,7 +153,7 @@ dmctl --master-addr=127.0.0.1:8261 validation start --start-time 2021-10-21T00:0
 }
 ```
 
-エラーの種類やエラー時間などのエラー行の詳細を表示する場合は、次の`dmctl validation show-error`コマンドを実行します。
+エラーの種類やエラー時間などのエラー行の詳細を表示するには、次の`dmctl validation show-error`コマンドを実行します。
 
     Usage:
       dmctl validation show-error [--error error-state] <task-name> [flags]

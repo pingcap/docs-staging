@@ -3,21 +3,21 @@ title: TiProxy API
 summary: TiProxy API を使用して、構成、ヘルス ステータス、監視データにアクセスする方法を学習します。
 ---
 
-# TiプロキシAPI {#tiproxy-api}
+# TiProxy API {#tiproxy-api}
 
-[Tiプロキシ](/tiproxy/tiproxy-overview.md) 、構成、ヘルス ステータス、および監視データにアクセスするための API エンドポイントを提供します。
+[TiProxy](/tiproxy/tiproxy-overview.md) 、構成、ヘルス ステータス、監視データにアクセスするための API エンドポイントを提供します。
 
 > **注記：**
 >
-> TiProxy API はデバッグ用に特別に設計されており、TiProxy で将来導入される機能と完全に互換性がない可能性があります。情報を取得するためにこのツールをアプリケーションまたはユーティリティ開発に含めることはお勧めしません。
+> TiProxy APIはデバッグ用に特別に設計されており、TiProxyに将来導入される機能と完全に互換性がない可能性があります。情報取得のためにこのツールをアプリケーションやユーティリティの開発に組み込むことは推奨されません。
 
-TiProxy API にアクセスするためのアドレスは`http://${host}:${port}${path}`です。ここで、 `${host}:${port}` TiProxy 構成項目[`api.addr`](/tiproxy/tiproxy-configuration.md#addr-1)によって指定され、 `${path}`アクセスする特定の API エンドポイントです。例:
+TiProxy APIにアクセスするためのアドレスは`http://${host}:${port}${path}`です。3 `${host}:${port}` TiProxy設定項目[`api.addr`](/tiproxy/tiproxy-configuration.md#addr-1)で指定され、 `${path}`アクセスする特定のAPIエンドポイントです。例：
 
 ```bash
 curl http://127.0.0.1:3080/api/admin/config/
 ```
 
-## TiProxy 設定を取得する {#get-tiproxy-configuration}
+## TiProxy の設定を取得する {#get-tiproxy-configuration}
 
 ### リクエストURI {#request-uri}
 
@@ -27,7 +27,7 @@ curl http://127.0.0.1:3080/api/admin/config/
 
 クエリパラメータは次のとおりです。
 
--   `format` : (オプション) 返される構成の形式を指定します。値のオプションは`json`と`toml`です。デフォルト値は`toml`です。
+-   `format` : (オプション) 返される設定の形式を指定します。値のオプションは`json`と`toml`です。デフォルト値は`toml`です。
 
 ### 例 {#example}
 
@@ -37,9 +37,9 @@ curl http://127.0.0.1:3080/api/admin/config/
 curl "http://127.0.0.1:3080/api/admin/config/?format=json"
 ```
 
-## TiProxy設定を設定する {#set-tiproxy-configuration}
+## TiProxy構成を設定する {#set-tiproxy-configuration}
 
-現在、TiProxy 構成を変更するには TOML 形式のみを使用できます。指定されていない構成項目は変更されないため、変更する項目のみを指定する必要があります。
+現在、TiProxyの設定変更にはTOML形式のみを使用できます。指定されていない設定項目は変更されないため、変更したい項目のみを指定してください。
 
 ### リクエストURI {#request-uri}
 
@@ -47,7 +47,7 @@ curl "http://127.0.0.1:3080/api/admin/config/?format=json"
 
 ### リクエスト本文 {#request-body}
 
-TiProxy 構成を TOML 形式で提供する必要があります。例:
+TiProxyの設定をTOML形式で提供する必要があります。例：
 
 ```toml
 [log]
@@ -97,7 +97,7 @@ level='warning'
 
 ## TiProxy のヘルスステータスを取得する {#get-tiproxy-health-status}
 
-このエンドポイントは、TiProxy のヘルス ステータスと構成のチェックサムを取得するために使用されます。TiProxy が正常に実行されている場合、このエンドポイントは構成のチェックサムを返します。TiProxy がシャットダウンまたはオフラインの場合は、エラーを返します。
+このエンドポイントは、TiProxy のヘルスステータスと設定のチェックサムを取得するために使用されます。TiProxy が正常に動作している場合、このエンドポイントは設定のチェックサムを返します。TiProxy がシャットダウンまたはオフラインの場合は、エラーを返します。
 
 ### リクエストURI {#request-uri}
 

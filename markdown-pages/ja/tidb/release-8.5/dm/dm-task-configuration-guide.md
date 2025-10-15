@@ -1,18 +1,18 @@
 ---
 title: Data Migration Task Configuration Guide
-summary: データ移行 (DM) でデータ移行タスクを構成する方法を学習します。
+summary: Data Migration (DM) でデータ移行タスクを構成する方法を学習します。
 ---
 
 # データ移行タスクコンフィグレーションガイド {#data-migration-task-configuration-guide}
 
-このドキュメントでは、データ移行 (DM) でデータ移行タスクを構成する方法について説明します。
+このドキュメントでは、Data Migration (DM) でデータ移行タスクを構成する方法について説明します。
 
 ## 移行するデータソースを構成する {#configure-data-sources-to-be-migrated}
 
-タスク用に移行するデータ ソースを構成する前に、まず DM が対応するデータ ソースの構成ファイルをロードしていることを確認する必要があります。次に、操作の参考資料をいくつか示します。
+タスクの移行対象となるデータソースを設定する前に、DMが対応するデータソースの設定ファイルをロードしていることを確認する必要があります。以下に操作手順を示します。
 
 -   データソースを表示するには、 [データソースの構成を確認する](/dm/dm-manage-source.md#check-data-source-configurations)を参照してください。
--   データソースを作成するには、 [データソースを作成する](/dm/migrate-data-using-dm.md#step-3-create-data-source)を参照してください。
+-   データ ソースを作成するには、 [データソースを作成する](/dm/migrate-data-using-dm.md#step-3-create-data-source)を参照してください。
 -   データ ソース構成ファイルを生成するには、 [ソース構成ファイルの紹介](/dm/dm-source-configuration-file.md)を参照してください。
 
 次の例`mysql-instances`は、データ移行タスクで移行する必要があるデータ ソースを構成する方法を示しています。
@@ -113,7 +113,7 @@ target-database:       # Configuration of target TiDB database.
         action: Do
     ```
 
-    詳細な設定ルールについては[Binlogイベント フィルター](/dm/dm-binlog-event-filter.md)参照してください。
+    詳細な設定ルールについては[Binlogイベントフィルター](/dm/dm-binlog-event-filter.md)参照してください。
 
 2.  データ ソース構成内のbinlogイベント フィルタリング ルールを参照して、データ ソース内の指定されたテーブルまたはスキーマの指定されたbinlogイベントをフィルタリングします。
 
@@ -127,7 +127,7 @@ target-database:       # Configuration of target TiDB database.
         filter-rules: ["filter-rule-2"]  # The name of the rule that filters specific binlog events of the data source. You can configure multiple rules here.
     ```
 
-## データソーステーブルから下流のTiDBテーブルへのマッピングを構成する {#configure-the-mapping-of-data-source-tables-to-downstream-tidb-tables}
+## データソーステーブルから下流の TiDB テーブルへのマッピングを構成する {#configure-the-mapping-of-data-source-tables-to-downstream-tidb-tables}
 
 > **注記：**
 >
@@ -153,7 +153,7 @@ target-database:       # Configuration of target TiDB database.
 
     詳細な設定ルールについては[テーブルルーティング](/dm/dm-table-routing.md)参照してください。
 
-2.  データ ソース構成のルーティング マッピング ルールを参照して、移行するテーブルをフィルター処理します。
+2.  データ ソース構成内のルーティング マッピング ルールを参照して、移行するテーブルをフィルター処理します。
 
     ```yaml
     mysql-instances:
@@ -170,11 +170,11 @@ target-database:       # Configuration of target TiDB database.
 
 > **注記：**
 >
-> -   シャード マージ シナリオでシャーディング DDL ステートメントを移行する必要がある場合は、 `shard-mode`フィールドを明示的に構成する**必要があります**。それ以外の場合は、 `shard-mode`まったく構成し**ないでください**。
+> -   シャードマージのシナリオでシャーディングDDL文を移行する必要がある場合は、 `shard-mode`フィールドを明示的に設定する**必要があります**。それ以外の場合は、 `shard-mode`を設定し**ないでください**。
 >
-> -   シャーディング DDL ステートメントを移行すると、多くの問題が発生する可能性があります。この機能を使用する前に、DM 移行 DDL ステートメントの原則と制限を理解し、慎重に使用する**必要があります**。
+> -   シャーディングDDL文の移行は、多くの問題を引き起こす可能性があります。この機能を使用する前に、DMによるDDL文の移行の原則と制限事項を理解し、慎重に使用して**ください**。
 
-次の例は、タスクをシャード マージ タスクとして構成する方法を示しています。
+次の例は、タスクをシャードマージタスクとして構成する方法を示しています。
 
 ```yaml
 ---
@@ -186,7 +186,7 @@ shard-mode: "pessimistic"       # The shard merge mode. Optional modes are ""/"p
 
 ## その他の構成 {#other-configurations}
 
-以下は、このドキュメントの全体的なタスク構成の例です。完全なタスク構成テンプレートは[DM タスク構成ファイルの完全な紹介](/dm/task-configuration-file-full.md)にあります。
+以下は、このドキュメントの全体的なタスク設定例です。完全なタスク設定テンプレートは[DMタスク構成ファイルの完全な紹介](/dm/task-configuration-file-full.md)にあります。
 
 ```yaml
 ---

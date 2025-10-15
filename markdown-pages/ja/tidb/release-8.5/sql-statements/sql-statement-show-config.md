@@ -1,11 +1,11 @@
 ---
 title: SHOW CONFIG
-summary: TiDB データベースでの SHOW CONFIG の使用の概要
+summary: TiDBデータベースにおけるSHOW CONFIGの使用の概要
 ---
 
 # 設定を表示 {#show-config}
 
-`SHOW CONFIG`ステートメントは、TiDB のさまざまなコンポーネントの現在の構成を表示するために使用されます。構成変数とシステム変数は異なる次元で動作するため、混同しないでください。システム変数情報を取得する場合は、 [変数を表示](/sql-statements/sql-statement-show-variables.md)構文を使用します。
+`SHOW CONFIG`文は、TiDB の様々なコンポーネントの現在の設定を表示するために使用されます。設定変数とシステム変数は異なる次元で作用するため、混同しないように注意してください。システム変数の情報を取得する場合は、 [変数を表示](/sql-statements/sql-statement-show-variables.md)構文を使用してください。
 
 > **注記：**
 >
@@ -39,7 +39,7 @@ SHOW CONFIG;
     ...
     120 rows in set (0.01 sec)
 
-`type`が`tidb`である構成を示します。
+`type`が`tidb`である構成を表示します。
 
 ```sql
 SHOW CONFIG WHERE type = 'tidb' AND name = 'advertise-address';
@@ -67,7 +67,7 @@ SHOW CONFIG LIKE 'tidb';
     ...
     40 rows in set (0.01 sec)
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。
 

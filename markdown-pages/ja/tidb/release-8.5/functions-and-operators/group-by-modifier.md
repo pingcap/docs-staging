@@ -7,14 +7,14 @@ summary: TiDB GROUP BY 修飾子の使用方法を学習します。
 
 v7.4.0 以降、TiDB の`GROUP BY`句は`WITH ROLLUP`修飾子をサポートします。
 
-`GROUP BY`句では、1 つ以上の列をグループ リストとして指定し、リストの後に`WITH ROLLUP`修飾子を追加できます。すると、TiDB はグループ リスト内の列に基づいて多次元降順グループ化を実行し、出力で各グループの要約結果を提供します。
+`GROUP BY`節では、1 つ以上の列をグループリストとして指定し、リストの後に`WITH ROLLUP`修飾子を付加できます。すると、TiDB はグループリスト内の列に基づいて多次元降順グループ化を実行し、各グループの要約結果を出力します。
 
 -   グループ化方法:
 
     -   最初のグループ化ディメンションには、グループ リスト内のすべての列が含まれます。
-    -   後続のグループ化ディメンションはグループ化リストの右端から始まり、一度に 1 列ずつ除外して新しいグループを形成します。
+    -   後続のグループ化ディメンションは、グループ化リストの右端から始まり、一度に 1 列ずつ除外して新しいグループを形成します。
 
--   集計の概要: クエリは各ディメンションに対して集計操作を実行し、このディメンションの結果を以前のすべてのディメンションの結果と集計します。つまり、詳細から全体まで、さまざまなディメンションで集計データを取得できます。
+-   集計サマリー：クエリは各ディメンションに対して集計演算を実行し、そのディメンションの結果を以前のすべてのディメンションの結果と集計します。つまり、詳細ディメンションから全体ディメンションまで、さまざまなディメンションで集計データを取得できます。
 
 このグループ化方法では、グループ リストに`N`列がある場合、TiDB はクエリ結果を`N+1`グループに集計します。
 
@@ -24,7 +24,7 @@ v7.4.0 以降、TiDB の`GROUP BY`句は`WITH ROLLUP`修飾子をサポートし
 SELECT count(1) FROM t GROUP BY a,b,c WITH ROLLUP;
 ```
 
-この例では、TiDB は`count(1)`の計算結果を 4 つのグループ (つまり、 `{a, b, c}` 、 `{a, b}` 、 `{a}` 、および`{}` ) に集計し、各グループの概要結果を出力します。
+この例では、TiDB は`count(1)`の計算結果を 4 つのグループ (つまり`{a, b, c}` 、 `{a, b}` 、 `{a}` 、 `{}` ) に集計し、各グループの概要結果を出力します。
 
 > **注記：**
 >
@@ -32,29 +32,29 @@ SELECT count(1) FROM t GROUP BY a,b,c WITH ROLLUP;
 
 ## ユースケース {#use-cases}
 
-複数の列からのデータの集計と要約は、OLAP (オンライン分析処理) シナリオでよく使用されます`WITH ROLLUP`修飾子を使用すると、集計結果内の他の高レベル ディメンションからのスーパー サマリー情報を表示する追加の行を取得できます。その後、スーパー サマリー情報を使用して、高度なデータ分析やレポート生成を行うことができます。
+複数`WITH ROLLUP`列からのデータの集計と要約は、OLAP（オンライン分析処理）シナリオでよく使用されます。1 修飾子を使用すると、集計結果に他の高レベルディメンションからのスーパーサマリー情報を表示する行を追加できます。これにより、スーパーサマリー情報を高度なデータ分析やレポート作成に活用できます。
 
 ## 前提条件 {#prerequisites}
 
 <CustomContent platform="tidb">
 
-v8.3.0 より前の TiDB では、 [TiFlash MPP モード](/tiflash/use-tiflash-mpp-mode.md)の`WITH ROLLUP`構文に対してのみ有効な実行プランの生成がサポートされています。したがって、TiDB クラスターにはTiFlashノードが含まれている必要があり、ターゲット テーブルは正しいTiFlashレプリカで構成されている必要があります。詳細については、 [TiFlashクラスターをスケールアウトする](/scale-tidb-using-tiup.md#scale-out-a-tiflash-cluster)参照してください。
+v8.3.0より前のTiDBでは、 [TiFlash MPPモード](/tiflash/use-tiflash-mpp-mode.md)の`WITH ROLLUP`構文に対してのみ有効な実行プランの生成がサポートされています。そのため、TiDBクラスターにはTiFlashノードが含まれており、ターゲットテーブルには正しいTiFlashレプリカが設定されている必要があります。詳細については、 [TiFlashクラスターのスケールアウト](/scale-tidb-using-tiup.md#scale-out-a-tiflash-cluster)参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-v8.3.0 より前の TiDB では、 [TiFlash MPP モード](/tiflash/use-tiflash-mpp-mode.md)の`WITH ROLLUP`構文に対してのみ有効な実行プランの生成がサポートされています。したがって、TiDB クラスターにはTiFlashノードが含まれている必要があり、ターゲット テーブルは正しいTiFlashレプリカで構成されている必要があります。詳細については、 [ノード番号を変更する](/tidb-cloud/scale-tidb-cluster.md#change-node-number)参照してください。
+v8.3.0より前のTiDBでは、 [TiFlash MPPモード](/tiflash/use-tiflash-mpp-mode.md)の`WITH ROLLUP`構文に対してのみ有効な実行プランの生成がサポートされています。そのため、TiDBクラスターにはTiFlashノードが含まれており、ターゲットテーブルには正しいTiFlashレプリカが設定されている必要があります。詳細については、 [ノード番号を変更する](/tidb-cloud/scale-tidb-cluster.md#change-node-number)参照してください。
 
 </CustomContent>
 
-v8.3.0 以降では、上記の制限はなくなりました。TiDB クラスターにTiFlashノードが含まれているかどうかに関係なく、TiDB は`WITH ROLLUP`構文の有効な実行プランの生成をサポートします。
+v8.3.0以降では、上記の制限は解除されました。TiDBクラスターにTiFlashノードが含まれているかどうかに関係なく、TiDBは`WITH ROLLUP`構文の有効な実行プランの生成をサポートします。
 
-TiDB またはTiFlash が`Expand`演算子を実行するかどうかを識別するには、実行プランで`Expand`演算子の`task`属性を確認します。詳細については、 [ROLLUP実行プランの解釈方法](#how-to-interpret-the-rollup-execution-plan)参照してください。
+TiDBとTiFlashのどちらが演算子`Expand`実行するかを確認するには、実行プランで演算子`Expand`の属性`task`確認します。詳細については、 [ROLLUP実行プランの解釈方法](#how-to-interpret-the-rollup-execution-plan)参照してください。
 
 ## 例 {#examples}
 
-`year` 、 `month` 、 `day` 、および`profit`列を持つ`bank`という名前の利益テーブルがあるとします。
+`year` 、 `month` 、 `day` 、 `profit`列を持つ`bank`という名前の利益テーブルがあるとします。
 
 ```sql
 CREATE TABLE bank
@@ -83,7 +83,7 @@ SELECT year, SUM(profit) AS profit FROM bank GROUP BY year;
 2 rows in set (0.15 sec)
 ```
 
-銀行レポートには通常、年間利益に加えて、すべての年の総利益または詳細な利益分析のための月ごとの分割利益も含める必要があります。v7.4.0 より前では、複数のクエリで異なる`GROUP BY`句を使用し、UNION を使用して結果を結合して集計サマリーを取得する必要がありました。v7.4.0 以降では、 `GROUP BY`句に`WITH ROLLUP`修飾子を追加することで、単一のクエリで目的の結果を簡単に得ることができます。
+銀行レポートでは通常、年間利益に加えて、全年度の利益全体、または詳細な利益分析のために月ごとの利益を分割して記載する必要があります。v7.4.0より前は、複数のクエリで異なる`GROUP BY`句を使用し、結果をUNIONで結合して集計結果を取得する必要がありました。v7.4.0以降では、 `GROUP BY`句に`WITH ROLLUP`修飾子を追加するだけで、単一のクエリで目的の結果を簡単に得ることができます。
 
 ```sql
 SELECT year, month, SUM(profit) AS profit from bank GROUP BY year, month WITH ROLLUP ORDER BY year desc, month desc;
@@ -100,15 +100,15 @@ SELECT year, month, SUM(profit) AS profit from bank GROUP BY year, month WITH RO
 6 rows in set (0.025 sec)
 ```
 
-上記の結果には、年と月の両方、年別、全体など、さまざまなディメンションで集計されたデータが含まれています。結果では、 `NULL`値のない行は、その行の`profit`年と月の両方をグループ化して計算されていることを示します`month`列に`NULL`値がある行は、その行の`profit` 1 年のすべての月を集計して計算されていることを示し、 `year`列に`NULL`値がある行は、その行の`profit`すべての年を集計して計算されていることを示します。
+上記の結果には、年と月の両方、年ごと、全体という異なるディメンションで集計されたデータが含まれています。結果において、 `NULL`値が存在しない行は、その行の`profit`年と月の両方をグループ化して計算されていることを示します。7 列の値が`NULL`で`month`行は、その行の`profit` 1 年間のすべての月を集計して計算されていることを示し、 `year`列の値が`NULL`である行は、その行の`profit`すべての年を集計して計算されていることを示します。
 
 具体的には：
 
--   最初の行の`profit`値は 2 次元グループ`{year, month}`からのもので、細粒度`{2000, "Jan"}`グループの集計結果を表します。
--   2 行目の値`profit`は 1 次元グループ`{year}`からのもので、中間レベル`{2001}`グループの集計結果を表します。
+-   最初の行の`profit`値は 2 次元グループ`{year, month}`からのもので、細粒度`{2000, "Jan"}`グループに対する集計結果を表しています。
+-   2 行目の値`profit`は 1 次元グループ`{year}`からのもので、中間レベルのグループ`{2001}`の集計結果を表しています。
 -   最後の行の`profit`値は 0 次元のグループ化`{}`から取得され、全体的な集計結果を表します。
 
-`WITH ROLLUP`結果の`NULL`値は、Aggregate 演算子が適用される直前に生成されます。したがって、 `SELECT` 、 `HAVING` 、および`ORDER BY`句で`NULL`値を使用して、集計結果をさらにフィルター処理できます。
+`WITH ROLLUP`結果のうち`NULL`値は、Aggregate 演算子が適用される直前に生成されます。したがって、 `SELECT` 、 `HAVING` 、 `ORDER BY`句で`NULL`値を使用して、集計結果をさらに絞り込むことができます。
 
 たとえば、 `HAVING`句の`NULL`使用して、2 次元グループの集計結果のみをフィルタリングして表示できます。
 
@@ -124,7 +124,7 @@ SELECT year, month, SUM(profit) AS profit FROM bank GROUP BY year, month WITH RO
 3 rows in set (0.02 sec)
 ```
 
-`GROUP BY`リストの列にネイティブ`NULL`値が含まれている場合、 `WITH ROLLUP`の集計結果によってクエリ結果が誤解される可能性があることに注意してください。この問題に対処するには、 `GROUPING()`関数を使用して、ネイティブ`NULL`値と`WITH ROLLUP`によって生成された`NULL`値を区別します。この関数は、グループ化式をパラメーターとして受け取り、グループ化式が現在の結果で集計されているかどうかを示す`0`または`1`を返します。19 `1`集計されていることを表し、 `0`集計されていないことを表します。
+`GROUP BY`の列にネイティブ`NULL`値が含まれている場合、 `WITH ROLLUP`の集計結果がクエリ結果を誤解させる可能性があることに注意してください。この問題に対処するには、 `GROUPING()`関数を使用して、ネイティブ`NULL`値と`WITH ROLLUP`によって生成された`NULL`値を区別できます。この関数はグループ化式をパラメータとして受け取り、現在の結果でグループ化式が集計されているかどうかを示す`0`または`1`返します。19 `1`集計されていることを表し、 `0`集計されていないことを表します。
 
 次の例は、 `GROUPING()`関数の使用方法を示しています。
 
@@ -143,9 +143,9 @@ SELECT year, month, SUM(profit) AS profit, grouping(year) as grp_year, grouping(
 6 rows in set (0.028 sec)
 ```
 
-この出力では、 `grp_year`と`grp_month`の結果から直接行の集計ディメンションを把握することができ、 `year`と`month`グループ化式におけるネイティブの`NULL`値からの干渉を防ぐことができます。
+この出力では、 `grp_year`と`grp_month`結果から行の集計ディメンションを直接把握することができ、 `year`と`month`グループ化式におけるネイティブの`NULL`値からの干渉を防ぐことができます。
 
-`GROUPING()`関数は、最大 64 個のグループ化式をパラメータとして受け入れることができます。複数のパラメータの出力では、各パラメータは`0`または`1`の結果を生成し、これらのパラメータは、各ビットが`0`または`1`である 64 ビットの`UNSIGNED LONGLONG`まとめて形成します。次の式を使用して、各パラメータのビット位置を取得できます。
+`GROUPING()`関数は、最大 64 個のグループ化式をパラメータとして受け入れることができます。複数のパラメータが出力された場合、各パラメータは`0`または`1`という結果を生成し、これらのパラメータは合計で 64 ビットの`UNSIGNED LONGLONG`を形成し、各ビットは`0`または`1`となります。各パラメータのビット位置を取得するには、次の式を使用します。
 
 ```go
 GROUPING(day, month, year):
@@ -154,7 +154,7 @@ GROUPING(day, month, year):
 + result for GROUPING(day) << 2
 ```
 
-`GROUPING()`関数で複数のパラメータを使用すると、任意の高次元で集計結果を効率的にフィルタリングできます。たとえば、 `GROUPING(year, month)`使用すると、各年およびすべての年の集計結果をすばやくフィルタリングできます。
+`GROUPING()`関数で複数のパラメータを使用することで、任意の高次元で集計結果を効率的にフィルタリングできます。例えば、 `GROUPING(year, month)`使用すると、各年と全年の集計結果を素早くフィルタリングできます。
 
 ```sql
 SELECT year, month, SUM(profit) AS profit, grouping(year) as grp_year, grouping(month) as grp_month FROM bank GROUP BY year, month WITH ROLLUP HAVING GROUPING(year, month) <> 0 ORDER BY year DESC, month DESC;
@@ -170,11 +170,11 @@ SELECT year, month, SUM(profit) AS profit, grouping(year) as grp_year, grouping(
 
 ## ROLLUP実行プランの解釈方法 {#how-to-interpret-the-rollup-execution-plan}
 
-多次元データ集約では、 `Expand`演算子を使用してデータをコピーし、多次元グループ化のニーズに対応します。各データコピーは、特定の次元のグループ化に対応します。MPP モードでは、 `Expand`演算子はデータシャッフルを容易にし、複数のノード間で大量のデータを迅速に再編成および計算し、各ノードの計算能力を最大限に活用します。TiFlashTiFlashのない TiDB クラスターでは、 `Expand`演算子は単一の TiDB ノードでのみ実行されるため、次元グループ化の数 ( `grouping set` ) が増えるにつれてデータの冗長性が増加します。
+多次元データ集約では、 `Expand`の演算子を用いてデータをコピーすることで、多次元グループ化のニーズに対応します。各データコピーは、特定の次元のグループ化に対応します。MPPモードでは、 `Expand`番目の演算子はデータシャッフルを容易にし、複数のノード間で大量のデータを迅速に再編成・計算することで、各ノードの計算能力を最大限に活用します。TiFlashノードのないTiFlashクラスターでは、 `Expand`演算子は単一のTiDBノードでのみ実行されるため、次元グループ化の数（ `grouping set` ）が増えるにつれてデータの冗長性が向上します。
 
-`Expand`演算子の実装は、 `Projection`演算子の実装と似ています。違いは、 `Expand`複数レベルの`Projection`であり、複数のレベルの射影演算式が含まれていることです。生データの各行に対して、 `Projection`演算子は結果に 1 行のみを生成しますが、 `Expand`演算子は結果に複数の行を生成します (行数は射影演算式のレベル数に等しくなります)。
+`Expand`演算子の実装は`Projection`演算子と似ています。違いは、 `Expand`多階層の`Projection`であり、複数階層の射影演算式を含むことです。生データの各行に対して、 `Projection`演算子は結果に 1 行のみを生成しますが、 `Expand`演算子は結果に複数行を生成します（行数は射影演算式のレベル数に等しくなります）。
 
-次の例は、 TiFlashノードのない TiDB クラスターの実行プランを示しています。3 `Expand`演算子のうち`task`が`root`であり、 `Expand`演算子が TiDB で実行されることを示しています。
+次の例は、 TiFlashノードのない TiDB クラスターの実行プランを示しています。3 `Expand`演算子のうちの`task` `root`であり、 `Expand`演算子が TiDB で実行されることを示しています。
 
 ```sql
 EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP;
@@ -191,7 +191,7 @@ EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 6 rows in set (0.00 sec)
 ```
 
-次の例は、 TiFlash MPP モードでの実行プランを示しています。ここで、 `Expand`演算子のうち`task`は`mpp[tiflash]`であり、 `Expand`演算子がTiFlashで実行されることを示しています。
+次の例は、 TiFlash MPP モードでの実行プランを示しています。3 `Expand`演算子のうち`task` `mpp[tiflash]`であり、これは`Expand`演算子がTiFlashで実行されることを示しています。
 
 ```sql
 EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP;
@@ -212,13 +212,13 @@ EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 10 rows in set (0.05 sec)
 ```
 
-この例の実行プランでは、 `Expand_20`行目の`operator info`列目に`Expand`演算子の複数レベルの式が表示されます。これは 2 次元の式で構成されており、行末の`schema: [test.bank.profit, Column#6, Column#7, gid]`に`Expand`演算子のスキーマ情報が表示されます。
+この実行プランの例では、 `Expand_20`行目の`operator info`列目に`Expand`演算子の複数レベルの式が表示されています。これは2次元の式で構成されており、行末の`schema: [test.bank.profit, Column#6, Column#7, gid]`に`Expand`演算子のスキーマ情報が表示されています。
 
-`Expand`演算子のスキーマ情報では、 `GID`追加列として生成されます。その値は、異なる次元のグループ化ロジックに基づいて`Expand`演算子によって計算され、現在のデータレプリカと`grouping set`の関係を反映します。ほとんどの場合、 `Expand`演算子は Bit-And 演算を使用し、ROLLUP のグループ化項目の 63 の組み合わせを表すことができ、64 次元のグループ化に対応します。このモードでは、TiDB は、現在のデータレプリカが複製されるときに、必要な次元の`grouping set`にグループ化式が含まれているかどうかに応じて`GID`値を生成し、グループ化される列の順序で 64 ビットの UINT64 値を埋めます。
+`Expand`演算子のスキーマ情報では、 `GID`追加列として生成されます。その値は、 `Expand`演算子によって異なる次元のグループ化ロジックに基づいて計算され、現在のデータレプリカと`grouping set`関係を反映します。ほとんどの場合、 `Expand`演算子はBit-And演算を使用し、ROLLUPのグループ化項目の組み合わせを63通り表現でき、64次元のグループ化に対応します。このモードでは、TiDBは現在のデータレプリカを複製する際に、必要な次元の`grouping set`グループ化式が含まれているかどうかに応じて`GID`値を生成し、グループ化する列の順序で64ビットのUINT64値を埋めます。
 
-前の例では、グループ化リスト内の列の順序は`[year, month]`で、 ROLLUP 構文によって生成されるディメンション グループは`{year, month}` 、 `{year}` 、および`{}`です。ディメンション グループ`{year, month}`の場合、 `year`と`month`両方が必須の列であるため、TiDB はそれらのビット位置をそれぞれ 1 と 1 で埋めます。これにより、 `11...0`の UINT64 が形成され、これは 10 進数では 3 です。したがって、射影式は`[test.bank.profit, Column#6, Column#7, 3->gid]`です ( `column#6` `year`に対応し、 `column#7` `month`に対応します)。
+上の例では、グループ化リスト内の列の順序は`[year, month]`で、 ROLLUP 構文によって生成されるディメンショングループは`{year, month}` 、 `{year}` 、 `{}`です。ディメンショングループ`{year, month}`では、 `year`と`month`両方が必須列であるため、TiDBはそれらのビット位置にそれぞれ 1 と 1 を設定します。これにより、UINT64 の`11...0`形成され、これは10進数では 3 です。したがって、射影式は`[test.bank.profit, Column#6, Column#7, 3->gid]`となります（ `column#6` `year`に、 `column#7` `month`に対応します）。
 
-以下は生データの例の行です。
+以下は生データの行の例です。
 
 ```sql
 +------+-------+------+------------+
@@ -242,4 +242,4 @@ EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 +------------+------+-------+-----+
 ```
 
-クエリの`SELECT`節では`GROUPING`関数が使用されていることに注意してください。 `GROUPING`関数が`SELECT` 、 `HAVING` 、または`ORDER BY`節で使用される場合、TiDB は論理最適化フェーズでそれを書き換え、 `GROUPING`関数と`GROUP BY`項目の関係をディメンション グループのロジック ( `grouping set`とも呼ばれます) に関連する`GID`に変換し、この`GID`メタデータとして新しい`GROUPING`関数に入力します。
+クエリ内の`SELECT`節は`GROUPING`関数を使用していることに注意してください。 `GROUPING`関数が`SELECT` 、 `HAVING` 、または`ORDER BY`節で使用されている場合、TiDB は論理最適化フェーズでそれを書き換え、 `GROUPING`関数と`GROUP BY`項目の関係をディメンショングループ（ `grouping set`とも呼ばれます）のロジックに関連する`GID`に変換し、この`GID`新しい`GROUPING`関数にメタデータとして入力します。

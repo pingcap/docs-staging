@@ -1,6 +1,6 @@
 ---
 title: SHOW CREATE TABLE | TiDB SQL Statement Reference
-summary: TiDB データベースに対する SHOW CREATE TABLE の使用法の概要。
+summary: TiDB データベースの SHOW CREATE TABLE の使用法の概要。
 ---
 
 # 表示テーブルの作成 {#show-create-table}
@@ -29,9 +29,9 @@ Create Table: CREATE TABLE `t1` (
 1 row in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SHOW CREATE TABLE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SHOW CREATE TABLE`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

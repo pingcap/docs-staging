@@ -5,7 +5,7 @@ summary: TiDB データベースの ADMIN CLEANUP の使用法の概要。
 
 # 管理者クリーンアップインデックス {#admin-cleanup-index}
 
-`ADMIN CLEANUP INDEX`ステートメントは、テーブルに不整合なデータとインデックスがある場合に、テーブルから冗長なインデックスを削除するために使用されます。この構文は[外部キー制約](/foreign-key.md)まだサポートしていないことに注意してください。
+`ADMIN CLEANUP INDEX`文は、テーブルに不整合なデータとインデックスがある場合に、テーブルから冗長なインデックスを削除するために使用されます。この構文は[外部キー制約](/foreign-key.md)まだサポートしていないことに注意してください。
 
 ## 概要 {#synopsis}
 
@@ -29,7 +29,7 @@ ADMIN CHECK INDEX tbl idx ;
 ERROR 1105 (HY000): handle &kv.CommonHandle{encoded:[]uint8{0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf8}, colEndOffsets:[]uint16{0xa}}, index:types.Datum{k:0x5, decimal:0x0, length:0x0, i:0, collation:"utf8mb4_bin", b:[]uint8{0x0}, x:interface {}(nil)} != record:<nil>
 ```
 
-`SELECT`クエリのエラー メッセージから、 `tbl`テーブルには 2 行のデータと 3 行のインデックス データが含まれていることがわかります。これは、行とインデックス データが矛盾していることを意味します。同時に、少なくとも 1 つのインデックスがダングリング状態にあります。この場合、 `ADMIN CLEANUP INDEX`ステートメントを使用してダングリング インデックスを削除できます。
+クエリ`SELECT`のエラーメッセージから、テーブル`tbl`には2行のデータと3行のインデックスデータが含まれていることがわかります。これは、行とインデックスのデータが不整合であることを意味します。同時に、少なくとも1つのインデックスがダングリング状態にあります。この場合、 `ADMIN CLEANUP INDEX`ステートメントを使用してダングリングインデックスを削除できます。
 
 ```sql
 ADMIN CLEANUP INDEX tbl idx;
@@ -59,12 +59,12 @@ Query OK, 0 rows affected (0.01 sec)
 >
 > レプリカの損失によりデータとインデックスが不整合になった場合:
 >
-> -   行データとインデックス データの両方が失われる可能性があります。一貫性を回復するには、ステートメント`ADMIN CLEANUP INDEX`と[`ADMIN RECOVER INDEX`](/sql-statements/sql-statement-admin-recover.md)一緒に使用します。
-> -   `ADMIN CLEANUP INDEX`ステートメントは常に 1 つのスレッドで実行されます。テーブル データが大きい場合は、インデックスを再構築してインデックス データを回復することをお勧めします。
-> -   `ADMIN CLEANUP INDEX`文を実行すると、対応するテーブルまたはインデックスはロックされず、TiDB は他のセッションが同時にテーブル レコードを変更することを許可します。ただし、この場合、 `ADMIN CLEANUP INDEX`すべてのテーブル レコードを正しく処理できない可能性があります。したがって、 `ADMIN CLEANUP INDEX`実行するときは、テーブル データを同時に変更しないようにしてください。
-> -   TiDB のエンタープライズ エディションを使用している場合は、サポート エンジニアに[リクエストを送信する](/support.md)て支援を受けることができます。
+> -   行データとインデックスデータの両方が失われている可能性があります。一貫性を回復するには、 `ADMIN CLEANUP INDEX`と[`ADMIN RECOVER INDEX`](/sql-statements/sql-statement-admin-recover.md)ステートメントを一緒に使用してください。
+> -   `ADMIN CLEANUP INDEX`ステートメントは常に単一スレッドで実行されます。テーブルデータが大きい場合は、インデックスを再構築してインデックスデータを回復することをお勧めします。
+> -   `ADMIN CLEANUP INDEX`文を実行すると、対応するテーブルまたはインデックスはロックされず、TiDB は他のセッションによるテーブルレコードの同時変更を許可します。ただし、この場合、 `ADMIN CLEANUP INDEX`ではすべてのテーブルレコードを正しく処理できない可能性があります。したがって、 `ADMIN CLEANUP INDEX`を実行する際は、テーブルデータの同時変更を避けてください。
+> -   TiDB のエンタープライズ エディションを使用する場合は、 [リクエストを送信する](/support.md)サポート エンジニアに問い合わせて支援を受けることができます。
 >
-> `ADMIN CLEANUP INDEX`ステートメントはアトミックではありません。ステートメントが実行中に中断された場合は、成功するまで再度実行することをお勧めします。
+> `ADMIN CLEANUP INDEX`文はアトミックではありません。実行中に文が中断された場合は、成功するまで再度実行することをお勧めします。
 
 </CustomContent>
 
@@ -74,16 +74,16 @@ Query OK, 0 rows affected (0.01 sec)
 >
 > レプリカの損失によりデータとインデックスが不整合になった場合:
 >
-> -   行データとインデックス データの両方が失われる可能性があります。一貫性を回復するには、ステートメント`ADMIN CLEANUP INDEX`と[`ADMIN RECOVER INDEX`](/sql-statements/sql-statement-admin-recover.md)一緒に使用します。
-> -   `ADMIN CLEANUP INDEX`ステートメントは常に 1 つのスレッドで実行されます。テーブル データが大きい場合は、インデックスを再構築してインデックス データを回復することをお勧めします。
-> -   `ADMIN CLEANUP INDEX`文を実行すると、対応するテーブルまたはインデックスはロックされず、TiDB は他のセッションが同時にテーブル レコードを変更することを許可します。ただし、この場合、 `ADMIN CLEANUP INDEX`すべてのテーブル レコードを正しく処理できない可能性があります。したがって、 `ADMIN CLEANUP INDEX`実行するときは、テーブル データを同時に変更しないようにしてください。
-> -   TiDB のエンタープライズ エディションを使用している場合は、サポート エンジニアに[リクエストを送信する](https://tidb.support.pingcap.com/)て支援を受けることができます。
+> -   行データとインデックスデータの両方が失われている可能性があります。一貫性を回復するには、 `ADMIN CLEANUP INDEX`と[`ADMIN RECOVER INDEX`](/sql-statements/sql-statement-admin-recover.md)ステートメントを一緒に使用してください。
+> -   `ADMIN CLEANUP INDEX`ステートメントは常に単一スレッドで実行されます。テーブルデータが大きい場合は、インデックスを再構築してインデックスデータを回復することをお勧めします。
+> -   `ADMIN CLEANUP INDEX`文を実行すると、対応するテーブルまたはインデックスはロックされず、TiDB は他のセッションによるテーブルレコードの同時変更を許可します。ただし、この場合、 `ADMIN CLEANUP INDEX`ではすべてのテーブルレコードを正しく処理できない可能性があります。したがって、 `ADMIN CLEANUP INDEX`を実行する際は、テーブルデータの同時変更を避けてください。
+> -   TiDB のエンタープライズ エディションを使用する場合は、 [リクエストを送信する](https://tidb.support.pingcap.com/)サポート エンジニアに問い合わせて支援を受けることができます。
 >
-> `ADMIN CLEANUP INDEX`ステートメントはアトミックではありません。ステートメントが実行中に中断された場合は、成功するまで再度実行することをお勧めします。
+> `ADMIN CLEANUP INDEX`文はアトミックではありません。実行中に文が中断された場合は、成功するまで再度実行することをお勧めします。
 
 </CustomContent>
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。
 

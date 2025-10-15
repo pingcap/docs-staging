@@ -5,19 +5,19 @@ summary: TiDB の構成オプションについて学習します。
 
 # コンフィグレーションオプション {#configuration-options}
 
-TiDB クラスターを起動するときに、コマンドライン オプションまたは環境変数を使用して構成できます。このドキュメントでは、TiDB のコマンド オプションについて説明します。デフォルトの TiDB ポートは、クライアント要求の場合は`4000` 、ステータス レポートの場合は`10080`です。
+TiDBクラスタを起動する際には、コマンドラインオプションまたは環境変数を使用して設定できます。このドキュメントでは、TiDBのコマンドオプションについて説明します。デフォルトのTiDBポートは、クライアントリクエスト用に`4000` 、ステータスレポート用に`10080`です。
 
 ## <code>--advertise-address</code> {#code-advertise-address-code}
 
 -   TiDBサーバーにログインするためのIPアドレス
 -   デフォルト: `""`
--   このアドレスは、TiDB クラスターの残りの部分とユーザーからアクセスできる必要があります。
+-   このアドレスは、TiDB クラスターの残りの部分とユーザーがアクセスできる必要があります。
 
 ## <code>--config</code> {#code-config-code}
 
 -   設定ファイル
 -   デフォルト: `""`
--   設定ファイルを指定している場合、TiDB は設定ファイルを読み取ります。対応する設定がコマンドライン オプションにも存在する場合、TiDB はコマンドライン オプションの設定を使用して設定ファイルの設定を上書きします。詳細な設定情報については、 [TiDBコンフィグレーションファイルの説明](/tidb-configuration-file.md)参照してください。
+-   設定ファイルが指定されている場合、TiDB は設定ファイルを読み取ります。対応する設定がコマンドラインオプションにも存在する場合、TiDB はコマンドラインオプションの設定を使用して設定ファイルの設定を上書きします。詳細な設定情報については、 [TiDBコンフィグレーションファイルの説明](/tidb-configuration-file.md)参照してください。
 
 ## <code>--config-check</code> {#code-config-check-code}
 
@@ -31,7 +31,7 @@ TiDB クラスターを起動するときに、コマンドライン オプシ�
 
 ## <code>--cors</code> {#code-cors-code}
 
--   TiDB HTTPステータスサービスのクロスオリジンリクエスト共有（CORS）リクエストの値`Access-Control-Allow-Origin`を指定します。
+-   TiDB HTTPステータスサービスのクロスオリジンリクエスト共有（CORS）リクエストの値`Access-Control-Allow-Origin`指定します。
 -   デフォルト: `""`
 
 ## <code>--host</code> {#code-host-code}
@@ -39,7 +39,7 @@ TiDB クラスターを起動するときに、コマンドライン オプシ�
 -   TiDBサーバーが監視するホストアドレス
 -   デフォルト: `"0.0.0.0"`
 -   TiDBサーバーはこのアドレスを監視します。
--   `"0.0.0.0"`アドレスは、デフォルトですべてのネットワーク カードを監視します。複数のネットワーク カードがある場合は、 `192.168.100.113`のように、サービスを提供するネットワーク カードを指定します。
+-   `"0.0.0.0"`アドレスはデフォルトですべてのネットワークカードを監視します。複数のネットワークカードがある場合は、サービスを提供するネットワークカード（例： `192.168.100.113` ）を指定してください。
 
 ## <code>--initialize-insecure</code> {#code-initialize-insecure-code}
 
@@ -48,23 +48,23 @@ TiDB クラスターを起動するときに、コマンドライン オプシ�
 
 ## <code>--initialize-secure</code> {#code-initialize-secure-code}
 
--   tidb-server をセキュアモードでブートストラップする
+-   tidb-server の初期化時に、認証方式`auth_socket`使用してアカウント`root`を作成するかどうかを制御します。 `true`に設定した場合、TiDB への初回ログインにはソケット接続を使用する必要があります。これにより、セキュリティが強化されます。
 -   デフォルト: `false`
 
 ## <code>--initialize-sql-file</code> {#code-initialize-sql-file-code}
 
--   TiDBクラスタを初めて起動したときに実行されるSQLスクリプト。詳細については[構成項目`initialize-sql-file`](/tidb-configuration-file.md#initialize-sql-file-new-in-v660)参照してください。
+-   TiDBクラスタの初回起動時に実行されるSQLスクリプト。詳細は[構成項目`initialize-sql-file`](/tidb-configuration-file.md#initialize-sql-file-new-in-v660)参照。
 -   デフォルト: `""`
 
 ## <code>-L</code> {#code-l-code}
 
 -   ログレベル
 -   デフォルト: `"info"`
--   `"error"` `"fatal"` `"warn"` `"debug"` `"info"`
+-   `"warn"` `"fatal"` `"error"` `"debug"` `"info"`
 
 ## <code>--lease</code> {#code-lease-code}
 
--   スキーマ リースの期間。何をするのか理解していない場合は、値を変更するのは**危険**です。
+-   スキーマリースの期間。何をするかを十分に理解していない場合は、値を変更するのは**危険**です。
 -   デフォルト: `45s`
 
 ## <code>--log-file</code> {#code-log-file-code}
@@ -94,7 +94,7 @@ TiDB クラスターを起動するときに、コマンドライン オプシ�
 
 ## <code>--metrics-interval</code> {#code-metrics-interval-code}
 
--   Prometheusクライアントのプッシュ間隔（秒単位）
+-   Prometheusクライアントのプッシュ間隔（秒）
 -   デフォルト: `15s`
 -   値を 0 に設定すると、Prometheus クライアントのプッシュが停止します。
 
@@ -107,30 +107,30 @@ TiDB クラスターを起動するときに、コマンドライン オプシ�
 ## <code>--path</code> {#code-path-code}
 
 -   「unistore」のようなローカルstorageエンジンのデータディレクトリへのパス
--   `--store = tikv`の場合、パスを指定する必要があります。 `--store = unistore`場合、パスを指定しないとデフォルト値が使用されます。
--   TiKV のような分散storageエンジンの場合、 `--path`実際の PD アドレスを指定します。PDサーバーを192.168.100.113:2379、192.168.100.114:2379、および 192.168.100.115:2379 にデプロイすると仮定すると、値`--path`は「192.168.100.113:2379、192.168.100.114:2379、192.168.100.115:2379」になります。
+-   `--store = tikv`場合、パスを指定する必要があります。 `--store = unistore`場合、パスを指定しないとデフォルト値が使用されます。
+-   TiKVのような分散storageエンジンの場合、 `--path`実際のPDアドレスを指定します。PDサーバーを192.168.100.113:2379、192.168.100.114:2379、192.168.100.115:2379にデプロイすると仮定すると、 `--path`値は「192.168.100.113:2379、192.168.100.114:2379、192.168.100.115:2379」となります。
 -   デフォルト: `"/tmp/tidb"`
--   `tidb-server --store=unistore --path=""`使用すると、純粋なインメモリ TiDB を有効にすることができます。
+-   純粋なインメモリ TiDB を有効にするには、 `tidb-server --store=unistore --path=""`使用します。
 
 ## <code>--proxy-protocol-fallbackable</code> {#code-proxy-protocol-fallbackable-code}
 
--   PROXY プロトコル フォールバック モードを有効にするかどうかを制御します。このパラメータを`true`に設定すると、TiDB は PROXY プロトコル仕様を使用せずに、または PROXY プロトコル ヘッダーを送信せずに、 `--proxy-protocol-networks`に属するクライアント接続を受け入れます。デフォルトでは、TiDB は`--proxy-protocol-networks`に属し、PROXY プロトコル ヘッダーを送信するクライアント接続のみを受け入れます。
+-   PROXYプロトコルフォールバックモードを有効にするかどうかを制御します。このパラメータを`true`に設定すると、TiDBはPROXYプロトコル仕様を使用せず、PROXYプロトコルヘッダーを送信せずに、 `--proxy-protocol-networks`に属するクライアント接続を受け入れます。デフォルトでは、TiDBは`--proxy-protocol-networks`に属し、PROXYプロトコルヘッダーを送信するクライアント接続のみを受け入れます。
 -   デフォルト値: `false`
 
 ## <code>--proxy-protocol-networks</code> {#code-proxy-protocol-networks-code}
 
 -   [PROXYプロトコル](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt)使用して TiDB に接続できるプロキシ サーバーの IP アドレスのリスト。
 -   デフォルト: `""`
--   通常、リバース プロキシの背後で TiDB にアクセスすると、TiDB はリバース プロキシサーバーの IP アドレスをクライアントの IP アドレスとして取得します。PROXY プロトコルを有効にすると、HAProxy などのこのプロトコルをサポートするリバース プロキシは、実際のクライアント IP アドレスを TiDB に渡すことができます。
--   このフラグを設定すると、TiDB は設定されたソース IP アドレスが PROXY プロトコルを使用して TiDB に接続できるようにします。PROXY 以外のプロトコルが使用されている場合、この接続は拒否されます。その他のアドレスは PROXY プロトコルを使用せずに TiDB に接続できます。このフラグが空のままの場合、どの IP アドレスも PROXY プロトコルを使用して TiDB に接続できません。値には、 `,`区切り文字として IP アドレス (192.168.1.50) または CIDR (192.168.1.0/24) を指定できます。3 `*`任意の IP アドレスを意味します。
+-   通常、リバースプロキシを経由してTiDBにアクセスする場合、TiDBはリバースプロキシサーバーのIPアドレスをクライアントのIPアドレスとして取得します。PROXYプロトコルを有効にすると、HAProxyなどのこのプロトコルをサポートするリバースプロキシは、実際のクライアントIPアドレスをTiDBに渡すことができます。
+-   このフラグを設定すると、TiDBは設定された送信元IPアドレスがPROXYプロトコルを使用してTiDBに接続することを許可します。PROXY以外のプロトコルが使用されている場合、この接続は拒否されます。その他のアドレスはPROXYプロトコルを使用せずにTiDBに接続できます。このフラグを空のままにすると、どのIPアドレスもPROXYプロトコルを使用してTiDBに接続できなくなります。値は、IPアドレス（192.168.1.50）またはCIDR（192.168.1.0/24）で、区切り文字として`,`使用します。3 `*`任意のIPアドレスを意味します。
 
 > **警告：**
 >
-> `*` 、任意の IP アドレスのクライアントがその IP アドレスを報告できるようにすることでセキュリティ リスクを招く可能性があるため、注意して使用してください。また、 `*`使用すると、 `--proxy-protocol-fallbackable` `true`に設定しない限り、TiDB に直接接続する内部コンポーネント(TiDB ダッシュボードなど) が使用できなくなる可能性があります。
+> `*` 、任意の IP アドレスのクライアントが自身の IP アドレスを報告できるようになるため、セキュリティリスクが生じる可能性があるため、注意して使用してください。また、 `*`使用すると、 `--proxy-protocol-fallbackable` `true`に設定しないと、TiDB に直接接続する内部コンポーネント（TiDB ダッシュボードなど）が利用できなくなる可能性があります。
 
 > **注記：**
 >
-> PROXY プロトコルを有効にした AWS Network Load Balancer (NLB) を使用するには、NLB の`target group`プロパティを設定する必要があります。具体的には、 `proxy_protocol_v2.client_to_server.header_place`を`on_first_ack`に設定します。同時に、AWS サポートにチケットを送信する必要があります。PROXY プロトコルを有効にすると、クライアントはサーバーからハンドシェイク パケットを取得できなくなり、クライアントがタイムアウトするまでパケットがブロックされることに注意してください。これは、NLB がクライアントがデータを送信した後にのみプロキシ パケットを送信するためです。ただし、クライアントがデータ パケットを送信する前に、サーバーから送信されたデータ パケットは内部ネットワークでドロップされます。
+> PROXYプロトコルを有効にしたAWS Network Load Balancer（NLB）を使用するには、NLBの`target group`プロパティを設定する必要があります。具体的には、 `proxy_protocol_v2.client_to_server.header_place`を`on_first_ack`に設定します。同時に、AWSサポートにチケットを送信する必要があります。PROXYプロトコルを有効にすると、クライアントはサーバーからのハンドシェイクパケットの取得に失敗し、クライアントがタイムアウトするまでパケットがブロックされることに注意してください。これは、NLBがクライアントがデータを送信した後にのみプロキシパケットを送信するためです。ただし、クライアントがデータパケットを送信する前に、サーバーから送信されたデータパケットは内部ネットワークでドロップされます。
 
 ## <code>--proxy-protocol-header-timeout</code> {#code-proxy-protocol-header-timeout-code}
 
@@ -139,17 +139,17 @@ TiDB クラスターを起動するときに、コマンドライン オプシ�
 
 > **警告：**
 >
-> v6.3.0 以降、このパラメータは非推奨です。ネットワーク データが初めて読み取られるときに PROXY プロトコル ヘッダーが読み取られるため、このパラメータは使用されなくなりました。このパラメータを非推奨にすると、ネットワーク データが初めて読み取られるときに設定されるタイムアウトに影響が及ばなくなります。
+> バージョン6.3.0以降、このパラメータは非推奨となりました。ネットワークデータの初回読み取り時にPROXYプロトコルヘッダーが読み込まれるため、このパラメータは使用されなくなりました。このパラメータを非推奨にすることで、ネットワークデータの初回読み取り時に設定されるタイムアウトに影響を与えなくなります。
 
 > **注記：**
 >
-> 値を`0`に設定しないでください。特別な状況を除いて、デフォルト値を使用してください。
+> 値を`0`に設定しないでください。特別な状況を除き、デフォルト値を使用してください。
 
 ## <code>--report-status</code> {#code-report-status-code}
 
 -   ステータスレポートとpprofツールを有効（ `true` ）または無効（ `false` ）にする
 -   デフォルト: `true`
--   `true`に設定すると、このパラメータはメトリックと pprof を有効にします。 `false`に設定すると、このパラメータはメトリックと pprof を無効にします。
+-   このパラメータを`true`に設定すると、メトリクスとpprofが有効になります。 `false`に設定すると、メトリクスとpprofが無効になります。
 
 ## <code>--run-ddl</code> {#code-run-ddl-code}
 
@@ -167,20 +167,20 @@ TiDB クラスターを起動するときに、コマンドライン オプシ�
 
 -   TiDBサーバーのステータスレポートポート
 -   デフォルト: `"10080"`
--   このポートはサーバーの内部データを取得するために使用されます。データには[プロメテウスメトリクス](https://prometheus.io/)と[専門家](https://golang.org/pkg/net/http/pprof/)含まれます。
+-   このポートはサーバー内部データを取得するために使用されます。データには[プロメテウスメトリクス](https://prometheus.io/)と[専門家](https://golang.org/pkg/net/http/pprof/)含まれます。
 -   Prometheus メトリックには`"http://host:status_port/metrics"`でアクセスできます。
 -   pprof データには`"http://host:status_port/debug/pprof"`でアクセスできます。
 
 ## <code>--status-host</code> {#code-status-host-code}
 
--   TiDBサービスの状態を監視するために使用される`HOST`
+-   TiDBサービスのステータスを監視するために使用される`HOST`
 -   デフォルト: `0.0.0.0`
 
 ## <code>--store</code> {#code-store-code}
 
--   最レイヤーでTiDBが使用するstorageエンジンを指定します
+-   最レイヤーで TiDB が使用するstorageエンジンを指定します
 -   デフォルト: `"unistore"`
--   「unistore」または「tikv」を選択できます。(「unistore」はローカルstorageエンジン、「tikv」は分散storageエンジンです)
+-   「unistore」または「tikv」を選択できます。（「unistore」はローカルstorageエンジン、「tikv」は分散storageエンジンです）
 
 ## <code>--temp-dir</code> {#code-temp-dir-code}
 
@@ -189,12 +189,12 @@ TiDB クラスターを起動するときに、コマンドライン オプシ�
 
 ## <code>--tidb-service-scope</code> {#code-tidb-service-scope-code}
 
--   現在の TiDB インスタンスの初期値[`tidb_service_scope`](/system-variables.md#tidb_service_scope-new-in-v740)を指定します。
+-   現在の TiDB インスタンスの初期値として[`tidb_service_scope`](/system-variables.md#tidb_service_scope-new-in-v740)指定します。
 -   デフォルト: `""`
 
 ## <code>--token-limit</code> {#code-token-limit-code}
 
--   TiDB で同時に実行できるセッションの数。トラフィック制御に使用されます。
+-   TiDBで同時に実行できるセッション数。トラフィック制御に使用されます。
 -   デフォルト: `1000`
 -   同時セッション数が`token-limit`より大きい場合、リクエストはブロックされ、トークンを解放する操作が終了するまで待機します。
 
@@ -210,19 +210,19 @@ TiDB クラスターを起動するときに、コマンドライン オプシ�
 
 ## <code>--plugin-load</code> {#code-plugin-load-code}
 
--   ロードするプラグインの名前。それぞれカンマで区切られます。
+-   ロードするプラグインの名前。それぞれはコンマで区切られます。
 -   デフォルト: `""`
 
 ## <code>--affinity-cpus</code> {#code-affinity-cpus-code}
 
--   TiDB サーバーの CPU アフィニティをコンマで区切って設定します。たとえば、「1,2,3」などです。
+-   TiDBサーバーのCPUアフィニティをカンマ区切りで設定します。例：&quot;1,2,3&quot;。
 -   デフォルト: `""`
 
 ## <code>--redact</code> {#code-redact-code}
 
 -   サブコマンド`collect-log`使用するときに、 TiDBサーバーがログ ファイルを非感度化するかどうかを決定します。
 -   デフォルト: false
--   値が`true`の場合はマスキング操作となり、 `‹ ›`マーク記号で囲まれたすべてのフィールドが`?`に置き換えられます。値が`false`の場合は復元操作となり、すべてのマーク記号が削除されます。この機能を使用するには、 `./tidb-server --redact=xxx collect-log <input> <output>`実行して、 `<input>`で指定した TiDBサーバーログ ファイルを非感応化または復元し、 `<output>`に出力します。詳細については、システム変数[`tidb_redact_log`](/system-variables.md#tidb_redact_log)参照してください。
+-   値が`true`の場合、マスキング操作となり、 `‹ ›`マーク記号で囲まれたすべてのフィールドが`?`に置き換えられます。値が`false`の場合、リストア操作となり、すべてのマーク記号が削除されます。この機能を使用するには、 `./tidb-server --redact=xxx collect-log <input> <output>`実行して、 `<input>`で指定された TiDBサーバーログファイルを非感応化またはリストアし、 `<output>`に出力します。詳細については、システム変数[`tidb_redact_log`](/system-variables.md#tidb_redact_log)参照してください。
 
 ## <code>--repair-mode</code> {#code-repair-mode-code}
 
@@ -231,5 +231,5 @@ TiDB クラスターを起動するときに、コマンドライン オプシ�
 
 ## <code>--repair-list</code> {#code-repair-list-code}
 
--   修復モードで修復するテーブルの名前。
+-   修復モードで修復されるテーブルの名前。
 -   デフォルト: `""`

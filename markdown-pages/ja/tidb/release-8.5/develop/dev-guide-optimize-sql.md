@@ -57,9 +57,9 @@ EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
 +---------------------+------------+-----------+---------------+-----------------------------------------+
 ```
 
-実行プランの`TableFullScan_5`からわかるように、TiDB は`books`テーブルの全テーブル スキャンを実行し、各行の`title`条件を満たしているかどうかを確認します。 `TableFullScan_5`の`estRows`の値は`1000000.00`であり、これはオプティマイザがこの全テーブル スキャンで`1000000.00`行のデータが必要になると見積もっていることを意味します。
+実行プランの`TableFullScan_5`からわかるように、TiDBは`books`テーブルに対してフルテーブルスキャンを実行し、各行について`title`条件を満たすかどうかを確認します`TableFullScan_5`の`estRows`の値は`1000000.00`です。これは、オプティマイザがこのフルテーブルスキャンで`1000000.00`行のデータが使用されると見積もっていることを意味します。
 
-`EXPLAIN`の使用方法の詳細については、 [`EXPLAIN`ウォークスルー](/explain-walkthrough.md)参照してください。
+`EXPLAIN`の使用法の詳細については、 [`EXPLAIN`ウォークスルー](/explain-walkthrough.md)参照してください。
 
 ### 解決策: セカンダリインデックスを使用する {#solution-use-secondary-index}
 
@@ -69,7 +69,7 @@ EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
 CREATE INDEX title_idx ON books (title);
 ```
 
-クエリの実行ははるかに高速です。
+クエリの実行ははるかに高速になります。
 
 ```sql
 SELECT * FROM books WHERE title = 'Marian Yost';
@@ -105,15 +105,15 @@ EXPLAIN SELECT * FROM books WHERE title = 'Marian Yost';
 +---------------------------+---------+-----------+-------------------------------------+-------------------------------------------------------+
 ```
 
-実行プランの`IndexLookup_10`からわかるように、TiDB は`title_idx`インデックスでデータをクエリします。その`estRows`値は`1.27`で、これはオプティマイザが`1.27`行のみがスキャンされると見積もっていることを意味します。推定されるスキャン行数は、フル テーブル スキャンの`1000000.00`行のデータよりはるかに少なくなります。
+実行プランの`IndexLookup_10`からわかるように、TiDBは`title_idx`のインデックスを使ってデータをクエリします。その`estRows`番目の値は`1.27`です。これは、オプティマイザが`1.27`行しかスキャンされないと見積もっていることを意味します。推定されるスキャン行数は、フルテーブルスキャンの`1000000.00`行のデータよりもはるかに少ないです。
 
-`IndexLookup_10`実行プランは、まず`IndexRangeScan_8`演算子を使用して`title_idx`インデックスを通じて条件を満たすインデックス データを読み取り、次に`TableLookup_9`演算子を使用して、インデックス データに格納されている行 ID に従って対応する行をクエリすることです。
+実行プラン`IndexLookup_10`では、まず`IndexRangeScan_8`演算子を使用して`title_idx`インデックスを通じて条件を満たすインデックス データを読み取り、次に`TableLookup_9`演算子を使用してインデックス データに格納されている行 ID に従って対応する行をクエリします。
 
 TiDB 実行プランの詳細については、 [TiDB クエリ実行プランの概要](/explain-overview.md)参照してください。
 
 ### 解決策: カバーインデックスを使用する {#solution-use-covering-index}
 
-インデックスが、SQL ステートメントによってクエリされるすべての列を含むカバーリング インデックスである場合、インデックス データをスキャンするだけでクエリに十分です。
+インデックスが、SQL ステートメントによってクエリされるすべての列を含むカバー インデックスである場合は、インデックス データをスキャンするだけでクエリに十分です。
 
 たとえば、次のクエリでは、 `title`に基づいて対応する`price`クエリするだけで済みます。
 
@@ -151,7 +151,7 @@ EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
 +---------------------------+---------+-----------+-------------------------------------+-------------------------------------------------------+
 ```
 
-パフォーマンスを最適化するには、インデックス`title_idx`を削除し、新しいカバー インデックス`title_price_idx`を作成します。
+パフォーマンスを最適化するには、インデックス`title_idx`削除し、新しいカバー インデックス`title_price_idx`を作成します。
 
 ```sql
 ALTER TABLE books DROP INDEX title_idx;
@@ -176,7 +176,7 @@ EXPLAIN SELECT title, price FROM books WHERE title = 'Marian Yost';
 +--------------------+---------+-----------+--------------------------------------------------+-------------------------------------------------------+
 ```
 
-このクエリはより高速に実行されます:
+このクエリの実行速度が速くなります。
 
 ```sql
 SELECT title, price FROM books WHERE title = 'Marian Yost';
@@ -196,7 +196,7 @@ SELECT title, price FROM books WHERE title = 'Marian Yost';
 Time: 0.004s
 ```
 
-`books`テーブルは後の例で使用されるため、 `title_price_idx`インデックスを削除します。
+`books`のテーブルは後の例で使用されるため、 `title_price_idx`インデックスを削除します。
 
 ```sql
 ALTER TABLE books DROP INDEX title_price_idx;
@@ -204,7 +204,7 @@ ALTER TABLE books DROP INDEX title_price_idx;
 
 ### 解決策: プライマリインデックスを使用する {#solution-use-primary-index}
 
-クエリが主キーを使用してデータをフィルター処理する場合、クエリは高速に実行されます。たとえば、 `books`テーブルの主キーは`id`列目なので、 `id`列目を使用してデータをクエリできます。
+クエリで主キーを使ってデータをフィルタリングすると、クエリの実行速度が向上します。例えば、テーブル`books`の主キーは列`id`なので、列`id`を使ってデータをクエリできます。
 
 ```sql
 SELECT * FROM books WHERE id = 896;
@@ -220,7 +220,7 @@ SELECT * FROM books WHERE id = 896;
 Time: 0.004s
 ```
 
-実行プランを表示するには`EXPLAIN`使用します。
+実行プランを確認するには`EXPLAIN`使用します。
 
 ```sql
 EXPLAIN SELECT * FROM books WHERE id = 896;
@@ -234,11 +234,11 @@ EXPLAIN SELECT * FROM books WHERE id = 896;
 +-------------+---------+------+---------------+---------------+
 ```
 
-`Point_Get`非常に高速な実行プランです。
+`Point_Get`は非常に高速な実行プランです。
 
 ## 適切な結合タイプを使用する {#use-the-right-join-type}
 
-[JOIN 実行プラン](/explain-joins.md)参照。
+[JOIN実行プラン](/explain-joins.md)参照。
 
 ### 参照 {#see-also}
 
@@ -249,12 +249,12 @@ EXPLAIN SELECT * FROM books WHERE id = 896;
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

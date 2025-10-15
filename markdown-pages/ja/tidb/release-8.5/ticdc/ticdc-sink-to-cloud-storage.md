@@ -24,7 +24,7 @@ cdc cli changefeed create \
 出力は次のようになります。
 
 ```shell
-Info: {"upstream_id":7171388873935111376,"namespace":"default","id":"simple-replication-task","sink_uri":"s3://logbucket/storage_test?protocol=canal-json","create_time":"2024-12-26T18:52:05.566016967+08:00","start_ts":437706850431664129,"engine":"unified","config":{"case_sensitive":false,"enable_old_value":true,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":false,"sync_point_interval":600000000000,"sync_point_retention":86400000000000,"filter":{"rules":["*.*"],"event_filters":null},"mounter":{"worker_num":16},"sink":{"protocol":"canal-json","schema_registry":"","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false},"column_selectors":null,"transaction_atomicity":"none","encoder_concurrency":16,"terminator":"\r\n","date_separator":"none","enable_partition_separator":false},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"storage":""}},"state":"normal","creator_version":"v8.1.2"}
+Info: {"upstream_id":7171388873935111376,"namespace":"default","id":"simple-replication-task","sink_uri":"s3://logbucket/storage_test?protocol=canal-json","create_time":"2025-08-14T18:52:05.566016967+08:00","start_ts":437706850431664129,"engine":"unified","config":{"case_sensitive":false,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":false,"sync_point_interval":600000000000,"sync_point_retention":86400000000000,"filter":{"rules":["*.*"],"event_filters":null},"mounter":{"worker_num":16},"sink":{"protocol":"canal-json","schema_registry":"","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false},"column_selectors":null,"transaction_atomicity":"none","encoder_concurrency":16,"terminator":"\r\n","date_separator":"none","enable_partition_separator":false},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"storage":""}},"state":"normal","creator_version":"v8.5.3"}
 ```
 
 -   `--server` : TiCDC クラスター内の任意の TiCDCサーバーのアドレス。
@@ -141,7 +141,7 @@ GCSへのアクセスに使用するアカウントは、アクセスキーを�
 
 ### NFSのシンクURIを構成する {#configure-sink-uri-for-nfs}
 
-以下は NFS の設定例です。
+以下は NFS の構成例です。
 
 ```shell
 --sink-uri="file:///my-directory/prefix?protocol=canal-json"
@@ -167,7 +167,7 @@ GCSへのアクセスに使用するアカウントは、アクセスキーを�
 -   `partition-separator` : テーブルパーティションによってパスを区切るセパレーターを指定します (例: `s3://bucket/bbb/ccc/test/table1/9999/ **20**` 。
 -   `date-separator` : トランザクションのコミット日に基づいてファイルを分類します。デフォルト値は`day`です。値のオプションは次のとおりです。
     -   `none` : `date-separator`なし。たとえば、バージョン`test.table1`が`9999`であるすべてのファイルは`s3://bucket/bbb/ccc/test/table1/9999`に保存されます。
-    -   `year` : 区切り文字はトランザクションコミット日の年です (例: `s3://bucket/bbb/ccc/test/table1/9999/ **2022**` 。
+    -   `year` : 区切り文字はトランザクションのコミット日の年です (例: `s3://bucket/bbb/ccc/test/table1/9999/ **2022**` 。
     -   `month` : 区切り文字はトランザクションコミット日の年と月です。例: `s3://bucket/bbb/ccc/test/table1/9999/ **2022-01**` 。
     -   `day` : 区切り文字はトランザクションコミット日の年、月、日です。例: `s3://bucket/bbb/ccc/test/table1/9999/ **2022-01-02**` 。
 -   `num` : データの変更を記録したファイルのシリアル番号を保存します (例: `s3://bucket/bbb/ccc/test/table1/9999/2022-01-02/CDC **000005** .csv` 。

@@ -77,11 +77,11 @@ TiFlash Proxyはv6.1.0（TiKV v6.0.0と連動）にアップグレードされ�
 
 -   TiDB v6.0以前：動的プルーニングはデフォルトで無効になっています。アップグレード後の動的プルーニングの設定は、以前のバージョンの設定を継承します。つまり、アップグレード後も動的プルーニングは自動的に有効化（または無効化）されません。
 
-    アップグレード後、動的プルーニングを有効にするには、 `tidb_partition_prune_mode`を`dynamic`に設定し、パーティションテーブルのGlobalStatsを手動で更新してください。詳細は[動的プルーニングモード](/partitioned-table.md#dynamic-pruning-mode)参照してください。
+    アップグレード後、動的プルーニングを有効にするには、 `tidb_partition_prune_mode`を`dynamic`に設定し、パーティションテーブルのグローバル統計を手動で更新してください。詳細については、 [動的プルーニングモード](/partitioned-table.md#dynamic-pruning-mode)参照してください。
 
 ## v5.x または v6.0 から v6.2 へ {#from-v5-x-or-v6-0-to-v6-2}
 
-TiDB v6.2では、 TiFlashのデータstorage形式がV3バージョンにアップグレードされます。そのため、 TiFlashをv5.xまたはv6.0からv6.2にアップグレードする場合は、 [TiFlashプロキシ](#tiflash-proxy)と[動的剪定](#dynamic-pruning)の機能変更に加えて、PageStorageの機能変更にも注意する必要があります。
+TiDB v6.2では、 TiFlashのデータstorageフォーマットがV3にアップグレードされ、書き込み増幅の低減とTiFlashの安定性向上が図られています。v5.x、v6.0、またはv6.1からv6.2以降のバージョンにアップグレードする場合は、 [TiFlashプロキシ](#tiflash-proxy)と[動的剪定](#dynamic-pruning)の機能変更に加えて、PageStorageの機能変更にも注意する必要があります。
 
 ### ページストレージ {#pagestorage}
 
@@ -104,23 +104,38 @@ TiFlash v6.2.0はデフォルトでPageStorage V3バージョン[`format_version
 -   V3のみ: PageStorage V3を使用しているテーブルの数（パーティションを含む）
 -   混合モード: PageStorage V2 から PageStorage V3 に変換されたデータ形式を持つテーブルの数 (パーティションを含む)
 
+> **注記：**
+>
+> 以下のパッチバージョンには既知の問題（問題[＃9039](https://github.com/pingcap/tiflash/issues/9039) ）があります。これらのバージョンにアップグレードすると、 TiFlashデータが破損する可能性があります。
+>
+> -   v6.5.0 から v6.5.9
+> -   バージョン6.6.0
+> -   バージョン7.0.0
+> -   v7.1.0 から v7.1.5
+> -   バージョン7.2.0
+> -   バージョン7.3.0
+> -   バージョン7.4.0
+> -   v7.5.0 から v7.5.1
+>
+> この問題が修正された v6.5.10、v7.1.6、v7.5.2 以降のバージョンにアップグレードすることをお勧めします。
+
 **テストやその他の特別なシナリオでTiFlashをダウングレードするための回避策**
 
 対象のTiFlashノードを強制的にスケールインし、TiKVからデータを再度複製することができます。詳細な手順については、 [TiFlashクラスターのスケールイン](/scale-tidb-using-tiup.md#scale-in-a-tiflash-cluster)参照してください。
 
-## v6.1からv6.2へ {#from-v6-1-to-v6-2}
-
-TiFlashをv6.1からv6.2にアップグレードする際は、データstorage形式の変更にご注意ください。詳細は[ページストレージ](#pagestorage)ご覧ください。
-
 ## v6.x または v7.x から<code>storage.format_version = 5</code>が設定された v7.3 へ {#from-v6-x-or-v7-x-to-v7-3-with-code-storage-format-version-5-code-configured}
 
-TiFlash v7.3 以降、新しい DTFile バージョン DTFile V3 (実験的) が導入されました。この新しい DTFile バージョンでは、複数の小さなファイルを 1 つの大きなファイルに結合することで、ファイル総数を削減できます。v7.3 では、デフォルトの DTFile バージョンは引き続き V2 です。V3 を使用するには、 [TiFlash構成パラメータ](/tiflash/tiflash-configuration.md) `storage.format_version = 5`を設定します。設定後もTiFlash はV2 DTFile を読み取り可能で、その後のデータ圧縮時に既存の V2 DTFile を徐々に V3 DTFile に書き換えます。
+TiFlash v7.3 以降、新しい DTFile バージョン DTFile V3 (実験的) が導入されました。この新しい DTFile バージョンでは、複数の小さなファイルを 1 つの大きなファイルに結合することで、ファイル総数を削減できます。v7.3 では、デフォルトの DTFile バージョンは引き続き V2 です。V3 を使用するには、 [TiFlash構成パラメータ](/tiflash/tiflash-configuration.md) `storage.format_version = 5`設定します。設定後もTiFlash はV2 DTFile を読み取り可能で、その後のデータ圧縮時に既存の V2 DTFile を徐々に V3 DTFile に書き換えます。
 
 TiFlashをv7.3にアップグレードし、V3 DTFilesを使用するように設定した後、 TiFlashを以前のバージョンに戻す必要がある場合は、DTToolをオフラインで使用してV3 DTFilesをV2 DTFilesに書き換えることができます。詳細については、 [DTTool 移行ツール](/tiflash/tiflash-command-line-flags.md#dttool-migrate)参照してください。
 
 ## v6.x または v7.x から v7.4 以降のバージョンへ {#from-v6-x-or-v7-x-to-v7-4-or-a-later-version}
 
-v7.4以降、データコンパクション中に発生するリードアンプリフィケーションとライトアンプリフィケーションを削減するため、 TiFlashはPageStorage V3のデータコンパクションロジックを最適化します。これにより、基盤となるstorageファイル名の一部が変更されます。そのため、v7.4以降へのアップグレード後、元のバージョンへのインプレースダウングレードはサポートされません。
+v7.4以降、データ圧縮中に発生する読み取りおよび書き込みの増幅を削減するため、 TiFlashはPageStorage V3のデータ圧縮ロジックを最適化します。これにより、基盤となるstorageファイル名の一部が変更されます。そのため、 TiFlashをv7.4以降のバージョンにアップグレードした後は、元のバージョンへのインプレースダウングレードはサポートされません。
+
+## v7.x から v8.4 以降のバージョンへ {#from-v7-x-to-v8-4-or-a-later-version}
+
+バージョン8.4以降、 TiFlashの基盤となるstorageフォーマットは[ベクトル検索](/vector-search/vector-search-overview.md)サポートするように更新されました。そのため、 TiFlashをバージョン8.4以降にアップグレードした後は、元のバージョンへのインプレースダウングレードはサポートされません。
 
 **テストやその他の特別なシナリオでTiFlashをダウングレードするための回避策**
 

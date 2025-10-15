@@ -1,17 +1,17 @@
 ---
 title: BATCH
-summary: TiDB データベースでの BATCH の使用法の概要。
+summary: TiDB データベースにおける BATCH の使用法の概要。
 ---
 
 # バッチ {#batch}
 
-`BATCH`構文は、DML ステートメントを TiDB 内の複数のステートメントに分割して実行します。つまり、トランザクションの原子性と分離性は**保証され**ません。したがって、これは「非トランザクション」ステートメントです。
+`BATCH`構文は、TiDB 内で DML 文を複数の文に分割して実行します。つまり、トランザクションの原子性と独立性は**保証されません**。したがって、これは「非トランザクション」文です。
 
 現在、 `BATCH`では`INSERT` 、 `REPLACE` 、 `UPDATE` 、 `DELETE`サポートされています。
 
-`BATCH`構文は、列に基づいて、DML ステートメントを複数の実行範囲に分割します。各範囲で、1 つの SQL ステートメントが実行されます。
+`BATCH`構文は、列に基づいてDML文を複数の実行範囲に分割します。各範囲では、1つのSQL文が実行されます。
 
-使用方法や制限事項の詳細については[非トランザクションDMLステートメント](/non-transactional-dml.md)参照してください。
+使用方法および制限事項の詳細については、 [非トランザクションDMLステートメント](/non-transactional-dml.md)参照してください。
 
 `BATCH`ステートメントで複数テーブルの結合を使用する場合は、あいまいさを避けるために列の完全なパスを指定する必要があります。
 
@@ -19,7 +19,7 @@ summary: TiDB データベースでの BATCH の使用法の概要。
 BATCH ON test.t2.id LIMIT 1 INSERT INTO t SELECT t2.id, t2.v, t3.v FROM t2 JOIN t3 ON t2.k = t3.k;
 ```
 
-上記のステートメントでは、分割する列を`test.t2.id`として指定しており、これは明確です。次のように`id`使用すると、エラーが報告されます。
+上記の文では、分割する列を`test.t2.id`と指定しており、これは明確な値です。次のように`id`使用すると、エラーが発生します。
 
 ```sql
 BATCH ON id LIMIT 1 INSERT INTO t SELECT t2.id, t2.v, t3.v FROM t2 JOIN t3 ON t2.k = t3.k;
@@ -43,7 +43,7 @@ ShardableStmt ::=
 |   ReplaceIntoStmt
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 `BATCH`構文は TiDB 固有であり、MySQL とは互換性がありません。
 

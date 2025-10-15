@@ -91,10 +91,6 @@ TiKVは現在、 CTRモードでAES128、AES192、AES256、またはSM4（バー
 
 TiKVは、AWS、Google Cloud、Azureの3つのプラットフォームでKMS暗号化をサポートしています。サービスがデプロイされているプラットフォームに応じて、いずれかのプラットフォームを選択してKMS暗号化を設定できます。
 
-> **警告：**
->
-> 現在、Google Cloud KMS を使用したマスターキーの指定は実験的中です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される可能性があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)報告を行ってください。
-
 <SimpleTab>
 
 <div label="AWS KMS">

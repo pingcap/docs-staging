@@ -5,7 +5,7 @@ summary: PARTITIONS` INFORMATION_SCHEMA テーブルについて学習します�
 
 # パーティション {#partitions}
 
-`PARTITIONS`表には[パーティションテーブル](/partitioned-table.md)に関する情報が記載されています。
+`PARTITIONS`表には[パーティションテーブル](/partitioned-table.md)に関する情報が示されています。
 
 ```sql
 USE INFORMATION_SCHEMA;

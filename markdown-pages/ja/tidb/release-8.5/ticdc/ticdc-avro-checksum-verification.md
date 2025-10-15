@@ -3,13 +3,13 @@ title: TiCDC Row Data Checksum Verification Based on Avro
 summary: TiCDC 行データ チェックサム検証の詳細な実装を紹介します。
 ---
 
-# Avro に基づく TiCDC 行データ チェックサム検証 {#ticdc-row-data-checksum-verification-based-on-avro}
+# Avroに基づくTiCDC行データチェックサム検証 {#ticdc-row-data-checksum-verification-based-on-avro}
 
-このドキュメントでは、TiCDC によって Kafka に送信され、 Golang を使用して Avro プロトコルでエンコードされたデータを使用する方法と、 [単一行データチェックサム機能](/ticdc/ticdc-integrity-check.md)を使用してデータ検証を実行する方法を紹介します。
+このドキュメントでは、TiCDC によって Kafka に送信され、 Golangを使用して Avro プロトコルでエンコードされたデータを使用する方法と、 [単一行データチェックサム機能](/ticdc/ticdc-integrity-check.md)を使用してデータ検証を実行する方法を紹介します。
 
-この例のソースコードは[`avro-checksum-verification`](https://github.com/pingcap/tiflow/tree/release-8.5/examples/golang/avro-checksum-verification)ディレクトリにあります。
+この例のソース コードは[`avro-checksum-verification`](https://github.com/pingcap/tiflow/tree/release-8.5/examples/golang/avro-checksum-verification)ディレクトリにあります。
 
-このドキュメントの例では、 [カフカ語](https://github.com/segmentio/kafka-go)使用して単純な Kafka コンシューマー プログラムを作成します。このプログラムは、指定されたトピックからデータを継続的に読み取り、チェックサムを計算し、その値を検証します。
+このドキュメントの例では、 [カフカ語](https://github.com/segmentio/kafka-go)使用してシンプルなKafkaコンシューマープログラムを作成します。このプログラムは、指定されたトピックから継続的にデータを読み取り、チェックサムを計算し、その値を検証します。
 
 ```go
 package main
@@ -92,7 +92,7 @@ func main() {
 }
 ```
 
-チェックサム値を計算するための重要な手順は`getValueMapAndSchema()`と`CalculateAndVerifyChecksum()`です。次のセクションでは、これら 2 つの関数の実装について説明します。
+チェックサム値を計算するための重要なステップは`getValueMapAndSchema()`と`CalculateAndVerifyChecksum()`です。以下のセクションでは、これら2つの関数の実装について説明します。
 
 ## データをデコードし、対応するスキーマを取得する {#decode-data-and-get-the-corresponding-schema}
 
@@ -207,11 +207,11 @@ type lookupResponse struct {
 
 前の手順で取得した`valueMap`と`valueSchema`は、チェックサムの計算と検証に使用されるすべての要素が含まれています。
 
-消費者側でのチェックサムの計算と検証のプロセスには、次の手順が含まれます。
+コンシューマー側のチェックサムの計算と検証のプロセスには、次の手順が含まれます。
 
 1.  予想されるチェックサム値を取得します。
-2.  各列を反復処理し、列の値と対応する MySQL 型に応じてバイト スライスを生成し、チェックサム値を継続的に更新します。
-3.  前の手順で計算したチェックサム値と、受信したメッセージから取得したチェックサム値を比較します。同じでない場合、チェックサム検証は失敗し、データが破損している可能性があります。
+2.  各列を反復処理し、列の値と対応する MySQL 型に応じてバイトスライスを生成し、チェックサム値を継続的に更新します。
+3.  前の手順で計算したチェックサム値と、受信メッセージから取得したチェックサム値を比較します。両者が一致しない場合、チェックサム検証は失敗し、データが破損している可能性があります。
 
 サンプルコードは次のとおりです。
 

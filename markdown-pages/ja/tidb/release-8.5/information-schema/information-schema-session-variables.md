@@ -5,7 +5,7 @@ summary: SESSION_VARIABLES` INFORMATION_SCHEMA テーブルについて学習し
 
 # セッション変数 {#session-variables}
 
-`SESSION_VARIABLES`番目のテーブルはセッション変数に関する情報を提供します。テーブル データは[`SHOW SESSION VARIABLES`](/sql-statements/sql-statement-show-variables.md)ステートメントの結果に似ています。
+`SESSION_VARIABLES`番目の表はセッション変数に関する情報を提供します。表のデータは[`SHOW SESSION VARIABLES`](/sql-statements/sql-statement-show-variables.md)のステートメントの結果と似ています。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -52,5 +52,5 @@ SELECT * FROM SESSION_VARIABLES ORDER BY variable_name LIMIT 10;
 
 `SESSION_VARIABLES`表の列の説明は次のとおりです。
 
--   `VARIABLE_NAME` : データベース内のセッションレベル変数の名前。
--   `VARIABLE_VALUE` : データベース内のセッションレベル変数の値。
+-   `VARIABLE_NAME` : データベース内のセッション レベル変数の名前。
+-   `VARIABLE_VALUE` : データベース内のセッション レベルの変数の値。

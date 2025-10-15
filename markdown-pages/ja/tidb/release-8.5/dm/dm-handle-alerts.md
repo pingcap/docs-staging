@@ -3,7 +3,7 @@ title: Handle Alerts in TiDB Data Migration
 summary: DM 内のアラート情報を処理する方法を理解します。
 ---
 
-# TiDB データ移行におけるアラートの処理 {#handle-alerts-in-tidb-data-migration}
+# TiDBデータ移行におけるアラートの処理 {#handle-alerts-in-tidb-data-migration}
 
 このドキュメントでは、DM でアラート情報を処理する方法について説明します。
 
@@ -20,13 +20,13 @@ summary: DM 内のアラート情報を処理する方法を理解します。
     アラートを処理するには、次の手順を実行できます。
 
     1.  クラスターの環境を確認します。
-    2.  トラブルシューティングのために、すべての DM マスター ノードのログを確認します。
+    2.  トラブルシューティングのために、すべての DM マスター ノードのログを確認してください。
 
 ### <code>DM_worker_offline</code> {#code-dm-worker-offline-code}
 
 -   説明：
 
-    DM ワーカー ノードが 1 時間以上オフラインの場合、このアラートがトリガーされます。高可用性アーキテクチャでは、このアラートによってタスクが直接中断されることはありませんが、中断のリスクが高まります。
+    DMワーカーノードが1時間以上オフラインの場合、このアラートがトリガーされます。高可用性アーキテクチャでは、このアラートによってタスクが直接中断されることはないかもしれませんが、中断のリスクが高まります。
 
 -   解決：
 
@@ -44,17 +44,17 @@ summary: DM 内のアラート情報を処理する方法を理解します。
 
 -   解決：
 
-    [DM のトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
+    [DMのトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
 
 ### <code>DM_pending_DDL</code> {#code-dm-pending-ddl-code}
 
 -   説明：
 
-    シャーディング DDL 操作が 1 時間以上保留になっている場合、このアラートがトリガーされます。
+    シャーディング DDL 操作が 1 時間以上保留されている場合、このアラートがトリガーされます。
 
 -   解決：
 
-    シナリオによっては、保留中のシャーディング DDL 操作がユーザーの期待どおりになる場合があります。それ以外の場合は、解決策については[DM でシャーディング DDL ロックを手動で処理する](/dm/manually-handling-sharding-ddl-locks.md)を参照してください。
+    シナリオによっては、保留中のシャーディングDDL操作がユーザーの期待どおりになる場合があります。それ以外の場合は、解決策については[DM でシャーディング DDL ロックを手動で処理する](/dm/manually-handling-sharding-ddl-locks.md)を参照してください。
 
 ## タスクステータスに関連するアラートルール {#alert-rules-related-to-task-status}
 
@@ -66,7 +66,7 @@ summary: DM 内のアラート情報を処理する方法を理解します。
 
 -   解決：
 
-    [DM のトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
+    [DMのトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
 
 ## リレーログに関連するアラートルール {#alert-rules-related-to-relay-log}
 
@@ -74,11 +74,11 @@ summary: DM 内のアラート情報を処理する方法を理解します。
 
 -   説明：
 
-    リレー ログ処理ユニットで自動回復不可能なエラー (たとえば、 binlogファイルが見つからない) が発生した場合、または短時間 (たとえば、2 分間に 3 回以上) に回復可能なエラー (たとえば、ネットワークの問題) が複数発生した場合、このアラートがトリガーされます。
+    リレー ログ処理ユニットで自動回復不可能なエラー (例: binlogファイルが見つからない) が発生した場合、または短時間に回復可能なエラー (例: ネットワークの問題) が複数発生した場合 (例: 2 分間に 3 回以上)、このアラートがトリガーされます。
 
 -   解決：
 
-    [DM のトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
+    [DMのトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
 
 ### <code>DM_remain_storage_of_relay_log</code> {#code-dm-remain-storage-of-relay-log-code}
 
@@ -91,8 +91,8 @@ summary: DM 内のアラート情報を処理する方法を理解します。
     アラートを処理するには、次の方法があります。
 
     -   不要なデータを手動で削除して、空きディスク容量を増やします。
-    -   [リレーログの自動データ消去戦略](/dm/relay-log.md#automatic-purge)または[データを手動で消去する](/dm/relay-log.md#manual-purge)再構成します。
-    -   コマンド`pause-relay`を実行して、リレー ログ プル プロセスを一時停止します。十分な空きディスク領域が確保されたら、コマンド`resume-relay`を実行してプロセスを再開します。リレー ログ プル プロセスが一時停止された後、プルされていないアップストリームbinlogファイルを消去してはならないことに注意してください。
+    -   [リレーログの自動データ消去戦略](/dm/relay-log.md#automatic-purge)または[データを手動で消去する](/dm/relay-log.md#manual-purge)を再構成します。
+    -   コマンド`pause-relay`を実行して、リレーログのプルプロセスを一時停止します。十分なディスク空き容量が確保できたら、コマンド`resume-relay`を実行してプロセスを再開します。リレーログのプルプロセスを一時停止した後、プルされていないアップストリームのbinlogファイルを削除しないでください。
 
 ### <code>DM_relay_log_data_corruption</code> {#code-dm-relay-log-data-corruption-code}
 
@@ -102,7 +102,7 @@ summary: DM 内のアラート情報を処理する方法を理解します。
 
 -   解決：
 
-    [DM のトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
+    [DMのトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
 
 ### <code>DM_fail_to_read_binlog_from_master</code> {#code-dm-fail-to-read-binlog-from-master-code}
 
@@ -112,27 +112,27 @@ summary: DM 内のアラート情報を処理する方法を理解します。
 
 -   解決：
 
-    [DM のトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
+    [DMのトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
 
 ### <code>DM_fail_to_write_relay_log</code> {#code-dm-fail-to-write-relay-log-code}
 
 -   説明：
 
-    リレー ログ処理ユニットがbinlogイベントをリレー ログ ファイルに書き込もうとしたときにエラーが発生すると、このユニットは`Paused`状態に移行し、アラートがトリガーされます。
+    リレー ログ処理ユニットがbinlogイベントをリレー ログ ファイルに書き込むときにエラーが発生すると、このユニットは`Paused`状態に移行し、アラートがトリガーされます。
 
 -   解決：
 
-    [DM のトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
+    [DMのトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
 
 ### <code>DM_binlog_file_gap_between_master_relay</code> {#code-dm-binlog-file-gap-between-master-relay-code}
 
 -   説明：
 
-    現在のアップストリーム MySQL/MariaDB 内のbinlogファイルの数が、リレー ログ処理ユニットによってプルされた最新のbinlogファイルの数を 10 分間で 1**以上**超過すると、アラートがトリガーされます。
+    現在のアップストリーム MySQL/MariaDB のbinlogファイルの数が、リレー ログ処理ユニットによってプルされた最新のbinlogファイルの数を 10 分間で 1**以上**超過すると、アラートがトリガーされます。
 
 -   解決：
 
-    [DM のトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
+    [DMのトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
 
 ## ダンプ/ロードに関連するアラートルール {#alert-rules-related-to-dump-load}
 
@@ -140,21 +140,21 @@ summary: DM 内のアラート情報を処理する方法を理解します。
 
 -   説明：
 
-    ダンプ処理ユニットで自動回復不可能なエラー (たとえば、 binlogファイルが見つからない) が発生した場合、または短時間 (たとえば、2 分間に 3 回以上) に複数の回復可能なエラー (たとえば、ネットワークの問題) が発生した場合、このアラートがトリガーされます。
+    ダンプ処理ユニットで自動回復不可能なエラー (例: binlogファイルが見つからない) が発生した場合、または短時間に (例: 2 分間に 3 回以上) 回復可能なエラー (例: ネットワークの問題) が複数発生した場合、このアラートがトリガーされます。
 
 -   解決：
 
-    [DM のトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
+    [DMのトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
 
 ### <code>DM_load_process_exists_with_error</code> {#code-dm-load-process-exists-with-error-code}
 
 -   説明：
 
-    ロード処理ユニットで自動回復不可能なエラー (たとえば、 binlogファイルが見つからない) が発生した場合、または短期間に (たとえば、2 分間に 3 回以上) 回復可能なエラー (たとえば、ネットワークの問題) が複数発生した場合、このアラートがトリガーされます。
+    ロード処理ユニットで自動回復不可能なエラー (例: binlogファイルが見つからない) が発生した場合、または短時間に (例: 2 分間に 3 回以上) 回復可能なエラー (例: ネットワークの問題) が複数発生した場合、このアラートがトリガーされます。
 
 -   解決：
 
-    [DM のトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
+    [DMのトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
 
 ## binlogレプリケーションに関連するアラートルール {#alert-rules-related-to-binlog-replication}
 
@@ -162,17 +162,17 @@ summary: DM 内のアラート情報を処理する方法を理解します。
 
 -   説明：
 
-    binlogログ レプリケーション処理ユニットで自動回復不可能なエラー (binlogファイルが見つからないなど) が発生した場合、または短期間に (たとえば、2 分間に 3 回以上) 回復可能なエラー (たとえば、ネットワークの問題) が複数発生した場合、このアラートがトリガーされます。
+    binlogレプリケーション処理ユニットで自動回復不可能なエラー (binlogファイルが見つからないなど) が発生した場合、または短時間 (2 分間に 3 回以上など) に複数の回復可能なエラー (ネットワークの問題など) が発生した場合、このアラートがトリガーされます。
 
 -   解決：
 
-    [DM のトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
+    [DMのトラブルシューティング](/dm/dm-error-handling.md#troubleshooting)を参照してください。
 
 ### <code>DM_binlog_file_gap_between_master_syncer</code> {#code-dm-binlog-file-gap-between-master-syncer-code}
 
 -   説明：
 
-    現在のアップストリーム MySQL/MariaDB 内のbinlogファイルの数が、リレー ログ処理ユニットによって処理された最新のbinlogファイルの数を 10 分間で 1**以上**超えると、アラートがトリガーされます。
+    現在のアップストリーム MySQL/MariaDB のbinlogファイルの数が、リレー ログ処理装置で処理された最新のbinlogファイルの数を 10 分間で 1**以上**超えると、アラートがトリガーされます。
 
 -   解決：
 

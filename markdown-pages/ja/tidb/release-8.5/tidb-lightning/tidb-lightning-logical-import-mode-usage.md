@@ -5,7 +5,7 @@ summary: TiDB Lightningの論理インポート モードを使用する方法�
 
 # 論理インポートモードを使用する {#use-logical-import-mode}
 
-このドキュメントでは、設定ファイルの記述やパフォーマンスのチューニングなど、 TiDB Lightningの[論理インポートモード](/tidb-lightning/tidb-lightning-logical-import-mode.md)使用方法を紹介します。
+このドキュメントでは、設定ファイルの書き方やパフォーマンスのチューニングなど、 TiDB Lightning[論理インポートモード](/tidb-lightning/tidb-lightning-logical-import-mode.md)の使い方を紹介します。
 
 ## 論理インポートモードを設定して使用する {#configure-and-use-the-logical-import-mode}
 
@@ -47,24 +47,24 @@ log-level = "error"
 
 ## 競合検出 {#conflict-detection}
 
-競合データとは、PK 列または UK 列に同じデータを持つ 2 つ以上のレコードを指します。論理インポート モードでは、 [`conflict.strategy`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)構成項目を設定することで、競合データの処理戦略を構成できます。この戦略に基づいて、 TiDB Lightning は異なる SQL ステートメントでデータをインポートします。
+競合データとは、PK列またはUK列に同じデータを持つ2つ以上のレコードを指します。論理インポートモードでは、 [`conflict.strategy`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)設定項目を設定することで、競合データの処理方法を設定できます。TiDB TiDB Lightningは、この処理方法に基づいて、異なるSQL文でデータをインポートします。
 
-| 戦略          | 競合するデータのデフォルトの動作                                         | 対応するSQL文                                                                                                      |
-| :---------- | :------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| `"replace"` | 既存のデータを新しいデータに置き換えます。                                    | `REPLACE INTO ...`                                                                                            |
-| `"ignore"`  | 既存のデータを保持し、新しいデータを無視します。                                 | `conflict.threshold`が0より大きい場合は`INSERT INTO`が使用され、 `conflict.threshold`が`0`の場合は`INSERT IGNORE INTO ...`使用されます。 |
-| `"error"`   | 競合するデータが検出された場合はインポートを終了します。                             | `INSERT INTO ...`                                                                                             |
-| `""`        | `"error"`に変換されます。これは、競合するデータが検出された場合にインポートを終了することを意味します。 | なし                                                                                                            |
+| 戦略          | 競合データのデフォルトの動作                                         | 対応するSQL文                                                                                                     |
+| :---------- | :----------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| `"replace"` | 既存のデータを新しいデータに置き換えます。                                  | `REPLACE INTO ...`                                                                                           |
+| `"ignore"`  | 既存のデータを保持し、新しいデータを無視します。                               | `conflict.threshold`が0より大きい場合は`INSERT INTO`使用され、 `conflict.threshold`が`0`の場合は`INSERT IGNORE INTO ...`使用されます。 |
+| `"error"`   | 競合するデータが検出された場合はインポートを終了します。                           | `INSERT INTO ...`                                                                                            |
+| `""`        | `"error"`に変換されます。これは、競合するデータが検出されるとインポートを終了することを意味します。 | なし                                                                                                           |
 
-戦略が`"error"`の場合、競合するデータによってエラーが発生すると、インポート タスクが直接終了します。戦略が`"replace"`または`"ignore"`場合、 [`conflict.threshold`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)設定することで、最大許容競合数を制御できます。デフォルト値は`10000`で、これは 10000 のエラーが許容されることを意味します。
+戦略が`"error"`場合、データの競合によって発生したエラーはインポートタスクを直ちに終了します。戦略が`"replace"`または`"ignore"`場合、許容される競合の最大数を[`conflict.threshold`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)に設定することで制御できます。デフォルト値は`10000`で、これは10000件のエラーが許容されることを意味します。
 
-戦略が`"ignore"`の場合、競合するデータは下流の`conflict_records`テーブルに記録されます。詳細については、 [エラーレポート](/tidb-lightning/tidb-lightning-error-resolution.md#error-report)参照してください。v8.1.0 より前では、 [`conflict.max-record-rows`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)設定することでレコードを制限でき、制限を超える競合データはスキップされ、記録されません。v8.1.0 以降では、ユーザー入力に関係なく、 TiDB Lightning は値`max-record-rows`に値`threshold`を自動的に割り当てるため、代わりに[`conflict.threshold`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)設定する必要があります。
+戦略が`"ignore"`場合、競合データは下流の`conflict_records`テーブルに記録されます。詳細は[エラーレポート](/tidb-lightning/tidb-lightning-error-resolution.md#error-report)参照してください。v8.1.0 より前では、 [`conflict.max-record-rows`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)設定することでレコード数を制限でき、制限を超える競合データはスキップされ、記録されませんでした。v8.1.0 以降では、 TiDB Lightning はユーザー入力に関係なく、 `threshold`の値に`max-record-rows`の値を自動的に割り当てるため、代わりに[`conflict.threshold`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)設定する必要があります。
 
 ## パフォーマンスチューニング {#performance-tuning}
 
--   論理インポート モードでは、 TiDB Lightningのパフォーマンスは、ターゲット TiDB クラスターの書き込みパフォーマンスに大きく依存します。クラスターがパフォーマンスのボトルネックになった場合は、 [高度な同時書き込みのベストプラクティス](/best-practices/high-concurrency-best-practices.md)を参照してください。
+-   論理インポートモードでは、 TiDB Lightningのパフォーマンスは、ターゲットTiDBクラスタの書き込みパフォーマンスに大きく依存します。クラスタでパフォーマンスのボトルネックが発生した場合は、 [高同時書き込みのベストプラクティス](/best-practices/high-concurrency-best-practices.md)を参照してください。
 
--   ターゲット TiDB クラスターが書き込みボトルネックに遭遇しない場合は、 TiDB Lightning構成で値`region-concurrency`を増やすことを検討してください。デフォルト値`region-concurrency`は CPU コアの数です`region-concurrency`の意味は、物理インポート モードと論理インポート モードでは異なります。論理インポート モードでは、 `region-concurrency`書き込み同時実行数です。
+-   ターゲットTiDBクラスタで書き込みボトルネックが発生していない場合は、 TiDB Lightning設定で`region-concurrency`の値を増やすことを検討してください。デフォルト値の`region-concurrency` CPUコア数です。5 `region-concurrency`物理インポートモードと論理インポートモードで意味が異なります。論理インポートモードでは、 `region-concurrency`書き込み同時実行数です。
 
     構成例:
 
@@ -73,4 +73,4 @@ log-level = "error"
     region-concurrency = 32
     ```
 
--   ターゲット TiDB クラスター内の構成項目`raftstore.apply-pool-size`と`raftstore.store-pool-size`を調整すると、インポート速度が向上する可能性があります。
+-   ターゲット TiDB クラスター内の`raftstore.apply-pool-size`と`raftstore.store-pool-size`構成項目を調整すると、インポート速度が向上する可能性があります。

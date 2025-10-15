@@ -5,7 +5,7 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 # TiCDCアラートルール {#ticdc-alert-rules}
 
-このドキュメントでは、TiCDC アラート ルールと対応するソリューションについて説明します。重大度レベルは、降順で、**重大**、**警告**です。
+このドキュメントでは、TiCDC のアラートルールとそれに対応するソリューションについて説明します。重大度は、降順に、**重大**、**警告の**順になります。
 
 ## 重大なアラート {#critical-alerts}
 
@@ -53,7 +53,7 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 -   解決：
 
-    このアラートはレプリケーションの中断に似ています。 [TiCDC はレプリケーションの中断を処理します](/ticdc/troubleshoot-ticdc.md#how-do-i-handle-replication-interruptions)を参照してください。
+    このアラートはレプリケーションの中断に似ています。1 [TiCDC はレプリケーションの中断を処理します](/ticdc/troubleshoot-ticdc.md#how-do-i-handle-replication-interruptions)参照してください。
 
 ## 警告アラート {#warning-alerts}
 
@@ -71,7 +71,7 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 -   解決：
 
-    根本原因を特定するために TiCDC ログを収集します。
+    根本原因を特定するには、TiCDC ログを収集します。
 
 ### <code>cdc_no_owner</code> {#code-cdc-no-owner-code}
 
@@ -127,7 +127,7 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 -   解決：
 
-    根本原因を特定するために TiKV ログを収集します。
+    根本原因を特定するには、TiKV ログを収集します。
 
 ### <code>tikv_cdc_scan_duration_seconds_more_than_10min</code> {#code-tikv-cdc-scan-duration-seconds-more-than-10min-code}
 
@@ -141,7 +141,7 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 -   解決：
 
-    根本原因を特定するために、TiCDC 監視メトリックと TiKV ログを収集します。
+    根本原因を特定するには、TiCDC 監視メトリックと TiKV ログを収集します。
 
 ### <code>ticdc_sink_execution_error</code> {#code-ticdc-sink-execution-error-code}
 
@@ -155,7 +155,7 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 -   解決：
 
-    根本的な原因は多数考えられます[TiCDC のトラブルシューティング](/ticdc/troubleshoot-ticdc.md)参照してください。
+    考えられる根本原因は多数あります。1 [TiCDC のトラブルシューティング](/ticdc/troubleshoot-ticdc.md)参照してください。
 
 ### <code>ticdc_memory_abnormal</code> {#code-ticdc-memory-abnormal-code}
 
@@ -169,4 +169,4 @@ summary: TiCDC アラート ルールとアラートの処理方法について�
 
 -   解決：
 
-    根本原因を特定するために TiCDC ログを収集します。
+    根本原因を特定するには、TiCDC ログを収集します。

@@ -21,7 +21,7 @@ ALTER TABLE table_name SET TIFLASH REPLICA count;
 
 > **注記：**
 >
-> [TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターの場合、 TiFlashレプリカの`count` `2`しか設定できません。7 `1`設定した場合、実行時に自動的に`2`に調整されます。2 より大きい数に設定した場合、レプリカ数に関するエラーが発生します。
+> [TiDB Cloudスターター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターの場合、 TiFlashレプリカの`count` `2`しか設定できません。7 `1`設定した場合、実行時に自動的に`2`に調整されます。2 より大きい数に設定した場合、レプリカ数に関するエラーが発生します。
 
 同じテーブルに対して複数のDDL文を実行した場合、最後に実行された文のみが確実に有効になります。次の例では、テーブル`tpch50`に対して2つのDDL文が実行されていますが、2番目の文（レプリカを削除する文）のみが確実に有効になります。
 
@@ -45,7 +45,7 @@ ALTER TABLE `tpch50`.`lineitem` SET TIFLASH REPLICA 0;
     CREATE TABLE table_name like t;
     ```
 
--   v4.0.6より前のバージョンでは、 TiDB Lightningを使用してデータをインポートする前にTiFlashレプリカを作成すると、データのインポートは失敗します。テーブルのTiFlashレプリカを作成する前に、テーブルにデータをインポートする必要があります。
+-   v4.0.6より前のバージョンでは、 TiDB Lightningを使用してデータをインポートする前にTiFlashレプリカを作成すると、データのインポートに失敗します。テーブルのTiFlashレプリカを作成する前に、テーブルにデータをインポートする必要があります。
 
 -   TiDB とTiDB Lightning の両方が v4.0.6 以降であれば、テーブルにTiFlashレプリカがあるかどうかに関係なく、 TiDB Lightningを使用してそのテーブルにデータをインポートできます。ただし、 TiDB Lightning のプロセスは、Lightning ホストの NIC 帯域幅、 TiFlashノードの CPU とディスク負荷、およびTiFlashレプリカの数に応じて遅くなる可能性があります。
 
@@ -134,7 +134,12 @@ SELECT TABLE_NAME FROM information_schema.tables where TABLE_SCHEMA = "<db_name>
 
 </CustomContent>
 
-TiFlashレプリカを追加する前に、各TiKVインスタンスはテーブル全体をスキャンし、スキャンしたデータを「スナップショット」としてTiFlashに送信してレプリカを作成します。デフォルトでは、オンラインサービスへの影響を最小限に抑えるため、 TiFlashレプリカはリソース使用量を抑えながらゆっくりと追加されます。TiKVノードとTiFlashノードに余裕のあるCPUリソースとディスクIOリソースがある場合は、以下の手順でTiFlashレプリケーションを高速化できます。
+TiDB クラスターは、次のいずれかの操作を実行すると、 TiFlashレプリカ レプリケーション プロセスをトリガーします。
+
+-   テーブルにTiFlashレプリカを追加します。
+-   新しいTiFlashインスタンスを追加すると、PD は元のインスタンスのTiFlashレプリカを新しいTiFlashインスタンスにスケジュールします。
+
+このプロセス中、各TiKVインスタンスはテーブル全体をスキャンし、スキャンしたデータのスナップショットをTiFlashに送信してレプリカを作成します。デフォルトでは、TiKVおよびTiFlashの本番ワークロードへの影響を最小限に抑えるため、 TiFlashはレプリカの追加速度を遅くし、使用するリソースを少なくしています。TiKVノードとTiFlashノードに十分なCPUとディスクI/Oリソースがある場合は、以下の手順を実行することでTiFlashレプリケーションを高速化できます。
 
 1.  [動的設定SQL文](https://docs.pingcap.com/tidb/stable/dynamic-config)使用して、各 TiKV およびTiFlashインスタンスのスナップショット書き込み速度制限を一時的に上げます。
 
@@ -146,34 +151,42 @@ TiFlashレプリカを追加する前に、各TiKVインスタンスはテーブ
 
     これらのSQL文を実行すると、クラスターを再起動することなく設定変更が即座に反映されます。ただし、レプリケーション速度はPD制限によってグローバルに制限されているため、現時点では高速化の効果を確認することはできません。
 
-2.  新しいレプリカの速度制限を段階的に緩和するには、 [PD Control](https://docs.pingcap.com/tidb/stable/pd-control)使用します。
+2.  レプリカのスケジュール速度制限を段階的に緩和するには、 [PD Control](https://docs.pingcap.com/tidb/stable/pd-control)使用します。
 
-    デフォルトの新規レプリカ速度制限は30です。これは、毎分約30のリージョンがTiFlashレプリカを追加することを意味します。以下のコマンドを実行すると、すべてのTiFlashインスタンスの制限が60に調整され、速度は元の2倍になります。
+    デフォルトの新規レプリカ速度制限は30です。これは、1つのTiFlashインスタンス上で毎分約30のリージョンがTiFlashレプリカを追加または削除することを意味します。以下のコマンドを実行すると、すべてのTiFlashインスタンスの制限が60に調整され、速度は元の2倍になります。
 
     ```shell
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 60 add-peer
     ```
 
-    > 上記のコマンドでは、 `v<CLUSTER_VERSION>`実際のクラスターバージョン（ `v8.1.2` `<PD_ADDRESS>:2379`任意のPDノードのアドレスなど）に置き換える必要があります。例：
+    > 上記のコマンドでは、 `v<CLUSTER_VERSION>`実際のクラスターバージョン（ `v8.5.3` `<PD_ADDRESS>:2379`任意のPDノードのアドレスなど）に置き換える必要があります。例：
     >
     > ```shell
-    > tiup ctl:v8.1.2 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
+    > tiup ctl:v8.5.3 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
     > ```
 
-    数分以内に、 TiFlashノードのCPUとディスクIOリソース使用量が大幅に増加し、 TiFlashによるレプリカ作成速度が向上することがわかります。同時に、TiKVノードのCPUとディスクIOリソース使用量も増加します。
+    クラスターに古いTiFlashノード上のリージョンが多数含まれている場合、PDはそれらを新しいTiFlashノードに再配分する必要があります。それに応じて`remove-peer`制限を調整する必要があります。
+
+    ```shell
+    tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 60 remove-peer
+    ```
+
+    数分以内に、 TiFlashノードのCPUとディスクIOリソース使用量が大幅に増加し、 TiFlashによるレプリカ作成速度が向上します。同時に、TiKVノードのCPUとディスクIOリソース使用量も増加します。
 
     この時点で TiKV ノードとTiFlashノードにまだ余分なリソースがあり、オンライン サービスのレイテンシーが大幅に増加しない場合は、制限をさらに緩和して、たとえば元の速度を 3 倍にすることができます。
 
     ```shell
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 90 add-peer
+    tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 90 remove-peer
     ```
 
 3.  TiFlashレプリケーションが完了したら、オンライン サービスへの影響を軽減するために、デフォルト構成に戻します。
 
-    デフォルトの新しいレプリカ速度制限を復元するには、次のPD Controlコマンドを実行します。
+    デフォルトのレプリカ スケジューリング速度制限を復元するには、次のPD Controlコマンドを実行します。
 
     ```shell
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 30 add-peer
+    tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 30 remove-peer
     ```
 
     デフォルトのスナップショット書き込み速度制限を復元するには、次の SQL ステートメントを実行します。
@@ -218,47 +231,50 @@ TiFlashレプリカを追加する前に、各TiKVインスタンスはテーブ
 
     以前のバージョンでは、 `flash.proxy.labels`設定では、利用可能なゾーン名に含まれる特殊文字を正しく処理できないことに注意してください。利用可能なゾーン名を設定するには、 `learner_config`の`server.labels`を使用することをお勧めします。
 
-2.  クラスターを起動した後、レプリカを作成するときにラベルを指定します。
+2.  クラスターを起動した後、高可用性を実現するためにTiFlashレプリカの数を指定します。構文は次のとおりです。
 
     ```sql
-    ALTER TABLE table_name SET TIFLASH REPLICA count LOCATION LABELS location_labels;
+    ALTER TABLE table_name SET TIFLASH REPLICA count;
     ```
 
     例えば：
 
     ```sql
-    ALTER TABLE t SET TIFLASH REPLICA 2 LOCATION LABELS "zone";
+    ALTER TABLE t SET TIFLASH REPLICA 2;
     ```
 
-3.  PDはラベルに基づいてレプリカをスケジュールします。この例では、PDはテーブル`t`の2つのレプリカをそれぞれ2つの利用可能なゾーンにスケジュールしています。スケジュール状況はpd-ctlで確認できます。
+3.  PDは、 TiFlashノードの`learner_config` `server.labels`テーブルのレプリカ数（ `count` ）に基づいて、テーブル`t`のレプリカを異なるアベイラビリティゾーンにスケジュールし、可用性を確保します。詳細については、 [トポロジラベルによるレプリカのスケジュール](https://docs.pingcap.com/tidb/stable/schedule-replicas-by-topology-labels/)参照してください。次のSQL文を使用して、 TiFlashノード間のテーブルのリージョンの分散を確認できます。
 
-    ```shell
-    > tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store
+    ```sql
+    -- Non-partitioned table
+    SELECT table_id, p.store_id, address, COUNT(p.region_id) 
+    FROM
+      information_schema.tikv_region_status r,
+      information_schema.tikv_region_peers p,
+      information_schema.tikv_store_status s
+    WHERE
+      r.db_name = 'test' 
+      AND r.table_name = 'table_to_check'
+      AND r.region_id = p.region_id 
+      AND p.store_id = s.store_id
+      AND JSON_EXTRACT(s.label, '$[0].value') = 'tiflash'
+    GROUP BY table_id, p.store_id, address;
 
-        ...
-        "address": "172.16.5.82:23913",
-        "labels": [
-          { "key": "engine", "value": "tiflash"},
-          { "key": "zone", "value": "z1" }
-        ],
-        "region_count": 4,
-
-        ...
-        "address": "172.16.5.81:23913",
-        "labels": [
-          { "key": "engine", "value": "tiflash"},
-          { "key": "zone", "value": "z1" }
-        ],
-        "region_count": 5,
-        ...
-
-        "address": "172.16.5.85:23913",
-        "labels": [
-          { "key": "engine", "value": "tiflash"},
-          { "key": "zone", "value": "z2" }
-        ],
-        "region_count": 9,
-        ...
+    -- Partitioned table
+    SELECT table_id, r.partition_name, p.store_id, address, COUNT(p.region_id)
+    FROM
+      information_schema.tikv_region_status r,
+      information_schema.tikv_region_peers p,
+      information_schema.tikv_store_status s
+    WHERE 
+      r.db_name = 'test' 
+      AND r.table_name = 'table_to_check' 
+      AND r.partition_name LIKE 'p202312%'
+      AND r.region_id = p.region_id 
+      AND p.store_id = s.store_id
+      AND JSON_EXTRACT(s.label, '$[0].value') = 'tiflash'
+    GROUP BY table_id, r.partition_name, p.store_id, address
+    ORDER BY table_id, r.partition_name, p.store_id;
     ```
 
 <CustomContent platform="tidb">
@@ -268,3 +284,7 @@ TiFlashレプリカを追加する前に、各TiKVインスタンスはテーブ
 TiFlashは、異なるゾーンに対するレプリカ選択戦略の設定をサポートしています。詳細については、 [`tiflash_replica_read`](/system-variables.md#tiflash_replica_read-new-in-v730)参照してください。
 
 </CustomContent>
+
+> **注記：**
+>
+> 構文`ALTER TABLE table_name SET TIFLASH REPLICA count LOCATION LABELS location_labels;`において、 `location_labels`に複数のラベルを指定すると、TiDBはそれらを正しく解析して配置ルールを設定できません。したがって、 TiFlashレプリカの設定には`LOCATION LABELS`使用しないでください。

@@ -3,7 +3,7 @@ title: JSON Functions That Modify JSON Values
 summary: JSON 値を変更する JSON関数について学習します。
 ---
 
-# JSON 値を変更する JSON 関数 {#json-functions-that-modify-json-values}
+# JSON値を変更するJSON関数 {#json-functions-that-modify-json-values}
 
 このドキュメントでは、JSON 値を変更する JSON関数について説明します。
 
@@ -100,7 +100,7 @@ SELECT JSON_INSERT(
     +------------------------------------------------------------------------------------------+
     1 row in set (0.00 sec)
 
-この関数は既存の属性の値を上書きしないことに注意してください。たとえば、次のステートメントは`"a"`属性を上書きするように見えますが、実際には上書きされません。
+この関数は既存の属性の値を上書きしないことに注意してください。例えば、次の文は属性`"a"`を上書きしているように見えますが、実際には上書きしません。
 
 ```sql
 SELECT JSON_INSERT('{"a": 61, "b": 62}', '$.a', 41, '$.c', 63);
@@ -115,7 +115,7 @@ SELECT JSON_INSERT('{"a": 61, "b": 62}', '$.a', 41, '$.c', 63);
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-modification-functions.html#function_json-merge-patch">JSON_MERGE_PATCH()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-modification-functions-html-function-json-merge-patch-json-merge-patch-a}
 
-`JSON_MERGE_PATCH(json_doc, json_doc [,json_doc] ...)`関数は、重複するキーの値を保持せずに、2 つ以上の JSON ドキュメントを 1 つの JSON ドキュメントにマージします。重複するキーを持つ`json_doc`の引数の場合、後で指定された`json_doc`引数の値のみがマージされた結果に保持されます。
+`JSON_MERGE_PATCH(json_doc, json_doc [,json_doc] ...)`関数は、重複するキーの値を保持せずに、2つ以上のJSONドキュメントを1つのJSONドキュメントにマージします。重複するキーを持つ`json_doc`引数の場合、マージされた結果には、後で指定された`json_doc`引数の値のみが保持されます。
 
 例:
 
@@ -197,13 +197,13 @@ SELECT JSON_REMOVE('{"a": 61, "b": 62, "c": 63}','$.b','$.c');
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-modification-functions.html#function_json-replace">JSON_REPLACE()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-modification-functions-html-function-json-replace-json-replace-a}
 
-`JSON_REPLACE(json_doc, path, value [, path, value] ...)`関数は、JSON ドキュメントの指定されたパス内の値を置き換え、結果を返します。指定されたパスが存在しない場合は、パスに対応する値は結果に追加されません。
+`JSON_REPLACE(json_doc, path, value [, path, value] ...)`関数は、JSON ドキュメント内の指定されたパス内の値を置き換え、結果を返します。指定されたパスが存在しない場合、そのパスに対応する値は結果に追加されません。
 
 この関数は引数をペアで受け取ります。各ペアは`path`と`value`です。
 
 例:
 
-次の例では、 `$.b`の値を`62`から`42`に変更します。
+次の例では、 `$.b`値を`62`から`42`に変更します。
 
 ```sql
 SELECT JSON_REPLACE('{"a": 41, "b": 62}','$.b',42);
@@ -216,7 +216,7 @@ SELECT JSON_REPLACE('{"a": 41, "b": 62}','$.b',42);
     +---------------------------------------------+
     1 row in set (0.00 sec)
 
-次の例では、 `$.b`の値を`62`から`42`に変更できます。さらに、このステートメントは`$.c`の値を`43`に置き換えようとしますが、 `$.c`パスが`{"a": 41, "b": 62}`に存在しないため機能しません。
+次の例では、 `$.b`の値を`62`から`42`に変更できます。さらに、この文は`$.c`の値を`43`に置き換えようとしますが、 `$.c`パスが`{"a": 41, "b": 62}`に存在しないため、これは機能しません。
 
 ```sql
 SELECT JSON_REPLACE('{"a": 41, "b": 62}','$.b',42,'$.c',43);
@@ -250,7 +250,7 @@ SELECT JSON_SET('{"version": 1.1, "name": "example"}','$.version',1.2);
     +-----------------------------------------------------------------+
     1 row in set (0.00 sec)
 
-次の例では、 `$.version`を`1.1`から`1.2`に更新できます。また、以前は存在しなかった`$.branch`を`main`に更新できます。
+次の例では、 `$.version` `1.1`から`1.2`に更新できます。また、以前は存在しなかった`$.branch` `main`に更新できます。
 
 ```sql
 SELECT JSON_SET('{"version": 1.1, "name": "example"}','$.version',1.2,'$.branch', "main");
@@ -265,7 +265,7 @@ SELECT JSON_SET('{"version": 1.1, "name": "example"}','$.version',1.2,'$.branch'
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-modification-functions.html#function_json-unquote">JSON_UNQUOTE()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-modification-functions-html-function-json-unquote-json-unquote-a}
 
-`JSON_UNQUOTE(json)`関数は JSON 値を引用符で囲まず、結果を文字列として返します。これは[`JSON_QUOTE()`](/functions-and-operators/json-functions/json-functions-create.md#json_quote)関数の逆です。
+`JSON_UNQUOTE(json)`関数はJSON値の引用符を解除し、結果を文字列として返します。これは[`JSON_QUOTE()`](/functions-and-operators/json-functions/json-functions-create.md#json_quote)関数の逆の動作です。
 
 例:
 
@@ -282,7 +282,7 @@ SELECT JSON_UNQUOTE('"foo"');
     +-----------------------+
     1 row in set (0.00 sec)
 
-この関数は、 [`JSON_EXTRACT()`](/functions-and-operators/json-functions/json-functions-search.md#json_extract)と一緒に使用されることが多いです。次の例では、最初の例で引用符付きの JSON 値を抽出し、2 つの関数を一緒に使用して 2 番目の例で値の引用符を解除できます。 `JSON_UNQUOTE(JSON_EXTRACT(...))`代わりに[`->>`](/functions-and-operators/json-functions/json-functions-search.md#--1)演算子を使用できることに注意してください。
+この関数は[`JSON_EXTRACT()`](/functions-and-operators/json-functions/json-functions-search.md#json_extract)と一緒に使用されることが多いです。以下の例では、最初の例では引用符付きのJSON値を抽出し、2番目の例では2つの関数を組み合わせて引用符を外します。3 `JSON_UNQUOTE(JSON_EXTRACT(...))`代わりに[`->>`](/functions-and-operators/json-functions/json-functions-search.md#--1)演算子を使用できることに注意してください。
 
 ```sql
 SELECT JSON_EXTRACT('{"database": "TiDB"}', '$.database');
@@ -308,5 +308,5 @@ SELECT JSON_UNQUOTE(JSON_EXTRACT('{"database": "TiDB"}', '$.database'));
 
 ## 参照 {#see-also}
 
--   [JSON 関数の概要](/functions-and-operators/json-functions.md)
--   [JSON データ型](/data-type-json.md)
+-   [JSON関数の概要](/functions-and-operators/json-functions.md)
+-   [JSONデータ型](/data-type-json.md)

@@ -15,7 +15,7 @@ TiDB は MySQL 互換のデータベースであり、 [タイプORM](https://gi
 
 > **注記**
 >
-> このチュートリアルは、TiDB Cloud Serverless、 TiDB Cloud Dedicated、および TiDB Self-Managed で動作します。
+> このチュートリアルは、 TiDB Cloud Starter、 TiDB Cloud Essential、 TiDB Cloud Dedicated、および TiDB Self-Managed で機能します。
 
 ## 前提条件 {#prerequisites}
 
@@ -29,13 +29,13 @@ TiDB は MySQL 互換のデータベースであり、 [タイプORM](https://gi
 
 <CustomContent platform="tidb">
 
--   (推奨) [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   (推奨) [TiDB Cloud Starter クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
 -   [ローカルテストTiDBクラスタをデプロイ](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](/production-deployment-using-tiup.md)に従ってローカル クラスターを作成します。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
--   (推奨) [TiDB Cloud Serverless クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
+-   (推奨) [TiDB Cloud Starter クラスターの作成](/develop/dev-guide-build-cluster-in-cloud.md)に従って、独自のTiDB Cloudクラスターを作成します。
 -   [ローカルテストTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster)または[本番のTiDBクラスタをデプロイ](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup)に従ってローカル クラスターを作成します。
 
 </CustomContent>
@@ -84,9 +84,9 @@ npm install @types/node ts-node typescript --save-dev
 選択した TiDB デプロイメント オプションに応じて、TiDB クラスターに接続します。
 
 <SimpleTab>
-<div label="TiDB Cloud Serverless">
+<div label="TiDB Cloud Starter or Essential">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -118,14 +118,14 @@ npm install @types/node ts-node typescript --save-dev
 
     > **注記**
     >
-    > TiDB Cloud Serverless の場合、パブリックエンドポイントを使用するときは、 `TIDB_ENABLE_SSL`経由の TLS 接続を有効にする**必要があります**。
+    > TiDB Cloud Starter およびTiDB Cloud Essential の場合、パブリック エンドポイントを使用するときは、 `TIDB_ENABLE_SSL`経由の TLS 接続を有効にする**必要があります**。
 
 7.  `.env`ファイルを保存します。
 
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1.  [**クラスター**](https://tidbcloud.com/project/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
+1.  [**クラスター**](https://tidbcloud.com/console/clusters)ページに移動し、ターゲット クラスターの名前をクリックして概要ページに移動します。
 
 2.  右上隅の**「接続」**をクリックします。接続ダイアログが表示されます。
 
@@ -230,7 +230,7 @@ npm start
 
 接続が成功すると、ターミナルには次のように TiDB クラスターのバージョンが出力されます。
 
-    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.1.2)
+    🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.3)
     🆕 Created a new player with ID 2.
     ℹ️ Got Player 2: Player { id: 2, coins: 100, goods: 100 }
     🔢 Added 50 coins and 50 goods to player 2, now player 2 has 100 coins and 150 goods.
@@ -272,9 +272,9 @@ export const AppDataSource = new DataSource({
 
 > **注記**
 >
-> TiDB Cloud Serverless では、パブリックエンドポイントを使用する場合は TLS 接続を有効にする必要があります。このサンプルコードでは、 `.env`ファイルの環境変数`TIDB_ENABLE_SSL` `true`に設定してください。
+> TiDB Cloud StarterおよびTiDB Cloud Essentialでは、パブリックエンドポイントを使用する際にTLS接続を必ず有効にしてください。このサンプルコードでは、 `.env`ファイルの環境変数`TIDB_ENABLE_SSL` `true`に設定してください。
 >
-> ただし、Node.js はデフォルトで組み込みの[Mozilla CA証明書](https://wiki.mozilla.org/CA/Included_Certificates)を使用し、これは TiDB Cloud Serverless によって信頼されているため、 `TIDB_CA_PATH`で SSL CA 証明書を指定する必要は**ありません**。
+> ただし、Node.js はデフォルトで組み込みの[Mozilla CA証明書](https://wiki.mozilla.org/CA/Included_Certificates)を使用するため、 `TIDB_CA_PATH`で SSL CA 証明書を指定する必要は**ありません**。これは、 TiDB Cloud Starter とTiDB Cloud Essential によって信頼されています。
 
 ### データを挿入する {#insert-data}
 
@@ -340,7 +340,7 @@ console.log(rows[0]['tidb_version']);
 
 ### 外部キー制約 {#foreign-key-constraints}
 
-[外部キー制約](https://docs.pingcap.com/tidb/stable/foreign-key) （実験的）を使用すると、データベース側でチェックを追加することで、データの[参照整合性](https://en.wikipedia.org/wiki/Referential_integrity)保証されます。ただし、大量のデータを扱うシナリオでは、深刻なパフォーマンス問題が発生する可能性があります。
+[外部キー制約](https://docs.pingcap.com/tidb/stable/foreign-key)使用すると、データベース側でチェックを追加することで、データの[参照整合性](https://en.wikipedia.org/wiki/Referential_integrity)保証されます。ただし、大量のデータを扱うシナリオでは、深刻なパフォーマンスの問題が発生する可能性があります。
 
 `createForeignKeyConstraints`オプション (デフォルト値は`true` ) を使用して、エンティティ間のリレーションシップを構築するときに外部キー制約を作成するかどうかを制御できます。
 

@@ -91,11 +91,11 @@ tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --rati
 
 1.  ターゲット クラスターの**インポート**ページを開きます。
 
-    1.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、プロジェクトの[**クラスター**](https://tidbcloud.com/project/clusters)ページに移動します。
+    1.  [TiDB Cloudコンソール](https://tidbcloud.com/)にログインし、プロジェクトの[**クラスター**](https://tidbcloud.com/console/clusters)ページに移動します。
 
         > **ヒント：**
         >
-        > 左上隅のコンボ ボックスを使用して、組織、プロジェクト、クラスターを切り替えることができます。
+        > 複数のプロジェクトがある場合は、<mdsvgicon name="icon-left-projects">左下隅にある をクリックして、別のプロジェクトに切り替えます。</mdsvgicon>
 
     2.  ターゲット クラスターの名前をクリックして概要ページに移動し、左側のナビゲーション ペインで**[インポート]**をクリックします。
 
@@ -103,7 +103,7 @@ tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --rati
 
 3.  **「Amazon S3 からのデータのインポート」**ページで、次のソースデータ情報を設定します。
 
-    -   **インポートファイル数**：TiDB Cloud Serverlessの場合は**「複数ファイル」**を選択してください。このフィールドはTiDB Cloud Dedicatedでは使用できません。
+    -   **インポートファイル数**： TiDB Cloud Serverlessの場合は**「複数ファイル」**を選択してください。このフィールドはTiDB Cloud Dedicatedでは使用できません。
     -   **含まれるスキーマ ファイル**:**はいを**選択します。
     -   **データ形式**: **SQL**を選択します。
     -   **フォルダー URI** : `s3://developer.pingcap.com/bookshop/`を入力します。
@@ -162,10 +162,10 @@ WHERE table_schema LIKE 'bookshop';
 
 | フィールド名 | タイプ          | 説明                    |
 | ------ | ------------ | --------------------- |
-| id     | ビッグイント(20)   | 本の一意のID               |
+| id     | ビッグインテント     | 本の一意のID               |
 | タイトル   | varchar(100) | 本のタイトル                |
 | タイプ    | 列挙型          | 本の種類（例：雑誌、アニメーション、教材） |
-| ストック   | ビッグイント(20)   | ストック                  |
+| ストック   | ビッグインテント     | ストック                  |
 | 価格     | 小数点(15,2)    | 価格                    |
 | 公開日時   | 日時           | 公開日                   |
 
@@ -175,11 +175,11 @@ WHERE table_schema LIKE 'bookshop';
 
 | フィールド名 | タイプ          | 説明                        |
 | ------ | ------------ | ------------------------- |
-| id     | ビッグイント(20)   | 著者の一意のID                  |
+| id     | ビッグインテント     | 著者の一意のID                  |
 | 名前     | varchar(100) | 著者名                       |
-| 性別     | タイニーイント(1)   | 生物学的性別（0：女性、1：男性、NULL：不明） |
-| 生年     | スモール整数(6)    | 生年                        |
-| 死亡年    | スモール整数(6)    | 死亡年                       |
+| 性別     | タイニーイント      | 生物学的性別（0：女性、1：男性、NULL：不明） |
+| 生年     | スモールインテンス    | 生年                        |
+| 死亡年    | スモールインテンス    | 死亡年                       |
 
 ### <code>users</code>テーブル {#code-users-code-table}
 
@@ -187,7 +187,7 @@ WHERE table_schema LIKE 'bookshop';
 
 | フィールド名 | タイプ          | 説明         |
 | ------ | ------------ | ---------- |
-| id     | ビッグイント(20)   | ユーザーの一意のID |
+| id     | ビッグインテント     | ユーザーの一意のID |
 | バランス   | 小数点(15,2)    | バランス       |
 | ニックネーム | varchar(100) | ニックネーム     |
 
@@ -206,22 +206,22 @@ WHERE table_schema LIKE 'bookshop';
 
 著者は複数の本を執筆する場合があり、また、1冊の本に複数の著者が関わる場合もあります。このテーブルは、本と著者の対応関係を保存します。
 
-| フィールド名 | タイプ        | 説明                                  |
-| ------ | ---------- | ----------------------------------- |
-| 書籍ID   | ビッグイント(20) | 書籍の一意のID（ [本](#books-table)にリンク）    |
-| 著者ID   | ビッグイント(20) | 著者の固有ID（ [著者](#authors-table)へのリンク） |
+| フィールド名 | タイプ      | 説明                                  |
+| ------ | -------- | ----------------------------------- |
+| 書籍ID   | ビッグインテント | 書籍の一意のID（ [本](#books-table)にリンク）    |
+| 著者ID   | ビッグインテント | 著者の固有ID（ [著者](#authors-table)へのリンク） |
 
 ### <code>orders</code>表 {#code-orders-code-table}
 
 このテーブルにはユーザーの購入情報が保存されます。
 
-| フィールド名 | タイプ        | 説明                                         |
-| ------ | ---------- | ------------------------------------------ |
-| id     | ビッグイント(20) | 注文の一意のID                                   |
-| 書籍ID   | ビッグイント(20) | 書籍の一意のID（ [本](#books-table)にリンク）           |
-| ユーザーID | ビッグイント(20) | ユーザー固有識別子（ [ユーザー](#users-table)に関連付けられている） |
-| 量      | タイニーイント(4) | 購入数量                                       |
-| 注文した日時 | 日時         | 購入時間                                       |
+| フィールド名 | タイプ      | 説明                                         |
+| ------ | -------- | ------------------------------------------ |
+| id     | ビッグインテント | 注文の一意のID                                   |
+| 書籍ID   | ビッグインテント | 書籍の一意のID（ [本](#books-table)にリンク）           |
+| ユーザーID | ビッグインテント | ユーザー固有識別子（ [ユーザー](#users-table)に関連付けられている） |
+| 量      | タイニーイント  | 購入数量                                       |
+| 注文時    | 日時       | 購入時間                                       |
 
 ## データベース初期化スクリプト<code>dbinit.sql</code> {#database-initialization-script-code-dbinit-sql-code}
 
@@ -232,29 +232,29 @@ CREATE DATABASE IF NOT EXISTS `bookshop`;
 
 DROP TABLE IF EXISTS `bookshop`.`books`;
 CREATE TABLE `bookshop`.`books` (
-  `id` bigint(20) AUTO_RANDOM NOT NULL,
+  `id` bigint AUTO_RANDOM NOT NULL,
   `title` varchar(100) NOT NULL,
   `type` enum('Magazine', 'Novel', 'Life', 'Arts', 'Comics', 'Education & Reference', 'Humanities & Social Sciences', 'Science & Technology', 'Kids', 'Sports') NOT NULL,
   `published_at` datetime NOT NULL,
-  `stock` int(11) DEFAULT '0',
+  `stock` int DEFAULT '0',
   `price` decimal(15,2) DEFAULT '0.0',
   PRIMARY KEY (`id`) CLUSTERED
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 DROP TABLE IF EXISTS `bookshop`.`authors`;
 CREATE TABLE `bookshop`.`authors` (
-  `id` bigint(20) AUTO_RANDOM NOT NULL,
+  `id` bigint AUTO_RANDOM NOT NULL,
   `name` varchar(100) NOT NULL,
-  `gender` tinyint(1) DEFAULT NULL,
-  `birth_year` smallint(6) DEFAULT NULL,
-  `death_year` smallint(6) DEFAULT NULL,
+  `gender` tinyint DEFAULT NULL,
+  `birth_year` smallint DEFAULT NULL,
+  `death_year` smallint DEFAULT NULL,
   PRIMARY KEY (`id`) CLUSTERED
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 DROP TABLE IF EXISTS `bookshop`.`book_authors`;
 CREATE TABLE `bookshop`.`book_authors` (
-  `book_id` bigint(20) NOT NULL,
-  `author_id` bigint(20) NOT NULL,
+  `book_id` bigint NOT NULL,
+  `author_id` bigint NOT NULL,
   PRIMARY KEY (`book_id`,`author_id`) CLUSTERED
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -279,10 +279,10 @@ CREATE TABLE `bookshop`.`users` (
 
 DROP TABLE IF EXISTS `bookshop`.`orders`;
 CREATE TABLE `bookshop`.`orders` (
-  `id` bigint(20) AUTO_RANDOM NOT NULL,
-  `book_id` bigint(20) NOT NULL,
-  `user_id` bigint(20) NOT NULL,
-  `quality` tinyint(4) NOT NULL,
+  `id` bigint AUTO_RANDOM NOT NULL,
+  `book_id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  `quality` tinyint NOT NULL,
   `ordered_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) CLUSTERED,
   KEY `orders_book_id_idx` (`book_id`)

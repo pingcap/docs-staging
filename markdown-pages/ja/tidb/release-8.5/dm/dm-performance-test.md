@@ -3,18 +3,18 @@ title: DM Cluster Performance Test
 summary: DM クラスターのパフォーマンスをテストする方法を学びます。
 ---
 
-# DMクラスタパフォーマンス テスト {#dm-cluster-performance-test}
+# DMクラスタパフォーマンステスト {#dm-cluster-performance-test}
 
 このドキュメントでは、データ移行に関する速度テストやレイテンシーテストなど、DM クラスターでパフォーマンス テストを実行するためのテスト シナリオの構築方法について説明します。
 
 ## 移行データフロー {#migration-data-flow}
 
-MySQL -&gt; DM -&gt; TiDB という単純な移行データ フローを使用して、DM クラスターのデータ移行パフォーマンスをテストできます。
+MySQL -&gt; DM -&gt; TiDB という単純な移行データフローを使用して、DM クラスターのデータ移行パフォーマンスをテストできます。
 
 ## テスト環境をデプロイ {#deploy-test-environment}
 
--   すべてのデフォルト構成で、 TiUP を使用して TiDB テスト クラスターをデプロイ。
--   MySQL サービスをデプロイ。binlogの`ROW`モードを有効にし、他の構成項目にはデフォルト構成を使用します。
+-   すべてのデフォルト構成で、 TiUPを使用して TiDB テスト クラスターをデプロイ。
+-   MySQL サービスをデプロイ。binlogの`ROW`モードを有効にし、その他の設定項目はデフォルト設定を使用します。
 -   DM ワーカーと DM マスターを使用して DM クラスターをデプロイ。
 
 ## パフォーマンステスト {#performance-test}
@@ -34,11 +34,11 @@ CREATE TABLE `sbtest` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
 ```
 
-### フルインポートベンチマークケース {#full-import-benchmark-case}
+### 完全輸入ベンチマークケース {#full-import-benchmark-case}
 
 #### テストデータを生成する {#generate-test-data}
 
-`sysbench`使用して、アップストリームにテスト テーブルを作成し、完全インポート用のテスト データを生成します。テスト データを生成するには、次の`sysbench`コマンドを実行します。
+`sysbench`使用してアップストリームにテストテーブルを作成し、フルインポート用のテストデータを生成します。テストデータを生成するには、以下の`sysbench`コマンドを実行します。
 
 ```bash
 sysbench --test=oltp_insert --tables=4 --mysql-host=172.16.4.40 --mysql-port=3306 --mysql-user=root --mysql-db=dm_benchmark --db-driver=mysql --table-size=50000000 prepare
@@ -46,9 +46,9 @@ sysbench --test=oltp_insert --tables=4 --mysql-host=172.16.4.40 --mysql-port=330
 
 #### データ移行タスクを作成する {#create-a-data-migration-task}
 
-1.  アップストリーム MySQL ソースを作成し、 `source-id` `source-1`に設定します。詳細については、 [データソース構成をロードする](/dm/dm-manage-source.md#operate-data-source)参照してください。
+1.  アップストリームMySQLソースを作成し、 `source-id`を`source-1`に設定します。詳細は[データソース構成をロードする](/dm/dm-manage-source.md#operate-data-source)参照してください。
 
-2.  移行タスクを作成します ( `full`モード)。以下はタスク構成テンプレートです。
+2.  移行タスクを作成します（モード`full` ）。タスク設定テンプレートは次のとおりです。
 
 ```yaml
 ---
@@ -84,12 +84,12 @@ mydumpers:
 
 > **注記：**
 >
-> -   マルチスレッドを使用して単一のテーブルから同時にデータをエクスポートできるようにするには、 `mydumpers`構成項目の`rows`オプションを使用します。これにより、データのエクスポートが高速化されます。
-> -   さまざまな構成でパフォーマンスをテストするには、 `mysql-instances`構成の`loader-thread`と、 `mydumpers`構成項目の`rows`と`threads`調整できます。
+> -   マルチスレッドを使用して単一のテーブルから同時にデータをエクスポートするには、設定項目`mydumpers`のオプション`rows`使用します。これにより、データのエクスポートが高速化されます。
+> -   異なる構成でのパフォーマンスをテストするには、 `mysql-instances`構成の`loader-thread`と、 `mydumpers`構成項目の`rows`と`threads`調整できます。
 
 #### テスト結果を取得する {#get-test-results}
 
-DM-worker ログを確認します。 `all data files have been finished`表示されている場合は、完全なデータがインポートされたことを意味します。この場合、データのインポートにかかった時間を確認できます。サンプル ログは次のとおりです。
+DM-worker のログを確認してください。1 `all data files have been finished`表示されている場合は、すべてのデータがインポートされたことを意味します。この場合、データのインポートにかかった時間を確認できます。サンプルログは次のとおりです。
 
      [INFO] [loader.go:604] ["all data files have been finished"] [task=test] [unit=load] ["cost time"=52.439796ms]
 
@@ -99,13 +99,13 @@ DM-worker ログを確認します。 `all data files have been finished`表示�
 
 #### テーブルを初期化する {#initialize-tables}
 
-`sysbench`使用して、アップストリームにテスト テーブルを作成します。
+アップストリームにテスト テーブルを作成するには`sysbench`使用します。
 
 #### データ移行タスクを作成する {#create-a-data-migration-task}
 
-1.  アップストリーム MySQL のソースを作成します`source-id`を`source-1`に設定します ( [フルインポートベンチマークケース](#full-import-benchmark-case)でソースを作成している場合は、再度作成する必要はありません)。詳細については、 [データソース構成をロードする](/dm/dm-manage-source.md#operate-data-source)参照してください。
+1.  アップストリームMySQLのソースを作成します。1を`source-id` `source-1`設定します（ [完全輸入ベンチマークケース](#full-import-benchmark-case)でソースを作成済みの場合は、再度作成する必要はありません）。詳細は[データソース構成をロードする](/dm/dm-manage-source.md#operate-data-source)参照してください。
 
-2.  DM 移行タスクを作成します ( `all`モード)。タスク構成ファイルの例を次に示します。
+2.  DM移行タスク（モード`all` ）を作成します。タスク設定ファイルの例を以下に示します。
 
 ```yaml
 ---
@@ -144,7 +144,7 @@ syncers:
 
 #### 増分データを生成する {#generate-incremental-data}
 
-アップストリームで継続的に増分データを生成するには、 `sysbench`コマンドを実行します。
+アップストリームで増分データを継続的に生成するには、 `sysbench`コマンドを実行します。
 
 ```bash
 sysbench --test=oltp_insert --tables=4 --num-threads=32 --mysql-host=172.17.4.40 --mysql-port=3306 --mysql-user=root --mysql-db=dm_benchmark --db-driver=mysql --report-interval=10 --time=1800 run
@@ -152,8 +152,8 @@ sysbench --test=oltp_insert --tables=4 --num-threads=32 --mysql-host=172.17.4.40
 
 > **注記：**
 >
-> 異なる`sysbench`つのステートメントを使用して、さまざまなシナリオでのデータ移行パフォーマンスをテストできます。
+> 異なる`sysbench`のステートメントを使用して、さまざまなシナリオでのデータ移行のパフォーマンスをテストできます。
 
 #### テスト結果を取得する {#get-test-results}
 
-DM の移行ステータスを確認するには、 `query-status`コマンドを実行します。DM の監視メトリックを確認するには、Grafana を使用します。ここでの監視メトリックとは、 `finished sqls jobs` (単位時間あたりに完了したジョブの数) およびその他の関連メトリックを指します。詳細については、 [Binlog移行監視メトリクス](/dm/monitor-a-dm-cluster.md#binlog-replication)参照してください。
+DMの移行ステータスを確認するには、コマンド`query-status`実行してください。DMの監視メトリクスを確認するには、Grafanaを使用してください。ここでの監視メトリクスとは、 `finished sqls jobs` （単位時間あたりに完了したジョブ数）およびその他の関連メトリクスを指します。詳細については、 [Binlog移行監視メトリクス](/dm/monitor-a-dm-cluster.md#binlog-replication)参照してください。

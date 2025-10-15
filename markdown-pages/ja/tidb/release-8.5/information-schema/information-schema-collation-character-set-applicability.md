@@ -5,7 +5,7 @@ summary: COLLATION_CHARACTER_SET_APPLICABILITY` INFORMATION_SCHEMA テーブル�
 
 # 照合文字セットの適用性 {#collation-character-set-applicability}
 
-`COLLATION_CHARACTER_SET_APPLICABILITY`テーブルは、照合順序を該当する文字セット名にマッピングします。3 `COLLATIONS`と同様に、これは MySQL との互換性のためだけに含まれています。
+`COLLATION_CHARACTER_SET_APPLICABILITY`テーブルは、照合順序を該当する文字セット名にマッピングします。3 `COLLATIONS`と同様に、MySQL との互換性のためだけに含まれています。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -24,7 +24,7 @@ DESC COLLATION_CHARACTER_SET_APPLICABILITY;
 2 rows in set (0.00 sec)
 ```
 
-`COLLATION_CHARACTER_SET_APPLICABILITY`の表の`utf8mb4`の文字セットの照合順序マッピングをビュー。
+`COLLATION_CHARACTER_SET_APPLICABILITY`テーブルの`utf8mb4`の文字セットの照合順序マッピングをビュー。
 
 ```sql
 SELECT * FROM COLLATION_CHARACTER_SET_APPLICABILITY WHERE character_set_name='utf8mb4';

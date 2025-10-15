@@ -3,13 +3,13 @@ title: Manage Data Source Configurations in TiDB Data Migration
 summary: TiDB データ移行でアップストリーム MySQL インスタンスを管理する方法を学習します。
 ---
 
-# TiDB データ移行におけるデータ ソース構成の管理 {#manage-data-source-configurations-in-tidb-data-migration}
+# TiDB データ移行におけるデータソース構成の管理 {#manage-data-source-configurations-in-tidb-data-migration}
 
 このドキュメントでは、MySQL パスワードの暗号化、データ ソースの操作、 [dmctl](/dm/dmctl-introduction.md)を使用したアップストリーム MySQL インスタンスと DM ワーカー間のバインディングの変更など、データ ソース構成を管理する方法について説明します。
 
 ## データベースのパスワードを暗号化する {#encrypt-the-database-password}
 
-DM 構成ファイルでは、dmctl で暗号化されたパスワードを使用することをお勧めします。元のパスワードは 1 つで、暗号化するたびに暗号化されたパスワードは異なります。
+DM設定ファイルでは、dmctlで暗号化されたパスワードを使用することをお勧めします。元のパスワードは1つですが、暗号化されるたびに暗号化されたパスワードは異なります。
 
 > **注記：**
 >
@@ -43,19 +43,19 @@ help operate-source
 
 ### フラグの説明 {#flags-description}
 
--   `create` : 1 つ以上のアップストリーム データベース ソースを作成します。複数のデータ ソースの作成が失敗すると、DM はコマンドが実行されなかった状態にロールバックします。
+-   `create` : 1つ以上の上流データベースソースを作成します。複数のデータソースの作成に失敗した場合、DMはコマンドが実行されなかった状態にロールバックします。
 
--   `stop` : 1 つ以上の上流データベース ソースを停止します。複数のデータ ソースの停止に失敗した場合、一部のデータ ソースが停止される可能性があります。
+-   `stop` : 1つ以上の上流データベースソースを停止します。複数のデータソースの停止に失敗した場合、一部のデータソースが停止される可能性があります。
 
 -   `show` : 追加されたデータ ソースと対応する DM ワーカーを表示します。
 
 -   `config-file` : `source.yaml`のファイル パスを指定し、複数のファイル パスを渡すことができます。
 
--   `--print-sample-config` : サンプル構成ファイルを印刷します。このパラメータは他のパラメータを無視します。
+-   `--print-sample-config` : サンプル設定ファイルを印刷します。このパラメータは他のパラメータを無視します。
 
 ### 使用例 {#usage-example}
 
-ソース構成ファイルを作成するには、次の`operate-source`コマンドを使用します。
+次の`operate-source`コマンドを使用して、ソース構成ファイルを作成します。
 
 ```bash
 operate-source create ./source.yaml
@@ -82,9 +82,9 @@ operate-source create ./source.yaml
 
 > **注記：**
 >
-> `config`コマンドは DM v6.0 以降のバージョンでのみサポートされます。それより前のバージョンでは、 `get-config`コマンドを使用する必要があります。
+> `config`コマンドは DM v6.0 以降のバージョンでのみサポートされます。それ以前のバージョンでは、 `get-config`コマンドを使用する必要があります。
 
-`source-id`がわかっている場合は、 `dmctl --master-addr <master-addr> config source <source-id>`実行してデータ ソース構成を取得できます。
+`source-id`わかっている場合は、 `dmctl --master-addr <master-addr> config source <source-id>`実行してデータ ソース構成を取得できます。
 
 ```bash
 config source mysql-replica-01
@@ -103,7 +103,7 @@ config source mysql-replica-01
             password: '******'
     }
 
-`source-id`がわからない場合は、まず`dmctl --master-addr <master-addr> operate-source show`実行してすべてのデータ ソースを一覧表示できます。
+`source-id`わからない場合は、まず`dmctl --master-addr <master-addr> operate-source show`を実行してすべてのデータ ソースを一覧表示できます。
 
 ```bash
 operate-source show
@@ -144,7 +144,7 @@ help transfer-source
     Global Flags:
       -s, --source strings   MySQL Source ID.
 
-転送する前に、DM は、バインド解除するワーカーにまだ実行中のタスクがあるかどうかを確認します。ワーカーに実行中のタスクがある場合は、まず[タスクを一時停止する](/dm/dm-pause-task.md)実行してバインドを変更し、次に[タスクを再開する](/dm/dm-resume-task.md)実行する必要があります。
+転送前に、DM はバインド解除するワーカーに実行中のタスクがあるかどうかを確認します。ワーカーに実行中のタスクがある場合は、まず[タスクを一時停止する](/dm/dm-pause-task.md)実行し、バインドを変更してから[タスクを再開する](/dm/dm-resume-task.md)実行する必要があります。
 
 ### 使用例 {#usage-example}
 
@@ -180,7 +180,7 @@ list-member --worker
         ]
     }
 
-上記の例では、 `mysql-replica-01` `dm-worker-1`にバインドされています。以下のコマンドは、 `mysql-replica-01`のバインディング ワーカーを`dm-worker-2`に転送します。
+上記の例では、 `mysql-replica-01` `dm-worker-1`にバインドされています。以下のコマンドは、 `mysql-replica-01`のバインドワーカーを`dm-worker-2`に転送します。
 
 ```bash
 transfer-source mysql-replica-01 dm-worker-2

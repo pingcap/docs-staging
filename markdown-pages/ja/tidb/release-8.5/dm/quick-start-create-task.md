@@ -20,14 +20,14 @@ summary: DM クラスターがデプロイされた後に移行タスクを作�
 | :----- | :-------- | :--- |
 | MySQL1 | 127.0.0.1 | 3306 |
 | MySQL2 | 127.0.0.1 | 3307 |
-| ティビ    | 127.0.0.1 | 4000 |
+| TiDB   | 127.0.0.1 | 4000 |
 | DMマスター | 127.0.0.1 | 8261 |
 
 このシナリオに基づいて、次のセクションではデータ移行タスクを作成する方法について説明します。
 
 ### アップストリームMySQLを起動する {#start-upstream-mysql}
 
-実行可能な MySQL インスタンスを 2 つ用意します。Docker を使用して MySQL をすばやく起動することもできます。コマンドは次のとおりです。
+実行可能なMySQLインスタンスを2つ用意します。Dockerを使ってMySQLを素早く起動することもできます。コマンドは以下のとおりです。
 
 ```bash
 docker run --rm --name mysql-3306 -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql:5.7.22 --log-bin=mysql-bin --port=3306 --bind-address=0.0.0.0 --binlog-format=ROW --server-id=1 --gtid_mode=ON --enforce-gtid-consistency=true > mysql.3306.log 2>&1 &
@@ -65,7 +65,7 @@ docker run --rm --name mysql-3307 -p 3307:3307 -e MYSQL_ALLOW_EMPTY_PASSWORD=tru
 TiDBサーバーを実行するには、次のコマンドを使用します。
 
 ```bash
-wget https://download.pingcap.org/tidb-community-server-v8.1.2-linux-amd64.tar.gz
+wget https://download.pingcap.org/tidb-community-server-v8.5.3-linux-amd64.tar.gz
 tar -xzvf tidb-latest-linux-amd64.tar.gz
 mv tidb-latest-linux-amd64/bin/tidb-server ./
 ./tidb-server
@@ -73,7 +73,7 @@ mv tidb-latest-linux-amd64/bin/tidb-server ./
 
 > **警告：**
 >
-> このドキュメントの TiDB の展開方法は、本番や開発環境には**適用されません**。
+> このドキュメントの TiDB のデプロイメント方法は、本番または開発環境には**適用されません**。
 
 ## MySQLデータソースを構成する {#configure-the-mysql-data-source}
 
@@ -86,7 +86,7 @@ mv tidb-latest-linux-amd64/bin/tidb-server ./
 > -   データベースにパスワードがない場合、この手順をスキップできます。
 > -   DM v1.0.6 以降のバージョンでは、プレーンテキスト パスワードを使用してソース情報を構成できます。
 
-安全上の理由から、暗号化されたパスワードを設定して使用することをお勧めします。 dmctl を使用して MySQL/TiDB パスワードを暗号化できます。 パスワードが「123456」であるとします。
+安全上の理由から、暗号化されたパスワードを設定して使用することをお勧めします。dmctlを使用してMySQL/TiDBのパスワードを暗号化できます。パスワードが「123456」であると仮定します。
 
 > **注記：**
 >
@@ -119,7 +119,7 @@ from:
   port: 3306
 ```
 
-MySQL2 データ ソースで、上記の構成を`conf/source2.yaml`にコピーします。 `name` `mysql-replica-02`に変更し、 `password`と`port`適切な値に変更する必要があります。
+MySQL2データソースで、上記の設定を`conf/source2.yaml`にコピーします。3 `name` `mysql-replica-02`に変更し、 `password`と`port`適切な値に変更する必要があります。
 
 ### ソースを作成する {#create-a-source}
 
@@ -129,15 +129,15 @@ dmctl を使用して MySQL1 のデータ ソース構成を DM クラスター�
 ./dmctl --master-addr=127.0.0.1:8261 operate-source create conf/source1.yaml
 ```
 
-MySQL2 の場合は、上記のコマンドの設定ファイルを MySQL2 の設定ファイルに置き換えます。
+MySQL2 の場合、上記のコマンドの設定ファイルを MySQL2 の設定ファイルに置き換えます。
 
 ## データ移行タスクを作成する {#create-a-data-migration-task}
 
-[準備されたデータ](#prepare-data)インポートすると、MySQL1 インスタンスと MySQL2 インスタンスの両方に複数のシャード テーブルが作成されます。これらのテーブルは構造が同一で、テーブル名に同じプレフィックス「t」が付きます。これらのテーブルが配置されているデータベースにはすべてプレフィックス「sharding」が付きます。また、主キーまたは一意キーに競合はありません (各シャード テーブルでは、主キーまたは一意キーが他のテーブルのものと異なります)。
+[準備されたデータ](#prepare-data)インポートすると、MySQL1 インスタンスと MySQL2 インスタンスの両方に複数のシャードテーブルが作成されます。これらのテーブルは構造が同一で、テーブル名に同じプレフィックス「t」が付きます。また、これらのテーブルが配置されているデータベースのプレフィックスはすべて「sharding」です。また、主キーと一意キーの競合はありません（各シャードテーブルの主キーまたは一意キーは、他のテーブルのものと異なります）。
 
-ここで、これらのシャード テーブルを TiDB の`db_target.t_target`テーブルに移行する必要があるとします。手順は次のとおりです。
+ここで、これらのシャードテーブルをTiDBの`db_target.t_target`テーブルに移行する必要があるとします。手順は以下のとおりです。
 
-1.  タスクの設定ファイルを作成します。
+1.  タスクの構成ファイルを作成します。
 
     ```yaml
     ---
@@ -209,4 +209,4 @@ MySQL2 の場合は、上記のコマンドの設定ファイルを MySQL2 の�
 
 ## データを検証する {#verify-data}
 
-アップストリーム MySQL シャード テーブル内のデータを変更できます。次に、 [同期差分インスペクター](/sync-diff-inspector/shard-diff.md)使用して、アップストリーム データとダウンストリーム データが一貫しているかどうかを確認します。データの一貫性は、移行タスクが正常に機能していることを意味し、クラスターが正常に機能していることも示しています。
+アップストリームのMySQLシャードテーブルのデータを変更できます。その後、 [同期差分インスペクター](/sync-diff-inspector/shard-diff.md)使用して、アップストリームとダウンストリームのデータの整合性を確認します。データの整合性は、移行タスクが正常に機能していることを意味し、クラスタが正常に動作していることを示します。

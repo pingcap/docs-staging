@@ -5,7 +5,7 @@ summary: REFERENTIAL_CONSTRAINTS` INFORMATION_SCHEMA テーブルについて学
 
 # 参照制約 {#referential-constraints}
 
-`REFERENTIAL_CONSTRAINTS`テーブルは、テーブル間の[`FOREIGN KEY`](/foreign-key.md)の関係に関する情報を提供します。
+`REFERENTIAL_CONSTRAINTS`テーブルは、テーブル間の[`FOREIGN KEY`](/foreign-key.md)関係に関する情報を提供します。
 
 ```sql
 USE INFORMATION_SCHEMA;

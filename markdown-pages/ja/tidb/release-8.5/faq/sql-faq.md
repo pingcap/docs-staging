@@ -32,7 +32,7 @@ TiDBにはコストベースのオプティマイザが搭載されています�
 
 ## 特定の SQL ステートメントの実行を防ぐにはどうすればよいでしょうか? {#how-to-prevent-the-execution-of-a-particular-sql-statement}
 
-TiDB v7.5.0以降のバージョンでは、 [`QUERY WATCH`](/sql-statements/sql-statement-query-watch.md)ステートメントを使用して特定のSQL文を終了できます。詳細については、 [予想よりも多くのリソースを消費するクエリ（ランナウェイクエリ）を管理する](/tidb-resource-control.md#query-watch-parameters)参照してください。
+TiDB v7.5.0以降のバージョンでは、 [`QUERY WATCH`](/sql-statements/sql-statement-query-watch.md)ステートメントを使用して特定のSQL文を終了できます。詳細については、 [予想よりも多くのリソースを消費するクエリ（ランナウェイクエリ）を管理する](/tidb-resource-control-runaway-queries.md#query-watch-parameters)参照してください。
 
 TiDB v7.5.0より前のバージョンでは、 [`MAX_EXECUTION_TIME`](/optimizer-hints.md#max_execution_timen)ヒントを使用して[SQLバインディング](/sql-plan-management.md#sql-binding)作成し、特定のステートメントの実行時間を小さな値（例えば1ミリ秒）に制限することができます。これにより、ステートメントはしきい値によって自動的に終了します。
 
@@ -209,7 +209,7 @@ TiDBは、 [グローバル](/system-variables.md#tidb_force_priority)単位ま�
 
 > **注記：**
 >
-> TiDB v6.6.0以降、 [リソース管理](/tidb-resource-control.md)サポートします。この機能を使用すると、異なるリソースグループで異なる優先度のSQL文を実行できます。これらのリソースグループに適切なクォータと優先度を設定することで、優先度の異なるSQL文のスケジュールをより適切に制御できます。リソース制御を有効にすると、文の優先度は適用されなくなります。異なるSQL文のリソース使用量を管理するには、 [リソース管理](/tidb-resource-control.md)使用することをお勧めします。
+> TiDBはv6.6.0以降、 [リソース管理](/tidb-resource-control-ru-groups.md)サポートしています。この機能を使用すると、異なるリソースグループで異なる優先度のSQL文を実行できます。これらのリソースグループに適切なクォータと優先度を設定することで、優先度の異なるSQL文のスケジュールをより適切に制御できます。リソース制御を有効にすると、文の優先度は適用されなくなります。異なるSQL文のリソース使用量を管理するには、リソース制御を使用することをお勧めします。
 
 上記の2つのパラメータをTiDBのDMLと組み合わせて使用できます。例：
 
@@ -229,7 +229,7 @@ TiDBは、 [グローバル](/system-variables.md#tidb_force_priority)単位ま�
 
 テーブル内の行数またはパーティションテーブルの単一パーティションの行数が 1000 に達し、テーブルまたはパーティションの比率 (変更された行数 / 現在の行数の合計) が[`tidb_auto_analyze_ratio`](/system-variables.md#tidb_auto_analyze_ratio)を超えると、 [`ANALYZE`](/sql-statements/sql-statement-analyze-table.md)ステートメントが自動的にトリガーされます。
 
-システム変数`tidb_auto_analyze_ratio`のデフォルト値は`0.5`で、この機能がデフォルトで有効になっていることを示します。システム変数`tidb_auto_analyze_ratio`を[`pseudo-estimate-ratio`](/tidb-configuration-file.md#pseudo-estimate-ratio)以上（デフォルト値は`0.8` ）に設定することは推奨されません。そうしないと、オプティマイザーが疑似統計を使用する可能性があります。TiDB v5.3.0 では[`tidb_enable_pseudo_for_outdated_stats`](/system-variables.md#tidb_enable_pseudo_for_outdated_stats-new-in-v530)変数が導入され、これを`OFF`に設定すると、統計が古くても疑似統計は使用されません。
+システム変数`tidb_auto_analyze_ratio`のデフォルト値は`0.5`で、この機能がデフォルトで有効になっていることを示します。5 `tidb_auto_analyze_ratio`値を[`pseudo-estimate-ratio`](/tidb-configuration-file.md#pseudo-estimate-ratio)以上（デフォルト値は`0.8` ）に設定することは推奨されません。そうしないと、オプティマイザーが疑似統計を使用する可能性があります。TiDB v5.3.0 では[`tidb_enable_pseudo_for_outdated_stats`](/system-variables.md#tidb_enable_pseudo_for_outdated_stats-new-in-v530)変数が導入され、これを`OFF`に設定すると、統計が古くても疑似統計は使用されません。
 
 `auto analyze`無効にするには、システム変数[`tidb_enable_auto_analyze`](/system-variables.md#tidb_enable_auto_analyze-new-in-v610)使用します。
 
@@ -412,9 +412,9 @@ SELECT 'café' = 'cafe' COLLATE utf8mb4_0900_ai_ci;  -- Returns 1 (TRUE)
 
 推奨事項:
 
--   ハードウェア構成を改善してください。1 [ソフトウェアおよびハードウェア要件](/hardware-and-software-requirements.md)参照してください。
+-   ハードウェア構成を改善してください。1 [TiDB のソフトウェアおよびハードウェア要件](/hardware-and-software-requirements.md)参照してください。
 -   同時実行性を改善します。デフォルト値は10です。50に上げて試してみるのも良いでしょう。ただし、通常はデフォルト値の2～4倍の改善が見られます。
--   大量のデータの場合は`count`をテストします。
+-   大量のデータの場合は`count`テストします。
 -   TiKV設定を最適化します。1と[TiKV スレッドのパフォーマンスを調整する](/tune-tikv-thread-performance.md) [TiKVメモリのパフォーマンスを調整する](/tune-tikv-memory-performance.md)参照してください。
 -   [コプロセッサーキャッシュ](/coprocessor-cache.md)を有効にします。
 

@@ -28,7 +28,7 @@ TableRefs ::=
 
 > **注記：**
 >
-> v6.6.0 以降、TiDB は[リソース管理](/tidb-resource-control.md)サポートします。この機能を使用すると、異なるリソース グループで異なる優先度の SQL 文を実行できます。これらのリソース グループに適切なクォータと優先度を構成することで、異なる優先度の SQL 文のスケジュールをより適切に制御できます。リソース制御を有効にすると、文の優先度 ( `LOW_PRIORITY`と`HIGH_PRIORITY` ) は無効になります。異なる SQL 文のリソース使用を管理するには、 [リソース管理](/tidb-resource-control.md)使用することをお勧めします。
+> TiDB v6.6.0以降、 [リソース管理](/tidb-resource-control-ru-groups.md)サポートします。この機能を使用すると、異なるリソースグループで異なる優先度のSQL文を実行できます。これらのリソースグループに適切なクォータと優先度を設定することで、優先度の異なるSQL文のスケジュールをより適切に制御できます。リソース制御を有効にすると、文の優先度（ `LOW_PRIORITY`と`HIGH_PRIORITY` ）は無効になります。異なるSQL文のリソース使用量を管理するには、 [リソース管理](/tidb-resource-control-ru-groups.md)使用することをお勧めします。
 
 ## 例 {#examples}
 
@@ -65,9 +65,9 @@ mysql> SELECT * FROM t1;
 3 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB は、式を評価するときに常に列の元の値を使用します。例:
+TiDBは式を評価する際に常に列の元の値を使用します。例:
 
 ```sql
 CREATE TABLE t (a int, b int);

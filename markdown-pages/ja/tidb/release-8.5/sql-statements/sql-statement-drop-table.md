@@ -5,7 +5,7 @@ summary: TiDB データベースの DROP TABLE の使用法の概要。
 
 # テーブルを削除 {#drop-table}
 
-このステートメントは、現在選択されているデータベースからテーブルを削除します。1 `IF EXISTS`が使用されていない限り、テーブルが存在しない場合はエラーが返されます。
+このステートメントは、現在選択されているデータベースからテーブルを削除します。テーブルが存在しない場合は、 `IF EXISTS`修飾子を使用しない限り、エラーが返されます。
 
 ## 概要 {#synopsis}
 
@@ -30,7 +30,7 @@ TableNameList ::=
 
 -   ローカル一時テーブルを削除するには`DROP TEMPORARY TABLE`使用します。
 -   グローバル一時テーブルを削除するには`DROP GLOBAL TEMPORARY TABLE`使用します。
--   通常のテーブルまたは一時テーブルを削除するには`DROP TABLE`使用します。
+-   通常のテーブルまたは一時テーブルを削除するには、 `DROP TABLE`使用します。
 
 ## 例 {#examples}
 
@@ -62,7 +62,7 @@ mysql> DROP TABLE v1;
 Query OK, 0 rows affected (0.23 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 現在、 `RESTRICT`と`CASCADE`構文的にのみサポートされています。
 

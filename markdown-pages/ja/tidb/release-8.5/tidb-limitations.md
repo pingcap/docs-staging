@@ -9,7 +9,7 @@ summary: TiDB の使用制限について学習します。
 
 > **注記：**
 >
-> TiDB は、MySQL の多くの制限を含む、MySQL プロトコルおよび構文との高い互換性を備えています。たとえば、1 つのインデックスには最大 16 列を含めることができます。詳細については、 [MySQL 互換性](/mysql-compatibility.md)および公式の MySQL ドキュメントを参照してください。
+> TiDBはMySQLのプロトコルおよび構文と高い互換性を備えていますが、MySQLの多くの制限事項も含まれています。例えば、1つのインデックスには最大16列まで含めることができます。詳細については、 [MySQLの互換性](/mysql-compatibility.md)およびMySQLの公式ドキュメントをご覧ください。
 
 ## 識別子の長さの制限 {#limitations-on-identifier-length}
 
@@ -37,11 +37,11 @@ summary: TiDB の使用制限について学習します。
 | :--- | :-- |
 | テーブル | 無制限 |
 
-## 単一テーブルに関する制限 {#limitations-on-a-single-table}
+## 単一テーブルの制限 {#limitations-on-a-single-table}
 
 | タイプ     | 上限（デフォルト値）                  |
 | :------ | :-------------------------- |
-| コラム     | デフォルトは1017で、最大4096まで調整できます。 |
+| 列       | デフォルトは1017で、最大4096まで調整できます。 |
 | インデックス  | デフォルトは64で、最大512まで調整可能       |
 | 行       | 無制限                         |
 | サイズ     | 無制限                         |
@@ -49,16 +49,16 @@ summary: TiDB の使用制限について学習します。
 
 <CustomContent platform="tidb">
 
--   上限`Columns`は[`table-column-count-limit`](/tidb-configuration-file.md#table-column-count-limit-new-in-v50)で変更できます。
--   上限`Indexes`は[`index-limit`](/tidb-configuration-file.md#index-limit-new-in-v50)で変更できます。
+-   上限値`Columns`は[`table-column-count-limit`](/tidb-configuration-file.md#table-column-count-limit-new-in-v50)で変更できます。
+-   上限値`Indexes`は[`index-limit`](/tidb-configuration-file.md#index-limit-new-in-v50)で変更できます。
 
 </CustomContent>
 
 ## 1行の制限 {#limitation-on-a-single-row}
 
-| タイプ | 上限（デフォルト値）                 |
-| :-- | :------------------------- |
-| サイズ | デフォルトは6 MiBで、120 MiBまで調整可能 |
+| タイプ | 上限（デフォルト値）                      |
+| :-- | :------------------------------ |
+| サイズ | デフォルトは6 MiBですが、120 MiBまで調整可能です。 |
 
 <CustomContent platform="tidb">
 
@@ -66,22 +66,32 @@ summary: TiDB の使用制限について学習します。
 
 </CustomContent>
 
+## インデックスの制限 {#limitations-on-indexes}
+
+インデックスの最大長は3072バイトで、4バイトUTF-8エンコードでは768文字に相当します。1つのインデックスに含まれる列の最大数は16に制限されています。
+
+<CustomContent platform="tidb">
+
+この制限は、 [`max-index-length`](/tidb-configuration-file.md#max-index-length)構成項目を使用して調整できます。
+
+</CustomContent>
+
 ## データ型の制限 {#limitations-on-data-types}
 
-| タイプ   | 上限                         |
-| :---- | :------------------------- |
-| 文字    | 255文字                      |
-| バイナリ  | 255文字                      |
-| バイナリ  | 65535文字                    |
-| バルチャー | 16383文字                    |
-| TEXT  | デフォルトは6 MiBで、120 MiBまで調整可能 |
-| ブロブ   | デフォルトは6 MiBで、120 MiBまで調整可能 |
+| タイプ       | 上限       |
+| :-------- | :------- |
+| チャー       | 255文字    |
+| バイナリ      | 255バイト   |
+| VARBINARY | 65535バイト |
+| ヴァルチャー    | 16383文字  |
+| TEXT      | 65535バイト |
+| ブロブ       | 65535バイト |
 
-## SQL 文の制限 {#limitations-on-sql-statements}
+## SQL文の制限 {#limitations-on-sql-statements}
 
-| タイプ                  | 上限                                                   |
-| :------------------- | :--------------------------------------------------- |
-| 単一トランザクション内のSQL文の最大数 | 楽観的トランザクションが使用され、トランザクション再試行が有効になっている場合、上限は 5000 です。 |
+| タイプ                  | 上限                                                  |
+| :------------------- | :-------------------------------------------------- |
+| 単一トランザクション内のSQL文の最大数 | 楽観的トランザクションを使用し、トランザクション再試行が有効になっている場合、上限は 5000 です。 |
 
 <CustomContent platform="tidb">
 
@@ -89,6 +99,6 @@ summary: TiDB の使用制限について学習します。
 
 </CustomContent>
 
-## TiKV バージョンの制限 {#limitations-on-tikv-version}
+## TiKVバージョンの制限 {#limitations-on-tikv-version}
 
-クラスターで、TiDBコンポーネントのバージョンが v6.2.0 以降の場合、TiKV のバージョンも v6.2.0 以降である必要があります。
+クラスター内の TiDBコンポーネントのバージョンが v6.2.0 以降の場合、TiKV のバージョンも v6.2.0 以降である必要があります。

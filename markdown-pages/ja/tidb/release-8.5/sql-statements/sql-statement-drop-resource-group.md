@@ -9,7 +9,7 @@ summary: TiDB での DROP RESOURCE GROUP の使用方法を学習します。
 
 > **注記：**
 >
-> この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> この機能は、クラスター[TiDB Cloudスターター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)および[TiDB Cloudエッセンシャル](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)では利用できません。
 
 ## 概要 {#synopsis}
 
@@ -85,4 +85,4 @@ MySQL も[リソースグループの削除](https://dev.mysql.com/doc/refman/8.
 
 -   [リソースグループの変更](/sql-statements/sql-statement-alter-resource-group.md)
 -   [リソースグループの作成](/sql-statements/sql-statement-create-resource-group.md)
--   [リクエストユニット（RU）](/tidb-resource-control.md#what-is-request-unit-ru)
+-   [リクエストユニット（RU）](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru)

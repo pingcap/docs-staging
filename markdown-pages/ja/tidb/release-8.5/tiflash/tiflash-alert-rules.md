@@ -19,7 +19,7 @@ summary: TiFlashクラスターのアラート ルールについて学習しま
 
 -   解決：
 
-    エラーは[サポートを受ける](/support.md)何らかの間違ったロジックによって発生した可能性があります。1 PingCAP またはコミュニティから。
+    このエラーは、何らかの間違ったロジックによって発生した可能性があります。1 [サポートを受ける](/support.md)またはコミュニティから。
 
 ## <code>TiFlash_schema_apply_duration</code> {#code-tiflash-schema-apply-duration-code}
 
@@ -33,7 +33,7 @@ summary: TiFlashクラスターのアラート ルールについて学習しま
 
 -   解決：
 
-    これは、 TiFlashstorageエンジンの内部的な問題が原因である可能性があります[サポートを受ける](/support.md)は PingCAP またはコミュニティから提供されました。
+    これは、 TiFlashstorageエンジンの内部的な問題が原因である可能性があります。1 [サポートを受ける](/support.md) PingCAP またはコミュニティから提供されました。
 
 ## <code>TiFlash_raft_read_index_duration</code> {#code-tiflash-raft-read-index-duration-code}
 
@@ -47,11 +47,11 @@ summary: TiFlashクラスターのアラート ルールについて学習しま
 
     > **注記：**
     >
-    > `read index`は、TiKV リーダーに送信される kvproto 要求です。TiKV 領域の再試行、ビジー ストア、またはネットワークの問題により、要求時間が`read index`と長くなる可能性があります。
+    > `read index`は TiKV リーダーに送信される kvproto リクエストです。TiKV リージョンの再試行、ストアのビジー状態、またはネットワークの問題により、リクエスト時間が`read index`と長くなる可能性があります。
 
 -   解決：
 
-    頻繁な再試行は、TiKV クラスターの頻繁な分割または移行によって発生する可能性があります。再試行の理由を特定するには、TiKV クラスターのステータスを確認します。
+    頻繁な再試行は、TiKV クラスターの頻繁な分割または移行が原因である可能性があります。再試行の理由を特定するには、TiKV クラスターのステータスを確認してください。
 
 ## <code>TiFlash_raft_wait_index_duration</code> {#code-tiflash-raft-wait-index-duration-code}
 
@@ -65,4 +65,4 @@ summary: TiFlashクラスターのアラート ルールについて学習しま
 
 -   解決：
 
-    これは、TiKV とプロキシ間の通信エラーが原因である可能性があります。1 [サポートを受ける](/support.md) PingCAP またはコミュニティから取得されました。
+    これは、TiKV とプロキシ間の通信エラーが原因である可能性があります。1 [サポートを受ける](/support.md) PingCAP またはコミュニティから提供されました。

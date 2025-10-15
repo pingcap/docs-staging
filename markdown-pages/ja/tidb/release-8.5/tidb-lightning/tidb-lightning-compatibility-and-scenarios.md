@@ -61,7 +61,7 @@ TiCDC を物理インポート モードで使用することは、短期的に�
 
 このシナリオでは、 [PITR](/br/br-log-architecture.md#process-of-pitr)有効になっている場合、 `IMPORT INTO`文を送信した後に互換性チェックでエラーが報告されます。これらのテーブルにバックアップが必要ないことが確実な場合は、その文の[`WithOptions`](/sql-statements/sql-statement-import-into.md#withoptions)に`DISABLE_PRECHECK` （バージョン 8.0.0 で導入）を含めて再送信してください。これにより、データインポートタスクは互換性チェックを無視し、データを直接インポートします。
 
-`IMPORT INTO`でインポートしたデータは、ログバックアップではバックアップできません。テーブルをバックアップする必要がある場合は、 [テーブルをバックアップする](/br/br-snapshot-manual.md#back-up-a-table)で説明されているように、インポート後にテーブルレベルのスナップショットバックアップを実行できます。
+`IMPORT INTO`でインポートしたデータは、ログバックアップではバックアップできません。テーブルをバックアップする必要がある場合は、 [テーブルをバックアップする](/br/br-snapshot-manual.md#back-up-a-table)で説明されているように、インポート後にテーブルレベルのスナップショットバックアップを実行することをお勧めします。
 
 ### TiCDC で使用される {#used-with-ticdc}
 

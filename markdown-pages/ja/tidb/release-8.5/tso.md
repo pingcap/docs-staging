@@ -5,7 +5,7 @@ summary: TiDB の TimeStamp Oracle (TSO) について学習します。
 
 # TiDB のタイムスタンプ Oracle (TSO) {#timestamp-oracle-tso-in-tidb}
 
-TiDB では、配置Driver(PD) が、クラスター内のさまざまなコンポーネントにタイムスタンプを割り当てる上で重要な役割を果たします。これらのタイムスタンプは、トランザクションとデータに時間マーカーを割り当てる際に重要な役割を果たします。これは、TiDB 内で[パーコレーター](https://research.google/pubs/large-scale-incremental-processing-using-distributed-transactions-and-notifications/)モデルを有効にするために不可欠なメカニズムです。Percolator モデルは、 [マルチバージョン同時実行制御 (MVCC)](https://docs.pingcap.com/tidb/stable/glossary#multi-version-concurrency-control-mvcc)と[取引管理](/transaction-overview.md)サポートするために使用されます。
+TiDBでは、配置Driver（PD）がクラスタ内の様々なコンポーネントにタイムスタンプを割り当てる上で重要な役割を果たします。これらのタイムスタンプは、トランザクションとデータに時間マーカーを割り当てる際に重要な役割を果たします。これは、TiDB内で[パーコレーター](https://research.google/pubs/large-scale-incremental-processing-using-distributed-transactions-and-notifications/)モデルを実現するために不可欠なメカニズムです。3と[マルチバージョン同時実行制御 (MVCC)](https://docs.pingcap.com/tidb/stable/glossary#multi-version-concurrency-control-mvcc) [取引管理](/transaction-overview.md)サポートするには、Percolatorモデルが使用されます。
 
 次の例は、TiDB で現在の TSO を取得する方法を示しています。
 
@@ -24,9 +24,9 @@ SELECT @ts;
 1 row in set (0.00 sec)
 ```
 
-TSO タイムスタンプはトランザクションごとに割り当てられるため、これは`BEGIN; ...; ROLLBACK`のトランザクションで実行されることに注意してください。
+TSO タイムスタンプはトランザクションごとに割り当てられるため、これは`BEGIN; ...; ROLLBACK`トランザクションで実行されることに注意してください。
 
-前の例で取得した TSO タイムスタンプは 10 進数です。次の SQL関数を使用してタイムスタンプを解析できます。
+前の例で取得したTSOタイムスタンプは10進数です。タイムスタンプを解析するには、以下のSQL関数を使用できます。
 
 -   [`TIDB_PARSE_TSO()`](/functions-and-operators/tidb-functions.md#tidb_parse_tso)
 -   [`TIDB_PARSE_TSO_LOGICAL()`](/functions-and-operators/tidb-functions.md)
@@ -62,7 +62,7 @@ SELECT TIDB_PARSE_TSO_LOGICAL(443852055297916932);
 TSO タイムスタンプには 2 つの部分があります。
 
 -   物理タイムスタンプ: 1970 年 1 月 1 日からのミリ秒単位の UNIX タイムスタンプ。
--   論理タイムスタンプ: 同じミリ秒内に複数のタイムスタンプが必要なシナリオや、特定のイベントによってクロックの進行が逆転する可能性があるシナリオで使用される増分カウンター。このような場合、物理タイムスタンプは変更されませんが、論理タイムスタンプは着実に進みます。このメカニズムにより、常に前進し、決して後退しない TSO タイムスタンプの整合性が確保されます。
+-   論理タイムスタンプ：増分するカウンターで、同じミリ秒内に複数のタイムスタンプが必要なシナリオや、特定のイベントによって時計の進行が逆転する可能性がある場合に使用されます。このような場合、物理タイムスタンプは変化せず、論理タイムスタンプは着実に進みます。このメカニズムにより、TSOタイムスタンプの整合性が確保されます。TSOタイムスタンプは常に前進し、後退することはありません。
 
 この知識があれば、SQL で TSO タイムスタンプをもう少し詳しく調べることができます。
 
@@ -78,9 +78,9 @@ FROM_UNIXTIME((@ts >> 18)/1000): 2023-08-27 20:33:41.6870
 1 row in set (0.00 sec)
 ```
 
-`>> 18`演算は、物理タイムスタンプの抽出に使用される[右シフト](/functions-and-operators/bit-functions-and-operators.md#-right-shift) x 18 ビットのビット単位を表します。物理タイムスタンプはミリ秒単位で表され、秒単位で測定される一般的な UNIX タイムスタンプ形式とは異なるため、これを 1000 で割って[`FROM_UNIXTIME()`](/functions-and-operators/date-and-time-functions.md)と互換性のある形式に変換する必要があります。このプロセスは、 `TIDB_PARSE_TSO()`の機能と一致します。
+`>> 18`演算は、ビット単位の[右シフト](/functions-and-operators/bit-functions-and-operators.md#-right-shift) × 18 ビットを表し、これを用いて物理タイムスタンプを抽出します。物理タイムスタンプはミリ秒単位で表され、秒単位で測定される一般的な UNIX タイムスタンプ形式とは異なるため、これを[`FROM_UNIXTIME()`](/functions-and-operators/date-and-time-functions.md)と互換性のある形式に変換するには 1000 で割る必要があります。この処理は`TIDB_PARSE_TSO()`の機能と一致します。
 
-10 進数では`4`に相当する、2 進数では論理タイムスタンプ`000000000000000100`を抽出することもできます。
+10 進数では`4`に相当する、2 進数では論理タイムスタンプ`000000000000000100`抽出することもできます。
 
 次のように CLI ツールを使用してタイムスタンプを解析することもできます。
 

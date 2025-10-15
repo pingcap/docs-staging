@@ -16,7 +16,7 @@ TiDB のシーケンス関数は、 [`CREATE SEQUENCE`](/sql-statements/sql-stat
 
 ## <code>NEXTVAL()</code> {#code-nextval-code}
 
-`NEXTVAL()`関数はシーケンスの次の値を返します。
+`NEXTVAL()`関数は、シーケンスの次の値を返します。
 
 例：
 
@@ -43,11 +43,11 @@ SELECT NEXTVAL(s1);
 
 ## <code>NEXT VALUE FOR</code> {#code-next-value-for-code}
 
-`NEXT VALUE FOR`関数は[`NEXTVAL()`](#nextval)の別名です。
+`NEXT VALUE FOR`関数は[`NEXTVAL()`](#nextval)エイリアスです。
 
 例：
 
-`NEXTVAL()`使用して`s1`から次の値を取得します。
+`NEXTVAL()`を使用して`s1`から次の値を取得します。
 
 ```sql
 SELECT NEXTVAL(s1);
@@ -62,7 +62,7 @@ SELECT NEXTVAL(s1);
     +-------------+
     1 row in set (0.00 sec)
 
-`NEXT VALUE FOR`使用して`s1`から次の値を取得します。
+`NEXT VALUE FOR`を使用して`s1`から次の値を取得します。
 
 ```sql
 SELECT NEXT VALUE FOR s1;
@@ -130,7 +130,7 @@ SELECT NEXTVAL(s1);
 
 ## <code>LASTVAL()</code> {#code-lastval-code}
 
-`LASTVAL()`関数は、**現在のセッションで**シーケンスによって生成された最後の値を返します。
+`LASTVAL()`関数は**、現在のセッションで**シーケンスによって生成された最後の値を返します。
 
 例：
 
@@ -149,6 +149,6 @@ SELECT LASTVAL(s1);
     +-------------+
     1 row in set (0.00 sec)
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 MySQL は、 [ISO/IEC 9075-2](https://www.iso.org/standard/76584.html)で定義されているシーケンスを作成および操作するための関数とステートメントをサポートしていません。

@@ -3,9 +3,9 @@ title: CREATE USER | TiDB SQL Statement Reference
 summary: TiDB データベースの CREATE USER の使用法の概要。
 ---
 
-# ユーザーを作成 {#create-user}
+# ユーザーの作成 {#create-user}
 
-このステートメントは、パスワードを指定して新しいユーザーを作成します。MySQL 権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。したがって、IP アドレス`192.168.1.1`からのみ接続できるユーザー`'newuser2'@'192.168.1.1'`作成できます。また、2 人のユーザーに同じユーザー部分を持たせ、異なるホストからログインするときに異なる権限を持たせることもできます。
+この文は、パスワードを指定して新しいユーザーを作成します。MySQLの権限システムでは、ユーザーはユーザー名と接続元のホストの組み合わせです。したがって、IPアドレス`192.168.1.1`からのみ接続できるユーザー`'newuser2'@'192.168.1.1'`作成することが可能です。また、2人のユーザーが同じユーザー領域を持ち、異なるホストからログインするため、異なる権限を持つことも可能になります。
 
 ## 概要 {#synopsis}
 
@@ -55,14 +55,14 @@ RequireListElement ::= 'ISSUER' Issuer | 'SUBJECT' Subject | 'CIPHER' Cipher | '
 
 ## 例 {#examples}
 
-`newuserpassword`パスワードを持つユーザーを作成します。
+`newuserpassword`パスワードでユーザーを作成します。
 
 ```sql
 mysql> CREATE USER 'newuser' IDENTIFIED BY 'newuserpassword';
 Query OK, 1 row affected (0.04 sec)
 ```
 
-`192.168.1.1`にのみログインできるユーザーを作成します。
+`192.168.1.1`のみにログインできるユーザーを作成します。
 
 ```sql
 mysql> CREATE USER 'newuser2'@'192.168.1.1' IDENTIFIED BY 'newuserpassword';
@@ -121,7 +121,7 @@ SELECT * FROM information_schema.user_attributes;
 1 rows in set (0.00 sec)
 ```
 
-過去 5 つのパスワードを再利用できないユーザーを作成します。
+過去 5 回のパスワードの再利用を許可しないユーザーを作成します。
 
 ```sql
 CREATE USER 'newuser8'@'%' PASSWORD HISTORY 5;
@@ -153,9 +153,9 @@ SELECT USER, HOST, USER_ATTRIBUTES FROM MYSQL.USER WHERE USER='newuser7';
 1 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-次の`CREATE USER`のオプションは TiDB ではまだサポートされていないため、解析されますが無視されます。
+次の`CREATE USER`オプションは TiDB ではまだサポートされていないため、解析されますが無視されます。
 
 -   `PASSWORD REQUIRE CURRENT DEFAULT`
 -   `WITH MAX_QUERIES_PER_HOUR`
@@ -171,11 +171,11 @@ SELECT USER, HOST, USER_ATTRIBUTES FROM MYSQL.USER WHERE USER='newuser7';
 
 <CustomContent platform="tidb">
 
--   [MySQL とのSecurity互換性](/security-compatibility-with-mysql.md)
+-   [MySQLとのSecurity互換性](/security-compatibility-with-mysql.md)
 -   [権限管理](/privilege-management.md)
 
 </CustomContent>
 
 -   [ユーザーを削除](/sql-statements/sql-statement-drop-user.md)
--   [ユーザーの作成を表示](/sql-statements/sql-statement-show-create-user.md)
+-   [表示 ユーザーの作成](/sql-statements/sql-statement-show-create-user.md)
 -   [ユーザーの変更](/sql-statements/sql-statement-alter-user.md)

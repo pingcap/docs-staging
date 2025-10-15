@@ -99,7 +99,7 @@ tiup br restore db --db test -u "${PD_IP}:2379" \
 
 ## 認証 {#authentication}
 
-クラウドstorageシステムにバックアップデータを保存する場合、クラウドサービスプロバイダーに応じて認証パラメータを設定する必要があります。このセクションでは、Amazon S3、GCS、Azure Blob Storageで使用される認証方法と、それぞれのストレージstorageにアクセスするために使用するアカウントの設定方法について説明します。
+クラウドstorageシステムにバックアップデータを保存する場合、クラウドサービスプロバイダーに応じて認証パラメータを設定する必要があります。このセクションでは、Amazon S3、GCS、Azure Blob Storageで使用される認証方法と、それぞれのstorageサービスにアクセスするためのアカウントの設定方法について説明します。
 
 <SimpleTab groupId="storage">
 <div label="Amazon S3" value="amazon">
@@ -107,9 +107,13 @@ tiup br restore db --db test -u "${PD_IP}:2379" \
 バックアップの前に、S3 上のバックアップ ディレクトリにアクセスするための次の権限を設定します。
 
 -   バックアップ中にバックアップディレクトリにアクセスするための TiKV および Backup &amp; Restore ( BR ) の最小権限: `s3:ListBucket` 、 `s3:GetObject` 、 `s3:DeleteObject` 、 `s3:PutObject` 、および`s3:AbortMultipartUpload`
--   リストア中にTiKVとBRがバックアップディレクトリにアクセスするための最小権限： `s3:ListBucket` 、 `s3:GetObject` 、 `s3:DeleteObject` 、および`s3:PutObject` 。BRはチェックポイント情報をバックアップディレクトリのサブディレクトリ`./checkpoints`に書き込みます。ログバックアップデータをリストアする際、 BRはリストアされたクラスターのテーブルIDマッピング関係をバックアップディレクトリのサブディレクトリ`./pitr_id_maps`に書き込みます。
+-   復元中に TiKV とBR がバックアップ ディレクトリにアクセスするための最小権限: `s3:ListBucket`と`s3:GetObject` 。
 
 バックアップディレクトリをまだ作成していない場合は、 [バケットを作成する](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html)を参照して指定のリージョンに S3 バケットを作成してください。必要に応じて、 [フォルダを作成する](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-folders.html)を参照してバケット内にフォルダを作成することもできます。
+
+> **注記：**
+>
+> 2024年にAWSはデフォルトの動作を変更し、新規に作成されたインスタンスはデフォルトでIMDSv2のみをサポートするようになりました。詳細については[アカウント内のすべての新規インスタンスの起動に対して IMDSv2 をデフォルトとして設定します](https://aws.amazon.com/about-aws/whats-new/2024/03/set-imdsv2-default-new-instance-launches/)ご覧ください。そのため、v8.4.0以降、 BRはIMDSv2のみが有効になっているAmazon EC2インスタンスでのIAMロール権限の取得をサポートします。v8.4.0より前のバージョンのBRを使用する場合は、インスタンスをIMDSv1とIMDSv2の両方をサポートするように設定する必要があります。
 
 次のいずれかの方法で S3 へのアクセスを構成することをお勧めします。
 

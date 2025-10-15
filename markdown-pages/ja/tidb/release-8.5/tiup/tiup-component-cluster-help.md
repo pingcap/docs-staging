@@ -1,11 +1,11 @@
 ---
 title: tiup cluster help
-summary: tiup-cluster は、コマンドライン インターフェイスでユーザーにヘルプ情報を提供します。ヘルプ情報にアクセスするには、help` コマンドまたは `--help` オプションを使用します。特定のコマンドのヘルプ情報を表示するには、`[command]` を指定します。出力は、指定されたコマンドまたはtiup-clusterのヘルプ情報です。
+summary: tiup-cluster は、コマンドラインインターフェースでユーザー向けのヘルプ情報を提供します。ヘルプ情報にアクセスするには、help` コマンドまたは `--help` オプションを使用します。特定のコマンドのヘルプ情報を表示するには、`[command]` を指定します。出力は、指定されたコマンドまたはtiup-clusterのヘルプ情報です。
 ---
 
 # tiup cluster help {#tiup-cluster-help}
 
-tiup-cluster は、コマンドライン インターフェイスでユーザー向けの豊富なヘルプ情報を提供します。 `help`コマンドまたは`--help`オプションで取得できます。 `tiup cluster help <command>`基本的に`tiup cluster <command> --help`と同じです。
+tiup-cluster は、コマンドラインインターフェースでユーザー向けに豊富なヘルプ情報を提供します。ヘルプ情報は、コマンド`help`またはオプション`--help`で取得できます。5 `tiup cluster help <command>`基本的に`tiup cluster <command> --help`と同じです。
 
 ## 構文 {#syntax}
 

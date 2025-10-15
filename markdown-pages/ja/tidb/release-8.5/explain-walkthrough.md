@@ -128,13 +128,13 @@ SHOW CREATE TABLE trips\G
 *************************** 1. row ***************************
        Table: trips
 Create Table: CREATE TABLE `trips` (
-  `trip_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `duration` int(11) NOT NULL,
+  `trip_id` bigint NOT NULL AUTO_INCREMENT,
+  `duration` int NOT NULL,
   `start_date` datetime DEFAULT NULL,
   `end_date` datetime DEFAULT NULL,
-  `start_station_number` int(11) DEFAULT NULL,
+  `start_station_number` int DEFAULT NULL,
   `start_station` varchar(255) DEFAULT NULL,
-  `end_station_number` int(11) DEFAULT NULL,
+  `end_station_number` int DEFAULT NULL,
   `end_station` varchar(255) DEFAULT NULL,
   `bike_number` varchar(255) DEFAULT NULL,
   `member_type` varchar(255) DEFAULT NULL,
@@ -197,7 +197,7 @@ EXPLAIN ANALYZE SELECT count(*) FROM trips WHERE start_date BETWEEN '2017-07-01 
 
 > **注記：**
 >
-> ここで適用されるもう一つの最適化は、コプロセッサキャッシュです。インデックスを追加できない場合は、 [コプロセッサキャッシュ](/coprocessor-cache.md)有効にすることを検討してください。有効にすると、演算子が最後に実行されてからリージョンが変更されていない限り、TiKVはキャッシュから値を返します。これにより、高コストな`TableFullScan`および`Selection`演算子のコストも大幅に削減されます。
+> Another optimization that applies here is the coprocessor cache. If you are unable to add indexes, consider enabling the [コプロセッサキャッシュ](/coprocessor-cache.md). When it is enabled, as long as the Region has not been modified since the operator is last executed, TiKV will return the value from the cache. This will also help reduce much of the cost of the expensive `TableFullScan` and `Selection` operators.
 
 ## サブクエリの早期実行を無効にする {#disable-the-early-execution-of-subqueries}
 

@@ -114,7 +114,7 @@ TiDB Operatorのドキュメントのセクション[継続的なプロファイ
 
 <details><summary>TiUP Playground を使用したクラスターの開始</summary>
 
-クラスタを起動すると、 TiUP Playground (&gt;= v1.8.0) は NgMonitoringコンポーネントを自動的に起動します。TiUP Playgroundを最新バージョンに更新するには、次のコマンドを実行します。
+クラスタを起動すると、 TiUP Playground (&gt;= v1.8.0) は自動的に NgMonitoringコンポーネントを起動します。TiUP Playgroundを最新バージョンに更新するには、以下のコマンドを実行します。
 
 ```shell
 tiup update --self

@@ -5,13 +5,13 @@ summary: シャードの小さなデータセットを MySQL から TiDB に移�
 
 # 小さなデータセットの MySQL シャードを TiDB に移行してマージする {#migrate-and-merge-mysql-shards-of-small-datasets-to-tidb}
 
-複数の MySQL データベース インスタンスを上流から下流の 1 つの TiDB データベースに移行してマージする場合、データ量がそれほど大きくない場合は、DM を使用して MySQL シャードを移行できます。このドキュメントの「小さなデータセット」は通常、1 TiB 前後またはそれ未満のデータを意味します。このドキュメントの例を通じて、移行の操作手順、注意事項、およびトラブルシューティングについて学習できます。
+複数のMySQLデータベースインスタンスを上流から下流の1つのTiDBデータベースに移行・統合し、データ量がそれほど大きくない場合は、DMを使用してMySQLシャードを移行できます。本ドキュメントにおける「小規模データセット」とは、通常、1TiB程度以下のデータを指します。本ドキュメントの例を通して、移行の操作手順、注意事項、トラブルシューティングについて理解を深めることができます。
 
-このドキュメントは、合計 1 TiB 未満の MySQL シャードの移行に適用されます。合計 1 TiB を超えるデータを持つ MySQL シャードを移行する場合、DM のみを使用して移行すると時間がかかります。この場合、 [大規模データセットの MySQL シャードを TiDB に移行してマージする](/migrate-large-mysql-shards-to-tidb.md)で紹介した操作に従って移行を実行することをお勧めします。
+このドキュメントは、合計1TiB未満のMySQLシャードの移行に適用されます。合計1TiBを超えるデータを持つMySQLシャードを移行する場合、DMのみを使用して移行すると長い時間がかかります。この場合、 [大規模データセットの MySQL シャードを TiDB に移行およびマージする](/migrate-large-mysql-shards-to-tidb.md)で紹介した操作に従って移行を実行することをお勧めします。
 
-このドキュメントでは、移行手順を説明するために簡単な例を取り上げます。この例では、2 つのデータ ソース MySQL インスタンスの MySQL シャードがダウンストリーム TiDB クラスターに移行されます。
+このドキュメントでは、簡単な例を用いて移行手順を説明します。例では、2つのデータソースMySQLインスタンスのMySQLシャードが下流のTiDBクラスタに移行されます。
 
-この例では、MySQL インスタンス 1 と MySQL インスタンス 2 の両方に次のスキーマとテーブルが含まれています。 この例では、両方のインスタンスでプレフィックスが`sale`である`store_01`および`store_02`スキーマのテーブルを移行して、 `store`スキーマのダウンストリーム`sale`テーブルにマージします。
+この例では、MySQLインスタンス1とMySQLインスタンス2の両方に以下のスキーマとテーブルが含まれています。この例では、両方のインスタンスでプレフィックスが`sale`あるスキーマ`store_01`と`store_02`テーブルを、スキーマ`store`の下流のテーブル`sale`に移行してマージします。
 
 | スキーマ   | テーブル          |
 | :----- | :------------ |
@@ -33,9 +33,9 @@ summary: シャードの小さなデータセットを MySQL から TiDB に移�
 
 ### シャードテーブルの競合をチェックする {#check-conflicts-for-the-sharded-tables}
 
-移行に異なるシャード テーブルからのデータのマージが含まれる場合、マージ中に主キーまたは一意のインデックスの競合が発生する可能性があります。したがって、移行前に、ビジネスの観点から現在のシャーディング スキームを詳しく検討し、競合を回避する方法を見つける必要があります。詳細については、 [複数のシャードテーブル間の主キーまたは一意のインデックス間の競合を処理する](/dm/shard-merge-best-practices.md#handle-conflicts-between-primary-keys-or-unique-indexes-across-multiple-sharded-tables)参照してください。以下に簡単に説明します。
+移行に異なるシャーディングされたテーブルからのデータのマージが含まれる場合、マージ中に主キーまたは一意のインデックスの競合が発生する可能性があります。そのため、移行前に、現在のシャーディングスキームをビジネスの観点から詳細に検討し、競合を回避する方法を見つける必要があります。詳細については、 [複数のシャードテーブル間の主キーまたは一意のインデックス間の競合を処理する](/dm/shard-merge-best-practices.md#handle-conflicts-between-primary-keys-or-unique-indexes-across-multiple-sharded-tables)参照してください。以下に簡単に説明します。
 
-この例では、 `sale_01`と`sale_02`次のように同じテーブル構造を持ちます。
+この例では、 `sale_01`と`sale_02`次の同じテーブル構造を持ちます。
 
 ```sql
 CREATE TABLE `sale_01` (
@@ -48,7 +48,7 @@ CREATE TABLE `sale_01` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ```
 
-`id`列目は主キーで、 `sid`列目はシャーディング キーです。5 `id`目は自動増分であり、複数のシャーディング テーブル範囲が重複するとデータの競合が発生します。7 列`sid`インデックスがグローバルに一意であることを保証できるため、 [自動増分主キーの主キー属性を削除します](/dm/shard-merge-best-practices.md#remove-the-primary-key-attribute-from-the-column)列目の手順に従って`id`列目をバイパスできます。
+`id`列目は主キー、 `sid`列目はシャーディングキーです。5列目`id`自動増分であり、複数のシャーディングテーブル範囲が重複するとデータ競合が発生します。7列`sid`インデックスのグローバル一意性を保証するため、 [自動増分主キーの主キー属性を削除します](/dm/shard-merge-best-practices.md#remove-the-primary-key-attribute-from-the-column)目の手順に従って`id`列目をバイパスできます。
 
 ```sql
 CREATE TABLE `sale` (
@@ -79,7 +79,7 @@ from:
   port: ${port}             # For example: 3306
 ```
 
-ターミナルで次のコマンドを実行します`tiup dmctl`使用して、データ ソース構成を DM クラスターにロードします。
+ターミナルで次のコマンドを実行します。1 `tiup dmctl`指定して、データソース構成を DM クラスターに読み込みます。
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} operate-source create source1.yaml
@@ -87,10 +87,10 @@ tiup dmctl --master-addr ${advertise-addr} operate-source create source1.yaml
 
 パラメータの説明は以下のとおりです。
 
-| パラメータ                   | 説明                                                                       |
-| ----------------------- | ------------------------------------------------------------------------ |
-| `--master-addr`         | dmctl が接続するクラスター内の任意の DM マスター ノードの`{advertise-addr}`例: 172.16.10.71:8261 |
-| `operate-source create` | データ ソースを DM クラスターにロードします。                                                |
+| パラメータ                   | 説明                                                                 |
+| ----------------------- | ------------------------------------------------------------------ |
+| `--master-addr`         | dmctlが接続するクラスタ内の任意のDMマスターノードの`{advertise-addr}`例：172.16.10.71:8261 |
+| `operate-source create` | データ ソースを DM クラスターにロードします。                                          |
 
 すべてのデータ ソースが DM クラスターに追加されるまで、上記の手順を繰り返します。
 
@@ -168,16 +168,16 @@ block-allow-list:           # filter or only migrate all operations of some data
 
 上記の例は、移行タスクを実行するための最小限の構成です。詳細については、 [DM 高度なタスクコンフィグレーションファイル](/dm/task-configuration-file-full.md)参照してください。
 
-タスク ファイル内の`routes`およびその他の構成の詳細については、次のドキュメント`filters`参照してください。
+タスク ファイル内の`routes` 、およびその他`filters`構成の詳細については、次のドキュメントを参照してください。
 
 -   [テーブルルーティング](/dm/dm-table-routing.md)
 -   [ブロックと許可のテーブルリスト](/dm/dm-block-allow-table-lists.md)
--   [Binlogイベント フィルター](/filter-binlog-event.md)
+-   [Binlogイベントフィルター](/filter-binlog-event.md)
 -   [SQL 式を使用して特定の行の変更をフィルタリングする](/filter-dml-event.md)
 
 ## ステップ3. タスクを開始する {#step-3-start-the-task}
 
-移行タスクを開始する前に、 `tiup dmctl`の`check-task`サブコマンドを実行して、構成が DM の要件を満たしているかどうかを確認し、エラーを回避します。
+移行タスクを開始する前に、 `tiup dmctl`の`check-task`サブコマンドを実行して、構成が DM の要件を満たしているかどうかを確認し、起こりうるエラーを回避します。
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} check-task task.yaml
@@ -189,12 +189,12 @@ tiup dmctl --master-addr ${advertise-addr} check-task task.yaml
 tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
 ```
 
-| パラメータ           | 説明                                                                       |
-| --------------- | ------------------------------------------------------------------------ |
-| `--master-addr` | dmctl が接続するクラスター内の任意の DM マスター ノードの`{advertise-addr}`例: 172.16.10.71:8261 |
-| `start-task`    | データ移行タスクを開始します。                                                          |
+| パラメータ           | 説明                                                                 |
+| --------------- | ------------------------------------------------------------------ |
+| `--master-addr` | dmctlが接続するクラスタ内の任意のDMマスターノードの`{advertise-addr}`例：172.16.10.71:8261 |
+| `start-task`    | データ移行タスクを開始します。                                                    |
 
-移行タスクの開始に失敗した場合は、エラー情報に従って構成情報を変更し、 `start-task task.yaml`再度実行して移行タスクを開始します。問題が発生した場合は、 [エラーの処理](/dm/dm-error-handling.md)と[FAQ](/dm/dm-faq.md)参照してください。
+移行タスクの開始に失敗した場合は、エラー情報に従って構成情報を変更し、手順`start-task task.yaml`再度実行して移行タスクを開始してください。問題が発生した場合は、 [エラーの処理](/dm/dm-error-handling.md)と[FAQ](/dm/dm-faq.md)参照してください。
 
 ## ステップ4. タスクを確認する {#step-4-check-the-task}
 
@@ -204,28 +204,28 @@ tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
 tiup dmctl --master-addr ${advertise-addr} query-status ${task-name}
 ```
 
-エラーが発生した場合は、 `query-status ${task-name}`使用して詳細情報を表示します。 `query-status`コマンドのクエリ結果、タスク ステータス、サブタスク ステータスの詳細については、 [TiDB データ移行クエリのステータス](/dm/dm-query-status.md)参照してください。
+エラーが発生した場合は、 `query-status ${task-name}`使用して詳細情報を表示してください。3 `query-status`のクエリ結果、タスクステータス、サブタスクステータスの詳細については、 [TiDB データ移行クエリのステータス](/dm/dm-query-status.md)参照してください。
 
-## ステップ 5. タスクを監視し、ログを確認する (オプション) {#step-5-monitor-tasks-and-check-logs-optional}
+## ステップ5. タスクを監視し、ログを確認する（オプション） {#step-5-monitor-tasks-and-check-logs-optional}
 
 Grafana またはログを通じて、移行タスクの履歴と内部運用メトリックを表示できます。
 
--   Grafana経由
+-   グラファナ経由
 
-    TiUPを使用して DM クラスターをデプロイする際に、Prometheus、Alertmanager、Grafana が正しくデプロイされていれば、Grafana で DM 監視メトリックを表示できます。具体的には、デプロイ時に指定した IP アドレスとポートを Grafana に入力し、DM ダッシュボードを選択します。
+    TiUPを使用してDMクラスターをデプロイする際に、Prometheus、Alertmanager、Grafanaが正しくデプロイされていれば、GrafanaでDMの監視メトリクスを確認できます。具体的には、デプロイ時に指定したIPアドレスとポート番号をGrafanaに入力し、DMダッシュボードを選択してください。
 
 -   ログ経由
 
-    DM が実行中の場合、DM-master、DM-worker、dmctl は移行タスクに関する情報を含むログを出力します。各コンポーネントのログ ディレクトリは次のとおりです。
+    DM の実行中、DM-master、DM-worker、dmctl は、移行タスクに関する情報を含むログを出力します。各コンポーネントのログディレクトリは以下のとおりです。
 
-    -   DM マスター ログ ディレクトリ: DM マスター プロセス パラメータ`--log-file`で指定されます。DM がTiUP を使用して展開されている場合、ログ ディレクトリは`/dm-deploy/dm-master-8261/log/`です。
-    -   DM ワーカー ログ ディレクトリ: DM ワーカー プロセス パラメータ`--log-file`で指定されます。DM がTiUP を使用してデプロイされている場合、ログ ディレクトリは`/dm-deploy/dm-worker-8262/log/`です。
+    -   DMマスターログディレクトリ：DMマスタープロセスパラメータ`--log-file`で指定されます。DMがTiUPを使用して展開されている場合、ログディレクトリは`/dm-deploy/dm-master-8261/log/`です。
+    -   DMワーカーログディレクトリ：DMワーカープロセスパラメータ`--log-file`で指定します。DMがTiUPを使用してデプロイされている場合、ログディレクトリは`/dm-deploy/dm-worker-8262/log/`です。
 
 ## 参照 {#see-also}
 
--   [大規模データセットの MySQL シャードを TiDB に移行してマージする](/migrate-large-mysql-shards-to-tidb.md) 。
+-   [大規模データセットの MySQL シャードを TiDB に移行およびマージする](/migrate-large-mysql-shards-to-tidb.md) 。
 -   [シャードテーブルからのデータのマージと移行](/dm/feature-shard-merge.md)
--   [シャードマージシナリオにおけるデータ移行のベストプラクティス](/dm/shard-merge-best-practices.md)
+-   [シャード統合シナリオにおけるデータ移行のベストプラクティス](/dm/shard-merge-best-practices.md)
 -   [エラーの処理](/dm/dm-error-handling.md)
 -   [パフォーマンスの問題に対処する](/dm/dm-handle-performance-issues.md)
 -   [FAQ](/dm/dm-faq.md)

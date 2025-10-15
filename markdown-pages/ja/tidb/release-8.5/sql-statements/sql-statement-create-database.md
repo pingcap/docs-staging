@@ -5,7 +5,7 @@ summary: TiDB データベースの CREATE DATABASE の使用法の概要。
 
 # データベースの作成 {#create-database}
 
-このステートメントは、TiDB に新しいデータベースを作成します。MySQL の「データベース」の用語は、SQL 標準のスキーマに最も近いものです。
+この文はTiDBに新しいデータベースを作成します。MySQLにおける「データベース」の用語は、SQL標準のスキーマに最も近いものです。
 
 ## 概要 {#synopsis}
 
@@ -36,7 +36,7 @@ PlacementPolicyOption ::=
 
 ## 構文 {#syntax}
 
-`CREATE DATABASE`ステートメントは、データベースを作成し、デフォルトの文字セットや照合順序などのデータベースのデフォルトのプロパティを指定するために使用されます。 `CREATE SCHEMA`は`CREATE DATABASE`の同義語です。
+`CREATE DATABASE`ステートメントは、データベースを作成し、デフォルトの文字セットや照合順序などのデータベースのデフォルトのプロパティを指定するために使用されます。 `CREATE SCHEMA` `CREATE DATABASE`の同義語です。
 
 ```sql
 CREATE {DATABASE | SCHEMA} [IF NOT EXISTS] db_name
@@ -71,9 +71,9 @@ mysql> SHOW TABLES;
 1 row in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`CREATE DATABASE`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`CREATE DATABASE`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

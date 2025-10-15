@@ -1,13 +1,13 @@
 ---
 title: Known Incompatibility Issues with Third-Party Tools
-summary: テスト中に見つかったサードパーティ ツールとの TiDB 互換性の問題について説明します。
+summary: テスト中に発見されたサードパーティ ツールとの TiDB 互換性の問題について説明します。
 ---
 
-# サードパーティツールとの既知の非互換性の問題 {#known-incompatibility-issues-with-third-party-tools}
+# サードパーティ製ツールとの既知の非互換性の問題 {#known-incompatibility-issues-with-third-party-tools}
 
 > **注記：**
 >
-> [サポートされていない機能](/mysql-compatibility.md#unsupported-features)セクションには、TiDB でサポートされていない機能がリストされています。これには以下が含まれます。
+> [サポートされていない機能](/mysql-compatibility.md#unsupported-features)セクションには、次のものを含む TiDB でサポートされていない機能がリストされています。
 >
 > -   ストアドプロシージャと関数
 > -   トリガー
@@ -16,13 +16,13 @@ summary: テスト中に見つかったサードパーティ ツールとの TiD
 > -   `SPATIAL`関数、データ型、インデックス
 > -   `XA`構文
 >
-> 上記のサポートされていない機能は想定される動作であり、このドキュメントには記載されていません。詳細については、 [MySQL 互換性](/mysql-compatibility.md)参照してください。
+> 上記のサポートされていない機能は想定される動作であり、このドキュメントには記載されていません。詳細については、 [MySQLの互換性](/mysql-compatibility.md)参照してください。
 
-このドキュメントに記載されている非互換性の問題は、いくつかの[TiDB がサポートするサードパーティ ツール](/develop/dev-guide-third-party-tools-compatibility.md)で見つかります。
+このドキュメントに記載されている非互換性の問題は、いくつかの[TiDBでサポートされているサードパーティツール](/develop/dev-guide-third-party-tools-compatibility.md)に見られます。
 
 ## 一般的な非互換性 {#general-incompatibility}
 
-### <code>SELECT CONNECTION_ID()</code> TiDBで64ビット整数を返します。 {#code-select-connection-id-code-returns-a-64-bit-integer-in-tidb}
+### <code>SELECT CONNECTION_ID()</code> TiDB で 64 ビット整数を返します。 {#code-select-connection-id-code-returns-a-64-bit-integer-in-tidb}
 
 **説明**
 
@@ -30,25 +30,25 @@ summary: テスト中に見つかったサードパーティ ツールとの TiD
 
 **回避方法**
 
-TiDB アプリケーションでは、データのオーバーフローを回避するために、 `SELECT CONNECTION_ID()`の結果を格納するために 64 ビットの整数または文字列型を使用する必要があります。たとえば、 Javaでは`Long`または`String`使用し、JavaScript または TypeScript では`string`使用できます。
+TiDBアプリケーションでは、データオーバーフローを回避するために、 `SELECT CONNECTION_ID()`の結果を格納する際に64ビット整数型または文字列型を使用する必要があります。例えば、 Javaでは`Long`または`String`使用し、JavaScriptまたはTypeScriptでは`string`使用できます。
 
 ### TiDBは<code>Com_*</code>カウンタを維持しません {#tidb-does-not-maintain-code-com-code-counters}
 
 **説明**
 
-MySQL は、データベースで実行した操作の合計数を追跡するために、一連の[`Com_`で始まるサーバーステータス変数](https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Com_xxx)維持します。たとえば、 `Com_select` MySQL が最後に起動されてから開始された`SELECT`のステートメントの合計数を記録します (ステートメントが正常にクエリされなかった場合でも)。TiDB はこれらの変数を維持しません。ステートメント[`SHOW GLOBAL STATUS LIKE 'Com_%'`](/sql-statements/sql-statement-show-status.md)使用して、TiDB と MySQL の違いを確認できます。
+MySQLは、データベースに対して実行された操作の合計数を追跡するために、 [`Com_`で始まるサーバーステータス変数](https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Com_xxx)という一連の変数を保持しています。例えば、 `Com_select` MySQLが最後に起動されてから開始された`SELECT`文の合計数を記録します（文が正常に実行されなかった場合でも記録されます）。TiDBはこれらの変数を保持していません。TiDBとMySQLの違いを確認するには、 [`SHOW GLOBAL STATUS LIKE 'Com_%'`](/sql-statements/sql-statement-show-status.md)変数を使用してください。
 
 **回避方法**
 
 <CustomContent platform="tidb">
 
-これらの変数は使用しないでください。一般的なシナリオの 1 つは監視です。TiDB は十分に監視可能であり、サーバーステータス変数からのクエリを必要としません。カスタム監視ツールについては、 [TiDB 監視フレームワークの概要](/tidb-monitoring-framework.md)を参照してください。
+これらの変数は使用しないでください。よくあるシナリオの一つは監視です。TiDBは監視性に優れているため、サーバーステータス変数からのクエリは必要ありません。カスタム監視ツールについては、 [TiDB 監視フレームワークの概要](/tidb-monitoring-framework.md)を参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-これらの変数は使用しないでください。一般的なシナリオの 1 つは監視です。TiDB TiDB Cloud は十分に監視可能であり、サーバーステータス変数からのクエリは必要ありません。TiDB TiDB Cloud監視サービスの詳細については、 [TiDBクラスタを監視する](/tidb-cloud/monitor-tidb-cluster.md)を参照してください。
+これらの変数は使用しないでください。よくあるシナリオの一つは監視です。TiDB TiDB Cloudは監視性に優れているため、サーバーステータス変数からのクエリは必要ありません。TiDB TiDB Cloud監視サービスの詳細については、 [TiDBクラスタを監視する](/tidb-cloud/monitor-tidb-cluster.md)を参照してください。
 
 </CustomContent>
 
@@ -56,19 +56,19 @@ MySQL は、データベースで実行した操作の合計数を追跡する�
 
 **説明**
 
-TiDB エラー メッセージは`TIMESTAMP`と`DATETIME`を区別しますが、MySQL は区別せず、すべて`DATETIME`として返します。つまり、MySQL は`TIMESTAMP`タイプのエラー メッセージを誤って`DATETIME`タイプに変換します。
+TiDBのエラーメッセージは`TIMESTAMP`と`DATETIME`を区別しますが、MySQLでは区別せず、すべて`DATETIME`として返します。つまり、MySQLは`TIMESTAMP`タイプのエラーメッセージを誤って`DATETIME`タイプに変換してしまうのです。
 
 **回避方法**
 
 <CustomContent platform="tidb">
 
-文字列の一致にはエラー メッセージを使用しないでください。代わりに、トラブルシューティングには[エラーコード](/error-codes.md)使用してください。
+文字列の照合にはエラーメッセージを使用しないでください。代わりに、トラブルシューティングには[エラーコード](/error-codes.md)使用してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-文字列の一致にはエラー メッセージを使用しないでください。代わりに、トラブルシューティングには[エラーコード](https://docs.pingcap.com/tidb/stable/error-codes)使用してください。
+文字列の照合にはエラーメッセージを使用しないでください。代わりに、トラブルシューティングには[エラーコード](https://docs.pingcap.com/tidb/stable/error-codes)使用してください。
 
 </CustomContent>
 
@@ -82,11 +82,11 @@ TiDB エラー メッセージは`TIMESTAMP`と`DATETIME`を区別しますが�
 
 データと対応するインデックスの一貫性をチェックするには、TiDB の[`ADMIN CHECK [TABLE|INDEX]`](/sql-statements/sql-statement-admin-check-table-index.md)ステートメントを使用できます。
 
-## MySQL JDBC との互換性 {#compatibility-with-mysql-jdbc}
+## MySQL JDBCとの互換性 {#compatibility-with-mysql-jdbc}
 
-テストバージョンはMySQL Connector/J 8.0.29です。
+テストバージョンは MySQL Connector/J 8.0.29 です。
 
-### デフォルトの照合順序が一貫していません {#the-default-collation-is-inconsistent}
+### デフォルトの照合順序が一貫していない {#the-default-collation-is-inconsistent}
 
 **説明**
 
@@ -94,31 +94,31 @@ MySQL Connector/J の照合順序はクライアント側に保存され、サ�
 
 次の表は、文字セットにおけるクライアント側とサーバー側の既知の照合順序の不一致を示しています。
 
-| キャラクター    | クライアント側のデフォルト照合順序    | サーバー側のデフォルト照合順序 |
-| --------- | -------------------- | --------------- |
-| `ascii`   | `ascii_general_ci`   | `ascii_bin`     |
-| `latin1`  | `latin1_swedish_ci`  | `latin1_bin`    |
-| `utf8mb4` | `utf8mb4_0900_ai_ci` | `utf8mb4_bin`   |
+| キャラクター    | クライアント側のデフォルトの照合順序   | サーバー側のデフォルトの照合順序 |
+| --------- | -------------------- | ---------------- |
+| `ascii`   | `ascii_general_ci`   | `ascii_bin`      |
+| `latin1`  | `latin1_swedish_ci`  | `latin1_bin`     |
+| `utf8mb4` | `utf8mb4_0900_ai_ci` | `utf8mb4_bin`    |
 
 **回避方法**
 
-照合順序を手動で設定し、クライアント側のデフォルトの照合順序に依存しないでください。クライアント側のデフォルトの照合順序は、MySQL Connector/J 構成ファイルによって保存されます。
+照合順序は手動で設定し、クライアント側のデフォルトの照合順序に依存しないでください。クライアント側のデフォルトの照合順序は、MySQL Connector/J 構成ファイルに保存されます。
 
-### <code>NO_BACKSLASH_ESCAPES</code>パラメータは有効になりません {#the-code-no-backslash-escapes-code-parameter-does-not-take-effect}
+### <code>NO_BACKSLASH_ESCAPES</code>パラメータは効果がありません {#the-code-no-backslash-escapes-code-parameter-does-not-take-effect}
 
 **説明**
 
-TiDB では、 `\`文字をエスケープせずに`NO_BACKSLASH_ESCAPES`パラメータを使用することはできません。詳細については、 [問題](https://github.com/pingcap/tidb/issues/35302)参照してください。
+TiDBでは、 `\`番目の文字をエスケープせずに`NO_BACKSLASH_ESCAPES`パラメータを使用することはできません。詳細については、 [問題](https://github.com/pingcap/tidb/issues/35302)を参照してください。
 
 **回避方法**
 
-TiDB では`NO_BACKSLASH_ESCAPES`と`\`使用せず、SQL ステートメントでは`\\`使用します。
+TiDB では`NO_BACKSLASH_ESCAPES`と`\`使用しないでください。SQL ステートメントでは`\\`使用してください。
 
 ### <code>INDEX_USED</code>関連のパラメータはサポートされていません {#the-code-index-used-code-related-parameters-are-not-supported}
 
 **説明**
 
-TiDB はプロトコルの`SERVER_QUERY_NO_GOOD_INDEX_USED`と`SERVER_QUERY_NO_INDEX_USED`パラメータを設定しません。これにより、実際の状況と矛盾する次のパラメータが返されます。
+TiDBはプロトコルのパラメータ`SERVER_QUERY_NO_GOOD_INDEX_USED`と`SERVER_QUERY_NO_INDEX_USED`設定しません。そのため、以下のパラメータが実際の状況と矛盾した値として返されます。
 
 -   `com.mysql.cj.protocol.ServerSession.noIndexUsed()`
 -   `com.mysql.cj.protocol.ServerSession.noGoodIndexUsed()`
@@ -131,17 +131,17 @@ TiDB では`noIndexUsed()`および`noGoodIndexUsed()`関数を使用しない�
 
 **説明**
 
-TiDB は[パケットデバッグを有効にする](https://dev.mysql.com/doc/connector-j/en/connector-j-connp-props-debugging-profiling.html)パラメータをサポートしていません。これは、データ パケットのバッファを保持するデバッグ用 MySQL Connector/J パラメータです。これにより、接続が予期せず終了する可能性があります。オンにし**ないでください**。
+TiDBはパラメータ[パケットデバッグを有効にする](https://dev.mysql.com/doc/connector-j/en/connector-j-connp-props-debugging-profiling.html)サポートしていません。これはMySQL Connector/Jのデバッグ用パラメータであり、データパケットのバッファを保持します。これにより、接続が予期せず切断される可能性があります。このパラメータを有効に**しないでください**。
 
 **回避方法**
 
 TiDB で`enablePacketDebug`パラメータを設定しないでください。
 
-### UpdatableResultSet はサポートされていません {#the-updatableresultset-is-not-supported}
+### UpdatableResultSetはサポートされていません {#the-updatableresultset-is-not-supported}
 
 **説明**
 
-TiDB は`UpdatableResultSet`サポートしていません。5 `ResultSet.CONCUR_UPDATABLE`を指定し**ないでください**。また、 `ResultSet`内のデータを更新し**ないでください**。
+TiDB は`UpdatableResultSet`サポートしていません。5 パラメータ`ResultSet.CONCUR_UPDATABLE`指定**しないでください**。また、 `ResultSet`内のデータを更新**しないでください**。
 
 **回避方法**
 
@@ -153,29 +153,29 @@ TiDB は`UpdatableResultSet`サポートしていません。5 `ResultSet.CONCUR
 
 **説明**
 
-MySQL Connector/J 8.0.32 以前のバージョンを使用している場合、 `useLocalTransactionState`と`rewriteBatchedStatements`パラメータを同時に`true`に設定すると、トランザクションのコミットに失敗する可能性があります。 [このコード](https://github.com/Icemap/tidb-java-gitpod/tree/reproduction-local-transaction-state-txn-error)で再現できます。
+MySQL Connector/J 8.0.32 以前のバージョンをご利用の場合、パラメータ`useLocalTransactionState`と`rewriteBatchedStatements`同時に`true`に設定すると、トランザクションのコミットに失敗する可能性があります。7 に[このコード](https://github.com/Icemap/tidb-java-gitpod/tree/reproduction-local-transaction-state-txn-error)すると再現します。
 
 **回避方法**
 
 > **注記：**
 >
-> `useConfigs=maxPerformance`には、一連の設定が含まれています。MySQL Connector/J 8.0 および MySQL Connector/J 5.1 の詳細な設定については、それぞれ[mysql-コネクタ-j 8.0](https://github.com/mysql/mysql-connector-j/blob/release/8.0/src/main/resources/com/mysql/cj/configurations/maxPerformance.properties)および[mysql-コネクタ-j 5.1](https://github.com/mysql/mysql-connector-j/blob/release/5.1/src/com/mysql/jdbc/configs/maxPerformance.properties)参照してください。 `maxPerformance`使用する場合は`useLocalTransactionState`無効にする必要があります。つまり、 `useConfigs=maxPerformance&useLocalTransactionState=false`使用します。
+> `useConfigs=maxPerformance`には一連の設定が含まれています。MySQL Connector/J 8.0 および MySQL Connector/J 5.1 の詳細な設定については、それぞれ[mysql-コネクタ-j 8.0](https://github.com/mysql/mysql-connector-j/blob/release/8.0/src/main/resources/com/mysql/cj/configurations/maxPerformance.properties)および[mysql-コネクタ-j 5.1](https://github.com/mysql/mysql-connector-j/blob/release/5.1/src/com/mysql/jdbc/configs/maxPerformance.properties)参照してください。 `maxPerformance`使用する場合は`useLocalTransactionState`無効にする必要があります。つまり、 `useConfigs=maxPerformance&useLocalTransactionState=false`使用してください。
 
-このバグは MySQL Connector/J 8.0.33 で修正されました。8.0.x シリーズの更新が停止していることを考慮すると、安定性とパフォーマンスを向上させるために、MySQL Connector/J を[最新の一般提供（GA）バージョン](https://dev.mysql.com/downloads/connector/j/)にアップグレードすることを強くお勧めします。
+このバグはMySQL Connector/J 8.0.33で修正されました。8.0.xシリーズのアップデートは終了しているため、安定性とパフォーマンスを向上させるためにMySQL Connector/Jを[最新の一般提供（GA）バージョン](https://dev.mysql.com/downloads/connector/j/)にアップグレードすることを強くお勧めします。
 
-### コネクタは 5.7.5 より前のサーバーバージョンと互換性がありません {#connector-is-incompatible-with-the-server-version-earlier-than-5-7-5}
+### コネクタは 5.7.5 より前のサーバーバージョンとは互換性がありません {#connector-is-incompatible-with-the-server-version-earlier-than-5-7-5}
 
 **説明**
 
-MySQL Connector/J 8.0.31 またはそれ以前のバージョンを MySQLサーバー&lt; 5.7.5 または MySQLサーバー&lt; 5.7.5 プロトコルを使用するデータベース (v6.3.0 より前の TiDB など) で使用すると、特定の条件下でデータベース接続がハングすることがあります。詳細については、 [バグレポート](https://bugs.mysql.com/bug.php?id=106252)を参照してください。
+MySQL Connector/J 8.0.31 以前のバージョンを、MySQL サーバー 5.7.5 未満、またはMySQL サーバー 5.7.5 未満のプロトコルを使用するデータベース（TiDB v6.3.0 未満など）で使用すると、特定の条件下でデータベース接続がハングすることがあります。詳細については、 [バグレポート](https://bugs.mysql.com/bug.php?id=106252)参照してください。
 
 **回避方法**
 
-このバグは MySQL Connector/J 8.0.32 で修正されました。8.0.x シリーズの更新が停止していることを考慮すると、安定性とパフォーマンスを向上させるために、MySQL Connector/J を[最新の一般提供（GA）バージョン](https://dev.mysql.com/downloads/connector/j/)にアップグレードすることを強くお勧めします。
+このバグはMySQL Connector/J 8.0.32で修正されました。8.0.xシリーズのアップデートは終了しているため、安定性とパフォーマンスを向上させるためにMySQL Connector/Jを[最新の一般提供（GA）バージョン](https://dev.mysql.com/downloads/connector/j/)にアップグレードすることを強くお勧めします。
 
 TiDB では、次の方法でもこれを修正します。
 
--   クライアント側: このバグは**pingcap/mysql-connector-j**で修正されており、公式の MySQL Connector/J の代わりに[pingcap/mysql-コネクタ-j](https://github.com/pingcap/mysql-connector-j)使用できます。
+-   クライアント側: このバグは**pingcap/mysql-connector-j**で修正されており、公式の MySQL Connector/J の代わりに[pingcap/mysql-connector-j](https://github.com/pingcap/mysql-connector-j)使用できます。
 -   サーバー側: この互換性の問題は TiDB v6.3.0 以降で修正されており、サーバーをv6.3.0 以降のバージョンにアップグレードできます。
 
 ## Sequelizeとの互換性 {#compatibility-with-sequelize}
@@ -184,14 +184,14 @@ TiDB では、次の方法でもこれを修正します。
 
 テスト結果によると、TiDBはSequelizeのほとんどの機能をサポートしています（ [`MySQL`方言として使用する](https://sequelize.org/docs/v6/other-topics/dialect-specific-things/#mysql) ）。
 
-サポートされていない機能は次のとおりです:
+サポートされていない機能は次のとおりです。
 
 -   [`GEOMETRY`](https://github.com/pingcap/tidb/issues/6347)はサポートされていません。
 -   整数主キーの変更はサポートされていません。
 -   `PROCEDURE`はサポートされていません。
 -   `READ-UNCOMMITTED`と`SERIALIZABLE` [分離レベル](/system-variables.md#transaction_isolation)サポートされていません。
--   列の`AUTO_INCREMENT`の属性の変更はデフォルトでは許可されません。
--   `FULLTEXT` `HASH`インデックスはサポートされて`SPATIAL`ません。
+-   デフォルトでは、列の`AUTO_INCREMENT`属性の変更は許可されません。
+-   `FULLTEXT` 、 `HASH` 、 `SPATIAL`インデックスはサポートされていません。
 -   `sequelize.queryInterface.showIndex(Model.tableName);`はサポートされていません。
 -   `sequelize.options.databaseVersion`はサポートされていません。
 -   [`queryInterface.addColumn`](https://sequelize.org/api/v6/class/src/dialects/abstract/query-interface.js~queryinterface#instance-method-addColumn)使用した外部キー参照の追加はサポートされていません。
@@ -200,48 +200,48 @@ TiDB では、次の方法でもこれを修正します。
 
 **説明**
 
-整数主キーの変更はサポートされていません。主キーが整数型の場合、TiDB は主キーをデータ編成のインデックスとして使用します。詳細については、 [問題 #18090](https://github.com/pingcap/tidb/issues/18090)および[クラスター化インデックス](/clustered-indexes.md)を参照してください。
+整数型の主キーの変更はサポートされていません。TiDBは、主キーが整数型の場合、データ編成のインデックスとして主キーを使用します。詳細は[問題番号 #18090](https://github.com/pingcap/tidb/issues/18090)と[クラスター化インデックス](/clustered-indexes.md)参照してください。
 
 ### <code>READ-UNCOMMITTED</code>および<code>SERIALIZABLE</code>分離レベルはサポートされていません {#the-code-read-uncommitted-code-and-code-serializable-code-isolation-levels-are-not-supported}
 
 **説明**
 
-TiDB は分離レベル`READ-UNCOMMITTED`および`SERIALIZABLE`サポートしていません。分離レベルが`READ-UNCOMMITTED`または`SERIALIZABLE`に設定されている場合、TiDB はエラーをスローします。
+TiDBは分離レベル`READ-UNCOMMITTED`と`SERIALIZABLE`サポートしていません。分離レベルが`READ-UNCOMMITTED`または`SERIALIZABLE`に設定されている場合、TiDBはエラーをスローします。
 
 **回避方法**
 
-TiDB がサポートする分離レベル`REPEATABLE-READ`または`READ-COMMITTED`のみを使用してください。
+TiDB がサポートする分離レベル`REPEATABLE-READ`または`READ-COMMITTED`を使用します。
 
-`SERIALIZABLE`分離レベルを設定するが`SERIALIZABLE`に依存しない他のアプリケーションと TiDB との互換性を確保したい場合は、 [`tidb_skip_isolation_level_check`](/system-variables.md#tidb_skip_isolation_level_check) `1`に設定できます。この場合、 TiDB はサポートされていない分離レベル エラーを無視します。
+分離レベル`SERIALIZABLE`を設定しているが`SERIALIZABLE`に依存しない他のアプリケーションと TiDB の互換性を確保したい場合は、 [`tidb_skip_isolation_level_check`](/system-variables.md#tidb_skip_isolation_level_check)を`1`に設定できます。この場合、TiDB はサポートされていない分離レベルエラーを無視します。
 
 ### 列の<code>AUTO_INCREMENT</code>属性の変更はデフォルトでは許可されていません {#modification-of-a-column-s-code-auto-increment-code-attribute-is-not-allowed-by-default}
 
 **説明**
 
-デフォルトでは、 `ALTER TABLE MODIFY`または`ALTER TABLE CHANGE`コマンドを使用して列の`AUTO_INCREMENT`属性を追加または削除することはできません。
+デフォルトでは、 `ALTER TABLE MODIFY`または`ALTER TABLE CHANGE`コマンドを使用して列の`AUTO_INCREMENT`の属性を追加または削除することはできません。
 
 **回避方法**
 
 [`AUTO_INCREMENT`の制限](/auto-increment.md#restrictions)を参照してください。
 
-`AUTO_INCREMENT`属性の削除を許可するには、 `@@tidb_allow_remove_auto_inc` `true`に設定します。
+`AUTO_INCREMENT`属性の削除を許可するには、 `@@tidb_allow_remove_auto_inc`を`true`に設定します。
 
 ### <code>FULLTEXT</code> 、 <code>HASH</code> 、 <code>SPATIAL</code>インデックスはサポートされていません {#code-fulltext-code-code-hash-code-and-code-spatial-code-indexes-are-not-supported}
 
 **説明**
 
-`FULLTEXT` `HASH`インデックスはサポートされて`SPATIAL`ません。
+`FULLTEXT` 、 `HASH` 、 `SPATIAL`インデックスはサポートされていません。
 
 ## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

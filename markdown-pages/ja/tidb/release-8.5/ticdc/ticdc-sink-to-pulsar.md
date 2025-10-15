@@ -23,19 +23,19 @@ cdc cli changefeed create \
 
 Create changefeed successfully!
 ID: simple-replication-task
-Info: {"upstream_id":7277814241002263370,"namespace":"default","id":"simple-replication-task","sink_uri":"pulsar://127.0.0.1:6650/consumer-test?protocol=canal-json","create_time":"2024-12-26T14:42:32.000904+08:00","start_ts":444203257406423044,"config":{"memory_quota":1073741824,"case_sensitive":false,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":false,"bdr_mode":false,"sync_point_interval":600000000000,"sync_point_retention":86400000000000,"filter":{"rules":["pulsar_test.*"]},"mounter":{"worker_num":16},"sink":{"protocol":"canal-json","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false,"binary_encoding_method":"base64"},"dispatchers":[{"matcher":["pulsar_test.*"],"partition":"","topic":"test_{schema}_{table}"}],"encoder_concurrency":16,"terminator":"\r\n","date_separator":"day","enable_partition_separator":true,"only_output_updated_columns":false,"delete_only_output_handle_key_columns":false,"pulsar_config":{"connection-timeout":30,"operation-timeout":30,"batching-max-messages":1000,"batching-max-publish-delay":10,"send-timeout":30},"advance_timeout":150},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"use_file_backend":false},"scheduler":{"enable_table_across_nodes":false,"region_threshold":100000,"write_key_threshold":0},"integrity":{"integrity_check_level":"none","corruption_handle_level":"warn"}},"state":"normal","creator_version":"v8.1.2","resolved_ts":444203257406423044,"checkpoint_ts":444203257406423044,"checkpoint_time":"2024-12-26 14:42:31.410"}
+Info: {"upstream_id":7277814241002263370,"namespace":"default","id":"simple-replication-task","sink_uri":"pulsar://127.0.0.1:6650/consumer-test?protocol=canal-json","create_time":"2025-08-14T14:42:32.000904+08:00","start_ts":444203257406423044,"config":{"memory_quota":1073741824,"case_sensitive":false,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":false,"bdr_mode":false,"sync_point_interval":600000000000,"sync_point_retention":86400000000000,"filter":{"rules":["pulsar_test.*"]},"mounter":{"worker_num":16},"sink":{"protocol":"canal-json","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false,"binary_encoding_method":"base64"},"dispatchers":[{"matcher":["pulsar_test.*"],"partition":"","topic":"test_{schema}_{table}"}],"encoder_concurrency":16,"terminator":"\r\n","date_separator":"day","enable_partition_separator":true,"only_output_updated_columns":false,"delete_only_output_handle_key_columns":false,"pulsar_config":{"connection-timeout":30,"operation-timeout":30,"batching-max-messages":1000,"batching-max-publish-delay":10,"send-timeout":30},"advance_timeout":150},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"use_file_backend":false},"scheduler":{"enable_table_across_nodes":false,"region_threshold":100000,"write_key_threshold":0},"integrity":{"integrity_check_level":"none","corruption_handle_level":"warn"}},"state":"normal","creator_version":"v8.5.3","resolved_ts":444203257406423044,"checkpoint_ts":444203257406423044,"checkpoint_time":"2025-08-14 14:42:31.410"}
 ```
 
 各パラメータの意味は次のとおりです。
 
 -   `--server` : TiCDC クラスター内の TiCDCサーバーのアドレス。
--   `--changefeed-id` : レプリケーション タスクの ID。形式は正規表現`^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`と一致する必要があります。ID が指定されていない場合、TiCDC は ID として UUID (バージョン 4 形式) を自動的に生成します。
--   `--sink-uri` : レプリケーションタスクのダウンストリームアドレス。2 [シンクURIを使用してPulsarを構成する](#sink-uri)参照してください。
--   `--start-ts` : 変更フィードの開始 TSO。TiCDC クラスターはこの TSO からデータの取得を開始します。デフォルト値は現在の時刻です。
--   `--target-ts` : 変更フィードのターゲット TSO。TiCDC クラスターはこの TSO でデータのプルを停止します。デフォルトでは空であり、TiCDC はデータのプルを自動的に停止しないことを意味します。
--   `--config` : changefeed 構成ファイル。2 [TiCDC チェンジフィード構成パラメータ](/ticdc/ticdc-changefeed-config.md)参照してください。
+-   `--changefeed-id` : レプリケーションタスクのID。形式は正規表現`^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`一致する必要があります。IDが指定されていない場合、TiCDCは自動的にUUID（バージョン4形式）をIDとして生成します。
+-   `--sink-uri` ：レプリケーションタスクのダウンストリームアドレス。2 [シンクURIを使用してPulsarを構成する](#sink-uri)参照してください。
+-   `--start-ts` : チェンジフィードの開始TSO。TiCDCクラスターはこのTSOからデータのプルを開始します。デフォルト値は現在時刻です。
+-   `--target-ts` : チェンジフィードのターゲットTSO。TiCDCクラスターはこのTSOでデータのプルを停止します。デフォルトでは空であり、TiCDCはデータのプルを自動的に停止しません。
+-   `--config` : changefeed設定ファイル[TiCDC チェンジフィード構成パラメータ](/ticdc/ticdc-changefeed-config.md)を参照してください。
 
-## Pulsar を構成するには、Sink URI と changefeed config を使用します。 {#use-sink-uri-and-changefeed-config-to-configure-pulsar}
+## Sink URIとchangefeed configを使用してPulsarを構成する {#use-sink-uri-and-changefeed-config-to-configure-pulsar}
 
 Sink URI を使用して TiCDC ターゲット システムの接続情報を指定し、changefeed config を使用して Pulsar に関連するパラメータを構成できます。
 
@@ -61,13 +61,13 @@ Sink URI を使用して TiCDC ターゲット システムの接続情報を指
 
 URI で設定可能なパラメータは次のとおりです。
 
-| パラメータ                         | 説明                                                                                                                                                                               |
-| :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pulsar`                      | 下流の Pulsar のスキーム。値は`pulsar`または`pulsar+ssl`です。                                                                                                                                    |
-| `127.0.0.1`                   | ダウンストリーム Pulsar がサービスを提供する IP アドレス。                                                                                                                                              |
-| `6650`                        | 下流の Pulsar の接続ポート。                                                                                                                                                               |
-| `persistent://abc/def/yktest` | 前の構成例 1 に示されているように、このパラメータは Pulsar のテナント、名前空間、およびトピックを指定するために使用されます。                                                                                                             |
-| `yktest`                      | 前の設定例 2 に示すように、指定するトピックが Pulsar のデフォルト テナント`public`のデフォルト名前空間`default`にある場合は、トピック名のみを使用して URI を設定できます (例: `yktest` )。これは、トピックを`persistent://public/default/yktest`として指定するのと同じです。 |
+| パラメータ                         | 説明                                                                                                                                                                    |
+| :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pulsar`                      | 下流Pulsarのスキーム。値は`pulsar` 、 `pulsar+ssl` 、 `pulsar+http` 、 `pulsar+https`いずれかで、v8.2.0以降では`pulsar+http`と`pulsar+https`サポートされています。                                       |
+| `127.0.0.1`                   | ダウンストリーム Pulsar がサービスを提供する IP アドレス。                                                                                                                                   |
+| `6650`                        | 下流 Pulsar の接続ポート。                                                                                                                                                     |
+| `persistent://abc/def/yktest` | 前の構成例 1 に示されているように、このパラメータは Pulsar のテナント、名前空間、トピックを指定するために使用されます。                                                                                                     |
+| `yktest`                      | 上記の設定例 2 に示すように、指定したいトピックがPulsarのデフォルトテナント`public`のデフォルト名前空間`default`にある場合、トピック名のみ（例： `yktest` ）でURIを設定できます。これは、トピックを`persistent://public/default/yktest`と指定するのと同じです。 |
 
 ### Changefeed 設定パラメータ {#changefeed-config-parameters}
 
@@ -138,12 +138,12 @@ send-timeout=30
 
 ### ベストプラクティス {#best-practice}
 
--   チェンジフィードを作成するときは、 `protocol`パラメータを指定する必要があります。現在、Pulsar へのデータの複製には`canal-json`プロトコルのみがサポートされています。
--   `pulsar-producer-cache-size`パラメータは、Pulsar クライアントにキャッシュされるプロデューサーの数を示します。Pulsar の各プロデューサーは 1 つのトピックにしか対応できないため、TiCDC はプロデューサーをキャッシュするために LRU 方式を採用しており、デフォルトの制限は 10240 です。複製する必要があるトピックの数がデフォルト値より大きい場合は、数を増やす必要があります。
+-   チェンジフィードを作成する際は、パラメータ`protocol`指定する必要があります。現在、Pulsarへのデータレプリケーションにはプロトコル`canal-json`のみがサポートされています。
+-   `pulsar-producer-cache-size`パラメータは、Pulsarクライアントにキャッシュされるプロデューサーの数を示します。Pulsarでは各プロデューサーが1つのトピックにしか対応できないため、TiCDCはプロデューサーのキャッシュにLRU方式を採用しており、デフォルトの制限は10240です。複製する必要があるトピックの数がデフォルト値よりも多い場合は、この数を増やす必要があります。
 
-### TLS暗号化送信 {#tls-encrypted-transmission}
+### TLS暗号化伝送 {#tls-encrypted-transmission}
 
-v7.5.1 および v8.0.0 以降、TiCDC は Pulsar の TLS 暗号化伝送をサポートします。設定例は次のとおりです。
+TiCDCはv7.5.1およびv8.0.0以降、PulsarのTLS暗号化通信をサポートしています。設定例は次のとおりです。
 
 シンクURI:
 
@@ -158,7 +158,7 @@ v7.5.1 および v8.0.0 以降、TiCDC は Pulsar の TLS 暗号化伝送をサ�
 tls-trust-certs-file-path="/data/pulsar/tls-trust-certs-file"
 ```
 
-Pulsarサーバーに`tlsRequireTrustedClientCertOnConnect=true`パラメータが設定されている場合は、changefeed 設定ファイルで`tls-key-file-path`と`tls-certificate-file`パラメータも設定する必要があります。例:
+Pulsarサーバーにパラメータ`tlsRequireTrustedClientCertOnConnect=true`が設定されている場合は、changefeed設定ファイルでパラメータ`tls-key-file-path`と`tls-certificate-file`も設定する必要があります。例：
 
 ```toml
 [sink.pulsar-config]
@@ -167,7 +167,7 @@ tls-certificate-file="/data/pulsar/tls-certificate-file"
 tls-key-file-path="/data/pulsar/tls-key-file"
 ```
 
-### Pulsar の TiCDC 認証と承認 {#ticdc-authentication-and-authorization-for-pulsar}
+### Pulsar の TiCDC 認証と認可 {#ticdc-authentication-and-authorization-for-pulsar}
 
 以下は、Pulsar でトークン認証を使用する場合のサンプル構成です。
 
@@ -224,7 +224,7 @@ tls-key-file-path="/data/pulsar/tls-key-file"
 
 -   OAuth2認証
 
-    v7.5.1 および v8.0.0 以降、TiCDC は Pulsar の OAuth2 認証をサポートします。
+    v7.5.1 および v8.0.0 以降、TiCDC は Pulsar の OAuth2 認証をサポートしています。
 
     シンクURI:
 
@@ -265,25 +265,25 @@ dispatchers = [
 ]
 ```
 
--   マッチャールールに一致するテーブルは、対応するトピック式で指定されたポリシーに従ってディスパッチされます。たとえば、テーブル`test3.aa` `Topic expression 2`に従ってディスパッチされ、テーブル`test5.aa`は`Topic expression 3`に従ってディスパッチされます。
--   複数のマッチャールールに一致するテーブルの場合、最初に一致するトピック式に従ってディスパッチされます。たとえば、テーブル`test1.aa`は`Topic expression 1`に従ってディスパッチされます。
--   どのマッチャーにも一致しないテーブルの場合、対応するデータ変更イベントは`-sink-uri`で指定されたデフォルトのトピックに送信されます。たとえば、テーブル`test10.aa`はデフォルトのトピックに送信されます。
--   マッチャー ルールに一致するがトピック ディスパッチャーが指定されていないテーブルの場合、対応するデータ変更は`-sink-uri`で指定されたデフォルト トピックに送信されます。たとえば、テーブル`test6.abc`はデフォルト トピックに送信されます。
+-   マッチャールールに一致するテーブルは、対応するトピック式で指定されたポリシーに従ってディスパッチされます。例えば、テーブル`test3.aa` `Topic expression 2`に従ってディスパッチされ、テーブル`test5.aa` `Topic expression 3`に従ってディスパッチされます。
+-   複数のマッチャールールに一致するテーブルの場合、最初に一致するトピック式に従ってディスパッチされます。例えば、テーブル`test1.aa` `Topic expression 1`に従ってディスパッチされます。
+-   どのマッチャーにも一致しないテーブルの場合、対応するデータ変更イベントは`-sink-uri`で指定されたデフォルトトピックに送信されます。例えば、テーブル`test10.aa`デフォルトトピックに送信されます。
+-   マッチャールールに一致するもののトピックディスパッチャーが指定されていないテーブルの場合、対応するデータ変更は`-sink-uri`で指定されたデフォルトトピックに送信されます。例えば、テーブル`test6.abc`デフォルトトピックに送信されます。
 
 ### トピックディスパッチャ {#topic-dispatcher}
 
-`topic = "xxx"`使用してトピック ディスパッチャーを指定し、トピック式を使用して柔軟なトピック ディスパッチ ポリシーを実装できます。トピックの合計数は 1000 未満にすることをお勧めします。
+`topic = "xxx"`使用するとトピックディスパッチャを指定し、トピック式を使用して柔軟なトピックディスパッチポリシーを実装できます。トピックの総数は1000未満にすることをお勧めします。
 
 トピック表現の形式は`[tenant_and_namespace][prefix]{schema}[middle][{table}][suffix]`です。各部分の意味は次のとおりです。
 
--   `tenant_and_namespace` ：オプション。トピックのテナントと名前空間を表します（例： `persistent://abc/def/` ）。設定されていない場合は、トピックがPulsarのデフォルトテナント`public`の下のデフォルト名前空間`default`にあることを意味します。
+-   `tenant_and_namespace` ：オプション。トピックのテナントと名前空間を表します（例： `persistent://abc/def/` ）。設定されていない場合は、トピックがPulsarのデフォルトテナント`public`のデフォルト名前空間`default`にあることを意味します。
 -   `prefix` : オプション。トピック名のプレフィックスを表します。
 -   `{schema}` : オプション。データベース名を表します。
 -   `middle` : オプション。データベース名とテーブル名の間の区切り文字を表します。
 -   `{table}` : オプション。テーブル名を表します。
 -   `suffix` : オプション。トピック名のサフィックスを表します。
 
-`prefix` 、 `middle` 、 `suffix` 、大文字と小文字 ( `a-z` 、 `A-Z` )、数字 ( `0-9` )、ドット ( `.` )、アンダースコア ( `_` )、ハイフン ( `-` ) のみをサポートします。 `{schema}`と`{table}`小文字にする必要があります。 `{Schema}`や`{TABLE}`などの大文字を含むプレースホルダーは無効です。
+`prefix` 、 `middle` 、 `suffix` 、大文字と小文字（ `a-z` 、 `A-Z` ）、数字（ `0-9` ）、ドット（ `.` ）、アンダースコア（ `_` ）、ハイフン（ `-` ）のみをサポートします。 `{schema}`と`{table}`小文字でなければなりません。 `{Schema}`や`{TABLE}`などの大文字を含むプレースホルダは無効です。
 
 以下に例をいくつか示します。
 
@@ -292,40 +292,40 @@ dispatchers = [
     -   テーブル`test2.table2`に対応するデータ変更イベントは、 `hello_test2_table2`という名前のトピックに送信されます。
 
 -   `matcher = ['test3.*', 'test4.*'], topic = "hello_{schema}_world"`
-    -   `test3`の下にあるすべてのテーブルのデータ変更イベントは、 `hello_test3_world`という名前のトピックに送信されます。
-    -   `test4`の下にあるすべてのテーブルのデータ変更イベントは、 `hello_test4_world`という名前のトピックに送信されます。
+    -   `test3`下にあるすべてのテーブルのデータ変更イベントは、 `hello_test3_world`という名前のトピックに送信されます。
+    -   `test4`下にあるすべてのテーブルのデータ変更イベントは、 `hello_test4_world`という名前のトピックに送信されます。
 
 -   `matcher = ['*.*'], topic = "{schema}_{table}"`
-    -   TiCDC がリッスンするすべてのテーブルは、 `databaseName_tableName`ルールに従って個別のトピックに送信されます。たとえば、テーブル`test.account`の場合、TiCDC はデータ変更ログを`test_account`という名前のトピックに送信します。
+    -   TiCDCがリッスンするすべてのテーブルは、ルール`databaseName_tableName`に従って別々のトピックに送信されます。例えば、テーブル`test.account`場合、TiCDCはデータ変更ログをトピック`test_account`に送信します。
 
 ### DDLイベントをディスパッチする {#dispatch-ddl-events}
 
 #### データベースレベルのDDLイベント {#database-level-ddl-events}
 
-`CREATE DATABASE`や`DROP DATABASE`のように特定のテーブルに関連しない DDL 文をデータベース レベルの DDL 文と呼びます。データベース レベルの DDL 文に対応するイベントは、 `--sink-uri`で指定したデフォルト トピックにディスパッチされます。
+`CREATE DATABASE`や`DROP DATABASE`ように特定のテーブルに関連しないDDL文は、データベースレベルのDDL文と呼ばれます。データベースレベルのDDL文に対応するイベントは、 `--sink-uri`で指定されたデフォルトトピックにディスパッチされます。
 
-#### テーブルレベルの DDL イベント {#table-level-ddl-events}
+#### テーブルレベルのDDLイベント {#table-level-ddl-events}
 
-`ALTER TABLE`や`CREATE TABLE`のように特定のテーブルに関連するDDL文をテーブルレベルDDL文と呼びます。テーブルレベルDDL文に対応するイベントは、 `dispatchers`の設定に従って適切なトピックにディスパッチされます。
+`ALTER TABLE`や`CREATE TABLE`ような特定のテーブルに関連するDDL文は、テーブルレベルDDL文と呼ばれます。テーブルレベルDDL文に対応するイベントは、 `dispatchers`の設定に従って適切なトピックにディスパッチされます。
 
 たとえば、 `matcher = ['test.*'], topic = {schema}_{table}`ような`dispatchers`構成の場合、DDL イベントは次のように送信されます。
 
--   DDL イベントが 1 つのテーブルのみに関係する場合、DDL イベントはそのまま適切なトピックにディスパッチされます。たとえば、DDL イベント`DROP TABLE test.table1`の場合、イベントは`test_table1`という名前のトピックにディスパッチされます。
+-   DDLイベントが単一のテーブルのみに関係する場合、DDLイベントはそのまま適切なトピックにディスパッチされます。例えば、DDLイベント`DROP TABLE test.table1`場合、イベントは`test_table1`名前のトピックにディスパッチされます。
 
--   DDL イベントに複数のテーブルが関係する場合 ( `RENAME TABLE` 、 `DROP TABLE` 、および`DROP VIEW`すべて複数のテーブルが関係する可能性があります)、単一の DDL イベントが複数に分割され、適切なトピックにディスパッチされます。たとえば、DDL イベント`RENAME TABLE test.table1 TO test.table10, test.table2 TO test.table20`の場合、処理は次のようになります。
+-   DDLイベントが複数のテーブルに関係する場合（ `RENAME TABLE` 、 `DROP TABLE` 、 `DROP VIEW`いずれも複数のテーブルに関係する可能性があります）、単一のDDLイベントは複数のイベントに分割され、適切なトピックにディスパッチされます。例えば、DDLイベント`RENAME TABLE test.table1 TO test.table10, test.table2 TO test.table20`場合、処理は次のようになります。
 
     -   `RENAME TABLE test.table1 TO test.table10`の DDL イベントを`test_table1`という名前のトピックにディスパッチします。
     -   `RENAME TABLE test.table2 TO test.table20`の DDL イベントを`test_table2`という名前のトピックにディスパッチします。
 
 ### パーティションディスパッチャ {#partition-dispatcher}
 
-現在、TiCDC は、排他的サブスクリプション モデルを使用してメッセージを消費するコンシューマーのみをサポートしています。つまり、各コンシューマーはトピック内のすべてのパーティションからメッセージを消費できます。
+現在、TiCDC は、排他的サブスクリプション モデルを使用してメッセージを消費するコンシューマーのみをサポートしています。つまり、各コンシューマーはトピック内のすべてのパーティションからのメッセージを消費できます。
 
-`partition = "xxx"`でパーティションディスパッチャを指定できます。サポートされているパーティションディスパッチは`default` 、 `ts` 、 `index-value` 、および`table` 。他の文字列を入力すると、TiCDC はその文字列を Pulsarサーバーに送信されるメッセージの`key`として渡します。
+パーティションディスパッチャは`partition = "xxx"`で指定できます。サポートされているパーティションディスパッチは`default` 、 `ts` 、 `index-value` 、 `table`です。その他の文字列を入力した場合、TiCDC はその文字列を Pulsarサーバーに送信されるメッセージの`key`として渡します。
 
 発送ルールは以下のとおりです。
 
--   `default` : デフォルトでは、スキーマ名とテーブル名によってイベントがディスパッチされます。これは、 `table`指定した場合と同じです。
+-   `default` : デフォルトでは、イベントはスキーマ名とテーブル名によってディスパッチされます。これは`table`指定した場合と同じです。
 -   `ts` : 行変更の commitT を使用してハッシュ計算を実行し、イベントをディスパッチします。
 -   `index-value` : テーブルの主キーまたは一意のインデックスの値を使用してハッシュ計算を実行し、イベントをディスパッチします。
 -   `table` : スキーマ名とテーブル名を使用してハッシュ計算を実行し、イベントをディスパッチします。

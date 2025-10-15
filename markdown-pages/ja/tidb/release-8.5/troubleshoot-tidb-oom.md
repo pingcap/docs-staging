@@ -5,36 +5,36 @@ summary: TiDB OOM (メモリ不足) の問題を診断して解決する方法�
 
 # TiDB OOM の問題のトラブルシューティング {#troubleshoot-tidb-oom-issues}
 
-このドキュメントでは、現象、原因、解決策、診断情報など、TiDB OOM (メモリ不足) の問題のトラブルシューティング方法について説明します。
+このドキュメントでは、現象、原因、解決策、診断情報など、TiDB OOM (メモリ不足) の問題をトラブルシューティングする方法について説明します。
 
 ## 典型的なOOM現象 {#typical-oom-phenomena}
 
 以下に、典型的な OOM 現象をいくつか示します。
 
--   クライアント側から次のエラーが報告されます: `SQL error, errno = 2013, state = 'HY000': Lost connection to MySQL server during query` 。
+-   クライアント側で次のエラーが報告されます: `SQL error, errno = 2013, state = 'HY000': Lost connection to MySQL server during query` 。
 
--   Grafana ダッシュボードには以下が表示されます:
-    -   **TiDB** &gt;**サーバー**&gt;**メモリ使用量では、** `process/heapInUse`メトリックが上昇し続け、しきい値に達した後突然ゼロに低下することが示されています。
-    -   **TiDB** &gt;**サーバー**&gt;**稼働時間**が突然ゼロに低下します。
-    -   **TiDB-Runtime** &gt;**メモリ使用量では**、 `estimate-inuse`メトリックが上昇し続けていることがわかります。
+-   Grafana ダッシュボードには次の内容が表示されます。
+    -   **TiDB** &gt;**サーバー**&gt;**メモリ使用量で**は、 `process/heapInUse`メトリックが上昇し続け、しきい値に達した後、突然 0 に低下することが示されています。
+    -   **TiDB** &gt;**サーバー**&gt;**稼働時間が**突然ゼロに低下します。
+    -   **TiDB-Runtime** &gt;**メモリ使用量で**は、 `estimate-inuse`メトリックが上昇し続けていることがわかります。
 
 -   `tidb.log`確認すると、次のログ エントリが見つかります。
-    -   OOM に関する警告: `[WARN] [memory_usage_alarm.go:139] ["tidb-server has the risk of OOM because of memory usage exceeds alarm ratio. Running SQLs and heap profile will be recorded in record path"]` 。詳細については、 [`memory-usage-alarm-ratio`](/system-variables.md#tidb_memory_usage_alarm_ratio)参照してください。
+    -   OOMに関するアラーム: `[WARN] [memory_usage_alarm.go:139] ["tidb-server has the risk of OOM because of memory usage exceeds alarm ratio. Running SQLs and heap profile will be recorded in record path"]` 。詳細については、 [`memory-usage-alarm-ratio`](/system-variables.md#tidb_memory_usage_alarm_ratio)参照してください。
     -   再起動に関するログエントリ: `[INFO] [printer.go:33] ["Welcome to TiDB."]` 。
 
 ## 全体的なトラブルシューティングプロセス {#overall-troubleshooting-process}
 
 OOM の問題をトラブルシューティングする場合は、次のプロセスに従います。
 
-1.  OOM の問題かどうかを確認します。
+1.  OOM の問題であるかどうかを確認します。
 
-    以下のコマンドを実行して、オペレーティングシステムのログを確認します。問題が発生した時間の近くに`oom-killer`ログがある場合は、OOM の問題であることが確認できます。
+    以下のコマンドを実行して、オペレーティングシステムのログを確認します。問題が発生した時刻付近に`oom-killer`ログがある場合は、OOMの問題であることが確認できます。
 
     ```shell
     dmesg -T | grep tidb-server
     ```
 
-    以下は`oom-killer`含むログの例です。
+    以下は`oom-killer`を含むログの例です。
 
     ```shell
     ......
@@ -51,10 +51,10 @@ OOM の問題をトラブルシューティングする場合は、次のプロ�
 
 2.  OOM の問題であることを確認した後、OOM の原因がデプロイメントによるものかデータベースによるものかをさらに調査できます。
 
-    -   OOM がデプロイメントの問題によって発生した場合は、リソース構成とハイブリッド デプロイメントの影響を調査する必要があります。
+    -   OOM が展開の問題によって発生した場合は、リソース構成とハイブリッド展開の影響を調査する必要があります。
     -   OOM がデータベースの問題によって発生した場合、次のような原因が考えられます。
         -   TiDB は、大規模なクエリ、大規模な書き込み、データのインポートなどの大規模なデータ トラフィックを処理します。
-        -   TiDB は、複数の SQL ステートメントが同時にリソースを消費したり、演算子の同時実行性が高くなったりする、同時実行性の高いシナリオにあります。
+        -   TiDB は、複数の SQL ステートメントが同時にリソースを消費したり、オペレーターの同時実行性が高くなったりする、同時実行性の高いシナリオです。
         -   TiDB にメモリリークがあり、リソースが解放されません。
 
     具体的なトラブルシューティング方法については、次のセクションを参照してください。
@@ -69,11 +69,11 @@ OOM の問題は通常、次の原因で発生します。
 
 ### 展開の問題 {#deployment-issues}
 
-不適切なデプロイメントによる OOM の原因は次のとおりです。
+不適切な展開による OOM の原因は次のとおりです。
 
 -   オペレーティング システムのメモリ容量が小さすぎます。
 -   TiUP構成[`resource_control`](/tiup/tiup-cluster-topology-reference.md#global)は適切ではありません。
--   ハイブリッド デプロイメント (TiDB と他のアプリケーションが同じサーバーにデプロイされていることを意味します) の場合、リソース不足のため、TiDB が`oom-killer`によって誤って強制終了されます。
+-   ハイブリッド デプロイメント (つまり、TiDB と他のアプリケーションが同じサーバーにデプロイされている) の場合、リソース不足により、TiDB が`oom-killer`によって誤って強制終了されることがあります。
 
 ### データベースの問題 {#database-issues}
 
@@ -81,38 +81,38 @@ OOM の問題は通常、次の原因で発生します。
 
 > **注記：**
 >
-> [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query)設定した場合、エラーが発生します: `ERROR 1105 (HY000): Out Of Memory Quota![conn_id=54]` 。これは、データベースのメモリ使用量制御動作によって発生します。これは正常な動作です。
+> [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query)設定した場合、エラーが発生します: `ERROR 1105 (HY000): Out Of Memory Quota![conn_id=54]` 。これはデータベースのメモリ使用量制御の動作によるもので、正常な動作です。
 
-#### SQL文を実行するとメモリが大量に消費される {#executing-sql-statements-consumes-too-much-memory}
+#### SQL文を実行するとメモリ消費量が多すぎる {#executing-sql-statements-consumes-too-much-memory}
 
 OOM 問題のさまざまな原因に応じて、SQL ステートメントのメモリ使用量を削減するために次の対策を講じることができます。
 
--   適切なインデックスがない、統計が古い、オプティマイザのバグなどにより、SQL の実行プランが最適でない場合は、間違った SQL の実行プランが選択されることがあります。その場合、膨大な中間結果セットがメモリに蓄積されます。このような場合は、次の対策を検討してください。
+-   SQL実行プランが最適でない場合（適切なインデックスの欠如、古い統計情報、オプティマイザのバグなど）、誤ったSQL実行プランが選択される可能性があり、その結果、膨大な中間結果セットがメモリに蓄積されます。このような場合は、以下の対策を検討してください。
     -   適切なインデックスを追加します。
     -   実行演算子には[ディスクスピル](/configure-memory-usage.md#disk-spill)機能を使用します。
     -   テーブル間の JOIN 順序を調整します。
     -   ヒントを使用して SQL ステートメントを最適化します。
 
--   一部の演算子と関数はstorageレベルへのプッシュダウンがサポートされていないため、中間結果セットが大量に蓄積されます。この場合、SQL ステートメントを改良するか、ヒントを使用して最適化し、プッシュダウンをサポートする関数または演算子を使用する必要があります。
+-   一部の演算子と関数はstorageレベルへのプッシュダウンがサポートされていないため、中間結果セットが大量に蓄積されます。このような場合は、SQL文を修正するか、ヒントを使用して最適化し、プッシュダウンをサポートする関数または演算子を使用する必要があります。
 
--   実行プランには演算子 HashAgg が含まれています。HashAgg は複数のスレッドによって同時に実行されるため、高速になりますが、より多くのメモリを消費します。代わりに、 `STREAM_AGG()`使用できます。
+-   実行プランにはHashAgg演算子が含まれています。HashAggは複数のスレッドで同時に実行されるため、高速ですがメモリ消費量は多くなります。代わりに`STREAM_AGG()`使用することもできます。
 
--   同時に読み取る領域の数を減らすか、演算子の同時実行性を減らして、同時実行性が高いために発生するメモリの問題を回避します。対応するシステム変数は次のとおりです。
+-   同時実行数の増加によるメモリ問題を回避するには、同時に読み取る領域の数を減らすか、演算子の同時実行数を減らしてください。対応するシステム変数は次のとおりです。
     -   [`tidb_distsql_scan_concurrency`](/system-variables.md#tidb_distsql_scan_concurrency)
     -   [`tidb_index_serial_scan_concurrency`](/system-variables.md#tidb_index_serial_scan_concurrency)
     -   [`tidb_executor_concurrency`](/system-variables.md#tidb_executor_concurrency-new-in-v50)
 
--   問題が発生した時点付近では、セッションの同時実行性が高すぎます。この場合、TiDB ノードを追加して TiDB クラスターをスケールアウトすることを検討してください。
+-   問題発生時点付近では、セッションの同時実行性が高すぎます。この場合は、TiDBノードを追加してTiDBクラスターをスケールアウトすることを検討してください。
 
 #### 大規模なトランザクションや大規模な書き込みはメモリを大量に消費します {#large-transactions-or-large-writes-consume-too-much-memory}
 
-メモリ容量を計画する必要があります。トランザクションが実行されると、TiDB プロセスのメモリ使用量はトランザクション サイズと比較して増加し、最大でトランザクション サイズの 2 ～ 3 倍以上にまで増加します。
+メモリ容量を計画する必要があります。トランザクションが実行されると、TiDBプロセスのメモリ使用量はトランザクションサイズに応じて増加し、最大でトランザクションサイズの2～3倍以上にまで達することがあります。
 
 1 つの大きなトランザクションを複数の小さなトランザクションに分割できます。
 
-#### 統計情報を収集して読み込むプロセスでメモリが大量に消費される {#the-process-of-collecting-and-loading-statistical-information-consumes-too-much-memory}
+#### 統計情報を収集して読み込むプロセスはメモリを大量に消費します {#the-process-of-collecting-and-loading-statistical-information-consumes-too-much-memory}
 
-TiDB ノードは起動後に統計をメモリにロードする必要があります。TiDB は統計情報を収集するときにメモリを消費します。メモリ使用量は、次の方法で制御できます。
+TiDBノードは起動後、統計情報をメモリに読み込む必要があります。TiDBは統計情報を収集する際にメモリを消費します。メモリ使用量は、以下の方法で制御できます。
 
 -   サンプリング レートを指定し、特定の列の統計情報のみを収集し、同時実行性を`ANALYZE`減らします。
 -   TiDB v6.1.0 以降では、システム変数[`tidb_stats_cache_mem_quota`](/system-variables.md#tidb_stats_cache_mem_quota-new-in-v610)使用して統計情報のメモリ使用量を制御できます。
@@ -122,26 +122,26 @@ TiDB ノードは起動後に統計をメモリにロードする必要があり
 
 #### 準備されたステートメントは使いすぎです {#prepared-statements-are-overused}
 
-クライアント側は準備​​済みステートメントを作成し続けますが、実行しません[`deallocate prepare stmt`](/sql-prepared-plan-cache.md#ignore-the-com_stmt_close-command-and-the-deallocate-prepare-statement) 。これにより、メモリ消費量が増加し続け、最終的に TiDB OOM が発生します。その理由は、プリペアドステートメントによって占有されたメモリは、セッションが終了するまで解放されないためです。これは、長時間の接続セッションでは特に重要です。
+クライアント側はプリペアドステートメントを作成し続けますが、実行しません[`deallocate prepare stmt`](/sql-prepared-plan-cache.md#ignore-the-com_stmt_close-command-and-the-deallocate-prepare-statement) 。これによりメモリ消費量が増加し続け、最終的にはTiDB OOMが発生します。これは、プリペアドステートメントによって占有されたメモリがセッションが終了するまで解放されないためです。これは、長時間接続セッションにおいて特に重要です。
 
 この問題を解決するには、次の対策を検討してください。
 
 -   セッションのライフサイクルを調整します。
--   [接続プールの`wait_timeout`と`max_execution_time`](/develop/dev-guide-connection-parameters.md#timeout-related-parameters)調整します。
--   システム変数[`max_prepared_stmt_count`](/system-variables.md#max_prepared_stmt_count)使用して、セッションで準備されたステートメントの最大数を制御します。
+-   [接続プールの`wait_timeout`と`max_execution_time`](/develop/dev-guide-connection-parameters.md#timeout-related-parameters)を調整します。
+-   システム変数[`max_prepared_stmt_count`](/system-variables.md#max_prepared_stmt_count)を使用して、セッションで準備されるステートメントの最大数を制御します。
 
 #### <code>tidb_enable_rate_limit_action</code>が正しく設定されていません {#code-tidb-enable-rate-limit-action-code-is-not-configured-properly}
 
-システム変数[`tidb_enable_rate_limit_action`](/system-variables.md#tidb_enable_rate_limit_action)は、SQL 文がデータを読み取るだけの場合に、メモリ使用量を効果的に制御します。この変数が有効になっていて、計算操作 (結合操作や集計操作など) が必要な場合、メモリ使用量が[`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query)によって制御されない可能性があり、OOM のリスクが高まります。
+システム変数[`tidb_enable_rate_limit_action`](/system-variables.md#tidb_enable_rate_limit_action) 、SQL文がデータの読み取りのみを行う場合に、メモリ使用量を効果的に制御します。この変数が有効になっている場合、結合や集計などの計算処理が必要なときに、メモリ使用量が[`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query)によって制御されない可能性があり、OOM（オーバーヘッドメモリ不足）のリスクが高まります。
 
-このシステム変数を無効にすることをお勧めします。TiDB v6.3.0 以降、このシステム変数はデフォルトで無効になっています。
+このシステム変数を無効にすることをお勧めします。TiDB v6.3.0以降、このシステム変数はデフォルトで無効になっています。
 
 ### クライアント側の問題 {#client-side-issues}
 
 クライアント側で OOM が発生した場合は、次の点を調査します。
 
 -   **Grafana TiDB の「詳細」** &gt; **「サーバー」** &gt; **「クライアント データ トラフィック」**で傾向と速度を確認し、ネットワークのブロックがあるかどうかを確認します。
--   間違った JDBC 構成パラメータによってアプリケーション OOM が発生していないかどうかを確認します。たとえば、ストリーミング読み取りの`defaultFetchSize`パラメータが誤って構成されていると、クライアント側に大量のデータが蓄積される可能性があります。
+-   誤ったJDBC設定パラメータによってアプリケーションのOOMが発生していないか確認してください。例えば、ストリーミング読み取りのパラメータ`defaultFetchSize`が正しく設定されていない場合、クライアント側に大量のデータが蓄積される可能性があります。
 
 ## OOM の問題をトラブルシューティングするために収集される診断情報 {#diagnostic-information-to-be-collected-to-troubleshoot-oom-issues}
 
@@ -157,7 +157,7 @@ OOM 問題の根本原因を特定するには、次の情報を収集する必�
         -   `numactl --show`
 
 -   データベースのバージョン情報とメモリ関連の構成を収集します。
-    -   TiDB バージョン
+    -   TiDBバージョン
     -   `tidb_mem_quota_query`
     -   `memory-usage-alarm-ratio`
     -   `mem-quota-query`
@@ -173,20 +173,20 @@ OOM 問題の根本原因を特定するには、次の情報を収集する必�
 
 -   より多くのメモリを消費する SQL ステートメントを確認します。
 
-    -   TiDB ダッシュボードで、SQL ステートメント分析、低速クエリ、メモリ使用量をビュー。
+    -   TiDB ダッシュボードで、SQL ステートメントの分析、遅いクエリ、メモリ使用量をビュー。
     -   `INFORMATION_SCHEMA`の`SLOW_QUERY`と`CLUSTER_SLOW_QUERY`確認してください。
     -   各 TiDB ノードで`tidb_slow_query.log`チェックします。
     -   `grep "expensive_query" tidb.log`実行して、対応するログ エントリを確認します。
     -   `EXPLAIN ANALYZE`実行して、演算子のメモリ使用量を確認します。
     -   `SELECT * FROM information_schema.processlist;`実行して`MEM`列の値を確認します。
 
--   メモリ使用量が高い場合に TiDB プロファイル情報を収集するには、次のコマンドを実行します。
+-   メモリ使用量が多いときに TiDB プロファイル情報を収集するには、次のコマンドを実行します。
 
     ```shell
     curl -G "http://{TiDBIP}:10080/debug/zip?seconds=10" > profile.zip
     ```
 
--   `grep "tidb-server has the risk of OOM" tidb.log`実行して、TiDB サーバーによって収集されたアラート ファイルのパスを確認します。出力例を次に示します。
+-   `grep "tidb-server has the risk of OOM" tidb.log`実行して、TiDB サーバーによって収集されたアラートファイルのパスを確認します。出力例を以下に示します。
 
     ```shell
     ["tidb-server has the risk of OOM because of memory usage exceeds alarm ratio. Running SQLs and heap profile will be recorded in record path"] ["is tidb_server_memory_limit set"=false] ["system memory total"=14388137984] ["system memory usage"=11897434112] ["tidb-server memory usage"=11223572312] [memory-usage-alarm-ratio=0.8] ["record path"="/tmp/0_tidb/MC4wLjAuMDo0MDAwLzAuMC4wLjA6MTAwODA=/tmp-storage/record"]
@@ -195,4 +195,4 @@ OOM 問題の根本原因を特定するには、次の情報を収集する必�
 ## 参照 {#see-also}
 
 -   [TiDB メモリ制御](/configure-memory-usage.md)
--   [TiKV メモリ パラメータのパフォーマンスを調整する](/tune-tikv-memory-performance.md)
+-   [TiKVメモリパラメータのパフォーマンスを調整する](/tune-tikv-memory-performance.md)
