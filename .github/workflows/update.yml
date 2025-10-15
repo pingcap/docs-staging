@@ -23,6 +23,7 @@ on:
         required: false
 
 env:
+  EN_CLOUD_BRANCH: release-8.5
   JA_CLOUD_BRANCH: i18n-ja-release-8.5
   ZH_CLOUD_BRANCH: i18n-zh-release-8.5
 
@@ -53,14 +54,26 @@ jobs:
         env:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # handle tidb doc based on specified ja/cn doc branch
+          # handle zh auto translated docs branch(only cloud)
+          if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.ZH_CLOUD_BRANCH }} ]
+          then
+          yarn download:tidb-cloud:zh --ref ${{ inputs.branch }}
+          exit 0
+          fi
+
+          # handle ja auto translated docs branch(tidb and cloud)
           if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.JA_CLOUD_BRANCH }} ]
           then
           yarn download:tidb-cloud:ja --ref ${{ inputs.branch }}
+          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
           exit 0
-          elif [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.ZH_CLOUD_BRANCH }} ]
+          fi
+
+          # handle tidb-cloud doc based on specified en doc branch
+          if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.EN_CLOUD_BRANCH }} ]
           then
-          yarn download:tidb-cloud:zh --ref ${{ inputs.branch }}
+          yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
+          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
           exit 0
           fi
 
@@ -69,15 +82,10 @@ jobs:
           then
           yarn download ${{ inputs.repo }} en --ref ${{ inputs.branch }}
           yarn download ${{ inputs.repo }} zh --ref ${{ inputs.branch }}
-          else
-          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+          exit 0
           fi
 
-          # handle tidb-cloud doc based on specified en doc branch
-          if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = "release-8.5" ]
-          then
-          yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
-          fi
+          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
 
       - name: Update all folder
         if: ${{ inputs.full }}
