@@ -5,7 +5,7 @@ summary: TiDB データベースの SHOW TABLE STATUS の使用法の概要。
 
 # テーブルステータスを表示 {#show-table-status}
 
-このステートメントは、TiDB 内のテーブルに関するさまざまな統計を表示します。統計が古いと思われる場合は、 [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)実行することをお勧めします。
+このステートメントは、TiDB内のテーブルに関するさまざまな統計情報を表示します。統計情報が古い場合は、 [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md)実行することをお勧めします。
 
 ## 概要 {#synopsis}
 
@@ -76,9 +76,9 @@ Max_data_length: 0
 1 row in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SHOW TABLE STATUS`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SHOW TABLE STATUS`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

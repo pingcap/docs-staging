@@ -7,9 +7,9 @@ summary: TiDB データベースでの CREATE BINDING の使用。
 
 このステートメントは、TiDB に新しい実行プラン バインディングを作成します。バインディングを使用すると、基になるクエリを変更することなく、ステートメントにヒントを挿入できます。
 
-`BINDING` `GLOBAL`または`SESSION`いずれかの基準になります。デフォルトは`SESSION`です。
+`BINDING` `GLOBAL`または`SESSION`基準で表されます。デフォルトは`SESSION`です。
 
-バインドされた SQL 文はパラメータ化され、システム テーブルに格納されます。SQL クエリが処理されるとき、パラメータ化された SQL 文とシステム テーブル内のバインドされた文が一致し、システム変数`tidb_use_plan_baselines`が`ON` (デフォルト) に設定されている限り、対応するオプティマイザ ヒントが使用可能です。複数の実行プランが使用可能な場合、オプティマイザはコストが最も低いプランをバインドすることを選択します。詳細については、 [バインディングを作成する](/sql-plan-management.md#create-a-binding)参照してください。
+バインドされたSQL文はパラメータ化され、システムテーブルに格納されます。SQLクエリが処理される際、パラメータ化されたSQL文とシステムテーブル内のバインドされたSQL文が一致し、システム変数`tidb_use_plan_baselines`が`ON` （デフォルト）に設定されている限り、対応するオプティマイザヒントが利用可能です。複数の実行プランが利用可能な場合、オプティマイザは最もコストの低いプランをバインドします。詳細については、 [バインディングを作成する](/sql-plan-management.md#create-a-binding)参照してください。
 
 ## 概要 {#synopsis}
 
@@ -35,12 +35,12 @@ StringLiteralOrUserVariable ::=
 
 ## 例 {#examples}
 
-SQL ステートメントまたは履歴実行プランに従ってバインドを作成できます。
+SQL ステートメントまたは履歴実行プランに従ってバインディングを作成できます。
 
 履歴実行プランに従ってバインディングを作成する場合は、対応するプラン ダイジェストを指定する必要があります。
 
 -   プラン ダイジェストを指定するには、文字列リテラルまたは文字列型のユーザー変数のいずれかを使用できます。
--   複数のプラン ダイジェストを指定して、複数のステートメントのバインディングを同時に作成できます。この場合、複数の文字列を指定し、各文字列に複数のダイジェストを含めることができます。文字列またはダイジェストはコンマで区切る必要があることに注意してください。
+-   複数のプランダイジェストを指定して、複数のステートメントのバインディングを同時に作成できます。この場合、複数の文字列を指定し、各文字列に複数のダイジェストを含めることができます。文字列またはダイジェストはカンマで区切る必要があることに注意してください。
 
 次の例は、SQL ステートメントに従ってバインディングを作成する方法を示しています。
 
@@ -308,7 +308,15 @@ Empty set (0.002 sec)
 1 row in set (0.002 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## SQL文の切り捨て {#sql-statement-truncation}
+
+`CREATE BINDING ... FROM HISTORY USING PLAN DIGEST`使用すると、そのダイジェストの[明細書要約表](/statement-summary-tables.md)に格納されているSQL文が[`tidb_stmt_summary_max_sql_length`](/system-variables.md#tidb_stmt_summary_max_sql_length-new-in-v40)より長いために切り捨てられ、バインディングが失敗する可能性があります。この場合、 `tidb_stmt_summary_max_sql_length`増やす必要があります。
+
+## 権限 {#permissions}
+
+`CREATE BINDING`ステートメントには`SUPER`権限が必要です。
+
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。
 
@@ -316,6 +324,6 @@ Empty set (0.002 sec)
 
 -   [[グローバル|セッション]バインディングの削除](/sql-statements/sql-statement-drop-binding.md)
 -   [[グローバル|セッション]バインディングを表示](/sql-statements/sql-statement-show-bindings.md)
--   [テーブルを分析](/sql-statements/sql-statement-analyze-table.md)
--   [オプティマイザーのヒント](/optimizer-hints.md)
--   [SQL プラン管理](/sql-plan-management.md)
+-   [表を分析する](/sql-statements/sql-statement-analyze-table.md)
+-   [オプティマイザヒント](/optimizer-hints.md)
+-   [SQLプラン管理](/sql-plan-management.md)

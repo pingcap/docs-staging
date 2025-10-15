@@ -15,7 +15,7 @@ SQLの配置ルールは、SQL文を使用してTiKVクラスター内のデー�
 
 > **注記：**
 >
-> この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> この機能は、クラスター[TiDB Cloudスターター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)および[TiDB Cloudエッセンシャル](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)では利用できません。
 
 ## 概要 {#overview}
 
@@ -50,11 +50,11 @@ SQL 機能の配置ルールを使用すると、次のように、粗い粒度�
 
 詳細な設定方法については、次の例を参照してください。
 
-| 展開方法                    | 例                                                                                                                                    |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 手動展開                    | [トポロジラベルによるレプリカのスケジュール](/schedule-replicas-by-topology-labels.md)                                                                    |
-| TiUPを使用した展開             | [地理的に分散した展開トポロジ](/geo-distributed-deployment-topology.md)                                                                            |
-| TiDB Operatorによるデプロイメント | [KubernetesでTiDBクラスターを構成する](https://docs.pingcap.com/tidb-in-kubernetes/stable/configure-a-tidb-cluster#high-data-high-availability) |
+| 展開方法                    | 例                                                                                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 手動展開                    | [トポロジラベルによるレプリカのスケジュール](/schedule-replicas-by-topology-labels.md)                                                                  |
+| TiUPを使用した展開             | [地理的に分散した展開トポロジ](/geo-distributed-deployment-topology.md)                                                                          |
+| TiDB Operatorによるデプロイメント | [KubernetesでTiDBクラスターを構成する](https://docs.pingcap.com/tidb-in-kubernetes/stable/configure-a-tidb-cluster#high-availability-of-data) |
 
 > **注記：**
 >
@@ -72,13 +72,13 @@ TiDB Cloud Dedicated クラスターの場合、TiKV ノードのラベルは自
 
 ```sql
 SHOW PLACEMENT LABELS;
-+--------+----------------+
-| Key    | Values         |
-+--------+----------------+
-| disk   | ["ssd"]        |
-| region | ["us-east-1"]  |
-| zone   | ["us-east-1a"] |
-+--------+----------------+
++--------+----------------------------+
+| Key    | Values                     |
++--------+----------------------------+
+| disk   | ["ssd"]                    |
+| region | ["us-east-1", "us-west-1"] |
+| zone   | ["us-east-1a"]             |
++--------+----------------------------+
 3 rows in set (0.00 sec)
 ```
 
@@ -130,7 +130,7 @@ SHOW PLACEMENT LABELS;
     *************************** 1. row ***************************
            Table: t1
     Create Table: CREATE TABLE `t1` (
-      `a` int(11) DEFAULT NULL
+      `a` int DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin /*T![placement] PLACEMENT POLICY=`myplacementpolicy` */
     1 row in set (0.00 sec)
     ```
@@ -295,14 +295,14 @@ ALTER TABLE t PLACEMENT POLICY=default; -- Removes the placement policy 'five_re
 パーティションテーブルまたはパーティションの配置ポリシーを指定することもできます。例:
 
 ```sql
-CREATE PLACEMENT POLICY storageforhisotrydata CONSTRAINTS="[+node=history]";
+CREATE PLACEMENT POLICY storageforhistorydata CONSTRAINTS="[+node=history]";
 CREATE PLACEMENT POLICY storagefornewdata CONSTRAINTS="[+node=new]";
 CREATE PLACEMENT POLICY companystandardpolicy CONSTRAINTS="";
 
-CREATE TABLE t1 (id INT, name VARCHAR(50), purchased DATE)
+CREATE TABLE t1 (id INT, name VARCHAR(50), purchased DATE, UNIQUE INDEX idx(id) GLOBAL)
 PLACEMENT POLICY=companystandardpolicy
 PARTITION BY RANGE( YEAR(purchased) ) (
-  PARTITION p0 VALUES LESS THAN (2000) PLACEMENT POLICY=storageforhisotrydata,
+  PARTITION p0 VALUES LESS THAN (2000) PLACEMENT POLICY=storageforhistorydata,
   PARTITION p1 VALUES LESS THAN (2005),
   PARTITION p2 VALUES LESS THAN (2010),
   PARTITION p3 VALUES LESS THAN (2015),
@@ -310,17 +310,18 @@ PARTITION BY RANGE( YEAR(purchased) ) (
 );
 ```
 
-テーブル内のパーティションに配置ポリシーが指定されていない場合、パーティションはテーブルからポリシー（存在する場合）を継承しようとします。上記の例では、次のようになります。
+テーブル内のパーティションに配置ポリシーが指定されていない場合、パーティションはテーブルのポリシー（存在する場合）を継承しようとします。テーブルのインデックスが[グローバルインデックス](/partitioned-table.md#global-indexes)の場合、インデックスはテーブルと同じ配置ポリシーを適用します。上記の例では、次のようになります。
 
--   `p0`パーティションには`storageforhisotrydata`ポリシーが適用されます。
+-   `p0`パーティションには`storageforhistorydata`ポリシーが適用されます。
 -   `p4`パーティションには`storagefornewdata`ポリシーが適用されます。
 -   `p1` 、 `p2` 、および`p3`パーティションには、表`t1`から継承された`companystandardpolicy`配置ポリシーが適用されます。
--   テーブル`t1`に配置ポリシーが指定されていない場合、 `p1` 、 `p2` 、および`p3`パーティションはデータベースのデフォルト ポリシーまたはグローバル デフォルト ポリシーを継承します。
+-   グローバルインデックス`idx`は、テーブル`t1`と同じ`companystandardpolicy`配置ポリシーが適用されます。
+-   テーブル`t1`に配置ポリシーが指定されていない場合、パーティション`p1` 、 `p2` 、 `p3`およびグローバル インデックス`idx`は、データベースのデフォルト ポリシーまたはグローバルのデフォルト ポリシーを継承します。
 
 これらのパーティションに配置ポリシーをアタッチした後、次の例のように特定のパーティションの配置ポリシーを変更できます。
 
 ```sql
-ALTER TABLE t1 PARTITION p1 PLACEMENT POLICY=storageforhisotrydata;
+ALTER TABLE t1 PARTITION p1 PLACEMENT POLICY=storageforhistorydata;
 ```
 
 ## 高可用性の例 {#high-availability-examples}
@@ -406,7 +407,7 @@ SHOW PLACEMENT;
 ノード間でのRaftリーダーの分散に関して特定の要件がある場合は、次のステートメントを使用して配置ポリシーを指定できます。
 
 ```sql
-CREATE PLACEMENT POLICY deploy221_primary_east1 LEADER_CONSTRAINTS="[+region=us-east-1]" FOLLOWER_CONSTRAINTS='{"+region=us-east-1": 1, "+region=us-east-2": 2, "+region=us-west-1: 1}';
+CREATE PLACEMENT POLICY deploy221_primary_east1 LEADER_CONSTRAINTS="[+region=us-east-1]" FOLLOWER_CONSTRAINTS='{"+region=us-east-1": 1, "+region=us-east-2": 2, "+region=us-west-1": 1}';
 ```
 
 この配置ポリシーを作成し、目的のデータに適用すると、そのデータのRaftLeaderレプリカは`LEADER_CONSTRAINTS`オプションで指定された`us-east-1`リージョンに配置され、その他のデータのレプリカは`FOLLOWER_CONSTRAINTS`オプションで指定されたリージョンに配置されます。7リージョンのノード停止など、クラスターに障害が発生した場合でも、 `FOLLOWER_CONSTRAINTS`で指定され`us-east-1`リージョンであっても、他のリージョンから新しいLeaderが選出されることに注意してください。つまり、サービスの可用性の確保が最優先されます。
@@ -466,7 +467,6 @@ PLACEMENT POLICY=app_list
 | バックアップと復元 (BR) | 6.0            | バージョン6.0より前のBRでは、配置ポリシーのバックアップと復元はサポートされていません。詳細については、 [配置ルールをクラスターに復元するとエラーが発生するのはなぜですか](/faq/backup-and-restore-faq.md#why-does-an-error-occur-when-i-restore-placement-rules-to-a-cluster)参照してください。 |
 | TiDB Lightning | まだ互換性がありません    | TiDB Lightningが配置ポリシーを含むバックアップデータをインポートするとエラーが報告されます                                                                                                                                                   |
 | TiCDC          | 6.0            | 配置ポリシーを無視し、下流にポリシーを複製しません。                                                                                                                                                                             |
-| TiDBBinlog     | 6.0            | 配置ポリシーを無視し、下流にポリシーを複製しません。                                                                                                                                                                             |
 
 </CustomContent>
 

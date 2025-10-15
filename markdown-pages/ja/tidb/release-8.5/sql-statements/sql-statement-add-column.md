@@ -5,7 +5,7 @@ summary: TiDB データベースの ADD COLUMN の使用法の概要。
 
 # 列を追加 {#add-column}
 
-`ALTER TABLE.. ADD COLUMN`文は既存のテーブルに列を追加します。この操作は TiDB ではオンラインで行われるため、列を追加してもテーブルへの読み取りや書き込みはブロックされません。
+`ALTER TABLE.. ADD COLUMN`文は既存のテーブルに列を追加します。この操作は TiDB ではオンラインで実行されるため、列の追加によってテーブルへの読み取りも書き込みもブロックされることはありません。
 
 ## 概要 {#synopsis}
 
@@ -83,9 +83,9 @@ mysql> SELECT * FROM t1;
 1 row in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   新しい列を追加して`PRIMARY KEY`に設定することはサポートされていません。
+-   新しい列を追加してそれを`PRIMARY KEY`に設定することはサポートされていません。
 -   新しい列を追加して`AUTO_INCREMENT`に設定することはサポートされていません。
 -   生成された列の追加には制限があります[生成された列の制限](/generated-columns.md#limitations)を参照してください。
 -   新しい列を追加するときに`PRIMARY KEY`または`UNIQUE INDEX` `GLOBAL`として指定して[グローバルインデックス](/partitioned-table.md#global-indexes)設定することは、 [パーティションテーブル](/partitioned-table.md)の TiDB 拡張であり、MySQL と互換性がありません。

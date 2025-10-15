@@ -25,7 +25,7 @@ TiFlashは、ClickHouseによって効率的に実装されたコプロセッサ
 
 TiFlashは、TiKVノード内のデータのリアルタイムレプリケーションを低コストで実行します。これにより、TiKVへの書き込みがブロックされることはありません。同時に、 TiFlashと同様の読み取り一貫性を提供し、最新のデータが読み取られることを保証します。TiFlashのリージョンレプリカはTiKVのレプリカと論理的に同一であり、TiKVのLeaderレプリカと同時に分割・統合されます。
 
-Linux AMD64アーキテクチャでTiFlashを展開するには、CPUがAVX2命令セットをサポートしている必要があります`cat /proc/cpuinfo | grep avx2`出力されていることを確認してください。Linux ARM64アーキテクチャでTiFlashを展開するには、CPUがARMv8命令セットアーキテクチャをサポートしている必要があります。3 `cat /proc/cpuinfo | grep 'crc32' | grep 'asimd'`出力されていることを確認してください。命令セット拡張を使用することで、TiFlashのベクトル化エンジンはより優れたパフォーマンスを発揮できます。
+Linux AMD64アーキテクチャでTiFlashを展開するには、CPUがAVX2命令セットをサポートしている必要があります。1 `grep avx2 /proc/cpuinfo`出力を生成することで、これを確認してください。Linux ARM64アーキテクチャの場合、CPUがARMv8命令セットアーキテクチャをサポートしている必要があります。3 `grep 'crc32' /proc/cpuinfo | grep 'asimd'`出力を生成することで、これを確認してください。これらの命令セット拡張を使用することで、TiFlashのベクトル化エンジンはより優れたパフォーマンスを発揮します。
 
 <CustomContent platform="tidb">
 
@@ -61,7 +61,7 @@ TiFlash内のレプリカは、特別な役割であるRaft Learnerとして非�
 
 ### 一貫性 {#consistency}
 
-TiFlashはTiKVと同じスナップショット分離レベルの一貫性を提供し、最新のデータが読み取られることを保証します。つまり、TiKVに以前書き込まれたデータを読み取ることができます。このような一貫性は、データレプリケーションの進行状況を検証することで実現されます。
+TiFlashはTiKVと同じスナップショット分離レベルの一貫性を提供し、最新のデータが確実に読み取られることを保証します。つまり、TiKVに以前書き込まれたデータを読み取ることができます。このような一貫性は、データレプリケーションの進行状況を検証することで実現されます。
 
 TiFlash が読み取り要求を受信するたびに、リージョンレプリカはLeaderレプリカに進行状況検証要求（軽量 RPC 要求）を送信します。TiFlashは、読み取り要求のタイムスタンプに含まれるデータが現在のレプリケーション進行状況に含まれるようになった場合にのみ、読み取り操作を実行します。
 
@@ -109,7 +109,7 @@ TiDBを使用してTiFlashレプリカを読み取り、分析処理を行うこ
 
 <CustomContent platform="tidb">
 
-TPC-H データセットでのデータのインポートからクエリまでのプロセス全体を体験するには、 [TiDB HTAPクイックスタートガイド](/quick-start-with-htap.md)を参照してください。
+TPC-H データセットでのデータのインポートからクエリまでのプロセス全体を体験するには、 [TiDB HTAPのクイックスタート](/quick-start-with-htap.md)を参照してください。
 
 </CustomContent>
 
@@ -117,7 +117,7 @@ TPC-H データセットでのデータのインポートからクエリまで�
 
 <CustomContent platform="tidb">
 
--   TiFlashノードを含む新しいクラスターを展開するには、 [TiUPを使用して TiDB クラスターをデプロイ](/production-deployment-using-tiup.md)参照してください。
+-   TiFlashノードを含む新しいクラスターを展開するには、 [TiUPを使用して TiDBクラスタをデプロイ](/production-deployment-using-tiup.md)参照してください。
 -   デプロイされたクラスターにTiFlashノードを追加するには、 [TiFlashクラスターのスケールアウト](/scale-tidb-using-tiup.md#scale-out-a-tiflash-cluster)参照してください。
 -   [TiFlashクラスターを管理](/tiflash/maintain-tiflash.md) 。
 -   [TiFlashのパフォーマンスを調整する](/tiflash/tune-tiflash-performance.md) 。

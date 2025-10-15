@@ -1,11 +1,11 @@
 ---
 title: TRACE | TiDB SQL Statement Reference
-summary: TiDB データベースでの TRACE の使用法の概要。
+summary: TiDB データベースにおける TRACE の使用法の概要。
 ---
 
 # トレース {#trace}
 
-`TRACE`ステートメントは、クエリ実行に関する詳細情報を提供します。これは、TiDB サーバーのステータス ポートによって公開されるグラフィカル インターフェイスを通じて表示されることを目的としています。
+`TRACE`文はクエリ実行に関する詳細情報を提供します。これは、TiDB サーバーのステータスポートによって公開されるグラフィカルインターフェースを通じて表示されるものです。
 
 ## 概要 {#synopsis}
 
@@ -17,11 +17,11 @@ TracableStmt ::=
     ( SelectStmt | DeleteFromStmt | UpdateStmt | InsertIntoStmt | ReplaceIntoStmt | UnionStmt | LoadDataStmt | BeginTransactionStmt | CommitStmt | RollbackStmt | SetStmt )
 ```
 
-| 形式   | 説明              |
-| ---- | --------------- |
-| 行    | ツリー形式で出力        |
-| json | JSON形式の構造化された出力 |
-| ログ   | ログベースの出力        |
+| 形式   | 説明           |
+| ---- | ------------ |
+| 行    | ツリー形式で出力     |
+| JSON | JSON形式の構造化出力 |
+| ログ   | ログベースの出力     |
 
 ## 例 {#examples}
 
@@ -50,7 +50,7 @@ TRACE FORMAT='row' SELECT * FROM mysql.user;
     +--------------------------------------------+-----------------+------------+
     13 rows in set (0.00 sec)
 
-### 翻訳 {#json}
+### JSON {#json}
 
 ```sql
 TRACE FORMAT='json' SELECT * FROM mysql.user;
@@ -88,10 +88,10 @@ TRACE FORMAT='log' SELECT * FROM mysql.user;
     +----------------------------+--------------------------------------------------------+------+------------------------------------+
     14 rows in set (0.0008 sec)
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。
 
 ## 参照 {#see-also}
 
--   [EXPLAIN](/sql-statements/sql-statement-explain-analyze.md)
+-   [EXPLAIN分析](/sql-statements/sql-statement-explain-analyze.md)

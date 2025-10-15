@@ -3,9 +3,9 @@ title: Migrate Data from TiDB to MySQL-compatible Databases
 summary: TiDB から MySQL 互換データベースにデータを移行する方法を学びます。
 ---
 
-# TiDB から MySQL 互換データベースにデータを移行する {#migrate-data-from-tidb-to-mysql-compatible-databases}
+# TiDB から MySQL 互換データベースへのデータ移行 {#migrate-data-from-tidb-to-mysql-compatible-databases}
 
-このドキュメントでは、TiDB クラスターからAurora、MySQL、MariaDB などの MySQL 互換データベースにデータを移行する方法について説明します。プロセス全体には、次の 4 つのステップが含まれます。
+このドキュメントでは、TiDB クラスターからAurora、MySQL、MariaDB などの MySQL 互換データベースへのデータ移行方法について説明します。プロセス全体は以下の 4 つのステップで構成されます。
 
 1.  環境を設定します。
 2.  全データを移行します。
@@ -16,7 +16,7 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
 
 1.  TiDB クラスターをアップストリームにデプロイ。
 
-    TiUP Playground を使用して TiDB クラスターをデプロイ。詳細については、 [TiUP を使用してオンライン TiDBクラスタをデプロイおよび管理](/tiup/tiup-cluster.md)を参照してください。
+    TiUP Playgroundを使用してTiDBクラスタをデプロイ。詳細については、 [TiUPを使用してオンライン TiDBクラスタをデプロイおよび管理](/tiup/tiup-cluster.md)を参照してください。
 
     ```shell
     # Create a TiDB cluster
@@ -37,14 +37,14 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
 
 3.  サービスのワークロードをシミュレートします。
 
-    ラボ環境では、 `go-tpc`使用して TiDB クラスターのアップストリームにデータを書き込むことができます。これは、TiDB クラスターでイベントの変更を生成するためです。次のコマンドを実行して、TiDB クラスターに`tpcc`という名前のデータベースを作成し、 TiUP bench を使用してこのデータベースにデータを書き込みます。
+    ラボ環境では、 `go-tpc`使用してTiDBクラスタの上流にデータを書き込むことができます。これは、TiDBクラスタでイベントの変更を生成するためです。以下のコマンドを実行して、TiDBクラスタに`tpcc`という名前のデータベースを作成し、 TiUP benchを使用してこのデータベースにデータを書き込みます。
 
     ```shell
     tiup bench tpcc -H 127.0.0.1 -P 4000 -D tpcc --warehouses 4 prepare
     tiup bench tpcc -H 127.0.0.1 -P 4000 -D tpcc --warehouses 4 run --time 300s
     ```
 
-    `go-tpc`の詳細については[TiDB で TPC-C テストを実行する方法](/benchmark/benchmark-tidb-using-tpcc.md)を参照してください。
+    `go-tpc`詳細については[TiDBでTPC-Cテストを実行する方法](/benchmark/benchmark-tidb-using-tpcc.md)を参照してください。
 
 ## ステップ2. 全データを移行する {#step-2-migrate-full-data}
 
@@ -52,11 +52,11 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
 
 > **注記：**
 >
-> 本番クラスターでは、GC を無効にしてバックアップを実行すると、クラスターのパフォーマンスに影響する可能性があります。この手順は、オフピーク時に完了することをお勧めします。
+> 本番のクラスタでは、GCを無効にしてバックアップを実行すると、クラスタのパフォーマンスに影響する可能性があります。この手順は、オフピーク時に実行することをお勧めします。
 
 1.  ガベージコレクション (GC) を無効にします。
 
-    増分移行中に新しく書き込まれたデータが削除されないようにするには、完全なデータをエクスポートする前に、アップストリーム クラスターの GC を無効にする必要があります。この方法では、履歴データは削除されません。TiDB v4.0.0 以降のバージョンでは、 Dumpling が[GCセーフポイントを自動的に調整してGCをブロックする](/dumpling-overview.md#manually-set-the-tidb-gc-time)なる可能性があります。ただし、 Dumpling の終了後に GC プロセスが開始され、増分変更の移行が失敗する可能性があるため、GC を手動で無効にする必要があります。
+    増分移行中に新しく書き込まれたデータが削除されないようにするには、フルデータをエクスポートする前に、上流クラスターのGCを無効にする必要があります。これにより、履歴データが削除されません。TiDB v4.0.0以降のバージョンでは、 Dumplingが[GCをブロックするためにGCセーフポイントを自動的に調整する](/dumpling-overview.md#manually-set-the-tidb-gc-time)なる可能性があります。ただし、 Dumplingの終了後にGCプロセスが開始され、増分変更の移行が失敗する可能性があるため、GCを手動で無効にすることは依然として必要です。
 
     GC を無効にするには、次のコマンドを実行します。
 
@@ -81,13 +81,13 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
 
 2.  データをバックアップします。
 
-    1.  Dumpling を使用して SQL 形式でデータをエクスポートします。
+    1.  Dumplingを使用して SQL 形式でデータをエクスポートします。
 
         ```shell
         tiup dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o ./dumpling_output -r 200000 -F256MiB
         ```
 
-    2.  データのエクスポートが完了したら、次のコマンドを実行してメタデータを確認します。メタデータの`Pos`はエクスポート スナップショットの TSO であり、BackupTS として記録できます。
+    2.  データのエクスポートが完了したら、次のコマンドを実行してメタデータを確認します。メタデータの`Pos`エクスポート スナップショットの TSO であり、BackupTS として記録できます。
 
         ```shell
         cat dumpling_output/metadata
@@ -102,7 +102,7 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
 
 3.  データを復元します。
 
-    MyLoader (オープンソースツール) を使用して、ダウンストリーム MySQL インスタンスにデータをインポートします。MyLoader のインストール方法と使用方法の詳細については、 [マイダンプラー/マイローダー](https://github.com/mydumper/mydumper)参照してください。MyLoader v0.10 以前のバージョンを使用する必要があることに注意してください。それ以降のバージョンでは、 Dumplingによってエクスポートされたメタデータ ファイルを処理できません。
+    MyLoader（オープンソースツール）を使用して、下流のMySQLインスタンスにデータをインポートします。MyLoaderのインストールと使用方法の詳細については、 [マイダンプラー/マイローダー](https://github.com/mydumper/mydumper)参照してください。MyLoaderはv0.10以前のバージョンを使用する必要があります。それ以降のバージョンでは、 Dumplingによってエクスポートされたメタデータファイルを処理できません。
 
     Dumplingによってエクスポートされた完全なデータを MySQL にインポートするには、次のコマンドを実行します。
 
@@ -112,13 +112,13 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
 
 4.  (オプション) データを検証します。
 
-    [同期差分インスペクター](/sync-diff-inspector/sync-diff-inspector-overview.md)使用すると、特定の時点でのアップストリームとダウンストリーム間のデータの一貫性をチェックできます。
+    [同期差分インスペクター](/sync-diff-inspector/sync-diff-inspector-overview.md)使用すると、特定の時間に上流と下流の間のデータの整合性をチェックできます。
 
     ```shell
     sync_diff_inspector -C ./config.yaml
     ```
 
-    sync-diff-inspector の設定方法の詳細については、 [コンフィグレーションファイルの説明](/sync-diff-inspector/sync-diff-inspector-overview.md#configuration-file-description)参照してください。このドキュメントでは、設定は次のようになります。
+    sync-diff-inspector の設定方法の詳細については[コンフィグレーションファイルの説明](/sync-diff-inspector/sync-diff-inspector-overview.md#configuration-file-description)参照してください。このドキュメントでは、設定は以下のとおりです。
 
     ```toml
     # Diff Configuration.
@@ -143,11 +143,11 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
             target-check-tables = ["*.*"]
     ```
 
-## ステップ3. 増分データを移行する {#step-3-migrate-incremental-data}
+## ステップ3. 増分データの移行 {#step-3-migrate-incremental-data}
 
 1.  TiCDCをデプロイ。
 
-    完全なデータ移行が完了したら、増分データをレプリケートするための TiCDC クラスターをデプロイして構成します。本番環境では、 [TiCDC をデプロイ](/ticdc/deploy-ticdc.md)手順に従って TiCDC をデプロイします。このドキュメントでは、テスト クラスターの作成時に TiCDC ノードが起動されています。したがって、TiCDC をデプロイする手順をスキップして、次の手順に進み、変更フィードを作成できます。
+    完全なデータ移行が完了したら、増分データをレプリケーションするためのTiCDCクラスターをデプロイして設定します。本番環境では、 [TiCDCをデプロイ](/ticdc/deploy-ticdc.md)の手順に従ってTiCDCをデプロイしてください。このドキュメントでは、テストクラスターの作成時にTiCDCノードが起動済みであるため、TiCDCのデプロイ手順をスキップして、次のステップに進み、変更フィードを作成できます。
 
 2.  変更フィードを作成します。
 
@@ -160,15 +160,15 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
     このコマンドのパラメータは次のとおりです。
 
     -   `--server` : TiCDC クラスター内の任意のノードの IP アドレス
-    -   `--sink-uri` : ダウンストリーム クラスターの URI
+    -   `--sink-uri` : 下流クラスタのURI
     -   `--changefeed-id` : チェンジフィードID、正規表現の形式でなければなりません、 `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`
-    -   `--start-ts` : 変更フィードの開始タイムスタンプ。バックアップ時間 (または[ステップ2. 全データを移行する](#step-2-migrate-full-data)の「データのバックアップ」セクションの BackupTS) である必要があります。
+    -   `--start-ts` : 変更フィードの開始タイムスタンプ。バックアップ時刻である必要があります (または[ステップ2. 全データの移行](#step-2-migrate-full-data)の「データのバックアップ」セクションの BackupTS)
 
     changefeed 構成の詳細については、 [タスク設定ファイル](/ticdc/ticdc-changefeed-config.md)参照してください。
 
 3.  GC を有効にします。
 
-    TiCDC を使用した増分移行では、GC はレプリケートされた履歴データのみを削除します。そのため、チェンジフィードを作成した後、以下のコマンドを実行して GC を有効にする必要があります。詳細については、 [TiCDCガベージコレクション（GC）セーフポイントの完全な動作は何ですか？](/ticdc/ticdc-faq.md#what-is-the-complete-behavior-of-ticdc-garbage-collection-gc-safepoint)参照してください。
+    TiCDCを用いた増分移行では、GCは複製された履歴データのみを削除します。そのため、変更フィードを作成した後、以下のコマンドを実行してGCを有効にする必要があります。詳細は[TiCDCガベージコレクション（GC）セーフポイントの完全な動作は何ですか？](/ticdc/ticdc-faq.md#what-is-the-complete-behavior-of-ticdc-garbage-collection-gc-safepoint)参照してください。
 
     GC を有効にするには、次のコマンドを実行します。
 
@@ -191,11 +191,11 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
         +-------------------------+
         1 row in set (0.00 sec)
 
-## ステップ4. サービスを移行する {#step-4-migrate-services}
+## ステップ4. サービスの移行 {#step-4-migrate-services}
 
-チェンジフィードを作成すると、アップストリーム クラスターに書き込まれたデータは、低レイテンシーでダウンストリーム クラスターにレプリケートされます。読み取りトラフィックをダウンストリーム クラスターに徐々に移行できます。一定期間、読み取りトラフィックを観察します。ダウンストリーム クラスターが安定している場合は、次の手順で書き込みトラフィックもダウンストリーム クラスターに移行できます。
+チェンジフィードを作成すると、上流クラスターに書き込まれたデータは、低レイテンシーで下流クラスターに複製されます。読み取りトラフィックを下流クラスターに徐々に移行できます。一定期間、読み取りトラフィックを観察してください。下流クラスターが安定している場合は、以下の手順で書き込みトラフィックも下流クラスターに移行できます。
 
-1.  アップストリーム クラスターの書き込みサービスを停止します。変更フィードを停止する前に、すべてのアップストリーム データがダウンストリームに複製されていることを確認してください。
+1.  アップストリームクラスタの書き込みサービスを停止します。変更フィードを停止する前に、アップストリームのすべてのデータがダウンストリームに複製されていることを確認してください。
 
     ```shell
     # Stop the changefeed from the upstream cluster to the downstream cluster
@@ -216,4 +216,4 @@ summary: TiDB から MySQL 互換データベースにデータを移行する�
           }
         ]
 
-2.  書き込みサービスをダウンストリーム クラスターに移行した後、しばらく観察します。ダウンストリーム クラスターが安定している場合は、アップストリーム クラスターを破棄できます。
+2.  書き込みサービスを下流クラスターに移行した後、しばらく観察します。下流クラスターが安定している場合は、上流クラスターを破棄できます。

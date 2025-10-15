@@ -1,9 +1,9 @@
 ---
-title: Software and Hardware Recommendations
+title: TiDB Software and Hardware Requirements
 summary: TiDB を展開および実行するためのソフトウェアとハードウェアの推奨事項について説明します。
 ---
 
-# ソフトウェアとハードウェアの推奨事項 {#software-and-hardware-recommendations}
+# TiDB のソフトウェアおよびハードウェア要件 {#tidb-software-and-hardware-requirements}
 
 <!-- Localization note for TiDB:
 
@@ -13,20 +13,22 @@ summary: TiDB を展開および実行するためのソフトウェアとハー
 
 -->
 
-TiDBは、高性能なオープンソースの分散SQLデータベースであり、Intelアーキテクチャサーバー、ARMアーキテクチャサーバー、主要な仮想化環境に導入でき、優れたパフォーマンスを発揮します。TiDBは、主要なハードウェアネットワークとLinuxオペレーティングシステムのほとんどをサポートしています。
+このドキュメントでは、TiDBデータベースの導入と実行に必要なソフトウェアおよびハードウェア要件について説明します。TiDBは、高性能なオープンソースの分散SQLデータベースであり、Intelアーキテクチャサーバー、ARMアーキテクチャサーバー、および主要な仮想化環境に導入でき、良好な動作を実現します。TiDBは、主要なハードウェアネットワークとLinuxオペレーティングシステムのほとんどをサポートしています。
 
 ## OSおよびプラットフォームの要件 {#os-and-platform-requirements}
 
-v8.1 LTS では、TiDB はオペレーティング システムと CPU アーキテクチャのさまざまな組み合わせに対して複数レベルの品質標準を保証します。
+v8.5 LTS では、TiDB はオペレーティング システムと CPU アーキテクチャのさまざまな組み合わせに対して複数レベルの品質標準を保証します。
 
 -   TiDB は、次のオペレーティング システムと CPU アーキテクチャの組み合わせに対して**エンタープライズ レベルの本番品質を提供し**、製品機能は包括的かつ体系的に検証されています。
 
-    <table><thead><tr><th>オペレーティングシステム</th><th>サポートされているCPUアーキテクチャ</th></tr></thead><tbody><tr><td>Red Hat Enterprise Linux 8.4 以降の 8.x バージョン</td><td><ul><li>x86_64</li><li> ARM 64</li></ul></td></tr><tr><td><ul><li> Red Hat Enterprise Linux 7.3 以降の 7.x バージョン (TiDB は 8.4 DMR 以降でサポートを終了します)</li><li> CentOS 7.3 またはそれ以降の 7.x バージョン (TiDB は 8.4 DMR 以降でサポートを終了します)</li></ul></td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr><tr><td>アマゾン リナックス 2</td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr><tr><td> Amazon Linux 2023</td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr><tr><td> Rocky Linux 9.1 以降</td><td><ul><li>x86_64</li><li> ARM 64</li></ul></td></tr><tr><td> Kylin V10 SP1/SP2/SP3 (SP3 は v7.5.5 以降でサポートされます)</td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr><tr><td>ユニオンテック OS (UOS) V20</td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr><tr><td> openEuler 22.03 LTS SP1/SP3</td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr></tbody></table>
+    <table><thead><tr><th>オペレーティングシステム</th><th>サポートされているCPUアーキテクチャ</th></tr></thead><tbody><tr><td>Red Hat Enterprise Linux 8.4 以降の 8.x バージョン</td><td><ul><li>x86_64</li><li> ARM 64</li></ul></td></tr><tr><td>アマゾン リナックス 2</td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr><tr><td> Amazon Linux 2023</td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr><tr><td> Rocky Linux 9.1 以降</td><td><ul><li>x86_64</li><li> ARM 64</li></ul></td></tr><tr><td> Kylin V10 SP1/SP2/SP3 (SP3 は v7.5.5 以降でサポートされます)</td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr><tr><td>ユニオンテック OS (UOS) V20</td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr><tr><td> openEuler 22.03 LTS SP1/SP3</td><td><ul><li> x86_64</li><li> ARM 64</li></ul></td></tr></tbody></table>
 
-    > **注記：**
+    > **警告：**
     >
-    > -   [CentOS Linux のサポート終了](https://blog.centos.org/2023/04/end-dates-are-coming-for-centos-stream-8-and-centos-linux-7/)によると、CentOS Linux 7のアップストリームサポートは2024年6月30日に終了します。TiDBはCentOS 7のサポートを8.4 DMRバージョンから終了しています。Rocky Linux 9.1以降のバージョンの使用をお勧めします。
-    > -   [Red Hat Enterprise Linux ライフサイクル](https://access.redhat.com/support/policy/updates/errata/#Life_Cycle_Dates)によると、Red Hat Enterprise Linux 7のメンテナンスサポートは2024年6月30日に終了します。TiDBは、8.4 DMRバージョン以降のRed Hat Enterprise Linux 7のサポートを終了します。Rocky Linux 9.1以降のバージョンを使用することをお勧めします。
+    > -   [CentOS Linux のサポート終了](https://blog.centos.org/2023/04/end-dates-are-coming-for-centos-stream-8-and-centos-linux-7/)によると、CentOS Linux 7 のアップストリームサポートは 2024 年 6 月 30 日に終了しました。
+    >     -   TiDBをアップグレードする前に、オペレーティングシステムのバージョンを必ずご確認ください。TiDB v8.4.0 DMRおよびv8.5.0では、glibc 2.17のサポートが削除され、CentOS Linux 7でのサポートとテストも終了しました。Rocky Linux 9.1以降のバージョンを使用することをお勧めします。CentOS 7上のTiDBクラスターをv8.4.0またはv8.5.0にアップグレードすると、クラスターが利用できなくなるリスクがあります。
+    >     -   v8.5.1 以降、CentOS Linux 7 を引き続き使用しているユーザーを支援するために、TiDB は glibc 2.17 のサポートを再開し、CentOS Linux 7 のテストも再開し、CentOS Linux 7 と互換性を持つようになりました。ただし、CentOS Linux は EOL 状態であるため、CentOS Linux 7 の[公式発表とセキュリティガイダンス](https://www.redhat.com/en/blog/centos-linux-has-reached-its-end-life-eol)確認し、本番での使用には Rocky Linux 9.1 以降など、TiDB がサポートするオペレーティング システムに移行することを強くお勧めします。
+    > -   [Red Hat Enterprise Linux ライフサイクル](https://access.redhat.com/support/policy/updates/errata/#Life_Cycle_Dates)によると、Red Hat Enterprise Linux 7のメンテナンスサポートは2024年6月30日に終了しました。TiDBは、8.4 DMRバージョン以降のRed Hat Enterprise Linux 7のサポートを終了します。Rocky Linux 9.1以降のバージョンの使用をお勧めします。Red Hat Enterprise Linux 7上のTiDBクラスタをv8.4.0以降にアップグレードすると、クラスタが使用できなくなります。TiDBをアップグレードする前に、オペレーティングシステムのバージョンを確認してください。
 
 -   以下のオペレーティングシステムとCPUアーキテクチャの組み合わせでは、TiDBをコンパイル、ビルド、デプロイできます。また、OLTP、OLAP、データツールの基本機能もご利用いただけます。ただし、TiDBは**エンタープライズレベルの本番品質を保証するものではありません**。
 
@@ -46,10 +48,10 @@ v8.1 LTS では、TiDB はオペレーティング システムと CPU アーキ
 
 | TiDBのコンパイルと実行に必要なライブラリ | バージョン                 |
 | :--------------------- | :-------------------- |
-| Golang                 | 1.21以降                |
+| Golang                 | 1.23以降                |
 | さび                     | nightly-2023-12-28 以降 |
 | GCC                    | 7.x                   |
-| LLVM                   | 13.0以降                |
+| LLVM                   | 17.0以降                |
 
 TiDB の実行に必要なライブラリ: glibc (バージョン 2.28-151.el8)
 
@@ -60,7 +62,7 @@ TiDB の実行に必要なライブラリ: glibc (バージョン 2.28-151.el8)
 -   x86_64。TiDB v6.6.0以降では、 [x86-64-v2命令セット](https://developers.redhat.com/blog/2021/01/05/building-red-hat-enterprise-linux-9-for-the-x86-64-v2-microarchitecture-level)必要です。
 -   ARM 64
 
-## ソフトウェアの推奨事項 {#software-recommendations}
+## ソフトウェア要件 {#software-requirements}
 
 ### 制御機 {#control-machine}
 
@@ -81,19 +83,19 @@ TiDB の実行に必要なライブラリ: glibc (バージョン 2.28-151.el8)
 | 沼        | 2.0.12以降 |
 | タール      | どれでも     |
 
-## サーバーの推奨事項 {#server-recommendations}
+## サーバー要件 {#server-requirements}
 
 TiDBは、Intel x86-64アーキテクチャの64ビット汎用ハードウェア・サーバー・プラットフォーム、またはARMアーキテクチャのハードウェア・サーバー・プラットフォームに導入して実行できます。開発環境、テスト環境、および本番環境におけるサーバー・ハードウェア構成に関する要件と推奨事項（オペレーティング・システム自体が占有するリソースは除く）は次のとおりです。
 
 ### 開発およびテスト環境 {#development-and-test-environments}
 
-|    成分   |   CPU  |   メモリ   |               ローカルストレージ              |     ネットワーク     |      インスタンス数（最小要件）     |
-| :-----: | :----: | :-----: | :----------------------------------: | :------------: | :--------------------: |
-|   TiDB  |  8コア以上 |  16GB以上 | [ディスク容量要件](#disk-space-requirements) | ギガビットネットワークカード |    1 (PDと同じマシンに展開可能)   |
-|    PD   |  4コア以上 |  8GB以上  |             SAS、200 GB以上             | ギガビットネットワークカード | 1 (TiDB と同じマシンにデプロイ可能) |
-|   TiKV  |  8コア以上 | 32 GB以上 |             SAS、200 GB以上             | ギガビットネットワークカード |            3           |
-| TiFlash | 32コア以上 | 64 GB以上 |             SSD、200 GB以上             | ギガビットネットワークカード |            1           |
-|  TiCDC  |  8コア以上 |  16GB以上 |             SAS、200 GB以上             | ギガビットネットワークカード |            1           |
+|    成分   |   CPU  |   メモリ   |             ローカルストレージ            |     ネットワーク     |      インスタンス数（最小要件）     |
+| :-----: | :----: | :-----: | :------------------------------: | :------------: | :--------------------: |
+|   TiDB  |  8コア以上 |  16GB以上 | [ストレージ要件](#storage-requirements) | ギガビットネットワークカード |    1 (PDと同じマシンに展開可能)   |
+|    PD   |  4コア以上 |  8GB以上  |           SAS、200 GB以上           | ギガビットネットワークカード | 1 (TiDB と同じマシンにデプロイ可能) |
+|   TiKV  |  8コア以上 | 32 GB以上 |           SAS、200 GB以上           | ギガビットネットワークカード |            3           |
+| TiFlash | 32コア以上 | 64 GB以上 |           SSD、200 GB以上           | ギガビットネットワークカード |            1           |
+|  TiCDC  |  8コア以上 |  16GB以上 |           SAS、200 GB以上           | ギガビットネットワークカード |            1           |
 
 > **注記：**
 >
@@ -101,7 +103,7 @@ TiDBは、Intel x86-64アーキテクチャの64ビット汎用ハードウェ�
 > -   パフォーマンス関連のテストでは、テスト結果の正確性を保証するために、低パフォーマンスのstorageおよびネットワーク ハードウェア構成を使用しないでください。
 > -   TiKVサーバーでは、読み取りと書き込みを高速化するために NVMe SSD を使用することをお勧めします。
 > -   機能のテストと検証のみを行う場合は、手順[TiDB クイックスタートガイド](/quick-start-with-tidb.md)に従って、TiDB を 1 台のマシンにデプロイします。
-> -   v6.3.0以降、Linux AMD64アーキテクチャでTiFlashを展開するには、CPUがAVX2命令セットをサポートしている必要があります。1 `cat /proc/cpuinfo | grep avx2`出力されていることを確認してください。Linux ARM64アーキテクチャでTiFlashを展開するには、CPUがARMv8命令セットアーキテクチャをサポートしている必要があります。3 `cat /proc/cpuinfo | grep 'crc32' | grep 'asimd'`出力されていることを確認してください。命令セット拡張を使用することで、TiFlashのベクトル化エンジンはより優れたパフォーマンスを発揮できます。
+> -   v6.3.0以降、Linux AMD64アーキテクチャでTiFlashを展開するには、CPUがAVX2命令セットをサポートしている必要があります。1 `grep avx2 /proc/cpuinfo`出力されていることを確認してください。Linux ARM64アーキテクチャでTiFlashを展開するには、CPUがARMv8命令セットアーキテクチャをサポートしている必要があります。3 `grep 'crc32' /proc/cpuinfo | grep 'asimd'`出力されていることを確認してください。命令セット拡張を使用することで、TiFlashのベクトル化エンジンはより優れたパフォーマンスを発揮できます。
 
 ### 生産環境 {#production-environment}
 
@@ -155,8 +157,6 @@ TiCDC を展開する前に、500 GB を超える PCIe SSD ディスクに TiCDC
 |     TiFlash     |   20170  | TiFlashプロキシサービスポート                                  |
 |     TiFlash     |   20292  | PrometheusがTiFlash Proxyメトリックを取得するためのポート            |
 |     TiFlash     |   8234   | PrometheusがTiFlashメトリックを取得するためのポート                  |
-|       Pump      |   8250   | Pump通信ポート                                           |
-|     Drainer     |   8249   | Drainer通信ポート                                        |
 |      TiCDC      |   8300   | TiCDC通信ポート                                          |
 |        監視       |   9090   | Prometheusサービスの通信ポート                                |
 |        監視       |   12020  | NgMonitoringサービスの通信ポート                              |
@@ -166,9 +166,11 @@ TiCDC を展開する前に、500 GB を超える PCIe SSD ディスクに TiCDC
 |    アラートマネージャー   |   9093   | アラートウェブサービスのポート                                     |
 |    アラートマネージャー   |   9094   | 警報通信ポート                                             |
 
-## ディスク容量要件 {#disk-space-requirements}
+## ストレージ要件 {#storage-requirements}
 
-<table><thead><tr><th>成分</th><th>ディスク容量要件</th><th>健全なディスク使用率</th></tr></thead><tbody><tr><td>TiDB</td><td><ul><li>ログディスク用に少なくとも30 GB</li><li> v6.5.0以降、インデックス追加などのDDL操作を高速化するため、Fast Online DDL（ <a href="https://docs.pingcap.com/tidb/v8.1/system-variables#tidb_ddl_enable_fast_reorg-new-in-v630">tidb_ddl_enable_fast_reorg</a>変数で制御）がデフォルトで有効になっています。アプリケーションに大きなオブジェクトを含むDDL操作がある場合、または<a href="https://docs.pingcap.com/tidb/v8.1/sql-statement-import-into">IMPORT INTO</a>を使用してデータをインポートする場合は、TiDB用に追加のSSDディスク容量（100GB以上）を用意することを強くお勧めします。詳細な設定手順については、 <a href="https://docs.pingcap.com/tidb/v8.1/check-before-deployment#set-temporary-spaces-for-tidb-instances-recommended">「TiDBインスタンスの一時領域の設定」を</a>ご覧ください。</li></ul></td><td> 90%未満</td></tr><tr><td>PD</td><td>データディスクとログディスクにはそれぞれ少なくとも20 GB</td><td> 90%未満</td></tr><tr><td>TiKV</td><td>データディスクとログディスクにはそれぞれ少なくとも100 GB</td><td> 80%未満</td></tr><tr><td>TiFlash</td><td>データディスクには少なくとも100 GB、ログディスクには少なくとも30 GB</td><td> 80%未満</td></tr><tr><td>TiUP</td><td><ul><li>制御マシン: 単一バージョンの TiDB クラスターをデプロイする場合、必要な容量は 1 GB 以下です。複数バージョンの TiDB クラスターをデプロイする場合は、必要な容量が増加します。</li><li>デプロイメントサーバー（TiDBコンポーネントが実行されるマシン）： TiFlashは約700MB、その他のコンポーネント（PD、TiDB、TiKVなど）はそれぞれ約200MBのスペースを占有します。クラスターのデプロイメントプロセス中、 TiUPクラスターは一時ファイルを保存するために1MB未満の一時スペース（ <code>/tmp</code>ディレクトリ）を必要とします。</li></ul></td><td>該当なし</td></tr><tr><td>NGモニタリング</td><td><ul><li>コンプロフ: 3 x 1 GB x コンポーネント数 (各コンポーネントは1日あたり約1 GB、合計3日間) + 20 GB の予約済みスペース</li><li>Top SQL: 30 x 50 MB x コンポーネント数（各コンポーネントは1日あたり約50 MBを占有し、合計30日間）</li><li> ConprofとTop SQLは予約スペースを共有します</li></ul></td><td>該当なし</td></tr></tbody></table>
+<table><thead><tr><th>成分</th><th>ディスク容量要件</th><th>健全なディスク使用率</th></tr></thead><tbody><tr><td>TiDB</td><td><ul><li>ログディスク用に少なくとも30 GB</li><li> v6.5.0以降、インデックス追加などのDDL操作を高速化するため、Fast Online DDL（<a href="https://docs.pingcap.com/tidb/dev/system-variables#tidb_ddl_enable_fast_reorg-new-in-v630">tidb_ddl_enable_fast_reorg</a>変数で制御）がデフォルトで有効になっています。アプリケーションに大きなオブジェクトを含むDDL操作がある場合、または<a href="https://docs.pingcap.com/tidb/dev/sql-statement-import-into">IMPORT INTO</a>を使用してデータをインポートする場合は、TiDB用に追加のSSDディスク容量（100GB以上）を用意することを強くお勧めします。詳細な設定手順については、 <a href="https://docs.pingcap.com/tidb/dev/check-before-deployment#set-temporary-spaces-for-tidb-instances-recommended">「TiDBインスタンスの一時領域の設定」を</a>ご覧ください。</li></ul></td><td> 90%未満</td></tr><tr><td>PD</td><td>データディスクとログディスクにはそれぞれ少なくとも20 GB</td><td> 90%未満</td></tr><tr><td>TiKV</td><td>データディスクとログディスクにはそれぞれ少なくとも100 GB</td><td> 80%未満</td></tr><tr><td>TiFlash</td><td>データディスクには少なくとも100 GB、ログディスクには少なくとも30 GB</td><td> 80%未満</td></tr><tr><td>TiUP</td><td><ul><li>制御マシン: 単一バージョンの TiDB クラスターをデプロイする場合、必要な容量は 1 GB 以下です。複数バージョンの TiDB クラスターをデプロイする場合は、必要な容量が増加します。</li><li>デプロイメントサーバー（TiDBコンポーネントが実行されるマシン）： TiFlashは約700MB、その他のコンポーネント（PD、TiDB、TiKVなど）はそれぞれ約200MBのスペースを占有します。クラスターのデプロイメントプロセス中、 TiUPクラスターは一時ファイルを保存するために1MB未満の一時スペース（ <code>/tmp</code>ディレクトリ）を必要とします。</li></ul></td><td>該当なし</td></tr><tr><td>NGモニタリング</td><td><ul><li>コンプロフ: 3 x 1 GB x コンポーネント数 (各コンポーネントは1日あたり約1 GB、合計3日間) + 20 GB の予約済みスペース</li><li>Top SQL: 30 x 50 MB x コンポーネント数（各コンポーネントは1日あたり約50 MBを占有し、合計30日間）</li><li> ConprofとTop SQLは予約スペースを共有します</li></ul></td><td>該当なし</td></tr></tbody></table>
+
+TiDBはXFSとExt4ファイルシステムをサポートしています。その他のファイルシステムは本番環境では推奨されません。
 
 ## ウェブブラウザの要件 {#web-browser-requirements}
 

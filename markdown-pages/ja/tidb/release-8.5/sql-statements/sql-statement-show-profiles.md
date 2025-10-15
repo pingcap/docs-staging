@@ -26,8 +26,8 @@ SHOW PROFILES;
 
     Empty set (0.00 sec)
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは、MySQL との互換性のためだけに含まれています。1 `SHOW PROFILES`実行すると、常に空の結果が返されます。
+このステートメントはMySQLとの互換性のためにのみ含まれています。1 `SHOW PROFILES`実行すると常に空の結果が返されます。
 
-代替として、TiDB は SQL パフォーマンスの問題を理解するのに役立つ[ステートメント要約表](/statement-summary-tables.md)を提供します。
+代替案として、TiDB は SQL パフォーマンスの問題を理解するのに役立つ[明細書要約表](/statement-summary-tables.md)提供します。

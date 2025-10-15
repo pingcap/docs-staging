@@ -3,13 +3,13 @@ title: JSON Functions That Search JSON Values
 summary: JSON 値を検索する JSON関数について学習します。
 ---
 
-# JSON 値を検索する JSON 関数 {#json-functions-that-search-json-values}
+# JSON値を検索するJSON関数 {#json-functions-that-search-json-values}
 
 このドキュメントでは、JSON 値を検索する JSON関数について説明します。
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#function_json-contains">JSON_CONTAINS()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-search-functions-html-function-json-contains-json-contains-a}
 
-`JSON_CONTAINS(json_doc, candidate [,path])`関数は、 `1`または`0`返すことにより、指定された`candidate` JSON ドキュメントがターゲット JSON ドキュメント内に含まれているかどうかを示します。
+`JSON_CONTAINS(json_doc, candidate [,path])`関数は、 `1`または`0`返すことで、指定された`candidate` JSON ドキュメントがターゲット JSON ドキュメント内に含まれているかどうかを示します。
 
 例:
 
@@ -26,7 +26,7 @@ SELECT JSON_CONTAINS('["a","b","c"]','"a"');
     +--------------------------------------+
     1 row in set (0.00 sec)
 
-ここで`e`対象ドキュメントに含まれていません。
+ここで`e`対象文書に含まれていません。
 
 ```sql
 SELECT JSON_CONTAINS('["a","b","c"]','"e"');
@@ -65,7 +65,7 @@ SELECT JSON_CONTAINS('{"foo": "bar", "aaa": 5}','"bar"');
     +---------------------------------------------------+
     1 row in set (0.00 sec)
 
-ここで、 `"bar"`対象ドキュメントの`$.foo`属性に含まれています。
+ここで、 `"bar"`対象ドキュメントの`$.foo`属性に含まれます。
 
 ```sql
 SELECT JSON_CONTAINS('{"foo": "bar", "aaa": 5}','"bar"', '$.foo');
@@ -97,7 +97,7 @@ SELECT JSON_CONTAINS_PATH('{"foo": "bar", "aaa": 5}','all','$.foo');
     +--------------------------------------------------------------+
     1 row in set (0.00 sec)
 
-ここでは文書に`$.bar`含まれていません。
+ここではドキュメントに`$.bar`が含まれていません。
 
 ```sql
 SELECT JSON_CONTAINS_PATH('{"foo": "bar", "aaa": 5}','all','$.bar');
@@ -161,7 +161,7 @@ FROM (
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#operator_json-inline-path">-&gt;&gt;</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-search-functions-html-operator-json-inline-path-a}
 
-`column->>path`関数は、 `path`引数に一致する`column`のデータを引用符なしで解除します。これは`JSON_UNQUOTE(JSON_EXTRACT(doc, path_literal))`の別名です。
+`column->>path`関数は、 `path`引数に一致する`column`内のデータを引用符で囲まないようにします。これは`JSON_UNQUOTE(JSON_EXTRACT(doc, path_literal))`のエイリアスです。
 
 ```sql
 SELECT
@@ -184,7 +184,7 @@ FROM (
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#function_json-keys">JSON_KEYS()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-search-functions-html-function-json-keys-json-keys-a}
 
-`JSON_KEYS(json_doc [,path])`関数は、 `path`オブジェクトの最上位キーを JSON 配列として返します。3 引数が指定されている場合は、選択したパスから最上位キーを返します。
+`JSON_KEYS(json_doc [,path])`関数は、JSONオブジェクトの最上位キーをJSON配列として返します。3 `path`が指定された場合は、選択されたパスの最上位キーを返します。
 
 例:
 
@@ -201,7 +201,7 @@ SELECT JSON_KEYS('{"name": {"first": "John", "last": "Doe"}, "type": "Person"}')
     +---------------------------------------------------------------------------+
     1 row in set (0.00 sec)
 
-次の例では、JSON ドキュメントの`$.name`パスにある最上位キーを返します。
+次の例では、JSON ドキュメントの`$.name`のパスにある最上位キーを返します。
 
 ```sql
 SELECT JSON_KEYS('{"name": {"first": "John", "last": "Doe"}, "type": "Person"}', '$.name');
@@ -214,13 +214,13 @@ SELECT JSON_KEYS('{"name": {"first": "John", "last": "Doe"}, "type": "Person"}',
     +-------------------------------------------------------------------------------------+
     1 row in set (0.00 sec)
 
-## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#function_json-search">JSON_検索()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-search-functions-html-function-json-search-json-search-a}
+## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#function_json-search">JSON_SEARCH()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-search-functions-html-function-json-search-json-search-a}
 
 `JSON_SEARCH(json_doc, one_or_all, str)`関数は、JSON ドキュメントで文字列の 1 つまたはすべての一致を検索します。
 
 例:
 
-次の例では、 `a`配列のインデックス 2 の位置にある`cc`の最初の結果を検索できます。
+次の例では、配列`a`のインデックス 2 の位置にある`cc`の最初の結果を検索できます。
 
 ```sql
 SELECT JSON_SEARCH('{"a": ["aa", "bb", "cc"], "b": ["cc", "dd"]}','one','cc');
@@ -233,7 +233,7 @@ SELECT JSON_SEARCH('{"a": ["aa", "bb", "cc"], "b": ["cc", "dd"]}','one','cc');
     +------------------------------------------------------------------------+
     1 row in set (0.00 sec)
 
-ここで同じことを行いますが、最初の結果だけでなくすべての結果を取得するには、 `one_or_all`を`all`に設定します。
+ここで同じ操作を行いますが、最初の結果だけでなくすべての結果を取得するには、 `one_or_all`を`all`に設定します。
 
 ```sql
 SELECT JSON_SEARCH('{"a": ["aa", "bb", "cc"], "b": ["cc", "dd"]}','all','cc');
@@ -248,7 +248,7 @@ SELECT JSON_SEARCH('{"a": ["aa", "bb", "cc"], "b": ["cc", "dd"]}','all','cc');
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#operator_member-of">メンバー()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-search-functions-html-operator-member-of-member-of-a}
 
-`str MEMBER OF (json_array)`関数は渡された値`str`が`json_array`の要素であるかどうかをテストし、 `1`返します。そうでない場合は`0`返します。引数のいずれかが`NULL`の場合は`NULL`返します。
+`str MEMBER OF (json_array)`関数は、渡された値`str`が`json_array`の要素かどうかをテストし、 `1`返します。そうでない場合は`0`返します。引数のいずれかが`NULL`の場合は`NULL`返します。
 
     SELECT '🍍' MEMBER OF ('["🍍","🥥","🥭"]') AS 'Contains pineapple';
 
@@ -264,7 +264,7 @@ SELECT JSON_SEARCH('{"a": ["aa", "bb", "cc"], "b": ["cc", "dd"]}','all','cc');
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#function_json-overlaps">JSON_OVERLAPS()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-search-functions-html-function-json-overlaps-json-overlaps-a}
 
-`JSON_OVERLAPS(json_doc, json_doc)`関数は、2 つの JSON ドキュメントに重複部分があるかどうかを示します。重複している場合は`1`返します。重複していない場合は`0`返します。引数のいずれかが`NULL`の場合は`NULL`返します。
+`JSON_OVERLAPS(json_doc, json_doc)`関数は、2つのJSONドキュメントに重複部分があるかどうかを示します。重複がある場合は`1` 、重複しない場合は`0`返します。引数のいずれかが`NULL`の場合は`NULL`返します。
 
 例:
 
@@ -318,5 +318,5 @@ SELECT JSON_OVERLAPS(
 
 ## 参照 {#see-also}
 
--   [JSON 関数の概要](/functions-and-operators/json-functions.md)
--   [JSON データ型](/data-type-json.md)
+-   [JSON関数の概要](/functions-and-operators/json-functions.md)
+-   [JSONデータ型](/data-type-json.md)

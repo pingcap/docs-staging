@@ -176,12 +176,12 @@ PD設定に加えて、TSOクライアントのバッチ待機機能を有効に
 
 #### TiKV設定を調整する {#adjust-tikv-configuration}
 
-リージョンの数を減らし、システムのハートビートのオーバーヘッドを軽減するには、TiKV 構成のリージョンサイズを`96MB`から`256MB`に増やすことをお勧めします。
+リージョンの数を減らし、システムのハートビートビートのオーバーヘッドを軽減するには、 [リージョンのサイズを調整する](/best-practices/massive-regions-best-practices.md#method-6-adjust-region-size)を参照して、TiKV 構成でリージョンのサイズを適度に増やすことができます。
 
     [coprocessor]
-      region-split-size = "256MB"
+      region-split-size = "288MiB"
 
-## チューニング後 {#after-tuning}
+### チューニング後 {#after-tuning}
 
 チューニング後、次の効果が見られます。
 

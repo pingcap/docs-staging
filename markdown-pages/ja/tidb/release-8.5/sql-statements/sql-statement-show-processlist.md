@@ -3,9 +3,9 @@ title: SHOW [FULL] PROCESSLIST | TiDB SQL Statement Reference
 summary: TiDB データベースの SHOW [FULL] PROCESSLIST の使用法の概要。
 ---
 
-# [フル]プロセスリストを表示 {#show-full-processlist}
+# プロセスリストを[完全]表示 {#show-full-processlist}
 
-このステートメントは、同じ TiDBサーバーに接続されている現在のセッションを一覧表示します。1 列にはクエリ テキストが含まれますが、オプションのキーワード`FULL`が指定`Info`れていない限り切り捨てられます。
+このステートメントは、同じTiDBサーバーに接続されている現在のセッションを一覧表示します。1列`Info`にはクエリテキストが含まれますが、オプションのキーワード`FULL`が指定されていない限り、切り捨てられます。クラスター全体のプロセスリストを表示するには、 [`INFORMATION_SCHEMA.CLUSTER_PROCESSLIST`](/information-schema/information-schema-processlist.md#cluster_processlist)列目を使用してください。
 
 ## 概要 {#synopsis}
 
@@ -26,11 +26,15 @@ mysql> SHOW PROCESSLIST;
 1 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## 権限 {#permissions}
 
--   TiDB の`State`列目は説明的ではありません。クエリが並列で実行され、各ゴルーチンが常に異なる状態になるため、状態を単一の値として表すのは TiDB ではより複雑になります。
+現在のユーザーに`PROCESS`権限がない場合、 `SHOW PROCESSLIST`ユーザー自身のセッションからのリクエストのみを表示します。
+
+## MySQLの互換性 {#mysql-compatibility}
+
+-   TiDBの`State`列目は説明的ではありません。クエリは並列に実行され、各ゴルーチンは常に異なる状態を持つため、状態を単一の値として表現することはTiDBではより複雑です。
 
 ## 参照 {#see-also}
 
--   [殺す [TIDB]](/sql-statements/sql-statement-kill.md)
+-   [キル [TIDB]](/sql-statements/sql-statement-kill.md)
 -   [`INFORMATION_SCHEMA.PROCESSLIST`](/information-schema/information-schema-processlist.md)

@@ -1,6 +1,6 @@
 ---
 title: Overview Page
-summary: TiDB 概要ページには、クラスターの QPS、レイテンシー、上位の SQL ステートメント、最近の低速クエリ、インスタンスのステータス、および監視/アラート リンクが表示されます。このページには、TiDB ダッシュボードまたは左側のナビゲーション メニューからアクセスします。QPS とレイテンシーには、Prometheus 監視が必要です。Top SQLと低速クエリには、SQL ステートメントと低速クエリ ログが有効になっている必要があります。インスタンスのステータスには、合計インスタンスと異常なインスタンスが表示されます。監視リンクとアラート リンクは、Grafana ダッシュボード、AlertManager、およびクラスター診断につながります。
+summary: TiDB概要ページには、クラスターのQPS、レイテンシー、上位SQL文、最近のスロークエリ、インスタンスステータス、監視/アラートリンクが表示されます。TiDBダッシュボードまたは左側のナビゲーションメニューからアクセスできます。QPSとレイテンシーにはPrometheusモニタリングが必要です。Top SQLとスロークエリには、SQL文とスロークエリログが有効になっている必要があります。インスタンスステータスには、インスタンスの総数と異常なインスタンスが表示されます。監視とアラートのリンクは、Grafanaダッシュボード、AlertManager、クラスター診断にリンクしています。
 ---
 
 # 概要ページ {#overview-page}
@@ -10,7 +10,7 @@ summary: TiDB 概要ページには、クラスターの QPS、レイテンシ�
 -   クラスター全体の 1 秒あたりのクエリ数 (QPS)。
 -   クラスター全体のクエリのレイテンシー。
 -   最近の期間に最も長い実行時間を累積した SQL ステートメント。
--   最近の期間の実行時間がしきい値を超える遅いクエリ。
+-   最近の期間の実行時間がしきい値を超えた遅いクエリ。
 -   各インスタンスのノード数とステータス。
 -   メッセージを監視および警告します。
 
@@ -20,15 +20,15 @@ TiDB ダッシュボードにログインすると、デフォルトで概要ペ
 
 ![Enter overview page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-access-v650.png)
 
-## 品質保証 {#qps}
+## QPS {#qps}
 
-この領域には、過去 1 時間のクラスター全体の 1 秒あたりの成功したクエリと失敗したクエリの数が表示されます。
+この領域には、最近の 1 時間におけるクラスター全体の 1 秒あたりの成功したクエリと失敗したクエリの数が表示されます。
 
 ![QPS](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-qps.png)
 
 > **注記：**
 >
-> この機能は、Prometheus 監視コンポーネントがデプロイされているクラスターでのみ使用できます。Prometheus がデプロイされていない場合は、エラーが表示されます。
+> この機能は、Prometheus 監視コンポーネントがデプロイされているクラスターでのみ利用できます。Prometheus がデプロイされていない場合はエラーが表示されます。
 
 ## レイテンシー {#latency}
 
@@ -38,15 +38,15 @@ TiDB ダッシュボードにログインすると、デフォルトで概要ペ
 
 > **注記：**
 >
-> この機能は、Prometheus 監視コンポーネントがデプロイされているクラスターでのみ使用できます。Prometheus がデプロイされていない場合は、エラーが表示されます。
+> この機能は、Prometheus 監視コンポーネントがデプロイされているクラスターでのみ利用できます。Prometheus がデプロイされていない場合はエラーが表示されます。
 
 ## Top SQL文 {#top-sql-statements}
 
-この領域には、最近の期間にクラスター全体で最も長い実行時間を蓄積した 10 種類の SQL ステートメントが表示されます。クエリ パラメータは異なるが同じ構造の SQL ステートメントは、同じ SQL タイプに分類され、同じ行に表示されます。
+この領域には、最近の期間にクラスター全体で最も実行時間が長かった10種類のSQL文が表示されます。クエリパラメータは異なるが構造が同じSQL文は、同じSQLタイプに分類され、同じ行に表示されます。
 
 ![Top SQL](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-top-statements.png)
 
-この領域に表示される情報は、より詳細な[SQL ステートメント ページ](/dashboard/dashboard-statement-list.md)と一致しています。 **[Top SQLステートメント]**見出しをクリックすると、完全なリストを表示できます。この表の列の詳細については、 [SQL ステートメント ページ](/dashboard/dashboard-statement-list.md)参照してください。
+この領域に表示される情報は、より詳細な[SQL文ページ](/dashboard/dashboard-statement-list.md)と一致しています。 **「Top SQL文」**の見出しをクリックすると、完全なリストが表示されます。この表の列の詳細については、 [SQL文ページ](/dashboard/dashboard-statement-list.md)参照してください。
 
 > **注記：**
 >
@@ -54,21 +54,21 @@ TiDB ダッシュボードにログインすると、デフォルトで概要ペ
 
 ## 最近の遅いクエリ {#recent-slow-queries}
 
-デフォルトでは、この領域には、過去 30 分間のクラスター全体の最新の 10 件の遅いクエリが表示されます。
+デフォルトでは、この領域には、過去 30 分間のクラスター全体の最新の 10 件の低速クエリが表示されます。
 
 ![Recent slow queries](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-slow-query.png)
 
-デフォルトでは、300 ミリ秒を超えて実行される SQL クエリは遅いクエリとしてカウントされ、テーブルに表示されます。このしきい値は、 [tidb_slow_log_threshold](/system-variables.md#tidb_slow_log_threshold)変数または[インスタンス.tidb_slow_log_threshold](/tidb-configuration-file.md#tidb_slow_log_threshold) TiDB パラメータを変更することで変更できます。
+デフォルトでは、実行時間が300ミリ秒を超えるSQLクエリはスロークエリとしてカウントされ、テーブルに表示されます。このしきい値は、 [tidb_slow_log_threshold](/system-variables.md#tidb_slow_log_threshold)変数または[インスタンス.tidb_slow_log_threshold](/tidb-configuration-file.md#tidb_slow_log_threshold) TiDBパラメータを変更することで変更できます。
 
-この領域に表示される内容は、より詳細な[遅いクエリページ](/dashboard/dashboard-slow-query.md)と一致しています。「**最近の低速クエリ」**のタイトルをクリックすると、完全なリストを表示できます。この表の列の詳細については、この[遅いクエリページ](/dashboard/dashboard-slow-query.md)参照してください。
+この領域に表示される内容は、より詳細な[遅いクエリページ](/dashboard/dashboard-slow-query.md)内容と一致しています。 **「最近のスロークエリ」**というタイトルをクリックすると、完全なリストが表示されます。この表の列の詳細については、 [遅いクエリページ](/dashboard/dashboard-slow-query.md)をご覧ください。
 
 > **注記：**
 >
-> この機能は、スロー クエリ ログが有効になっているクラスターでのみ使用できます。デフォルトでは、スロー クエリ ログはTiUP を使用してデプロイされたクラスターで有効になっています。
+> この機能は、スロークエリログが有効になっているクラスターでのみ利用できます。TiUPを使用してデプロイされたクラスターでは、スロークエリログはデフォルトで有効になっています。
 
 ## インスタンス {#instances}
 
-この領域には、クラスター全体の TiDB、TiKV、PD、およびTiFlashのインスタンスの合計数と異常なインスタンス数がまとめられています。
+この領域には、クラスター全体の TiDB、TiKV、PD、およびTiFlashのインスタンスの総数と異常なインスタンス数がまとめられます。
 
 ![Instances](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-instances.png)
 
@@ -77,7 +77,7 @@ TiDB ダッシュボードにログインすると、デフォルトで概要ペ
 -   稼働中: インスタンスは正常に実行されています (オフラインstorageインスタンスを含む)。
 -   ダウン: ネットワーク切断やプロセスクラッシュなど、インスタンスが異常な状態で動作しています。
 
-**インスタンス**タイトルをクリックすると、各インスタンスの詳細な実行ステータスを示す[クラスタ情報ページ](/dashboard/dashboard-cluster-info.md)表示されます。
+**インスタンスの**タイトルをクリックすると、各インスタンスの詳細な実行ステータスを示す[クラスタ情報ページ](/dashboard/dashboard-cluster-info.md)が表示されます。
 
 ## 監視と警告 {#monitor-and-alert}
 
@@ -85,10 +85,10 @@ TiDB ダッシュボードにログインすると、デフォルトで概要ペ
 
 ![Monitor and alert](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-monitor.png)
 
--   **メトリックのビュー**: このリンクをクリックすると、クラスターの詳細な監視情報を表示できる Grafana ダッシュボードに移動します。Grafana ダッシュボードの各監視メトリックの詳細については、 [監視メトリクス](/grafana-overview-dashboard.md)参照してください。
--   **アラートのビュー**: このリンクをクリックすると、クラスターの詳細なアラート情報を表示できる AlertManager ページに移動します。クラスターにアラートが存在する場合、アラートの数がリンク テキストに直接表示されます。
+-   **メトリクスのビュー**：このリンクをクリックすると、Grafanaダッシュボードに移動し、クラスターの詳細な監視情報を確認できます。Grafanaダッシュボードの各監視メトリクスの詳細については、 [監視メトリック](/grafana-overview-dashboard.md)参照してください。
+-   **アラートのビュー**：このリンクをクリックすると、AlertManagerページに移動し、クラスターの詳細なアラート情報を確認できます。クラスターにアラートが存在する場合、アラートの数がリンクテキストに直接表示されます。
 -   **診断の実行**: このリンクをクリックすると、より詳細な[クラスター診断ページ](/dashboard/dashboard-diagnostics-access.md)にジャンプします。
 
 > **注記：**
 >
-> 「**メトリックのビュー」**リンクは、Grafana ノードがデプロイされているクラスターでのみ使用できます。「**アラートのビュー」**リンクは、AlertManager ノードがデプロイされているクラスターでのみ使用できます。
+> **「メトリックのビュー**」リンクは、Grafanaノードがデプロイされているクラスターでのみ使用できます。 **「アラートのビュー」**リンクは、AlertManagerノードがデプロイされているクラスターでのみ使用できます。

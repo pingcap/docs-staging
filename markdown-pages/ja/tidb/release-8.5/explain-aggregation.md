@@ -5,7 +5,7 @@ summary: TiDB の EXPLAIN` ステートメントによって返される実行�
 
 # 集計を使用してステートメントを説明する {#explain-statements-using-aggregation}
 
-データを集計する場合、SQL オプティマイザーはハッシュ集計またはストリーム集計演算子のいずれかを選択します。クエリの効率を向上させるために、集計はコプロセッサと TiDB レイヤーの両方で実行されます。次の例を検討してください。
+データを集計する際、SQLオプティマイザはハッシュ集計またはストリーム集計のいずれかの演算子を選択します。クエリ効率を向上させるため、集計はコプロセッサ層とTiDB層の両方で実行されます。次の例を考えてみましょう。
 
 ```sql
 CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY auto_increment, pad1 BLOB, pad2 BLOB, pad3 BLOB);
@@ -47,7 +47,7 @@ SHOW TABLE t1 REGIONS;
 4 rows in set (0.00 sec)
 ```
 
-`EXPLAIN`次の集計ステートメントで使用すると、最初に TiKV 内の各リージョンで`└─StreamAgg_8`実行されることがわかります。次に、各 TiKVリージョンは1 行を TiDB に送り返し、TiDB は各リージョンからのデータを`StreamAgg_16`に集計します。
+以下の集計文で`EXPLAIN`使用すると、まず TiKV 内の各リージョンで`└─StreamAgg_8`実行されていることがわかります。その後、各 TiKVリージョンは 1 行を TiDB に送り返し、TiDB は各リージョンのデータを`StreamAgg_16`に集計します。
 
 ```sql
 EXPLAIN SELECT COUNT(*) FROM t1;
@@ -65,7 +65,7 @@ EXPLAIN SELECT COUNT(*) FROM t1;
 4 rows in set (0.00 sec)
 ```
 
-これは`EXPLAIN ANALYZE`で最も簡単に確認できます。ここでは、 `TableFullScan`が使用されており、セカンダリ インデックスがないため、 `actRows`が`SHOW TABLE REGIONS`のリージョン数と一致しています。
+これは`EXPLAIN ANALYZE`で最も簡単に確認できます。1 では、 `TableFullScan`使用されており、セカンダリ インデックスがないため、 `actRows` `SHOW TABLE REGIONS`のリージョンの数と一致しています。
 
 ```sql
 EXPLAIN ANALYZE SELECT COUNT(*) FROM t1;
@@ -85,7 +85,7 @@ EXPLAIN ANALYZE SELECT COUNT(*) FROM t1;
 
 ## ハッシュ集計 {#hash-aggregation}
 
-ハッシュ集計アルゴリズムは、集約の実行中にハッシュ テーブルを使用して中間結果を保存します。複数のスレッドを使用して並列に実行されますが、ストリーム集計よりも多くのメモリを消費します。
+ハッシュ集計アルゴリズムは、集約実行中にハッシュテーブルを使用して中間結果を保存します。複数のスレッドを使用して並列実行されますが、ストリーム集計よりも多くのメモリを消費します。
 
 以下は`HashAgg`演算子の例です。
 
@@ -105,11 +105,11 @@ EXPLAIN SELECT /*+ HASH_AGG() */ count(*) FROM t1;
 4 rows in set (0.00 sec)
 ```
 
-`operator info`は、データを集約するために使用されるハッシュ関数が`funcs:count(1)->Column#6`あることを示します。
+`operator info` 、データを集約するために使用されるハッシュ関数が`funcs:count(1)->Column#6`あることを示しています。
 
 ## ストリーム集計 {#stream-aggregation}
 
-ストリーム集計アルゴリズムは通常、ハッシュ集計よりもメモリ消費量が少なくなります。ただし、この演算子では、データが到着すると*ストリームし*て集約を適用できるように、データが順序どおりに送信されることが必要です。
+ストリーム集計アルゴリズムは通常、ハッシュ集計よりもメモリ消費量が少なくなります。ただし、この演算子では、データが到着した時点でストリーム*処理を*行い、集約を適用できるように、データが順序通りに送信される必要があります。
 
 次の例を考えてみましょう。
 
@@ -137,7 +137,7 @@ Records: 5  Duplicates: 0  Warnings: 0
 5 rows in set (0.00 sec)
 ```
 
-この例では、 `col1`にインデックスを追加することで`└─Sort_13`演算子を削除できます。インデックスが追加されると、データが順番に読み取られ、 `└─Sort_13`演算子が削除されます。
+この例では、 `col1`にインデックスを追加することで`└─Sort_13`演算子を省略できます。インデックスを追加すると、データは順番に読み込まれるため、 `└─Sort_13`演算子は省略されます。
 
 ```sql
 ALTER TABLE t2 ADD INDEX (col1);
@@ -159,11 +159,11 @@ Query OK, 0 rows affected (0.28 sec)
 5 rows in set (0.00 sec)
 ```
 
-## ROLLUP による多次元データ集約 {#multidimensional-data-aggregation-with-rollup}
+## ROLLUPによる多次元データ集計 {#multidimensional-data-aggregation-with-rollup}
 
 v7.4.0 以降、TiDB の`GROUP BY`句は`WITH ROLLUP`修飾子をサポートします。
 
-`GROUP BY`句では、1 つ以上の列をグループ リストとして指定し、リストの後に`WITH ROLLUP`修飾子を追加できます。すると、TiDB はグループ リスト内の列に基づいて多次元降順グループ化を実行し、出力で各グループの要約結果を提供します。
+`GROUP BY`節では、1 つ以上の列をグループリストとして指定し、リストの後に`WITH ROLLUP`修飾子を付加できます。すると、TiDB はグループリスト内の列に基づいて多次元降順グループ化を実行し、各グループの要約結果を出力します。
 
 > **注記：**
 >
@@ -188,6 +188,6 @@ explain SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 10 rows in set (0.05 sec)
 ```
 
-前のステートメントの`GROUP BY year, month WITH ROLLUP`構文に従って、このステートメントの SQL 集計結果は、それぞれ`{year, month}` 、 `{year}` 、 `{}`の 3 つのグループに計算され、連結されます。
+前のステートメントの`GROUP BY year, month WITH ROLLUP`構文に従って、このステートメントの SQL 集計結果は、それぞれ`{year, month}` 、 `{year}` 、 `{}` 3 つのグループに計算され、連結されます。
 
-詳細については[GROUP BY 修飾子](/functions-and-operators/group-by-modifier.md)参照してください。
+詳細については[GROUP BY修飾子](/functions-and-operators/group-by-modifier.md)参照してください。

@@ -7,7 +7,7 @@ summary: TiProxy の主な機能、インストール、および使用方法を
 
 TiProxyはPingCAPの公式プロキシコンポーネントです。クライアントとTiDBサーバーの間に配置され、負荷分散、接続の持続性、サービス検出、その他のTiDB機能を提供します。
 
-TiProxy はオプションのコンポーネントです。サードパーティのプロキシコンポーネントを使用することも、プロキシを使用せずに TiDBサーバーに直接接続することもできます。
+TiProxy はオプションのコンポーネントです。サードパーティ製のプロキシコンポーネントを使用することも、プロキシを使用せずに TiDBサーバーに直接接続することもできます。
 
 次の図は、TiProxy のアーキテクチャを示しています。
 
@@ -15,13 +15,13 @@ TiProxy はオプションのコンポーネントです。サードパーティ
 
 ## 主な特徴 {#main-features}
 
-TiProxy は、接続の移行、サービスの検出、および迅速な展開を提供します。
+TiProxy は、接続の移行、フェイルオーバー、サービスの検出、および迅速な展開を提供します。
 
 ### 接続の移行 {#connection-migration}
 
 TiProxy は、クライアント接続を切断することなく、ある TiDBサーバーから別の TiDB サーバーに接続を移行できます。
 
-下図に示すように、クライアントはTiProxyを介してTiDB 1に接続します。接続の移行後、クライアントは実際にはTiDB 2に接続します。TiDB 1がオフラインになりそうになった場合、またはTiDB 1とTiDB 2の接続比率が設定されたしきい値を超えた場合、接続の移行がトリガーされます。クライアントは接続の移行を認識しません。
+下図に示すように、クライアントは当初TiProxyを介してTiDB 1に接続します。接続の移行後、クライアントは実際にはTiDB 2に接続します。TiDB 1がオフラインになりそうになった場合、またはTiDB 1とTiDB 2の接続比率が設定されたしきい値を超えた場合、接続の移行がトリガーされます。クライアントは接続の移行を認識しません。
 
 <img src="https://docs-download.pingcap.com/media/images/docs/tiproxy/tiproxy-session-migration.png" alt="TiProxy接続の移行" width="400" />
 
@@ -30,95 +30,167 @@ TiProxy は、クライアント接続を切断することなく、ある TiDB�
 -   TiDBサーバーがスケールイン、ローリング アップグレード、またはローリング リスタートを実行する場合、TiProxy はオフラインになる予定の TiDBサーバーから他の TiDB サーバーへの接続を移行して、クライアント接続を維持できます。
 -   TiDBサーバーがスケールアウトを実行すると、TiProxy は既存の接続を新しい TiDBサーバーに移行し、クライアント接続プールをリセットせずにリアルタイムの負荷分散を実現できます。
 
+### フェイルオーバー {#failover}
+
+TiDBサーバーがメモリ不足 (OOM) になる危険がある場合、または PD または TiKV に接続できない場合、TiProxy は問題を自動的に検出し、接続を別の TiDBサーバーに移行して、継続的なクライアント接続を確保します。
+
 ### サービス検出 {#service-discovery}
 
 TiDBサーバーがスケールインまたはスケールアウトを実行する際、共通のロードバランサーを使用している場合は、TiDBサーバーリストを手動で更新する必要があります。しかし、TiProxyは手動操作なしでTiDBサーバーリストを自動的に検出します。
 
 ### 迅速な展開 {#quick-deployment}
 
-TiProxy は[TiUP](https://github.com/pingcap/tiup) 、 [TiDB Operator](https://github.com/pingcap/tidb-operator) 、 [TiDBダッシュボード](/dashboard/dashboard-intro.md) 、 [グラファナ](/tiproxy/tiproxy-grafana.md)に統合されており、導入、運用、管理のコストが削減されます。
+TiProxy は[TiUP](https://github.com/pingcap/tiup) 、 [TiDB Operator](https://github.com/pingcap/tidb-operator) 、 [TiDBダッシュボード](/dashboard/dashboard-intro.md) 、および[グラファナ](/tiproxy/tiproxy-grafana.md)に統合されており、組み込みの仮想 IP 管理をサポートしているため、導入、運用、および管理のコストが削減されます。
 
 ## ユーザーシナリオ {#user-scenarios}
 
 TiProxy は次のシナリオに適しています。
 
--   接続の永続性：TiDBサーバーがスケールイン、ローリングアップグレード、またはローリングリスタートを実行すると、クライアント接続が切断され、エラーが発生します。クライアントに冪等なエラーリトライメカニズムがない場合、手動でエラーを確認して修正する必要があり、人件費が大幅に増加します。TiProxyはクライアント接続を維持できるため、クライアントはエラーを報告しません。
--   頻繁なスケールインとスケールアウト：アプリケーションのワークロードは定期的に変化する可能性があります。コスト削減のため、TiDBをクラウドに導入し、ワークロードに応じてTiDBサーバーを自動的にスケールインおよびスケールアウトすることができます。ただし、スケールインはクライアントの接続を切断する可能性があり、スケールアウトは負荷の不均衡を引き起こす可能性があります。TiProxyはクライアント接続を維持し、負荷分散を実現します。
+-   接続の持続性：TiDBサーバーがスケールイン、ローリングアップグレード、またはローリングリスタートを実行すると、クライアント接続が切断され、エラーが発生します。クライアントに冪等なエラーリトライメカニズムがない場合、手動でエラーを確認して修正する必要があり、人件費が大幅に増加します。TiProxyはクライアント接続を維持できるため、クライアントはエラーを報告しません。
+-   頻繁なスケールインとスケールアウト：アプリケーションのワークロードは定期的に変化する可能性があります。コスト削減のため、TiDBをクラウドにデプロイし、ワークロードに応じてTiDBサーバーを自動的にスケールインおよびスケールアウトすることができます。ただし、スケールインはクライアントの接続を切断する可能性があり、スケールアウトは負荷の不均衡を引き起こす可能性があります。TiProxyはクライアント接続を維持し、負荷分散を実現します。
+-   CPU負荷の不均衡：バックグラウンドタスクが大量のCPUリソースを消費したり、接続間のワークロードが大きく変動してCPU負荷の不均衡が生じたりした場合、TiProxyはCPU使用率に基づいて接続を移行することで負荷分散を実現します。詳細については、 [CPUベースの負荷分散](/tiproxy/tiproxy-load-balance.md#cpu-based-load-balancing)参照してください。
+-   TiDBサーバーのメモリ不足：クエリの暴走によってTiDBサーバーのメモリが不足した場合、TiProxyはOOMリスクを事前に検出し、他の正常な接続を別のTiDBサーバーに移行することで、クライアントの継続的な接続を確保します。詳細については、 [メモリベースの負荷分散](/tiproxy/tiproxy-load-balance.md#memory-based-load-balancing)参照してください。
 
 TiProxy は次のシナリオには適していません。
 
--   パフォーマンスの影響を受けやすい：TiProxyのパフォーマンスはHAProxyや他のロードバランサに比べて低いため、TiProxyを使用する場合は、同等のパフォーマンスレベルを維持するためにより多くのCPUリソースを予約する必要があります。詳細については、 [TiProxy パフォーマンステストレポート](/tiproxy/tiproxy-performance-test.md)を参照してください。
--   コストに敏感：TiDB クラスターがハードウェアロードバランサー、仮想 IP、または Kubernetes が提供するロードバランサーを使用している場合、TiProxy を追加するとコストが増加します。さらに、クラウド上の複数のアベイラビリティゾーンに TiDB クラスターを展開する場合、TiProxy を追加するとアベイラビリティゾーン間のトラフィックコストも増加します。
--   TiDBサーバーのフェイルオーバー：TiProxyは、TiDBサーバーがオフラインの場合、または計画通りに再起動された場合にのみクライアント接続を維持できます。TiDBサーバーが予期せずオフラインになった場合、接続は依然として切断されます。
+-   パフォーマンスの影響を受けやすい：TiProxyのパフォーマンスはHAProxyや他のロードバランサよりも低いため、TiProxyを使用する場合は、同等のパフォーマンスレベルを維持するためにより多くのCPUリソースを予約する必要があります。詳細については、 [TiProxy パフォーマンステストレポート](/tiproxy/tiproxy-performance-test.md)を参照してください。
+-   コストの影響を受けやすい：TiDB クラスターがハードウェアロードバランサー、仮想 IP、または Kubernetes が提供するロードバランサーを使用している場合、TiProxy を追加するとコストが増加します。さらに、クラウド上の複数のアベイラビリティゾーンに TiDB クラスターを展開する場合、TiProxy を追加するとアベイラビリティゾーン間のトラフィックコストも増加します。
+-   予期せぬTiDBサーバーのダウンタイムに対するフェイルオーバー：TiProxyは、TiDBサーバーがオフラインの場合、または計画通りに再起動された場合にのみクライアント接続を維持できます。TiDBサーバーが予期せずオフラインになった場合、接続は依然として切断されます。
 
 TiProxy が適しているシナリオでは TiProxy を使用し、アプリケーションがパフォーマンスに敏感な場合は HAProxy またはその他のプロキシを使用することをお勧めします。
 
 ## インストールと使用方法 {#installation-and-usage}
 
-このセクションでは、 TiUPを使用して TiProxy をデプロイおよび変更する方法について説明します。Kubernetes でTiDB Operatorを使用して TiProxy をデプロイする方法については、 [TiDB Operatorのドキュメント](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-tiproxy)参照してください。
+このセクションでは、 TiUPを使用して TiProxy をデプロイおよび変更する方法について説明します。TiProxy をスケールアウトすることで、 [TiProxyで新しいクラスターを作成する](#create-a-cluster-with-tiproxy)または[既存のクラスターで TiProxy を有効にする](#enable-tiproxy-for-an-existing-cluster)いずれかを実行できます。
 
-### TiProxyをデプロイ {#deploy-tiproxy}
+> **注記：**
+>
+> TiUPが v1.16.1 以降であることを確認してください。
 
-1.  TiUP v1.15.0 より前のバージョンでは、自己署名証明書を手動で生成する必要があります。
+その他の展開方法については、次のドキュメントを参照してください。
 
-    TiDBインスタンス用の自己署名証明書を生成し、すべてのTiDBインスタンスに同じ証明書を配置して、すべてのTiDBインスタンスが同じ証明書を持つようにします。詳細な手順については、 [自己署名証明書を生成する](/generate-self-signed-certificates.md)参照してください。
+-   TiDB Operatorを使用して TiProxy をデプロイするには、 [TiDB Operator](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-tiproxy)ドキュメントを参照してください。
+-   TiUPを使用して TiProxy をローカルに素早く展開するには、 [TiProxyをデプロイ](/tiup/tiup-playground.md#deploy-tiproxy)参照してください。
 
-2.  TiDB インスタンスを構成します。
+### TiProxyでクラスターを作成する {#create-a-cluster-with-tiproxy}
 
-    TiProxy を使用する場合は、TiDB インスタンスに対して次の項目も設定する必要があります。
+次の手順では、新しいクラスターを作成するときに TiProxy をデプロイする方法について説明します。
 
-    -   TiUP v1.15.0より前のバージョンでは、TiDBインスタンスの[`security.session-token-signing-cert`](/tidb-configuration-file.md#session-token-signing-cert-new-in-v640)と[`security.session-token-signing-key`](/tidb-configuration-file.md#session-token-signing-key-new-in-v640)証明書のパスに設定してください。そうしないと、接続を移行できません。
-    -   TiDBインスタンスの[`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50) 、アプリケーションの最長トランザクション継続時間よりも大きな値に設定してください。そうしないと、TiDBサーバーがオフラインになったときにクライアントが切断される可能性があります。トランザクション継続時間は[TiDB 監視ダッシュボードのトランザクションメトリック](/grafana-tidb-dashboard.md#transaction)で確認できます。詳細は[TiProxyの使用制限](#limitations)ご覧ください。
+1.  TiDB インスタンスを構成します。
+
+    TiProxyを使用する場合、TiDBに[`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50)設定する必要があります。この値は、アプリケーションの最長トランザクションの所要時間より少なくとも10秒長く設定する必要があります。これにより、TiDBサーバーがオフラインになった場合にクライアント接続が中断されるのを回避できます。トランザクションの所要時間は[TiDB モニタリング ダッシュボードのトランザクションメトリック](/grafana-tidb-dashboard.md#transaction)で確認できます。詳細については、 [制限事項](#limitations)参照してください。
 
     設定例は次のとおりです。
 
     ```yaml
     server_configs:
       tidb:
-        security.session-token-signing-cert: "/var/sess/cert.pem"
-        security.session-token-signing-key: "/var/sess/key.pem"
-        security.ssl-ca: "/var/ssl/ca.pem"
-        security.ssl-cert: "/var/ssl/cert.pem"
-        security.ssl-key: "/var/ssl/key.pem"
-        graceful-wait-before-shutdown: 15
+        graceful-wait-before-shutdown: 30
     ```
 
-3.  TiProxy インスタンスを構成します。
+2.  TiProxy インスタンスを構成します。
 
-    TiProxy の高可用性を確保するには、少なくとも 2 つの TiProxy インスタンスを導入することをお勧めします。ハードウェアロードバランサーを使用して各 TiProxy インスタンスにトラフィックを分散するか、仮想 IP を設定して利用可能な TiProxy インスタンスにトラフィックをルーティングすることもできます。
+    TiProxy の高可用性を確保するには、少なくとも 2 つの TiProxy インスタンスを展開し、 [`ha.virtual-ip`](/tiproxy/tiproxy-configuration.md#virtual-ip)と[`ha.interface`](/tiproxy/tiproxy-configuration.md#interface)設定して仮想 IP を構成し、使用可能な TiProxy インスタンスにトラフィックをルーティングすることをお勧めします。
 
-    TiProxy インスタンスのモデルと数を選択するときは、次の要素を考慮してください。
+    次の点に注意してください。
 
-    -   ワークロードの種類と最大 QPS については、 [TiProxy パフォーマンステストレポート](/tiproxy/tiproxy-performance-test.md)参照してください。
-    -   TiProxyインスタンス数はTiDBサーバ数よりも少ないため、TiProxyのネットワーク帯域がボトルネックになりやすいです。そのため、ネットワーク帯域も考慮する必要があります。例えばAWSでは、EC2の同系列のベースラインネットワーク帯域はCPUコア数に比例しません。詳細は[ネットワークパフォーマンス](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/compute-optimized-instances.html#compute-network-performance)参照してください。このような場合、ネットワーク帯域がボトルネックになる場合は、TiProxyインスタンスをより多くの小さなインスタンスに分割することでQPSを向上させることができます。
+    -   ワークロードの種類と最大QPSに基づいて、TiProxyインスタンスのモデルと数を選択してください。詳細については、 [TiProxy パフォーマンステストレポート](/tiproxy/tiproxy-performance-test.md)参照してください。
+    -   通常、TiProxyインスタンス数はTiDBサーバーインスタンス数よりも少ないため、TiProxyのネットワーク帯域幅がボトルネックになりやすくなります。例えばAWSでは、同シリーズのEC2インスタンスのベースラインネットワーク帯域幅はCPUコア数に比例しません。ネットワーク帯域幅がボトルネックになる場合は、TiProxyインスタンスをより多くの小さなインスタンスに分割することでQPSを向上させることができます。詳細は[ネットワーク仕様](https://docs.aws.amazon.com/ec2/latest/instancetypes/co.html#co_network)参照してください。
+    -   トポロジ設定ファイルでTiProxyのバージョンを指定することをお勧めします。これにより、TiDBクラスタをアップグレードするために[`tiup cluster upgrade`](/tiup/tiup-component-cluster-upgrade.md)実行した際にTiProxyが自動的にアップグレードされることがなくなり、TiProxyのアップグレードによってクライアント接続が切断されることを防ぐことができます。
 
-    TiDBクラスタを[`tiup cluster upgrade`](/tiup/tiup-component-cluster-upgrade.md)にアップグレードする際にTiProxyがアップグレードされないように、トポロジ構成でTiProxyのバージョン番号を指定することをお勧めします。そうしないと、TiProxyのアップグレード中にクライアント接続が切断される可能性があります。
+    TiProxy のテンプレートの詳細については、 [TiProxyトポロジのシンプルなテンプレート](https://github.com/pingcap/docs/blob/master/config-templates/simple-tiproxy.yaml)参照してください。
 
-    TiProxy 構成項目を構成するには、 [TiProxy の設定](/tiproxy/tiproxy-configuration.md)参照してください。
+    TiDB クラスタ トポロジ ファイル内の構成項目の詳細については、 [TiUPを使用した TiDB デプロイメントのトポロジコンフィグレーションファイル](/tiup/tiup-cluster-topology-reference.md)参照してください。
 
     設定例は次のとおりです。
 
     ```yaml
     component_versions:
-      tiproxy: "v1.0.0"
+      tiproxy: "v1.3.2"
     server_configs:
       tiproxy:
-        security.server-tls.ca: "/var/ssl/ca.pem"
-        security.server-tls.cert: "/var/ssl/cert.pem"
-        security.server-tls.key: "/var/ssl/key.pem"
+        ha.virtual-ip: "10.0.1.10/24"
+        ha.interface: "eth0"
+    tiproxy_servers:
+      - host: 10.0.1.11
+        port: 6000
+        status_port: 3080
+      - host: 10.0.1.12
+        port: 6000
+        status_port: 3080
     ```
 
-4.  クラスターを起動します。
+3.  クラスターを起動します。
 
     TiUPを使用してクラスターを起動するには、 [TiUPドキュメント](/tiup/tiup-documentation-guide.md)参照してください。
 
+4.  TiProxy に接続します。
+
+    クラスタがデプロイされると、TiDBサーバーポートとTiProxyポートが同時に公開されます。クライアントはTiDBサーバーに直接接続するのではなく、TiProxyポートに接続する必要があります。
+
+### 既存のクラスターで TiProxy を有効にする {#enable-tiproxy-for-an-existing-cluster}
+
+TiProxy がデプロイされていないクラスターの場合は、TiProxy インスタンスをスケールアウトすることで TiProxy を有効にすることができます。
+
+1.  TiProxy インスタンスを構成します。
+
+    `tiproxy.toml`ような別のトポロジ ファイルで TiProxy を構成します。
+
+    ```yaml
+    component_versions:
+      tiproxy: "v1.3.2"
+    server_configs:
+      tiproxy:
+        ha.virtual-ip: "10.0.1.10/24"
+        ha.interface: "eth0"
+    tiproxy_servers:
+      - host: 10.0.1.11
+        deploy_dir: "/tiproxy-deploy"
+        port: 6000
+        status_port: 3080
+      - host: 10.0.1.12
+        deploy_dir: "/tiproxy-deploy"
+        port: 6000
+        status_port: 3080
+    ```
+
+2.  TiProxy をスケールアウトします。
+
+    [`tiup cluster scale-out`](/tiup/tiup-component-cluster-scale-out.md)コマンドを使用して TiProxy インスタンスをスケールアウトします。例:
+
+    ```shell
+    tiup cluster scale-out <cluster-name> tiproxy.toml
+    ```
+
+    TiProxyをスケールアウトすると、 TiUPはTiDB用の自己署名証明書[`security.session-token-signing-cert`](/tidb-configuration-file.md#session-token-signing-cert-new-in-v640)と[`security.session-token-signing-key`](/tidb-configuration-file.md#session-token-signing-key-new-in-v640)自動的に構成します。この証明書は接続の移行に使用されます。
+
+3.  TiDB 構成を変更します。
+
+    TiProxyを使用する場合、TiDBに[`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50)設定する必要があります。TiDBサーバーがオフラインになった際にクライアント接続が中断されるのを防ぐため、この値はアプリケーションの最長トランザクションの所要時間より少なくとも10秒長く設定する必要があります。トランザクションの所要時間は[TiDB モニタリング ダッシュボードのトランザクションメトリック](/grafana-tidb-dashboard.md#transaction)で確認できます。詳細については、 [制限事項](#limitations)参照してください。
+
+    設定例は次のとおりです。
+
+    ```yaml
+    server_configs:
+      tidb:
+        graceful-wait-before-shutdown: 30
+    ```
+
+4.  TiDB 構成を再読み込みします。
+
+    TiDBは自己署名証明書と`graceful-wait-before-shutdown`設定されているため、設定を有効にするには[`tiup cluster reload`](/tiup/tiup-component-cluster-reload.md)コマンドを使用して設定を再読み込みする必要があります。設定を再読み込みすると、TiDBはローリング再起動を実行し、クライアント接続が切断されることに注意してください。
+
+    ```shell
+    tiup cluster reload <cluster-name> -R tidb
+    ```
+
 5.  TiProxy に接続します。
 
-    クラスタがデプロイされると、クラスタはTiDBサーバーとTiProxyのポートを同時に公開します。クライアントはTiDBサーバーのポートではなく、TiProxyのポートに接続する必要があります。
+    TiProxy を有効にすると、クライアントは TiDBサーバーポートではなく TiProxy ポートに接続する必要があります。
 
 ### TiProxy構成の変更 {#modify-tiproxy-configuration}
 
-TiProxy がクライアント接続を維持するには、必要な場合を除き TiProxy を再起動しないでください。そのため、TiProxy の設定項目のほとんどはオンラインで変更できます。オンライン変更をサポートする設定項目のリストについては、 [TiProxy の設定](/tiproxy/tiproxy-configuration.md)参照してください。
+TiProxy がクライアント接続を維持するには、必要な場合を除き TiProxy を再起動しないでください。そのため、TiProxy の設定項目のほとんどはオンラインで変更できます。オンライン変更をサポートする設定項目の一覧については、 [TiProxyの設定](/tiproxy/tiproxy-configuration.md)参照してください。
 
 TiUPを使用して TiProxy の設定を変更する場合、変更する構成項目がオンライン変更をサポートしている場合は、 [`--skip-restart`](/tiup/tiup-component-cluster-reload.md#--skip-restart)オプションを使用して TiProxy の再起動を回避できます。
 
@@ -132,6 +204,10 @@ TiProxy をアップグレードする必要がある場合は、アップグレ
 tiup cluster upgrade <cluster-name> <version> --tiproxy-version <tiproxy-version>
 ```
 
+> **注記：**
+>
+> このコマンドは、クラスターのバージョンが変更されない場合でも、TiDB クラスターをアップグレードして再起動します。
+
 ### TiDBクラスタを再起動します {#restart-the-tidb-cluster}
 
 [`tiup cluster restart`](/tiup/tiup-component-cluster-restart.md)使用して TiDB クラスタを再起動すると、TiDB サーバはローリング再起動されず、クライアント接続が切断されます。したがって、このコマンドの使用は避けてください。
@@ -144,7 +220,7 @@ tiup cluster upgrade <cluster-name> <version> --tiproxy-version <tiproxy-version
 -   TiProxyのTLS接続にはTiDBと互換性のない機能があります。詳細については[Security](#security)参照してください。
 -   TiDB ダッシュボードと Grafana は、v7.6.0 から TiProxy をサポートしています。
 -   TiUP はv1.14.1 から TiProxy をサポートし、 TiDB Operator はv1.5.1 から TiProxy をサポートします。
--   TiProxy のステータス ポートによって提供されるインターフェイスは TiDBサーバーのインターフェイスと異なるため、 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)使用してデータをインポートする場合、ターゲット データベースは TiProxy のアドレスではなく、TiDBサーバーのアドレスにする必要があります。
+-   TiProxy のステータス ポートによって提供されるインターフェイスは TiDBサーバーのインターフェイスとは異なるため、 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)使用してデータをインポートする場合、ターゲット データベースは TiProxy のアドレスではなく、TiDBサーバーのアドレスにする必要があります。
 
 ## Security {#security}
 
@@ -161,7 +237,7 @@ TiProxy と TiDBサーバー間の TLS 接続は、次のルールに従って�
 
 TiProxy には、TiDB と互換性のない次の動作があります。
 
--   `STATUS`と`SHOW STATUS`ステートメントは異なる TLS 情報を返す可能性があります。5 `STATUS`ステートメントはクライアントと TiProxy 間の TLS 情報を返し、 `SHOW STATUS`ステートメントは TiProxy と TiDBサーバー間の TLS 情報を返します。
+-   `STATUS`と`SHOW STATUS`ステートメントは異なるTLS情報を返す可能性があります。5 `STATUS`ステートメントはクライアントとTiProxy間のTLS情報を返し、 `SHOW STATUS`ステートメントはTiProxyとTiDBサーバー間のTLS情報を返します。
 -   TiProxy は[証明書ベースの認証](/certificate-authentication.md)サポートしていません。そうでない場合、クライアントと TiProxy 間の TLS 証明書が TiProxy と TiDBサーバー間の TLS 証明書と異なるため、クライアントがログインに失敗する可能性があります。TiDBサーバーはTiProxy 上の TLS 証明書に基づいて TLS 証明書を検証します。
 
 ## 制限事項 {#limitations}
@@ -170,12 +246,12 @@ TiProxy には、TiDB と互換性のない次の動作があります。
 
 -   TiDB が予期せずオフラインになりました。TiProxy は、TiDBサーバーがオフラインの場合、または計画どおりに再起動された場合にのみクライアント接続を維持し、TiDBサーバーのフェイルオーバーをサポートしません。
 -   TiProxy はスケールイン、アップグレード、または再起動を実行します。TiProxy がオフラインになると、クライアント接続は切断されます。
--   TiDBは接続を積極的に切断します。例えば、セッションが`wait_timeout`以上リクエストを送信しなかった場合、TiDBは接続を積極的に切断し、TiProxyもクライアント接続を切断します。
+-   TiDBは接続を積極的に切断します。例えば、セッションが`wait_timeout`以上リクエストを送信しない場合、TiDBは接続を積極的に切断し、TiProxyもクライアント接続を切断します。
 
-TiProxy は次のシナリオでは接続を移行できないため、クライアント接続を維持したり負荷分散を実現したりすることができません。
+TiProxy は次のシナリオでは接続を移行できないため、クライアント接続が中断されたり、負荷分散が失敗したりします。
 
--   単一のステートメントまたは単一のトランザクションの継続時間が、TiDBサーバーで構成された[`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50)超えています。
--   セッションはカーソルを使用してデータを読み取りますが、カーソルが閉じられていないか、TiDBサーバーで構成された[`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50)以内にデータが読み取られません。
+-   長時間実行される単一のステートメントまたは単一のトランザクション: 実行時間が、TiDBサーバーで構成された値[`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50)から 10 秒を引いた値を超えています。
+-   カーソルを使用していて、時間内に完了しない: セッションはカーソルを使用してデータを読み取りますが、TiDBサーバーで構成された値[`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50)から 10 秒を引いた時間が経過してもデータの読み取りが完了しないか、カーソルが閉じられません。
 -   セッションは[ローカル一時テーブル](/temporary-tables.md#local-temporary-tables)を作成します。
 -   セッションは[ユーザーレベルロック](/functions-and-operators/locking-functions.md)を開催します。
 -   セッションは[テーブルロック](/sql-statements/sql-statement-lock-tables-and-unlock-tables.md)を開催します。

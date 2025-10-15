@@ -3,15 +3,15 @@ title: TiCDC Debezium Protocol
 summary: TiCDC Debezium プロトコルの概念とその使用方法を学びます。
 ---
 
-# TiCDC デベジウム プロトコル {#ticdc-debezium-protocol}
+# TiCDC デベジウムプロトコル {#ticdc-debezium-protocol}
 
-[デベジウム](https://debezium.io/) 、データベースの変更をキャプチャするためのツールです。キャプチャされた各データベースの変更を「イベント」と呼ばれるメッセージに変換し、これらのイベントを Kafka に送信します。v8.0.0 以降、TiCDC は Debezium スタイルの出力形式を使用して TiDB の変更を Kafka に送信することをサポートし、これまで Debezium の MySQL 統合を使用していたユーザーにとって MySQL データベースからの移行を簡素化します。
+TiCDC [デベジウム](https://debezium.io/) 、データベースの変更をキャプチャするためのツールです。キャプチャされたデータベースの変更はそれぞれ「イベント」と呼ばれるメッセージに変換され、Kafka に送信されます。v8.0.0以降、TiCDCはDebeziumスタイルの出力形式を使用してTiDBの変更をKafkaに送信することをサポートするため、これまでDebeziumのMySQL統合を使用していたユーザーにとって、MySQLデータベースからの移行が簡素化されます。
 
 ## Debeziumメッセージ形式を使用する {#use-the-debezium-message-format}
 
-Kafka をダウンストリーム シンクとして使用する場合は、 `sink-uri`構成で`protocol`フィールドを`debezium`に指定します。すると、TiCDC はイベントに基づいて Debezium メッセージをカプセル化し、TiDB データ変更イベントをダウンストリームに送信します。
+Kafkaをダウンストリームシンクとして使用する場合は、 `sink-uri`設定で`protocol`フィールドを`debezium`に指定します。TiCDCはイベントに基づいてDebeziumメッセージをカプセル化し、TiDBデータ変更イベントをダウンストリームに送信します。
 
-現在、Debezium プロトコルは行変更イベントのみをサポートしており、DDL イベントと WATERMARK イベントは直接無視します。行変更イベントは、行内のデータ変更を表します。行が変更されると、変更前と変更後の行に関する関連情報を含む行変更イベントが送信されます。WATERMARK イベントは、テーブルのレプリケーションの進行状況を示し、ウォーターマークより前のすべてのイベントがダウンストリームに送信されたことを示します。
+Currently, the Debezium protocol only supports Row Changed events and directly ignores DDL events and WATERMARK events. A Row changed event represents a data change in a row. When a row changes, the Row Changed event is sent, including relevant information about the row both before and after the change. A WATERMARK event marks the replication progress of a table, indicating that all events earlier than the watermark have been sent to the downstream.
 
 Debezium メッセージ形式を使用するための構成例は次のとおりです。
 
@@ -19,9 +19,9 @@ Debezium メッセージ形式を使用するための構成例は次のとお�
 cdc cli changefeed create --server=http://127.0.0.1:8300 --changefeed-id="kafka-debezium" --sink-uri="kafka://127.0.0.1:9092/topic-name?kafka-version=2.4.0&protocol=debezium"
 ```
 
-Debezium 出力形式には、下流の消費者が現在の行のデータ構造をよりよく理解できるように、現在の行のスキーマ情報が含まれています。スキーマ情報が不要なシナリオでは、changefeed 構成ファイルで`debezium-disable-schema`パラメータを`true`に設定するか、 `sink-uri`に設定して、スキーマ出力を無効にすることもできます。
+Debeziumの出力形式には、下流のコンシューマーが現在の行のデータ構造をより適切に理解できるように、現在の行のスキーマ情報が含まれています。スキーマ情報が不要なシナリオでは、changefeed設定ファイルで`debezium-disable-schema`パラメータを`true`または`sink-uri`に設定することで、スキーマ出力を無効にすることもできます。
 
-さらに、元の Debezium 形式には、TiDB の`CommitTS`の一意のトランザクション識別子などの重要なフィールドが含まれていません。データの整合性を確保するために、TiCDC は、TiDB データの変更の関連情報を識別できるように、Debezium 形式に`CommitTs`と`ClusterID` 2 つのフィールドを追加します。
+In addition, the original Debezium format does not include important fields such as the unique transaction identifier of the `CommitTS` in TiDB. To ensure data integrity, TiCDC adds two fields, `CommitTs` and `ClusterID`, to the Debezium format to identify the relevant information of TiDB data changes.
 
 ## メッセージ形式の定義 {#message-format-definition}
 
@@ -31,7 +31,7 @@ Debezium 出力形式には、下流の消費者が現在の行のデータ構�
 
 TiCDC は、キーと値の両方を Debezium 形式でエンコードして、DML イベントを Kafka メッセージにエンコードします。
 
-### キーフォーマット {#key-format}
+#### キーフォーマット {#key-format}
 
 ```json
 {
@@ -53,15 +53,15 @@ TiCDC は、キーと値の両方を Debezium 形式でエンコードして、D
 }
 ```
 
-キーのフィールドには、主キーまたは一意のインデックス列のみが含まれます。フィールドの説明は次のとおりです。
+キーのフィールドには、主キーまたは一意のインデックス列のみが含まれます。各フィールドの説明は以下のとおりです。
 
-| 分野                | タイプ | 説明                                                             |
-| :---------------- | :-- | :------------------------------------------------------------- |
-| `payload`         | 翻訳  | 主キーまたは一意のインデックス列に関する情報。各フィールドのキーと値は、それぞれ列名とその現在の値を表します。        |
-| `schema.fields`   | 翻訳  | 変更前後の行データのスキーマ情報を含む、ペイロード内の各フィールドの型情報。                         |
-| `schema.name`     | 弦   | スキーマの名前（形式`"{cluster-name}.{schema-name}.{table-name}.Key"` ）。 |
-| `schema.optional` | ブール | フィールドがオプションかどうかを示します。 `true`の場合、フィールドはオプションです。                 |
-| `schema.type`     | 弦   | フィールドのデータ型。                                                    |
+| 分野                | タイプ     | 説明                                                                                                                                                        |
+| :---------------- | :------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `payload`         | JSON    | The information about primary key or unique index columns. The key and value in each field represent the column name and its current value, respectively. |
+| `schema.fields`   | JSON    | ペイロード内の各フィールドの型情報（変更前後の行データのスキーマ情報を含む）。                                                                                                                   |
+| `schema.name`     | String  | スキーマの名前（形式は`"{cluster-name}.{schema-name}.{table-name}.Key"` 。                                                                                            |
+| `schema.optional` | Boolean | Indicates whether the field is optional. When it is `true`, the field is optional.                                                                        |
+| `schema.type`     | 弦       | フィールドのデータ型。                                                                                                                                               |
 
 #### 値の形式 {#value-format}
 
@@ -148,28 +148,28 @@ TiCDC は、キーと値の両方を Debezium 形式でエンコードして、D
 }
 ```
 
-上記の JSON データの主要なフィールドは次のように説明されます。
+The key fields of the preceding JSON data are explained as follows:
 
-| 分野                | タイプ | 説明                                                                            |
-| :---------------- | :-- | :---------------------------------------------------------------------------- |
-| ペイロード.op          | 弦   | 変更イベントのタイプ。1 `"c"` `INSERT`イベント、 `"u"` `UPDATE`イベント、 `"d"` `DELETE`イベントを示します。 |
-| ペイロード.ts_ms       | 番号  | TiCDC がこのメッセージを生成したときのタイムスタンプ (ミリ秒単位)。                                        |
-| ペイロード.before      | 翻訳  | ステートメントの変更イベント前のデータ値。 `"c"`イベントの場合、 `before`フィールドの値は`null`です。                 |
-| ペイロード後            | 翻訳  | ステートメントの変更イベント後のデータ値。 `"d"`イベントの場合、 `after`フィールドの値は`null`です。                  |
-| ペイロード.ソース.コミット_ts | 番号  | TiCDC がこのメッセージを生成するときの`CommitTs`識別子。                                          |
-| ペイロード.ソース.db      | 弦   | イベントが発生したデータベースの名前。                                                           |
-| ペイロード.ソース.テーブル    | 弦   | イベントが発生するテーブルの名前。                                                             |
-| スキーマフィールド         | 翻訳  | 変更前後の行データのスキーマ情報を含む、ペイロード内の各フィールドの型情報。                                        |
-| スキーマ名             | 弦   | スキーマの名前（形式`"{cluster-name}.{schema-name}.{table-name}.Envelope"` ）。           |
-| スキーマ。オプション        | ブール | フィールドがオプションかどうかを示します。 `true`の場合、フィールドはオプションです。                                |
-| スキーマタイプ           | 弦   | フィールドのデータ型。                                                                   |
+| 分野                   | タイプ    | 説明                                                                                                                               |
+| :------------------- | :----- | :------------------------------------------------------------------------------------------------------------------------------- |
+| ペイロード.op             | String | 変更イベントのタイプ。1 `"c"` `INSERT`イベント、 `"u"` `UPDATE`イベント、 `"d"` `DELETE`イベントを示します。                                                    |
+| ペイロード.ts_ms          | 番号     | TiCDC がこのメッセージを生成したときのタイムスタンプ (ミリ秒単位)。                                                                                           |
+| ペイロード.before         | JSON   | ステートメントの変更イベント前のデータ値。イベントが`"c"`場合、フィールド`before`の値は`null`なります。                                                                    |
+| ペイロード後               | JSON   | The data value after the change event of a statement. For `"d"` events, the value of the `after` field is `null`.                |
+| ペイロード.ソース.コミット_ts    | 番号     | TiCDC がこのメッセージを生成するときの`CommitTs`識別子。                                                                                             |
+| ペイロード.ソース.db         | 弦      | イベントが発生したデータベースの名前。                                                                                                              |
+| payload.source.table | 弦      | イベントが発生するテーブルの名前。                                                                                                                |
+| schema.fields        | JSON   | The type information of each field in the payload, including the schema information of the row data before and after the change. |
+| スキーマ名                | 弦      | スキーマの名前（形式は`"{cluster-name}.{schema-name}.{table-name}.Envelope"` 。                                                              |
+| スキーマ.オプション           | ブール値   | フィールドがオプションかどうかを示します。 `true`の場合、フィールドはオプションです。                                                                                   |
+| スキーマタイプ              | 弦      | フィールドのデータ型。                                                                                                                      |
 
-### データ型マッピング {#data-type-mapping}
+### Data type mapping {#data-type-mapping}
 
-TiCDC Debezium メッセージのデータ形式マッピングは基本的に[Debezium データ型マッピングルール](https://debezium.io/documentation/reference/2.4/connectors/mysql.html#mysql-data-types)に従います。これは、MySQL 用の Debezium Connector のネイティブ メッセージとほぼ一致しています。ただし、一部のデータ型については、TiCDC Debezium メッセージと Debezium Connector メッセージの間に次の違いがあります。
+TiCDC Debeziumメッセージのデータ形式マッピングは基本的に[Debeziumデータ型マッピングルール](https://debezium.io/documentation/reference/2.4/connectors/mysql.html#mysql-data-types)準拠しており、これはMySQL用Debeziumコネクタのネイティブメッセージと概ね一致しています。ただし、一部のデータ型については、TiCDC DebeziumメッセージとDebeziumコネクタメッセージの間に以下の違いがあります。
 
 -   現在、TiDB は、GEOMETRY、LINESTRING、POLYGON、MULTIPOINT、MULTILINESTRING、MULTIPOLYGON、GEOMETRYCOLLECTION などの空間データ型をサポートしていません。
 
--   Varchar、String、VarString、TinyBlob、MediumBlob、BLOB、LongBlob などの文字列のようなデータ型の場合、列に BINARY フラグがある場合、TiCDC はそれを Base64 でエンコードした後に String 型としてエンコードします。列に BINARY フラグがない場合、TiCDC はそれを直接 String 型としてエンコードします。ネイティブ Debezium Connector は、 `binary.handling.mode`に従ってさまざまな方法でエンコードします。
+-   Varchar、String、VarString、TinyBlob、MediumBlob、BLOB、LongBlobなどの文字列型データ型の場合、列にBINARYフラグが付いている場合、TiCDCはBase64でエンコードした後、String型としてエンコードします。列にBINARYフラグが付いていない場合は、TiCDCは直接String型としてエンコードします。ネイティブDebeziumコネクタは、 `binary.handling.mode`に従って異なる方法でエンコードします。
 
--   `DECIMAL`や`NUMERIC`などの Decimal データ型の場合、TiCDC は float64 型を使用してそれを表します。ネイティブの Debezium Connector は、データ型の異なる精度に応じて、これを float32 または float64 でエンコードします。
+-   TiCDCは、 `DECIMAL`と`NUMERIC`含むDecimalデータ型をfloat64型で表現します。ネイティブのDebeziumコネクタは、データ型の精度に応じて、float32またはfloat64でエンコードします。

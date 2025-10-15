@@ -3,13 +3,13 @@ title: TIDB_HOT_REGIONS
 summary: TIDB_HOT_REGIONS` information_schema テーブルについて学習します。
 ---
 
-# TIDB_ホットリージョン {#tidb-hot-regions}
+# TIDB_HOT_REGIONS {#tidb-hot-regions}
 
-`TIDB_HOT_REGIONS`表には、現在のホット リージョンに関する情報が示されています。過去のホット リージョンの詳細については、 `[TIDB_HOT_REGIONS_HISTORY](/information-schema/information-schema-tidb-hot-regions-history.md)`参照してください。
+`TIDB_HOT_REGIONS`表は、現在のホットリージョンに関する情報を提供します。過去のホットリージョンに関する情報については、 `[TIDB_HOT_REGIONS_HISTORY](/information-schema/information-schema-tidb-hot-regions-history.md)`ご覧ください。
 
 > **注記：**
 >
-> この表は TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
+> このテーブルは TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
 ```sql
 USE information_schema;

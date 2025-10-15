@@ -7,7 +7,7 @@ summary: ツールと適用可能なシナリオを学習します。
 
 TiDBは、TiDBの導入と保守、データ管理（データ移行、バックアップと復元、データ比較など）、TiKV上でのSpark SQLの実行を支援する豊富なツールセットを提供しています。ニーズに応じて適切なツールを選択できます。
 
-## 展開および運用ツール {#deployment-and-operation-tools}
+## 導入・運用ツール {#deployment-and-operation-tools}
 
 TiDB は、さまざまなシステム環境での導入および運用のニーズを満たすために、 TiUPとTiDB Operatorを提供します。
 
@@ -122,17 +122,6 @@ TiCDC の基本は次のとおりです。
 -   出典: TiDB クラスター
 -   対象: TiDB クラスター、MySQL、Kafka、Confluent
 -   サポートされている TiDB バージョン: v4.0.6 以降
-
-### 増分ログレプリケーション - TiDB Binlog {#incremental-log-replication-tidb-binlog}
-
-[TiDBBinlog](/tidb-binlog/tidb-binlog-overview.md) 、TiDBクラスタのbinlogを収集し、ほぼリアルタイムのデータレプリケーションとバックアップを提供するツールです。例えば、あるTiDBクラスタをプライマリTiDBクラスタのセカンダリクラスタにするなど、TiDBクラスタ間の増分データレプリケーションに使用できます。
-
-TiDB Binlogの基本は次のとおりです。
-
--   出典: TiDB クラスター
--   ターゲット: TiDB クラスター、MySQL、Kafka、または増分バックアップ ファイル
--   サポートされている TiDB バージョン: v2.1 以降
--   Kubernetes サポート: はい。詳細は[TiDBBinlogクラスタ操作](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-tidb-binlog)と[Kubernetes での TiDBBinlogDrainer構成](https://docs.pingcap.com/tidb-in-kubernetes/stable/configure-tidb-binlog-drainer)参照してください。
 
 ### 同期差分インスペクター {#sync-diff-inspector}
 

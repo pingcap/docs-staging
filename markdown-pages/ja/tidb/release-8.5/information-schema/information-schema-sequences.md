@@ -5,7 +5,7 @@ summary: SEQUENCES` INFORMATION_SCHEMA テーブルについて学習します�
 
 # シーケンス {#sequences}
 
-`SEQUENCES`テーブルはシーケンスに関する情報を提供します[シーケンス機能](/sql-statements/sql-statement-create-sequence.md) MariaDB の同様の機能に基づいてモデル化されています。
+`SEQUENCES`のテーブルはシーケンスに関する情報を提供します。3 [シーケンス機能](/sql-statements/sql-statement-create-sequence.md)テーブルは、MariaDB の同様の機能をモデルにしています。
 
 ```sql
 USE INFORMATION_SCHEMA;

@@ -7,7 +7,7 @@ summary: PD 構成ファイルについて学習します。
 
 <!-- markdownlint-disable MD001 -->
 
-PD設定ファイルは、コマンドラインパラメータよりも多くのオプションをサポートしています。デフォルトの設定ファイルは[ここ](https://github.com/pingcap/pd/blob/release-8.1/conf/config.toml)あります。
+PD設定ファイルは、コマンドラインパラメータよりも多くのオプションをサポートしています。デフォルトの設定ファイルは[ここ](https://github.com/tikv/pd/blob/release-8.5/conf/config.toml)あります。
 
 このドキュメントでは、コマンドラインパラメータに含まれないパラメータについてのみ説明します。コマンドラインパラメータについては、 [ここ](/command-line-flags-for-pd-configuration.md)参照してください。
 
@@ -36,7 +36,7 @@ PD設定ファイルは、コマンドラインパラメータよりも多くの
 
 -   クライアントがPDにアクセスするためのアドバタイズURLのリスト
 -   デフォルト値: `"${client-urls}"`
--   Docker または NAT ネットワーク環境などの状況では、クライアントが PD がリッスンするデフォルトのクライアント URL を通じて PD にアクセスできない場合は、アドバタイズ クライアント URL を手動で設定する必要があります。
+-   Docker または NAT ネットワーク環境などの状況では、クライアントが PD によってリッスンされるデフォルトのクライアント URL を通じて PD にアクセスできない場合は、アドバタイズ クライアント URL を手動で設定する必要があります。
 -   例えば、Dockerの内部IPアドレスは`172.17.0.1` 、ホストのIPアドレスは`192.168.100.113` 、ポートマッピングは`-p 2380:2380`に設定されています。この場合、 `advertise-client-urls`を`"http://192.168.100.113:2380"`に設定できます。クライアントは`"http://192.168.100.113:2380"`を通じてこのサービスを見つけられます。
 
 ### <code>peer-urls</code> {#code-peer-urls-code}
@@ -75,7 +75,7 @@ PD設定ファイルは、コマンドラインパラメータよりも多くの
 ### <code>lease</code> {#code-lease-code}
 
 -   PDLeaderキーリースのタイムアウト。タイムアウト後、システムはLeaderを再選出します。
--   デフォルト値: `3`
+-   デフォルト値: v8.5.2 以降では、デフォルト値は`5`です。v8.5.2 より前では、デフォルト値は`3`です。
 -   単位：秒
 
 ### <code>quota-backend-bytes</code> {#code-quota-backend-bytes-code}
@@ -172,7 +172,7 @@ pd-server関連のコンフィグレーション項目
 ### <code>flow-round-by-digit</code> <span class="version-mark">TiDB 5.1 の新機能</span> {#code-flow-round-by-digit-code-span-class-version-mark-new-in-tidb-5-1-span}
 
 -   デフォルト値: 3
--   PDはフロー番号の最下位桁を丸めることで、リージョンフロー情報の変更に伴う統計情報の更新を削減します。この設定項目は、リージョンフロー情報の最小桁数を指定します。例えば、フロー`100512`デフォルト値が`3`あるため、 `101000`に丸められます。この設定により、 `trace-region-flow`置き換えられます。
+-   PDはフロー番号の最下位桁を丸めることで、リージョンフロー情報の変更に伴う統計情報の更新を削減します。この設定項目は、リージョンフロー情報の最小桁数を指定します。例えば、フロー`100512`デフォルト値が`3`であるため、 `101000`に丸められます。この設定により、 `trace-region-flow`置き換えられます。
 
 > **注記：**
 >
@@ -211,8 +211,9 @@ pd-server関連のコンフィグレーション項目
 ### <code>redact-info-log</code><span class="version-mark">バージョン5.0の新機能</span> {#code-redact-info-log-code-span-class-version-mark-new-in-v5-0-span}
 
 -   PDログでログ編集を有効にするかどうかを制御します
--   構成値を`true`に設定すると、PD ログでユーザー データが編集されます。
+-   `true` `"marker"` : `false`
 -   デフォルト値: `false`
+-   使用方法の詳細については、 [PD側でのログ編集](/log-redaction.md#log-redaction-in-pd-side)参照してください。
 
 ## <code>log</code> {#code-log-code}
 
@@ -281,18 +282,27 @@ pd-server関連のコンフィグレーション項目
 ### <code>max-merge-region-size</code> {#code-max-merge-region-size-code}
 
 -   サイズ制限を`Region Merge`に制御します。リージョンサイズが指定された値より大きい場合、PD はリージョンを隣接する領域と結合しません。
--   デフォルト値: `20`
+-   デフォルト値: `54` 。v8.4.0より前のバージョンでは、デフォルト値は`20`です。v8.4.0以降では、デフォルト値は`54`です。
 -   単位: MiB
 
 ### <code>max-merge-region-keys</code> {#code-max-merge-region-keys-code}
 
 -   `Region Merge`キーの上限を指定します。リージョンキーが指定された値より大きい場合、PDはリージョンを隣接するリージョンと結合しません。
--   デフォルト値: `200000`
+-   デフォルト値: `540000` 。v8.4.0より前のバージョンでは、デフォルト値は`200000`です。v8.4.0以降では、デフォルト値は`540000`です。
 
 ### <code>patrol-region-interval</code> {#code-patrol-region-interval-code}
 
--   `replicaChecker` リージョンのヘルス状態をチェックする実行頻度を制御します。この値が小さいほど、 `replicaChecker`実行速度が速くなります。通常、このパラメータを調整する必要はありません。
+-   チェッカーがリージョンのヘルス状態を検査する実行頻度を制御します。この値が小さいほど、チェッカーの実行速度は速くなります。通常、この設定を変更する必要はありません。
 -   デフォルト値: `10ms`
+
+### <code>patrol-region-worker-count</code><span class="version-mark">バージョン8.5.0の新機能</span> {#code-patrol-region-worker-count-code-span-class-version-mark-new-in-v8-5-0-span}
+
+> **警告：**
+>
+> この設定項目を1より大きい値に設定すると、同時チェックが有効になります。これは実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される可能性があります。バグを発見した場合は、GitHubで[問題](https://github.com/tikv/pd/issues)報告してください。
+
+-   リージョンのヘルス状態を検査する際にチェッカーによって作成される同時実行数[オペレーター](/glossary.md#operator)を制御します。通常、この設定を調整する必要はありません。
+-   デフォルト値: `1`
 
 ### <code>split-merge-interval</code> {#code-split-merge-interval-code}
 
@@ -322,7 +332,7 @@ pd-server関連のコンフィグレーション項目
 
 ### <code>max-store-preparing-time</code><span class="version-mark">バージョン6.1.0の新機能</span> {#code-max-store-preparing-time-code-span-class-version-mark-new-in-v6-1-0-span}
 
--   ストアがオンラインになるまでの最大待機時間を制御します。ストアがオンライン段階にある間、PDはストアのオンライン化の進行状況を照会できます。指定された時間を超えると、PDはストアがオンラインになったとみなし、再度ストアのオンライン化の進行状況を照会できなくなります。ただし、これによってリージョンが新しいオンラインストアに移行できなくなるわけではありません。ほとんどの場合、このパラメータを調整する必要はありません。
+-   ストアがオンラインになるまでの最大待機時間を制御します。ストアがオンライン段階にある間、PDはストアのオンライン進行状況を照会できます。指定された時間を超えると、PDはストアがオンラインになったとみなし、再度ストアのオンライン進行状況を照会できなくなります。ただし、これによってリージョンが新しいオンラインストアに移行できなくなるわけではありません。ほとんどの場合、このパラメータを調整する必要はありません。
 -   デフォルト値: `48h`
 
 ### <code>leader-schedule-limit</code> {#code-leader-schedule-limit-code}
@@ -397,15 +407,11 @@ pd-server関連のコンフィグレーション項目
 
 ### <code>store-limit-version</code> <span class="version-mark">v7.1.0 の新機能</span> {#code-store-limit-version-code-span-class-version-mark-new-in-v7-1-0-span}
 
-> **警告：**
->
-> この設定項目を`"v2"`に設定するのは実験的機能です。本番環境での使用は推奨されません。
-
 -   店舗制限の計算式のバージョンを制御します
 -   デフォルト値: `v1`
 -   値のオプション:
     -   `v1` : v1 モードでは、 `store limit`手動で変更して、単一の TiKV のスケジュール速度を制限できます。
-    -   `v2` : (実験的機能) v2モードでは、PDがTiKVスナップショットの機能に基づいて動的に調整するため、 `store limit`値を手動で設定する必要はありません。詳細については、 [店舗制限の原則 v2](/configure-store-limit.md#principles-of-store-limit-v2)を参照してください。
+    -   `v2` : v2モードでは、PDがTiKVスナップショットの機能に基づいて動的に調整するため、 `store limit`値を手動で設定する必要はありません。詳細については、 [店舗制限の原則 v2](/configure-store-limit.md#principles-of-store-limit-v2)を参照してください。
 
 ### <code>enable-joint-consensus</code> <span class="version-mark">v5.0 の新機能</span> {#code-enable-joint-consensus-code-span-class-version-mark-new-in-v5-0-span}
 
@@ -459,7 +465,7 @@ pd-server関連のコンフィグレーション項目
 
 ### <code>strictly-match-label</code> {#code-strictly-match-label-code}
 
--   TiKV ラベルが PD `location-labels`と一致するかどうかを厳密にチェックできるようにします。
+-   TiKV ラベルが PD `location-labels`一致するかどうかを厳密にチェックできるようにします。
 -   デフォルト値: `false`
 
 ### <code>enable-placement-rules</code> {#code-enable-placement-rules-code}
@@ -532,7 +538,7 @@ pd-server関連のコンフィグレーション項目
 
 ## コントローラ {#controller}
 
-このセクションでは、 PD for [リソース管理](/tidb-resource-control.md)に組み込まれている構成項目について説明します。
+このセクションでは、 PD for [リソース管理](/tidb-resource-control-ru-groups.md)に組み込まれている構成項目について説明します。
 
 ### <code>degraded-mode-wait-duration</code> {#code-degraded-mode-wait-duration-code}
 
@@ -542,7 +548,7 @@ pd-server関連のコンフィグレーション項目
 
 ### <code>request-unit</code> {#code-request-unit-code}
 
-[リクエストユニット（RU）](/tidb-resource-control.md#what-is-request-unit-ru)に関する設定項目は以下のとおりです。
+[リクエストユニット（RU）](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru)に関する設定項目は以下のとおりです。
 
 #### <code>read-base-cost</code> {#code-read-base-cost-code}
 
@@ -558,7 +564,7 @@ pd-server関連のコンフィグレーション項目
 
 -   読み取りフローからRUへの変換の基礎係数
 -   デフォルト値: 1/(64 * 1024)
--   1 RU = 64 KiB の読み取りバイト
+-   1 RU = 64 KiB 読み取りバイト
 
 #### <code>write-cost-per-byte</code> {#code-write-cost-per-byte-code}
 

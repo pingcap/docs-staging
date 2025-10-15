@@ -8,7 +8,7 @@ summary: tiup cluster patch` コマンドを使用すると、実行中のクラ
 クラスターの実行中にサービスのバイナリを動的に置き換える必要がある場合（つまり、置き換えプロセス中もクラスターを利用可能な状態に保つ必要がある場合）、 `tiup cluster patch`コマンドを使用できます。コマンドの実行後、 TiUP は以下の処理を実行します。
 
 -   置換用のバイナリ パッケージをターゲット マシンにアップロードします。
--   ターゲット サービスが TiKV、 TiFlash、TiDB Binlogなどのstorageサービスの場合、 TiUP はまず API 経由で関連ノードをオフラインにします。
+-   ターゲット サービスが TiKV やTiFlashなどのstorageサービスの場合、 TiUP はまず API 経由で関連ノードをオフラインにします。
 -   対象サービスを停止します。
 -   バイナリ パッケージを解凍し、サービスを置き換えます。
 -   対象サービスを開始します。
@@ -29,8 +29,8 @@ tiup cluster patch <cluster-name> <package-path> [flags]
 1.  次の変数を決定します。
 
     -   `${component}` : 置換するコンポーネントの名前 ( `tidb` 、 `tikv` 、 `pd`など)。
-    -   `${version}` :コンポーネントのバージョン ( `v8.1.2`や`v7.5.4`など)。
-    -   `${os}` :オペレーティングシステム( `linux` )
+    -   `${version}` :コンポーネントのバージョン ( `v8.5.3`や`v7.5.4`など)。
+    -   `${os}` :オペレーティングシステム（ `linux` ）。
     -   `${arch}` :コンポーネント`arm64`実行されるプラットフォーム( `amd64` )。
 
 2.  次のコマンドを使用して、現在のコンポーネントパッケージをダウンロードします。
@@ -87,7 +87,7 @@ tiup cluster patch <cluster-name> <package-path> [flags]
 
 ### -N, --node {#n-node}
 
--   置換するノードを指定します。このオプションの値は、カンマ区切りのノードIDのリストです。ノードIDは、 `tiup cluster display`コマンドで返される[クラスターステータステーブル](/tiup/tiup-component-cluster-display.md)の最初の列から取得できます。
+-   置換するノードを指定します。このオプションの値は、カンマ区切りのノードIDのリストです。ノードIDは、 `tiup cluster display`コマンドで返される[クラスターステータステーブル](/tiup/tiup-component-cluster-display.md)の1列目から取得できます。
 -   データ型: `STRINGS`
 -   このオプションを指定しないと、 TiUP はデフォルトで置換するノードを選択しません。
 

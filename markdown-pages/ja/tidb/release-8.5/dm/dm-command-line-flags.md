@@ -11,15 +11,15 @@ summary: DM のコマンドライン フラグについて学習します。
 
 ### <code>--advertise-addr</code> {#code-advertise-addr-code}
 
--   クライアント要求を受信するために使用されるDMマスターの外部アドレス
+-   クライアントのリクエストを受信するために使用されるDMマスターの外部アドレス
 -   デフォルト値は`"{master-addr}"`です
--   オプションのフラグ`"domain-name:port"`の形式になります。
+-   オプションフラグ。1の形式をとることができます`"domain-name:port"`
 
 ### <code>--advertise-peer-urls</code> {#code-advertise-peer-urls-code}
 
 -   DMマスターノード間の通信用の外部アドレス
 -   デフォルト値は`"{peer-urls}"`です
--   オプションのフラグ`"http(s)://domain-name:port"`の形式になります。
+-   オプションフラグ。1の形式をとることができます`"http(s)://domain-name:port"`
 
 ### <code>--config</code> {#code-config-code}
 
@@ -43,7 +43,7 @@ summary: DM のコマンドライン フラグについて学習します。
 
 -   DMマスターノードがこのクラスタに参加したときの既存のクラスタの`advertise-addr`リスト
 -   デフォルト値は`""`です
--   `initial-cluster`フラグが指定されていない場合は、このフラグを指定する必要があります。新しいノードが2つのノードを持つクラスターに参加すると仮定すると、構成例は`"172.16.15.11:8261,172.16.15.12:8261"`なります。
+-   `initial-cluster`フラグが指定されていない場合は、このフラグを指定する必要があります。2ノードのクラスタに新しいノードが参加する場合、設定例は`"172.16.15.11:8261,172.16.15.12:8261"`です。
 
 ### <code>--log-file</code> {#code-log-file-code}
 
@@ -85,9 +85,9 @@ summary: DM のコマンドライン フラグについて学習します。
 
 ### <code>--advertise-addr</code> {#code-advertise-addr-code}
 
--   クライアントのリクエストを受信するために使用される DM ワーカーの外部アドレス
+-   クライアントのリクエストを受信するために使用されるDMワーカーの外部アドレス
 -   デフォルト値は`"{worker-addr}"`です
--   オプションのフラグ`"domain-name:port"`の形式になります。
+-   オプションフラグ。1の形式をとることができます`"domain-name:port"`
 
 ### <code>--config</code> {#code-config-code}
 
@@ -97,7 +97,7 @@ summary: DM のコマンドライン フラグについて学習します。
 
 ### <code>--join</code> {#code-join-code}
 
--   DMワーカーがこのクラスタに登録したときのクラスタ内のDMマスターノードのリスト`{advertise-addr}`
+-   DMワーカーがこのクラスタに登録したときのクラスタ内のDMマスターノードの`{advertise-addr}`のリスト
 -   デフォルト値は`""`です
 -   必須フラグ。3ノード（DMマスターノード）クラスタの構成例は`"172.16.15.11:8261,172.16.15.12:8261,172.16.15.13:8261"`です。
 

@@ -25,7 +25,7 @@ TiUPをインストールした後、 `tiup ctl:v<CLUSTER_VERSION> tidb`コマ�
 
 ### ソースコードからコンパイルする {#compile-from-source-code}
 
--   コンパイル環境要件: [行く](https://golang.org/) 1.21以降
+-   コンパイル環境要件: [行く](https://golang.org/) 1.23以降
 -   コンパイル手順: [TiDB制御プロジェクト](https://github.com/pingcap/tidb-ctl)のルート ディレクトリに移動し、 `make`コマンドを使用してコンパイルし、 `tidb-ctl`生成します。
 -   コンパイル ドキュメント: ヘルプ ファイルは`doc`ディレクトリにあります。ヘルプ ファイルが失われた場合、または更新する場合は、 `make doc`コマンドを使用してヘルプ ファイルを生成します。
 

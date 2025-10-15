@@ -5,7 +5,7 @@ summary: TiDB データベースに対する GRANT <権限> の使用法の概�
 
 # <code>GRANT &#x3C;privileges></code> {#code-grant-x3c-privileges-code}
 
-このステートメントは、TiDB 内の既存のユーザーに権限を割り当てます。TiDB の権限システムは MySQL に準拠しており、資格情報はデータベース/テーブル パターンに基づいて割り当てられます。このステートメントを実行するには、 `GRANT OPTION`権限と割り当てたすべての権限が必要です。
+この文は、TiDB内の既存のユーザーに権限を割り当てます。TiDBの権限システムはMySQLに準拠しており、資格情報はデータベース/テーブルパターンに基づいて割り当てられます。この文を実行するには、 `GRANT OPTION`権限と割り当てたすべての権限が必要です。
 
 ## 概要 {#synopsis}
 
@@ -79,12 +79,12 @@ mysql> SHOW GRANTS FOR 'newuser';
 2 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 -   MySQL と同様に、 `USAGE`権限は TiDBサーバーにログインする機能を示します。
 -   カラムレベルの権限は現在サポートされていません。
--   MySQL と同様に、 `NO_AUTO_CREATE_USER` sql モードが存在しない場合、ユーザーが存在しないときは、 `GRANT`ステートメントによって空のパスワードを持つ新しいユーザーが自動的に作成されます。この sql モードを削除すると (デフォルトで有効になっています)、セキュリティ上のリスクが生じます。
--   TiDB では、 `GRANT <privileges>`ステートメントが正常に実行されると、実行結果が現在の接続に直ちに反映されます。一方、 [MySQLでは、一部の権限では、実行結果は後続の接続にのみ有効になります。](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)については、詳細については[ティDB #39356](https://github.com/pingcap/tidb/issues/39356)参照してください。
+-   MySQLと同様に、 `NO_AUTO_CREATE_USER` SQLモードが存在しない場合、 `GRANT`ステートメントは、ユーザーが存在しない場合に空のパスワードを持つ新しいユーザーを自動的に作成します。このSQLモードを削除すると（デフォルトで有効になっています）、セキュリティリスクが生じます。
+-   TiDBでは、 `GRANT <privileges>`文が正常に実行されると、その実行結果が現在の接続に直ちに反映されます。一方、 [MySQLでは、一部の権限では、実行結果は後続の接続にのみ反映されます。](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)文については、詳細は[TiDB #39356](https://github.com/pingcap/tidb/issues/39356)参照してください。
 
 ## 参照 {#see-also}
 

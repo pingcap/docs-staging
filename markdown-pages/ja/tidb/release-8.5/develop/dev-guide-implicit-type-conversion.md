@@ -1,6 +1,6 @@
 ---
 title: Avoid Implicit Type Conversions
-summary: TiDB での暗黙的な型変換によって生じる可能性のある結果と、それを回避する方法を紹介します。
+summary: TiDB での暗黙的な型変換によって起こりうる結果と、それを回避する方法を紹介します。
 ---
 
 # 暗黙的な型変換を避ける {#avoid-implicit-type-conversions}
@@ -9,28 +9,28 @@ summary: TiDB での暗黙的な型変換によって生じる可能性のある
 
 ## 変換ルール {#conversion-rules}
 
-SQL ステートメントの述語の両側のデータ型が一致しない場合、TiDB は、述語操作のために、一方または両方の側のデータ型を互換性のあるデータ型に暗黙的に変換します。
+SQL ステートメントの述語の両側のデータ型が一致しない場合、TiDB は、述語操作のために、片側または両側のデータ型を互換性のあるデータ型に暗黙的に変換します。
 
-TiDB での暗黙的な型変換のルールは次のとおりです。
+TiDB における暗黙的な型変換のルールは次のとおりです。
 
--   引数の 1 つまたは両方が`NULL`の場合、比較の結果は`NULL`になります。NULL 安全な`<=>`同等の比較演算子では、 NULL `<=>` NULL の結果が`true`になるため、変換は必要ありません。
+-   引数の一方または両方が`NULL`場合、比較の結果は`NULL`なります。NULL 安全な`<=>`比較演算子は変換を必要としません。NULL `<=>` NULL は`true`になります。
 -   比較演算の両方の引数が文字列の場合、それらは文字列として比較されます。
 -   両方の引数が整数の場合、それらは整数として比較されます。
--   数値による比較が行われない場合、16 進数値はバイナリ文字列として扱われます。
--   引数の 1 つが 10 進数値の場合、比較は他の引数によって決まります。他の引数が 10 進数値または整数値の場合、引数は 10 進数値と比較されます。他の引数が浮動小数点数値の場合、引数は浮動小数点数値と比較されます。
--   引数の 1 つが`TIMESTAMP`または`DATETIME`列で、もう 1 つの引数が定数の場合、比較が実行される前に定数がタイムスタンプに変換されます。
+-   数値と比較しない場合は、16 進数値はバイナリ文字列として扱われます。
+-   引数の一方が小数値の場合、比較はもう一方の引数に依存します。もう一方の引数が小数値または整数値の場合、その引数は小数値と比較されます。もう一方の引数が浮動小数点値の場合、その引数は浮動小数点値と比較されます。
+-   引数の 1 つが`TIMESTAMP`列または`DATETIME`列で、もう 1 つの引数が定数の場合、比較が実行される前に定数はタイムスタンプに変換されます。
 -   それ以外の場合、引数は浮動小数点数 ( `DOUBLE`型) として比較されます。
 
 ## 暗黙的な型変換によって生じる結果 {#consequences-caused-by-implicit-type-conversion}
 
-暗黙的な型変換により、人間とコンピューターの相互作用の使いやすさが向上します。ただし、アプリケーション コードでは暗黙的な型変換を使用しないでください。次のような問題が発生する可能性があります。
+暗黙的な型変換は、人間とコンピュータのインタラクションの利便性を向上させます。ただし、アプリケーションコードでは暗黙的な型変換の使用は避けてください。以下の問題が発生する可能性があります。
 
--   インデックスの無効
+-   インデックスの無効性
 -   精度の低下
 
-### インデックスの無効 {#index-invalidity}
+### インデックスの無効性 {#index-invalidity}
 
-次のケースでは、 `account_id`主キーであり、そのデータ型は`varchar`です。実行プランでは、この SQL ステートメントには暗黙的な型変換があり、インデックスを使用できません。
+以下のケースでは、主キーは`account_id`で、そのデータ型は`varchar`です。実行プランでは、このSQL文には暗黙的な型変換があり、インデックスを使用できません。
 
 ```sql
 DESC SELECT * FROM `account` WHERE `account_id`=6010000000009801;
@@ -48,7 +48,7 @@ DESC SELECT * FROM `account` WHERE `account_id`=6010000000009801;
 
 ### 精度の低下 {#loss-of-precision}
 
-次のケースでは、 `a`フィールドのデータ型は`decimal(32,0)`です。実行プランでは暗黙的な型変換が発生し、decimal フィールドと文字列定数の両方が double 型に変換されます。double 型の精度は、decimal ほど高くないため、精度が低下します。この場合、SQL ステートメントは、結果セットを範囲外に誤ってフィルター処理します。
+以下のケースでは、フィールド`a`のデータ型は`decimal(32,0)`です。実行プランでは暗黙的な型変換が発生し、decimal フィールドと文字列定数の両方が double 型に変換されます。double 型の精度はdecimal 型ほど高くないため、精度が低下します。この場合、SQL文は結果セットを範囲外として誤ってフィルタリングします。
 
 ```sql
 DESC SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000';
@@ -81,12 +81,12 @@ SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000';
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

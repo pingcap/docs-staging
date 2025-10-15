@@ -1,15 +1,15 @@
 ---
 title: Migrate Data from SQL Files to TiDB
-summary: SQL ファイルから TiDB にデータを移行する方法を学びます。
+summary: SQL ファイルから TiDB にデータを移行する方法を学習します。
 ---
 
 # SQL ファイルから TiDB へのデータの移行 {#migrate-data-from-sql-files-to-tidb}
 
-このドキュメントでは、 TiDB Lightning を使用して MySQL SQL ファイルから TiDB にデータを移行する方法について説明します。MySQL SQL ファイルの生成方法については、 [Dumplingを使用して SQL ファイルにエクスポートする](/dumpling-overview.md#export-to-sql-files)を参照してください。
+このドキュメントでは、 TiDB Lightningを使用してMySQL SQLファイルからTiDBにデータを移行する方法について説明します。MySQL SQLファイルの生成方法については、 [Dumplingを使用して SQL ファイルにエクスポートする](/dumpling-overview.md#export-to-sql-files)を参照してください。
 
 ## 前提条件 {#prerequisites}
 
--   [TiUP を使用してTiDB Lightning をインストールする](/migration-tools.md)
+-   [TiUPを使用してTiDB Lightningをインストールする](/migration-tools.md)
 -   [TiDB Lightningのターゲットデータベースに必要な権限を付与します](/tidb-lightning/tidb-lightning-faq.md#what-are-the-privilege-requirements-for-the-target-database)
 
 ## ステップ1. SQLファイルを準備する {#step-1-prepare-sql-files}
@@ -20,7 +20,7 @@ summary: SQL ファイルから TiDB にデータを移行する方法を学び�
 
 TiDB にデータをインポートするには、ターゲット データベースのテーブル スキーマを作成する必要があります。
 
-Dumpling を使用してデータをエクスポートすると、テーブル スキーマ ファイルが自動的にエクスポートされます。他の方法でエクスポートされたデータの場合は、次のいずれかの方法でテーブル スキーマを作成できます。
+Dumplingを使用してデータをエクスポートする場合、テーブルスキーマファイルは自動的にエクスポートされます。他の方法でエクスポートされたデータの場合は、以下のいずれかの方法でテーブルスキーマを作成できます。
 
 -   **方法 1** : TiDB Lightningを使用してターゲット テーブル スキーマを作成します。
 
@@ -67,9 +67,9 @@ pd-addr = "${ip}:${port}"     # The address of the cluster's PD. TiDB Lightning 
 
 ## ステップ4. データをインポートする {#step-4-import-the-data}
 
-インポートを開始するには、 `tidb-lightning`実行します。コマンドラインでプログラムを起動すると、 `SIGHUP`信号によりプログラムが終了する可能性があります。この場合、 `nohup`または`screen`ツールを使用してプログラムを実行することをお勧めします。
+インポートを開始するには、 `tidb-lightning`実行してください。コマンドラインでプログラムを起動すると、 `SIGHUP`シグナルによってプログラムが終了する可能性があります。その場合は、 `nohup`または`screen`ツールを使用してプログラムを実行することをお勧めします。
 
-S3 からデータをインポートする場合は、アカウントの`SecretKey`と`AccessKey`環境変数として渡す必要があります。アカウントには、S3 バックエンドstorageにアクセスする権限があります。
+S3からデータをインポートする場合は、アカウントの`SecretKey`と`AccessKey`環境変数として渡す必要があります。アカウントにはS3バックエンドstorageへのアクセス権があります。
 
 ```shell
 export AWS_ACCESS_KEY_ID=${access_key}
@@ -82,11 +82,11 @@ TiDB Lightning は、 `~/.aws/credentials`からの資格情報ファイルの�
 インポートが開始されたら、次のいずれかの方法で進行状況を確認できます。
 
 -   デフォルトでは 5 分ごとに更新される`grep`ログで`progress`キーワードを検索します。
--   Grafanaダッシュボードを使用します。詳細については、 [TiDB Lightning監視](/tidb-lightning/monitor-tidb-lightning.md)参照してください。
--   Webインターフェースを使用します。詳細については[TiDB Lightning Web インターフェース](/tidb-lightning/tidb-lightning-web-interface.md)参照してください。
+-   Grafanaダッシュボードを使用します。詳細については[TiDB Lightning監視](/tidb-lightning/monitor-tidb-lightning.md)参照してください。
+-   Webインターフェースを使用します。詳細は[TiDB Lightning Webインターフェース](/tidb-lightning/tidb-lightning-web-interface.md)参照してください。
 
-インポートが完了すると、 TiDB Lightning は自動的に終了します。最後の行の`tidb-lightning.log`に`the whole procedure completed`含まれているかどうかを確認します。含まれている場合は、インポートは成功しています。含まれていない場合は、インポートでエラーが発生しています。エラー メッセージの指示に従ってエラーに対処してください。
+インポートが完了すると、 TiDB Lightning は自動的に終了します。最後の行の`tidb-lightning.log`に`the whole procedure completed`含まれているかどうかを確認してください。含まれている場合はインポートが成功しています。含まれていない場合は、インポートでエラーが発生しました。エラーメッセージの指示に従ってエラーに対処してください。
 
 > **注記：**
 >
-> インポートが成功したかどうかに関係なく、最後の行に`tidb lightning exit`表示されます。これは、タスクが完了したことではなく、 TiDB Lightningが正常に終了したことを意味します。インポート プロセス中に問題が発生した場合は、トラブルシューティングについては[TiDB LightningFAQ](/tidb-lightning/tidb-lightning-faq.md)を参照してください。
+> インポートが成功したかどうかに関わらず、最後の行には`tidb lightning exit`表示されます。これはTiDB Lightningが正常に終了したことを意味するだけで、タスクの完了を意味するものではありません。インポートプロセス中に問題が発生した場合は、 [TiDB LightningFAQ](/tidb-lightning/tidb-lightning-faq.md)トラブルシューティングを参照してください。

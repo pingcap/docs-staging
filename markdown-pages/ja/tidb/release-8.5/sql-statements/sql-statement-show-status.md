@@ -5,9 +5,9 @@ summary: TiDB データベースの SHOW [GLOBAL|SESSION] STATUS の使用法の
 
 # [グローバル|セッション]ステータスを表示 {#show-global-session-status}
 
-このステートメントは、MySQL との互換性のために含まれています。TiDB は、ほとんどのメトリックに対して`SHOW STATUS`ではなく、集中メトリック収集に Prometheus と Grafana を使用します。
+このステートメントは、MySQL との互換性のために含まれています。TiDB は、ほとんどのメトリクスに対して`SHOW STATUS`ではなく、Prometheus と Grafana を使用して集中的なメトリクス収集を行います。
 
-変数の詳細な説明は、こちらでご覧いただけます: [ステータス変数](/status-variables.md)
+変数の詳細な説明は、こちらを参照してください: [ステータス変数](/status-variables.md)
 
 ## 概要 {#synopsis}
 
@@ -63,7 +63,7 @@ mysql> SHOW GLOBAL STATUS;
 9 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 -   このステートメントは MySQL と互換性があります。
 

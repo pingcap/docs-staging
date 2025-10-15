@@ -125,10 +125,6 @@ show warnings;
 | `raftstore.max-apply-unpersisted-log-limit`               | コミットされたが永続化されていないRaftログの最大数を適用できます                                                                                                        |
 | `raftstore.split-region-check-tick-interval`              | リージョン分割が必要かどうかを確認する時間間隔                                                                                                                   |
 | `raftstore.region-split-check-diff`                       | リージョン分割前にリージョンデータが超過できる最大値                                                                                                                |
-| `raftstore.region-compact-check-interval`                 | RocksDB 圧縮を手動でトリガーする必要があるかどうかを確認する時間間隔                                                                                                    |
-| `raftstore.region-compact-check-step`                     | 手動圧縮の各ラウンドで一度にチェックされる領域の数                                                                                                                 |
-| `raftstore.region-compact-min-tombstones`                 | RocksDBの圧縮をトリガーするために必要なトゥームストーンの数                                                                                                         |
-| `raftstore.region-compact-tombstones-percent`             | RocksDBの圧縮をトリガーするために必要なトゥームストーンの割合                                                                                                        |
 | `raftstore.pd-heartbeat-tick-interval`                    | PDへのリージョンのハートビートがトリガーされる時間間隔                                                                                                              |
 | `raftstore.pd-store-heartbeat-tick-interval`              | 店舗のPDへのハートビートがトリガーされる時間間隔                                                                                                                 |
 | `raftstore.snap-mgr-gc-tick-interval`                     | 期限切れのスナップショットファイルのリサイクルがトリガーされる時間間隔                                                                                                       |
@@ -156,6 +152,7 @@ show warnings;
 | `readpool.unified.max-thread-count`                       | 読み取り要求を均一に処理するスレッド プール内のスレッドの最大数。これは、UnifyReadPool スレッド プールのサイズです。                                                                        |
 | `readpool.unified.max-tasks-per-worker`                   | 統合読み取りプール内の 1 つのスレッドに許可されるタスクの最大数。値を超えると`Server Is Busy`エラーが返されます。                                                                        |
 | `readpool.unified.auto-adjust-pool-size`                  | UnifyReadPool スレッド プールのサイズを自動的に調整するかどうかを決定します                                                                                             |
+| `resource-control.priority-ctl-strategy`                  | 低優先度タスクのフロー制御戦略を構成します。                                                                                                                    |
 | `coprocessor.split-region-on-table`                       | テーブルごとにリージョンを分割できます                                                                                                                       |
 | `coprocessor.batch-split-limit`                           | バッチでのリージョン分割のしきい値                                                                                                                         |
 | `coprocessor.region-max-size`                             | リージョンの最大サイズ                                                                                                                               |
@@ -166,6 +163,8 @@ show warnings;
 | `pessimistic-txn.wake-up-delay-duration`                  | 悲観的トランザクションが起動されるまでの期間                                                                                                                    |
 | `pessimistic-txn.pipelined`                               | パイプライン化された悲観的ロック処理を有効にするかどうかを決定します                                                                                                        |
 | `pessimistic-txn.in-memory`                               | メモリ内の悲観的ロックを有効にするかどうかを決定します                                                                                                               |
+| `pessimistic-txn.in-memory-peer-size-limit`               | リージョン内のメモリ内悲観的ロックのメモリ使用量制限を制御します                                                                                                          |
+| `pessimistic-txn.in-memory-instance-size-limit`           | TiKVインスタンス内のメモリ内悲観的ロックのメモリ使用量制限を制御します                                                                                                     |
 | `quota.foreground-cpu-time`                               | TiKVフォアグラウンドが読み取りおよび書き込み要求を処理するために使用するCPUリソースのソフト制限                                                                                       |
 | `quota.foreground-write-bandwidth`                        | フォアグラウンドトランザクションがデータを書き込む帯域幅のソフト制限                                                                                                        |
 | `quota.foreground-read-bandwidth`                         | フォアグラウンドトランザクションとコプロセッサーがデータを読み取る帯域幅のソフト制限                                                                                                |
@@ -179,6 +178,12 @@ show warnings;
 | `gc.max-write-bytes-per-sec`                              | RocksDBに1秒あたり書き込める最大バイト数                                                                                                                  |
 | `gc.enable-compaction-filter`                             | 圧縮フィルタを有効にするかどうか                                                                                                                          |
 | `gc.compaction-filter-skip-version-check`                 | 圧縮フィルタのクラスタバージョンチェックをスキップするかどうか（未リリース）                                                                                                    |
+| `gc.auto-compaction.check-interval`                       | TiKVが自動（RocksDB）圧縮をトリガーするかどうかを確認する間隔                                                                                                      |
+| `gc.auto-compaction.tombstone-num-threshold`              | TiKV自動（RocksDB）圧縮をトリガーするために必要なRocksDBトゥームストーンの数                                                                                           |
+| `gc.auto-compaction.tombstone-percent-threshold`          | TiKV自動（RocksDB）圧縮をトリガーするために必要なRocksDBトゥームストーンの割合                                                                                          |
+| `gc.auto-compaction.redundant-rows-threshold`             | TiKV自動（RocksDB）圧縮をトリガーするために必要な冗長MVCC行の数                                                                                                   |
+| `gc.auto-compaction.redundant-rows-percent-threshold`     | TiKV自動（RocksDB）圧縮をトリガーするために必要な冗長MVCC行の割合                                                                                                  |
+| `gc.auto-compaction.bottommost-level-force`               | RocksDB の最下層ファイルの圧縮を強制するかどうか                                                                                                              |
 | `{db-name}.max-total-wal-size`                            | 合計WALの最大サイズ                                                                                                                               |
 | `{db-name}.max-background-jobs`                           | RocksDBのバックグラウンドスレッドの数                                                                                                                    |
 | `{db-name}.max-background-flushes`                        | RocksDBのフラッシュスレッドの最大数                                                                                                                     |
@@ -212,6 +217,11 @@ show warnings;
 | `server.raft-msg-max-batch-size`                          | 1つのgRPCメッセージに含まれるRaftメッセージの最大数を設定します                                                                                                      |
 | `server.simplify-metrics`                                 | サンプリング監視メトリックを簡素化するかどうかを制御します                                                                                                             |
 | `storage.block-cache.capacity`                            | 共有ブロックキャッシュのサイズ（v4.0.3以降でサポート）                                                                                                            |
+| storage.フロー制御.有効                                          | フロー制御メカニズムを有効にするかどうかを決定します                                                                                                                |
+| storage.フロー制御.memtables-threshold                         | フロー制御をトリガーするkvDBメモリテーブルの最大数                                                                                                               |
+| storage.フロー制御.l0-ファイルしきい値                                 | フロー制御をトリガーするkvDB L0ファイルの最大数                                                                                                               |
+| storage.フロー制御.ソフト保留圧縮バイト制限                                | フロー制御メカニズムが一部の書き込み要求を拒否するトリガーとなる、kvDB 保留圧縮バイトのしきい値                                                                                        |
+| storage.フロー制御.ハード保留コンパクションバイト制限                           | フロー制御メカニズムがすべての書き込み要求を拒否するトリガーとなる、kvDB 保留圧縮バイトのしきい値                                                                                       |
 | `storage.scheduler-worker-pool-size`                      | スケジューラスレッドプール内のスレッド数                                                                                                                      |
 | `import.num-threads`                                      | 復元またはインポート RPC 要求を処理するスレッドの数 (v8.1.2 以降では動的な変更がサポートされています)                                                                                |
 | `backup.num-threads`                                      | バックアップ スレッドの数 (v4.0.3 以降でサポート)                                                                                                            |
@@ -253,68 +263,71 @@ Query OK, 0 rows affected (0.01 sec)
 
 次の PD 構成項目は動的に変更できます。
 
-| コンフィグレーション項目                                         | 説明                                                   |
-| :--------------------------------------------------- | :--------------------------------------------------- |
-| `log.level`                                          | ログレベル                                                |
-| `cluster-version`                                    | クラスターバージョン                                           |
-| `schedule.max-merge-region-size`                     | `Region Merge` （MiB単位）のサイズ制限を制御します                   |
-| `schedule.max-merge-region-keys`                     | `Region Merge`キーの最大数を指定します                           |
-| `schedule.patrol-region-interval`                    | チェッカーがリージョンのヘルス状態を検査する頻度を決定します                       |
-| `schedule.split-merge-interval`                      | 同じリージョンで分割および結合操作を実行する時間間隔を決定します                     |
-| `schedule.max-snapshot-count`                        | 単一のストアが同時に送受信できるスナップショットの最大数を決定します                   |
-| `schedule.max-pending-peer-count`                    | 単一ストア内の保留中のピアの最大数を決定します                              |
-| `schedule.max-store-down-time`                       | PDが切断されたストアを回復できないと判断するまでのダウンタイム                     |
-| `schedule.max-store-preparing-time`                  | ストアがオンラインになるまでの最大待ち時間を制御します                          |
-| `schedule.leader-schedule-policy`                    | Leaderのスケジュールポリシーを決定する                               |
-| `schedule.leader-schedule-limit`                     | 同時に実行されるLeaderスケジュールタスクの数                            |
-| `schedule.region-schedule-limit`                     | 同時に実行されるリージョンスケジュールタスクの数                             |
-| `schedule.replica-schedule-limit`                    | 同時に実行されるレプリカスケジュールタスクの数                              |
-| `schedule.merge-schedule-limit`                      | 同時に実行される`Region Merge`スケジュールタスクの数                    |
-| `schedule.hot-region-schedule-limit`                 | 同時に実行されるホットリージョンスケジューリングタスクの数                        |
-| `schedule.hot-region-cache-hits-threshold`           | リージョンがホットスポットとみなされる閾値を決定します                          |
-| `schedule.high-space-ratio`                          | 店舗の収容能力が十分である閾値比率                                    |
-| `schedule.low-space-ratio`                           | 店舗の収容能力が不足する閾値比率                                     |
-| `schedule.tolerant-size-ratio`                       | `balance`バッファサイズを制御します                               |
-| `schedule.enable-remove-down-replica`                | `DownReplica`自動的に削除する機能を有効にするかどうかを決定します              |
-| `schedule.enable-replace-offline-replica`            | `OfflineReplica`移行する機能を有効にするかどうかを決定します               |
-| `schedule.enable-make-up-replica`                    | レプリカを自動的に補完する機能を有効にするかどうかを決定します                      |
-| `schedule.enable-remove-extra-replica`               | 余分なレプリカを削除する機能を有効にするかどうかを決定します                       |
-| `schedule.enable-location-replacement`               | 分離レベルチェックを有効にするかどうかを決定します                            |
-| `schedule.enable-cross-table-merge`                  | テーブル間の結合を有効にするかどうかを決定します                             |
-| `schedule.enable-one-way-merge`                      | 一方向のマージを有効にします。これにより、隣接する次のリージョンとのマージのみが可能になります。     |
-| `schedule.region-score-formula-version`              | リージョンスコアの計算式のバージョンを制御します                             |
-| `schedule.scheduler-max-waiting-operator`            | 各スケジューラの待機オペレータの数を制御します                              |
-| `schedule.enable-debug-metrics`                      | デバッグ用のメトリクスを有効にする                                    |
-| `schedule.enable-joint-consensus`                    | レプリカのスケジュールにジョイントコンセンサスを使用するかどうかを制御します               |
-| `schedule.hot-regions-write-interval`                | PDがホットリージョン情報を保存する時間間隔                               |
-| `schedule.hot-regions-reserved-days`                 | ホットリージョン情報を保持する日数を指定します                              |
-| `schedule.max-movable-hot-peer-size`                 | ホットリージョンスケジュールにスケジュールできる最大リージョンサイズを制御します             |
-| `schedule.store-limit-version`                       | [店舗制限](/configure-store-limit.md)のバージョンを制御します        |
-| `replication.max-replicas`                           | レプリカの最大数を設定する                                        |
-| `replication.location-labels`                        | TiKVクラスタのトポロジ情報                                      |
-| `replication.enable-placement-rules`                 | 配置ルールを有効にする                                          |
-| `replication.strictly-match-label`                   | ラベルチェックを有効にする                                        |
-| `replication.isolation-level`                        | TiKVクラスタの最小トポロジカル分離レベル                               |
-| `pd-server.use-region-storage`                       | 独立したリージョンstorageを有効にする                               |
-| `pd-server.max-gap-reset-ts`                         | タイムスタンプをリセットする最大間隔を設定します（BR）                         |
-| `pd-server.key-type`                                 | クラスタキータイプを設定する                                       |
-| `pd-server.metric-storage`                           | クラスターメトリックのstorageアドレスを設定します                         |
-| `pd-server.dashboard-address`                        | ダッシュボードのアドレスを設定する                                    |
-| `pd-server.flow-round-by-digit`                      | リージョンフロー情報を丸める最下位桁数を指定します                            |
-| `pd-server.min-resolved-ts-persistence-interval`     | 最小解決タイムスタンプがPDに永続的に保存される間隔を決定します。                    |
-| `pd-server.server-memory-limit`                      | PDインスタンスのメモリ制限比率                                     |
-| `pd-server.server-memory-limit-gc-trigger`           | PDがGCをトリガーしようとする閾値比率                                 |
-| `pd-server.enable-gogc-tuner`                        | GOGCチューナーを有効にするかどうかを制御します                            |
-| `pd-server.gc-tuner-threshold`                       | GOGCのチューニングにおける最大メモリ閾値比                              |
-| `replication-mode.replication-mode`                  | バックアップモードを設定します                                      |
-| `replication-mode.dr-auto-sync.label-key`            | 異なるAZを区別し、配置ルールに一致させる必要がある                           |
-| `replication-mode.dr-auto-sync.primary`              | プライマリAZ                                              |
-| `replication-mode.dr-auto-sync.dr`                   | 災害復旧（DR）AZ                                           |
-| `replication-mode.dr-auto-sync.primary-replicas`     | プライマリ AZ 内の Voter レプリカの数                             |
-| `replication-mode.dr-auto-sync.dr-replicas`          | 災害復旧（DR）AZ内の投票者レプリカの数                                |
-| `replication-mode.dr-auto-sync.wait-store-timeout`   | ネットワークの分離や障害が発生したときに非同期レプリケーションモードに切り替えるまでの待機時間      |
-| `replication-mode.dr-auto-sync.wait-recover-timeout` | ネットワークが回復した後、 `sync-recover`状態に戻るまでの待機時間             |
-| `replication-mode.dr-auto-sync.pause-region-split`   | `async_wait`と`async`ステータスでリージョン分割操作を一時停止するかどうかを制御します |
+| コンフィグレーション項目                                         | 説明                                                         |
+| :--------------------------------------------------- | :--------------------------------------------------------- |
+| `log.level`                                          | ログレベル                                                      |
+| `cluster-version`                                    | クラスターバージョン                                                 |
+| `schedule.max-merge-region-size`                     | `Region Merge` （MiB単位）のサイズ制限を制御します                         |
+| `schedule.max-merge-region-keys`                     | `Region Merge`キーの最大数を指定します                                 |
+| `schedule.patrol-region-interval`                    | チェッカーがリージョンのヘルス状態を検査する頻度を決定します                             |
+| `schedule.split-merge-interval`                      | 同じリージョンで分割および結合操作を実行する時間間隔を決定します                           |
+| `schedule.max-snapshot-count`                        | 単一のストアが同時に送受信できるスナップショットの最大数を決定します                         |
+| `schedule.max-pending-peer-count`                    | 単一ストア内の保留中のピアの最大数を決定します                                    |
+| `schedule.max-store-down-time`                       | PDが切断されたストアを回復できないと判断するまでのダウンタイム                           |
+| `schedule.max-store-preparing-time`                  | ストアがオンラインになるまでの最大待ち時間を制御します                                |
+| `schedule.leader-schedule-policy`                    | Leaderのスケジュールポリシーを決定する                                     |
+| `schedule.leader-schedule-limit`                     | 同時に実行されるLeaderスケジュールタスクの数                                  |
+| `schedule.region-schedule-limit`                     | 同時に実行されるリージョンスケジュールタスクの数                                   |
+| `schedule.replica-schedule-limit`                    | 同時に実行されるレプリカスケジュールタスクの数                                    |
+| `schedule.merge-schedule-limit`                      | 同時に実行される`Region Merge`スケジュールタスクの数                          |
+| `schedule.hot-region-schedule-limit`                 | 同時に実行されるホットリージョンスケジューリングタスクの数                              |
+| `schedule.hot-region-cache-hits-threshold`           | リージョンがホットスポットとみなされる閾値を決定します                                |
+| `schedule.high-space-ratio`                          | 店舗の収容能力が十分である閾値比率                                          |
+| `schedule.low-space-ratio`                           | 店舗の収容能力が不足する閾値比率                                           |
+| `schedule.tolerant-size-ratio`                       | `balance`バッファサイズを制御します                                     |
+| `schedule.enable-remove-down-replica`                | `DownReplica`自動的に削除する機能を有効にするかどうかを決定します                    |
+| `schedule.enable-replace-offline-replica`            | `OfflineReplica`移行する機能を有効にするかどうかを決定します                     |
+| `schedule.enable-make-up-replica`                    | レプリカを自動的に補完する機能を有効にするかどうかを決定します                            |
+| `schedule.enable-remove-extra-replica`               | 余分なレプリカを削除する機能を有効にするかどうかを決定します                             |
+| `schedule.enable-location-replacement`               | 分離レベルチェックを有効にするかどうかを決定します                                  |
+| `schedule.enable-cross-table-merge`                  | テーブル間の結合を有効にするかどうかを決定します                                   |
+| `schedule.enable-one-way-merge`                      | 一方向のマージを有効にします。これにより、隣接する次のリージョンとのマージのみが可能になります。           |
+| `schedule.region-score-formula-version`              | リージョンスコアの計算式のバージョンを制御します                                   |
+| `schedule.scheduler-max-waiting-operator`            | 各スケジューラの待機オペレータの数を制御します                                    |
+| `schedule.enable-debug-metrics`                      | デバッグ用のメトリクスを有効にする                                          |
+| `schedule.enable-heartbeat-concurrent-runner`        | リージョンハートビートの非同期並行処理を有効にする                                  |
+| `schedule.enable-heartbeat-breakdown-metrics`        | リージョンハートビートの内訳メトリックを有効にして、リージョンハートビート処理の各段階で消費された時間を測定します。 |
+| `schedule.enable-joint-consensus`                    | レプリカのスケジュールにジョイントコンセンサスを使用するかどうかを制御します                     |
+| `schedule.hot-regions-write-interval`                | PDがホットリージョン情報を保存する時間間隔                                     |
+| `schedule.hot-regions-reserved-days`                 | ホットリージョン情報を保持する日数を指定します                                    |
+| `schedule.max-movable-hot-peer-size`                 | ホットリージョンスケジューリングにスケジュールできる最大リージョンサイズを制御します。                |
+| `schedule.store-limit-version`                       | [店舗制限](/configure-store-limit.md)のバージョンを制御します              |
+| `schedule.patrol-region-worker-count`                | リージョンのヘルス状態を検査するときにチェッカーによって作成される同時オペレータの数を制御します           |
+| `replication.max-replicas`                           | レプリカの最大数を設定する                                              |
+| `replication.location-labels`                        | TiKVクラスタのトポロジ情報                                            |
+| `replication.enable-placement-rules`                 | 配置ルールを有効にする                                                |
+| `replication.strictly-match-label`                   | ラベルチェックを有効にする                                              |
+| `replication.isolation-level`                        | TiKVクラスタの最小トポロジカル分離レベル                                     |
+| `pd-server.use-region-storage`                       | 独立したリージョンstorageを有効にする                                     |
+| `pd-server.max-gap-reset-ts`                         | タイムスタンプをリセットする最大間隔を設定します（BR）                               |
+| `pd-server.key-type`                                 | クラスタキータイプを設定する                                             |
+| `pd-server.metric-storage`                           | クラスターメトリックのstorageアドレスを設定します                               |
+| `pd-server.dashboard-address`                        | ダッシュボードのアドレスを設定する                                          |
+| `pd-server.flow-round-by-digit`                      | リージョンフロー情報を丸める最下位桁数を指定します                                  |
+| `pd-server.min-resolved-ts-persistence-interval`     | 最小解決タイムスタンプがPDに永続的に保存される間隔を決定します。                          |
+| `pd-server.server-memory-limit`                      | PDインスタンスのメモリ制限比率                                           |
+| `pd-server.server-memory-limit-gc-trigger`           | PDがGCをトリガーしようとする閾値比率                                       |
+| `pd-server.enable-gogc-tuner`                        | GOGCチューナーを有効にするかどうかを制御します                                  |
+| `pd-server.gc-tuner-threshold`                       | GOGCのチューニングにおける最大メモリ閾値比                                    |
+| `replication-mode.replication-mode`                  | バックアップモードを設定します                                            |
+| `replication-mode.dr-auto-sync.label-key`            | 異なるAZを区別し、配置ルールに一致させる必要がある                                 |
+| `replication-mode.dr-auto-sync.primary`              | プライマリAZ                                                    |
+| `replication-mode.dr-auto-sync.dr`                   | 災害復旧（DR）AZ                                                 |
+| `replication-mode.dr-auto-sync.primary-replicas`     | プライマリ AZ 内の Voter レプリカの数                                   |
+| `replication-mode.dr-auto-sync.dr-replicas`          | 災害復旧（DR）AZ内の投票者レプリカの数                                      |
+| `replication-mode.dr-auto-sync.wait-store-timeout`   | ネットワークの分離や障害が発生したときに非同期レプリケーションモードに切り替えるまでの待機時間            |
+| `replication-mode.dr-auto-sync.wait-recover-timeout` | ネットワークが回復した後、 `sync-recover`状態に戻るまでの待機時間                   |
+| `replication-mode.dr-auto-sync.pause-region-split`   | `async_wait`と`async`ステータスでリージョン分割操作を一時停止するかどうかを制御します       |
 
 詳細なパラメータの説明については[PDコンフィグレーションファイル](/pd-configuration-file.md)を参照してください。
 
@@ -365,7 +378,7 @@ select @@tidb_slow_log_threshold;
 
 現在、システム変数[`tidb_max_tiflash_threads`](/system-variables.md#tidb_max_tiflash_threads-new-in-v610)を使用してTiFlash構成`max_threads`変更できます。この変数は、 TiFlash が要求を実行するための最大同時実行性を指​​定します。
 
-デフォルト値は`tidb_max_tiflash_threads` `-1` 、このシステム変数は無効であり、 TiFlash設定ファイルの設定に依存することを示します。 `tidb_max_tiflash_threads`を使用すると、 `max_threads`から 10 に設定できます。
+デフォルト値は`tidb_max_tiflash_threads` `-1` 、このシステム変数は無効であり、 TiFlash設定ファイルの設定に依存することを示します。 `tidb_max_tiflash_threads`使用すると、 `max_threads`から 10 に設定できます。
 
 ```sql
 set tidb_max_tiflash_threads = 10;

@@ -637,7 +637,7 @@ mysql> SELECT FROM_BASE64('MTIzNDU2');
 
 > **注記：**
 >
-> MySQLクライアントでは、インタラクティブモードではデフォルトで[`--binary-as-hex`](https://dev.mysql.com/doc/refman/8.0/en/mysql-command-options.html#option_mysql_binary-as-hex)オプションが有効になっており、不明な文字セットを持つデータは[16進数リテラル](https://dev.mysql.com/doc/refman/8.0/en/hexadecimal-literals.html)として表示されます。この動作を無効にするには、 `--skip-binary-as-hex`オプションを使用します。
+> MySQLクライアントでは、インタラクティブモードではデフォルトで[`--binary-as-hex`](https://dev.mysql.com/doc/refman/8.0/en/mysql-command-options.html#option_mysql_binary-as-hex)オプションが有効になっているため、クライアントは不明な文字セットのデータを[16進数リテラル](https://dev.mysql.com/doc/refman/8.0/en/hexadecimal-literals.html)として表示します。この動作を無効にするには、 `--skip-binary-as-hex`オプションを使用します。
 
 例（ `mysql --skip-binary-as-hex`件）:
 
@@ -743,7 +743,7 @@ SELECT INSERT('あああああああ', 2, 3, 'xx');
 
 ### <a href="https://dev.mysql.com/doc/refman/8.0/en/string-functions.html#function_instr"><code>INSTR()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-string-functions-html-function-instr-code-instr-code-a}
 
-`INSTR(str, substr)`関数は、 `str`の中で`substr`最初に出現する位置を取得します。各引数は文字列または数値のいずれかです。この関数は、引数が2つの[`LOCATE(substr, str)`](#locate)関数と同じですが、引数の順序が逆になっています。
+`INSTR(str, substr)`関数は、 `str`における`substr`の最初の出現位置を取得します。各引数は文字列または数値のいずれかです。この関数は、引数が2つの[`LOCATE(substr, str)`](#locate)関数と同じですが、引数の順序が逆になっています。
 
 > **注記：**
 >
@@ -1432,11 +1432,11 @@ SELECT MAKE_SET(b'111','foo','bar','baz');
 
 ### <a href="https://dev.mysql.com/doc/refman/8.0/en/string-functions.html#function_mid"><code>MID()</code></a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-string-functions-html-function-mid-code-mid-code-a}
 
-`MID(str, pos, len)`関数は、指定された`pos`位置から始まり、長さが`len`部分文字列を返します。
+`MID(str, pos[, len])`関数は、指定された`pos`位置から始まり、長さが`len`部分文字列を返します。
+
+TiDB v8.4.0以降、2つの引数を持つバリアント`MID(str, pos)`がサポートされます。3 `len`指定されていない場合、この関数は指定された`pos`の位置から文字列の末尾までの残りのすべての文字を返します。
 
 引数のいずれかが`NULL`の場合、関数は`NULL`返します。
-
-TiDBはこの関数の2引数バージョンをサポートしていません。詳細については[＃52420](https://github.com/pingcap/tidb/issues/52420)参照してください。
 
 例:
 
@@ -1450,6 +1450,19 @@ SELECT MID('abcdef',2,3);
     | MID('abcdef',2,3) |
     +-------------------+
     | bcd               |
+    +-------------------+
+    1 row in set (0.00 sec)
+
+次の例では、 `MID()`入力文字列の 2 番目の文字 ( `b` ) から文字列の末尾までの部分文字列を返します。
+
+```sql
+SELECT MID('abcdef',2);
+```
+
+    +-------------------+
+    | MID('abcdef',2)   |
+    +-------------------+
+    | bcdef             |
     +-------------------+
     1 row in set (0.00 sec)
 

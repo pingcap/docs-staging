@@ -3,9 +3,9 @@ title: SET ROLE | TiDB SQL Statement Reference
 summary: TiDB データベースの SET ROLE の使用法の概要。
 ---
 
-# 役割を設定 {#set-role}
+# 役割を設定する {#set-role}
 
-`SET ROLE`ステートメントは、現在のセッションでロールを有効にするために使用されます。ロールを有効にすると、ユーザーはロールの権限を使用できるようになります。
+`SET ROLE`文は、現在のセッションでロールを有効にするために使用されます。ロールを有効にすると、ユーザーはロールの権限を使用できるようになります。
 
 ## 概要 {#synopsis}
 
@@ -16,7 +16,7 @@ SetRoleStmt ::=
 
 ## 例 {#examples}
 
-ユーザー`'u1'@'%'`と`'r1'@'%'` 、 `'r2'@'%'` 、 `'r3'@'%'` 3 つのロールを作成します。これらのロールを`'u1'@'%'`に付与し、 `'r1'@'%'` `'u1'@'%'`のデフォルト ロールとして設定します。
+ユーザー`'u1'@'%'`と3つのロール（ `'r1'@'%'` 、 `'r2'@'%'` 、 `'r3'@'%'`を作成します。これらのロールを`'u1'@'%'`に付与し、 `'r1'@'%'` `'u1'@'%'`のデフォルトロールとして設定します。
 
 ```sql
 CREATE USER 'u1'@'%';
@@ -81,20 +81,20 @@ SELECT CURRENT_ROLE();
     +----------------+
     1 row in set (0.000 sec)
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SET ROLE`ステートメントは、MySQL 8.0 のロール機能と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SET ROLE`文はMySQL 8.0のロール機能と完全に互換性があります。互換性に関する相違点が見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 
--   [ロールの作成](/sql-statements/sql-statement-create-role.md)
--   [役割をドロップ](/sql-statements/sql-statement-drop-role.md)
+-   [ロールを作成](/sql-statements/sql-statement-create-role.md)
+-   [役割を放棄する](/sql-statements/sql-statement-drop-role.md)
 -   [`GRANT &#x3C;role>`](/sql-statements/sql-statement-grant-role.md)
 -   [`REVOKE &#x3C;role>`](/sql-statements/sql-statement-revoke-role.md)
 -   [デフォルトロールの設定](/sql-statements/sql-statement-set-default-role.md)
 
 <CustomContent platform="tidb">
 
--   [ロールベースのアクセス制御](/role-based-access-control.md)
+-   [ロールベースアクセス制御](/role-based-access-control.md)
 
 </CustomContent>

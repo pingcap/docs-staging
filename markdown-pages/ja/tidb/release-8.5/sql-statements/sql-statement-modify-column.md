@@ -5,11 +5,11 @@ summary: TiDB データベースの MODIFY COLUMN の使用法の概要。
 
 # 列の変更 {#modify-column}
 
-`ALTER TABLE.. MODIFY COLUMN`ステートメントは、既存のテーブルの列を変更します。変更には、データ型と属性の変更が含まれます。同時に名前を変更するには、代わりに[`CHANGE COLUMN`](/sql-statements/sql-statement-change-column.md)ステートメントを使用します。
+`ALTER TABLE.. MODIFY COLUMN`文は既存のテーブルの列を変更します。変更にはデータ型と属性の変更が含まれます。同時に列名を変更するには、代わりに[`CHANGE COLUMN`](/sql-statements/sql-statement-change-column.md)文を使用してください。
 
-v5.1.0 以降、TiDB は Reorg データのデータ型の変更をサポートしています。これには以下が含まれますが、これらに限定されません。
+バージョン 5.1.0 以降、TiDB は、Reorg データのデータ型の変更をサポートしています。これには以下が含まれますが、これらに限定されません。
 
--   `VARCHAR` `BIGINT`に変更
+-   `VARCHAR`を`BIGINT`に変更
 -   `DECIMAL`精度の変更
 -   `VARCHAR(10)`の長さを`VARCHAR(5)`に圧縮する
 
@@ -125,7 +125,7 @@ CREATE TABLE `t1` (
 
 > **注記：**
 >
-> -   変更されたデータ型が既存のデータ行と競合する場合、TiDB はエラーを返します。上記の例では、TiDB は次のエラーを返します。
+> -   TiDBは、変更されたデータ型が既存のデータ行と競合する場合にエラーを返します。上記の例では、TiDBは次のエラーを返します。
 >
 >         alter table t1 modify column col1 varchar(4);
 >         ERROR 1406 (22001): Data Too Long, field len 4, data len 5
@@ -134,9 +134,9 @@ CREATE TABLE `t1` (
 >
 >         Query OK, 0 rows affected (2.52 sec)
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   主キー列の Reorg-Data タイプの変更はサポートされていませんが、Meta-Only タイプの変更はサポートされています。例:
+-   主キー列のReorg-Data型の変更はサポートされていませんが、Meta-Only型の変更はサポートされています。例：
 
     ```sql
     CREATE TABLE t (a int primary key);
@@ -156,7 +156,7 @@ CREATE TABLE `t1` (
     Query OK, 0 rows affected (0.01 sec)
     ```
 
--   生成された列の列タイプの変更はサポートされていません。例:
+-   生成された列の列型の変更はサポートされていません。例:
 
     ```sql
     CREATE TABLE t (a INT, b INT as (a+1));
@@ -164,7 +164,7 @@ CREATE TABLE `t1` (
     ERROR 8200 (HY000): Unsupported modify column: column is generated
     ```
 
--   パーティション化されたテーブルの列タイプの変更はサポートされていません。例:
+-   パーティションテーブルの列の型の変更はサポートされていません。例:
 
     ```sql
     CREATE TABLE t (c1 INT, c2 INT, c3 INT) partition by range columns(c1) ( partition p0 values less than (10), partition p1 values less than (maxvalue));
@@ -172,7 +172,7 @@ CREATE TABLE `t1` (
     ERROR 8200 (HY000): Unsupported modify column: table is partition table
     ```
 
--   TiDB と MySQL 間の`cast`の関数の動作に関する互換性の問題により、一部のデータ型 (一部の TIME 型、BIT、SET、ENUM、JSON など) から他の型への変更はサポートされていません。
+-   TiDB と MySQL 間の`cast`関数の動作に関する互換性の問題により、一部のデータ型 (一部の TIME 型、BIT、SET、ENUM、JSON など) から他の型への変更はサポートされていません。
 
     ```sql
     CREATE TABLE t (a DECIMAL(13, 7));
@@ -185,5 +185,5 @@ CREATE TABLE `t1` (
 -   [テーブルの作成](/sql-statements/sql-statement-create-table.md)
 -   [表示テーブルの作成](/sql-statements/sql-statement-show-create-table.md)
 -   [列を追加](/sql-statements/sql-statement-add-column.md)
--   [ドロップコラム](/sql-statements/sql-statement-drop-column.md)
+-   [ドロップカラム](/sql-statements/sql-statement-drop-column.md)
 -   [列の変更](/sql-statements/sql-statement-change-column.md)

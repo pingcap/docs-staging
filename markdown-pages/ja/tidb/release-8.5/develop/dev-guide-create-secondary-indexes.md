@@ -5,13 +5,13 @@ summary: セカンダリ インデックスを作成する手順、ルール、�
 
 # セカンダリインデックスを作成する {#create-a-secondary-index}
 
-このドキュメントでは、SQLと様々なプログラミング言語を用いてセカンダリインデックスを作成する方法と、インデックス作成のルールを列挙します。このドキュメントでは、アプリケーション[書店](/develop/dev-guide-bookshop-schema-design.md)例に、セカンダリインデックスの作成手順を順を追って説明します。
+このドキュメントでは、SQLと様々なプログラミング言語を用いてセカンダリインデックスを作成する方法と、インデックス作成のルールを列挙します。このドキュメントでは、 [書店](/develop/dev-guide-bookshop-schema-design.md)アプリケーションを例に、セカンダリインデックスの作成手順を順を追って説明します。
 
 ## 始める前に {#before-you-start}
 
 セカンダリ インデックスを作成する前に、次の操作を実行します。
 
--   [TiDB Cloud Serverlessクラスタを構築する](/develop/dev-guide-build-cluster-in-cloud.md) 。
+-   [TiDB Cloudサーバーレスクラスタの構築](/develop/dev-guide-build-cluster-in-cloud.md) 。
 -   [スキーマ設計の概要](/develop/dev-guide-schema-design-overview.md)読んでください。
 -   [データベースを作成する](/develop/dev-guide-create-database.md) 。
 -   [テーブルを作成する](/develop/dev-guide-create-table.md) 。
@@ -73,10 +73,10 @@ KEY `{index_name}` (`{column_names}`)
 
 | フィールド名 | タイプ          | フィールドの説明               |
 | ------ | ------------ | ---------------------- |
-| id     | ビッグイント(20)   | 本の一意のID                |
+| id     | ビッグインテント     | 本の一意のID                |
 | タイトル   | varchar(100) | 書籍タイトル                 |
 | タイプ    | 列挙型          | 書籍の種類（例：雑誌、アニメーション、教材） |
-| ストック   | ビッグイント(20)   | ストック                   |
+| ストック   | ビッグインテント     | ストック                   |
 | 価格     | 小数点(15,2)    | 価格                     |
 | 公開日時   | 日時           | 発行日                    |
 
@@ -84,11 +84,11 @@ KEY `{index_name}` (`{column_names}`)
 
 ```sql
 CREATE TABLE `bookshop`.`books` (
-  `id` bigint(20) AUTO_RANDOM NOT NULL,
+  `id` bigint AUTO_RANDOM NOT NULL,
   `title` varchar(100) NOT NULL,
   `type` enum('Magazine', 'Novel', 'Life', 'Arts', 'Comics', 'Education & Reference', 'Humanities & Social Sciences', 'Science & Technology', 'Kids', 'Sports') NOT NULL,
   `published_at` datetime NOT NULL,
-  `stock` int(11) DEFAULT '0',
+  `stock` int DEFAULT '0',
   `price` decimal(15,2) DEFAULT '0.0',
   PRIMARY KEY (`id`) CLUSTERED
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

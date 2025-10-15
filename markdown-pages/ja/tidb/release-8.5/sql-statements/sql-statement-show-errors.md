@@ -5,7 +5,7 @@ summary: TiDB データベースの SHOW ERRORS の使用法の概要。
 
 # エラーを表示 {#show-errors}
 
-このステートメントは、以前に実行されたステートメントのエラーを表示します。ステートメントが正常に実行されるとすぐにエラー バッファーはクリアされます。その場合、 `SHOW ERRORS`空のセットを返します。
+この文は、以前に実行された文のエラーを表示します。文が正常に実行されると、エラーバッファはすぐにクリアされます。その場合、 `SHOW ERRORS`空のセットを返します。
 
 どのステートメントがエラーを生成するか、または警告を生成するかの動作は、現在の`sql_mode`に大きく影響されます。
 
@@ -50,9 +50,9 @@ mysql> SHOW ERRORS;
 Empty set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SHOW ERRORS`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SHOW ERRORS`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

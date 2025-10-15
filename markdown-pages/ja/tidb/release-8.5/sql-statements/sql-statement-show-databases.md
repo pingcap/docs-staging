@@ -5,9 +5,9 @@ summary: TiDB データベースに対する SHOW DATABASES の使用法の概�
 
 # データベースを表示 {#show-databases}
 
-このステートメントは、現在のユーザーが権限を持つデータベースのリストを表示します。現在のユーザーがアクセス権を持たないデータベースは、リストに表示されません。データベース`information_schema`は常にデータベース リストの最初に表示されます。
+このステートメントは、現在のユーザーが権限を持つデータベースのリストを表示します。現在のユーザーがアクセスできないデータベースはリストに表示されません。データベース`information_schema`常にデータベースリストの先頭に表示されます。
 
-`SHOW SCHEMAS`このステートメントのエイリアスです。
+`SHOW SCHEMAS`はこのステートメントのエイリアスです。
 
 ## 概要 {#synopsis}
 
@@ -50,9 +50,9 @@ mysql> SHOW DATABASES;
 5 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SHOW DATABASES`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SHOW DATABASES`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

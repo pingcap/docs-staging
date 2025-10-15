@@ -5,7 +5,7 @@ summary: TiDB データベースの SET [NAMES|CHARACTER SET] の使用法の概
 
 # SET [名前|文字セット] {#set-names-character-set}
 
-ステートメント`SET NAMES` `SET CHARACTER SET`および`SET CHARSET` 、現在の接続の変数`character_set_client` 、および`character_set_results` `character_set_connection`変更します。
+ステートメント`SET NAMES` 、および`SET CHARSET` `SET CHARACTER SET`現在の接続の変数`character_set_client` 、および`character_set_connection` `character_set_results`します。
 
 ## 概要 {#synopsis}
 
@@ -69,9 +69,9 @@ mysql> SHOW VARIABLES LIKE 'character_set%';
 8 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SET [NAMES|CHARACTER SET]`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SET [NAMES|CHARACTER SET]`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

@@ -3,38 +3,38 @@ title: Role-Based Access Control
 summary: このドキュメントでは、TiDB RBAC の操作と実装について説明します。
 ---
 
-# ロールベースのアクセス制御 {#role-based-access-control}
+# ロールベースアクセス制御 {#role-based-access-control}
 
-TiDB のロールベース アクセス制御 (RBAC) システムの実装は、MySQL 8.0 の実装と似ています。TiDB は、MySQL のほとんどの RBAC 構文と互換性があります。
+TiDB のロールベースアクセス制御 (RBAC) システムの実装は、MySQL 8.0 のものと似ています。TiDB は、MySQL のほとんどの RBAC 構文と互換性があります。
 
 このドキュメントでは、TiDB RBAC 関連の操作と実装について説明します。
 
-## RBAC 操作 {#rbac-operations}
+## RBAC操作 {#rbac-operations}
 
-ロールは一連の権限の集合です。次の操作を実行できます。
+ロールとは、一連の権限の集合です。以下の操作を行うことができます。
 
 -   ロールを作成します。
 -   ロールを削除します。
 -   ロールに権限を付与します。
--   別のユーザーにロールを付与します。ロールを有効にすると、そのユーザーはロールに関連する権限を取得できます。
+-   別のユーザーにロールを付与します。ロールを有効化すると、そのユーザーはロールに関連する権限を取得できます。
 
 ### ロールを作成する {#create-a-role}
 
-たとえば、次のステートメントを使用して、ロール`app_developer` 、 `app_read` 、および`app_write`を作成できます。
+たとえば、次のステートメントを使用して、ロール`app_developer` 、 `app_read` 、および`app_write`作成できます。
 
 ```sql
 CREATE ROLE 'app_developer', 'app_read', 'app_write';
 ```
 
-ロールの命名形式とルールについては、 [TiDB ユーザーアカウント管理](/user-account-management.md)参照してください。
+ロールの命名形式と規則については、 [TiDB ユーザーアカウント管理](/user-account-management.md)参照してください。
 
-ロールは`mysql.user`テーブルに保存され、ロール名のホスト名部分 (省略されている場合) はデフォルトで`'%'`になります。作成しようとしているロールの名前は一意である必要があります。一意でない場合は、エラーが報告されます。
+ロールは`mysql.user`テーブルに保存され、ロール名のホスト名部分（省略されている場合）はデフォルトで`'%'`になります。作成しようとしているロール名は一意である必要があります。一意でない場合はエラーが報告されます。
 
-ロールを作成するには、権限`CREATE ROLE`または`CREATE USER`必要です。
+ロールを作成するには、 `CREATE ROLE`または`CREATE USER`権限が必要です。
 
 ### ロールに権限を付与する {#grant-a-privilege-to-a-role}
 
-ロールに権限を付与する操作は、ユーザーに権限を付与する操作と同じです。詳細については、 [TiDB権限管理](/privilege-management.md)参照してください。
+ロールに権限を付与する操作は、ユーザーに権限を付与する操作と同じです。詳細は[TiDB権限管理](/privilege-management.md)参照してください。
 
 たとえば、次のステートメントを使用して、 `app_read`ロールに`app_db`データベースを読み取る権限を付与できます。
 
@@ -56,7 +56,7 @@ GRANT ALL ON app_db.* TO 'app_developer';
 
 ### ユーザーにロールを付与する {#grant-a-role-to-a-user}
 
-ユーザー`dev1` `app_db`に対するすべての権限を持つ開発者ロールを持ち、ユーザー`read_user1`と`read_user2` `app_db`に対する読み取り専用権限を持ち、ユーザー`rw_user1`が`app_db`に対する読み取り権限と書き込み権限を持っているとします。
+ユーザー`dev1` `app_db`に対するすべての権限を持つ開発者ロールを持ち、ユーザー`read_user1`と`read_user2` `app_db`に対する読み取り専用権限を持ち、ユーザー`rw_user1` `app_db`に対する読み取り権限と書き込み権限を持っているとします。
 
 `CREATE USER`使用してユーザーを作成します。
 
@@ -77,7 +77,7 @@ GRANT 'app_read', 'app_write' TO 'rw_user1'@'localhost';
 
 別のユーザーにロールを付与したり、ロールを取り消したりするには、 `SUPER`権限が必要です。
 
-ユーザーにロールを付与することは、そのロールをすぐに有効にすることを意味するわけではありません。ロールを有効にすることは別の操作です。
+ユーザーにロールを付与しても、そのロールがすぐに有効になるわけではありません。ロールの有効化は別の操作です。
 
 次の操作は「関係ループ」を形成する可能性があります。
 
@@ -92,7 +92,7 @@ GRANT 'r2' TO 'u2';
 GRANT 'u2' TO 'r2';
 ```
 
-TiDB はこの複数レベルの承認関係をサポートしています。これを使用して権限の継承を実装できます。
+TiDBはこの多段階の認可関係をサポートしています。これを利用して権限の継承を実装できます。
 
 ### ロールの権限を確認する {#check-a-role-s-privileges}
 
@@ -151,14 +151,14 @@ SHOW GRANTS FOR 'read_user1'@'localhost' USING 'app_read';
     | GRANT `app_read`@`%` TO `read_user1`@`localhost`       |
     +--------------------------------------------------------+
 
-現在のユーザーの権限を確認するには、 `SHOW GRANTS`または`SHOW GRANTS FOR CURRENT_USER()`使用します。5 と`SHOW GRANTS` `SHOW GRANTS FOR CURRENT_USER()`次の点で異なります。
+現在のユーザーの権限を確認するには、 `SHOW GRANTS`または`SHOW GRANTS FOR CURRENT_USER()`使用します。5 と`SHOW GRANTS FOR CURRENT_USER()` `SHOW GRANTS`の点で異なります。
 
 -   `SHOW GRANTS` 、現在のユーザーに対して有効なロールの権限を示します。
--   `SHOW GRANTS FOR CURRENT_USER()`有効なロールの権限は表示されません。
+-   `SHOW GRANTS FOR CURRENT_USER()`場合、有効なロールの権限は表示されません。
 
 ### デフォルトロールを設定する {#set-the-default-role}
 
-ロールがユーザーに付与されても、すぐには有効になりません。ユーザーがこのロールを有効にした後にのみ、ロールが所有する権限を使用できます。
+ロールはユーザーに付与されてもすぐには有効になりません。ユーザーがこのロールを有効化した後にのみ、そのロールが持つ権限を利用できるようになります。
 
 ユーザーにデフォルトのロールを設定できます。ユーザーがログインすると、デフォルトのロールが自動的に有効になります。
 
@@ -168,7 +168,7 @@ SET DEFAULT ROLE
     TO user [, user ]
 ```
 
-たとえば、次のステートメントを使用して、デフォルトのロール`rw_user1@localhost` ～ `app_read`および`app_write`設定できます。
+たとえば、次のステートメントを使用して、 `rw_user1@localhost` ～ `app_read`および`app_write`のデフォルト ロールを設定できます。
 
 ```sql
 SET DEFAULT ROLE app_read, app_write TO 'rw_user1'@'localhost';
@@ -216,7 +216,7 @@ SET ROLE 'app_read', 'app_write';
 SET ROLE DEFAULT
 ```
 
-次のステートメントを使用して、現在のユーザーに付与されているすべてのロールを有効にすることができます。
+次のステートメントを使用して、現在のユーザーに付与されているすべてのロールを有効にできます。
 
 ```sql
 SET ROLE ALL
@@ -248,7 +248,7 @@ SET ROLE ALL EXCEPT 'app_read'
 SET DEFAULT ROLE ALL TO 'rw_user1'@'localhost';
 ```
 
-`rw_user1@localhost`ログインしたら、次のステートメントを実行できます。
+`rw_user1@localhost`後、次のステートメントを実行できます。
 
 ```sql
 SELECT CURRENT_ROLE();
@@ -272,7 +272,7 @@ SET ROLE 'app_read'; SELECT CURRENT_ROLE();
 
 ### 役割を取り消す {#revoke-a-role}
 
-次のステートメントを使用して、ユーザー`read_user1@localhost`と`read_user2@localhost`に付与された`app_read`ロールを取り消すことができます。
+次のステートメントを使用して、ユーザー`read_user1@localhost`および`read_user2@localhost`に付与された`app_read`ロールを取り消すことができます。
 
 ```sql
 REVOKE 'app_read' FROM 'read_user1'@'localhost', 'read_user2'@'localhost';
@@ -288,7 +288,7 @@ REVOKE 'app_read', 'app_write' FROM 'rw_user1'@'localhost';
 
 ### 権限を取り消す {#revoke-a-privilege}
 
-`REVOKE`ステートメントは`GRANT`の逆です。 `REVOKE`使用して`app_write`の権限を取り消すことができます。
+`REVOKE`文は`GRANT`の逆です。 `REVOKE`使用すると`app_write`の権限を取り消すことができます。
 
 ```sql
 REVOKE INSERT, UPDATE, DELETE ON app_db.* FROM 'app_write';
@@ -304,9 +304,9 @@ REVOKE INSERT, UPDATE, DELETE ON app_db.* FROM 'app_write';
 DROP ROLE 'app_read', 'app_write';
 ```
 
-この操作により、 `mysql.user`テーブルの`app_read`と`app_write`のロール レコードと承認テーブル内の関連レコードが削除され、2 つのロールに関連する承認が終了します。
+この操作により、 `mysql.user`テーブル内の`app_read`と`app_write`ロール レコードと、承認テーブル内の関連レコードが削除され、2 つのロールに関連する承認が終了します。
 
-ロールを削除するには、権限`DROP ROLE`または`DROP USER`必要です。
+ロールを削除するには、 `DROP ROLE`または`DROP USER`権限が必要です。
 
 ### 承認テーブル {#authorization-table}
 
@@ -317,7 +317,7 @@ DROP ROLE 'app_read', 'app_write';
 
 #### <code>mysql.role_edges</code> {#code-mysql-role-edges-code}
 
-`mysql.role_edges`には次のデータが含まれます。
+`mysql.role_edges`次のデータが含まれます。
 
 ```sql
 SELECT * FROM mysql.role_edges;
@@ -331,11 +331,11 @@ SELECT * FROM mysql.role_edges;
     1 row in set (0.00 sec)
 
 -   `FROM_HOST`と`FROM_USER`それぞれロールのホスト名とユーザー名を示します。
--   `TO_HOST`と`TO_USER`ロールが付与されるユーザーのホスト名とユーザー名を示します。
+-   `TO_HOST`と`TO_USER` 、ロールが付与されるユーザーのホスト名とユーザー名を示します。
 
 #### <code>mysql.default_roles</code> {#code-mysql-default-roles-code}
 
-`mysql.default_roles`各ユーザーに対してデフォルトで有効になっているロールを示します。
+`mysql.default_roles` 、各ユーザーに対してデフォルトで有効になっているロールを示します。
 
 ```sql
 SELECT * FROM mysql.default_roles;

@@ -5,7 +5,7 @@ summary: TiDB データベースの SET DEFAULT ROLE の使用法の概要。
 
 # <code>SET DEFAULT ROLE</code> {#code-set-default-role-code}
 
-このステートメントは、デフォルトでユーザーに適用される特定のロールを設定します。したがって、 `SET ROLE <rolename>`または`SET ROLE ALL`実行しなくても、ロールに関連付けられた権限が自動的に付与されます。
+このステートメントは、特定のロールをユーザーにデフォルトで適用するように設定します。これにより、 `SET ROLE <rolename>`または`SET ROLE ALL`実行しなくても、ロールに関連付けられた権限が自動的に付与されます。
 
 ## 概要 {#synopsis}
 
@@ -99,7 +99,7 @@ Query OK, 0 rows affected (0.02 sec)
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-この後、ユーザー`jennifer`ロール`analyticsteam`に関連付けられた権限を持ち、 `jennifer`ステートメント`SET ROLE`を実行する必要がなくなります。
+この後、ユーザー`jennifer`ロール`analyticsteam`に関連付け`jennifer`た権限を持ち、ステートメント`SET ROLE`実行する必要がなくなります。
 
 ```sql
 SHOW GRANTS;
@@ -121,16 +121,16 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-`SET DEFAULT ROLE`ユーザーに関連付けられたロールを自動的に`GRANT`付与しません。 `jennifer`付与されていないロールに対して`SET DEFAULT ROLE`付与しようとすると、次のエラーが発生します。
+`SET DEFAULT ROLE` 、ユーザーに関連付けられたロールを自動的に`GRANT`付与しません。 `jennifer`れていないロールに対して`SET DEFAULT ROLE`を付与しようとすると、次のエラーが発生します。
 
 ```sql
 SET DEFAULT ROLE analyticsteam TO jennifer;
 ERROR 3530 (HY000): `analyticsteam`@`%` is is not granted to jennifer@%
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SET DEFAULT ROLE`ステートメントは、MySQL 8.0 のロール機能と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
+TiDBの`SET DEFAULT ROLE`文はMySQL 8.0のロール機能と完全に互換性があります。互換性に関する相違点が見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 
@@ -142,6 +142,6 @@ TiDB の`SET DEFAULT ROLE`ステートメントは、MySQL 8.0 のロール機�
 
 <CustomContent platform="tidb">
 
--   [ロールベースのアクセス制御](/role-based-access-control.md)
+-   [ロールベースアクセス制御](/role-based-access-control.md)
 
 </CustomContent>

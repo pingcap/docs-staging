@@ -3,15 +3,15 @@ title: SHOW [FULL] COLUMNS FROM | TiDB SQL Statement Reference
 summary: TiDB データベースの SHOW [FULL] COLUMNS FROM の使用法の概要。
 ---
 
-# [全]列を表示 {#show-full-columns-from}
+# [全列表示] から {#show-full-columns-from}
 
-ステートメント`SHOW [FULL] COLUMNS FROM <table_name>` 、テーブルまたはビューの列を便利な表形式で記述します。オプションのキーワード`FULL`現在のユーザーがその列に対して持つ権限と、テーブル定義からの`comment`を表示します。
+ステートメント`SHOW [FULL] COLUMNS FROM <table_name>` 、テーブルまたはビューの列を便利な表形式で記述します。オプションのキーワード`FULL` 、現在のユーザーがその列に対して持っている権限と、テーブル定義の`comment`表示します。
 
-ステートメント`SHOW [FULL] FIELDS FROM <table_name>` 、 `DESC <table_name>` 、 `DESCRIBE <table_name>` 、および`EXPLAIN <table_name>`は、このステートメントのエイリアスです。
+ステートメント`SHOW [FULL] FIELDS FROM <table_name>` 、 `DESC <table_name>` 、 `DESCRIBE <table_name>` 、および`EXPLAIN <table_name>`はこのステートメントのエイリアスです。
 
 > **注記：**
 >
-> `DESC TABLE <table_name>` 、 `DESCRIBE TABLE <table_name>` 、 `EXPLAIN TABLE <table_name>`上記のステートメントと同等ではありません。これらは[`DESC SELECT * FROM &#x3C;table_name>`](/sql-statements/sql-statement-explain.md)の別名です。
+> `DESC TABLE <table_name>` 、 `DESCRIBE TABLE <table_name>` 、 `EXPLAIN TABLE <table_name>`上記の文と同等ではありません。これらは[`DESC SELECT * FROM &#x3C;table_name>`](/sql-statements/sql-statement-explain.md)の別名です。
 
 ## 概要 {#synopsis}
 
@@ -127,9 +127,9 @@ mysql> SHOW FULL COLUMNS FROM mysql.user;
 38 rows in set (0.00 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`SHOW [FULL] COLUMNS FROM`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`SHOW [FULL] COLUMNS FROM`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

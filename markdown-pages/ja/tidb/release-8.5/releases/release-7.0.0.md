@@ -111,7 +111,7 @@ v7.0.0-DMR の主な新機能と改善点は次のとおりです。
     -   セッションレベル。1 を介して現在の[`SET RESOURCE GROUP`](/sql-statements/sql-statement-set-resource-group.md)で使用されるリソースグループを設定します。
     -   ステートメントレベル[`RESOURCE_GROUP()`](/optimizer-hints.md#resource_groupresource_group_name)を介して現在のステートメントで使用されるリソースグループを設定します。
 
-    詳細については[ドキュメント](/tidb-resource-control.md)参照してください。
+    詳細については[ドキュメント](/tidb-resource-control-ru-groups.md)参照してください。
 
 -   高速オンラインDDLのチェックポイントメカニズムをサポートし、フォールトトレランスと自動リカバリ機能を向上させます[＃42164](https://github.com/pingcap/tidb/issues/42164) @ [接線](https://github.com/tangenta)
 
@@ -197,11 +197,11 @@ v7.0.0-DMR の主な新機能と改善点は次のとおりです。
 -   [DBeaver](https://dbeaver.io/) v23.0.1 はデフォルトで TiDB をサポートします[＃17396](https://github.com/dbeaver/dbeaver/issues/17396) @ [アイスマップ](https://github.com/Icemap)
 
     -   独立した TiDB モジュール、アイコン、ロゴを提供します。
-    -   デフォルト構成では[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)サポートされているため、TiDB Cloud Serverless への接続が容易になります。
+    -   デフォルト構成では[TiDB Cloudサーバーレス](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)サポートされているため、 TiDB Cloud Serverless への接続が容易になります。
     -   外部キー タブを表示または非表示にするために TiDB のバージョンを識別することをサポートします。
     -   `EXPLAIN`結果で SQL 実行プランの視覚化をサポートします。
     -   `PESSIMISTIC` `REORGANIZE`の TiDB `AUTO_RANDOM` `PLACEMENT` `CLUSTERED`表示`OPTIMISTIC` `CACHE` `EXCHANGE` `NONCLUSTERED` `POLICY`
-    -   `TIDB_BOUNDED_STALENESS` `TIDB_IS_DDL_OWNER`の`TIDB_VERSION`関数の`TIDB_DECODE_KEY`表示`TIDB_DECODE_PLAN`サポート`TIDB_DECODE_SQL_DIGESTS` `TIDB_SHARD` `TIDB_PARSE_TSO`
+    -   `TIDB_BOUNDED_STALENESS` `TIDB_PARSE_TSO`の`TIDB_VERSION`関数の`TIDB_DECODE_PLAN`表示`TIDB_DECODE_KEY`サポート`TIDB_DECODE_SQL_DIGESTS` `TIDB_SHARD` `TIDB_IS_DDL_OWNER`
 
     詳細については[DBeaver ドキュメント](https://github.com/dbeaver/dbeaver/wiki)参照してください。
 
@@ -273,7 +273,7 @@ v7.0.0-DMR の主な新機能と改善点は次のとおりです。
 
     TiCDC クラスターを v7.0.0 にアップグレードする際、Avro を使用して複製されたテーブルに`FLOAT`データ型が含まれている場合は、アップグレード前に Confluent Schema Registry の互換性ポリシーを手動で`None`に調整し、changefeed がスキーマを正常に更新できるようにする必要があります。そうしないと、アップグレード後に changefeed がスキーマを更新できなくなり、エラー状態になります。
 
--   v7.0.0 以降、 [`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size)システム変数は[`LOAD DATA`文](/sql-statements/sql-statement-load-data.md)では有効になりません。
+-   v7.0.0 以降、 [`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size)システム変数は[`LOAD DATA`ステートメント](/sql-statements/sql-statement-load-data.md)では有効になりません。
 
 ### システム変数 {#system-variables}
 
@@ -306,12 +306,12 @@ v7.0.0-DMR の主な新機能と改善点は次のとおりです。
 | TiKV           | [`resolved-ts.advance-ts-interval`](/tikv-configuration-file.md#advance-ts-interval)                 | 修正済み     | デフォルト値は`"1s"`から`"20s"`に変更されます。この変更により、Resolved TS の定期的な進行間隔が長くなり、TiKV ノード間のトラフィック消費量が削減されます。                                                                                                                                                      |
 | TiKV           | [`resource-control.enabled`](/tikv-configuration-file.md#resource-control)                           | 修正済み     | デフォルト値は`false`から`true`に変更されます。                                                                                                                                                                                                                    |
 | TiKV           | [`raft-engine.prefill-for-recycle`](/tikv-configuration-file.md#prefill-for-recycle-new-in-v700)     | 新しく追加された | Raft Engineのログリサイクル用に空のログファイルを生成するかどうかを制御します。デフォルト値は`false`です。                                                                                                                                                                                    |
-| PD             | [`degraded-mode-wait-duration`](/pd-configuration-file.md#degraded-mode-wait-duration)               | 新しく追加された | [リソース管理](/tidb-resource-control.md)関連の設定項目です。縮退モードをトリガーするまでの待機時間を制御します。デフォルト値は`0s`です。                                                                                                                                                             |
-| PD             | [`read-base-cost`](/pd-configuration-file.md#read-base-cost)                                         | 新しく追加された | [リソース管理](/tidb-resource-control.md)関連の設定項目です。読み取り要求から RU への変換における基準係数を制御します。デフォルト値は`0.25`です。                                                                                                                                                      |
-| PD             | [`read-cost-per-byte`](/pd-configuration-file.md#read-cost-per-byte)                                 | 新しく追加された | [リソース管理](/tidb-resource-control.md)関連の設定項目です。読み取りフローから RU への変換の基準係数を制御します。デフォルト値は`1/ (64 * 1024)`です。                                                                                                                                              |
-| PD             | [`read-cpu-ms-cost`](/pd-configuration-file.md#read-cpu-ms-cost)                                     | 新しく追加された | [リソース管理](/tidb-resource-control.md)関連の設定項目です。CPU から RU への変換における基準係数を制御します。デフォルト値は`1/3`です。                                                                                                                                                         |
-| PD             | [`write-base-cost`](/pd-configuration-file.md#write-base-cost)                                       | 新しく追加された | [リソース管理](/tidb-resource-control.md)関連の設定項目です。書き込み要求から RU への変換の基準係数を制御します。デフォルト値は`1`です。                                                                                                                                                            |
-| PD             | [`write-cost-per-byte`](/pd-configuration-file.md#write-cost-per-byte)                               | 新しく追加された | [リソース管理](/tidb-resource-control.md)関連の設定項目です。書き込みフローから RU への変換の基準係数を制御します。デフォルト値は`1/1024`です。                                                                                                                                                      |
+| PD             | [`degraded-mode-wait-duration`](/pd-configuration-file.md#degraded-mode-wait-duration)               | 新しく追加された | [リソース管理](/tidb-resource-control-ru-groups.md)関連の設定項目です。縮退モードをトリガーするまでの待機時間を制御します。デフォルト値は`0s`です。                                                                                                                                                   |
+| PD             | [`read-base-cost`](/pd-configuration-file.md#read-base-cost)                                         | 新しく追加された | [リソース管理](/tidb-resource-control-ru-groups.md)関連の設定項目です。読み取り要求から RU への変換における基準係数を制御します。デフォルト値は`0.25`です。                                                                                                                                            |
+| PD             | [`read-cost-per-byte`](/pd-configuration-file.md#read-cost-per-byte)                                 | 新しく追加された | [リソース管理](/tidb-resource-control-ru-groups.md)関連の設定項目です。読み取りフローから RU への変換の基準係数を制御します。デフォルト値は`1/ (64 * 1024)`です。                                                                                                                                    |
+| PD             | [`read-cpu-ms-cost`](/pd-configuration-file.md#read-cpu-ms-cost)                                     | 新しく追加された | [リソース管理](/tidb-resource-control-ru-groups.md)関連の設定項目です。CPU から RU への変換における基準係数を制御します。デフォルト値は`1/3`です。                                                                                                                                               |
+| PD             | [`write-base-cost`](/pd-configuration-file.md#write-base-cost)                                       | 新しく追加された | [リソース管理](/tidb-resource-control-ru-groups.md)関連の設定項目です。書き込み要求から RU への変換の基準係数を制御します。デフォルト値は`1`です。                                                                                                                                                  |
+| PD             | [`write-cost-per-byte`](/pd-configuration-file.md#write-cost-per-byte)                               | 新しく追加された | [リソース管理](/tidb-resource-control-ru-groups.md)関連の設定項目です。書き込みフローから RU への変換の基準係数を制御します。デフォルト値は`1/1024`です。                                                                                                                                            |
 | TiFlash        | [`mark_cache_size`](/tiflash/tiflash-configuration.md)                                               | 修正済み     | 不要なメモリ使用量を削減するために、 TiFlashのデータ ブロックのメタデータのデフォルトのキャッシュ制限を`5368709120`から`1073741824`に変更します。                                                                                                                                                         |
 | TiFlash        | [`minmax_index_cache_size`](/tiflash/tiflash-configuration.md)                                       | 修正済み     | 不要なメモリ使用量を削減するために、 TiFlashのデータ ブロックの最小最大インデックスのデフォルトのキャッシュ制限を`5368709120`から`1073741824`に変更します。                                                                                                                                                    |
 | TiFlash        | [`flash.disaggregated_mode`](/tiflash/tiflash-disaggregated-and-s3.md)                               | 新しく追加された | TiFlashの分散アーキテクチャにおいて、このTiFlashノードが書き込みノードか計算ノードかを示します。値は`tiflash_write`または`tiflash_compute`です。                                                                                                                                                   |

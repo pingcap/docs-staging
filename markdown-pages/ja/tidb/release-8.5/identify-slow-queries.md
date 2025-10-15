@@ -82,7 +82,7 @@ insert into t select * from t;
 -   `Preproc_subqueries` : ステートメント内の事前に実行されるサブクエリの数。例えば、 `where id in (select if from t)`サブクエリが事前に実行される可能性があります。
 -   `Preproc_subqueries_time` : このステートメントのサブクエリを事前に実行するのに費やされた時間。
 -   `Exec_retry_count` : このステートメントの再試行回数。このフィールドは通常、ロックが失敗した場合にステートメントが再試行される悲観的トランザクション用です。
--   `Exec_retry_time` : このステートメントの実行再試行時間。例えば、ステートメントが合計3回実行された場合（最初の2回は失敗）、 `Exec_retry_time`最初の2回の実行の合計時間を意味します。最後の実行時間は`Query_time`から`Exec_retry_time`引いた値です。
+-   `Exec_retry_time` : この文の実行再試行時間。例えば、文が合計3回実行された場合（最初の2回は失敗）、 `Exec_retry_time`最初の2回の実行の合計時間を意味します。最後の実行時間は`Query_time`から`Exec_retry_time`引いた値です。
 -   `KV_total` : このステートメントによる TiKV またはTiFlash上のすべての RPC 要求に費やされた時間。
 -   `PD_total` : このステートメントによって PD 上のすべての RPC 要求に費やされた時間。
 -   `Backoff_total` : このステートメントの実行中にすべてのバックオフに費やされた時間。
@@ -100,7 +100,7 @@ insert into t select * from t;
 -   `Write_keys` : トランザクションが TiKV 内の書き込み CF に書き込むキーの数。
 -   `Write_size` : トランザクションがコミットされたときに書き込まれるキーまたは値の合計サイズ。
 -   `Prewrite_region` ：2フェーズトランザクションコミットの最初のフェーズ（事前書き込み）に関与するTiKVリージョンの数。各リージョンはリモートプロシージャコールをトリガーします。
--   `Wait_prewrite_binlog_time` : トランザクションがコミットされたときにバイナリログを書き込むために使用される時間。
+-   `Wait_prewrite_binlog_time` : トランザクションがコミットされた際にバイナリログを書き込むのにかかった時間。v8.4.0以降、TiDBBinlogは削除され、このフィールドには値が設定されません。
 -   `Resolve_lock_time` : トランザクションのコミット中にロックが発生した後、ロックを解決するか期限が切れるまで待機する時間。
 
 メモリ使用量フィールド:
@@ -193,7 +193,7 @@ TiKVコプロセッサータスク フィールド:
 set @@tidb_enable_collect_execution_info=0;
 ```
 
-`Plan`フィールドに返される結果は、 `EXPLAIN`または`EXPLAIN ANALYZE`結果とほぼ同じ形式になります。実行プランの詳細については、 [`EXPLAIN`](/sql-statements/sql-statement-explain.md)または[`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md)参照してください。
+`Plan`フィールドに返される結果は、 `EXPLAIN`または`EXPLAIN ANALYZE`結果とほぼ同じ形式です。実行プランの詳細については、 [`EXPLAIN`](/sql-statements/sql-statement-explain.md)または[`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md)参照してください。
 
 詳細については[TiDB固有の変数と構文](/system-variables.md)参照してください。
 
@@ -517,7 +517,7 @@ pt-query-digest --report tidb-slow.log
 
 ## 問題のあるSQL文を特定する {#identify-problematic-sql-statements}
 
-`SLOW_QUERY` `process_time`すべてが問題となるわけではありません。3 が非常に大きいものだけが、クラスター全体への負荷を高めます。
+`SLOW_QUERY`のすべてが問題となるわけではありません。3 `process_time`非常に大きいものだけが、クラスター全体への負荷を高めます。
 
 `wait_time`が非常に大きく、 `process_time`が非常に小さいステートメントは、通常は問題になりません。これは、実際に問題のあるステートメントによってブロックされ、実行キューで待機する必要があるため、応答時間が大幅に長くなるためです。
 

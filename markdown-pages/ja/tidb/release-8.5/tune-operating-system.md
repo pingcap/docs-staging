@@ -69,6 +69,7 @@ NUMA（Non-Uniform Memory Access）ノードをまたがるメモリを可能な
 ```shell
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 echo never > /sys/kernel/mm/transparent_hugepage/defrag
+grubby --update-kernel="$KERNEL" --args='transparent_hugepage=never'
 ```
 
 ### メモリ - 仮想メモリパラメータ {#memory-virtual-memory-parameters}

@@ -7,7 +7,7 @@ summary: TiDB クラスターのアラート ルールについて学習しま�
 
 # TiDBクラスタアラートルール {#tidb-cluster-alert-rules}
 
-このドキュメントでは、TiDB クラスター内のさまざまなコンポーネントのアラート ルールについて説明します。これには、TiDB、TiKV、PD、 TiFlash、TiDB Binlog、TiCDC、Node_exporter、Blackbox_exporter のアラート項目のルールの説明と解決策が含まれます。
+このドキュメントでは、TiDB、TiKV、PD、 TiFlash、TiCDC、Node_exporter、Blackbox_exporter のアラート項目のルールの説明と解決策を含む、TiDB クラスター内のさまざまなコンポーネントのアラート ルールについて説明します。
 
 アラートルールは、重大度レベルに応じて、緊急レベル、重大レベル、警告レベルの3つのカテゴリ（高から低の順）に分類されます。この重大度レベルの区分は、以下の各コンポーネントのすべてのアラート項目に適用されます。
 
@@ -122,12 +122,11 @@ summary: TiDB クラスターのアラート ルールについて学習しま�
     TiDB サービスで発生したイベントの数。以下のイベントが発生するとアラートがトリガーされます。
 
     1.  start: TiDB サービスが開始されます。
-    2.  ハング: 重大なレベルのイベント (現時点では TiDB がbinlogを書き込めないというシナリオのみ) が発生すると、TiDB は`hang`モードに入り、手動で強制終了されるのを待機します。
+    2.  ハング: 重大なレベルのイベントが発生すると、TiDB は`hang`モードに入り、手動で強制終了されるのを待機します。
 
 -   解決：
 
-    -   サービスを回復するには、TiDB を再起動します。
-    -   TiDB Binlogサービスが正常かどうかを確認します。
+    サービスを回復するには、TiDB を再起動します。
 
 #### <code>TiDB_tikvclient_backoff_seconds_count</code> {#code-tidb-tikvclient-backoff-seconds-count-code}
 
@@ -185,7 +184,7 @@ summary: TiDB クラスターのアラート ルールについて学習しま�
 
 -   説明：
 
-    PD は長時間にわたって TiKV/ TiFlashハートビートを受信して​​いません (デフォルト設定は 30 分です)。
+    PD は長時間にわたって TiKV/ TiFlashハートビートを受信していません (デフォルト設定は 30 分です)。
 
 -   解決：
 
@@ -483,7 +482,7 @@ summary: TiDB クラスターのアラート ルールについて学習しま�
 -   解決：
 
     1.  [**TiKV詳細**&gt; **Raft Propose**ダッシュボード](/grafana-tikv-dashboard.md#raft-propose)監視し、アラートが発生した TiKV ノードのRaftプロポーズが他の TiKV ノードよりも大幅に高いかどうかを確認します。もしそうであれば、この TiKV に 1 つ以上のホットスポットがあることを意味します。ホットスポットのスケジューリングが適切に機能するかどうかを確認する必要があります。
-    2.  [**TiKV詳細**&gt; **Raft IO**ダッシュボード](/grafana-tikv-dashboard.md#raft-io)監視し、レイテンシーが増加していないか確認してください。レイテンシーが高い場合は、ディスクにボトルネックが発生している可能性があります。
+    2.  [**TiKV-詳細**&gt; **Raft IO**ダッシュボード](/grafana-tikv-dashboard.md#raft-io)監視し、レイテンシーが増加していないか確認してください。レイテンシーが高い場合は、ディスクにボトルネックが発生している可能性があります。
     3.  [**TiKV詳細**&gt;**Raftプロセス**ダッシュボード](/grafana-tikv-dashboard.md#raft-process)見て、 `tick duration`ハイかどうかを確認してください。ハイなら、 [`raftstore.raft-base-tick-interval`](/tikv-configuration-file.md#raft-base-tick-interval) `"2s"`に設定する必要があります。
 
 #### <code>TiKV_write_stall</code> {#code-tikv-write-stall-code}
@@ -775,10 +774,6 @@ summary: TiDB クラスターのアラート ルールについて学習しま�
 
 TiFlashアラート ルールの詳細な説明については、 [TiFlashアラートルール](/tiflash/tiflash-alert-rules.md)参照してください。
 
-## TiDBBinlogアラートルール {#tidb-binlog-alert-rules}
-
-TiDB Binlogアラート ルールの詳細な説明については、 [TiDBBinlog監視ドキュメント](/tidb-binlog/monitor-tidb-binlog-cluster.md#alert-rules)参照してください。
-
 ## TiCDCアラートルール {#ticdc-alert-rules}
 
 TiCDC アラート ルールの詳細な説明については、 [TiCDCアラートルール](/ticdc/ticdc-alert-rules.md)参照してください。
@@ -967,38 +962,6 @@ TiCDC アラート ルールの詳細な説明については、 [TiCDCアラー
     -   TiFlashサービスを提供するマシンがダウンしていないかどうかを確認します。
     -   TiFlashプロセスが存在するかどうかを確認します。
     -   監視マシンとTiFlashマシン間のネットワークが正常かどうかを確認します。
-
-#### <code>Pump_server_is_down</code> {#code-pump-server-is-down-code}
-
--   アラートルール:
-
-    `probe_success{group="pump"} == 0`
-
--   説明：
-
-    ポンプのサービス ポートのプローブに失敗しました。
-
--   解決：
-
-    -   ポンプ サービスを提供するマシンがダウンしていないかどうかを確認します。
-    -   ポンププロセスが存在するかどうかを確認します。
-    -   監視機とポンプ機間のネットワークが正常かどうかを確認します。
-
-#### <code>Drainer_server_is_down</code> {#code-drainer-server-is-down-code}
-
--   アラートルール:
-
-    `probe_success{group="drainer"} == 0`
-
--   説明：
-
-    Drainerのサービス ポートのプローブに失敗しました。
-
--   解決：
-
-    -   Drainerサービスを提供するマシンがダウンしていないかどうかを確認します。
-    -   Drainerプロセスが存在するかどうかを確認します。
-    -   監視マシンとDrainerマシン間のネットワークが正常かどうかを確認します。
 
 #### <code>TiKV_server_is_down</code> {#code-tikv-server-is-down-code}
 

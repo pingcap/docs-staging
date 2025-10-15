@@ -3,13 +3,13 @@ title: SQL or Transaction Issues
 summary: アプリケーション開発中に発生する可能性のある SQL またはトランザクションの問題をトラブルシューティングする方法を学習します。
 ---
 
-# SQL またはトランザクションの問題 {#sql-or-transaction-issues}
+# SQLまたはトランザクションの問題 {#sql-or-transaction-issues}
 
 このドキュメントでは、アプリケーション開発中に発生する可能性のある問題と関連ドキュメントについて説明します。
 
 ## SQLクエリの問題のトラブルシューティング {#troubleshoot-sql-query-problems}
 
-SQL クエリのパフォーマンスを向上させる場合は、 [SQL性能チューニング](/develop/dev-guide-optimize-sql-overview.md)の手順に従って、完全なテーブル スキャンやインデックスの欠落などのパフォーマンスの問題を解決します。
+SQL クエリのパフォーマンスを向上させる場合は、 [SQL性能チューニング](/develop/dev-guide-optimize-sql-overview.md)の手順に従って、完全なテーブル スキャンやインデックスの欠落などのパフォーマンスの問題を解決してください。
 
 <CustomContent platform="tidb">
 
@@ -18,19 +18,19 @@ SQL クエリのパフォーマンスを向上させる場合は、 [SQL性能�
 -   [遅いクエリを分析する](/analyze-slow-queries.md)
 -   [Top SQLを使用してコストの高いクエリを特定する](/dashboard/top-sql.md)
 
-SQL 操作に関する質問がある場合は、 [SQLに関するよくある質問](/faq/sql-faq.md)参照してください。
+SQL 操作について質問がある場合は、 [SQLに関するよくある質問](/faq/sql-faq.md)参照してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-SQL 操作に関する質問がある場合は、 [SQLに関するよくある質問](https://docs.pingcap.com/tidb/stable/sql-faq)参照してください。
+SQL 操作について質問がある場合は、 [SQLに関するよくある質問](https://docs.pingcap.com/tidb/stable/sql-faq)参照してください。
 
 </CustomContent>
 
 ## 取引に関する問題のトラブルシューティング {#troubleshoot-transaction-issues}
 
-[トランザクションエラーの処理](/develop/dev-guide-transaction-troubleshoot.md)参照。
+[トランザクションエラーを処理する](/develop/dev-guide-transaction-troubleshoot.md)参照。
 
 ## 参照 {#see-also}
 
@@ -38,8 +38,8 @@ SQL 操作に関する質問がある場合は、 [SQLに関するよくある�
 
 <CustomContent platform="tidb">
 
--   [クラスタ管理に関するよくある質問](/faq/manage-cluster-faq.md)
--   [TiDB に関するよくある質問](/faq/tidb-faq.md)
+-   [クラスタ管理に関するFAQ](/faq/manage-cluster-faq.md)
+-   [TiDBに関するよくある質問](/faq/tidb-faq.md)
 
 </CustomContent>
 
@@ -47,12 +47,12 @@ SQL 操作に関する質問がある場合は、 [SQLに関するよくある�
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

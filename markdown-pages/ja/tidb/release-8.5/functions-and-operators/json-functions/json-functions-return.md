@@ -3,7 +3,7 @@ title: JSON Functions That Return JSON Values
 summary: JSON 値を返す JSON関数について学習します。
 ---
 
-# JSON 値を返す JSON 関数 {#json-functions-that-return-json-values}
+# JSON値を返すJSON関数 {#json-functions-that-return-json-values}
 
 このドキュメントでは、JSON 値を返す JSON関数について説明します。
 
@@ -17,7 +17,7 @@ summary: JSON 値を返す JSON関数について学習します。
 
 -   ルート ( `$` )
 -   天気 ( `$.weather` )
--   気象の流れ ( `$.weather.sunny` )
+-   気象潮流 ( `$.weather.sunny` )
 
 ```sql
 SELECT JSON_DEPTH('{"weather": {"current": "sunny"}}');
@@ -30,13 +30,13 @@ SELECT JSON_DEPTH('{"weather": {"current": "sunny"}}');
     +-------------------------------------------------+
     1 row in set (0.00 sec)
 
-## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-attribute-functions.html#function_json-length">JSON_LENGTH()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-attribute-functions-html-function-json-length-json-length-a}
+## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-attribute-functions.html#function_json-length">JSON_長さ()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-attribute-functions-html-function-json-length-json-length-a}
 
-`JSON_LENGTH(json_doc [,path])`関数は`path`ドキュメントの長さを返します。3 引数が指定されている場合は、パス内の値の長さを返します。
+`JSON_LENGTH(json_doc [,path])`の関数はJSONドキュメントの長さを返します。3 `path`の引数が指定された場合は、パス内の値の長さを返します。
 
 例:
 
-次の例では、ドキュメントのルートにある唯一の項目が`weather`であるため、返される値は`1`になります。
+次の例では、ドキュメントのルートにある唯一の項目が`weather`あるため、返される値は`1`なります。
 
 ```sql
 SELECT JSON_LENGTH('{"weather": {"current": "sunny", "tomorrow": "cloudy"}}','$');
@@ -49,7 +49,7 @@ SELECT JSON_LENGTH('{"weather": {"current": "sunny", "tomorrow": "cloudy"}}','$'
     +----------------------------------------------------------------------------+
     1 row in set (0.00 sec)
 
-次の例では、 `$.weather`に`current`と`tomorrow` 2 つの項目があるため、返される値は`2`になります。
+次の例では、 `$.weather`に`current`と`tomorrow` 2 つの項目があるため、返される値は`2`なります。
 
 ```sql
 SELECT JSON_LENGTH('{"weather": {"current": "sunny", "tomorrow": "cloudy"}}','$.weather');
@@ -122,7 +122,7 @@ SELECT JSON_TYPE('"2025-06-14"'),JSON_TYPE(CAST(CAST('2025-06-14' AS date) AS js
 
 ## <a href="https://dev.mysql.com/doc/refman/8.0/en/json-attribute-functions.html#function_json-valid">JSON_VALID()</a> {#a-href-https-dev-mysql-com-doc-refman-8-0-en-json-attribute-functions-html-function-json-valid-json-valid-a}
 
-`JSON_VALID(str)`関数は、引数が有効な JSON であるかどうかを確認します。これは、列を`JSON`型に変換する前にチェックするのに役立ちます。
+`JSON_VALID(str)`関数は、引数が有効なJSONかどうかを確認します。これは、列を`JSON`型に変換する前にチェックするのに役立ちます。
 
 ```sql
 SELECT JSON_VALID('{"foo"="bar"}');
@@ -148,5 +148,5 @@ SELECT JSON_VALID('{"foo": "bar"}');
 
 ## 参照 {#see-also}
 
--   [JSON 関数の概要](/functions-and-operators/json-functions.md)
--   [JSON データ型](/data-type-json.md)
+-   [JSON関数の概要](/functions-and-operators/json-functions.md)
+-   [JSONデータ型](/data-type-json.md)

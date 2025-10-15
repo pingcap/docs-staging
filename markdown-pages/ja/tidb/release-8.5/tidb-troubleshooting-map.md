@@ -161,7 +161,7 @@ OOM のトラブルシューティングの詳細については、 [TiDB OOM �
 
     -   v3.0 以降のバージョンでは、 `SQL Bind`機能を使用して実行プランをバインドします。
 
-    -   統計を更新してください。問題の原因が統計[統計をダンプする](/statistics.md#export-statistics)にあるとほぼ確信できる場合は、統計情報の更新を行ってください。統計情報が古い場合（例えば、 `show stats_meta`の`modify count/row count`が特定の値（例えば0.3）より大きい場合や、テーブルに時間列のインデックスがある場合など）は、 `analyze table`を使用して復旧を試みることができます`auto analyze`設定されている場合は、システム変数`tidb_auto_analyze_ratio`大きすぎないか（例えば0.3より大きい場合）、および現在の時刻が`tidb_auto_analyze_start_time` `tidb_auto_analyze_end_time`間であるかどうかを確認してください。
+    -   統計を更新してください。問題の原因が統計[統計をダンプする](/statistics.md#export-statistics)にあるとほぼ確信できる場合は、統計情報の更新を行ってください。統計情報が古い場合（例えば、 `show stats_meta`の`modify count/row count`が特定の値（例えば0.3）より大きい場合や、テーブルに時間列のインデックスがある場合など）は、 `analyze table`を使用して復旧を試みることができます`auto analyze`設定されている場合は、システム変数`tidb_auto_analyze_ratio`大きすぎないか（例えば0.3より大きい場合）、および現在の時刻が`tidb_auto_analyze_start_time`から`tidb_auto_analyze_end_time`間であるかどうかを確認してください。
 
     -   その他の状況では、 [バグを報告する](https://github.com/pingcap/tidb/issues/new?labels=type%2Fbug&#x26;template=bug-report.md) 。
 
@@ -211,15 +211,11 @@ TiDBは、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-st
 
 ### 4.1 TiKVがパニックを起こし起動に失敗する {#4-1-tikv-panics-and-fails-to-start}
 
--   4.1.1 `sync-log = false` . マシンの電源を切った後に`unexpected raft log index: last_index X < applied_index Y`エラーが返されます。
-
-    この問題は想定内です。1 `tikv-ctl`使用してリージョンを復元できます。
-
--   4.1.2 TiKV が仮想マシンに展開されている場合、仮想マシンが強制終了されるか物理マシンの電源がオフになると、エラー`entries[X, Y] is unavailable from storage`が報告されます。
+-   4.1.1 TiKV が仮想マシンに展開されている場合、仮想マシンが強制終了されるか物理マシンの電源がオフになると、 `entries[X, Y] is unavailable from storage`エラーが報告されます。
 
     この問題は想定内です。仮想マシン`fsync`は信頼できないため、 `tikv-ctl`を使用してリージョンを復元する必要があります。
 
--   4.1.3 その他の予期せぬ原因の場合、 [バグを報告する](https://github.com/tikv/tikv/issues/new?template=bug-report.md) .
+-   4.1.2 その他の予期せぬ原因の場合、 [バグを報告する](https://github.com/tikv/tikv/issues/new?template=bug-report.md) .
 
 ### 4.2 TiKV OOM {#4-2-tikv-oom}
 
@@ -392,107 +388,37 @@ TiDBは、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-st
 
 -   5.3.2 ローリングアップグレード中のPD OOM。gRPCメッセージのサイズに制限がなく、モニターではTCP InSegsが比較的大きいことが示されています。この問題はv3.0.6（ [＃1952](https://github.com/pingcap/pd/pull/1952) ）で修正されました。 <!--For details, see [case-852](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case852.md).-->
 
-### 5.4 Grafanaディスプレイ {#5-4-grafana-display}
+### 5.4 Grafana ディスプレイ {#5-4-grafana-display}
 
 -   5.4.1 **Grafana** -&gt; **PD** -&gt;**クラスター**-&gt;**ロール**のモニターにフォロワーが表示されます。Grafana 式の問題は v3.0.8 で修正されました。
 
 ## 6. エコシステムツール {#6-ecosystem-tools}
 
-### 6.1 TiDBBinlog {#6-1-tidb-binlog}
+### 6.1 データ移行 {#6-1-data-migration}
 
--   6.1.1 TiDB Binlogは、TiDBからの変更を収集し、下流のTiDBまたはMySQLプラットフォームへのバックアップとレプリケーションを提供するツールです。詳細については、 [GitHub 上の TiDBBinlog](https://github.com/pingcap/tidb-binlog)参照してください。
+-   6.1.1 TiDB Data Migration (DM) は、MySQL/MariaDB から TiDB へのデータ移行をサポートする移行ツールです。詳細については、 [DMの概要](/dm/dm-overview.md)参照してください。
 
--   6.1.2Pump/Drainerステータスの`Update Time`正常に更新され、ログに異常は表示されませんが、下流にデータが書き込まれません。
-
-    -   TiDB設定でBinlogが有効になっていません。TiDBの`[binlog]`設定を変更してください。
-
--   6.1.3 Drainerの`sarama` `EOF`エラーを報告します。
-
-    -   Drainerの Kafka クライアントのバージョンが Kafka のバージョンと一致していません。1 `[syncer.to] kafka-version`設定を変更する必要があります。
-
--   6.1.4 Drainer がKafka への書き込みに失敗してパニックになり、Kafka が`Message was too large`エラーを報告します。
-
-    -   binlogデータが大きすぎるため、Kafka に書き込まれる単一のメッセージが大きすぎます。Kafka の以下の設定を変更する必要があります。
-
-        ```properties
-        message.max.bytes=1073741824
-        replica.fetch.max.bytes=1073741824
-        fetch.message.max.bytes=1073741824
-        ```
-
-        詳細は中国語版[ケース789](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case789.md)ご覧ください。
-
--   6.1.5 上流と下流のデータの不一致
-
-    -   一部のTiDBノードではbinlogが有効になっていません。v3.0.6以降のバージョンでは、 [http://127.0.0.1:10080/info/all](http://127.0.0.1:10080/info/all)インターフェースにアクセスすることで全ノードのbinlogステータスを確認できます。v3.0.6より前のバージョンでは、設定ファイルを表示することでbinlogステータスを確認できます。
-
-    -   一部のTiDBノードは`ignore binlog`ステータスになります。v3.0.6以降のバージョンでは、 [http://127.0.0.1:10080/info/all](http://127.0.0.1:10080/info/all)インターフェースにアクセスすることで、すべてのノードのbinlogステータスを確認できます。v3.0.6より前のバージョンでは、TiDBログにキーワード`ignore binlog`が含まれているかどうかを確認してください。
-
-    -   タイムスタンプ列の値がアップストリームとダウンストリームで一致していません。
-
-        -   これはタイムゾーンの違いが原因です。Drainerが上流および下流のデータベースと同じタイムゾーンにあることを確認する必要があります。Drainerはタイムゾーンを`/etc/localtime`から取得し、環境変数`TZ`サポートしていません。中国語版の[ケース826](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case826.md)参照してください。
-
-        -   TiDBではtimestampのデフォルト値は`null`ですが、 MySQL 5.7 （MySQL 8を除く）では同じデフォルト値が現在時刻です。そのため、上流のTiDBのtimestampが`null`で、下流がMySQL 5.7の場合、timestamp列のデータが不整合になります。binlogを有効にする前に、上流で`set @@global.explicit_defaults_for_timestamp=on;`実行する必要があります。
-
-    -   その他の状況では、 [バグを報告する](https://github.com/pingcap/tidb-binlog/issues/new?labels=bug&#x26;template=bug-report.md) 。
-
--   6.1.6 遅いレプリケーション
-
-    -   ダウンストリームはTiDB/MySQLで、アップストリームは頻繁にDDL操作を実行します。中国語版は[ケース1023](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case1023.md)ご覧ください。
-
-    -   下流はTiDB/MySQLであり、レプリケート対象のテーブルには主キーとユニークインデックスが設定されていないため、 binlogのパフォーマンスが低下します。主キーまたはユニークインデックスを追加することをお勧めします。
-
-    -   ダウンストリームがファイルに出力する場合は、出力ディスクまたはネットワーク ディスクが遅いかどうかを確認します。
-
-    -   その他の状況では、 [バグを報告する](https://github.com/pingcap/tidb-binlog/issues/new?labels=bug&#x26;template=bug-report.md) 。
-
--   6.1.7Pumpはbinlogを書き込むことができず、エラー`no space left on device`を報告します。
-
-    -   Pumpがbinlogデータを正常に書き込むには、ローカルディスクの空き容量が不足しています。ディスク容量をクリーンアップしてから、 Pumpを再起動する必要があります。
-
--   6.1.8Pumpは起動時にエラー`fail to notify all living drainer`を報告します。
-
-    -   原因: Pumpが起動すると、状態`online`にあるすべてのDrainerノードに通知が送信されます。Drainerへの通知に失敗した場合、このエラーログが出力されます。
-
-    -   解決策：binlogctlツールを使用して、各Drainerノードが正常かどうかを確認します。これは、状態`online`にあるすべてのDrainerノードが正常に動作していることを確認するためです。Drainerノードの状態が実際の動作状態と一致していない場合は、binlogctlツールを使用して状態を変更し、 Pumpを再起動してください。ケース[すべての生きている排水装置に通知できなかった](/tidb-binlog/handle-tidb-binlog-errors.md#fail-to-notify-all-living-drainer-is-returned-when-pump-is-started)参照してください。
-
--   6.1.9Drainerは`gen update sqls failed: table xxx: row data is corruption []`エラーを報告します。
-
-    -   トリガー: アップストリームは`DROP COLUMN` DDLを実行しながら、このテーブルに対してDML操作を実行します。この問題はv3.0.6で修正されました。中国語版は[ケース820](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case820.md)ご覧ください。
-
--   6.1.10Drainerのレプリケーションがハングします。プロセスはアクティブなままですが、チェックポイントは更新されません。
-
-    -   この問題はv3.0.4で修正されました。中国語版は[ケース741](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case741.md)ご覧ください。
-
--   6.1.11 いずれかのコンポーネントがパニックになります。
-
-    -   [バグを報告する](https://github.com/pingcap/tidb-binlog/issues/new?labels=bug&#x26;template=bug-report.md) 。
-
-### 6.2 データ移行 {#6-2-data-migration}
-
--   6.2.1 TiDB Data Migration (DM) は、MySQL/MariaDB から TiDB へのデータ移行をサポートする移行ツールです。詳細については、 [DMの概要](/dm/dm-overview.md)参照してください。
-
--   6.2.2 `Access denied for user 'root'@'172.31.43.27' (using password: YES)` `query status`実行したとき、またはログを確認したときに表示されます。
+-   6.1.2 `Access denied for user 'root'@'172.31.43.27' (using password: YES)` `query status`実行したとき、またはログを確認したときに表示されます。
 
     -   すべてのDM設定ファイル内のデータベース関連のパスワードは、 `dmctl`で暗号化する必要があります。データベースパスワードが空の場合は、パスワードを暗号化する必要はありません。v1.0.6以降では、平文パスワードを使用できます。
     -   DM操作中は、上流データベースと下流データベースのユーザーには、対応する読み取り権限と書き込み権限が必要です。データ移行は、データレプリケーションタスクの開始時に自動的に[対応する権限を事前チェックする](/dm/dm-precheck.md) 。
     -   DM クラスターに DM-worker/DM-master/dmctl の異なるバージョンをデプロイするには、中国語の[AskTUGのケーススタディ](https://asktug.com/t/dm1-0-0-ga-access-denied-for-user/1049/5)参照してください。
 
--   6.2.3 レプリケーション タスクが中断され、 `driver: bad connection`エラーが返されます。
+-   6.1.3 レプリケーション タスクが中断され、 `driver: bad connection`エラーが返されます。
 
     -   エラー`driver: bad connection`は、DM と下流の TiDB データベース間の接続に異常 (ネットワーク障害や TiDB の再起動など) が発生し、現在のリクエストのデータがまだ TiDB に送信されていないことを示します。
 
         -   DM 1.0.0 GA より前のバージョンの場合は、 `stop-task`実行してタスクを停止し、 `start-task`を実行してタスクを再開します。
         -   DM 1.0.0 GA以降のバージョンでは、このタイプのエラーに対する自動再試行メカニズムが追加されています[＃265](https://github.com/pingcap/dm/pull/265)参照してください。
 
--   6.2.4 レプリケーション タスクが`invalid connection`エラーで中断されます。
+-   6.1.4 レプリケーション タスクが`invalid connection`エラーで中断されます。
 
     -   `invalid connection`エラーは、DMと下流TiDBデータベース間の接続に異常（ネットワーク障害、TiDBの再起動、TiKVのビジー状態など）が発生し、現在のリクエストのデータの一部がTiDBに送信されたことを示します。DMはレプリケーションタスクにおいて下流へのデータのレプリケーションを並行して行う機能を備えているため、タスクが中断されると複数のエラーが発生する可能性があります。これらのエラーは、 `query-status`または`query-error`実行することで確認できます。
 
         -   増分レプリケーション プロセス中に`invalid connection`エラーのみが発生した場合、DM はタスクを自動的に再試行します。
         -   DM が再試行しない、またはバージョンの問題により自動的に再試行できない場合 (自動再試行は v1.0.0-rc.1 で導入されています)、 `stop-task`使用してタスクを停止し、 `start-task`使用してタスクを再起動します。
 
--   6.2.5 リレーユニットがエラー`event from * in * diff from passed-in event *`報告するか、またはレプリケーションタスクが`get binlog error ERROR 1236 (HY000) and binlog checksum mismatch, data may be corrupted returned`などのbinlogの取得または解析に失敗するエラーで中断されます。
+-   6.1.5 リレーユニットがエラー`event from * in * diff from passed-in event *`報告するか、またはレプリケーションタスクが`get binlog error ERROR 1236 (HY000) and binlog checksum mismatch, data may be corrupted returned`などのbinlogの取得または解析に失敗するエラーで中断されます。
 
     -   DM がリレー ログまたは増分レプリケーションをプルするプロセス中に、アップストリームbinlogファイルのサイズが 4 GB を超えると、この 2 つのエラーが発生する可能性があります。
 
@@ -503,7 +429,7 @@ TiDBは、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-st
         -   リレー処理ユニットの場合、 [手動でレプリケーションを回復する](https://pingcap.com/docs/tidb-data-migration/dev/error-handling/#the-relay-unit-throws-error-event-from--in--diff-from-passed-in-event--or-a-replication-task-is-interrupted-with-failing-to-get-or-parse-binlog-errors-like-get-binlog-error-error-1236-hy000-and-binlog-checksum-mismatch-data-may-be-corrupted-returned) 。
         -   binlogレプリケーション処理単位の場合、 [手動でレプリケーションを回復する](https://pingcap.com/docs/tidb-data-migration/dev/error-handling/#the-relay-unit-throws-error-event-from--in--diff-from-passed-in-event--or-a-replication-task-is-interrupted-with-failing-to-get-or-parse-binlog-errors-like-get-binlog-error-error-1236-hy000-and-binlog-checksum-mismatch-data-may-be-corrupted-returned) 。
 
--   6.2.6 DMレプリケーションが中断され、ログに`ERROR 1236 (HY000) The slave is connecting using CHANGE MASTER TO MASTER_AUTO_POSITION = 1, but the master has purged binary logs containing GTIDs that the slave requires.`返される
+-   6.1.6 DMレプリケーションが中断され、ログに`ERROR 1236 (HY000) The slave is connecting using CHANGE MASTER TO MASTER_AUTO_POSITION = 1, but the master has purged binary logs containing GTIDs that the slave requires.`返される
 
     -   マスターbinlogが消去されているかどうかを確認します。
     -   `relay.meta`で記録した位置情報を確認します。
@@ -512,15 +438,15 @@ TiDBは、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-st
 
         -   `relay.meta`で記録されたbinlogイベントにより、不完全リカバリプロセスがトリガーされ、誤った GTID 情報が記録されます。この問題は v1.0.2 で修正されていますが、それ以前のバージョンでも発生する可能性があります。 <!--See [case-764](https://github.com/pingcap/tidb-map/blob/master/maps/diagnose-case-study/case764.md).-->
 
--   6.2.7 DMレプリケーションプロセスでエラー`Error 1366: incorrect utf8 value eda0bdedb29d(\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd)`返されます。
+-   6.1.7 DM レプリケーション プロセスでエラー`Error 1366: incorrect utf8 value eda0bdedb29d(\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd)`返されます。
 
     -   この値はMySQL 8.0またはTiDBには正常に書き込めませんが、 MySQL 5.7には書き込めます。1パラメータ`tidb_skip_utf8_check`有効にすると、データ形式のチェックをスキップできます。
 
-### 6.3 TiDB Lightning {#6-3-tidb-lightning}
+### 6.2 TiDB Lightning {#6-2-tidb-lightning}
 
--   6.3.1 TiDB Lightningは、大量のデータをTiDBクラスタに高速かつ完全にインポートするためのツールです。1 [GitHub 上のTiDB Lightning](https://github.com/pingcap/tidb/tree/release-8.1/lightning)参照してください。
+-   6.2.1 TiDB Lightningは、大量のデータをTiDBクラスタに高速かつ完全にインポートするためのツールです。1 [GitHub 上のTiDB Lightning](https://github.com/pingcap/tidb/tree/release-8.5/lightning)参照してください。
 
--   6.3.2 インポート速度が遅すぎます。
+-   6.2.2 インポート速度が遅すぎます。
 
     -   `region-concurrency`設定が高すぎると、スレッドの競合が発生し、パフォーマンスが低下します。トラブルシューティングには以下の 3 つの方法があります。
 
@@ -532,7 +458,7 @@ TiDBは、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-st
 
     -   TiDB Lightningのバージョンが古いです。最新バージョンをお試しください。インポート速度が向上する可能性があります。
 
--   6.3.3 `checksum failed: checksum mismatched remote vs local` .
+-   6.2.3 `checksum failed: checksum mismatched remote vs local` .
 
     -   原因1: テーブルに既にデータが含まれている可能性があります。これらの古いデータは最終的なチェックサムに影響を与える可能性があります。
 
@@ -545,19 +471,19 @@ TiDBは、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-st
 
     -   解決策: [トラブルシューティングの解決策](/tidb-lightning/troubleshoot-tidb-lightning.md#checksum-failed-checksum-mismatched-remote-vs-local)参照してください。
 
--   6.3.4 `Checkpoint for … has invalid status:(error code)`
+-   6.2.4 `Checkpoint for … has invalid status:(error code)`
 
     -   原因: チェックポイントが有効になっており、Lightning/Importer が以前に異常終了しています。データ破損を防ぐため、エラーが解決されるまでTiDB Lightning は起動しません。エラーコードは 25 未満の整数で、 `0, 3, 6, 9, 12, 14, 15, 17, 18, 20 and 21`などの値になります。この整数は、インポートプロセスにおいて予期せぬ終了が発生したステップを示します。整数が大きいほど、終了が発生するまでの時間が遅くなります。
 
     -   解決策: [トラブルシューティングの解決策](/tidb-lightning/troubleshoot-tidb-lightning.md#checkpoint-for--has-invalid-status-error-code)参照してください。
 
--   6.3.5 `cannot guess encoding for input file, please convert to UTF-8 manually`
+-   6.2.5 `cannot guess encoding for input file, please convert to UTF-8 manually`
 
     -   原因: TiDB Lightning はUTF-8 と GB-18030 エンコーディングのみをサポートしています。このエラーは、ファイルがこれらのいずれのエンコーディングにも該当しないことを意味します。また、過去の ALTER TABLE 実行により、ファイルに UTF-8 の文字列と GB-18030 の文字列が混在しているなど、エンコーディングが混在している可能性もあります。
 
     -   解決策: [トラブルシューティングの解決策](/tidb-lightning/troubleshoot-tidb-lightning.md#cannot-guess-encoding-for-input-file-please-convert-to-utf-8-manually)参照してください。
 
--   6.3.6 `[sql2kv] sql encode error = [types:1292]invalid time format: '{1970 1 1 0 45 0 0}'`
+-   6.2.6 `[sql2kv] sql encode error = [types:1292]invalid time format: '{1970 1 1 0 45 0 0}'`
 
     -   原因: タイムスタンプ型のエントリに存在しない時刻値が含まれています。これは、夏時間の変更、または時刻値がサポート範囲（1970年1月1日から2038年1月19日）を超えていることが原因です。
 
@@ -573,19 +499,13 @@ TiDBは、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-st
 
     GCの有効期間を延ばすには、システム変数[`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50)変更します。ただし、このパラメータを変更すると、トランザクションに`UPDATE`と`DELETE`ステートメントが多数含まれる場合、古いバージョンが大量に蓄積される可能性があるため、通常は変更を推奨しません。
 
--   7.1.2 `txn takes too much time` .
-
-    このエラーは、長時間 (590 秒以上) コミットされていないトランザクションをコミットした場合に返されます。
-
-    アプリケーションでこのような長時間のトランザクションを実行する必要がある場合は、 `[tikv-client] max-txn-time-use = 590`パラメータとGC有効期間を増やすことでこの問題を回避できます。アプリケーションでこのような長時間のトランザクション実行が必要かどうかを確認することをお勧めします。
-
--   7.1.3 `coprocessor.go`レポート`request outdated` 。
+-   7.1.2 `coprocessor.go`レポート`request outdated` 。
 
     このエラーは、TiKV に送信されたコプロセッサ要求が TiKV のキューで 60 秒以上待機している場合に返されます。
 
     TiKV コプロセッサが長いキューに入っている理由を調査する必要があります。
 
--   7.1.4 `region_cache.go` `switch region peer to next due to send request fail`という大きな数値を報告し、エラーメッセージは`context deadline exceeded`です。
+-   7.1.3 `region_cache.go` `switch region peer to next due to send request fail`という大きな数値を報告し、エラーメッセージは`context deadline exceeded`です。
 
     TiKV へのリクエストがタイムアウトし、リージョンキャッシュがトリガーされてリクエストが他のノードに切り替えられました。ログの`addr`のフィールドに対して`grep "<addr> cancelled`コマンドを引き続き実行し、 `grep`結果に応じて以下の手順を実行してください。
 
@@ -596,7 +516,7 @@ TiDBは、トランザクションまたは[`ADMIN CHECK [TABLE|INDEX]`](/sql-st
 
     -   `wait response is cancelled` : リクエストはTiKVに送信された後、タイムアウトしました。対応するTiKVアドレスの応答時間と、その時点のリージョンのPDおよびKVログを確認する必要があります。
 
--   7.1.5 `distsql.go`レポート`inconsistent index` 。
+-   7.1.4 `distsql.go`レポート`inconsistent index` 。
 
     データインデックスに不整合があるようです。報告されたインデックスがあるテーブルでコマンド`admin check table <TableName>`を実行してください。チェックに失敗した場合は、次のコマンドを実行してガベージコレクションを無効にし、 [バグを報告する](https://github.com/pingcap/tidb/issues/new?labels=type%2Fbug&#x26;template=bug-report.md)実行します。
 

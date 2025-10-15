@@ -9,8 +9,8 @@ TiDB では、クエリを入力してから最終実行プランに従って実
 
 ![SQL Optimization Process](https://docs-download.pingcap.com/media/images/docs/sql-optimization.png)
 
-元のクエリ テキストを`parser`で解析し、いくつかの簡単な妥当性チェックを行った後、TiDB はまずクエリに論理的に同等の変更を加えます。詳細な変更については、 [SQL 論理最適化](/sql-logical-optimization.md)参照してください。
+TiDBは、元のクエリテキストを`parser`で解析し、簡単な妥当性チェックを行った後、まずクエリに論理的に同等の変更を加えます。詳細な変更については、 [SQL論理最適化](/sql-logical-optimization.md)参照してください。
 
-これらの等価変更により、このクエリは論理実行プランで扱いやすくなります。等価変更が行われた後、TiDB は元のクエリと等価なクエリプラン構造を取得し、データ分布と演算子の特定の実行コストに基づいて最終的な実行プランを取得します。詳細については、 [SQL 物理最適化](/sql-physical-optimization.md)参照してください。
+これらの等価変更により、このクエリは論理実行プランで処理しやすくなります。等価変更が完了すると、TiDBは元のクエリと等価なクエリプラン構造を取得し、その後、データ分布と演算子の具体的な実行コストに基づいて最終的な実行プランを取得します。詳細については、 [SQL物理最適化](/sql-physical-optimization.md)参照してください。
 
-同時に、TiDB が[`PREPARE`](/sql-statements/sql-statement-prepare.md)ステートメントを実行するときに、キャッシュを有効にして、TiDB で実行プランを生成するコストを削減することを選択できます。詳細については、 [実行プランキャッシュ](/sql-prepared-plan-cache.md)参照してください。
+同時に、TiDBが[`PREPARE`](/sql-statements/sql-statement-prepare.md)ステートメントを実行する際に、キャッシュを有効にするかどうかを選択できます。これにより、TiDBでの実行計画生成のコストを削減できます。詳細については、 [実行プランキャッシュ](/sql-prepared-plan-cache.md)参照してください。

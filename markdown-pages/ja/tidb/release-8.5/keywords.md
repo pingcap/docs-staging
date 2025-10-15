@@ -41,6 +41,8 @@ CREATE TABLE test.select (BEGIN int, END int);
 
 v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/information-schema-keywords.md)テーブルにキーワードの完全なリストを提供します。
 
+システム変数[`tidb_enable_window_function`](/system-variables.md#tidb_enable_window_function)使用すると、 [ウィンドウ関数](/functions-and-operators/window-functions.md)内のキーワードが構文ツリーで有効になるかどうかを制御できます。 `tidb_enable_window_function`を`OFF`に設定すると、ウィンドウ関数内の単語はキーワードとして扱われなくなります。
+
 ## キーワードリスト {#keyword-list}
 
 以下のリストはTiDBのキーワードを示しています。予約語には`(R)`が付きます。3 [ウィンドウ関数](/functions-and-operators/window-functions.md)予約語には`(R-Window)`が付きます。
@@ -64,6 +66,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   分析（R）
 -   そして（R）
 -   どれでも
+-   適用する
 -   アレイ（R）
 -   AS（R）
 -   ASC（R）
@@ -125,6 +128,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   チェック（R）
 -   チェックポイント
 -   チェックサム
+-   CHECKSUM_CONCURRENCY
 -   暗号
 -   掃除
 -   クライアント
@@ -146,6 +150,8 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   コンパクト
 -   圧縮された
 -   圧縮
+-   圧縮レベル
+-   圧縮タイプ
 -   同時実行
 -   設定
 -   繋がり
@@ -228,6 +234,8 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   有効
 -   封入（R）
 -   暗号化
+-   暗号化キーファイル
+-   暗号化方法
 -   終わり
 -   強制執行
 -   エンジン
@@ -274,7 +282,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   見つかった
 -   （R）より
 -   満杯
--   フルテキスト（R）
+-   FULLTEXT (R)
 -   関数
 
 <a id="G" class="letter" href="#G">G</a>
@@ -309,10 +317,11 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   特定された
 -   IF（R）
 -   無視（R）
+-   統計を無視
 -   アイライク（R）
 -   輸入
 -   輸入品
--   イン（R）
+-   IN（R）
 -   インクリメント
 -   増分
 -   インデックス（R）
@@ -377,6 +386,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   ラインズ（R）
 -   リスト
 -   ロード（R）
+-   ロード統計
 -   地元
 -   現地時間（R）
 -   ローカルタイムスタンプ (R)
@@ -445,7 +455,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   NTH_VALUE (Rウィンドウ)
 -   NTILE（Rウィンドウ）
 -   ヌル（R）
--   NULLS
+-   ヌル
 -   数値（R）
 -   ネヴァルチャー
 
@@ -525,6 +535,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   読む（R）
 -   リアル（R）
 -   再構築
+-   推薦する
 -   回復する
 -   再帰的（R）
 -   冗長
@@ -567,7 +578,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   行数
 -   行フォーマット
 -   ROW_NUMBER (Rウィンドウ)
--   ROWS（Rウィンドウ）
+-   ROWS (Rウィンドウ)
 -   RTREE
 -   走る
 
@@ -628,7 +639,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   SQL_TSI_YEAR
 -   SQL例外 (R)
 -   SQL状態 (R)
--   SQL警告（R）
+-   SQL警告 (R)
 -   SSL（R）
 -   始める
 -   スターティング（R）
@@ -638,7 +649,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   統計バケット
 -   統計_列_選択
 -   統計列リスト
--   統計_拡張（R）
+-   統計_拡張
 -   健康状態
 -   統計ヒストグラム
 -   統計がロックされています
@@ -676,7 +687,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   よりも
 -   それから（R）
 -   TIDB
--   TiDB_CURRENT_TSO (R)
+-   TIDB_CURRENT_TSO (R)
 -   ティフラッシュ
 -   TIKV_IMPORTER
 -   時間
@@ -735,6 +746,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   ヴァーチャルキャラクター（R）
 -   変数
 -   変化する（R）
+-   ベクター
 -   ビュー
 -   バーチャル（R）
 -   見える
@@ -742,6 +754,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 <a id="W" class="letter" href="#W">W</a>
 
 -   待って
+-   WAIT_TIFLASH_READY
 -   警告
 -   週
 -   重量文字列
@@ -751,6 +764,7 @@ v7.5.3 および v7.6.0 以降、TiDB は[`INFORMATION_SCHEMA.KEYWORDS`](/inform
 -   幅
 -   WINDOW（R-ウィンドウ）
 -   ウィズ（R）
+-   WITH_SYS_TABLE
 -   それなし
 -   ワークロード
 -   書き込み（R）

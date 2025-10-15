@@ -11,7 +11,7 @@ summary: このドキュメントでは、データベース内の単一のテ�
 
 ## 始める前に {#before-you-begin}
 
-次のコンテンツでは、 [書店](/develop/dev-guide-bookshop-schema-design.md)アプリケーションを例に、TiDB 内の単一のテーブルからデータをクエリする方法を示します。
+次のコンテンツでは、 [書店](/develop/dev-guide-bookshop-schema-design.md)アプリケーションを例として、TiDB 内の単一のテーブルからデータをクエリする方法を示します。
 
 データをクエリする前に、次の手順が完了していることを確認してください。
 
@@ -43,7 +43,7 @@ summary: このドキュメントでは、データベース内の単一のテ�
 
 ## 簡単なクエリを実行する {#execute-a-simple-query}
 
-Bookshop アプリケーションのデータベースでは、 `authors`テーブルに著者の基本情報が格納されています。3 `SELECT ... FROM ...`を使用して、データベースからデータを照会できます。
+Bookshopアプリケーションのデータベースでは、 `authors`のテーブルに著者の基本情報が保存されています。3 `SELECT ... FROM ...`のステートメントを使用して、データベースからデータをクエリできます。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -76,12 +76,12 @@ SELECT id, name FROM authors;
 </div>
 <div label="Java" value="java">
 
-Javaでは、著者の基本情報を格納するために、クラス`Author`を宣言できます。データベースの[データ型](/data-type-overview.md)と[値の範囲](/data-type-numeric.md)に応じて適切なJavaデータ型を選択する必要があります。例:
+Javaでは、著者の基本情報を格納するためにクラス`Author`宣言できます。データベースの[データ型](/data-type-overview.md)と[値の範囲](/data-type-numeric.md)に応じて適切なJavaデータ型を選択する必要があります。例えば、次のようになります。
 
--   タイプ`int`のデータを格納するには、タイプ`Int`の変数を使用します。
--   タイプ`bigint`のデータを格納するには、タイプ`Long`の変数を使用します。
--   タイプ`tinyint`のデータを格納するには、タイプ`Short`の変数を使用します。
--   タイプ`varchar`のデータを格納するには、タイプ`String`の変数を使用します。
+-   タイプ`Int`の変数を使用して、タイプ`int`のデータを保存します。
+-   タイプ`Long`の変数を使用して、タイプ`bigint`のデータを保存します。
+-   タイプ`Short`の変数を使用して、タイプ`tinyint`のデータを保存します。
+-   タイプ`String`の変数を使用して、タイプ`varchar`のデータを保存します。
 
 ```java
 public class Author {
@@ -133,12 +133,12 @@ public class AuthorDAO {
 </CustomContent>
 
 -   次に、 `stmt.executeQuery("query_sql")`呼び出して、TiDB へのデータベース クエリ要求を開始します。
--   クエリの結果は`ResultSet`オブジェクトに保存されます。 `ResultSet`トラバースすると、返された結果を`Author`オブジェクトにマッピングできます。
+-   クエリ結果は`ResultSet`オブジェクトに保存されます。 `ResultSet`トラバースすることで、返された結果を`Author`オブジェクトにマッピングできます。
 
 </div>
 </SimpleTab>
 
-## 結果をフィルタリング {#filter-results}
+## 結果をフィルタリングする {#filter-results}
 
 クエリ結果をフィルタリングするには、 `WHERE`ステートメントを使用できます。
 
@@ -158,7 +158,7 @@ SELECT * FROM authors WHERE birth_year = 1998;
 
 Javaでは、同じ SQL を使用して、動的パラメータを含むデータ クエリ要求を処理できます。
 
-これは、パラメータを SQL ステートメントに連結することで実行できます。ただし、この方法はアプリケーションのセキュリティに潜在的[SQLインジェクション](https://en.wikipedia.org/wiki/SQL_injection)リスクをもたらします。
+これは、パラメータをSQL文に連結することで実現できます。ただし、この方法はアプリケーションのセキュリティに潜在的[SQLインジェクション](https://en.wikipedia.org/wiki/SQL_injection)リスクをもたらします。
 
 このようなクエリを処理するには、通常のステートメントの代わりに[準備された声明](/develop/dev-guide-prepared-statement.md)使用します。
 
@@ -189,7 +189,7 @@ public List<Author> getAuthorsByBirthYear(Short birthYear) throws SQLException {
 
 クエリ結果を並べ替えるには、 `ORDER BY`ステートメントを使用できます。
 
-たとえば、次の SQL ステートメントは、 `authors`テーブルを`birth_year`列に従って降順 ( `DESC` ) で並べ替えて、最も若い著者のリストを取得します。
+たとえば、次の SQL 文は、 `authors`テーブルを`birth_year`番目の列に従って降順 ( `DESC` ) で並べ替えて、最も若い著者のリストを取得します。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -230,7 +230,7 @@ public List<Author> getAuthorsSortByBirthYear() throws SQLException {
 </div>
 </SimpleTab>
 
-結果は以下のようになります。
+結果は次のとおりです。
 
     +-----------+------------------------+------------+
     | id        | name                   | birth_year |
@@ -293,7 +293,7 @@ public List<Author> getAuthorsWithLimit(Integer limit) throws SQLException {
 </div>
 </SimpleTab>
 
-結果は以下のようになります。
+結果は次のとおりです。
 
     +-----------+------------------------+------------+
     | id        | name                   | birth_year |
@@ -311,13 +311,13 @@ public List<Author> getAuthorsWithLimit(Integer limit) throws SQLException {
     +-----------+------------------------+------------+
     10 rows in set (0.11 sec)
 
-この例では、 `LIMIT`ステートメントにより、クエリ時間が`0.23 sec`から`0.11 sec`に大幅に短縮されます。詳細については、 [TopNと制限](/topn-limit-push-down.md)参照してください。
+この例では、 `LIMIT`文を実行することでクエリ時間が`0.23 sec`から`0.11 sec`に大幅に短縮されます。詳細については、 [TopNとLimit](/topn-limit-push-down.md)参照してください。
 
 ## 集計クエリ {#aggregate-queries}
 
 全体的なデータ状況をよりよく理解するために、 `GROUP BY`ステートメントを使用してクエリ結果を集計できます。
 
-たとえば、どの年に作家がより多く生まれたかを知りたい場合は、 `authors`のテーブルを`birth_year`の列でグループ化し、各年をカウントします。
+たとえば、どの年に作家がより多く生まれたかを知りたい場合は、 `authors`テーブルを`birth_year`番目の列でグループ化し、各年についてカウントすることができます。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -368,7 +368,7 @@ public List<AuthorCount> getAuthorCountsByBirthYear() throws SQLException {
 </div>
 </SimpleTab>
 
-結果は以下のようになります。
+結果は次のとおりです。
 
     +------------+--------------+
     | birth_year | author_count |
@@ -387,18 +387,18 @@ public List<AuthorCount> getAuthorCountsByBirthYear() throws SQLException {
     +------------+--------------+
     71 rows in set (0.00 sec)
 
-`COUNT`関数に加えて、TiDB は他の集計関数もサポートしています。詳細については、 [集計 (GROUP BY) 関数](/functions-and-operators/aggregate-group-by-functions.md)参照してください。
+`COUNT`関数に加えて、TiDB は他の集計関数もサポートしています。詳細については、 [集計（GROUP BY）関数](/functions-and-operators/aggregate-group-by-functions.md)参照してください。
 
 ## ヘルプが必要ですか? {#need-help}
 
 <CustomContent platform="tidb">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](/support.md)についてコミュニティに質問してください。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、または[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
+[不和](https://discord.gg/DQZ2dy3cuc?utm_source=doc)または[スラック](https://slack.tidb.io/invite?team=tidb-community&#x26;channel=everyone&#x26;ref=pingcap-docs) 、あるいは[サポートチケットを送信する](https://tidb.support.pingcap.com/)についてコミュニティに質問してください。
 
 </CustomContent>

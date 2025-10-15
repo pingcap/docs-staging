@@ -17,7 +17,7 @@ SQLパフォーマンスの問題をより適切に処理するために、MySQL
 
 > **注記：**
 >
-> 上記のテーブルは[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは使用できません。
+> 上記のテーブルは、クラスター[TiDB Cloudスターター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)および[TiDB Cloudエッセンシャル](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)では使用できません。
 
 このドキュメントでは、これらのテーブルについて詳しく説明し、それらを使用して SQL パフォーマンスの問題をトラブルシューティングする方法を紹介します。
 
@@ -80,7 +80,7 @@ select * from employee where id in (...) and salary between ? and ?;
 > **注記：**
 >
 > -   TiDB では、ステートメント サマリー テーブルのフィールドの時間単位はナノ秒 (ns) ですが、MySQL では時間単位はピコ秒 (ps) です。
-> -   v7.5.1 および v7.6.0 以降では、 [資源管理](/tidb-resource-control.md)が有効になっているクラスターの場合、 `statements_summary`リソース グループごとに集計されます。たとえば、異なるリソース グループで実行された同じステートメントは、異なるレコードとして収集されます。
+> -   v7.5.1 および v7.6.0 以降では、 [資源管理](/tidb-resource-control-ru-groups.md)が有効になっているクラスターの場合、 `statements_summary`リソース グループごとに集計されます。たとえば、異なるリソース グループで実行された同じステートメントは、異なるレコードとして収集されます。
 
 ## <code>statements_summary_history</code> {#code-statements-summary-history-code}
 
@@ -331,6 +331,8 @@ SELECT sum_latency, avg_latency, exec_count, query_sample_text
 -   `BINARY_PLAN` : バイナリ形式でエンコードされた元の実行プラン。複数のステートメントがある場合は、1つのステートメントのプランのみが採用されます。特定の実行プランを解析するには、 [`SELECT tidb_decode_binary_plan('xxx...')`](/functions-and-operators/tidb-functions.md#tidb_decode_binary_plan)ステートメントを実行します。
 -   `PLAN_CACHE_HITS` : このカテゴリの SQL ステートメントがプラン キャッシュにヒットした合計回数。
 -   `PLAN_IN_CACHE` : このカテゴリの SQL ステートメントの前回の実行がプラン キャッシュにヒットしたかどうかを示します。
+-   `PLAN_CACHE_UNQUALIFIED` : このカテゴリの SQL ステートメントがプラン キャッシュにヒットできなかった回数。
+-   `PLAN_CACHE_UNQUALIFIED_LAST_REASON` : このカテゴリの SQL ステートメントが前回プラン キャッシュにヒットできなかった理由。
 
 実行時間に関連するフィールド:
 
@@ -338,6 +340,8 @@ SELECT sum_latency, avg_latency, exec_count, query_sample_text
 -   `SUMMARY_END_TIME` : 現在の集計期間の終了時刻。
 -   `FIRST_SEEN` : このカテゴリの SQL 文が初めて表示された時刻。
 -   `LAST_SEEN` : このカテゴリの SQL 文が最後に確認された時刻。
+
+<CustomContent platform="tidb">
 
 TiDBサーバーに関連するフィールド:
 
@@ -356,6 +360,32 @@ TiDBサーバーに関連するフィールド:
 -   `MAX_MEM` : 使用される最大メモリ(バイト)。
 -   `AVG_DISK` : 使用された平均ディスク容量 (バイト)。
 -   `MAX_DISK` : 使用される最大ディスク容量 (バイト)。
+-   `AVG_TIDB_CPU_TIME` : このカテゴリのSQL文が消費するTiDBサーバーCPU時間の平均。2 [Top SQL](/dashboard/top-sql.md)が有効な場合にのみ意味のある値が表示されます。それ以外の場合は、値は常に`0`です。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+TiDBサーバーに関連するフィールド:
+
+-   `EXEC_COUNT` : このカテゴリの SQL ステートメントの合計実行時間。
+-   `SUM_ERRORS` : 実行中に発生したエラーの合計。
+-   `SUM_WARNINGS` : 実行中に発生した警告の合計。
+-   `SUM_LATENCY` : このカテゴリの SQL ステートメントの合計実行レイテンシー。
+-   `MAX_LATENCY` : このカテゴリの SQL ステートメントの最大実行レイテンシー。
+-   `MIN_LATENCY` : このカテゴリの SQL ステートメントの最小実行レイテンシー。
+-   `AVG_LATENCY` : このカテゴリの SQL ステートメントの平均実行レイテンシー。
+-   `AVG_PARSE_LATENCY` : パーサーの平均レイテンシー。
+-   `MAX_PARSE_LATENCY` : パーサーの最大レイテンシー。
+-   `AVG_COMPILE_LATENCY` : コンパイラの平均レイテンシー。
+-   `MAX_COMPILE_LATENCY` : コンパイラの最大レイテンシー。
+-   `AVG_MEM` : 使用された平均メモリ(バイト)。
+-   `MAX_MEM` : 使用される最大メモリ(バイト)。
+-   `AVG_DISK` : 使用された平均ディスク容量 (バイト)。
+-   `MAX_DISK` : 使用される最大ディスク容量 (バイト)。
+-   `AVG_TIDB_CPU_TIME` : このカテゴリのSQL文が消費するTiDBサーバーCPU時間の平均。Top Top SQL機能が有効な場合にのみ意味のある値が表示されます。それ以外の場合は、値は常に`0`です。
+
+</CustomContent>
 
 TiKVコプロセッサータスクに関連するフィールド:
 
@@ -374,6 +404,7 @@ TiKVコプロセッサータスクに関連するフィールド:
 -   `MAX_TOTAL_KEYS` :コプロセッサーがスキャンしたキーの最大数。
 -   `AVG_PROCESSED_KEYS` :コプロセッサーが処理したキーの平均数。2 と比較すると、 `avg_total_keys` `avg_processed_keys`古いバージョンの MVCC は含まれていません。6 `avg_total_keys` `avg_processed_keys`の差が大きいことから、古いバージョンが多数存在することがわかります。
 -   `MAX_PROCESSED_KEYS` :コプロセッサーが処理したキーの最大数。
+-   `AVG_TIKV_CPU_TIME` : このカテゴリの SQL ステートメントが消費する TiKVサーバーCPU 時間の平均。
 
 取引関連のフィールド:
 

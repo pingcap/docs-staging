@@ -1,6 +1,6 @@
 ---
 title: Export and Import Data Sources and Task Configuration of Clusters
-summary: DM を使用するときに、クラスターのデータ ソースとタスク構成をエクスポートおよびインポートする方法を学習します。
+summary: DM を使用するときに、データ ソースとクラスターのタスク構成をエクスポートおよびインポートする方法を学習します。
 ---
 
 # データソースのエクスポートとインポート、およびクラスターのタスクコンフィグレーション {#export-and-import-data-sources-and-task-configuration-of-clusters}
@@ -59,7 +59,7 @@ config import [--dir directory]
 
 > **注記：**
 >
-> v2.0.2 以降のクラスターでは、現在、リレー ワーカーに関連する構成の自動インポートはサポートされていません。 `start-relay`コマンドを使用して手動で[リレーログを開始](/dm/relay-log.md#enable-and-disable-relay-log)実行できます。
+> v2.0.2以降のクラスターでは、現在、リレーワーカー関連の設定の自動インポートはサポートされていません`start-relay`コマンドを使用して手動で[リレーログを開始](/dm/relay-log.md#enable-and-disable-relay-log)実行できます。
 
 ### パラメータの説明 {#parameter-explanation}
 

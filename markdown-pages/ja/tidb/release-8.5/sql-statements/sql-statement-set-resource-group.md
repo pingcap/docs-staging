@@ -9,7 +9,7 @@ summary: TiDB データベースでの SET RESOURCE GROUP の使用法の概要�
 
 > **注記：**
 >
-> この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> この機能は、クラスター[TiDB Cloudスターター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)および[TiDB Cloudエッセンシャル](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)では利用できません。
 
 ## 概要 {#synopsis}
 
@@ -23,6 +23,13 @@ ResourceGroupName ::=
     Identifier
 |   "DEFAULT"
 ```
+
+## 特権 {#privilege}
+
+このステートメントを実行するには、次の構成と権限が必要です。
+
+1.  システム変数[`tidb_enable_resource_control`](/system-variables.md#tidb_enable_resource_control-new-in-v660) `ON`に設定されています。
+2.  システム変数[`tidb_resource_control_strict_mode`](/system-variables.md#tidb_resource_control_strict_mode-new-in-v820) `ON`に設定されている場合、 `SUPER` 、 `RESOURCE_GROUP_ADMIN` 、または`RESOURCE_GROUP_USER`権限が必要です。 `OFF`に設定されている場合、これらの権限は必要ありません。
 
 ## 例 {#examples}
 
@@ -86,4 +93,4 @@ MySQLも[リソースグループの設定](https://dev.mysql.com/doc/refman/8.0
 -   [リソースグループの作成](/sql-statements/sql-statement-create-resource-group.md)
 -   [リソースグループの削除](/sql-statements/sql-statement-drop-resource-group.md)
 -   [リソースグループの変更](/sql-statements/sql-statement-alter-resource-group.md)
--   [リソース管理](/tidb-resource-control.md)
+-   [リソース管理](/tidb-resource-control-ru-groups.md)

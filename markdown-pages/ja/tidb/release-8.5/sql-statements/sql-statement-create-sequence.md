@@ -5,7 +5,7 @@ summary: TiDB データベースの CREATE SEQUENCE の使用法の概要。
 
 # シーケンスを作成 {#create-sequence}
 
-`CREATE SEQUENCE`文は、TiDB にシーケンス オブジェクトを作成します。シーケンスは、テーブルおよび`View`オブジェクトと同等のデータベース オブジェクトです。シーケンスは、カスタマイズされた方法でシリアル化された ID を生成するために使用されます。
+`CREATE SEQUENCE`ステートメントは、TiDB にシーケンスオブジェクトを作成します。シーケンスは、テーブルや`View`のオブジェクトと同等のデータベースオブジェクトです。シーケンスは、カスタマイズされた方法でシリアル化された ID を生成するために使用されます。
 
 ## 概要 {#synopsis}
 
@@ -51,35 +51,35 @@ CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name
 
 ## パラメータ {#parameters}
 
-| パラメータ       | デフォルト値                       | 説明                                                                                                                                   |
-| :---------- | :--------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `TEMPORARY` | `false`                      | TiDB は現在`TEMPORARY`オプションをサポートしておらず、構文の互換性のみを提供しています。                                                                                 |
-| `INCREMENT` | `1`                          | シーケンスの増分を指定します。正または負の値により、シーケンスの成長方向を制御できます。                                                                                         |
-| `MINVALUE`  | `1`または`-9223372036854775807` | シーケンスの最小値を指定します。 `INCREMENT` &gt; `0`の場合、デフォルト値は`1`です。 `INCREMENT` &lt; `0`の場合、デフォルト値は`-9223372036854775807`です。                      |
-| `MAXVALUE`  | `9223372036854775806`または`-1` | シーケンスの最大値を指定します。 `INCREMENT` &gt; `0`の場合、デフォルト値は`9223372036854775806`です。 `INCREMENT` &lt; `0`の場合、デフォルト値は`-1`です。                      |
-| `START`     | `MINVALUE`または`MAXVALUE`      | シーケンスの初期値を指定します。 `INCREMENT` &gt; `0`の場合、デフォルト値は`MINVALUE`です。 `INCREMENT` &lt; `0`の場合、デフォルト値は`MAXVALUE`です。                           |
-| `CACHE`     | `1000`                       | TiDB 内のシーケンスのローカル キャッシュ サイズを指定します。                                                                                                   |
-| `CYCLE`     | `NO CYCLE`                   | シーケンスが最小値（降順シーケンスの場合は最大値）から再開するかどうかを指定します。 `INCREMENT` &gt; `0`の場合、デフォルト値は`MINVALUE`です。 `INCREMENT` &lt; `0`の場合、デフォルト値は`MAXVALUE`です。 |
+| パラメータ       | デフォルト値                       | 説明                                                                                                                                  |
+| :---------- | :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| `TEMPORARY` | `false`                      | TiDB は現在`TEMPORARY`オプションをサポートしておらず、構文の互換性のみを提供しています。                                                                                |
+| `INCREMENT` | `1`                          | シーケンスの増分を指定します。正または負の値を指定することで、シーケンスの増加方向を制御できます。                                                                                   |
+| `MINVALUE`  | `1`または`-9223372036854775807` | シーケンスの最小値を指定します。1 &gt; `0` `INCREMENT`場合、デフォルト値は`1`です。7 &lt; `0` `INCREMENT`場合、デフォルト値は`-9223372036854775807`です。                     |
+| `MAXVALUE`  | `9223372036854775806`または`-1` | シーケンスの最大値を指定します。1 &gt; `0` `INCREMENT`場合、デフォルト値は`9223372036854775806`です。7 &lt; `0` `INCREMENT`場合、デフォルト値は`-1`です。                     |
+| `START`     | `MINVALUE`または`MAXVALUE`      | シーケンスの初期値を指定します。1 &gt; `0` `INCREMENT`場合、デフォルト値は`MINVALUE`です。7 &lt; `0` `INCREMENT`場合、デフォルト値は`MAXVALUE`です。                          |
+| `CACHE`     | `1000`                       | TiDB 内のシーケンスのローカル キャッシュ サイズを指定します。                                                                                                  |
+| `CYCLE`     | `NO CYCLE`                   | シーケンスを最小値（降順シーケンスの場合は最大値）から再開するかどうかを指定します。1 &gt; `0` `INCREMENT` 、デフォルト値は`MINVALUE`です。7 &lt; `INCREMENT` `0`場合、デフォルト値は`MAXVALUE`です。 |
 
-## <code>SEQUENCE</code>機能 {#code-sequence-code-function}
+## <code>SEQUENCE</code>関数 {#code-sequence-code-function}
 
-次の式関数を使用してシーケンスを制御できます。
+次の式関数を通じてシーケンスを制御できます。
 
 -   `NEXTVAL`または`NEXT VALUE FOR`
 
-    本質的には、どちらもシーケンス オブジェクトの次の有効な値を取得する`NEXTVAL()`番目の関数です。3 `NEXTVAL()`の関数のパラメーターは、シーケンスの`identifier`です。
+    基本的に、どちらもシーケンスオブジェクトの次の有効な値を取得する`NEXTVAL()`関数です。3 `NEXTVAL()`の関数の引数は、シーケンスの`identifier`の値です。
 
 -   `LASTVAL`
 
-    この関数は、このセッションで最後に使用された値を取得します。値が存在しない場合は、 `NULL`が使用されます。この関数のパラメーターは、シーケンスの`identifier`です。
+    この関数は、このセッションで最後に使用された値を取得します。値が存在しない場合は`NULL`使用されます。この関数の引数は、シーケンスの`identifier`です。
 
 -   `SETVAL`
 
-    この関数は、シーケンスの現在の値の進行を設定します。この関数の最初のパラメーターはシーケンスの`identifier`で、2 番目のパラメーターは`num`です。
+    この関数は、シーケンスの現在の値の進行を設定します。この関数の最初のパラメータはシーケンスの`identifier` 、2番目のパラメータは`num`です。
 
 > **注記：**
 >
-> TiDB でのシーケンスの実装では、 `SETVAL`関数はこのシーケンスの初期進行またはサイクル進行を変更できません。この関数は、この進行に基づいて次の有効な値を返すだけです。
+> TiDBにおけるシーケンスの実装において、 `SETVAL`関数はシーケンスの初期進行またはサイクル進行を変更できません。この関数は、この進行に基づいて次の有効な値を返すだけです。
 
 ## 例 {#examples}
 
@@ -104,7 +104,7 @@ CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name
         +--------------+
         1 row in set (0.02 sec)
 
--   このセッションでシーケンス オブジェクトへの最後の呼び出しによって生成された値を取得するには、 `LASTVAL()`関数を使用します。
+-   このセッションでのシーケンス オブジェクトへの最後の呼び出しによって生成された値を取得するには、 `LASTVAL()`関数を使用します。
 
     ```sql
     SELECT LASTVAL(seq);
@@ -117,7 +117,7 @@ CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name
         +--------------+
         1 row in set (0.02 sec)
 
--   `SETVAL()`関数を使用して、シーケンス オブジェクトの現在の値 (または現在の位置) を設定します。
+-   シーケンス オブジェクトの現在の値 (または現在の位置) を設定するには、 `SETVAL()`関数を使用します。
 
     ```sql
     SELECT SETVAL(seq, 10);
@@ -230,7 +230,7 @@ CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name
         +------+
         1 row in set (0.00 sec)
 
--   次の例では、値が指定されていないため、デフォルト値の`seq2`が使用されます。ただし、次の値`seq2`は上記の例 ( `CREATE SEQUENCE seq2 start 3 increment 2 minvalue 1 maxvalue 10 cache 3;` ) で定義された範囲内ではないため、エラーが返されます。
+-   次の例では、値が指定されていないため、デフォルト値の`seq2`が使用されます。しかし、次の値`seq2`は上記の例で定義された範囲（ `CREATE SEQUENCE seq2 start 3 increment 2 minvalue 1 maxvalue 10 cache 3;` ）外であるため、エラーが返されます。
 
     ```sql
     INSERT into t values();
@@ -238,11 +238,11 @@ CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name
 
         ERROR 4135 (HY000): Sequence 'test.seq2' has run out
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-このステートメントは TiDB の拡張機能です。実装は MariaDB で利用可能なシーケンスに基づいてモデル化されています。
+このステートメントはTiDBの拡張機能です。実装はMariaDBで利用可能なシーケンスをモデルにしています。
 
-`SETVAL`関数を除き、他のすべての関数はMariaDB と同じ*進行順序*を持ちます。ここでの「進行順序」とは、シーケンス内の数字がシーケンスによって定義された特定の等差数列の規則に従うことを意味します。シーケンスの現在の値を設定するには`SETVAL`使用できますが、シーケンスのそれ以降の値は元の進行順序の規則に従います。
+`SETVAL`関数を除くすべての関数は、MariaDB と同じ*数列規則*に従います。ここでの「数列規則」とは、シーケンス内の数値が、シーケンスによって定義された特定の等差数列規則に従うことを意味します。シーケンスの現在の値を設定するのに`SETVAL`使用できますが、シーケンスのそれ以降の値は元の数列規則に従います。
 
 例えば：
 
@@ -256,5 +256,5 @@ CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name
 
 -   [シーケンスの変更](/sql-statements/sql-statement-alter-sequence.md)
 -   [ドロップシーケンス](/sql-statements/sql-statement-drop-sequence.md)
--   [表示シーケンスの作成](/sql-statements/sql-statement-show-create-sequence.md)
+-   [シーケンスの作成を表示](/sql-statements/sql-statement-show-create-sequence.md)
 -   [シーケンス関数](/functions-and-operators/sequence-functions.md)

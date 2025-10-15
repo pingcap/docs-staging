@@ -9,7 +9,7 @@ summary: TiDB での CREATE RESOURCE GROUP の使用方法を学習します。
 
 > **注記：**
 >
-> この機能は[TiDB Cloud Serverless](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)クラスターでは利用できません。
+> この機能は、クラスター[TiDB Cloudスターター](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless)および[TiDB Cloudエッセンシャル](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)では利用できません。
 
 ## 概要 {#synopsis}
 
@@ -53,6 +53,8 @@ ResourceGroupRunawayOptionList ::=
 
 DirectResourceGroupRunawayOption ::=
     "EXEC_ELAPSED" EqOpt stringLit
+|   "PROCESSED_KEYS" EqOpt intLit
+|   "RU" EqOpt intLit
 |   "ACTION" EqOpt ResourceGroupRunawayActionOption
 |   "WATCH" EqOpt ResourceGroupRunawayWatchOption WatchDurationOption
 
@@ -68,18 +70,19 @@ ResourceGroupRunawayActionOption ::=
     DRYRUN
 |   COOLDOWN
 |   KILL
+| "SWITCH_GROUP" '(' ResourceGroupName ')'
 ```
 
 リソースグループ名パラメータ（ `ResourceGroupName` ）はグローバルに一意である必要があります。
 
-TiDB は次の`DirectResourceGroupOption`サポートします[リクエストユニット（RU）](/tidb-resource-control.md#what-is-request-unit-ru)は、CPU、IO、およびその他のシステム リソース用の TiDB 内の統一された抽象化単位です。
+TiDB は次の`DirectResourceGroupOption`サポートします[リクエストユニット（RU）](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru)は、CPU、IO、およびその他のシステム リソース用の TiDB 内の統一された抽象化単位です。
 
-| オプション         | 説明                                                                                    | 例                                                                                                                                                                                                                                                                                                                                                               |
-| ------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `RU_PER_SEC`  | 1秒あたりのRUバックフィル速度                                                                      | `RU_PER_SEC = 500` 、このリソース グループが 1 秒あたり 500 RU でバックフィルされることを示します。                                                                                                                                                                                                                                                                                               |
-| `PRIORITY`    | TiKVで処理されるタスクの絶対的な優先度                                                                 | `PRIORITY = HIGH`優先度が高いことを示します。指定されていない場合は、デフォルト値は`MEDIUM`です。                                                                                                                                                                                                                                                                                                   |
-| `BURSTABLE`   | `BURSTABLE`属性が設定されている場合、TiDB は、クォータを超えたときに、対応するリソース グループが使用可能なシステム リソースを使用することを許可します。 |                                                                                                                                                                                                                                                                                                                                                                 |
-| `QUERY_LIMIT` | クエリ実行がこの条件を満たす場合、クエリはランナウェイ クエリとして識別され、対応するアクションが実行されます。                              | `QUERY_LIMIT=(EXEC_ELAPSED='60s', ACTION=KILL, WATCH=EXACT DURATION='10m')` 、実行時間が60秒を超えた場合にクエリがランナウェイクエリと識別されることを示します。クエリは終了します。同じSQLテキストを持つすべてのSQL文は、今後10分以内に即時終了します。2または`QUERY_LIMIT=NULL` `QUERY_LIMIT=()`ランナウェイ制御が無効であることを意味します。6 [ランナウェイクエリ](/tidb-resource-control.md#manage-queries-that-consume-more-resources-than-expected-runaway-queries)参照してください。 |
+| オプション         | 説明                                                                                    | 例                                                                                                                                                                                                                                                                                                      |
+| ------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `RU_PER_SEC`  | 1秒あたりのRUバックフィル速度                                                                      | `RU_PER_SEC = 500` 、このリソース グループが 1 秒あたり 500 RU でバックフィルされることを示します。                                                                                                                                                                                                                                      |
+| `PRIORITY`    | TiKVで処理されるタスクの絶対的な優先度                                                                 | `PRIORITY = HIGH`優先度が高いことを示します。指定されていない場合は、デフォルト値は`MEDIUM`です。                                                                                                                                                                                                                                          |
+| `BURSTABLE`   | `BURSTABLE`属性が設定されている場合、TiDB は、クォータを超えたときに、対応するリソース グループが使用可能なシステム リソースを使用することを許可します。 |                                                                                                                                                                                                                                                                                                        |
+| `QUERY_LIMIT` | クエリ実行がこの条件を満たす場合、クエリはランナウェイ クエリとして識別され、対応するアクションが実行されます。                              | `QUERY_LIMIT=(EXEC_ELAPSED='60s', ACTION=KILL, WATCH=EXACT DURATION='10m')` 、実行時間が60秒を超えた場合にクエリがランナウェイクエリと識別されることを示します。クエリは終了します。同じSQLテキストを持つすべてのSQL文は、今後10分以内に即時終了します。2または`QUERY_LIMIT=NULL` `QUERY_LIMIT=()`ランナウェイ制御が無効であることを意味します。6 [ランナウェイクエリ](/tidb-resource-control-runaway-queries.md)参照してください。 |
 
 > **注記：**
 >
@@ -141,4 +144,4 @@ MySQLも[リソースグループの作成](https://dev.mysql.com/doc/refman/8.0
 -   [リソースグループの削除](/sql-statements/sql-statement-drop-resource-group.md)
 -   [リソースグループの変更](/sql-statements/sql-statement-alter-resource-group.md)
 -   [ユーザーリソースグループの変更](/sql-statements/sql-statement-alter-user.md#modify-the-resource-group-bound-to-the-user)
--   [リクエストユニット（RU）](/tidb-resource-control.md#what-is-request-unit-ru)
+-   [リクエストユニット（RU）](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru)

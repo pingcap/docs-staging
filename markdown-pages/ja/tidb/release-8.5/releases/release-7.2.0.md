@@ -62,7 +62,7 @@ TiDB バージョン: 7.2.0
 
     予想以上にリソースを消費するクエリを自動的に管理することで、予期せぬクエリパフォーマンスの問題に迅速に対応するための効果的な手段となります。この機能により、問題がデータベース全体のパフォーマンスに与える影響を軽減し、データベースの安定性を向上させることができます。
 
-    詳細については[ドキュメント](/tidb-resource-control.md#manage-queries-that-consume-more-resources-than-expected-runaway-queries)参照してください。
+    詳細については[ドキュメント](/tidb-resource-control-runaway-queries.md)参照してください。
 
 -   履歴実行プラン[＃39199](https://github.com/pingcap/tidb/issues/39199) @ [qw4990](https://github.com/qw4990)に従ってバインディングを作成する機能を強化します
 
@@ -170,7 +170,7 @@ TiDB バージョン: 7.2.0
 | TiKV           | [`rocksdb.[defaultcf|writecf|lockcf].ribbon-filter-above-level`](/tikv-configuration-file.md#ribbon-filter-above-level-new-in-v720)             | 新しく追加された | この値以上のレベルにはリボン フィルターを使用し、この値未満のレベルには非ブロックベースのブルーム フィルターを使用するかどうかを制御します。                                                                                                                                                                                                   |
 | TiKV           | [`rocksdb.[defaultcf|writecf|lockcf].ttl`](/tikv-configuration-file.md#ttl-new-in-v720)                                                         | 新しく追加された | TTL よりも古い更新を含む SST ファイルは自動的に圧縮対象として選択されます。                                                                                                                                                                                                                                |
 | TiDB Lightning | `send-kv-pairs`                                                                                                                                 | 非推奨      | バージョン7.2.0以降、パラメータ`send-kv-pairs`非推奨となりました。物理インポートモードでTiKVにデータを送信する際、1リクエストの最大サイズを制御するにはパラメータ[`send-kv-size`](/tidb-lightning/tidb-lightning-configuration.md)使用します。                                                                                                      |
-| TiDB Lightning | [`character-set`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)                                                          | 修正済み     | データインポートでサポートされる文字セットに新しい値オプション`latin1`が導入されました。このオプションを使用すると、Latin-1文字セットのソースファイルをインポートできます。                                                                                                                                                                             |
+| TiDB Lightning | [`character-set`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task)                                                          | 修正済み     | データインポートでサポートされる文字セットに新しい値オプション`latin1`が追加されました。このオプションを使用すると、Latin-1文字セットのソースファイルをインポートできます。                                                                                                                                                                             |
 | TiDB Lightning | [`send-kv-size`](/tidb-lightning/tidb-lightning-configuration.md)                                                                               | 新しく追加された | 物理インポートモードでTiKVにデータを送信する際の1リクエストの最大サイズを指定します。キーと値のペアのサイズが指定されたしきい値に達すると、 TiDB Lightningはそれらを直ちにTiKVに送信します。これにより、大規模で幅の広いテーブルをインポートする際に、 TiDB Lightningノードがメモリ内にキーと値のペアを過剰に蓄積することで発生するOOM問題を回避できます。このパラメータを調整することで、メモリ使用量とインポート速度のバランスを調整し、インポートプロセスの安定性と効率性を向上させることができます。 |
 | データ移行          | [`strict-optimistic-shard-mode`](/dm/feature-shard-merge-optimistic.md)                                                                         | 新しく追加された | この設定項目は、TiDB Data Migration v2.0 の DDL シャードマージ動作との互換性を保つために使用されます。この設定項目は楽観的モードで有効にできます。有効にすると、Type 2 の DDL 文が検出されるとレプリケーションタスクが中断されます。複数のテーブルにおける DDL 変更間に依存関係がある場合、適切なタイミングで中断される可能性があります。上流と下流の間のデータ整合性を確保するため、レプリケーションタスクを再開する前に、各テーブルの DDL 文を手動で処理する必要があります。         |
 | TiCDC          | [`sink.protocol`](/ticdc/ticdc-changefeed-config.md)                                                                                            | 修正済み     | ダウンストリームがKafkaの場合、新しい値オプション`"open-protocol"`が導入されました。メッセージのエンコードに使用するプロトコル形式を指定します。                                                                                                                                                                                       |
@@ -185,7 +185,7 @@ TiDB バージョン: 7.2.0
     -   古い読み取りの再試行リーダーがロックに遭遇すると、TiDBはロックを解決した後、リーダーで強制的に再試行し、不要なオーバーヘッドを回避します[＃43659](https://github.com/pingcap/tidb/issues/43659) @ [あなた06](https://github.com/you06)
     -   推定時間を使用して古い読み取りtsを計算し、古い読み取り[＃44215](https://github.com/pingcap/tidb/issues/44215) @ [あなた06](https://github.com/you06)のオーバーヘッドを削減します。
     -   長時間実行されるトランザクションのログとシステム変数を追加する[＃41471](https://github.com/pingcap/tidb/issues/41471) @ [crazycs520](https://github.com/crazycs520)
-    -   圧縮MySQLプロトコル経由でTiDBに接続できるようになりました。これにより、低帯域幅ネットワークにおけるデータ集約型クエリのパフォーマンスが向上し、帯域幅コストを削減できます。1 `zlib`と`zstd`ベースの両方の圧縮をサポートしています[＃22605](https://github.com/pingcap/tidb/issues/22605) @ [ドヴェーデン](https://github.com/dveeden)
+    -   圧縮MySQLプロトコル経由でのTiDBへの接続をサポート。これにより、低帯域幅ネットワークにおけるデータ集約型クエリのパフォーマンスが向上し、帯域幅コストを削減できます。1 `zlib`と`zstd`ベースの両方の圧縮をサポートしています[＃22605](https://github.com/pingcap/tidb/issues/22605) @ [ドヴェーデン](https://github.com/dveeden)
     -   `utf8`と`utf8bm3`両方を従来の 3 バイト UTF-8 文字セットエンコーディングとして認識します。これにより、MySQL 8.0 から TiDB [＃26226](https://github.com/pingcap/tidb/issues/26226) @ [ドヴェーデン](https://github.com/dveeden)への従来の UTF-8 エンコーディングを持つテーブルの移行が容易になります。
     -   `UPDATE`ステートメント[＃44751](https://github.com/pingcap/tidb/issues/44751) @ [CbcWestwolf](https://github.com/CbcWestwolf)での割り当てに`:=`使用することをサポート
 
@@ -230,7 +230,7 @@ TiDB バージョン: 7.2.0
 
     -   CTE を含むクエリによって TiDB がハングする問題を修正[＃43749](https://github.com/pingcap/tidb/issues/43749) [＃36896](https://github.com/pingcap/tidb/issues/36896) @ [グオシャオゲ](https://github.com/guo-shaoge)
     -   `min, max`クエリ結果が正しくない問題を修正[＃43805](https://github.com/pingcap/tidb/issues/43805) @ [wshwsh12](https://github.com/wshwsh12)
-    -   `SHOW PROCESSLIST`文でサブクエリ時間が長い文のトランザクションの TxnStart が表示できない問題を修正[＃40851](https://github.com/pingcap/tidb/issues/40851) @ [crazycs520](https://github.com/crazycs520)
+    -   `SHOW PROCESSLIST`文でサブクエリ時間が長い文のトランザクションの TxnStart を表示できない問題を修正[＃40851](https://github.com/pingcap/tidb/issues/40851) @ [crazycs520](https://github.com/crazycs520)
     -   コプロセッサータスク[＃43365](https://github.com/pingcap/tidb/issues/43365) @ [あなた06](https://github.com/you06)に`TxnScope`が不足しているため、古い読み取りグローバル最適化が有効にならない問題を修正しました。
     -   フォロワー読み取りが再試行前にフラッシュバックエラーを処理せず、クエリエラー[＃43673](https://github.com/pingcap/tidb/issues/43673) @ [あなた06](https://github.com/you06)が発生する問題を修正しました
     -   `ON UPDATE`文が主キー[＃44565](https://github.com/pingcap/tidb/issues/44565) @ [ジグアン](https://github.com/zyguan)を正しく更新しない場合にデータとインデックスが不整合になる問題を修正しました

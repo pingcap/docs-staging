@@ -5,9 +5,9 @@ summary: TiDB データベースでの FLASHBACK DATABASE の使用方法を学�
 
 # フラッシュバックデータベース {#flashback-database}
 
-TiDB v6.4.0 では`FLASHBACK DATABASE`構文が導入されています。3 `FLASHBACK DATABASE`使用すると、ガベージ コレクション (GC) の有効期間内に`DROP`ステートメントによって削除されたデータベースとそのデータを復元できます。
+TiDB v6.4.0 では`FLASHBACK DATABASE`構文が導入されました。3 `FLASHBACK DATABASE`使用すると、ガベージコレクション (GC) の有効期間内に`DROP`ステートメントによって削除されたデータベースとそのデータを復元できます。
 
-[`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50)システム変数を設定することで、履歴データの保持時間を設定できます。デフォルト値は`10m0s`です。次の SQL 文を使用して、現在の`safePoint` 、つまり GC が実行された時点を照会できます。
+履歴データの保持期間は、システム変数[`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50)設定することで設定できます。デフォルト値は`10m0s`です。現在の`safePoint` 、つまりGCが実行された時点までを照会するには、次のSQL文を使用します。
 
 ```sql
 SELECT * FROM mysql.tidb WHERE variable_name = 'tikv_gc_safe_point';
@@ -32,9 +32,9 @@ FlashbackToNewName ::=
 
 ## 注記 {#notes}
 
--   `tikv_gc_safe_point`回目より前にデータベースが削除された場合、 `FLASHBACK DATABASE`ステートメントを使用してデータを復元することはできません。 `FLASHBACK DATABASE`ステートメントは`ERROR 1105 (HY000): Can't find dropped database 'test' in GC safe point 2022-11-06 16:10:10 +0800 CST`と同様のエラーを返します。
+-   `tikv_gc_safe_point`回目より前にデータベースが削除された場合、 `FLASHBACK DATABASE`ステートメントを使用してデータを復元することはできません。5 `FLASHBACK DATABASE`目のステートメントは`ERROR 1105 (HY000): Can't find dropped database 'test' in GC safe point 2022-11-06 16:10:10 +0800 CST`と同様のエラーを返します。
 
--   `FLASHBACK DATABASE`ステートメントを使用して同じデータベースを複数回復元することはできません`FLASHBACK DATABASE`で復元されたデータベースは元のデータベースと同じスキーマ ID を持つため、同じデータベースを複数回復元するとスキーマ ID が重複します。TiDB では、データベース スキーマ ID はグローバルに一意である必要があります。
+-   `FLASHBACK DATABASE`ステートメントを使用して、同じデータベースを複数回リストアすることはできません。3 でリストアされ`FLASHBACK DATABASE`データベースは元のデータベースと同じスキーマ ID を持つため、同じデータベースを複数回リストアするとスキーマ ID が重複します。TiDB では、データベースのスキーマ ID はグローバルに一意である必要があります。
 
 ## 例 {#example}
 
@@ -48,7 +48,7 @@ FlashbackToNewName ::=
     FLASHBACK DATABASE test;
     ```
 
--   `DROP`で削除された`test`データベースを復元し、名前を`test1`に変更します。
+-   `DROP`によって削除された`test`データベースを復元し、名前を`test1`に変更します。
 
     ```sql
     DROP DATABASE test;
@@ -58,6 +58,6 @@ FlashbackToNewName ::=
     FLASHBACK DATABASE test TO test1;
     ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 このステートメントは、MySQL 構文に対する TiDB 拡張です。

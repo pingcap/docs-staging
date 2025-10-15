@@ -1,6 +1,6 @@
 ---
 title: Use TiDB Dashboard behind a Reverse Proxy
-summary: TiDB ダッシュボードは、リバース プロキシを使用して安全に公開できます。これを行うには、実際の TiDB ダッシュボード アドレスを取得し、HAProxy または NGINX を使用してリバース プロキシを構成します。TiDB ダッシュボード サービスのパス プレフィックスをカスタマイズすることもできます。セキュリティを強化するには、ファイアウォールの構成を検討してください。
+summary: TiDBダッシュボードは、リバースプロキシを使用して安全に公開できます。これを行うには、TiDBダッシュボードの実際のアドレスを取得し、HAProxyまたはNGINXを使用してリバースプロキシを設定します。TiDBダッシュボードサービスのパスプレフィックスをカスタマイズすることもできます。セキュリティを強化するには、ファイアウォールの設定を検討してください。
 ---
 
 # リバースプロキシの背後でTiDBダッシュボードを使用する {#use-tidb-dashboard-behind-a-reverse-proxy}
@@ -9,9 +9,9 @@ summary: TiDB ダッシュボードは、リバース プロキシを使用し�
 
 ## 手順 {#procedures}
 
-### ステップ1: 実際のTiDBダッシュボードアドレスを取得する {#step-1-get-the-actual-tidb-dashboard-address}
+### ステップ1: 実際のTiDBダッシュボードのアドレスを取得する {#step-1-get-the-actual-tidb-dashboard-address}
 
-クラスター内に複数の PD インスタンスがデプロイされている場合、実際に TiDB Dashboard を実行するのは PD インスタンスのうちの 1 つだけです。そのため、リバース プロキシのアップストリームが正しいアドレスを指していることを確認する必要があります。このメカニズムの詳細については、 [複数のPDインスタンスを使用したデプロイメント](/dashboard/dashboard-ops-deploy.md#deployment-with-multiple-pd-instances)参照してください。
+クラスター内に複数のPDインスタンスがデプロイされている場合、TiDBダッシュボードを実際に実行するのは1つのPDインスタンスのみです。そのため、リバースプロキシのアップストリームが正しいアドレスを指していることを確認する必要があります。このメカニズムの詳細については、 [複数のPDインスタンスを使用したデプロイメント](/dashboard/dashboard-ops-deploy.md#deployment-with-multiple-pd-instances)参照してください。
 
 デプロイメントにTiUPツールを使用する場合は、次のコマンドを実行して実際の TiDB ダッシュボード アドレスを取得します ( `CLUSTER_NAME`クラスター名に置き換えます)。
 
@@ -19,7 +19,7 @@ summary: TiDB ダッシュボードは、リバース プロキシを使用し�
 tiup cluster display CLUSTER_NAME --dashboard
 ```
 
-出力は実際の TiDB ダッシュボード アドレスです。サンプルは次のとおりです。
+出力は実際のTiDBダッシュボードのアドレスです。例を以下に示します。
 
 ```bash
 http://192.168.0.123:2379/dashboard/
@@ -44,7 +44,7 @@ http://192.168.0.123:2379/dashboard/
 
 [HAプロキシ](https://www.haproxy.org/)リバース プロキシとして使用する場合は、次の手順を実行します。
 
-1.  たとえば、 `8033`ポートで TiDB ダッシュボードのリバース プロキシを使用します。HAProxy 構成ファイルに、次の構成を追加します。
+1.  例えば、TiDBダッシュボードのリバースプロキシを`8033`ポート（例）で使用します。HAProxy設定ファイルに以下の設定を追加します。
 
     ```haproxy
     frontend tidb_dashboard_front
@@ -60,7 +60,7 @@ http://192.168.0.123:2379/dashboard/
 
     > **警告：**
     >
-    > **このパス内のサービスのみ**がリバース プロキシの背後にあることを保証するために、 `use_backend`ディレクティブの`if`部分を保持する必要があります。そうしないと、セキュリティ リスクが発生する可能性があります。 [セキュリティTiDB ダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。
+    > **このパス内のサービスのみが**リバースプロキシの背後にあることを保証するには、 `use_backend`ディレクティブの`if`部分を保持する必要があります。そうしないと、セキュリティリスクが発生する可能性があります。7 [セキュリティTiDBダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。
 
 2.  設定を有効にするには、HAProxy を再起動します。
 
@@ -70,9 +70,9 @@ http://192.168.0.123:2379/dashboard/
 
 <details><summary><strong>NGINXを使用する</strong></summary>
 
-[NGINX とは](https://nginx.org/)リバース プロキシとして使用する場合は、次の手順を実行します。
+[NGINX](https://nginx.org/)リバース プロキシとして使用する場合は、次の手順を実行します。
 
-1.  たとえば、 `8033`ポートで TiDB ダッシュボードのリバース プロキシを使用します。NGINX 構成ファイルに次の構成を追加します。
+1.  TiDBダッシュボードのリバースプロキシを`8033`ポート（例）で使用します。NGINX設定ファイルに以下の設定を追加します。
 
     ```nginx
     server {
@@ -83,11 +83,11 @@ http://192.168.0.123:2379/dashboard/
     }
     ```
 
-    `http://192.168.0.123:2379/dashboard/` [ステップ1](#step-1-get-the-actual-tidb-dashboard-address)で取得した TiDB ダッシュボードの実際のアドレスに置き換えます。
+    `http://192.168.0.123:2379/dashboard/` 、 [ステップ1](#step-1-get-the-actual-tidb-dashboard-address)で取得した TiDB ダッシュボードの実際のアドレスに置き換えます。
 
     > **警告：**
     >
-    > このパスの下にあるサービスのみがリバース プロキシされるようにするには、 `proxy_pass`ディレクティブに`/dashboard/`パスを保持する必要があります。そうしないと、セキュリティ リスクが発生します。 [セキュリティTiDB ダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。
+    > `proxy_pass`ディレクティブの`/dashboard/`パスは必ず保持してください。これにより、このパスの下にあるサービスのみがリバースプロキシされます。そうしないと、セキュリティリスクが発生します。5 [セキュリティTiDBダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。
 
 2.  設定を有効にするには、NGINX をリロードします。
 
@@ -101,13 +101,13 @@ http://192.168.0.123:2379/dashboard/
 
 ## パスプレフィックスをカスタマイズする {#customize-path-prefix}
 
-TiDB ダッシュボードは、デフォルトで`/dashboard/`パス ( `http://example.com:8033/dashboard/`など) でサービスを提供します。これはリバース プロキシの場合でも当てはまります。リバース プロキシを構成して、 `http://example.com:8033/foo/`や`http://example.com:8033/`などのデフォルト以外のパスで TiDB ダッシュボード サービスを提供するには、次の手順を実行します。
+TiDBダッシュボードは、デフォルトで`/dashboard/`パス（例えば`http://example.com:8033/dashboard/` ）でサービスを提供します。これはリバースプロキシでも同様です。リバースプロキシを設定して、TiDBダッシュボードサービスにデフォルト以外のパス（例えば`http://example.com:8033/foo/`や`http://example.com:8033/` ）を提供するには、以下の手順を実行してください。
 
 ### ステップ1: PD構成を変更して、TiDBダッシュボードサービスのパスプレフィックスを指定します。 {#step-1-modify-pd-configuration-to-specify-the-path-prefix-of-tidb-dashboard-service}
 
-PD 構成の`[dashboard]`カテゴリの`public-path-prefix`構成項目を変更して、TiDB ダッシュボード サービスのパス プレフィックスを指定します。この項目を変更したら、変更を有効にするために PD インスタンスを再起動します。
+PD設定の`[dashboard]`のカテゴリにある`public-path-prefix`設定項目を変更し、TiDBダッシュボードサービスのパスプレフィックスを指定します。この項目を変更した後、変更を有効にするにはPDインスタンスを再起動してください。
 
-たとえば、クラスターがTiUP を使用してデプロイされており、サービスを`http://example.com:8033/foo/`で実行する場合は、次の構成を指定できます。
+たとえば、クラスターがTiUPを使用してデプロイされており、サービスを`http://example.com:8033/foo/`で実行する場合は、次の構成を指定できます。
 
 ```yaml
 server_configs:
@@ -115,15 +115,15 @@ server_configs:
     dashboard.public-path-prefix: /foo
 ```
 
-<details><summary><strong>TiUP を使用して新しいクラスターを展開するときに構成を変更する</strong></summary>
+<details><summary><strong>TiUPを使用して新しいクラスターを展開するときに構成を変更する</strong></summary>
 
-新しいクラスターを展開する場合は、上記の構成を`topology.yaml` TiUPトポロジ ファイルに追加してクラスターを展開できます。具体的な手順については、 [TiUP展開ドキュメント](/production-deployment-using-tiup.md#step-3-initialize-cluster-topology-file)参照してください。
+新しいクラスタをデプロイする場合は、上記の設定を`topology.yaml` TiUPトポロジファイルに追加してクラスタをデプロイできます。具体的な手順については、 [TiUP展開ドキュメント](/production-deployment-using-tiup.md#step-3-initialize-the-cluster-topology-file)参照してください。
 
 </details>
 
 <details>
 
-<summary><strong>TiUP を使用してデプロイされたクラスターの構成を変更する</strong></summary>
+<summary><strong>TiUPを使用してデプロイされたクラスターの構成を変更する</strong></summary>
 
 デプロイされたクラスターの場合:
 
@@ -133,7 +133,7 @@ server_configs:
     tiup cluster edit-config CLUSTER_NAME
     ```
 
-2.  `server_configs`の`pd`構成の下にある構成項目を変更または追加します。 `server_configs`存在しない場合は、最上位レベルに追加します。
+2.  `server_configs`の`pd`設定の下にある設定項目を変更または追加します。5 `server_configs`存在しない場合は、最上位レベルに追加します。
 
     ```yaml
     monitored:
@@ -146,7 +146,7 @@ server_configs:
       ...
     ```
 
-    変更後の設定ファイルは次のファイルのようになります。
+    変更後の構成ファイルは次のファイルのようになります。
 
     ```yaml
     server_configs:
@@ -189,7 +189,7 @@ server_configs:
 
 > **警告：**
 >
-> 変更およびカスタマイズされたパス プレフィックスが有効になると、TiDB ダッシュボードに直接アクセスできなくなります。パス プレフィックスに一致するリバース プロキシを介してのみ、TiDB ダッシュボードにアクセスできます。
+> 変更およびカスタマイズされたパスプレフィックスが有効になると、TiDBダッシュボードに直接アクセスできなくなります。TiDBダッシュボードにアクセスするには、パスプレフィックスに一致するリバースプロキシを経由する必要があります。
 
 ### ステップ2: リバースプロキシ構成を変更する {#step-2-modify-the-reverse-proxy-configuration}
 
@@ -212,7 +212,7 @@ backend tidb_dashboard_back
 
 > **警告：**
 >
-> **このパス内のサービスのみ**がリバース プロキシの背後にあることを保証するために、 `use_backend`ディレクティブの`if`部分を保持する必要があります。そうしないと、セキュリティ リスクが発生する可能性があります。 [セキュリティTiDB ダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。
+> **このパス内のサービスのみが**リバースプロキシの背後にあることを保証するには、 `use_backend`ディレクティブの`if`部分を保持する必要があります。そうしないと、セキュリティリスクが発生する可能性があります。7 [セキュリティTiDBダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。
 
 TiDB ダッシュボード サービスをルート パス ( `http://example.com:8033/`など) で実行する場合は、次の構成を使用します。
 
@@ -243,11 +243,11 @@ server {
 }
 ```
 
-`http://192.168.0.123:2379/dashboard/` [ステップ1](#step-1-get-the-actual-tidb-dashboard-address)で取得した TiDB ダッシュボードの実際のアドレスに置き換えます。
+`http://192.168.0.123:2379/dashboard/` 、 [ステップ1](#step-1-get-the-actual-tidb-dashboard-address)で取得した TiDB ダッシュボードの実際のアドレスに置き換えます。
 
 > **警告：**
 >
-> `proxy_pass`ディレクティブの`/dashboard/`パスを保持して**、このパス内のサービスのみ**がリバース プロキシの背後にあることを確認する必要があります。そうしないと、セキュリティ リスクが発生する可能性があります[セキュリティTiDB ダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。
+> `proxy_pass`ディレクティブの`/dashboard/`パスは必ず保持し**、このパス内のサービスのみが**リバースプロキシの背後にあるようにする必要があります。そうしないと、セキュリティリスクが発生する可能性があります。7 [セキュリティTiDBダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。
 
 TiDB ダッシュボード サービスをルート パス ( `http://example.com:8033/`など) で実行する場合は、次の構成を使用します。
 
@@ -268,6 +268,6 @@ sudo nginx -s reload
 
 </details>
 
-## 次は何か {#what-s-next}
+## 次は何？ {#what-s-next}
 
-ファイアウォールの設定など、TiDB ダッシュボードのセキュリティを強化する方法については、 [セキュリティTiDB ダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。
+ファイアウォールの設定など、TiDB ダッシュボードのセキュリティを強化する方法については、 [セキュリティTiDBダッシュボード](/dashboard/dashboard-ops-security.md)参照してください。

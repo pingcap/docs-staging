@@ -5,7 +5,7 @@ summary: TiDB データベースの DROP USER の使用法の概要。
 
 # ユーザーを削除 {#drop-user}
 
-このステートメントは、TiDB システム データベースからユーザーを削除します。オプションのキーワード`IF EXISTS`使用すると、ユーザーが存在しない場合にエラーを黙らせることができます。このステートメントには`CREATE USER`権限が必要です。
+この文は、TiDBシステムデータベースからユーザーを削除します。オプションのキーワード`IF EXISTS`使用すると、ユーザーが存在しない場合にエラーを出力しません。この文には`CREATE USER`権限が必要です。
 
 ## 概要 {#synopsis}
 
@@ -59,13 +59,13 @@ mysql> SHOW GRANTS FOR 'newuser';
 ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%'
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
--   `IF EXISTS`で存在しないユーザーを削除しても、TiDB に警告は表示されません[問題 #10196](https://github.com/pingcap/tidb/issues/10196) 。
+-   `IF EXISTS`で存在しないユーザーを削除しても、TiDB に警告は作成されません[問題番号 #10196](https://github.com/pingcap/tidb/issues/10196) 。
 
 ## 参照 {#see-also}
 
--   [ユーザーを作成](/sql-statements/sql-statement-create-user.md)
+-   [ユーザーの作成](/sql-statements/sql-statement-create-user.md)
 -   [ユーザーの変更](/sql-statements/sql-statement-alter-user.md)
 -   [表示 ユーザーの作成](/sql-statements/sql-statement-show-create-user.md)
 

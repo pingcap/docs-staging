@@ -54,6 +54,39 @@ SELECT 'A' = 'a';
 1 row in set (0.00 sec)
 ```
 
+次の例は、異なるUnicode照合順序がドイツ語の`ß`と`ss`どのように比較するかを示しています。より厳密なUnicode照合順序のみがこれらを同等とみなし、 `1` （つまりTRUE）を返すことがわかります。
+
+```sql
+SELECT
+  'ss' COLLATE utf8mb4_general_ci = 'ß',
+  'ss' COLLATE utf8mb4_unicode_ci = 'ß',
+  'ss' COLLATE utf8mb4_0900_ai_ci = 'ß',
+  'ss' COLLATE utf8mb4_0900_bin = 'ß'
+\G
+```
+
+    *************************** 1. row ***************************
+    'ss' COLLATE utf8mb4_general_ci = 'ß': 0
+    'ss' COLLATE utf8mb4_unicode_ci = 'ß': 1
+    'ss' COLLATE utf8mb4_0900_ai_ci = 'ß': 1
+      'ss' COLLATE utf8mb4_0900_bin = 'ß': 0
+    1 row in set (0.01 sec)
+
+### 文字セットと照合順序の命名 {#character-set-and-collation-naming}
+
+文字セットには、 `<character_set>_<collation_properties>`形式で命名された複数の照合順序を設定できます。例えば、 `utf8mb4`文字セットには`utf8mb4_bin`という照合順序があり、これは`utf8mb4`バイナリ照合順序です。複数の照合順序プロパティをアンダースコア ( `_` ) で区切って名前に含めることができます。
+
+次の表は、一般的な照合順序プロパティと意味を示しています。
+
+| 照合プロパティ       | 意味                                    |
+| ------------- | ------------------------------------- |
+| `_bin`        | バイナリ                                  |
+| `_ci`         | 大文字と小文字を区別しない                         |
+| `_ai_ci`      | アクセント、大文字と小文字を区別しない                   |
+| `_0900_bin`   | Unicode UCA 9.0.0、バイナリ                |
+| `_unicode_ci` | （古い）Unicode UCA照合順序、大文字と小文字を区別しない     |
+| `_general_ci` | Unicode照合順序はそれほど厳密ではなく、大文字と小文字を区別しません |
+
 ## TiDB でサポートされている文字セットと照合順序 {#character-sets-and-collations-supported-by-tidb}
 
 現在、TiDB は次の文字セットをサポートしています。
@@ -83,23 +116,23 @@ SHOW COLLATION;
 ```
 
 ```sql
-+--------------------+---------+------+---------+----------+---------+
-| Collation          | Charset | Id   | Default | Compiled | Sortlen |
-+--------------------+---------+------+---------+----------+---------+
-| ascii_bin          | ascii   |   65 | Yes     | Yes      |       1 |
-| binary             | binary  |   63 | Yes     | Yes      |       1 |
-| gbk_bin            | gbk     |   87 |         | Yes      |       1 |
-| gbk_chinese_ci     | gbk     |   28 | Yes     | Yes      |       1 |
-| latin1_bin         | latin1  |   47 | Yes     | Yes      |       1 |
-| utf8_bin           | utf8    |   83 | Yes     | Yes      |       1 |
-| utf8_general_ci    | utf8    |   33 |         | Yes      |       1 |
-| utf8_unicode_ci    | utf8    |  192 |         | Yes      |       1 |
-| utf8mb4_0900_ai_ci | utf8mb4 |  255 |         | Yes      |       1 |
-| utf8mb4_0900_bin   | utf8mb4 |  309 |         | Yes      |       1 |
-| utf8mb4_bin        | utf8mb4 |   46 | Yes     | Yes      |       1 |
-| utf8mb4_general_ci | utf8mb4 |   45 |         | Yes      |       1 |
-| utf8mb4_unicode_ci | utf8mb4 |  224 |         | Yes      |       1 |
-+--------------------+---------+------+---------+----------+---------+
++--------------------+---------+-----+---------+----------+---------+---------------+
+| Collation          | Charset | Id  | Default | Compiled | Sortlen | Pad_attribute |
++--------------------+---------+-----+---------+----------+---------+---------------+
+| ascii_bin          | ascii   |  65 | Yes     | Yes      |       1 | PAD SPACE     |
+| binary             | binary  |  63 | Yes     | Yes      |       1 | NO PAD        |
+| gbk_bin            | gbk     |  87 |         | Yes      |       1 | PAD SPACE     |
+| gbk_chinese_ci     | gbk     |  28 | Yes     | Yes      |       1 | PAD SPACE     |
+| latin1_bin         | latin1  |  47 | Yes     | Yes      |       1 | PAD SPACE     |
+| utf8_bin           | utf8    |  83 | Yes     | Yes      |       1 | PAD SPACE     |
+| utf8_general_ci    | utf8    |  33 |         | Yes      |       1 | PAD SPACE     |
+| utf8_unicode_ci    | utf8    | 192 |         | Yes      |       8 | PAD SPACE     |
+| utf8mb4_0900_ai_ci | utf8mb4 | 255 |         | Yes      |       0 | NO PAD        |
+| utf8mb4_0900_bin   | utf8mb4 | 309 |         | Yes      |       1 | NO PAD        |
+| utf8mb4_bin        | utf8mb4 |  46 | Yes     | Yes      |       1 | PAD SPACE     |
+| utf8mb4_general_ci | utf8mb4 |  45 |         | Yes      |       1 | PAD SPACE     |
+| utf8mb4_unicode_ci | utf8mb4 | 224 |         | Yes      |       8 | PAD SPACE     |
++--------------------+---------+-----+---------+----------+---------+---------------+
 13 rows in set (0.00 sec)
 ```
 
@@ -123,25 +156,27 @@ SHOW COLLATION WHERE Charset = 'utf8mb4';
 ```
 
 ```sql
-+--------------------+---------+------+---------+----------+---------+
-| Collation          | Charset | Id   | Default | Compiled | Sortlen |
-+--------------------+---------+------+---------+----------+---------+
-| utf8mb4_0900_ai_ci | utf8mb4 |  255 |         | Yes      |       1 |
-| utf8mb4_0900_bin   | utf8mb4 |  309 |         | Yes      |       1 |
-| utf8mb4_bin        | utf8mb4 |   46 | Yes     | Yes      |       1 |
-| utf8mb4_general_ci | utf8mb4 |   45 |         | Yes      |       1 |
-| utf8mb4_unicode_ci | utf8mb4 |  224 |         | Yes      |       1 |
-+--------------------+---------+------+---------+----------+---------+
-5 rows in set (0.00 sec)
++--------------------+---------+-----+---------+----------+---------+---------------+
+| Collation          | Charset | Id  | Default | Compiled | Sortlen | Pad_attribute |
++--------------------+---------+-----+---------+----------+---------+---------------+
+| utf8mb4_0900_ai_ci | utf8mb4 | 255 |         | Yes      |       0 | NO PAD        |
+| utf8mb4_0900_bin   | utf8mb4 | 309 |         | Yes      |       1 | NO PAD        |
+| utf8mb4_bin        | utf8mb4 |  46 | Yes     | Yes      |       1 | PAD SPACE     |
+| utf8mb4_general_ci | utf8mb4 |  45 |         | Yes      |       1 | PAD SPACE     |
+| utf8mb4_unicode_ci | utf8mb4 | 224 |         | Yes      |       8 | PAD SPACE     |
++--------------------+---------+-----+---------+----------+---------+---------------+
+5 rows in set (0.001 sec)
 ```
 
 GBK 文字セットの TiDB サポートの詳細については、 [GBK](/character-set-gbk.md)参照してください。
 
 ## TiDB の<code>utf8</code>と<code>utf8mb4</code> {#code-utf8-code-and-code-utf8mb4-code-in-tidb}
 
-MySQLでは、文字セット`utf8`最大3バイトに制限されています。これは基本多言語面（BMP）の文字を格納するには十分ですが、絵文字などの文字を格納するには不十分です。そのため、代わりに文字セット`utf8mb4`使用することをお勧めします。
+MySQLでは、文字セット`utf8`最大3バイトに制限されています。これは基本多言語面（BMP）の文字を格納するには十分ですが、絵文字などの文字を格納するには不十分です。新規インストールの場合は、文字セット`utf8mb4`使用し、文字セット`utf8`から移行することをお勧めします。
 
-TiDBはデフォルトで、文字セット`utf8`最大3バイトに制限しています。これは、TiDBで作成されたデータがMySQLで安全に復元できることを保証するためです。システム変数[`tidb_check_mb4_value_in_utf8`](/system-variables.md#tidb_check_mb4_value_in_utf8)の値を`OFF`に変更することで、この制限を無効にすることができます。
+MySQL と TiDB の両方で、 `utf8`と`utf8mb3`同じ文字セットのエイリアスです。
+
+TiDBはデフォルトで、文字セット`utf8`を最大3バイトに制限しています。これは、TiDBで作成されたデータがMySQLで安全に復元できることを保証するためです。システム変数[`tidb_check_mb4_value_in_utf8`](/system-variables.md#tidb_check_mb4_value_in_utf8)の値を`OFF`に変更することで、この制限を無効にすることができます。ただし、完全なUnicodeサポートと高い互換性のためには、代わりに`utf8mb4`使用することをお勧めします。
 
 以下は、4バイトの絵文字をテーブルに挿入する際のデフォルトの動作を示しています。1 `INSERT`文は`utf8`文字セットでは失敗しますが、 `utf8mb4`の文では成功します。
 
@@ -151,9 +186,7 @@ CREATE TABLE utf8_test (
     ) CHARACTER SET utf8;
 ```
 
-```sql
-Query OK, 0 rows affected (0.09 sec)
-```
+    Query OK, 0 rows affected (0.09 sec)
 
 ```sql
 CREATE TABLE utf8m4_test (
@@ -161,48 +194,38 @@ CREATE TABLE utf8m4_test (
     ) CHARACTER SET utf8mb4;
 ```
 
-```sql
-Query OK, 0 rows affected (0.09 sec)
-```
+    Query OK, 0 rows affected (0.09 sec)
 
 ```sql
 INSERT INTO utf8_test VALUES ('😉');
 ```
 
-```sql
-ERROR 1366 (HY000): incorrect utf8 value f09f9889(😉) for column c
-```
+    ERROR 1366 (HY000): incorrect utf8 value f09f9889(😉) for column c
 
 ```sql
 INSERT INTO utf8m4_test VALUES ('😉');
 ```
 
-```sql
-Query OK, 1 row affected (0.02 sec)
-```
+    Query OK, 1 row affected (0.02 sec)
 
 ```sql
 SELECT char_length(c), length(c), c FROM utf8_test;
 ```
 
-```sql
-Empty set (0.01 sec)
-```
+    Empty set (0.01 sec)
 
 ```sql
 SELECT char_length(c), length(c), c FROM utf8m4_test;
 ```
 
-```sql
-+----------------+-----------+------+
-| char_length(c) | length(c) | c    |
-+----------------+-----------+------+
-|              1 |         4 | 😉     |
-+----------------+-----------+------+
-1 row in set (0.00 sec)
-```
+    +----------------+-----------+------+
+    | char_length(c) | length(c) | c    |
+    +----------------+-----------+------+
+    |              1 |         4 | 😉     |
+    +----------------+-----------+------+
+    1 row in set (0.00 sec)
 
-## 異なるレイヤーにおける文字セットと照合順序 {#character-set-and-collation-in-different-layers}
+## 異なるレイヤーでの文字セットと照合順序 {#character-set-and-collation-in-different-layers}
 
 文字セットと照合順序は異なるレイヤーで設定できます。
 

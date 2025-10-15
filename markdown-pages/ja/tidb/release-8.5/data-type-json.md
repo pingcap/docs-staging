@@ -3,12 +3,12 @@ title: TiDB Data Type
 summary: TiDB の JSON データ型について学習します。
 ---
 
-# JSON データ型 {#json-data-type}
+# JSONデータ型 {#json-data-type}
 
-TiDB は、半構造化データを格納するのに役立つ`JSON` (JavaScript Object Notation) データ型をサポートしています。 `JSON`データ型には、文字列列に`JSON`形式の文字列を格納する場合と比べて、次の利点があります。
+TiDBは、半構造化データの保存に便利な`JSON` （JavaScript Object Notation）データ型をサポートしています`JSON`データ型は、文字列列に`JSON`形式の文字列を保存する場合と比べて、以下の利点があります。
 
--   シリアル化にはバイナリ形式を使用します。内部形式により、 `JSON`ドキュメント要素への迅速な読み取りアクセスが可能になります。
--   `JSON`列に保存された JSON ドキュメントの自動検証。有効なドキュメントのみを保存できます。
+-   シリアル化にはバイナリ形式を使用します。内部形式により、 `JSON`ドキュメント要素への高速な読み取りアクセスが可能になります。
+-   `JSON`列に保存されたJSONドキュメントを自動検証します。有効なドキュメントのみを保存できます。
 
 `JSON`列は、他のバイナリ タイプの列と同様に直接インデックス付けされませんが、生成された列の形式で`JSON`ドキュメント内のフィールドをインデックス付けできます。
 
@@ -23,23 +23,23 @@ INSERT INTO city (id,detail) VALUES (1, '{"name": "Beijing", "population": 100}'
 SELECT id FROM city WHERE population >= 100;
 ```
 
-詳細については[JSON関数](/functions-and-operators/json-functions.md)および[生成された列](/generated-columns.md)参照してください。
+詳細については、 [JSON関数](/functions-and-operators/json-functions.md)および[生成された列](/generated-columns.md)参照してください。
 
-## JSON 値型 {#json-value-types}
+## JSON値の型 {#json-value-types}
 
-JSON ドキュメント内の値には型があります。これは[`JSON_TYPE`](/functions-and-operators/json-functions/json-functions-return.md#json_type)の出力に表示されます。
+JSONドキュメント内の値には型があります。これは[`JSON_TYPE` ()](/functions-and-operators/json-functions/json-functions-return.md#json_type)の出力で確認できます。
 
 | タイプ    | 例                              |
 | ------ | ------------------------------ |
 | 配列     | `[]`                           |
 | 少し     |                                |
 | ブロブ    | `0x616263`                     |
-| ブール    | `true`                         |
+| ブール値   | `true`                         |
 | 日付     | `"2025-06-14"`                 |
 | 日時     | `"2025-06-14 09:05:10.000000"` |
 | ダブル    | `1.14`                         |
 | 整数     | `5`                            |
-| NULL   | `null`                         |
+| ヌル     | `null`                         |
 | 物体     | `{}`                           |
 | 不透明    |                                |
 | 弦      | `"foobar"`                     |
@@ -48,11 +48,11 @@ JSON ドキュメント内の値には型があります。これは[`JSON_TYPE`
 
 ## 制限 {#restrictions}
 
--   現在、 TiDB はTiFlashへの限定された`JSON`関数のプッシュダウンのみをサポートしています。詳細については、 [プッシュダウン式](/tiflash/tiflash-supported-pushdown-calculations.md#push-down-expressions)参照してください。
--   TiDB バックアップ &amp; リストア (BR) は、v6.3.0 で JSON 列データのエンコード方法を変更します。したがって、 BRを使用して JSON 列を含むデータを v6.3.0 より前の TiDB クラスターにリストアすることはお勧めしません。
+-   現在、TiDBはTiFlashへのプッシュダウンを限定的に`JSON`関数のみサポートしています。詳細については[プッシュダウン式](/tiflash/tiflash-supported-pushdown-calculations.md#push-down-expressions)ご覧ください。
+-   TiDBバックアップ＆リストア（BR）は、v6.3.0でJSON列データのエンコード方法を変更します。そのため、JSON列を含むデータをBRを使用してv6.3.0より前のTiDBクラスターにリストアすることは推奨されません。
 -   `DATE` 、 `DATETIME` 、 `TIME`などの非標準`JSON`データ型を含むデータをレプリケートする場合は、レプリケーション ツールを使用しないでください。
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
 -   `BINARY`型のデータを含む JSON 列を作成すると、MySQL は現在そのデータを`STRING`型として誤ってラベル付けしますが、TiDB はそれを`BINARY`型として正しく処理します。
 
@@ -70,9 +70,9 @@ JSON ドキュメント内の値には型があります。これは[`JSON_TYPE`
     1 row in set (0.01 sec)
     ```
 
-    詳細については、第[＃37443](https://github.com/pingcap/tidb/issues/37443)号を参照してください。
+    詳細については、第[＃37443](https://github.com/pingcap/tidb/issues/37443)を参照してください。
 
--   データ型を`ENUM`または`SET`から`JSON`に変換する場合、TiDB はデータ形式の正確性をチェックします。たとえば、TiDB で次の SQL ステートメントを実行すると、エラーが返されます。
+-   データ型を`ENUM`または`SET`から`JSON`に変換する際、TiDB はデータ形式の正確性をチェックします。例えば、TiDB で以下の SQL 文を実行するとエラーが返されます。
 
     ```sql
     CREATE TABLE t(e ENUM('a'));
@@ -81,7 +81,7 @@ JSON ドキュメント内の値には型があります。これは[`JSON_TYPE`
     ERROR 3140 (22032): Invalid JSON text: The document root must not be followed by other values.
     ```
 
-    詳細については、第[＃9999](https://github.com/pingcap/tidb/issues/9999)号を参照してください。
+    詳細については、第[＃9999](https://github.com/pingcap/tidb/issues/9999)を参照してください。
 
 -   TiDB では、 `ORDER BY`使用して JSON 配列または JSON オブジェクトをソートできます。
 
@@ -111,7 +111,7 @@ JSON ドキュメント内の値には型があります。これは[`JSON_TYPE`
     2 rows in set (0.00 sec)
     ```
 
-    詳細については、第[＃37506](https://github.com/pingcap/tidb/issues/37506)号を参照してください。
+    詳細については、第[＃37506](https://github.com/pingcap/tidb/issues/37506)を参照してください。
 
 -   JSON 列にデータを挿入すると、TiDB は暗黙的にデータの値を`JSON`型に変換します。
 

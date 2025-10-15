@@ -3,9 +3,9 @@ title: METRICS_SUMMARY
 summary: METRICS_SUMMARY システム テーブルについて学習します。
 ---
 
-# メトリクス_概要 {#metrics-summary}
+# メトリクス_サマリー {#metrics-summary}
 
-TiDB クラスターには多くの監視メトリックがあります。異常な監視メトリックを簡単に検出できるように、TiDB 4.0 では次の 2 つの監視サマリー テーブルが導入されています。
+TiDB クラスタには多くの監視メトリックがあります。異常な監視メトリックを容易に検出できるように、TiDB 4.0 では次の 2 つの監視サマリーテーブルが導入されています。
 
 -   `information_schema.metrics_summary`
 -   `information_schema.metrics_summary_by_label`
@@ -14,7 +14,7 @@ TiDB クラスターには多くの監視メトリックがあります。異常
 >
 > 上記の 2 つの監視概要テーブルは、TiDB Self-Managed にのみ適用され、 [TiDB Cloud](https://docs.pingcap.com/tidbcloud/)では使用できません。
 
-2 つのテーブルには、各監視メトリックを効率的に確認できるように、すべての監視データがまとめられています。 `information_schema.metrics_summary`と比較すると、 `information_schema.metrics_summary_by_label`テーブルには`label`列が追加され、異なるラベルに従って差別化された統計が実行されます。
+2つの表は、すべての監視データを要約したもので、各監視メトリックを効率的に確認できます。 `information_schema.metrics_summary`と比較して、表`information_schema.metrics_summary_by_label`には`label`列が追加され、異なるラベルに応じて区別された統計情報が表示されます。
 
 ```sql
 USE information_schema;
@@ -39,7 +39,7 @@ DESC metrics_summary;
 フィールドの説明:
 
 -   `METRICS_NAME` : 監視テーブル名。
--   `QUANTILE` : パーセンタイル。SQL ステートメントを使用して`QUANTILE`指定できます。例:
+-   `QUANTILE` : パーセンタイル。SQL文を使用して`QUANTILE`指定することもできます。例:
     -   `select * from metrics_summary where quantile=0.99` 0.99 パーセンタイルのデータを表示することを指定します。
     -   `select * from metrics_summary where quantile in (0.80, 0.90, 0.99, 0.999)` 、0.8、0.90、0.99、0.999 パーセンタイルのデータを同時に表示することを指定します。
 -   `SUM_VALUE` 、 `AVG_VALUE` 、 `MIN_VALUE` 、 `MAX_VALUE`それぞれ合計、平均値、最小値、最大値を意味します。
@@ -47,7 +47,7 @@ DESC metrics_summary;
 
 例えば：
 
-`'2020-03-08 13:23:00', '2020-03-08 13: 33: 00'`の時間範囲内で TiDB クラスター内で平均時間消費が最も長い 3 つの監視項目グループを照会するには、 `information_schema.metrics_summary`テーブルを直接照会し、 `/*+ time_range() */`ヒントを使用して時間範囲を指定します。SQL ステートメントは次のようになります。
+TiDBクラスター内で時間範囲`'2020-03-08 13:23:00', '2020-03-08 13: 33: 00'`内で平均消費時間が最長の監視項目の3つのグループを照会するには、テーブル`information_schema.metrics_summary`を直接クエリし、ヒント`/*+ time_range() */`を使用して時間範囲を指定します。SQL文は次のようになります。
 
 ```sql
 SELECT /*+ time_range('2020-03-08 13:23:00','2020-03-08 13:33:00') */ *
@@ -131,14 +131,14 @@ MAX_VALUE    | 0.008241
 COMMENT      | The quantile of TiDB query durations(second)
 ```
 
-上記のクエリ結果の 2 行目と 3 行目は、 `tidb_query_duration`の`Select`番目と`Rollback`ステートメントの平均実行時間が長いことを示しています。
+上記のクエリ結果の 2 行目と 3 行目は、 `tidb_query_duration`の`Select`と`Rollback`ステートメントの平均実行時間が長いことを示しています。
 
-上記の例に加えて、監視サマリー テーブルを使用して、2 つの期間のフル リンク監視項目を比較することで、監視データから最大の変化があるモジュールをすばやく見つけ、ボトルネックをすばやく特定できます。次の例では、2 つの期間 (t1 がベースライン) のすべての監視項目を比較し、これらの項目を最大の違いに従って並べ替えます。
+上記の例に加えて、監視サマリーテーブルを使用して、2つの期間のフルリンク監視項目を比較することで、監視データから最も大きな変化があったモジュールを迅速に特定し、ボトルネックを迅速に特定できます。次の例では、2つの期間（t1がベースライン）のすべての監視項目を比較し、これらの項目を差異の大きい順に並べ替えています。
 
 -   期間t1: `("2020-03-03 17:08:00", "2020-03-03 17:11:00")`
 -   期間t2: `("2020-03-03 17:18:00", "2020-03-03 17:21:00")`
 
-2 つの期間の監視項目は`METRICS_NAME`に従って結合され、差分値に従ってソートされます。3 `TIME_RANGE`クエリ時間を指定するヒントです。
+2 つの期間の監視項目は`METRICS_NAME`に従って結合され、差異値に従ってソートされます。3 `TIME_RANGE`クエリ時間を指定するヒントです。
 
 ```sql
 SELECT GREATEST(t1.avg_value,t2.avg_value)/LEAST(t1.avg_value,
@@ -177,10 +177,10 @@ ORDER BY ratio DESC LIMIT 10;
 上記のクエリ結果から、次の情報を取得できます。
 
 -   期間 t2 の`tib_slow_query_cop_process_total_time` (TiDB の遅いクエリでの時間消費量`cop process` ) は、期間 t1 の 5,865 倍になります。
--   期間 t2 の`tidb_distsql_partial_scan_key_total_num` (TiDB の`distsql`によって要求されたスキャンするキーの数) は、期間 t1 の 3,648 倍になります。期間 t2 中、 `tidb_slow_query_cop_wait_total_time` (TiDB の低速クエリでキューイングを要求するコプロセッサーの待機時間) は、期間 t1 の 267 倍になります。
+-   期間t2における`tidb_distsql_partial_scan_key_total_num` （TiDBの`distsql`が要求するスキャンキー数）は、期間t1の3,648倍です。期間t2における`tidb_slow_query_cop_wait_total_time` （コプロセッサーがTiDBのスロークエリのキューイングを要求する際の待機時間）は、期間t1の267倍です。
 -   期間 t2 の`tikv_cop_total_response_size` (TiKVコプロセッサー要求結果のサイズ) は、期間 t1 の 192 倍になります。
--   期間 t2 (TiKVコプロセッサーによって要求されたスキャン) の`tikv_cop_scan_details`は、期間 t1 の 0 の 105 倍になります。
+-   期間 t2 (TiKVコプロセッサーによって要求されたスキャン) の`tikv_cop_scan_details` 、期間 t1 の 0 の 105 倍になります。
 
-上記の結果から、期間 t2 のコプロセッサーリクエストが期間`cop task`のリクエストよりもはるかに多いことがわかります。これにより、TiKVコプロセッサーが過負荷になり、待機する必要があります。期間 t2 にいくつかの大きなクエリが発生し、負荷が増加する可能性があります。
+上記の結果から、期間t2のコプロセッサーリクエストが期間t1よりもはるかに多いことがわかります。これによりTiKVコプロセッサーが過負荷になり、 `cop task`待機状態になります。期間t2に大規模なクエリが発生し、負荷がさらに増加している可能性があります。
 
-実際、t1 から t2 までの全期間を通じて、 `go-ycsb`圧力テストが実行されています。その後、期間 t2 中に 20 個`tpch`クエリが実行されています。したがって、多くのコプロセッサー要求を引き起こすのは`tpch`クエリです。
+実際、t1からt2までの期間全体を通して、 `go-ycsb`負荷テストが実行されています。その後、t2の期間には`tpch`クエリが20回実行されています。つまり、多くのコプロセッサーリクエストを引き起こしているのは、この`tpch`クエリです。

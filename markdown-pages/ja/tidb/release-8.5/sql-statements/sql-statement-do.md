@@ -9,9 +9,9 @@ summary: TiDB データベースにおける DO の使用法の概要。
 
 > **注記：**
 >
-> `DO`式のみを実行します。2 `SELECT`使用できるすべてのケースで使用できるわけではありません。たとえば、 `DO id FROM t1`テーブルを参照するため無効です。
+> `DO`式のみを実行します。2 `SELECT`使用できるすべてのケースで使用できるわけではありません。例えば、 `DO id FROM t1`テーブルを参照するため無効です。
 
-MySQL では、ストアド プロシージャまたはトリガーを実行するのが一般的な使用例です。TiDB はストアド プロシージャまたはトリガーを提供しないため、この機能の使用は制限されます。
+MySQLでは、ストアドプロシージャやトリガーの実行が一般的なユースケースです。TiDBはストアドプロシージャやトリガーを提供していないため、この機能の用途は限定されます。
 
 ## 概要 {#synopsis}
 
@@ -51,9 +51,9 @@ mysql> DO SLEEP(1), SLEEP(1.5);
 Query OK, 0 rows affected (2.50 sec)
 ```
 
-## MySQL 互換性 {#mysql-compatibility}
+## MySQLの互換性 {#mysql-compatibility}
 
-TiDB の`DO`ステートメントは MySQL と完全に互換性があります。互換性の違いが見つかった場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support) 。
+TiDBの`DO`文はMySQLと完全に互換性があります。互換性に違いがある場合は、 [バグを報告する](https://docs.pingcap.com/tidb/stable/support)参照してください。
 
 ## 参照 {#see-also}
 

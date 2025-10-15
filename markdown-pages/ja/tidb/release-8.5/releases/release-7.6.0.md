@@ -184,7 +184,7 @@ TiDB バージョン: 7.6.0
 
     -   [遅いクエリ](/identify-slow-queries.md) : リソース グループ名、リソース ユニット (RU) の消費量、およびリソースの待機時間を追加します。
     -   [明細書概要表](/statement-summary-tables.md) : リソース グループ名、RU 消費量、リソースの待機時間を追加します。
-    -   システム変数[`tidb_last_query_info`](/system-variables.md#tidb_last_query_info-new-in-v4014)に、SQL文によって消費されたリソース量[ロシア](/tidb-resource-control.md#what-is-request-unit-ru)示す新しいエントリ`ru_consumption`を追加します。この変数を使用して、セッション内の最後の文のリソース消費量を取得できます。
+    -   システム変数[`tidb_last_query_info`](/system-variables.md#tidb_last_query_info-new-in-v4014)に、SQL文によって消費されたリソース量[ロシア](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru)示す新しいエントリ`ru_consumption`を追加します。この変数を使用して、セッション内の最後の文のリソース消費量を取得できます。
     -   リソース グループに基づいてデータベース メトリックを追加します: QPS/TPS、実行時間 (P999/P99/P95)、障害数、接続数。
     -   すべてのリソース グループの毎日消費された RU の履歴レコードを記録するために、システム テーブル[`request_unit_by_group`](/mysql-schema/mysql-schema.md#system-tables-related-to-resource-control)を追加します。
 
@@ -200,7 +200,7 @@ TiDB バージョン: 7.6.0
 
 -   TiCDC は、双方向レプリケーション (BDR) モードでの DDL ステートメントのレプリケーションをサポートしています (実験的) [＃10301](https://github.com/pingcap/tiflow/issues/10301) [＃48519](https://github.com/pingcap/tidb/issues/48519) @ [okJiang](https://github.com/okJiang) @ [アズドンメン](https://github.com/asddongmen)
 
-    v7.6.0以降、TiCDCは双方向レプリケーションが設定されたDDL文のレプリケーションをサポートします。以前は、TiCDCはDDL文のレプリケーションをサポートしていなかったため、TiCDCの双方向レプリケーションを利用するユーザーは、両方のTiDBクラスターに個別にDDL文を適用する必要がありました。この機能により、TiCDCはクラスターに`PRIMARY` BDRロールを割り当て、そのクラスターから下流のクラスターへのDDL文のレプリケーションを可能にします。
+    バージョン7.6.0以降、TiCDCは双方向レプリケーションが設定されたDDL文のレプリケーションをサポートします。以前は、TiCDCはDDL文のレプリケーションをサポートしていなかったため、TiCDCの双方向レプリケーションを利用するユーザーは、両方のTiDBクラスターに個別にDDL文を適用する必要がありました。この機能により、TiCDCはクラスターに`PRIMARY` BDRロールを割り当て、そのクラスターから下流のクラスターへのDDL文のレプリケーションを可能にします。
 
     詳細については[ドキュメント](/ticdc/ticdc-bidirectional-replication.md)参照してください。
 
@@ -296,7 +296,7 @@ v7.6.0 以降、 `TiDB-community-server` [バイナリパッケージ](/binary-p
     -   相関サブクエリの列が上位レベルの演算子によって参照されていない場合、相関サブクエリは直接削除できます[＃45822](https://github.com/pingcap/tidb/issues/45822) @ [キング・ディラン](https://github.com/King-Dylan)
     -   `EXCHANGE PARTITION`操作により、統計[＃47354](https://github.com/pingcap/tidb/issues/47354) @ [ハイラスティン](https://github.com/Rustin170506)のメンテナンス更新がトリガーされます
     -   TiDBは、連邦情報処理標準（FIPS） [＃47948](https://github.com/pingcap/tidb/issues/47948) @ [天菜まお](https://github.com/tiancaiamao)の要件を満たすバイナリファイルの構築をサポートしています。
-    -   いくつかの型変換を処理する際の TiDB 実装を最適化し、関連する問題を修正しました[＃47945](https://github.com/pingcap/tidb/issues/47945) [＃47864](https://github.com/pingcap/tidb/issues/47864) [＃47829](https://github.com/pingcap/tidb/issues/47829) [＃47816](https://github.com/pingcap/tidb/issues/47816) @ [ヤンケオ](https://github.com/YangKeao) @ [lcwangchao](https://github.com/lcwangchao)
+    -   いくつかの型変換を処理する際のTiDB実装を最適化し、関連する問題を修正しました[＃47945](https://github.com/pingcap/tidb/issues/47945) [＃47864](https://github.com/pingcap/tidb/issues/47864) [＃47829](https://github.com/pingcap/tidb/issues/47829) [＃47816](https://github.com/pingcap/tidb/issues/47816) @ [ヤンケオ](https://github.com/YangKeao) @ [lcwangchao](https://github.com/lcwangchao)
     -   スキーマバージョンを取得する際、TiDBはデフォルトでKVタイムアウト機能を使用して読み取り、低速なメタリージョンリーダーの読み取りがスキーマバージョンの更新に与える影響を軽減します[＃48125](https://github.com/pingcap/tidb/pull/48125) @ [cfzjywxk](https://github.com/cfzjywxk)
 
 -   TiKV
@@ -312,7 +312,7 @@ v7.6.0 以降、 `TiDB-community-server` [バイナリパッケージ](/binary-p
 
 -   TiFlash
 
-    -   ディスクパフォ​​ーマンスジッタによる読み取りレイテンシーへの影響を軽減[＃8583](https://github.com/pingcap/tiflash/issues/8583) @ [ジェイソン・ファン](https://github.com/JaySon-Huang)
+    -   ディスクパフォーマンスジッタによる読み取りレイテンシーへの影響を軽減[＃8583](https://github.com/pingcap/tiflash/issues/8583) @ [ジェイソン・ファン](https://github.com/JaySon-Huang)
     -   バックグラウンド GC タスクによる読み取りおよび書き込みタスクのレイテンシーへの影響を軽減[＃8650](https://github.com/pingcap/tiflash/issues/8650) @ [ジェイソン・ファン](https://github.com/JaySon-Huang)
     -   ストレージとコンピューティングの分離アーキテクチャで同一のデータ読み取り操作をマージして、高同時実行時のデータスキャンパフォーマンスを向上させる[＃6834](https://github.com/pingcap/tiflash/issues/6834) @ [ジンヘリン](https://github.com/JinheLin)
     -   `JOIN ON` [＃47424](https://github.com/pingcap/tidb/issues/47424) @ [ゲンリチ](https://github.com/gengliqi)にJOIN KEYの等価条件のみが含まれる場合の`SEMI JOIN`と`LEFT OUTER SEMIJOIN`の実行パフォーマンスを最適化します
@@ -384,7 +384,7 @@ v7.6.0 以降、 `TiDB-community-server` [バイナリパッケージ](/binary-p
     -   バイトを`TIME` [＃47346](https://github.com/pingcap/tidb/issues/47346) @ [wshwsh12](https://github.com/wshwsh12)に変換するときにエンコードが失敗する問題を修正しました
     -   `CHECK`制約の`ENFORCED`オプションの動作がMySQL 8.0 [＃47567](https://github.com/pingcap/tidb/issues/47567) [＃47631](https://github.com/pingcap/tidb/issues/47631) @ [ジフハウス](https://github.com/jiyfhust)と一致しない問題を修正
     -   `CHECK`制約の DDL 文が[＃47632](https://github.com/pingcap/tidb/issues/47632) @ [ジフハウス](https://github.com/jiyfhust)でスタックする問題を修正しました
-    -   メモリ不足のためDDL文のインデックス追加が失敗する問題を修正[＃47862](https://github.com/pingcap/tidb/issues/47862) @ [GMHDBJD](https://github.com/GMHDBJD)
+    -   メモリ不足[＃47862](https://github.com/pingcap/tidb/issues/47862) @ [GMHDBJD](https://github.com/GMHDBJD)により DDL ステートメントのインデックス追加が失敗する問題を修正しました
     -   `ADD INDEX`実行中にクラスタをアップグレードすると、データがインデックス[＃46306](https://github.com/pingcap/tidb/issues/46306) @ [ジムララ](https://github.com/zimulala)と矛盾する可能性がある問題を修正しました。
     -   `tidb_mem_quota_query`システム変数を更新した後に`ADMIN CHECK`実行すると`ERROR 8175` [＃49258](https://github.com/pingcap/tidb/issues/49258) @ [接線](https://github.com/tangenta)が返される問題を修正しました
     -   `ALTER TABLE`外部キーによって参照される列の型を変更すると、 `DECIMAL`精度の変更がエラーとして報告されない問題を修正[＃49836](https://github.com/pingcap/tidb/issues/49836) @ [ヨシキポム](https://github.com/yoshikipom)
@@ -406,7 +406,7 @@ v7.6.0 以降、 `TiDB-community-server` [バイナリパッケージ](/binary-p
     -   自動統計更新の時間枠を設定した後、その時間枠外でも統計が更新される可能性がある問題を修正[＃49552](https://github.com/pingcap/tidb/issues/49552) @ [ホーキングレイ](https://github.com/hawkingrei)
     -   パーティションテーブルを非パーティションテーブルに変換したときに古い統計情報が自動的に削除されない問題を修正[＃49547](https://github.com/pingcap/tidb/issues/49547) @ [ハイラスティン](https://github.com/Rustin170506)
     -   `TRUNCATE TABLE` [＃49663](https://github.com/pingcap/tidb/issues/49663) @ [ハイラスティン](https://github.com/Rustin170506)を使用して非パーティションテーブルからデータをクリアしたときに古い統計が自動的に削除されない問題を修正しました
-    -   クエリがソートを強制するオプティマイザヒント（ `STREAM_AGG()`など）を使用し、実行プランに`IndexMerge` [＃49605](https://github.com/pingcap/tidb/issues/49605) @ [アイリンキッド](https://github.com/AilinKid)が含まれている場合に、強制ソートが無効になる可能性がある問題を修正しました。
+    -   クエリがソートを強制するオプティマイザヒント（ `STREAM_AGG()`など）を使用し、その実行プランに`IndexMerge` [＃49605](https://github.com/pingcap/tidb/issues/49605) @ [アイリンキッド](https://github.com/AilinKid)が含まれている場合、強制ソートが無効になる可能性がある問題を修正しました。
     -   ヒストグラムの境界に`NULL` [＃49823](https://github.com/pingcap/tidb/issues/49823) @ [アイリンキッド](https://github.com/AilinKid)が含まれている場合、ヒストグラム統計が読み取り可能な文字列に解析されない可能性がある問題を修正しました。
     -   `GROUP_CONCAT(ORDER BY)`構文を含むクエリを実行するとエラー[＃49986](https://github.com/pingcap/tidb/issues/49986) @ [アイリンキッド](https://github.com/AilinKid)が返される可能性がある問題を修正しました
     -   `SQL_MODE`が厳密でない場合に、 `UPDATE` 、 `DELETE` 、 `INSERT`ステートメントが警告ではなくオーバーフローエラーを返す問題を修正しました[＃49137](https://github.com/pingcap/tidb/issues/49137) @ [ヤンケオ](https://github.com/YangKeao)
@@ -430,7 +430,7 @@ v7.6.0 以降、 `TiDB-community-server` [バイナリパッケージ](/binary-p
     -   Titan モニタリングの BLOB ファイルサイズが正しくない問題を修正[＃15971](https://github.com/tikv/tikv/issues/15971) @ [コナー1996](https://github.com/Connor1996)
     -   TiCDC を使用して大きなテーブルを複製すると、TiKV が OOM [＃16035](https://github.com/tikv/tikv/issues/16035) @ [金星の上](https://github.com/overvenus)になる可能性がある問題を修正しました。
     -   `DECIMAL`算術乗算切り捨て[＃16268](https://github.com/tikv/tikv/issues/16268) @ [ソロツグ](https://github.com/solotzg)を処理するときに TiDB と TiKV が矛盾した結果を生成する可能性がある問題を修正しました
-    -   `cast_duration_as_time`誤った結果を返す可能性がある問題を修正[＃16211](https://github.com/tikv/tikv/issues/16211) @ [ゲンリキ](https://github.com/gengliqi)
+    -   `cast_duration_as_time`誤った結果を返す可能性がある問題を修正[＃16211](https://github.com/tikv/tikv/issues/16211) @ [ゲンリチ](https://github.com/gengliqi)
     -   TiKVがブラジルとエジプトのタイムゾーンを誤って変換する問題を修正[＃16220](https://github.com/tikv/tikv/issues/16220) @ [金星の上](https://github.com/overvenus)
     -   gRPC スレッドが`is_shutdown` [＃16236](https://github.com/tikv/tikv/issues/16236) @ [ピンギュ](https://github.com/pingyu)をチェックしているときに TiKV がpanic可能性がある問題を修正しました
 
@@ -450,7 +450,7 @@ v7.6.0 以降、 `TiDB-community-server` [バイナリパッケージ](/binary-p
     -   `ColumnRef in (Literal, Func...)` [＃8631](https://github.com/pingcap/tiflash/issues/8631) @ [ロイド・ポティガー](https://github.com/Lloyd-Pottiger)のようなフィルタリング条件でクエリを実行したときにクエリ結果が正しくない問題を修正しました
     -   TiFlash が同時 DDL 実行中に競合に遭遇した場合のTiFlashpanic問題を修正[＃8578](https://github.com/pingcap/tiflash/issues/8578) @ [ジェイソン・ファン](https://github.com/JaySon-Huang)
     -   分散storageおよびコンピューティングアーキテクチャ[＃8519](https://github.com/pingcap/tiflash/issues/8519) @ [ジェイソン・ファン](https://github.com/JaySon-Huang)で、 TiFlash がオブジェクトstorageデータの GC 所有者を選択できない可能性がある問題を修正しました。
-    -   `lowerUTF8`と`upperUTF8`関数で、大文字と小文字が異なるバイト[＃8484](https://github.com/pingcap/tiflash/issues/8484) @ [ゲンリチ](https://github.com/gengliqi)を占めることができない問題を修正しました。
+    -   `lowerUTF8`と`upperUTF8`関数で、大文字と小文字が異なるバイト[＃8484](https://github.com/pingcap/tiflash/issues/8484) @ [ゲンリキ](https://github.com/gengliqi)を占めることができない問題を修正しました。
     -   `ENUM`値が0 [＃8311](https://github.com/pingcap/tiflash/issues/8311) @ [ソロツグ](https://github.com/solotzg)ときにTiFlashが`ENUM`誤って処理する問題を修正しました
     -   `INET_NTOA()`式[＃8211](https://github.com/pingcap/tiflash/issues/8211) @ [ソロツグ](https://github.com/solotzg)の非互換性の問題を修正
     -   ストリーム読み取り[＃8505](https://github.com/pingcap/tiflash/issues/8505) @ [ゲンリキ](https://github.com/gengliqi)中に複数のパーティション テーブルをスキャンするときに発生する可能性のある OOM 問題を修正しました。
@@ -471,7 +471,7 @@ v7.6.0 以降、 `TiDB-community-server` [バイナリパッケージ](/binary-p
 
     -   TiCDC
 
-        -   特定のシナリオで`DELETE`ステートメントを複製するときに、 `WHERE`節が主キーを条件として使用しない問題を修正しました[＃9812](https://github.com/pingcap/tiflow/issues/9812) @ [アズドンメン](https://github.com/asddongmen)
+        -   特定のシナリオで`DELETE`ステートメントを複製するときに、 `WHERE`句が主キーを条件として使用しない問題を修正しました[＃9812](https://github.com/pingcap/tiflow/issues/9812) @ [アズドンメン](https://github.com/asddongmen)
         -   オブジェクトstorageサービス[＃10137](https://github.com/pingcap/tiflow/issues/10137) @ [スドジ](https://github.com/sdojjy)にデータを複製するときに TiCDCサーバーがpanic可能性がある問題を修正しました
         -   `kv-client`初期化[＃10095](https://github.com/pingcap/tiflow/issues/10095) @ [3エースショーハンド](https://github.com/3AceShowHand)中に発生する可能性のあるデータ競合問題を修正
         -   特定の特殊なシナリオで TiCDC が TiKV との接続を誤って閉じる問題を修正[＃10239](https://github.com/pingcap/tiflow/issues/10239) @ [ヒック](https://github.com/hicqu)
@@ -486,7 +486,7 @@ v7.6.0 以降、 `TiDB-community-server` [バイナリパッケージ](/binary-p
 
 ## 寄稿者 {#contributors}
 
-TiDB コミュニティの以下の貢献者に感謝いたします。
+TiDB コミュニティからの以下の貢献者に感謝いたします。
 
 -   [0o001](https://github.com/0o001) (初回投稿者)
 -   [バゲチェンジ](https://github.com/bagechengzi) (初回投稿者)

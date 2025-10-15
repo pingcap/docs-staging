@@ -5,7 +5,7 @@ summary: DM 接続で TLS を有効にする方法を学習します。
 
 # DM接続にTLSを有効にする {#enable-tls-for-dm-connections}
 
-このドキュメントでは、DM マスター、DM ワーカー、dmctl コンポーネント間の接続、および DM と上流または下流のデータベース間の接続を含む、DM 接続の暗号化されたデータ転送を有効にする方法について説明します。
+このドキュメントでは、DM マスター、DM ワーカー、dmctl コンポーネント間の接続、および DM と上流または下流データベース間の接続を含む、DM 接続の暗号化されたデータ転送を有効にする方法について説明します。
 
 ## DMマスター、DMワーカー、dmctl間の暗号化されたデータ転送を有効にする {#enable-encrypted-data-transmission-between-dm-master-dm-worker-and-dmctl}
 
@@ -15,9 +15,9 @@ summary: DM 接続で TLS を有効にする方法を学習します。
 
 1.  証明書を準備します。
 
-    DM-master と DM-worker のサーバー証明書を別々に用意することをお勧めします。2 つのコンポーネントが相互に認証できることを確認してください。dmctl のクライアント証明書を 1 つ共有することもできます。
+    DMマスターとDMワーカーそれぞれにサーバー証明書を別々に用意することをお勧めします。2つのコンポーネントが相互に認証できることを確認してください。dmctlでは1つのクライアント証明書を共有することもできます。
 
-    自己署名証明書を生成するには、 `openssl` 、 `cfssl`および`easy-rsa`などの`openssl`に基づいた他のツールを使用できます。
+    自己署名証明書を生成するには、 `openssl` 、 `cfssl` 、および`easy-rsa`などの`openssl`に基づいたその他のツールを使用できます。
 
     `openssl`選択した場合は[自己署名証明書の生成](/dm/dm-generate-self-signed-certificates.md)を参照できます。
 
@@ -49,7 +49,7 @@ summary: DM 接続で TLS を有効にする方法を学習します。
 
     -   dmctl
 
-        DM クラスターで暗号化された送信を有効にした後、dmctl を使用してクラスターに接続する必要がある場合は、クライアント証明書を指定します。例:
+        DMクラスタで暗号化通信を有効にした後、dmctlを使用してクラスタに接続する必要がある場合は、クライアント証明書を指定します。例：
 
         ```bash
         ./dmctl --master-addr=127.0.0.1:8261 --ssl-ca /path/to/ca.pem --ssl-cert /path/to/client-cert.pem --ssl-key /path/to/client-key.pem
@@ -57,7 +57,7 @@ summary: DM 接続で TLS を有効にする方法を学習します。
 
 ### コンポーネント呼び出し元のIDを確認する {#verify-component-caller-s-identity}
 
-共通名は、発信者の検証に使用されます。通常、着信側は、発信者が提供するキー、証明書、および CA を検証するだけでなく、発信者の ID も検証する必要があります。たとえば、DM-worker には DM-master のみがアクセスでき、他の訪問者は正当な証明書を持っていてもブロックされます。
+コモンネームは発信者の認証に使用されます。一般的に、着信側は発信者が提供した鍵、証明書、およびCAに加えて、発信者の身元も確認する必要があります。例えば、DM-workerにはDM-masterのみがアクセスでき、他の訪問者は正当な証明書を持っていてもブロックされます。
 
 コンポーネントの呼び出し元の ID を確認するには、証明書を生成するときに`Common Name` (CN) を使用して証明書のユーザー ID をマークし、呼び出し先の`Common Name`リストを構成して呼び出し元の ID を確認する必要があります。
 
@@ -81,7 +81,7 @@ summary: DM 接続で TLS を有効にする方法を学習します。
 
 証明書とキーを再ロードするために、DM-master、DM-worker、および dmctl は、新しい接続が作成されるたびに現在の証明書とキー ファイルを再読み取りします。
 
-`ssl-ca` 、または`ssl-cert`で指定されたファイルが更新`ssl-key`れた場合は、DM コンポーネントを再起動して証明書とキー ファイルを再読み込みし、相互に再接続します。
+`ssl-ca` `ssl-cert`または`ssl-key`で指定されたファイルが更新された場合は、DM コンポーネントを再起動して証明書とキー ファイルを再読み込みし、相互に再接続します。
 
 ## DMコンポーネントと上流または下流のデータベース間の暗号化されたデータ転送を有効にする {#enable-encrypted-data-transmission-between-dm-components-and-the-upstream-or-downstream-database}
 
@@ -107,7 +107,7 @@ summary: DM 接続で TLS を有効にする方法を学習します。
 
 ### 下流のTiDBへの暗号化されたデータ転送を有効にする {#enable-encrypted-data-transmission-for-downstream-tidb}
 
-1.  暗号化された接続を使用するようにダウンストリーム TiDB を構成します。詳細な操作については、 [安全な接続を使用するように TiDBサーバーを構成する](/enable-tls-between-clients-and-servers.md#configure-tidb-server-to-use-secure-connections)を参照してください。
+1.  下流TiDBが暗号化接続を使用するように設定します。詳細な操作については、 [安全な接続を使用するように TiDBサーバーを構成する](/enable-tls-between-clients-and-servers.md#configure-tidb-server-to-use-secure-connections)を参照してください。
 
 2.  タスク構成ファイルで TiDB クライアント証明書を設定します。
 
