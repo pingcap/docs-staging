@@ -23,7 +23,12 @@ export const imageCDNs = {
   "dbaas-docs": IMAGE_CDN_PREFIX + "/tidbcloud",
 };
 
-const CLOUD_TOC_LIST = ["TOC-tidb-cloud-premium.md"];
+const CLOUD_TOC_LIST = [
+  "TOC-tidb-cloud.md",
+  "TOC-tidb-cloud-starter.md",
+  "TOC-tidb-cloud-essential.md",
+  "TOC-tidb-cloud-premium.md",
+];
 
 const isCloudTOC = (relativePathInZip) => {
   return CLOUD_TOC_LIST.includes(relativePathInZip);
@@ -268,10 +273,7 @@ export async function retrieveCloudMDsFromZip(
   const { repo, ref } = metaInfo;
   const { ignore = [], pipelines = [] } = options;
 
-  const archiveFileName = `archive-${ref.replace(
-    "/",
-    "-"
-  )}-${new Date().getTime()}.zip`;
+  const archiveFileName = `archive-${ref}-${new Date().getTime()}.zip`;
   // Download archive
   await getArchiveFile(repo, ref, archiveFileName);
   sig.success("download archive file", archiveFileName);
@@ -287,6 +289,7 @@ export async function retrieveCloudMDsFromZip(
     const cloudTocZipEntry = zipEntries.filter((entry) =>
       CLOUD_TOC_LIST.some((toc) => entry.entryName.endsWith(toc))
     );
+    console.log("cloudTocZipEntry:", cloudTocZipEntry);
 
     const cloudFileList = [
       ...new Set(
@@ -296,8 +299,7 @@ export async function retrieveCloudMDsFromZip(
           .flat()
       ),
     ];
-
-    console.log(cloudFileList);
+    console.log("cloudFileList:", cloudFileList);
 
     zipEntries.forEach(function (zipEntry) {
       // console.log(zipEntry.toString()) // outputs zip entries information
