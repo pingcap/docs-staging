@@ -1,9 +1,9 @@
 ---
-title: Configure TiDB Cloud Starter, Essential, or Premium Firewall Rules for Public Endpoints 
+title: Configure TiDB Cloud Starter or Essential Firewall Rules for Public Endpoints 
 summary: Learn how to configure and manage firewall rules with public access to your TiDB Cloud Starter or TiDB Cloud Essential cluster securely.
 ---
 
-# Configure TiDB Cloud Starter, Essential, or Premium Firewall Rules for Public Endpoints
+# Configure TiDB Cloud Starter or Essential Firewall Rules for Public Endpoints
 
 This document describes the public connectivity option for TiDB Cloud Starter and TiDB Cloud Essential clusters. You will learn key concepts for securely managing a cluster accessible via the internet.
 
@@ -55,4 +55,4 @@ To add firewall rules to a TiDB Cloud Starter or TiDB Cloud Essential cluster, t
 
 ## What's next
 
-- [Connect to TiDB Cloud Starter, Essential, or Premium via Public Endpoint](/tidb-cloud/connect-via-standard-connection-serverless.md)
+- [Connect to TiDB Cloud Starter or Essential via Public Endpoint](/tidb-cloud/connect-via-standard-connection-serverless.md)

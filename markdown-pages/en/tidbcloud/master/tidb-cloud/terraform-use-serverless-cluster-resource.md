@@ -7,7 +7,7 @@ summary: Learn how to use the `tidbcloud_serverless_cluster` resource to create 
 
 This document describes how to manage a [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) cluster with the `tidbcloud_serverless_cluster` resource.
 
-In addition, you will also learn how to get the necessary information with the `tidbcloud_projects` data source.
+You will also learn how to get the necessary information with the `tidbcloud_projects` data source.
 
 The features of the `tidbcloud_serverless_cluster` resource include the following:
 
@@ -123,11 +123,11 @@ Now, you can get all the available projects from the output. Copy one of the pro
 
 You can create a TiDB Cloud Starter cluster using the `tidbcloud_serverless_cluster` resource.
 
-The following example shows how to create a TiDB Cloud Starter cluster.
-
 1. Create a directory for the cluster and enter it.
 
-2. Create a `cluster.tf` file:
+2. Create a `cluster.tf` file.
+
+    The following is an example of the `cluster.tf` file:
 
     ```
     terraform {
@@ -159,8 +159,7 @@ The following example shows how to create a TiDB Cloud Starter cluster.
 
     - To use the `tidbcloud_serverless_cluster` resource, set the resource type as `tidbcloud_serverless_cluster`.
     - For the resource name, you can define it as needed. For example, `example`.
-    - For the resource details, you can configure them according to the Project ID and the TiDB Cloud Starter cluster specification information.
-    - To get the TiDB Cloud Starter cluster specification information, see [tidbcloud_serverless_cluster (Resource)](https://registry.terraform.io/providers/tidbcloud/tidbcloud/latest/docs/resources/serverless_cluster).
+    - For resource details, you can configure them according to the Project ID and the [`tidbcloud_serverless_cluster` specification](https://registry.terraform.io/providers/tidbcloud/tidbcloud/latest/docs/resources/serverless_cluster).
 
 3. Run the `terraform apply` command. It is not recommended to use `terraform apply --auto-approve` when you apply a resource.
 
@@ -420,9 +419,7 @@ resource "tidbcloud_serverless_cluster" "example" {
 
 ## Import a TiDB Cloud Starter cluster
 
-For a TiDB Cloud Starter cluster that is not managed by Terraform, you can use Terraform to manage it just by importing it.
-
-Import a TiDB Cloud Starter cluster that is not created by Terraform as follows:
+For a TiDB Cloud Starter cluster that is not managed by Terraform, you can bring it under Terraform management by importing it.
 
 1. Add an import block for the new `tidbcloud_serverless_cluster` resource.
 
@@ -542,7 +539,7 @@ tidbcloud_serverless_cluster.example: Destruction complete after 1s
 Apply complete! Resources: 0 added, 0 changed, 1 destroyed.
 ```
 
-Now, if you run the `terraform show` command, it will show no managed resources because the resource has been cleared:
+Now, if you run the `terraform show` command, it will show no managed resources because the resource has been destroyed:
 
 ```
 $ terraform show

@@ -1,9 +1,9 @@
 ---
-title: Connect to Your TiDB Cloud Starter, Essential, or Premium Cluster
+title: Connect to Your TiDB Cloud Starter or Essential Cluster
 summary: Learn how to connect to your TiDB Cloud Starter or TiDB Cloud Essential cluster via different methods.
 ---
 
-# Connect to Your TiDB Cloud Starter, Essential, or Premium Cluster
+# Connect to Your TiDB Cloud Starter or Essential Cluster
 
 This document describes how to connect to your TiDB Cloud Starter or TiDB Cloud Essential cluster.
 

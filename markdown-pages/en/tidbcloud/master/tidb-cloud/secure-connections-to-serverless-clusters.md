@@ -1,10 +1,10 @@
 ---
-title: TLS Connections to TiDB Cloud Starter, Essential, or Premium
+title: TLS Connections to TiDB Cloud Starter or Essential
 summary: Introduce TLS connections in TiDB Cloud Starter and TiDB Cloud Essential.
 aliases: ['/tidbcloud/secure-connections-to-serverless-tier-clusters']
 ---
 
-# TLS Connections to TiDB Cloud Starter, Essential, or Premium
+# TLS Connections to TiDB Cloud Starter or Essential
 
 Establishing a secure TLS connection between your client and your TiDB Cloud Starter or TiDB Cloud Essential cluster is one of the basic security practices for connecting to your databases. The server certificate for TiDB Cloud is issued by an independent third-party certificate provider. You can easily connect to your TiDB Cloud cluster without downloading a server-side digital certificate.
 

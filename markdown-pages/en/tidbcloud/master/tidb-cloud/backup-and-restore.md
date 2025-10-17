@@ -10,7 +10,7 @@ This document describes how to back up and restore your TiDB Cloud Dedicated clu
 
 > **Tip**
 >
-> To learn how to back up and restore data on TiDB Cloud Starter or TiDB Cloud Essential clusters, see [Back Up and Restore Data on TiDB Cloud Starter, Essential, or Premium](/tidb-cloud/backup-and-restore-serverless.md).
+> To learn how to back up and restore data on TiDB Cloud Starter or TiDB Cloud Essential clusters, see [Back Up and Restore Data on TiDB Cloud Starter or Essential](/tidb-cloud/backup-and-restore-serverless.md).
 
 ## Limitations
 

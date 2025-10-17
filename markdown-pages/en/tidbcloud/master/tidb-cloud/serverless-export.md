@@ -1,11 +1,11 @@
 ---
-title: Export Data from TiDB Cloud Starter, Essential, or Premium
+title: Export Data from TiDB Cloud Starter or Essential
 summary: Learn how to export data from TiDB Cloud Starter or TiDB Cloud Essential clusters.
 ---
 
-# Export Data from TiDB Cloud Starter, Essential, or Premium
+# Export Data from TiDB Cloud Starter or Essential
 
-TiDB Cloud enables you to export data from a TiDB Cloud Starter, Essential, or Premium cluster to a local file or an external storage service. You can use the exported data for backup, migration, data analysis, or other purposes.
+TiDB Cloud enables you to export data from a TiDB Cloud Starter or Essential cluster to a local file or an external storage service. You can use the exported data for backup, migration, data analysis, or other purposes.
 
 While you can also export data using tools such as [mysqldump](https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html) and TiDB [Dumpling](https://docs.pingcap.com/tidb/dev/dumpling-overview), the export feature provided by TiDB Cloud offers a more convenient and efficient way to export data from a cluster. It brings the following benefits:
 

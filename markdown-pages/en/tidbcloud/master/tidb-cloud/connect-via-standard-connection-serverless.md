@@ -1,9 +1,9 @@
 ---
-title: Connect to TiDB Cloud Starter, Essential, or Premium via Public Endpoint
+title: Connect to TiDB Cloud Starter or Essential via Public Endpoint
 summary: Learn how to connect to your TiDB Cloud Starter or TiDB Cloud Essential cluster via public endpoint.
 ---
 
-# Connect to TiDB Cloud Starter, Essential, or Premium via Public Endpoint
+# Connect to TiDB Cloud Starter or Essential via Public Endpoint
 
 This document describes how to connect to your TiDB Cloud Starter or TiDB Cloud Essential cluster via a public endpoint, using a SQL client from your computer, as well as how to disable a public endpoint.
 
@@ -25,11 +25,11 @@ To connect to a TiDB Cloud Starter or TiDB Cloud Essential cluster via public en
 
     > **Note:**
     >
-    > - Keeping the connection type as `Public` means the connection is via standard TLS connection. For more information, see [TLS Connection to TiDB Cloud Starter, Essential, or Premium](/tidb-cloud/secure-connections-to-serverless-clusters.md).
+    > - Keeping the connection type as `Public` means the connection is via standard TLS connection. For more information, see [TLS Connection to TiDB Cloud Starter or Essential](/tidb-cloud/secure-connections-to-serverless-clusters.md).
     > - If you choose **Private Endpoint** in the **Connection Type** drop-down list, it means that the connection is via private endpoint. For more information, see the following documents:
     >
-    >     - [Connect to TiDB Cloud Starter via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
-    >     - [Connect to TiDB Cloud Starter, Essential, or Premium via Alibaba Cloud Private Endpoint](/tidb-cloud/set-up-private-endpoint-connections-on-alibaba-cloud.md)
+    >     - [Connect to TiDB Cloud Starter or Essential via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
+    >     - [Connect to TiDB Cloud Starter or Essential via Alibaba Cloud Private Endpoint](/tidb-cloud/set-up-private-endpoint-connections-on-alibaba-cloud.md)
 
     </CustomContent>
 
@@ -37,8 +37,8 @@ To connect to a TiDB Cloud Starter or TiDB Cloud Essential cluster via public en
 
     > **Note:**
     >
-    > - Keeping the connection type as `Public` means the connection is via standard TLS connection. For more information, see [TLS Connection to TiDB Cloud Starter, Essential, or Premium](/tidb-cloud/secure-connections-to-serverless-clusters.md).
-    > - If you choose **Private Endpoint** in the **Connection Type** drop-down list, it means that the connection is via private endpoint. For more information, see [Connect to TiDB Cloud Starter via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections-serverless.md).
+    > - Keeping the connection type as `Public` means the connection is via standard TLS connection. For more information, see [TLS Connection to TiDB Cloud Starter or Essential](/tidb-cloud/secure-connections-to-serverless-clusters.md).
+    > - If you choose **Private Endpoint** in the **Connection Type** drop-down list, it means that the connection is via private endpoint. For more information, see [Connect to TiDB Cloud Starter or Essential via AWS PrivateLink](/tidb-cloud/set-up-private-endpoint-connections-serverless.md).
 
     </CustomContent>
 
@@ -51,7 +51,7 @@ To connect to a TiDB Cloud Starter or TiDB Cloud Essential cluster via public en
     > **Note:**
     >
     > When you connect to a TiDB Cloud Starter or TiDB Cloud Essential cluster, you must include the prefix for your cluster in the user name and wrap the name with quotation marks. For more information, see [User name prefix](/tidb-cloud/select-cluster-tier.md#user-name-prefix).
-    > Your client IP must be in the allowed IP rules of the public endpoint of your cluster. For more information, see [Configure TiDB Cloud Starter, Essential, or Premium Firewall Rules for Public Endpoints](/tidb-cloud/configure-serverless-firewall-rules-for-public-endpoints.md).
+    > Your client IP must be in the allowed IP rules of the public endpoint of your cluster. For more information, see [Configure TiDB Cloud Starter or Essential Firewall Rules for Public Endpoints](/tidb-cloud/configure-serverless-firewall-rules-for-public-endpoints.md).
 
 ## Disable a public endpoint
 

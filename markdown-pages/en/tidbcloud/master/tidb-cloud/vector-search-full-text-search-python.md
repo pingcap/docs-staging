@@ -26,9 +26,9 @@ The full-text search feature in TiDB provides the following capabilities:
 
 ## Prerequisites
 
-Full-text search is still in the early stages, and we are continuously rolling it out to more customers. Currently, Full-text search is only available for the following product option and regions:
+Full-text search is still in the early stages, and we are continuously rolling it out to more customers. Currently, Full-text search is only available on TiDB Cloud Starter and TiDB Cloud Essential in the following regions:
 
-- TiDB Cloud Starter on AWS: `Frankfurt (eu-central-1)` and `Singapore (ap-southeast-1)`
+- AWS: `Frankfurt (eu-central-1)` and `Singapore (ap-southeast-1)`
 
 To complete this tutorial, make sure you have a TiDB Cloud Starter cluster in a supported region. If you don't have one, follow [Creating a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md) to create it.
 
