@@ -289,6 +289,7 @@ export async function retrieveCloudMDsFromZip(
     const cloudTocZipEntry = zipEntries.filter((entry) =>
       CLOUD_TOC_LIST.some((toc) => entry.entryName.endsWith(toc))
     );
+    console.log("cloudTocZipEntry:", cloudTocZipEntry);
 
     const cloudFileList = [
       ...new Set(
@@ -298,8 +299,7 @@ export async function retrieveCloudMDsFromZip(
           .flat()
       ),
     ];
-
-    console.log(cloudFileList);
+    console.log("cloudFileList:", cloudFileList);
 
     zipEntries.forEach(function (zipEntry) {
       // console.log(zipEntry.toString()) // outputs zip entries information
