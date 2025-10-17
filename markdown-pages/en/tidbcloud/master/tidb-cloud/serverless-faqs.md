@@ -1,5 +1,5 @@
 ---
-title: TiDB Cloud Starter FAQs
+title: "TiDB Cloud Starter FAQs"
 summary: Learn about the most frequently asked questions (FAQs) relating to TiDB Cloud Starter.
 aliases: ['/tidbcloud/serverless-tier-faqs']
 ---
