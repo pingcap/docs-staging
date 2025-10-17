@@ -316,7 +316,9 @@ export async function retrieveCloudMDsFromZip(
         !(
           relativePathInZip.startsWith(`tidb-cloud/`) ||
           cloudFileList.includes(`/${relativePathInZip}`) ||
-          isCloudTOC(relativePathInZip)
+          isCloudTOC(relativePathInZip) ||
+          // Docs home
+          relativePathInZip === `_docHome.md`
         )
       ) {
         return;
