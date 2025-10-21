@@ -20,7 +20,7 @@ Starting from TiDB v7.0.0, the `LOAD DATA` SQL statement supports the following 
 
 > **Note:**
 >
-> For the `LOAD DATA INFILE` statement, TiDB Cloud Dedicated supports `LOAD DATA LOCAL INFILE`, and `LOAD DATA INFILE` from Amazon S3 or Google Cloud Storage, while [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) only support `LOAD DATA LOCAL INFILE`.
+> For the `LOAD DATA INFILE` statement, TiDB Cloud Dedicated supports `LOAD DATA LOCAL INFILE`, and `LOAD DATA INFILE` from Amazon S3 or Google Cloud Storage, while [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) only support `LOAD DATA LOCAL INFILE`.
 
 </CustomContent>
 
