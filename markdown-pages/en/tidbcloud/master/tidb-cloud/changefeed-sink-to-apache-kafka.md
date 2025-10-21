@@ -10,7 +10,7 @@ This document describes how to create a changefeed to stream data from TiDB Clou
 > **Note:**
 >
 > - To use the changefeed feature, make sure that your TiDB Cloud Dedicated cluster version is v6.1.3 or later.
-> - For [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) and [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) clusters, the changefeed feature is unavailable.
+> - For [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter) and [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) clusters, the changefeed feature is unavailable.
 
 ## Restrictions
 

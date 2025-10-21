@@ -9,7 +9,7 @@ This document describes JSON functions that validate JSON documents.
 
 > **Note:**
 >
-> Currently, this feature is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> Currently, this feature is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
 
 ## [JSON_SCHEMA_VALID()](https://dev.mysql.com/doc/refman/8.0/en/json-validation-functions.html#function_json-schema-valid)
 
