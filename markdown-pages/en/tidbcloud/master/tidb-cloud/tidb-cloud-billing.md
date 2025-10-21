@@ -13,7 +13,7 @@ TiDB Cloud charges according to the resources that you consume.
 
 See [TiDB Cloud Dedicated Pricing Details](https://www.pingcap.com/tidb-dedicated-pricing-details/).
 
-### Pricing for TiDB Cloud Starter (formerly Serverless) {#pricing-for-starter}
+### Pricing for TiDB Cloud Starter {#pricing-for-starter}
 
 See [TiDB Cloud Starter Pricing Details](https://www.pingcap.com/tidb-cloud-starter-pricing-details/).
 
