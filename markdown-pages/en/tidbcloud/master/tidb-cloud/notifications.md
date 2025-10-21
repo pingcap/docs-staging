@@ -37,7 +37,7 @@ The following table lists the notifications available in TiDB Cloud, along with 
 
 | Notification | Trigger event | Notification recipient |
 | --- | --- | --- |
-| TiDB Cloud Starter cluster creation | A [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) cluster is created. | All project members |
+| TiDB Cloud Starter cluster creation | A [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter) cluster is created. | All project members |
 | TiDB Cloud Starter cluster deletion | A TiDB Cloud Starter cluster is deleted. | All project members |
 | TiDB Cloud Essential cluster creation | A [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) cluster is created. | All project members |
 | TiDB Cloud Essential cluster deletion | A [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) cluster is deleted. | All project members |

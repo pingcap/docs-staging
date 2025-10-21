@@ -62,7 +62,7 @@ We are constantly filling in the feature gaps between TiDB Cloud Starter/Essenti
 
 ## Usage quota
 
-For each organization in TiDB Cloud, you can create a maximum of five [free TiDB Cloud Starter clusters](/tidb-cloud/select-cluster-tier.md#tidb-cloud-serverless) by default. To create more TiDB Cloud Starter clusters, you need to add a credit card and [set a monthly spending limit](/tidb-cloud/manage-serverless-spend-limit.md) for the usage.
+For each organization in TiDB Cloud, you can create a maximum of five [free TiDB Cloud Starter clusters](/tidb-cloud/select-cluster-tier.md#starter) by default. To create more TiDB Cloud Starter clusters, you need to add a credit card and [set a monthly spending limit](/tidb-cloud/manage-serverless-spend-limit.md) for the usage.
 
 For the first five TiDB Cloud Starter clusters in your organization, TiDB Cloud provides a free usage quota for each of them as follows:
 
