@@ -9,7 +9,7 @@ The `RESOURCE_GROUPS` table shows the information about all resource groups. For
 
 > **Note:**
 >
-> This table is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This table is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
 
 ```sql
 USE information_schema;
