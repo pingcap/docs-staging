@@ -102,7 +102,7 @@ Connect to your TiDB cluster depending on the TiDB deployment option you've sele
 
    > **Note**
    >
-   > For [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential), TLS connection **MUST** be enabled with the `ssl_mode=verify_identity` query parameter when using public endpoint.
+   > For [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential), TLS connection **MUST** be enabled with the `ssl_mode=verify_identity` query parameter when using public endpoint.
 
 7. Save the `.env` file.
 
@@ -225,7 +225,7 @@ production:
 
 > **Note**
 >
-> For [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential), TLS connection **MUST** be enabled via setting the `ssl_mode` query parameter to `verify_identity` in `DATABASE_URL` when using public endpoint, but you **don't** have to specify an SSL CA certificate via `DATABASE_URL`, because mysql2 gem will search for existing CA certificates in a particular order until a file is discovered.
+> For [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential), TLS connection **MUST** be enabled via setting the `ssl_mode` query parameter to `verify_identity` in `DATABASE_URL` when using public endpoint, but you **don't** have to specify an SSL CA certificate via `DATABASE_URL`, because mysql2 gem will search for existing CA certificates in a particular order until a file is discovered.
 
 ### Insert data
 
