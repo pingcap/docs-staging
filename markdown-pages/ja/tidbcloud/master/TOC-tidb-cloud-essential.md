@@ -241,7 +241,7 @@
         -   [概要](/vector-search/vector-search-integration-overview.md)
         -   AIフレームワーク
             -   [ラマインデックス](/vector-search/vector-search-integrate-with-llamaindex.md)
-            -   [ランチェイン](/vector-search/vector-search-integrate-with-langchain.md)
+            -   [ランチェーン](/vector-search/vector-search-integrate-with-langchain.md)
         -   AIサービス
             -   [アマゾンの岩盤](/tidb-cloud/vector-search-integrate-with-amazon-bedrock.md)
         -   モデル/サービスの埋め込み
@@ -577,7 +577,7 @@
     -   認証
         -   [ログイン](/tidb-cloud/ticloud-auth-login.md)
         -   [ログアウト](/tidb-cloud/ticloud-auth-logout.md)
-        -   [誰だ](/tidb-cloud/ticloud-auth-whoami.md)
+        -   [だれだ](/tidb-cloud/ticloud-auth-whoami.md)
     -   サーバーレス
         -   [容量](/tidb-cloud/ticloud-serverless-capacity.md)
         -   [作成する](/tidb-cloud/ticloud-cluster-create.md)
