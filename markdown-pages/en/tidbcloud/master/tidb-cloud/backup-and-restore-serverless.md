@@ -33,12 +33,15 @@ Automatic backup settings vary between TiDB Cloud Starter clusters and TiDB Clou
 | Backup setting   | TiDB Cloud Starter (free) | TiDB Cloud Starter (with spending limit > 0) | TiDB Cloud Essential |
 |------------------|----------------------------|----------------------------|----------------------------|
 | Backup Cycle     | Daily                      | Daily                      | Daily                      |
-| Backup Retention | 1 day                      | 30 days                    | 30 days                    |
+| Backup Retention | 1 day                      | Up to 30 days              | Up to 30 days              |
 | Backup Time      | Fixed time                 | Configurable               | Configurable               |
 
 - **Backup Cycle** is the frequency at which backups are taken.
 
 - **Backup Retention** is the duration for which backups are retained. Expired backups cannot be restored.
+
+    - For a free TiDB Cloud Starter cluster, the backup retention is 1 day.
+    - For a TiDB Cloud Starter (with spending limit > 0) or TiDB Cloud Essential cluster, you can configure the backup retention to any value between 1 and 30 days. The default retention is 14 days.
 
 - **Backup Time** is the time when the backup starts to be scheduled. Note that the final backup time might fall behind the configured backup time.
 
@@ -70,7 +73,7 @@ TiDB Cloud supports snapshot restore and point-in-time restore for your cluster.
 - **Point-in-Time Restore (beta)**: restores your cluster to a specific time.
 
     - TiDB Cloud Starter clusters: not supported.
-    - TiDB Cloud Essential clusters: restores to any time within the last 30 days, but not before the cluster creation time or after the current time minus one minute.
+    - TiDB Cloud Essential clusters: restores to any time within the backup retention, but not before the cluster creation time or after the current time minus one minute.
 
 ### Restore destination
 
