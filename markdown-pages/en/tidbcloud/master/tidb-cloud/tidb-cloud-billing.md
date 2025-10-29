@@ -21,6 +21,14 @@ See [TiDB Cloud Starter Pricing Details](https://www.pingcap.com/tidb-cloud-star
 
 For TiDB Cloud Essential, you are charged based on the number of provisioned Request Capacity Units (RCUs), **not** on the actual usage by your application. See [TiDB Cloud Essential Pricing Details](https://www.pingcap.com/tidb-cloud-essential-pricing-details/).
 
+<CustomContent plan="premium">
+
+### Pricing for TiDB Cloud Premium {#pricing-for-premium}
+
+For TiDB Cloud Premium, you are billed based on the number of provisioned Request Capacity Units (RCUs) and the storage you actually use, rather than the underlying backend nodes or provisioned disk size. As TiDB Cloud Premium is currently in private preview, you can [contact our sales](https://www.pingcap.com/contact-us/) for pricing details.
+
+</CustomContent>
+
 ## Invoices
 
 If you are in the `Organization Owner` or `Organization Billing Manager` role of your organization, you can manage the invoice information of TiDB Cloud. Otherwise, skip this section.
