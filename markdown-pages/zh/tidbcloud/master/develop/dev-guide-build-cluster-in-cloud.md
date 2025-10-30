@@ -1,15 +1,15 @@
 ---
-title: 搭建一个 TiDB Cloud Starter 集群
-summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Starter 集群并连接到它。
+title: 构建 TiDB Cloud Starter 集群
+summary: 了解如何在 TiDB Cloud 中构建 TiDB Cloud Starter 集群并连接到它。
 ---
 
 <!-- markdownlint-disable MD029 -->
 
-# 搭建一个 TiDB Cloud Starter 集群
+# 构建 TiDB Cloud Starter 集群
 
 <CustomContent platform="tidb">
 
-本文档将带你快速上手 TiDB。你将使用 [TiDB Cloud](https://www.pingcap.com/tidb-cloud) 创建一个 TiDB Cloud Starter（原 Serverless）集群，连接到该集群，并在其上运行一个示例应用程序。
+本文档将带你快速上手 TiDB。你将使用 [TiDB Cloud](https://www.pingcap.com/tidb-cloud) 创建一个 TiDB Cloud Starter 集群，连接到它，并在其上运行一个示例应用程序。
 
 如果你需要在本地机器上运行 TiDB，请参见 [本地启动 TiDB](/quick-start-with-tidb.md)。
 
@@ -17,11 +17,11 @@ summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Starter 集群并
 
 <CustomContent platform="tidb-cloud">
 
-本文档将带你快速上手 TiDB Cloud。你将创建一个 TiDB 集群，连接到该集群，并在其上运行一个示例应用程序。
+本文档将带你快速上手 TiDB Cloud。你将创建一个 TiDB 集群，连接到它，并在其上运行一个示例应用程序。
 
 </CustomContent>
 
-## 第 1 步：创建一个 TiDB Cloud Starter 集群 {#step-1-create-a-tidb-cloud-cluster}
+## 第 1 步. 创建 TiDB Cloud Starter 集群 {#step-1-create-a-tidb-cloud-cluster}
 
 1. 如果你还没有 TiDB Cloud 账号，请点击[这里](https://tidbcloud.com/free-trial)注册账号。
 
@@ -29,9 +29,9 @@ summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Starter 集群并
 
 3. 在 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击 **Create Cluster**。
 
-4. 在 **Create Cluster** 页面，**Starter** 默认已选中。如有需要，可修改默认集群名称，并选择你希望创建集群的区域。
+4. 在 **Create Cluster** 页面，**Starter** 默认已选中。如有需要，可修改默认集群名称，然后选择你希望创建集群的区域。
 
-5. 点击 **Create** 创建一个 TiDB Cloud Starter 集群。
+5. 点击 **Create** 创建 TiDB Cloud Starter 集群。
 
     你的 TiDB Cloud 集群将在大约 30 秒内创建完成。
 
@@ -39,13 +39,13 @@ summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Starter 集群并
 
 7. 在对话框中，选择你偏好的连接方式和操作系统，以获取对应的连接字符串。本文档以 MySQL 客户端为例。
 
-8. 点击 **Generate Password** 生成一个随机密码。生成的密码只会显示一次，请妥善保存。如果你没有设置 root 密码，将无法连接到集群。
+8. 点击 **Generate Password** 生成一个随机密码。生成的密码只会显示一次，请妥善保存。如果你未设置 root 密码，将无法连接到集群。
 
 <CustomContent platform="tidb">
 
 > **注意：**
 >
-> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群，连接集群时，必须在用户名中包含集群的前缀，并用引号包裹用户名。详细信息请参见 [用户名前缀](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix)。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 集群，连接集群时，必须在用户名中包含集群的前缀，并用引号包裹用户名。更多信息请参见 [用户名前缀](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix)。
 
 </CustomContent>
 
@@ -53,11 +53,11 @@ summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Starter 集群并
 
 > **注意：**
 >
-> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 集群，连接集群时，必须在用户名中包含集群的前缀，并用引号包裹用户名。详细信息请参见 [用户名前缀](/tidb-cloud/select-cluster-tier.md#user-name-prefix)。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 集群，连接集群时，必须在用户名中包含集群的前缀，并用引号包裹用户名。更多信息请参见 [用户名前缀](/tidb-cloud/select-cluster-tier.md#user-name-prefix)。
 
 </CustomContent>
 
-## 第 2 步：连接到集群
+## 第 2 步. 连接到集群
 
 1. 如果未安装 MySQL 客户端，请选择你的操作系统并按照以下步骤安装。
 
@@ -65,7 +65,7 @@ summary: 学习如何在 TiDB Cloud 中搭建一个 TiDB Cloud Starter 集群并
 
 <div label="macOS">
 
-对于 macOS，如果尚未安装 [Homebrew](https://brew.sh/index)，请先安装，然后运行以下命令安装 MySQL 客户端：
+对于 macOS，如果你还没有安装 [Homebrew](https://brew.sh/index)，请先安装，然后运行以下命令安装 MySQL 客户端：
 
 ```shell
 brew install mysql-client
@@ -85,7 +85,7 @@ For compilers to find mysql-client you may need to set:
   export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
 ```
 
-要将 MySQL 客户端添加到 PATH，请在上述输出中找到以下命令（如果你的输出与本文档不一致，请使用你输出中的对应命令）并运行：
+要将 MySQL 客户端添加到 PATH，请在上述输出中找到以下命令（如果你的输出与本文档中的输出不一致，请使用你输出中的对应命令）并运行：
 
 ```shell
 echo 'export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"' >> ~/.zshrc
@@ -155,9 +155,9 @@ mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
 
 </CustomContent>
 
-3. 输入密码以登录。
+3. 输入密码进行登录。
 
-## 第 3 步：执行 SQL 语句
+## 第 3 步. 执行 SQL 语句
 
 让我们尝试在 TiDB Cloud 上执行你的第一条 SQL 语句。
 
@@ -181,12 +181,12 @@ SELECT 'Hello TiDB Cloud!';
 
 <CustomContent platform="tidb">
 
-可以在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或[提交支持工单](/support.md)。
+欢迎在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或[提交支持工单](/support.md)。
 
 </CustomContent>
 
 <CustomContent platform="tidb-cloud">
 
-可以在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或[提交支持工单](https://tidb.support.pingcap.com/)。
+欢迎在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或[提交支持工单](https://tidb.support.pingcap.com/)。
 
 </CustomContent>
