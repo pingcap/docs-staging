@@ -11,11 +11,11 @@ TiDB 是兼容 MySQL 的数据库，[mysql2](https://github.com/brianmario/mysql
 
 - 搭建你的开发环境。
 - 使用 mysql2 连接到你的 TiDB 集群。
-- 构建并运行你的应用程序。你还可以在 [示例代码片段](#sample-code-snippets) 中找到基本 CRUD 操作的代码示例。
+- 构建并运行你的应用程序。你还可以在 [示例代码片段](#sample-code-snippets) 中找到基本的 CRUD 操作示例。
 
 > **注意：**
 >
-> 本教程适用于 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
+> 本教程适用于 TiDB Cloud Starter、TiDB Cloud Essential、TiDB Cloud Dedicated 以及自建 TiDB 集群。
 
 ## 前置条件
 
@@ -30,18 +30,18 @@ TiDB 是兼容 MySQL 的数据库，[mysql2](https://github.com/brianmario/mysql
 
 <CustomContent platform="tidb">
 
-- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建属于你自己的 TiDB Cloud 集群。
 - 参考 [部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
 </CustomContent>
 <CustomContent platform="tidb-cloud">
 
-- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建属于你自己的 TiDB Cloud 集群。
 - 参考 [部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
 
 </CustomContent>
 
-## 运行示例应用并连接 TiDB
+## 运行示例应用连接 TiDB
 
 本节演示如何运行示例应用代码并连接到 TiDB。
 
@@ -65,7 +65,7 @@ bundle install
 <details>
 <summary><b>为已有项目安装依赖</b></summary>
 
-对于你的已有项目，运行以下命令安装依赖包：
+对于你已有的项目，运行以下命令安装依赖包：
 
 ```shell
 bundle add mysql2 dotenv
@@ -80,18 +80,18 @@ bundle add mysql2 dotenv
 <SimpleTab>
 <div label="TiDB Cloud Starter or Essential">
 
-1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页。
+1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称，进入集群概览页。
 
-2. 点击右上角的 **Connect**，弹出连接对话框。
+2. 点击右上角的 **Connect**，弹出连接信息对话框。
 
 3. 确保连接对话框中的配置与你的操作环境一致。
 
    - **Connection Type** 设置为 `Public`。
    - **Branch** 设置为 `main`。
    - **Connect With** 设置为 `General`。
-   - **Operating System** 与运行应用的操作系统一致。
+   - **Operating System** 与你运行应用的操作系统一致。
 
-4. 如果你还未设置密码，点击 **Generate Password** 生成随机密码。
+4. 如果你还未设置密码，点击 **Generate Password** 生成一个随机密码。
 
 5. 运行以下命令，复制 `.env.example` 并重命名为 `.env`：
 
@@ -99,7 +99,7 @@ bundle add mysql2 dotenv
     cp .env.example .env
     ```
 
-6. 编辑 `.env` 文件，按如下方式设置环境变量，并将对应的占位符 {} 替换为连接对话框中的参数：
+6. 编辑 `.env` 文件，按如下方式设置环境变量，并将对应的占位符 `{}` 替换为连接对话框中的参数：
 
     ```dotenv
     DATABASE_HOST={host}
@@ -112,22 +112,22 @@ bundle add mysql2 dotenv
 
    > **注意**
    >
-   > 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，使用公网地址时，**必须** 通过 `DATABASE_ENABLE_SSL` 启用 TLS 连接。
+   > 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，使用公网连接时，**必须** 通过 `DATABASE_ENABLE_SSL` 启用 TLS 连接。
 
 7. 保存 `.env` 文件。
 
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页。
+1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称，进入集群概览页。
 
-2. 点击右上角的 **Connect**，弹出连接对话框。
+2. 点击右上角的 **Connect**，弹出连接信息对话框。
 
 3. 在连接对话框中，从 **Connection Type** 下拉列表选择 **Public**，然后点击 **CA cert** 下载 CA 证书。
 
     如果你还未配置 IP 访问列表，点击 **Configure IP Access List**，或参考 [配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list) 进行配置，以便首次连接。
 
-    除了 **Public** 连接类型外，TiDB Cloud Dedicated 还支持 **Private Endpoint** 和 **VPC Peering** 连接类型。更多信息请参考 [连接到你的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+    除了 **Public** 连接类型，TiDB Cloud Dedicated 还支持 **Private Endpoint** 和 **VPC Peering** 连接类型。更多信息请参考 [连接到你的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
 4. 运行以下命令，复制 `.env.example` 并重命名为 `.env`：
 
@@ -135,7 +135,7 @@ bundle add mysql2 dotenv
     cp .env.example .env
     ```
 
-5. 编辑 `.env` 文件，按如下方式设置环境变量，并将对应的占位符 {} 替换为连接对话框中的参数：
+5. 编辑 `.env` 文件，按如下方式设置环境变量，并将对应的占位符 `{}` 替换为连接对话框中的参数：
 
     ```dotenv
     DATABASE_HOST={host}
@@ -149,9 +149,9 @@ bundle add mysql2 dotenv
 
    > **注意**
    >
-   > 推荐在使用公网地址连接 TiDB Cloud Dedicated 集群时启用 TLS 连接。
+   > 推荐在使用公网连接 TiDB Cloud Dedicated 集群时启用 TLS 连接。
    >
-   > 启用 TLS 连接时，请将 `DATABASE_ENABLE_SSL` 设置为 `true`，并通过 `DATABASE_SSL_CA` 指定从连接对话框下载的 CA 证书文件路径。
+   > 启用 TLS 连接时，将 `DATABASE_ENABLE_SSL` 设置为 `true`，并通过 `DATABASE_SSL_CA` 指定从连接对话框下载的 CA 证书文件路径。
 
 6. 保存 `.env` 文件。
 
@@ -164,7 +164,7 @@ bundle add mysql2 dotenv
     cp .env.example .env
     ```
 
-2. 编辑 `.env` 文件，按如下方式设置环境变量，并将对应的占位符 {} 替换为你自己的 TiDB 连接信息：
+2. 编辑 `.env` 文件，按如下方式设置环境变量，并将对应的占位符 `{}` 替换为你自己的 TiDB 连接信息：
 
     ```dotenv
     DATABASE_HOST={host}
@@ -231,11 +231,11 @@ client = Mysql2::Client.new(options)
 
 > **注意**
 >
-> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-serverless) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，使用公网地址时，**必须** 通过 `DATABASE_ENABLE_SSL` 启用 TLS 连接，但**不需要**通过 `DATABASE_SSL_CA` 指定 SSL CA 证书，因为 mysql2 gem 会按特定顺序自动查找本地已存在的 CA 证书文件。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，使用公网连接时，**必须** 通过 `DATABASE_ENABLE_SSL` 启用 TLS 连接，但**无需**通过 `DATABASE_SSL_CA` 指定 SSL CA 证书，因为 mysql2 gem 会按特定顺序自动查找本地已存在的 CA 证书文件。
 
 ### 插入数据
 
-以下查询创建一个包含两个字段的玩家，并返回 `last_insert_id`：
+以下查询语句创建一个包含两个字段的玩家，并返回 `last_insert_id`：
 
 ```ruby
 def create_player(client, coins, goods)
@@ -250,7 +250,7 @@ end
 
 ### 查询数据
 
-以下查询根据 ID 返回指定玩家的记录：
+以下查询语句根据 ID 返回指定玩家的记录：
 
 ```ruby
 def get_player_by_id(client, id)
@@ -265,7 +265,7 @@ end
 
 ### 更新数据
 
-以下查询根据 ID 更新指定玩家的记录：
+以下查询语句根据 ID 更新指定玩家的记录：
 
 ```ruby
 def update_player(client, player_id, inc_coins, inc_goods)
@@ -280,7 +280,7 @@ end
 
 ### 删除数据
 
-以下查询删除指定玩家的记录：
+以下查询语句删除指定玩家的记录：
 
 ```ruby
 def delete_player_by_id(client, id)
@@ -295,20 +295,20 @@ end
 
 ## 最佳实践
 
-默认情况下，mysql2 gem 会按如下顺序查找本地已存在的 CA 证书文件，直到找到为止。
+默认情况下，mysql2 gem 会按特定顺序自动查找本地已存在的 CA 证书文件，直到找到为止。
 
 1. `/etc/ssl/certs/ca-certificates.crt`（适用于 Debian、Ubuntu、Gentoo、Arch 或 Slackware）
 2. `/etc/pki/tls/certs/ca-bundle.crt`（适用于 RedHat、Fedora、CentOS、Mageia、Vercel 或 Netlify）
 3. `/etc/ssl/ca-bundle.pem`（适用于 OpenSUSE）
 4. `/etc/ssl/cert.pem`（适用于 macOS 或 Alpine（docker 容器））
 
-虽然可以手动指定 CA 证书路径，但在多环境部署场景下，不同机器和环境的 CA 证书存放路径可能不同，这会带来较大不便。因此，推荐将 `sslca` 设置为 `nil`，以便在不同环境下灵活部署和使用。
+虽然你可以手动指定 CA 证书路径，但在多环境部署场景下，不同机器和环境可能存储 CA 证书的位置不同，这样做会带来较大不便。因此，推荐将 `sslca` 设置为 `nil`，以便在不同环境下灵活部署和使用。
 
 ## 后续步骤
 
-- 通过 [mysql2 官方文档](https://github.com/brianmario/mysql2#readme) 学习更多 mysql2 驱动的用法。
+- 通过 [mysql2 的官方文档](https://github.com/brianmario/mysql2#readme) 学习更多 mysql2 驱动的用法。
 - 通过 [开发者指南](/develop/dev-guide-overview.md) 各章节，学习 TiDB 应用开发最佳实践，例如：[插入数据](/develop/dev-guide-insert-data.md)、[更新数据](/develop/dev-guide-update-data.md)、[删除数据](/develop/dev-guide-delete-data.md)、[查询数据](/develop/dev-guide-get-data-from-single-table.md)、[事务](/develop/dev-guide-transaction-overview.md) 以及 [SQL 性能优化](/develop/dev-guide-optimize-sql-overview.md)。
-- 通过专业的 [TiDB 开发者课程](https://www.pingcap.com/education/)，考试通过后获得 [TiDB 认证](https://www.pingcap.com/education/certification/)。
+- 通过专业的 [TiDB 开发者课程](https://www.pingcap.com/education/)，并在通过考试后获得 [TiDB 认证](https://www.pingcap.com/education/certification/)。
 
 ## 需要帮助？
 
