@@ -156,7 +156,7 @@ x'12AC'
 0x12AC
 ```
 
-Illegal hexadecimal literals:
+Invalid hexadecimal literals:
 
 ```
 X'1z' (z is not a hexadecimal legal digit)
@@ -211,7 +211,7 @@ B'01'
 0b01
 ```
 
-Illegal bit-value literals:
+Invalid bit-value literals:
 
 ```
 b'2' (2 is not a binary digit; it must be 0 or 1)
