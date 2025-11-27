@@ -1,4 +1,4 @@
-yarn download:tidb-operator en
+yarn download:tidb-operator en main
 yarn download:tidb-operator en release-2.0
 yarn download:tidb-operator en release-1.6
 yarn download:tidb-operator en release-1.5
