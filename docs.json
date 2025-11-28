@@ -121,7 +121,7 @@
           "repo": "pingcap/docs-tidb-operator",
           "path": "en",
           "versions": [
-            "master",
+            "main",
             "release-2.0",
             "release-1.6",
             "release-1.5",
@@ -133,7 +133,7 @@
           "repo": "pingcap/docs-tidb-operator",
           "path": "zh",
           "versions": [
-            "master",
+            "main",
             "release-2.0",
             "release-1.6",
             "release-1.5",
