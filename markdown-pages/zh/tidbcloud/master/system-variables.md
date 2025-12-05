@@ -6291,7 +6291,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 作用域：NONE
 - 是否适用于 hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)：否
 - 默认值：`8.0.11-TiDB-`(tidb 版本)
-- 此变量返回 MySQL 版本，后跟 TiDB 版本。例如 '8.0.11-TiDB-8.5.3'。
+- 此变量返回 MySQL 版本，后跟 TiDB 版本。例如 '8.0.11-TiDB-8.5.4'。
 
 ### version_comment
 
