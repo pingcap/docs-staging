@@ -191,7 +191,7 @@ npm start
 如果连接成功，控制台会输出 TiDB 集群的版本信息，如下所示：
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.3)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.4)
 ⏳ Loading sample game data...
 ✅ Loaded sample game data.
 
