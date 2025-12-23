@@ -52,7 +52,9 @@ If you have the `Organization Owner` role, you can create a TiDB Cloud Premium i
 
     RCUs represent the compute resources provisioned for your workload. TiDB Cloud automatically scales your instance within this range based on demand.
 
-6. Click **Create**.
+6. For TiDB Cloud Premium instances, only regional high availability is enabled, and it is not configurable. For more information, see [High Availability](/tidb-cloud/serverless-high-availability.md).
+
+7. Click **Create**.
 
     The instance creation process begins. If this is your first instance in the selected region, provisioning typically takes about 30 minutes. If the selected region already has existing instances, the process is faster and usually completes within about 1 minute.
 
