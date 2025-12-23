@@ -1,11 +1,16 @@
 ---
-title: High Availability in TiDB Cloud Starter and Essential
-summary: Learn about the high availability architecture of TiDB Cloud Starter and Essential. Discover Zonal and Regional High Availability options, automated backups, failover processes, and how TiDB ensures data durability and business continuity.
+title: High Availability in TiDB Cloud
+summary: Learn about the high availability architecture of <CustomContent plan="starter,essential">TiDB Cloud Starter and TiDB Cloud Essential</CustomContent></CustomContent><CustomContent plan="premium">TiDB Cloud Starter, TiDB Cloud Essential, and TiDB Cloud Premium</CustomContent>. Discover Zonal and Regional High Availability options, automated backups, failover processes, and how TiDB ensures data durability and business continuity.
 ---
 
-# High Availability in TiDB Cloud Starter and Essential
+# High Availability in TiDB Cloud
 
 TiDB Cloud is designed with robust mechanisms to maintain high availability and data durability by default, preventing single points of failure and ensuring continuous service even in the face of disruptions. As a fully managed service based on the battle-tested TiDB Open Source product, it inherits TiDB's core high availability (HA) features and augments them with additional cloud-native capabilities.
+
+> **Note:**
+>
+> - This document is only applicable for <CustomContent plan="starter,essential">TiDB Cloud Starter and TiDB Cloud Essential</CustomContent></CustomContent><CustomContent plan="premium">TiDB Cloud Starter, TiDB Cloud Essential, and TiDB Cloud Premium</CustomContent>.
+> - For high availability in TiDB Cloud Dedicated, see [High Availability in TiDB Cloud Dedicated](/tidb-cloud/high-availability-with-multi-az.md).
 
 ## Overview
 
@@ -13,10 +18,24 @@ TiDB ensures high availability and data durability using the Raft consensus algo
 
 TiDB Cloud extends these capabilities with zonal high availability and regional high availability to meet different operational requirements.
 
+<CustomContent plan="starter,essential">
+
 > **Note:**
 >
 > - For TiDB Cloud Starter clusters, only zonal high availability is enabled, and it is not configurable.
 > - For TiDB Cloud Essential clusters hosted in the AWS Tokyo (ap-northeast-1) region or any Alibaba Cloud region, regional high availability is enabled by default. You can change it to zonal high availability as needed during cluster creation. For TiDB Cloud Essential clusters hosted in other regions, only zonal high availability is enabled, and it is not configurable.
+
+</CustomContent>
+
+<CustomContent plan="premium">
+
+> **Note:**
+>
+> - For TiDB Cloud Starter clusters, only zonal high availability is enabled, and it is not configurable.
+> - For TiDB Cloud Premium clusters, only regional high availability is enabled, and it is not configurable.
+> - For TiDB Cloud Essential clusters hosted in the AWS Tokyo (ap-northeast-1) region or any Alibaba Cloud region, regional high availability is enabled by default. You can change it to zonal high availability as needed during cluster creation. For TiDB Cloud Essential clusters hosted in other regions, only zonal high availability is enabled, and it is not configurable.
+
+</CustomContent>
 
 - **Zonal high availability**: This option places all nodes within a single availability zone, reducing network latency. It ensures high availability without requiring application-level redundancy across zones, making it suitable for applications that prioritize low latency within a single zone. For more information, see [Zonal high availability architecture](#zonal-high-availability-architecture).
 
