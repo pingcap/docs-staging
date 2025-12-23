@@ -1,6 +1,6 @@
 ---
 title: High Availability in TiDB Cloud
-summary: Learn about the high availability architecture of <CustomContent plan="starter,essential">TiDB Cloud Starter and TiDB Cloud Essential</CustomContent></CustomContent><CustomContent plan="premium">TiDB Cloud Starter, TiDB Cloud Essential, and TiDB Cloud Premium</CustomContent>. Discover Zonal and Regional High Availability options, automated backups, failover processes, and how TiDB ensures data durability and business continuity.
+summary: Learn about the high availability architecture of TiDB Cloud. Discover Zonal and Regional High Availability options, automated backups, failover processes, and how TiDB ensures data durability and business continuity.
 ---
 
 # High Availability in TiDB Cloud
@@ -9,7 +9,7 @@ TiDB Cloud is designed with robust mechanisms to maintain high availability and 
 
 > **Note:**
 >
-> - This document is only applicable for <CustomContent plan="starter,essential">TiDB Cloud Starter and TiDB Cloud Essential</CustomContent></CustomContent><CustomContent plan="premium">TiDB Cloud Starter, TiDB Cloud Essential, and TiDB Cloud Premium</CustomContent>.
+> - This document is only applicable for <CustomContent plan="starter,essential">TiDB Cloud Starter and TiDB Cloud Essential</CustomContent><CustomContent plan="premium">TiDB Cloud Starter, TiDB Cloud Essential, and TiDB Cloud Premium</CustomContent>.
 > - For high availability in TiDB Cloud Dedicated, see [High Availability in TiDB Cloud Dedicated](/tidb-cloud/high-availability-with-multi-az.md).
 
 ## Overview
