@@ -43,14 +43,14 @@ TiDB Operator 使用 [Custom Resource Definition (CRD)](https://kubernetes.io/do
 
 
 ```shell
-kubectl create -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.3/manifests/crd.yaml
+kubectl create -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.4/manifests/crd.yaml
 ```
 
 如果服务器没有外网，需要先用有外网的机器下载 `crd.yaml` 文件，然后再进行安装：
 
 
 ```shell
-wget https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.3/manifests/crd.yaml
+wget https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.4/manifests/crd.yaml
 kubectl create -f ./crd.yaml
 ```
 
@@ -92,7 +92,7 @@ tidbmonitors.pingcap.com             2020-06-11T07:59:41Z
 
     > **注意：**
     >
-    > `${chart_version}` 在后续文档中代表 chart 版本，例如 `v1.6.3`，可以通过 `helm search repo -l tidb-operator` 查看当前支持的版本。
+    > `${chart_version}` 在后续文档中代表 chart 版本，例如 `v1.6.4`，可以通过 `helm search repo -l tidb-operator` 查看当前支持的版本。
 
 2. 配置 TiDB Operator
 
@@ -139,14 +139,14 @@ tidbmonitors.pingcap.com             2020-06-11T07:59:41Z
 
     
     ```shell
-    wget http://charts.pingcap.org/tidb-operator-v1.6.3.tgz
+    wget http://charts.pingcap.org/tidb-operator-v1.6.4.tgz
     ```
 
-    将 `tidb-operator-v1.6.3.tgz` 文件拷贝到服务器上并解压到当前目录：
+    将 `tidb-operator-v1.6.4.tgz` 文件拷贝到服务器上并解压到当前目录：
 
     
     ```shell
-    tar zxvf tidb-operator.v1.6.3.tgz
+    tar zxvf tidb-operator.v1.6.4.tgz
     ```
 
 2. 下载 TiDB Operator 运行所需的 Docker 镜像
@@ -156,8 +156,8 @@ tidbmonitors.pingcap.com             2020-06-11T07:59:41Z
     TiDB Operator 用到的 Docker 镜像有：
 
     ```shell
-    pingcap/tidb-operator:v1.6.3
-    pingcap/tidb-backup-manager:v1.6.3
+    pingcap/tidb-operator:v1.6.4
+    pingcap/tidb-backup-manager:v1.6.4
     bitnami/kubectl:latest
     pingcap/advanced-statefulset:v0.7.0
     ```
@@ -166,13 +166,13 @@ tidbmonitors.pingcap.com             2020-06-11T07:59:41Z
 
     
     ```shell
-    docker pull pingcap/tidb-operator:v1.6.3
-    docker pull pingcap/tidb-backup-manager:v1.6.3
+    docker pull pingcap/tidb-operator:v1.6.4
+    docker pull pingcap/tidb-backup-manager:v1.6.4
     docker pull bitnami/kubectl:latest
     docker pull pingcap/advanced-statefulset:v0.7.0
 
-    docker save -o tidb-operator-v1.6.3.tar pingcap/tidb-operator:v1.6.3
-    docker save -o tidb-backup-manager-v1.6.3.tar pingcap/tidb-backup-manager:v1.6.3
+    docker save -o tidb-operator-v1.6.4.tar pingcap/tidb-operator:v1.6.4
+    docker save -o tidb-backup-manager-v1.6.4.tar pingcap/tidb-backup-manager:v1.6.4
     docker save -o bitnami-kubectl.tar bitnami/kubectl:latest
     docker save -o advanced-statefulset-v0.3.3.tar pingcap/advanced-statefulset:v0.7.0
     ```
@@ -181,8 +181,8 @@ tidbmonitors.pingcap.com             2020-06-11T07:59:41Z
 
     
     ```shell
-    docker load -i tidb-operator-v1.6.3.tar
-    docker load -i tidb-backup-manager-v1.6.3.tar
+    docker load -i tidb-operator-v1.6.4.tar
+    docker load -i tidb-backup-manager-v1.6.4.tar
     docker load -i bitnami-kubectl.tar
     docker load -i advanced-statefulset-v0.3.3.tar
     ```

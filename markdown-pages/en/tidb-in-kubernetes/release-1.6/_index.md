@@ -68,7 +68,7 @@ aliases: ['/docs/tidb-in-kubernetes/dev/']
 
 <LearningPath label="Reference" icon="cloud-dev">
 
-[API Docs](<https://github.com/pingcap/tidb-operator/blob/v1.6.3/docs/api-references/docs.md>)
+[API Docs](<https://github.com/pingcap/tidb-operator/blob/v1.6.4/docs/api-references/docs.md>)
 
 [Tools](https://docs.pingcap.com/tidb-in-kubernetes/v1.6/tidb-toolkit)
 
