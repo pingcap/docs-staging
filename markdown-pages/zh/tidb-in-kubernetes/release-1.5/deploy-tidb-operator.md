@@ -144,7 +144,7 @@ tidbmonitors.pingcap.com             2020-06-11T07:59:41Z
 
     
     ```shell
-    wget http://charts.pingcap.org/tidb-operator-v1.5.5.tgz
+    wget http://charts.pingcap.com/tidb-operator-v1.5.5.tgz
     ```
 
     将 `tidb-operator-v1.5.5.tgz` 文件拷贝到服务器上并解压到当前目录：
