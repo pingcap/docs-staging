@@ -142,7 +142,7 @@ If your server cannot access the Internet, install TiDB Operator offline by the 
 
     
     ```shell
-    wget http://charts.pingcap.org/tidb-operator-v1.3.10.tgz
+    wget http://charts.pingcap.com/tidb-operator-v1.3.10.tgz
     ```
 
     Copy the `tidb-operator-v1.3.10.tgz` file to the target server and extract it to the current directory:
