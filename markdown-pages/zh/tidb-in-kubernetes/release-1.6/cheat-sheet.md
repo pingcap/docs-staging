@@ -386,7 +386,7 @@ aliases: ['/docs-cn/tidb-in-kubernetes/dev/cheat-sheet/']
 
 
 ```shell
-helm repo add pingcap https://charts.pingcap.org/
+helm repo add pingcap https://charts.pingcap.com/
 ```
 
 ### 更新 Helm repository
