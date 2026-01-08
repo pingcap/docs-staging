@@ -44,7 +44,7 @@ sudo yum install -y mariadb-server
 
 
 ```bash
-curl -LO https://download.pingcap.org/tidb-community-server-v7.1.5-linux-amd64.tar.gz | tar xzf - &&
+curl -LO https://download.pingcap.com/tidb-community-server-v7.1.5-linux-amd64.tar.gz | tar xzf - &&
 cd tidb-latest-linux-amd64
 ```
 
