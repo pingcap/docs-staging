@@ -34,7 +34,7 @@ summary: 了解如何快速上手部署试用 TiDB Data Migration 工具。
 
 
 ```bash
-wget http://download.pingcap.org/dm-nightly-linux-amd64.tar.gz
+wget http://download.pingcap.com/dm-nightly-linux-amd64.tar.gz
 tar -xzvf dm-nightly-linux-amd64.tar.gz
 cd dm-nightly-linux-amd64
 ```
