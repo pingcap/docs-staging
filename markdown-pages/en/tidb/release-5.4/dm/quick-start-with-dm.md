@@ -36,7 +36,7 @@ Download DM latest binary package or compile the package manually.
 
 
 ```bash
-wget http://download.pingcap.org/dm-nightly-linux-amd64.tar.gz
+wget http://download.pingcap.com/dm-nightly-linux-amd64.tar.gz
 tar -xzvf dm-nightly-linux-amd64.tar.gz
 cd dm-nightly-linux-amd64
 ```

@@ -31,7 +31,7 @@ Run the following commands to download the packages:
 
 ```bash
 version="latest" for nightly builds &&
-wget https://download.pingcap.org/tidb-latest-linux-amd64.{tar.gz,sha256}
+wget https://download.pingcap.com/tidb-latest-linux-amd64.{tar.gz,sha256}
 ```
 
 Check the file integrity. If the result is OK, the file is correct.
@@ -45,7 +45,7 @@ For TiDB v2.1.0 GA or later versions, Pump and Drainer are already included in t
 
 
 ```bash
-wget https://download.pingcap.org/tidb-binlog-$version-linux-amd64.{tar.gz,sha256}
+wget https://download.pingcap.com/tidb-binlog-$version-linux-amd64.{tar.gz,sha256}
 ```
 
 Check the file integrity. If the result is OK, the file is correct.
