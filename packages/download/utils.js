@@ -233,8 +233,11 @@ export async function retrieveTiDBMDsFromZip(
       const relativePathNameList = entryName.split("/");
       relativePathNameList.shift();
       const relativePathInZip = relativePathNameList.join("/");
-      // Ignore if cloud TOC
-      if (isCloudTOC(relativePathInZip)) {
+      // Ignore if cloud file
+      if (
+        relativePathInZip.startsWith(`tidb-cloud/`) ||
+        isCloudTOC(relativePathInZip)
+      ) {
         return;
       }
       const filteredArray = ignore.filter((value) =>
