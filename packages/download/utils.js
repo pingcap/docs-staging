@@ -28,6 +28,7 @@ const CLOUD_TOC_LIST = [
   "TOC-tidb-cloud-starter.md",
   "TOC-tidb-cloud-essential.md",
   "TOC-tidb-cloud-premium.md",
+  "TOC-tidb-cloud-releases.md",
 ];
 
 const isCloudTOC = (relativePathInZip) => {
