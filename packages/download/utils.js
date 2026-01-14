@@ -210,7 +210,9 @@ export async function retrieveTiDBMDsFromZip(
   const { repo, ref } = metaInfo;
   const { ignore = [], pipelines = [] } = options;
 
-  const archiveFileName = `archive-${ref}-${new Date().getTime()}.zip`;
+  // Replace slashes in branch name to avoid path issues
+  const safeRef = ref.replace(/\//g, "-");
+  const archiveFileName = `archive-${safeRef}-${new Date().getTime()}.zip`;
   // Download archive
   await getArchiveFile(repo, ref, archiveFileName);
   sig.success("download archive file", archiveFileName);
@@ -274,7 +276,9 @@ export async function retrieveCloudMDsFromZip(
   const { repo, ref } = metaInfo;
   const { ignore = [], pipelines = [] } = options;
 
-  const archiveFileName = `archive-${ref}-${new Date().getTime()}.zip`;
+  // Replace slashes in branch name to avoid path issues
+  const safeRef = ref.replace(/\//g, "-");
+  const archiveFileName = `archive-${safeRef}-${new Date().getTime()}.zip`;
   // Download archive
   await getArchiveFile(repo, ref, archiveFileName);
   sig.success("download archive file", archiveFileName);
