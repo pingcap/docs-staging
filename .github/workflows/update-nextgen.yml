@@ -23,7 +23,7 @@ on:
         required: false
 
 env:
-  EN_CLOUD_BRANCH: feature/preview-top-navigation
+  EN_CLOUD_BRANCH: release-8.5
   JA_CLOUD_BRANCH: i18n-ja-release-8.5
   ZH_CLOUD_BRANCH: i18n-zh-release-8.5
 
