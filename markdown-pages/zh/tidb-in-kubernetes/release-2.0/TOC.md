@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD007 -->
 <!-- markdownlint-disable MD041 -->
 
-- [TiDB on Kubernetes 文档](https://docs.pingcap.com/zh/tidb-in-kubernetes/v2.0)
+- [TiDB on Kubernetes 文档](https://docs.pingcap.com/zh/tidb-in-kubernetes/dev/)
 - 关于 TiDB Operator
   - [简介](tidb-operator-overview.md)
 - [快速上手](get-started.md)
@@ -58,7 +58,3 @@
   - [TiDB Operator v2 和 v1 的对比](v2-vs-v1.md)
   - 工具
     - [TiDB Toolkit](tidb-toolkit.md)
-- 版本发布历史
-  - v2.0
-    - [2.0 GA](releases/release-2.0.0.md)
-    - [2.0.0-beta.0](releases/release-2.0.0-beta.0.md)
