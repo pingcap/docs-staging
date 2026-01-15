@@ -69,7 +69,7 @@ To run a TiDB server, use the following command:
 
 
 ```bash
-wget https://download.pingcap.com/tidb-community-server-v8.5.4-linux-amd64.tar.gz
+wget https://download.pingcap.com/tidb-community-server-v8.5.5-linux-amd64.tar.gz
 tar -xzvf tidb-latest-linux-amd64.tar.gz
 mv tidb-latest-linux-amd64/bin/tidb-server ./
 ./tidb-server
