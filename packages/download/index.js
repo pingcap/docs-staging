@@ -20,6 +20,26 @@ import nPath from "path";
 import rimraf from "rimraf";
 import sig from "signale";
 
+const PREVIEW_TOP_NAVIGATION_REF = "feature/preview-top-navigation";
+
+function resolveDestRef(repo, ref) {
+  if (ref !== PREVIEW_TOP_NAVIGATION_REF) {
+    return ref;
+  }
+
+  switch (repo) {
+    case "pingcap/docs":
+    case "pingcap/docs-cn":
+      return "release-8.5";
+    case "pingcap/docs-tidb-operator":
+      return "main";
+    case "tidbcloud/dbaas-docs":
+      return "master";
+    default:
+      return ref;
+  }
+}
+
 function genOptions(repo, config, dryRun) {
   const options = {
     pipelines: [
@@ -56,13 +76,17 @@ export function download(argv) {
   const { repo, path, ref, destination, config, dryRun } = argv;
   const dest = nPath.resolve(destination);
   const options = genOptions(repo, config, dryRun);
+  const destRef = resolveDestRef(repo, ref);
 
   switch (repo) {
     case "pingcap/docs-cn":
       const docsCnDestPath = genDest(
         repo,
         path,
-        nPath.resolve(dest, `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${ref}`)
+        nPath.resolve(
+          dest,
+          `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${destRef}`
+        )
       );
       rimraf.sync(docsCnDestPath);
       retrieveTiDBMDsFromZip(
@@ -102,7 +126,7 @@ export function download(argv) {
           path,
           nPath.resolve(
             dest,
-            `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${ref}`
+            `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${destRef}`
           )
         );
         rimraf.sync(docsDestPath);
@@ -131,7 +155,7 @@ export function download(argv) {
       const dmOpDestPath = genDest(
         repo,
         path,
-        nPath.resolve(dest, `${path.split("/")[0]}/${name}/${ref}`)
+        nPath.resolve(dest, `${path.split("/")[0]}/${name}/${destRef}`)
       );
       rimraf.sync(dmOpDestPath);
 
@@ -174,6 +198,7 @@ export function sync(argv) {
   const { repo, ref, base, head, destination, config, dryRun } = argv;
   const dest = nPath.resolve(destination);
   const options = genOptions(repo, config, dryRun);
+  const destRef = resolveDestRef(repo, ref);
 
   switch (repo) {
     case "pingcap/docs":
@@ -200,7 +225,7 @@ export function sync(argv) {
             base,
             head,
           },
-          nPath.resolve(dest, `en/tidb/${ref}`),
+          nPath.resolve(dest, `en/tidb/${destRef}`),
           options
         );
       }
@@ -215,7 +240,7 @@ export function sync(argv) {
         },
         nPath.resolve(
           dest,
-          `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${ref}`
+          `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${destRef}`
         ),
         options
       );
@@ -231,7 +256,7 @@ export function sync(argv) {
           base,
           head,
         },
-        nPath.resolve(dest, `en/${name}/${ref}`), // use en as a placeholder
+        nPath.resolve(dest, `en/${name}/${destRef}`), // use en as a placeholder
         options
       );
 
