@@ -1,4 +1,4 @@
-name: Update docs.pingcap.com (nextgen)
+name: Update docs.tidb.io
 
 on:
   workflow_dispatch:
