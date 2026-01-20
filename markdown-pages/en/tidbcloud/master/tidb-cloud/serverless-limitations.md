@@ -49,8 +49,8 @@ We are constantly filling in the feature gaps between TiDB Cloud Starter/Essenti
 
 ### Stream data
 
-- [Changefeed](/tidb-cloud/changefeed-overview.md) is not supported for TiDB Cloud Starter and TiDB Cloud Essential currently.
-- [Data Migration](/tidb-cloud/migrate-from-mysql-using-data-migration.md) is not supported for TiDB Cloud Starter and TiDB Cloud Essential currently.
+- [Changefeed](/tidb-cloud/changefeed-overview.md) is not supported for TiDB Cloud Starter currently.
+- [Data Migration](/tidb-cloud/migrate-from-mysql-using-data-migration.md) is not supported for TiDB Cloud Starter currently.
 
 ### Time to live (TTL)
 
