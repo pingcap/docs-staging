@@ -1,16 +1,16 @@
 <!-- markdownlint-disable MD007 -->
 <!-- markdownlint-disable MD041 -->
 
-# Table of Contents
+# 目录
 
-## OVERVIEW zh
+## 版本概览
 
-- [Release Timeline](/releases/release-timeline.md)
-- [TiDB Versioning](/releases/versioning.md)
-- [Release Support Policy](https://www.pingcap.com/tidb-release-support-policy/)
-- [TiDB Installation Packages](/binary-package.md)
+- [发布版本汇总](/releases/_index.md)
+- [版本发布时间线](/releases/release-timeline.md)
+- [TiDB 版本规则](/releases/versioning.md)
+- [版本周期支持策略](https://pingkai.cn/tidb-release-support-policy)
 
-## RELEASE NOTES
+## 版本发布说明
 
 - v8.5
   - [8.5.4](/releases/release-8.5.4.md)
@@ -95,7 +95,7 @@
   - [5.4.2](/releases/release-5.4.2.md)
   - [5.4.1](/releases/release-5.4.1.md)
   - [5.4.0](/releases/release-5.4.0.md)
-- End of Life Releases
+- End of Life 版本
   - v5.3
     - [5.3.4](/releases/release-5.3.4.md)
     - [5.3.3](/releases/release-5.3.3.md)
@@ -230,14 +230,6 @@
     - [1.1 Beta](/releases/release-1.1-beta.md)
     - [1.1 Alpha](/releases/release-1.1-alpha.md)
   - v1.0
-    - [1.0.8](/releases/release-1.0.8.md)
-    - [1.0.7](/releases/release-1.0.7.md)
-    - [1.0.6](/releases/release-1.0.6.md)
-    - [1.0.5](/releases/release-1.0.5.md)
-    - [1.0.4](/releases/release-1.0.4.md)
-    - [1.0.3](/releases/release-1.0.3.md)
-    - [1.0.2](/releases/release-1.0.2.md)
-    - [1.0.1](/releases/release-1.0.1.md)
     - [1.0](/releases/release-1.0-ga.md)
     - [Pre-GA](/releases/release-pre-ga.md)
     - [RC4](/releases/release-rc.4.md)

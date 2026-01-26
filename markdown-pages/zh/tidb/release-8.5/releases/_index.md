@@ -1,16 +1,16 @@
 ---
-title: Release Notes
-summary: TiDB has released multiple versions, including 8.5.0, 8.4.0-DMR, 8.3.0-DMR, 8.2.0-DMR, 8.1.0, 8.0.0-DMR, 7.6.0-DMR, 7.5.1, 7.5.0, 7.4.0-DMR, 7.3.0-DMR, 7.2.0-DMR, 7.1.4, 7.1.3, 7.1.2, 7.1.1, 7.1.0, 7.0.0-DMR, 6.6.0-DMR, 6.5.9, 6.5.8, 6.5.7, 6.5.6, 6.5.5, 6.5.4, 6.5.3, 6.5.2, 6.5.1, 6.5.0, 6.4.0-DMR, 6.3.0-DMR, 6.2.0-DMR, 6.1.7, 6.1.6, 6.1.5, 6.1.4, 6.1.3, 6.1.2, 6.1.1, 6.1.0, 6.0.0-DMR, 5.4.3, 5.4.2, 5.4.1, 5.4.0, 5.3.4, 5.3.3, 5.3.2, 5.3.1, 5.3.0, 5.2.4, 5.2.3, 5.2.2, 5.2.1, 5.2.0, 5.1.5, 5.1.4, 5.1.3, 5.1.2, 5.1.1, 5.1.0, 5.0.6, 5.0.5, 5.0.4, 5.0.3, 5.0.2, 5.0.1, 5.0.0, 5.0.0-rc, 4.0.16, 4.0.15, 4.0.14, 4.0.13, 4.0.12, 4.0.11, 4.0.10, 4.0.9, 4.0.8, 4.0.7, 4.0.6, 4.0.5, 4.0.4, 4.0.3, 4.0.2, 4.0.1, 4.0.0, 4.0.0-rc.2, 4.0.0-rc.1, 4.0.0-rc, 4.0.0-beta.2, 4.0.0-beta.1, 4.0.0-beta, 3.1.2, 3.1.1, 3.1.0, 3.1.0-rc, 3.1.0-beta.2, 3.1.0-beta.1, 3.1.0-beta, 3.0.20, 3.0.19, 3.0.18, 3.0.17, 3.0.16, 3.0.15, 3.0.14, 3.0.13, 3.0.12, 3.0.11, 3.0.10, 3.0.9, 3.0.8, 3.0.7, 3.0.6, 3.0.5, 3.0.4, 3.0.3, 3.0.2, 3.0.1, 3.0.0, 3.0.0-rc.3, 3.0.0-rc.2, 3.0.0-rc.1, 3.0.0-beta.1, 3.0.0-beta, 2.1.19, 2.1.18, 2.1.17, 2.1.16, 2.1.15, 2.1.14, 2.1.13, 2.1.12, 2.1.11, 2.1.10, 2.1.9, 2.1.8, 2.1.7, 2.1.6, 2.1.5, 2.1.4, 2.1.3, 2.1.2, 2.1.1, 2.1.0, 2.1.0-rc.5, 2.1.0-rc.4, 2.1.0-rc.3, 2.1.0-rc.2, 2.1.0-rc.1, 2.1.0-beta, 2.0.11, 2.0.10, 2.0.9, 2.0.8, 2.0.7, 2.0.6, 2.0.5, 2.0.4, 2.0.3, 2.0.2, 2.0.1, 2.0.0, 2.0.0-rc.5, 2.0.0-rc.4, 2.0.0-rc.3, 2.0.0-rc.1, 1.1.0-beta, 1.1.0-alpha, 1.0.8, 1.0.7, 1.0.6, 1.0.5, 1.0.4, 1.0.3, 1.0.2, 1.0.1, 1.0.0, Pre-GA, rc4, rc3, rc2, rc1.
-aliases: ['/tidb/stable/release-notes/','/tidb/v8.5/release-notes/']
+title: TiDB 版本发布历史
+summary: 介绍 TiDB 版本发布历史。
+aliases: ['/zh/tidb/stable/release-notes/','/zh/tidb/v8.5/release-notes/']
 ---
 
-# TiDB Release Notes zh
+# TiDB 版本发布历史
 
 <EmailSubscriptionWrapper />
 
-This document lists all released TiDB versions, sorted by version number in descending order.
+本文列出了所有已发布的 TiDB 版本，按版本号降序排序。
 
-To learn about the support timelines for Long-Term Support (LTS) versions of TiDB, see the [TiDB Release Support Policy](https://pingcap.com/tidb-release-support-policy/).
+关于 TiDB 长期支持版本 (Long-Term Support, LTS) 的支持时间表，请参阅 [TiDB 版本周期支持策略](https://pingkai.cn/tidb-release-support-policy)。
 
 ## 8.5
 
@@ -244,7 +244,7 @@ To learn about the support timelines for Long-Term Support (LTS) versions of TiD
 - [2.1.18](/releases/release-2.1.18.md): 2019-11-04
 - [2.1.17](/releases/release-2.1.17.md): 2019-09-11
 - [2.1.16](/releases/release-2.1.16.md): 2019-08-15
-- [2.1.15](/releases/release-2.1.15.md): 2019-07-18
+- [2.1.15](/releases/release-2.1.15.md): 2019-07-16
 - [2.1.14](/releases/release-2.1.14.md): 2019-07-04
 - [2.1.13](/releases/release-2.1.13.md): 2019-06-21
 - [2.1.12](/releases/release-2.1.12.md): 2019-06-13
@@ -290,14 +290,14 @@ To learn about the support timelines for Long-Term Support (LTS) versions of TiD
 
 ## 1.0
 
-- [1.0.8](/releases/release-1.0.8.md): 2018-02-11
-- [1.0.7](/releases/release-1.0.7.md): 2018-01-22
-- [1.0.6](/releases/release-1.0.6.md): 2018-01-08
-- [1.0.5](/releases/release-1.0.5.md): 2017-12-26
-- [1.0.4](/releases/release-1.0.4.md): 2017-12-11
-- [1.0.3](/releases/release-1.0.3.md): 2017-11-28
-- [1.0.2](/releases/release-1.0.2.md): 2017-11-13
-- [1.0.1](/releases/release-1.0.1.md): 2017-11-01
+- [1.0.8](https://docs.pingcap.com/tidb/dev/release-1.0.8): 2018-02-11
+- [1.0.7](https://docs.pingcap.com/tidb/dev/release-1.0.7): 2018-01-22
+- [1.0.6](https://docs.pingcap.com/tidb/dev/release-1.0.6): 2018-01-08
+- [1.0.5](https://docs.pingcap.com/tidb/dev/release-1.0.5): 2017-12-26
+- [1.0.4](https://docs.pingcap.com/tidb/dev/release-1.0.4): 2017-12-11
+- [1.0.3](https://docs.pingcap.com/tidb/dev/release-1.0.3): 2017-11-28
+- [1.0.2](https://docs.pingcap.com/tidb/dev/release-1.0.2): 2017-11-13
+- [1.0.1](https://docs.pingcap.com/tidb/dev/release-1.0.1): 2017-11-01
 - [1.0.0](/releases/release-1.0-ga.md): 2017-10-16
 - [Pre-GA](/releases/release-pre-ga.md): 2017-08-30
 - [rc4](/releases/release-rc.4.md): 2017-08-04
