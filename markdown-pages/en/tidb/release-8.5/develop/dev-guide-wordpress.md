@@ -1,6 +1,7 @@
 ---
 title: Connect to TiDB Cloud Starter with WordPress
 summary: Learn how to use TiDB Cloud Starter to run WordPress. This tutorial gives step-by-step guidance to run WordPress + TiDB Cloud Starter in a few minutes.
+aliases: ['/tidbcloud/dev-guide-wordpress/']
 ---
 
 # Connect to TiDB Cloud Starter with WordPress

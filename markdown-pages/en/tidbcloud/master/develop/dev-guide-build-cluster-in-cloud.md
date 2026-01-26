@@ -1,6 +1,7 @@
 ---
 title: Build a TiDB Cloud Starter Cluster
 summary: Learn how to build a TiDB Cloud Starter cluster in TiDB Cloud and connect to it.
+aliases: ['/tidb/stable/dev-guide-build-cluster-in-cloud/','/tidb/dev/dev-guide-build-cluster-in-cloud/','/tidbcloud/dev-guide-build-cluster-in-cloud/']
 ---
 
 <!-- markdownlint-disable MD029 -->
