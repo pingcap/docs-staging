@@ -1,12 +1,12 @@
 ---
-title: Build a TiDB Cloud Starter Cluster
-summary: Learn how to build a TiDB Cloud Starter cluster in TiDB Cloud and connect to it.
+title: Create a TiDB Cloud Starter Cluster
+summary: Learn how to create a TiDB Cloud Starter cluster and connect to it.
 aliases: ['/tidb/stable/dev-guide-build-cluster-in-cloud/','/tidb/dev/dev-guide-build-cluster-in-cloud/','/tidbcloud/dev-guide-build-cluster-in-cloud/']
 ---
 
 <!-- markdownlint-disable MD029 -->
 
-# Build a TiDB Cloud Starter Cluster
+# Create a TiDB Cloud Starter Cluster
 
 This document walks you through the quickest way to get started with TiDB. You will use [TiDB Cloud](https://www.pingcap.com/tidb-cloud) to create a TiDB Cloud Starter cluster, connect to it, and run a sample application on it.
 

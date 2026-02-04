@@ -10,7 +10,7 @@ This document briefly introduces how to use TiDB's CRUD SQL.
 
 ## Before you start
 
-Please make sure you are connected to a TiDB cluster. If not, refer to [Build a TiDB Cloud Starter Cluster](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-cluster) to create a TiDB Cloud Starter cluster.
+Please make sure you are connected to a TiDB cluster. If not, refer to [Create a TiDB Cloud Starter Cluster](/develop/dev-guide-build-cluster-in-cloud.md#step-1-create-a-tidb-cloud-cluster) to create a TiDB Cloud Starter cluster.
 
 ## Explore SQL with TiDB
 
