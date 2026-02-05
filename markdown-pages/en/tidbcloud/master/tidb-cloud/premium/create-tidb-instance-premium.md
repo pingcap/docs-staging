@@ -9,7 +9,7 @@ This document describes how to create a TiDB Cloud Premium instance in the [TiDB
 
 > **Note:**
 >
-> - Currently, TiDB Cloud Premium is only available upon request. To request it, click **?** in the lower-right corner of the [TiDB Cloud console](https://tidbcloud.com) and click **Request Support**. Then, fill in "Apply for TiDB Cloud Premium" in the **Description** field and click **Submit**.
+> - Currently, TiDB Cloud Premium is only available upon request. To request TiDB Cloud Premium, click **?** in the lower-right corner of the [TiDB Cloud console](https://tidbcloud.com), and then click **Support Tickets** to go to the [Help Center](https://tidb.support.pingcap.com/servicedesk/customer/portals). Create a ticket, fill in "Apply for TiDB Cloud Premium" in the **Description** in the **Description** field, and then click **Submit**.
 > - To learn how to create a TiDB Cloud Dedicated cluster, see [Create a TiDB Cloud Dedicated Cluster](/tidb-cloud/create-tidb-cluster.md).
 
 ## Before you begin
@@ -43,7 +43,7 @@ If you have the `Organization Owner` role, you can create a TiDB Cloud Premium i
 
     > **Note:**
     >
-    > If **Switch to Private Preview** is not visible in the lower-left corner of your TiDB Cloud console, it means that your organization has not been invited to the private preview of TiDB Cloud Premium. In this case, you can click **?** in the lower-right corner of the [TiDB Cloud console](https://tidbcloud.com) and click **Request Support** to apply for TiDB Cloud Premium.
+    > If **Switch to Private Preview** is not visible in the lower-left corner of your TiDB Cloud console, it means that your organization has not been invited to the private preview of TiDB Cloud Premium. In this case, you can click **?** in the lower-right corner of the [TiDB Cloud console](https://tidbcloud.com), and then click **Support Tickets** to go to the [Help Center](https://tidb.support.pingcap.com/servicedesk/customer/portals). Create a ticket, fill in "Apply for the private preview of TiDB Cloud Premium" in the **Description** field, and then click **Submit**.
 
 2. On the **TiDB Instances** page, click **Create Instance**.
 3. Enter a name for your TiDB Cloud Premium instance.
