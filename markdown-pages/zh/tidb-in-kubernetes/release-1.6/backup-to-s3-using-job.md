@@ -114,7 +114,7 @@ spec:
 
 ```shell
 export name=dumpling
-export version=v8.5.2
+export version=v8.5.5
 export namespace=tidb-cluster
 export AWS_REGION=us-west-2
 export AWS_ACCESS_KEY_ID=<your-access-key-id>

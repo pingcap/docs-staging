@@ -162,7 +162,7 @@ Run the following commands to create the TiDB Lightning job:
 
 ```shell
 export name=lightning
-export version=v8.5.2
+export version=v8.5.5
 export namespace=tidb-cluster
 export storageClassName=<your-storage-class>
 export storage=250G

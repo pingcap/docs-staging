@@ -24,7 +24,7 @@ If you are using a NUMA-based CPU, you need to enable `Static`'s CPU management 
 
 ## Configure TiDB deployment
 
-To configure a TiDB deployment, you need to configure the `TiDBCluster` CR. Refer to the [TidbCluster example](<https://github.com/pingcap/tidb-operator/blob/v1.6.4/examples/advanced/tidb-cluster.yaml>) for an example. For the complete configurations of `TiDBCluster` CR, refer to [API documentation](<https://github.com/pingcap/tidb-operator/blob/v1.6.4/docs/api-references/docs.md>).
+To configure a TiDB deployment, you need to configure the `TiDBCluster` CR. Refer to the [TidbCluster example](<https://github.com/pingcap/tidb-operator/blob/v1.6.5/examples/advanced/tidb-cluster.yaml>) for an example. For the complete configurations of `TiDBCluster` CR, refer to [API documentation](<https://github.com/pingcap/tidb-operator/blob/v1.6.5/docs/api-references/docs.md>).
 
 > **Note:**
 >
@@ -41,11 +41,11 @@ Usually, components in a cluster are in the same version. It is recommended to c
 
 Here are the formats of the parameters:
 
-- `spec.version`: the format is `imageTag`, such as `v8.5.2`
+- `spec.version`: the format is `imageTag`, such as `v8.5.5`
 
 - `spec.<pd/tidb/tikv/pump/tiflash/ticdc>.baseImage`: the format is `imageName`, such as `pingcap/tidb`
 
-- `spec.<pd/tidb/tikv/pump/tiflash/ticdc>.version`: the format is `imageTag`, such as `v8.5.2`
+- `spec.<pd/tidb/tikv/pump/tiflash/ticdc>.version`: the format is `imageTag`, such as `v8.5.5`
 
 ### Recommended configuration
 
@@ -415,7 +415,7 @@ For all the configurable parameters of TiKV, refer to [TiKV Configuration File](
 >
 > - If you deploy your TiDB cluster using CR, make sure that `Config: {}` is set, no matter you want to modify `config` or not. Otherwise, TiKV components might not be started successfully. This step is meant to be compatible with `Helm` deployment.
 > - TiKV RocksDB logs are stored in the `/var/lib/tikv` data directory by default. It is recommended that you configure `max-days` and `max-backups` to automatically clean log files.
-> - You can also use the `separateRocksDBLog` configuration item to configure TiKV to output RocksDB logs to stdout through a sidecar container. For more information, see the [TiDB Cluster example](<https://github.com/pingcap/tidb-operator/blob/v1.6.4/examples/advanced/tidb-cluster.yaml>).
+> - You can also use the `separateRocksDBLog` configuration item to configure TiKV to output RocksDB logs to stdout through a sidecar container. For more information, see the [TiDB Cluster example](<https://github.com/pingcap/tidb-operator/blob/v1.6.5/examples/advanced/tidb-cluster.yaml>).
 
 #### Configure PD parameters
 

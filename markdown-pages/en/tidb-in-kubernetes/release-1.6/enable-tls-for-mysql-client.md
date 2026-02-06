@@ -530,7 +530,7 @@ In this step, you create a TiDB cluster and perform the following operations:
           name: ${cluster_name}
           namespace: ${namespace}
         spec:
-          version: v8.5.2
+          version: v8.5.5
           timezone: UTC
           pvReclaimPolicy: Retain
           pd:

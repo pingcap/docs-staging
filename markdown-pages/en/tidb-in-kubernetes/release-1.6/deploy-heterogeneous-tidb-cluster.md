@@ -48,7 +48,7 @@ To deploy a heterogeneous cluster, do the following:
       name: ${heterogeneous_cluster_name}
     spec:
       configUpdateStrategy: RollingUpdate
-      version: v8.5.2
+      version: v8.5.5
       timezone: UTC
       pvReclaimPolicy: Delete
       discovery: {}
@@ -128,7 +128,7 @@ After creating certificates, take the following steps to deploy a TLS-enabled he
       tlsCluster:
         enabled: true
       configUpdateStrategy: RollingUpdate
-      version: v8.5.2
+      version: v8.5.5
       timezone: UTC
       pvReclaimPolicy: Delete
       discovery: {}
@@ -164,7 +164,7 @@ After creating certificates, take the following steps to deploy a TLS-enabled he
 
     In the configuration file, `spec.tlsCluster.enabled`controls whether to enable TLS between the components and `spec.tidb.tlsClient.enabled`controls whether to enable TLS for the MySQL client.
 
-    - For more configurations of a TLS-enabled heterogeneous cluster, see the ['heterogeneous-tls'](<https://github.com/pingcap/tidb-operator/tree/v1.6.4/examples/heterogeneous-tls>) example.
+    - For more configurations of a TLS-enabled heterogeneous cluster, see the ['heterogeneous-tls'](<https://github.com/pingcap/tidb-operator/tree/v1.6.5/examples/heterogeneous-tls>) example.
     - For more configurations and field meanings of a TiDB cluster, see the [TiDB cluster configuration document](configure-a-tidb-cluster.md).
 
 2. In the configuration file of your heterogeneous cluster, modify the configurations of each node according to your need.
@@ -214,7 +214,7 @@ If you need to deploy a monitoring component for a heterogeneous cluster, take t
         version: 7.5.11
     initializer:
         baseImage: pingcap/tidb-monitor-initializer
-        version: v8.5.2
+        version: v8.5.5
     reloader:
         baseImage: pingcap/tidb-monitor-reloader
         version: v1.0.1

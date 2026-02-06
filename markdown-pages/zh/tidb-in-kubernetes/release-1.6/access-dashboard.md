@@ -233,13 +233,13 @@ spec:
       ngMonitoring:
         requests:
           storage: 10Gi
-        version: v8.5.2
+        version: v8.5.5
         # storageClassName: default
         baseImage: pingcap/ng-monitoring
     EOF
     ```
 
-    关于 TidbNGMonitoring CR 的更多配置项，可参考 [tidb-operator 中的示例](<https://github.com/pingcap/tidb-operator/blob/v1.6.4/examples/advanced/tidb-ng-monitoring.yaml>)。
+    关于 TidbNGMonitoring CR 的更多配置项，可参考 [tidb-operator 中的示例](<https://github.com/pingcap/tidb-operator/blob/v1.6.5/examples/advanced/tidb-ng-monitoring.yaml>)。
 
 3. 启用持续性能分析。
 

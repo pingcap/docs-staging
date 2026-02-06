@@ -198,9 +198,9 @@ First, download the sample `TidbCluster` and `TidbMonitor` configuration files:
 
 
 ```shell
-curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.4/examples/aks/tidb-cluster.yaml && \
-curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.4/examples/aks/tidb-monitor.yaml && \
-curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.4/examples/aks/tidb-dashboard.yaml
+curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.5/examples/aks/tidb-cluster.yaml && \
+curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.5/examples/aks/tidb-monitor.yaml && \
+curl -O https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.5/examples/aks/tidb-dashboard.yaml
 ```
 
 Refer to [configure the TiDB cluster](configure-a-tidb-cluster.md) to further customize and configure the CR before applying.
@@ -299,7 +299,7 @@ After access to the internal host via SSH, you can access the TiDB cluster throu
     $ mysql --comments -h 20.240.0.7 -P 4000 -u root
     Welcome to the MariaDB monitor.  Commands end with ; or \g.
     Your MySQL connection id is 1189
-    Server version: 8.0.11-TiDB-v8.5.2 TiDB Server (Apache License 2.0) Community Edition, MySQL 8.0 compatible
+    Server version: 8.0.11-TiDB-v8.5.5 TiDB Server (Apache License 2.0) Community Edition, MySQL 8.0 compatible
 
     Copyright (c) 2000, 2022, Oracle and/or its affiliates.
 
@@ -475,7 +475,7 @@ Add a node pool for TiFlash/TiCDC respectively. You can set `--node-count` as re
 
 Finally, run the `kubectl -n tidb-cluster apply -f tidb-cluster.yaml` command to update the TiDB cluster configuration.
 
-For detailed CR configuration, refer to [API references](<https://github.com/pingcap/tidb-operator/blob/v1.6.4/docs/api-references/docs.md>) and [Configure a TiDB Cluster](configure-a-tidb-cluster.md).
+For detailed CR configuration, refer to [API references](<https://github.com/pingcap/tidb-operator/blob/v1.6.5/docs/api-references/docs.md>) and [Configure a TiDB Cluster](configure-a-tidb-cluster.md).
 
 ## Use other Disk volume types
 
@@ -553,7 +553,7 @@ For instance types that provide local disks, refer to [Lsv2-series](https://docs
 
     
     ```shell
-    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.4/manifests/eks/local-volume-provisioner.yaml
+    kubectl apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.5/manifests/eks/local-volume-provisioner.yaml
     ```
 
 3. Use local storage.
