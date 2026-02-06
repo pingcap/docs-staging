@@ -62,13 +62,14 @@ This section introduces the preparation works needed before upgrading your TiDB 
 
 Review compatibility changes in TiDB release notes. If any changes affect your upgrade, take actions accordingly.
 
-The following provides release notes you need to know when you upgrade from v8.4.0 to the current version (v8.5.4). If you are upgrading from v8.3.0 or earlier versions to the current version, you might also need to check the [release notes](/releases/_index.md) of the intermediate versions.
+The following provides release notes you need to know when you upgrade from v8.4.0 to the current version (v8.5.5). If you are upgrading from v8.3.0 or earlier versions to the current version, you might also need to check the [release notes](/releases/_index.md) of the intermediate versions.
 
 - TiDB v8.5.0 [compatibility changes](/releases/release-8.5.0.md#compatibility-changes)
 - TiDB v8.5.1 [release notes](/releases/release-8.5.1.md)
 - TiDB v8.5.2 [release notes](/releases/release-8.5.2.md)
 - TiDB v8.5.3 [compatibility changes](/releases/release-8.5.3.md#compatibility-changes)
 - TiDB v8.5.4 [compatibility changes](/releases/release-8.5.4.md#compatibility-changes)
+- TiDB v8.5.5 [compatibility changes](https://docs.pingcap.com/tidb/v8.5/release-8.5.5/#compatibility-changes)
 
 ### Step 2: Upgrade TiUP or TiUP offline mirror
 
@@ -138,7 +139,7 @@ Now, the offline mirror has been upgraded successfully. If an error occurs durin
 > Skip this step if one of the following situations applies:
 >
 > + You have not modified the configuration parameters of the original cluster. Or you have modified the configuration parameters using `tiup cluster` but no more modification is needed.
-> + After the upgrade, you want to use the default parameter values of v8.5.4 for the unmodified configuration items.
+> + After the upgrade, you want to use the default parameter values of v8.5.5 for the unmodified configuration items.
 
 1. Enter the `vi` editing mode to edit the topology file:
 
@@ -195,11 +196,11 @@ If your application has a maintenance window for the database to be stopped for 
 tiup cluster upgrade <cluster-name> <version>
 ```
 
-For example, if you want to upgrade the cluster to v8.5.4:
+For example, if you want to upgrade the cluster to v8.5.5:
 
 
 ```shell
-tiup cluster upgrade <cluster-name> v8.5.4
+tiup cluster upgrade <cluster-name> v8.5.5
 ```
 
 > **Note:**
@@ -244,7 +245,7 @@ tiup cluster upgrade -h | grep "version"
     tiup cluster stop <cluster-name>
     ```
 
-2. Use the `upgrade` command with the `--offline` option to perform the offline upgrade. Fill in the name of your cluster for `<cluster-name>` and the version to upgrade to for `<version>`, such as `v8.5.4`.
+2. Use the `upgrade` command with the `--offline` option to perform the offline upgrade. Fill in the name of your cluster for `<cluster-name>` and the version to upgrade to for `<version>`, such as `v8.5.5`.
 
     
     ```shell
@@ -270,7 +271,7 @@ tiup cluster display <cluster-name>
 ```
 Cluster type:       tidb
 Cluster name:       <cluster-name>
-Cluster version:    v8.5.4
+Cluster version:    v8.5.5
 ```
 
 ## FAQ
@@ -323,7 +324,7 @@ Starting from v6.2.0, TiDB enables the [concurrent DDL framework](/best-practice
 
 ### The evict leader has waited too long during the upgrade. How to skip this step for a quick upgrade?
 
-You can specify `--force`. Then the processes of transferring PD leader and evicting TiKV leader are skipped during the upgrade. The cluster is directly restarted to update the version, which has a great impact on the cluster that runs online. In the following command, `<version>` is the version to upgrade to, such as `v8.5.4`.
+You can specify `--force`. Then the processes of transferring PD leader and evicting TiKV leader are skipped during the upgrade. The cluster is directly restarted to update the version, which has a great impact on the cluster that runs online. In the following command, `<version>` is the version to upgrade to, such as `v8.5.5`.
 
 
 ```shell
@@ -336,5 +337,5 @@ You can upgrade the tool version by using TiUP to install the `ctl` component of
 
 
 ```shell
-tiup install ctl:v8.5.4
+tiup install ctl:v8.5.5
 ```

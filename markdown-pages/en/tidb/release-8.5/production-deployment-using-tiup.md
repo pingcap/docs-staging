@@ -81,16 +81,16 @@ Perform the following steps in this section to deploy a TiDB cluster offline usi
 **Method 1**: Download the offline binary packages (TiUP offline package included) of the target TiDB version using the following links. You need to download both the server and toolkit packages. Note that your downloading means you agree to the [Privacy Policy](https://www.pingcap.com/privacy-policy/).
 
 ```
-https://download.pingcap.org/tidb-community-server-{version}-linux-{arch}.tar.gz
+https://download.pingcap.com/tidb-community-server-{version}-linux-{arch}.tar.gz
 ```
 
 ```
-https://download.pingcap.org/tidb-community-toolkit-{version}-linux-{arch}.tar.gz
+https://download.pingcap.com/tidb-community-toolkit-{version}-linux-{arch}.tar.gz
 ```
 
 > **Tip:**
 >
-> `{version}` in the link indicates the version number of TiDB and `{arch}` indicates the architecture of the system, which can be `amd64` or `arm64`. For example, the download link for `v8.5.4` in the `amd64` architecture is `https://download.pingcap.org/tidb-community-toolkit-v8.5.4-linux-amd64.tar.gz`.
+> `{version}` in the link indicates the version number of TiDB and `{arch}` indicates the architecture of the system, which can be `amd64` or `arm64`. For example, the download link for `v8.5.5` in the `amd64` architecture is `https://download.pingcap.com/tidb-community-toolkit-v8.5.5-linux-amd64.tar.gz`.
 
 **Method 2**: Manually pack an offline component package using `tiup mirror clone`. The detailed steps are as follows:
 
@@ -308,13 +308,13 @@ Before you run the `deploy` command, use the `check` and `check --apply` command
 3. Deploy a TiDB cluster:
 
     ```shell
-    tiup cluster deploy tidb-test v8.5.4 ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
+    tiup cluster deploy tidb-test v8.5.5 ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
     ```
 
 In the `tiup cluster deploy` command above:
 
 - `tidb-test` is the name of the TiDB cluster to be deployed.
-- `v8.5.4` is the version of the TiDB cluster to be deployed. You can see the latest supported versions by running `tiup list tidb`.
+- `v8.5.5` is the version of the TiDB cluster to be deployed. You can see the latest supported versions by running `tiup list tidb`.
 - `topology.yaml` is the initialization configuration file.
 - `--user root` indicates logging into the target machine as the `root` user to complete the cluster deployment. The `root` user is expected to have `ssh` and `sudo` privileges to the target machine. Alternatively, you can use other users with `ssh` and `sudo` privileges to complete the deployment.
 - `[-i]` and `[-p]` are optional. If you have configured login to the target machine without password, these parameters are not required. If not, choose one of the two parameters. `[-i]` is the private key of the root user (or other users specified by `--user`) that has access to the target machine. `[-p]` is used to input the user password interactively.
