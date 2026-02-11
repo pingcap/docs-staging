@@ -1,7 +1,7 @@
 ---
 title: TiDB Cloud Serverless Driver (Beta)
 summary: Learn how to connect to TiDB Cloud Starter or TiDB Cloud Essential from serverless and edge environments.
-aliases: ['/tidbcloud/serverless-driver-config']
+aliases: ['/tidbcloud/serverless-driver-config/','/tidbcloud/serverless-driver/']
 ---
 
 # TiDB Cloud Serverless Driver (Beta)
@@ -18,7 +18,7 @@ Traditional TCP-based MySQL drivers are not suitable for serverless functions du
 
 > **Note:**
 >
-> If you prefer programming with RESTful API rather than SQL or ORM, you can use [Data Service (beta)](/tidb-cloud/data-service-overview.md).
+> If you prefer programming with RESTful API rather than SQL or ORM, you can use [Data Service (beta)](https://docs.pingcap.com/tidbcloud/data-service-overview/).
 
 ## Install the serverless driver
 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
 }
 ```
 
-Learn more about [using TiDB Cloud serverless driver in Vercel](/tidb-cloud/integrate-tidbcloud-with-vercel.md).
+Learn more about [using TiDB Cloud serverless driver in Vercel](https://docs.pingcap.com/tidbcloud/integrate-tidbcloud-with-vercel).
 
 </div>
 
@@ -104,7 +104,7 @@ export default {
 };
 ```
 
-Learn more about [using TiDB Cloud serverless driver in Cloudflare Workers](/tidb-cloud/integrate-tidbcloud-with-cloudflare.md).
+Learn more about [using TiDB Cloud serverless driver in Cloudflare Workers](https://docs.pingcap.com/tidbcloud/integrate-tidbcloud-with-cloudflare).
 
 </div>
 
@@ -120,7 +120,7 @@ export default async () => {
 }
 ```
 
-Learn more about [using TiDB Cloud serverless driver in Netlify](/tidb-cloud/integrate-tidbcloud-with-netlify.md#use-the-edge-function).
+Learn more about [using TiDB Cloud serverless driver in Netlify](https://docs.pingcap.com/tidbcloud/integrate-tidbcloud-with-netlify#use-the-edge-function).
 
 </div>
 
@@ -331,7 +331,7 @@ TiDB Cloud serverless driver has been integrated with the following ORMs:
 
 ## Pricing
 
-The serverless driver itself is free, but accessing data with the driver generates [Request Units (RUs)](/tidb-cloud/tidb-cloud-glossary.md#request-unit-ru) and storage usage.
+The serverless driver itself is free, but accessing data with the driver generates [Request Units (RUs)](https://docs.pingcap.com/tidbcloud/tidb-cloud-glossary#request-unit-ru) and storage usage.
 
 - For TiDB Cloud Starter clusters, the pricing follows the [TiDB Cloud Starter pricing](https://www.pingcap.com/tidb-cloud-starter-pricing-details/) model.
 - For TiDB Cloud Essential clusters, the pricing follows the [TiDB Cloud Essential pricing](https://www.pingcap.com/tidb-cloud-essential-pricing-details/) model.
@@ -342,9 +342,9 @@ Currently, using serverless driver has the following limitations:
 
 - Up to 10,000 rows can be fetched in a single query.
 - You can execute only a single SQL statement at a time. Multiple SQL statements in one query are not supported yet.
-- Connection with [private endpoints](/tidb-cloud/set-up-private-endpoint-connections-serverless.md) is not supported yet.
+- Connection with [private endpoints](https://docs.pingcap.com/tidbcloud/set-up-private-endpoint-connections-serverless.md) is not supported yet.
 - The server blocks requests from unauthorized browser origins via Cross-Origin Resource Sharing (CORS) to protect your credentials. As a result, you can use the serverless driver only from backend services.
 
 ## What's next
 
-- Learn how to [use TiDB Cloud serverless driver in a local Node.js project](/tidb-cloud/serverless-driver-node-example.md).
+- Learn how to [use TiDB Cloud serverless driver in a local Node.js project](/develop/serverless-driver-node-example.md).

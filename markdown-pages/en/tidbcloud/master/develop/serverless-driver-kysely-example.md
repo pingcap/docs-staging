@@ -1,11 +1,12 @@
 ---
 title: TiDB Cloud Serverless Driver Kysely Tutorial
 summary: Learn how to use TiDB Cloud serverless driver with Kysely.
+aliases: ['/tidbcloud/serverless-driver-kysely-example/']
 ---
 
 # TiDB Cloud Serverless Driver Kysely Tutorial
 
-[Kysely](https://kysely.dev/docs/intro) is a type-safe and autocompletion-friendly TypeScript SQL query builder. TiDB Cloud offers [@tidbcloud/kysely](https://github.com/tidbcloud/kysely), enabling you to use Kysely over HTTPS with [TiDB Cloud serverless driver](/tidb-cloud/serverless-driver.md). Compared with the traditional TCP way, [@tidbcloud/kysely](https://github.com/tidbcloud/kysely) brings the following benefits:
+[Kysely](https://kysely.dev/docs/intro) is a type-safe and autocompletion-friendly TypeScript SQL query builder. TiDB Cloud offers [@tidbcloud/kysely](https://github.com/tidbcloud/kysely), enabling you to use Kysely over HTTPS with [TiDB Cloud serverless driver](/develop/serverless-driver.md). Compared with the traditional TCP way, [@tidbcloud/kysely](https://github.com/tidbcloud/kysely) brings the following benefits:
 
 - Better performance in serverless environments.
 - Ability to use Kysely in edge environments.
@@ -89,7 +90,7 @@ To complete this tutorial, you need the following:
 
 1. Create a table in your TiDB Cloud Starter cluster and insert some data. 
 
-    You can use [SQL Editor in the TiDB Cloud console](/tidb-cloud/explore-data-with-chat2query.md) to execute SQL statements. Here is an example:
+    You can use [SQL Editor in the TiDB Cloud console](https://docs.pingcap.com/tidbcloud/explore-data-with-chat2query) to execute SQL statements. Here is an example:
 
    ```sql
    CREATE TABLE `test`.`person`  (
@@ -201,7 +202,7 @@ mysql://[username]:[password]@[host]/[database]
 
 1. Create a table in your TiDB Cloud Starter cluster and insert some data.
 
-    You can use [SQL Editor in the TiDB Cloud console](/tidb-cloud/explore-data-with-chat2query.md) to execute SQL statements. Here is an example:
+    You can use [SQL Editor in the TiDB Cloud console](https://docs.pingcap.com/tidbcloud/explore-data-with-chat2query) to execute SQL statements. Here is an example:
 
    ```sql
    CREATE TABLE `test`.`person`  (
@@ -296,4 +297,4 @@ mysql://[username]:[password]@[host]/[database]
 ## What's next
 
 - Learn more about [Kysely](https://kysely.dev/docs/intro) and [@tidbcloud/kysely](https://github.com/tidbcloud/kysely)
-- Learn how to [integrate TiDB Cloud with Vercel](/tidb-cloud/integrate-tidbcloud-with-vercel.md)
+- Learn how to [integrate TiDB Cloud with Vercel](https://docs.pingcap.com/tidbcloud/integrate-tidbcloud-with-vercel)

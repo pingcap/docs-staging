@@ -34,7 +34,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
 **General changes**
 
-- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.4](https://docs.pingcap.com/tidb/v7.5/release-7.5.4) to [v8.1.1](https://docs.pingcap.com/tidb/stable/release-8.1.1).
+- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.4](https://docs.pingcap.com/tidb/stable/release-7.5.4) to [v8.1.1](https://docs.pingcap.com/tidb/stable/release-8.1.1).
 
 - [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#starter) reduces costs for large data writes by up to 80% for the following scenarios:
 
@@ -88,7 +88,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
 **General changes**
 
-- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.3](https://docs.pingcap.com/tidb/v7.5/release-7.5.3) to [v7.5.4](https://docs.pingcap.com/tidb/v7.5/release-7.5.4).
+- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.3](https://docs.pingcap.com/tidb/stable/release-7.5.3) to [v7.5.4](https://docs.pingcap.com/tidb/stable/release-7.5.4).
 
 ## October 15, 2024
 
@@ -182,7 +182,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
     This charge will appear under the existing **TiDB Cloud Dedicated - Data Transfer - Load Balancing** service in your [billing details](/tidb-cloud/tidb-cloud-billing.md#billing-details).
 
-- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.2](https://docs.pingcap.com/tidb/v7.5/release-7.5.2) to [v7.5.3](https://docs.pingcap.com/tidb/v7.5/release-7.5.3).
+- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.2](https://docs.pingcap.com/tidb/stable/release-7.5.2) to [v7.5.3](https://docs.pingcap.com/tidb/stable/release-7.5.3).
 
 **Console changes**
 
@@ -196,7 +196,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
 - [Data Service (beta)](https://tidbcloud.com/project/data-service) supports automatically generating vector search endpoints.
 
-    If your table contains [vector data types](/vector-search/vector-search-data-types.md), you can automatically generate a vector search endpoint that calculates vector distances based on your selected distance function.
+    If your table contains [vector data types](/ai/reference/vector-search-data-types.md), you can automatically generate a vector search endpoint that calculates vector distances based on your selected distance function.
 
     This feature enables seamless integration with AI platforms such as [Dify](https://docs.dify.ai/guides/tools) and [GPTs](https://openai.com/blog/introducing-gpts), enhancing your applications with advanced natural language processing and AI capabilities for more complex tasks and intelligent solutions.
 
@@ -242,12 +242,12 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
     The vector search (beta) feature provides an advanced search solution for performing semantic similarity searches across various data types, including documents, images, audio, and video. This feature enables developers to easily build scalable applications with generative artificial intelligence (AI) capabilities using familiar MySQL skills. Key features include:
 
-    - [Vector data types](/vector-search/vector-search-data-types.md), [vector index](/vector-search/vector-search-index.md), and [vector functions and operators](/vector-search/vector-search-functions-and-operators.md).
-    - Ecosystem integrations with [LangChain](/vector-search/vector-search-integrate-with-langchain.md), [LlamaIndex](/vector-search/vector-search-integrate-with-llamaindex.md), and [JinaAI](/vector-search/vector-search-integrate-with-jinaai-embedding.md).
-    - Programming language support for Python: [SQLAlchemy](/vector-search/vector-search-integrate-with-sqlalchemy.md), [Peewee](/vector-search/vector-search-integrate-with-peewee.md), and [Django ORM](/vector-search/vector-search-integrate-with-django-orm.md).
-    - Sample applications and tutorials: perform semantic searches for documents using [Python](/vector-search/vector-search-get-started-using-python.md) or [SQL](/vector-search/vector-search-get-started-using-sql.md).
+    - [Vector data types](/ai/reference/vector-search-data-types.md), [vector index](/ai/reference/vector-search-index.md), and [vector functions and operators](/ai/reference/vector-search-functions-and-operators.md).
+    - Ecosystem integrations with [LangChain](/ai/integrations/vector-search-integrate-with-langchain.md), [LlamaIndex](/ai/integrations/vector-search-integrate-with-llamaindex.md), and [JinaAI](/ai/integrations/vector-search-integrate-with-jinaai-embedding.md).
+    - Programming language support for Python: [SQLAlchemy](/ai/integrations/vector-search-integrate-with-sqlalchemy.md), [Peewee](/ai/integrations/vector-search-integrate-with-peewee.md), and [Django ORM](/ai/integrations/vector-search-integrate-with-django-orm.md).
+    - Sample applications and tutorials: perform semantic searches for documents using [Python](/ai/quickstart-via-python.md) or [SQL](/ai/quickstart-via-sql.md).
 
-  For more information, see [Vector search (beta) overview](/vector-search/vector-search-overview.md).
+  For more information, see [Vector search (beta) overview](/ai/concepts/vector-search-overview.md).
 
 - [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#starter) now offers weekly email reports for organization owners.
 
@@ -280,7 +280,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
     For more information, see [TiFlash node storage](/tidb-cloud/size-your-cluster.md#tiflash-node-storage).
 
-- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.1](https://docs.pingcap.com/tidb/v7.5/release-7.5.1) to [v7.5.2](https://docs.pingcap.com/tidb/v7.5/release-7.5.2).
+- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.1](https://docs.pingcap.com/tidb/stable/release-7.5.1) to [v7.5.2](https://docs.pingcap.com/tidb/stable/release-7.5.2).
 
 ## June 4, 2024
 
@@ -346,7 +346,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
 **CLI changes**
 
-- Introduce [TiDB Cloud CLI 1.0.0-beta.1](https://github.com/tidbcloud/tidbcloud-cli), built upon the new [TiDB Cloud API](/tidb-cloud/api-overview.md). The new CLI brings the following new features:
+- Introduce [TiDB Cloud CLI 1.0.0-beta.1](https://github.com/tidbcloud/tidbcloud-cli), built upon the new [TiDB Cloud API](https://docs.pingcap.com/api/tidb-cloud-api-overview). The new CLI brings the following new features:
 
     - [Export data from TiDB Cloud Serverless clusters](/tidb-cloud/serverless-export.md)
     - [Import data from local storage into TiDB Cloud Serverless clusters](/tidb-cloud/ticloud-import-start.md)
@@ -378,7 +378,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
 **General changes**
 
-- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.0](https://docs.pingcap.com/tidb/v7.5/release-7.5.0) to [v7.5.1](https://docs.pingcap.com/tidb/v7.5/release-7.5.1).
+- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.5.0](https://docs.pingcap.com/tidb/stable/release-7.5.0) to [v7.5.1](https://docs.pingcap.com/tidb/stable/release-7.5.1).
 
 **Console changes**
 
@@ -400,7 +400,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
 **General changes**
 
-- Upgrade the TiDB version of [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#starter) clusters from [v6.6.0](https://docs.pingcap.com/tidb/v6.6/release-6.6.0) to [v7.1.3](https://docs.pingcap.com/tidb/v7.1/release-7.1.3).
+- Upgrade the TiDB version of [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#starter) clusters from [v6.6.0](https://docs.pingcap.com/tidb/stable/release-6.6.0) to [v7.1.3](https://docs.pingcap.com/tidb/stable/release-7.1.3).
 
 ## February 20, 2024
 
@@ -457,7 +457,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
     For more information, see [Organization SSO Authentication](/tidb-cloud/tidb-cloud-org-sso-authentication.md).
 
-- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.1.1](https://docs.pingcap.com/tidb/v7.1/release-7.1.1) to [v7.5.0](https://docs.pingcap.com/tidb/v7.5/release-7.5.0).
+- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v7.1.1](https://docs.pingcap.com/tidb/stable/release-7.1.1) to [v7.5.0](https://docs.pingcap.com/tidb/stable/release-7.5.0).
 
 - The dual region backup feature for [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) is now in General Availability (GA).
 

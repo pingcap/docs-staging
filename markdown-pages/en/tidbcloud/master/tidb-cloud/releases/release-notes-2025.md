@@ -64,7 +64,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
 - **TiDB Cloud Dedicated**
 
-    - Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v8.5.3](https://docs.pingcap.com/tidb/v8.5/release-8.5.3/) to [v8.5.4](https://docs.pingcap.com/tidb/v8.5/release-8.5.4/).
+    - Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v8.5.3](https://docs.pingcap.com/tidb/stable/release-8.5.3/) to [v8.5.4](https://docs.pingcap.com/tidb/stable/release-8.5.4/).
 
 **Console changes**
 
@@ -81,7 +81,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
             - **Python**: Django, mysqlclient, MySQL Connector/Python, peewee, PyMySQL, SQLAlchemy
             - **Node.js**: mysql.js, Next.js, node-mysql2, Prisma, Sequelize, TypeORM
             - **Ruby**: mysql2, Rails
-        - Move the [Vercel](/tidb-cloud/integrate-tidbcloud-with-vercel.md) and [AWS Bedrock](/tidb-cloud/vector-search-integrate-with-amazon-bedrock.md) integration entries to the cluster level to improve discoverability.
+        - Move the [Vercel](/tidb-cloud/integrate-tidbcloud-with-vercel.md) and [AWS Bedrock](/ai/integrations/vector-search-integrate-with-amazon-bedrock.md) integration entries to the cluster level to improve discoverability.
         - Add **Suggest Integration** for requesting new integrations.
 
 **API changes**
@@ -328,7 +328,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
 - **TiDB Cloud Dedicated**
 
-    - Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v8.5.2](https://docs.pingcap.com/tidb/v8.5/release-8.5.2/) to [v8.5.3](https://docs.pingcap.com/tidb/v8.5/release-8.5.3/).
+    - Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v8.5.2](https://docs.pingcap.com/tidb/stable/release-8.5.2/) to [v8.5.3](https://docs.pingcap.com/tidb/stable/release-8.5.3/).
 
 </CustomContent>
 
@@ -336,7 +336,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
 - **TiDB Cloud Dedicated**
 
-    - Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v8.5.2](https://docs.pingcap.com/tidb/v8.5/release-8.5.2/) to [v8.5.3](https://docs.pingcap.com/tidb/v8.5/release-8.5.3/).
+    - Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v8.5.2](https://docs.pingcap.com/tidb/stable/release-8.5.2/) to [v8.5.3](https://docs.pingcap.com/tidb/stable/release-8.5.3/).
 
 </CustomContent>
 
@@ -627,7 +627,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
     - Relevance-based ranking: results are ranked using the industry-standard BM25 algorithm for optimal relevance.
     - Native SQL compatibility: seamlessly use SQL features such as filtering, grouping, and joining with full-text search.
 
-  To get started, see [Full Text Search with SQL](/tidb-cloud/vector-search-full-text-search-sql.md) or [Full Text Search with Python](/tidb-cloud/vector-search-full-text-search-python.md).
+  To get started, see [Full Text Search with SQL](/ai/guides/vector-search-full-text-search-sql.md) or [Full Text Search with Python](/ai/guides/vector-search-full-text-search-python.md).
 
 - Increase the maximum TiFlash node storage for [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) cluster:
 
@@ -660,7 +660,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
     For more information, see [Export Data from TiDB Cloud Serverless](/tidb-cloud/serverless-export.md#alibaba-cloud-oss).
 
-- Upgrade the TiDB version of [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#starter) clusters from [v7.1.3](https://docs.pingcap.com/tidb/v7.1/release-7.1.3) to [v7.5.2](https://docs.pingcap.com/tidb/v7.5/release-7.5.2).
+- Upgrade the TiDB version of [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#starter) clusters from [v7.1.3](https://docs.pingcap.com/tidb/stable/release-7.1.3) to [v7.5.2](https://docs.pingcap.com/tidb/stable/release-7.5.2).
 
 ## April 15, 2025
 
@@ -836,7 +836,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
   
     For more information, see [High Availability in TiDB Cloud Serverless](/tidb-cloud/serverless-high-availability.md).
 
-- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v8.1.1](https://docs.pingcap.com/tidb/v8.1/release-8.1.1) to [v8.1.2](https://docs.pingcap.com/tidb/v8.1/release-8.1.2).
+- Upgrade the default TiDB version of new [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters from [v8.1.1](https://docs.pingcap.com/tidb/stable/release-8.1.1) to [v8.1.2](https://docs.pingcap.com/tidb/stable/release-8.1.2).
 
 **Console changes**
 

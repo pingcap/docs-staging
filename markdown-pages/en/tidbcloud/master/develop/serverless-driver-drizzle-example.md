@@ -1,11 +1,12 @@
 ---
 title: TiDB Cloud Serverless Driver Drizzle Tutorial
 summary: Learn how to use TiDB Cloud serverless driver with Drizzle.
+aliases: ['/tidbcloud/serverless-driver-drizzle-example/']
 ---
 
 # TiDB Cloud Serverless Driver Drizzle Tutorial
 
-[Drizzle ORM](https://orm.drizzle.team/) is a lightweight and performant TypeScript ORM with developer experience in mind. Starting from `drizzle-orm@0.31.2`, it supports [drizzle-orm/tidb-serverless](https://orm.drizzle.team/docs/get-started-mysql#tidb-serverless), enabling you to use Drizzle over HTTPS with [TiDB Cloud serverless driver](/tidb-cloud/serverless-driver.md).
+[Drizzle ORM](https://orm.drizzle.team/) is a lightweight and performant TypeScript ORM with developer experience in mind. Starting from `drizzle-orm@0.31.2`, it supports [drizzle-orm/tidb-serverless](https://orm.drizzle.team/docs/get-started-mysql#tidb-serverless), enabling you to use Drizzle over HTTPS with [TiDB Cloud serverless driver](/develop/serverless-driver.md).
 
 This tutorial describes how to use TiDB Cloud serverless driver with Drizzle in Node.js environments and edge environments.
 
@@ -97,7 +98,7 @@ To complete this tutorial, you need the following:
 
 1. Create a table in your TiDB Cloud Starter cluster.
 
-   You can use [SQL Editor in the TiDB Cloud console](/tidb-cloud/explore-data-with-chat2query.md) to execute SQL statements. Here is an example:
+   You can use [SQL Editor in the TiDB Cloud console](https://docs.pingcap.com/tidbcloud/explore-data-with-chat2query) to execute SQL statements. Here is an example:
 
    ```sql
    CREATE TABLE `test`.`users` (
@@ -207,7 +208,7 @@ To complete this tutorial, you need the following:
 
 1. Create a table in your TiDB Cloud Starter cluster.
 
-   You can use [SQL Editor in the TiDB Cloud console](/tidb-cloud/explore-data-with-chat2query.md) to execute SQL statements. Here is an example:
+   You can use [SQL Editor in the TiDB Cloud console](https://docs.pingcap.com/tidbcloud/explore-data-with-chat2query.md) to execute SQL statements. Here is an example:
 
    ```sql
    CREATE TABLE `test`.`users` (
@@ -273,4 +274,4 @@ To complete this tutorial, you need the following:
 ## What's next
 
 - Learn more about [Drizzle](https://orm.drizzle.team/docs/overview) and [drizzle-orm/tidb-serverless](https://orm.drizzle.team/docs/get-started-mysql#tidb-serverless).
-- Learn how to [integrate TiDB Cloud with Vercel](/tidb-cloud/integrate-tidbcloud-with-vercel.md).
+- Learn how to [integrate TiDB Cloud with Vercel](https://docs.pingcap.com/tidbcloud/integrate-tidbcloud-with-vercel).

@@ -1,9 +1,10 @@
 ---
-title: Connect to TiDB Cloud Starter with WordPress
+title: Integrate WordPress with TiDB Cloud Starter
 summary: Learn how to use TiDB Cloud Starter to run WordPress. This tutorial gives step-by-step guidance to run WordPress + TiDB Cloud Starter in a few minutes.
+aliases: ['/tidbcloud/dev-guide-wordpress/']
 ---
 
-# Connect to TiDB Cloud Starter with WordPress
+# Integrate WordPress with TiDB Cloud Starter
 
 TiDB is a MySQL-compatible database, TiDB Cloud Starter is a fully managed TiDB offering, and [WordPress](https://github.com/WordPress) is a free, open-source content management system (CMS) that lets users create and manage websites. WordPress is written in PHP and uses a MySQL database.
 
