@@ -3,10 +3,10 @@ title: Home
 hide_sidebar: true
 hide_commit: true
 hide_leftNav: true
-summary: TiDBドキュメントでは、データ移行やアプリケーション構築など、 TiDB CloudとTiDB Self-Managedの使用方法に関するガイドとリファレンスを提供しています。TiDB TiDB Cloudは、クラウドネイティブな分散SQLデータベースのパワーに簡単にアクセスできる、フルマネージドのDatabase-as-a-Service（データベース・アズ・ア・サービス）です。TiDBは、MySQLとの互換性、水平スケーラビリティ、高可用性を備えたオープンソースの分散SQLデータベースです。開発者は、アプリケーション開発に関するドキュメントにアクセスしたり、TiDB Playground、PingCAP Education、コミュニティ参加の機会などの追加リソースを活用したりできます。
+summary: TiDBドキュメントでは、データ移行やアプリケーション構築など、 TiDB CloudとTiDB Self-Managedの使用方法に関するガイドとリファレンスを提供しています。TiDB TiDB Cloudは、クラウドネイティブな分散SQLデータベースのパワーに簡単にアクセスできる、フルマネージドのDatabase-as-a-Service（DaaS）です。TiDBは、MySQLとの互換性、水平スケーラビリティ、高可用性を備えたオープンソースの分散SQLデータベースです。開発者は、アプリケーション開発に関するドキュメントにアクセスしたり、TiDB Playground、PingCAP Education、コミュニティ参加の機会などの追加リソースを活用したりできます。
 ---
 
-<DocHomeContainer title="TiDB ドキュメント" subTitle="Explore the how-to guides and references you need to use TiDB Cloud Starter, TiDB Cloud Dedicated and TiDB Self-Managed, migrate data, and build your applications on the database." ctaLabel="Start TiDB Cloud Starter for Free" ctaLink="https://tidbcloud.com/free-trial">
+<DocHomeContainer title="TiDB Documentation" subTitle="Explore the how-to guides and references you need to use TiDB Cloud Starter, TiDB Cloud Dedicated and TiDB Self-Managed, migrate data, and build your applications on the database." ctaLabel="Start TiDB Cloud Starter for Free" ctaLink="https://tidbcloud.com/free-trial">
 
 <DocHomeSection label="TiDB Cloud" anchor="tidb-cloud" id="tidb-cloud">
 
@@ -26,15 +26,15 @@ TiDB Cloudを簡単に使い始めるためのガイド。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidbcloud/dev-guide-overview" label="Developer Guide" icon="cloud-developer-mauve">
+<DocHomeCard href="/developer/" label="Developer Guide" icon="cloud-developer-mauve">
 
 アプリケーションを好みの言語やフレームワークに接続します。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidbcloud/vector-search-overview" label="Vector Search in TiDB Cloud Starter (Beta)" icon="cloud-vector-mauve">
+<DocHomeCard href="/ai/vector-search-overview" label="Vector Search (Beta)" icon="cloud-vector-mauve">
 
-AI アプリケーションを構築するには、 {TiDB Cloud Starter の Vector Search のネイティブ サポートを調べてください。
+TiDB Cloud Starter の Vector Search のネイティブ サポートを調べて、AI アプリケーションを構築します。
 
 </DocHomeCard>
 
@@ -76,13 +76,13 @@ TiDB Self-Managed を使い始めるための最も簡単な方法を説明し�
 
 <DocHomeCard href="/tidb/stable/production-deployment-using-tiup" label="Deploy a Local TiDB Cluster" icon="oss-deploy-blue">
 
-本番環境で TiDB をローカルにデプロイする方法を学習します。
+実本番環境で TiDB をローカルにデプロイする方法を学習します。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidb/stable/dev-guide-overview" label="Developer Guide" icon="oss-developer-blue">
+<DocHomeCard href="/developer/" label="Developer Guide" icon="oss-developer-blue">
 
-TiDB Self-Managed を使用するアプリケーション開発者向け。
+アプリケーションを好みの言語やフレームワークに接続します。
 
 </DocHomeCard>
 
