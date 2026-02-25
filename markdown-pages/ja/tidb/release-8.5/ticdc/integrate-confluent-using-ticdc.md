@@ -1,18 +1,18 @@
 ---
-title: Integrate Data with Confluent Cloud and Snowflake
+title: Integrate Data with Confluent Cloud, Snowflake, ksqlDB, and SQL Server
 summary: TiDB データを Confluent Cloud、Snowflake、ksqlDB、SQL Server にストリーミングする方法を学習します。
 ---
 
-# Confluent CloudとSnowflakeでデータを統合 {#integrate-data-with-confluent-cloud-and-snowflake}
+# Confluent Cloud、Snowflake、ksqlDB、SQL Server とデータを統合 {#integrate-data-with-confluent-cloud-snowflake-ksqldb-and-sql-server}
 
-Confluentは、強力なデータ統合機能を提供するApache Kafka互換のストリーミングデータプラットフォームです。このプラットフォームでは、ノンストップのリアルタイムストリーミングデータにアクセス、保存、管理できます。
+Confluentは、Apache Kafka互換のストリーミングデータプラットフォームであり、強力なデータ統合機能を提供します。このプラットフォームでは、ノンストップのリアルタイムストリーミングデータにアクセス、保存、管理できます。
 
 TiDB v6.1.0以降、TiCDCはAvro形式でConfluentへの増分データのレプリケーションをサポートします。本ドキュメントでは、 [TiCDC](/ticdc/ticdc-overview.md)使用してTiDBの増分データをConfluentにレプリケーションし、さらにConfluent Cloud経由でSnowflake、ksqlDB、SQL Serverにデータをレプリケーションする方法を紹介します。本ドキュメントの構成は以下のとおりです。
 
 1.  TiCDC が組み込まれた TiDB クラスターを迅速に展開します。
 2.  TiDB から Confluent Cloud にデータを複製する変更フィードを作成します。
 3.  Confluent Cloud から Snowflake、ksqlDB、SQL Server にデータを複製するコネクタを作成します。
-4.  go-tpc を使用して TiDB にデータを書き込み、Snowflake、ksqlDB、SQL Server でのデータの変更を観察します。
+4.  go-tpc を使用して TiDB にデータを書き込み、Snowflake、ksqlDB、SQL Server のデータの変更を観察します。
 
 上記の手順はラボ環境で実行されています。これらの手順を参考に、本番環境にクラスターをデプロイすることもできます。
 
@@ -30,7 +30,7 @@ TiDB v6.1.0以降、TiCDCはAvro形式でConfluentへの増分データのレプ
     tiup status
     ```
 
-    TiUPがまだインストールされていない場合は、 [TiUPをインストールする](/tiup/tiup-overview.md#install-tiup)を参照してください。本番環境では、 [TiCDCをデプロイ](/ticdc/deploy-ticdc.md)手順に従って TiCDC をデプロイできます。
+    TiUPがまだインストールされていない場合は、 [TiUPをインストールする](/tiup/tiup-overview.md#install-tiup)を参照してください。実本番環境では、 [TiCDCをデプロイ](/ticdc/deploy-ticdc.md)の手順に従って TiCDC を展開できます。
 
 2.  Confluent Cloud を登録し、Confluent クラスターを作成します。
 
@@ -40,7 +40,7 @@ TiDB v6.1.0以降、TiCDCはAvro形式でConfluentへの増分データのレプ
 
 1.  クラスター API キーを作成します。
 
-    [コンフルエントクラウド](https://confluent.cloud)にサインインします。**データ統合**&gt; **APIキー**&gt;**キーの作成**を選択します。表示される**APIキーのスコープの選択**ページで、**グローバルアクセス**を選択します。
+    [コンフルエントクラウド](https://confluent.cloud)にサインインします。**データ統合**&gt; **APIキー**&gt;**キーの作成 を**選択します。表示される**APIキーのスコープの選択**ページで、**グローバルアクセス**を選択します。
 
     作成後、以下に示すようにキー ペア ファイルが生成されます。
 
@@ -63,7 +63,7 @@ TiDB v6.1.0以降、TiCDCはAvro形式でConfluentへの増分データのレプ
 
 3.  スキーマ レジストリ API キーを作成します。
 
-    Confluent Cloud Consoleで、 **「スキーマレジストリ」** &gt; **「API認証情報」**を選択します。 **「編集」を**クリックし、 **「キーの作成」を**クリックします。
+    Confluent Cloud Console で、 **「スキーマレジストリ」** &gt; **「API 認証情報」**を選択します。 **「編集」**をクリックし、 **「キーの作成」を**クリックします。
 
     作成後、次に示すようにキー ペア ファイルが生成されます。
 
@@ -73,9 +73,9 @@ TiDB v6.1.0以降、TiCDCはAvro形式でConfluentへの増分データのレプ
         API secret:
         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-    この手順はConfluent CLIを使用して実行することもできます。詳細については[Confluent CLI を Confluent Cloud クラスタに接続する](https://docs.confluent.io/confluent-cli/current/connect.html)参照してください。
+    この手順はConfluent CLIを使用して実行することもできます。詳細については[Confluent CLI を Confluent Cloudクラスタに接続する](https://docs.confluent.io/confluent-cli/current/connect.html)参照してください。
 
-### ステップ3. Kafka の変更フィードを作成する {#step-3-create-a-kafka-changefeed}
+### ステップ3. Kafkaの変更フィードを作成する {#step-3-create-a-kafka-changefeed}
 
 1.  changefeed 構成ファイルを作成します。
 
@@ -111,7 +111,7 @@ TiDB v6.1.0以降、TiCDCはAvro形式でConfluentへの増分データのレプ
 
     -   コマンドを実行して、変更フィードを作成します。
 
-        -   変更フィードが正常に作成されると、変更フィード ID などの変更フィード情報が次のように表示されます。
+        -   changefeed が正常に作成されると、以下に示すように、changefeed ID などの changefeed 情報が表示されます。
 
             ```shell
             Create changefeed successfully!
@@ -119,7 +119,7 @@ TiDB v6.1.0以降、TiCDCはAvro形式でConfluentへの増分データのレプ
             Info: {... changfeed info json struct ...}
             ```
 
-        -   コマンド実行後に結果が返されない場合は、コマンドを実行したサーバーとConfluent Cloud間のネットワーク接続を確認してください。詳細は[Confluent Cloudへの接続をテストする](https://docs.confluent.io/cloud/current/networking/testing.html)参照してください。
+        -   コマンドを実行しても結果が返されない場合は、コマンドを実行したサーバーとConfluent Cloud間のネットワーク接続を確認してください。詳細は[Confluent Cloudへの接続をテストする](https://docs.confluent.io/cloud/current/networking/testing.html)参照してください。
 
 3.  changefeed を作成した後、次のコマンドを実行して changefeed のステータスを確認します。
 
@@ -127,7 +127,7 @@ TiDB v6.1.0以降、TiCDCはAvro形式でConfluentへの増分データのレプ
     tiup cdc:v<CLUSTER_VERSION> cli changefeed list --server="http://127.0.0.1:8300"
     ```
 
-    チェンジフィードを管理するには、 [TiCDC の変更フィードを管理する](/ticdc/ticdc-manage-changefeed.md)を参照してください。
+    チェンジフィードを管理するには、 [TiCDC チェンジフィードを管理する](/ticdc/ticdc-manage-changefeed.md)を参照してください。
 
 ### ステップ4. 変更ログを生成するためにデータを書き込む {#step-4-write-data-to-generate-change-logs}
 
@@ -135,7 +135,7 @@ TiDB v6.1.0以降、TiCDCはAvro形式でConfluentへの増分データのレプ
 
 1.  サービスのワークロードをシミュレートします。
 
-    ラボ環境で変更ログを生成するには、go-tpc を使用して TiDB クラスターにデータを書き込むことができます。具体的には、以下のコマンドを実行して TiDB クラスターにデータベース`tpcc`作成します。次に、 TiUP bench を使用してこの新しいデータベースにデータを書き込みます。
+    ラボ環境で変更ログを生成するには、go-tpc を使用して TiDB クラスターにデータを書き込むことができます。具体的には、以下のコマンドを実行して TiDB クラスターにデータベース`tpcc`を作成します。次に、 TiUP bench を使用してこの新しいデータベースにデータを書き込みます。
 
     ```shell
     tiup bench tpcc -H 127.0.0.1 -P 4000 -D tpcc --warehouses 4 prepare
@@ -148,7 +148,7 @@ TiDB v6.1.0以降、TiCDCはAvro形式でConfluentへの増分データのレプ
 
     ![Confluent topics](https://docs-download.pingcap.com/media/images/docs/integrate/confluent-topics.png)
 
-    Confluent Cloud コンソールで、 **「トピック」**をクリックします。対象のトピックが作成され、データを受信していることがわかります。この時点で、TiDB データベースの増分データが Confluent Cloud に正常に複製されています。
+    Confluent Cloud コンソールで、 **「トピック」**をクリックします。対象のトピックが作成され、データを受信して​​いることがわかります。この時点で、TiDB データベースの増分データが Confluent Cloud に正常に複製されています。
 
 ## Snowflakeとデータを統合する {#integrate-data-with-snowflake}
 
@@ -156,7 +156,7 @@ Snowflakeはクラウドネイティブなデータウェアハウスです。Co
 
 ### 前提条件 {#prerequisites}
 
--   Snowflakeクラスタの登録と作成が完了しました[Snowflakeを使い始める](https://docs.snowflake.com/en/user-guide-getting-started.html)参照してください。
+-   Snowflakeクラスターの登録と作成が完了しました[Snowflakeを使い始める](https://docs.snowflake.com/en/user-guide-getting-started.html)参照してください。
 -   Snowflakeクラスタに接続する前に、クラスタ用の秘密鍵を生成しておきます。1 [キーペア認証とキーペアローテーション](https://docs.snowflake.com/en/user-guide/key-pair-auth.html)参照してください。
 
 ### 統合手順 {#integration-procedure}
@@ -169,7 +169,7 @@ Snowflakeはクラウドネイティブなデータウェアハウスです。Co
 
     ![Add snowflake sink connector](https://docs-download.pingcap.com/media/images/docs/integrate/add-snowflake-sink-connector.png)
 
-3.  Snowflakeに複製するトピックを選択してください。次のページへ進んでください。
+3.  Snowflakeにレプリケートするトピックを選択してください。次のページに進みます。
 
     ![Configuration](https://docs-download.pingcap.com/media/images/docs/integrate/configuration.png)
 
@@ -177,7 +177,7 @@ Snowflakeはクラウドネイティブなデータウェアハウスです。Co
 
     ![Configuration](https://docs-download.pingcap.com/media/images/docs/integrate/configuration.png)
 
-5.  **コンフィグレーション**ページで、**入力Kafkaレコード値の形式**と**入力Kafkaレコードキーの形式の**両方に`AVRO`選択します。次に、 **「続行」**をクリックします。コネクタが作成され、ステータスが**「実行中」**になるまでお待ちください。これには数分かかる場合があります。
+5.  **コンフィグレーション**ページで、**入力Kafkaレコード値の形式**と**入力Kafkaレコードキーの形式**の両方に`AVRO`選択します。次に、 **「続行」**をクリックします。コネクタが作成され、ステータスが**「実行中」**になるまでお待ちください。これには数分かかる場合があります。
 
     ![Data preview](https://docs-download.pingcap.com/media/images/docs/integrate/data-preview.png)
 
@@ -185,7 +185,7 @@ Snowflakeはクラウドネイティブなデータウェアハウスです。Co
 
 ### SnowflakeでTiDBテーブルのデータレプリカを作成する {#create-data-replicas-of-tidb-tables-in-snowflake}
 
-前のセクションでは、TiDB増分データの変更ログがSnowflakeに複製されました。本セクションでは`UPDATE`これらの変更ログをSnowflakeのTASK機能とSTREAM機能を用いて、イベントタイプ`INSERT`に応じて処理し、上流と同じ構造のテーブルに書き込むことで、SnowflakeにTiDBテーブルのデータレプリカを作成する方法について説明します。以下では`DELETE` `ITEM`テーブルを例に説明します。
+前のセクションでは、TiDB増分データの変更ログがSnowflakeに複製されました。本セクションでは`UPDATE` `INSERT`応じて処理し、上流と同じ構造のテーブルに書き込むことで、SnowflakeにTiDBテーブルのデータレプリカを作成する方法について説明します。以下では`DELETE`イベントタイプ`ITEM`のテーブルを例に説明します。
 
 `ITEM`テーブルの構造は次のとおりです。
 
@@ -215,7 +215,7 @@ Snowflakeには、Confluent Snowflake Sink Connectorによって自動的に作�
             i_data VARCHAR
         );
 
-2.  `TIDB_TEST_ITEM`のストリームを作成し、 `append_only`を`true`に次のように設定します。
+2.  `TIDB_TEST_ITEM`ストリームを作成し、 `append_only`から`true`を次のように設定します。
 
         create or replace stream TEST_ITEM_STREAM on table TIDB_TEST_ITEM append_only=true;
 
@@ -246,7 +246,7 @@ Snowflakeには、Confluent Snowflake Sink Connectorによって自動的に作�
                   (v:i_data, v:i_id, v:i_im_id, v:i_name, v:i_price)
         ;
 
-    上の例では、Snowflakeの`MERGE INTO`ステートメントを使用して、ストリームとテーブルを特定の条件で一致させ、レコードの削除、更新、挿入などの対応する操作を実行しています。この例では、以下の3つのシナリオで3つの`WHERE`節が使用されています。
+    上の例では、Snowflakeの`MERGE INTO`のステートメントを使用して、ストリームとテーブルを特定の条件で一致させ、レコードの削除、更新、挿入などの対応する操作を実行しています。この例では、以下の3つのシナリオで3つの`WHERE`節が使用されています。
 
     -   ストリームとテーブルが一致し、ストリーム内のデータが空の場合、テーブル内のレコードを削除します。
     -   ストリームとテーブルが一致し、ストリーム内のデータが空でない場合は、テーブル内のレコードを更新します。
@@ -279,7 +279,7 @@ Snowflakeには、Confluent Snowflake Sink Connectorによって自動的に作�
                   (v:i_data, v:i_id, v:i_im_id, v:i_name, v:i_price)
         ;
 
-これで、特定のETL機能を備えたデータチャネルが確立されました。このデータチャネルを通じて、TiDBの増分データ変更ログをSnowflakeに複製し、TiDBのデータレプリカを維持し、Snowflakeでデータを使用できるようになります。
+これで、特定のETL機能を備えたデータチャネルが確立されました。このデータチャネルを通じて、TiDBの増分データ変更ログをSnowflakeに複製し、TiDBのデータレプリカを維持し、Snowflakeでデータを使用することができます。
 
 最後のステップは、 `TIDB_TEST_ITEM`テーブル内の不要なデータを定期的にクリーンアップすることです。
 
@@ -298,9 +298,9 @@ ksqlDBは、ストリーム処理アプリケーション向けに特別に構�
 
 1.  Confluent Cloud Console で**ksqlDB**を選択し、指示に従って ksqlDB クラスターを作成します。
 
-    ksqlDB クラスタのステータスが**「実行中」に**なるまでお待ちください。このプロセスには数分かかります。
+    ksqlDB クラスターのステータスが**「実行中」**になるまでお待ちください。このプロセスには数分かかります。
 
-2.  ksqlDB エディターで次のコマンドを実行して、トピック`tidb_tpcc_orders`にアクセスするためのストリームを作成します。
+2.  ksqlDB エディターで次のコマンドを実行して、 `tidb_tpcc_orders`トピックにアクセスするためのストリームを作成します。
 
     ```sql
     CREATE STREAM orders (o_id INTEGER, o_d_id INTEGER, o_w_id INTEGER, o_c_id INTEGER, o_entry_d STRING, o_carrier_id INTEGER, o_ol_cnt INTEGER, o_all_local INTEGER) WITH (kafka_topic='tidb_tpcc_orders', partitions=3, value_format='AVRO');
@@ -340,7 +340,7 @@ Microsoft SQL Server は、Microsoft が開発したリレーショナルデー�
     (6 rows affected)
     ```
 
-2.  Confluent Cloud Console で、 **「データ統合」** &gt; **「コネクタ」** &gt; **「Microsoft SQL Server シンク」**を選択します。以下のページが表示されます。
+2.  Confluent Cloud Console で、 **「データ統合」** &gt; **「コネクタ」** &gt; **「Microsoft SQL Server Sink」**を選択します。以下のページが表示されます。
 
     ![Topic selection](https://docs-download.pingcap.com/media/images/docs/integrate/topic-selection.png)
 
@@ -352,15 +352,15 @@ Microsoft SQL Server は、Microsoft が開発したリレーショナルデー�
 
 5.  **「コンフィグレーション」**ページで次のフィールドを構成し、 **「続行」**をクリックします。
 
-    | 分野               | 価値     |
-    | :--------------- | :----- |
-    | 入力Kafkaレコード値の形式  | アブロ    |
-    | 挿入モード            | アップサート |
-    | テーブルの自動作成        | 真実     |
-    | 列の自動追加           | 真実     |
-    | PKモード            | レコードキー |
-    | 入力Kafkaレコードキーの形式 | アブロ    |
-    | null の場合に削除      | 真実     |
+    | 分野              | 価値     |
+    | :-------------- | :----- |
+    | 入力Kafkaレコード値の形式 | アブロ    |
+    | 挿入モード           | アップサート |
+    | テーブルの自動作成       | 真実     |
+    | 列の自動追加          | 真実     |
+    | PKモード           | レコードキー |
+    | 入力Kafkaレコードキー形式 | アブロ    |
+    | null の場合に削除     | 真実     |
 
 6.  設定後、 **「続行」**をクリックします。コネクタのステータスが**「実行中」**になるまで待ちます。これには数分かかる場合があります。
 
