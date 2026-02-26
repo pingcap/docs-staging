@@ -80,7 +80,7 @@ Query OK, 0 rows affected (0.01 sec)
 
 
 ```sql
-set config tikv `log-level`='warn';
+set config tikv `log-level`='warn'; -- This command fails because `log-level` is incorrect. Use `log.level` instead.
 ```
 
 ```sql
