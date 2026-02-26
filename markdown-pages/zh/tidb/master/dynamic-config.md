@@ -81,7 +81,7 @@ Query OK, 0 rows affected (0.01 sec)
 
 
 ```sql
-set config tikv `log-level`='warn';
+set config tikv `log-level`='warn'; -- The correct config item is `log.level`.
 ```
 
 ```sql
