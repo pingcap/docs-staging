@@ -53,13 +53,6 @@ This document is an overview of the commands used for TiDB cluster management.
     kubectl -n ${namespace} get restore ${name}
     ```
 
-* View TidbClusterAutoScaler:
-
-    
-    ```shell
-    kubectl -n ${namespace} get tidbclusterautoscaler ${name}
-    ```
-
 * View TidbInitializer:
 
     
@@ -366,13 +359,6 @@ This document is an overview of the commands used for TiDB cluster management.
     
     ```shell
     kubectl delete -n ${namespace} tidbmonitor ${tidb_monitor_name}
-    ```
-
-* Delete TidbClusterAutoScaler:
-
-    
-    ```shell
-    kubectl -n ${namespace} delete tidbclusterautoscaler ${name}
     ```
 
 ### More
