@@ -3,44 +3,38 @@ title: PingCAP Documentation
 hide_sidebar: true
 hide_commit: true
 hide_leftNav: true
-summary: TiDB ドキュメントには、データ移行やアプリケーション構築など、 TiDB Cloudと TiDB Self-Managed の使用方法ガイドとリファレンスが用意されています。TiDB TiDB Cloud は、クラウドネイティブの分散 SQL データベースのパワーに簡単にアクセスできる、完全に管理された Database-as-a-Service です。TiDB は、MySQL 互換性、水平スケーラビリティ、高可用性を備えたオープンソースの分散 SQL データベースです。開発者は、アプリケーション開発に関するドキュメントにアクセスし、TiDB Playground、PingCAP Education、コミュニティ参加の機会などの追加リソースを調べることができます。
+summary: TiDB ドキュメントでは、データ移行やアプリケーション構築を含む、TiDB Cloud および TiDB Self-Managed を使用するためのハウツーガイドやリファレンスを提供しています。TiDB Cloud はフルマネージドの Database-as-a-Service であり、クラウドネイティブな分散型 SQL データベースの機能に簡単にアクセスできます。TiDB は、MySQL 互換性、水平方向のスケーラビリティ、高可用性を備えたオープンソースの分散型 SQL データベースです。開発者はアプリケーション開発のドキュメントにアクセスできるほか、TiDB Playground、PingCAP Education、コミュニティ参加の機会など、追加のリソースを確認できます。
 ---
 
-<DocHomeContainer title="TiDB ドキュメント" subTitle="TiDB Cloud および TiDB Self-Managed を使い始めるためのハウツーガイドやリファレンスを参照し、データをスムーズに移行しながら、アプリケーションを簡単に構築できます。" ctaLabel="Start TiDB Cloud for Free" ctaLink="https://tidbcloud.com/free-trial">
+<DocHomeContainer title="TiDB ドキュメント" subTitle="TiDB Cloud および TiDB Self-Managed の利用開始、スムーズなデータ移行、およびアプリケーションの簡単な構築を行うためのハウツーガイドやリファレンスを探索します。" ctaLabel="無料で TiDB Cloud を始める" ctaLink="https://tidbcloud.com/free-trial">
 
 <DocHomeSection label="TiDB Cloud" anchor="tidb-cloud" id="tidb-cloud">
 
-TiDB Cloud は、TiDB の優れた機能すべてをクラウドに提供する、完全に管理された Database-as-a-Service (DBaaS) であり、データベースの複雑さではなくアプリケーションに集中できます。
+TiDB Cloud はフルマネージドの Database-as-a-Service (DBaaS) であり、TiDB の優れたすべての機能をクラウドにもたらします。データベースの複雑さを気にすることなく、アプリケーション開発に集中できます。
 
 <DocHomeCardContainer>
 
-<DocHomeCard href="/ja/tidbcloud/tidb-cloud-intro" label="What is TiDB Cloud" icon="cloud-product-mauve">
+<DocHomeCard href="/ja/tidbcloud/tidb-cloud-intro" label="TiDB Cloud とは" icon="cloud-product-mauve">
 
-使いやすいデータベースとしてのTiDB Cloudとその主な機能について学びます。
-
-</DocHomeCard>
-
-<DocHomeCard href="/ja/tidbcloud/tidb-cloud-quickstart" label="Get started with TiDB Cloud" icon="cloud-getstarted-mauve">
-
-TiDB Cloudを簡単に使い始めるためのガイド。
+使いやすいデータベースとしての TiDB Cloud の概要とその主な機能について学びます。
 
 </DocHomeCard>
 
-<DocHomeCard href="/ja/tidbcloud/dev-guide-overview" label="Developer Guide" icon="cloud-developer-mauve">
+<DocHomeCard href="/ja/tidbcloud/tidb-cloud-quickstart" label="TiDB Cloud を始める" icon="cloud-getstarted-mauve">
 
-アプリケーションを好みの言語やフレームワークに接続します。
-
-</DocHomeCard>
-
-<DocHomeCard href="/ja/tidbcloud/vector-search-overview" label="Vector Search in TiDB Cloud (Beta)" icon="cloud-vector-mauve">
-
-TiDB Cloud の Vector Search のネイティブ サポートを調べて、AI アプリケーションを構築します。
+TiDB Cloud を簡単に始めるためのガイド。
 
 </DocHomeCard>
 
-<DocHomeCard href="/ja/tidbcloud/tidb-cloud-roadmap" label="TiDB Cloud Roadmap" icon="cloud-roadmap-mauve">
+<DocHomeCard href="/ja/developer/" label="開発者ガイド" icon="cloud-developer-mauve">
 
-TiDB Cloudの計画されている機能とリリース。
+お好みの言語とフレームワークを使用して、アプリケーションを接続します。
+
+</DocHomeCard>
+
+<DocHomeCard href="/ja/ai/vector-search-overview" label="ベクトル検索 (ベータ版)" icon="cloud-vector-mauve">
+
+TiDB Cloud でのベクトル検索のネイティブサポートを活用し、AI アプリケーションを構築します。
 
 </DocHomeCard>
 
@@ -58,101 +52,95 @@ TiDB Cloudの計画されている機能とリリース。
 
 -->
 
-TiDB は、ハイブリッド トランザクションおよび分析処理 (HTAP) ワークロードをサポートするオープン ソースの分散 SQL データベースです。MySQL と互換性があり、水平スケーラビリティ、強力な一貫性、高可用性を備えています。TiDB は、セルフホスト環境またはクラウドにデプロイできます。
+TiDB は、Hybrid Transactional and Analytical Processing (HTAP) ワークロードをサポートするオープンソースの NewSQL データベースです。MySQL との互換性があり、水平方向のスケーラビリティ、強力な一貫性、高可用性を特徴としています。TiDB はセルフホスト環境またはクラウド上にデプロイできます。
 
 <DocHomeCardContainer>
 
-<DocHomeCard href="/ja/tidb/stable/overview" label="What is TiDB Self-Managed" icon="oss-product-blue">
+<DocHomeCard href="/ja/tidb/stable/overview" label="TiDB Self-Managed とは" icon="oss-product-blue">
 
-TiDB Self-Managed とその主な機能について学びます。
-
-</DocHomeCard>
-
-<DocHomeCard href="/ja/tidb/stable/quick-start-with-tidb" label="Get started with TiDB Self-Managed" icon="oss-getstarted-blue">
-
-TiDB Self-Managed を使い始めるための最も簡単な方法を説明します。
+TiDB Self-Managed の概要とその主な機能について学びます。
 
 </DocHomeCard>
 
-<DocHomeCard href="/ja/tidb/stable/production-deployment-using-tiup" label="Deploy a Local TiDB Cluster" icon="oss-deploy-blue">
+<DocHomeCard href="/ja/tidb/stable/quick-start-with-tidb" label="TiDB Self-Managed を始める" icon="oss-getstarted-blue">
 
-本番環境で TiDB をローカルにデプロイする方法を学習します。
-
-</DocHomeCard>
-
-<DocHomeCard href="/ja/tidb/stable/dev-guide-overview" label="Developer Guide" icon="oss-developer-blue">
-
-TiDB Self-Managed を使用するアプリケーション開発者向け。
+TiDB Self-Managed を最も早く始めるための手順を説明します。
 
 </DocHomeCard>
 
-<DocHomeCard href="/ja/tidb/stable/mysql-compatibility" label="MySQL Compatibility" icon="oss-mysql-blue">
+<DocHomeCard href="/ja/tidb/stable/production-deployment-using-tiup" label="ローカル TiDB クラスターのデプロイ" icon="oss-deploy-blue">
 
-TiDB は、MySQL プロトコルおよびMySQL 5.7と MySQL 8.0 の共通機能と構文と高い互換性があります。
+本番環境向けに TiDB をローカルにデプロイする方法を学びます。
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidb/dev/tidb-roadmap" label="TiDB Self-Managed Roadmap" icon="oss-roadmap-blue">
+<DocHomeCard href="/ja/developer/" label="開発者ガイド" icon="oss-developer-blue">
 
-TiDB Self-Managed の計画されている機能とリリース日。
+お好みの言語とフレームワークを使用して、アプリケーションを接続します。
+
+</DocHomeCard>
+
+<DocHomeCard href="/ja/tidb/stable/mysql-compatibility" label="MySQL 互換性" icon="oss-mysql-blue">
+
+TiDB は、MySQL プロトコル、および MySQL 5.7 と MySQL 8.0 の一般的な機能や構文と高い互換性があります。
 
 </DocHomeCard>
 
 </DocHomeCardContainer>
 
-オープンソースの TiDB プラットフォームは Apache 2.0 ライセンスの下でリリースされ、コミュニティによってサポートされています[GitHubでビュー](https://github.com/pingcap/tidb)
+オープンソースの TiDB プラットフォームは、Apache 2.0 ライセンスに基づいてリリースされており、コミュニティによってサポートされています。[GitHub で見る](https://github.com/pingcap/tidb)
 
 </DocHomeSection>
 
-<DocHomeSection label="More Resources" anchor="resources" id="resources">
+<DocHomeSection label="その他のリソース" anchor="resources" id="resources">
 
 <DocHomeCardContainer>
 
-<DocHomeCard href="https://www.pingcap.com/education/" label="Learning Center" icon="global-tidb-education">
+<DocHomeCard href="https://pingcap.co.jp/education/" label="学習センター" icon="global-tidb-education">
 
-適切に設計されたオンライン コースとインストラクター主導のトレーニングを通じて、 TiDB Cloudと TiDB Self-Managed を学習します。
-
-</DocHomeCard>
-
-<DocHomeCard href="https://www.pingcap.com/blog/" label="Blog" icon="global-tidb-blog">
-
-TiDB Cloudと TiDB Self-Managed に関する優れた記事をお読みください。
+適切に設計されたオンラインコースやインストラクター主導のトレーニングを通じて、TiDB Cloud と TiDB Self-Managed について学びます。
 
 </DocHomeCard>
 
-<DocHomeCard href="https://www.pingcap.com/event/" label="Events" icon="global-tidb-events">
+<DocHomeCard href="https://pingcap.co.jp/blog/" label="ブログ" icon="global-tidb-blog">
 
-PingCAP とコミュニティが主催するイベントについて学びます。
-
-</DocHomeCard>
-
-<DocHomeCard href="https://www.pingcap.com/ebook-whitepaper/" label="eBooks & Papers" icon="global-tidb-ebook">
-
-電子書籍と論文をダウンロードしてください。
+TiDB Cloud および TiDB Self-Managed に関する優れた記事をお読みください。
 
 </DocHomeCard>
 
-<DocHomeCard href="https://www.pingcap.com/videos/" label="Videos" icon="global-tidb-video">
+<DocHomeCard href="https://pingcap.co.jp/event/" label="イベント" icon="global-tidb-events">
 
-TiDB とさまざまな使用例を説明する短いビデオのコンピレーションをご覧ください。
+PingCAP やコミュニティが主催するイベントについて調べます。
+
+</DocHomeCard>
+
+<DocHomeCard href="https://pingcap.co.jp/ebook-whitepaper/" label="eBook とホワイトペーパー" icon="global-tidb-ebook">
+
+eBook やホワイトペーパーをダウンロードします。
+
+</DocHomeCard>
+
+<DocHomeCard href="https://pingcap.co.jp/videos/" label="動画" icon="global-tidb-video">
+
+TiDB やさまざまなユースケースについて解説する短い動画のまとめをご覧ください。
 
 </DocHomeCard>
 
 <DocHomeCard href="https://ossinsight.io/" label="OSS Insight" icon="global-tidb-ossinsight">
 
-TiDB Cloudを活用した、あらゆる GitHub リポジトリの詳細な分析を提供する強力な洞察ツールです。
+TiDB Cloud を活用した、あらゆる GitHub リポジトリの詳細な分析を提供する強力なインサイトツールです。
 
 </DocHomeCard>
 
 <DocHomeCard href="https://play.tidbcloud.com/?utm_source=docs&utm_medium=home_more_resources" label="Playground" icon="global-tidb-playground">
 
-登録なしで TiDB の機能を体験してください。
+登録不要で TiDB の機能を体験できます。
 
 </DocHomeCard>
 
-<DocHomeCard href="https://discord.gg/DQZ2dy3cuc?utm_source=doc" label="Join our community on Discord" icon="global-tidb-discord" colspan="2" actionBtnLabel="Join Community" ctaGraphic="global-iso-hand">
+<DocHomeCard href="https://discord.gg/DQZ2dy3cuc?utm_source=doc" label="Discord コミュニティに参加する" icon="global-tidb-discord" colspan="2" actionBtnLabel="コミュニティに参加する" ctaGraphic="global-iso-hand">
 
-Discord に参加するか、貢献者になってください。
+Discord に参加するか、コントリビューターになってください。
 
 </DocHomeCard>
 
