@@ -8,6 +8,24 @@ aliases: ['/tidbcloud/supported-tidb-versions','/tidbcloud/release-notes']
 
 This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-cloud/) in 2026.
 
+## March 3, 2026
+
+**General changes**
+
+- **TiDB Cloud Dedicated**
+
+    - Changefeeds for Amazon S3 sinks support using AWS Role ARN for authentication.
+
+        You can now configure changefeeds for Amazon S3 sinks using an IAM Role ARN on [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) clusters, in addition to the existing AK/SK authentication method. This feature enhances security by enabling short-lived credentials and automatic rotation, simplifies secret management, and supports least-privileged practices.
+
+        For more information, see [Sink to Cloud Storage](/tidb-cloud/changefeed-sink-to-cloud-storage.md).
+
+    - Refine storage usage calculation for TiKV and TiFlash.
+
+        The calculation of TiKV and TiFlash storage usage for metrics and alerting systems now incorporates WAL files and temporary files, providing more accurate capacity and usage monitoring.
+
+        For more information, see [TiDB Cloud Built-in Metrics](/tidb-cloud/built-in-monitoring.md).
+
 ## February 10, 2026
 
 **General changes**
@@ -22,7 +40,7 @@ This page lists the release notes of [TiDB Cloud](https://www.pingcap.com/tidb-c
 
         Built-in alerting enables you to subscribe to receive instant alerts through email, Slack, Zoom, Flashduty, and PagerDuty. You can also customize alerts by defining specific thresholds for each alert type.
 
-        For more information, see [TiDB Cloud Built-in Alerting](/tidb-cloud/monitor-built-in-alerting.md).
+        For more information, see [TiDB Cloud Built-in Alerting](https://docs.pingcap.com/tidbcloud/monitor-built-in-alerting/?plan=essential).
 
 - **TiDB Cloud Dedicated**
 

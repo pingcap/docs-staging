@@ -58,7 +58,7 @@ Quick access: [Quick start](https://docs.pingcap.com/tidb/v8.4/quick-start-with-
   </tr>
   <tr>
     <td rowspan="1">SQL</td>
-    <td><a href="https://docs.pingcap.com/tidb/v8.4/vector-search-overview">Vector search</a> (experimental)</td>
+    <td><a href="https://docs.pingcap.com/ai/vector-search-overview">Vector search</a> (experimental)</td>
     <td>Vector search is a search method based on data semantics, which provides more relevant search results. As one of the core functions of AI and large language models (LLMs), vector search can be used in various scenarios such as Retrieval-Augmented Generation (RAG), semantic search, and recommendation systems.</td>
   </tr>
   <tr>
@@ -494,4 +494,4 @@ We would like to thank the following contributors from the TiDB community:
 - [samba-rgb](https://github.com/samba-rgb) (First-time contributor)
 - [SeaRise](https://github.com/SeaRise)
 - [tuziemon](https://github.com/tuziemon) (First-time contributor)
-- [xyproto](https://github.com/xyproto) (First-time contributor)
+- [xyproto](https://github.com/xyproto) (First-time contributor) 
