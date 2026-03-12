@@ -31,6 +31,7 @@ Commands:
 Options:
   -h, --help                 Show help                                                                         [boolean]
       --version              Show version number                                                               [boolean]
+      --branch-mapping       Map source ref to destination folder, e.g. feature/foo:release-8.5                [array]
       --destination, --dest  The root directory where documents are stored          [string] [default: "markdown-pages"]
       --config               Specify the config                                          [string] [default: "docs.json"]
   -d, --debug                Print debug information at runtime                               [boolean] [default: false]
@@ -48,6 +49,8 @@ The last, `[ref]` is the branch of the repo. In this example, we want to downloa
 ## Rate limiting
 
 You can put `GITHUB_AUTHORIZATION_TOKEN=token` in an `.env` file to avoid the rate limit.
+
+You can also set `BRANCH_MAPPING=feature/preview-cloud-lake:release-8.5` (or `DOCS_DOWNLOAD_BRANCH_MAPPING`) to remap a source branch to a destination folder when downloading docs.
 
 ## License
 

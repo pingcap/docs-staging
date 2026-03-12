@@ -23,6 +23,7 @@ on:
         required: false
 
 env:
+  BRANCH_MAPPING: "feature/preview-cloud-lake:release-8.5"
   EN_CLOUD_BRANCH: feature/preview-cloud-lake
   JA_CLOUD_BRANCH: i18n-ja-release-8.5
   ZH_CLOUD_BRANCH: i18n-zh-release-8.5
@@ -68,7 +69,7 @@ jobs:
           if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.JA_CLOUD_BRANCH }} ]
           then
           yarn download:tidb-cloud:ja --ref ${{ inputs.branch }}
-          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }} --branch-mapping "${{ env.BRANCH_MAPPING }}"
           exit 0
           fi
 
@@ -76,19 +77,19 @@ jobs:
           if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.EN_CLOUD_BRANCH }} ]
           then
           yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
-          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }} --branch-mapping "${{ env.BRANCH_MAPPING }}"
           exit 0
           fi
 
           # docs-dm and docs-tidb-operator need specify language
           if [ ${{ inputs.repo }} = "pingcap/docs-dm" ] || [ ${{ inputs.repo }} = "pingcap/docs-tidb-operator" ]
           then
-          yarn download ${{ inputs.repo }} en --ref ${{ inputs.branch }}
-          yarn download ${{ inputs.repo }} zh --ref ${{ inputs.branch }}
+          yarn download ${{ inputs.repo }} en --ref ${{ inputs.branch }} --branch-mapping "${{ env.BRANCH_MAPPING }}"
+          yarn download ${{ inputs.repo }} zh --ref ${{ inputs.branch }} --branch-mapping "${{ env.BRANCH_MAPPING }}"
           exit 0
           fi
 
-          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }} --branch-mapping "${{ env.BRANCH_MAPPING }}"
 
       - name: Update all folder
         if: ${{ inputs.full }}

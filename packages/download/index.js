@@ -20,24 +20,73 @@ import nPath from "path";
 import rimraf from "rimraf";
 import sig from "signale";
 
-const PREVIEW_TOP_NAVIGATION_REF = "feature/preview-top-navigation";
+const DEFAULT_BRANCH_MAPPINGS = {
+  "feature/preview-top-navigation": {
+    "pingcap/docs": "release-8.5",
+    "pingcap/docs-cn": "release-8.5",
+    "pingcap/docs-tidb-operator": "main",
+    "tidbcloud/dbaas-docs": "master",
+  },
+};
 
-function resolveDestRef(repo, ref) {
-  if (ref !== PREVIEW_TOP_NAVIGATION_REF) {
-    return ref;
+const BRANCH_MAPPING_ENV_KEYS = [
+  "BRANCH_MAPPING",
+  "DOCS_DOWNLOAD_BRANCH_MAPPING",
+];
+
+function normalizeBranchMappings(rawBranchMappings) {
+  if (!rawBranchMappings) {
+    return [];
   }
 
-  switch (repo) {
-    case "pingcap/docs":
-    case "pingcap/docs-cn":
-      return "release-8.5";
-    case "pingcap/docs-tidb-operator":
-      return "main";
-    case "tidbcloud/dbaas-docs":
-      return "master";
-    default:
-      return ref;
+  const mappingList = Array.isArray(rawBranchMappings)
+    ? rawBranchMappings
+    : [rawBranchMappings];
+
+  return mappingList
+    .flatMap((mapping) => String(mapping).split(/\r?\n|,/))
+    .map((mapping) => mapping.trim())
+    .filter(Boolean);
+}
+
+function parseBranchMappings(rawBranchMappings) {
+  return normalizeBranchMappings(rawBranchMappings).reduce((mappings, item) => {
+    const separatorIndex = item.indexOf(":");
+
+    if (separatorIndex === -1) {
+      sig.warn("Ignore invalid branch mapping:", item);
+      return mappings;
+    }
+
+    const sourceRef = item.slice(0, separatorIndex).trim();
+    const targetRef = item.slice(separatorIndex + 1).trim();
+
+    if (!sourceRef || !targetRef) {
+      sig.warn("Ignore invalid branch mapping:", item);
+      return mappings;
+    }
+
+    mappings[sourceRef] = targetRef;
+    return mappings;
+  }, {});
+}
+
+function getBranchMappings(argv) {
+  const envBranchMappings = BRANCH_MAPPING_ENV_KEYS.map(
+    (key) => process.env[key]
+  ).filter(Boolean);
+
+  return parseBranchMappings(
+    argv.branchMapping?.length ? argv.branchMapping : envBranchMappings
+  );
+}
+
+function resolveDestRef(repo, ref, branchMappings = {}) {
+  if (branchMappings[ref]) {
+    return branchMappings[ref];
   }
+
+  return DEFAULT_BRANCH_MAPPINGS[ref]?.[repo] ?? ref;
 }
 
 function genOptions(repo, config, dryRun) {
@@ -76,7 +125,7 @@ export function download(argv) {
   const { repo, path, ref, destination, config, dryRun } = argv;
   const dest = nPath.resolve(destination);
   const options = genOptions(repo, config, dryRun);
-  const destRef = resolveDestRef(repo, ref);
+  const destRef = resolveDestRef(repo, ref, getBranchMappings(argv));
 
   switch (repo) {
     case "pingcap/docs-cn":
@@ -198,7 +247,7 @@ export function sync(argv) {
   const { repo, ref, base, head, destination, config, dryRun } = argv;
   const dest = nPath.resolve(destination);
   const options = genOptions(repo, config, dryRun);
-  const destRef = resolveDestRef(repo, ref);
+  const destRef = resolveDestRef(repo, ref, getBranchMappings(argv));
 
   switch (repo) {
     case "pingcap/docs":

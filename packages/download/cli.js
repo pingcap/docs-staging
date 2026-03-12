@@ -80,6 +80,11 @@ const argv = yargs(hideBin(process.argv))
     }
   )
   .options({
+    'branch-mapping': {
+      desc: 'Map source ref to destination folder, e.g. feature/foo:release-8.5',
+      type: 'string',
+      array: true,
+    },
     destination: {
       alias: 'dest',
       desc: 'The root directory where documents are stored',
