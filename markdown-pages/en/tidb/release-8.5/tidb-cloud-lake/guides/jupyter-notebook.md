@@ -56,7 +56,7 @@ pip install pymysql
     jupyter notebook
     ```
 
-    This will start up Jupyter and your default browser should start (or open a new tab) to the following URL: http://localhost:8888/tree
+    This will start up Jupyter and your default browser should start (or open a new tab) to the following URL: <http://localhost:8888/tree>
 
     ![Jupyter Notebook file tree](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/integration-notebook-tree.png)
 
@@ -111,7 +111,7 @@ pip install sqlalchemy
 jupyter notebook
 ```
 
-This will start up Jupyter and your default browser should start (or open a new tab) to the following URL: http://localhost:8888/tree
+This will start up Jupyter and your default browser should start (or open a new tab) to the following URL: <http://localhost:8888/tree>
 
 ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/integration-notebook-tree.png)
 
@@ -178,7 +178,7 @@ pip install matplotlib
 jupyter notebook
 ```
 
-This will start up Jupyter and your default browser should start (or open a new tab) to the following URL: http://localhost:8888/tree
+This will start up Jupyter and your default browser should start (or open a new tab) to the following URL: <http://localhost:8888/tree>
 
 ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/integration-notebook-tree.png)
 
@@ -263,7 +263,7 @@ pip install sqlalchemy
 jupyter notebook
 ```
 
-This will start up Jupyter and your default browser should start (or open a new tab) to the following URL: http://localhost:8888/tree
+This will start up Jupyter and your default browser should start (or open a new tab) to the following URL: <http://localhost:8888/tree>
 
 ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/pricing-billing-notebook-tree.png)
 
