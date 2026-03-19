@@ -1,11 +1,11 @@
 ---
 title: System Functions
-summary: This page provides reference information for the system-related functions in Databend. These functions help you analyze and monitor the internal storage and performance aspects of your Databend deployment.
+summary: This page provides reference information for the system-related functions in TiDB Lake. These functions help you analyze and monitor the internal storage and performance aspects of your TiDB Lake deployment.
 ---
 
 # System Functions
 
-This page provides reference information for the system-related functions in Databend. These functions help you analyze and monitor the internal storage and performance aspects of your Databend deployment.
+This page provides reference information for the system-related functions in TiDB Lake. These functions help you analyze and monitor the internal storage and performance aspects of your TiDB Lake deployment.
 
 ## Table Metadata Functions
 

@@ -51,7 +51,7 @@ The inner product is fundamental in:
 
 > **Note:**
 >
-> This function performs vector computations within Databend and does not rely on external APIs.
+> This function performs vector computations within TiDB Lake and does not rely on external APIs.
 
 ## Examples
 

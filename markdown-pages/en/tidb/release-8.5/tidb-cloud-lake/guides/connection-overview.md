@@ -1,11 +1,11 @@
 ---
 title: Connect to TiDB Cloud Lake
-summary: TiDB Cloud Lake supports multiple connection methods to suit different use cases. All options below work with both **TiDB Cloud Lake** and **self-hosted Databend**.
+summary: TiDB Cloud Lake supports multiple connection methods to suit different use cases. All options below work with both **TiDB Cloud Lake** and **self-hosted TiDB Lake**.
 ---
 
 # Connect to TiDB Cloud Lake
 
-Databend supports multiple connection methods to suit different use cases. All options below work with both **Databend Cloud** and **self-hosted Databend**.
+TiDB Lake supports multiple connection methods to suit different use cases. All options below work with both **TiDB Cloud Lake** and **self-hosted TiDB Lake**.
 
 ## Quick Selection
 
@@ -19,12 +19,12 @@ Databend supports multiple connection methods to suit different use cases. All o
 
 | Deployment | Format |
 |------------|--------|
-| **Databend Cloud** | `databend://<user>:<pass>@<tenant>.gw.<region>.default.databend.com:443/<db>?warehouse=<name>` |
+| **TiDB Cloud Lake** | `databend://<user>:<pass>@<tenant>.gw.<region>.default.databend.com:443/<db>?warehouse=<name>` |
 | **Self-Hosted** | `databend://<user>:<pass>@<host>:<port>/<db>` |
 
 > **Tip:**
 >
-> - **Databend Cloud**: Log in → Click **Connect** → Copy the generated DSN
+> - **TiDB Cloud Lake**: Log in → Click **Connect** → Copy the generated DSN
 > - **Self-Hosted**: Use your server address with the configured user credentials
 
 ## SQL Clients

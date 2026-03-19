@@ -1,11 +1,11 @@
 ---
 title: MCP Client Integration
-summary: Databend MCP connects AI assistants to Databend via Model Context Protocol. Works with Claude Code, Codex, Cursor, Claude Desktop, VS Code, and other MCP-compatible clients.
+summary: "TiDB Lake MCP connects AI assistants to TiDB Lake via Model Context Protocol. Works with Claude Code, Codex, Cursor, Claude Desktop, VS Code, and other MCP-compatible clients."
 ---
 
 # MCP Client Integration
 
-[Databend MCP](https://github.com/databendlabs/mcp-databend) connects AI assistants to Databend via Model Context Protocol. Works with Claude Code, Codex, Cursor, Claude Desktop, VS Code, and other MCP-compatible clients.
+[TiDB Lake MCP](https://github.com/databendlabs/mcp-databend) connects AI assistants to TiDB Lake via Model Context Protocol. Works with Claude Code, Codex, Cursor, Claude Desktop, VS Code, and other MCP-compatible clients.
 
 **What you can do:**
 
@@ -18,11 +18,11 @@ For example: _"Create a scheduled task that copies parquet files from @my_stage 
 
 ## Installation
 
-### 1. Get Databend Connection
+### 1. Get TiDB Lake Connection
 
-We recommend using **Databend Cloud** for the best experience.
+We recommend using **TiDB Cloud Lake** for the best experience.
 
-1. Log in to [Databend Cloud](https://app.databend.com).
+1. Log in to [TiDB Cloud Lake](https://app.databend.com).
 2. Click **Use with AI Tools** in the navigation bar.
 3. Select regular connection information (Host, User, Password, etc.).
 4. Copy your DSN, which looks like:

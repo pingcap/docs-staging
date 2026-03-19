@@ -11,15 +11,15 @@ summary: Vector is a high-performance observability data pipeline that puts orga
 
 [Vector](https://vector.dev/) is a high-performance observability data pipeline that puts organizations in control of their observability data. Collect, transform, and route all your logs, metrics, and traces to any vendors you want today and any other vendors you may want tomorrow. Vector enables dramatic cost reduction, novel data enrichment, and data security where you need it, not where is most convenient for your vendors. Open source and up to 10x faster than every alternative.
 
-Vector natively supports delivering data to [Databend as a sink](https://vector.dev/docs/reference/configuration/sinks/databend/), this means that Vector can send data to Databend for storage or further processing. Databend acts as the destination for the data collected and processed by Vector. By configuring Vector to use Databend as a sink, you can seamlessly transfer data from Vector to Databend, enabling efficient data analysis, storage, and retrieval.
+Vector natively supports delivering data to [TiDB Lake as a sink](https://vector.dev/docs/reference/configuration/sinks/databend/), this means that Vector can send data to TiDB Lake for storage or further processing. TiDB Lake acts as the destination for the data collected and processed by Vector. By configuring Vector to use TiDB Lake as a sink, you can seamlessly transfer data from Vector to TiDB Lake, enabling efficient data analysis, storage, and retrieval.
 
 ## Integrating with Vector
 
-To integrate Databend with Vector, start by creating an SQL account in Databend and assigning appropriate permissions. This account will be used for communication and data transfer between Vector and Databend. Then, in the Vector configuration, set up Databend as a Sink.
+To integrate TiDB Lake with Vector, start by creating an SQL account in TiDB Lake and assigning appropriate permissions. This account will be used for communication and data transfer between Vector and TiDB Lake. Then, in the Vector configuration, set up TiDB Lake as a Sink.
 
-### Step 1: Creating an SQL User in Databend
+### Step 1: Creating an SQL User in TiDB Lake
 
-For instructions on how to create a SQL user in Databend and grant appropriate privileges, see [Create User](/tidb-cloud-lake/sql/create-user.md). Here's an example of creating a user named *user1* with the password *abc123*:
+For instructions on how to create a SQL user in TiDB Lake and grant appropriate privileges, see [Create User](/tidb-cloud-lake/sql/create-user.md). Here's an example of creating a user named *user1* with the password *abc123*:
 
 ```sql
 CREATE ROLE vector_role;
@@ -31,9 +31,9 @@ GRANT INSERT ON nginx.* TO ROLE vector_role;
 GRANT ROLE vector_role TO user1;
 ```
 
-### Step 2: Configure Databend as a Sink in Vector
+### Step 2: Configure TiDB Lake as a Sink in Vector
 
-In this step, configure Databend as a sink in Vector by specifying the necessary settings such as the input source, compression, database, endpoint, table, and authentication credentials (username and password) for Databend integration. The following is a simple example of configuring Databend as a sink. For a comprehensive list of configuration parameters, refer to the Vector documentation at <https://vector.dev/docs/reference/configuration/sinks/databend/>
+In this step, configure TiDB Lake as a sink in Vector by specifying the necessary settings such as the input source, compression, database, endpoint, table, and authentication credentials (username and password) for TiDB Lake integration. The following is a simple example of configuring TiDB Lake as a sink. For a comprehensive list of configuration parameters, refer to the Vector documentation at <https://vector.dev/docs/reference/configuration/sinks/databend/>
 
 ```toml title='vector.toml'
 ...
@@ -60,11 +60,11 @@ password = "abc123" #Databend password
 
 ## Nginx Access Log Example
 
-### Step 1. Deploy Databend
+### Step 1. Deploy TiDB Lake
 
-#### 1.1 Install Databend
+#### 1.1 Install TiDB Lake
 
-Deploy a warehouse in the Databend Cloud.
+Deploy a warehouse in the TiDB Cloud Lake.
 
 #### 1.2 Create a Database and a Table
 
@@ -324,7 +324,7 @@ test no event from wrong access log ... passed
 vector -c ./vector.toml
 ```
 
-### Step 4. Analyze Nginx Log in Databend
+### Step 4. Analyze Nginx Log in TiDB Lake
 
 #### 4.1 Generate logs
 
@@ -334,7 +334,7 @@ Reload the home page at `http://localhost/xx/yy?mm=nn` many times, or using the 
 wrk -t12 -c400 -d30s http://localhost
 ```
 
-#### 4.2 Analyze Nginx Access Logs in Databend
+#### 4.2 Analyze Nginx Access Logs in TiDB Lake
 
 - __Top 10 Request Status__
 

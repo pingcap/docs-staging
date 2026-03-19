@@ -1,6 +1,6 @@
 ---
 title: Apache Hive Tables
-summary: Databend can query data that is cataloged by Apache Hive without copying it. Register the Hive Metastore as a Databend catalog, point to the object storage that holds the table data, and then query the tables as if they were native Databend objects.
+summary: "TiDB Lake can query data that is cataloged by Apache Hive without copying it. Register the Hive Metastore as a TiDB Lake catalog, point to the object storage that holds the table data, and then query the tables as if they were native TiDB Lake objects."
 ---
 
 # Apache Hive Tables
@@ -9,7 +9,7 @@ summary: Databend can query data that is cataloged by Apache Hive without copyin
 >
 > Introduced or updated in v1.2.668.
 
-Databend can query data that is cataloged by Apache Hive without copying it. Register the Hive Metastore as a Databend catalog, point to the object storage that holds the table data, and then query the tables as if they were native Databend objects.
+TiDB Lake can query data that is cataloged by Apache Hive without copying it. Register the Hive Metastore as a TiDB Lake catalog, point to the object storage that holds the table data, and then query the tables as if they were native TiDB Lake objects.
 
 ## Quick Start
 
@@ -46,7 +46,7 @@ Databend can query data that is cataloged by Apache Hive without copying it. Reg
 
 ## Keep Metadata Fresh
 
-Hive schemas or partitions can change outside of Databend. Refresh Databend’s cached metadata when that happens:
+Hive schemas or partitions can change outside of TiDB Lake. Refresh TiDB Lake’s cached metadata when that happens:
 
 ```sql
 ALTER TABLE tpch.lineitem REFRESH CACHE;
@@ -54,9 +54,9 @@ ALTER TABLE tpch.lineitem REFRESH CACHE;
 
 ## Data Type Mapping
 
-Databend automatically converts Hive primitive types to their closest native equivalents when queries run:
+TiDB Lake automatically converts Hive primitive types to their closest native equivalents when queries run:
 
-| Hive Type | Databend Type |
+| Hive Type | TiDB Lake Type |
 | --------- | ------------- |
 | `BOOLEAN` | [BOOLEAN](/tidb-cloud-lake/sql/boolean.md) |
 | `TINYINT`, `SMALLINT`, `INT`, `BIGINT` | [Integer types](/tidb-cloud-lake/sql/numeric.md#integer-data-types) |
@@ -71,6 +71,6 @@ Nested structures such as `STRUCT` are surfaced through the [VARIANT](/tidb-clou
 
 ## Notes and Limitations
 
-- Hive catalogs are **read-only** in Databend (writes must happen through Hive-compatible engines).
+- Hive catalogs are **read-only** in TiDB Lake (writes must happen through Hive-compatible engines).
 - Access to the underlying object storage is required; configure credentials by using [connection parameters](/tidb-cloud-lake/sql/connection-parameters.md).
 - Use `ALTER TABLE ... REFRESH CACHE` whenever table layout changes (for example, new partitions) to keep query results up to date.

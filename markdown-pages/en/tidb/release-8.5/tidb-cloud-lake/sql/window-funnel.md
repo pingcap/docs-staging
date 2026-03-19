@@ -6,7 +6,7 @@ summary: Funnel Analysis.
 # WINDOW_FUNNEL
 
 <p align="center">
-<img alt="Databend Funnel Analysis" src="/media/tidb-cloud-lake/remote-7db0f18fbe80-databend-funnel.png" width="550"/>
+<img alt="TiDB Lake Funnel Analysis" src="/media/tidb-cloud-lake/remote-7db0f18fbe80-databend-funnel.png" width="550"/>
 </p>
 
 ## WINDOW_FUNNEL

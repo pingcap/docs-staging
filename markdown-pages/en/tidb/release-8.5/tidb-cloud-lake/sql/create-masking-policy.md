@@ -1,6 +1,6 @@
 ---
 title: CREATE MASKING POLICY
-summary: Creates a new masking policy in Databend.
+summary: Creates a new masking policy in TiDB Lake.
 ---
 
 # CREATE MASKING POLICY
@@ -9,7 +9,7 @@ summary: Creates a new masking policy in Databend.
 >
 > Introduced or updated in v1.2.845.
 
-Creates a new masking policy in Databend.
+Creates a new masking policy in TiDB Lake.
 
 ## Syntax
 
@@ -40,7 +40,7 @@ CREATE [ OR REPLACE ] MASKING POLICY [ IF NOT EXISTS ] <policy_name> AS
 |:----------|:------------|
 | CREATE MASKING POLICY | Required to create or replace a masking policy. Typically granted on `*.*`. |
 
-Databend automatically grants OWNERSHIP on the new masking policy to the current role so that it can manage the policy with others.
+TiDB Lake automatically grants OWNERSHIP on the new masking policy to the current role so that it can manage the policy with others.
 
 ## Examples
 

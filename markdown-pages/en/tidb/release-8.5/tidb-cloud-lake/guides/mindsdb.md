@@ -7,13 +7,13 @@ summary: Data that lives in your database is a valuable asset. MindsDB enables y
 
 Data that lives in your database is a valuable asset. [MindsDB](https://mindsdb.com/) enables you to use your data and make forecasts. It speeds up the ML development process by bringing machine learning into the database. With MindsDB, you can build, train, optimize, and deploy your ML models without the need for other platforms.
 
-Both Databend and Databend Cloud can integrate with MindsDB as a data source, which brings Machine Learning capabilities into Databend. The following tutorials show you how to integrate with MindsDB and make data forecasts, using the [Air Pollution in Seoul](https://www.kaggle.com/datasets/bappekim/air-pollution-in-seoul) dataset as an example.
+Both TiDB Lake and TiDB Cloud Lake can integrate with MindsDB as a data source, which brings Machine Learning capabilities into TiDB Lake. The following tutorials show you how to integrate with MindsDB and make data forecasts, using the [Air Pollution in Seoul](https://www.kaggle.com/datasets/bappekim/air-pollution-in-seoul) dataset as an example.
 
-## Tutorial-1: Integrating Databend with MindsDB
+## Tutorial-1: Integrating TiDB Lake with MindsDB
 
 Before you start, install a local MindsDB or sign up an account for MindsDB Cloud. This tutorial uses MindsDB Cloud. For more information about how to install a local MindsDB, refer to <https://docs.mindsdb.com/quickstart#1-create-a-mindsdb-cloud-account-or-install-mindsdb-locally>
 
-### Step 1. Load Dataset into Databend
+### Step 1. Load Dataset into TiDB Lake
 
 Run the following SQL statements to create a table in the database `default` and load the [Air Pollution in Seoul](https://www.kaggle.com/datasets/bappekim/air-pollution-in-seoul) dataset using the COPY INTO command:
 
@@ -34,7 +34,7 @@ CREATE TABLE pollution_measurement(
 COPY INTO pollution_measurement FROM 'https://datasets.databend.org/AirPolutionSeoul/Measurement_summary.csv' file_format=(type='CSV' skip_header=1);
 ```
 
-### Step 2. Connect MindsDB to Databend
+### Step 2. Connect MindsDB to TiDB Lake
 
 1. Copy and paste the following SQL statements to the MindsDB Cloud Editor, and click **Run**:
 
@@ -53,7 +53,7 @@ COPY INTO pollution_measurement FROM 'https://datasets.databend.org/AirPolutionS
 
     > **Tip:**
     >
-    > The SQL statements above connect the database `default` in Databend to your MindsDB Cloud account. For explanations about the parameters, refer to <https://docs.mindsdb.com/data-integrations/all-data-integrations#databend>
+    > The SQL statements above connect the database `default` in TiDB Lake to your MindsDB Cloud account. For explanations about the parameters, refer to <https://docs.mindsdb.com/data-integrations/all-data-integrations#databend>
 
 2. In the MindsDB Cloud Editor, run the following SQL statements to verify the integration:
 
@@ -104,13 +104,13 @@ Output:
 
 ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/integration-mindsdb-predict.png)
 
-## Tutorial-2: Integrating Databend Cloud with MindsDB
+## Tutorial-2: Integrating TiDB Cloud Lake with MindsDB
 
 Before you start, install a local MindsDB or sign up an account for MindsDB Cloud. This tutorial uses MindsDB Cloud. For more information about how to install a local MindsDB, refer to <https://docs.mindsdb.com/quickstart#1-create-a-mindsdb-cloud-account-or-install-mindsdb-locally>
 
-### Step 1. Load Dataset into Databend Cloud
+### Step 1. Load Dataset into TiDB Cloud Lake
 
-Open a worksheet in Databend Cloud, and run the following SQL statements to create a table in the database `default` and load the [Air Pollution in Seoul](https://www.kaggle.com/datasets/bappekim/air-pollution-in-seoul) dataset using the COPY INTO command:
+Open a worksheet in TiDB Cloud Lake, and run the following SQL statements to create a table in the database `default` and load the [Air Pollution in Seoul](https://www.kaggle.com/datasets/bappekim/air-pollution-in-seoul) dataset using the COPY INTO command:
 
 ```sql
 CREATE TABLE pollution_measurement(
@@ -130,7 +130,7 @@ CREATE TABLE pollution_measurement(
 COPY INTO pollution_measurement FROM 'https://repo.databend.com/AirPolutionSeoul/Measurement_summary.csv' file_format=(type='CSV' skip_header=1);
 ```
 
-### Step 2. Connect MindsDB to Databend Cloud
+### Step 2. Connect MindsDB to TiDB Cloud Lake
 
 1. Copy and paste the following SQL statements to the MindsDB Cloud Editor, and click **Run**:
 
@@ -149,7 +149,7 @@ COPY INTO pollution_measurement FROM 'https://repo.databend.com/AirPolutionSeoul
 
     > **Tip:**
     >
-    > The SQL statements above connect the database `default` in Databend Cloud to your MindsDB Cloud account. The parameter values can be obtained from the connection information of your warehouse. For more information, see [Connecting to a Warehouse](/tidb-cloud-lake/guides/warehouse.md#connecting). For explanations about the parameters, refer to <https://docs.mindsdb.com/data-integrations/all-data-integrations#databend>
+    > The SQL statements above connect the database `default` in TiDB Cloud Lake to your MindsDB Cloud account. The parameter values can be obtained from the connection information of your warehouse. For more information, see [Connecting to a Warehouse](/tidb-cloud-lake/guides/warehouse.md#connecting). For explanations about the parameters, refer to <https://docs.mindsdb.com/data-integrations/all-data-integrations#databend>
 
 2. In the MindsDB Cloud Editor, run the following SQL statements to verify the integration:
 

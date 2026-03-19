@@ -1,11 +1,11 @@
 ---
 title: system.configs
-summary: Contains information about Databend server configs.
+summary: Contains information about TiDB Lake server configs.
 ---
 
 # system.configs
 
-Contains information about Databend server configs.
+Contains information about TiDB Lake server configs.
 
 > **Note:**
 >

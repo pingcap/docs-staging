@@ -1,29 +1,29 @@
 ---
 title: Tracking Metrics with Prometheus
-summary: Prometheus offers a robust solution for real-time monitoring, empowering you to track critical metrics and maintain system stability effectively. This topic guides you through the steps to integrate Prometheus with Databend Cloud and provides an overview of the available metrics.
+summary: Prometheus offers a robust solution for real-time monitoring, empowering you to track critical metrics and maintain system stability effectively. This topic guides you through the steps to integrate Prometheus with TiDB Cloud Lake and provides an overview of the available metrics.
 ---
 
 # Tracking Metrics with Prometheus
 
-[Prometheus](https://prometheus.io/) offers a robust solution for real-time monitoring, empowering you to track critical metrics and maintain system stability effectively. This topic guides you through the steps to integrate Prometheus with Databend Cloud and provides an overview of the available metrics.
+[Prometheus](https://prometheus.io/) offers a robust solution for real-time monitoring, empowering you to track critical metrics and maintain system stability effectively. This topic guides you through the steps to integrate Prometheus with TiDB Cloud Lake and provides an overview of the available metrics.
 
 > **Note:**
 >
-> Tracking metrics with Prometheus is only available for Databend Cloud users on the Business and Dedicated plans.
+> Tracking metrics with Prometheus is only available for TiDB Cloud Lake users on the Business and Dedicated plans.
 
 ## Integrating with Prometheus
 
-Follow these steps to set up a Prometheus instance with Docker and integrate it with Databend Cloud:
+Follow these steps to set up a Prometheus instance with Docker and integrate it with TiDB Cloud Lake:
 
 ## Step 1: Prerequisites
 
-- To start tracking metrics, ensure that metrics are enabled for your Databend Cloud tenant. To enable this feature, submit a support ticket in Databend Cloud by navigating to **Support** > **Create New Ticket** and requesting metrics activation for your tenant.
+- To start tracking metrics, ensure that metrics are enabled for your TiDB Cloud Lake tenant. To enable this feature, submit a support ticket in TiDB Cloud Lake by navigating to **Support** > **Create New Ticket** and requesting metrics activation for your tenant.
 
 - This procedure explains how to set up a Prometheus instance using Docker. Ensure that the Docker Engine is installed on your machine before proceeding.
 
 ## Step 2: Prepare a SQL User
 
-Create a dedicated SQL user in Databend Cloud for Prometheus to access metrics. For example, you can create a SQL user named `metrics` with the password `metrics_password` using the following SQL statement:
+Create a dedicated SQL user in TiDB Cloud Lake for Prometheus to access metrics. For example, you can create a SQL user named `metrics` with the password `metrics_password` using the following SQL statement:
 
 ```sql
 CREATE USER metrics IDENTIFIED BY 'metrics_password';
@@ -31,7 +31,7 @@ CREATE USER metrics IDENTIFIED BY 'metrics_password';
 
 ## Step 3: Start Prometheus Using Docker
 
-1. On your local machine, create a file named **prometheus.yml** to configure Prometheus for scraping metrics from Databend Cloud. Use the following template:
+1. On your local machine, create a file named **prometheus.yml** to configure Prometheus for scraping metrics from TiDB Cloud Lake. Use the following template:
 
     ```yaml title='prometheus.yml'
     scrape_configs:
@@ -56,7 +56,7 @@ CREATE USER metrics IDENTIFIED BY 'metrics_password';
     | ------------------- | ------------------------------------------------ | ------------------------------------------------- |
     | `<USERNAME>`        | The username for the SQL user.                   | `metrics`                                         |
     | `<PASSWORD>`        | The secure password for the SQL user.            | `metrics_password`                                |
-    | `<TENANT_ENDPOINT>` | The endpoint URL for your Databend Cloud tenant. | `tnxxxxxxx.gw.aws-us-east-2.default.databend.com` |
+    | `<TENANT_ENDPOINT>` | The endpoint URL for your TiDB Cloud Lake tenant. | `tnxxxxxxx.gw.aws-us-east-2.default.databend.com` |
     | `<TENANT_ID>`       | Your tenant's unique identifier.                 | `tnxxxxxxx`                                       |
     | `<PLATFORM>`        | The cloud platform hosting the tenant.           | `aws`                                             |
     | `<REGION>`          | The region where the tenant is hosted.           | `us-east-2`                                       |
@@ -89,7 +89,7 @@ Please note that all metrics are prefixed with `databend_cloud_`.
 
 ### Query Metrics
 
-The following is a list of query metrics available in Databend Cloud:
+The following is a list of query metrics available in TiDB Cloud Lake:
 
 | Name                 | Type    | Labels           | Description                         |
 | -------------------- | ------- | ---------------- | ----------------------------------- |
@@ -100,7 +100,7 @@ The following is a list of query metrics available in Databend Cloud:
 
 ### Storage Metrics
 
-The following is a list of storage metrics available in Databend Cloud:
+The following is a list of storage metrics available in TiDB Cloud Lake:
 
 | Name                          | Type  | Labels | Description                                           |
 | ----------------------------- | ----- | ------ | ----------------------------------------------------- |
@@ -111,7 +111,7 @@ The following is a list of storage metrics available in Databend Cloud:
 
 ### Warehouse Metrics
 
-The following is a list of warehouse metrics available in Databend Cloud:
+The following is a list of warehouse metrics available in TiDB Cloud Lake:
 
 | Name                             | Type    | Labels                       | Description                                         |
 | -------------------------------- | ------- | ---------------------------- | --------------------------------------------------- |
@@ -129,7 +129,7 @@ The following is a list of warehouse metrics available in Databend Cloud:
 
 ### Task Metrics
 
-The following is a list of task metrics available in Databend Cloud:
+The following is a list of task metrics available in TiDB Cloud Lake:
 
 | Name                            | Type    | Labels          | Description                      |
 | ------------------------------- | ------- | --------------- | -------------------------------- |

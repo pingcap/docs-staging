@@ -1,6 +1,6 @@
 ---
 title: SHOW PASSWORD POLICIES
-summary: Displays a list of all existing password policies in Databend.
+summary: Displays a list of all existing password policies in TiDB Lake.
 ---
 
 # SHOW PASSWORD POLICIES
@@ -9,7 +9,7 @@ summary: Displays a list of all existing password policies in Databend.
 >
 > Introduced or updated in v1.2.283.
 
-Displays a list of all existing password policies in Databend.
+Displays a list of all existing password policies in TiDB Lake.
 
 ## Syntax
 

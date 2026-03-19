@@ -1,11 +1,11 @@
 ---
 title: Test Functions
-summary: This page provides reference information for the test functions in Databend. These functions are primarily used for testing and debugging purposes.
+summary: This page provides reference information for the test functions in TiDB Lake. These functions are primarily used for testing and debugging purposes.
 ---
 
 # Test Functions
 
-This page provides reference information for the test functions in Databend. These functions are primarily used for testing and debugging purposes.
+This page provides reference information for the test functions in TiDB Lake. These functions are primarily used for testing and debugging purposes.
 
 ## Available Test Functions
 

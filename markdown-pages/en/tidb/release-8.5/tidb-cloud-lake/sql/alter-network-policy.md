@@ -1,6 +1,6 @@
 ---
 title: ALTER NETWORK POLICY
-summary: Modifies an existing network policy in Databend.
+summary: Modifies an existing network policy in TiDB Lake.
 ---
 
 # ALTER NETWORK POLICY
@@ -9,7 +9,7 @@ summary: Modifies an existing network policy in Databend.
 >
 > Introduced or updated in v1.2.26.
 
-Modifies an existing network policy in Databend.
+Modifies an existing network policy in TiDB Lake.
 
 ## Syntax
 

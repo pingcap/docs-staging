@@ -9,7 +9,7 @@ summary: Parquet is a columnar storage format commonly used in data analytics. I
 
 Parquet is a columnar storage format commonly used in data analytics. It is designed to support complex data structures, and it is efficient for processing large datasets.
 
-Parquet file is most friendly to Databend. It is recommended to use Parquet file as the data source for Databend.
+Parquet file is most friendly to TiDB Lake. It is recommended to use Parquet file as the data source for TiDB Lake.
 
 ## Loading Parquet File
 

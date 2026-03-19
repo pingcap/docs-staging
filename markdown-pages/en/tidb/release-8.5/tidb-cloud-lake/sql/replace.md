@@ -15,11 +15,11 @@ REPLACE INTO can either insert multiple new rows into a table or update existing
 
 - Query results
 
-- Staged files: Databend enables you to replace data into a table from staged files with the REPLACE INTO statement. This is achieved through Databend's capacity to [Query Staged Files](/tidb-cloud-lake/sql/stage.md) and subsequently incorporate the query result into the table.
+- Staged files: TiDB Lake enables you to replace data into a table from staged files with the REPLACE INTO statement. This is achieved through TiDB Lake's capacity to [Query Staged Files](/tidb-cloud-lake/sql/stage.md) and subsequently incorporate the query result into the table.
 
 > **Tip:**
 >
-> Databend ensures data integrity with atomic operations. Inserts, updates, replaces, and deletes either succeed completely or fail entirely.
+> TiDB Lake ensures data integrity with atomic operations. Inserts, updates, replaces, and deletes either succeed completely or fail entirely.
 
 ## Syntax
 

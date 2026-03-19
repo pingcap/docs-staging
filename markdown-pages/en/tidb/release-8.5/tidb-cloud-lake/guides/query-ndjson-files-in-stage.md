@@ -1,11 +1,11 @@
 ---
 title: Querying NDJSON Files in Stage
-summary: In Databend, you can directly query NDJSON files stored in stages without first loading the data into tables. This approach is particularly useful for data exploration, ETL processing, and ad-hoc analysis scenarios.
+summary: In TiDB Lake, you can directly query NDJSON files stored in stages without first loading the data into tables. This approach is particularly useful for data exploration, ETL processing, and ad-hoc analysis scenarios.
 ---
 
 # Querying NDJSON Files in Stage
 
-In Databend, you can directly query NDJSON files stored in stages without first loading the data into tables. This approach is particularly useful for data exploration, ETL processing, and ad-hoc analysis scenarios.
+In TiDB Lake, you can directly query NDJSON files stored in stages without first loading the data into tables. This approach is particularly useful for data exploration, ETL processing, and ad-hoc analysis scenarios.
 
 ## What is NDJSON?
 
@@ -88,7 +88,7 @@ FROM @ndjson_query_stage
 );
 ```
 
-**Key difference:** The pattern `.*[.]ndjson[.]gz` matches files ending with `.ndjson.gz`. Databend automatically decompresses gzip files during query execution thanks to the `COMPRESSION = AUTO` setting in the file format.
+**Key difference:** The pattern `.*[.]ndjson[.]gz` matches files ending with `.ndjson.gz`. TiDB Lake automatically decompresses gzip files during query execution thanks to the `COMPRESSION = AUTO` setting in the file format.
 
 ## Related Documentation
 
