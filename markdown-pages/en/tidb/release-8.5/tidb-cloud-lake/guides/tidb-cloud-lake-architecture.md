@@ -3,6 +3,10 @@ title: TiDB Cloud Lake Architecture
 summary: TiDB Cloud Lake Architecture.
 ---
 
+# TiDB Cloud Lake Architecture
+
+This document introduces the architecture of TiDB Cloud Lake.
+
 ![TiDB Cloud Lake Architecture](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/architecture.png)
 
 <SimpleTab groupId="databendlay">
