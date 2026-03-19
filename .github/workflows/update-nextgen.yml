@@ -138,4 +138,7 @@ jobs:
               repo: 'website-docs',
               workflow_id: 'production.yml',
               ref: 'preview-nextgen',
+              inputs: {
+                hash: 'nextgen'
+              }
             })
