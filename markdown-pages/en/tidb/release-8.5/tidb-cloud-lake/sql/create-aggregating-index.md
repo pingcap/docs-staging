@@ -1,6 +1,6 @@
 ---
 title: CREATE AGGREGATING INDEX
-summary: Create a new aggregating index in TiDB Lake.
+summary: Create a new aggregating index in TiDB Cloud Lake.
 ---
 
 # CREATE AGGREGATING INDEX
@@ -9,7 +9,7 @@ summary: Create a new aggregating index in TiDB Lake.
 >
 > Introduced or updated in v1.2.339.
 
-Create a new aggregating index in TiDB Lake.
+Create a new aggregating index in TiDB Cloud Lake.
 
 ## Syntax
 

@@ -1,11 +1,11 @@
 ---
 title: Masking Policy
-summary: This page provides a comprehensive overview of Masking Policy operations in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of Masking Policy operations in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # Masking Policy
 
-This page provides a comprehensive overview of Masking Policy operations in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of Masking Policy operations in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## Masking Policy Management
 
@@ -21,4 +21,4 @@ This page provides a comprehensive overview of Masking Policy operations in TiDB
 
 > **Note:**
 >
-> Masking policies in TiDB Lake allow you to protect sensitive data by dynamically transforming or obfuscating it when queried by users without proper privileges.
+> Masking policies in TiDB Cloud Lake allow you to protect sensitive data by dynamically transforming or obfuscating it when queried by users without proper privileges.

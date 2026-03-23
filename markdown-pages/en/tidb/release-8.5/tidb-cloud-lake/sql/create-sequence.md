@@ -1,6 +1,6 @@
 ---
 title: CREATE SEQUENCE
-summary: Creates a new sequence in TiDB Lake.
+summary: Creates a new sequence in TiDB Cloud Lake.
 ---
 
 # CREATE SEQUENCE
@@ -9,7 +9,7 @@ summary: Creates a new sequence in TiDB Lake.
 >
 > Introduced or updated in v1.2.807.
 
-Creates a new sequence in TiDB Lake.
+Creates a new sequence in TiDB Cloud Lake.
 
 A sequence is an object that automatically generates unique numeric identifiers, commonly used for assigning distinct values to table rows (e.g., user IDs). While sequences guarantee unique values, they **do not** ensure contiguity (i.e., gaps may occur).
 

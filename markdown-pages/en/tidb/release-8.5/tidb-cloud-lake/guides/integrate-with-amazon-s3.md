@@ -1,11 +1,11 @@
 ---
 title: Amazon S3
-summary: The Amazon S3 data integration enables you to import files from S3 buckets into TiDB Lake. It supports CSV, Parquet, and NDJSON file formats, with options for one-time imports or continuous ingestion that automatically polls for new files.
+summary: The Amazon S3 data integration enables you to import files from S3 buckets into TiDB Cloud Lake. It supports CSV, Parquet, and NDJSON file formats, with options for one-time imports or continuous ingestion that automatically polls for new files.
 ---
 
 # Amazon S3
 
-The Amazon S3 data integration enables you to import files from S3 buckets into TiDB Lake. It supports CSV, Parquet, and NDJSON file formats, with options for one-time imports or continuous ingestion that automatically polls for new files.
+The Amazon S3 data integration enables you to import files from S3 buckets into TiDB Cloud Lake. It supports CSV, Parquet, and NDJSON file formats, with options for one-time imports or continuous ingestion that automatically polls for new files.
 
 ## Supported File Formats
 
@@ -89,13 +89,13 @@ The system reads the first matching file and displays:
 
 ### Step 3: Set Target Table
 
-Configure the destination in TiDB Lake:
+Configure the destination in TiDB Cloud Lake:
 
 | Field               | Description                                                        |
 |---------------------|--------------------------------------------------------------------|
 | **Warehouse**       | Select the target TiDB Cloud Lake warehouse for running the import  |
-| **Target Database** | Choose the target database in TiDB Lake                             |
-| **Target Table**    | The table name in TiDB Lake                                         |
+| **Target Database** | Choose the target database in TiDB Cloud Lake                             |
+| **Target Table**    | The table name in TiDB Cloud Lake                                         |
 
 ![S3 Set Target Table](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/s3-task-set-target-table.png)
 
@@ -112,7 +112,7 @@ The system auto-detects columns from the source files. You can review and edit c
 
 > **Tip:**
 >
-> Enable **Continuous Ingestion** when new files are regularly added to the S3 path and you want them automatically loaded into TiDB Lake. Disable it for one-time imports.
+> Enable **Continuous Ingestion** when new files are regularly added to the S3 path and you want them automatically loaded into TiDB Cloud Lake. Disable it for one-time imports.
 
 Click **Create** to finalize the integration task.
 
@@ -143,7 +143,7 @@ This is useful for data pipelines where upstream systems continuously write new 
 
 ### Clean Up Original Files (PURGE)
 
-When enabled, source files are deleted from S3 after they are successfully imported into TiDB Lake. This helps manage storage costs and prevents reprocessing. Ensure your AWS credentials have `s3:DeleteObject` permission on the target bucket.
+When enabled, source files are deleted from S3 after they are successfully imported into TiDB Cloud Lake. This helps manage storage costs and prevents reprocessing. Ensure your AWS credentials have `s3:DeleteObject` permission on the target bucket.
 
 ### Allow Duplicate Imports (FORCE)
 

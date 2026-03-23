@@ -1,11 +1,11 @@
 ---
 title: information_schema.keywords
-summary: The information_schema.keywords system table is a view that provides all keywords in TiDB Lake.
+summary: The information_schema.keywords system table is a view that provides all keywords in TiDB Cloud Lake.
 ---
 
 # information_schema.keywords
 
-The `information_schema.keywords` system table is a view that provides all keywords in TiDB Lake
+The `information_schema.keywords` system table is a view that provides all keywords in TiDB Cloud Lake
 
 ```sql
 DESCRIBE information_schema.keywords

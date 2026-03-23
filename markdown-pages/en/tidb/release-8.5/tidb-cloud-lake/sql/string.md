@@ -7,7 +7,7 @@ summary: Basic String data type.
 
 ## String Data Types
 
-In TiDB Lake, strings can be stored in the `VARCHAR` field, the storage size is variable.
+In TiDB Cloud Lake, strings can be stored in the `VARCHAR` field, the storage size is variable.
 
 | Name    | Aliases | Storage Size |
 |---------|---------|--------------|

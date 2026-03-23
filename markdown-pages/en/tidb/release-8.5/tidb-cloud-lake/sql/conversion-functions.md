@@ -1,11 +1,11 @@
 ---
 title: Conversion Functions
-summary: This page provides a comprehensive overview of Conversion functions in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of Conversion functions in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # Conversion Functions
 
-This page provides a comprehensive overview of Conversion functions in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of Conversion functions in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## Type Conversion Functions
 
@@ -46,7 +46,7 @@ This page provides a comprehensive overview of Conversion functions in TiDB Lake
 
 Please note the following when converting a value from one type to another:
 
-- When converting from floating-point, decimal numbers, or strings to integers or decimal numbers with fractional parts, TiDB Lake rounds the values to the nearest integer. This is determined by the setting `numeric_cast_option` (defaults to 'rounding') which controls the behavior of numeric casting operations. When `numeric_cast_option` is explicitly set to 'truncating', TiDB Lake will truncate the decimal part, discarding any fractional values.
+- When converting from floating-point, decimal numbers, or strings to integers or decimal numbers with fractional parts, TiDB Cloud Lake rounds the values to the nearest integer. This is determined by the setting `numeric_cast_option` (defaults to 'rounding') which controls the behavior of numeric casting operations. When `numeric_cast_option` is explicitly set to 'truncating', TiDB Cloud Lake will truncate the decimal part, discarding any fractional values.
 
     ```sql title='Example:'
     SELECT CAST('0.6' AS DECIMAL(10, 0)), CAST(0.6 AS DECIMAL(10, 0)), CAST(1.5 AS INT);
@@ -79,4 +79,4 @@ Please note the following when converting a value from one type to another:
     | Decimal        | Int         |
     | String (Int)   | Int         |
 
-- TiDB Lake also offers a variety of functions for converting expressions into different date and time formats. For more information, see [Date & Time Functions](/tidb-cloud-lake/sql/date-time-functions.md).
+- TiDB Cloud Lake also offers a variety of functions for converting expressions into different date and time formats. For more information, see [Date & Time Functions](/tidb-cloud-lake/sql/date-time-functions.md).

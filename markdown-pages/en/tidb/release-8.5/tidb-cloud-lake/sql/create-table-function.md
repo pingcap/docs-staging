@@ -32,7 +32,7 @@ Where:
 
 ## Unified Function Syntax
 
-TiDB Lake uses a unified `$$` syntax for both scalar and table functions:
+TiDB Cloud Lake uses a unified `$$` syntax for both scalar and table functions:
 
 | Function Type | Returns | Usage |
 |---------------|---------|-------|

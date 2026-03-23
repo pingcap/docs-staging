@@ -1,11 +1,11 @@
 ---
 title: External Function
-summary: This page provides a comprehensive overview of External Function operations in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of External Function operations in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # External Function
 
-This page provides a comprehensive overview of External Function operations in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of External Function operations in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## External Function Management
 
@@ -17,4 +17,4 @@ This page provides a comprehensive overview of External Function operations in T
 
 > **Note:**
 >
-> External Functions in TiDB Lake allow you to extend functionality by integrating with external services through HTTP/HTTPS endpoints, enabling you to leverage external processing capabilities.
+> External Functions in TiDB Cloud Lake allow you to extend functionality by integrating with external services through HTTP/HTTPS endpoints, enabling you to leverage external processing capabilities.

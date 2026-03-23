@@ -1,15 +1,15 @@
 ---
 title: Recovery from Operational Errors
-summary: This guide provides step-by-step instructions for recovering from common operational errors in TiDB Lake.
+summary: This guide provides step-by-step instructions for recovering from common operational errors in TiDB Cloud Lake.
 ---
 
 # Recovery from Operational Errors
 
-This guide provides step-by-step instructions for recovering from common operational errors in TiDB Lake.
+This guide provides step-by-step instructions for recovering from common operational errors in TiDB Cloud Lake.
 
 ## Introduction
 
-TiDB Lake can help you recover from these common operational errors:
+TiDB Cloud Lake can help you recover from these common operational errors:
 
 - **Accidentally dropped databases**
 - **Accidentally dropped tables**
@@ -19,7 +19,7 @@ TiDB Lake can help you recover from these common operational errors:
 - **Schema evolution rollbacks** (reverting table structure changes)
 - **Dropped columns or constraints**
 
-These recovery capabilities are powered by TiDB Lake's FUSE engine with its Git-like storage design, which maintains snapshots of your data at different points in time.
+These recovery capabilities are powered by TiDB Cloud Lake's FUSE engine with its Git-like storage design, which maintains snapshots of your data at different points in time.
 
 ## Recovery Scenarios and Solutions
 
@@ -201,4 +201,4 @@ If you've made unwanted changes to a table's structure, you can revert to the pr
 - **Ownership**: Ownership isn't automatically restored—manually grant it after recovery.
 - **Transient Tables**: Flashback doesn't work for transient tables (no snapshots stored).
 
-**For Emergency Situations**: Facing critical data loss? Contact TiDB Lake Support immediately for help.
+**For Emergency Situations**: Facing critical data loss? Contact TiDB Cloud Lake Support immediately for help.

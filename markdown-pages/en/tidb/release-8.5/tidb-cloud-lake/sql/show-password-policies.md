@@ -1,6 +1,6 @@
 ---
 title: SHOW PASSWORD POLICIES
-summary: Displays a list of all existing password policies in TiDB Lake.
+summary: Displays a list of all existing password policies in TiDB Cloud Lake.
 ---
 
 # SHOW PASSWORD POLICIES
@@ -9,7 +9,7 @@ summary: Displays a list of all existing password policies in TiDB Lake.
 >
 > Introduced or updated in v1.2.283.
 
-Displays a list of all existing password policies in TiDB Lake.
+Displays a list of all existing password policies in TiDB Cloud Lake.
 
 ## Syntax
 

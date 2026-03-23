@@ -1,11 +1,11 @@
 ---
 title: Query Result Cache
-summary: "TiDB Lake caches and persists the query results for every executed query when enabled. This can be used to great effect to dramatically reduce the time it takes to get an answer."
+summary: "TiDB Cloud Lake caches and persists the query results for every executed query when enabled. This can be used to great effect to dramatically reduce the time it takes to get an answer."
 ---
 
 # Query Result Cache
 
-TiDB Lake caches and persists the query results for every executed query when enabled. This can be used to great effect to dramatically reduce the time it takes to get an answer.
+TiDB Cloud Lake caches and persists the query results for every executed query when enabled. This can be used to great effect to dramatically reduce the time it takes to get an answer.
 
 ## Cache Usage Conditions
 

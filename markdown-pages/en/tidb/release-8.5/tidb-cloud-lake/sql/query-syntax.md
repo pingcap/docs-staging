@@ -1,11 +1,11 @@
 ---
 title: Query Syntax
-summary: This page provides reference information for the query syntax in TiDB Lake. Each component can be used individually or combined to build powerful queries.
+summary: This page provides reference information for the query syntax in TiDB Cloud Lake. Each component can be used individually or combined to build powerful queries.
 ---
 
 # Query Syntax
 
-This page provides reference information for the query syntax in TiDB Lake. Each component can be used individually or combined to build powerful queries.
+This page provides reference information for the query syntax in TiDB Cloud Lake. Each component can be used individually or combined to build powerful queries.
 
 ## Core Query Components
 
@@ -46,7 +46,7 @@ This page provides reference information for the query syntax in TiDB Lake. Each
 
 ## Query Structure
 
-A typical TiDB Lake query follows this structure:
+A typical TiDB Cloud Lake query follows this structure:
 
 ```sql
 [WITH cte_expressions]

@@ -1,11 +1,11 @@
 ---
 title: File Format
-summary: This page provides a comprehensive overview of File Format operations in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of File Format operations in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # File Format
 
-This page provides a comprehensive overview of File Format operations in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of File Format operations in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## File Format Management
 
@@ -22,4 +22,4 @@ This page provides a comprehensive overview of File Format operations in TiDB La
 
 > **Note:**
 >
-> File formats in TiDB Lake define how data files should be parsed during data loading operations or formatted during data unloading operations. They provide a reusable way to specify file type, field delimiters, compression, and other formatting options.
+> File formats in TiDB Cloud Lake define how data files should be parsed during data loading operations or formatted during data unloading operations. They provide a reusable way to specify file type, field delimiters, compression, and other formatting options.

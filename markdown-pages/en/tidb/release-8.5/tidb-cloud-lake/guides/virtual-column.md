@@ -23,7 +23,7 @@ When querying JSON data, traditional databases must parse the entire JSON struct
 
 ## How It Works Automatically
 
-1. **Data Ingestion** → TiDB Lake analyzes JSON structure in VARIANT columns
+1. **Data Ingestion** → TiDB Cloud Lake analyzes JSON structure in VARIANT columns
 2. **Smart Detection** → System identifies frequently accessed nested fields
 3. **Background Optimization** → Virtual columns are created automatically
 4. **Query Acceleration** → Queries automatically use optimized paths
@@ -158,4 +158,4 @@ Virtual columns typically provide:
 
 ---
 
-*Virtual columns work automatically in the background—TiDB Lake optimizes your JSON queries with zero configuration.*
+*Virtual columns work automatically in the background—TiDB Cloud Lake optimizes your JSON queries with zero configuration.*

@@ -1,6 +1,6 @@
 ---
 title: Fuse Engine Tables
-summary: "TiDB Lake uses the Fuse Engine as its default storage engine, providing a Git-like data management system with."
+summary: "TiDB Cloud Lake uses the Fuse Engine as its default storage engine, providing a Git-like data management system with."
 ---
 
 # Fuse Engine Tables
@@ -11,7 +11,7 @@ summary: "TiDB Lake uses the Fuse Engine as its default storage engine, providin
 
 ## Overview
 
-TiDB Lake uses the Fuse Engine as its default storage engine, providing a Git-like data management system with:
+TiDB Cloud Lake uses the Fuse Engine as its default storage engine, providing a Git-like data management system with:
 
 - **Snapshot-based Architecture**: Query and restore data at any point in time, with history of data changes for recovery
 - **High Performance**: Optimized for analytical workloads with automatic indexing and bloom filters
@@ -46,7 +46,7 @@ Below are the main parameters for creating a Fuse Engine table:
 
 ### `ENGINE`
 
-- **Description:** If an engine is not explicitly specified, TiDB Lake will automatically default to using the Fuse Engine to create tables, which is equivalent to `ENGINE = FUSE`.
+- **Description:** If an engine is not explicitly specified, TiDB Cloud Lake will automatically default to using the Fuse Engine to create tables, which is equivalent to `ENGINE = FUSE`.
 
 ### `CLUSTER BY`
 

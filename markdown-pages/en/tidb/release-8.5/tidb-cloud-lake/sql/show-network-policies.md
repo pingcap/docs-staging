@@ -1,6 +1,6 @@
 ---
 title: SHOW NETWORK POLICIES
-summary: Displays a list of all existing network policies in TiDB Lake. It provides information about the available network policies, including their names and whether they have any allowed or blocked IP address lists configured.
+summary: Displays a list of all existing network policies in TiDB Cloud Lake. It provides information about the available network policies, including their names and whether they have any allowed or blocked IP address lists configured.
 ---
 
 # SHOW NETWORK POLICIES
@@ -9,7 +9,7 @@ summary: Displays a list of all existing network policies in TiDB Lake. It provi
 >
 > Introduced or updated in v1.2.26.
 
-Displays a list of all existing network policies in TiDB Lake. It provides information about the available network policies, including their names and whether they have any allowed or blocked IP address lists configured.
+Displays a list of all existing network policies in TiDB Cloud Lake. It provides information about the available network policies, including their names and whether they have any allowed or blocked IP address lists configured.
 
 ## Syntax
 

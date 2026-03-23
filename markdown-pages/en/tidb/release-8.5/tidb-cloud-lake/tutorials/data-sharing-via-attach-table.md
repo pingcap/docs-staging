@@ -1,24 +1,24 @@
 ---
 title: TiDB Cloud Lake - Data Sharing via ATTACH TABLE
-summary: In this tutorial, we'll walk you through how to link a table in TiDB Cloud Lake with an existing TiDB Lake table stored in an S3 bucket using the ATTACH TABLE command.
+summary: In this tutorial, we'll walk you through how to link a table in TiDB Cloud Lake with an existing TiDB Cloud Lake table stored in an S3 bucket using the ATTACH TABLE command.
 ---
 
 # TiDB Cloud Lake - Data Sharing via ATTACH TABLE
 
-In this tutorial, we'll walk you through how to link a table in TiDB Cloud Lake with an existing TiDB Lake table stored in an S3 bucket using the [ATTACH TABLE](/tidb-cloud-lake/sql/attach-table.md) command.
+In this tutorial, we'll walk you through how to link a table in TiDB Cloud Lake with an existing TiDB Cloud Lake table stored in an S3 bucket using the [ATTACH TABLE](/tidb-cloud-lake/sql/attach-table.md) command.
 
 ## Before You Start
 
 Before you start, ensure you have the following prerequisites in place:
 
-- [Docker](https://www.docker.com/) is installed on your local machine, as it will be used to launch a self-hosted TiDB Lake.
-- An AWS S3 bucket used as storage for your self-hosted TiDB Lake. [Learn how to create an S3 bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html).
+- [Docker](https://www.docker.com/) is installed on your local machine, as it will be used to launch a self-hosted TiDB Cloud Lake.
+- An AWS S3 bucket used as storage for your self-hosted TiDB Cloud Lake. [Learn how to create an S3 bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html).
 - AWS Access Key ID and Secret Access Key with sufficient permissions for accessing your S3 bucket. [Manage your AWS credentials](https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys).
 - BendSQL is installed on your local machine. See [Installing BendSQL](/tidb-cloud-lake/guides/connect-using-bendsql.md#installing-bendsql) for instructions on how to install BendSQL using various package managers.
 
-## Step 1: Launch TiDB Lake in Docker
+## Step 1: Launch TiDB Cloud Lake in Docker
 
-1. Start a TiDB Lake container on your local machine. The command below launches a TiDB Lake container with S3 as the storage backend, using the `databend-doc` bucket, along with the specified S3 endpoint and authentication credentials.
+1. Start a TiDB Cloud Lake container on your local machine. The command below launches a TiDB Cloud Lake container with S3 as the storage backend, using the `databend-doc` bucket, along with the specified S3 endpoint and authentication credentials.
 
     ```bash
     docker run \
@@ -105,7 +105,7 @@ ATTACH TABLE population_only (city, population) 's3://databend-doc/1/16/' CONNEC
     └────────────────────────────────────┘
     ```
 
-2. If you update the source table in TiDB Lake, you can observe the same changes reflected in the attached table on TiDB Cloud Lake. For example, if you change the population of Toronto to 2,371,571 in the source table:
+2. If you update the source table in TiDB Cloud Lake, you can observe the same changes reflected in the attached table on TiDB Cloud Lake. For example, if you change the population of Toronto to 2,371,571 in the source table:
 
     ```sql
     UPDATE population

@@ -1,11 +1,11 @@
 ---
 title: Support Services
-summary: "TiDB Lake provides comprehensive Support Services for our TiDB Cloud Lake users and customers. Our objective is to deliver exceptional support that reflects the TiDB Lake product's core values – high performance, ease of use, and fast, high-quality results."
+summary: "TiDB Cloud Lake provides comprehensive Support Services for our TiDB Cloud Lake users and customers. Our objective is to deliver exceptional support that reflects the TiDB Cloud Lake product's core values – high performance, ease of use, and fast, high-quality results."
 ---
 
 # Support Services
 
-TiDB Lake provides comprehensive Support Services for our TiDB Cloud Lake users and customers. Our objective is to deliver exceptional support that reflects the TiDB Lake product's core values – high performance, ease of use, and fast, high-quality results.
+TiDB Cloud Lake provides comprehensive Support Services for our TiDB Cloud Lake users and customers. Our objective is to deliver exceptional support that reflects the TiDB Cloud Lake product's core values – high performance, ease of use, and fast, high-quality results.
 
 For detailed information about support service levels across different editions, see [Support Service Levels](#support-service-levels). For more information, contact our [sales team](https://www.databend.com/contact-us/).
 
@@ -38,7 +38,7 @@ TiDB Cloud Lake offers different levels of support based on your subscription ti
 >
 > Please note that only Business and Dedicated customers have a Service Level Agreement (SLA) on Support Incidents. If you are using the Personal edition – while we will try to answer your question as soon as possible, we'd encourage you to also explore our Community resources:
 >
-> - [TiDB Lake Community Slack Channel](https://link.databend.com/join-slack)
+> - [TiDB Cloud Lake Community Slack Channel](https://link.databend.com/join-slack)
 > - [GitHub Discussions](https://github.com/databendlabs/databend/discussions)
 
 ## Enterprise Support

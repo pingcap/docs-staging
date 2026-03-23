@@ -13,7 +13,7 @@ Inserts one or more rows into a table.
 
 > **Tip:**
 >
-> TiDB Lake ensures data integrity with atomic operations. Inserts, updates, replaces, and deletes either succeed completely or fail entirely.
+> TiDB Cloud Lake ensures data integrity with atomic operations. Inserts, updates, replaces, and deletes either succeed completely or fail entirely.
 
 See also: [INSERT (multi-table)](/tidb-cloud-lake/sql/insert-multi-table.md)
 
@@ -189,7 +189,7 @@ SELECT * FROM staff_records;
 
 ### Example-4: Insert with Staged Files
 
-TiDB Lake enables you to insert data into a table from staged files with the INSERT INTO statement. This is achieved through TiDB Lake's capacity to [Query Staged Files](/tidb-cloud-lake/sql/stage.md) and subsequently incorporate the query result into the table.
+TiDB Cloud Lake enables you to insert data into a table from staged files with the INSERT INTO statement. This is achieved through TiDB Cloud Lake's capacity to [Query Staged Files](/tidb-cloud-lake/sql/stage.md) and subsequently incorporate the query result into the table.
 
 1. Create a table called `sample`:
 

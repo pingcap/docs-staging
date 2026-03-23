@@ -1,6 +1,6 @@
 ---
 title: DROP SEQUENCE
-summary: Deletes an existing sequence from TiDB Lake.
+summary: Deletes an existing sequence from TiDB Cloud Lake.
 ---
 
 # DROP SEQUENCE
@@ -9,7 +9,7 @@ summary: Deletes an existing sequence from TiDB Lake.
 >
 > Introduced or updated in v1.2.426.
 
-Deletes an existing sequence from TiDB Lake.
+Deletes an existing sequence from TiDB Cloud Lake.
 
 ## Syntax
 

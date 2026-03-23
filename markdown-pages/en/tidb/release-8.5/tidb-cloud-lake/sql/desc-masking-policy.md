@@ -1,6 +1,6 @@
 ---
 title: DESC MASKING POLICY
-summary: Displays detailed information about a specific masking policy in TiDB Lake.
+summary: Displays detailed information about a specific masking policy in TiDB Cloud Lake.
 ---
 
 # DESC MASKING POLICY
@@ -9,7 +9,7 @@ summary: Displays detailed information about a specific masking policy in TiDB L
 >
 > Introduced or updated in v1.2.845.
 
-Displays detailed information about a specific masking policy in TiDB Lake.
+Displays detailed information about a specific masking policy in TiDB Cloud Lake.
 
 ## Syntax
 

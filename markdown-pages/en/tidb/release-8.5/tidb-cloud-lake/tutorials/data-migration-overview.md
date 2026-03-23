@@ -1,15 +1,15 @@
 ---
 title: Data Migration Overview
-summary: Select your source database and migration requirements to find the most suitable migration method to TiDB Lake.
+summary: Select your source database and migration requirements to find the most suitable migration method to TiDB Cloud Lake.
 ---
 
 # Data Migration Overview
 
-Select your source database and migration requirements to find the most suitable migration method to TiDB Lake.
+Select your source database and migration requirements to find the most suitable migration method to TiDB Cloud Lake.
 
-## MySQL to TiDB Lake
+## MySQL to TiDB Cloud Lake
 
-TiDB Lake supports two main migration approaches from MySQL:
+TiDB Cloud Lake supports two main migration approaches from MySQL:
 
 | Migration Approach       | Recommended Tool             | Supported MySQL versions |
 |--------------------------|------------------------------|--------------------------|
@@ -43,13 +43,13 @@ TiDB Lake supports two main migration approaches from MySQL:
 | [DataX](/tidb-cloud-lake/tutorials/migrate-from-mysql-with-datax.md) | Full Load, Incremental | High-performance large dataset transfers | You need high throughput for large datasets; You want parallel processing capabilities; You need a mature, widely-used tool |
 | [Addax](/tidb-cloud-lake/tutorials/migrate-from-mysql-with-addax.md) | Full Load, Incremental | Enhanced DataX with better performance | You need better error handling than DataX; You want improved monitoring capabilities; You need more recent updates and features |
 
-## Snowflake to TiDB Lake
+## Snowflake to TiDB Cloud Lake
 
-Migrating from Snowflake to TiDB Lake involves a three-step process:
+Migrating from Snowflake to TiDB Cloud Lake involves a three-step process:
 
 1. **Configuring Snowflake Storage Integration for Amazon S3**: Set up secure access between Snowflake and S3
 2. **Preparing & Exporting Data to Amazon S3**: Export your Snowflake data to S3 in Parquet format
-3. **Loading Data into TiDB Lake**: Import the data from S3 into TiDB Lake
+3. **Loading Data into TiDB Cloud Lake**: Import the data from S3 into TiDB Cloud Lake
 
 ### When to Choose Snowflake Migration
 

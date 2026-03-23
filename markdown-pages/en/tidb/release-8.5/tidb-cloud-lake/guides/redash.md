@@ -7,15 +7,15 @@ summary: Redash is designed to enable anyone, regardless of the level of technic
 
 [Redash](https://redash.io/) is designed to enable anyone, regardless of the level of technical sophistication, to harness the power of data big and small. SQL users leverage Redash to explore, query, visualize, and share data from any data sources. Their work in turn enables anybody in their organization to use the data. Every day, millions of users at thousands of organizations around the world use Redash to develop insights and make data-driven decisions.
 
-Both TiDB Lake and TiDB Cloud Lake can integrate with Redash as a data source. The following tutorials guide you through deploying and integrating Redash.
+Both TiDB Cloud Lake and TiDB Cloud Lake can integrate with Redash as a data source. The following tutorials guide you through deploying and integrating Redash.
 
-## Tutorial-1: Integrating TiDB Lake with Redash
+## Tutorial-1: Integrating TiDB Cloud Lake with Redash
 
-In this tutorial, you'll deploy a local TiDB Lake and install Redash with Docker. Before you start, ensure that you have Docker installed.
+In this tutorial, you'll deploy a local TiDB Cloud Lake and install Redash with Docker. Before you start, ensure that you have Docker installed.
 
-### Step 1. Deploy TiDB Lake
+### Step 1. Deploy TiDB Cloud Lake
 
-Deploy a local TiDB Lake.
+Deploy a local TiDB Cloud Lake.
 
 ### Step 2. Deploy Redash
 
@@ -65,7 +65,7 @@ The steps below describe how to deploy Redash with Docker.
 docker-compose up
 ```
 
-### Step 3. Add TiDB Lake as a Data Source
+### Step 3. Add TiDB Cloud Lake as a Data Source
 
 1. Sign up for Redash by completing the initial process at <http://localhost:5000> in your web browser.
 
@@ -73,13 +73,13 @@ docker-compose up
 
     ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/integration-redash-select.png)
 
-3. Configure your TiDB Lake data source.
+3. Configure your TiDB Cloud Lake data source.
 
-   - Username: `root`. No password is required if you log into a local instance of TiDB Lake with `root`.
+   - Username: `root`. No password is required if you log into a local instance of TiDB Cloud Lake with `root`.
    - Host: `host.docker.internal`
    - Port: `8000`
    - Database: `default`
-   - Secure: Enable this option if you enabled HTTPS on your TiDB Lake server.
+   - Secure: Enable this option if you enabled HTTPS on your TiDB Cloud Lake server.
 
     ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/redash-cfg-local.png)
 
@@ -151,7 +151,7 @@ docker-compose up
 
     ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/bi-redash-select.png)
 
-3. Configure your TiDB Lake data source.
+3. Configure your TiDB Cloud Lake data source.
 
    - Username: `cloudapp`.
    - Password: Copy and paste your password generated in TiDB Cloud Lake.

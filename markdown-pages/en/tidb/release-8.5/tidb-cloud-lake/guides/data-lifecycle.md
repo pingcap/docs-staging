@@ -1,15 +1,15 @@
 ---
 title: Data Lifecycle in TiDB Cloud Lake
-summary: "TiDB Lake supports familiar Data Definition Language (DDL) and Data Manipulation Language (DML) commands, making it easy for you to manage your database. Whether you're organizing, storing, querying, modifying, or deleting data, TiDB Lake follows the same industry standards you're accustomed to."
+summary: "TiDB Cloud Lake supports familiar Data Definition Language (DDL) and Data Manipulation Language (DML) commands, making it easy for you to manage your database. Whether you're organizing, storing, querying, modifying, or deleting data, TiDB Cloud Lake follows the same industry standards you're accustomed to."
 ---
 
 # Data Lifecycle in TiDB Cloud Lake
 
-TiDB Lake supports familiar Data Definition Language (DDL) and Data Manipulation Language (DML) commands, making it easy for you to manage your database. Whether you're organizing, storing, querying, modifying, or deleting data, TiDB Lake follows the same industry standards you're accustomed to.
+TiDB Cloud Lake supports familiar Data Definition Language (DDL) and Data Manipulation Language (DML) commands, making it easy for you to manage your database. Whether you're organizing, storing, querying, modifying, or deleting data, TiDB Cloud Lake follows the same industry standards you're accustomed to.
 
-## TiDB Lake Objects
+## TiDB Cloud Lake Objects
 
-TiDB Lake supports the following objects to create and modify them:
+TiDB Cloud Lake supports the following objects to create and modify them:
 
 - Database
 - Table
@@ -41,7 +41,7 @@ Key Commands:
 
 ## Storing Data
 
-Directly add data to your tables. TiDB Lake also allows importing data from external files into its tables.
+Directly add data to your tables. TiDB Cloud Lake also allows importing data from external files into its tables.
 
 Key Commands:
 
@@ -58,7 +58,7 @@ Key Command:
 
 ## Working with Data
 
-Once your data is in TiDB Lake, you can update, replace, merge, or delete it as needed.
+Once your data is in TiDB Cloud Lake, you can update, replace, merge, or delete it as needed.
 
 Key Commands:
 
@@ -69,7 +69,7 @@ Key Commands:
 
 ## Removing Data
 
-TiDB Lake allows you to delete specific data or entire tables and databases.
+TiDB Cloud Lake allows you to delete specific data or entire tables and databases.
 
 Key Commands:
 

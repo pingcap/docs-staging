@@ -43,7 +43,7 @@ Your data in TiDB Cloud Lake is physically stored in Amazon S3. Storage costs in
 
 ### Cloud Service Pricing
 
-The cloud service fee currently includes fees for the API requests. Each time you run a SQL query with TiDB Cloud Lake, a REST API request is sent to the `databend-query` through the TiDB Lake HTTP handler. In the Personal Edition, you are billed $1 for every 10,000 API requests, while in the Business Edition, the cost is $2 for every 10,000 API requests.
+The cloud service fee currently includes fees for the API requests. Each time you run a SQL query with TiDB Cloud Lake, a REST API request is sent to the `databend-query` through the TiDB Cloud Lake HTTP handler. In the Personal Edition, you are billed $1 for every 10,000 API requests, while in the Business Edition, the cost is $2 for every 10,000 API requests.
 
 | Edition          | Cost per 10,000 API Requests |
 | ---------------- | ---------------------------- |

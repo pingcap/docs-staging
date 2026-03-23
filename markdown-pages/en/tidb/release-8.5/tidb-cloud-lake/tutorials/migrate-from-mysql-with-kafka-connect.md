@@ -7,26 +7,26 @@ summary: Builds a MySQL-to-TiDB Cloud Lake pipeline with Kafka Connect to suppor
 
 > **Capabilities**: CDC, Incremental, Full Load
 
-This tutorial shows how to build a real-time data pipeline from MySQL to TiDB Lake using Kafka Connect.
+This tutorial shows how to build a real-time data pipeline from MySQL to TiDB Cloud Lake using Kafka Connect.
 
 ## Overview
 
-Kafka Connect is a tool for streaming data between Apache Kafka and other systems reliably and at scale. It simplifies building real-time data pipelines by standardizing data movement in and out of Kafka. For MySQL to TiDB Lake migration, Kafka Connect provides a seamless solution that enables:
+Kafka Connect is a tool for streaming data between Apache Kafka and other systems reliably and at scale. It simplifies building real-time data pipelines by standardizing data movement in and out of Kafka. For MySQL to TiDB Cloud Lake migration, Kafka Connect provides a seamless solution that enables:
 
-- Real-time data synchronization from MySQL to TiDB Lake
+- Real-time data synchronization from MySQL to TiDB Cloud Lake
 - Automatic schema evolution and table creation
 - Support for both new data capture and updates to existing data
 
 The migration pipeline consists of two main components:
 
 - **MySQL JDBC Source Connector**: Reads data from MySQL and publishes it to Kafka topics
-- **TiDB Lake Sink Connector**: Consumes data from Kafka topics and writes it to TiDB Lake
+- **TiDB Cloud Lake Sink Connector**: Consumes data from Kafka topics and writes it to TiDB Cloud Lake
 
 ## Prerequisites
 
 - MySQL database with data you want to migrate
 - Apache Kafka installed ([Kafka quickstart guide](https://kafka.apache.org/quickstart))
-- TiDB Lake instance running
+- TiDB Cloud Lake instance running
 - Basic knowledge of SQL and command line
 
 ## Step 1: Set Up Kafka Connect
@@ -114,15 +114,15 @@ The MySQL Source Connector supports three synchronization modes:
    timestamp.column.name=updated_at
    ```
 
-## Step 3: Configure TiDB Lake Sink Connector
+## Step 3: Configure TiDB Cloud Lake Sink Connector
 
 ### Install Required Components
 
-1. Download the [TiDB Lake Kafka Connector](https://github.com/databendcloud/databend-kafka-connect/releases) and place it in your Kafka `libs` directory
+1. Download the [TiDB Cloud Lake Kafka Connector](https://github.com/databendcloud/databend-kafka-connect/releases) and place it in your Kafka `libs` directory
 
-2. Download the [TiDB Lake JDBC Driver](https://central.sonatype.com/artifact/com.databend/databend-jdbc/) and copy it to your Kafka `libs` directory
+2. Download the [TiDB Cloud Lake JDBC Driver](https://central.sonatype.com/artifact/com.databend/databend-jdbc/) and copy it to your Kafka `libs` directory
 
-### Create TiDB Lake Sink Configuration
+### Create TiDB Cloud Lake Sink Configuration
 
 Create a file `databend-sink.properties` in your Kafka `config` directory:
 
@@ -151,7 +151,7 @@ pk.fields=id
 batch.size=1000
 ```
 
-Adjust the TiDB Lake connection settings as needed for your environment.
+Adjust the TiDB Cloud Lake connection settings as needed for your environment.
 
 ## Step 4: Start the Migration Pipeline
 
@@ -173,9 +173,9 @@ bin/connect-standalone.sh config/connect-standalone.properties \
    tail -f /path/to/kafka/logs/connect.log
    ```
 
-2. **Verify Data in TiDB Lake**
+2. **Verify Data in TiDB Cloud Lake**
 
-   Connect to your TiDB Lake instance and run:
+   Connect to your TiDB Cloud Lake instance and run:
 
    ```sql
    SELECT * FROM mysql_data LIMIT 10;
@@ -183,7 +183,7 @@ bin/connect-standalone.sh config/connect-standalone.properties \
 
 ### Test Schema Evolution
 
-If you add a new column to your MySQL table, the schema change will automatically propagate to TiDB Lake:
+If you add a new column to your MySQL table, the schema change will automatically propagate to TiDB Cloud Lake:
 
 1. **Add a column in MySQL**
 
@@ -191,7 +191,7 @@ If you add a new column to your MySQL table, the schema change will automaticall
    ALTER TABLE your_table ADD COLUMN new_field VARCHAR(100);
    ```
 
-2. **Verify schema update in TiDB Lake**
+2. **Verify schema update in TiDB Cloud Lake**
 
    ```sql
    DESC mysql_data;
@@ -211,13 +211,13 @@ To test updates, ensure you're using timestamp or timestamp+incrementing mode:
    UPDATE your_table SET some_column='new value' WHERE id=1;
    ```
 
-3. **Verify the update in TiDB Lake**
+3. **Verify the update in TiDB Cloud Lake**
 
    ```sql
    SELECT * FROM mysql_data WHERE id=1;
    ```
 
-## Key Features of TiDB Lake Kafka Connect
+## Key Features of TiDB Cloud Lake Kafka Connect
 
 1. **Automatic Table and Column Creation**: With `auto.create` and `auto.evolve` settings, tables and columns are created automatically based on Kafka topic data
 
@@ -232,5 +232,5 @@ To test updates, ensure you're using timestamp or timestamp+incrementing mode:
 ## Troubleshooting
 
 - **Connector Not Starting**: Check Kafka Connect logs for errors
-- **No Data in TiDB Lake**: Verify topic exists and contains data using Kafka console consumer
+- **No Data in TiDB Cloud Lake**: Verify topic exists and contains data using Kafka console consumer
 - **Schema Issues**: Ensure `auto.create` and `auto.evolve` are set to `true`

@@ -1,6 +1,6 @@
 ---
 title: ALTER PASSWORD POLICY
-summary: Modifies an existing password policy in TiDB Lake.
+summary: Modifies an existing password policy in TiDB Cloud Lake.
 ---
 
 # ALTER PASSWORD POLICY
@@ -9,7 +9,7 @@ summary: Modifies an existing password policy in TiDB Lake.
 >
 > Introduced or updated in v1.2.283.
 
-Modifies an existing password policy in TiDB Lake.
+Modifies an existing password policy in TiDB Cloud Lake.
 
 ## Syntax
 

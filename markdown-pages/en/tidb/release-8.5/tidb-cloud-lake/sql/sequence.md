@@ -1,11 +1,11 @@
 ---
 title: Sequence
-summary: This page provides a comprehensive overview of sequence operations in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of sequence operations in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # Sequence
 
-This page provides a comprehensive overview of sequence operations in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of sequence operations in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## Sequence Management
 
@@ -23,4 +23,4 @@ This page provides a comprehensive overview of sequence operations in TiDB Lake,
 
 > **Note:**
 >
-> Sequences in TiDB Lake are used to generate unique numeric values in a sequential order, commonly used for primary keys or other unique identifiers.
+> Sequences in TiDB Cloud Lake are used to generate unique numeric values in a sequential order, commonly used for primary keys or other unique identifiers.

@@ -1,11 +1,11 @@
 ---
 title: system.build_options
-summary: This system table describes the build options of the current TiDB Lake release.
+summary: This system table describes the build options of the current TiDB Cloud Lake release.
 ---
 
 # system.build_options
 
-This system table describes the build options of the current TiDB Lake release.
+This system table describes the build options of the current TiDB Cloud Lake release.
 
 - `cargo_features`: The package features have been enabled, which are listed in the `[features]` section of `Cargo.toml` .
 - `target_features`: The platform features that have been enabled for the current compilation target. Ref: [Conditional Compilation - `target_feature`](https://doc.rust-lang.org/reference/conditional-compilation.html#target_feature) .

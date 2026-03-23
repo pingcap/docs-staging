@@ -1,11 +1,11 @@
 ---
 title: Type Conversion Functions
-summary: This section provides reference information for type conversion functions in TiDB Lake. These functions enable strict casting of VARIANT values to other SQL data types.
+summary: This section provides reference information for type conversion functions in TiDB Cloud Lake. These functions enable strict casting of VARIANT values to other SQL data types.
 ---
 
 # Type Conversion Functions
 
-This section provides reference information for type conversion functions in TiDB Lake. These functions enable strict casting of VARIANT values to other SQL data types.
+This section provides reference information for type conversion functions in TiDB Cloud Lake. These functions enable strict casting of VARIANT values to other SQL data types.
 
 ## Type Conversion
 

@@ -1,11 +1,11 @@
 ---
 title: Cluster Key
-summary: This page provides a comprehensive overview of cluster key operations in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of cluster key operations in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # Cluster Key
 
-This page provides a comprehensive overview of cluster key operations in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of cluster key operations in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## Cluster Key Management
 
@@ -22,4 +22,4 @@ This page provides a comprehensive overview of cluster key operations in TiDB La
 
 > **Note:**
 >
-> Cluster keys in TiDB Lake are used to physically organize data in tables to improve query performance by co-locating related data.
+> Cluster keys in TiDB Cloud Lake are used to physically organize data in tables to improve query performance by co-locating related data.

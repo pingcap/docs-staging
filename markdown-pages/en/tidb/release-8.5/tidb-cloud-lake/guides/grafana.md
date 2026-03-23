@@ -7,10 +7,10 @@ summary: Grafana is a monitoring dashboard system, which is an open-source monit
 
 [Grafana](https://grafana.com/) is a monitoring dashboard system, which is an open-source monitoring tool developed by Grafana Labs. It can greatly simplify the complexity of monitoring by allowing us to provide the data to be monitored, and it generates various visualizations. Additionally, it has an alarm function that sends notifications when there is an issue with the system.
 
-TiDB Cloud Lake and TiDB Lake can integrate with Grafana in two ways:
+TiDB Cloud Lake and TiDB Cloud Lake can integrate with Grafana in two ways:
 
 - **Loki Protocol (Recommended for TiDB Cloud Lake)**: Use Grafana's built-in Loki data source to connect to TiDB Cloud Lake via Loki-compatible API endpoints.
-- **Custom Plugin**: Use the [Grafana TiDB Lake Data Source Plugin](https://github.com/databendlabs/grafana-databend-datasource) for direct SQL access.
+- **Custom Plugin**: Use the [Grafana TiDB Cloud Lake Data Source Plugin](https://github.com/databendlabs/grafana-databend-datasource) for direct SQL access.
 
 ## Using Loki Protocol (Recommended)
 
@@ -129,7 +129,7 @@ For detailed information on obtaining connection details, see [Connecting to a W
 
 ## Using Custom Plugin (Alternative)
 
-For advanced use cases requiring direct SQL access or when working with self-hosted TiDB Lake, you can use the Grafana TiDB Lake Data Source Plugin.
+For advanced use cases requiring direct SQL access or when working with self-hosted TiDB Cloud Lake, you can use the Grafana TiDB Cloud Lake Data Source Plugin.
 
 ### Step 1. Set up Environment
 
@@ -147,7 +147,7 @@ Add the following lines to your `grafana.ini` file:
 allow_loading_unsigned_plugins = databend-datasource
 ```
 
-### Step 3. Install the Grafana TiDB Lake Data Source Plugin
+### Step 3. Install the Grafana TiDB Cloud Lake Data Source Plugin
 
 1. Find the latest release on [GitHub Release](https://github.com/databendlabs/grafana-databend-datasource/releases).
 
@@ -174,7 +174,7 @@ allow_loading_unsigned_plugins = databend-datasource
 
 2. Click **Add new data source** on the top right corner of the page.
 
-3. Input the `DSN` field for your TiDB Lake instance. For example:
+3. Input the `DSN` field for your TiDB Cloud Lake instance. For example:
    - Self-hosted: `databend://root:@localhost:8000?sslmode=disable`
    - TiDB Cloud Lake: `databend://cloudapp:******@tnxxxxxxx.gw.aws-us-east-2.default.databend.com:443/default?warehouse=xsmall-fsta`
 
@@ -186,7 +186,7 @@ allow_loading_unsigned_plugins = databend-datasource
 
 1. Create a new dashboard and add a panel.
 
-2. Select your TiDB Lake data source.
+2. Select your TiDB Cloud Lake data source.
 
 3. Write SQL queries to retrieve and visualize your data.
 

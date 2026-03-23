@@ -1,11 +1,11 @@
 ---
 title: Vector Functions
-summary: Vector functions in TiDB Lake for vector operations and analysis.
+summary: Vector functions in TiDB Cloud Lake for vector operations and analysis.
 ---
 
 # Vector Functions
 
-This section provides reference information for vector functions in TiDB Lake. These functions enable comprehensive vector operations including distance calculations, similarity measurements, and vector analysis for machine learning applications, vector search, and AI-powered analytics.
+This section provides reference information for vector functions in TiDB Cloud Lake. These functions enable comprehensive vector operations including distance calculations, similarity measurements, and vector analysis for machine learning applications, vector search, and AI-powered analytics.
 
 ## Distance Functions
 

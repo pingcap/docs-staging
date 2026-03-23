@@ -1,6 +1,6 @@
 ---
 title: Data Types
-summary: "TiDB Lake stores data in strongly typed columns. This page summarizes the supported data types, how automatic/explicit conversions work, and what happens with NULL or default values."
+summary: "TiDB Cloud Lake stores data in strongly typed columns. This page summarizes the supported data types, how automatic/explicit conversions work, and what happens with NULL or default values."
 ---
 
 # Data Types
@@ -9,7 +9,7 @@ summary: "TiDB Lake stores data in strongly typed columns. This page summarizes 
 >
 > Introduced or updated in v1.2.100.
 
-TiDB Lake stores data in strongly typed columns. This page summarizes the supported data types, how automatic/explicit conversions work, and what happens with NULL or default values.
+TiDB Cloud Lake stores data in strongly typed columns. This page summarizes the supported data types, how automatic/explicit conversions work, and what happens with NULL or default values.
 
 ## Foundational Types
 
@@ -62,7 +62,7 @@ TiDB Lake stores data in strongly typed columns. This page summarizes the suppor
 
 ### Implicit Casting (Coercion)
 
-TiDB Lake performs automatic conversions in well-defined situations:
+TiDB Cloud Lake performs automatic conversions in well-defined situations:
 
 1. Integers upcast to `INT64`. Example: `UInt8 -> INT64`.
 2. Numeric values upcast to `FLOAT64` when necessary.
@@ -79,7 +79,7 @@ SELECT CONCAT(1, col);        -- may fail if `col` can't coerce to number
 
 ## NULL Handling and Defaults
 
-Columns allow NULL values unless declared `NOT NULL`. When a `NOT NULL` column is omitted during INSERT, TiDB Lake writes a type-specific default value:
+Columns allow NULL values unless declared `NOT NULL`. When a `NOT NULL` column is omitted during INSERT, TiDB Cloud Lake writes a type-specific default value:
 
 | Type Category            | Default |
 |--------------------------|---------|

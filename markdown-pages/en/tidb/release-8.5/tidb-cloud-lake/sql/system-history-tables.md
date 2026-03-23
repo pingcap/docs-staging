@@ -1,11 +1,11 @@
 ---
 title: System History Tables
-summary: "TiDB Lake's system history tables provide Data Governance capabilities by automatically tracking database activities for compliance, security monitoring, and performance analysis."
+summary: "TiDB Cloud Lake's system history tables provide Data Governance capabilities by automatically tracking database activities for compliance, security monitoring, and performance analysis."
 ---
 
 # System History Tables
 
-TiDB Lake's system history tables provide **Data Governance** capabilities by automatically tracking database activities for compliance, security monitoring, and performance analysis.
+TiDB Cloud Lake's system history tables provide **Data Governance** capabilities by automatically tracking database activities for compliance, security monitoring, and performance analysis.
 
 ## Available Tables
 
@@ -48,7 +48,7 @@ GRANT ROLE audit_team TO USER compliance_officer;
 
 ✅ **Automatically enabled** - All system history tables are ready to use without any configuration.
 
-### Self-Hosted TiDB Lake
+### Self-Hosted TiDB Cloud Lake
 
 <details open>
 <summary>📝 **Manual configuration required** - Click to expand configuration details</summary>

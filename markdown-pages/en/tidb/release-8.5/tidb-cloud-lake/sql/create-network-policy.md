@@ -1,6 +1,6 @@
 ---
 title: CREATE NETWORK POLICY
-summary: Creates a new network policy in TiDB Lake.
+summary: Creates a new network policy in TiDB Cloud Lake.
 ---
 
 # CREATE NETWORK POLICY
@@ -9,7 +9,7 @@ summary: Creates a new network policy in TiDB Lake.
 >
 > Introduced or updated in v1.2.341.
 
-Creates a new network policy in TiDB Lake.
+Creates a new network policy in TiDB Cloud Lake.
 
 ## Syntax
 

@@ -7,7 +7,7 @@ summary: Loads MySQL data into TiDB Cloud Lake with Addax for batch full-load an
 
 > **Capabilities**: Full Load, Incremental
 
-In this tutorial, you will load data from MySQL to TiDB Lake with Addax. Before you start, make sure you have successfully set up TiDB Lake, MySQL, and Addax in your environment.
+In this tutorial, you will load data from MySQL to TiDB Cloud Lake with Addax. Before you start, make sure you have successfully set up TiDB Cloud Lake, MySQL, and Addax in your environment.
 
 1. In MySQL, create a SQL user that you will use for data loading and then create a table and populate it with sample data.
 
@@ -19,7 +19,7 @@ In this tutorial, you will load data from MySQL to TiDB Lake with Addax. Before 
     mysql> insert into db.tb01 values(1, 'test1'), (2, 'test2'), (3, 'test3');
     ```
 
-2. In TiDB Lake, create a corresponding target table.
+2. In TiDB Cloud Lake, create a corresponding target table.
 
     ```sql title='In Databend:'
     databend> create database migrated_db;
@@ -85,7 +85,7 @@ cd {YOUR_ADDAX_DIR_BIN}
 ./addax.sh -L debug ./mysql_demo.json
 ```
 
-You are all set! To verify the data loading, execute the query in TiDB Lake:
+You are all set! To verify the data loading, execute the query in TiDB Cloud Lake:
 
 ```sql
 databend> select * from migrated_db.tb01;

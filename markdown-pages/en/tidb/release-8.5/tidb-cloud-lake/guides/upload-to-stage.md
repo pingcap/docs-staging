@@ -1,20 +1,20 @@
 ---
 title: Uploading to Stage
-summary: "TiDB Lake recommends two file upload methods for stages PRESIGN and PUT/GET commands. These methods enable direct data transfer between the client and your storage, eliminating intermediaries and resulting in cost savings by reducing traffic between TiDB Lake and your storage."
+summary: "TiDB Cloud Lake recommends two file upload methods for stages PRESIGN and PUT/GET commands. These methods enable direct data transfer between the client and your storage, eliminating intermediaries and resulting in cost savings by reducing traffic between TiDB Cloud Lake and your storage."
 ---
 
 # Uploading to Stage
 
-TiDB Lake recommends two file upload methods for stages: [PRESIGN](/tidb-cloud-lake/sql/presign.md) and PUT/GET commands. These methods enable direct data transfer between the client and your storage, eliminating intermediaries and resulting in cost savings by reducing traffic between TiDB Lake and your storage.
+TiDB Cloud Lake recommends two file upload methods for stages: [PRESIGN](/tidb-cloud-lake/sql/presign.md) and PUT/GET commands. These methods enable direct data transfer between the client and your storage, eliminating intermediaries and resulting in cost savings by reducing traffic between TiDB Cloud Lake and your storage.
 
 ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/staging-file.png)
 
-The PRESIGN method generates a time-limited URL with a signature, which clients can use to securely initiate file uploads. This URL grants temporary access to the designated stage, allowing clients to directly transfer data without relying on TiDB Lake servers for the entire process, enhancing both security and efficiency.
+The PRESIGN method generates a time-limited URL with a signature, which clients can use to securely initiate file uploads. This URL grants temporary access to the designated stage, allowing clients to directly transfer data without relying on TiDB Cloud Lake servers for the entire process, enhancing both security and efficiency.
 
 If you're using [BendSQL](/tidb-cloud-lake/guides/connect-using-bendsql.md) to manage files in a stage, you can use the PUT command for uploading files and the GET command for downloading files.
 
 - The GET command currently can only download all files in a stage, not individual ones.
-- These commands are exclusive to BendSQL and the GET command will not function when TiDB Lake uses the file system as the storage backend.
+- These commands are exclusive to BendSQL and the GET command will not function when TiDB Cloud Lake uses the file system as the storage backend.
 
 ## Uploading with Presigned URL
 

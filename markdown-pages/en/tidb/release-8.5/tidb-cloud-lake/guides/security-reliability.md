@@ -1,11 +1,11 @@
 ---
 title: Security & Reliability
-summary: "TiDB Lake offers enterprise-grade security and reliability features that safeguard your data throughout its lifecycle. From controlling who can access your data to protecting against network threats and recovering from operational errors, TiDB Lake's multi-layered security approach helps you maintain data integrity, compliance, and business continuity."
+summary: "TiDB Cloud Lake offers enterprise-grade security and reliability features that safeguard your data throughout its lifecycle. From controlling who can access your data to protecting against network threats and recovering from operational errors, TiDB Cloud Lake's multi-layered security approach helps you maintain data integrity, compliance, and business continuity."
 ---
 
 # Security & Reliability
 
-TiDB Lake offers **enterprise-grade security and reliability features** that safeguard your data throughout its lifecycle. From controlling who can access your data to protecting against network threats and recovering from operational errors, TiDB Lake's **multi-layered security approach** helps you maintain data integrity, compliance, and business continuity.
+TiDB Cloud Lake offers **enterprise-grade security and reliability features** that safeguard your data throughout its lifecycle. From controlling who can access your data to protecting against network threats and recovering from operational errors, TiDB Cloud Lake's **multi-layered security approach** helps you maintain data integrity, compliance, and business continuity.
 
 | Security Feature | Purpose | When to Use |
 |-----------------|---------|------------|

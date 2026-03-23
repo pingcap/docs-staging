@@ -1,11 +1,11 @@
 ---
 title: system.configs
-summary: Contains information about TiDB Lake server configs.
+summary: Contains information about TiDB Cloud Lake server configs.
 ---
 
 # system.configs
 
-Contains information about TiDB Lake server configs.
+Contains information about TiDB Cloud Lake server configs.
 
 > **Note:**
 >

@@ -1,6 +1,6 @@
 ---
 title: DROP NETWORK POLICY
-summary: Deletes an existing network policy from TiDB Lake. When you drop a network policy, it is removed from TiDB Lake, and its associated rules for allowed and blocked IP address lists are no longer in effect. Please note that, before dropping a network policy, ensure that this policy is not associated with any users.
+summary: Deletes an existing network policy from TiDB Cloud Lake. When you drop a network policy, it is removed from TiDB Cloud Lake, and its associated rules for allowed and blocked IP address lists are no longer in effect. Please note that, before dropping a network policy, ensure that this policy is not associated with any users.
 ---
 
 # DROP NETWORK POLICY
@@ -9,7 +9,7 @@ summary: Deletes an existing network policy from TiDB Lake. When you drop a netw
 >
 > Introduced or updated in v1.2.26.
 
-Deletes an existing network policy from TiDB Lake. When you drop a network policy, it is removed from TiDB Lake, and its associated rules for allowed and blocked IP address lists are no longer in effect. Please note that, before dropping a network policy, ensure that this policy is not associated with any users.
+Deletes an existing network policy from TiDB Cloud Lake. When you drop a network policy, it is removed from TiDB Cloud Lake, and its associated rules for allowed and blocked IP address lists are no longer in effect. Please note that, before dropping a network policy, ensure that this policy is not associated with any users.
 
 ## Syntax
 

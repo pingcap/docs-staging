@@ -1,6 +1,6 @@
 ---
 title: DROP INVERTED INDEX
-summary: Removes an inverted index in TiDB Lake.
+summary: Removes an inverted index in TiDB Cloud Lake.
 ---
 
 # DROP INVERTED INDEX
@@ -9,7 +9,7 @@ summary: Removes an inverted index in TiDB Lake.
 >
 > Introduced or updated in v1.2.405.
 
-Removes an inverted index in TiDB Lake.
+Removes an inverted index in TiDB Cloud Lake.
 
 ## Syntax
 

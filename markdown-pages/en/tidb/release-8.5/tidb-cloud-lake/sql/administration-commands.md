@@ -1,11 +1,11 @@
 ---
 title: Administration Commands
-summary: This page provides reference information for the system administration commands in TiDB Lake.
+summary: This page provides reference information for the system administration commands in TiDB Cloud Lake.
 ---
 
 # Administration Commands
 
-This page provides reference information for the system administration commands in TiDB Lake.
+This page provides reference information for the system administration commands in TiDB Cloud Lake.
 
 ## System Monitoring
 

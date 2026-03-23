@@ -1,11 +1,11 @@
 ---
 title: SQL Function Reference
-summary: "TiDB Lake provides comprehensive SQL functions for all types of data processing. Functions are organized by importance and usage frequency."
+summary: "TiDB Cloud Lake provides comprehensive SQL functions for all types of data processing. Functions are organized by importance and usage frequency."
 ---
 
 # SQL Function Reference
 
-TiDB Lake provides comprehensive SQL functions for all types of data processing. Functions are organized by importance and usage frequency.
+TiDB Cloud Lake provides comprehensive SQL functions for all types of data processing. Functions are organized by importance and usage frequency.
 
 ## Core Data Functions
 

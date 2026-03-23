@@ -1,11 +1,11 @@
 ---
 title: Performance Optimization
-summary: "TiDB Lake primarily accelerates query performance through various indexing technologies, including data clustering, result caching, and specialized indexes, helping you significantly improve query response times."
+summary: "TiDB Cloud Lake primarily accelerates query performance through various indexing technologies, including data clustering, result caching, and specialized indexes, helping you significantly improve query response times."
 ---
 
 # Performance Optimization
 
-TiDB Lake primarily accelerates query performance through **various indexing technologies**, including data clustering, result caching, and specialized indexes, helping you significantly improve query response times.
+TiDB Cloud Lake primarily accelerates query performance through **various indexing technologies**, including data clustering, result caching, and specialized indexes, helping you significantly improve query response times.
 
 ## Optimization Features
 

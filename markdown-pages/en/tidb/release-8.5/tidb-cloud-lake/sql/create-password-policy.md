@@ -1,6 +1,6 @@
 ---
 title: CREATE PASSWORD POLICY
-summary: Creates a new password policy in TiDB Lake.
+summary: Creates a new password policy in TiDB Cloud Lake.
 ---
 
 # CREATE PASSWORD POLICY
@@ -9,7 +9,7 @@ summary: Creates a new password policy in TiDB Lake.
 >
 > Introduced or updated in v1.2.339.
 
-Creates a new password policy in TiDB Lake.
+Creates a new password policy in TiDB Cloud Lake.
 
 ## Syntax
 

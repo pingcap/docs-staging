@@ -11,7 +11,7 @@ summary: Array of defined data type.
 
 > **Note:**
 >
-> TiDB Lake arrays are 1-based. `arr[1]` returns the first element and `arr[n]` the last.
+> TiDB Cloud Lake arrays are 1-based. `arr[1]` returns the first element and `arr[n]` the last.
 
 ## Examples
 

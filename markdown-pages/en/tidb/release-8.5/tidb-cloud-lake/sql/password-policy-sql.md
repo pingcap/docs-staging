@@ -1,11 +1,11 @@
 ---
 title: Password Policy
-summary: This page provides a comprehensive overview of Password Policy operations in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of Password Policy operations in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # Password Policy
 
-This page provides a comprehensive overview of Password Policy operations in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of Password Policy operations in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## Password Policy Management
 
@@ -28,4 +28,4 @@ This page provides a comprehensive overview of Password Policy operations in TiD
 
 > **Note:**
 >
-> Password policies in TiDB Lake allow you to enforce security requirements for user passwords, such as minimum length, complexity, and expiration rules.
+> Password policies in TiDB Cloud Lake allow you to enforce security requirements for user passwords, such as minimum length, complexity, and expiration rules.

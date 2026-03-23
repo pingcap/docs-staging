@@ -1,11 +1,11 @@
 ---
 title: Data Integration
-summary: The Data Integration feature in TiDB Cloud Lake enables you to load data from external sources into TiDB Lake through a visual, no-code interface. You can create data sources, configure integration tasks, and monitor synchronization — all from the TiDB Cloud Lake console.
+summary: The Data Integration feature in TiDB Cloud Lake enables you to load data from external sources into TiDB Cloud Lake through a visual, no-code interface. You can create data sources, configure integration tasks, and monitor synchronization — all from the TiDB Cloud Lake console.
 ---
 
 # Data Integration
 
-The Data Integration feature in TiDB Cloud Lake enables you to load data from external sources into TiDB Lake through a visual, no-code interface. You can create data sources, configure integration tasks, and monitor synchronization — all from the TiDB Cloud Lake console.
+The Data Integration feature in TiDB Cloud Lake enables you to load data from external sources into TiDB Cloud Lake through a visual, no-code interface. You can create data sources, configure integration tasks, and monitor synchronization — all from the TiDB Cloud Lake console.
 
 ## Supported Data Sources
 
@@ -27,7 +27,7 @@ TiDB Cloud Lake currently supports two types of data sources:
 
 ### Integration Task
 
-An integration task defines how data flows from a source to a target table in TiDB Lake. Each task specifies the source configuration, target warehouse and table, and operational parameters specific to the data source type.
+An integration task defines how data flows from a source to a target table in TiDB Cloud Lake. Each task specifies the source configuration, target warehouse and table, and operational parameters specific to the data source type.
 
 ## Managing Data Sources
 

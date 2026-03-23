@@ -1,6 +1,6 @@
 ---
 title: REFRESH NGRAM INDEX
-summary: "TiDB Lake automatically refreshes NGRAM indexes when data is ingested. Use REFRESH NGRAM INDEX when you need to backfill data that existed before the index was defined."
+summary: "TiDB Cloud Lake automatically refreshes NGRAM indexes when data is ingested. Use REFRESH NGRAM INDEX when you need to backfill data that existed before the index was defined."
 ---
 
 # REFRESH NGRAM INDEX
@@ -9,7 +9,7 @@ summary: "TiDB Lake automatically refreshes NGRAM indexes when data is ingested.
 >
 > Introduced or updated in v1.2.726.
 
-TiDB Lake automatically refreshes NGRAM indexes when data is ingested. Use `REFRESH NGRAM INDEX` when you need to backfill data that existed before the index was defined.
+TiDB Cloud Lake automatically refreshes NGRAM indexes when data is ingested. Use `REFRESH NGRAM INDEX` when you need to backfill data that existed before the index was defined.
 
 ## Syntax
 

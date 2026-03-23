@@ -13,7 +13,7 @@ Removes one or more rows from a table.
 
 > **Tip:**
 >
-> TiDB Lake ensures data integrity with atomic operations. Inserts, updates, replaces, and deletes either succeed completely or fail entirely.
+> TiDB Cloud Lake ensures data integrity with atomic operations. Inserts, updates, replaces, and deletes either succeed completely or fail entirely.
 
 ## Syntax
 

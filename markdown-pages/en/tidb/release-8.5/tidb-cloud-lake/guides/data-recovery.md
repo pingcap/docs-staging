@@ -1,15 +1,15 @@
 ---
 title: Data Recovery
-summary: This topic explains how to back up and restore data in TiDB Lake.
+summary: This topic explains how to back up and restore data in TiDB Cloud Lake.
 ---
 
 # Data Recovery
 
-This topic explains how to back up and restore data in TiDB Lake.
+This topic explains how to back up and restore data in TiDB Cloud Lake.
 
 ## Time Travel: Easy Access to Past Data
 
-With TiDB Lake Time Travel, you can revisit and retrieve data from the past, even if it's been altered or removed. It's perfect for:
+With TiDB Cloud Lake Time Travel, you can revisit and retrieve data from the past, even if it's been altered or removed. It's perfect for:
 
 - **Getting Back Deleted Data:** Helps you get back important things like tables, databases that were deleted, whether by accident or on purpose.
 
@@ -65,15 +65,15 @@ Fail-safe includes:
 
 ## BendSave
 
-BendSave is a command-line tool for backing up and restoring both metadata and actual data files in TiDB Lake. It stores backups in S3-compatible object storage, making it ideal for disaster recovery.
+BendSave is a command-line tool for backing up and restoring both metadata and actual data files in TiDB Cloud Lake. It stores backups in S3-compatible object storage, making it ideal for disaster recovery.
 
 ### Downloading BendSave
 
-The BendSave binary is distributed as part of the [TiDB Lake release packages](https://github.com/databendlabs/databend/releases).
+The BendSave binary is distributed as part of the [TiDB Cloud Lake release packages](https://github.com/databendlabs/databend/releases).
 
 To download:
 
-1. Go to the latest [TiDB Lake Releases](https://github.com/databendlabs/databend/releases).
+1. Go to the latest [TiDB Cloud Lake Releases](https://github.com/databendlabs/databend/releases).
 
 2. Select the release that matches your currently running `databend-query` version.
 
@@ -83,7 +83,7 @@ To download:
 
 ### Command Reference
 
-To back up the metadata of a TiDB Lake cluster:
+To back up the metadata of a TiDB Cloud Lake cluster:
 
 ```bash
 databend-bendsave backup \
@@ -96,7 +96,7 @@ databend-bendsave backup \
 | from      | Path to the  `databend-query.toml` configuration file.                  |
 | to        | Backup destination, e.g.,`s3://backup?endpoint=http://127.0.0.1:9900&access_key_id=xxx&secret_access_key=xxx`.<br/>- It is recommended to use environment variables such as `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to provide credentials.|
 
-To restore the metadata to a TiDB Lake cluster:
+To restore the metadata to a TiDB Cloud Lake cluster:
 
 ```bash
 databend-bendsave restore \

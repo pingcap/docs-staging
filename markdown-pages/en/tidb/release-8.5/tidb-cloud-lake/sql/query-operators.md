@@ -1,11 +1,11 @@
 ---
 title: Query Operators
-summary: This page provides reference information for the query operators in TiDB Lake.
+summary: This page provides reference information for the query operators in TiDB Cloud Lake.
 ---
 
 # Query Operators
 
-This page provides reference information for the query operators in TiDB Lake.
+This page provides reference information for the query operators in TiDB Cloud Lake.
 
 ## Operator Types
 

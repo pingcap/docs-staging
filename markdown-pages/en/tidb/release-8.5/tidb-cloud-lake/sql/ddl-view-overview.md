@@ -1,11 +1,11 @@
 ---
 title: View
-summary: This page provides a comprehensive overview of view operations in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of view operations in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # View
 
-This page provides a comprehensive overview of view operations in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of view operations in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## View Management
 
@@ -24,4 +24,4 @@ This page provides a comprehensive overview of view operations in TiDB Lake, org
 
 > **Note:**
 >
-> Views in TiDB Lake are named queries stored in the database that can be referenced like tables. They provide a way to simplify complex queries and control access to underlying data.
+> Views in TiDB Cloud Lake are named queries stored in the database that can be referenced like tables. They provide a way to simplify complex queries and control access to underlying data.

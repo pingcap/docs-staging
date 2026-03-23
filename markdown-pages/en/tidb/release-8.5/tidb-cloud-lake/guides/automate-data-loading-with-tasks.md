@@ -1,11 +1,11 @@
 ---
 title: Automating Data Loading with Tasks
-summary: Tasks wrap SQL so TiDB Lake can run it for you on a schedule or when a condition is met. Keep the following knobs in mind when you define one with CREATE TASK.
+summary: Tasks wrap SQL so TiDB Cloud Lake can run it for you on a schedule or when a condition is met. Keep the following knobs in mind when you define one with CREATE TASK.
 ---
 
 # Automating Data Loading with Tasks
 
-Tasks wrap SQL so TiDB Lake can run it for you on a schedule or when a condition is met. Keep the following knobs in mind when you define one with [CREATE TASK](/tidb-cloud-lake/sql/create-task.md):
+Tasks wrap SQL so TiDB Cloud Lake can run it for you on a schedule or when a condition is met. Keep the following knobs in mind when you define one with [CREATE TASK](/tidb-cloud-lake/sql/create-task.md):
 
 ![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/task.png)
 

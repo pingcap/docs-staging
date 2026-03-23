@@ -1,11 +1,11 @@
 ---
 title: Unload Data from TiDB Cloud Lake
-summary: "TiDB Lake's COPY INTO command exports data to various file formats and storage locations with flexible formatting options."
+summary: "TiDB Cloud Lake's COPY INTO command exports data to various file formats and storage locations with flexible formatting options."
 ---
 
 # Unload Data from TiDB Cloud Lake
 
-TiDB Lake's `COPY INTO` command exports data to various file formats and storage locations with flexible formatting options.
+TiDB Cloud Lake's `COPY INTO` command exports data to various file formats and storage locations with flexible formatting options.
 
 ## Supported File Formats
 

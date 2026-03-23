@@ -27,7 +27,7 @@ In TiDB Cloud Lake, warehouses are available in various sizes, each defined by t
 | nXLarge               | n=2,3,4,5,6 [Contace Us](https://www.databend.com/contact-us/)                                                                                  |
 | Multi-Cluster Scaling | Automatically scales out and scales in to match your workload, providing the most cost-efficient way to improve concurrency based on your needs. |
 
-To choose the appropriate warehouse size, TiDB Lake recommends starting with a smaller size. Smaller warehouses may take longer to execute SQL tasks compared to medium or large ones. If you find that query execution is taking too long (for example, several minutes), consider scaling up to a medium or large warehouse for faster results.
+To choose the appropriate warehouse size, TiDB Cloud Lake recommends starting with a smaller size. Smaller warehouses may take longer to execute SQL tasks compared to medium or large ones. If you find that query execution is taking too long (for example, several minutes), consider scaling up to a medium or large warehouse for faster results.
 
 ## Managing Warehouses {#managing}
 
@@ -98,7 +98,7 @@ To assign a role to a warehouse, select the desired role in the **Advanced Optio
 
 ![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/warehouse-role.png)
 
-- The two [Built-in Roles](/tidb-cloud-lake/guides/roles.md#built-in-roles) are available for selection, and you can also create additional roles using the [CREATE ROLE](/tidb-cloud-lake/sql/create-role.md) command. For more information about TiDB Lake roles, see [Roles](/tidb-cloud-lake/guides/roles.md).
+- The two [Built-in Roles](/tidb-cloud-lake/guides/roles.md#built-in-roles) are available for selection, and you can also create additional roles using the [CREATE ROLE](/tidb-cloud-lake/sql/create-role.md) command. For more information about TiDB Cloud Lake roles, see [Roles](/tidb-cloud-lake/guides/roles.md).
 - Warehouses without an assigned role default to the `public` role, allowing access to all users.
 - You can grant a role to a user (TiDB Cloud Lake login email or SQL user) using the [GRANT](/tidb-cloud-lake/sql/grant.md) command, or, alternatively, assign a role when inviting the user to your organization. For more information, see [Inviting New Members](/tidb-cloud-lake/guides/organization-members.md#inviting-new-members). This example grants the role `manager` to the user with the email `name@example.com`, allowing access to any warehouse assigned to the `manager` role:
 

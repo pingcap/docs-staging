@@ -1,6 +1,6 @@
 ---
 title: REFRESH INVERTED INDEX
-summary: "TiDB Lake automatically refreshes inverted indexes in SYNC mode whenever new data is written. Use REFRESH INVERTED INDEX primarily to backfill rows that existed before the index was declared."
+summary: "TiDB Cloud Lake automatically refreshes inverted indexes in SYNC mode whenever new data is written. Use REFRESH INVERTED INDEX primarily to backfill rows that existed before the index was declared."
 ---
 
 # REFRESH INVERTED INDEX
@@ -9,7 +9,7 @@ summary: "TiDB Lake automatically refreshes inverted indexes in SYNC mode whenev
 >
 > Introduced or updated in v1.2.405.
 
-TiDB Lake automatically refreshes inverted indexes in `SYNC` mode whenever new data is written. Use `REFRESH INVERTED INDEX` primarily to backfill rows that existed before the index was declared.
+TiDB Cloud Lake automatically refreshes inverted indexes in `SYNC` mode whenever new data is written. Use `REFRESH INVERTED INDEX` primarily to backfill rows that existed before the index was declared.
 
 ## Syntax
 

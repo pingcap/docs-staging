@@ -92,11 +92,11 @@ SELECT calculate_bmi(70.0, 1.75) AS bmi;
 
 ## Python
 
-Python runtime requires TiDB Lake Enterprise. You can install PyPI packages via `PACKAGES` and import stage files via `IMPORTS`.
+Python runtime requires TiDB Cloud Lake Enterprise. You can install PyPI packages via `PACKAGES` and import stage files via `IMPORTS`.
 
 ### Data type mappings (Python)
 
-| TiDB Lake Type | Python Type |
+| TiDB Cloud Lake Type | Python Type |
 |--------------|-------------|
 | NULL | None |
 | BOOLEAN | bool |
@@ -152,7 +152,7 @@ SELECT numpy_sqrt(9.0) AS sqrt_val;
 
 ### Data type mappings (JavaScript)
 
-| TiDB Lake Type | JavaScript Type |
+| TiDB Cloud Lake Type | JavaScript Type |
 |--------------|----------------|
 | NULL | null |
 | BOOLEAN | Boolean |

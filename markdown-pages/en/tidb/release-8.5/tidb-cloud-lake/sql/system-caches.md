@@ -1,11 +1,11 @@
 ---
 title: system.caches
-summary: An overview of various caches being managed in TiDB Lake.
+summary: An overview of various caches being managed in TiDB Cloud Lake.
 ---
 
 # system.caches
 
-An overview of various caches being managed in TiDB Lake.
+An overview of various caches being managed in TiDB Cloud Lake.
 
 The table below shows the cache name, the number of items in the cache, and the size of the cache:
 

@@ -1,6 +1,6 @@
 ---
 title: Apache Iceberg™ Tables
-summary: "TiDB Lake supports the integration of an Apache Iceberg™ catalog, enhancing its compatibility and versatility for data management and analytics. This extends TiDB Lake's capabilities by seamlessly incorporating the powerful metadata and storage management capabilities of Apache Iceberg™ into the platform."
+summary: "TiDB Cloud Lake supports the integration of an Apache Iceberg™ catalog, enhancing its compatibility and versatility for data management and analytics. This extends TiDB Cloud Lake's capabilities by seamlessly incorporating the powerful metadata and storage management capabilities of Apache Iceberg™ into the platform."
 ---
 
 # Apache Iceberg™ Tables
@@ -9,7 +9,7 @@ summary: "TiDB Lake supports the integration of an Apache Iceberg™ catalog, en
 >
 > Introduced or updated in v1.2.725.
 
-TiDB Lake supports the integration of an [Apache Iceberg™](https://iceberg.apache.org/) catalog, enhancing its compatibility and versatility for data management and analytics. This extends TiDB Lake's capabilities by seamlessly incorporating the powerful metadata and storage management capabilities of Apache Iceberg™ into the platform.
+TiDB Cloud Lake supports the integration of an [Apache Iceberg™](https://iceberg.apache.org/) catalog, enhancing its compatibility and versatility for data management and analytics. This extends TiDB Cloud Lake's capabilities by seamlessly incorporating the powerful metadata and storage management capabilities of Apache Iceberg™ into the platform.
 
 ## Quick Start with Iceberg
 
@@ -103,11 +103,11 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 [2025-05-07 12:17:42] [SUCCESS] TPCH data generation and loading completed successfully
 ```
 
-### Query Data in TiDB Lake
+### Query Data in TiDB Cloud Lake
 
-Once the TPC-H tables are loaded, you can query the data in TiDB Lake:
+Once the TPC-H tables are loaded, you can query the data in TiDB Cloud Lake:
 
-1. Launch TiDB Lake in Docker:
+1. Launch TiDB Cloud Lake in Docker:
 
     ```bash
     docker network create iceberg_net
@@ -124,7 +124,7 @@ Once the TPC-H tables are loaded, you can query the data in TiDB Lake:
       datafuselabs/databend
     ```
 
-2. Connect to TiDB Lake using BendSQL first, and then create an Iceberg catalog:
+2. Connect to TiDB Cloud Lake using BendSQL first, and then create an Iceberg catalog:
 
     ```bash
     bendsql
@@ -209,9 +209,9 @@ ORDER BY
 
 ## Datatype Mapping
 
-This table maps data types between Apache Iceberg™ and TiDB Lake. Please note that TiDB Lake does not currently support Iceberg data types that are not listed in the table.
+This table maps data types between Apache Iceberg™ and TiDB Cloud Lake. Please note that TiDB Cloud Lake does not currently support Iceberg data types that are not listed in the table.
 
-| Apache Iceberg™                             | TiDB Lake                                                                 |
+| Apache Iceberg™                             | TiDB Cloud Lake                                                                 |
 | ------------------------------------------- | ------------------------------------------------------------------------ |
 | BOOLEAN                                     | [BOOLEAN](/tidb-cloud-lake/sql/boolean.md)                         |
 | INT                                         | [INT32](/tidb-cloud-lake/sql/numeric.md#integer-data-types)        |
@@ -229,7 +229,7 @@ This table maps data types between Apache Iceberg™ and TiDB Lake. Please note 
 
 ## Managing Catalogs
 
-TiDB Lake provides you the following commands to manage catalogs:
+TiDB Cloud Lake provides you the following commands to manage catalogs:
 
 - [CREATE CATALOG](#create-catalog)
 - [SHOW CREATE CATALOG](#show-create-catalog)
@@ -238,7 +238,7 @@ TiDB Lake provides you the following commands to manage catalogs:
 
 ### CREATE CATALOG
 
-Defines and establishes a new catalog in the TiDB Lake query engine.
+Defines and establishes a new catalog in the TiDB Cloud Lake query engine.
 
 #### Syntax
 
@@ -286,7 +286,7 @@ CONNECTION=(
 
 ### Catalog Types
 
-TiDB Lake supports four types of Iceberg catalogs:
+TiDB Cloud Lake supports four types of Iceberg catalogs:
 
 - REST Catalog
 
@@ -396,7 +396,7 @@ USE CATALOG <catalog_name>
 
 ## Caching Iceberg Catalog
 
-TiDB Lake offers a Catalog Metadata Cache specifically designed for Iceberg catalogs. When a query is executed on an Iceberg table for the first time, the metadata is cached in memory. By default, this cache remains valid for 10 minutes, after which it is asynchronously refreshed. This ensures that queries on Iceberg tables are faster by avoiding repeated metadata retrieval.
+TiDB Cloud Lake offers a Catalog Metadata Cache specifically designed for Iceberg catalogs. When a query is executed on an Iceberg table for the first time, the metadata is cached in memory. By default, this cache remains valid for 10 minutes, after which it is asynchronously refreshed. This ensures that queries on Iceberg tables are faster by avoiding repeated metadata retrieval.
 
 If you need fresh metadata, you can manually refresh the cache using the following commands:
 
@@ -417,11 +417,11 @@ iceberg_table_meta_count = 0
 ...
 ```
 
-In addition to metadata caching, TiDB Lake also supports table data caching for Iceberg catalog tables, similar to Fuse tables.
+In addition to metadata caching, TiDB Cloud Lake also supports table data caching for Iceberg catalog tables, similar to Fuse tables.
 
 ## Writing to Iceberg Tables
 
-TiDB Lake supports writing data to Iceberg tables using `INSERT INTO`. You can create Iceberg tables directly with the `ENGINE = ICEBERG` clause and optionally define partition columns using `PARTITION BY`.
+TiDB Cloud Lake supports writing data to Iceberg tables using `INSERT INTO`. You can create Iceberg tables directly with the `ENGINE = ICEBERG` clause and optionally define partition columns using `PARTITION BY`.
 
 ### Creating Iceberg Tables
 
@@ -439,9 +439,9 @@ CREATE TABLE <table_name> (
 
 #### Supported Data Types
 
-The following TiDB Lake data types are supported for writing to Iceberg tables:
+The following TiDB Cloud Lake data types are supported for writing to Iceberg tables:
 
-| TiDB Lake Type | Iceberg Type |
+| TiDB Cloud Lake Type | Iceberg Type |
 |---------------|-------------|
 | BOOLEAN       | Boolean     |
 | INT           | Int         |
@@ -460,7 +460,7 @@ Use standard `INSERT INTO` statements to write data into Iceberg tables:
 INSERT INTO <table_name> VALUES (...), (...);
 ```
 
-Both partitioned and non-partitioned tables support single-row and multi-row inserts. For partitioned tables, TiDB Lake automatically routes rows to the correct partitions. Null values in partition columns are also supported.
+Both partitioned and non-partitioned tables support single-row and multi-row inserts. For partitioned tables, TiDB Cloud Lake automatically routes rows to the correct partitions. Null values in partition columns are also supported.
 
 ### Examples
 
@@ -544,7 +544,7 @@ SELECT * FROM t_multi_part;
 
 ## Apache Iceberg™ Table Functions
 
-TiDB Lake provides the following table functions for querying Iceberg metadata, allowing users to inspect snapshots and manifests efficiently:
+TiDB Cloud Lake provides the following table functions for querying Iceberg metadata, allowing users to inspect snapshots and manifests efficiently:
 
 - [ICEBERG_MANIFEST](/tidb-cloud-lake/sql/iceberg-manifest.md)
 - [ICEBERG_SNAPSHOT](/tidb-cloud-lake/sql/iceberg-snapshot.md)

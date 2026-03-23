@@ -16,7 +16,7 @@ PrivateLink-style private endpoints offered by major clouds (AWS PrivateLink, Az
 
 ## How it works
 
-After TiDB Cloud Lake approves the cloud account or project you plan to connect, you create a private endpoint that points to the TiDB Lake PrivateLink service for your region. The cloud provider automatically allocates private IP addresses and, once private DNS is enabled, your TiDB Cloud Lake domains resolve to those addresses so every session stays on the secure, private path.
+After TiDB Cloud Lake approves the cloud account or project you plan to connect, you create a private endpoint that points to the TiDB Cloud Lake PrivateLink service for your region. The cloud provider automatically allocates private IP addresses and, once private DNS is enabled, your TiDB Cloud Lake domains resolve to those addresses so every session stays on the secure, private path.
 
 ## How to setup AWS PrivateLink
 

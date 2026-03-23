@@ -1,11 +1,11 @@
 ---
 title: DDL (Data Definition Language) Commands
-summary: These topics provide reference information for the DDL (Data Definition Language) commands in TiDB Lake.
+summary: These topics provide reference information for the DDL (Data Definition Language) commands in TiDB Cloud Lake.
 ---
 
 # DDL (Data Definition Language) Commands
 
-These topics provide reference information for the DDL (Data Definition Language) commands in TiDB Lake.
+These topics provide reference information for the DDL (Data Definition Language) commands in TiDB Cloud Lake.
 
 ## Database & Table Management
 

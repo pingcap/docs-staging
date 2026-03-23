@@ -59,7 +59,7 @@ SELECT * FROM logs WHERE MATCH(message, 'error kubernetes');
 
 - **New Data**: Automatically indexed as it's inserted - no manual action needed
 - **Existing Data**: One-time refresh required only for data that existed before index creation
-- **Ongoing Maintenance**: TiDB Lake automatically maintains optimal search performance
+- **Ongoing Maintenance**: TiDB Cloud Lake automatically maintains optimal search performance
 
 ## Search Functions
 

@@ -7,7 +7,7 @@ summary: Migrates data from Snowflake to TiDB Cloud Lake by exporting data to Am
 
 > **Capabilities**: Full Load
 
-This tutorial walks you through the process of migrating your data from Snowflake to TiDB Lake. The migration involves exporting data from Snowflake to an Amazon S3 bucket and then loading it into TiDB Lake. The process is broken down into three main steps:
+This tutorial walks you through the process of migrating your data from Snowflake to TiDB Cloud Lake. The migration involves exporting data from Snowflake to an Amazon S3 bucket and then loading it into TiDB Cloud Lake. The process is broken down into three main steps:
 
 ![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/snowflake-databend.png)
 

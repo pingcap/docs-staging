@@ -1,11 +1,11 @@
 ---
 title: Transaction
-summary: This page provides a comprehensive overview of Transaction operations in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of Transaction operations in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # Transaction
 
-This page provides a comprehensive overview of Transaction operations in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of Transaction operations in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## Transaction Control
 
@@ -23,4 +23,4 @@ This page provides a comprehensive overview of Transaction operations in TiDB La
 
 > **Note:**
 >
-> Transactions in TiDB Lake ensure data consistency by grouping SQL operations into atomic units that either completely succeed or completely fail, maintaining database integrity.
+> Transactions in TiDB Cloud Lake ensure data consistency by grouping SQL operations into atomic units that either completely succeed or completely fail, maintaining database integrity.

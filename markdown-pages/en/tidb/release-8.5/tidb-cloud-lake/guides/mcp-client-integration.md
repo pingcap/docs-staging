@@ -1,11 +1,11 @@
 ---
 title: MCP Client Integration
-summary: "TiDB Lake MCP connects AI assistants to TiDB Lake via Model Context Protocol. Works with Claude Code, Codex, Cursor, Claude Desktop, VS Code, and other MCP-compatible clients."
+summary: "TiDB Cloud Lake MCP connects AI assistants to TiDB Cloud Lake via Model Context Protocol. Works with Claude Code, Codex, Cursor, Claude Desktop, VS Code, and other MCP-compatible clients."
 ---
 
 # MCP Client Integration
 
-[TiDB Lake MCP](https://github.com/databendlabs/mcp-databend) connects AI assistants to TiDB Lake via Model Context Protocol. Works with Claude Code, Codex, Cursor, Claude Desktop, VS Code, and other MCP-compatible clients.
+[TiDB Cloud Lake MCP](https://github.com/databendlabs/mcp-databend) connects AI assistants to TiDB Cloud Lake via Model Context Protocol. Works with Claude Code, Codex, Cursor, Claude Desktop, VS Code, and other MCP-compatible clients.
 
 **What you can do:**
 
@@ -18,7 +18,7 @@ For example: _"Create a scheduled task that copies parquet files from @my_stage 
 
 ## Installation
 
-### 1. Get TiDB Lake Connection
+### 1. Get TiDB Cloud Lake Connection
 
 We recommend using **TiDB Cloud Lake** for the best experience.
 

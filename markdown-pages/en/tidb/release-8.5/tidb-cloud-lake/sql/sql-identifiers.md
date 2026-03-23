@@ -1,11 +1,11 @@
 ---
 title: SQL Identifiers
-summary: SQL identifiers are names used for different elements within TiDB Lake, such as tables, views, and databases.
+summary: SQL identifiers are names used for different elements within TiDB Cloud Lake, such as tables, views, and databases.
 ---
 
 # SQL Identifiers
 
-SQL identifiers are names used for different elements within TiDB Lake, such as tables, views, and databases.
+SQL identifiers are names used for different elements within TiDB Cloud Lake, such as tables, views, and databases.
 
 ## Unquoted & Double-quoted Identifiers
 
@@ -42,17 +42,17 @@ Note that using double backticks (``) or double quotes (") is equivalent:
 
 ## Identifier Casing Rules
 
-TiDB Lake stores unquoted identifiers by default in lowercase and double-quoted identifiers as they are entered. In other words, TiDB Lake handles object names, such as databases, tables, and columns, as case-insensitive. If you want TiDB Lake to handle them as case-sensitive, double-quote them.
+TiDB Cloud Lake stores unquoted identifiers by default in lowercase and double-quoted identifiers as they are entered. In other words, TiDB Cloud Lake handles object names, such as databases, tables, and columns, as case-insensitive. If you want TiDB Cloud Lake to handle them as case-sensitive, double-quote them.
 
 > **Note:**
 >
-> TiDB Lake allows you to have control over the casing sensitivity of identifiers. Two key settings are available:
+> TiDB Cloud Lake allows you to have control over the casing sensitivity of identifiers. Two key settings are available:
 >
 > - unquoted_ident_case_sensitive: When set to 1, this option preserves the case of characters for unquoted identifiers, ensuring they are case-sensitive. If left at the default value of 0, unquoted identifiers remain case-insensitive, converting to lowercase.
 >
 > - quoted_ident_case_sensitive: By setting this option to 0, you can indicate that double-quoted identifiers should not preserve the case of characters, making them case-insensitive.
 
-This example demonstrates how TiDB Lake treats the casing of identifiers when creating and listing databases:
+This example demonstrates how TiDB Cloud Lake treats the casing of identifiers when creating and listing databases:
 
 ```sql
 -- Create a database named "databend"
@@ -78,7 +78,7 @@ information_schema  |
 system              |
 ```
 
-This example demonstrates how TiDB Lake handles identifier casing for table and column names, highlighting its case-sensitivity by default and the use of double quotes to differentiate between identifiers with varying casing:
+This example demonstrates how TiDB Cloud Lake handles identifier casing for table and column names, highlighting its case-sensitivity by default and the use of double quotes to differentiate between identifiers with varying casing:
 
 ```sql
 -- Create a table named "databend"
@@ -111,7 +111,7 @@ A    |INT |YES |NULL   |     |
 
 ## String Identifiers
 
-In TiDB Lake, when managing string items like text and dates, it is essential to enclose them within single quotes (') as a standard practice.
+In TiDB Cloud Lake, when managing string items like text and dates, it is essential to enclose them within single quotes (') as a standard practice.
 
 ```sql
 INSERT INTO weather VALUES ('San Francisco', 46, 50, 0.25, '1994-11-27');
@@ -131,7 +131,7 @@ SELECT "Databend";
   |                                                                         ^^^^^^^^^^ column Databend doesn't exist, do you mean 'Databend'?
 ```
 
-By default, TiDB Lake SQL dialect is `PostgreSQL`:
+By default, TiDB Cloud Lake SQL dialect is `PostgreSQL`:
 
 ```sql
 SHOW SETTINGS LIKE '%sql_dialect%';

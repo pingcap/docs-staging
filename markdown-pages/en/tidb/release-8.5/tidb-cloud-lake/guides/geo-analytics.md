@@ -251,4 +251,4 @@ h3_cell         | frames | avg_risk
 609131411684720639| 1    | 0.59
 ```
 
-TiDB Lake now serves vector, text, and spatial queries off the exact same `video_id`, so investigation teams never have to reconcile separate pipelines.
+TiDB Cloud Lake now serves vector, text, and spatial queries off the exact same `video_id`, so investigation teams never have to reconcile separate pipelines.

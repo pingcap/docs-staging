@@ -10,7 +10,7 @@ summary: This guide explains how to use an experimental Airbyte destination that
 ## What is Airbyte
 
 - [Airbyte](https://airbyte.com/) is an open-source data integration platform that syncs data from applications, APIs & databases to data warehouses lakes & DBs.
-- You could load data from any airbyte source to TiDB Lake.
+- You could load data from any airbyte source to TiDB Cloud Lake.
 
 Currently we implemented an experimental airbyte destination allow you to send data from your airbyte source to databend
 
@@ -27,9 +27,9 @@ PRESIGN UPLOAD @airbyte_stage/test.csv;
 
 If you got an error like `Code: 501, Text = Presign is not supported`, then you could not use the integration.
 
-## Create a TiDB Lake User
+## Create a TiDB Cloud Lake User
 
-Connect to TiDB Lake server with MySQL client:
+Connect to TiDB Cloud Lake server with MySQL client:
 
 ```shell
 mysql -h127.0.0.1 -uroot -P3307
@@ -57,13 +57,13 @@ GRANT ROLE airbyte_role TO user1;
 
 ## Configure Airbyte
 
-To use TiDB Lake with Airbyte, you should add our customized connector to your Airbyte Instance.
+To use TiDB Cloud Lake with Airbyte, you should add our customized connector to your Airbyte Instance.
 You could add the destination in Settings -> Destinations -> Custom Destinations -> Add a Custom Destination Page.
 Our custom destination image is `datafuselabs/destination-databend:alpha`
 
 ![Configure Airbyte](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/integration-airbyte-plugins.png)
 
-## Setup TiDB Lake destination
+## Setup TiDB Cloud Lake destination
 
 > **Note**:
 >

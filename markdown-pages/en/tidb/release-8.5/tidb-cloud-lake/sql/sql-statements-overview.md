@@ -1,11 +1,11 @@
 ---
 title: SQL Statements Overview
-summary: These topics provide reference information for various SQL commands in TiDB Lake.
+summary: These topics provide reference information for various SQL commands in TiDB Cloud Lake.
 ---
 
 # SQL Statements Overview
 
-These topics provide reference information for various SQL commands in TiDB Lake.
+These topics provide reference information for various SQL commands in TiDB Cloud Lake.
 
 ## Command Categories
 

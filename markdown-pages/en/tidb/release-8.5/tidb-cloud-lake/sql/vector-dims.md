@@ -36,7 +36,7 @@ The `VECTOR_DIMS` function returns the dimensionality of a vector, which is the 
 
 > **Note:**
 >
-> This function performs vector computations within TiDB Lake and does not rely on external APIs.
+> This function performs vector computations within TiDB Cloud Lake and does not rely on external APIs.
 
 ## Examples
 

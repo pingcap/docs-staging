@@ -5,7 +5,7 @@ summary: mcp-databend is an MCP (Model Context Protocol) server that enables AI 
 
 # MCP Server for TiDB Cloud Lake
 
-[mcp-databend](https://github.com/databendlabs/mcp-databend) is an MCP (Model Context Protocol) server that enables AI assistants to interact directly with your TiDB Lake database using natural language.
+[mcp-databend](https://github.com/databendlabs/mcp-databend) is an MCP (Model Context Protocol) server that enables AI assistants to interact directly with your TiDB Cloud Lake database using natural language.
 
 ## What mcp-databend Can Do
 
@@ -18,20 +18,20 @@ summary: mcp-databend is an MCP (Model Context Protocol) server that enables AI 
 
 This tutorial shows you how to build a conversational Business Intelligence tool using mcp-databend and the Agno framework. You'll create a local agent that can answer data questions in natural language.
 
-![TiDB Lake MCP ChatBI](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/databend-mcp-chatbi.png)
+![TiDB Cloud Lake MCP ChatBI](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/databend-mcp-chatbi.png)
 
 ## Prerequisites
 
 Before getting started, you'll need:
 
-1. **TiDB Lake Database** - Either [TiDB Cloud Lake](https://app.databend.com) (free tier available) or a self-hosted instance
+1. **TiDB Cloud Lake Database** - Either [TiDB Cloud Lake](https://app.databend.com) (free tier available) or a self-hosted instance
 2. **DeepSeek API Key** - Get your key from [https://platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
 
 ## Step-by-Step Tutorial
 
-### Step 1: Setup TiDB Lake Connection
+### Step 1: Setup TiDB Cloud Lake Connection
 
-If you don't already have a TiDB Lake database:
+If you don't already have a TiDB Cloud Lake database:
 
 1. **Sign up for [TiDB Cloud Lake](https://app.databend.com)** (free tier available)
 2. **Create a warehouse and database**

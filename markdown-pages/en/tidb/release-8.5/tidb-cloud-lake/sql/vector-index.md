@@ -1,11 +1,11 @@
 ---
 title: Vector Index
-summary: Vector indexes in TiDB Lake enable efficient similarity search on high-dimensional vector data using the HNSW (Hierarchical Navigable Small World) algorithm. They support use cases like semantic search, recommendation systems, and AI applications.
+summary: Vector indexes in TiDB Cloud Lake enable efficient similarity search on high-dimensional vector data using the HNSW (Hierarchical Navigable Small World) algorithm. They support use cases like semantic search, recommendation systems, and AI applications.
 ---
 
 # Vector Index
 
-Vector indexes in TiDB Lake enable efficient similarity search on high-dimensional vector data using the HNSW (Hierarchical Navigable Small World) algorithm. They support use cases like semantic search, recommendation systems, and AI applications.
+Vector indexes in TiDB Cloud Lake enable efficient similarity search on high-dimensional vector data using the HNSW (Hierarchical Navigable Small World) algorithm. They support use cases like semantic search, recommendation systems, and AI applications.
 
 > **Tip:**
 >

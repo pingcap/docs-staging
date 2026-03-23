@@ -1,6 +1,6 @@
 ---
 title: TRY_TO_TIMESTAMP
-summary: A variant of TO_TIMESTAMP in TiDB Lake that, while performing the same conversion of an input expression to a timestamp, incorporates error-handling support by returning NULL if the conversion fails instead of raising an error.
+summary: A variant of TO_TIMESTAMP in TiDB Cloud Lake that, while performing the same conversion of an input expression to a timestamp, incorporates error-handling support by returning NULL if the conversion fails instead of raising an error.
 ---
 
 # TRY_TO_TIMESTAMP
@@ -9,7 +9,7 @@ summary: A variant of TO_TIMESTAMP in TiDB Lake that, while performing the same 
 >
 > Introduced or updated in v1.2.528.
 
-A variant of [TO_TIMESTAMP](/tidb-cloud-lake/sql/to-timestamp.md) in TiDB Lake that, while performing the same conversion of an input expression to a timestamp, incorporates error-handling support by returning NULL if the conversion fails instead of raising an error.
+A variant of [TO_TIMESTAMP](/tidb-cloud-lake/sql/to-timestamp.md) in TiDB Cloud Lake that, while performing the same conversion of an input expression to a timestamp, incorporates error-handling support by returning NULL if the conversion fails instead of raising an error.
 
 See also: [TO_TIMESTAMP](/tidb-cloud-lake/sql/to-timestamp.md)
 

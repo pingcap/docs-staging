@@ -1,11 +1,11 @@
 ---
 title: Explain Commands
-summary: This page provides reference information for the explain-related commands in TiDB Lake.
+summary: This page provides reference information for the explain-related commands in TiDB Cloud Lake.
 ---
 
 # Explain Commands
 
-This page provides reference information for the explain-related commands in TiDB Lake.
+This page provides reference information for the explain-related commands in TiDB Cloud Lake.
 
 ## Commands Overview
 

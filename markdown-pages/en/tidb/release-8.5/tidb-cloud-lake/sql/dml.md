@@ -1,11 +1,11 @@
 ---
 title: DML (Data Manipulation Language) Commands
-summary: This page provides reference information for the DML (Data Manipulation Language) commands in TiDB Lake.
+summary: This page provides reference information for the DML (Data Manipulation Language) commands in TiDB Cloud Lake.
 ---
 
 # DML (Data Manipulation Language) Commands
 
-This page provides reference information for the DML (Data Manipulation Language) commands in TiDB Lake.
+This page provides reference information for the DML (Data Manipulation Language) commands in TiDB Cloud Lake.
 
 ## Data Modification
 

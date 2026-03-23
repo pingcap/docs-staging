@@ -90,11 +90,11 @@ The VACUUM DROP TABLE command removes data files older than the `DATA_RETENTION_
 SET GLOBAL DATA_RETENTION_TIME_IN_DAYS = 2;
 ```
 
-`DATA_RETENTION_TIME_IN_DAYS` defaults to 1 day (24 hours), and the maximum value varies across TiDB Lake editions:
+`DATA_RETENTION_TIME_IN_DAYS` defaults to 1 day (24 hours), and the maximum value varies across TiDB Cloud Lake editions:
 
 | Edition                                  | Default Retention | Max. Retention   |
 | ---------------------------------------- | ----------------- | ---------------- |
-| TiDB Lake Community & Enterprise Editions | 1 day (24 hours)  | 90 days          |
+| TiDB Cloud Lake Community & Enterprise Editions | 1 day (24 hours)  | 90 days          |
 | TiDB Cloud Lake (Personal)                | 1 day (24 hours)  | 1 day (24 hours) |
 | TiDB Cloud Lake (Business)                | 1 day (24 hours)  | 90 days          |
 

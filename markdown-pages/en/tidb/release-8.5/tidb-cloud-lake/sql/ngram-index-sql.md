@@ -1,11 +1,11 @@
 ---
 title: Ngram Index
-summary: This page provides a comprehensive overview of Ngram index operations in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of Ngram index operations in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # Ngram Index
 
-This page provides a comprehensive overview of Ngram index operations in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of Ngram index operations in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## Ngram Index Management
 
@@ -17,4 +17,4 @@ This page provides a comprehensive overview of Ngram index operations in TiDB La
 
 > **Note:**
 >
-> Ngram indexes in TiDB Lake enable efficient substring and pattern matching searches within text data, improving performance for LIKE and similar operations.
+> Ngram indexes in TiDB Cloud Lake enable efficient substring and pattern matching searches within text data, improving performance for LIKE and similar operations.

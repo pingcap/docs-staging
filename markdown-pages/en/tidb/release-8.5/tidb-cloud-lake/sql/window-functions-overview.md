@@ -18,14 +18,14 @@ Window functions perform calculations across a set of related rows while returni
 
 **Note on SQL examples in this documentation:**
 
-- ✅ **Complete SQL statements** have been validated against TiDB Lake
+- ✅ **Complete SQL statements** have been validated against TiDB Cloud Lake
 - ⚠️ **Syntax examples** show window frame patterns (not complete statements)
-- 📋 All examples use standard SQL syntax supported by TiDB Lake
+- 📋 All examples use standard SQL syntax supported by TiDB Cloud Lake
 - 🔍 Examples marked as "Complete example" are fully executable
 
 ## Window Function Categories
 
-TiDB Lake supports two main categories of window functions:
+TiDB Cloud Lake supports two main categories of window functions:
 
 ### 1. Dedicated Window Functions
 
@@ -108,7 +108,7 @@ FUNCTION() OVER (
 
 ## Window Frame Specification
 
-The window frame defines which rows are included in the calculation for each row. TiDB Lake supports two types of window frames:
+The window frame defines which rows are included in the calculation for each row. TiDB Cloud Lake supports two types of window frames:
 
 ### 1. ROWS BETWEEN
 

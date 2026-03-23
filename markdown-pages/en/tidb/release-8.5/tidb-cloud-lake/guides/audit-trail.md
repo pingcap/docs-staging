@@ -1,11 +1,11 @@
 ---
 title: Audit Trail
-summary: "TiDB Lake system history tables automatically capture detailed records of database activities, providing a complete audit trail for compliance and security monitoring."
+summary: "TiDB Cloud Lake system history tables automatically capture detailed records of database activities, providing a complete audit trail for compliance and security monitoring."
 ---
 
 # Audit Trail
 
-TiDB Lake system history tables automatically capture detailed records of database activities, providing a complete audit trail for compliance and security monitoring.
+TiDB Cloud Lake system history tables automatically capture detailed records of database activities, providing a complete audit trail for compliance and security monitoring.
 
 Allows the auditing of the user:
 
@@ -15,7 +15,7 @@ Allows the auditing of the user:
 
 ## Available Audit Tables
 
-TiDB Lake provides five system history tables that capture different aspects of database activity:
+TiDB Cloud Lake provides five system history tables that capture different aspects of database activity:
 
 | Table | Purpose | Key Use Cases |
 |-------|---------|---------------|

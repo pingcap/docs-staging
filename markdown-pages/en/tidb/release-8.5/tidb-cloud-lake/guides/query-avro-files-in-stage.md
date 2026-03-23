@@ -1,6 +1,6 @@
 ---
 title: Querying Avro Files in Stage
-summary: "TiDB Lake provides comprehensive support for querying Avro files directly from stages. This allows for flexible data exploration and transformation without needing to load the data into a table first."
+summary: "TiDB Cloud Lake provides comprehensive support for querying Avro files directly from stages. This allows for flexible data exploration and transformation without needing to load the data into a table first."
 ---
 
 # Querying Avro Files in Stage
@@ -12,10 +12,10 @@ summary: "TiDB Lake provides comprehensive support for querying Avro files direc
 
 ## Avro Querying Features Overview
 
-TiDB Lake provides comprehensive support for querying Avro files directly from stages. This allows for flexible data exploration and transformation without needing to load the data into a table first.
+TiDB Cloud Lake provides comprehensive support for querying Avro files directly from stages. This allows for flexible data exploration and transformation without needing to load the data into a table first.
 
 * **Variant Representation**: Each row in an Avro file is treated as a variant, referenced by `$1`. This allows for flexible access to nested structures within the Avro data.
-* **Type Mapping**: Each Avro type is mapped to a corresponding variant type in TiDB Lake.
+* **Type Mapping**: Each Avro type is mapped to a corresponding variant type in TiDB Cloud Lake.
 * **Metadata Access**: You can access metadata columns like `METADATA$FILENAME` and `METADATA$FILE_ROW_NUMBER` for additional context about the source file and row.
 
 ## Tutorial
@@ -92,8 +92,8 @@ FROM @avro_query_stage
 
 ## Type Mapping to Variant
 
-Variants in TiDB Lake are stored as JSONB. While most Avro types map straightforwardly, some special considerations apply:
+Variants in TiDB Cloud Lake are stored as JSONB. While most Avro types map straightforwardly, some special considerations apply:
 
 * **Time Types**: `TimeMillis` and `TimeMicros` are mapped to `INT64` as JSONB does not have a native Time type. Users should be aware of the original type when processing these values.
 * **Decimal Types**: Decimals are loaded as `DECIMAL128` or `DECIMAL256`. An error may occur if the precision exceeds the supported limits.
-* **Enum Types**: Avro `ENUM` types are mapped to `STRING` values in TiDB Lake.
+* **Enum Types**: Avro `ENUM` types are mapped to `STRING` values in TiDB Cloud Lake.

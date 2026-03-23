@@ -1,11 +1,11 @@
 ---
 title: Loading from Stage
-summary: "TiDB Lake enables you to easily import data from files uploaded to either the user stage or an internal/external stage. To do so, you can first upload the files to a stage using BendSQL, and then employ the COPY INTO command to load the data from the staged file. Please note that the files must be in a format supported by TiDB Lake, otherwise the data cannot be imported. For more information on the file formats supported by TiDB Lake, see Input & Output File Formats."
+summary: "TiDB Cloud Lake enables you to easily import data from files uploaded to either the user stage or an internal/external stage. To do so, you can first upload the files to a stage using BendSQL, and then employ the COPY INTO command to load the data from the staged file. Please note that the files must be in a format supported by TiDB Cloud Lake, otherwise the data cannot be imported. For more information on the file formats supported by TiDB Cloud Lake, see Input & Output File Formats."
 ---
 
 # Loading from Stage
 
-TiDB Lake enables you to easily import data from files uploaded to either the user stage or an internal/external stage. To do so, you can first upload the files to a stage using [BendSQL](/tidb-cloud-lake/guides/connect-using-bendsql.md), and then employ the [COPY INTO](/tidb-cloud-lake/sql/copy-into-table.md) command to load the data from the staged file. Please note that the files must be in a format supported by TiDB Lake, otherwise the data cannot be imported. For more information on the file formats supported by TiDB Lake, see [Input & Output File Formats](/tidb-cloud-lake/sql/input-output-file-formats.md).
+TiDB Cloud Lake enables you to easily import data from files uploaded to either the user stage or an internal/external stage. To do so, you can first upload the files to a stage using [BendSQL](/tidb-cloud-lake/guides/connect-using-bendsql.md), and then employ the [COPY INTO](/tidb-cloud-lake/sql/copy-into-table.md) command to load the data from the staged file. Please note that the files must be in a format supported by TiDB Cloud Lake, otherwise the data cannot be imported. For more information on the file formats supported by TiDB Cloud Lake, see [Input & Output File Formats](/tidb-cloud-lake/sql/input-output-file-formats.md).
 
 ![image](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/load-data-from-stage.jpeg)
 
@@ -22,7 +22,7 @@ Transaction Processing,Jim Gray,1992
 Readings in Database Systems,Michael Stonebraker,2004
 ```
 
-- Create a table with the following SQL statements in TiDB Lake:
+- Create a table with the following SQL statements in TiDB Cloud Lake:
 
 ```sql
 USE default;
@@ -36,7 +36,7 @@ CREATE TABLE books
 
 ## Tutorial 1: Loading from User Stage
 
-Follow this tutorial to upload the sample file to the user stage and load data from the staged file into TiDB Lake.
+Follow this tutorial to upload the sample file to the user stage and load data from the staged file into TiDB Cloud Lake.
 
 ### Step 1: Upload Sample File
 
@@ -85,7 +85,7 @@ Readings in Database Systems|Michael Stonebraker|2004|
 
 ## Tutorial 2: Loading from Internal Stage
 
-Follow this tutorial to upload the sample file to an internal stage and load data from the staged file into TiDB Lake.
+Follow this tutorial to upload the sample file to an internal stage and load data from the staged file into TiDB Cloud Lake.
 
 ### Step 1. Create an Internal Stage
 
@@ -159,7 +159,7 @@ Readings in Database Systems|Michael Stonebraker|2004|
 
 ## Tutorial 3: Loading from External Stage
 
-Follow this tutorial to upload the sample file to an external stage and load data from the staged file into TiDB Lake.
+Follow this tutorial to upload the sample file to an external stage and load data from the staged file into TiDB Cloud Lake.
 
 ### Step 1. Create an External Stage
 

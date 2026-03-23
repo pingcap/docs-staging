@@ -1,11 +1,11 @@
 ---
 title: Aggregating Index
-summary: This page provides a comprehensive overview of aggregating index operations in TiDB Lake, organized by functionality for easy reference.
+summary: This page provides a comprehensive overview of aggregating index operations in TiDB Cloud Lake, organized by functionality for easy reference.
 ---
 
 # Aggregating Index
 
-This page provides a comprehensive overview of aggregating index operations in TiDB Lake, organized by functionality for easy reference.
+This page provides a comprehensive overview of aggregating index operations in TiDB Cloud Lake, organized by functionality for easy reference.
 
 ## Aggregating Index Management
 
@@ -21,4 +21,4 @@ This page provides a comprehensive overview of aggregating index operations in T
 
 > **Note:**
 >
-> Aggregating indexes in TiDB Lake are used to improve the performance of aggregate queries by pre-computing and storing aggregate results.
+> Aggregating indexes in TiDB Cloud Lake are used to improve the performance of aggregate queries by pre-computing and storing aggregate results.

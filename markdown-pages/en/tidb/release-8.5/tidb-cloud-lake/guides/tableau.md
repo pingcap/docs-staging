@@ -1,24 +1,24 @@
 ---
 title: Tableau
-summary: Tableau is a visual analytics platform transforming the way we use data to solve problems—empowering people and organizations to make the most of their data. By leveraging the databend-jdbc driver (version 0.3.4 or higher), both TiDB Lake and TiDB Cloud Lake can integrate with Tableau, enabling seamless data access and efficient analysis. It is important to note that for optimal compatibility, it is advisable to use Tableau version 2022.3 or higher to avoid potential compatibility issues.
+summary: Tableau is a visual analytics platform transforming the way we use data to solve problems—empowering people and organizations to make the most of their data. By leveraging the databend-jdbc driver (version 0.3.4 or higher), both TiDB Cloud Lake and TiDB Cloud Lake can integrate with Tableau, enabling seamless data access and efficient analysis. It is important to note that for optimal compatibility, it is advisable to use Tableau version 2022.3 or higher to avoid potential compatibility issues.
 ---
 
 # Tableau
 
-[Tableau](https://www.tableau.com/) is a visual analytics platform transforming the way we use data to solve problems—empowering people and organizations to make the most of their data. By leveraging the [databend-jdbc driver](https://github.com/databendcloud/databend-jdbc) (version 0.3.4 or higher), both TiDB Lake and TiDB Cloud Lake can integrate with Tableau, enabling seamless data access and efficient analysis. It is important to note that for optimal compatibility, it is advisable to use Tableau version 2022.3 or higher to avoid potential compatibility issues.
+[Tableau](https://www.tableau.com/) is a visual analytics platform transforming the way we use data to solve problems—empowering people and organizations to make the most of their data. By leveraging the [databend-jdbc driver](https://github.com/databendcloud/databend-jdbc) (version 0.3.4 or higher), both TiDB Cloud Lake and TiDB Cloud Lake can integrate with Tableau, enabling seamless data access and efficient analysis. It is important to note that for optimal compatibility, it is advisable to use Tableau version 2022.3 or higher to avoid potential compatibility issues.
 
-TiDB Lake currently provides two integration methods with Tableau. The first approach utilizes the Other Databases (JDBC) interface within Tableau and is applicable to both TiDB Lake and TiDB Cloud Lake. The second method recommends using the [databend-tableau-connector-jdbc](https://github.com/databendcloud/databend-tableau-connector-jdbc) connector specifically developed by TiDB Lake for optimal connectivity with TiDB Lake.
+TiDB Cloud Lake currently provides two integration methods with Tableau. The first approach utilizes the Other Databases (JDBC) interface within Tableau and is applicable to both TiDB Cloud Lake and TiDB Cloud Lake. The second method recommends using the [databend-tableau-connector-jdbc](https://github.com/databendcloud/databend-tableau-connector-jdbc) connector specifically developed by TiDB Cloud Lake for optimal connectivity with TiDB Cloud Lake.
 
 The `databend-tableau-connector-jdbc` connector offers faster performance through its JDBC driver, especially when creating Extracts, and is easier to install as a cross-platform jar file, eliminating platform-specific compilations. It allows you to fine-tune SQL queries for standard Tableau functionality, including multiple JOINS and working with Sets, and provides a user-friendly connection dialog for a seamless integration experience.
 
-## Tutorial-1: Integrating with TiDB Lake (through Other Databases (JDBC) Interface)
+## Tutorial-1: Integrating with TiDB Cloud Lake (through Other Databases (JDBC) Interface)
 
-In this tutorial, you'll deploy and integrate a local TiDB Lake with [Tableau Desktop](https://www.tableau.com/products/desktop). Before you start, [download](https://www.tableau.com/products/desktop/download) Tableau Desktop and follow the on-screen instructions to complete the installation.
+In this tutorial, you'll deploy and integrate a local TiDB Cloud Lake with [Tableau Desktop](https://www.tableau.com/products/desktop). Before you start, [download](https://www.tableau.com/products/desktop/download) Tableau Desktop and follow the on-screen instructions to complete the installation.
 
-### Step 1. Deploy TiDB Lake
+### Step 1. Deploy TiDB Cloud Lake
 
-1. Deploy a local TiDB Lake.
-2. Create a SQL user in TiDB Lake. You will use this account to connect to TiDB Lake in Tableau Desktop.
+1. Deploy a local TiDB Cloud Lake.
+2. Create a SQL user in TiDB Cloud Lake. You will use this account to connect to TiDB Cloud Lake in Tableau Desktop.
 
 ```sql
 CREATE ROLE tableau_role;
@@ -38,7 +38,7 @@ GRANT ROLE tableau_role TO tableau;
 | MacOS            | ~/Library/Tableau/Drivers        |
 | Windows          | C:\Program Files\Tableau\Drivers |
 
-### Step 3. Connect to TiDB Lake
+### Step 3. Connect to TiDB Cloud Lake
 
 1. Launch Tableau Desktop and select **Other Database (JDBC)** in the sidebar. This opens a window as follows:
 
@@ -50,8 +50,8 @@ GRANT ROLE tableau_role TO tableau;
     | --------- | -------------------------------------------------------------------- | -------------------------------------------------------- |
     | URL       | Format: `jdbc:databend://{user}:{password}@{host}:{port}/{database}` | `jdbc:databend://tableau:tableau@127.0.0.1:8000/default` |
     | Dialect   | Select "MySQL" for SQL dialect.                                      | MySQL                                                    |
-    | Username  | SQL user for connecting to TiDB Lake                                  | tableau                                                  |
-    | Password  | SQL user for connecting to TiDB Lake                                  | tableau                                                  |
+    | Username  | SQL user for connecting to TiDB Cloud Lake                                  | tableau                                                  |
+    | Password  | SQL user for connecting to TiDB Cloud Lake                                  | tableau                                                  |
 
 3. When the Tableau workbook opens, select the database, schema, and tables that you want to query. For this tutorial, select _default_ for both **Database** and **Schema**.
 
@@ -59,14 +59,14 @@ GRANT ROLE tableau_role TO tableau;
 
 You're all set! You can now drag tables to the work area to start your query and further analysis.
 
-## Tutorial-2: Integrating with TiDB Lake (through databend-tableau-connector-jdbc Connector)
+## Tutorial-2: Integrating with TiDB Cloud Lake (through databend-tableau-connector-jdbc Connector)
 
-In this tutorial, you'll deploy and integrate a local TiDB Lake with [Tableau Desktop](https://www.tableau.com/products/desktop). Before you start, [download](https://www.tableau.com/products/desktop/download) Tableau Desktop and follow the on-screen instructions to complete the installation.
+In this tutorial, you'll deploy and integrate a local TiDB Cloud Lake with [Tableau Desktop](https://www.tableau.com/products/desktop). Before you start, [download](https://www.tableau.com/products/desktop/download) Tableau Desktop and follow the on-screen instructions to complete the installation.
 
-### Step 1. Deploy TiDB Lake
+### Step 1. Deploy TiDB Cloud Lake
 
-1. Deploy a local TiDB Lake.
-2. Create a SQL user in TiDB Lake. You will use this account to connect to TiDB Lake in Tableau Desktop.
+1. Deploy a local TiDB Cloud Lake.
+2. Create a SQL user in TiDB Cloud Lake. You will use this account to connect to TiDB Cloud Lake in Tableau Desktop.
 
 ```sql
 CREATE ROLE tableau_role;
@@ -101,9 +101,9 @@ GRANT ROLE tableau_role TO tableau;
 /Applications/Tableau\ Desktop\ 2023.2.app/Contents/MacOS/Tableau -DDisableVerifyConnectorPluginSignature=true
 ```
 
-### Step 4. Connect to TiDB Lake
+### Step 4. Connect to TiDB Cloud Lake
 
-1. In Tableau Desktop, select **TiDB Lake JDBC by TiDB Lake, Inc.** on **To a Server** > **More...**.
+1. In Tableau Desktop, select **TiDB Cloud Lake JDBC by TiDB Cloud Lake, Inc.** on **To a Server** > **More...**.
 
     ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/tableau-connector-1.png)
 
