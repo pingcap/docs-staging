@@ -25,8 +25,7 @@ We recommend using **TiDB Cloud Lake** for the best experience.
 1. Log in to [TiDB Cloud Lake](https://app.lake.tidbcloud.com).
 2. Click **Use with AI Tools** in the navigation bar.
 3. Select regular connection information (Host, User, Password, etc.).
-4. Copy your DSN, which looks like:
-    `lake://user:pwd@host:443/database?warehouse=warehouse_name`
+4. Copy your DSN, which looks like `lake://user:pwd@host:443/database?warehouse=warehouse_name`.
 
 ![Use with AI Tools](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/ai-tools.png)
 
