@@ -43,11 +43,11 @@ GRANT ROLE user1_role TO user1;
 
 2. Install dependencies with pip:
 
-```shell
-pip install sqlalchemy
-pip install pandas
-pip install pymysql
-```
+    ```shell
+    pip install sqlalchemy
+    pip install pandas
+    pip install pymysql
+    ```
 
 ### Step 3. Run Sample Notebook
 
@@ -69,13 +69,13 @@ pip install pymysql
 
 ## Tutorial-2: Integrating TiDB Cloud Lake with Jupyter Notebook using ipython-sql
 
-In this tutorial, you will first deploy a TiDB Cloud Lake instance and Jupyter Notebook, and then run a sample notebook to connect to your local TiDB Cloud Lake through [ipython-sql](https://github.com/catherinedevlin/ipython-sql), as well as write and visualize data within the notebook.
+In this tutorial, you will first deploy a TiDB Cloud Lake instance and Jupyter Notebook, and then run a sample notebook to connect to your TiDB Cloud Lake through [ipython-sql](https://github.com/catherinedevlin/ipython-sql), as well as write and visualize data within the notebook.
 
 Before you start, ensure that you have [Python](https://www.python.org/) installed on your system.
 
 ### Step 1. Deploy TiDB Cloud Lake
 
-1. Deploy a local TiDB Cloud Lake.
+1. Deploy a TiDB Cloud Lake.
 2. Create a SQL user in TiDB Cloud Lake. You will use this account to connect to TiDB Cloud Lake in Jupyter Notebook.
 
 ```sql
@@ -125,7 +125,7 @@ pip install sqlalchemy
 ```
 
 ```sql title='In [2]:'
-%%sql databend://user1:abc123@localhost:8000/default
+%%sql lake://user1:abc123@localhost:8000/default
 create table if not exists user(created_at Date, count Int32);
 insert into user values('2022-04-01', 5);
 insert into user values('2022-04-01', 3);
@@ -152,7 +152,7 @@ You can now see a bar chart on the notebook:
 
 ## Tutorial-3: Integrating TiDB Cloud Lake with Jupyter Notebook with Python Binding Library
 
-In this tutorial, you will first deploy a local TiDB Cloud Lake instance and Jupyter Notebook, and then run queries in a notebook through the [TiDB Cloud Lake Python Binding](https://pypi.org/project/databend/) library, as well as write and visualize data within the notebook.
+In this tutorial, you will first deploy a TiDB Cloud Lake instance and Jupyter Notebook, and then run queries in a notebook through the [TiDB Cloud Lake Python Binding](https://pypi.org/project/databend/) library, as well as write and visualize data within the notebook.
 
 Before you start, ensure that you have [Python](https://www.python.org/) installed on your system.
 
@@ -281,7 +281,7 @@ import pandas as pd
 ```
 
 ```python
-engine = create_engine(f"databend://cloudapp:<your-password>@<your-host>:443/default?secure=true")
+engine = create_engine(f"lake://cloudapp:<your-password>@<your-host>:443/default?secure=true")
 connection = engine.connect()
 ```
 

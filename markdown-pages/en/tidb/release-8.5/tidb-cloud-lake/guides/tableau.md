@@ -13,12 +13,13 @@ The `databend-tableau-connector-jdbc` connector offers faster performance throug
 
 ## Tutorial-1: Integrating with TiDB Cloud Lake (through Other Databases (JDBC) Interface)
 
-In this tutorial, you'll deploy and integrate a local TiDB Cloud Lake with [Tableau Desktop](https://www.tableau.com/products/desktop). Before you start, [download](https://www.tableau.com/products/desktop/download) Tableau Desktop and follow the on-screen instructions to complete the installation.
+In this tutorial, you'll deploy and integrate a TiDB Cloud Lake instance with [Tableau Desktop](https://www.tableau.com/products/desktop). Before you start, [download](https://www.tableau.com/products/desktop/download) Tableau Desktop and follow the on-screen instructions to complete the installation.
 
 ### Step 1. Deploy TiDB Cloud Lake
 
-1. Deploy a local TiDB Cloud Lake.
-2. Create a SQL user in TiDB Cloud Lake. You will use this account to connect to TiDB Cloud Lake in Tableau Desktop.
+1. [Sign up](https://tidbcloud.com/signup) for a TiDB Cloud account and log in.
+2. Create a TiDB Cloud Lake instance.
+3. Create a SQL user in TiDB Cloud Lake. You will use this account to connect to TiDB Cloud Lake in Tableau Desktop.
 
 ```sql
 CREATE ROLE tableau_role;
@@ -48,7 +49,7 @@ GRANT ROLE tableau_role TO tableau;
 
     | Parameter | Description                                                          | For This Tutorial                                        |
     | --------- | -------------------------------------------------------------------- | -------------------------------------------------------- |
-    | URL       | Format: `jdbc:databend://{user}:{password}@{host}:{port}/{database}` | `jdbc:databend://tableau:tableau@127.0.0.1:8000/default` |
+    | URL       | Format: `jdbc:lake://{user}:{password}@{host}:{port}/{database}` | `jdbc:lake://tableau:tableau@127.0.0.1:8000/default` |
     | Dialect   | Select "MySQL" for SQL dialect.                                      | MySQL                                                    |
     | Username  | SQL user for connecting to TiDB Cloud Lake                                  | tableau                                                  |
     | Password  | SQL user for connecting to TiDB Cloud Lake                                  | tableau                                                  |
@@ -61,12 +62,13 @@ You're all set! You can now drag tables to the work area to start your query and
 
 ## Tutorial-2: Integrating with TiDB Cloud Lake (through databend-tableau-connector-jdbc Connector)
 
-In this tutorial, you'll deploy and integrate a local TiDB Cloud Lake with [Tableau Desktop](https://www.tableau.com/products/desktop). Before you start, [download](https://www.tableau.com/products/desktop/download) Tableau Desktop and follow the on-screen instructions to complete the installation.
+In this tutorial, you'll deploy and integrate a TiDB Cloud Lake instance with [Tableau Desktop](https://www.tableau.com/products/desktop). Before you start, [download](https://www.tableau.com/products/desktop/download) Tableau Desktop and follow the on-screen instructions to complete the installation.
 
 ### Step 1. Deploy TiDB Cloud Lake
 
-1. Deploy a local TiDB Cloud Lake.
-2. Create a SQL user in TiDB Cloud Lake. You will use this account to connect to TiDB Cloud Lake in Tableau Desktop.
+1. [Sign up](https://tidbcloud.com/signup) for a TiDB Cloud account and log in.
+2. Create a TiDB Cloud Lake instance.
+3. Create a SQL user in TiDB Cloud Lake. You will use this account to connect to TiDB Cloud Lake in Tableau Desktop.
 
 ```sql
 CREATE ROLE tableau_role;
@@ -145,7 +147,7 @@ Obtain the connection information from TiDB Cloud Lake. For how to do that, refe
 
     | Parameter | Description                                                          | For This Tutorial                                                          |
     | --------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-    | URL       | Format: `jdbc:databend://{user}:{password}@{host}:{port}/{database}` | `jdbc:databend://cloudapp:<your-password>@https://<your-host>:443/default` |
+    | URL       | Format: `jdbc:lake://{user}:{password}@{host}:{port}/{database}` | `jdbc:lake://cloudapp:<your-password>@<your-host>:443/default` |
     | Dialect   | Select "MySQL" for SQL dialect.                                      | MySQL                                                                      |
     | Username  | SQL user for connecting to TiDB Cloud Lake                            | cloudapp                                                                   |
     | Password  | SQL user for connecting to TiDB Cloud Lake                            | Your password                                                              |

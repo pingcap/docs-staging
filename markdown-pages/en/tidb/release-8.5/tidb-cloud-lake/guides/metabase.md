@@ -37,10 +37,7 @@ This tutorial guides you through the process of integrating TiDB Cloud Lake / Ti
 
 To follow along, you'll need to install Metabase with Docker. Before you begin, make sure that Docker is installed on your system.
 
-For this tutorial, you can integrate either with TiDB Cloud Lake or TiDB Cloud Lake:
-
-- If you choose to integrate with a local TiDB Cloud Lake instance, deploy it if you don't have one already.
-- If you prefer to integrate with TiDB Cloud Lake, make sure you can log in to your account and obtain the connection information for a warehouse. For more details, see [Connecting to a Warehouse](/tidb-cloud-lake/guides/warehouse.md#connecting).
+For this tutorial, you will integrate with TiDB Cloud Lake. Make sure you can log in to your TiDB Cloud account and obtain the connection information for a warehouse. For more details, see [Connecting to a Warehouse](/tidb-cloud-lake/guides/warehouse.md#connecting).
 
 ### Step 2. Deploy Metabase
 

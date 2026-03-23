@@ -72,7 +72,7 @@ In this tutorial, you will load data from MySQL to TiDB Cloud Lake with DataX. B
                 ],
                 "connection": [
                   {
-                    "jdbcUrl": "jdbc:databend://localhost:8000/migrated_db",
+                    "jdbcUrl": "jdbc:lake://<your-lake-host>:<port>/migrated_db",
                     "table": [
                       "tb01"
                     ]

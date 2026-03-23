@@ -36,7 +36,7 @@ However, if you prefer to install dbt separately, you can refer to the official 
 
 If you're new to dbt, TiDB Cloud Lake recommends completing the official dbt tutorial available at <https://github.com/dbt-labs/jaffle_shop>. Before you start, follow [Installing dbt-databend-cloud](#installing-dbt-databend-cloud) to install dbt and dbt-databend-cloud.
 
-This tutorial provides a sample dbt project called "jaffle_shop," offering hands-on experience with the dbt tool. By configuring the default global profile (~/.dbt/profiles.yml) with the necessary information to connect to your TiDB Cloud Lake instance, the project will generate tables and views defined in the dbt models directly in your TiDB Cloud Lake database. Here's an example of the file profiles.yml that connects to a local TiDB Cloud Lake instance:
+This tutorial provides a sample dbt project called "jaffle_shop," offering hands-on experience with the dbt tool. By configuring the default global profile (~/.dbt/profiles.yml) with the necessary information to connect to your TiDB Cloud Lake instance, the project will generate tables and views defined in the dbt models directly in your TiDB Cloud Lake database. Here's an example of the file profiles.yml that connects to a TiDB Cloud Lake instance:
 
 ```yml title="~/.dbt/profiles.yml"
 jaffle_shop_databend:
