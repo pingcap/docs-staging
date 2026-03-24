@@ -103,7 +103,7 @@ jobs:
           yarn download:tidb-operator:all
 
       - name: Sync tooltip terms
-        if: ${{ inputs.repo == 'pingcap/docs' }}
+        if: ${{ inputs.repo == 'pingcap/docs' && inputs.branch == 'master' }}
         env:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
