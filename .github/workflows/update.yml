@@ -108,17 +108,15 @@ jobs:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           TEMP_FILE=$(mktemp)
-          STATUS_CODE=$(curl \
+          if curl \
+            --fail \
             --silent \
             --show-error \
             --location \
             --output "${TEMP_FILE}" \
-            --write-out "%{http_code}" \
             -H "Accept: application/vnd.github.raw+json" \
             -H "Authorization: token ${GITHUB_AUTHORIZATION_TOKEN}" \
-            "https://api.github.com/repos/${{ inputs.repo }}/contents/tooltip-terms.json?ref=${{ inputs.branch }}")
-
-          if [ "${STATUS_CODE}" = "200" ]
+            "https://api.github.com/repos/${{ inputs.repo }}/contents/tooltip-terms.json?ref=${{ inputs.branch }}"
           then
             mv "${TEMP_FILE}" ./tooltip-terms.json
           else
@@ -129,10 +127,7 @@ jobs:
       - name: Git commit
         run: |
           git add markdown-pages
-          if [ -f tooltip-terms.json ]
-          then
-            git add tooltip-terms.json
-          fi
+          git add tooltip-terms.json 2>/dev/null || true
           git fetch
           git pull
           if [[ -z $(git status -s) ]]
