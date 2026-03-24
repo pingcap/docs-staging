@@ -102,9 +102,37 @@ jobs:
           yarn download:dm:all
           yarn download:tidb-operator:all
 
+      - name: Sync tooltip terms
+        if: ${{ inputs.repo == 'pingcap/docs' }}
+        env:
+          GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          TEMP_FILE=$(mktemp)
+          STATUS_CODE=$(curl \
+            --silent \
+            --show-error \
+            --location \
+            --output "${TEMP_FILE}" \
+            --write-out "%{http_code}" \
+            -H "Accept: application/vnd.github.raw+json" \
+            -H "Authorization: token ${GITHUB_AUTHORIZATION_TOKEN}" \
+            "https://api.github.com/repos/${{ inputs.repo }}/contents/tooltip-terms.json?ref=${{ inputs.branch }}")
+
+          if [ "${STATUS_CODE}" = "200" ]
+          then
+            mv "${TEMP_FILE}" ./tooltip-terms.json
+          else
+            rm -f "${TEMP_FILE}"
+            echo "Skip syncing tooltip-terms.json because it does not exist on ${{ inputs.repo }}@${{ inputs.branch }}."
+          fi
+
       - name: Git commit
         run: |
           git add markdown-pages
+          if [ -f tooltip-terms.json ]
+          then
+            git add tooltip-terms.json
+          fi
           git fetch
           git pull
           if [[ -z $(git status -s) ]]
