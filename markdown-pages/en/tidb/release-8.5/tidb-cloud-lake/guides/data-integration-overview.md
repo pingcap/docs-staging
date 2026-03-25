@@ -31,8 +31,6 @@ An integration task defines how data flows from a source to a target table in Ti
 
 ## Managing Data Sources
 
-![Data Sources Overview](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/databendcloud-dataintegration-datasource-overview.png)
-
 To manage data sources, navigate to **Data** > **Data Sources** from the left sidebar. From this page you can:
 
 - View all configured data sources

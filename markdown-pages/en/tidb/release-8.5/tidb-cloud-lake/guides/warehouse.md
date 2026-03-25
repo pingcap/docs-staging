@@ -163,11 +163,9 @@ TiDB Cloud Lake supports multiple connection methods to meet your specific needs
 
 To obtain the connection information for a warehouse:
 
-1. Click **Connect** on the **Overview** page.
-2. Select the database and warehouse you wish to connect to. The connection information will update based on your selection.
+1. Click **Overview** > **Connect**.
+2. Select the **Database** and **Warehouse** you wish to connect to. The connection information will update based on your selection.
 3. The connection details include a SQL user named `cloudapp` with a randomly generated password. TiDB Cloud Lake does not store this password. Be sure to copy and save it securely. If you forget the password, click **Reset** to generate a new one.
-
-![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/databend_cloud_dsn.gif)
 
 ### Connection String Format
 

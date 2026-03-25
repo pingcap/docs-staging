@@ -9,8 +9,6 @@ summary: Tapdata is a platform-oriented product designed for data services, aime
 
 TiDB Cloud Lake is one of the data sources supported by Tapdata. You can use Tapdata to synchronize data from other platforms to TiDB Cloud Lake, using TiDB Cloud Lake as the **destination** for data migration/synchronization.
 
-![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/tapdata-databend.png)
-
 ## Integrating with Tapdata Cloud
 
 To establish a connection with TiDB Cloud Lake and set it as the synchronization destination in [Tapdata Cloud](https://tapdata.net/tapdata-cloud.html), you need to complete the following steps:

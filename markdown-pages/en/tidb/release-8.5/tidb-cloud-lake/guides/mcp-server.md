@@ -18,7 +18,7 @@ summary: mcp-databend is an MCP (Model Context Protocol) server that enables AI 
 
 This tutorial shows you how to build a conversational Business Intelligence tool using mcp-databend and the Agno framework. You'll create a local agent that can answer data questions in natural language.
 
-![TiDB Cloud Lake MCP ChatBI](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/databend-mcp-chatbi.png)
+![TiDB Cloud Lake MCP ChatBI](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/mcp-chatbi.png)
 
 ## Prerequisites
 
