@@ -7,7 +7,7 @@ summary: "TiDB Cloud Lake recommends two file upload methods for stages PRESIGN 
 
 TiDB Cloud Lake recommends two file upload methods for stages: [PRESIGN](/tidb-cloud-lake/sql/presign.md) and PUT/GET commands. These methods enable direct data transfer between the client and your storage, eliminating intermediaries and resulting in cost savings by reducing traffic between TiDB Cloud Lake and your storage.
 
-![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/staging-file.png)
+![Uploading to Stage](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/staging-file.png)
 
 The PRESIGN method generates a time-limited URL with a signature, which clients can use to securely initiate file uploads. This URL grants temporary access to the designated stage, allowing clients to directly transfer data without relying on TiDB Cloud Lake servers for the entire process, enhancing both security and efficiency.
 

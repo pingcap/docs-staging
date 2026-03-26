@@ -42,5 +42,3 @@ When inviting finance personnel to your organization, assign them this `billing`
 ![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/billing-role.png)
 
 Once they log in to TiDB Cloud Lake, they will have restricted access, limited to only the billing page, with all other business-related pages hidden from view. This approach helps to safeguard sensitive data by restricting unnecessary access to other parts of your TiDB Cloud Lake environment.
-
-![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/billing-only-view.png)

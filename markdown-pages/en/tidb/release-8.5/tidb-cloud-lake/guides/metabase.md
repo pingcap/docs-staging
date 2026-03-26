@@ -57,8 +57,6 @@ Follow these steps to install and deploy Metabase with Docker:
 
 3. [Download](https://github.com/databendcloud/metabase-databend-driver/releases/latest) the Metabase TiDB Cloud Lake Driver, then import it to the **plugins** folder of the Metabase container in Docker.
 
-    ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/add2plugins.gif)
-
 4. Restart the Metabase container.
 
 ### Step 3. Connect to Metabase
@@ -83,5 +81,3 @@ Follow these steps to install and deploy Metabase with Docker:
 4. Click **Save changes**, then click **Exit admin**.
 
 You're all set! You can now start creating a query and building a dashboard. For more information, please refer to the Metabase documentation: <https://www.metabase.com/docs/latest/index.html>
-
-![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/allset.png)

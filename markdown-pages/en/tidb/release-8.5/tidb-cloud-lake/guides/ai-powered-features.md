@@ -19,8 +19,6 @@ To launch an AI-Chat:
 
 3. Enter your question.
 
-![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/ai-chat.gif)
-
 ### AI-Powered SQL Assistant
 
 AI assistance is available for editing SQL statements within worksheets. You don't need to write your SQL from scratch — AI can generate it for you.

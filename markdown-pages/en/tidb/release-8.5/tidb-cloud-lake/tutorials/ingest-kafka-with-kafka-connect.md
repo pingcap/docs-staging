@@ -105,8 +105,6 @@ In this step, you will set up a connector that connects to TiDB Cloud Lake.
 
 1. In Confluent Cloud, from the navigation menu, click **Connectors** > **Add Connector**. Search for then select the plugin you uploaded.
 
-    ![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/kafka-3.png)
-
 2. In the **Kafka credentials** step, select **Use an existing API key**, then enter the API key & secret you created with the Confluent CLI.
 
     ![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/kafka-4.png)
@@ -180,12 +178,10 @@ In this step, you will produce messages using the Confluent CLI and verify that 
     confluent kafka topic produce databend_topic --value-format avro --schema schema.json
     Successfully registered schema with ID "100001".
     Starting Kafka Producer. Use Ctrl-C or Ctrl-D to exit.
-    
+
     {"id":1, "name":"Alice", "age":30}
     {"id":2, "name":"Bob", "age":25}
     {"id":3, "name":"Charlie", "age":35}
     ```
 
-3. In TiDB Cloud Lake, verify that the data has been successfully loaded:
-
-![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/kafka-5.png)
+3. In TiDB Cloud Lake, verify that the data has been successfully loaded.

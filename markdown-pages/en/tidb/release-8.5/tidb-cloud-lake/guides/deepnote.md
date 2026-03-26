@@ -39,8 +39,4 @@ Make sure you can log in to your TiDB Cloud Lake account and obtain the connecti
 
 5. In the notebook, navigate to the **SQL** section, and then choose the connection you previously created.
 
-    ![Deepnote connection](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/deepnote-connection.png)
-
 You're all set! Refer to the Deepnote documentation for how to work with the tool.
-
-![Deepnote connection ready](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/deepnote-connection-ready.png)

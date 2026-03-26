@@ -146,9 +146,7 @@ df = result.DataFrame()
 df.plot.bar(x='date', y='count')
 ```
 
-You can now see a bar chart on the notebook:
-
-![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/jupyter-ipython-sql.png)
+You can now see a bar chart on the notebook.
 
 ## Tutorial-3: Integrating TiDB Cloud Lake with Jupyter Notebook with Python Binding Library
 

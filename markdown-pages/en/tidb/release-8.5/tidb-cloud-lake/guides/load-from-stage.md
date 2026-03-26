@@ -7,7 +7,7 @@ summary: "TiDB Cloud Lake enables you to easily import data from files uploaded 
 
 TiDB Cloud Lake enables you to easily import data from files uploaded to either the user stage or an internal/external stage. To do so, you can first upload the files to a stage using [BendSQL](/tidb-cloud-lake/guides/connect-using-bendsql.md), and then employ the [COPY INTO](/tidb-cloud-lake/sql/copy-into-table.md) command to load the data from the staged file. Please note that the files must be in a format supported by TiDB Cloud Lake, otherwise the data cannot be imported. For more information on the file formats supported by TiDB Cloud Lake, see [Input & Output File Formats](/tidb-cloud-lake/sql/input-output-file-formats.md).
 
-![image](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/load-data-from-stage.jpeg)
+![image](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/load-data-from-stage.png)
 
 The following tutorials offer a detailed, step-by-step guide to help you effectively navigate the process of loading data from files in a stage.
 

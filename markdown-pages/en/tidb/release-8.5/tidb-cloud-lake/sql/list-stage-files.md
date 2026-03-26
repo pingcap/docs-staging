@@ -23,12 +23,6 @@ LIST { userStage | internalStage | externalStage } [ PATTERN = '<regex_pattern>'
 
 The stage below contains a file named **books.parquet** and a folder named **2023**.
 
-![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/list-stage.png)
-
-And the folder **2023** contains the following files:
-
-![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/list-stage-2.png)
-
 The LIST command lists all the files in a stage by default:
 
 ```sql

@@ -46,40 +46,28 @@ After TiDB Cloud Lake approves the cloud account or project you plan to connect,
 
    ![Create Endpoint Button](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/create-endpoint-1.png)
 
-   ![Create Endpoint Sheet](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/create-endpoint-2.png)
-
    Select the previously created security group `HTTPS`
 
    ![Create Endpoint SG](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/create-endpoint-3.png)
 
-   ![Create Endpoint Done](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/create-endpoint-4.png)
+6. Wait for the cloud admin to approve your connection request.
 
-6. Wait for cloud admin approving your connect request:
-
-   ![Request](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/request.png)
-
-7. Wait for the PrivateLink creation:
-
-   ![Creation](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/creation.png)
+7. Wait for the PrivateLink creation to complete.
 
 8. Modify private DNS name setting:
 
-   ![DNS Menu](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/dns-1.png)
+    ![DNS Menu](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/dns-1.png)
 
-   Enable private DNS names:
+    Enable private DNS names:
 
-   ![DNS Sheet](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/dns-2.png)
+    ![DNS Sheet](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/dns-2.png)
 
-   Wait for changes to apply.
+    Wait for changes to apply.
 
 9. Verify accessing TiDB Cloud Lake via PrivateLink:
 
-   ![Verify DNS](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/verify-1.png)
+    Gateway domain is resolved to VPC internal IP address.
 
-   ![Verify Response](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/verify-2.png)
-
-   Gateway domain is resolved to VPC internal IP address.
-
-> **Note:**
->
-> Congratulations! You have successfully connected to TiDB Cloud Lake with AWS PrivateLink.
+    > **Note:**
+    >
+    > Congratulations! You have successfully connected to TiDB Cloud Lake with AWS PrivateLink.

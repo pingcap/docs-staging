@@ -185,13 +185,9 @@ In this step, you'll load the AWS billing dataset into TiDB Cloud Lake with just
 
 1. In TiDB Cloud Lake, select **Overview** > **Load Data** to launch the data loading wizard.
 
-2. Select to load data into **An existing table**, then choose **Load from a URL** and enter the dataset URL: `https://datasets.databend.com/aws-billing.parquet`.
-
-    ![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/aws-billing-1.png)
+2. Select to load data into **An existing table**, then choose **Load from a URL** and enter the dataset URL.
 
 3. Select the database and table you created, then choose a warehouse.
-
-    ![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/aws-billing-2.png)
 
 4. Click **Confirm** to start the data loading.
 

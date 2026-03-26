@@ -23,9 +23,8 @@ The dataset "Covid-19 Data from New York Times" is a built-in sample dataset tha
 ## Step 1: Loading Dataset
 
 1. In TiDB Cloud Lake, click the **Load Data** button on the **Overview** page.
-2. On the page that opens, choose the **A new table** radio button, and then select **Covid-19 Data from New York Times.CSV** from the **Load sample data** dropdown menu:
 
-    ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/dashboard-1.png)
+2. On the page that opens, choose the **A new table** radio button, and then select **Covid-19 Data from New York Times.CSV** from the **Load sample data** dropdown menu.
 
 3. On the next page, select a database and set a name for the target table to be created.
 
