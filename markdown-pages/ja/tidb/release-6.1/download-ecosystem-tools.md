@@ -24,14 +24,14 @@ TiDB Toolkitには、データ エクスポート ツールDumpling、データ 
 次のリンクからTiDB Toolkitをダウンロードできます。
 
 ```
-https://download.pingcap.org/tidb-community-toolkit-{version}-linux-amd64.tar.gz
+https://download.pingcap.com/tidb-community-toolkit-{version}-linux-amd64.tar.gz
 ```
 
-リンクの`{version}`は、TiDB のバージョン番号を示します。たとえば、 `v6.1.2`のダウンロード リンクは`https://download.pingcap.org/tidb-community-toolkit-v6.1.2-linux-amd64.tar.gz`です。
+リンクの`{version}`は、TiDB のバージョン番号を示します。たとえば、 `v6.1.2`のダウンロード リンクは`https://download.pingcap.com/tidb-community-toolkit-v6.1.2-linux-amd64.tar.gz`です。
 
 > **ノート：**
 >
-> [PD Control](/pd-control.md)ツール`pd-ctl`をダウンロードする必要がある場合は、 `https://download.pingcap.org/tidb-community-server-{version}-linux-amd64.tar.gz`とは別に TiDB インストール パッケージをダウンロードします。
+> [PD Control](/pd-control.md)ツール`pd-ctl`をダウンロードする必要がある場合は、 `https://download.pingcap.com/tidb-community-server-{version}-linux-amd64.tar.gz`とは別に TiDB インストール パッケージをダウンロードします。
 
 ## TiDB Toolkitの説明 {#tidb-toolkit-description}
 

@@ -17,11 +17,11 @@ summary: Learn how to deploy a Data Migration cluster using DM binary.
 
 | パッケージ名                                                         | OS    | 建築    | SHA256チェックサム                                                   |
 | :------------------------------------------------------------- | :---- | :---- | :------------------------------------------------------------- |
-| `https://download.pingcap.org/dm-{version}-linux-amd64.tar.gz` | Linux | amd64 | `https://download.pingcap.org/dm-{version}-linux-amd64.sha256` |
+| `https://download.pingcap.com/dm-{version}-linux-amd64.tar.gz` | Linux | amd64 | `https://download.pingcap.com/dm-{version}-linux-amd64.sha256` |
 
 > **ノート：**
 >
-> 上記のダウンロードリンクの`{version}`は、TiDBのバージョン番号を示します。たとえば、 `v1.0.1`のダウンロードリンクは`https://download.pingcap.org/dm-v1.0.1-linux-amd64.tar.gz`です。公開されているDMのバージョンは[DMリリース](https://github.com/pingcap/tiflow/releases)ページで確認できます。
+> 上記のダウンロードリンクの`{version}`は、TiDBのバージョン番号を示します。たとえば、 `v1.0.1`のダウンロードリンクは`https://download.pingcap.com/dm-v1.0.1-linux-amd64.tar.gz`です。公開されているDMのバージョンは[DMリリース](https://github.com/pingcap/tiflow/releases)ページで確認できます。
 
 ダウンロードされたファイルには、 `bin`と`conf`の2つのサブディレクトリがあります。 `bin`ディレクトリには、DM-master、DM-worker、およびdmctlのバイナリファイルが含まれています。 `conf`ディレクトリには、サンプル構成ファイルが含まれています。
 

@@ -23,11 +23,11 @@ PD Controlを使用するには、 `tiup ctl:<cluster-version> pd -u http://<pd_
 
 | インストールパッケージ                                                                                | OS    | アーキテクチャ | SHA256 チェックサム                                                                     |
 | :----------------------------------------------------------------------------------------- | :---- | :------ | :-------------------------------------------------------------------------------- |
-| `https://download.pingcap.org/tidb-community-server-{version}-linux-amd64.tar.gz` (pd-ctl) | Linux | amd64   | `https://download.pingcap.org/tidb-community-server-{version}-linux-amd64.sha256` |
+| `https://download.pingcap.com/tidb-community-server-{version}-linux-amd64.tar.gz` (pd-ctl) | Linux | amd64   | `https://download.pingcap.com/tidb-community-server-{version}-linux-amd64.sha256` |
 
 > **ノート：**
 >
-> `{version}`は TiDB のバージョン番号を示します。たとえば、 `{version}`が`v6.1.2`の場合、パッケージのダウンロード リンクは`https://download.pingcap.org/tidb-community-server-v6.1.2-linux-amd64.tar.gz`です。
+> `{version}`は TiDB のバージョン番号を示します。たとえば、 `{version}`が`v6.1.2`の場合、パッケージのダウンロード リンクは`https://download.pingcap.com/tidb-community-server-v6.1.2-linux-amd64.tar.gz`です。
 
 ### ソースコードからコンパイル {#compile-from-source-code}
 

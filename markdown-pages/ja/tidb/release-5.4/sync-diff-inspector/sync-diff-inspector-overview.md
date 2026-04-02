@@ -9,7 +9,7 @@ summary: Use sync-diff-inspector to compare data and repair inconsistent data.
 
 このガイドでは、sync-diff-inspectorの主な機能を紹介し、このツールを構成して使用する方法について説明します。 sync-diff-inspectorをダウンロードするには、次のいずれかの方法を使用します。
 
--   バイナリパッケージ。 [tidb-community-toolkit-v5.4.2-linux-amd64](https://download.pingcap.org/tidb-community-toolkit-v5.4.2-linux-amd64.tar.gz)をクリックしてダウンロードします。
+-   バイナリパッケージ。 [tidb-community-toolkit-v5.4.2-linux-amd64](https://download.pingcap.com/tidb-community-toolkit-v5.4.2-linux-amd64.tar.gz)をクリックしてダウンロードします。
 -   Dockerイメージ。次のコマンドを実行してダウンロードします。
 
     

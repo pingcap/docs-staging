@@ -23,12 +23,12 @@ PD Controlを使用するには、 `tiup ctl:v<CLUSTER_VERSION> pd -u http://<pd
 
 | インストールパッケージ                                                                                | OS    | アーキテクチャ | SHA256 チェックサム                                                                     |
 | :----------------------------------------------------------------------------------------- | :---- | :------ | :-------------------------------------------------------------------------------- |
-| `https://download.pingcap.org/tidb-community-server-{version}-linux-amd64.tar.gz` (pd-ctl) | Linux | amd64   | `https://download.pingcap.org/tidb-community-server-{version}-linux-amd64.sha256` |
-| `https://download.pingcap.org/tidb-community-server-{version}-linux-arm64.tar.gz` (pd-ctl) | Linux | アーム64   | `https://download.pingcap.org/tidb-community-server-{version}-linux-arm64.sha256` |
+| `https://download.pingcap.com/tidb-community-server-{version}-linux-amd64.tar.gz` (pd-ctl) | Linux | amd64   | `https://download.pingcap.com/tidb-community-server-{version}-linux-amd64.sha256` |
+| `https://download.pingcap.com/tidb-community-server-{version}-linux-arm64.tar.gz` (pd-ctl) | Linux | アーム64   | `https://download.pingcap.com/tidb-community-server-{version}-linux-arm64.sha256` |
 
 > **ノート：**
 >
-> リンクの`{version}`は、TiDB のバージョン番号を示します。たとえば、 `amd64`アーキテクチャの`v6.5.2`のダウンロード リンクは`https://download.pingcap.org/tidb-community-server-v6.5.2-linux-amd64.tar.gz`です。
+> リンクの`{version}`は、TiDB のバージョン番号を示します。たとえば、 `amd64`アーキテクチャの`v6.5.2`のダウンロード リンクは`https://download.pingcap.com/tidb-community-server-v6.5.2-linux-amd64.tar.gz`です。
 
 ### ソースコードからコンパイル {#compile-from-source-code}
 

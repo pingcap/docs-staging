@@ -238,7 +238,7 @@ DM v2.0.1 以前のバージョンでは、フル インポートが完了する
     2.  クラスター内の Grafana ノードをスケールインしてからスケール アウトし、Grafana サービスを再起動します。
 -   解決策 2:
     1.  `deploy/grafana-$port/bin/public`フォルダをバックアップします。
-    2.  [TiUP DMオフライン パッケージ](https://download.pingcap.org/tidb-dm-v2.0.1-linux-amd64.tar.gz)をダウンロードして解凍します。
+    2.  [TiUP DMオフライン パッケージ](https://download.pingcap.com/tidb-dm-v2.0.1-linux-amd64.tar.gz)をダウンロードして解凍します。
     3.  オフライン パッケージの`grafana-v4.0.3-**.tar.gz`を解凍します。
     4.  フォルダ`deploy/grafana-$port/bin/public`を`grafana-v4.0.3-**.tar.gz`の`public`フォルダに置き換えます。
     5.  `tiup dm restart $cluster_name -R grafana`を実行して Grafana サービスを再起動します。

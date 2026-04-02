@@ -31,7 +31,7 @@ TiUPを使用してTiDBBinlogをデプロイすることをお勧めします。
 
 ```bash
 version="latest" for nightly builds &&
-wget https://download.pingcap.org/tidb-latest-linux-amd64.{tar.gz,sha256}
+wget https://download.pingcap.com/tidb-latest-linux-amd64.{tar.gz,sha256}
 ```
 
 ファイルの整合性を確認してください。結果に問題がなければ、ファイルは正しいです。
@@ -45,7 +45,7 @@ TiDB v2.1.0 GA以降のバージョンでは、PumpとDrainerはすでにTiDBダ
 
 
 ```bash
-wget https://download.pingcap.org/tidb-binlog-$version-linux-amd64.{tar.gz,sha256}
+wget https://download.pingcap.com/tidb-binlog-$version-linux-amd64.{tar.gz,sha256}
 ```
 
 ファイルの整合性を確認してください。結果に問題がなければ、ファイルは正しいです。

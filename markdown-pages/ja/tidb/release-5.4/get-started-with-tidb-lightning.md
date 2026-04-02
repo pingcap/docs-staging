@@ -48,7 +48,7 @@ summary: Learn how to deploy TiDB Lightning and import full backup data to TiDB.
 
 次のリンクからTiDBLightningインストールパッケージをダウンロードします。
 
--   **v5.4.0** ： [tidb-toolkit-v5.4.0-linux-amd64.tar.gz](https://download.pingcap.org/tidb-toolkit-v5.4.0-linux-amd64.tar.gz)
+-   **v5.4.0** ： [tidb-toolkit-v5.4.0-linux-amd64.tar.gz](https://download.pingcap.com/tidb-toolkit-v5.4.0-linux-amd64.tar.gz)
 
 > **ノート：**
 >
