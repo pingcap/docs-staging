@@ -9,7 +9,7 @@ This document describes how to create a changefeed to stream data from TiDB Clou
 
 ## Restrictions
 
-- For each TiDB Cloud Essential cluster, you can create up to 10 changefeeds.
+- For each TiDB Cloud Essential instance, you can create up to 10 changefeeds.
 - Currently, TiDB Cloud Essential does not support uploading self-signed TLS certificates to connect to Kafka brokers.
 - Because TiDB Cloud Essential uses TiCDC to establish changefeeds, it has the same [restrictions as TiCDC](https://docs.pingcap.com/tidb/stable/ticdc-overview#unsupported-scenarios).
 - If the table to be replicated does not have a primary key or a non-null unique index, the absence of a unique constraint during replication could result in duplicated data being inserted downstream in some retry scenarios.
@@ -23,7 +23,7 @@ Before creating a changefeed to stream data to Apache Kafka, you need to complet
 
 ### Network
 
-Ensure that your TiDB Cloud Essential cluster can connect to the Apache Kafka service. You can choose one of the following connection methods:
+Ensure that your TiDB Cloud Essential instance can connect to the Apache Kafka service. You can choose one of the following connection methods:
 
 - Private Link Connection: meeting security compliance and ensuring network quality.
 - Public Network: suitable for a quick setup.
@@ -65,7 +65,7 @@ For example, if your Kafka cluster is in Confluent Cloud, refer to [Resources](h
 ## Step 1. Open the Changefeed page for Apache Kafka
 
 1. Log in to the [TiDB Cloud console](https://tidbcloud.com).
-2. Navigate to the overview page of the target TiDB Cloud Essential cluster, and then click **Data** > **Changefeed** in the left navigation pane.
+2. Navigate to the overview page of the target TiDB Cloud Essential instance, and then click **Data** > **Changefeed** in the left navigation pane.
 3. Click **Create Changefeed**, and then select **Kafka** as **Destination**.
 
 ## Step 2. Configure the changefeed target

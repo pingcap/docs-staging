@@ -5,7 +5,7 @@ summary: The reference of `ticloud serverless create`.
 
 # ticloud serverless create
 
-Create a TiDB Cloud cluster:
+Create a TiDB Cloud Starter or Essential instance:
 
 ```shell
 ticloud serverless create [flags]
@@ -13,25 +13,25 @@ ticloud serverless create [flags]
 
 ## Examples
 
-Create a TiDB Cloud cluster in interactive mode:
+Create a TiDB Cloud Starter or Essential instance in interactive mode:
 
 ```shell
 ticloud serverless create
 ```
 
-Create a TiDB Cloud cluster in non-interactive mode:
+Create a TiDB Cloud Starter or Essential instance in non-interactive mode:
 
 ```shell
 ticloud serverless create --display-name <display-name> --region <region>
 ```
 
-Create a TiDB Cloud Starter cluster with a spending limit in non-interactive mode:
+Create a TiDB Cloud Starter instance with a spending limit in non-interactive mode:
 
 ```shell
 ticloud serverless create --display-name <display-name> --region <region> --spending-limit-monthly <spending-limit-monthly>
 ```
 
-Create a TiDB Cloud Essential cluster in non-interactive mode:
+Create a TiDB Cloud Essential instance in non-interactive mode:
 
 ```shell
 ticloud serverless create --display-name <display-name> --region <region> --max-rcu <maximum-rcu> --min-rcu <minimum-rcu>
@@ -43,14 +43,14 @@ In non-interactive mode, you need to manually enter the required flags. In inter
 
 | Flag                         | Description                                                                                                    | Required | Note                                                |
 |------------------------------|----------------------------------------------------------------------------------------------------------------|----------|-----------------------------------------------------|
-| -n --display-name string     | Specifies the name of the cluster to be created.                                                               | Yes      | Only works in non-interactive mode.                 |
+| -n --display-name string     | Specifies the name of the TiDB Cloud Starter or Essential instance to be created.                                                               | Yes      | Only works in non-interactive mode.                 |
 | --spending-limit-monthly int | Specifies the maximum monthly spending limit in USD cents.                                                     | No       | Only works in non-interactive mode.                 |
-| -p, --project-id string      | Specifies the ID of the project, in which the cluster will be created. The default value is `default project`. | No       | Only works in non-interactive mode.                 |
+| -p, --project-id string      | Specifies the ID of the project, in which the TiDB Cloud Starter or Essential instance will be created. The default value is `default project`. | No       | Only works in non-interactive mode.                 |
 | -r, --region string          | Specifies the name of the cloud region. You can view all available regions using the `ticloud serverless region` command.                | Yes      | Only works in non-interactive mode.                 |
-| --disable-public-endpoint    | Disables the public endpoint. Use this option if you want to prevent public access to the cluster.                                                                                 | No       | Only works in non-interactive mode.                 |
-| --encryption                 | Enables dual-layer data encryption. It is enabled by default for TiDB Cloud Essential clusters, and disabled by default for TiDB Cloud Starter clusters.                       | No       | Only works in non-interactive mode.                 |
-| --max-rcu int32              | Sets the maximum Request Capacity Units (RCUs) for the TiDB Cloud Essential cluster, up to 100000.                                                                  | No       | Only works in non-interactive mode.                 |
-| --min-rcu int32              | Sets the minimum Request Capacity Units (RCUs) for the TiDB Cloud Essential cluster, at least 2000.                                                                    | No       | Only works in non-interactive mode.                 |
+| --disable-public-endpoint    | Disables the public endpoint. Use this option if you want to prevent public access to the TiDB Cloud Starter or Essential instance.                                                                                 | No       | Only works in non-interactive mode.                 |
+| --encryption                 | Enables dual-layer data encryption. It is enabled by default for TiDB Cloud Essential instances, and disabled by default for TiDB Cloud Starter instances.                       | No       | Only works in non-interactive mode.                 |
+| --max-rcu int32              | Sets the maximum Request Capacity Units (RCUs) for the TiDB Cloud Essential instance, up to 100000.                                                                  | No       | Only works in non-interactive mode.                 |
+| --min-rcu int32              | Sets the minimum Request Capacity Units (RCUs) for the TiDB Cloud Essential instance, at least 2000.                                                                    | No       | Only works in non-interactive mode.                 |
 | -h, --help                   | Shows help information for this command.                                                                       | No       | Works in both non-interactive and interactive modes |
 
 ## Inherited flags

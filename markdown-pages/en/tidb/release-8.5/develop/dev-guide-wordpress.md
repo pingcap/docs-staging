@@ -12,13 +12,13 @@ In this tutorial, you can learn how to use TiDB Cloud Starter to run WordPress f
 
 > **Note:**
 >
-> In addition to TiDB Cloud Starter, this tutorial works with TiDB Cloud Essential, TiDB Cloud Dedicated, and TiDB Self-Managed clusters as well. However, it is highly recommended to run WordPress with TiDB Cloud Starter for cost efficiency.
+> In addition to TiDB Cloud Starter, this tutorial works with TiDB Cloud Essential, TiDB Cloud Dedicated, and TiDB Self-Managed as well. However, it is highly recommended to run WordPress with TiDB Cloud Starter for cost efficiency.
 
 ## Prerequisites
 
 To complete this tutorial, you need:
 
-- A TiDB Cloud Starter cluster. Follow [creating a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md) to create your own TiDB Cloud cluster if you don't have one.
+- [Create a TiDB Cloud Starter instance](/develop/dev-guide-build-cluster-in-cloud.md) if you don't have one.
 
 ## Run WordPress with TiDB Cloud Starter
 
@@ -51,7 +51,7 @@ cd wordpress-tidb-docker
 
 Configure the WordPress database connection to TiDB Cloud Starter.
 
-1. Navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page, and then click the name of your target cluster to go to its overview page.
+1. Navigate to the [**My TiDB**](https://tidbcloud.com/tidbs) page, and then click the name of your target TiDB Cloud Starter instance to go to its overview page.
 
 2. Click **Connect** in the upper-right corner. A connection dialog is displayed.
 
@@ -84,7 +84,7 @@ Configure the WordPress database connection to TiDB Cloud Starter.
     TIDB_DB_NAME='test'
     ```
 
-    Be sure to replace the placeholders `{}` with the connection parameters obtained from the connection dialog. By default, your TiDB Cloud Starter comes with a `test` database. If you have already created another database in your TiDB Cloud Starter cluster, you can replace `test` with your database name.
+    Be sure to replace the placeholders `{}` with the connection parameters obtained from the connection dialog. By default, your TiDB Cloud Starter comes with a `test` database. If you have already created another database in your TiDB Cloud Starter instance, you can replace `test` with your database name.
 
 7. Save the `.env` file.
 
@@ -100,9 +100,9 @@ Configure the WordPress database connection to TiDB Cloud Starter.
 
 ### Step 5: Confirm the database connection
 
-1. Close the connection dialog for your cluster on the TiDB Cloud console, and open the **SQL Editor** page.
-2. Under the **Schemas** tab on the left, click the database you connected to Wordpress.
-3. Confirm that you now see the Wordpress tables (such as `wp_posts` and `wp_comments`) in the list of tables for that database.
+1. Close the connection dialog for your TiDB Cloud Starter instance in the TiDB Cloud console, and open the **SQL Editor** page.
+2. Under the **Schemas** tab on the left, click the database you connected to WordPress.
+3. Confirm that you now see the WordPress tables (such as `wp_posts` and `wp_comments`) in the list of tables for that database.
 
 ## Need help?
 

@@ -9,7 +9,7 @@ This tutorial demonstrates how to use OpenAI-compatible embedding services to ge
 
 > **Note:**
 >
-> Currently, [Auto Embedding](/ai/integrations/vector-search-auto-embedding-overview.md) is only available on TiDB Cloud Starter clusters hosted on AWS.
+> Currently, [Auto Embedding](/ai/integrations/vector-search-auto-embedding-overview.md) is only available on TiDB Cloud Starter instances hosted on AWS.
 
 ## OpenAI-compatible embedding services
 

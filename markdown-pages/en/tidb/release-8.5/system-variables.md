@@ -1629,7 +1629,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 >
 > - If you are using a [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) cluster, to improve the speed for index creation using this variable, make sure that your TiDB cluster is hosted on AWS and your TiDB node size is at least 8 vCPU.
 > - For [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier#tidb-cloud-dedicated) clusters with 4 vCPU, it is recommended to manually disable [`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630) to prevent resource limitations from affecting cluster stability during index creation. Disabling this setting allows indexes to be created using transactions, which reduces the overall impact on the cluster.
-> - For [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters, this variable is read-only.
+> - For [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances, this variable is read-only.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2321,7 +2321,7 @@ Assume that you have a cluster with 4 TiDB nodes and multiple TiKV nodes. In thi
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2403,7 +2403,7 @@ Assume that you have a cluster with 4 TiDB nodes and multiple TiKV nodes. In thi
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2735,7 +2735,7 @@ Assume that you have a cluster with 4 TiDB nodes and multiple TiKV nodes. In thi
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2799,7 +2799,7 @@ Assume that you have a cluster with 4 TiDB nodes and multiple TiKV nodes. In thi
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -2911,7 +2911,7 @@ Query OK, 0 rows affected (0.09 sec)
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3143,7 +3143,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3163,7 +3163,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3193,7 +3193,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3208,7 +3208,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3226,7 +3226,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3321,7 +3321,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3356,7 +3356,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -3369,7 +3369,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -3648,7 +3648,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): Yes
@@ -3749,7 +3749,7 @@ For a system upgraded to v5.0 from an earlier version, if you have not modified 
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: No, only applicable to the current TiDB instance that you are connecting to.
@@ -5385,7 +5385,7 @@ SHOW WARNINGS;
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -5718,7 +5718,7 @@ SHOW WARNINGS;
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -5759,7 +5759,7 @@ SHOW WARNINGS;
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -5777,7 +5777,7 @@ SHOW WARNINGS;
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -5790,7 +5790,7 @@ SHOW WARNINGS;
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -5856,7 +5856,7 @@ SHOW WARNINGS;
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6042,7 +6042,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -6189,7 +6189,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6203,7 +6203,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6216,7 +6216,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6242,7 +6242,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6264,7 +6264,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6337,7 +6337,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6440,7 +6440,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6504,7 +6504,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6517,7 +6517,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6530,7 +6530,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6543,7 +6543,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6556,7 +6556,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6569,7 +6569,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6582,7 +6582,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -6595,7 +6595,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -6608,7 +6608,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
@@ -6686,7 +6686,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
@@ -6711,7 +6711,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -6726,7 +6726,7 @@ For details, see [Identify Slow Queries](/identify-slow-queries.md).
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -6919,7 +6919,7 @@ Internally, the TiDB parser transforms the `SET TRANSACTION ISOLATION LEVEL [REA
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: SESSION
 - Applies to hint [SET_VAR](/optimizer-hints.md#set_varvar_namevar_value): No
@@ -7052,7 +7052,7 @@ Internally, the TiDB parser transforms the `SET TRANSACTION ISOLATION LEVEL [REA
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 - Scope: SESSION | GLOBAL
 - Persists to cluster: Yes
