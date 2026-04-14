@@ -1,19 +1,19 @@
 ---
 title: Use TiDB Cloud Starter with AI Tools
-summary: Learn how to connect your TiDB Cloud Starter cluster to AI-powered development tools that support the Model Context Protocol (MCP), such as Cursor, Claude Code, VS Code, and Windsurf.
+summary: Learn how to connect your TiDB Cloud Starter instance to AI-powered development tools that support the Model Context Protocol (MCP), such as Cursor, Claude Code, VS Code, and Windsurf.
 ---
 
 # Use TiDB Cloud Starter with AI Tools
 
-This document describes how to connect your TiDB Cloud Starter cluster to AI-powered development tools that support the Model Context Protocol (MCP), such as Cursor, Claude Code, Visual Studio Code (VS Code), and Windsurf.
+This document describes how to connect your TiDB Cloud Starter instance to AI-powered development tools that support the Model Context Protocol (MCP), such as Cursor, Claude Code, Visual Studio Code (VS Code), and Windsurf.
 
-By configuring your TiDB Cloud Starter cluster as an MCP server, you can enable AI assistants in your development tools to query your database schema, understand your data model, and generate context-aware code suggestions.
+By configuring your TiDB Cloud Starter instance as an MCP server, you can enable AI assistants in your development tools to query your database schema, understand your data model, and generate context-aware code suggestions.
 
 ## Before you begin
 
 To complete this guide, you need the following:
 
-- A TiDB Cloud Starter cluster. If you don't have any, you can [create a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md).
+- A TiDB Cloud Starter instance. If you don't have any, you can [create a TiDB Cloud Starter instance](/develop/dev-guide-build-cluster-in-cloud.md).
 - [Python 3.11 or higher](https://www.python.org/downloads/) installed.
 - [uv](https://docs.astral.sh/uv/getting-started/installation/) installed.
 - An AI development tool that supports MCP, such as:
@@ -25,9 +25,9 @@ To complete this guide, you need the following:
 
 ## Connect to AI tools
 
-After you create a TiDB Cloud Starter cluster in TiDB Cloud, perform the following steps to connect it to your AI tool.
+After you create a TiDB Cloud Starter instance in TiDB Cloud, perform the following steps to connect it to your AI tool.
 
-1. On the [**Clusters**](https://tidbcloud.com/project/clusters) page, click the name of your target cluster to go to its overview page. Then, click **Use with AI Tools** in the upper-right corner.
+1. On the [**My TiDB**](https://tidbcloud.com/tidbs) page, click the name of your target TiDB Cloud Starter instance to go to its overview page.
 2. In the **Access `your_cluster_name` with AI tools** dialog, select the **Branch** and **Database** that you want the AI tool to access.
 3. Verify that you meet all the **Prerequisites** listed. If not, follow the on-screen instructions to install the required dependencies.
 4. Configure the password:

@@ -1,15 +1,15 @@
 ---
 title: TiDB Cloud CLI Quick Start
-summary: Learn how to manage TiDB Cloud resources through the TiDB Cloud CLI.
+summary: Learn how to manage TiDB Cloud Starter and Essential instances through the TiDB Cloud CLI.
 ---
 
 # TiDB Cloud CLI Quick Start
 
 TiDB Cloud provides a command-line interface (CLI) [`ticloud`](https://github.com/tidbcloud/tidbcloud-cli) for you to interact with TiDB Cloud from your terminal with a few lines of commands. For example, you can easily perform the following operations using `ticloud`:
 
-- Create, delete, and list your clusters.
-- Import data to your clusters.
-- Export data from your clusters.
+- Create, delete, and list your TiDB Cloud Starter or Essential instances.
+- Import data to your TiDB Cloud Starter or Essential instances.
+- Export data from your TiDB Cloud Starter or Essential instances.
 
 > **Note:**
 >
@@ -87,11 +87,11 @@ Install the MySQL command-line client if you do not have it. You can refer to th
 
 ## Quick start
 
-[TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter) is the best way to get started with TiDB Cloud. In this section, you will learn how to create a TiDB Cloud Starter cluster with TiDB Cloud CLI.
+[TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter) is the best way to get started with TiDB Cloud. In this section, you will learn how to create a TiDB Cloud Starter instance with TiDB Cloud CLI.
 
 ### Create a user profile or log into TiDB Cloud
 
-Before creating a cluster with TiDB Cloud CLI, you need to either create a user profile or log into TiDB Cloud.
+Before creating a TiDB Cloud Starter instance with TiDB Cloud CLI, you need to either create a user profile or log into TiDB Cloud.
 
 - Create a user profile with your [TiDB Cloud API key](https://docs.pingcap.com/tidbcloud/api/v1beta#section/Authentication/API-Key-Management):
 
@@ -115,9 +115,9 @@ Before creating a cluster with TiDB Cloud CLI, you need to either create a user 
 >
 > In the preceding two methods, the TiDB Cloud API key takes precedence over the OAuth token. If both are available, the API key will be used.
 
-### Create a TiDB Cloud Starter cluster
+### Create a TiDB Cloud Starter instance
 
-To create a TiDB Cloud Starter cluster, enter the following command, and then follow the CLI prompts to provide the required information:
+To create a TiDB Cloud Starter instance, enter the following command, and then follow the CLI prompts to provide the required information:
 
 ```shell
 ticloud serverless create

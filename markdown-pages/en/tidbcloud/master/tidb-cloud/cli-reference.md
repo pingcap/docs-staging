@@ -9,11 +9,11 @@ summary: Provides an overview of TiDB Cloud CLI.
 >
 > Currently, TiDB Cloud CLI is in beta and not applicable to TiDB Cloud Dedicated clusters.
 
-TiDB Cloud CLI is a command line interface, which allows you to operate TiDB Cloud from your terminal with a few lines of commands. In the TiDB Cloud CLI, you can easily manage your TiDB Cloud clusters, import data to your clusters, and perform more operations.
+TiDB Cloud CLI is a command line interface, which allows you to operate TiDB Cloud from your terminal with a few lines of commands. In the TiDB Cloud CLI, you can easily manage your TiDB Cloud Starter and Essential instances, import data to your instances, and perform more operations.
 
 ## Before you begin
 
-Make sure to first [set up your TiDB Cloud CLI environment](/tidb-cloud/get-started-with-cli.md). Once you have installed the `ticloud` CLI, you can use it to manage your TiDB Cloud clusters from the command lines.
+Make sure to first [set up your TiDB Cloud CLI environment](/tidb-cloud/get-started-with-cli.md). Once you have installed the `ticloud` CLI, you can use it to manage your TiDB Cloud Starter and Essential instances from the command lines.
 
 ## Commands available
 
@@ -24,12 +24,12 @@ To use the `ticloud` CLI in your terminal, run `ticloud [command] [subcommand]`.
 | Command               | Subcommand                                                            | Description                                    |
 |-----------------------|-----------------------------------------------------------------------|------------------------------------------------|
 | auth                  | login, logout, whoami                                                 | Login and logout                               |
-| serverless (alias: s) | create, delete, describe, list, update, spending-limit, region, shell | Manage TiDB Cloud Starter or TiDB Cloud Essential cluster          |
-| serverless branch     | create, delete, describe, list, shell                                 | Manage branches for your TiDB Cloud Starter or TiDB Cloud Essential cluster          |
-| serverless import     | cancel, describe, list, start                                         | Manage import tasks for your TiDB Cloud Starter or TiDB Cloud Essential cluster      |
-| serverless export     | create, describe, list, cancel, download                              | Manage export tasks for your TiDB Cloud Starter or TiDB Cloud Essential cluster      |
-| serverless sql-user   | create, list, delete, update                                          | Manage SQL users for your TiDB Cloud Starter or TiDB Cloud Essential cluster         |
-| serverless audit-log  | config, describe, filter-rule (alias: filter), download                                    | Manage database audit logging for your TiDB Cloud Starter or TiDB Cloud Essential cluster         |
+| serverless (alias: s) | create, delete, describe, list, update, spending-limit, region, shell | Manage TiDB Cloud Starter or TiDB Cloud Essential instance          |
+| serverless branch     | create, delete, describe, list, shell                                 | Manage branches for your TiDB Cloud Starter or TiDB Cloud Essential instance          |
+| serverless import     | cancel, describe, list, start                                         | Manage import tasks for your TiDB Cloud Starter or TiDB Cloud Essential instance      |
+| serverless export     | create, describe, list, cancel, download                              | Manage export tasks for your TiDB Cloud Starter or TiDB Cloud Essential instance      |
+| serverless sql-user   | create, list, delete, update                                          | Manage SQL users for your TiDB Cloud Starter or TiDB Cloud Essential instance         |
+| serverless audit-log  | config, describe, filter-rule (alias: filter), download                                    | Manage database audit logging for your TiDB Cloud Starter or TiDB Cloud Essential instance         |
 | completion            | bash, fish, powershell, zsh                                           | Generate completion script for specified shell |
 | config                | create, delete, describe, edit, list, set, use                        | Configure user profiles                        |
 | project               | list                                                                  | Manage projects                                |

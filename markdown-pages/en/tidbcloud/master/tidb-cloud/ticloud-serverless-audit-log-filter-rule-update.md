@@ -5,7 +5,7 @@ summary: The reference of `ticloud serverless audit-log filter-rule update`.
 
 # ticloud serverless audit-log filter-rule update
 
-Update an audit log filter rule for a TiDB Cloud Essential cluster.
+Update an audit log filter rule for a TiDB Cloud Essential instance.
 
 ```shell
 ticloud serverless audit-log filter-rule update [flags]

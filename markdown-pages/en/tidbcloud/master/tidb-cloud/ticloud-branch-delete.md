@@ -5,7 +5,7 @@ summary: The reference of `ticloud serverless branch delete`.
 
 # ticloud serverless branch delete
 
-Delete a branch from your TiDB Cloud Starter or TiDB Cloud Essential cluster:
+Delete a branch from your TiDB Cloud Starter or TiDB Cloud Essential instance:
 
 ```shell
 ticloud serverless branch delete [flags]

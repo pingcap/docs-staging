@@ -1,20 +1,20 @@
 ---
 title: Use the `tidbcloud_serverless_cluster` Resource
-summary: Learn how to use the `tidbcloud_serverless_cluster` resource to create and modify a TiDB Cloud Starter cluster.
+summary: Learn how to use the `tidbcloud_serverless_cluster` resource to create and modify a TiDB Cloud Starter instance.
 ---
 
 # Use the `tidbcloud_serverless_cluster` Resource
 
-This document describes how to manage a [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter) cluster with the `tidbcloud_serverless_cluster` resource.
+This document describes how to manage a [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter) instance with the `tidbcloud_serverless_cluster` resource.
 
 You will also learn how to get the necessary information with the `tidbcloud_projects` data source.
 
 The features of the `tidbcloud_serverless_cluster` resource include the following:
 
-- Create TiDB Cloud Starter clusters.
-- Modify TiDB Cloud Starter clusters.
-- Import TiDB Cloud Starter clusters.
-- Delete TiDB Cloud Starter clusters.
+- Create TiDB Cloud Starter instances.
+- Modify TiDB Cloud Starter instances.
+- Import TiDB Cloud Starter instances.
+- Delete TiDB Cloud Starter instances.
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ The features of the `tidbcloud_serverless_cluster` resource include the followin
 
 ## Get project IDs using the `tidbcloud_projects` data source
 
-Each TiDB cluster belongs to a project. Before creating a TiDB Cloud Starter cluster, you need to obtain the ID of the project where you want to create the cluster. If no `project_id` is specified, the default project will be used.
+Each TiDB Cloud Starter instance belongs to a project. Before creating a TiDB Cloud Starter instance, you need to obtain the ID of the project where you want to create the TiDB Cloud Starter instance. If no `project_id` is specified, the default project will be used.
 
 To retrieve the information about all available projects, use the `tidbcloud_projects` data source as follows:
 
@@ -119,11 +119,11 @@ To retrieve the information about all available projects, use the `tidbcloud_pro
 
 Now, you can get all the available projects from the output. Copy one of the project IDs that you need.
 
-## Create a TiDB Cloud Starter cluster
+## Create a TiDB Cloud Starter instance
 
-You can create a TiDB Cloud Starter cluster using the `tidbcloud_serverless_cluster` resource.
+You can create a TiDB Cloud Starter instance using the `tidbcloud_serverless_cluster` resource.
 
-1. Create a directory for the cluster and enter it.
+1. Create a directory for the TiDB Cloud Starter instance and enter it.
 
 2. Create a `cluster.tf` file.
 
@@ -288,16 +288,16 @@ You can create a TiDB Cloud Starter cluster using the `tidbcloud_serverless_clus
     }
     ```
 
-## Modify a TiDB Cloud Starter cluster
+## Modify a TiDB Cloud Starter instance
 
-For a TiDB Cloud Starter cluster, you can use Terraform to manage resources. The arguments that you can modify include:
+For a TiDB Cloud Starter instance, you can use Terraform to manage resources. The arguments that you can modify include:
 
-- `display_name`: The display name of the cluster.
-- `spending_limit`: The spending limit of the cluster.
+- `display_name`: The display name of the TiDB Cloud Starter instance.
+- `spending_limit`: The spending limit of the TiDB Cloud Starter instance.
 - `endpoints.public.disabled`: Whether to disable the public endpoint.
 - `automated_backup_policy.start_time`: The UTC time of day in `HH:mm` format when the automated backup starts.
 
-To modify a TiDB Cloud Starter cluster, you can modify the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to apply the changes. For example, you can modify the `display_name` and `spending_limit` as follows:
+To modify a TiDB Cloud Starter instance, you can modify the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to apply the changes. For example, you can modify the `display_name` and `spending_limit` as follows:
 
 ```
 resource "tidbcloud_serverless_cluster" "example" {
@@ -417,9 +417,9 @@ resource "tidbcloud_serverless_cluster" "example" {
 }
 ```
 
-## Import a TiDB Cloud Starter cluster
+## Import a TiDB Cloud Starter instance
 
-For a TiDB Cloud Starter cluster that is not managed by Terraform, you can bring it under Terraform management by importing it.
+For a TiDB Cloud Starter instance that is not managed by Terraform, you can bring it under Terraform management by importing it.
 
 1. Add an import block for the new `tidbcloud_serverless_cluster` resource.
 
@@ -455,11 +455,11 @@ For a TiDB Cloud Starter cluster that is not managed by Terraform, you can bring
     Apply complete! Resources: 1 imported, 0 added, 0 changed, 0 destroyed.
     ```
 
-Now you can manage the imported cluster with Terraform.
+Now you can manage the imported TiDB Cloud Starter instance with Terraform.
 
-## Delete a TiDB Cloud Starter cluster
+## Delete a TiDB Cloud Starter instance
 
-To delete a TiDB Cloud Starter cluster, you can delete the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to destroy the resource:
+To delete a TiDB Cloud Starter instance, you can delete the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to destroy the resource:
 
 ```shell
 $ terraform apply

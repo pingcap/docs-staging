@@ -5,7 +5,7 @@ summary: Learn about the audit logging feature for the TiDB Cloud console.
 
 # Console Audit Logging
 
-TiDB Cloud provides the console audit logging feature to help you track various behaviors and operations of users on the [TiDB Cloud console](https://tidbcloud.com). For example, you can track operations, such as inviting a user to join your organization and creating a cluster.
+TiDB Cloud provides the console audit logging feature to help you track various behaviors and operations of users on the [TiDB Cloud console](https://tidbcloud.com). For example, you can track operations, such as inviting a user to join your organization and importing data.
 
 ## Prerequisites
 
@@ -152,14 +152,14 @@ The console audit logs record various user activities on the TiDB Cloud console 
 | BindSupportPlan                | Bind a support plan                                                              |
 | CancelSupportPlan              | Cancel a support plan                                                            |
 | UpdateOrganizationName         | Update the organization name                                                     |
-| SetSpendLimit                  | Edit the spending limit of a TiDB Cloud Starter cluster                    |
+| SetSpendLimit                  | Edit the spending limit of a TiDB Cloud Starter instance                    |
 | UpdateMaintenanceWindow        | Modify maintenance window start time                                             |
 | DeferMaintenanceTask           | Defer a maintenance task                                                         |
-| CreateBranch                   | Create a branch for TiDB Cloud Starter or TiDB Cloud Essential cluster                                                  |
-| DeleteBranch                   | Delete a branch for TiDB Cloud Starter or TiDB Cloud Essential cluster                                                  |
-| SetBranchRootPassword          | Set root password for a branch of your TiDB Cloud Starter or TiDB Cloud Essential cluster                                   |
-| ConnectBranchGitHub            | Connect the cluster with a GitHub repository to enable branching integration     |
-| DisconnectBranchGitHub         | Disconnect the cluster from a GitHub repository to disable branching integration |
+| CreateBranch                   | Create a branch for TiDB Cloud Starter or TiDB Cloud Essential instance                                                  |
+| DeleteBranch                   | Delete a branch for TiDB Cloud Starter or TiDB Cloud Essential instance                                                  |
+| SetBranchRootPassword          | Set root password for a branch of your TiDB Cloud Starter or TiDB Cloud Essential instance                                   |
+| ConnectBranchGitHub            | Connect a TiDB Cloud Starter or TiDB Cloud Essential instance with a GitHub repository to enable branching integration     |
+| DisconnectBranchGitHub         | Disconnect a TiDB Cloud Starter or TiDB Cloud Essential instance from a GitHub repository to disable branching integration |
 | UpdateAuthenticationMethod     | Update the authentication method for Cloud Organization SSO                        |
 
 ## Console audit log fields

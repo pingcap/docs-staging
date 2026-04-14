@@ -16,14 +16,14 @@ We are constantly filling in the feature gaps between TiDB Cloud Starter/Essenti
 
 ### Audit logs
 
-- [Database audit logging](/tidb-cloud/essential-database-audit-logging.md) is currently unavailable for TiDB Cloud Starter clusters.
+- [Database audit logging](/tidb-cloud/essential-database-audit-logging.md) is currently unavailable for TiDB Cloud Starter instances.
 
 ### Connection
 
-- Only [Public Endpoint](/tidb-cloud/connect-via-standard-connection-serverless.md) and [Private Endpoint](/tidb-cloud/set-up-private-endpoint-connections-serverless.md) can be used. You cannot use [VPC Peering](/tidb-cloud/set-up-vpc-peering-connections.md) to connect to TiDB Cloud Starter or TiDB Cloud Essential clusters.
+- Only [Public Endpoint](/tidb-cloud/connect-via-standard-connection-serverless.md) and [Private Endpoint](/tidb-cloud/set-up-private-endpoint-connections-serverless.md) can be used. You cannot use [VPC Peering](/tidb-cloud/set-up-vpc-peering-connections.md) to connect to TiDB Cloud Starter or TiDB Cloud Essential instances.
 - No [Firewall Rules](/tidb-cloud/configure-serverless-firewall-rules-for-public-endpoints.md) support for Private Endpoint.
 - Your database client connections might be terminated unexpectedly if they remain open for more than 30 minutes. This can occur when a TiDB server shuts down, restarts, or undergoes maintenance, potentially causing application disruptions. To avoid this issue, configure a maximum connection lifetime. It is recommended to start with 5 minutes and increase it gradually if it affects tail latency. For more information, see [Recommended settings for connection pools](/develop/dev-guide-connection-parameters.md).
-- For a TiDB Cloud Starter cluster, you can have up to 400 concurrent connections. If you set a [spending limit](/tidb-cloud/manage-serverless-spend-limit.md), this limit increases to 5,000.
+- For a TiDB Cloud Starter instance, you can have up to 400 concurrent connections. If you set a [spending limit](/tidb-cloud/manage-serverless-spend-limit.md), this limit increases to 5,000.
 
 > **Note:**
 >
@@ -31,7 +31,7 @@ We are constantly filling in the feature gaps between TiDB Cloud Starter/Essenti
 
 ### Encryption
 
-- Data persisted in your TiDB Cloud Starter or TiDB Cloud Essential cluster is encrypted using the encryption tool provided by the cloud provider that manages your cluster. For TiDB Cloud Starter (with spending limit > 0) and TiDB Cloud Essential clusters, an optional second layer of encryption is available during the cluster creation process, providing an additional level of security beyond the default encryption at rest.
+- Data persisted in your TiDB Cloud Starter or TiDB Cloud Essential instance is encrypted using the encryption tool provided by the cloud provider that manages your instance. For TiDB Cloud Starter (with spending limit > 0) and TiDB Cloud Essential instances, an optional second layer of encryption is available during the instance creation process, providing an additional level of security beyond the default encryption at rest.
 - Using [customer-managed encryption keys (CMEK)](/tidb-cloud/tidb-cloud-encrypt-cmek-aws.md) is currently unavailable.
 
 ### Maintenance window
@@ -64,9 +64,9 @@ We are constantly filling in the feature gaps between TiDB Cloud Starter/Essenti
 
 ## Usage quota
 
-For each organization in TiDB Cloud, you can create a maximum of five [free TiDB Cloud Starter clusters](/tidb-cloud/select-cluster-tier.md#starter) by default. To create more TiDB Cloud Starter clusters, you need to add a credit card and [set a monthly spending limit](/tidb-cloud/manage-serverless-spend-limit.md) for the usage.
+For each organization in TiDB Cloud, you can create a maximum of five [free TiDB Cloud Starter instances](/tidb-cloud/select-cluster-tier.md#starter) by default. To create more TiDB Cloud Starter instances, you need to add a credit card and [set a monthly spending limit](/tidb-cloud/manage-serverless-spend-limit.md) for the usage.
 
-For the first five TiDB Cloud Starter clusters in your organization, TiDB Cloud provides a free usage quota for each of them as follows:
+For the first five TiDB Cloud Starter instances in your organization, TiDB Cloud provides a free usage quota for each of them as follows:
 
 - Row-based storage: 5 GiB
 - Columnar storage: 5 GiB
@@ -74,10 +74,10 @@ For the first five TiDB Cloud Starter clusters in your organization, TiDB Cloud 
 
 The Request Unit (RU) is a unit of measurement used to track the resource consumption of a query or transaction. It is a metric that allows you to estimate the computational resources required to process a specific request in the database. The request unit is also the billing unit for TiDB Cloud Starter service.
 
-Once a cluster reaches its usage quota, it immediately denies any new connection attempts until you [increase the quota](/tidb-cloud/manage-serverless-spend-limit.md#update-spending-limit) or the usage is reset upon the start of a new month. Existing connections established before reaching the quota will remain active but will experience throttling.
+Once a TiDB Cloud Starter instance reaches its usage quota, it immediately denies any new connection attempts until you [increase the quota](/tidb-cloud/manage-serverless-spend-limit.md#update-spending-limit) or the usage is reset upon the start of a new month. Existing connections established before reaching the quota will remain active but will experience throttling.
 
 To learn more about the RU consumption of different resources (including read, write, SQL CPU, and network egress), the pricing details, and the throttled information, see [TiDB Cloud Starter Pricing Details](https://www.pingcap.com/tidb-cloud-starter-pricing-details/).
 
-If you want to create a TiDB Cloud Starter cluster with an additional quota, you can set the monthly spending limit on the cluster creation page. For more information, see [Create a TiDB Cloud Starter cluster](/tidb-cloud/create-tidb-cluster-serverless.md).
+If you want to create a TiDB Cloud Starter instance with an additional quota, you can set the monthly spending limit on the TiDB Cloud Starter instance creation page. For more information, see [Create a TiDB Cloud Starter instance](/tidb-cloud/create-tidb-cluster-serverless.md).
 
-After creating a TiDB Cloud Starter cluster, you can still check and edit the spending limit on your cluster overview page. For more information, see [Manage Spending Limit for TiDB Cloud Starter Clusters](/tidb-cloud/manage-serverless-spend-limit.md).
+After creating a TiDB Cloud Starter instance, you can still check and edit the spending limit on the overview page of your TiDB Cloud Starter instance. For more information, see [Manage Spending Limit for TiDB Cloud Starter Instances](/tidb-cloud/manage-serverless-spend-limit.md).

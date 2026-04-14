@@ -15,7 +15,7 @@ The features of the `tidbcloud_backup` resource include the following:
 ## Prerequisites
 
 - [Get TiDB Cloud Terraform Provider](/tidb-cloud/terraform-get-tidbcloud-provider.md).
-- The backup and restore feature introduced in this document is unavailable to TiDB Cloud Starter or TiDB Cloud Essential clusters. To use `tidbcloud_backup` resources, make sure that you have created a TiDB Cloud Dedicated cluster.
+- The backup and restore feature introduced in this document is unavailable to TiDB Cloud Starter or TiDB Cloud Essential instances. To use `tidbcloud_backup` resources, make sure that you have created a TiDB Cloud Dedicated cluster.
 
 ## Create a backup with the `tidbcloud_backup` resource
 
