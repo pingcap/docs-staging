@@ -6,7 +6,7 @@ aliases: ['/tidbcloud/ticloud-connect']
 
 # ticloud serverless branch shell
 
-Connect to a branch of a TiDB Cloud Starter or TiDB Cloud Essential cluster:
+Connect to a branch of a TiDB Cloud Starter or TiDB Cloud Essential instance:
 
 ```shell
 ticloud serverless branch shell [flags]

@@ -11,14 +11,14 @@ This document describes how to import data into TiDB Cloud Starter or TiDB Cloud
 
 Before you can import data via MySQL CLI to TiDB Cloud Starter or TiDB Cloud Essential, you need the following prerequisites:
 
-- You have access to your TiDB Cloud Starter or TiDB Cloud Essential cluster. If you do not have, create one following the instructions in [Build a TiDB Cloud Cluster](/develop/dev-guide-build-cluster-in-cloud.md).
+- You have access to your TiDB Cloud Starter or TiDB Cloud Essential instance. If you do not have, create one following the instructions in [Create a TiDB Cloud Starter Instance](/develop/dev-guide-build-cluster-in-cloud.md).
 - Install MySQL CLI on your local computer.
 
-## Step 1. Connect to your TiDB Cloud Starter or TiDB Cloud Essential cluster
+## Step 1. Connect to your TiDB Cloud Starter or Essential instance
 
-Connect to your TiDB cluster.
+Connect to your TiDB Cloud Starter or Essential instance.
 
-1. Navigate to the [**Clusters**](https://tidbcloud.com/project/clusters) page, and then click the name of your target cluster to go to its overview page.
+1. Navigate to the [**My TiDB**](https://tidbcloud.com/tidbs) page, and then click the name of your target TiDB Cloud Starter or Essential instance to go to its overview page.
 
 2. Click **Connect** in the upper-right corner. A connection dialog is displayed.
 
