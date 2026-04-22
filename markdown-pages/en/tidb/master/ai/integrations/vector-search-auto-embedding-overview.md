@@ -16,7 +16,7 @@ To use Auto Embedding, the basic workflow is as follows:
 
 > **Note:**
 >
-> Auto Embedding is only available on TiDB Cloud Starter clusters hosted on AWS.
+> Auto Embedding is only available on TiDB Cloud Starter instances hosted on AWS.
 
 ## Quick start example
 

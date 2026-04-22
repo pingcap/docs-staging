@@ -9,7 +9,7 @@ The `TIDB_SERVERS_INFO` table provides information about TiDB servers in the TiD
 
 > **Note:**
 >
-> This table is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> This table is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 ```sql
 USE INFORMATION_SCHEMA;
