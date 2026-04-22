@@ -10,7 +10,7 @@ This document describes how to use OpenAI embedding models with [Auto Embedding]
 
 > **Note:**
 >
-> [Auto Embedding](/ai/integrations/vector-search-auto-embedding-overview.md) is only available on TiDB Cloud Starter clusters hosted on AWS.
+> [Auto Embedding](/ai/integrations/vector-search-auto-embedding-overview.md) is only available on TiDB Cloud Starter instances hosted on AWS.
 
 ## Available models
 

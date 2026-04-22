@@ -9,7 +9,7 @@ TiDB supports most of the [JSON schema validation functions](https://dev.mysql.c
 
 > **Note:**
 >
-> Currently, this feature is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) clusters.
+> Currently, this feature is not available on [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) instances.
 
 ## `JSON_SCHEMA_VALID()`
 
