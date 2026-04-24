@@ -12,8 +12,7 @@
             "release-7.5",
             "release-7.1",
             "release-6.5",
-            "release-6.1",
-            "release-5.4"
+            "release-6.1"
           ]
         },
         "zh": {
@@ -25,8 +24,7 @@
             "release-7.5",
             "release-7.1",
             "release-6.5",
-            "release-6.1",
-            "release-5.4"
+            "release-6.1"
           ]
         },
         "ja": {
@@ -37,8 +35,7 @@
             "release-7.5",
             "release-7.1",
             "release-6.5",
-            "release-6.1",
-            "release-5.4"
+            "release-6.1"
           ]
         }
       },
@@ -84,6 +81,7 @@
         "v6.3",
         "v6.2",
         "v6.0",
+        "v5.4",
         "v5.3",
         "v5.2",
         "v5.1",
@@ -211,6 +209,7 @@
     }
   },
   "redirect": {
+    "/ja/tidb/v5.4/*": "https://docs-archive.pingcap.com/ja/tidb/v5.4/*",
     "/ja/tidb/v6.2/*": "https://docs-archive.pingcap.com/ja/tidb/v6.2/*",
     "/ja/tidb/v6.3/*": "https://docs-archive.pingcap.com/ja/tidb/v6.3/*"
   },
