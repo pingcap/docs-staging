@@ -548,7 +548,7 @@
             -   [`KILL [TIDB]`](/sql-statements/sql-statement-kill.md)
             -   [`LOAD DATA`](/sql-statements/sql-statement-load-data.md)
             -   [`LOAD STATS`](/sql-statements/sql-statement-load-stats.md)
-            -   [`LOCK TABLES`と`UNLOCK TABLES`](/sql-statements/sql-statement-lock-tables-and-unlock-tables.md)
+            -   [`[LOCK|UNLOCK] TABLES`](/sql-statements/sql-statement-lock-tables-and-unlock-tables.md)
             -   [`MODIFY COLUMN`](/sql-statements/sql-statement-modify-column.md)
             -   [`PREPARE`](/sql-statements/sql-statement-prepare.md)
             -   [`RECOVER TABLE`](/sql-statements/sql-statement-recover-table.md)
