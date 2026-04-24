@@ -27,8 +27,8 @@ summary: Learns how to use `binlogctl`.
 
 
 ```bash
-wget https://download.pingcap.org/tidb-{version}-linux-amd64.tar.gz &&
-wget https://download.pingcap.org/tidb-{version}-linux-amd64.sha256
+wget https://download.pingcap.com/tidb-{version}-linux-amd64.tar.gz &&
+wget https://download.pingcap.com/tidb-{version}-linux-amd64.sha256
 ```
 
 ファイルの整合性を確認するには、次のコマンドを実行します。結果に問題がなければ、ファイルは正しいです。

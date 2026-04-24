@@ -11,7 +11,7 @@ This document describes how to upgrade TiDB Operator to a specific version. You 
 
 Review the following items before you upgrade TiDB Operator.
 
-- Effective January 4, 2026, the TiDB Operator Helm chart repository domain changes from `charts.pingcap.org` to `charts.pingcap.com`. If you previously installed TiDB Operator from `charts.pingcap.org`, follow these steps to update your Helm repository configuration:
+- Effective January 4, 2026, the TiDB Operator Helm chart repository domain changes from `charts.pingcap.com` to `charts.pingcap.com`. If you previously installed TiDB Operator from `charts.pingcap.com`, follow these steps to update your Helm repository configuration:
 
     1. Remove the old Helm repository:
 

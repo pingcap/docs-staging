@@ -7,7 +7,7 @@ summary: Learn to use Reparo.
 
 ReparoはTiDBBinlogツールであり、増分データを回復するために使用されます。インクリメンタルデータをバックアップするには、TiDB BinlogのDrainerを使用して、binlogデータをprotobuf形式でファイルに出力します。インクリメンタルデータを復元するには、Reparoを使用してファイル内のbinlogデータを解析し、TiDB/MySQLにbinlogを適用します。
 
-[tidb-binlog-cluster-latest-linux-amd64.tar.gz](https://download.pingcap.org/tidb-binlog-cluster-latest-linux-amd64.tar.gz)経由でReparoをダウンロード
+[tidb-binlog-cluster-latest-linux-amd64.tar.gz](https://download.pingcap.com/tidb-binlog-cluster-latest-linux-amd64.tar.gz)経由でReparoをダウンロード
 
 ## レパロの使用法 {#reparo-usage}
 

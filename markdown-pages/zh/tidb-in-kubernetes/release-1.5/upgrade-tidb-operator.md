@@ -12,7 +12,7 @@ aliases: ['/docs-cn/tidb-in-kubernetes/dev/upgrade-tidb-operator/']
 
 升级 TiDB Operator 前，请查看以下事项。
 
-- 自 2026 年 1 月 4 日起，TiDB Operator 的 Helm chart 仓库域名从 `charts.pingcap.org` 变更为 `charts.pingcap.com`。如果你之前是从 `charts.pingcap.org` 安装 TiDB Operator，请按照以下步骤更新 Helm repo 配置：
+- 自 2026 年 1 月 4 日起，TiDB Operator 的 Helm chart 仓库域名从 `charts.pingcap.com` 变更为 `charts.pingcap.com`。如果你之前是从 `charts.pingcap.com` 安装 TiDB Operator，请按照以下步骤更新 Helm repo 配置：
 
     1. 移除旧的 Helm repo：
 

@@ -23,12 +23,12 @@ PD Control を使用するには、 `tiup ctl:v<CLUSTER_VERSION> pd -u http://<p
 
 | インストールパッケージ                                                                                | OS    | アーキテクチャ | SHA256 チェックサム                                                                            |
 | :----------------------------------------------------------------------------------------- | :---- | :------ | :--------------------------------------------------------------------------------------- |
-| `https://download.pingcap.org/tidb-community-server-{version}-linux-amd64.tar.gz` (pd-ctl) | リナックス | 64ビット   | `https://download.pingcap.org/tidb-community-server-{version}-linux-amd64.tar.gz.sha256` |
-| `https://download.pingcap.org/tidb-community-server-{version}-linux-arm64.tar.gz` (pd-ctl) | リナックス | アーム64   | `https://download.pingcap.org/tidb-community-server-{version}-linux-arm64.tar.gz.sha256` |
+| `https://download.pingcap.com/tidb-community-server-{version}-linux-amd64.tar.gz` (pd-ctl) | リナックス | 64ビット   | `https://download.pingcap.com/tidb-community-server-{version}-linux-amd64.tar.gz.sha256` |
+| `https://download.pingcap.com/tidb-community-server-{version}-linux-arm64.tar.gz` (pd-ctl) | リナックス | アーム64   | `https://download.pingcap.com/tidb-community-server-{version}-linux-arm64.tar.gz.sha256` |
 
 > **注記：**
 >
-> リンク内の`{version}` TiDB のバージョン番号を示します。たとえば、 `amd64`アーキテクチャの`v8.1.2`のダウンロード リンクは`https://download.pingcap.org/tidb-community-server-v8.1.2-linux-amd64.tar.gz`です。
+> リンク内の`{version}` TiDB のバージョン番号を示します。たとえば、 `amd64`アーキテクチャの`v8.1.2`のダウンロード リンクは`https://download.pingcap.com/tidb-community-server-v8.1.2-linux-amd64.tar.gz`です。
 
 ### ソースコードからコンパイルする {#compile-from-source-code}
 

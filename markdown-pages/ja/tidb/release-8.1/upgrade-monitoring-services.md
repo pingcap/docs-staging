@@ -30,11 +30,11 @@ TiDB との互換性を高めるために、TiDB インストール パッケー
 
 1.  TiDBサーバーパッケージをダウンロードして解凍します。ダウンロードすると、 [プライバシーポリシー](https://www.pingcap.com/privacy-policy/)に同意したことになります。
 
-        https://download.pingcap.org/tidb-community-server-{version}-linux-{arch}.tar.gz
+        https://download.pingcap.com/tidb-community-server-{version}-linux-{arch}.tar.gz
 
     > **ヒント：**
     >
-    > リンク内の`{version}` TiDB のバージョン番号を示し、 `{arch}`システムのアーキテクチャ`amd64`または`arm64`を示します。たとえば、 `amd64`アーキテクチャの`v8.1.2`のダウンロード リンクは`https://download.pingcap.org/tidb-community-toolkit-v8.1.2-linux-amd64.tar.gz`です。
+    > リンク内の`{version}` TiDB のバージョン番号を示し、 `{arch}`システムのアーキテクチャ`amd64`または`arm64`を示します。たとえば、 `amd64`アーキテクチャの`v8.1.2`のダウンロード リンクは`https://download.pingcap.com/tidb-community-toolkit-v8.1.2-linux-amd64.tar.gz`です。
 
 2.  抽出したファイルで、 `prometheus-v{version}-linux-amd64.tar.gz`見つけて抽出します。
 
@@ -77,11 +77,11 @@ TiDB との互換性を高めるために、TiDB インストール パッケー
 
 1.  TiDBサーバーパッケージをダウンロードして解凍します。ダウンロードすると、 [プライバシーポリシー](https://www.pingcap.com/privacy-policy/)に同意したことになります。
 
-        https://download.pingcap.org/tidb-community-server-{version}-linux-{arch}.tar.gz
+        https://download.pingcap.com/tidb-community-server-{version}-linux-{arch}.tar.gz
 
     > **ヒント：**
     >
-    > リンク内の`{version}` TiDB のバージョン番号を示し、 `{arch}`システムのアーキテクチャ`amd64`または`arm64`を示します。たとえば、 `amd64`アーキテクチャの`v8.1.2`のダウンロード リンクは`https://download.pingcap.org/tidb-community-toolkit-v8.1.2-linux-amd64.tar.gz`です。
+    > リンク内の`{version}` TiDB のバージョン番号を示し、 `{arch}`システムのアーキテクチャ`amd64`または`arm64`を示します。たとえば、 `amd64`アーキテクチャの`v8.1.2`のダウンロード リンクは`https://download.pingcap.com/tidb-community-toolkit-v8.1.2-linux-amd64.tar.gz`です。
 
 2.  抽出したファイルで、 `grafana-v{version}-linux-amd64.tar.gz`見つけて抽出します。
 
