@@ -12,8 +12,7 @@
             "release-7.5",
             "release-7.1",
             "release-6.5",
-            "release-6.1",
-            "release-5.4"
+            "release-6.1"
           ]
         },
         "zh": {
@@ -25,8 +24,7 @@
             "release-7.5",
             "release-7.1",
             "release-6.5",
-            "release-6.1",
-            "release-5.4"
+            "release-6.1"
           ]
         },
         "ja": {
@@ -37,8 +35,7 @@
             "release-7.5",
             "release-7.1",
             "release-6.5",
-            "release-6.1",
-            "release-5.4"
+            "release-6.1"
           ]
         }
       },
@@ -84,6 +81,7 @@
         "v6.3",
         "v6.2",
         "v6.0",
+        "v5.4",
         "v5.3",
         "v5.2",
         "v5.1",
@@ -121,7 +119,7 @@
           "repo": "pingcap/docs-tidb-operator",
           "path": "en",
           "versions": [
-            "master",
+            "main",
             "release-2.0",
             "release-1.6",
             "release-1.5",
@@ -133,7 +131,7 @@
           "repo": "pingcap/docs-tidb-operator",
           "path": "zh",
           "versions": [
-            "master",
+            "main",
             "release-2.0",
             "release-1.6",
             "release-1.5",
@@ -146,7 +144,7 @@
       "archived": ["v1.2", "v1.1", "v1.0"]
     },
     "tidbcloud": {
-      "target": "release-8.1",
+      "target": "release-8.5",
       "languages": {
         "en": {
           "repo": "pingcap/docs",
@@ -184,6 +182,12 @@
           },
           {
             "id": "v1beta1",
+            "pathname": "v1beta1/dedicated",
+            "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-dedicated.swagger.json",
+            "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-dedicated.swagger.json"
+          },
+          {
+            "id": "v1beta1",
             "pathname": "v1beta1/iam",
             "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-iam.swagger.json",
             "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-iam.swagger.json"
@@ -193,6 +197,12 @@
             "pathname": "v1beta1/msp",
             "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-msp.json",
             "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-msp.json"
+          },
+          {
+            "id": "v1beta1",
+            "pathname": "v1beta1/serverless",
+            "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-serverless.swagger.json",
+            "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-serverless.swagger.json"
           }
         ]
       }
