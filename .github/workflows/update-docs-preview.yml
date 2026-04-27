@@ -19,6 +19,9 @@ on:
         default: false
         required: false
 
+env:
+  DOCS_STAGING_PREVIEW_BRANCH: premium-preview
+
 concurrency: ${{ github.workflow }}-${{ inputs.repo }}-${{ inputs.branch }}
 
 jobs:
@@ -30,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: "premium-preview"
+          ref: "${{ env.DOCS_STAGING_PREVIEW_BRANCH }}"
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -97,4 +100,4 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
           https://api.github.com/repos/pingcap/website-docs/actions/workflows/production.yml/dispatches \
-          -d '{"ref":"premium-preview","inputs":{"hash": "$CURRENT_SHA", "fallback": "false"}}'
+          -d '{"ref":"${{ env.DOCS_STAGING_PREVIEW_BRANCH }}","inputs":{"hash": "$CURRENT_SHA", "fallback": "false"}}'
