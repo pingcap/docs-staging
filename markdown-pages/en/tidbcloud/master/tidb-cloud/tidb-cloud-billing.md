@@ -25,7 +25,7 @@ For TiDB Cloud Essential, you are charged based on the number of provisioned Req
 
 ### Pricing for TiDB Cloud Premium {#pricing-for-premium}
 
-For TiDB Cloud Premium, you are billed based on the number of provisioned Request Capacity Units (RCUs) and the storage you actually use, rather than the underlying backend nodes or provisioned disk size. As TiDB Cloud Premium is currently in private preview, you can [contact our sales](https://www.pingcap.com/contact-us/) for pricing details.
+For TiDB Cloud Premium, you are billed based on the actual [Request Capacity Unit (RCU)](/tidb-cloud/tidb-cloud-glossary.md#request-capacity-unit-rcu) consumption and the storage that you actually use, rather than the underlying backend nodes or provisioned disk size. See [TiDB Cloud Premium Pricing Details](https://www.pingcap.com/tidb-cloud-premium-pricing-details/).
 
 </CustomContent>
 
