@@ -15,7 +15,7 @@ This tutorial guides you through the process of integrating TiDB Cloud Lake with
 
 ### Step 1. Set up Environment
 
-Make sure you can log in to your TiDB Cloud Lake account and obtain the connection information for a warehouse. For more details, see [Connecting to a Warehouse](/tidb-cloud-lake/guides/warehouse.md#connecting).
+Make sure you can log in to your TiDB Cloud Lake account and obtain the connection information for a warehouse. For more details, see [Connecting to a Warehouse](/tidb-cloud-lake/guides/warehouse.md#connecting-to-a-warehouse).
 
 ### Step 2. Connect to TiDB Cloud Lake
 

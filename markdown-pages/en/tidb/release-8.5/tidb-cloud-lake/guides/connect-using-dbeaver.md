@@ -19,7 +19,7 @@ For connections to TiDB Cloud Lake, you can use the default `cloudapp` user or a
 
 ### Step 1: Obtain TiDB Cloud Lake Connection Information
 
-Log in to TiDB Cloud Lake to obtain connection information. For more information, see [Connecting to a Warehouse](/tidb-cloud-lake/guides/warehouse.md#connecting).
+Log in to TiDB Cloud Lake to obtain connection information. For more information, see [Connecting to a Warehouse](/tidb-cloud-lake/guides/warehouse.md#connecting-to-a-warehouse).
 
 ![alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/dbeaver-connect-info.png)
 
