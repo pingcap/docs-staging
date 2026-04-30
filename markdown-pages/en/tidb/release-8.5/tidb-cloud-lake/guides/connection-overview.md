@@ -19,7 +19,7 @@ TiDB Cloud Lake supports multiple connection methods to suit different use cases
 
 | Deployment | Format |
 |------------|--------|
-| **TiDB Cloud Lake** | `lake://<user>:<pass>@<tenant>.gw.<region>.default.databend.com:443/<db>?warehouse=<name>` |
+| **TiDB Cloud Lake** | `lake://<user>:<pass>@<tenant>.gw.<region>.default.tidbcloud.com:443/<db>?warehouse=<name>` |
 
 > **Tip:**
 >
