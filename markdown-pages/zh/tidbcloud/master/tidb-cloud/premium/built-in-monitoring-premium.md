@@ -31,7 +31,7 @@ TiDB Cloud 会在 **Metrics** 页面收集并展示你的 TiDB Cloud Premium 实
 
 | Metric name  | Labels | Description                                   |
 | :------------| :------| :-------------------------------------------- |
-| Request Units per Second | Total RU per second | Request Unit (RU) 是用于跟踪查询或事务资源消耗的计量单位。除了你运行的查询之外，后台活动也可能消耗 request units，因此当 QPS 为 0 时，每秒 request units 也可能不为 0。 |
+| Request Units per Second | Total RU per second, AVG RU/s | Request Unit (RU) 是用于跟踪查询或事务资源消耗的计量单位。`Total RU per second` 显示每秒实时 RU 消耗。`AVG RU/s` 显示所选时间范围内每秒平均 RU 消耗，帮助你更好地了解资源消耗情况。除了你运行的查询之外，后台活动也可能消耗 RU。因此，当 QPS 为 0 时，每秒 RU 消耗仍可能大于 0。 |
 | Used Storage Size | {type} | 行存的大小和列存的大小。 |
 | Query Per Second | All, {SQL type} | 每秒执行的 SQL 语句数量，按 SQL 类型统计，例如 `SELECT`、`INSERT` 和 `UPDATE`。 |
 | Query Duration | avg, avg-{SQL type}, 99, 99-{SQL type} | 从 TiDB 接收到来自客户端的请求，到 TiDB 执行该请求并将结果返回给客户端的持续时间。 |
