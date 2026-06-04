@@ -41,6 +41,10 @@ TiDB Cloud 允许你为 TiDB Cloud Starter 和 TiDB Cloud Essential 实例创建
 
 - 对于 TiDB Cloud 中的每个组织，默认最多可在所有 TiDB Cloud Starter 和 Essential 实例下创建 5 个分支。TiDB Cloud Starter 或 Essential 实例的分支会在与实例相同的 region 创建，且无法为受限或大于 100 GiB 的 TiDB Cloud Starter 或 Essential 实例创建分支。
 
+    > **注意：**
+    >
+    > 对于构建 agent 平台或其他需要大量分支的服务的付费组织，TiDB Cloud 提供 **Instance Capacity Plan**，允许你创建超过 5 个分支。要了解更多信息，请参阅 [Instance Capacity Plan](/tidb-cloud/select-cluster-tier.md#instance-capacity-plan)。
+
 - 对于免费 TiDB Cloud Starter 实例的每个分支，允许使用 10 GiB 存储空间。对于消费额度大于 0 的 TiDB Cloud Starter 实例的每个分支，允许使用 100 GiB 存储空间。当存储空间达到上限时，该分支的读写操作将被限制，直到你减少存储占用。
 
 - 分支主要用于短期功能开发和功能测试。由于分支不具备自动扩缩容能力，不适合用于性能测试。
