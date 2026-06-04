@@ -43,6 +43,8 @@ TiDB Cloud 会在 **Metrics** 页面收集并展示你的 TiDB Cloud Premium 实
 | Transaction Duration | avg-{transaction model}, 99-{transaction model} | 事务的平均持续时间或第 99 百分位持续时间。 |
 | Connection Count | All, active connection | All：连接数。<br/> Active connections：活跃连接数。 |
 | Disconnection Count | {result} | 断开连接的客户端数量。 |
+| Table Count by TTL Schedule Delay | `{name}` | 按调度延迟分组显示启用了 TTL 的表数量。`name` 标签表示延迟分桶。可能的分桶值包括：`01 hour`、`02 hour`、`06 hour`、`12 hour`、`24 hour`、`72 hour`、`one week` 和 `others`。 |
+| TTL Insert/Delete Rows by Day | `insert current day`, `delete current day`, `insert last day`, `delete last day`, `insert 2 days ago`, `delete 2 days ago` | 显示每个日历日中插入到 TTL 管理表中的行数，以及由 TTL 作业删除的行数。如果插入数持续稳定地超过删除数，则表明 TTL 处理落后于数据写入，这可能导致存储增长。比较多天的数据有助于区分正常的工作负载波动和长期积压趋势。 |
 
 ### 数据库 {#database}
 
