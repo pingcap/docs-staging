@@ -90,13 +90,13 @@ SET GLOBAL tidb_enable_top_sql = 1;
 
     ![Refresh](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-usage-refresh.png)
 
-6.  テーブルレベルまたはデータベースレベルでCPUリソースの使用状況をビューで、より上位レベルでのリソース使用状況を迅速に把握できます。現在、TiKVインスタンスのみがサポートされています。
+6.  テーブルレベルまたはデータベースレベルでCPUリソースの使用状況を表示し、より上位レベルでのリソース使用状況を迅速に把握できます。現在、TiKVインスタンスのみがサポートされています。
 
     TiKVインスタンスを選択し、次に**「テーブル別」**または**「データベース別」**を選択します。
 
     ![Select aggregation dimension](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-usage-select-agg-by.png)
 
-    集計結果をより高いレベルでビュー：
+    集計結果をより高いレベルで表示する：
 
     ![Aggregated results at DB level](https://docs-download.pingcap.com/media/images/docs/dashboard/top-sql-usage-agg-by-db-detail.png)
 
