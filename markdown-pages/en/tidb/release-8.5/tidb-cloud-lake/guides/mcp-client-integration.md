@@ -5,7 +5,7 @@ summary: "TiDB Cloud Lake MCP connects AI assistants to TiDB Cloud Lake via Mode
 
 # MCP Client Integration
 
-[TiDB Cloud Lake MCP](https://github.com/databendlabs/mcp-databend) connects AI assistants to TiDB Cloud Lake through the Model Context Protocol. It works with Codex, Kimi Code, Cursor, Claude Code, Claude Desktop, Gemini CLI, VS Code, and other MCP-compatible clients.
+[TiDB Cloud Lake MCP](https://github.com/tidbcloud/lake-mcp) connects AI assistants to TiDB Cloud Lake through the Model Context Protocol. It works with Codex, Kimi Code, Cursor, Claude Code, Claude Desktop, Gemini CLI, VS Code, and other MCP-compatible clients.
 
 **What you can do:**
 
