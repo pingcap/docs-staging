@@ -7,9 +7,9 @@ summary: Jupyter Notebook is a web-based interactive application that enables yo
 
 [Jupyter Notebook](https://jupyter.org) is a web-based interactive application that enables you to create notebook documents that feature live code, interactive plots, widgets, equations, images, etc., and share these documents easily. It is also quite versatile as it can support many programming languages via kernels such as Julia, Python, Ruby, Scala, Haskell, and R.
 
-With the SQLAlchemy library in Python or [ipython-sql](https://github.com/catherinedevlin/ipython-sql), you can establish a connection to TiDB Cloud Lake and TiDB Cloud Lake within a Jupyter Notebook, allowing you to execute queries and visualize your data from TiDB Cloud Lake directly in the notebook.
+With the SQLAlchemy library in Python or [ipython-sql](https://github.com/catherinedevlin/ipython-sql), you can establish a connection to TiDB Cloud Lake within a Jupyter Notebook, allowing you to execute queries and visualize your data from TiDB Cloud Lake directly in the notebook.
 
-Alternatively, you can run SQL queries in Python using the [TiDB Cloud Lake Python Binding](https://pypi.org/project/databend/) library, allowing you to harness DataBend's capabilities directly within your local Python environment or online services like Jupyter Notebook and Google Colab without the need to deploy a separate DataBend instance.
+Alternatively, you can run SQL queries in Python using the [TiDB Cloud Lake Python driver](https://pypi.org/project/tidbcloudlake-driver/) library, allowing you to access TiDB Cloud Lake directly within your local Python environment or online services like Jupyter Notebook and Google Colab.
 
 ## Tutorial-1: Integrating TiDB Cloud Lake with Jupyter Notebook using SQLAlchemy
 
@@ -71,7 +71,7 @@ GRANT ROLE user1_role TO user1;
 
 In this tutorial, you will first deploy a TiDB Cloud Lake instance and Jupyter Notebook, and then run a sample notebook to connect to your TiDB Cloud Lake through [ipython-sql](https://github.com/catherinedevlin/ipython-sql), as well as write and visualize data within the notebook.
 
-Before you start, ensure that you have [Python](https://www.python.org/) installed on your system.
+Before you start, ensure that you have [Python](https://www.python.org/) installed on your system and have obtained the DSN for connecting to TiDB Cloud Lake.
 
 ### Step 1. Deploy TiDB Cloud Lake
 
@@ -148,9 +148,9 @@ df.plot.bar(x='date', y='count')
 
 You can now see a bar chart on the notebook.
 
-## Tutorial-3: Integrating TiDB Cloud Lake with Jupyter Notebook with Python Binding Library
+## Tutorial-3: Integrating TiDB Cloud Lake with Jupyter Notebook using the Python driver
 
-In this tutorial, you will first deploy a TiDB Cloud Lake instance and Jupyter Notebook, and then run queries in a notebook through the [TiDB Cloud Lake Python Binding](https://pypi.org/project/databend/) library, as well as write and visualize data within the notebook.
+In this tutorial, you will first deploy a TiDB Cloud Lake instance and Jupyter Notebook, and then run queries in a notebook through the [TiDB Cloud Lake Python driver](https://pypi.org/project/tidbcloudlake-driver/) library, as well as write and visualize data within the notebook.
 
 Before you start, ensure that you have [Python](https://www.python.org/) installed on your system.
 
@@ -164,10 +164,11 @@ Before you start, ensure that you have [Python](https://www.python.org/) install
 
 2. Install dependencies with pip:
 
-```shell
-pip install databend
-pip install matplotlib
-```
+    ```shell
+    pip install tidbcloudlake-driver
+    pip install matplotlib
+    pip install pandas
+    ```
 
 ### Step 2. Create a Notebook
 
@@ -187,36 +188,39 @@ pip install matplotlib
 
 ```python title='In [1]:'
 # Import the necessary libraries
-from databend import SessionContext
+from tidbcloudlake_driver import BlockingLakeClient
 
-# Create a DataBend session
-ctx = SessionContext()
+# Connect to TiDB Cloud Lake
+client = BlockingLakeClient('<your-dsn>')
+cursor = client.cursor()
 ```
 
 ```python title='In [2]:'
-# Create a table in DataBend
-ctx.sql("CREATE TABLE IF NOT EXISTS user (created_at Date, count Int32)")
+# Create a table in TiDB Cloud Lake
+cursor.execute("CREATE TABLE IF NOT EXISTS user (created_at Date, count Int32)")
 ```
 
 ```python title='In [3]:'
 # Insert multiple rows of data into the table
-ctx.sql("INSERT INTO user VALUES ('2022-04-01', 5), ('2022-04-01', 3), ('2022-04-03', 4), ('2022-04-03', 1), ('2022-04-04', 10)")
+cursor.execute("INSERT INTO user VALUES ('2022-04-01', 5), ('2022-04-01', 3), ('2022-04-03', 4), ('2022-04-03', 1), ('2022-04-04', 10)")
 ```
 
 ```python title='In [4]:'
 # Execute a query
-result = ctx.sql("SELECT created_at as date, count(*) as count FROM user GROUP BY created_at")
+cursor.execute("SELECT created_at as date, count(*) as count FROM user GROUP BY created_at")
 
-# Display the query result
-result.show()
+# Fetch the query result
+rows = cursor.fetchall()
+rows
 ```
 
 ```python title='In [5]:'
 # Import libraries for data visualization
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # Convert the query result to a Pandas DataFrame
-df = result.to_pandas()
+df = pd.DataFrame([row.values() for row in rows], columns=["date", "count"])
 ```
 
 ```python title='In [6]:'
@@ -279,7 +283,7 @@ import pandas as pd
 ```
 
 ```python
-engine = create_engine(f"lake://cloudapp:<your-password>@<your-host>:443/default?secure=true")
+engine = create_engine(f"databend://cloudapp:<your-password>@<your-host>:443/default?secure=true")
 connection = engine.connect()
 ```
 

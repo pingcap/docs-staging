@@ -57,7 +57,7 @@ if __name__ == '__main__':
 ```
 
 ```sql
--- Register the external function in Databend
+-- Register the external function in TiDB Cloud Lake
 CREATE OR REPLACE FUNCTION ai_embed_768 (STRING)
     RETURNS ARRAY(FLOAT)
     LANGUAGE PYTHON

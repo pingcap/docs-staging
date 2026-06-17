@@ -126,7 +126,7 @@ TiDB Cloud Lake offers a range of privileges that allow you to exercise fine-gra
 | CREATEUSER        | Creates a user.                                                                                                   |
 | DROPROLE          | Drops a role.                                                                                                     |
 | SUPER             | Kills a query. Sets or unsets a setting. Operates a stage, catalog or share. Calls a function. COPY INTO a stage. |
-| USAGE             | Connects to a databend query only.                                                                                |
+| USAGE             | Connects to TiDB Cloud Lake query only.                                                                             |
 | CREATE            | Creates a UDF.                                                                                                    |
 | DROP              | Drops a UDF.                                                                                                      |
 | ALTER             | Alters a UDF. Alters a SQL user.                                                                                  |
