@@ -54,13 +54,13 @@
     -   [オープンAI](/ai/integrations/vector-search-auto-embedding-openai.md)
     -   [OpenAI対応](/ai/integrations/embedding-openai-compatible.md)
     -   [Jina AI](/ai/integrations/vector-search-auto-embedding-jina-ai.md)
-    -   [コヒア](/ai/integrations/vector-search-auto-embedding-cohere.md)
+    -   [Cohere](/ai/integrations/vector-search-auto-embedding-cohere.md)
     -   [Google ジェミニ](/ai/integrations/vector-search-auto-embedding-gemini.md)
     -   [抱きしめる顔](/ai/integrations/vector-search-auto-embedding-huggingface.md)
     -   [NVIDIA NIM](/ai/integrations/vector-search-auto-embedding-nvidia-nim.md)
     -   [Amazon Titan](/ai/integrations/vector-search-auto-embedding-amazon-titan.md)
 -   AIフレームワーク
-    -   [ランチェーン](/ai/integrations/vector-search-integrate-with-langchain.md)
+    -   [LangChain](/ai/integrations/vector-search-integrate-with-langchain.md)
     -   [LlamaIndex](/ai/integrations/vector-search-integrate-with-llamaindex.md)
 -   ORMライブラリ
     -   [SQLアルケミー](/ai/integrations/vector-search-integrate-with-sqlalchemy.md)
