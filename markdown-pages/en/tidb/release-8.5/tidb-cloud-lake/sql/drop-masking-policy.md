@@ -5,10 +5,6 @@ summary: Deletes an existing masking policy from TiDB Cloud Lake. When you drop 
 
 # DROP MASKING POLICY
 
-> **Note:**
->
-> Introduced or updated in v1.2.845.
-
 Deletes an existing masking policy from TiDB Cloud Lake. When you drop a masking policy, it is removed from TiDB Cloud Lake, and its associated masking rules are no longer in effect. Please note that, before dropping a masking policy, ensure that this policy is not associated with any columns.
 
 ## Syntax

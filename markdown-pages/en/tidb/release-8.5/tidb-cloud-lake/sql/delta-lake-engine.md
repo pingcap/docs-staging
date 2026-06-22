@@ -5,10 +5,6 @@ summary: "TiDB Cloud Lake's Delta Lake engine allows you to seamlessly query and
 
 # Delta Lake Engine
 
-> **Note:**
->
-> Introduced or updated in v1.2.262.
-
 TiDB Cloud Lake's [Delta Lake](https://delta.io/) engine allows you to seamlessly query and analyze data in Delta Lake tables stored in your object storage. When you create a table with the Delta Lake engine in TiDB Cloud Lake, you specify a location where the data files of a Delta Lake table are stored. This setup allows you to gain direct access to the table and perform queries seamlessly from within TiDB Cloud Lake.
 
 - TiDB Cloud Lake's Delta Lake engine currently supported read-only operations. This means that querying data from your Delta Lake tables is supported, while writing to the tables is not.

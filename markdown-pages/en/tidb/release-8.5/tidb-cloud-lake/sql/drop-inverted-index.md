@@ -5,10 +5,6 @@ summary: Removes an inverted index in TiDB Cloud Lake.
 
 # DROP INVERTED INDEX
 
-> **Note:**
->
-> Introduced or updated in v1.2.405.
-
 Removes an inverted index in TiDB Cloud Lake.
 
 ## Syntax

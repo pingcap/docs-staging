@@ -5,10 +5,6 @@ summary: Displays a list of all existing password policies in TiDB Cloud Lake.
 
 # SHOW PASSWORD POLICIES
 
-> **Note:**
->
-> Introduced or updated in v1.2.283.
-
 Displays a list of all existing password policies in TiDB Cloud Lake.
 
 ## Syntax

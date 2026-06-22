@@ -5,10 +5,6 @@ summary: "TiDB Cloud Lake uses the Fuse Engine as its default storage engine, pr
 
 # Fuse Engine Tables
 
-> **Note:**
->
-> Introduced or updated in v1.2.892.
-
 ## Overview
 
 TiDB Cloud Lake uses the Fuse Engine as its default storage engine, providing a Git-like data management system with:

@@ -5,10 +5,6 @@ summary: ATTACH TABLE creates a read-only link to existing table data without co
 
 # ATTACH TABLE
 
-> **Note:**
->
-> Introduced or updated in v1.2.698.
-
 ATTACH TABLE creates a read-only link to existing table data without copying it. This command is ideal for data sharing across environments, especially when migrating from a private TiDB Cloud Lake deployment to [TiDB Cloud Lake](https://www.databend.com).
 
 ## Key Features

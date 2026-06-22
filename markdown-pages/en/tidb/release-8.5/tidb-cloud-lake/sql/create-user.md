@@ -5,10 +5,6 @@ summary: Creates a SQL user for connecting to TiDB Cloud Lake. Users must be gra
 
 # CREATE USER
 
-> **Note:**
->
-> Introduced or updated in v1.2.703.
-
 Creates a SQL user for connecting to TiDB Cloud Lake. Users must be granted appropriate privileges to access databases and perform operations.
 
 See also:

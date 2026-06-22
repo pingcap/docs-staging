@@ -5,10 +5,6 @@ summary: Deletes an existing password policy from TiDB Cloud Lake. Please note t
 
 # DROP PASSWORD POLICY
 
-> **Note:**
->
-> Introduced or updated in v1.2.283.
-
 Deletes an existing password policy from TiDB Cloud Lake. Please note that, before dropping a password policy, ensure that this policy is not associated with any users.
 
 ## Syntax

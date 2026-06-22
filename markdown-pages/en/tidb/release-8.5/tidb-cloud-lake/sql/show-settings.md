@@ -5,10 +5,6 @@ summary: "TiDB Cloud Lake provides a variety of system settings that enable you 
 
 # SHOW SETTINGS
 
-> **Note:**
->
-> Introduced or updated in v1.2.314.
-
 TiDB Cloud Lake provides a variety of system settings that enable you to control how TiDB Cloud Lake works. This command displays the current and default values, as well as the [Setting Levels](#setting-levels), of available system settings. To update a setting, use the [SET](/tidb-cloud-lake/sql/set.md) or [UNSET](/tidb-cloud-lake/sql/unset.md) command.
 
 - Some TiDB Cloud Lake behaviors cannot be changed through the system settings; you must take them into consideration while working with TiDB Cloud Lake. For example,

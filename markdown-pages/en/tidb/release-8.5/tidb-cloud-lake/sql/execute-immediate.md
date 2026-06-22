@@ -5,10 +5,6 @@ summary: Executes a SQL script. For how to write SQL scripts for TiDB Cloud Lake
 
 # EXECUTE IMMEDIATE
 
-> **Note:**
->
-> Introduced or updated in v1.2.452.
-
 Executes a SQL script. For how to write SQL scripts for TiDB Cloud Lake, see [Stored Procedure & SQL Scripting](/tidb-cloud-lake/sql/stored-procedure-scripting.md).
 
 ## Syntax

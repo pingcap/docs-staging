@@ -5,10 +5,6 @@ summary: "Creates a new row access policy in TiDB Cloud Lake. A row access polic
 
 # CREATE ROW ACCESS POLICY
 
-> **Note:**
->
-> Introduced or updated in v1.2.845.
-
 Creates a new row access policy in TiDB Cloud Lake. A row access policy defines a Boolean predicate that TiDB Cloud Lake applies to rows when the policy is attached to a table.
 
 ## Syntax

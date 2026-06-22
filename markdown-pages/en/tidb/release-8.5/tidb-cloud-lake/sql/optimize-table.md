@@ -5,10 +5,6 @@ summary: Optimizing a table in TiDB Cloud Lake involves compacting or purging hi
 
 # OPTIMIZE TABLE
 
-> **Note:**
->
-> Introduced or updated in v1.2.395.
-
 Optimizing a table in TiDB Cloud Lake involves compacting or purging historical data to save storage space and enhance query performance.
 
 <details>

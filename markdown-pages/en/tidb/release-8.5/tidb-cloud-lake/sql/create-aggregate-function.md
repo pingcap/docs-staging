@@ -5,10 +5,6 @@ summary: Creates a user-defined aggregate function (UDAF) that runs inside TiDB 
 
 # CREATE AGGREGATE FUNCTION
 
-> **Note:**
->
-> Introduced or updated in v1.2.799.
-
 Creates a user-defined aggregate function (UDAF) that runs inside TiDB Cloud Lake's JavaScript or Python runtime.
 
 ## Supported Languages

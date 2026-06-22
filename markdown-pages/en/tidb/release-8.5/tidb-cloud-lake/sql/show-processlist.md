@@ -5,10 +5,6 @@ summary: The TiDB Cloud Lake process list indicates the operations currently bei
 
 # SHOW PROCESSLIST
 
-> **Note:**
->
-> Introduced or updated in v1.2.190.
-
 The TiDB Cloud Lake process list indicates the operations currently being performed by the set of threads executed within the server.
 
 See also: [KILL](/tidb-cloud-lake/sql/kill.md)

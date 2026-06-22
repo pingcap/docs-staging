@@ -5,10 +5,6 @@ summary: "TiDB Cloud Lake supports the integration of an Apache Iceberg™ catal
 
 # Apache Iceberg™ Tables
 
-> **Note:**
->
-> Introduced or updated in v1.2.725.
-
 TiDB Cloud Lake supports the integration of an [Apache Iceberg™](https://iceberg.apache.org/) catalog, enhancing its compatibility and versatility for data management and analytics. This extends TiDB Cloud Lake's capabilities by seamlessly incorporating the powerful metadata and storage management capabilities of Apache Iceberg™ into the platform.
 
 ## Quick Start with Iceberg

@@ -5,10 +5,6 @@ summary: Create a new aggregating index in TiDB Cloud Lake.
 
 # CREATE AGGREGATING INDEX
 
-> **Note:**
->
-> Introduced or updated in v1.2.339.
-
 Create a new aggregating index in TiDB Cloud Lake.
 
 ## Syntax

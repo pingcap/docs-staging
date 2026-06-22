@@ -5,10 +5,6 @@ summary: "TiDB Cloud Lake can query data that is cataloged by Apache Hive withou
 
 # Apache Hive Tables
 
-> **Note:**
->
-> Introduced or updated in v1.2.668.
-
 TiDB Cloud Lake can query data that is cataloged by Apache Hive without copying it. Register the Hive Metastore as a TiDB Cloud Lake catalog, point to the object storage that holds the table data, and then query the tables as if they were native TiDB Cloud Lake objects.
 
 ## Quick Start

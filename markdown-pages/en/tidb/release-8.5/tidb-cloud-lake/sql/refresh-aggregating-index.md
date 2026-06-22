@@ -5,10 +5,6 @@ summary: "TiDB Cloud Lake automatically maintains aggregating indexes in SYNC mo
 
 # REFRESH AGGREGATING INDEX
 
-> **Note:**
->
-> Introduced or updated in v1.2.151.
-
 TiDB Cloud Lake automatically maintains aggregating indexes in `SYNC` mode as new data is ingested. Run `REFRESH AGGREGATING INDEX` when you introduce an index on a table that already contains data so earlier rows are backfilled.
 
 ## Syntax
