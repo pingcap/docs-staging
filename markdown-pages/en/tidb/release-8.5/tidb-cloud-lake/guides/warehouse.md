@@ -185,7 +185,6 @@ TiDB Cloud Lake supports multiple connection methods to meet your specific needs
 | Client                                     | Type            | Best For                      | Key Features                                          |
 | ------------------------------------------ | --------------- | ----------------------------- | ----------------------------------------------------- |
 | **[LakeSQL](/tidb-cloud-lake/guides/connect-using-lakesql.md)** | Command Line    | Developers, Scripts           | Native CLI, Rich formatting, Multiple install options |
-| **[DBeaver](/tidb-cloud-lake/guides/connect-using-dbeaver.md)**    | GUI Application | Data Analysis, Visual Queries | Built-in driver, Cross-platform, Query builder        |
 
 #### Developer Drivers
 

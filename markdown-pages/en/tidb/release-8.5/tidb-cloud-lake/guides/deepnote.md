@@ -7,7 +7,7 @@ summary: Deepnote allows you to easily work on your data science projects, toget
 
 [Deepnote](https://deepnote.com) allows you to easily work on your data science projects, together in real-time and in one place with your friends and colleagues; helping you turn your ideas and analyses into products faster. Deepnote is built for the browser so you can use it across any platform (Windows, Mac, Linux or Chromebook). No downloads required, with updates shipped to you daily. All changes are instantly saved.
 
-Both TiDB Cloud Lake and TiDB Cloud Lake support integration with Deepnote, requiring a secure connection. When integrating with TiDB Cloud Lake, please note that the default port is `8124`.
+You can connect Deepnote to TiDB Cloud Lake by using Deepnote's ClickHouse-compatible integration with a secure connection.
 
 ## Tutorial: Integrating with Deepnote
 
@@ -29,7 +29,7 @@ Make sure you can log in to your TiDB Cloud Lake account and obtain the connecti
 
     | Parameter        | Description                        |
     | ---------------- | ---------------------------------- |
-    | Integration name | For example, `Databend`            |
+    | Integration name | For example, `TiDB Cloud Lake`     |
     | Host name        | Obtain from connection information |
     | Port             | `443`                              |
     | Username         | `cloudapp`                         |

@@ -12,7 +12,3 @@ For information about the system requirements, download, and deployment steps fo
 ## DatabendReader & DatabendWriter
 
 DatabendReader and DatabendWriter are integrated plugins of Addax, allowing seamless integration with TiDB Cloud Lake. The DatabendReader plugin enables reading data from TiDB Cloud Lake. TiDB Cloud Lake provides compatibility with the MySQL client protocol, so you can also use the [MySQLReader](https://wgzhao.github.io/Addax/develop/reader/mysqlreader/) plugin to retrieve data from TiDB Cloud Lake. For more information about DatabendReader, see <https://wgzhao.github.io/Addax/develop/reader/databendreader/>
-
-## Tutorials
-
-- [Migrating from MySQL with Addax](/tidb-cloud-lake/tutorials/migrate-from-mysql-with-addax.md)

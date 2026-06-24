@@ -26,4 +26,4 @@ This page provides reference information for the context-related functions in Ti
 
 | Function | Description | Example |
 |----------|-------------|--------|
-| [VERSION](/tidb-cloud-lake/sql/version.md) | Returns the current version of TiDB Cloud Lake | `VERSION()` → `'DatabendQuery v1.2.252-nightly-193ed56304'` |
+| [VERSION](/tidb-cloud-lake/sql/version.md) | Returns the current version of TiDB Cloud Lake | `VERSION()` → `'LakeQuery v1.2.252-nightly-193ed56304'` |

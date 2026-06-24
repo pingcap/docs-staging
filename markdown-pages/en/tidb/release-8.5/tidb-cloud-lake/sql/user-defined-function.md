@@ -11,7 +11,6 @@ User-Defined Functions (UDFs) in TiDB Cloud Lake allow you to create custom oper
 
 | Command | Description |
 |---------|-------------|
-| [CREATE SCALAR FUNCTION](/tidb-cloud-lake/sql/create-function.md) | Scalar UDF (SQL/Python/JavaScript) |
 | [CREATE AGGREGATE FUNCTION](/tidb-cloud-lake/sql/create-aggregate-function.md) | Script UDAF (JavaScript/Python runtimes) |
 | [CREATE TABLE FUNCTION](/tidb-cloud-lake/sql/create-table-function.md) | SQL-only table function returning result sets |
 | [SHOW USER FUNCTIONS](/tidb-cloud-lake/sql/show-user-functions.md) | Lists all user-defined functions |
