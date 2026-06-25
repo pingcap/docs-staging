@@ -5,13 +5,13 @@ summary: TiDB Cloud Lake supports multiple connection methods to suit different 
 
 # Connect to TiDB Cloud Lake
 
-TiDB Cloud Lake supports multiple connection methods to suit different use cases. All options below work with both **TiDB Cloud Lake** and **self-hosted TiDB Cloud Lake**.
+TiDB Cloud Lake supports multiple connection methods to suit different use cases.
 
 ## Quick Selection
 
 | I want to... | Recommended |
 |-------------|-------------|
-| Run SQL queries interactively | **LakeSQL** (CLI) or **DBeaver** (GUI) |
+| Run SQL queries interactively | **LakeSQL** (CLI) |
 | Build an application | Language-specific **Driver** |
 | Create dashboards & reports | **BI/Visualization Tools** |
 
