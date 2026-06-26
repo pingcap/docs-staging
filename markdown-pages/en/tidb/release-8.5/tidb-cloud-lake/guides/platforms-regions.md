@@ -9,10 +9,10 @@ TiDB Cloud Lake is a cloud-native solution that currently supports [Amazon S3](h
 
 | Platform                     | Region ID      |
 | ---------------------------- | -------------- |
-| AWS US East (Ohio)           | us-east-2      |
 | AWS US West (Oregon)         | us-west-2      |
+| AWS Asia Pacific (Tokyo)     | ap-northeast-1 |
+| AWS US East (N. Virginia)    | us-east-1      |
 | AWS Asia Pacific (Singapore) | ap-southeast-1 |
-| AWS Europe (Frankfurt)       | eu-central-1   |
 
 > **Note:**
 >
