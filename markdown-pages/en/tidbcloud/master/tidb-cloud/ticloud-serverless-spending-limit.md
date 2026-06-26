@@ -5,7 +5,7 @@ summary: The reference of `ticloud serverless spending-limit`.
 
 # ticloud serverless spending-limit
 
-Set the maximum monthly [spending limit](/tidb-cloud/manage-serverless-spend-limit.md) for a TiDB Cloud Starter cluster:
+Set the maximum monthly [spending limit](/tidb-cloud/manage-serverless-spend-limit.md) for a TiDB Cloud Starter instance:
 
 ```shell
 ticloud serverless spending-limit [flags]
@@ -13,13 +13,13 @@ ticloud serverless spending-limit [flags]
 
 ## Examples
 
-Set the spending limit for a TiDB Cloud Starter cluster in interactive mode:
+Set the spending limit for a TiDB Cloud Starter instance in interactive mode:
 
 ```shell
 ticloud serverless spending-limit
 ```
 
-Set the spending limit for a TiDB Cloud Starter cluster in non-interactive mode:
+Set the spending limit for a TiDB Cloud Starter instance in non-interactive mode:
 
 ```shell
 ticloud serverless spending-limit -c <cluster-id> --monthly <spending-limit-monthly>

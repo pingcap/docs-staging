@@ -21,7 +21,7 @@ This command actually performs the following operations:
 
 - Because this command does not specify the version of the playground component, TiUP first checks the latest version of the installed playground component. Assume that the latest version is v1.12.3, then this command works the same as `tiup playground:v1.12.3`.
 - If you have not used TiUP playground to install the TiDB, TiKV, and PD components, the playground component installs the latest stable version of these components, and then start these instances.
-- Because this command does not specify the version of the TiDB, PD, and TiKV component, TiUP playground uses the latest version of each component by default. Assume that the latest version is v8.5.5, then this command works the same as `tiup playground:v1.12.3 v8.5.5`.
+- Because this command does not specify the version of the TiDB, PD, and TiKV component, TiUP playground uses the latest version of each component by default. Assume that the latest version is v8.5.6, then this command works the same as `tiup playground:v1.12.3 v8.5.6`.
 - Because this command does not specify the number of each component, TiUP playground, by default, starts a smallest cluster that consists of one TiDB instance, one TiKV instance, one PD instance, and one TiFlash instance.
 - After starting each TiDB component, TiUP playground reminds you that the cluster is successfully started and provides you some useful information, such as how to connect to the TiDB cluster through the MySQL client and how to access the [TiDB Dashboard](/dashboard/dashboard-intro.md).
 
@@ -89,6 +89,24 @@ tiup playground --tag ${tag_name}
 
 For a cluster started in this way, the data files are retained after the cluster is stopped. You can use this tag to start the cluster next time so that you can use the data kept since the cluster was stopped.
 
+## Access TiDB Dashboard and Grafana
+
+When you start a TiDB cluster using TiUP playground, you can access [TiDB Dashboard](/dashboard/dashboard-intro.md) and Grafana at the following addresses in your browser:
+
+- TiDB Dashboard: `http://127.0.0.1:2379/dashboard`
+
+    - Default username: `root`
+    - Default password: `` (empty, press `Enter` directly)
+
+- Grafana: `http://127.0.0.1:3000`
+
+    - Default username: `admin`
+    - Default password: `admin`
+
+> **Note:**
+>
+> If you have changed the password for the TiDB `root` user, use the new password to log in to TiDB Dashboard.
+
 ## Quickly connect to the TiDB cluster started by playground
 
 TiUP provides the `client` component, which is used to automatically find and connect to a local TiDB cluster started by playground. The usage is as follows:
@@ -149,7 +167,7 @@ Starting from TiUP v1.15.0, you can deploy TiProxy for your cluster using TiUP P
 2. Start the TiDB cluster:
 
     ```shell
-    tiup playground v8.5.5 --tiproxy 1 --db.config tidb.toml
+    tiup playground v8.5.6 --tiproxy 1 --db.config tidb.toml
     ```
 
     In the playground component, TiProxy-related command-line flags are as follows:
@@ -174,7 +192,7 @@ To use the TiProxy client program `tiproxyctl`, see [Install TiProxy Control](/t
 Starting from v8.2.0, [PD microservice mode](/pd-microservices.md) (experimental) can be deployed using TiUP. You can deploy the `tso` microservice and `scheduling` microservice for your cluster using TiUP Playground as follows:
 
 ```shell
-tiup playground v8.5.5 --pd.mode ms --pd 3 --tso 2 --scheduling 2
+tiup playground v8.5.6 --pd.mode ms --pd 3 --tso 2 --scheduling 2
 ```
 
 - `--pd.mode`: setting it to `ms` means enabling the microservice mode for PD.

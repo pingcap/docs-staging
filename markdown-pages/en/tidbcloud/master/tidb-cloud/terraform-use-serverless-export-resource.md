@@ -1,17 +1,17 @@
 ---
 title: Use `tidbcloud_serverless_export` Resource
-summary: Learn how to use the `tidbcloud_serverless_export` resource to create and modify data export tasks for TiDB Cloud Starter or TiDB Cloud Essential clusters.
+summary: Learn how to use the `tidbcloud_serverless_export` resource to create and modify data export tasks for TiDB Cloud Starter or TiDB Cloud Essential instances.
 ---
 
 # Use `tidbcloud_serverless_export` Resource
 
-This document describes how to manage data export tasks for TiDB Cloud Starter or TiDB Cloud Essential clusters using the `tidbcloud_serverless_export` resource.
+This document describes how to manage data export tasks for TiDB Cloud Starter or TiDB Cloud Essential instances using the `tidbcloud_serverless_export` resource.
 
 The features of the `tidbcloud_serverless_export` resource include the following:
 
-- Create data export tasks for TiDB Cloud Starter or TiDB Cloud Essential clusters.
-- Import data export tasks for TiDB Cloud Starter or TiDB Cloud Essential clusters.
-- Delete data export tasks for TiDB Cloud Starter or TiDB Cloud Essential clusters.
+- Create data export tasks for TiDB Cloud Starter or TiDB Cloud Essential instances.
+- Import data export tasks for TiDB Cloud Starter or TiDB Cloud Essential instances.
+- Delete data export tasks for TiDB Cloud Starter or TiDB Cloud Essential instances.
 
 > **Note:**
 >
@@ -20,11 +20,11 @@ The features of the `tidbcloud_serverless_export` resource include the following
 ## Prerequisites
 
 - [Get TiDB Cloud Terraform Provider](/tidb-cloud/terraform-get-tidbcloud-provider.md) v0.4.0 or later.
-- [Create a TiDB Cloud Starter or TiDB Cloud Essential cluster](/tidb-cloud/create-tidb-cluster-serverless.md).
+- [Create a TiDB Cloud Starter or TiDB Cloud Essential instance](/tidb-cloud/create-tidb-cluster-serverless.md).
 
-## Create a data export task for a TiDB Cloud Starter or TiDB Cloud Essential cluster
+## Create a data export task for a TiDB Cloud Starter or TiDB Cloud Essential instance
 
-You can create a data export task for a TiDB Cloud Starter or TiDB Cloud Essential cluster using the `tidbcloud_serverless_export` resource.
+You can create a data export task for a TiDB Cloud Starter or TiDB Cloud Essential instance using the `tidbcloud_serverless_export` resource.
 
 1. Create a directory for the export and enter it.
 
@@ -115,7 +115,7 @@ You can create a data export task for a TiDB Cloud Starter or TiDB Cloud Essenti
     Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
     ```
 
-    In this example, the `tidbcloud_serverless_export.example` resource will create an export task to export data from the entire cluster. 
+    In this example, the `tidbcloud_serverless_export.example` resource will create an export task to export data from the entire TiDB Cloud Starter or TiDB Cloud Essential instance. 
     
     This resource is not synchronized. You can use `terraform refresh` to retrieve its latest state.
 
@@ -142,9 +142,9 @@ You can create a data export task for a TiDB Cloud Starter or TiDB Cloud Essenti
     }
     ```
 
-## Import a data export task for a TiDB Cloud Starter or TiDB Cloud Essential cluster
+## Import a data export task for a TiDB Cloud Starter or TiDB Cloud Essential instance
 
-If a data export task for a TiDB Cloud Starter or TiDB Cloud Essential cluster is not managed by Terraform, you can bring it under Terraform management by importing it.
+If a data export task for a TiDB Cloud Starter or TiDB Cloud Essential instance is not managed by Terraform, you can bring it under Terraform management by importing it.
 
 1. Add an import block for the new `tidbcloud_serverless_export` resource.
 
@@ -182,9 +182,9 @@ If a data export task for a TiDB Cloud Starter or TiDB Cloud Essential cluster i
 
 Now you can manage the imported export with Terraform.
 
-## Delete a data export task for a TiDB Cloud Starter or TiDB Cloud Essential cluster
+## Delete a data export task for a TiDB Cloud Starter or TiDB Cloud Essential instance
 
-To delete a data export task for a TiDB Cloud Starter or TiDB Cloud Essential cluster, you can delete the configuration of the `tidbcloud_serverless_export` resource, then use the `terraform apply` command to destroy the resource:
+To delete a data export task for a TiDB Cloud Starter or TiDB Cloud Essential instance, you can delete the configuration of the `tidbcloud_serverless_export` resource, then use the `terraform apply` command to destroy the resource:
 
 ```shell
 $ terraform apply

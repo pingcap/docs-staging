@@ -5,7 +5,7 @@ summary: The reference of `ticloud serverless audit-log download`.
 
 # ticloud serverless audit-log download
 
-Download the database audit log files from a TiDB Cloud Essential cluster.
+Download the database audit log files from a TiDB Cloud Essential instance.
 
 ```shell
 ticloud serverless audit-log download [flags]

@@ -5,7 +5,7 @@ summary: The reference of `ticloud serverless audit-log filter-rule list`.
 
 # ticloud serverless audit-log filter-rule list
 
-List audit log filter rules for a TiDB Cloud Essential cluster.
+List audit log filter rules for a TiDB Cloud Essential instance.
 
 ```shell
 ticloud serverless audit-log filter-rule list [flags]

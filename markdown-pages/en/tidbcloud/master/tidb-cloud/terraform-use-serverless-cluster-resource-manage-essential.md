@@ -1,20 +1,20 @@
 ---
 title: Use the `tidbcloud_serverless_cluster` Resource
-summary: Learn how to use the `tidbcloud_serverless_cluster` resource to create and modify a TiDB Cloud Essential cluster.
+summary: Learn how to use the `tidbcloud_serverless_cluster` resource to create and modify a TiDB Cloud Essential instance.
 ---
 
 # Use the `tidbcloud_serverless_cluster` Resource
 
-This document describes how to manage a [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) cluster with the `tidbcloud_serverless_cluster` resource.
+This document describes how to manage a [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) instance with the `tidbcloud_serverless_cluster` resource.
 
 You will also learn how to get the necessary information with the `tidbcloud_projects` data source.
 
 The features of the `tidbcloud_serverless_cluster` resource include the following:
 
-- Create TiDB Cloud Essential clusters.
-- Modify TiDB Cloud Essential clusters.
-- Import TiDB Cloud Essential clusters.
-- Delete TiDB Cloud Essential clusters.
+- Create TiDB Cloud Essential instances.
+- Modify TiDB Cloud Essential instances.
+- Import TiDB Cloud Essential instances.
+- Delete TiDB Cloud Essential instances.
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ The features of the `tidbcloud_serverless_cluster` resource include the followin
 
 ## Get project IDs using the `tidbcloud_projects` data source
 
-Each TiDB cluster belongs to a project. Before creating a TiDB Cloud Essential cluster, you need to obtain the ID of the project where you want to create the cluster. If no `project_id` is specified, the default project will be used.
+Each TiDB Cloud Essential instance belongs to a project. Before creating a TiDB Cloud Essential instance, you need to obtain the ID of the project where you want to create the TiDB Cloud Essential instance. If no `project_id` is specified, the default project will be used.
 
 To retrieve the information about all available projects, use the `tidbcloud_projects` data source as follows:
 
@@ -119,11 +119,11 @@ To retrieve the information about all available projects, use the `tidbcloud_pro
 
 Now, you can get all the available projects from the output. Copy one of the project IDs that you need.
 
-## Create a TiDB Cloud Essential cluster
+## Create a TiDB Cloud Essential instance
 
-You can create a TiDB Cloud Essential cluster using the `tidbcloud_serverless_cluster` resource.
+You can create a TiDB Cloud Essential instance using the `tidbcloud_serverless_cluster` resource.
 
-1. Create a directory for the cluster and enter it.
+1. Create a directory for the TiDB Cloud Essential instance and enter it.
 
 2. Create a `cluster.tf` file.
 
@@ -160,7 +160,7 @@ You can create a TiDB Cloud Essential cluster using the `tidbcloud_serverless_cl
 
     - To use the `tidbcloud_serverless_cluster` resource, set the resource type as `tidbcloud_serverless_cluster`.
     - For the resource name, you can define it as needed. For example, `example`.
-    - For resource details, you can configure them according to the Project ID and the [`tidbcloud_serverless_cluster` specification](https://registry.terraform.io/providers/tidbcloud/tidbcloud/latest/docs/resources/serverless_cluster). To create a TiDB Cloud Essential cluster, you must specify the `auto_scaling` attribute in resource details.
+    - For resource details, you can configure them according to the Project ID and the [`tidbcloud_serverless_cluster` specification](https://registry.terraform.io/providers/tidbcloud/tidbcloud/latest/docs/resources/serverless_cluster). To create a TiDB Cloud Essential instance, you must specify the `auto_scaling` attribute in resource details.
 
 3. Run the `terraform apply` command. It is not recommended to use `terraform apply --auto-approve` when you apply a resource.
 
@@ -291,16 +291,16 @@ You can create a TiDB Cloud Essential cluster using the `tidbcloud_serverless_cl
     }
     ```
 
-## Modify a TiDB Cloud Essential cluster
+## Modify a TiDB Cloud Essential instance
 
-For a TiDB Cloud Essential cluster, you can use Terraform to manage resources. The arguments that you can modify include:
+For a TiDB Cloud Essential instance, you can use Terraform to manage resources. The arguments that you can modify include:
 
-- `display_name`: The display name of the cluster.
-- `auto_scaling`: The auto scaling configuration of the cluster.
+- `display_name`: The display name of the TiDB Cloud Essential instance.
+- `auto_scaling`: The auto scaling configuration of the TiDB Cloud Essential instance.
 - `endpoints.public.disabled`: Whether to disable the public endpoint.
 - `automated_backup_policy.start_time`: The UTC time of day in `HH:mm` format when the automated backup starts.
 
-To modify a TiDB Cloud Essential cluster, you can modify the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to apply the changes. For example, you can modify the `display_name` and `auto_scaling` as follows:
+To modify a TiDB Cloud Essential instance, you can modify the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to apply the changes. For example, you can modify the `display_name` and `auto_scaling` as follows:
 
 ```
 resource "tidbcloud_serverless_cluster" "example" {
@@ -423,9 +423,9 @@ resource "tidbcloud_serverless_cluster" "example" {
 }
 ```
 
-## Import a TiDB Cloud Essential cluster
+## Import a TiDB Cloud Essential instance
 
-For a TiDB Cloud Essential cluster that is not managed by Terraform, you can bring it under Terraform management by importing it.
+For a TiDB Cloud Essential instance that is not managed by Terraform, you can bring it under Terraform management by importing it.
 
 1. Add an import block for the new `tidbcloud_serverless_cluster` resource.
 
@@ -461,11 +461,11 @@ For a TiDB Cloud Essential cluster that is not managed by Terraform, you can bri
     Apply complete! Resources: 1 imported, 0 added, 0 changed, 0 destroyed.
     ```
 
-Now you can manage the imported cluster with Terraform.
+Now you can manage the imported TiDB Cloud Essential instance with Terraform.
 
-## Delete a TiDB Cloud Essential cluster
+## Delete a TiDB Cloud Essential instance
 
-To delete a TiDB Cloud Essential cluster, you can delete the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to destroy the resource:
+To delete a TiDB Cloud Essential instance, you can delete the configuration of the `tidbcloud_serverless_cluster` resource, then use the `terraform apply` command to destroy the resource:
 
 ```shell
 $ terraform apply

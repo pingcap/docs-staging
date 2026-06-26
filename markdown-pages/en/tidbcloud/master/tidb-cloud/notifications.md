@@ -37,15 +37,15 @@ The following table lists the notifications available in TiDB Cloud, along with 
 
 | Notification | Trigger event | Notification recipient |
 | --- | --- | --- |
-| TiDB Cloud Starter cluster creation | A [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter) cluster is created. | All project members |
-| TiDB Cloud Starter cluster deletion | A TiDB Cloud Starter cluster is deleted. | All project members |
-| TiDB Cloud Essential cluster creation | A [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) cluster is created. | All project members |
-| TiDB Cloud Essential cluster deletion | A [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) cluster is deleted. | All project members |
+| TiDB Cloud Starter instance creation | A [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter) instance is created. | All project members |
+| TiDB Cloud Starter instance deletion | A TiDB Cloud Starter instance is deleted. | All project members |
+| TiDB Cloud Essential instance creation | A [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) instance is created. | All project members |
+| TiDB Cloud Essential instance deletion | A [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) instance is deleted. | All project members |
 | TiDB Cloud Dedicated cluster creation | A [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) cluster is created. | All project members |
 | TiDB Cloud Dedicated cluster deletion | A TiDB Cloud Dedicated cluster is deleted. | All project members |
 | Organization Budget threshold alert | The organization [budget threshold](/tidb-cloud/tidb-cloud-budget.md) is reached. | `Organization Owner`, `Organization Billing Manager`, and `Organization Billing Viewer` |
 | Project Budget threshold alert | The project [budget threshold](/tidb-cloud/tidb-cloud-budget.md) is reached. | `Organization Owner`, `Organization Billing Manager`, `Organization Billing Viewer`, and `Project Owner` |
-| Starter cluster spending limit threshold alert | The [spending limit threshold](/tidb-cloud/manage-serverless-spend-limit.md) for TiDB Cloud Starter clusters in the organization is reached. | `Organization Owner`, `Organization Billing Manager`, `Organization Billing Viewer`, and `Project Owner` |
+| Starter instance spending limit threshold alert | The [spending limit threshold](/tidb-cloud/manage-serverless-spend-limit.md) for TiDB Cloud Starter instances in the organization is reached. | `Organization Owner`, `Organization Billing Manager`, `Organization Billing Viewer`, and `Project Owner` |
 | Credits update | [Credits](/tidb-cloud/tidb-cloud-billing.md#credits) for the organization are applied, fully used, reclaimed, or expired. | `Organization Owner`, `Organization Billing Manager`, and `Organization Billing Viewer` |
 | Discount update | [Discounts](/tidb-cloud/tidb-cloud-billing.md#discounts) for the organization are applied, reclaimed, or expired. | `Organization Owner`, `Organization Billing Manager`, and `Organization Billing Viewer` |
 | Marketplace update | The organization has a subscription or unsubscription through a cloud provider marketplace. | All organization members |

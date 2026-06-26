@@ -5,7 +5,7 @@ summary: The reference of `ticloud serverless audit-log config update`.
 
 # ticloud serverless audit-log config update
 
-Update the database audit logging configuration for a TiDB Cloud Essential cluster.
+Update the database audit logging configuration for a TiDB Cloud Essential instance.
 
 ```shell
 ticloud serverless audit-log config update [flags]

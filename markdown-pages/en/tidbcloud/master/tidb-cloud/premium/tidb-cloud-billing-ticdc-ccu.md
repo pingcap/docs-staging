@@ -38,7 +38,7 @@ The following table lists the specifications and corresponding replication perfo
 
 ### Price
 
-Currently, TiDB Cloud Premium is in private preview. You can [contact our sales](https://www.pingcap.com/contact-us/) for pricing details.
+Currently, TiDB Cloud Premium is in public preview. For more information, see [TiDB Cloud Premium Pricing Details](https://www.pingcap.com/tidb-cloud-premium-pricing-details/).
 
 ## Private Data Link cost
 

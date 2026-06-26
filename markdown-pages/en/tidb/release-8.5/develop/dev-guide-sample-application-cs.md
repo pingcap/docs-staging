@@ -14,7 +14,7 @@ While .NET is commonly used on Windows, it is also available for macOS and Linux
 
 - Download the [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download).
 - This tutorial uses the `dotnet` command-line tool. Alternatively, you can use the Visual Studio Code IDE to work with C# code.
-- To complete this tutorial, you need access to a TiDB instance. You can use a [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) or [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier/#tidb-cloud-dedicated) cluster on TiDB Cloud, or a TiDB Self-Managed cluster, such as one started using `tiup playground`.
+- To complete this tutorial, you need access to a TiDB instance. You can use a [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) instance or [TiDB Cloud Dedicated](https://docs.pingcap.com/tidbcloud/select-cluster-tier/#tidb-cloud-dedicated) cluster on TiDB Cloud, or a TiDB Self-Managed cluster, such as one started using `tiup playground`.
 
 ## Step 1. Set up a console project
 
@@ -108,10 +108,10 @@ The code connects to the database, prints its version, then executes a SQL query
 $ dotnet run
 Connecting to TiDB...
 
-Connected to: 8.0.11-TiDB-v8.5.5
+Connected to: 8.0.11-TiDB-v8.5.6
 
 Version details:
-Release Version: v8.5.5
+Release Version: v8.5.6
 Edition: Community
 Git Commit Hash: f43a13324440f92209e2a9f04c0bbe9cf763978d
 Git Branch: HEAD

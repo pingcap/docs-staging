@@ -5,7 +5,7 @@
 
 ## QUICK START
 
-- [Create a TiDB Cloud Starter Cluster](/develop/dev-guide-build-cluster-in-cloud.md)
+- [Create a TiDB Cloud Starter Instance](/develop/dev-guide-build-cluster-in-cloud.md)
 - [TiDB Basics](/develop/dev-guide-tidb-basics.md)
 - [CRUD SQL in TiDB](/develop/dev-guide-tidb-crud-sql.md)
 

@@ -21,7 +21,7 @@ The parameter of the above command is described as follows:
 
 > **Note:**
 >
-> For a [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) cluster, the `count` of TiFlash replicas can only be `2`. If you set it to `1`, it will be automatically adjusted to `2` for execution. If you set it to a number larger than 2, you will get an error about the replica count.
+> For a [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) instance, the `count` of TiFlash replicas can only be `2`. If you set it to `1`, it will be automatically adjusted to `2` for execution. If you set it to a number larger than 2, you will get an error about the replica count.
 
 If you execute multiple DDL statements on the same table, only the last statement is ensured to take effect. In the following example, two DDL statements are executed on the table `tpch50`, but only the second statement (to delete the replica) takes effect.
 
@@ -47,7 +47,7 @@ ALTER TABLE `tpch50`.`lineitem` SET TIFLASH REPLICA 0;
 
 * For versions earlier than v4.0.6, if you create the TiFlash replica before using TiDB Lightning to import the data, the data import will fail. You must import data to the table before creating the TiFlash replica for the table.
 
-* If TiDB and TiDB Lightning are both v4.0.6 or later, no matter a table has TiFlash replica(s) or not, you can import data to that table using TiDB Lightning. Note that this might slow the TiDB Lightning procedure, which depends on the NIC bandwidth on the lightning host, the CPU and disk load of the TiFlash node, and the number of TiFlash replicas.
+* If TiDB and TiDB Lightning are both v4.0.6 or later, regardless of whether a table has TiFlash replicas, you can import data to that table using TiDB Lightning. Note that this might slow down the TiDB Lightning process, which depends on the NIC bandwidth on the TiDB Lightning host, the CPU and disk load of the TiFlash node, and the number of TiFlash replicas.
 
 * It is recommended that you do not replicate more than 1,000 tables because this lowers the PD scheduling performance. This limit will be removed in later versions.
 
@@ -159,10 +159,10 @@ During this process, each TiKV instance performs a full table scan and sends a s
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 60 add-peer
     ```
 
-    > In the preceding command, you need to replace `v<CLUSTER_VERSION>` with the actual cluster version, such as `v8.5.5` and `<PD_ADDRESS>:2379` with the address of any PD node. For example:
+    > In the preceding command, you need to replace `v<CLUSTER_VERSION>` with the actual cluster version, such as `v8.5.6` and `<PD_ADDRESS>:2379` with the address of any PD node. For example:
     >
     > ```shell
-    > tiup ctl:v8.5.5 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
+    > tiup ctl:v8.5.6 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
     > ```
 
     If the cluster contains many Regions on the old TiFlash nodes, PD needs to rebalance them to the new TiFlash nodes. You need to adjust the `remove-peer` limit accordingly.

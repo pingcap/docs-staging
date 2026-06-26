@@ -1,11 +1,11 @@
 ---
-title: Connect to Your TiDB Cloud Starter or Essential Cluster
-summary: Learn how to connect to your TiDB Cloud Starter or TiDB Cloud Essential cluster via different methods.
+title: Connect to Your TiDB Cloud Starter or Essential Instance
+summary: Learn how to connect to your TiDB Cloud Starter or TiDB Cloud Essential instance via different methods.
 ---
 
-# Connect to Your TiDB Cloud Starter or Essential Cluster
+# Connect to Your TiDB Cloud Starter or Essential Instance
 
-This document describes how to connect to your TiDB Cloud Starter or TiDB Cloud Essential cluster.
+This document describes how to connect to your TiDB Cloud Starter or TiDB Cloud Essential instance.
 
 > **Tip:**
 >
@@ -14,19 +14,19 @@ This document describes how to connect to your TiDB Cloud Starter or TiDB Cloud 
 
 ## Network connection methods
 
-After your TiDB Cloud Starter or TiDB Cloud Essential cluster is created on TiDB Cloud, you can connect to it via one of the following methods:
+After your TiDB Cloud Starter or TiDB Cloud Essential instance is created on TiDB Cloud, you can connect to it via one of the following methods:
 
 - Direct connections
 
-  Direct connections mean the MySQL native connection system over TCP. You can connect to your cluster using any tool that supports MySQL connection, such as [MySQL client](https://dev.mysql.com/doc/refman/8.0/en/mysql.html).
+  Direct connections mean the MySQL native connection system over TCP. You can connect to your TiDB Cloud Starter or Essential instance using any tool that supports MySQL connection, such as [MySQL client](https://dev.mysql.com/doc/refman/8.0/en/mysql.html).
 
 - [Data Service (beta)](/tidb-cloud/data-service-overview.md)
 
-  TiDB Cloud provides a Data Service feature that enables you to connect to your TiDB Cloud Starter cluster hosted on AWS via an HTTPS request using a custom API endpoint. Unlike direct connections, Data Service accesses your cluster data via a RESTful API rather than raw SQL.
+  TiDB Cloud provides a Data Service feature that enables you to connect to your TiDB Cloud Starter instance hosted on AWS via an HTTPS request using a custom API endpoint. Unlike direct connections, Data Service accesses your TiDB Cloud Starter or Essential instance data via a RESTful API rather than raw SQL.
 
 - [Serverless Driver (beta)](/develop/serverless-driver.md)
 
-  TiDB Cloud provides a serverless driver for JavaScript, which allows you to connect to your TiDB Cloud Starter or TiDB Cloud Essential cluster in edge environments with the same experience as direct connections.
+  TiDB Cloud provides a serverless driver for JavaScript, which allows you to connect to your TiDB Cloud Starter or TiDB Cloud Essential instance in edge environments with the same experience as direct connections.
 
 In the preceding connection methods, you can choose your desired one based on your needs:
 
@@ -46,9 +46,9 @@ There are two network connection types for TiDB Cloud Starter and TiDB Cloud Ess
 
 - [Public endpoint](/tidb-cloud/connect-via-standard-connection-serverless.md)
 
-  The standard connection exposes a public endpoint, so you can connect to your TiDB cluster via a SQL client from your laptop.
+  The standard connection exposes a public endpoint, so you can connect to your TiDB Cloud Starter or Essential instance via a SQL client from your laptop.
 
-  TiDB Cloud Starter and TiDB Cloud Essential require [TLS connections](/tidb-cloud/secure-connections-to-serverless-clusters.md), which ensures the security of data transmission from your applications to TiDB clusters.
+  TiDB Cloud Starter and TiDB Cloud Essential require [TLS connections](/tidb-cloud/secure-connections-to-serverless-clusters.md), which ensures the security of data transmission from your applications to TiDB Cloud Starter or Essential instances.
 
 The following table shows the network you can use in different connection methods:
 
@@ -60,4 +60,4 @@ The following table shows the network you can use in different connection method
 
 ## What's next
 
-After you have successfully connected to your TiDB cluster, you can [explore SQL statements with TiDB](/basic-sql-operations.md).
+After you have successfully connected to your TiDB Cloud Starter or Essential instance, you can [explore SQL statements with TiDB](/basic-sql-operations.md).
