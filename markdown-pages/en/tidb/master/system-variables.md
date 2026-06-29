@@ -1761,7 +1761,7 @@ mysql> SELECT job_info FROM mysql.analyze_jobs ORDER BY end_time DESC LIMIT 1;
 
 > **Note:**
 >
-> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) and [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential).
+> This variable is read-only for [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter), [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential), and [TiDB Cloud Premium](https://docs.pingcap.com/tidbcloud/select-cluster-tier#premium).
 
 - Scope: GLOBAL
 - Persists to cluster: Yes
