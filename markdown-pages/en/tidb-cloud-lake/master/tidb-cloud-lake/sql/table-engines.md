@@ -1,0 +1,23 @@
+---
+title: Table Engines
+summary: "TiDB Cloud Lake provides several table engines so that you can balance performance and interoperability needs without moving data. Each engine is optimized for a specific scenario—ranging from TiDB Cloud Lake’s native Fuse storage to external data lake formats."
+---
+
+# Table Engines
+
+TiDB Cloud Lake provides several table engines so that you can balance performance and interoperability needs without moving data. Each engine is optimized for a specific scenario—ranging from TiDB Cloud Lake’s native Fuse storage to external data lake formats.
+
+## Available Engines
+
+| Engine | Best For | Highlights |
+| ------ | -------- | ---------- |
+| [Fuse Engine Tables](/tidb-cloud-lake/sql/fuse-engine-tables.md) | Native TiDB Cloud Lake tables | Snapshot-based storage, automatic clustering, change tracking |
+| [Apache Hive Tables](/tidb-cloud-lake/sql/apache-hive-tables.md) | Hive metastore data | Query Hive-managed data stores through external tables |
+| [Delta Lake Engine](/tidb-cloud-lake/sql/delta-lake-engine.md) | Delta Lake datasets | Read Delta tables in object storage with ACID guarantees |
+
+## Choosing an Engine
+
+- Use **Fuse** when you manage data directly inside TiDB Cloud Lake and want the best storage and query performance.
+- Choose **Iceberg** when you already manage datasets through Iceberg catalogs and need tight lakehouse integration.
+- Configure **Hive** when you rely on an existing Hive Metastore but want TiDB Cloud Lake’s query engine.
+- Select **Delta** to analyse Delta Lake tables in place without ingesting them into Fuse.
