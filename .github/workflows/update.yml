@@ -54,6 +54,25 @@ jobs:
         env:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          sync_tidb_cloud_lake() {
+            local source_root="$1"
+            local target_root="./markdown-pages/en/tidb-cloud-lake/master"
+
+            mkdir -p "${target_root}"
+            rm -rf "${target_root}/tidb-cloud-lake"
+            rm -f "${target_root}/TOC-tidb-cloud-lake.md"
+
+            if [ -d "${source_root}/tidb-cloud-lake" ]
+            then
+              mv "${source_root}/tidb-cloud-lake" "${target_root}/"
+            fi
+
+            if [ -f "${source_root}/TOC-tidb-cloud-lake.md" ]
+            then
+              mv "${source_root}/TOC-tidb-cloud-lake.md" "${target_root}/"
+            fi
+          }
+
           # handle zh auto translated docs branch(only cloud)
           if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.ZH_CLOUD_BRANCH }} ]
           then
@@ -74,6 +93,7 @@ jobs:
           then
           yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
           yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+          sync_tidb_cloud_lake "./markdown-pages/en/tidb/${{ inputs.branch }}"
           exit 0
           fi
 
@@ -92,8 +112,28 @@ jobs:
         env:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          sync_tidb_cloud_lake() {
+            local source_root="$1"
+            local target_root="./markdown-pages/en/tidb-cloud-lake/master"
+
+            mkdir -p "${target_root}"
+            rm -rf "${target_root}/tidb-cloud-lake"
+            rm -f "${target_root}/TOC-tidb-cloud-lake.md"
+
+            if [ -d "${source_root}/tidb-cloud-lake" ]
+            then
+              mv "${source_root}/tidb-cloud-lake" "${target_root}/"
+            fi
+
+            if [ -f "${source_root}/TOC-tidb-cloud-lake.md" ]
+            then
+              mv "${source_root}/TOC-tidb-cloud-lake.md" "${target_root}/"
+            fi
+          }
+
           sudo rm -fr ./markdown-pages/*
           yarn download:tidb:en:all
+          sync_tidb_cloud_lake "./markdown-pages/en/tidb/${{ env.EN_CLOUD_BRANCH }}"
           yarn download:tidb-cloud:en
           yarn download:tidb:zh:all
           yarn download:tidb:ja:all
