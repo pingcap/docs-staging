@@ -181,8 +181,9 @@ The TiDB configuration file supports more options than command-line parameters. 
 
 > **Warning:**
 >
-> - For versions from v8.1.0 to v8.5.1, TiDB removes the telemetry feature and this configuration item no longer takes effect. It is retained solely for compatibility with earlier versions.
-> - Starting from v8.5.3, TiDB reintroduces the telemetry feature. However, it only logs telemetry-related information locally and no longer sends data to PingCAP over the network.
+> - For versions from v8.1.0 to v8.5.2, TiDB removes the telemetry feature and this configuration item no longer takes effect. It is retained solely for compatibility with earlier versions.
+> - For versions from v8.5.3 to v8.5.6, TiDB reintroduces the telemetry feature. However, it only logs telemetry-related information locally and no longer sends data to PingCAP over the network.
+> - Starting from v8.5.7, TiDB deprecates this configuration item and the telemetry feature.
 
 - Controls whether to enable telemetry collection in a TiDB instance.
 - Default value: `false`
@@ -208,7 +209,7 @@ The TiDB configuration file supports more options than command-line parameters. 
 
 - Specifies the number of seconds that TiDB waits when you shut down the server, which allows the clients to disconnect.
 - Default value: `0`
-- When TiDB is waiting for shutdown (in the grace period), the HTTP status will indicate a failure, which allows the load balancers to reroute traffic.
+- When TiDB is waiting for shutdown (in the grace period), the HTTP status will indicate a failure, which allows the load balancers to reroute traffic. TiDB also returns an error in response to the `COM_PING` command.
 
 > **Note:**
 >
@@ -637,10 +638,20 @@ Configuration items related to performance.
 + When the value of `force-init-stats` is `true`, TiDB needs to wait until statistics initialization is finished before providing services upon startup. Note that if there are a large number of tables and partitions and the value of [`lite-init-stats`](/tidb-configuration-file.md#lite-init-stats-new-in-v710) is `false`, setting `force-init-stats` to `true` might prolong the time it takes for TiDB to start providing services.
 + When the value of `force-init-stats` is `false`, TiDB can still provide services before statistics initialization is finished, but the optimizer uses pseudo statistics to make decisions, which might result in suboptimal execution plans.
 
+### skip-init-stats <span class="version-mark">New in v9.0.0</span>
+
+> **Warning:**
+>
+> This configuration item is for maintenance purposes only. Do not enable it on TiDB nodes that handle regular workloads. 
+
++ Controls whether to skip statistics initialization during TiDB startup.
++ Default value: `false`
++ When the value of `skip-init-stats` is `true`, TiDB skips statistics initialization during startup and does not load statistics afterward. It is useful if you need to start TiDB quickly without waiting for statistics initialization, especially when there are a large number of tables and partitions. However, it is intended for maintenance only. In most cases, do not set this configuration item to `true`; otherwise, the optimizer might generate suboptimal execution plans due to missing statistics.
+
 ### `enable-async-batch-get` <span class="version-mark">New in v8.5.5 and v9.0.0</span>
 
 + Controls whether TiDB uses asynchronous mode to execute the Batch Get operator. Using asynchronous mode can reduce goroutine overhead and provide better performance. Generally, there is no need to modify this configuration item.
-+ Default value: `true`
++ Default value: `true` for v9.0.0 and later versions. In v8.5.5, the default value is `false`.
 
 ## opentracing
 

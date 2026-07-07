@@ -9,7 +9,7 @@ Release date: July 11, 2024
 
 TiDB version: 8.2.0
 
-Quick access: [Quick start](https://docs.pingcap.com/tidb/v8.2/quick-start-with-tidb)
+Quick access: [Quick start](https://docs-archive.pingcap.com/tidb/v8.2/quick-start-with-tidb)
 
 8.2.0 introduces the following key features and improvements:
 
@@ -24,20 +24,20 @@ Quick access: [Quick start](https://docs.pingcap.com/tidb/v8.2/quick-start-with-
 <tbody>
   <tr>
     <td rowspan="3">Reliability and Availability</td>
-    <td><a href="https://docs.pingcap.com/tidb/v8.2/tiproxy-load-balance">TiProxy supports multiple load balancing policies</a></td>
+    <td><a href="https://docs-archive.pingcap.com/tidb/v8.2/tiproxy-load-balance">TiProxy supports multiple load balancing policies</a></td>
     <td>In TiDB v8.2.0, TiProxy evaluates and ranks TiDB nodes based on various dimensions, such as status, connection counts, health, memory, CPU, and location. According to the load balancing policy specified in the <code>policy</code> configuration item, TiProxy dynamically selects the optimal TiDB node to execute database operations. This optimizes overall resource usage, improves cluster performance, and increases throughput.</td>
   </tr>
   <tr>
-    <td><a href="https://docs.pingcap.com/tidb/v8.2/system-variables#tidb_enable_parallel_hashagg_spill-new-in-v800">The parallel HashAgg algorithm of TiDB supports disk spill (GA)</a></td>
+    <td><a href="https://docs-archive.pingcap.com/tidb/v8.2/system-variables#tidb_enable_parallel_hashagg_spill-new-in-v800">The parallel HashAgg algorithm of TiDB supports disk spill (GA)</a></td>
     <td>HashAgg is a widely used aggregation operator in TiDB for efficiently aggregating rows with the same field values. TiDB v8.0.0 introduces parallel HashAgg as an experimental feature to further enhance processing speed. When memory resources are insufficient, parallel HashAgg spills temporary sorted data to disk, avoiding potential OOM risks caused by excessive memory usage. This improves query performance while maintaining node stability. In v8.2.0, this feature becomes generally available (GA) and is enabled by default, enabling you to safely configure the concurrency of parallel HashAgg using <code>tidb_executor_concurrency</code>.</td>
   </tr>
   <tr>
-    <td><a href="https://docs.pingcap.com/tidb/v8.2/tidb-configuration-file#stats-load-concurrency-new-in-v540">Improve statistics loading efficiency by up to 10 times</a></td>
+    <td><a href="https://docs-archive.pingcap.com/tidb/v8.2/tidb-configuration-file#stats-load-concurrency-new-in-v540">Improve statistics loading efficiency by up to 10 times</a></td>
     <td>For clusters with a large number of tables and partitions, such as SaaS or PaaS services, improvement in statistics loading efficiency can solve the problem of slow startup of TiDB instances, and increase the success rate of dynamic loading of statistics. This improvement reduces performance rollbacks caused by statistics loading failures and improves cluster stability.</td>
   </tr>
   <tr>
     <td rowspan="1">DB Operations and Observability</td>
-    <td><a href="https://docs.pingcap.com/tidb/v8.2/tidb-resource-control#bind-resource-groups">Introduce privilege control of switching resource groups</a></td>
+    <td><a href="https://docs-archive.pingcap.com/tidb/v8.2/tidb-resource-control#bind-resource-groups">Introduce privilege control of switching resource groups</a></td>
     <td>As resource control is widely used, the privilege control of switching resource groups can prevent database users from abusing resources, strengthen administrators' protection of overall resource usage, and improve cluster stability.</td>
   </tr>
 </tbody>
@@ -226,7 +226,7 @@ Quick access: [Quick start](https://docs.pingcap.com/tidb/v8.2/quick-start-with-
 
 + TiDB
 
-    - Support parallel execution of [logical DDL statements (General DDL)](/ddl-introduction.md#types-of-ddl-statements). Compared with v8.1.0, when you use 10 sessions to submit different DDL statements concurrently, the performance is improved by 3 to 6 times [#53246](https://github.com/pingcap/tidb/issues/53246) @[D3Hunter](https://github.com/D3Hunter)
+    - Support parallel execution of [logical DDL statements (General DDL)](/best-practices/ddl-introduction.md#types-of-ddl-statements). Compared with v8.1.0, when you use 10 sessions to submit different DDL statements concurrently, the performance is improved by 3 to 6 times [#53246](https://github.com/pingcap/tidb/issues/53246) @[D3Hunter](https://github.com/D3Hunter)
     - Improve the logic of matching multi-column indexes using expressions like `((a = 1 and b = 2 and c > 3) or (a = 4 and b = 5 and c > 6)) and d > 3` to produce a more accurate `Range` [#41598](https://github.com/pingcap/tidb/issues/41598) @[ghazalfamilyusa](https://github.com/ghazalfamilyusa)
     - Optimize the performance of obtaining data distribution information when performing simple queries on tables with large data volumes [#53850](https://github.com/pingcap/tidb/issues/53850) @[you06](https://github.com/you06)
     - The aggregated result set can be used as an inner table for IndexJoin, allowing more complex queries to be matched to IndexJoin, thus improving query efficiency through indexing [#37068](https://github.com/pingcap/tidb/issues/37068) @[elsa0520](https://github.com/elsa0520)

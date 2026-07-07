@@ -8,7 +8,7 @@ aliases: ['/tidb/dev/br-usage-backup/','/tidb/dev/br-usage-restore/','/tidb/dev/
 
 This document describes how to back up and restore TiDB snapshots using the br command-line tool (hereinafter referred to as `br`). Before backing up and restoring data, you need to [install the br command-line tool](/br/br-use-overview.md#deploy-and-use-br) first.
 
-Snapshot backup is an implementation to back up the entire cluster. It is based on [multi-version concurrency control (MVCC)](/tidb-storage.md#mvcc) and backs up all data in the specified snapshot to a target storage. The size of the backup data is approximately the size of the compressed single replica in the cluster. After the backup is completed, you can restore the backup data to an empty cluster or a cluster that does not contain conflict data (with the same schema or same tables), restore the cluster to the time point of the snapshot backup, and restore multiple replicas according to the cluster replica settings.
+Snapshot backup lets you back up the entire cluster. It is based on [multi-version concurrency control (MVCC)](/tidb-storage.md#mvcc) and backs up all data in the specified snapshot to a target storage. The size of the backup data is approximately the size of the compressed single replica in the cluster. After the backup completes, you can restore the backup data to an empty cluster or a cluster that does not contain conflict data (with the same schema or same tables), restore the cluster to the time point of the snapshot backup, and restore multiple replicas according to the cluster replica settings.
 
 Besides basic backup and restore, snapshot backup and restore also provides the following features:
 
@@ -153,7 +153,7 @@ When you perform a snapshot backup, BR backs up system tables as tables with the
 - Starting from BR v5.1.0, when you back up snapshots, BR automatically backs up the **system tables** in the `mysql` schema, but does not restore these system tables by default.
 - Starting from v6.2.0, BR lets you specify `--with-sys-table` to restore **data in some system tables**.
 - Starting from v7.6.0, BR enables `--with-sys-table` by default, which means that BR restores **data in some system tables** by default.
-- Starting from v9.0.0, BR lets you specify `--fast-load-sys-tables` to restore system tables physically. This approach uses the `RENAME TABLE` DDL statement to atomically swap the system tables in the `__TiDB_BR_Temporary_mysql` database with the system tables in the `mysql` database. Unlike the logical restoration of system tables using the `REPLACE INTO` SQL statement, physical restoration completely overwrites the existing data in the system tables.
+- Starting from v8.5.5 and v9.0.0, BR lets you specify `--fast-load-sys-tables` to restore system tables physically. This approach uses the `RENAME TABLE` DDL statement to atomically swap the system tables in the `__TiDB_BR_Temporary_mysql` database with the system tables in the `mysql` database. Unlike the logical restoration of system tables using the `REPLACE INTO` SQL statement, physical restoration completely overwrites the existing data in the system tables.
 
 **BR can restore data in the following system tables:**
 
