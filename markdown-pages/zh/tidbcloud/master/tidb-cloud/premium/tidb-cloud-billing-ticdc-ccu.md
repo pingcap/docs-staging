@@ -1,15 +1,15 @@
 ---
-title: TiDB Cloud Premium 的 Changefeed 计费
-summary: 了解 TiDB Cloud Premium 中 changefeeds 的计费方式。
+title: TiDB Cloud Essential 和 Premium 的 Changefeed 计费
+summary: 了解 TiDB Cloud Essential 和 Premium 中 changefeeds 的计费方式。
 ---
 
-# TiDB Cloud Premium 的 Changefeed 计费
+# TiDB Cloud Essential 和 Premium 的 Changefeed 计费
 
-本文档介绍 TiDB Cloud Premium 中 changefeeds 的计费详情。
+本文档介绍 TiDB Cloud Essential 和 Premium 中 changefeeds 的计费详情。
 
 ## CCU 成本 {#ccu-cost}
 
-TiDB Cloud Premium 使用 TiCDC Changefeed Capacity Units (CCUs) 来衡量 [changefeeds](/tidb-cloud/changefeed-overview.md) 的容量。当你为实例[创建 changefeed](/tidb-cloud/changefeed-overview.md#create-a-changefeed) 时，可以选择合适的规格。CCU 越高，复制性能越好。你将按这些 TiCDC CCU 收费。
+TiDB Cloud Essential 和 Premium 使用 TiCDC Changefeed Capacity Units (CCUs) 来衡量 [changefeeds](/tidb-cloud/changefeed-overview.md) 的容量。当你为实例[创建 changefeed](/tidb-cloud/changefeed-overview.md#create-a-changefeed) 时，可以选择合适的规格。CCU 越高，复制性能越好。你将按这些 TiCDC CCU 收费。
 
 ### TiCDC CCU 数量 {#number-of-ticdc-ccus}
 
@@ -38,7 +38,10 @@ TiDB Cloud Premium 使用 TiCDC Changefeed Capacity Units (CCUs) 来衡量 [chan
 
 ### 价格 {#price}
 
-目前，TiDB Cloud Premium 处于公开预览阶段。更多信息，请参见 [TiDB Cloud Premium Pricing Details](https://www.pingcap.com/tidb-cloud-premium-pricing-details/)。
+目前，TiDB Cloud Essential 和 Premium 均处于公测阶段。有关定价的更多信息，请参见以下页面：
+
+- [TiDB Cloud Essential Pricing Details](https://www.pingcap.com/tidb-cloud-essential-pricing-details/)
+- [TiDB Cloud Premium Pricing Details](https://www.pingcap.com/tidb-cloud-premium-pricing-details/)
 
 ## Private Data Link 成本 {#private-data-link-cost}
 
