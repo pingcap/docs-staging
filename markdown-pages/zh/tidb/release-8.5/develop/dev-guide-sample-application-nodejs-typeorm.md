@@ -271,7 +271,7 @@ npm start
 如果连接成功，你的终端将会输出 TiDB 版本信息：
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.6)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.7)
 🆕 Created a new player with ID 2.
 ℹ️ Got Player 2: Player { id: 2, coins: 100, goods: 100 }
 🔢 Added 50 coins and 50 goods to player 2, now player 2 has 100 coins and 150 goods.

@@ -308,7 +308,7 @@ void main();
 如果连接成功，在你的终端上会输出 TiDB 版本信息。
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.6)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.7)
 🆕 Created a new player with ID 1.
 ℹ️ Got Player 1: Player { id: 1, coins: 100, goods: 100 }
 🔢 Added 50 coins and 50 goods to player 1, now player 1 has 150 coins and 150 goods.

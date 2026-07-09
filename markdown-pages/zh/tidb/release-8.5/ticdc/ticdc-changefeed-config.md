@@ -16,7 +16,7 @@ cdc cli changefeed create --server=http://10.0.10.25:8300 --sink-uri="mysql://ro
 ```shell
 Create changefeed successfully!
 ID: simple-replication-task
-Info: {"upstream_id":7178706266519722477,"namespace":"default","id":"simple-replication-task","sink_uri":"mysql://root:xxxxx@127.0.0.1:4000/?time-zone=","create_time":"2026-04-14T15:05:46.679218+08:00","start_ts":438156275634929669,"engine":"unified","config":{"case_sensitive":false,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":true,"bdr_mode":false,"sync_point_interval":30000000000,"sync_point_retention":3600000000000,"filter":{"rules":["test.*"],"event_filters":null},"mounter":{"worker_num":16},"sink":{"protocol":"","schema_registry":"","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false},"column_selectors":null,"transaction_atomicity":"none","encoder_concurrency":16,"terminator":"\r\n","date_separator":"none","enable_partition_separator":false},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"storage":""}},"state":"normal","creator_version":"v8.5.6"}
+Info: {"upstream_id":7178706266519722477,"namespace":"default","id":"simple-replication-task","sink_uri":"mysql://root:xxxxx@127.0.0.1:4000/?time-zone=","create_time":"2026-07-09T15:05:46.679218+08:00","start_ts":438156275634929669,"engine":"unified","config":{"case_sensitive":false,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":true,"bdr_mode":false,"sync_point_interval":30000000000,"sync_point_retention":3600000000000,"filter":{"rules":["test.*"],"event_filters":null},"mounter":{"worker_num":16},"sink":{"protocol":"","schema_registry":"","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false},"column_selectors":null,"transaction_atomicity":"none","encoder_concurrency":16,"terminator":"\r\n","date_separator":"none","enable_partition_separator":false},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"storage":""}},"state":"normal","creator_version":"v8.5.7"}
 ```
 
 - `--changefeed-id`：同步任务的 ID，格式需要符合正则表达式 `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`。如果不指定该 ID，TiCDC 会自动生成一个 UUID（version 4 格式）作为 ID。
@@ -180,10 +180,9 @@ Info: {"upstream_id":7178706266519722477,"namespace":"default","id":"simple-repl
 
 #### `dispatchers`
 
-- 对于 MQ 类的 Sink，可以通过 dispatchers 配置 event 分发器。
+- 当 Changefeed 下游为 MQ 类 Sink 时，可以通过 `dispatchers` 配置 event 分发器。从 v8.5.7 起，对于 [TiCDC 新架构](/ticdc/ticdc-architecture.md)，也可以通过 `dispatchers` 配置表路由，将上游表映射到指定的下游库名或表名。更多信息，参见 [TiCDC 表路由](/ticdc/ticdc-table-routing.md)。
 - 支持 partition 及 topic（从 v6.1 开始支持）两种 event 分发器。二者的详细说明见下一节。
 - matcher 的匹配语法和过滤器规则语法相同，matcher 匹配规则的详细说明见下一节。
-- 该参数只有当下游为消息队列时，才会生效。
 - 当下游 MQ 为 Pulsar 时，如果 partition 的路由规则未指定为 `ts`、`index-value`、`table`、`default` 中的任意一个，那么将会使用你设置的字符串作为每一条 Pulsar message 的 key 进行路由。例如，如果你指定的路由规则为 `'code'` 字符串，那么符合该 matcher 的所有 Pulsar message 都将会以 `'code'` 作为 key 进行路由。
 
 #### `column-selectors` <span class="version-mark">从 v7.5.0 版本开始引入</span>
