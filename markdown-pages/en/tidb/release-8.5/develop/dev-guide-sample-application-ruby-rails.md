@@ -212,7 +212,7 @@ Connect to TiDB depending on the TiDB deployment option you've selected.
 If the connection is successful, the console will output the TiDB version as follows:
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.6)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.7)
 ⏳ Loading sample game data...
 ✅ Loaded sample game data.
 
