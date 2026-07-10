@@ -4,7 +4,7 @@ summary: 快速注册体验 TiDB Cloud 并创建一个 TiDB Cloud Starter 实例
 category: quick start
 ---
 
-# TiDB Cloud 快速入门
+# TiDB Cloud 快速入门 <!--Corresponding EN commit: 87b21d6d905ce9d293d57d0a80c1b9592ee932cb-->
 
 *预计完成时间：20 分钟*
 
@@ -130,6 +130,19 @@ TiDB Cloud 提供了交互式教程和精心设计的示例数据集，帮助你
 1. 点击控制台右下角的 **?** 图标，选择 **Guided tour of SQL Editor**。
 2. 选择你想用于教程的 TiDB Cloud Starter 实例，点击 **Import Dataset**。导入过程大约需要 1 分钟。
 3. 示例数据导入完成后，按照页面提示完成教程。
+
+## 第 4 步：连接到你的 TiDB Cloud Starter 实例 {#step-4-connect-to-your-starter-instance}
+
+TiDB 与 MySQL 协议高度兼容，因此你可以使用大多数 MySQL 工具、驱动程序和 ORM 连接到 TiDB。以下步骤以 MySQL CLI 客户端 `mysql` 为例。
+
+1. 打开 [**My TiDB**](https://tidbcloud.com/tidbs) 页面，然后点击目标 TiDB Cloud Starter 实例的名称，进入其实例概览页面。
+2. 点击右上角的 **Connect**。此时会显示一个包含连接参数的连接对话框。
+3. 确保连接对话框中的配置与你的运行环境匹配。
+4. 点击 **Generate Password** 以创建一个随机密码。
+5. 在 **Connect With** 下拉列表中，选择 **MySQL CLI**。
+6. 复制连接命令，将其粘贴到终端中，然后按 **Enter** 运行。
+
+MySQL CLI 客户端将打开并连接到你的 TiDB Cloud Starter 实例。
 
 ## 后续操作
 
