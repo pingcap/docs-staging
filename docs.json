@@ -11,8 +11,7 @@
             "release-8.1",
             "release-7.5",
             "release-7.1",
-            "release-6.5",
-            "release-6.1"
+            "release-6.5"
           ]
         },
         "zh": {
@@ -23,8 +22,7 @@
             "release-8.1",
             "release-7.5",
             "release-7.1",
-            "release-6.5",
-            "release-6.1"
+            "release-6.5"
           ]
         },
         "ja": {
@@ -34,8 +32,7 @@
             "release-8.1",
             "release-7.5",
             "release-7.1",
-            "release-6.5",
-            "release-6.1"
+            "release-6.5"
           ]
         }
       },
@@ -80,6 +77,7 @@
         "v6.4",
         "v6.3",
         "v6.2",
+        "v6.1",
         "v6.0",
         "v5.4",
         "v5.3",
@@ -203,8 +201,31 @@
             "pathname": "v1beta1/serverless",
             "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta1-serverless.swagger.json",
             "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta1-serverless.swagger.json"
+          },
+          {
+            "id": "v1beta2",
+            "pathname": "v1beta2/premium",
+            "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta2-premium.swagger.json",
+            "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta2-premium.swagger.json"
           }
         ]
+      }
+    },
+    "tidb-cloud-lake": {
+      "target": "release-8.5",
+      "languages": {
+        "en": {
+          "repo": "pingcap/docs",
+          "versions": ["master"]
+        },
+        "zh": {
+          "repo": "pingcap/docs",
+          "versions": ["master"]
+        },
+        "ja": {
+          "repo": "pingcap/docs",
+          "versions": ["master"]
+        }
       }
     }
   },

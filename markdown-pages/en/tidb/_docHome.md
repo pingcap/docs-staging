@@ -33,6 +33,7 @@ hide_leftNav: true
 | v6.4 (DMR) | [TiDB v6.4 documentation](https://docs-archive.pingcap.com/tidb/v6.4/) | April 6, 2023 |
 | v6.3 (DMR) | [TiDB v6.3 documentation](https://docs-archive.pingcap.com/tidb/v6.3/) | February 24, 2023 |
 | v6.2 (DMR) | [TiDB v6.2 documentation](https://docs-archive.pingcap.com/tidb/v6.2/) | January 31, 2023 |
+| v6.1       | [TiDB v6.1 documentation](https://docs-archive.pingcap.com/tidb/v6.1/) | July 10, 2026 |
 | v6.0 (DMR) | [TiDB v6.0 documentation](https://docs-archive.pingcap.com/tidb/v6.0/) | January 31, 2023 |
 | v5.4       | [TiDB v5.4 documentation](https://docs-archive.pingcap.com/tidb/v5.4/) | April 24, 2026 |
 | v5.3       | [TiDB v5.3 documentation](https://docs-archive.pingcap.com/tidb/v5.3/) | December 30, 2024 |
