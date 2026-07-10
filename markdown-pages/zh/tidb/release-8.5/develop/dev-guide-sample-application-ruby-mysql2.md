@@ -224,7 +224,7 @@ ruby app.rb
 如果连接成功，你的终端将会输出 TiDB 版本信息：
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.6)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.7)
 ⏳ Loading sample game data...
 ✅ Loaded sample game data.
 
