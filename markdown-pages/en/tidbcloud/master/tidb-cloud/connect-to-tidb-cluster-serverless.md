@@ -20,11 +20,11 @@ After your TiDB Cloud Starter or TiDB Cloud Essential instance is created on TiD
 
   Direct connections mean the MySQL native connection system over TCP. You can connect to your TiDB Cloud Starter or Essential instance using any tool that supports MySQL connection, such as [MySQL client](https://dev.mysql.com/doc/refman/8.0/en/mysql.html).
 
-- [Data Service (beta)](/tidb-cloud/data-service-overview.md)
+- [Data Service (PREVIEW)](/tidb-cloud/data-service-overview.md)
 
   TiDB Cloud provides a Data Service feature that enables you to connect to your TiDB Cloud Starter instance hosted on AWS via an HTTPS request using a custom API endpoint. Unlike direct connections, Data Service accesses your TiDB Cloud Starter or Essential instance data via a RESTful API rather than raw SQL.
 
-- [Serverless Driver (beta)](/develop/serverless-driver.md)
+- [Serverless Driver (PREVIEW)](/develop/serverless-driver.md)
 
   TiDB Cloud provides a serverless driver for JavaScript, which allows you to connect to your TiDB Cloud Starter or TiDB Cloud Essential instance in edge environments with the same experience as direct connections.
 
@@ -55,8 +55,8 @@ The following table shows the network you can use in different connection method
 | Connection method          | Network                      | Description                                                                                                       |
 |----------------------------|------------------------------|-------------------------------------------------------------------------------------------------------------------|
 | Direct connections         | Public or private endpoint   | Direct connections can be made via both public and private endpoints.                                             |
-| Data Service (beta)        | /                            | Accessing TiDB Cloud Starter hosted on AWS via Data Service (beta) does not need to specify the network type.                      |
-| Serverless Driver (beta)   | Public endpoint              | Serverless Driver only supports connections via public endpoint.                                                  |
+| Data Service (PREVIEW)        | /                            | You do not need to specify the network type when accessing TiDB Cloud Starter hosted on AWS via Data Service (PREVIEW). |
+| Serverless Driver (PREVIEW)   | Public endpoint              | Serverless Driver only supports connections via public endpoint.                                                  |
 
 ## What's next
 
