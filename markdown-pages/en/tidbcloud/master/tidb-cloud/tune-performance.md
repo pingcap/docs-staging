@@ -76,7 +76,7 @@ The results are displayed in the form of a table, and you can sort the results b
 
 > **Note:**
 >
-> To improve traffic visibility, TiDB Cloud Starter and TiDB Cloud Essential now display the real client IP address for connections via AWS PrivateLink in detailed execution information. Currently, this feature is in beta and is available only in the AWS region `Frankfurt (eu-central-1)`.
+> To improve traffic visibility, TiDB Cloud Starter and TiDB Cloud Essential now display the real client IP address for connections via AWS PrivateLink in detailed execution information. Currently, this feature is in public preview and is available only in the AWS region `Frankfurt (eu-central-1)`.
 
 </CustomContent>
 <CustomContent plan="starter,essential,dedicated">

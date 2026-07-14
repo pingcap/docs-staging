@@ -21,7 +21,7 @@ TiDB Cloud changefeed helps you stream data from TiDB Cloud to other data servic
 > - Currently, TiDB Cloud only allows up to 100 changefeeds per <CustomContent plan="dedicated">TiDB Cloud Dedicated cluster</CustomContent><CustomContent plan="premium">TiDB Cloud Premium instance</CustomContent>.
 > - Currently, TiDB Cloud only allows up to 100 table filter rules per changefeed.
 > - For [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter) instances, the changefeed feature is unavailable.
-> - For [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) instances, the changefeed feature is in beta. For more information, see [Changefeed (Beta)](/tidb-cloud/essential-changefeed-overview.md).
+> - For [TiDB Cloud Essential](/tidb-cloud/select-cluster-tier.md#essential) instances, the changefeed feature is only available upon request. For more information, see [Changefeed](/tidb-cloud/essential-changefeed-overview.md).
 
 ## View the Changefeed page
 
