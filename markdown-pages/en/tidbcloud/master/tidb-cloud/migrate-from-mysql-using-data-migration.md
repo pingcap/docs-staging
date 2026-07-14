@@ -12,7 +12,7 @@ This document guides you through migrating your MySQL databases from Amazon Auro
 
 > **Note:**
 >
-> Currently, the Data Migration feature is in beta for TiDB Cloud Essential.
+> Currently, the Data Migration feature is in public preview for TiDB Cloud Essential.
 
 </CustomContent>
 

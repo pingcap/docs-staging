@@ -32,7 +32,7 @@ Connect your application with the languages and frameworks you prefer.
 
 </DocHomeCard>
 
-<DocHomeCard href="/ai/vector-search-overview" label="Vector Search (Beta)" icon="cloud-vector-mauve">
+<DocHomeCard href="/ai/vector-search-overview" label="Vector Search (PREVIEW)" icon="cloud-vector-mauve">
 
 Explore native support of Vector Search in TiDB Cloud Starter to build your AI application.
 
