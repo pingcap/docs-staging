@@ -4,7 +4,7 @@ summary: 快速注册体验 TiDB Cloud 并创建一个 TiDB Cloud Starter 实例
 category: quick start
 ---
 
-# TiDB Cloud 快速入门 <!--Corresponding EN commit: 87b21d6d905ce9d293d57d0a80c1b9592ee932cb-->
+# TiDB Cloud 快速入门
 
 *预计完成时间：20 分钟*
 
@@ -58,7 +58,7 @@ category: quick start
 
 2. 若要体验 TiDB Cloud 的 AI 能力，请按照页面提示，允许 PingCAP 和 AWS Bedrock 使用你的代码片段进行研究和服务改进，然后点击 **Save and Get Started**。
 
-3. 在 SQL Editor 中，按下 <kbd>⌘</kbd> + <kbd>I</kbd>（macOS）或 <kbd>Control</kbd> + <kbd>I</kbd>（Windows 或 Linux），即可指示 [Chat2Query (beta)](/tidb-cloud/tidb-cloud-glossary.md#chat2query) 自动生成 SQL 查询。
+3. 在 SQL Editor 中，按下 <kbd>⌘</kbd> + <kbd>I</kbd>（macOS）或 <kbd>Control</kbd> + <kbd>I</kbd>（Windows 或 Linux），即可指示 [Chat2Query (PREVIEW)](/tidb-cloud/tidb-cloud-glossary.md#chat2query) 自动生成 SQL 查询。
 
     例如，若要创建一个包含两列（`id` 和 `name`）的新表 `test.t`，你可以输入 `use test;` 指定数据库，按下 <kbd>⌘</kbd> + <kbd>I</kbd>，输入指令 `create a new table t with id and name`，然后按 **Enter**，让 AI 自动生成相应的 SQL 语句。
 
@@ -150,4 +150,4 @@ MySQL CLI 客户端将打开并连接到你的 TiDB Cloud Starter 实例。
 - 了解如何使用 SQL Editor 和 Chat2Query 探索你的数据，请参见 [Explore your data with AI-assisted SQL Editor](/tidb-cloud/explore-data-with-chat2query.md)。
 - 了解 TiDB SQL 的使用方法，请参见 [Explore SQL with TiDB](/basic-sql-operations.md)。
 - 若需生产环境使用，享受跨可用区高可用、水平扩展和 [HTAP](https://en.wikipedia.org/wiki/Hybrid_transactional/analytical_processing) 等优势，请参见 [Create a TiDB Cloud Dedicated cluster](/tidb-cloud/create-tidb-cluster.md)。
-- 如需使用 TiDB Cloud CLI 管理你的实例，请参见 [TiDB Cloud CLI Reference (Beta)](/tidb-cloud/cli-reference.md)。
+- 如需使用 TiDB Cloud CLI 管理你的实例，请参见 [TiDB Cloud CLI Reference (PREVIEW)](/tidb-cloud/cli-reference.md)。

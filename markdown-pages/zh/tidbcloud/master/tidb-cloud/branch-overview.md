@@ -1,9 +1,9 @@
 ---
-title: TiDB Cloud Branching (Beta) Overview
+title: TiDB Cloud Branching (PREVIEW) Overview
 summary: 了解 TiDB Cloud 分支的概念。
 ---
 
-# TiDB Cloud Branching（Beta）概述
+# TiDB Cloud Branching（PREVIEW）概述
 
 TiDB Cloud 允许你为 TiDB Cloud Starter 实例创建分支。TiDB Cloud Starter 实例的分支是一个独立的实例，包含从原始 TiDB Cloud Starter 实例分叉出来的数据副本。它提供了一个隔离的环境，使你可以自由地进行实验，而无需担心影响原始 TiDB Cloud Starter 实例。
 
@@ -11,7 +11,7 @@ TiDB Cloud 允许你为 TiDB Cloud Starter 实例创建分支。TiDB Cloud Start
 
 > **注意：**
 >
-> 目前，TiDB Cloud Branching 处于 beta 阶段，且暂不支持 TiDB Cloud Dedicated 集群。
+> 目前，TiDB Cloud Branching 处于公开预览阶段，且暂不支持 TiDB Cloud Dedicated 集群。
 
 ## 实现方式
 
@@ -37,7 +37,7 @@ TiDB Cloud 允许你为 TiDB Cloud Starter 实例创建分支。TiDB Cloud Start
 
 ## 限制与配额
 
-目前，TiDB Cloud 分支处于 beta 阶段，且免费使用。
+目前，TiDB Cloud 分支处于公开预览阶段。
 
 - 对于 TiDB Cloud 中的每个组织，默认最多可在所有 TiDB Cloud Starter 实例下创建 5 个分支。TiDB Cloud 会在与 TiDB Cloud Starter 实例相同的 region 创建分支，且无法为受限或大于 100 GiB 的 TiDB Cloud Starter 实例创建分支。
 
