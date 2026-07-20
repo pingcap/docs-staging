@@ -13,7 +13,7 @@ In the [TiDB Cloud console](https://tidbcloud.com/), you can discover, access, a
 
 A TiDB Cloud resource is a deployable unit that you can manage. It can be one of the following:
 
-- A TiDB X instance, which is a service-oriented TiDB Cloud offering built on the [TiDB X architecture](/tidb-cloud/tidb-x-architecture.md), such as a TiDB Cloud Starter, Essential, or Premium instance
+- A TiDB X instance, which is a service-oriented TiDB Cloud offering built on the [TiDB X architecture](/tidb-cloud/tidb-x-architecture.md), such as a TiDB Cloud Starter, Essential, Premium<CustomContent plan="byoc">, or BYOC</CustomContent> instance
 - A TiDB Cloud Dedicated cluster
 
 ### TiDB Cloud projects
@@ -44,6 +44,12 @@ For more information, see the following documents:
 - [Create a TiDB Cloud Starter or Essential Instance](/tidb-cloud/create-tidb-cluster-serverless.md)
 
 - [Create a TiDB Cloud Premium Instance](/tidb-cloud/premium/create-tidb-instance-premium.md)
+
+<CustomContent plan="byoc">
+
+- [Create a TiDB Cloud BYOC Instance](/tidb-cloud/byoc/create-tidb-instance-byoc.md)
+
+</CustomContent>
 
 - [Create a TiDB Cloud Dedicated Cluster](/tidb-cloud/create-tidb-cluster.md)
 
@@ -94,9 +100,22 @@ To create a new project, take the following steps:
 
     - If the project is created for TiDB X instances, click **Confirm**.
 
+        <CustomContent plan="starter,essential,premium,dedicated">
+
         > **Note:**
         >
         > For TiDB Cloud Premium instances, encryption is configured per instance rather than per project. After you create the instance, you can enable [Dual-Layer Data Encryption](/tidb-cloud/premium/dual-layer-data-encryption-premium.md) to add a database-layer encryption on top of the default storage-layer encryption.
+
+        </CustomContent>
+
+        <CustomContent plan="byoc">
+
+        > **Note:**
+        >
+        > - For TiDB Cloud BYOC instances, projects are optional. The data plane runs in your own cloud account, and BYOC environment-level settings are configured during BYOC onboarding.
+        > - For TiDB Cloud Premium instances, encryption is configured per instance rather than per project. After you create the instance, you can enable [Dual-Layer Data Encryption](/tidb-cloud/premium/dual-layer-data-encryption-premium.md) to add a database-layer encryption on top of the default storage-layer encryption.
+
+        </CustomContent>
 
     - If the project is created for TiDB Cloud Dedicated clusters, select the **Create for Dedicated Cluster** option, configure [Customer-Managed Encryption Keys (CMEK)](/tidb-cloud/tidb-cloud-encrypt-cmek-aws.md) and [maintenance window](/tidb-cloud/configure-maintenance-window.md) for the project, and then click **Confirm**.
 

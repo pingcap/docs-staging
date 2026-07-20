@@ -40,7 +40,7 @@
   - [Security Hardening](/tidb-cloud/byoc/security-hardening.md)
   - [Multi-Region Deployment](/tidb-cloud/byoc/multi-region-deployment.md)
 - Manage Instances
-  - [Create a TiDB Cloud Premium Instance](/tidb-cloud/premium/create-tidb-instance-premium.md)
+  - [Create a TiDB Cloud BYOC Instance](/tidb-cloud/byoc/create-tidb-instance-byoc.md)
   - Connect to Your TiDB Cloud Premium Instance
     - [Connection Overview](/tidb-cloud/premium/connect-to-tidb-instance.md)
     - [Connect via Public Endpoint](/tidb-cloud/premium/connect-to-premium-via-public-connection.md)
