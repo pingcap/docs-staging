@@ -10,15 +10,24 @@ The plan determines the throughput and performance of your TiDB resource.
 
 TiDB Cloud provides the following options of plans. Whether you are just getting started or scaling to meet the increasing application demands, these service plans provide the flexibility and capability you need. Before creating a TiDB resource, you need to consider which option suits your need better.
 
+<CustomContent plan="starter,essential,premium,dedicated">
+
 - [TiDB Cloud Starter](#starter)
 - [TiDB Cloud Essential](#essential)
 - [TiDB Cloud Premium](#premium)
+- [TiDB Cloud Dedicated](#tidb-cloud-dedicated)
 
-<CustomContent plan="byoc">
-- [TiDB Cloud BYOC](#byoc)
 </CustomContent>
 
+<CustomContent plan="byoc">
+
+- [TiDB Cloud Starter](#starter)
+- [TiDB Cloud Essential](#essential)
+- [TiDB Cloud Premium](#premium)
+- [TiDB Cloud BYOC](#byoc)
 - [TiDB Cloud Dedicated](#tidb-cloud-dedicated)
+
+</CustomContent>
 
 > **Note:**
 >
@@ -59,7 +68,7 @@ For each paid organization in TiDB Cloud, you can create up to 100 TiDB Cloud St
 
 For paid organizations building agent platforms or other services that require a large number of instances and branches, TiDB Cloud offers the **Instance Capacity Plan**. With this plan, each paid TiDB Cloud organization can create more than five branches and is not subject to the limit of 100 TiDB Cloud Starter instances and branches. To learn more and apply for the Instance Capacity Plan, fill out the [application form](https://www.pingcap.com/programs/agentic-ai-instance-capacity).
 
-You will receive an email notification once your application for the TiDB Cloud Instance Capacity Plan is approved. 
+You will receive an email notification once your application for the TiDB Cloud Instance Capacity Plan is approved.
 
 ## TiDB Cloud Essential {#essential}
 
