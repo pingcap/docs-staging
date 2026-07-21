@@ -12,6 +12,7 @@ TiDB Cloud Lake provides several table engines so that you can balance performan
 | Engine | Best For | Highlights |
 | ------ | -------- | ---------- |
 | [Fuse Engine Tables](/tidb-cloud-lake/sql/fuse-engine-tables.md) | Native TiDB Cloud Lake tables | Snapshot-based storage, automatic clustering, change tracking |
+| [Apache Iceberg™ Tables](/tidb-cloud-lake/sql/apache-icebergtm-tables.md) | Lakehouse catalogs | Time-travel, schema evolution, REST/Hive/Storage catalogs |
 | [Apache Hive Tables](/tidb-cloud-lake/sql/apache-hive-tables.md) | Hive metastore data | Query Hive-managed data stores through external tables |
 | [Delta Lake Engine](/tidb-cloud-lake/sql/delta-lake-engine.md) | Delta Lake datasets | Read Delta tables in object storage with ACID guarantees |
 
