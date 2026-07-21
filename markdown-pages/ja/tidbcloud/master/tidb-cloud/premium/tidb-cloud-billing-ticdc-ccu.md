@@ -32,7 +32,7 @@ TiDB Cloud Essential と Premium は、TiCDC Changefeed Capacity Unit (CCU) の[
 | 320のCCU       | 80万行/秒         |
 | 384のCCU       | 96万行/秒         |
 
-> **注記：**
+> **Note:**
 >
 > 上記のパフォーマンスデータは参考値であり、状況によって異なる場合があります。本番環境でchangefeed機能を使用する前に、実際のワークロードテストを実施することを強くお勧めします。さらにサポートが必要な場合は、 [TiDB Cloudサポート](/tidb-cloud/tidb-cloud-support.md)にお問い合わせください。
 
