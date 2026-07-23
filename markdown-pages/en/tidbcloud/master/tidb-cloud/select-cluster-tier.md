@@ -16,6 +16,7 @@ TiDB Cloud provides the following options of plans. Whether you are just getting
 - [TiDB Cloud Essential](#essential)
 - [TiDB Cloud Premium](#premium)
 - [TiDB Cloud Dedicated](#tidb-cloud-dedicated)
+- [TiDB Cloud Lake](#lake)
 
 </CustomContent>
 
@@ -26,6 +27,7 @@ TiDB Cloud provides the following options of plans. Whether you are just getting
 - [TiDB Cloud Premium](#premium)
 - [TiDB Cloud BYOC](#byoc)
 - [TiDB Cloud Dedicated](#tidb-cloud-dedicated)
+- [TiDB Cloud Lake](#lake)
 
 </CustomContent>
 
@@ -146,3 +148,11 @@ To create a TiDB Cloud Dedicated cluster, you need to [add a payment method](/ti
 > **Note:**
 >
 > You cannot decrease the node storage after your TiDB Cloud Dedicated cluster is created.
+
+## TiDB Cloud Lake {#lake}
+
+TiDB Cloud Lake is a cloud-native data warehouse service for analytics workloads. It separates compute and storage, allowing you to provision warehouses independently, scale with workload changes, and store data cost-effectively in object storage.
+
+TiDB Cloud Lake supports ANSI SQL, semi-structured data processing, vector search, and AI-oriented workflows in one platform. It is designed for teams that want a managed analytics experience without operating the underlying infrastructure themselves.
+
+See [TiDB Cloud Lake Overview](https://docs.pingcap.com/tidbcloudlake/lake-overview/) and [TiDB Cloud Lake Quick Start](https://docs.pingcap.com/tidbcloudlake/lake-quick-start/).
