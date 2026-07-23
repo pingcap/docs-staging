@@ -25,6 +25,14 @@ For TiDB Cloud Essential, you are charged based on the number of provisioned Req
 
 For TiDB Cloud Premium, you are billed based on the actual [Request Capacity Unit (RCU)](/tidb-cloud/tidb-cloud-glossary.md#request-capacity-unit-rcu) consumption and the storage that you actually use, rather than the underlying backend nodes or provisioned disk size. See [TiDB Cloud Premium Pricing Details](https://www.pingcap.com/tidb-cloud-premium-pricing-details/).
 
+<CustomContent plan="byoc">
+
+### Pricing for TiDB Cloud BYOC {#pricing-for-byoc}
+
+For pricing information about TiDB Cloud BYOC, contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md).
+
+</CustomContent>
+
 ### Pricing for TiDB Cloud Lake {#pricing-for-lake}
 
 For TiDB Cloud Lake, your costs consist of warehouse, storage, and cloud service fees. For details, see [TiDB Cloud Lake Pricing & Billing](https://docs.pingcap.com/tidbcloudlake/pricing-billing/).
