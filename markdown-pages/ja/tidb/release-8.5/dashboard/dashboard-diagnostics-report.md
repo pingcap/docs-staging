@@ -208,7 +208,7 @@ TiDBには自動診断結果が組み込まれています。各フィールド�
 
 #### 各コンポーネントでエラーが発生しました {#errors-occurred-in-each-component}
 
-表`Errors Occurred in Each Component`は、TiDBとTiKVにおけるエラーの総数を示しています。binlogへのbinlog失敗、 `tikv server is busy`などです。各エラーの具体的な意味については`TiKV channel full`行のコメント`tikv write stall`参照してください。
+表`Errors Occurred in Each Component`は、TiDBとTiKVにおけるエラーの総数を示しています。binlogへのbinlog失敗、 `tikv server is busy`などです。各エラーの具体的な意味については`TiKV channel full`行のコメント`tikv write stall`を参照してください。
 
 ![Errors Occurred in Each Component report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-error.png)
 
@@ -363,6 +363,6 @@ TiKV モジュールの監視情報に関連するテーブルは次のとおり
 -   `Table` : この監視メトリックが比較レポート内のどのテーブルから取得されるかを示します。たとえば、 `TiKV, coprocessor_info` TiKVコンポーネントの`coprocessor_info`のテーブルを示します。
 -   `METRIC_NAME` : 監視メトリック名。2 `expand`クリックすると、メトリックの異なるラベルの比較が表示されます。
 -   `LABEL` : 監視メトリックに対応するラベル。例えば、監視メトリック`TiKV Coprocessor scan`には、TiKVアドレス、リクエストタイプ、操作タイプ、操作カラムファミリーを表す2つのラベル（ `instance` 、 `req` 、 `tag` 、 `sql_type` ）があります。
--   `MAX_DIFF` : `t1.VALUE`と`t2.VALUE`の`DIFF_RATIO`計算した結果の差の値。
+-   `MAX_DIFF` : `t1.VALUE`と`t2.VALUE`の`DIFF_RATIO`を計算した結果の差の値。
 
 上記の表から、 `t2`時間範囲では`t1`時間範囲よりもコプロセッサー要求がはるかに多く、 `t2`の TiDB の SQL 解析時間が大幅に長くなっていることがわかります。
