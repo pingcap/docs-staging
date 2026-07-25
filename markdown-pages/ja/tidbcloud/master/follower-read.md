@@ -113,7 +113,7 @@ Follower Read には、TiKV 読み取りリクエストをリーダーレプリ�
 
 ### 強力な一貫性のある読み取り {#strongly-consistent-reads}
 
-フォロワーノードが読み取り要求を処理する際、まずRaftプロトコルの`ReadIndex`使用してリージョンのリーダーとやり取りし、現在のRaftグループの最新のコミットインデックスを取得します。リーダーの最新のコミットインデックスがフォロワーにローカルに適用された後、読み取り要求の処理が開始されます。
+フォロワーノードが読み取り要求を処理する際、まずRaftプロトコルの`ReadIndex`を使用してリージョンのリーダーとやり取りし、現在のRaftグループの最新のコミットインデックスを取得します。リーダーの最新のコミットインデックスがフォロワーにローカルに適用された後、読み取り要求の処理が開始されます。
 
 ![read-index-flow](https://docs-download.pingcap.com/media/images/docs/follower-read/read-index.png)
 
