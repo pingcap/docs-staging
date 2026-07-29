@@ -89,7 +89,7 @@ Query OK, 1 row affected (0.02 sec)
 
 
 ```sql
-CREATE USER 'newuser4'@'%' IDENTIFIED BY 'newuserpassword' REQUIRE ISSUER '/C=US/ST=California/L=San Francisco/O=PingCAP';
+CREATE USER 'newuser4'@'%' IDENTIFIED BY 'newuserpassword' REQUIRE ISSUER '/C=US/ST=California/L=San Francisco/O=Example Inc.';
 ```
 
 ```
@@ -126,7 +126,7 @@ SELECT * FROM information_schema.user_attributes;
 创建一个具有邮箱 (`email`) 属性的用户。
 
 ```sql
-CREATE USER 'newuser7'@'%' ATTRIBUTE '{"email": "user@pingcap.com"}';
+CREATE USER 'newuser7'@'%' ATTRIBUTE '{"email": "user@example.com"}';
 SELECT * FROM information_schema.user_attributes;
 ```
 
@@ -134,7 +134,7 @@ SELECT * FROM information_schema.user_attributes;
 +-----------+------+---------------------------------------------------+
 | USER      | HOST | ATTRIBUTE                                         |
 +-----------+------+---------------------------------------------------+
-| newuser7  | %    | {"email": "user@pingcap.com"} |
+| newuser7  | %    | {"email": "user@example.com"} |
 +-----------+------+---------------------------------------------------+
 1 rows in set (0.00 sec)
 ```
