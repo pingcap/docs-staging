@@ -81,7 +81,7 @@ TiDB Cloud Dedicated の場合、クライアントはパブリック エンド�
 
 ## AWS DMS レプリケーションインスタンスを作成する {#create-an-aws-dms-replication-instance}
 
-1.  AWS DMSコンソールの[**レプリケーションインスタンス**](https://console.aws.amazon.com/dms/v2/home#replicationInstances)ページ目に移動し、対応するリージョンに切り替えます。AWS DMSでは、 TiDB Cloudと同じリージョンを使用することをお勧めします。
+1.  AWS DMSコンソールの[**レプリケーションインスタンス**](https://console.aws.amazon.com/dms/v2/home#replicationInstances)ページに移動し、対応するリージョンに切り替えます。AWS DMSでは、 TiDB Cloudと同じリージョンを使用することをお勧めします。
 
     ![Create replication instance](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-tidb-cloud/aws-dms-connect-replication-instances.png)
 
