@@ -13,7 +13,7 @@ TiDB Dashboardにログインし、左側のナビゲーションバーから**�
 
 ![Monitoring page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-monitoring.png)
 
-TiDBクラスターをTiUPを使用してデプロイした場合、Grafanaでパフォーマンス概要ダッシュボードを表示することもできます。このデプロイメントモードでは、監視システム（PrometheusとGrafana）も同時にデプロイされます。詳細については、 [TiDB 監視フレームワークの概要](/tidb-monitoring-framework.md)参照してください。
+TiDBクラスターをTiUPを使用してデプロイした場合、Grafanaでパフォーマンス概要ダッシュボードを表示することもできます。このデプロイメントモードでは、監視システム（PrometheusとGrafana）も同時にデプロイされます。詳細については、 [TiDB 監視フレームワークの概要](/tidb-monitoring-framework.md)を参照してください。
 
 ![performance overview](https://docs-download.pingcap.com/media/images/docs/performance/grafana_performance_overview.png)
 

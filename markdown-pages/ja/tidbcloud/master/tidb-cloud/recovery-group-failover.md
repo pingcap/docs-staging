@@ -13,7 +13,7 @@ summary: TiDB Cloudクラスタ間でデータベースのフェイルオーバ�
 
 ## 前提条件 {#prerequisites}
 
-フェールオーバーを実行する前に、リカバリグループが作成され、セカンダリ クラスターに正常にレプリケートされている必要があります。詳細については、 [回復支援グループに参加してみましょう](/tidb-cloud/recovery-group-get-started.md)参照してください。
+フェールオーバーを実行する前に、リカバリグループが作成され、セカンダリ クラスターに正常にレプリケートされている必要があります。詳細については、 [回復支援グループに参加してみましょう](/tidb-cloud/recovery-group-get-started.md)を参照してください。
 
 ![Protected Recovery Group](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/recovery-group/recovery-group-protected.png)
 
