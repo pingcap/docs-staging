@@ -9,7 +9,7 @@ TiDB Dashboardは、TiDBクラスターの監視、診断、管理のためのWe
 
 > **Note:**
 >
-> TiDB v6.5.0以降およびTiDB Operator v1.4.0以降では、TiDB DashboardをKubernetes上の独立したPodとしてデプロイできます。詳細については、 [TiDB DashboardをTiDB Operatorで独立してデプロイ](https://docs.pingcap.com/tidb-in-kubernetes/v1.6/get-started#deploy-tidb-dashboard-independently)参照してください。
+> TiDB v6.5.0以降およびTiDB Operator v1.4.0以降では、TiDB DashboardをKubernetes上の独立したPodとしてデプロイできます。詳細については、 [TiDB DashboardをTiDB Operatorで独立してデプロイ](https://docs.pingcap.com/tidb-in-kubernetes/v1.6/get-started#deploy-tidb-dashboard-independently)を参照してください。
 
 ![TiDB Dashboard interface](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-intro.gif)
 
@@ -63,7 +63,7 @@ TiDB Dashboardの [ログの検索] ページでは、クラスター内で実�
 
 [リソース管理](/tidb-resource-control-ru-groups.md)機能を使用してリソース分離を実装するには、クラスター管理者がリソース グループを作成し、各グループにクォータを設定できます。
 
-リソース計画を立てる前に、クラスター全体の容量を把握しておく必要があります。詳細については、 [リソースマネージャーページ](/dashboard/dashboard-resource-manager.md)参照してください。
+リソース計画を立てる前に、クラスター全体の容量を把握しておく必要があります。詳細については、 [リソースマネージャーページ](/dashboard/dashboard-resource-manager.md)を参照してください。
 
 ## 各インスタンスのプロファイリングデータを収集する {#collect-profiling-data-for-each-instance}
 

@@ -50,7 +50,7 @@ PostgreSQL、Oracle、SQL Serverなどの異種データベースからTiDB Clou
 
 [AWSコンソール](https://console.aws.amazon.com/vpc/home#vpcs:)にログインし、AWS VPCを作成してください。後でこのVPC内にOracle RDSおよびDMSインスタンスを作成する必要があります。
 
-VPC の作成方法については、 [VPCの作成](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html#Create-VPC)参照してください。
+VPC の作成方法については、 [VPCの作成](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html#Create-VPC)を参照してください。
 
 ![Create VPC](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/aws-dms-from-oracle-to-tidb-1.png)
 
@@ -113,15 +113,15 @@ SQLスクリプトの実行が完了したら、Oracleのデータを確認し�
 
 > **Note:**
 >
-> TiDB Cloud Starter DMS エンドポイントを作成する詳細な手順については、 [AWS DMSをTiDB Cloudに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)参照してください。
+> TiDB Cloud Starter DMS エンドポイントを作成する詳細な手順については、 [AWS DMSをTiDB Cloudに接続する](/tidb-cloud/tidb-cloud-connect-aws-dms.md)を参照してください。
 
 ## ステップ7．スキーマを移行する {#step-7-migrate-the-schema}
 
 この例では、スキーマ定義が単純なため、AWS DMS がスキーマを自動的に処理します。
 
-AWS Schema Conversion Tool を使用してスキーマを移行する場合は、 [AWS SCTのインストール](https://docs.aws.amazon.com/SchemaConversionTool/latest/userguide/CHAP_Installing.html#CHAP_Installing.Procedure)参照してください。
+AWS Schema Conversion Tool を使用してスキーマを移行する場合は、 [AWS SCTのインストール](https://docs.aws.amazon.com/SchemaConversionTool/latest/userguide/CHAP_Installing.html#CHAP_Installing.Procedure)を参照してください。
 
-詳細については、 [AWS SCTを使用してソーススキーマをターゲットデータベースに移行する](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_GettingStarted.SCT.html)参照してください。
+詳細については、 [AWS SCTを使用してソーススキーマをターゲットデータベースに移行する](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_GettingStarted.SCT.html)を参照してください。
 
 ## ステップ8. データベース移行タスクを作成する {#step-8-create-a-database-migration-task}
 

@@ -8,7 +8,7 @@ aliases: ['/ja/tidb/stable/dev-guide-playground-gitpod/','/ja/tidbcloud/dev-guid
 
 # GitPod {#gitpod}
 
-[GitPod](https://www.gitpod.io/)使用すると、ボタンまたはリンクをクリックするだけでブラウザ内で完全な開発環境が得られ、すぐにコードを記述できます。
+[GitPod](https://www.gitpod.io/)を使用すると、ボタンまたはリンクをクリックするだけでブラウザ内で完全な開発環境が得られ、すぐにコードを記述できます。
 
 Gitpodは、コードを直接記述する開発環境向けのオープンソースKubernetesアプリケーション（GitHubリポジトリアドレス： [https://github.com/gitpod-io/gitpod](https://github.com/gitpod-io/gitpod) ）です。クラウド上で、タスクごとに最新の自動化開発環境を数秒で構築します。開発環境をコードとして記述し、ブラウザまたはデスクトップIDEから直接、リモートおよびクラウドベースの開発環境を即座に開始できます。
 
@@ -34,7 +34,7 @@ Gitpodは、コードを直接記述する開発環境向けのオープンソ�
 
 ![playground gitpod workspace init](https://docs-download.pingcap.com/media/images/docs/develop/playground-gitpod-workspace-init.png)
 
-このページのシナリオでは、 [TiUP](https://docs.pingcap.com/tidb/stable/tiup-overview)使用してTiDB Playgroundを構築します。ターミナル領域の左側で進行状況を確認できます。
+このページのシナリオでは、 [TiUP](https://docs.pingcap.com/tidb/stable/tiup-overview)を使用してTiDB Playgroundを構築します。ターミナル領域の左側で進行状況を確認できます。
 
 TiDB Playground の準備が完了すると、さらに`Spring JPA Hibernate`タスクが実行されます。進行状況はターミナル領域の右側で確認できます。
 

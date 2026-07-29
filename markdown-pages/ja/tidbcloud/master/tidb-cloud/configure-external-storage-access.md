@@ -8,7 +8,7 @@ aliases: ['/ja/tidbcloud/serverless-external-storage']
 
 TiDB Cloud Starter、 Essential 、またはPremiumインスタンスで外部ストレージからデータをインポートしたり、外部ストレージにデータをエクスポートしたりするには、アカウント間アクセスを設定する必要があります。このドキュメントでは、TiDB Cloud Starter、 TiDB Cloud Essential、およびTiDB Cloud Premiumインスタンスで外部ストレージへのアクセスを設定する方法について説明します。
 
-TiDB Cloud Dedicatedクラスター用にこれらの外部ストレージを構成する必要がある場合は、 [TiDB Cloud Dedicatedの外部ストレージアクセスを構成する](/tidb-cloud/dedicated-external-storage.md)参照してください。
+TiDB Cloud Dedicatedクラスター用にこれらの外部ストレージを構成する必要がある場合は、 [TiDB Cloud Dedicatedの外部ストレージアクセスを構成する](/tidb-cloud/dedicated-external-storage.md)を参照してください。
 
 ## Amazon S3へのアクセスを設定する {#configure-amazon-s3-access}
 
@@ -19,7 +19,7 @@ TiDB Cloud Starter、 Essential、またはPremiumインスタンスがAmazon S3
 
 ### ロールARNを使用してAmazon S3へのアクセスを設定する {#configure-amazon-s3-access-using-a-role-arn}
 
-ロールARNの作成には[AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)使用することをお勧めします。作成するには、以下の手順に従ってください。
+ロールARNの作成には[AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)を使用することをお勧めします。作成するには、以下の手順に従ってください。
 
 > **Note:**
 >
@@ -180,11 +180,11 @@ AWS CloudFormationでロールARNを作成する際に問題が発生した場�
 
 アクセスキーを設定するには、以下の手順に従ってください。
 
-1.  IAMユーザーを作成します。詳細については、 [IAMユーザーの作成](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console)参照してください。
+1.  IAMユーザーを作成します。詳細については、 [IAMユーザーの作成](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console)を参照してください。
 
 2.  AWSアカウントIDまたはアカウントエイリアス、およびIAMユーザー名とパスワードを使用して[IAMコンソール](https://console.aws.amazon.com/iam)にサインインしてください。
 
-3.  アクセスキーを作成します。詳細については、 [IAMユーザーのアクセスキーを作成する](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey)参照してください。
+3.  アクセスキーを作成します。詳細については、 [IAMユーザーのアクセスキーを作成する](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey)を参照してください。
 
 > **Note:**
 >
@@ -198,7 +198,7 @@ TiDB Cloud StarterまたはEssentialインスタンスがGCSバケットにア�
 
 サービスアカウントキーを設定するには、以下の手順に従ってください。
 
-1.  Google Cloud サービス[サービスアカウントページ](https://console.cloud.google.com/iam-admin/serviceaccounts)ページで、 **[サービス アカウントの作成]**をクリックしてサービス アカウントを作成します。詳細については、 [サービスアカウントの作成](https://cloud.google.com/iam/docs/creating-managing-service-accounts)参照してください。
+1.  Google Cloud サービス[サービスアカウントページ](https://console.cloud.google.com/iam-admin/serviceaccounts)ページで、 **[サービス アカウントの作成]**をクリックしてサービス アカウントを作成します。詳細については、 [サービスアカウントの作成](https://cloud.google.com/iam/docs/creating-managing-service-accounts)を参照してください。
 
     1.  サービスアカウント名を入力してください。
 
@@ -294,7 +294,7 @@ Azure ARMテンプレートを使用してSASトークンを作成する際に�
 
     ![sas-position](https://docs-download.pingcap.com/media/images/docs/tidb-cloud/serverless-external-storage/azure-sas-position.png)
 
-3.  **[共有アクセス署名]**ページで、次のように必要なアクセス許可を持つサービス SAS トークンを作成します。詳細については、 [サービスSASトークンを作成します](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview)参照してください。
+3.  **[共有アクセス署名]**ページで、次のように必要なアクセス許可を持つサービス SAS トークンを作成します。詳細については、 [サービスSASトークンを作成します](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview)を参照してください。
 
     1.  **「許可されたサービス」**セクションで、 **「Blob」**サービスを選択します。
 
@@ -323,11 +323,11 @@ TiDB CloudがAlibaba Cloud OSSバケットにアクセスできるようにす�
 
 アクセスキーペアを設定するには、以下の手順に従ってください。
 
-1.  RAM ユーザーを作成し、AccessKey ペアを取得します。詳細については、 [RAMユーザーを作成する](https://www.alibabacloud.com/help/en/ram/user-guide/create-a-ram-user)参照してください。
+1.  RAM ユーザーを作成し、AccessKey ペアを取得します。詳細については、 [RAMユーザーを作成する](https://www.alibabacloud.com/help/en/ram/user-guide/create-a-ram-user)を参照してください。
 
     **アクセスモードの**セクションで、 **「永続的なアクセスキーを使用してアクセスする」を**選択します。
 
-2.  必要な権限を持つカスタム ポリシーを作成します。詳細については、 [カスタムポリシーを作成する](https://www.alibabacloud.com/help/en/ram/user-guide/create-a-custom-policy)参照してください。
+2.  必要な権限を持つカスタム ポリシーを作成します。詳細については、 [カスタムポリシーを作成する](https://www.alibabacloud.com/help/en/ram/user-guide/create-a-custom-policy)を参照してください。
 
     -   **「効果」**セクションで**「許可」**を選択します。
 
@@ -341,4 +341,4 @@ TiDB CloudがAlibaba Cloud OSSバケットにアクセスできるようにす�
 
     -   **リソース**セクションで、バケットとバケット内のオブジェクトを選択します。
 
-3.  カスタム ポリシーを RAM ユーザーにアタッチします。詳細については、 [RAMユーザーに権限を付与する](https://www.alibabacloud.com/help/en/ram/user-guide/grant-permissions-to-the-ram-user)参照してください。
+3.  カスタム ポリシーを RAM ユーザーにアタッチします。詳細については、 [RAMユーザーに権限を付与する](https://www.alibabacloud.com/help/en/ram/user-guide/grant-permissions-to-the-ram-user)を参照してください。
