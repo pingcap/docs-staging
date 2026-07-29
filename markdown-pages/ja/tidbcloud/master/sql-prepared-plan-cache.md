@@ -280,7 +280,7 @@ MySQL [test]> select @@last_plan_from_cache; -- The cached plan cannot be select
 1 row in set (0.00 sec)
 ```
 
-現在、TiDBは`GLOBAL`実行計画キャッシュのクリアをサポートしていません。つまり、TiDBクラスタ全体のキャッシュされた計画をクリアすることはできません。3 `GLOBAL`実行計画キャッシュをクリアしようとすると、以下のエラーが報告されます。
+現在、TiDBは`GLOBAL`実行計画キャッシュのクリアをサポートしていません。つまり、TiDBクラスタ全体のキャッシュされた計画をクリアすることはできません。`GLOBAL`実行計画キャッシュをクリアしようとすると、以下のエラーが報告されます。
 
 ```sql
 MySQL [test]> admin flush global plan_cache;
@@ -354,6 +354,6 @@ TiDBページの**Executor**セクションの[Grafanaダッシュボード](/gr
 
 <CustomContent platform="tidb-cloud">
 
-[TiDB Cloudコンソール](https://tidbcloud.com/)の[**監視**](/tidb-cloud/built-in-monitoring.md)ページ目で`Queries Using Plan Cache OPS`メトリックをチェックして、すべての TiDB インスタンスで 1 秒あたりにプラン キャッシュを使用している、またはプラン キャッシュがないクエリの数を取得できます。
+[TiDB Cloudコンソール](https://tidbcloud.com/)の[**監視**](/tidb-cloud/built-in-monitoring.md)ページで`Queries Using Plan Cache OPS`メトリックをチェックして、すべての TiDB インスタンスで 1 秒あたりにプランキャッシュを使用している、またはプランキャッシュがないクエリの数を取得できます。
 
 </CustomContent>
