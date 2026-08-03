@@ -473,7 +473,7 @@ TiDB Cloud Dedicated クラスターの場合、Terraform を使用して次の�
 
 ### TiFlashコンポーネントを追加する {#add-a-tiflash-component}
 
-1.  [クラスターを作成する](#create-a-cluster-using-the-cluster-resource)実行するときに使用する`cluster.tf`ファイルで、 `tiflash`構成を`components`フィールドに追加します。
+1.  [クラスターを作成する](#create-a-cluster-using-the-cluster-resource)を実行するときに使用する`cluster.tf`ファイルで、 `tiflash`構成を`components`フィールドに追加します。
 
     例えば：
 
@@ -669,7 +669,7 @@ TiDB Cloud Dedicated クラスターの場合、Terraform を使用して次の�
 -   クラスターを一時停止するには`paused = true`設定します。
 -   クラスターを再開するには`paused = false`設定します。
 
-1.  [クラスターを作成する](#create-a-cluster-using-the-cluster-resource)実行するときに使用する`cluster.tf`ファイルで、 `config`構成に`pause = true`追加します。
+1.  [クラスターを作成する](#create-a-cluster-using-the-cluster-resource)を実行するときに使用する`cluster.tf`ファイルで、 `config`構成に`pause = true`を追加します。
 
         config = {
             paused = true
@@ -762,7 +762,7 @@ TiDB Cloud Dedicated クラスターの場合、Terraform を使用して次の�
             ...
           }
 
-5.  `terraform apply`コマンドを実行し、確認のために`yes`入力します。5 コマンドでステータスを確認すると、 `RESUMING`になっていること`terraform state show tidbcloud_cluster.${resource-name}`わかります。
+5.  `terraform apply`コマンドを実行し、確認のために`yes`を入力します。 `terraform state show tidbcloud_cluster.${resource-name}`コマンドでステータスを確認すると、 `RESUMING`になっていることがわかります。
 
         # tidbcloud_cluster.example_cluster:
         resource "tidbcloud_cluster" "example_cluster" {

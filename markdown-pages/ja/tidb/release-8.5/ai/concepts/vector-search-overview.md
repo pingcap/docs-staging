@@ -43,7 +43,7 @@ TiDB は、ベクトル埋め込みのstorageと検索を最適化するよう�
 
 生データをベクトル埋め込みに変換してTiDBに保存した後、アプリケーションはベクトル検索クエリを実行して、ユーザーのクエリに対して意味的または文脈的に最も関連性の高いデータを見つけることができます。
 
-TiDBベクトル検索は、 [距離関数](/ai/reference/vector-search-functions-and-operators.md)指定されたベクトルとデータベースに格納されているベクトル間の距離を計算するために用いられます。クエリで指定されたベクトルに最も近いベクトルは、意味的に最も類似したデータを表します。
+TiDBベクトル検索は、 [距離関数](/ai/reference/vector-search-functions-and-operators.md)が指定されたベクトルとデータベースに格納されているベクトル間の距離を計算するために用いられます。クエリで指定されたベクトルに最も近いベクトルは、意味的に最も類似したデータを表します。
 
 ![The Schematic TiDB Vector Search](https://docs-download.pingcap.com/media/images/docs/vector-search/embedding-search.png)
 
