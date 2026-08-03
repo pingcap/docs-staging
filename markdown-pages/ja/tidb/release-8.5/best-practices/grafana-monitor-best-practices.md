@@ -73,7 +73,7 @@ Prometheusは多くのクエリ式と関数をサポートしています。詳�
 
 ![Edit query expression and check all dimensions](https://docs-download.pingcap.com/media/images/docs/best-practices/edit-expression-check-dimensions.jpg)
 
-次に、クエリ式を修正し、 `type`後に`instance`ディメンションを追加し、 `Legend format`フィールドに`{{instance}}`追加します。これにより、各TiDBサーバーで実行される様々な種類のSQL文のQPSを確認できます。
+次に、クエリ式を修正し、 `type`の後に`instance`ディメンションを追加し、 `Legend format`フィールドに`{{instance}}`を追加します。これにより、各TiDBサーバーで実行される様々な種類のSQL文のQPSを確認できます。
 
 ![Add an instance dimension to the query expression](https://docs-download.pingcap.com/media/images/docs/best-practices/add-instance-dimension.jpeg)
 
