@@ -142,7 +142,7 @@ MySQLで培った多くの経験は、TiDBにも応用できます。ただし�
 
 ### デプロイメント {#deployment}
 
-導入の前に、 [TiDBのソフトウェアおよびハードウェア要件](/hardware-and-software-requirements.md)をお読みください。
+デプロイの前に、 [TiDBのソフトウェアおよびハードウェア要件](/hardware-and-software-requirements.md)をお読みください。
 
 TiDBクラスタのデプロイには[TiUP](/production-deployment-using-tiup.md)の使用をお勧めします。このツールを使えば、クラスタ全体のデプロイ、停止、削除、アップグレードが可能で、非常に便利です。TiDBクラスタを手動でデプロイすることは、後々の保守やアップグレードが困難になる可能性があるため、お勧めしません。
 
@@ -150,7 +150,7 @@ TiDBクラスタのデプロイには[TiUP](/production-deployment-using-tiup.md
 
 インポート プロセス中の書き込みパフォーマンスを向上させるには、 [TiKVメモリパラメータのパフォーマンスを調整する](/tune-tikv-memory-performance.md)。
 
-### 書く {#write}
+### 書き込み {#write}
 
 前述のとおり、TiDBはキーバリューレイヤーにおける単一トランザクションのサイズを制限しています。SQLレイヤーに関しては、データ行がキーバリューエントリにマッピングされます。インデックスを追加するごとに、キーバリューエントリが1つ追加されます。
 
@@ -158,7 +158,7 @@ TiDBクラスタのデプロイには[TiUP](/production-deployment-using-tiup.md
 >
 > トランザクションのサイズ制限を設定する際には、TiDBエンコーディングのオーバーヘッドと追加のトランザクションキーを考慮する必要があります。**各トランザクションの行数は200未満、1行あたりのデータサイズは100KB未満にする**ことをお勧めします。そうでない場合、パフォーマンスが低下します。
 
-`INSERT` 、 `UPDATE`のいずれのステートメントであっても、ステートメント`DELETE`か、ステートメントに制限を追加することをお勧めします。
+`INSERT` 、 `UPDATE` 、 `DELETE`のいずれのステートメントであっても、ステートメントをバッチに分割するか、ステートメントに制限を追加することをお勧めします。
 
 大量のデータを削除する場合は、 `Delete from t where xx limit 5000;`を使用することをお勧めします。これはループを通して削除を行い、 `Affected Rows == 0`条件としてループを終了します。
 
@@ -195,7 +195,7 @@ TiDB は[Grafana + Prometheus](/tidb-monitoring-framework.md)を使用してシ�
 
 監視に加えて、システムログを表示することもできます。TiDB の 3 つのコンポーネント、tidb-server、tikv-server、および pd-server には、それぞれ`--log-file`パラメータがあります。このパラメータがクラスタの起動時に構成されている場合、ログはパラメータで構成されたファイルに保存され、ログファイルは毎日自動的にアーカイブされます。 `--log-file`パラメータが構成されていない場合、ログは`stderr`に出力されます。
 
-TiDB 4.0 以降、TiDB は使いやすさを向上させるために[TiDB Dashboard](/dashboard/dashboard-intro.md)UI を提供します。 TiDB Dashboardにアクセスするには、ブラウザで[http://${PD_IP}:${PD_PORT}/dashboard](http://$%7BPD_IP%7D:$%7BPD_PORT%7D/dashboard)Dashboardにアクセスします。 TiDB Dashboardは、クラスターのステータスの表示、パフォーマンス分析、トラフィックの視覚化、クラスターの診断、ログ検索などの機能を提供します。
+TiDB 4.0 以降、TiDB は使いやすさを向上させるために[TiDB Dashboard](/dashboard/dashboard-intro.md)UI を提供します。 TiDB Dashboardにアクセスするには、ブラウザで<http://${PD_IP}:${PD_PORT}/dashboard>にアクセスします。 TiDB Dashboardは、クラスターのステータスの表示、パフォーマンス分析、トラフィックの視覚化、クラスターの診断、ログ検索などの機能を提供します。
 
 ### 文書 {#documentation}
 
