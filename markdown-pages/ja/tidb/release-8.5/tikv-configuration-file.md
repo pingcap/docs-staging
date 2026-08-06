@@ -369,7 +369,7 @@ TiKV の設定ファイルは、コマンドライン パラメータよりも�
 
 ### `use-unified-pool` {#use-unified-pool-1}
 
--   storage要求に統合スレッドプール（ [`readpool.unified`](#readpoolunified)で構成）を使用するかどうかを決定します。このパラメーターの値が`false`の場合、このセクションの残りのパラメーター（ `readpool.storage` ）で構成された別のスレッドプールが使用されます。
+-   ストレージ要求に統合スレッドプール（ [`readpool.unified`](#readpoolunified)で構成）を使用するかどうかを決定します。このパラメーターの値が`false`の場合、このセクションの残りのパラメーター（ `readpool.storage` ）で構成された別のスレッドプールが使用されます。
 -   デフォルト値: このセクション ( `readpool.storage` ) に他の設定がない場合、デフォルト値は`true`です。それ以外の場合は、下位互換性のために、デフォルト値は`false`です。このオプションを有効にする前に、必要に応じて[`readpool.unified`](#readpoolunified)の設定を変更してください。
 
 ### `high-concurrency` {#high-concurrency-1}
@@ -2253,11 +2253,11 @@ Raft Engineに関連するコンフィグレーション項目。
 ### `redact-info-log` <span class="version-mark">v4.0.8の新機能</span> {#redact-info-log-new-in-v408}
 
 -   この設定項目は、ログのマスキングを有効または無効にします。値のオプション: `true` 、 `false` 、 `"on"` 、 `"off"` 、および`"marker"` 。 `"on"` 、 `"off"` 、および`"marker"`オプションは、v8.3.0 で導入されました。
--   設定項目が`false`または`"off"`に設定されている場合、ログの編集は無効になります。
+-   設定項目が`false`または`"off"`に設定されている場合、ログの秘匿化は無効になります。
 -   設定項目が`true`または`"on"`に設定されている場合、ログ内のすべてのユーザーデータは`?`に置き換えられます。
 -   設定項目が`"marker"`に設定されている場合、ログ内のすべてのユーザーデータは`‹ ›`で囲まれます。ユーザーデータに`‹`または`›`が含まれている場合、 `‹`は`‹‹`にエスケープされ、 `›`は`››`にエスケープされます。マークされたログに基づいて、ログの表示時にマークされた情報を非機密化するかどうかを決定できます。
 -   デフォルト値: `false`
--   詳しい使い方は[TiKV側でのログ編集](/log-redaction.md#log-redaction-in-tikv-side)をご覧ください。
+-   詳しい使い方は[TiKV側でのログの秘匿化](/log-redaction.md#log-redaction-in-tikv-side)をご覧ください。
 
 ## セキュリティ暗号化 {#securityencryption}
 
