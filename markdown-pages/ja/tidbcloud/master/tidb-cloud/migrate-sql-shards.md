@@ -61,7 +61,7 @@ Amazon S3 バケット内に、第 1 階層ディレクトリ`store` (データ�
 -   MySQLインスタンス1のデータを`s3://dumpling-s3/store/sales/instance01/`に移行します。
 -   MySQLインスタンス2のデータを`s3://dumpling-s3/store/sales/instance02/`に移行します。
 
-複数のインスタンスにシャードがある場合は、データベースごとに第 1 レベルのディレクトリを 1 つ作成し、シャードされたテーブルごとに第 2 レベルのディレクトリを 1 つ作成します。次に、管理を容易にするために、MySQL インスタンスごとに第 3 レベルのディレクトリを作成します。たとえば、MySQL インスタンス 1 と MySQL インスタンス 2 のテーブル`stock_N.product_N`をTiDB Cloudのテーブル`stock.products`に移行およびマージする場合は、次のディレクトリを作成できます。
+複数のインスタンスにシャードがある場合は、データベースごとに第 1 レベルのディレクトリを 1 つ作成し、シャーディングされたテーブルごとに第 2 レベルのディレクトリを 1 つ作成します。次に、管理を容易にするために、MySQL インスタンスごとに第 3 レベルのディレクトリを作成します。たとえば、MySQL インスタンス 1 と MySQL インスタンス 2 のテーブル`stock_N.product_N`をTiDB Cloudのテーブル`stock.products`に移行およびマージする場合は、次のディレクトリを作成できます。
 
 -   `s3://dumpling-s3/stock/products/instance01/`
 -   `s3://dumpling-s3/stock/products/instance02/`
@@ -138,7 +138,7 @@ Query OK, 0 rows affected (0.17 sec)
 
 ### ステップ4. Amazon S3へのアクセスを設定する {#step-4-configure-amazon-s3-access}
 
-[Amazon S3へのアクセスを設定する](/tidb-cloud/dedicated-external-storage.md#configure-amazon-s3-access)」の手順に従って、ソースデータにアクセスするためのロール ARN を取得します。
+[Amazon S3へのアクセスを設定する](/tidb-cloud/dedicated-external-storage.md#configure-amazon-s3-access)の手順に従って、ソースデータにアクセスするためのロール ARN を取得します。
 
 以下の例では、主要なポリシー設定のみを示しています。Amazon S3 のパスを、ご自身の値に置き換えてください。
 
@@ -285,7 +285,7 @@ Amazon S3へのアクセスを設定した後、 TiDB Cloudコンソールで次
 
     | パラメータ                   | 説明                                                                        |
     | ----------------------- | ------------------------------------------------------------------------- |
-    | `--master-addr`         | `{advertise-addr}`が接続されるクラスタ内の任意のDMマスターノードの`dmctl` 。例：192.168.11.110:9261 |
+    | `--master-addr`         | dmctlが接続するクラスタ内の任意のDMマスターノードの`{advertise-addr}`。例：192.168.11.110:9261 |
     | `operate-source create` | データソースをDMクラスターにロードします。                                                    |
 
     以下は出力例です。
@@ -470,7 +470,7 @@ Starting component `dmctl`: /root/.tiup/components/dmctl/${tidb_version}/dmctl/d
 
 | パラメータ           | 説明                                                                        |
 | --------------- | ------------------------------------------------------------------------- |
-| `--master-addr` | `{advertise-addr}`が接続されるクラスタ内の任意のDMマスターノードの`dmctl` 。例：192.168.11.110:9261 |
+| `--master-addr` | dmctlが接続するクラスタ内の任意のDMマスターノードの`{advertise-addr}`。例：192.168.11.110:9261 |
 | `start-task`    | 移行タスクを開始します。                                                              |
 
 以下は出力例です。
