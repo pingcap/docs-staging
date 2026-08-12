@@ -1,11 +1,11 @@
 ---
-title: Subscribe via Zoom
-summary: Learn how to monitor your TiDB cluster by getting alert notifications via Zoom.
+title: Subscribe via Lark
+summary: Learn how to monitor your TiDB cluster by getting alert notifications via Lark.
 ---
 
-# Subscribe via Zoom
+# Subscribe via Lark
 
-TiDB Cloud provides you with an easy way to subscribe to alert notifications via Zoom, [Slack](/tidb-cloud/monitor-alert-slack.md), [email](/tidb-cloud/monitor-alert-email.md), [Flashduty](/tidb-cloud/monitor-alert-flashduty.md), and [PagerDuty](/tidb-cloud/monitor-alert-pagerduty.md). This document describes how to subscribe to alert notifications via Zoom.
+TiDB Cloud provides you with an easy way to subscribe to alert notifications via Lark, [email](/tidb-cloud/monitor-alert-email.md), [Slack](/tidb-cloud/monitor-alert-slack.md), [Zoom](/tidb-cloud/monitor-alert-zoom.md), [Flashduty](/tidb-cloud/monitor-alert-flashduty.md), [PagerDuty](/tidb-cloud/monitor-alert-pagerduty.md), and [Webhook](/tidb-cloud/monitor-alert-webhook.md). This document describes how to subscribe to alert notifications via Lark.
 
 > **Note:**
 >
@@ -13,9 +13,9 @@ TiDB Cloud provides you with an easy way to subscribe to alert notifications via
 
 ## Prerequisites
 
-- The subscribing via Zoom feature is only available for organizations that subscribe to the **Enterprise** or **Premium** support plan.
+- The subscribing via Lark feature is only available for organizations that subscribe to the **Enterprise** or **Premium** support plan.
 
-- To add and configure the Incoming Webhook Chatbot in Zoom, you need to have admin permissions on your Zoom account.
+- You need a Lark webhook URL for the Lark group where you want to receive alert notifications.
 
 <CustomContent plan="dedicated">
 
@@ -31,30 +31,6 @@ TiDB Cloud provides you with an easy way to subscribe to alert notifications via
 
 ## Subscribe to alert notifications
 
-### Step 1. Add the Zoom Incoming Webhook app
-
-1. Sign in to the [Zoom App Marketplace](https://marketplace.zoom.us/) as the account administrator.
-2. Go to the [Incoming Webhook App](https://marketplace.zoom.us/apps/eH_dLuquRd-VYcOsNGy-hQ) page in the Zoom App Marketplace, and then click **Add** to add this app. If the app is not pre-approved, contact your Zoom admin to approve this app for your account. For more information, see [Approving apps and managing app requests](https://support.zoom.us/hc/en-us/articles/360027829671). 
-3. Confirm the permissions the app requires, then click **Authorize** to add the Incoming Webhook app.
-
-### Step 2. Generate a Zoom webhook URL
-
-1. Sign in to the Zoom desktop client.
-2. Click the **Team Chat** tab.
-3. Under **Apps**, find and select **Incoming Webhook**, or select a chat channel from above that you would like to receive messages in.
-4. Enter the following command to make a new connection. You need to replace `${connectionName}` with your desired connection name, for example, `tidbcloud-alerts`:
-
-    ```shell
-    /inc connect ${connectionName}
-    ```
-
-5. The command will return the following details:
-
-   - **Endpoint**. It will provide a webhook URL in the format: `https://integrations.zoom.us/chat/webhooks/incomingwebhook/XXXXXXXXXXXXXXXXXXXXXXXX`.
-   - **Verification Token**
-
-### Step 3. Subscribe from TiDB Cloud
-
 Alert notification subscriptions vary by [your TiDB Cloud plan](/tidb-cloud/select-cluster-tier.md).
 
 <CustomContent plan="dedicated">
@@ -69,24 +45,17 @@ To subscribe to alert notifications of TiDB Cloud Dedicated clusters, take the f
 2. In the project view, locate your target project, and then click <MDSvgIcon name="icon-project-settings" /> for the project.
 3. In the left navigation pane, click **Alert Subscription** under **Project Settings**.
 4. On the **Alert Subscription** page, click **Add Subscriber** in the upper-right corner.
-5. Select **Zoom** from the **Subscriber Type** drop-down list.
-6. Enter a name in the **Name** field, your Zoom webhook URL in the **URL** field, and the verification token in the **Token** field.
-7. Click **Test Connection**.
+5. Select **Lark Webhook** from the **Subscriber Type** drop-down list.
+6. Enter a name in the **Name** field, your Lark webhook URL in the **Webhook URL** field and your Lark secret in the **Secret** field. Note that the secret token is only generated after you enable "Sign Verification" for your Lark group.
+7. Click **Save**. The backend will test connection and save for you.
 
-    - If the test succeeds, the **Save** button is displayed.
-    - If the test fails, an error message is displayed. Follow the message for troubleshooting and retry the connection.
-
-8. Click **Save** to complete the subscription.
+    If the test fails, an error message is displayed. Follow the message to troubleshoot the issue and retry the connection.
 
 Alternatively, you can also click **Subscribe** in the upper-right corner of the **Alert** page of the target TiDB Cloud Dedicated cluster. You will be directed to the **Alert Subscription** page.
-
-Alternatively, you can also click **Subscribe** in the upper-right corner of the **Alert** page of the cluster. You will be directed to the **Alert Subscription** page.
 
 </CustomContent>
 
 <CustomContent plan="essential">
-
-To subscribe to alert notifications of a TiDB Cloud Essential instance, take the following steps:
 
 > **Tip:**
 >
@@ -95,22 +64,17 @@ To subscribe to alert notifications of a TiDB Cloud Essential instance, take the
 1. In the [TiDB Cloud console](https://tidbcloud.com), navigate to the [**My TiDB**](https://tidbcloud.com/tidbs) page of your organization, and then click the name of your target TiDB Cloud Essential instance to go to its overview page.
 2. In the left navigation pane, click **Settings** > **Alert Subscription**.
 3. On the **Alert Subscription** page, click **Add Subscriber** in the upper-right corner.
-4. Select **Zoom** from the **Subscriber Type** drop-down list.
-5. Enter a name in the **Name** field, your Zoom webhook URL in the **URL** field, and the verification token in the **Token** field.
-6. Click **Test Connection**.
+4. Select **Lark** from the **Subscriber Type** drop-down list.
+5. Enter a name in the **Name** field, your Lark webhook URL in the **Webhook URL** field and your Lark secret in the **Secret** field. Note that the secret token is only generated after you enable "Sign Verification" for your Lark group.
+6. Click **Save**. The backend will test connection and save for you.
 
-    - If the test succeeds, the **Save** button is displayed.
-    - If the test fails, an error message is displayed. Follow the message to troubleshoot the issue and retry the connection.
-
-7. Click **Save** to complete the subscription.
+    If the test fails, an error message is displayed. Follow the message to troubleshoot the issue and retry the connection.
 
 Alternatively, you can also click **Subscribe** in the upper-right corner of the **Alert** page of the target TiDB Cloud Essential instance. You will be directed to the **Alert Subscription** page.
 
 </CustomContent>
 
 <CustomContent plan="premium">
-
-To subscribe to alert notifications of a TiDB Cloud Premium instance, take the following steps:
 
 > **Tip:**
 >
@@ -119,14 +83,11 @@ To subscribe to alert notifications of a TiDB Cloud Premium instance, take the f
 1. In the [TiDB Cloud console](https://tidbcloud.com), navigate to the [**My TiDB**](https://tidbcloud.com/tidbs) page of your organization, and then click the name of your target TiDB Cloud Premium instance to go to its overview page.
 2. In the left navigation pane, click **Settings** > **Alert Subscription**.
 3. On the **Alert Subscription** page, click **Add Subscriber** in the upper-right corner.
-4. Select **Zoom** from the **Subscriber Type** drop-down list.
-5. Enter a name in the **Name** field, your Zoom webhook URL in the **URL** field, and the verification token in the **Token** field.
-6. Click **Test Connection**.
+4. Select **Lark** from the **Subscriber Type** drop-down list.
+5. Enter a name in the **Name** field, your Lark webhook URL in the **Webhook URL** field and your Lark secret in the **Secret** field. Note that the secret token is only generated after you enable "Sign Verification" for your Lark group.
+6. Click **Save**. The backend will test connection and save for you.
 
-    - If the test succeeds, the **Save** button is displayed.
-    - If the test fails, an error message is displayed. Follow the message to troubleshoot the issue and retry the connection.
-
-7. Click **Save** to complete the subscription.
+    If the test fails, an error message is displayed. Follow the message to troubleshoot the issue and retry the connection.
 
 Alternatively, you can also click **Subscribe** in the upper-right corner of the **Alert** page of the target TiDB Cloud Premium instance. You will be directed to the **Alert Subscription** page.
 
