@@ -49,7 +49,7 @@ summary: 本文档介绍如何为已有的 TiDB 集群部署一个异构集群�
       name: ${heterogeneous_cluster_name}
     spec:
       configUpdateStrategy: RollingUpdate
-      version: v8.5.5
+      version: v8.5.7
       timezone: UTC
       pvReclaimPolicy: Delete
       discovery: {}
@@ -127,7 +127,7 @@ summary: 本文档介绍如何为已有的 TiDB 集群部署一个异构集群�
       tlsCluster:
         enabled: true
       configUpdateStrategy: RollingUpdate
-      version: v8.5.5
+      version: v8.5.7
       timezone: UTC
       pvReclaimPolicy: Delete
       discovery: {}
@@ -163,7 +163,7 @@ summary: 本文档介绍如何为已有的 TiDB 集群部署一个异构集群�
 
     其中，`spec.tlsCluster.enabled` 表示组件间是否开启 TLS，`spec.tidb.tlsClient.enabled` 表示 MySQL 客户端是否开启 TLS。
 
-    - 详细的异构 TLS 集群配置示例，请参阅 [`heterogeneous-tls`](<https://github.com/pingcap/tidb-operator/tree/v1.6.5/examples/heterogeneous-tls>)。
+    - 详细的异构 TLS 集群配置示例，请参阅 [`heterogeneous-tls`](<https://github.com/pingcap/tidb-operator/tree/v1.6.6/examples/heterogeneous-tls>)。
 
     - TiDB 集群更多的配置项和字段含义，请参考 [TiDB 集群配置文档](configure-a-tidb-cluster.md)。
 
@@ -214,7 +214,7 @@ summary: 本文档介绍如何为已有的 TiDB 集群部署一个异构集群�
         version: 7.5.11
     initializer:
         baseImage: pingcap/tidb-monitor-initializer
-        version: v8.5.5
+        version: v8.5.7
     reloader:
         baseImage: pingcap/tidb-monitor-reloader
         version: v1.0.1

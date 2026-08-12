@@ -17,7 +17,7 @@ summary: 了解如何在 Kubernetes 上部署 TiDB DM 集群。
 
 ## 部署配置
 
-通过配置 DMCluster CR 来配置 DM 集群。参考 DMCluster [示例](<https://github.com/pingcap/tidb-operator/blob/v1.6.5/examples/dm/dm-cluster.yaml>)和 [API 文档](<https://github.com/pingcap/tidb-operator/blob/v1.6.5/docs/api-references/docs.md#dmcluster>)（示例和 API 文档请切换到当前使用的 TiDB Operator 版本）完成 DMCluster CR (Custom Resource)。
+通过配置 DMCluster CR 来配置 DM 集群。参考 DMCluster [示例](<https://github.com/pingcap/tidb-operator/blob/v1.6.6/examples/dm/dm-cluster.yaml>)和 [API 文档](<https://github.com/pingcap/tidb-operator/blob/v1.6.6/docs/api-references/docs.md#dmcluster>)（示例和 API 文档请切换到当前使用的 TiDB Operator 版本）完成 DMCluster CR (Custom Resource)。
 
 ### 集群名称
 
@@ -29,9 +29,9 @@ summary: 了解如何在 Kubernetes 上部署 TiDB DM 集群。
 
 相关参数的格式如下：
 
-- `spec.version`，格式为 `imageTag`，例如 `v8.5.5`
+- `spec.version`，格式为 `imageTag`，例如 `v8.5.7`
 - `spec.<master/worker>.baseImage`，格式为 `imageName`，例如 `pingcap/dm`
-- `spec.<master/worker>.version`，格式为 `imageTag`，例如 `v8.5.5`
+- `spec.<master/worker>.version`，格式为 `imageTag`，例如 `v8.5.7`
 
 TiDB Operator 仅支持部署 DM 2.0 及更新版本。
 
@@ -50,7 +50,7 @@ metadata:
   name: ${dm_cluster_name}
   namespace: ${namespace}
 spec:
-  version: v8.5.5
+  version: v8.5.7
   configUpdateStrategy: RollingUpdate
   pvReclaimPolicy: Retain
   discovery: {}
@@ -134,26 +134,26 @@ kubectl apply -f ${dm_cluster_name}.yaml -n ${namespace}
 
 如果服务器没有外网，需要按下述步骤在有外网的机器上将 DM 集群用到的 Docker 镜像下载下来并上传到服务器上，然后使用 `docker load` 将 Docker 镜像安装到服务器上：
 
-1. 部署一套 DM 集群会用到下面这些 Docker 镜像（假设 DM 集群的版本是 v8.5.5）：
+1. 部署一套 DM 集群会用到下面这些 Docker 镜像（假设 DM 集群的版本是 v8.5.7）：
 
     ```shell
-    pingcap/dm:v8.5.5
+    pingcap/dm:v8.5.7
     ```
 
 2. 通过下面的命令将所有这些镜像下载下来：
 
     
     ```shell
-    docker pull pingcap/dm:v8.5.5
+    docker pull pingcap/dm:v8.5.7
 
-    docker save -o dm-v8.5.5.tar pingcap/dm:v8.5.5
+    docker save -o dm-v8.5.7.tar pingcap/dm:v8.5.7
     ```
 
 3. 将这些 Docker 镜像上传到服务器上，并执行 `docker load` 将这些 Docker 镜像安装到服务器上：
 
     
     ```shell
-    docker load -i dm-v8.5.5.tar
+    docker load -i dm-v8.5.7.tar
     ```
 
 部署 DM 集群完成后，通过下面命令查看 Pod 状态：

@@ -150,7 +150,7 @@ First, you need to install the Custom Resource Definitions (CRDs) that are requi
 To install the CRDs, run the following command:
 
 ```shell
-kubectl create -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.5/manifests/crd.yaml
+kubectl create -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.6/manifests/crd.yaml
 ```
 
 <details>
@@ -204,7 +204,7 @@ To install TiDB Operator, you can use [Helm 3](https://helm.sh/docs/intro/instal
 3. Install TiDB Operator:
 
     ```shell
-    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.6.5
+    helm install --namespace tidb-admin tidb-operator pingcap/tidb-operator --version v1.6.6
     ```
 
     <details>
@@ -251,7 +251,7 @@ This section describes how to deploy a TiDB cluster and its monitoring services.
 
 ```shell
 kubectl create namespace tidb-cluster && \
-    kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.5/examples/basic/tidb-cluster.yaml
+    kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.6/examples/basic/tidb-cluster.yaml
 ```
 
 <details>
@@ -272,7 +272,7 @@ If you need to deploy a TiDB cluster on an ARM64 machine, refer to [Deploying a 
 >
 > ``` shell
 > kubectl create namespace tidb-cluster && \
->     kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.5/examples/basic/pd-micro-service-cluster.yaml
+>     kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.6/examples/basic/pd-micro-service-cluster.yaml
 > ```
 >
 > View the Pod status:
@@ -295,7 +295,7 @@ If you need to deploy a TiDB cluster on an ARM64 machine, refer to [Deploying a 
 ### Deploy TiDB Dashboard independently
 
 ```shell
-kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.5/examples/basic/tidb-dashboard.yaml
+kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.6/examples/basic/tidb-dashboard.yaml
 ```
 
 <details>
@@ -310,7 +310,7 @@ tidbdashboard.pingcap.com/basic created
 ### Deploy TiDB monitoring services
 
 ```shell
-kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.5/examples/basic/tidb-monitor.yaml
+kubectl -n tidb-cluster apply -f https://raw.githubusercontent.com/pingcap/tidb-operator/v1.6.6/examples/basic/tidb-monitor.yaml
 ```
 
 <details>
@@ -453,10 +453,10 @@ APPROXIMATE_KEYS: 0
 ```sql
 mysql> select tidb_version()\G
 *************************** 1. row ***************************
-         tidb_version(): Release Version: v8.5.5
+         tidb_version(): Release Version: v8.5.7
                 Edition: Community
         Git Commit Hash: d13e52ed6e22cc5789bed7c64c861578cd2ed55b
-             Git Branch: heads/refs/tags/v8.5.5
+             Git Branch: heads/refs/tags/v8.5.7
          UTC Build Time: 2024-12-19 14:38:24
               GoVersion: go1.23.2
            Race Enabled: false
@@ -642,10 +642,10 @@ Note that `nightly` is not a fixed version and the version might vary depending 
 
 ```
 *************************** 1. row ***************************
-tidb_version(): Release Version: v8.5.5
+tidb_version(): Release Version: v8.5.7
 Edition: Community
 Git Commit Hash: d13e52ed6e22cc5789bed7c64c861578cd2ed55b
-Git Branch: heads/refs/tags/v8.5.5
+Git Branch: heads/refs/tags/v8.5.7
 UTC Build Time: 2024-12-19 14:38:24
 GoVersion: go1.23.2
 Race Enabled: false

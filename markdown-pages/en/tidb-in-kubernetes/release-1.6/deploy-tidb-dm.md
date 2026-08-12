@@ -17,7 +17,7 @@ summary: Learn how to deploy TiDB DM cluster on Kubernetes.
 
 ## Configure DM deployment
 
-To configure the DM deployment, you need to configure the `DMCluster` Custom Resource (CR). For the complete configurations of the `DMCluster` CR, refer to the [DMCluster example](<https://github.com/pingcap/tidb-operator/blob/v1.6.5/examples/dm/dm-cluster.yaml>) and [API documentation](<https://github.com/pingcap/tidb-operator/blob/v1.6.5/docs/api-references/docs.md#dmcluster>). Note that you need to choose the example and API of the current TiDB Operator version.
+To configure the DM deployment, you need to configure the `DMCluster` Custom Resource (CR). For the complete configurations of the `DMCluster` CR, refer to the [DMCluster example](<https://github.com/pingcap/tidb-operator/blob/v1.6.6/examples/dm/dm-cluster.yaml>) and [API documentation](<https://github.com/pingcap/tidb-operator/blob/v1.6.6/docs/api-references/docs.md#dmcluster>). Note that you need to choose the example and API of the current TiDB Operator version.
 
 ### Cluster name
 
@@ -29,9 +29,9 @@ Usually, components in a cluster are in the same version. It is recommended to c
 
 The formats of the related parameters are as follows:
 
-- `spec.version`: the format is `imageTag`, such as `v8.5.5`.
+- `spec.version`: the format is `imageTag`, such as `v8.5.7`.
 - `spec.<master/worker>.baseImage`: the format is `imageName`, such as `pingcap/dm`.
-- `spec.<master/worker>.version`: the format is `imageTag`, such as `v8.5.5`.
+- `spec.<master/worker>.version`: the format is `imageTag`, such as `v8.5.7`.
 
 TiDB Operator only supports deploying DM 2.0 and later versions.
 
@@ -50,7 +50,7 @@ metadata:
   name: ${dm_cluster_name}
   namespace: ${namespace}
 spec:
-  version: v8.5.5
+  version: v8.5.7
   configUpdateStrategy: RollingUpdate
   pvReclaimPolicy: Retain
   discovery: {}
@@ -135,25 +135,25 @@ kubectl apply -f ${dm_cluster_name}.yaml -n ${namespace}
 
 If the server does not have an external network, you need to download the Docker image used by the DM cluster and upload the image to the server, and then execute `docker load` to install the Docker image on the server:
 
-1. Deploy a DM cluster requires the following Docker image (assuming the version of the DM cluster is v8.5.5):
+1. Deploy a DM cluster requires the following Docker image (assuming the version of the DM cluster is v8.5.7):
 
     ```shell
-    pingcap/dm:v8.5.5
+    pingcap/dm:v8.5.7
     ```
 
 2. To download the image, execute the following command:
 
     
     ```shell
-    docker pull pingcap/dm:v8.5.5
-    docker save -o dm-v8.5.5.tar pingcap/dm:v8.5.5
+    docker pull pingcap/dm:v8.5.7
+    docker save -o dm-v8.5.7.tar pingcap/dm:v8.5.7
     ```
 
 3. Upload the Docker image to the server, and execute `docker load` to install the image on the server:
 
     
     ```shell
-    docker load -i dm-v8.5.5.tar
+    docker load -i dm-v8.5.7.tar
     ```
 
 After deploying the DM cluster, execute the following command to view the Pod status:

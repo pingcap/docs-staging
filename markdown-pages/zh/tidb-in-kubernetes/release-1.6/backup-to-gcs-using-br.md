@@ -49,7 +49,7 @@ Ad-hoc 备份支持快照备份，也支持[启动](#启动日志备份)和[停�
     kubectl create namespace backup-test
     ```
 
-2. 下载文件 [backup-rbac.yaml](<https://github.com/pingcap/tidb-operator/blob/v1.6.5/manifests/backup/backup-rbac.yaml>)，并执行以下命令在 `backup-test` 这个 namespace 中创建备份需要的 RBAC 相关资源：
+2. 下载文件 [backup-rbac.yaml](<https://github.com/pingcap/tidb-operator/blob/v1.6.6/manifests/backup/backup-rbac.yaml>)，并执行以下命令在 `backup-test` 这个 namespace 中创建备份需要的 RBAC 相关资源：
 
     
     ```shell

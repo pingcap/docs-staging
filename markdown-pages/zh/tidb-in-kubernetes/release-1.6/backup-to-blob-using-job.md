@@ -90,7 +90,7 @@ spec:
 
 ```shell
 export name=dumpling
-export version=v8.5.5
+export version=v8.5.7
 export namespace=tidb-cluster
 export accountname=<your-account-name>
 export accountkey=<your-account-key>
