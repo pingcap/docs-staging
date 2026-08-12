@@ -276,7 +276,7 @@
         - [LATERAL 派生テーブル](/lateral-derived-tables.md)
         - [最大値/最小値を削除する](/max-min-eliminate.md)
         - [Predicate Push Down](/predicate-push-down.md)
-        - [パーティション剪定](/partition-pruning.md)
+        - [パーティションプルーニング](/partition-pruning.md)
         - [トップNとリミットプッシュダウン](/topn-limit-push-down.md)
         - [結合したテーブルの再配置](/join-reorder.md)
         - [ウィンドウ関数からTopNまたはLimitを導出する](/derive-topn-from-window.md)
@@ -452,7 +452,7 @@
       - シャーディングされたテーブルからデータをマージおよび移行する
         - [概要](/dm/feature-shard-merge.md)
         - [悲観的モード](/dm/feature-shard-merge-pessimistic.md)
-        - [楽観モード](/dm/feature-shard-merge-optimistic.md)
+        - [楽観的モード](/dm/feature-shard-merge-optimistic.md)
         - [シャーディングDDLロックを手動で処理する](/dm/manually-handling-sharding-ddl-locks.md)
       - [GH-ost/PT-oscを使用するMySQLデータベースからの移行](/dm/feature-online-ddl.md)
       - [より多くのカラムを持つダウンストリーム TiDB テーブルにデータを移行する](/migrate-with-more-columns-downstream.md)
@@ -853,7 +853,7 @@
     - [グローバルインデックス](/global-indexes.md)
     - [ベクトルインデックス](/ai/reference/vector-search-index.md)
     - [制約](/constraints.md)
-    - [生成された列](/generated-columns.md)
+    - [生成列](/generated-columns.md)
     - [SQLモード](/sql-mode.md)
     - [テーブル属性](/table-attributes.md)
     - トランザクション
