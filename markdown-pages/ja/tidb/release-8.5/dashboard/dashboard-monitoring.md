@@ -9,7 +9,7 @@ summary: TiDB Dashboardのモニタリングページでは、パフォーマン
 
 ## ページにアクセスする {#access-the-page}
 
-TiDB Dashboardにログインし、左側のナビゲーションバーから**「モニタリング」**をクリックします。パフォーマンス概要ダッシュボードが表示されます。
+TiDB Dashboardにログインし、左側のナビゲーションバーから**モニタリング**をクリックします。パフォーマンス概要ダッシュボードが表示されます。
 
 ![Monitoring page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-monitoring.png)
 
