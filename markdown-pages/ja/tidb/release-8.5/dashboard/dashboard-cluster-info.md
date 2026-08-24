@@ -17,7 +17,7 @@ summary: TiDB Dashboardのクラスタ情報ページでは、クラスタ全体
 
 ## インスタンスリスト {#instance-list}
 
-インスタンスのリストを表示するには、 **「インスタンス」を**クリックします。
+インスタンスのリストを表示するには、 **Instances**をクリックします。
 
 ![Instance list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-cluster-info-instances-v650.png)
 
