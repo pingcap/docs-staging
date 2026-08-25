@@ -38,7 +38,7 @@ TiDB Cloud Essential と Premium は、TiCDC Changefeed Capacity Unit (CCU) の[
 
 ### 価格 {#price}
 
-現在、 TiDB Cloud Essential と Premium はパブリック プレビュー段階にあります。価格の詳細については、以下のページを参照してください:
+現在、 TiDB Cloud Essential と Premium はパブリックプレビュー段階にあります。価格の詳細については、以下のページを参照してください:
 
 - [TiDB Cloud Essential の料金詳細](https://www.pingcap.com/tidb-cloud-essential-pricing-details/)
 - [TiDB Cloud Premium の料金詳細](https://www.pingcap.com/tidb-cloud-premium-pricing-details/)
