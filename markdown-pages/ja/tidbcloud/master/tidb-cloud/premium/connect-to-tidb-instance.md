@@ -23,7 +23,7 @@ TiDB Cloud で TiDB Cloud Premium<CustomContent plan="byoc"> または TiDB Clou
 
 ## ネットワーク {#network}
 
-TiDB Cloud Premium<CustomContent plan="byoc"> および TiDB Cloud BYOC</CustomContent> には、2 種類のネットワーク接続タイプがあります。
+TiDB Cloud Premium<CustomContent plan="byoc"> および TiDB Cloud BYOC</CustomContent> には、2種類のネットワーク接続タイプがあります。
 
 - [プライベートエンドポイント](/tidb-cloud/premium/connect-to-premium-via-aws-private-endpoint.md)(推奨)
 
