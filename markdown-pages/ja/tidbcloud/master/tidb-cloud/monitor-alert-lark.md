@@ -39,7 +39,7 @@ TiDB Cloud Dedicated クラスターのアラート通知を購読するには�
 
 > **Tip:**
 >
-> TiDB Cloud Dedicated では、アラートの購読は現在のプロジェクト内のすべてのアラートに対して適用されます。プロジェクト内に複数の TiDB Cloud Dedicated クラスターがある場合でも、購読は 1 回だけで済みます。
+> TiDB Cloud Dedicated では、アラートの購読は現在のプロジェクト内のすべてのアラートに対して適用されます。プロジェクト内に複数の TiDB Cloud Dedicated クラスターがある場合でも、購読は 1回だけで済みます。
 
 1. [TiDB Cloud console](https://tidbcloud.com) で、組織の [**My TiDB**](https://tidbcloud.com/tidbs) ページに移動し、**Project view** タブをクリックします。
 2. プロジェクトビューで対象のプロジェクトを見つけ、プロジェクトの <MDSvgIcon name="icon-project-settings" /> をクリックします。
@@ -93,7 +93,7 @@ TiDB Cloud Dedicated クラスターのアラート通知を購読するには�
 
 </CustomContent>
 
-アラート条件が変わらない場合、アラートは 3 時間ごとに通知を送信します。
+アラート条件が変わらない場合、アラートは 3時間ごとに通知を送信します。
 
 ## アラート通知の購読を解除する {#unsubscribe-from-alert-notifications}
 
