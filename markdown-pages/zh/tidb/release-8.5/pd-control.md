@@ -28,7 +28,7 @@ PD Control 是 PD 的命令行工具，用于获取集群状态信息和调整�
 
 > **注意：**
 >
-> 下载链接中的 `{version}` 为 TiDB 的版本号。例如，amd64 架构的 `v8.5.7` 版本的下载链接为 `https://download.pingcap.com/tidb-community-server-v8.5.7-linux-amd64.tar.gz`。
+> 下载链接中的 `{version}` 为 TiDB 的版本号。例如，amd64 架构的 `v8.5.8` 版本的下载链接为 `https://download.pingcap.com/tidb-community-server-v8.5.8-linux-amd64.tar.gz`。
 
 ### 源码编译
 
@@ -197,7 +197,7 @@ config show cluster-version
 ```
 
 ```
-"8.5.7"
+"8.5.8"
 ```
 
 - `max-snapshot-count` 控制单个 store 最多同时接收或发送的 snapshot 数量，调度受制于这个配置来防止抢占正常业务的资源。当需要加快补副本或 balance 速度时可以调大这个值。
@@ -375,10 +375,10 @@ config show cluster-version
 
 - `cluster-version` 集群的版本，用于控制某些 Feature 是否开启，处理兼容性问题。通常是集群正常运行的所有 TiKV 节点中的最低版本，需要回滚到更低的版本时才进行手动设置。
 
-    设置 cluster version 为 8.5.7：
+    设置 cluster version 为 8.5.8：
 
     ```bash
-    config set cluster-version 8.5.7
+    config set cluster-version 8.5.8
     ```
 
 - `leader-schedule-policy` 用于选择 Leader 的调度策略，可以选择按照 `size` 或者 `count` 来进行调度。
