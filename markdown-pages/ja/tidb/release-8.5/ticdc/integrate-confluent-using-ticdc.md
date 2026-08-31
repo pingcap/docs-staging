@@ -185,7 +185,7 @@ Snowflakeはクラウドネイティブなデータウェアハウスです。Co
 
     ![Configuration](https://docs-download.pingcap.com/media/images/docs/integrate/configuration.png)
 
-5. **Configuration**ページで、**Input Kafka record value format**と**Input Kafka record key format**の両方に`AVRO`選択します。次に、 **Continue**をクリックします。コネクタが作成され、ステータスが**Running**になるまでお待ちください。これには数分かかる場合があります。
+5. **Configuration**ページで、**Input Kafka record value format**と**Input Kafka record key format**の両方に`AVRO`を選択します。次に、 **Continue**をクリックします。コネクタが作成され、ステータスが**Running**になるまでお待ちください。これには数分かかる場合があります。
 
     ![Data preview](https://docs-download.pingcap.com/media/images/docs/integrate/data-preview.png)
 
