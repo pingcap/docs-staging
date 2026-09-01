@@ -40,6 +40,8 @@ Grab the PrivateLink service name from the **Connect to TiDB Cloud Lake** dialog
 
    ![Create Endpoint Button](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/create-endpoint-1.png)
 
+   ![Create Endpoint Sheet](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/create-endpoint-2.png)
+
    Select the previously created security group `HTTPS`:
 
    ![Create Endpoint SG](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/create-endpoint-3.png)
