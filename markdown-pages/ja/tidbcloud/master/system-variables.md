@@ -6130,13 +6130,13 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **Warning:**
 >
-> 明細書の要約を永続化する機能は実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される場合があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告してください。
+> ステートメントサマリーを永続化する機能は実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される場合があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告してください。
 
 - 対象範囲：グローバル
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - 型: Boolean
 - デフォルト値: `OFF`
-- この変数は読み取り専用です。 [ステートメントの要約持続性](/statement-summary-tables.md#persist-statements-summary)を有効にするかどうかを制御します。
+- この変数は読み取り専用です。 [ステートメントサマリーの永続化](/statement-summary-tables.md#persist-statements-summary)を有効にするかどうかを制御します。
 
 <CustomContent platform="tidb">
 
@@ -6156,13 +6156,13 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **Warning:**
 >
-> 明細書の要約を永続化する機能は実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される場合があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告してください。
+> ステートメントサマリーを永続化する機能は実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される場合があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告してください。
 
 - 対象範囲：グローバル
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - 型: String
 - デフォルト値: `"tidb-statements.log"`
-- この変数は読み取り専用です。 [ステートメントの要約持続性](/statement-summary-tables.md#persist-statements-summary)が有効な場合に永続データが書き込まれるファイルを指定します。
+- この変数は読み取り専用です。 [ステートメントサマリーの永続化](/statement-summary-tables.md#persist-statements-summary)が有効な場合に永続データが書き込まれるファイルを指定します。
 
 <CustomContent platform="tidb">
 
@@ -6182,13 +6182,13 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **Warning:**
 >
-> 明細書の要約を永続化する機能は実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される場合があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告してください。
+> ステートメントサマリーを永続化する機能は実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される場合があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告してください。
 
 - 対象範囲：グローバル
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - 型: 整数
 - デフォルト値: `0`
-- この変数は読み取り専用です。 [ステートメントの要約持続性](/statement-summary-tables.md#persist-statements-summary)が有効な場合に保存できるデータファイルの最大数を指定します。
+- この変数は読み取り専用です。 [ステートメントサマリーの永続化](/statement-summary-tables.md#persist-statements-summary)が有効な場合に保存できるデータファイルの最大数を指定します。
 
 <CustomContent platform="tidb">
 
@@ -6208,14 +6208,14 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **Warning:**
 >
-> 明細書の要約を永続化する機能は実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される場合があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告してください。
+> ステートメントサマリーを永続化する機能は実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される場合があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告してください。
 
 - 対象範囲：グローバル
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - 型: 整数
 - デフォルト値: `3`
 - 単位：日
-- この変数は読み取り専用です。 [ステートメントの要約持続性](/statement-summary-tables.md#persist-statements-summary)が有効な場合に、永続的なデータファイルを保持する最大日数を指定します。
+- この変数は読み取り専用です。 [ステートメントサマリーの永続化](/statement-summary-tables.md#persist-statements-summary)が有効な場合に、永続的なデータファイルを保持する最大日数を指定します。
 
 <CustomContent platform="tidb">
 
@@ -6235,14 +6235,14 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 > **Warning:**
 >
-> 明細書の要約を永続化する機能は実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される場合があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告してください。
+> ステートメントサマリーを永続化する機能は実験的機能です。本番環境での使用は推奨されません。この機能は予告なく変更または削除される場合があります。バグを発見した場合は、GitHub で[問題](https://github.com/pingcap/tidb/issues)を報告してください。
 
 - 対象範囲：グローバル
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - 型: 整数
 - デフォルト値: `64`
 - 単位: MiB
-- この変数は読み取り専用です。 [ステートメントの要約持続性](/statement-summary-tables.md#persist-statements-summary)が有効な場合の永続データファイルの最大サイズを指定します。
+- この変数は読み取り専用です。 [ステートメントサマリーの永続化](/statement-summary-tables.md#persist-statements-summary)が有効な場合の永続データファイルの最大サイズを指定します。
 
 <CustomContent platform="tidb">
 
@@ -6583,7 +6583,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - デフォルト値: `0`
 - 範囲: `[0, 9223372036854775807]`
-- この変数は、各 TiDB ノード上の TTL ジョブにおける`DELETE`ステートメントのレートを制限するために使用されます。この値は、TTL ジョブ内の単一ノードで 1 秒あたりに許可される`DELETE`ステートメントの最大数を表します。この変数が`0`に設定されている場合、制限は適用されません。詳細については、[存続時間（TTL）](/time-to-live.md)を参照してください。
+- この変数は、各 TiDB ノード上の TTL ジョブにおける`DELETE`ステートメントのレートを制限するために使用されます。この値は、TTL ジョブ内の単一ノードで 1 秒あたりに許可される`DELETE`ステートメントの最大数を表します。この変数が`0`に設定されている場合、制限は適用されません。詳細については、[TTL (Time to Live)](/time-to-live.md)を参照してください。
 
 ### tidb_ttl_delete_batch_size <span class="version-mark">New in v6.5.0</span>
 
@@ -6596,7 +6596,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - デフォルト値: `100`
 - 範囲: `[1, 10240]`
-- この変数は、TTL ジョブの単一の`DELETE`トランザクションで削除できる最大行数を設定するために使用されます。詳細については、[存続時間（TTL）](/time-to-live.md)を参照してください。
+- この変数は、TTL ジョブの単一の`DELETE`トランザクションで削除できる最大行数を設定するために使用されます。詳細については、[TTL (Time to Live)](/time-to-live.md)を参照してください。
 
 ### tidb_ttl_delete_worker_count <span class="version-mark">New in v6.5.0</span>
 
@@ -6609,7 +6609,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - デフォルト値: `4`
 - 範囲: `[1, 256]`
-- この変数は、各 TiDB ノードでの TTL ジョブの最大同時実行数を設定するために使用されます。詳細については、[存続時間（TTL）](/time-to-live.md)を参照してください。
+- この変数は、各 TiDB ノードでの TTL ジョブの最大同時実行数を設定するために使用されます。詳細については、[TTL (Time to Live)](/time-to-live.md)を参照してください。
 
 ### tidb_ttl_job_enable <span class="version-mark">New in v6.5.0</span>
 
@@ -6622,7 +6622,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - デフォルト値: `ON`
 - 型: Boolean
-- この変数は、TTL ジョブを有効にするかどうかを制御するために使用されます。 `OFF`に設定されている場合、TTL 属性を持つすべてのテーブルは、期限切れデータのクリーンアップを自動的に停止します。詳細については、[存続時間（TTL）](/time-to-live.md)を参照してください。
+- この変数は、TTL ジョブを有効にするかどうかを制御するために使用されます。 `OFF`に設定されている場合、TTL 属性を持つすべてのテーブルは、期限切れデータのクリーンアップを自動的に停止します。詳細については、[TTL (Time to Live)](/time-to-live.md)を参照してください。
 
 ### tidb_ttl_scan_batch_size <span class="version-mark">New in v6.5.0</span>
 
@@ -6635,7 +6635,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - デフォルト値: `500`
 - 範囲: `[1, 10240]`
-- この変数は、TTL ジョブの期限切れデータのスキャンに使用される各`LIMIT` `SELECT`値を設定するために使用されます。詳細については、[存続時間（TTL）](/time-to-live.md)を参照してください。
+- この変数は、TTL ジョブの期限切れデータのスキャンに使用される各`SELECT`文の`LIMIT`値を設定するために使用されます。詳細については、[TTL (Time to Live)](/time-to-live.md)を参照してください。
 
 ### tidb_ttl_scan_worker_count <span class="version-mark">New in v6.5.0</span>
 
@@ -6648,7 +6648,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - ヒント[SET_VAR](/optimizer-hints.md#set_varvar_namevar_value)に適用：いいえ
 - デフォルト値: `4`
 - 範囲: `[1, 256]`
-- この変数は、各 TiDB ノードでの TTL スキャン ジョブの最大同時実行数を設定するために使用されます。詳細については、[存続時間（TTL）](/time-to-live.md)を参照してください。
+- この変数は、各 TiDB ノードでの TTL スキャン ジョブの最大同時実行数を設定するために使用されます。詳細については、[TTL (Time to Live)](/time-to-live.md)を参照してください。
 
 ### tidb_ttl_job_schedule_window_start_time <span class="version-mark">New in v6.5.0</span>
 
@@ -6661,7 +6661,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 型: Time
 - クラスターに保持される: はい
 - デフォルト値: `00:00 +0000`
-- この変数は、バックグラウンドで実行されるTTLジョブのスケジューリングウィンドウの開始時刻を制御するために使用されます。この変数の値を変更する際は、ウィンドウが小さすぎると期限切れデータのクリーンアップが失敗する可能性があるため注意してください。詳細については、[存続時間（TTL）](/time-to-live.md)を参照してください。
+- この変数は、バックグラウンドで実行されるTTLジョブのスケジューリングウィンドウの開始時刻を制御するために使用されます。この変数の値を変更する際は、ウィンドウが小さすぎると期限切れデータのクリーンアップが失敗する可能性があるため注意してください。詳細については、[TTL (Time to Live)](/time-to-live.md)を参照してください。
 
 ### tidb_ttl_job_schedule_window_end_time <span class="version-mark">New in v6.5.0</span>
 
@@ -6674,7 +6674,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 型: Time
 - クラスターに保持される: はい
 - デフォルト値: `23:59 +0000`
-- この変数は、バックグラウンドで実行されるTTLジョブのスケジューリングウィンドウの終了時刻を制御するために使用されます。この変数の値を変更する際は、ウィンドウが小さすぎると期限切れデータのクリーンアップが失敗する可能性があるため注意してください。詳細については、[存続時間（TTL）](/time-to-live.md)を参照してください。
+- この変数は、バックグラウンドで実行されるTTLジョブのスケジューリングウィンドウの終了時刻を制御するために使用されます。この変数の値を変更する際は、ウィンドウが小さすぎると期限切れデータのクリーンアップが失敗する可能性があるため注意してください。詳細については、[TTL (Time to Live)](/time-to-live.md)を参照してください。
 
 ### tidb_ttl_running_tasks <span class="version-mark">New in v7.0.0</span>
 
@@ -6688,7 +6688,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 - 型: 整数
 - デフォルト値: `-1`
 - 範囲: `-1`および`[1, 256]`
-- クラスター全体で実行中の TTL タスクの最大数を指定します。 `-1`は、TTL タスクの数が TiKV ノードの数と等しいことを意味します。詳細については、[存続時間（TTL）](/time-to-live.md)を参照してください。
+- クラスター全体で実行中の TTL タスクの最大数を指定します。 `-1`は、TTL タスクの数が TiKV ノードの数と等しいことを意味します。詳細については、[TTL (Time to Live)](/time-to-live.md)を参照してください。
 
 ### tidb_txn_assertion_level <span class="version-mark">New in v6.0.0</span>
 
