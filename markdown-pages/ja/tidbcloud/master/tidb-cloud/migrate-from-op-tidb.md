@@ -69,11 +69,11 @@ tiup update --self && tiup update dumpling
 
 上流データベースからデータをエクスポートするには、以下の権限が必要です。
 
-- 選択
-- リロード
-- ロックテーブル
-- レプリケーションクライアント
-- プロセス
+- SELECT
+- RELOAD
+- LOCK TABLES
+- REPLICATION CLIENT
+- PROCESS
 
 ### TiCDCをデプロイ {#deploy-ticdc}
 
@@ -210,7 +210,7 @@ TiDB Self-ManagedクラスターからAmazon S3にデータをエクスポート
 
     - s3:GetObject
     - s3:GetObjectVersion
-    - s3:リストバケット
+    - s3:ListBucket
     - s3:GetBucketLocation
 
     S3バケットがサーバー側暗号化（SSE-KMS）を使用している場合は、KMS権限も追加する必要があります。
