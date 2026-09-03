@@ -76,4 +76,4 @@ summary: パブリック接続を介してTiDB Cloud Premiumに接続する方�
 
 ## 次は？ {#what-s-next}
 
-TiDB Cloud Premium<CustomContent plan="byoc"> または TiDB Cloud BYOC</CustomContent> インスタンスに正常に接続したら、[TiDBを使用してSQLステートメントを探索する](/basic-sql-operations.md)ことができます。
+TiDB Cloud Premium<CustomContent plan="byoc"> または TiDB Cloud BYOC</CustomContent> インスタンスに正常に接続したら、[TiDBを使用してSQL文を探索する](/basic-sql-operations.md)ことができます。
