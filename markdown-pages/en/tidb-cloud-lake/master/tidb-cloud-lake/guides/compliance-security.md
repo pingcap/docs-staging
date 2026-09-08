@@ -28,7 +28,7 @@ TiDB Cloud Lake uses a comprehensive access control system that combines:
 
 ### Secure Connectivity
 
-**AWS PrivateLink**: Enables private connections between your VPC and TiDB Cloud Lake without exposing traffic to the public internet. Currently available on AWS only.
+**PrivateLink**: Enables private connections between your VPC and TiDB Cloud Lake without exposing traffic to the public internet. For setup instructions, see [Connect with AWS PrivateLink](/tidb-cloud-lake/guides/connect-with-aws-privatelink.md) or [Connect with Alibaba Cloud PrivateLink](/tidb-cloud-lake/guides/connect-with-alibaba-cloud-privatelink.md).
 
 ## Encryption
 
