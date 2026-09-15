@@ -1,29 +1,29 @@
 ---
 title: SHOW STATS_META
-summary: TiDB 数据库中 SHOW STATS_META 语句的简单说明。
+summary: SHOW STATS_META 在 TiDB 数据库中的用法概述。
 ---
 
 # SHOW STATS_META
 
-你可以通过 `SHOW STATS_META` 来查看表的总行数以及修改的行数等信息，可以通过 ShowLikeOrWhere 来筛选需要的信息。
+你可以使用 `SHOW STATS_META` 查看某个表中的行数以及该表中被更改的行数。在使用该语句时，可以通过 `ShowLikeOrWhere` 子句过滤所需的信息。
 
-目前 `SHOW STATS_META` 会输出以下列：
+目前，`SHOW STATS_META` 语句输出以下列：
 
-| 列名 | 说明            |
+| 列名 | 描述            |
 | -------- | ------------- |
-| Db_name  |  数据库名    |
-| Table_name | 表名 |
-| Partition_name| 分区名 |
-| Update_time | 更新时间 |
-| Modify_count | 修改的行数 |
+| Db_name  |  数据库名称    |
+| Table_name | 表名称 |
+| Partition_name| 分区名称 |
+| Update_time | 最后更新时间 |
+| Modify_count | 被修改的行数 |
 | Row_count | 总行数 |
-| Last_analyze_time | 表上次被分析的时间 |
+| Last_analyze_time | 表最后一次被分析的时间 |
 
-> **注意：**
+> **Note:**
 >
-> 在 TiDB 根据 DML 语句自动更新总行数以及修改的行数时，`update_time` 也会被更新，因此并不能认为 `update_time` 是最近一次发生 Analyze 的时间。
+> 当 TiDB 根据 DML 语句更新 `modify_count` 和 `row_count` 字段时，`update_time` 会被更新。因此，`update_time` 并不是 `ANALYZE` 语句的最后执行时间。
 
-## 语法图
+## 语法
 
 ```ebnf+diagram
 ShowStatsMetaStmt ::=
@@ -72,5 +72,5 @@ SHOW STATS_META WHERE table_name = 't2';
 
 ## 另请参阅
 
-* [`ANALYZE`](/sql-statements/sql-statement-analyze-table.md)
-* [常规统计信息](/statistics.md)
+* [ANALYZE](/sql-statements/sql-statement-analyze-table.md)
+* [统计信息简介](/statistics.md)

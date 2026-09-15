@@ -1,29 +1,29 @@
 ---
-title: Changefeed DDL 同步
-summary: 了解 TiCDC 支持同步的 DDL 和一些特殊情况
+title: Changefeed DDL Replication
+summary: Learn about the DDL statements supported by TiCDC and some special cases.
 ---
 
-# Changefeed DDL 同步
+# Changefeed DDL Replication
 
-本文档介绍了 TiCDC 同步 DDL 的规则和特殊情况。
+This document describes the rules and special cases of DDL replication in TiCDC.
 
-## DDL 白名单
+## DDL allow list
 
-目前 TiCDC 在同步 DDL 时使用白名单策略，只有在白名单中的 DDL 操作才会被同步到下游系统，不在白名单中的 DDL 操作将不会被 TiCDC 同步。
+Currently, TiCDC uses an allow list to determine whether to replicate a DDL statement. Only the DDL statements in the allow list are replicated to the downstream. The DDL statements not in the allow list are not replicated.
 
-此外，TiCDC 会根据表中是否具有[有效索引](/ticdc/ticdc-overview.md#有效索引)以及配置项 [`force-replicate`](/ticdc/ticdc-changefeed-config.md#force-replicate) 是否为 `true` 来决定是否将 DDL 同步到下游。当 `force-replicate=true` 时，同步任务会尝试强制[同步没有有效索引的表](/ticdc/ticdc-manage-changefeed.md#同步没有有效索引的表)。
+In addition, TiCDC determines whether to replicate a DDL statement to the downstream based on whether the table has a [valid index](/ticdc/ticdc-overview.md#valid-index) and whether the configuration item [`force-replicate`](/ticdc/ticdc-changefeed-config.md#force-replicate) is set to `true`. When `force-replicate=true`, the replication task attempts to forcibly [replicate tables without a valid index](/ticdc/ticdc-manage-changefeed.md#replicate-tables-without-a-valid-index).
 
-以下为 TiCDC 支持同步的 DDL 的列表。该表中出现的缩写字母含义如下：
+The following is the allow list of DDL statements supported by TiCDC. The abbreviations in the table:
 
-- Y：在该条件下可以同步到下游。
-- N：在该条件下不会同步到下游。
+- Y: Replication to the downstream is supported in this condition.
+- N: Replication to the downstream is not supported in this condition.
 
-> **注意：** 
+> **Note**
 >
-> - 当上游表不存在有效索引，且未配置 `force-replicate=true` 时，该表不会被同步，但是之后在该表上创建有效索引的 DDL (`CREATE INDEX`、`ADD INDEX` 和 `ADD PRIMARY KEY`）会被同步，下游表和上游表结构可能产生不一致从而导致后续数据同步失败。
-> - 删除最后一个有效索引的 DDL（`DROP INDEX` 和 `DROP PRIMARY KEY`）不会被同步，并且导致后续数据同步失败。
+> - When the upstream table has no valid index and `force-replicate=true` is not configured, the table will not be replicated. However, subsequent DDL statements (including `CREATE INDEX`, `ADD INDEX`, and `ADD PRIMARY KEY`) that create a valid index on this table will be replicated, which might cause inconsistency between downstream and upstream table schemas and lead to subsequent data replication failure.
+> - DDL statements (including `DROP INDEX` and `DROP PRIMARY KEY`) that drop the last valid index will not be replicated, causing subsequent data replication to fail.
 
-| DDL | 存在有效索引 | 无有效索引且 `force-replicate` 为默认值 `false`  | 无有效索引且 `force-replicate` 为 `true` |
+| DDL | A valid index exists | A valid index does not exist and `force-replicate` is `false` (default) | A valid index does not exist and `force-replicate` is set to `true` |
 |---|:---:|:---:| :---: |
 | `CREATE DATABASE` | Y | Y | Y |
 | `DROP DATABASE` | Y | Y | Y |
@@ -57,94 +57,96 @@ summary: 了解 TiCDC 支持同步的 DDL 和一些特殊情况
 | `ALTER TABLE TTL` | Y | N | Y |
 | `ALTER TABLE REMOVE TTL` | Y | N | Y |
 
-## DDL 同步注意事项
+## DDL replication considerations
 
-### 创建和添加索引 DDL 的异步执行
+### Asynchronous execution of `ADD INDEX` and `CREATE INDEX` DDLs
 
-虽然 TiCDC 在大多数情况下会按顺序同步 DDL，但如果下游是 TiDB，TiCDC 会异步执行创建和添加索引的 DDL 操作，即 TiCDC 将 `ADD INDEX` 和 `CREATE INDEX` DDL 同步到下游执行后，会立刻返回，而不会等待 DDL 操作完成。这样可以减小对 Changefeed 同步延迟的影响，避免阻塞后续的 DML 执行。
+When the downstream is TiDB, TiCDC executes `ADD INDEX` and `CREATE INDEX` DDL operations asynchronously to minimize the impact on changefeed replication latency. This means that, after replicating `ADD INDEX` and `CREATE INDEX` DDLs to the downstream TiDB for execution, TiCDC returns immediately without waiting for the completion of the DDL execution. This avoids blocking subsequent DML executions.
 
-当 `ADD INDEX` 或 `CREATE INDEX` DDL 操作在下游执行期间，TiCDC 执行同一张表的下一条 DDL 时，这条 DDL 可能长期被阻塞在 `queueing` 状态，导致其被 TiCDC 重复执行多次，重试时间过长时还会导致同步任务失败。从 v8.4.0 开始，如果拥有下游数据库的 `SUPER` 权限，TiCDC 会定期执行 `ADMIN SHOW DDL JOBS` 查询异步执行的 DDL 任务的状态，等到索引创建完成后再继续同步。这期间虽然同步任务的延迟会加剧，但避免了同步任务失败的问题。
+During the execution of the `ADD INDEX` or `CREATE INDEX` DDL operation in the downstream, when TiCDC executes the next DDL operation of the same table, this DDL operation might be blocked in the `queueing` state for a long time. This can cause TiCDC to repeatedly execute this DDL operation, and if retries take too long, it might lead to replication task failure. Starting from v8.4.0, if TiCDC has the `SUPER` permission of the downstream database, it periodically runs `ADMIN SHOW DDL JOBS` to check the status of asynchronously executed DDL tasks. TiCDC will wait for index creation to complete before proceeding with replication. Although this might increase replication latency, it avoids replication task failure.
 
-> **注意：**
+> **Note:**
 >
-> - 如果下游 DML 的执行依赖于未完成同步的索引，DML 可能会执行得很慢，进而影响 TiCDC 的同步延迟。
-> - 在同步 DDL 到下游之前，如果 TiCDC 节点宕机或者下游有其他写操作，该 DDL 存在极低的失败概率，你可以自行检查。
+> - If the execution of certain downstream DMLs relies on indexes that have not completed replication, these DMLs might be executed slowly, thereby affecting TiCDC replication latency.
+> - Before replicating DDLs to the downstream, if a TiCDC node crashes or if the downstream is performing other write operations, the DDL replication has an extremely low probability of failure. You can check the downstream to see whether that occurs.
 
-### Rename table 类型的 DDL 注意事项
+### DDL replication considerations for renaming tables
 
-由于同步过程中缺乏一些上下文信息，因此 TiCDC 对 rename table 类型的 DDL 同步有一些约束。
+Due to the lack of some context during the replication process, TiCDC has some constraints on the replication of `RENAME TABLE` DDLs.
 
-#### 一条 DDL 语句内 rename 单个表
+#### Rename a single table in a DDL statement
 
-如果一条 DDL 语句重命名单个表，则只有旧表名符合过滤规则时，TiCDC 才会同步该 DDL 语句。下面使用具体示例进行说明。
+If a DDL statement renames a single table, TiCDC only replicates the DDL statement when the old table name matches the filter rule. The following is an example.
 
-假设你的 changefeed 的配置文件如下：
-
-```toml
-[filter]
-rules = ['test.t*']
-```
-
-那么，TiCDC 对该类型 DDL 的处理行为如下表所示：
-
-| DDL | 是否同步 | 原因和处理方式 |
-| --- | --- | --- |
-| `RENAME TABLE test.t1 TO test.t2` | 同步 | test.t1 符合 filter 规则 |
-| `RENAME TABLE test.t1 TO ignore.t1` | 同步 | test.t1 符合 filter 规则 |
-| `RENAME TABLE ignore.t1 TO ignore.t2` | 忽略 | ignore.t1 不符合 filter 规则 |
-| `RENAME TABLE test.n1 TO test.t1` | 报错，并停止同步。 | 旧表名 test.n1 不符合 filter 规则，但是新表名 test.t1 符合 filter 规则，这是非法操作。请参考错误提示信息进行处理 |
-| `RENAME TABLE ignore.t1 TO test.t1` | 报错，并停止同步。 | 理由同上 |
-
-#### 一条 DDL 语句内 rename 多个表
-
-如果一条 DDL 语句重命名多个表，则只有当**旧的表库名**和**新的库名**都符合过滤规则时，TiCDC 才会同步该 DDL 语句。此外，TiCDC 不支持同步对表名进行交换的 rename table DDL。下面使用具体示例进行说明。
-
-假设你的 changefeed 的配置文件如下：
+Assume that the configuration file of your changefeed is as follows:
 
 ```toml
 [filter]
 rules = ['test.t*']
 ```
 
-那么，TiCDC 对该类型的处理行为如下表所示：
+TiCDC processes this type of DDL as follows:
 
-| DDL | 是否同步 | 原因 |
+| DDL | Whether to replicate | Reason for the handling |
 | --- | --- | --- |
-| `RENAME TABLE test.t1 TO test.t2, test.t3 TO test.t4` | 同步 | 新旧表库名都符合 filter 规则 |
-| `RENAME TABLE test.t1 TO test.ignore1, test.t3 TO test.ignore2` | 同步 | 旧的表库名，新的库名都符合 filter 规则 |
-| `RENAME TABLE test.t1 TO ignore.t1, test.t2 TO test.t22;` | 报错 | 新的库名 ignore 不符合 filter 规则 |
-| `RENAME TABLE test.t1 TO test.t4, test.t3 TO test.t1, test.t4 TO test.t3;` | 报错 | 在一条 DDL 中交换 test.t1 和 test.t3 两个表的名字，TiCDC 无法正确处理。请参考错误提示提示信息处理。 |
+| `RENAME TABLE test.t1 TO test.t2` | Replicate | `test.t1` matches the filter rule |
+| `RENAME TABLE test.t1 TO ignore.t1` | Replicate | `test.t1` matches the filter rule |
+| `RENAME TABLE ignore.t1 TO ignore.t2` | Ignore | `ignore.t1` does not match the filter rule |
+| `RENAME TABLE test.n1 TO test.t1` | Report an error and exit the replication | The old table name `test.n1` does not match the filter rule, but the new table name `test.t1` matches the filter rule. This operation is illegal. In this case, refer to the error message for handling. |
+| `RENAME TABLE ignore.t1 TO test.t1` | Report an error and exit the replication | Same reason as above. |
 
-### DDL 语句注意事项
+#### Rename multiple tables in a DDL statement
 
-当在上游执行跨数据库的 DDL 语句（如 `CREATE TABLE db1.t1 LIKE t2`）时，建议在 DDL 语句中显式地指定所有相关的库名（如 `CREATE TABLE db1.t1 LIKE db2.t2`）。否则，由于缺少库名信息，跨数据库的 DDL 语句可能无法正确地在下游执行。
+If a DDL statement renames multiple tables, TiCDC replicates the DDL statement only when the **old database name**, **old table names**, and **new database name** all match the filter rule.
 
-### 使用 Event Filter 过滤 DDL 事件的注意事项
+In addition, TiCDC does not support the `RENAME TABLE` DDL that swaps the table names. The following is an example.
 
-如果被过滤的 DDL 语句涉及表的创建或删除，TiCDC 只会过滤掉这些 DDL 语句，而不影响 DML 的同步行为。下面使用具体示例进行说明。
+Assume that the configuration file of your changefeed is as follows:
 
-假设你的 changefeed 的配置文件如下：
+```toml
+[filter]
+rules = ['test.t*']
+```
+
+TiCDC processes this type of DDL as follows:
+
+| DDL | Whether to replicate | Reason for the handling |
+| --- | --- | --- |
+| `RENAME TABLE test.t1 TO test.t2, test.t3 TO test.t4` | Replicate | All database names and table names match the filter rule. |
+| `RENAME TABLE test.t1 TO test.ignore1, test.t3 TO test.ignore2` | Replicate | The old database name, the old table names, and the new database name match the filter rule. |
+| `RENAME TABLE test.t1 TO ignore.t1, test.t2 TO test.t22;` | Report an error | The new database name `ignore` does not match the filter rule. |
+| `RENAME TABLE test.t1 TO test.t4, test.t3 TO test.t1, test.t4 TO test.t3;` | Report an error | The `RENAME TABLE` DDL swaps the names of `test.t1` and `test.t3` in one DDL statement, which TiCDC cannot handle correctly. In this case, refer to the error message for handling. |
+
+### DDL statement considerations
+
+When executing cross-database DDL statements (such as `CREATE TABLE db1.t1 LIKE t2`) in the upstream, it is recommended that you explicitly specify all relevant database names in DDL statements (such as `CREATE TABLE db1.t1 LIKE db2.t2`). Otherwise, cross-database DDL statements might not be executed correctly in the downstream due to the lack of database name information.
+
+### Notes on using event filter rules to filter DDL events
+
+If a filtered DDL statement involves table creation or deletion, TiCDC only filters out the DDL statement without affecting the replication behavior of DML statements. The following is an example.
+
+Assume that the configuration file of your changefeed is as follows:
 
 ```toml
 [filter]
 rules = ['test.t*']
 
 [[filter.event-filters]]
-matcher = ["test.t1"] # 该过滤规则只应用于 test 库中的 t1 表
+matcher = ["test.t1"] # This filter rule applies only to the t1 table in the test database.
 ignore-event = ["create table", "drop table", "truncate table", "rename table"]
 ```
 
-| DDL | DDL 行为 | DML 行为 | 原因 |
+| DDL | DDL behavior | DML behavior | Explanation |
 | --- | --- | --- | --- |
-| `CREATE TABLE test.t1 (id INT, name VARCHAR(50));` | 忽略 | 同步 | `test.t1` 符合 Event Filter 过滤规则，`CREATE TABLE` 事件被忽略，但不影响 DML 事件的同步 |
-| `CREATE TABLE test.t2 (id INT, name VARCHAR(50));` | 同步 | 同步 | `test.t2` 不符合 Event Filter 过滤规则 |
-| `CREATE TABLE test.ignore (id INT, name VARCHAR(50));` | 忽略 | 忽略 | `test.ignore` 符合 Table Filter 过滤规则，因此 DDL 和 DML 事件均被忽略 |
-| `DROP TABLE test.t1;` | 忽略 | - | `test.t1` 符合 Event Filter，`DROP TABLE` 事件被忽略。该表已被删除，TiCDC 不再同步 t1 的 DML 事件 |
-| `TRUNCATE TABLE test.t1;` | 忽略 | 同步 | `test.t1` 符合 Event Filter，`TRUNCATE TABLE` 事件被忽略，但不影响 DML 事件的同步  |
-| `RENAME TABLE test.t1 TO test.t2;` | 忽略 | 同步 | `test.t1` 符合 Event Filter，`RENAME TABLE` 事件被忽略，但不影响 DML 事件的同步  |
-| `RENAME TABLE test.t1 TO test.ignore;` | 忽略 | 忽略 | `test.t1` 符合 Event Filter，`RENAME TABLE` 事件被忽略，`test.ignore` 符合 Table Filter 过滤规则，因此 DDL 和 DML 事件均被忽略  |
+| `CREATE TABLE test.t1 (id INT, name VARCHAR(50));` | Ignore | Replicate | `test.t1` matches the event filter rule, so the `CREATE TABLE` event is ignored. The replication of DML events remains unaffected. |
+| `CREATE TABLE test.t2 (id INT, name VARCHAR(50));` | Replicate | Replicate | `test.t2` does not match the event filter rule. |
+| `CREATE TABLE test.ignore (id INT, name VARCHAR(50));` | Ignore | Ignore | `test.ignore` matches the event filter rule, so both DDL and DML events are ignored. |
+| `DROP TABLE test.t1;` | Ignore | - | `test.t1` matches the event filter rule, so the `DROP TABLE` event is ignored. Because the table is deleted, TiCDC no longer replicates DML events for `t1`. |
+| `TRUNCATE TABLE test.t1;` | Ignore | Replicate | `test.t1` matches the event filter rule, so the `TRUNCATE TABLE` event is ignored. The replication of DML events remains unaffected. |
+| `RENAME TABLE test.t1 TO test.t2;` | Ignore | Replicate | `test.t1` matches the event filter rule, so the `RENAME TABLE` event is ignored. The replication of DML events remains unaffected. |
+| `RENAME TABLE test.t1 TO test.ignore;` | Ignore | Ignore | `test.t1` matches the event filter rule, so the `RENAME TABLE` event is ignored. `test.ignore` matches the event filter rule, so both DDL and DML events are ignored. |
 
-> **注意：**
+> **Note:**
 >
-> - 当同步数据到数据库时，应谨慎使用 Event Filter 过滤 DDL 事件，同步过程中需确保上下游的库表结构始终一致。否则，TiCDC 可能会报错或产生未定义的同步行为。
-> - 在 v6.5.8、v7.1.4、v7.5.1 之前的版本中，使用 Event Filter 过滤涉及创建或删除表的 DDL 事件，会影响 DML 的同步，不推荐使用该功能。
+> - When replicating data to a database, use the event filter to filter DDL events with caution. Ensure that the upstream and downstream database schemas remain consistent during replication. Otherwise, TiCDC might report errors or cause undefined replication behavior.
+> - For versions earlier than v6.5.8, v7.1.4, and v7.5.1, using the event filter to filter DDL events involving table creation or deletion affects DML replication. It is not recommended to use this feature in these versions.

@@ -1,104 +1,106 @@
 ---
-title: TiFlash 集群监控
-summary: TiFlash 集群监控包括 TiFlash-Summary、TiFlash-Proxy-Summary 和 TiFlash-Proxy-Details。监控指标包括存储、内存、CPU 使用率、请求处理、错误数量、线程数、任务调度、DDL、写入、读取、Raft 等信息。注意低版本监控信息不完善，建议使用 v4.0.5 或更高版本的 TiDB 集群。
+title: Monitor the TiFlash Cluster
+summary: Learn the monitoring items of TiFlash.
 ---
 
-# TiFlash 集群监控
+# Monitor the TiFlash Cluster
 
-使用 TiUP 部署 TiDB 集群时，一键部署监控系统 (Prometheus & Grafana)，监控架构参见 [TiDB 监控框架概述](/tidb-monitoring-framework.md)。
+This document describes the monitoring items of TiFlash.
 
-目前 Grafana Dashboard 整体分为 PD、TiDB、TiKV、Node\_exporter、Overview 等。
+If you use TiUP to deploy the TiDB cluster, the monitoring system (Prometheus & Grafana) is deployed at the same time. For more information, see [Overview of the Monitoring Framework](/tidb-monitoring-framework.md).
 
-TiFlash 面板一共包括 **TiFlash-Summary**、**TiFlash-Proxy-Summary**、**TiFlash-Proxy-Details**。通过面板上的指标，可以了解 TiFlash 当前的状态。其中 **TiFlash-Proxy-Summary**、**TiFlash-Proxy-Details** 主要为 TiFlash 的 Raft 层信息，其监控指标信息可参考 [TiKV 监控指标详解](/grafana-tikv-dashboard.md)。
+The Grafana dashboard is divided into a series of sub dashboards which include Overview, PD, TiDB, TiKV, and Node\_exporter. A lot of metrics are there to help you diagnose.
 
-> **注意：**
+TiFlash has three dashboard panels: **TiFlash-Summary**, **TiFlash-Proxy-Summary**, and **TiFlash-Proxy-Details**. The metrics on these panels indicate the current status of TiFlash. The **TiFlash-Proxy-Summary** and **TiFlash-Proxy-Details** panels mainly show the information of the Raft layer and the metrics are detailed in [Key Monitoring Metrics of TiKV](/grafana-tikv-dashboard.md).
+
+> **Note:**
 >
-> 低版本的 TiFlash 监控信息较不完善，如有需要推荐使用 v4.0.5 或更高版本的 TiDB 集群。
+> It is recommended that you use TiDB v4.0.5 or later versions for improved monitor on TiFlash.
 
-以下为 **TiFlash-Summary** 默认的监控信息：
+The following sections introduce the default monitoring information of **TiFlash-Summary**.
 
 ## Server
 
-- Store size：每个 TiFlash 实例的使用的存储空间的大小。
-- Available size：每个 TiFlash 实例的可用的存储空间的大小。
-- Capacity size：每个 TiFlash 实例的存储容量的大小。
-- Uptime：自上次重启以来 TiFlash 正常运行的时间。
-- Memory：每个 TiFlash 实例内存的使用情况。
-- CPU Usage：每个 TiFlash 实例 CPU 的使用率。
-- FSync OPS：每个 TiFlash 实例每秒进行 fsync 操作的次数。
-- File Open OPS：每个 TiFlash 实例每秒进行 open 操作的次数。
-- Opened File Count：当前每个 TiFlash 实例打开的文件句柄数。
+- Store size: The storage size used by each TiFlash instance.
+- Available size: The storage size available for each TiFlash instance.
+- Capacity size: The storage capacity for each TiFlash instance.
+- Uptime: The runtime of TiFlash since last restart.
+- Memory: The memory usage per TiFlash instance.
+- CPU Usage: The CPU utilization per TiFlash instance.
+- FSync OPS: The number of fsync operations per TiFlash instance per second.
+- File Open OPS: The number of `open` operations per TiFlash instance per second.
+- Opened File Count: The number of file descriptors currently opened by each TiFlash instance.
 
-> **注意：**
+> **Note:**
 >
-> Store size、FSync OPS、File Open OPS、Opened File Count 目前仅包含了 TiFlash 存储层的统计指标，未包括 TiFlash-Proxy 内的信息。
+> Store size, FSync OPS, File Open OPS, and Opened File Count currently only cover the monitoring information of the TiFlash storage layer and do not cover that in TiFlash-Proxy.
 
 ## Coprocessor
 
-- Request QPS：所有 TiFlash 实例收到的 coprocessor 请求数量。其中 batch 是 batch 请求数量，batch_cop 是 batch 请求中的 coprocessor 请求数量，cop 是直接通过 coprocessor 接口发送的 coprocessor 请求数量，cop_dag 是所有 coprocessor 请求中 dag 请求数量，super_batch 是开启 super batch 特性的请求数量。
-- Executor QPS：所有 TiFlash 实例收到的请求中，每种 dag 算子的数量，其中 table_scan 是扫表算子，selection 是过滤算子，aggregation 是聚合算子，top_n 是 TopN 算子，limit 是 limit 算子。
-- Request Duration：所有 TiFlash 实例处理 coprocessor request 总时间，总时间为接收到该 coprocessor 请求至请求应答完毕的时间。
-- Error QPS：所有 TiFlash 实例处理 coprocessor 请求的错误数量。其中 meet_lock 为读取的数据有锁，region_not_found 为 Region 不存在，epoch_not_match 为读取的 Region epoch 与本地不一致，kv_client_error 为与 TiKV 通信产生的错误，internal_error 为 TiFlash 内部系统错误，other 为其他错误。
-- Request Handle Duration：所有 TiFlash 实例处理 coprocessor 请求处理时间，处理时间为该 coprocessor 请求开始执行到执行结束的时间。
-- Response Bytes/Seconds：所有 TiFlash 实例应答总字节数。
-- Cop task memory usage：所有 TiFlash 实例处理 coprocessor 请求占用的总内存。
-- Handling Request Number：所有 TiFlash 实例正在处理的 coprocessor 请求数量之和。请求的分类与 Request QPS 中的分类相同。
-- Threads of RPC：每个 TiFlash 实例使用的实时 RPC 线程数。
-- Max Threads of RPC：最近一段时间每个 TiFlash 实例使用的 RPC 线程数峰值。
-- Threads：每个 TiFlash 实例使用的实时线程数。
-- Max Threads：最近一段时间每个 TiFlash 实例使用的线程数峰值。
+- Request QPS: The number of coprocessor requests received by all TiFlash instances. `batch` is the number of batch requests. `batch_cop` is the number of coprocessor requests in the batch requests. `cop` is the number of coprocessor requests that are sent directly via the coprocessor interface. `cop_dag` is the number of dag requests in all coprocessor requests. `super_batch` is the number of requests to enable the Super Batch feature.
+- Executor QPS: The number of each type of dag executors in the requests received by all TiFlash instances. `table_scan` is the table scan executor. `selection` is the selection executor. `aggregation` is the aggregation executor. `top_n` is the `TopN` executor. `limit` is the limit executor.
+- Request Duration: The total duration of all TiFlash instances processing coprocessor requests. The total duration is from the time that the coprocessor request is received to the time that the response to the request is completed.
+- Error QPS: The number of errors of all TiFlash instances processing coprocessor requests. `meet_lock` means that the read data is locked. `region_not_found` means that the Region does not exist. `epoch_not_match` means the read Region epoch is inconsistent with the local epoch. `kv_client_error` means that the communication with TiKV returns an error. `internal_error` is the internal system error of TiFlash. `other` is other types of errors.
+- Request Handle Duration: The duration of all TiFlash instances processing coprocessor requests. The processing time is from starting to execute the coprocessor request to completing the execution.
+- Response Bytes/Seconds: The total bytes of the response from all TiFlash instances.
+- Cop task memory usage: The total memory usage of all TiFlash instances processing coprocessor requests.
+- Handling Request Number: The total number of all TiFlash instances processing coprocessor requests. The classification of the requests is the same as that of Request QPS.
+- Threads of RPC: The real-time number of RPC threads used in each TiFlash instance.
+- Max Threads of RPC: The maximum number of RPC threads recently used in each TiFlash instance.
+- Threads: The real-time number of threads used in each TiFlash instance.
+- Max Threads: The maximum number of threads recently used in each TiFlash instance.
 
 ## Task Scheduler
 
-- Min TSO：每个 TiFlash 实例上正在运行的查询语句中的最小 TSO，该值确保具有最小 TSO 的查询可以被调度。如果当前没有正在运行的查询，则该值为 `uint64` 整数型最大值。
-- Estimated Thread Usage and Limit：每个 TiFlash 实例上正在运行的所有任务占用的线程估值，以及该实例上任务调度器设置的估算线程用量的软限制和硬限制。
-- Active and Waiting Queries Count：每个 TiFlash 实例上正在运行的查询数量和正在等待的查询数量。
-- Active and Waiting Tasks Count：每个 TiFlash 实例上正在运行的任务数量和正在等待的任务数量。
-- Hard Limit Exceeded Count：每个 TiFlash 实例上运行中任务的估算线程用量超过了设置的硬限制的次数。
-- Task Waiting Duration：每个 TiFlash 实例上任务从初始化到被调度的等待时长。
+- Min TSO: The minimum TSO among all queries running on each TiFlash instance. This value ensures that queries with the minimum TSO can be scheduled to run. When no queries are running, this value is the maximum unsigned 64-bit integer.
+- Estimated Thread Usage and Limit: The estimated amount of threads used by all queries running on each TiFlash instance, and the soft and hard limits on the amount.
+- Active and Waiting Queries Count: The amount of running queries and that of waiting queries on each TiFlash instance.
+- Active and Waiting Tasks Count: The amount of running tasks and that of waiting tasks on each TiFlash instance.
+- Hard Limit Exceeded Count: Times that the estimated amount of threads used by queries running on each TiFlash instance exceeds the hard limit.
+- Task Waiting Duration: The duration from task initialization to task scheduling on each TiFlash instance.
 
 ## DDL
 
-- Schema Version：每个 TiFlash 实例目前缓存的 schema 版本。
-- Schema Apply OPM：所有 TiFlash 实例每分钟 apply 同步 TiDB schema diff 的次数。diff apply 是正常的单次 apply 过程，如果 diff apply 失败，则 failed apply +1，并回退到 full apply，拉取最新的 schema 信息以更新 TiFlash 的 schema 版本。
-- Schema Internal DDL OPM：所有 TiFlash 实例每分钟执行的内部 DDL 次数。
-- Schema Apply Duration：所有 TiFlash 实例 apply schema 消耗的时间。
+- Schema Version: The version of the schema currently cached in each TiFlash instance.
+- Schema Apply OPM: The number of TiDB `schema diff` synchronized in `apply` operations by all TiFlash instances per minute. This item includes the count of three types of `apply`: `diff apply`, `full apply`, and `failed apply`. `diff apply` is the normal process of a single apply. If `diff apply` fails, `failed apply` increases by `1`, and TiFlash rolls back to `full apply` and pulls the latest schema information to update the schema version of TiFlash.
+- Schema Internal DDL OPM: The number of specific DDL operations executed per minute in all TiFlash instances.
+- Schema Apply Duration: The time used for a single `apply schema` operation in all TiFlash instances.
 
 ## Storage
 
-- Write Command OPS：所有 TiFlash 实例存储层每秒收到的写请求数量。
-- Write Amplification：每个 TiFlash 实例写放大倍数（实际磁盘写入量/逻辑数据写入量）。total 为自此次启动以来的写放大倍数，5min 为最近 5 分钟内的写放大倍数。
-- Read Tasks OPS：每个 TiFlash 实例每秒存储层内部读取任务的数量。
-- Rough Set Filter Rate：每个 TiFlash 实例最近 1 分钟内读取的 packet 数被存储层粗糙索引过滤的比例。
-- Internal Tasks OPS：所有 TiFlash 实例每秒进行内部数据整理任务的次数。
-- Internal Tasks Duration：所有 TiFlash 实例进行内部数据整理任务消耗的时间。
-- Page GC Tasks OPM：所有 TiFlash 实例每分钟进行 Delta 部分数据整理任务的次数。
-- Page GC Tasks Duration：所有 TiFlash 实例进行 Delta 部分数据整理任务消耗的时间分布。
-- Disk Write OPS：所有 TiFlash 实例每秒进行磁盘写入的次数。
-- Disk Read OPS：所有 TiFlash 实例每秒进行磁盘读取的次数。
-- Write flow：所有 TiFlash 实例磁盘写操作的流量。
-- Read flow：所有 TiFlash 实例磁盘读操作的流量。
+- Write Command OPS: The number of write requests received per second by the storage layer of all TiFlash instances.
+- Write Amplification: Write amplification of each TiFlash instance (the actual bytes of disk writes divided by the written bytes of logical data). `total` is the write amplification since this start, and `5min` is the write amplification in the last 5 minutes.
+- Read Tasks OPS: The number of read tasks in the storage layer per second for each TiFlash instance.
+- Rough Set Filter Rate: The proportion of the number of packets read by each TiFlash instance in the last minute that are filtered by the rough set index of the storage layer.
+- Internal Tasks OPS: The number of times that all TiFlash instances perform internal data sorting tasks per second.
+- Internal Tasks Duration: The time consumed by all TiFlash instances for internal data sorting tasks.
+- Page GC Tasks OPM: The number of times that all TiFlash instances perform Delta data sorting tasks per minute.
+- Page GC Tasks Duration: The distribution of time consumed by all TiFlash instances to perform Delta data sorting tasks.
+- Disk Write OPS: The number of disk writes per second by all TiFlash instances.
+- Disk Read OPS: The number of disk reads per second by all TiFlash instances.
+- Write flow: The traffic of disk writes by all TiFlash instances.
+- Read flow: The traffic of disk reads by all TiFlash instances.
 
-> **注意：**
+> **Note:**
 >
-> 目前这部分监控指标仅包含了 TiFlash 存储层的统计指标，未包括 TiFlash-Proxy 内的信息。
+> These metrics only cover the monitoring information of the TiFlash storage layer and do not cover that in TiFlash-Proxy.
 
 ## Storage Write Stall
 
-- Write & Delta Management Throughput：所有实例写入及数据整理的吞吐量。
-    - `throughput_write` 表示通过 Raft 进行数据同步的吞吐量。
-    - `throughput_delta-management` 表示数据整理的吞吐量。
-    - `total_write` 表示自上次启动以来的总写入字节数。
-    - `total_delta-management` 表示自上次启动以来数据整理的总字节数。
-- Write Stall Duration：每个实例写入和移除 Region 数据产生的卡顿时长。
-- Write Throughput By Instance：每个实例写入数据的吞吐量，包括 apply Raft 数据日志以及 Raft 快照的写入吞吐量。
-- Write Command OPS By Instance：每个实例收到各种命令的总计数。
-    - `write block` 表示通过 Raft 同步数据日志。
-    - `delete_range` 表示从该实例中删除一些 Region 或移动一些 Region 到该实例中。
-    - `ingest` 表示这些 Region 的快照被应用到这个实例中。
+- Write & Delta Management Throughput: The throughput of write and data compaction for all instances.
+    - `throughput_write` means the throughput of data synchronization through Raft.
+    - `throughput_delta-management` means the throughput of data compaction.
+    - `total_write` means the total bytes written since the last start.
+    - `total_delta-management` means the total bytes of data compacted since the last start.
+- Write Stall Duration: The stall duration of write and removing Region data (deleting ranges) by instance.
+- Write Throughput By Instance: The throughput of write by instance. It includes the throughput by applying the Raft write commands and Raft snapshots.
+- Write Command OPS By Instance: The total count of different kinds of commands received by instance.
+    - `write block` means the data logs synchronized through Raft.
+    - `delete_range` means that some Regions are removed from or moved to this instance.
+    - `ingest` means some Region snapshots are applied to this instance.
 
 ## Raft
 
-- Read Index OPS：每个 TiFlash 实例每秒触发 read_index 请求的次数，等于请求触发的 Region 总数。
-- Read Index Duration：所有 TiFlash 实例在进行 read_index 消耗的时间，主要消耗在于和 Region leader 的交互和重试时间。
-- Wait Index Duration：所有 TiFlash 实例在进行 wait_index 消耗的时间，即拿到 read_index 请求后，等待本地的 Region index >= read_index 所花费的时间。
+- Read Index OPS: The number of times that each TiFlash instance triggers the `read_index` request per second, which equals to the number of Regions triggered.
+- Read Index Duration: The time used by `read_index` for all TiFlash instances. Most time is used for interaction with the Region leader and retry.
+- Wait Index Duration: The time used by `wait_index` for all TiFlash instances, namely the time used to wait until local index >= read_index after the `read_index` request is received.

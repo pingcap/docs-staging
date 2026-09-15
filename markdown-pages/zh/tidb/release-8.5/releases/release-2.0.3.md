@@ -1,38 +1,37 @@
 ---
-title: TiDB 2.0.3 release notes
-summary: TiDB 2.0.3 版本在 2.0.2 版的基础上做出了改进，包括系统兼容性和稳定性的改进。TiDB 支持在线更改日志级别和 `COM_CHANGE_USER` 命令，优化查询条件代价估算和修复多个问题。PD 修复了特定条件下的问题，TiKV 修复了错误上报和除数为 0 的问题。
-aliases: ['/zh/tidb/dev/release-2.0.3/','/zh/tidb/v2.0/release-2.0.3','/docs-cn/dev/releases/release-2.0.3/','/docs-cn/dev/releases/203/','/zh/tidb/v5.4/release-2.0.3','/zh/tidb/v6.1/release-2.0.3','/zh/tidb/v6.5/release-2.0.3','/zh/tidb/v7.1/release-2.0.3','/zh/tidb/v7.5/release-2.0.3','/zh/tidb/v8.1/release-2.0.3']
+title: TiDB 2.0.3 Release Notes
+summary: TiDB 2.0.3 was released on June 1, 2018, with improvements in system compatibility and stability. It includes various fixes and optimizations for TiDB, PD, and TiKV. Some highlights are support for modifying log level online, fixing issues with unique index and `ON DUPLICATE KEY UPDATE`, and addressing panic issues in specific conditions.
 ---
 
 # TiDB 2.0.3 Release Notes
 
-2018 年 6 月 1 日，TiDB 发布 2.0.3 版。该版本在 2.0.2 版的基础上，对系统兼容性、稳定性做出了改进。
+On June 1, 2018, TiDB 2.0.3 is released. Compared with TiDB 2.0.2, this release has great improvement in system compatibility and stability.
 
 ## TiDB
 
-- 支持在线更改日志级别
-- 支持 `COM_CHANGE_USER` 命令
-- 支持二进制协议情况下使用时间类型参数
-- 优化带 `BETWEEN` 表达式的查询条件代价估算
-- 在 `SHOW CREATE TABLE` 里不显示 `FOREIGN KEY` 信息
-- 优化带 `LIMIT` 子句的查询代价估算
-- 修复 `YEAR` 类型作为唯一索引的问题
-- 修复在没有唯一索引的情况下 `ON DUPLICATE KEY UPDATE` 的问题
-- 修复 `CEIL` 函数的兼容性问题
-- 修复 `DECIMAL` 类型计算 `DIV` 的精度问题
-- 修复 `ADMIN CHECK TABLE` 误报的问题
-- 修复 `MAX`/`MIN` 在特定表达式参数下 panic 的问题
-- 修复特殊情况下 `JOIN` 结果为空的问题
-- 修复 `IN` 表达式构造查询 `Range` 的问题
-- 修复使用 `Prepare` 方式进行查询且启用 `Plan Cache` 情况下的 Range 计算问题
-- 修复异常情况下频繁加载 Schema 信息的问题
+- Support modifying the log level online
+- Support the `COM_CHANGE_USER` command
+- Support using the `TIME` type parameters under the binary protocol
+- Optimize the cost estimation of query conditions with the `BETWEEN` expression
+- Do not display the `FOREIGN KEY` information in the result of `SHOW CREATE TABLE`
+- Optimize the cost estimation for queries with the `LIMIT` clause
+- Fix the issue about the `YEAR` type as the unique index
+- Fix the issue about `ON DUPLICATE KEY UPDATE` in conditions without the unique index
+- Fix the compatibility issue of the `CEIL` function
+- Fix the accuracy issue of the `DIV` calculation in the `DECIMAL` type
+- Fix the false alarm of `ADMIN CHECK TABLE`
+- Fix the panic issue of `MAX`/`MIN` under specific expression parameters
+- Fix the issue that the result of `JOIN` is null in special conditions
+- Fix the `IN` expression issue when building and querying Range
+- Fix a Range calculation issue when using `Prepare` to query and `Plan Cache` is enabled
+- Fix the issue that the Schema information is frequently loaded in abnormal conditions
 
 ## PD
 
-- 修复在特定条件下收集 hot-cache metrics 会 panic 的问题
-- 修复对旧的 Region 产生调度的问题
+- Fix the panic issue when collecting hot-cache metrics in specific conditions
+- Fix the issue about scheduling of the obsolete Regions
 
 ## TiKV
 
-- 修复 learner flag 错误上报给 PD 的 bug
-- 在 `do_div_mod` 中 `divisor/dividend` 为 0 时返回错误
+- Fix the bug that the learner flag mistakenly reports to PD
+- Report an error instead of getting a result if `divisor/dividend` is 0 in `do_div_mod`

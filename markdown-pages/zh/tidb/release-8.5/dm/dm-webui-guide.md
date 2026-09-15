@@ -1,73 +1,73 @@
 ---
-title: 使用 WebUI 管理 DM 迁移任务
-summary: 学习如何使用 WebUI 来方便的管理数据迁移任务。
+title: Use WebUI to Manage DM migration tasks
+summary: Learn how to use WebUI to manage DM migration tasks.
 ---
 
-# 使用 WebUI 管理 DM 迁移任务
+# Use WebUI to Manage DM migration tasks
 
-DM WebUI 是一个 TiDB Data Migration (DM) 迁移任务管理界面，方便用户以直观的方式管理大量迁移任务，无需使用 dmctl 命令行，简化任务管理的操作步骤。
+DM WebUI is a web-based GUI platform for managing TiDB Data Migration (DM) tasks. This platform provides a simple and intuitive way to manage a large number of migration tasks, which frees you from using the dmctl command-line tool.
 
-本文档介绍 DM WebUI 的访问方式、使用前提、各界面的使用场景以及注意事项。
+This document introduces how to access DM WebUI, the prerequisites, the use cases of each page on the interface, and the attention points.
 
-> **警告：**
+> **Warning:**
 >
-> - DM WebUI 当前为实验特性，不建议在生产环境中使用。
-> - DM WebUI 中 `task` 的生命周期有所改变，不建议与 dmctl 同时使用。
+> - DM WebUI is currently an experimental feature. It is not recommended to use it in the production environment.
+> - The lifecycle of `task` in DM WebUI has been changed, and it is not recommended to use DM WebUI and dmctl at the same time.
 
-DM WebUI 主要包含以下界面：
+DM WebUI has the following pages:
 
-- **数据迁移**
-    - **任务列表**：提供创建迁移任务的界面入口，并展示各迁移任务的详细信息。帮助用户监控、创建、删除、配置迁移任务。
-    - **上游配置**：用户在此页面配置同步任务的上游数据源信息。管理数据迁移环境中的上游配置，包含了，新增、删除上游配置、监控上游配置对应的同步任务状态、修改上游配置等相关的管理功能。
-    - **同步详情**：展示更加详细的任务状态信息。根据用户指定的筛选条件查看同步任务的具体配置和状态信息，包括上下游配置信息，上下游数据库名称，源表和目标表的关系等。
-- **集群管理**
-    - **成员列表**：展示 DM 集群中所有的 master 和 worker 节点，以及 worker 节点与 source 的绑定关系。查看当前 DM 集群的配置信息和各个 worker 的状态信息，并提供基本的管理功能。
+- **Migration**
+    - **Task**: Provides an entry to task creation, and displays the detailed information of each migration task. This page helps you monitor, create, delete, and configure migration tasks.
+    - **Source**: Configures the information of upstream data source for a migration task. On this page, you can manage the upstream configuration in a data migration environment, including creating and deleting upstream configuration, monitoring the task status corresponding to the upstream configuration, and modifying upstream configuration.
+    - **Replication Detail**: Displays the detailed status information of migration tasks. On this page, you can view the detailed configuration and status information based on a specified filter, including the configuration information and database names of the upstream and downstream, the relation of source tables and target tables.
+- **Cluster**
+    - **Members**: Displays the list of all master and worker nodes in the DM cluster, and the binding relationship between worker nodes and the source. On this page, you can view the configuration information of the current DM cluster and the status information of each worker. In addition, basic management is also provided on this page.
 
-界面示例如下：
+The interface is as follows:
 
-![webui](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-webui-preview-cn.png)
+![webui](https://docs-download.pingcap.com/media/images/docs/dm/dm-webui-preview-en.png)
 
-## 访问方式
+## Access method
 
-在开启 [OpenAPI](/dm/dm-open-api.md) 后，你可以从 DM 集群的任意 master 节点访问 DM WebUI，访问端口与 DM OpenAPI 保持一致，默认为 `8261`。访问地址示例：`http://{master_ip}:{master_port}/dashboard/`。
+When [OpenAPI](/dm/dm-open-api.md#maintain-dm-clusters-using-openapi) is enabled, you can access the DM WebUI from any master node of the DM cluster. The access port is `8261` by default and is the same as that of DM OpenAPI. Here is an example of an access address: `http://{master_ip}:{master_port}/dashboard/`.
 
-## 数据迁移
+## Migration
 
-**数据迁移**包含**上游配置**、**任务列表**、**同步详情**三个界面。
+**Migration** includes **Source**, **Task**, and **Replication Detail** pages.
 
-### 上游配置
+### Source
 
-创建迁移任务之前，你需要先创建同步任务的上游数据源信息。你可在**上游配置**页面创建上游任务的配置。创建时，请注意以下事项：
+Before creating a migration task, you need to create the data source information of the upstream for the replication task. You can create the upstream configuration in the **Source** page. When creating sources, pay attention to the following items:
 
-- 如果存在主从切换，请务必在上游 MySQL 开启 GTID，并在创建上游配置时将 GTID 设为 `True`，否则数据迁移任务将在主从切换时中断（AWS Aurora 除外）。
-- 若某个上游数据库需要临时下线，可将其“停用”，但停用期间其他正在同步的 MySQL 实例不可执行 DDL 操作，否则停用的实例被启用后将无法正常同步。
-- 当多个迁移任务使用同一个上游时，可能对其造成额外压力。开启 relay log 可降低对上游的影响，建议开启 relay log。
+- If there is an auto failover between primary and secondary instance, enable GTID in the upstream MySQL and set GTID to `True` when creating the upstream configuration; otherwise, the migration task will be interrupted during the failover (except for AWS Aurora).
+- If a MySQL instance needs to be temporarily offline, you can disable the instance. However, when the MySQL instance is being disabled, other MySQL instances running migration tasks should not execute DDL operations; otherwise, the disabled instance cannot properly migrate data after it is enabled.
+- When multiple migration tasks use the same upstream, it might cause additional stress. Enabling relay log can reduce the impact on the upstream, so it is recommended to enable relay log.
 
-### 任务列表
+### Task
 
-你可通过**任务列表**界面查看迁移任务详情，并创建迁移任务。
+You can view the migration task details on the **Task** page, and create migration tasks.
 
-#### 查看迁移任务详情
+#### View migration task details
 
-在任务列表中，点击任务名称，详情页面会从右侧滑出。详情页面展示了更加详细的任务状态信息。在信息详情页面，你可以查看每一个子任务的运行情况，以及此迁移任务当前完整的配置项信息。
+In the task list, click the task name to view the Details page from the right. The Details page displays more detailed task status information. On this page, you can view the status of each sub-task and the current configuration information of the migration task.
 
-在 DM 中，迁移任务中的每一个子任务可能处于不同的阶段，即全量导出 (dump) -> 全量导入 (load) -> 增量同步 (sync)。因此任务的当前阶段以子任务所处阶段的统计信息来展示，可以更加清楚的了解任务运行情况。
+In DM, each sub-task of a migration task might be at different stages, namely full dump -> full import (load) -> incremental replication (sync). Therefore, the current stage of a task is displayed with the statistics of the sub-task statuses, which can help you better understand the running status of the task.
 
-#### 创建迁移任务
+#### Create migration tasks
 
-要在该界面创建任务，点击右上角的**添加**按钮即可。创建迁移任务时，你可以使用以下任一方式：
+To create a migration task on this page, click the **Add** button on the top right corner. You can use one of the following methods to create a migration task:
 
-- 通过向导方式。通过 WebUI 根据指引一步步填写所需信息进行任务创建，此种方式比较适合入门级用户及日常使用。
-- 通过配置文件。通过直接粘贴或编写 JSON 格式的任务配置文件进行创建，支持更多的参数调整，适合熟练的用户使用。
+- By following the WebUI instruction. Fill in the required information step by step on the WebUI. This method is suitable for beginners and for daily use.
+- By using a configuration file. Paste or write a JSON-formatted configuration file to create a migration task. This method supports adjusting more parameters and is suitable for advanced users.
 
-### 同步详情
+### Replication detail
 
-你可以通过**同步详情**页面查看迁移任务中所配置迁移规则的运行情况。同步详情页面支持根据任务、数据源、表库名称进行查询。
+You can view the status of the migration rules configured for a migration task on the **Replication Detail** page. This page supports querying by task, source, and database name.
 
-查询结果中包含上游表至下游表的对应信息，因此请慎重使用 `.*` 等，以防止查询结果过多导致页面反应迟缓。
+The query result contains the corresponding information of the upstream table and the downstream table, so be careful using `.*` in case that too many query results slow down the page response.
 
-## 集群管理
+## Cluster
 
-### 成员列表
+### Members
 
-**成员列表**页面展示 DM 集群中所有的 master 和 worker 节点，以及 worker 节点与 source 的绑定关系。
+The **Members** page displays all the master and worker nodes in the DM cluster, and the binding relationship between worker nodes and the source.

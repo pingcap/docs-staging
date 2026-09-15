@@ -1,13 +1,13 @@
 ---
-title: TiCDC Changefeed 命令行参数和配置参数
-summary: 了解 TiCDC Changefeed 详细的命令行参数和配置文件定义。
+title: CLI and Configuration Parameters of TiCDC Changefeeds
+summary: Learn the definitions of CLI and configuration parameters of TiCDC changefeeds.
 ---
 
-# TiCDC Changefeed 命令行参数和配置参数
+# CLI and Configuration Parameters of TiCDC Changefeeds
 
-## TiCDC Changefeed 命令行参数
+## Changefeed CLI parameters
 
-本章节将以创建同步任务为例，介绍 TiCDC Changefeed 的命令行参数：
+This section introduces the command-line parameters of TiCDC changefeeds by illustrating how to create a replication (changefeed) task:
 
 ```shell
 cdc cli changefeed create --server=http://10.0.10.25:8300 --sink-uri="mysql://root:123456@127.0.0.1:3306/" --changefeed-id="simple-replication-task"
@@ -16,457 +16,458 @@ cdc cli changefeed create --server=http://10.0.10.25:8300 --sink-uri="mysql://ro
 ```shell
 Create changefeed successfully!
 ID: simple-replication-task
-Info: {"upstream_id":7178706266519722477,"namespace":"default","id":"simple-replication-task","sink_uri":"mysql://root:xxxxx@127.0.0.1:4000/?time-zone=","create_time":"2026-08-27T15:05:46.679218+08:00","start_ts":438156275634929669,"engine":"unified","config":{"case_sensitive":false,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":true,"bdr_mode":false,"sync_point_interval":30000000000,"sync_point_retention":3600000000000,"filter":{"rules":["test.*"],"event_filters":null},"mounter":{"worker_num":16},"sink":{"protocol":"","schema_registry":"","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false},"column_selectors":null,"transaction_atomicity":"none","encoder_concurrency":16,"terminator":"\r\n","date_separator":"none","enable_partition_separator":false},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"storage":""}},"state":"normal","creator_version":"v8.5.8"}
+Info: {"upstream_id":7178706266519722477,"namespace":"default","id":"simple-replication-task","sink_uri":"mysql://root:xxxxx@127.0.0.1:4000/?time-zone=","create_time":"2026-08-27T15:05:46.679218+08:00","start_ts":438156275634929669,"engine":"unified","config":{"case_sensitive":false,"enable_old_value":true,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":true,"bdr_mode":false,"sync_point_interval":30000000000,"sync_point_retention":3600000000000,"filter":{"rules":["test.*"],"event_filters":null},"mounter":{"worker_num":16},"sink":{"protocol":"","schema_registry":"","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false},"column_selectors":null,"transaction_atomicity":"none","encoder_concurrency":16,"terminator":"\r\n","date_separator":"none","enable_partition_separator":false},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"storage":""}},"state":"normal","creator_version":"8.5.8"}
 ```
 
-- `--changefeed-id`：同步任务的 ID，格式需要符合正则表达式 `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`。如果不指定该 ID，TiCDC 会自动生成一个 UUID（version 4 格式）作为 ID。
-- `--sink-uri`：同步任务下游的地址，需要按照以下格式进行配置，目前 scheme 支持 `mysql`、`tidb` 和 `kafka`。
+- `--changefeed-id`: The ID of the replication task. The format must match the `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$` regular expression. If this ID is not specified, TiCDC automatically generates a UUID (the version 4 format) as the ID.
+- `--sink-uri`: The downstream address of the replication task. Configure `--sink-uri` according to the following format. Currently, the scheme supports `mysql`, `tidb`, and `kafka`.
 
     ```
     [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
     ```
 
-    URI 的参数包含特殊字符时，如 `! * ' ( ) ; : @ & = + $ , / ? % # [ ]`，需要对 URI 特殊字符进行转义处理。你可以在 [URI Encoder](https://www.urlencoder.org/) 中对 URI 进行转义。
+    When the sink URI parameters contain special characters such as `! * ' ( ) ; : @ & = + $ , / ? % # [ ]`, you need to escape the special characters, for example, in [URI Encoder](https://www.urlencoder.org/).
 
-- `--start-ts`：指定 changefeed 的开始 TSO。TiCDC 集群将从这个 TSO 开始拉取数据。默认为当前时间。
-- `--target-ts`：指定 changefeed 的目标 TSO。TiCDC 集群拉取数据直到这个 TSO 停止。默认为空，即 TiCDC 不会自动停止。
-- `--config`：指定 changefeed 配置文件。
+- `--start-ts`: Specifies the starting TSO of the changefeed. From this TSO, the TiCDC cluster starts pulling data. The default value is the current time.
+- `--target-ts`: Specifies the ending TSO of the changefeed. To this TSO, the TiCDC cluster stops pulling data. The default value is empty, which means that TiCDC does not automatically stop pulling data.
+- `--config`: Specifies the configuration file of the changefeed.
 
-## TiCDC Changefeed 配置文件说明
+## Changefeed configuration parameters
 
-本章节详细介绍了同步任务的配置。
+This section introduces the configuration of a replication task.
 
 ### `memory-quota`
 
-- 指定该 Changefeed 在 Capture Server 中内存配额的上限。对于超额使用部分，会在运行中被 Go runtime 优先回收。
-- 默认值：`1073741824`，即 1 GiB
+- Specifies the memory quota (in bytes) that can be used in the capture server by the sink manager. If the value is exceeded, the overused part will be recycled by the go runtime.
+- Default value: `1073741824` (1 GiB)
 
 ### `case-sensitive`
 
-- 指定配置文件中涉及的库名、表名是否为大小写敏感。自 v6.5.6、v7.1.3 和 v7.5.0 起，默认值由 `true` 改为 `false`。
-- 该配置会同时影响 filter 和 sink 相关配置。
-- 默认值：`false`
+- Specifies whether the database names and tables in the configuration file are case-sensitive. Starting from v6.5.6, v7.1.3, and v7.5.0, the default value changes from `true` to `false`.
+- This configuration item affects configurations related to filter and sink.
+- Default value: `false`
 
 ### `force-replicate`
 
-- 指定是否强制[同步没有有效索引的表](/ticdc/ticdc-manage-changefeed.md#同步没有有效索引的表)。
-- 默认值: `false`
+- Specifies whether to forcibly [replicate tables without a valid index](/ticdc/ticdc-manage-changefeed.md#replicate-tables-without-a-valid-index).
+- Default value: `false`
 
-### `enable-sync-point` <span class="version-mark">从 v6.3.0 版本开始引入</span>
+### `enable-sync-point` <span class="version-mark">New in v6.3.0</span>
 
-- 是否开启 Syncpoint 功能，从 v6.3.0 开始支持，该功能默认关闭。
-- 从 v6.4.0 开始，使用 Syncpoint 功能需要同步任务拥有下游集群的 SYSTEM_VARIABLES_ADMIN 或者 SUPER 权限。
-- 该参数只有当下游为 TiDB 时，才会生效。
-- 默认值：`false`
+- Specifies whether to enable the Syncpoint feature, which is supported starting from v6.3.0 and is disabled by default.
+- Starting from v6.4.0, only the changefeed with the `SYSTEM_VARIABLES_ADMIN` or `SUPER` privilege can use the TiCDC Syncpoint feature.
+- This configuration item only takes effect if the downstream is TiDB.
+- Default value: `false`
 
 ### `sync-point-interval`
 
-- Syncpoint 功能对齐上下游 snapshot 的时间间隔。
-- 该参数只有当下游为 TiDB 时，才会生效。
-- 配置格式为 `"h m s"`，例如 `"1h30m30s"`
-- 默认值：`"10m"`
-- 最小值：`"30s"`
+- Specifies the interval at which Syncpoint aligns the upstream and downstream snapshots.
+- This configuration item only takes effect if the downstream is TiDB.
+- The format is `"h m s"`. For example, `"1h30m30s"`.
+- Default value: `"10m"`
+- Minimum value: `"30s"`
 
 ### `sync-point-retention`
 
-- Syncpoint 功能在下游表中保存的数据的时长，超过这个时间的数据会被清理。
-- 该参数只有当下游为 TiDB 时，才会生效。
-- 配置格式为 `"h m s"`，例如 `"24h30m30s"`
-- 默认值：`"24h"`
+- Specifies how long the data is retained by Syncpoint in the downstream table. When this duration is exceeded, the data is cleaned up.
+- This configuration item only takes effect if the downstream is TiDB.
+- The format is `"h m s"`. For example, `"24h30m30s"`.
+- Default value: `"24h"`
 
-### `sql-mode` <span class="version-mark">从 v6.5.6、v7.1.3 和 v7.5.0 版本开始引入</span>
+### `sql-mode` <span class="version-mark">New in v6.5.6, v7.1.3, and v7.5.0</span>
 
-- 用于设置解析 DDL 时使用的 [SQL 模式](/sql-mode.md)，多个模式之间用逗号分隔。
-- 默认值：`"ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"`，与 TiDB 的默认 SQL 模式一致
+- Specifies the [SQL mode](/sql-mode.md) used when parsing DDL statements. Multiple modes are separated by commas.
+- Default value: `"ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"`, which is the same as the default SQL mode of TiDB
 
 ### `bdr-mode`
 
-- 如果要使用 TiCDC 搭建 BDR (Bidirectional replication) 集群，需要将该参数设置为 `true`，同时要将 TiDB 集群设置为 BDR 模式。详情请参考 [TiCDC 双向复制](/ticdc/ticdc-bidirectional-replication.md#ticdc-双向复制)
-- 默认值：`false`，表示不处于 BDR 模式
+- To set up BDR (Bidirectional replication) clusters using TiCDC, modify this parameter to `true` and set the TiDB clusters to BDR mode. For more information, see [Bidirectional Replication](/ticdc/ticdc-bidirectional-replication.md#bidirectional-replication).
+- Default value: `false`, indicating that bi-directional replication (BDR) mode is not enabled
 
 ### `changefeed-error-stuck-duration`
 
-- Changefeed 发生内部错误或异常时允许自动重试的时间。
-- 若 Changefeed 发生内部错误或异常，且持续时间超过该参数设置的时间，Changefeed 会进入 Failed 状态。
-- 当 Changefeed 处于 Failed 状态时，需要手动重启 Changefeed 才能恢复。
-- 配置格式为 `"h m s"`，例如 `"1h30m30s"`
-- 默认值：`"30m"`
+- Specifies the duration for which the changefeed is allowed to automatically retry when internal errors or exceptions occur.
+- The changefeed enters the failed state if internal errors or exceptions occur in the changefeed and persist longer than the duration set by this parameter.
+- When the changefeed is in the failed state, you need to restart the changefeed manually for recovery.
+- The format is `"h m s"`. For example, `"1h30m30s"`.
+- Default value: `"30m"`
 
 ### mounter
 
 #### `worker-num`
 
-- mounter 解码 KV 数据的线程数。
-- 默认值：`16`
+- Specifies the number of threads with which the mounter decodes KV data.
+- Default value: `16`
 
 ### filter
 
 #### `ignore-txn-start-ts`
 
-- 忽略指定 start_ts 的事务。
+- Ignores the transaction of specified start_ts.
 
-<!-- 示例值：`[1, 2]` -->
+<!-- Example: `[1, 2]` -->
 
 #### `rules`
 
-- 过滤器规则，过滤规则语法参考[表库过滤语法](/table-filter.md#表库过滤语法)。
+- Specifies the filter rules. For more information, see [Syntax](/table-filter.md#syntax).
 
-<!-- 示例值：`['*.*', '!test.*']` -->
+<!-- Example: `['*.*', '!test.*']` -->
 
 #### filter.event-filters
 
+For more information, see [Event filter rules](/ticdc/ticdc-filter.md#event-filter-rules).
+
 ##### `matcher`
 
-- matcher 是一个白名单，`matcher = ["test.worker"]` 表示该过滤规则只应用于 `test` 库中的 `worker` 表。
+- `matcher` is an allow list. `matcher = ["test.worker"]` means this rule only applies to the `worker` table in the `test` database.
 
 ##### `ignore-event`
 
-- `ignore-event = ["insert"]` 表示过滤掉 `INSERT` 事件。
-- `ignore-event = ["drop table", "delete"]` 表示忽略 `DROP TABLE` 的 DDL 事件和 `DELETE` 类型的 DML 事件。需要注意的是，在更新 TiDB 中聚簇索引的列值时，TiCDC 会将一个 `UPDATE` 事件拆分成为 `DELETE` 和 `INSERT` 事件，TiCDC 无法将该类事件识别为 `UPDATE` 事件，因此无法正确地进行过滤。
+- `ignore-event = ["insert"]` ignores `INSERT` events. 
+- `ignore-event = ["drop table", "delete"]` ignores the `DROP TABLE` DDL events and the `DELETE` DML events. Note that when a value in the clustered index column is updated in TiDB, TiCDC splits an `UPDATE` event into `DELETE` and `INSERT` events. TiCDC cannot identify such events as `UPDATE` events and thus cannot correctly filter out such events.
 
 ##### `ignore-sql`
 
-- `ignore-sql = ["^drop", "add column"]` 表示过滤掉以 `DROP` 开头或者包含 `ADD COLUMN` 的 DDL。
+- `ignore-sql = ["^drop", "add column"]` ignores DDLs that start with `DROP` or contain `ADD COLUMN`.
 
 ##### `ignore-delete-value-expr`
 
-- `ignore-delete-value-expr = "name = 'john'"` 表示过滤掉包含 `name = 'john'` 条件的 `DELETE` DML。
+- `ignore-delete-value-expr = "name = 'john'"` ignores `DELETE` DMLs that contain the condition `name = 'john'`.
 
 ##### `ignore-insert-value-expr`
 
-- `ignore-insert-value-expr = "id >= 100"` 表示过滤掉包含 `id >= 100` 条件的 `INSERT` DML。
+- `ignore-insert-value-expr = "id >= 100"` ignores `INSERT` DMLs that contain the condition `id >= 100`
 
 ##### `ignore-update-old-value-expr`
 
-- `ignore-update-old-value-expr = "age < 18"` 表示过滤掉旧值 `age < 18` 的 `UPDATE` DML。
+- `ignore-update-old-value-expr = "age < 18"` ignores `UPDATE` DMLs whose old value contains `age < 18`
 
 ##### `ignore-update-new-value-expr`
 
-- `ignore-update-new-value-expr = "gender = 'male'"` 表示过滤掉新值 `gender = 'male'` 的 `UPDATE` DML。
+- `ignore-update-new-value-expr = "gender = 'male'"` ignores `UPDATE` DMLs whose new value contains `gender = 'male'`
 
 ### scheduler
 
 #### `enable-table-across-nodes`
 
-- 将表以 Region 为单位分配给多个 TiCDC 节点进行同步。
-- 在 [TiCDC 老架构](/ticdc/ticdc-classic-architecture.md)中，该功能只在 Kafka Changefeed 上生效，暂不支持 MySQL Changefeed。
-- 在 [TiCDC 新架构](/ticdc/ticdc-architecture.md)中，该功能对所有类型下游的 Changefeed 生效。详情请参考[新功能介绍](/ticdc/ticdc-architecture.md#新功能介绍)。
-- `enable-table-across-nodes` 开启后，有两种分配模式：
+- Allocate tables to multiple TiCDC nodes for replication on a per-Region basis.
+- This configuration item only takes effect on Kafka changefeeds and is not supported on MySQL changefeeds.
+- When `enable-table-across-nodes` is enabled, there are two allocation modes:
 
-    1. 按 Region 的数量分配，即每个 TiCDC 节点处理 Region 的个数基本相等。当某个表 Region 个数大于 [`region-threshold`](#region-threshold) 值时，会将表分配到多个节点处理。
-    2. 按写入的流量分配，即每个 TiCDC 节点处理 Region 总修改行数基本相当。只有当表中每分钟修改行数超过 `write-key-threshold` 值时，该表才会生效。
+    1. Allocate tables based on the number of Regions, so that each TiCDC node handles roughly the same number of Regions. If the number of Regions for a table exceeds the value of [`region-threshold`](#region-threshold), the table will be allocated to multiple nodes for replication. The default value of `region-threshold` is `100000`.
+    2. Allocate tables based on the write traffic, so that each TiCDC node handles roughly the same number of modified rows. Only when the number of modified rows per minute in a table exceeds the value of [`write-key-threshold`](#write-key-threshold), will this allocation take effect.
 
-  两种方式配置一种即可生效，当 `region-threshold` 和 `write-key-threshold` 同时配置时，TiCDC 将优先采用按流量分配的模式，即 `write-key-threshold`。
+  You only need to configure one of the two modes. If both `region-threshold` and `write-key-threshold` are configured, TiCDC prioritizes the traffic allocation mode, namely `write-key-threshold`.
 
-- 默认为 `false`。设置为 `true` 以打开该功能。
-- 默认值：`false`
-
-#### `region-count-per-span` <span class="version-mark">从 v8.5.4 版本开始引入</span>
-
-- 在 [TiCDC 新架构](/ticdc/ticdc-architecture.md)中引入。在 Changefeed 初始化阶段，满足拆分条件的表会按照该参数进行拆分。拆分后，每个子表最多包含 `region-count-per-span` 个 Region。
-- 默认值：`100`。
+- The value is `false` by default. Set it to `true` to enable this feature.
+- Default value: `false`
 
 #### `region-threshold`
 
-- 默认值：对于 [TiCDC 新架构](/ticdc/ticdc-architecture.md)，默认值为 `10000`；对于 [TiCDC 老架构](/ticdc/ticdc-classic-architecture.md)，默认值为 `100000`。
+- Default value: `100000`
 
 #### `write-key-threshold`
 
-- 默认值：`0`，代表默认不会采用流量的分配模式
+- Default value: `0`, which means that the traffic allocation mode is not used by default
 
 ### sink
 
-<!-- 以下是 MQ 类型 sink 配置 -->
+<!-- MQ sink configuration items -->
 
 #### `dispatchers`
 
-- 当 Changefeed 下游为 MQ 类 Sink 时，可以通过 `dispatchers` 配置 event 分发器。从 v8.5.7 起，对于 [TiCDC 新架构](/ticdc/ticdc-architecture.md)，也可以通过 `dispatchers` 配置表路由，将上游表映射到指定的下游库名或表名。更多信息，参见 [TiCDC 表路由](/ticdc/ticdc-table-routing.md)。
-- 支持 partition 及 topic（从 v6.1 开始支持）两种 event 分发器。二者的详细说明见下一节。
-- matcher 的匹配语法和过滤器规则语法相同，matcher 匹配规则的详细说明见下一节。
-- 当下游 MQ 为 Pulsar 时，如果 partition 的路由规则未指定为 `ts`、`index-value`、`table`、`default` 中的任意一个，那么将会使用你设置的字符串作为每一条 Pulsar message 的 key 进行路由。例如，如果你指定的路由规则为 `'code'` 字符串，那么符合该 matcher 的所有 Pulsar message 都将会以 `'code'` 作为 key 进行路由。
+- For the sink of MQ type, you can use dispatchers to configure the event dispatcher.
+- Starting from v6.1.0, TiDB supports two types of event dispatchers: partition and topic.
+- The matching syntax of matcher is the same as the filter rule syntax.
+- This configuration item only takes effect if the downstream is MQ.
+- When the downstream MQ is Pulsar, if the routing rule for `partition` is not specified as any of `ts`, `index-value`, `table`, or `default`, each Pulsar message will be routed using the string you set as the key. For example, if you specify the routing rule for a matcher as the string `code`, then all Pulsar messages that match that matcher will be routed with `code` as the key.
 
-#### `column-selectors` <span class="version-mark">从 v7.5.0 版本开始引入</span>
+#### `column-selectors` <span class="version-mark">New in v7.5.0</span>
 
-- 用于选择部分列进行同步。仅对 Kafka Sink 生效。
+- Selects specific columns for replication. This only takes effect when the downstream is Kafka.
 
 #### `protocol`
 
-- 用于指定编码消息时使用的格式协议。
-- 当下游类型是 Kafka 时，支持 canal-json、avro、debezium、open-protocol、simple。
-- 当下游类型是 Pulsar 时，仅支持 canal-json 协议。
-- 当下游类型是存储服务时，目前仅支持 canal-json、csv 两种协议。
-- 注意：该参数只有当下游为 Kafka、Pulsar，或存储服务时，才会生效。
+- Specifies the protocol format used for encoding messages.
+- This configuration item only takes effect if the downstream is Kafka, Pulsar, or a storage service.
+- When the downstream is Kafka, the protocol can be canal-json, avro, debezium, open-protocol, or simple.
+- When the downstream is Pulsar, the protocol can only be canal-json.
+- When the downstream is a storage service, the protocol can only be canal-json or csv.
 
-<!-- 示例值：`"canal-json"` -->
+<!-- Example: `"canal-json"` -->
 
-#### `delete-only-output-handle-key-columns` <span class="version-mark">从 v7.2.0 版本开始引入</span>
+#### `delete-only-output-handle-key-columns` <span class="version-mark">New in v7.2.0</span>
 
-- 用于指定 Delete 事件的输出内容，只对 canal-json 和 open-protocol 协议有效。
-- 该参数和 `force-replicate` 参数不兼容，如果同时将该参数和 `force-replicate` 设置为 `true`，创建 changefeed 会报错。
-- Avro 协议不受该参数控制，总是只输出主键列，或唯一索引列的内容。
-- CSV 协议不受该参数控制，总是输出所有列的内容。
-- 默认值：`false`，即输出所有列的内容。
-- 当设置为 `true` 时，只输出主键列，或唯一索引列的内容。
+- Specifies the output of DELETE events. This parameter is valid only for canal-json and open-protocol protocols.
+- This parameter is incompatible with `force-replicate`. If both this parameter and `force-replicate` are set to `true`, TiCDC reports an error when creating a changefeed.
+- The Avro protocol is not controlled by this parameter and always outputs only the primary key columns or unique index columns.
+- The CSV protocol is not controlled by this parameter and always outputs all columns.
+- Default value: `false`, which means outputting all columns
+- When you set it to `true`, only primary key columns or unique index columns are output.
 
 #### `schema-registry`
 
-- Schema 注册表的 URL。
-- 该参数只有当下游为消息队列时，才会生效。
+- Specifies the schema registry URL.
+- This configuration item only takes effect if the downstream is MQ.
 
-<!-- 示例值：`"http://localhost:80801/subjects/{subject-name}/versions/{version-number}/schema"` -->
+<!-- Example: `"http://localhost:80801/subjects/{subject-name}/versions/{version-number}/schema"` -->
 
 #### `encoder-concurrency`
 
-- 编码数据时所用编码器的线程数。
-- 该参数只有当下游为消息队列时，才会生效。
-- 默认值：`32`
+- Specifies the number of encoder threads used when encoding data.
+- This configuration item only takes effect if the downstream is MQ.
+- Default value: `32`
 
 #### `enable-kafka-sink-v2`
 
-- 是否开启 Kafka Sink V2。Kafka Sink V2 内部使用 kafka-go 实现。
-- 该参数是一个实验特性，并且只有当下游为消息队列时才会生效。
-- 默认值：`false`
+> **Warning:**
+>
+> This configuration is an experimental feature. It is not recommended to use it in production environments.
 
-#### `only-output-updated-columns` <span class="version-mark">从 v7.1.0 版本开始引入</span>
+- Specifies whether to enable kafka-sink-v2 that uses the kafka-go sink library.
+- This configuration item only takes effect if the downstream is MQ.
+- Default value: `false`
 
-- 是否只向下游同步有内容更新的列。
-- 注意：该参数只有当下游为消息队列，并且使用 Open Protocol 或 Canal-JSON 时，才会生效。
-- 默认值：`false`
+#### `only-output-updated-columns` <span class="version-mark">New in v7.1.0</span>
 
-<!-- 以下是存储服务类型 sink 配置 -->
+- Specifies whether to only output the updated columns.
+- This configuration item only applies to the MQ downstream using the open-protocol and canal-json.
+- Default value: `false`
+
+<!-- Storage sink configuration items -->
 
 #### `terminator`
 
-- 该配置项仅在同步到存储服务的 sink 中使用，在 MQ 和 MySQL 类 sink 中无需设置。
-- 换行符，用来分隔两个数据变更事件。
-- 默认值：`""`，表示使用 `\r\n` 作为换行符。
+- This configuration item is only used when you replicate data to storage sinks and can be ignored when replicating data to MQ or MySQL sinks.
+- Specifies the row terminator, used for separating two data change events.
+- Default value: `""`, which means `\r\n` is used
 
 #### `date-separator`
 
-- 文件路径的日期分隔类型。详情参考[数据变更记录](/ticdc/ticdc-sink-to-cloud-storage.md#数据变更记录)。
-- 该参数只有当下游为存储服务时，才会生效。
-- 默认值：`day`，即按天分隔
-- 可选值：`none`、`year`、`month`、`day`
+- Specifies the date separator type used in the file directory. For more information, see [Data change records](/ticdc/ticdc-sink-to-cloud-storage.md#data-change-records).
+- This configuration item only takes effect if the downstream is a storage service.
+- Default value: `day`, which means separating files by day
+- Value options: `none`, `year`, `month`, `day`
 
 #### `enable-partition-separator`
 
-- 是否使用 partition 作为分隔字符串。
-- 该参数只有当下游为存储服务时，才会生效
-- 默认值：`true`，即一张表中各个 partition 的数据会分不同的目录来存储
-- 注意：后续版本中该配置项将会被废弃，并强制设置成 `true`。建议保持该配置项为默认值，以避免下游分区表可能丢数据的问题。详情请参见 [Issue #11979](https://github.com/pingcap/tiflow/issues/11979)。使用示例详见[数据变更记录](/ticdc/ticdc-sink-to-cloud-storage.md#数据变更记录)。
+- Controls whether to use partitions as the separation string.
+- This configuration item only takes effect if the downstream is a storage service.
+- Default value: `true`, which means that partitions in a table are stored in separate directories
+- Note that this configuration will be deprecated in future versions and will be forcibly set to `true`. It is recommended to keep this configuration at its default value to avoid potential data loss in downstream partitioned tables. For more information, see [Issue #11979](https://github.com/pingcap/tiflow/issues/11979). For usage examples, see [Data change records](/ticdc/ticdc-sink-to-cloud-storage.md#data-change-records).
 
 #### `debezium-disable-schema`
 
-- 是否关闭 schema 信息的输出。
-- 默认值：`false`，即输出 schema 信息
-- 该参数只有当 sink 类型为 MQ 且输出协议为 Debezium 时才生效。
+- Controls whether to disable the output of schema information.
+- Default value: `false`, which means enabling the output of schema information
+- This parameter only takes effect when the sink type is MQ and the output protocol is Debezium.
 
-#### sink.csv <span class="version-mark">从 v6.5.0 版本开始引入</span>
+#### sink.csv <span class="version-mark">New in v6.5.0</span>
 
-从 v6.5.0 开始，TiCDC 支持以 CSV 格式将数据变更记录保存至存储服务中，在 MQ 和 MySQL 类 sink 中无需设置。
+Starting from v6.5.0, TiCDC supports saving data changes to storage services in CSV format. Ignore the following configurations if you replicate data to MQ or MySQL sinks.
 
 ##### `delimiter`
 
-- 字段之间的分隔符。必须为 ASCII 字符。
-- 默认值：`,`
+- Specifies the character used to separate fields in the CSV file. The value must be an ASCII character.
+- Default value: `,`
 
 ##### `quote`
 
-- 用于包裹字段的引号字符。空值代表不使用引号字符。
-- 默认值：`"`
+- Specifies the quotation character used to surround fields in the CSV file. If the value is empty, no quotation is used.
+- Default value: `"`
 
 ##### `null`
 
-- CSV 中列为 NULL 时将以什么字符来表示。
-- 默认值：`\N`
+- Specifies the character displayed when a CSV column is NULL.
+- Default value: `\N`
 
 ##### `include-commit-ts`
 
-- 是否在 CSV 行中包含 commit-ts。
-- 默认值：`false`
+- Controls whether to include commit-ts in CSV rows.
+- Default value: `false`
 
 ##### `binary-encoding-method`
 
-- 二进制类型数据的编码方式。
-- 默认值：`base64`
-- 可选值：`base64`、`hex`
+- Specifies the encoding method of binary data.
+- Default value: `base64`
+- Value option: `base64`, `hex`
 
 ##### `output-handle-key`
 
-- 是否输出 handle 列信息。该配置项仅用于内部实现，不推荐设置该配置项。
-- 默认值：`false`
+- Controls whether to output handle key information. This configuration parameter is for internal implementation only, so it is not recommended to set it.
+- Default value: `false`
 
 ##### `output-old-value`
 
-- 是否输出行数据更改前的值。
-- 开启后，即当该参数设为 `true` 时，UPDATE 事件会输出两行数据：第一行为 DELETE 事件，输出更改前的数据；第二行为 INSERT 事件，输出更改后的数据。
-- 开启后，会在变更数据列前增加 `"is-update"` 列。该列用来标识当前行的变更数据是来自 Update 事件，还是原始的 INSERT/DELETE 事件。如果当前行的变更数据来自 UPDATE 事件，则 `"is-update"` 列为 `true`，否则为 `false`。
-- 默认值：`false`
+- Controls whether to output the value before the row data changes. The default value is false. 
+- When it is enabled (setting it to `true`), the `UPDATE` event will output two rows of data: the first row is a `DELETE` event that outputs the data before the change; the second row is an `INSERT` event that outputs the changed data.
+- When it is enabled, the `"is-update"` column will be added before the column with data changes. This added column is used to identify whether the data change of the current row comes from the `UPDATE` event or the original `INSERT` or `DELETE` event. If the data change of the current row comes from the `UPDATE` event, the value of the `"is-update"` column is `true`. Otherwise, it is `false`.
+- Default value: `false`
 
-从 v8.0.0 开始，TiCDC 新增了 Simple Protocol 消息编码协议，以下为该协议的配置参数。关于该协议的详情，请参考 [TiCDC Simple Protocol](/ticdc/ticdc-simple-protocol.md)。
+Starting from v8.0.0, TiCDC supports the Simple message encoding protocol. The following are the configuration parameters for the Simple protocol. For more information about the protocol, see [TiCDC Simple Protocol](/ticdc/ticdc-simple-protocol.md).
 
-以下为 Simple Protocol 参数，用来控制 bootstrap 消息的发送行为。
+The following configuration parameters control the sending behavior of bootstrap messages.
 
 #### `send-bootstrap-interval-in-sec`
 
-- 控制发送 bootstrap 消息的时间间隔。
-- 默认值：`120`，即每张表每隔 120 秒发送一次 bootstrap 消息
-- 单位：秒
+- Controls the time interval for sending bootstrap messages, in seconds.
+- Default value: `120`, which means that a bootstrap message is sent every 120 seconds for each table
+- Unit: Seconds
 
 #### `send-bootstrap-in-msg-count`
 
-- 控制发送 bootstrap 的消息间隔，单位为消息数。
-- 默认值：`10000`，即每张表每发送 10000 条行变更消息就发送一次 bootstrap 消息
-- 如果要关闭 bootstrap 消息的发送，则将 `send-bootstrap-interval-in-sec` 和 `send-bootstrap-in-msg-count` 均设置为 `0`。
+- Controls the message interval for sending bootstrap, in message count.
+- Default value: `10000`, which means that a bootstrap message is sent every 10000 row changed messages for each table
+- If you want to disable the sending of bootstrap messages, set both [`send-bootstrap-interval-in-sec`](#send-bootstrap-interval-in-sec) and `send-bootstrap-in-msg-count` to `0`.
 
 #### `send-bootstrap-to-all-partition`
 
-- 控制是否发送 bootstrap 消息到所有的 partition。
-- 如果设置为 `false`，则只发送 bootstrap 消息到对应表 topic 的第一个 partition。
-- 默认值：`true`
+- Controls whether to send bootstrap messages to all partitions.
+- Setting it to `false` means bootstrap messages are sent to only the first partition of the corresponding table topic.
+- Default value: `true`, which means that bootstrap messages are sent to all partitions of the corresponding table topic
 
 #### sink.kafka-config.codec-config
 
 ##### `encoding-format`
 
-- 用来控制 simple protocol 的消息的编码格式，目前支持 `json` 和 `avro` 两种格式。
-- 默认值：`json`
-- 可选值：`json`、`avro`
+- Controls the encoding format of the Simple protocol messages. Currently, the Simple protocol message supports `json` and `avro` encoding formats.
+- Default value: `json`
+- Value options: `json`, `avro`
 
 #### sink.open
 
 ##### `output-old-value`
 
-- 是否输出行数据更改前的值。关闭后，UPDATE 事件不会输出 "p" 字段的数据。
-- 默认值：`true`
+- Controls whether to output the value before the row data changes. The default value is true. When it is disabled, the `UPDATE` event does not output the "p" field.
+- Default value: `true`
 
 #### sink.debezium
 
 ##### `output-old-value`
 
-- 是否输出行数据更改前的值。关闭后，UPDATE 事件不会输出 "before" 字段的数据。
-- 默认值：`true`
+- Controls whether to output the value before the row data changes. The default value is true. When it is disabled, the `UPDATE` event does not output the "before" field.
+- Default value: `true`
 
 ### consistent
 
-consistent 中的字段用于配置 Changefeed 的数据一致性。详细信息请参考[灾难场景的最终一致性复制](/ticdc/ticdc-sink-to-mysql.md#灾难场景的最终一致性复制)。
+Specifies the replication consistency configurations for a changefeed when using the redo log. For more information, see [Eventually consistent replication in disaster scenarios](/ticdc/ticdc-sink-to-mysql.md#eventually-consistent-replication-in-disaster-scenarios).
 
-注意：一致性相关参数只有当下游为数据库并且开启 redo log 功能时，才会生效。
+Note: The consistency-related configuration items only take effect when the downstream is a database and the redo log feature is enabled.
 
 #### `level`
 
-- 数据一致性级别。设置为 `"none"` 时将关闭 redo log。
-- 默认值：`"none"`
-- 可选值：`"none"`、`"eventual"`
+- The data consistency level. `"none"` means that the redo log is disabled.
+- Default value: `"none"`
+- Value options: `"none"`, `"eventual"`
 
 #### `max-log-size`
 
-- redo log 的最大日志大小。
-- 默认值：`64`
-- 单位：MiB
+- The max redo log size.
+- Default value: `64`
+- Unit: MiB
 
 #### `flush-interval`
 
-- 两次 redo log 刷新的时间间隔。
-- 默认值：`2000`
-- 单位：毫秒
+- The flush interval for redo log.
+- Default value: `2000`
+- Unit: milliseconds
 
 #### `storage`
 
-- redo log 使用存储服务的 URI。
-- 默认值：`""`
+- The storage URI of the redo log.
+- Default value: `""`
 
 #### `use-file-backend`
 
-- 是否将 redo log 存储到本地文件中。
-- 默认值：`false`
+- Specifies whether to store the redo log in a local file.
+- Default value: `false`
 
 #### `encoding-worker-num`
 
-- 控制 redo 模块中编解码 worker 的数量。
-- 默认值：`16`
+- The number of encoding and decoding workers in the redo module.
+- Default value: `16`
 
 #### `flush-worker-num`
 
-- 控制 redo 模块中上传文件 worker 的数量。
-- 默认值：`8`
+- The number of flushing workers in the redo module.
+- Default value: `8`
 
-#### `compression` <span class="version-mark">从 v6.5.6、v7.1.3、v7.5.1 和 v7.6.0 版本开始引入</span>
+#### `compression` <span class="version-mark">New in v6.5.6, v7.1.3, v7.5.1, and v7.6.0</span>
 
-- redo log 文件的压缩行为。
-- 默认值：`""`，表示不进行压缩
-- 可选值：`""`、`"lz4"`
+- The behavior to compress redo log files.
+- Default value: `""`, which means no compression
+- Value options: `""`, `"lz4"`
 
-#### `flush-concurrency` <span class="version-mark">从 v6.5.6、v7.1.3、v7.5.1 和 v7.6.0 版本开始引入</span>
+#### `flush-concurrency` <span class="version-mark">New in v6.5.6, v7.1.3, v7.5.1, and v7.6.0</span>
 
-- redo log 上传单个文件的并发数。
-- 默认值：`1`，表示禁用并发
+- The concurrency for uploading a single redo file.
+- Default value: `1`, which means concurrency is disabled
 
 ### integrity
 
 #### `integrity-check-level`
 
-- 是否开启单行数据的 Checksum 校验功能。
-- 默认值：`"none"`，即不开启
-- 可选值：`"none"`、`"correctness"`
+- Controls whether to enable the checksum validation for single-row data.
+- Default value: `"none"`, which means to disable the feature
+- Value options: `"none"`, `"correctness"`
 
 #### `corruption-handle-level`
 
-- 当单行数据的 Checksum 校验失败时，Changefeed 打印错误行数据相关日志的级别。
-- 默认值：`"warn"` 
-- 可选值：`"warn"`、`"error"`
+- Specifies the log level of the changefeed when the checksum validation for single-row data fails.
+- Default value: `"warn"` 
+- Value options: `"warn"`, `"error"`
 
 ### sink.kafka-config
 
-以下参数仅在下游为 Kafka 时生效。
+The following configuration items only take effect when the downstream is Kafka.
 
 #### `sasl-mechanism`
 
-- Kafka SASL 认证机制。
-- 默认值：`""`，表示不使用 SASL 认证
+- Specifies the mechanism of Kafka SASL authentication.
+- Default value: `""`, indicating that SASL authentication is not used
 
-<!-- 示例值：`OAUTHBEARER` -->
+<!-- Example: `OAUTHBEARER` -->
 
 #### `sasl-oauth-client-id`
 
-- Kafka SASL OAUTHBEARER 认证机制中的 client-id。在使用该认证机制时，该参数必填。
-- 默认值：`""`
+- Specifies the client-id in the Kafka SASL OAUTHBEARER authentication. This parameter is required when the OAUTHBEARER authentication is used.
+- Default value: `""`
 
 #### `sasl-oauth-client-secret`
 
-- Kafka SASL OAUTHBEARER 认证机制中的 client-secret。需要 Base64 编码。在使用该认证机制时，该参数必填。
-- 默认值：`""`
+- Specifies the client-secret in the Kafka SASL OAUTHBEARER authentication. This parameter is required when the OAUTHBEARER authentication is used.
+- Default value: `""`
 
 #### `sasl-oauth-token-url`
 
-- Kafka SASL OAUTHBEARER 认证机制中的 token-url 用于获取 token。在使用该认证机制时，该参数必填。
-- 默认值：`""`
+- Specifies the token-url in the Kafka SASL OAUTHBEARER authentication to obtain the token. This parameter is required when the OAUTHBEARER authentication is used.
+- Default value: `""`
 
 #### `sasl-oauth-scopes`
 
-- Kafka SASL OAUTHBEARER 认证机制中的 scopes。在使用该认证机制时，该参数可选填。
-- 默认值：`""`
+- Specifies the scopes in the Kafka SASL OAUTHBEARER authentication. This parameter is optional when the OAUTHBEARER authentication is used.
+- Default value: `""`
 
 #### `sasl-oauth-grant-type`
 
-- Kafka SASL OAUTHBEARER 认证机制中的 grant-type。在使用该认证机制时，该参数可选填。
-- 默认值：`"client_credentials"`
+- Specifies the grant-type in the Kafka SASL OAUTHBEARER authentication. This parameter is optional when the OAUTHBEARER authentication is used.
+- Default value: `"client_credentials"`
 
 #### `sasl-oauth-audience`
 
-- Kafka SASL OAUTHBEARER 认证机制中的 audience。在使用该认证机制时，该参数可选填。
-- 默认值：`""`
+- Specifies the audience in the Kafka SASL OAUTHBEARER authentication. This parameter is optional when the OAUTHBEARER authentication is used.
+- Default value: `""`
 
-<!-- 示例值：`"kafka"` -->
+<!-- Example: `"kafka"` -->
 
 #### `output-raw-change-event`
 
-- 控制是否输出原始的数据变更事件。更多信息，请参考[控制是否拆分主键或唯一键 `UPDATE` 事件](/ticdc/ticdc-split-update-behavior.md#控制是否拆分主键或唯一键-update-事件)。
-- 默认值：`false`
+- Controls whether to output the original data change event. For more information, see [Control whether to split primary or unique key `UPDATE` events](/ticdc/ticdc-split-update-behavior.md#control-whether-to-split-primary-or-unique-key-update-events).
+- Default value: `false`
 
 ### sink.kafka-config.glue-schema-registry-config
 
-以下配置仅在选用 avro 作为协议，并且使用 AWS Glue Schema Registry 时需要配置。
+The following configuration is only required when using Avro as the protocol and AWS Glue Schema Registry:
 
 ```toml
 region="us-west-1"
@@ -476,141 +477,141 @@ secret-access-key="xxxx"
 token="xxxx"
 ```
 
-详细信息请参考 [TiCDC 集成 AWS Glue Schema Registry](/ticdc/ticdc-sink-to-kafka.md#ticdc-集成-aws-glue-schema-registry)。
+For more information, see [Integrate TiCDC with AWS Glue Schema Registry](/ticdc/ticdc-sink-to-kafka.md#integrate-ticdc-with-aws-glue-schema-registry).
 
 ### sink.pulsar-config
 
-以下配置项仅在下游为 Pulsar 时生效。
+The following parameters take effect only when the downstream is Pulsar.
 
 #### `authentication-token`
 
-- 使用 token 进行 Pulsar 服务端的认证，此处为 token 的值。
+- Authentication on the Pulsar server is done using a token. Specify the value of the token.
 
 #### `token-from-file`
 
-- 指定使用 token 进行 Pulsar 服务端的认证，此处为 token 所在文件的路径。
+- When you use a token for Pulsar server authentication, specify the path to the file where the token is located.
 
 #### `basic-user-name`
 
-- Pulsar 使用 basic 账号密码验证身份。
+- Pulsar uses the basic account and password to authenticate the identity. Specify the account.
 
 #### `basic-password`
 
-- Pulsar 使用 basic 账号密码验证身份，此处为密码。
+- Pulsar uses the basic account and password to authenticate the identity. Specify the password.
 
 #### `auth-tls-certificate-path`
 
-- Pulsar TLS 加密认证证书路径。
+- Specifies the certificate path for Pulsar TLS encrypted authentication.
 
 #### `auth-tls-private-key-path`
 
-- Pulsar TLS 加密认证私钥路径。
+- Specifies the private key path for Pulsar TLS encrypted authentication.
 
 #### `tls-trust-certs-file-path`
 
-- Pulsar TLS 加密可信证书文件路径。
+- Specifies the path to trusted certificate file of the Pulsar TLS encrypted authentication.
 
 #### `oauth2.oauth2-issuer-url`
 
-- Pulsar oauth2 issuer-url
-- 详细配置请参考 [Pulsar 官方介绍](https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication)。
+- Pulsar oauth2 issuer-url.
+- For more information, see [Pulsar documentation website](https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication).
 
 #### `oauth2.oauth2-audience`
 
-- Pulsar oauth2 audience
-- 详细配置请参考 [Pulsar 官方介绍](https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication)。
+- Pulsar oauth2 audience.
+- For more information, see the [Pulsar website](https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication).
 
 #### `oauth2.oauth2-private-key`
 
-- Pulsar oauth2 private-key
-- 详细配置请参考 [Pulsar 官方介绍](https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication)。
+- Pulsar oauth2 private-key.
+- For more information, see the [Pulsar website](https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication).
 
 #### `oauth2.oauth2-client-id`
 
 - Pulsar oauth2 client-id
-- 详细配置请参考 [Pulsar 官方介绍](https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication)。
+- For more information, see the [Pulsar website](https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication).
 
 #### `oauth2.oauth2-scope`
 
-- Pulsar oauth2 oauth2-scope
-- 详细配置请参考 [Pulsar 官方介绍](https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication)。
+- Pulsar oauth2 oauth2-scope.
+- For more information, see the [Pulsar website](https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication).
 
 #### `pulsar-producer-cache-size`
 
-- TiCDC 中缓存 Pulsar Producer 的个数。每个 Pulsar Producer 对应一个 topic，如果你需要同步的 topic 数量大于默认值，则需要调大该数量。
-- 默认值：`10240`
+- Specifies the number of cached Pulsar producers in TiCDC. Each Pulsar producer corresponds to one topic. If the number of topics you need to replicate is larger than the default value, you need to increase the number.
+- Default value: `10240`
 
 #### `compression-type`
 
-- Pulsar 数据压缩方式。
-- 默认值：`""`，表示不压缩
-- 可选值：`"lz4"`、`"zlib"`、`"zstd"`
+- Pulsar data compression method. 
+- Default value: `""`, which means no compression is used
+- Value options: `"lz4"`, `"zlib"`, `"zstd"`
 
 #### `connection-timeout`
 
-- Pulsar 客户端与服务端建立 TCP 连接的超时时间。
-- 默认值：`5`（秒）
+- The timeout for the Pulsar client to establish a TCP connection with the server.
+- Default value: `5` (seconds)
 
 #### `operation-timeout`
 
-- Pulsar 客户端发起创建、订阅等操作的超时时间。
-- 默认值：`30`（秒）
+- The timeout for Pulsar clients to initiate operations such as creating and subscribing to a topic.
+- Default value: `30` (seconds)
 
 #### `batching-max-messages`
 
-- Pulsar Producer 发送消息时的单个 batch 内的消息数量上限。
-- 默认值：`1000`
+- The maximum number of messages in a single batch for a Pulsar producer to send.
+- Default value: `1000`
 
 #### `batching-max-publish-delay`
 
-- Pulsar Producer 消息攒批的时间间隔。
-- 默认值：`10`（毫秒）
+- The interval at which Pulsar producer messages are saved for batching.
+- Default value: `10` (milliseconds)
 
 #### `send-timeout`
 
-- Pulsar Producer 发送消息的超时时间。
-- 默认值：`30`（秒）
+- The timeout for a Pulsar producer to send a message.
+- Default value: `30` (seconds)
 
 #### `output-raw-change-event`
 
-- 控制是否输出原始的数据变更事件。更多信息，请参考[控制是否拆分主键或唯一键 `UPDATE` 事件](/ticdc/ticdc-split-update-behavior.md#控制是否拆分主键或唯一键-update-事件)。
-- 默认值：`false`
+- Controls whether to output the original data change event. For more information, see [Control whether to split primary or unique key `UPDATE` events](/ticdc/ticdc-split-update-behavior.md#control-whether-to-split-primary-or-unique-key-update-events).
+- Default value: `false`
 
 ### sink.cloud-storage-config
 
 #### `worker-count`
 
-- 向下游存储服务保存数据变更记录的并发度。
-- 默认值：`16`
+- The concurrency for saving data changes to the downstream cloud storage.
+- Default value: `16`
 
 #### `flush-interval`
 
-- 向下游存储服务保存数据变更记录的间隔。
-- 默认值：`"2s"`
+- The interval for saving data changes to the downstream cloud storage.
+- Default value: `"2s"`
 
 #### `file-size`
 
-- 单个数据变更文件的字节数超过 `file-size` 时将其保存至存储服务中。
-- 默认值：`67108864`，即 64 MiB
+- A data change file is saved to the cloud storage when the number of bytes in this file exceeds `file-size`.
+- Default value: `67108864`, that is 64 MiB
 
 #### `file-expiration-days`
 
-- 文件保留的时长，仅在 `date-separator` 配置为 `day` 时生效。
-- 默认值：`0`，表示禁用文件清理
-- 假设 `file-expiration-days = 1` 且 `file-cleanup-cron-spec = "0 0 0 * * *"`，TiCDC 将在每天 00:00:00 时刻清理已保存超过 24 小时的文件。例如，2023/12/02 00:00:00 将清理 2023/12/01 之前（注意：不包括 2023/12/01）的文件。
+- The duration to retain files, which takes effect only when `date-separator` is configured as `day`.
+- Default value: `0`, which means file cleanup is disabled
+- Assume that `file-expiration-days = 1` and `file-cleanup-cron-spec = "0 0 0 * * *"`, then TiCDC performs daily cleanup at 00:00:00 for files saved beyond 24 hours. For example, at 00:00:00 on 2023/12/02, TiCDC cleans up files generated before 2023/12/01, while files generated on 2023/12/01 remain unaffected.
 
 #### `file-cleanup-cron-spec`
 
-- 定时清理任务的运行周期，与 crontab 配置兼容。
-- 格式为 `<Second> <Minute> <Hour> <Day of the month> <Month> <Day of the week (Optional)>`
-- 默认值：`"0 0 2 * * *"`，表示每天凌晨两点执行清理任务
+- The running cycle of the scheduled cleanup task, compatible with the crontab configuration.
+- The format is `<Second> <Minute> <Hour> <Day of the month> <Month> <Day of the week (Optional)>`
+- Default value: `"0 0 2 * * *"`, which means that the cleanup task is executed every day at 2 AM
 
 #### `flush-concurrency`
 
-- 上传单个文件的并发数。
-- 默认值：`1`，表示禁用并发
+- The concurrency for uploading a single file.
+- Default value: `1`, which means concurrency is disabled
 
 #### `output-raw-change-event`
 
-- 控制是否输出原始的数据变更事件。更多信息，请参考[控制是否拆分主键或唯一键 `UPDATE` 事件](/ticdc/ticdc-split-update-behavior.md#控制是否拆分主键或唯一键-update-事件)。
-- 默认值：`false`
+- Controls whether to output the original data change event. For more information, see [Control whether to split primary or unique key `UPDATE` events](/ticdc/ticdc-split-update-behavior.md#control-whether-to-split-primary-or-unique-key-update-events).
+- Default value: `false`

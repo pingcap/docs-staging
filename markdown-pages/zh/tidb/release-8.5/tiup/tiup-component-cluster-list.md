@@ -1,38 +1,38 @@
 ---
 title: tiup cluster list
-summary: tiup-cluster 支持使用同一个中控机部署多套集群。命令 `tiup cluster list` 可以查看当前登录的用户使用该中控机部署了哪些集群。输出包含 Name、User、Version、Path、PrivateKey 字段的表格。注意：部署的集群数据默认放在 `~/.tiup/storage/cluster/clusters/` 目录下，当前登录用户无法查看其他用户部署的集群。
+summary: tiup-cluster supports deploying multiple clusters using the same control machine. The `tiup cluster list` command outputs all clusters deployed by the currently logged-in user. The deployed cluster data is stored in the `~/.tiup/storage/cluster/clusters/` directory. Users can view the cluster name, deployment user, version, path, and private key used to connect the cluster.
 ---
 
 # tiup cluster list
 
-tiup-cluster 支持使用同一个中控机部署多套集群，而命令 `tiup cluster list` 可以查看当前登录的用户使用该中控机部署了哪些集群。
+tiup-cluster supports deploying multiple clusters using the same control machine. The `tiup cluster list` command outputs all clusters deployed by the currently logged-in user using this control machine.
 
-> **注意：**
-> 
-> 部署的集群数据默认放在 `~/.tiup/storage/cluster/clusters/` 目录下，因此在同一台中控机上，当前登录用户无法查看其他用户部署的集群。
+> **Note:**
+>
+> The deployed cluster data is stored in the `~/.tiup/storage/cluster/clusters/` directory by default, so on the same control machine, the currently logged-in user cannot view the clusters deployed by other users.
 
-## 语法
+## Syntax
 
 ```shell
 tiup cluster list [flags]
 ```
 
-## 选项
+## Options
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints help information.
+- Data type: `BOOLEAN`
+- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
 
-## 输出
+## Outputs
 
-输出含有以下字段的表格：
+Outputs the table with the following fields:
 
-- Name：集群名字
-- User：部署用户
-- Version：集群版本
-- Path：集群部署数据在中控机上的路径
-- PrivateKey：连接集群的私钥所在路径
+- Name: the cluster name
+- User: the deployment user
+- Version: the cluster version
+- Path: the path of the cluster deployment data on the control machine
+- PrivateKey: the path of the private key that is used to connect the cluster
 
-[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)
+[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)

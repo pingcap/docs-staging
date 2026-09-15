@@ -1,13 +1,17 @@
 ---
 title: SHOW PLACEMENT LABELS
-summary: TiDB 数据库中 SHOW PLACEMENT LABELS 的使用概况。
+summary: SHOW PLACEMENT LABELS 在 TiDB 中的用法。
 ---
 
 # SHOW PLACEMENT LABELS
 
-`SHOW PLACEMENT LABELS` 汇总可用于放置规则 (Placement Rules) 的标签 (label) 和值。
+`SHOW PLACEMENT LABELS` 用于汇总可用于放置规则（Placement Rules）的标签及其对应的值。
 
-## 语法图
+> **Note:**
+>
+> 此功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
+
+## 语法
 
 ```ebnf+diagram
 ShowStmt ::=
@@ -20,7 +24,7 @@ ShowStmt ::=
 SHOW PLACEMENT LABELS;
 ```
 
-```sql
+```
 +--------+----------------+
 | Key    | Values         |
 +--------+----------------+

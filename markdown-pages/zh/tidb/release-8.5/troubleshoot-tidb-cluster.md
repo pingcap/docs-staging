@@ -1,142 +1,124 @@
 ---
-title: TiDB 集群故障诊断
-summary: TiDB 集群故障诊断包括收集出错信息、组件状态、日志信息、机器配置和 dmesg 中的问题。解决数据库连接问题需要确认服务是否启动，查看 tidb-server 日志并清空数据重新部署服务。解决 tidb-server 启动报错需检查参数、端口占用和 pd-server 连接。解决 tikv-server 启动报错需检查参数、端口占用和 pd-server 连接。解决 pd-server 启动报错需检查参数和端口占用。进程异常退出需检查是否在前台启动，使用 nohup+& 方式运行或写在脚本中。TiKV 进程异常重启需检查 OOM 信息和 panic log。连接被拒绝需确保网络参数正确。解决文件打开过多问题需确保 ulimit -n 足够大。数据库访问超时需检查拓扑结构、硬件配置、其他服务、操作、CPU 线程、网络 /IO 监控数据。
+title: TiDB Cluster Troubleshooting Guide
+summary: Learn how to diagnose and resolve issues when you use TiDB.
 ---
 
-# TiDB 集群故障诊断
+# TiDB Cluster Troubleshooting Guide
 
-当试用 TiDB 遇到问题时，请先参考本篇文档。如果问题未解决，请收集以下信息并通过 [TiDB 支持资源](/support.md)解决：
+You can use this guide to help you diagnose and solve basic problems while using TiDB. If your problem is not resolved, please collect the following information and you can [report a bug](/support.md):
 
-+ 具体的出错信息以及正在执行的操作
-+ 当前所有组件的状态
-+ 出问题组件 log 中的 error/fatal/panic 信息
-+ 机器配置以及部署拓扑
-+ dmesg 中 TiDB 组件相关的问题
+- The exact error message and the operations while the error occurs
+- The state of all the components
+- The `error`/`fatal`/`panic` information in the log of the component that reports the error
+- The configuration and deployment topology
+- The TiDB component related issue in `dmesg`
 
-## 数据库连接不上
+For other information, see [Frequently Asked Questions (FAQ)](/faq/tidb-faq.md).
 
-首先请确认集群的各项服务是否已经启动，包括 tidb-server、pd-server、tikv-server。请用 ps 命令查看所有进程是否在。如果某个组件的进程已经不在了，请参考对应的章节排查错误。
+## Cannot connect to the database
 
-如果所有的进程都在，请查看 tidb-server 的日志，看是否有报错？常见的错误包括：
+1. Make sure all the services are started, including `tidb-server`, `pd-server`, and `tikv-server`.
+2. Use the `ps` command to check if all the processes are running.
 
-+ InformationSchema is out of date
+    - If a certain process is not running, see the following corresponding sections to diagnose and solve the issue.
 
-    无法连接 tikv-server，请检查 pd-server 以及 tikv-server 的状态和日志。
+    + If all the processes are running, check the `tidb-server` log to see if the following messages are displayed:
+        - InformationSchema is out of date: This message is displayed if the `tikv-server` cannot be connected. Check the state and log of `pd-server` and `tikv-server`.
+        - panic: This message is displayed if there is an issue with the program. Please provide the detailed panic log and you can [report a bug](/support.md).
 
-+ panic
+3. If the data is cleared and the services are re-deployed, make sure that:
 
-    程序有错误，请将具体的 panic log [提供给 TiDB 开发者](https://github.com/pingcap/tidb/issues/new/choose)。
+    - All the data in `tikv-server` and `pd-server` are cleared. The specific data is stored in `tikv-server` and the metadata is stored in `pd-server`. If only one of the two servers is cleared, the data will be inconsistent.
+    - After the data in `pd-server` and `tikv-server` are cleared and the `pd-server` and `tikv-server` are restarted, the `tidb-server` must be restarted too. The cluster ID is randomly allocated when the `pd-server` is initialized. So when the cluster is re-deployed, the cluster ID changes and you need to restart the `tidb-server` to get the new cluster ID.
 
-    如果是清空数据并重新部署服务，请确认以下信息：
+## Cannot start `tidb-server`
 
-+ pd-server、tikv-server 数据都已清空
+See the following for the situations when the `tidb-server` cannot be started:
 
-    tikv-server 存储具体的数据，pd-server 存储 tikv-server 中数据的元信息。如果只清空 pd-server 或只清空 tikv-server 的数据，会导致两边数据不匹配。
+- Error in the startup parameters.
 
-+ 清空 pd-server 和 tikv-server 的数据并重启后，也需要重启 tidb-server
+    See the [TiDB configuration and options](/command-line-flags-for-tidb-configuration.md).
 
-    集群 ID 是由 pd-server 在集群初始化时随机分配，所以重新部署集群后，集群 ID 会发生变化。tidb-server 业务需要重启以获取新的集群 ID。
+- The port is occupied.
 
-## tidb-server 启动报错
+    Use the `lsof -i:port` command to show all the networking related to a given port and make sure the port to start the `tidb-server` is not occupied.
 
-tidb-server 无法启动的常见情况包括：
++ Cannot connect to `pd-server`.
 
-+ 启动参数错误
+    - Check if the network between TiDB and PD is running smoothly, including whether the network can be pinged or if there is any issue with the Firewall configuration.
+    - If there is no issue with the network, check the state and log of the `pd-server` process.
 
-    请参考 [TiDB 命令行参数](/command-line-flags-for-tidb-configuration.md)。
+## Cannot start `tikv-server`
 
-+ 端口被占用：`lsof -i:port`
+See the following for the situations when the `tikv-server` cannot be started:
 
-    请确保 tidb-server 启动所需要的端口未被占用。
+- Error in the startup parameters: See the [TiKV configuration and options](/command-line-flags-for-tikv-configuration.md).
 
-+ 无法连接 pd-server
+- The port is occupied: Use the `lsof -i:port` command to show all the networking related to a given port and make sure the port to start the `tikv-server` is not occupied.
 
-    首先检查 pd-server 的进程状态和日志，确保 pd-server 成功启动，对应端口已打开：`lsof -i:port`。
++ Cannot connect to `pd-server`.
 
-    若 pd-server 正常，则需要检查 tidb-server 机器和 pd-server 对应端口之间的连通性，确保网段连通且对应服务端口已添加到防火墙白名单中，可通过 nc 或 curl 工具检查。
+    - Check if the network between TiDB and PD is running smoothly, including whether the network can be pinged or if there is any issue with the Firewall configuration.
 
-    例如，假设 tidb 服务位于 `192.168.1.100`，无法连接的 pd 位于 `192.168.1.101`，且 2379 为其 client port，则可以在 tidb 机器上执行 `nc -v -z 192.168.1.101 2379`，测试是否可以访问端口。或使用 `curl -v 192.168.1.101:2379/pd/api/v1/leader` 直接检查 pd 是否正常服务。
+    - If there is no issue with the network, check the state and log of the `pd-server` process.
 
-## tikv-server 启动报错
+- The file is occupied.
 
-+ 启动参数错误
+    Do not open two TiKV files on one database file directory.
 
-    请参考 [TiKV 启动参数](/command-line-flags-for-tikv-configuration.md)文档。
+## Cannot start `pd-server`
 
-+ 端口被占用：`lsof -i:port`
+See the following for the situations when the `pd-server` cannot be started:
 
-    请确保 tikv-server 启动所需要的端口未被占用：`lsof -i:port`。
+- Error in the startup parameters.
 
-+ 无法连接 pd-server
+    See the [PD configuration and options](/command-line-flags-for-pd-configuration.md).
 
-    首先检查 pd-server 的进程状态和日志。确保 pd-server 成功启动，对应端口已打开：`lsof -i:port`。
+- The port is occupied.
 
-    若 pd-server 正常，则需要检查 tikv-server 机器和 pd-server 对应端口之间的连通性，确保网段连通且对应服务端口已添加到防火墙白名单中，可通过 nc 或 curl 工具检查。具体命令参考上一节。
+    Use the `lsof -i:port` command to show all the networking related to a given port and make sure the port to start the `pd-server` is not occupied.
 
-+ 文件被占用
+## The TiDB/TiKV/PD process aborts unexpectedly
 
-    不要在一个数据库文件目录上打开两个 tikv。
+- Is the process started on the foreground? The process might exit because the client aborts.
 
-## pd-server 启动报错
-
-+ 启动参数错误
-
-    请参考 [PD 命令行参数](/command-line-flags-for-pd-configuration.md)文档。
-
-+ 端口被占用：`lsof -i:port`
-
-    请确保 pd-server 启动所需要的端口未被占用：`lsof -i:port`。
-
-## TiDB/TiKV/PD 进程异常退出
-
-+ 进程是否是启动在前台
-
-    当前终端退出给其所有子进程发送 HUP 信号，从而导致进程退出。
-
-+ 是否是在命令行用过 `nohup+&` 方式直接运行
-
-    这样依然可能导致进程因终端连接突然中断，作为终端 SHELL 的子进程被杀掉。
-
-    推荐将启动命令写在脚本中，通过脚本运行（相当于二次 fork 启动）。
-
-## TiKV 进程异常重启
-
-+ 检查 dmesg 或者 syslog 里面是否有 OOM 信息
-
-    如果有 OOM 信息并且杀掉的进程为 TiKV，请减少 TiKV 的 RocksDB 的各个 CF 的 `block-cache-size` 值。
-
-+ 检查 TiKV 日志是否有 panic 的 log
-
-    提交 Issue 并附上 panic 的 log。
+- Is `nohup+&` run in the command line? This might cause the process to abort because it receives the hup signal. It is recommended to write and run the startup command in a script.
 
 ## TiDB panic
 
-请提供 panic 的 log。
+Please provide the panic log and you can [report a bug](/support.md).
 
-## 连接被拒绝
+## The connection is rejected
 
-+ 请确保操作系统的网络参数正确，包括但不限于
-    - 连接字符串中的端口和 tidb-server 启动的端口需要一致
-    - 请保证防火墙的配置正确
+Make sure the network parameters of the operating system are correct, including but not limited to:
 
-## Too many open files
+- The port in the connection string is consistent with the `tidb-server` starting port.
+- The firewall is configured correctly.
 
-在启动进程之前，请确保 `ulimit -n` 的结果足够大，推荐设为 unlimited 或者是大于 1000000。
+## Open too many files
 
-## 数据库访问超时，系统负载高
+Before starting the process, make sure the result of `ulimit -n` is large enough. It is recommended to set the value to `unlimited` or larger than `1000000`.
 
-首先检查 [SLOW-QUERY](/identify-slow-queries.md) 日志，判断是否是因为某条 SQL 语句导致。如果未能解决，请提供如下信息：
+## Database access times out and the system load is too high
 
-+ 部署的拓扑结构
-    - tidb-server/pd-server/tikv-server 部署了几个实例
-    - 这些实例在机器上是如何分布的
-+ 机器的硬件配置
-    - CPU 核数
-    - 内存大小
-    - 硬盘类型（SSD 还是机械硬盘）
-    - 是实体机还是虚拟机
-+ 机器上除了 TiDB 集群之外是否还有其他服务
-+ pd-server 和 tikv-server 是否分开部署
-+ 目前正在进行什么操作
-+ 用 `top -H` 命令查看当前占用 CPU 的线程名
-+ 最近一段时间的网络/IO 监控数据是否有异常
+First, check the [slow query log](/identify-slow-queries.md) and see if it is because of some inappropriate SQL statement.
+
+If you failed to solve the problem, provide the following information:
+
++ The deployment topology
+
+    - How many `tidb-server`/`pd-server`/`tikv-server` instances are deployed?
+    - How are these instances distributed in the machines?
+
++ The hardware configuration of the machines where these instances are deployed:
+
+    - The number of CPU cores
+    - The size of the memory
+    - The type of the disk (SSD or Hard Drive Disk)
+    - Are they physical machines or virtual machines?
+
+- Are there other services besides the TiDB cluster?
+- Are the `pd-server`s and `tikv-server`s deployed separately?
+- What is the current operation?
+- Check the CPU thread name using the `top -H` command.
+- Are there any exceptions in the network or IO monitoring data recently?

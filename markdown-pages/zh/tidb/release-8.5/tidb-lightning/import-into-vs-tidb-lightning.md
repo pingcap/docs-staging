@@ -1,133 +1,133 @@
 ---
-title: IMPORT INTO 和 TiDB Lightning 对比
-summary: 了解 `IMPORT INTO` 和 TiDB Lightning 的差异。
+title: IMPORT INTO vs. TiDB Lightning
+summary: Learn about the differences between `IMPORT INTO` and TiDB Lightning.
 ---
 
-# IMPORT INTO 和 TiDB Lightning 对比
+# IMPORT INTO vs. TiDB Lightning
 
-许多用户反馈 [TiDB Lightning](/tidb-lightning/tidb-lightning-configuration.md) 的部署、配置、维护比较复杂，特别是在处理大数据量[并行导入](/tidb-lightning/tidb-lightning-distributed-import.md)的场景中。
+Many users have provided feedback that the deployment, configuration, and maintenance of [TiDB Lightning](/tidb-lightning/tidb-lightning-configuration.md) are complex, especially in scenarios involving [parallel importing](/tidb-lightning/tidb-lightning-distributed-import.md) of large datasets.
 
-针对此问题，TiDB 逐渐将 TiDB Lightning 的一些功能整合到 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) 语句中。你可以直接通过执行 `IMPORT INTO` 导入数据，从而提升导入数据的效率。此外，`IMPORT INTO` 支持某些 TiDB Lightning 不支持的功能，例如自动分布式任务调度和 [TiDB 全局排序](/tidb-global-sort.md)。
+Based on the feedback, TiDB has gradually integrated some functionalities of TiDB Lightning into the [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) SQL statement. You can directly import data by executing `IMPORT INTO`, thereby improving the efficiency of data import. In addition, `IMPORT INTO` supports some functionalities that TiDB Lightning does not, such as automatic distributed task scheduling and [TiDB Global Sort](/tidb-global-sort.md).
 
-`IMPORT INTO` 在 v7.2.0 中引入，在 v7.5.0 成为正式功能 (Generally Available, GA)，并会在未来版本中继续完善优化。一旦 `IMPORT INTO` 能够完全取代 TiDB Lightning，TiDB Lightning 将会被废弃。到时候会在 TiDB Release Notes 和文档中提前发布相关通知。
+`IMPORT INTO` is introduced in v7.2.0 and becomes generally available (GA) in v7.5.0. It will continue to be improved and optimized in future versions. Once the `IMPORT INTO` capability can fully replace TiDB Lightning, TiDB Lightning will be deprecated. At that time, relevant notification will be provided in advance in TiDB Release Notes and documentation.
 
-## `IMPORT INTO` 和 TiDB Lightning 对比
+## Comparison between `IMPORT INTO` and TiDB Lightning
 
-以下章节介绍了 `IMPORT INTO` 和 TiDB Lightning 在多个维度的差异。
+The following sections describe the differences between `IMPORT INTO` and TiDB Lightning in multiple dimensions.
 
-### 部署成本
-
-#### `IMPORT INTO`
-
-`IMPORT INTO` 无需单独部署。你可以直接在 TiDB 节点上执行，从而省去了不必要的部署工作。
-
-#### TiDB Lightning
-
-相比之下，TiDB Lightning 需要进行[单独部署](/tidb-lightning/deploy-tidb-lightning.md)。
-
-### 资源使用
+### Deployment cost
 
 #### `IMPORT INTO`
 
-`IMPORT INTO` 任务可以与其它业务负载共享 TiDB 节点的资源，或者错峰使用这些节点以充分利用资源。为实现以最优性能保持业务稳定运行，同时保证 `IMPORT INTO` 任务的性能和稳定性，你可以指定[特定的 TiDB 节点](/system-variables.md#tidb_service_scope-从-v740-版本开始引入)，专门用于使用 `IMPORT INTO` 导入数据。
-
-当使用 [TiDB 全局排序](/tidb-global-sort.md)时，你无需加载太大的本地磁盘。TiDB 全局排序可以使用 Amazon S3 作为存储。一旦完成数据导入，存储在 Amazon S3 上用于全局排序的数据会自动删除，以节省存储成本。
+`IMPORT INTO` does not require separate deployment. You can run it directly on TiDB nodes, which eliminates additional deployment work.
 
 #### TiDB Lightning
 
-你需要单独的服务器部署和运行 TiDB Lightning。不执行数据导入任务时，这些资源处于闲置状态。在周期性的导入数据的场景中，闲置的时间会更长，造成资源浪费。
+By contrast, TiDB Lightning requires [separate server deployment](/tidb-lightning/deploy-tidb-lightning.md).
 
-如果导入的数据量大，还需要准备较大的本地磁盘对导入的数据进行排序。
-
-### 任务配置和集成
+### Resource utilization
 
 #### `IMPORT INTO`
 
-你可以直接编写 SQL 语句来提交导入任务，方便调用和集成。
+The `IMPORT INTO` task and other business workloads can share TiDB resources or utilize them at different times to fully leverage the TiDB resources. To ensure stable operation of business workloads while maintaining the performance and stability of the `IMPORT INTO` task, you can specify [specific TiDB nodes](/system-variables.md#tidb_service_scope-new-in-v740) dedicated to `IMPORT INTO` for data import.
+
+When you use [TiDB Global Sort](/tidb-global-sort.md), there is no need to mount large local disks. TiDB Global Sort can use Amazon S3 as the storage. Once the import task is completed, the temporary data stored on Amazon S3 for global sorting will be automatically deleted to save storage costs.
 
 #### TiDB Lightning
 
-相比之下，TiDB Lightning 需要你编写[配置文件](/tidb-lightning/tidb-lightning-configuration.md)，非常复杂，而且不便于第三方软件调用。
+You need separate servers to deploy and run TiDB Lightning. When no import tasks are executed, these resources remain idle. The total idle time is even longer in scenarios where import tasks are executed periodically, resulting in a waste of resources.
 
-### 任务调度
+If the dataset to be imported is large, you also need to prepare large local disks to sort the data to be imported.
+
+### Task configuration and integration
 
 #### `IMPORT INTO`
 
-`IMPORT INTO` 支持分布式执行。例如，当你需要将 40 TiB 的源数据文件导入到一张目标表时，在提交了 SQL 语句之后，TiDB 会自动将导入任务拆分成多个子任务，然后调度不同的 TiDB 节点分布式执行这些子任务。
+You can directly write SQL statements to submit import tasks, which are easy to call and integrate.
 
 #### TiDB Lightning
 
-相比之下，TiDB Lightning 的配置复杂、低效且容易出错。
+By contrast, TiDB Lightning requires you to write [task configuration files](/tidb-lightning/tidb-lightning-configuration.md). These configuration files are complex and not easily called by third parties.
 
-假设你需要启动 10 个 TiDB Lightning 实例并行导入数据，那么你需要编写 10 个 TiDB Lightning 配置文件，并在每个配置文件中配置对应 TiDB Lightning 实例读取的源文件范围。例如，TiDB Lightning 实例 1 读取前 100 个文件，实例 2 读取接下来的 100 个文件，依此类推。
-
-此外，你还需要为这 10 个 TiDB Lightning 实例配置共享元数据表和其他配置信息。配置相对复杂和繁琐。
-
-### 全局排序与本地排序
+### Task scheduling
 
 #### `IMPORT INTO`
 
-基于 TiDB 全局排序，`IMPORT INTO` 可以将几十 TiB 的源数据传输到多个 TiDB 节点，编码数据 KV 对和索引 KV 对，并传输到 Amazon S3 对这些 KV 对进行全局排序，然后写入到 TiKV。
-
-由于这些 KV 对是全局排序过的，因此从各个 TiDB 节点导入到 TiKV 的数据不会重叠，可以直接将其写入到 RocksDB 中。这样就不需要 TiKV 执行 Compaction 操作，从而显着提升写入 TiKV 的性能和稳定性。
-
-导入完成后，Amazon S3 上用于全局排序的数据将自动删除，节省存储成本。
+`IMPORT INTO` supports distributed execution. For example, when you import 40 TiB of source data files into one target table, after submitting the SQL statement, TiDB will automatically split the import task into multiple sub-tasks and schedule different TiDB nodes to execute these sub-tasks.
 
 #### TiDB Lightning
 
-TiDB Lightning 仅支持本地排序。例如，对于几十 TiB 的源数据，如果 TiDB Lightning 没有配置大的本地磁盘，或者使用多个 TiDB Lightning 实例并行导入，则每个 TiDB Lightning 实例只会使用本地磁盘对待导入的数据进行排序。由于无法进行全局排序，多个 TiDB Lightning 实例导入到 TiKV 的数据之间会出现重叠，尤其是索引数据较多的场景，这将会触发 TiKV 进行 Compaction 操作。Compaction 操作非常消耗资源，会导致 TiKV 的写入性能和稳定性下降。
+By contrast, the configuration for TiDB Lightning is complex, inefficient, and prone to errors.
 
-如果后续还要继续导入数据，你需要继续保留 TiDB Lightning 服务器以及该服务器上的磁盘，以供下次导入使用。与 `IMPORT INTO` 使用 Amazon S3 按需付费的方式相比，使用 TiDB Lightning 成本相对较高。
+Assume that you start 10 TiDB Lightning instances to import data in parallel, then you need to create 10 TiDB Lightning configuration files. In each file, you need to configure the range of source files to be read by the corresponding TiDB Lightning instance. For example, TiDB Lightning instance 1 reads the first 100 files, instance 2 reads the next 100 files, and so on.
 
-### 性能
+In addition, you need to configure the shared metadata table and other configuration information for these 10 TiDB Lightning instances, which is complex.
 
-目前，还没有 `IMPORT INTO` 和 TiDB Lightning 在同等测试环境下的性能测试对比结果。
-
-使用 Amazon S3 作为全局排序的存储时，`IMPORT INTO` 性能测试结果如下：
-
-| 源数据集                         | 节点配置                                       | 单个 TiDB 节点平均导入速度    |
-|---------------------------------|----------------------------------------------|----------------------------|
-| 40 TiB 数据（22.6 亿行，单行大小 19 KiB） | 10 个 TiDB (16C32G) 节点和 20 个 TiKV (16C27G) 节点  | 222 GiB/h        |
-| 10 TiB 数据（5.65 亿行，单行大小 19 KiB） | 5 个 TiDB (16C32G) 节点和 10 个 TiKV (16C27G) 节点  | 307 GiB/h        |
-
-### 高可用性
+### Global Sort vs. local sort
 
 #### `IMPORT INTO`
 
-当某个 TiDB 节点发生故障后，该节点上的任务会自动转移到其它 TiDB 节点上继续运行。
+With TiDB Global Sort, `IMPORT INTO` can transmit tens of TiB of source data to multiple TiDB nodes, encode the data KV pairs and index KV pairs, and then transfer these pairs to Amazon S3 for global sorting before writing them into TiKV.
+
+Because these KV pairs are globally sorted, data imported from various TiDB nodes into TiKV does not overlap, allowing it to be written directly into the RocksDB. This eliminates the need for TiKV to perform compaction operations, resulting in significant improvement in both write performance and stability of TiKV.
+
+After the import is completed, the data used for global sorting on Amazon S3 will be automatically deleted, saving storage costs.
 
 #### TiDB Lightning
 
-TiDB Lightning 实例节点出现故障后，需要根据之前记录的检查点在新节点上手动恢复任务。
+TiDB Lightning only supports local sort. For example, for tens of TiB of source data, if TiDB Lightning does not have large local disks configured, or if multiple TiDB Lightning instances are used for parallel import, each TiDB Lightning instance can only use local disks to sort the data to be imported. Due to the inability to perform global sort, there will be an overlap between the data imported into TiKV by multiple TiDB Lightning instances, especially in scenarios where index data is more prevalent, triggering TiKV to perform compaction operations. Compaction operations are resource-intensive, which will lead to a decrease in TiKV's write performance and stability.
 
-### 可扩展性
+If you want to continue importing data later, you will need to keep the TiDB Lightning server and the disks on the server for the next import. The cost of using preallocated disks is relatively high, compared with `IMPORT INTO` using Amazon S3 on a pay-as-you-go basis.
+
+### Performance
+
+Currently, there are no performance test comparison results under equivalent test environments between `IMPORT INTO` and TiDB Lightning.
+
+When Amazon S3 is used as the storage for global sorting, the performance test results for `IMPORT INTO` are as follows:
+
+| Source dataset                    | Node configuration                                           | Average import speed per TiDB node |
+|------------------------------------|--------------------------------------------------------------|------------------------------------|
+| 40 TiB data (2.26 billion rows, 19 KiB per row) | 10 TiDB (16C32G) nodes and 20 TiKV (16C27G) nodes | 222 GiB/h |
+| 10 TiB data (565 million rows, 19 KiB per row) | 5 TiDB (16C32G) nodes and 10 TiKV (16C27G) nodes | 307 GiB/h |
+
+### High availability
 
 #### `IMPORT INTO`
 
-由于使用全局排序，导入 TiKV 的数据不会重叠，与 TiDB Lightning 相比，具有更好的可扩展性。
+After a TiDB node fails, tasks on that node are automatically transferred to the remaining TiDB nodes to continue running.
 
 #### TiDB Lightning
 
-由于仅支持本地排序，添加 TiDB Lightning 实例时导入 TiKV 的数据可能会重叠，导致 TiKV 需要更多的压缩操作，与 `IMPORT INTO` 相比，可扩展性受到限制。
+After a TiDB Lightning instance node fails, you need to perform manual recovery of tasks on a new node based on previously recorded checkpoints.
 
-## `IMPORT INTO` 不支持的特性
+### Scalability
 
-目前，`IMPORT INTO` 还缺少一些特性，在部分场景无法替代 TiDB Lightning，例如：
+#### `IMPORT INTO`
 
-- 逻辑导入
+Due to the use of Global Sort, data imported into TiKV does not overlap, resulting in better scalability compared with TiDB Lightning.
 
-    在使用 `IMPORT INTO` 导入数据之前，目标表必须为空。如果需要将数据导入到已经包含数据的表中，建议使用 [`LOAD DATA`](/sql-statements/sql-statement-load-data.md) 或直接插入等方法。从 v8.0 起，TiDB 支持[批量 DML](/system-variables.md#tidb_dml_type-从-v800-版本开始引入) 来执行大型事务。
+#### TiDB Lightning
 
-- 冲突数据处理
+Due to only supporting local sort, data imported into TiKV might overlap when new TiDB Lightning instances are added, resulting in more compaction operations for TiKV and limiting scalability relative to `IMPORT INTO`.
 
-    `IMPORT INTO` 目前不支持冲突数据处理。在导入数据前，你需要正确定义表结构，且保证导入的数据不存在主键或唯一键冲突，否则可能会导致任务失败。
+## Functionalities not supported by `IMPORT INTO`
 
-- 将数据导入多个目标表
+Currently, `IMPORT INTO` still lacks some functionalities and cannot fully replace TiDB Lightning in some scenarios, such as:
 
-    目前，一个 `IMPORT INTO` 语句仅允许导入数据到一个目标表。如果要将数据导入到多个目标表中，则需要提交多个 `IMPORT INTO` 语句。
+- Logical import
 
-在未来的版本中，`IMPORT INTO` 计划将支持这些功能，并对功能进行其他增强，例如允许在任务执行期间修改并发性以及调整写入 TiKV 的吞吐量，让你更方便地管理任务。
+    Before importing data with `IMPORT INTO`, the target table must be empty. If you need to import data into a table that already contains data, it is recommended to use methods such as [`LOAD DATA`](/sql-statements/sql-statement-load-data.md) or direct insertion. Starting from v8.0, TiDB supports [bulk DML](/system-variables.md#tidb_dml_type-new-in-v800) for executing large transactions.
 
-## 总结
+- Conflict data handling
 
-与 TiDB Lightning 相比，`IMPORT INTO` 语句可以直接在 TiDB 节点上执行，支持自动化分布式任务调度和 [TiDB 全局排序](/tidb-global-sort.md)，在部署、资源利用率、任务配置便捷性、调用集成便捷性、高可用性和可扩展性等方面都有很大提升。建议在合适的场景下，使用 `IMPORT INTO` 代替 TiDB Lightning。
+    `IMPORT INTO` currently does not support conflict data handling. Before the data import, you need to define the table schema properly to ensure that the data to be imported does not conflict with primary keys (PK) or unique keys (UK). Otherwise, it might cause task failures.
+
+- Importing data into multiple target tables
+
+    Currently, only one target table is allowed for one `IMPORT INTO` SQL statement. If you want to import data into multiple target tables, you need to submit multiple `IMPORT INTO` SQL statements.
+
+In future versions, these functionalities will be supported by `IMPORT INTO`, along with additional enhancements to its capabilities, such as allowing modification of concurrency during task execution and adjusting throughput for writing to TiKV. This will make it more convenient for you to manage tasks.
+
+## Summary
+
+Compared with TiDB Lightning, `IMPORT INTO`can be directly executed on TiDB nodes, supports automated distributed task scheduling and [TiDB Global Sort](/tidb-global-sort.md), and offers significant improvements in deployment, resource utilization, task configuration convenience, ease of invocation and integration, high availability, and scalability. It is recommended that you consider using `IMPORT INTO` instead of TiDB Lightning in appropriate scenarios.

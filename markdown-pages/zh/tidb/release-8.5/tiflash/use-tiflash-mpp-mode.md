@@ -1,59 +1,70 @@
 ---
-title: 使用 MPP 模式
-summary: 了解如何使用 MPP 模式。
+title: 使用 TiFlash MPP 模式
+summary: 了解 TiFlash 的 MPP 模式及其使用方法。
 ---
 
-# 使用 MPP 模式
+# 使用 TiFlash MPP 模式
 
-本文档介绍 TiFlash 的 [Massively Parallel Processing (MPP)](/glossary.md#massively-parallel-processing-mpp) 模式及其使用方法。
+<CustomContent platform="tidb">
 
-TiFlash 支持 MPP 模式的查询执行，即在计算中引入跨节点的数据交换（data shuffle 过程）。TiDB 默认由优化器自动选择是否使用 MPP 模式，你可以通过修改变量 [`tidb_allow_mpp`](/system-variables.md#tidb_allow_mpp-从-v50-版本开始引入) 和 [`tidb_enforce_mpp`](/system-variables.md#tidb_enforce_mpp-从-v51-版本开始引入) 的值来更改选择策略。
+本文介绍了 [Massively Parallel Processing (MPP)](/glossary.md#massively-parallel-processing-mpp) 模式的 TiFlash 以及如何使用它。
 
-MPP 模式的工作原理见下图。
+</CustomContent>
 
-![mpp-mode](https://docs-download.pingcap.com/media/images/docs-cn/tiflash/tiflash-mpp.png)
+<CustomContent platform="tidb-cloud">
+
+本文介绍了 [Massively Parallel Processing (MPP)](/tidb-cloud/tidb-cloud-glossary.md#mpp) 模式的 TiFlash 以及如何使用它。
+
+</CustomContent>
+
+TiFlash 支持使用 MPP 模式执行查询，该模式引入了跨节点数据交换（数据洗牌过程）到计算中。TiDB 会通过优化器的成本估算自动判断是否选择 MPP 模式。你可以通过修改 [`tidb_allow_mpp`](/system-variables.md#tidb_allow_mpp-new-in-v50) 和 [`tidb_enforce_mpp`](/system-variables.md#tidb_enforce_mpp-new-in-v51) 的值来改变选择策略。
+
+下图展示了 MPP 模式的工作原理。
+
+![mpp-mode](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash-mpp.png)
 
 ## 控制是否选择 MPP 模式
 
-变量 `tidb_allow_mpp` 控制 TiDB 能否选择 MPP 模式执行查询。变量 `tidb_enforce_mpp` 控制是否忽略优化器代价估算，强制使用 TiFlash 的 MPP 模式执行查询。
+`tidb_allow_mpp` 变量控制 TiDB 是否可以选择 MPP 模式执行查询。`tidb_enforce_mpp` 变量控制是否忽略优化器的成本估算，强制使用 TiFlash 的 MPP 模式执行查询。
 
 这两个变量所有取值对应的结果如下：
 
-|                        | tidb_allow_mpp=off | tidb_allow_mpp=on（默认）              |
-| ---------------------- | -------------------- | -------------------------------- |
-| tidb_enforce_mpp=off（默认） | 不使用 MPP 模式。  | 优化器根据代价估算选择。（默认） |
-| tidb_enforce_mpp=on  | 不使用 MPP 模式。  | TiDB 无视代价估算，选择 MPP 模式。      |
+|                        | tidb_allow_mpp=off | tidb_allow_mpp=on（默认）             |
+| ---------------------- | ------------------ | ---------------------------------- |
+| tidb_enforce_mpp=off（默认） | 不使用 MPP 模式。     | 根据成本估算由优化器选择 MPP 模式（默认）。 |
+| tidb_enforce_mpp=on   | 不使用 MPP 模式。     | TiDB 忽略成本估算，强制选择 MPP 模式。     |
 
-例如，如果你不想使用 MPP 模式，可以通过以下语句来设置：
-
+例如，如果你不想使用 MPP 模式，可以执行以下语句：
 
 ```sql
 set @@session.tidb_allow_mpp=0;
 ```
 
-如果想要通过优化器代价估算来智能选择是否使用 MPP（默认情况），可以通过如下语句来设置：
-
+如果你希望 TiDB 的基于成本的优化器自动决定是否使用 MPP 模式（默认），可以执行：
 
 ```sql
 set @@session.tidb_allow_mpp=1;
 set @@session.tidb_enforce_mpp=0;
 ```
 
-如果想要 TiDB 忽略优化器的代价估算，强制使用 MPP，可以通过如下语句来设置：
-
+如果你希望 TiDB 忽略优化器的成本估算，强制选择 MPP 模式，可以执行：
 
 ```sql
 set @@session.tidb_allow_mpp=1;
 set @@session.tidb_enforce_mpp=1;
 ```
 
-Session 变量 `tidb_enforce_mpp` 的初始值等于这台 tidb-server 实例的 [`enforce-mpp`](/tidb-configuration-file.md#enforce-mpp) 配置项值（默认为 `false`）。在一个 TiDB 集群中，如果有若干台 tidb-server 实例只执行分析型查询，要确保它们能够选中 MPP 模式，你可以将它们的 [`enforce-mpp`](/tidb-configuration-file.md#enforce-mpp) 配置值修改为 `true`.
+<CustomContent platform="tidb">
 
-> **注意：**
+`tidb_enforce_mpp` 会话变量的初始值等于该 tidb-server 实例的 [`enforce-mpp`](/tidb-configuration-file.md#enforce-mpp) 配置值（默认为 `false`）。如果在一个 TiDB 集群中多个 tidb-server 实例只执行分析查询，并且你希望确保这些实例都使用 MPP 模式，可以将它们的 [`enforce-mpp`](/tidb-configuration-file.md#enforce-mpp) 配置值改为 `true`。
+
+</CustomContent>
+
+> **Note:**
 >
-> `tidb_enforce_mpp=1` 在生效时，TiDB 优化器会忽略代价估算选择 MPP 模式。但如果存在其它不支持 MPP 的因素，例如没有 TiFlash 副本、TiFlash 副本同步未完成、语句中含有 MPP 模式不支持的算子或函数等，那么 TiDB 仍然不会选择 MPP 模式。
+> 当 `tidb_enforce_mpp=1` 生效时，TiDB 优化器会忽略成本估算以选择 MPP 模式。但是，如果存在阻止 MPP 模式的其他因素，TiDB 也不会选择 MPP 模式。这些因素包括 TiFlash 副本不存在、TiFlash 副本未完成复制，以及包含不被 MPP 模式支持的操作符或函数的语句。
 >
-> 如果由于代价估算之外的原因导致 TiDB 优化器无法选择 MPP，在你使用 `EXPLAIN` 语句查看执行计划时，会返回警告说明原因，例如：
+> 如果 TiDB 优化器由于其他原因无法选择 MPP 模式，当你使用 `EXPLAIN` 查看执行计划时，会返回警告以说明原因。例如：
 >
 > ```sql
 > set @@session.tidb_enforce_mpp=1;
@@ -72,12 +83,12 @@ Session 变量 `tidb_enforce_mpp` 的初始值等于这台 tidb-server 实例的
 
 ## MPP 模式的算法支持
 
-MPP 模式目前支持的物理算法有：Broadcast Hash Join、Shuffled Hash Join、 Shuffled Hash Aggregation、Union All、 TopN 和 Limit。算法的选择由优化器自动判断。通过 `EXPLAIN` 语句可以查看具体的查询执行计划。如果 `EXPLAIN` 语句的结果中出现 ExchangeSender 和 ExchangeReceiver 算子，表明 MPP 已生效。
+MPP 模式支持以下物理算法：Broadcast Hash Join、Shuffled Hash Join、Shuffled Hash Aggregation、Union All、TopN 和 Limit。优化器会自动判断在某个查询中使用哪种算法。要查看具体的执行计划，可以执行 `EXPLAIN` 语句。如果 `EXPLAIN` 的结果中显示有 ExchangeSender 和 ExchangeReceiver 操作符，说明 MPP 模式已生效。
 
-以 TPC-H 测试集中的表结构为例：
+以下示例以 TPC-H 测试集中的表结构为例：
 
 ```sql
-mysql> explain select count(*) from customer c join nation n on c.c_nationkey=n.n_nationkey;
+explain select count(*) from customer c join nation n on c.c_nationkey=n.n_nationkey;
 +------------------------------------------+------------+--------------+---------------+----------------------------------------------------------------------------+
 | id                                       | estRows    | task         | access object | operator info                                                              |
 +------------------------------------------+------------+--------------+---------------+----------------------------------------------------------------------------+
@@ -94,23 +105,24 @@ mysql> explain select count(*) from customer c join nation n on c.c_nationkey=n.
 9 rows in set (0.00 sec)
 ```
 
-在执行计划中，出现了 `ExchangeReceiver` 和 `ExchangeSender` 算子。该执行计划表示 `nation` 表读取完毕后，经过 `ExchangeSender` 算子广播到各个节点中，与 `customer` 表先后进行 `HashJoin` 和 `HashAgg` 操作，再将结果返回至 TiDB 中。
+在示例执行计划中，包含了 `ExchangeReceiver` 和 `ExchangeSender` 操作符。执行计划表明，在读取 `nation` 表后，`ExchangeSender` 操作符会将表广播到每个节点，`HashJoin` 和 `HashAgg` 操作在 `nation` 表和 `customer` 表上执行，最后将结果返回给 TiDB。
 
-TiFlash 提供了 3 个全局/会话变量决定是否选择 Broadcast Hash Join，分别为：
+TiFlash 提供以下 3 个全局/会话变量，用于控制是否使用 Broadcast Hash Join：
 
-- [`tidb_broadcast_join_threshold_size`](/system-variables.md#tidb_broadcast_join_threshold_size-从-v50-版本开始引入)，单位为 bytes。如果表大小（字节数）小于该值，则选择 Broadcast Hash Join 算法。否则选择 Shuffled Hash Join 算法。
-- [`tidb_broadcast_join_threshold_count`](/system-variables.md#tidb_broadcast_join_threshold_count-从-v50-版本开始引入)，单位为行数。如果 join 的对象为子查询，优化器无法估计子查询结果集大小，在这种情况下通过结果集行数判断。如果子查询的行数估计值小于该变量，则选择 Broadcast Hash Join 算法。否则选择 Shuffled Hash Join 算法。
-- [`tidb_prefer_broadcast_join_by_exchange_data_size`](/system-variables.md#tidb_prefer_broadcast_join_by_exchange_data_size-从-v710-版本开始引入)，控制是否使用最小网络数据交换策略。使用该策略时，TiDB 会估算 Broadcast Hash Join 和 Shuffled Hash Join 两种算法所需进行网络交换的数据量，并选择网络交换数据量较小的算法。该功能开启后，[`tidb_broadcast_join_threshold_size`](/system-variables.md#tidb_broadcast_join_threshold_size-从-v50-版本开始引入) 和 [`tidb_broadcast_join_threshold_count`](/system-variables.md#tidb_broadcast_join_threshold_count-从-v50-版本开始引入) 将不再生效。
+- [`tidb_broadcast_join_threshold_size`](/system-variables.md#tidb_broadcast_join_threshold_size-new-in-v50)：值的单位为字节。如果表的大小（以字节为单位）小于该变量的值，则使用 Broadcast Hash Join 算法，否则使用 Shuffled Hash Join。
+- [`tidb_broadcast_join_threshold_count`](/system-variables.md#tidb_broadcast_join_threshold_count-new-in-v50)：值的单位为行数。如果连接操作的对象属于子查询，优化器无法估算子查询结果集的大小，因此以结果集中的行数为准。如果子查询的估算行数小于该变量的值，则使用 Broadcast Hash Join，否则使用 Shuffled Hash Join。
+- [`tidb_prefer_broadcast_join_by_exchange_data_size`](/system-variables.md#tidb_prefer_broadcast_join_by_exchange_data_size-new-in-v710)：控制是否优先选择网络传输开销较小的算法。如果启用该变量，TiDB 会分别估算 `Broadcast Hash Join` 和 `Shuffled Hash Join` 需要交换的数据大小，然后选择较小的那个。启用后，`tidb_broadcast_join_threshold_count` 和 `tidb_broadcast_join_threshold_size` 不再生效。
 
-## MPP 模式访问分区表
+## 在 MPP 模式下访问分区表
 
-如果希望使用 MPP 模式访问分区表，需要先开启[动态裁剪模式](/partitioned-table.md#动态裁剪模式)。
+要在 MPP 模式下访问分区表，首先需要启用 [动态裁剪模式](https://docs.pingcap.com/tidb/stable/partitioned-table#dynamic-pruning-mode)。
 
-示例如下：
+示例：
 
 ```sql
 mysql> DROP TABLE if exists test.employees;
 Query OK, 0 rows affected, 1 warning (0.00 sec)
+
 mysql> CREATE TABLE test.employees
 (id int NOT NULL,
  fname varchar(30) DEFAULT NULL,
@@ -128,8 +140,10 @@ Query OK, 0 rows affected (0.10 sec)
 
 mysql> ALTER table test.employees SET tiflash replica 1;
 Query OK, 0 rows affected (0.09 sec)
+
 mysql> SET tidb_partition_prune_mode=static;
 Query OK, 0 rows affected, 1 warning (0.00 sec)
+
 mysql> explain SELECT count(*) FROM test.employees;
 +----------------------------------+----------+-------------------+-------------------------------+-----------------------------------+
 | id                               | estRows  | task              | access object                 | operator info                     |
@@ -153,10 +167,11 @@ mysql> explain SELECT count(*) FROM test.employees;
 |       └─StreamAgg_77             | 1.00     | batchCop[tiflash] |                               | funcs:count(1)->Column#18         |
 |         └─TableFullScan_85       | 10000.00 | batchCop[tiflash] | table:employees, partition:p3 | keep order:false, stats:pseudo    |
 +----------------------------------+----------+-------------------+-------------------------------+-----------------------------------+
-18 rows in set (0,00 sec)
+18 rows in set (0.00 sec)
 
 mysql> SET tidb_partition_prune_mode=dynamic;
 Query OK, 0 rows affected (0.00 sec)
+
 mysql> explain SELECT count(*) FROM test.employees;
 +------------------------------+----------+--------------+-----------------+---------------------------------------------------------+
 | id                           | estRows  | task         | access object   | operator info                                           |
@@ -167,5 +182,5 @@ mysql> explain SELECT count(*) FROM test.employees;
 |     └─HashAgg_8              | 1.00     | mpp[tiflash] |                 | funcs:count(1)->Column#11                               |
 |       └─TableFullScan_16     | 10000.00 | mpp[tiflash] | table:employees | keep order:false, stats:pseudo, PartitionTableScan:true |
 +------------------------------+----------+--------------+-----------------+---------------------------------------------------------+
-5 rows in set (0,00 sec)
+5 rows in set (0.00 sec)
 ```

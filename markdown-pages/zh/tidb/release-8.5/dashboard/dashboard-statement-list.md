@@ -1,78 +1,75 @@
 ---
-title: TiDB Dashboard SQL 语句分析列表页面
-summary: 查看所有 SQL 语句在集群上执行情况
+title: SQL Statements Page of TiDB Dashboard
+summary: The SQL statements page in TiDB Dashboard shows the execution status of all SQL statements in the cluster. It allows users to analyze long-running SQL statements and provides options to access, filter, display more columns, sort, and change settings. The page also includes a feature to limit the number of stored SQL statements. For more details, visit the TiDB Dashboard documentation.
 ---
 
-# TiDB Dashboard SQL 语句分析执行详情页面
+# SQL Statements Page of TiDB Dashboard
 
-该页面可以查看所有 SQL 语句在集群上执行情况，常用于分析总耗时或单次耗时执行耗时较长的 SQL 语句。
+The SQL statements page shows the execution status of all SQL statements in the cluster. This page is often used to analyze the SQL statement whose total or single execution time is long.
 
-在该页面中，结构一致的 SQL 查询（即使查询参数不一致）都会被归为同一个 SQL 语句，例如 `SELECT * FROM employee WHERE id IN (1, 2, 3)` 和 `select * from EMPLOYEE where ID in (4, 5)` 都属于同一 SQL 语句 `select * from employee where id in (...)`。
+On this page, SQL queries with a consistent structure (even if the query parameters are inconsistent) are classified as the same SQL statement. For example, both `SELECT * FROM employee WHERE id IN (1, 2, 3)` and `select * from EMPLOYEE where ID in (4, 5)` are classified as the same `select * from employee where id in (...)` SQL statement.
 
-## 访问列表页面
+## Access the page
 
-可以通过以下两种方法访问 SQL 语句分析页面：
+You can use one of the following two methods to access the SQL statement summary page:
 
-* 登录 TiDB Dashboard 后，在左侧导航栏中点击**SQL 语句分析** (SQL Statements)。
+* After logging in to TiDB Dashboard, click **SQL Statements** in the left navigation menu.
 
-* 在浏览器中访问 <http://127.0.0.1:2379/dashboard/#/statement>（将 `127.0.0.1:2379` 替换为实际 PD 实例地址和端口）。
+* Visit <http://127.0.0.1:2379/dashboard/#/statement> in your browser. Replace `127.0.0.1:2379` with the actual PD instance address and port.
 
-SQL 语句分析页面所展示的所有数据都来自于 TiDB Statement 系统表，参见 [Statement Summary Tables](/statement-summary-tables.md) 文档了解该系统表的详细情况。
+All the data shown on the SQL statement summary page are from the TiDB statement summary tables. For more details about the tables, see [TiDB Statement Summary Tables](/statement-summary-tables.md).
 
-> **注意：**
+> **Note:**
 >
-> 在 SQL 语句分析页面的 **Mean Latency** 列中，蓝色条表示平均耗时。如果某条 SQL 语句的蓝色条上有黄色的线，黄色线的左右两侧分别代表最近一个收集周期内该 SQL 语句耗时的最小值和最大值。
+> In the **Mean Latency** column of the SQL statement summary page, the blue bar indicates the average execution time. If there is a yellow line on the blue bar for an SQL statement, the left and right sides of the yellow line respectively represent the minimum and maximum execution time of the SQL statement during the recent data collection cycle. 
 
-### 修改列表过滤条件
+### Change Filters
 
-页面顶部可修改显示的时间范围、按执行 SQL 所在数据库进行过滤，或按 SQL 类型进行过滤，如下所示。默认显示最近一个收集周期（默认最近 30 分钟）内的所有 SQL 语句执行情况。
+On the top of the SQL statement summary page, you can modify the time range of SQL executions to be displayed. You can also filter the list by database in which SQL statements are executed, or by SQL types. The following image shows all SQL executions over the recent data collection cycle (recent 30 minutes by default).
 
-![修改过滤条件](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-filter-options.png)
+![Modify filters](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-filter-options.png)
 
-### 显示其他字段
+### Display More Columns
 
-页面顶部**选择列** (Columns) 选项中可选择显示更多列，可将鼠标移动到列名右侧的 (i) 图标处查看列的说明：
+Click **Columns** on the page and you can choose to see more columns. You can move your mouse to the **(i)** icon at the right side of a column name to view the description of this column:
 
-![选择列](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-columns-selector.png)
+![Choose columns](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-columns-selector.png)
 
-### 修改列表排序依据
+### Sort by Column
 
-列表默认以**累计耗时** (Total Latency) 从高到低进行排序，点击不同的列标题可以修改排序依据或切换排序顺序：
+By default, the list is sorted by **Total Latency** from high to low. Click on different column headings to modify the sorting basis or switch the sorting order:
 
-![修改列排序](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-change-order.png)
+![Modify list sorting](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-change-order.png)
 
-### 修改数据收集设置
+### Change Settings
 
-在列表页面，点击顶部右侧的**设置** (Settings) 按钮，即可对 SQL 语句分析功能进行设置：
+On the list page, click the **Settings** button on the top right to change the settings of the SQL statements feature:
 
-![设置入口](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-setting-entry.png)
+![Settings entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-setting-entry.png)
 
-点击后设置界面如下图所示：
+After clicking the **Settings** button, you can see the following setting dialog box:
 
-![设置](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-settings.png)
+![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-settings.png)
 
-在设置中可以选择关闭或开启 SQL 语句分析功能。在开启 SQL 语句分析功能时可以修改以下选项：
+On the setting page, you can disable or enable the SQL statements feature. When the SQL statements feature is enabled, you can modify the following settings:
 
-- 数据收集周期：默认 30 分钟，每次进行 SQL 语句分析的时间长度。SQL 语句分析功能每次对一段时间范围内的所有 SQL 语句进行汇总统计。
+- Collect interval: The length of period for each SQL statement analysis, which is 30 minutes by default. The SQL statements feature summarizes and counts all SQL statements within a period of time. If the period is too long, the granularity of the summary is coarse, which is not good for locating problems; if the period is too short, the granularity of the statistics is fine, which is good for locating problems, but this will result in more records and more memory usage within the same data retention duration. Therefore, you need to adjust this value based on the actual situation, and properly lower this value when locating problems.
+- Data retain duration: The retention duration of summary information, which is 1 day by default. Data retained longer than this duration will be deleted from system tables.
 
-    如果这个时间范围过长，则统计的粒度粗，不利用定位问题；如果太短，则统计的粒度细，方便定位问题，但会导致在相同的数据保留时间内产生更多的记录，产生更多的内存占用。因此需要根据实际情况调整，在需要定位问题时适当地将值调低。
+See [Configurations of Statement Summary Tables](/statement-summary-tables.md#parameter-configuration) for details.
 
-- 数据保留时间：默认 1 天，统计信息保留的时间，超过这个时间的数据会被从系统表中删除。
-
-参见 [Statement Summary Tables 参数设置](/statement-summary-tables.md#参数配置)文档了解详细情况。
-
-> **注意：**
+> **Note:**
 >
-> 由于 Statement 系统表只存放在内存中，关闭此功能后，系统表中的数据会将清空。
+> + Because the statement system table is only stored in memory, after the SQL Statements feature is disabled, the data in the system table will be cleared.
 >
-> 数据收集周期和保留时间的值会影响内存占用，因此建议根据实际情况调整，保留时间不宜设置过大。
+> + The values of `Collect interval` and `retain duration` affect the memory usage, so it is recommended to adjust these values according to the actual situation. The value of `retain duration` should not be set too large.
 
 ### Others
 
-[`tidb_stmt_summary_max_stmt_count`](/system-variables.md#tidb_stmt_summary_max_stmt_count-从-v40-版本开始引入) 用于限制 [`statements_summary`](/statement-summary-tables.md#statements_summary) 和 [`statements_summary_history`](/statement-summary-tables.md#statements_summary_history) 这两张表在内存中可存储的 SQL digest 总数。当超出该限制时，TiDB 会移除最近没有使用的 SQL。这些 SQL 将会被 `DIGEST` 为 `NULL` 的行数据统计。`DIGEST` 为 `NULL` 的行数据在 TiDB Dashboard SQL 语句分析列表页面中将会显示为 `Others`，如下所示：
+[`tidb_stmt_summary_max_stmt_count`](/system-variables.md#tidb_stmt_summary_max_stmt_count-new-in-v40) limits the number of SQL digests that the [statements_summary](/statement-summary-tables.md#statements_summary) and [statements_summary_history](/statement-summary-tables.md#statements_summary_history) tables can store in memory totally. If the limit is exceeded, TiDB clears the SQL statements that recently remain unused. These cleared SQL statements are represented as rows with `DIGEST` set to `NULL`. On the SQL statement page of TiDB Dashboard, the information of these rows is displayed as `Others`.
 
-![Others 行](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-other-row.png)
+![Others](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-other-row.png)
 
-## 下一步
+## Next step
 
-阅读[查看执行详情](/dashboard/dashboard-statement-details.md)章节了解如何进一步查看 SQL 语句的详细执行情况。
+For more information about how to view the execution details of SQL statements, see [Statement execution details of TiDB Dashboard](/dashboard/dashboard-statement-details.md).

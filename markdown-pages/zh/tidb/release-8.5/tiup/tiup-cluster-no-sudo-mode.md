@@ -1,33 +1,33 @@
 ---
-title: 使用 TiUP no-sudo 模式部署运维 TiDB 线上集群
-summary: 了解如何使用 TiUP no-sudo 模式部署运维 TiDB 线上集群。
+title: Deploy and Maintain an Online TiDB Cluster Using TiUP No-sudo Mode
+summary: Learn how to deploy and maintain an online TiDB cluster using the TiUP no-sudo mode.
 ---
 
-# 使用 TiUP no-sudo 模式部署运维 TiDB 线上集群
+# Deploy and Maintain an Online TiDB Cluster Using TiUP No-sudo Mode
 
-本文介绍如何使用 TiUP no-sudo 模式部署一个 TiDB 线上集群。
+This document describes how to use the TiUP no-sudo mode to deploy a cluster.
 
-> **注意：**
+> **Note:**
 >
-> 对于 CentOS 操作系统，仅支持 CentOS 8 及更高版本。
+> For CentOS, only CentOS 8 or later versions are supported.
 
-## 准备用户并配置 SSH 互信
+## Prepare the user and configure the SSH mutual trust
 
-本文以 `tidb` 用户为例进行说明。
+This document takes the `tidb` user as an example.
 
-1. 以 `root` 用户身份登录所有目标机器，创建名为 `tidb` 的用户并为该用户配置系统资源限制，如下所示：
+1. Log in to all the target machines as the `root` user, create a user named `tidb` and configure the system resource limits for this user as follows:
 
-    > **注意：**
+    > **Note:**
     >
-    > 在 no-sudo 模式下，无需为 `tidb` 用户配置免密 sudo，即不需要将 `tidb` 用户添加到 `sudoers` 文件中。
+    > In no-sudo mode, configuring passwordless sudo for the `tidb` user is unnecessary, that is, you do not need to add the `tidb` user to the `sudoers` file.
 
-    1. 添加 `tidb` 用户：
+    1. Add the `tidb` user:
 
         ```shell
         adduser tidb
         ```
 
-    2. 为 `tidb` 用户配置资源限制：
+    2. Configure the resource limits for the `tidb` user:
 
         ```shell
         cat << EOF >>/etc/security/limits.conf
@@ -40,18 +40,18 @@ summary: 了解如何使用 TiUP no-sudo 模式部署运维 TiDB 线上集群。
         EOF
         ```
 
-2. 在每台部署目标机器上，为 `tidb` 用户启动 `systemd user` 模式。该步骤是必须的，请勿跳过。
+2. Start the `systemd user` mode for the `tidb` user on each target machine. This step is required and do not skip it.
 
-    1. 使用 `tidb` 用户设置 `XDG_RUNTIME_DIR` 环境变量。
+    1. Use the `tidb` user to set the `XDG_RUNTIME_DIR` environment variable.
 
-        ```bash
+        ```shell
         sudo -iu tidb  # Switch to the tidb user
         mkdir -p ~/.bashrc.d
         echo "export XDG_RUNTIME_DIR=/run/user/$(id -u)" > ~/.bashrc.d/systemd
         source ~/.bashrc.d/systemd
         ```
 
-    2. 使用 `root` 用户启动 user service。
+    2. Use the `root` user to start the user service.
 
         ```shell
         $ uid=$(id -u tidb) # Get the ID of the tidb user
@@ -74,53 +74,53 @@ summary: 了解如何使用 TiUP no-sudo 模式部署运维 TiDB 线上集群。
                   └─3358 /usr/bin/pulseaudio --daemonize=no --log-target=journal
         ```
 
-    3. 执行 `systemctl --user`。如果没有报错，说明 `systemd user` 模式已正常启动。
+    3. Execute `systemctl --user`. If no errors occur, it indicates that the `systemd user` mode has started successfully.
 
-3. 使用 `root` 用户执行以下命令，为 systemd 用户 `tidb` 启用驻留。
+3. Use the `root` user to execute the following command to enable lingering for the systemd user `tidb`.
 
-    ```bash
+    ```shell
     loginctl enable-linger tidb
     loginctl show-user -p Linger tidb # This should show: Linger=yes
     ```
 
-    更多详情，参见 [systemd 用户实例的自动启动](https://wiki.archlinux.org/title/Systemd/User#Automatic_start-up_of_systemd_user_instances)。
+    You can read the systemd documentation for reference, [Automatic start-up of systemd user instances](https://wiki.archlinux.org/title/Systemd/User#Automatic_start-up_of_systemd_user_instances).
 
-4. 在中控机上使用 `ssh-keygen` 生成密钥：
+4. Generate a key using `ssh-keygen` on the control machine:
 
     ```shell
     ssh-keygen
     ```
 
-5. 将公钥复制到集群中的其它机器，完成 SSH 互信。
+5. Copy the public key to the other machines in the cluster to establish SSH trust.
 
-    - 如果你已为 `tidb` 用户设置了密码，可以使用 `ssh-copy-id` 命令将公钥复制到目标机器。
+    - If you have set a password for the `tidb` user, you can use `ssh-copy-id` command to copy the public key to the target machine.
 
         ```shell
         ssh-copy-id tidb@host
         ```
 
-        将 `host` 替换为目标机器的主机名，并在集群中的其它每台机器上运行 `ssh-copy-id` 命令。
+        You need to replace `host` with the hostname of the target machine and run this command on each of the other machines in the cluster.
 
-    - 如果你使用其他方法复制公钥，复制完成后请检查 `/home/tidb/.ssh/authorized_keys` 文件的权限。
+    - If you use a different method to copy the public key, make sure to check the permissions of the `/home/tidb/.ssh/authorized_keys` file after the copy.
 
         ```shell
         chown -R tidb:tidb /home/tidb/.ssh/authorized_keys
         chmod 600 /home/tidb/.ssh/authorized_keys
         ```
 
-## 准备部署拓扑文件
+## Prepare the topology file
 
-1. 执行以下 TiUP 命令生成拓扑文件。
+1. Execute the following command to generate the topology file.
 
-    ```bash
+    ```shell
     tiup cluster template > topology.yaml
     ```
 
-2. 编辑拓扑文件。
+2. Edit the topology file.
 
-    相比常规模式，使用 no-sudo 模式的 TiUP 时，需要在 `topology.yaml` 的 `global` 模块中新增一行 `systemd_mode: "user"`。`systemd_mode` 参数用于设置是否使用 `systemd user` 模式。如果不设置该参数，其默认值为 `system`，表示需要使用 sudo 权限。
+    Compared with the regular mode, when using TiUP in no-sudo mode, you need to add a line `systemd_mode: "user"` in the `global` module of the `topology.yaml` file. The `systemd_mode` parameter is used to set whether to use the `systemd user` mode. If this parameter is not set, the default value is `system`, meaning sudo permissions are required.
 
-    此外，由于 no-sudo 模式下，普通用户 `tidb` 没有权限使用 `/data` 目录作为 `deploy_dir` 和 `data_dir`，因此，你需要选择一个普通用户可以访问的路径。以下示例使用了相对路径，实际使用的路径为 `/home/tidb/data/tidb-deploy` 和 `/home/tidb/data/tidb-data`。拓扑文件的其余部分与常规模式一致。另一种方法是使用 `root` 用户创建目录，然后使用 `chown` 将所有权更改为 `tidb:tidb`。
+    Additionally, in no-sudo mode, because the non-root `tidb` user does not have permission to use the `/data` directory as `deploy_dir` or `data_dir`, you must select a path accessible to non-root users. The following example uses relative paths, and the actual paths used are `/home/tidb/data/tidb-deploy` and `/home/tidb/data/tidb-data`. The rest of the topology file remains the same as in the regular mode. Another option is to use the root user to create the directories and then use `chown` to change the ownership to `tidb:tidb`.
 
     ```yaml
     global:
@@ -133,15 +133,15 @@ summary: 了解如何使用 TiUP no-sudo 模式部署运维 TiDB 线上集群。
       ...
     ```
 
-## 手动修复检查项
+## Manually repair failed check items
 
-> **注意：**
+> **Note:**
 >
-> 如果使用最小化安装，请确保已安装 `tar` 包。否则，`tiup cluster check` 命令将会执行失败。
+> If you use a minimal install, make sure the `tar` package is installed. Otherwise, the `tiup cluster check` command will fail.
 
-执行 `tiup cluster check topology.yaml --user tidb` 会产生失败的检查项。示例如下：
+Executing `tiup cluster check topology.yaml --user tidb` can generate some failed check items. The following is an example.
 
-```bash
+```shell
 Node            Check         Result  Message
 ----            -----         ------  -------
 192.168.124.27  thp           Fail    THP is enabled, please disable it for best performance
@@ -158,53 +158,53 @@ Node            Check         Result  Message
 192.168.124.27  service       Fail    service firewalld is running but should be stopped
 ```
 
-由于在 no-sudo 模式下，`tidb` 用户没有 sudo 权限，执行 `tiup cluster check topology.yaml --apply --user tidb` 会导致无法自动修复失败的检查项。你需要使用 `root` 用户在目标部署机器上手动修复。
+In no-sudo mode, the `tidb` user does not have sudo permissions. As a result, running `tiup cluster check topology.yaml --apply --user tidb` cannot automatically fix the failed check items. You need to manually fix it by using the `root` user on the target machines.
 
-更多信息，请参阅 [TiDB 环境与系统配置检查](/check-before-deployment.md)。请注意，你需要跳过文档中的[手动配置 SSH 互信及 sudo 免密码](/check-before-deployment.md#手动配置-ssh-互信及-sudo-免密码)步骤。
+For more information, see [TiDB Environment and System Configuration Check](/check-before-deployment.md). Note that you need to skip the step [Manually configure the SSH mutual trust and sudo without password](/check-before-deployment.md#manually-configure-the-ssh-mutual-trust-and-sudo-without-password) in the document.
 
-## 部署和管理集群
+## Deploy and manage the cluster
 
-为了使用上述步骤准备好的 `tidb` 用户而避免重新创建新的用户，执行 `deploy` 命令时需要加上 `--user tidb`，示例如下：
+To use the `tidb` user created in preceding steps and avoid creating a new one, add `--user tidb` when running the following `deploy` command:
 
 ```shell
 tiup cluster deploy mycluster v8.5.0 topology.yaml --user tidb
 ```
 
-> **注意：**
+> **Note:**
 >
-> 你需要将上述命令中的 `v8.5.0` 替换为要部署的 TiDB 版本，并将 `mycluster` 替换为你想要为集群指定的名称。
+> You need to replace `v8.5.0` in the preceding command with the TiDB version that you want to deploy and `mycluster` with the name you want to give to your cluster.
 
-启动集群：
+Start the cluster:
 
 ```shell
 tiup cluster start mycluster
 ```
 
-扩容集群：
+Scale out the cluster:
 
 ```shell
 tiup cluster scale-out mycluster scale.yaml --user tidb
 ```
 
-缩容集群：
+Scale in the cluster:
 
 ```shell
 tiup cluster scale-in mycluster -N 192.168.124.27:20160
 ```
 
-升级集群：
+Upgrade the cluster:
 
 ```shell
 tiup cluster upgrade mycluster v8.2.0
 ```
 
-## 常见问题
+## FAQ
 
-### 启动 user@.service 时出现报错 `Trying to run as user instance, but $XDG_RUNTIME_DIR is not set.`
+### The `Trying to run as user instance, but $XDG_RUNTIME_DIR is not set.` error occurs when starting user@.service
 
-该错误的原因可能是 `/etc/pam.d/system-auth.ued` 文件中缺少 `pam_systemd.so`。
+This issue might be caused by the absence of `pam_systemd.so` in your `/etc/pam.d/system-auth.ued` file.
 
-要解决该问题，你可以使用以下命令检查 `/etc/pam.d/system-auth.ued` 文件是否已包含 `pam_systemd.so` 模块的配置。如果没有，则将 `session optional pam_systemd.so` 附加到文件末尾。
+To resolve this issue, use the following command to check whether the `/etc/pam.d/system-auth.ued` file contains the `pam_systemd.so` module. If not, append `session optional pam_systemd.so` to the end of the file.
 
 ```shell
 grep 'pam_systemd.so' /etc/pam.d/system-auth.ued || echo 'session     optional      pam_systemd.so' >> /etc/pam.d/system-auth.ued

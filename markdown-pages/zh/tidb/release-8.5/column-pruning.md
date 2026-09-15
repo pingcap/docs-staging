@@ -1,19 +1,24 @@
 ---
-title: 列裁剪
-summary: 列裁剪是优化器在优化过程中删除不需要的列的基本思想。这样可以减少 I/O 资源占用并为后续优化带来便利。TiDB 会在逻辑优化阶段进行列裁剪，减少资源浪费。该扫描过程称作“列裁剪”，对应逻辑优化规则中的 columnPruner。如果要关闭这个规则，可以参照优化规则及表达式下推的黑名单中的关闭方法。
+title: Column Pruning
+summary: 了解 TiDB 中的 column pruning 的用法。
 ---
 
-# 列裁剪
+# Column Pruning
 
-列裁剪的基本思想在于：对于算子中实际用不上的列，优化器在优化的过程中没有必要保留它们。对这些列的删除会减少 I/O 资源占用，并为后续的优化带来便利。下面给出一个列重复的例子：
+column pruning 的基本思想是，对于在操作符中未使用的列，优化器在优化过程中无需保留它们。移除这些列可以减少 I/O 资源的使用，并有助于后续的优化。以下是一个列重复的示例：
 
-假设表 t 里面有 a b c d 四列，执行如下语句：
-
+假设在表 t 中有四个列（a、b、c 和 d）。你可以执行以下语句：
 
 ```sql
-select a from t where b > 5
+select a from t where b> 5
 ```
 
-在该查询的过程中，t 表实际上只有 a, b 两列会被用到，而 c, d 的数据则显得多余。对应到该语句的查询计划，Selection 算子会用到 b 列，下面接着的 DataSource 算子会用到 a, b 两列，而剩下 c, d 两列则都可以裁剪掉，DataSource 算子在读数据时不需要将它们读进来。
+在这个查询中，只使用了列 a 和列 b，而列 c 和列 d 是冗余的。关于该语句的查询计划，`Selection` 操作符使用了列 b，然后 `DataSource` 操作符使用了列 a 和列 b。列 c 和列 d 可以被裁剪，因为 `DataSource` 操作符不读取它们。
 
-出于上述考量，TiDB 会在逻辑优化阶段进行自上而下的扫描，裁剪不需要的列，减少资源浪费。该扫描过程称作 “列裁剪”，对应逻辑优化规则中的 `columnPruner`。如果要关闭这个规则，可以在参照[优化规则及表达式下推的黑名单](/blocklist-control-plan.md)中的关闭方法。
+因此，当 TiDB 在逻辑优化阶段进行自上而下的扫描时，会裁剪掉冗余的列以减少资源浪费。这个扫描过程被称为 "Column Pruning"，对应的规则是 `columnPruner`。
+
+<CustomContent platform="tidb">
+
+如果你想禁用此规则，可以参考 [The Blocklist of Optimization Rules and Expression Pushdown](/blocklist-control-plan.md)。
+
+</CustomContent>

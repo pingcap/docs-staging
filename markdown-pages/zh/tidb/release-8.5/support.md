@@ -1,25 +1,33 @@
 ---
-title: 支持资源
-summary: 在使用 TiDB 时遇到问题，如何获取支持。
+title: Support Resources
+summary: Find support resources if you encounter a problem using TiDB.
 ---
 
-# 支持资源
+# Support Resources
 
-如果你在使用 TiDB 的过程中遇到了问题，你可以通过以下方式向 PingCAP 公司或 TiDB 社区寻求帮助：
+If you encounter a problem when you use TiDB, you can reach out for support from PingCAP or the TiDB community via the following methods:
 
-+ 从 PingCAP 公司获取支持（需要订阅 [TiDB 企业版](https://pingcap.com/tidb-enterprise/)）：
++ Get support from PingCAP for [TiDB Enterprise Edition](https://www.pingcap.com/tidb-enterprise/):
 
-    - [提交工单](https://tidb.support.pingcap.com)
+    - [Submit a request](https://tidb.support.pingcap.com)
 
-+ 从 TiDB 社区寻求帮助：
++ Get support from PingCAP for TiDB Cloud:
 
-    - [AskTUG 论坛](https://pingkai.cn/tidbcommunity/forum/)
-    - [Stack Overflow](https://stackoverflow.com/questions/tagged/tidb)（在 #tidb 标签下提问）
+    - Report an issue directly from the [TiDB Cloud console](https://tidbcloud.com/)
+    - [Documentation for TiDB Cloud support](https://docs.pingcap.com/tidbcloud/tidb-cloud-support)
 
-+ 报告 bug：
++ Seek help from the TiDB community:
 
-    - 在 TiDB 仓库中[提交 issue](https://github.com/pingcap/tidb/issues/new/choose)
+    - [Discord channels](https://discord.gg/DQZ2dy3cuc?utm_source=doc)
+    - Slack channels: [#everyone](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=docs) (English), [#tidb-japan](https://slack.tidb.io/invite?team=tidb-community&channel=tidb-japan&ref=docs) (Japanese)
+    - [Stack Overflow](https://stackoverflow.com/questions/tagged/tidb) (questions tagged with #tidb)
+    - [TiDB Forum](https://ask.pingcap.com/)
 
-+ 了解 TiDB 的实现和设计
++ Report a bug
 
-    - 查看 GitHub 上的 [Discussions](https://github.com/orgs/pingcap/discussions)
+    - Submit an issue [on GitHub](https://github.com/pingcap/tidb/issues/new/choose)
+
++ Learn TiDB's implementation and design
+
+    - [TiDB development guide](https://pingcap.github.io/tidb-dev-guide/)
+    - [Discussions on GitHub](https://github.com/orgs/pingcap/discussions)

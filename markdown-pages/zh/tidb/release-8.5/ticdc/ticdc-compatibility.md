@@ -1,132 +1,92 @@
 ---
-title: TiCDC 兼容性
-summary: 了解 TiCDC 兼容性相关限制和问题处理。
+title: TiCDC Compatibility
+summary: Learn about compatibility issues of TiCDC and how to handle them.
 ---
 
-# TiCDC 兼容性
+# TiCDC Compatibility
 
-本文介绍了与 TiCDC 有关的一系列兼容性问题及其处理方案。
+This section describes compatibility issues related to TiCDC and how to handle them.
 
-## TiCDC 新架构与 TiDB 集群的兼容性
+## Compatibility with TiDB Lightning
 
-TiCDC 新架构支持 v7.5.0 及以上版本的 TiDB 集群，部分特殊的兼容性说明可参考：[TiCDC 兼容性说明](/ticdc/ticdc-architecture.md#兼容性说明)。
+[TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) provides two data import modes: [logical import mode](/tidb-lightning/tidb-lightning-logical-import-mode.md) and [physical import mode](/tidb-lightning/tidb-lightning-physical-import-mode.md). This section describes the compatibility of these modes with TiCDC and the steps to use TiDB Lightning and TiCDC together in a cluster.
 
-## TiCDC 与 TiDB Lightning 的兼容性
+In the logical import mode, TiDB Lightning imports data by executing SQL statements. This mode is compatible with TiCDC. To use TiDB Lightning's logical import mode with TiCDC for data replication, perform the following steps:
 
-[TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 支持[逻辑导入模式](/tidb-lightning/tidb-lightning-logical-import-mode.md)和[物理导入模式](/tidb-lightning/tidb-lightning-physical-import-mode.md)两种数据导入模式。本章节介绍这两种模式与 TiCDC 的兼容性，以及同时使用 TiDB Lightning 和 TiCDC 时的操作步骤。
+1. Create a changefeed. For more information, see [Create a replication task](/ticdc/ticdc-manage-changefeed.md#create-a-replication-task).
+2. Start TiDB Lightning and import data using the logical import mode. For more information, see [Use logical import mode](/tidb-lightning/tidb-lightning-logical-import-mode-usage.md).
 
-在逻辑导入模式下，TiDB Lightning 通过执行 SQL 语句导入数据。此模式与 TiCDC 兼容。你可以按照以下步骤同时使用 TiDB Lightning 逻辑导入模式和 TiCDC 进行数据同步：
+In the physical import mode, TiDB Lightning imports data by inserting SST files into TiKV. TiCDC is not compatible with this mode and does not support replicating data imported through physical import mode. If you need to use both TiDB Lightning's physical import mode and TiCDC, choose one of the following solutions based on your downstream system:
 
-1. 创建 changefeed，详情参考[创建同步任务](/ticdc/ticdc-manage-changefeed.md#创建同步任务)。
-2. 启动 TiDB Lightning 并使用逻辑模式模式导入数据，详情参考[使用逻辑导入模式](/tidb-lightning/tidb-lightning-logical-import-mode-usage.md)。
+- If the downstream is a TiDB cluster, perform the following steps:
 
-在物理导入模式下，TiDB Lightning 通过向 TiKV 插入 SST 文件的方式导入数据。TiCDC 与此模式不兼容，不支持同步通过物理模式导入的数据。如果你需要同时使用 TiDB Lightning 物理导入模式和 TiCDC，可以根据 TiCDC 下游系统的类型选择以下解决方案：
+    1. Use TiDB Lightning to import data into both the upstream and downstream TiDB clusters to ensure data consistency.
+    2. Create a changefeed to replicate subsequent incremental data written through SQL. For more information, see [Create a replication task](/ticdc/ticdc-manage-changefeed.md#create-a-replication-task).
 
-- 下游系统是 TiDB 集群：
-    1. 使用 TiDB Lightning 分别向上下游 TiDB 集群导入数据，以确保两个集群的数据一致性。
-    2. 创建 changefeed，用于同步后续通过 SQL 写入的增量数据。详情参考[创建同步任务](/ticdc/ticdc-manage-changefeed.md#创建同步任务)。
+- If the downstream is not a TiDB cluster, perform the following steps:
 
-- 下游系统不是 TiDB 集群：
-    1. 使用下游系统提供的离线导入工具，将 TiDB Lightning 的输入文件导入到下游系统。
-    2. 创建 changefeed，用于同步后续通过 SQL 写入的增量数据。详情参考[创建同步任务](/ticdc/ticdc-manage-changefeed.md#创建同步任务)。
+    1. Use the offline import tool provided by your downstream system to import TiDB Lightning's input files.
+    2. Create a changefeed to replicate subsequent incremental data written through SQL. For more information, see [Create a replication task](/ticdc/ticdc-manage-changefeed.md#create-a-replication-task).
 
-## TiCDC 与 TiFlash 的兼容性
+## Compatibility with TiFlash
 
-目前，使用 TiCDC 同步表到下游 TiDB 集群时，不支持为表创建 TiFlash 副本，即 TiCDC 不支持同步 TiFlash 相关的 DDL，例如：
+Currently, when you use TiCDC to replicate tables to a downstream TiDB cluster, creating TiFlash replicas for the tables is not supported, which means that TiCDC does not support replicating TiFlash-related DDL statements, such as:
 
 * `ALTER TABLE table_name SET TIFLASH REPLICA count;`
 * `ALTER DATABASE db_name SET TIFLASH REPLICA count;`
 
-## 历史版本升级的兼容性说明
+## CLI and configuration file compatibility
 
-TiCDC 依赖 TiDB、TiKV 和 PD 提供的上游变更数据及相关接口。随着 TiDB 及相关组件的持续演进，这些数据格式和接口可能发生变化，例如 TiDB 的并行 DDL、快速建表等功能会修改相关逻辑和数据处理流程，TiCDC 需要进行相应适配。因此，**老架构 TiCDC 不保证在跨版本的 TiDB/TiKV/PD 混合部署环境中提供正式的向上和向下兼容性**。新架构 TiCDC 支持对 v7.5.0 及以上版本的 TiDB 集群提供**向下兼容性**。
+* In TiCDC v4.0.0, `ignore-txn-commit-ts` is removed and `ignore-txn-start-ts` is added, which uses start_ts to filter transactions.
+* In TiCDC v4.0.2, `db-dbs`/`db-tables`/`ignore-dbs`/`ignore-tables` are removed and `rules` is added, which uses new filter rules for databases and tables. For detailed filter syntax, see [Table Filter](/table-filter.md).
+* Starting from TiCDC v6.2.0, `cdc cli` can directly interact with TiCDC server via TiCDC Open API. You can specify the address of the TiCDC server using the `--server` parameter. `--pd` is deprecated.
+* Since v6.4.0, only the changefeed with the `SYSTEM_VARIABLES_ADMIN` or `SUPER` privilege can use the TiCDC Syncpoint feature.
 
-### 老架构 TiCDC 升级建议
+## Handle compatibility issues
 
-如果将老架构 TiCDC 升级到新架构，需要先暂停所有 Changefeed 再做升级。更多说明请参阅 [TiCDC 新架构升级指南](/ticdc/ticdc-architecture.md#升级指南)。
+This section describes compatibility issues related to TiCDC and how to handle them.
 
-如果是老架构 TiCDC 之间的升级，小版本之间可以正常滚动升级；如果是跨大版本升级（v8.5.0 -> v8.5.3 属于跨小版本，v8.1.x -> v8.5.x 属于跨大版本），**不建议在 TiDB 集群滚动升级期间持续运行 Changefeed**。需要跨大版本升级时，建议按以下顺序执行：
+### Incompatibility issue caused by using the TiCDC v5.0.0-rc `cdc cli` tool to operate a v4.0.x cluster
 
-1. 暂停所有 Changefeed。
-2. 滚动升级 TiDB 集群。
-3. 升级完成后，恢复 Changefeed。
+When using the `cdc cli` tool of TiCDC v5.0.0-rc to operate a v4.0.x TiCDC cluster, you might encounter the following abnormal situations:
 
-例如，假设将集群从 v8.5.4 升级到 v8.5.5，如果使用 TiUP 管理集群，可以参考以下命令（以下示例以 `linux-amd64` 为例，其他平台请根据实际环境替换包名中的平台信息）：
+- If the TiCDC cluster is v4.0.8 or an earlier version, using the v5.0.0-rc `cdc cli` tool to create a replication task might cause cluster anomalies and get the replication task stuck.
 
-```sh
-# 1. 暂停所有 Changefeed（需对每个 Changefeed 分别执行一次）。
-tiup cdc:v8.5.4 cli changefeed pause \
-  --server=http://<ticdc-host>:8300 \
-  --changefeed-id=<changefeed-id>
+- If the TiCDC cluster is v4.0.9 or a later version, using the v5.0.0-rc `cdc cli` tool to create a replication task will cause the old value and unified sorter features to be unexpectedly enabled by default.
 
-# 2. 滚动升级 TiDB 集群。
-tiup cluster upgrade <cluster-name> v8.5.5
+Solutions:
 
-# 3. 升级完成后，恢复所有 Changefeed（需对每个 Changefeed 分别执行一次）。
-tiup cdc:v8.5.5 cli changefeed resume \
-  --server=http://<ticdc-host>:8300 \
-  --changefeed-id=<changefeed-id>
-```
+Use the `cdc` executable file corresponding to the TiCDC cluster version to perform the following operations:
 
-### 新架构 TiCDC 升级建议
+1. Delete the changefeed created using the v5.0.0-rc `cdc cli` tool. For example, run the `tiup cdc:v4.0.9 cli changefeed remove -c xxxx --pd=xxxxx --force` command.
+2. If the replication task is stuck, restart the TiCDC cluster. For example, run the `tiup cluster restart <cluster_name> -R cdc` command.
+3. Re-create the changefeed. For example, run the `tiup cdc:v4.0.9 cli changefeed create --sink-uri=xxxx --pd=xxx` command.
 
-新架构 TiCDC 在 TiDB 集群滚动升级期间能够持续运行 Changefeed，但前提是升级之前的 TiCDC 已经是新架构 TiCDC。
-
-如果需要在 TiCDC 新老架构之间进行升级或切换，请参阅 [TiCDC 新架构升级指南](/ticdc/ticdc-architecture.md#升级指南)。
-
-## 命令行参数和配置文件兼容性
-
-* TiCDC v4.0.0 中移除了 `ignore-txn-commit-ts`，添加了 `ignore-txn-start-ts`，使用 `start_ts` 过滤事务。
-* TiCDC v4.0.2 中移除了 `db-dbs`/`db-tables`/`ignore-dbs`/`ignore-tables`，添加了 `rules`，使用新版的数据库和数据表过滤规则，详细语法参考[表库过滤](/table-filter.md)。
-* 从 TiCDC v6.2.0 开始，`cdc cli` 将通过 TiCDC 的 Open API 直接与 TiCDC server 进行交互，而不再需要访问 PD。`cdc cli` 子命令中的 `--pd` 参数被废除，增加了 `--server` 参数，用于指定 TiCDC Server 地址。请使用 `--server` 参数替代 `--pd` 参数。
-* 从 v6.4.0 开始，TiCDC 使用 Syncpoint 功能需要同步任务拥有下游集群的 `SYSTEM_VARIABLES_ADMIN` 或者 `SUPER` 权限。
-
-## 兼容性问题处理
-
-本节介绍了兼容性相关的问题。
-
-### 使用 TiCDC v5.0.0-rc 版本的 `cdc cli` 工具操作 v4.0.x 集群导致不兼容问题
-
-使用 TiCDC v5.0.0-rc 版本的 `cdc cli` 工具操作 v4.0.x 版本的 TiCDC 集群时，可能会遇到如下异常情况：
-
-- 若 TiCDC 集群版本为 v4.0.8 或以下，使用 v5.0.0-rc 版本的 `cdc cli` 创建同步任务 changefeed 时，可能导致 TiCDC 集群陷入异常状态，导致同步卡住。
-- 若 TiCDC 集群版本为 v4.0.9 或以上，使用 v5.0.0-rc 版本的 `cdc cli` 创建同步任务 changefeed，会导致 Old Value 和 Unified Sorter 特性被非预期地默认开启。
-
-处理方案：
-
-使用和 TiCDC 集群版本对应的 `cdc` 可执行文件进行如下操作：
-
-1. 删除使用 v5.0.0-rc 版本创建的 changefeed，例如：`tiup cdc:v4.0.9 cli changefeed remove -c xxxx --pd=xxxxx --force`。
-2. 如果 TiCDC 同步已经卡住，重启 TiCDC 集群，例如：`tiup cluster restart <cluster_name> -R cdc`。
-3. 重新创建 changefeed，例如：`tiup cdc:v4.0.9 cli changefeed create --sink-uri=xxxx --pd=xxx`。
-
-> **注意：**
+> **Note:**
 >
-> 上述问题仅在 `cdc cli` 的版本是 v5.0.0-rc 时存在。未来其他 v5.0.x 版本的 `cdc cli` 可以兼容 v4.0.x 版本的集群。
+> This issue exists only when `cdc cli` is v5.0.0-rc. `cdc cli` tool of other v5.0.x versions is compatible with v4.0.x clusters.
 
-### `sort-dir` 及 `data-dir` 配置项的兼容性说明
+### Compatibility notes for `sort-dir` and `data-dir`
 
-`sort-dir` 配置项用于给 TiCDC 内部的排序器指定临时文件目录，其作用在各版本有过如下兼容性更改：
+The `sort-dir` configuration is used to specify the temporary file directory for the TiCDC sorter. Its functionalities might vary in different versions. The following table lists `sort-dir`'s compatibility changes across versions.
 
-|  版本  |  `sort-engine` 的使用  |  说明   |  使用建议  |
+|  Version  |  `sort-engine` functionality  |  Note   |  Recommendation   |
 |  :---  |    :---               |  :--    | :-- |
-| v4.0.11 及之前的 v4.0 版本，v5.0.0-rc | 作为 changefeed 配置项，给 `file` sorter 和 `unified` Sorter 指定临时文件目录 | 在这些版本中，`file` sorter 和 `unified` sorter **均不是**正式功能 (GA)，不推荐在生产环境中使用。<br/><br/>如果有多个 changefeed 被配置使用了 `unified` 作为 `sort-engine`，那么实际使用的临时文件目录可能是任何一个 changefeed 的 `sort-dir` 配置，且每个 TiCDC 节点上使用的目录可能不一致。 | 不推荐在生产环境中使用 Unified Sorter |
-| v4.0.12，v4.0.13，v5.0.0 及 v5.0.1 | 作为 changefeed 配置项或 `cdc server` 配置项 | 在默认情况下 changefeed 的 `sort-dir` 配置不会生效，而 `cdc server` 的 `sort-dir` 配置默认为 `/tmp/cdc_sort`。建议生产环境下仅配置 `cdc server` 的相关配置。<br/><br/>如果你使用 TiUP 部署 TiCDC，建议升级到最新的 TiUP 版本并在 TiCDC server 配置中设置 `sorter.sort-dir` 一项。<br/><br />在 v4.0.13、v5.0.0 和 v5.0.1 中 unified sorter 是默认开启的，如果要将集群升级至这些版本，请确保 TiCDC server 配置中的 `sorter.sort-dir` 已经被正确配置。| 需要通过 `cdc server` 命令行参数（或 TiUP）配置 `sort-dir` |
-|  v4.0.14 及之后的 v4.0 版本，v5.0.3 及之后的 v5.0 版本，更新的版本  | `sort-dir` 被弃用，建议配置 `data-dir` |  `data-dir` 可以通过最新版本的 TiUP 进行配置。这些版本中 unified sorter 是默认开启的，升级时请确保 `data-dir` 已经被正确配置，否则将默认使用 `/tmp/cdc_data`。<br/><br/>如果该目录所在设备空间不足，有可能出现硬盘空间不足的问题。之前配置的 changefeed 的 `sort-dir` 配置将会失效。| 需要通过 `cdc server` 命令行参数（或 TiUP）配置 `data-dir` |
-| v6.0.0 及之后版本 | `data-dir` 被用来存放 TiCDC 生成的临时文件  | 在该版本之后，TiCDC 默认采用 `db sorter` 作为内部的排序引擎，它使用 `data-dir` 作为磁盘目录。 | 需要通过 `cdc server` 命令行参数（或 TiUP）配置 `data-dir` |
+| v4.0.11 or an earlier v4.0 version, v5.0.0-rc | It is a changefeed configuration item and specifies temporary file directory for the `file` sorter and `unified` sorter. | In these versions, `file` sorter and `unified` sorter are **experimental features** and **NOT** recommended for the production environment. <br/><br/> If multiple changefeeds use the `unified` sorter as its `sort-engine`, the actual temporary file directory might be the `sort-dir` configuration of any changefeed, and the directory used for each TiCDC node might be different. | It is not recommended to use `unified` sorter in the production environment. |
+| v4.0.12, v4.0.13, v5.0.0, and v5.0.1 |  It is a configuration item of changefeed or of `cdc server`. | By default, the `sort-dir` configuration of a changefeed does not take effect, and the `sort-dir` configuration of `cdc server` defaults to `/tmp/cdc_sort`. It is recommended to only configure `cdc server` in the production environment.<br /><br /> If you use TiUP to deploy TiCDC, it is recommended to use the latest TiUP version and set `sorter.sort-dir` in the TiCDC server configuration.<br /><br /> The `unified` sorter is enabled by default in v4.0.13, v5.0.0, and v5.0.1. If you want to upgrade your cluster to these versions, make sure that you have correctly configured `sorter.sort-dir` in the TiCDC server configuration. | You need to configure `sort-dir` using the `cdc server` command-line parameter (or TiUP). |
+|  v4.0.14 and later v4.0 versions, v5.0.3 and later v5.0 versions, later TiDB versions | `sort-dir` is deprecated. It is recommended to configure `data-dir`.  |  You can configure `data-dir` using the latest version of TiUP. In these TiDB versions, `unified` sorter is enabled by default. Make sure that `data-dir` has been configured correctly when you upgrade your cluster. Otherwise, `/tmp/cdc_data` will be used by default as the temporary file directory. <br /><br /> If the storage capacity of the device where the directory is located is insufficient, the problem of insufficient hard disk space might occur. In this situation, the previous `sort-dir` configuration of changefeed will become invalid.| You need to configure `data-dir` using the `cdc server` command-line parameter (or TiUP).  |
+| v6.0.0 and later versions | `data-dir` is used for saving the temporary files generated by TiCDC. | Starting from v6.0.0, TiCDC uses `db sorter` as the sort engine by default. `data-dir` is the disk directory for this engine.  | You need to configure `data-dir` using the `cdc server` command-line parameter (or TiUP).  |
 
-### 全局临时表兼容性说明
+### Compatibility with temporary tables
 
-TiCDC 从 v5.3.0 开始支持[全局临时表](/temporary-tables.md#全局临时表)。
+Since v5.3.0, TiCDC supports [global temporary tables](/temporary-tables.md#global-temporary-tables). Replicating global temporary tables to the downstream using TiCDC of a version earlier than v5.3.0 causes table definition error.
 
-你需要使用 TiCDC v5.3.0 及以上版本同步全局临时表到下游。低于该版本，会导致表定义错误。
+If the upstream cluster contains a global temporary table, the downstream TiDB cluster is expected to be v5.3.0 or a later version. Otherwise, an error occurs during the replication process.
 
-如果 TiCDC 的上游集群包含全局临时表，下游集群也必须是 TiDB 5.3.0 及以上版本，否则同步报错。
+### Compatibility with vector data types
 
-### 向量数据类型兼容性说明 {#compatibility-with-vector-data-types}
+Starting from v8.4.0, TiCDC supports replicating tables with [vector data types](/vector-search/vector-search-data-types.md) to downstream (experimental).
 
-从 v8.4.0 开始，TiCDC 支持同步包含[向量数据类型](/ai/reference/vector-search-data-types.md)的表到下游（实验特性）。
+When the downstream is Kafka or a storage service (such as Amazon S3, GCS, Azure Blob Storage, or NFS), TiCDC converts vector data types into string types before writing to the downstream.
 
-当下游为 Kafka 或者存储服务（如：Amazon S3、GCS、Azure Blob Storage 和 NFS）时，TiCDC 会将向量数据类型转为字符串类型进行写入。
-
-当下游为不支持向量类型的 MySQL 兼容数据库时，涉及向量类型的 DDL 事件无法成功写入。在这种情况下，请在 `sink-url` 中添加配置参数 `has-vector-type=true`，然后 TiCDC 会将向量数据类型转为 `LONGTEXT` 类型进行写入。
+When the downstream is a MySQL-compatible database that does not support vector data types, TiCDC fails to write DDL events involving vector types to the downstream. In this case, add the `has-vector-type=true` parameter to `sink-url`, which allows TiCDC to convert vector data types into the `LONGTEXT` type before writing.

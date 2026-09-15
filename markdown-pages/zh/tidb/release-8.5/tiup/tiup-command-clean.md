@@ -1,32 +1,32 @@
 ---
 title: tiup clean
-summary: tiup clean 命令用于清除组件运行过程中产生的数据。可以使用 --all 选项清除所有运行记录。
+summary: The "tiup clean" command clears data generated during component operation. The syntax is "tiup clean [name] [flags]", with the option to use "--all" to clear all operation records.
 ---
 
 # tiup clean
 
-命令 `tiup clean` 用于清除组件运行过程中产生的数据。
+The `tiup clean` command is used to clear the data generated during component operation.
 
-## 语法
+## Syntax
 
 ```shell
 tiup clean [name] [flags]
 ```
 
-`[name]` 取值为 [status 命令](/tiup/tiup-command-status.md)输出的 `Name` 字段。若省略 `[name]`，则必须配合 `--all` 使用。
+The value of `[name]` is the `Name` field output by the [`status` command](/tiup/tiup-command-status.md). If `[name]` is omitted, you must add the `--all` option in the `tiup clean` command.
 
-## 选项
+## Option
 
 ### --all
 
-- 清除所有运行记录。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Clears all operation records
+- Data type: Boolean
+- Default: false
 
-## 输出
+## Output
 
 ```
 Clean instance of `%s`, directory: %s
 ```
 
-[<< 返回上一页 - TiUP 命令清单](/tiup/tiup-reference.md#命令清单)
+[<< Back to the previous page - TiUP Reference command list](/tiup/tiup-reference.md#command-list)

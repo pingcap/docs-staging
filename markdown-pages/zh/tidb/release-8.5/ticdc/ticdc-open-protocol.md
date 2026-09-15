@@ -1,51 +1,49 @@
 ---
 title: TiCDC Open Protocol
-summary: 了解 TiCDC Open Protocol 的概念和使用方法。
+summary: Learn the concept of TiCDC Open Protocol and how to use it.
 ---
 
 # TiCDC Open Protocol
 
-## 概述
+TiCDC Open Protocol is a row-level data change notification protocol that provides data sources for monitoring, caching, full-text indexing, analysis engines, and primary-secondary replication between different databases. TiCDC complies with TiCDC Open Protocol and replicates data changes of TiDB to third-party data medium such as MQ (Message Queue).
 
-TiCDC Open Protocol 是一种行级别的数据变更通知协议，为监控、缓存、全文索引、分析引擎、异构数据库的主从复制等提供数据源。TiCDC 遵循 TiCDC Open Protocol，向 MQ(Message Queue) 等第三方数据媒介复制 TiDB 的数据变更。
+TiCDC Open Protocol uses Event as the basic unit to replicate data change events to the downstream. The Event is divided into three categories:
 
-TiCDC Open Protocol 以 Event 为基本单位向下游复制数据变更事件，Event 分为三类：
+* Row Changed Event: Represents the data change in a row. When a row is changed, this Event is sent and contains information about the changed row.
+* DDL Event: Represents the DDL change. This Event is sent after a DDL statement is successfully executed in the upstream. The DDL Event is broadcasted to every MQ Partition.
+* Resolved Event: Represents a special time point before which the Event received is complete.
 
-* Row Changed Event：代表一行的数据变化，在行发生变更时该 Event 被发出，包含变更后该行的相关信息。
-* DDL Event：代表 DDL 变更，在上游成功执行 DDL 后发出，DDL Event 会广播到每一个 MQ Partition 中。
-* Resolved Event：代表一个特殊的时间点，表示在这个时间点前的收到的 Event 是完整的。
+## Restrictions
 
-## 协议约束
+* In most cases, the Row Changed Event of a version is sent only once, but in special situations such as node failure and network partition, the Row Changed Event of the same version might be sent multiple times.
+* On the same table, the Row Changed Events of each version which is first sent are incremented in the order of timestamps (TS) in the Event stream.
+* Resolved Events are periodically broadcasted to each MQ Partition. The Resolved Event means that any Event with a TS earlier than Resolved Event TS has been sent to the downstream.
+* DDL Events are broadcasted to each MQ Partition.
+* Multiple Row Changed Events of a row are sent to the same MQ Partition.
 
-* 在绝大多数情况下，一个版本的 Row Changed Event 只会发出一次，但是特殊情况（节点故障、网络分区等）下，同一版本的 Row Changed Event 可能会多次发送。
-* 同一张表中的每一个版本第一次发出的 Row Changed Event 在 Event 流中一定是按 TS (timestamp) 顺序递增的。
-* Resolved Event 会被周期性的广播到各个 MQ Partition，Resolved Event 意味着任何 TS 小于 Resolved Event TS 的 Event 已经发送给下游。
-* DDL Event 将被广播到各个 MQ Partition。
-* 一行数据的多个 Row Changed Event 一定会被发送到同一个 MQ Partition 中。
+## Message format
 
-## Message 格式定义
-
-一个 Message 中包含一个或多个 Event，按照以下格式排列：
+A Message contains one or more Events, arranged in the following format:
 
 Key:
 
-| Offset(Byte) | 0~7     | 8~15 | 16~(15+长度1) | ... | ... |
+| Offset(Byte) | 0~7     | 8~15 | 16~(15+length1) | ... | ... |
 | :----------- | :------ | :--- | :----------- | :--- | :----------- |
-| 参数         | 协议版本号 | 长度1 | Event Key1         | 长度N | Event KeyN         |
+| Parameter         | Protocol version | Length1 | Event Key1         | LengthN | Event KeyN         |
 
 Value:
 
-| Offset(Byte) | 0~7 | 8~(7+长度1) | ... | ... |
+| Offset(Byte) | 0~7 | 8~(7+length1) | ... | ... |
 | :----------- | :--- | :-------- | :--- | :------ |
-| 参数         | 长度1 | Event Value1     | 长度N | Event ValueN |
+| Parameter         | Length1 | Event Value1     | LengthN | Event ValueN |
 
-* `长度N`代表第 `N` 个 Key/Value 的长度
-* 长度及协议版本号均为大端序 int64 类型
-* 当前协议版本号为 `1`
+* `LengthN` represents the length of the `N`th key/value.
+* The length and protocol version are the big-endian `int64` type.
+* The version of the current protocol is `1`.
 
-## Event 格式定义
+## Event format
 
-本部分介绍 Row Changed Event、DDL Event 和 Resolved Event 的格式定义。
+This section introduces the formats of Row Changed Event, DDL Event, and Resolved Event.
 
 ### Row Changed Event
 
@@ -60,15 +58,15 @@ Value:
     }
     ```
 
-    | 参数         | 类型   | 说明                    |
+    | Parameter         | Type   | Description                    |
     | :---------- | :----- | :--------------------- |
-    | TS          | Number | 造成 Row 变更的事务的 TS  |
-    | Schema Name | String | Row 所在的 Schema 的名字 |
-    | Table Name  | String | Row 所在的 Table 的名字  |
+    | TS          | Number |  The timestamp of the transaction that causes the row change.  |
+    | Schema Name | String |  The name of the schema where the row is in. |
+    | Table Name  | String |  The name of the table where the row is in. |
 
 + **Value:**
 
-    `Insert` 事件，输出新增的行数据。
+    `Insert` event. The newly added row data is output.
 
     ```json
     {
@@ -89,7 +87,7 @@ Value:
     }
     ```
 
-    `Update` 事件，输出新增的行数据 ("u") 以及修改前的行数据 ("p")。
+    `Update` event. The newly added row data ("u") and the row data before the update ("p") are output.
 
     ```json
     {
@@ -124,7 +122,7 @@ Value:
     }
     ```
 
-    `Delete` 事件，输出被删除的行数据。
+    `Delete` event. The deleted row data is output.
 
     ```json
     {
@@ -145,13 +143,13 @@ Value:
     }
     ```
 
-| 参数         | 类型   | 说明                    |
-| :---------- | :----- | :--------------------- |
-| Column Name    | String | 列名   |
-| Column Type    | Number | 列类型，详见：[Column 的类型码](#column-的类型码) |
-| Where Handle   | Bool   | 表示该列是否可以作为 Where 筛选条件，当该列在表内具有唯一性时，Where Handle 为 true。 |
-| Flag           | Number | 列标志位，详见：[列标志位](#列标志位) |
-| Column Value   | Any    | 列值   |
+    | Parameter         | Type   | Description                    |
+    | :---------- | :----- | :--------------------- |
+    | Column Name    | String |  The column name.  |
+    | Column Type    | Number |  The column type. For details, see [Column Type Code](#column-type-code).  |
+    | Where Handle  | Boolean   |  Determines whether this column can be the filter condition of the `Where` clause. When this column is unique on the table, `Where Handle` is `true`. |
+    | Flag       | Number   |  The bit flags of columns. For details, see [Bit flags of columns](#bit-flags-of-columns). |
+    | Column Value   | Any    | The Column value.   |
 
 ### DDL Event
 
@@ -166,11 +164,11 @@ Value:
     }
     ```
 
-    | 参数         | 类型   | 说明                                 |
+    | Parameter         | Type   | Description                                 |
     | :---------- | :----- | :---------------------------------- |
-    | TS          | Number | 进行 DDL 变更的事务的 TS               |
-    | Schema Name | String | DDL 变更的 Schema 的名字，可能为空字符串 |
-    | Table Name  | String | DDL 变更的 Table 的名字，可能为空字符串  |
+    | TS          | Number |  The timestamp of the transaction that performs the DDL change.    |
+    | Schema Name | String |  The schema name of the DDL change, which might be an empty string.  |
+    | Table Name  | String |  The table name of the DDL change, which might be am empty string. |
 
 + **Value:**
 
@@ -181,10 +179,10 @@ Value:
     }
     ```
 
-    | 参数       | 类型   | 说明           |
+    | Parameter       | Type   | Description           |
     | :-------- | :----- | :------------ |
     | DDL Query | String | DDL Query SQL |
-    | DDL Type  | String | DDL 类型，详见：[DDL 的类型码](#ddl-的类型码)  |
+    | DDL Type  | String | The DDL type. For details, see [DDL Type Code](#ddl-type-code).    |
 
 ### Resolved Event
 
@@ -197,23 +195,24 @@ Value:
     }
     ```
 
-    | 参数         | 类型   | 说明                                         |
+    | Parameter         | Type   | Description                                         |
     | :---------- | :----- | :------------------------------------------ |
-    | TS          | Number | Resolved TS，任意小于该 TS 的 Event 已经发送完毕 |
+    | TS          | Number | The Resolved timestamp. Any TS earlier than this Event has been sent. |
 
 + **Value:** None
 
-## Event 流的输出示例
+## Examples of the Event stream output
 
-本部分展示并描述 Event 流的输出日志。
+This section shows and displays the output logs of the Event stream.
 
-假设在上游执行以下 SQL 语句，MQ Partition 数量为 2：
+Suppose that you execute the following SQL statement in the upstream and the MQ Partition number is 2:
+
 
 ```sql
 CREATE TABLE test.t1(id int primary key, val varchar(16));
 ```
 
-如以下执行日志中的 Log 1、Log 3 所示，DDL Event 将被广播到所有 MQ Partition，Resolved Event 会被周期性地广播到各个 MQ Partition：
+From the following Log 1 and Log 3, you can see that the DDL Event is broadcasted to all MQ Partitions, and that the Resolved Event is periodically broadcasted to each MQ Partition.
 
 ```
 1. [partition=0] [key="{\"ts\":415508856908021766,\"scm\":\"test\",\"tbl\":\"t1\",\"t\":2}"] [value="{\"q\":\"CREATE TABLE test.t1(id int primary key, val varchar(16))\",\"t\":3}"]
@@ -222,7 +221,8 @@ CREATE TABLE test.t1(id int primary key, val varchar(16));
 4. [partition=1] [key="{\"ts\":415508856908021766,\"t\":3}"] [value=]
 ```
 
-在上游执行以下 SQL 语句：
+Execute the following SQL statements in the upstream:
+
 
 ```sql
 BEGIN;
@@ -233,9 +233,9 @@ INSERT INTO test.t1(id, val) VALUES (3, 'cc');
 COMMIT;
 ```
 
-- 如以下执行日志中的 Log 5 和 Log 6 所示，同一张表内的 Row Changed Event 可能会根据主键被分派到不同的 Partition，但同一行的变更一定会分派到同一个 Partition，方便下游并发处理。
-- 如 Log 6 所示，在一个事务内对同一行进行多次修改，只会发出一个 Row Changed Event。
-- Log 8 是 Log 7 的重复 Event。Row Changed Event 可能重复，但每个版本的 Event 第一次发出的次序一定是有序的。
++ From the following Log 5 and Log 6, you can see that Row Changed Events on the same table might be sent to different partitions based on the primary key, but changes to the same row are sent to the same partition so that the downstream can easily process the Event concurrently.
++ From Log 6, multiple changes to the same row in a transaction are only sent in one Row Changed Event.
++ Log 8 is a repeated event of Log 7. Row Changed Event might be repeated, but the first Event of each version is sent orderly.
 
 ```
 5. [partition=0] [key="{\"ts\":415508878783938562,\"scm\":\"test\",\"tbl\":\"t1\",\"t\":1}"] [value="{\"u\":{\"id\":{\"t\":3,\"h\":true,\"v\":1},\"val\":{\"t\":15,\"v\":\"aa\"}}}"]
@@ -244,7 +244,8 @@ COMMIT;
 8. [partition=0] [key="{\"ts\":415508878783938562,\"scm\":\"test\",\"tbl\":\"t1\",\"t\":1}"] [value="{\"u\":{\"id\":{\"t\":3,\"h\":true,\"v\":3},\"val\":{\"t\":15,\"v\":\"cc\"}}}"]
 ```
 
-在上游执行以下 SQL 语句：
+Execute the following SQL statements in the upstream:
+
 
 ```sql
 BEGIN;
@@ -254,8 +255,8 @@ UPDATE test.t1 SET id = 4, val = 'ee' WHERE id = 2;
 COMMIT;
 ```
 
-+ Log 9 是 `Delete` 类型的 Row Changed Event，这种类型的 Event 只包含主键列或唯一索引列。
-+ Log 13 和 Log 14 是 Resolved Event。Resolved Event 意味着在这个 Partition 中，任意小于 Resolved TS 的 Event（包括 Row Changed Event 和 DDL Event）已经发送完毕。
++ Log 9 is the Row Changed Event of the `Delete` type. This type of Event only contains primary key columns or unique index columns.
++ Log 13 and Log 14 are Resolved Events. The Resolved Event means that in this Partition, any events smaller than the Resolved TS (including Row Changed Event and DDL Event) have been sent.
 
 ```
 9. [partition=0] [key="{\"ts\":415508881418485761,\"scm\":\"test\",\"tbl\":\"t1\",\"t\":1}"] [value="{\"d\":{\"id\":{\"t\":3,\"h\":true,\"v\":1}}}"]
@@ -266,20 +267,20 @@ COMMIT;
 14. [partition=1] [key="{\"ts\":415508881038376963,\"t\":3}"] [value=]
 ```
 
-## 消费端协议解析
+## Protocol parsing for consumers
 
-目前 TiCDC 没有提供 Open Protocol 协议解析的标准实现，但是提供了 Golang 版本和 Java 版本的解析例子。你可以参考本文档提供的数据格式和以下例子实现消费端协议解析。
+Currently, TiCDC does not provide the standard parsing library for TiCDC Open Protocol, but the Golang version and Java version of parsing examples are provided. You can refer to the data format provided in this document and the following examples to implement the protocol parsing for consumers.
 
-- [Golang 例子](https://github.com/pingcap/tiflow/tree/release-8.5/cmd/kafka-consumer)
-- [Java 例子](https://github.com/pingcap/tiflow/tree/release-8.5/examples/java)
+- [Golang examples](https://github.com/pingcap/tiflow/tree/release-8.5/cmd/kafka-consumer)
+- [Java examples](https://github.com/pingcap/tiflow/tree/release-8.5/examples/java)
 
-## Column 的类型码
+## Column type code
 
-Column 的类型码用于标识 Row Changed Event 中列的数据类型。
+`Column Type Code` represents the column data type of the Row Changed Event.
 
-| 类型                   | Code | 输出示例 | 说明 |
+| Type                   | Code | Output Example | Description |
 | :-------------------- | :--- | :------ | :-- |
-| TINYINT/BOOL          | 1    | {"t":1,"v":1} | |
+| TINYINT/BOOLEAN          | 1    | {"t":1,"v":1} | |
 | SMALLINT              | 2    | {"t":2,"v":1} | |
 | INT                   | 3    | {"t":3,"v":123} | |
 | FLOAT                 | 4    | {"t":4,"v":153.123} | |
@@ -292,25 +293,25 @@ Column 的类型码用于标识 Row Changed Event 中列的数据类型。
 | TIME                  | 11   | {"t":11,"v":"23:59:59"} | |
 | DATETIME              | 12   | {"t":12,"v":"2015-12-20 23:58:58"} | |
 | YEAR                  | 13   | {"t":13,"v":1970} | |
-| VARCHAR/VARBINARY     | 15/253   | {"t":15,"v":"测试"} / {"t":15,"v":"\\\\x89PNG\\\\r\\\\n\\\\x1a\\\\n"} | value 编码为 UTF-8；当上游类型为 VARBINARY 时，将对不可见的字符转义 |
+| VARCHAR/VARBINARY     | 15/253   | {"t":15,"v":"test"} / {"t":15,"v":"\\\\x89PNG\\\\r\\\\n\\\\x1a\\\\n"} |  The value is encoded in UTF-8. When the upstream type is VARBINARY, invisible characters are escaped. |
 | BIT                   | 16   | {"t":16,"v":81} | |
 | JSON                  | 245  | {"t":245,"v":"{\\"key1\\": \\"value1\\"}"} | |
 | DECIMAL               | 246  | {"t":246,"v":"129012.1230000"} | |
 | ENUM                  | 247  | {"t":247,"v":1} | |
 | SET                   | 248  | {"t":248,"v":3} | |
-| TINYTEXT/TINYBLOB     | 249  | {"t":249,"v":"5rWL6K+VdGV4dA=="} | value 编码为 Base64 |
-| MEDIUMTEXT/MEDIUMBLOB | 250  | {"t":250,"v":"5rWL6K+VdGV4dA=="} | value 编码为 Base64 |
-| LONGTEXT/LONGBLOB     | 251  | {"t":251,"v":"5rWL6K+VdGV4dA=="} | value 编码为 Base64 |
-| TEXT/BLOB             | 252  | {"t":252,"v":"5rWL6K+VdGV4dA=="} | value 编码为 Base64 |
-| CHAR/BINARY           | 254  | {"t":254,"v":"测试"} / {"t":254,"v":"\\\\x89PNG\\\\r\\\\n\\\\x1a\\\\n"} | value 编码为 UTF-8；当上游类型为 BINARY 时，将对不可见的字符转义 |
-| TiDBVectorFloat32     | 225  | {"t":225,"v":"[1.23, -0.4]"} | |
-| GEOMETRY              | 255  |  | 尚不支持 |
+| TINYTEXT/TINYBLOB     | 249  | {"t":249,"v":"5rWL6K+VdGV4dA=="} | The value is encoded in Base64. |
+| MEDIUMTEXT/MEDIUMBLOB | 250  | {"t":250,"v":"5rWL6K+VdGV4dA=="} | The value is encoded in Base64. |
+| LONGTEXT/LONGBLOB     | 251  | {"t":251,"v":"5rWL6K+VdGV4dA=="} | The value is encoded in Base64. |
+| TEXT/BLOB             | 252  | {"t":252,"v":"5rWL6K+VdGV4dA=="} | The value is encoded in Base64. |
+| CHAR/BINARY           | 254  | {"t":254,"v":"test"} / {"t":254,"v":"\\\\x89PNG\\\\r\\\\n\\\\x1a\\\\n"} | The value is encoded in UTF-8. When the upstream type is BINARY, invisible characters are escaped. |
+| TiDBVectorFloat32              | 225  | {"t":225,"v":"[1.23, -0.4]"} |  |
+| GEOMETRY              | 255  |  | Unsupported |
 
-## DDL 的类型码
+## DDL Type Code
 
-DDL 的类型码用于标识 DDL Event 中的 DDL 语句的类型。
+`DDL Type Code` represents the DDL statement type of the DDL Event.
 
-| 类型                               | Code |
+| Type                              | Code |
 | :-------------------------------- | :- |
 | Create Schema                     | 1  |
 | Drop Schema                       | 2  |
@@ -349,38 +350,38 @@ DDL 的类型码用于标识 DDL Event 中的 DDL 语句的类型。
 | Alter Sequence                    | 35 |
 | Drop Sequence                     | 36 |
 
-## 列标志位
+## Bit flags of columns
 
-列标志位以 Bit flags 形式标记列的相关属性。
+The bit flags represent specific attributes of columns.
 
-| 位移 | 值 | 名称 | 说明 |
+| Bit | Value | Name | Description |
 | :-- | :- | :- | :- |
-| 1   | 0x01 | BinaryFlag          | 该列是否为二进制编码列  |
-| 2   | 0x02 | HandleKeyFlag       | 该列是否为 Handle 列 |
-| 3   | 0x04 | GeneratedColumnFlag | 该列是否为生成列      |
-| 4   | 0x08 | PrimaryKeyFlag      | 该列是否为主键列      |
-| 5   | 0x10 | UniqueKeyFlag       | 该列是否为唯一索引列   |
-| 6   | 0x20 | MultipleKeyFlag     | 该列是否为组合索引列   |
-| 7   | 0x40 | NullableFlag        | 该列是否为可空列       |
-| 8   | 0x80 | UnsignedFlag        | 该列是否为无符号列     |
+| 1   | 0x01 | BinaryFlag          | Whether the column is a binary-encoded column. |
+| 2   | 0x02 | HandleKeyFlag       | Whether the column is a Handle index column. |
+| 3   | 0x04 | GeneratedColumnFlag | Whether the column is a generated column.     |
+| 4   | 0x08 | PrimaryKeyFlag      | Whether the column is a primary key column.      |
+| 5   | 0x10 | UniqueKeyFlag       | Whether the column is a unique index column.  |
+| 6   | 0x20 | MultipleKeyFlag     | Whether the column is a composite index column.   |
+| 7   | 0x40 | NullableFlag        | Whether the column is a nullable column.       |
+| 8   | 0x80 | UnsignedFlag        | Whether the column is an unsigned column.     |
 
-示例：
+Example:
 
-若某列 Flag 值为 85，则代表这一列为可空列、唯一索引列、生成列、二进制编码列。
+If the value of a column flag is `85`, the column is a nullable column, a unique index column, a generated column, and a binary-encoded column.
 
 ```
 85 == 0b_101_0101
    == NullableFlag | UniqueKeyFlag | GeneratedColumnFlag | BinaryFlag
 ```
 
-若某列 Flag 值为 46，则代表这一列为组合索引列、主键列、生成列、Handle 列。
+If the value of a column is `46`, the column is a composite index column, a primary key column, a generated column, and a Handle key column.
 
 ```
 46 == 0b_010_1110
    == MultipleKeyFlag | PrimaryKeyFlag | GeneratedColumnFlag | HandleKeyFlag
 ```
 
-> **注意：**
+> **Note:**
 >
-> + BinaryFlag 仅在列为 BLOB/TEXT（包括 TINYBLOB/TINYTEXT、BINARY/CHAR 等）类型时才有意义。当上游列为 BLOB 类型时，BinaryFlag 置 `1`；当上游列为 TEXT 类型时，BinaryFlag 置 `0`。
-> + 若要同步上游的一张表，TiCDC 会选择一个[有效索引](/ticdc/ticdc-overview.md#最佳实践)作为 Handle Index。Handle Index 包含的列的 HandleKeyFlag 置 `1`。
+> + `BinaryFlag` is meaningful only when the column type is BLOB/TEXT (including TINYBLOB/TINYTEXT and BINARY/CHAR). When the upstream column is the BLOB type, the `BinaryFlag` value is set to `1`. When the upstream column is the TEXT type, the `BinaryFlag` value is set to `0`.
+> + To replicate a table from the upstream, TiCDC selects a [valid index](/ticdc/ticdc-overview.md#best-practices) as the Handle index. The `HandleKeyFlag` value of the Handle index column is set to `1`.

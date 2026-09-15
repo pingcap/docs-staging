@@ -1,18 +1,22 @@
 ---
 title: TIKV_REGION_PEERS
-summary: 了解 INFORMATION_SCHEMA 表 `TIKV_REGION_PEERS`。
+summary: 了解 `TIKV_REGION_PEERS` INFORMATION_SCHEMA 表。
 ---
 
 # TIKV_REGION_PEERS
 
-`TIKV_REGION_PEERS` 表提供了 TiKV 中单个 Region 节点的详细信息，比如它是一个 learner 还是一个 leader。
+`TIKV_REGION_PEERS` 表展示了 TiKV 中单个 Region 节点的详细信息，例如该节点是否为 learner 或 leader。
+
+> **Note:**
+>
+> 该表在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC TIKV_REGION_PEERS;
 ```
 
-输出结果如下：
+输出如下：
 
 ```sql
 +--------------+-------------+------+------+---------+-------+
@@ -29,7 +33,7 @@ DESC TIKV_REGION_PEERS;
 7 rows in set (0.01 sec)
 ```
 
-例如，使用以下 SQL 语句，你可以查询 `WRITTEN_BYTES` 最大的前 3 个 Region 所在的 TiKV 地址：
+例如，你可以使用以下 SQL 语句，查询 `WRITTEN_BYTES` 最大的前 3 个 Region 的具体 TiKV 地址：
 
 ```sql
 SELECT
@@ -46,15 +50,15 @@ WHERE
   AND peer.store_id = tikv.store_id;
 ```
 
-`TIKV_REGION_PEERS` 表各列含义如下：
+`TIKV_REGION_PEERS` 表中的字段说明如下：
 
-* `REGION_ID`：REGION 的 ID。
-* `PEER_ID`：REGION 中对应的副本 Peer 的 ID。
-* `STORE_ID`：REGION 所在 TiKV Store 的 ID。
-* `IS_LEARNER`：Peer 是否是 LEARNER。
-* `IS_LEADER`：Peer 是否是 LEADER。
-* `STATUS`：Peer 的状态，一共有 3 种状态：
-    * `PENDING`：暂时不可用状态。
-    * `DOWN`：下线状态，该 Peer 不再提供服务。
-    * `NORMAL`：正常状态。
-* `DOWN_SECONDS`：处于下线状态的时间，单位是秒。
+* REGION_ID：Region 的 ID。
+* PEER_ID：Region 副本的 ID。
+* STORE_ID：该 Region 所在 TiKV 实例的 ID。
+* IS_LEARNER：该副本是否为 learner。
+* IS_LEADER：该副本是否为 leader。
+* STATUS：副本的状态：
+    * PENDING：暂时不可用。
+    * DOWN：已下线并已转换。该副本不再提供服务。
+    * NORMAL：正常运行。
+* DOWN_SECONDS：下线持续的时间，单位为秒。

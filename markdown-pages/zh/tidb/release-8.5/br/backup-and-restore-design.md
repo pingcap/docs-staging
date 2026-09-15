@@ -1,23 +1,23 @@
 ---
-title: TiDB 备份与恢复功能架构概述
-summary: 了解 TiDB 的备份与恢复功能的架构设计。
+title: Overview of TiDB Backup & Restore Architecture
+summary: TiDB supports backup and restore for cluster data using Backup & Restore (BR) and TiDB Operator. Tasks can be created to back up data from TiKV nodes and restore data to TiKV nodes. The architecture includes full data backup and restore, data change log backup, and point-in-time recovery (PITR). For details, refer to specific documents for each feature.
 ---
 
-# TiDB 备份与恢复功能架构概述
+# Overview of TiDB Backup & Restore Architecture
 
-正如 [TiDB 备份与恢复概述](/br/backup-and-restore-overview.md)所介绍，TiDB 备份恢复功能包含了多种不同类型的集群数据对象的备份与恢复实现。这些功能都以 Backup & Restore (BR) 和 TiDB Operator 为使用入口，创建相应的任务从 TiKV 节点上备份数据，或者恢复数据到 TiKV 节点。
+As described in [TiDB Backup & Restore Overview](/br/backup-and-restore-overview.md), TiDB supports backing up and restoring multiple types of cluster data. You can use Backup & Restore (BR) and TiDB Operator to access these features, and create tasks to back up data from TiKV nodes or restore data to TiKV nodes.
 
-关于各种备份恢复功能的实现架构，请参考以下链接：
+For details about the architecture of each backup and restore feature, see the following documents:
 
-- 全量数据备份与恢复
+- Full data backup and restore
 
-    - [备份集群快照数据](/br/br-snapshot-architecture.md#备份流程)
-    - [恢复快照备份数据](/br/br-snapshot-architecture.md#恢复流程)
+    - [Back up snapshot data](/br/br-snapshot-architecture.md#process-of-backup)
+    - [Restore snapshot backup data](/br/br-snapshot-architecture.md#process-of-restore)
 
-- 数据变更日志备份
+- Data change log backup
 
-    - [日志备份 - 备份 kv 数据变更](/br/br-log-architecture.md#日志备份)
+    - [Log backup: backup of KV data change](/br/br-log-architecture.md#process-of-log-backup)
 
 - Point-in-time recovery (PITR)
 
-    - [恢复到指定时间点](/br/br-log-architecture.md#pitr)
+    - [PITR](/br/br-log-architecture.md#process-of-pitr)

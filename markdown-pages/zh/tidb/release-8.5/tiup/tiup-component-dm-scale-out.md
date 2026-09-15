@@ -1,45 +1,50 @@
 ---
 title: tiup dm scale-out
-summary: tiup dm scale-out 命令用于集群扩容，内部逻辑与部署类似。首先建立新节点的 SSH 连接，在目标节点上创建必要的目录，然后执行部署并启动服务。命令语法为 tiup dm scale-out <cluster-name> <topology.yaml>。选项包括 -u, --user（string，默认为当前执行命令的用户），-i, --identity_file（string，默认 ~/.ssh/id_rsa），-p, --password，-h, --help。输出为扩容日志。
+summary: The `tiup dm scale-out` command is used to scale out the cluster by establishing an SSH connection to the new node, creating necessary directories, deploying, and starting the service.
 ---
 
 # tiup dm scale-out
 
-`tiup dm scale-out` 命令用于集群扩容，扩容的内部逻辑与部署类似，tiup-dm 组件会先建立新节点的 SSH 连接，在目标节点上创建必要的目录，然后执行部署并且启动服务。
+The `tiup dm scale-out` command is used for scaling out the cluster. The internal logic of scaling out the cluster is similar to the cluster deployment. The `tiup-dm` components first establish an SSH connection to the new node, create the necessary directories on the target node, then perform the deployment and start the service.
 
-## 语法
+## Syntax
 
 ```shell
 tiup dm scale-out <cluster-name> <topology.yaml> [flags]
 ```
 
-- `<cluster-name>` 为要操作的集群名字，如果忘记集群名字可查看[集群列表](/tiup/tiup-component-dm-list.md)
-- `<topology.yaml>` 为事先编写好的扩容[拓扑文件](/tiup/tiup-dm-topology-reference.md)，该文件应当仅包含扩容部分的拓扑
+`<cluster-name>`: the name of the cluster to operate on. If you forget the cluster name, you can check it with the [cluster list](/tiup/tiup-component-dm-list.md) command.
 
-## 选项
+`<topology.yaml>`: the prepared [topology file](/tiup/tiup-dm-topology-reference.md). This topology file should only contain the new nodes that are to be added to the current cluster.
 
-### -u, --user（string，默认为当前执行命令的用户）
+## Options
 
-指定连接目标机器的用户名，该用户在目标机器上需要有免密 sudo root 的权限。
+### -u, --user
 
-### -i, --identity_file（string，默认 ~/.ssh/id_rsa）
+- Specifies the user name used to connect to the target machine. This user must have the secret-free sudo root permission on the target machine.
+- Data type: `STRING`
+- Default: the current user who executes the command.
 
-指定连接目标机器的密钥文件。
+### -i, --identity_file
+
+- Specifies the key file used to connect to the target machine.
+- Data type: `STRING`
+- If this option is not specified in the command, the `~/.ssh/id_rsa` file is used to connect to the target machine by default.
 
 ### -p, --password
 
-- 在连接目标机器时使用密码登录，不可和 `-i/--identity_file` 同时使用。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Specifies the password used to connect to the target machine. Do not use this option and `-i/--identity_file` at the same time.
+- Data type: `BOOLEAN`
+- Default: false
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints the help information.
+- Data type: `BOOLEAN`
+- Default: false
 
-## 输出
+## Output
 
-扩容日志
+The log of scaling out.
 
-[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)
+[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)

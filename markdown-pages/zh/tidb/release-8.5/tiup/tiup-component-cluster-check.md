@@ -1,168 +1,166 @@
 ---
 title: tiup cluster check
-summary: TiUP Cluster 提供了 `check` 子命令，用于检查集群的硬件和软件环境是否满足正常运行条件。检查包括操作系统版本、CPU 支持、系统时间、内核参数、磁盘挂载参数等。用户可以通过指定选项来启用 CPU 核心数、内存大小和磁盘性能测试的检查。检查结果将以表格形式输出，包括目标节点、检查项、检查结果和结果描述。
+summary: TiUP Cluster provides a `check` command to ensure hardware and software environments meet production requirements. It checks OS version, CPU support, time synchronization, system limits, and more. Options include automatic repair and enabling checks for CPU core number, memory size, and disk performance. Use `tiup cluster check <topology.yml | cluster-name> [flags]` command to perform checks. Use `--apply` to attempt automatic repair. Use `-N, --node` and `-R, --role` to specify nodes and roles to check. Use `--enable-cpu`, `--enable-disk`, and `--enable-mem` to enable specific checks.
 ---
 
 # tiup cluster check
 
-对于严肃的生产环境，在正式上线之前需要进行一系列检查，来确保集群拥有最好的表现。为了简化人工检查的步骤，TiUP Cluster 提供了 `check` 子命令，用于检查指定集群的机器硬件和软件环境是否满足正常运行条件。
+For a formal production environment, before the environment goes live, you need to perform a series of checks to ensure the clusters are in their best performance. To simplify the manual check steps, TiUP Cluster provides the `check` command to check whether the hardware and software environments of the target machines of a specified cluster meet the requirements to work normally.
 
-## 检查项列表
+## List of check items
 
-### 操作系统版本
+### Operating system version
 
-检查部署机操作系统发行版和版本。关于 TiDB 支持的操作系统版本列表，请参考[操作系统及平台要求](/hardware-and-software-requirements.md#操作系统及平台要求)。
+Check the operating system distribution and version of the deployed machines. For a list of supported versions, see [OS and platform requirements](/hardware-and-software-requirements.md#os-and-platform-requirements).
 
 ### CPU EPOLLEXCLUSIVE
 
-检查部署机 CPU 是否支持 EPOLLEXCLUSIVE。
+Check whether the CPU of the target machine supports EPOLLEXCLUSIVE.
 
 ### numactl
 
-检查部署机是否安装 `numactl`，若用户配置绑核，则必须安装 `numactl`。
+Check whether `numactl` is installed on the target machine. If tied cores are configured on the target machine, you must install `numactl`.
 
-### 系统时间
+### System time
 
-检查部署机系统时间是否同步：将部署机系统时间与中控机对比，偏差超出某一阈值（500ms）后报错。
+Check whether the system time of the target machine is synchronized. Compare the system time of the target machine with that of the central control machine, and report an error if the deviation exceeds a certain threshold (500 ms).
 
-### 系统时区
+### System time zone
 
-检查部署机系统时区是否同步：将部署机系统的时区配置进行对比，如果时区不一致则报错。
+Check whether the system time zone of the target machines is synchronized. Compare the time zone configuration of these machines and report an error if the time zone is inconsistent.
 
-### 时间同步服务
+### Time synchronization service
 
-检查部署机是否配置了时间同步服务：即 ntpd 是否在运行
+Check whether the time synchronization service is configured on the target machine. Namely, check whether ntpd is running.
 
-### Swap 分区
+### Swap partitioning
 
-检查部署机是否启用 Swap 分区：建议禁用 Swap 分区
+Check whether swap partitioning is enabled on the target machine. It is recommended to disable swap partitioning.
 
-### 内核参数
+### Kernel parameters
 
-检查各项内核参数的值：
+Check the values of the following kernel parameters:
 
-- net.ipv4.tcp_tw_recycle: 0
-- net.ipv4.tcp_syncookies: 0
-- net.core.somaxconn: 32768
-- vm.swappiness: 0
-- vm.overcommit_memory: 0 或 1
-- fs.file-max: 1000000
+- `net.ipv4.tcp_tw_recycle`: 0
+- `net.ipv4.tcp_syncookies`: 0
+- `net.core.somaxconn`: 32768
+- `vm.swappiness`: 0
+- `vm.overcommit_memory`: 0 or 1
+- `fs.file-max`: 1000000
 
-### THP（透明大页）
+### Transparent Huge Pages (THP)
 
-检查部署机是否启用透明大页：建议禁用透明大页。
+Check whether THP is enabled on the target machine. It is recommended to disable THP.
 
-要检查 THP 是否启用，可以运行以下命令：
+To check if THP is enabled you can run this:
 
-```bash
+```
 cat /sys/kernel/mm/transparent_hugepage/enabled
 ```
 
-如果结果不是 `never`，你可以使用 `grubby --update-kernel=ALL --args="transparent_hugepage=never"` 修改。
+If it is not set to `never`, you can change it with `grubby --update-kernel=ALL --args="transparent_hugepage=never"`.
 
-要更改当前运行的配置，你可以选择重启系统，或者运行 `echo never > /sys/kernel/mm/transparent_hugepage/enabled`。
+To change the running configuration, either reboot or run `echo never > /sys/kernel/mm/transparent_hugepage/enabled`.
 
-### 系统限制
+### System limits
 
-检查 /etc/security/limits.conf 中各项 limit 值：
+Check the limit values in the `/etc/security/limits.conf` file:
 
 ```
-<deploy-user>    soft   nofile    1000000
-<deploy-user>    hard   nofile    1000000
-<deploy-user>    soft   stack     10240
+<deploy-user> soft nofile 1000000
+<deploy-user> hard nofile 1000000
+<deploy-user> soft stack 10240
 ```
 
-其中 `<deploy-user>` 为部署、运行 TiDB 集群的用户，最后一列的数值为要求达到的最小值。
+`<deploy-user>` is the user who deploys and runs the TiDB cluster, and the last column is the minimum value required for the system.
 
 ### SELinux
 
-SELinux 必须关闭或设置为 `permissive` 模式。你可以使用 [getenforce(8)](https://linux.die.net/man/8/getenforce) 工具来检查 SELinux 的当前状态。
+SELinux must be disabled or set to permissive mode. To check the current status, use the [getenforce(8)](https://linux.die.net/man/8/getenforce) utility.
 
-如果 SELinux 未关闭，请打开 `/etc/selinux/config` 文件，找到以 `SELINUX=` 开头的行，并将其修改为 `SELINUX=disabled`。修改完成后，你需要重启系统，因为从 `enforcing` 或 `permissive` 切换到 `disabled` 模式只有在重启后才会生效。
+If SELinux is not disabled, open the `/etc/selinux/config` file, locate the line starting with `SELINUX=`, and change it to `SELINUX=disabled`. After making this change, you need to reboot the system because switching from `enforcing` or `permissive` to `disabled` does not take effect without a reboot.
 
-在某些系统（如 Ubuntu）上，`/etc/selinux/config` 文件可能不存在，且 getenforce 工具可能未安装。在这种情况下，可以跳过此检查步骤。
+On some systems (such as Ubuntu), the `/etc/selinux/config` file might not exist, and the getenforce utility might not be installed. In that case, you can skip this step.
 
-### 防火墙
+### Firewall
 
-检查 FirewallD 服务是否启用：建议用户禁用 FirewallD 或为 TiDB 集群各服务添加允许规则。
+Check whether the FirewallD service is enabled. It is recommended to either disable the FirewallD service or add permission rules for each service in the TiDB cluster.
 
 ### irqbalance
 
-检查 irqbalance 服务是否启用：建议用户启用 irqbalance 服务。
+Check whether the irqbalance service is enabled. It is recommended to enable the irqbalance service.
 
-### 磁盘挂载参数
+### Disk mount options
 
-检查 ext4 分区的挂载参数：确保挂载参数包含 nodelalloc,noatime 选项。
+Check the mount options for ext4 partitions. Make sure the mount options include the nodelalloc option and the noatime option.
 
-### 端口占用
+### Port usage
 
-检查部署机上是否已有进程占用了端口：检查拓扑中定义的端口（包括自动补全的默认端口）在部署机上是否已被占用。
+Check if the ports defined in the topology (including the auto-completion default ports) are already used by the processes on the target machine.
 
-> **注意：**
+> **Note:**
 >
-> 端口占用检查假设集群尚未启动，如果检查的是已经部署并启动的集群，那么端口占用检查一定会失败，因为端口确实被占用了。
+> The port usage check assumes that a cluster is not started yet. If a cluster is already deployed and started, the port usage check on the cluster fails because the ports must be in use in this case.
 
-### CPU 核心数
+### CPU core number
 
-检查部署机 CPU 信息：建议生产集群 CPU 逻辑核心数 >= 16
+Check the CPU information of the target machine. For a production cluster, it is recommended that the number of the CPU logical core is greater than or equal to 16.
 
-> **注意：**
+> **Note:**
 >
-> 默认不检查 CPU 核心数，需要通过选项 `--enable-cpu` 启用。
+> CPU core number is not checked by default. To enable the check, you need to add the `-enable-cpu` option to the command.
 
-### 内存大小
+### Memory size
 
-检查部署机的内存大小：建议生产集群总内存容量 >= 32Gb。
+Check the memory size of the target machine. For a production cluster, it is recommended that the total memory capacity is greater than or equal to 32GB.
 
-> **注意：**
+> **Note:**
 >
-> 默认不检查内存大小，需要通过选项 `--enable-mem` 启用。
+> Memory size is not checked by default. To enable the check, you need to add the `-enable-mem` option to the command.
 
-### fio 磁盘性能测试
+### Fio disk performance test
 
-使用 fio 测试 data_dir 所在磁盘的性能，包括三个测试项目：
+Use flexible I/O tester (fio) to test the performance of the disk where `data_dir` is located, including the following three test items:
 
 - fio_randread_write_latency
 - fio_randread_write
 - fio_randread
 
-> **注意：**
+> **Note:**
 >
-> 默认不进行 fio 磁盘性能测试，需要通过选项 `--enable-disk` 启用。
+> The fio disk performance test is not performed by default. To perform the test, you need to add the `-enable-disk` option to the command.
 
-## 语法
+## Syntax
 
 ```shell
 tiup cluster check <topology.yml | cluster-name> [flags]
 ```
 
-- 若集群尚未部署，需要传递将用于部署集群的 [topology.yml](/tiup/tiup-cluster-topology-reference.md) 文件，tiup-cluster 会根据该文件的内容连接到对应机器去检查。
-- 若集群已经部署，则可以使用集群的名字 `<cluster-name>` 作为检查对象。
-- 如果需要检查已部署集群的扩容拓扑文件，可以将 `<scale-out.yml>` 和 `<cluster-name>` 作为检查对象。
+- If a cluster is not deployed yet, you need to pass the [topology.yml](/tiup/tiup-cluster-topology-reference.md) file that is used to deploy the cluster. According to the content in this file, tiup-cluster connects to the corresponding machine to perform the check.
+- If a cluster is already deployed, you can use the `<cluster-name>` as the check object.
+- If you want to check the scale-out YAML file for an existing cluster, you can use both `<scale-out.yml>` and `<cluster-name>` as the check objects.
 
-> **注意：**
+> **Note:**
 >
-> 若传递的是集群名字，则需要配合 `--cluster` 选项使用。
+> If `<cluster-name>` is used for the check, you need to add the `--cluster` option in the command.
 
-## 选项
+## Options
 
 ### --apply
 
-- 尝试自动修复失败的检查项，目前仅会尝试修复以下项目：
-
+- Attempts to automatically repair the failed check items. Currently, tiup-cluster only attempts to repair the following check items:
     - SELinux
-    - 防火墙
+    - firewall
     - irqbalance
-    - 内核参数
-    - 系统 Limits
-    - THP（透明大页）
+    - kernel parameters
+    - System limits
+    - THP (Transparent Huge Pages)
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
 
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
-
-> **注意：**
+> **Note:**
 >
-> `tiup cluster check` 也支持修复已部署集群的扩容拓扑文件，命令格式：
+> `tiup cluster check` also supports repairing the `scale-out.yml` file for an existing cluster with the following command format:
 >
 >```shell
 > tiup cluster check <cluster-name> scale-out.yml --cluster --apply --user root [-p] [-i /home/root/.ssh/gcp_rsa]
@@ -170,100 +168,103 @@ tiup cluster check <topology.yml | cluster-name> [flags]
 
 ### --cluster
 
-- 对已部署的集群进行检查。
-- 数据类型：`BOOLEAN`
-- 默认值：`false`
-- 在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
-- 命令格式：
+- Indicates that the check is for a cluster that has been deployed.
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- Command format:
 
     ```shell
     tiup cluster check <topology.yml | cluster-name> --cluster [flags]
     ```
 
-> **注意：**
+> **Note:**
 >
-> - 若选择的格式为 `tiup cluster check <cluster-name>`，则必须加上该选项：`tiup cluster check <cluster-name> --cluster`。
-> - `tiup cluster check` 也支持检查已部署集群的扩容拓扑文件，命令格式：
+> - If the `tiup cluster check <cluster-name>` command is used, you must add the `--cluster` option: `tiup cluster check <cluster-name> --cluster`.
+> - `tiup cluster check` also supports checking the `scale-out.yml` file for an existing cluster with the following command format:
 >
->    ```shell
->     tiup cluster check <cluster-name> scale-out.yml --cluster --user root [-p] [-i /home/root/.ssh/gcp_rsa]
->    ```
+>   ```shell
+>   tiup cluster check <cluster-name> scale-out.yml --cluster --user root [-p] [-i /home/root/.ssh/gcp_rsa]
+>   ```
 
 ### -N, --node
 
-- 指定要检查的节点。该选项的值为以逗号分割的节点 ID 列表，节点 ID 为 [`tiup-component-cluster-display`](/tiup/tiup-component-cluster-display.md) 命令返回的集群状态表格的第一列。
-- 数据类型：`STRINGS`
-- 如果不指定该选项，默认检查所有节点，即 `[]`。
+- Specifies the nodes to be checked. The value of this option is a comma-separated list of node IDs. You can get the node IDs from the first column of the cluster status table returned by the [`tiup cluster display`](/tiup/tiup-component-cluster-display.md) command.
+- Data type: `STRINGS`
+- If this option is not specified in the command, all nodes are checked by default.
 
-> **注意：**
+> **Note:**
 >
-> 若同时指定了 `-R, --role`，那么将检查它们的交集中的服务。
+> If the `-R, --role` option is specified at the same time, only the service nodes that match both the specifications of `-N, --node` and `-R, --role` are checked.
 
 ### -R, --role
 
-- 指定要检查的角色。该选项的值为以逗号分割的节点角色列表，角色为 [`tiup-component-cluster-display`](/tiup/tiup-component-cluster-display.md) 命令返回的集群状态表格的第二列。
-- 数据类型：`STRINGS`
-- 如果不指定该选项，默认检查所有角色。
+- Specifies the roles to be checked. The value of this option is a comma-separated list of node roles. You can get the roles of nodes from the second column of the cluster status table returned by the [`tiup cluster display`](/tiup/tiup-component-cluster-display.md) command.
+- Data type: `STRINGS`
+- If this option is not specified in the command, all roles are checked by default.
 
-> **注意：**
+> **Note:**
 >
-> 若同时指定了 `-N, --node`，那么将检查它们的交集中的服务。
+> If the `-N, --node` option is specified at the same time, only the service nodes that match both the specifications of `-N, --node` and `-R, --role` are checked.
 
 ### --enable-cpu
 
-- 默认情况下 tiup-cluster 不检查 CPU 核心数，该选项用于启用 CPU 核心数检查。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Enables the check of CPU core number.
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
 
 ### --enable-disk
 
-- 默认情况下 tiup-cluster 不进行 fio 磁盘性能测试，该选项用于启用 fio 磁盘性能测试。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Enables the fio disk performance test.
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
 
 ### --enable-mem
 
-默认情况下 tiup-cluster 不检查内存大小，该选项用于启用内存大小检查。
+- Enables the memory size check.
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
 
-### -u, --user（string，默认为当前执行命令的用户）
+### --u, --user
 
-指定连接目标机器的用户名，该用户在目标机器上需要有免密 sudo root 的权限。
+- Specifies the user name to connect to the target machine. The specified user needs to have the password-free sudo root privileges on the target machine.
+- Data type: `STRING`
+- If this option is not specified in the command, the user who executes the command is used as the default value.
 
-> **注意：**
+> **Note:**
 >
-> 仅当 `--cluster` 选项为 false 时该选项有效，否则该值固定为部署集群时拓扑文件中指定的用户名。
+> This option is valid only if the `-cluster` option is false. Otherwise, the value of this option is fixed to the username specified in the topology file for the cluster deployment.
 
-### -i, --identity_file（string，默认 ~/.ssh/id_rsa）
+### -i, --identity_file
 
-指定连接目标机器的密钥文件。
+- Specifies the key file to connect to the target machine.
+- Data type: `STRING`
+- The option is enabled by default with `~/.ssh/id_rsa` (the default value) passed in.
 
-> **注意：**
+> **Note:**
 >
-> 仅当 `--cluster` 选项为 false 时该选项有效，否则该值固定为 `${TIUP_HOME}/storage/cluster/clusters/<cluster-name>/ssh/id_rsa`
+> This option is valid only if the `--cluster` option is false. Otherwise, the value of this option is fixed to `${TIUP_HOME}/storage/cluster/clusters/<cluster-name>/ssh/id_rsa`.
 
 ### -p, --password
 
-- 在连接目标机器时使用密码登录：
-
-    - 对于指定了 `--cluster` 的集群，密码为部署集群时拓扑文件中指定的用户的密码
-    - 对于未指定 `--cluster` 的集群，密码为 `-u/--user` 参数指定的用户的密码
-
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Logs in with a password when connecting to the target machine.
+    - If the `--cluster` option is added for a cluster, the password is the password of the user specified in the topology file when the cluster was deployed.
+    - If the `--cluster` option is not added for a cluster, the password is the password of the user specified in the `-u/--user` option.
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints the help information of the related commands.
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
 
-## 输出
+## Output
 
-输出含有以下字段的表格：
+A table containing the following fields:
 
-- Node：目标节点
-- Check：检查项
-- Result：检查结果（Pass/Warn/Fail）
-- Message：结果描述
+- `Node`: the target node
+- `Check`: the check item
+- `Result`: the check result (Pass, Warn, or Fail)
+- `Message`: the result description
 
-[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)
+[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)

@@ -1,26 +1,155 @@
 ---
-title: 连接到 TiDB
-summary: 连接到 TiDB 的方式概览。
-aliases: ['/zh/tidb/stable/dev-guide-connect-to-tidb/','/zh/tidb/dev/dev-guide-connect-to-tidb/','/zh/tidb/dev/connect-to-tidb']
+title: Connect to TiDB
+summary: Learn how to connect to TiDB.
 ---
 
-# 连接到 TiDB
+# Connect to TiDB
 
-TiDB 高度兼容 MySQL 协议，这使得大多数客户端驱动程序和 ORM 框架可以像连接到 MySQL 一样地连接到 TiDB。
+TiDB is highly compatible with the MySQL protocol. For a full list of client link parameters, see [MySQL Client Options](https://dev.mysql.com/doc/refman/8.0/en/mysql-command-options.html).
 
-- 如需手动执行 SQL（用于连接测试、调试或快速验证），可以通过 [MySQL CLI 工具](/develop/dev-guide-mysql-tools.md) 连接到 TiDB。
+TiDB supports the [MySQL Client/Server Protocol](https://dev.mysql.com/doc/dev/mysql-server/latest/PAGE_PROTOCOL.html), which allows most client drivers and ORM frameworks to connect to TiDB just as they connect to MySQL.
 
-- 如果希望通过图形界面工具进行连接，可参考以下常用 GUI 工具的相关文档：
+## MySQL
 
-    - [MySQL Workbench](/develop/dev-guide-gui-mysql-workbench.md)
-    - [Navicat](/develop/dev-guide-gui-navicat.md)
+You can choose to use MySQL Client or MySQL Shell based on your personal preferences.
 
-- 如需基于 TiDB 构建应用程序，可以根据所使用的编程语言和框架[选择合适的驱动或 ORM](/develop/dev-guide-choose-driver-or-orm.md)。
+<SimpleTab>
 
-- 如需从边缘环境通过 HTTP 连接到 TiDB Cloud Starter 或 TiDB Cloud Essential 实例，可以使用 [TiDB Cloud Serverless Driver](/develop/serverless-driver.md)。需要注意的是，Serverless Driver 目前处于公测阶段，仅适用于 TiDB Cloud Starter 或 TiDB Cloud Essential 实例。
+<div label="MySQL Client">
 
-## 需要帮助？
+You can connect to TiDB using MySQL Client, which can be used as a command-line tool for TiDB. To install MySQL Client, follow the instructions below for YUM based Linux distributions.
 
-- 在 [AskTUG 论坛](https://pingkai.cn/tidbcommunity/forum/?utm_source=docs-cn-dev-guide) 上提问
-- [提交 TiDB Cloud 工单](https://tidb.support.pingcap.com/servicedesk/customer/portals)
-- [提交 TiDB 工单](/support.md)
+```shell
+sudo yum install mysql
+```
+
+After the installation, you can connect to TiDB using the following command:
+
+```shell
+mysql --host <tidb_server_host> --port 4000 -u root -p --comments
+```
+
+The MySQL v9.0 client on macOS cannot correctly load the `mysql_native_password` plugin, causing the error `ERROR 2059 (HY000): Authentication plugin 'mysql_native_password' cannot be loaded` when connecting to TiDB. To address this issue, it is recommended to install and use the MySQL v8.0 client to connect to TiDB. Run the following commands to install it:
+
+```shell
+brew install mysql-client@8.0
+brew unlink mysql
+brew link mysql-client@8.0
+```
+
+If you still encounter errors, you can specify the installation path of the MySQL v8.0 client to connect to TiDB. Run the following command:
+
+```shell
+/opt/homebrew/opt/mysql-client@8.0/bin/mysql --comments --host ${YOUR_IP_ADDRESS} --port ${YOUR_PORT_NUMBER} -u ${your_user_name} -p
+```
+
+Replace `/opt/homebrew/opt/mysql-client@8.0/bin/mysql` in the preceding command with the installation path of the MySQL v8.0 client in your actual environment.
+
+</div>
+
+<div label="MySQL Shell">
+
+You can connect to TiDB using MySQL Shell, which can be used as a command-line tool for TiDB. To install MySQL Shell, follow the instructions in the [MySQL Shell documentation](https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-install.html). After the installation, you can connect to TiDB using the following command:
+
+```shell
+mysqlsh --sql mysql://root@<tidb_server_host>:4000
+```
+
+</div>
+
+</SimpleTab>
+
+## JDBC
+
+You can connect to TiDB using the [JDBC](https://dev.mysql.com/doc/connector-j/en/) driver. To do that, you need to create a `MysqlDataSource` or `MysqlConnectionPoolDataSource` object (both objects support the `DataSource` interface), and then set the connection string using the `setURL` function.
+
+For example:
+
+```java
+MysqlDataSource mysqlDataSource = new MysqlDataSource();
+mysqlDataSource.setURL("jdbc:mysql://{host}:{port}/{database}?user={username}&password={password}");
+```
+
+For more information on JDBC connections, see the [JDBC documentation](https://dev.mysql.com/doc/connector-j/en/)
+
+### Connection parameters
+
+| Parameter name | Description |
+| :---: | :----------------------------: |
+| `{username}` | A SQL user to connect to the TiDB cluster |
+| `{password}` | The password of the SQL user |
+| `{host}` | [Host](https://en.wikipedia.org/wiki/Host_(network)) of a TiDB node |
+| `{port}` | Port that the TiDB node is listening on |
+| `{database}` | Name of an existing database |
+
+<CustomContent platform="tidb">
+
+For more information about TiDB SQL users, see [TiDB User Account Management](/user-account-management.md).
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+For more information about TiDB SQL users, see [TiDB User Account Management](https://docs.pingcap.com/tidb/stable/user-account-management).
+
+</CustomContent>
+
+## Hibernate
+
+You can connect to TiDB using the [Hibernate ORM](https://hibernate.org/orm/). To do that, you need to set `hibernate.connection.url` in the Hibernate configuration file to a legal TiDB connection string.
+
+For example, if you use a `hibernate.cfg.xml` configuration file, set `hibernate.connection.url` as follows:
+
+```xml
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.TiDBDialect</property>
+        <property name="hibernate.connection.url">jdbc:mysql://{host}:{port}/{database}?user={user}&amp;password={password}</property>
+    </session-factory>
+</hibernate-configuration>
+```
+
+After the configuration is done, you can use the following command to read the configuration file and get the `SessionFactory` object:
+
+```java
+SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+```
+
+Note the following:
+
+- Because the `hibernate.cfg.xml` configuration file is in the XML format and `&` is a special character in XML, you need to change `&` to `&amp;` when configuring the file. For example, you need to change the connection string `hibernate.connection.url` from `jdbc:mysql://{host}:{port}/{database}?user={user}&password={password}` to `jdbc:mysql://{host}:{ port}/{database}?user={user}&amp;password={password}`.
+- It is recommended that you use the `TiDB` dialect by setting `hibernate.dialect` to `org.hibernate.dialect.TiDBDialect`.
+- Hibernate supports TiDB dialects starting from `6.0.0.Beta2`, so it is recommended that you use Hibernate `6.0.0.Beta2` or a later version to connect to TiDB.
+
+For more information about Hibernate connection parameters, see [Hibernate documentation](https://hibernate.org/orm/documentation).
+
+### Connection parameters
+
+| Parameter name | Description |
+| :---: | :----------------------------: |
+| `{username}` |  A SQL user to connect to the TiDB cluster  |
+| `{password}` | The password of the SQL user |
+| `{host}` | [Host](https://en.wikipedia.org/wiki/Host_(network)) of a TiDB node |
+| `{port}` | Port that the TiDB node is listening on |
+| `{database}` |  Name of an existing database |
+
+<CustomContent platform="tidb">
+
+For more information about TiDB SQL users, see [TiDB User Account Management](/user-account-management.md).
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+For more information about TiDB SQL users, see [TiDB User Account Management](https://docs.pingcap.com/tidb/stable/user-account-management).
+
+</CustomContent>
+
+## Need help?
+
+Ask the community on [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) or [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs), or [submit a support ticket](/support.md).

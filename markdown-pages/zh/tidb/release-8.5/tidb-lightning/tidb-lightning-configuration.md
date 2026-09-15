@@ -1,683 +1,684 @@
 ---
-title: TiDB Lightning 配置参数
-summary: 使用配置文件或命令行配置 TiDB Lightning。
+title: TiDB Lightning Configuration
+summary: Learn about the CLI usage and sample configuration in TiDB Lightning.
 ---
 
-# TiDB Lightning 配置参数
+# TiDB Lightning Configuration
 
-你可以使用配置文件或命令行配置 TiDB Lightning。本文主要介绍 TiDB Lightning 的全局配置、任务配置，以及如何使用命令行进行参数配置。你可以在 [`lightning/tidb-lightning.toml`](https://github.com/pingcap/tidb/blob/master/lightning/tidb-lightning.toml) 找到配置文件示例。
+This document provides samples for global configuration and task configuration, and describes the usage of command-line parameters. You can find a sample configuration file in [`lightning/tidb-lightning.toml`](https://github.com/pingcap/tidb/blob/master/lightning/tidb-lightning.toml).
 
-TiDB Lightning 的配置文件分为“全局”和“任务”两种类别，二者在结构上兼容。只有当服务器模式开启时，全局配置和任务配置才会有区别；默认情况下，服务器模式为禁用状态，此时 TiDB Lightning 只会执行一个任务，且全局和任务配置使用同一配置文件。
+TiDB Lightning has two configuration classes: "global" and "task", and they have compatible structures. Their distinction arises only when the [server mode](/tidb-lightning/tidb-lightning-web-interface.md) is enabled. When server mode is disabled (the default), TiDB Lightning will only execute one task, and the same configuration file is used for both global and task configurations.
 
-## TiDB Lightning 全局配置
+## TiDB Lightning (Global)
 
 ### lightning
 
 #### `status-addr`
 
-- 用于拉取 Prometheus 监控指标、暴露调试数据，以及在服务器模式下提交导入任务的 HTTP 端口。
-- 将其设置为 `0` 可禁用该功能。
+- The HTTP port for displaying the task progress on the web interface, pulling Prometheus metrics, exposing debug data, and submitting import tasks (in server mode).
+- Setting it to `0` disables the port.
 
-<!-- 示例值：`:8289` -->
+<!-- Example: `:8289` -->
 
 #### `server-mode`
 
-- 设置服务器模式。
-- 默认值：`false`
-- 可选值：
-    - `false`：命令启动后会开始导入任务。
-    - `true`：命令启动后，会等待用户通过其 HTTP API 提交导入任务。
+- Sets the server mode.
+- Default value: `false`
+- Value options:
+    - `false`: an import task starts immediately after you execute the command.
+    - `true`: after you execute the command, TiDB Lightning waits until you submit an import task in the web interface. For more information, see [TiDB Lightning Web Interface](/tidb-lightning/tidb-lightning-web-interface.md).
 
 #### `level`
 
-- 示例值：`"info"`
+- Example: `"info"`
 
 #### `file`
 
-- 示例值：`"tidb-lightning.log"`
+- Example: `"tidb-lightning.log"`
 
 #### `max-size`
 
-- 示例值：`128` <!-- MB -->
+- Example: `128` <!-- MB -->
 
 #### `max-days`
 
-- 示例值：`28`
+- Example: `28`
 
 #### `max-backups`
 
-- 示例值：`14`
+- Example: `14`
 
-#### `enable-diagnose-logs` <span class="version-mark">从 v7.3.0 版本开始引入</span>
+#### `enable-diagnose-logs` <span class="version-mark">New in v7.3.0</span>
 
-- 设置是否开启诊断日志。
-- 默认值：`false`
-- 可选值：
-    - `false`：即只输出和导入有关的日志，不会输出依赖的其他组件的日志。
-    - `true`：既输出和导入相关的日志，也输出依赖的其他组件的日志，并开启 GRPC debug，可用于问题诊断。
+- Controls whether to enable the diagnostic logs.
+- Default value: `false`
+- Value options:
+    - `false`: only the logs related to the import are output, and the logs of other dependent components are not output.
+    - `true`: logs from both the import process and other dependent components are output, and GRPC debugging is enabled, which can be used for diagnosis.
 
-## TiDB Lightning 任务配置
+## TiDB Lightning (Task)
 
 ### lightning
 
 #### `check-requirements`
 
-- 启动之前检查集群是否满足最低需求，以及运行过程中检查 TiKV 的可用存储空间是否大于 10%。
+- Checks whether the cluster meets the minimum requirement before starting the task, and checks whether TiKV has more than 10% free space left during running time.
 
-<!-- 示例值：`true` -->
+<!-- Example: `true` -->
 
 #### `index-concurrency`
 
-- 索引引擎的最大并行数。每张表被切分成一个用于存储索引的“索引引擎”和若干存储行数据的“数据引擎”。`index-concurrency` 和 `table-concurrency` 这两项设置控制两种引擎文件的最大并发数。通常情况下使用默认值。
+- The maximum number of index engines to be opened concurrently. Each table is split into one "index engine" to store indices, and multiple "data engines" to store row data. `index-concurrency` and `table-concurrency` settings control the maximum concurrent number for each type of engines. Generally, use the default value.
 
-<!-- 示例值：`2` -->
+<!-- Example: `2` -->
 
 #### `table-concurrency`
 
-- 数据引擎的最大并行数。每张表被切分成一个用于存储索引的“索引引擎”和若干存储行数据的“数据引擎”。`index-concurrency` 和 `table-concurrency` 这两项设置控制两种引擎文件的最大并发数。通常情况下使用默认值。
+- The maximum number of data engines to be opened concurrently. Each table is split into one "index engine" to store indices, and multiple "data engines" to store row data. `index-concurrency` and `table-concurrency` settings control the maximum concurrent number for each type of engines. Generally, use the default value.
 
-<!-- 示例值：`6` -->
+<!-- Example: `6` -->
 
 #### `region-concurrency`
 
-- 数据的并发数。混合部署的情况下可以将其大小配置为逻辑 CPU 数的 75%，以限制 CPU 的使用。
-- 默认值：与逻辑 CPU 的数量相同
+- The concurrency number of data. When deploying together with other components, you can set it to 75% of the size of logical CPU cores to limit the CPU usage.
+- Default value: the number of logical CPU cores
 
 #### `io-concurrency`
 
-- I/O 最大并发数。I/O 并发量太高时，会因硬盘内部缓存频繁被刷新而增加 I/O 等待时间，导致缓存未命中和读取速度降低。对于不同的存储介质，你可能需要调整此参数以达到最佳效率。
+- The maximum I/O concurrency. Excessive I/O concurrency causes an increase in I/O latency because the disk's internal buffer is frequently refreshed, which causes the cache miss and slows down the read speed. Depending on the storage medium, this value might need to be adjusted for optimal performance.
 
-<!-- 示例值：`5` -->
+<!-- Example: `5` -->
 
 #### `max-error`
 
-- TiDB Lightning 停止迁移任务之前能容忍的最大非严重错误 (non-fatal errors) 的数量。
-- 在忽略非严重错误所在的行数据之后，迁移任务可以继续执行。
-- 将该值设置为 N，表示 TiDB Lightning 会在遇到第 (N+1) 个错误时停止迁移任务。
-- 被忽略的行会被记录到位于目标集群的 `task info` 数据库中。
-- 默认值：MaxInt64 字节，即 `9223372036854775807` 字节
+- The maximum number of non-fatal errors to tolerate before stopping TiDB Lightning.
+- Non-fatal errors are localized to a few rows, and ignoring those rows allows the import process to continue.
+- Setting this to N means that TiDB Lightning will stop as soon as possible when the (N+1)-th error is encountered.
+- The skipped rows will be inserted into tables inside the `task info` schema on the target TiDB.
+- Default value: `MaxInt64` bytes, that is, `9223372036854775807` bytes.
 
 #### `task-info-schema-name`
 
-- 指定用于存储 TiDB Lightning 执行结果的数据库。
-- 将值设置为空字符串可以关闭该功能。
+- Specifies the name of the schema or database that stores TiDB Lightning execution results.
+- To disable error recording, set this to an empty string.
 
-<!-- 示例值：`'lightning_task_info'` -->
+<!-- Example: `'lightning_task_info'` -->
 
 #### `meta-schema-name`
 
-- 在[并行导入模式](/tidb-lightning/tidb-lightning-distributed-import.md)下，在目标集群保存各个 TiDB Lightning 实例元信息的 schema 名字。如果未开启并行导入模式，无须设置此配置项。
-- 对于参与同一批并行导入的每个 TiDB Lightning 实例，该参数设置的值必须相同，否则将无法确保导入数据的正确性。
-- 如果开启并行导入模式，需要确保执行导入操作的用户（对于 `tidb.user` 配置项）有权限创建和访问此配置对应的库。
-- TiDB Lightning 在导入完成后会删除此 schema，因此不要使用已存在的库名配置该参数。
-- 默认值：`"lightning_metadata"`
+- In [parallel import mode](/tidb-lightning/tidb-lightning-distributed-import.md), the schema name that stores the meta information for each TiDB Lightning instance in the target cluster. Configure this parameter only if parallel import is enabled.
+- The value set for this parameter must be the same for each TiDB Lightning instance that participates in the same parallel import; otherwise, the correctness of the imported data cannot be ensured.
+- If parallel import mode is enabled, make sure that the user used for import (for the `tidb.user` configuration) has permissions to create and access the databases corresponding to this configuration.
+- TiDB Lightning removes this schema after the import is completed. So do not use any existing schema name to configure this parameter.
+- Default value: `"lightning_metadata"`
 
 ### security
 
-指定集群中用于 TLS 连接的证书和密钥。
+The `security` section specifies certificates and keys for TLS connections within the cluster.
 
 #### `ca-path`
 
-- CA 的公钥证书。如果留空，则禁用 TLS。
+- Specifies the public certificate of the CA. Leave it empty if you want to disable TLS.
 
-<!-- 示例值：`"/path/to/ca.pem"` -->
+<!-- Example: `"/path/to/ca.pem"` -->
 
 #### `cert-path`
 
-- 此服务的公钥证书。
+- Specifies the public certificate of this service.
 
-<!-- 示例值：`"/path/to/lightning.pem"` -->
+<!-- Example: `"/path/to/lightning.pem"` -->
 
 #### `key-path`
 
-- 该服务的密钥。
+- Specifies the private key of this service.
 
-<!-- 示例值：`"/path/to/lightning.key"` -->
+<!-- Example: `"/path/to/lightning.key"` -->
 
 ### checkpoint
 
 #### `enable`
 
-- 是否启用断点续传。
-- 导入数据时，TiDB Lightning 会记录当前表导入的进度，所以即使 TiDB Lightning 或其他组件异常退出，在重启时也可以避免重复再导入已完成的数据。
+- Controls whether to enable checkpoints.
+- While importing data, TiDB Lightning records which tables have been imported, so even if TiDB Lightning or another component crashes, you can start from a known good state instead of restarting from scratch.
 
-<!-- 示例值：`true` -->
+<!-- Example: `true` -->
 
 #### `schema`
 
-- 存储断点的数据库名称。
+- Specifies the schema name (database name) to store the checkpoints.
 
-<!-- 示例值：`"tidb_lightning_checkpoint"` -->
+<!-- Example: `"tidb_lightning_checkpoint"` -->
 
 #### `driver`
 
-- 存储断点的方式。
-- 可选值：
-    - `"file"`：存放在本地文件系统
-    - `"mysql"`：存放在兼容 MySQL 的数据库服务器
+- Where to store the checkpoints.
+- Value options:
+    - `"file"`: store as a local file.
+    - `"mysql"`: store into a remote MySQL-compatible database.
 
 #### `dsn`
 
-- 数据源名称 (data source name)，表示断点的存放位置。
-- 若 `driver = "file"`，则 `dsn` 为断点信息存放的文件路径。若不设置该路径，则默认存储路径为 `/tmp/CHECKPOINT_SCHEMA.pb`。
-- 若 `driver = "mysql"`，则 `dsn` 为 `username:password@tcp(host:port)/` 格式的 URL。
-- 若不设置该 URL，则默认会使用 `[tidb]` 部分指定的 TiDB 服务器来存储断点。
-- 为减少目标 TiDB 集群的压力，建议指定另一台兼容 MySQL 的数据库服务器来存储断点。
+- The data source name (DSN) indicating the location of the checkpoint storage.
+- For the `file` driver, the DSN is a path. If the path is not specified, TiDB Lightning uses the default value `/tmp/CHECKPOINT_SCHEMA.pb`.
+- For the `mysql` driver, the DSN is a URL in the form of `USER:PASS@tcp(HOST:PORT)/`.
+- If the URL is not specified, the TiDB server from the `[tidb]` section is used to store the checkpoints.
+- It is recommended that you specify a different MySQL-compatible database server to reduce the load of the target TiDB cluster.
 
-<!-- 示例值：`"/tmp/tidb_lightning_checkpoint.pb"` -->
+<!-- Example: `"/tmp/tidb_lightning_checkpoint.pb"` -->
 
 #### `keep-after-success`
 
-- 所有数据导入成功后是否保留断点。设置为 `false` 时为删除断点。
-- 保留断点有利于进行调试，但会泄漏关于数据源的元数据。
+- Controls whether to keep the checkpoints after all data are imported. If `false`, the checkpoints will be deleted.
+- Keeping the checkpoints can aid debugging but will leak metadata about the data source.
 
-<!-- 示例值：`false` -->
+<!-- Example: `false` -->
 
 ### conflict
 
 #### `strategy`
 
-- 从 v7.3.0 开始引入的新版冲突数据处理策略。从 v8.0.0 开始，TiDB Lightning 优化了物理导入模式和逻辑导入模式的冲突策略。
-- 默认值：`""`
-- 可选值：
-    - `""`：不同的导入模式下，设置该选项的结果不同：
-        - 在物理导入模式下，不进行冲突数据检测和处理。如果源文件存在主键或唯一键冲突的记录，后续步骤会报错。
-        - 在逻辑导入模式下，`""` 策略将被转换为 `"error"` 策略处理。
-    - `"error"`：检测到导入的数据存在主键或唯一键冲突的数据时，终止导入并报错。
-    - `"replace"`：遇到主键或唯一键冲突的数据时，保留最新的数据，覆盖旧的数据。
-        - 使用物理导入模式时，冲突数据将被记录到目标 TiDB 集群中的 `lightning_task_info.conflict_view` 视图中。
-        - 在 `lightning_task_info.conflict_view` 视图中，如果某行的 `is_precheck_conflict` 字段为 `0`，表示该行记录的冲突数据是通过后置冲突检测发现的；如果某行的 `is_precheck_conflict` 字段为 `1`，表示该行记录的冲突数据是通过前置冲突检测发现的。你可以根据业务需求选择正确的记录重新手动写入到目标表中。
-        - 注意，该方法要求目标 TiKV 的版本为 v5.2.0 或更新版本。
-    - `"ignore"`：遇到主键或唯一键冲突的数据时，保留旧的数据，忽略新的数据。该选项仅适用于逻辑导入模式。
+- Starting from v7.3.0, a new version of strategy is introduced to handle conflicting data. Starting from v8.0.0, TiDB Lightning optimizes the conflict strategy for both physical and logical import modes.
+- Default value: `""`
+- Value options:
+    - `""`:
+        - In the physical import mode, TiDB Lightning does not detect or handle conflicting data. If the source file contains conflicting primary or unique key records, the subsequent step reports an error.
+        - In the logical import mode, TiDB Lightning converts the `""` strategy to the `"error"` strategy for processing.
+    - `"error"`: when detecting conflicting primary or unique key records in the imported data, TiDB Lightning terminates the import and reports an error.
+    - `"replace"`: when encountering conflicting primary or unique key records, TiDB Lightning retains the latest data and overwrites the old data.
+        - When you use the physical import mode, the conflicting data are recorded in the `lightning_task_info.conflict_view` view of the target TiDB cluster.
+        - In the `lightning_task_info.conflict_view` view, if the `is_precheck_conflict` field for a row is `0`, it means that the conflicting data recorded in that row is detected by postprocess conflict detection; if the `is_precheck_conflict` field for a row is `1`, it means that conflicting data recorded in that row is detected by pre-import conflict detection. You can manually insert the correct records into the target table based on your application requirements.
+        - Note that the target TiKV must be v5.2.0 or later versions.
+    - `"ignore"`: when encountering conflicting primary or unique key records, TiDB Lightning retains the old data and ignores the new data. This option can only be used in the logical import mode.
 
 #### `precheck-conflict-before-import`
 
-- 控制是否开启前置冲突检测，即导入数据到 TiDB 前，先检查将要导入的数据是否存在冲突。该参数仅适用于物理导入模式。
-- 在冲突记录数量高于 1,000,000 的场景中，建议开启前置冲突检测，可以提升冲突检测的性能。
-- 在冲突记录数量少于 1,000,000 的场景中，建议关闭前置冲突检测。
-- 默认值：`false`
-- 可选值：
-    - `false`：仅开启后置冲突检测。
-    - `true`：同时开启前置冲突检测和后置冲突检测。
+- Controls whether to enable pre-import conflict detection, which checks conflicts in data before importing it to TiDB. This parameter can be used only in the physical import mode.
+- In scenarios where the number of conflict records is greater than 1,000,000, it is recommended to set `precheck-conflict-before-import = true` for better performance in conflict detection.
+- In other scenarios, it is recommended to disable it.
+- Default value: `false`
+- Value options:
+    - `false`: TiDB Lightning only checks conflicts after the import.
+    - `true`: TiDB Lightning checks conflicts both before and after the import.
 
 #### `threshold`
 
-- 控制 [`strategy`](#strategy) 为 `"replace"` 或 `"ignore"` 时，能处理的冲突错误数的上限。仅在 `strategy` 为 `"replace"` 或 `"ignore"` 时可配置。
-- 注意如果设置的值大于 `10000`，导入过程可能会出现性能下降的情况。
-- 默认值：`10000`
+- Controls the maximum number of conflict errors that can be handled when [`strategy`](#strategy) is `"replace"` or `"ignore"`. You can set it only when `strategy` is `"replace"` or `"ignore"`.
+- If you set a value larger than `10000`, the import process might experience performance degradation.
+- Default value: `10000`
 
 #### `max-record-rows`
 
-- 控制冲突数据记录表 (`conflict_records`) 中记录的冲突数据的条数上限。
-- 从 v8.1.0 开始，TiDB Lightning 会自动将该配置项的值设置为 [`threshold`](#threshold) 的值，并忽略用户输入，因此无需再单独配置该配置项。
-- `max-record-rows` 将在未来版本中废弃。
-- 在物理导入模式下，当 `strategy` 为 `"replace"` 时会记录被覆盖的冲突记录。
-- 在逻辑导入模式下，当 `strategy` 为 `"ignore"` 时会记录被忽略写入的冲突记录。当 `strategy` 为 `"replace"` 时，不会记录冲突记录。
-- 默认值：`10000`
+- Controls the maximum number of records in the `conflict_records` table.
+- Starting from v8.1.0, there is no need to configure `max-record-rows` manually, because TiDB Lightning automatically assigns the value of `max-record-rows` with the value of [`threshold`](#threshold), regardless of the user input.
+- `max-record-rows` will be deprecated in a future release.
+- In the physical import mode, if the strategy is `"replace"`, the conflict records that are overwritten are recorded.
+- In the logical import mode, if the strategy is `"ignore"`, the conflict records that are ignored are recorded; if the strategy is `"replace"`, the conflict records are not recorded.
+- Default value: `10000`
 
 ### tikv-importer
 
 #### `backend`
 
-- 设置 TiDB Lightning 导入数据的模式。
-- 默认值：`"local"`
-- 可选值：
-    - `"local"`：[物理导入模式 (Physical Import Mode)](/tidb-lightning/tidb-lightning-physical-import-mode.md)。适用于导入 TiB 级以上的数据量。采用该导入模式时，在数据导入期间，下游 TiDB 无法对外提供服务。
-    - `"tidb"`：[逻辑导入模式 (Logical Import Mode)](/tidb-lightning/tidb-lightning-logical-import-mode.md)。适用于导入 TiB 级以下的数据量。采用该导入模式时，在数据导入期间，下游 TiDB 仍可正常提供服务。
+- Specifies the import mode of TiDB Lightning.
+- Default value: `"local"`
+- Value options:
+    - `"local"`: [Physical import mode](/tidb-lightning/tidb-lightning-physical-import-mode.md), used by default. It applies to large dataset import, for example, greater than 1 TiB. However, during the import, downstream TiDB is not available to provide services.
+    - `"tidb"`: [Logical import mode](/tidb-lightning/tidb-lightning-logical-import-mode.md). You can use this mode for small dataset import, for example, smaller than 1 TiB. During the import, downstream TiDB is available to provide services.
 
 #### `parallel-import`
 
-- 是否允许启动多个 TiDB Lightning 实例（物理导入模式）[并行导入数据](/tidb-lightning/tidb-lightning-distributed-import.md)到一个或多个目标表。该参数仅限目标表为空的场景使用。
-- 默认值：`false`
-- 可选值：`true`、`false`
-- 多个 TiDB Lightning 实例（物理导入模式）同时导入一张表时，此开关必须设置为 `true`。但前提是目标表不能存在数据，即所有的数据都只能是由 TiDB Lightning 导入。
+- Controls whether to enable multiple TiDB Lightning instances (in physical import mode) to import data to one or more target tables [in parallel](/tidb-lightning/tidb-lightning-distributed-import.md). Note that this parameter is only used in scenarios where the target table is empty.
+- Default value: `false`
+- Value options: `true`, `false`
+- When you use parallel import mode, you must set the parameter to `true`, but the premise is that no data exists in the target table, that is, all data can only be imported by TiDB Lightning.
 
 #### `duplicate-resolution`
 
-> **警告：**
+> **Warning:**
 >
-> 从 v8.0.0 开始，`duplicate-resolution` 被废弃，并将在未来版本中被移除。详情参考[旧版冲突检测](/tidb-lightning/tidb-lightning-physical-import-mode-usage.md#旧版冲突检测从-v800-开始已被废弃)。
+> Starting from v8.0.0, the `duplicate-resolution` parameter is deprecated and will be removed in a future release. For more information, see [The old version of conflict detection](/tidb-lightning/tidb-lightning-physical-import-mode-usage.md#the-old-version-of-conflict-detection-deprecated-in-v800).
 
-- 物理导入模式设置是否检测和解决重复的记录（唯一键冲突）。
-- 默认值：`'none'`
-- 可选值：
-    - `'none'`：不检测重复记录。如果数据源存在重复记录，会导致 TiDB 中出现数据不一致的情况。如果 `duplicate-resolution` 设置为 `'none'` 且 `conflict.strategy` 未设置，TiDB Lightning 会自动将 `conflict.strategy` 赋值为 `""`。
-    - `'remove'`：如果 `duplicate-resolution` 设置为 `'remove'` 且 `conflict.strategy` 未设置，TiDB Lightning 会自动将 `conflict.strategy` 赋值为 `"replace"` 开启新版冲突检测。
+- Controls whether to detect and resolve duplicate records (unique key conflict) in the physical import mode.
+- Default value: `'none'`
+- Value options:
+    - `'none'`: does not detect duplicate records. If there are duplicate records in the data source, it might lead to inconsistent data in the target TiDB. If you set `duplicate-resolution = 'none'` and do not set `conflict.strategy`, TiDB Lightning will automatically assign `""` to `conflict.strategy`.
+    - `'remove'`: if you set `duplicate-resolution = 'remove'` and do not set `conflict.strategy`, TiDB Lightning will automatically assign "replace" to `conflict.strategy` and enable the new version of conflict detection.
 
 #### `send-kv-pairs`
 
-> **警告：**
+> **Warning:**
 >
-> 从 v7.2.0 开始，该参数废弃，设置后不再生效。如果希望调整一次请求中向 TiKV 发送的数据量，请使用 [`send-kv-size`](#send-kv-size-从-v720-版本开始引入) 参数。
+> Starting from v7.2.0, this parameter is deprecated and no longer takes effect after it is set. If you want to adjust the amount of data sent to TiKV in one request, use the [`send-kv-size`](#send-kv-size-new-in-v720) parameter instead.
 
-- 物理导入模式下，向 TiKV 发送数据时一次请求中最大 KV 数量。
+- Specifies the maximum number of KV pairs in one request when sending data to TiKV in physical import mode.
 
-<!-- 示例值：32768 -->
+<!-- Example: 32768 -->
 
-#### `send-kv-size` <span class="version-mark">从 v7.2.0 版本开始引入</span>
+#### `send-kv-size` <span class="version-mark">New in v7.2.0</span>
 
-- 物理导入模式下，向 TiKV 发送数据时一次请求的最大大小。一般情况下不建议调整该参数。
-- 默认值：`"16K"`
+- Specifies the maximum size of one request when sending data to TiKV in physical import mode.
+- Default value: `"16K"`
 
 #### `compress-kv-pairs`
 
-- 物理导入模式下，向 TiKV 发送 KV 时是否启用压缩。
-- 目前仅支持 Gzip 压缩算法，可填写 `"gzip"` 或 `"gz"`。
-- 默认值：`""`，即不启用压缩。
-- 可选值：`""`、`"gzip"`、`"gz"`
+- Controls whether to enable compression when sending KV pairs to TiKV in the physical import mode.
+- Currently, only the Gzip compression algorithm is supported. To use this algorithm, you can fill in either `"gzip"` or `"gz"` for this parameter.
+- Default value: `""`, which means the compression is not enabled.
+- Value options: `""`, `"gzip"`, `"gz"`
 
 #### `sorted-kv-dir`
 
-- 物理导入模式本地进行 KV 排序的路径。如果磁盘性能较低（如使用机械盘），建议设置成与 `data-source-dir` 不同的磁盘以提升导入性能。
+- Specifies the directory of local KV sorting in the physical import mode. If the disk performance is low (such as in HDD), it is recommended to set the directory on a different disk from `data-source-dir` to improve import speed.
 
 #### `range-concurrency`
 
-- 物理导入模式 TiKV 写入 KV 数据的并发度。
-- 当 TiDB Lightning 和 TiKV 直接网络传输速度超过万兆的时候，可以适当增加这个值。
-- 默认值：`16`
+- Specifies the concurrency that TiKV writes KV data in the physical import mode.
+- When the network transmission speed between TiDB Lightning and TiKV exceeds 10 Gigabit, you can increase this value accordingly.
+
+<!-- Example: `16` -->
 
 #### `store-write-bwlimit`
 
-- 物理导入模式限制 TiDB Lightning 向每个 TiKV 节点写入的带宽大小。
-- 默认值：`0`，表示不限制
+- Limits the bandwidth in which TiDB Lightning writes data into each TiKV node in the physical import mode.
+- Default value: `0`, which means no limit.
 
 #### `disk-quota`
 
-- 使用物理导入模式时，配置 TiDB Lightning 本地临时文件使用的磁盘配额 (disk quota)。
-- 当磁盘配额不足时，TiDB Lightning 会暂停读取源数据以及写入临时文件的过程，优先将已经完成排序的 key-value 写入到 TiKV，TiDB Lightning 删除本地临时文件后，再继续导入过程。
-- 需要同时配合把 [`backend`](#backend) 设置为 `local` 模式才能生效。
-- 默认值：`MaxInt64` 字节（9223372036854775807 字节）
+- Specifies the disk quota for local temporary files when physical import mode is used.
+- When the disk quota is insufficient, TiDB Lightning stops reading source data and writing temporary files, but prioritizes writing the already sorted key-value pairs to TiKV. After TiDB Lightning deletes the local temporary files, the import process continues.
+- This option takes effect only when you set the [`backend`](#backend) option to `local`.
+- Default value: `MaxInt64` bytes, that is, 9223372036854775807 bytes.
 
 #### `add-index-by-sql`
 
-- 物理导入模式是否通过 SQL 方式添加索引。
-- 通过 SQL 方式添加索引的优点是将导入数据与导入索引分开，可以快速导入数据，即使导入数据后，索引添加失败，也不会影响数据的一致性。
-- 默认值：`false`
-- 可选值：
-    - `false`：TiDB Lightning 会将行数据以及索引数据都编码成 KV pairs 后一同导入 TiKV，实现机制和历史版本保持一致。
-    - `true`：TiDB Lightning 会在导入数据完成后，使用 `ADD INDEX` 的 SQL 来添加索引。
+- Specifies whether to add indexes via SQL in physical import mode.
+- This mechanism is consistent with that of the historical versions. The benefit of adding indexes via SQL is that you can separately import data and import indexes, and import data more quickly. After the data is imported, even if the indexes fail to be added, it does not affect the consistency of the imported data.
+- Default value: `false`
+- Value options:
+    - `false`: TiDB Lightning will encode both row data and index data into KV pairs and import them into TiKV together.
+    - `true`: TiDB Lightning adds indexes via the `ADD INDEX` SQL statement after importing the row data.
 
 #### `keyspace-name`
 
-- 在使用 TiDB Lightning 导入多租户的 TiDB 集群的场景下，指定对应的 key space 名称。
-- 默认值：`""`，表示 TiDB Lightning 会自动获取导入数据对应租户的 key space 名称。
-- 如果指定了值，则使用指定的 key space 名称导入数据。
+- When you use TiDB Lightning to import a multi-tenant TiDB cluster, use this parameter to specify the corresponding key space name.
+- Default value: `""`, which means TiDB Lightning will automatically get the key space name of the corresponding tenant to import data.
+- If you specify a value, the specified key space name will be used to import data.
 
-#### `pause-pd-scheduler-scope` <span class="version-mark">从 v7.1.0 版本开始引入</span>
+#### `pause-pd-scheduler-scope` <span class="version-mark">New in v7.1.0</span>
 
-- 物理导入模式下，用于控制 TiDB Lightning 暂停 PD 调度的范围。
-- 默认值：`"table"`
-- 可选值：
-    - `"table"`：仅暂停目标表数据所在 Region 的调度。该选项仅适用于 TiDB v6.1.0 及以上版本的目标集群。
-    - `"global"`：暂停全局调度。当导入数据到无业务流量的集群时，建议设置为 `"global"`，以避免其他调度的干扰。
+- In Physical Import Mode, this parameter controls the scope in which TiDB Lightning stops PD scheduling.
+- Default value: `"table"`
+- Value options:
+    - `"table"`: pause scheduling only for the Region that stores the target table data.
+    - `"global"`: pause global scheduling. When importing data to a cluster without any business traffic, it is recommended to set this parameter to `"global"` to avoid interference from other scheduling.
 
-#### `region-split-batch-size` <span class="version-mark">从 v7.1.0 版本开始引入</span>
+#### `region-split-batch-size` <span class="version-mark">New in v7.1.0</span>
 
-- 物理导入模式下，用于控制批量 Split Region 时的 Region 个数。
-- 每个 TiDB Lightning 实例最多同时 Split Region 的个数为：`region-split-batch-size * region-split-concurrency * table-concurrency`
-- 默认值：`4096`
+- In Physical Import Mode, this parameter controls the number of Regions when splitting Regions in a batch.
+- The maximum number of Regions that can be split at the same time per TiDB Lightning instance is: `region-split-batch-size * region-split-concurrency * table-concurrency`
+- Default value: `4096`
 
-#### `region-split-concurrency` <span class="version-mark">从 v7.1.0 版本开始引入</span>
+#### `region-split-concurrency` <span class="version-mark">New in v7.1.0</span>
 
-- 物理导入模式下，用于控制 Split Region 时的并发度。
-- 默认值：CPU 核数
+- In Physical Import Mode, this parameter controls the concurrency when splitting Regions.
+- Default value: the number of CPU cores
 
-#### `region-check-backoff-limit` <span class="version-mark">从 v7.1.0 版本开始引入</span>
+#### `region-check-backoff-limit` <span class="version-mark">New in v7.1.0</span>
 
-- 物理导入模式下，用于控制 split 和 scatter 操作后等待 Region 上线的重试次数。
-- 重试符合指数回退策略，最大重试间隔为 2 秒。若两次重试之间有任何 Region 上线，该次操作不会被计为重试次数。
-- 默认值：`1800`
+- In Physical Import Mode, this parameter controls the number of retries to wait for the Region to come online after the split and scatter operations.
+- The maximum retry interval is two seconds. The number of retries will not be increased if any Region becomes online between retries.
+- Default value: `1800`
 
-#### `block-size` <span class="version-mark">从 v7.6.0 版本开始引入</span>
+#### `block-size` <span class="version-mark">New in v7.6.0</span>
 
-- 物理导入模式下，用于控制本地文件排序的 I/O 区块大小。当 IOPS 成为瓶颈时，你可以调大该参数的值以缓解磁盘 IOPS，从而提升数据导入性能。
-- 取值必须大于或等于 `1B`。注意，如果仅指定数字（如 `16`），则单位为 Byte 而不是 KiB。
-- 默认值：`"16KiB"`
+- In Physical Import Mode, this parameter controls the I/O block size for sorting local files. When the disk IOPS is a bottleneck, you can increase this value to improve data import performance.
+- The value must be greater than or equal to `1B`. Note that if you only specify a number (for example, `16`), the unit is Byte instead of KiB.
+- Default value: `"16KiB"`
 
-#### `logical-import-batch-size` <span class="version-mark">从 v8.0.0 版本开始引入</span>
+#### `logical-import-batch-size` <span class="version-mark">New in v8.0.0</span>
 
-- 在逻辑导入模式下，用于设置下游 TiDB 服务器上执行的每条 SQL 语句的最大值。
-- 该参数指定了单个事务中执行的每个 `INSERT` 或 `REPLACE` 语句的 `VALUES` 部分的期望最大大小。
-- 该参数不是一个严格限制。实际执行的 SQL 语句长度可能会根据导入数据的具体内容而有所不同。
-- 默认值：`"96KiB"`，在 TiDB Lightning 是集群中唯一的客户端时，这是导入速度的最佳值。
-- 由于 TiDB Lightning 的实现限制，该参数最大值为 `"96KiB"`。设置更大的值不会生效。你可以减小该值以减轻大事务对集群的压力。
+- In Logical Import Mode, this parameter controls the size of each SQL statement executed on the downstream TiDB server.
+- It specifies the expected size of the `VALUES` part of each `INSERT` or `REPLACE` statement in a single transaction.
+- This parameter is not a hard limit. The actual SQL executed might be longer or shorter, depending on the actual content imported.
+- Default value: `"96KiB"`, which is optimized for import speed when TiDB Lightning is the only client of the cluster.
+- Due to the implementation details of TiDB Lightning, the value is capped at 96 KiB. Setting a larger value will not take effect. You can decrease this value to reduce the stress on the cluster due to large transactions.
 
-#### `logical-import-batch-rows` <span class="version-mark">从 v8.0.0 版本开始引入</span>
+#### `logical-import-batch-rows` <span class="version-mark">New in v8.0.0</span>
 
-- 在逻辑导入模式下，限制每个事务中可插入的最大行数。
-- 当同时指定 [`logical-import-batch-size`](#logical-import-batch-size-从-v800-版本开始引入) 和 `logical-import-batch-rows` 时，首先达到阈值的参数将生效。
-- 你可以减小该值以减轻大事务对集群的压力。
-- 默认值：`65536`
+- In Logical Import Mode, this parameter controls the maximum number of rows inserted per transaction.
+- When you specify both [`logical-import-batch-size`](#logical-import-batch-size-new-in-v800) and `logical-import-batch-rows`, the parameter whose value reaches its threshold first will take effect.
+- You can decrease this value to reduce the stress on the cluster due to large transactions.
+- Default value: `65536`
 
 #### `logical-import-prep-stmt`
 
-- 在逻辑导入模式下，控制是否使用[预处理语句](/sql-statements/sql-statement-prepare.md)和语句缓存来提高性能。
-- 默认值：`false`
+- In Logical Import Mode, this parameter controls whether to use [prepared statements](/sql-statements/sql-statement-prepare.md) and statement cache to improve performance.
+- Default value: `false`
 
 ### mydumper
 
 #### `read-block-size`
 
-- 设置文件读取的区块大小，确保该值比数据源的最长字符串长。
-- 默认值：`"64KiB"`
+- Specifies the block size for file reading. Keep it longer than the longest string of the data source.
+- Default value: `"64KiB"`
 
 #### `batch-import-ratio`
 
-- 引擎文件需按顺序导入。由于并行处理，多个数据引擎几乎同时被导入，这样形成的处理队列会造成资源浪费。因此，为了合理分配资源，TiDB Lightning 稍微增大了前几个区块的大小。
-- 该参数用于设置在完全并发下，导入和写入过程的持续时间比。该值可以通过计算 1 GiB 大小的单张表的（导入时长/写入时长）得到。你可以在日志文件中查看精确的时间。
-- 如果导入更快，区块大小的差异就会更小。比值为 `0` 表示区块大小相同。
-- 取值范围：`[0, 1)`
+- The engine file needs to be imported sequentially. Due to parallel processing, multiple data engines will be imported at nearly the same time, and this creates a queue and wastes resources. Therefore, TiDB Lightning slightly increases the size of the first few batches to properly distribute resources.
+- The scale up factor is controlled by this parameter, which expresses the ratio of duration between the "import" and "write" steps with full concurrency. This can be calculated by using the ratio (import duration/write duration) of a single table of size around 1 GiB. The exact timing can be found in the log.
+- If "import" is faster, the batch size variance is smaller, and a ratio of zero means a uniform batch size.
+- Range: `[0, 1)`
 
-<!-- 示例值：`0.75` -->
+<!-- Example: `0.75` -->
 
 #### `data-source-dir`
 
-- 本地源数据目录或外部存储 URI。关于外部存储 URI 详情可参考 [URI 格式](/br/backup-and-restore-storages.md#uri-格式)。
+- Specifies the local source data directory or the URI of the external storage. For more information about the URI of the external storage, see [URI format](/br/backup-and-restore-storages.md#uri-format).
 
-<!-- 示例值：`"/data/my_database"` -->
+<!-- Example: `"/data/my_database"` -->
 
 #### `character-set`
 
-- 指定包含 `CREATE TABLE` 语句的表结构文件的字符集。
-- 默认值：`"auto"`
-- 可选值：
-    - `"auto"`：自动判断文件编码是 UTF-8 还是 GB-18030，两者皆非则会报错
-    - `"utf8mb4"`：表结构文件必须使用 UTF-8 编码，否则会报错
-    - `"gb18030"`：表结构文件必须使用 GB-18030 编码，否则会报错
-    - `"latin1"`：源数据文件使用 MySQL latin1 字符集编码（也被称为 Code Page 1252）
-    - `"binary"`：不尝试转换编码
+- Specifies the character set of the schema files that contains the `CREATE TABLE` statements.
+- Default value: `"auto"`
+- Value options:
+    - `"auto"`: automatically detects whether the schema is UTF-8 or GB-18030. An error is reported if the encoding is neither.
+    - `"utf8mb4"`: the schema files must be encoded as UTF-8; otherwise, an error is reported.
+    - `"gb18030"`: the schema files must be encoded as GB-18030; otherwise, an error is reported
+    - `"latin1"`: the schema files use MySQL latin1 encoding, also known as Code Page 1252.
+    - `"binary"`: do not try to decode the schema files
 
 #### `data-character-set`
 
-- 指定源数据文件的字符集，TiDB Lightning 会在导入过程中将源文件从指定的字符集转换为 UTF-8 编码。
-- 该配置项目前仅用于指定 CSV 文件的字符集。留空此配置将默认使用 `"binary"`，即不尝试转换编码。
-- TiDB Lightning 不会对源数据文件的字符集做假定，仅会根据此配置对数据进行转码并导入。
-- 如果字符集设置与源数据文件的实际编码不符，可能会导致导入失败、导入缺失或导入数据乱码。
-- 默认值：`"binary"`
-- 可选值：
-    - `"binary"`：不尝试转换编码
-    - `"utf8mb4"`：源数据文件使用 UTF-8 编码
-    - `"GB18030"`：源数据文件使用 GB-18030 编码
-    - `"GBK"`：源数据文件使用 GBK 编码（GBK 编码是对 GB-2312 字符集的拓展，也被称为 Code Page 936）
-    - `"latin1"`：源数据文件使用 MySQL latin1 字符集编码（也被称为 Code Page 1252）
+- Specifies the character set of the source data file. TiDB Lightning converts the source file from the specified character set to UTF-8 encoding when importing.
+- Currently, this configuration only specifies the character set of the CSV files with the following options supported. If left blank, the default value `"binary"` is used, that is to say, Lightning does not convert the encoding.
+- TiDB Lightning does not predict about the character set of the source data file and only converts the source file and import the data based on this configuration.
+- If the value of this configuration is not the same as the actual encoding of the source data file, a failed import, data loss or data disorder might appear.
+- Default value: `"binary"`
+- Value options:
+    - `"binary"`: indicates that TiDB Lightning does not convert the encoding (by default).
+    - `"utf8mb4"`: indicates that the source data file uses UTF-8 encoding.
+    - `"GB18030"`: indicates that the source data file uses the GB-18030 encoding.
+    - `"GBK"`: the source data file uses GBK encoding (GBK encoding is an extension of the GB-2312 character set, also known as Code Page 936).
+    - `"latin1"`: the source data file uses MySQL latin1 encoding, also known as Code Page 1252.
 
 #### `data-invalid-char-replace`
 
-- 指定在源数据文件的字符集转换过程中，出现不兼容字符时的替换字符。
-- 此项不可与字段分隔符、引用界定符和换行符号重复。改变默认值可能会导致潜在的源数据文件解析性能下降。
-- 默认值：`"\uFFFD"`，即 UTF-8 编码中的 "error" Rune 或 Unicode replacement character
+- Specifies the replacement character in case of incompatible characters during the character set conversion of the source data file.
+- This configuration must not be duplicated with field separators, quote definers, and line breaks. Changing the default value might result in potential degradation of parsing performance for the source data file.
+- Default value: `"\uFFFD"`, which is the "error" Rune or Unicode replacement character in UTF-8 encoding.
 
 #### `strict-format`
 
-- 启用[严格格式](/tidb-lightning/tidb-lightning-data-source.md#启用严格格式)可加快导入数据的速度。为保证数据安全而非追求处理速度，默认值为 `false`，即关闭严格格式。
-- 默认值：`false`
-- 可选值：`true`、`false`
-- 当设置为 `true` 开启严格格式时，有如下限制：
-    - 在 CSV 文件的所有记录中，每条数据记录的值不可包含字符换行符（`U+000A` 和 `U+000D`，即 `\r` 和 `\n`）甚至被引号包裹的字符换行符都不可包含，即换行符只可用来分隔行。
-    - 导入数据源为严格格式时，TiDB Lightning 会快速定位大文件的分割位置进行并行处理。但是如果输入数据为非严格格式，可能会将一条完整的数据分割成两部分，导致结果出错。
+- Specifies the input data in a [strict format](/tidb-lightning/tidb-lightning-data-source.md#strict-format) to speed up processing. The default value is `false` for safety instead of speed.
+- Default value: `false`
+- Value options: `true`, `false`
+- `strict-format = true` requires that:
+    - In CSV, every value cannot contain literal new lines (`U+000A` and `U+000D`, or `\r` and `\n`) even when quoted, which means new lines are strictly used to separate rows.
+    - The strict format allows TiDB Lightning to quickly locate split positions of a large file for parallel processing. However, if the input data is not "strict", it might split a valid data in half and corrupt the result.
 
 #### `max-region-size`
 
-- 如果严格模式 [`strict-format`](#strict-format) 设置为 `true`，TiDB Lightning 会将 CSV 大文件分割为多个文件块进行并行处理。`max-region-size` 用于设置分割后每个文件块的最大大小。
-- 默认值：`"256MiB"`
+- If [`strict-format`](#strict-format) is `true`, TiDB Lightning splits large CSV files into multiple chunks to process in parallel. `max-region-size` is the maximum size of each chunk after splitting.
+- Default value: `"256MiB"`
 
 #### `filter`
 
-- 只导入与该通配符规则相匹配的表。
+- Only imports tables that match these wildcard rules.
 
-<!-- 示例值：`['*.*', '!mysql.*', '!sys.*', '!INFORMATION_SCHEMA.*', '!PERFORMANCE_SCHEMA.*', '!METRICS_SCHEMA.*', '!INSPECTION_SCHEMA.*']` -->
+<!-- Example: `['*.*', '!mysql.*', '!sys.*', '!INFORMATION_SCHEMA.*', '!PERFORMANCE_SCHEMA.*', '!METRICS_SCHEMA.*', '!INSPECTION_SCHEMA.*']` -->
 
 ### mydumper.csv
 
-配置 CSV 文件的解析方式。
+Configures how CSV files are parsed.
 
 #### `separator`
 
-- 字段分隔符，支持一个或多个字符。
-- 默认值：`','`
+- Specifies the separator between fields. It supports one or more characters.
+- Default value: `','`
 
 #### `delimiter`
 
-- 引用定界符，设置为空表示字符串未加引号。
-- 默认值：`'"'`
+- Specifies the quoting delimiter. Empty value means no quoting.
+- Default value: `'"'`
 
 #### `terminator`
 
-- 行尾定界字符，支持一个或多个字符。
-- 默认值：`""`，表示 `"\n"`（换行）和 `"\r\n"`（回车+换行），均表示行尾
+- Specifies the line terminator.
+- Default value: `""`, which means both `"\n"` (LF) and `"\r\n"` (CRLF) are line terminators.
 
 #### `header`
 
-- CSV 文件是否包含表头。
-- 可选值：
-    - `true`：将把首行的内容作为表头处理，不作为数据导入。
-    - `false`：首行也作为 CSV 数据导入，此时请确保 CSV 文件的列顺序与目标表的列顺序一致，否则可能会导致数据差异。
+- Controls whether the CSV files contain a header.
+- Value options:
+    - `true`: TiDB Lightning treats the first row as a table header and does not import it as data.
+    - `false`: the first row is also imported as CSV data.
 
 #### `header-schema-match`
 
-- CSV 表头是否匹配目标表的表结构。
-- 默认为 `true`，表示在导入数据时，会根据 CSV 表头的字段名去匹配目标表对应的列名，这样即使 CSV 文件和目标表列的顺序不一致也能按照对应的列名进行导入。
-- 如果 CSV 表头中的字段名和目标表的列名不匹配（例如，CSV 表头中的某些字段名在目标表中可能找不到对应的同名列）但列的顺序是一致的，请将该配置设置为 `false`。这时，在导入的时候，会直接忽略 CSV 表头的内容，以避免导入错误。在这种情况下，直接把 CSV 数据按照目标表列的顺序导入。因此，如果列的顺序不一致，请手动调整一致后再导入，否则可能会导致数据差异。
-- 默认值：`true`
-- 可选值：`true`、`false`
+- Controls whether the column names in the CSV file header are matched to those defined in the target table.
+- The default value is `true`, which means that you have confirmed that the column names in the CSV header are consistent with those in the target table, so that even if the order of the columns is different between the two, TiDB Lightning can still import the data successfully by mapping the column names.
+- If the column names between the CSV table header and the target table do not match (for example, some column names in the CSV table header cannot be found in the target table) but the column order is the same, set this configuration to `false`. In this scenario, TiDB Lightning will ignore the CSV header to avoid errors and import the data directly in the order of the columns in the target table. Therefore, if the columns are not in the same order, you need to manually adjust the order of the columns in the CSV file to be consistent with that in the target table before importing; otherwise data discrepancies might occur.
+- Default value: `true`
+- Value options: `true`, `false`
 
-> **注意：**
+> **Note:**
 >
-> 只有在 `header = true` 时，该参数才会生效。如果 `header = false`，表示 CSV 文件没有表头，此时不需要考虑相关列名匹配的问题。
+> This parameter only applies if the `header` parameter is set to `true`. If `header` is set to `false`, it means that the CSV file does not contain a header, so this parameter is not relevant.
 
 #### `not-null`
 
-- CSV 文件是否包含 NULL。
-- 可选值：
-    - `true`：CSV 所有列都不能解析为 NULL。
-    - `false`：CSV 可以包含 NULL。
+- Controls whether the CSV contains any NULL value.
+- Value options:
+    - `true`: all columns from CSV cannot be NULL.
+    - `false`: CSV can contain NULL values.
 
 #### `null`
 
-- 如果 `not-null` 设置为 `false`，即 CSV 可以包含 NULL，为 `null` 指定的值的字段将会被解析为 NULL。
+- When `not-null` is `false` (that is, CSV can contain NULL), fields equal to this value will be treated as NULL.
 
-<!-- 示例值：`'\N'` -->
+<!-- Example: `'\N'` -->
 
 #### `backslash-escape`
 
-- 是否对字段内 `\` 进行转义。
+- Controls whether to interpret backslash escapes inside fields.
 
-<!-- 示例值：`true` -->
+<!-- Example: `true` -->
 
 #### `trim-last-separator`
 
-- 如果有行以分隔符结尾，是否删除尾部分隔符。
+- Controls whether to remove it if a line ends with a separator.
 
-<!-- 示例值：`false` -->
+<!-- Example: `false` -->
 
 ### mydumper.files
 
 #### `pattern`
 
-- 解析 AWS Aurora Parquet 文件所需的表达式。
-- 示例值：`'(?i)^(?:[^/]*/)*([a-z0-9_]+)\.([a-z0-9_]+)/(?:[^/]*/)*(?:[a-z0-9\-_.]+\.(parquet))$'`
+- Expression used for parsing AWS Aurora parquet files.
+- Example: `'(?i)^(?:[^/]*/)*([a-z0-9_]+)\.([a-z0-9_]+)/(?:[^/]*/)*(?:[a-z0-9\-_.]+\.(parquet))$'`
 
 #### `schema`
 
-- 示例值：`'$1'`
+- Example: `'$1'`
 
 #### `table`
 
-- 示例值：`'$2'`
+- Example: `'$2'`
 
 #### `type`
 
-- 示例值：`'$3'`
+- Example: `'$3'`
 
 ### tidb
 
 #### `host`
 
-- 目标集群的信息。tidb-server 的地址，填一个即可。
+- Configuration of any TiDB server from the cluster.
 
-<!-- 示例值：`"172.16.31.1"` -->
+<!-- Example: `"172.16.31.1"` -->
 
 #### `port`
 
-- 示例值：`4000`
+- Example: `4000`
 
 #### `user`
 
-- 示例值：`"root"`
+- Example: `"root"`
 
 #### `password`
 
-- 设置连接 TiDB 的密码，可为明文或 Base64 编码。
+- Configure the password to connect to TiDB. The password can either be plaintext or Base64 encoded.
 
 #### `status-port`
 
-- 表结构信息从 TiDB 的 `status-port` 获取。
+- Fetches the table schema information from TiDB.
 
-<!-- 示例值：`10080` -->
+<!-- Example: `10080` -->
 
 #### `pd-addr`
 
-- pd-server 的地址，从 v7.6.0 开始支持设置多个地址。
+- Specifies the address of any PD server from the cluster. Starting from v7.6.0, TiDB supports setting multiple PD addresses.
 
-<!-- 示例值：`"172.16.31.4:2379,56.78.90.12:3456"` -->
+<!-- Example: `"172.16.31.4:2379,56.78.90.12:3456"` -->
 
 #### `log-level`
 
-- 设置 TiDB 库的日志等级。TiDB Lightning 引用了 TiDB 库，并生成日志。
+- Controls the log level of the TiDB library. TiDB Lightning imports TiDB as a library and generates some logs itself.
 
-<!-- 示例值：`"error"` -->
+<!-- Example: `"error"` -->
 
 #### `build-stats-concurrency`
 
-- 设置 TiDB 会话变量，提升 Checksum 和 Analyze 的速度。详情参考[控制 `ANALYZE` 并发度](/statistics.md#控制-analyze-并发度)。
+- Sets the TiDB session variable to speed up the Checksum and Analyze operations. For more information, see [Control `ANALYZE` concurrency](/statistics.md#control-analyze-concurrency).
 
-<!-- 示例值：`20` -->
+<!-- Example: `20` -->
 
 #### `distsql-scan-concurrency`
 
-- 设置 TiDB 会话变量，提升 Checksum 和 Analyze 的速度。详情参考[控制 `ANALYZE` 并发度](/statistics.md#控制-analyze-并发度)。
-- 如果将 [`checksum-via-sql`](#checksum-via-sql) 设置为 `"true"`，则会通过 TiDB 执行 `ADMIN CHECKSUM TABLE <table>` SQL 语句来进行 Checksum 操作。在这种情况下，`distsql-scan-concurrency` 参数设置不会生效。
+- Sets the TiDB session variable to speed up the Checksum and Analyze operations. For more information, see [Control `ANALYZE` concurrency](/statistics.md#control-analyze-concurrency).
+- If [`checksum-via-sql`](#checksum-via-sql) is set to `"true"`, TiDB Lightning will execute the `ADMIN CHECKSUM TABLE <table>` SQL statement to perform the Checksum operation on TiDB. In this case, the following parameters `distsql-scan-concurrency` and `checksum-table-concurrency` will not take effect.
 
-<!-- 示例值：`15` -->
+<!-- Example: `15` -->
 
 #### `index-serial-scan-concurrency`
 
-- 设置 TiDB 会话变量，提升 Checksum 和 Analyze 的速度。详情参考[控制 `ANALYZE` 并发度](/statistics.md#控制-analyze-并发度)。
+- Sets the TiDB session variable to speed up the Checksum and Analyze operations. For more information, see [Control `ANALYZE` concurrency](/statistics.md#control-analyze-concurrency).
 
-<!-- 示例值：`20` -->
+<!-- Example: `20` -->
 
 #### `checksum-table-concurrency`
 
-- 设置 TiDB 会话变量，提升 Checksum 和 `ANALYZE` 的速度。详情参考[控制 `ANALYZE` 并发度](/statistics.md#控制-analyze-并发度)。
-- 如果将 [`checksum-via-sql`](#checksum-via-sql) 设置为 `"true"`，则会通过 TiDB 执行 `ADMIN CHECKSUM TABLE <table>` SQL 语句来进行 Checksum 操作。在这种情况下，`checksum-table-concurrency` 参数设置不会生效。
+- Sets the TiDB session variable to speed up the Checksum and `ANALYZE` operations. For more information, see [Control `ANALYZE` concurrency](/statistics.md#control-analyze-concurrency).
+- If [`checksum-via-sql`](#checksum-via-sql) is set to `"true"`, TiDB Lightning will execute the `ADMIN CHECKSUM TABLE <table>` SQL statement to perform the Checksum operation on TiDB. In this case, the following parameters `distsql-scan-concurrency` and `checksum-table-concurrency` will not take effect.
 
-<!-- 示例值：`2` -->
+<!-- Example: `2` -->
 
 #### `sql-mode`
 
-- 解析和执行 SQL 语句的默认 SQL 模式。
+- Specifies the default SQL mode used to parse and execute the SQL statements.
 
-<!-- 示例值：`"ONLY_FULL_GROUP_BY,NO_AUTO_CREATE_USER"` -->
+<!-- Example: `"ONLY_FULL_GROUP_BY,NO_AUTO_CREATE_USER"` -->
 
 #### `max-allowed-packet`
 
-- 设置数据库连接允许的最大数据包大小，对应于系统参数中的 `max_allowed_packet`。
-- 如果设置为 `0`，会使用下游数据库 global 级别的 `max_allowed_packet`。
+- Sets maximum packet size allowed for SQL connections.
+- Set this to `0` to automatically fetch the `max_allowed_packet` variable from server on every connection.
 
-<!-- 示例值：`67_108_864` -->
+<!-- Example: `67_108_864` -->
 
 #### `tls`
 
-- SQL 连接是否使用 TLS。
-- 可选值：
-    * `""`：如果填充了 [`[tidb.security]`](#tidbsecurity) 部分，则强制使用 TLS（与 `"cluster"` 情况相同），否则与 `"false"` 情况相同
-    * `"false"`：禁用 TLS
-    * `"cluster"`：强制使用 TLS 并使用 [`[tidb.security]`](#tidbsecurity) 部分中指定的 CA 验证服务器的证书
-    * `"skip-verify"`：强制使用 TLS，但不验证服务器的证书（不安全）
-    * `"preferred"`：与 `"skip-verify"` 相同，但是如果服务器不支持 TLS，则会退回到未加密的连接
+- Controls whether to use TLS for SQL connections.
+- Value options:
+    * `""`: forces TLS (the same as "cluster") if the [`[tidb.security]`](#tidbsecurity) section is populated. Otherwise, the same as `"false"`.
+    * `"false"`: disables TLS.
+    * `"cluster"`: forces TLS and verifies the server's certificate with the CA specified in the [`[tidb.security]`](#tidbsecurity) section.
+    * `"skip-verify"`: forces TLS but does not verify the server's certificate. Note that this setting is insecure.
+    * `"preferred"`: the same as `"skip-verify"`, but if the server does not support TLS, fall back to the unencrypted connection.
 
 ### tidb.security
 
-- 指定证书和密钥用于 TLS 连接 MySQL。
-- 默认值：[`security`](#security) 部分的副本。
+- Specifies certificates and keys for TLS-enabled MySQL connections.
+- Default value: the copy of the [`security`](#security) section.
 
 #### `ca-path`
 
-- CA 的公钥证书。设置为空字符串可禁用 SQL 的 TLS。
+- Specifies the public certificate of the CA. Set to the empty string if you want to disable TLS for SQL.
 
-<!-- 示例值：`"/path/to/ca.pem"` -->
+<!-- Example: `"/path/to/ca.pem"` -->
 
 #### `cert-path`
 
-- 该服务的公钥证书。
-- 默认值：[`security.cert-path`](#cert-path) 的副本。
+- Specifies the public certificate of this service.
+- Default value: the copy of [`security.cert-path`](#cert-path).
 
-<!-- 示例值：`"/path/to/lightning.pem"` -->
+<!-- Example: `"/path/to/lightning.pem"` -->
 
 #### `key-path`
 
-- 此服务的私钥。
-- 默认值：[`security.key-path`](#key-path) 的副本。
+- Specifies the private key of this service.
+- Default value: the copy of [`security.key-path`](#key-path).
 
-<!-- 示例值：`"/path/to/lightning.key"` -->
+<!-- Example: `"/path/to/lightning.key"` -->
 
 ### tidb.session-vars
 
-设置其他 TiDB 会话变量。
+Specifies other TiDB session variables.
 
 <!-- tidb_enable_clustered_index = "OFF" -->
 
 ### post-restore
 
-- 对于物理导入模式，数据导入完成后，TiDB Lightning 可以自动执行 Checksum 和 `ANALYZE` 操作。
-- 在生产环境中，建议总是开启 Checksum 和 `ANALYZE`。
-- 执行的顺序为：Checksum -> `ANALYZE`。
-- 注意：对于逻辑导入模式，无须执行这两个阶段，因此在实际运行时总是会直接跳过。
+- In the physical import mode, when data importing is complete, TiDB Lightning can automatically perform the Checksum and `ANALYZE` operations.
+- It is recommended to leave these as true in the production environment.
+- The execution order: Checksum -> `ANALYZE`.
+- Note that in the logical import mode, Checksum and `ANALYZE` operations are not needed, and they are always skipped in the actual operation.
 
 #### `checksum`
 
-- 配置是否在导入完成后对每一个表执行 `ADMIN CHECKSUM TABLE <table>` 操作来验证数据的完整性。
-- 默认值：`"required"`，从 v4.0.8 开始，默认值由 `"true"` 改为 `"required"`
-- 可选值：
-    - `"required"`：在导入完成后执行 Checksum 检查，如果 Checksum 检查失败，则会报错退出
-    - `"optional"`：在导入完成后执行 Checksum 检查，如果报错，会输出一条 WARN 日志并忽略错误
-    - `"off"`：导入结束后不执行 Checksum 检查
-- Checksum 对比失败通常表示导入异常（数据丢失或数据不一致），因此建议总是开启 Checksum。
-- 考虑到与旧版本的兼容性，依然可以在本配置项设置 `true` 和 `false` 两个布尔值，其效果与 `required` 和 `off` 相同。
+- Specifies whether to perform `ADMIN CHECKSUM TABLE <table>` for each table to verify data integrity after importing.
+- Default value: `"required"`. Starting from v4.0.8, the default value is changed from `"true"` to `"required"`.
+- Value options:
+    - `"required"`: Perform admin checksum. If checksum fails, TiDB Lightning will exit with failure.
+    - `"optional"`: Perform admin checksum. If checksum fails, TiDB Lightning will report a WARN log but ignore any error.
+    - `"off"`: Do not perform checksum.
+- Checksum failure usually means import exception (data loss or inconsistency). It is recommended to always enable checksum.
+- For backward compatibility, bool values `true` and `false` are also allowed for this field. `true` is equivalent to `required` and `false` is equivalent to `off`.
 
 #### `checksum-via-sql`
 
-- 设置是否通过 TiDB 执行 `ADMIN CHECKSUM TABLE <table>` 操作。
-- 默认值：`"false"`
-- 可选值：
-    - `"false"`：表示通过 TiDB Lightning 下发 `ADMIN CHECKSUM TABLE <table>` 命令给 TiKV 执行。
-    - `"true"`：当该值为 `"true"` 时，如果要调整并发，需要在 TiDB 中设置 [`tidb_checksum_table_concurrency`](/system-variables.md#tidb_checksum_table_concurrency) 系统变量。
-- 建议将该值设为 `"true"`，以便在执行 Checksum 失败时更容易定位问题。
+- Specifies whether the `ADMIN CHECKSUM TABLE <table>` operation is executed via TiDB.
+- Default value: `"false"`
+- Value options:
+    - `"false"`: the `ADMIN CHECKSUM TABLE <table>` command is sent to TiKV for execution via TiDB Lightning.
+    - `"true"`: if you want to adjust concurrency when this value is `"true"`, you need to set the [`tidb_checksum_table_concurrency`](/system-variables.md#tidb_checksum_table_concurrency) variable in TiDB.
+- It is recommended that you set this value to `"true"` to make it easier to locate the problem if checksum fails.
 
 #### `analyze`
 
-- 配置是否在 Checksum 结束后对所有表逐个执行 `ANALYZE TABLE <table>` 操作。
-- 默认值：`"optional"`
-- 可选值：`"required"`、`"optional"`、`"off"`
+- Specifies whether to perform `ANALYZE TABLE <table>` for each table after checksum is done.
+- Default value: `"optional"`
+- Value options: `"required"`, `"optional"`, `"off"`
 
 ### cron
 
-- 设置周期性后台操作
-- 支持的单位：h（时）、m（分）、s（秒）
+- Configures the background periodic actions.
+- Supported units: h (hour), m (minute), s (second).
 
 #### `switch-mode`
 
-- TiDB Lightning 自动刷新导入模式状态的持续时间，该值应小于 TiKV 对应的设定值。
+- Specifies the duration between which TiDB Lightning automatically refreshes the import mode status. Should be shorter than the corresponding TiKV setting.
 
-<!-- 示例值：`"5m"` -->
+<!-- Example: `"5m"` -->
 
 #### `log-progress`
 
-- 在日志中打印导入进度的持续时间。
+- Specifies the duration between which an import progress is printed to the log.
 
-<!-- 示例值：`"5m"` -->
+<!-- Example: `"5m"` -->
 
 #### `check-disk-quota`
 
-- 使用物理导入模式时，检查本地磁盘配额的时间间隔。
-- 默认值：`"60s"`，即 60 秒
+- Specifies the time interval for checking the local disk quota when you use the physical import mode.
+- Default value: `"60s"`, which means 60 seconds.

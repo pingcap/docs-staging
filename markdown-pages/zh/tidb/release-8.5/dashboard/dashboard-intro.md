@@ -1,72 +1,72 @@
 ---
-title: TiDB Dashboard 介绍
-summary: TiDB Dashboard 是 TiDB 4.0 版本后提供的图形化界面，用于监控和诊断集群。它内置于 TiDB 的 PD 组件中，无需独立部署。可以查看集群整体运行概况、组件及主机运行状态、集群读写流量分布、SQL 查询的执行信息、耗时较长的 SQL 语句执行信息、诊断集群问题并生成报告、查询所有组件日志、预估资源管控容量、收集分析各个组件的性能数据。
+title: TiDB Dashboard Introduction
+summary: TiDB Dashboard is a Web UI for monitoring, diagnosing, and managing the TiDB cluster. It shows overall running status, component and host status, traffic distribution, SQL statement execution information, slow queries, cluster diagnostics, log search, resource control, and profiling data collection.
 ---
 
-# TiDB Dashboard 介绍
+# TiDB Dashboard Introduction
 
-TiDB Dashboard 是 TiDB 自 4.0 版本起提供的图形化界面，可用于监控及诊断 TiDB 集群。TiDB Dashboard 内置于 TiDB 的 PD 组件中，无需独立部署。
+TiDB Dashboard is a Web UI for monitoring, diagnosing, and managing the TiDB cluster, which is available since v4.0. It is built into the PD component and does not require an independent deployment.
 
-> **注意：**
+> **Note:**
 >
-> TiDB v6.5.0 且 TiDB Operator v1.4.0 之后，在 Kubernetes 上支持将 TiDB Dashboard 作为独立的 Pod 部署。具体信息，参考 [TiDB Operator 部署独立的 TiDB Dashboard](https://docs.pingcap.com/zh/tidb-in-kubernetes/v1.6/get-started#部署独立的-tidb-dashboard)。
+> TiDB v6.5.0 (and later) and TiDB Operator v1.4.0 (and later) support deploying TiDB Dashboard as an independent Pod on Kubernetes. For details, see [Deploy TiDB Dashboard independently in TiDB Operator](https://docs.pingcap.com/tidb-in-kubernetes/dev/get-started#deploy-tidb-dashboard-independently).
 
-![界面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-intro.gif)
+![TiDB Dashboard interface](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-intro.gif)
 
-TiDB Dashboard 在 GitHub 上[开源](https://github.com/pingcap-incubator/tidb-dashboard)。
+TiDB Dashboard is open-sourced on [GitHub](https://github.com/pingcap-incubator/tidb-dashboard).
 
-以下列出了 TiDB Dashboard 的主要功能，可分别点击小节内的链接进一步了解详情。
+This document introduces the main features of TiDB Dashboard. You can click links in the following sections to learn more details.
 
-## 了解集群整体运行概况
+## Show the overall running status of the TiDB cluster
 
-查看集群整体 QPS 数值、执行耗时、消耗资源最多的几类 SQL 语句等概况信息。
+You can use TiDB Dashboard to learn the TiDB cluster's queries per second (QPS), execution time, the types of SQL statements that consume the most resources, and other overview information.
 
-参阅[概况页面](/dashboard/dashboard-overview.md)了解详情。
+See [TiDB Dashboard Overview](/dashboard/dashboard-overview.md) for details.
 
-## 查看组件及主机运行状态
+## Show the running status of components and hosts
 
-查看整个集群中 TiDB、TiKV、PD、TiFlash 组件的运行状态及其所在主机的运行状态。
+You can use TiDB Dashboard to view the running status of TiDB, TiKV, PD, TiFlash components in the entire cluster and the running status of the host on which these components are located.
 
-参阅[集群信息页面](/dashboard/dashboard-cluster-info.md)了解详情。
+See [TiDB Dashboard Cluster Information Page](/dashboard/dashboard-cluster-info.md) for details.
 
-## 分析集群读写流量分布及趋势变化
+## Show distribution and trends of read and write traffic
 
-通过热力图形式可视化地展示整个集群中读写流量随时间的变化情况，及时发现业务模式的变化，或定位性能不均衡的热点所在。
+The Key Visualizer feature of TiDB Dashboard visually shows the change of read and write traffic over time in the entire cluster in the form of heatmap. You can use this feature to timely discover changes of application modes or locate hotspot issues with uneven performance.
 
-参阅[流量可视化页面](/dashboard/dashboard-key-visualizer.md)了解详情。
+See [Key Visualizer Page](/dashboard/dashboard-key-visualizer.md) for details.
 
-## 列出所有 SQL 查询的耗时等执行信息
+## Show a list of execution information of all SQL statements
 
-列出所有 SQL 语句在集群上执行情况，了解各个阶段的执行时间、总运行次数等信息，帮助用户分析和定位集群中最消耗资源的查询，优化整体性能。
+The execution information of all SQL statements is listed on the SQL Statements page. You can use this page to learn the execution time and total executions at all stages, which helps you analyze and locate the SQL queries that consume the most resources and improve the overall cluster performance.
 
-参阅 [SQL 语句分析页面](/dashboard/dashboard-statement-list.md)了解详情。
+See [SQL Statements Page of TiDB Dashboard](/dashboard/dashboard-statement-list.md) for details.
 
-## 详细了解耗时较长的 SQL 语句的执行信息
+## Learn the detailed execution information of slow queries
 
-列出所有耗时较长的 SQL 语句文本及其执行信息，帮助用户定位 SQL 语句性能缓慢或发生性能抖动的原因。
+The Slow Queries page of TiDB Dashboard shows a list of all SQL statements that take a long time to execute, including the SQL texts and execution information. This page helps you locate the cause of slow queries or performance jitter.
 
-参阅[慢查询页面](/dashboard/dashboard-slow-query.md)了解详情。
+See [Slow Queries Page](/dashboard/dashboard-slow-query.md) for details.
 
-## 诊断常见集群问题并生成报告
+## Diagnose common cluster problems and generate reports
 
-自动判断集群中是否存在一些常见的风险（如配置不一致）或问题，生成报告并给出操作建议，或对比集群在不同时间段的各个指标状态，供用户分析可能存在问题的方向。
+The diagnostic feature of TiDB Dashboard automatically determines whether some common risks (such as inconsistent configurations) or problems exist in the cluster, generates reports, and gives operation suggestions, or compares the status of each cluster metric in different time ranges for you to analyze possible problems.
 
-参阅[集群诊断页面](/dashboard/dashboard-diagnostics-access.md)了解详情。
+See [TiDB Dashboard Cluster Diagnostics Page](/dashboard/dashboard-diagnostics-access.md) for details.
 
-## 查询所有组件日志
+## Query logs of all components
 
-按关键字、时间范围等条件快速搜索集群中所有运行实例的日志，并可打包下载到本地。
+On the Search Logs page of TiDB Dashboard, you can quickly search logs of all running instances in the cluster by keywords, time range, and other conditions, package these logs, and download them to your local machine.
 
-参阅[日志搜索页面](/dashboard/dashboard-log-search.md)了解详情。
+See [Search Logs Page](/dashboard/dashboard-log-search.md) for details.
 
-## 预估资源管控容量
+## Estimate cluster capacity for resource control
 
-为使用[资源管控 (Resource Control)](/tidb-resource-control-ru-groups.md) 特性实现资源隔离，集群管理员可以定义资源组 (Resource Group)，通过资源组限定配额。
+To implement resource isolation using the [Resource Control](/tidb-resource-control-ru-groups.md) feature, cluster administrators can create resource groups and set quotas for each group.
 
-在进行资源规划之前，你需要了解集群的整体容量。参阅[资源管控页面](/dashboard/dashboard-resource-manager.md)了解详情。
+Before resource planning, you need to know the overall capacity of the cluster. For more details, see [Resource Manager page](/dashboard/dashboard-resource-manager.md).
 
-## 收集分析各个组件的性能数据
+## Collect profiling data for each instance
 
-高级调试功能：无需第三方工具，在线地对各个组件进行性能分析，剖析组件实例在分析时间段内执行的各种内部操作及比例。
+This is an advanced debugging feature that lets you profile each instance online and analyze various internal operations an instance performed during the profiling data collection period and the proportion of the operation execution time in this period without third-party tools.
 
-参阅[实例性能分析页面](/dashboard/dashboard-profiling.md)了解详情。
+See [Profile Instances Page](/dashboard/dashboard-profiling.md) for details.

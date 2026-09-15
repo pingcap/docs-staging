@@ -1,18 +1,18 @@
 ---
-title: 高可用常见问题
-summary: 介绍高可用相关的常见问题。
+title: High Availability FAQs
+summary: Learn about the FAQs related to high availability of TiDB.
 ---
 
-# 高可用常见问题
+# High Availability FAQs
 
-本文档介绍高可用相关的常见问题。
+This document summarizes the FAQs related to high availability of TiDB.
 
-## TiDB 数据是强一致的吗？
+## How is TiDB strongly consistent?
 
-通过使用 [Raft 一致性算法](https://raft.github.io/)，数据在各 TiKV 节点间复制为多副本，以确保某个节点宕机时数据的安全性。
+Data is redundantly replicated between TiKV nodes using the [Raft consensus algorithm](https://raft.github.io/) to ensure recoverability when a node failure occurs.
 
-在底层，TiKV 使用复制日志 + 状态机 (State Machine) 的模型来复制数据。对于写入请求，数据被写入 Raft Leader，然后 Leader 以日志的形式将命令复制到它的 Follower 中。当集群中的大多数节点收到此日志时，日志会被提交，状态机会相应作出变更，以此来实现强一致。
+At the bottom layer, TiKV uses a model of replication log + State Machine to replicate data. For the write requests, the data is written to a Leader and the Leader then replicates the command to its Followers in the form of log. When the majority of nodes in the cluster receive this log, this log is committed and can be applied into the State Machine.
 
-## TiDB 是否提供三中心跨机房多活部署的推荐方案？
+## What's the recommended solution for the deployment of three geo-distributed data centers?
 
-从架构来看，TiDB 支持真正意义上的跨中心异地多活。从实现层面看，多地部署方案依赖数据中心之间的网络延迟和稳定性，一般建议延迟在 5ms 以下。目前 TiDB 已经有相似的客户部署方案，参见[两地三中心部署方案](/three-data-centers-in-two-cities-deployment.md)。
+The architecture of TiDB guarantees that it fully supports geo-distribution and multi-activeness. Your data and applications are always-on. All the outages are transparent to your applications and your data can recover automatically. The operation depends on the network latency and stability. It is recommended to keep the latency within 5ms. Currently, TiDB already has similar use cases. For details, see [Three Data Centers in Two Cities Deployment](/three-data-centers-in-two-cities-deployment.md).

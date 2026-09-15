@@ -1,50 +1,54 @@
 ---
 title: tiup dm stop
-summary: tiup dm stop 命令用于停止指定集群的所有服务或部分服务。核心服务停止后集群将无法提供服务。语法为 tiup dm stop <cluster-name> [flags]。选项包括 -N, --node（strings，默认为 []，表示所有节点），-R, --role（strings，默认为 []，表示所有角色），-h, --help。停止服务的日志将会输出。
+summary: The `tiup dm stop` command is used to stop services in a specified cluster. You can specify nodes and roles to be stopped using the `-N, --node` and `-R, --role` options. The output is the log of stopping the service.
 ---
 
 # tiup dm stop
 
-命令 `tiup dm stop` 用于停止指定集群的所有服务或部分服务。
+The `tiup dm stop` command is used to stop all or part of the services of the specified cluster.
 
-> **注意：**
+> **Note:**
 >
-> 核心服务停止后集群将无法提供服务。
+> The cluster cannot provide services after the core service is stopped.
 
-## 语法
+## Syntax
 
 ```shell
 tiup dm stop <cluster-name> [flags]
 ```
 
-`<cluster-name>` 为要操作的集群名字，如果忘记集群名字可查看[集群列表](/tiup/tiup-component-dm-list.md)。
+`<cluster-name>`: the name of the cluster to operate on. If you forget the cluster name, you can check it with the [cluster list](/tiup/tiup-component-dm-list.md) command.
 
-## 选项
+## Options
 
-### -N, --node（strings，默认为 []，表示所有节点）
+### -N, --node
 
-指定要停止的节点，不指定则表示所有节点。该选项的值为以逗号分割的节点 ID 列表，节点 ID 为[集群状态](/tiup/tiup-component-dm-display.md)表格的第一列。
+- Specifies the nodes to be stopped. If not specified, all nodes are stopped. The value of this option is a comma-separated list of node IDs. You can get the node IDs from the first column of the cluster status table returned by the [`tiup dm display`](/tiup/tiup-component-dm-display.md) command.
+- Data type: `STRINGS`
+- If this option is not specified in the command, all nodes are selected by default.
 
-> **注意：**
-> 
-> 若同时指定了 `-R, --role`，那么将停止它们的交集中的服务。
+> **Note:**
+>
+> If the `-R, --role` option is specified at the same time, only the service nodes that match both the specifications of `-N, --node` and `-R, --role` are stopped.
 
-### -R, --role（strings，默认为 []，表示所有角色）
+### -R, --role
 
-指定要停止的角色，不指定则表示所有角色。该选项的值为以逗号分割的节点角色列表，角色为[集群状态](/tiup/tiup-component-dm-display.md)表格的第二列。
+- Specifies the roles to be stopped. If not specified, all roles are stopped. The value of this option is a comma-separated list of node roles. You can get the roles of nodes from the second column of the cluster status table returned by the [`tiup dm display`](/tiup/tiup-component-dm-display.md) command.
+- Data type: `STRINGS`
+- If this option is not specified in the command, all roles are selected by default.
 
-> **注意：**
-> 
-> 若同时指定了 `-N, --node`，那么将停止它们的交集中的服务。
+> **Note:**
+>
+> If the `-N, --node` option is specified at the same time, only the service nodes that match both the specifications of `-N, --node` and `-R, --role` are stopped.
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints the help information.
+- Data type: `BOOLEAN`
+- Default: false
 
-## 输出
+## Output
 
-停止服务的日志。
+The log of stopping the service.
 
-[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)
+[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)

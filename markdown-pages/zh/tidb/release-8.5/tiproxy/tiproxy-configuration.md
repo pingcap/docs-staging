@@ -1,13 +1,13 @@
 ---
-title: TiProxy 配置文件
-summary: 了解与 TiProxy 部署和使用相关的配置参数。
+title: TiProxy Configuration File
+summary: Learn how to configure TiProxy.
 ---
 
-# TiProxy 配置文件
+# TiProxy Configuration File
 
-本文档介绍了与 TiProxy 部署和使用相关的配置参数。关于 TiUP 的拓扑文件配置参数，请参阅 [tiproxy-servers 配置参数](/tiup/tiup-cluster-topology-reference.md#tiproxy_servers)。
+This document introduces the configuration parameters related to the deployment and use of TiProxy. For the configurations of TiUP deployment topology, see [tiproxy-servers configurations](/tiup/tiup-cluster-topology-reference.md#tiproxy_servers).
 
-以下是一个配置示例：
+The following is an example configuration:
 
 ```toml
 [proxy]
@@ -29,117 +29,116 @@ skip-ca = true
 skip-ca = true
 ```
 
-## 配置 `tiproxy.toml` 文件
+## Configure the `tiproxy.toml` file
 
-本小节介绍了 TiProxy 的配置参数。
+This section introduces the configuration parameters of TiProxy.
 
-> **建议：**
+> **Tip:**
 >
-> 如需调整配置项的值，参见[修改配置参数](/maintain-tidb-using-tiup.md#修改配置参数)。通常情况下，修改配置项会导致重启，但是 TiProxy 支持热加载，你可以通过 `tiup cluster reload --skip-restart` 跳过重启。
+> If you need to adjust the value of a configuration item, refer to [Modify the configuration](/maintain-tidb-using-tiup.md#modify-the-configuration). Normally the modification leads to a restart. Because TiProxy supports hot-reloading, you can skip restart by executing `tiup cluster reload --skip-restart`.
 
 ### proxy
 
-SQL 端口的配置。
+Configuration for SQL port.
 
 #### `addr`
 
-+ 默认值：`0.0.0.0:6000`
-+ 支持热加载：否
-+ SQL 服务的监听地址。格式为 `<ip>:<port>`。使用 TiUP 或 TiDB Operator 部署 TiProxy 时，此配置项会自动设置。
++ Default value: `0.0.0.0:6000`
++ Support hot-reload: no
++ The listening address of the SQL service. The format is `<ip>:<port>`. This configuration item is automatically set when you deploy TiProxy using TiUP or TiDB Operator.
 
 #### `advertise-addr`
 
-+ 默认值：`""`
-+ 支持热加载：否
-+ 指定其他组件连接 TiProxy 时使用的地址，该地址只包含主机名，不包含端口。该地址可能与 [`addr`](#addr) 中的主机名不同。例如，TiProxy 的 TLS 证书中的 `Subject Alternative Name` 只包含域名时，其他组件通过 IP 连接 TiProxy 会失败。使用 TiUP 或 TiDB Operator 部署 TiProxy 时，此配置项会自动设置。如果未设置该配置项，将使用该 TiProxy 实例的外部 IP 地址。
++ Default value: `""`
++ Support hot-reload: no
++ Specifies the address that other components use to connect to this TiProxy instance. This address only contains the host name, not the port. This address might be different from the host name in [`addr`](#addr). For example, if the `Subject Alternative Name` in TiProxy's TLS certificate contains only the domain name, other components will fail to connect to TiProxy via IP. This configuration item is automatically set when you deploy TiProxy using TiUP or TiDB Operator. If not set, the external IP address of the TiProxy instance is used.
 
 #### `graceful-wait-before-shutdown`
 
-+ 默认值：`0`
-+ 支持热加载：是
-+ 单位：秒
-+ 在 TiProxy 关闭时，在 `graceful-wait-before-shutdown` 秒内，HTTP 状态返回不健康，但 SQL 端口仍接受新连接。`graceful-wait-before-shutdown` 秒之后 SQL 端口将拒绝新连接并关闭现有连接。如果客户端和 TiProxy 之间没有其他代理（例如 NLB），建议将这个配置的值设置为 `0`。
++ Default value: `0`
++ Support hot-reload: yes
++ Unit: second
++ When TiProxy shuts down, the HTTP status returns unhealthy but the SQL port still accepts new connections for `graceful-wait-before-shutdown` seconds. After that, it rejects new connections and drains clients. It is recommended to set it to `0` when there are no other proxies (e.g. NLB) between the client and TiProxy.
 
 #### `graceful-close-conn-timeout`
 
-+ 默认值：`15`
-+ 支持热加载：是
-+ 单位：秒
-+ 在 TiProxy 关闭前，最多等待 `graceful-close-conn-timeout` 秒，连接的当前事务完成后将关闭连接。超时之后 TiProxy 将强制关闭所有连接。`graceful-close-conn-timeout` 发生在 `graceful-wait-before-shutdown` 之后。建议将此超时时间设置为长于事务的生命周期。
++ Default value: `15`
++ Support hot-reload: yes
++ Unit: second
++ When TiProxy shuts down, it closes connections when they have completed their current transactions (also known as draining clients) within `graceful-close-conn-timeout` seconds. After that, all the connections are closed at once. `graceful-close-conn-timeout` happens after `graceful-wait-before-shutdown`. It is recommended to set this timeout longer than the lifecycle of a transaction.
 
 #### `max-connections`
 
-+ 默认值：`0`
-+ 支持热加载：是
-+ 每个 TiProxy 实例最多可以接受 `max-connections` 个连接。`0` 表示没有限制。
++ Default value: `0`
++ Support hot-reload: yes
++ Each TiProxy instance can accept `max-connections` connections at most. `0` means no limitation.
 
 #### `conn-buffer-size`
 
-+ 默认值：`32768`
-+ 支持热加载：是，但只对新连接有效
-+ 单位：字节
-+ 取值范围：`[1024, 16777216]`
-+ 每个连接的缓冲区大小，读和写分别使用一个缓冲区。它是内存空间和性能之间的平衡，较大的缓冲区可能会有更高的性能，但占用更多内存。当值为 `0` 时，TiProxy 会使用默认大小的缓冲区。
++ Default value: `32768`
++ Support hot-reload: yes, but only for new connections
++ Range: `[1024, 16777216]`
++ This configuration item lets you decide the connection buffer size. Each connection uses one read buffer and one write buffer. It is a tradeoff between memory and performance. A larger buffer might yield better performance results but consume more memory. When it is `0`, TiProxy uses the default buffer size.
 
 #### `pd-addrs`
 
-+ 默认值：`127.0.0.1:2379`
-+ 支持热加载：否
-+ TiProxy 连接的 PD 地址。TiProxy 通过从 PD 获取 TiDB 列表来发现 TiDB 实例。如果使用 TiUP 或 TiDB Operator 部署 TiProxy，则会自动设置此项。
++ Default value: `127.0.0.1:2379`
++ Support hot-reload: no
++ The PD addresses TiProxy connects to. TiProxy discovers TiDB instances by fetching the TiDB list from the PD. It is set automatically when TiProxy is deployed by TiUP or TiDB Operator.
 
 #### `proxy-protocol`
 
-+ 默认值：`""`
-+ 支持热加载：是，但只对新连接有效
-+ 可选值：`""`, `"v2"`
-+ 在 SQL 端口启用 [PROXY 协议](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt)。开启 PROXY 协议后能让 TiProxy 透传客户端真实的 IP 地址给 TiDB。`"v2"` 代表使用 PROXY 协议 v2 版本，`""` 代表不使用 PROXY 协议。在 TiProxy 启用 PROXY 协议后，需要同时在 TiDB 服务器上启用 [PROXY 协议](/tidb-configuration-file.md#proxy-protocol)。
++ Default value: `""`
++ Support hot-reload: yes, but only for new connections
++ Possible values: `""`, `"v2"`
++ Enable the [PROXY protocol](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt) on the port. By enabling the PROXY protocol, TiProxy can pass the real client IP address to TiDB. `"v2"` indicates using the PROXY protocol version 2, and `""` indicates disabling the PROXY protocol. If the PROXY protocol is enabled on TiProxy, you need to also enable the [PROXY protocol](/tidb-configuration-file.md#proxy-protocol) on the TiDB server.
 
 ### api
 
-HTTP 网关的配置。
+Configurations for HTTP gateway.
 
 #### `addr`
 
-+ 默认值：`0.0.0.0:3080`
-+ 支持热加载：否
-+ API 网关地址。格式为 `<ip>:<port>`。
++ Default value: `0.0.0.0:3080`
++ Support hot-reload: no
++ API gateway address. You can specify `ip:port`.
 
 #### `proxy-protocol`
 
-+ 默认值：`""`
-+ 支持热加载：否
-+ 可选值：`""`, `"v2"`
-+ 在端口启用 [PROXY 协议](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt)。`"v2"` 代表使用 PROXY 协议 v2 版本，`""` 代表不使用 PROXY 协议。
++ Default value: `""`
++ Support hot-reload: no
++ Possible values: `""`, `"v2"`
++ Enable the [PROXY protocol](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt) on the port. `"v2"` indicates using the PROXY protocol version 2, and `""` indicates disabling the PROXY protocol.
 
 ### balance
 
-TiProxy 负载均衡策略的配置。
+Configurations for the load balancing policy of TiProxy.
 
 #### `label-name`
 
-+ 默认值：`""`
-+ 支持热加载：是
-+ 指定用于[基于标签的负载均衡](/tiproxy/tiproxy-load-balance.md#基于标签的负载均衡)的标签名。TiProxy 根据该标签名匹配 TiDB server 的标签值，并优先将请求路由到与自身具有相同标签值的 TiDB server。
-+ `label-name` 的默认值为空字符串，表示不使用基于标签的负载均衡。要启用该负载均衡策略，需要将此配置项设置为非空字符串，并配置 TiProxy 的 [`labels`](#labels) 和 TiDB 的 [`labels`](/tidb-configuration-file.md#labels) 配置项。有关详细信息，请参阅[基于标签的负载均衡](/tiproxy/tiproxy-load-balance.md#基于标签的负载均衡)。
++ Default value: `""`
++ Support hot-reload: yes
++ Specifies the label name used for [label-based load balancing](/tiproxy/tiproxy-load-balance.md#label-based-load-balancing). TiProxy matches the label values of TiDB servers based on this label name and prioritizes routing requests to TiDB servers with the same label value as itself.
++ The default value of `label-name` is an empty string, indicating that label-based load balancing is not used. To enable this load balancing policy, you need to set this configuration item to a non-empty string and configure both [`labels`](#labels) in TiProxy and [`labels`](/tidb-configuration-file.md#labels) in TiDB. For more information, see [Label-based load balancing](/tiproxy/tiproxy-load-balance.md#label-based-load-balancing).
 
 #### `policy`
 
-+ 默认值：`resource`
-+ 支持热加载：是
-+ 可选值：`resource`、`location`、`connection`
-+ 指定负载均衡策略。各个可选值的含义请参阅 [TiProxy 负载均衡策略](/tiproxy/tiproxy-load-balance.md#负载均衡策略配置)。
++ Default value: `resource`
++ Support hot-reload: yes
++ Possible values: `resource`, `location`, `connection`
++ Specifies the load balancing policy. For the meaning of each possible value, see [TiProxy load balancing policies](/tiproxy/tiproxy-load-balance.md#configure-load-balancing-policies).
 
 ### ha
 
-TiProxy 的高可用配置。
+High availability configurations for TiProxy.
 
 #### `virtual-ip`
 
-+ 默认值：`""`
-+ 支持热加载：否
-+ 指定虚拟 IP 地址，使用 CIDR 格式表示，例如 `"10.0.1.10/24"`。当集群中有多台 TiProxy 配置同一虚拟 IP 时，只有一台 TiProxy 会绑定该虚拟 IP。当该 TiProxy 下线时，另外一台 TiProxy 会自动绑定该 IP，确保客户端始终能通过虚拟 IP 连接到可用的 TiProxy。
++ Default value: `""`
++ Support hot-reload: no
++ Specifies the virtual IP address in the CIDR format, such as `"10.0.1.10/24"`. When you configure multiple TiProxy instances in a cluster with the same virtual IP, only one instance binds to it at a time. If this instance goes offline, another TiProxy instance automatically takes over the virtual IP. This ensures that clients can always connect to an available TiProxy through the virtual IP.
 
-配置示例：
+The following is an example configuration:
 
 ```yaml
 server_configs:
@@ -148,78 +147,74 @@ server_configs:
     ha.interface: "eth0"
 ```
 
-从 v1.3.1 开始，TiProxy 支持配置多个虚拟 IP。当需要隔离计算层资源时，可以配置多个虚拟 IP，并结合[基于标签的负载均衡](/tiproxy/tiproxy-load-balance.md#基于标签的负载均衡)使用。示例可参见[基于标签的负载均衡](/tiproxy/tiproxy-load-balance.md#基于标签的负载均衡)。
+Starting from v1.3.1, TiProxy supports configuring multiple virtual IP addresses. When you need to isolate computing layer resources, you can configure multiple virtual IP addresses and use [label-based load balancing](/tiproxy/tiproxy-load-balance.md#label-based-load-balancing) in combination. For an example configuration, see [label-based load balancing](/tiproxy/tiproxy-load-balance.md#label-based-load-balancing).
 
-> **注意：**
+> **Note:**
 >
-> - 虚拟 IP 仅支持 Linux 操作系统。
-> - 运行 TiProxy 的 Linux 用户必须具有绑定 IP 地址的权限。
-> - TiProxy 实例的真实 IP 和虚拟 IP 必须处于同一个 CIDR 范围内。
+> - Virtual IP is only supported on Linux operating systems.
+> - The Linux user running TiProxy must have permission to bind IP addresses.
+> - The real and virtual IP addresses of one TiProxy instance must be within the same CIDR range.
 
 #### `interface`
 
-+ 默认值：`""`
-+ 支持热加载：否
-+ 指定绑定虚拟 IP 的网络接口，例如 `"eth0"`。只有同时设置 [`ha.virtual-ip`](#virtual-ip) 和 `ha.interface` 时，该 TiProxy 实例才能绑定虚拟 IP。
++ Default value: `""`
++ Support hot-reload: no
++ Specifies the network interface to bind the virtual IP to, such as `"eth0"`. The virtual IP will be bound to a TiProxy instance only when both [`ha.virtual-ip`](#virtual-ip) and `ha.interface` are set.
 
 ### `labels`
 
-+ 默认值：`{}`
-+ 支持热加载：是
-+ 指定服务器标签，例如 `{ zone = "us-west-1", dc = "dc1" }`。
++ Default value: `{}`
++ Support hot-reload: yes
++ Specifies server labels. For example, `{ zone = "us-west-1", dc = "dc1" }`.
 
 ### log
 
 #### `level`
 
-+ 默认值：`info`
-+ 支持热加载：是
-+ 可选值：`debug`, `info`, `warn`, `error`, `panic`
-+ 指定日志的级别。当指定 `panic` 级别时，TiProxy 遇到错误时会 panic。
++ Default value: `info`
++ Support hot-reload: yes
++ Possible values: `debug`, `info`, `warn`, `error`, `panic`
++ Specify the log level. With the `panic` level, TiProxy will panic on errors.
 
 #### `encoder`
 
-+ 默认值：`tidb`
-+ 可选值：
++ Default value: `tidb`
++ You can specify:
 
-    + `tidb`：TiDB 使用的格式。有关详细信息，请参见[统一日志格式](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md)。
-    + `json`：结构化 JSON 格式。
-    + `console`：易读的日志格式。
+    + `tidb`: format used by TiDB. For details, refer to [Unified Log Format](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md).
+    + `json`: structured JSON format.
+    + `console`: human-readable log format.
 
 ### log.log-file
 
 #### `filename`
 
-+ 默认值：`""`
-+ 支持热加载：是
-+ 日志文件路径。非空值将启用日志记录到文件。使用 TiUP 部署时会自动设置文件路径。
++ Default value: `""`
++ Support hot-reload: yes
++ Log file path. Non empty value will enable logging to file. When TiProxy is deployed with TiUP, the filename is set automatically.
 
 #### `max-size`
 
-+ 默认值：`300`
-+ 支持热加载：是
-+ 单位：MB
-+ 日志文件的最大大小。超过该大小后，日志将被轮转。
++ Default value: `300`
++ Support hot-reload: yes
++ Unit: MB
++ Specifies the maximum size for log files. A log file will be rotated if its size exceeds this limit.
 
 #### `max-days`
 
-+ 默认值：`3`
-+ 支持热加载：是
-+ 指定保留旧日志文件的最大天数。超过此期限后，将删除过时的日志文件。
++ Default value: `3`
++ Support hot-reload: yes
++ Specifies the maximum number of days to keep old log files. Outdated log files are deleted after surpassing this period.
 
 #### `max-backups`
 
-+ 默认值：`3`
-+ 支持热加载：是
-+ 指定要保留的日志文件的最大数量。当超过此数量时，将自动删除多余的日志文件。
++ Default value: `3`
++ Support hot-reload: yes
++ Specifies the maximum number of log files to be retained. Surplus log files will be automatically deleted when an excessive number is reached.
 
 ### security
 
-> **注意：**
->
-> TiProxy 每小时会从磁盘重新加载一次证书。因此，磁盘上证书文件的变更最多可能需要一小时才能生效。
-
-在 `[security]` 部分有四个名称不同的 TLS 对象，它们共享相同的配置格式和字段，但是不同名称对象的字段解释可能不同。
+There are four TLS objects in the `[security]` section with different names. They share the same configuration format and fields, but they are interpreted differently depending on their names.
 
 ```toml
 [security]
@@ -229,50 +224,50 @@ server_configs:
     auto-certs = true
 ```
 
-所有 TLS 选项都支持热加载。
+All TLS options are hot-reloaded.
 
-TLS 对象字段：
+TLS object fields:
 
-+ `ca`：指定 CA
-+ `cert`：指定证书
-+ `key`：指定私钥
-+ `auto-certs`：主要用于测试。如果没有指定证书或密钥，则会生成证书。
-+ `skip-ca`：在客户端对象上跳过使用 CA 验证证书，或在服务器对象上跳过服务器端验证。
-+ `min-tls-version`：设置最低 TLS 版本。可选值：`1.0`、`1.1`、`1.2` 和 `1.3`。默认为 `1.2`，代表支持 TLSv1.2 及以上版本。
-+ `rsa-key-size`：启用 `auto-certs` 时设置 RSA 密钥大小。
-+ `autocert-expire-duration`：设置自动生成证书的默认到期时间。
++ `ca`: specifies the CA
++ `cert`: specifies the certificate
++ `key`: specifies the private key
++ `auto-certs`: mostly used for tests. It generates certificates if no certificate or key is specified.
++ `skip-ca`: skips verifying certificates using CA on client object or skips server-side verification on server object.
++ `min-tls-version`: sets the minimum TLS version. Possible values are `1.0`, `1.1`, `1.2`, and `1.3`. The default value is `1.2`, which allows v1.2 or higher TLS versions.
++ `rsa-key-size`: sets the RSA key size when `auto-certs` is enabled.
++ `autocert-expire-duration`: sets the default expiration duration for auto-generated certificates.
 
-对象根据名称被分类为客户端或服务器对象。
+Objects are classified into client or server objects by their names.
 
-对客户端 TLS 对象：
+For client TLS object:
 
-- 必须设置 `ca` 或 `skip-ca` 来跳过验证服务器证书。
-- 可选：可以设置 `cert` 或 `key` 来通过服务器端客户端验证。
-- 无用字段：`auto-certs`。
+- You must set either `ca` or `skip-ca` to skip verifying server certificates.
+- Optionally, you can set `cert` or `key` to pass server-side client verification.
+- Useless fields: auto-certs.
 
-对服务器 TLS 对象：
+For server TLS object:
 
-- 设置 `cert`、`key` 或 `auto-certs` 后支持 TLS 连接，否则不支持 TLS 连接。
-- 可选：如果 `ca` 不为空，则启用服务器端的客户端验证。客户端必须提供证书。如果 `skip-ca` 为 `true` 且 `ca` 不为空，则服务器仅在客户端提供证书时才验证客户端证书。
++ You can set either `cert` or `key` or `auto-certs` to support TLS connections. Otherwise, TiProxy doesn't support TLS connections.
++ Optionally, if `ca` is not empty, it enables server-side client verification. The client must provide their certificates. Alternatively, if both `skip-ca` is true and `ca` is not empty, the server will only verify client certificates if they provide one.
 
 #### `cluster-tls`
 
-客户端 TLS 对象。用于访问 TiDB 或 PD。
+A client TLS object. It is used to access TiDB or PD.
 
 #### `require-backend-tls`
 
-+ 默认值：`false`
-+ 支持热加载：是，但只对新连接有效
-+ 要求 TiProxy 和 TiDB 服务器之间使用 TLS 连接。如果 TiDB 服务器不支持 TLS，则客户端在连接到 TiProxy 时会报错。
++ Default value: `false`
++ Support hot-reload: yes, but only for new connections
++ Require TLS between TiProxy and TiDB servers. If the TiDB server does not support TLS, clients will report an error when connecting to TiProxy.
 
 #### `sql-tls`
 
-客户端 TLS 对象。用于访问 TiDB SQL 端口（4000）。
+A client TLS object. It is used to access TiDB SQL port (4000).
 
 #### `server-tls`
 
-服务器 TLS 对象。用于在 SQL 端口（6000）上提供 TLS。
+A server TLS object. It is used to provide TLS on SQL port (6000).
 
 #### `server-http-tls`
 
-服务器 TLS 对象。用于在 HTTP 状态端口（3080）上提供 TLS。
+A server TLS object. It is used to provide TLS on HTTP status port (3080).

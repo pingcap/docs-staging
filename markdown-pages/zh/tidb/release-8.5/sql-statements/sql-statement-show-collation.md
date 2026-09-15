@@ -1,17 +1,17 @@
 ---
-title: SHOW COLLATION
-summary: TiDB 数据库中 SHOW COLLATION 的使用概况。
+title: SHOW COLLATION | TiDB SQL 语句参考
+summary: 关于在 TiDB 数据库中使用 SHOW COLLATION 的概述。
 ---
 
 # SHOW COLLATION
 
-`SHOW COLLATION` 语句用于提供一个静态的排序规则列表，确保与 MySQL 客户端库的兼容性。
+此语句提供了一个静态的字符集排序规则列表，旨在与 MySQL 客户端库保持兼容。
 
-> **注意：**
+> **Note:**
 >
-> `SHOW COLLATION` 所展示的排序规则列表与 TiDB 集群是否开启[新排序规则框架](/character-set-and-collation.md#新框架下的排序规则支持)有关，详情请见 [TiDB 字符集和排序规则](/character-set-and-collation.md)。
+> 当启用 ["new collation framework"](/character-set-and-collation.md#new-framework-for-collations) 时，`SHOW COLLATION` 的结果会有所不同。有关新字符集排序框架的详细信息，请参考 [Character Set and Collation](/character-set-and-collation.md)。
 
-## 语法图
+## 概要
 
 ```ebnf+diagram
 ShowCollationStmt ::=
@@ -24,7 +24,11 @@ ShowLikeOrWhere ::=
 
 ## 示例
 
-如果启用了[新排序规则框架](/tidb-configuration-file.md#new_collations_enabled_on_first_bootstrap)（默认启用），输出如下：
+<CustomContent platform="tidb">
+
+当 [启用新字符集排序框架](/tidb-configuration-file.md#new_collations_enabled_on_first_bootstrap)（默认设置）时，示例输出如下：
+
+</CustomContent>
 
 ```sql
 SHOW COLLATION;
@@ -48,16 +52,18 @@ SHOW COLLATION;
 | utf8mb4_general_ci | utf8mb4 |  45 |         | Yes      |       1 | PAD SPACE     |
 | utf8mb4_unicode_ci | utf8mb4 | 224 |         | Yes      |       8 | PAD SPACE     |
 +--------------------+---------+-----+---------+----------+---------+---------------+
-13 rows in set (0.00 sec)
+13 行结果（0.00 秒）
 ```
 
-若未开启新排序规则框架，仅展示二进制排序规则：
+<CustomContent platform="tidb">
+
+当禁用新字符集排序框架时，只列出二进制字符集。
 
 ```sql
 SHOW COLLATION;
 ```
 
-```sql
+```
 +-------------+---------+----+---------+----------+---------+---------------+
 | Collation   | Charset | Id | Default | Compiled | Sortlen | Pad_attribute |
 +-------------+---------+----+---------+----------+---------+---------------+
@@ -68,16 +74,18 @@ SHOW COLLATION;
 | utf8_bin    | utf8    | 83 | Yes     | Yes      |       1 | PAD SPACE     |
 | gbk_bin     | gbk     | 87 | Yes     | Yes      |       1 | PAD SPACE     |
 +-------------+---------+----+---------+----------+---------+---------------+
-6 rows in set (0.00 sec)
+6 行结果（0.00 秒）
 ```
 
-要过滤字符集，可以添加 `WHERE` 子句。
+</CustomContent>
+
+可以通过添加 `WHERE` 子句来筛选字符集。
 
 ```sql
 SHOW COLLATION WHERE Charset="utf8mb4";
 ```
 
-```
+```sql
 +--------------------+---------+-----+---------+----------+---------+---------------+
 | Collation          | Charset | Id  | Default | Compiled | Sortlen | Pad_attribute |
 +--------------------+---------+-----+---------+----------+---------+---------------+
@@ -87,14 +95,14 @@ SHOW COLLATION WHERE Charset="utf8mb4";
 | utf8mb4_general_ci | utf8mb4 |  45 |         | Yes      |       1 | PAD SPACE     |
 | utf8mb4_unicode_ci | utf8mb4 | 224 |         | Yes      |       8 | PAD SPACE     |
 +--------------------+---------+-----+---------+----------+---------+---------------+
-5 rows in set (0.001 sec)
+5 行结果（0.001 秒）
 ```
 
 ## MySQL 兼容性
 
-`SHOW COLLATION` 语句功能与 MySQL 完全兼容。注意，TiDB 中字符集的默认排序规则与 MySQL 有所不同，具体可参考[与 MySQL 兼容性对比](/mysql-compatibility.md#默认设置)。如发现任何其他兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
+TiDB 中 `SHOW COLLATION` 语句的用法与 MySQL 完全兼容。然而，TiDB 中的字符集可能与 MySQL 默认的排序规则不同。有关详细信息，请参考 [Compatibility with MySQL](/mysql-compatibility.md)。如果你发现任何兼容性差异，请 [report a bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
-* [`SHOW CHARACTER SET`](/sql-statements/sql-statement-show-character-set.md)
-* [字符集和排序规则](/character-set-and-collation.md)
+* [SHOW CHARACTER SET](/sql-statements/sql-statement-show-character-set.md)
+* [Character Set and Collation](/character-set-and-collation.md)

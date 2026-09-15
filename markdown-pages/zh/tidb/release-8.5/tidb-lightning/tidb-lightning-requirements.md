@@ -1,45 +1,45 @@
 ---
-title: TiDB Lightning 目标数据库要求
-summary: 了解 TiDB Lightning 运行时对目标数据库的必需条件。
+title: TiDB Lightning Requirements for the Target Database
+summary: Learn prerequisites for running TiDB Lightning.
 ---
 
-# TiDB Lightning 目标数据库要求
+# TiDB Lightning Requirements for the Target Database
 
-使用 TiDB Lightning 导入数据前，先检查环境是否满足要求，这有助于减少导入过程的错误，避免导入失败的情况。
+Before using TiDB Lightning, you need to check whether the environment meets the requirements. This helps reduce errors during import and ensures import success.
 
-## 目标数据库权限要求
+## Privileges of the target database
 
-TiDB Lightning 导入数据时，根据导入方式和启用特性等，需要下游数据库用户具备不同的权限，可参考下表：
+Based on the import mode and features enabled, the target database users should be granted with different privileges. The following table provides a reference.
 
 <table>
    <tr>
       <td></td>
-      <td>特性</td>
-      <td>作用域</td>
-      <td>所需权限</td>
-      <td>备注</td>
+      <td>Feature</td>
+      <td>Scope</td>
+      <td>Required privilege</td>
+      <td>Remarks</td>
    </tr>
    <tr>
-      <td rowspan="2">必需</td>
-      <td rowspan="2">基本功能</td>
-      <td>目标 table</td>
-      <td>CREATE,SELECT,INSERT,UPDATE,DELETE,DROP,ALTER</td>
-      <td>DROP 仅 tidb-lightning-ctl 在执行 checkpoint-destroy-all 时需要</td>
+      <td rowspan="2">Mandatory</td>
+      <td rowspan="2">Basic functions</td>
+      <td>Target table</td>
+      <td>CREATE, SELECT, INSERT, UPDATE, DELETE, DROP, ALTER</td>
+      <td>DROP is required only when tidb-lightning-ctl runs the checkpoint-destroy-all command</td>
    </tr>
    <tr>
-      <td>目标 database</td>
+      <td>Target database</td>
       <td>CREATE</td>
       <td></td>
    </tr>
    <tr>
-      <td rowspan="4">必需</td>
-      <td>逻辑导入模式</td>
+      <td rowspan="4">Mandatory</td>
+      <td>Logical Import Mode</td>
       <td>information_schema.columns</td>
       <td>SELECT</td>
       <td></td>
    </tr>
    <tr>
-      <td  rowspan="3">物理导入模式</td>
+      <td rowspan="3">Physical Import Mode</td>
       <td>mysql.tidb</td>
       <td>SELECT</td>
       <td></td>
@@ -52,44 +52,42 @@ TiDB Lightning 导入数据时，根据导入方式和启用特性等，需要�
    <tr>
       <td>-</td>
       <td>RESTRICTED_VARIABLES_ADMIN,RESTRICTED_TABLES_ADMIN</td>
-      <td>当目标 TiDB 开启 SEM</td>
+      <td>Required when the target TiDB enables SEM</td>
    </tr>
    <tr>
-      <td>推荐</td>
-      <td>冲突检测，max-error</td>
-      <td>lightning.task-info-schema-name 配置的 schema</td>
-      <td>SELECT,INSERT,UPDATE,DELETE,CREATE,DROP</td>
-      <td>如不需要，该值必须设为""</td>
+      <td>Recommended</td>
+      <td>Conflict detection, max-error</td>
+      <td>Schema configured for lightning.task-info-schema-name</td>
+      <td>SELECT, INSERT, UPDATE, DELETE, CREATE, DROP</td>
+      <td>If not required, the value must be set to ""</td>
    </tr>
    <tr>
-      <td>可选</td>
-      <td>并行导入</td>
-      <td>lightning.meta-schema-name 配置的 schema</td>
-      <td>SELECT,INSERT,UPDATE,DELETE,CREATE,DROP</td>
-      <td>如不需要，该值必须设为""</td>
+      <td>Optional</td>
+      <td>Parallel import</td>
+      <td>Schema configured for lightning.meta-schema-name</td>
+      <td>SELECT, INSERT, UPDATE, DELETE, CREATE, DROP</td>
+      <td>If not required, the value must be set to ""</td>
    </tr>
    <tr>
-      <td>可选</td>
+      <td>Optional</td>
       <td>checkpoint.driver = "mysql"</td>
-      <td>checkpoint.schema 设置</td>
+      <td>checkpoint.schema setting</td>
       <td>SELECT,INSERT,UPDATE,DELETE,CREATE,DROP</td>
-      <td>使用数据库而非文件形式存放 checkpoint 信息时需要</td>
+      <td>Required when checkpoint information is stored in databases, instead of files</td>
    </tr>
 </table>
 
-## 目标数据库所需空间
+## Storage space of the target database
 
-目标 TiKV 集群必须有足够空间接收新导入的数据。除了[标准硬件配置](/hardware-and-software-requirements.md)以外，目标 TiKV 集群的总存储空间必须大于 **数据源大小 × [副本数量](/faq/manage-cluster-faq.md#每个-region-的-replica-数量可配置吗调整的方法是) × 2**。例如集群默认使用 3 副本，那么总存储空间需为数据源大小的 6 倍以上。公式中的 2 倍可能难以理解，其依据是以下因素的估算空间占用：
+The target TiKV cluster must have enough disk space to store the imported data. In addition to the [standard hardware requirements](/hardware-and-software-requirements.md), the storage space of the target TiKV cluster must be larger than **the size of the data source x the number of replicas x 2**. For example, if the cluster uses 3 replicas by default, the target TiKV cluster must have a storage space larger than 6 times the size of the data source. The formula has x 2 because:
 
-- 索引会占据额外的空间
-- RocksDB 的空间放大效应
+- Indexes might take extra space.
+- RocksDB has a space amplification effect.
 
-目前无法精确计算 Dumpling 从 MySQL 导出的数据大小，但你可以用下面 SQL 语句统计信息表的 `DATA_LENGTH` 字段估算数据量：
-
-统计所有 schema 大小，单位 MiB，注意修改 ${schema_name}
+It is difficult to calculate the exact data volume exported by Dumpling from MySQL. However, you can estimate the data volume by using the following SQL statement to summarize the `DATA_LENGTH` field in the information_schema.tables table:
 
 ```sql
--- 统计所有 schema 大小
+-- Calculate the size of all schemas
 SELECT
   TABLE_SCHEMA,
   FORMAT_BYTES(SUM(DATA_LENGTH)) AS 'Data Size',
@@ -99,8 +97,8 @@ FROM
 GROUP BY
   TABLE_SCHEMA;
 
--- 统计最大的 5 个单表
-SELECT
+-- Calculate the 5 largest tables
+SELECT 
   TABLE_NAME,
   TABLE_SCHEMA,
   FORMAT_BYTES(SUM(data_length)) AS 'Data Size',

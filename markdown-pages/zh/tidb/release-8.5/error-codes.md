@@ -1,129 +1,153 @@
 ---
-title: 错误码与故障诊断
-summary: TiDB 错误码包括 MySQL 兼容的错误码和 TiDB 特有的错误码。如果遇到错误码，请参考官方文档或社区获取支持。常见错误码包括内存使用超限、写入冲突、表数据损坏、事务过大、写入冲突等。另外，TiDB 还提供了故障诊断文档供参考。
+title: Error Codes and Troubleshooting
+summary: Learn about the error codes and solutions in TiDB.
 ---
 
-# 错误码与故障诊断
+# Error Codes and Troubleshooting
 
-本篇文档描述在使用 TiDB 过程中会遇到的问题以及解决方法。
+This document describes the problems encountered during the use of TiDB and provides the solutions.
 
-## 错误码
+## Error codes
 
-TiDB 兼容 MySQL 的错误码，在大多数情况下，返回和 MySQL 一样的错误码。关于 MySQL 的错误码列表，详见 [MySQL 8.0 Error Message Reference](https://dev.mysql.com/doc/mysql-errors/8.0/en/)。另外还有一些 TiDB 特有的错误码：
+TiDB is compatible with the error codes in MySQL, and in most cases returns the same error code as MySQL. For a list of error codes for MySQL, see [MySQL 8.0 Error Message Reference](https://dev.mysql.com/doc/mysql-errors/8.0/en/). In addition, TiDB has the following unique error codes:
 
-> **注意：**
+> **Note:**
 >
-> 有一部分错误码属于内部错误，正常情况下 TiDB 会自行处理不会直接返回给用户，故没有在此列出。
+> Some error codes stand for internal errors. Normally, TiDB handles the error rather than return it to the user, so some error codes are not listed here.
 >
-> 如果你遇到了这里没有列出的错误码，请从 PingCAP 官方或 TiDB 社区[获取支持](/support.md)。
+> If you encounter an error code that is not listed here, [get support](/support.md) from PingCAP or the community.
 
 * Error Number: 8001
 
-    请求使用的内存超过 TiDB 内存使用的阈值限制。出现这种错误，可以通过调整系统变量 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 来增大单个 SQL 使用的内存上限。
+    The memory used by the request exceeds the threshold limit for the TiDB memory usage.
+
+    Increase the memory limit for a single SQL statement by configuring the system variable [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query).
 
 * Error Number: 8002
 
-    带有 `SELECT FOR UPDATE` 语句的事务，在遇到写入冲突时，为保证一致性无法进行重试，事务将进行回滚并返回该错误。出现这种错误，应用程序可以安全地重新执行整个事务。
+    To guarantee consistency, a transaction with the `SELECT FOR UPDATE` statement cannot be retried when it encounters a commit conflict. TiDB rolls back the transaction and returns this error.
+
+    The application can safely retry the whole transaction.
 
 * Error Number: 8003
 
-    [`ADMIN CHECK TABLE`](/sql-statements/sql-statement-admin-check-table-index.md) 命令在遇到行数据跟索引不一致的时候返回该错误，在检查表中数据是否有损坏时常出现。出现该错误时，请向 PingCAP 工程师或通过官方论坛寻求帮助。
+    If the data in a row is not consistent with the index when executing the [`ADMIN CHECK TABLE`](/sql-statements/sql-statement-admin-check-table-index.md) command, TiDB returns this error. This error is commonly seen when you check the data corruption in the table.
+
+    You can [get support](/support.md) from PingCAP or the community.
 
 * Error Number: 8004
 
-    单个事务过大，原因及解决方法请参考[这里](/faq/migration-tidb-faq.md#transaction-too-large-是什么原因怎么解决)
+    A single transaction is too large.
+
+    See [the error message `transaction too large`](/faq/migration-tidb-faq.md#the-error-message-transaction-too-large-is-displayed) for the cause and solution.
 
 * Error Number: 8005
 
-    完整的报错信息为 `ERROR 8005 (HY000) : Write Conflict, txnStartTS is stale`。
+    The complete error message: `ERROR 8005 (HY000): Write Conflict, txnStartTS is stale`
 
-    事务在 TiDB 中遇到了写入冲突。请检查业务逻辑，重试写入操作。
+    Transactions in TiDB encounter write conflicts. Check your application logic and retry the write operation.
 
 * Error Number: 8018
 
-    当执行重新载入插件时，如果之前插件没有载入过，则会出现该错误。出现该错误，进行插件首次载入即可。
+    When you reload a plugin, if the plugin has not been loaded before, this error is returned.
+
+    You can execute an initial load of the plugin.
 
 * Error Number: 8019
 
-    重新载入的插件版本与之前的插件版本不一致，无法重新载入插件并报告该错误。可重新载入插件，确保插件的版本与之前载入的插件版本一致。
+    The version of the plugin that is being reloaded is different from the previous version. Therefore, the plugin cannot be reloaded, and this error is returned.
+
+    You can reload the plugin by ensuring that the plugin version is the same as the previous one.
 
 * Error Number: 8020
 
-    当表被加锁时，如果对该表执行写入操作，将出现该错误。请将表解锁后，再进行尝试写入。
+    When the table is locked, if you perform a write operation on the table, this error is returned.
+
+    Unlock the table and retry the write operation.
 
 * Error Number: 8021
 
-    当向 TiKV 读取的 key 不存在时将出现该错误，该错误用于内部使用，对外表现为读到的结果为空。
+    When the key to be read from TiKV does not exist, this error is returned. This error is used internally, and the external result is an empty read.
 
 * Error Number: 8022
 
-    事务提交失败，已经回滚，应用程序可以安全的重新执行整个事务。
+    The transaction commit fails and has been rolled back.
+
+    The application can safely retry the whole transaction.
 
 * Error Number: 8023
 
-    在事务内，写入事务缓存时，设置了空值，将返回该错误。这是一个内部使用的错误，将由内部进行处理，不会返回给应用程序。
+    If you set an empty value when writing the transaction cache, this error is returned. This error is used and dealt with internally, and is not returned to the application.
 
 * Error Number: 8024
 
-    非法的事务。当事务执行时，发现没有获取事务的 ID (Start Timestamp)，代表正在执行的事务是一个非法的事务，将返回该错误。通常情况下不会出现该问题，当发生时，请向 PingCAP 工程师或通过官方论坛寻求帮助。
+    Invalid transactions. If TiDB finds that no transaction ID (Start Timestamp) is obtained for the transaction that is being executed, which means this transaction is invalid, this error is returned.
+
+    Usually this error does not occur. If you encounter this error, [get support](/support.md) from PingCAP or the community.
 
 * Error Number: 8025
 
-    写入的单条键值对过大。TiDB 默认支持最大 6MB 的单个键值对，超过该限制可适当调整 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-从-v4010-和-v500-版本开始引入) 配置项以放宽限制。
+    The single Key-Value pair being written is too large. The largest single Key-Value pair supported in TiDB is 6 MB by default.
+
+    If a pair exceeds this limit, you need to properly adjust the [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500) configuration value to relax the limit.
 
 * Error Number: 8026
 
-    使用了没有实现的接口函数。该错误仅用于数据库内部，应用程序不会收到这个错误。
+    The interface function being used has not been implemented. This error is only used internally, and is not returned to the application.
 
 * Error Number: 8027
 
-    表结构版本过期。TiDB 采用在线变更表结构的方法。当 TiDB server 表结构版本落后于整个系统的时，执行 SQL 将遇到该错误。遇到该错误，请检查该 TiDB server 与 PD leader 之间的网络。
+    The table schema version is outdated. TiDB applies schema changes online. When the table schema version of the TiDB server is earlier than that of the entire system, this error is returned if you execute a SQL statement.
+
+    When this error occurs, check the network between the TiDB server and the PD Leader.
 
 * Error Number: 8028
 
-    TiDB v6.3.0 引入了[元数据锁](/metadata-lock.md)特性。在关闭元数据锁的情况下，当事务执行时，事务无法感知到 TiDB 的表结构发生了变化。因此，TiDB 在事务提交时，会对事务涉及表的结构进行检查。如果事务执行中表结构发生了变化，则事务将提交失败，并返回该错误。遇到该错误，应用程序可以安全地重新执行整个事务。
+    Since v6.3.0, TiDB introduces the [Metadata lock](/metadata-lock.md) feature. When the metadata lock is disabled and a transaction is executed, the transaction cannot recognize the table schema changes. Therefore, when the transaction is committed, TiDB checks the table schema related to the transaction. If the related table schema has been changed during the execution, the transaction commit fails with this error. At this time, the application can safely retry the whole transaction.
 
-    在打开元数据锁的情况下，非 RC 隔离级别中，如果从事务开始到初次访问一个表之间，该表进行了有损的列类型变更操作（例如 `INT` 类型变成 `CHAR` 类型是有损的，`TINYINT` 类型变成 `INT` 类型这种不需要重写数据的则是无损的），则访问该表的语句报错，事务不会自动回滚。用户可以继续执行其他语句，并决定是否回滚或者提交事务。
+    When the metadata lock is enabled not in the Read Committed isolation level, if a lossy column type change occurs on a table (for example, changing from `INT` to `CHAR` is lossy, and changing from `TINYINT` to `INT` is not lossy because overwriting data is not required) from a transaction start to access the table for the first time, then the query fails while the transaction will not roll back automatically. You can continue to execute other statements and decide whether to roll back or commit the transaction.
 
 * Error Number: 8029
 
-    当数据库内部进行数值转换发生错误时，将会出现该错误，该错误仅在内部使用，对外部应用将转换为具体类型的错误。
+    This error occurs when numeric conversion within the database encounters an error. This error is only used internally and is converted to a specific type of error for external applications.
 
 * Error Number: 8030
 
-    将值转变为带符号正整数时发生了越界，将结果显示为负数。多在告警信息里出现。
+    After an unsigned positive integer is converted to a signed integer, it exceeds the maximum value and displays as a negative integer. This error mostly occurs in the alert message.
 
 * Error Number: 8031
 
-    将负数转变为无符号数时，将负数转变为了正数。多在告警信息里出现。
+    When being converted to an unsigned integer, a negative integer is converted to a positive integer. This error mostly occurs in the alert message.
 
 * Error Number: 8032
 
-    使用了非法的 year 格式。year 只允许 1 位、2 位和 4 位数。
+    Invalid `year` format is used. `year` only accepts 1, 2 or 4 digits.
 
 * Error Number: 8033
 
-    使用了非法的 year 值。year 的合法范围是 (1901, 2155)。
+    Invalid `year` value is used. The valid range of `year` is (1901, 2155).
 
 * Error Number: 8037
 
-    week 函数中使用了非法的 mode 格式。mode 必须是一位数字，范围 [0, 7]。
+    Invalid `mode` format is used in the `week` function. `mode` must be 1 digit within [0, 7].
 
 * Error Number: 8038
 
-    字段无法获取到默认值。一般作为内部错误使用，转换成其他具体错误类型后，返回给应用程序。
+    The field fails to obtain the default value. This error is usually used internally, and is converted to a specific type of error for external applications.
 
 * Error Number: 8040
 
-    尝试进行不支持的操作，比如在 View 和 Sequence 上进行 lock table。
+    Unsupported operations are performed. For example, you perform a table locking operation on a view or a sequence.
 
 * Error Number: 8047
 
-    设置了不支持的系统变量值，通常在用户设置了数据库不支持的变量值后的告警信息里出现。
+    The value of the system variable is not supported. This error usually occurs in the alarm information when the user sets a variable value that is not supported in the database.
 
 * Error Number: 8048
 
-    设置了不支持的隔离级别，如果是使用第三方工具或框架等无法修改代码进行适配的情况，可以考虑通过 [`tidb_skip_isolation_level_check`](/system-variables.md#tidb_skip_isolation_level_check) 来绕过这一检查。
+    An unsupported database isolation level is set.
+
+    If you cannot modify the codes because you are using a third-party tool or framework, consider using [`tidb_skip_isolation_level_check`](/system-variables.md#tidb_skip_isolation_level_check) to bypass this check.
 
     
     ```sql
@@ -132,420 +156,504 @@ TiDB 兼容 MySQL 的错误码，在大多数情况下，返回和 MySQL 一样�
 
 * Error Number: 8050
 
-    设置了不支持的权限类型，遇到该错误请参考 [TiDB 权限说明](/privilege-management.md#tidb-各操作需要的权限)进行调整。
+    An unsupported privilege type is set.
+
+    See [Privileges required for TiDB operations](/privilege-management.md#privileges-required-for-tidb-operations) for the solution.
 
 * Error Number: 8051
 
-    TiDB 在解析客户端发送的 Exec 参数列表时遇到了未知的数据类型。如果遇到这个错误，请检查客户端是否正常，如果客户端正常请向 PingCAP 工程师或通过官方论坛寻求帮助。
+    Unknown data type is encountered when TiDB parses the Exec argument list sent by the client.
+
+    If you encounter this error, check the client. If the client is normal, [get support](/support.md) from PingCAP or the community.
 
 * Error Number: 8052
 
-    来自客户端的数据包的序列号错误。如果遇到这个错误，请检查客户端是否正常，如果客户端正常请向 PingCAP 工程师或通过官方论坛寻求帮助。
+    The serial number of the data packet from the client is incorrect.
+
+    If you encounter this error, check the client. If the client is normal, [get support](/support.md) from PingCAP or the community.
 
 * Error Number: 8055
 
-    当前快照过旧，数据可能已经被 GC。可以调大 [`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-从-v50-版本开始引入) 的值来避免该问题。从 TiDB v4.0.8 版本起，TiDB 会自动为长时间运行的事务保留数据，一般不会遇到该错误。
+    The current snapshot is too old. The data may have been garbage collected. You can increase the value of [`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50) to avoid this problem. TiDB automatically reserves data for long-running transactions. Usually this error does not occur.
 
-    有关 GC 的介绍和配置可以参考 [GC 机制简介](/garbage-collection-overview.md)和 [GC 配置](/garbage-collection-configuration.md)文档。
+    See [garbage collection overview](/garbage-collection-overview.md) and [garbage collection configuration](/garbage-collection-configuration.md).
 
 * Error Number: 8059
 
-    自动随机量可用次数用尽无法进行分配。当前没有恢复这类错误的方法。建议在使用 auto random 功能时使用 bigint 以获取最大的可分配次数，并尽量避免手动给 auto random 列赋值。相关的介绍和使用建议可以参考 [auto random 功能文档](/auto-random.md)。
+    The auto-random ID is exhausted and cannot be allocated. There is no way to recover from such errors currently. It is recommended to use bigint when using the auto random feature to obtain the maximum number of assignment. And try to avoid manually assigning values to the auto random column.
+
+    See [auto random](/auto-random.md) for reference.
 
 * Error Number: 8060
 
-    非法的自增列偏移量。请检查 `auto_increment_increment` 和 `auto_increment_offset` 的取值是否符合要求。
+    Invalid auto-incrementing offset. Check the values of `auto_increment_increment` and `auto_increment_offset`.
 
 * Error Number: 8061
 
-    不支持的 SQL Hint。请参考 [Optimizer Hints](/optimizer-hints.md) 检查和修正 SQL Hint。
+    Unsupported SQL Hint.
+
+    See [Optimizer Hints](/optimizer-hints.md) to check and modify the SQL Hint.
 
 * Error Number: 8062
 
-    SQL Hint 中使用了非法的 token，与 Hint 的保留字冲突。请参考 [Optimizer Hints](/optimizer-hints.md) 检查和修正 SQL Hint。
+    An invalid token is used in SQL Hint. It conflicts with reserved words in SQL Hint.
+
+    See [Optimizer Hints](/optimizer-hints.md) to check and modify the SQL Hint.
 
 * Error Number: 8063
 
-    SQL Hint 中限制内存使用量超过系统设置的上限，设置被忽略。请参考 [Optimizer Hints](/optimizer-hints.md) 检查和修正 SQL Hint。
+    The limited memory usage set in SQL Hint exceeds the upper limit of the system. The setting in SQL Hint is ignored.
+
+    See [Optimizer Hints](/optimizer-hints.md) to check and modify the SQL Hint.
 
 * Error Number: 8064
 
-    解析 SQL Hint 失败。请参考 [Optimizer Hints](/optimizer-hints.md) 检查和修正 SQL Hint。
+    It fails to parse SQL Hint.
+
+    See [Optimizer Hints](/optimizer-hints.md) to check and modify the SQL Hint.
 
 * Error Number: 8065
 
-    SQL Hint 中使用了非法的整数。请参考 [Optimizer Hints](/optimizer-hints.md) 检查和修正 SQL Hint。
+    An invalid integer is used in SQL Hint.
+
+    See [Optimizer Hints](/optimizer-hints.md) to check and modify the SQL Hint.
 
 * Error Number: 8066
 
-    JSON_OBJECTAGG 函数的第二个参数是非法参数。
+    The second parameter in the `JSON_OBJECTAGG` function is invalid.
 
 * Error Number: 8101
 
-    插件 ID 格式错误，正确的格式是 `[name]-[version]` 并且 name 和 version 中不能带有 '-'。
+    The format of plugin ID is incorrect.
+
+    The correct format is `[name]-[version]`, and no `-` is allowed in `name` and `version`.
 
 * Error Number: 8102
 
-    无法读取插件定义信息。请检查插件相关的配置。
+    Unable to read the plugin definition information.
+
+    Check the configuration related to the plugin.
 
 * Error Number: 8103
 
-    插件名称错误，请检查插件的配置。
+    The plugin name is incorrect.
+
+    Check the configuration of the plugin.
 
 * Error Number: 8104
 
-    插件版本不匹配，请检查插件的配置。
+    The plugin version does not match.
+
+    Check the configuration of the plugin.
 
 * Error Number: 8105
 
-    插件被重复载入。
+    The plugin is repeatedly loaded.
 
 * Error Number: 8106
 
-    插件定义的系统变量名称没有以插件名作为开头，请联系插件的开发者进行修复。
+    The plugin defines a system variable whose name does not begin with the plugin name.
+
+    Contact the developer of the plugin to modify, or [get support](/support.md) from PingCAP or the community.
 
 * Error Number: 8107
 
-    载入的插件未指定版本或指定的版本过低，请检查插件的配置。
+    The loaded plugin does not specify a version, or the specified version is too low.
+
+    Check the configuration of the plugin.
 
 * Error Number: 8108
 
-    不支持的执行计划类型。该错误为内部处理的错误，如果遇到该报错请向 PingCAP 工程师或通过官方论坛寻求帮助。
+    Unsupported execution plan type. This error is an internal error.
+
+    If you encounter this error, [get support](/support.md) from PingCAP or the community.
 
 * Error Number: 8109
 
-    analyze 索引时找不到指定的索引。
+    The specified index cannot be found when the index is analyzed.
 
 * Error Number: 8110
 
-    不能进行笛卡尔积运算，需要将配置文件里的 `cross-join` 设置为 `true`。
+    The Cartesian product operation cannot be executed.
+
+    Set `cross-join` in the configuration to `true`.
 
 * Error Number: 8111
 
-    execute 语句执行时找不到对应的 prepare 语句。
+    When executing the `EXECUTE` statement, the corresponding `Prepare` statement cannot be found.
 
 * Error Number: 8112
 
-    execute 语句的参数个数与 prepare 语句不符合。
+    The number of parameters in the `EXECUTE` statement is not consistent with the `Prepare` statement.
 
 * Error Number: 8113
 
-    execute 语句涉及的表结构在 prepare 语句执行后发生了变化。
+    The table schema related in the `EXECUTE` statement has changed after the `Prepare` statement is executed.
 
 * Error Number: 8115
 
-    不支持 prepare 多行语句。
+    It is not supported to prepare multiple lines of statements.
 
 * Error Number: 8116
 
-    不支持 prepare DDL 语句。
+    It is not supported to prepare DDL statements.
 
 * Error Number: 8120
 
-    获取不到事务的 start tso，请检查 PD Server 状态/监控/日志以及 TiDB Server 与 PD Server 之间的网络。
+    The `start tso` of transactions cannot be obtained.
+
+    Check the state/monitor/log of the PD server and the network between the TiDB server and the PD server.
 
 * Error Number: 8121
 
-    权限检查失败，请检查数据库的权限配置。
+    Privilege check fails.
+
+    Check the privilege configuration of the database.
 
 * Error Number: 8122
 
-    指定了通配符，但是找不到对应的表名。
+    No corresponding table name is found, given the specified wild cards.
 
 * Error Number: 8123
 
-    带聚合函数的 SQL 中返回非聚合的列，违反了 `only_full_group_by` 模式。请修改 SQL 或者考虑关闭 `only_full_group_by` 模式。
+    An SQL query with aggregate functions returns non-aggregated columns, which violates the `only_full_group_by` mode.
+
+    Modify the SQL statement or disable the `only_full_group_by` mode.
 
 * Error Number: 8129
 
-    TiDB 尚不支持键长度 >= 65536 的 JSON 对象。
+    TiDB does not yet support JSON objects with the key length >= 65536.
 
 * Error Number: 8130
 
-    完整的报错信息为 `ERROR 8130 (HY000): client has multi-statement capability disabled`。
+    The complete error message: `ERROR 8130 (HY000): client has multi-statement capability disabled`
 
-    从早期版本的 TiDB 升级后，可能会出现该问题。为了减少 SQL 注入攻击的影响，TiDB 目前默认不允许在同一 `COM_QUERY` 调用中执行多个查询。
+    This error might occur after you upgrade from an earlier version of TiDB. To reduce the impact of SQL injection attacks, TiDB now prevents multiple queries from being executed in the same `COM_QUERY` call by default.
 
-    可通过系统变量 [`tidb_multi_statement_mode`](/system-variables.md#tidb_multi_statement_mode-从-v4011-版本开始引入) 控制是否在同一 `COM_QUERY` 调用中执行多个查询。
+    The system variable [`tidb_multi_statement_mode`](/system-variables.md#tidb_multi_statement_mode-new-in-v4011) can be used to control this behavior.
 
 * Error Number: 8138
 
-    事务试图写入的行值有误，请参考[数据索引不一致报错](/troubleshoot-data-inconsistency-errors.md#error-8138)。
+    The transaction attempts to write an incorrect row value. For more information, see [Troubleshoot Inconsistency Between Data and Indexes](/troubleshoot-data-inconsistency-errors.md#error-8138).
 
 * Error Number: 8139
 
-    事务试图写入的行和索引的 handle 值不一致，请参考[数据索引不一致报错](/troubleshoot-data-inconsistency-errors.md#error-8139)。
+    The transaction attempts to write a row whose handle is inconsistent with that in the index. For more information, see [Troubleshoot Inconsistency Between Data and Indexes](/troubleshoot-data-inconsistency-errors.md#error-8139).
 
 * Error Number: 8140
 
-    事务试图写入的行和索引的值不一致，请参考[数据索引不一致报错](/troubleshoot-data-inconsistency-errors.md#error-8140)。
+   The transaction attempts to write a row whose data is inconsistent with the index data. For more information, see [Troubleshoot Inconsistency Between Data and Indexes](/troubleshoot-data-inconsistency-errors.md#error-8140).
 
 * Error Number: 8141
 
-    事务写入时，对 key 的存在性断言报错，请参考[数据索引不一致报错](/troubleshoot-data-inconsistency-errors.md#error-8141)。
+    When a transaction is being committed, the existence assertion of a key fails. For more information,see [Troubleshoot Inconsistency Between Data and Indexes](/troubleshoot-data-inconsistency-errors.md#error-8141).
 
 * Error Number: 8143
 
-    非事务 DML 语句的一个 batch 报错，语句中止，请参考[非事务 DML 语句](/non-transactional-dml.md)
+    During the execution of a non-transactional DML statement, if a batch fails, the statement is stopped. For more information, see [Non-transactional DML statements](/non-transactional-dml.md).
 
 * Error Number: 8147
 
-   当 [`tidb_constraint_check_in_place_pessimistic`](/system-variables.md#tidb_constraint_check_in_place_pessimistic-从-v630-版本开始引入) 设置为 `OFF` 时，为保证事务的正确性，SQL 语句执行时产生的任何错误都可能导致 TiDB 返回 `8147` 报错并中止当前事务。具体的错误原因，请参考对应的报错信息。详见[约束](/constraints.md#悲观事务)。
+    When [`tidb_constraint_check_in_place_pessimistic`](/system-variables.md#tidb_constraint_check_in_place_pessimistic-new-in-v630) is set to `OFF`, to ensure the correctness of transactions, any errors in the SQL statement execution might cause TiDB to return this `8147` error and abort the current transaction. For specific causes of the error, refer to the error message. For more information, see [Constraints](/constraints.md#pessimistic-transactions).
 
 * Error Number: 8154
 
-    目前 `LOAD DATA` 不支持从 TiDB 服务器本地导入数据，可以指定 `LOCAL` 从客户端导入，或者将数据上传到 S3/GCS 再进行导入。请参考 [`LOAD DATA`](/sql-statements/sql-statement-load-data.md)。
+    Currently `LOAD DATA` does not support importing data locally from TiDB server. You can specify `LOCAL` to import from client, or upload data to S3 or GCS and then import it. See [`LOAD DATA`](/sql-statements/sql-statement-load-data.md).
 
 * Error Number: 8156
 
-    传入的文件路径不能为空。需要设置正确的路径再进行导入。
+    The provided path cannot be empty. You need to set a correct path before the import.
 
 * Error Number: 8157
 
-    不支持的文件格式。请参考 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md#format) 查看支持的格式。
+    The provided file format is unsupported. For the supported formats, see [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md#format).
 
 * Error Number: 8158
 
-    传入的文件路径不合法。请根据具体的错误提示进行处理。S3 和 GCS 路径设置可参考[外部存储服务的 URI 格式](/external-storage-uri.md)。
+    The provided path is invalid. Refer to the specific error message for actions. For Amazon S3 or GCS path settings, see [URI Formats of External Storage Services](/external-storage-uri.md).
 
 * Error Number: 8159
 
-    TiDB 无法访问传入的 S3/GCS 路径。请确保填写的 S3/GCS bucket 存在，且输入了正确的 Access Key 和 Secret Access Key 以让 TiDB 服务器有权限访问 S3/GCS 对应的 bucket。
+    TiDB cannot access the provided Amazon S3 or GCS path. Make sure that the specified S3 or GCS bucket exists and that you have provided the correct Access Key and Secret Access Key for TiDB to access the corresponding bucket.
 
 * Error Number: 8160
 
-    读取数据文件失败。请根据具体的错误提示进行处理。
+    Failed to read the data files. Refer to the specific error message for actions.
 
 * Error Number: 8162
 
-    语句存在错误。请根据具体的错误提示进行处理。
+    There is an error in the statement. Refer to the specific error message for actions.
 
 * Error Number: 8163
 
-    未知的选项。请参考 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md#参数说明) 查看支持的选项。
+    The provided option is unknown. For supported options, see [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md#parameter-description).
 
 * Error Number: 8164
 
-    选项取值无效。请参考 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md#参数说明) 查看有效的取值。
+    The provided option value is invalid. For valid values, see [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md#parameter-description).
 
 * Error Number: 8165
 
-    重复指定了选项，每个选项只能指定一次。
+    Duplicate options are specified. Each option can only be specified once.
 
 * Error Number: 8166
 
-    某些选项只能在特定的条件下才可以使用。请根据具体的错误提示进行处理。请参考 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md#参数说明) 查看支持的选项。
+    Certain options can only be used in specific conditions. Refer to the specific error message for actions. For supported options, see [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md#parameter-description).
 
 * Error Number: 8170
 
-    指定的 job 不存在。
+    The specified job does not exist.
 
 * Error Number: 8171
 
-    该 job 的状态不能进行当前操作。请根据具体的错误提示进行处理。
+    The current operation cannot be performed for the current job status. Refer to the specific error message for actions.
 
 * Error Number: 8173
 
-    执行 `IMPORT INTO` 时，TiDB 会对当前环境进行检查，比如检查下游表是否为空等。请根据具体的错误提示进行处理。
+    When executing `IMPORT INTO`, TiDB checks the current environment, such as checking if the downstream table is empty. Refer to the specific error message for actions.
 
 * Error Number: 8200
 
-    尚不支持的 DDL 语法。请参考[与 MySQL DDL 的兼容性](/mysql-compatibility.md#ddl-的限制)。
+    The DDL syntax is not yet supported.
+
+    See [compatibility of MySQL DDL](/mysql-compatibility.md#ddl-operations) for reference.
 
 * Error Number: 8214
 
-    DDL 操作被 admin cancel 操作终止。
+    The DDL operation is terminated by the `admin cancel` operation.
 
 * Error Number: 8215
 
-    Admin Repair 表失败，如果遇到该报错请向 PingCAP 工程师或通过官方论坛寻求帮助。
+    [`ADMIN REPAIR TABLE`](/sql-statements/sql-statement-admin.md#admin-repair-statement) fails.
+
+    If you encounter this error, [get support](/support.md) from PingCAP or the community.
 
 * Error Number: 8216
 
-    `AUTO_RANDOM` 的使用方法不正确。请参考 [`AUTO_RANDOM`](/auto-random.md) 进行修改。
+    The usage of the `AUTO_RANDOM` columns is incorrect.
+
+    See [`AUTO_RANDOM`](/auto-random.md) to modify.
 
 * Error Number: 8223
 
-    检测出数据与索引不一致的错误，如果遇到该报错请向 PingCAP 工程师或通过官方论坛寻求帮助。
+    This error occurs when detecting that the data is not consistent with the index.
+
+    If you encounter this error, [get support](/support.md) from PingCAP or the community.
 
 * Error Number: 8224
 
-    找不到 DDL job，请检查 restore 操作指定的 job id 是否存在。
+    The DDL job cannot be found.
+
+    Check whether the job id specified by the `restore` operation exists.
 
 * Error Number: 8225
 
-    DDL 已经完成，无法被取消。
+    The DDL operation is completed and cannot be canceled.
 
 * Error Number: 8226
 
-    DDL 几乎要完成了，无法被取消。
+    The DDL operation is almost completed and cannot be canceled.
 
 * Error Number: 8227
 
-    创建 Sequence 时使用了不支持的选项，支持的选项的列表可以参考 [Sequence 使用文档](/sql-statements/sql-statement-create-sequence.md#参数说明)。
+    Unsupported options are used when creating Sequence.
+
+    See [Sequence documentation](/sql-statements/sql-statement-create-sequence.md#parameters) to find the list of the supported options.
 
 * Error Number: 8228
 
-    在 Sequence 上使用 `SETVAL` 时指定了不支持的类型，该函数的示例可以在 [Sequence 使用文档](/sql-statements/sql-statement-create-sequence.md#示例)中找到。
+    Unsupported types are specified when using `SETVAL` on Sequence.
+
+    See [Sequence documentation](/sql-statements/sql-statement-create-sequence.md#examples) to find the example of the function.
 
 * Error Number: 8229
 
-    事务超过存活时间，遇到该问题可以提交或者回滚当前事务，开启一个新事务。
+    The transaction exceeds the survival time.
+
+    Commit or roll back the current transaction, and start a new transaction.
 
 * Error Number: 8230
 
-    TiDB 目前不支持在新添加的列上使用 Sequence 作为默认值，如果尝试进行这类操作会返回该错误。
+    TiDB currently does not support using Sequence as the default value on newly added columns, and reports this error if you use it.
 
 * Error Number: 8248
 
-    资源组已存在。在重复创建资源组时返回该错误。
+    The resource group already exists. This error is returned when a resource group is repeatedly created.
 
 * Error Number: 8249
 
-    资源组不存在。在修改或绑定不存在的资源组时返回该错误。请参考[创建资源组](/tidb-resource-control-ru-groups.md#创建资源组)。
+    The resource group does not exist. This error is returned when you modify or bind a resource group that does not exist. See [Create a resource group](/tidb-resource-control-ru-groups.md#create-a-resource-group).
 
 * Error Number: 8250
 
-    完整的报错信息如下：
+    The complete error message is as follows:
 
     `ERROR 8250 (HY000) : Resource control feature is disabled. Run "SET GLOBAL tidb_enable_resource_control='on'" to enable the feature`
 
-    资源控制的功能没有打开时，使用资源管控 (Resource Control) 相关功能会返回该错误。你可以开启全局变量 [`tidb_enable_resource_control`](/system-variables.md#tidb_enable_resource_control-从-v660-版本开始引入) 启用资源管控。
+    This error is returned when you try to use the resource control feature but it is not enabled. You can turn on the global variable [`tidb_enable_resource_control`](/system-variables.md#tidb_enable_resource_control-new-in-v660) to enable resource control.
 
 * Error Number: 8251
 
-    `Resource Control` 组件在 TiDB 启动时进行初始化，相关配置会从 `Resource Control` 的服务端 `Resource Manager` 上获取，如果此过程中出错，则会返回此错误。
+    The `Resource Control` component is initialized upon TiDB startup. The associated configuration is fetched from the `Resource Manager` on the server side of `Resource Control`. This error is returned if there is an error during this process.
 
 * Error Number: 8252
 
-    完整的报错信息如下：
+    The complete error message is as follows:
 
     `ERROR 8252 (HY000) : Exceeded resource group quota limitation`
 
-    在尝试消耗超过资源组的限制时返回该错误。一般出现该错误，是由于单次事务太大或者并发太多导致，需调整事务大小或减少客户端并发数。
+    This error is returned when the attempted consumption exceeds the resource group limit. This error is usually caused by a single transaction that is too large or too many concurrent transactions. You need to adjust the transaction size or reduce the number of concurrent clients.
 
 * Error Number: 8253
 
-    查询终止，因为满足 Runaway Queries 的条件。请参考 [Runaway Queries](/tidb-resource-control-runaway-queries.md)。
+    The query stops because it meets the condition of a runaway query. See [Runaway Queries](/tidb-resource-control-runaway-queries.md).
 
 * Error Number: 8254
 
-    查询终止，因为被 Runaway Queries 免疫命中。请参考 [Runaway Queries](/tidb-resource-control-runaway-queries.md)。
+    The query stops because it meets the quarantined watch condition of a runaway query. See [Runaway Queries](/tidb-resource-control-runaway-queries.md).
 
 * Error Number: 8260
 
-    DDL 操作无法被 `ADMIN PAUSE` 暂停运行。
+    DDL operations cannot be paused by `ADMIN PAUSE`.
 
 * Error Number: 8261
 
-    DDL 操作无法被 `ADMIN RESUME` 恢复运行。
+    DDL operations cannot be resumed by `ADMIN RESUME`.
 
 * Error Number: 8262
 
-    DDL 已经被 `ADMIN PAUSE` 暂停，无法再次执行。
+    DDL is paused by `ADMIN PAUSE` and cannot be paused again.
 
 * Error Number: 8263
 
-    该 DDL 无法在特定的 BDR role 下执行。请确定该集群是否处于[双向复制](/ticdc/ticdc-bidirectional-replication.md)中。如果集群没有在双向复制中，可以通过 `ADMIN UNSET BDR ROLE;` 使 DDL 恢复正常使用。
+    This DDL cannot be executed under a specific BDR role. Make sure that the cluster is in [bidirectional replication](/ticdc/ticdc-bidirectional-replication.md). If the cluster is not in bidirectional replication, you can use `ADMIN UNSET BDR ROLE;` to make DDL normal.
 
 * Error Number: 9001
 
-    完整的报错信息为 `ERROR 9001 (HY000) : PD server timeout`。
+    The complete error message: `ERROR 9001 (HY000): PD server timeout`
 
-    请求 PD 超时，请检查 PD Server 状态/监控/日志以及 TiDB Server 与 PD Server 之间的网络。
+    The PD request timed out.
+
+    Check the status, monitoring data and log of the PD server, and the network between the TiDB server and the PD server.
 
 * Error Number: 9002
 
-    完整的报错信息为 `ERROR 9002 (HY000) : TiKV server timeout`。
+    The complete error message: `ERROR 9002 (HY000): TiKV server timeout`
 
-    请求 TiKV 超时，请检查 TiKV Server 状态/监控/日志以及 TiDB Server 与 TiKV Server 之间的网络。
+    The TiKV request timed out.
+
+    Check the status, monitoring data and log of the TiKV server, and the network between the TiDB server and the TiKV server.
 
 * Error Number: 9003
 
-    完整的报错信息为 `ERROR 9003 (HY000) : TiKV Server is Busy`。
+    The complete error message: `ERROR 9003 (HY000): TiKV Server is Busy`
 
-    TiKV 操作繁忙，一般出现在数据库负载比较高时，请检查 TiKV Server 状态/监控/日志。
+    The TiKV server is busy and this usually occurs when the workload is too high.
+
+    Check the status, monitoring data, and log of the TiKV server.
 
 * Error Number: 9004
 
-    完整的报错信息为 `ERROR 9004 (HY000) : Resolve Lock Timeout`。
+    The complete error message: `ERROR 9004 (HY000): Resolve Lock Timeout`
 
-    清理锁超时，当数据库上承载的业务存在大量的事务冲突时，会遇到这种错误，请检查业务代码是否有锁争用。
+    A lock resolving timeout. This error occurs when a large number of transactional conflicts exist in the database.
+
+    Check the application code to see whether lock contention exists in the database.
 
 * Error Number: 9005
 
-    完整的报错信息为 `ERROR 9005 (HY000) : Region is unavailable`。
+    The complete error message: `ERROR 9005 (HY000): Region is unavailable`
 
-    访问的 Region 不可用，某个 Raft Group 不可用，如副本数目不足，出现在 TiKV 比较繁忙或者是 TiKV 节点停机的时候，请检查 TiKV Server 状态/监控/日志。
+    The accessed Region or a certain Raft Group is not available, with possible reasons such as insufficient replicas. This error usually occurs when the TiKV server is busy or the TiKV node is down.
+
+    Check the status, monitoring data and log of the TiKV server.
 
 * Error Number: 9006
 
-    完整的报错信息为 `ERROR 9006 (HY000) : GC life time is shorter than transaction duration`。
+    The complete error message: `ERROR 9006 (HY000): GC life time is shorter than transaction duration`
 
-    GC Life Time 间隔时间过短，长事务本应读到的数据可能被清理了。你可以使用如下命令修改 [`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-从-v50-版本开始引入) 的值：
+    The interval of `GC Life Time` is too short. The data that should have been read by long transactions might be deleted. You can adjust [`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50) using the following command:
 
     ```sql
     SET GLOBAL tidb_gc_life_time = '30m';
     ```
 
-    其中 30m 代表仅清理 30 分钟前的数据，这可能会额外占用一定的存储空间。
+    > **Note:**
+    >
+    > "30m" means only cleaning up the data generated 30 minutes ago, which might consume some extra storage space.
+
+* Error Number: 9500
+
+    A single transaction is too large.
+
+    See [the error message `transaction too large`](/faq/migration-tidb-faq.md#the-error-message-transaction-too-large-is-displayed) for the solution.
 
 * Error Number: 9007
 
-    报错信息以 `ERROR 9007 (HY000) : Write conflict` 开头。
+    The error message starts with `ERROR 9007 (HY000): Write conflict`.
 
-    如果报错信息中含有 "reason=LazyUniquenessCheck"，说明是悲观事务并且设置了 `@@tidb_constraint_check_in_place_pessimistic=OFF`，业务中存在唯一索引上的写冲突，此时悲观事务不能保证执行成功。可以在应用测重试事务，或将该变量设置成 `ON` 绕过。详见[约束](/constraints.md#悲观事务)。
+    If the error message contains `reason=LazyUniquenessCheck`, it means that the transaction is pessimistic, `@@tidb_constraint_check_in_place_pessimistic=OFF` is set, and a write conflict occurs on a unique index for the application. In this case, successful execution of the pessimistic transaction is not guaranteed. You can retry the transaction from the application, or set the variable to `ON` to avoid the error.
 
 * Error Number: 9008
 
-    同时向 TiKV 发送的请求过多，超过了限制。请调大 `tidb_store_limit` 或将其设置为 `0` 来取消对请求流量的限制。
+    Too many requests are sent to TiKV at the same time. The number exceeds limit.
+
+    Increase `tidb_store_limit` or set it to `0` to remove the limit on the traffic of requests.
 
 * Error Number: 9010
 
-    TiKV 无法处理这条 raft log，请检查 TiKV Server 状态/监控/日志。
+    TiKV cannot process this raft log.
+
+    Check the state/monitor/log of the TiKV server.
 
 * Error Number: 9012
 
-    请求 TiFlash 超时。请检查 TiFlash Server 状态/监控/日志以及 TiDB Server 与 TiFlash Server 之间的网络。
+    The TiFlash request timed out.
+
+    Check the state/monitor/log of the TiFlash server and the network between the TiDB server and TiFlash server.
 
 * Error Number: 9013
 
-    TiFlash 操作繁忙。该错误一般出现在数据库负载比较高时。请检查 TiFlash Server 的状态/监控/日志。
+    The TiFlash server is busy and this usually occurs when the workload is too high.
 
-### MySQL 原生报错汇总
+    Check the state/monitor/log of the TiFlash server.
+
+### MySQL native error messages
 
 * Error Number: 2013 (HY000)
 
-    完整的报错信息为 `ERROR 2013 (HY000): Lost connection to MySQL server during query`。
+    The complete error message: `ERROR 2013 (HY000): Lost connection to MySQL server during query`
 
-    排查方法如下：
+    You can handle this error as follows:
 
-    - log 中是否有 panic
-    - dmesg 中是否有 oom，命令：`dmesg -T | grep -i oom`
-    - 长时间没有访问，也会收到这个报错，一般是 tcp 超时导致的，tcp 长时间不用，会被操作系统 kill。
+    - Check whether panic is in the log.
+    - Check whether OOM exists in dmesg using `dmesg -T | grep -i oom`.
+    - A long time of no access might also lead to this error. It is usually caused by TCP timeout. If TCP is not used for a long time, the operating system kills it.
 
 * Error Number: 1105 (HY000)
 
-    完整的报错信息为 `ERROR 1105 (HY000): other error: unknown error Wire Error(InvalidEnumValue(4004))`
+    The complete error message: `ERROR 1105 (HY000): other error: unknown error Wire Error(InvalidEnumValue(4004))`
 
-    这类问题一般是 TiDB 和 TiKV 版本不匹配，在升级过程尽量一起升级，避免版本 mismatch。
+    This error usually occurs when the version of TiDB does not match with that of TiKV. To avoid version mismatch, upgrade all components when you upgrade the version.
 
 * Error Number: 1148 (42000)
 
-    完整的报错信息为 `ERROR 1148 (42000): the used command is not allowed with this TiDB version`。
+    The complete error message: `ERROR 1148 (42000): the used command is not allowed with this TiDB version`
 
-    这个问题是因为在执行 `LOAD DATA LOCAL` 语句的时候，MySQL 客户端不允许执行此语句（即 `local_infile` 选项为 0）。解决方法是在启动 MySQL 客户端时，用 `--local-infile=1` 选项。具体启动指令类似：`mysql --local-infile=1 -u root -h 127.0.0.1 -P 4000`。有些 MySQL 客户端需要设置而有些不需要设置，原因是不同版本的 MySQL 客户端对 `local-infile` 的默认值不同。
+    When you execute the `LOAD DATA LOCAL` statement but the MySQL client does not allow executing this statement (the value of the `local_infile` option is 0), this error occurs.
+
+    The solution is to use the `--local-infile=1` option when you start the MySQL client. For example, run the command `mysql --local-infile=1 -u root -h 127.0.0.1 -P 4000`. The default value of `local-infile` varies in different versions of the MySQL client. Therefore, you need to configure it in specific MySQL clients.
 
 * Error Number: 9001 (HY000)
 
-    完整的报错信息为 `ERROR 9001 (HY000): PD server timeout start timestamp may fall behind safe point`
+    The complete error message: `ERROR 9001 (HY000): PD server timeout start timestamp may fall behind safe point`
 
-    这个报错一般是 TiDB 访问 PD 出了问题，TiDB 后台有个 worker 会不断地从 PD 查询 safepoint，如果超过 100s 查不成功就会报这个错。一般是因为 PD 磁盘操作过忙、反应过慢，或者 TiDB 和 PD 之间的网络有问题。TiDB 常见错误码请参考[错误码与故障诊断](/error-codes.md)。
+    This error occurs when TiDB fails to access PD. A worker in the TiDB background continuously queries the safepoint from PD and reports this error if it fails to query within 100s. Generally, it is because the disk on PD is slow and busy or the network failed between TiDB and PD. For the details of common errors, see [Error Number and Fault Diagnosis](/error-codes.md).
 
-* TiDB 日志中的报错信息：EOF
+* TiDB log error message: EOF error
 
-    当客户端或者 proxy 断开连接时，TiDB 不会立刻察觉连接已断开，而是等到开始往连接返回数据时，才发现连接已断开，此时日志会打印 EOF 错误。
+    When the client or proxy disconnects from TiDB, TiDB does not immediately notice the disconnection. Instead, TiDB notices the disconnection only when it begins to return data to the connection. At this time, the log prints an EOF error.
 
-## 故障诊断
+## Troubleshooting
 
-参见[故障诊断文档](/troubleshoot-tidb-cluster.md)。
+See the [troubleshooting](/troubleshoot-tidb-cluster.md) and [FAQ](/faq/tidb-faq.md) documents.

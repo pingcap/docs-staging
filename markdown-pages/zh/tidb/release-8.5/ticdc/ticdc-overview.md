@@ -1,116 +1,126 @@
 ---
-title: TiCDC 简介
-summary: TiCDC 是一款 TiDB 增量数据同步工具，适用于多 TiDB 集群的高可用和容灾方案，以及实时同步变更数据到异构系统。其主要特性包括数据容灾复制、双向复制、低延迟的增量数据同步能力等。TiCDC 架构包括 TiKV Server、TiCDC 和 PD，支持将数据同步到 TiDB、MySQL 数据库、Kafka 以及存储服务。目前暂不支持单独使用 RawKV 的 TiKV 集群，创建 SEQUENCE 的 DDL 操作和在同步过程中对 TiCDC 正在同步的表和库进行 BR 数据恢复和 TiDB Lightning 导入。
+title: TiCDC Overview
+summary: Learn what TiCDC is, what features TiCDC provides, and how to install and deploy TiCDC.
 ---
 
-# TiCDC 简介
+# TiCDC Overview
 
-[TiCDC](https://github.com/pingcap/tiflow/tree/release-8.5/cdc) 是一款 TiDB 增量数据同步工具，通过拉取上游 TiKV 的数据变更日志，TiCDC 可以将数据解析为有序的行级变更数据输出到下游。关于具体的数据同步能力，参见 [TiCDC 数据同步能力详解](/ticdc/ticdc-data-replication-capabilities.md)。
+[TiCDC](https://github.com/pingcap/tiflow/tree/release-8.5/cdc) is a tool used to replicate incremental data from TiDB. Specifically, TiCDC pulls TiKV change logs, sorts captured data, and exports row-based incremental data to downstream databases. For detailed data replication capabilities, see [TiCDC Data Replication Capabilities](/ticdc/ticdc-data-replication-capabilities.md).
 
-## TiCDC 适用场景
+## Usage scenarios
 
-TiCDC 适用于以下场景：
+TiCDC has multiple usage scenarios, including:
 
-- 提供多 TiDB 集群，跨区域数据高可用和容灾方案，保证在灾难发生时保证主备集群数据的最终一致性。
-- 提供同步实时变更数据到异构系统的服务，为监控、缓存、全文索引、数据分析、异构数据库使用等场景提供数据源。
+- Providing high availability and disaster recovery solutions for multiple TiDB clusters. TiCDC ensures eventual data consistency between primary and secondary clusters in case of a disaster.
+- Replicating real-time data changes to homogeneous systems. This provides data sources for various scenarios, such as monitoring, caching, global indexing, data analysis, and primary-secondary replication between heterogeneous databases.
 
-## TiCDC 主要特性
+## Major features
 
-### 核心能力
+### Key capabilities
 
-TiCDC 提供了以下核心能力：
+TiCDC has the following key capabilities:
 
-- 提供 TiDB -> TiDB 之间数据容灾复制的能力，实现秒级别 RPO 和分钟级别 RTO
-- 提供 TiDB 之间双向复制的能力，支持通过 TiCDC 构建多写多活的 TiDB 集群
-- 提供 TiDB -> MySQL（或其他兼容 MySQL 协议的数据库）的低延迟的增量数据同步能力
-- 提供 TiDB -> Kafka 增量数据同步能力，推荐的数据格式包含 [Canal-JSON](/ticdc/ticdc-canal-json.md)，[Avro](/ticdc/ticdc-avro-protocol.md)，[Debezium](/ticdc/ticdc-debezium.md) 等
-- 提供 TiDB -> 存储服务（如：Amazon S3、GCS、Azure Blob Storage 和 NFS）增量数据同步能力
-- 提供表级别数据同步能力，支持同步过程中过滤数据库、表、DML、DDL 的能力
-- 高可用架构，无单点故障；支持动态添加、删除 TiCDC 节点
-- 支持通过 [Open API](/ticdc/ticdc-open-api-v2.md) 进行集群管理，包括查询任务状态；动态修改任务配置；动态创建、删除任务等
+- Replicating incremental data between TiDB clusters with second-level RPO and minute-level RTO.
+- Bidirectional replication between TiDB clusters, allowing the creation of a multi-active TiDB solution using TiCDC.
+- Replicating incremental data from a TiDB cluster to a MySQL database or other MySQL-compatible databases with low latency.
+- Replicating incremental data from a TiDB cluster to a Kafka cluster. The recommended data format includes [Canal-JSON](/ticdc/ticdc-canal-json.md), [Avro](/ticdc/ticdc-avro-protocol.md), and [Debezium](/ticdc/ticdc-debezium.md).
+- Replicating incremental data from a TiDB cluster to storage services, such as Amazon S3, GCS, Azure Blob Storage, and NFS.
+- Replicating tables with the ability to filter databases, tables, DMLs, and DDLs.
+- High availability with no single point of failure, supporting dynamically adding and deleting TiCDC nodes.
+- Cluster management through [Open API](/ticdc/ticdc-open-api-v2.md), including querying task status, dynamically modifying task configuration, and creating or deleting tasks.
 
-### 数据同步顺序性
+### Replication order
 
-- TiCDC 对于所有的 DDL/DML 都能对外输出**至少一次**。
-- TiCDC 在 TiKV/TiCDC 集群故障期间可能会重复发相同的 DDL/DML。对于重复的 DDL/DML：
-    - MySQL sink 可以重复执行 DDL，对于在下游可重入的 DDL（譬如 `TRUNCATE TABLE`）直接执行成功；对于在下游不可重入的 DDL（譬如 `CREATE TABLE`），执行失败，TiCDC 会忽略错误继续同步。
-    - Kafka sink 提供不同的数据分发策略：
-        - 可以按照表、主键或 ts 等策略分发数据到不同 Kafka partition。使用表、主键分发策略，可以保证某一行的更新数据被顺序的发送到相同 partition。
-        - 对所有的分发策略，TiCDC 都会定期发送 Resolved TS 消息到所有的 topic/partition，表示早于该 Resolved TS 的消息都已经发送到 topic/partition，消费程序可以利用 Resolved TS 对多个 topic/partition 的消息进行排序。
-        - Kafka sink 会发送重复的消息，但重复消息不会破坏 Resolved TS 的约束，比如在 changefeed 暂停重启后，可能会按顺序发送 msg1、msg2、msg3、msg2、msg3。你可以在 Kafka 消费端进行过滤。
+- For all DDL or DML statements, TiCDC outputs them **at least once**.
+- When the TiKV or TiCDC cluster encounters a failure, TiCDC might send the same DDL/DML statement repeatedly. For duplicated DDL/DML statements:
 
-### 数据同步一致性
+    - The MySQL sink can execute DDL statements repeatedly. For DDL statements that can be executed repeatedly in the downstream, such as `TRUNCATE TABLE`, the statement is executed successfully. For those that cannot be executed repeatedly, such as `CREATE TABLE`, the execution fails, and TiCDC ignores the error and continues with the replication process.
+    - The Kafka sink provides different strategies for data distribution.
+        - You can distribute data to different Kafka partitions based on the table, primary key, or timestamp. This ensures that the updated data of a row is sent to the same partition in order.
+        - All these distribution strategies send `Resolved TS` messages to all topics and partitions periodically. This indicates that all messages earlier than the `Resolved TS` have already been sent to the topics and partitions. The Kafka consumer can use the `Resolved TS` to sort the messages received.
+        - The Kafka sink sometimes sends duplicated messages, but these duplicated messages do not affect the constraints of `Resolved Ts`. For example, if a changefeed is paused and then resumed, the Kafka sink might send `msg1`, `msg2`, `msg3`, `msg2`, and `msg3` in order. You can filter out the duplicated messages from Kafka consumers.
+
+### Replication consistency
 
 - MySQL sink
 
-    - TiCDC 开启 redo log 后保证数据复制的最终一致性
-    - TiCDC **保证**单行的更新与上游更新顺序一致。
-    - TiCDC **不保证**下游事务的执行顺序和上游完全一致。
+    - TiCDC enables the redo log to ensure eventual consistency of data replication.
+    - TiCDC ensures that the order of single-row updates is consistent with the upstream.
+    - TiCDC does not ensure that the downstream transactions are executed in the same order as the upstream transactions.
 
-> **注意：**
+    > **Note:**
+    >
+    > Since v6.2, you can use the sink URI parameter [`transaction-atomicity`](/ticdc/ticdc-sink-to-mysql.md#configure-sink-uri-for-mysql-or-tidb) to control whether to split single-table transactions. Splitting single-table transactions can greatly reduce the latency and memory consumption of replicating large transactions.
+
+## TiCDC architecture
+
+TiCDC is an incremental data replication tool for TiDB, which is highly available through PD's etcd. The replication process consists of the following steps:
+
+1. Multiple TiCDC processes pull data changes from TiKV nodes.
+2. TiCDC sorts and merges the data changes.
+3. TiCDC replicates the data changes to multiple downstream systems through multiple replication tasks (changefeeds).
+
+The architecture of TiCDC is illustrated in the following figure:
+
+![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs/ticdc/cdc-architecture.png)
+
+The components in the architecture diagram are described as follows:
+
+- TiKV Server: TiKV nodes in a TiDB cluster. When data changes occur, TiKV nodes send the changes as change logs (KV change logs) to TiCDC nodes. If TiCDC nodes detect that the change logs are not continuous, they will actively request the TiKV nodes to provide change logs.
+- TiCDC: TiCDC nodes where TiCDC processes run. Each node runs a TiCDC process. Each process pulls data changes from one or more tables in TiKV nodes and replicates the changes to the downstream system through the sink component.
+- PD: The scheduling module in a TiDB cluster. This module is responsible for scheduling cluster data and usually consists of three PD nodes. PD provides high availability through the etcd cluster. In the etcd cluster, TiCDC stores its metadata, such as node status information and changefeed configurations.
+
+As shown in the architecture diagram, TiCDC supports replicating data to TiDB, MySQL, Kafka, and storage services.
+
+## Valid index
+
+Generally, TiCDC only replicates tables that have at least one valid index to the downstream. If an index in a table meets one of the following requirements, it is valid.
+
+- A primary key (`PRIMARY KEY`) is a valid index.
+- A unique index (`UNIQUE INDEX`) is valid if every column of the index is explicitly defined as non-nullable (`NOT NULL`) and the index does not have a virtual generated column (`VIRTUAL GENERATED COLUMNS`).
+
+> **Note:**
 >
-> 从 v6.2 版本起，你可以通过配置 sink URI 参数 [`transaction-atomicity`](/ticdc/ticdc-sink-to-mysql.md#sink-uri-配置-mysqltidb) 来控制 TiCDC 是否拆分单表事务。拆分事务可以大幅降低 MySQL sink 同步大事务的延时和内存消耗。
+> When you set [`force-replicate`](/ticdc/ticdc-changefeed-config.md#force-replicate) to `true`, TiCDC will forcibly [replicate tables without a valid index](/ticdc/ticdc-manage-changefeed.md#replicate-tables-without-a-valid-index).
 
-## TiCDC 架构概览
+## Best practices
 
-TiCDC 作为 TiDB 的增量数据同步工具，通过 PD 内部的 etcd 实现高可用，通过多个 TiCDC 进程获取 TiKV 节点上的数据改变，在内部进行排序、合并等处理之后，通过多个同步任务 (Changefeed)，同时向多个下游系统进行数据同步。
+- When you use TiCDC to replicate data between two TiDB clusters, if the network latency between the two clusters is higher than 100 ms:
 
-![TiCDC architecture](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/cdc-architecture.png)
+    - For TiCDC versions earlier than v6.5.2, it is recommended to deploy TiCDC in the region (IDC) where the downstream TiDB cluster is located.
+    - With a series of improvements introduced starting from TiCDC v6.5.2, it is recommended to deploy TiCDC in the region (IDC) where the upstream TiDB cluster is located.
 
-在以上架构图中：
+- Each table to be replicated by TiCDC has at least one [valid index](#valid-index).
 
-- TiKV Server：代表 TiDB 集群中的 TiKV 节点，当数据发生改变时 TiKV 节点会主动将发生的数据改变以变更日志（KV change logs，简称 change logs）的方式发送给 TiCDC 节点。当然，当 TiCDC 节点发现收到的 change logs 并不是连续的，也会主动发起请求，获得需要的 change logs。
-- TiCDC：代表运行了 TiCDC 进程的各个节点。每个节点都运行一个 TiCDC 进程，每个进程会从 TiKV 节点中拉取一个或者多个表中的数据改变，并通过 Sink 模块同步到下游系统。
-- PD：代表 TiDB 集群中的调度模块，负责集群数据的事实调度，这个模块通常是由 3 个 PD 节点构成的，内部通过 etcd 集群来实现选举等高可用相关的能力。 TiCDC 集群使用了 PD 集群内置的 etcd 集群来保存自己的元数据信息，例如：节点的状态信息，changefeed 配置信息等。
+- To ensure eventual consistency when using TiCDC for disaster recovery, you need to configure [redo log](/ticdc/ticdc-sink-to-mysql.md#eventually-consistent-replication-in-disaster-scenarios) and ensure that the storage system where the redo log is written can be read normally when a disaster occurs in the upstream.
 
-在具体实现上，TiCDC 的[新架构](/ticdc/ticdc-architecture.md)和[老架构](/ticdc/ticdc-classic-architecture.md)均基于上述模型实现增量数据同步。相比之下，新架构在任务调度和同步机制上进行了重构与优化，显著提升了实时数据复制的性能、可扩展性与稳定性，同时降低了资源成本。
+## Implementation of processing data changes
 
-另外，从上面的架构图中也可以看到，目前 TiCDC 支持将数据同步到 TiDB、MySQL 数据库、Kafka 以及存储服务等。
+This section mainly describes how TiCDC processes data changes generated by upstream DML operations.
 
-## 有效索引
+For data changes generated by upstream DDL operations, TiCDC obtains the complete DDL SQL statement, converts it into the corresponding format based on the sink type of the downstream, and sends it to the downstream. This section does not elaborate on this.
 
-一般情况，TiCDC 只会同步存在有效索引的表到下游。当表中的索引满足以下条件之一，即为有效索引：
-
-- 主键 (`PRIMARY KEY`) 为有效索引。
-- 唯一索引 (`UNIQUE INDEX`) 中每一列在表结构中明确定义为非空 (`NOT NULL`) 且不存在虚拟生成列 (`VIRTUAL GENERATED COLUMNS`)。
-
-> **注意：**
+> **Note:**
 >
-> 在设置 [`force-replicate`](/ticdc/ticdc-changefeed-config.md#force-replicate) 为 `true` 后，TiCDC 会强制[同步没有有效索引的表](/ticdc/ticdc-manage-changefeed.md#同步没有有效索引的表)。
+> The logic of how TiCDC processes data changes might be adjusted in subsequent versions.
 
-## 最佳实践
+MySQL binlog directly records all DML SQL statements executed in the upstream. Unlike MySQL, TiCDC listens to the real-time information of each Region Raft Log in the upstream TiKV, and generates data change information based on the difference between the data before and after each transaction, which corresponds to multiple SQL statements. TiCDC only guarantees that the output change events are equivalent to the changes in the upstream TiDB, and does not guarantee that it can accurately restore the SQL statements that caused the data changes in the upstream TiDB.
 
-- 使用 TiCDC 在两个 TiDB 集群间同步数据时，如果上下游的延迟超过 100 ms：
-    - 对于 v6.5.2 之前的版本，推荐将 TiCDC 部署在下游 TiDB 集群所在的区域 (IDC, region)
-    - 经过优化后，对于 v6.5.2 及之后的版本，推荐将 TiCDC 部署在上游集群所在的区域 (IDC, region)。
-- TiCDC 同步的每张表都至少包含一个[有效索引](#有效索引)。
-- 在使用 TiCDC 实现容灾的场景下，为实现最终一致性，需要配置 [redo log](/ticdc/ticdc-sink-to-mysql.md#灾难场景的最终一致性复制) 并确保 redo log 写入的存储系统在上游发生灾难时可以正常读取。
+Data change information includes the data change types and the data values before and after the change. The difference between the data before and after the transaction can result in three types of events:
 
-## TiCDC 处理数据变更的实现原理
+1. The `DELETE` event: corresponds to a `DELETE` type data change message, which contains the data before the change.
 
-本小节主要描述 TiCDC 如何处理上游 DML 产生的数据变更。对于上游 DDL 产生的数据变更，TiCDC 会获取到完整的 DDL SQL 语句，根据下游的 Sink 类型，转换成对应的格式发送给下游，本小节不再赘述。
+2. The `INSERT` event: corresponds to a `PUT` type data change message, which contains the data after the change.
 
-> **注意：**
->
-> TiCDC 处理数据变更的逻辑可能会在后续版本发生调整。
+3. The `UPDATE` event: corresponds to a `PUT` type data change message, which contains the data both before and after the change.
 
-MySQL binlog 直接记录了上游执行的所有 DML 操作的 SQL 语句。与 MySQL 不同，TiCDC 则实时监听上游 TiKV 各个 Region Raft Log 的信息，并根据每个事务前后数据的差异生成对应多条 SQL 语句的数据变更信息。TiCDC 只保证输出的变更事件和上游 TiDB 的变更是等价的，不保证能准确还原上游 TiDB 引起数据变更的 SQL 语句。
+Based on the data change information, TiCDC generates data in the appropriate formats for different downstream types, and sends the data to the downstream. For example, it generates data in formats such as Canal-JSON and Avro, and writes the data to Kafka, or converts the data back into SQL statements and sends them to the downstream MySQL or TiDB.
 
-数据变更信息会包含数据变更类型，以及变更前后的数值。事务前后数据的差异一共可能产生三种事件：
+Currently, when TiCDC adapts data change information for the corresponding protocol, for specific `UPDATE` events, it might split them into one `DELETE` event and one `INSERT` event. For more information, see [Split `UPDATE` events for MySQL sinks](/ticdc/ticdc-split-update-behavior.md#split-update-events-for-mysql-sinks) and [Split primary or unique key `UPDATE` events for non-MySQL sinks](/ticdc/ticdc-split-update-behavior.md#split-primary-or-unique-key-update-events-for-non-mysql-sinks).
 
-1. `DELETE` 事件：对应会收到一条 `DELETE` 类型的数据变更信息，包含变更前的数据。
+When the downstream is MySQL or TiDB, TiCDC cannot guarantee that the SQL statements written to the downstream are exactly the same as the SQL statements executed in the upstream. This is because TiCDC does not directly obtain the original DML statements executed in the upstream, but generates SQL statements based on the data change information. However, TiCDC ensures the consistency of the final results.
 
-2. `INSERT` 事件：对应会收到一条 `PUT` 类型的数据变更信息，包含变更后的数据。
-
-3. `UPDATE` 事件：对应会收到一条 `PUT` 类型的数据变更信息，包含变更前与变更后的数据。
-
-TiCDC 会根据收到的这些数据变更信息，适配各个类型的下游来生成合适格式的数据传输给下游。例如，生成 Canal-JSON、Avro 等格式的数据写入 Kafka 中，或者重新转换成 SQL 语句发送给下游的 MySQL 或者 TiDB。
-
-目前 TiCDC 将数据变更信息适配对应的协议时，对于特定的 `UPDATE` 事件，可能会将其拆成一条 `DELETE` 事件和一条 `INSERT` 事件。详见 [MySQL Sink 拆分 `UPDATE` 事件行为说明](/ticdc/ticdc-split-update-behavior.md#mysql-sink-拆分-update-事件行为说明)及[非 MySQL Sink 拆分主键或唯一键 `UPDATE` 事件](/ticdc/ticdc-split-update-behavior.md#非-mysql-sink-拆分主键或唯一键-update-事件)。
-
-当下游是 MySQL 或者 TiDB 时，因为 TiCDC 并非直接获取原生上游执行的 DML 语句，而是重新根据数据变更信息来生成 SQL 语句，因此不能保证写入下游的 SQL 语句和上游执行的 SQL 语句完全相同，但会保证最终结果的一致性。
-
-例如上游执行了以下 SQL 语句：
+For example, the following SQL statement is executed in the upstream:
 
 ```sql
 Create Table t1 (A int Primary Key, B int);
@@ -124,7 +134,7 @@ Commit;
 Update t1 set b = 4 where b = 2;
 ```
 
-TiCDC 将根据数据变更信息重新生成 SQL 语句，向下游写以下两条 SQL 语句：
+TiCDC generates the following two SQL statements based on the data change information, and writes them to the downstream:
 
 ```sql
 INSERT INTO `test.t1` (`A`,`B`) VALUES (1,2),(2,2),(3,3);
@@ -139,20 +149,14 @@ END
 WHERE `A` = 1 OR `A` = 2;
 ```
 
-## 暂不支持的场景
+## Unsupported scenarios
 
-目前 TiCDC 暂不支持的场景如下：
+Currently, the following scenarios are not supported:
 
-- 暂不支持单独使用 RawKV 的 TiKV 集群。
-- 暂不支持在 TiDB 中[创建 SEQUENCE 的 DDL 操作](/sql-statements/sql-statement-create-sequence.md)和 [SEQUENCE 函数](/sql-statements/sql-statement-create-sequence.md#sequence-函数)。在上游 TiDB 使用 SEQUENCE 时，TiCDC 将会忽略掉上游执行的 SEQUENCE DDL 操作/函数，但是使用 SEQUENCE 函数的 DML 操作可以正确地同步。
-- 暂不支持对 TiCDC 正在同步的表和库进行 [TiDB Lightning 物理导入](/tidb-lightning/tidb-lightning-physical-import-mode.md)。详情请参考 [TiDB Lightning 物理导入模式与 TiCDC 的兼容性存在哪些限制](/ticdc/ticdc-faq.md#tidb-lightning-物理导入模式和-ticdc-的兼容性存在哪些限制)。
-- 在 v8.2.0 之前的版本中，当集群存在 TiCDC 同步任务时，BR 不支持进行[数据恢复](/br/backup-and-restore-overview.md)。详情请参考 [BR (Backup & Restore) 和 TiCDC 的兼容性存在哪些限制？](/ticdc/ticdc-faq.md#br-backup--restore-和-ticdc-的兼容性存在哪些限制)。
-- 从 BR v8.2.0 起，BR 数据恢复对 TiCDC 的限制被放宽：如果所恢复数据的 BackupTS（即备份时间）早于 Changefeed 的 [CheckpointTS](/ticdc/ticdc-classic-architecture.md#checkpointts)（即记录当前同步进度的时间戳），BR 数据恢复可以正常进行。考虑到 BackupTS 通常较早，此时可以认为绝大部分场景下，当集群存在 TiCDC 同步任务时，BR 都可以进行数据恢复。
+- A TiKV cluster that uses RawKV alone.
+- The [`CREATE SEQUENCE` DDL operation](/sql-statements/sql-statement-create-sequence.md) and the [`SEQUENCE` function](/sql-statements/sql-statement-create-sequence.md#sequence-function) in TiDB. When the upstream TiDB uses `SEQUENCE`, TiCDC ignores `SEQUENCE` DDL operations/functions performed upstream. However, DML operations using `SEQUENCE` functions can be correctly replicated.
+- Currently, performing [TiDB Lightning physical import](/tidb-lightning/tidb-lightning-physical-import-mode.md) on tables and databases that are being replicated by TiCDC is not supported. For more information, see [Why does replication using TiCDC stall or even stop after data restore using TiDB Lightning and BR from upstream](/ticdc/ticdc-faq.md#why-does-replication-using-ticdc-stall-or-even-stop-after-data-restore-using-tidb-lightning-physical-import-mode-and-br-from-upstream).
+- Before v8.2.0, BR does not support [restoring data](/br/backup-and-restore-overview.md) for a cluster with TiCDC replication tasks. For more information, see [Why does replication using TiCDC stall or even stop after data restore using TiDB Lightning and BR from upstream](/ticdc/ticdc-faq.md#why-does-replication-using-ticdc-stall-or-even-stop-after-data-restore-using-tidb-lightning-physical-import-mode-and-br-from-upstream).
+- Starting from v8.2.0, BR relaxes the restrictions on data restoration for TiCDC: if the `BackupTS` (the backup time) of the data to be restored is earlier than the changefeed [`CheckpointTS`](/ticdc/ticdc-architecture.md#checkpointts) (the timestamp that indicates the current replication progress), BR can proceed with the data restoration normally. Considering that the `BackupTS` is usually much earlier, it can be assumed that in most scenarios, BR supports restoring data for a cluster with TiCDC replication tasks.
 
-对上游存在较大事务的场景提供部分支持，详见 [TiCDC 是否支持同步大事务？有什么风险吗？](/ticdc/ticdc-faq.md#ticdc-支持同步大事务吗有什么风险吗)。
-
-## 相关资源
-
-<RelatedResources>
-  <ResourceCard title="管理 TiDB 实验 11: 使用 TiCDC 复制 TiDB 变更事件" type="lab" link="https://labs.pingcap.com/labs/dba_303_lab_ff10" imgSrc="https://lab-static.pingcap.com/quick-demo/dba_303_ch12_en.png" duration="60 分钟" />
-</RelatedResources>
+TiCDC only partially supports scenarios involving large transactions in the upstream. For details, refer to the [TiCDC FAQ](/ticdc/ticdc-faq.md#does-ticdc-support-replicating-large-transactions-is-there-any-risk), where you can find details on whether TiCDC supports replicating large transactions and any associated risks.

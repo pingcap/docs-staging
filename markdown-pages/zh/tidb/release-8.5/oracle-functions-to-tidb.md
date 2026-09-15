@@ -1,170 +1,170 @@
 ---
-title: Oracle 与 TiDB 函数和语法差异对照
-summary: 了解 Oracle 与 TiDB 函数和语法差异对照。
+title: Comparisons between Functions and Syntax of Oracle and TiDB
+summary: Learn the comparisons between functions and syntax of Oracle and TiDB.
 ---
 
-# Oracle 与 TiDB 函数和语法差异对照
+# Comparisons between Functions and Syntax of Oracle and TiDB
 
-本文档提供了 Oracle 与 TiDB 的函数和语法差异对照，方便你根据 Oracle 函数查找对应的 TiDB 函数，了解 Oracle 与 TiDB 语法差异。
+This document describes the comparisons between functions and syntax of Oracle and TiDB. It helps you find the corresponding TiDB functions based on the Oracle functions, and understand the syntax differences between Oracle and TiDB.
 
-> **注意：**
+> **Note:**
 >
-> 本文的内容是基于 Oracle 12.2.0.1.0 和 TiDB v5.4.0，其他版本可能存在差异。
+> The functions and syntax in this document are based on Oracle 12.2.0.1.0 and TiDB v5.4.0. They might be different in other versions.
 
-## 函数对照表
+## Comparisons of functions
 
-下表列出了 Oracle 与 TiDB 部分函数的对照表。
+The following table shows the comparisons between some Oracle and TiDB functions.
 
-| 函数 | Oracle 语法 | TiDB 语法 | 说明 |
+| Function | Oracle syntax | TiDB syntax | Note |
 |---|---|---|---|
-| 转换数据类型 |  <ul><li>`TO_NUMBER(key)`</li><li>`TO_CHAR(key)`</li></ul> | `CONVERT(key,dataType)` | TiDB 支持转换为下面类型：`BINARY`、`CHAR`、`DATE`、`DATETIME`、`TIME`、`SIGNED INTEGER`、`UNSIGNED INTEGER` 和 `DECIMAL`。 |
-| 日期类型转换为字符串类型 | <ul><li>`TO_CHAR(SYSDATE,'yyyy-MM-dd hh24:mi:ss')`</li> <li>`TO_CHAR(SYSDATE,'yyyy-MM-dd')`</li></ul> | <ul><li>`DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s')`</li><li>`DATE_FORMAT(NOW(),'%Y-%m-%d')`</li></ul> | TiDB 的格式化字符串大小写敏感。 |
-| 字符串类型转换为日期类型 | <ul><li>`TO_DATE('2021-05-28 17:31:37','yyyy-MM-dd hh24:mi:ss')`</li><li>`TO_DATE('2021-05-28','yyyy-MM-dd hh24:mi:ss')`</li></ul> | <ul><li>`STR_TO_DATE('2021-05-28 17:31:37','%Y-%m-%d %H:%i:%s')`</li><li>`STR_TO_DATE('2021-05-28','%Y-%m-%d%T')` </li></ul> | TiDB 的格式化字符串大小写敏感。 |
-| 获取系统当前时间（精确到秒）| `SYSDATE` | `NOW()` | |
-| 获取当前时间（精确到微秒）| `SYSTIMESTAMP` | `CURRENT_TIMESTAMP(6)` | |
-| 获取两个日期相差的天数 | `date1 - date2` | `DATEDIFF(date1, date2)` | |
-| 获取两个日期间隔月份 | `MONTHS_BETWEEN(ENDDATE,SYSDATE)` | `TIMESTAMPDIFF(MONTH,SYSDATE,ENDDATE)` | Oracle 中 `MONTHS_BETWEEN()` 函数与 TiDB 中 `TIMESTAMPDIFF()` 函数的结果会有误差。`TIMESTAMPDIFF()` 只保留整数月。使用时需要注意，两个函数的参数位置相反。 |
-| 日期增加/减少 n 天 | `DATEVAL + n` | `DATE_ADD(dateVal,INTERVAL n DAY)` | `n` 可为负数。|
-| 日期增加/减少 n 月 | `ADD_MONTHS(dateVal,n)`| `DATE_ADD(dateVal,INTERVAL n MONTH)` | `n` 可为负数。|
-| 获取日期到日 | `TRUNC(SYSDATE)` |  <ul><li>`CAST(NOW() AS DATE)`</li><li>`DATE_FORMAT(NOW(),'%Y-%m-%d')`</li></ul> | TiDB 中 `CAST` 与 `DATE_FORMAT` 结果一致。|
-| 获取日期当月第一天 | `TRUNC(SYSDATE,'mm')` | `DATE_ADD(CURDATE(),interval - day(CURDATE()) + 1 day)` | |
-| 截取数据 | `TRUNC(2.136) = 2`<br/> `TRUNC(2.136,2) = 2.13` | `TRUNCATE(2.136,0) = 2`<br/> `TRUNCATE(2.136,2) = 2.13` | 数据精度保留，直接截取相应小数位，不涉及四舍五入。 |
-| 获取序列下一个值 | `sequence_name.NEXTVAL` | `NEXTVAL(sequence_name)` | |
-| 获取随机序列值 | `SYS_GUID()` | `UUID()` | TiDB 返回一个通用唯一识别码 (UUID)。|
-| 左/右外连接 | `SELECT * FROM a, b WHERE a.id = b.id(+);`<br/>`SELECT * FROM a, b WHERE a.id(+) = b.id;` | `SELECT * FROM a LEFT JOIN b ON a.id = b.id;`<br/>`SELECT * FROM a RIGHT JOIN b ON a.id = b.id;` | 关联查询时，TiDB 不支持使用 (+) 实现左/右关联，只能通过 `LEFT JOIN` 或 `RIGHT JOIN` 实现。|
-| `NVL()` | `NVL(key,val)` | `IFNULL(key,val)` | 如果该字段值为 `NULL`，则返回 val 值，否则返回该字段的值。 |
-| `NVL2()` | `NVL2(key, val1, val2)`  | `IF(key is NOT NULL, val1, val2)` | 如果该字段值非 `NULL`，则返回 val1 值，否则返回 val2 值。|
-| `DECODE()` | <ul><li>`DECODE(key,val1,val2,val3)`</li><li>`DECODE(value,if1,val1,if2,val2,...,ifn,valn,val)`</li></ul> | <ul><li>`IF(key=val1,val2,val3)`</li><li>`CASE WHEN value=if1 THEN val1 WHEN value=if2 THEN val2,...,WHEN value=ifn THEN valn ELSE val END`</li></ul> | <ul><li>如果该字段值等于 val1，则返回 val2，否则返回 val3。</li><li>当该字段值满足条件 1 (if1) 时，返回 val1，满足条件 2 (if2) 时，返回 val2，满足条件 3 (if3) 时，返回 val3。</li></ul> |
-| 拼接字符串 `a` 和 `b` | <code>'a' \|\| 'b'</code>  | `CONCAT('a','b')` | |
-| 获取字符串长度 | `LENGTH(str)` | `CHAR_LENGTH(str)` | |
-| 获取子串 | `SUBSTR('abcdefg',0,2) = 'ab'`<br/> `SUBSTR('abcdefg',1,2) = 'ab'` | `SUBSTRING('abcdefg',0,2) = ''`<br/>`SUBSTRING('abcdefg',1,2) = 'ab'` | <ul><li>Oracle 中起始位置 0 与 1 作用一样。</li><li>TiDB 中 0 开始获取的子串为空，若需从字符串的起始位置开始，则应从 1 开始。</li></ul> |
-| 字符串在源字符串中的位置 | `INSTR('abcdefg','b',1,1)` | `INSTR('abcdefg','b')` | 从字符串 `'abcdefg'` 第一个字符开始查询，返回 `'b'` 字符串第一次出现的位置。 |
-| 字符串在源字符串中的位置 | `INSTR('stst','s',1,2)` | `LENGTH(SUBSTRING_INDEX('stst','s',2)) + 1` | 从字符串 `'stst'` 第一个字符开始查找，返回 `'s'` 字符第二次出现的位置。 |
-| 字符串在源字符串中的位置 | `INSTR('abcabc','b',2,1)` | `LOCATE('b','abcabc',2)` | 从字符串 `'abcabc'` 第二个字符开始查询，返回 `'b'` 字符第一次出现的位置。 |
-| 列合并为行 | `LISTAGG(CONCAT(E.dimensionid,'---',E.DIMENSIONNAME),'***') within GROUP(ORDER BY  DIMENSIONNAME)` | `GROUP_CONCAT(CONCAT(E.dimensionid,'---',E.DIMENSIONNAME) ORDER BY DIMENSIONNAME SEPARATOR '***')` | 将一列字段合并为一行并根据 `***` 符号进行分割。 |
-| ASCII 值转化为对应字符 | `CHR(n)` | `CHAR(n)` | Oracle 中制表符 (`CHR(9)`)、换行符 (`CHR(10)`)、回车符 (`CHR(13)`) 对应 TiDB 中的 `CHAR(9)`、`CHAR(10)`、`CHAR(13)`。 |
+| Cast a value as a certain type | <li>`TO_NUMBER(key)`</li><li>`TO_CHAR(key)`</li> | `CONVERT(key,dataType)` | TiDB supports casting a value as one of the following types: `BINARY`, `CHAR`, `DATE`, `DATETIME`, `TIME`, `SIGNED INTEGER`, `UNSIGNED INTEGER` and `DECIMAL`. |
+| Convert a date to a string | <li>`TO_CHAR(SYSDATE,'yyyy-MM-dd hh24:mi:ss')`</li> <li>`TO_CHAR(SYSDATE,'yyyy-MM-dd')`</li> | <li>`DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s')`</li><li>`DATE_FORMAT(NOW(),'%Y-%m-%d')`</li> | The format string of TiDB is case-sensitive. |
+| Convert a string to a date | <li>`TO_DATE('2021-05-28 17:31:37','yyyy-MM-dd hh24:mi:ss')`</li><li>`TO_DATE('2021-05-28','yyyy-MM-dd hh24:mi:ss')`</li> | <li>`STR_TO_DATE('2021-05-28 17:31:37','%Y-%m-%d %H:%i:%s')`</li><li>`STR_TO_DATE('2021-05-28','%Y-%m-%d%T')` </li> | The format string of TiDB is case-sensitive. |
+| Get the current system time in second precision | `SYSDATE` | `NOW()` | |
+| Get the current system time in microsecond precision | `SYSTIMESTAMP` | `CURRENT_TIMESTAMP(6)` | |
+| Get the number of days between two dates | `date1 - date2` | `DATEDIFF(date1, date2)` | |
+| Get the number of months between two dates | `MONTHS_BETWEEN(ENDDATE,SYSDATE)` | `TIMESTAMPDIFF(MONTH,SYSDATE,ENDDATE)` | The results of `MONTHS_BETWEEN()` in Oracle and `TIMESTAMPDIFF()` in TiDB are different. `TIMESTAMPDIFF()` returns an integer. Note that the parameters in the two functions are swapped. |
+| Add `n` days to a date | `DATEVAL + n` | `DATE_ADD(dateVal,INTERVAL n DAY)` | `n` can be a negative value.|
+| Add `n` months to a date | `ADD_MONTHS(dateVal,n)`| `DATE_ADD(dateVal,INTERVAL n MONTH)` | `n` can be a negative value. |
+| Get the day of a date | `TRUNC(SYSDATE)` | <li>`CAST(NOW() AS DATE)`</li><li>`DATE_FORMAT(NOW(),'%Y-%m-%d')`</li> | In TiDB, `CAST` and `DATE_FORMAT` return the same result. |
+| Get the month of a date | `TRUNC(SYSDATE,'mm')` | `DATE_ADD(CURDATE(),interval - day(CURDATE()) + 1 day)`  | |
+| Truncate a value | `TRUNC(2.136) = 2`<br/> `TRUNC(2.136,2) = 2.13` | `TRUNCATE(2.136,0) = 2`<br/> `TRUNCATE(2.136,2) = 2.13` | Data precision is preserved. Truncate the corresponding decimal places without rounding. |
+| Get the next value in a sequence | `sequence_name.NEXTVAL` | `NEXTVAL(sequence_name)` | |
+| Get a random sequence value | `SYS_GUID()` | `UUID()` | TiDB returns a Universal Unique Identifier (UUID). |
+| Left join or right join | `SELECT * FROM a, b WHERE a.id = b.id(+);`<br/>`SELECT * FROM a, b WHERE a.id(+) = b.id;` | `SELECT * FROM a LEFT JOIN b ON a.id = b.id;`<br/>`SELECT * FROM a RIGHT JOIN b ON a.id = b.id;` | In a correlated query, TiDB does not support using (+) to left join or right join. You can use `LEFT JOIN` or `RIGHT JOIN` instead. |
+| `NVL()` | `NVL(key,val)` | `IFNULL(key,val)` | If the value of the field is `NULL`, it returns `val`; otherwise, it returns the value of the field.  |
+| `NVL2()` | `NVL2(key, val1, val2)` | `IF(key is NOT NULL, val1, val2)` | If the value of the field is not `NULL`, it returns `val1`; otherwise, it returns `val2`. |
+| `DECODE()` | <li>`DECODE(key,val1,val2,val3)`</li><li>`DECODE(value,if1,val1,if2,val2,...,ifn,valn,val)`</li> | <li>`IF(key=val1,val2,val3)`</li><li>`CASE WHEN value=if1 THEN val1 WHEN value=if2 THEN val2,...,WHEN value=ifn THEN valn ELSE val END`</li> | <li>If the value of the field is `val1`, then it returns `val2`; otherwise it returns `val3`. </li><li>When the value of the field satisfies condition 1 (`if1`), it returns `val1`. When it satisfies condition 2 (`if2`), it returns `val2`. When it satisfies condition 3 (`if3`), it returns `val3`.</li> |
+| Concatenate the string `a` and `b` | <code>'a' \|\| 'b'</code> | `CONCAT('a','b')` | |
+| Get the length of a string | `LENGTH(str)` | `CHAR_LENGTH(str)` | |
+| Get the substring as specified | `SUBSTR('abcdefg',0,2) = 'ab'`<br/> `SUBSTR('abcdefg',1,2) = 'ab'` | `SUBSTRING('abcdefg',0,2) = ''`<br/>`SUBSTRING('abcdefg',1,2) = 'ab'` | <li>In Oracle, the starting position 0 has the same effect as 1. </li><li>In TiDB, the starting position 0 returns an empty string. If you want to get a substring from the beginning, the starting position should be 1.</li> |
+| Get the position of a substring | `INSTR('abcdefg','b',1,1)` | `INSTR('abcdefg','b')` | Search from the first character of `'abcdefg'` and return the position of the first occurrence of `'b'`. |
+| Get the position of a substring | `INSTR('stst','s',1,2)` | `LENGTH(SUBSTRING_INDEX('stst','s',2)) + 1` | Search from the first character of `'stst'` and return the position of the second occurrence of `'s'`. |
+| Get the position of a substring | `INSTR('abcabc','b',2,1)` | `LOCATE('b','abcabc',2)` | Search from the second character of `abcabc` and return the position of the first occurrence of `b`. |
+| Concatenate values of a column | `LISTAGG(CONCAT(E.dimensionid,'---',E.DIMENSIONNAME),'***') within GROUP(ORDER BY DIMENSIONNAME)` | `GROUP_CONCAT(CONCAT(E.dimensionid,'---',E.DIMENSIONNAME) ORDER BY DIMENSIONNAME SEPARATOR '***')` | Concatenate values of a specified column to one row with the `***` delimiter. |
+| Convert an ASCII code to a character | `CHR(n)` | `CHAR(n)` | The Tab (`CHR(9)`), LF (`CHR(10)`), and CR (`CHR(13)`) characters in Oracle correspond to `CHAR(9)`, `CHAR(10)`, and `CHAR(13)` in TiDB. |
 
-## 语法差异
+## Comparisons of syntax
 
-本节介绍 Oracle 部分语法与 TiDB 的差异。
+This section describes some syntax differences between Oracle and TiDB.
 
-### 字符串语法
+### String syntax
 
-Oracle 中字符串只能使用单引号 ('')。例如 `'a'`。
+In Oracle, a string can only be enclosed in single quotes (''). For example `'a'`.
 
-TiDB 中字符串可以使用单引号 ('') 或双引号 ("")。例如 `'a'` 或 `"a"`。
+In TiDB, a string can be enclosed in single quotes ('') or double quotes (""). For example, `'a'` and `"a"`.
 
-### `NULL` 与空字符串的区分
+### Difference between `NULL` and an empty string
 
-Oracle 中不区分 `NULL` 和空字符串 `''`，即 `NULL` 与 `''` 是等价的。
+Oracle does not distinguish between `NULL` and an empty string `''`, that is, `NULL` is equivalent to `''`.
 
-TiDB 中区分 `NULL` 和空字符串 `''`。
+TiDB distinguishes between `NULL` and an empty string `''`.
 
-### `INSERT` 语句中读写同一张表
+### Read and write to the same table in an `INSERT` statement
 
-Oracle 支持 `INSERT` 语句中读写同一张表。例如：
+Oracle supports reading and writing to the same table in an `INSERT` statement. For example:
 
 ```sql
 INSERT INTO table1 VALUES (field1,(SELECT field2 FROM table1 WHERE...))
 ```
 
-TiDB 不支持 `INSERT` 语句中读写同一张表。例如：
+TiDB does not support reading and writing to the same table in a `INSERT` statement. For example:
 
 ```sql
 INSERT INTO table1 VALUES (field1,(SELECT T.fields2 FROM table1 T WHERE...))
 ```
 
-### 获取前 n 行数据
+### Get the first n rows from a query
 
-Oracle 通过 `ROWNUM <= n` 获取前 n 行数据。例如，`ROWNUM <= 10`。
+In Oracle, to get the first n rows from a query, you can use the `ROWNUM <= n` clause. For example `ROWNUM <= 10`.
 
-TiDB 通过 `LIMIT n` 获取前 n 行数据。例如，`LIMIT 10`。Hibernate Query Language (HQL) 方式运行带 `LIMIT` 的 SQL 语句会出现错误，需要将 Hibernate 的运行方式改为 SQL 方式运行。
+In TiDB, to get the first n rows from a query, you can use the `LIMIT n` clause. For example `LIMIT 10`. The Hibernate Query Language (HQL) running SQL statements with `LIMIT` results in an error. You need to change the Hibernate statements to SQL statements.
 
-### `UPDATE` 语句多表更新
+### Update multiple tables in an `UPDATE` statement
 
-Oracle 多表更新时不需要列出具体的字段更新关系。例如：
+In Oracle, it is not necessary to list the specific field update relationship when updating multiple tables. For example:
 
 ```sql
 UPDATE test1 SET(test1.name,test1.age) = (SELECT test2.name,test2.age FROM test2 WHERE test2.id=test1.id)
 ```
 
-TiDB 多表更新时需要在 `SET` 时把具体的字段更新关系都列出来。例如：
+In TiDB, when updating multiple tables, you need to list all the specific field update relationships in `SET`. For example:
 
 ```sql
 UPDATE test1,test2 SET test1.name=test2.name,test1.age=test2.age WHERE test1.id=test2.id
 ```
 
-### 派生表别名
+### Derived table alias
 
-Oracle 多表查询时，派生表可以不起别名。例如：
+In Oracle, when querying multiple tables, it is unnecessary to add an alias to the derived table. For example:
 
 ```sql
 SELECT * FROM (SELECT * FROM test)
 ```
 
-TiDB 多表查询时，每一个派生出来的表都必须有一个自己的别名。例如：
+In TiDB, when querying multiple tables, every derived table must have its own alias. For example:
 
 ```sql
 SELECT * FROM (SELECT * FROM test) t
 ```
 
-### 差集运算
+### Set operations
 
-Oracle 使用 `MINUS` 进行差集运算。例如：
+In Oracle, to get the rows that are in the first query result but not in the second, you can use the `MINUS` set operation. For example:
 
 ```sql
 SELECT * FROM t1 MINUS SELECT * FROM t2
 ```
 
-TiDB 不支持 `MINUS`，需要改写为 `EXCEPT` 进行差集运算。例如：
+TiDB does not support the `MINUS` operation. You can use the `EXCEPT` set operation. For example:
 
 ```sql
 SELECT * FROM t1 EXCEPT SELECT * FROM t2
 ```
 
-### 注释语法
+### Comment syntax
 
-Oracle 中注释语法为 `--注释`，其中 `--` 后面不需要空格。
+In Oracle, the comment syntax is `--Comment`.
 
-TiDB 中注释语法为 `-- 注释`，其中 `--` 后面需要有一个空格。
+In TiDB, the comment syntax is `-- Comment`. Note that there is a white space after `--` in TiDB.
 
-### 分页查询
+### Pagination
 
-Oracle 分页查询时 `OFFSET m` 表示跳过 `m` 行数据，`FETCH NEXT n ROWS ONLY` 表示取 `n` 条数据。例如：
+In Oracle, you can use the `OFFSET m ROWS` to skip `m` rows and use the `FETCH NEXT n ROWS ONLY`to fetch `n` rows. For example:
 
 ```sql
 SELECT * FROM tables OFFSET 0 ROWS FETCH NEXT 2000 ROWS ONLY
 ```
 
-TiDB 使用 `LIMIT n OFFSET m` 等价改写 `OFFSET m ROWS FETCH NEXT n ROWS ONLY`。例如：
+In TiDB, you can use the `LIMIT n OFFSET m` to replace `OFFSET m ROWS FETCH NEXT n ROWS ONLY`. For example:
 
 ```sql
 SELECT * FROM tables LIMIT 2000 OFFSET 0
 ```
 
-### `ORDER BY` 语句对 `NULL` 的排序规则
+### Sorting order on `NULL` values
 
-Oracle 中 `ORDER BY` 语句对 `NULL` 的排序规则：
+In Oracle, `NULL` values are sorted by the `ORDER BY` clause in the following cases:
 
-- `ORDER BY COLUMN ASC` 时，`NULL` 默认被放在最后。
+- In the `ORDER BY column ASC` statement, `NULL` values are returned last.
 
-- `ORDER BY COLUMN DESC` 时，`NULL` 默认被放在最前。
+- In the `ORDER BY column DESC` statement, `NULL` values are returned first.
 
-- `ORDER BY COLUMN [ASC|DESC] NULLS FIRST` 时，强制 `NULL` 放在最前，非 `NULL` 的值仍然按声明顺序 `ASC|DESC` 进行排序。
+- In the `ORDER BY column [ASC|DESC] NULLS FIRST` statement, `NULL` values are returned before non-NULL values. Non-NULL values are returned in ascending order or descending order specified in `ASC|DESC`.
 
-- `ORDER BY COLUMN [ASC|DESC] NULLS LAST` 时，强制 `NULL` 放在最后，非 `NULL` 的值仍然按声明顺序 `ASC|DESC` 进行排序。
+- In the `ORDER BY column [ASC|DESC] NULLS LAST` statement, `NULL` values are returned after non-NULL values. Non-NULL values are returned in ascending order or descending order specified in `ASC|DESC`.
 
-TiDB 中 `ORDER BY` 语句对 `NULL` 的排序规则：
+In TiDB, `NULL` values are sorted by the `ORDER BY` clause in the following cases:
 
-- `ORDER BY COLUMN ASC` 时，`NULL` 默认被放在最前。
+- In the `ORDER BY column ASC` statement, `NULL` values are returned first.
 
-- `ORDER BY COLUMN DESC` 时，`NULL` 默认被放在最后。
+- In the `ORDER BY column DESC` statement, `NULL` values are returned last.
 
-下表是 Oracle 与 TiDB 中等价 `ORDER BY` 语句示例：
+The following table shows some examples of equivalent `ORDER BY` statements in Oracle and TiDB:
 
-| Oracle 中的 `ORDER BY` | TiDB 中的 `ORDER BY`|
+| `ORDER BY` in Oracle | Equivalent statements in TiDB |
 | :------------------- | :----------------- |
-| `SELECT * FROM t1 ORDER BY name NULLS FIRST;`      | `SELECT * FROM t1 ORDER BY name;`                         |
-| `SELECT * FROM t1 ORDER BY name DESC NULLS LAST;`  | `SELECT * FROM t1 ORDER BY name DESC;`                    |
+| `SELECT * FROM t1 ORDER BY name NULLS FIRST;`      | `SELECT * FROM t1 ORDER BY name;`  |
+| `SELECT * FROM t1 ORDER BY name DESC NULLS LAST;`  | `SELECT * FROM t1 ORDER BY name DESC;` |
 | `SELECT * FROM t1 ORDER BY name DESC NULLS FIRST;` | `SELECT * FROM t1 ORDER BY ISNULL(name) DESC, name DESC;` |
-| `SELECT * FROM t1 ORDER BY name ASC NULLS LAST;`   | `SELECT * FROM t1 ORDER BY ISNULL(name), name;`           |
+| `SELECT * FROM t1 ORDER BY name ASC NULLS LAST;`   | `SELECT * FROM t1 ORDER BY ISNULL(name), name;` |

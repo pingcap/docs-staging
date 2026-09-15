@@ -1,96 +1,105 @@
 ---
-title: HTAP 快速上手指南
-summary: 本文介绍如何快速上手体验 TiDB 的 HTAP 功能。 
+title: Quick Start with TiDB HTAP
+summary: Learn how to quickly get started with the TiDB HTAP.
 ---
 
-# HTAP 快速上手指南
+# Quick Start with TiDB HTAP
 
-本指南介绍如何快速上手体验 TiDB 的一站式混合型在线事务与在线分析处理 (Hybrid Transactional and Analytical Processing, HTAP) 功能。
+This guide walks you through the quickest way to get started with TiDB's one-stop solution of Hybrid Transactional and Analytical Processing (HTAP).
 
-> **注意：**
+> **Note:**
 >
-> 本指南中的步骤仅适用于快速上手体验，不适用于生产环境。如需探索 HTAP 更多功能，请参考[深入探索 HTAP](/explore-htap.md)。
+> The steps provided in this guide is ONLY for quick start in the test environment. For production environments, [explore HTAP](/explore-htap.md) is recommended.
 
-## 基础概念
+## Basic concepts
 
-在试用前，你需要对 TiDB 面向在线事务处理的行存储引擎 [TiKV](/tikv-overview.md) 与面向实时分析场景的列存储引擎 [TiFlash](/tiflash/tiflash-overview.md) 有一些基本了解：
+Before using TiDB HTAP, you need to have some basic knowledge about [TiKV](/tikv-overview.md), a row-based storage engine for TiDB Online Transactional Processing (OLTP), and [TiFlash](/tiflash/tiflash-overview.md), a columnar storage engine for TiDB Online Analytical Processing (OLAP).
 
-- HTAP 存储引擎：行存 (Row-store) 与列存 (columnar-store) 同时存在，自动同步，保持强一致性。行存为在线事务处理 OLTP 提供优化，列存则为在线分析处理 OLAP 提供性能优化。
-- HTAP 数据一致性：作为一个分布式事务型的键值数据库，TiKV 提供了满足 ACID 约束的分布式事务接口，并通过 [Raft](https://raft.github.io/raft.pdf) 协议保证了多副本数据一致性以及高可用。TiFlash 通过 Multi-Raft Learner 协议实时从 TiKV 复制数据，确保与 TiKV 之间的数据强一致。
-- HTAP 数据隔离性：TiKV、TiFlash 可按需部署在不同的机器，解决 HTAP 资源隔离的问题。
-- MPP 计算引擎：从 v5.0 版本起，TiFlash 引入了分布式计算框架 [MPP](/tiflash/use-tiflash-mpp-mode.md)，允许节点之间的数据交换并提供高性能、高吞吐的 SQL 算法，可以大幅度缩短分析查询的执行时间。
+- Storage engines of HTAP: The row-based storage engine and the columnar storage engine co-exist for HTAP. Both storage engines can replicate data automatically and keep strong consistency. The row-based storage engine optimizes OLTP performance, and the columnar storage engine optimizes OLAP performance.
+- Data consistency of HTAP: As a distributed and transactional key-value database, TiKV provides transactional interfaces with ACID compliance, and guarantees data consistency between multiple replicas and high availability with the implementation of the [Raft consensus algorithm](https://raft.github.io/raft.pdf). As a columnar storage extension of TiKV, TiFlash replicates data from TiKV in real time according to the Raft Learner consensus algorithm, which ensures that data is strongly consistent between TiKV and TiFlash.
+- Data isolation of HTAP: TiKV and TiFlash can be deployed on different machines as needed to solve the problem of HTAP resource isolation.
+- MPP computing engine: [MPP](/tiflash/use-tiflash-mpp-mode.md#control-whether-to-select-the-mpp-mode) is a distributed computing framework provided by the TiFlash engine since TiDB 5.0, which allows data exchange between nodes and provides high-performance, high-throughput SQL algorithms. In the MPP mode, the run time of the analytic queries can be significantly reduced.
 
-## 体验步骤
+## Steps
 
-本文的步骤以 [TPC-H](http://www.tpc.org/tpch/) 数据集为例，通过其中一个查询场景来体验 TiDB HTAP 的便捷性和高性能。TPC-H 是业界较为流行的决策支持（Decision Support）业务 Benchmark。它包含大数据量下，一个业务决策分析系统所需要响应的不同类型高复杂度的即席查询。如果需要体验 TPC-H 完整的 22 条 SQL，可以访问 [tidb-bench 仓库](https://github.com/pingcap/tidb-bench/tree/master/tpch/queries)或者阅读 TPC-H 官网说明了解如何生成查询语句以及数据。
+In this document, you can experience the convenience and high performance of TiDB HTAP by querying an example table in a [TPC-H](http://www.tpc.org/tpch/) dataset. TPC-H is a popular decision support benchmark that consists of a suite of business oriented ad-hoc queries with large volumes of data and a high degree of complexity. To experience 22 complete SQL queries using TPC-H, visit [tidb-bench repo](https://github.com/pingcap/tidb-bench/tree/master/tpch/queries) or [TPC-H](http://www.tpc.org/tpch/) for instructions on how to generate query statements and data.
 
-### 第 1 步：部署试用环境
+### Step 1. Deploy a local test environment
 
-在试用 TiDB HTAP 功能前，请按照 [TiDB 数据库快速上手指南](/quick-start-with-tidb.md)中的步骤准备 TiDB 本地测试环境，执行以下命令启动 TiDB 集群：
+Before using TiDB HTAP, follow the steps in the [Quick Start with TiDB Self-Managed](/quick-start-with-tidb.md) to prepare a local test environment, and run the following command to deploy a TiDB cluster:
 
 
 ```shell
 tiup playground
 ```
 
-> **注意：**
+> **Note:**
 >
-> `tiup playground` 命令仅适用于快速上手体验，不适用于生产环境，也不适用于全面的功能测试和稳定性测试。
+> `tiup playground` command is ONLY for quick start, NOT for production.
 
-### 第 2 步：准备试用数据
+### Step 2. Prepare test data
 
-通过以下步骤，将生成一个 [TPC-H](http://www.tpc.org/tpch/) 数据集用于体验 TiDB HTAP 功能。如果你对 TPC-H 感兴趣，可查看其[规格说明](http://tpc.org/tpc_documents_current_versions/pdf/tpc-h_v3.0.0.pdf)。
+In the following steps, you can create a [TPC-H](http://www.tpc.org/tpch/) dataset as the test data to use TiDB HTAP. If you are interested in TPC-H, see [General Implementation Guidelines](http://tpc.org/tpc_documents_current_versions/pdf/tpc-h_v3.0.0.pdf).
 
-> **注意：**
+> **Note:**
 >
-> 如果你想使用自己现有的数据进行分析查询，可以将[数据迁移到 TiDB](/migration-overview.md) 中；如果你想自己设计并生成数据，可以通过 SQL 语句或相关工具生成。
+> If you want to use your existing data for analytic queries, you can [migrate your data to TiDB](/migration-overview.md). If you want to design and create your own test data, you can create it by executing SQL statements or using related tools.
 
-1. 使用以下命令安装数据生成工具：
+1. Install the test data generation tool by running the following command:
 
     
     ```shell
     tiup install bench
     ```
 
-2. 使用以下命令生成数据：
+2. Generate the test data by running the following command:
 
     
     ```shell
     tiup bench tpch --sf=1 prepare
     ```
 
-    当命令行输出 `Finished` 时，表示数据生成完毕。
+    If the output of this command shows `Finished`, it indicates that the data is created.
 
-3. 运行以下 SQL 语句查看生成的数据：
+3. Execute the following SQL statement to view the generated data:
 
     
     ```sql
-    SELECT CONCAT(table_schema,'.',table_name) AS 'Table Name', table_rows AS 'Number of Rows', CONCAT(ROUND(data_length/(1024*1024*1024),4),'G') AS 'Data Size', CONCAT(ROUND(index_length/(1024*1024*1024),4),'G') AS 'Index Size', CONCAT(ROUND((data_length+index_length)/(1024*1024*1024),4),'G') AS'Total'FROM information_schema.TABLES WHERE table_schema LIKE 'test';
+    SELECT
+      CONCAT(table_schema,'.',table_name) AS 'Table Name',
+      table_rows AS 'Number of Rows',
+      FORMAT_BYTES(data_length) AS 'Data Size',
+      FORMAT_BYTES(index_length) AS 'Index Size',
+      FORMAT_BYTES(data_length+index_length) AS'Total'
+    FROM
+      information_schema.TABLES
+    WHERE
+      table_schema='test';
     ```
 
-    从输出中可以看到，一共生成了八张表，最大的一张表数据量有 600 万行（由于数据是工具随机生成，所以实际的数据生成量以 SQL 实际查询到的值为准）。
+    As you can see from the output, eight tables are created in total, and the largest table has 6.5 million rows (the number of rows created by the tool depends on the actual SQL query result because the data is randomly generated).
 
     ```sql
-    +---------------+----------------+-----------+------------+---------+
-    | Table Name    | Number of Rows | Data Size | Index Size | Total   |
-    +---------------+----------------+-----------+------------+---------+
-    | test.nation   |             25 | 0.0000G   | 0.0000G    | 0.0000G |
-    | test.region   |              5 | 0.0000G   | 0.0000G    | 0.0000G |
-    | test.part     |         200000 | 0.0245G   | 0.0000G    | 0.0245G |
-    | test.supplier |          10000 | 0.0014G   | 0.0000G    | 0.0014G |
-    | test.partsupp |         800000 | 0.1174G   | 0.0119G    | 0.1293G |
-    | test.customer |         150000 | 0.0242G   | 0.0000G    | 0.0242G |
-    | test.orders   |        1514336 | 0.1673G   | 0.0000G    | 0.1673G |
-    | test.lineitem |        6001215 | 0.7756G   | 0.0894G    | 0.8651G |
-    +---------------+----------------+-----------+------------+---------+
+    +---------------+----------------+-----------+------------+-----------+
+    |  Table Name   | Number of Rows | Data Size | Index Size |   Total   |
+    +---------------+----------------+-----------+------------+-----------+
+    | test.nation   |             25 | 2.44 KiB  | 0 bytes    | 2.44 KiB  |
+    | test.region   |              5 | 416 bytes | 0 bytes    | 416 bytes |
+    | test.part     |         200000 | 25.07 MiB | 0 bytes    | 25.07 MiB |
+    | test.supplier |          10000 | 1.45 MiB  | 0 bytes    | 1.45 MiB  |
+    | test.partsupp |         800000 | 120.17 MiB| 12.21 MiB  | 132.38 MiB|
+    | test.customer |         150000 | 24.77 MiB | 0 bytes    | 24.77 MiB |
+    | test.orders   |        1527648 | 174.40 MiB| 0 bytes    | 174.40 MiB|
+    | test.lineitem |        6491711 | 849.07 MiB| 99.06 MiB  | 948.13 MiB|
+    +---------------+----------------+-----------+------------+-----------+
     8 rows in set (0.06 sec)
     ```
 
-    这是一个商业订购系统的数据库。其中，`test.nation` 表是国家信息、`test.region` 表是地区信息、`test.part` 表是零件信息、`test.supplier` 表是供货商信息、`test.partsupp` 表是供货商的零件信息、`test.customer` 表是消费者信息、`test.orders` 表是订单信息、`test.lineitem` 表是在线商品的信息。
+    This is a database of a commercial ordering system. In which, the `test.nation` table indicates the information about countries, the `test.region` table indicates the information about regions, the `test.part` table indicates the information about parts, the `test.supplier` table indicates the information about suppliers, the `test.partsupp` table indicates the information about parts of suppliers, the `test.customer` table indicates the information about customers, the `test.customer` table indicates the information about orders, and the `test.lineitem` table indicates the information about online items.
 
-### 第 3 步：使用行存查询数据
+### Step 3. Query data with the row-based storage engine
 
-执行以下 SQL 语句，你可以体验当只使用行存（大多数数据库）时 TiDB 的表现：
+To know the performance of TiDB with only the row-based storage engine, execute the following SQL statements:
 
 
 ```sql
@@ -122,11 +131,11 @@ ORDER BY
 limit 10;
 ```
 
-这是一个运送优先权查询，用于给出在指定日期之前尚未运送的订单中收入最高订单的优先权和潜在的收入。潜在的收入被定义为 `l_extendedprice * (1-l_discount)` 的和。订单按照收入的降序列出。在本示例中，此查询将列出潜在查询收入在前 10 的尚未运送的订单。
+This is a shipping priority query, which provides the priority and potential revenue of the highest-revenue order that has not been shipped before a specified date. The potential revenue is defined as the sum of `l_extendedprice * (1-l_discount)`. The orders are listed in the descending order of revenue. In this example, this query lists the unshipped orders with potential query revenue in the top 10.
 
-### 第 4 步：同步列存数据
+### Step 4. Replicate the test data to the columnar storage engine
 
-TiFlash 部署完成后并不会自动同步 TiKV 数据，你可以在 MySQL 客户端向 TiDB 发送以下 DDL 命令指定需要同步到 TiFlash 的表。指定后，TiDB 将创建对应的 TiFlash 副本。
+After TiFlash is deployed, TiKV does not replicate data to TiFlash immediately. You need to execute the following DDL statements in a MySQL client of TiDB to specify which tables need to be replicated. After that, TiDB will create the specified replicas in TiFlash accordingly.
 
 
 ```sql
@@ -135,7 +144,7 @@ ALTER TABLE test.orders SET TIFLASH REPLICA 1;
 ALTER TABLE test.lineitem SET TIFLASH REPLICA 1;
 ```
 
-如需查询 TiFlash 表的同步状态，请使用以下 SQL 语句：
+To check the replication status of the specific tables, execute the following statements:
 
 
 ```sql
@@ -144,16 +153,16 @@ SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'test' and
 SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'test' and TABLE_NAME = 'lineitem';
 ```
 
-以上查询结果中：
+In the result of the above statements:
 
-- `AVAILABLE` 字段表示该表的 TiFlash 副本是否可用。1 代表可用，0 代表不可用。副本状态变为可用之后就不再改变。
-- `PROGRESS` 字段代表同步进度，在 0.0~1.0 之间，1 代表 TiFlash 副本已经完成同步。
+- `AVAILABLE` indicates whether the TiFlash replica of a specific table is available or not. `1` means available and `0` means unavailable. Once the `AVAILABLE` field becomes `1`, this status does not change anymore.
+- `PROGRESS` means the progress of the replication. The value is between 0.0 and 1.0. 1 means that the replication progress of the TiFlash replica is complete.
 
-### 第 5 步：使用 HTAP 更快地分析数据
+### Step 5. Analyze data faster using HTAP
 
-再次执行[第 3 步](#第-3-步使用行存查询数据)中的 SQL 语句，你可以感受 TiDB HTAP 的表现。
+Execute the SQL statements in [Step 3](#step-3-query-data-with-the-row-based-storage-engine) again, and you can see the performance of TiDB HTAP.
 
-对于创建了 TiFlash 副本的表，TiDB 优化器会自动根据代价估算选择是否使用 TiFlash 副本。如需查看实际是否选择了 TiFlash 副本，可以使用 `desc` 或 `explain analyze` 语句，例如：
+For tables with TiFlash replicas, the TiDB optimizer automatically determines whether to use TiFlash replicas based on the cost estimation. To check whether or not a TiFlash replica is selected, you can use the `desc` or `explain analyze` statement. For example:
 
 
 ```sql
@@ -185,14 +194,14 @@ ORDER BY
 limit 10;
 ```
 
-如果结果中出现 ExchangeSender 和 ExchangeReceiver 算子，表明 MPP 已生效。
+If the result of the `EXPLAIN` statement shows `ExchangeSender` and `ExchangeReceiver` operators, it indicates that the MPP mode has taken effect.
 
-此外，你也可以指定整个查询的各个计算部分都只使用 TiFlash 引擎，详情请参阅[使用 TiDB 读取 TiFlash](/tiflash/use-tidb-to-read-tiflash.md)。
+In addition, you can specify that each part of the entire query is computed using only the TiFlash engine. For detailed information, see [Use TiDB to read TiFlash replicas](/tiflash/use-tidb-to-read-tiflash.md).
 
-你可以对比两次的查询结果和查询性能。
+You can compare query results and query performance of these two methods.
 
-## 探索更多
+## What's next
 
-- [TiDB HTAP 形态架构](/tiflash/tiflash-overview.md#整体架构)
-- [深入探索 HTAP](/explore-htap.md)
-- [使用 TiFlash](/tiflash/tiflash-overview.md#使用-tiflash)
+- [Architecture of TiDB HTAP](/tiflash/tiflash-overview.md#architecture)
+- [Explore HTAP](/explore-htap.md)
+- [Use TiFlash](/tiflash/tiflash-overview.md#use-tiflash)

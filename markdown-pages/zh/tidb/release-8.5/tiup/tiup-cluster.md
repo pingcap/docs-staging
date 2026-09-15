@@ -1,15 +1,15 @@
 ---
-title: 使用 TiUP 部署运维 TiDB 线上集群
-summary: 使用 TiUP 的 cluster 组件可以快速部署生产集群，并提供强大的生产集群管理功能，包括升级、缩容、扩容、操作、审计等。部署集群的命令为 tiup cluster deploy，部署完成后可以通过 tiup cluster list 查看集群列表。启动集群的命令为 tiup cluster start，查看集群状态的命令为 tiup cluster display。可以使用 tiup cluster scale-in 进行集群缩容，tiup cluster scale-out 进行集群扩容。另外，还可以使用 tiup cluster upgrade 进行滚动升级，使用 tiup cluster edit-config 进行配置更新。最后，可以使用 tiup cluster exec 在集群节点机器上执行命令。
+title: Deploy and Maintain an Online TiDB Cluster Using TiUP
+summary: Learns how to deploy and maintain an online TiDB cluster using TiUP.
 ---
 
-# 使用 TiUP 部署运维 TiDB 线上集群
+# Deploy and Maintain an Online TiDB Cluster Using TiUP
 
-本文重在介绍如何使用 TiUP 的 cluster 组件，如果需要线上部署的完整步骤，可参考[使用 TiUP 部署 TiDB 集群](/production-deployment-using-tiup.md)。
+This document focuses on how to use the TiUP cluster component. For the complete steps of online deployment, refer to [Deploy a TiDB Cluster Using TiUP](/production-deployment-using-tiup.md).
 
-与 playground 组件用于部署本地测试集群类似，cluster 组件用于快速部署生产集群。对比 playground，cluster 组件提供了更强大的生产集群管理功能，包括对集群的升级、缩容、扩容甚至操作、审计等。
+Similar to [the TiUP playground component](/tiup/tiup-playground.md) used for a local test deployment, the TiUP cluster component quickly deploys TiDB for production environment. Compared with playground, the cluster component provides more powerful production cluster management features, including upgrading, scaling, and even operation and auditing.
 
-cluster 组件的帮助文档如下：
+For the help information of the cluster component, run the following command:
 
 ```bash
 tiup cluster
@@ -23,51 +23,51 @@ Usage:
   tiup cluster [command]
 
 Available Commands:
-  check       对集群进行预检
-  deploy      部署集群
-  start       启动已部署的集群
-  stop        停止集群
-  restart     重启集群
-  scale-in    集群缩容
-  scale-out   集群扩容
-  clean       清理数据
-  destroy     销毁集群
-  upgrade     升级集群
-  display     获取集群信息
-  list        获取集群列表
-  audit       查看集群操作日志
-  import      导入一个由 TiDB Ansible 部署的集群
-  edit-config 编辑 TiDB 集群的配置
-  reload      用于必要时重载集群配置
-  patch       使用临时的组件包替换集群上已部署的组件
-  help        打印 Help 信息
+  check       Precheck a cluster
+  deploy      Deploy a cluster for production
+  start       Start a TiDB cluster
+  stop        Stop a TiDB cluster
+  restart     Restart a TiDB cluster
+  scale-in    Scale in a TiDB cluster
+  scale-out   Scale out a TiDB cluster
+  destroy     Destroy a specified cluster
+  clean       (Experimental) Clean up a specified cluster
+  upgrade     Upgrade a specified TiDB cluster
+  display     Display information of a TiDB cluster
+  list        List all clusters
+  audit       Show audit log of cluster operation
+  import      Import an existing TiDB cluster from TiDB-Ansible
+  edit-config Edit TiDB cluster config
+  reload      Reload a TiDB cluster's config and restart if needed
+  patch       Replace the remote package with a specified package and restart the service
+  help        Help about any command
 
 Flags:
-  -c, --concurrency int     最大并行任务数（默认值为 5）
-      --format string       (实验特性) 输出的格式, 支持 [default, json] (默认值为 "default")
-  -h, --help                帮助信息
-      --ssh string          （实验特性）SSH 执行类型，可选值为 'builtin'、'system'、'none'。
-      --ssh-timeout uint    SSH 连接超时时间
-  -v, --version             版本信息
-      --wait-timeout uint   等待操作超时的时间
-  -y, --yes                 跳过所有的确认步骤
+  -c, --concurrency int     Maximum number of concurrent tasks allowed (defaults to `5`)
+      --format string       (EXPERIMENTAL) The format of output, available values are [default, json] (default "default")
+  -h, --help                help for tiup
+      --ssh string          (Experimental) The executor type. Optional values are 'builtin', 'system', and 'none'.
+      --ssh-timeout uint    Timeout in seconds to connect a host via SSH. Operations that don't need an SSH connection are ignored. (default 5)
+  -v, --version            TiUP version
+      --wait-timeout uint   Timeout in seconds to wait for an operation to complete. Inapplicable operations are ignored. (defaults to `120`)
+  -y, --yes                 Skip all confirmations and assumes 'yes'
 ```
 
-## 部署集群
+## Deploy the cluster
 
-部署集群的命令为 `tiup cluster deploy`，一般用法为：
+To deploy the cluster, run the `tiup cluster deploy` command. The usage of the command is as follows:
 
 ```bash
 tiup cluster deploy <cluster-name> <version> <topology.yaml> [flags]
 ```
 
-该命令需要提供集群的名字、集群使用的 TiDB 版本（例如 `v8.5.8`），以及一个集群的拓扑文件。
+This command requires you to provide the cluster name, the TiDB cluster version (such as `8.5.8`), and a topology file of the cluster.
 
-拓扑文件的编写可参考[示例](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml)。以一个最简单的拓扑为例，将下列文件保存为 `/tmp/topology.yaml`：
+To write a topology file, refer to [the example](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml). The following file is an example of the simplest topology:
 
-> **注意：**
+> **Note:**
 >
-> TiUP Cluster 组件的部署和扩容拓扑是使用 [yaml](https://yaml.org/spec/1.2/spec.html) 语法编写，所以需要注意缩进。
+> The topology file used by the TiUP cluster component for deployment and scaling is written using [yaml](https://yaml.org/spec/1.2/spec.html) syntax, so make sure that the indentation is correct.
 
 ```yaml
 ---
@@ -105,35 +105,35 @@ monitoring_servers:
   - host: 172.16.5.134
 ```
 
-TiUP 默认部署在 amd64 架构上运行的 binary，若目标机器为 arm64 架构，可以在拓扑文件中进行配置：
+By default, TiUP is deployed as the binary files running on the amd64 architecture. If the target machine is the arm64 architecture, you can configure it in the topology file:
 
 ```yaml
 global:
-  arch: "arm64"           # 让所有机器默认使用 arm64 的 binary
+  arch: "arm64"           # Configures all machines to use the binary files of the arm64 architecture by default
 
 tidb_servers:
   - host: 172.16.5.134
-    arch: "amd64"         # 这台机器会使用 amd64 的 binary
+    arch: "amd64"         # Configures this machine to use the binary files of the amd64 architecture
   - host: 172.16.5.139
-    arch: "arm64"         # 这台机器会使用 arm64 的 binary
-  - host: 172.16.5.140    # 没有配置 arch 字段的机器，会使用 global 中的默认值，这个例子中是 arm64
+    arch: "arm64"         # Configures this machine to use the binary files of the arm64 architecture
+  - host: 172.16.5.140    # Machines that are not configured with the arch field use the default value in the global field, which is arm64 in this case.
 
 ...
 ```
 
-假如我们想要使用 TiDB 的 v8.5.8 版本，集群名字为 `prod-cluster`，则执行以下命令：
+Save the file as `/tmp/topology.yaml`. If you want to use TiDB 8.5.8 and your cluster name is `prod-cluster`, run the following command:
 
 
 ```shell
-tiup cluster deploy -p prod-cluster v8.5.8 /tmp/topology.yaml
+tiup cluster deploy -p prod-cluster 8.5.8 /tmp/topology.yaml
 ```
 
-执行过程中会再次确认拓扑结构并提示输入目标机器上的 root 密码（-p 表示使用密码）：
+During the execution, TiUP asks you to confirm your topology again and requires the root password of the target machine (the `-p` flag means inputting password):
 
 ```bash
 Please confirm your topology:
 TiDB Cluster: prod-cluster
-TiDB Version: v8.5.8
+TiDB Version: 8.5.8
 Type        Host          Ports                            OS/Arch       Directories
 ----        ----          -----                            -------       -----------
 pd          172.16.5.134  2379/2380                        linux/x86_64  deploy/pd-2379,data/pd-2379
@@ -153,19 +153,19 @@ prometheus  172.16.5.134  9090         deploy/prometheus-9090,data/prometheus-90
 grafana     172.16.5.134  3000         deploy/grafana-3000
 Attention:
     1. If the topology is not what you expected, check your yaml file.
-    1. Please confirm there is no port/directory conflicts in same host.
+    2. Please confirm there is no port/directory conflicts in same host.
 Do you want to continue? [y/N]:
 ```
 
-输入密码后 tiup-cluster 便会下载需要的组件并部署到对应的机器上，当看到以下提示时说明部署成功：
+After you enter the password, TiUP cluster downloads the required components and deploy them on the corresponding machines. When you see the following message, the deployment is successful:
 
 ```bash
 Deployed cluster `prod-cluster` successfully
 ```
 
-## 查看集群列表
+## View the cluster list
 
-集群部署成功后，可以通过 `tiup cluster list` 命令在集群列表中查看该集群：
+After the cluster is successfully deployed, view the cluster list by running the following command:
 
 
 ```bash
@@ -176,23 +176,25 @@ tiup cluster list
 Starting /root/.tiup/components/cluster/v1.12.3/cluster list
 Name          User  Version    Path                                               PrivateKey
 ----          ----  -------    ----                                               ----------
-prod-cluster  tidb  v8.5.8    /root/.tiup/storage/cluster/clusters/prod-cluster  /root/.tiup/storage/cluster/clusters/prod-cluster/ssh/id_rsa
+prod-cluster  tidb  8.5.8    /root/.tiup/storage/cluster/clusters/prod-cluster  /root/.tiup/storage/cluster/clusters/prod-cluster/ssh/id_rsa
 ```
 
-## 启动集群
+## Start the cluster
 
-集群部署成功后，可以执行以下命令启动该集群。如果忘记了部署的集群的名字，可以使用 `tiup cluster list` 命令查看。
+After the cluster is successfully deployed, start the cluster by running the following command:
 
 
 ```shell
 tiup cluster start prod-cluster
 ```
 
-TiUP 使用 `Systemd` 启动守护进程。如果进程意外退出，会在 15s 间隔后被重新拉起。
+If you forget the name of your cluster, view the cluster list by running `tiup cluster list`.
 
-## 检查集群状态
+TiUP uses `systemd` to start a daemon process. If the process terminates unexpectedly, it will be pulled up after 15 seconds.
 
-如果想查看集群中每个组件的运行状态，逐一登录到各个机器上查看显然很低效。因此，TiUP 提供了 `tiup cluster display` 命令，用法如下：
+## Check the cluster status
+
+TiUP provides the `tiup cluster display` command to view the status of each component in the cluster. With this command, you don't have to log in to each machine to see the component status. The usage of the command is as follows:
 
 
 ```bash
@@ -202,7 +204,7 @@ tiup cluster display prod-cluster
 ```
 Starting /root/.tiup/components/cluster/v1.12.3/cluster display prod-cluster
 TiDB Cluster: prod-cluster
-TiDB Version: v8.5.8
+TiDB Version: 8.5.8
 ID                  Role        Host          Ports                            OS/Arch       Status  Data Dir              Deploy Dir
 --                  ----        ----          -----                            -------       ------  --------              ----------
 172.16.5.134:3000   grafana     172.16.5.134  3000                             linux/x86_64  Up      -                     deploy/grafana-3000
@@ -222,44 +224,50 @@ ID                  Role        Host          Ports                            O
 172.16.5.144:6000   tiproxy     172.16.5.144  6000/3080                        linux/x86_64  Up      -                     deploy/tiproxy-6000
 ```
 
-Status 列用 `Up` 或者 `Down` 表示该服务是否正常。对于 PD 组件，同时可能会带有 `|L` 表示该 PD 是 Leader，`|UI` 表示该 PD 运行着 [TiDB Dashboard](/dashboard/dashboard-intro.md)。
+The `Status` column uses `Up` or `Down` to indicate whether the service is running normally.
 
-## 缩容节点
+For the PD component, `|L` or `|UI` might be appended to `Up` or `Down`. `|L` indicates that the PD node is a Leader, and `|UI` indicates that [TiDB Dashboard](/dashboard/dashboard-intro.md) is running on the PD node.
 
-> **注意：**
+## Scale in a cluster
+
+> **Note:**
 >
-> 本节只展示缩容命令的语法示例，线上扩缩容具体步骤可参考[使用 TiUP 扩容缩容 TiDB 集群](/scale-tidb-using-tiup.md)。
+> This section describes only the syntax of the scale-in command. For detailed steps of online scaling, refer to [Scale a TiDB Cluster Using TiUP](/scale-tidb-using-tiup.md).
 
-缩容即下线服务，最终会将指定的节点从集群中移除，并删除遗留的相关文件。
+Scaling in a cluster means making some node(s) offline. This operation removes the specific node(s) from the cluster and deletes the remaining files.
 
-由于 TiKV 和 TiFlash 组件的下线是异步的（需要先通过 API 执行移除操作）并且下线过程耗时较长（需要持续观察节点是否已经下线成功），所以对 TiKV 和 TiFlash 组件做了特殊处理：
+Because the offline process of the TiKV and TiFlash components is asynchronous (which requires removing the node through API), and the process takes a long time (which requires continuous observation on whether the node is successfully taken offline), special treatment is given to the TiKV and TiFlash components.
 
-- 对 TiKV 和 TiFlash 组件的操作
-    - TiUP cluster 通过 API 将其下线后直接退出而不等待下线完成
-    - 等之后再执行集群操作相关的命令时，会检查是否存在已经下线完成的 TiKV 或者 TiFlash 节点。如果不存在，则继续执行指定的操作；如果存在，则执行如下操作：
-        1. 停止已经下线掉的节点的服务
-        2. 清理已经下线掉的节点的相关数据文件
-        3. 更新集群的拓扑，移除已经下线掉的节点
-- 对其他组件的操作
-    - 下线 PD 组件时，会通过 API 将指定节点从集群中删除掉（这个过程很快），然后停掉指定 PD 的服务并且清除该节点的相关数据文件
-    - 下线其他组件时，直接停止并且清除节点的相关数据文件
+- For TiKV and TiFlash:
 
-缩容命令的基本用法：
+    - TiUP cluster takes the node offline through API and directly exits without waiting for the process to be completed.
+    - Afterwards, when a command related to the cluster operation is executed, TiUP cluster examines whether there is a TiKV or TiFlash node that has been taken offline. If not, TiUP cluster continues with the specified operation; If there is, TiUP cluster takes the following steps:
+
+        1. Stop the service of the node that has been taken offline.
+        2. Clean up the data files related to the node.
+        3. Remove the node from the cluster topology.
+
+- For other components:
+
+    - When taking the PD component down, TiUP cluster quickly deletes the specified node from the cluster through API, stops the service of the specified PD node, and deletes the related data files.
+    - When taking other components down, TiUP cluster directly stops the node service and deletes the related data files.
+
+The basic usage of the scale-in command:
 
 ```bash
 tiup cluster scale-in <cluster-name> -N <node-id>
 ```
 
-它需要指定至少两个参数，一个是集群名字，另一个是节点 ID。节点 ID 可以参考上一节使用 `tiup cluster display` 命令获取。
+To use this command, you need to specify at least two flags: the cluster name and the node ID. The node ID can be obtained by using the `tiup cluster display` command in the previous section.
 
-比如想缩容 172.16.5.140 上的 TiKV 节点，可以执行：
+For example, to make the TiKV node on `172.16.5.140` offline, run the following command:
 
 
 ```bash
 tiup cluster scale-in prod-cluster -N 172.16.5.140:20160
 ```
 
-通过 `tiup cluster display` 可以看到该 TiKV 已经被标记为 `Offline`：
+By running `tiup cluster display`, you can see that the TiKV node is marked `Offline`:
 
 
 ```bash
@@ -269,7 +277,7 @@ tiup cluster display prod-cluster
 ```
 Starting /root/.tiup/components/cluster/v1.12.3/cluster display prod-cluster
 TiDB Cluster: prod-cluster
-TiDB Version: v8.5.8
+TiDB Version: 8.5.8
 ID                  Role        Host          Ports                            OS/Arch       Status   Data Dir              Deploy Dir
 --                  ----        ----          -----                            -------       ------   --------              ----------
 172.16.5.134:3000   grafana     172.16.5.134  3000                             linux/x86_64  Up       -                     deploy/grafana-3000
@@ -289,23 +297,27 @@ ID                  Role        Host          Ports                            O
 172.16.5.144:6000   tiproxy     172.16.5.144  6000/3080                        linux/x86_64  Up       -                     deploy/tiproxy-6000
 ```
 
-待 PD 将其数据调度到其他 TiKV 后，该节点会被自动删除。
+After PD schedules the data on the node to other TiKV nodes, this node will be deleted automatically.
 
-## 扩容节点
+## Scale out a cluster
 
-> **注意：**
+> **Note:**
 >
-> 本节只用于展示扩容命令的语法示例，线上扩缩容可参考[使用 TiUP 扩容缩容 TiDB 集群](/scale-tidb-using-tiup.md)。
+> This section describes only the syntax of the scale-out command. For detailed steps of online scaling, refer to [Scale a TiDB Cluster Using TiUP](/scale-tidb-using-tiup.md).
 
-扩容的内部逻辑与部署类似，TiUP cluster 组件会先保证节点的 SSH 连接，在目标节点上创建必要的目录，然后执行部署并且启动服务。其中 PD 节点的扩容会通过 join 方式加入到集群中，并且会更新与 PD 有关联的服务的配置；其他服务直接启动加入到集群中。所有服务在扩容时都会做正确性验证，最终返回是否扩容成功。
+The scale-out operation has an inner logic similar to that of deployment: the TiUP cluster component firstly ensures the SSH connection of the node, creates the required directories on the target node, then executes the deployment operation, and starts the node service.
 
-例如，在集群 `tidb-test` 中扩容一个 TiKV 节点和一个 PD 节点：
+When you scale out PD, the node is added to the cluster by `join`, and the configurations of services associated with PD are updated. When you scale out other services, the service is started directly and added to the cluster.
 
-1. 新建 scale.yaml 文件，添加新增的 TiKV 和 PD 节点 IP：
+All services conduct correctness validation when they are scaled out. The validation results show whether the scaling-out is successful.
 
-    > **注意：**
+To add a TiKV node and a PD node in the `tidb-test` cluster, take the following steps:
+
+1. Create a `scale.yaml` file, and add IPs of the new TiKV and PD nodes:
+
+    > **Note:**
     >
-    > 需要新建一个拓扑文件，文件中只写入扩容节点的描述信息，不要包含已存在的节点。
+    > You need to create a topology file, which includes only the description of the new nodes, not the existing nodes.
 
     ```yaml
     ---
@@ -317,86 +329,95 @@ ID                  Role        Host          Ports                            O
       - host: 172.16.5.140
     ```
 
-2. 执行扩容操作。TiUP cluster 根据 scale.yaml 文件中声明的端口、目录等信息在集群中添加相应的节点：
+2. Perform the scale-out operation. TiUP cluster adds the corresponding nodes to the cluster according to the port, directory, and other information described in `scale.yaml`.
 
     
     ```shell
     tiup cluster scale-out tidb-test scale.yaml
     ```
 
-    执行完成之后可以通过 `tiup cluster display tidb-test` 命令检查扩容后的集群状态。
+    After the command is executed, you can check the status of the scaled-out cluster by running `tiup cluster display tidb-test`.
 
-## 滚动升级
+## Rolling upgrade
 
-> **注意：**
+> **Note:**
 >
-> 本节只用于展示命令的语法示例，线上升级请参考[使用 TiUP 升级 TiDB](/upgrade-tidb-using-tiup.md)。
+> This section describes only the syntax of the upgrade command. For detailed steps of online upgrade, refer to [Upgrade TiDB Using TiUP](/upgrade-tidb-using-tiup.md).
 
-滚动升级功能借助 TiDB 的分布式能力，升级过程中尽量保证对前端业务透明、无感知。升级时会先检查各个组件的配置文件是否合理，如果配置有问题，则报错退出；如果配置没有问题，则工具会逐个节点进行升级。其中对不同节点有不同的操作。
+The rolling upgrade feature leverages the distributed capabilities of TiDB. The upgrade process is made as transparent as possible to the application, and does not affect the business.
 
-### 不同节点的操作
+Before the upgrade, TiUP cluster checks whether the configuration file of each component is rational. If so, the components are upgraded node by node; if not, TiUP reports an error and exits. The operations vary with different nodes.
 
-- 升级 PD 节点
-    - 优先升级非 Leader 节点
-    - 所有非 Leader 节点升级完成后再升级 Leader 节点
-        - 工具会向 PD 发送一条命令将 Leader 迁移到升级完成的节点上
-        - 当 Leader 已经切换到其他节点之后，再对旧的 Leader 节点做升级操作
-    - 同时升级过程中，若发现有不健康的节点，工具会中止本次升级并退出，此时需要由人工判断、修复后再执行升级。
-- 升级 TiKV 节点
-    - 先在 PD 中添加一个迁移对应 TiKV 上 Region leader 的调度，通过迁移 Leader 确保升级过程中不影响前端业务
-    - 等待迁移 Leader 完成之后，再对该 TiKV 节点进行升级更新
-    - 等更新后的 TiKV 正常启动之后再移除迁移 Leader 的调度
-- 升级其他服务
-    - 正常停止服务再更新
+### Operations for different nodes
 
-### 升级操作
+- Upgrade the PD node
 
-升级命令参数如下：
+    - First, upgrade non-Leader nodes.
+    - After all the non-Leader nodes are upgraded, upgrade the Leader node.
+        - The upgrade tool sends a command to PD that migrates Leader to an already upgraded node.
+        - After the Leader role is switched to another node, upgrade the previous Leader node.
+    - During the upgrade, if any unhealthy node is detected, the tool stops this upgrade operation and exits. You need to manually analyze the cause, fix the issue and run the upgrade again.
+
+- Upgrade the TiKV node
+
+    - First, add a scheduling operation in PD that migrates the Region Leader of this TiKV node. This ensures that the upgrade process does not affect the business.
+    - After the Leader is migrated, upgrade this TiKV node.
+    - After the upgraded TiKV is started normally, remove the scheduling of the Leader.
+
+- Upgrade other services
+
+    - Stop the service normally and update the node.
+
+### Upgrade command
+
+The flags for the upgrade command is as follows:
 
 ```bash
 Usage:
-  tiup cluster upgrade <cluster-name> <version> [flags]
+  cluster upgrade <cluster-name> <version> [flags]
 
 Flags:
-      --force                  在不 transfer leader 的情况下强制升级（危险操作）
-  -h, --help                   帮助手册
-      --transfer-timeout int   transfer leader 的超时时间
+      --force                  Force upgrade won't transfer leader
+  -h, --help                   help for upgrade
+      --transfer-timeout int   Timeout in seconds when transferring PD and TiKV store leaders (default 600)
 
 Global Flags:
-      --ssh string        （实验特性）SSH 执行类型，可选值为 'builtin'、'system'、'none'。
-      --wait-timeout int  等待操作超时的时间
-      --ssh-timeout int   SSH 连接的超时时间
-  -y, --yes               跳过所有的确认步骤
+      --ssh string          (Experimental) The executor type. Optional values are 'builtin', 'system', and 'none'.
+      --wait-timeout int  Timeout of waiting the operation
+      --ssh-timeout int   Timeout in seconds to connect host via SSH, ignored for operations that don't need an SSH connection. (default 5)
+  -y, --yes               Skip all confirmations and assumes 'yes'
 ```
 
-例如，把集群升级到 v8.5.8 的命令为：
+For example, the following command upgrades the cluster to 8.5.8:
 
 
 ```bash
-tiup cluster upgrade tidb-test v8.5.8
+tiup cluster upgrade tidb-test 8.5.8
 ```
 
-## 更新配置
+## Update configuration
 
-如果想要动态更新组件的配置，TiUP cluster 组件为每个集群保存了一份当前的配置，如果想要编辑这份配置，则执行 `tiup cluster edit-config <cluster-name>` 命令。例如：
+If you want to dynamically update the component configurations, the TiUP cluster component saves a current configuration for each cluster. To edit this configuration, execute the `tiup cluster edit-config <cluster-name>` command. For example:
 
 
 ```bash
 tiup cluster edit-config prod-cluster
 ```
 
-然后 TiUP cluster 组件会使用 vi 打开配置文件供编辑（如果你想要使用其他编辑器，请使用 `EDITOR` 环境变量自定义编辑器，例如 `export EDITOR=nano`），编辑完之后保存即可。此时的配置并没有应用到集群，如果想要让它生效，还需要执行：
+TiUP cluster opens the configuration file in the vi editor. If you want to use other editors, use the `EDITOR` environment variable to customize the editor, such as `export EDITOR=nano`.
+
+After editing the file, save the changes. To apply the new configuration to the cluster, execute the following command:
 
 
 ```bash
 tiup cluster reload prod-cluster
 ```
 
-该操作会将配置发送到目标机器，重启集群，使配置生效。
+The command sends the configuration to the target machine and restarts the cluster to make the configuration take effect.
 
-> **注意：**
+> **Note:**
 >
-> 对于监控组件，可以通过执行 `tiup cluster edit-config` 命令在对应实例上添加自定义配置路径来进行配置自定义，例如：
+> For monitoring components, customize the configuration by executing the `tiup cluster edit-config` command to add a custom configuration path on the corresponding instance. For example:
 
 ```yaml
 ---
@@ -414,25 +435,25 @@ alertmanager_servers:
     config_file: /path/to/local/alertmanager.yml
 ```
 
-路径内容格式如下：
+The content and format requirements for files under the specified path are as follows:
 
-- `grafana_servers` 的 `dashboard_dir` 字段指定的文件夹中应当含有完整的 `*.json` 文件。
-- `monitoring_servers` 的 `rule_dir` 字段定义的文件夹中应当含有完整的 `*.rules.yml` 文件。
-- `alertmanager_servers` 的 `config_file` 格式请参考 [Alertmanager 配置模板](https://github.com/pingcap/tiup/blob/master/embed/templates/config/alertmanager.yml)。
+- The folder specified in the `dashboard_dir` field of `grafana_servers` must contain full `*.json` files.
+- The folder specified in the `rule_dir` field of `monitoring_servers` must contain full `*.rules.yml` files.
+- For the format of files specified in the `config_file` field of `alertmanager_servers`, refer to [the Alertmanager configuration template](https://github.com/pingcap/tiup/blob/master/embed/templates/config/alertmanager.yml).
 
-在执行 `tiup reload` 时，TiUP 会将中控机上对应的配置上传到目标机器对应的配置目录中，上传之前会删除目标机器中已有的旧配置文件。如果想要修改某一个配置文件，请确保将所有的（包含未修改的）配置文件都放在同一个目录中。例如，要修改 Grafana 的 `tidb.json` 文件，可以先将 Grafana 的 `dashboards` 目录中所有的 `*.json` 文件拷贝到本地目录中，再修改 `tidb.json` 文件。否则最终的目标机器上将缺失其他的 JSON 文件。
+When you execute `tiup reload`, TiUP first deletes all old configuration files in the target machine and then uploads the corresponding configuration from the control machine to the corresponding configuration directory of the target machine. Therefore, if you want to modify a particular configuration file, make sure that all configuration files (including the unmodified ones) are in the same directory. For example, to modify Grafana's `tidb.json` file, you need to first copy all the `*.json` files from Grafana's `dashboards` directory to your local directory. Otherwise, other JSON files will be missing from the target machine.
 
-> **注意：**
+> **Note:**
 >
-> 如果配置了 `grafana_servers` 的 `dashboard_dir` 字段，在执行 `tiup cluster rename` 命令进行集群重命名后，需要完成以下操作：
+> If you have configured the `dashboard_dir` field of `grafana_servers`, after executing the `tiup cluster rename` command to rename the cluster, you need to complete the following operations:
 >
-> 1. 在本地的 `dashboards` 目录中，将集群名修改为新的集群名。
-> 2. 在本地的 `dashboards` 目录中，将 `datasource` 更新为新的集群名（`datasource` 是以集群名命名的）。
-> 3. 执行 `tiup cluster reload -R grafana` 命令。
+> 1. In the local `dashboards` directory, change the cluster name to the new cluster name.
+> 2. In the local `dashboards` directory, change `datasource` to the new cluster name, because `datasource` is named after the cluster name.
+> 3. Execute the `tiup cluster reload -R grafana` command.
 
-## 更新组件
+## Update component
 
-常规的升级集群可以使用 upgrade 命令，但是在某些场景下（例如 Debug)，可能需要用一个临时的包替换正在运行的组件，此时可以用 patch 命令：
+For normal upgrade, you can use the `upgrade` command. But in some scenarios, such as debugging, you might need to replace the currently running component with a temporary package. To achieve this, use the `patch` command:
 
 
 ```bash
@@ -443,39 +464,48 @@ tiup cluster patch --help
 Replace the remote package with a specified package and restart the service
 
 Usage:
-  tiup cluster patch <cluster-name> <package-path> [flags]
+  cluster patch <cluster-name> <package-path> [flags]
 
 Flags:
-  -h, --help                   帮助信息
-  -N, --node strings           指定被替换的节点
-      --overwrite              在未来的 scale-out 操作中使用当前指定的临时包
-  -R, --role strings           指定被替换的服务类型
-      --transfer-timeout int   transfer leader 的超时时间
+  -h, --help                    help for patch
+  -N, --node strings            Specify the nodes
+      --offline                 Patch a stopped cluster
+      --overwrite               Use this package in the future scale-out operations
+  -R, --role strings            Specify the roles
+      --transfer-timeout uint   Timeout in seconds when transferring PD and TiKV store leaders, also for TiCDC drain one capture (default 600)
 
 Global Flags:
-      --ssh string        （实验特性）SSH 执行类型，可选值为 'builtin'、'system'、'none'。
-      --wait-timeout int  等待操作超时的时间
-      --ssh-timeout int   SSH 连接的超时时间
-  -y, --yes               跳过所有的确认步骤
+  -c, --concurrency int     max number of parallel tasks allowed (default 5)
+      --format string       (EXPERIMENTAL) The format of output, available values are [default, json] (default "default")
+      --ssh string          (EXPERIMENTAL) The executor type: 'builtin', 'system', 'none'.
+      --ssh-timeout uint    Timeout in seconds to connect host via SSH, ignored for operations that don't need an SSH connection. (default 5)
+      --wait-timeout uint   Timeout in seconds to wait for an operation to complete, ignored for operations that don't fit. (default 120)
+  -y, --yes                 Skip all confirmations and assumes 'yes'
 ```
 
-例如，有一个 TiDB 的 hotfix 包放在 `/tmp/tidb-hotfix.tar.gz`，如果此时想要替换集群上的所有 TiDB，则可以执行：
+If a TiDB hotfix package is in `/tmp/tidb-hotfix.tar.gz` and you want to replace all the TiDB packages in the cluster, run the following command:
 
 
 ```bash
 tiup cluster patch test-cluster /tmp/tidb-hotfix.tar.gz -R tidb
 ```
 
-或者只替换其中一个 TiDB：
+You can also replace only one TiDB package in the cluster:
 
 
 ```bash
 tiup cluster patch test-cluster /tmp/tidb-hotfix.tar.gz -N 172.16.4.5:4000
 ```
 
-## 导入 TiDB Ansible 集群
+## Import TiDB Ansible cluster
 
-在 TiUP 之前，一般使用 TiDB Ansible 部署 TiDB 集群，import 命令用于将这部分集群过渡给 TiUP 接管。import 命令用法如下：
+> **Note:**
+>
+> Currently, TiUP cluster's support for TiSpark is still **experimental**. It is not supported to import a TiDB cluster with TiSpark enabled.
+
+Before TiUP is released, TiDB Ansible is often used to deploy TiDB clusters. To enable TiUP to take over the cluster deployed by TiDB Ansible, use the `import` command.
+
+The usage of the `import` command is as follows:
 
 
 ```bash
@@ -486,23 +516,23 @@ tiup cluster import --help
 Import an exist TiDB cluster from TiDB-Ansible
 
 Usage:
-  tiup cluster import [flags]
+  cluster import [flags]
 
 Flags:
-  -d, --dir string         TiDB-Ansible 的目录，默认为当前目录
-  -h, --help               import 的帮助信息
-      --inventory string   inventory 文件的名字 (默认为 "inventory.ini")
-      --no-backup          不备份 Ansible 目录, 用于存在多个 inventory 文件的 Ansible 目录
-  -r, --rename NAME        重命名被导入的集群
+  -d, --dir string         The path to TiDB-Ansible directory
+  -h, --help               help for import
+      --inventory string   The name of inventory file (default "inventory.ini")
+      --no-backup          Don't backup ansible dir, useful when there're multiple inventory files
+  -r, --rename NAME        Rename the imported cluster to NAME
 
 Global Flags:
-      --ssh string        （实验特性）SSH 执行类型，可选值为 'builtin'、'system'、'none'。
-      --wait-timeout int  等待操作超时的时间
-      --ssh-timeout int   SSH 连接的超时时间
-  -y, --yes               跳过所有的确认步骤
+      --ssh string        (Experimental) The executor type. Optional values are 'builtin', 'system', and 'none'.
+      --wait-timeout int  Timeout of waiting the operation
+      --ssh-timeout int   Timeout in seconds to connect host via SSH, ignored for operations that don't need an SSH connection. (default 5)
+  -y, --yes               Skip all confirmations and assumes 'yes'
 ```
 
-例如，导入一个 TiDB Ansible 集群：
+You can use either of the following commands to import a TiDB Ansible cluster:
 
 
 ```bash
@@ -510,16 +540,14 @@ cd tidb-ansible
 tiup cluster import
 ```
 
-或者
-
 
 ```bash
 tiup cluster import --dir=/path/to/tidb-ansible
 ```
 
-## 查看操作日志
+## View the operation log
 
-操作日志的查看可以借助 audit 命令，其用法如下：
+To view the operation log, use the `audit` command. The usage of the `audit` command is as follows:
 
 ```bash
 Usage:
@@ -529,7 +557,7 @@ Flags:
   -h, --help   help for audit
 ```
 
-在不使用 `[audit-id]` 参数时，该命令会显示执行的命令列表，如下：
+If the `[audit-id]` flag is not specified, the command shows a list of commands that have been executed. For example:
 
 
 ```bash
@@ -540,46 +568,50 @@ tiup cluster audit
 Starting component `cluster`: /home/tidb/.tiup/components/cluster/v1.12.3/cluster audit
 ID      Time                       Command
 --      ----                       -------
-4BLhr0  2026-08-27T23:55:09+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.5.8 /tmp/topology.yaml
-4BKWjF  2026-08-27T23:36:57+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.5.8 /tmp/topology.yaml
-4BKVwH  2026-08-27T23:02:08+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.5.8 /tmp/topology.yaml
+4BLhr0  2026-08-27T23:55:09+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test 8.5.8 /tmp/topology.yaml
+4BKWjF  2026-08-27T23:36:57+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test 8.5.8 /tmp/topology.yaml
+4BKVwH  2026-08-27T23:02:08+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test 8.5.8 /tmp/topology.yaml
 4BKKH1  2026-08-27T16:39:04+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster destroy test
-4BKKDx  2026-08-27T16:36:57+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test v8.5.8 /tmp/topology.yaml
+4BKKDx  2026-08-27T16:36:57+08:00  /home/tidb/.tiup/components/cluster/v1.12.3/cluster deploy test 8.5.8 /tmp/topology.yaml
 ```
 
-第一列为 audit-id，如果想看某个命令的执行日志，则传入这个 audit-id：
+The first column is `audit-id`. To view the execution log of a certain command, pass the `audit-id` of a command as the flag as follows:
 
 
 ```bash
 tiup cluster audit 4BLhr0
 ```
 
-## 在集群节点机器上执行命令
+## Run commands on a host in the TiDB cluster
 
-`exec` 命令可以很方便地到集群的机器上执行命令，其使用方式如下：
+To run command on a host in the TiDB cluster, use the `exec` command. The usage of the `exec` command is as follows:
 
 ```bash
 Usage:
-  tiup cluster exec <cluster-name> [flags]
+  cluster exec <cluster-name> [flags]
 
 Flags:
-      --command string   需要执行的命令 (默认是 "ls")
-  -h, --help             帮助信息
-  -N, --node strings     指定要执行的节点 ID （节点 id 通过 display 命令获取）
-  -R, --role strings     指定要执行的 role
-      --sudo             是否使用 root (默认为 false)
+      --command string   the command run on cluster host (default "ls")
+  -h, --help             help for exec
+  -N, --node strings     Only exec on host with specified nodes
+  -R, --role strings     Only exec on host with specified roles
+      --sudo             use root permissions (default false)
+
+Global Flags:
+      --ssh-timeout int   Timeout in seconds to connect host via SSH, ignored for operations that don't need an SSH connection. (default 5)
+  -y, --yes               Skip all confirmations and assumes 'yes'
 ```
 
-例如，如果要到所有的 TiDB 节点上执行 `ls /tmp`：
+For example, to execute `ls /tmp` on all TiDB nodes, run the following command:
 
 
 ```bash
 tiup cluster exec test-cluster --command='ls /tmp'
 ```
 
-## 集群控制工具 (controllers)
+## Cluster controllers
 
-在 TiUP 之前，我们用 `tidb-ctl`、`tikv-ctl`、`pd-ctl` 等工具操控集群，为了方便下载和使用，TiUP 将它们集成到了统一的组件 `ctl` 中：
+Before TiUP is released, you can control the cluster using `tidb-ctl`, `tikv-ctl`, `pd-ctl`, and other tools. To make the tools easier to download and use, TiUP integrates them into an all-in-one component, `ctl`.
 
 ```bash
 Usage:
@@ -589,7 +621,7 @@ Flags:
   -h, --help   help for tiup
 ```
 
-这个命令和之前的命令对应关系为：
+This command has a corresponding relationship with those of the previous tools:
 
 ```bash
 tidb-ctl [args] = tiup ctl tidb [args]
@@ -598,21 +630,20 @@ tikv-ctl [args] = tiup ctl tikv [args]
 etcdctl [args] = tiup ctl etcd [args]
 ```
 
-例如，以前查看 store 的命令为 `pd-ctl -u http://127.0.0.1:2379 store`，集成到 TiUP 中的命令为：
+For example, if you previously view the store by running `pd-ctl -u http://127.0.0.1:2379 store`, now you can run the following command in TiUP:
 
 
 ```bash
 tiup ctl:v<CLUSTER_VERSION> pd -u http://127.0.0.1:2379 store
 ```
 
-## 部署机环境检查
+## Environment checks for target machines
 
-使用 `check` 子命令可以对部署机的环境进行一系列检查，并输出检查结果。通过执行 `check` 子命令，可以发现常见的不合理配置或不支持情况。命令参数列表如下：
+You can use the `check` command to perform a series of checks on the environment of the target machine and output the check results. By executing the `check` command, you can find common unreasonable configurations or unsupported situations. The command flag list is as follows:
 
 ```bash
 Usage:
   tiup cluster check <topology.yml | cluster-name> [flags]
-
 Flags:
       --apply                  Try to fix failed checks
       --cluster                Check existing cluster, the input is a cluster name.
@@ -625,86 +656,85 @@ Flags:
       --user string            The user name to login via SSH. The user must has root (or sudo) privilege.
 ```
 
-默认情况下，此功能用于在部署前进行环境检查，通过指定 `--cluster` 参数切换模式，也可以用于对已部署集群的部署机进行检查，例如：
+By default, this command is used to check the environment before deployment. By specifying the `--cluster` flag to switch the mode, you can also check the target machines of an existing cluster, for example:
 
 ```bash
-# check deploy servers before deploy
+# check deployed servers before deployment
 tiup cluster check topology.yml --user tidb -p
-
-# check deploy servers of an existing cluster
+# check deployed servers of an existing cluster
 tiup cluster check <cluster-name> --cluster
 ```
 
-其中，CPU 线程数检查、内存大小检查和磁盘性能检查三项默认关闭，对于生产环境，建议将此三项检测开启并确保通过，以获得最佳性能。
+The CPU thread count check, memory size check, and disk performance check are disabled by default. For the production environment, it is recommended that you enable the three checks and make sure they pass to obtain the best performance.
 
-- CPU：线程数大于等于 16 为通过检查
-- 内存：物理内存总大小大于等于 32 GB 为通过检查
-- 磁盘：对 `data_dir` 所在分区执行 `fio` 测试并记录结果
+- CPU: If the number of threads is greater than or equal to 16, the check is passed.
+- Memory: If the total size of physical memory is greater than or equal to 32 GB, the check is passed.
+- Disk: Execute `fio` test on the partitions of `data_dir` and record the results.
 
-在运行检测时，若指定了 `--apply` 参数，程序将尝试对其中未通过的项目自动修复。自动修复仅限于部分可通过修改配置或系统参数调整的项目，其它未修复的项目需要根据实际情况手工处理。
+When running the checks, if the `--apply` flag is specified, the program automatically repairs the failed items. Automatic repair is limited to some items that can be adjusted by modifying the configuration or system parameters. Other unrepaired items need to be handled manually according to the actual situation.
 
-环境检查不是部署集群的必需流程。对于生产环境建议在部署前执行环境检查并通过所有检测项。如果未通过全部检查项，也可能正常部署和运行集群，但可能无法获得最佳性能表现。
+Environment checks are not necessary for deploying a cluster. For the production environment, it is recommended to perform environment checks and pass all check items before deployment. If not all the check items are passed, the cluster might be deployed and run normally, but the best performance might not be obtained.
 
-## 使用中控机系统自带的 SSH 客户端连接集群
+## Use the system's native SSH client to connect to cluster
 
-在以上所有操作中，涉及到对集群机器的操作都是通过 TiUP 内置的 SSH 客户端连接集群执行命令，但是在某些场景下，需要使用系统自带的 SSH 客户端来对集群执行操作，比如：
+All operations above performed on the cluster machine use the SSH client embedded in TiUP to connect to the cluster and execute commands. However, in some scenarios, you might also need to use the SSH client native to the control machine system to perform such cluster operations. For example:
 
-- 使用 SSH 插件来做认证
-- 使用定制的 SSH 客户端
+- To use an SSH plug-in for authentication
+- To use a customized SSH client
 
-此时可以通过命令行参数 `--ssh=system` 启用系统自带命令行：
+Then you can use the `--ssh=system` command-line flag to enable the system-native command-line tool:
 
-- 部署集群：`tiup cluster deploy <cluster-name> <version> <topo> --ssh=system`，其中 `<cluster-name>` 为集群名称，`<version>` 为 TiDB 集群版本（例如 `v8.5.8`），`<topo>` 为拓扑文件路径
-- 启动集群：`tiup cluster start <cluster-name> --ssh=system`
-- 升级集群：`tiup cluster upgrade ... --ssh=system`
+- Deploy a cluster: `tiup cluster deploy <cluster-name> <version> <topo> --ssh=system`. Fill in the name of your cluster for `<cluster-name>`, the TiDB version to be deployed (such as `8.5.8`) for `<version>`, and the topology file for `<topo>`.
+- Start a cluster: `tiup cluster start <cluster-name> --ssh=system`
+- Upgrade a cluster: `tiup cluster upgrade ... --ssh=system`
 
-所有涉及集群操作的步骤都可以加上 `--ssh=system` 来使用系统自带的客户端。
+You can add `--ssh=system` in all cluster operation commands above to use the system's native SSH client.
 
-也可以使用环境变量 `TIUP_NATIVE_SSH` 来指定是否使用本地 SSH 客户端，避免每个命令都需要添加 `--ssh=system` 参数：
+To avoid adding such a flag in every command, you can use the `TIUP_NATIVE_SSH` system variable to specify whether to use the local SSH client:
 
 ```shell
 export TIUP_NATIVE_SSH=true
-# 或者
-export TIUP_NATIVE_SSh=1
-# 或者
+# or
+export TIUP_NATIVE_SSH=1
+# or
 export TIUP_NATIVE_SSH=enable
 ```
 
-若环境变量和 `--ssh` 同时指定，则以 `--ssh` 为准。
+If you specify this environment variable and `--ssh` at the same time, `--ssh` has higher priority.
 
-> **注意：**
+> **Note:**
 >
-> 在部署集群的步骤中，若需要使用密码的方式连接 (-p)，或者密钥文件设置了 passphrase，则需要保证中控机上安装了 sshpass，否则连接时会报错。
+> During the process of cluster deployment, if you need to use a password for connection (`-p`) or `passphrase` is configured in the key file, you must ensure that `sshpass` is installed on the control machine; otherwise, a timeout error is reported.
 
-## 迁移中控机与备份
+## Migrate control machine and back up TiUP data
 
-TiUP 相关的数据都存储在用户 home 目录的 `.tiup` 目录下，若要迁移中控机只需要拷贝 `.tiup` 目录到对应目标机器即可。
+The TiUP data is stored in the `.tiup` directory in the user's home directory. To migrate the control machine, you can take the following steps to copy the `.tiup` directory to the corresponding target machine:
 
-1. 在原机器 home 目录下执行 `tar czvf tiup.tar.gz .tiup`。
-2. 把 `tiup.tar.gz` 拷贝到目标机器 home 目录。
-3. 在目标机器 home 目录下执行 `tar xzvf tiup.tar.gz`。
-4. 添加 `.tiup` 目录到 `PATH` 环境变量。
+1. Execute `tar czvf tiup.tar.gz .tiup` in the home directory of the original machine.
+2. Copy `tiup.tar.gz` to the home directory of the target machine.
+3. Execute `tar xzvf tiup.tar.gz` in the home directory of the target machine.
+4. Add the `.tiup` directory to the `PATH` environment variable.
 
-    如使用 `bash` 并且是 `tidb` 用户，在 `~/.bashrc` 中添加 `export PATH=/home/tidb/.tiup/bin:$PATH` 后执行 `source ~/.bashrc`，根据使用的 shell 与用户做相应调整。
+    If you use `bash` and you are a `tidb` user, you can add `export PATH=/home/tidb/.tiup/bin:$PATH` in `~/.bashrc` and execute `source ~/.bashrc`. Then make corresponding adjustments according to the shell and the user you use.
 
-> **注意：**
+> **Note:**
 >
-> 为了避免中控机磁盘损坏等异常情况导致 TiUP 数据丢失，建议定时备份 `.tiup` 目录。
+> It is recommended that you back up the `.tiup` directory regularly to avoid the loss of TiUP data caused by abnormal conditions, such as disk damage of the control machine.
 
-## 备份与恢复集群部署和运维所需的 meta 文件
+## Back up and restore meta files for cluster deployment and O&M
 
-如果运维所需的 meta 文件丢失，会导致无法继续使用 TiUP 管理集群，建议通过以下方式定期备份 meta 文件：
+If the meta files used for operation and maintenance (O&M) are lost, managing the cluster using TiUP will fail. It is recommended that you back up the meta files regularly by running the following command:
 
 ```bash
 tiup cluster meta backup ${cluster_name}
 ```
 
-如果 meta 文件丢失，可以使用以下方法恢复 meta 文件：
+If the meta files are lost, you can restore them by running the following command:
 
 ```bash
 tiup cluster meta restore ${cluster_name} ${backup_file}
 ```
 
-> **注意：**
+> **Note:**
 >
-> 恢复操作会覆盖当前的 meta 文件，建议仅在 meta 文件丢失的情况下进行恢复。
+> The restore operation overwrites the current meta files. Therefore, it is recommended to restore the meta files only when they are lost.

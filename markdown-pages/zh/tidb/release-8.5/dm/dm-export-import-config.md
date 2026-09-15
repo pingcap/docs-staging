@@ -1,54 +1,49 @@
 ---
-title: TiDB Data Migration 导出和导入集群的数据源和任务配置
-summary: 了解 TiDB Data Migration 导出和导入集群的数据源和任务配置。
+title: Export and Import Data Sources and Task Configuration of Clusters
+summary: Learn how to export and import data sources and task configuration of clusters when you use DM.
 ---
 
-# TiDB Data Migration 导出和导入集群的数据源和任务配置
+# Export and Import Data Sources and Task Configuration of Clusters
 
-`config` 命令用于导出和导入集群的数据源和任务配置。
+`config` command is used to export and import data sources and task configuration of clusters.
 
-> **注意：**
+> **Note:**
 >
-> 对于 v2.0.5 版本之前的集群，可使用 >= v2.0.5 且 < v8.0.0 的 dmctl 导出和导入集群的数据源和任务配置文件。
+> For clusters earlier than v2.0.5, you can use dmctl (>= v2.0.5 and < v8.0.0) to export and import the data source and task configuration files.
 
 
 ```bash
 » help config
 Commands to import/export config
-
 Usage:
   dmctl config [command]
-
 Available Commands:
   export      Export the configurations of sources and tasks.
   import      Import the configurations of sources and tasks.
-
 Flags:
   -h, --help   help for config
-
 Global Flags:
   -s, --source strings   MySQL Source ID.
-
 Use "dmctl config [command] --help" for more information about a command.
 ```
 
-## 导出集群的数据源和任务配置
+## Export the data source and task configuration of clusters
 
-使用 `export` 子命令导出集群的数据源和任务配置到指定文件夹中。
+You can use `export` command to export the data source and task configuration of clusters to specified files.
 
 
 ```bash
 config export [--dir directory]
 ```
 
-### 参数解释
+### Parameter explanation
 
-- `dir`：
-    - 可选
-    - 指定导出文件夹路径
-    - 默认值为 `./configs`
+- `dir`:
+    - optional
+    - specifies the file path for exporting
+    - the default value is `./configs`
 
-### 返回结果示例
+### Returned results
 
 
 ```bash
@@ -59,27 +54,27 @@ config export -d /tmp/configs
 export configs to directory `/tmp/configs` succeed
 ```
 
-## 导入集群的数据源和任务配置
+## import the data source and task configuration of clusters
 
-使用 `import` 子命令从指定文件夹中导入集群的数据源和任务配置。
+You can use `import` command to import the data source and task configuration of clusters from specified files.
 
 
 ```bash
 config import [--dir directory]
 ```
 
-> **注意：**
+> **Note:**
 >
-> 对于 v2.0.2 版本之后的集群，暂不支持自动导入 relay worker 的相关配置，可以手动使用 `start-relay` 命令[开启 relay log](/dm/relay-log.md#开启关闭-relay-log)。
+> For clusters later than v2.0.2, currently, it is not supported to automatically import the configuration related to relay worker. You can use `start-relay` command to manually [start relay log](/dm/relay-log.md#enable-and-disable-relay-log).
 
-### 参数解释
+### Parameter explanation
 
-- `dir`：
-    - 可选
-    - 指定导入文件夹路径
-    - 默认值为 `./configs`
+- `dir`:
+    - optional
+    - specifies the file path for importing
+    - the default value is `./configs`
 
-### 返回结果示例
+### Returned results
 
 
 ```bash

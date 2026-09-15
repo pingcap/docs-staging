@@ -1,26 +1,30 @@
 ---
-title: TiDB Data Migration 分库分表合并
-summary: 了解 DM 的分库分表合并功能。
+title: TiDB Data Migration Shard Merge
+summary: Learn the shard merge feature of DM.
 ---
 
-# TiDB Data Migration 分库分表合并
+# TiDB Data Migration Shard Merge
 
-TiDB Data Migration (DM) 支持将上游 MySQL/MariaDB 各分库分表中的 DML、DDL 数据合并后迁移到下游 TiDB 的库表中。
+TiDB Data Migration (DM) supports merging the DML and DDL data in the upstream MySQL/MariaDB sharded tables and migrating the merged data to the downstream TiDB tables.
 
-如果你需要从小数据量分库分表 MySQL 合并迁移数据到 TiDB，请参考[这篇文档](/migrate-small-mysql-shards-to-tidb.md)
+If you need to migrate and merge MySQL shards of small datasets to TiDB, refer to [this tutorial](/migrate-small-mysql-shards-to-tidb.md).
 
-## 使用限制
+## Restrictions
 
-目前分库分表合并功能仅支持有限的场景，使用该功能前，请仔细阅读[悲观模式分库分表合并迁移使用限制](/dm/feature-shard-merge-pessimistic.md#使用限制)和[乐观模式分库分表合并迁移使用限制](/dm/feature-shard-merge-optimistic.md#使用限制)。
+Currently, the shard merge feature is supported only in limited scenarios. For details, refer to [Sharding DDL usage Restrictions in the pessimistic mode](/dm/feature-shard-merge-pessimistic.md#restrictions) and [Sharding DDL usage Restrictions in the optimistic mode](/dm/feature-shard-merge-optimistic.md#restrictions).
 
-## 参数配置
+## Configure parameters
 
-在任务配置文件中设置：
+In the task configuration file, set `shard-mode` to `pessimistic`:
 
 ```yaml
-shard-mode: "pessimistic" # 默认值为 "" 即无需协调。如果为分库分表合并任务，请设置为悲观协调模式 "pessimistic"。在深入了解乐观协调模式的原理和使用限制后，也可以设置为乐观协调模式 "optimistic"
+shard-mode: "pessimistic"
+# The shard merge mode. Optional modes are ""/"pessimistic"/"optimistic". The "" mode is used by default
+# which means sharding DDL merge is disabled. If the task is a shard merge task, set it to the "pessimistic"
+# mode. After getting a deep understanding of the principles and restrictions of the "optimistic" mode, you
+# can set it to the "optimistic" mode.
 ```
 
-## 手动处理 Sharding DDL Lock
+## Handle sharding DDL locks manually
 
-如果分库分表合并迁移过程中发生了异常，对于部分场景，可尝试参考[手动处理 Sharding DDL Lock](/dm/manually-handling-sharding-ddl-locks.md) 进行处理。
+In some abnormal scenarios, you need to [handle sharding DDL Locks manually](/dm/manually-handling-sharding-ddl-locks.md).

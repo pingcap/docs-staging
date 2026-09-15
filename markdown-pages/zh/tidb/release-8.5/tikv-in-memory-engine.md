@@ -1,94 +1,96 @@
 ---
-title: TiKV MVCC 内存引擎
-summary: 了解内存引擎的适用场景和工作原理，使用内存引擎加速多版本记录查询。
+title: TiKV MVCC In-Memory Engine
+summary: Learn the applicable scenarios and working principles of the in-memory engine, and how to use the in-memory engine to accelerate queries for MVCC versions.
 ---
 
-# TiKV MVCC 内存引擎
+# TiKV MVCC In-Memory Engine
 
-TiKV MVCC 内存引擎 (In-Memory Engine, IME) 主要用于加速需要扫描大量 MVCC 历史版本的查询，即[查询扫描的总共版本数量 (`total_keys`) 远大于处理的版本数量 (`processed_keys`)](/analyze-slow-queries.md#过期-mvcc-版本和-key-过多)。
+TiKV MVCC In-Memory Engine (IME) is primarily used to accelerate queries that need to scan a large number of MVCC historical versions, that is, [the total number of versions scanned (`total_keys`) is much greater than the number of versions processed (`processed_keys`)](/analyze-slow-queries.md#obsolete-mvcc-versions-and-excessive-keys).
 
-TiKV MVCC 内存引擎适用于以下场景：
+TiKV MVCC in-memory engine is suitable for the following scenarios:
 
-- 业务需要查询频繁更新或删除的记录。
-- 业务需要调整 [`tidb_gc_life_time`](/garbage-collection-configuration.md#gc-配置)，使 TiDB 保留较长时间的历史版本（比如 24 小时）。
+- The application that requires querying records that are frequently updated or deleted.
+- The application that requires adjusting [`tidb_gc_life_time`](/garbage-collection-configuration.md#garbage-collection-configuration) to retain historical versions in TiDB for a longer period (for example, 24 hours).
 
-## 工作原理
+## Implementation principles
 
-TiKV MVCC 内存引擎在内存中缓存最近写入的 MVCC 版本，并实现独立于 TiDB 的 MVCC GC 机制，使其可快速 GC 内存中的 MVCC 记录，从而减少查询时扫描版本的个数，以达到降低请求延时和减少 CPU 开销的效果。
+The TiKV MVCC in-memory engine caches the latest written MVCC versions in memory, and implements an MVCC GC mechanism independent of TiDB. This allows it to quickly perform GC on MVCC versions in memory, reducing the number of versions scanned during queries, thereby lowering request latency and reducing CPU overhead.
 
-下图为 TiKV 如何组织 MVCC 版本的示意图：
+The following diagram illustrates how TiKV organizes MVCC versions:
 
-![IME 通过缓存近期的版本以减少 CPU 开销](https://docs-download.pingcap.com/media/images/docs-cn/tikv-ime-data-organization.png)
+![IME caches recent versions to reduce CPU overhead](https://docs-download.pingcap.com/media/images/docs/tikv-ime-data-organization.png)
 
-以上示意图中共有 2 行记录，每行记录各有 9 个 MVCC 版本。在开启内存引擎和未开启内存引擎的情况下，行为对比如下：
+The preceding diagram shows two rows of records, each with 9 MVCC versions. The behavior comparison between enabling and not enabling the in-memory engine is as follows:
 
-- 左侧（未开启内存引擎）：表中记录按主键升序保存在 RocksDB 中，相同行的 MVCC 版本紧邻在一起。
-- 右侧（开启了内存引擎）：RocksDB 中的数据与左侧一致，同时内存引擎缓存了 2 行记录最新的 2 个 MVCC 版本。
-- 当 TiKV 处理一个范围为 `[k1, k2]`，开始时间戳为 `8` 的扫描请求时：
-    - 左侧未开启内存引擎时需要处理 11 个 MVCC 版本。
-    - 右侧开启内存引擎时只需处理 4 个 MVCC 版本，因此减少了请求延时和 CPU 消耗。
-- 当 TiKV 处理一个范围为 `[k1, k2]`，开始时间戳为 `7` 的扫描请求时：
-    - 由于右侧缺少需要读取的历史版本，因此内存引擎缓存失效，回退到读取 RocksDB 中的数据。
+- On the left (in-memory engine disabled): the table records are stored in RocksDB in ascending order by the primary key, with all MVCC versions of the same row adjacent to each other.
+- On the right (in-memory engine enabled): the data in RocksDB is the same as that on the left, but the in-memory engine caches the two latest MVCC versions for each of the two rows.
+- When TiKV processes a scan request with a range of `[k1, k2]` and a start timestamp of `8`:
+    - Without the in-memory engine (left), it needs to process 11 MVCC versions.
+    - With the in-memory engine (right), it only processes 4 MVCC versions, reducing request latency and CPU consumption.
+- When TiKV processes a scan request with a range of `[k1, k2]` and a start timestamp of `7`:
+    - Because the required historical versions are missing in the in-memory engine (right), the cache becomes invalid, and TiKV falls back to reading data from RocksDB.
 
-## 使用方式
+## Usage
 
-如果要开启 TiKV MVCC 内存引擎 (IME) 功能，需要调整 [TiKV 配置](/tikv-configuration-file.md#in-memory-engine-从-v850-版本开始引入)并重启 TiKV。以下是配置说明：
+To enable the TiKV MVCC in-memory engine (IME), you need to adjust the [TiKV configuration](/tikv-configuration-file.md#in-memory-engine-new-in-v850) and restart TiKV. The configuration details are as follows:
 
 ```toml
 [in-memory-engine]
-# 该参数为内存引擎功能的开关，默认为 false，调整为 true 即可开启。
-# 建议 TiKV 节点至少配置 8 GiB 内存，推荐配置 32 GiB 或更多内存以获得更佳性能。
-# 如果 TiKV 可用内存过低，即使将该配置项设置为 true，内存引擎也不会被启用。此时，你可以在 TiKV 的日志文件中查找与 "in-memory engine is disabled because" 相关的日志信息，以判断为何内存引擎未能启用。
+# This parameter is the switch for the in-memory engine feature, which is disabled by default. You can set it to true to enable it.
+# It is recommended to configure at least 8 GiB of memory for the TiKV node, with 32 GiB or more for optimal performance.
+# If the available memory for the TiKV node is insufficient, the in-memory engine will not be enabled even if this configuration item is set to true. In such cases, check the TiKV log file for messages containing "in-memory engine is disabled because" to learn why the in-memory engine is not enabled.
 enable = false
 
-# 该参数控制内存引擎可使用的内存大小。默认值为 `min(系统总内存 * 10%, 5 GiB)`，你可以手动调整配置以使用更多内存。
-# 注意：当内存引擎开启后，block-cache.capacity 会减少 10%。
+# This parameter controls the memory size available to the in-memory engine.
+# The default value is 10% of the system memory, and the maximum value is 5 GiB.
+# You can manually adjust this configuration to allocate more memory.
+# Note: When the in-memory engine is enabled, block-cache.capacity automatically decreases by 10%.
 capacity = "5GiB"
 
-# 该参数控制内存引擎 GC 缓存 MVCC 的版本的时间间隔。
-# 默认为 3 分钟，代表每 3 分钟 GC 一次缓存的 MVCC 版本。
-# 调小该参数可加快 GC 频率，减少 MVCC 记录，但会增加 GC CPU 的消耗和增加内存引擎失效的概率。
+# This parameter controls the time interval for the in-memory engine to GC the cached MVCC versions.
+# The default value is 3 minutes, representing that GC is performed every 3 minutes on the cached MVCC versions.
+# Decreasing the value of this parameter can increase the GC frequency, reduce the number of MVCC versions, but will increase CPU consumption for GC and increase the probability of in-memory engine cache miss.
 gc-run-interval = "3m"
 
-# 该参数控制内存引擎选取加载 Region 时 MVCC 读放大的阈值。
-# 默认为 10，表示在某个 Region 中读一行记录需要处理的 MVCC 版本数量超过 10 个时，将有可能会被加载到内存引擎中。
+# This parameter controls the threshold for the in-memory engine to select and load Regions based on MVCC read amplification.
+# The default value is 10, indicating that if reading a single row in a Region requires processing more than 10 MVCC versions, this Region might be loaded into the in-memory engine.
 mvcc-amplification-threshold = 10
 ```
 
-> **注意：**
+> **Note:**
 >
-> + 内存引擎默认关闭，并且从关闭状态修改为开启状态后，需要重启 TiKV。
-> + 除 `enable` 之外，其他配置都可以动态调整。
+> + The in-memory engine is disabled by default. After you enable it, you need to restart TiKV.
+> + Except for `enable`, all the other configuration items can be dynamically adjusted.
 
-### 自动加载
+### Automatic loading
 
-开启内存引擎之后，TiKV 会根据 Region 的读流量和 MVCC 放大程度，选择要自动加载的 Region。具体流程如下：
+After you enable the in-memory engine, TiKV automatically selects the Regions to load based on the read traffic and MVCC amplification of the Region. The specific process is as follows:
 
-1. Region 按照最近时间段的 `next` (RocksDB Iterator next API) 和 `prev` (RocksDB Iterator prev API) 次数进行排序。
-2. 使用 `mvcc-amplification-threshold` 配置项对 Region 进行过滤，该配置项的默认值为 `10`。MVCC amplification 衡量读放大程度，计算公式为 (`next` + `prev`) / `processed_keys`）。
-3. 载入前 N 个 MVCC 放大严重的 Region，其中 N 基于内存估算而来。
+1. Regions are sorted based on the number of recent `next` (RocksDB Iterator next API) and `prev` (RocksDB Iterator prev API) calls.
+2. Regions are filtered using the `mvcc-amplification-threshold` configuration parameter. The default value is `10`. MVCC amplification measures read amplification, calculated as (`next` + `prev`) / `processed_keys`.
+3. The top N Regions with severe MVCC amplification are loaded, where N is determined based on memory estimation.
 
-内存引擎也会定期驱逐 Region。具体流程如下：
+The in-memory engine also periodically evicts Regions. The process is as follows:
 
-1. 内存引擎会驱逐那些读流量过小或者 MVCC 放大程度过低的 Region。
-2. 如果内存使用达到了 `capacity` 的 90%，并且有新的 Region 需要被载入，那么内存引擎会根据读取流量来筛选 Region 并进行驱逐。
+1. The in-memory engine evicts Regions with low read traffic or low MVCC amplification.
+2. If memory usage reaches 90% of `capacity` and new Regions need to be loaded, then the in-memory engine selects and evicts Regions based on read traffic.
 
-## 兼容性
+## Compatibility
 
-+ [BR](/br/br-use-overview.md)：内存引擎与 BR 可同时使用，但 BR restore 会驱逐内存引擎中涉及恢复的 Region，BR restore 完成后，如果对应 Region 还是热点，则会被内存引擎自动加载。
-+ [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)：内存引擎与 TiDB Lightning 可同时使用，但 TiDB Lightning 的物理导入模式会驱逐内存引擎中涉及恢复的 Region，TiDB Lightning 使用物理导入模式完成导入数据后，如果对应 Region 还是热点，则会被内存引擎自动加载。
-+ [Follower Read](/develop/dev-guide-use-follower-read.md) 与 [Stale Read](/develop/dev-guide-use-stale-read.md)：内存引擎可与这两个特性同时开启，但内存引擎只能加速 Leader 上的 coprocessor 请求，无法加速 Follower Read 和 Stale Read。
-+ [`FLASHBACK CLUSTER`](/sql-statements/sql-statement-flashback-cluster.md)：内存引擎与 Flashback 可同时使用，但 Flashback 会导致内存引擎缓存失效。Flashback 完成后，内存引擎会自动加载热点 Region。
++ [BR](/br/br-use-overview.md): the in-memory engine can be used alongside BR. However, during a BR restore, the Regions involved in the restore process are evicted from the in-memory engine. After the BR restore is complete, if the corresponding Regions remain hotspots, they will be automatically loaded by the in-memory engine.
++ [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md): the in-memory engine can be used alongside TiDB Lightning. However, when TiDB Lightning operates in physical import mode, it evicts the Regions involved in the restore process from the in-memory engine. Once the physical import is complete, if the corresponding Regions remain hotspots, they will be automatically loaded by the in-memory engine.
++ [Follower Read](/develop/dev-guide-use-follower-read.md) and [Stale Read](/develop/dev-guide-use-stale-read.md): the in-memory engine can be used alongside these two features. However, the in-memory engine can only accelerate coprocessor requests on the Leader, and cannot accelerate Follower Read and Stale Read operations.
++ [`FLASHBACK CLUSTER`](/sql-statements/sql-statement-flashback-cluster.md): the in-memory engine can be used alongside Flashback. However, Flashback invalidates the in-memory engine cache. After the Flashback process is complete, the in-memory engine will automatically load hotspot Regions.
 
 ## FAQ
 
-### 内存引擎能否减少写入延时，提高写入吞吐？
+### Can the in-memory engine reduce write latency and increase write throughput?
 
-不能。内存引擎只能加速扫描了大量 MVCC 版本的读请求。
+No. The in-memory engine can only accelerate read requests that scan a large number of MVCC versions.
 
-### 如何判断内存引擎是否能改善我的场景？
+### How to determine if the in-memory engine can improve my scenario?
 
-可以通过执行以下 SQL 语句查看是否存在 `Total_keys` 远大于 `Process_keys` 的慢查询：
+You can execute the following SQL statement to check if there are slow queries with `Total_keys` much greater than `Process_keys`:
 
 ```sql
 SELECT
@@ -117,9 +119,9 @@ ORDER BY Total_keys DESC
 LIMIT 5;
 ```
 
-示例：
+Example:
 
-以下结果显示 `db1.tbl1` 表上存在 MVCC 放大严重的查询，TiKV 在处理 1358517 个 MVCC 版本后，仅返回了 2 个版本。
+The following result shows that queries with severe MVCC amplification exist on the `db1.tbl1` table. TiKV processes 1358517 MVCC versions and only returns 2 versions.
 
 ```
 +----------------------------+-----+-------------------+--------------+------------+-----------------------------------+--------------------+--------------------+--------------------+
@@ -134,9 +136,9 @@ LIMIT 5;
 5 rows in set (1.26 sec)
 ```
 
-### 如何判断 TiKV MVCC 内存引擎是否开启？
+### How can I check whether the TiKV MVCC in-memory engine is enabled?
 
-你可以使用 [`SHOW CONFIG`](/sql-statements/sql-statement-show-config.md) 语句查看 TiKV 配置。如果 `in-memory-engine.enable` 的值为 `true`，表示 TiKV MVCC 内存引擎已经开启。
+You can check the TiKV configuration using the [`SHOW CONFIG`](/sql-statements/sql-statement-show-config.md) statement. If the value of `in-memory-engine.enable` is `true`, it means that TiKV MVCC in-memory engine is enabled.
 
 ```sql
 SHOW CONFIG WHERE Type='tikv' AND Name LIKE 'in-memory-engine\.%';
@@ -158,6 +160,6 @@ SHOW CONFIG WHERE Type='tikv' AND Name LIKE 'in-memory-engine\.%';
 8 rows in set (0.00 sec)
 ```
 
-### 如何监控 TiKV MVCC 内存引擎？
+### How can I monitor the TiKV MVCC in-memory engine?
 
-你可以查看 **TiKV-Details** 面板中的 [**In Memory Engine**](/grafana-tikv-dashboard.md#in-memory-engine) 部分。
+You can check the [**In Memory Engine**](/grafana-tikv-dashboard.md#in-memory-engine) section on the **TiKV-Details** dashboard in Grafana.

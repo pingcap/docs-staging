@@ -1,21 +1,21 @@
 ---
 title: TiDB 乐观事务模型
-summary: 了解 TiDB 的乐观事务模型。
+summary: 了解 TiDB 中的乐观事务模型。
 ---
 
 # TiDB 乐观事务模型
 
-乐观事务模型下，将修改冲突视为事务提交的一部分。因此并发事务不常修改同一行时，可以跳过获取行锁的过程进而提升性能。但是并发事务频繁修改同一行（冲突）时，乐观事务的性能可能低于[悲观事务](/pessimistic-transaction.md)。
+在乐观事务中，**冲突**的变更会在事务提交阶段被检测出来。当并发事务很少修改同一行时，这有助于提升**性能**，因为可以跳过获取行**锁**的过程。如果并发事务频繁修改同一行（发生**冲突**），乐观事务的**性能**可能会比 [悲观事务](/pessimistic-transaction.md) 更差。
 
-启用乐观事务前，请确保应用程序可正确处理 `COMMIT` 语句可能返回的错误。如果不确定应用程序将会如何处理，建议改为使用悲观事务。
+在启用乐观事务之前，请确保你的应用程序能够正确**handle** `COMMIT` **statement** 可能**return**的错误。如果你不确定应用程序的处理方式，建议使用悲观事务。
 
 > **注意：**
 >
-> 自 v3.0.8 开始，TiDB 集群默认使用[悲观事务模式](/pessimistic-transaction.md)。但如果从 3.0.7 及之前版本创建的集群升级到 3.0.8 及之后的版本，不会改变默认事务模式，即**只有新创建的集群才会默认使用悲观事务模式**。
+> 从 v3.0.8 开始，TiDB 默认使用 [悲观事务模式](/pessimistic-transaction.md)。但如果你是从 v3.0.7 或更早版本升级到 v3.0.8 或更高版本，则不会影响你现有的**cluster**。换句话说，**只有新创建的集群默认使用悲观事务模式**。
 
-## 乐观事务原理
+## 乐观事务的原理
 
-为支持分布式事务，TiDB 中乐观事务使用两阶段提交协议，流程如下：
+为了支持分布式事务，TiDB 在乐观事务中采用了两阶段提交（2PC）。流程如下：
 
 ```mermaid
 ---
@@ -68,77 +68,77 @@ sequenceDiagram
     TiDB-->>client: success
 ```
 
-1. 客户端开始一个事务。
+1. **client** 开启一个事务。
 
-    TiDB 从 PD 获取一个全局唯一递增的时间戳作为当前事务的唯一事务 ID，这里称为该事务的 `start_ts`。TiDB 实现了多版本并发控制 (MVCC)，因此 `start_ts` 同时也作为该事务获取的数据库快照版本。该事务只能读到此 `start_ts` 版本可以读到的数据。
+    TiDB 从 PD 获取一个**timestamp**（单调递增且**全局**唯一），作为当前事务的唯一事务 ID，称为 `start_ts`。TiDB 实现了多版本并发控制，因此 `start_ts` 也作为该事务获取的数据库**snapshot**的版本。这意味着该事务只能读取 `start_ts` 时刻数据库中的数据。
 
-2. 客户端发起读请求。
+2. **client** 发起**read request**。
 
-    1. TiDB 从 PD 获取数据路由信息，即数据具体存在哪个 TiKV 节点上。
-    2. TiDB 从 TiKV 获取 `start_ts` 版本下对应的数据。
+    1. TiDB 从 PD 获取路由信息（数据在 TiKV **node** 之间的分布方式）。
+    2. TiDB 从 TiKV 获取 `start_ts` 版本的数据。
 
-3. 客户端发起写请求。
+3. **client** 发起写**request**。
 
-    TiDB 校验写入数据是否符合约束（如数据类型是否正确、是否符合非空约束等）。**校验通过的数据将存放在 TiDB 中该事务的私有内存里。**
+    TiDB 检查写入的数据是否满足**constraint**（确保数据**type**正确、NOT NULL 约束满足）。**有效数据会存储在 TiDB 中该事务的私有 memory 中**。
 
-4. 客户端发起 commit。
+4. **client** 发起提交**request**。
 
-5. TiDB 开始两阶段提交，在保证事务原子性的前提下，进行数据持久化。
+5. TiDB 开始 2PC，并在保证事务原子性的同时将数据持久化到存储中。
 
-    1. TiDB 从当前要写入的数据中选择一个 Key 作为当前事务的 Primary Key。
-    2. TiDB 从 PD 获取所有数据的写入路由信息，并将所有的 Key 按照所有的路由进行分类。
-    3. TiDB 并发地向所有涉及的 TiKV 发起 prewrite 请求。TiKV 收到 prewrite 数据后，检查数据版本信息是否存在冲突或已过期。符合条件的数据会被加锁。
-    4. TiDB 收到所有 prewrite 响应且所有 prewrite 都成功。
-    5. TiDB 向 PD 获取第二个全局唯一递增版本号，定义为本次事务的 `commit_ts`。
-    6. TiDB 向 Primary Key 所在 TiKV 发起第二阶段提交。TiKV 收到 commit 操作后，检查数据合法性，清理 prewrite 阶段留下的锁。
-    7. TiDB 收到两阶段提交成功的信息。
+    1. TiDB 从待写入的数据中选取一个 Primary Key。
+    2. TiDB 从 PD 获取 Region 分布信息，并按 Region 对所有 key 进行分组。
+    3. TiDB 向所有涉及的 TiKV **node** 发送 prewrite **request**。TiKV 检查是否有**冲突**或**expire**的版本，有效数据会被加锁。
+    4. TiDB 收到 prewrite 阶段的所有响应，prewrite 成功。
+    5. TiDB 从 PD 获取一个提交版本号，记为 `commit_ts`。
+    6. TiDB 向 Primary Key 所在的 TiKV **node** 发起第二次提交。TiKV 检查数据，并清理 prewrite 阶段遗留的锁。
+    7. TiDB 收到第二阶段成功完成的消息。
 
-6. TiDB 向客户端返回事务提交成功的信息。
+6. TiDB **return** 消息，通知**client**事务提交成功。
 
-7. TiDB 异步清理本次事务遗留的锁信息。
+7. TiDB 异步清理本事务遗留的锁。
 
-## 优缺点分析
+## 优缺点
 
-通过分析 TiDB 中事务的处理流程，可以发现 TiDB 事务有如下优点：
+从上述 TiDB 事务流程可以看出，TiDB 事务具有以下优点：
 
-* 实现原理简单，易于理解。
-* 基于单实例事务实现了跨节点事务。
-* 锁管理实现了去中心化。
+* 易于理解
+* 基于单行事务实现跨**node**事务
+* 去中心化的**lock**管理
 
-但 TiDB 事务也存在以下缺点：
+但 TiDB 事务也有以下缺点：
 
-* 两阶段提交使网络交互增多。
-* 需要一个中心化的分配时间戳服务。
-* 事务数据量过大时易导致内存暴涨。
+* 由于 2PC 带来的事务**latency**
+* 需要一个中心化的**timestamp**分配**service**
+* 大量数据写入**memory**时可能导致 OOM（内存溢出）
 
-## 事务的重试
-
-> **注意：**
->
-> 从 v8.0.0 开始，[`tidb_disable_txn_auto_retry`](/system-variables.md#tidb_disable_txn_auto_retry) 被废弃，不再支持乐观事务的自动重试。推荐使用[悲观事务模式](/pessimistic-transaction.md)。如果使用乐观事务模式发生冲突，请在应用里捕获错误并重试。
-
-使用乐观事务模型时，在高冲突率的场景中，事务容易发生写写冲突而导致提交失败。从 v3.0.8 开始，TiDB 默认使用[悲观事务模型](/pessimistic-transaction.md)，与 MySQL 一致。这意味着 TiDB 和 MySQL 在执行写入类型的 SQL 语句的过程中会进行加锁，并且在 Repeatable Read 隔离级别下使用了当前读的机制，能够读取到最新的数据，所以提交时一般不会出现异常。
-
-### 重试机制
+## 事务重试
 
 > **注意：**
 >
-> - 从 TiDB v3.0.0 开始，事务的自动重试功能默认为禁用状态，因为该功能可能导致**事务隔离级别遭到破坏**。
+> 从 v8.0.0 开始，[`tidb_disable_txn_auto_retry`](/system-variables.md#tidb_disable_txn_auto_retry) **system variable** 已废弃，TiDB 不再支持乐观事务的自动重试。建议使用 [悲观事务模式](/pessimistic-transaction.md)。如果遇到乐观事务**conflict**，可以在应用层捕获错误并重试事务。
+
+在乐观事务模型下，在高**concurrency**的**scenario**中，事务可能因为写-写**conflict**而提交失败。从 v3.0.8 开始，TiDB 默认使用 [悲观事务模式](/pessimistic-transaction.md)，与 MySQL 一致。这意味着 TiDB 和 MySQL 在执行写类型 SQL **statement** 时会加**lock**，其可重复读**isolation level**允许当前**read**，因此提交通常不会遇到**exception**。
+
+### 自动重试
+
+> **注意：**
+>
+> - 从 TiDB v3.0.0 开始，事务自动重试默认关闭，因为它可能**break**事务的**isolation level**。
 > - 从 TiDB v8.0.0 开始，不再支持乐观事务的自动重试。
 
-当事务提交时，如果发现写写冲突，TiDB 内部重新执行包含写操作的 SQL 语句。你可以通过设置 `tidb_disable_txn_auto_retry = OFF` 开启自动重试，并通过 `tidb_retry_limit` 设置重试次数：
+如果在事务提交过程中发生写-写**conflict**，TiDB 会自动重试包含写操作的 SQL **statement**。你可以通过将 `tidb_disable_txn_auto_retry` 设置为 `OFF` 启用自动重试，并通过配置 `tidb_retry_limit` 设置重试次数上限：
 
 ```toml
-# 设置是否禁用自动重试，默认为 “on”，即不重试。
+# 是否禁用自动重试。（默认 "on"）
 tidb_disable_txn_auto_retry = OFF
-# 控制重试次数，默认为 “10”。只有自动重试启用时该参数才会生效。
-# 当 “tidb_retry_limit = 0” 时，也会禁用自动重试。
+# 设置最大重试次数。（默认 "10"）
+# 当 "tidb_retry_limit = 0" 时，完全禁用自动重试。
 tidb_retry_limit = 10
 ```
 
-你也可以修改当前 Session 或 Global 的值：
+你可以在**session**级别或**global**级别启用自动重试：
 
-- Session 级别设置：
+1. **session**级别：
 
     
     ```sql
@@ -150,7 +150,7 @@ tidb_retry_limit = 10
     SET tidb_retry_limit = 10;
     ```
 
-- Global 级别设置：
+2. **global**级别：
 
     
     ```sql
@@ -164,40 +164,35 @@ tidb_retry_limit = 10
 
 > **注意：**
 >
-> `tidb_retry_limit` 变量决定了事务重试的最大次数。当它被设置为 0 时，所有事务都不会自动重试，包括自动提交的单语句隐式事务。这是彻底禁用 TiDB 中自动重试机制的方法。禁用自动重试后，所有冲突的事务都会以最快的方式上报失败信息（包含 `try again later`）给应用层。
+> `tidb_retry_limit` **variable** 决定最大重试次数。当该**variable**设置为 `0` 时，所有事务都不会自动重试，包括自动提交的隐式单条**statement**事务。这是完全禁用 TiDB 自动重试机制的方法。禁用自动重试后，所有发生**conflict**的事务会以最快速度向应用层**return**失败（包括 `try again later` 消息）。
 
-### 重试的局限性
+### 重试的限制
 
-TiDB 默认不进行事务重试，因为重试事务可能会导致更新丢失，从而破坏[可重复读的隔离级别](/transaction-isolation-levels.md)。
+默认情况下，TiDB 不会重试事务，因为这可能导致更新丢失并破坏 [`REPEATABLE READ` 隔离](/transaction-isolation-levels.md)。
 
-事务重试的局限性与其原理有关。事务重试可概括为以下三个步骤：
+原因可以从重试流程中看出：
 
-1. 重新获取 `start_ts`。
-2. 重新执行包含写操作的 SQL 语句。
-3. 再次进行两阶段提交。
+1. 分配一个新的**timestamp**，记为 `start_ts`。
+2. 重试包含写操作的 SQL **statement**。
+3. 执行两阶段提交。
 
-第二步中，重试时仅重新执行包含写操作的 SQL 语句，并不涉及读操作的 SQL 语句。但是当前事务中读到数据的时间与事务真正开始的时间发生了变化，写入的版本变成了重试时获取的 `start_ts` 而非事务一开始时获取的 `start_ts`。因此，当事务中存在依赖查询结果来更新的语句时，重试将无法保证事务原本可重复读的隔离级别，最终可能导致结果与预期出现不一致。
+在第 2 步，TiDB 只会重试包含写操作的 SQL **statement**。但在重试时，TiDB 会收到一个新的版本号作为事务的起始点。这意味着 TiDB 会用新的 `start_ts` 版本的数据重试 SQL **statement**。此时，如果事务根据其他**query**结果进行**update**，结果可能会不一致，因为违反了 `REPEATABLE READ` **isolation**。
 
-如果业务可以容忍事务重试导致的异常，或并不关注事务是否以可重复读的隔离级别来执行，则可以开启自动重试。
+如果你的应用可以**tolerate**更新丢失，并且不要求 `REPEATABLE READ` **isolation**的一致性，可以通过设置 `tidb_disable_txn_auto_retry = OFF` 启用该功能。
 
 ## 冲突检测
 
-作为一个分布式系统，TiDB 在内存中的冲突检测是在 TiKV 中进行，主要发生在 prewrite 阶段。因为 TiDB 集群是一个分布式系统，TiDB 实例本身无状态，实例之间无法感知到彼此的存在，也就无法确认自己的写入与别的 TiDB 实例是否存在冲突，所以会在 TiKV 这一层检测具体的数据是否有冲突。
+作为一款**distributed database**，TiDB 在 TiKV 层进行内存**conflict**检测，主要发生在 prewrite 阶段。TiDB **instance** 是**stateless**且彼此不可见，这意味着它们无法知道自己的写操作是否会在整个**cluster**中产生**conflict**。因此，**conflict**检测在 TiKV 层完成。
 
-具体配置如下：
+配置如下：
 
 ```toml
-# scheduler 内置一个内存锁机制，防止同时对一个 Key 进行操作。
-# 每个 Key hash 到不同的 slot。（默认为 2048000）
+# 控制槽位数量。（默认 "2048000"）
 scheduler-concurrency = 2048000
 ```
 
-此外，TiKV 支持监控等待 latch 的时间：
+此外，TiKV 支持监控调度器中等待 latch 的耗时。
 
-![Scheduler latch wait duration](https://docs-download.pingcap.com/media/images/docs-cn/optimistic-transaction-metric.png)
+![Scheduler latch wait duration](https://docs-download.pingcap.com/media/images/docs/optimistic-transaction-metric.png)
 
-当 `Scheduler latch wait duration` 的值特别高时，说明大量时间消耗在等待锁的请求上。如果不存在底层写入慢的问题，基本上可以判断该段时间内冲突比较多。
-
-## 更多阅读
-
-- [Percolator 和 TiDB 事务算法](https://pingkai.cn/tidbcommunity/blog/f537be2c)
+当 `Scheduler latch wait duration` 较高且没有慢写入时，可以安全地判断此时存在大量写**conflict**。

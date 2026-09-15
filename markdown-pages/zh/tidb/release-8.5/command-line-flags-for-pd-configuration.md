@@ -1,113 +1,106 @@
 ---
-title: PD 配置参数
-summary: PD 配置参数可以通过命令行参数或环境变量配置。包括外部访问 PD 的 URL 列表，其他 PD 节点访问某个 PD 节点的 URL 列表，PD 监听的客户端 URL 列表，PD 节点监听其他 PD 节点的 URL 列表，配置文件，PD 存储数据路径，初始化 PD 集群配置，动态加入 PD 集群，Log 级别，Log 文件，是否开启日志切割，当前 PD 的名字，CA 文件路径，包含 X509 证书的 PEM 文件路径，包含 X509 key 的 PEM 文件路径，指定 Prometheus Pushgateway 的地址，强制使用当前节点创建新的集群，输出版本信息并退出。
+title: PD Configuration Flags
+summary: Learn some configuration flags of PD.
 ---
 
-# PD 配置参数
+# PD Configuration Flags
 
-PD 可以通过命令行参数或环境变量配置。
+PD is configurable using command-line flags and environment variables.
 
 ## `--advertise-client-urls`
 
-+ 用于外部访问 PD 的 URL 列表。
-+ 默认：`${client-urls}`
-+ 在某些情况下，例如 Docker 或者 NAT 网络环境，客户端并不能通过 PD 自己监听的 client URLs 来访问到 PD，这时候，你就可以设置 advertise URLs 来让客户端访问。
-+ 例如，Docker 内部 IP 地址为 `172.17.0.1`，而宿主机的 IP 地址为 `192.168.100.113` 并且设置了端口映射 `-p 2379:2379`，那么可以设置为 `--advertise-client-urls="http://192.168.100.113:2379"`，客户端可以通过 `http://192.168.100.113:2379` 来找到这个服务。
+- The list of advertise URLs for the client to access PD
+- Default: `"${client-urls}"`
+- In some situations such as in the Docker or NAT network environment, if a client cannot access PD through the default client URLs listened to by PD, you must manually set the advertise client URLs.
+- For example, the internal IP address of Docker is `172.17.0.1`, while the IP address of the host is `192.168.100.113` and the port mapping is set to `-p 2379:2379`. In this case, you can set `--advertise-client-urls` to `"http://192.168.100.113:2379"`. The client can find this service through `"http://192.168.100.113:2379"`.
 
 ## `--advertise-peer-urls`
 
-+ 用于其他 PD 节点访问某个 PD 节点的 URL 列表。
-+ 默认：`${peer-urls}`
-+ 在某些情况下，例如 Docker 或者 NAT 网络环境，其他节点并不能通过 PD 自己监听的 peer URLs 来访问到 PD，这时候，你就可以设置 advertise URLs 来让其他节点访问。
-+ 例如，Docker 内部 IP 地址为 `172.17.0.1`，而宿主机的 IP 地址为 `192.168.100.113` 并且设置了端口映射 `-p 2380:2380`，那么可以设置为 `advertise-peer-urls="http://192.168.100.113:2380"`，其他 PD 节点可以通过 `http://192.168.100.113:2380` 来找到这个服务。
+- The list of advertise URLs for other PD nodes (peers) to access a PD node
+- Default: `"${peer-urls}"`
+- In some situations such as in the Docker or NAT network environment, if the other nodes (peers) cannot access the PD node through the default peer URLs listened to by this PD node, you must manually set the advertise peer URLs.
+- For example, the internal IP address of Docker is `172.17.0.1`, while the IP address of the host is `192.168.100.113` and the port mapping is set to `-p 2380:2380`. In this case, you can set `--advertise-peer-urls` to `"http://192.168.100.113:2380"`. The other PD nodes can find this service through `"http://192.168.100.113:2380"`.
 
 ## `--client-urls`
 
-+ PD 监听的客户端 URL 列表。
-+ 默认：`http://127.0.0.1:2379`
-+ 如果部署一个集群，`--client-urls` 必须指定当前主机的 IP 地址，例如 `http://192.168.100.113:2379"`，如果是运行在 Docker 则需要指定为 `http://0.0.0.0:2379`。
+- The list of client URLs to be listened to by PD
+- Default: `"http://127.0.0.1:2379"`
+- When you deploy a cluster, you must specify the IP address of the current host as `--client-urls` (for example, `"http://192.168.100.113:2379"`). If the cluster runs on Docker, specify the IP address of Docker as `"http://0.0.0.0:2379"`.
 
 ## `--peer-urls`
 
-+ PD 节点监听其他 PD 节点的 URL 列表。
-+ 默认：`http://127.0.0.1:2380`
-+ 如果部署一个集群，`--peer-urls` 必须指定当前主机的 IP 地址，例如 `http://192.168.100.113:2380`，如果是运行在 Docker 则需要指定为 `http://0.0.0.0:2380`。
+- The list of peer URLs to be listened to by a PD node
+- Default: `"http://127.0.0.1:2380"`
+- When you deploy a cluster, you must specify `--peer-urls` as the IP address of the current host, such as `"http://192.168.100.113:2380"`. If the cluster runs on Docker, specify the IP address of Docker as `"http://0.0.0.0:2380"`.
 
 ## `--config`
 
-+ 配置文件。
-+ 默认：""
-+ 如果你指定了配置文件，PD 会首先读取配置文件的配置。然后如果对应的配置在命令行参数里面也存在，PD 就会使用命令行参数的配置来覆盖配置文件里面的。
+- The configuration file
+- Default: `""`
+- If you set the configuration using the command line, the same setting in the configuration file will be overwritten.
 
 ## `--data-dir`
 
-+ PD 存储数据路径。
-+ 默认：`default.${name}`
+- The path to the data directory
+- Default: `"default.${name}"`
 
 ## `--initial-cluster`
 
-+ 初始化 PD 集群配置。
-+ 默认：`"{name}=http://{advertise-peer-url}"`
-+ 例如，如果 name 是 "pd"，并且 `advertise-peer-urls` 是 `http://192.168.100.113:2380`，那么 `initial-cluster` 就是 `pd=http://192.168.100.113:2380`。
-+ 如果你需要启动三台 PD，那么 `initial-cluster` 可能就是 `pd1=http://192.168.100.113:2380, pd2=http://192.168.100.114:2380, pd3=192.168.100.115:2380`。
+- The initial cluster configuration for bootstrapping
+- Default: `"{name}=http://{advertise-peer-url}"`
+- For example, if `name` is "pd", and `advertise-peer-urls` is `"http://192.168.100.113:2380"`, the `initial-cluster` is `"pd=http://192.168.100.113:2380"`.
+- If you need to start three PD servers, the `initial-cluster` might be:
+
+    ```
+    pd1=http://192.168.100.113:2380, pd2=http://192.168.100.114:2380, pd3=192.168.100.115:2380
+    ```
 
 ## `--join`
 
-+ 动态加入 PD 集群。
-+ 默认：""
-+ 如果你想动态将一台 PD 加入集群，你可以使用 `--join="${advertise-client-urls}"`，`advertise-client-url` 是当前集群里面任意 PD 的 `advertise-client-url`，你也可以使用多个 PD 的，需要用逗号分隔。
+- Join the cluster dynamically
+- Default: `""`
+- If you want to join an existing cluster, you can use `--join="${advertise-client-urls}"`, the `advertise-client-url` is any existing PD's, multiply advertise client urls are separated by comma.
 
 ## `-L`
 
-+ Log 级别。
-+ 默认："info"
-+ 可选："debug"，"info"，"warn"，"error"，"fatal"
+- The log level
+- Default: `"info"`
+- Optional values: `"debug"`, `"info"`, `"warn"`, `"error"`, `"fatal"`
 
 ## `--log-file`
 
-+ Log 文件。
-+ 默认：""
-+ 如果没设置这个参数，log 会默认输出到 "stderr"，如果设置了，log 就会输出到对应的文件里面。
+- The log file
+- Default: `""`
+- If this flag is not set, logs will be written to "stderr". If this flag is set, logs are output to the corresponding file.
 
 ## `--log-rotate`
 
-+ 是否开启日志切割。
-+ 默认：true
-+ 当值为 true 时，按照 PD 配置文件中 `[log.file]` 信息执行。
+- To enable or disable log rotation
+- Default: `true`
+- When the value is true, follow the `[log.file]` in PD configuration files.
 
 ## `--name`
 
-+ 当前 PD 的名字。
-+ 默认："pd-${hostname}"
-+ 如果你需要启动多个 PD，一定要给 PD 使用不同的名字
+- The human-readable unique name for this PD member
+- Default: `"pd-${hostname}"`
+- If you want to start multiply PDs, you must use different name for each one.
 
 ## `--cacert`
 
-+ CA 文件路径，用于开启 TLS。
-+ 默认：""
+- The file path of CA, used to enable TLS
+- Default: `""`
 
 ## `--cert`
 
-+ 包含 X509 证书的 PEM 文件路径，用户开启 TLS。
-+ 默认：""
+- The path of the PEM file including the X509 certificate, used to enable TLS
+- Default: `""`
 
 ## `--key`
 
-+ 包含 X509 key 的 PEM 文件路径，用于开启 TLS。
-+ 默认：""
+- The path of the PEM file including the X509 key, used to enable TLS
+- Default: `""`
 
 ## `--metrics-addr`
 
-+ 指定 Prometheus Pushgateway 的地址。
-+ 默认：""
-+ 如果留空，则不开启 Prometheus Push。
-
-## `--force-new-cluster`
-
-+ 强制使用当前节点创建新的集群。
-+ 默认：false
-+ 仅用于在 PD 丢失多数副本的情况下恢复服务，可能会产生部分数据丢失。
-
-## `-V`, `--version`
-
-+ 输出版本信息并退出。
+- The address of Prometheus Pushgateway, which does not push data to Prometheus by default.
+- Default: `""`

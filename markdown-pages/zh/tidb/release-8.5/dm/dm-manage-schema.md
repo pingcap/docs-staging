@@ -1,48 +1,50 @@
 ---
-title: 管理 TiDB Data Migration 迁移表的表结构
-summary: 了解如何管理待迁移表在 DM 内部的表结构。
+title: Manage Table Schemas of Tables to Be Migrated Using TiDB Data Migration
+summary: Learn how to manage the schema of the table to be migrated in DM.
 ---
 
-# 管理 TiDB Data Migration 迁移表的表结构
+# Manage Table Schemas of Tables to Be Migrated Using TiDB Data Migration
 
-[dmctl](/dm/dmctl-introduction.md) 是运维 TiDB Data Migration (DM) 集群的命令行工具，本文介绍如何使用 dmctl 组件来管理通过 DM 迁移的表在 DM 内部的表结构。
+This document describes how to manage the schema of the table in DM during migration using [dmctl](/dm/dmctl-introduction.md).
 
-DM 执行增量迁移时，首先读取上游的 binlog，然后生成 SQL 语句执行到下游。但是，上游的 binlog 中并不记录表的完整结构信息，为了生成 SQL 语句，DM 内部维护了待迁移的表的 schema 信息，即表结构信息。
+When DM performs incremental replication, it first reads the upstream binlog, then creates SQL statements and executes them in the downstream. However, the upstream binlog does not contain the complete table schema. To generate the SQL statements, DM maintains internally the schema information of the table to be migrated. This is called the internal table schema.
 
-为了一些特殊场景及处理其他可能的由于 schema 不匹配导致的迁移中断等问题，DM 提供了 `binlog-schema` 命令来获取、修改、删除 DM 内部维护的表结构。
+To deal with some special occasions, or to handle migration interruptions caused by mismatch of the table schemas, DM provides the `binlog-schema` command to obtain, modify, and delete the internal table schema.
 
-## 原理介绍
+## Implementation principles
 
-DM 中的 schema 信息来源包括以下几部分：
+The internal table schema comes from the following sources:
 
-1. 执行全量数据迁移 (`task-mode=all`) 时，任务将经过 dump/load/sync（全量导出/全量导入/增量同步）三个阶段。dump 阶段将表结构信息随着数据一并导出，并自动在下游创建相关表。sync 阶段时以该表结构作为起始的表结构信息。
-2. sync 阶段中，处理 DDL 语句（如 `ALTER TABLE`）时，DM 执行该语句的同时更新内部维护的表结构信息。
-3. 如果任务是增量迁移 (`task-mode=incremental`)，下游已经将待迁移的表创建完成，DM 会从下游数据库获取该表的结构信息（此行为随版本变化而不同）。
+- For full data migration (`task-mode=all`), the migration task goes through three stages: dump/load/sync, which means full export, full import, and incremental replication. In the dump stage, DM exports the table schema information along with the data and automatically creates the corresponding table in the downstream. In the sync stage, this table schema is used as the starting table scheme for incremental replication.
+- In the sync stage, when DM handles DDL statements such as `ALTER TABLE`, it updates the internal table schema at the same time.
+- If the task is an incremental migration (`task-mode=incremental`), in which the downstream has completed creating the table to be migrated, DM obtains the table schema information from the downstream database. This behavior varies with DM versions.
 
-增量迁移过程的 schema 信息维护较为复杂，在整个数据链路中包含以下几类可能相同或不同的表结构。
+For incremental replication, schema maintenance is complicated. During the whole data replication, the following four table schemas are involved. These schemas might be the consistent or inconsistent with one another:
 
-![表结构](https://docs-download.pingcap.com/media/images/docs-cn/dm/operate-schema.png)
+![schema](https://docs-download.pingcap.com/media/images/docs/dm/operate-schema.png)
 
-- 上游当前时刻的表结构（记为 `schema-U`）。
-- 当前 DM 正在消费的 binlog event 的表结构（记为 `schema-B`，其对应于上游某个历史时刻的表结构）。
-- DM 内部（schema tracker 组件）当前维护的表结构（记为 `schema-I`）。
-- 下游 TiDB 集群中的表结构（记为 `schema-D`）。
+* The upstream table schema at the current time, identified as `schema-U`.
+* The table schema of the binlog event currently being consumed by DM, identified as `schema-B`. This schema corresponds to the upstream table schema at a historical time.
+* The table schema currently maintained in DM (the schema tracker component), identified as `schema-I`.
+* The table schema in the downstream TiDB cluster, identified as `schema-D`.
 
-在大多数情况下，以上 4 类表结构一致。当上游执行 DDL 变更表结构后，`schema-U` 即会发生变更；DM 通过将该 DDL 应用于内部的 schema tracker 组件及下游 TiDB，会先后更新 `schema-I`、`schema-D` 以与 `schema-U` 保持一致，因而随后能正常消费 binlog 中在 DDL 之后对应表结构为 `schema-B` 的 binlog event。即当 DDL 被复制成功后，仍能保持 `schema-U`、`schema-B`、`schema-I` 及 `schema-D` 的一致。
+In most cases, the preceding four table schemas are consistent.
 
-需要注意以下不一致的情况：
+When the upstream database performs a DDL operation to change the table schema, `schema-U` is changed. By applying the DDL operation to the internal schema tracker component and the downstream TiDB cluster, DM updates `schema-I` and `schema-D` in an orderly manner to keep them consistent with `schema-U`. Therefore, DM can then normally consume the binlog event corresponding to the `schema-B` table schema. That is, after the DDL operation is successfully migrated, `schema-U`, `schema-B`, `schema-I`, and `schema-D` are still consistent.
 
-- 在开启[乐观 shard DDL 支持](/dm/feature-shard-merge-optimistic.md)的数据迁移过程中，下游合并表的 `schema-D` 可能与部分分表对应的 `schema-B` 及 `schema-I` 并不一致，但 DM 仍保持 `schema-I` 与 `schema-B` 的一致，以确保能正常解析 DML 对应的 binlog event。
+Note the following situations that might cause inconsistency:
 
-- 当下游比上游多部分列时，`schema-D` 也可能会与 `schema-B` 及 `schema-I` 并不一致。全量数据迁移 (`task-mode=all`) 时 DM 会自动处理不一致的情况；而增量迁移 (`task-mode=incremental`) 时，由于任务首次启动，内部尚无 Schema 信息，DM 将自动读取下游表结构，即 `schema-D`，更新自身的 `schema-I`(此行为随版本变化而不同)。在此之后，如果 DM 使用 `schema-I` 解析 `schema-B` 的 binlog，将会导致 `Column count doesn't match value count` 错误，详情可参考：[下游存在更多列的迁移场景](/migrate-with-more-columns-downstream.md)
+- During the migration with [optimistic mode sharding DDL support](/dm/feature-shard-merge-optimistic.md) enabled, the `schema-D` of the downstream table might be inconsistent with the `schema-B` and `schema-I` of some upstream sharded tables. In such cases, DM still keeps `schema-I` and `schema-B` consistent to ensure that the binlog event corresponding to DML can be parsed normally.
 
-`binlog-schema` 命令可以获取、修改、删除 DM 内部维护的表结构 `schema-I`。
+- When the downstream table has more columns than the upstream table, `schema-D` might be inconsistent with `schema-B` and `schema-I`. In the full data migration (`task-mode=all`), DM automatically handles inconsistency. In the incremental migration (`task-mode=incremental`), because the task is on a first start and there is no internal schema information yet, DM automatically reads the downstream schema (`schema-D`) and updates `schema-I` (this behavior varies with DM versions). After that, if DM uses `schema-I` to parse `schema-B`'s binlog, it will report `Column count doesn't match value count` error. For details, refer to [Migrate Data to a Downstream TiDB Table with More Columns](/migrate-with-more-columns-downstream.md).
 
-> **注意：**
+You can run the `binlog-schema` command to obtain, modify, or delete the `schema-I` table schema maintained in DM.
+
+> **Note:**
 >
-> `binlog-schema` 命令仅在 DM v6.0 及其以后版本支持，之前版本可使用 `operate-schema` 命令。
+> The `binlog-schema` command is supported only in DM v6.0 or later versions. For earlier versions, you must use the `operate-schema` command.
 
-## 命令介绍
+## Command
 
 
 ```bash
@@ -69,25 +71,25 @@ Global Flags:
 Use "dmctl binlog-schema [command] --help" for more information about a command.
 ```
 
-> **注意：**
+> **Note:**
 >
-> - 由于表结构在数据迁移过程中可能会发生变更，为获取确定性的表结构，当前 `binlog-schema` 命令仅能在数据迁移任务处于 `Paused` 状态时可用。
-> - 强烈建议在修改表结构前，首先获取并备份表结构，以免误操作导致数据丢失。
+> - Because a table schema might change during data migration, to obtain a predictable table schema, currently the `binlog-schema` command can be used only when the data migration task is in the `Paused` state.
+> - To avoid data loss due to mishandling, it is **strongly recommended** to get and backup the table schema firstly before you modify the schema.
 
-## 参数解释
+## Parameters
 
-+ `delete`：删除表结构
-+ `list`：获取查看表结构
-+ `update`：更新设置表结构
-+ `-s` 或 `--source`:
-    - 必选
-    - 指定操作将应用到的 MySQL 源
+* `delete`: Deletes the table schema.
+* `list`: Lists the table schema.
+* `update`: Updates the table schema.
+* `-s` or `--source`:
+    - Required.
+    - Specifies the MySQL source that the operation is applied to.
 
-## 使用示例
+## Usage example
 
-### 获取表结构
+### Get the table schema
 
-如需获取表结构，可使用 `binlog-schema list` 命令：
+To get the table schema, run the `binlog-schema list` command:
 
 ```bash
 help binlog-schema list
@@ -106,7 +108,7 @@ Global Flags:
   -s, --source strings   MySQL Source ID.
 ```
 
-假设要获取 `db_single` 任务对应于 `mysql-replica-01` MySQL 源的 ``` `db_single`.`t1` ``` 表的表结构，则执行如下命令：
+If you want to get the table schema of the ``` `db_single`.`t1` ``` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task, run the following command:
 
 
 ```bash
@@ -128,9 +130,10 @@ binlog-schema list -s mysql-replica-01 task_single db_single t1
 }
 ```
 
-### 更新设置表结构
+### Update the table schema
 
-如需更新设置表结构，可使用 `binlog-schema update` 命令：
+To update the table schema, run the `binlog-schema update` command:
+
 
 ```bash
 help binlog-schema update
@@ -153,7 +156,7 @@ Global Flags:
   -s, --source strings   MySQL Source ID.
 ```
 
-假设要设置 `db_single` 任务对应于 `mysql-replica-01` MySQL 源的 ``` `db_single`.`t1` ``` 表的表结构为如下所示：
+If you want to set the table schema of the ``` `db_single`.`t1` ``` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task as follows:
 
 ```sql
 CREATE TABLE `t1` (
@@ -163,11 +166,11 @@ CREATE TABLE `t1` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin
 ```
 
-则将上述 `CREATE TABLE` 语句保存为文件（如 `db_single.t1-schema.sql`）后，执行如下命令：
+Save the `CREATE TABLE` statement above as a file (for example, `db_single.t1-schema.sql`), and run the following command:
 
 
 ```bash
-binlog-schema update -s mysql-replica-01 task_single db_single t1 db_single.t1-schema.sql
+operate-schema set -s mysql-replica-01 task_single -d db_single -t t1 db_single.t1-schema.sql
 ```
 
 ```
@@ -185,9 +188,9 @@ binlog-schema update -s mysql-replica-01 task_single db_single t1 db_single.t1-s
 }
 ```
 
-### 删除表结构
+### Delete the table schema
 
-如需删除表结构，可使用 `binlog-schema delete` 命令：
+To delete the table schema, run the `binlog-schema delete` command:
 
 ```bash
 help binlog-schema delete
@@ -206,11 +209,15 @@ Global Flags:
   -s, --source strings   MySQL Source ID.
 ```
 
-> **注意：**
+> **Note:**
 >
-> 删除 DM 内部维护的表结构后，如果后续有该表的 DDL/DML 需要复制到下游，则 DM 会依次尝试从 checkpoint 表里 `table_info` 字段、乐观 shard DDL 协调中的元信息以及下游 TiDB 中对应的该表获取表结构。
+> After the table schema maintained in DM is deleted, if a DDL/DML statement related to this table needs to be migrated to the downstream, DM will try to get the table schema from the following three sources in an orderly manner:
+>
+> * The `table_info` field in the checkpoint table
+> * The meta information in the optimistic sharding DDL
+> * The corresponding table in the downstream TiDB
 
-假设要删除 `db_single` 任务对应于 `mysql-replica-01` MySQL 源的 ``` `db_single`.`t1` ``` 表的表结构，则执行如下命令：
+If you want to delete the table schema of the ``` `db_single`.`t1` ``` table corresponding to the `mysql-replica-01` MySQL source in the `db_single` task, run the following command:
 
 
 ```bash

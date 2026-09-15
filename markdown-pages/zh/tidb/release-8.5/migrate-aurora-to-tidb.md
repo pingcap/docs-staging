@@ -1,32 +1,34 @@
 ---
-title: 从 Amazon Aurora 迁移数据到 TiDB
-summary: 介绍如何使用快照从 Amazon Aurora 迁移数据到 TiDB。
+title: Migrate Data from Amazon Aurora to TiDB
+summary: Learn how to migrate data from Amazon Aurora to TiDB using DB snapshot.
 ---
 
-# 从 Amazon Aurora 迁移数据到 TiDB
+# Migrate Data from Amazon Aurora to TiDB
 
-本文档介绍如何从 Amazon Aurora 迁移数据到 TiDB，迁移过程采用 [DB snapshot](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Managing.Backups.html)，可以节约大量的空间和时间成本。整个迁移包含两个过程：
+This document describes how to migrate data from Amazon Aurora to TiDB. The migration process uses [DB snapshot](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Managing.Backups.html), which saves a lot of space and time.
 
-- 使用 TiDB Lightning 导入全量数据到 TiDB
-- 使用 DM 持续增量同步到 TiDB（可选）
+The whole migration has two processes:
 
-## 前提条件
+- Import full data to TiDB using TiDB Lightning
+- Replicate incremental data to TiDB using DM (optional)
 
-- [安装 Dumpling 和 TiDB Lightning](/migration-tools.md)。如果你要在目标端手动创建相应的表，则无需安装 Dumpling。
-- [获取 Dumpling 所需上游数据库权限](/dumpling-overview.md#需要的权限)。
-- [获取 TiDB Lightning 所需下游数据库权限](/tidb-lightning/tidb-lightning-faq.md#tidb-lightning-对下游数据库的账号权限要求是怎样的)。
+## Prerequisites
 
-## 导入全量数据到 TiDB
+- [Install Dumpling and TiDB Lightning](/migration-tools.md). If you want to create the corresponding tables manually on the target side, do not install Dumpling.
+- [Get the upstream database privileges required by Dumpling](/dumpling-overview.md#required-privileges).
+- [Get the target database privileges required for TiDB Lightning](/tidb-lightning/tidb-lightning-faq.md#what-are-the-privilege-requirements-for-the-target-database).
 
-### 第 1 步：导出和导入 schema 文件
+## Import full data to TiDB
 
-如果你已经提前手动在目标库创建好了相应的表，则可以跳过本节内容。
+### Step 1. Export and import the schema file
 
-#### 1.1 导出 schema 文件
+This section describes how to export the schema file from Amazon Aurora and import it to TiDB. If you have manually created the table in the target database, you can skip this step.
 
-因为 Amazon Aurora 生成的快照文件并不包含建表语句文件，所以你需要使用 Dumpling 自行导出 schema 并使用 TiDB Lightning 在下游创建 schema。
+#### 1.1 Export the schema file from Amazon Aurora
 
-运行以下命令时，建议使用 `--filter` 参数仅导出所需表的 schema。命令中所用参数描述，请参考 [Dumpling 主要选项表](/dumpling-overview.md#dumpling-主要选项表)。
+Because the snapshot file from Amazon Aurora does not contain the DDL statements, you need to export the schema using Dumpling and create the schema in the target database using TiDB Lightning.
+
+Export the schema using Dumpling by running the following command. The command includes the `--filter` parameter to only export the desired table schema. For more information about the parameters, see the [Option list of Dumpling](/dumpling-overview.md#option-list-of-dumpling).
 
 ```shell
 export AWS_ACCESS_KEY_ID=${access_key}
@@ -34,64 +36,67 @@ export AWS_SECRET_ACCESS_KEY=${secret_key}
 tiup dumpling --host ${host} --port 3306 --user root --password ${password} --filter 'my_db1.table[12],mydb.*' --consistency none --no-data --output 's3://my-bucket/schema-backup'
 ```
 
-记录上面命令中导出的 schema 的 URI，例如 's3://my-bucket/schema-backup'，后续导入 schema 时要用到。
+Record the URI of the schema exported in the above command, such as 's3://my-bucket/schema-backup', which will be used when importing the schema file later.
 
-为了获取 Amazon S3 的访问权限，可以将该 Amazon S3 的 Secret Access Key 和 Access Key 作为环境变量传入 Dumpling 或 TiDB Lightning。另外，Dumpling 或 TiDB Lightning 也可以通过 `~/.aws/credentials` 读取凭证文件。使用凭证文件可以让这台机器上所有的 Dumpling 或 TiDB Lightning 任务无需再次传入相关 Secret Access Key 和 Access Key。
+To get access to Amazon S3, you can pass the secret access key and access key of the account that has access to this Amazon S3 storage path into the Dumpling or TiDB Lightning node as environment variables. Dumpling and TiDB Lightning also support reading credential files from `~/.aws/credentials`. This method eliminates the need to provide the secret access key and access key again for all tasks on that Dumpling or TiDB Lightning node.
 
-#### 1.2 编写用于导入 schema 文件的 TiDB Lightning 配置文件
+#### 1.2 Create the TiDB Lightning configuration file for the schema file
 
-新建 `tidb-lightning-schema.toml` 文件，将以下内容复制到文件中并替换对应的内容。
+Create a new `tidb-lightning-schema.toml` file, copy the following content into the file, and replace the corresponding content.
 
 ```toml
 [tidb]
 
-# 目标 TiDB 集群信息。
-host = "${host}"
-port = "${port}"
+# The target TiDB cluster information.
+host = ${host}
+port = ${port}
 user = "${user_name}"
 password = "${password}"
-status-port = "${status-port}"  # TiDB 的“状态端口”，通常为 10080
-pd-addr = "${ip}:${port}"       # 集群 PD 的地址，port 通常为 2379
+status-port = ${status-port}  # The TiDB status port. Usually the port is 10080.
+pd-addr = "${ip}:${port}"     # The cluster PD address. Usually the port is 2379.
 
 [tikv-importer]
-# 采用默认的物理导入模式 ("local")。注意该模式在导入期间下游 TiDB 无法对外提供服务。
-# 关于后端模式更多信息，请参阅：https://docs.pingcap.com/zh/tidb/stable/tidb-lightning-overview
+# "local": Use the default Physical Import Mode (the "local" backend).
+# During the import, the target TiDB cluster cannot provide any service.
+# For more information about import modes, see https://docs.pingcap.com/tidb/stable/tidb-lightning-overview
 backend = "local"
 
-# 设置排序的键值对的临时存放地址，目标路径必须是一个空目录，目录空间须大于待导入数据集的大小。
-# 建议设为与 `data-source-dir` 不同的磁盘目录并使用闪存介质，独占 IO 会获得更好的导入性能。
+# Set the temporary storage directory for the sorted Key-Value files.
+# The directory must be empty, and the storage space must be greater than the size of the dataset to be imported.
+# For better import performance, it is recommended to use a directory different from `data-source-dir` and use flash storage,
+# which can use I/O exclusively.
 sorted-kv-dir = "${path}"
 
 [mydumper]
-# 设置从 Amazon Aurora 导出的 schema 文件的地址
+# Set the directory of the schema file exported from Amazon Aurora
 data-source-dir = "s3://my-bucket/schema-backup"
 ```
 
-如果需要在 TiDB 开启 TLS，请参考 [TiDB Lightning 配置参数](/tidb-lightning/tidb-lightning-configuration.md)。
+If you need to enable TLS in the TiDB cluster, refer to [TiDB Lightning Configuration](/tidb-lightning/tidb-lightning-configuration.md).
 
-#### 1.3 导入 schema 文件
+#### 1.3 Import the schema file to TiDB
 
-使用 TiDB Lightning 导入 schema 到下游的 TiDB。
+Use TiDB Lightning to import the schema file to the downstream TiDB.
 
 ```shell
 export AWS_ACCESS_KEY_ID=${access_key}
-export AWS_SECRET_ACCESS_KEY=${secret_access_key}
+export AWS_SECRET_ACCESS_KEY=${secret_key}
 nohup tiup tidb-lightning -config tidb-lightning-schema.toml > nohup.out 2>&1 &
 ```
 
-### 第 2 步：导出和导入 Amazon Aurora 快照文件
+### Step 2. Export and import an Amazon Aurora snapshot to Amazon S3
 
-本节介绍如何导出和导入 Amazon Aurora 快照文件。
+This section describes how to export an Amazon Aurora snapshot to Amazon S3 and import it into TiDB by TiDB Lightning.
 
-#### 2.1 导出 Amazon Aurora 快照文件到 Amazon S3
+#### 2.1 Export an Amazon Aurora snapshot to Amazon S3
 
-1. 获取 Amazon Aurora binlog 的名称及位置以便于后续的增量迁移。在 Amazon Aurora 上，执行 `SHOW MASTER STATUS` 并记录当前 binlog 位置：
+1. Get the name and location of the Amazon Aurora binlog for subsequent incremental migration. In Amazon Aurora, run the `SHOW MASTER STATUS` command and record the current binlog position:
 
     ```sql
     SHOW MASTER STATUS;
     ```
 
-    你将得到类似以下的输出，请记录 binlog 名称和位置，供后续步骤使用：
+    The output is similar to the following. Record the binlog name and position for later use.
 
     ```
     +----------------------------+----------+--------------+------------------+-------------------+
@@ -102,201 +107,205 @@ nohup tiup tidb-lightning -config tidb-lightning-schema.toml > nohup.out 2>&1 &
     1 row in set (0.012 sec)
     ```
 
-2. 导出 Amazon Aurora 快照文件。具体方式请参考 Amazon Aurora 的官方文档：[Exporting DB snapshot data to Amazon S3](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_ExportSnapshot.html)。请注意，执行 `SHOW MASTER STATUS` 命令和导出 Amazon Aurora 快照文件的时间间隔建议不要超过 5 分钟，否则记录的 binlog 位置过旧可能导致增量同步时产生数据冲突。
+2. Export the Amazon Aurora snapshot. For detailed steps, refer to [Exporting DB snapshot data to Amazon S3](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_ExportSnapshot.html). After you obtain the binlog position, export the snapshot within 5 minutes. Otherwise, the recorded binlog position might be outdated and thus cause data conflict during the incremental replication.
 
-#### 2.2 编写用于导入快照文件的 TiDB Lightning 配置文件
+#### 2.2 Create the TiDB Lightning configuration file for the data file
 
-新建 `tidb-lightning-data.toml` 文件，将以下内容复制到文件中并替换对应的内容。
+Create a new `tidb-lightning-data.toml` configuration file, copy the following content into the file, and replace the corresponding content.
 
 ```toml
 [tidb]
 
-# 目标 TiDB 集群信息。
-host = "${host}"
-port = "${port}"
+# The target TiDB cluster information.
+host = ${host}
+port = ${port}
 user = "${user_name}"
 password = "${password}"
-status-port = "${status-port}"  # TiDB 的“状态端口”，通常为 10080
-pd-addr = "${ip}:${port}"       # 集群 PD 的地址，port 通常为 2379
+status-port = ${status-port}  # The TiDB status port. Usually the port is 10080.
+pd-addr = "${ip}:${port}"     # The cluster PD address. Usually the port is 2379.
 
 [tikv-importer]
-# 采用默认的物理导入模式 ("local")。注意该模式在导入期间下游 TiDB 无法对外提供服务。
-# 关于后端模式更多信息请参阅：https://docs.pingcap.com/zh/tidb/stable/tidb-lightning-overview
+# "local": Use the default Physical Import Mode (the "local" backend).
+# During the import, the target TiDB cluster cannot provide any service.
+# For more information about import modes, see https://docs.pingcap.com/tidb/stable/tidb-lightning-overview
 backend = "local"
 
-# 设置排序的键值对的临时存放地址，目标路径必须是一个空目录，目录空间须大于待导入数据集的大小。
-# 建议设为与 `data-source-dir` 不同的磁盘目录并使用闪存介质，独占 IO 会获得更好的导入性能。
+# Set the temporary storage directory for the sorted Key-Value files.
+# The directory must be empty, and the storage space must be greater than the size of the dataset to be imported.
+# For better import performance, it is recommended to use a directory different from `data-source-dir` and use flash storage,
+# which can use I/O exclusively.
 sorted-kv-dir = "${path}"
 
 [mydumper]
-# 设置从 Amazon Aurora 导出的快照文件的地址
-data-source-dir = "s3://my-bucket/sql-backup"
+# Set the directory of the snapshot file exported from Amazon Aurora
+data-source-dir = "${s3_path}"  # eg: s3://my-bucket/sql-backup
 
 [[mydumper.files]]
-# 解析 Parquet 文件所需的表达式
+# The expression that parses the parquet file.
 pattern = '(?i)^(?:[^/]*/)*([a-z0-9_]+)\.([a-z0-9_]+)/(?:[^/]*/)*(?:[a-z0-9\-_.]+\.(parquet))$'
 schema = '$1'
 table = '$2'
 type = '$3'
 ```
 
-如果需要在 TiDB 开启 TLS，请参考 [TiDB Lightning 配置参数](/tidb-lightning/tidb-lightning-configuration.md)。
+If you need to enable TLS in the TiDB cluster, refer to [TiDB Lightning Configuration](/tidb-lightning/tidb-lightning-configuration.md).
 
-#### 2.3 导入全量数据到 TiDB
+#### 2.3 Import full data to TiDB
 
-1. 使用 TiDB Lightning 导入 Aurora Snapshot 的数据到 TiDB。 
+1. Use TiDB Lightning to import data from an Amazon Aurora snapshot to TiDB.
 
     ```shell
     export AWS_ACCESS_KEY_ID=${access_key}
-    export AWS_SECRET_ACCESS_KEY=${secret_access_key}
+    export AWS_SECRET_ACCESS_KEY=${secret_key}
     nohup tiup tidb-lightning -config tidb-lightning-data.toml > nohup.out 2>&1 &
     ```
 
-2. 导入开始后，可以采用以下任意方式查看进度：
+2. After the import starts, you can check the progress of the import by either of the following methods:
 
-    - 通过 `grep` 日志关键字 `progress` 查看进度，默认 5 分钟更新一次。
-    - 通过监控面板查看进度，请参考 [TiDB Lightning 监控](/tidb-lightning/monitor-tidb-lightning.md)。
+    - `grep` the keyword `progress` in the log. The progress is updated every 5 minutes by default.
+    - Check progress in [the monitoring dashboard](/tidb-lightning/monitor-tidb-lightning.md).
+    - Check progress in [the TiDB Lightning web interface](/tidb-lightning/tidb-lightning-web-interface.md).
 
-3. 导入完毕后，TiDB Lightning 会自动退出。查看 `tidb-lightning.log` 日志末尾是否有 `the whole procedure completed` 信息，如果有，表示导入成功。如果没有，则表示导入遇到了问题，可根据日志中的 error 提示解决遇到的问题。
+3. After TiDB Lightning completes the import, it exits automatically. Check whether `tidb-lightning.log` contains `the whole procedure completed` in the last lines. If yes, the import is successful. If no, the import encounters an error. Address the error as instructed in the error message.
 
-> **注意：**
+> **Note:**
 >
-> 无论导入成功与否，最后一行都会显示 `tidb lightning exit`。它只是表示 TiDB Lightning 正常退出，不代表任务完成。
+> Whether the import is successful or not, the last line of the log shows `tidb lightning exit`. It means that TiDB Lightning exits normally, but does not necessarily mean that the import is successful.
 
-如果导入过程中遇到问题，请参见 [TiDB Lightning 常见问题](/tidb-lightning/tidb-lightning-faq.md)。
+If you encounter any problem during the import, refer to [TiDB Lightning FAQ](/tidb-lightning/tidb-lightning-faq.md) for troubleshooting.
 
-## 持续增量同步数据到 TiDB（可选）
+## Replicate incremental data to TiDB (optional)
 
-### 前提条件
+### Prerequisites
 
-- [安装 DM 集群](/dm/deploy-a-dm-cluster-using-tiup.md)
-- [获取 DM 所需上下游数据库权限](/dm/dm-worker-intro.md)
+- [Install DM](/dm/deploy-a-dm-cluster-using-tiup.md).
+- [Get the source database and target database privileges required for DM](/dm/dm-worker-intro.md).
 
-### 第 1 步：创建数据源
+### Step 1: Create the data source
 
-1. 新建 `source1.yaml` 文件，写入以下内容：
+1. Create the `source1.yaml` file as follows:
 
     ```yaml
-    # 唯一命名，不可重复。
+    # Must be unique.
     source-id: "mysql-01"
-
-    # DM-worker 是否使用全局事务标识符 (GTID) 拉取 binlog。使用前提是上游 MySQL 已开启 GTID 模式。若上游存在主从自动切换，则必须使用 GTID 模式。
+    # Configures whether DM-worker uses the global transaction identifier (GTID) to pull binlogs. To enable this mode, the upstream MySQL must also enable GTID. If the upstream MySQL service is configured to switch master between different nodes automatically, GTID mode is required.
     enable-gtid: false
 
     from:
-      host: "${host}"         # 例如：172.16.10.81
+      host: "${host}"         # e.g.: 172.16.10.81
       user: "root"
-      password: "${password}" # 支持但不推荐使用明文密码，建议使用 dmctl encrypt 对明文密码进行加密后使用
+      password: "${password}" # Supported but not recommended to use plaintext password. It is recommended to use `dmctl encrypt` to encrypt the plaintext password before using it.
       port: 3306
     ```
 
-2. 在终端中执行下面的命令，使用 `tiup dmctl` 将数据源配置加载到 DM 集群中:
+2. Load the data source configuration to the DM cluster using `tiup dmctl` by running the following command:
 
     ```shell
     tiup dmctl --master-addr ${advertise-addr} operate-source create source1.yaml
     ```
 
-    该命令中的参数描述如下：
+    The parameters used in the command above are described as follows:
 
-    | 参数           | 描述 |
-    | -              | - |
-    | `--master-addr` | dmctl 要连接的集群的任意 DM-master 节点的 `{advertise-addr}`，例如：172.16.10.71:8261 |
-    | `operate-source create` |向 DM 集群加载数据源 |
+    |Parameter              |Description    |
+    |-                      |-              |
+    |`--master-addr`        |The `{advertise-addr}` of any DM-master in the cluster where `dmctl` is to be connected, e.g.: 172.16.10.71:8261|
+    |`operate-source create`|Loads the data source to the DM cluster.|
 
-### 第 2 步：创建迁移任务
+### Step 2: Create the migration task
 
-新建 `task1.yaml` 文件，写入以下内容：
-
+Create the `task1.yaml` file as follows:
 
 ```yaml
-# 任务名，多个同时运行的任务不能重名。
+# Task name. Multiple tasks that are running at the same time must each have a unique name.
 name: "test"
-# 任务模式，可设为
-# full：只进行全量数据迁移
-# incremental： binlog 实时同步
-# all： 全量 + binlog 迁移
+# Task mode. Options are:
+# - full: only performs full data migration.
+# - incremental: only performs binlog real-time replication.
+# - all: full data migration + binlog real-time replication.
 task-mode: "incremental"
-# 下游 TiDB 配置信息。
+# The configuration of the target TiDB database.
 target-database:
-  host: "${host}"                   # 例如：172.16.10.83
+  host: "${host}"                   # e.g.: 172.16.10.83
   port: 4000
   user: "root"
-  password: "${password}"           # 支持但不推荐使用明文密码，建议使用 dmctl encrypt 对明文密码进行加密后使用
+  password: "${password}"           # Supported but not recommended to use a plaintext password. It is recommended to use `dmctl encrypt` to encrypt the plaintext password before using it.
 
-# 黑白名单全局配置，各实例通过配置项名引用。
-block-allow-list:                     # 如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list。
-  listA:                              # 名称
-    do-tables:                        # 需要迁移的上游表的白名单。
-    - db-name: "test_db"              # 需要迁移的表的库名。
-      tbl-name: "test_table"          # 需要迁移的表的名称。
+# Global configuration for block and allow lists. Each instance can reference the configuration by name.
+block-allow-list:                     # If the DM version is earlier than v2.0.0-beta.2, use black-white-list.
+  listA:                              # Name.
+    do-tables:                        # Allow list for the upstream tables to be migrated.
+    - db-name: "test_db"              # Name of databases to be migrated.
+      tbl-name: "test_table"          # Name of tables to be migrated.
 
-# 配置数据源
+# Configures the data source.
 mysql-instances:
-  - source-id: "mysql-01"               # 数据源 ID，即 source1.yaml 中的 source-id
-    block-allow-list: "listA"           # 引入上面黑白名单配置。
-#    syncer-config-name: "global"        # syncer 配置的名称
-    meta:                               # `task-mode` 为 `incremental` 且下游数据库的 `checkpoint` 不存在时 binlog 迁移开始的位置; 如果 checkpoint 存在，则以 `checkpoint` 为准。如果 `meta` 项和下游数据库的 `checkpoint` 都不存在，则从上游当前最新的 binlog 位置开始迁移。
-      binlog-name: "mysql-bin.000004"   # “Step 1. 导出 Amazon Aurora 快照文件到 Amazon S3” 中记录的日志位置，当上游存在主从切换时，必须使用 gtid。
+  - source-id: "mysql-01"               # Data source ID, i.e., source-id in source1.yaml
+    block-allow-list: "listA"           # References the block-allow-list configuration above.
+#       syncer-config-name: "global"    # Name of the syncer configuration.
+    meta:                               # The position where the binlog replication starts when `task-mode` is `incremental` and the downstream database checkpoint does not exist. If the checkpoint exists, the checkpoint is used. If neither the `meta` configuration item nor the downstream database checkpoint exists, the migration starts from the latest binlog position of the upstream.
+      binlog-name: "mysql-bin.000004"   # The binlog position recorded in "Step 1. Export an Amazon Aurora snapshot to Amazon S3". When the upstream database has source-replica switching, GTID mode is required.
       binlog-pos: 109227
       # binlog-gtid: "09bec856-ba95-11ea-850a-58f2b4af5188:1-9"
 
-# 【可选配置】 如果增量数据迁移需要重复迁移已经在全量数据迁移中完成迁移的数据，则需要开启 safe mode 避免增量数据迁移报错。
-   ##  该场景多见于以下情况：全量迁移的数据不属于数据源的一个一致性快照，随后从一个早于全量迁移数据之前的位置开始同步增量数据。
-   # syncers:            # sync 处理单元的运行配置参数。
-   #  global:           # 配置名称。
-   #    safe-mode: true # 设置为 true，会将来自数据源的 INSERT 改写为 REPLACE，将 UPDATE 改写为 DELETE 与 REPLACE，从而保证在表结构中存在主键或唯一索引的条件下迁移数据时可以重复导入 DML。在启动或恢复增量复制任务的前 1 分钟内 TiDB DM 会自动启动 safe mode。
+# (Optional) If you need to incrementally replicate data that has already been migrated in the full data migration, you need to enable the safe mode to avoid the incremental data replication error.
+   # This scenario is common in the following case: the full migration data does not belong to the data source's consistency snapshot, and after that, DM starts to replicate incremental data from a position earlier than the full migration.
+   # syncers:            # The running configurations of the sync processing unit.
+   #   global:            # Configuration name.
+   #     safe-mode: true  # If this field is set to true, DM changes INSERT of the data source to REPLACE for the target database, and changes UPDATE of the data source to DELETE and REPLACE for the target database. This is to ensure that when the table schema contains a primary key or unique index, DML statements can be imported repeatedly. In the first minute of starting or resuming an incremental replication task, DM automatically enables the safe mode.
 ```
 
-以上内容为执行迁移的最小任务配置。关于任务的更多配置项，可以参考 [DM 任务完整配置文件介绍](/dm/task-configuration-file-full.md)
+The YAML file above is the minimum configuration required for the migration task. For more configuration items, refer to [DM Advanced Task Configuration File](/dm/task-configuration-file-full.md).
 
-### 第 3 步：启动任务
+### Step 3. Run the migration task
 
-在你启动数据迁移任务之前，建议使用 `check-task` 命令检查配置是否符合 DM 的配置要求，以降低后期报错的概率：
+Before you start the migration task, to reduce the probability of errors, it is recommended to confirm that the configuration meets the requirements of DM by running the `check-task` command:
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} check-task task.yaml
 ```
 
-使用 `tiup dmctl` 执行以下命令启动数据迁移任务。
+After that, start the migration task by running `tiup dmctl`:
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
 ```
 
-该命令中的参数描述如下：
+The parameters used in the command above are described as follows:
 
-|参数|描述|
-|-|-|
-|`--master-addr`|dmctl 要连接的集群的任意 DM-master 节点的 `{advertise-addr}`，例如：172.16.10.71:8261|
-|`start-task`|命令用于创建数据迁移任务|
+|Parameter              |Description    |
+|-                      |-              |
+|`--master-addr`        |The `{advertise-addr}` of any DM-master in the cluster where `dmctl` is to be connected, e.g.: 172.16.10.71:8261|
+|`start-task`           |Starts the migration task.|
 
-如果任务启动失败，可根据返回结果的提示进行配置变更后，再次执行上述命令，重新启动任务。遇到问题请参考[故障及处理方法](/dm/dm-error-handling.md)以及[常见问题](/dm/dm-faq.md)。
+If the task fails to start, check the prompt message and fix the configuration. After that, you can re-run the command above to start the task.
 
-### 第 4 步：查看任务状态
+If you encounter any problem, refer to [DM error handling](/dm/dm-error-handling.md) and [DM FAQ](/dm/dm-faq.md).
 
-如需了解 DM 集群中是否存在正在运行的迁移任务及任务状态等信息，可使用 `tiup dmctl` 执行 `query-status` 命令进行查询：
+### Step 4. Check the migration task status
+
+To learn whether the DM cluster has an ongoing migration task and the task status, run the `query-status` command using `tiup dmctl`:
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} query-status ${task-name}
 ```
 
-关于查询结果的详细解读，请参考[查询状态](/dm/dm-query-status.md)。
+For a detailed interpretation of the results, refer to [Query Status](/dm/dm-query-status.md).
 
-### 第 5 步：监控任务与查看日志
+### Step 5. Monitor the task and view logs
 
-要查看迁移任务的历史状态以及更多的内部运行指标，可参考以下步骤。
+To view the history status of the migration task and other internal metrics, take the following steps.
 
-如果使用 TiUP 部署 DM 集群时，正确部署了 Prometheus、Alertmanager 与 Grafana，则使用部署时填写的 IP 及端口进入 Grafana，选择 DM 的 dashboard 查看 DM 相关监控项。
+If you have deployed Prometheus, Alertmanager, and Grafana when you deployed DM using TiUP, you can access Grafana using the IP address and port specified during the deployment. You can then select DM dashboard to view DM-related monitoring metrics.
 
-DM 在运行过程中，DM-worker、DM-master 及 dmctl 都会通过日志输出相关信息。各组件的日志目录如下：
+When DM is running, DM-worker, DM-master, and dmctl print the related information in logs. The log directories of these components are as follows:
 
-- DM-master 日志目录：通过 DM-master 进程参数 `--log-file` 设置。如果使用 TiUP 部署 DM，则日志目录默认位于 `/dm-deploy/dm-master-8261/log/`。
-- DM-worker 日志目录：通过 DM-worker 进程参数 `--log-file` 设置。如果使用 TiUP 部署 DM，则日志目录默认位于 `/dm-deploy/dm-worker-8262/log/`。
+- DM-master: specified by the DM-master process parameter `--log-file`. If you deploy DM using TiUP, the log directory is `/dm-deploy/dm-master-8261/log/` by default.
+- DM-worker: specified by the DM-worker process parameter `--log-file`. If you deploy DM using TiUP, the log directory is `/dm-deploy/dm-worker-8262/log/` by default.
 
-## 探索更多
+## What's next
 
-- [暂停数据迁移任务](/dm/dm-pause-task.md)
-- [恢复数据迁移任务](/dm/dm-resume-task.md)
-- [停止数据迁移任务](/dm/dm-stop-task.md)
-- [导出和导入集群的数据源和任务配置](/dm/dm-export-import-config.md)
-- [处理出错的 DDL 语句](/dm/handle-failed-ddl-statements.md)
+- [Pause the migration task](/dm/dm-pause-task.md).
+- [Resume the migration task](/dm/dm-resume-task.md).
+- [Stop the migration task](/dm/dm-stop-task.md).
+- [Export and import the cluster data source and task configuration](/dm/dm-export-import-config.md).
+- [Handle failed DDL statements](/dm/handle-failed-ddl-statements.md).

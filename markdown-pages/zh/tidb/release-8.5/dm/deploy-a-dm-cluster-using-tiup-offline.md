@@ -1,84 +1,84 @@
 ---
-title: 使用 TiUP 离线镜像部署 DM 集群
-summary: 学习如何使用 TiUP DM 组件来离线部署 TiDB Data Migration 工具。
+title: Deploy a DM Cluster Offline Using TiUP
+summary: Introduce how to deploy a DM cluster offline using TiUP.
 ---
 
-# 使用 TiUP 离线镜像部署 DM 集群
+# Deploy a DM Cluster Offline Using TiUP
 
-本文介绍如何使用 TiUP 离线部署 DM 集群，具体的操作步骤如下。
+This document describes how to deploy a DM cluster offline using TiUP.
 
-## 第 1 步：准备 TiUP 离线组件包
+## Step 1: Prepare the TiUP offline component package
 
-- 在线环境中安装 TiUP 包管理器工具。
+- Install the TiUP package manager online.
 
-    1. 执行如下命令安装 TiUP 工具：
+    1. Install the TiUP tool:
 
         
         ```shell
         curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
         ```
 
-    2. 重新声明全局环境变量：
+    2. Redeclare the global environment variables:
 
         
         ```shell
         source .bash_profile
         ```
 
-    3. 确认 TiUP 工具是否安装：
+    3. Confirm whether TiUP is installed:
 
         
         ```shell
         which tiup
         ```
 
-- 使用 TiUP 制作离线镜像。
+- Pull the mirror using TiUP
 
-    1. 在一台和外网相通的机器上拉取需要的组件：
+    1. Pull the needed components on a machine that has access to the Internet:
 
         
         ```bash
-        # 将 ${version} 修改成实际需要的版本 
+        # You can modify ${version} to the needed version.
         tiup mirror clone tidb-dm-${version}-linux-amd64 --os=linux --arch=amd64 \
             --dm-master=${version} --dm-worker=${version} --dmctl=${version} \
             --alertmanager=v0.17.0 --grafana=v4.0.3 --prometheus=v4.0.3 \
             --dm=v$(tiup --version|grep 'tiup'|awk -F ' ' '{print $1}')
         ```
 
-        该命令会在当前目录下创建一个名叫 `tidb-dm-${version}-linux-amd64` 的目录，里面包含 TiUP 管理的组件包。
+        The command above creates a directory named `tidb-dm-${version}-linux-amd64` in the current directory, which contains the component package managed by TiUP.
 
-    2. 通过 tar 命令将该组件包打包然后发送到隔离环境的中控机：
+    2. Pack the component package by using the `tar` command and send the package to the control machine in the isolated environment:
 
         
         ```bash
         tar czvf tidb-dm-${version}-linux-amd64.tar.gz tidb-dm-${version}-linux-amd64
         ```
 
-        此时，`tidb-dm-${version}-linux-amd64.tar.gz` 就是一个独立的离线环境包。
+        `tidb-dm-${version}-linux-amd64.tar.gz` is an independent offline environment package.
 
-## 第 2 步: 部署离线环境 TiUP 组件
+## Step 2: Deploy the offline TiUP component
 
-将离线包发送到目标集群的中控机后，执行以下命令安装 TiUP 组件：
+After sending the package to the control machine of the target cluster, install the TiUP component by running the following command:
 
 
 ```bash
-# 将 ${version} 修改成实际需要的版本
+# You can modify ${version} to the needed version.
 tar xzvf tidb-dm-${version}-linux-amd64.tar.gz
 sh tidb-dm-${version}-linux-amd64/local_install.sh
 source /home/tidb/.bash_profile
 ```
 
-`local_install.sh` 脚本会自动执行 `tiup mirror set tidb-dm-${version}-linux-amd64` 命令将当前镜像地址设置为 `tidb-dm-${version}-linux-amd64`。
+The `local_install.sh` script automatically executes the `tiup mirror set tidb-dm-${version}-linux-amd64` command to set the current mirror address to `tidb-dm-${version}-linux-amd64`.
 
-若需将镜像切换到其他目录，可以通过手动执行 `tiup mirror set <mirror-dir>` 进行切换，切换后如果再想切换成官方镜像，可执行 `tiup mirror set https://tiup-mirrors.pingcap.com`。
+To switch the mirror to another directory, manually execute the `tiup mirror set <mirror-dir>` command. If you want to switch back to the official mirror, execute `tiup mirror set https://tiup-mirrors.pingcap.com`.
 
-## 第 3 步：编辑初始化配置文件
+## Step 3: Edit the initialization configuration file
 
-请根据不同的集群拓扑，编辑 TiUP 所需的集群初始化配置文件。
+You need to edit the cluster initialization configuration file according to different cluster topologies.
 
-请根据[配置文件模板](https://github.com/pingcap/tiup/blob/master/embed/examples/dm/topology.example.yaml)，新建一个配置文件 `topology.yaml`。如果有其他组合场景的需求，请根据多个模板自行调整。
+For the full configuration template, refer to the [TiUP configuration parameter template](https://github.com/pingcap/tiup/blob/master/embed/examples/dm/topology.example.yaml). Create a configuration file `topology.yaml`. In other combined scenarios, edit the configuration file as needed according to the templates.
 
-部署 3 个 DM-master、3 个 DM-worker 与 1 个监控组件的配置如下：
+The configuration of deploying three DM-masters, three DM-workers, and one monitoring component instance is as follows:
 
 ```yaml
 ---
@@ -109,66 +109,61 @@ alertmanager_servers:
   - host: 172.19.0.101
 ```
 
-> **注意：**
+> **Note:**
 >
-> - 如果不需要确保 DM 集群高可用，则可只部署 1 个 DM-master 节点，且部署的 DM-worker 节点数量不少于上游待迁移的 MySQL/MariaDB 实例数。
+> - If you do not need to ensure high availability of the DM cluster, deploy only one DM-master node, and the number of deployed DM-worker nodes must be no less than the number of upstream MySQL/MariaDB instances to be migrated.
 >
-> - 如果需要确保 DM 集群高可用，则推荐部署 3 个 DM-master 节点，且部署的 DM-worker 节点数量大于上游待迁移的 MySQL/MariaDB 实例数（如 DM-worker 节点数量比上游实例数多 2 个）。
+> - To ensure high availability of the DM cluster, it is recommended to deploy three DM-master nodes, and the number of deployed DM-worker nodes must be greater than the number of upstream MySQL/MariaDB instances to be migrated (for example, the number of DM-worker nodes is two more than the number of upstream instances).
 >
-> - 对于需要全局生效的参数，请在配置文件中 `server_configs` 的对应组件下配置。
+> - For parameters that should be globally effective, configure these parameters of corresponding components in the `server_configs` section of the configuration file.
 >
-> - 对于需要某个节点生效的参数，请在具体节点的 `config` 中配置。
+> - For parameters that should be effective on a specific node, configure these parameters in `config` of this node.
 >
-> - 配置的层次结构使用 `.` 表示。如：`log.slow-threshold`。更多格式说明，请参考 [TiUP 配置参数模版](https://github.com/pingcap/tiup/blob/master/embed/examples/dm/topology.example.yaml)。
+> - Use `.` to indicate the subcategory of the configuration, such as `log.slow-threshold`. For more formats, see [TiUP configuration template](https://github.com/pingcap/tiup/blob/master/embed/examples/dm/topology.example.yaml).
 >
-> - 更多参数说明，请参考 [master `config.toml.example`](https://github.com/pingcap/tiflow/blob/release-8.5/dm/master/dm-master.toml)、[worker `config.toml.example`](https://github.com/pingcap/tiflow/blob/release-8.5/dm/worker/dm-worker.toml)。
+> - For more parameter description, see [master `config.toml.example`](https://github.com/pingcap/tiflow/blob/release-8.5/dm/master/dm-master.toml) and [worker `config.toml.example`](https://github.com/pingcap/tiflow/blob/release-8.5/dm/worker/dm-worker.toml).
 >
-> - 需要确保以下组件间端口可正常连通：
->
->     - 各 DM-master 节点间的 `peer_port`（默认为 `8291`）可互相连通。
->
->     - 各 DM-master 节点可连通所有 DM-worker 节点的 `port`（默认为 `8262`）。
->
->     - 各 DM-worker 节点可连通所有 DM-master 节点的 `port`（默认为 `8261`）。
->
->     - TiUP 节点可连通所有 DM-master 节点的 `port`（默认为 `8261`）。
->
->     - TiUP 节点可连通所有 DM-worker 节点的 `port`（默认为 `8262`）。
+> - Make sure that the ports among the following components are interconnected:
+>     - The `peer_port` (`8291` by default) among the DM-master nodes are interconnected.
+>     - Each DM-master node can connect to the `port` of all DM-worker nodes (`8262` by default).
+>     - Each DM-worker node can connect to the `port` of all DM-master nodes (`8261` by default).
+>     - The TiUP nodes can connect to the `port` of all DM-master nodes (`8261` by default).
+>     - The TiUP nodes can connect to the `port` of all DM-worker nodes (`8262` by default).
 
-## 第 4 步：执行部署命令
+## Step 4: Execute the deployment command
 
-> **注意：**
+> **Note:**
 >
-> 通过 TiUP 进行集群部署可以使用密钥或者交互密码方式来进行安全认证：
+> You can use secret keys or interactive passwords for security authentication when you deploy DM using TiUP:
 >
-> - 如果是密钥方式，可以通过 `-i` 或者 `--identity_file` 来指定密钥的路径；
-> - 如果是密码方式，可以通过 `-p` 进入密码交互窗口；
-> - 如果已经配置免密登录目标机，则不需填写认证。
+> - If you use secret keys, you can specify the path of the keys through `-i` or `--identity_file`;
+> - If you use passwords, add the `-p` flag to enter the password interaction window;
+> - If password-free login to the target machine has been configured, no authentication is required.
 
 
 ```shell
 tiup dm deploy dm-test ${version} ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
 ```
 
-以上部署命令中：
+In the above command:
 
-- 通过 TiUP DM 部署的集群名称为 `dm-test`。
-- 部署版本为 `${version}`，可以通过执行 `tiup list dm-master` 来查看 TiUP 支持的最新版本。
-- 初始化配置文件为 `topology.yaml`。
-- `--user root`：通过 root 用户登录到目标主机完成集群部署，该用户需要有 ssh 到目标机器的权限，并且在目标机器有 sudo 权限。也可以用其他有 ssh 和 sudo 权限的用户完成部署。
-- `-i` 及 `-p`：非必选项，如果已经配置免密登录目标机，则不需填写，否则选择其一即可。`-i` 为可登录到目标机的 root 用户（或 `--user` 指定的其他用户）的私钥，也可使用 `-p` 交互式输入该用户的密码。
-- TiUP DM 使用内置的 SSH 客户端，如需使用系统自带的 SSH 客户端，请参考 TiUP DM 文档中[使用中控机系统自带的 SSH 客户端连接集群](/dm/maintain-dm-using-tiup.md#使用中控机系统自带的-ssh-客户端连接集群)章节进行设置。
+- The name of the deployed DM cluster is `dm-test`.
+- The version of the DM cluster is `${version}`. You can view the latest versions supported by TiUP by running `tiup list dm-master`.
+- The initialization configuration file is `topology.yaml`.
+- `--user root`: Log in to the target machine through the `root` key to complete the cluster deployment, or you can use other users with `ssh` and `sudo` privileges to complete the deployment.
+- `[-i]` and `[-p]`: optional. If you have configured login to the target machine without password, these parameters are not required. If not, choose one of the two parameters. `[-i]` is the private key of the `root` user (or other users specified by `--user`) that has access to the target machine. `[-p]` is used to input the user password interactively.
+- TiUP DM uses the embedded SSH client. If you want to use the SSH client native to the control machine system, edit the configuration according to [using the system's native SSH client to connect to the cluster](/dm/maintain-dm-using-tiup.md#use-the-systems-native-ssh-client-to-connect-to-cluster).
 
-预期日志结尾输出会有 ```Deployed cluster `dm-test` successfully``` 关键词，表示部署成功。
+At the end of the output log, you will see ```Deployed cluster `dm-test` successfully```. This indicates that the deployment is successful.
 
-## 第 5 步：查看 TiUP 管理的集群情况 
+## Step 5: Check the clusters managed by TiUP
 
 
 ```shell
 tiup dm list
 ```
 
-TiUP 支持管理多个 DM 集群，该命令会输出当前通过 TiUP DM 管理的所有集群信息，包括集群名称、部署用户、版本、密钥信息等：
+TiUP supports managing multiple DM clusters. The command above outputs information of all the clusters currently managed by TiUP, including the name, deployment user, version, and secret key information:
 
 ```log
 Name  User  Version  Path                                  PrivateKey
@@ -176,33 +171,33 @@ Name  User  Version  Path                                  PrivateKey
 dm-test  tidb  ${version}  /root/.tiup/storage/dm/clusters/dm-test  /root/.tiup/storage/dm/clusters/dm-test/ssh/id_rsa
 ```
 
-## 第 6 步：检查部署的 DM 集群情况
+## Step 6: Check the status of the deployed DM cluster
 
-例如，执行如下命令检查 `dm-test` 集群情况：
+To check the status of the `dm-test` cluster, execute the following command:
 
 
 ```shell
 tiup dm display dm-test
 ```
 
-预期输出包括 `dm-test` 集群中实例 ID、角色、主机、监听端口和状态（由于还未启动，所以状态为 Down/inactive）、目录信息。
+Expected output includes the instance ID, role, host, listening port, and status (because the cluster is not started yet, so the status is `Down`/`inactive`), and directory information of the `dm-test` cluster.
 
-## 第 7 步：启动集群
+## Step 7: Start the cluster
 
 
 ```shell
 tiup dm start dm-test
 ```
 
-预期结果输出 ```Started cluster `dm-test` successfully``` 表示启动成功。
+If the output log includes ```Started cluster `dm-test` successfully```, the start is successful.
 
-## 第 8 步：验证集群运行状态
+## Step 8: Verify the running status of the cluster
 
-通过以下 TiUP 命令检查集群状态：
+Check the DM cluster status using TiUP:
 
 
 ```shell
 tiup dm display dm-test
 ```
 
-在输出结果中，如果 Status 状态信息为 `Up`，说明集群状态正常。
+If the `Status` is `Up` in the output, the cluster status is normal.

@@ -1,48 +1,48 @@
 ---
 title: tiup dm disable
-summary: tiup dm disable 命令用于关闭集群服务重启后的自启动。语法为 tiup dm disable <cluster-name>，其中 <cluster-name> 为要关闭自启的集群。选项包括 -N, --node 和 -R, --role，分别用于指定要关闭自启的节点和角色。若不指定选项，默认关闭所有节点和角色的自启。执行该命令将输出 tiup-dm 的执行日志。
+summary: The `tiup dm disable` command is used to disable the auto-enabling of cluster service after restarting the machine. It can be used with options like `-N, --node` to specify nodes and `-R, --role` to specify roles for disabling auto-enabling. The output is the execution log of the tiup-dm command.
 ---
 
 # tiup dm disable
 
-集群服务所在的机器重启之后会自启动，命令 `tiup dm disable` 用于关闭该自启动。该命令会在指定的节点上执行 `systemctl disable <service>` 来关闭服务的自启动。
+After restarting the machine on which the cluster service is located, the cluster service will be automatically enabled. To disable the auto-enabling of cluster service, you can use the `tiup dm disable` command. This command executes `systemctl disable <service>` on the specified node to disable the auto-enabling of the service.
 
-## 语法
+## Syntax
 
 ```shell
 tiup dm disable <cluster-name> [flags]
 ```
 
-`<cluster-name>` 为要关闭自启的集群。
+`<cluster-name>` is the cluster whose service auto-enabling is to be disabled.
 
-## 选项
+## Options
 
 ### -N, --node
 
-- 指定要关闭自启的节点，该选项的值为以逗号分割的节点 ID 列表，节点 ID 为[集群状态](/tiup/tiup-component-dm-display.md)表格的第一列。
-- 数据类型：`STRINGS`
-- 如果不指定该选项，默认关闭所有节点的自启。
+- Specifies the nodes whose service auto-enabling is to be disabled. The value of this option is a comma-separated list of node IDs. You can get the node IDs from the first column of the cluster status table returned by the [`tiup dm display`](/tiup/tiup-component-dm-display.md) command.
+- Data type: `STRINGS`
+- If this option is not specified in the command, the auto-enabling of all nodes is disabled by default.
 
-> **注意：**
+> **Note:**
 >
-> 若同时指定了 `-R, --role`，那么将关闭它们的交集中的服务自启。
+> If the `-R, --role` option is specified at the same time, the auto-enabling of services that match both the specifications of `-N, --node` and `-R, --role` is disabled.
 
 ### -R, --role
 
-- 指定要关闭自启的角色，该选项的值为以逗号分割的节点角色列表，角色为[集群状态](/tiup/tiup-component-dm-display.md)表格的第二列。
-- 数据类型：`STRINGS`
-- 如果不指定该选项，默认关闭所有角色的自启。
+- Specifies the roles whose service auto-enabling is to be disabled. The value of this option is a comma-separated list of node roles. You can get the roles of nodes from the second column of the cluster status table returned by the [`tiup dm display`](/tiup/tiup-component-dm-display.md) command.
+- Data type: `STRINGS`
+- If this option is not specified in the command, the auto-enabling of all roles is disabled by default.
 
-> **注意：**
+> **Note:**
 >
-> 若同时指定了 `-N, --node`，那么将关闭它们的交集中的服务自启。
+> If the `-N, --node` option is specified at the same time, the auto-enabling of services that match both the specifications of `-N, --node` and `-R, --role` is disabled.
 
 ### -h, --help
 
-输出帮助信息。
+Prints the help information.
 
-## 输出
+## Output
 
-tiup-dm 的执行日志。
+The execution log of the tiup-dm.
 
-[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)
+[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)

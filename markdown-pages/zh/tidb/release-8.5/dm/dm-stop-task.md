@@ -1,11 +1,11 @@
 ---
-title: 停止 TiDB Data Migration 数据迁移任务
-summary: 了解 TiDB Data Migration 如何停止数据迁移任务。
+title: Stop a Data Migration Task
+summary: Learn how to stop a data migration task.
 ---
 
-# 停止 TiDB Data Migration 数据迁移任务
+# Stop a Data Migration Task
 
-`stop-task` 命令用于停止数据迁移任务。有关 `stop-task` 与 `pause-task` 的区别，请参考[暂停数据迁移任务](/dm/dm-pause-task.md)中的相关说明。
+You can use the `stop-task` command to stop a data migration task. For differences between `stop-task` and `pause-task`, refer to [Pause a Data Migration Task](/dm/dm-pause-task.md).
 
 
 ```bash
@@ -25,24 +25,19 @@ Global Flags:
  -s, --source strings   MySQL Source ID
 ```
 
-## 命令用法示例
+## Usage example
 
 
 ```bash
 stop-task [-s "mysql-replica-01"]  task-name
 ```
 
-## 参数解释
+## Flags description
 
-- `-s`：
-    - 可选
-    - 指定在特定的一个 MySQL 源上停止数据迁移任务的子任务
-    - 如果设置，则只停止该任务在指定 MySQL 源上的子任务
-- `task-name | task-file`：
-    - 必选
-    - 指定任务名称或任务文件路径
+- `-s`: (Optional) Specifies the MySQL source where the subtasks of the migration task (that you want to stop) run. If it is set, only subtasks on the specified MySQL source are stopped.
+- `task-name | task-file`: (Required) Specifies the task name or task file path.
 
-## 返回结果示例
+## Returned results
 
 
 ```bash
@@ -65,9 +60,9 @@ stop-task test
 }
 ```
 
-> **注意：**
+> **Note:**
 >
-> 通过 `stop-task` 停止迁移任务后，执行 [`query-status`](/dm/dm-query-status.md) 将无法查询到该任务，但该任务的 checkpoint 等信息仍然保留在元数据库 `dm_meta` 中。
+> After you stop a migration task with the `stop-task` command, running [`query-status`](/dm/dm-query-status.md) will no longer display the task. However, the checkpoint and other related information for this task is still retained in the `dm_meta` database.
 >
-> + 要重新创建该迁移任务，你需要在 [`start-task`](/dm/dm-create-task.md) 中添加 `--remove-meta` 参数。
-> + 要彻底删除该迁移任务，你需要在元数据库 `dm_meta` 中删除以该任务名为表名前缀的四张表。
+> + To start over the migration task, add the `--remove-meta` option when running the [`start-task`](/dm/dm-create-task.md) command.
+> + To completely remove the migration task, manually delete the four tables that use the task name as a prefix from the `dm_meta` database.

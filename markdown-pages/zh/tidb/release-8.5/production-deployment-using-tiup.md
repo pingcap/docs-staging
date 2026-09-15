@@ -1,166 +1,178 @@
 ---
-title: 使用 TiUP 部署 TiDB 集群
-summary: 了解如何使用 TiUP 部署 TiDB 集群。
+title: Deploy a TiDB Cluster Using TiUP
+summary: Learn how to easily deploy a TiDB cluster using TiUP.
 ---
 
-# 使用 TiUP 部署 TiDB 集群
+# Deploy a TiDB Cluster Using TiUP
 
-本指南介绍如何在生产环境中使用 [TiUP](https://github.com/pingcap/tiup) 部署 TiDB 集群。
+This guide describes how to deploy a TiDB Self-Managed cluster using [TiUP](https://github.com/pingcap/tiup) in the production environment.
 
-TiUP 是在 TiDB v4.0 中引入的集群运维工具，提供了使用 Golang 编写的集群管理组件 [TiUP cluster](https://github.com/pingcap/tiup/tree/master/components/cluster)。通过使用 TiUP cluster 组件，你可以轻松执行日常的数据库运维操作，包括部署、启动、关闭、销毁、弹性扩缩容、升级 TiDB 集群，以及管理 TiDB 集群参数。
+TiUP is a cluster operation and maintenance tool introduced in TiDB v4.0. It provides [TiUP cluster](https://github.com/pingcap/tiup/tree/master/components/cluster), a Golang-based component for managing TiDB clusters. By using the TiUP cluster, you can easily perform routine database operations, such as deploying, starting, stopping, destroying, scaling, upgrading TiDB clusters, and managing TiDB cluster parameters.
 
-TiUP 还支持部署 TiDB、TiFlash、TiCDC 以及监控系统。本指南介绍了如何部署不同拓扑的 TiDB 集群。
+TiUP also supports deploying TiDB, TiFlash, TiCDC, and the monitoring system. This guide introduces how to deploy TiDB clusters with different topologies.
 
-## 第 1 步：软硬件环境需求及前置检查
+## Step 1. Prerequisites and prechecks
 
-务必阅读以下文档：
+Make sure that you have read the following documents:
 
-- [软硬件环境需求](/hardware-and-software-requirements.md)
-- [环境与系统配置检查](/check-before-deployment.md)
+- [TiDB Software and Hardware Requirements](/hardware-and-software-requirements.md)
+- [TiDB Environment and System Configuration Check](/check-before-deployment.md)
 
-此外，建议阅读了解 [TiDB 安全配置最佳实践](/best-practices-for-security-configuration.md)。
+In addition, it is recommended to learn the [Best Practices for TiDB Security Configuration](/best-practices-for-security-configuration.md).
 
-## 第 2 步：在中控机上部署 TiUP 组件
+## Step 2. Deploy TiUP on the control machine
 
-在中控机上部署 TiUP 组件有两种方式：在线部署和离线部署。
+You can deploy TiUP on the control machine in either of the two ways: online deployment and offline deployment.
 
-### 在线部署
+### Deploy TiUP online
 
-> **注意：**
+> **Note:**
 >
-> 如果 TiUP 环境会转变为离线，请参考[离线部署](#离线部署)方式进行部署，否则无法正常使用 TiUP。
+> If the TiUP environment switches to offline, refer to [Deploy TiUP offline](#deploy-tiup-offline) for deployment. Otherwise, TiUP cannot work properly.
 
-以普通用户身份登录中控机。以 `tidb` 用户为例，后续安装 TiUP 及集群管理操作均通过该用户完成：
+Log in to the control machine using a regular user account (take the `tidb` user as an example). Subsequent TiUP installation and cluster management can be performed by the `tidb` user.
 
-1. 执行如下命令安装 TiUP 工具：
+1. Install TiUP by running the following command:
 
     ```shell
     curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
     ```
 
-2. 按如下步骤设置 TiUP 环境变量：
+2. Set TiUP environment variables:
 
-    1. 重新声明全局环境变量：
+    1. Redeclare the global environment variables:
 
         ```shell
         source .bash_profile
         ```
 
-    2. 确认 TiUP 工具是否安装：
+    2. Confirm whether TiUP is installed:
 
         ```shell
         which tiup
         ```
 
-3. 安装 TiUP 集群组件：
+3. Install the TiUP cluster component:
 
     ```shell
     tiup cluster
     ```
 
-4. 如果已经安装，则更新 TiUP 集群组件至最新版本：
+4. If TiUP is already installed, update the TiUP cluster component to the latest version:
 
     ```shell
     tiup update --self && tiup update cluster
     ```
 
-    预期输出 `“Updated successfully!”` 字样。
+    If `Updated successfully!` is displayed, the TiUP cluster is updated successfully.
 
-5. 验证当前 TiUP 集群版本信息。执行如下命令查看 TiUP 集群组件版本：
+5. Verify the current version of your TiUP cluster:
 
     ```shell
     tiup --binary cluster
     ```
 
-### 离线部署
+### Deploy TiUP offline
 
-离线部署 TiUP 组件的操作步骤如下。
+Perform the following steps in this section to deploy a TiDB cluster offline using TiUP:
 
-#### 准备 TiUP 离线组件包
+#### Prepare the TiUP offline component package
 
-方式一：在[软件下载中心](https://pingkai.cn/download#tidb-community)选择对应版本的 TiDB server 离线镜像包（包含 TiUP 离线组件包）。需要同时下载 TiDB-community-server 软件包和 TiDB-community-toolkit 软件包。
+**Method 1**: Download the offline binary packages (TiUP offline package included) of the target TiDB version using the following links. You need to download both the server and toolkit packages. Note that your downloading means you agree to the [Privacy Policy](https://www.pingcap.com/privacy-policy/).
 
-方式二：使用 `tiup mirror clone` 命令手动打包离线组件包。步骤如下：
+```
+https://download.pingcap.org/tidb-community-server-{version}-linux-{arch}.tar.gz
+```
 
-1. 在在线环境中安装 TiUP 包管理器工具。
+```
+https://download.pingcap.org/tidb-community-toolkit-{version}-linux-{arch}.tar.gz
+```
 
-    1. 执行如下命令安装 TiUP 工具：
+> **Tip:**
+>
+> `{version}` in the link indicates the version number of TiDB and `{arch}` indicates the architecture of the system, which can be `amd64` or `arm64`. For example, the download link for `8.5.8` in the `amd64` architecture is `https://download.pingcap.org/tidb-community-toolkit-8.5.8-linux-amd64.tar.gz`.
+
+**Method 2**: Manually pack an offline component package using `tiup mirror clone`. The detailed steps are as follows:
+
+1. Install the TiUP package manager online.
+
+    1. Install the TiUP tool:
 
         ```shell
         curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
         ```
 
-    2. 重新声明全局环境变量：
+    2. Redeclare the global environment variables:
 
         ```shell
         source .bash_profile
         ```
 
-    3. 确认 TiUP 工具是否安装：
+    3. Confirm whether TiUP is installed:
 
         ```shell
         which tiup
         ```
 
-2. 使用 TiUP 制作离线镜像。
+2. Pull the mirror using TiUP.
 
-    1. 在一台和外网相通的机器上拉取需要的组件：
+    1. Pull the needed components on a machine that has access to the Internet:
 
-        ```bash
+        ```shell
         tiup mirror clone tidb-community-server-${version}-linux-amd64 ${version} --os=linux --arch=amd64
         ```
 
-        该命令会在当前目录下创建一个名叫 `tidb-community-server-${version}-linux-amd64` 的目录，里面包含 TiUP 管理的组件包。
+        The command above creates a directory named `tidb-community-server-${version}-linux-amd64` in the current directory, which contains the component package necessary for starting a cluster.
 
-    2. 通过 tar 命令将该组件包打包然后发送到隔离环境的中控机：
+    2. Pack the component package by using the `tar` command and send the package to the control machine in the isolated environment:
 
         ```bash
         tar czvf tidb-community-server-${version}-linux-amd64.tar.gz tidb-community-server-${version}-linux-amd64
         ```
 
-        此时，`tidb-community-server-${version}-linux-amd64.tar.gz` 就是一个独立的离线环境包。
+        `tidb-community-server-${version}-linux-amd64.tar.gz` is an independent offline environment package.
 
-3. 自定义制作的离线镜像，或调整已有离线镜像中的内容。
+3. Customize the offline mirror, or adjust the contents of an existing offline mirror.
 
-    如果从官网下载的离线镜像不满足你的具体需求，或者希望对已有的离线镜像内容进行调整，例如增加某个组件的新版本等，可以采取以下步骤进行操作：
+    If you want to adjust an existing offline mirror (such as adding a new version of a component), take the following steps:
 
-    1. 在制作离线镜像时，可通过参数指定具体的组件和版本等信息，获得不完整的离线镜像。例如，要制作一个只包括 v1.12.3 版本 TiUP 和 TiUP Cluster 的离线镜像，可执行如下命令：
+    1. When pulling an offline mirror, you can get an incomplete offline mirror by specifying specific information via parameters, such as the component and version information. For example, you can pull an offline mirror that includes only the offline mirror of TiUP v1.12.3 and TiUP Cluster v1.12.3 by running the following command:
 
         ```bash
         tiup mirror clone tiup-custom-mirror-v1.12.3 --tiup v1.12.3 --cluster v1.12.3
         ```
 
-        如果只需要某一特定平台的组件，也可以通过 `--os` 和 `--arch` 参数来指定。
+        If you only need the components for a particular platform, you can specify them using the `--os` or `--arch` parameters.
 
-    2. 参考上文“使用 TiUP 制作离线镜像”第 2 步的方式，将此不完整的离线镜像传输到隔离环境的中控机。
+    2. Refer to the step 2 of "Pull the mirror using TiUP", and send this incomplete offline mirror to the control machine in the isolated environment.
 
-    3. 在隔离环境的中控机上，查看当前使用的离线镜像路径。较新版本的 TiUP 可以直接通过命令获取当前的镜像地址：
+    3. Check the path of the current offline mirror on the control machine in the isolated environment. If your TiUP tool is of a recent version, you can get the current mirror address by running the following command:
 
         ```bash
         tiup mirror show
         ```
 
-        以上命令如果提示 `show` 命令不存在，可能当前使用的是较老版本的 TiUP。此时可以通过查看 `$HOME/.tiup/tiup.toml` 获得正在使用的镜像地址。将此镜像地址记录下来，后续步骤中将以变量 `${base_mirror}` 指代此镜像地址。
+        If the output of the above command indicates that the `show` command does not exist, you might be using an older version of TiUP. In this case, you can get the current mirror address from `$HOME/.tiup/tiup.toml`. Record this mirror address. In the following steps, `${base_mirror}` is used to refer to this address.
 
-    4. 将不完整的离线镜像合并到已有的离线镜像中：
+    4. Merge an incomplete offline mirror into an existing offline mirror:
 
-        首先将当前离线镜像中的 `keys` 目录复制到 `$HOME/.tiup` 目录中：
+        First, copy the `keys` directory in the current offline mirror to the `$HOME/.tiup` directory:
 
         ```bash
         cp -r ${base_mirror}/keys $HOME/.tiup/
         ```
 
-        然后使用 TiUP 命令将不完整的离线镜像合并到当前使用的镜像中：
+        Then use the TiUP command to merge the incomplete offline mirror into the mirror in use:
 
         ```bash
         tiup mirror merge tiup-custom-mirror-v1.12.3
         ```
 
-    5. 上述步骤完成后，通过 `tiup list` 命令检查执行结果。在本文例子中，使用 `tiup list tiup` 和 `tiup list cluster` 均应能看到对应组件的 `v1.12.3` 版本出现在结果中。
+    5. When the above steps are completed, check the result by running the `tiup list` command. In this document's example, the outputs of both `tiup list tiup` and `tiup list cluster` show that the corresponding components of `v1.12.3` are available.
 
-#### 部署离线环境 TiUP 组件
+#### Deploy the offline TiUP component
 
-将离线包发送到目标集群的中控机后，执行以下命令安装 TiUP 组件：
+After sending the package to the control machine of the target cluster, install the TiUP component by running the following commands:
 
 ```bash
 tar xzvf tidb-community-server-${version}-linux-amd64.tar.gz && \
@@ -168,13 +180,13 @@ sh tidb-community-server-${version}-linux-amd64/local_install.sh && \
 source /home/tidb/.bash_profile
 ```
 
-`local_install.sh` 脚本会自动执行 `tiup mirror set tidb-community-server-${version}-linux-amd64` 命令将当前镜像地址设置为 `tidb-community-server-${version}-linux-amd64`。
+The `local_install.sh` script automatically runs the `tiup mirror set tidb-community-server-${version}-linux-amd64` command to set the current mirror address to `tidb-community-server-${version}-linux-amd64`.
 
-#### 合并离线包
+#### Merge offline packages
 
-如果是通过[软件下载中心](https://pingkai.cn/download#tidb-community)下载的离线软件包，需要将 TiDB-community-server 软件包和 TiDB-community-toolkit 软件包合并到离线镜像中。如果是通过 `tiup mirror clone` 命令手动打包的离线组件包，不需要执行此步骤。
+If you download the offline packages via download links, you need to merge the server package and the toolkit package into an offline mirror. If you manually package the offline component packages using the `tiup mirror clone` command, you can skip this step.
 
-执行以下命令合并离线组件到 server 目录下。
+Run the following commands to merge the offline toolkit package into the server package directory:
 
 ```bash
 tar xf tidb-community-toolkit-${version}-linux-amd64.tar.gz
@@ -184,31 +196,31 @@ cp -rp keys ~/.tiup/
 tiup mirror merge ../tidb-community-toolkit-${version}-linux-amd64
 ```
 
-若需将镜像切换到其他目录，可以通过手动执行 `tiup mirror set <mirror-dir>` 进行切换。如果需要切换到在线环境，可执行 `tiup mirror set https://tiup-mirrors.pingcap.com`。
+To switch the mirror to another directory, run the `tiup mirror set <mirror-dir>` command. To switch the mirror to the online environment, run the `tiup mirror set https://tiup-mirrors.pingcap.com` command.
 
-## 第 3 步：初始化集群拓扑文件
+## Step 3. Initialize the cluster topology file
 
-执行如下命令，生成集群初始化配置文件：
+Run the following command to create a cluster topology file:
 
 ```shell
 tiup cluster template > topology.yaml
 ```
 
-针对两种常用的部署场景，也可以通过以下命令生成建议的拓扑模板：
+In the following two common scenarios, you can generate recommended topology templates by running commands:
 
-- 混合部署场景：单台机器部署多个实例，详情参见[混合部署拓扑架构](/hybrid-deployment-topology.md)。
+- For hybrid deployment: Multiple instances are deployed on a single machine. For details, see [Hybrid Deployment Topology](/hybrid-deployment-topology.md).
 
     ```shell
     tiup cluster template --full > topology.yaml
     ```
 
-- 跨机房部署场景：跨机房部署 TiDB 集群，详情参见[跨机房部署拓扑架构](/geo-distributed-deployment-topology.md)。
+- For geo-distributed deployment: TiDB clusters are deployed in geographically distributed data centers. For details, see [Geo-Distributed Deployment Topology](/geo-distributed-deployment-topology.md).
 
     ```shell
     tiup cluster template --multi-dc > topology.yaml
     ```
 
-执行 `vi topology.yaml`，查看配置文件的内容：
+Run `vi topology.yaml` to see the content of the configuration file:
 
 ```shell
 global:
@@ -237,113 +249,114 @@ alertmanager_servers:
   - host: 10.0.1.4
 ```
 
-下表列出了常用的 6 种场景，请根据链接中的拓扑说明以及配置文件模板配置 `topology.yaml`。如果有其他组合场景的需求，请根据多个模板自行调整。
+The following examples cover six common scenarios. You need to modify the configuration file (named `topology.yaml`) according to the topology description and templates in the corresponding links. For other scenarios, edit the configuration template accordingly.
 
-| 场景 | 配置任务 | 配置文件模板 | 拓扑说明 |
+| Application | Configuration task | Configuration file template | Topology description |
 | :-- | :-- | :-- | :-- |
-| OLTP 业务 | [部署最小拓扑架构](/minimal-deployment-topology.md) | [简单最小配置模板](/minimal-deployment-topology.md#拓扑模版)<br/>[详细最小配置模板](/minimal-deployment-topology.md#拓扑模版) | 最小集群拓扑，包括 tidb-server、tikv-server、pd-server。 |
-| HTAP 业务 | [部署 TiFlash 拓扑架构](/tiflash-deployment-topology.md) | [简单 TiFlash 配置模版](/tiflash-deployment-topology.md#拓扑模版)<br/>[详细 TiFlash 配置模版](/tiflash-deployment-topology.md#拓扑模版) | 在最小拓扑的基础上部署 TiFlash。TiFlash 是列式存储引擎，已经逐步成为集群拓扑的标配。|
-| 使用 [TiCDC](/ticdc/ticdc-overview.md) 进行增量同步 | [部署 TiCDC 拓扑架构](/ticdc-deployment-topology.md) | [简单 TiCDC 配置模板](/ticdc-deployment-topology.md#拓扑模版)<br/>[详细 TiCDC 配置模板](/ticdc-deployment-topology.md#拓扑模版) | 在最小拓扑的基础上部署 TiCDC。TiCDC 支持多种下游：TiDB、MySQL、Kafka、MQ、Confluent 和存储服务。 |
-| 单台机器，多个实例 | [混合部署拓扑架构](/hybrid-deployment-topology.md) | [简单混部配置模板](/hybrid-deployment-topology.md#拓扑模版)<br/>[详细混部配置模板](/hybrid-deployment-topology.md#拓扑模版) | 也适用于单机多实例需要额外增加目录、端口、资源配比、label 等配置的场景。 |
-| 跨机房部署 TiDB 集群 | [跨机房部署拓扑架构](/geo-distributed-deployment-topology.md) | [跨机房配置模板](/geo-distributed-deployment-topology.md#拓扑模版) | 以典型的两地三中心架构为例，介绍跨机房部署架构，以及需要注意的关键设置。 |
+| OLTP | [Deploy minimal topology](/minimal-deployment-topology.md) | [Simple minimal configuration template](https://github.com/pingcap/docs/blob/master/config-templates/simple-mini.yaml) <br/> [Full minimal configuration template](https://github.com/pingcap/docs/blob/master/config-templates/complex-mini.yaml) | This is the basic cluster topology, including tidb-server, tikv-server, and pd-server. |
+| HTAP | [Deploy the TiFlash topology](/tiflash-deployment-topology.md) | [Simple TiFlash configuration template](https://github.com/pingcap/docs/blob/master/config-templates/simple-tiflash.yaml) <br/> [Full TiFlash configuration template](https://github.com/pingcap/docs/blob/master/config-templates/complex-tiflash.yaml) | This is to deploy TiFlash along with the minimal cluster topology. TiFlash is a columnar storage engine, and gradually becomes a standard cluster topology. |
+| Replicate incremental data using [TiCDC](/ticdc/ticdc-overview.md) | [Deploy the TiCDC topology](/ticdc-deployment-topology.md) | [Simple TiCDC configuration template](https://github.com/pingcap/docs/blob/master/config-templates/simple-cdc.yaml) <br/> [Full TiCDC configuration template](https://github.com/pingcap/docs/blob/master/config-templates/complex-cdc.yaml) | This is to deploy TiCDC along with the minimal cluster topology. TiCDC supports multiple downstream platforms, such as TiDB, MySQL, Kafka, MQ, and storage services. |
+| Use OLAP on Spark | [Deploy the TiSpark topology](/tispark-deployment-topology.md) | [Simple TiSpark configuration template](https://github.com/pingcap/docs/blob/master/config-templates/simple-tispark.yaml) <br/> [Full TiSpark configuration template](https://github.com/pingcap/docs/blob/master/config-templates/complex-tispark.yaml) |  This is to deploy TiSpark along with the minimal cluster topology. TiSpark is a component built for running Apache Spark on top of TiDB/TiKV to answer the OLAP queries. Currently, TiUP cluster's support for TiSpark is still **experimental**. |
+| Deploy multiple instances on a single machine | [Deploy a hybrid topology](/hybrid-deployment-topology.md) | [Simple configuration template for hybrid deployment](https://github.com/pingcap/docs/blob/master/config-templates/simple-multi-instance.yaml) <br/> [Full configuration template for hybrid deployment](https://github.com/pingcap/docs/blob/master/config-templates/complex-multi-instance.yaml) | The deployment topologies also apply when you need to add extra configurations for the directory, port, resource ratio, and label. |
+| Deploy TiDB clusters across data centers | [Deploy a geo-distributed deployment topology](/geo-distributed-deployment-topology.md) | [Configuration template for geo-distributed deployment](https://github.com/pingcap/docs/blob/master/config-templates/geo-redundancy-deployment.yaml) | This topology takes the typical architecture of three data centers in two cities as an example. It introduces the geo-distributed deployment architecture and the key configuration that requires attention. |
 
-> **注意：**
+> **Note:**
 >
-> - 对于需要全局生效的参数，请在配置文件中 `server_configs` 的对应组件下配置。
-> - 对于需要某个节点生效的参数，请在具体节点的 `config` 中配置。
-> - 配置的层次结构使用 `.` 表示。如：`log.slow-threshold`。更多格式参考 [TiUP 配置参数模版](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml)。
-> - 如果需要指定在目标机创建的用户组名，可以参考[这个例子](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml#L7)。
+> - For parameters that should be globally effective, configure these parameters of corresponding components in the `server_configs` section of the configuration file.
+> - For parameters that should be effective on a specific node, configure these parameters in the `config` of this node.
+> - Use `.` to indicate the subcategory of the configuration, such as `log.slow-threshold`. For more formats, see [TiUP configuration template](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml).
+> - If you need to specify the user group name to be created on the target machine, see [this example](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml#L7).
 
-更多参数说明，请参考：
+For more configuration description, see the following configuration examples:
 
 - [TiDB `config.toml.example`](https://github.com/pingcap/tidb/blob/release-8.5/pkg/config/config.toml.example)
 - [TiKV `config.toml.example`](https://github.com/tikv/tikv/blob/release-8.5/etc/config-template.toml)
 - [PD `config.toml.example`](https://github.com/tikv/pd/blob/release-8.5/conf/config.toml)
 - [TiFlash `config.toml.example`](https://github.com/pingcap/tiflash/blob/release-8.5/etc/config-template.toml)
 
-## 第 4 步：执行部署命令
+## Step 4. Run the deployment command
 
-> **注意：**
+> **Note:**
 >
-> 通过 TiUP 部署集群时用于初始化的用户（通过 `--user` 指定），可以使用密钥或者交互密码的方式进行安全认证：
+> You can securely authenticate users used for initialization when deploying a cluster via TiUP (specified via `--user`) using either a key or a cross-password:
 >
-> - 如果使用密钥方式，可以通过 `-i` 或者 `--identity_file` 指定密钥的路径。
-> - 如果使用密码方式，可以通过 `-p` 进入密码交互窗口。
-> - 如果已经配置免密登录目标机，则不需填写认证。
+> - If you use secret keys, specify the path of the keys through `-i` or `--identity_file`.
+> - If you use passwords, add the `-p` flag to enter the password interaction window.
+> - If password-free login to the target machine has been configured, no authentication is required.
 >
-> TiUP 用于实际执行相关进程的用户和组（通过 `topology.yaml` 指定，默认值为 `tidb`），一般情况下会在目标机器上自动创建，但以下情况例外：
+> In general, the users and groups used by TiUP to actually execute the processes (specified via `topology.yaml`, and the default value is `tidb`) are created automatically on the target machine, with the following exceptions:
 >
-> - `topology.yaml` 中设置的用户名在目标机器上已存在。
-> - 在命令行上使用了参数 `--skip-create-user` 明确指定跳过创建用户的步骤。
+> - The user name configured in `topology.yaml` already exists on the target machine.
+> - You have used the `--skip-create-user` option in the command line to explicitly skip the step of creating the user.
 >
-> 无论 `topology.yaml` 中约定的用户和组是否被自动创建，TiUP 都会自动生成一对 ssh key，并为每台机器的该用户设置免密登录。在此后的操作中都会使用这个用户和 ssh key 去管理机器，而用于初始化的用户和密码在部属完成后不再被使用。
+> Regardless of whether the users and groups agreed upon in `topology.yaml` are created automatically, TiUP automatically generates a pair of ssh keys and sets up a secret-free login for that user on each machine. This user and ssh key will be used to manage the machine for all subsequent operations, while the user and password used for initialization will not be used any more after the deployment is complete.
 
-执行部署命令前，先使用 `check` 及 `check --apply` 命令检查和自动修复集群存在的潜在风险：
+Before you run the `deploy` command, use the `check` and `check --apply` commands to detect and automatically repair potential risks in the cluster:
 
-1. 检查集群存在的潜在风险：
+1. Check for potential risks:
 
     ```shell
     tiup cluster check ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
     ```
 
-2. 自动修复集群存在的潜在风险：
+2. Enable automatic repair:
 
     ```shell
     tiup cluster check ./topology.yaml --apply --user root [-p] [-i /home/root/.ssh/gcp_rsa]
     ```
 
-3. 部署 TiDB 集群：
+3. Deploy a TiDB cluster:
 
     ```shell
-    tiup cluster deploy tidb-test v8.5.8 ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
+    tiup cluster deploy tidb-test 8.5.8 ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
     ```
 
-以上部署示例中：
+In the `tiup cluster deploy` command above:
 
-- `tidb-test` 为部署的集群名称。
-- `v8.5.8` 为部署的集群版本，可以通过执行 `tiup list tidb` 来查看 TiUP 支持的最新可用版本。
-- 初始化配置文件为 `topology.yaml`。
-- `--user root` 表示通过 root 用户登录到目标主机完成集群部署，该用户需要有 ssh 到目标机器的权限，并且在目标机器有 sudo 权限。也可以用其他有 ssh 和 sudo 权限的用户完成部署。
-- [-i] 及 [-p] 为可选项，如果已经配置免密登录目标机，则不需填写。否则选择其一即可，[-i] 为可登录到目标机的 root 用户（或 `--user` 指定的其他用户）的私钥，也可使用 [-p] 交互式输入该用户的密码。
+- `tidb-test` is the name of the TiDB cluster to be deployed.
+- `8.5.8` is the version of the TiDB cluster to be deployed. You can see the latest supported versions by running `tiup list tidb`.
+- `topology.yaml` is the initialization configuration file.
+- `--user root` indicates logging into the target machine as the `root` user to complete the cluster deployment. The `root` user is expected to have `ssh` and `sudo` privileges to the target machine. Alternatively, you can use other users with `ssh` and `sudo` privileges to complete the deployment.
+- `[-i]` and `[-p]` are optional. If you have configured login to the target machine without password, these parameters are not required. If not, choose one of the two parameters. `[-i]` is the private key of the root user (or other users specified by `--user`) that has access to the target machine. `[-p]` is used to input the user password interactively.
 
-预期日志结尾输出 ```Deployed cluster `tidb-test` successfully``` 关键词，表示部署成功。
+At the end of the output log, you will see ```Deployed cluster `tidb-test` successfully```. This indicates that the deployment is successful.
 
-## 第 5 步：查看 TiUP 管理的集群情况
+## Step 5. Check the clusters managed by TiUP
 
 ```shell
 tiup cluster list
 ```
 
-TiUP 支持管理多个 TiDB 集群，该命令会输出当前通过 TiUP cluster 管理的所有集群信息，包括集群名称、部署用户、版本、密钥信息等。
+TiUP supports managing multiple TiDB clusters. The preceding command outputs information of all the clusters currently managed by TiUP, including the cluster name, deployment user, version, and secret key information:
 
-## 第 6 步：检查部署的 TiDB 集群情况
+## Step 6. Check the status of the deployed TiDB cluster
 
-例如，执行如下命令检查 `tidb-test` 集群情况：
+For example, run the following command to check the status of the `tidb-test` cluster:
 
 ```shell
 tiup cluster display tidb-test
 ```
 
-预期输出包括 `tidb-test` 集群中实例 ID、角色、主机、监听端口和状态（由于还未启动，所以状态为 Down/inactive）、目录信息。
+Expected output includes the instance ID, role, host, listening port, and status (because the cluster is not started yet, so the status is `Down`/`inactive`), and directory information.
 
-## 第 7 步：启动集群
+## Step 7. Start a TiDB cluster
 
-安全启动是 TiUP cluster 从 v1.9.0 起引入的一种新的启动方式，采用该方式启动数据库可以提高数据库安全性。推荐使用安全启动。
+Since TiUP cluster v1.9.0, safe start is introduced as a new start method. Starting a database using this method improves the security of the database. It is recommended that you use this method.
 
-安全启动后，TiUP 会自动生成 TiDB root 用户的密码，并在命令行界面返回密码。
+After safe start, TiUP automatically generates a password for the TiDB root user and returns the password in the command-line interface.
 
-> **注意：**
+> **Note:**
 >
-> - 使用安全启动方式后，不能通过无密码的 root 用户登录数据库，你需要记录命令行返回的密码进行后续操作。
-> - 该自动生成的密码只会返回一次，如果没有记录或者忘记该密码，请参照[忘记 root 密码](/user-account-management.md#忘记-root-密码)修改密码。
+> - After safe start of a TiDB cluster, you cannot log in to TiDB using a root user without a password. Therefore, you need to record the password returned in the command output for future logins.
+> - The password is generated only once. If you do not record it or you forgot it, refer to [Forget the `root` password](/user-account-management.md#forget-the-root-password) to change the password.
 
-方式一：安全启动
+Method 1: Safe start
 
 ```shell
 tiup cluster start tidb-test --init
 ```
 
-预期结果如下，表示启动成功。
+If the output is as follows, the start is successful:
 
 ```shell
 Started cluster `tidb-test` successfully.
@@ -353,42 +366,36 @@ Copy and record it to somewhere safe, it is only displayed once, and will not be
 The generated password can NOT be got again in future.
 ```
 
-方式二：普通启动
+Method 2: Standard start
 
 ```shell
 tiup cluster start tidb-test
 ```
 
-预期结果输出 ```Started cluster `tidb-test` successfully```，表示启动成功。使用普通启动方式后，可通过无密码的 root 用户登录数据库。
+If the output log includes ```Started cluster `tidb-test` successfully```, the start is successful. After standard start, you can log in to a database using a root user without a password.
 
-## 第 8 步：验证集群运行状态
+## Step 8. Verify the running status of the TiDB cluster
 
 ```shell
 tiup cluster display tidb-test
 ```
 
-预期结果输出：各节点 Status 状态信息为 `Up` 说明集群状态正常。
+If the output log shows `Up` status, the cluster is running properly.
 
-## 探索更多
+## See also
 
-如果你已同时部署了 [TiFlash](/tiflash/tiflash-overview.md)，接下来可参阅以下文档：
+If you have deployed [TiFlash](/tiflash/tiflash-overview.md) along with the TiDB cluster, see the following documents:
 
-- [使用 TiFlash](/tiflash/tiflash-overview.md#使用-tiflash)
-- [TiFlash 集群运维](/tiflash/maintain-tiflash.md)
-- [TiFlash 报警规则与处理方法](/tiflash/tiflash-alert-rules.md)
-- [TiFlash 常见问题](/tiflash/troubleshoot-tiflash.md)
+- [Use TiFlash](/tiflash/tiflash-overview.md#use-tiflash)
+- [Maintain a TiFlash Cluster](/tiflash/maintain-tiflash.md)
+- [TiFlash Alert Rules and Solutions](/tiflash/tiflash-alert-rules.md)
+- [Troubleshoot TiFlash](/tiflash/troubleshoot-tiflash.md)
 
-如果你已同时部署了 [TiCDC](/ticdc/ticdc-overview.md)，接下来可参阅以下文档：
+If you have deployed [TiCDC](/ticdc/ticdc-overview.md) along with the TiDB cluster, see the following documents to stream data:
 
-- [Changefeed 概述](/ticdc/ticdc-changefeed-overview.md)
-- [管理 Changefeed](/ticdc/ticdc-manage-changefeed.md)
-- [TiCDC 故障处理](/ticdc/troubleshoot-ticdc.md)
-- [TiCDC 常见问题](/ticdc/ticdc-faq.md)
+- [Changefeed Overview](/ticdc/ticdc-changefeed-overview.md)
+- [Manage Changefeed](/ticdc/ticdc-manage-changefeed.md)
+- [Troubleshoot TiCDC](/ticdc/troubleshoot-ticdc.md)
+- [TiCDC FAQs](/ticdc/ticdc-faq.md)
 
-如果你想在不中断线上服务的情况下扩容或缩容 TiDB 集群，请参阅[使用 TiUP 扩容缩容 TiDB 集群](/scale-tidb-using-tiup.md)。
-
-## 相关资源
-
-<RelatedResources>
-  <ResourceCard title="管理 TiDB 实验 1: 使用 TiUP 部署 TiDB 集群" type="lab" link="https://labs.pingcap.com/labs/dba_303_lab_ff0" imgSrc="https://lab-static.pingcap.com/quick-demo/dba_303_ch01_en.png" duration="60 分钟" />
-</RelatedResources>
+If you want to scale out or scale in your TiDB cluster without interrupting the online services, see [Scale a TiDB Cluster Using TiUP](/scale-tidb-using-tiup.md).

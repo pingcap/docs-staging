@@ -1,132 +1,132 @@
 ---
 title: TiDB 5.0.2 Release Notes
-summary: TiDB 5.0.2 发布日期为 2021 年 6 月 10 日。此版本包含兼容性更改、新功能、提升改进和 Bug 修复。兼容性更改包括 TiCDC 工具中的参数废弃和 TiKV 默认开启 Hibernate Region 特性。新功能包括 BR 支持 S3 兼容的存储和 TiFlash 优化锁操作。提升改进方面，TiDB 避免后台作业频繁读取表造成高 CPU 使用率，TiKV 添加背压功能和减少扫描的内存使用量。Bug 修复方面，修复了多个问题，包括索引导致的 panic、事务中的语句不正确使用、排序规则写入错误值等。
-aliases: ['/zh/tidb/dev/release-5.0.2/','/zh/tidb/v5.0/release-5.0.2','/zh/tidb/v5.4/release-5.0.2','/zh/tidb/v6.1/release-5.0.2','/zh/tidb/v6.5/release-5.0.2','/zh/tidb/v7.1/release-5.0.2','/zh/tidb/v7.5/release-5.0.2','/zh/tidb/v8.1/release-5.0.2']
+summary: TiDB 5.0.2 was released on June 10, 2021. The new version includes compatibility changes, new features, improvements, bug fixes, and updates to various tools such as TiKV, TiFlash, PD, TiCDC, Backup & Restore (BR), and TiDB Lightning. Some notable changes include the deprecation of `--sort-dir` in TiCDC, enabling the Hibernate Region feature in TiKV, and various bug fixes in TiDB, TiKV, PD, TiFlash, and tools like TiCDC, BR, and TiDB Lightning.
 ---
 
 # TiDB 5.0.2 Release Notes
 
-发版日期：2021 年 6 月 10 日
+Release date: June 10, 2021
 
-TiDB 版本：5.0.2
+TiDB version: 5.0.2
 
-## 兼容性更改
+## Compatibility Changes
 
 + Tools
 
     + TiCDC
 
-        - 在 `cdc cli changefeed` 命令中废弃 `--sort-dir` 参数，用户可在 `cdc server` 命令中设定 `--sort-dir` [#1795](https://github.com/pingcap/tiflow/pull/1795)
+        - Deprecate `--sort-dir` in the `cdc cli changefeed` command. Instead, users can set `--sort-dir` in the `cdc server` command. [#1795](https://github.com/pingcap/tiflow/pull/1795)
 
-## 新功能
+## New Features
 
 + TiKV
 
-    - 默认开启 Hibernate Region 特性 [#10266](https://github.com/tikv/tikv/pull/10266)
+    - Enable the Hibernate Region feature by default [#10266](https://github.com/tikv/tikv/pull/10266)
 
-## 提升改进
+## Improvements
 
 + TiDB
 
-    - 当内存中的统计信息缓存是最新的时，避免后台作业频繁读取 `mysql.stats_histograms` 表造成高 CPU 使用率 [#24317](https://github.com/pingcap/tidb/pull/24317)
+    - Avoid frequently reading the `mysql.stats_histograms` table if the cached statistics is up-to-date to avoid high CPU usage [#24317](https://github.com/pingcap/tidb/pull/24317)
 
 + TiKV
 
-    - BR 支持 S3 兼容的存储（基于 virtual-host 寻址模式）[#10243](https://github.com/tikv/tikv/pull/10243)
-    - 为 TiCDC 扫描的速度添加背压 (back pressure) 功能 [#10151](https://github.com/tikv/tikv/pull/10151)
-    - 减少 TiCDC 进行初次扫描的内存使用量 [#10133](https://github.com/tikv/tikv/pull/10133)
-    - 提升了悲观事务中 TiCDC Old Value 的缓存命中率 [#10089](https://github.com/tikv/tikv/pull/10089)
-    - 让 Region 分裂更均匀，缓解有写入热点时 Region 大小的增长速度超过分裂速度的问题 [#9785](https://github.com/tikv/tikv/issues/9785)
+    - BR now supports the S3-compatible storage using the virtual-host addressing mode [#10243](https://github.com/tikv/tikv/pull/10243)
+    - Support the back pressure for TiCDC's scan speed [#10151](https://github.com/tikv/tikv/pull/10151)
+    - Reduce the memory usage of TiCDC's initial scan [#10133](https://github.com/tikv/tikv/pull/10133)
+    - Improve the cache hit ratio of the TiCDC's Old Value feature in the pessimistic transaction [#10089](https://github.com/tikv/tikv/pull/10089)
+    - Split Regions more evenly to mitigate the issue that the growth of Region size exceeds the splitting speed when there are hotspot writes [#9785](https://github.com/tikv/tikv/issues/9785)
 
 + TiFlash
 
-    - 优化锁操作以避免 DDL 语句和读数据相互阻塞
-    - 支持 `INTEGER` 和 `REAL` 类型转化为 `REAL` 类型
+    - Optimize the table lock to prevent DDL jobs and data reads from blocking each other
+    - Support casting the `INTEGER` or `REAL` type to `REAL` type
 
 + Tools
 
     + TiCDC
 
-        - 添加关于数据表内存使用情况的监控 [#1885](https://github.com/pingcap/tiflow/pull/1885)
-        - 优化排序阶段的内存和 CPU 使用 [#1863](https://github.com/pingcap/tiflow/pull/1863)
-        - 删除了一些可能让用户困惑的无用日志信息 [#1759](https://github.com/pingcap/tiflow/pull/1759)
+        - Add monitoring metrics for the table memory consumption [#1885](https://github.com/pingcap/tiflow/pull/1885)
+        - Optimize the memory and CPU usages during the sorting stage [#1863](https://github.com/pingcap/tiflow/pull/1863)
+        - Delete some useless log information that might cause user confusion [#1759](https://github.com/pingcap/tiflow/pull/1759)
 
     + Backup & Restore (BR)
 
-        - 优化了一些含糊的报错信息 [#1132](https://github.com/pingcap/br/pull/1132)
-        - 支持检查备份的版本信息 [#1091](https://github.com/pingcap/br/pull/1091)
-        - 支持备份和恢复 `mysql` schema 下的系统表 [#1143](https://github.com/pingcap/br/pull/1143) [#1078](https://github.com/pingcap/br/pull/1078)
+        - Clarify some ambiguous error messages [#1132](https://github.com/pingcap/br/pull/1132)
+        - Support checking the cluster version of a backup [#1091](https://github.com/pingcap/br/pull/1091)
+        - Support backing up and restoring system tables in the `mysql` schema [#1143](https://github.com/pingcap/br/pull/1143) [#1078](https://github.com/pingcap/br/pull/1078)
 
     + Dumpling
 
-        - 修复备份失败却没有错误输出的问题 [#280](https://github.com/pingcap/dumpling/pull/280)
+        - Fix the issue that no error is output when a backup operation fails [#280](https://github.com/pingcap/dumpling/pull/280)
 
-## Bug 修复
+## Bug Fixes
 
 + TiDB
 
-    - 修复了在某些情况下，使用前缀索引和 Index Join 导致的 panic 的问题 [#24547](https://github.com/pingcap/tidb/issues/24547) [#24716](https://github.com/pingcap/tidb/issues/24716) [#24717](https://github.com/pingcap/tidb/issues/24717)
-    - 修复了 `point get` 的 prepare plan cache 被事务中的 `point get` 语句不正确使用的问题 [#24741](https://github.com/pingcap/tidb/issues/24741)
-    - 修复了当排序规则为 `ascii_bin` 或 `latin1_bin` 时，写入错误的前缀索引值的问题 [#24569](https://github.com/pingcap/tidb/issues/24569)
-    - 修复了正在执行的事务被 GC worker 中断的问题 [#24591](https://github.com/pingcap/tidb/issues/24591)
-    - 修复了当 `new-collation` 开启且 `new-row-format` 关闭的情况下，点查在聚簇索引下可能出错的问题 [#24541](https://github.com/pingcap/tidb/issues/24541)
-    - 为 Shuffle Hash Join 重构分区键的转换功能 [#24490](https://github.com/pingcap/tidb/pull/24490)
-    - 修复了当查询包含 `HAVING` 子句时，在构建计划的过程中 panic 的问题 [#24045](https://github.com/pingcap/tidb/issues/24045)
-    - 修复了列裁剪优化导致 `Apply` 算子和 `Join` 算子执行结果错误的问题 [#23887](https://github.com/pingcap/tidb/issues/23887)
-    - 修复了从 Async Commit 回退的主锁无法被清除的问题 [#24384](https://github.com/pingcap/tidb/issues/24384)
-    - 修复了一个统计信息 GC 的问题，该问题可能导致重复的 fm-sketch 记录 [#24357](https://github.com/pingcap/tidb/pull/24357)
-    - 当悲观锁事务收到 `ErrKeyExists` 错误时，避免不必要的悲观事务回滚 [#23799](https://github.com/pingcap/tidb/issues/23799)
-    - 修复了当 sql_mode 包含 `ANSI_QUOTES` 时，数值字面值无法被识别的问题 [#24429](https://github.com/pingcap/tidb/issues/24429)
-    - 禁止如 `INSERT INTO table PARTITION (<partitions>) ... ON DUPLICATE KEY UPDATE` 的语句从 non-listed partitions 读取数据 [#24746](https://github.com/pingcap/tidb/issues/24746)
-    - 修复了当 SQL 语句包含 `GROUP BY` 以及 `UNION` 时，可能会出现的 `index out of range` 的问题 [#24281](https://github.com/pingcap/tidb/issues/24281)
-    - 修复了 `CONCAT` 函数错误处理排序规则的问题 [#24296](https://github.com/pingcap/tidb/issues/24296)
-    - 修复了全局变量 `collation_server` 对新会话无法生效的问题 [#24156](https://github.com/pingcap/tidb/pull/24156)
+    - Fix the panic issue caused by using the prefix index and index join in some cases [#24547](https://github.com/pingcap/tidb/issues/24547) [#24716](https://github.com/pingcap/tidb/issues/24716) [#24717](https://github.com/pingcap/tidb/issues/24717)
+    - Fix the issue that the prepared plan cache of `point get` is incorrectly used by the `point get` statement in the transaction [#24741](https://github.com/pingcap/tidb/issues/24741)
+    - Fix the issue of writing the wrong prefix index value when the collation is `ascii_bin` or `latin1_bin` [#24569](https://github.com/pingcap/tidb/issues/24569)
+    - Fix the issue that the ongoing transaction might be interrupted by the GC worker [#24591](https://github.com/pingcap/tidb/issues/24591)
+    - Fix a bug that the point query might get wrong on the clustered index when `new-collation` is enabled but `new-row-format` is disabled [#24541](https://github.com/pingcap/tidb/issues/24541)
+    - Refactor the conversion of partition keys for shuffle hash join [#24490](https://github.com/pingcap/tidb/pull/24490)
+    - Fix the panic issue that occurs when building the plan for queries that contain the `HAVING` clause [#24045](https://github.com/pingcap/tidb/issues/24045)
+    - Fix the issue that the column pruning improvement causes the `Apply` and `Join` operators' results to go wrong [#23887](https://github.com/pingcap/tidb/issues/23887)
+    - Fix a bug that the primary lock fallen back from async commit cannot be resolved [#24384](https://github.com/pingcap/tidb/issues/24384)
+    - Fix a GC issue of statistics that might cause duplicated fm-sketch records [#24357](https://github.com/pingcap/tidb/pull/24357)
+    - Avoid unnecessary pessimistic rollback when the pessimistic locking receives the `ErrKeyExists` error [#23799](https://github.com/pingcap/tidb/issues/23799)
+    - Fix the issue that numeric literals cannot be recognized when the sql_mode contains `ANSI_QUOTES` [#24429](https://github.com/pingcap/tidb/issues/24429)
+    - Forbid statements such as `INSERT INTO table PARTITION (<partitions>) ... ON DUPLICATE KEY UPDATE` to read data from non-listed partitions [#24746](https://github.com/pingcap/tidb/issues/24746)
+    - Fix the potential `index out of range` error when a SQL statement contains both `GROUP BY` and `UNION` [#24281](https://github.com/pingcap/tidb/issues/24281)
+    - Fix the issue that the `CONCAT` function incorrectly handles the collation [#24296](https://github.com/pingcap/tidb/issues/24296)
+    - Fix the issue that the `collation_server` global variable does not take effect in new sessions [#24156](https://github.com/pingcap/tidb/pull/24156)
 
 + TiKV
-    - 修复了由于读取旧值而导致的 TiCDC OOM 问题 [#9996](https://github.com/tikv/tikv/issues/9996) [#9981](https://github.com/tikv/tikv/issues/9981)
-    - 修复了聚簇主键列在次级索引上的 `latin1_bin` 字符集出现空值的问题 [#24548](https://github.com/pingcap/tidb/issues/24548)
-    - 新增 `abort-on-panic` 配置，允许 TiKV 在 panic 时生成 core dump 文件。用户仍需正确配置环境以开启 core dump。 [#10216](https://github.com/tikv/tikv/pull/10216)
-    - 修复了 TiKV 不繁忙时 `point get` 查询性能回退的问题 [#10046](https://github.com/tikv/tikv/issues/10046)
+
+    - Fix a TiCDC OOM issue caused by reading old values [#9996](https://github.com/tikv/tikv/issues/9996) [#9981](https://github.com/tikv/tikv/issues/9981)
+    - Fix the issue of empty value in the secondary index for the clustered primary key column when collation is `latin1_bin` [#24548](https://github.com/pingcap/tidb/issues/24548)
+    - Add the `abort-on-panic` configuration, which allows TiKV to generate the core dump file when panic occurs. Users still need to correctly configure the environment to enable core dump [#10216](https://github.com/tikv/tikv/pull/10216)
+    - Fix the performance regression issue of `point get` queries that occurs when TiKV is not busy [#10046](https://github.com/tikv/tikv/issues/10046)
 
 + PD
 
-    - 修复在 store 数量多的情况下，切换 PD Leader 慢的问题 [#3697](https://github.com/tikv/pd/issues/3697)
-    - 修复删除不存在的 evict leader 调度器时出现 panic 的问题 [#3660](https://github.com/tikv/pd/issues/3660)
-    - 修复 offline peer 在合并完后未更新统计的问题 [#3611](https://github.com/tikv/pd/issues/3611)
+    - Fix the issue that the PD Leader re-election is slow when there are many stores [#3697](https://github.com/tikv/pd/issues/3697)
+    - Fix the panic issue that occurs when removing the evict leader scheduler from a non-existent store [#3660](https://github.com/tikv/pd/issues/3660)
+    - Fix the issue that the statistics are not updated after offline peers are merged [#3611](https://github.com/tikv/pd/issues/3611)
 
 + TiFlash
 
-    - 修复并发复制共享 Delta 索引导致结果错误的问题
-    - 修复当存在数据缺失的情况下 TiFlash 无法启动的问题
-    - 修复旧的 dm 文件无法被自动清理的问题
-    - 修复 TiFlash 在 Compaction Filter 特性开启时可能崩溃的问题
-    - 修复 `ExchangeSender` 可能传输重复数据的问题
-    - 修复了从 Async Commit 回退的锁无法被 TiFlash 清除的问题
-    - 修复当 `TIMEZONE` 类型的转换结果包含 `TIMESTAMP` 类型时返回错误结果的问题
-    - 修复 TiFlash 在 Segment Split 期间异常退出的问题
-    - 修复非根节点 MPP 任务的执行信息显示不正确的问题
+    - Fix the issue of incorrect results when cloning shared delta index concurrently
+    - Fix the potential issue that TiFlash fails to restart with incomplete data
+    - Fix the issue that old dm files are not removed automatically
+    - Fix the potential panic that occurs when the Compaction Filter feature is enabled
+    - Fix the potential issue that `ExchangeSender` sends duplicated data
+    - Fix the issue that TiFlash cannot resolve the lock fallen back from async commit
+    - Fix the issue of incorrect results returned when the casted result of the `TIMEZONE` type contains the `TIMESTAMP` type
+    - Fix the TiFlash panic issue that occurs during Segment Split
+    - Fix the issue that the execution information about the non-root MPP task is not accurate
 
 + Tools
 
     + TiCDC
 
-        - 修复 Avro 输出中丢失时区信息的问题 [#1712](https://github.com/pingcap/tiflow/pull/1712)
-        - 支持清理 Unified Sorter 过期的文件并禁止共享 `sort-dir` 目录 [#1742](https://github.com/pingcap/tiflow/pull/1742)
-        - 修复存在大量过期 Region 信息时 KV 客户端可能锁死的问题 [#1599](https://github.com/pingcap/tiflow/issues/1599)
-        - 修复 `--cert-allowed-cn` 参数中错误的帮助消息 [#1697](https://github.com/pingcap/tiflow/pull/1697)
-        - 修复因更新 `explicit_defaults_for_timestamp` 而需要 MySQL `SUPER` 权限的问题 [#1750](https://github.com/pingcap/tiflow/pull/1750)
-        - 添加 sink 流控以降低内存溢出的风险 [#1840](https://github.com/pingcap/tiflow/pull/1840)
-        - 修复调度数据表时可能发生的同步终止问题 [#1828](https://github.com/pingcap/tiflow/pull/1828)
-        - 修复 TiCDC changefeed 断点卡住导致 TiKV GC safe point 不推进的问题 [#1759](https://github.com/pingcap/tiflow/pull/1759)
+        - Fix the issue that the time zone information is lost in the Avro output [#1712](https://github.com/pingcap/tiflow/pull/1712)
+        - Support cleaning up stale temporary files in Unified Sorter and forbid sharing the `sort-dir` directory [#1742](https://github.com/pingcap/tiflow/pull/1742)
+        - Fix a deadlock bug in the KV client that occurs when many stale Regions exist [#1599](https://github.com/pingcap/tiflow/issues/1599)
+        - Fix the wrong help information in the `--cert-allowed-cn` flag [#1697](https://github.com/pingcap/tiflow/pull/1697)
+        - Revert the update for `explicit_defaults_for_timestamp` which requires the `SUPER` privilege when replicating data to MySQL [#1750](https://github.com/pingcap/tiflow/pull/1750)
+        - Support the sink flow control to reduce the risk of memory overflow [#1840](https://github.com/pingcap/tiflow/pull/1840)
+        - Fix a bug that the replication task might stop when moving a table [#1828](https://github.com/pingcap/tiflow/pull/1828)
+        - Fix the issue that the TiKV GC safe point is blocked due to the stagnation of TiCDC changefeed checkpoint [#1759](https://github.com/pingcap/tiflow/pull/1759)
 
     + Backup & Restore (BR)
 
-        - 修复 log restore 时丢失删除事件的问题 [#1063](https://github.com/pingcap/br/issues/1063)
-        - 修复 BR 发送过多无用 RPC 请求到 TiKV 的问题 [#1037](https://github.com/pingcap/br/pull/1037)
-        - 修复备份失败却没有错误输出的问题 [#1043](https://github.com/pingcap/br/pull/1043)
+        - Fix the issue that the `DELETE` events are lost during the log restore [#1063](https://github.com/pingcap/br/issues/1063)
+        - Fix a bug that causes BR to send too many useless RPC requests to TiKV [#1037](https://github.com/pingcap/br/pull/1037)
+        - Fix the issue that no error is output when a backup operation fails [#1043](https://github.com/pingcap/br/pull/1043)
 
     + TiDB Lightning
 
-        - 修复在生成 KV 数据时可能发生的 panic 问题 [#1127](https://github.com/pingcap/br/pull/1127)
-        - 修复 TiDB-backend 模式下因没有开启 autocommit 而无法加载数据的问题 [#1104](https://github.com/pingcap/br/issues/1104)
-        - 修复数据导入期间 Batch Split Region 因键的总大小超过 Raft 条目限制而可能失败的问题 [#969](https://github.com/pingcap/br/issues/969)
+        - Fix the issue of TiDB Lightning panic that occurs when generating KV data [#1127](https://github.com/pingcap/br/pull/1127)
+        - Fix the issue that TiDB Lightning in the TiDB-backend mode cannot load any data when the autocommit is disabled [#1104](https://github.com/pingcap/br/issues/1104)
+        - Fix a bug that the batch split Region fails due to the total key size exceeding the raft entry limit during the data import [#969](https://github.com/pingcap/br/issues/969)

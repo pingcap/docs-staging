@@ -1,98 +1,98 @@
 ---
-title: TiKV 配置参数
-summary: TiKV 配置参数支持文件大小和时间的可读性好的单位转换。命令行参数包括监听地址、对外访问地址、服务状态监听端口、对外访问服务状态地址、配置文件、存储数据的容量、配置信息输出格式、数据存储路径、日志级别、日志文件、PD 地址列表。需要注意的是，PD 地址列表需要使用逗号分隔多个地址。
+title: TiKV Configuration Flags
+summary: Learn some configuration flags of TiKV.
 ---
 
-# TiKV 配置参数
+# TiKV Configuration Flags
 
-TiKV 的命令行参数支持一些可读性好的单位转换。
+TiKV supports some readable unit conversions for command line parameters.
 
-+ 文件大小（以 bytes 为单位）：KB, MB, GB, TB, PB（也可以全小写）
-+ 时间（以毫秒为单位）：ms, s, m, h
+- File size (based on byte): KB, MB, GB, TB, PB (or lowercase)
+- Time (based on ms): ms, s, m, h
 
 ## `-A, --addr`
 
-+ TiKV 监听地址。
-+ 默认："127.0.0.1:20160"
-+ 如果部署一个集群，\-\-addr 必须指定当前主机的 IP 地址，例如 "192.168.100.113:20160"，如果是运行在 docker 则需要指定为 "0.0.0.0:20160"。
+- The address that the TiKV server monitors
+- Default: `"127.0.0.1:20160"`
+- To deploy a cluster, you must use `--addr` to specify the IP address of the current host, such as `"192.168.100.113:20160"`. If the cluster is run on Docker, specify the IP address of Docker as `"0.0.0.0:20160"`.
 
 ## `--advertise-addr`
 
-+ TiKV 对外访问地址。
-+ 默认：${addr}
-+ 在某些情况下，比如 Docker 或者 NAT 网络环境，客户端并不能通过 `--addr` 的地址来访问到 TiKV。这时候，你可以设置 `--advertise-addr` 来让客户端访问 TiKV。
-+ 例如，docker 内部 IP 地址为 172.17.0.1，而宿主机的 IP 地址为 192.168.100.113 并且设置了端口映射 -p 20160:20160，那么可以设置为 \-\-advertise-addr="192.168.100.113:20160"，客户端可以通过 192.168.100.113:20160 来找到这个服务。
+- The server advertise address for client traffic from outside
+- Default: `${addr}`
+- If the client cannot connect to TiKV through the `--addr` address because of Docker or NAT network, you must manually set the `--advertise-addr` address.
+- For example, the internal IP address of Docker is 172.17.0.1, while the IP address of the host is 192.168.100.113 and the port mapping is set to `-p 20160:20160`. In this case, you can set `--advertise-addr` to "192.168.100.113:20160". The client can find this service through 192.168.100.113:20160.
 
 ## `--status-addr`
 
-+ TiKV 服务状态监听端口。
-+ 默认："20180"
-+ Prometheus 统计可以通过 `http://host:status_port/metrics` 访问。
-+ Profile 数据可以通过 `http://host:status_port/debug/pprof/profile` 访问。
++ The port through which the TiKV service status is listened
++ Default: `"20180"`
++ The Prometheus can access this status information via `http://host:status_port/metrics`.
++ The Profile can access this status information via `http://host:status_port/debug/pprof/profile`.
 
 ## `--advertise-status-addr`
 
-+ TiKV 对外访问服务状态地址。
-+ 默认：使用 `--status-addr`
-+ 在某些情况下，例如 docker 或者 NAT 网络环境，客户端并不能通过 `--status-addr` 的地址来访问到 TiKV。此时，你可以设置 `--advertise-status-addr` 来让客户端访问 TiKV。
-+ 例如，Docker 内部 IP 地址为 `172.17.0.1`，而宿主机的 IP 地址为 `192.168.100.113` 并且设置了端口映射 `-p 20180:20180`，那么可以设置 `--advertise-status-addr="192.168.100.113:20180"`，客户端可以通过 `192.168.100.113:20180` 来找到这个服务。
+- The address through which TiKV accesses service status from outside.
+- Default: The value of `--status-addr` is used.
+- If the client cannot connect to TiKV through the `--status-addr` address because of Docker or NAT network, you must manually set the `--advertise-status-addr` address.
+- For example, the internal IP address of Docker is `172.17.0.1`, while the IP address of the host is `192.168.100.113` and the port mapping is set to `-p 20180:20180`. In this case, set `--advertise-status-addr="192.168.100.113:20180"`. The client can find this service through `192.168.100.113:20180`.
 
 ## `-C, --config`
 
-+ 配置文件。
-+ 默认：""
-+ 如果你指定了配置文件，TiKV 会首先读取配置文件的配置。然后如果对应的配置在命令行参数里面也存在，TiKV 就会使用命令行参数的配置来覆盖配置文件里面的。
+- The config file
+- Default: `""`
+- If you set the configuration using the command line, the same setting in the config file will be overwritten.
 
 ## `--capacity`
 
-+ TiKV 存储数据的容量。
-+ 默认：0（无限）
-+ PD 需要使用这个值来对整个集群做 balance 操作。（提示：你可以使用 10GB 来替代 10737418240，从而简化参数的传递）。
+- The store capacity
+- Default: `0` (unlimited)
+- PD uses this flag to determine how to balance the TiKV servers. (Tip: you can use 10GB instead of 1073741824)
 
 ## `--config-info <FORMAT>`
 
-+ 按照指定的 `FORMAT` 输出各个配置项的取值信息并退出。
-+ `FORMAT` 可选值：`json`。
-+ 目前仅支持以 JSON 格式输出每个配置项的名字 (Name)、默认值 (DefaultValue) 和当前配置值 (ValueInFile)。当执行此命令时，若同时指定了 `-C` 或 `--config` 参数，则对应的配置文件包含的配置项会同时输出当前配置值和默认值，其他未指定的配置项仅输出默认值，示例如下：
+- When this flag is used, available configuration values are listed according to `FORMAT` and then exit.
+- Value option for `FORMAT`: `json`. Currently, only JSON format is supported.
+- Only the configuration name (Name), default value (DefaultValue) and current value (ValueInFile) are listed in the output JSON. If the `-C` or `--config` is specified, the current value and the default value of configuration items in the file are listed together, and other items without `-C` or `--config` specified only have default values. The following is an example:
 
-  ```json
-  {
+    ```json
+    {
     "Component": "TiKV Server",
     "Version": "6.2.0",
     "Parameters": [
-      {
+        {
         "Name": "log-level",
         "DefaultValue": "info",
         "ValueInFile": "warn"
-      },
-      {
+        },
+        {
         "Name": "log-file",
         "DefaultValue": ""
-      },
-      ...
+        },
+        ...
     ]
-  }
-  ```
+    }
+    ```
 
 ## `--data-dir`
 
-+ TiKV 数据存储路径。
-+ 默认："/tmp/tikv/store"
+- The path to the data directory
+- Default: `"/tmp/tikv/store"`
 
 ## `-L`
 
-+ Log 级别。
-+ 默认："info"
-+ 可选值："debug"，"info"，"warn"，"error"，"fatal"
+- The log level
+- Default: `"info"`
+- Optional values: `"debug"`, `"info"`, `"warn"`, `"error"`, `"fatal"`
 
 ## `--log-file`
 
-+ Log 文件。
-+ 默认：""
-+ 如果没设置这个参数，log 会默认输出到 "stderr"，如果设置了，log 就会输出到对应的文件里面。
+- The log file
+- Default: `""`
+- If this flag is not set, logs will be written to "stderr". If this flag is set, logs are output to the corresponding file.
 
 ## `--pd`
 
-+ PD 地址列表。
-+ 默认：""
-+ TiKV 必须使用这个值连接 PD，才能正常工作。使用逗号来分隔多个 PD 地址，例如：192.168.100.113:2379, 192.168.100.114:2379, 192.168.100.115:2379。
+- The address list of PD servers
+- Default: `""`
+- To make TiKV work, you must use the value of `--pd` to connect the TiKV server to the PD server. Separate multiple PD addresses using comma, for example "192.168.100.113:2379, 192.168.100.114:2379, 192.168.100.115:2379".

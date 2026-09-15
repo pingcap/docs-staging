@@ -1,67 +1,122 @@
 ---
-title: TiDB 中的各种超时
-summary: 简单介绍 TiDB 中的各种超时，为排查错误提供依据。
-aliases: ['/zh/tidb/dev/timeouts-in-tidb','/zh/tidb/stable/dev-guide-timeouts-in-tidb/','/zh/tidb/dev/dev-guide-timeouts-in-tidb/','/zh/tidbcloud/dev-guide-timeouts-in-tidb/']
+title: TiDB 中的超时机制
+summary: 了解 TiDB 中的超时机制，以及排查错误的解决方案。
 ---
 
-# TiDB 中的各种超时
+# TiDB 中的超时机制
 
-本章将介绍 TiDB 中的各种超时，为排查错误提供依据。
+本文档介绍了 TiDB 中的各种超时机制，帮助你排查相关错误。
 
 ## GC 超时
 
-TiDB 的事务的实现采用了 MVCC（多版本并发控制）机制，当新写入的数据覆盖旧的数据时，旧的数据不会被替换掉，而是与新写入的数据同时保留，并以时间戳来区分版本。TiDB 通过定期 GC 的机制来清理不再需要的旧数据。
+TiDB 的事务实现采用了 MVCC（多版本并发控制）机制。当新写入的数据覆盖旧数据时，旧数据不会被替换，而是与新写入的数据一同保留。不同版本通过时间戳进行区分。TiDB 通过定期的垃圾回收（GC）机制清理不再需要的旧数据。
 
-- TiDB v4.0 之前的版本：
+- 对于 TiDB v4.0 之前的版本：
 
-    默认情况下，TiDB 可以确保每个 MVCC 版本（一致性快照）保存 10 分钟。读取时间超过 10 分钟的事务，会收到报错 `GC life time is shorter than transaction duration`。
+    默认情况下，每个 MVCC 版本（即一致性快照）会保留 10 分钟。读取时间超过 10 分钟的事务会收到 `GC life time is shorter than transaction duration` 错误。
 
-- TiDB v4.0 及之后的版本：
+- 对于 TiDB v4.0 及之后的版本：
 
-    正在运行的事务，如果持续时间不超过 24 小时，在运行期间 GC 会被阻塞，不会出现 `GC life time is shorter than transaction duration` 报错。
+    对于运行时间不超过 24 小时的事务，事务执行期间会阻止垃圾回收（GC）。不会出现 `GC life time is shorter than transaction duration` 错误。
 
-如果你确定在临时特殊场景中需要更长的读取时间，可以通过以下方式调大 MVCC 版本保留时间：
+如果在某些场景下你需要临时更长的读取时间，可以增加 MVCC 版本的保留时间：
 
-- TiDB v5.0 之前的版本 ：调整 `mysql.tidb` 表中的 `tikv_gc_life_time`。
-- TiDB v5.0 及之后的版本：调整系统变量 [`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-从-v50-版本开始引入)。
+- 对于 TiDB v5.0 之前的版本：在 TiDB 的 `mysql.tidb` 表中调整 `tikv_gc_life_time`。
+- 对于 TiDB v5.0 及之后的版本：调整系统变量 [`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50)。
 
-需要注意的是，此变量的配置是立刻影响全局的，调大它会增加当前所有快照的生命时长，调小它也会立即缩短所有快照的生命时长。过多的 MVCC 版本会影响 TiDB 的集群性能，因此在使用后，需要及时把此变量调整回之前的设置。
+注意，系统变量的配置是全局且即时生效的。增加该值会延长所有现有快照的生命周期，减少该值会立即缩短所有快照的生命周期。过多的 MVCC 版本会影响 TiDB 集群的性能，因此你需要及时将该变量恢复为之前的设置。
+
+<CustomContent platform="tidb">
 
 > **Tip:**
 >
-> 特别地，在 Dumpling 备份时，如果导出的数据量少于 1 TB 且导出的 TiDB 版本为 v4.0.0 或更新版本，并且 Dumpling 可以访问 TiDB 集群的 PD 地址以及 [`INFORMATION_SCHEMA.CLUSTER_INFO`](/information-schema/information-schema-cluster-info.md) 表，Dumpling 会自动调整 GC 的 safe point 从而阻塞 GC 且不会对原集群造成影响。以下场景除外：
+> 特别地，当 Dumpling 从 TiDB 导出数据（小于 1 TB）时，如果 TiDB 版本为 v4.0.0 或更高，并且 Dumpling 能访问 TiDB 集群的 PD 地址和 [`INFORMATION_SCHEMA.CLUSTER_INFO`](/information-schema/information-schema-cluster-info.md) 表，Dumpling 会自动调整 GC safe point，阻止 GC，不影响原有集群。
+>
+> 但在以下任一场景下，Dumpling 无法自动调整 GC 时间：
 >
 > - 数据量非常大（超过 1 TB）。
-> - Dumpling 无法直接连接到 PD，例如 TiDB 集群运行在 TiDB Cloud 上，或者 TiDB 集群运行在 Kubernetes 上且与 Dumpling 分离。
+> - Dumpling 无法直接连接 PD，例如 TiDB 集群部署在 TiDB Cloud 或与 Dumpling 隔离的 Kubernetes 上。
 >
-> 在这些场景中，你必须使用 `tikv_gc_life_time` 提前手动调长 GC 时间，以避免因为导出过程中发生 GC 导致导出失败。详见 TiDB 工具 Dumpling 的[手动设置 TiDB GC 时间](/dumpling-overview.md#手动设置-tidb-gc-时间)。
+> 在这些场景下，你必须提前手动延长 GC 时间，以避免导出过程中因 GC 导致导出失败。
+>
+> 详情参见 [手动设置 TiDB GC 时间](/dumpling-overview.md#manually-set-the-tidb-gc-time)。
 
-更多关于 GC 的信息，请参考 [GC 机制简介](/garbage-collection-overview.md)文档。
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+> **Tip:**
+>
+> 特别地，当 Dumpling 从 TiDB 导出数据（小于 1 TB）时，如果 TiDB 版本大于等于 v4.0.0，并且 Dumpling 能访问 TiDB 集群的 PD 地址，Dumpling 会自动延长 GC 时间，不影响原有集群。
+>
+> 但在以下任一场景下，Dumpling 无法自动调整 GC 时间：
+>
+> - 数据量非常大（超过 1 TB）。
+> - Dumpling 无法直接连接 PD，例如 TiDB 集群部署在 TiDB Cloud 或与 Dumpling 隔离的 Kubernetes 上。
+>
+> 在这些场景下，你必须提前手动延长 GC 时间，以避免导出过程中因 GC 导致导出失败。
+>
+> 详情参见 [手动设置 TiDB GC 时间](https://docs.pingcap.com/tidb/stable/dumpling-overview#manually-set-the-tidb-gc-time)。
+
+</CustomContent>
+
+关于 GC 的更多信息，参见 [GC 概述](/garbage-collection-overview.md)。
 
 ## 事务超时
 
-在事务已启动但未提交或回滚的情况下，你可能需要更细粒度的控制和更短的超时，以避免持有锁的时间过长。此时，你可以使用 TiDB 在 v7.6.0 引入的 [`tidb_idle_transaction_timeout`](/system-variables.md#tidb_idle_transaction_timeout-从-v760-版本开始引入) 控制用户会话中事务的空闲超时。
+在某些场景下，事务已开启但既未提交也未回滚，你可能需要更细粒度的控制和更短的超时时间，以防止长时间持有锁。此时，你可以使用 [`tidb_idle_transaction_timeout`](/system-variables.md#tidb_idle_transaction_timeout-new-in-v760)（TiDB v7.6.0 引入）来控制用户会话中事务的空闲超时时间。
 
-垃圾回收 (GC) 不会影响到正在执行的事务。但悲观事务的运行仍有上限，有基于事务超时的限制（TiDB 配置文件 [performance] 类别下的 `max-txn-ttl` 修改，默认为 60 分钟）和基于事务使用内存的限制。
+GC 不会影响正在进行的事务。但悲观事务的并发数量仍有上限，事务超时和事务使用的内存都有上限。你可以通过 TiDB 配置文件 `[performance]` 分类下的 `max-txn-ttl` 参数修改事务超时时间，默认值为 60 分钟。
 
-形如 `INSERT INTO t10 SELECT * FROM t1` 的 SQL 语句，不会受到 GC 的影响，但超过了 `max-txn-ttl` 的时间后，会由于超时而回滚。
+如 `INSERT INTO t10 SELECT * FROM t1` 这类 SQL 语句不会受到 GC 的影响，但如果执行时间超过 `max-txn-ttl`，会因超时被回滚。
 
-## SQL 执行时间超时
+## SQL 执行超时
 
-TiDB 还提供了一个系统变量来限制单条 SQL 语句的执行时间，仅对 `SELECT` 语句（包括 `SELECT ... FOR UPDATE`）生效：`max_execution_time`，它的默认值为 0，表示无限制。`max_execution_time` 的单位为 ms，但实际精度在 100ms 级别，而非更准确的毫秒级别。
+TiDB 还提供了一个系统变量（`max_execution_time`，默认值为 `0`，表示不限制）用于限制单条 SQL 语句的执行时间。目前该系统变量仅对 `SELECT` 语句（包括 `SELECT ... FOR UPDATE`）生效。`max_execution_time` 的单位为 `ms`，但实际精度为 100ms 级别，而非毫秒级。
 
 ## JDBC 查询超时
 
-从 v6.1.0 起，当 [`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-从-v610-版本开始引入) 配置项为默认值 `true` 时，你可以使用 MySQL JDBC 提供的 `setQueryTimeout()` 方法来控制查询的超时时间。
+<CustomContent platform="tidb">
 
->**注意:**
+自 v6.1.0 起，当 [`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-new-in-v610) 配置项为默认值 `true` 时，你可以使用 MySQL JDBC 提供的 `setQueryTimeout()` 方法控制查询超时。
+
+> **Note:**
 >
-> 当 TiDB 版本低于 v6.1.0 或 [`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-从-v610-版本开始引入) 为 `false` 时，`setQueryTimeout()` 对 TiDB 不起作用。这是因为查询超时后，客户端会向数据库发送一条 `KILL` 命令。但是由于 TiDB 服务是负载均衡的，为防止 `KILL` 命令在错误的 TiDB 节点上终止连接，TiDB 不会执行该命令。此时，可以通过设置 `max_execution_time` 实现查询超时控制。
+> 如果你的 TiDB 版本低于 v6.1.0，或 [`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-new-in-v610) 设置为 `false`，`setQueryTimeout()` 对 TiDB 无效。这是因为客户端在检测到查询超时时会向数据库发送 `KILL` 命令。但由于 TiDB 服务是负载均衡的，TiDB 不会执行 `KILL` 命令，以避免错误节点上的连接被终止。在这种情况下，你可以使用 `max_execution_time` 控制查询超时。
 
-TiDB 提供了三个与 MySQL 兼容的超时控制参数：
+</CustomContent>
 
-- **wait_timeout**，控制与 Java 应用连接的非交互式空闲超时时间。在 TiDB v5.4 及以上版本中，默认值为 `28800` 秒，即空闲超时为 8 小时。在 v5.4 之前，默认值为 `0`，即没有时间限制。
-- **interactive_timeout**，控制与 Java 应用连接的交互式空闲超时时间，默认值为 8 小时。
-- **max_execution_time**，控制连接中 SQL 执行的超时时间，仅对 `SELECT` 语句（包括 `SELECT ... FOR UPDATE`）生效，默认值是 0，即允许连接无限忙碌（一个 SQL 语句执行无限的长的时间）。
+<CustomContent platform="tidb-cloud">
 
-但在实际生产环境中，空闲连接和一直无限执行的 SQL 对数据库和应用都有不好的影响。你可以通过在应用的连接字符串中配置这两个 session 级的变量来避免空闲连接和执行时间过长的 SQL 语句。例如，设置 `sessionVariables=wait_timeout=3600（1 小时）`和 `sessionVariables=max_execution_time=300000（5 分钟）`。
+自 v6.1.0 起，当 [`enable-global-kill`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file/#enable-global-kill-new-in-v610) 配置项为默认值 `true` 时，你可以使用 MySQL JDBC 提供的 `setQueryTimeout()` 方法控制查询超时。
+
+> **Note:**
+>
+> 如果你的 TiDB 版本低于 v6.1.0，或 [`enable-global-kill`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file/#enable-global-kill-new-in-v610) 设置为 `false`，`setQueryTimeout()` 对 TiDB 无效。这是因为客户端在检测到查询超时时会向数据库发送 `KILL` 命令。但由于 TiDB 服务是负载均衡的，TiDB 不会执行 `KILL` 命令，以避免错误节点上的连接被终止。在这种情况下，你可以使用 `max_execution_time` 控制查询超时。
+
+</CustomContent>
+
+TiDB 提供了以下与 MySQL 兼容的超时控制参数。
+
+- **wait_timeout**，控制与 Java 应用的非交互式空闲连接超时时间。自 TiDB v5.4 起，`wait_timeout` 默认值为 28800 秒，即 8 小时。对于 v5.4 之前的版本，默认值为 0，表示无限制超时。
+- **interactive_timeout**，控制与 Java 应用的交互式空闲连接超时时间。默认值为 8 小时。
+- **max_execution_time**，控制连接中 SQL 执行的超时时间，仅对 `SELECT` 语句（包括 `SELECT ... FOR UPDATE`）生效。默认值为 0，表示连接可以无限忙碌，即 SQL 语句可以无限执行。
+
+但在实际生产环境中，空闲连接和无限执行的 SQL 语句会对数据库和应用产生负面影响。你可以在应用的连接字符串中配置这两个会话级变量，避免空闲连接和无限执行的 SQL 语句。例如，设置如下：
+
+- `sessionVariables=wait_timeout=3600`（1 小时）
+- `sessionVariables=max_execution_time=300000`（5 分钟）
+
+## 需要帮助？
+
+<CustomContent platform="tidb">
+
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或[提交支持工单](/support.md)。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或[提交支持工单](https://tidb.support.pingcap.com/)。
+
+</CustomContent>

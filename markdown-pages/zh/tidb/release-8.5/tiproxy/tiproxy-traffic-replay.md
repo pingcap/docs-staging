@@ -1,97 +1,97 @@
 ---
-title: TiProxy 流量回放
-summary: 介绍 TiProxy 的流量回放的使用场景和使用步骤。
+title: TiProxy Traffic Replay
+summary: Introduce the use cases and steps for the TiProxy traffic replay feature.
 ---
 
-# TiProxy 流量回放
+# TiProxy Traffic Replay
 
-> **警告：**
+> **Warning:**
 >
-> TiProxy 流量回放目前为实验特性，不建议在生产环境中使用。该功能可能会在未事先通知的情况下发生变化或删除。如果发现 bug，请在 GitHub 上提 [issue](https://github.com/pingcap/tiproxy/issues) 反馈。
+> Currently, the TiProxy traffic replay feature is experimental. It is not recommended that you use it in production environments. This feature might be changed or removed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tiproxy/issues) on GitHub.
 
-从 TiProxy v1.3.0 开始，你可以使用 TiProxy 捕获 TiDB 生产集群中的访问流量，并在测试集群中按照指定的速率回放这些流量。通过该功能，你可以在测试环境中重现生产集群的实际工作负载，从而验证所有 SQL 的执行结果和性能表现。
+Starting from TiProxy v1.3.0, you can use TiProxy to capture access traffic in a TiDB production cluster and replay it in a test cluster at a specified rate. This feature enables you to reproduce actual workloads from the production cluster in a test environment, verifying SQL statement execution results and performance.
 
-<img src="https://docs-download.pingcap.com/media/images/docs-cn/tiproxy/tiproxy-traffic-replay.png" alt="TiProxy 流量回放" width="800" />
+<img src="https://docs-download.pingcap.com/media/images/docs/tiproxy/tiproxy-traffic-replay.png" alt="TiProxy traffic replay" width="800" />
 
-## 使用场景
+## Use cases
 
-流量回放适用于以下场景：
+Traffic replay is suitable for the following scenarios:
 
-- **TiDB 版本升级前验证**：在新版本的测试集群上回放生产流量，验证新版本 TiDB 能否成功执行所有 SQL 语句。
-- **执行变更前影响评估**：在测试集群上使用生产流量模拟，验证变更对集群的影响。例如在变更配置项或系统变量、变更表结构、使用 TiDB 的新功能前，先在测试集群验证效果。
-- **TiDB 扩缩容前性能验证**：在新规模的测试集群上按对应速率回放流量，验证新规模集群的性能是否满足要求。例如，为了节省成本要将集群规模缩容到 1/2 时，可以按 1/2 速率回放流量，验证缩容后 SQL 延迟是否满足要求。
-- **性能上限测试**：在相同规模的测试集群上多次回放流量，每次调大回放速率，测试该规模下集群的吞吐量上限，以评估性能是否满足未来业务增长需求。
+- **Verify TiDB version upgrades**: Replay production traffic on a test cluster with a new TiDB version to verify that the new TiDB version can successfully execute all SQL statements.
+- **Assess change impact**: Simulate production traffic on a test cluster to verify the impact of changes on the cluster. For example, verify the effects before modifying configuration items or system variables, altering table schemas, or enabling new TiDB features.
+- **Validate performance before TiDB scaling**: Replay traffic at corresponding rates on a test cluster with a new scale to validate whether the performance meets requirements. For example, to plan a 50% cluster downscale for cost savings, replay traffic at half speed to validate if SQL latency meets requirements after scaling.
+- **Test performance limits**: Replay traffic multiple times on a test cluster of the same scale, increasing the replay rate each time to test the throughput limit of that scale and assess whether performance meets future business growth needs.
 
-流量回放不适用于以下场景：
+Traffic replay is not suitable for the following scenarios:
 
-- TiDB 与 MySQL 的 SQL 兼容性验证：TiProxy 只支持读取 TiProxy 生成的流量文件，不支持从 MySQL 捕获流量后在 TiDB 上回放。
-- TiDB 版本间 SQL 执行结果对比：TiProxy 只验证 SQL 语句是否执行成功，不对比运行结果。
+- Verify SQL compatibility between TiDB and MySQL: TiProxy only supports reading traffic files it generates and cannot capture traffic from MySQL for replay on TiDB.
+- Compare SQL execution results between TiDB versions: TiProxy only verifies if SQL statements execute successfully but does not compare results.
 
-## 使用步骤
+## Usage
 
-1. 准备测试环境：
+1. Prepare the test environment:
 
-    1. 创建测试集群，详情参考[使用 TiUP 部署 TiDB 集群](/production-deployment-using-tiup.md)。
-    2. 安装 `tiproxyctl`，确保安装 `tiproxyctl` 的主机能连接到生产集群和测试集群的 TiProxy 实例。详情参考[安装 TiProxy Control](/tiproxy/tiproxy-command-line-flags.md#安装-tiproxy-control)。
-    3. 同步生产集群的数据到测试集群，详情参考[数据迁移概述](/migration-overview.md)。
-    4. 在测试集群中运行 [`ANALYZE`](/sql-statements/sql-statement-analyze-table.md) 更新统计信息。
+    1. Create a test cluster. For more information, see [Deploy a TiDB Cluster Using TiUP](/production-deployment-using-tiup.md).
+    2. Install `tiproxyctl` and ensure the host with `tiproxyctl` can connect to TiProxy instances in both production and test clusters. For more information, see [Install TiProxy Control](/tiproxy/tiproxy-command-line-flags.md#install-tiproxy-control).
+    3. Replicate data from the production cluster to the test cluster. For more information, see [Data Migration Overview](/migration-overview.md).
+    4. Run the [`ANALYZE`](/sql-statements/sql-statement-analyze-table.md) statement in the test cluster to update statistics.
 
-2. 使用 [`tiproxyctl traffic capture`](/tiproxy/tiproxy-command-line-flags.md#traffic-capture) 命令连接到生产集群的 TiProxy 实例，开始捕获流量。
+2. Use the [`tiproxyctl traffic capture`](/tiproxy/tiproxy-command-line-flags.md#traffic-capture) command to connect to the production cluster's TiProxy instance and start capturing traffic.
 
-    > **注意：**
+    > **Note:**
     >
-    > - TiProxy 会捕获所有连接上的流量，包括已创建的和新创建的连接。
-    > - 在 TiProxy 主备模式下，请确保连接到 TiProxy 主实例。
-    > - 如果 TiProxy 配置了虚拟 IP，建议连接到虚拟 IP 地址。
-    > - TiProxy 的 CPU 使用率越高，捕获流量对 QPS 的影响越大。为减少对生产集群的影响，建议预留至少 30% 的 CPU，此时平均 QPS 下降约 3%。有关详细性能数据，请参阅[捕获流量测试](/tiproxy/tiproxy-performance-test.md#捕获流量测试)。
-    > - 再次捕获流量时，上次的流量文件不会自动删除，需要手动删除。
+    > - TiProxy captures traffic on all connections, including existing and newly created ones.
+    > - In TiProxy primary-secondary mode, connect to the primary TiProxy instance.
+    > - If TiProxy is configured with a virtual IP, it is recommended to connect to the virtual IP address.
+    > - The higher the CPU usage of TiProxy, the greater the impact of traffic capture on QPS. To reduce the impact on the production cluster, it is recommended to reserve at least 30% of CPU capacity, which results in an approximately 3% decrease in average QPS. For detailed performance data, see [Traffic capture test](/tiproxy/tiproxy-performance-test.md#traffic-capture-test).
+    > - TiProxy does not automatically delete previous capture files when capturing traffic again. You need to manually delete them.
 
-    例如，以下命令连接到 TiProxy 实例 `10.0.1.10:3080`，捕获一个小时的流量，并将流量保存到 TiProxy 实例的 `/tmp/traffic` 目录下：
-    
+    For example, the following command connects to the TiProxy instance at `10.0.1.10:3080`, captures traffic for one hour, and saves it to the `/tmp/traffic` directory on the TiProxy instance:
+
     ```shell
     tiproxyctl traffic capture --host 10.0.1.10 --port 3080 --output="/tmp/traffic" --duration=1h
     ```
 
-    流量文件会自动转轮和压缩。`/tmp/traffic` 目录下的文件示例如下：
+    Traffic files are automatically rotated and compressed. Example files in the `/tmp/traffic` directory:
 
     ```shell
     ls /tmp/traffic
     # meta    traffic-2024-08-29T17-37-12.477.log.gz  traffic-2024-08-29T17-43-11.166.log.gz traffic.log
     ```
 
-    更多信息，请参考 [`tiproxyctl traffic capture`](/tiproxy/tiproxy-command-line-flags.md#traffic-capture)。
+    For more information, see [`tiproxyctl traffic capture`](/tiproxy/tiproxy-command-line-flags.md#traffic-capture).
 
-3. 将流量文件目录复制到测试集群的 TiProxy 实例上。
-4. 使用 [`tiproxyctl traffic replay`](/tiproxy/tiproxy-command-line-flags.md#traffic-replay) 连接到测试集群的 TiProxy 实例，开始回放流量。
+3. Copy the traffic file directory to the test cluster's TiProxy instance.
+4. Use [`tiproxyctl traffic replay`](/tiproxy/tiproxy-command-line-flags.md#traffic-replay) to connect to the test cluster's TiProxy instance and start replaying traffic.
 
-    默认配置下，SQL 语句的执行速率与生产集群相同，数据库连接也与生产集群一一对应，以模拟生产集群的负载，并保证事务的执行顺序一致。
+    By default, SQL statements are executed at the same rate as in the production cluster, and each database connection corresponds to a connection in the production cluster to simulate the production load and ensure consistent transaction execution order.
 
-    例如，如下命令通过用户名 `u1` 和密码 `123456` 连接到 TiProxy 实例 `10.0.1.10:3080`，从 TiProxy 实例的 `/tmp/traffic` 目录下读取流量文件并回放流量：
+    For example, the following command connects to the TiProxy instance at `10.0.1.10:3080` using username `u1` and password `123456`, reads traffic files from the `/tmp/traffic` directory on the TiProxy instance, and replays the traffic:
 
     ```shell
     tiproxyctl traffic replay --host 10.0.1.10 --port 3080 --username="u1" --password="123456" --input="/tmp/traffic"
     ```
 
-    由于所有流量在用户 `u1` 下运行，请确保 `u1` 能访问所有数据库和表。如果没有这样的用户，则需要创建一个。
+    Because all traffic runs under user `u1`, ensure `u1` can access all databases and tables. If no such user exists, create one.
 
-    更多信息，请参考 [`tiproxyctl traffic replay`](/tiproxy/tiproxy-command-line-flags.md#traffic-replay)。
+    For more information, see [`tiproxyctl traffic replay`](/tiproxy/tiproxy-command-line-flags.md#traffic-replay).
 
-5. 查看回放报告。
+5. View the replay report.
 
-    回放完成后，报告存储在测试集群的 `tiproxy_traffic_replay` 数据库下。该数据库包含两个表 `fail` 和 `other_errors`。
+    After replay completion, the report is stored in the `tiproxy_traffic_replay` database on the test cluster. This database contains two tables: `fail` and `other_errors`.
 
-    `fail` 表存储运行失败的 SQL 语句，字段说明如下：
+    The `fail` table stores failed SQL statements, with the following fields:
 
-    - `cmd_type`：运行错误的命令类型，例如 `Query`（执行普通语句）、`Prepare`（预处理语句）、`Execute`（执行预处理语句）。
-    - `digest`：执行失败的 SQL 语句的指纹。
-    - `sample_stmt`：SQL 语句首次执行失败时的 SQL 文本。
-    - `sample_err_msg`：SQL 语句执行失败的报错信息。
-    - `sample_conn_id`：SQL 语句在流量文件中记录的连接 ID，可用于在流量文件中查看 SQL 语句的执行上下文。
-    - `sample_capture_time`：SQL 语句在流量文件中记录的执行时间，可用于在流量文件中查看 SQL 语句的执行上下文。
-    - `sample_replay_time`：SQL 语句在回放时执行失败的时间，可用于在 TiDB 日志文件中查看错误信息。
-    - `count`：SQL 语句执行失败的次数。
+    - `cmd_type`: the type of a failed command, such as `Query` (execute an ordinary statement), `Prepare` (prepare a statement), and `Execute` (execute a prepared statement).
+    - `digest`: the digest of the failed SQL statement.
+    - `sample_stmt`: the SQL text when the statement first failed.
+    - `sample_err_msg`: the error message when the SQL statement failed.
+    - `sample_conn_id`: the connection ID recorded in the traffic file for the SQL statement. You can use this to view the execution context in the traffic file.
+    - `sample_capture_time`: the execution time recorded in the traffic file for the SQL statement. You can use this to view the execution context in the traffic file.
+    - `sample_replay_time`: the time when the SQL statement failed during replay. You can use this to view error information in the TiDB log file.
+    - `count`: the number of times the SQL statement failed.
 
-    以下是 `fail` 表的输出示例：
+    The following is an example output of the `fail` table:
 
     ```sql
     SELECT * FROM tiproxy_traffic_replay.fail LIMIT 1\G
@@ -109,14 +109,14 @@ summary: 介绍 TiProxy 的流量回放的使用场景和使用步骤。
                   count: 4
     ```
 
-    `other_errors` 表存储其他未预期错误，例如网络错误、连接数据库错误。字段说明如下：
+    The `other_errors` table stores unexpected errors, such as network errors or database connection errors, with the following fields:
 
-    - `err_type`：错误的类型，是一个简短的错误信息，例如 `i/o timeout`。
-    - `sample_err_msg`：错误首次出现时的完整错误信息。
-    - `sample_replay_time`：错误在回放时执行失败的时间，可用于在 TiDB 日志文件中查看错误信息。
-    - `count`：错误出现的次数。
+    - `err_type`: the type of error, presented as a brief error message. For example, `i/o timeout`.
+    - `sample_err_msg`: the complete error message when the error first occurred.
+    - `sample_replay_time`: the time when the error occurred during replay. You can use this to view error information in the TiDB log file.
+    - `count`: the number of occurrences for this error.
 
-    以下是 `other_errors` 表的输出示例：
+    The following is an example output of the `other_errors` table:
 
     ```sql
     SELECT * FROM tiproxy_traffic_replay.other_errors LIMIT 1\G
@@ -130,33 +130,33 @@ summary: 介绍 TiProxy 的流量回放的使用场景和使用步骤。
                  count: 1
     ```
 
-    > **注意：**
+    > **Note:**
     >
-    > - `tiproxy_traffic_replay` 中的表结构在未来版本中可能会改变。不推荐在应用程序开发或工具开发中读取 `tiproxy_traffic_replay` 中的数据。
-    > - 回放不保证连接之间的事务执行顺序与捕获时完全一致，因此可能会误报错误。
-    > - 再次回放时，上一次的回放报告不会自动删除，需要手动删除。
+    > - The table schema of `tiproxy_traffic_replay` might change in future versions. It is not recommended to directly read data from `tiproxy_traffic_replay` in your application or tool development.
+    > - Replay does not guarantee that the transaction execution order between connections exactly matches the capture sequence. This might lead to incorrect error reports.
+    > - TiProxy does not automatically delete the previous replay report when replaying traffic. You need to manually delete it.
 
-## 测试吞吐量
+## Test throughput
 
-如果需要测试集群的吞吐量，可以使用 `--speed` 选项调整回放的速率。
+To test cluster throughput, use the `--speed` option to adjust the replay rate.
 
-例如，`--speed=2` 会使 SQL 语句以两倍速率执行，总回放时间缩短一半：
+For example, `--speed=2` executes SQL statements at twice the rate, reducing the total replay time by half:
 
 ```shell
 tiproxyctl traffic replay --host 10.0.1.10 --port 3080 --username="u1" --password="123456" --input="/tmp/traffic" --speed=2
 ```
 
-调大回放速率只会缩短 SQL 语句之间的空闲时间，不会增加连接数。因此当会话的空闲时间本身较短时，仅调大倍速可能无法有效提升吞吐量。在这种情况下，可以部署多个 TiProxy 实例，让它们同时回放相同的流量文件，通过增加并发度来提高吞吐量。
+Increasing the replay rate only reduces idle time between SQL statements and does not increase the number of connections. When session idle time is already short, increasing the speed might not effectively improve throughput. In such cases, you can deploy multiple TiProxy instances to replay the same traffic files simultaneously, increasing concurrency to improve throughput.
 
-## 任务查看与管理
+## View and manage tasks
 
-在捕获和回放过程中，如果遇到未知错误会自动停止任务。使用 [`tiproxyctl traffic show`](/tiproxy/tiproxy-command-line-flags.md#traffic-show) 命令可查看当前的任务进度或上次任务的错误信息：
+During capture and replay, tasks automatically stop if unknown errors occur. To view the current task progress or error information from the last task, use the [`tiproxyctl traffic show`](/tiproxy/tiproxy-command-line-flags.md#traffic-show) command:
 
 ```shell
 tiproxyctl traffic show --host 10.0.1.10 --port 3080
 ```
 
-例如，如下输出代表捕获任务正在运行：
+For example, the following output indicates a running capture task:
 
 ```json
 [
@@ -171,23 +171,23 @@ tiproxyctl traffic show --host 10.0.1.10 --port 3080
 ]
 ```
 
-更多信息，请参考 [`tiproxyctl traffic show`](/tiproxy/tiproxy-command-line-flags.md#traffic-show)。
+For more information, see [`tiproxyctl traffic show`](/tiproxy/tiproxy-command-line-flags.md#traffic-show).
 
-如果需要取消当前的捕获或回放任务，可使用 [`tiproxyctl traffic cancel`](/tiproxy/tiproxy-command-line-flags.md#traffic-cancel) 命令：
+To cancel the current capture or replay task, use the [`tiproxyctl traffic cancel`](/tiproxy/tiproxy-command-line-flags.md#traffic-cancel) command:
 
 ```shell
 tiproxyctl traffic cancel --host 10.0.1.10 --port 3080
 ```
 
-更多信息，请参考 [`tiproxyctl traffic cancel`](/tiproxy/tiproxy-command-line-flags.md#traffic-cancel)。
+For more information, see [`tiproxyctl traffic cancel`](/tiproxy/tiproxy-command-line-flags.md#traffic-cancel).
 
-## 使用限制
+## Limitations
 
-- TiProxy 仅支持回放 TiProxy 捕获的流量文件，不支持其他文件格式，因此生产集群必须先使用 TiProxy 捕获流量。
-- TiProxy 不支持过滤 SQL 类型，DML 和 DDL 语句也会被回放，因此重新回放前需要将集群数据恢复到回放前的状态。
-- 由于 TiProxy 使用同一个用户名回放流量，因此无法测试[资源管控 (Resource Control)](/tidb-resource-control-ru-groups.md) 和[权限管理](/privilege-management.md)。
-- 不支持回放 [`LOAD DATA`](/sql-statements/sql-statement-load-data.md) 语句。
+- TiProxy only supports replaying traffic files captured by TiProxy and does not support other file formats. Therefore, make sure to capture traffic from the production cluster using TiProxy first.
+- TiProxy traffic replay does not support filtering SQL types and DML and DDL statements are replayed. Therefore, you need to restore the cluster data to its pre-replay state before replaying again.
+- TiProxy traffic replay does not support testing [Resource Control](/tidb-resource-control-ru-groups.md) and [privilege management](/privilege-management.md) because TiProxy uses the same username to replay traffic.
+- TiProxy does not support replaying [`LOAD DATA`](/sql-statements/sql-statement-load-data.md) statements.
 
-## 资源
+## More resources
 
-关于 TiProxy 流量回放更详细的信息，请参阅[设计文档](https://github.com/pingcap/tiproxy/blob/main/docs/design/2024-08-27-traffic-replay.md)。
+For more information about the traffic replay of TiProxy, see the [design document](https://github.com/pingcap/tiproxy/blob/main/docs/design/2024-08-27-traffic-replay.md).

@@ -1,47 +1,46 @@
 ---
 title: TiDB 2.0.9 Release Notes
-summary: TiDB 2.0.9 版本发布，改进了系统兼容性和稳定性。修复了多个问题，包括统计信息、DDL JOB、Commit 操作、Limit 值、字符集支持、内建函数、主键选择率估算、Session 变量、Union 语句、统计信息清除、事务运行时间、表创建语句、取消 DDL 任务、全局环境变量等。PD 修复了 etcd 启动失败和 pd-ctl 读取 Region key 的问题。TiKV 增加了 kv_scan 接口扫描上界的限制，废弃了 max-tasks-xxx 配置，并修复了 RocksDB CompactFiles 的问题。
-aliases: ['/zh/tidb/dev/release-2.0.9/','/zh/tidb/v2.0/release-2.0.9','/docs-cn/dev/releases/release-2.0.9/','/docs-cn/dev/releases/209/','/zh/tidb/v5.4/release-2.0.9','/zh/tidb/v6.1/release-2.0.9','/zh/tidb/v6.5/release-2.0.9','/zh/tidb/v7.1/release-2.0.9','/zh/tidb/v7.5/release-2.0.9','/zh/tidb/v8.1/release-2.0.9']
+summary: TiDB 2.0.9 was released on November 19, 2018, with significant improvements in system compatibility and stability. The release includes fixes for various issues, such as empty statistics histogram, panic issue with UNION ALL statement, stack overflow issue, and support for specifying utf8mb4 character set. PD and TiKV also received fixes for issues related to server startup failure and interface limits.
 ---
 
 # TiDB 2.0.9 Release Notes
 
-2018 年 11 月 19 日，TiDB 发布 2.0.9 版。该版本在 2.0.8 版的基础上，对系统兼容性、稳定性做出了改进。
+On November 19, 2018, TiDB 2.0.9 is released. Compared with TiDB 2.0.8, this release has great improvement in system compatibility and stability.
 
 ## TiDB
 
-- 修复统计信息直方图为空的时候导致的问题 [#7927](https://github.com/pingcap/tidb/pull/7927)
-- 修复 `UNION ALL` 语句在某些情况下 panic 的问题 [#7942](https://github.com/pingcap/tidb/pull/7942)
-- 修复错误的 DDL JOB 情况下导致的递归溢出问题 [#7959](https://github.com/pingcap/tidb/pull/7959)
-- 为 `Commit` 操作加上慢操作日志 [#7983](https://github.com/pingcap/tidb/pull/7983)
-- 修复 `Limit` 值太大的情况下导致的 panic 问题 [#8004](https://github.com/pingcap/tidb/pull/8004)
-- 支持 `USING` 子句指定 `utf8mb4` 字符集 [#8048](https://github.com/pingcap/tidb/pull/8048)
-- 内建函数 `TRUNCATE` 支持类型为 unsigned int 的参数 [#8069](https://github.com/pingcap/tidb/pull/8069)
-- 修复统计信息模块在某些情况下主键选择率估算的问题 [#8150](https://github.com/pingcap/tidb/pull/8150)
-- 增加 `Session` 变量来控制是否允许写入 `_tidb_rowid` [#8126](https://github.com/pingcap/tidb/pull/8126)
-- 修复 `PhysicalProjection` 在某些情况下 panic 的问题 [#8154](https://github.com/pingcap/tidb/pull/8154)
-- 修复 `Union` 语句在某些情况下结果不稳定的问题 [#8168](https://github.com/pingcap/tidb/pull/8168)
-- 修复在非插入语句下 `values` 没有返回 `NULL` 的问题 [#8179](https://github.com/pingcap/tidb/pull/8179)
-- 修复某些情况下统计信息模块无法清除过期统计数据的问题 [#8184](https://github.com/pingcap/tidb/pull/8184)
-- 让事务允许的最长运行时间变成一个可配置项 [#8209](https://github.com/pingcap/tidb/pull/8209)
-- 修复 `expression rewriter` 某些情况下错误的比较逻辑 [#8288](https://github.com/pingcap/tidb/pull/8288)
-- 消除 `UNION ORDER BY` 语句生成的多余列的问题 [#8307](https://github.com/pingcap/tidb/pull/8307)
-- 支持 `admin show next_row_id` 语句 [#8274](https://github.com/pingcap/tidb/pull/8274)
-- 修复 `Show Create Table` 语句中特殊字符转义的问题 [#8321](https://github.com/pingcap/tidb/pull/8321)
-- 修复 `UNION` 语句在某些情况下遇到非预期错误的问题 [#8318](https://github.com/pingcap/tidb/pull/8318)
-- 修复某些情况下取消 DDL 任务导致的 Schema 没有回滚的问题 [#8312](https://github.com/pingcap/tidb/pull/8312)
-- 把变量 `tidb_max_chunk_size` 变成全局环境变量 [#8333](https://github.com/pingcap/tidb/pull/8333)
-- ticlient `Scan` 命令增加边界，解决数据扫出边界的问题 [#8309](https://github.com/pingcap/tidb/pull/8309) [#8310](https://github.com/pingcap/tidb/pull/8310)
+- Fix the issue caused by the empty statistics histogram [#7927](https://github.com/pingcap/tidb/pull/7927)
+- Fix the panic issue of the `UNION ALL` statement in some cases [#7942](https://github.com/pingcap/tidb/pull/7942)
+- Fix the stack overflow issue caused by wrong DDL Jobs [#7959](https://github.com/pingcap/tidb/pull/7959)
+- Add the slow log for the `Commit` operation [#7983](https://github.com/pingcap/tidb/pull/7983)
+- Fix the panic issue caused by the too large `Limit` value [#8004](https://github.com/pingcap/tidb/pull/8004)
+- Support specifying the `utf8mb4` character set in the `USING` clause [#8048](https://github.com/pingcap/tidb/pull/8048)
+- Make the `TRUNCATE` built-in function support parameters of unsigned integer type [#8069](https://github.com/pingcap/tidb/pull/8069)
+- Fix the selectivity estimation issue of the primary key for the statistics module in some cases [#8150](https://github.com/pingcap/tidb/pull/8150)
+- Add the `Session` variable to control whether `_tidb_rowid` is allowed to be written in [#8126](https://github.com/pingcap/tidb/pull/8126)
+- Fix the panic issue of `PhysicalProjection` in some cases [#8154](https://github.com/pingcap/tidb/pull/8154)
+- Fix the unstable results of the `Union` statement in some cases [#8168](https://github.com/pingcap/tidb/pull/8168)
+- Fix the issue that `NULL` is not returned by `values` in the non-`Insert` statement [#8179](https://github.com/pingcap/tidb/pull/8179)
+- Fix the issue that the statistics module cannot clear the outdated data in some cases [#8184](https://github.com/pingcap/tidb/pull/8184)
+- Make the maximum allowed running time for a transaction a configurable option [#8209](https://github.com/pingcap/tidb/pull/8209)
+- Fix the wrong comparison algorithm of `expression rewriter` in some cases [#8288](https://github.com/pingcap/tidb/pull/8288)
+- Eliminate the extra columns generated by the `UNION ORDER BY` statement [#8307](https://github.com/pingcap/tidb/pull/8307)
+- Support the `admin show next_row_id` statement [#8274](https://github.com/pingcap/tidb/pull/8274)
+- Fix the escape issue of special characters in the `Show Create Table` statement [#8321](https://github.com/pingcap/tidb/pull/8321)
+- Fix the unexpected errors in the `UNION` statement in some cases [#8318](https://github.com/pingcap/tidb/pull/8318)
+- Fix the issue that canceling a DDL job causes no rollback of a schema in some cases [#8312](https://github.com/pingcap/tidb/pull/8312)
+- Change `tidb_max_chunk_size` to a global variable [#8333](https://github.com/pingcap/tidb/pull/8333)
+- Add an upper bound to the `Scan` command of ticlient, to avoid overbound scan [#8309](https://github.com/pingcap/tidb/pull/8309) [#8310](https://github.com/pingcap/tidb/pull/8310)
 
 ## PD
 
-- 修复 etcd 启动失败导致的服务挂起问题 [#1267](https://github.com/pingcap/pd/pull/1267)
-- 修复 `pd-ctl` 读取 Region key 的相关问题 [#1298](https://github.com/pingcap/pd/pull/1298) [#1299](https://github.com/pingcap/pd/pull/1299) [#1308](https://github.com/pingcap/pd/pull/1308)
-- 修复 `regions/check` API 输出错误的问题 [#1311](https://github.com/pingcap/pd/pull/1311)
-- 修复 PD join 失败后无法重新 join 的问题 [#1279](https://github.com/pingcap/pd/pull/1279)
+- Fix the issue that the PD server gets stuck caused by etcd startup failure [#1267](https://github.com/pingcap/pd/pull/1267)
+- Fix the issues related to `pd-ctl` reading the Region key [#1298](https://github.com/pingcap/pd/pull/1298) [#1299](https://github.com/pingcap/pd/pull/1299) [#1308](https://github.com/pingcap/pd/pull/1308)
+- Fix the issue that the `regions/check` API returns the wrong result [#1311](https://github.com/pingcap/pd/pull/1311)
+- Fix the issue that PD cannot restart join after a PD join failure [#1279](https://github.com/pingcap/pd/pull/1279)
 
 ## TiKV
 
-- 增加 `kv_scan` 接口扫描上界的限制 [#3749](https://github.com/tikv/tikv/pull/3749)
-- 废弃配置 `max-tasks-xxx` 并新增 `max-tasks-per-worker-xxx` [#3093](https://github.com/tikv/tikv/pull/3093)
-- 修复 RocksDB `CompactFiles` 的问题 [#3789](https://github.com/tikv/tikv/pull/3789)
+- Add the `end-key` limit to the `kv_scan` interface [#3749](https://github.com/tikv/tikv/pull/3749)
+- Abandon the `max-tasks-xxx` configuration and add `max-tasks-per-worker-xxx` [#3093](https://github.com/tikv/tikv/pull/3093)
+- Fix the `CompactFiles` issue in RocksDB [#3789](https://github.com/tikv/tikv/pull/3789)

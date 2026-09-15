@@ -1,78 +1,78 @@
 ---
-title: IMPORT INTO 和 TiDB Lightning 与日志备份和 TiCDC 的兼容性
-summary: 了解 IMPORT INTO 和 TiDB Lightning 与日志备份和 TiCDC 的兼容性及使用场景。
+title: Compatibility of TiDB Lightning and IMPORT INTO with TiCDC and Log Backup
+summary: Learn about compatibility of IMPORT INTO and TiDB Lightning with log backup and TiCDC.
 ---
 
-# IMPORT INTO 和 TiDB Lightning 与日志备份和 TiCDC 的兼容性
+# Compatibility of TiDB Lightning and IMPORT INTO with TiCDC and Log Backup
 
-本文档介绍 TiDB Lightning 和 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) 与[日志备份](/br/br-pitr-guide.md)、[TiCDC](/ticdc/ticdc-overview.md) 的兼容性，以及某些特殊的使用场景。
+This document describes TiDB Lightning and [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) compatibility with [log backup](/br/br-pitr-guide.md) and [TiCDC](/ticdc/ticdc-overview.md), as well as some special usage scenarios.
 
-## `IMPORT INTO` 和 TiDB Lightning 对比
+## `IMPORT INTO` vs. TiDB Lightning
 
-[`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) 目前已经集成了 TiDB Lightning 的物理导入模式，但二者还存在一些差异。详情请参见 [`IMPORT INTO` 和 TiDB Lightning 对比](/tidb-lightning/import-into-vs-tidb-lightning.md)。
+[`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) integrates with the physical import mode of TiDB Lightning, but there are some differences. See [`IMPORT INTO` vs. TiDB Lightning](/tidb-lightning/import-into-vs-tidb-lightning.md) for details.
 
-## 与日志备份和 TiCDC 的兼容性
+## Compatibility with log backup and TiCDC
 
-- TiDB Lightning 的[逻辑导入模式](/tidb-lightning/tidb-lightning-logical-import-mode.md)与日志备份以及 TiCDC 兼容。
+- TiDB Lightning [logical import mode](/tidb-lightning/tidb-lightning-logical-import-mode.md) is compatible with log backup and TiCDC.
 
-- TiDB Lightning 的[物理导入模式](/tidb-lightning/tidb-lightning-physical-import-mode.md)与日志备份以及 TiCDC 均不兼容。原因是 TiDB Lightning 物理导入模式是将源数据编码后的 KV Pairs 直接 Ingest 到 TiKV，该过程 TiKV 不会产生相应的 Change log，由于没有这部分的 Change log，相关数据无法通过日志备份的方式备份，也无法被 TiCDC 复制。
+- TiDB Lightning [physical import mode](/tidb-lightning/tidb-lightning-physical-import-mode.md) is not compatible with log backup and TiCDC. The reason is that physical import mode directly ingests encoded KV pairs of the source data to TiKV, causing TiKV not to generate corresponding change logs during this process. Without such change logs, the relevant data cannot be backed up via log backup and cannot be replicated by TiCDC.
 
-- 如果你需要在同一个集群上同时使用 TiDB Lightning 和 TiCDC，请参考 [TiCDC 与 TiDB Lightning 的兼容性](/ticdc/ticdc-compatibility.md#ticdc-与-tidb-lightning-的兼容性)。
+- To use TiDB Lightning and TiCDC together in a cluster, see [Compatibility with TiDB Lightning](/ticdc/ticdc-compatibility.md#compatibility-with-tidb-lightning).
 
-- `IMPORT INTO` 与日志备份以及 TiCDC 均不兼容。原因是 `IMPORT INTO` 的导入过程也是将源数据编码后的 KV Pairs 直接 Ingest 到 TiKV。
+- `IMPORT INTO` is not compatible with log backup and TiCDC. The reason is that `IMPORT INTO` also ingests encoded KV pairs of the source data directly to TiKV.
 
-## TiDB Lightning 逻辑导入模式的使用场景
+## Scenarios for TiDB Lightning logical import mode
 
-如果 TiDB Lightning 逻辑导入的性能可以满足业务的性能要求，且业务要求 TiDB Lightning 导入的表进行数据备份，或者使用 TiCDC 同步到下游，建议使用 TiDB Lightning 逻辑导入模式。
+If TiDB Lightning logical import mode can meet your application's performance requirements and your application requires imported tables to be backed up or replicated downstream using TiCDC, it is recommended to use TiDB Lightning logical import mode.
 
-## TiDB Lightning 物理导入模式的使用场景
+## Scenarios for TiDB Lightning physical import mode
 
-本节介绍 TiDB Lightning 物理导入模式与[日志备份](/br/br-pitr-guide.md)和 [TiCDC](/ticdc/ticdc-overview.md) 同时使用时的操作方法。
+This section describes how to use TiDB Lightning together with [log backup](/br/br-pitr-guide.md) and [TiCDC](/ticdc/ticdc-overview.md).
 
-如果 TiDB Lightning 逻辑导入的性能无法满足业务的性能要求，且只能使用 TiDB Lightning 物理导入模式的场景，同时这些表还需要备份或者使用 TiCDC 同步到下游，则建议使用以下方案进行处理。
+If TiDB Lightning logical import mode does not meet your application's performance requirements, you have to use TiDB Lightning physical import mode, and imported tables need to be backed up or replicated downstream using TiCDC, then the following scenarios are recommended.
 
-### 和日志备份同时使用
+### Used with log backup
 
-该场景下，如果开启了 [PITR](/br/br-log-architecture.md#pitr)，启动 TiDB Lightning 后兼容性检查会报错。如果你确定不需要备份这些表，你可以把 [TiDB Lightning 配置文件](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-任务配置)中的 `Lightning.check-requirements` 参数改成 `false`，然后重新启动导入任务即可。
+In this scenario, if [PITR](/br/br-log-architecture.md#process-of-pitr) is enabled, the compatibility check will report an error after TiDB Lightning starts. If you are sure that these tables do not need backup, you can change the `Lightning.check-requirements` parameter in the [TiDB Lightning configuration file](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task) to `false` and restart the import task.
 
-由于无法对 TiDB Lightning 物理导入模式导入的数据进行日志备份，如果你需要对该表进行备份，可在 TiDB Lightning 物理导入模式完成数据导入后，对该表执行一次表级别快照备份即可，操作步骤请参考[备份单张表的数据](/br/br-snapshot-manual.md#备份单张表的数据)。
+Data imported using TiDB Lightning physical import mode cannot be backed up via log backup. If you need to back up the table, it is recommended to perform a table-level snapshot backup after the import, as described in [Back up a table](/br/br-snapshot-manual.md#back-up-a-table). 
 
-### 和 TiCDC 同时使用
+### Used with TiCDC
 
-该场景短期内无法兼容，因为 TiCDC 很难追上 TiDB Lightning 物理导入的写入速度，可能造成集群同步延迟不断增加。
+Using TiCDC with physical import mode is not compatible in the short term, because TiCDC cannot keep up with the write speed of TiDB Lightning physical import mode, which might result in increasing cluster replication latency.
 
-可根据如下不同的场景进行操作：
+You can perform in different scenarios as follows:
 
-- 场景 1：该表不需要被 TiCDC 同步到下游。
+- Scenario 1: the table does not need to be replicated downstream by TiCDC.
 
-    在该场景下，如果开启了 TiCDC 同步任务，启动 TiDB Lightning 后兼容性检查会报错。如果你确定这些表不需要被 TiCDC 同步，你可以把 [TiDB Lightning 配置文件](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-任务配置)中的 `Lightning.check-requirements` 参数改成 `false`，然后重新启动导入任务即可。
+    In this scenario, if TiCDC changefeed is enabled, the compatibility check will report an error after TiDB Lightning starts. If you are sure that these tables do not need backup or [log backup](/br/br-pitr-guide.md), you can change the `Lightning.check-requirements` parameter in the [TiDB Lightning configuration file](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task) to `false` and restart the import task.
 
-- 场景 2：该表需要被 TiCDC 同步到下游。
+- Scenario 2: the table needs to be replicated downstream by TiCDC.
 
-    在该场景下，由于上游 TiDB 集群开启了 TiCDC 同步任务，因此启动 TiDB Lightning 后兼容性检查会报错。你需要在上游 TiDB 集群把 [TiDB Lightning 配置文件](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-任务配置)中的 `Lightning.check-requirements` 参数改成 `false`，然后重新启动导入任务即可。
+    In this scenario, if TiCDC changefeed is enabled, the compatibility check will report an error after TiDB Lightning starts. You need to change the `Lightning.check-requirements` parameter in the [TiDB Lightning configuration file](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task) in the upstream TiDB cluster to `false` and restart the import task.
 
-    上游 TiDB 集群的导入任务完成后，再使用 TiDB Lightning 在下游 TiDB 集群也导入一份同样的数据。如果下游是 Redshift、Snowflake 等数据库，可直接让这些数据库从 Cloud Storage 读取 CSV、SQL、Parquet 等格式的文件并写入到数据库。
+    After the import task for the upstream TiDB cluster is finished, use TiDB Lightning to import the same data in the downstream TiDB cluster. If you have databases such as Redshift and Snowflake in the downstream, you can configure them to read CSV, SQL, or Parquet files from a cloud storage service and then write the data to the database.
 
-## `IMPORT INTO` 的使用场景
+## Scenarios for `IMPORT INTO`
 
-本节介绍 `IMPORT INTO` 与[日志备份](/br/br-pitr-guide.md)和 [TiCDC](/ticdc/ticdc-overview.md) 同时使用时的操作方法。
+This section describes how to use `IMPORT INTO` together with [log backup](/br/br-pitr-guide.md) and [TiCDC](/ticdc/ticdc-overview.md).
 
-### 和日志备份同时使用
+### Used with log backup
 
-该场景下，如果开启了 [PITR](/br/br-log-architecture.md#pitr)，提交 `IMPORT INTO` SQL 语句后兼容性检查会报错。如果你确定不需要备份这些表，你可以在该 SQL 的 [`WithOptions`](/sql-statements/sql-statement-import-into.md#withoptions) 里带上参数 `DISABLE_PRECHECK`（从 v8.0.0 版本引入）重新提交即可，这样数据导入任务会忽略该兼容性检查，直接导入数据。
+In this scenario, if [PITR](/br/br-log-architecture.md#process-of-pitr) is enabled, the compatibility check will report an error after you submit the `IMPORT INTO` statement. If you are sure that these tables do not need backup, you can include `DISABLE_PRECHECK` (introduced in v8.0.0) in [`WithOptions`](/sql-statements/sql-statement-import-into.md#withoptions) of that statement, and then resubmit it. In this way, the data import task ignores the compatibility check and imports the data directly.
 
-由于无法对 `IMPORT INTO` 导入的数据进行日志备份，如果你需要对该表进行备份，可在完成数据导入后，对该表执行一次表级别快照备份即可，操作步骤请参考[备份单张表的数据](/br/br-snapshot-manual.md#备份单张表的数据)。
+Data imported using `IMPORT INTO` cannot be backed up via log backup. If you need to back up the table, it is recommended to perform a table-level snapshot backup after the import, as described in [Back up a table](/br/br-snapshot-manual.md#back-up-a-table).
 
-### 和 TiCDC 同时使用
+### Used with TiCDC
 
-可根据如下不同的场景进行操作：
+You can perform in different scenarios as follows:
 
-- 场景 1：该表不需要被 TiCDC 同步到下游。
+- Scenario 1: the table does not need to be replicated downstream by TiCDC.
 
-    在该场景下，如果开启了 TiCDC Changefeed，提交 `IMPORT INTO` SQL 语句后兼容性检查会报错。如果你确定这些表不需要被 TiCDC 同步，你可以在该 SQL 的 [`WithOptions`](/sql-statements/sql-statement-import-into.md#withoptions) 里带上参数 `DISABLE_PRECHECK`（从 v8.0.0 版本引入）重新提交即可，这样数据导入任务会忽略该兼容性检查，直接导入数据。
+    In this scenario, if TiCDC changefeed is enabled, the compatibility check will report an error after you submit the `IMPORT INTO` statement. If you are sure that these tables do not need to be replicated by TiCDC, you can include `DISABLE_PRECHECK` (introduced in v8.0.0) in [`WithOptions`](/sql-statements/sql-statement-import-into.md#withoptions) of that statement, and then resubmit it. In this way, the data import task ignores the compatibility check and imports the data directly.
 
-- 场景 2：该表需要被 TiCDC 同步到下游。
+- Scenario 2: the table needs to be replicated downstream by TiCDC.
 
-    在该场景下，如果上游 TiDB 集群开启了 TiCDC 同步任务，提交 `IMPORT INTO` SQL 语句后兼容性检查会报错。你需要在该 SQL 的 [`WithOptions`](/sql-statements/sql-statement-import-into.md#withoptions) 里带上参数 `DISABLE_PRECHECK`（从 v8.0.0 版本引入）重新提交即可。
+    In this scenario, if TiCDC changefeed is enabled, the compatibility check will report an error after you submit the `IMPORT INTO` statement. You can include `DISABLE_PRECHECK` (introduced in v8.0.0) in [`WithOptions`](/sql-statements/sql-statement-import-into.md#withoptions) of that statement, and then resubmit it. In this way, the data import task ignores the compatibility check and imports the data directly.
 
-    上游 TiDB 集群的导入任务完成后，再使用 `IMPORT INTO` 在下游 TiDB 集群也导入一份同样的数据。如果下游是 Redshift、Snowflake 等数据库，可直接让这些数据库从 Cloud Storage 读取 CSV、SQL、Parquet 等格式的文件并写入到数据库。
+    After the import task for the upstream TiDB cluster is finished, use `IMPORT INTO` to import the same data in the downstream TiDB cluster. If you have databases such as Redshift and Snowflake in the downstream, you can configure them to read CSV, SQL, or Parquet files from a cloud storage service and then write the data to the database.

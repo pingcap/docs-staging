@@ -1,76 +1,81 @@
 ---
-title: TiFlash 命令行参数
-summary: TiFlash 的命令行启动参数包括 server --config-file、dttool migrate、dttool bench 和 dttool inspect。server --config-file 用于指定配置文件路径，dttool migrate 用于迁移 DTFile 的文件格式，dttool bench 用于提供 DTFile 的简单 IO 速度测试，dttool inspect 用于检查 DTFile 的完整性。每个命令都有对应的参数，可以根据需求进行配置。警告：TiFlash 目前只支持默认压缩等级的 LZ4 算法，自定义压缩参数并未经过大量测试。注意：为保证安全，DTTool 在迁移模式下会尝试对工作目录进行加锁。
+title: TiFlash Command-line Flags
+summary: Learn the command-line startup flags of TiFlash.
 ---
 
-# TiFlash 命令行参数
+# TiFlash Command-Line Flags
 
-本文介绍了 TiFlash 的命令行启动参数。
+This document introduces the command-line flags that you can use when you launch TiFlash.
 
 ## `server --config-file`
 
-+ 指定 TiFlash 的配置文件路径
-+ 默认：""
-+ 必须指定配置文件，详细的配置项请参阅 [TiFlash 配置参数](/tiflash/tiflash-configuration.md)
++ Specifies the path of the TiFlash configuration file
++ Default: ""
++ You must specify the configuration file. For detailed configuration items, refer to [TiFlash configuration parameters](/tiflash/tiflash-configuration.md).
 
 ## `dttool migrate`
 
-- 迁移 DTFile 的文件格式 （用于测试和原地降级）。数据迁移的单位为单个 DTFile。如果想进行整表迁移，通常需要定位到所有形如 `<data dir>/t_<table id>/stable/dmf_<file id>` 的路径，逐一进行迁移。可以结合脚本来自动进行这一操作。
+- Migrates the file format of DTFile (for testing or downgrading). Data is migrated in the unit of a single DTFile. If you want to migrate the whole table, you need to locate all the paths similar to `<data dir>/t_<table id>/stable/dmf_<file id>` and migrate them one by one. You can use scripts to automate the migration.
 
-- 使用场景：
-    - 当需要从开启了数据校验功能 (`storage.format_version` >= 3) 的 TiFlash v5.4 及以上版本降级回以前的版本时，可以使用此工具完成数据格式降级。
-    - 当升级到 TiFlash v5.4 及以上，并希望对存量数据也加上数据校验功能以加固数据检验时，可以使用此工具完成数据格式升级。
-    - 测试不同配置的 DTFile 空间占用和读取速度。
-    - 当需要从开启了合并小文件功能 (`storage.format_version` >= 5) 的 TiFlash v7.3 及以上版本降级回以前的版本时，可以使用此工具完成数据格式的降级。
+- User scenarios:
 
-- 参数：
-    - `--imitative`：当不使用 DTFile 的加密功能时，可以使用本选项避免使用配置文件和连接 PD。
-    - `--version`：DTFile 的目标版本，可选值为 1、2、3，默认为 2。1 为传统格式，2 为 checksum 对应的 DTFile 格式，3 为合并小文件后的 DTFile 格式。
-    - `--algorithm`：检验哈希算法，可选值为 xxh3，city128，crc32，crc64，none，默认为 xxh3，仅在 version=2 时有用。
-    - `--frame`：校验帧大小，默认为 1048576，仅在 version=2 时有用。
-    - `--compression`：目标压缩算法，可选值为 LZ4（默认）、LZ4HC、zstd 和 none。
-    - `--level`：目标压缩等级，不指定则根据压缩算法默认使用推荐的压缩级别。如果 `compression` 设置为 `LZ4` 或 `zstd`，则默认设置为 1；如果 `compression` 设置为 `LZ4HC`，则默认设置为 9。
-    - `--config-file`：dttool migrate 的配置文件应当与 server 模式下的[配置文件](/tiflash/tiflash-command-line-flags.md#server---config-file)保持一致。见 `--imitative` 选项。
-    - `--file-id`：对应 DTFile 的 ID，如 `dmf_123` 对应的 ID 是 123。
-    - `--workdir`：指向 `dmf_xxx` 的父级目录。
-    - `--dry`：空跑模式，只输出迁移过程。
-    - `--nokeep`：不保留原数据。不开启该选项时，会产生 `dmf_xxx.old` 文件。
+    - If you need to downgrade TiFlash from a version >= v5.4.0 that has enabled data validation to a version < v5.4.0, you can use this tool to downgrade the data format of the DTFile.
+    - If you upgrade TiFlash to a version >= v5.4.0, and if you hope to enable data validation for existing data, you can use this tool to upgrade the data format of the DTFile.
+    - Test the space usage and read speed of the DTFile in different configurations.
+    - If you need to downgrade TiFlash from a version >= v7.3.0 that has enabled small file merging (that is, `storage.format_version` >= 5) to a version < v7.3.0, you can use this tool to downgrade the data format of the DTFile.
 
-> **警告：**
+- Parameters:
+    - `--imitative`: When you do not use the encryption feature of the DTFile, you can use this flag to avoid using the configuration file and connecting to PD.
+    - `--version`: The target version of DTFile. The value options are `1`, `2` (default), and `3`. `1` is the old version, `2` is the version corresponding to the new checksum, and `3` is the version that supports merging small files.
+    - `--algorithm`: The hash algorithm used for data validation. The value options are `xxh3` (default), `city128`, `crc32`, `crc64`, and `none`. This parameter is effective only when `version` is `2`.
+    - `--frame`: The size of the validation frame. The default value is `1048576`. This parameter is effective only when `version` is `2`.
+    - `--compression`: The target compression algorithm. The value options are `LZ4` (default), `LZ4HC`, `zstd`, and `none`.
+    - `--level`: The target compression level. If not specified, the recommended compression level is used by default according to the compression algorithm. If `compression` is set to `LZ4` or `zstd`, the default level is 1. If `compression` is set to `LZ4HC`, the default level is 9. 
+    - `--config-file`: The configuration file of `dttool migrate` is the same as the [configuration file of `server`](/tiflash/tiflash-command-line-flags.md#server---config-file). For more information, see `--imitative`.
+    - `--file-id`: The ID of the DTFile. For example, the ID of the DTFile `dmf_123` is `123`.
+    - `--workdir`: The parent directory of `dmf_xxx`.
+    - `--dry`: The dry run mode. Only the migration process is output.
+    - `--nokeep`: Does not keep the original data. When this option is not enabled, `dmf_xxx.old` files are created.
+
+> **Warning:**
 >
-> 虽然 TiFlash 可以读取自定义压缩算法和压缩等级的 DTFile，但目前正式支持的只有默认压缩等级的 LZ4 算法。自定义压缩参数并未经过大量测试，仅作实验。
+> TiFlash can read DTFile that uses custom compression algorithms and compression levels. However, only the `lz4` algorithm with the default compression level is officially supported. Custom compression parameters have not been thoroughly tested and are only experimental.
 
-> **注意：**
+> **Note:**
 >
-> 为保证安全 DTTool 在迁移模式下会尝试对工作目录进行加锁，因此同一工作目录下同一时间只能有一个 DTTool 执行迁移工作。如果您在中途强制停止 DTTool，可能会因锁未释放导致后面在运行 DTTool 时工具拒绝进行迁移工作。
-> 如果您遇到这种情况，在保证安全的前提下，可以手动删除工作目录下的 LOCK 文件来释放锁。
+> For security reasons, DTTool attempts to add a lock to the working directory in the migration mode. Therefore, in the same directory, only one DTTool can perform the migration task at the same time. If you forcibly stop DTTool where the lock is not released, then when you try to rerun DTTool later, it might refuse to perform the migration task.
+>
+> If you encounter this situation, and if you are aware that removing the LOCK file does not cause any data corruption, you can manually delete the LOCK file in the working directory to release the lock.
 
 ## `dttool bench`
 
-- 提供 DTFile 的简单 IO 速度测试。
-- 参数：
-    - `--version`：DTFile 的版本，见 [dttool migrate](#dttool-migrate) 对应参数。
-    - `--algorithm`：检验哈希算法，见 [dttool migrate](#dttool-migrate) 对应参数。
-    - `--frame`：校验帧大小，见 [dttool migrate](#dttool-migrate) 对应参数。
-    - `--column`：测试表宽度，默认为 100。
-    - `--size`：测试表长度，默认为 1000。
-    - `--field`：测试表字段长度上限，默认为 1024。
-    - `--random`：随机数种子。如未提供，该值从系统熵池抽取。
-    - `--encryption`：启用加密功能。
-    - `--repeat`：性能测试采样次数，默认为 5。
-    - `--workdir`：临时数据文件夹，应指向需要测试的文件系统下的路径，默认为 /tmp/test。
+- Provides a basic I/O speed test for the DTFile.
+- Parameters:
+
+    - `--version`: The version of DTFile. See [`--version` in `dttool migrate`](#dttool-migrate).
+    - `--algorithm`: The hash algorithm used for data validation. See [`--algorithm` in `dttool migrate`](#dttool-migrate).
+    - `--frame`: The size of the validation frame. See [`--frame` in `dttool migrate`](#dttool-migrate).
+    - `--column`: The columns of the table to be tested. The default value is `100`.
+    - `--size`: The rows of the table to be tested. The default value is `1000`.
+    - `--field`: The field length limit of the table to be tested. The default value is `1024`.
+    - `--random`: The random seed. If you do not specify this parameter, the random seed is drawn from the system entropy pool.
+    - `--encryption`: Enables the encryption feature.
+    - `--repeat`: The number of times to repeat the test. The default value is `5`.
+    - `--workdir`: The temporary data directory, which points to a path in the file system to be tested. The default value is `/tmp/test`.
 
 ## `dttool inspect`
 
-- 检查 DTFile 的完整性。数据校验的单位为单个 DTFile。如果想进行整表校验，通常需要定位到所有形如 `<data dir>/t_<table id>/stable/dmf_<file id>` 的路径，逐一进行校验。可以结合脚本来自动进行这一操作。
+- Checks the integrity of the DTFile. Data validation is performed in the unit of a single DTFile. If you want to validate the whole table, you need to locate all the paths similar to `<data dir>/t_<table id>/stable/dmf_<file id>` and validate them one by one. You can use scripts to automate the validation.
 
-- 使用场景：
-    - 完成格式升降级后进行完整性检测。
-    - 将原有数据文件搬迁至新环境后进行完整性检测。
+- User scenarios:
 
-- 参数：
-    - `--config-file`：dttool bench 的配置文件，见 [dttool migrate](#dttool-migrate) 对应参数。
-    - `--check`：进行哈希校验。
-    - `--file-id`：对应 DTFile 的 ID，见 [dttool migrate](#dttool-migrate) 对应参数。
-    - `--imitative`：模拟数据库上下文，见 [dttool migrate](#dttool-migrate) 对应参数。
-    - `--workdir`：数据文件夹，见 [dttool migrate](#dttool-migrate) 对应参数。
+    - After you perform a format upgrade or downgrade, you can validate the data integrity of the DTFile.
+    - After you migrate the DTFile to a new environment, you can validate the data integrity of the DTFile.
+
+- Parameters:
+
+    - `--config-file`: The configuration file of `dttool bench`. See [`--config-file` in `dttool migrate`](#dttool-migrate).
+    - `--check`: Performs hash validation.
+    - `--file-id`: The ID of the DTFile. See [`--file-id` in `dttool migrate`](#dttool-migrate).
+    - `--imitative`: Imitates the database context. See [`--imitative` in `dttool migrate`](#dttool-migrate).
+    - `--workdir`: The data directory. See [`--workdir` in `dttool migrate`](#dttool-migrate).

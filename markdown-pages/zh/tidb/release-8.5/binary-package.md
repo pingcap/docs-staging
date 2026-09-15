@@ -1,17 +1,17 @@
 ---
-title: TiDB 离线包
-summary: 了解 TiDB 离线包及其包含的内容。
+title: TiDB Installation Packages
+summary: Learn about TiDB installation packages and the specific components included.
 ---
 
-# TiDB 离线包
+# TiDB Installation Packages
 
-在[使用 TiUP 离线部署 TiDB](/production-deployment-using-tiup.md#离线部署) 前，你需要在[软件下载中心](https://pingkai.cn/download#tidb-community)选择对应版本的 TiDB server 离线镜像包（包含 TiUP 离线组件包）。
+Before [deploying TiUP offline](/production-deployment-using-tiup.md#deploy-tiup-offline), you need to download the binary packages of TiDB as described in [Prepare the TiUP offline component package](/production-deployment-using-tiup.md#prepare-the-tiup-offline-component-package).
 
-TiDB 提供了 amd64 和 arm64 两种架构的离线包。对于每种架构，TiDB 提供了两个二进制离线包：`TiDB-community-server` 软件包和 `TiDB-community-toolkit` 软件包。
+TiDB binary packages are available in amd64 and arm64 architectures. In either architecture, TiDB provides two binary packages: `TiDB-community-server` and `TiDB-community-toolkit`.
 
-`TiDB-community-server` 软件包中包含以下内容：
+The `TiDB-community-server` package contains the following contents.
 
-| 内容 | 变更说明 |
+| Content | Change history |
 |---|---|
 | tidb-{version}-linux-{arch}.tar.gz |  |
 | tikv-{version}-linux-{arch}.tar.gz |  |
@@ -28,21 +28,21 @@ TiDB 提供了 amd64 和 arm64 两种架构的离线包。对于每种架构，T
 | local_install.sh |  |
 | cluster-{version}-linux-{arch}.tar.gz |  |
 | insight-{version}-linux-{arch}.tar.gz |  |
-| diag-{version}-linux-{arch}.tar.gz | 从 v6.0.0 起新增 |
+| diag-{version}-linux-{arch}.tar.gz | New in v6.0.0 |
 | influxdb-{version}-linux-{arch}.tar.gz |  |
 | playground-{version}-linux-{arch}.tar.gz |  |
-| tiproxy-{version}-linux-{arch}.tar.gz | 从 v7.6.0 起新增 |
+| tiproxy-{version}-linux-{arch}.tar.gz | New in v7.6.0 |
 
-> **注意：**
+> **Note:**
 >
-> 以上离线包名称中，`{version}` 取决于离线包中内容的版本号，`{arch}` 取决于离线包对应的架构（amd64 或 arm64）。
+> `{version}` depends on the version of the component or server you are installing. `{arch}` depends on the architecture of the system, which can be `amd64` or `arm64`.
 
-`TiDB-community-toolkit` 软件包中包含以下内容：
+The `TiDB-community-toolkit` package contains the following contents.
 
-| 内容 | 变更说明 |
+| Content | Change history |
 |---|---|
 | pd-recover-{version}-linux-{arch}.tar.gz |  |
-| etcdctl | 从 v6.0.0 起新增 |
+| etcdctl | New in v6.0.0 |
 | tiup-linux-{arch}.tar.gz |  |
 | tiup-{version}-linux-{arch}.tar.gz |  |
 | tidb-lightning-{version}-linux-{arch}.tar.gz |  |
@@ -61,17 +61,17 @@ TiDB 提供了 amd64 和 arm64 两种架构的离线包。对于每种架构，T
 | PCC-{version}-linux-{arch}.tar.gz |  |
 | sync_diff_inspector |  |
 | reparo |  |
-| server-{version}-linux-{arch}.tar.gz | 从 v6.2.0 起新增 |
-| grafana-{version}-linux-{arch}.tar.gz | 从 v6.2.0 起新增 |
-| alertmanager-{version}-linux-{arch}.tar.gz | 从 v6.2.0 起新增 |
-| prometheus-{version}-linux-{arch}.tar.gz | 从 v6.2.0 起新增  |
-| blackbox_exporter-{version}-linux-{arch}.tar.gz | 从 v6.2.0 起新增 |
-| node_exporter-{version}-linux-{arch}.tar.gz | 从 v6.2.0 起新增 |
+| server-{version}-linux-{arch}.tar.gz | New in v6.2.0 |
+| grafana-{version}-linux-{arch}.tar.gz | New in v6.2.0 |
+| alertmanager-{version}-linux-{arch}.tar.gz | New in v6.2.0 |
+| prometheus-{version}-linux-{arch}.tar.gz | New in v6.2.0 |
+| blackbox_exporter-{version}-linux-{arch}.tar.gz | New in v6.2.0  |
+| node_exporter-{version}-linux-{arch}.tar.gz | New in v6.2.0  |
 
-> **注意：**
+> **Note:**
 >
-> 以上离线包名称中，`{version}` 取决于离线包中工具的版本号，`{arch}` 取决于离线包对应的架构（amd64 或 arm64）。
+> `{version}` depends on the version of the tool you are installing. `{arch}` depends on the architecture of the system, which can be `amd64` or `arm64`.
 
-## 延伸阅读
+## See also
 
-[离线部署 TiDB 集群](/production-deployment-using-tiup.md#离线部署)
+[Deploy TiUP offline](/production-deployment-using-tiup.md#deploy-tiup-offline)

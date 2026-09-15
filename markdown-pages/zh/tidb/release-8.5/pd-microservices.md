@@ -1,97 +1,97 @@
 ---
-title: PD 微服务
-summary: 介绍如何开启 PD 微服务模式，以提高服务质量。
+title: PD Microservices
+summary: Learn how to enable the microservice mode of PD to improve service quality.
 ---
 
-# PD 微服务
+# PD Microservices
 
-从 v8.0.0 开始，PD 支持微服务模式。该模式可将 PD 的时间戳分配和集群调度功能拆分为以下微服务单独部署，从而与 PD 的路由功能解耦，让 PD 专注于元数据的路由服务。
+Starting from v8.0.0, PD supports the microservice mode, which splits the timestamp allocation and cluster scheduling functions of PD into the following two independently deployed microservices. In this way, these two functions are decoupled from the routing function of PD, which allows PD to focus on the routing service for metadata.
 
-- `tso` 微服务：为整个集群提供单调递增的时间戳分配。
-- `scheduling` 微服务：为整个集群提供调度功能，包括但不限于负载均衡、热点处理、副本修复、副本放置等。
+- `tso` microservice: provides monotonically increasing timestamp allocation for the entire cluster.
+- `scheduling` microservice: provides scheduling functions for the entire cluster, including but not limited to load balancing, hot spot handling, replica repair, and replica placement.
 
-每个微服务都以独立进程的方式部署。当设置某个微服务的副本数大于 1 时，该微服务会自动实现主备的容灾模式，以确保服务的高可用性和可靠性。
+Each microservice is deployed as an independent process. If you configure more than one replica for a microservice, the microservice automatically implements a primary-secondary fault-tolerant mode to ensure high availability and reliability of the service.
 
-> **警告：**
+> **Warning:**
 >
-> PD 微服务目前为实验特性，不建议在生产环境中使用。该功能可能会在未事先通知的情况下发生变化或删除。如果发现 bug，请在 GitHub 上提 [issue](https://github.com/tikv/pd/issues) 反馈。
+> Currently, the PD microservices feature is experimental. It is not recommended that you use it in production environments. This feature might be changed or removed without prior notice. If you find a bug, you can report an [issue](https://github.com/tikv/pd/issues) on GitHub.
 
-## 使用场景
+## Usage scenarios
 
-PD 微服务通常用于解决 PD 出现性能瓶颈的问题，提高 PD 服务质量。利用该特性，你可以避免以下问题：
+PD microservices are typically used to address performance bottlenecks in PD and improve PD service quality. With this feature, you can avoid the following issues:
 
-- PD 集群压力过大而导致 TSO 分配的长尾延迟或者抖动现象
-- 调度模块故障导致整个集群服务不可用的问题
-- PD 自身单点瓶颈的问题
+- Long-tail latency or jitter in TSO allocations due to excessive pressure in PD clusters
+- Service unavailability of the entire cluster due to failures in the scheduling module
+- Bottleneck issues solely caused by PD
 
-此外，当调度模块发生变更时，你可以单独更新 `scheduling` 微服务，无需再对 PD 进行重启，进而不会影响集群的整体服务。
+In addition, when the scheduling module is changed, you can update the `scheduling` microservice independently without restarting PD, thus avoiding any impact on the overall service of the cluster.
 
-> **注意：**
+> **Note:**
 >
-> 如果集群的性能瓶颈不是 PD 引起的，则无需开启微服务。微服务本身会增加组件数量，提高运维成本。
+> If the performance bottleneck of a cluster is not caused by PD, there is no need to enable microservices, because using microservices increases the number of components and raises operational costs.
 
-## 使用限制
+## Restrictions
 
-- `tso` 微服务目前不支持动态启停，开启或关闭 `tso` 微服务后你需要重启 PD 集群才会生效。
-- 只有 TiDB 组件支持通过服务发现直接连接 `tso` 微服务，其他的组件是通过请求转发的方式，将请求通过 PD 转发到 `tso` 微服务以获取时间戳。
-- 与[同步部署模式 (DR Auto-Sync)](/two-data-centers-in-one-city-deployment.md) 特性不兼容。
-- 与 TiDB 系统变量 [`tidb_enable_tso_follower_proxy`](/system-variables.md#tidb_enable_tso_follower_proxy-从-v530-版本开始引入) 不兼容。
-- 由于集群中可能存在[静默 Region](/tikv-configuration-file.md#hibernate-regions)，`scheduling` 微服务在进行主备切换时，为避免冗余调度，集群可能存在最长 [`peer-stale-state-check-interval`](/tikv-configuration-file.md#peer-stale-state-check-interval) 时间内（默认为五分钟）没有调度的现象。
+- Currently, the `tso` microservice does not support dynamic start and stop. After enabling or disabling the `tso` microservice, you need to restart the PD cluster for the changes to take effect.
+- Only the TiDB component supports a direct connection to the `tso` microservice through service discovery, while other components need to forward requests to the `tso` microservice through PD to obtain timestamps.
+- Microservices are not compatible with the [Data Replication Auto Synchronous (DR Auto-Sync)](/two-data-centers-in-one-city-deployment.md) feature.
+- Microservices are not compatible with the TiDB system variable [`tidb_enable_tso_follower_proxy`](/system-variables.md#tidb_enable_tso_follower_proxy-new-in-v530).
+- Because [hibernate Regions](/tikv-configuration-file.md#hibernate-regions) might exist in a cluster, during a primary and secondary switchover of the `scheduling` microservice, the scheduling function of the cluster might be unavailable for a certain period (up to [`peer-stale-state-check-interval`](/tikv-configuration-file.md#peer-stale-state-check-interval), which is five minutes by default) to avoid redundant scheduling.
 
-## 使用方法
+## Usage
 
-PD 微服务支持通过 [TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable) 或 [TiUP](/tiup/tiup-overview.md) 进行部署。
+PD microservices can be deployed using [TiDB Operator](https://docs.pingcap.com/tidb-in-kubernetes/stable/) or [TiUP](/tiup/tiup-overview.md).
 
 <SimpleTab>
 <div label="TiDB Operator">
 
-对于通过 TiDB Operator 部署的 TiDB 集群，PD 微服务详细使用方法请参考以下文档：
+For TiDB clusters deployed using TiDB Operator, you can deploy and configure PD microservices according to the following documents:
 
-- [部署 PD 微服务](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/configure-a-tidb-cluster#部署-pd-微服务)
-- [配置 PD 微服务](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/configure-a-tidb-cluster#配置-pd-微服务)
-- [修改 PD 微服务](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/modify-tidb-configuration#修改-pd-微服务配置)
-- [扩容缩容 PD 微服务组件](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/scale-a-tidb-cluster#扩缩容-pd-微服务组件)
+- [Deploy PD microservices](https://docs.pingcap.com/tidb-in-kubernetes/stable/configure-a-tidb-cluster#enable-pd-microservices)
+- [Configure PD microservices](https://docs.pingcap.com/tidb-in-kubernetes/stable/configure-a-tidb-cluster#configure-pd-microservices)
+- [Modify PD microservices](https://docs.pingcap.com/tidb-in-kubernetes/stable/modify-tidb-configuration#modify-pd-microservice-configuration)
+- [Scale PD microservice components](https://docs.pingcap.com/tidb-in-kubernetes/stable/scale-a-tidb-cluster#scale-pd-microservice-components)
 
 </div>
 <div label="TiUP">
 
-对于通过 TiUP 部署的 TiDB 集群，PD 微服务详细使用方法请参考以下文档：
+For TiDB clusters deployed using TiUP, you can deploy and configure PD microservices according to the following documents:
 
-- [部署 PD 微服务](/pd-microservices-deployment-topology.md)
-- [扩容缩容 PD 微服务节点](/scale-microservices-using-tiup.md)
-- 配置 `tso` 微服务 
-    - [通过配置文件配置](/tso-configuration-file.md)
-    - [通过命令行参数配置](/command-line-flags-for-tso-configuration.md)
-- 配置 `scheduling` 微服务 
-    - [通过配置文件配置](/scheduling-configuration-file.md)
-    - [通过命令行参数配置](/command-line-flags-for-scheduling-configuration.md)
+- [Deploy PD microservices](/pd-microservices-deployment-topology.md)
+- [Scale PD microservice nodes](/scale-microservices-using-tiup.md)
+- Configure the `tso` microservice
+    - [Configure via the configuration file](/tso-configuration-file.md)
+    - [Configure via command line flags](/command-line-flags-for-tso-configuration.md)
+- Configure the `scheduling` microservice
+    - [Configure via the configuration file](/scheduling-configuration-file.md)
+    - [Configure via command line flags](/command-line-flags-for-scheduling-configuration.md)
 
 </div>
 <div label="TiUP Playground">
 
-对于通过 TiUP 的 Playground 组件部署的 TiDB 本地集群，PD 微服务详细使用方法请参考以下文档：
+To deploy and configure PD microservices in a TiDB local cluster using TiUP Playground, see the following document:
 
-- [部署 PD 微服务](/tiup/tiup-playground.md#部署-pd-微服务)
+- [Deploy PD microservices](/tiup/tiup-playground.md#deploy-pd-microservices)
 
 </div>
 </SimpleTab>
 
-## 注意事项
+## Notes
 
-当部署和使用 PD 微服务时，请注意以下事项：
+When deploying and using PD microservices, pay attention to the following:
 
-- 开启微服务并重启 PD 后，PD 不再提供 TSO 分配功能。因此，开启微服务时，你需要在集群中部署 `tso` 微服务。
-- 如果集群中部署了 `scheduling` 微服务，调度功能将由 `scheduling` 微服务提供。如果没有部署 `scheduling` 微服务，调度功能仍然由 PD 提供。
-- `scheduling` 微服务支持动态切换。该功能默认开启（`enable-scheduling-fallback` 默认为 `true`）。如果 `scheduling` 微服务进程关闭，PD 默认会继续为集群提供调度服务。
+- After you enable microservices and restart PD for a cluster, PD stops allocating TSO for the cluster. Therefore, you need to deploy the `tso` microservice in the cluster when you enable microservices.
+- If the `scheduling` microservice is deployed in a cluster, the scheduling function of the cluster is provided by the `scheduling` microservice. If the `scheduling` microservice is not deployed, the scheduling function of the cluster is still provided by PD.
+- The `scheduling` microservice supports dynamic switching, which is enabled by default (`enable-scheduling-fallback` defaults to `true`). If the process of the `scheduling` microservice is terminated, PD continues to provide scheduling services for the cluster by default.
 
-    如果 `scheduling` 微服务和 PD 使用的 binary 版本不同，为防止调度逻辑出现变化，可以通过执行 `pd-ctl config set enable-scheduling-fallback false` 关闭 `scheduling` 微服务动态切换功能。关闭后，如果 `scheduling` 微服务的进程关闭，PD 将不会接管调度服务。这意味着，在 `scheduling` 微服务重新启动前，集群将无法提供调度服务。
+    If the binary versions of the `scheduling` microservice and PD are different, to prevent changes in the scheduling logic, you can disable the dynamic switching function of the `scheduling` microservice by executing `pd-ctl config set enable-scheduling-fallback false`. After this function is disabled, PD will not take over the scheduling service when the process of the `scheduling` microservice is terminated. This means that the scheduling service of the cluster will be unavailable until the `scheduling` microservice is restarted.
 
-## 工具兼容性
+## Tool compatibility
 
-微服务不影响数据导入导出以及其他同步工具的正常使用。
+Microservices do not affect the normal use of data import, export, and other replication tools.
 
-## 常见问题
+## FAQs
 
-- 如何判断 PD 是否达到了性能瓶颈?
+- How can I determine if PD becomes a performance bottleneck?
 
-  在集群自身状态正常的前提下，可以查看 Grafana PD 面板中的监控指标。如果 `TiDB - PD server TSO handle time` 指标出现明显延迟上涨或 `Heartbeat - TiKV side heartbeat statistics` 指标出现大量 pending，说明 PD 达到了性能瓶颈。
+  When your cluster is in a normal state, you can check monitoring metrics in the Grafana PD panel. If the `TiDB - PD server TSO handle time` metric shows a notable increase in latency or the `Heartbeat - TiKV side heartbeat statistics` metric shows a significant number of pending items, it indicates that PD becomes a performance bottleneck.

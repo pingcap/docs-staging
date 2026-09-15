@@ -1,131 +1,133 @@
 ---
-title: TiDB Dashboard 常见问题
-summary: TiDB Dashboard 常见问题汇总，包括访问、界面功能方面的常见问题与解决办法。若无法解决，请获取官方或社区支持。
+title: TiDB Dashboard FAQs
+summary: This document summarizes FAQs about TiDB Dashboard. It covers access-related, UI-related, and deployment issues, providing solutions for each problem. If further assistance is needed, support can be obtained from PingCAP or the community.
 ---
 
-# TiDB Dashboard 常见问题
+# TiDB Dashboard FAQs
 
-本文汇总了使用 TiDB Dashboard 过程中的常见问题与解决办法。若无法找到对应问题，或者根据指引操作后问题仍然存在，请从 PingCAP 官方或 TiDB 社区[获取支持](/support.md)。
+This document summarizes the frequently asked questions (FAQs) and answers about TiDB Dashboard. If a problem cannot be located or persists after you perform as instructed, [get support](/support.md) from PingCAP or the community.
 
-## 访问
+## Access-related FAQ
 
-### 已配置防火墙或反向代理，但访问后被跳转到一个内部地址无法访问 TiDB Dashboard
+### When the firewall or reverse proxy is configured, I am redirected to an internal address other than TiDB Dashboard
 
-集群部署有多个 PD 实例的情况下，只有其中某一个 PD 实例会真正运行 TiDB Dashboard 服务，访问其他 PD 实例时会发生浏览器端重定向。若防火墙或反向代理没有为此进行正确配置，就可能出现访问后被重定向到一个被防火墙或反向代理保护的内部地址的情况。
+When multiple Placement Driver (PD) instances are deployed in a cluster, only one of the PD instances actually runs the TiDB Dashboard service. If you access other PD instances instead of this one, your browser redirects you to another address. If the firewall or reverse proxy is not properly configured for accessing TiDB Dashboard, when you visit the Dashboard, you might be redirected to an internal address that is protected by the firewall or reverse proxy.
 
-- 参阅 [TiDB Dashboard 多 PD 实例部署](/dashboard/dashboard-ops-deploy.md#多-pd-实例部署)章节了解多 PD 实例下 TiDB Dashboard 的工作原理。
-- 参阅[通过反向代理使用 TiDB Dashboard](/dashboard/dashboard-ops-reverse-proxy.md) 章节了解如何正确配置反向代理。
-- 参阅[提高 TiDB Dashboard 安全性](/dashboard/dashboard-ops-security.md)章节了解如何正确配置防火墙。
+- See [TiDB Dashboard Multi-PD Instance Deployment](/dashboard/dashboard-ops-deploy.md) to learn the working principle of TiDB Dashboard with multiple PD instances.
+- See [Use TiDB Dashboard through a Reverse Proxy](/dashboard/dashboard-ops-reverse-proxy.md) to learn how to correctly configure a reverse proxy.
+- See [Secure TiDB Dashboard](/dashboard/dashboard-ops-security.md) to learn how to correctly configure the firewall.
 
-### 双网卡部署时无法通过另一个网卡访问 TiDB Dashboard
+### When TiDB Dashboard is deployed with dual network interface cards (NICs), TiDB Dashboard cannot be accessed using another NIC
 
-PD 中的 TiDB Dashboard 出于安全考虑仅监听部署时所指定的 IP 地址（即只监听在一个网卡上），而非 `0.0.0.0`，因此当主机上安装了多个网卡时，通过另一个网卡将无法访问。
+For security reasons, TiDB Dashboard on PD only monitors the IP addresses specified during deployment (that is, it only listens on one NIC), not on `0.0.0.0`. Therefore, when multiple NICs are installed on the host, you cannot access TiDB Dashboard using another NIC.
 
-当你使用 `tiup cluster` 或 `tiup playground` 命令部署时，目前尚没有方法改变该行为。推荐使用反向代理将 TiDB Dashboard 安全地暴露给另一个网卡，具体参见[通过反向代理使用 TiDB Dashboard](/dashboard/dashboard-ops-reverse-proxy.md) 章节。
+If you have deployed TiDB using the `tiup cluster` or `tiup playground` command, currently this problem cannot be solved. It is recommended that you use a reverse proxy to safely expose TiDB Dashboard to another NIC. For details, see [Use TiDB Dashboard behind a Reverse Proxy](/dashboard/dashboard-ops-reverse-proxy.md).
 
-## 界面功能
+## UI-related FAQ
 
-### 概况页面中 QPS 及 Latency 显示 `prometheus_not_found` 错误
+### A `prometheus_not_found` error is shown in **QPS** and **Latency** sections on the Overview page
 
-QPS 及 Latency 监控依赖于集群中已正常部署 Prometheus 监控实例，没有部署的情况下就会显示为错误。向集群中新部署 Prometheus 实例即可解决该问题。
+The **QPS** and **Latency** sections on the **Overview** page require a cluster with Prometheus deployed. Otherwise, the error is shown. You can solve this problem by deploying a Prometheus instance in the cluster.
 
-若已经部署 Prometheus 监控实例但仍然显示为错误，可能的原因是您使用的部署工具（TiUP 或 TiDB Operator）版本比较旧，没有自动汇报监控地址，导致 TiDB Dashboard 无法感知并查询监控数据。可以升级到最新的部署工具并重试。
+If you still encounter this problem when the Prometheus instance has been deployed, the possible reason is that your deployment tool is out of date (TiUP or TiDB Operator), and your tool does not automatically report metrics addresses, which makes TiDB Dashboard unable to query metrics. You can upgrade your deployment tool to the latest version and try again.
 
-以下给出 TiUP 部署工具的操作方法，对于其他部署工具，请参阅工具对应文档。
+If your deployment tool is TiUP, take the following steps to solve this problem. For other deployment tools, refer to the corresponding documents of those tools.
 
-1. 升级 TiUP、TiUP Cluster：
+1. Upgrade TiUP and TiUP Cluster:
 
+    
     ```bash
     tiup update --self
     tiup update cluster --force
     ```
 
-2. 升级后，部署包含监控节点的新集群时，应当能正常显示监控。
+2. After the upgrade, when a new cluster is deployed with Prometheus instances, the metrics can be displayed normally.
 
-3. 升级后，对于现有集群，可通过再次启动集群的方法汇报监控地址（将 `CLUSTER_NAME` 替换为实际集群名称）：
+3. After the upgrade, for an existing cluster, you can restart this cluster to report the metrics addresses. Replace `CLUSTER_NAME` with the actual cluster name:
 
+    
     ```bash
     tiup cluster start CLUSTER_NAME
     ```
 
-    即使集群已经启动，请仍然执行该命令。该命令不会影响集群上正常的业务，但会刷新并上报监控地址，从而能让监控在 TiDB Dashboard 中正常显示。
+   Even if the cluster has been started, still execute this command. This command does not affect the normal application in the cluster, but refreshes and reports the metrics addresses, so that the monitoring metrics can be displayed normally in TiDB Dashboard.
 
-### 慢查询页面显示 `invalid connection` 错误
+### An `invalid connection` error is shown on the **Slow Queries** page
 
-可能的原因是你开启了 TiDB 的 `prepared-plan-cache` 功能。`prepared-plan-cache` 是实验性功能，在某些版本的 TiDB 中可能无法正常运行，开启后可能会导致 TiDB Dashboard（及其他应用）出现该问题。你可以通过系统变量 [`tidb_enable_prepared_plan_cache`](/system-variables.md#tidb_enable_prepared_plan_cache-从-v610-版本开始引入) 关闭这项功能。
+The possible reason is that you have enabled the Prepared Plan Cache feature of TiDB. As an experimental feature, when enabled, Prepared Plan Cache might not function properly in specific TiDB versions, which could cause this problem in TiDB Dashboard (and other applications). You can disable Prepared Plan Cache by setting the system variable [`tidb_enable_prepared_plan_cache = OFF`](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610).
 
-### 界面提示 `集群中未启动必要组件 NgMonitoring`
+### A `required component NgMonitoring is not started` error is shown
 
-NgMonitoring 是 TiDB v5.4.0 及以上集群中内置的高级监控组件，用于支撑 TiDB Dashboard 的 **持续性能分析** 和 **Top SQL** 等功能。使用较新版本 TiUP 部署或升级集群时，NgMonitoring 会自动部署；使用 TiDB Operator 部署集群时，需要依据[启用持续性能分析](https://docs.pingcap.com/zh/tidb-in-kubernetes/v1.6/access-dashboard#启用持续性能分析)手动部署 NgMonitoring。
+NgMonitoring is an advanced monitoring component built in TiDB clusters of v5.4.0 and later versions to support TiDB Dashboard features such as **Continuous Profiling** and **Top SQL**. NgMonitoring is automatically deployed when you deploy or upgrade a cluster with a newer version of TiUP. For clusters deployed using TiDB Operator, you can deploy NgMonitoring manually by referring to [Enable Continuous Profiling](https://docs.pingcap.com/tidb-in-kubernetes/dev/access-dashboard/#enable-continuous-profiling).
 
-如果界面提示 `集群中未启动必要组件 NgMonitoring`，可按以下方式排查部署问题。
+If the web page shows `required component NgMonitoring is not started`, you can troubleshoot the deployment issue as follows:
 
 <details>
-  <summary>使用 TiUP 部署的集群</summary>
+  <summary>Clusters Deployed using TiUP</summary>
 
-第 1 步：检查 TiUP Cluster 版本
+Step 1. Check versions
 
-  1. 检查 TiUP Cluster 版本，NgMonitoring 组件需要较高版本的部署工具支持（TiUP v1.9.0 及以上）：
+1. Check the TiUP cluster version. NgMonitoring is deployed only when TiUP is v1.9.0 or later.
 
-        
-        ```shell
-        tiup cluster --version
-        ```
+    
+    ```shell
+    tiup cluster --version
+    ```
 
-        上述命令可查看 TiUP Cluster 的具体版本。例如：
+    The command output shows the TiUP version. For example:
 
-        ```
-        tiup version 1.9.0 tiup
-        Go Version: go1.17.2
-        Git Ref: v1.9.0
-        ```
+    ```
+    tiup version 1.9.0 tiup
+    Go Version: go1.17.2
+    Git Ref: v1.9.0
+    ```
 
-  2. 如果 TiUP 版本低于 v1.9.0，升级 TiUP 和 TiUP Cluster 版本至最新。
+2. If the TiUP cluster version is earlier than v1.9.0, upgrade TiUP and TiUP cluster to the latest version:
 
-        
-        ```shell
-        tiup update --all
-        ```
+    
+    ```shell
+    tiup update --all
+    ```
 
-第 2 步：在中控机上，通过 TiUP 添加 ng_port 配置项，然后重启 Prometheus 节点。
+Step 2. Add the ng_port configuration item on the control machine by using TiUP. Then reload Prometheus.
 
-  1. 以编辑模式打开集群的配置文件：
+1. Open the cluster configuration file in editing mode:
 
-        
-        ```shell
-        tiup cluster edit-config ${cluster-name}
-        ```
+    
+    ```shell
+    tiup cluster edit-config ${cluster-name}
+    ```
 
-  2. 在 `monitoring_servers` 下面增加 `ng_port:12020` 参数：
+2. Under `monitoring_servers`, add the `ng_port:12020` parameter:
 
-        ```
-        monitoring_servers:
-        - host: 172.16.6.6
-          ng_port: 12020
-        ```
+    ```
+    monitoring_servers:
+    - host: 172.16.6.6
+      ng_port: 12020
+    ```
 
-  3. 重启 Prometheus 节点：
+3. Reload Prometheus:
 
-        
-        ```shell
-        tiup cluster reload ${cluster-name} --role prometheus
-        ```
+    
+    ```shell
+    tiup cluster reload ${cluster-name} --role prometheus
+    ```
 
-如果执行完上述步骤后依然提示 NgMonitoring 未启动，请从 PingCAP 官方或 TiDB 社区[获取支持](/support.md)。
+If the error message is still prompted after performing steps above, [get support](/support.md) from PingCAP or the community.
 
 </details>
 
 <details>
-  <summary>使用 TiDB Operator 部署的集群</summary>
+  <summary>Clusters Deployed using TiDB Operator</summary>
 
-请参见 TiDB Operator 文档中[启用持续性能分析](https://docs.pingcap.com/zh/tidb-in-kubernetes/v1.6/access-dashboard#启用持续性能分析)的步骤部署 NgMonitoring 组件。
+Deploy the NgMonitoring component by following instructions in the [Enable Continuous Profiling](https://docs.pingcap.com/tidb-in-kubernetes/dev/access-dashboard/#enable-continuous-profiling) section in TiDB Operator documentation.
 
 </details>
 
 <details>
-  <summary>使用 TiUP Playground 启动的集群</summary>
+  <summary>Clusters Started using TiUP Playground</summary>
 
-TiUP Playground (>= v1.8.0) 在启动集群时会自动启动 NgMonitoring 组件。可使用以下命令更新 TiUP Playground 到最新版：
+When starting the cluster, TiUP Playground (>= v1.8.0) automatically starts the NgMonitoring component. To update TiUP Playground to the latest version, run the following command:
 
 
 ```shell
@@ -135,22 +137,22 @@ tiup update playground
 
 </details>
 
-### 慢查询页面显示 `unknown field` 错误
+### An `unknown field` error is shown on the **Slow Queries** page
 
-集群升级后，如果慢查询页面出现 `unknown field` 错误，是由于升级后新版本 TiDB Dashboard 字段与浏览器缓存内的用户偏好设置的字段不兼容导致的。该问题已修复。如果你的集群版本低于 v5.0.3 或 v4.0.14，需要执行以下步骤清理浏览器缓存：
+If the `unknown field` error appears on the **Slow Queries** page after the cluster upgrade, the error is related to a compatibility issue caused by the difference between TiDB Dashboard server fields (which might be updated) and user preferences fields (which are in the browser cache). This issue has been fixed. If your cluster is earlier than v5.0.3 or v4.0.14, perform the following steps to clear your browser cache:
 
-1. 打开 TiDB Dashboard 页面。
+1. Open TiDB Dashboard page.
 
-2. 打开浏览器的开发者工具。各浏览器的打开方式不同。
+2. Open Developer Tools. Different browsers have different ways of opening Developer Tools. After clicking the **Menu Bar**:
 
-    - Firefox：**菜单** > **Web 开发者** > **切换工具箱**（译者注：此处修改为最新的 Firefox Quantum），或者**工具栏** > **切换工具箱**。
-    - Chrome：**菜单** > **更多工具** > **开发者工具**。
-    - Safari：**Develop** > **Show Web Inspector**。如果你看不到 Develop 菜单，选择 **Preferences** > **Advanced**，然后点击 **Show Develop menu in menu bar** 复选框。
+    - Firefox: **Menu** > **Web Developer** > **Toggle Tools**, or **Tools** > **Web Developer** > **Toggle Tools**.
+    - Chrome: **More tools** > **Developer tools**.
+    - Safari: **Develop** > **Show Web Inspector**. If you can't see the **Develop** menu, go to **Safari** > **Preferences** > **Advanced**, and check the **Show Develop** menu in menu bar checkbox.
 
-    以 Chrome 为例：
+    In the following example, Chrome is used.
 
-    ![打开开发者工具](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-faq-devtools.png)
+    ![Opening DevTools from Chrome's main menu](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-faq-devtools.png)
 
-3. 选中 **Application** 面板，展开 **Local Storage** 菜单并选中 **TiDB Dashboard 页面的域名**，点击 **Clear All**。
+3. Select the **Application** panel, expand the **Local Storage** menu and select the **TiDB Dashboard page domain**. Click the **Clear All** button.
 
-    ![清理 Local Storage](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-faq-devtools-application.png)
+    ![Clear the Local Storage](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-faq-devtools-application.png)

@@ -1,151 +1,156 @@
 ---
-title: DM 监控指标
-summary: 介绍 DM 的监控指标
+title: Data Migration Monitoring Metrics
+summary: Learn about the monitoring metrics when you use Data Migration to migrate data.
 ---
 
-# DM 监控指标
+# Data Migration Monitoring Metrics
 
-使用 TiUP 部署 DM 集群的时候，会默认部署一套[监控系统](/dm/migrate-data-using-dm.md#第-8-步监控任务与查看日志)。
+If your DM cluster is deployed using TiUP, the [monitoring system](/dm/migrate-data-using-dm.md#step-8-monitor-the-task-and-check-logs) is also deployed at the same time. This document describes the monitoring metrics provided by DM-worker.
 
 ## Task
 
-在 Grafana dashboard 中，DM 默认名称为 `DM-task`。
+In the Grafana dashboard, the default name of DM is `DM-task`.
 
-### Overview
+### `overview`
 
-overview 下包含运行当前选定 task 的所有 DM-worker/master instance/source 的部分监控指标。当前默认告警规则只针对于单个 DM-worker/master instance/source。
+`Overview` contains some monitoring metrics of all the DM-worker and DM-master instances or sources in the currently selected task. The current default alert rule is only for a single DM-worker/DM-master instance/source.
 
-| metric 名称 | 说明 | 告警说明 | 告警级别 |
+| Metric name | Description | Alert | Severity level |
 |:----|:------------|:----|:----|
-| task state | 迁移子任务的状态 | N/A | N/A |
-| storage capacity | relay log 占有的磁盘的总容量  | N/A | N/A |
-| storage remain | relay log 占有的磁盘的剩余可用容量  | N/A | N/A |
-| binlog file gap between master and relay | relay 与上游 master 相比落后的 binlog file 个数 | N/A | N/A |
-| load progress | load unit 导入过程的进度百分比，值变化范围为：0% - 100%  | N/A | N/A |
-| binlog file gap between master and syncer | 与上游 master 相比 binlog replication unit 落后的 binlog file 个数 | N/A | N/A |
-| shard lock resolving | 当前子任务是否正在等待 shard DDL 迁移，大于 0 表示正在等待迁移 | N/A | N/A |
+| task state | The state of subtasks for migration | N/A | N/A |
+| storage capacity | The total storage capacity of the disk occupied by relay logs | N/A | N/A |
+| storage remain | The remaining storage capacity of the disk occupied by relay logs | N/A | N/A |
+| binlog file gap between master and relay | The number of binlog files by which the `relay` processing unit is behind the upstream master | N/A | N/A |
+| load progress | The percentage of the completed loading process of the load unit. The value is between 0%~100% | N/A | N/A |
+| binlog file gap between master and syncer | The number of binlog files by which the binlog replication unit is behind the upstream master | N/A | N/A |
+| shard lock resolving | Whether the current subtask is waiting for sharding DDL migration. A value greater than 0 means that the current subtask is waiting for sharding DDL migration | N/A | N/A |
 
-### Operate error
+### Operation errors
 
-| metric 名称 | 说明 | 告警说明 | 告警级别 |
+| Metric name | Description | Alert | Severity level |
 |:----|:------------|:----|:----|
-| before any operate error | 在进行操作之前出错的次数 | N/A | N/A |
-| source bound error | 数据源绑定操作出错次数 | N/A | N/A |
-| start error | 子任务启动的出错次数 | N/A | N/A |
-| pause error | 子任务暂停的出错次数 | N/A | N/A |
-| resume error | 子任务恢复的出错次数 | N/A | N/A |
-| auto-resume error | 子任务自动恢复的出错次数 | N/A | N/A |
-| update error | 子任务更新的出错次数 | N/A | N/A |
-| stop error | 子任务停止的出错次数 | N/A | N/A |
+| before any operate error | The number of errors before any operation | N/A | N/A |
+| source bound error | The number of errors of data source binding operations | N/A | N/A |
+| start error | The number of errors during the start of a subtask | N/A | N/A |
+| pause error | The number of errors during the pause of a subtask | N/A | N/A |
+| resume error | The number of errors during the resuming of a subtask | N/A | N/A |
+| auto-resume error | The number of errors during the auto-resuming of a subtask | N/A | N/A |
+| update error | The number of errors during the update of a subtask | N/A | N/A |
+| stop error | The number of errors during the stop of a subtask | N/A | N/A |
 
-### HA 高可用
+### High availability
 
-| metric 名称 | 说明 | 告警说明 | 告警级别 |
+| Metric name | Description | Alert | Severity level |
 |:----|:------------|:----|:----|
-| number of dm-masters start leader components per minute | 每分钟内 DM-master 尝试启用 leader 相关组件次数 | N/A | N/A |
-| number of workers in different state | 不同状态下有多少个 DM-worker | 存在离线的 DM-worker 超过一小时 | critical |
-| workers' state | DM-worker 的状态 | N/A | N/A |
-| number of worker event error | 不同类型的 DM-worker 错误出现次数 | N/A | N/A |
-| shard ddl error per minute | 每分钟内不同类型的 shard DDL 错误次数 | 发生 shard DDL 错误 | critical |
-| number of pending shard ddl | 未完成的 shard DDL 数目 | 存在未完成的 shard DDL 数目超过一小时 | critical |
+| number of dm-masters start leader components per minute | The number of DM-master attempts to enable leader related components per minute | N/A | N/A |
+| number of workers in different state | The number of DM-workers in different states | Some DM-worker(s) has (have) been offline for more than one hour | critical |
+| workers' state | The state of the DM-worker | N/A | N/A |
+| number of worker event error | The number of different types of DM-worker errors | N/A | N/A |
+| shard ddl error per minute | The number of different types of sharding DDL errors per minute | Any sharding DDL error occurs | critical |
+| number of pending shard ddl | The number of pending sharding DDL operations | Any pending sharding DDL operation has existed for more than one hour | critical |
 
-### Task 状态
+### Task state
 
-| metric 名称 | 说明 | 告警说明 | 告警级别 |
+| Metric name | Description | Alert | Severity level |
 |:----|:------------|:----|:----|
-| task state | 迁移子任务的状态 | 当子任务状态处于 `Paused` 超过 20 分钟时| critical |
+| task state | The state of subtasks | An alert occurs when the subtask has been in the `Paused` state for more than 20 minutes | critical |
 
 ### Dump/Load unit
 
-下面 metrics 仅在 `task-mode` 为 `full` 或者 `all` 模式下会有值。
+The following metrics show only when `task-mode` is in the `full` or `all` mode.
 
-| metric 名称 | 说明 | 告警说明 | 告警级别 |
+| Metric name | Description | Alert | Severity level |
 |:----|:------------|:----|:----|
-| dump progress | dump unit 导出过程的进度百分比，值变化范围为：0% - 100%  | N/A | N/A |
-| load progress | load unit 导入过程的进度百分比，值变化范围为：0% - 100%  | N/A | N/A |
-| checksum progress | load unit 导入完成后，数据校验过程的进度百分比，值变化范围为：0% - 100%  | N/A | N/A |
-| total bytes for load unit | load unit 导入过程中源数据解析、生成数据 KV、生成索引 KV 阶段处理的字节数 | N/A | N/A |
-| chunk process duration | load unit 处理数据源文件 chunk 的耗时，单位：秒 | N/A | N/A |
-| dump process exits with error | dump unit 在 DM-worker 内部遇到错误并且退出了 | 立即告警 | critical |
-| load process exits with error | load unit 在 DM-worker 内部遇到错误并且退出了  | 立即告警 | critical |
+| dump progress | The percentage of the completed dumping process of the dump unit. The value range is 0%~100% | N/A | N/A |
+| load progress | The percentage of the completed loading process of the load unit. The value range is 0%~100% | N/A | N/A |
+| checksum progress | The percentage of the completed checksum process after the load unit finishes dumping. The value range is 0%~100% | N/A | N/A |
+| total bytes for load unit | The bytes processed in the parsing, in generating data KV, and in generating index KV stages of the import process by the load unit | N/A | N/A |
+| chunk process duration | The duration of the load unit processing the data source file chunk (in seconds) | N/A | N/A |
+| data file size | The total size of the data files (includes the `INSERT INTO` statement) in the full data imported by the load unit | N/A | N/A |
+| dump process exits with error | The dump unit encounters an error within the DM-worker and exits | Immediate alerts | critical |
+| load process exits with error | The load unit encounters an error within the DM-worker and exits | Immediate alerts | critical |
 
 ### Binlog replication
 
-下面 metrics 仅在 `task-mode` 为 `incremental` 或者 `all` 模式下会有值。
+The following metrics show only when `task-mode` is in the `incremental` or `all` mode.
 
-| metric 名称 | 说明  | 告警说明 | 告警级别 |
+| Metric name | Description | Alert | Severity level |
 |:----|:------------|:----|:----|
-| remaining time to sync | 预计 Syncer 还需要多少分钟可以和上游 master 完全同步，单位：分钟 | N/A | N/A |
-| replicate lag gauge | 上游 master 到下游的 binlog 复制延迟时间，单位：秒 | N/A | N/A |
-| replicate lag histogram | 上游 master 到下游的 binlog 复制延迟分布，单位：秒。注意由于统计机制不同，数据会有误差 | N/A | N/A |
-| process exist with error | binlog replication unit 在 DM-worker 内部遇到错误并且退出了 | 立即告警 | critical |
-| binlog file gap between master and syncer | 与上游 master 相比落后的 binlog file 个数 | 落后 binlog file 个数超过 1 个（不含 1 个）且持续 10 分钟时 | critical |
-| binlog file gap between relay and syncer | 与 relay 相比落后的 binlog file 个数 | 落后 binlog file 个数超过 1 个（不含 1 个）且持续 10 分钟时 | critical |
-| binlog event QPS | 单位时间内接收到的 binlog event 数量 (不包含需要跳过的 event) | N/A | N/A |
-| skipped binlog event QPS | 单位时间内接收到的需要跳过的 binlog event 数量  | N/A | N/A |
-| read binlog event duration | binlog replication unit 从 relay log 或上游 MySQL 读取 binlog 的耗时，单位：秒 | N/A | N/A |
-| transform binlog event duration | binlog replication unit 解析 binlog 并将 binlog 转换成 SQL 语句的耗时，单位：秒 | N/A | N/A |
-| dispatch binlog event duration | binlog replication unit 调度一条 binlog event 的耗时，单位：秒 | N/A | N/A |
-| transaction execution latency | binlog replication unit 执行事务到下游的耗时，单位：秒 | N/A | N/A |
-| binlog event size | binlog replication unit 从 relay log 或上游 MySQL 读取的单条 binlog event 的大小 | N/A | N/A |
-| DML queue remain length | 剩余 DML job 队列的长度 | N/A | N/A |
-| total sqls jobs | 单位时间内新增的 job 数量 | N/A | N/A |
-| finished sqls jobs | 单位时间内完成的 job 数量 | N/A | N/A |
-| statement execution latency | binlog replication unit 执行语句到下游的耗时，单位：秒 | N/A | N/A |
-| add job duration | binlog replication unit 增加一条 job 到队列的耗时，单位：秒 | N/A | N/A |
-| DML conflict detect duration | binlog replication unit 检测 DML 间冲突的耗时，单位：秒 | N/A | N/A |
-| skipped event duration | binlog replication unit 跳过 binlog event 的耗时，单位：秒 | N/A | N/A |
-| unsynced tables | 当前子任务内还未收到 shard DDL 的分表数量 | N/A | N/A |
-| shard lock resolving | 当前子任务是否正在等待 shard DDL 迁移，大于 0 表示正在等待迁移 | N/A | N/A |
-| ideal QPS | 在 DM 运行耗时为 0 时可以达到的最高 QPS | N/A | N/A |
-| binlog event row | 一个 binlog 事件中的行数 | N/A | N/A |
-| finished transaction total | 执行完毕的事务数量 | N/A | N/A |
-| replication transaction batch | 执行到下游的事务里中 sql 行数 | N/A | N/A |
-| flush checkpoints time interval | 检查点刷新时间间隔，单位：秒  | N/A | N/A |
+| remaining time to sync | The predicted remaining time it takes for `syncer` to be completely migrated with the upstream master (in minutes) | N/A | N/A |
+| replicate lag gauge | The latency time it takes to replicate the binlog from upstream to downstream (in seconds) | N/A | N/A |
+| replicate lag histogram | The histogram of replicating the binlog from upstream to downstream (in seconds). Note that due to different statistical mechanisms, the data might be inaccurate | N/A | N/A |
+| process exist with error | The binlog replication unit encounters an error within the DM-worker and exits | Immediate alerts | critical |
+| binlog file gap between master and syncer | The number of binlog files by which the `syncer` processing unit is behind the upstream master | An alert occurs when the number of binlog files by which the `syncer` processing unit is behind the upstream master exceeds one (>1) and the condition lasts over 10 minutes | critical |
+| binlog file gap between relay and syncer | The number of binlog files by which `syncer` is behind `relay` | An alert occurs when the number of binlog files by which the `syncer` processing unit is behind the `relay` processing unit exceeds one (>1) and the condition lasts over 10 minutes | critical |
+| binlog event QPS | The number of binlog events received per unit of time (this number does not include the events that need to be skipped) | N/A | N/A |
+| skipped binlog event QPS | The number of binlog events received per unit of time that need to be skipped | N/A | N/A |
+| read binlog event duration | The duration that the binlog replication unit reads the binlog from the relay log or the upstream MySQL (in seconds) | N/A | N/A |
+| transform binlog event duration | The duration that the binlog replication unit parses and transforms the binlog into SQL statements (in seconds) | N/A | N/A |
+| dispatch binlog event duration | The duration that the binlog replication unit dispatches a binlog event (in seconds) | N/A | N/A |
+| transaction execution latency | The duration that the binlog replication unit executes the transaction to the downstream (in seconds) | N/A | N/A |
+| binlog event size | The size of a binlog event that the binlog replication unit reads from the relay log or the upstream MySQL | N/A | N/A |
+| DML queue remain length | The length of the remaining DML job queue | N/A | N/A |
+| total sqls jobs | The number of newly added jobs per unit of time | N/A | N/A |
+| finished sqls jobs | The number of finished jobs per unit of time | N/A | N/A |
+| statement execution latency | The duration that the binlog replication unit executes the statement to the downstream (in seconds) | N/A | N/A |
+| add job duration | The duration that the binlog replication unit adds a job to the queue (in seconds) | N/A | N/A |
+| DML conflict detect duration | The duration that the binlog replication unit detects the conflict in DML (in seconds) | N/A | N/A |
+| skipped event duration | The duration that the binlog replication unit skips a binlog event (in seconds) | N/A | N/A |
+| unsynced tables | The number of tables that have not received the shard DDL statement in the current subtask | N/A | N/A |
+| shard lock resolving | Whether the current subtask is waiting for the shard DDL lock to be resolved. A value greater than 0 indicates that it is waiting for the shard DDL lock to be resolved | N/A | N/A |
+| ideal QPS | The highest QPS that can be achieved when the running time of DM is 0 | N/A | N/A |
+| binlog event row | The number of rows in a binlog event | N/A | N/A |
+| finished transaction total | The number of finished transactions in total | N/A | N/A |
+| replication transaction batch | The number of sql rows in the transaction executed to the downstream | N/A | N/A |
+| flush checkpoints time interval | The time interval for flushing the checkpoints (in seconds) | N/A | N/A |
 
 ### Relay log
 
-| metric 名称 | 说明 | 告警说明 | 告警级别 |
+> **Note:**
+>
+> Currently, DM v2.0 does not support enabling the relay log feature.
+
+| Metric name | Description | Alert | Severity level |
 |:----|:------------|:----|:----|
-| storage capacity | relay log 占有的磁盘的总容量  | N/A | N/A |
-| storage remain | relay log 占有的磁盘的剩余可用容量  | 小于 10G 的时候需要告警 | critical |
-| process exits with error | relay log 在 DM-worker 内部遇到错误并且退出了  | 立即告警 | critical |
-| relay log data corruption | relay log 文件损坏的个数 | 立即告警 | emergency |
-| fail to read binlog from master | relay 从上游的 MySQL 读取 binlog 时遇到的错误数 | 立即告警 | critical |
-| fail to write relay log | relay 写 binlog 到磁盘时遇到的错误数 | 立即告警 | critical |
-| binlog file index | relay log 最大的文件序列号。如 value = 1 表示 relay-log.000001 | N/A | N/A |
-| binlog file gap between master and relay | relay 与上游 master 相比落后的 binlog file 个数 | 落后 binlog file 个数超过 1 个（不含 1 个）且持续 10 分钟时 | critical |
-| binlog pos | relay log 最新文件的写入 offset  | N/A | N/A |
-| read binlog event duration | relay log 从上游的 MySQL 读取 binlog 的时延，单位：秒 |  N/A | N/A |
-| write relay log duration | relay log 每次写 binlog 到磁盘的时延，单位：秒| N/A | N/A |
-| binlog event size | relay log 写到磁盘的单条 binlog 的大小 | N/A | N/A |
+| storage capacity | The storage capacity of the disk occupied by the relay log | N/A | N/A |
+| storage remain | The remaining storage capacity of the disk occupied by the relay log | An alert is needed once the value is smaller than 10G | critical |
+| process exits with error | The relay log encounters an error within the DM-worker and exits | Immediate alerts | critical |
+| relay log data corruption | The number of corrupted relay log files | Immediate alerts | emergency |
+| fail to read binlog from master | The number of errors encountered when the relay log reads the binlog from the upstream MySQL | Immediate alerts | critical |
+| fail to write relay log | The number of errors encountered when the relay log writes the binlog to disks | Immediate alerts | critical |
+| binlog file index | The largest index number of relay log files. For example, "value = 1" indicates "relay-log.000001" | N/A | N/A |
+| binlog file gap between master and relay | The number of binlog files in the relay log that are behind the upstream master | An alert occurs when the number of binlog files by which the `relay` processing unit is behind the upstream master exceeds one (>1) and the condition lasts over 10 minutes | critical |
+| binlog pos | The write offset of the latest relay log file | N/A | N/A |
+| read binlog event duration | The duration that the relay log reads binlog from the upstream MySQL (in seconds) | N/A | N/A |
+| write relay log duration | The duration that the relay log writes binlog into the disks each time (in seconds) | N/A | N/A |
+| binlog event size | The size of a single binlog event that the relay log writes into the disks | N/A | N/A |
 
 ## Instance
 
-在 Grafana dashboard 中，instance 的默认名称为 `DM-instance`。
+In the Grafana dashboard, the default name of an instance is `DM-instance`.
 
 ### Relay log
 
-| metric 名称 | 说明 | 告警说明 | 告警级别 |
+| Metric name | Description | Alert | Severity level |
 |:----|:------------|:----|:----|
-| storage capacity | relay log 占有的磁盘的总容量  | N/A | N/A |
-| storage remain | relay log 占有的磁盘的剩余可用容量  | 小于 10G 的时候需要告警 | critical |
-| process exits with error | relay log 在 DM-worker 内部遇到错误并且退出了  | 立即告警 | critical |
-| relay log data corruption | relay log 文件损坏的个数 | 立即告警 | emergency |
-| fail to read binlog from master | relay 从上游的 MySQL 读取 binlog 时遇到的错误数 | 立即告警 | critical |
-| fail to write relay log | relay 写 binlog 到磁盘时遇到的错误数 | 立即告警 | critical |
-| binlog file index | relay log 最大的文件序列号。如 value = 1 表示 relay-log.000001 | N/A | N/A |
-| binlog file gap between master and relay | relay 与上游 master 相比落后的 binlog file 个数 | 落后 binlog file 个数超过 1 个（不含 1 个）且持续 10 分钟时 | critical |
-| binlog pos | relay log 最新文件的写入 offset  | N/A | N/A |
-| read binlog duration | relay log 从上游的 MySQL 读取 binlog 的时延，单位：秒 |  N/A | N/A |
-| write relay log duration | relay log 每次写 binlog 到磁盘的时延，单位：秒 | N/A | N/A |
-| binlog size | relay log 写到磁盘的单条 binlog 的大小 | N/A | N/A |
+| storage capacity | The total storage capacity of the disk occupied by the relay log | N/A | N/A |
+| storage remain | The remaining storage capacity within the disk occupied by the relay log | An alert occurs once the value is smaller than 10G | critical |
+| process exits with error | The relay log encounters an error in DM-worker and exits | Immediate alerts | critical |
+| relay log data corruption | The number of corrupted relay logs | Immediate alerts | emergency |
+| fail to read binlog from master | The number of errors encountered when relay log reads the binlog from the upstream MySQL | Immediate alerts | critical |
+| fail to write relay log | The number of errors encountered when the relay log writes the binlog to disks | Immediate alerts | critical |
+| binlog file index | The largest index number of relay log files. For example, "value = 1" indicates "relay-log.000001" | N/A | N/A |
+| binlog file gap between master and relay | The number of binlog files by which the `relay` processing unit is behind the upstream master | An alert occurs when the number of binlog files by which the `relay` processing unit is behind the upstream master exceeds one (>1) and the condition lasts over 10 minutes | critical |
+| binlog pos | The write offset of the latest relay log file | N/A | N/A |
+| read binlog duration | The duration that the relay log reads the binlog from the upstream MySQL (in seconds) | N/A | N/A |
+| write relay log duration | The duration that the relay log writes the binlog into the disk each time (in seconds) | N/A | N/A |
+| binlog size | The size of a single binlog event that the relay log writes into the disks | N/A | N/A |
 
-### task
+### Task
 
-| metric 名称 | 说明 | 告警说明 | 告警级别 |
+| Metric name | Description | Alert | Severity level |
 |:----|:------------|:----|:----|
-| task state | 迁移子任务的状态 | 当子任务状态处于 paused 超过 10 分钟时 | critical |
-| load progress | load unit 导入过程的进度百分比，值变化范围为：0% - 100%  | N/A | N/A |
-| binlog file gap between master and syncer | 与上游 master 相比 binlog replication unit 落后的 binlog file 个数 | N/A | N/A |
-| shard lock resolving | 当前子任务是否正在等待 shard DDL 迁移，大于 0 表示正在等待迁移 | N/A | N/A |
+| task state | The state of subtasks for migration | An alert occurs when the subtask has been paused for more than 10 minutes | critical |
+| load progress | The percentage of the completed loading process of the load unit. The value range is 0%~100% | N/A | N/A |
+| binlog file gap between master and syncer | The number of binlog files by which the binlog replication unit is behind the upstream master | N/A | N/A |
+| shard lock resolving | Whether the current subtask is waiting for sharding DDL migration. A value greater than 0 means that the current subtask is waiting for sharding DDL migration | N/A | N/A |

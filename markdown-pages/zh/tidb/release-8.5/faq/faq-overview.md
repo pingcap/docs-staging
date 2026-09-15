@@ -1,21 +1,74 @@
 ---
-title: TiDB 产品常见问题解答汇总
-summary: 汇总 TiDB 产品的常见问题解答。
+title: TiDB FAQ Summary
+summary: Summarizes frequently asked questions (FAQs) about TiDB.
 ---
 
-# TiDB 产品常见问题解答汇总
+# TiDB FAQ Summary
 
-本文整合汇总了 TiDB 使用过程中常见问题解答的 (FAQ) 文档。
+This document summarizes frequently asked questions (FAQs) about TiDB.
 
-|   分类     |           相关文档          |
-|   :-------   |   :-------------------   |
-|   产品架构和原理    |       [产品架构常见问题](/faq/tidb-faq.md)   |
-|   安装部署           |     <ul><li>[安装部署常见问题](/faq/deploy-and-maintain-faq.md)</li><li>[TiUP 常见问题](/tiup/tiup-faq.md)</li><li>[Kubernetes 上的 TiDB 集群常见问题](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/faq)</li></ul> |
-|  数据迁移      | <ul><li>[数据迁移常见问题](/faq/migration-tidb-faq.md)</li><li>数据导入<ul><li>[TiDB Lightning 常见问题](/tidb-lightning/tidb-lightning-faq.md)</li><li>[TiDB Data Migration 常见问题](/dm/dm-faq.md)</li></ul></li><li>增量数据同步<ul><li>[TiCDC 常见问题解答](/ticdc/ticdc-faq.md)</li></ul></li></ul>  |
-|  数据备份与恢复   |    [备份与恢复常见问题](/faq/backup-and-restore-faq.md)   |
-|  SQL 使用  |   [SQL 操作常见问题](/faq/sql-faq.md)  |
-|  集群升级       |  [TiDB 集群升级常见问题](/faq/upgrade-faq.md) |
-|  集群管理       |  [TiDB 集群管理常见问题](/faq/manage-cluster-faq.md)  |
-| 监控报警  |  <ul><li>[TiDB 监控常见问题](/faq/monitor-faq.md)</li><li>[TiDB Dashboard 常见问题](/dashboard/dashboard-faq.md)</li><li>[TiDB 集群报警规则](/alert-rules.md)</li></ul>  |
-| 高可用和高可靠    |   <ul><li>[TiDB 高可用常见问题](/faq/high-availability-faq.md)</li><li>[TiDB 高可靠常见问题](/faq/high-reliability-faq.md)</li></ul>   |
-| 常见错误码      |  [错误码与故障诊断](/error-codes.md) |
+<table>
+<thead>
+  <tr>
+    <th>Category</th>
+    <th>Related documents</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>TiDB architecture and principles</td>
+    <td><a href="https://docs.pingcap.com/tidb/dev/tidb-faq">TiDB Architecture FAQs</a></td>
+  </tr>
+  <tr>
+    <td>Deployment</td>
+    <td><ul><li><a href="https://docs.pingcap.com/tidb/dev/deploy-and-maintain-faq">Deployment FAQs</a></li><li><a href="https://docs.pingcap.com/tidb/dev/tiup-faq">TiUP FAQs</a></li><li><a href="https://docs.pingcap.com/tidb-in-kubernetes/stable/faq">TiDB on Kubernetes FAQs</a></li></ul></td>
+  </tr>
+  <tr>
+    <td>Data migration</td>
+    <td>
+      <ul>
+        <li><a href="https://docs.pingcap.com/tidb/dev/migration-tidb-faq">Data Migration FAQs</a></li>
+        <li>Data import
+          <ul>
+            <li><a href="https://docs.pingcap.com/tidb/dev/tidb-lightning-faq">TiDB Lightning FAQs</a></li>
+            <li><a href="https://docs.pingcap.com/tidb/dev/dm-faq">DM FAQs</a></li>
+          </ul>
+        </li>
+        <li>Incremental data replication
+          <ul>
+            <li><a href="https://docs.pingcap.com/tidb/dev/ticdc-faq">TiCDC FAQs</a></li>
+          </ul>
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>Data backup and restore</td>
+    <td><a href="https://docs.pingcap.com/tidb/dev/backup-and-restore-faq">Backup &amp; Restore FAQs</a></td>
+  </tr>
+  <tr>
+    <td>SQL operations</td>
+    <td><a href="https://docs.pingcap.com/tidb/dev/sql-faq">SQL FAQs</a></td>
+  </tr>
+  <tr>
+    <td>Cluster upgrade</td>
+    <td><a href="https://docs.pingcap.com/tidb/dev/upgrade-faq">TiDB Upgrade FAQs</a></td>
+  </tr>
+  <tr>
+    <td>Cluster management</td>
+    <td><a href="https://docs.pingcap.com/tidb/dev/manage-cluster-faq">Cluster Management FAQs</a></td>
+  </tr>
+  <tr>
+    <td>Monitor and alert</td>
+    <td><ul><li><a href="https://docs.pingcap.com/tidb/dev/monitor-faq">Monitoring FAQs</a></li><li><a href="https://docs.pingcap.com/tidb/dev/dashboard-faq">TiDB Dashboard FAQs</a></li><li><a href="https://docs.pingcap.com/tidb/dev/alert-rules">TiDB Cluster Alert Rules</a></li></ul></td>
+  </tr>
+  <tr>
+    <td>High availability and high reliability</td>
+    <td><ul><li><a href="https://docs.pingcap.com/tidb/dev/high-availability-faq">High Availability FAQs</a></li><li><a href="https://docs.pingcap.com/tidb/dev/high-reliability-faq">High Reliability FAQs</a></li></ul></td>
+  </tr>
+  <tr>
+    <td>Common error codes</td>
+    <td><a href="https://docs.pingcap.com/tidb/dev/error-codes">Error Codes and Troubleshooting</a></td>
+  </tr>
+</tbody>
+</table>

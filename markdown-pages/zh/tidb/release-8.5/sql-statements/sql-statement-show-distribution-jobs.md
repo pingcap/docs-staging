@@ -1,13 +1,17 @@
 ---
 title: SHOW DISTRIBUTION JOBS
-summary: 介绍 TiDB 数据库中 SHOW DISTRIBUTION JOBS 的使用概况。
+summary: SHOW DISTRIBUTION JOBS 在 TiDB 数据库中的用法概述。
 ---
 
-# SHOW DISTRIBUTION JOBS <span class="version-mark">从 v8.5.4 开始引入</span>
+# SHOW DISTRIBUTION JOBS <span class="version-mark">New in v8.5.4</span>
 
-`SHOW DISTRIBUTION JOBS` 语句用于显示当前所有的 Region 调度任务。
+`SHOW DISTRIBUTION JOBS` 语句用于显示当前所有的 Region 分布作业。
 
-## 语法图
+> **Note:**
+>
+> 此功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
+
+## 语法
 
 ```ebnf+diagram
 ShowDistributionJobsStmt ::=
@@ -16,7 +20,7 @@ ShowDistributionJobsStmt ::=
 
 ## 示例
 
-显示当前所有的 Region 调度任务：
+显示当前所有的 Region 分布作业：
 
 ```sql
 SHOW DISTRIBUTION JOBS;

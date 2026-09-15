@@ -1,40 +1,39 @@
 ---
 title: TiDB 2.0.10 Release Notes
-summary: TiDB 2.0.10 版本发布，修复了系统兼容性和稳定性问题。包括取消 DDL 任务可能导致的问题，ORDER BY 和 UNION 语句无法引用带表名的列的问题，UNCOMPRESS 函数错误输入长度的问题等。PD 修复了 RaftCluster 退出时可能的死锁问题，TiKV 修复了迁移 Leader 到新节点时造成请求延时问题和多余的 Region 心跳问题。
-aliases: ['/zh/tidb/dev/release-2.0.10/','/zh/tidb/v2.0/release-2.0.10','/docs-cn/dev/releases/release-2.0.10/','/docs-cn/dev/releases/2.0.10/','/zh/tidb/v5.4/release-2.0.10','/zh/tidb/v6.1/release-2.0.10','/zh/tidb/v6.5/release-2.0.10','/zh/tidb/v7.1/release-2.0.10','/zh/tidb/v7.5/release-2.0.10','/zh/tidb/v8.1/release-2.0.10']
+summary: TiDB 2.0.10 and TiDB Ansible 2.0.10 were released on December 18, 2018. The release includes improvements in system compatibility and stability. Fixes include issues with DDL jobs, ORDER BY and UNION clauses, UNCOMPRESS function, ANSI_QUOTES SQL_MODE, select results, and more. PD fixes a possible RaftCluster deadlock issue, while TiKV optimizes leader transfer and fixes redundant Region heartbeats.
 ---
 
 # TiDB 2.0.10 Release Notes
 
-2018 年 12 月 18 日，TiDB 发布 2.0.10 版，TiDB Ansible 相应发布 2.0.10 版本。该版本在 2.0.9 版的基础上，对系统兼容性、稳定性做出了改进。
+On December 18, 2018, TiDB 2.0.10 is released. The corresponding TiDB Ansible 2.0.10 is also released. Compared with TiDB 2.0.9, this release has great improvement in system compatibility and stability.
 
 ## TiDB
 
-- 修复取消 DDL 任务的时候可能导致的问题 [#8513](https://github.com/pingcap/tidb/pull/8513)
-- 修复 `ORDER BY`，`UNION` 语句无法引用带表名的列的问题 [#8514](https://github.com/pingcap/tidb/pull/8514)
-- 修复 `UNCOMPRESS` 函数没有判断错误输入长度的问题 [#8607](https://github.com/pingcap/tidb/pull/8607)
-- 修复 `ANSI_QUOTES SQL_MODE` 在 TiDB 升级的时候遇到的问题 [#8575](https://github.com/pingcap/tidb/pull/8575)
-- 修复某些情况下 `select` 返回结果错误的问题 [#8570](https://github.com/pingcap/tidb/pull/8570)
-- 修复 TiDB 在收到退出信号的时候可能无法退出的问题 [#8501](https://github.com/pingcap/tidb/pull/8501)
-- 修复某些情况下 `IndexLookUpJoin` 返回错误结果的问题 [#8508](https://github.com/pingcap/tidb/pull/8508)
-- 避免下推有 `GetVar` 或 `SetVar 的 filter` [#8454](https://github.com/pingcap/tidb/pull/8454)
-- 修复某些情况下 `UNION` 语句结果长度错误的问题 [#8491](https://github.com/pingcap/tidb/pull/8491)
-- 修复 `PREPARE FROM @var_name` 的问题 [#8488](https://github.com/pingcap/tidb/pull/8488)
-- 修复某些情况下导出统计信息 panic 的问题 [#8464](https://github.com/pingcap/tidb/pull/8464)
-- 修复统计信息某些情况下对点查估算的问题 [#8493](https://github.com/pingcap/tidb/pull/8493)
-- 修复某些情况下返回 Enum 默认值为字符串导致的 panic [#8476](https://github.com/pingcap/tidb/pull/8476)
-- 修复在宽表场景下，占用太多内存的问题 [#8467](https://github.com/pingcap/tidb/pull/8467)
-- 修复 Parser 对取模操作错误格式化导致的问题 [#8431](https://github.com/pingcap/tidb/pull/8431)
-- 修复某些情况下添加外键约束导致的 panic 问题 [#8421](https://github.com/pingcap/tidb/pull/8421)，[#8410](https://github.com/pingcap/tidb/pull/8410)
-- 修复 `YEAR` 类型错误转换零值的问题 [#8396](https://github.com/pingcap/tidb/pull/8396)
-- 修复 `VALUES` 函数在参数不为列的时候 panic 的问题 [#8404](https://github.com/pingcap/tidb/pull/8404)
-- 存在子查询的语句禁用 Plan Cache [#8395](https://github.com/pingcap/tidb/pull/8395)
+- Fix the possible issue caused by canceling a DDL job [#8513](https://github.com/pingcap/tidb/pull/8513)
+- Fix the issue that the `ORDER BY` and `UNION` clauses cannot quote the column including a table name [#8514](https://github.com/pingcap/tidb/pull/8514)
+- Fix the issue that the `UNCOMPRESS` function does not judge the incorrect input length [#8607](https://github.com/pingcap/tidb/pull/8607)
+- Fix the issue encountered by `ANSI_QUOTES SQL_MODE` when upgrading TiDB [#8575](https://github.com/pingcap/tidb/pull/8575)
+- Fix the issue that `select` returns the wrong result in some cases [#8570](https://github.com/pingcap/tidb/pull/8570)
+- Fix the possible issue that TiDB cannot exit when it receives the exit signal [#8501](https://github.com/pingcap/tidb/pull/8501)
+- Fix the issue that `IndexLookUpJoin` returns the wrong result in some cases [#8508](https://github.com/pingcap/tidb/pull/8508)
+- Avoid pushing down the filter containing `GetVar` or `SetVar` [#8454](https://github.com/pingcap/tidb/pull/8454)
+- Fix the issue that the result length of the `UNION` clauses is incorrect in some cases [#8491](https://github.com/pingcap/tidb/pull/8491)
+- Fix the issue of `PREPARE FROM @var_name` [#8488](https://github.com/pingcap/tidb/pull/8488)
+- Fix the panic issue when dumping statistics information in some cases [#8464](https://github.com/pingcap/tidb/pull/8464)
+- Fix the statistics estimation issue of point queries in some cases [#8493](https://github.com/pingcap/tidb/pull/8493)
+- Fix the panic issue when the returned default `enum` value is a string [#8476](https://github.com/pingcap/tidb/pull/8476)
+- Fix the issue that too much memory is consumed in the scenario of wide tables [#8467](https://github.com/pingcap/tidb/pull/8467)
+- Fix the issue encountered when Parser incorrectly formats the mod opcode [#8431](https://github.com/pingcap/tidb/pull/8431)
+- Fix the panic issue caused by adding foreign key constraints in some cases [#8421](https://github.com/pingcap/tidb/pull/8421), [#8410](https://github.com/pingcap/tidb/pull/8410)
+- Fix the issue that the `YEAR` column type incorrectly converts the zero value [#8396](https://github.com/pingcap/tidb/pull/8396)
+- Fix the panic issue occurred when the argument of the `VALUES` function is not a column [#8404](https://github.com/pingcap/tidb/pull/8404)
+- Disable Plan Cache for statements containing subqueries [#8395](https://github.com/pingcap/tidb/pull/8395)
 
 ## PD
 
-- 修复 RaftCluster 在退出时可能的死锁问题 [#1370](https://github.com/pingcap/pd/pull/1370)
+- Fix the possible issue that RaftCluster cannot stop caused by deadlock [#1370](https://github.com/pingcap/pd/pull/1370)
 
 ## TiKV
 
-- 修复迁移 Leader 到新节点时造成请求延时问题 [#3929](https://github.com/tikv/tikv/pull/3929)
-- 修复多余的 Region 心跳 [#3930](https://github.com/tikv/tikv/pull/3930)
+- Avoid transferring the leader to a newly created peer, to optimize the possible delay [#3929](https://github.com/tikv/tikv/pull/3929)
+- Fix redundant Region heartbeats [#3930](https://github.com/tikv/tikv/pull/3930)

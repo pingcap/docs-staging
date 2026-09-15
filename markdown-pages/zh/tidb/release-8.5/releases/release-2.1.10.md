@@ -1,61 +1,60 @@
 ---
 title: TiDB 2.1.10 Release Notes
-summary: TiDB 2.1.10 发布，修复了多个 bug 和兼容性问题，增强了安全性。PD 修复了 Leader 优先级不生效的问题。TiKV 修复了多个问题，包括 transfer leader 中可能发生的脏读问题。TiDB Lightning 新增了发送数据到 importer 失败时进行重试的功能。TiDB Binlog 优化了 Pump storage 组件 log。TiDB Ansible 更新了配置文件，新增了 tidb_lightning_ctl 脚本。
-aliases: ['/zh/tidb/dev/release-2.1.10/','/zh/tidb/v2.1/release-2.1.10','/docs-cn/dev/releases/release-2.1.10/','/docs-cn/dev/releases/2.1.10/','/zh/tidb/v5.4/release-2.1.10','/zh/tidb/v6.1/release-2.1.10','/zh/tidb/v6.5/release-2.1.10','/zh/tidb/v7.1/release-2.1.10','/zh/tidb/v7.5/release-2.1.10','/zh/tidb/v8.1/release-2.1.10']
+summary: TiDB 2.1.10 was released on May 22, 2019, with various bug fixes and improvements. The release includes fixes for issues related to table schema, read results, generated columns, datetime functions, slow logs, and more. Additionally, improvements were made to TiKV and tools like TiDB Lightning and TiDB Binlog. The TiDB Ansible version 2.1.10 also received updates.
 ---
 
 # TiDB 2.1.10 Release Notes
 
-发版日期：2019 年 5 月 22 日
+Release date: May 22, 2019
 
-TiDB 版本：2.1.10
+TiDB version: 2.1.10
 
-TiDB Ansible 版本：2.1.10
+TiDB Ansible version: 2.1.10
 
 ## TiDB
 
-- 修复在使用 `tidb_snapshot` 读取历史数据的时候，某些异常情况导致的表结构不正确 [#10359](https://github.com/pingcap/tidb/pull/10359)
-- 修复 `NOT` 函数在某些情况下导致的读取结果错误的问题 [#10363](https://github.com/pingcap/tidb/pull/10363)
-- 修复 `Generated Column` 在 `Replace` 或者 `Insert on duplicate update` 语句中的错误行为 [#10385](https://github.com/pingcap/tidb/pull/10385)
-- 修复 `BETWEEN` 函数在 `DATE`/`DATETIME` 类型比较的一个 bug [#10407](https://github.com/pingcap/tidb/pull/10407)
-- 修复使用 `SLOW_QUERY` 表查询慢日志时，单行慢日志长度过长导致的报错 [#10412](https://github.com/pingcap/tidb/pull/10412)
-- 修复某些情况下 `DATETIME` 和 `INTERVAL` 相加的结果跟 MySQL 不一致的问题 [#10416](https://github.com/pingcap/tidb/pull/10416)，[#10418](https://github.com/pingcap/tidb/pull/10418)
-- 增加闰年二月的非法时间的检查 [#10417](https://github.com/pingcap/tidb/pull/10417)
-- 内部的初始化操作限制只在 DDL Owner 中执行，避免了初始化集群的时候出现的大量冲突报错 [#10426](https://github.com/pingcap/tidb/pull/10426)
-- 修复 `DESC` 在输出时间戳列的默认值为 `default current_timestamp on update current_timestamp` 时跟 MySQL 不兼容的问题 [#10337](https://github.com/pingcap/tidb/issues/10337)
-- 修复 `Update` 语句中权限检查出错的问题 [#10439](https://github.com/pingcap/tidb/pull/10439)
-- 修复 `CHAR` 类型的列在某些情况下 `RANGE` 计算错误导致的错误结果的问题 [#10455](https://github.com/pingcap/tidb/pull/10455)
-- 避免 `ALTER SHARD_ROW_ID_BITS` 缩小 shard bits 位数在极低概率下，可能导致的数据错误 [#9868](https://github.com/pingcap/tidb/pull/9868)
-- 修复 `ORDER BY RAND()` 不返回随机数字的问题 [#10064](https://github.com/pingcap/tidb/pull/10064)
-- 禁止 `ALTER` 语句修改 DECIMAL 的精度 [#10458](https://github.com/pingcap/tidb/pull/10458)
-- 修复 `TIME_FORMAT` 函数与 MySQL 的兼容问题 [#10474](https://github.com/pingcap/tidb/pull/10474)
-- 检查 `PERIOD_ADD` 中参数的合法性 [#10430](https://github.com/pingcap/tidb/pull/10430)
-- 修复非法的 `YEAR` 字符串在 TiDB 中的表现跟 MySQL 不兼容的问题 [#10493](https://github.com/pingcap/tidb/pull/10493)
-- 支持 `ALTER DATABASE` 语法 [#10503](https://github.com/pingcap/tidb/pull/10503)
-- 修复 `SLOW_QUERY` 内存表在慢语句没有 `;` 的情况下报错的问题 [#10536](https://github.com/pingcap/tidb/pull/10536)
-- 修复某些情况下 `Partitioned Table` 的表 `Add index` 操作没有办法取消的问题 [#10533](https://github.com/pingcap/tidb/pull/10533)
-- 修复在某些情况下无法抓住内存使用太多导致 OOM 的问题 [#10545](https://github.com/pingcap/tidb/pull/10545)
-- 增强 DDL 操作改写表元信息的安全性 [#10547](https://github.com/pingcap/tidb/pull/10547)
+- Fix the issue that some abnormalities cause incorrect table schema when using `tidb_snapshot` to read the history data [#10359](https://github.com/pingcap/tidb/pull/10359)
+- Fix the issue that the `NOT` function causes wrong read results in some cases [#10363](https://github.com/pingcap/tidb/pull/10363)
+- Fix the wrong behavior of `Generated Column` in the `Replace` or `Insert on duplicate update` statement [#10385](https://github.com/pingcap/tidb/pull/10385)
+- Fix a bug of the `BETWEEN` function in the `DATE`/`DATETIME` comparison [#10407](https://github.com/pingcap/tidb/pull/10407)
+- Fix the issue that a single line of a slow log that is too long causes an error report when using the `SLOW_QUERY` table to query a slow log [#10412](https://github.com/pingcap/tidb/pull/10412)
+- Fix the issue that the result of `DATETIME` plus `INTERVAL` is not the same with that of MySQL in some cases [#10416](https://github.com/pingcap/tidb/pull/10416), [#10418](https://github.com/pingcap/tidb/pull/10418)
+- Add the check for the invalid time of February in a leap year [#10417](https://github.com/pingcap/tidb/pull/10417)
+- Execute the internal initialization operation limitation only in the DDL owner to avoid a large number of conflict error reports when initializing the cluster [#10426](https://github.com/pingcap/tidb/pull/10426)
+- Fix the issue that `DESC` is incompatible with MySQL when the default value of the output timestamp column is `default current_timestamp on update current_timestamp` [#10337](https://github.com/pingcap/tidb/issues/10337)
+- Fix the issue that an error occurs during the privilege check in the `Update` statement [#10439](https://github.com/pingcap/tidb/pull/10439)
+- Fix the issue that wrong calculation of `RANGE` causes a wrong result in the `CHAR` column in some cases [#10455](https://github.com/pingcap/tidb/pull/10455)
+- Fix the issue that the data might be overwritten after decreasing `SHARD_ROW_ID_BITS` [#9868](https://github.com/pingcap/tidb/pull/9868)
+- Fix the issue that `ORDER BY RAND()` does not return random numbers [#10064](https://github.com/pingcap/tidb/pull/10064)
+- Prohibit the `ALTER` statement modifying the precision of decimals [#10458](https://github.com/pingcap/tidb/pull/10458)
+- Fix the compatibility issue of the `TIME_FORMAT` function with MySQL [#10474](https://github.com/pingcap/tidb/pull/10474)
+- Check the parameter validity of `PERIOD_ADD` [#10430](https://github.com/pingcap/tidb/pull/10430)
+- Fix the issue that the behavior of the invalid `YEAR` string in TiDB is incompatible with that in MySQL [#10493](https://github.com/pingcap/tidb/pull/10493)
+- Support the `ALTER DATABASE` syntax [#10503](https://github.com/pingcap/tidb/pull/10503)
+- Fix the issue that the `SLOW_QUERY` memory engine reports an error when no `;` exists in the slow query statement [#10536](https://github.com/pingcap/tidb/pull/10536)
+- Fix the issue that the `Add index` operation in partitioned tables cannot be canceled in some cases [#10533](https://github.com/pingcap/tidb/pull/10533)
+- Fix the issue that the OOM panic cannot be recovered in some cases [#10545](https://github.com/pingcap/tidb/pull/10545)
+- Improve the security of the DDL operation rewriting the table metadata [#10547](https://github.com/pingcap/tidb/pull/10547)
 
 ## PD
 
-- 修复 Leader 优先级不生效的问题 [#1533](https://github.com/pingcap/pd/pull/1533)
+- Fix the issue that the priority of the leader does not take effect [#1533](https://github.com/pingcap/pd/pull/1533)
 
 ## TiKV
 
-- 拒绝在最近发生过成员变更的 Region 上执行 transfer leader，防止迁移失败 [#4684](https://github.com/tikv/tikv/pull/4684)
-- Coprocessor metrics 上添加 priority 标签 [#4643](https://github.com/tikv/tikv/pull/4643)
-- 修复 transfer leader 中可能发生的脏读问题 [#4724](https://github.com/tikv/tikv/pull/4724)
-- 修复某些情况下 `CommitMerge` 导致 TiKV 不能重启的问题 [#4615](https://github.com/tikv/tikv/pull/4615)
-- 修复 unknown 的日志 [#4730](https://github.com/tikv/tikv/pull/4730)
+- Reject transferring the leader in a Region whose configuration has been changed recently to avoid transfer failure [#4684](https://github.com/tikv/tikv/pull/4684)
+- Add the priority label for Coprocessor metrics [#4643](https://github.com/tikv/tikv/pull/4643)
+- Fix the possible dirty read issue during transferring the leader [#4724](https://github.com/tikv/tikv/pull/4724)
+- Fix the issue that `CommitMerge` causes the restart failure of TiKV in some cases [#4615](https://github.com/tikv/tikv/pull/4615)
+- Fix unknown logs [#4730](https://github.com/tikv/tikv/pull/4730)
 
 ## Tools
 
 - TiDB Lightning
-    - 新增 TiDB Lightning 发送数据到 importer 失败时进行重试 [#176](https://github.com/pingcap/tidb-lightning/pull/176)
+    - Add the retry feature when TiDB Lightning fails to send data to `importer` [#176](https://github.com/pingcap/tidb-lightning/pull/176)
 - TiDB Binlog
-    - 优化 Pump storage 组件 log，以利于排查问题 [#607](https://github.com/pingcap/tidb-binlog/pull/607)
+    - Optimize the Pump storage log to facilitate troubleshooting [#607](https://github.com/pingcap/tidb-binlog/pull/607)
 
 ## TiDB Ansible
 
-- 更新 TiDB Lightning 配置文件，新增 `tidb_lightning_ctl` 脚本 [#d3a4a368](https://github.com/pingcap/tidb-ansible/commit/d3a4a368810a421c49980899a286cf010569b4c7)
+- Update the configuration file of TiDB Lightning and add the `tidb_lightning_ctl` script [#d3a4a368](https://github.com/pingcap/tidb-ansible/commit/d3a4a368810a421c49980899a286cf010569b4c7)

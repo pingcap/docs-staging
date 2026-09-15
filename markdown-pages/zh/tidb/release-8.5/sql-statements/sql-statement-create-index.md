@@ -1,13 +1,21 @@
 ---
-title: CREATE INDEX
-summary: CREATE INDEX 在 TiDB 中的使用概况
+title: CREATE INDEX | TiDB SQL Statement Reference
+summary: TiDB 数据库中 CREATE INDEX 的用法概述。
 ---
 
 # CREATE INDEX
 
-`CREATE INDEX` 语句用于在已有表中添加新索引，功能等同于 [`ALTER TABLE .. ADD INDEX`](/sql-statements/sql-statement-alter-table.md)，提供了 MySQL 兼容性。
+该语句用于为已有表添加一个新索引。它是 [`ALTER TABLE .. ADD INDEX`](/sql-statements/sql-statement-alter-table.md) 的另一种语法形式，并为 MySQL 兼容性而提供。
 
-## 语法图
+<CustomContent platform="tidb-cloud">
+
+> **注意：**
+>
+> 对于 [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated) 4 vCPU 的集群，建议手动关闭 [`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630)，以防止资源限制在创建索引期间影响集群稳定性。关闭该设置后，索引将通过事务方式创建，从而降低对集群的整体影响。
+
+</CustomContent>
+
+## 语法
 
 ```ebnf+diagram
 CreateIndexStmt ::=
@@ -67,27 +75,14 @@ KeyOrIndex ::=
 ## 示例
 
 ```sql
-CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
-```
-
-```
+mysql> CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
 Query OK, 0 rows affected (0.10 sec)
-```
 
-```sql
-INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
-```
-
-```
+mysql> INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
 Query OK, 5 rows affected (0.02 sec)
 Records: 5  Duplicates: 0  Warnings: 0
-```
 
-```sql
-EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
-```
-
-```
+mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 +-------------------------+----------+-----------+---------------+--------------------------------+
 | id                      | estRows  | task      | access object | operator info                  |
 +-------------------------+----------+-----------+---------------+--------------------------------+
@@ -96,21 +91,11 @@ EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 |   └─TableFullScan_5     | 10000.00 | cop[tikv] | table:t1      | keep order:false, stats:pseudo |
 +-------------------------+----------+-----------+---------------+--------------------------------+
 3 rows in set (0.00 sec)
-```
 
-```sql
-CREATE INDEX c1 ON t1 (c1);
-```
-
-```
+mysql> CREATE INDEX c1 ON t1 (c1);
 Query OK, 0 rows affected (0.30 sec)
-```
 
-```sql
-EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
-```
-
-```
+mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 +------------------------+---------+-----------+------------------------+---------------------------------------------+
 | id                     | estRows | task      | access object          | operator info                               |
 +------------------------+---------+-----------+------------------------+---------------------------------------------+
@@ -118,45 +103,35 @@ EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 | └─IndexRangeScan_5     | 10.00   | cop[tikv] | table:t1, index:c1(c1) | range:[3,3], keep order:false, stats:pseudo |
 +------------------------+---------+-----------+------------------------+---------------------------------------------+
 2 rows in set (0.00 sec)
-```
 
-```sql
-ALTER TABLE t1 DROP INDEX c1;
-```
-
-```
+mysql> ALTER TABLE t1 DROP INDEX c1;
 Query OK, 0 rows affected (0.30 sec)
-```
 
-```sql
-CREATE UNIQUE INDEX c1 ON t1 (c1);
-```
-
-```
+mysql> CREATE UNIQUE INDEX c1 ON t1 (c1);
 Query OK, 0 rows affected (0.31 sec)
 ```
 
 ## 表达式索引
 
-在一些场景中，查询的条件往往是基于某个表达式进行过滤。在这些场景中，一般的索引不能生效，执行查询只能遍历整个表，导致查询性能较差。表达式索引是一种特殊的索引，能将索引建立于表达式上。在创建了表达式索引后，基于表达式的查询便可以使用上索引，极大提升查询的性能。
+在某些场景下，查询的过滤条件基于某个表达式。在这些场景下，由于普通索引无法生效，查询只能通过全表扫描来执行，查询性能较差。表达式索引是一种可以在表达式上创建的特殊索引。创建表达式索引后，TiDB 可以针对基于该表达式的查询使用该索引，从而显著提升查询性能。
 
-假设要基于 `LOWER(col1)` 这个表达式建立索引，示例的 SQL 语句如下：
+例如，如果你希望基于 `LOWER(col1)` 创建索引，可以执行如下 SQL 语句：
 
 ```sql
 CREATE INDEX idx1 ON t1 ((LOWER(col1)));
 ```
 
-或者等价的语句：
+或者你也可以执行如下等价语句：
 
 ```sql
 ALTER TABLE t1 ADD INDEX idx1((LOWER(col1)));
 ```
 
-还可以在建表的同时指定表达式索引：
+你还可以在建表时指定表达式索引：
 
 ```sql
 CREATE TABLE t1 (
-    col1 CHAR(10),
+    col1 CHAR(10), 
     col2 CHAR(10),
     INDEX ((LOWER(col1)))
 );
@@ -164,15 +139,15 @@ CREATE TABLE t1 (
 
 > **注意：**
 >
-> 表达式索引中的表达式需要用 `(` 和 `)` 包围起来，否则会报语法错误。
+> 表达式索引中的表达式必须用 `(` 和 `)` 包裹，否则会报语法错误。
 
-删除表达式索引与删除普通索引的方法一致：
+你可以像删除普通索引一样删除表达式索引：
 
 ```sql
 DROP INDEX idx1 ON t1;
 ```
 
-表达式索引涉及众多表达式。为了确保正确性，当前仅允许经充分测试的一部分函数用于创建表达式索引，即生产环境中仅允许表达式中包含这些函数。这些函数可以通过查询变量 [`tidb_allow_function_for_expression_index`](/system-variables.md#tidb_allow_function_for_expression_index-从-v520-版本开始引入) 得到。在后续版本中，这些函数会持续增加。目前允许的函数如下：
+表达式索引涉及多种表达式。为保证正确性，仅允许使用部分经过充分测试的函数来创建表达式索引。这意味着在生产环境中表达式中只能包含这些函数。你可以通过查询 [`tidb_allow_function_for_expression_index`](/system-variables.md#tidb_allow_function_for_expression_index-new-in-v520) 变量获取这些函数。目前允许的函数如下：
 
 - [`JSON_ARRAY()`](/functions-and-operators/json-functions.md)
 - [`JSON_ARRAY_APPEND()`](/functions-and-operators/json-functions.md)
@@ -205,43 +180,49 @@ DROP INDEX idx1 ON t1;
 - [`UPPER()`](/functions-and-operators/string-functions.md#upper)
 - [`VITESS_HASH()`](/functions-and-operators/tidb-functions.md)
 
-对于以上列表之外的函数，由于未完成充分测试，当前仍为实验特性，不建议在生产环境中使用。其他的表达式例如运算符、`CAST` 和 `CASE WHEN` 也同样为实验特性，不建议在生产环境中使用。如果仍然希望使用，可以在 [TiDB 配置文件](/tidb-configuration-file.md#allow-expression-index-从-v400-版本开始引入)中进行以下设置：
+对于未包含在上述列表中的函数，这些函数尚未经过充分测试，不建议在生产环境中使用，可视为实验性特性。其他表达式如运算符、`CAST`、`CASE WHEN` 也属于实验性特性，不建议在生产环境中使用。
+
+<CustomContent platform="tidb">
+
+如果你仍希望使用这些表达式，可以在 [TiDB 配置文件](/tidb-configuration-file.md#allow-expression-index-new-in-v400) 中进行如下配置：
 
 ```sql
 allow-expression-index = true
 ```
 
+</CustomContent>
+
 > **注意：**
 >
-> 表达式索引不能为主键。
+> 表达式索引不能创建在主键上。
 >
 > 表达式索引中的表达式不能包含以下内容：
 >
-> - 易变函数，例如 `RAND()` 和 `NOW()` 等。
-> - [系统变量](/system-variables.md)以及[用户变量](/user-defined-variables.md)。
+> - 易变函数，如 `RAND()` 和 `NOW()`。
+> - [系统变量](/system-variables.md) 和 [用户变量](/user-defined-variables.md)。
 > - 子查询。
-> - [`AUTO_INCREMENT`](/auto-increment.md) 属性的列。一个例外是设置系统变量 [`tidb_enable_auto_increment_in_generated`](/system-variables.md#tidb_enable_auto_increment_in_generated) 为 `true` 后，可以去掉该限制。
+> - [`AUTO_INCREMENT`](/auto-increment.md) 字段。你可以通过将 [`tidb_enable_auto_increment_in_generated`](/system-variables.md#tidb_enable_auto_increment_in_generated)（系统变量）设置为 `true` 来移除此限制。
 > - [窗口函数](/functions-and-operators/window-functions.md)。
-> - ROW 函数。例如 `CREATE TABLE t (j JSON, INDEX k (((j,j))));`。
+> - ROW 函数，如 `CREATE TABLE t (j JSON, INDEX k (((j,j))));`。
 > - [聚合函数](/functions-and-operators/aggregate-group-by-functions.md)。
 >
-> 表达式索引将隐式占用名字，`_V$_{index_name}_{index_offset}`，如果已有相同名字的列存在，创建表达式索引将报错。如果后续新增相同名字的列，也会报错。
+> 表达式索引会隐式占用一个名称（例如 `_V$_{index_name}_{index_offset}`）。如果你尝试创建一个与已有列同名的新表达式索引，会报错。同样，如果你添加了一个与之同名的新列，也会报错。
 >
-> 在表达式索引中，表达式的函数参数个数必须正确。
+> 请确保表达式索引中函数的参数数量正确。
 >
-> 当索引的表达式使用了字符串相关的函数时，受返回类型以及其长度的影响，创建表达式索引可能会失败。这时可以使用 `CAST()` 函数显式指定返回的类型以及长度。例如表达式 `REPEAT(a, 3)`，为了能根据该表达式建立表达式索引，需要将表达式改写为 `CAST(REPEAT(a, 3) AS CHAR(20))` 这样的形式。
+> 当索引表达式中包含字符串相关函数时，受返回类型和长度影响，可能导致表达式索引创建失败。此时，你可以使用 `CAST()` 函数显式指定返回类型和长度。例如，若要基于 `REPEAT(a, 3)` 表达式创建表达式索引，需要将其修改为 `CAST(REPEAT(a, 3) AS CHAR(20))`。
 
-当查询语句中的表达式与表达式索引中的表达式一致时，优化器可以为该查询选择使用表达式索引。依赖于统计信息，某些情况下优化器不一定选择表达式索引。这时可以通过 hint 指定强制使用表达式索引。
+当查询语句中的表达式与表达式索引中的表达式匹配时，优化器可以为该查询选择表达式索引。在某些情况下，优化器可能不会选择表达式索引，这取决于统计信息。此时，你可以通过优化器提示强制优化器选择表达式索引。
 
-在以下示例中，假设建立在 `LOWER(col1)` 表达式上的索引为 `idx`。
+以下示例假设你在 `LOWER(col1)` 表达式上创建了表达式索引 `idx`：
 
-当读取的结果为相同的表达式时，可以使用表达式索引。例如：
+如果查询语句的结果为相同表达式，则会使用表达式索引。例如：
 
 ```sql
 SELECT LOWER(col1) FROM t;
 ```
 
-当过滤的条件中有相同的表达式时，可以使用表达式索引。例如：
+如果过滤条件中包含相同表达式，也会使用表达式索引。例如：
 
 ```sql
 SELECT * FROM t WHERE LOWER(col1) = "a";
@@ -252,28 +233,30 @@ SELECT * FROM t WHERE LOWER(col1) > "a" AND LOWER(col1) < "b";
 SELECT * FROM t WHERE LOWER(col1) > "b" OR LOWER(col1) < "a";
 ```
 
-当查询按照相同的表达式进行排序时，可以使用表达式索引。例如：
+当查询按相同表达式排序时，也会使用表达式索引。例如：
 
 ```sql
 SELECT * FROM t ORDER BY LOWER(col1);
 ```
 
-当聚合函数或者 `GROUP BY` 中包含相同的表达式时，可以使用表达式索引。例如：
+如果聚合（`GROUP BY`）函数中包含相同表达式，也会使用表达式索引。例如：
 
 ```sql
 SELECT MAX(LOWER(col1)) FROM t;
 SELECT MIN(col1) FROM t GROUP BY LOWER(col1);
 ```
 
-要查看表达式索引对应的表达式，可执行 [`SHOW INDEX`](/sql-statements/sql-statement-show-indexes.md) 或查看系统表 [`information_schema.tidb_indexes`](/information-schema/information-schema-tidb-indexes.md) 以及 [`information_schema.STATISTICS`](/information-schema/information-schema-statistics.md) 表，输出中 `Expression` 这一列显示对应的表达式。对于非表达式索引，该列的值为 `NULL`。
+要查看表达式索引对应的表达式，可以执行 [`SHOW INDEX`](/sql-statements/sql-statement-show-indexes.md)，或查看系统表 [`information_schema.tidb_indexes`](/information-schema/information-schema-tidb-indexes.md) 以及表 [`information_schema.STATISTICS`](/information-schema/information-schema-statistics.md)。输出结果中的 `Expression` 列表示对应的表达式。对于非表达式索引，该列显示为 `NULL`。
 
-维护表达式索引的代价比一般的索引更高，因为在插入或者更新每一行时都需要计算出表达式的值。因为表达式的值已经存储在索引中，所以当优化器选择表达式索引时，表达式的值就不需要再计算。因此，当查询速度比插入速度和更新速度更重要时，可以考虑建立表达式索引。
+维护表达式索引的成本高于其他索引，因为每次插入或修改行时都需要计算表达式的值。表达式的值已存储在索引中，因此当优化器选择表达式索引时无需重新计算该值。
 
-表达式索引的语法和限制与 MySQL 相同，是通过将索引建立在隐藏的虚拟生成列 (generated virtual column) 上来实现的。因此所支持的表达式继承了虚拟生成列的所有[限制](/generated-columns.md#生成列的局限性)。
+因此，当查询性能优先于插入和修改性能时，可以考虑对表达式建立索引。
+
+表达式索引的语法和限制与 MySQL 保持一致。其实现方式是为不可见的虚拟生成列创建索引，因此支持的表达式也继承了 [虚拟生成列的所有限制](/generated-columns.md#limitations)。
 
 ## 多值索引
 
-多值索引是一种定义在数组列上的二级索引。在普通索引中，一条索引记录对应一条数据记录 (1:1)。而在多值索引中，存在多条索引记录对应一条数据记录 (N:1)。多值索引用于索引 JSON 数组。例如，一个定义在 `zipcode` 字段上的多值索引会对每一个 `zipcode` 中的记录产生一条索引记录。
+多值索引是一种定义在数组字段上的二级索引。在普通索引中，一个索引记录对应一条数据记录（1:1）。而在多值索引中，多条索引记录对应一条数据记录（N:1）。多值索引用于为 JSON 数组建立索引。例如，在 `zipcode` 字段上定义多值索引时，`zipcode` 数组中的每个元素都会生成一条索引记录。
 
 ```json
 {
@@ -285,7 +268,7 @@ SELECT MIN(col1) FROM t GROUP BY LOWER(col1);
 
 ### 创建多值索引
 
-创建多值索引与创建表达式索引的方法一致。在索引定义中使用 [`CAST(... AS ... ARRAY)`](/functions-and-operators/cast-functions-and-operators.md#cast) 函数来创建一个多值索引。
+你可以在索引定义中使用 [`CAST(... AS ... ARRAY)`](/functions-and-operators/cast-functions-and-operators.md#cast) 函数来创建多值索引，方式与创建表达式索引类似。
 
 ```sql
 mysql> CREATE TABLE customers (
@@ -296,7 +279,7 @@ mysql> CREATE TABLE customers (
 );
 ```
 
-多值索引可以被定义为唯一索引：
+你可以将多值索引定义为唯一索引。
 
 ```sql
 mysql> CREATE TABLE customers (
@@ -307,17 +290,17 @@ mysql> CREATE TABLE customers (
 );
 ```
 
-当被定义为唯一索引时，试图插入重复数据将会报错：
+当多值索引被定义为唯一索引时，如果你尝试插入重复数据，则会报错。
 
 ```sql
-mysql> INSERT INTO customers VALUES (1, 'company-a', '{"zipcode": [1,2]}');
+mysql> INSERT INTO customers VALUES (1, 'pingcap', '{"zipcode": [1,2]}');
 Query OK, 1 row affected (0.01 sec)
 
-mysql> INSERT INTO customers VALUES (1, 'company-a', '{"zipcode": [2,3]}');
+mysql> INSERT INTO customers VALUES (1, 'pingcap', '{"zipcode": [2,3]}');
 ERROR 1062 (23000): Duplicate entry '2' for key 'customers.zips'
 ```
 
-允许同一条记录存在重复的值，不同记录出现重复值时将报错：
+同一条记录可以有重复值，但不同记录有重复值时会报错。
 
 ```sql
 -- 插入成功
@@ -329,7 +312,7 @@ mysql> INSERT INTO t1 VALUES('[1,2]');
 mysql> INSERT INTO t1 VALUES('[2,3]');
 ```
 
-多值索引也可以被定义为复合索引：
+你还可以将多值索引定义为组合索引：
 
 ```sql
 mysql> CREATE TABLE customers (
@@ -340,7 +323,7 @@ mysql> CREATE TABLE customers (
 );
 ```
 
-当被定义为复合索引时，多值部分可以出现在任意位置，但是只能出现一次。
+当多值索引被定义为组合索引时，多值部分可以出现在任意位置，但只能出现一次。
 
 ```sql
 mysql> CREATE TABLE customers (
@@ -352,50 +335,50 @@ mysql> CREATE TABLE customers (
 ERROR 1235 (42000): This version of TiDB doesn't yet support 'more than one multi-valued key part per index'.
 ```
 
-写入的数据必须与多值索引的定义类型完全匹配，否则数据写入失败：
+写入的数据必须与多值索引定义的类型完全一致，否则写入数据会失败：
 
 ```sql
--- zipcode 字段中的所有元素必须为 UNSIGNED 类型
-mysql> INSERT INTO customers VALUES (1, 'company-a', '{"zipcode": [-1]}');
+-- zipcode 字段中的所有元素必须为 UNSIGNED 类型。
+mysql> INSERT INTO customers VALUES (1, 'pingcap', '{"zipcode": [-1]}');
 ERROR 3752 (HY000): Value is out of range for expression index 'zips' at row 1
 
-mysql> INSERT INTO customers VALUES (1, 'company-a', '{"zipcode": ["1"]}'); -- 与 MySQL 不兼容
+mysql> INSERT INTO customers VALUES (1, 'pingcap', '{"zipcode": ["1"]}'); -- 与 MySQL 不兼容
 ERROR 3903 (HY000): Invalid JSON value for CAST for expression index 'zips'
 
-mysql> INSERT INTO customers VALUES (1, 'company-a', '{"zipcode": [1]}');
+mysql> INSERT INTO customers VALUES (1, 'pingcap', '{"zipcode": [1]}');
 Query OK, 1 row affected (0.00 sec)
 ```
 
 ### 使用多值索引
 
-请参考[索引的选择](/choose-index.md#使用多值索引)。
+更多详情请参见 [索引选择 - 使用多值索引](/choose-index.md#use-multi-valued-indexes)。
 
-### 特性与限制
+### 限制
 
-- 如果是空 JSON 数组，则不会有对应的索引记录。
-- `CAST(... AS ... ARRAY)` 中的目标类型不能是 `BINARY`、`JSON`、`YEAR`、`FLOAT`、`DECIMAL`。其中源类型必须是 JSON。
-- 无法使用多值索引进行排序。
-- 只允许在 JSON 数组上建立多值索引。
-- 多值索引不可以作为主键或外键。
-- 多值索引使用额外的存储空间为：平均每行数组元素个数 * 普通二级索引使用空间。
-- 相比于普通索引，DML 会对多值索引产生更多的索引记录的修改，因此多值索引会带来比普通索引更大的性能影响。
-- 由于多值索引是一种特殊的表达式索引，因此具有表达式索引的限制。
-- 使用备份恢复工具 (BR)、同步工具 (TiCDC)、导入工具 (TiDB Lightning) 无法将定义了多值索引的表备份、同步、导入到低于 v6.6.0 版本的 TiDB。
-- 条件复杂的查询有可能无法选择到多值索引，多值索引支持的条件模式请参考[使用多值索引](/choose-index.md#使用多值索引)。
+- 对于空的 JSON 数组，不会生成对应的索引记录。
+- `CAST(... AS ... ARRAY)` 中的目标类型不能为 `BINARY`、`JSON`、`YEAR`、`FLOAT` 和 `DECIMAL`，源类型必须为 JSON。
+- 多值索引不能用于排序。
+- 只能在 JSON 数组上创建多值索引。
+- 多值索引不能作为主键或外键。
+- 多值索引额外占用的存储空间 = 每行数组元素的平均个数 × 普通二级索引占用的空间。
+- 与普通索引相比，DML 操作会修改更多的多值索引记录，因此多值索引对性能的影响大于普通索引。
+- 由于多值索引属于特殊类型的表达式索引，因此多值索引具有与表达式索引相同的限制。
+- 如果表使用了多值索引，不能通过 BR、TiCDC 或 TiDB Lightning 将该表备份、同步或导入到 v6.6.0 之前的 TiDB 集群。
+- 对于包含复杂条件的查询，TiDB 可能无法选择多值索引。关于多值索引支持的条件模式，参见 [使用多值索引](/choose-index.md#use-multi-valued-indexes)。
 
-## 部分索引 <span class="version-mark">从 v8.5.7 开始引入</span>
+## 部分索引 <span class="version-mark">从 v8.5.7 版本开始引入</span> {#partial-indexes-new-in-v857}
 
-部分索引是基于表中部分行构建的索引。在创建部分索引时，你可以使用条件表达式（称为谓词）来定义这些行的子集。该索引仅包含满足谓词条件的行对应的索引条目。
+部分索引是建立在表中部分行子集上的索引。创建部分索引时，你可以指定一个条件表达式，也称为谓词，用于定义这个行子集。索引中仅包含满足该谓词的行的条目。
 
-### 适用场景
+### 使用场景 {#usage-scenarios}
 
-在以下场景中，使用部分索引有助于提升查询性能或降低索引维护开销：
+在以下场景中，使用部分索引有助于提升查询性能或减少索引维护开销：
 
-- **选择性过滤**：当你经常基于特定条件查询一小部分行时，可以使用部分索引。对于满足部分索引谓词的查询，TiDB 可以使用部分索引来避免扫描无关的行，并减少索引占用的存储空间。
-- **条件唯一性**：当你只需要对满足特定条件的行强制执行唯一性约束时，可以使用唯一部分索引，避免对整张表应用唯一性约束。
-- **减少 DML 开销**：当许多 `INSERT`、`UPDATE` 或 `DELETE` 操作会影响不需要被索引的行时，可以使用部分索引。与维护完整索引相比，维护部分索引可以减少索引维护开销。
+- **选择性过滤**：当你经常基于特定条件查询一小部分行时，可以使用部分索引。对于满足部分索引谓词的查询，TiDB 可以使用部分索引来避免扫描无关行，并减少索引占用的存储空间。
+- **条件唯一性**：当你只需要对满足特定条件的行强制执行唯一性约束时，可以使用唯一部分索引，以避免将唯一性约束应用到整张表。
+- **减少 DML 开销**：当许多 `INSERT`、`UPDATE` 或 `DELETE` 操作影响到不需要建立索引的行时，可以使用部分索引。与维护完整索引相比，维护部分索引可以减少索引维护开销。
 
-### 创建部分索引
+### 创建部分索引 {#create-partial-indexes}
 
 你可以通过在索引定义中添加 `WHERE` 子句来创建部分索引。例如：
 
@@ -404,13 +387,13 @@ CREATE TABLE t1 (c1 INT, c2 INT, c3 TEXT);
 CREATE INDEX idx1 ON t1 (c1) WHERE c2 > 10;
 ```
 
-你也可以使用 `ALTER TABLE` 来创建部分索引：
+你也可以使用 `ALTER TABLE` 创建部分索引：
 
 ```sql
 ALTER TABLE t1 ADD INDEX idx2 (c1, c2) WHERE c3 = 'abc';
 ```
 
-你也可以在创建表时指定部分索引：
+你还可以在创建表时指定部分索引：
 
 ```sql
 CREATE TABLE t2 (
@@ -421,11 +404,11 @@ CREATE TABLE t2 (
 );
 ```
 
-### 使用示例
+### 使用示例 {#usage-examples}
 
-以下示例演示如何有效地使用部分索引：
+以下示例演示了如何有效使用部分索引：
 
-创建包含用户数据的表：
+创建一个包含用户数据的表：
 
 ```sql
 CREATE TABLE users (
@@ -445,7 +428,7 @@ CREATE INDEX idx_high_score_users ON users (created_at) WHERE score > 1000;
 CREATE INDEX idx_pending_status ON users (status) WHERE status = 'pending';
 ```
 
-然后以下查询可以使用部分索引：
+然后，以下查询可以使用部分索引：
 
 ```sql
 mysql> EXPLAIN SELECT * FROM users WHERE status = 'active' AND name = 'John';
@@ -492,7 +475,7 @@ mysql> EXPLAIN SELECT * FROM users WHERE status = 'pending';
 3 rows in set (0.00 sec)
 ```
 
-如果查询谓词不满足部分索引定义的条件，即使使用 hint，TiDB 也不会选择该部分索引。例如，以下语句无法使用部分索引 `idx_high_score_users`，因为查询谓词 `score > 100` 不满足部分索引定义 `score > 1000`：
+如果查询的谓词不满足部分索引定义的条件，TiDB 即使在使用 hint 的情况下也不会选择部分索引。例如，以下语句无法使用部分索引 `idx_high_score_users`，因为查询谓词 `score > 100` 不满足部分索引定义 `score > 1000`：
 
 ```sql
 mysql> EXPLAIN SELECT * FROM users USE INDEX(idx_high_score_users) WHERE score > 100 ORDER BY created_at;
@@ -506,45 +489,50 @@ mysql> EXPLAIN SELECT * FROM users USE INDEX(idx_high_score_users) WHERE score >
 +---------------------------+----------+-----------+---------------+--------------------------------+
 ```
 
-### 限制
+### 限制 {#limitations}
 
-- 部分索引的 `WHERE` 子句支持基本比较运算符（`=`、`!=`、`<`、`<=`、`>`、`>=`）、`IS NULL`、`IS NOT NULL` 和包含常量值的 `IN` 谓词。
-- 谓词中的列和常量值必须具有相同的数据类型。
-- 谓词只能引用同一表中的列。
+- 部分索引中的 `WHERE` 子句支持基本比较运算符（`=`、`!=`、`<`、`<=`、`>`、`>=`）、`IS NULL`、`IS NOT NULL` 以及带常量值的 `IN` 谓词。
+- 谓词中的列和常量值必须是相同的数据类型。
+- 谓词只能引用同一张表中的列。
 - 不能在表达式索引上创建部分索引。
 
-## 不可见索引
+## 隐式索引
 
-默认情况下，不可见索引 (Invisible Indexes) 不会被查询优化器使用：
+默认情况下，隐式索引是被查询优化器忽略的索引：
 
 ```sql
 CREATE TABLE t1 (c1 INT, c2 INT, UNIQUE(c2));
 CREATE UNIQUE INDEX c1 ON t1 (c1) INVISIBLE;
 ```
 
-从 TiDB v8.0.0 开始，你可以通过修改系统变量 [`tidb_opt_use_invisible_indexes`](/system-variables.md#tidb_opt_use_invisible_indexes-从-v800-版本开始引入)，允许优化器选择不可见索引。
+自 TiDB v8.0.0 起，你可以通过修改系统变量 [`tidb_opt_use_invisible_indexes`](/system-variables.md#tidb_opt_use_invisible_indexes-new-in-v800) 让优化器选择隐式索引。
 
-具体可以参考 [`ALTER INDEX`](/sql-statements/sql-statement-alter-index.md)。
+详情参见 [`ALTER INDEX`](/sql-statements/sql-statement-alter-index.md)。
 
 ## 相关系统变量
 
-和 `CREATE INDEX` 语句相关的系统变量有 `tidb_ddl_enable_fast_reorg`、`tidb_ddl_reorg_worker_cnt` 、`tidb_ddl_reorg_batch_size` 、`tidb_ddl_reorg_priority` 和 `tidb_enable_auto_increment_in_generated`，具体可以参考[系统变量](/system-variables.md#tidb_ddl_reorg_worker_cnt)。
+与 `CREATE INDEX` 语句相关的系统变量有 `tidb_ddl_enable_fast_reorg`、`tidb_ddl_reorg_worker_cnt`、`tidb_ddl_reorg_batch_size`、`tidb_enable_auto_increment_in_generated` 和 `tidb_ddl_reorg_priority`。详情参见 [系统变量](/system-variables.md#tidb_ddl_reorg_worker_cnt)。
 
 ## MySQL 兼容性
 
-* TiDB 支持解析 `FULLTEXT` 语法，但尚不支持使用 `FULLTEXT`、`HASH` 和 `SPATIAL` 索引。
-* 为了兼容 MySQL，TiDB 在语法上支持 `HASH`、`BTREE` 和 `RTREE` 等索引类型，但会忽略它们。
-* 不支持降序索引 （类似于 MySQL 5.7）。
-* 无法向表中添加 `CLUSTERED` 类型的 `PRIMARY KEY`。要了解关于 `CLUSTERED` 主键的详细信息，请参考[聚簇索引](/clustered-indexes.md)。
-* 表达式索引与视图存在兼容性问题。通过视图进行查询时，无法使用上表达式索引。
-* 表达式索引与 Binding 存在兼容性问题。当表达式索引中的表达式存在常量时，对应查询所建的 Binding 会扩大范围。假设表达式索引中的表达式为 `a+1`，对应的查询条件为 `a+1 > 2`。则建立的 Binding 为 `a+? > ?`，这会导致像 `a+2 > 2` 这样的查询也会强制使用表达式索引，得到一个较差的执行计划。这同样影响 SQL Plan Management (SPM) 中的捕获和演进功能。
-* 多值索引写入的数据必须与定义类型完全匹配，否则数据写入失败。详见[创建多值索引](/sql-statements/sql-statement-create-index.md#创建多值索引)。
-* TiDB 对[分区表](/partitioned-table.md)进行了扩展。你可以指定 `GLOBAL` 索引选项将 `UNIQUE INDEX` 设置为[全局索引](/global-indexes.md)。该扩展与 MySQL 不兼容。
+* TiDB 自建版和 TiDB Cloud Dedicated 支持解析 `FULLTEXT` 语法，但不支持使用 `FULLTEXT`、`HASH` 和 `SPATIAL` 索引。
+
+    > **注意：**
+    >
+    > 目前，仅部分 AWS 区域的 TiDB Cloud Starter 实例支持 [`FULLTEXT` 语法和索引](https://docs.pingcap.com/tidbcloud/vector-search-full-text-search-sql)。
+
+* TiDB 为兼容 MySQL，语法上接受 `HASH`、`BTREE` 和 `RTREE` 等索引类型，但会忽略它们。
+* 不支持降序索引（与 MySQL 5.7 类似）。
+* 不支持为表添加 `CLUSTERED` 类型的主键。关于 `CLUSTERED` 类型主键的更多信息，参见 [聚簇索引](/clustered-indexes.md)。
+* 表达式索引与视图不兼容。通过视图执行查询时，不能同时使用表达式索引。
+* 表达式索引与绑定存在兼容性问题。当表达式索引的表达式中包含常数时，为对应查询创建的绑定会扩展其作用域。例如，假设表达式索引的表达式为 `a+1`，对应的查询条件为 `a+1 > 2`，此时创建的绑定为 `a+? > ?`，这意味着带有条件如 `a+2 > 2` 的查询也会被强制使用表达式索引，导致执行计划不佳。此外，这也会影响 SQL Plan Management (SPM) 中的基线捕获和基线演进。
+* 使用多值索引写入的数据必须与定义的数据类型完全一致，否则写入数据会失败。详情参见 [创建多值索引](/sql-statements/sql-statement-create-index.md#create-multi-valued-indexes)。
+* 将 `UNIQUE KEY` 作为 [全局索引](/global-indexes.md) 并通过 `GLOBAL` 索引选项设置，是 TiDB 针对 [分区表](/partitioned-table.md) 的扩展，不兼容 MySQL。
 
 ## 另请参阅
 
-* [索引的选择](/choose-index.md)
-* [错误索引的解决方案](/wrong-index-solution.md)
+* [索引选择](/choose-index.md)
+* [错误索引解决方案](/wrong-index-solution.md)
 * [ADD INDEX](/sql-statements/sql-statement-add-index.md)
 * [DROP INDEX](/sql-statements/sql-statement-drop-index.md)
 * [RENAME INDEX](/sql-statements/sql-statement-rename-index.md)

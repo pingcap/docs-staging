@@ -1,13 +1,17 @@
 ---
 title: SHOW CREATE RESOURCE GROUP
-summary: TiDB 数据库中 SHOW CREATE RESOURCE GROUP 的使用概况。
+summary: 了解在 TiDB 中 SHOW CREATE RESOURCE GROUP 的用法。
 ---
 
 # SHOW CREATE RESOURCE GROUP
 
-`SHOW CREATE RESOURCE GROUP` 语句可用于查看资源组当前的定义。
+你可以使用 `SHOW CREATE RESOURCE GROUP` 语句查看某个资源组的当前定义。
 
-## 语法图
+> **Note:**
+>
+> 该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
+
+## 语法
 
 ```ebnf+diagram
 ShowCreateResourceGroupStmt ::=
@@ -20,12 +24,14 @@ ResourceGroupName ::=
 
 ## 示例
 
-查看资源组 `rg1` 当前的定义：
+创建一个名为 `rg1` 的资源组。
 
 ```sql
 CREATE RESOURCE GROUP rg1 RU_PER_SEC=100;
 Query OK, 0 rows affected (0.10 sec)
 ```
+
+查看 `rg1` 的定义。
 
 ```sql
 SHOW CREATE RESOURCE GROUP rg1;
@@ -40,7 +46,7 @@ SHOW CREATE RESOURCE GROUP rg1;
 
 ## MySQL 兼容性
 
-该语句是 TiDB 对 MySQL 语法的扩展。
+该语句是 TiDB 针对 MySQL 的扩展。
 
 ## 另请参阅
 

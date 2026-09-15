@@ -1,10 +1,10 @@
 ---
-title: 在 Kubernetes 上部署 TiDB 集群
-summary: 你可以使用 TiDB Operator 在 Kubernetes 上部署 TiDB。TiDB Operator 是 Kubernetes 上的 TiDB 集群自动运维系统，提供部署、升级、扩缩容、备份恢复、配置变更的 TiDB 全生命周期管理。借助 TiDB Operator，TiDB 可以无缝运行在公有云或自托管的 Kubernetes 集群上。TiDB Operator 的文档目前独立于 TiDB 文档。要查看如何在 Kubernetes 上部署 TiDB 的详细步骤，请参阅对应版本的 TiDB Operator 文档。
+title: Deploy a TiDB Cluster on Kubernetes
+summary: Learn how to deploy a TiDB cluster on Kubernetes.
 ---
 
-# 在 Kubernetes 上部署 TiDB 集群
+# Deploy a TiDB Cluster on Kubernetes
 
-你可以使用 [TiDB Operator](https://github.com/pingcap/tidb-operator) 在 Kubernetes 上部署 TiDB 集群。TiDB Operator 是 Kubernetes 上的 TiDB 集群自动运维系统，提供包括部署、升级、扩缩容、备份恢复、配置变更的 TiDB 全生命周期管理。借助 TiDB Operator，TiDB 可以无缝运行在公有云或自托管的 Kubernetes 集群上。
+You can use [TiDB Operator](https://github.com/pingcap/tidb-operator) to deploy TiDB clusters on Kubernetes. TiDB Operator is an automatic operation system for TiDB clusters on Kubernetes. It provides full life-cycle management for TiDB including deployment, upgrades, scaling, backup, fail-over, and configuration changes. With TiDB Operator, TiDB can run seamlessly in the Kubernetes clusters deployed on a public or private cloud.
 
-TiDB Operator 的文档目前独立于 TiDB 文档。要查看如何在 Kubernetes 上部署 TiDB 集群的详细步骤，请了解 [TiDB Operator 与 TiDB 版本的对应关系](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/tidb-operator-overview)，参阅相应版本的 [TiDB on Kubernetes 用户文档](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/)。
+Currently, the TiDB on Kubernetes documentation is independent of the TiDB documentation. For detailed steps on how to deploy TiDB clusters on Kubernetes using TiDB Operator, learn the [relationship between TiDB Operator and TiDB versions](https://docs.pingcap.com/tidb-in-kubernetes/stable/tidb-operator-overview), and see the corresponding [TiDB on Kubernetes documentation](https://docs.pingcap.com/tidb-in-kubernetes/stable/).

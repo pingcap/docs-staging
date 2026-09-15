@@ -1,11 +1,11 @@
 ---
-title: 创建 TiDB Data Migration 数据迁移任务
-summary: 了解 TiDB Data Migration 如何创建数据迁移任务。
+title: Create a Data Migration Task
+summary: Learn how to create a data migration task in TiDB Data Migration.
 ---
 
-# 创建 TiDB Data Migration 数据迁移任务
+# Create a Data Migration Task
 
-`start-task` 命令用于创建数据迁移任务。当数据迁移任务启动时，TiDB Data Migration (DM) 将[自动对相应权限和配置进行前置检查](/dm/dm-precheck.md)。
+You can use the `start-task` command to create a data migration task. When the data migration task is started, DM [prechecks privileges and configurations](/dm/dm-precheck.md).
 
 
 ```bash
@@ -34,33 +34,28 @@ Global Flags:
   -V, --version              Prints version and exit.
 ```
 
-## 命令用法示例
+## Usage example
 
 
 ```bash
 start-task [ -s "mysql-replica-01"] ./task.yaml
 ```
 
-## 参数解释
+## Flags description
 
-+ `-s`：
-    - 可选
-    - 指定在特定的一个 MySQL 源上执行 `task.yaml`
-    - 如果设置，则只启动指定任务在该 MySQL 源上的子任务
-+ `config-file`：
-    - 必选
-    - 指定 `task.yaml` 的文件路径
-+ `remove-meta`:
-    - 可选
-    - 如果设置，则在启动指定任务时会移除该任务之前存在的 metadata
-+ `start-time`:
-    - 可选，格式为 `'2021-10-21 00:01:00'` 或 `2021-10-21T00:01:00`
-    - 对于增量任务，可以通过该参数大致指定任务起始位点，该参数比任务配置文件中的 binlog 位置优先级更高，也比下游 checkpoint 中的 binlog 位置优先级更高
-    - 当该任务存在 checkpoint 时，如果通过这种方式启动任务，DM 会自动开启 safe mode 直到同步过 checkpoint，以避免重置任务到更早位置时遇到数据重复的报错。向前重置起始位点时，如果起始位点的表结构与下游当前表结构不一致可能会在同步时报错；向后重置起始位点时，需要注意跳过的 binlog 可能在下游残留脏数据
-    - 指定了过早的时间时，会从最早的 binlog 开始同步
-    - 指定了过晚的时间时，会报错 `start-time {input-time} is too late, no binlog location matches it`
+- `-s`: (Optional) Specifies the MySQL source to execute `task.yaml`. If it is set, the command only starts the subtasks of the specified task on the MySQL source.
+- `config-file`: (Required) Specifies the file path of `task.yaml`.
+- `remove-meta`: (Optional) Specifies whether to remove the task's previous metadata when starting the task.
+- `start-time`: (Optional) Specifies the start time of binlog replication.
+    - Format: `'2021-10-21 00:01:00'` or `2021-10-21T00:01:00`.
+    - For incremental tasks, you can specify a rough starting point for the task using this flag. This flag takes precedence over the binlog position in the task configuration file and the binlog position in the downstream checkpoint.
+    - When the task already has a checkpoint, if you start the task using this flag, DM automatically enables safe mode until the replication passes the checkpoint. This is to avoid the data duplication error caused by resetting the task to an earlier position.
+        - When you reset the task to an earlier position, if the table schema at that time point is different from the downstream at the current time point, the task might report an error.
+        - When you reset the task to a later position, note that the skipped binlog might have dirty data left in the downstream.
+    - When you specify an earlier start time, DM starts migration from the earliest binlog position available.
+    - When you specify a later start time, DM reports an error: `start-time {input-time} is too late, no binlog location matches it`.
 
-## 返回结果示例
+## Returned results
 
 
 ```bash

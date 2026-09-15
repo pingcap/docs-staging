@@ -1,76 +1,79 @@
 ---
-title: TiUP 命令概览
-summary: TiUP 是 TiDB 生态的包管理器，管理着诸如 TiDB、PD、TiKV 等组件。它支持执行命令和运行组件，可以通过 `--help` 获取命令信息。选项包括打印二进制文件路径、指定组件路径、指定组件 tag、打印版本和帮助信息。TiUP 包含众多命令和子命令，以及组件清单。
+title: TiUP Reference
+summary: TiUP is the package manager for the TiDB ecosystem, managing components like TiDB, PD, and TiKV. It supports commands like install, list, uninstall, update, status, clean, mirror, telemetry, completion, env, and help. It also manages the cluster and TiDB Data Migration (DM) cluster.
 ---
 
-# TiUP 命令概览
+# TiUP Reference
 
-TiUP 在 TiDB 生态中承担包管理器的功能，管理着 TiDB 生态下众多的组件，如 TiDB、PD、TiKV 等。
+TiUP serves as the package manager of the TiDB ecosystem. It manages components in the TiDB ecosystem, such as TiDB, PD, and TiKV.
 
-## 语法
+## Syntax
 
 ```shell
-tiup [flags] <command> [args...]        # 执行命令
+tiup [flags] <command> [args...]        # Executes a command
 # or
-tiup [flags] <component> [args...]      # 运行组件
+tiup [flags] <component> [args...]      # Runs a component
 ```
 
-使用 `--help` 命令可以获取特定命令的信息，每个命令的摘要都显示了其参数及其用法。必须参数显示在尖括号中，可选参数显示在方括号中。
+You can use the `--help` command to get the information of a specific command. The summary of each command shows its parameters and their usage. Mandatory parameters are shown in angle brackets, and optional parameters are shown in square brackets.
 
-`<command>` 代表命令名字，支持的命令列表请参考下方[命令清单](#命令清单)，`<component>` 代表组件名，支持的组件列表请参考下方[组件清单](#组件清单)。
+`<command>` represents the command name. For the list of supported commands, see the [Command list](#command-list) below. `<component>` represents the component name. For the list of supported components, see the [Component list](#component-list) below.
 
-## 选项
+## Options
 
 ### --binary
 
-打印指定组件的二进制文件路径：
+- If you enable this option, the specified binary file path is printed.
 
-- 执行 `tiup --binary <component>` 将打印已安装的 `<component>` 组件的最新稳定版路径，若 `<component>` 组件未安装，则报错
-- 执行 `tiup --binary <component>:<version>` 将打印已经安装的 `<component>` 组件的 `<version>` 版本所在的路径，若该版本未安装，则报错
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+    - Executing `tiup --binary <component>` will have the path of the latest stable installed `<component>` component printed. If `<component>` is not installed, an error is returned.
+    - Executing `tiup --binary <component>:<version>` will have the path of the installed `<component>` component's `<version>` printed. If this `<version>` is not printed, an error is returned.
 
-> **注意：**
+- Data type: `BOOLEAN`
+- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+
+> **Note:**
 >
-> 该选项只能用于 `tiup [flags] <component> [args...]` 格式的命令。
+> This option can only be used in commands of the `tiup [flags] <component> [args...]` format.
 
-### --binpath (string)
+### --binpath
 
-指定要执行的组件的路径：执行一个组件时，如果不想使用 TiUP 镜像中的二进制文件，可以使用该参数使用自定义路径的二进制文件替换之。
-
-> **注意：**
+> **Note:**
 >
-> 该选项只能用于 `tiup [flags] <component> [args...]` 格式的命令。
+> This option can only be used in commands of the `tiup [flags] <component> [args...]` format.
 
-### -T, --tag (string)
+- Specifies the path of the component to be executed. When a component is executed, if you do not want to use the binary file in the TiUP mirror, you can add this option to specify using the binary file in a custom path.
+- Data type: `STRING`
 
-对启动的组件指定一个 `tag`：有的组件在执行过程中需要使用磁盘存储，TiUP 会分配一个临时目录作为该组件本次执行的存储目录，如果希望分配固定目录，可以用 `-T/--tag` 来指定目录名字，这样多次执行使用同样的 `tag` 就能读写到同一批文件。
+### -T, --tag
+
+- Specifies a tag for the component to be started. Some components need to use disk storage during the execution, and TiUP allocates a temporary storage directory for this execution. If you want TiUP to allocate a fixed directory, you can use `-T/--tag` to specify the name of the directory, so that the same batch of files can be read and written in multiple executions with the same tag.
+- Data type: `STRING`
 
 ### -v, --version
 
-打印 TiUP 的版本
+Prints the TiUP version.
 
 ### --help
 
-打印帮助信息
+Prints the help information.
 
-## 命令清单
+## Command list
 
-TiUP 包含众多的命令，这些命令又包含了许多子命令，具体命令及其子命令的说明请参考对应的链接：
+TiUP has multiple commands, and these commands have multiple sub-commands. For the specific commands and their detailed descriptions, click the corresponding links in the list below:
 
-- [install](/tiup/tiup-command-install.md)：安装组件
-- [list](/tiup/tiup-command-list.md)：查看组件列表
-- [uninstall](/tiup/tiup-command-uninstall.md)：卸载组件
-- [update](/tiup/tiup-command-update.md)：升级已安装的组件
-- [status](/tiup/tiup-command-status.md)：查看组件运行状态
-- [clean](/tiup/tiup-command-clean.md)：清理组件数据目录
-- [mirror](/tiup/tiup-command-mirror.md)：镜像管理
-- [telemetry](/tiup/tiup-command-telemetry.md)：遥测开关
-- [completion](/tiup/tiup-command-completion.md)：TiUP 命令补全
-- [env](/tiup/tiup-command-env.md)：查看 TiUP 相关环境变量
-- [help](/tiup/tiup-command-help.md)：查看特定命令或组件的帮助文档
+- [install](/tiup/tiup-command-install.md): Installs a component.
+- [list](/tiup/tiup-command-list.md): Shows the component list.
+- [uninstall](/tiup/tiup-command-uninstall.md): Uninstalls a component.
+- [update](/tiup/tiup-command-update.md): Updates the installed component.
+- [status](/tiup/tiup-command-status.md): Shows the running status of a component.
+- [clean](/tiup/tiup-command-clean.md): Cleans the data directory of a component.
+- [mirror](/tiup/tiup-command-mirror.md): Manages the mirror.
+- [telemetry](/tiup/tiup-command-telemetry.md): Enables or disables the telemetry.
+- [completion](/tiup/tiup-command-completion.md): Completes the TiUP command.
+- [env](/tiup/tiup-command-env.md): Shows the TiUP-related environment variables.
+- [help](/tiup/tiup-command-help.md): Shows the help information of a command or component.
 
-## 组件清单
+## Component list
 
-- [cluster](/tiup/tiup-component-cluster.md)：生产环境 TiDB 集群管理
-- [dm](/tiup/tiup-component-dm.md)：生产环境 DM 集群管理
+- [cluster](/tiup/tiup-component-cluster.md): Manages the TiDB cluster in a production environment.
+- [dm](/tiup/tiup-component-dm.md): Manages the TiDB Data Migration (DM) cluster in a production environment.

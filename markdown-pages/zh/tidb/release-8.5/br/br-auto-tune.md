@@ -1,79 +1,86 @@
 ---
-title: 备份自动调节
-summary: 了解 TiDB 的自动调节备份功能，在集群资源占用率较高的情况下，BR 会自动限制备份使用的资源以求减少对集群的影响。
+title: Backup Auto-Tune
+summary: TiDB v5.4.0 introduces the auto-tune feature for backup tasks, which is enabled by default. It limits the resources used by backup tasks to reduce their impact on the cluster. You can enable or disable the feature dynamically without restarting the cluster. However, auto-tune may not completely remove the impact of backup on the cluster due to limitations. Adjusting the number of threads used by backup tasks can help mitigate the impact in certain scenarios.
 ---
 
-# 备份自动调节 <span class="version-mark">从 v5.4 版本开始引入</span>
+# Backup Auto-Tune <span class="version-mark">New in v5.4.0</span>
 
-在 TiDB v5.4.0 之前，默认情况下，使用 BR 进行备份任务时使用的线程数量占总逻辑 CPU 数量的 75%。在没有限速的前提下，备份会消耗大量的集群资源，这会对在线集群的性能造成相当大的影响。虽然你可以通过调节线程池的大小的方式来减少备份对集群性能的影响，但观察负载、手动调节线程池大小也是一件繁琐的事情。
+Before TiDB v5.4.0, when you back up data using Backup & Restore (BR), the number of threads used for backup makes up 75% of the logical CPU cores. Without a speed limit, the backup process can consume a lot of cluster resources, which has a considerable impact on the performance of the online cluster. Although you can reduce the impact of backup by adjusting the size of the thread pool, it is a tedious task to observe the CPU load and manually adjust the thread pool size.
 
-为了减少备份任务对在线集群的影响，从 TiDB v5.4.0 起，引入了自动调节功能，此功能默认开启。在集群资源占用率较高的情况下，备份功能可以通过该功能自动限制备份使用的资源，从而减少对集群的影响。
+To reduce the impact of backup tasks on the cluster, TiDB v5.4.0 introduces the auto-tune feature, which is enabled by default. When the cluster resource utilization is high, BR automatically limits the resources used by backup tasks and thereby reduces their impact on the cluster. The auto-tune feature is enabled by default.
 
-## 使用场景
+## Usage scenario
 
-如果你希望减少备份对集群的影响，那么，你可以开启自动调节功能。开启该功能后，备份功能会在不过度影响集群的前提下，以最快的速度进行数据备份。
+If you want to reduce the impact of backup tasks on the cluster, you can enable the auto-tune feature. With this feature enabled, TiDB performs backup tasks as fast as possible without excessively affecting the cluster.
 
-或者，你也可以使用 TiKV 配置项 [`backup.num-threads`](/tikv-configuration-file.md#num-threads-1) 或参数 `--ratelimit` 进行备份限速。设置 `--ratelimit` 后，为了避免任务数过多导致限速失效，br 的 `concurrency` 参数会自动调整为 1。
+Alternatively, you can limit the backup speed by using the TiKV configuration item [`backup.num-threads`](/tikv-configuration-file.md#num-threads-1) or using the parameter `--ratelimit`. When `--ratelimit` is set, to avoid too many tasks causing the speed limit to fail, the `concurrency` parameter of br is automatically adjusted to `1`.
 
-## 使用方法
+## Use auto-tune
 
-自动调节功能默认打开，无需额外配置。
+The auto-tune feature is enabled by default, without additional configuration.
 
-> **注意：**
+> **Note:**
 >
-> v5.3.x 版本的集群，在升级到 v5.4.0 及以上版本后，自动调节功能默认关闭，需手动开启。
+> For clusters that upgrade from v5.3.x to v5.4.0 or later versions, the auto-tune feature is disabled by default. You need to manually enable it.
 
-如需开启备份自动调节功能，可以通过把 TiKV 配置项 [`backup.enable-auto-tune`](/tikv-configuration-file.md#enable-auto-tune-从-v54-版本开始引入) 设置为 `true` 的方式来完成。
+To manually enable the auto-tune feature, you need to set the TiKV configuration item [`backup.enable-auto-tune`](/tikv-configuration-file.md#enable-auto-tune-new-in-v540) to `true`.
 
-TiKV 支持[动态配置](/tikv-control.md#动态修改-tikv-的配置)自动调节功能，因此，在开启或关闭该功能时，无需重启集群。你可以运行以下命令动态启动或停止备份自动调节功能：
+TiKV supports dynamically configuring the auto-tune feature. You can enable or disable the feature without restarting your cluster. To dynamically enable or disable the auto-tune feature, run the following command:
+
 
 ```shell
-tikv-ctl --host=<tikv-ip:port> modify-tikv-config -n backup.enable-auto-tune -v <true|false>
+tikv-ctl modify-tikv-config -n backup.enable-auto-tune -v <true|false>
 ```
 
-在离线备份场景中，你也可以使用 `tikv-ctl` 把 `backup.num-threads` 修改为更大的数字，从而提升备份速度。
+When you perform backup tasks on an offline cluster, to speed up the backup, you can modify the value of `backup.num-threads` to a larger number using `tikv-ctl`.
 
-## 使用限制
+## Limitations
 
-自动调节是一个粗粒度的限流方案，它的优势在无需手动调节。但是，由于调节的粒度不够精确，该功能有可能无法彻底移除备份对集群的影响。
+Auto-tune is a coarse-grained solution for limiting backup speed. It reduces the need for manual tuning. However, because of the lack of fine-grained control, auto-tune might not be able to completely remove the impact of backup on the cluster.
 
-该功能的已知问题及其解决方案如下：
+The auto-tune feature has the following issues and corresponding solutions:
 
-- 问题 1：对于**以写负载为主的集群**，自动调节可能会让工作负载和备份进入一种“正反馈循环”：备份会占用较多资源，导致工作负载使用的资源变少。此时，自动调节会误以为资源使用率下降，从而让备份运行得更加激进。在这种情况下，自动调节实际上失效。
-    - 解决方法：手动调节 `backup.num-threads`，限制处理备份的工作线程数量。具体原理如下：
+- Issue 1: For **write-heavy clusters**, auto-tune might put the workload and backup tasks into a "positive feedback loop": the backup tasks take up too many resources, which causes the cluster to use fewer resources; at this point, auto-tune might mistakenly assume that the cluster is not under heavy workload and thus allowing backup to run faster. In such cases, auto-tune is ineffective.
 
-        目前，备份过程会涉及大量的 SST 解码、编码、压缩、解压，而此过程会需要消耗大量的 CPU 资源。另外，以往的测试证明，备份过程中，用于备份的线程池的 CPU 利用率接近 100%。也就是说，备份任务会占用大量 CPU 资源。通过调整备份任务使用的线程数量，TiKV 可以控制备份任务使用的 CPU 核心数，从而减少其任务对集群性能的影响。
+    - Solution: Manually adjust `backup.num-threads` to a smaller number to limit the number of threads used by backup tasks. The working principle is as follows:
 
-- 问题 2：对于**存在热点的集群**，产生热点的 TiKV 节点可能会被过度限流，从而拉慢备份的整体进度。
-    - 解决方法：消除热点节点，或者在热点节点上关闭自动调节（关闭此功能可能会导致集群性能降低）。
-- 问题 3：对于**流量抖动非常大的场景**，由于自动调节每隔 [`auto-tune-refresh-interval`](#实现原理)（默认为一分钟）才会计算出新的限流，所以可能无法很好地应对流量抖动非常厉害的场景。
-    - 解决方法：关闭自动调节。
+        The backup process includes lots of SST decoding, encoding, compression, and decompression, which consume CPU resources. In addition, previous test cases have shown that during the backup process, the CPU utilization of the thread pool used for backup is close to 100%. This means that the backup tasks take up a lot of CPU resources. By adjusting the number of threads used by the backup tasks, TiKV can limit the CPU cores used by backup tasks, thus reducing the impact of backup tasks on the cluster performance.
 
-## 实现原理
+- Issue 2: For **clusters with hotspots**, backup tasks on the TiKV node that has hotspots might be excessively limited, which slows down the overall backup process.
 
-自动调节会通过调节备份时使用的工作线程池的大小，保证集群的 CPU 总体使用率不超过某个特定的值。
+    - Solution: Eliminate the hotspot node, or disable auto-tune on the hotspot node (this might reduce the cluster performance).
 
-这个特性还有两个配置项未在 TiKV 文档中列出，仅在内部调试使用，正常备份时**无需**配置这两个参数。
+- Issue 3: For scenarios with **high traffic jitter**, because auto-tune adjusts the speed limit on a fixed interval (1 minute by default), it might not be able to handle high traffic jitter. For details, see [`auto-tune-refresh-interval`](#implementation).
 
-- `backup.auto-tune-remain-threads`：
-    - 通过控制备份任务占用的资源，自动调节会保证该节点中至少有该数量的核心会保持空闲的状态。
-    - 默认值：`round(0.2 * vCPU)`
+    - Solution: Disable auto-tune.
 
-- `backup.auto-tune-refresh-interval`：
-    - 每隔该值的时间段，自动调节会刷新统计信息并重新计算备份任务使用的 CPU 核心数的上限。
-    - 默认值：`1m`
+## Implementation
 
-以下是一个使用自动调节功能的示例，其中 `*` 代表集群中被备份任务占用的 CPU，`^` 代表其它任务占用的 CPU，`-` 代表空闲 CPU。
+Auto-tune adjusts the size of the thread pool used by backup tasks to ensure that the overall CPU utilization of the cluster does not exceed a specific threshold.
+
+This feature has two related configuration items not listed in the TiKV configuration file. These two configuration items are only for internal tuning. You do **not** need to configure these two configuration items when you perform backup tasks.
+
+- `backup.auto-tune-remain-threads`:
+
+    - Auto-tune controls the resources used by the backup tasks and ensures that at least `backup.auto-tune-remain-threads` cores are available for other tasks on the same node.
+    - Default value: `round(0.2 * vCPU)`
+
+- `backup.auto-tune-refresh-interval`:
+
+    - Every `backup.auto-tune-refresh-interval` minute(s), auto-tune refreshes the statistics and recalculates the maximum number of CPU cores that backup tasks can use.
+    - Default value: `1m`
+
+The following is an example of how auto-tune works. `*` denotes a CPU core used by backup tasks. `^` denotes a CPU core used by other tasks. `-` denotes an idle CPU core.
 
 ```
-|--------| 系统总共有 8 颗逻辑 CPU。
-|****----| 默认配置 `backup.num-threads` 为 `4`。请注意，在任何时候自动调节都不会让线程池大小大于 `backup.num-threads`。
-|^^****--| 默认配置 `auto-tune-remain-threads` = round(8 * 0.2) = 2。自动调节会将备份任务的线程池大小调节至 `4`。
-|^^^^**--| 由于集群的工作负载加重，自动调节将备份任务的线程池大小调节至 `2`。调节后，集群中仍有 2 个 CPU 核心数保持空闲。
+|--------| The server has 8 logical CPU cores.
+|****----| By default, `backup.num-threads` is `4`. Note that auto-tune makes sure that the thread pool size is never larger than `backup.num-threads`.
+|^^****--| By default, `auto-tune-remain-threads` = round(8 * 0.2) = 2. Auto-tune adjusts the size of the thread pool to `4`.
+|^^^^**--| Because the cluster workload gets higher, auto-tune adjusts the size of the thread pool to `2`. After that, the cluster still has 2 idle CPU cores.
 ```
 
-在监控面板的“Backup CPU Utilization”中，可以看到自动限流目前选择的线程池的大小：
+In the **Backup CPU Utilization** panel, you can see the size of the thread pool adjusted by auto-tune:
 
-![Grafana dashboard example of backup auto-tune metrics](https://docs-download.pingcap.com/media/images/docs-cn/br/backup-auto-throttle.png)
+![Grafana dashboard example of backup auto-tune metrics](https://docs-download.pingcap.com/media/images/docs/br/br-auto-throttle.png)
 
-图片中，黄色半透明的填充部分为开启自动调节后备份任务可用的线程，即备份任务能使用的所有资源。从中可以看到备份任务的 CPU 使用率不会超过黄色部分。
+In the image above, the yellow semi-transparent area represents the threads available for backup tasks. You can see the CPU utilization of backup tasks does not go beyond the yellow area.

@@ -1,18 +1,22 @@
 ---
 title: TIDB_SERVERS_INFO
-summary: 了解 INFORMATION_SCHEMA 表 `TIDB_SERVERS_INFO`。
+summary: 了解 `TIDB_SERVERS_INFO` INFORMATION_SCHEMA 表。
 ---
 
 # TIDB_SERVERS_INFO
 
-`TIDB_SERVERS_INFO` 表提供了 TiDB 集群中 TiDB 服务器的信息（即 tidb-server 进程）。
+`TIDB_SERVERS_INFO` 表提供了关于 TiDB 集群中 TiDB 服务器（即 tidb-server 进程）的信息。
+
+> **Note:**
+>
+> 该表在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
 
 ```sql
 USE INFORMATION_SCHEMA;
-DESC TIDB_SERVERS_INFO;
+DESC tidb_servers_info;
 ```
 
-输出结果如下：
+输出如下：
 
 ```sql
 +---------------+--------------+------+------+---------+-------+
@@ -31,13 +35,13 @@ DESC TIDB_SERVERS_INFO;
 9 rows in set (0.00 sec)
 ```
 
-查看 `TIDB_SERVERS_INFO` 表的信息：
+查看 `TIDB_SERVERS_INFO` 表：
 
 ```sql
 SELECT * FROM TIDB_SERVERS_INFO\G
 ```
 
-输出结果如下：
+输出如下：
 
 ```sql
 *************************** 1. row ***************************
@@ -46,8 +50,8 @@ SELECT * FROM TIDB_SERVERS_INFO\G
          PORT: 4000
   STATUS_PORT: 10080
         LEASE: 45s
-      VERSION: 8.0.11-TiDB-v8.5.8
-     GIT_HASH: 635a4362235e8a3c0043542e629532e3c7bb2756
+      VERSION: 8.0.11-TiDB-v8.5.3
+     GIT_HASH: 827d8ff2d22ac4c93ae1b841b79d468211e1d393
 BINLOG_STATUS: Off
        LABELS:
 1 row in set (0.006 sec)

@@ -1,46 +1,50 @@
 ---
 title: tiup dm deploy
-summary: tiup dm deploy 命令用于部署全新的集群。语法为 tiup dm deploy <cluster-name> <version> <topology.yaml> [flags]，其中 cluster-name 表示新集群的名字，version 为要部署的 DM 集群版本号，topology.yaml 为事先编写好的拓扑文件。选项包括 -u, -i, -p, -h，分别用于指定连接目标机器的用户名、密钥文件、密码登录和输出帮助信息。输出为部署日志。
+summary: The `tiup dm deploy` command is used to deploy a new cluster. It requires the cluster name, version, and a prepared topology file. Optional flags include user, identity file, password, and help. The output is the deployment log.
 ---
 
 # tiup dm deploy
 
-命令 `tiup dm deploy` 用于部署一个全新的集群。
+The `tiup dm deploy` command is used to deploy a new cluster.
 
-## 语法
+## Syntax
 
 ```shell
 tiup dm deploy <cluster-name> <version> <topology.yaml> [flags]
 ```
 
-- `<cluster-name>` 表示新集群的名字，不能和现有集群同名
-- `<version>` 为要部署的 DM 集群版本号，如 `v2.0.0`
-- `<topology.yaml>` 为事先编写好的[拓扑文件](/tiup/tiup-dm-topology-reference.md)
+- `<cluster-name>`: the name of the new cluster, which cannot be the same as the existing cluster names.
+- `<version>`: the version number of the DM cluster to be deployed, such as `v2.0.0`.
+- `<topology.yaml>`: the prepared [topology file](/tiup/tiup-dm-topology-reference.md).
 
-## 选项
+## Options
 
-### -u, --user（string，默认为当前执行命令的用户）
+### -u, --user
 
-指定连接目标机器的用户名，该用户在目标机器上需要有免密 sudo root 的权限。
+- Specifies the user name used to connect to the target machine. This user must have the secret-free sudo root permission on the target machine.
+- Data type: `STRING`
+- Default: the current user who executes the command.
 
-### -i, --identity_file（string，默认 ~/.ssh/id_rsa）
+### -i, --identity_file
 
-指定连接目标机器的密钥文件。
+- Specifies the key file used to connect to the target machine.
+- Data type: `STRING`
+- Default: `~/.ssh/id_rsa`
 
 ### -p, --password
 
-- 在连接目标机器时使用密码登录，不可和 `-i/--identity_file` 同时使用。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Specifies the password used to connect to the target machine. Do not use this option and `-i/--identity_file` at the same time.
+- Data type: `BOOLEAN`
+- Default: false
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints the help information.
+- Data type: `BOOLEAN`
+- Default: false
 
-## 输出
+## Output
 
-部署日志。
+The deployment log.
 
-[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)
+[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)

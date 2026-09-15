@@ -1,36 +1,35 @@
 ---
-title: 三节点混合部署最佳实践
-summary: 了解三节点混合部署最佳实践。
-aliases: ['/docs-cn/dev/best-practices/three-nodes-hybrid-deployment/','/zh/tidb/stable/three-nodes-hybrid-deployment/','/zh/tidb/dev/three-nodes-hybrid-deployment/']
+title: Best Practices for Three-Node Hybrid Deployment
+summary: TiDB cluster can be deployed in a cost-effective way on three machines. Best practices for this hybrid deployment include adjusting parameters for stability and performance. Limiting resource consumption and adjusting thread pool sizes are key to optimizing the cluster. Adjusting parameters for TiKV background tasks and TiDB execution operators is also important.
 ---
 
-# 三节点混合部署的最佳实践
+# Best Practices for Three-Node Hybrid Deployment
 
-在对性能要求不高且需要控制成本的场景下，将 TiDB、TiKV、PD 混合部署在三台机器上是一个可行的方案。
+For a TiDB cluster, if you have no requirements on high performance but need to control the cost, you can deploy the TiDB, TiKV, and PD components on three machines in a hybrid way.
 
-本文以 TPC-C 作为工作负载，提供一些在三节点混合部署场景下部署和参数调整的建议。
+This document offers an example of three-node hybrid deployment and a TPC-C test against the deployed cluster. Based on this example, this document offers best practices for the deployment scenario and its parameter adjustment.
 
-## 部署环境和测试方法
+## Prerequisites for deployment and the test method
 
-三台物理机，每台机器有 16 个 CPU 核心且内存为 32 GB。每节点（台机器）上混合部署 1 TiDB （实例）+ 1 TiKV （实例）+ 1 PD（实例）。
+In this example, three physical machines are used for deployment, each with 16 CPU cores and 32 GB of memory. On each machine (node), one TiDB instance, one TiKV instance, and one PD instance are deployed in a hybrid way.
 
-由于 PD 和 TiKV 都会存储信息到磁盘，磁盘的写入读取延迟会直接影响到 PD 和 TiKV 的服务延迟，为了防止 PD 和 TiKV 对磁盘资源的争抢导致相互影响，推荐 PD 和 TiKV 采用不同的磁盘。
+Because PD and TiKV both store information on the disk, the read and write latency of disk directly affects the latency of the PD and TiKV services. To avoid the situation that PD and TiKV compete for disk resources and affect each other, it is recommended to use different disks for PD and TiKV.
 
-在 TiUP bench 中使用 TPC-C 5000 Warehouse 数据，每次以 `terminals` 参数为 `128` 的并发度测试 12 小时。主要观察集群性能的稳定性指标。
+In this example, the TPC-C 5000 Warehouse data is used in TiUP bench and the test lasts 12 hours with the `terminals` parameter set to `128` (concurrency). Close attention is paid to metrics related to performance stability of the cluster.
 
-下图是默认参数配置下，12 小时内集群的 QPS 监控，可以看倒有比较明显的抖动。
+The image below shows the QPS monitor of the cluster within 12 hours with the default parameter configuration. From the image, you can see an obvious performance jitter.
 
-![QPS with default config](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/three-nodes-default-config-qps.png)
+![QPS with default config](https://docs-download.pingcap.com/media/images/docs/best-practices/three-nodes-default-config-qps.png)
 
-调整参数后，稳定性得到了改善。
+After the parameter adjustment, the performance is improved.
 
-![QPS with modified config](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/three-nodes-final-config-qps.png)
+![QPS with modified config](https://docs-download.pingcap.com/media/images/docs/best-practices/three-nodes-final-config-qps.png)
 
-## 参数调整
+## Parameter adjustment
 
-上图中出现抖动的主要原因是，默认的线程池和后台任务资源分配针对的是资源比较充足的机器。在混合部署的场景下，因为可用资源需要被多个组件共享，所以需要通过配置参数进行限制。
+Performance jitter occurs in the image above, because the default thread pool configuration and the resource allocation to background tasks are for machines with sufficient resources. In the hybrid deployment scenario, the resources are shared among multiple components, so you need to limit the resource consumption via configuration parameters.
 
-本次测试最终采用的配置如下：
+The final cluster configuration for this test is as follows:
 
 
 ```yaml
@@ -41,86 +40,88 @@ tikv:
     gc.max-write-bytes-per-sec: 300K
     rocksdb.max-background-jobs: 3
     rocksdb.max-sub-compactions: 1
-    rocksdb.rate-bytes-per-sec: “200M”
+    rocksdb.rate-bytes-per-sec: "200M"
 
   tidb:
     performance.max-procs: 8
 ```
 
-接下来会分别介绍这几个参数的意义和调整方法。
+The following sections introduce the meanings and the adjustment methods of these parameters.
 
-### TiKV 线程池大小配置
+### Configuration of TiKV thread pool size
 
-本节的配置项会调整一些与前台业务有关的线程池的资源配比。缩减这些线程池会损失一些性能，但在混合部署场景下可用资源有限，本身也难以达到很高的性能，所以选择牺牲一小部分性能去换取整体的稳定性。
+This section offers best practices for adjusting parameters that relate to the resource allocation of thread pools for foreground applications. Reducing these thread pool sizes will compromise performance, but in the hybrid deployment scenario with limited resources, the cluster itself is hard to achieve high performance. In this scenario, the overall stability of the cluster is preferred over performance.
 
-可以先以默认配置为基础运行一次实际负载的测试，观察各线程池的实际使用量，再修改这些配置项，缩减利用率不高的线程池大小。
+If you conduct an actual load test, you can first use the default configuration and observe the actual resource usage of each thread pool. Then you can adjust the corresponding configuration items and reduce the sizes of the thread pools that have lower usage.
 
 #### `readpool.unified.max-thread-count`
 
-该参数默认取值为机器线程数的 80%，因为是混合部署场景，你需要手动计算并指定该值。可以先设置成期望 TiKV 使用的 CPU 线程数的 80%。
+The default value of this parameter is 80% of the number of machine threads. In a hybrid deployment scenario, you need to manually calculate and specify this value. You can first set it to 80% of the expected number of CPU threads used by TiKV.
 
 #### `server.grpc-concurrency`
 
-因为现有部署方案的 CPU 资源有限，实际请求数也不会很多，可以把 [`server.grpc-concurrency`](/tikv-configuration-file.md#grpc-concurrency) 参数值调低，后续观察监控面板保持其使用率在 80% 以下即可。
+This parameter defaults to `4`. Because in the existing deployment plan, the CPU resources are limited and the actual requests are few. You can observe the monitoring panel, lower the value of this parameter, and keep the usage rate below 80%.
 
-本次测试最后选择设置该参数值为 `2`，通过 **gRPC poll CPU** 面板观察，利用率正好在 80% 左右。
+In this test, the value of this parameter is set to `2`. Observe the **gRPC poll CPU** panel and you can see that the usage rate is just around 80%.
 
-![gRPC Pool CPU](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/three-nodes-grpc-pool-usage.png)
+![gRPC Pool CPU](https://docs-download.pingcap.com/media/images/docs/best-practices/three-nodes-grpc-pool-usage.png)
 
 #### `storage.scheduler-worker-pool-size`
 
-在 TiKV 检测到机器 CPU 数大于或等于 `16` 时，该参数值默认为 `8`。CPU 数小于 `16` 时，该参数值默认为 `4`。它主要用于将复杂的事务请求转化为简单的 key-value 读写。但是 scheduler 线程池本身不进行任何写操作。
+When TiKV detects that the CPU core number of the machine is greater than or equal to `16`, this parameter value defaults to `8`. When the CPU core number is smaller than `16`, the parameter value defaults to `4`. This parameter is used when TiKV converts complex transaction requests to simple key-value reads or writes, but the scheduler thread pool does not perform any writes.
 
-一般来说该线程池的利用率保持在 50% - 75% 之间是比较好的。和 gRPC 线程池情况类似，混合部署时该参数默认取值偏大，资源利用不充分。本次测试最后选择取值为 `2`，通过 **Scheduler worker CPU** 面板观察，利用率比较符合最佳实践。
+Ideally, the usage rate of the scheduler thread pool is kept between 50% and 75%. Similar to the gRPC thread pool, the `storage.scheduler-worker-pool-size` parameter defaults to a larger value during the hybrid deployment, which makes resource usage insufficient. In this test, the value of this parameter is set to `2`, which is in line with the best practices, a conclusion drawn by observing the corresponding metrics in the **Scheduler worker CPU** panel.
 
-![Scheduler Worker CPU](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/three-nodes-scheduler-pool-usage.png)
+![Scheduler Worker CPU](https://docs-download.pingcap.com/media/images/docs/best-practices/three-nodes-scheduler-pool-usage.png)
 
-### TiKV 后台任务资源配置
+### Resource configuration for TiKV background tasks
 
-除前台任务之外，TiKV 上还会持续地有后台任务进行数据整理和过期数据的清除。默认配置为这些后台任务分配了比较多的资源以应对大流量的写入。
+In addition to foreground tasks, TiKV regularly sorts data and cleans outdated data in background tasks. The default configuration allocates sufficient resources to these tasks for the scenario of high-traffic writes.
 
-混合部署场景下，默认配置就不是很合适了，需要通过以下参数对这些后台任务地资源使用量进行限制。
+However, in the hybrid deployment scenario, this default configuration is not in line with the best practices. You need to limit the resource usage of background tasks by adjusting the following parameters.
 
-#### `rocksdb.max-background-jobs` 和 `rocksdb.max-sub-compactions`
+#### `rocksdb.max-background-jobs` and `rocksdb.max-sub-compactions`
 
-RocksDB 线程池是进行 Compact 和 Flush 任务的线程池，默认大小为 8。这明显超出了实际可以使用的资源，需要限制。`rocksdb.max-sub-compactions` 是单个 compaction 任务的子任务并发数，默认值为 `3`，在写入流量不大的情况下可以进行限制。
+The RocksDB thread pool is used to perform compaction and flush jobs. The default value of `rocksdb.max-background-jobs` is `8`, which obviously exceeds the resource that is in need. Therefore, the value should be adjusted to limit the resource usage.
 
-这次测试最终将 `rocksdb.max-background-jobs` 设置为 3，将 `rocksdb.max-sub-compactions` 设置为 1。在 12 小时的 TPC-C 负载下没有发生 Write Stall，根据实际负载进行这两项参数的优化时，可以逐步调低这两个配置，并通过监控观察。
+`rocksdb.max-sub-compactions` indicates the number of concurrent sub-tasks allowed for a single compaction job, which defaults to `3`. You can lower this value when the write traffic is not high.
 
-* 如果遇到了 Write Stall，可以先调大 `rocksdb.max-background-jobs` 的取值。
-* 如果还是存在问题，可将 `rocksdb.max-sub-compactions` 设置为 2 或者 3。
+In the test, the `rocksdb.max-background-jobs` value is set to `3` and the `rocksdb.max-sub-compactions` value is set to `1`. No write stall occurs during the 12-hour test with the TPC-C load. When optimizing the two parameter values according to the actual load, you can lower the values gradually based on monitoring metrics:
+
+* If write stall occurs, increase the value of `rocksdb.max-background-jobs`.
+* If the write stall persists, set the value of `rocksdb.max-sub-compactions` to `2` or `3`.
 
 #### `rocksdb.rate-bytes-per-sec`
 
-该参数用于限制后台 compaction 任务的磁盘流量。默认配置下没有进行任何限制。为了避免 compaction 挤占前台服务资源，可以根据硬盘的顺序读写速度进行调整，为正常的服务保留足够多的磁盘带宽。
+This parameter is used to limit the disk traffic for the background compaction jobs. The default configuration has no limit for this parameter. To avoid the situation that compaction jobs occupy the resources of foreground services, you can adjust this parameter value according to the sequential read and write speed of the disk, which reserves enough disk bandwidth for foreground services.
 
-类似 compaction 线程池的调整方法，调整该参数值后，也根据是否存在 Write Stall 来判断取值是否合理。
+The method of optimizing the RocksDB thread pool is similar to that of optimizing the compaction thread pool. You can determine whether the value you have adjusted is suitable according to whether write stall occurs.
 
 #### `gc.max_write_bytes_per_sec`
 
-因为 TiDB 使用的是 MVCC 的模型，TiKV 还需要周期性地在后台清除旧版本的数据。当可用资源有限的时候，这个操作会引起周期性的性能抖动。可以用 `gc.max_write_bytes_per_sec` 来限制这一操作的资源使用。
+Because TiDB uses the multi-version concurrency control (MVCC) model, TiKV periodically cleans old version data in the background. When the available resources are limited, this operation causes periodical performance jitter. You can use the `gc.max_write_bytes_per_sec` parameter to limit the resource usage of such an operation.
 
-![GC Impact](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/three-nodes-gc-impact.png)
+![GC Impact](https://docs-download.pingcap.com/media/images/docs/best-practices/three-nodes-gc-impact.png)
 
-除了在配置文件中设置该参数之外，还可以通过 tikv-ctl 动态调节，为调整该参数提供便利：
+In addition to setting this parameter value in the configuration file, you can also dynamically adjust this value in tikv-ctl.
 
 
 ```shell
 tiup ctl:v<CLUSTER_VERSION> tikv --host=${ip:port} modify-tikv-config -n gc.max_write_bytes_per_sec -v ${limit}
 ```
 
-> **注意：**
+> **Note:**
 >
-> 对于更新频繁的业务场景，限制 GC 流量可能会导致 MVCC 版本堆积，进而影响读取性能。所以这个参数的取值需要进行多次尝试，在性能抖动和性能衰退之间找一个比较平衡的取值。
+> In application scenarios with frequent updates, limiting GC traffic might cause the MVCC versions to pile up and affect read performance. Currently, to achieve a balance between performance jitter and performance decrease, you might need to try multiple times to adjust the value of this parameter.
 
-### TiDB 参数调整
+### TiDB parameter adjustment
 
-一般通过系统变量调整 TiDB 执行算子的优化参数，例如 `tidb_hash_join_concurrency`、`tidb_index_lookup_join_concurrency` 等。
+Generally, you can adjust the TiDB parameters of execution operators using system variables such as `tidb_hash_join_concurrency` and `tidb_index_lookup_join_concurrency`.
 
-本测试中没有对这些参数进行调整。如果实际的业务负载测试中，出现执行算子消耗过多 CPU 资源的情况，可以针对业务场景对特定的算子资源使用量进行限制。这部分内容可以参考 [TiDB 系统变量文档](/system-variables.md)。
+In this test, these parameters are not adjusted. In the load test of your actual application, if the execution operators consume an excessive amount of CPU resources, you can limit the resource usage of specific operators according to your application scenario. For more details, see [TiDB system variables](/system-variables.md).
 
 #### `performance.max-procs`
 
-该参数控制着整个 Go 进程能使用的 CPU 核心数量，默认情况下为当前机器或者 cgroups 的 CPU 数量。
+This parameter is used to control how many CPU cores an entire Go process can use. By default, the value is equal to the number of CPU cores of the current machine or cgroups.
 
-Go 运行时会定期使用一定比例的线程进行 GC 等后台工作。在混合部署模式下，如果不对这一参数进行限制，GC 等后台操作会过多占用 CPU 资源。
+When Go is running, a proportion of threads is used for background tasks such as GC. If you do not limit the value of the `performance.max-procs` parameter, these background tasks will consume too much CPU.

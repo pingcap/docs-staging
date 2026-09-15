@@ -1,35 +1,35 @@
 ---
 title: tiup cluster meta restore
-summary: TiUP cluster meta restore 命令用于从备份文件中恢复 TiUP meta 文件。语法为 tiup cluster meta restore <cluster-name> <backup-file>。选项包括 -h, --help，用于输出帮助信息。恢复操作会覆盖当前的 meta 文件，建议仅在 meta 文件丢失的情况下进行恢复。执行日志将作为输出。
+summary: To restore the TiUP meta file, use the `tiup cluster meta restore` command with cluster name and backup file path. The restore operation overwrites the current meta file, so it should only be done when the file is lost. The `-h` or `--help` option prints help information. The output includes the execution logs of tiup-cluster.
 ---
 
 # tiup cluster meta restore
 
-当需要恢复 TiUP meta 文件时，可以通过 `tiup cluster meta restore` 命令从备份文件中恢复。
+To restore the TiUP meta file, you can use the `tiup cluster meta restore` command to restore from the backup file.
 
-## 语法
+## Syntax
 
 ```shell
 tiup cluster meta restore <cluster-name> <backup-file> [flags]
 ```
 
-- `<cluster-name>` 代表需要执行操作的集群名。
-- `<backup-file>` 代表 TiUP meta 备份文件所在的文件路径。
+- `<cluster-name>` is the name of the cluster to be operated on.
+- `<backup-file>` is the path to the TiUP meta backup file.
 
-> **注意：**
+> **Note:**
 >
-> 恢复操作会覆盖当前的 meta 文件，建议仅在 meta 文件丢失的情况下进行恢复。
+> The restore operation overwrites the current meta file. It is recommended to restore the meta file only when it is lost.
 
-## 选项
+## Options
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints the help information.
+- Data type: `Boolean`
+- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
 
-## 输出
+## Output
 
-tiup-cluster 的执行日志。
+The execution logs of tiup-cluster.
 
-[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)
+[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)

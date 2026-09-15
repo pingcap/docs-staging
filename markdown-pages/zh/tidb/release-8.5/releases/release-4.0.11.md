@@ -1,171 +1,170 @@
 ---
 title: TiDB 4.0.11 Release Notes
-summary: TiDB 4.0.11 发布，新增支持 `uft8_unicode_ci` 和 `utf8mb4_unicode_ci` 排序规则。TiKV 支持 `utf8mb4_unicode_ci` 和 `cast_year_as_time` 排序规则。TiFlash 增加排队处理 Coprocessor 任务的线程池。改进包括重排由 `outer join` 简化的 `inner join` 顺序，Grafana 面板支持多集群，Bug 修复包括修复异常的 `unicode_ci` 常数传递等。PD 修复成员健康的监控显示不正确的问题。TiFlash 修复 Decimal 类型的 `min`/`max` 计算结果错误等。Tools 修复 TiCDC 服务在同时发生 `ErrTaskStatusNotExists` 和 `capture` 会话关闭的情况下的非预期的退出等。
-aliases: ['/zh/tidb/dev/release-4.0.11/','/zh/tidb/v4.0/release-4.0.11','/zh/tidb/v5.4/release-4.0.11','/zh/tidb/v6.1/release-4.0.11','/zh/tidb/v6.5/release-4.0.11','/zh/tidb/v7.1/release-4.0.11','/zh/tidb/v7.5/release-4.0.11','/zh/tidb/v8.1/release-4.0.11']
+summary: TiDB 4.0.11 was released on February 26, 2021. New features include support for `utf8_unicode_ci` and `utf8mb4_unicode_ci` collations. Improvements were made to inner joins, Grafana dashboards, and slow query metrics. Bug fixes address issues with collation, type inference, and function errors. TiKV improvements include support for multiple clusters in Grafana dashboards and bug fixes for memory diagnostics and OOM errors. PD fixes member health metrics and store limit persistence issues. TiFlash bug fixes address decimal type results, data loss, and crash issues. Tools like TiCDC, BR, and TiDB Lightning also received bug fixes and improvements.
 ---
 
 # TiDB 4.0.11 Release Notes
 
-发版日期：2021 年 2 月 26 日
+Release date: February 26, 2021
 
-TiDB 版本：4.0.11
+TiDB version: 4.0.11
 
-## 新功能
+## New Features
 
 + TiDB
 
-    - 支持 `uft8_unicode_ci` 和 `utf8mb4_unicode_ci` 排序规则 [#22558](https://github.com/pingcap/tidb/pull/22558)
+    - Support the `utf8_unicode_ci` and `utf8mb4_unicode_ci` collations [#22558](https://github.com/pingcap/tidb/pull/22558)
 
 + TiKV
 
-    - 支持 `utf8mb4_unicode_ci` 排序规则 [#9577](https://github.com/tikv/tikv/pull/9577)
-    - 支持 `cast_year_as_time` 排序规则 [#9299](https://github.com/tikv/tikv/pull/9299)
+    - Support the `utf8mb4_unicode_ci` collation [#9577](https://github.com/tikv/tikv/pull/9577)
+    - Support the `cast_year_as_time` collation [#9299](https://github.com/tikv/tikv/pull/9299)
 
 + TiFlash
 
-    - 增加排队处理 Coprocessor 任务的线程池以降低内存溢出几率，并增加配置项 `cop_pool_size` 和 `batch_cop_pool_size`，默认值为 `物理核数 * 2`
+    - Add a Coprocessor thread pool to queue Coprocessor requests for execution, which avoids out of memory (OOM) in some cases, and add the `cop_pool_size` and `batch_cop_pool_size` configuration items with the default values of `NumOfPhysicalCores * 2`
 
-## 改进提升
+## Improvements
 
 + TiDB
 
-    - 重排由 `outer join` 简化的 `inner join` 顺序 [#22402](https://github.com/pingcap/tidb/pull/22402)
-    - Grafana 面板支持多集群 [#22534](https://github.com/pingcap/tidb/pull/22534)
-    - 为多语句问题提供替代解决方案 [#22468](https://github.com/pingcap/tidb/pull/22468)
-    - 将慢查询监控区分为 `internal` 和 `general` 两类 [#22405](https://github.com/pingcap/tidb/pull/22405)
-    - 为 `utf8_unicode_ci` 和 `utf8mb4_unicode_ci` 排序规则增加接口 [#22099](https://github.com/pingcap/tidb/pull/22099)
+    - Reorder inner joins that are simplified from outer joins [#22402](https://github.com/pingcap/tidb/pull/22402)
+    - Support multiple clusters in Grafana dashboards [#22534](https://github.com/pingcap/tidb/pull/22534)
+    - Add a workaround for the issue of multiple statements [#22468](https://github.com/pingcap/tidb/pull/22468)
+    - Divide the metrics of slow query into `internal` and `general` [#22405](https://github.com/pingcap/tidb/pull/22405)
+    - Add interface for `utf8_unicode_ci` and `utf8mb4_unicode_ci` collations [#22099](https://github.com/pingcap/tidb/pull/22099)
 
 + TiKV
 
-    - 为 DBaaS 添加 server 信息的监控指标 [#9591](https://github.com/tikv/tikv/pull/9591)
-    - Grafana dashboards 支持监控多个集群 [#9572](https://github.com/tikv/tikv/pull/9572)
-    - 汇报 RocksDB 的监控指标到 TiDB [#9316](https://github.com/tikv/tikv/pull/9316)
-    - 为 Coprocessor 任务记录暂停时间 [#9277](https://github.com/tikv/tikv/pull/9277)
-    - 为 Load Base Split 添加 key 数量和大小的阀值 [#9354](https://github.com/tikv/tikv/pull/9354)
-    - 在导入数据前检查文件是否存在 [#9544](https://github.com/tikv/tikv/pull/9544)
-    - 改进 Fast Tune 面板 [#9180](https://github.com/tikv/tikv/pull/9180)
+    - Add metrics of server information for DBaaS [#9591](https://github.com/tikv/tikv/pull/9591)
+    - Support multiple clusters in Grafana dashboards [#9572](https://github.com/tikv/tikv/pull/9572)
+    - Report RocksDB metrics to TiDB [#9316](https://github.com/tikv/tikv/pull/9316)
+    - Record the suspension time for Coprocessor tasks [#9277](https://github.com/tikv/tikv/pull/9277)
+    - Add thresholds of key counts and key size for Load Base Split [#9354](https://github.com/tikv/tikv/pull/9354)
+    - Check whether the file exists before data import [#9544](https://github.com/tikv/tikv/pull/9544)
+    - Improve Fast Tune panels [#9180](https://github.com/tikv/tikv/pull/9180)
 
 + PD
 
-    - Grafana dashboards 支持监控多个集群 [#3398](https://github.com/tikv/tikv/pull/3398)
+    - Support multiple clusters in Grafana dashboards [#3398](https://github.com/pingcap/pd/pull/3398)
 
 + TiFlash
 
-    - 优化 `date_format` 函数的性能
-    - 优化处理 ingest SST 时的内存开销
-    - 优化 Batch Coprocessor 内部的重试逻辑以降低 Region error 的出现概率
+    - Optimize the performance of the `date_format` function
+    - Optimize the memory consumption of handling ingest SST
+    - Optimize the retrying logic in Batch Coprocessor to reduce the probability of Region error
 
 + Tools
 
     + TiCDC
 
-        - 在 `capture` 元信息中添加版本信息和在 `changefeed` 元信息中创建该 `changefeed` 的 CLI 版本 [#1342](https://github.com/pingcap/tiflow/pull/1342)
+        - Add the version information in the `capture` metadata and add the CLI version of a `changefeed` in the `changefeed` metadata [#1342](https://github.com/pingcap/tiflow/pull/1342)
 
     + TiDB Lightning
 
-        - 并行创建数据表以提升导入速度 [#502](https://github.com/pingcap/tidb-lightning/pull/502)
-        - 跳过分裂小 Region 以提升导入速度 [#524](https://github.com/pingcap/tidb-lightning/pull/524)
-        - 添加导入进度条并提升恢复进度的精确度 [#506](https://github.com/pingcap/tidb-lightning/pull/506)
+        - Create tables in parallel to improve import performance [#502](https://github.com/pingcap/tidb-lightning/pull/502)
+        - Skip splitting Regions to improve import performance if the engine's total size is smaller than the Region size [#524](https://github.com/pingcap/tidb-lightning/pull/524)
+        - Add a import progress bar and optimize the accuracy of restore progress [#506](https://github.com/pingcap/tidb-lightning/pull/506)
 
-## Bug 修复
+## Bug Fixes
 
 + TiDB
 
-    - 修复异常的 `unicode_ci` 常数传递 [#22614](https://github.com/pingcap/tidb/pull/22614)
-    - 修复可能导致排序规则和 coercibility 错误的问题 [#22602](https://github.com/pingcap/tidb/pull/22602)
-    - 修复可能导致错误排序规则结果的问题 [#22599](https://github.com/pingcap/tidb/pull/22599)
-    - 修复不同排序规则的常数替换问题 [#22582](https://github.com/pingcap/tidb/pull/22582)
-    - 修复 `like` 函数使用排序规则时可能返回错误结果的问题 [#22531](https://github.com/pingcap/tidb/pull/22531)
-    - 修复 `least` 和 `greatest` 函数 `duration` 类型推导错误问题 [#22580](https://github.com/pingcap/tidb/pull/22580)
-    - 修复 `like` 函数处理 `_` 宽字符后加 `%` 出错的问题 [#22575](https://github.com/pingcap/tidb/pull/22575)
-    - 修复比较函数 `least` 和 `greatest` 类型推导错误的问题 [#22562](https://github.com/pingcap/tidb/pull/22562)
-    - 修复使用 `like` 函数处理 Unicode 字符串错误的问题 [#22529](https://github.com/pingcap/tidb/pull/22529)
-    - 修复点查请求无法取得 `@@tidb_snapshot` 变量中快照的问题 [#22527](https://github.com/pingcap/tidb/pull/22527)
-    - 修复生成多个 join 相关 hint 可能 panic 的问题 [#22518](https://github.com/pingcap/tidb/pull/22518)
-    - 修复转换字符串为 `BIT` 类型不准确的问题 [#22420](https://github.com/pingcap/tidb/pull/22420)
-    - 修复插入 `tidb_rowid` 列时出现的 `index out of range` 报错问题 [#22359](https://github.com/pingcap/tidb/pull/22359)
-    - 修复缓存计划被错误地使用的问题 [#22353](https://github.com/pingcap/tidb/pull/22353)
-    - 修复 `WEIGHT_STRING` 函数处理过长字符串出现 panic 的问题 [#22332](https://github.com/pingcap/tidb/pull/22332)
-    - 禁止参数数量不合法时使用生成列 [#22174](https://github.com/pingcap/tidb/pull/22174)
-    - 在构造执行计划前正确地设置进程执行信息 [#22148](https://github.com/pingcap/tidb/pull/22148)
-    - 修复 `IndexLookUp` 执行统计不准的问题 [#22136](https://github.com/pingcap/tidb/pull/22136)
-    - 容器部署时为内存使用信息增加缓存 [#22116](https://github.com/pingcap/tidb/pull/22116)
-    - 修复解码执行计划错误的问题 [#22022](https://github.com/pingcap/tidb/pull/22022)
-    - 使用错误的窗口函数说明时提供报错 [#21976](https://github.com/pingcap/tidb/pull/21976)
-    - 使用 `PREPARE` 语句嵌套 `EXECUTE`、`DEALLOCATE` 或 `PREPARE` 时报错 [#21972](https://github.com/pingcap/tidb/pull/21972)
-    - 修复使用 `INSERT IGNORE` 到不存在的分区时不报错的问题 [#21971](https://github.com/pingcap/tidb/pull/21971)
-    - 统一 `EXPLAIN` 和 slow log 中的执行计划编码 [#21964](https://github.com/pingcap/tidb/pull/21964)
-    - 修复聚合算子下 join 出现未知列的问题 [#21957](https://github.com/pingcap/tidb/pull/21957)
-    - 修复 `ceiling` 函数中类型推导错误的问题 [#21936](https://github.com/pingcap/tidb/pull/21936)
-    - 修复 `Double` 列忽略精度的问题 [#21916](https://github.com/pingcap/tidb/pull/21916)
-    - 修复关联聚合在子查询中被计算的问题 [#21877](https://github.com/pingcap/tidb/pull/21877)
-    - 当 JSON 数据长度超过 65536 时提供报错 [#21870](https://github.com/pingcap/tidb/pull/21870)
-    - 修复 `dyname` 函数和 MySQL 不兼容的问题 [#21850](https://github.com/pingcap/tidb/pull/21850)
-    - 修复输入数据过长时 `to_base64` 函数返回 `NULL` 的问题 [#21813](https://github.com/pingcap/tidb/pull/21813)
-    - 修复在子查询中比较多个字段失败的问题 [#21808](https://github.com/pingcap/tidb/pull/21808)
-    - 修复 JSON 中比较浮点数的问题 [#21785](https://github.com/pingcap/tidb/pull/21785)
-    - 修复 JSON 类型比较的问题 [#21718](https://github.com/pingcap/tidb/pull/21718)
-    - 修复 `cast` 函数的 coercibility 值设置错误的问题 [#21714](https://github.com/pingcap/tidb/pull/21714)
-    - 修复使用 `IF` 函数时可能出现 panic 的问题 [#21711](https://github.com/pingcap/tidb/pull/21711)
-    - 修复 JSON 搜索返回 `NULL` 和 MySQL 不兼容的问题 [#21700](https://github.com/pingcap/tidb/pull/21700)
-    - 修复 `ORDER BY` 和 `HAVING` 子句检查 `only_full_group_by` 模式的问题 [#21697](https://github.com/pingcap/tidb/pull/21697)
-    - 修复 Day/Time 单位和 MySQL 不兼容的问题 [#21676](https://github.com/pingcap/tidb/pull/21676)
-    - 修复 `LEAD` 和 `LAG` 函数默认值类型问题 [#21665](https://github.com/pingcap/tidb/pull/21665)
-    - `LOAD DATA` 时执行检测以保证只能往基础表中导入数据 [#21638](https://github.com/pingcap/tidb/pull/21638)
-    - 修复 `addtime` 和 `subtime` 函数处理非法参数的问题 [#21635](https://github.com/pingcap/tidb/pull/21635)
-    - 将近似值的舍入规则更改为“舍入到最接近的偶数” [#21628](https://github.com/pingcap/tidb/pull/21628)
-    - 修复 `WEEK()` 在被明确读取前无法识别全局变量 `default_week_format` 的问题 [#21623](https://github.com/pingcap/tidb/pull/21623)
+    - Fix the issue of abnormal `unicode_ci` constant propagation [#22614](https://github.com/pingcap/tidb/pull/22614)
+    - Fix the issue that might cause wrong collation and coercibility [#22602](https://github.com/pingcap/tidb/pull/22602)
+    - Fix the issue that might cause wrong collation results [#22599](https://github.com/pingcap/tidb/pull/22599)
+    - Fix the issue of constant substitution for different collations [#22582](https://github.com/pingcap/tidb/pull/22582)
+    - Fix a bug that the `like` function might return wrong result when using collation [#22531](https://github.com/pingcap/tidb/pull/22531)
+    - Fix the issue of incorrect `duration` type inference in `least` and `greatest` functions [#22580](https://github.com/pingcap/tidb/pull/22580)
+    - Fix a bug that occurs when the `like` function handles a single character wildcard (`_`) followed by a multiple character wildcard (`%`) [#22575](https://github.com/pingcap/tidb/pull/22575)
+    - Fix the type inference error of the TiDB's built-in functions (`least` and `greatest`) [#22562](https://github.com/pingcap/tidb/pull/22562)
+    - Fix a bug that makes the `like` function get the wrong result if the pattern string is a unicode string [#22529](https://github.com/pingcap/tidb/pull/22529)
+    - Fix a bug that the point get query does not get the snapshot data when the `@@tidb_snapshot` variable is set [#22527](https://github.com/pingcap/tidb/pull/22527)
+    - Fix the potential panic that occurs when generating hints from joins [#22518](https://github.com/pingcap/tidb/pull/22518)
+    - Fix the issue that strings are incorrectly converted to the `BIT` type [#22420](https://github.com/pingcap/tidb/pull/22420)
+    - Fix the `index out of range` error that occurs when inserting values to the `tidb_rowid` column [#22359](https://github.com/pingcap/tidb/pull/22359)
+    - Fix a bug that the cached plan is incorrectly used [#22353](https://github.com/pingcap/tidb/pull/22353)
+    - Fix the runtime panic in the `WEIGHT_STRING` function when the length of the binary/char string is too large [#22332](https://github.com/pingcap/tidb/pull/22332)
+    - Forbid using the generated column when the number of function parameters is invalid [#22174](https://github.com/pingcap/tidb/pull/22174)
+    - Correctly set the process information before building the execution plan [#22148](https://github.com/pingcap/tidb/pull/22148)
+    - Fix the issue of inaccurate runtime statistics of `IndexLookUp` [#22136](https://github.com/pingcap/tidb/pull/22136)
+    - Add cache for the memory usage information when the cluster is deployed in a container [#22116](https://github.com/pingcap/tidb/pull/22116)
+    - Fix the issue of the decoding plan errors [#22022](https://github.com/pingcap/tidb/pull/22022)
+    - Report errors for using invalid window specifications [#21976](https://github.com/pingcap/tidb/pull/21976)
+    - Report errors when the `PREPARE` statement is nested with `EXECUTE`, `DEALLOCATE` or `PREPARE` [#21972](https://github.com/pingcap/tidb/pull/21972)
+    - Fix the issue that no error is reported when the `INSERT IGNORE` statement is used on a non-existing partition [#21971](https://github.com/pingcap/tidb/pull/21971)
+    - Unify the encoding of `EXPLAIN` results and slow log [#21964](https://github.com/pingcap/tidb/pull/21964)
+    - Fix the issue of unknown columns in join when using the aggregate operator [#21957](https://github.com/pingcap/tidb/pull/21957)
+    - Fix the wrong type inference in the `ceiling` function [#21936](https://github.com/pingcap/tidb/pull/21936)
+    - Fix the issue that the `Double` type column ignores its decimal [#21916](https://github.com/pingcap/tidb/pull/21916)
+    - Fix the issue that the correlated aggregation is calculated in subqueries [#21877](https://github.com/pingcap/tidb/pull/21877)
+    - Report errors for the JSON object with key length >= 65536 [#21870](https://github.com/pingcap/tidb/pull/21870)
+    - Fix the issue that the `dyname` function is incompatible with MySQL [#21850](https://github.com/pingcap/tidb/pull/21850)
+    - Fix the issue that the `to_base64` function returns `NULL` when the input data is too long [#21813](https://github.com/pingcap/tidb/pull/21813)
+    - Fix the failure of comparing multiple fields in the subquery [#21808](https://github.com/pingcap/tidb/pull/21808)
+    - Fix the issue that occurs when comparing the float type in JSON [#21785](https://github.com/pingcap/tidb/pull/21785)
+    - Fix the issue that occurs when comparing the types of JSON objects [#21718](https://github.com/pingcap/tidb/pull/21718)
+    - Fix the issue that the coercibility value of the `cast` function is incorrectly set [#21714](https://github.com/pingcap/tidb/pull/21714)
+    - Fix an unexpected panic when using the `IF` function [#21711](https://github.com/pingcap/tidb/pull/21711)
+    - Fix the issue that the `NULL` result returned from JSON search is incompatible with MySQL [#21700](https://github.com/pingcap/tidb/pull/21700)
+    - Fix the issue that occurs when checking the `only_full_group_by` mode using `ORDER BY` and `HAVING` [#21697](https://github.com/pingcap/tidb/pull/21697)
+    - Fix the issue that the units of `Day` and `Time` are incompatible with MySQL [#21676](https://github.com/pingcap/tidb/pull/21676)
+    - Fix the issue that the default values of `LEAD` and `LAG` cannot adapt to the field type [#21665](https://github.com/pingcap/tidb/pull/21665)
+    - Perform a check to ensure that the `LOAD DATA` statement can only load data into base tables [#21638](https://github.com/pingcap/tidb/pull/21638)
+    - Fix the issue that occurs when `addtime` and `subtime` functions handle invalid arguments [#21635](https://github.com/pingcap/tidb/pull/21635)
+    - Change the round rule for approximate values to "round to the nearest even number" [#21628](https://github.com/pingcap/tidb/pull/21628)
+    - Fix the issue that `WEEK()` does not recognize `@@GLOBAL.default_week_format` until it has been explicitly read [#21623](https://github.com/pingcap/tidb/pull/21623)
 
 + TiKV
 
-    - 修复当设置 `PROST=1` 时构建 TiKV 失败的问题 [#9604](https://github.com/tikv/tikv/pull/9604)
-    - 修复不匹配的内存诊断信息 [#9589](https://github.com/tikv/tikv/pull/9589)
-    - 修复在恢复 RawKV 数据时部分 key range 的 end key 的包含性问题 [#9583](https://github.com/tikv/tikv/pull/9583)
-    - 修复当 TiCDC 增量扫数据时读取一个被回滚的事务的某个 key 的旧值时 TiKV 可能会 panic 的问题 [#9569](https://github.com/tikv/tikv/pull/9569)
-    - 修复使用不同配置的连接拉取同一个 Region 的变更时旧值配置不匹配的问题 [#9565](https://github.com/tikv/tikv/pull/9565)
-    - 修复 TiVK 运行在网络接口缺少 MAC 地址的设备上会崩溃的问题（自 v4.0.9 引入）[#9516](https://github.com/tikv/tikv/pull/9516)
-    - 修复 TiKV 在备份大 Region 时会内存溢出的问题 [#9448](https://github.com/tikv/tikv/pull/9448)
-    - 修复 `region-split-check-diff` 无法自定义配置的问题 [#9530](https://github.com/tikv/tikv/pull/9530)
-    - 修复系统时间回退时 TiKV 会 panic 的问题 [#9542](https://github.com/tikv/tikv/pull/9542)
+    - Fix the issue that TiKV is failed to build with `PROST=1` [#9604](https://github.com/tikv/tikv/pull/9604)
+    - Fix the unmatched memory diagnostics [#9589](https://github.com/tikv/tikv/pull/9589)
+    - Fix the issue that the end key of a partial RawKV-restore range is inclusive [#9583](https://github.com/tikv/tikv/pull/9583)
+    - Fix the issue of TiKV panic that occurs when loading the old value of a key of a rolled-back transaction during TiCDC's incremental scan [#9569](https://github.com/tikv/tikv/pull/9569)
+    - Fix the configuration glitch of old values when changefeeds with different settings connect to one Region [#9565](https://github.com/tikv/tikv/pull/9565)
+    - Fix a crash issue that occurs when running a TiKV cluster on a machine with a network interface that lacks the MAC address (introduced in v4.0.9) [#9516](https://github.com/tikv/tikv/pull/9516)
+    - Fix the issue of TiKV OOM when backing up a huge Region [#9448](https://github.com/tikv/tikv/pull/9448)
+    - Fix the issue that `region-split-check-diff` cannot be customized [#9530](https://github.com/tikv/tikv/pull/9530)
+    - Fix the issue of TiKV panic when the system time goes back [#9542](https://github.com/tikv/tikv/pull/9542)
 
 + PD
 
-    - 修复成员健康的监控显示不正确的问题 [#3368](https://github.com/pingcap/pd/pull/3368)
-    - 禁止有副本的不正常 tombstone store 被清除 [#3352](https://github.com/pingcap/pd/pull/3352)
-    - 修复 store limit 无法持久化的问题 [#3403](https://github.com/pingcap/pd/pull/3403)
-    - 调整 `scatter range schedler` 的 limit 限制 [#3401](https://github.com/pingcap/pd/pull/3401)
+    - Fix the issue that member health metrics are incorrectly displayed [#3368](https://github.com/pingcap/pd/pull/3368)
+    - Forbid removing the tombstone store that still has peers [#3352](https://github.com/pingcap/pd/pull/3352)
+    - Fix the issue that the store limit cannot be persisted [#3403](https://github.com/pingcap/pd/pull/3403)
+    - Fix the limit constriction of the scatter range scheduler [#3401](https://github.com/pingcap/pd/pull/3401)
 
 + TiFlash
 
-    - 修复 Decimal 类型的 `min`/`max` 计算结果错误的问题
-    - 修复读取数据时有可能导致 crash 的问题
-    - 修复 DDL 操作后写入的数据可能会在 compaction 后丢失的问题
-    - 修复 Coprocessor 中错误解析 Decimal 常量的问题
-    - 修复 Learner Read 过程中可能导致 crash 的问题
-    - 修复 TiFlash 中除以 `0` 或 `NULL` 的行为与 TiDB 不一致的问题
+    - Fix a bug that the `min`/`max` result is wrong for the decimal type
+    - Fix a bug that TiFlash might crash when reading data
+    - Fix the issue that some data written after DDL operations might be lost after data compaction
+    - Fix the issue that TiFlash incorrectly handles decimal constants in Coprocessor
+    - Fix the potential crash during the learner read process
+    - Fix the inconsistent behaviors of division by `0` or `NULL` between TiDB and TiFlash
 
 + Tools
 
     + TiCDC
 
-        - 修复 TiCDC 服务在同时发生 `ErrTaskStatusNotExists` 和 `capture` 会话关闭的情况下的非预期的退出的问题 [#1240](https://github.com/pingcap/tiflow/pull/1240)
-        - 修复 `changefeed` 之间不同 Old Value 设置会互相影响的问题 [#1347](https://github.com/pingcap/tiflow/pull/1347)
-        - 修复 TiCDC 服务在遇见错误的 `sort-engine` 参数时卡住的问题 [#1309](https://github.com/pingcap/tiflow/pull/1309)
-        - 修复在非 Owner 节点上获取 debug 信息退出的问题 [#1349](https://github.com/pingcap/tiflow/pull/1349)
-        - 修复 `ticdc_processor_num_of_tables` 和 `ticdc_processor_table_resolved_ts` 两个监控指标在增删数据表时没有被正确更新的问题 [#1351](https://github.com/pingcap/tiflow/pull/1351)
-        - 修复 Processor 在添加同步数据表时退出而造成的潜在的数据丢失问题 [#1363](https://github.com/pingcap/tiflow/pull/1363)
-        - 修复 Owner 在数据表迁移期间造成非正常状态的 TiCDC 服务退出的问题 [#1352](https://github.com/pingcap/tiflow/pull/1352)
-        - 修复 TiCDC 服务在丢失 service GC safepoint 时没有及时退出的问题 [#1367](https://github.com/pingcap/tiflow/pull/1367)
-        - 修复 KV client 可能跳过创建 event feed 的问题 [#1336](https://github.com/pingcap/tiflow/pull/1336)
-        - 修复同步事务到下游时事务原子性被破坏的问题 [#1375](https://github.com/pingcap/tiflow/pull/1375)
+        - Fix a bug that the TiCDC service might unexpectedly exit when `ErrTaskStatusNotExists` and the closing of `capture` session occur at the same time [#1240](https://github.com/pingcap/tiflow/pull/1240)
+        - Fix the old value switch issue that a `changefeed` might be affected by another `changefeed` [#1347](https://github.com/pingcap/tiflow/pull/1347)
+        - Fix a bug that the TiCDC service might hang when processing a new `changefeed` with the invalid `sort-engine` parameter [#1309](https://github.com/pingcap/tiflow/pull/1309)
+        - Fix the issue of panic that occurs when getting the debugging information on non-owner nodes [#1349](https://github.com/pingcap/tiflow/pull/1349)
+        - Fix the issue that the `ticdc_processor_num_of_tables` and `ticdc_processor_table_resolved_ts` metrics are not properly updated when adding or removing tables [#1351](https://github.com/pingcap/tiflow/pull/1351)
+        - Fix the issue of potential data loss if a processor crashes when adding a table [#1363](https://github.com/pingcap/tiflow/pull/1363)
+        - Fix a bug that the owner might lead to abnormal TiCDC server exits during table migrations [#1352](https://github.com/pingcap/tiflow/pull/1352)
+        - Fix a bug that TiCDC does not exit in time after the service GC safepoint is lost [#1367](https://github.com/pingcap/tiflow/pull/1367)
+        - Fix a bug that the KV client might skip creating the event feed [#1336](https://github.com/pingcap/tiflow/pull/1336)
+        - Fix a bug that the atomicity of transactions is broken when the transactions are replicated to the downstream [#1375](https://github.com/pingcap/tiflow/pull/1375)
 
     + Backup & Restore (BR)
 
-        - 修复恢复备份后 TiKV 可能产生大 Region 的问题 [#702](https://github.com/pingcap/br/pull/702)
-        - 修复在没有 Auto ID 的数据表上恢复 Auto ID 的问题 [#720](https://github.com/pingcap/br/pull/720)
+        - Fix the issue that TiKV might be caused to generate a big Region after BR restores the backup [#702](https://github.com/pingcap/br/pull/702)
+        - Fix the issue that BR restores a table's Auto ID even if the table does not have Auto ID [#720](https://github.com/pingcap/br/pull/720)
 
     + TiDB Lightning
 
-        - 修复使用 TiDB-backend 时可能触发 `column count mismatch` 的问题 [#535](https://github.com/pingcap/tidb-lightning/pull/535)
-        - 修复 TiDB-backend 在导入数据源 column 个数和数据表 column 个数不匹配时非预期退出的问题 [#528](https://github.com/pingcap/tidb-lightning/pull/528)
-        - 修复导入期间 TiKV 可能发生的非预期退出的问题 [#554](https://github.com/pingcap/tidb-lightning/pull/554)
+        - Fix a bug that `column count mismatch` might be triggered when using the TiDB-backend [#535](https://github.com/pingcap/tidb-lightning/pull/535)
+        - Fix a bug that TiDB-backend panics if the column count of the source file and the column count of the target table mismatch [#528](https://github.com/pingcap/tidb-lightning/pull/528)
+        - Fix a bug that TiKV might unexpectedly panic during TiDB Lightning's data import [#554](https://github.com/pingcap/tidb-lightning/pull/554)

@@ -1,13 +1,13 @@
 ---
-title: FLUSH TABLES
-summary: TiDB 数据库中 FLUSH TABLES 的使用概况。
+title: FLUSH TABLES | TiDB SQL 语句参考
+summary: 关于在 TiDB 数据库中使用 FLUSH TABLES 的概述。
 ---
 
 # FLUSH TABLES
 
-`FLUSH TABLES` 语句用于提供 MySQL 兼容性，但在 TiDB 中并无有效用途。
+此语句是为了与 MySQL 兼容而存在。在 TiDB 中没有实际的使用场景。
 
-## 语法图
+## 概要
 
 ```ebnf+diagram
 FlushStmt ::=
@@ -40,29 +40,19 @@ WithReadLockOpt ::=
 
 ## 示例
 
-
 ```sql
-FLUSH TABLES;
-```
-
-```
+mysql> FLUSH TABLES;
 Query OK, 0 rows affected (0.00 sec)
-```
 
-
-```sql
-FLUSH TABLES WITH READ LOCK;
-```
-
-```
+mysql> FLUSH TABLES WITH READ LOCK;
 ERROR 1105 (HY000): FLUSH TABLES WITH READ LOCK is not supported.  Please use @@tidb_snapshot
 ```
 
 ## MySQL 兼容性
 
-* TiDB 没有 MySQL 中的表缓存这一概念。所以，`FLUSH TABLES` 因 MySQL 兼容性会在 TiDB 中解析出但会被忽略掉。
-* 因为 TiDB 目前不支持锁表，所以`FLUSH TABLES WITH READ LOCK` 语句会产生错误。建议使用 [Historical reads](/read-historical-data.md) 来实现锁表。
+* TiDB 没有像 MySQL 那样的表缓存概念。因此，`FLUSH TABLES` 在 TiDB 中会被解析但忽略，以保持兼容性。
+* 语句 `FLUSH TABLES WITH READ LOCK` 会产生错误，因为 TiDB 目前不支持锁定表。建议使用 [读取历史数据](/read-historical-data.md) 来实现类似功能。
 
 ## 另请参阅
 
-* [Read historical data](/read-historical-data.md)
+* [读取历史数据](/read-historical-data.md)

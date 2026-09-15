@@ -1,27 +1,26 @@
 ---
-title: 多列索引优化最佳实践
-summary: 了解如何在 TiDB 中高效使用多列索引，并应用高级优化技巧。
-aliases: ['/zh/tidb/stable/multi-column-index-best-practices/','/zh/tidb/dev/multi-column-index-best-practices/']
+title: Best Practices for Optimizing Multi-Column Indexes
+summary: Learn how to use multi-column indexes effectively in TiDB and apply advanced optimization techniques.
 ---
 
-# 多列索引优化最佳实践
+# Best Practices for Optimizing Multi-Column Indexes
 
-在当今数据驱动的世界中，高效处理大数据集上的复杂查询对于保持应用响应和性能至关重要。对于 TiDB 这样专为高规模、高需求环境设计的分布式 SQL 数据库来说，优化数据访问路径是实现高效查询的关键。
+In today's data-driven world, efficiently handling complex queries on large datasets is critical to keeping applications responsive and performant. For TiDB, a distributed SQL database designed to manage high-scale and high-demand environments, optimizing data access paths is essential to delivering smooth and efficient queries.
 
-索引是提升查询性能的重要工具，可以避免全表扫描。TiDB 的查询优化器能够利用多列索引 (Multi-Column Indexes) 智能过滤数据，处理复杂的查询条件，这在传统数据库（如 MySQL）中往往难以实现。
+Indexes are a powerful tool for improving query performance by avoiding the need to scan all rows in a table. TiDB's query optimizer leverages multi-column indexes to intelligently filter data, handling complex query conditions that traditional databases such as MySQL cannot process as effectively.
 
-本文将介绍多列索引的工作原理、重要性，以及 TiDB 如何将复杂的查询条件优化为高效的数据访问路径。通过这些优化，即使在大规模场景下，你也能获得更快的响应速度、最小化的表扫描，以及更流畅的性能。
+This document walks you through how multi-column indexes function, why they are crucial, and how TiDB's optimization transforms intricate query conditions into efficient access paths. After optimization, you can achieve faster responses, minimized table scans, and streamlined performance, even at massive scale.
 
-如果没有这些优化，大型 TiDB 数据库中的查询性能可能会迅速下降。全表扫描和低效过滤会让毫秒级的查询变成分钟级，内存消耗过大还可能导致内存溢出 (Out of Memory, OOM) 错误，尤其是在资源受限的环境下。TiDB 的针对性优化方式确保只访问相关数据，从而保持低延迟和高效的内存使用，即使面对最复杂的查询也能应对自如。
+Without these optimizations, query performance in large TiDB databases can degrade quickly. Full table scans and inadequate filtering can turn milliseconds into minutes. Additionally, excessive memory use can lead to out-of-memory (OOM) errors, especially in constrained environments. TiDB's targeted approach ensures only relevant data is accessed. This keeps latency low and memory usage efficient, even for the most complex queries.
 
-## 前提条件
+## Prerequisites
 
-- 多列索引功能在 TiDB v8.3.0 及以上版本可用。
-- 使用该功能前，需将[优化器 Fix Control **54337**](/optimizer-fix-controls.md#54337-从-v830-版本开始引入) 设置为 `ON`。
+- The multi-column index feature is available in TiDB v8.3 and later versions.
+- Before using this feature, you must set the value of the [optimizer fix control **54337**](/optimizer-fix-controls.md#54337-new-in-v830) to `ON`.
 
-## 背景：多列索引
+## Background: multi-column indexes
 
-本文以一个租房信息表为例，每条记录包含唯一 ID、城市、卧室数、租金和可入住日期：
+This document takes an example of a rental listings table defined as follows. In this example, each listing contains a unique ID, city, number of bedrooms, rent price, and availability date:
 
 ```sql
 CREATE TABLE listings (
@@ -33,10 +32,10 @@ CREATE TABLE listings (
 );
 ```
 
-假设该表在全中国有 2000 万条房源。如果你想查找租金低于 2000 元的房源，可以在 `price` 列上建索引。这样优化器只需扫描 `[-inf, 2000.00)` 范围的数据，假设 70% 房源高于 2000 元，实际扫描量约为 1400 万行。执行计划如下：
+Suppose this table has 20 million listings across the United States. If you want to find all listings with a price under $2,000, you can add an index on the price column. This index allows the optimizer to filter out rows, scanning only the range `[-inf, 2000.00)`. This helps reduce the search to about 14 million rows (assuming 70% of rentals are priced above `$2,000`). In the query execution plan, TiDB performs an index range scan on price. This limits the need for a full table scan and improves efficiency.
 
 ```sql
--- 查询 1：查找租金低于 2000 的房源
+-- Query 1: Find listings with price < 2000
 EXPLAIN FORMAT = "brief" SELECT * FROM listings WHERE price < 2000;
 ```
 
@@ -50,48 +49,48 @@ EXPLAIN FORMAT = "brief" SELECT * FROM listings WHERE price < 2000;
 +-----------------------------+---------+----------------------------------------------+---------------------------+
 ```
 
-虽然这样能提升性能，但返回的结果仍然数量庞大。若你需要更精确的房源，可以增加过滤条件，如指定城市、卧室数和最高租金。例如，查找北京两居室且租金低于 2000 元的房源，结果会大大缩小，可能只剩几十条。
+While this filter improves performance, it might still return a large number of rows. This is not ideal for a user looking for more specific listings. Adding filters, such as specifying the city, number of bedrooms, and a maximum price, narrows the results significantly. For example, a query to find two-bedroom listings in San Francisco under `$2,000` is more useful, likely returning only a few dozen rows.
 
-为优化此查询，可以在 `city`、`bedrooms` 和 `price` 上创建一个多列索引：
+To optimize this query, you can create a multi-column index on `city`, `bedrooms`, and `price` as follows:
 
 ```sql
 CREATE INDEX idx_city_bedrooms_price ON listings (city, bedrooms, price);
 ```
 
-SQL 中的多列索引按字典序排序。以 `(city, bedrooms, price)` 为例，数据先按 `city` 排序，再在每个 `city` 内按 `bedrooms` 排序，最后在每个 `(city, bedrooms)` 内按 `price` 排序。这样 TiDB 能高效利用每个条件：
+Multi-column indexes in SQL are ordered lexicographically. In the case of an index on `(city, bedrooms, price)`, the data is first sorted by `city`, then by `bedrooms` within each city, and finally by `price` within each `(city, bedrooms)` combination. This ordering lets TiDB efficiently access rows based on each condition:
 
-1. 先按 `city` 过滤；
-2. 再按 `bedrooms` 过滤；
-3. 最后按 `price` 过滤。
+1. Filter by `city`, which is the primary filter.
+2. Optionally filter by `bedrooms` within that city.
+3. Optionally filter by `price` within the city-bedroom grouping.
 
-## 示例数据
+## Sample data
 
-下表展示了多列索引如何细化搜索结果：
+The following table shows a sample dataset that illustrates how multi-column indexing refines search results:
 
-| City     | Bedrooms| Price |
-| -------- | ------- | ------|
-| Beijing  | 1       | 1000  |
-| Beijing  | 1       | 1500  |
-| Beijing  | 2       | 1000  |
-| Beijing  | 2       | 1500  |
-| Beijing  | 3       | 2500  |
-| Beijing  | 3       | 3000  |
-| Shanghai | 1       | 1000  |
-| Shanghai | 1       | 1500  |
-| Shanghai | 2       | 1000  |
-| Shanghai | 2       | 2500  |
-| Shanghai | 3       | 1000  |
-| Shanghai | 3       | 2500  |
+| City          | Bedrooms | Price |
+| ------------- | -------- | ----- |
+| San Diego     | 1        | 1000  |
+| San Diego     | 1        | 1500  |
+| San Diego     | 2        | 1000  |
+| San Diego     | 2        | 2500  |
+| San Diego     | 3        | 1000  |
+| San Diego     | 3        | 2500  |
+| San Francisco | 1        | 1000  |
+| San Francisco | 1        | 1500  |
+| San Francisco | 2        | 1000  |
+| San Francisco | 2        | 1500  |
+| San Francisco | 3        | 2500  |
+| San Francisco | 3        | 3000  |
 
-## 优化查询与结果
+## Optimized queries and results
 
-利用多列索引，TiDB 能高效定位北京两居室且租金低于 2000 元的房源：
+Using the multi-column index, TiDB can efficiently narrow the scan range to find listings in San Francisco with two bedrooms and a price under $2,000:
 
 ```sql
--- 查询 2：查找北京两居室且租金低于 2000 的房源
+-- Query 2: Find two-bedroom listings in San Francisco under $2,000
 EXPLAIN FORMAT = "brief"
     SELECT * FROM listings
-    WHERE city = 'Beijing' AND bedrooms = 2 AND price < 2000;
+    WHERE city = 'San Francisco' AND bedrooms = 2 AND price < 2000;
 ```
 
 ```
@@ -99,53 +98,53 @@ EXPLAIN FORMAT = "brief"
 | id                     | task | access object                                                                               | operator info                   |
 +------------------------+------+---------------------------------------------------------------------------------------------+---------------------------------+
 | IndexLookUp            | root |                                                                                             |                                 |
-| ├─IndexRangeScan(Build)| root |table:listings,index:idx_city_bedrooms_price ["Beijing" 2 -inf,(city, bedrooms, price)]|range:["Beijing" 2 2000.00)|
+| ├─IndexRangeScan(Build)| root |table:listings,index:idx_city_bedrooms_price ["San Francisco" 2 -inf,(city, bedrooms, price)]|range:["San Francisco" 2 2000.00)|
 | └─TableRowIDScan(Probe)| root |table:listings                                                                               |                                 |
 +------------------------+------+---------------------------------------------------------------------------------------------+---------------------------------+
 ```
 
-该查询在示例数据中返回：
+This query returns the following filtered results from the sample data:
 
-| City           | Bedrooms| Price  |
-| -------------- | ------- | ------ |
-| Beijing        | 2       | 1000   |
-| Beijing        | 2       | 1500   |
+| City          | Bedrooms | Price |
+|---------------|----------|-------|
+| San Francisco |    2     | 1000  |
+| San Francisco |    2     | 1500  |
 
-通过多列索引，TiDB 避免了不必要的行扫描，大幅提升查询性能。
+By using a multi-column index, TiDB avoids unnecessary row scanning and significantly boosts query performance.
 
-## 索引范围推导 (Index Range Derivation)
+## Index range derivation
 
-TiDB 优化器内置了强大的范围推导组件。该组件会根据查询条件和相关索引列，生成高效的索引范围，并传递给表访问组件，来决定最优的数据访问方式。
+The TiDB optimizer includes a powerful range derivation component. It is designed to take a query's conditions and relevant index columns and generate efficient index ranges for table access. This derived range then feeds into TiDB's table access component, which determines the most resource-efficient way to access the table.
 
-对于查询中的每个表，表访问组件会评估所有可用索引，以确定最佳的访问方式，无论是全表扫描还是索引扫描。它会计算每个相关索引的范围，评估访问代价，选择代价最低的路径。这一过程结合了范围推导和代价评估，确保数据检索既高效又节省资源。
+For each table in a query, the table access component evaluates all applicable indexes to identify the optimal access method—whether through a full table scan or an index scan. It calculates the range for each relevant index, assesses the access cost, and selects the path with the lowest cost. This process combines range derivation with a cost assessment subsystem to find the most efficient way to retrieve data, balancing performance and resource usage.
 
-下图展示了 TiDB 如何通过范围推导和代价评估协同工作，以选择最优的表访问路径：
+The diagram below illustrates how the range derivation and cost assessment work together within TiDB's table access logic to achieve optimal data retrieval.
 
-![表访问路径选择](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/multi-column-index-table-access-path-selection.png)
+![Table Access Path Selection](https://docs-download.pingcap.com/media/images/docs/best-practices/multi-column-index-table-access-path-selection.png)
 
-多列过滤条件往往比上述示例更复杂，可能包含 **AND**、**OR** 或两者组合。TiDB 的范围推导子系统能高效处理这些情况，生成最具选择性或最有效的索引范围。
+Multi-column filters are often more complex than the basic examples discussed earlier. They might include **AND** conditions, **OR** conditions, or a combination of both. TiDB's range derivation subsystem is designed to handle these cases efficiently, generating the most selective (and therefore, most effective) index ranges.
 
-一般来说，该子系统会对 **OR** 条件生成的范围执行 **UNION** 操作，对 **AND** 条件生成的范围执行 **INTERSECT** 操作。通过这种方式，TiDB 即使在面对复杂的过滤逻辑时，也能尽可能精确地筛选数据。
+In general, the subsystem applies a **UNION** operation for ranges generated from **OR** conditions and an **INTERSECT** operation for ranges derived from **AND** conditions. This approach ensures that TiDB can filter data as precisely as possible, even with complex filtering logic.
 
-## 多列索引中的析取条件（`OR` 条件）
+## Disjunctive conditions (`OR` conditions) in multi-column indexes
 
-当查询中包含 `OR` 条件（Disjunctive Predicates，析取谓词）时，优化器会分别处理每个条件，为每部分生成范围。如果范围有重叠，则合并为一个连续范围；否则保留为多个独立范围，均可用于索引扫描。
+When there are `OR` conditions in a query (known as "disjunctive predicates"), the optimizer handles each condition separately, creating a range for each part of the `OR` condition. If any of these ranges overlap, the optimizer merges them into one continuous range. If they do not overlap, they remain as separate ranges, both of which can still be used for an index scan.
 
-### 示例 1：重叠范围
+### Example 1: overlapping ranges
 
-假设要查找杭州两居室，租金在以下两个重叠区间的房源：
+Consider a query that looks for listings in New York with two bedrooms, where the price falls into one of two overlapping ranges:
 
-- 租金在 1000~2000 元之间
-- 租金在 1500~2500 元之间
+- Price between `$1,000` and `$2,000`
+- Price between `$1,500` and `$2,500`
 
-优化器会将两个区间合并为 1000 ~ 2500。查询及执行计划如下：
+In this case, the two ranges overlap, so the optimizer combines them into a single range from `$1,000` to `$2,500`. Here is the query and its execution plan:
 
 ```sql
--- 查询 3：重叠租金区间
+-- Query 3: Overlapping price ranges
 EXPLAIN FORMAT = "brief"
     SELECT * FROM listings
-    WHERE (city = 'Hangzhou' AND bedrooms = 2 AND price >= 1000 AND price < 2000)
-       OR (city = 'Hangzhou' AND bedrooms = 2 AND price >= 1500 AND price < 2500);
+    WHERE (city = 'New York' AND bedrooms = 2 AND price >= 1000 AND price < 2000)
+       OR (city = 'New York' AND bedrooms = 2 AND price >= 1500 AND price < 2500);
 ```
 
 ```
@@ -153,28 +152,28 @@ EXPLAIN FORMAT = "brief"
 | id                      | task | access object                                                        | operator info                                    |
 +-------------------------+------+----------------------------------------------------------------------+--------------------------------------------------+
 | IndexLookUp             | root |                                                                      |                                                  |
-| ├─IndexRangeScan(Build) | root | table:listings,index:idx_city_bedrooms_price(city, bedrooms, price)  | range:["Hangzhou" 2 1000.00,"Hangzhou" 2 2500.00)|
+| ├─IndexRangeScan(Build) | root | table:listings,index:idx_city_bedrooms_price(city, bedrooms, price)  | range:["New York" 2 1000.00,"New York" 2 2500.00)|
 | └─TableRowIDScan(Probe) | root | table:listings                                                       |                                                  |
 +-------------------------+------+----------------------------------------------------------------------+--------------------------------------------------+
 ```
 
-### 示例 2：不重叠范围
+### Example 2: non-overlapping ranges
 
-再比如查找北京或上海的一居室，分别在不同租金区间：
+In a different scenario, imagine a query that looks for affordable single-bedroom listings in either San Francisco or San Diego. Here, the `OR` condition specifies two distinct ranges for different cities:
 
-- 北京一居室，租金 1500 ~ 2500
-- 上海一居室，租金 1000 ~ 1500
+- Listings in San Francisco, 1 bedroom, priced between `$1,500` and `$2,500`
+- Listings in San Diego, 1 bedroom, priced between `$1,000` and `$1,500`
 
-由于区间不重叠，执行计划中会保留两个独立范围：
+Because the index ranges do not overlap, they remain separate in the execution plan, with each city having its own index range:
 
 ```sql
--- 查询 4：不同城市的不重叠区间
+-- Query 4: Non-overlapping ranges for different cities
 
 EXPLAIN FORMAT = "brief"
     SELECT * FROM listings
     WHERE
-        (city = 'Beijing' AND bedrooms = 1 AND price >= 1500 AND price < 2500)
-     OR (city = 'Shanghai' AND bedrooms = 1 AND price >= 1000 AND price < 1500);
+        (city = 'San Francisco' AND bedrooms = 1 AND price >= 1500 AND price < 2500)
+     OR (city = 'San Diego' AND bedrooms = 1 AND price >= 1000 AND price < 1500);
 ```
 
 ```
@@ -182,20 +181,20 @@ EXPLAIN FORMAT = "brief"
 | id                      | task | access object                                                      | operator info                                              |
 +-------------------------+------+--------------------------------------------------------------------+------------------------------------------------------------+
 | IndexLookUp             | root |                                                                    |                                                            |
-| ├─IndexRangeScan(Build) | root | table:listings,index:idx_city_bedrooms_price(city, bedrooms, price)| range:["Beijing" 1 1500.00,"Beijing" 1 2500.00) ["Shanghai" 1 1000, "Shanghai" 1 1500) |
-| └─TableRowIDScan(Probe) | root | table:listings                                                     |           |
+| ├─IndexRangeScan(Build) | root | table:listings,index:idx_city_bedrooms_price(city, bedrooms, price)| range:["San Francisco" 1 1500.00,"San Francisco" 1 2500.00)|
+| └─TableRowIDScan(Probe) | root | table:listings                                                     |       ["San Diego" 1 1000.00,"San Diego" 1 1500.00)        |
 +-------------------------+------+--------------------------------------------------------------------+------------------------------------------------------------+
 ```
 
-通过合并或保留独立范围，优化器能高效利用索引处理 `OR` 条件，避免无谓扫描，提升性能。
+By creating either merged or distinct ranges based on overlap, the optimizer can efficiently use indexes for `OR` conditions, avoiding unnecessary scans and improving query performance.
 
-## 多列索引中的合取条件（`AND` 条件）
+## Conjunctive conditions (`AND` conditions) in multi-column indexes
 
-对于 **AND** 条件（合取条件），TiDB 优化器会为每个条件生成范围，并取其交集 (`INTERSECT`)，得到最精确的索引访问范围。如果某条件包含多个范围，TiDB 会组合这些范围，确保结果最优。
+For queries with **AND** conditions (also known as conjunctive conditions), the TiDB optimizer creates a range for each condition. It then finds the overlap (intersection) of these ranges to get a precise result for index access. If each condition has only one range, this is straightforward, but it becomes more complex if any condition contains multiple ranges. In such cases, TiDB combines these ranges to produce the most selective, efficient result.
 
-### 示例 1：表结构
+### Example 1: table setup
 
-假设有如下表 t1：
+Consider a table `t1` that is defined as follows:
 
 ```sql
 CREATE TABLE t1 (
@@ -206,38 +205,42 @@ CREATE TABLE t1 (
 );
 ```
 
-有如下查询条件：
+Suppose you have a query with the following conditions:
 
 ```sql
 (a1, b1) > (1, 10) AND (a1, b1) < (10, 20)
 ```
 
-该查询涉及多列比较，TiDB 优化器的处理步骤如下：
+This query involves comparing multiple columns, and requires the TiDB optimizer to process it in the following two steps:
 
-1. 拆解表达式。
+1. Translate the expressions.
 
-    - `(a1, b1) > (1, 10)` 转换为 `(a1 > 1) OR (a1 = 1 AND b1 > 10)`，表示包括所有 `a1` 大于 `1` 的情况，或 `a1` 等于 `1` 且 `b1` 大于 `10` 的情况。
-    - `(a1, b1) < (10, 20)` 转换为 `(a1 < 10) OR (a1 = 10 AND b1 < 20)`，表示包括所有 `a1` 小于 `10` 的情况，或 `a1` 等于 `10` 且 `b1` 小于 `20` 的情况。
+    The TiDB optimizer breaks down these complex conditions into simpler parts.
 
-    合并后为：
+    - `(a1, b1) > (1, 10)` translates to `(a1 > 1) OR (a1 = 1 AND b1 > 10)`, meaning it includes all cases where `a1` is greater than `1` or where `a1` is exactly `1` and `b1` is greater than `10`.
+    - `(a1, b1) < (10, 20)` translates to `(a1 < 10) OR (a1 = 10 AND b1 < 20)`, covering cases where `a1` is less than `10` or where `a1` is exactly `10` and `b1` is less than `20`.
+
+    These expressions are then combined using `AND`:
 
     ```sql
     ((a1 > 1) OR (a1 = 1 AND b1 > 10)) AND ((a1 < 10) OR (a1 = 10 AND b1 < 20))
     ```
 
-2. 推导并组合范围。
+2. Derive and combine ranges.
 
-    - `(a1, b1) > (1, 10)`：推导出的范围包括 `(1, +inf]`（`a1 > 1` 的情况）和 `(1, 10, 1, +inf]`（`a1 = 1` 且 `b1 > 10` 的情况）。
-    - `(a1, b1) < (10, 20)`：推导出的范围包括 `[-inf, 10)`（`a1 < 10` 的情况）和 `[10, -inf, 10, 20)`（`a1 = 10` 且 `b1 < 20` 的情况）。
+    After breaking down the conditions, the TiDB optimizer calculates ranges for each part and combines them. For this example, it derives:
 
-    组合范围后，最终的索引范围为 `(1, 10, 1, +inf] UNION (1, 10) UNION [10, -inf, 10, 20)`。
+    - For `(a1, b1) > (1, 10)`: it creates ranges such as `(1, +inf]` for cases where `a1 > 1` and `(1, 10, 1, +inf]` for cases where `a1 = 1` and `b1 > 10`.
+    - For `(a1, b1) < (10, 20)`: it creates ranges `[-inf, 10)` for cases where `a1 < 10` and `[10, -inf, 10, 20)` for cases where `a1 = 10` and `b1 < 20`.
 
-### 示例 2：查询计划
+    The final result combines these to get a refined range: `(1, 10, 1, +inf] UNION (1, 10) UNION [10, -inf, 10, 20)`.
 
-查询计划如下：
+### Example 2: query plan
+
+The following query plan shows the derived ranges:
 
 ```sql
--- 查询 5：多列合取条件
+-- Query 5: Conjunctive conditions on (a1, b1)
 EXPLAIN FORMAT = "brief"
     SELECT * FROM t1
     WHERE (a1, b1) > (1, 10) AND (a1, b1) < (10, 20);
@@ -253,12 +256,12 @@ EXPLAIN FORMAT = "brief"
 +-------------------------+------+----------------------------+-------------------------------------------+
 ```
 
-假设表有 5 亿行，通过优化后只需访问约 4000 行，仅占总数据的 0.0008%。查询延迟从两分钟降至几毫秒。
+In this example, the table has about 500 million rows. However, this optimization allows TiDB to narrow down the access to only around 4,000 rows, just 0.0008% of the total data. This refinement drastically reduces query latency to a few milliseconds, as opposed to over two minutes without optimization.
 
-与 MySQL 需全表扫描不同，TiDB 优化器可高效处理复杂行表达式，充分利用推导范围。
+Unlike MySQL, which requires a full table scan for such conditions, the TiDB optimizer can handle complex row expressions efficiently by leveraging these derived ranges.
 
-## 总结
+## Conclusion
 
-TiDB 优化器通过多列索引和高级范围推导，可大幅降低复杂 SQL 查询的数据访问代价。无论是合取 (`AND`) 还是析取 (`OR`) 条件，TiDB 都能将行表达式转化为最优访问路径，缩短查询时间，提升性能。与 MySQL 不同，TiDB 支持多列索引上的并集与交集操作，能高效处理复杂过滤条件。在实际应用中，优化后查询可在几毫秒内完成，而未优化时可能需两分钟以上，极大降低了延迟。
+The TiDB optimizer uses multi-column indexes and advanced range derivation to significantly lower data access costs for complex SQL queries. By effectively managing both conjunctive (`AND`) and disjunctive (`OR`) conditions, TiDB converts row-based expressions into optimal access paths, reducing query times and enhancing performance. Unlike MySQL, TiDB supports union and intersection operations on multi-column indexes, allowing efficient processing of intricate filters. In practical use, this optimization enables TiDB to complete queries in just a few milliseconds—compared to over two minutes without it, demonstrating a substantial reduction in latency.
 
-更多 TiDB 与 MySQL 架构差异及其对可扩展性、可靠性和 HTAP 工作负载的影响，详见 [MySQL vs. TiDB: A Guide to Open Source Database Selection](https://www.pingcap.com/ebook-whitepaper/tidb-vs-mysql-product-comparison-guide/)。
+Check out the [comparison white paper](https://www.pingcap.com/ebook-whitepaper/tidb-vs-mysql-product-comparison-guide/) to discover even more differences between MySQL and TiDB's architecture, and why this matters for scalability, reliability, and hybrid transactional and analytical workloads.

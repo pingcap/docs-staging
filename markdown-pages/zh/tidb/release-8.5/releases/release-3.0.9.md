@@ -1,58 +1,59 @@
 ---
 title: TiDB 3.0.9 Release Notes
-summary: TiDB 3.0.9 发布日期为 2020 年 1 月 14 日。该版本修复了一些已知问题，并提升了性能。包括 Executor 修复了聚合函数作用于枚举和集合列时结果不正确的问题，Server 支持了系统变量 `auto_increment_increment` 和 `auto_increment_offset`，新增了监控项等。TiKV 提升了 Raft 成员变更的速度，新增了监控项用于监控 `waiter` 的生命周期等。PD 新增了一些功能和修复了一些问题。Tools 方面也有一些新增和优化。TiDB Ansible 优化了 Lightning 部署。
-aliases: ['/zh/tidb/dev/release-3.0.9/','/zh/tidb/v3.0/release-3.0.9','/docs-cn/dev/releases/release-3.0.9/','/docs-cn/dev/releases/3.0.9/','/zh/tidb/v5.4/release-3.0.9','/zh/tidb/v6.1/release-3.0.9','/zh/tidb/v6.5/release-3.0.9','/zh/tidb/v7.1/release-3.0.9','/zh/tidb/v7.5/release-3.0.9','/zh/tidb/v8.1/release-3.0.9']
+summary: TiDB 3.0.9 was released on January 14, 2020. It includes fixes for known issues and new features. Some improvements were made to Executor, Server, DDL, Planner, TiKV, PD, Tools, and TiDB Ansible. Notable changes include support for system variables, monitoring metrics, and optimizations for transaction execution latency. Additionally, support for using backlash in the location label name and automatically creating directories for TiDB Lightning deployment was added.
 ---
 
 # TiDB 3.0.9 Release Notes
 
-发版日期：2020 年 1 月 14 日
+Release date: January 14, 2020
 
-TiDB 版本：3.0.9
+TiDB version: 3.0.9
 
-TiDB Ansible 版本：3.0.9
+TiDB Ansible version: 3.0.9
 
-> **警告：**
+> **Warning:**
 >
-> 该版本存在一些已知问题，已在新版本中修复，建议使用 3.0.x 的最新版本。
+> Some known issues are found in this version, and these issues are fixed in new versions. It is recommended that you use the latest 3.0.x version.
 
 ## TiDB
 
 + Executor
-    - 修复聚合函数作用于枚举和集合列时结果不正确的问题 [#14364](https://github.com/pingcap/tidb/pull/14364)
+    - Fix the incorrect result when the aggregate function is applied to the `ENUM` column and the collection column [#14364](https://github.com/pingcap/tidb/pull/14364)
 + Server
-    - 支持系统变量 `auto_increment_increment` 和 `auto_increment_offset` [#14396](https://github.com/pingcap/tidb/pull/14396)
-    - 新增 `tidb_tikvclient_ttl_lifetime_reach_total` 监控项，监控悲观事务 TTL 达到 10 分钟的数量 [#14300](https://github.com/pingcap/tidb/pull/14300)
-    - 执行 SQL 过程中当发生 panic 时输出导致 panic 的 SQL 信息 [#14322](https://github.com/pingcap/tidb/pull/14322)
-    - statement summary 系统表新增 `plan` 和 `plan_digest` 字段，记录当前正在执行的 `plan` 和 `plan` 的签名 [#14285](https://github.com/pingcap/tidb/pull/14285)
-    - 配置项 `stmt-summary.max-stmt-count` 的默认值从 `100` 调整至 `200` [#14285](https://github.com/pingcap/tidb/pull/14285)
-    - slow query 表新增 `plan_digest` 字段，记录 `plan` 的签名 [#14292](https://github.com/pingcap/tidb/pull/14292)
+    - Support the `auto_increment_increment` and `auto_increment_offset` system variables [#14396](https://github.com/pingcap/tidb/pull/14396)
+    - Add the `tidb_tikvclient_ttl_lifetime_reach_total` monitoring metric to monitor the number of pessimistic transactions with a TTL of 10 minutes [#14300](https://github.com/pingcap/tidb/pull/14300)
+    - Output the SQL information in the log when the SQL query causes a panic during its execution [#14322](https://github.com/pingcap/tidb/pull/14322)
+    - Add the `plan` and `plan_digest` fields in the statement summary table to record the `plan` that is being executed and the `plan` signature [#14285](https://github.com/pingcap/tidb/pull/14285)
+    - Adjust the default value of the `stmt-summary.max-stmt-count` configuration item from `100` to `200` [#14285](https://github.com/pingcap/tidb/pull/14285)
+    - Add the `plan_digest` field in the slow query table to record the `plan` signature [#14292](https://github.com/pingcap/tidb/pull/14292)
 + DDL
-    - 修复 `alter table ... add index` 语句创建匿名索引行为与 MySQL 不一致的问题 [#14310](https://github.com/pingcap/tidb/pull/14310)
-    - 修复 `drop table` 错误删除视图的问题 [#14052](https://github.com/pingcap/tidb/pull/14052)
+    - Fix the issue that the results of anonymous indexes created using `alter table ... add index` on the `primary` column is inconsistent with MySQL [#14310](https://github.com/pingcap/tidb/pull/14310)
+    - Fix the issue that `VIEW`s are mistakenly dropped by the `drop table` syntax [#14052](https://github.com/pingcap/tidb/pull/14052)
 + Planner
-    - 提升类似 `select max(a), min(a) from t` 语句的性能。如果 `a` 列表上有索引，该语句会被优化为 `select * from (select a from t order by a desc limit 1) as t1, (select a from t order by a limit 1) as t2` 以避免全表扫 [#14410](https://github.com/pingcap/tidb/pull/14410)
+    - Optimize the performance of statements such as `select max(a), min(a) from t`. If an index exists in the `a` column, the statement is optimized to `select * from (select a from t order by a desc limit 1) as t1, (select a from t order by a limit 1) as t2` to avoid full table scan [#14410](https://github.com/pingcap/tidb/pull/14410)
 
 ## TiKV
 
 + Raftstore
-    - 提升 Raft 成员变更的速度 [#6421](https://github.com/tikv/tikv/pull/6421)
+    - Speed up the configuration change to speed up the Region scattering [#6421](https://github.com/tikv/tikv/pull/6421)
 + Transaction
-    - 新增 `tikv_lock_manager_waiter_lifetime_duration`、`tikv_lock_manager_detect_duration`、`tikv_lock_manager_detect_duration` 监控项，用于监控 `waiter` 的生命周期、死锁检测耗费时间、`wait table` 的状态 [#6392](https://github.com/tikv/tikv/pull/6422)
-    - 通过优化配置项 `wait-for-lock-time` 默认值从 `3s` 调整到 `1s`、`wake-up-delay-duration` 默认值从 `100ms` 调整为 `20ms`，以降低极端场景下 Region Leader 切换、切换死锁检测的 leader 导致的事务执行延迟 [#6429](https://github.com/tikv/tikv/pull/6429)
-    - 修复 Region Merge 过程中可能导致死锁检测器 leader 角色误判的问题 [#6431](https://github.com/tikv/tikv/pull/6431)
+    - Add the `tikv_lock_manager_waiter_lifetime_duration`, `tikv_lock_manager_detect_duration`, and `tikv_lock_manager_detect_duration` monitoring metrics to monitor `waiter`s' lifetime, the time cost of detecting deadlocks, and the status of `Wait` table [#6392](https://github.com/tikv/tikv/pull/6392)
+    - Optimize the following configuration items to reduce transaction execution latency caused by changing Region leader or the leader of deadlock detector in extreme situations [#6429](https://github.com/tikv/tikv/pull/6429)
+        - Change the default value of `wait-for-lock-time` from `3s` to `1s`
+        - Change the default value of `wake-up-delay-duration` from `100ms` to `20ms`
+    - Fix the issue that the leader of the deadlock detector might be incorrect during the Region Merge process [#6431](https://github.com/tikv/tikv/pull/6431)
 
 ## PD
 
-+ 新增 location label 的名字中允许使用斜杠 `/` 的功能 [#2083](https://github.com/pingcap/pd/pull/2083)
-+ 修复因为不正确地统计了 tombstone 的标签，导致该统计信息不准的问题 [#2060](https://github.com/pingcap/pd/issues/2060)
++ Support using backlash `/` in the location label name [#2083](https://github.com/pingcap/pd/pull/2083)
++ Fix the incorrect statistics because the tombstone store is mistakenly included by the label counter [#2067](https://github.com/pingcap/pd/pull/2067)
 
 ## Tools
 
 + TiDB Binlog
-    - Drainer 输出的 binlog 协议中新增 unique key 信息 [#862](https://github.com/pingcap/tidb-binlog/pull/862)
-    - Drainer 支持使用加密后的数据库连接密码 [#868](https://github.com/pingcap/tidb-binlog/pull/868)
+    - Add the unique key information in the binlog protocol output by Drainer [#862](https://github.com/pingcap/tidb-binlog/pull/862)
+    - Support using the encrypted password for database connection for Drainer [#868](https://github.com/pingcap/tidb-binlog/pull/868)
 
 ## TiDB Ansible
 
-+ 优化 Lightning 部署，自动创建相关目录 [#1105](https://github.com/pingcap/tidb-ansible/pull/1105)
++ Support automatically creating directories to optimize the deployment of TiDB Lightning [#1105](https://github.com/pingcap/tidb-ansible/pull/1105)

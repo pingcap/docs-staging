@@ -1,114 +1,113 @@
 ---
 title: TiDB 3.0.14 Release Notes
-summary: TiDB 3.0.14 发布日期为 2020 年 5 月 9 日。该版本兼容性变化包括 `performance_schema` 和 `metrics_schema` 由读写改为只读。重点修复的 Bug 包括 join 条件在 handle 列上存在多个等值条件时，index join 查询结果错误等问题。新功能包括 `admin show ddl jobs` 查询结果中添加库名和表名列等功能。Bug 修复包括 `WEEKEND` 函数在 SQL mode 为 `ALLOW_INVALID_DATES` 时结果与 MySQL 不兼容等问题。TiKV 也有相关 Bug 修复，如节点隔离恢复之后无法被正确删掉等问题。
-aliases: ['/zh/tidb/dev/release-3.0.14/','/zh/tidb/v3.0/release-3.0.14','/docs-cn/dev/releases/release-3.0.14/','/docs-cn/dev/releases/3.0.14/','/zh/tidb/v5.4/release-3.0.14','/zh/tidb/v6.1/release-3.0.14','/zh/tidb/v6.5/release-3.0.14','/zh/tidb/v7.1/release-3.0.14','/zh/tidb/v7.5/release-3.0.14','/zh/tidb/v8.1/release-3.0.14']
+summary: TiDB 3.0.14 was released on May 9, 2020. The release includes compatibility changes, important bug fixes, new features, bug fixes, and improvements for TiDB, TiKV, and Tools. Some of the bug fixes include issues with query results, panic occurrences, and incorrect behavior. New features include enhanced syntax support and improved performance.
 ---
 
 # TiDB 3.0.14 Release Notes
 
-发版日期：2020 年 5 月 9 日
+Release date: May 9, 2020
 
-TiDB 版本：3.0.14
+TiDB version: 3.0.14
 
-## 兼容性变化
-
-+ TiDB
-
-    - `performance_schema` 和 `metrics_schema` 由读写改为只读 [#15417](https://github.com/pingcap/tidb/pull/15417)
-
-## 重点修复的 Bug
+## Compatibility Changes
 
 + TiDB
 
-    - 修复 join 条件在 handle 列上存在多个等值条件时，index join 查询结果错误的问题 [#15734](https://github.com/pingcap/tidb/pull/15734)
-    - 修复 fast analyze handle 列 panic 的问题 [#16079](https://github.com/pingcap/tidb/pull/16079)
-    - 修复通过 prepare 方式执行 DDL 语句时，DDL job 结构中 query 字段错误的问题，该问题可能导致使用 Binlog 同步时，上下游数据产生不一致 [#15443](https://github.com/pingcap/tidb/pull/15443)
+    - Adjust the user privilege in `performance_schema` and `metrics_schema` from read-write to read-only [#15417](https://github.com/pingcap/tidb/pull/15417)
+
+## Important Bug Fixes
+
++ TiDB
+
+    - Fix the issue that the query result of `index join` is incorrect when the `join` condition has multiple equivalent conditions on the column with the `handle` attribute [#15734](https://github.com/pingcap/tidb/pull/15734)
+    - Fix the panic that occurs when performing the `fast analyze` operation on the column with the `handle` attribute [#16079](https://github.com/pingcap/tidb/pull/16079)
+    - Fix the issue that the `query` field in the DDL job structure is incorrect when the DDL statement is executed in a way of `prepare`. This issue might cause data inconsistency between the upstream and the downstream when Binlog is used for data replication. [#15443](https://github.com/pingcap/tidb/pull/15443)
 
 + TiKV
 
-    - 修复重复清锁请求可能破坏事务原子性的问题 [#7388](https://github.com/tikv/tikv/pull/7388)
+    - Fix the issue that repeated requests on the cleanup of lock might destroy the atomicity of the transaction [#7388](https://github.com/tikv/tikv/pull/7388)
 
-## 新功能
+## New Features
 
 + TiDB
 
-    - `admin show ddl jobs` 查询结果中添加库名和表名列 [#16428](https://github.com/pingcap/tidb/pull/16428)
-    - `RECOVER TABLE` 支持恢复被 `TRUNCATE` 的表 [#15458](https://github.com/pingcap/tidb/pull/15458)
-    - 新增 `SHOW GRANTS` 语句权限检查的功能 [#16168](https://github.com/pingcap/tidb/pull/16168)
-    - 新增 `LOAD DATA` 语句权限检查 [#16736](https://github.com/pingcap/tidb/pull/16736)
-    - 提升时间日期相关函数作为 partition key 时，分区裁剪的性能 [#15618](https://github.com/pingcap/tidb/pull/15618)
-    - `dispatch error` 的日志级别从 `WARN` 调整为 `ERROR` [#16232](https://github.com/pingcap/tidb/pull/16232)
-    - 新增支持 `require-secure-transport` 启动项，以强制要求客户端必须使用 TLS [#15415](https://github.com/pingcap/tidb/pull/15415)
-    - 支持内部组件间 http 通信使用 TLS [#15419](https://github.com/pingcap/tidb/pull/15419)
-    - `information_schema.processlist` 表中添加显示当前事务 `start_ts` 信息 [#16160](https://github.com/pingcap/tidb/pull/16160)
-    - 新增自动重加载集群间通讯 TLS 证书信息的功能 [#15162](https://github.com/pingcap/tidb/pull/15162)
-    - 通过重构分区裁剪的实现，提升分区表的读操作的性能 [#15628](https://github.com/pingcap/tidb/pull/15628)
-    - 新增当使用 `floor(unix_timestamp(a))` 作为 `range` 分区表的分区表达式时，支持分区裁剪功能 [#16521](https://github.com/pingcap/tidb/pull/16521)
-    - 修改 `update` 语句中包含 `view` 且不对该 `view` 进行 update 时的行为，由不允许执行改为正常执行 [#16787](https://github.com/pingcap/tidb/pull/16787)
-    - 禁止创建嵌套 `view` [#15424](https://github.com/pingcap/tidb/pull/15424)
-    - 禁止 truncate `view` [#16420](https://github.com/pingcap/tidb/pull/16420)
-    - 当列处于非 public 状态时，禁止用 `update` 语句显式的更新此列的值 [#15576](https://github.com/pingcap/tidb/pull/15576)
-    - 当 status 端口被占用时，禁止启动 TiDB [#15466](https://github.com/pingcap/tidb/pull/15466)
-    - `current_role` 函数的字符集由 binary 调整为 utf8mb4 [#16083](https://github.com/pingcap/tidb/pull/16083)
-    - 通过在处理完每个 Region 后增加检查 `max-execution-time` 是否符合条件，提升系统处理 `max-execution-time` 的响应灵敏度 [#15615](https://github.com/pingcap/tidb/pull/15615)
-    - 新增语法 `ALTER TABLE ... AUTO_ID_CACHE` 用于显式设置 `auto_id` 的缓存步长 [#16287](https://github.com/pingcap/tidb/pull/16287)
+    - Add the schema name column and the table name column to the query results of the `admin show ddl jobs` statement [#16428](https://github.com/pingcap/tidb/pull/16428)
+    - Enhance the `RECOVER TABLE` syntax to support recovering truncated tables [#15458](https://github.com/pingcap/tidb/pull/15458)
+    - Support the privilege check for the `SHOW GRANTS` statement [#16168](https://github.com/pingcap/tidb/pull/16168)
+    - Support the privilege check for the `LOAD DATA` statement [#16736](https://github.com/pingcap/tidb/pull/16736)
+    - Improve the performance of partition pruning when functions related to time and date are used as partition keys [#15618](https://github.com/pingcap/tidb/pull/15618)
+    - Adjust the log level of `dispatch error` from `WARN` to `ERROR` [#16232](https://github.com/pingcap/tidb/pull/16232)
+    - Support the `require-secure-transport` startup option to force clients to use TLS [#15415](https://github.com/pingcap/tidb/pull/15415)
+    - Support HTTP communication between TiDB components when TLS is configured [#15419](https://github.com/pingcap/tidb/pull/15419)
+    - Add the `start_ts` information of the current transaction to the `information_schema.processlist` table [#16160](https://github.com/pingcap/tidb/pull/16160)
+    - Support automatically reloading the TLS certificate information used for communication among clusters [#15162](https://github.com/pingcap/tidb/pull/15162)
+    - Improve the read performance of the partitioned tables by restructuring the partition pruning [#15628](https://github.com/pingcap/tidb/pull/15628)
+    - Support the partition pruning feature when `floor(unix_timestamp(a))` is used as the partition expression of the `range` partition table [#16521](https://github.com/pingcap/tidb/pull/16521)
+    - Allow executing the `update` statement that contains a `view` and does not update the `view` [#16787](https://github.com/pingcap/tidb/pull/16787)
+    - Prohibit creating nested `view`s [#15424](https://github.com/pingcap/tidb/pull/15424)
+    - Prohibit truncating `view` [#16420](https://github.com/pingcap/tidb/pull/16420)
+    - Prohibit using the `update` statement to explicitly update the values of a column when this column is not in the `public` state [#15576](https://github.com/pingcap/tidb/pull/15576)
+    - Prohibit starting TiDB when the `status` port is occupied [#15466](https://github.com/pingcap/tidb/pull/15466)
+    - Change the character set of the `current_role` function from `binary` to `utf8mb4` [#16083](https://github.com/pingcap/tidb/pull/16083)
+    - Improve `max-execution-time` usability by checking the interrupt signal when the data of a new Region is read [#15615](https://github.com/pingcap/tidb/pull/15615)
+    - Add the `ALTER TABLE ... AUTO_ID_CACHE` syntax for explicitly setting the cache step of `auto_id` [#16287](https://github.com/pingcap/tidb/pull/16287)
 
 + TiKV
 
-    - 提升乐观事务存在大量冲突及 `BatchRollback` 存在时的性能 [#7605](https://github.com/tikv/tikv/pull/7605)
-    - 提升悲观事务冲突严重的场景下悲观锁 waiter 被频繁唤醒导致性能下降的问题 [#7584](https://github.com/tikv/tikv/pull/7584)
+    - Improve the performance when many conflicts and the `BatchRollback` condition exist in optimistic transactions [#7605](https://github.com/tikv/tikv/pull/7605)
+    - Fix the issue of decreased performance that occurs because the pessimistic lock `waiter` is frequently awakened when many conflicts exist in pessimistic transactions [#7584](https://github.com/tikv/tikv/pull/7584)
 
 + Tools
 
     + TiDB Lightning
 
-        - tidb-lightning-ctl 新增 `fetch-mode` 子命令，输出 TiKV 集群模式 [#287](https://github.com/pingcap/tidb-lightning/pull/287)
+        - Support printing the TiKV cluster mode using the `fetch-mode` sub-command of tidb-lightning-ctl [#287](https://github.com/pingcap/tidb-lightning/pull/287)
 
-## Bug 修复
+## Bug Fixes
 
 + TiDB
 
-    - 修复 `WEEKEND` 函数在 SQL mode 为 `ALLOW_INVALID_DATES` 时结果与 MySQL 不兼容的问题 [#16170](https://github.com/pingcap/tidb/pull/16170)
-    - 修复当索引列上包含自增主键时，`DROP INDEX` 执行失败的问题 [#16008](https://github.com/pingcap/tidb/pull/16008)
-    - 修复 Statement Summary 中，`TABLE_NAMES` 列值有时会不正确的问题 [#15231](https://github.com/pingcap/tidb/pull/15231)
-    - 修复因 Plan Cache 启动后部分表达式计算结果错误的问题 [#16184](https://github.com/pingcap/tidb/pull/16184)
-    - 修复函数 `not`/`istrue` /`isfalse` 计算结果错误的问题 [#15916](https://github.com/pingcap/tidb/pull/15916)
-    - 修复带有冗余索引的表 MergeJoin 时 Panic 的问题 [#15919](https://github.com/pingcap/tidb/pull/15919)
-    - 修复谓词只跟外表有联接的情况下错误地化简外链接的问题 [#16492](https://github.com/pingcap/tidb/pull/16492)
-    - 修复 `SET ROLE` 导致的 `CURRENT_ROLE` 函数报错问题 [#15569](https://github.com/pingcap/tidb/pull/15569)
-    - 修复 `LOAD DATA` 在遇到 `\` 时，处理结果与 MySQL 不兼容的问题 [#16633](https://github.com/pingcap/tidb/pull/16633)
-    - 修复数据库可见性与 MySQL 不兼容的问题 [#14939](https://github.com/pingcap/tidb/pull/14939)
-    - 修复 `SET DEFAULT ROLE ALL` 语句的权限检查不正确的问题 [#15585](https://github.com/pingcap/tidb/pull/15585)
-    - 修复 plan cache 导致的分区裁剪失效问题 [#15818](https://github.com/pingcap/tidb/pull/15818)
-    - 修复因事务未对相关表进行加锁，该表存在并发的 DDL 操作且有阻塞时导致事务提交时报 `schema change` 的问题 [#15707](https://github.com/pingcap/tidb/pull/15707)
-    - 修复 `IF(not_int, *, *)` 行为不正确的问题 [#15356](https://github.com/pingcap/tidb/pull/15356)
-    - 修复 `CASE WHEN (not_int)` 行为不正确的问题 [#15359](https://github.com/pingcap/tidb/pull/15359)
-    - 修复在使用非当前 schema 中的视图时报 `Unknown column` 错误的问题 [#15866](https://github.com/pingcap/tidb/pull/15866)
-    - 修复解析时间字符串的结果与 MySQL 不兼容的问题 [#16242](https://github.com/pingcap/tidb/pull/16242)
-    - 修复 left join 右孩子节点有 `null` 列可能会导致 join 上的排序算子 panic 的问题 [#15798](https://github.com/pingcap/tidb/pull/15798)
-    - 修复当 TiKV 持续返回 `StaleCommand` 错误期间，执行 SQL 的流程被阻塞且不报错的问题 [#16528](https://github.com/pingcap/tidb/pull/16528)
-    - 修复启用审计插件后端口探活可能会导致 panic 的问题 [#16064](https://github.com/pingcap/tidb/pull/16064)
-    - 修复 `fast analyze` 作用于 index 时导致 panic 的问题 [#15967](https://github.com/pingcap/tidb/pull/15967)
-    - 修复某些情况下 `SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST` 语句 panic 的问题 [#16309](https://github.com/pingcap/tidb/pull/16309)
-    - 修复哈希分区表在建表时由于分配内存之前未及时检查分区数量导致当指定非常大的分区数量（例如 9999999999999）时，导致 TiDB OOM 的问题 [#16218](https://github.com/pingcap/tidb/pull/16218)
-    - 修复 `information_schema.tidb_hot_table` 对于分区表信息不准确的问题 [#16726](https://github.com/pingcap/tidb/pull/16726)
-    - 修复分区选择算法在哈希分区表上不生效的问题 [#16070](https://github.com/pingcap/tidb/pull/16070)
-    - 修复 mvcc 系列的 HTTP API 不支持分区表的问题 [#16191](https://github.com/pingcap/tidb/pull/16191)
-    - 保持 `UNION` 语句和 `SELECT` 语句对于错误处理的行为一致 [#16137](https://github.com/pingcap/tidb/pull/16137)
-    - 修复当 `VALUES` 函数参数类型为 `bit(n)` 时行为不正确的问题 [#15486](https://github.com/pingcap/tidb/pull/15486)
-    - 修复 `view` 列名过长时处理逻辑与 MySQL 不一致的问题，当列名过长时，系统自动生成一个短的列名 [#14873](https://github.com/pingcap/tidb/pull/14873)
-    - 修复 `(not not col)` 被错误地优化为 `col` 的问题 [#16094](https://github.com/pingcap/tidb/pull/16094)
-    - 修复 index join 构造内表 range 错误的问题 [#15753](https://github.com/pingcap/tidb/pull/15753)
-    - 修复 `only_full_group_by` 对含括号的表达式检查错误的问题 [#16012](https://github.com/pingcap/tidb/pull/16012)
-    - 修复 `select view_name.col_name from view_name` 报错的问题 [#15572](https://github.com/pingcap/tidb/pull/15572)
+    - Fix the issue that `WEEKEND` function is not compatible with MySQL when the SQL mode is `ALLOW_INVALID_DATES` [#16170](https://github.com/pingcap/tidb/pull/16170)
+    - Fix the issue that the `DROP INDEX` statement fails to execute when the index column contains the auto-increment primary key [#16008](https://github.com/pingcap/tidb/pull/16008)
+    - Fix the issue of incorrect values of the `TABLE_NAMES` column in the Statement Summary [#15231](https://github.com/pingcap/tidb/pull/15231)
+    - Fix the issue that some expressions have incorrect results when the plan cache is enabled [#16184](https://github.com/pingcap/tidb/pull/16184)
+    - Fix the issue that the result of the `not`/`istrue`/`isfalse` function is incorrect [#15916](https://github.com/pingcap/tidb/pull/15916)
+    - Fix the panic caused by the `MergeJoin` operation on tables with redundant indexes [#15919](https://github.com/pingcap/tidb/pull/15919)
+    - Fix the issue caused by incorrectly simplifying the link when the predicate only refers to the outer table [#16492](https://github.com/pingcap/tidb/pull/16492)
+    - Fix the issue that the `CURRENT_ROLE` function reports an error caused by the `SET ROLE` statement [#15569](https://github.com/pingcap/tidb/pull/15569)
+    - Fix the issue that the result of the `LOAD DATA` statement is incompatible with MySQL when this statement encounters `\` [#16633](https://github.com/pingcap/tidb/pull/16633)
+    - Fix the issue that the database visibility is incompatible with MySQL [#14939](https://github.com/pingcap/tidb/pull/14939)
+    - Fix the issue of incorrect privilege check for the `SET DEFAULT ROLE ALL` statement [#15585](https://github.com/pingcap/tidb/pull/15585)
+    - Fix the issue of partition pruning failure caused by the plan cache [#15818](https://github.com/pingcap/tidb/pull/15818)
+    - Fix the issue that `schema change` is reported during the transaction commit when concurrent DDL operations are performed on a table and blocking exists, because the transaction does not lock the related table [#15707](https://github.com/pingcap/tidb/pull/15707)
+    - Fix the incorrect behavior of `IF(not_int, *, *)` [#15356](https://github.com/pingcap/tidb/pull/15356)
+    - Fix the incorrect behavior of `CASE WHEN (not_int)` [#15359](https://github.com/pingcap/tidb/pull/15359)
+    - Fix the issue that the `Unknown column` error message is returned when using a `view` that is not in the current schema [#15866](https://github.com/pingcap/tidb/pull/15866)
+    - Fix the issue that the result of parsing time strings is incompatible with MySQL [#16242](https://github.com/pingcap/tidb/pull/16242)
+    - Fix the possible panic of the collation operator in `left join` when a `null` column exists in the right child node [#16528](https://github.com/pingcap/tidb/pull/16528)
+    - Fix the issue that no error message is returned even though the SQL execution is blocked when TiKV keeps returning the `StaleCommand` error message [#16528](https://github.com/pingcap/tidb/pull/16528)
+    - Fix the possible panic caused by the port probing when the audit plugin is enabled [#15967](https://github.com/pingcap/tidb/pull/15967)
+    - Fix the panic caused when `fast analyze` works on indices only [#15967](https://github.com/pingcap/tidb/pull/15967)
+    - Fix the possible panic of the `SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST` statement execution in some cases [#16309](https://github.com/pingcap/tidb/pull/16309)
+    - Fix the issue of TiDB OOM caused by specifying a large number of partitions (for example, `9999999999999`) when the hash partition table is created without checking the number of partitions before allocating memory [#16218](https://github.com/pingcap/tidb/pull/16218)
+    - Fix the issue of incorrect information of partitioned tables in `information_schema.tidb_hot_table` [#16726](https://github.com/pingcap/tidb/pull/16726)
+    - Fix the issue that the partition selection algorithm does not take effect on the hash partitioned table [#16070](https://github.com/pingcap/tidb/pull/16070)
+    - Fix the issue that the HTTP API of the MVCC series does not support partitioned tables [#16191](https://github.com/pingcap/tidb/pull/16191)
+    - Keep the error handling of the `UNION` statement consistent with that of the `SELECT` statement [#16137](https://github.com/pingcap/tidb/pull/16137)
+    - Fix the issue of incorrect behavior when the parameter type of the `VALUES` function is `bit(n)` [#15486](https://github.com/pingcap/tidb/pull/15486)
+    - Fix the issue that the processing logic of TiDB is inconsistent with MySQL when the `view` column name is too long. In this case, the system automatically generates a short column name. [#14873](https://github.com/pingcap/tidb/pull/14873 )
+    - Fix the issue that `(not not col)` is incorrectly optimized as `col` [#16094](https://github.com/pingcap/tidb/pull/16094)
+    - Fix the issue of incorrect `range` of the inner table built by `IndexLookupJoin` plans [#15753](https://github.com/pingcap/tidb/pull/15753)
+    - Fix the issue that `only_full_group_by` fails to correctly check expressions with brackets [#16012](https://github.com/pingcap/tidb/pull/16012)
+    - Fix the issue that an error is returned when the `select view_name.col_name from view_name` statement is executed [#15572](https://github.com/pingcap/tidb/pull/15572)
 
 + TiKV
 
-    - 修复某些情况节点隔离恢复之后无法被正确删掉的问题 [#7703](https://github.com/tikv/tikv/pull/7703)
-    - 修复网络隔离时 Region Merge 可能导致数据丢失的问题 [#7679](https://github.com/tikv/tikv/pull/7679)
-    - 修复某些情况 learner 无法被正确移除的问题 [#7598](https://github.com/tikv/tikv/pull/7598)
-    - 修复扫描 raw kv 时可能乱序的问题 [#7597](https://github.com/tikv/tikv/pull/7597)
-    - 修复由于 Raft 消息 batch 过大时导致连接重连的问题 [#7542](https://github.com/tikv/tikv/pull/7542)
-    - 修复 empty request 造成 gRPC 线程死锁的问题 [#7538](https://github.com/tikv/tikv/pull/7538)
-    - 修复 merge 过程中 learner 重启的处理逻辑不正确的问题 [#7457](https://github.com/tikv/tikv/pull/7457)
-    - 修复重复清锁请求可能破坏事务原子性的问题 [#7388](https://github.com/tikv/tikv/pull/7388)
+    - Fix the issue that the node cannot be deleted correctly after the isolation recovery in some cases [#7703](https://github.com/tikv/tikv/pull/7703)
+    - Fix the issue of data loss during network isolation caused by the Region Merge operation [#7679](https://github.com/tikv/tikv/pull/7679)
+    - Fix the issue that learner cannot be removed correctly in some cases [#7598](https://github.com/tikv/tikv/pull/7598)
+    - Fix the issue that the scanning result of raw key-value pairs might be out of order [#7597](https://github.com/tikv/tikv/pull/7597)
+    - Fix the issue of reconnection when the batch of Raft messages is too large [#7542](https://github.com/tikv/tikv/pull/7542)
+    - Fix the issue of gRPC thread deadlock caused by the empty request [#7538](https://github.com/tikv/tikv/pull/7538)
+    - Fix the issue that the processing logic of restarting the learner is incorrect during the merge process [#7457](https://github.com/tikv/tikv/pull/7457)
+    - Fix the issue that repeated requests on the cleanup of lock might destroy the atomicity of the transaction [#7388](https://github.com/tikv/tikv/pull/7388)

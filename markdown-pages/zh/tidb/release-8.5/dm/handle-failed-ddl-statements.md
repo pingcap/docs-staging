@@ -1,41 +1,45 @@
 ---
-title: 使用 TiDB Data Migration 处理出错的 DDL 语句
-summary: 了解在使用 TiDB Data Migration 迁移数据时，如何处理出错的 DDL 语句。
+title: Handle Failed DDL Statements in TiDB Data Migration
+summary: Learn how to handle failed DDL statements when you're using the TiDB Data Migration tool to migrate data.
 ---
 
-# 使用 TiDB Data Migration 处理出错的 DDL 语句
+# Handle Failed DDL Statements in TiDB Data Migration
 
-本文介绍了如何使用 TiDB Data Migration (DM) 来处理出错的 DDL 语句。
+This document introduces how to handle failed DDL statements when you're using the TiDB Data Migration (DM) tool to migrate data.
 
-目前，TiDB 并不完全兼容所有的 MySQL 语法（详见 [DDL 的限制](/mysql-compatibility.md#ddl-的限制)）。当使用 DM 从 MySQL 迁移数据到 TiDB 时，如果 TiDB 不支持对应的 DDL 语句，可能会造成错误并中断迁移任务。在这种情况下，DM 提供 `binlog` 命令来恢复迁移。
+Currently, TiDB is not completely compatible with all MySQL syntax (see [the DDL statements supported by TiDB](/mysql-compatibility.md#ddl-operations)). Therefore, when DM is migrating data from MySQL to TiDB and TiDB does not support the corresponding DDL statement, an error might occur and break the migration process. In this case, you can use the `binlog` command of DM to resume the migration.
 
-## 使用限制
+## Restrictions
 
-如果业务不能接受下游 TiDB 跳过异常的 DDL 语句，也不接受使用其他 DDL 语句作为替代，不接受插入其他 DDL 语句，则不适合使用此方式进行处理。
+Do not use this command in the following situations:
 
-比如：`DROP PRIMARY KEY`，这种情况下，只能在下游重建一个（DDL 执行完后的）新表结构对应的表，并将原表的全部数据重新导入该新表。
+* It is unacceptable in the actual production environment that the failed DDL statement is skipped in the downstream TiDB.
+* The failed DDL statement cannot be replaced with other DDL statements.
+* Other DDL statements must not be injected into the downstream TiDB.
 
-## 支持场景
+For example, `DROP PRIMARY KEY`. In this scenario, you can only create a new table in the downstream with the new table schema (after executing the DDL statement), and re-import all the data into this new table.
 
-迁移过程中，上游执行了 TiDB 不支持的 DDL 语句并迁移到了 DM，造成迁移任务中断。
+## Supported scenarios
 
-- 如果业务能接受下游 TiDB 不执行该 DDL 语句，则使用 `binlog skip <task-name>` 跳过对该 DDL 语句的迁移以恢复迁移任务。
-- 如果业务能接受下游 TiDB 执行其他 DDL 语句来作为替代，则使用 `binlog replace <task-name>` 替代该 DDL 的迁移以恢复迁移任务。
-- 如果业务能接受下游 TiDB 插入执行其他 DDL 语句，则使用 `binlog inject <task-name>` 插入其他 DDL 以恢复迁移任务。
+During the migration, the DDL statement unsupported by TiDB is executed in the upstream and migrated to the downstream, and as a result, the migration task gets interrupted.
 
-## 命令介绍
+- If it is acceptable that this DDL statement is skipped in the downstream TiDB, then you can use `binlog skip <task-name>` to skip migrating this DDL statement and resume the migration.
+- If it is acceptable that this DDL statement is replaced with other DDL statements, then you can use `binlog replace <task-name>` to replace this DDL statement and resume the migration.
+- If it is acceptable that other DDL statements are injected to the downstream TiDB, then you can use `binlog inject <task-name>` to inject other DDL statements and resume the migration.
 
-使用 dmctl 手动处理出错的 DDL 语句时，主要使用的命令包括 `query-status`、`binlog`。
+## Commands
+
+When you use dmctl to manually handle the failed DDL statements, the commonly used commands include `query-status` and `binlog`.
 
 ### query-status
 
-`query-status` 命令用于查询当前 MySQL 实例内子任务及 relay 单元等的状态和错误信息，详见[查询状态](/dm/dm-query-status.md)。
+The `query-status` command is used to query the current status of items such as the subtask and the relay unit in each MySQL instance. For details, see [query status](/dm/dm-query-status.md).
 
 ### binlog
 
-`binlog` 命令管理和查看 binlog 操作。命令仅在 DM v6.0 及其以后版本支持，之前版本可使用 `handle-error` 命令。
+The `binlog` command is used to manage and show binlog operations. This command is only supported in DM v6.0 and later versions. For earlier versions, use the `handle-error` command.
 
-`binlog` 命令用法如下：
+The usage of `binlog` is as follows:
 
 ```bash
 binlog -h
@@ -64,33 +68,31 @@ Global Flags:
 Use "dmctl binlog [command] --help" for more information about a command.
 ```
 
-`binlog` 支持如下子命令：
+`binlog` supports the following sub-commands:
 
-+ `inject`：在 DDL binlog 位置插入 DDL 语句，binlog 位置指定方式参考 `-b, --binlog-pos`。
-+ `list`：查看 binlog 位置以及此位置之后的有效 inject/skip/replace 操作，binlog 位置指定方式参考 `-b, --binlog-pos`。
-+ `replace`：替代 DDL binlog 位置的 DDL 语句，binlog 位置指定方式参考 `-b, --binlog-pos`。
-+ `revert`：重置 binlog 位置的 inject/skip/replace 操作，仅在先前的操作没有最终生效前执行，binlog 位置指定方式参考 `-b, --binlog-pos`
-+ `skip`：跳过 binlog 位置的 DDL 语句, binlog 位置指定方式参考 `-b, --binlog-pos`。
+* `inject`: injects DDL statements into the current error event or a specific binlog position. To specify the binlog position, refer to `-b, --binlog-pos`.
+* `list`: lists all valid `inject`, `skip`, and `replace` operations at the current binlog position or after the current binlog position. To specify the binlog position, refer to `-b, --binlog-pos`.
+* `replace`: replaces the DDL statement at a specific binlog position with another DDL statement. To specify the binlog position, refer to `-b, --binlog-pos`.
+* `revert`: reverts the `inject`, `skip` or `replace` operation at a specified binlog operation, only if the previous operation does not take effect. To specify the binlog position, refer to `-b, --binlog-pos`.
+* `skip`: skips the DDL statement at a specific binlog position. To specify the binlog position, refer to `-b, --binlog-pos`.
 
-`binlog` 支持如下参数：
+`binlog` supports the following flags:
 
-+ `-b, --binlog-pos`：
-    - 类型：string。
-    - 指定 binlog 位置，表示操作将在 `binlog-pos` 与 binlog event 的 position 匹配时生效。若不指定，DM 会默认置为当前出错的 DDL 语句的 binlog 位置。
-    - 格式：`binlog-filename:binlog-pos`，例如 `mysql-bin|000001.000003:3270`。
-    - 在迁移执行出错后，binlog position 可直接从 `query-status` 返回的 `startLocation` 中的 `position` 获得；在迁移执行出错前，binlog position 可在上游 MySQL 中使用 [`SHOW BINLOG EVENTS`](https://dev.mysql.com/doc/refman/8.0/en/show-binlog-events.html) 获得。
++ `-b, --binlog-pos`:
+    - Type: string.
+    - Specifies a binlog position. When the position of the binlog event matches `binlog-pos`, the operation is executed. If it is not specified, DM automatically sets `binlog-pos` to the currently failed DDL statement.
+    - Format: `binlog-filename:binlog-pos`, for example, `mysql-bin|000001.000003:3270`.
+    - After the migration returns an error, the binlog position can be obtained from `position` in `startLocation` returned by `query-status`. Before the migration returns an error, the binlog position can be obtained by using [`SHOW BINLOG EVENTS`](https://dev.mysql.com/doc/refman/8.0/en/show-binlog-events.html) in the upstream MySQL instance.
 
-+ `-s, --source strings`：
-    - 类型：string。
-    - `source` 指定预设操作将生效的 MySQL 实例。
++ `-s, --source`:
+    - Type: string.
+    - Specifies the MySQL instance in which the preset operation is to be executed.
 
-+ 其他参数参考 `-h` 提示。
+## Usage examples
 
-## 使用示例
+### Skip DDL if the migration gets interrupted
 
-### 迁移中断执行跳过操作
-
-如需在迁移中断时执行跳过操作，可使用 `binlog skip` 命令：
+If you need to skip the DDL statement when the migration gets interrupted, run the `binlog skip` command:
 
 ```bash
 binlog skip -h
@@ -110,16 +112,16 @@ Global Flags:
   -s, --source strings      MySQL Source ID.
 ```
 
-#### 非合库合表场景
+#### Non-shard-merge scenario
 
-假设现在需要将上游的 `db1.tbl1` 表迁移到下游 TiDB，初始时表结构为：
+Assume that you need to migrate the upstream table `db1.tbl1` to the downstream TiDB. The initial table schema is:
 
 
 ```sql
 SHOW CREATE TABLE db1.tbl1;
 ```
 
-```
+```sql
 +-------+--------------------------------------------------+
 | Table | Create Table                                     |
 +-------+--------------------------------------------------+
@@ -131,22 +133,22 @@ SHOW CREATE TABLE db1.tbl1;
 +-------+--------------------------------------------------+
 ```
 
-此时，上游执行以下 DDL 操作修改表结构（将列的 DECIMAL(11, 3) 修改为 DECIMAL(10, 3)）：
+Now, the following DDL statement is executed in the upstream to alter the table schema (namely, alter DECIMAL(11, 3) of c2 into DECIMAL(10, 3)):
 
 
 ```sql
 ALTER TABLE db1.tbl1 CHANGE c2 c2 DECIMAL (10, 3);
 ```
 
-则会由于 TiDB 不支持该 DDL 语句而导致 DM 迁移任务中断，使用 `query-status <task-name>` 命令可看到如下错误：
+Because this DDL statement is not supported by TiDB, the migration task of DM gets interrupted. Execute the `query-status <task-name>` command, and you can see the following error:
 
 ```
 ERROR 8200 (HY000): Unsupported modify column: can't change decimal column precision
 ```
 
-假设业务上可以接受下游 TiDB 不执行此 DDL 语句（即继续保持原有的表结构），则可以通过使用 `binlog skip <task-name>` 命令跳过该 DDL 语句以恢复迁移任务。操作步骤如下：
+Assume that it is acceptable in the actual production environment that this DDL statement is not executed in the downstream TiDB (namely, the original table schema is retained). Then you can use `binlog skip <task-name>` to skip this DDL statement to resume the migration. The procedures are as follows:
 
-1. 使用 `binlog skip <task-name>` 跳过当前错误的 DDL 语句
+1. Execute `binlog skip <task-name>` to skip the currently failed DDL statement:
 
     
     ```bash
@@ -168,14 +170,14 @@ ERROR 8200 (HY000): Unsupported modify column: can't change decimal column preci
     }
     ```
 
-2. 使用 `query-status <task-name>` 查看任务状态
+2. Execute `query-status <task-name>` to view the task status:
 
     
     ```bash
     » query-status test
     ```
 
-    <details><summary> 执行结果 </summary>
+    <details><summary> See the execution result.</summary>
 
     ```
     {
@@ -222,23 +224,23 @@ ERROR 8200 (HY000): Unsupported modify column: can't change decimal column preci
 
     </details>
 
-    可以看到任务运行正常，错误的 DDL 被跳过。
+    You can see that the task runs normally and the wrong DDL is skipped.
 
-#### 合库合表场景
+#### Shard merge scenario
 
-假设现在存在如下四个上游表需要合并迁移到下游的同一个表 ``` `shard_db`.`shard_table` ```，任务模式为悲观协调模式：
+Assume that you need to merge and migrate the following four tables in the upstream to one same table ``` `shard_db`.`shard_table` ``` in the downstream. The task mode is "pessimistic".
 
-- MySQL 实例 1 内有 `shard_db_1` 库，包括 `shard_table_1` 和 `shard_table_2` 两个表。
-- MySQL 实例 2 内有 `shard_db_2` 库，包括 `shard_table_1` 和 `shard_table_2` 两个表。
+- MySQL instance 1 contains the `shard_db_1` schema, which includes the `shard_table_1` and `shard_table_2` tables.
+- MySQL instance 2 contains the `shard_db_2` schema, which includes the `shard_table_1` and `shard_table_2` tables.
 
-初始时表结构为：
+The initial table schema is:
 
 
 ```sql
 SHOW CREATE TABLE shard_db.shard_table;
 ```
 
-```
+```sql
 +-------+-----------------------------------------------------------------------------------------------------------+
 | Table | Create Table                                                                                              |
 +-------+-----------------------------------------------------------------------------------------------------------+
@@ -249,14 +251,14 @@ SHOW CREATE TABLE shard_db.shard_table;
 +-------+-----------------------------------------------------------------------------------------------------------+
 ```
 
-此时，在上游所有分表上都执行以下 DDL 操作修改表字符集
+Now, execute the following DDL statement to all upstream sharded tables to alter their character set:
 
 
 ```sql
 ALTER TABLE `shard_db_*`.`shard_table_*` CHARACTER SET LATIN1 COLLATE LATIN1_DANISH_CI;
 ```
 
-则会由于 TiDB 不支持该 DDL 语句而导致 DM 迁移任务中断，使用 `query-status` 命令可以看到 MySQL 实例 1 的 `shard_db_1`.`shard_table_1` 表和 MySQL 实例 2 的 `shard_db_2`.`shard_table_1` 表报错：
+Because this DDL statement is not supported by TiDB, the migration task of DM gets interrupted. Execute the `query-status` command, and you can see the following errors reported by the `shard_db_1`.`shard_table_1` table in MySQL instance 1 and the `shard_db_2`.`shard_table_1` table in MySQL instance 2:
 
 ```
 {
@@ -272,9 +274,9 @@ ALTER TABLE `shard_db_*`.`shard_table_*` CHARACTER SET LATIN1 COLLATE LATIN1_DAN
 }
 ```
 
-假设业务上可以接受下游 TiDB 不执行此 DDL 语句（即继续保持原有的表结构），则可以通过使用 `binlog skip <task-name>` 命令跳过该 DDL 语句以恢复迁移任务。操作步骤如下：
+Assume that it is acceptable in the actual production environment that this DDL statement is not executed in the downstream TiDB (namely, the original table schema is retained). Then you can use `binlog skip <task-name>` to skip this DDL statement to resume the migration. The procedures are as follows:
 
-1. 使用 `binlog skip <task-name>` 跳过 MySQL 实例 1 和实例 2 当前错误的 DDL 语句
+1. Execute `binlog skip <task-name>` to skip the currently failed DDL statements in MySQL instance 1 and 2:
 
     
     ```bash
@@ -302,7 +304,7 @@ ALTER TABLE `shard_db_*`.`shard_table_*` CHARACTER SET LATIN1 COLLATE LATIN1_DAN
     }
     ```
 
-2. 使用 `query-status <task-name>` 查看任务状态，可以看到 MySQL 实例 1 的 `shard_db_1`.`shard_table_2` 表和 MySQL 实例 2 的 `shard_db_2`.`shard_table_2` 表报错：
+2. Execute the `query-status` command, and you can see the errors reported by the `shard_db_1`.`shard_table_2` table in MySQL instance 1 and the `shard_db_2`.`shard_table_2` table in MySQL instance 2:
 
     ```
     {
@@ -318,11 +320,11 @@ ALTER TABLE `shard_db_*`.`shard_table_*` CHARACTER SET LATIN1 COLLATE LATIN1_DAN
     }
     ```
 
-3. 继续使用 `binlog skip <task-name>` 跳过 MySQL 实例 1 和实例 2 当前错误的 DDL 语句
+3. Execute `binlog skip <task-name>` again to skip the currently failed DDL statements in MySQL instance 1 and 2:
 
     
     ```bash
-    » binlog skip test
+    » handle-error test skip
     ```
 
     ```
@@ -346,14 +348,14 @@ ALTER TABLE `shard_db_*`.`shard_table_*` CHARACTER SET LATIN1 COLLATE LATIN1_DAN
     }
     ```
 
-4. 使用 `query-status <task-name>` 查看任务状态
+4. Use `query-status <task-name>` to view the task status:
 
     
     ```bash
     » query-status test
     ```
 
-    <details><summary> 执行结果 </summary>
+    <details><summary> See the execution result.</summary>
 
     ```
     {
@@ -434,11 +436,11 @@ ALTER TABLE `shard_db_*`.`shard_table_*` CHARACTER SET LATIN1 COLLATE LATIN1_DAN
 
     </details>
 
-    可以看到任务运行正常，无错误信息。四条 DDL 全部被跳过。
+    You can see that the task runs normally with no error and all four wrong DDL statements are skipped.
 
-### 迁移中断执行替代操作
+### Replace DDL if the migration gets interrupted
 
-如需在迁移中断时执行替代操作，可使用 `binlog replace` 命令：
+If you need to replace the DDL statement when the migration gets interrupted, run the `binlog replace` command:
 
 ```bash
 binlog replace -h
@@ -458,16 +460,16 @@ Global Flags:
   -s, --source strings      MySQL Source ID.
 ```
 
-#### 非合库合表场景
+#### Non-shard-merge scenario
 
-假设现在需要将上游的 `db1.tbl1` 表迁移到下游 TiDB，初始时表结构为：
+Assume that you need to migrate the upstream table `db1.tbl1` to the downstream TiDB. The initial table schema is:
 
 
 ```sql
 SHOW CREATE TABLE db1.tbl1;
 ```
 
-```
+```SQL
 +-------+-----------------------------------------------------------------------------------------------------------+
 | Table | Create Table                                                                                              |
 +-------+-----------------------------------------------------------------------------------------------------------+
@@ -478,14 +480,14 @@ SHOW CREATE TABLE db1.tbl1;
 +-------+-----------------------------------------------------------------------------------------------------------+
 ```
 
-此时，上游执行以下 DDL 操作增加新列，并添加 UNIQUE 约束
+Now, perform the following DDL operation in the upstream to add a new column with the UNIQUE constraint:
 
 
 ```sql
 ALTER TABLE `db1`.`tbl1` ADD COLUMN new_col INT UNIQUE;
 ```
 
-则会由于 TiDB 不支持该 DDL 语句而导致 DM 迁移任务中断，使用 `query-status` 命令可看到如下错误：
+Because this DDL statement is not supported by TiDB, the migration task gets interrupted. Execute the `query-status` command, and you can see the following error:
 
 ```
 {
@@ -494,9 +496,9 @@ ALTER TABLE `db1`.`tbl1` ADD COLUMN new_col INT UNIQUE;
 }
 ```
 
-我们将该 DDL 替换成两条等价的 DDL。操作步骤如下：
+You can replace this DDL statement with two equivalent DDL statements. The steps are as follows:
 
-1. 使用如下命令替换错误的 DDL 语句
+1. Replace the wrong DDL statement by the following command:
 
     
     ```bash
@@ -518,14 +520,14 @@ ALTER TABLE `db1`.`tbl1` ADD COLUMN new_col INT UNIQUE;
     }
     ```
 
-2. 使用 `query-status <task-name>` 查看任务状态
+2. Use `query-status <task-name>` to view the task status:
 
     
     ```bash
     » query-status test
     ```
 
-    <details><summary> 执行结果 </summary>
+    <details><summary> See the execution result.</summary>
 
     ```
     {
@@ -572,23 +574,23 @@ ALTER TABLE `db1`.`tbl1` ADD COLUMN new_col INT UNIQUE;
 
     </details>
 
-    可以看到任务运行正常，错误的 DDL 已被替换且执行成功。
+    You can see that the task runs normally and the wrong DDL statement is replaced by new DDL statements that execute successfully.
 
-#### 合库合表场景
+#### Shard merge scenario
 
-假设现在存在如下四个上游表需要合并迁移到下游的同一个表 ``` `shard_db`.`shard_table` ```，任务模式为悲观协调模式：
+Assume that you need to merge and migrate the following four tables in the upstream to one same table ``` `shard_db`.`shard_table` ``` in the downstream. The task mode is "pessimistic".
 
-- MySQL 实例 1 内有 `shard_db_1` 库，包括 `shard_table_1` 和 `shard_table_2` 两个表。
-- MySQL 实例 2 内有 `shard_db_2` 库，包括 `shard_table_1` 和 `shard_table_2` 两个表。
+- In the MySQL instance 1, there is a schema `shard_db_1`, which has two tables `shard_table_1` and `shard_table_2`.
+- In the MySQL instance 2, there is a schema `shard_db_2`, which has two tables `shard_table_1` and `shard_table_2`.
 
-初始时表结构为：
+The initial table schema is:
 
 
 ```sql
 SHOW CREATE TABLE shard_db.shard_table;
 ```
 
-```
+```sql
 +-------+-----------------------------------------------------------------------------------------------------------+
 | Table | Create Table                                                                                              |
 +-------+-----------------------------------------------------------------------------------------------------------+
@@ -599,14 +601,14 @@ SHOW CREATE TABLE shard_db.shard_table;
 +-------+-----------------------------------------------------------------------------------------------------------+
 ```
 
-此时，在上游所有分表上都执行以下 DDL 操作增加新列，并添加 UNIQUE 约束：
+Now, perform the following DDL operation to all upstream sharded tables to add a new column with the UNIQUE constraint:
 
 
 ```sql
 ALTER TABLE `shard_db_*`.`shard_table_*` ADD COLUMN new_col INT UNIQUE;
 ```
 
-则会由于 TiDB 不支持该 DDL 语句而导致 DM 迁移任务中断，使用 `query-status` 命令可以看到 MySQL 实例 1 的 `shard_db_1`.`shard_table_1` 表和 MySQL 实例 2 的 `shard_db_2`.`shard_table_1` 表报错：
+Because this DDL statement is not supported by TiDB, the migration task gets interrupted. Execute the `query-status` command, and you can see the following errors reported by the `shard_db_1`.`shard_table_1` table in MySQL instance 1 and the `shard_db_2`.`shard_table_1` table in MySQL instance 2:
 
 ```
 {
@@ -622,9 +624,9 @@ ALTER TABLE `shard_db_*`.`shard_table_*` ADD COLUMN new_col INT UNIQUE;
 }
 ```
 
-我们将该 DDL 替换成两条等价的 DDL。操作步骤如下：
+You can replace this DDL statement with two equivalent DDL statements. The steps are as follows:
 
-1. 使用如下命令分别替换 MySQL 实例 1 和实例 2 中错误的 DDL 语句
+1. Replace the wrong DDL statements respectively in MySQL instance 1 and MySQL instance 2 by the following commands:
 
     
     ```bash
@@ -666,7 +668,7 @@ ALTER TABLE `shard_db_*`.`shard_table_*` ADD COLUMN new_col INT UNIQUE;
     }
     ```
 
-2. 使用 `query-status <task-name>` 查看任务状态，可以看到 MySQL 实例 1 的 `shard_db_1`.`shard_table_2` 表和 MySQL 实例 2 的 `shard_db_2`.`shard_table_2` 表报错：
+2. Use `query-status <task-name>` to view the task status, and you can see the following errors reported by the `shard_db_1`.`shard_table_2` table in MySQL instance 1 and the `shard_db_2`.`shard_table_2` table in MySQL instance 2:
 
     ```
     {
@@ -680,7 +682,7 @@ ALTER TABLE `shard_db_*`.`shard_table_*` ADD COLUMN new_col INT UNIQUE;
     }
     ```
 
-3. 使用如下命令继续分别替换 MySQL 实例 1 和实例 2 中错误的 DDL 语句
+3. Execute `handle-error <task-name> replace` again to replace the wrong DDL statements in MySQL instance 1 and 2:
 
     
     ```bash
@@ -722,14 +724,14 @@ ALTER TABLE `shard_db_*`.`shard_table_*` ADD COLUMN new_col INT UNIQUE;
     }
     ```
 
-4. 使用 `query-status <task-name>` 查看任务状态
+4. Use `query-status <task-name>` to view the task status:
 
     
     ```bash
     » query-status test
     ```
 
-    <details><summary> 执行结果 </summary>
+    <details><summary> See the execution result.</summary>
 
     ```
     {
@@ -814,8 +816,8 @@ ALTER TABLE `shard_db_*`.`shard_table_*` ADD COLUMN new_col INT UNIQUE;
 
     </details>
 
-    可以看到任务运行正常，无错误信息。四条 DDL 全部被替换。
+    You can see that the task runs normally with no error and all four wrong DDL statements are replaced.
 
-### 其他命令
+### Other commands
 
-binlog 其他命令的使用，请参考上述 `binlog skip`、`binlog replace` 命令的使用方式。
+For the usage of other commands of `binlog`, refer to the `binlog skip` and `binlog replace` examples above.

@@ -1,79 +1,83 @@
 ---
-title: TiUP 常见运维操作
-summary: TiUP 是用于管理 TiDB 集群的工具，可以进行查看集群列表、启动、关闭、修改配置参数、查看状态等常见运维操作。操作简单方便，适合用于 TiDB 集群的管理。
+title: TiUP Common Operations
+summary: Learn the common operations to operate and maintain a TiDB cluster using TiUP.
 ---
 
-# TiUP 常见运维操作
+# TiUP Common Operations
 
-本文介绍使用 TiUP 运维 TiDB 集群的常见操作。
+This document describes the common operations when you operate and maintain a TiDB cluster using TiUP.
 
-## 查看集群列表
+## View the cluster list
 
-TiUP cluster 组件可以用来管理多个 TiDB 集群，在每个 TiDB 集群部署完毕后，该集群会出现在 TiUP 的集群列表里，可以使用 list 命令来查看。
+You can manage multiple TiDB clusters using the TiUP cluster component. When a TiDB cluster is deployed, the cluster appears in the TiUP cluster list.
+
+To view the list, run the following command:
 
 
 ```bash
 tiup cluster list
 ```
 
-## 启动集群
+## Start the cluster
 
-启动集群操作会按 PD -> TiKV -> TiDB -> TiFlash -> TiCDC -> Prometheus -> Grafana -> Alertmanager 的顺序启动整个 TiDB 集群所有组件：
+The components in the TiDB cluster are started in the following order:
+
+**PD > TiKV > TiDB > TiFlash > TiCDC > Prometheus > Grafana > Alertmanager**
+
+To start the cluster, run the following command:
 
 
 ```bash
 tiup cluster start ${cluster-name}
 ```
 
-> **注意：**
+> **Note:**
 >
-> 你需要将 `${cluster-name}` 替换成实际的集群名字，若忘记集群名字，可通过 `tiup cluster list` 查看。
+> Replace `${cluster-name}` with the name of your cluster. If you forget the cluster name, check it by running `tiup cluster list`.
 
-该命令支持通过 `-R` 和 `-N` 参数来只启动部分组件。
+You can start only some of the components by adding the `-R` or `-N` parameters in the command. For example:
 
-例如，下列命令只启动 PD 组件：
+- This command starts only the PD component:
 
+    
+    ```bash
+    tiup cluster start ${cluster-name} -R pd
+    ```
 
-```bash
-tiup cluster start ${cluster-name} -R pd
-```
+- This command starts only the PD components on the `1.2.3.4` and `1.2.3.5` hosts:
 
-下列命令只启动 `1.2.3.4` 和 `1.2.3.5` 这两台机器上的 PD 组件：
+    
+    ```bash
+    tiup cluster start ${cluster-name} -N 1.2.3.4:2379,1.2.3.5:2379
+    ```
 
-
-```bash
-tiup cluster start ${cluster-name} -N 1.2.3.4:2379,1.2.3.5:2379
-```
-
-> **注意：**
+> **Note:**
 >
-> 若通过 `-R` 和 `-N` 启动指定组件，需要保证启动顺序正确（例如需要先启动 PD 才能启动 TiKV），否则可能导致启动失败。
+> If you start the specified component by using the `-R` or `-N` parameters, make sure the starting order is correct. For example, start the PD component before the TiKV component. Otherwise, the start might fail.
 
-## 查看集群状态
+## View the cluster status
 
-集群启动之后需要检查每个组件的运行状态，以确保每个组件工作正常。TiUP 提供了 display 命令，节省了登录到每台机器上去查看进程的时间。
+After starting the cluster, check the status of each component to ensure that they work normally. TiUP provides the `display` command, so you do not have to log in to every machine to view the component status.
 
 
 ```bash
 tiup cluster display ${cluster-name}
 ```
 
-## 修改配置参数
+## Modify the configuration
 
-集群运行过程中，如果需要调整某个组件的参数，可以使用 `edit-config` 命令来编辑参数。具体的操作步骤如下：
+When the cluster is in operation, if you need to modify the parameters of a component, run the `edit-config` command. The detailed steps are as follows:
 
-1. 以编辑模式打开该集群的配置文件：
+1. Open the configuration file of the cluster in the editing mode:
 
     
     ```bash
     tiup cluster edit-config ${cluster-name}
     ```
 
-2. 设置参数：
+2. Configure the parameters:
 
-    首先确定配置的生效范围，有以下两种生效范围：
-
-    - 如果配置的生效范围为该组件全局，则配置到 `server_configs`。例如：
+    - If the configuration is globally effective for a component, edit `server_configs`:
 
         ```
         server_configs:
@@ -81,7 +85,7 @@ tiup cluster display ${cluster-name}
             log.slow-threshold: 300
         ```
 
-    - 如果配置的生效范围为某个节点，则配置到具体节点的 `config` 中。例如：
+    - If the configuration takes effect on a specific node, edit the configuration in `config` of the node:
 
         ```
         tidb_servers:
@@ -91,22 +95,22 @@ tiup cluster display ${cluster-name}
               log.slow-threshold: 300
         ```
 
-    参数的格式参考 [TiUP 配置参数模版](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml)。
+    For the parameter format, see the [TiUP parameter template](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml).
 
-    **配置项层次结构使用 `.` 表示**。
+    **Use `.` to represent the hierarchy of the configuration items**.
 
-    关于组件的更多配置参数说明，可参考 [tidb `config.toml.example`](https://github.com/pingcap/tidb/blob/release-8.5/pkg/config/config.toml.example)、[tikv `config.toml.example`](https://github.com/tikv/tikv/blob/release-8.5/etc/config-template.toml) 和 [pd `config.toml.example`](https://github.com/tikv/pd/blob/release-8.5/conf/config.toml)。
+    For more information on the configuration parameters of components, refer to [TiDB `config.toml.example`](https://github.com/pingcap/tidb/blob/release-8.5/pkg/config/config.toml.example), [TiKV `config.toml.example`](https://github.com/tikv/tikv/blob/release-8.5/etc/config-template.toml), and [PD `config.toml.example`](https://github.com/tikv/pd/blob/release-8.5/conf/config.toml).
 
-3. 执行 `reload` 命令滚动分发配置、重启相应组件：
+3. Rolling update the configuration and restart the corresponding components by running the `reload` command:
 
     
     ```bash
     tiup cluster reload ${cluster-name} [-N <nodes>] [-R <roles>]
     ```
 
-### 示例
+### Example
 
-如果要调整 tidb-server 中事务大小限制参数 `txn-total-size-limit` 为 `1G`，该参数位于 [performance](https://github.com/pingcap/tidb/blob/release-8.5/pkg/config/config.toml.example) 模块下，调整后的配置如下：
+If you want to set the transaction size limit parameter (`txn-total-size-limit` in the [performance](https://github.com/pingcap/tidb/blob/release-8.5/pkg/config/config.toml.example) module) to `1G` in tidb-server, edit the configuration as follows:
 
 ```
 server_configs:
@@ -114,11 +118,11 @@ server_configs:
     performance.txn-total-size-limit: 1073741824
 ```
 
-然后执行 `tiup cluster reload ${cluster-name} -R tidb` 命令滚动重启。
+Then, run the `tiup cluster reload ${cluster-name} -R tidb` command to rolling restart the TiDB component.
 
-## Hotfix 版本替换
+## Replace with a hotfix package
 
-常规的升级集群请参考[升级文档](/upgrade-tidb-using-tiup.md)，但是在某些场景下（例如 Debug），可能需要用一个临时的包替换正在运行的组件，此时可以用 `patch` 命令：
+For normal upgrade, see [Upgrade TiDB Using TiUP](/upgrade-tidb-using-tiup.md). But in some scenarios, such as debugging, you might need to replace the currently running component with a temporary package. To achieve this, use the `patch` command:
 
 
 ```bash
@@ -129,167 +133,173 @@ tiup cluster patch --help
 Replace the remote package with a specified package and restart the service
 
 Usage:
-  tiup cluster patch <cluster-name> <package-path> [flags]
+  cluster patch <cluster-name> <package-path> [flags]
 
 Flags:
-  -h, --help                   帮助信息
-  -N, --node strings           指定被替换的节点
-      --overwrite              在未来的 scale-out 操作中使用当前指定的临时包
-  -R, --role strings           指定被替换的服务类型
-      --transfer-timeout int   transfer leader 的超时时间
+  -h, --help                   help for patch
+  -N, --node strings           Specify the nodes
+      --overwrite              Use this package in the future scale-out operations
+  -R, --role strings           Specify the role
+      --transfer-timeout int   Timeout in seconds when transferring PD and TiKV store leaders (default 600)
 
 Global Flags:
-      --native-ssh        使用系统默认的 SSH 客户端
-      --wait-timeout int  等待操作超时的时间
-      --ssh-timeout int   SSH 连接的超时时间
-  -y, --yes               跳过所有的确认步骤
+
+      --native-ssh        Use the system's native SSH client
+      --wait-timeout int  Timeout of waiting the operation
+      --ssh-timeout int   Timeout in seconds to connect host via SSH, ignored for operations that don't need an SSH connection. (default 5)
+  -y, --yes               Skip all confirmations and assumes 'yes'
 ```
 
-例如，有一个 TiDB 实例的 hotfix 包放在 `/tmp/tidb-hotfix.tar.gz` 目录下。如果此时想要替换集群上的所有 TiDB 实例，则可以执行以下命令：
+If a TiDB hotfix package is in `/tmp/tidb-hotfix.tar.gz` and you want to replace all the TiDB packages in the cluster, run the following command:
 
 
 ```bash
 tiup cluster patch test-cluster /tmp/tidb-hotfix.tar.gz -R tidb
 ```
 
-或者只替换其中一个 TiDB 实例：
+You can also replace only one TiDB package in the cluster:
 
 
 ```bash
 tiup cluster patch test-cluster /tmp/tidb-hotfix.tar.gz -N 172.16.4.5:4000
 ```
 
-## 重命名集群
+## Rename the cluster
 
-部署并启动集群后，可以通过 `tiup cluster rename` 命令来对集群重命名：
+After deploying and starting the cluster, you can rename the cluster using the `tiup cluster rename` command:
 
 
 ```bash
 tiup cluster rename ${cluster-name} ${new-name}
 ```
 
-> **注意：**
+> **Note:**
 >
-> + 重命名集群会重启监控（Prometheus 和 Grafana）。
-> + 重命名集群之后 Grafana 可能会残留一些旧集群名的面板，需要手动删除这些面板。
+> + The operation of renaming a cluster restarts the monitoring system (Prometheus and Grafana).
+> + After a cluster is renamed, some panels with the old cluster name might remain on Grafana. You need to delete them manually.
 
-## 关闭集群
+## Stop the cluster
 
-关闭集群操作会按 Alertmanager -> Grafana -> Prometheus -> TiCDC -> TiFlash -> TiDB -> TiKV -> PD 的顺序关闭整个 TiDB 集群所有组件（同时也会关闭监控组件）：
+The components in the TiDB cluster are stopped in the following order (The monitoring component is also stopped):
+
+**Alertmanager > Grafana > Prometheus > TiCDC > TiFlash > TiDB > TiKV > PD**
+
+To stop the cluster, run the following command:
 
 
 ```bash
 tiup cluster stop ${cluster-name}
 ```
 
-和 `start` 命令类似，`stop` 命令也支持通过 `-R` 和 `-N` 参数来只停止部分组件。
+Similar to the `start` command, the `stop` command supports stopping some of the components by adding the `-R` or `-N` parameters. For example:
 
-例如，下列命令只停止 TiDB 组件：
+- This command stops only the TiDB component:
 
+    
+    ```bash
+    tiup cluster stop ${cluster-name} -R tidb
+    ```
 
-```bash
-tiup cluster stop ${cluster-name} -R tidb
-```
+- This command stops only the TiDB components on the `1.2.3.4` and `1.2.3.5` hosts:
 
-下列命令只停止 `1.2.3.4` 和 `1.2.3.5` 这两台机器上的 TiDB 组件：
+    
+    ```bash
+    tiup cluster stop ${cluster-name} -N 1.2.3.4:4000,1.2.3.5:4000
+    ```
 
+## Clean up cluster data
 
-```bash
-tiup cluster stop ${cluster-name} -N 1.2.3.4:4000,1.2.3.5:4000
-```
+The operation of cleaning up cluster data stops all the services and cleans up the data directory or/and log directory. The operation cannot be reverted, so proceed **with caution**.
 
-## 清除集群数据
+- Clean up the data of all services in the cluster, but keep the logs:
 
-此操作会关闭所有服务，并清空其数据目录或/和日志目录，并且无法恢复，需要**谨慎操作**。
+    
+    ```bash
+    tiup cluster clean ${cluster-name} --data
+    ```
 
-清空集群所有服务的数据，但保留日志：
+- Clean up the logs of all services in the cluster, but keep the data:
 
+    
+    ```bash
+    tiup cluster clean ${cluster-name} --log
+    ```
 
-```bash
-tiup cluster clean ${cluster-name} --data
-```
+- Clean up the data and logs of all services in the cluster:
 
-清空集群所有服务的日志，但保留数据：
+    
+    ```bash
+    tiup cluster clean ${cluster-name} --all
+    ```
 
-```bash
-tiup cluster clean ${cluster-name} --log
-```
+- Clean up the logs and data of all services except Prometheus:
 
-清空集群所有服务的数据和日志：
+    
+    ```bash
+    tiup cluster clean ${cluster-name} --all --ignore-role prometheus
+    ```
 
+- Clean up the logs and data of all services except the `172.16.13.11:9000` instance:
 
-```bash
-tiup cluster clean ${cluster-name} --all
-```
+    
+    ```bash
+    tiup cluster clean ${cluster-name} --all --ignore-node 172.16.13.11:9000
+    ```
 
-清空 Prometheus 以外的所有服务的日志和数据：
+- Clean up the logs and data of all services except the `172.16.13.12` node:
 
+    
+    ```bash
+    tiup cluster clean ${cluster-name} --all --ignore-node 172.16.13.12
+    ```
 
-```bash
-tiup cluster clean ${cluster-name} --all --ignore-role prometheus
-```
+## Destroy the cluster
 
-清空节点 `172.16.13.11:9000` 以外的所有服务的日志和数据：
-
-
-```bash
-tiup cluster clean ${cluster-name} --all --ignore-node 172.16.13.11:9000
-```
-
-清空部署在 `172.16.13.12` 以外的所有服务的日志和数据：
-
-
-```bash
-tiup cluster clean ${cluster-name} --all --ignore-node 172.16.13.12
-```
-
-## 销毁集群
-
-销毁集群操作会关闭服务，清空数据目录和部署目录，并且无法恢复，需要**谨慎操作**。
+The destroy operation stops the services and clears the data directory and deployment directory. The operation cannot be reverted, so proceed **with caution**.
 
 
 ```bash
 tiup cluster destroy ${cluster-name}
 ```
 
-## 从 Prometheus 切换到 VictoriaMetrics
+## Switch from Prometheus to VictoriaMetrics
 
-在大型集群中，Prometheus 在处理大量实例时可能会遇到性能瓶颈。从 TiUP 1.16.3 版本开始，TiUP 支持将指标监控组件从 Prometheus 切换为 VictoriaMetrics (VM)，以提供更好的可扩展性、更高的性能和更低的资源消耗。
+In large-scale clusters, Prometheus might encounter performance bottlenecks when handling a large number of instances. Starting from TiUP v1.16.3, TiUP supports switching the monitoring component from Prometheus to VictoriaMetrics (VM) to provide better scalability, higher performance, and lower resource consumption.
 
-### 在新部署中启用 VictoriaMetrics
+### Set up VictoriaMetrics for a new deployment
 
-默认情况下，TiUP 使用 Prometheus 作为指标监控组件。如果要在新部署中使用 VictoriaMetrics 替代 Prometheus，可以在拓扑文件中进行如下配置：
+By default, TiUP uses Prometheus as the metrics monitoring component. To use VictoriaMetrics instead of Prometheus in a new deployment, configure the topology file as follows:
 
 ```yaml
-# 监控服务器配置
+# Monitoring server configuration
 monitoring_servers:
-  # 监控服务器的 IP 地址
+  # IP address of the monitoring server
   - host: ip_address
     ...
     prom_remote_write_to_vm: true
     enable_prom_agent_mode: true
 
-# Grafana 服务器配置
+# Grafana server configuration
 grafana_servers:
-  # Grafana 服务器的 IP 地址
+  # IP address of the Grafana server
   - host: ip_address
     ...
     use_vm_as_datasource: true
 ```
 
-### 将现有部署迁移到 VictoriaMetrics
+### Migrate an existing deployment to VictoriaMetrics
 
-你可以在不中断服务的情况下完成迁移。TiUP 会将现有的指标数据保留在 Prometheus 中，将新的指标数据写入 VictoriaMetrics。
+You can perform the migration without affecting running instances. Existing metrics will remain in Prometheus, while TiUP will write new metrics to VictoriaMetrics.
 
-#### 启用 Prometheus 向 VictoriaMetrics 的远程写入
+#### Enable VictoriaMetrics remote write
 
-1. 编辑集群配置：
+1. Edit the cluster configuration:
 
     ```bash
     tiup cluster edit-config ${cluster-name}
     ```
 
-2. 在 `monitoring_servers` 配置下，添加 `prom_remote_write_to_vm: true`：
+2. Under `monitoring_servers`, set `prom_remote_write_to_vm` to `true`:
 
     ```yaml
     monitoring_servers:
@@ -298,21 +308,21 @@ grafana_servers:
         prom_remote_write_to_vm: true
     ```
 
-3. 重新加载配置使其生效：
+3. Reload the configuration to apply the changes:
 
     ```bash
     tiup cluster reload ${cluster-name} -R prometheus
     ```
 
-#### 切换 Grafana 默认数据源至 VictoriaMetrics
+#### Switch the default data source to VictoriaMetrics
 
-1. 编辑集群配置：
+1. Edit the cluster configuration:
 
     ```bash
     tiup cluster edit-config ${cluster-name}
     ```
 
-2. 在 `grafana_servers` 配置下，添加 `use_vm_as_datasource: true`：
+2. Under `grafana_servers`, set `use_vm_as_datasource` to `true`:
 
     ```yaml
     grafana_servers:
@@ -321,23 +331,23 @@ grafana_servers:
         use_vm_as_datasource: true
     ```
 
-3. 重新加载配置使其生效：
+3. Reload the configuration to apply the changes:
 
     ```bash
     tiup cluster reload ${cluster-name} -R grafana
     ```
 
-#### 查看切换前的历史指标（可选）
+#### View historical metrics generated before the switch (optional)
 
-如果需要查看切换前生成的历史指标数据，执行以下步骤切换 Grafana 的数据源：
+If you need to view historical metrics generated before the switch, switch the data source of Grafana as follows:
 
-1. 编辑集群配置：
+1. Edit the cluster configuration:
 
     ```bash
     tiup cluster edit-config ${cluster-name}
     ```
 
-2. 注释掉 `grafana_servers` 下的 `use_vm_as_datasource`：
+2. Under `grafana_servers`, comment out `use_vm_as_datasource`:
 
     ```yaml
     grafana_servers:
@@ -346,29 +356,27 @@ grafana_servers:
         # use_vm_as_datasource: true
     ```
 
-3. 重新加载配置使其生效：
+3. Reload the configuration to apply the changes:
 
     ```bash
     tiup cluster reload ${cluster-name} -R grafana
     ```
 
-4. 若需切换回 VictoriaMetrics，请重复[切换 Grafana 默认数据源至 VictoriaMetrics](#切换-grafana-默认数据源至-victoriametrics) 的步骤。
+4. To switch back to VictoriaMetrics, repeat the steps in [Switch the default data source to VictoriaMetrics](#switch-the-default-data-source-to-victoriametrics).
 
-### 清理旧指标和服务
+### Clean up old metrics and services
 
-在确认旧指标已过期的前提下，可按以下步骤移除相关冗余服务和文件，这不会影响集群的正常运行。
+After confirming that the old metrics have expired, you can perform the following steps to remove redundant services and files. This does not affect the running cluster.
 
-#### 将 Prometheus 设置为代理模式
+#### Set Prometheus to agent mode
 
-1. 编辑集群配置：
+1. Edit the cluster configuration:
 
     ```bash
     tiup cluster edit-config ${cluster-name}
     ```
 
-2. 设置代理模式，并确保相关参数已正确配置。
-
-    在 `monitoring_servers` 下设置 `enable_prom_agent_mode` 为 `true`，并确保 `prom_remote_write_to_vm` 和 `use_vm_as_datasource` 也正确设置：
+2. Under `monitoring_servers`, set `enable_prom_agent_mode` to `true`, and ensure you also set `prom_remote_write_to_vm` and `use_vm_as_datasource` correctly:
 
     ```yaml
     monitoring_servers:
@@ -376,22 +384,21 @@ grafana_servers:
         ...
         prom_remote_write_to_vm: true
         enable_prom_agent_mode: true
-
     grafana_servers:
       - host: ip_address
         ...
         use_vm_as_datasource: true
     ```
 
-3. 重新加载配置使其生效：
+3. Reload the configuration to apply the changes:
 
     ```bash
     tiup cluster reload ${cluster-name} -R prometheus
     ```
 
-#### 删除 Prometheus 旧数据目录
+#### Remove expired data directories
 
-1. 在配置文件中找到监控服务器的数据目录路径 `data_dir`：
+1. In the configuration file, locate the `data_dir` path of the monitoring server:
 
     ```yaml
     monitoring_servers:
@@ -400,7 +407,7 @@ grafana_servers:
         data_dir: "/tidb-data/prometheus-8249"
     ```
 
-2. 删除数据目录：
+2. Remove the data directory:
 
     ```bash
     rm -rf /tidb-data/prometheus-8249

@@ -1,56 +1,55 @@
 ---
 title: TiDB 4.0.1 Release Notes
-summary: TiDB 4.0.1 发布日期为 2020 年 6 月 12 日。新功能包括 TiKV 添加 `--advertise-status-addr` 启动参数，PD 支持内部代理和客户端自定义超时设置，TiFlash 支持新的排序规则框架和函数下推，以及 BR 增加集群版本检查。Bug 修复方面，TiKV 修复了多个问题，PD 修复了错误配置和 panic 问题，TiFlash 修复了默认值解析和时区计算错误的问题。
-aliases: ['/zh/tidb/dev/release-4.0.1/','/zh/tidb/v4.0/release-4.0.1','/docs-cn/dev/releases/release-4.0.1/','/zh/tidb/v5.4/release-4.0.1','/zh/tidb/v6.1/release-4.0.1','/zh/tidb/v6.5/release-4.0.1','/zh/tidb/v7.1/release-4.0.1','/zh/tidb/v7.5/release-4.0.1','/zh/tidb/v8.1/release-4.0.1']
+summary: TiDB 4.0.1 was released on June 12, 2020. New features include support for custom timeout for PD client and new collation framework in TiFlash. Bug fixes address issues with configuration, monitoring metrics, and store information retrieval. Backup & Restore (BR) now includes a version check to avoid compatibility issues.
 ---
 
 # TiDB 4.0.1 Release Notes
 
-发版日期：2020 年 6 月 12 日
+Release date: June 12, 2020
 
-TiDB 版本：4.0.1
+TiDB version: 4.0.1
 
-## 新功能
+## New Features
 
 + TiKV
 
-    - 添加 `--advertise-status-addr` 启动参数 [#8046](https://github.com/tikv/tikv/pull/8046)
+    - Add the `--advertise-status-addr` start flag to specify the status address to advertise [#8046](https://github.com/tikv/tikv/pull/8046)
 
 + PD
 
-    - 为内嵌的 TiDB Dashboard 添加内部代理的支持 [#2511](https://github.com/pingcap/pd/pull/2511)
-    - 添加对 PD 客户端自定义超时的设置 [#2509](https://github.com/pingcap/pd/pull/2509)
+    - Support the internal proxy for the built-in TiDB Dashboard [#2511](https://github.com/pingcap/pd/pull/2511)
+    - Support setting a custom timeout for PD client [#2509](https://github.com/pingcap/pd/pull/2509)
 
 + TiFlash
 
-    - 支持 TiDB `new collation framework` 排序规则框架
-    - 支持函数 `If`/`BitAnd/BitOr`/`BitXor/BitNot`/`Json_length` 下推到 TiFlash
-    - 支持 TiFlash 中对于大事务的 Resolve Lock 逻辑
+    - Support the TiDB new collation framework
+    - Support pushing down the `If`/`BitAnd/BitOr`/`BitXor/BitNot`/`Json_length` functions to TiFlash
+    - Support the Resolve Lock logic for large transactions in TiFlash
 
 + Tools
 
     - Backup & Restore (BR)
 
-        * 增加启动时集群版本检查，避免 BR 和 TiDB 集群不兼容的问题 [#311](https://github.com/pingcap/br/pull/311)
+        - Add a version check when starting BR to avoid the issue that BR and the TiDB cluster are incompatible [#311](https://github.com/pingcap/br/pull/311)
 
-## Bug 修复
+## Bug Fixes
 
 + TiKV
 
-    - 修复日志中 `use-unified-pool` 配置打印不正确的问题 [#7946](https://github.com/tikv/tikv/pull/7946)
-    - 修复 tikv-ctl 不支持相对路径的问题 [#7963](https://github.com/tikv/tikv/pull/7963)
-    - 修复点查监控指标不准确的问题 [#8033](https://github.com/tikv/tikv/pull/8033)
-    - 修复过时副本在网络隔离消除后不能销毁的问题 [#8006](https://github.com/tikv/tikv/pull/8006)
-    - 修复 `read index` 可能过时的问题 [#8043](https://github.com/tikv/tikv/pull/8043)
-    - 改善备份恢复文件操作的可靠性 [#7917](https://github.com/tikv/tikv/pull/7917)
+    - Fix the issue that the `use-unified-pool` configuration in the startup log is incorrectly printed [#7946](https://github.com/tikv/tikv/pull/7946)
+    - Fix the issue that the tikv-ctl does not support relative path [#7963](https://github.com/tikv/tikv/pull/7963)
+    - Fix the bug that the monitoring metric of Point Selects is inaccurate [#8033](https://github.com/tikv/tikv/pull/8033)
+    - Fix the issue that a peer might not be destroyed after the network isolation disappears [#8006](https://github.com/tikv/tikv/pull/8006)
+    - Fix the issue that a request for read index might get outdated commit index [#8043](https://github.com/tikv/tikv/pull/8043)
+    - Improve the reliability of backup and restore with S3 and GCS storages [#7917](https://github.com/tikv/tikv/pull/7917)
 
 + PD
 
-    - 防止某些场景下对 Placement Rules 的错误配置 [#2516](https://github.com/pingcap/pd/pull/2516)
-    - 修复删除 Placement Rules 可能引发 panic 的问题 [#2515](https://github.com/pingcap/pd/pull/2515)
-    - 修复当 Store 的已用空间为零时无法获取 Store 信息的 bug [#2474](https://github.com/pingcap/pd/pull/2474)
+    - Prevent misconfiguration of Placement Rules in some situations [#2516](https://github.com/pingcap/pd/pull/2516)
+    - Fix the issue that deleting the Placement Rule might cause panic [#2515](https://github.com/pingcap/pd/pull/2515)
+    - Fix a bug that the store information cannot be obtained when the store's used size is zero [#2474](https://github.com/pingcap/pd/pull/2474)
 
 + TiFlash
 
-    - 修复 TiFlash 中 Bit 类型列的 Default Value 解析不正确的问题
-    - 修复 TiFlash 对于 `1970-01-01 00:00:00 UTC` 在部分时区下计算错误的问题
+    - Fix the issue that default value of the `bit` type column in TiFlash is incorrectly parsed
+    - Fix the miscalculation of `1970-01-01 00:00:00 UTC` in some timezones in TiFlash

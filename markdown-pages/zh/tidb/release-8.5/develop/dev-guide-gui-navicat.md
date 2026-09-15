@@ -1,182 +1,165 @@
 ---
-title: 使用 Navicat 连接到 TiDB
-summary: 了解如何使用 Navicat 连接到 TiDB。
-aliases: ['/zh/tidb/stable/dev-guide-gui-navicat/','/zh/tidb/dev/dev-guide-gui-navicat/','/zh/tidbcloud/dev-guide-gui-navicat/']
+title: 使用 Navicat 连接 TiDB
+summary: 学习如何使用 Navicat 连接 TiDB。
 ---
 
-# 使用 Navicat 连接到 TiDB
+# 使用 Navicat 连接 TiDB
 
-TiDB 是一个兼容 MySQL 的数据库。[Navicat](https://www.navicat.com) 是为数据库用户提供的 GUI 工具集。本教程使用 [Navicat Premium](https://www.navicat.com/en/products/navicat-premium) 工具连接 TiDB。
+TiDB 是兼容 MySQL 的数据库，[Navicat](https://www.navicat.com) 是一套为数据库用户设计的 GUI 工具。本教程将使用 [Navicat Premium](https://www.navicat.com/en/products/navicat-premium) 工具连接 TiDB。
 
-在本文档中，你可以学习如何使用 Navicat 连接到 TiDB。
+在本教程中，你可以学习如何使用 Navicat 连接到你的 TiDB 集群。
 
-> **注意**
+> **注意：**
 >
-> 本文档适用于 TiDB Cloud Starter、TiDB Cloud Essential、TiDB Cloud Premium、TiDB Cloud Dedicated 和本地部署的 TiDB。
+> 本教程兼容 TiDB Cloud Starter、TiDB Cloud Essential、TiDB Cloud Dedicated 集群以及自托管 TiDB。
 
-## 前置需求
+## 前提条件
 
-为了能够顺利完成本文中的操作，你需要：
+完成本教程，你需要：
 
-- [Navicat Premium](https://www.navicat.com/en/products/navicat-premium) **17.1.6** 或以上版本。
-- 一个 Navicat Premium 的付费账号。
-- 准备一个 TiDB 集群。
+- [Navicat Premium](https://www.navicat.com) **17.1.6** 或更高版本。
+- 一个 Navicat Premium 付费账号。
+- 一个 TiDB 集群。
 
-**如果你还没有 TiDB 集群，可以按如下方式创建一个：**
+<CustomContent platform="tidb">
 
-- （推荐方式）[创建一个 TiDB Cloud Starter 实例](/develop/dev-guide-build-cluster-in-cloud.md)。
-- [部署一个本地测试 TiDB Self-Managed 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署一个生产 TiDB Self-Managed 集群](/production-deployment-using-tiup.md)。
+**如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-## 连接到 TiDB
+- （推荐）参照[创建 {} 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- 参照[部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或[部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
-根据不同的 TiDB 部署方式，使用不同的方法连接到 TiDB。
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
+**如果你还没有 TiDB 集群，可以按如下方式创建：**
+
+- （推荐）参照[创建 {} 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- 参照[部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或[部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
+
+</CustomContent>
+
+## 连接 TiDB
+
+根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
-<div label="TiDB Cloud Starter 或 Essential">
+<div label="{} 或 Essential">
 
-1. 在 TiDB Cloud 的 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，点击你目标 TiDB Cloud Starter 或 Essential 实例的名字，进入实例的 **Overview** 页面。
+1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称，进入集群概览页面。
 
-2. 点击右上角的 **Connect** 按钮，将会弹出连接对话框。
+2. 点击右上角的 **Connect**，弹出连接对话框。
 
-3. 确认对话框中的配置和你的运行环境一致。
+3. 确认连接对话框中的配置与你的操作环境一致。
 
-    - **Connection Type** 选择 `Public`。
-    - **Branch** 选择 `main`。
-    - **Connect With** 选择 `Navicat`。
-    - **Operating System** 为你的运行环境。
+    - **Connection Type** 设置为 `Public`。
+    - **Branch** 设置为 `main`。
+    - **Connect With** 设置为 `Navicat`。
+    - **Operating System** 与你的环境一致。
 
 4. 点击 **Generate Password** 生成一个随机密码。
 
-    > **建议：**
+    > **提示：**
     >
-    > 如果你之前已经生成过密码，可以直接使用原密码，或点击 **Reset Password** 重新生成密码。
+    > 如果你之前已经创建过密码，可以继续使用原密码，或点击 **Reset Password** 生成新密码。
 
-5. 启动 Navicat Premium，点击左上角的 **Connection**，在 **Vendor Filter** 中勾选 **PingCAP**，并双击右侧面板中的 **TiDB**。
+5. 启动 Navicat Premium，点击左上角的 **Connection**，在 **Vendor Filter** 列表中选择 **PingCAP**，在右侧面板双击 **TiDB**。
 
-    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-add-new-connection.png)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-add-new-connection.png)
 
 6. 在 **New Connection (TiDB)** 对话框中，配置以下连接参数：
 
-    - **Connection Name**：为该连接指定一个有意义的名称。
-    - **Host**：输入从 TiDB Cloud 连接对话框中的得到的 `HOST` 参数。
-    - **Port**：输入从 TiDB Cloud 连接对话框中的得到的 `PORT` 参数。
-    - **User Name**：输入从 TiDB Cloud 连接对话框中的得到的 `USERNAME` 参数。
-    - **Password**：输入第 4 步中生成的密码。
+    - **Connection Name**：为该连接命名，便于识别。
+    - **Host**：输入 TiDB Cloud 连接对话框中的 `HOST` 参数。
+    - **Port**：输入 TiDB Cloud 连接对话框中的 `PORT` 参数。
+    - **User Name**：输入 TiDB Cloud 连接对话框中的 `USERNAME` 参数。
+    - **Password**：输入 {} 集群的密码。
 
-    ![Navicat: configure connection general panel for TiDB Cloud Starter](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-connection-config-serverless-general.png)
+    ![Navicat: configure connection general panel for {}](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-serverless-general.png)
 
-7. 点击 **SSL** 选项卡，选择 **Use SSL**，**Use authentication** 以及 **Verify server certificate against CA** 复选框。并在 **CA Certificate** 字段中填入从 TiDB Cloud 连接对话框中获取的 `CA` 文件路径。
+7. 点击 **SSL** 标签页，勾选 **Use SSL**、**Use authentication** 和 **Verify server certificate against CA** 复选框。然后，将 TiDB Cloud 连接对话框中的 `CA` 文件选择到 **CA Certificate** 字段。
 
-    ![Navicat: configure connection SSL panel for TiDB Cloud Starter](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-connection-config-serverless-ssl.png)
+    ![Navicat: configure connection SSL panel for {}](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-serverless-ssl.png)
 
-8. 点击 **Test Connection** 以验证与你的目标 TiDB Cloud Starter 或 Essential 实例的连接。
+8. 点击 **Test Connection** 测试与 {} 集群的连接。
 
-9. 如果连接测试成功，你可以看到 **Connection Successful** 信息。点击 **OK** 完成连接配置。
-
-</div>
-<div label="TiDB Cloud Premium">
-
-1. 在 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，点击你目标 TiDB Cloud Premium 实例的名字，进入实例的 **Overview** 页面。
-
-2. 在左侧导航栏中，点击 **Settings** > **Networking**。
-
-3. 在 **Networking** 页面，点击 **Public Endpoint** 的 **Enable**，然后点击 **Add IP Address**。
-
-    确保你的客户端 IP 地址已添加到访问列表中。
-
-4. 在左侧导航栏中，点击 **Overview** 返回实例概览页面。
-
-5. 点击右上角的 **Connect** 按钮，将会弹出连接对话框。
-
-6. 在连接对话框中，从 **Connection Type** 下拉列表中选择 **Public**。
-
-    - 如果提示 Public Endpoint 正在开启，请等待该过程完成。
-    - 如果你尚未设置密码，请在对话框中点击 **Set Root Password**。
-    - 如果需要验证服务器证书或连接失败且需要 CA 证书，请点击 **CA cert** 下载证书。
-    - 除 **Public** 连接类型外，TiDB Cloud Premium 还支持 **Private Endpoint** 连接。详情请参阅[通过 AWS PrivateLink 连接到 TiDB Cloud Premium](https://docs.pingcap.com/tidbcloud/connect-to-premium-via-aws-private-endpoint/?plan=premium)。
-
-7. 启动 Navicat Premium，点击左上角的 **Connection**，在 **Vendor Filter** 中勾选 **PingCAP**，并双击右侧面板中的 **TiDB**。
-
-8. 在 **New Connection (TiDB)** 对话框中，配置以下连接参数：
-
-    - **Connection Name**：为该连接指定一个有意义的名称。
-    - **Host**：输入从 TiDB Cloud 连接对话框中获取的 `HOST` 参数。
-    - **Port**：输入从 TiDB Cloud 连接对话框中获取的 `PORT` 参数。
-    - **User Name**：输入从 TiDB Cloud 连接对话框中获取的 `USERNAME` 参数。
-    - **Password**：输入 TiDB Cloud Premium 实例的密码。
-
-9. 点击 **SSL** 选项卡，取消选择 **Use SSL** 复选框。
-
-10. 点击 **Test Connection** 以验证与 TiDB Cloud Premium 实例的连接。
-
-11. 如果连接测试成功，你可以看到 **Connection Successful** 信息。点击 **OK** 完成连接配置。
+9. 如果连接测试成功，你会看到 **Connection Successful** 消息。点击 **OK** 完成连接配置。
 
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1. 在 TiDB Cloud 的 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，点击你目标 TiDB Cloud Dedicated 集群的名字，进入集群的 **Overview** 页面。
+1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称，进入集群概览页面。
 
-2. 点击右上角的 **Connect** 按钮，将会弹出连接对话框。
+2. 点击右上角的 **Connect**，弹出连接对话框。
 
-3. 在连接对话框中，从 **Connection Type** 下拉列表中选择 **Public**。
+3. 在连接对话框中，从 **Connection Type** 下拉列表选择 **Public**。
 
-    如果你尚未配置 IP 访问列表，请在首次连接前点击 **Configure IP Access List** 或按照[配置 IP 访问列表（英文）](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
+    如果你还未配置 IP 访问列表，点击 **Configure IP Access List**，或参照 [Configure an IP Access List](https://docs.pingcap.com/tidbcloud/configure-ip-access-list) 进行首次连接前的配置。
 
-    除 **Public** 连接类型外，TiDB Cloud Dedicated 还支持 **Private Endpoint** 和 **VPC Peering** 连接类型。详情请参阅[连接 TiDB Cloud Dedicated 集群（英文）](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+    除了 **Public** 连接类型，TiDB Cloud Dedicated 集群还支持 **Private Endpoint** 和 **VPC Peering** 连接类型。更多信息参见 [Connect to Your TiDB Cloud Dedicated Cluster](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
-4. 点击 **CA cert** 下载 CA 文件。
+4. 点击 **CA cert** 下载 CA 证书。
 
-5. 启动 Navicat Premium，点击左上角的 **Connection**，在 **Vendor Filter** 中勾选 **PingCAP**，并双击右侧面板中的 **TiDB**。
+5. 启动 Navicat Premium，点击左上角的 **Connection**，在 **Vendor Filter** 列表中选择 **PingCAP**，在右侧面板双击 **TiDB**。
 
-    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-add-new-connection.png)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-add-new-connection.png)
 
 6. 在 **New Connection (TiDB)** 对话框中，配置以下连接参数：
 
-    - **Connection Name**：为该连接指定一个有意义的名称。
-    - **Host**: 输入从 TiDB Cloud 连接对话框中的得到的 `HOST` 参数。
-    - **Port**：输入从 TiDB Cloud 连接对话框中的得到的 `PORT` 参数。
-    - **User Name**: 输入从 TiDB Cloud 连接对话框中的得到的 `USERNAME` 参数。
+    - **Connection Name**：为该连接命名，便于识别。
+    - **Host**：输入 TiDB Cloud 连接对话框中的 `HOST` 参数。
+    - **Port**：输入 TiDB Cloud 连接对话框中的 `PORT` 参数。
+    - **User Name**：输入 TiDB Cloud 连接对话框中的 `USERNAME` 参数。
     - **Password**：输入 TiDB Cloud Dedicated 集群的密码。
 
-    ![Navicat: configure connection general panel for TiDB Cloud Dedicated](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-connection-config-dedicated-general.png)
+    ![Navicat: configure connection general panel for TiDB Cloud Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-dedicated-general.png)
 
-7. 点击 **SSL** 选项卡，选择 **Use SSL**，**Use authentication** 以及 **Verify server certificate against CA** 复选框。然后，在 **CA Certificate** 字段中选择第 4 步下载的 CA 文件。
+7. 点击 **SSL** 标签页，勾选 **Use SSL**、**Use authentication** 和 **Verify server certificate against CA** 复选框。然后，将第 4 步下载的 CA 文件选择到 **CA Certificate** 字段。
 
-    ![Navicat: configure connection SSL panel for TiDB Cloud Dedicated](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-connection-config-dedicated-ssl.png)
+    ![Navicat: configure connection SSL panel for TiDB Cloud Dedicated](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-dedicated-ssl.png)
 
-8. 点击 **Test Connection** 以验证与 TiDB Cloud Dedicated 集群的连接。
+8. **Test Connection** 测试与 TiDB Cloud Dedicated 集群的连接。
 
-9. 如果连接测试成功，你可以看到 **Connection Successful** 信息。点击 **OK** 完成连接配置。
+9. 如果连接测试成功，你会看到 **Connection Successful** 消息。点击 **OK** 完成连接配置。
 
 </div>
-<div label="本地部署 TiDB">
+<div label="TiDB Self-Managed">
 
-1. 启动 Navicat Premium，点击左上角的 **Connection**，在 **Vendor Filter** 中勾选 **PingCAP**，并双击右侧面板中的 **TiDB**。
+1. 启动 Navicat Premium，点击左上角的 **Connection**，在 **Vendor Filter** 列表中选择 **PingCAP**，在右侧面板双击 **TiDB**。
 
-    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-add-new-connection.png)
+    ![Navicat: add new connection](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-add-new-connection.png)
 
 2. 在 **New Connection (TiDB)** 对话框中，配置以下连接参数：
 
-    - **Connection Name**：为该连接指定一个有意义的名称。
-    - **Host**：输入本地部署 TiDB 集群的 IP 地址或域名。
-    - **Port**：输入本地部署 TiDB 集群的端口号。
-    - **User Name**：输入用于连接到 TiDB 的用户名。
-    - **Password**：输入用于连接到 TiDB 的密码。
+    - **Connection Name**：为该连接命名，便于识别。
+    - **Host**：输入你的自托管 TiDB 集群的 IP 地址或域名。
+    - **Port**：输入你的自托管 TiDB 集群的端口号。
+    - **User Name**：输入连接 TiDB 所用的用户名。
+    - **Password**：输入连接 TiDB 所用的密码。
 
-    ![Navicat: configure connection general panel for self-hosted TiDB](https://docs-download.pingcap.com/media/images/docs-cn/develop/navicat-premium-connection-config-self-hosted-general.png)
+    ![Navicat: configure connection general panel for self-hosted TiDB](https://docs-download.pingcap.com/media/images/docs/develop/navicat-premium-connection-config-self-hosted-general.png)
 
-3. 点击 **Test Connection** 以验证与本地部署 TiDB 集群的连接。
+3. 点击 **Test Connection** 测试与自托管 TiDB 集群的连接。
 
-4. 如果连接测试成功，你可以看到 **Connection Successful** 信息。点击 **OK** 完成连接配置。
+4. 如果连接测试成功，你会看到 **Connection Successful** 消息。点击 **OK** 完成连接配置。
 
 </div>
 </SimpleTab>
 
-## 下一步
+## 后续步骤
 
-- 你可以继续阅读[开发者文档](/develop/_index.md)，以获取更多关于 TiDB 应用开发的最佳实践。例如：[插入数据](/develop/dev-guide-insert-data.md)、[更新数据](/develop/dev-guide-update-data.md)、[删除数据](/develop/dev-guide-delete-data.md)、[单表读取](/develop/dev-guide-get-data-from-single-table.md)、[事务](/develop/dev-guide-transaction-overview.md)、[SQL 性能优化](/develop/dev-guide-optimize-sql-overview.md)等。
-- 如果你更倾向于参与课程进行学习，我们也提供专业的 [TiDB 开发者课程](https://pingkai.cn/learn)支持，并在考试后提供相应的[资格认证](https://learn.pingkai.cn/learner/certification-center)。
+- 通过 [开发者指南](/develop/dev-guide-overview.md) 各章节，学习 TiDB 应用开发最佳实践，例如 [插入数据](/develop/dev-guide-insert-data.md)、[更新数据](/develop/dev-guide-update-data.md)、[删除数据](/develop/dev-guide-delete-data.md)、[单表读取](/develop/dev-guide-get-data-from-single-table.md)、[事务](/develop/dev-guide-transaction-overview.md) 以及 [SQL 性能优化](/develop/dev-guide-optimize-sql-overview.md)。
+- 通过专业的 [TiDB 开发者课程](https://www.pingcap.com/education/)，考试通过后获得 [TiDB 认证](https://www.pingcap.com/education/certification/)。
 
-## 需要帮助?
+## 需要帮助？
 
-如果在开发的过程中遇到问题，可以在 [AskTUG 论坛](https://pingkai.cn/tidbcommunity/forum/?utm_source=docs-cn-dev-guide) 上提问，或从 PingCAP 官方或 TiDB 社区[获取支持](/support.md)。
+<CustomContent platform="tidb">
+
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或[提交支持工单](/support.md)。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或[提交支持工单](https://tidb.support.pingcap.com/)。
+
+</CustomContent>

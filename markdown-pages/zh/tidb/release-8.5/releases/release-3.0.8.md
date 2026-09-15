@@ -1,113 +1,112 @@
 ---
 title: TiDB 3.0.8 Release Notes
-summary: TiDB 3.0.8 发布，修复了 SQL 优化器、SQL 执行引擎、DDL、Server、Transaction、Monitor 等方面的多个问题。TiKV 也进行了多项修复和优化。PD 新增了一些功能，并升级了 etcd 版本。TiDB Ansible 进行了配置项回滚和优化，TiSpark 版本升级到 2.1.8。
-aliases: ['/zh/tidb/dev/release-3.0.8/','/zh/tidb/v3.0/release-3.0.8','/docs-cn/dev/releases/release-3.0.8/','/docs-cn/dev/releases/3.0.8/','/zh/tidb/v5.4/release-3.0.8','/zh/tidb/v6.1/release-3.0.8','/zh/tidb/v6.5/release-3.0.8','/zh/tidb/v7.1/release-3.0.8','/zh/tidb/v7.5/release-3.0.8','/zh/tidb/v8.1/release-3.0.8']
+summary: TiDB 3.0.8 was released on December 31, 2019. It includes various fixes and improvements for SQL optimizer, SQL execution engine, DDL, server, transaction, monitor, TiKV, PD, and TiDB Ansible. Notable changes include SQL binding plan fixes, error message optimizations, and support for certificate-based authentication. The default value of `tidb_txn_mode` variable is updated to `"pessimistic"`. PD also received performance optimizations and bug fixes. TiDB Ansible saw various logic optimizations and upgrades.
 ---
 
 # TiDB 3.0.8 Release Notes
 
-发版日期：2019 年 12 月 31 日
+Release date: December 31, 2019
 
-TiDB 版本：3.0.8
+TiDB version: 3.0.8
 
-TiDB Ansible 版本：3.0.8
+TiDB Ansible version: 3.0.8
 
 ## TiDB
 
-+ SQL 优化器
-    - 修复 SQL Binding 因为 cache 更新不及时，导致绑定计划错误的问题 [#13891](https://github.com/pingcap/tidb/pull/13891)
-    - 修复当 SQL 包含符号列表（类似于 `?, ?, ?` 这样的占位符）时，SQL Binding 可能失效的问题 [#14004](https://github.com/pingcap/tidb/pull/14004)
-    - 修复 SQL Binding 由于原 SQL 以 `;` 结尾而不能创建/删除的问题 [#14113](https://github.com/pingcap/tidb/pull/14113)
-    - 修复 `PhysicalUnionScan` 算子没有正确设置统计信息，导致查询计划可能选错的问题 [#14133](https://github.com/pingcap/tidb/pull/14133)
-    - 移除 `minAutoAnalyzeRatio` 约束使自动 analyze 更及时 [#14015](https://github.com/pingcap/tidb/pull/14015)
-+ SQL 执行引擎
-    - 修复 `INSERT/REPLACE/UPDATE ... SET ... = DEFAULT` 语法会报错的问题，修复 `DEFAULT` 表达式与虚拟生成列配合使用会报错的问题 [#13682](https://github.com/pingcap/tidb/pull/13682)
-    - 修复 `INSERT` 语句在进行字符串类型到浮点类型转换时，可能会报错的问题 [#14011](https://github.com/pingcap/tidb/pull/14011)
-    - 修复 `HashAgg` Executor 并发值未被正确初始化，导致聚合操作执行在一些情况下效率低的问题 [#13811](https://github.com/pingcap/tidb/pull/13811)
-    - 修复 group by item 被括号包含时执行报错的问题 [#13658](https://github.com/pingcap/tidb/pull/13658)
-    - 修复 TiDB 没有正确计算 group by item，导致某些情况下 OUTER JOIN 执行会报错的问题 [#14014](https://github.com/pingcap/tidb/pull/14014)
-    - 修复向 Range 分区表写入超过 Range 外的数据时，报错信息不准确的问题 [#14107](https://github.com/pingcap/tidb/pull/14107)
-    - 鉴于 MySQL 8 即将废弃 `PadCharToFullLength`，revert PR [#10124](https://github.com/pingcap/tidb/pull/10124) 并撤销 `PadCharToFullLength` 的效果，以避免一些特殊情况下查询结果不符合预期 [#14157](https://github.com/pingcap/tidb/pull/14157)
-    - 修复 `ExplainExec` 中没有保证 `close()` 的调用而导致 `EXPLAIN ANALYZE` 时造成 goroutine 泄露的问题 [#14226](https://github.com/pingcap/tidb/pull/14226)
++ SQL Optimizer
+    - Fix the wrong SQL binding plan caused by untimely cache updates [#13891](https://github.com/pingcap/tidb/pull/13891)
+    - Fix the issue that the SQL binding might be invalid when an SQL statement contains a symbol list [#14004](https://github.com/pingcap/tidb/pull/14004)
+    - Fix the issue that an SQL binding cannot be created or deleted because an SQL statement ends with `;` [#14113](https://github.com/pingcap/tidb/pull/14113)
+    - Fix the issue that a wrong SQL query plan might be selected because the `PhysicalUnionScan` operator sets wrong statistics [#14133](https://github.com/pingcap/tidb/pull/14133)
+    - Remove the `minAutoAnalyzeRatio` restriction to make `autoAnalyze` more timely [#14015](https://github.com/pingcap/tidb/pull/14015)
++ SQL Execution Engine
+    - Fix issues that the `INSERT/REPLACE/UPDATE ... SET ... = DEFAULT` syntax might report an error and combining the usage of the `DEFAULT` expression with a virtual generated column might report an error [#13682](https://github.com/pingcap/tidb/pull/13682)
+    - Fix the issue that the `INSERT` statement might report an error when converting a string to a float [#14011](https://github.com/pingcap/tidb/pull/14011)
+    - Fix the issue that sometimes the aggregate operation is low effective because the concurrency value of the `HashAgg` executor is incorrectly initialized [#13811](https://github.com/pingcap/tidb/pull/13811)
+    - Fix the issue that an error is reported in the execution of`group by item` when the clause is in the parentheses [#13658](https://github.com/pingcap/tidb/pull/13658)
+    - Fix the issue that the execution of `OUTER JOIN` might report an error because TiDB incorrectly calculates `group by item` [#14014](https://github.com/pingcap/tidb/pull/14014)
+    - Fix the issue that the error message is inaccurate when Range-exceeding data is written into Range partitioned tables [#14107](https://github.com/pingcap/tidb/pull/14107)
+    - Revert [PR #10124](https://github.com/pingcap/tidb/pull/10124) and cancel the `PadCharToFullLength` effect to avoid unexpected query results in special cases, considering that MySQL 8 will discard `PadCharToFullLength` soon [#14157](https://github.com/pingcap/tidb/pull/14157)
+    - Fix the goroutine leak issue when executing the `EXPLAIN ANALYZE` statement caused by unguaranteed `close()` calling in `ExplainExec` [#14226](https://github.com/pingcap/tidb/pull/14226)
 + DDL
-    - 优化 "change column"/"modify column" 的输出的报错信息，让人更容易理解 [#13796](https://github.com/pingcap/tidb/pull/13796)
-    - 新增 `SPLIT PARTITION TABLE` 语法，支持分区表切分 Region 功能 [#13929](https://github.com/pingcap/tidb/pull/13929)
-    - 修复创建索引时，没有正确检查长度，导致索引长度超过 3072 字节没有报错的问题 [#13779](https://github.com/pingcap/tidb/pull/13779)
-    - 修复由于分区表添加索引时若花费时间过长，可能导致输出 `GC life time is shorter than transaction duration` 报错信息的问题 [#14132](https://github.com/pingcap/tidb/pull/14132)
-    - 修复在 `DROP COLUMN`/`MODIFY COLUMN`/`CHANGE COLUMN` 时没有检查外键导致执行 `SELECT * FROM information_schema.KEY_COLUMN_USAGE` 语句时发生 panic 的问题 [#14105](https://github.com/pingcap/tidb/pull/14105)
+    - Optimize the error message output of `change column`/`modify column` to make it easier to understand [#13796](https://github.com/pingcap/tidb/pull/13796)
+    - Add the `SPLIT PARTITION TABLE` syntax to support splitting Regions for partitioned tables [#13929](https://github.com/pingcap/tidb/pull/13929)
+    - Fix the issue that the index length exceeds 3072 bytes and no error is reported because the index length is incorrectly checked when an index is created [#13779](https://github.com/pingcap/tidb/pull/13779)
+    - Fix the issue that the `GC life time is shorter than transaction duration` error message might be reported because it takes too much time to add an index in partitioned tables [#14132](https://github.com/pingcap/tidb/pull/14132)
+    - Fix the panic when `SELECT * FROM information_schema.KEY_COLUMN_USAGE` is executed because the foreign key is not checked when `DROP COLUMN`/`MODIFY COLUMN`/`CHANGE COLUMN` is executed [#14105](https://github.com/pingcap/tidb/pull/14105)
 + Server
-    - Statement Summary 功能改进：
-        - 新增大量的 SQL 指标字段，便于对 SQL 进行更详细的统计分析 [#14151](https://github.com/pingcap/tidb/pull/14151)，[#14168](https://github.com/pingcap/tidb/pull/14168)
-        - 新增 `stmt-summary.refresh-interval` 参数用于控制定期将 `events_statements_summary_by_digest` 表中过期的数据移到 `events_statements_summary_by_digest_history` 表，默认间隔时间：30min [#14161](https://github.com/pingcap/tidb/pull/14161)
-        - 新增 `events_statements_summary_by_digest_history` 表，保存从 `events_statements_summary_by_digest` 中过期的数据 [#14166](https://github.com/pingcap/tidb/pull/14166)
-    - 修复执行 RBAC 相关的内部 SQL 时，错误输出 binlog 的问题 [#13890](https://github.com/pingcap/tidb/pull/13890)
-    - 新增 `server-version` 配置项来控制修改 TiDB server 版本的功能 [#13906](https://github.com/pingcap/tidb/pull/13906)
-    - 新增通过 HTTP 接口恢复 TiDB binlog 写入功能 [#13892](https://github.com/pingcap/tidb/pull/13892)
-    - 将 `GRANT roles TO user` 所需要的权限由 `GrantPriv` 修改为 `ROLE_ADMIN` 或 `SUPER`，以与 MySQL 保持一致 [#13932](https://github.com/pingcap/tidb/pull/13932)
-    - 当 `GRANT` 语句未指定 database 名时，TiDB 行为由使用当前 database 改为报错 `No database selected`，与 MySQL 保持兼容 [#13784](https://github.com/pingcap/tidb/pull/13784)
-    - 修改 `REVOKE` 语句执行权限从 `SuperPriv` 改成用户只需要有对应 Schema 的权限，就可以执行 `REVOKE` 语句，与 MySQL 保持一致 [#13306](https://github.com/pingcap/tidb/pull/13306)
-    - 修复 `GRANT ALL` 语法在没有 `WITH GRANT OPTION` 时，错误地将 `GrantPriv` 授权给目标用户的问题 [#13943](https://github.com/pingcap/tidb/pull/13943)
-    - 修复 `LoadDataInfo` 中调用 `addRecord` 报错时，报错信息不包含导致 `LOAD DATA` 语句行为不正确信息的问题 [#13980](https://github.com/pingcap/tidb/pull/13980)
-    - 修复因查询中多个 SQL 语句共用同一个 `StartTime` 导致输出错误的慢查询信息的问题 [#13898](https://github.com/pingcap/tidb/pull/13898)
-    - 修复 `batchClient` 处理大事务时可能造成内存泄露的问题 [#14032](https://github.com/pingcap/tidb/pull/14032)
-    - 修复 `system_time_zone` 固定显示为 `CST` 的问题，现在 TiDB 的 `system_time_zone` 会从 `mysql.tidb` 表中的 `systemTZ` 获取 [#14086](https://github.com/pingcap/tidb/pull/14086)
-    - 修复 `GRANT ALL` 语法授予权限不完整（例如 `Lock_tables_priv`）的问题 [#14092](https://github.com/pingcap/tidb/pull/14092)
-    - 修复 `Priv_create_user` 权限不能 `CREATE ROLE` 和 `DROP ROLE`的问题 [#14088](https://github.com/pingcap/tidb/pull/14088)
-    - 将 `ErrInvalidFieldSize` 的错误码从 `1105(Unknow Error)` 改成 `3013` [#13737](https://github.com/pingcap/tidb/pull/13737)
-    - 新增 `SHUTDOWN` 命令用于停止 TiDB Server，并新增 `ShutdownPriv` 权限 [#14104](https://github.com/pingcap/tidb/pull/14104)
-    - 修复 `DROP ROLE` 语句的原子性问题，避免语句执行失败时，一些 ROLE 仍然被非预期地删除 [#14130](https://github.com/pingcap/tidb/pull/14130)
-    - 修复 3.0 以下版本升级到 3.0 时，`tidb_enable_window_function` 在 `SHOW VARIABLE` 语句的查询结果错误输出 1 的问题，修复后输出 0 [#14131](https://github.com/pingcap/tidb/pull/14131)
-    - 修复 TiKV 节点下线时，由于 `gcworker` 持续重试导致可能出现 goroutine 泄露的问题 [#14106](https://github.com/pingcap/tidb/pull/14106)
-    - 在慢日志中记录 Binlog 的 `Prewrite` 的时间，提升问题追查的易用性 [#14138](https://github.com/pingcap/tidb/pull/14138)
-    - `tidb_enable_table_partition` 变量支持 GLOBAL SCOPE 作用域 [#14091](https://github.com/pingcap/tidb/pull/14091)
-    - 修复新增权限时未正确将新增的权限赋予对应的用户导致用户权限可能缺失或者被误添加的问题 [#14178](https://github.com/pingcap/tidb/pull/14178)
-    - 修复当 TiKV 链接断开时，由于 `rpcClient` 不会关闭而导致 `CheckStreamTimeoutLoop` goroutine 会泄露的问题 [#14227](https://github.com/pingcap/tidb/pull/14227)
-    - 支持基于证书的身份验证（[使用文档](/certificate-authentication.md)）[#13955](https://github.com/pingcap/tidb/pull/13955)
+    - Statement Summary improvements:
+        - Add a large number of SQL metric fields to facilitate analyzing SQL statements in more detail [#14151](https://github.com/pingcap/tidb/pull/14151), [#14168](https://github.com/pingcap/tidb/pull/14168)
+        - Add the `stmt-summary.refresh-interval` parameter to control whether to move the stale data from the `events_statements_summary_by_digest` table to the `events_statements_summary_by_digest_history` table (the default interval: 30 minutes) [#14161](https://github.com/pingcap/tidb/pull/14161)
+        - Add the `events_statements_summary_by_digest_history` table to save the stale data in `events_statements_summary_by_digest` [#14166](https://github.com/pingcap/tidb/pull/14166)
+    - Fix the issue that the binlog is incorrectly output when RBAC-related internal SQL statements are executed [#13890](https://github.com/pingcap/tidb/pull/13890)
+    - Add the `server-version` configuration item to control the feature of modifying the TiDB server version [#13906](https://github.com/pingcap/tidb/pull/13906)
+    - Add the feature of using the HTTP interface to recover writing the TiDB binlog [#13892](https://github.com/pingcap/tidb/pull/13892)
+    - Update the privilege required by `GRANT roles TO user` from `GrantPriv` to `ROLE_ADMIN` or `SUPER`, to keep consistency with the MySQL behavior [#13932](https://github.com/pingcap/tidb/pull/13932)
+    - Modify the TiDB behavior from using the current database to reporting the `No database selected` error when the `GRANT` statement does not specify a database name, to keep compatibility with the MySQL behavior [#13784](https://github.com/pingcap/tidb/pull/13784)
+    - Modify the execution privilege for the `REVOKE` statement from `SuperPriv` to `REVOKE` being executable only if the user has the privilege for the corresponding schema, to keep consistency with the MySQL behavior [#13306](https://github.com/pingcap/tidb/pull/13306)
+    - Fix the issue that `GrantPriv` is mistakenly granted to the target user when the `GRANT ALL` syntax does not contain `WITH GRANT OPTION` [#13943](https://github.com/pingcap/tidb/pull/13943)
+    - Fix the issue that the error message does not contain the cause for the `LOAD DATA` statement's wrong behavior when `LoadDataInfo` fails to call `addRecord` [#13980](https://github.com/pingcap/tidb/pull/13980)
+    - Fix the issue that wrong slow query information is output because multiple SQL statements in a query share the same `StartTime` [#13898](https://github.com/pingcap/tidb/pull/13898)
+    - Fix the issue that the memory might leak when `batchClient` processes a large transaction [#14032](https://github.com/pingcap/tidb/pull/14032)
+    - Fix the issue that `system_time_zone` is always displayed as `CST` and now TiDB's `system_time_zone` is obtained from `systemTZ` in the `mysql.tidb` table [#14086](https://github.com/pingcap/tidb/pull/14086)
+    - Fix the issue that the `GRANT ALL` syntax does not grant all privileges to the user [#14092](https://github.com/pingcap/tidb/pull/14092)
+    - Fix the issue that the `Priv_create_user` privilege is invalid for `CREATE ROLE` and `DROP ROLE` [#14088](https://github.com/pingcap/tidb/pull/14088)
+    - Modify the error code of `ErrInvalidFieldSize` from `1105(Unknow Error)` to `3013` [#13737](https://github.com/pingcap/tidb/pull/13737)
+    - Add the `SHUTDOWN` command to stop a TiDB server and add the `ShutdownPriv` privilege [#14104](https://github.com/pingcap/tidb/pull/14104)
+    - Fix the atomicity issue for the `DROP ROLE` statement to avoid some roles being deleted unexpectedly when TiDB fails to execute a statement [#14130](https://github.com/pingcap/tidb/pull/14130)
+    - Fix the issue that the `tidb_enable_window_function` in the `SHOW VARIABLE` result incorrectly outputs `1` when a TiDB version is upgraded to 3.0, and replace the wrong result with `0` [#14131](https://github.com/pingcap/tidb/pull/14131)
+    - Fix the issue that the goroutine might leak because `gcworker` continuously retries when the TiKV node is offline [#14106](https://github.com/pingcap/tidb/pull/14106)
+    - Record the binlog `Prewrite` time in the slow query log to improve the usability for issue tracking [#14138](https://github.com/pingcap/tidb/pull/14138)
+    - Make the `tidb_enable_table_partition` variable support `GLOBAL SCOPE` [#14091](https://github.com/pingcap/tidb/pull/14091)
+    - Fix the issue that the user privilege might be missing or mistakenly added because the newly added privilege is not correctly granted to the corresponding user when a new privilege is added [#14178](https://github.com/pingcap/tidb/pull/14178)
+    - Fix the issue that the `CheckStreamTimeoutLoop` goroutine might leak because `rpcClient` does not close when the TiKV server is disconnected [#14227](https://github.com/pingcap/tidb/pull/14227)
+    - Support certificate-based authentication ([User document](/certificate-authentication.md)) [#13955](https://github.com/pingcap/tidb/pull/13955)
 + Transaction
-    - 创建新集群时，`tidb_txn_mode` 变量的默认值由 `""` 改为 `"pessimistic"` [#14171](https://github.com/pingcap/tidb/pull/14171)
-    - 修复悲观事务模式，事务重试时单条语句的等锁时间没有被重置导致等锁时间过长的问题 [#13990](https://github.com/pingcap/tidb/pull/13990)
-    - 修复悲观事务模式，因对没有修改的数据未加锁导致可能读到不正确数据的问题 [#14050](https://github.com/pingcap/tidb/pull/14050)
-    - 修复 mocktikv 中 prewrite 时，没有区分事务类型，导致重复的 insert value 约束检查 [#14175](https://github.com/pingcap/tidb/pull/14175)
-    - 修复 `session.TxnState` 状态为 `Invalid` 时，事务没有被正确处理导致 panic 的问题 [#13988](https://github.com/pingcap/tidb/pull/13988)
-    - 修复 mocktikv 中 `ErrConfclit` 结构未包含 `ConflictCommitTS` 的问题 [#14080](https://github.com/pingcap/tidb/pull/14080)
-    - 修复 TiDB 在 Resolve Lock 之后，没有正确处理锁超时检查导致事务卡住的问题 [#14083](https://github.com/pingcap/tidb/pull/14083)
+    - Update the default value of the `tidb_txn_mode` variable from `""` to `"pessimistic"` when a new cluster is created [#14171](https://github.com/pingcap/tidb/pull/14171)
+    - Fix the issue that the lock waiting time is too long for a pessimistic transaction because the lock waiting time for a single statement is not reset when a transaction is retried [#13990](https://github.com/pingcap/tidb/pull/13990)
+    - Fix the issue that wrong data might be read because unmodified data is unlocked for the pessimistic transaction mode [#14050](https://github.com/pingcap/tidb/pull/14050)
+    - Fix repeated insert value restriction checks because transaction types are not distinguished when prewrite is performed in mocktikv [#14175](https://github.com/pingcap/tidb/pull/14175)
+    - Fix the panic because transactions are not correctly handled when `session.TxnState` is `Invalid` [#13988](https://github.com/pingcap/tidb/pull/13988)
+    - Fix the issue that the `ErrConfclit` structure in mocktikv does not contain `ConflictCommitTS` [#14080](https://github.com/pingcap/tidb/pull/14080)
+    - Fix the issue that the transaction is blocked because TiDB does not correctly check lock timeout after resolving the lock [#14083](https://github.com/pingcap/tidb/pull/14083)
 + Monitor
-    - `LockKeys` 新增 `pessimistic_lock_keys_duration` 监控 [#14194](https://github.com/pingcap/tidb/pull/14194)
+    - Add the `pessimistic_lock_keys_duration` monitoring item in `LockKeys` [#14194](https://github.com/pingcap/tidb/pull/14194)
 
 ## TiKV
 
 + Coprocessor
-    - 修改 Coprocessor 遇到错误时输出日志的级别从 `error` 改成 `warn` [#6051](https://github.com/tikv/tikv/pull/6051)
-    - 修改统计信息采样数据的更新行为从直接更行改成先删除再插入，更新行为与 tidb-server 保持一致 [#6069](https://github.com/tikv/tikv/pull/6096)
+    - Modify the level of the output log from `error` to `warn` when an error occurs in Coprocessor [#6051](https://github.com/tikv/tikv/pull/6051)
+    - Modify the update behavior of statistics sampling data from directly updating the row to deleting before inserting, to keep consistency with the update behavior of tidb-server [#6069](https://github.com/tikv/tikv/pull/6096)
 + Raftstore
-    - 修复因重复向 `peerfsm` 发送 destroy 消息，`peerfsm` 被多次销毁导致 panic 的问题 [#6297](https://github.com/tikv/tikv/pull/6297)
-    - `split-region-on-table` 默认值由 `true` 改成 `false`，默认关闭按 table 切分 Region 的功能 [#6253](https://github.com/tikv/tikv/pull/6253)
+    - Fix the panic caused by repeatedly sending the `destroy` message to `peerfsm` and `peerfsm` being destroyed multiple times [#6297](https://github.com/tikv/tikv/pull/6297)
+    - Update the default value of `split-region-on-table` from `true` to `false` to disable splitting Regions by table by default [#6253](https://github.com/tikv/tikv/pull/6253)
 + Engine
-    - 修复极端条件下因 RocksDB 迭代器错误未正确处理导致可能返回空数据的问题 [#6326](https://github.com/tikv/tikv/pull/6326)
-+ 事务
-    - 修复悲观锁因锁未被正确清理导致 Key 无法写入数据，且出现 GC 卡住的问题 [#6354](https://github.com/tikv/tikv/pull/6354)
-    - 优化悲观锁等锁机制，提升锁冲突严重场景的性能 [#6296](https://github.com/tikv/tikv/pull/6296)
-+ 将内存分配库的默认值由 `tikv_alloc/default` 改成 `jemalloc` [#6206](https://github.com/tikv/tikv/pull/6206)
+    - Fix the issue that empty data might be returned because RocksDB iterator errors are not correctly processed in extreme conditions [#6326](https://github.com/tikv/tikv/pull/6326)
++ Transaction
+    - Fix the issue that TiKV fails to write data into keys and GC is blocked because the pessimistic locks are incorrectly cleaned up [#6354](https://github.com/tikv/tikv/pull/6354)
+    - Optimize the pessimistic lock waiting mechanism to improve the performance in scenarios where the lock conflict is severe [#6296](https://github.com/tikv/tikv/pull/6296)
++ Update the default value of `tikv_alloc` from `tikv_alloc/default` to `jemalloc` [#6206](https://github.com/tikv/tikv/pull/6206)
 
 ## PD
 
 - Client
-    - 新增通过 `context` 创建新 client，创建新 client 时可设置超时时间 [#1994](https://github.com/pingcap/pd/pull/1994)
-    - 新增创建 `KeepAlive` 连接功能 [#2035](https://github.com/pingcap/pd/pull/2035)
-- 优化`/api/v1/regions` API 的性能 [#1986](https://github.com/pingcap/pd/pull/1986)
-- 修复删除 `tombstone` 状态的 Store 可能会导致 panic 的隐患 [#2038](https://github.com/pingcap/pd/pull/2038)
-- 修复从磁盘加载 Region 信息时错误的将范围有重叠的 Region 删除的问题 [#2011](https://github.com/pingcap/pd/issues/2011)，[#2040](https://github.com/pingcap/pd/pull/2040)
-- 将 etcd 版本从 3.4.0 升级到 3.4.3 稳定版本，注意升级后只能通过 pd-recover 工具降级 [#2058](https://github.com/pingcap/pd/pull/2058)
+    - Support using `context` to create a client and setting the timeout duration when creating a new client [#1994](https://github.com/pingcap/pd/pull/1994)
+    - Support creating the `KeepAlive` connection [#2035](https://github.com/pingcap/pd/pull/2035)
+- Optimize the performance for the `/api/v1/regions` API [#1986](https://github.com/pingcap/pd/pull/1986)
+- Fix the issue that deleting stores in a `tombstone` state might cause a panic [#2038](https://github.com/pingcap/pd/pull/2038)
+- Fix the issue that overlapped Regions are mistakenly deleted when loading the Region information from disks [#2011](https://github.com/pingcap/pd/issues/2011), [#2040](https://github.com/pingcap/pd/pull/2040)
+- Upgrade etcd from v3.4.0 to v3.4.3 (note that after upgrading you can only degrade etcd using pd-recover) [#2058](https://github.com/pingcap/pd/pull/2058)
 
 ## Tools
 
 + TiDB Binlog
-    - 修复 Pump 由于没有收到 DDL 的 commit binlog 导致 binlog 被忽略的问题 [#853](https://github.com/pingcap/tidb-binlog/pull/853)
+    - Fix the issue that the binlog is ignored because Pump does not receive the DDL committed binlog [#853](https://github.com/pingcap/tidb-binlog/pull/853)
 
 ## TiDB Ansible
 
-- 回滚被精简的配置项 [#1053](https://github.com/pingcap/tidb-ansible/pull/1053)
-- 优化滚动升级时 TiDB 版本检查的逻辑 [#1056](https://github.com/pingcap/tidb-ansible/pull/1056)
-- TiSpark 版本升级到 2.1.8 [#1061](https://github.com/pingcap/tidb-ansible/pull/1061)
-- 修复 Grafana 监控上 PD 页面 Role 监控项显示不正确的问题 [#1065](https://github.com/pingcap/tidb-ansible/pull/1065)
-- 优化 Grafana 监控上 TiKV Detail 页面上 `Thread Voluntary Context Switches` 和 `Thread Nonvoluntary Context Switches` 监控项 [#1071](https://github.com/pingcap/tidb-ansible/pull/1071)
+- Revert the simplified configuration item [#1053](https://github.com/pingcap/tidb-ansible/pull/1053)
+- Optimize the logic for checking the TiDB version when performing a rolling update [#1056](https://github.com/pingcap/tidb-ansible/pull/1056)
+- Upgrade TiSpark to v2.1.8 [#1061](https://github.com/pingcap/tidb-ansible/pull/1061)
+- Fix the issue that the PD role monitoring item is wrongly displayed on Grafana [#1065](https://github.com/pingcap/tidb-ansible/pull/1065)
+- Optimize `Thread Voluntary Context Switches` and `Thread Nonvoluntary Context Switches` monitoring items on the TiKV Detail page on Grafana [#1071](https://github.com/pingcap/tidb-ansible/pull/1071)

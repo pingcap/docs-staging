@@ -1,13 +1,13 @@
 ---
 title: UNLOCK STATS
-summary: TiDB 数据库中 UNLOCK STATS 的使用概况。
+summary: 关于 TiDB 数据库中 UNLOCK STATS 使用情况的概述。
 ---
 
 # UNLOCK STATS
 
-`UNLOCK STATS` 语句用于解锁统计信息被锁定的表。
+`UNLOCK STATS` 用于解锁一个或多个表的统计信息。
 
-## 语法图
+## 语法概要
 
 ```ebnf+diagram
 UnlockStatsStmt ::=
@@ -25,9 +25,9 @@ PartitionNameList ::=
 
 ## 示例
 
-参考 [LOCK STATS](/sql-statements/sql-statement-lock-stats.md) 语句的示例来创建表 `t`，并锁定表 `t` 的统计信息。
+参考 [LOCK STATS](/sql-statements/sql-statement-lock-stats.md) 中的示例，创建一个表 `t` 并锁定其统计信息。
 
-解锁表 `t` 的统计信息，成功执行 `ANALYZE` 语句。
+解锁表 `t` 的统计信息后，可以成功执行 `ANALYZE`。
 
 ```sql
 mysql> UNLOCK STATS t;
@@ -45,9 +45,9 @@ mysql> SHOW WARNINGS;
 1 row in set (0.00 sec)
 ```
 
-参考 [LOCK STATS](/sql-statements/sql-statement-lock-stats.md) 语句的示例来创建表 `t`，并锁定表 `t` 的分区 `p1` 的统计信息。
+参考 [LOCK STATS](/sql-statements/sql-statement-lock-stats.md) 中的示例，创建一个表 `t` 并锁定其分区 `p1` 的统计信息。
 
-解锁分区 `p1` 的统计信息，成功执行 `ANALYZE` 语句。
+解锁分区 `p1` 的统计信息后，可以成功执行 `ANALYZE`。
 
 ```sql
 mysql> UNLOCK STATS t PARTITION p1;
@@ -67,10 +67,10 @@ mysql> SHOW WARNINGS;
 
 ## MySQL 兼容性
 
-该语句是 TiDB 对 MySQL 语法的扩展。
+该语句为 TiDB 对 MySQL 语法的扩展。
 
-## 另请参阅
+## 相关链接
 
-* [统计信息](/statistics.md#锁定统计信息)
+* [Statistics](/statistics.md#lock-statistics)
 * [LOCK STATS](/sql-statements/sql-statement-lock-stats.md)
 * [SHOW STATS_LOCKED](/sql-statements/sql-statement-show-stats-locked.md)

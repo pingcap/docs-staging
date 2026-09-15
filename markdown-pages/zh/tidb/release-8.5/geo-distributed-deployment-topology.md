@@ -1,171 +1,52 @@
 ---
-title: 跨数据中心部署拓扑
-summary: 介绍跨数据中心部署 TiDB 集群的拓扑结构。
+title: Geo-distributed Deployment topology
+summary: Learn the geo-distributed deployment topology of TiDB.
 ---
 
-# 跨数据中心部署拓扑
+# Geo-Distributed Deployment Topology
 
-本文以典型的两地三中心为例，介绍跨数据中心部署的拓扑以及关键参数。本文示例所涉及的城市是上海（即 `sha`）和北京（即 `bja` 和 `bjb`）。
+This document takes the typical architecture of three data centers (DC) in two cities as an example, and introduces the geo-distributed deployment architecture and the key configuration. The cities used in this example are Shanghai (referred to as `sha`) and Beijing (referred to as `bja` and `bjb`).
 
-## 拓扑信息
+## Topology information
 
-|实例 | 个数 | 物理机配置 | BJ IP | SH IP |配置 |
+| Instance | Count | Physical machine configuration | BJ IP | SH IP | Configuration |
 | :-- | :-- | :-- | :-- | :-- | :-- |
-| TiDB |5 | 16 VCore 32GB * 1 | 10.0.1.1 <br/> 10.0.1.2 <br/> 10.0.1.3 <br/> 10.0.1.4 | 10.0.1.5 | 默认端口 <br/>  全局目录配置 |
-| PD | 5 | 4 VCore 8GB * 1 |10.0.1.6 <br/> 10.0.1.7 <br/> 10.0.1.8 <br/> 10.0.1.9 | 10.0.1.10 | 默认端口 <br/> 全局目录配置 |
-| TiKV | 5 | 16 VCore 32GB 4TB (nvme ssd) * 1 | 10.0.1.11 <br/> 10.0.1.12 <br/> 10.0.1.13 <br/> 10.0.1.14 | 10.0.1.15 | 默认端口 <br/> 全局目录配置 |
-| Monitoring & Grafana | 1 | 4 VCore 8GB * 1 500GB (ssd) | 10.0.1.16 || 默认端口 <br/> 全局目录配置 |
+| TiDB | 5 | 16 VCore 32GB * 1 | 10.0.1.1 <br/> 10.0.1.2 <br/> 10.0.1.3 <br/> 10.0.1.4 | 10.0.1.5 | Default port <br/> Global directory configuration |
+| PD | 5 | 4 VCore 8GB * 1 | 10.0.1.6 <br/> 10.0.1.7 <br/> 10.0.1.8 <br/> 10.0.1.9 | 10.0.1.10 | Default port <br/> Global directory configuration |
+| TiKV | 5 | 16 VCore 32GB 4TB (nvme ssd) * 1 | 10.0.1.11 <br/> 10.0.1.12 <br/> 10.0.1.13 <br/> 10.0.1.14 | 10.0.1.15 | Default port <br/> Global directory configuration |
+| Monitoring & Grafana | 1 | 4 VCore 8GB * 1 500GB (ssd) | 10.0.1.16 | | Default port <br/> Global directory configuration |
 
-> **注意：**
+> **Note:**
 >
-> 该表中拓扑实例的 IP 为示例 IP。在实际部署时，请替换为实际的 IP。
+> The IP addresses of the instances are given as examples only. In your actual deployment, replace the IP addresses with your actual IP addresses.
 
-### 拓扑模版
+### Topology templates
 
-<details>
-<summary>跨机房配置模板</summary>
+- [The geo-distributed topology template](https://github.com/pingcap/docs/blob/master/config-templates/geo-redundancy-deployment.yaml)
 
-```yaml
-# Tip: PD priority needs to be manually set using the PD-ctl client tool. such as, member Leader_priority PD-name numbers.
-# Global variables are applied to all deployments and used as the default value of
-# the deployments if a specific deployment value is missing.
-#
-# Abbreviations used in this example:
-# sh: Shanghai Zone
-# bj: Beijing Zone
-# sha: Shanghai Datacenter A
-# bja: Beijing Datacenter A
-# bjb: Beijing Datacenter B
+For detailed descriptions of the configuration items in the above TiDB cluster topology file, see [Topology Configuration File for Deploying TiDB Using TiUP](/tiup/tiup-cluster-topology-reference.md).
 
-global:
-  user: "tidb"
-  ssh_port: 22
-  deploy_dir: "/tidb-deploy"
-  data_dir: "/tidb-data"
-monitored:
-  node_exporter_port: 9100
-  blackbox_exporter_port: 9115
-  deploy_dir: "/tidb-deploy/monitored-9100"
-server_configs:
-  tidb:
-    log.level: debug
-    log.slow-query-file: tidb-slow.log
-  tikv:
-    server.grpc-compression-type: gzip
-    readpool.storage.use-unified-pool: true
-    readpool.storage.low-concurrency: 8
-  pd:
-    replication.location-labels: ["zone","dc","rack","host"]
-    replication.max-replicas: 5
-    label-property:  # TiDB 5.2 及以上版本默认不支持 label-property 配置。若要设置副本策略，请使用 Placement Rules。
-      reject-leader:
-        - key: "dc"
-          value: "sha"
-pd_servers:
- - host: 10.0.1.6
- - host: 10.0.1.7
- - host: 10.0.1.8
- - host: 10.0.1.9
- - host: 10.0.1.10
-tidb_servers:
- - host: 10.0.1.1
- - host: 10.0.1.2
- - host: 10.0.1.3
- - host: 10.0.1.4
- - host: 10.0.1.5
-tikv_servers:
- - host: 10.0.1.11
-   ssh_port: 22
-   port: 20160
-   status_port: 20180
-   deploy_dir: "/tidb-deploy/tikv-20160"
-   data_dir: "/tidb-data/tikv-20160"
-   config:
-     server.labels:
-       zone: bj
-       dc: bja
-       rack: rack1
-       host: host1
- - host: 10.0.1.12
-   ssh_port: 22
-   port: 20161
-   status_port: 20181
-   deploy_dir: "/tidb-deploy/tikv-20161"
-   data_dir: "/tidb-data/tikv-20161"
-   config:
-     server.labels:
-       zone: bj
-       dc: bja
-       rack: rack1
-       host: host2
- - host: 10.0.1.13
-   ssh_port: 22
-   port: 20160
-   status_port: 20180
-   deploy_dir: "/tidb-deploy/tikv-20160"
-   data_dir: "/tidb-data/tikv-20160"
-   config:
-     server.labels:
-       zone: bj
-       dc: bjb
-       rack: rack1
-       host: host1
- - host: 10.0.1.14
-   ssh_port: 22
-   port: 20161
-   status_port: 20181
-   deploy_dir: "/tidb-deploy/tikv-20161"
-   data_dir: "/tidb-data/tikv-20161"
-   config:
-     server.labels:
-       zone: bj
-       dc: bjb
-       rack: rack1
-       host: host2
- - host: 10.0.1.15
-   ssh_port: 22
-   port: 20160
-   deploy_dir: "/tidb-deploy/tikv-20160"
-   data_dir: "/tidb-data/tikv-20160"
-   config:
-     server.labels:
-       zone: sh
-       dc: sha
-       rack: rack1
-       host: host1
-     readpool.storage.use-unified-pool: true
-     readpool.storage.low-concurrency: 10
-     raftstore.raft-min-election-timeout-ticks: 50
-     raftstore.raft-max-election-timeout-ticks: 60
-monitoring_servers:
- - host: 10.0.1.16
-grafana_servers:
- - host: 10.0.1.16
-```
+### Key parameters
 
-</details>
+This section describes the key parameter configuration of the TiDB geo-distributed deployment.
 
-以上 TiDB 集群拓扑文件中，详细的配置项说明见[通过 TiUP 部署 TiDB 集群的拓扑文件配置](/tiup/tiup-cluster-topology-reference.md)。
+#### TiKV parameters
 
-### 关键参数配置
+- The gRPC compression format (`none` by default):
 
-本节介绍跨数据中心部署 TiDB 集群的关键参数配置。
-
-#### TiKV 参数
-
-- 设置 gRPC 的压缩格式，默认为 `none`。为提高跨机房部署场景的目标节点间 gRPC 包的传输速度，建议设置为 gzip 格式。
+    To increase the transmission speed of gRPC packages between geo-distributed target nodes, set this parameter to `gzip`.
 
     ```yaml
     server.grpc-compression-type: gzip
     ```
 
-- label 配置
+- The label configuration:
 
-    由于采用跨机房部署 TiKV，为了避免物理机宕机导致 Raft Group 默认的 5 副本中丢失 3 副本，使集群不可用的问题，可以通过 label 来实现 PD 智能调度，保证同中心、同机柜、同机器 TiKV 实例不会出现 Raft Group 有 3 副本的情况。
+    Since TiKV is deployed across different data centers, if the physical machines go down, the Raft Group might lose three of the default five replicas, which causes the cluster unavailability. To address this issue, you can configure the labels to enable the smart scheduling of PD, which ensures that the Raft Group does not allow three replicas to be located in TiKV instances on the same machine in the same cabinet of the same data center.
 
-- TiKV 配置
+- The TiKV configuration:
 
-    相同物理机配置相同的 host 级别 label 信息：
+    The same host-level label information is configured for the same physical machine.
 
     ```yaml
     config:
@@ -176,32 +57,32 @@ grafana_servers:
         host: host2
     ```
 
-- 防止异地 TiKV 节点发起不必要的 Raft 选举，需要将异地 TiKV 节点发起选举时经过最少的 tick 个数和最多经过的 tick 个数都调大，这两个参数默认设置均为 `0`。
+- To prevent remote TiKV nodes from launching unnecessary Raft elections, it is required to increase the minimum and maximum number of ticks that the remote TiKV nodes need to launch an election. The two parameters are set to `0` by default.
 
     ```yaml
     raftstore.raft-min-election-timeout-ticks: 50
     raftstore.raft-max-election-timeout-ticks: 60
     ```
 
-> **注意:**
+> **Note:** 
 >
-> 通过 `raftstore.raft-min-election-timeout-ticks` 和 `raftstore.raft-max-election-timeout-ticks` 为 TiKV 节点配置较大的 election timeout tick 可以大幅降低该节点上的 Region 成为 Leader 的概率。但在发生灾难的场景中，如果部分 TiKV 节点宕机，而其它存活的 TiKV 节点 Raft 日志落后，此时只有这个配置了较大的 election timeout tick 的 TiKV 节点上的 Region 能成为 Leader。由于此 TiKV 节点上的 Region 需要至少等待 `raftstore.raft-min-election-timeout-ticks` 设置的时间后才能发起选举，因此尽量避免将此配置值设置得过大，以免在这种场景下影响集群的可用性。
+> Using `raftstore.raft-min-election-timeout-ticks` and `raftstore.raft-max-election-timeout-ticks` to configure larger election timeout ticks for a TiKV node can significantly decrease the likelihood of Regions on that node becoming Leaders. However, in a disaster scenario where some TiKV nodes are offline and the remaining active TiKV nodes lag behind in Raft logs, only Regions on this TiKV node with large election timeout ticks can become Leaders. Because Regions on this TiKV node must wait for at least the duration set by `raftstore.raft-min-election-timeout-ticks` before initiating an election, it is recommended to avoid setting these values excessively large to prevent potential impact on the cluster availability in such scenarios.
 
-#### PD 参数
+#### PD parameters
 
-- PD 元数据信息记录 TiKV 集群的拓扑信息，根据四个维度调度 Raft Group 副本。
+- The PD metadata information records the topology of the TiKV cluster. PD schedules the Raft Group replicas on the following four dimensions:
 
     ```yaml
     replication.location-labels: ["zone","dc","rack","host"]
     ```
 
-- 调整 Raft Group 的副本数据量为 5，保证集群的高可用性。
+- To ensure high availability of the cluster, adjust the number of Raft Group replicas to be `5`:
 
     ```yaml
     replication.max-replicas: 5
     ```
 
-- 拒绝异地机房 TiKV 的 Raft 副本选举为 Leader。
+- Forbid the remote TiKV Raft replica being elected as Leader:
 
     ```yaml
     label-property:
@@ -210,13 +91,13 @@ grafana_servers:
               value: "sha"
     ```
 
-    > **注意：**
-    >
-    > TiDB 5.2 及以上版本默认不支持 `label-property` 配置。若要设置副本策略，请使用 [Placement Rules](/configure-placement-rules.md)。
+   > **Note:**
+   >
+   > Since TiDB 5.2, the `label-property` configuration is not supported by default. To set the replica policy, use the [placement rules](/configure-placement-rules.md).
+   
+For the further information about labels and the number of Raft Group replicas, see [Schedule Replicas by Topology Labels](/schedule-replicas-by-topology-labels.md).
 
-有关 Label 的使用和 Raft Group 副本数量，详见[通过拓扑 label 进行副本调度](/schedule-replicas-by-topology-labels.md)。
-
-> **注意：**
+> **Note:**
 >
-> - 无需手动创建配置文件中的 `tidb` 用户，TiUP cluster 组件会在目标主机上自动创建该用户。可以自定义用户，也可以和中控机的用户保持一致。
-> - 如果部署目录配置为相对路径，会部署在用户的 Home 目录下。
+> - You do not need to manually create the `tidb` user in the configuration file. The TiUP cluster component automatically creates the `tidb` user on the target machines. You can customize the user, or keep the user consistent with the control machine.
+> - If you configure the deployment directory as a relative path, the cluster will be deployed in the home directory of the user.

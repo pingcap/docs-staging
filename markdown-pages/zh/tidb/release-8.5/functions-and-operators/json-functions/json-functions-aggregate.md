@@ -1,21 +1,21 @@
 ---
 title: 聚合 JSON 值的 JSON 函数
-summary: 了解聚合 JSON 值的 JSON 函数。
+summary: 了解用于聚合 JSON 值的 JSON 函数。
 ---
 
 # 聚合 JSON 值的 JSON 函数
 
-本文档介绍 TiDB [聚合函数](/functions-and-operators/aggregate-group-by-functions.md)中专门用于处理 JSON 的聚合函数。
+本页列出的函数属于 TiDB 支持的 [聚合函数](/functions-and-operators/aggregate-group-by-functions.md) 的一部分，但专门用于处理 JSON。
 
-TiDB 支持使用 MySQL 8.0 中提供的[两个 JSON 聚合函数](https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html)。
+TiDB 支持 MySQL 8.0 中提供的 [两种聚合 JSON 函数](https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html)。
 
 ## `JSON_ARRAYAGG()`
 
-`JSON_ARRAYAGG(key)` 函数可以根据给定的 `key` 将 `key` 值聚合到一个 JSON 数组中。`key` 通常为表达式或列名。
+`JSON_ARRAYAGG(key)` 函数根据给定的 `key` 将 key 的值聚合为一个 JSON 数组。`key` 通常是一个表达式或列名。
 
 示例：
 
-在下面示例中，表格一列中的两条记录被聚合到一个 JSON 数组中。
+这里将表中一列的两行数据聚合为一个 JSON 数组。
 
 ```sql
 SELECT JSON_ARRAYAGG(v) FROM (SELECT 1 'v' UNION SELECT 2);
@@ -32,11 +32,11 @@ SELECT JSON_ARRAYAGG(v) FROM (SELECT 1 'v' UNION SELECT 2);
 
 ## `JSON_OBJECTAGG()`
 
-`JSON_OBJECTAGG(key,value)` 函数可以根据给定的 `key` 和 `value` 将 `key` 值和 `value` 值聚合成一个 JSON 对象。`key` 和 `value` 通常为表达式或列名。
+`JSON_OBJECTAGG(key,value)` 函数根据给定的 `key` 和 `value` 将 key 和对应的 value 聚合为一个 JSON 对象。`key` 和 `value` 通常都是一个表达式或列名。
 
 示例：
 
-首先创建两个表，并在其中添加几行数据。
+首先，创建两个表并插入几行数据。
 
 ```sql
 CREATE TABLE plants (
@@ -68,7 +68,7 @@ VALUES
 (3, "thorns","no");
 ```
 
-查看创建的表格的结果。
+现在你可以查看已创建的表的内容。
 
 ```sql
 TABLE plants;
@@ -104,7 +104,7 @@ TABLE plant_attributes;
 7 rows in set (0.00 sec)
 ```
 
-你可以使用 `JSON_OBJECTAGG()` 函数来处理这些数据。在下面示例中，你可以看到每个 Group 中，多个键/值对被聚合成一个 JSON 对象。
+你可以使用 `JSON_OBJECTAGG()` 函数处理这些数据。如下所示，对于每个分组，多个 key/value 对被聚合为一个 JSON 对象。
 
 ```sql
 SELECT
@@ -128,7 +128,7 @@ GROUP BY
 3 rows in set (0.00 sec)
 ```
 
-## 另请参阅
+## 参见
 
-- [JSON 函数](/functions-and-operators/json-functions.md)
+- [JSON 函数概览](/functions-and-operators/json-functions.md)
 - [JSON 数据类型](/data-type-json.md)

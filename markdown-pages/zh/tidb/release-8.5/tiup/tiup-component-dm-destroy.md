@@ -1,34 +1,34 @@
 ---
 title: tiup dm destroy
-summary: tiup dm destroy 命令用于销毁集群，包括停止集群、删除日志目录、部署目录和数据目录。语法为 tiup dm destroy <cluster-name>。选项 -h, --help 用于输出帮助信息。输出为 tiup-dm 的执行日志。
+summary: The `tiup dm destroy` command stops the cluster, deletes log, deployment, and data directories for each service, and also deletes parent directories created by `tiup-dm`. The syntax is `tiup dm destroy <cluster-name> [flags]`. The option `-h, --help` prints help information. The output is the execution log of tiup-dm.
 ---
 
 # tiup dm destroy
 
-当业务下线之后，如果想将集群占有的机器释放出来让给其他业务使用，需要清理掉集群上的数据以及部署的二进制文件。`tiup dm destroy` 命令会执行以下操作销毁集群：
+After an application goes offline, if you want to release the machines occupied by the cluster for use by other applications, you need to clean up the data on the cluster and the deployed binary files. To destroy the cluster, the `tiup dm destroy` command performs the following operations:
 
-- 停止集群
-- 对于每个服务，删除其日志目录，部署目录，数据目录
-- 如果各个服务的数据目录/部署目录的父目录是由 tiup-dm 创建的，也一并删除
+- Stops the cluster.
+- For each service, delete its log directory, deployment directory, and data directory.
+- If the parent directory of the data directory or deployment directory of each service is created by `tiup-dm`, also delete the parent directory.
 
-## 语法
+## Syntax
 
 ```shell
 tiup dm destroy <cluster-name> [flags]
 ```
 
-`<cluster-name>` 为要销毁的集群名字。
+`<cluster-name>`: the name of the cluster to be destroyed.
 
-## 选项
+## Option
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints the help information.
+- Data type: `Boolean`
+- Default: false
 
-## 输出
+## Output
 
-tiup-dm 的执行日志。
+The execution log of the tiup-dm.
 
-[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)
+[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)

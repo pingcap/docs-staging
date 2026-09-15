@@ -1,13 +1,13 @@
 ---
-title: TiDB Data Migration 生成自签名证书
-summary: 了解如何生成自签名证书。
+title: Generate Self-signed Certificates for TiDB Data Migration
+summary: Use `openssl` to generate self-signed certificates.
 ---
 
-# TiDB Data Migration 生成自签名证书
+# Generate Self-signed Certificates for TiDB Data Migration
 
-本文档提供使用 `openssl` 为 TiDB Data Migration (DM) 生成自签名证书的一个示例，你也可以根据自己的需求生成符合要求的证书和密钥。
+This document provides an example of using `openssl` to generate a self-signed certificate for TiDB Data Migration (DM). You can also generate certificates and keys that meet requirements according to your demands.
 
-假设实例集群拓扑如下：
+Assume that the topology of the instance cluster is as follows:
 
 | Name  | Host IP      | Services   |
 | ----- | -----------  | ---------- |
@@ -18,84 +18,82 @@ summary: 了解如何生成自签名证书。
 | node5 | 172.16.10.15 | DM-worker2 |
 | node6 | 172.16.10.16 | DM-worker3 |
 
-## 安装 OpenSSL
+## Install OpenSSL
 
-对于 Debian 或 Ubuntu 操作系统：
+- For Debian or Ubuntu OS:
 
+    
+    ```bash
+    apt install openssl
+    ```
 
-```bash
-apt install openssl
-```
+- For RedHat or CentOS OS:
 
-对于 RedHat 或 CentOS 操作系统：
+    
+    ```bash
+    yum install openssl
+    ```
 
+You can also refer to OpenSSL's official [download document](https://www.openssl.org/source/) for installation.
 
-```bash
-yum install openssl
-```
+## Generate the CA certificate
 
-也可以参考 OpenSSL 官方的[下载文档](https://www.openssl.org/source/)进行安装。
+A certificate authority (CA) is a trusted entity that issues digital certificates. In practice, contact your administrator to issue the certificate or use a trusted CA. CA manages multiple certificate pairs. Here you only need to generate an original pair of certificates as follows.
 
-## 生成 CA 证书
-
-CA 的作用是签发证书。实际情况中，请联系你的管理员签发证书或者使用信任的 CA 机构。CA 会管理多个证书对，这里只需生成原始的一对证书，步骤如下：
-
-1. 生成 CA 密钥：
+1. Generate the CA key:
 
     
     ```bash
     openssl genrsa -out ca-key.pem 4096
     ```
 
-2. 生成 CA 证书：
+2. Generate the CA certificates:
 
     
     ```bash
     openssl req -new -x509 -days 1000 -key ca-key.pem -out ca.pem
     ```
 
-3. 验证 CA 证书：
+3. Validate the CA certificates:
 
     
     ```bash
     openssl x509 -text -in ca.pem -noout
     ```
 
-## 签发各个组件的证书
+## Issue certificates for individual components
 
-### 集群中可能使用到的证书
+### Certificates that might be used in the cluster
 
-- master certificate 由 DM-master 使用，为其他组件验证 DM-master 身份。
-- worker certificate 由 DM-worker 使用，为其他组件验证 DM-worker 身份。
-- client certificate 由 dmctl 使用，用于 DM-master、DM-worker 验证客户端。
+- The `master` certificate used by DM-master to authenticate DM-master for other components.
+- The `worker` certificate used by DM-worker to authenticate DM-worker for other components.
+- The `client` certificate used by dmctl to authenticate clients for DM-master and DM-worker.
 
-### 为 DM-master 签发证书
+### Issue certificates for DM-master
 
-给 DM-master 实例签发证书的步骤如下：
+To issue a certificate to a DM-master instance, perform the following steps:
 
-1. 生成该证书对应的私钥：
+1. Generate the private key corresponding to the certificate:
 
     
     ```bash
     openssl genrsa -out master-key.pem 2048
     ```
 
-2. 拷贝一份 OpenSSL 的配置模板文件。
-
-    模板文件可能存在多个位置，请以实际位置为准：
+2. Make a copy of the OpenSSL configuration template file (Refer to the actual location of your template file because it might have more than one location):
 
     
     ```bash
     cp /usr/lib/ssl/openssl.cnf .
     ```
 
-    如果不知道实际位置，请在根目录下查找：
+    If you do not know the actual location, look for it in the root directory:
 
     ```bash
     find / -name openssl.cnf
     ```
 
-3. 编辑 `openssl.cnf`，在 `[ req ]` 字段下加入 `req_extensions = v3_req`，然后在 `[ v3_req ]` 字段下加入 `subjectAltName = @alt_names`。最后新建一个字段，根据前述的集群拓扑编辑 `Subject Alternative Name` (SAN) 的信息：
+3. Edit `openssl.cnf`, add `req_extensions = v3_req` under the `[ req ]` field, and add `subjectAltName = @alt_names` under the `[ v3_req ]` field. Finally, create a new field and edit the information of `Subject Alternative Name` (SAN) according to the cluster topology description above.
 
     ```
     [ alt_names ]
@@ -105,38 +103,38 @@ CA 的作用是签发证书。实际情况中，请联系你的管理员签发�
     IP.4 = 172.16.10.13
     ```
 
-    目前支持以下 SAN 检查项：
+    The following checking items of SAN are currently supported:
 
     - `IP`
     - `DNS`
     - `URI`
 
-    > **注意：**
+    > **Note:**
     >
-    > 如果要使用 `0.0.0.0` 等特殊 IP 用于连接通讯，也需要将其加入到 `alt_names` 中。
+    > If a special IP such as `0.0.0.0` is to be used for connection or communication, you must also add it to `alt_names`.
 
-4. 保存 `openssl.cnf` 文件后，生成证书请求文件（在这一步中提供 `Common Name (e.g. server FQDN or YOUR name) []:` 输入时，可以为该证书指定 Common Name (CN)，如 `dm`。其作用是让服务端验证接入的客户端的身份，各个组件默认不会开启验证，需要在配置文件中启用该功能才生效）：
+4. Save the `openssl.cnf` file, and generate the certificate request file: (When giving input to `Common Name (e.g. server FQDN or YOUR name) []:`, you assign a Common Name (CN) to the certificate, such as `dm`. It is used by the server to validate the identity of the client. Each component does not enable the validation by default. You can enable it in the configuration file.)
 
     
     ```bash
     openssl req -new -key master-key.pem -out master-cert.pem -config openssl.cnf
     ```
 
-5. 签发生成证书：
+5. Issue and generate the certificate:
 
     
     ```bash
     openssl x509 -req -days 365 -CA ca.pem -CAkey ca-key.pem -CAcreateserial -in master-cert.pem -out master-cert.pem -extensions v3_req -extfile openssl.cnf
     ```
 
-6. 验证证书携带 SAN 字段信息（可选）：
+6. Verify that the certificate includes the SAN field (optional):
 
     
     ```bash
     openssl x509 -text -in master-cert.pem -noout
     ```
 
-7. 确认在当前目录下得到如下文件：
+7. Confirm that the following files exist in your current directory:
 
     ```
     ca.pem
@@ -144,29 +142,29 @@ CA 的作用是签发证书。实际情况中，请联系你的管理员签发�
     master-key.pem
     ```
 
-> **注意：**
+> **Note:**
 >
-> 为 DM-worker 组件签发证书的过程类似，此文档不再赘述。
+> The process of issuing certificates for the DM-worker instance is similar and will not be repeated in this document.
 
-### 为 dmctl 签发证书
+### Issue certificates for the client (dmctl)
 
-为客户端签发证书的步骤如下。
+To issue a certificate to the client (dmctl), perform the following steps:
 
-1. 生成该证书对应的私钥：
+1. Generate the private key corresponding to the certificate:
 
     
     ```bash
     openssl genrsa -out client-key.pem 2048
     ```
 
-2. 生成证书请求文件（在这一步也可以为该证书指定 Common Name，其作用是让服务端验证接入的客户端的身份，默认不会开启对各个组件的验证，需要在配置文件中启用该功能才生效）
+2. Generate the certificate request file (in this step, you can also assign a Common Name to the certificate, which is used to allow the server to validate the identity of the client. Each component does not enable the validation by default, and you can enable it in the configuration file):
 
     
     ```bash
     openssl req -new -key client-key.pem -out client-cert.pem
     ```
 
-3. 签发生成证书：
+3. Issue and generate the certificate:
 
     
     ```bash

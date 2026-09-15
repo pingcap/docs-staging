@@ -1,30 +1,27 @@
 ---
-title: TiDB Lightning 监控告警
-summary: TiDB Lightning 支持使用Prometheus采集监控指标。监控配置需手动部署，配置方法在 tidb-lightning.toml 中。Grafana 面板可用于监控速度、进度、资源使用和存储空间。监控指标包括计数器和直方图，用于计算引擎文件数量、闲置 worker、KV 编码器、处理过的表、引擎文件和 Chunks的状态，以及导入每个表所需时间等。
+title: TiDB Lightning Monitoring
+summary: Learn about the monitor configuration and monitoring metrics of TiDB Lightning.
 ---
 
-# TiDB Lightning 监控告警
+# TiDB Lightning Monitoring
 
-`tidb-lightning` 支持使用 [Prometheus](https://prometheus.io/) 采集监控指标 (metrics)。本文主要介绍 TiDB Lightning 的监控配置与监控指标。
+`tidb-lightning` supports metrics collection via [Prometheus](https://prometheus.io/). This document introduces the monitor configuration and monitoring metrics of TiDB Lightning.
 
-## 监控配置
+## Monitor configuration
 
-如果是手动部署 TiDB Lightning，则参照以下步骤进行配置。
+If TiDB Lightning is manually installed, follow the instructions below.
 
-只要 Prometheus 能发现 `tidb-lightning` 和 `tikv-importer` 的监控地址，就能收集对应的监控指标。
-
-监控的端口可在 `tidb-lightning.toml` 中配置：
+The metrics of `tidb-lightning` can be gathered directly by Prometheus as long as it is discovered. You can set the metrics port in `tidb-lightning.toml`:
 
 ```toml
 [lightning]
-# 用于调试和 Prometheus 监控的 HTTP 端口。输入 0 关闭。
+# HTTP port for debugging and Prometheus metrics pulling (0 to disable)
 pprof-port = 8289
 
 ...
 ```
 
-配置 Prometheus 后，`tidb-lightning` 才能发现服务器。配置方法如下，将服务器地址直接添加至 `scrape_configs` 部分：
-
+You need to configure Prometheus to make it discover the servers. For instance, you can directly add the server address to the `scrape_configs` section:
 
 ```yaml
 ...
@@ -34,208 +31,208 @@ scrape_configs:
       - targets: ['192.168.20.10:8289']
 ```
 
-## Grafana 面板
+## Grafana dashboard
 
-[Grafana](https://grafana.com/) 的可视化面板可以让你在网页上监控 Prometheus 指标。
+[Grafana](https://grafana.com/) is a web interface to visualize Prometheus metrics as dashboards.
 
-### 第一行：速度面板
+### Row 1: Speed
 
-![第一行速度面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-1.png)
+![Panels in first row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-1.png)
 
-| 面板名称 | 序列 | 描述 |
+| Panel | Series | Description |
 |:-----|:-----|:-----|
-| Import speed | write from lightning | 从 TiDB Lightning 向 TiKV Importer 发送键值对的速度，取决于每个表的复杂性 |
-| Import speed | upload to tikv | 从 TiKV Importer 上传 SST 文件到所有 TiKV 副本的总体速度 |
-| Chunk process duration | | 完全编码单个数据文件所需的平均时间 |
+| Import speed | write from TiDB Lightning | Speed of sending KVs from TiDB Lightning to TiKV Importer, which depends on each table's complexity |
+| Import speed | upload to tikv | Total upload speed from TiKV Importer to all TiKV replicas |
+| Chunk process duration | | Average time needed to completely encode one single data file |
 
-有时导入速度会降到 0，这是为了平衡其他部分的速度，属于正常现象。
+Sometimes the import speed will drop to zero allowing other parts to catch up. This is normal.
 
-### 第二行：进度面板
+### Row 2: Progress
 
-![第二行进度面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-2.png)
+![Panels in second row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-2.png)
 
-| 面板名称 | 描述 |
+| Panel | Description |
 |:-----|:-----|
-| Import progress | 已编码的文件所占百分比 |
-| Checksum progress | 已导入的表所占百分比 |
-| Failures | 导入失败的表的数量以及故障点，通常为空 |
+| Import progress | Percentage of data files encoded so far |
+| Checksum progress | Percentage of tables are verified to be imported successfully |
+| Failures | Number of failed tables and their point of failure, normally empty |
 
-### 第三行：资源使用面板
+### Row 3: Resource
 
-![第三行资源使用面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-3.png)
+![Panels in third row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-3.png)
 
-| 面板名称 | 描述 |
+| Panel | Description |
 |:-----|:-----|
-| Memory usage | 每个服务占用的内存 |
-| Number of Lightning Goroutines | TiDB Lightning 使用的运行中的 goroutines 数量 |
-| CPU% | 每个服务使用的逻辑 CPU 数量 |
+| Memory usage | Amount of memory occupied by each service |
+| Number of TiDB Lightning Goroutines | Number of running goroutines used by TiDB Lightning |
+| CPU% | Number of logical CPU cores utilized by each service |
 
-### 第四行：配额使用面板
+### Row 4: Quota
 
-![第四行配额使用面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-4.png)
+![Panels in fourth row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-4.png)
 
-| 面板名称 | 序列 | 描述 |
+| Panel | Series | Description |
 |:-----|:-----|:-----|
-| Idle workers | io | 未使用的 `io-concurrency` 的数量，通常接近配置值（默认为 5），接近 0 时表示磁盘运行太慢 |
-| Idle workers | closed-engine | 已关闭但未清理的引擎数量，通常接近 `index-concurrency` 与 `table-concurrency` 的和（默认为 8），接近 0 时表示 TiDB Lightning 比 TiKV Importer 快，导致 TiDB Lightning 延迟 |
-| Idle workers | table | 未使用的 `table-concurrency` 的数量，通常为 0，直到进程结束 |
-| Idle workers | index | 未使用的 `index-concurrency` 的数量，通常为 0，直到进程结束 |
-| Idle workers | region | 未使用的 `region-concurrency` 的数量，通常为 0，直到进程结束 |
-| External resources | KV Encoder | 已激活的 KV encoder 的数量，通常与 `region-concurrency` 的数量相同，直到进程结束 |
-| External resources | Importer Engines | 打开的引擎文件数量，不应超过 `max-open-engines` 的设置 |
+| Idle workers | io | Number of unused `io-concurrency`, normally close to configured value (default 5), and close to 0 means the disk is too slow |
+| Idle workers | closed-engine | Number of engines which is closed but not yet cleaned up, normally close to index + table-concurrency (default 8), and close to 0 means TiDB Lightning is faster than TiKV Importer, which will cause TiDB Lightning to stall |
+| Idle workers | table | Number of unused `table-concurrency`, normally 0 until the end of process |
+| Idle workers | index | Number of unused `index-concurrency`, normally 0 until the end of process |
+| Idle workers | region | Number of unused `region-concurrency`, normally 0 until the end of process |
+| External resources | KV Encoder | Counts active KV encoders, normally the same as `region-concurrency` until the end of process |
+| External resources | Importer Engines | Counts opened engine files, should never exceed the `max-open-engines` setting |
 
-### 第五行：读取速度面板
+### Row 5: Read speed
 
-![第五行读取速度面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-5.png)
+![Panels in fifth row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-5.png)
 
-| 面板名称 | 序列 | 描述 |
+| Panel | Series | Description |
 |:-----|:-----|:-----|
-| Chunk parser read block duration | read block | 读取一个字节块来准备解析时所消耗的时间 |
-| Chunk parser read block duration | apply worker | 等待 `io-concurrency` 空闲所消耗的时间 |
-| SQL process duration | row encode | 解析和编码单行所消耗的时间 |
-| SQL process duration | block deliver | 将一组键值对发送到 TiKV Importer 所消耗的时间 |
+| Chunk parser read block duration | read block | Time taken to read one block of bytes to prepare for parsing |
+| Chunk parser read block duration | apply worker | Time elapsed to wait for an idle io-concurrency |
+| SQL process duration | row encode | Time taken to parse and encode a single row |
+| SQL process duration | block deliver | Time taken to send a block of KV pairs to TiKV Importer |
 
-如果上述项的持续时间过长，则表示 TiDB Lightning 使用的磁盘运行太慢或 I/O 太忙。
+If any of the duration is too high, it indicates that the disk used by TiDB Lightning is too slow or busy with I/O.
 
-### 第六行：存储空间面板
+### Row 6: Storage
 
-![第六行存储空间面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-6.png)
+![Panels in sixth row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-6.png)
 
-| 面板名称 | 序列 |描述 |
+| Panel | Series | Description |
 |:-----|:-----|:-----|
-| SQL process rate | data deliver rate  | 向 TiKV Importer 发送数据键值对的速度 |
-| SQL process rate | index deliver rate | 向 TiKV Importer 发送索引键值对的速度 |
-| SQL process rate | total deliver rate | 发送数据键值对及索引键值对的速度之和 |
-| Total bytes | parser read size | TiDB Lightning 正在读取的字节数 |
-| Total bytes | data deliver size | 已发送到 TiKV Importer 的数据键值对的字节数 |
-| Total bytes | index deliver size | 已发送到 TiKV Importer 的索引键值对的字节数 |
-| Total bytes | storage_size/3 | TiKV 集群占用的存储空间大小的 1/3（3 为默认的副本数量）|
+| SQL process rate | data deliver rate | Speed of delivery of data KV pairs to TiKV Importer |
+| SQL process rate | index deliver rate | Speed of delivery of index KV pairs to TiKV Importer |
+| SQL process rate | total deliver rate | The sum of two rates above |
+| Total bytes | parser read size | Number of bytes being read by TiDB Lightning |
+| Total bytes | data deliver size | Number of bytes of data KV pairs already delivered to TiKV Importer |
+| Total bytes | index deliver size | Number of bytes of index KV pairs already delivered to TiKV Importer |
+| Total bytes | storage_size / 3 | Total size occupied by the TiKV cluster, divided by 3 (the default number of replicas) |
 
-### 第七行：导入速度面板
+### Row 7: Import speed
 
-![第七行导入速度面板](https://docs-download.pingcap.com/media/images/docs-cn/lightning-grafana-row-7.png)
+![Panels in seventh row](https://docs-download.pingcap.com/media/images/docs/lightning-grafana-row-7.png)
 
-| 面板名称 | 序列 | 描述 |
+| Panel | Series | Description |
 |:-----|:-----|:-----|
-| Delivery duration |  Range delivery | 将一个 range 的键值对上传到 TiKV 集群所消耗的时间 |
-| Delivery duration | SST delivery | 将单个 SST 文件上传到 TiKV 集群所消耗的时间 |
-| SST process duration | Split SST | 将键值对流切分成若干 SST 文件所消耗的时间 |
-| SST process duration | SST upload | 上传单个 SST 文件所消耗的时间 |
-| SST process duration  | SST ingest | ingest 单个 SST 文件所消耗的时间 |
-| SST process duration | SST size | 单个 SST 文件的大小 |
+| Delivery duration | Range delivery | Time taken to upload a range of KV pairs to the TiKV cluster |
+| Delivery duration | SST delivery | Time taken to upload an SST file to the TiKV cluster |
+| SST process duration | Split SST | Time taken to split the stream of KV pairs into SST files |
+| SST process duration | SST upload | Time taken to upload an SST file |
+| SST process duration | SST ingest | Time taken to ingest an uploaded SST file |
+| SST process duration | SST size | File size of an SST file |
 
-## 监控指标
+## Monitoring metrics
 
-本节将详细描述 `tidb-lightning` 的监控指标。
+This section explains the monitoring metrics of `tidb-lightning`.
 
-`tidb-lightning` 的监控指标皆以 `lightning_*` 为前缀。
+Metrics provided by `tidb-lightning` are listed under the namespace `lightning_*`.
 
-- **`lightning_importer_engine`**（计数器）
+- **`lightning_importer_engine`** (Counter)
 
-    计算已开启及关闭的引擎文件数量。标签：
+    Counts open and closed engine files. Labels:
 
     - **type**:
         * `open`
         * `closed`
 
-- **`lightning_idle_workers`**（计量表盘）
+- **`lightning_idle_workers`** (Gauge)
 
-    计算闲置的 worker。标签：
+    Counts idle workers. Labels:
 
-    - **name**：
-        * `table` — 未使用的 `table-concurrency` 的数量，通常为 0，直到进程结束
-        * `index` — 未使用的 `index-concurrency` 的数量，通常为 0，直到进程结束
-        * `region` — 未使用的 `region-concurrency` 的数量，通常为 0，直到进程结束
-        * `io` — 未使用的 `io-concurrency` 的数量，通常接近配置值（默认为 5），接近 0 时表示磁盘运行太慢
-        * `closed-engine` — 已关闭但未清理的引擎数量，通常接近 `index-concurrency` 与 `table-concurrency` 的和（默认为 8），接近 0 时表示 TiDB Lightning 比 TiKV Importer 快，导致 TiDB Lightning 延迟
+    - **name**:
+        * `table`: the remainder of `table-concurrency`, normally 0 until the end of the process
+        * `index`: the remainder of `index-concurrency`, normally 0 until the end of the process
+        * `region`: the remainder of `region-concurrency`, normally 0 until the end of the process
+        * `io`: the remainder of `io-concurrency`, normally close to configured value (default 5), and close to 0 means the disk is too slow
+        * `closed-engine`: number of engines which have been closed but not yet cleaned up, normally close to index + table-concurrency (default 8). A value close to 0 means TiDB Lightning is faster than TiKV Importer, which might cause TiDB Lightning to stall
 
-- **`lightning_kv_encoder`**（计数器）
+- **`lightning_kv_encoder`** (Counter)
 
-    计算已开启及关闭的 KV 编码器。KV 编码器是运行于内存的 TiDB 实例，用于将 SQL 的 `INSERT` 语句转换成键值对。此度量的净值（开启减掉关闭）在正常情况下不应持续增长。标签：
+    Counts open and closed KV encoders. KV encoders are in-memory TiDB instances that convert SQL `INSERT` statements into KV pairs. The net values need to be bounded in a healthy situation. Labels:
 
     - **type**:
         * `open`
         * `closed`
 
-- **`lightning_tables`**（计数器）
+* **`lightning_tables`** (Counter)
 
-    计算处理过的表及其状态。标签：
+    Counts processed tables and their statuses. Labels:
 
-    - **state**：表的状态，表明当前应执行的操作
-        * `pending` — 等待处理
-        * `written` — 所有数据已编码和传输
-        * `closed` — 所有对应的引擎文件已关闭
-        * `imported` — 所有引擎文件已上传到目标集群
-        * `altered_auto_inc` — 自增 ID 已改
-        * `checksum` — 已计算校验和
-        * `analyzed` — 已进行统计信息分析
-        * `completed` — 表格已完全导入并通过验证
-    - **result**：当前操作的执行结果
-        * `success` — 成功
-        * `failure` — 失败（未完成）
+    - **state**: the status of the table, indicating which phase should be completed
+        * `pending`: not yet processed
+        * `written`: all data encoded and sent
+        * `closed`: all corresponding engine files closed
+        * `imported`: all engine files have been imported into the target cluster
+        * `altered_auto_inc`: AUTO_INCREMENT ID altered
+        * `checksum`: checksum performed
+        * `analyzed`: statistics analysis performed
+        * `completed`: the table has been fully imported and verified
+    - **result**: the result of the current phase
+        * `success`: the phase completed successfully
+        * `failure`: the phase failed (did not complete)
 
-- **`lightning_engines`**（计数器）
+* **`lightning_engines`** (Counter)
 
-    计算处理后引擎文件的数量以及其状态。标签：
+    Counts number of engine files processed and their status. Labels:
 
-    - **state**：引擎文件的状态，表明当前应执行的操作
-        * `pending` — 等待处理
-        * `written` — 所有数据已编码和传输
-        * `closed` — 引擎文件已关闭
-        * `imported` — 当前引擎文件已上传到目标集群
-        * `completed` — 当前引擎文件已完全导入
-    - **result**：当前操作的执行结果
-        * `success` — 成功
-        * `failure` — 失败（未完成）
+    - **state**: the status of the engine, indicating which phase should be completed
+        * `pending`: not yet processed
+        * `written`: all data encoded and sent
+        * `closed`: engine file closed
+        * `imported`: the engine file has been imported into the target cluster
+        * `completed`: the engine has been fully imported
+    - **result**: the result of the current phase
+        * `success`: the phase completed successfully
+        * `failure`: the phase failed (did not complete)
 
-- **`lightning_chunks`**（计数器）
+- **`lightning_chunks`** (Counter)
 
-    计算处理过的 Chunks 及其状态。标签：
+    Counts number of chunks processed and their status. Labels:
 
-    - **state**: 单个 Chunk 的状态，表明该 Chunk 当前所处的阶段
-        * `estimated` — （非状态）当前任务中 Chunk 的数量
-        * `pending` — 已载入但未执行
-        * `running` — 正在编码和发送数据
-        * `finished` — 该 Chunk 已处理完毕
-        * `failed` — 处理过程中发生错误
+    - **state**: a chunk's status, indicating which phase the chunk is in
+        * `estimated`: (not a state) this value gives total number of chunks in current task
+        * `pending`: loaded but not yet processed
+        * `running`: data are being encoded and sent
+        * `finished`: the entire chunk has been processed
+        * `failed`: errors happened during processing
 
-- **`lightning_import_seconds`**（直方图）
+- **`lightning_import_seconds`** (Histogram)
 
-    导入每个表所需时间的直方图。
+    Bucketed histogram for the time needed to import a table.
 
-- **`lightning_row_read_bytes`**（直方图）
+- **`lightning_row_read_bytes`** (Histogram)
 
-    单行 SQL 数据大小的直方图。
+    Bucketed histogram for the size of a single SQL row.
 
-- **`lightning_row_encode_seconds`**（直方图）
+- **`lightning_row_encode_seconds`** (Histogram)
 
-    解码单行 SQL 数据到键值对所需时间的直方图。
+    Bucketed histogram for the time needed to encode a single SQL row into KV pairs.
 
-- **`lightning_row_kv_deliver_seconds`**（直方图）
+- **`lightning_row_kv_deliver_seconds`** (Histogram)
 
-    发送一组与单行 SQL 数据对应的键值对所需时间的直方图。
+    Bucketed histogram for the time needed to deliver a set of KV pairs corresponding to one single SQL row.
 
-- **`lightning_block_deliver_seconds`**（直方图）
+- **`lightning_block_deliver_seconds`** (Histogram)
 
-    每个键值对中的区块传送到 `tikv-importer` 所需时间的直方图。
+    Bucketed histogram for the time needed to deliver a block of KV pairs to Importer.
 
-- **`lightning_block_deliver_bytes`**（直方图）
+- **`lightning_block_deliver_bytes`** (Histogram)
 
-    发送到 Importer 的键值对中区块（未压缩）的大小的直方图。
+    Bucketed histogram for the uncompressed size of a block of KV pairs delivered to Importer.
 
-- **`lightning_chunk_parser_read_block_seconds`**（直方图）
+- **`lightning_chunk_parser_read_block_seconds`** (Histogram)
 
-    数据文件解析每个 SQL 区块所需时间的直方图。
+    Bucketed histogram for the time needed by the data file parser to read a block.
 
-- **`lightning_checksum_seconds`**（直方图）
+- **`lightning_checksum_seconds`** (Histogram)
 
-    计算表中 Checksum 所需时间的直方图。
+    Bucketed histogram for the time needed to compute the checksum of a table.
 
-- **`lightning_apply_worker_seconds`**（直方图）
+- **`lightning_apply_worker_seconds`** (Histogram)
 
-    获取闲置 worker 等待时间的直方图 (参见 `lightning_idle_workers` 计量表盘)。标签：
+    Bucketed histogram for the time needed to acquire an idle worker (see also the `lightning_idle_workers` gauge). Labels:
 
-    - **name**：
+    - **name**:
         * `table`
         * `index`
         * `region`

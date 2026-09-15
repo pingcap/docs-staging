@@ -1,17 +1,17 @@
 ---
-title: ANALYZE
-summary: TiDB 数据库中 ANALYZE 的使用概况。
+title: ANALYZE | TiDB SQL 语句参考
+summary: 关于在 TiDB 数据库中使用 ANALYZE 的概述。
 ---
 
 # ANALYZE
 
-`ANALYZE` 语句用于更新 TiDB 在表和索引上留下的统计信息。执行大批量更新或导入记录后，或查询执行计划不是最佳时，建议运行 `ANALYZE`。
+此语句用于更新 TiDB 在表和索引上构建的统计信息。建议在执行大量批量更新或导入记录后，或者当你发现查询执行计划不理想时，运行 `ANALYZE`。
 
-当 TiDB 逐渐发现这些统计数据与预估不一致时，也会自动更新其统计数据。
+TiDB 也会随着时间的推移自动更新其统计信息，当它发现统计信息与自身的估算不一致时。
 
-目前 TiDB 收集统计信息为全量收集，通过 `ANALYZE TABLE` 语句来实现。关于该语句的详细使用方式，可参考[常规统计信息](/statistics.md)。
+目前，TiDB 通过使用 `ANALYZE TABLE` 语句以完整采集的方式收集统计信息。更多信息请参见 [统计信息简介](/statistics.md)。
 
-## 语法图
+## 语法概要
 
 ```ebnf+diagram
 AnalyzeTableStmt ::=
@@ -47,40 +47,24 @@ PartitionNameList ::=
 
 ## 示例
 
-
 ```sql
-CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
-```
-
-```
+mysql> CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
 Query OK, 0 rows affected (0.11 sec)
 ```
 
-
 ```sql
-INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
-```
-
-```
+mysql> INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
 Query OK, 5 rows affected (0.03 sec)
 Records: 5  Duplicates: 0  Warnings: 0
 ```
 
-
 ```sql
-ALTER TABLE t1 ADD INDEX (c1);
-```
-
-```
+mysql> ALTER TABLE t1 ADD INDEX (c1);
 Query OK, 0 rows affected (0.30 sec)
 ```
 
-
 ```sql
-EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
-```
-
-```
+mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 +------------------------+---------+-----------+------------------------+---------------------------------------------+
 | id                     | estRows | task      | access object          | operator info                               |
 +------------------------+---------+-----------+------------------------+---------------------------------------------+
@@ -90,23 +74,13 @@ EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 2 rows in set (0.00 sec)
 ```
 
-当前的统计信息状态为 `pseudo`，表示统计信息不准确。
-
+当前统计信息的状态为 `pseudo`，意味着统计信息不准确。
 
 ```sql
-ANALYZE TABLE t1;
-```
-
-```
+mysql> ANALYZE TABLE t1;
 Query OK, 0 rows affected (0.13 sec)
-```
 
-
-```sql
-EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
-```
-
-```
+mysql> EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 +------------------------+---------+-----------+------------------------+-------------------------------+
 | id                     | estRows | task      | access object          | operator info                 |
 +------------------------+---------+-----------+------------------------+-------------------------------+
@@ -116,18 +90,16 @@ EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 2 rows in set (0.00 sec)
 ```
 
-统计信息已经正确地更新和加载。
+统计信息现已正确更新并加载。
 
 ## MySQL 兼容性
 
-`ANALYZE TABLE` 在语法上与 MySQL 类似。但 `ANALYZE TABLE` 在 TiDB 上的执行时间可能长得多，因为它的内部运行方式不同。
+TiDB 在 **统计信息的收集** 和 **查询执行时统计信息的使用** 方面与 MySQL 存在差异。虽然此语句在语法上与 MySQL 类似，但存在以下不同点：
 
-TiDB 与 MySQL 在以下方面存在区别：所收集的统计信息，以及查询执行过程中统计信息是如何被使用的。虽然 TiDB 中的 `ANALYZE` 语句在语法上与 MySQL 类似，但存在以下差异：
++ 在运行 `ANALYZE TABLE` 时，TiDB 可能不会包含最近提交的变更。在批量更新行后，你可能需要 `sleep(1)`，然后再执行 `ANALYZE TABLE`，以使统计信息反映这些变更。详见 [#16570](https://github.com/pingcap/tidb/issues/16570)。
++ 在 TiDB 中，`ANALYZE TABLE` 的执行时间明显长于 MySQL。
 
-+ 执行 `ANALYZE TABLE` 时，TiDB 可能不包含最近提交的更改。若对行进行了批量更改，在执行 `ANALYZE TABLE` 之前，你可能需要先执行 `sleep(1)`，这样统计信息更新才能反映这些更改。参见 [#16570](https://github.com/pingcap/tidb/issues/16570)。
-+ `ANALYZE TABLE` 在 TiDB 中的执行时间比在 MySQL 中的执行时间要长得多。
-
-## 另请参阅
+## 相关链接
 
 * [EXPLAIN](/sql-statements/sql-statement-explain.md)
 * [EXPLAIN ANALYZE](/sql-statements/sql-statement-explain-analyze.md)

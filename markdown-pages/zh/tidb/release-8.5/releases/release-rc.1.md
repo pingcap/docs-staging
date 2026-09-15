@@ -1,42 +1,47 @@
 ---
 title: TiDB RC1 Release Notes
-summary: TiDB RC1 于 2016 年 12 月 23 日发布，TiKV 提升了写入速度和稳定性，支持百 TB 级别数据，集群规模支持 200 个节点。PD 优化了调度策略框架，添加了 label 支持，提供了 PD Control。TiDB 新增了 SQL 查询优化器和更多 MySQL 内建函数，重构了 time 相关类型的实现，提升了和 MySQL 的兼容性。工具方面，Loader 兼容 Percona 的 Mydumper 数据格式，提供了多线程导入、出错重试、断点续传等功能，并且针对 TiDB 有优化。完成了一键部署工具。
-aliases: ['/zh/tidb/dev/release-rc.1/','/docs-cn/dev/releases/release-rc.1/','/docs-cn/dev/releases/rc1/','/zh/tidb/v5.4/release-rc.1','/zh/tidb/v6.1/release-rc.1','/zh/tidb/v6.5/release-rc.1','/zh/tidb/v7.1/release-rc.1','/zh/tidb/v7.5/release-rc.1','/zh/tidb/v8.1/release-rc.1']
+summary: TiDB RC1 was released on December 23, 2016. Updates include improved write speed and reduced disk space usage in TiKV, optimized scheduling strategy framework in PD, and added features in the SQL query optimizer and new tools in TiDB. The release also supports more built-in functions in MySQL and enhances the speed of the `add index` statement.
 ---
 
 # TiDB RC1 Release Notes
 
-2016 年 12 月 23 日，分布式关系型数据库 TiDB 正式发布 RC1。
+On December 23, 2016, TiDB RC1 is released. See the following updates in this release:
 
 ## TiKV
 
-+ 提升写入速度
-+ 降低磁盘空间占用
-+ 支持百 TB 级别数据
-+ 提升稳定性，集群规模支持 200 个节点
-+ 提供 Raw KV API，以及 Golang client
++ The write speed has been improved.
++ The disk space usage is reduced.
++ Hundreds of TBs of data can be supported.
++ The stability is improved and TiKV can support a cluster with 200 nodes.
++ Supports the Raw KV API and the Golang client.
 
-## PD
+## Placement Driver (PD)
 
-+ PD 调度策略框架优化，策略更加灵活合理
-+ 添加 label 支持，支持跨 DC 调度
-+ 提供 PD Control，方便操作 PD 集群
++ The scheduling strategy framework is optimized and now the strategy is more flexible and reasonable.
++ The support for `label` is added to support Cross Data Center scheduling.
++ PD Control is provided to operate the PD cluster more easily.
 
 ## TiDB
 
-+ SQL 查询优化器
-    - 支持 eager aggregate
-    - 更详细的 explain 信息
-    - union 算子并行化
-    - 子查询性能优化
-    - 条件下推优化
-    - 优化 CBO 框架
-+ 重构 time 相关类型的实现，提升和 MySQL 的兼容性
-+ 支持更多的 MySQL 内建函数
-+ Add Index 语句提速
-+ 支持用 change column 语句修改列名；支持使用 Alter table 的 modify column 和 change column 完成部分列类型转换
++ The following features are added or improved in the SQL query optimizer:
+    - Eager aggregation
+    - More detailed `EXPLAIN` information
+    - Parallelization of the `UNION` operator
+    - Optimization of the subquery performance
+    - Optimization of the conditional push-down
+    - Optimization of the Cost Based Optimizer (CBO) framework
++ The implementation of the time related data types are refactored to improve the compatibility with MySQL.
++ More built-in functions in MySQL are supported.
++ The speed of the `add index` statement is enhanced.
++ The following statements are supported:
+    - Use the `CHANGE COLUMN` statement to change the name of a column.
+    - Use `MODIFY COLUMN` and `CHANGE COLUMN` of the `ALTER TABLE` statement for some of the column type transfer.
 
-## 工具
+## New tools
 
-+ Loader：兼容 Percona 的 Mydumper 数据格式，提供多线程导入、出错重试、断点续传等功能，并且针对 TiDB 有优化
-+ 开发完成一键部署工具
++ `Loader` is added to be compatible with the `mydumper` data format in Percona and provides the following functions:
+    - Multi-thread import
+    - Retry if error occurs
+    - Breakpoint resume
+    - Targeted optimization for TiDB
++ The tool for one-click deployment is added.

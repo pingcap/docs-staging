@@ -1,232 +1,231 @@
 ---
-title: HAProxy 在 TiDB 中的最佳实践
-summary: HAProxy 是 TiDB 中实现负载均衡的最佳实践。它提供 TCP 协议下的负载均衡能力，通过连接 HAProxy 提供的浮动 IP 对数据进行操作，实现 TiDB Server 层的负载均衡。HAProxy 提供高可用性、负载均衡、健康检查、会话保持、SSL 支持和监控统计等核心功能。部署 HAProxy 需要满足一定的硬件和软件要求，配置和启动 HAProxy 后即可实现数据库负载均衡。
-aliases: ['/docs-cn/dev/best-practices/haproxy-best-practices/','/docs-cn/dev/reference/best-practices/haproxy/','/zh/tidb/stable/haproxy-best-practices/','/zh/tidb/dev/haproxy-best-practices/']
+title: Best Practices for Using HAProxy in TiDB
+summary: HAProxy is a free, open-source load balancer and proxy server for TCP and HTTP-based applications. It provides high availability, load balancing, health checks, sticky sessions, SSL support, and monitoring. To deploy HAProxy, ensure hardware and software requirements are met, then install and configure it. Use the latest stable version for best results.
 ---
 
-# HAProxy 在 TiDB 中的最佳实践
+# Best Practices for Using HAProxy in TiDB
 
-本文介绍 [HAProxy](https://github.com/haproxy/haproxy) 在 TiDB 中的最佳配置和使用方法。HAProxy 提供 TCP 协议下的负载均衡能力，TiDB 客户端通过连接 HAProxy 提供的浮动 IP 即可对数据进行操作，实现 TiDB Server 层的负载均衡。
+This document describes best practices for configuration and usage of [HAProxy](https://github.com/haproxy/haproxy) in TiDB. HAProxy provides load balancing for TCP-based applications. From TiDB clients, you can manipulate data just by connecting to the floating virtual IP address provided by HAProxy, which helps to achieve load balance in the TiDB server layer.
 
-![HAProxy 在 TiDB 中的最佳实践](https://docs-download.pingcap.com/media/images/docs-cn/haproxy.jpg)
+![HAProxy Best Practices in TiDB](https://docs-download.pingcap.com/media/images/docs/haproxy.jpg)
 
-> **注意：**
+> **Note:**
 >
-> TiDB 支持的最小 HAProxy 版本为 v1.5。使用 v1.5 到 v2.1 之间的 HAProxy 时，需要在 `mysql-check` 中配置 `post-41`。建议使用 HAProxy v2.2 或更高版本。
+> The minimum version of HAProxy that works with all versions of TiDB is v1.5. Between v1.5 and v2.1, you need to set the `post-41` option in `mysql-check`. It is recommended to use HAProxy v2.2 or newer.
 
-## HAProxy 简介
+## HAProxy overview
 
-HAProxy 是由 C 语言编写的自由开放源码的软件，为基于 TCP 和 HTTP 协议的应用程序提供高可用性、负载均衡和代理服务。因为 HAProxy 能够快速、高效使用 CPU 和内存，所以目前使用非常广泛，许多知名网站诸如 GitHub、Bitbucket、Stack Overflow、Reddit、Tumblr、Twitter 和 Tuenti 以及亚马逊网络服务系统都在使用 HAProxy。
+HAProxy is free, open-source software written in C language that provides a high availability load balancer and proxy server for TCP and HTTP-based applications. Because of its fast and efficient use of CPU and memory, HAProxy is now widely used by many well-known websites such as GitHub, Bitbucket, Stack Overflow, Reddit, Tumblr, Twitter, Tuenti, and AWS (Amazon Web Services).
 
-HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，他现在仍然负责该项目的维护，并在开源社区免费提供版本迭代。本文示例使用 HAProxy [2.6](https://www.haproxy.com/blog/announcing-haproxy-2-6/)。推荐使用最新稳定版的 HAProxy，详情见[已发布的 HAProxy 版本](http://www.haproxy.org/)。
+HAProxy is written in the year 2000 by Willy Tarreau, the core contributor to the Linux kernel, who is still responsible for the maintenance of the project and provides free software updates in the open-source community. In this guide, HAProxy [2.6](https://www.haproxy.com/blog/announcing-haproxy-2-6/) is used. It is recommended to use the latest stable version. See [the released version of HAProxy](http://www.haproxy.org/) for details.
 
-## HAProxy 部分核心功能介绍
+## Basic features
 
-- [高可用性](http://cbonte.github.io/haproxy-dconv/2.6/intro.html#3.3.4)：HAProxy 提供优雅关闭服务和无缝切换的高可用功能；
-- [负载均衡](http://cbonte.github.io/haproxy-dconv/2.6/configuration.html#4.2-balance)：L4 (TCP) 和 L7 (HTTP) 两种负载均衡模式，至少 9 类均衡算法，比如 roundrobin，leastconn，random 等；
-- [健康检查](http://cbonte.github.io/haproxy-dconv/2.6/configuration.html#5.2-check)：对 HAProxy 配置的 HTTP 或者 TCP 模式状态进行检查；
-- [会话保持](http://cbonte.github.io/haproxy-dconv/2.6/intro.html#3.3.6)：在应用程序没有提供会话保持功能的情况下，HAProxy 可以提供该项功能；
-- [SSL](http://cbonte.github.io/haproxy-dconv/2.6/intro.html#3.3.2)：支持 HTTPS 通信和解析；
-- [监控与统计](http://cbonte.github.io/haproxy-dconv/2.6/intro.html#3.3.3)：通过 web 页面可以实时监控服务状态以及具体的流量信息。
+- [High Availability](http://cbonte.github.io/haproxy-dconv/2.6/intro.html#3.3.4): HAProxy provides high availability with support for a graceful shutdown and a seamless switchover;
+- [Load Balancing](http://cbonte.github.io/haproxy-dconv/2.6/configuration.html#4.2-balance): Two major proxy modes are supported: TCP, also known as layer 4, and HTTP, also known as layer 7. No less than 9 load balancing algorithms are supported, such as roundrobin, leastconn and random;
+- [Health Check](http://cbonte.github.io/haproxy-dconv/2.6/configuration.html#5.2-check): HAProxy periodically checks the status of HTTP or TCP mode of the server;
+- [Sticky Session](http://cbonte.github.io/haproxy-dconv/2.6/intro.html#3.3.6): HAProxy can stick a client to a specific server for the duration when the application does not support sticky sessions;
+- [SSL](http://cbonte.github.io/haproxy-dconv/2.6/intro.html#3.3.2): HTTPS communication and resolution are supported;
+- [Monitoring and Statistics](http://cbonte.github.io/haproxy-dconv/2.6/intro.html#3.3.3): Through the web page, you can monitor the service state and traffic flow in real time.
 
-## 准备环境
+## Before you begin
 
-在部署 HAProxy 之前，需准备好以下环境。
+Before you deploy HAProxy, make sure that you meet the hardware and software requirements.
 
-### 硬件要求
+### Hardware requirements
 
-根据[HAProxy 官方文档](https://www.haproxy.com/documentation/haproxy-enterprise/getting-started/installation/linux/)，HAProxy 的服务器硬件的最低配置如下。在 Sysbench `oltp_read_write` 工作负载下，该配置的最高 QPS 约为 50K。你可以根据负载均衡环境进行推算，在此基础上提高服务器配置。
+According to the [HAProxy documentation](https://www.haproxy.com/documentation/haproxy-enterprise/getting-started/installation/linux/), the minimum hardware configuration for HAProxy is shown in the following table. Under the Sysbench `oltp_read_write` workload, the maximum QPS for this configuration is about 50K. You can increase the server configuration according to your load balancing environment.
 
-|硬件资源|最低配置|
-|:---|:---|
-|CPU|2 核，3.5 GHz|
-|内存|4 GB|
-|存储容量|50 GB（SATA 盘）|
-|网卡|万兆网卡|
+| Hardware resource      | Minimum specification |
+| :--------------------- | :-------------------- |
+| CPU                    | 2 cores, 3.5 GHz      |
+| Memory                 | 4 GB                 |
+| Storage                | 50 GB (SATA)          |
+| Network Interface Card | 10G Network Card      |
 
-### 依赖软件
+### Software requirements
 
-根据 HAProxy 官方文档，对操作系统和依赖包有以下建议，如果通过 yum 源部署安装 HAProxy 软件，依赖包无需单独安装。
+You can use the following operating systems and make sure the required dependencies are installed. If you use yum to install HAProxy, the dependencies are installed along with it and you do not need to separately install them again.
 
-#### 操作系统
+#### Operating systems
 
-| Linux 操作系统       | 版本         |
+| Linux distribution       | Version         |
 | :----------------------- | :----------- |
-| Red Hat Enterprise Linux | 7 或者 8   |
-| CentOS                   | 7 或者 8   |
-| Oracle Enterprise Linux  | 7 或者 8   |
-| Ubuntu LTS               | 18.04 或者以上版本 |
+| Red Hat Enterprise Linux | 7 or 8   |
+| CentOS                   | 7 or 8   |
+| Oracle Enterprise Linux  | 7 or 8   |
+| Ubuntu LTS               | 18.04 or later versions |
 
-> **注意：**
+> **Note:**
 >
-> - 其他操作系统支持情况，详见 [HAProxy 文档](https://github.com/haproxy/haproxy/blob/master/INSTALL)。
+> - For more information about other supported operating systems, see [HAProxy documentation](https://github.com/haproxy/haproxy/blob/master/INSTALL).
 
-#### 依赖包
+#### Dependencies
 
 - epel-release
 - gcc
 - systemd-devel
 
-执行如下命令安装依赖包：
+To install the dependencies above, run the following command:
 
 ```bash
 yum -y install epel-release gcc systemd-devel
 ```
 
-## 部署 HAProxy
+## Deploy HAProxy
 
-HAProxy 配置 Database 负载均衡场景操作简单，以下部署操作具有普遍性，不具有特殊性，建议根据实际场景，个性化配置相关的[配置文件](http://cbonte.github.io/haproxy-dconv/2.6/configuration.html)。
+You can easily use HAProxy to configure and set up a load-balanced database environment. This section shows general deployment operations. You can customize the [configuration file](http://cbonte.github.io/haproxy-dconv/2.6/configuration.html) based on your actual scenario.
 
-### 安装 HAProxy
+### Install HAProxy
 
-1. 下载 HAProxy 2.6.21 的源码包：
+1. Download the package of the HAProxy 2.6.21 source code:
 
     ```bash
     wget https://www.haproxy.org/download/2.6/src/haproxy-2.6.21.tar.gz
     ```
 
-2. 解压源码包：
+2. Extract the package:
 
     ```bash
     tar zxf haproxy-2.6.21.tar.gz
     ```
 
-3. 从源码编译 HAProxy 应用：
+3. Compile the application from the source code:
 
     ```bash
     cd haproxy-2.6.21
     make clean
     make -j 8 TARGET=linux-glibc USE_THREAD=1
-    make PREFIX=${/app/haproxy} SBINDIR=${/app/haproxy/bin} install  # 将 `${/app/haproxy}` 和 `${/app/haproxy/bin}` 替换为自定义的实际路径。
+    make PREFIX=${/app/haproxy} SBINDIR=${/app/haproxy/bin} install  # Replace `${/app/haproxy}` and `${/app/haproxy/bin}` with your custom directories.
     ```
 
-4. 重新配置 `profile` 文件：
+4. Reconfigure the profile:
 
     ```bash
     echo 'export PATH=/app/haproxy/bin:$PATH' >> /etc/profile
     . /etc/profile
     ```
 
-5. 检查 HAProxy 是否安装成功：
+5. Check whether the installation is successful:
 
     ```bash
     which haproxy
     ```
 
-#### HAProxy 命令介绍
+#### HAProxy commands
 
-执行如下命令查看命令行参数及基本用法：
+Execute the following command to print a list of keywords and their basic usage:
 
 ```bash
 haproxy --help
 ```
 
-| 参数    | 说明       |
-| :------- | :--------- |
-| `-v` | 显示简略的版本信息。 |
-| `-vv` | 显示详细的版本信息。 |
-| `-d` | 开启 debug 模式。 |
-| `-db` | 禁用后台模式和多进程模式。 |
-| `-dM [<byte>]` | 执行分配内存。|
-| `-V` | 启动过程显示配置和轮询信息。 |
-| `-D` | 开启守护进程模式。 |
-| `-C <dir>` | 在加载配置文件之前更改目录位置至 `<dir>`。 |
-| `-W` | 主从模式。 |
-| `-q` | 静默模式，不输出信息。 |
-| `-c` | 只检查配置文件并在尝试绑定之前退出。 |
-| `-n <limit>` | 设置每个进程的最大总连接数为 `<limit>`。 |
-| `-m <limit>` | 设置所有进程的最大可用内存为 `<limit>`（单位：MB）。 |
-| `-N <limit>` | 设置单点最大连接数为 `<limit>`，默认为 2000。 |
-| `-L <name>` | 将本地实例对等名称改为 `<name>`，默认为本地主机名。 |
-| `-p <file>` | 将 HAProxy 所有子进程的 PID 信息写入 `<file>`。 |
-| `-de` | 禁止使用 epoll(7)，epoll(7) 仅在 Linux 2.6 和某些定制的 Linux 2.4 系统上可用。 |
-| `-dp` | 禁止使用 epoll(2)，可改用 select(2)。 |
-| `-dS` | 禁止使用 splice(2)，splice(2) 在一些旧版 Linux 内核上不可用。 |
-| `-dR` | 禁止使用 SO_REUSEPORT。 |
-| `-dr` | 忽略服务器地址解析失败。 |
-| `-dV` | 禁止在服务器端使用 SSL。 |
-| `-sf <pidlist>` | 启动后，向 pidlist 中的 PID 发送 `finish` 信号，收到此信号的进程在退出之前将等待所有会话完成，即优雅停止服务。此选项必须最后指定，后跟任意数量的 PID。从技术上讲，SIGTTOU 和 SIGUSR1 都被发送。 |
-| `-st <pidlist>` | 启动后，向 pidlist 中的 PID 发送 `terminate` 信号，收到此信号的进程将立即终止，关闭所有活动会话。此选项必须最后指定，后跟任意数量的 PID。从技术上讲，SIGTTOU 和 SIGTERM 都被发送。 |
-| `-x <unix_socket>` | 连接指定的 socket 并从旧进程中获取所有 listening socket，然后，使用这些 socket 而不是绑定新的。 |
-| `-S <bind>[,<bind_options>...]` | 主从模式下，创建绑定到主进程的 socket，此 socket 可访问每个子进程的 socket。 |
+| Option | Description |
+| :-------| :---------|
+| `-v` | Reports the version and build date. |
+| `-vv` | Displays the version, build options, libraries versions and usable pollers. |
+| `-d` | Enables debug mode. |
+| `-db` | Disables background mode and multi-process mode. |
+| `-dM [<byte>]` | Forces memory poisoning, which means that each and every memory region allocated with malloc() or pool_alloc2() will be filled with `<byte>` before being passed to the caller. |
+| `-V` | Enables verbose mode (disables quiet mode). |
+| `-D` | Starts as a daemon.|
+| `-C <dir>` | Changes to directory `<dir>` before loading configuration files. |
+| `-W` | Master-worker mode. |
+| `-q` | Sets "quiet" mode: This disables some messages during the configuration parsing and during startup. |
+| `-c` | Only performs a check of the configuration files and exits before trying to bind. |
+| `-n <limit>` | Limits the per-process connection limit to `<limit>`. |
+| `-m <limit>` | Limits the total allocatable memory to `<limit>` megabytes across all processes. |
+| `-N <limit>` | Sets the default per-proxy maxconn to `<limit>` instead of the builtin default value (usually 2000). |
+| `-L <name>` | Changes the local peer name to `<name>`, which defaults to the local hostname. |
+| `-p <file>` | Writes all processes' PIDs into `<file>` during startup. |
+| `-de` | Disables the use of epoll(7). epoll(7) is available only on Linux 2.6 and some custom Linux 2.4 systems. |
+| `-dp` | Disables the use of poll(2). select(2) might be used instead. |
+| `-dS` | Disables the use of splice(2), which is broken on older kernels. |
+| `-dR` | Disables SO_REUSEPORT usage. |
+| `-dr` | Ignores server address resolution failures. |
+| `-dV` | Disables SSL verify on the server side. |
+| `-sf <pidlist>` | Sends the "finish" signal to the PIDs in pidlist after startup. The processes which receive this signal wait for all sessions to finish before exiting. This option must be specified last, followed by any number of PIDs. Technically speaking, SIGTTOU and SIGUSR1 are sent. |
+| `-st <pidlist>` | Sends the "terminate" signal to the PIDs in pidlist after startup. The processes which receive this signal terminate immediately, closing all active sessions. This option must be specified last, followed by any number of PIDs. Technically speaking, SIGTTOU and SIGTERM are sent. |
+| `-x <unix_socket>` | Connects to the specified socket and retrieves all the listening sockets from the old process. Then, these sockets are used instead of binding new ones. |
+| `-S <bind>[,<bind_options>...]` | In master-worker mode, creates a master CLI. This CLI enables access to the CLI of every worker. Useful for debugging, it's a convenient way of accessing a leaving process. |
 
-更多有关 HAProxy 命令参数的信息，可参阅 [Management Guide of HAProxy](http://cbonte.github.io/haproxy-dconv/2.6/management.html) 和 [General Commands Manual of HAProxy](https://manpages.debian.org/buster-backports/haproxy/haproxy.1.en.html)。
+For more details on HAProxy command line options, refer to [Management Guide of HAProxy](http://cbonte.github.io/haproxy-dconv/2.6/management.html) and [General Commands Manual of HAProxy](https://manpages.debian.org/buster-backports/haproxy/haproxy.1.en.html).
 
-### 配置 HAProxy
+### Configure HAProxy
 
-yum 安装过程中会生成配置模版，你也可以根据实际场景自定义配置如下配置项。
+A configuration template is generated when you use yum to install HAProxy. You can also customize the following configuration items according to your scenario.
 
 ```yaml
-global                                     # 全局配置。
-   log         127.0.0.1 local2            # 定义全局的 syslog 服务器，最多可以定义两个。
-   chroot      /var/lib/haproxy            # 更改当前目录并为启动进程设置超级用户权限，从而提高安全性。
-   pidfile     /var/run/haproxy.pid        # 将 HAProxy 进程的 PID 写入 pidfile。
-   maxconn     4096                        # 单个 HAProxy 进程可接受的最大并发连接数，等价于命令行参数 "-n"。
-   nbthread    48                          # 最大线程数。线程数的上限与 CPU 数量相同。
-   user        haproxy                     # 同 UID 参数。
-   group       haproxy                     # 同 GID 参数，建议使用专用用户组。
-   daemon                                  # 让 HAProxy 以守护进程的方式工作于后台，等同于命令行参数“-D”的功能。当然，也可以在命令行中用“-db”参数将其禁用。
-   stats socket /var/lib/haproxy/stats     # 统计信息保存位置。
+global                                     # Global configuration.
+   log         127.0.0.1 local2            # Global syslog servers (up to two).
+   chroot      /var/lib/haproxy            # Changes the current directory and sets superuser privileges for the startup process to improve security.
+   pidfile     /var/run/haproxy.pid        # Writes the PIDs of HAProxy processes into this file.
+   maxconn     4096                        # The maximum number of concurrent connections for a single HAProxy process. It is equivalent to the command-line argument "-n".
+   nbthread    48                          # The maximum number of threads. (The upper limit is equal to the number of CPUs)
+   user        haproxy                     # Same with the UID parameter.
+   group       haproxy                     # Same with the GID parameter. A dedicated user group is recommended.
+   daemon                                  # Makes the process fork into background. It is equivalent to the command line "-D" argument. It can be disabled by the command line "-db" argument.
+   stats socket /var/lib/haproxy/stats     # The directory where statistics output is saved.
 
-defaults                                   # 默认配置。
-   log global                              # 日志继承全局配置段的设置。
-   retries 2                               # 向上游服务器尝试连接的最大次数，超过此值便认为后端服务器不可用。
-   timeout connect  2s                     # HAProxy 与后端服务器连接超时时间。如果在同一个局域网内，可设置成较短的时间。
-   timeout client 30000s                   # 客户端与 HAProxy 连接后，数据传输完毕，即非活动连接的超时时间。
-   timeout server 30000s                   # 服务器端非活动连接的超时时间。
+defaults                                   # Default configuration.
+   log global                              # Inherits the settings of the global configuration.
+   retries 2                               # The maximum number of retries to connect to an upstream server. If the number of connection attempts exceeds the value, the backend server is considered unavailable.
+   timeout connect  2s                     # The maximum time to wait for a connection attempt to a backend server to succeed. It should be set to a shorter time if the server is located on the same LAN as HAProxy.
+   timeout client 30000s                   # The maximum inactivity time on the client side.
+   timeout server 30000s                   # The maximum inactivity time on the server side.
 
-listen admin_stats                         # frontend 和 backend 的组合体，此监控组的名称可按需进行自定义。
-   bind 0.0.0.0:8080                       # 监听端口。
-   mode http                               # 监控运行的模式，此处为 `http` 模式。
-   option httplog                          # 开始启用记录 HTTP 请求的日志功能。
-   maxconn 10                              # 最大并发连接数。
-   stats refresh 30s                       # 每隔 30 秒自动刷新监控页面。
-   stats uri /haproxy                      # 监控页面的 URL。
-   stats realm HAProxy                     # 监控页面的提示信息。
-   stats auth admin:pingcap123             # 监控页面的用户和密码，可设置多个用户名。
-   stats hide-version                      # 隐藏监控页面上的 HAProxy 版本信息。
-   stats  admin if TRUE                    # 手工启用或禁用后端服务器（HAProxy 1.4.9 及之后版本开始支持）。
+listen admin_stats                         # The name of the Stats page reporting information from frontend and backend. You can customize the name according to your needs.
+   bind 0.0.0.0:8080                       # The listening port.
+   mode http                               # The monitoring mode.
+   option httplog                          # Enables HTTP logging.
+   maxconn 10                              # The maximum number of concurrent connections.
+   stats refresh 30s                       # Automatically refreshes the Stats page every 30 seconds.
+   stats uri /haproxy                      # The URL of the Stats page.
+   stats realm HAProxy                     # The authentication realm of the Stats page.
+   stats auth admin:pingcap123             # User name and password in the Stats page. You can have multiple user names.
+   stats hide-version                      # Hides the version information of HAProxy on the Stats page.
+   stats admin if TRUE                     # Manually enables or disables the backend server (supported in HAProxy 1.4.9 or later versions).
 
-listen tidb-cluster                        # 配置 database 负载均衡。
-   bind 0.0.0.0:3390                       # 浮动 IP 和监听端口。
-   mode tcp                                # HAProxy 要使用第 4 层的传输层。
-   balance leastconn                       # 连接数最少的服务器优先接收连接。`leastconn` 建议用于长会话服务，例如 LDAP、SQL、TSE 等，而不是短会话协议，如 HTTP。该算法是动态的，对于启动慢的服务器，服务器权重会在运行中作调整。
-   server tidb-1 10.9.18.229:4000 check inter 2000 rise 2 fall 3       # 检测 4000 端口，检测频率为每 2000 毫秒一次。如果 2 次检测为成功，则认为服务器可用；如果 3 次检测为失败，则认为服务器不可用。
+listen tidb-cluster                        # Database load balancing.
+   bind 0.0.0.0:3390                       # The Floating IP address and listening port.
+   mode tcp                                # HAProxy uses layer 4, the transport layer.
+   balance leastconn                       # The server with the smallest number of connections receives the connection. "leastconn" is recommended where long sessions are expected, such as LDAP, SQL and TSE, rather than protocols using short sessions, such as HTTP. The algorithm is dynamic, which means that server weights might be adjusted on the fly for slow starts for instance.
+   server tidb-1 10.9.18.229:4000 check inter 2000 rise 2 fall 3       # Detects port 4000 at a frequency of once every 2000 milliseconds. If it is detected as successful twice, the server is considered available; if it is detected as failed three times, the server is considered unavailable.
    server tidb-2 10.9.39.208:4000 check inter 2000 rise 2 fall 3
    server tidb-3 10.9.64.166:4000 check inter 2000 rise 2 fall 3
 ```
 
-如要通过 `SHOW PROCESSLIST` 查看连接来源 IP，需要配置使用 [PROXY 协议](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt)连接 TiDB。
+To check the source IP address using `SHOW PROCESSLIST`, you need to configure the [PROXY protocol](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt) to connect to TiDB.
 
 ```yaml
-   server tidb-1 10.9.18.229:4000 send-proxy check inter 2000 rise 2 fall 3
+   server tidb-1 10.9.18.229:4000 send-proxy check inter 2000 rise 2 fall 3       
    server tidb-2 10.9.39.208:4000 send-proxy check inter 2000 rise 2 fall 3
    server tidb-3 10.9.64.166:4000 send-proxy check inter 2000 rise 2 fall 3
 ```
 
-> **注意：**
+> **Note:**
 >
-> 使用 PROXY 协议时，你需要在 tidb-server 的配置文件中设置 [`proxy-protocol.networks`](/tidb-configuration-file.md#networks)。
+> Before using the PROXY protocol, you need to configure [`proxy-protocol.networks`](/tidb-configuration-file.md#networks) in the configuration file of the TiDB server.
 
-### 启动 HAProxy
+### Start HAProxy
 
-要启动 HAProxy，执行 `haproxy` 命令。默认读取 `/etc/haproxy/haproxy.cfg`（推荐）。
+To start HAProxy, run `haproxy`. `/etc/haproxy/haproxy.cfg` is read by default (recommended).
 
 ```bash
 haproxy -f /etc/haproxy/haproxy.cfg
 ```
 
-### 停止 HAProxy
+### Stop HAProxy
 
-要停止 HAProxy，使用 `kill -9` 命令。
+To stop HAProxy, use the `kill -9` command.
 
-1. 执行如下命令：
+1. Run the following command:
 
     ```bash
     ps -ef | grep haproxy
     ```
 
-2. 终止 HAProxy 相关的 PID 进程：
+2. Terminate the process of HAProxy:
 
     ```bash
     kill -9 ${haproxy.pid}

@@ -1,30 +1,30 @@
 ---
 title: tiup completion
-summary: TiUP 提供了 `tiup completion` 命令，用于生成命令行自动补全的配置文件。目前支持 `bash` 和 `zsh` 两种 shell 的命令补全。安装方式包括在 macOS 上执行 `brew install bash-completion` 或 `brew install bash-completion@2`，在 Linux 上执行 `yum install bash-completion` 或 `apt install bash-completion`。使用方式包括在 `.bash_profile` 中执行 `source` 命令，并在 zsh 中执行 `tiup completion zsh > "${fpath[1]}/_tiup"`。
+summary: TiUP provides the `tiup completion` command to generate a configuration file for automatic command-line completion, supporting `bash` and `zsh` commands. To complete `bash` commands, install `bash-completion` and use the `tiup completion <shell>` syntax to set the shell type. For `bash`, write the command into a file and source it in `.bash_profile`. For `zsh`, use the `tiup completion zsh` command.
 ---
 
 # tiup completion
 
-为了降低使用成本，TiUP 提供了 `tiup completion` 命令用于生成命令行自动补全的配置文件。目前支持 `bash` 和 `zsh` 两种 shell 的命令补全。
+To reduce user costs, TiUP provides the `tiup completion` command to generate a configuration file for automatic command-line completion. Currently, TiUP supports completing `bash` and `zsh` commands.
 
-如果是 bash，需要提前安装好 bash-completion：
+If you want to complete `bash` commands, you need to install `bash-completion` first. See the following instructions:
 
-- 在 macOS 上的安装方式为：如果 bash 版本小于 4.1，执行 `brew install bash-completion`；如果 bash 版本大于等于 4.1，则执行 `brew install bash-completion@2`。
-- 在 Linux 上的安装方式为：使用包管理器安装 `bash-completion` 包，例如执行 `yum install bash-completion` 或者 `apt install bash-completion`。
+- On macOS: If your bash version is earlier than 4.1, run `brew install bash-completion`; otherwise, run `brew install bash-completion@2`.
+- On Linux: Use a package manager to install `bash-completion`. For example, run `yum install bash-completion` or `apt install bash-completion`.
 
-## 语法
+## Syntax
 
 ```shell
 tiup completion <shell>
 ```
 
-`<shell>` 为 shell 类型，目前支持 `bash` 和 `zsh`。
+`<shell>` is used to set the type of shell you use. Currently, `bash` and `zsh` are supported.
 
-## 使用方式
+## Usage
 
 ### bash
 
-将自动补全代码写入一个文件，并且在 `.bash_profile` 中对其执行 `source` 命令：
+Write the `tiup completion bash` command into a file and source the file in `.bash_profile`. See the following example:
 
 ```shell
 tiup completion bash > ~/.tiup.completion.bash
@@ -43,4 +43,4 @@ source $HOME/.bash_profile
 tiup completion zsh > "${fpath[1]}/_tiup"
 ```
 
-[<< 返回上一页 - TiUP 命令清单](/tiup/tiup-reference.md#命令清单)
+[<< Back to the previous page - TiUP Reference command list](/tiup/tiup-reference.md#command-list)

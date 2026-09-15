@@ -1,36 +1,36 @@
 ---
 title: tiup cluster edit-config
-summary: tiup cluster edit-config 命令用于调整部署集群后的配置。执行命令后会启动一个编辑器，允许用户修改指定集群的拓扑文件。注意不能增删机器，需执行 tiup cluster reload 命令来重新加载配置。语法为 tiup cluster edit-config <cluster-name>，选项包括 -h, --help。执行命令后正常情况下无输出，若修改了不能修改的字段则会报错并提示用户重新编辑。
+summary: The `tiup cluster edit-config` command allows you to modify the cluster configuration after deployment. You can use an editor to modify the topology file, specified in the `$EDITOR` environment variable. Note that you cannot add or delete machines when modifying the configuration. After executing the command, the configuration is modified only on the control machine, and you need to execute `tiup cluster reload` to reload the configuration.
 ---
 
 # tiup cluster edit-config
 
-在部署集群之后，如果需要再调整集群服务的配置，则可以使用命令 `tiup cluster edit-config`，它会启动一个编辑器（默认为 $EDITOR 环境变量指定的值，当 EDITOR 环境变量不存在时，使用 vi 打开）允许用户修改指定集群的[拓扑文件](/tiup/tiup-cluster-topology-reference.md)。
+If you need to modify the cluster configuration after the cluster is deployed, you can use the `tiup cluster edit-config` command that starts an editor for you to modify the [topology file](/tiup/tiup-cluster-topology-reference.md) of a cluster. This editor is specified in the `$EDITOR` environment variable by default. If the `$EDITOR` environment variable does not exist, the `vi` editor is used.
 
-> **注意：**
-> 
-> + 修改配置时不能增删机器，增删机器属于[集群扩容](/tiup/tiup-component-cluster-scale-out.md)和[集群缩容](/tiup/tiup-component-cluster-scale-in.md)的功能。
-> + 执行完该命令后配置只是在中控机上修改了，要应用配置需要执行 `tiup cluster reload` 命令来重新加载。
+> **Note:**
+>
+> + When you modify the configuration, you cannot add or delete machines. For how to add machines, see [Scale out a cluster](/tiup/tiup-component-cluster-scale-out.md). For how to delete machines, see [Scale in a cluster](/tiup/tiup-component-cluster-scale-in.md).
+> + After you execute the `tiup cluster edit-config` command, the configuration is modified only on the control machine. Then you need to execute the `tiup cluster reload` command to reload the configuration.
 
-## 语法
+## Syntax
 
 ```shell
 tiup cluster edit-config <cluster-name> [flags]
 ```
 
-`<cluster-name>` 代表要操作的集群名。
+`<cluster-name>` is the cluster to operate on.
 
-## 选项
+## Option
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints help information.
+- Data type: `BOOLEAN`
+- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
 
-## 输出
+## Output
 
-- 正常情况无输出
-- 若修改了不能修改的字段，则保存文件时报错并提示用户重新编辑，不能修改的字段参考[拓扑文件](/tiup/tiup-cluster-topology-reference.md)中的相关描述
+- If the command is successfully executed, there is no output.
+- If you have mistakenly modified the fields that cannot be modified, when you save the file, an error will be reported, reminding you to edit the file again. For the fields that cannot be modified, see the [topology file](/tiup/tiup-cluster-topology-reference.md).
 
-[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)
+[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)

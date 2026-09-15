@@ -1,76 +1,78 @@
 ---
-title: TiDB Dashboard 实例性能分析 - 手动分析页面
-summary: 了解如何收集集群各个实例当前性能数据，从而分析复杂问题
+title: TiDB Dashboard Instance Profiling - Manual Profiling
+summary: Manual Profiling allows users to collect current performance data on demand for TiDB, TiKV, PD, and TiFlash instances. Experts can analyze resource consumption details like CPU and memory to pinpoint ongoing performance problems. Access the page through TiDB Dashboard or a browser. Start profiling by choosing target instances and modify the duration if needed. View real-time progress and download performance data after profiling is completed. View profiling history for detailed operations.
 ---
 
-# TiDB Dashboard 实例性能分析 - 手动分析页面
+# TiDB Dashboard Instance Profiling - Manual Profiling
 
-> **注意：**
+> **Note:**
 >
-> 该功能面向数据库技术专家，建议非专家用户在 PingCAP 专业技术人员的指导下使用该功能。
+> This feature is designed for database experts. For non-expert users, it is recommended to use this feature under the guidance of PingCAP technical supports.
 
-该页面允许用户**按需地**一键收集 TiDB、TiKV、PD、TiFlash 各个实例的当前性能数据。收集到的性能数据可显示为火焰图或有向无环图形式。
+Manual Profiling allows users to collect current performance data **on demand** for each TiDB, TiKV, PD and TiFlash instances with a single click. The collected performance data can be visualized as FlameGraph or DAG.
 
-通过这些性能数据，技术专家可以分析实例当前的 CPU、内存等资源消耗细节，帮助解决诸如当前 CPU 开销较高、内存占用较大、进程不明原因卡死等复杂问题。
+With these performance data, experts can analyze current resource consumption details like instance's CPU and memory, to help pinpoint sophisticated ongoing performance problems, such as high CPU overhead, high memory usage, and process stalls.
 
-启动分析后，TiDB Dashboard 将会收集当前一小段时间（默认 30 秒）的性能数据，因而只能用于分析集群当前正在面临的问题，对于当前已经不再复现的问题没有显著效果。若你想要收集或分析过去任意时刻性能数据，不希望每次都人工介入按需分析，请使用[持续性能分析](/dashboard/continuous-profiling.md)功能。
+After initiates the profiling, TiDB Dashboard collects current performance data for a period of time (30 seconds by default). Therefore this feature can only be used to analyze ongoing problems that the cluster is facing now and has no significant effect on historical problems. If you want to collect and analyze performance data **at any time**, see [Continuous Profiling](/dashboard/continuous-profiling.md).
 
-## 支持的性能数据
+## Supported performance data
 
-目前支持收集并分析以下性能数据：
+The following performance data are currently supported:
 
-- CPU：TiDB、TiKV、PD、TiFlash 实例上各个内部函数的 CPU 开销情况
+- CPU: The CPU overhead of each internal function on TiDB, TiKV, PD and TiFlash instances
 
-  > ARM 环境中暂不支持对 TiKV 和 TiFlash 的 CPU 开销情况进行分析。
+  > The CPU overhead of TiKV and TiFlash instances is currently not supported in ARM architecture.
 
-- Heap：TiDB、PD、TiKV 实例上各个内部函数的内存占用开销情况
+- Heap: The memory consumption of each internal function on TiDB, TiKV, and PD instances
 
-  > 从 v7.5 版本开始，支持获取 TiKV Heap Profile，并且需要 TiDB Dashboard 的运行环境中有 Perl 依赖，否则会报错。
+  > Starting from v7.5, TiDB supports the TiKV Heap Profile. The Perl dependency is required in the running environment of TiDB Dashboard. Otherwise an error will occur.
 
-- Mutex：TiDB、PD 实例上各个处于等待状态的 Mutex 情况
+- Mutex: The mutex contention states on TiDB and PD instances
 
-- Goroutine：TiDB、PD 实例上各个 Goroutine 的运行状态及调用栈情况
+- Goroutine: The running state and call stack of all goroutines on TiDB and PD instances
 
-## 访问页面
+## Access the page
 
-可以通过以下两种方法访问实例性能分析页面：
+You can access the instance profiling page using either of the following methods:
 
-- 登录 TiDB Dashboard 后，在左侧导航栏中点击**高级调试** (Advanced Debugging) > **实例性能分析** (Profile Instances) > **手动分析** (Manual Profiling)：
+* After logging in to TiDB Dashboard, click **Advanced Debugging** > **Profiling Instances** > **Manual Profiling** in the left navigation menu.
 
-  ![访问页面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-profiling-access.png)
+  ![Access instance profiling page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-access.png)
 
-- 在浏览器中访问 <http://127.0.0.1:2379/dashboard/#/instance_profiling>（将 `127.0.0.1:2379` 替换为实际 PD 实例地址和端口）。
+* Visit <http://127.0.0.1:2379/dashboard/#/instance_profiling> in your browser. Replace `127.0.0.1:2379` with the actual PD instance address and port.
 
-## 开始性能分析
+## Start Profiling
 
-在实例性能分析页面，选择至少一个目标实例和分析类型，确定性能分析时长（默认为 30 秒）。点击**开始分析** (Start Profiling) ：
+In the instance profiling page, choose at least one target instance and click **Start Profiling** to start the instance profiling.
 
-![开始分析](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-profiling-start.png)
+![Start instance profiling](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-start.png)
 
-在已经启用了[持续性能分析](/dashboard/continuous-profiling.md)的集群上，手动性能分析不再可用。若要在启用了持续性能分析功能的集群上获取当前时刻的集群性能数据，请查看[持续性能分析页面](/dashboard/continuous-profiling.md#访问页面)上最近一次的分析结果。
+You can modify the profiling duration before starting the profiling. This duration is determined by the time needed for the profiling, which is 30 seconds by default. The 30-second duration takes 30 seconds to complete.
 
-## 查看性能分析状态
+Manual Profiling cannot be initiated on clusters that have [Continuous Profiling](/dashboard/continuous-profiling.md) enabled. To view the performance data at the current moment, click on the most recent profiling result in the [Continuous Profiling page](/dashboard/continuous-profiling.md#access-the-page).
 
-开始性能分析后，可以看到实时性能分析状态和进度：
+## View profiling status
 
-![实时状态](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-profiling-view-progress.png)
+After a profiling is started, you can view the profiling status and progress in real time.
 
-性能分析会在后台运行，刷新或退出当前页面不会终止已经运行的性能分析任务。
+![Profiling detail](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-view-progress.png)
 
-## 下载性能数据
+The profiling runs in the background. Refreshing or exiting the current page does not stop the profiling task that is running.
 
-所有实例的性能分析都完成后，可点击右上角下载按钮 (Download Profiling Result) 打包下载所有性能数据：
+## Download performance data
 
-![下载分析结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-profiling-download.png)
+After the profiling of all instances is completed, you can click **Download Profiling Result** in the upper right corner to download all performance data.
 
-也可以点击列表中的单个实例查看其性能数据，或者悬浮到 **...** 按钮上下载原始数据：
+![Download profiling result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-download.png)
 
-![在线查看分析结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-profiling-view-single.png)
+You can also click an individual instance in the table to view its profiling result. Alternatively, you can hover on ... to download raw data.
 
-## 查看历史性能数据
+![Single instance result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-view-single.png)
 
-在性能分析页面下方，列出了你手动发起的性能分析历史。点击任意一行，即可查看其状态详情：
+## View profiling history
 
-![历史列表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-profiling-history.png)
+The on-demand profiling history is listed on the page. Click a row to view details.
 
-关于状态详情页的操作，参见[查看性能分析状态](#查看性能分析状态)章节。
+![View profiling history](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-profiling-history.png)
+
+For detailed operations on the profiling status page, see [View Profiling Status](#view-profiling-status).

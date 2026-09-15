@@ -1,29 +1,28 @@
 ---
 title: TiDB 3.1 Beta Release Notes
-summary: TiDB 3.1 Beta 发布说明：发版日期为 2019 年 12 月 20 日，TiDB 版本为 3.1.0-beta，TiDB Ansible 版本为 3.1.0-beta。TiDB 新增 SQL 优化器和丰富的 SQL hint 功能。另外，TiDB 还支持 Follower Read 功能。TiKV 新增支持分布式备份恢复功能和 Follower Read 功能。PD 也新增支持分布式备份恢复功能。
-aliases: ['/zh/tidb/dev/release-3.1.0-beta/','/zh/tidb/v3.1/release-3.1.0-beta','/docs-cn/dev/releases/release-3.1.0-beta/','/docs-cn/dev/releases/3.1.0-beta/','/zh/tidb/v5.4/release-3.1.0-beta','/zh/tidb/v6.1/release-3.1.0-beta','/zh/tidb/v6.5/release-3.1.0-beta','/zh/tidb/v7.1/release-3.1.0-beta','/zh/tidb/v7.5/release-3.1.0-beta','/zh/tidb/v8.1/release-3.1.0-beta']
+summary: TiDB 3.1 Beta was released on December 20, 2019. It includes SQL Optimizer improvements and supports the Follower Read feature. TiKV now supports distributed backup and restore, as well as the Follower Read feature. PD also supports distributed backup and restore.
 ---
 
 # TiDB 3.1 Beta Release Notes
 
-发版日期：2019 年 12 月 20 日
+Release date: December 20, 2019
 
-TiDB 版本：3.1.0-beta
+TiDB version: 3.1.0-beta
 
-TiDB Ansible 版本：3.1.0-beta
+TiDB Ansible version: 3.1.0-beta
 
 ## TiDB
 
-+ SQL 优化器
-    - 丰富 SQL hint [#12192](https://github.com/pingcap/tidb/pull/12192)
-+ 新功能
-    - TiDB 支持 Follower Read 功能 [#12535](https://github.com/pingcap/tidb/pull/12535)
++ SQL Optimizer
+    - Enrich SQL hints [#12192](https://github.com/pingcap/tidb/pull/12192)
++ New feature
+    - Support the Follower Read feature [#12535](https://github.com/pingcap/tidb/pull/12535)
 
 ## TiKV
 
-- 支持分布式备份恢复功能 [#5532](https://github.com/tikv/tikv/pull/5532)
-- TiKV 支持 Follower Read 功能 [#5562](https://github.com/tikv/tikv/pull/5562)
+- Support the distributed backup and restore feature [#5532](https://github.com/tikv/tikv/pull/5532)
+- Support the Follower Read feature [#5562](https://github.com/tikv/tikv/pull/5562)
 
 ## PD
 
-- 支持分布式备份恢复功能 [#1896](https://github.com/pingcap/pd/pull/1896)
+- Support the distributed backup and restore feature [#1896](https://github.com/pingcap/pd/pull/1896)

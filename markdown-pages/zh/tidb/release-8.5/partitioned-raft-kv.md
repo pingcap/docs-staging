@@ -1,47 +1,47 @@
 ---
 title: Partitioned Raft KV
-summary: 了解 TiKV 的 Partitioned Raft KV 特性。
+summary: Learn about the partitioned Raft KV feature of TiKV.
 ---
 
 # Partitioned Raft KV
 
-> **警告：**
+> **Warning:**
 >
-> Partitioned Raft KV 目前为实验特性，不建议在生产环境中使用。该功能可能会在未事先通知的情况下发生变化或删除。如果发现 bug，请在 GitHub 上提 [issue](https://github.com/pingcap/tidb/issues) 反馈。
+> Partitioned Raft KV is an experimental feature. It is not recommended that you use it in the production environment. This feature might be changed or removed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
 
-v6.6.0 之前，基于 Raft 的存储引擎，TiKV 使用单个 RocksDB 实例存储该 TiKV 实例所有 Region 的数据。
+Before v6.6.0, TiKV's Raft-based storage engine used a single RocksDB instance to store the data of all Regions of the TiKV instance.
 
-为了更平稳地支持更大的集群，从 v6.6.0 开始，TiDB 引入了一个全新的 TiKV 存储引擎，该引擎使用多个 RocksDB 实例来存储 TiKV 的 Region 数据，每个 Region 的数据都独立存储在单个 RocksDB 实例中。
+To support larger clusters more stably, starting from TiDB v6.6.0, a new TiKV storage engine is introduced, which uses multiple RocksDB instances to store TiKV Region data, and the data of each Region is independently stored in a separate RocksDB instance.
 
-新的 TiKV 引擎能够更好地控制 RocksDB 实例的文件数和层级，并实现了 Region 间数据操作的物理隔离，避免相互影响。同时，该引擎支持平稳管理更多的数据。你可以理解为，TiKV 通过分区管理多个 RocksDB 实例，这也是该特性 Partitioned Raft KV 名字的由来。
+The new engine can better control the number and level of files in each RocksDB instance, achieve physical isolation of data operations between Regions, and support stably managing more data. You can see it as TiKV managing multiple RocksDB instances through partitioning, which is why the feature is named Partitioned Raft KV.
 
-## 使用场景
+## Application scenarios
 
-如果你的 TiKV 集群有以下特点，可以考虑使用该功能：
+You can use this feature if your TiKV cluster has the following characteristics:
 
-* 需要在单个 TiKV 实例支持更多的数据。
-* 具有大量写入吞吐。
-* 需要频繁地扩缩容。
-* 负载有较为严重的读写放大。
-* TiKV 内存尚有富余。
+* A single TiKV instance needs to support more data.
+* There are many write requests.
+* Scale-in and scale-out operations are frequent.
+* The workload has a serious read and write amplification.
+* TiKV has sufficient memory.
 
-该功能的主要优势在于，提高写入性能，加快扩缩容速度，以及在相同硬件下支持更多数据和更大的集群。
+Advantages of this feature are better write performance, faster scaling speed, and larger volume of data supported with the same hardware. It can also support larger cluster scale.
 
-## 使用方法
+## Usage
 
-要启用 Partitioned Raft KV，需要在创建集群时将配置项 [`storage.engine`](/tikv-configuration-file.md#engine-从-v660-版本开始引入) 设为 `"partitioned-raft-kv"`。同时，在使用 Partitioned Raft KV 特性时，可以通过配置项 [`rocksdb.write-buffer-flush-oldest-first`](/tikv-configuration-file.md#write-buffer-flush-oldest-first-从-v660-版本开始引入) 和 [`rocksdb.write-buffer-limit`](/tikv-configuration-file.md#write-buffer-limit-从-v660-版本开始引入) 来控制 RocksDB 的内存使用。
+To enable Partitioned Raft KV, set the configuration item [`storage.engine`](/tikv-configuration-file.md#engine-new-in-v660) to `"partitioned-raft-kv"` when creating a cluster. At the same time, you can use the configuration items [`rocksdb.write-buffer-flush-oldest-first`](/tikv-configuration-file.md#write-buffer-flush-oldest-first-new-in-v660) and [`rocksdb.write-buffer-limit`](/tikv-configuration-file.md#write-buffer-limit-new-in-v660) to control the memory usage of RocksDB when using Raft KV.
 
-## 使用限制
+## Restrictions
 
-由于该功能为实验特性，目前有以下限制：
+Partitioned Raft KV has the following restrictions:
 
-* 暂不支持基于 EBS 的快照备份
-* 暂不支持 Online Unsafe Recovery 和 Titan
-* 不支持 tikv-ctl 命令行管理工具中的以下子命令：
+* It does not support EBS volume snapshot backup yet.
+* It does not support online unsafe recovery or Titan yet.
+* It does not support the following subcommands of the tikv-ctl command-line tool:
     * `unsafe-recover`
     * `raw-scan`
     * `remove-fail-stores`
     * `recreate-region`
     * `reset-to-version`
-* 暂不兼容 TiFlash
-* 初始化以后不支持开启或者关闭
+* It is not compatible with TiFlash yet.
+* You cannot enable or disable this feature after the cluster is initialized.

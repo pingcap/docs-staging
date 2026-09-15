@@ -1,136 +1,171 @@
 ---
-title: 创建 TiDB Cloud Starter 实例
-summary: 使用 TiDB Cloud Starter 构建 TiDB 实例，并连接到该实例。
-aliases: ['/zh/tidb/dev/build-cluster-in-cloud','/zh/tidb/stable/dev-guide-build-cluster-in-cloud/','/zh/tidb/dev/dev-guide-build-cluster-in-cloud/','/zh/tidbcloud/dev-guide-build-cluster-in-cloud/']
+title: 构建 TiDB Cloud Starter 集群
+summary: 了解如何在 TiDB Cloud 中构建 TiDB Cloud Starter 集群并连接到它。
 ---
 
 <!-- markdownlint-disable MD029 -->
 
-# 创建 TiDB Cloud Starter 实例
+# 构建 TiDB Cloud Starter 集群
 
-本文将介绍如何以最快的方式开始使用 TiDB。你将创建并启动一个 [TiDB Cloud Starter](https://www.pingcap.com/tidb-cloud-starter/) 实例，使用 TiDB SQL 客户端，插入数据。随后将从示例程序读取出数据。
+<CustomContent platform="tidb">
 
-若你需要在本地计算机上启动 TiDB，请参阅[本地启动 TiDB](/quick-start-with-tidb.md)。
+本文档将带你快速上手 TiDB。你将使用 [TiDB Cloud](https://www.pingcap.com/tidb-cloud) 创建一个 TiDB Cloud Starter 集群，连接到它，并在其上运行一个示例应用程序。
 
-## 第 1 步：创建 TiDB Cloud Starter 实例 {#step-1-create-a-starter-instance}
+如果你需要在本地机器上运行 TiDB，请参见 [本地启动 TiDB](/quick-start-with-tidb.md)。
 
-1. 如果你没有 TiDB Cloud 账户，请点击[此处](https://tidbcloud.com/free-trial)注册。
+</CustomContent>
 
-2. [登录](https://tidbcloud.com/)你的 TiDB Cloud 账户。
+<CustomContent platform="tidb-cloud">
 
-3. 在 [**My TiDB**](https://tidbcloud.com/tidbs) 页面，点击 **Create Resource**。
+本文档将带你快速上手 TiDB Cloud。你将创建一个 TiDB 集群，连接到它，并在其上运行一个示例应用程序。
 
-4. 在 **Create Resource*** 页面，**Starter** 为默认选项。为你的 TiDB Cloud Starter 实例输入一个名称，选择云服务提供商，然后选择一个可用区。
+</CustomContent>
 
-5. 点击 **Create** 以创建 TiDB Cloud Starter 实例。
+## 第 1 步. 创建 TiDB Cloud Starter 集群 {#step-1-create-a-tidb-cloud-cluster}
 
-    你的 TiDB Cloud Starter 实例将在约 30 秒内创建完成。
+1. 如果你还没有 TiDB Cloud 账号，请点击[这里](https://tidbcloud.com/free-trial)注册账号。
 
-6. 在你的 TiDB Cloud Starter 实例创建完成后，点击实例名称进入其概览页面，然后点击右上角的 **Connect**。此时会显示一个连接对话框。
+2. [登录](https://tidbcloud.com/)你的 TiDB Cloud 账号。
 
-7. 在对话框中，选择你所需的连接方式和操作系统，获取对应的连接字符串。本文档以 MySQL 客户端为例。
+3. 在 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击 **Create Cluster**。
 
-8. 点击 **Generate Password** 生成随机密码。生成的密码不会再次显示，因此请将密码妥善保存。如果没有设置 root 密码，你将无法连接到 TiDB Cloud Starter 实例。
+4. 在 **Create Cluster** 页面，**Starter** 默认已选中。如有需要，可修改默认集群名称，然后选择你希望创建集群的区域。
+
+5. 点击 **Create** 创建 TiDB Cloud Starter 集群。
+
+    你的 TiDB Cloud 集群将在大约 30 秒内创建完成。
+
+6. 集群创建完成后，点击你的集群名称进入集群概览页面，然后点击右上角的 **Connect**。此时会弹出连接对话框。
+
+7. 在对话框中，选择你偏好的连接方式和操作系统，以获取对应的连接字符串。本文档以 MySQL 客户端为例。
+
+8. 点击 **Generate Password** 生成一个随机密码。生成的密码只会显示一次，请妥善保存。如果你未设置 root 密码，将无法连接到集群。
+
+<CustomContent platform="tidb">
 
 > **注意：**
 >
-> 当连接到 TiDB Cloud Starter 实例时，必须在用户名前加上前缀并使用单引号包裹用户名。你可以在 [TiDB Cloud Starter 用户名前缀](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix)中获得更多信息。
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 集群，连接集群时，必须在用户名中包含集群的前缀，并用引号包裹用户名。更多信息请参见 [用户名前缀](https://docs.pingcap.com/tidbcloud/select-cluster-tier#user-name-prefix)。
 
-## 第 2 步：连接到 TiDB Cloud Starter 实例 {#step-2-connect-to-a-starter-instance}
+</CustomContent>
 
-1. 若未安装 MySQL 客户端，请选择自己的操作系统，按以下步骤安装。
+<CustomContent platform="tidb-cloud">
 
-    <SimpleTab>
+> **注意：**
+>
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 集群，连接集群时，必须在用户名中包含集群的前缀，并用引号包裹用户名。更多信息请参见 [用户名前缀](/tidb-cloud/select-cluster-tier.md#user-name-prefix)。
 
-    <div label="macOS">
+</CustomContent>
 
-    对于 macOS 操作系统，如果你没有安装 Homebrew，请参考 [Homebrew 官网](https://brew.sh/zh-cn/)进行安装。
+## 第 2 步. 连接到集群
 
-    ```shell
-    brew install mysql-client
-    ```
+1. 如果未安装 MySQL 客户端，请选择你的操作系统并按照以下步骤安装。
 
-    在安装完成的命令行输出中，得到以下信息：
+<SimpleTab>
 
-    ```
-    mysql-client is keg-only, which means it was not symlinked into /opt/homebrew,
-    because it conflicts with mysql (which contains client libraries).
+<div label="macOS">
 
-    If you need to have mysql-client first in your PATH, run:
-    echo 'export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"' >> ~/.zshrc
+对于 macOS，如果你还没有安装 [Homebrew](https://brew.sh/index)，请先安装，然后运行以下命令安装 MySQL 客户端：
 
-    For compilers to find mysql-client you may need to set:
-    export LDFLAGS="-L/opt/homebrew/opt/mysql-client/lib"
-    export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
-    ```
+```shell
+brew install mysql-client
+```
 
-    请运行其中的此行（命令行输出若与此处文档不一致，请以命令行输出为准）：
+输出如下：
 
-    ```shell
-    echo 'export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"' >> ~/.zshrc
-    ```
+```
+mysql-client is keg-only, which means it was not symlinked into /opt/homebrew,
+because it conflicts with mysql (which contains client libraries).
 
-    完成后，生效该配置文件（例如 `~/.zshrc`），并验证 MySQL 客户端是否安装成功：
+If you need to have mysql-client first in your PATH, run:
+  echo 'export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"' >> ~/.zshrc
 
-    ```shell
-    source ~/.zshrc
-    mysql --version
-    ```
+For compilers to find mysql-client you may need to set:
+  export LDFLAGS="-L/opt/homebrew/opt/mysql-client/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
+```
 
-    预期会得到形如以下的输出：
+要将 MySQL 客户端添加到 PATH，请在上述输出中找到以下命令（如果你的输出与本文档中的输出不一致，请使用你输出中的对应命令）并运行：
 
-    ```
-    mysql  Ver 8.0.28 for macos12.0 on arm64 (Homebrew)
-    ```
+```shell
+echo 'export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"' >> ~/.zshrc
+```
 
-    </div>
+然后，通过 `source` 命令声明全局环境变量，并验证 MySQL 客户端是否安装成功：
 
-    <div label="Linux">
+```shell
+source ~/.zshrc
+mysql --version
+```
 
-    对于 Linux 操作系统，下面以 Ubuntu 为例：
+预期输出示例：
 
-    ```shell
-    apt-get install mysql-client
-    ```
+```
+mysql  Ver 8.0.28 for macos12.0 on arm64 (Homebrew)
+```
 
-    完成后，请验证 MySQL 客户端是否安装成功：
+</div>
 
-    ```shell
-    mysql --version
-    ```
+<div label="Linux">
 
-    预期会得到形如以下的输出：
+对于 Linux，这里以 Ubuntu 为例：
 
-    ```
-    mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
-    ```
+```shell
+apt-get install mysql-client
+```
 
-    </div>
+然后，验证 MySQL 客户端是否安装成功：
 
-    </SimpleTab>
+```shell
+mysql --version
+```
 
-2. 运行[第 1 步](#step-1-create-a-starter-instance)中得到的连接字符串。
+预期输出示例：
 
+```
+mysql  Ver 15.1 Distrib 5.5.68-MariaDB, for Linux (x86_64) using readline 5.1
+```
+
+</div>
+
+</SimpleTab>
+
+2. 运行在[第 1 步](#step-1-create-a-tidb-cloud-cluster)中获取的连接字符串。
+
+    
     ```shell
     mysql --connect-timeout 15 -u '<prefix>.root' -h <host> -P 4000 -D test --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/cert.pem -p
     ```
 
+<CustomContent platform="tidb">
+
 > **注意：**
 >
-> - 在连接 TiDB Cloud Starter 实例时，[必须使用 TLS 连接](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-tier-clusters)。
-> - 如果你在连接时遇到问题，可阅读 [TiDB Cloud Starter 实例安全连接](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-tier-clusters)来获得更多信息。
+> - 连接 TiDB Cloud Starter 集群时，必须[使用 TLS 连接](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters)。
+> - 如果在连接 TiDB Cloud Starter 集群时遇到问题，可以参考 [安全连接到 TiDB Cloud Starter 集群](https://docs.pingcap.com/tidbcloud/secure-connections-to-serverless-clusters) 获取更多信息。
 
-3. 填写密码，完成登录。
+</CustomContent>
 
-## 第 3 步：运行 SQL
+<CustomContent platform="tidb-cloud">
 
-尝试运行一下你在 TiDB Cloud 上的的第一个 SQL 吧：
+> **注意：**
+>
+> - 连接 TiDB Cloud Starter 集群时，必须[使用 TLS 连接](/tidb-cloud/secure-connections-to-serverless-clusters.md)。
+> - 如果在连接 TiDB Cloud Starter 集群时遇到问题，可以参考 [安全连接到 TiDB Cloud Starter 集群](/tidb-cloud/secure-connections-to-serverless-clusters.md) 获取更多信息。
+
+</CustomContent>
+
+3. 输入密码进行登录。
+
+## 第 3 步. 执行 SQL 语句
+
+让我们尝试在 TiDB Cloud 上执行你的第一条 SQL 语句。
 
 ```sql
 SELECT 'Hello TiDB Cloud!';
 ```
 
-你将看到这样的输出：
+预期输出：
 
 ```sql
 +-------------------+
@@ -140,4 +175,18 @@ SELECT 'Hello TiDB Cloud!';
 +-------------------+
 ```
 
-如果你的实际输出与预期输出一致，表示你已经在 TiDB Cloud 上成功地运行了 SQL 语句。
+如果你的实际输出与预期输出类似，恭喜你，已经在 TiDB Cloud 上成功执行了一条 SQL 语句。
+
+## 需要帮助？
+
+<CustomContent platform="tidb">
+
+欢迎在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或[提交支持工单](/support.md)。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+欢迎在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或[提交支持工单](https://tidb.support.pingcap.com/)。
+
+</CustomContent>

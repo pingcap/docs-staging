@@ -1,39 +1,40 @@
 ---
 title: TiDB 2.1.6 Release Notes
-summary: TiDB 2.1.6 版本发布，对系统稳定性、优化器、统计信息和执行引擎做了改进。修复了多个问题，包括索引扫描选择问题、聚合函数兼容性问题、变量设置导致的 Panic 问题等。TiKV 修复了解析 protobuf 失败导致的错误。Lightning 修复了多个导入相关的问题，并支持 CSV 格式。
-aliases: ['/zh/tidb/dev/release-2.1.6/','/zh/tidb/v2.1/release-2.1.6','/docs-cn/dev/releases/release-2.1.6/','/docs-cn/dev/releases/2.1.6/','/zh/tidb/v5.4/release-2.1.6','/zh/tidb/v6.1/release-2.1.6','/zh/tidb/v6.5/release-2.1.6','/zh/tidb/v7.1/release-2.1.6','/zh/tidb/v7.5/release-2.1.6','/zh/tidb/v8.1/release-2.1.6']
+summary: TiDB 2.1.6 and TiDB Ansible 2.1.6 were released on March 15, 2019. The release includes improvements in stability, SQL optimizer, statistics, and execution engine. Fixes and enhancements were made in SQL optimizer/executor, server, DDL, TiKV, and Tools. Notable changes include support for log_bin variable, sanity check for transactions, and fixing import failure due to non-alphanumeric characters in schema names.
 ---
 
 # TiDB 2.1.6 Release Notes
 
-2019 年 3 月 15 日，TiDB 发布 2.1.6 版，TiDB Ansible 相应发布 2.1.6 版本。相比 2.1.5 版本，该版本对系统稳定性、优化器、统计信息以及执行引擎做了很多改进。
+On March 15, 2019, TiDB 2.1.6 is released. The corresponding TiDB Ansible 2.1.6 is also released. Compared with TiDB 2.1.5, this release has greatly improved the stability, the SQL optimizer, statistics, and the execution engine.
 
 ## TiDB
 
-+ 优化器/执行器
-    - 当两个表在 `TIDB_INLJ` 的 Hint 中时，基于代价来选择外表 [#9615](https://github.com/pingcap/tidb/pull/9615)
-    - 修复在某些情况下，没有正确选择 IndexScan 的问题 [#9587](https://github.com/pingcap/tidb/pull/9587)
-    - 修复聚合函数在子查询里面的检查跟 MySQL 不兼容的行为 [#9551](https://github.com/pingcap/tidb/pull/9551)
-    - 使 `show stats_histograms` 语句只输出合法的列，避免 Panic [#9502](https://github.com/pingcap/tidb/pull/9502)
++ SQL Optimizer/Executor
+    - Optimize planner to select the outer table based on cost when both tables are specified in Hint of `TIDB_INLJ` [#9615](https://github.com/pingcap/tidb/pull/9615)
+    - Fix the issue that `IndexScan` cannot be selected correctly in some cases [#9587](https://github.com/pingcap/tidb/pull/9587)
+    - Fix incompatibility with MySQL of check in the `agg` function in subqueries [#9551](https://github.com/pingcap/tidb/pull/9551)
+    - Make `show stats_histograms` only output valid columns to avoid panics [#9502](https://github.com/pingcap/tidb/pull/9502)
+
 + Server
-    - 支持变量 `log_bin`，用于开启/关闭 Binlog [#9634](https://github.com/pingcap/tidb/pull/9634)
-    - 在事务中添加一个防御性检查，避免错误的事务提交 [#9559](https://github.com/pingcap/tidb/pull/9559)
-    - 修复设置变量导致的 Panic 的问题 [#9539](https://github.com/pingcap/tidb/pull/9539)
+    - Support the `log_bin` variable to enable/disable Binlog [#9634](https://github.com/pingcap/tidb/pull/9634)
+    - Add a sanity check for transactions to avoid false transaction commit [#9559](https://github.com/pingcap/tidb/pull/9559)
+    - Fix the issue that setting variables may lead to panic  [#9539](https://github.com/pingcap/tidb/pull/9539)
+
 + DDL
-    - 修复 Create Table Like 语句在某些情况导致 Panic 的问题 [#9652](https://github.com/pingcap/tidb/pull/9652)
-    - 打开 etcd client 的 AutoSync 特性，防止某些情况下 TiDB 无法连接上 etcd 的问题 [#9600](https://github.com/pingcap/tidb/pull/9600)
+    - Fix the issue that the `Create Table Like` statement causes panic in some cases [#9652](https://github.com/pingcap/tidb/pull/9652)
+    - Enable the `AutoSync` feature of etcd clients to avoid connection issues between TiDB and etcd in some cases [#9600](https://github.com/pingcap/tidb/pull/9600)
 
 ## TiKV
 
-- 修复在某些情况下解析 protobuf 失败导致 `StoreNotMatch` 错误的问题 [#4303](https://github.com/tikv/tikv/pull/4303)
+- Fix the issue that a `protobuf` parsing failure would in some cases cause a `StoreNotMatch` error [#4303](https://github.com/tikv/tikv/pull/4303)
 
 ## Tools
 
 + Lightning
-    - importer 的默认的 region-split-size 变更为 512 MiB [#4369](https://github.com/tikv/tikv/pull/4369)
-    - 保存原先在内存中的中间状态的 SST 到磁盘，减少内存使用 [#4369](https://github.com/tikv/tikv/pull/4369)
-    - 限制 RocksDB 的内存使用 [#4369](https://github.com/tikv/tikv/pull/4369)
-    - 修复 Region 还没有调度完成时进行 scatter 的问题 [#4369](https://github.com/tikv/tikv/pull/4369)
-    - 将大表的数据和索引分离导入，在分批导入时能有效降低耗时 [#132](https://github.com/pingcap/tidb-lightning/pull/132)
-    - 支援 CSV [#111](https://github.com/pingcap/tidb-lightning/pull/111)
-    - 修复库名中含非英数字符时导入失败的错误 [#9547](https://github.com/pingcap/tidb/pull/9547)
+    - Change the default `region-split-size` of importer to 512 MiB [#4369](https://github.com/tikv/tikv/pull/4369)
+    - Save the intermediate SST previously cached in memory to the local disk to reduce memory usage [#4369](https://github.com/tikv/tikv/pull/4369)
+    - Limit the memory usage of RocksDB [#4369](https://github.com/tikv/tikv/pull/4369)
+    - Fix the issue that Regions are scattered before scheduling is finished [#4369](https://github.com/tikv/tikv/pull/4369)
+    - Separate importing of data and indexes for large tables to effectively reduce time consumption when importing in batches [#132](https://github.com/pingcap/tidb-lightning/pull/132)
+    - Support CSV [#111](https://github.com/pingcap/tidb-lightning/pull/111)
+    - Fix the error of import failure due to non-alphanumeric characters in schema names [#9547](https://github.com/pingcap/tidb/pull/9547)

@@ -1,84 +1,84 @@
 ---
-title: TiDB 磁盘 I/O 过高的处理办法
-summary: 了解如何定位和处理 TiDB 存储 I/O 过高的问题。
+title: Troubleshoot High Disk I/O Usage in TiDB
+summary: Learn how to locate and address the issue of high TiDB storage I/O usage.
 ---
 
-# TiDB 磁盘 I/O 过高的处理办法
+# Troubleshoot High Disk I/O Usage in TiDB
 
-本文主要介绍如何定位和处理 TiDB 存储 I/O 过高的问题。
+This document introduces how to locate and address the issue of high disk I/O usage in TiDB.
 
-## 确认当前 I/O 指标
+## Check the current I/O metrics
 
-当出现系统响应变慢的时候，如果已经排查了 CPU 的瓶颈、数据事务冲突的瓶颈后，就需要从 I/O 来入手来辅助判断目前的系统瓶颈点。
+If TiDB's response slows down after you have troubleshot the CPU bottleneck and the bottleneck caused by transaction conflicts, you need to check I/O metrics to help determine the current system bottleneck.
 
-### 从监控定位 I/O 问题
+### Locate I/O issues from monitor
 
-最快速的定位手段是从监控来查看整体的 I/O 情况，可以从集群部署工具 (TiUP) 默认会部署的监控组件 Grafana 来查看对应的 I/O 监控，跟 I/O 相关的 Dashboard 有 `Overview`，`Node_exporter`，`Disk-Performance`。
+The quickest way to locate I/O issues is to view the overall I/O status from the monitor, such as the Grafana dashboard which is deployed by default by TiUP. The dashboard panels related to I/O include **Overview**, **Node_exporter**, and **Disk-Performance**.
 
-#### 第一类面板
+#### The first type of monitoring panels
 
-在 `Overview` > `System Info` > `IO Util` 中，可以看到集群中每个机器的 I/O 情况，该指标和 Linux iostat 监控中的 util 类似，百分比越高代表磁盘 I/O 占用越高：
+In **Overview**> **System Info**> **IO Util**, you can see the I/O status of each machine in the cluster. This metric is similar to `util` in the Linux `iostat` monitor. The higher percentage represents higher disk I/O usage:
 
-- 如果监控中只有一台机器的 I/O 高，那么可以辅助判断当前有读写热点。
-- 如果监控中大部分机器的 I/O 都高，那么集群现在有高 I/O 负载存在。
+- If there is only one machine with high I/O usage in the monitor, currently there might be read and write hotspots on this machine.
+- If the I/O usage of most machines in the monitor is high, the cluster now has high I/O loads.
 
-如果发现某台机器的 I/O 比较高，可以从监控 `Disk-Performance Dashboard` 进一步观察 I/O 的使用情况，结合 `Disk Latency`，`Disk Load` 等 metric 判断是否存在异常，必要时可以使用 fio 工具对磁盘进行检测。
+For the first situation above (only one machine with high I/O usage), you can further observe I/O metrics from the **Disk-Performance Dashboard** such as `Disk Latency` and `Disk Load` to determine whether any anomaly exists. If necessary, use the fio tool to check the disk.
 
-#### 第二类面板
+#### The second type of monitoring panels
 
-TiDB 集群主要的持久化组件是 TiKV 集群，一个 TiKV 包含两个 RocksDB 实例：一个用于存储 Raft 日志，位于 data/raft，一个用于存储真正的数据，位于 data/db。
+The main storage component of the TiDB cluster is TiKV. One TiKV instance contains two RocksDB instances: one for storing Raft logs, located in `data/raft`, and the other for storing real data, located in `data/db`.
 
-在 `TiKV-Details` > `Raft IO` 中，可以看到这两个实例磁盘写入的相关 metric：
+In **TiKV-Details** > **Raft IO**, you can see the metrics related to disk writes of these two instances:
 
-- `Append log duration`：该监控表明了存储 Raft 日志的 RocksDB 写入的响应时间，99% 的响应应该在 50ms 以内。
-- `Apply log duration`：该监控表明了存储真正数据的 RocksDB 写入的响应时间，99% 的响应应该在 100ms 以内。
+- `Append log duration`: This metric indicates the response time of writes into RockDB that stores Raft logs. The `.99` response time should be within 50 ms.
+- `Apply log duration`: This metric indicates the response time of writes into RockDB that stores real data. The `.99` response should be within 100 ms.
 
-这两个监控还有 `.. per server` 的监控面板来提供辅助查看热点写入的情况。
+These two metrics also have the **.. per server** monitoring panel to help you view the write hotspots.
 
-#### 第三类面板
+#### The third type of monitoring panels
 
-在 `TiKV-Details` > `Storage` 中，有关于 storage 相关情况的监控：
+In **TiKV-Details** > **Storage**, there are monitoring metrics related to storage:
 
-- `Storage command total`：收到的不同命令的个数。
-- `Storage async write duration`：包括了磁盘 sync duration 等监控项，可能和 Raft IO 有关。如遇到异常情况，需要通过 log 来检查相关组件的工作状态是否正常。
+- `Storage command total`: Indicates the number of different commands received.
+- `Storage async write duration`: Includes monitoring metrics such as `disk sync duration`, which might be related to Raft I/O. If you encounter an abnormal situation, check the working statuses of related components by checking logs.
 
-#### 其他面板
+#### Other panels
 
-此外，可能还需要一些其它内容来辅助确认瓶颈是否为 I/O，并可以尝试调整一些参数。通过查看 TiKV gRPC 的 prewrite/commit/raw-put（仅限 raw kv 集群）duration，确认确实是 TiKV 写入慢了。常见的几种情况如下：
+In addition, some other panel metrics might help you determine whether the bottleneck is I/O, and you can try to set some parameters. By checking the prewrite/commit/raw-put (for raw key-value clusters only) of TiKV gRPC duration, you can determine that the bottleneck is indeed the slow TiKV write. The common situations of slow TiKV writes are as follows:
 
-- append log 慢。TiKV Grafana 的 Raft I/O 和 append log duration 比较高，通常情况下是由于写盘慢了，可以检查 RocksDB - raft 的 WAL Sync Duration max 值来确认，否则可能需要报 bug。
-- raftstore 线程繁忙。TiKV grafana 的 Raft Propose/propose wait duration 明显高于 append log duration。请查看以下两点：
+- `append log` is slow. TiKV Grafana's `Raft I/O` and `append log duration` metrics are relatively high, which is often due to slow disk writes. You can check the value of `WAL Sync Duration max` in **RocksDB-raft** to determine the cause of slow `append log`. Otherwise, you might need to report a bug.
+- The `raftstore` thread is busy. In TiKV Grafana, `Raft Propose`/`propose wait duration` is significantly higher than `append log duration`. Check the following aspects for troubleshooting:
 
-    - `[raftstore]` 的 `store-pool-size` 配置是否过小（该值建议在[1,5] 之间，不建议太大）。
-    - 机器的 CPU 是不是不够了。
+    - Whether the value of `store-pool-size` of `[raftstore]` is too small. It is recommended to set this value between `[1,5]` and not too large.
+    - Whether the CPU resource of the machine is insufficient.
 
-- apply log 慢。TiKV Grafana 的 Raft I/O 和 apply log duration 比较高，通常会伴随着 Raft Propose/apply wait duration 比较高。可能的情况如下：
+- `apply log` is slow. TiKV Grafana's `Raft I/O` and `apply log duration` metrics are relatively high, which might usually occur along with relatively high `Raft Propose`/`apply wait duration`. The possible causes are as follows:
   
-    - `[raftstore]` 的 `apply-pool-size` 配置过小（建议在 [1, 5] 之间，不建议太大），Thread CPU/apply cpu 比较高；
-    - 机器的 CPU 资源不够了。
-    - Region 写入热点问题，单个 apply 线程 CPU 使用率比较高（通过修改 Grafana 表达式，加上 by (instance, name) 来看各个线程的 cpu 使用情况），暂时对于单个 Region 的热点写入没有很好的方式，最近在优化该场景。
-    - 写 RocksDB 比较慢，RocksDB kv/max write duration 比较高（单个 Raft log 可能包含很多个 kv，写 RocksDB 的时候会把 128 个 kv 放在一个 write batch 写入到 RocksDB，所以一次 apply log 可能涉及到多次 RocksDB 的 write）。
-    - 其他情况，需要报 bug。
+    - The value of `apply-pool-size` of `[raftstore]` is too small. It is recommended to set this value between `[1, 5]` and not too large. The value of `Thread CPU`/`apply cpu` is also relatively high.
+    - Insufficient CPU resources on the machine.
+    - Write hotspot issue of a single Region (Currently, the solution to this issue is still on the way). The CPU usage of a single `apply` thread is high (which can be viewed by modifying the Grafana expression, appended with `by (instance, name)`).
+    - Slow write into RocksDB, and `RocksDB kv`/`max write duration` is high. A single Raft log might contain multiple key-value pairs (kv). 128 kvs are written to RocksDB in a batch, so one `apply` log might involve multiple RocksDB writes.
+    - For other causes, report them as bugs.
 
-- raft commit log 慢。TiKV Grafana 的 Raft I/O 和 commit log duration 比较高（4.x 版本的 Grafana 才有该 metric）。每个 Region 对应一个独立的 Raft group，Raft 本身是有流控机制的，类似 TCP 的滑动窗口机制，通过参数 [raftstore] raft-max-inflight-msgs = 256 来控制滑动窗口的大小，如果有热点写入并且 commit log duration 比较高可以适度调大改参数，比如 1024。
+- `raft commit log` is slow. In TiKV Grafana, `Raft I/O` and `commit log duration` (only available in Grafana 4.x) metrics are relatively high. Each Region corresponds to an independent Raft group. Raft has a flow control mechanism similar to the sliding window mechanism of TCP. To control the size of a sliding window, adjust the `[raftstore] raft-max-inflight-msgs` parameter. If there is a write hotspot and `commit log duration` is high, you can properly set this parameter to a larger value, such as `1024`.
 
-### 从 log 定位 I/O 问题
+### Locate I/O issues from log
 
-- 如果客户端报 `server is busy` 错误，特别是 `raftstore is busy` 的错误信息，会和 I/O 有相关性。
+- If the client reports errors such as `server is busy` or especially `raftstore is busy`, the errors might be related to I/O issues.
 
-    可以通过查看监控：grafana -> TiKV -> errors 监控确认具体 busy 原因。其中，`server is busy` 是 TiKV 自身的流控机制，TiKV 通过这种方式告知 `tidb/ti-client` 当前 TiKV 的压力过大，过一会儿再尝试。
+    You can check the monitoring panel (**Grafana** -> **TiKV** -> **errors**) to confirm the specific cause of the `busy` error. `server is busy` is TiKV's flow control mechanism. In this way, TiKV informs `tidb/ti-client` that the current pressure of TiKV is too high, and the client should try later.
 
-- TiKV RocksDB 日志出现 `write stall`。
+- `Write stall` appears in TiKV RocksDB logs.
 
-    可能是 `level0 sst` 太多导致 stall。可以添加参数 `[rocksdb] max-sub-compactions = 2（或者 3）` 加快 level0 sst 往下 compact 的速度，该参数的意思是将从 level0 到 level1 的 compaction 任务最多切成 `max-sub-compactions` 个子任务交给多线程并发执行。
+    It might be that too many level-0 SST files cause the write stall. To address the issue, you can add the `[rocksdb] max-sub-compactions = 2 (or 3)` parameter to speed up the compaction of level-0 SST files. This parameter means that the compaction tasks of level-0 to level-1 can be divided into `max-sub-compactions` subtasks for multi-threaded concurrent execution.
 
-    如果磁盘 I/O 能力持续跟不上写入，建议扩容。如果磁盘的吞吐达到了上限（例如 SATA SSD 的吞吐相对 NVME SSD 会低很多）导致 write stall，但是 CPU 资源又比较充足，可以尝试采用压缩率更高的压缩算法来缓解磁盘的压力，用 CPU 资源换磁盘资源。
+    If the disk's I/O capability fails to keep up with the write, it is recommended to scale up the disk. If the throughput of the disk reaches the upper limit  (for example, the throughput of SATA SSD is much lower than that of NVMe SSD), which results in write stall, but the CPU resource is relatively sufficient, you can try to use a compression algorithm of higher compression ratio to relieve the pressure on the disk, that is, use CPU resources to make up for disk resources.
 
-    比如 `default cf compaction` 压力比较大时，可以调整参数 `[rocksdb.defaultcf] compression-per-level = ["no", "no", "lz4", "lz4", "lz4", "zstd", "zstd"]` 改成 `compression-per-level = ["no", "no", "zstd", "zstd", "zstd", "zstd", "zstd"]`。
+    For example, when the pressure of `default cf compaction` is relatively high, you can change the parameter`[rocksdb.defaultcf] compression-per-level = ["no", "no", "lz4", "lz4", "lz4", "zstd", "zstd"]` to `compression-per-level = ["no", "no", "zstd", "zstd", "zstd", "zstd", "zstd"]`.
 
-### 从告警发现 I/O 问题
+### I/O issues found in alerts
 
-集群部署工具 (TiUP) 默认部署的告警组件，官方已经预置了相关的告警项目和阈值，I/O 相关项包括：
+The cluster deployment tool (TiUP) deploys the cluster with alert components by default that have built-in alert items and thresholds. The following alert items are related to I/O:
 
 - TiKV_write_stall
 - TiKV_raft_log_lag
@@ -87,8 +87,8 @@ TiDB 集群主要的持久化组件是 TiKV 集群，一个 TiKV 包含两个 Ro
 - TiKV_raft_append_log_duration_secs
 - TiKV_raft_apply_log_duration_secs
 
-## I/O 问题处理方案
+## Handle I/O issues
 
-1. 当确认为热点 I/O 问题的时候，需要参考 [TiDB 热点问题处理](/troubleshoot-hot-spot-issues.md)来消除相关的热点 I/O 情况。
-2. 当确认整体 I/O 已经到达瓶颈的时候，且从业务侧能够判断 I/O 的能力会持续的跟不上，那么就可以利用分布式数据库的 scale 的能力，采用扩容 TiKV 节点数量的方案来获取更大的整体 I/O 吞吐量。
-3. 调整上述说明中的一些参数，使用计算/内存资源来换取磁盘的存储资源。
++ When an I/O hotspot issue is confirmed to occur, you need to refer to Handle TiDB Hotspot Issues to eliminate the I/O hotspots.
++ When it is confirmed that the overall I/O performance has become the bottleneck, and you can determine that the I/O performance will keep falling behind in the application side, then you can take advantage of the distributed database's capability of scaling and increase the number of TiKV nodes to have greater overall I/O throughput.
++ Adjust some of the parameters as described above, and use computing/memory resources to make up for disk storage resources.

@@ -1,78 +1,74 @@
 ---
-title: Placement Rules 使用文档
-summary: 如何配置 Placement Rules
+title: Placement Rules
+summary: Learn how to configure Placement Rules.
 ---
 
-# Placement Rules 使用文档
+# Placement Rules
 
-> **注意：**
+> **Note:**
 >
-> 本文介绍如何手动在 Placement Driver (PD) 中设置 Placement Rules。推荐使用 [Placement Rules in SQL](/placement-rules-in-sql.md)，让你更方便地设置表和分区的放置。
+> This document introduces how to manually specify placement rules in Placement Driver (PD). It is now recommended to use [Placement Rules in SQL](/placement-rules-in-sql.md). This offers a more convenient way to configure the placement of tables and partitions.
 
-Placement Rules 是 PD 在 4.0 版本引入的一套副本规则系统，用于指导 PD 针对不同类型的数据生成对应的调度。通过组合不同的调度规则，用户可以精细地控制任何一段连续数据的副本数量、存放位置、主机类型、是否参与 Raft 投票、是否可以担任 Raft leader 等属性。
+Placement Rules, introduced in v5.0, is a replica rule system that guides PD to generate corresponding schedules for different types of data. By combining different scheduling rules, you can finely control the attributes of any continuous data range, such as the number of replicas, the storage location, the host type, whether to participate in Raft election, and whether to act as the Raft leader.
 
-Placement Rules 特性在 TiDB v5.0 及以上的版本中默认开启。如需关闭 Placement Rules 特性，请参考[关闭 Placement Rules](#关闭-placement-rules-特性)。
+The Placement Rules feature is enabled by default in v5.0 and later versions of TiDB. To disable it, refer to [Disable Placement Rules](#disable-placement-rules). 
 
-## 规则系统介绍
+## Rule system
 
-整个规则系统的配置由多条规则即 Rule 组成。每条 Rule 可以指定不同的副本数量、Raft 角色、放置位置等属性，以及这条规则生效的 key range。PD 在进行调度时，会先根据 Region 的 key range 在规则系统中查到该 Region 对应的规则，然后再生成对应的调度，来使得 Region 副本的分布情况符合 Rule。
+The configuration of the whole rule system consists of multiple rules. Each rule can specify attributes such as the number of replicas, the Raft role, the placement location, and the key range in which this rule takes effect. When PD is performing schedule, it first finds the rule corresponding to the Region in the rule system according to the key range of the Region, and then generates the corresponding schedule to make the distribution of the Region replica comply with the rule.
 
-多条规则的 key range 可以有重叠部分的，即一个 Region 能匹配到多条规则。这种情况下 PD 根据 Rule 的属性来决定规则是相互覆盖还是同时生效。如果有多条规则同时生效，PD 会按照规则的堆叠次序依次去生成调度进行规则匹配。
+The key ranges of multiple rules can have overlapping parts, which means that a Region can match multiple rules. In this case, PD decides whether the rules overwrite each other or take effect at the same time according to the attributes of rules. If multiple rules take effect at the same time, PD will generate schedules in sequence according to the stacking order of the rules for rule matching.
 
-此外，为了满足不同来源的规则相互隔离的需求，支持更灵活的方式来组织规则，还引入了分组 (Group) 的概念。通常情况下，用户可根据规则的不同来源把规则放置在不同的 Group。
+In addition, to meet the requirement that rules from different sources are isolated from each other, these rules can be organized in a more flexible way. Therefore, the concept of "Group" is introduced. Generally, users can place rules in different groups according to different sources.
 
-Placement Rules 示意图如下所示：
+![Placement rules overview](https://docs-download.pingcap.com/media/images/docs/placement-rules-1.png)
 
-![Placement rules overview](https://docs-download.pingcap.com/media/images/docs-cn/placement-rules-1.png)
+### Rule fields
 
-### 规则字段
+The following table shows the meaning of each field in a rule:
 
-以下是每条规则中各个字段的具体含义：
-
-| 字段名           | 类型及约束                      | 说明                                |
+| Field name           | Type and restriction                      | Description                                |
 | :---            | :---                           | :---                                |
-| `GroupID`         | `string`                         | 分组 ID，标识规则的来源               |
-| `ID`              | `string`                         | 分组内唯一 ID                        |
-| `Index`           | `int`                            | 分组内堆叠次序                       |
-| `Override`        | `true`/`false`                     | 是否覆盖 index 的更小 Rule（限分组内） |
-| `StartKey`        | `string`，十六进制编码                | 适用 Range 起始 key                 |
-| `EndKey`          | `string`，十六进制编码                | 适用 Range 终止 key                 |
-| `Role`            | `string` | 副本角色，包括 voter/leader/follower/learner                           |
-| `Count`           | `int`，正整数                     | 副本数量                            |
-| `LabelConstraint` | `[]Constraint`                    | 用于按 label 筛选节点               |
-| `LocationLabels`  | `[]string`                        | 用于物理隔离                        |
-| `IsolationLevel`  | `string`                          | 用于设置最小强制物理隔离级别             |
+| `GroupID`         | `string`                         |  The group ID that marks the source of the rule.                |
+| `ID`              | `string`                         |  The unique ID of a rule in a group.                        |
+| `Index`           | `int`                            |   The stacking sequence of rules in a group.                     |
+| `Override`        | `true`/`false`                     | Whether to overwrite rules with smaller index (in a group).  |
+| `StartKey`        | `string`, in hexadecimal form                |  Applies to the starting key of a range.                |
+| `EndKey`          | `string`, in hexadecimal form                |  Applies to the ending key of a range.                |
+| `Role`            | `string` | Replica roles, including voter/leader/follower/learner.                           |
+| `Count`           | `int`, positive integer                     |  The number of replicas.                            |
+| `LabelConstraint` | `[]Constraint`                    |  Filters nodes based on the label.               |
+| `LocationLabels`  | `[]string`                        |  Used for physical isolation.                       |
+| `IsolationLevel`  | `string`                          |  Used to set the minimum physical isolation level
 
-`LabelConstraint` 与 Kubernetes 中的功能类似，支持通过 `in`、`notIn`、`exists` 和 `notExists` 四种原语来筛选 label。这四种原语的意义如下：
+`LabelConstraint` is similar to the function in Kubernetes that filters labels based on these four primitives: `in`, `notIn`, `exists`, and `notExists`. The meanings of these four primitives are as follows:
 
-+ `in`：给定 key 的 label value 包含在给定列表中。
-+ `notIn`：给定 key 的 label value 不包含在给定列表中。
-+ `exists`：包含给定的 label key。
-+ `notExists`：不包含给定的 label key。
++ `in`: the label value of the given key is included in the given list.
++ `notIn`: the label value of the given key is not included in the given list.
++ `exists`: includes the given label key.
++ `notExists`: does not include the given label key.
 
-`LocationLabels` 的意义和作用与 PD v4.0 之前的版本相同。比如配置 `[zone,rack,host]` 定义了三层的拓扑结构：集群分为多个 zone（可用区），每个 zone 下有多个 rack（机架），每个 rack 下有多个 host（主机）。PD 在调度时首先会尝试将 Region 的 Peer 放置在不同的 zone，假如无法满足（比如配置 3 副本但总共只有 2 个 zone）则保证放置在不同的 rack；假如 rack 的数量也不足以保证隔离，那么再尝试 host 级别的隔离，以此类推。
+The meaning and function of `LocationLabels` are the same with those earlier than v4.0. For example, if you have deployed `[zone,rack,host]` that defines a three-layer topology: the cluster has multiple zones (Availability Zones), each zone has multiple racks, and each rack has multiple hosts. When performing schedule, PD first tries to place the Region's peers in different zones. If this try fails (such as there are three replicas but only two zones in total), PD guarantees to place these replicas in different racks. If the number of racks is not enough to guarantee isolation, then PD tries the host-level isolation.
 
-`IsolationLevel` 的意义和作用详细请参考[配置集群拓扑](/schedule-replicas-by-topology-labels.md)。例如已配置 `LocationLabels` 为 `[zone,rack,host]` 的前提下，设置 `IsolationLevel` 为 `zone`，则 PD 在调度时会保证每个 Region 的所有 Peer 均被放置在不同的 zone。假如无法满足 `IsolationLevel` 的最小强制隔离级别限制（比如配置 3 副本但总共只有 2 个 zone），PD 也不会尝试补足，以满足该限制。`IsolationLevel` 默认值为空字符串，即禁用状态。
+The meaning and function of `IsolationLevel` is elaborated in [Cluster topology configuration](/schedule-replicas-by-topology-labels.md). For example, if you have deployed `[zone,rack,host]` that defines a three-layer topology with `LocationLabels` and set `IsolationLevel` to `zone`, then PD ensures that all peers of each Region are placed in different zones during the scheduling. If the minimum isolation level restriction on `IsolationLevel` cannot be met (for example, 3 replicas are configured but there are only 2 data zones in total), PD will not try to make up to meet this restriction. The default value of `IsolationLevel` is an empty string, which means that it is disabled.
 
-### 规则分组字段
+### Fields of the rule group
 
-以下是规则分组字段的含义：
+The following table shows the description of each field in a rule group:
 
-| 字段名 | 类型及约束  | 说明 |
+| Field name | Type and restriction  | Description |
 | :--- | :--- | :--- |
-| `ID` | `string` | 分组 ID，用于标识规则来源 |
-| `Index` | `int` | 不同分组的堆叠次序 |
-| `Override` | `true`/`false` | 是否覆盖 index 更小的分组 |
+| `ID` | `string` | The group ID that marks the source of the rule. |
+| `Index` | `int` | The stacking sequence of different groups. |
+| `Override` | `true`/`false` | Whether to override groups with smaller indexes. |
 
-如果不单独设置规则分组，默认 `Override=false`，对应的行为是不同分组之间相互不影响，不同分组内的规则是同时生效的。
+## Configure rules
 
-## 配置规则操作步骤
+The operations in this section are based on [pd-ctl](/pd-control.md), and the commands involved in the operations also support calls via HTTP API.
 
-本节的操作步骤以使用 [pd-ctl](/pd-control.md) 工具为例，涉及到的命令也支持通过 HTTP API 进行调用。
+### Enable Placement Rules
 
-### 开启 Placement Rules 特性
-
-Placement Rules 特性在 TiDB v5.0 及以上的版本中默认开启。如需关闭 Placement Rules 特性，请参考[关闭 Placement Rules](#关闭-placement-rules-特性)。如需在关闭后重新开启该特性，可以集群初始化以前设置 PD 配置文件：
+The Placement Rules feature is enabled by default in v5.0 and later versions of TiDB. To disable it, refer to [Disable Placement Rules](#disable-placement-rules). To enable this feature after it has been disabled, you can modify the PD configuration file as follows before initializing the cluster:
 
 
 ```toml
@@ -80,7 +76,7 @@ Placement Rules 特性在 TiDB v5.0 及以上的版本中默认开启。如需�
 enable-placement-rules = true
 ```
 
-这样，PD 在初始化成功后会开启这个特性，并根据 [`max-replicas`](/pd-configuration-file.md#max-replicas)、[`location-labels`](/pd-configuration-file.md#location-labels) 及 [`isolation-level`](/pd-configuration-file.md#isolation-level) 配置生成对应的规则：
+In this way, PD enables this feature after the cluster is successfully bootstrapped and generates corresponding rules according to the [`max-replicas`](/pd-configuration-file.md#max-replicas), [`location-labels`](/pd-configuration-file.md#location-labels), and [`isolation-level`](/pd-configuration-file.md#isolation-level) configurations:
 
 
 ```json
@@ -96,72 +92,72 @@ enable-placement-rules = true
 }
 ```
 
-如果是已经初始化过的集群，也可以通过 pd-ctl 进行在线开启：
+For a bootstrapped cluster, you can also enable Placement Rules dynamically through pd-ctl:
 
 
 ```bash
 pd-ctl config placement-rules enable
 ```
 
-PD 同样将根据系统的 `max-replicas`、`location-labels` 及 `isolation-level` 生成默认的规则。
+PD also generates default rules based on the `max-replicas`, `location-labels`, and `isolation-level` configurations.
 
-> **注意：**
+> **Note:**
 >
-> - 开启 Placement Rules 且存在多条 rule 的情况下，原先的 `max-replicas`、`location-labels` 及 `isolation-level` 配置项将不再生效。如果需要调整副本策略，应当使用 Placement Rules 相关接口。
-> - 开启 Placement Rules 且只存在一条默认的 rule 的情况下，当改变 `max-replicas`、`location-labels` 或 `isolation-level` 配置项时，系统会自动更新这条默认的 rule。
+> - When Placement Rules are enabled and multiple rules exist, the previously configured `max-replicas`, `location-labels`, and `isolation-level` no longer take effect. To adjust the replica policy, use the interface related to Placement Rules.
+> - When Placement Rules are enabled and only one default rule exists, TiDB will automatically update this default rule when `max-replicas`, `location-labels`, or `isolation-level` configurations are changed.
 
-### 关闭 Placement Rules 特性
+### Disable Placement Rules
 
-使用 pd-ctl 可以关闭 Placement Rules 特性，切换为之前的调度策略。
+You can use pd-ctl to disable the Placement Rules feature and switch to the previous scheduling strategy.
 
 
 ```bash
 pd-ctl config placement-rules disable
 ```
 
-> **注意：**
+> **Note:**
 >
-> 关闭 Placement Rules 后，PD 将使用原先的 `max-replicas`、`location-labels` 及 `isolation-level` 配置。在 Placement Rules 开启期间对 Rule 的修改不会导致这三项配置的同步更新。此外，设置好的所有 Rule 都会保留在系统中，会在下次开启 Placement Rules 时被使用。
+> After disabling Placement Rules, PD uses the original `max-replicas`, `location-labels`, and `isolation-level` configurations. The modification of rules (when Placement Rules is enabled) will not update these three configurations in real time. In addition, all the rules that have been configured remain in PD and will be used the next time you enable Placement Rules.
 
-### 使用 pd-ctl 设置规则
+### Set rules using pd-ctl
 
-> **注意：**
+> **Note:**
 >
-> 规则的变更将实时地影响 PD 调度，不恰当的规则设置可能导致副本数较少，影响系统的高可用。
+> The change of rules affects the PD scheduling in real time. Improper rule setting might result in fewer replicas and affect the high availability of the system.
 
-pd-ctl 支持使用多种方式查看系统中的 Rule，输出是 json 格式的 Rule 或 Rule 列表：
+pd-ctl supports using the following methods to view rules in the system, and the output is a JSON-format rule or a rule list.
 
-+ 查看所有规则列表
+- To view the list of all rules:
 
     
     ```bash
     pd-ctl config placement-rules show
     ```
 
-+ 查看 PD Group 的所有规则列表
+- To view the list of all rules in a PD Group:
 
     
     ```bash
     pd-ctl config placement-rules show --group=pd
     ```
 
-+ 查看对应 Group 和 ID 的某条规则
+- To view the rule of a specific ID in a Group:
 
     
     ```bash
     pd-ctl config placement-rules show --group=pd --id=default
     ```
 
-+ 查看 Region 所匹配的规则列表
+- To view the rule list that matches a Region:
 
     
     ```bash
     pd-ctl config placement-rules show --region=2
     ```
 
-    上面的例子中 `2` 为 Region ID。
+    In the above example, `2` is the Region ID.
 
-新增和编辑规则是类似的，需要把对应的规则写进文件，然后使用 `save` 命令保存至 PD：
+Adding rules and editing rules are similar. You need to write the corresponding rules into a file and then use the `save` command to save the rules to PD:
 
 
 ```bash
@@ -188,9 +184,9 @@ EOF
 Success!
 ```
 
-以上操作会将 rule1、rule2 两条规则写入 PD，如果系统中已经存在 GroupID+ID 相同的规则，则会覆盖该规则。
+The above operation writes `rule1` and `rule2` to PD. If a rule with the same `GroupID` + `ID` already exists in the system, this rule is overwritten.
 
-如果需要删除某条规则，只需要将规则的 `count` 置为 `0` 即可，对应 GroupID+ID 相同的规则会被删除。以下命令将删除 `pd/rule2` 这条规则：
+To delete a rule, you only need to set the `count` of the rule to `0`, and the rule with the same `GroupID` + `ID` will be deleted. The following command deletes the `pd / rule2` rule:
 
 
 ```bash
@@ -207,48 +203,48 @@ EOF
 Success!
 ```
 
-### 使用 pd-ctl 设置规则分组
+### Use pd-ctl to configure rule groups
 
-+ 查看所有的规则分组列表
+- To view the list of all rule groups:
 
     
     ```bash
     pd-ctl config placement-rules rule-group show
     ```
 
-+ 查看指定 ID 的规则分组
+- To view the rule group of a specific ID:
 
     
     ```bash
     pd-ctl config placement-rules rule-group show pd
     ```
 
-+ 设置规则分组的 index 和 override 属性
+- To set the `index` and `override` attributes of the rule group:
 
     
     ```bash
     pd-ctl config placement-rules rule-group set pd 100 true
     ```
 
-+ 删除规则分组配置（如组内还有规则，则使用默认分组配置）
+- To delete the configuration of a rule group (use the default group configuration if there is any rule in the group):
 
     
     ```bash
     pd-ctl config placement-rules rule-group delete pd
     ```
 
-### 使用 pd-ctl 批量更新分组及组内规则
+### Use pd-ctl to batch update groups and rules in groups
 
-使用 `rule-bundle` 子命令，可以方便地同时查看和修改规则分组及组内的所有规则。
+To view and modify the rule groups and all rules in the groups at the same time, execute the `rule-bundle` subcommand.
 
-该子命令中 `get {group_id}` 用来查询一个分组，输出结果为嵌套形式的规则分组和组内规则：
+In this subcommand, `get {group_id}` is used to query a group, and the output result shows the rule group and rules of the group in a nested form:
 
 
 ```bash
 pd-ctl config placement-rules rule-bundle get pd
 ```
 
-输出示例：
+The output of the above command:
 
 ```json
 {
@@ -268,41 +264,41 @@ pd-ctl config placement-rules rule-bundle get pd
 }
 ```
 
-`rule-bundle get` 子命令中可以添加 `--out` 参数来将输出写入文件，方便后续修改保存。
+To write the output to a file, add the `--out` argument to the `rule-bundle get` subcommand, which is convenient for subsequent modification and saving.
 
 
 ```bash
 pd-ctl config placement-rules rule-bundle get pd --out="group.json"
 ```
 
-修改完成后，使用 `rule-bundle set` 子命令将文件中的配置保存至 PD 服务器。与前面介绍的 `save` 不同，此命令会替换服务器端该分组内的所有规则。
+After the modification is finished, you can use the `rule-bundle set` subcommand to save the configuration in the file to the PD server. Unlike the `save` command described in [Set rules using pd-ctl](#set-rules-using-pd-ctl), this command replaces all the rules of this group on the server side.
 
 
 ```bash
 pd-ctl config placement-rules rule-bundle set pd --in="group.json"
 ```
 
-### 使用 pd-ctl 查看和修改所有配置
+### Use pd-ctl to view and modify all configurations
 
-用户还可以使用 pd-ctl 查看和修改所有配置，即把全部配置保存至文件，修改后再覆盖保存。该操作同样使用 `rule-bundle` 子命令。
+You can also view and modify all configuration using pd-ctl. To do that, save all configuration to a file, edit the configuration file, and then save the file to the PD server to overwrite the previous configuration. This operation also uses the `rule-bundle` subcommand.
 
-下面的命令将所有配置保存至 `rules.json` 文件：
+For example, to save all configuration to the `rules.json` file, execute the following command:
 
 
 ```bash
 pd-ctl config placement-rules rule-bundle load --out="rules.json"
 ```
 
-编辑完文件后，使用下面的命令将配置保存至 PD 服务器：
+After editing the file, execute the following command to save the configuration to the PD server:
 
 
 ```bash
 pd-ctl config placement-rules rule-bundle save --in="rules.json"
 ```
 
-### 使用 tidb-ctl 查询表相关的 key range
+### Use tidb-ctl to query the table-related key range
 
-若需要针对元数据或某个特定的表进行特殊配置，可以通过 [tidb-ctl](https://github.com/pingcap/tidb-ctl) 的 [`keyrange` 命令](https://github.com/pingcap/tidb-ctl/blob/master/doc/tidb-ctl_keyrange.md)来查询相关的 key。注意要添加 `--encode` 返回 PD 中的表示形式。
+If you need special configuration for metadata or a specific table, you can execute the [`keyrange` command](https://github.com/pingcap/tidb-ctl/blob/master/doc/tidb-ctl_keyrange.md) in [tidb-ctl](https://github.com/pingcap/tidb-ctl) to query related keys. Remember to add `--encode` at the end of the command.
 
 
 ```bash
@@ -322,17 +318,17 @@ table ttt ranges: (NOTE: key range might be changed after DDL)
   table rows: (7480000000000000ff2d5f720000000000fa, 7480000000000000ff2e00000000000000f8)
 ```
 
-> **注意：**
+> **Note:**
 >
-> DDL 等操作会导致 table ID 发生变化，需要同步更新对应的规则。
+> DDL and other operations can cause table ID changes, so you need to update the corresponding rules at the same time.
 
-## 典型场景示例
+## Typical usage scenarios
 
-本部分介绍 Placement Rules 的使用场景示例。
+This section introduces the typical usage scenarios of Placement Rules.
 
-### 场景一：普通的表使用 3 副本，元数据使用 5 副本提升集群容灾能力
+### Scenario 1: Use three replicas for normal tables and five replicas for the metadata to improve cluster disaster tolerance
 
-只需要增加一条规则，将 key range 限定在 meta 数据的范围，并把 `count` 值设为 `5`。添加规则示例如下：
+You only need to add a rule that limits the key range to the range of metadata, and set the value of `count` to `5`. Here is an example of this rule:
 
 
 ```json
@@ -349,9 +345,9 @@ table ttt ranges: (NOTE: key range might be changed after DDL)
 }
 ```
 
-### 场景二：5 副本按 2-2-1 的比例放置在 3 个数据中心，且第 3 个中心不产生 Leader
+### Scenario 2: Place five replicas in three data centers in the proportion of 2:2:1, and the Leader should not be in the third data center
 
-创建三条规则，分别设置副本数为 2、2、1，并且在每个规则内通过 `label_constraints` 将副本限定在对应的数据中心内。另外，不需要 leader 的数据中心将 `role` 改为 `follower`。
+Create three rules. Set the number of replicas to `2`, `2`, and `1` respectively. Limit the replicas to the corresponding data centers through `label_constraints` in each rule. In addition, change `role` to `follower` for the data center that does not need a Leader.
 
 
 ```json
@@ -395,9 +391,9 @@ table ttt ranges: (NOTE: key range might be changed after DDL)
 ]
 ```
 
-### 场景三：为某张表添加 2 个 TiFlash Learner 副本
+### Scenario 3: Add two TiFlash replicas for a table
 
-为表的 row key 单独添加一条规则，限定数量为 2，并且通过 `label_constraints` 保证副本产生在 `engine=tiflash` 的节点。注意这里使用了单独的 `group_id`，保证这条规则不会与系统中其他来源的规则互相覆盖或产生冲突。
+Add a separate rule for the row key of the table and limit `count` to `2`. Use `label_constraints` to ensure that the replicas are generated on the node of `engine = tiflash`. Note that a separate `group_id` is used here to ensure that this rule does not overlap or conflict with rules from other sources in the system.
 
 
 ```json
@@ -415,9 +411,9 @@ table ttt ranges: (NOTE: key range might be changed after DDL)
 }
 ```
 
-### 场景四：为某张表在有高性能磁盘的北京节点添加 2 个 Follower 副本
+### Scenario 4: Add two follower replicas for a table in the Beijing node with high-performance disks
 
-这个例子展示了比较复杂的 `label_constraints` 配置，下面的例子限定了副本放置在 bj1 或 bj2 机房，且磁盘类型为 `nvme`。
+The following example shows a more complicated `label_constraints` configuration. In this rule, the replicas must be placed in the `bj1` or `bj2` machine room, and the disk type must be `nvme`.
 
 
 ```json
@@ -436,11 +432,11 @@ table ttt ranges: (NOTE: key range might be changed after DDL)
 }
 ```
 
-### 场景五：将某张表迁移至 SSD 节点
+### Scenario 5: Migrate a table to the nodes with SSD disks
 
-与场景三不同，这个场景不是要在原有配置的基础上增加新副本，而是要强制覆盖一段数据的其它配置，因此需要通过配置规则分组来指定一个足够大的 index 以及设置 override 来覆盖原有规则。
+Different from scenario 3, this scenario is not to add new replica(s) on the basis of the existing configuration, but to forcibly override the other configuration of a data range. So you need to specify an `index` value large enough and set `override` to `true` in the rule group configuration to override the existing rule.
 
-规则：
+The rule:
 
 
 ```json
@@ -458,7 +454,7 @@ table ttt ranges: (NOTE: key range might be changed after DDL)
 }
 ```
 
-规则分组：
+The rule group:
 
 
 ```json

@@ -1,15 +1,15 @@
 ---
-title: TiDB 社区荣誉列表
-summary: 了解 TiDB 社区贡献者列表及角色。
+title: Credits
+summary: Learn about the list and roles of contributors to the TiDB community.
 ---
 
-# TiDB 社区荣誉列表
+# Credits
 
-每一位贡献者都是推动 TiDB 健壮发展的重要成员，我们感谢所有为 TiDB 提交代码、撰写或翻译文档的贡献者。
+Each contributor has played an important role in promoting the robust development of TiDB. We sincerely appreciate all contributors who have submitted code, written and translated documents for TiDB.
 
-## TiDB 开发者
+## TiDB developers
 
-TiDB 开发者为 TiDB 的新功能开发、性能优化、稳定性保障做出了贡献。以下链接包含了 TiDB 相关 repo 的贡献者名单：
+TiDB developers contribute to new feature development, performance improvement, stability guarantee, and bug fixes. The following is the list of contributors in TiDB related repos:
 
 - [pingcap/tidb](https://github.com/pingcap/tidb/graphs/contributors)
 - [tikv/tikv](https://github.com/tikv/tikv/graphs/contributors)
@@ -20,13 +20,14 @@ TiDB 开发者为 TiDB 的新功能开发、性能优化、稳定性保障做出
 - [pingcap/tidb-dashboard](https://github.com/pingcap/tidb-dashboard/graphs/contributors)
 - [pingcap/tiflow](https://github.com/pingcap/tiflow/graphs/contributors)
 - [pingcap/tidb-tools](https://github.com/pingcap/tidb-tools/graphs/contributors)
+- [pingcap/tispark](https://github.com/pingcap/tispark/graphs/contributors)
 - [tikv/client-java](https://github.com/tikv/client-java/graphs/contributors)
 - [tidb-incubator/TiBigData](https://github.com/tidb-incubator/TiBigData/graphs/contributors)
 - [ti-community-infra](https://github.com/orgs/ti-community-infra/people)
 
-## TiDB 文档写作者和译员
+## Writers and translators for TiDB documentation
 
-TiDB 文档写作者和译员为 TiDB 及相关项目撰写文档、提供翻译。以下链接包含了 TiDB 文档相关 repo 的贡献者名单：
+Writers and translators write and translate documents for TiDB and the related projects. The following is the list of contributors in TiDB documentation related repos:
 
 - [pingcap/docs-cn](https://github.com/pingcap/docs-cn/graphs/contributors)
 - [pingcap/docs](https://github.com/pingcap/docs/graphs/contributors)

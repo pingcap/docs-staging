@@ -1,55 +1,54 @@
 ---
 title: TiDB 2.1.5 Release Notes
-summary: TiDB 2.1.5 版本对系统稳定性、优化器、统计信息和执行引擎做了很多改进。包括优化器 / 执行器、Server、DDL、PD、TiKV 和 Tools 的改进和修复。
-aliases: ['/zh/tidb/dev/release-2.1.5/','/zh/tidb/v2.1/release-2.1.5','/docs-cn/dev/releases/release-2.1.5/','/docs-cn/dev/releases/2.1.5/','/zh/tidb/v5.4/release-2.1.5','/zh/tidb/v6.1/release-2.1.5','/zh/tidb/v6.5/release-2.1.5','/zh/tidb/v7.1/release-2.1.5','/zh/tidb/v7.5/release-2.1.5','/zh/tidb/v8.1/release-2.1.5']
+summary: TiDB 2.1.5 and TiDB Ansible 2.1.5 are released on February 28, 2019. The release improves stability, SQL optimizer, statistics, and execution engine. Fixes include issues with sorting, data overflow, and SQL query results. New features include system variables, HTTP API, and detailed error messages. PD now has an option to exclude Tombstone stores, and TiKV fixes issues with data import, errors, and panic caused by Region merge. Tools like Lightning and TiDB Binlog also receive updates.
 ---
 
 # TiDB 2.1.5 Release Notes
 
-2019 年 2 月 28 日，TiDB 发布 2.1.5 版，TiDB Ansible 相应发布 2.1.5 版本。相比 2.1.4 版本，该版本对系统稳定性、优化器、统计信息以及执行引擎做了很多改进。
+On February 28, 2019, TiDB 2.1.5 is released. The corresponding TiDB Ansible 2.1.5 is also released. Compared with TiDB 2.1.4, this release has greatly improved the stability, the SQL optimizer, statistics, and the execution engine.
 
 ## TiDB
 
-+ 优化器/执行器
-    - 当列的字符集信息和表的字符集信息相同时，`SHOW CREATE TABLE` 不再打印列的字符集信息，使其结果更加兼容 MySQL [#9306](https://github.com/pingcap/tidb/pull/9306)
-    - 将 `Sort` 算子中的表达计算抽取出来用一个 `Project` 算子完成，简化 `Sort` 算子的计算逻辑，修复某些情况下 `Sort` 算子结果不正确或者 panic 的问题 [#9319](https://github.com/pingcap/tidb/pull/9319)
-    - 移除 `Sort` 算子中的数值为常量的排序字段 [#9335](https://github.com/pingcap/tidb/pull/9335)，[#9440](https://github.com/pingcap/tidb/pull/9440)
-    - 修复向无符号整数列插入数据时数据溢出的问题 [#9339](https://github.com/pingcap/tidb/pull/9339)
-    - 目标 binary 的长度超过 `max_allowed_packet` 时，将 `cast_as_binary` 设置为 `NULL` [#9349](https://github.com/pingcap/tidb/pull/9349)
-    - 优化 `IF` 和 `IFNULL` 的常量折叠过程 [#9351](https://github.com/pingcap/tidb/pull/9351)
-    - 使用 skyline pruning 优化 TiDB 的索引选择，增加简单查询的稳定性 [#9356](https://github.com/pingcap/tidb/pull/9356)
-    - 支持对析取范式计算选择率 [#9405](https://github.com/pingcap/tidb/pull/9405)
-    - 修复 `!=ANY()` 和 `=ALL()` 在某些情况下 SQL 查询结果不正确的问题 [#9403](https://github.com/pingcap/tidb/pull/9403)
-    - 修复执行 Merge Join 操作的两个表的 Join Key 类型不同时结果可能不正确或者 panic 的问题 [#9438](https://github.com/pingcap/tidb/pull/9438)
-    - 修复某些情况下 `RAND()` 函数结果和 MySQL 不兼容的问题 [#9446](https://github.com/pingcap/tidb/pull/9446)
-    - 重构 Semi Join 对 `NULL` 值和空结果集的处理逻辑，使其返回正确的结果，更加兼容 MySQL [#9449](https://github.com/pingcap/tidb/pull/9449)
++ SQL Optimizer/Executor
+    - Make `SHOW CREATE TABLE` do not print the column charset information when the charset information of a column is the same with that of a table, to improve the compatibility of `SHOW CREATE TABLE` with MySQL [#9306](https://github.com/pingcap/tidb/pull/9306)
+    - Fix the panic or the wrong result of the `Sort` operator in some cases by extracting `ScalarFunc` from `Sort` to a `Projection` operator for computing to simplify the computing logic of `Sort` [#9319](https://github.com/pingcap/tidb/pull/9319)
+    - Remove the sorting field with constant values in the `Sort` operator [#9335](https://github.com/pingcap/tidb/pull/9335), [#9440](https://github.com/pingcap/tidb/pull/9440)
+    - Fix the data overflow issue when inserting data into an unsigned integer column [#9339](https://github.com/pingcap/tidb/pull/9339)
+    - Set `cast_as_binary` to `NULL` when the length of the target binary exceeds `max_allowed_packet` [#9349](https://github.com/pingcap/tidb/pull/9349)
+    - Optimize the constant folding process of `IF` and `IFNULL` [#9351](https://github.com/pingcap/tidb/pull/9351)
+    - Optimize the index selection of TiDB using skyline pruning to improve the stability of simple queries [#9356](https://github.com/pingcap/tidb/pull/9356)
+    - Support computing the selectivity of the `DNF` expression [#9405](https://github.com/pingcap/tidb/pull/9405)
+    - Fix the wrong SQL query result of `!=ANY()` and `=ALL()` in some cases [#9403](https://github.com/pingcap/tidb/pull/9403)
+    - Fix the panic or the wrong result when the Join Key types of two tables on which the `Merge Join` operation is performed are different [#9438](https://github.com/pingcap/tidb/pull/9438)
+    - Fix the issue that the result of the `RAND()` function is not compatible with MySQL [#9446](https://github.com/pingcap/tidb/pull/9446)
+    - Refactor the logic of `Semi Join` processing `NULL` and the empty result set to get the correct result and improve the compatibility with MySQL [#9449](https://github.com/pingcap/tidb/pull/9449)
 + Server
-    - 增加系统变量 `tidb_constraint_check_in_place`，在 `INSERT` 语句执行时即检查数据的唯一性约束 [#9401](https://github.com/pingcap/tidb/pull/9401)
-    - 修复系统变量 `tidb_force_priority` 的值和配置文件中的设置的值不一致的问题 [#9347](https://github.com/pingcap/tidb/pull/9347)
-    - 在 general log 中增加 “current_db” 字段打印当前使用的数据库 [#9346](https://github.com/pingcap/tidb/pull/9346)
-    - 增加通过表 ID 来获取表信息的 HTTP API [#9408](https://github.com/pingcap/tidb/pull/9408)
-    - 修复 `LOAD DATA` 在某些情况下导入数据不正确的问题 [#9414](https://github.com/pingcap/tidb/pull/9414)
-    - 修复某些情况下，客户端建立连接慢的问题 [#9451](https://github.com/pingcap/tidb/pull/9451)
+    - Add the `tidb_constraint_check_in_place` system variable to check the data uniqueness constraint when executing the `INSERT` statement [#9401](https://github.com/pingcap/tidb/pull/9401)
+    - Fix the issue that the value of the `tidb_force_priority` system variable is different from that set in the configuration file [#9347](https://github.com/pingcap/tidb/pull/9347)
+    - Add the `current_db` field in general logs to print the name of the currently used database [#9346](https://github.com/pingcap/tidb/pull/9346)
+    - Add an HTTP API of obtaining the table information with the table ID [#9408](https://github.com/pingcap/tidb/pull/9408)
+    - Fix the issue that `LOAD DATA` loads incorrect data in some cases [#9414](https://github.com/pingcap/tidb/pull/9414)
+    - Fix the issue that it takes a long time to build a connection between the MySQL client and TiDB in some cases [#9451](https://github.com/pingcap/tidb/pull/9451)
 + DDL
-    - 修复撤销 `DROP COLUMN` 操作中的一些问题 [#9352](https://github.com/pingcap/tidb/pull/9352)
-    - 修复撤销 `DROP`/`ADD` 分区表操作中的一些问题 [#9376](https://github.com/pingcap/tidb/pull/9376)
-    - 修复某些情况下 `ADMIN CHECK TABLE` 误报数据索引不一致的问题 [#9399](https://github.com/pingcap/tidb/pull/9399)
-    - 修复 `TIMESTAMP` 类型的默认值在时区上的一些问题 [#9108](https://github.com/pingcap/tidb/pull/9108)
+    - Fix some issues when canceling the `DROP COLUMN` operation [#9352](https://github.com/pingcap/tidb/pull/9352)
+    - Fix some issues when canceling the `DROP` or `ADD` partitioned table operation [#9376](https://github.com/pingcap/tidb/pull/9376)
+    - Fix the issue that `ADMIN CHECK TABLE` mistakenly reports the data index inconsistency in some cases [#9399](https://github.com/pingcap/tidb/pull/9399)
+    - Fix the time zone issue of the `TIMESTAMP` default value [#9108](https://github.com/pingcap/tidb/pull/9108)
 
 ## PD
 
-- `GetAllStores` 接口提供了 `exclude_tombstone_stores` 选项，将 Tombstone store 从返回结果中去除 [#1444](https://github.com/pingcap/pd/pull/1444)
+- Provide the `exclude_tombstone_stores` option in the `GetAllStores` interface to remove the Tombstone store from the returned result [#1444](https://github.com/pingcap/pd/pull/1444)
 
 ## TiKV
 
-- 修复了某些情况下 Importer 导入失败的问题 [#4223](https://github.com/tikv/tikv/pull/4223)
-- 修复了某些情况下 "key not in region" 错误 [#4125](https://github.com/tikv/tikv/pull/4125)
-- 修复了某些情况下 Region merge 导致 panic 的问题 [#4235](https://github.com/tikv/tikv/pull/4235)
-- 添加了详细的 `StoreNotMatch` 错误信息 [#3885](https://github.com/tikv/tikv/pull/3885)
+- Fix the issue that Importer fails to import data in some cases [#4223](https://github.com/tikv/tikv/pull/4223)
+- Fix the `KeyNotInRegion` error in some cases [#4125](https://github.com/tikv/tikv/pull/4125)
+- Fix the panic issue caused by Region merge in some cases [#4235](https://github.com/tikv/tikv/pull/4235)
+- Add the detailed `StoreNotMatch` error message [#3885](https://github.com/tikv/tikv/pull/3885)
 
 ## Tools
 
 + Lightning
-    - 集群中有 Tombstone store 时 Lightning 不会再报错退出 [#4223](https://github.com/tikv/tikv/pull/4223)
+    - Do not report an error or exit when a Tombstone store exists in the cluster [#4223](https://github.com/tikv/tikv/pull/4223)
 + TiDB Binlog
-    - 修正 DDL Binlog 同步方案，确保 DDL 同步的正确性 [#9304](https://github.com/pingcap/tidb/issues/9304)
+    - Update the DDL binlog replication plan to guarantee the correctness of DDL event replication [#9304](https://github.com/pingcap/tidb/issues/9304)

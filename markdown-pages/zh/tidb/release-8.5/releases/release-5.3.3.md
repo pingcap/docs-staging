@@ -1,23 +1,22 @@
 ---
 title: TiDB 5.3.3 Release Note
-summary: TiDB 5.3.3 发布日期为 2022 年 9 月 14 日。此版本修复了 TiKV 存在的 bug，该 bug 导致在执行 SQL 语句时出现持续报错的问题。影响版本为 v5.3.2 和 v5.4.2，已在 v5.3.3 上修复。如果使用 v5.3.2 的 TiDB 集群，可以升级至 v5.3.3。除升级外，还可以重启无法向 PD 发送 Region 心跳的 TiKV 节点，直至不再有待发送的 Region 心跳为止。
-aliases: ['/zh/tidb/dev/release-5.3.3/','/zh/tidb/v5.3/release-5.3.3','/zh/tidb/v5.4/release-5.3.3','/zh/tidb/v6.1/release-5.3.3','/zh/tidb/v6.5/release-5.3.3','/zh/tidb/v7.1/release-5.3.3','/zh/tidb/v7.5/release-5.3.3','/zh/tidb/v8.1/release-5.3.3']
+summary: TiDB 5.3.3 was released on September 14, 2022. The bug fix in TiKV addresses continuous SQL execution errors in the cluster after PD leader switch or PD restart. The issue was caused by a TiKV bug that has been fixed in v5.3.3. Affected versions include v5.3.2 and v5.4.2. Upgrading to v5.3.3 or restarting TiKV nodes can resolve the issue. For more details, refer to issue #12934 on GitHub.
 ---
 
 # TiDB 5.3.3 Release Note
 
-发版日期：2022 年 9 月 14 日
+Release date: September 14, 2022
 
-TiDB 版本：5.3.3
+TiDB version: 5.3.3
 
-## Bug 修复
+## Bug fix
 
 + TiKV
 
-    - 修复了 PD leader 发生切换或重启 PD 后，在集群中执行 SQL 语句会出现持续报错的问题。
+    - Fix the issue of continuous SQL execution errors in the cluster after the PD leader is switched or PD is restarted.
 
-        - 问题原因：该问题是由于 TiKV 存在 bug，TiKV 向 PD client 发送心跳请求失败后不会重试，只能等待与 PD client 重连。这样，故障 TiKV 节点上的 Region 的信息会逐步变旧，使得 TiDB 无法获取最新的 Region 信息，导致 SQL 执行出错。
-        - 影响版本：v5.3.2 和 v5.4.2。目前该问题已在 v5.3.3 上修复。如果你使用 v5.3.2 的 TiDB 集群，可以升级至 v5.3.3。
-        - 规避方法：除升级外，你还可以重启无法向 PD 发送 Region 心跳的 TiKV 节点，直至不再有待发送的 Region 心跳为止。
+        - Cause: This issue is caused by a TiKV bug that TiKV does not retry sending heartbeat information to PD client after heartbeat requests fail, until TiKV reconnects to PD client. As a result, the Region information on the failed TiKV node becomes outdated, and TiDB cannot get the latest Region information, which causes SQL execution errors.
+        - Affected versions: v5.3.2 and v5.4.2. This issue has been fixed in v5.3.3. If you are using v5.3.2, you can upgrade your cluster to v5.3.3.
+        - Workaround: In addition to upgrade, you can also restart the TiKV nodes that cannot send Region heartbeat to PD, until there is no Region heartbeat to send.
 
-        Bug 详情参见 [#12934](https://github.com/tikv/tikv/issues/12934)。
+        For bug details, see [#12934](https://github.com/tikv/tikv/issues/12934).
