@@ -1,177 +1,177 @@
 ---
 title: TiDB 4.0.5 Release Notes
-summary: TiDB 4.0.5 was released on August 31, 2020. The new version includes compatibility changes, new features, improvements, bug fixes, and updates to TiKV, TiFlash, Tools, PD, and TiDB Lightning. Some notable changes include support for the unified log format with TiDB, optimization of performance, bug fixes for various issues, and support for encryption at rest for data storage in TiFlash.
+summary: TiDB 4.0.5 发布，兼容性变化包括修改参数和添加状态检查。新增功能包括为错误定义错误码和支持统一的 log 格式。优化提升包括减少 GC 锁扫描次数和降低统计信息对性能的影响。Bug 修复包括函数错误处理和查询结果错误等。PD 修复了 TSO 不可用和 Region 调度问题。TiFlash 修复了进程启动和升级问题。Tools 修复了恢复缓慢和同步任务问题。
+aliases: ['/zh/tidb/dev/release-4.0.5/','/zh/tidb/v4.0/release-4.0.5','/zh/tidb/v5.4/release-4.0.5','/zh/tidb/v6.1/release-4.0.5','/zh/tidb/v6.5/release-4.0.5','/zh/tidb/v7.1/release-4.0.5','/zh/tidb/v7.5/release-4.0.5','/zh/tidb/v8.1/release-4.0.5']
 ---
 
 # TiDB 4.0.5 Release Notes
 
-Release date: August 31, 2020
+发版日期：2020 年 8 月 31 日
 
-TiDB version: 4.0.5
+TiDB 版本：4.0.5
 
-## Compatibility Changes
+## 兼容性变化
 
 + TiDB
 
-    - Change `drop partition` and `truncate partition`'s job arguments to support the ID array of multiple partitions [#18930](https://github.com/pingcap/tidb/pull/18930)
-    - Add the delete-only state for checking `add partition` replicas [#18865](https://github.com/pingcap/tidb/pull/18865)
+    - 修改 `drop partition` 和 `truncate partition` 的参数 [#18930](https://github.com/pingcap/tidb/pull/18930)
+    - 为 `add partition` 操作添加状态检查 [#18865](https://github.com/pingcap/tidb/pull/18865)
 
-## New Features
+## 新功能
 
 + TiKV
 
-    - Define error code for errors [#8387](https://github.com/tikv/tikv/pull/8387)
+    - 为错误定义错误码 [#8387](https://github.com/tikv/tikv/pull/8387)
 
 + TiFlash
 
-    - Support the unified log format with TiDB
+    - 支持与 TiDB 统一的 log 格式
 
 + Tools
 
-    + TiCDC
+    - TiCDC
 
-        - Support Kafka SSL connection [#764](https://github.com/pingcap/tiflow/pull/764)
-        - Support outputting the old value [#708](https://github.com/pingcap/tiflow/pull/708)
-        - Add the column flags [#796](https://github.com/pingcap/tiflow/pull/796)
-        - Support outputting the DDL statements and table schema of the previous version [#799](https://github.com/pingcap/tiflow/pull/799)
+        - 支持加密 Kafka 链接 [#764](https://github.com/pingcap/tiflow/pull/764)
+        - 支持输出 old value [#708](https://github.com/pingcap/tiflow/pull/708)
+        - 添加列的特征的标识 [#796](https://github.com/pingcap/tiflow/pull/796)
+        - 支持输出上一版本的 DDL 和表结构 [#799](https://github.com/pingcap/tiflow/pull/799)
 
-## Improvements
+## 优化提升
 
 + TiDB
 
-    - Optimize the performance of `DecodePlan` for big union queries [#18941](https://github.com/pingcap/tidb/pull/18941)
-    - Reduce the number of GC lock scans when the `Region cache miss` error occurs [#18876](https://github.com/pingcap/tidb/pull/18876)
-    - Ease the impact of statistical feedback on cluster performance [#18772](https://github.com/pingcap/tidb/pull/18772)
-    - Support canceling operations before the RPC response is returned [#18580](https://github.com/pingcap/tidb/pull/18580)
-    - Add the HTTP API to generate the TiDB metric profile [#18531](https://github.com/pingcap/tidb/pull/18531)
-    - Support scattering partitioned tables [#17863](https://github.com/pingcap/tidb/pull/17863)
-    - Add detailed memory usage of each instance in Grafana [#18679](https://github.com/pingcap/tidb/pull/18679)
-    - Show the detailed runtime information of the `BatchPointGet` operator in the result of `EXPLAIN` [#18892](https://github.com/pingcap/tidb/pull/18892)
-    - Show the detailed runtime information of the `PointGet` operator in the result of `EXPLAIN` [#18817](https://github.com/pingcap/tidb/pull/18817)
-    - Warn the potential deadlock for `Consume` in `remove()` [#18395](https://github.com/pingcap/tidb/pull/18395)
-    - Refine the behaviors of `StrToInt` and `StrToFloat` and support converting JSON to the `date`, `time`, and `timestamp` types [#18159](https://github.com/pingcap/tidb/pull/18159)
-    - Support limiting the memory usage of the `TableReader` operator [#18392](https://github.com/pingcap/tidb/pull/18392)
-    - Avoid too many times of backoff when retrying the `batch cop` request [#18999](https://github.com/pingcap/tidb/pull/18999)
-    - Improve compatibility for `ALTER TABLE` algorithms [#19270](https://github.com/pingcap/tidb/pull/19270)
-    - Make the single partitioned table support `IndexJoin` on the inner side [#19151](https://github.com/pingcap/tidb/pull/19151)
-    - Support searching the log file even when the log includes invalid lines [#18579](https://github.com/pingcap/tidb/pull/18579)
+    - 优化 `Union` 场景下 `DecodePlan` 的开销 [#18941](https://github.com/pingcap/tidb/pull/18941)
+    - 减少 GC 在遇到 `Region cache miss` 错误时扫描锁的次数 [#18876](https://github.com/pingcap/tidb/pull/18876)
+    - 减少统计信息 feedback 对集群性能的影响 [#18772](https://github.com/pingcap/tidb/pull/18772)
+    - 支持在 RPC 请求返回结果前取消操作 [#18580](https://github.com/pingcap/tidb/pull/18580)
+    - 支持使用 HTTP API 生成带有相关监控项名称的 profile [#18531](https://github.com/pingcap/tidb/pull/18531)
+    - 支持分区表的预打散功能 [#17863](https://github.com/pingcap/tidb/pull/17863)
+    - 在监控面板中显示每个实例的内存使用详情 [#18679](https://github.com/pingcap/tidb/pull/18679)
+    - 在 `EXPLAIN` 中显示 `BatchPointGet` 算子的详细运行信息 [#18892](https://github.com/pingcap/tidb/pull/18892)
+    - 在 `EXPLAIN` 中显示 `PointGet` 算子的详细运行信息 [#18817](https://github.com/pingcap/tidb/pull/18817)
+    - 解决 `MemTracker` 潜在的死锁问题 [#18395](https://github.com/pingcap/tidb/pull/18395)
+    - 提高字符串转换为整数类型和小数类型的兼容性，支持将 JSON 转换为时间日期类型 [#18159](https://github.com/pingcap/tidb/pull/18159)
+    - 支持限制 `TableReader` 算子内存使用 [#18392](https://github.com/pingcap/tidb/pull/18392)
+    - 在 `batch cop` 请求重试时避免多次 backoff [#18999](https://github.com/pingcap/tidb/pull/18999)
+    - 提升 `ALTER TABLE` 的兼容性 [#19270](https://github.com/pingcap/tidb/pull/19270)
+    - 单个分区支持 `IndexJoin` [#19151](https://github.com/pingcap/tidb/pull/19151)
+    - 支持在 log 中存在非法字符时搜索 log [#18579](https://github.com/pingcap/tidb/pull/18579)
 
 + PD
 
-    - Support scattering Regions in stores with special engines (such as TiFlash) [#2706](https://github.com/tikv/pd/pull/2706)
-    - Support the Region HTTP API to prioritize Region scheduling of a given key range [#2687](https://github.com/tikv/pd/pull/2687)
-    - Improve the leader distribution after Region scattering [#2684](https://github.com/tikv/pd/pull/2684)
-    - Add more tests and logs for the TSO request [#2678](https://github.com/tikv/pd/pull/2678)
-    - Avoid invalid cache updates after the leader of a Region has changed [#2672](https://github.com/tikv/pd/pull/2672)
-    - Add an option to allow `store.GetLimit` to return the tombstone stores [#2743](https://github.com/tikv/pd/pull/2743)
-    - Support synchronizing the Region leader change between the PD leader and followers [#2795](https://github.com/tikv/pd/pull/2795)
-    - Add commands for querying the GC safepoint service [#2797](https://github.com/tikv/pd/pull/2797)
-    - Replace the `region.Clone` call in filters to improve performance [#2801](https://github.com/tikv/pd/pull/2801)
-    - Add an option to disable updating Region flow cache to improve the performance of the large cluster [#2848](https://github.com/tikv/pd/pull/2848)
+    - 支持打散特殊存储引擎节点（例如 TiFlash）上的 Region [#2706](https://github.com/tikv/pd/pull/2706)
+    - 支持通过 API 指定某范围内的 Region 优先进行调度 [#2687](https://github.com/tikv/pd/pull/2687)
+    - 优化 Region 打散操作，使得 Leader 分布更均匀 [#2684](https://github.com/tikv/pd/pull/2684)
+    - 针对 TSO 请求添加更多测试和日志 [#2678](https://github.com/tikv/pd/pull/2678)
+    - 避免 Region Leader 变化时可能产生的不必要的缓存更新 [#2672](https://github.com/tikv/pd/pull/2672)
+    - 增加选项允许 `store.GetLimit` 返回 tombstone 状态的 store [#2743](https://github.com/tikv/pd/pull/2743)
+    - 支持 PD Leader 和 Follower 之间同步 Region Leader 变更 [#2795](https://github.com/tikv/pd/pull/2795)
+    - 增加查询 GC safepoint 服务的命令 [#2797](https://github.com/tikv/pd/pull/2797)
+    - 替换 filter 中的 `region.Clone` 调用，优化性能 [#2801](https://github.com/tikv/pd/pull/2801)
+    - 增加关闭 Region 流量统计缓存更新的选项，用于提升大规模集群的性能 [#2848](https://github.com/tikv/pd/pull/2848)
 
 + TiFlash
 
-    - Add more Grafana panels to display metrics of CPU, I/O, RAM usages and metrics of the storage engine
-    - Reduce I/O operations by optimizing the processing logic of Raft logs
-    - Accelerate Region scheduling for the blocked `add partition` DDL statement
-    - Optimize compactions of delta data in DeltaTree to reduce read and write amplification
-    - Optimize the performance of applying Region snapshots by preprocessing the snapshots using multiple threads
-    - Optimize the number of opening file descriptors when the read load of TiFlash is low to reduce system resource consumption
-    - Optimize the number of unnecessary small files created when TiFlash restarts
-    - Support encryption at rest for data storage
-    - Support TLS for data transfer
+    - 添加更多的 Grafana 监控面板，比如 CPU、I/O、RAM 使用量，以及存储引擎的各项指标
+    - 通过优化 Raft logs 的处理逻辑，减少 I/O 操作
+    - 加快 `add partition` DDL 之后 Region 的调度速度
+    - 优化 DeltaTree 引擎中 delta 数据的整理，减少读写放大
+    - 通过使用多线程对 Region snapshot 进行预处理，优化从 TiKV 同步 Region 副本的性能
+    - 优化系统负载较低时打开文件描述符的数量，降低系统资源占用量
+    - 减少 TiFlash 重启时新创建的文件数量
+    - 支持数据存储的静态加密功能
+    - 支持数据传输的 TLS 功能
 
 + Tools
 
     + TiCDC
 
-        - Lower the frequency of getting TSO [#801](https://github.com/pingcap/tiflow/pull/801)
+        - 减少了获取时间戳的频率 [#801](https://github.com/pingcap/tiflow/pull/801)
 
     + Backup & Restore (BR)
 
-        - Optimize some logs [#428](https://github.com/pingcap/br/pull/428)
+        - 优化了日志 [#428](https://github.com/pingcap/br/pull/428)
 
     + Dumpling
 
-        - Release FTWRL after connections are created to reduce the lock time for MySQL [#121](https://github.com/pingcap/dumpling/pull/121)
+        - 减少导出 MySQL 时持锁的时间 [#121](https://github.com/pingcap/dumpling/pull/121)
 
     + TiDB Lightning
 
-        - Optimize some logs [#352](https://github.com/pingcap/tidb-lightning/pull/352)
+        - 优化了日志 [#352](https://github.com/pingcap/tidb-lightning/pull/352)
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
 
-    - Fix the `should ensure all columns have the same length` error that occurs because the `ErrTruncate/Overflow` error is incorrectly handled in the `builtinCastRealAsDecimalSig` function [#18967](https://github.com/pingcap/tidb/pull/18967)
-    - Fix the issue that the `pre_split_regions` table option does not work in the partitioned table [#18837](https://github.com/pingcap/tidb/pull/18837)
-    - Fix the issue that might cause a large transaction to be terminated prematurely [#18813](https://github.com/pingcap/tidb/pull/18813)
-    - Fix the issue that using the `collation` functions get wrong query results [#18735](https://github.com/pingcap/tidb/pull/18735)
-    - Fix the bug that the `getAutoIncrementID()` function does not consider the `tidb_snapshot` session variable, which might cause the dumper tool to fail with the `table not exist` error [#18692](https://github.com/pingcap/tidb/pull/18692)
-    - Fix the `unknown column error` for SQL statement like `select a from t having t.a` [#18434](https://github.com/pingcap/tidb/pull/18434)
-    - Fix the panic issue that writing the 64-bit unsigned type into the hash partitioned table causes overflow and gets an unexpected negative number when the partition key is the integer type [#18186](https://github.com/pingcap/tidb/pull/18186)
-    - Fix the wrong behavior of the `char` function [#18122](https://github.com/pingcap/tidb/pull/18122)
-    - Fix the issue that the `ADMIN REPAIR TABLE` statement cannot parse integer in the expressions on the range partition [#17988](https://github.com/pingcap/tidb/pull/17988)
-    - Fix the wrong behavior of the `SET CHARSET` statement [#17289](https://github.com/pingcap/tidb/pull/17289)
-    - Fix the bug caused by the wrong collation setting which leads to the wrong result of the `collation` function [#17231](https://github.com/pingcap/tidb/pull/17231)
-    - Fix the issue that `STR_TO_DATE`'s handling of the format tokens '%r', '%h' is inconsistent with that of MySQL [#18727](https://github.com/pingcap/tidb/pull/18727)
-    - Fix issues that the TiDB version information is inconsistent with that of PD/TiKV in the `cluster_info` table [#18413](https://github.com/pingcap/tidb/pull/18413)
-    - Fix the existent checks for pessimistic transactions [#19004](https://github.com/pingcap/tidb/pull/19004)
-    - Fix the issue that executing `union select for update` might cause concurrent race [#19006](https://github.com/pingcap/tidb/pull/19006)
-    - Fix the wrong query result when `apply` has a child of the `PointGet` operator [#19046](https://github.com/pingcap/tidb/pull/19046)
-    - Fix the incorrect result that occurs when `IndexLookUp` is in the inner side of the `Apply` operator [#19496](https://github.com/pingcap/tidb/pull/19496)
-    - Fix the incorrect result of `anti-semi-join` queries [#19472](https://github.com/pingcap/tidb/pull/19472)
-    - Fix the incorrect result caused by the mistaken usage of `BatchPointGet` [#19456](https://github.com/pingcap/tidb/pull/19456)
-    - Fix the incorrect result that occurs when `UnionScan` is in the inner side of the `Apply` operator [#19496](https://github.com/pingcap/tidb/pull/19496)
-    - Fix the panic caused by using the `EXECUTE` statement to print an expensive query log [#17419](https://github.com/pingcap/tidb/pull/17419)
-    - Fix the index join error when the join key is `ENUM` or `SET` [#19235](https://github.com/pingcap/tidb/pull/19235)
-    - Fix the issue that the query range cannot be built when the `NULL` value exists on the index column [#19358](https://github.com/pingcap/tidb/pull/19358)
-    - Fix the data race issue caused by updating the global configuration [#17964](https://github.com/pingcap/tidb/pull/17964)
-    - Fix the panic issue occurs when modifying the character set in an uppercase schema [#19286](https://github.com/pingcap/tidb/pull/19286)
-    - Fix an unexpected error caused by changing the temporary directory during the disk spill action [#18970](https://github.com/pingcap/tidb/pull/18970)
-    - Fix the wrong hash key for the decimal type [#19131](https://github.com/pingcap/tidb/pull/19131)
-    - Fix the issue that the `PointGet` and `BatchPointGet` operators do not consider the partition selection syntax and get incorrect results [#19141](https://github.com/pingcap/tidb/issues/19141)
-    - Fix the incorrect results when using the `Apply` operator together with the `UnionScan` operator [#19104](https://github.com/pingcap/tidb/issues/19104)
-    - Fix the bug that causes the indexed virtual generated column to return wrong value [#17989](https://github.com/pingcap/tidb/issues/17989)
-    - Add the lock for runtime statistics to fix a panic caused by concurrent execution [#18983](https://github.com/pingcap/tidb/pull/18983)
+    - 修复 `builtinCastRealAsDecimalSig` 函数中未正确处理 `ErrTruncate/Overflow` 错误导致报 `should ensure all columns have the same length` 错误的问题 [#18967](https://github.com/pingcap/tidb/pull/18967)
+    - 修复 `pre_split_regions` 对分区表不生效的问题 [#18837](https://github.com/pingcap/tidb/pull/18837)
+    - 修复大事务提前终止的问题 [#18813](https://github.com/pingcap/tidb/pull/18813)
+    - 修复使用 `collation` 相关函数查询结果错误的问题 [#18735](https://github.com/pingcap/tidb/pull/18735)
+    - 修复 `getAutoIncrementID()` 函数逻辑错误导致导出工具报 `table not exist` 错误的问题 [#18692](https://github.com/pingcap/tidb/pull/18692)
+    - 修复 `select a from t having t.a` 报 `unknown column error` 的问题 [#18434](https://github.com/pingcap/tidb/pull/18434)
+    - 修复 Hash 分区表的分区键为整数类型时，写入 64 位无符号类型导致溢出 panic 的问题 [#18186](https://github.com/pingcap/tidb/pull/18186)
+    - 修复 `char` 函数行为错误的问题 [#18122](https://github.com/pingcap/tidb/pull/18122)
+    - 修复 `ADMIN REPAIR TABLE` 无法解析 range 分区表表达式中整数的问题 [#17988](https://github.com/pingcap/tidb/pull/17988)
+    - 修复 `SET CHARSET` 行为不正确的问题 [#17289](https://github.com/pingcap/tidb/pull/17289)
+    - 修复由于错误的设置 collation 导致 `collation` 函数返回错误结果的问题 [#17231](https://github.com/pingcap/tidb/pull/17231)
+    - 修复 `STR_TO_DATE` 和 MySQL 行为不一致的问题 [#18727](https://github.com/pingcap/tidb/pull/18727)
+    - 修复 `cluster_info` 表中，TiDB 版本和 PD/TiKV 不一致的问题 [#18413](https://github.com/pingcap/tidb/pull/18413)
+    - 修复悲观事务未能检查出重复数据导致可以重复写入冲突数据的问题 [#19004](https://github.com/pingcap/tidb/pull/19004)
+    - 修复 `union select for update` 存在并发竞态的问题 [#19006](https://github.com/pingcap/tidb/pull/19006)
+    - 修复自查询含有 `PointGet` 算子时返回结果错误的问题 [#19046](https://github.com/pingcap/tidb/pull/19046)
+    - 修复 `IndexLookUp` 作为 `Apply` 的内连接算子时查询结果不正确的问题 [#19496](https://github.com/pingcap/tidb/pull/19496)
+    - 修复 `anti-semi-join` 查询结果不正确的问题 [#19472](https://github.com/pingcap/tidb/pull/19472)
+    - 修复 `BatchPointGet` 查询结果不正确的问题 [#19456](https://github.com/pingcap/tidb/pull/19456)
+    - 修复 `UnionScan` 作为 `Apply` 的内连接算子时查询结果不正确的问题 [#19496](https://github.com/pingcap/tidb/pull/19496)
+    - 修复使用 `EXECUTE` 语句产生大查询日志造成 panic 的问题 [#17419](https://github.com/pingcap/tidb/pull/17419)
+    - 修复 `IndexJoin` 在使用 `ENUM` 或 `SET` 类型作为连接键报错的问题 [#19235](https://github.com/pingcap/tidb/pull/19235)
+    - 修复在索引值为 `NULL` 时无法构建出查询范围的问题 [#19358](https://github.com/pingcap/tidb/pull/19358)
+    - 修复更新全局配置导致的数据竞态问题 [#17964](https://github.com/pingcap/tidb/pull/17964)
+    - 修复修改 schema 字符集导致 panic 的问题 [#19286](https://github.com/pingcap/tidb/pull/19286)
+    - 修复修改文件夹对中间结果落盘功能的影响 [#18970](https://github.com/pingcap/tidb/pull/18970)
+    - 修复 `decimal` 类型哈希值不正确的问题 [#19131](https://github.com/pingcap/tidb/pull/19131)
+    - 修复 `PointGet` 和 `BatchPointGet` 在分区表场景下报错的问题 [#19141](https://github.com/pingcap/tidb/issues/19141)
+    - 修复共同使用 `Apply` 算子和 `UnionScan` 算子时查询结果不正确的问题 [#19104](https://github.com/pingcap/tidb/issues/19104)
+    - 修复生成列索引结果不正确的问题 [#17989](https://github.com/pingcap/tidb/issues/17989)
+    - 修复并发收集统计信息 panic 的问题 [#18983](https://github.com/pingcap/tidb/pull/18983)
 
 + TiKV
 
-    - Speed up leader election when Hibernate Region is enabled [#8292](https://github.com/tikv/tikv/pull/8292)
-    - Fix the memory leak issue during scheduling [#8357](https://github.com/tikv/tikv/pull/8357)
-    - Add the `hibernate-timeout` configuration item to prevent the leader from becoming hibernate too fast [#8208](https://github.com/tikv/tikv/pull/8208)
+    - 修复开启 Hibernate Region 时，某些情况下 leader 选举慢的问题 [#8292](https://github.com/tikv/tikv/pull/8292)
+    - 修复 Region 调度产生的一个内存泄露问题 [#8357](https://github.com/tikv/tikv/pull/8357)
+    - 增加 `hibernate-timeout` 配置避免 leader 过快变为 Hibernate 状态 [#8208](https://github.com/tikv/tikv/pull/8208)
 
 + PD
 
-    - Fix the bug that the TSO request might fail at the time of leader change [#2666](https://github.com/tikv/pd/pull/2666)
-    - Fix the issue that sometimes Region replicas cannot be scheduled to the optimal state when placement rules are enabled [#2720](https://github.com/tikv/pd/pull/2720)
-    - Fix the issue that `Balance Leader` does not work when placement rules are enabled [#2726](https://github.com/tikv/pd/pull/2726)
-    - Fix the issue that unhealthy stores are not filtered from store load statistics [#2805](https://github.com/tikv/pd/pull/2805)
+    - 修复 PD leader 切换时可能导致一段时间内 TSO 不可用的问题 [#2666](https://github.com/tikv/pd/pull/2666)
+    - 修复开启 Placement Rule 时，某些情况下 Region 无法调度至最佳状态的问题 [#2720](https://github.com/tikv/pd/pull/2720)
+    - 修复开启 Placement Rules 后，`Balance Leader` 不工作的问题 [#2726](https://github.com/tikv/pd/pull/2726)
+    - 修复不健康的 Store 未从负载统计信息中过滤的问题 [#2805](https://github.com/tikv/pd/pull/2805)
 
 + TiFlash
 
-    - Fix the issue that TiFlash cannot start normally after upgrading from an earlier version if the name of the database or table contains special characters
-    - Fix the issue that the TiFlash process cannot exit if any exceptions are thrown during initialization
+    - 修复 TiFlash 从旧版本升级到新版本的过程中，由于包含特殊字符而导致进程无法启动的问题
+    - 修复 TiFlash 进程在初始化过程中，一旦出现任何异常就无法退出的问题
 
 + Tools
 
     + Backup & Restore (BR)
-
-        - Fix the issue of duplicated calculation of total KV and total bytes in the backup summary log [#472](https://github.com/pingcap/br/pull/472)
-        - Fix the issue that the import mode does not work in the first 5 minutes after switching to this mode [#473](https://github.com/pingcap/br/pull/473)
+    
+        - 修复 total KV 和 total bytes 被计算两次的问题 [#472](https://github.com/pingcap/br/pull/472)
+        - 修复切换模式不及时导致恢复缓慢的问题 [#473](https://github.com/pingcap/br/pull/473)
 
     + Dumpling
-
-        - Fix the issue that FTWRL lock is not released in time [#128](https://github.com/pingcap/dumpling/pull/128)
+        - 修复 FTWRL 锁没有及时释放的问题 [#128](https://github.com/pingcap/dumpling/pull/128)
 
     + TiCDC
 
-        - Fix the issue that the failed `changefeed` cannot be removed [#782](https://github.com/pingcap/tiflow/pull/782)
-        - Fix invalid `delete` events by selecting one unique index as the handle index [#787](https://github.com/pingcap/tiflow/pull/787)
-        - Fix the bug that GC safepoint is forwarded beyond the checkpoint of stopped `changefeed` [#797](https://github.com/pingcap/tiflow/pull/797)
-        - Fix the bug that the network I/O waiting blocks tasks to exit [#825](https://github.com/pingcap/tiflow/pull/825)
-        - Fix the bug that some unnecessary data might be mistakenly replicated to the downstream [#743](https://github.com/pingcap/tiflow/issues/743)
+        - 解决了同步任务不能被移除的问题 [#782](https://github.com/pingcap/tiflow/pull/782)
+        - 修正了错误的删除事件 [#787](https://github.com/pingcap/tiflow/pull/787)
+        - 解决了已停止的同步任务会卡住 GC 的问题 [#797](https://github.com/pingcap/tiflow/pull/797)
+        - 解决了网络阻塞导致同步任务不能退出的问题 [#825](https://github.com/pingcap/tiflow/pull/825)
+        - 修复在某些情况下无关数据被错误地到下游的问题 [#743](https://github.com/pingcap/tiflow/issues/743)
 
     + TiDB Lightning
 
-        - Fix the syntax error on empty binary/hex literals when using TiDB backend [#357](https://github.com/pingcap/tidb-lightning/pull/357)
+        - 解决了 TiDB backend 遇到空 binary/hex 的时候出现语法错误的问题 [#357](https://github.com/pingcap/tidb-lightning/pull/357)

@@ -1,97 +1,82 @@
 ---
-title: Certificate-Based Authentication for Login
-summary: Learn the certificate-based authentication used for login.
+title: TiDB 证书鉴权使用指南
+summary: 了解使用 TiDB 的证书鉴权功能。
 ---
 
-# Certificate-Based Authentication for Login
+# TiDB 证书鉴权使用指南
 
-TiDB supports a certificate-based authentication method for users to log into TiDB. With this method, TiDB issues certificates to different users, uses encrypted connections to transfer data, and verifies certificates when users log in. This approach is more secure than the traditional password-based authentication method commonly used by MySQL users and is thus adopted by an increasing number of users.
+TiDB 支持基于证书鉴权的登录方式。采用这种方式，TiDB 对不同用户签发证书，使用加密连接来传输数据，并在用户登录时验证证书。相比 MySQL 用户常用的用户名密码验证方式，与 MySQL 相兼容的证书鉴权方式更安全，因此越来越多的用户使用证书鉴权来代替用户名密码验证。
 
-To use certificate-based authentication, you might need to perform the following operations:
+在 TiDB 上使用证书鉴权的登录方法，可能需要进行以下操作：
 
-+ Create security keys and certificates
-+ Configure certificates for TiDB and the client
-+ Configure the user certificate information to be verified when the user logs in
-+ Update and replace certificates
++ 创建安全密钥和证书
++ 配置 TiDB 和客户端使用的证书
++ 配置登录时需要校验的用户证书信息
++ 更新和替换证书
 
-The rest of the document introduces in detail how to perform these operations.
+本文介绍了如何进行证书鉴权的上述几个操作。
 
-## Create security keys and certificates
+## 创建安全密钥和证书
 
-<CustomContent platform="tidb">
+目前推荐使用 [OpenSSL](https://www.openssl.org/) 来生成密钥和证书，生成证书的过程和[为 TiDB 客户端服务端间通信开启加密传输](/enable-tls-between-clients-and-servers.md)过程类似，下面更多演示如何在证书中配置更多需校验的属性字段。
 
-It is recommended that you use [OpenSSL](https://www.openssl.org/) to create keys and certificates. The certificate generation process is similar to the process described in [Enable TLS Between TiDB Clients and Servers](/enable-tls-between-clients-and-servers.md). The following paragraphs demonstrate how to configure more attribute fields that need to be verified in the certificate.
+### 生成 CA 密钥和证书
 
-</CustomContent>
+1. 执行以下命令生成 CA 密钥：
 
-<CustomContent platform="tidb-cloud">
-
-It is recommended that you use [OpenSSL](https://www.openssl.org/) to create keys and certificates. The certificate generation process is similar to the process described in [Enable TLS Between TiDB Clients and Servers](https://docs.pingcap.com/tidb/stable/enable-tls-between-clients-and-servers). The following paragraphs demonstrate how to configure more attribute fields that need to be verified in the certificate.
-
-</CustomContent>
-
-### Generate CA key and certificate
-
-1. Execute the following command to generate the CA key:
-
-    
     ```bash
     sudo openssl genrsa 2048 > ca-key.pem
     ```
 
-    The output of the above command:
+    命令执行后输出以下结果：
 
-    ```
+    ```bash
     Generating RSA private key, 2048 bit long modulus (2 primes)
     ....................+++++
     ...............................................+++++
     e is 65537 (0x010001)
     ```
 
-2. Execute the following command to generate the certificate corresponding to the CA key:
+2. 执行以下命令生成该密钥对应的证书：
 
-    
     ```bash
     sudo openssl req -new -x509 -nodes -days 365000 -key ca-key.pem -out ca-cert.pem
     ```
 
-3. Enter detailed certificate information. For example:
+3. 输入证书细节信息，示例如下：
 
-    
     ```bash
     Country Name (2 letter code) [AU]:US
     State or Province Name (full name) [Some-State]:California
-    Locality Name (e.g. city) []:San Francisco
-    Organization Name (e.g. company) [Internet Widgits Pty Ltd]:PingCAP Inc.
-    Organizational Unit Name (e.g. section) []:TiDB
+    Locality Name (eg, city) []:San Francisco
+    Organization Name (eg, company) [Internet Widgits Pty Ltd]:Example Inc.
+    Organizational Unit Name (eg, section) []:TiDB
     Common Name (e.g. server FQDN or YOUR name) []:TiDB admin
-    Email Address []:s@pingcap.com
+    Email Address []:s@example.com
     ```
 
-    > **Note:**
+    > **注意：**
     >
-    > In the above certificate details, texts after `:` are the entered information.
+    > 以上信息中，`:` 后的文字为用户输入的信息。
 
-### Generate server key and certificate
+### 生成服务端密钥和证书
 
-1. Execute the following command to generate the server key:
+1. 执行以下命令生成服务端的密钥：
 
-    
     ```bash
     sudo openssl req -newkey rsa:2048 -days 365000 -nodes -keyout server-key.pem -out server-req.pem
     ```
 
-2. Enter detailed certificate information. For example:
+2. 输入证书细节信息，示例如下：
 
-    
     ```bash
     Country Name (2 letter code) [AU]:US
     State or Province Name (full name) [Some-State]:California
-    Locality Name (e.g. city) []:San Francisco
-    Organization Name (e.g. company) [Internet Widgits Pty Ltd]:PingCAP Inc.
-    Organizational Unit Name (e.g. section) []:TiKV
+    Locality Name (eg, city) []:San Francisco
+    Organization Name (eg, company) [Internet Widgits Pty Ltd]:Example Inc.
+    Organizational Unit Name (eg, section) []:TiKV
     Common Name (e.g. server FQDN or YOUR name) []:TiKV Test Server
-    Email Address []:k@pingcap.com
+    Email Address []:k@example.com
 
     Please enter the following 'extra' attributes
     to be sent with your certificate request
@@ -99,60 +84,56 @@ It is recommended that you use [OpenSSL](https://www.openssl.org/) to create key
     An optional company name []:
     ```
 
-3. Execute the following command to generate the RSA key of the server:
+3. 执行以下命令生成服务端的 RSA 密钥：
 
-    
     ```bash
     sudo openssl rsa -in server-key.pem -out server-key.pem
     ```
 
-    The output of the above command:
+    输出结果如下：
 
     ```bash
     writing RSA key
     ```
 
-4. Use the CA certificate signature to generate the signed server certificate:
+4. 使用 CA 证书签名来生成服务端的证书：
 
-    
     ```bash
     sudo openssl x509 -req -in server-req.pem -days 365000 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out server-cert.pem
     ```
 
-    The output of the above command (for example):
+    输出结果示例如下：
 
     ```bash
     Signature ok
-    subject=C = US, ST = California, L = San Francisco, O = PingCAP Inc., OU = TiKV, CN = TiKV Test Server, emailAddress = k@pingcap.com
+    subject=C = US, ST = California, L = San Francisco, O = Example Inc., OU = TiKV, CN = TiKV Test Server, emailAddress = k@example.com
     Getting CA Private Key
     ```
 
-    > **Note:**
+    > **注意：**
     >
-    > When you log in, TiDB checks whether the information in the `subject` section of the above output is consistent or not.
+    > 以上结果中，用户登录时 TiDB 将强制检查 `subject` 部分的信息是否一致。
 
-### Generate client key and certificate
+### 生成客户端密钥和证书
 
-After generating the server key and certificate, you need to generate the key and certificate for the client. It is often necessary to generate different keys and certificates for different users.
+生成服务端密钥和证书后，需要生成客户端使用的密钥和证书。通常需要为不同的用户生成不同的密钥和证书。
 
-1. Execute the following command to generate the client key:
+1. 执行以下命令生成客户端的密钥：
 
-    
     ```bash
     sudo openssl req -newkey rsa:2048 -days 365000 -nodes -keyout client-key.pem -out client-req.pem
     ```
 
-2. Enter detailed certificate information. For example:
+2. 输入证书细节信息，示例如下：
 
-    
     ```bash
     Country Name (2 letter code) [AU]:US
     State or Province Name (full name) [Some-State]:California
-    Locality Name (e.g. city) []:San Francisco
-    Organization Name (e.g. company) [Internet Widgits Pty Ltd]:PingCAP Inc.
-    Organizational Unit Name (e.g. section) []:TiDB
+    Locality Name (eg, city) []:San Francisco
+    Organization Name (eg, company) [Internet Widgits Pty Ltd]:Example Inc.
+    Organizational Unit Name (eg, section) []:TiDB
     Common Name (e.g. server FQDN or YOUR name) []:tpch-user1
-    Email Address []:zz@pingcap.com
+    Email Address []:zz@example.com
 
     Please enter the following 'extra' attributes
     to be sent with your certificate request
@@ -160,187 +141,174 @@ After generating the server key and certificate, you need to generate the key an
     An optional company name []:
     ```
 
-3. Execute the following command to generate the RSA key of the client:
+3. 执行以下命令生成客户端 RSA 证书：
 
-    
     ```bash
     sudo openssl rsa -in client-key.pem -out client-key.pem
     ```
 
-    The output of the above command:
+    以上命令的输出结果如下：
 
     ```bash
     writing RSA key
     ```
 
-4. Use the CA certificate signature to generate the client certificate:
+4. 执行以下命令，使用 CA 证书签名来生成客户端证书：
 
-    
     ```bash
     sudo openssl x509 -req -in client-req.pem -days 365000 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out client-cert.pem
     ```
 
-    The output of the above command (for example):
+    输出结果示例如下：
 
     ```bash
     Signature ok
-    subject=C = US, ST = California, L = San Francisco, O = PingCAP Inc., OU = TiDB, CN = tpch-user1, emailAddress = zz@pingcap.com
+    subject=C = US, ST = California, L = San Francisco, O = Example Inc., OU = TiDB, CN = tpch-user1, emailAddress = zz@example.com
     Getting CA Private Key
     ```
 
-    > **Note:**
+    > **注意：**
     >
-    > The information of the `subject` section in the above output is used for [certificate configuration for login verification](#configure-the-user-certificate-information-for-login-verification) in the `require` section.
+    > 以上结果中，`subject` 部分后的信息会被用来在 `REQUIRE` 中配置和要求验证。
 
-### Verify certificate
+### 验证证书
 
-Execute the following command to verify certificate:
-
+执行以下命令验证证书：
 
 ```bash
 openssl verify -CAfile ca-cert.pem server-cert.pem client-cert.pem
 ```
 
-If the certificate is verified, you will see the following result:
+如果验证通过，会显示以下信息：
 
 ```
 server-cert.pem: OK
 client-cert.pem: OK
 ```
 
-## Configure TiDB and the client to use certificates
+## 配置 TiDB 和客户端使用证书
 
-After generating the certificates, you need to configure the TiDB server and the client to use the corresponding server certificate or client certificate.
+在生成证书后，需要在 TiDB 中配置服务端所使用的证书，同时让客户端程序使用客户端证书。
 
-### Configure TiDB to use server certificate
+### 配置 TiDB 服务端
 
-Modify the `[security]` section in the TiDB configuration file. This step specifies the directory in which the CA certificate, the server key, and the server certificate are stored. You can replace `path/to/server-cert.pem`, `path/to/server-key.pem`, `path/to/ca-cert.pem` with your own directory.
+修改 TiDB 配置文件中的 `[security]` 段。这一步指定 CA 证书、服务端密钥和服务端证书存放的路径。可将 `path/to/server-cert.pem`、`path/to/server-key.pem` 和 `path/to/ca-cert.pem` 替换成实际的路径。
 
-
-```
+```toml
 [security]
-ssl-cert ="path/to/server-cert.pem"
-ssl-key ="path/to/server-key.pem"
-ssl-ca="path/to/ca-cert.pem"
+ssl-cert = "path/to/server-cert.pem"
+ssl-key = "path/to/server-key.pem"
+ssl-ca = "path/to/ca-cert.pem"
 ```
 
-Start TiDB and check logs. If the following information is displayed in the log, the configuration is successful:
+启动 TiDB 日志。如果日志中有以下内容，即代表配置生效：
 
 ```
 [INFO] [server.go:286] ["mysql protocol server secure connection is enabled"] ["client verification enabled"=true]
 ```
 
-### Configure the client to use client certificate
+### 配置客户端程序
 
-Configure the client so that the client uses the client key and certificate for login.
+配置客户端程序，让客户端使用客户端密钥和证书来登录 TiDB。
 
-Taking the MySQL client as an example, you can use the newly created client certificate, client key and CA by specifying `ssl-cert`, `ssl-key`, and `ssl-ca`:
-
+以 MySQL 客户端为例，可以通过指定 `ssl-cert`、`ssl-key`、`ssl-ca` 来使用新的 CA 证书、客户端密钥和证书：
 
 ```bash
-mysql -utest -h0.0.0.0 -P4000 --ssl-cert /path/to/client-cert.new.pem --ssl-key /path/to/client-key.new.pem --ssl-ca /path/to/ca-cert.pem
+mysql -u test -h 0.0.0.0 -P 4000 --ssl-cert /path/to/client-cert.new.pem --ssl-key /path/to/client-key.new.pem --ssl-ca /path/to/ca-cert.pem
 ```
 
-> **Note:**
+> **注意：**
 >
-> `/path/to/client-cert.new.pem`, `/path/to/client-key.new.pem`, and `/path/to/ca-cert.pem` are the directory of the CA certificate, client key, and client certificate. You can replace them with your own directory.
+> `/path/to/client-cert.new.pem`、`/path/to/client-key.new.pem` 和 `/path/to/ca-cert.pem` 是 CA 证书、客户端密钥和客户端存放的路径。可将以上命令中的这些部分替换为实际的路径。
 
-## Configure the user certificate information for login verification
+## 配置登录时需要校验的用户证书信息
 
-First, connect TiDB using the client to configure the login verification. Then, you can get and configure the user certificate information to be verified.
+使用客户端连接 TiDB 进行授权配置。先获取需要验证的用户证书信息，再对这些信息进行配置。
 
-### Get user certificate information
+### 获取用户证书信息
 
-The user certificate information can be specified by `REQUIRE SUBJECT`, `REQUIRE ISSUER`, `REQUIRE SAN`, and `REQUIRE CIPHER`, which are used to check the X.509 certificate attributes.
+用户证书信息可由 `REQUIRE SUBJECT`、`REQUIRE ISSUER`、`REQUIRE SAN` 和 `REQUIRE CIPHER` 来指定，用于检查 X.509 certificate attributes。
 
-+ `REQUIRE SUBJECT`: Specifies the subject information of the client certificate when you log in. With this option specified, you do not need to configure `require ssl` or x509. The information to be specified is consistent with the entered subject information in [Generate client keys and certificates](#generate-client-key-and-certificate).
++ `REQUIRE SUBJECT`：指定用户在连接时需要提供客户端证书的 `subject` 内容。指定该选项后，不需要再配置 `REQUIRE SSL` 或 `REQUIRE X509`。配置内容对应[生成客户端密钥和证书](#生成客户端密钥和证书)中的录入信息。
 
-    To get this option, execute the following command:
+    可以执行以下命令来获取该项的信息：
 
-    
-    ```bash
+    ```
     openssl x509 -noout -subject -in client-cert.pem | sed 's/.\{8\}//'  | sed 's/, /\//g' | sed 's/ = /=/g' | sed 's/^/\//'
     ```
 
-+ `require issuer`: Specifies the `subject` information of the CA certificate that issues the user certificate. The information to be specified is consistent with the entered `subject` information in [Generate CA key and certificate](#generate-ca-key-and-certificate).
++ `REQUIRE ISSUER`：指定签发用户证书的 CA 证书的 `subject` 内容。配置内容对应[生成 CA 密钥和证书](#生成-ca-密钥和证书)中的录入信息。
 
-    To get this option, execute the following command:
+    可以执行以下命令来获取该项的信息：
 
-    
-    ```bash
+    ```
     openssl x509 -noout -subject -in ca-cert.pem | sed 's/.\{8\}//'  | sed 's/, /\//g' | sed 's/ = /=/g' | sed 's/^/\//'
     ```
 
-+ `require san`: Specifies the `Subject Alternative Name` information of the CA certificate that issues the user certificate. The information to be specified is consistent with the [`alt_names` of the `openssl.cnf` configuration file](https://docs.pingcap.com/tidb/stable/generate-self-signed-certificates) used to generate the client certificate.
++ `REQUIRE SAN`：指定签发用户证书的 CA 证书的 `Subject Alternative Name` 内容。配置内容对应生成客户端证书使用的 [openssl.cnf 配置文件的 `alt_names` 信息](/generate-self-signed-certificates.md)。
 
-    + Execute the following command to get the information of the `REQUIRE SAN` item in the generated certificate:
+    + 可以执行以下命令来获取已生成证书中的 `REQUIRE SAN` 项的信息：
 
-        
         ```shell
         openssl x509 -noout -extensions subjectAltName -in client.crt
         ```
 
-    + `REQUIRE SAN` currently supports the following `Subject Alternative Name` check items:
+    + `REQUIRE SAN` 目前支持以下 `Subject Alternative Name` 检查项：
 
         - URI
         - IP
         - DNS
 
-    + Multiple check items can be configured after they are connected by commas. For example, configure `REQUIRE SAN` as follows for the `u1` user:
+    + 多个检查项可通过逗号连接后进行配置。例如，对用户 `u1` 进行以下配置：
 
-        
         ```sql
         CREATE USER 'u1'@'%' REQUIRE SAN 'DNS:d1,URI:spiffe://example.org/myservice1,URI:spiffe://example.org/myservice2';
         ```
 
-        The above configuration only allows the `u1` user to log in to TiDB using the certificate with the URI item `spiffe://example.org/myservice1` or `spiffe://example.org/myservice2` and the DNS item `d1`.
+        以上配置只允许用户 `u1` 使用 URI 项为 `spiffe://example.org/myservice1` 或 `spiffe://example.org/myservice2`、DNS 项为 `d1` 的证书登录 TiDB。
 
-+ `REQUIRE CIPHER`: Checks the cipher method supported by the client. Use the following statement to check the list of supported cipher methods:
++ `REQUIRE CIPHER`：配置该项检查客户端支持的 `cipher method`。可以使用以下语句来查看支持的列表：
 
     ```sql
     SHOW SESSION STATUS LIKE 'Ssl_cipher_list';
     ```
 
-### Configure user certificate information
+### 配置用户证书信息
 
-After getting the user certificate information (`REQUIRE SUBJECT`, `REQUIRE ISSUER`, `REQUIRE SAN`, `REQUIRE CIPHER`), configure these information to be verified when creating a user, granting privileges, or altering a user. Replace `<replaceable>` with the corresponding information in the following statements.
+获取用户证书信息（`REQUIRE SUBJECT`、`REQUIRE ISSUER`、`REQUIRE SAN` 和 `REQUIRE CIPHER`）后，可在创建用户、赋予权限或更改用户时配置用户证书信息。将以下命令中的 `<replaceable>` 替换为对应的信息。可以选择配置其中一项或多项，使用空格或 `and` 分隔。
 
-You can configure one option or multiple options using the space or `and` as the separator.
++ 可以在创建用户 (`CREATE USER`) 时配置登录时需要校验的证书信息：
 
-+ Configure user certificate when creating a user (`CREATE USER`):
-
-    
     ```sql
     CREATE USER 'u1'@'%' REQUIRE ISSUER '<replaceable>' SUBJECT '<replaceable>' SAN '<replaceable>' CIPHER '<replaceable>';
     ```
 
-+ Configure user certificate when altering a user:
++ 可以在修改已有用户 (`ALTER USER`) 时配置登录时需要校验的证书信息：
 
-    
     ```sql
     ALTER USER 'u1'@'%' REQUIRE ISSUER '<replaceable>' SUBJECT '<replaceable>' SAN '<replaceable>' CIPHER '<replaceable>';
     ```
 
-After the above configuration, the following items will be verified when you log in:
+配置完成后，用户在登录时 TiDB 会验证以下内容：
 
-+ SSL is used; the CA that issues the client certificate is consistent with the CA configured in the server.
-+ The `issuer` information of the client certificate matches the information specified in `REQUIRE ISSUER`.
-+ The `subject` information of the client certificate matches the information specified in `REQUIRE CIPHER`.
-+ The `Subject Alternative Name` information of the client certificate matches the information specified in `REQUIRE SAN`.
++ 使用 SSL 登录，且证书为服务器配置的 CA 证书所签发
++ 证书的 `issuer` 信息和权限配置里的 `REQUIRE ISSUER` 信息相匹配
++ 连接使用的加密套件与 `REQUIRE CIPHER` 中指定的套件一致。
++ 证书的 `Subject Alternative Name` 信息和权限配置里的 `REQUIRE SAN` 信息相匹配
 
-You can log into TiDB only after all the above items are verified. Otherwise, the `ERROR 1045 (28000): Access denied` error is returned. You can use the following command to check the TLS version, the cipher algorithm and whether the current connection uses the certificate for the login.
+全部验证通过后用户才能登录，否则会报 `ERROR 1045 (28000): Access denied` 错误。登录后，可以通过以下命令来查看当前链接是否使用证书登录、TLS 版本和 Cipher 算法。
 
-Connect the MySQL client and execute the following statement:
+连接 MySQL 客户端并执行：
 
 ```sql
 \s
 ```
 
-The output:
+返回结果如下：
 
 ```
 --------------
-mysql  Ver 8.5.1 for Linux on x86_64 (MySQL Community Server - GPL)
+mysql  Ver 8.5.8 for Linux on x86_64 (MySQL Community Server - GPL)
 
 Connection id:       1
 Current database:    test
@@ -348,13 +316,13 @@ Current user:        root@127.0.0.1
 SSL:                 Cipher in use is TLS_AES_128_GCM_SHA256
 ```
 
-Then execute the following statement:
+然后执行：
 
 ```sql
 SHOW VARIABLES LIKE '%ssl%';
 ```
 
-The output:
+返回结果如下：
 
 ```
 +---------------+----------------------------------+
@@ -370,106 +338,101 @@ The output:
 6 rows in set (0.06 sec)
 ```
 
-## Update and replace certificate
+## 更新和替换证书
 
-The key and certificate are updated regularly. The following sections introduce how to update the key and certificate.
+证书和密钥通常会周期性更新。下文介绍更新密钥和证书的流程。
 
-The CA certificate is the basis for mutual verification between the client and server. To replace the CA certificate, generate a combined certificate that supports the authentication for both old and new certificates. On the client and server, first replace the CA certificate, then replace the client/server key and certificate.
+CA 证书是客户端和服务端相互校验的依据，所以如果需要替换 CA 证书，则需要生成一个组合证书来在替换期间同时支持客户端和服务器上新旧证书的验证，并优先替换客户端和服务端的 CA 证书，再替换客户端和服务端的密钥和证书。
 
-### Update CA key and certificate
+### 更新 CA 密钥和证书
 
-1. Back up the old CA key and certificate (suppose that `ca-key.pem` is stolen):
+1. 以替换 CA 密钥为例（假设 `ca-key.pem` 被盗），将旧的 CA 密钥和证书进行备份：
 
-    
     ```bash
     mv ca-key.pem ca-key.old.pem && \
     mv ca-cert.pem ca-cert.old.pem
     ```
 
-2. Generate the new CA key:
+2. 生成新的 CA 密钥：
 
-    
     ```bash
     sudo openssl genrsa 2048 > ca-key.pem
     ```
 
-3. Generate the new CA certificate using the newly generated CA key:
+3. 用新的密钥生成新的 CA 证书：
 
-    
     ```bash
     sudo openssl req -new -x509 -nodes -days 365000 -key ca-key.pem -out ca-cert.new.pem
     ```
 
-    > **Note:**
+    > **注意：**
     >
-    > Generating the new CA certificate is to replace the keys and certificates on the client and server, and to ensure that online users are not affected. Therefore, the appended information in the above command must be consistent with the `require issuer` information.
+    > 生成新的 CA 证书是为了替换密钥和证书，保证在线用户不受影响。所以以上命令中填写的附加信息必须与已配置的 `REQUIRE ISSUER` 信息一致。
 
-4. Generate the combined CA certificate:
+4. 生成组合 CA 证书：
 
-    
     ```bash
     cat ca-cert.new.pem ca-cert.old.pem > ca-cert.pem
     ```
 
-After the above operations, restart the TiDB server with the newly created combined CA certificate. Then the server accepts both the new and old CA certificates.
+之后使用新生成的组合 CA 证书并重启 TiDB Server，此时服务端可以同时接受和使用新旧 CA 证书。
 
-Also replace the old CA certificate with the combined certificate so that the client accepts both the old and new CA certificates.
+之后先将所有客户端用的 CA 证书也替换为新生成的组合 CA 证书，使客户端能同时和使用新旧 CA 证书。
 
-### Update client key and certificate
+### 更新客户端密钥和证书
 
-> **Note:**
+> **注意：**
 >
-> Perform the following steps **only after** you have replaced the old CA certificate on the client and server with the combined CA certificate.
+> 需要将集群中所有服务端和客户端使用的 CA 证书都替换为新生成的组合 CA 证书后才能开始进行以下步骤。
 
-1. Generate the new RSA key of the client:
+1. 生成新的客户端 RSA 密钥：
 
-    
     ```bash
     sudo openssl req -newkey rsa:2048 -days 365000 -nodes -keyout client-key.new.pem -out client-req.new.pem && \
     sudo openssl rsa -in client-key.new.pem -out client-key.new.pem
     ```
 
-    > **Note:**
+    > **注意：**
     >
-    > The above command is to replace the client key and certificate, and to ensure that the online users are not affected. Therefore, the appended information in the above command must be consistent with the `require subject` information.
+    > 以上命令是为了替换密钥和证书，保证在线用户不受影响，所以以上命令中填写的附加信息必须与已配置的 `REQUIRE SUBJECT` 信息一致。
 
-2. Use the combined certificate and the new CA key to generate the new client certificate:
+2. 使用新的组合 CA 证书和新 CA 密钥生成新客户端证书：
 
-    
     ```bash
     sudo openssl x509 -req -in client-req.new.pem -days 365000 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out client-cert.new.pem
     ```
 
-3. Make the client (for example, MySQL) connect TiDB with the new client key and certificate:
+3. 让客户端使用新的客户端密钥和证书来连接 TiDB （以 MySQL 客户端为例）：
 
-    
     ```bash
-    mysql -utest -h0.0.0.0 -P4000 --ssl-cert /path/to/client-cert.new.pem --ssl-key /path/to/client-key.new.pem --ssl-ca /path/to/ca-cert.pem
+    mysql -u test -h 0.0.0.0 -P 4000 --ssl-cert /path/to/client-cert.new.pem --ssl-key /path/to/client-key.new.pem --ssl-ca /path/to/ca-cert.pem
     ```
 
-    > **Note:**
+    > **注意：**
     >
-    > `/path/to/client-cert.new.pem`, `/path/to/client-key.new.pem`, and `/path/to/ca-cert.pem` specify the directory of the CA certificate, client key, and client certificate. You can replace them with your own directory.
+    > `/path/to/client-cert.new.pem`、`/path/to/client-key.new.pem` 和 `/path/to/ca-cert.pem` 是 CA 证书、客户端密钥和客户端存放的路径。可将以上命令中的这些部分替换为实际的路径。
 
-### Update the server key and certificate
+### 更新服务端密钥和证书
 
-1. Generate the new RSA key of the server:
+1. 生成新的服务端 RSA 密钥：
 
-    
     ```bash
     sudo openssl req -newkey rsa:2048 -days 365000 -nodes -keyout server-key.new.pem -out server-req.new.pem && \
     sudo openssl rsa -in server-key.new.pem -out server-key.new.pem
     ```
 
-2. Use the combined CA certificate and the new CA key to generate the new server certificate:
+2. 使用新的组合 CA 证书和新 CA 密钥生成新服务端证书：
 
-    
     ```bash
     sudo openssl x509 -req -in server-req.new.pem -days 365000 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out server-cert.new.pem
     ```
 
-3. Configure the TiDB server to use the new server key and certificate. See [Configure TiDB server](#configure-tidb-and-the-client-to-use-certificates) for details.
+3. 配置 TiDB 使用上面新生成的服务端密钥和证书并重启。将文件放置在[配置 TiDB 服务端](#配置-tidb-服务端)一节中指定的目录中。
 
-## Policy-based access control for certificates
+    ```sql
+    ALTER INSTANCE RELOAD TLS;
+    ```
 
-TiDB supports policy-based access control (PBAC) for certificates, leveraging policies defined by the underlying key management server. This enables fine-grained control over access based on various criteria, such as time-based policies (for example, certificates only valid during specific hours), location-based policies (for example, restricting access to certain geographic locations), and other customizable conditions, ensuring enhanced security and flexibility in certificate management.
+## 基于策略的证书访问控制
+
+TiDB 支持基于策略的证书访问控制 (PBAC)，利用底层密钥管理服务器定义的策略。这使得用户能够根据各种条件进行细粒度的访问控制，例如基于时间的策略（如证书仅在特定时间段内有效）、基于位置的策略（如限制对特定地理位置的访问）以及其他可自定义的条件，从而确保在证书管理中提供更高的安全性和灵活性。

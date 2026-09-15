@@ -1,128 +1,121 @@
 ---
-title: Performance Tuning Overview
-summary: This document introduces the basic concepts of performance tuning, such as user response time, throughput, and database time, and also provides a general process for performance tuning.
+title:  性能优化概述
+summary: 本文介绍性能优化的基本概念，比如用户响应时间、吞吐和数据库时间，以及性能优化的通用流程。
 ---
 
-# TiDB Performance Tuning Overview
+# TiDB 性能优化概述
 
-This document introduces the basic concepts of performance tuning, such as user response time, throughput, and database time, and also provides a general process for performance tuning.
+本文介绍性能优化的基本概念，比如用户响应时间、吞吐和数据库时间，以及性能优化的通用流程。
 
-## User response time and database time
+## 用户响应时间和数据库时间
 
-### User response time
+### 用户响应时间
 
-User response time indicates how long an application takes to return the results of a request to users. As you can see from the following sequential timing diagram, the time of a typical user request contains the following:
+用户响应时间是指应用系统为用户返回请求结果所消耗的时间。一个典型的用户请求的处理时序图如下，包含了用户和应用系统的网络延迟、应用的处理时间、应用和数据库的交互时的网络延迟和数据库的服务时间等。用户响应时间受到请求链路上各个子系统的影响，比如网络延迟和带宽、系统并发用户数和请求类型、服务器 CPU 和 IO 资源使用率等。要对整个系统进行有效的优化，你需要先定位用户响应时间的瓶颈。
 
-- The network latency between the user and the application
-- The processing time of the application
-- The network latency during the interaction between the application and the database
-- The service time of the database
+你可以通过以下公式计算指定时间范围 (`ΔT`) 内总的用户响应时间：
 
-The user response time is affected by various subsystems on the request chain, such as network latency and bandwidth, number and request types of concurrent users, and resource usage of server CPU and I/O. To optimize the entire system effectively, you need to first identify the bottlenecks in user response time.
+`ΔT` 时间内总的用户响应时间 = 平均 TPS (Transactions Per Second) x 用户平均响应时间 x `ΔT`。
 
-To get a total user response time within a specified time range (`ΔT`), you can use the following formula:
+![用户响应时间](https://docs-download.pingcap.com/media/images/docs-cn/performance/user_response_time_cn.png)
 
-Total user response time in `ΔT` = Average TPS (Transactions Per Second) x Average user response time x `ΔT`.
+### 数据库时间
 
-![user_response_time](https://docs-download.pingcap.com/media/images/docs/performance/user_response_time_en.png)
+数据库时间是指数据库系统提供服务的时间，`ΔT` 时间内的数据库时间为数据库并发处理所有应用请求的时间总和。
 
-### Database time
+你可以通过以下任一方式计算数据库时间：
 
-Database time indicates the total service time provided by a database. The database time in `ΔT` is the sum of the time that a database takes to process all application requests concurrently.
+- 方式一： 通过 QPS 乘以平均 query 延迟乘以 ΔT，即 `DB Time in ΔT = QPS × avg latency × ΔT`
+- 方式二： 通过平均活跃会话数乘以 ΔT，即 `DB Time in ΔT  = avg active connections × ΔT`
+- 方式三： 通过 TiDB 内部的 Prometheus 指标 tidb_server_tokens 计算，即 `ΔT DB Time = rate(tidb_server_tokens) × ΔT`
 
-To get the database time, you can use any of the following methods:
+## 用户响应时间和系统吞吐的关系
 
-- Method 1: Multiply the average query latency by QPS and by ΔT, that is, `DB Time in ΔT = QPS × avg latency × ΔT`
-- Method 2: Multiply the average number of active sessions by ΔT, that is, `DB Time in ΔT  = avg active connections × ΔT`
-- Method 3: Calculate the time based on the TiDB internal Prometheus metric `tidb_server_tokens`, that is. `ΔT DB Time = rate(tidb_server_tokens) × ΔT`
-
-## Relationship between user response time and system throughput
-
-User response time consists of service time, queuing time, and concurrent waiting time to complete a user request.
+用户响应时间包含完成用户请求的服务时间、排队时间和并发等待时间，即：
 
 ```
 User Response time = Service time + Queuing delay + Coherency delay
 ```
 
-- Service time: the time a system consumes on certain resources when processing a request, for example, the CPU time that a database consumes to complete a SQL request.
-- Queuing delay: the time a system waits in a queue for service of certain resources when processing a request.
-- Coherency delay: the time a system communicates and collaborates with other concurrent tasks, so that it can access shared resources when processing a request.
+- Service Time（完成用户请求的服务时间）：系统处理请求时需要消耗某种资源的时间，比如数据库完成一次 SQL 请求需要消耗的 CPU 时间。
+- Queuing delay（排队延迟时间）：系统处理请求时为了等待某种资源的服务，在队列中等待调度的时间。
+- Coherency delay（并发等待延迟）：系统处理请求时为了访问共享资源，需要和其他并发的任务进行通信和协作的时间。
 
-System throughput indicates the number of requests that can be completed by a system per second. User response time and throughput are usually inverse of each other. When the throughput increases, the system resource utilization and the queuing latency for a requested service increase accordingly. Once resource utilization exceeds a certain inflection point, the queuing latency will increase dramatically.
+系统吞吐指系统每秒完成的请求数量。用户响应时间和吞吐通常是反比倒数的关系。随着吞吐的上升，系统资源利用率上升，请求服务的排队延迟会随之上升，当资源利用率超过某个拐点，排队延迟会急剧上升。
 
-For example, for a database system running OLTP loads, after its CPU utilization exceeds 65%, the CPU queueing scheduling latency increases significantly. This is because concurrent requests of a system are not completely independent, which means that these requests can collaborate and compete for shared resources. For example, requests from different users might perform mutually exclusive locking operations on the same data. When the resource utilization increases, the queuing and scheduling latency increases too, which causes that the shared resources cannot be released in time and in turn prolongs the waiting time for shared resources by other tasks.
+例如，对于运行 OLTP 负载的数据库系统，当 CPU 利用率超过 65% 之后，CPU 的排队调度延迟会明显上升。因为系统的并发请求不是完全独立的，请求之间存在共享资源的协同和争用，比如不同的数据库请求可能对同样的数据有互斥的加锁操作。当资源利用率上升时，排队和调度延迟上升，这将导致持有的共享资源无法及时释放，反过来延长了其他任务对共享资源的等待时间。
 
-## Performance tuning process
+## 性能优化流程
 
-The performance tuning process consists of the following 6 steps:
+性能优化流程包含以下 6 个步骤：
 
-1. Define a tuning objective.
-2. Establish a performance baseline.
-3. Identify bottlenecks in user response time.
-4. Propose tuning solutions, and evaluate the benefits, risks, and costs of each solution.
-5. Implement tuning solutions.
-6. Evaluate tuning results.
+1. 定义优化目标
+2. 建立性能基线
+3. 定位用户响应时间的瓶颈
+4. 提出优化方案，预估每种方案的收益、风险和成本
+5. 实施优化
+6. 评估优化结果
 
-To achieve the tuning objective of a performance tuning project, you usually need to repeat Step 2 to Step 6 multiple times.
+一个性能优化项目，经常需要对步骤 2 到 6 进行多次循环，才能达到优化的目标。
 
-### Step 1. Define a tuning objective
+### 第 1 步：定义优化目标
 
-For different types of systems, tuning objectives are different too. For example, for a financial core OLTP system, the tuning objective might be to reduce the long-tail latency of transactions; for a financial settlement system, the tuning objective might be to make better use of hardware resources and reduce the time of batch settlement tasks.
+不同类型系统优化目标不同。例如，对于一个金融核心的 OLTP 系统，优化目标可能是降低交易的长尾延迟；对于一个财务结算系统，优化目标可能是更充分利用硬件资源，缩短批量结算任务时间。
 
-A good tuning objective should be easily quantifiable. For example:
+一个好的优化目标应该是容易量化的，比如：
 
-- Good tuning objective: The p99 latency for transfer transactions needs to be less than 200 ms during peak business hours of 9 am to 10 am.
-- Poor tuning objective: The system is too slow to respond so it needs to be optimized.
+- 好的优化目标：”业务高峰期上午 9 点到 10 点，转账交易的 p99 延迟需要小于 200 毫秒“
+- 差的优化目标：”系统太慢了没有响应，需要优化“
 
-Defining a clear tuning objective helps guide the subsequent performance tuning steps.
+定义一个清晰的优化目标有助于指导后续的性能优化工作。
 
-### Step 2. Establish a performance baseline
+### 第 2 步：建立性能基线
 
-To tune performance efficiently, you need to capture the current performance data to establish a performance baseline. The performance data to be captured typically includes the following:
+为了高效地进行性能优化，你需要采集当前的性能数据以建立性能基线。需要采集的性能数据通常包含以下内容：
 
-- Mean and long-tail values of user response time, and throughput of your application
-- Database performance data such as database time, query latency, and QPS
+- 用户响应时间的平均值和长尾值、应用系统的吞吐
+- 数据库时间、Query 延迟和 QPS 等数据库性能数据。
 
-    TiDB measures and stores performance data thoroughly in different dimensions, such as [slow query logs](/identify-slow-queries.md), [Top SQL](/dashboard/top-sql.md), [Continuous Performance Profiling](/dashboard/continuous-profiling.md), and [traffic visualizer](/dashboard/dashboard-key-visualizer.md). In addition, you can perform historical backtracking and comparison of the timing metrics data stored in Prometheus.
+    TiDB 针对不同维度的性能数据进行了完善的测量和存储，例如[慢日志](/identify-slow-queries.md)、[Top SQL](/dashboard/top-sql.md)、[持续性能分析功能](/dashboard/continuous-profiling.md)和[流量可视化](/dashboard/dashboard-key-visualizer.md)等。此外，你还可以对存储在 Prometheus 中的时序指标数据进行历史回溯和对比。
 
-- Resource utilization, including resources such as CPU, IO, and network
-- Configuration information, such as application configurations, database configurations, and operating system configurations
+- 资源使用率，包含 CPU、IO 和网络等资源
+- 配置信息，比如应用系统、数据库和操作系统的配置
 
-### Step 3. Identify bottlenecks in user response time
+### 第 3 步：定位用户响应时间的瓶颈
 
-Identify or speculate on bottlenecks in user response times based on data from the performance baseline.
+基于性能基线的数据，定位或者推测用户响应时间的瓶颈。
 
-Applications usually do not measure and record the full chain of user requests, so you cannot effectively break down user response time from top to bottom through the application.
+现实中的应用程序往往没有对用户请求的链路进行完整的测量和记录，因此你无法通过应用程序对用户响应时间进行自上而下有效的分解。
 
-In contrast, databases have a complete record of performance metrics such as query latency and throughput. Based on database time, you can determine if the bottleneck in user response time is in a database.
+与之相反的是，数据库内部对于 query 延迟和吞吐等性能指标记录非常完善。基于数据库时间，你可以判断用户响应时间的瓶颈是否在数据库中。
 
-- If the bottleneck is not in databases, you need to rely on the resource utilization collected outside databases or profile the application to identify the bottleneck outside databases. Common scenarios include insufficient resources of an application or proxy server, and insufficient usage of hardware resources caused by serial points in an application.
-- If bottlenecks are in databases, you can analyze and diagnose the database performances using comprehensive tuning tools. Common scenarios include the presence of slow SQL, unreasonable usage of a database by an application, and the presence of read and write hotspots in databases.
+- 如果瓶颈不在数据库中，需要借助数据库外部搜集的资源利用率，或者对应用程序进行 Profile，以确定数据库外部的瓶颈。常见场景包括应用程序或者代理服务器资源不足，应用程序存在串行点无法充分利用硬件资源等。
+- 如果瓶颈存在数据库中，你可以通过数据库完善的调优工具进行数据库内部性能分析和诊断。常见场景包括存在慢 SQL、应用程序使用数据库的方式不合理、数据库存在读写热点等。
 
-For more information about the analysis and diagnostic methods and tools, see [Performance Analysis and Tuning](/performance-tuning-methods.md).
+具体的分析诊断方法和工具，请参考[性能优化方法](/performance-tuning-methods.md)。
 
-### Step 4. Propose tuning solutions, and evaluate the benefits, risks, and costs of each solution
+### 第 4 步：提出优化方案，评估每种方案的收益、风险和成本
 
-After identifying the bottleneck of a system through performance analysis, you can propose a tuning solution that is cost-effective, has low risks, and provides the maximum benefit based on the actual situation.
+通过性能分析确定系统瓶颈点之后，根据实际情况提出低成本、低风险、并能获得最大的收益的优化方案。
 
-According to [Amdahl's Law](https://en.wikipedia.org/wiki/Amdahl%27s_law), the maximum gain from performance tuning depends on the percentage of the optimized part in the overall system. Therefore, you need to identify the system bottlenecks and the corresponding percentage based on the performance data, and then predict the gains after the bottleneck is resolved or optimized.
+根据[阿姆达尔定律](https://zh.wikipedia.org/wiki/%E9%98%BF%E5%A7%86%E8%BE%BE%E5%B0%94%E5%AE%9A%E5%BE%8B)，性能优化的最大收益，取决于优化的部分在整个系统的占比。因此，你需要根据性能数据，确认系统瓶颈和相应的占比，预估瓶颈解决或者优化之后的收益。
 
-Note that even if a solution can bring the greatest potential benefits by tuning the largest bottleneck, you still need to evaluate the risks and costs of this solution. For example:
+需要注意的是，即使某个方案针对最大瓶颈点的优化潜在收益最大，也需要同时评估该方案的风险和成本。例如：
 
-- The most straightforward tuning objective solution for a resource-overloaded system is to expand its capacity, but in practice, the expansion solution might be too costly to be adopted.
-- When a slow query in a business module causes a slow response of the entire module, upgrading to a new version of the database can solve the slow query issue, but it might also affect modules that did not have this issue. Therefore, this solution might have a potentially high risk. A low-risk solution is to skip the database version upgrade and rewrite the existing slow queries for the current database version.
+- 对于资源过载的系统，最直接的优化方案是扩容，但是实际中可能因为扩容方案成本太高而无法被采纳。
+- 当某个业务模块里的一个慢 SQL 导致整个模块的响应时间很慢时，升级到数据库新版本的方案可以解决这个慢 SQL 问题，但是同时可能影响原来没有问题的模块，因此该方案可能存在潜在的高风险。一个低风险的方案是不升级数据库版本，直接改写现有慢 SQL，在当前数据库版本中解决该问题。
 
-### Step 5. Implement tuning solutions
+### 第 5 步：实施优化
 
-Considering the benefits, risks, and costs, choose one or more tuning solutions for implementation. In the implementation process, you need to make thorough preparation for changes to the production system and record the changes in detail.
+综合考量收益、风险和成本，选定一种或者多种优化方案进行实施，并对生产系统的变更进行周全的准备和详细的记录。
 
-To mitigate risks and validate the benefits of a tuning solution, it is recommended that you perform validation and complete regression of changes in both test and staging environments. For example, if the selected tuning solution of a slow query is to create a new index to optimize the query access path, you need to ensure that the new index does not introduce any obvious write hotspots to the existing data insertion workload and slows down other modules.
+为了降低风险和验证优化方案的收益，建议在测试环境和准生产环境对变更的内容进行验证和完整的回归。例如，针对一个查询业务的慢 SQL，如果选定的优化方案是新建索引优化查询的访问路径，你需要确保新的索引不会在现有的数据插入业务中引入明显的写入热点，导致其他业务变慢。
 
-### Step 6. Evaluate tuning results
+### 第 6 步：评估优化结果
 
-After applying the tuning solution, you need to evaluate the results:
+实施优化之后，需要评估优化结果。
 
-- If the tuning objective is reached, the entire tuning project is completed successfully.
-- If the tuning objective is not reached, you need to repeat Step 2 to Step 6 in this document until the tuning objective is reached.
+- 如果达到优化目标，整个优化项目顺利完成。
+- 如果未达到优化目标，你需要重复步骤 2 到 6，直到达到优化目标。
 
-After reaching your tuning objectives, you might need to further plan your system capacity to meet your business growth.
+达到优化目标之后，为了应对业务的增长，你可能还需要进一步做好系统的容量规划。

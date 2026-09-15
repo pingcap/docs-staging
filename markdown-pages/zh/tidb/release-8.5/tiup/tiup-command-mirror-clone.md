@@ -1,51 +1,49 @@
 ---
 title: tiup mirror clone
-summary: The `tiup mirror clone` command is used to clone an existing mirror or its components to create a new mirror with a different signature key. The syntax is `tiup mirror clone <target-dir> [global version] [flags]`. Options include cloning the whole mirror, specifying platform and operating system, and matching component versions by prefix.
+summary: tiup mirror clone 命令用于克隆已存在的镜像或部分组件生成新镜像。新旧镜像的组件相同，但使用的签名密钥不同。命令语法为 tiup mirror clone <target-dir> [global version] [flags]。选项包括 -f, --full, -a, --arch, -o, --os, --prefix, --{component}。
 ---
 
 # tiup mirror clone
 
-The command `tiup mirror clone` is used to clone an existing mirror or clone some of its components to create a new mirror. The new mirror has the same components as the old one, but uses a different signature key.
+命令 `tiup mirror clone` 用于克隆一个已经存在的镜像或克隆部分组件生成一个新的镜像。新旧镜像的组件相同，但使用的签名密钥不同。
 
-## Syntax
+## 语法
 
 ```shell
 tiup mirror clone <target-dir> [global version] [flags]
 ```
 
-- `<target-dir>` is used to set the local path to the cloned mirror. If the path does not exist, TiUP automatically creates one.
-- If `[global version]` is specified, TiUP tries to clone all components of the specified version. If some components do not have the specified version, then TiUP clones its latest version.
+- `<target-dir>` 是本地存放克隆下来的镜像的路径，如果不存在则会自动创建。
+- 若指定了 `[global version]` 参数，TiUP 会尝试克隆指定版本的所有组件。若某些组件没有指定的版本，则克隆其最新版本。
 
-## Options
+## 选项
 
 ### -f, --full
 
-- Whether to clone the whole mirror. If this option is set, other options becomes ignored and TiUP completely clones all components of all versions from the targeted mirror.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 是否克隆整个镜像。指定该选项后会从目标镜像完整克隆所有组件的所有版本，此时其他指定的选项将失效。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### -a, --arch
 
-- Only clones components that can run on the specified platform.
-- Data type: `STRING`
-- Default: "amd64,arm64"
+- 仅克隆能在指定平台上运行的组件。
+- 数据类型：`STRINGS`
+- 该参数接受以逗号分隔的多个平台名称，例如 `amd64,arm64`。如果未指定该选项，默认克隆 AMD64 和 ARM64 平台的组件，即 `amd64,arm64`。
 
 ### -o, --os
 
-- Only clones components that can run on the specified operating system.
-- Data type: `STRING`
-- Default: "linux,darwin"
+- 仅克隆能在指定操作系统上运行的组件。
+- 数据类型：`STRINGS`
+- 该参数接受以逗号分隔的多个操作系统名称，例如 `linux,darwin`。如果未指定该选项，默认克隆 Linux 和 Darwin 系统的组件，即 `linux,darwin`。
 
 ### --prefix
 
-- Whether to only match the prefix of versions. By default, TiUP downloads a component version when it is strictly matched. If this option is set, TiUP also downloads component versions of which prefixes are matched.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 匹配版本时是否前缀匹配。默认情况下必须严格匹配指定的版本才会下载，指定该选项之后，仅前缀匹配指定的版本也会被下载。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-### --{component}
+### --{component}（strings，默认为空）
 
-- Specifies the version list of the component to be cloned. Fill component names in `{component}`. You can run [`tiup list --all`](/tiup/tiup-command-list.md) to view available component names.
-- Data type: Strings
-- Default: Null
+指定要克隆的 `{component}` 组件的版本列表。`{component}` 为组件名，可选的组件名可执行 [`tiup list --all`](/tiup/tiup-command-list.md) 查看。
 
-[<< Back to the previous page - TiUP Mirror command list](/tiup/tiup-command-mirror.md#command-list)
+[<< 返回上一页 - TiUP Mirror 命令清单](/tiup/tiup-command-mirror.md#命令清单)

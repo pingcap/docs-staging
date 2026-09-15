@@ -1,12 +1,12 @@
 ---
-title: DM Alert Information
-summary: Introduce the alert information of DM.
+title: DM 告警信息
+summary: 介绍 DM 的告警信息。
 ---
 
-# DM Alert Information
+# DM 告警信息
 
-The [alert system](/dm/migrate-data-using-dm.md#step-8-monitor-the-task-and-check-logs) is deployed by default when you deploy a DM cluster using TiUP.
+使用 TiUP 部署 DM 集群的时候，会默认部署一套[告警系统](/dm/migrate-data-using-dm.md#第-8-步监控任务与查看日志)。
 
-For more information about DM alert rules and the solutions, refer to [handle alerts](/dm/dm-handle-alerts.md).
+DM 的告警规则及其对应的处理方法可参考[告警处理](/dm/dm-handle-alerts.md)。
 
-Both DM alert information and monitoring metrics are based on Prometheus. For more information about their relationship, refer to [DM monitoring metrics](/dm/monitor-a-dm-cluster.md).
+DM 的告警信息与监控指标均基于 Prometheus，告警规则与监控指标的对应关系可参考 [DM 监控指标](/dm/monitor-a-dm-cluster.md)。

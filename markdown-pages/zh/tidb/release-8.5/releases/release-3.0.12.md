@@ -1,52 +1,53 @@
 ---
 title: TiDB 3.0.12 Release Notes
-summary: TiDB 3.0.12 was released on March 16, 2020. It includes compatibility changes, new features, bug fixes, and improvements for TiDB, TiKV, PD, and TiDB Ansible. Some known issues are fixed in new versions, so it is recommended to use the latest 3.0.x version. New features include dynamic loading of replaced certificate files, flow limiting for DDL requests, and support for exiting the TiDB server when binlog write fails. Bug fixes address issues with locking, error message display, decimal point accuracy, and data index inconsistency. Additionally, improvements have been made to TiKV's flow control mechanism and PD's Region information processing.
+summary: TiDB 3.0.12 发布日期为 2020 年 3 月 16 日。该版本存在一些已知问题，建议使用最新版本。兼容性变化包括修复慢日志中记录 prewrite binlog 时间计时不准确的问题。新功能包括动态加载已被替换的证书文件，添加配置项，限流功能，以及在 binlog 写入失败时 TiDB 退出。Bug 修复包括保证原子性，悲观锁加锁问题修复，建索引长度超过限制时的报错信息显示，FROM_UNIXTIME 函数小数点位数不正确的问题修复，以及其他问题的修复。
+aliases: ['/zh/tidb/dev/release-3.0.12/','/zh/tidb/v3.0/release-3.0.12','/docs-cn/dev/releases/release-3.0.12/','/docs-cn/dev/releases/3.0.12/','/zh/tidb/v5.4/release-3.0.12','/zh/tidb/v6.1/release-3.0.12','/zh/tidb/v6.5/release-3.0.12','/zh/tidb/v7.1/release-3.0.12','/zh/tidb/v7.5/release-3.0.12','/zh/tidb/v8.1/release-3.0.12']
 ---
 
 # TiDB 3.0.12 Release Notes
 
-Release date: March 16, 2020
+发版日期：2020 年 3 月 16 日
 
-TiDB version: 3.0.12
+TiDB 版本：3.0.12
 
-TiDB Ansible version: 3.0.12
+TiDB Ansible 版本：3.0.12
 
-> **Warning:**
+> **警告：**
 >
-> Some known issues are found in this version, and these issues are fixed in new versions. It is recommended that you use the latest 3.0.x version.
+> 该版本存在一些已知问题，已在新版本中修复，建议使用 3.0.x 的最新版本。
 
-## Compatibility Changes
-
-+ TiDB
-    - Fix the issue of inaccurate timing of prewrite binlog in slow query log. The original timing field was called `Binlog_prewrite_time`. After this fix, the name is changed to `Wait_prewrite_binlog_time`. [#15276](https://github.com/pingcap/tidb/pull/15276)
-
-## New Features
+## 兼容性变化
 
 + TiDB
-    - Support dynamic loading of the replaced certificate file by using the `alter instance` statement [#15080](https://github.com/pingcap/tidb/pull/15080) [#15292](https://github.com/pingcap/tidb/pull/15292)
-    - Add the `cluster-verify-cn` configuration item. After configuration, the status service can only be used when with the corresponding CN certificate. [#15164](https://github.com/pingcap/tidb/pull/15164)
-    - Add a flow limiting feature for DDL requests in each TiDB server to reduce the error reporting frequency of DDL request conflicts [#15148](https://github.com/pingcap/tidb/pull/15148)
-    - Support exiting of the TiDB server when binlog write fails [#15339](https://github.com/pingcap/tidb/pull/15339)
+    - 修复慢日志中记录 prewrite binlog 的时间部分计时不准确问题。原本计时的字段名是 `Binlog_prewrite_time`，这次修正后，名称更改为 `Wait_prewrite_binlog_time`。[#15276](https://github.com/pingcap/tidb/pull/15276)
+
+## 新功能
+
++ TiDB
+    - 支持通过 `alter instance` 语句动态加载已被替换的证书文件 [#15080](https://github.com/pingcap/tidb/pull/15080) [#15292](https://github.com/pingcap/tidb/pull/15292)
+    - 添加 `cluster-verify-cn` 配置项，配置后必须是对应 CN 证书才使用 status 服务 [#15164](https://github.com/pingcap/tidb/pull/15164)
+    - 在每个 TiDB server 中添加对 DDL 请求的一个限流的功能，从而降低 DDL 请求冲突报错频率 [#15148](https://github.com/pingcap/tidb/pull/15148)
+    - 支持在 binlog 写入失败时，TiDB 退出 [#15339](https://github.com/pingcap/tidb/pull/15339)
 
 + Tools
     - TiDB Binlog
-        - Add the `kafka-client-id` configuration item in Drainer, which supports connecting to Kafka clients to configure the client ID [#929](https://github.com/pingcap/tidb-binlog/pull/929)
+        - Drainer 新增 `kafka-client-id` 配置项，支持连接 Kafka 客户端配置客户端 ID [#929](https://github.com/pingcap/tidb-binlog/pull/929)
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
-    - Make `GRANT`, `REVOKE` guarantee atomicity when modifying multiple users [#15092](https://github.com/pingcap/tidb/pull/15092)
-    - Fix the issue that the locking of pessimistic lock on the partition table failed to lock the correct row [#15114](https://github.com/pingcap/tidb/pull/15114)
-    - Make the error message display according to the value of `max-index-length` in the configuration when the index length exceeds the limit [#15130](https://github.com/pingcap/tidb/pull/15130)
-    - Fix the incorrect decimal point issue of the `FROM_UNIXTIME` function [#15270](https://github.com/pingcap/tidb/pull/15270)
-    - Fix the issue of conflict detection failure or data index inconsistency caused by deleting records written by oneself in a transaction [#15176](https://github.com/pingcap/tidb/pull/15176)
+    - 使 `GRANT`/`REVOKE` 在对多个用户修改时，保证原子性 [#15092](https://github.com/pingcap/tidb/pull/15092)
+    - 修复在分区表上面悲观锁的加锁未能锁住正确的行的问题 [#15114](https://github.com/pingcap/tidb/pull/15114)
+    - 建索引长度超过限制时，使报错信息根据配置中 `max-index-length` 的值显示 [#15130](https://github.com/pingcap/tidb/pull/15130)
+    - 修复 `FROM_UNIXTIME` 函数小数点位数不正确的问题 [#15270](https://github.com/pingcap/tidb/pull/15270)
+    - 修复一个事务中删除自己写的记录导致冲突检测失效或数据索引不一致问题 [#15176](https://github.com/pingcap/tidb/pull/15176)
 
 + TiKV
-    - Fix the issue of conflict detection failure or data index inconsistency caused by inserting an existing key into a transaction and then deleting it immediately when disabling the consistency check parameter [#7054](https://github.com/tikv/tikv/pull/7054)
-    - Introduce a flow control mechanism in Raftstore to solve the problem that without flow control, it might lead to too slow tracking and cause the cluster to be stuck, and the transaction size might cause frequent reconnection of TiKV connections [#7072](https://github.com/tikv/tikv/pull/7072) [#6993](https://github.com/tikv/tikv/pull/6993)
+    - 修复一个在关闭一致性检查参数时，在事务中插入一个已存在的 Key 然后立马删除，导致冲突检测失效或数据索引不一致的问题 [#7054](https://github.com/tikv/tikv/pull/7054)
+    - Raftstore 引入流控机制，解决没有流控可能导致追日志太慢可能导致集群卡住，以及事务大小太大会导致 TiKV 间连接频繁重连的问题 [#7072](https://github.com/tikv/tikv/pull/7072) [#6993](https://github.com/tikv/tikv/pull/6993)
 
 + PD
-    - Fix the issue of incorrect Region information caused by data race when PD processes Region heartbeats [#2233](https://github.com/pingcap/pd/pull/2233)
+    - 修复 PD 因处理 Region heartbeat 时的数据竞争导致 Region 信息不正确的问题 [#2233](https://github.com/pingcap/pd/pull/2233)
 
 + TiDB Ansible
-    - Support deploying multiple Grafana/Prometheus/Alertmanager in a cluster [#1198](https://github.com/pingcap/tidb-ansible/pull/1198)
+    - 支持一个集群部署多个 Grafana/Prometheus/Alertmanager [#1198](https://github.com/pingcap/tidb-ansible/pull/1198)

@@ -1,368 +1,368 @@
 ---
-title: TiDB Dashboard Diagnostic Report
-summary: TiDB Dashboard Diagnostic Report introduces diagnostic report content, including basic, diagnostic, load, overview, monitoring, and configuration information. It also includes comparison report details, DIFF_RATIO explanation, and Maximum Different Item table.
+title: TiDB Dashboard 诊断报告
+summary: TiDB Dashboard 诊断报告介绍了诊断报告的内容和查看技巧。报告包括基本信息、诊断信息、负载信息、概览信息、TiDB/PD/TiKV 监控信息和配置信息。对比报告显示两个时间段的差异，通过 DIFF_RATIO 和 Maximum Different Item 报表可以快速发现监控项的差异。
 ---
 
-# TiDB Dashboard Diagnostic Report
+# TiDB Dashboard 诊断报告
 
-This document introduces the content of the diagnostic report and viewing tips. To access the cluster diagnostic page and generate reports, see [TiDB Dashboard Cluster Diagnostics Page](/dashboard/dashboard-diagnostics-access.md).
+本文档主要介绍诊断报告的内容以及查看技巧，访问集群诊断和生成报告请参考[诊断报告访问文档](/dashboard/dashboard-diagnostics-access.md)。
 
-## View report
+## 查看报告
 
-The diagnostic report consists of the following parts:
+诊断报告由以下几部分组成：
 
-* Basic information: Includes the time range of the diagnostic report, hardware information of the cluster, the version information of cluster topology.
-* Diagnostic information: Shows the results of automatic diagnostics.
-* Load information: Includes CPU, memory and other load information of the server, TiDB, PD, or TiKV.
-* Overview information: Includes the consumed time and error information of each TiDB, PD, or TiKV module.
-* TiDB/PD/TiKV monitoring information: Includes monitoring information of each component.
-* Configuration information: Includes configuration information of each component.
+* 基本信息：包括生成报告的时间范围，集群的硬件信息，集群的拓扑版本信息。
+* 诊断信息：显示自动诊断的结果。
+* 负载信息：包括服务器，TIDB/PD/TiKV 相关的 CPU、内存等负载信息。
+* 概览信息：包括 TiDB/PD/TiKV 的各个模块的耗时信息和错误信息。
+* TiDB/PD/TiKV 监控信息：包括各个组件的监控信息。
+* 配置信息：包括各个组件的配置信息。
 
-An example of the diagnostic report is as follows:
+报告中报表示例如下：
 
-![Sample report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-example-table.png)
+![示例报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-example-table.png)
 
-In the image above, **Total Time Consume** in the top blue box is the report name. The information in the red box below explains the content of this report and the meaning of each field in the report.
+上图中，最上面蓝框内的 **Total Time Consume** 是报表名。下方红框内的内容是对该报表意义的解释，以及报表中各个字段的含义。
 
-In this report, some small buttons are described as follows:
+报表中小按钮图标的解释如下：
 
-* **i** icon: You can move your mouse to the **i** icon to see the explanatory note of the row.
-* **expand**: Click **expand** to see details about this monitoring metric. For example, the detailed information of `tidb_get_token` in the image above includes the monitoring information of each TiDB instance's latency.
-* **collapse**: Contrary to **expand**, the button is used to fold detailed monitoring information.
+* **i** 图标：鼠标移动到 **i** 图标处会显示该行的说明注释。
+* **expand**：点击 **expand** 会看到这项监控更加详细的信息。如是上图中 `tidb_get_token` 的详细信息包括各个 TiDB 实例的延迟监控信息。
+* **fold**：和 **expand** 相反，用于把监控的详细信息折叠起来。
 
-All monitoring metrics basically correspond to those on the TiDB Grafana monitoring dashboard. After a module is found to be abnormal, you can view more monitoring information on the TiDB Grafana.
+所有监控基本上和 TiDB Grafna 监控面板上的监控内容相对应，发现某个模块异常后，可以在 TiDB Grafna 监控面板上查看更多详细的监控信息。
 
-In addition, the `TOTAL_TIME` and `TOTAL_COUNT` metrics in this report are monitoring data read from Prometheus, so calculation inaccuracy might exist in their statistics.
+另外，报表中统计的 `TOTAL_TIME` 和 `TOTAL_COUNT` 由于是从 Prometheus 读取的监控数据，其统计会有一些计算上的精度误差。
 
-Each part of this report is introduced as follows.
+以下介绍诊断报告的各部分内容。
 
-### Basic information
+### 基本信息
 
-#### Diagnostics Time Range
+#### Report Time Range
 
-The time range for generating the diagnostics report includes the start time and end time.
+**Report Time Range** 表显示生成报告的时间范围，包括开始时间和结束时间。
 
-![Report time range](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-report-time-range.png)
+![report time range 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-report-time-range.png)
 
-#### Cluster Hardware Info
+#### Cluster Hardware
 
-Cluster Hardware Info includes information such as CPU, memory, and disk of each server in the cluster.
+**Cluster Hardware** 表显示集群中各服务器的硬件信息，包括 CPU、Memory、磁盘等信息。
 
-![Cluster hardware report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-cluster-hardware.png)
+![Cluster Hardware 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-cluster-hardware.png)
 
-The fields in the table above are described as follows:
+上表中各个字段含义如下：
 
-* `HOST`: The IP address of the server.
-* `INSTANCE`: The number of instances deployed on the server. For example, `pd * 1` means that this server has 1 PD instance deployed; `tidb * 2 pd * 1` means that this server has 2 TiDB instances and 1 PD instance deployed.
-* `CPU_CORES`: Indicates the number of CPU cores (physical cores or logical cores) of the server.
-* `MEMORY`: Indicates the memory size of the server. The unit is GB.
-* `DISK`: Indicates the server disk size. The unit is GB.
-* `UPTIME`: The uptime of the server. The unit is day.
+* `HOST`：服务器的 IP 地址。
+* `INSTANCE`：该服务器部署的实例数量，如 `pd * 1` 代表这台服务器部署了 1 个 PD 实例。如 `tidb * 2 pd * 1` 表示这台服务器部署了 2 个 TiDB 实例和 1 个 PD 实例。
+* `CPU_CORES`：表示服务器 CPU 的核心数，物理核心/逻辑核心。
+* `MEMORY`：表示服务器的内存大小，单位是 GB。
+* `DISK`：表示服务器磁盘大小，单位是 GB。
+* `UPTIME`：服务器的启动时间，单位是 DAY。
 
-#### Cluster Topology Info
+#### Cluster Info
 
-The `Cluster Info` table shows the cluster topology information. The information in this table are from TiDB [information_schema.cluster_info](/information-schema/information-schema-cluster-info.md) system table.
+**Cluster Info** 为集群拓扑信息。表中信息来自 TiDB 的 [information_schema.cluster_info](/information-schema/information-schema-cluster-info.md) 系统表。
 
-![Cluster info](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-cluster-info.png)
+![Cluster Info 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-cluster-info.png)
 
-The fields in the table above are described as follows:
+上表中各个字段含义如下：
 
-* `TYPE`: The node type.
-* `INSTANCE`: The instance address(es), which is a string in the `IP:PORT` format.
-* `STATUS_ADDRESS`: The HTTP API service address.
-* `VERSION`: The semantic version number of the corresponding node.
-* `GIT_HASH`: Git Commit Hash when compiling the node version, which is used to identify whether the two nodes are absolutely the consistent version.
-* `START_TIME`: The start time of the corresponding node.
-* `UPTIME`: The uptime of the corresponding node.
+* `TYPE`：节点类型。
+* `INSTANCE`：实例地址，为 `IP:PORT` 格式的字符串。
+* `STATUS_ADDRESS`：HTTP API 的服务地址。
+* `VERSION`：对应节点的语义版本号。
+* `GIT_HASH`：编译节点版本时的 Git Commit Hash，用于识别两个节点是否是绝对一致的版本。
+* `START_TIME`：对应节点的启动时间。
+* `UPTIME`：对应节点已经运行的时间。
 
-### Diagnostic information
+### 诊断信息
 
-TiDB has built-in automatic diagnostic results. For the description of each field, see [information_schema.inspection-result](/information-schema/information-schema-inspection-result.md) system table.
+TiDB 内置自动诊断的结果，具体各字段含义以及介绍可以参考 [information_schema.inspection_result](/information-schema/information-schema-inspection-result.md) 系统表的内容。
 
-### Load Info
+### 负载信息
 
 #### Node Load Info
 
-The `Node Load Info` table shows the load information of the server node, including the average value (AVG), maximum value (MAX), minimum value (MIN) of the following metrics of the server within the time range:
+**Node Load Info** 表显示服务器节点的负载信息，包括时间范围内，服务器以下指标的平均值 (AVG)、最大值 (MAX)、最小值 (MIN)：
 
-* CPU usage (the maximum value is `100%`)
-* Memory usage
-* Disk I/O usage
-* Disk write latency
-* Disk read latency
-* Disk read bytes per second
-* Disk write bytes per second
-* The number of bytes received by the node network per minute
-* The number of bytes sent from the node network per minute
-* The number of TCP connections in use by the node
-* The number of all TCP connections of the node
+* CPU 使用率，最大值是 100%
+* 内存使用率
+* 磁盘 I/O 使用率
+* 磁盘写延迟
+* 磁盘读延迟
+* 磁盘每秒的读取字节数
+* 磁盘每秒的写入字节数
+* 节点网络每分钟收到的字节数
+* 节点网络每分钟发送的字节数
+* 节点正在使用的 TCP 连接数
+* 节点所有的 TCP 连接数
 
-![Server Load Info report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-node-load-info.png)
+![Node Load Info 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-node-load-info.png)
 
 #### Instance CPU Usage
 
-The `Instance CPU Usage` table shows the average value (AVG), maximum value (MAX), and minimum value (MIN) of the CPU usage of each TiDB/PD/TiKV process. The maximum CPU usage of the process is `100% * the number of CPU logical cores`.
+**Instance CPU Usage** 表显示各个 TiDB/PD/TiKV 进程的 CPU 使用率的平均值 (AVG)，最大值 (MAX)，最小值 (MIN)，这里进程 CPU 使用率最大值是 `100% * CPU 逻辑核心数`。
 
-![Instance CPU Usage report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-process-cpu-usage.png)
+![Instance CPU Usage 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-process-cpu-usage.png)
 
 #### Instance Memory Usage
 
-The `Instance Memory Usage` table shows the average value (AVG), maximum value (MAX), and minimum value (MIN) of memory bytes occupied by each TiDB/PD/TiKV process.
+**Instance Memory Usage** 表显示各个 TiDB/PD/TiKV 进程占用内存字节数的平均值 (AVG)，最大值 (MAX)，最小值 (MIN)。
 
-![Instance memory usage report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-process-memory-usage.png)
+![Instance Memory Usage 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-process-memory-usage.png)
 
 #### TiKV Thread CPU Usage
 
-The `TiKV Thread CPU Usage` table shows the average value (AVG), maximum value (MAX) and minimum value (MIN) of CPU usage of each module thread in TiKV. The maximum CPU usage of the process is `100% * the thread count of the corresponding configuration`.
+**TiKV Thread CPU Usage** 表显示 TiKV 内部各个模块线程的 CPU 使用率的平均值 (AVG)、最大值 (MAX)、和最小值 (MIN)。这里进程 CPU 使用率最大值为 `100% * 对应配置的线程数量`。
 
-![TiKV Thread CPU Usage report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-thread-cpu-usage.png)
+![TiKV Thread CPU Usage 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-thread-cpu-usage.png)
 
-In the table above,
+上表中的字段解释如下：
 
-* `CONFIG_KEY`: The relevant thread configuration of the corresponding module.
-* `CURRENT_CONFIG_VALUE`: The current value of the configuration when the report is generated.
+* `CONFIG_KEY`：表示对应模块的相关线程数配置。
+* `CURRENT_CONFIG_VALUE`：表示配置在生成报表时刻的当前值。
 
-> **Note:**
+> **注意：**
 >
-> `CURRENT_CONFIG_VALUE` is the value when the report is generated, not the value within the time range of this report. Currently, some configuration values ​​of historical time cannot be obtained.
+> `CURRENT_CONFIG_VALUE` 是生成报告时的值，并不是报告时间范围内的值。目前不能获取历史时间某些配置的值。
 
-#### `TiDB/PD Goroutines Count`
+#### TiDB/PD Goroutines Count
 
-The `TiDB/PD Goroutines Count` table shows the average value (AVG), maximum value (MAX), and minimum value (MIN) of the number of TiDB or PD goroutines. If the number of goroutines exceeds 2,000, the concurrency of the process is too high, which affects the overall request latency.
+**TiDB/PD Goroutines Count** 表显示 TiDB/PD goroutines 数量的平均值 (AVG)，最大值 (MAX)，和最小值 (MIN)。如果 goroutines 数量超过 2000，说明该进程并发太高，会对整体请求的延迟有影响。
 
-![TiDB/PD goroutines count report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-goroutines-count.png)
+![TiDB/PD goroutines count 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-goroutines-count.png)
 
-### Overview information
+### 概览信息
 
 #### Time Consumed by Each Component
 
-The `Time Consumed by Each Component` table shows the monitored consumed time and the time ratio of TiDB, PD, TiKV modules in the cluster. The default time unit is seconds. You can use this table to quickly locate which modules consume more time.
+**Time Consumed by Each Component** 显示包括集群中 TiDB、PD、TiKV 各个模块的监控耗时以及各项耗时的占比。默认时间单位是秒。用户可以用该表快速定位哪些模块的耗时较多。
 
-![Time Consume report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-total-time-consume.png)
+![Total Time Consume 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-total-time-consume.png)
 
-The fields in columns of the table above are described as follows:
+上表各列的字段含义如下：
 
-* `METRIC_NAME`: The name of the monitoring metric.
-* `Label`: The label information for the monitoring metric. Click **expand** to view more detailed monitoring information of each label for a metric.
-* `TIME_RATIO`: The ratio of the total time consumed by this monitoring metric to the total time of the monitoring row where `TIME_RATIO` is `1`. For example, the total consumed time by `kv_request` is `1.65` (namely, `38325.58`/`23223.86`) times that of `tidb_query`. Because KV requests are executed concurrently, the total time of all KV requests might exceed the total query (`tidb_query`) execution time.
-* `TOTAL_TIME`: The total time consumed by this monitoring metric.
-* `TOTAL_COUNT`: The total number of times this monitoring metric is executed.
-* `P999`: The maximum P999 time of this monitoring metric.
-* `P99`: The maximum P99 time of this monitoring metric.
-* `P90`: The maximum P90 time of this monitoring metric.
-* `P80`: The maximum P80 time of this monitoring metric.
+* `METRIC_NAME`：监控项的名称。
+* `Label`：监控的 label 信息，点击 expand 后可以查看该项监控更加详细的各项 label 的监控信息。
+* `TIME_RATIO`：该项为 `TIME_RATIO` 为 `1` 的监控行总时间与监控消耗的总时间的比例。如 `kv_request` 的总耗时占 `tidb_query` 总耗时的 `1.65 = 38325.58/23223.86`。因为 KV 请求会并行执行，所以所有 KV 请求的总时间有可能超过总查询 (`tidb_query`) 的执行时间。
+* `TOTAL_TIME`：该项监控的总耗时。
+* `TOTAL_COUNT`：该项监控执行的总次数。
+* `P999`：该项监控的 P999 最大时间。
+* `P99`：该项监控的 P99 最大时间。
+* `P90`：该项监控的 P90 最大时间。
+* `P80`：该项监控的 P80 最大时间。
 
-The following image shows the relationship of time consumption of the related modules in the monitoring metrics above.
+以上监控中相关模块的耗时关系如下所示：
 
-![Time-consumption relationship of each module](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-time-relation.png)
+![各个模块耗时关系图](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-time-relation.png)
 
-In the image above, yellow boxes are the TiDB-related monitoring metrics.Blue boxes are TiKV-related monitoring metrics, and gray boxes temporarily do not correspond to specific monitoring metrics.
+上图中，黄色部分是 TiDB 相关的监控，蓝色部分是 TiKV 相关的监控，灰色部分暂时没有具体对应的监控项。
 
-In the image above, the time consumption of `tidb_query` includes the following four parts:
+上图中，`tidb_query` 的耗时包括以下部分的耗时：
 
 * `get_token`
 * `parse`
 * `compile`
 * `execute`
 
-The `execute` time includes the following parts:
+其中 `execute` 的耗时包括以下部分：
 
 * `wait_start_tso`
-* The execution time at the TiDB layer, which is currently not monitored
-* KV request time
-* `KV_backoff` time, which is the time for backoff after the KV request fails
+* TiDB 层的执行时间，目前暂无监控
+* KV 请求的时间
+* `tidb_kv_backoff` 的时间，这是 KV 请求失败后进行 backoff 的时间
 
-Among the parts above, the KV request time includes the following parts:
+其中，KV 请求时间包含以下部分：
 
-* The time consumed by the network sending and receiving of requests. Currently, there is no monitoring metric for this item. You can subtract the time of `tikv_grpc_message` from the KV request time to roughly estimate this item.
-* `tikv_grpc_message` time consumption.
+* 请求的网络发送以及接收耗时，目前该项暂无监控，可以大致用 KV 请求时间减去 `tikv_grpc_message` 的时间
+* `tikv_grpc_message` 的耗时
 
-Among the parts above, `tikv_grpc_message` time consumption includes the following parts:
+其中，`tikv_grpc_message` 耗时包含以下部分：
 
-* Coprocessor request time consumption, which refers to processing the COP type requests. This time consumption includes the following parts:
-    * `tikv_cop_wait`: The time consumed by request queue.
-    * `Coprocessor handle`: The time consumed to process Coprocessor requests.
+* Coprocessor request 耗时，指用于处理 COP 类型的请求，该耗时包括以下部分：
+    * `tikv_cop_wait`，请求排队等待的耗时
+    * `Coprocessor handling request`，处理 COP 请求的耗时
+* `tikv_scheduler_command` 耗时，该耗时包含以下部分：
+    * `tikv_scheduler_processing_read`，处理读请求的耗时
+    * `tikv_storage_async_request` 中获取 snapshot 的耗时（snapshot 是该项监控的 label）
+    * 处理写请求的耗时，该耗时包括以下部分：
+        * `tikv_scheduler_latch_wait`，等待 latch 的耗时
+        * `tikv_storage_async_request` 中 write 的耗时（write 是该监控的 label）
 
-* `tikv_scheduler_command` time consumption, which includes the following parts:
-    * `tikv_scheduler_processing_read`: The time consumed to process read requests.
-    * The time consumed to get snapshot in `tikv_storage_async_request` (snapshot is the label for this monitoring metric).
-    * Time consumed to process write requests. This time consumption includes the following parts:
-        * `tikv_scheduler_latch_wait`: The time consumed to wait for latch.
-        * The time consumption of writes in `tikv_storage_async_request` (write is the label for this monitoring metric).
-
-Among the above metrics, The time consumption of writes in `tikv_storage_async_request` refers to the time consumption of writing Raft KVs, including the following parts:
+其中，`tikv_storage_async_request` 中的 write 耗时是指 raft kv 写入的耗时，包括以下部分：
 
 * `tikv_raft_propose_wait`
-* `tikv_raft_process`, which mainly includes `tikv_raft_append_log`
-* `tikv_raft_commit_log`
-* `tikv_raft_apply_wait`
-* `tikv_raft_apply_log`
+* `tikv_raft_process`，该耗时主要时间包括：
+    * `tikv_raft_append_log`
+    * `tikv_raft_commit_log`
+    * `tikv_raft_apply_wait`
+    * `tikv_raft_apply_log`
 
-You can use `TOTAL_TIME`, the P999 time, and the P99 time to determine which modules consume longer time according to the relationship between the time consumptions described above, and then look at the related monitoring metrics.
+用户可以根据上述耗时之间的关系，利用 `TOTAL_TIME` 以及 P999，P99 的时间大致定位哪些模块耗时比较长，然后再看相关的监控。
 
-> **Note:**
+> **注意：**
 >
-> Because the Raft KVs writes might be processed in one batch, using `TOTAL_TIME` to measure the time consumed by each module is inapplicable to monitoring metrics related to Raft KV writes, specifically, `tikv_raft_process`, `tikv_raft_append_log`, `tikv_raft_commit_log`, `tikv_raft_apply_wait`, and `tikv_raft_apply_log`. In this situation, it is more reasonable to compare the time consumption of each module with the time of P999 and P99.
+> 由于 Raft KV 可能会将多个请求作为一个 batch 来写入，所以 `TOTAL_TIME` 不适用于来衡量 Raft KV 的写入相关监控项的耗时，这些监控项具体是 `tikv_raft_process`、`tikv_raft_append_log`、`tikv_raft_commit_log`、`tikv_raft_apply_wait`、`tikv_raft_apply_log`。此时用 P999 和 P99 的时间来对比各个模块的耗时更加合理。
 >
-> The reason is that if there are 10 asynchronous write requests, Raft KVs internally pack 10 requests into a batch execution, and the execution time is 1 second. Therefore, the execution time of each request is 1 second, and the total time of 10 requests is 10 seconds, but the total time for Raft KV processing is 1 second. If you use `TOTAL_TIME` to measure the consumed time, you might not understand where the remaining 9 seconds are spent. You can also see the difference between the monitoring metric of Raft KV and other previous monitoring metrics from the total number of requests (`TOTAL_COUNT`).
+> 原因是，假如有 10 个 async write 请求，Raft KV 内部将 10 个请求打包成一个 batch 执行，执行时间为 1 秒，所以每个请求的执行时间为 1 秒，10 个请求的总时间是 10 秒。但是 Raft KV 处理的总时间是 1 秒。如果用 `TOTAL_TIME` 来衡量，用户可能不明白剩余的 9 秒耗时在哪些模块下。这里从总请求数 (`TOTAL_COUNT`) 也能看出 Raft KV 的监控和其他监控的差异。
 
 #### Errors Occurred in Each Component
 
-The `Errors Occurred in Each Component` table shows the total number of errors in TiDB and TiKV, such as the failure to write binlog, `tikv server is busy`, `TiKV channel full`, `tikv write stall`. You can see the row comments for the specific meaning of each error.
+**Errors Occurred in Each Component** 表显示包括 TiDB 和 TiKV 出现错误的总数。例如写 binlog 失败、`tikv server is busy`、`TiKV channel full`、`tikv write stall` 等错误，具体各项错误含义可以看行注释。
 
-![Errors Occurred in Each Component report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-error.png)
+![Errors Occurred in Each Component 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-error.png)
 
-#### Specific TiDB/PD/TiKV monitoring information
+### TiDB/PD/TiKV 的具体监控信息
 
-This part includes more specific monitoring information of TiDB, PD, or TiKV.
+这部分包括了 TiDB/PD/TiKV 更多的具体的监控信息。
 
-#### TiDB-related monitoring information
+#### TiDB 相关监控信息
 
 ##### Time Consumed by TiDB Component
 
-This table shows the time consumed by each TiDB module and the ratio of each time consumption, which is similar to the `time consume` table in the overview, but the label information of this table are more detailed.
+**Time Consumed by TiDB Component** 表显示 TiDB 的各项监控耗时以及各项耗时的占比。和 [Time Consumed by Each Component](#time-consumed-by-each-component) 表类似，但是这个表的 label 信息会更丰富，细节更多。
 
 ##### TiDB Server Connections
 
-This table shows the number of client connections for each TiDB instance.
+**TiDB Server Connections** 表显示 TiDB 各个实例的客户端连接数。
 
 ##### TiDB Transaction
 
-This table shows transaction-related monitoring metrics.
+**TiDB Transaction** 表显示 TiDB 事务相关的监控。
 
-![Transaction report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-tidb-txn.png)
+![Transaction 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-tidb-txn.png)
 
-* `TOTAL_VALUE`: The sum of all values ​​(SUM) during the report time range.
-* `TOTAL_COUNT`: The total number of occurrences of this monitoring metric.
-* `P999`: The maximum P999 value of this monitoring metric.
-* `P99`: The maximum P99 value of this monitoring metric.
-* `P90`: The maximum P90 value of this monitoring metric.
-* `P80`: The maximum P80 value of this monitoring metric.
+* `TOTAL_VALUE`：该项监控在报告时间段内所有值的和 (SUM)。
+* `TOTAL_COUNT`：该项监控出现的总次数。
+* P999: 该项监控的 P999 最大值。
+* P99: 该项监控的 P99 最大值。
+* P90: 该项监控的 P90 最大值。
+* P80: 该项监控的 P80 最大值。
 
-Example:
+示例：
 
-In the table above, within the report time range, `tidb_txn_kv_write_size`: a total of about 181,296 transactions of KV writes, and the total KV write size is 266.772 MB, of which the maximum P999, P99, P90, P80 values for a single transaction of KV writes ​​are 116.913 KB, 1.996 KB, 1.905 KB, and 1.805 KB.
+上表中，在报告时间范围的 `tidb_txn_kv_write_size` 表示一共约有 181296 次事务的 KV 写入，总 kV 写入大小是 266.772 MB，其中单次事务的 KV 写入的 P999、P99、P90、P80 的最大值分别为 116.913 KB、1.996 KB、1.905 KB、1.805 KB。
 
 ##### DDL Owner
 
-![TiDB DDL Owner Report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-tidb-ddl.png)
+![TiDB DDL Owner 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-tidb-ddl.png)
 
-The table above shows that from `2020-05-21 14:40:00`, the cluster's `DDL OWNER` is at the `10.0.1.13:10080` node. If the owner changes, multiple rows of data exist in the table above, where the `Min_Time` column indicates the minimum time of the corresponding known owner.
+上表表示从 `2020-05-21 14:40:00` 开始，集群的 DDL owner 在 `10.0.1.13:10080` 节点。如果 owner 发生变更，上表会有多行数据，其中 `MinTime` 列表示已知对应 Owner 的最小时间。
 
-> **Note:**
+> **注意：**
 >
-> If the owner information is empty, it does not mean that no owner exists in this period of time. Because in this situation, the DDL owner is determined based on the monitoring information of `ddl_worker`, it might be that `ddl_worker` has not done any DDL job in this period of time, causing the owner information to be empty.
+> 如果 owner 信息为空，不代表这个时间段内一定没有 owner，因为这里是依靠 `ddl_worker` 的监控信息来判断 DDL owner 的。也可能是这个时间段内 `ddl_worker` 没有做任何 DDL job 导致 owner 信息为空。
 
-Other monitoring tables in TiDB are as follows:
+TiDB 中其他部分监控表如下：
 
-* Statistics Info: Shows related monitoring metrics of TiDB statistical information.
-* Top 10 Slow Query: Shows the Top 10 slow query information in the report time range.
-* Top 10 Slow Query Group By Digest: Shows the Top 10 slow query information in the report time range, which is aggregated according to the SQL fingerprint.
-* Slow Query With Diff Plan: The SQL statement whose execution plan changes within the report time range.
+* **Statistics Info**：TiDB 统计信息的相关监控。
+* **Top 10 Slow Query**：报表时间范围内 Top 10 的慢查询信息。
+* **Top 10 Slow Query Group By Digest**：报表时间范围内 Top 10 的慢查询信息，并按照 SQL 指纹聚合。
+* **Slow Query With Diff Plan**：报表时间范围内执行计划发生变更的 SQL 语句。
 
-#### PD related monitoring information
+#### PD 相关监控信息
 
-The tables related to the monitoring information of PD modules are as follows:
+PD 模块相关监控的报表如下：
 
-* `Time Consumed by PD Component`: The time consumed by the monitoring metrics of related modules in PD.
-* `Blance Leader/Region`: The monitoring information of `balance-region` and `balance leader` occurred in the cluster within the report time range, such as the number of leaders that are scheduled out from `tikv_note_1` or the number of leaders that are scheduled in.
-* `Cluster Status`: The cluster status information, including total number of TiKV nodes, total cluster storage capacity, the number of Regions, and the number of offline TiKV nodes.
-* `Store Status`: Record the status information of each TiKV node, including Region score, leader score, and the number of Regions/leaders.
-* `Etcd Status`: etcd related information in PD.
+* **Time Consumed by PD Component**：PD 中相关模块的耗时监控
+* **Scheduled Leader/Region**：报表时间范围内集群发生的 `balance-region` 和 `balance leader` 监控，比如从 `tikv_note_1` 上调度走了多少个 leader，调度进了多少个 leader。
+* **Cluster Status**：集群的状态信息，包括总 TiKV 数量、总集群存储容量、Region 数量、离线 TiKV 的数量等信息。
+* **Store Status**：记录各个 TiKV 节点的状态信息，包括 Region score、leader score、Region/leader 的数量。
+* **etcd Status**：PD 内部的 etcd 相关信息。
 
-#### TiKV related monitoring information
+#### TiKV 相关监控信息
 
-The tables related to the monitoring information of TiKV modules are as follows:
+TIKV 模块的相关监控报表如下：
 
-* `Time Consumed by TiKV Component`: The time consumed by related modules in TiKV.
-* `Time Consumed by RocksDB`: The time consumed by RocksDB in TiKV.
-* `TiKV Error`: The error information related to each module in TiKV.
-* `TiKV Engine Size`: The size of stored data of column families on each node in TiKV.
-* `Coprocessor Info`: Monitoring information related to the Coprocessor module in TiKV.
-* `Raft Info`: Monitoring information of the Raft module in TiKV.
-* `Snapshot Info`: Snapshot related monitoring information in TiKV.
-* `GC Info`: Garbage Collection (GC) related monitoring information in TiKV.
-* `Cache Hit`: The hit rate information of each cache of RocksDB in TiKV.
+* **Time Consumed by TiKV Component**：TiKV 中相关模块的耗时监控。
+* **Time Consumed by RocksDB**：TiKV 中 RocksDB 的耗时监控。
+* **TiKV Error**：TiKV 中各个模块相关的 error 信息。
+* **TiKV Engine Size**：TiKV 中各个节点 column family 的存储数据大小。
+* **Coprocessor Info**：TiKV 中 Coprocessor 模块相关的监控。
+* **Raft Info**：TiKV 中 Raft 模块的相关监控信息。
+* **Snapshot Info**：TiKV 中 snapshot 相关监控信息。
+* **GC Info**：TiKV 中 GC 相关的监控信息。
+* **Cache Hit**：TiKV 中 Rocksdb 的各个缓存的命中率监控信息。
 
-### Configuration information
+### 配置信息
 
-In the configuration information, the configuration values of some modules are shown within the report time range. But the historical values of some other configurations of these modules cannot be obtained, so the shown values of these configurations are the current (when the report is generated) values .
+配置信息中，部分模块的配置信息可以显示报告时间范围内的配置值，有部分配置则因为无法获取到历史的配置值，所以是生成报告时刻的当前配置值。
 
-Within the report time range, the following tables include items whose values are configured at the start time of the report time range:
+在报告时间范围内，以下表包括部分配置的在报告时间范围的开始时间的值：
 
-* `Scheduler Initial Config`: The initial value of PD scheduling-related configuration at the report's start time.
-* `TiDB GC Initial Config`: The initial value of TiDB GC related-configuration at the report's start time
-* `TiKV RocksDB Initial Config`: The initial value of TiKV RocksDB-related configuration at the report's start time
-* `TiKV RaftStore Initial Config`: The initial value of TiKV RaftStore-related configuration at the report's start time
+* **Scheduler Initial Config**：PD 调度相关配置在报告开始时间的初始值。
+* **TiDB GC Initial Config**：TiDB GC 相关配置在报告开始时间的初始值。
+* **TiKV RocksDB Initial Config**：TiKV RocksDB 相关配置在报告开始时间的初始值。
+* **TiKV RaftStore Initial Config**：TiKV RaftStore 相关配置在报告开始时间的初始值。
 
-Within the report time range, if some configurations have been modified, the following tables include records of some configurations that have been modified:
+在报表时间范围内，如若有些配置被修改过，以下表包括部分配置被修改的记录：
 
-* `Scheduler Config Change History`
-* `TiDB GC Config Change History`
-* `TiKV RocksDB Config Change History`
-* `TiKV RaftStore Config Change History`
+* **Scheduler Config Change History**
+* **TiDB GC Config Change History**
+* **TiKV RocksDB Config Change History**
+* **TiKV RaftStore Config Change History**
 
-Example:
+示例：
 
-![Scheduler Config Change History report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-config-change.png)
+![Scheduler Config Change History 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-config-change.png)
 
-The table above shows that the `leader-schedule-limit` configuration parameter has been modified within the report time range:
+上面报表显示，`leader-schedule-limit` 配置参数在报告时间范围内有被修改过：
 
-* `2020-05-22T20:00:00+08:00`: At the start time of the report, the configuration value of `leader-schedule-limit` is `4`, which does not mean that the configuration has been modified, but that at the start time in the report time range, its configuration value is `4`.
-* `2020-05-22T20:07:00+08:00`: The `leader-schedule-limit` configuration value is `8`, which indicates that the value of this configuration has been modified around `2020-05-22T20:07:00+08:00`.
+* `2020-05-22T20:00:00+08:00`，即报告的开始时间 `leader-schedule-limit` 的配置值为 `4`，这里并不是指该配置被修改了，只是说明在报告时间范围的开始时间其配置值是 `4`。
+* `2020-05-22T20:07:00+08:00`，`leader-schedule-limit` 的配置值为 `8`，说明在 `2020-05-22T20:07:00+08:00` 左右，该配置的值被修改了。
 
-The following tables show the current configuration of TiDB, PD, and TiKV at the time when the report is generated:
+下面的报表是生成报告时，TiDB、PD、TiKV 的在生成报告时刻的当前配置：
 
-* `TiDB's Current Config`
-* `PD's Current Config`
-* `TiKV's Current Config`
+* **TiDB's Current Config**
+* **PD's Current Config**
+* **TiKV's Current Config**
 
-## Comparison report
+## 对比报告
 
-You can generate a comparison report for two time ranges. The report content is the same as the report for a single time range, except that a comparison column is added to show the difference between the two time ranges. The following sections introduce some unique tables in the comparison report and how to view the comparison report.
+生成两个时间段的对比报告，其内容和单个时间段的报告是一样的，只是加入了对比列显示两个时间段的差别。下面主要介绍对比报告中的一些特有表以及如何查看对比报表。
 
-First, the `Compare Report Time Range` report in the basic information shows the two time ranges for comparison:
+首先在基本信息中的 **Compare Report Time Range** 报表会显示出对比的两个时间段：
 
-![Compare Report Time Range report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-compare-time.png)
+![Compare Report Time Range 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-compare-time.png)
 
-In the table above, `t1` is the normal time range, or the reference time range. `t2` is the abnormal time range.
+其中 `t1` 是正常时间段，或者叫参考时间段，`t2` 是异常时间段。
 
-Tables related to slow queries are shown as follows:
+下面是一些慢查询相关的报表：
 
-* `Slow Queries In Time Range t2`: Shows slow queries that only appear in `t2` but not during `t1`.
-* `Top 10 slow query in time range t1`: The Top 10 slow queries during `t1`.
-* `Top 10 slow query in time range t2`: The Top 10 slow queries during `t2`.
+* **Slow Queries In Time Range t2**：仅出现在 `t2` 时间段但没有出现在 `t1` 时间段的慢查询。
+* **Top 10 slow query in time range t1**：`t1` 时间段的 Top10 慢查询。
+* **Top 10 slow query in time range t2**：`t2` 时间段的 Top10 慢查询。
 
-### DIFF_RATIO introduction
+### DIFF_RATIO 介绍
 
-This section introduces `DIFF_RATIO` using the `Instance CPU Usage` table as an example.
+本部分以 `Instance CPU Usage` 为例介绍 `DIFF_RATIO`。
 
-![Compare Instance CPU Usage report](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-compare-instance-cpu-usage.png)
+![Compare Instance CPU Usage 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-compare-instance-cpu-usage.png)
 
-* `t1.AVG`, `t1.MAX`, `t1.Min` are the average value, maximum value, and minimum value of CPU usage in the `t1`.
-* `t2.AVG`, `t2.MAX`, and `t2.Min` are the average value, maximum value, and minimum value ​​of CPU usage during `t2`.
-* `AVG_DIFF_RATIO` is `DIFF_RATIO` of the average values during `t1` and `t2`.
-* `MAX_DIFF_RATIO` is `DIFF_RATIO` of the maximum values during `t1` and `t2`.
-* `MIN_DIFF_RATIO` is `DIFF_RATIO` of the minimum values during `t1` and `t2`.
+* `t1.AVG`、`t1.MAX`、`t1.Min` 分别是 `t1` 时间段内 CPU 使用率的平均值、最大值、最小值。
+* `t2.AVG`、`t2.MAX`、`t2.Min` 分别是 `t2` 时间段内 CPU 使用率的平均值、最大值、最小值。
+* `AVG_DIFF_RATIO` 表示 `t1` 和 `t2` 时间段平均值的 `DIFF_RATIO`。
+* `MAX_DIFF_RATIO` 表示 `t1` 和 `t2` 时间段最大值的 `DIFF_RATIO`。
+* `MIN_DIFF_RATIO` 表示 `t1` 和 `t2` 时间段最小值的 `DIFF_RATIO`。
 
-`DIFF_RATIO`: Indicates the difference value between the two time ranges. It has the following values:
+`DIFF_RATIO` 表示两个时间段的差异大小，有以下几个取值方式：
 
-* If the monitoring metric has a value only within `t2` and has no value within `t1`, the value of `DIFF_RATIO` is `1`.
-* If the monitoring metric has a value only within `t1`, and has no value within `t2` time range, the value of `DIFF_RATIO` is `-1`.
-* If the value of `t2` is greater than that of `t1`, then `DIFF_RATIO` = `(t2.value / t1.value)-1`
-* If the value of `t2` is smaller than that of `t1`, then `DIFF_RATIO` = `1-(t1.value / t2.value)`
+* 如果该监控仅在 `t2` 时间内才有值，`t1` 时间段没有，则 `DIFF_RATIO` 取值为 `1`。
+* 如果监控项仅在 `t1` 时间内才有值，`t1` 时间段没有，则 `DIFF_RATIO` 取值为 `-1`。
+* 如果 t2 时间段的值比 t1 时间段的值大，则 `DIFF_RATIO` = `(t2.value / t1.value) - 1`。
+* 如果 `t2` 时间段的值比 `t1` 时间段的值小，则 `DIFF_RATIO` = `1 - (t1.value / t2.value)`。
 
-For example, in the table above, the average CPU usage of the `tidb` node in `t2` is 2.02 times higher than that in `t1`, which is `2.02` = `1240/410-1`.
+例如上表中，`tidb` 节点的平均 CPU 使用率在 `t2` 时间段比 `t1` 时间段高 `2.02` 倍，`2.02` = `1240/410 - 1`。
 
-### Maximum Different Item table
+### Maximum Different Item 报表介绍
 
-The `Maximum Different Item` table compares the monitoring metrics of two time ranges, and sorts them according to the difference of the monitoring metrics. Using this table, you can quickly find out which monitoring metric has the biggest difference in the two time ranges. See the following example:
+`Maximum Different Item` 的报表是对比两个时间段的监控项后，按照监控项的差异大小排序，通过这个表可以很快发现两个时间段哪些监控的差异最大。示例如下：
 
-![Maximum Different Item table](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-diagnostics-maximum-different-item.png)
+![Maximum Different Item 报表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-diagnostics-maximum-different-item.png)
 
-* `Table`: Indicates this monitoring metric comes from which table in the comparison report. For example, `TiKV, coprocessor_info` indicates the `coprocessor_info` table in the TiKV component.
-* `METRIC_NAME`: The monitoring metric name. Click `expand` to view the comparison of different labels of metrics.
-* `LABEL`: The label corresponding to the monitoring metric. For example, the monitoring metric of `TiKV Coprocessor scan` has 2 labels, namely `instance`, `req`, `tag`, `sql_type`, which are the TiKV address, request type, operation type and operation column family.
-* `MAX_DIFF`: Difference value, which is the `DIFF_RATIO` calculation of `t1.VALUE` and `t2.VALUE`.
+* `Table`：表示这个监控项来自于对比报告中报表，如 `TiKV, coprocessor_info` 表示是 TiKV 组件下的 `coprocessor_info` 报表。
+* `METRIC_NAME`：监控项名，点击 `expand` 可以查看该监控的不同 label 的差异对比。
+* `LABEL`：监控项对应的 label。比如 `TiKV Coprocessor scan` 监控项有两个 label，分别是 instance、req、tag、sql_type，分别表示为 TiKV 地址、请求类型、操作类型和操作的 column family。
+* `MAX_DIFF`：差异大小，取值为 `t1.VALUE` 和 `t2.VALUE` 的 `DIFF_RATIO` 计算。
 
-From the table above, you can see the `t2` time range has much more Coprocessor requests than the `t1` time range, and the SQL parsing time of TiDB in `t2` is much longer.
+可以从上表中发现，`t2` 时间段比 `t1` 时间段多出了大量的 Coprocessor 请求，TiDB 的解析 SQL (parse) 时间也多了很多。

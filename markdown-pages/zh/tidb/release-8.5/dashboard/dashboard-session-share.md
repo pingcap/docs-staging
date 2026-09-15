@@ -1,56 +1,56 @@
 ---
-title: Share TiDB Dashboard Sessions
-summary: TiDB Dashboard allows users to share their current session with others, eliminating the need for a user password. The inviter can generate an authorization code with specific sharing settings and provide it to the invitee. The invitee can then use the authorization code to sign in without a password.
+title: 分享 TiDB Dashboard 会话
+summary: 了解如何将当前的 TiDB Dashboard 会话分享给其他用户访问。
 ---
 
-# Share TiDB Dashboard Sessions
+# 分享 TiDB Dashboard 会话
 
-You can share the current session of the TiDB Dashboard to other users so that they can access and operate the TiDB Dashboard without entering the user password.
+你可以将当前的 TiDB Dashboard 会话安全地分享给其他用户访问，这样其他用户无需要知道登录账号密码即可访问 TiDB Dashboard 并进行操作。
 
-## Steps for the inviter
+## 分享者操作步骤
 
-1. Sign into TiDB Dashboard.
+1. 登录 TiDB Dashboard。
 
-2. Click the username in the left sidebar to access the configuration page.
+2. 点击边栏左下角的用户名访问配置界面。
 
-3. Click **Share Current Session**.
+3. 点击**分享当前会话** (Share Current Session)。
 
-   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-settings-1-v650.png)
+   ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-share-settings-1-v650.png)
 
-   > **Note:**
+   > **注意：**
    >
-   > For security reasons, the shared session cannot be shared again.
+   > 出于安全考虑，已分享的会话中不能使用分享功能将该会话再次分享给其他人。
 
-4. Adjust sharing settings in the popup dialog:
+4. 在弹出的对话框中，对分享进行细节配置：
 
-   - Expire in: How long the shared session will be effective. Signing out of the current session does not affect the effective time of the shared session.
+   - 有效时间：分享的会话在多少时间内有效。登出当前会话不影响已分享会话的有效时间。
 
-   - Share as read-only privilege: The shared session only permits read operations but not write operations (such as modifying configurations).
+   - 以只读权限分享：分享的会话为只读，例如不允许进行配置修改等操作。
 
-5. Click **Generate Authorization Code**.
+5. 点击**生成授权码** (Generate Authorization Code)。
 
-   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-settings-2-v650.png)
+   ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-share-settings-2-v650.png)
 
-6. Provide the generated **Authorization Code** to the user to whom you want to share the session.
+6. 将生成出来的**授权码**提供给要分享的用户。
 
-   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-settings-3-v650.png)
+   ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-share-settings-3-v650.png)
 
-   > **Warning:**
+   > **警告：**
    >
-   > Keep your authorization code secure and do not send it to anyone who is untrusted. Otherwise, they will be able to access and operate TiDB Dashboard without your authorization.
+   > 请妥善地保管授权码。不要将授权码分发给不受信任的用户，否则他们也将具备访问和操作 TiDB Dashboard 的能力。
 
-## Steps for the invitee
+## 受邀请者操作步骤
 
-1. On the sign-in page of TiDB Dashboard, click **Use Alternative Authentication**.
+1. 在 TiDB Dashboard 登录界面上，点击**使用其他登录方式** (Use Alternative Authentication)。
 
-   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-signin-1-v650.png)
+   ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-share-signin-1-v650.png)
 
-2. Click **Authorization Code** to use it to sign in.
+2. 选择使用**授权码** (Authorization Code) 登录。
 
-   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-signin-2-v650.png)
+   ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-share-signin-2-v650.png)
 
-3. Enter the authorization code you have received from the inviter.
+3. 输入从分享者取得的授权码。
 
-4. Click **Sign In**.
+4. 点击**登录** (Sign In)。
 
-   ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-share-signin-3-v650.png)
+   ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-share-signin-3-v650.png)

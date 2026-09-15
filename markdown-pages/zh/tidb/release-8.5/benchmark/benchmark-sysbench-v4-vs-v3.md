@@ -1,47 +1,47 @@
 ---
-title: TiDB Sysbench Performance Test Report -- v4.0 vs. v3.0
-summary: Compare the Sysbench performance of TiDB 4.0 and TiDB 3.0.
+title: TiDB Sysbench 性能对比测试报告 - v4.0 对比 v3.0
+summary: TiDB v4.0 在 OLTP 场景下的性能优于 v3.0。Point Select、Update Non-index、Update Index 和 Read Write 性能分别提升了 14%、15%、17% 和 31%。
 ---
 
-# TiDB Sysbench Performance Test Report -- v4.0 vs. v3.0
+# TiDB Sysbench 性能对比测试报告 - v4.0 对比 v3.0
 
-## Test purpose
+## 测试目的
 
-This test aims to compare the Sysbench performance of TiDB 4.0 and TiDB 3.0 in the Online Transactional Processing (OLTP) scenario.
+测试对比 TiDB v4.0 和 v3.0 在 OLTP 场景下的性能。
 
-## Test environment (AWS EC2）
+## 测试环境 (AWS EC2)
 
-### Hardware configuration
+### 硬件配置
 
-| Service type         | EC2 type     | Instance count |
+| 服务类型   | EC2 类型   |    实例数  |
 |:----------|:----------|:----------|
 | PD        | m5.xlarge |     3     |
 | TiKV      | i3.4xlarge|     3     |
 | TiDB      | c5.4xlarge|     3     |
 | Sysbench  | m5.4xlarge|     1     |
 
-### Software version
+### 软件版本
 
-| Service type   | Software version    |
+| 服务类型   | 软件版本   |
 |:----------|:-----------|
-| PD        | 3.0 and 4.0   |
-| TiDB      | 3.0 and 4.0   |
-| TiKV      | 3.0 and 4.0   |
+| PD        | 3.0、4.0   |
+| TiDB      | 3.0、4.0   |
+| TiKV      | 3.0、4.0   |
 | Sysbench  | 1.0.20     |
 
-### Parameter configuration
+### 参数配置
 
-#### TiDB v3.0 configuration
+#### TiDB v3.0 参数配置
 
 
 ```yaml
-log.level: "error"
+log.level: “error”
 performance.max-procs: 20
 prepared-plan-cache.enabled: true
 tikv-client.max-batch-wait-time: 2000000
 ```
 
-#### TiKV v3.0 configuration
+#### TiKV v3.0 参数配置
 
 
 ```yaml
@@ -56,17 +56,17 @@ readpool.storage.normal-concurrency: 10
 readpool.coprocessor.normal-concurrency: 5
 ```
 
-#### TiDB v4.0 configuration
+#### TiDB v4.0 参数配置
 
 
 ```yaml
-log.level: "error"
+log.level: “error”
 performance.max-procs: 20
 prepared-plan-cache.enabled: true
 tikv-client.max-batch-wait-time: 2000000
 ```
 
-#### TiKV v4.0 configuration
+#### TiKV v4.0 参数配置
 
 
 ```yaml
@@ -83,7 +83,7 @@ readpool.storage.normal-concurrency: 10
 pessimistic-txn.pipelined: true
 ```
 
-#### Global variable configuration
+#### 全局变量配置
 
 
 ```sql
@@ -92,18 +92,18 @@ set global tidb_hashagg_partial_concurrency=1;
 set global tidb_disable_txn_auto_retry=0;
 ```
 
-## Test plan
+## 测试方案
 
-1. Deploy TiDB v4.0 and v3.0 using TiUP.
-2. Use Sysbench to import 16 tables, each table with 10 million rows of data.
-3. Execute the `analyze table` statement on each table.
-4. Back up the data used for restore before different concurrency tests, which ensures data consistency for each test.
-5. Start the Sysbench client to perform the `point_select`, `read_write`, `update_index`, and `update_non_index` tests. Perform stress tests on TiDB via AWS NLB. In each type of test, the warm-up takes 1 minute and the test takes 5 minutes.
-6. After each type of test is completed, stop the cluster, overwrite the cluster with the backup data in step 4, and restart the cluster.
+1. 通过 TiUP 部署 TiDB v4.0 和 v3.0。
+2. 通过 Sysbench 导入 16 张表，每张表有 1000 万行数据。
+3. 分别对每个表执行 `analyze table` 命令。
+4. 备份数据，用于不同并发测试前进行数据恢复，以保证每次数据一致。
+5. 启动 Sysbench 客户端，进行 `point_select`、`read_write`、`update_index` 和 `update_non_index` 测试。通过 AWS NLB 向 TiDB 加压，单轮预热 1 分钟，测试 5 分钟。
+6. 每轮完成后停止集群，使用之前的备份的数据覆盖，再启动集群。
 
-### Prepare test data
+### 准备测试数据
 
-Execute the following command to prepare the test data:
+执行以下命令来准备测试数据：
 
 
 ```bash
@@ -119,9 +119,9 @@ sysbench oltp_common \
     prepare --tables=16 --table-size=10000000
 ```
 
-### Perform the test
+### 执行测试命令
 
-Execute the following command to perform the test.
+执行以下命令来执行测试：
 
 
 ```bash
@@ -137,11 +137,11 @@ sysbench $testname \
     run --tables=16 --table-size=10000000
 ```
 
-## Test results
+## 测试结果
 
-### Point Select performance
+### Point Select 性能
 
-| Threads   | v3.0 QPS   | v3.0 95% latency (ms)   | v4.0 QPS   | v4.0 95% latency (ms)   | QPS improvement |
+| Threads   | v3.0 QPS   | v3.0 95% latency (ms)   | v4.0 QPS   | v4.0 95% latency (ms)   | QPS 提升   |
 |:----------|:----------|:----------|:----------|:----------|:----------|
 | 150        | 117085.701 |     1.667     | 118165.1357        | 1.608 |     0.92%     |
 | 300      | 200621.4471|     2.615     | 207774.0859        | 2.032 |     3.57%     |
@@ -150,13 +150,13 @@ sysbench $testname \
 | 1200  | 347200.2366|     8.092     | 408929.4372        | 6.318 |     17.78%     |
 | 1500  | 366406.2767|     10.562     | 418268.8856        | 7.985 |     14.15%     |
 
-Compared with v3.0, the Point Select performance of TiDB v4.0 has increased by 14%.
+v4.0 对比 v3.0，Point Select 性能提升了 14%。
 
-![Point Select](https://docs-download.pingcap.com/media/images/docs/sysbench-v4vsv3-point-select.png)
+![Point Select](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v4vsv3_point_select.png)
 
-### Update Non-index performance
+### Update Non-index 性能
 
-| Threads   | v3.0 QPS   | v3.0 95% latency (ms)   | v4.0 QPS   | v4.0 95% latency (ms)   | QPS improvement |
+| Threads   | v3.0 QPS   | v3.0 95% latency (ms)   | v4.0 QPS   | v4.0 95% latency (ms)   | QPS 提升   |
 |:----------|:----------|:----------|:----------|:----------|:----------|
 | 150        | 15446.41024 |     11.446     | 16954.39971        | 10.844 |     9.76%     |
 | 300      | 22276.15572|     17.319     | 24364.44689        | 16.706 |     9.37%     |
@@ -165,13 +165,13 @@ Compared with v3.0, the Point Select performance of TiDB v4.0 has increased by 1
 | 1200  | 33954.69114|     58.923     | 38552.63158        | 51.018 |     13.54%     |
 | 1500  | 35412.0032|     74.464     | 40859.63755        | 62.193 |     15.38%     |
 
-Compared with v3.0, the Update Non-index performance of TiDB v4.0 has increased by 15%.
+v4.0 对比 v3.0，Update Non-index 性能提升了 15%。
 
-![Update Non-index](https://docs-download.pingcap.com/media/images/docs/sysbench-v4vsv3-update-non-index.png)
+![Update Non-index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v4vsv3_update_non_index.png)
 
-### Update Index performance
+### Update Index 性能
 
-| Threads   | v3.0 QPS   | v3.0 95% latency (ms)   | v4.0 QPS   | v4.0 95% latency (ms)   | QPS improvement |
+| Threads   | v3.0 QPS   | v3.0 95% latency (ms)   | v4.0 QPS   | v4.0 95% latency (ms)   | QPS 提升   |
 |:----------|:----------|:----------|:----------|:----------|:----------|
 | 150        | 11164.40571 |     16.706     | 11954.73635        | 16.408 |     7.08%     |
 | 300      | 14460.98057|     28.162     | 15243.40899        | 28.162 |     5.41%     |
@@ -180,13 +180,13 @@ Compared with v3.0, the Update Non-index performance of TiDB v4.0 has increased 
 | 1200  | 18622.50283|     127.805     | 21390.25122        | 94.104 |     14.86%     |
 | 1500  | 18980.34447|     170.479     | 22359.996        | 114.717 |     17.81%     |
 
-Compared with v3.0, the Update Index performance of TiDB v4.0 has increased by 17%.
+v4.0 对比 v3.0，Update Index 性能提升了 17%。
 
-![Update Index](https://docs-download.pingcap.com/media/images/docs/sysbench-v4vsv3-update-index.png)
+![Update Index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v4vsv3_update_index.png)
 
-### Read-write performance
+### Read Write 性能
 
-| Threads   | v3.0 QPS   | v3.0 95% latency (ms)   | v4.0 QPS   | v4.0 95% latency (ms)   | QPS improvement |
+| Threads   | v3.0 QPS   | v3.0 95% latency (ms)   | v4.0 QPS   | v4.0 95% latency (ms)   | QPS 提升   |
 |:----------|:----------|:----------|:----------|:----------|:----------|
 | 150        | 43768.33633 |     71.83     | 53912.63705        | 59.993 |     23.18%     |
 | 300      | 55655.63589|     121.085     | 71327.21336        | 97.555 |     28.16%     |
@@ -195,6 +195,6 @@ Compared with v3.0, the Update Index performance of TiDB v4.0 has increased by 1
 | 1200  | 71334.80099|     434.829     | 92779.71507        | 344.078 |     30.06%     |
 | 1500  | 72069.9115|     580.017     | 95088.50812        | 434.829 |     31.94%     |
 
-Compared with v3.0, the read-write performance of TiDB v4.0 has increased by 31%.
+v4.0 对比 v3.0，Read Write 性能提升了 31%。
 
-![Read Write](https://docs-download.pingcap.com/media/images/docs/sysbench-v4vsv3-read-write.png)
+![Read Write](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v4vsv3_read_write.png)

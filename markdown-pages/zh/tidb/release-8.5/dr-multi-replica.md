@@ -1,32 +1,29 @@
 ---
-title: DR Solution Based on Multiple Replicas in a Single Cluster
-summary: Learn about the multi-replica disaster recovery solution for a single cluster.
+title: 基于多副本的单集群容灾方案
+summary: 了解 TiDB 提供的基于多副本的单集群容灾方案。
 ---
 
-# DR Solution Based on Multiple Replicas in a Single Cluster
+# 基于多副本的单集群容灾方案
 
-This document describes the disaster recovery (DR) solution based on multiple replicas in a single cluster. The document is organized as follows:
+本文介绍了基于多副本的单集群容灾方案，文档内容组织如下：
 
-- Solution introduction
-- How to set up a cluster and configure replicas
-- How to monitor the cluster
-- How to perform a DR switchover
+- 方案简介
+- 搭建集群
+- 配置副本
+- 监控集群
+- 容灾切换
 
-## Introduction
+## 简介
 
-Important production systems usually require regional DR with zero RPO and minute-level RTO. A Raft-based distributed database, TiDB provides multiple replicas, which allows it to support regional DR with data consistency and high availability guaranteed. Considering the small network latency between available zones (AZs) in the same region, we can dispatch business traffic to two AZs on the same region simultaneously, and achieve load balance among AZs on the same region by properly locating the Region leader and the PD leader.
+对于重要的生产系统，很多用户需要能够实现区域级别的容灾，并且做到 RPO = 0 和分钟级别的 RTO。TiDB 作为基于 Raft 协议的分布式数据库，其自带的多副本特性可以用于支持区域级别的容灾目标，并同时确保数据的一致性和高可用性。而同区域可用区 (Available Zone, AZ) 之间的网络延迟相对较小，可以把业务流量同时派发到同区域两个 AZ，并通过控制 Region Leader 和 PD Leader 分布实现同区域 AZ 共同负载业务流量。
 
-> **Note:**
->
-> ["Region" in TiKV](/glossary.md#regionpeerraft-group) means a range of data while the term "region" means a physical location. The two terms are not interchangeable.
+## 搭建集群和配置副本
 
-## Set up a cluster and configure replicas
+在这一部分当中，会以一个 5 副本的集群为例，演示如何使用 TiUP 创建一个跨 3 个区域的集群，以及如何控制数据和 PD 的分布位置，从而达到容灾的目的。
 
-This section illustrates how to create a TiDB cluster across three regions with five replicas using TiUP, and how to achieve DR by properly distributing data and PD nodes.
+在下面的示例中，TiDB 集群的区域 1 作为 primary region，区域 2 作为 secondary region，而区域 3 则作为投票使用的第三个区域，一共包含 5 个副本。同理，PD 集群也包含了 5 个副本，其功能和 TiDB 集群的功能基本一致。
 
-In this example, TiDB contains five replicas and three regions. Region 1 is the primary region, region 2 is the secondary region, and region 3 is used for voting. Similarly, the PD cluster also contains 5 replicas, which function basically the same as the TiDB cluster.
-
-1. Create a topology file similar to the following:
+1. 创建类似于以下的集群拓扑文件：
 
     ```toml
     global:
@@ -39,7 +36,7 @@ In this example, TiDB contains five replicas and three regions. Region 1 is the 
       tikv:
         server.grpc-compression-type: gzip
       pd:
-        replication.location-labels:  ["Region","AZ"] # PD schedules replicas according to the Region and AZ configuration of TiKV nodes.
+        replication.location-labels:  ["Region","AZ"] # PD 会根据 TiKV 节点的 Region 和 AZ 配置来进行副本的调度。
 
     pd_servers:
       - host: tidb-dr-test1
@@ -57,7 +54,7 @@ In this example, TiDB contains five replicas and three regions. Region 1 is the 
       - host: tidb-dr-test1
       - host: tidb-dr-test3
 
-    tikv_servers:  # Label the Regions and AZs of each TiKV node through the labels option.
+    tikv_servers:  # 在 TiKV 节点中通过 labels 选项来对每个 TiKV 节点所在的 Region 和 AZ 进行标记
       - host: tidb-dr-test1
         config:
           server.labels: { Region: "Region1", AZ: "AZ1" }
@@ -87,12 +84,12 @@ In this example, TiDB contains five replicas and three regions. Region 1 is the 
       - host: tidb-dr-test2
     ```
 
-    The preceding configurations use the following options to optimize toward cross-region DR:
+    在上面的配置中，使用了以下一系列配置来针对跨区域容灾场景进行优化：
 
-    - `server.grpc-compression-type: gzip` to enable gRPC message compression in TiKV, thus reducing network traffic.
-    - `raftstore.raft-min-election-timeout-ticks` and `raftstore.raft-max-election-timeout-ticks` to extend the time before region 3 participates in the election, thus preventing any replica in this region from being voted as the leader.
+    - 使用 `server.grpc-compression-type`：gzip 启用 TiKV 之间的消息压缩，从而降低网络流量。
+    - 使用 `raftstore.raft-min-election-timeout-ticks` 和 `raftstore.raft-max-election-timeout-ticks` 延长区域 3 参加选举的时间，从而避免该区域中的副本被选举为主节点。
 
-2. Create a cluster using the preceding configuration file:
+2. 使用上面的配置文件创建集群：
 
     ```shell
     tiup cluster deploy drtest v6.4.0 ./topo.yaml
@@ -100,17 +97,17 @@ In this example, TiDB contains five replicas and three regions. Region 1 is the 
     tiup cluster display drtest
     ```
 
-    Configure the number of replicas and the leader limit for the cluster:
+    对集群的副本数和 Leader 限制进行配置：
 
     ```shell
     tiup ctl:v6.4.0 pd config set max-replicas 5
     tiup ctl:v6.4.0 pd config set label-property reject-leader Region Region3
 
-    # The following step adds some test data to the cluster, which is optional.
+    # 下面的步骤用于向集群中添加一些测试数据，可选
     tiup bench tpcc  prepare -H 127.0.0.1 -P 4000 -D tpcc --warehouses 1
     ```
 
-    Specify the priority of PD leader:
+    指定 PD leader 的优先级：
 
     ```shell
     tiup ctl:v6.4.0 pd member leader_priority  pd-1 4
@@ -120,63 +117,63 @@ In this example, TiDB contains five replicas and three regions. Region 1 is the 
     tiup ctl:v6.4.0 pd member leader_priority  pd-5 0
     ```
 
-    > **Note:**
+    > **注意：**
     >
-    > In all available PD nodes, the node with the highest priority number becomes the leader.
+    > 在可用的 PD 节点中，优先级数值最大的节点会直接当选 leader。
 
-3. Create placement rules and fix the primary replica of the test table to region 1:
+3. 创建 placement rule，并将测试表的主副本固定在区域 1：
 
     ```sql
-    -- Create two placement rules: the first rule specifies that region 1 works as the primary region, and region 2 as the secondary region.
-    -- The second placement rule specifies that when region 1 is down, region 2 will become the primary region.
+    -- 创建两个 placement rules，第一个是区域 1 作为主区域，在系统正常时使用，第二个是区域 2 作为备区域。
+    -- 作为主区域，当区域 1 出现问题时，区域 2 会作为主区域。
     MySQL [(none)]> CREATE PLACEMENT POLICY primary_rule_for_region1 PRIMARY_REGION="Region1" REGIONS="Region1, Region2,Region3";
     MySQL [(none)]> CREATE PLACEMENT POLICY secondary_rule_for_region2 PRIMARY_REGION="Region2" REGIONS="Region1,Region2,Region3";
 
-    -- Apply the rule primary_rule_for_region1 to the corresponding user tables.
+    -- 将刚刚创建的规则 primary_rule_for_region1 应用到对应的用户表上。
     ALTER TABLE tpcc.warehouse PLACEMENT POLICY=primary_rule_for_region1;
     ALTER TABLE tpcc.district PLACEMENT POLICY=primary_rule_for_region1;
 
-    -- Note: You can modify the database name, table name, and placement rule name as needed.
+    -- 说明：请根据需要修改上面的数据库名称、表名和 placement rule 的名称。
 
-    -- Confirm whether the leaders have been transferred by executing the following query to check the number of leaders in each region.
+    -- 使用类似下面的查询，用户可以查看每个区域包含的 leader 数量，以确认 leader 迁移是否完成。
     SELECT STORE_ID, address, leader_count, label FROM TIKV_STORE_STATUS ORDER BY store_id;
     ```
 
-    The following SQL statement can generate a SQL script to configure the leader of all non-system schema tables to a specific region:
+    下面的语句可以产生一个 SQL 脚本，把所有非系统 schema 中的表的 leader 都设置到特定的区域上：
 
     ```sql
     SET @region_name=primary_rule_for_region1;
-    SELECT CONCAT('ALTER TABLE ', table_schema, '.', table_name, ' PLACEMENT POLICY=', @region_name, ';') FROM information_schema.tables WHERE table_schema NOT IN ('METRICS_SCHEMA', 'PERFORMANCE_SCHEMA', 'INFORMATION_SCHEMA','mysql');
+    SELECT concat('ALTER TABLE ', table_schema, '.', table_name, ' PLACEMENT POLICY=', @region_name, ';') FROM information_schema.tables WHERE table_schema NOT IN ('METRICS_SCHEMA', 'PERFORMANCE_SCHEMA', 'INFORMATION_SCHEMA','mysql');
     ```
 
-## Monitor the cluster
+## 监控集群
 
-You can monitor the performance metrics of TiKV, TiDB, PD, and other components in the cluster by accessing Grafana or TiDB Dashboard. Based on the status of the components, you can determine whether to perform a DR switchover. For details, see the following documents:
+对于部署的集群，你可以通过访问集群中的 Grafana 地址或者 TiDB Dashboard 组件来对集群中的各个 TiKV、TiDB 和 PD 组件的各种性能指标进行监控。根据组件的状态，确定是否进行容灾切换。详细信息，请参考如下文档：
 
-- [Key Monitoring Metrics of TiDB](/grafana-tidb-dashboard.md)
-- [Key Monitoring Metrics of TiKV](/grafana-tikv-dashboard.md)
-- [Key Monitoring Metrics of PD](/grafana-pd-dashboard.md)
-- [TiDB Dashboard Monitoring Page](/dashboard/dashboard-monitoring.md)
+- [TiDB 重要监控指标详解](/grafana-tidb-dashboard.md)
+- [TiKV 监控指标详解](/grafana-tikv-dashboard.md)
+- [PD 重要监控指标详解](/grafana-pd-dashboard.md)
+- [TiDB Dashboard 监控页面](/dashboard/dashboard-monitoring.md)
 
-## Perform a DR switchover
+## 容灾切换
 
-This section describes how to perform a DR switchover, including planned switchover and unplanned switchover.
+本部分介绍容灾切换，包括计划内切换和计划外切换。
 
-### Planned switchover
+### 计划内切换
 
-A planned switchover is a scheduled switchover between the primary and secondary regions based on the maintenance needs. It can be used to verify whether the DR system works properly. This section describes how to perform a planned switchover.
+指根据维护需要进行的主备区域切换，可用于验证容灾系统是否可以正常工作。本部分介绍如何在计划内切换主备区域。
 
-1. Run the following command to switch all user tables and PD leaders to region 2:
+1. 执行如下命令，将所有用户表和 PD Leader 都切换到区域 2：
 
     ```sql
-    -- Apply the rule secondary_rule_for_region2 to the corresponding user tables.
+    -- 将之前创建的规则 secondary_rule_for_region2 应用到对应的用户表上。
     ALTER TABLE tpcc.warehouse PLACEMENT POLICY=secondary_rule_for_region2;
     ALTER TABLE tpcc.district PLACEMENT POLICY=secondary_rule_for_region2;
     ```
 
-    Note: You can modify the database name, table name, and placement rule name as needed.
+    说明：请根据需要修改上面的数据库名称、表名和 placement rule 的名称。
 
-    Run the following commands to lower the priority of PD nodes in region 1 and increase that of PD nodes in region 2.
+    执行如下命令，调低区域 1 的 PD 节点的优先级，并调高区域 2 的 PD 节点的优先级。
 
     ``` shell
     tiup ctl:v6.4.0 pd member leader_priority pd-1 2
@@ -185,27 +182,27 @@ A planned switchover is a scheduled switchover between the primary and secondary
     tiup ctl:v6.4.0 pd member leader_priority pd-4 3
     ```
 
-2. Observe the PD and TiKV nodes in Grafana and ensure that leaders of the PD and user tables have been transferred to the target region. The steps for switching back to the original region are the same as the preceding steps and are therefore not covered in this document.
+2. 观察 Grafana 中 PD 和 TiKV 部分中的内容，确保 PD 的 Leader 和用户表的 Leader 已经迁移到对应的区域。另外，切换回原有区域的步骤与上面的步骤基本相同，本文不做过多的描述。
 
-### Unplanned switchover
+### 计划外切换
 
-An unplanned switchover means a switchover between primary and secondary regions when a disaster occurs. It can also be a primary-secondary region switchover initiated to simulate disaster scenarios so as to verify the effectiveness of DR systems.
+计划外切换，指灾难发生时的主备区域切换，或者为了验证容灾系统的有效性，而模拟灾难发生时的主备区域切换。
 
-1. Run the following command to stop all TiKV, TiDB, and PD nodes in region 1:
+1. 执行类似下面的命令终止区域 1 上所有的 TiKV、TiDB 和 PD 节点:
 
     ``` shell
     tiup cluster stop drtest -N tidb-dr-test1:20160,tidb-dr-test2:20160,tidb-dr-test1:2379,tidb-dr-test2:2379
     ```
 
-2. Run the following commands to switch the leaders of all user tables to region 2:
+2. 运行类似于下面的命令切换用户表的 leader 到区域 2:
 
     ```sql
-    -- Apply the rule secondary_rule_for_region2 to the corresponding user tables.
+    -- 将之前创建的规则 secondary_rule_for_region2 应用到对应的用户表上。
     ALTER TABLE tpcc.warehouse PLACEMENT POLICY=secondary_rule_for_region2;
     ALTER TABLE tpcc.district PLACEMENT POLICY=secondary_rule_for_region2;
 
-    --- Confirm whether the leaders have been transferred by executing the following query to check the number of leaders in each region.
+    ---可以使用类似下面的查询查看每个区域包含的 leader 数量，以确认 leader 迁移是否完成。
     SELECT STORE_ID, address, leader_count, label FROM TIKV_STORE_STATUS ORDER BY store_id;
     ```
 
-    After region 1 recovers, you can use commands similar to the preceding ones to switch the leaders of user tables back to region 1.
+    当区域 1 恢复正常之后，可以使用类似于上面的命令将用户表的 leader 重新切换到区域 1。

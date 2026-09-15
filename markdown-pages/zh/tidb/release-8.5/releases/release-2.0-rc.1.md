@@ -1,39 +1,40 @@
 ---
 title: TiDB 2.0 RC1 Release Notes
-summary: TiDB 2.0 RC1, released on March 9, 2018, brings improvements in MySQL compatibility, SQL optimization, and stability. Key updates include memory usage limitation for SQL statements, Stream Aggregate operator support, configuration file validation, and HTTP API for configuration information. TiDB also enhances MySQL syntax compatibility, optimizer, and Boolean field length. PD sees logic and performance optimizations, while TiKV fixes gRPC call and adds gRPC APIs for metrics. Additionally, TiKV checks SSD usage, optimizes read performance, and improves metrics usage.
+summary: TiDB 2.0 RC1 版本发布，改进了 MySQL 兼容性、系统稳定性和优化器。TiDB 支持限制单条 SQL 语句内存使用，下推流式聚合算子到 TiKV，配置文件合法性检测，HTTP API 获取参数信息。Parser 兼容更多 MySQL 语法，提升对 Navicat 的兼容性。优化器提升，提取多个 OR 条件的公共表达式，选取更优执行计划。PD 优化检查 Region 状态的代码逻辑，异常情况下日志信息输出，修复监控中 TiKV 节点磁盘空间不足统计。TiKV 修复 PD leader 切换 gRPC call 问题，增加获取 metrics 的 gRPC API，启动时检查是否使用 SSD，使用 ReadPool 优化读性能。
+aliases: ['/zh/tidb/dev/release-2.0-rc.1/','/zh/tidb/v2.0/release-2.0-rc.1','/docs-cn/dev/releases/release-2.0-rc.1/','/docs-cn/dev/releases/2rc1/','/zh/tidb/v5.4/release-2.0-rc.1','/zh/tidb/v6.1/release-2.0-rc.1','/zh/tidb/v6.5/release-2.0-rc.1','/zh/tidb/v7.1/release-2.0-rc.1','/zh/tidb/v7.5/release-2.0-rc.1','/zh/tidb/v8.1/release-2.0-rc.1']
 ---
 
 # TiDB 2.0 RC1 Release Notes
 
-On March 9, 2018, TiDB 2.0 RC1 is released. This release has great improvement in MySQL compatibility, SQL optimization and stability.
+2018 年 3 月 9 日，TiDB 发布 2.0 RC1 版。该版本在上一版的基础上，对 MySQL 兼容性、系统稳定性和优化器做了很多改进。
 
 ## TiDB
 
-- Support limiting the memory usage by a single SQL statement, to reduce the risk of OOM
-- Support pushing the Stream Aggregate operator down to TiKV
-- Support validating the configuration file
-- Support obtaining the information of TiDB configuration through HTTP API
-- Compatible with more MySQL syntax in Parser
-- Improve the compatibility with Navicat
-- Improve the optimizer and extract common expressions with multiple OR conditions, to choose better query plan
-- Improve the optimizer and convert subqueries to Join operators in more scenarios, to choose better query plan
-- Resolve Lock in the Batch mode to increase the garbage collection speed
-- Fix the length of Boolean field to improve compatibility
-- Optimize the Add Index operation and give lower priority to all write and read operations, to reduce the impact on online business
++ 支持限制单条 SQL 语句使用内存的大小，减少程序 OOM 风险
++ 支持下推流式聚合算子到 TiKV
++ 支持配置文件的合法性检测
++ 支持 HTTP API 获取 TiDB 参数信息
++ Parser 兼容更多 MySQL 语法
++ 提升对 Navicat 的兼容性
++ 优化器提升，提取多个 OR 条件的公共表达式，选取更优执行计划
++ 优化器提升，在更多场景下将子查询转换成 Join 算子，选取更优查询计划
++ 使用 Batch 方式 Resolve Lock，提升垃圾回收速度
++ 修复 Boolean 类型的字段长度，提升兼容性
++ 优化 Add Index 操作，所有的读写操作采用低优先级，减小对在线业务的影响
 
 ## PD
 
-- Optimize the logic of code used to check the Region status to improve performance
-- Optimize the output of log information in abnormal conditions to facilitate debugging
-- Fix the monitor statistics that the disk space of TiKV nodes is not enough
-- Fix the wrong reporting issue of the health interface when TLS is enabled
-- Fix the issue that concurrent addition of replicas might exceed the threshold value of configuration, to improve stability
++ 优化检查 Region 状态的代码逻辑，提升程序性能
++ 优化异常情况下日志信息输出，便于调试
++ 修复监控中关于 TiKV 节点磁盘空间不足情况的统计
++ 修复开启 TLS 时健康检查接口误报的问题
++ 修复同时添加副本数量可能超过配置阈值的问题，提升程序稳定性
 
 ## TiKV
 
-- Fix the issue that gRPC call is not cancelled when PD leaders switch
-- Protect important configuration which cannot be changed after initial configuration
-- Add gRPC APIs used to obtain metrics
-- Check whether SSD is used when you start the cluster
-- Optimize the read performance using ReadPool, and improve the performance by 30% in the `raw get` test
-- Improve metrics and optimize the usage of metrics
++ 修复 PD leader 切换，gRPC call 没被 cancel 的问题
++ 对重要配置进行保护，第一次设置之后不允许变更
++ 增加获取 metrics 的 gRPC API
++ 启动时候，检查是否使用 SSD
++ 使用 ReadPool 优化读性能，`raw get` 测试性能提升 30%
++ 完善 metrics，优化 metrics 的使用

@@ -1,40 +1,41 @@
 ---
 title: TiDB 3.0.18 Release Notes
-summary: TiDB 3.0.18 was released on August 21, 2020. The release includes improvements to TiDB Binlog and bug fixes for TiDB and TiKV. Bug fixes for TiDB include issues with handling decimal, set, and enum types, as well as problems with duplicate keys and cached execution plans. TiKV's bug fix involves changing the GC failure log level. TiDB Lightning also received fixes for issues with the log file argument, syntax errors, and unexpected calls.
+summary: TiDB 3.0.18 发布，提升了 TiDB Binlog 工具的细粒度 Pump GC 时间支持。修复了 TiDB 中 Hash 函数对 Decimal 类型的错误处理问题，以及对 Set 和 Enum 类型的错误处理问题。还修复了 Duplicate Key 检测在悲观事务下失效的问题，以及其他执行结果错误的问题。TiKV 将 GC 的失败日志级别改为 Warning。TiDB Lightning 修复了多个命令行参数和使用 TiDB backend 时的问题。
+aliases: ['/zh/tidb/dev/release-3.0.18/','/zh/tidb/v3.0/release-3.0.18','/zh/tidb/v5.4/release-3.0.18','/zh/tidb/v6.1/release-3.0.18','/zh/tidb/v6.5/release-3.0.18','/zh/tidb/v7.1/release-3.0.18','/zh/tidb/v7.5/release-3.0.18','/zh/tidb/v8.1/release-3.0.18']
 ---
 
 # TiDB 3.0.18 Release Notes
 
-Release date: August 21, 2020
+发版日期：2020 年 8 月 21 日
 
-TiDB version: 3.0.18
+TiDB 版本：3.0.18
 
-## Improvements
+## 提升改进
 
 + Tools
 
     + TiDB Binlog
 
-        - Support the time duration format of Go for the Pump GC configuration [#996](https://github.com/pingcap/tidb-binlog/pull/996)
+        - 支持更加细粒度的 Pump GC 时间 [#996](https://github.com/pingcap/tidb-binlog/pull/996)
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
 
-    - Fix the issue that the wrong handling of the `decimal` type by the `Hash` function causes the wrong HashJoin result [#19185](https://github.com/pingcap/tidb/pull/19185)
-    - Fix the issue that the wrong handling of the `set` and `enum` types by the `Hash` function causes the wrong HashJoin result [#19175](https://github.com/pingcap/tidb/pull/19175)
-    - Fix the issue that the check for duplicate keys fails in the pessimistic locking mode [#19236](https://github.com/pingcap/tidb/pull/19236)
-    - Fix the issue that the `Apply` and `Union Scan` operators cause the wrong execution result [#19297](https://github.com/pingcap/tidb/pull/19297)
-    - Fix the issue that some cached execution plans are incorrectly executed in transaction [#19274](https://github.com/pingcap/tidb/pull/19274)
+    - 修复 `Hash` 函数对 `Decimal` 类型的错误处理导致 HashJoin 结果错误的问题 [#19185](https://github.com/pingcap/tidb/pull/19185)
+    - 修复 `Hash` 函数对 `Set` 和 `Enum` 类型的错误处理导致 HashJoin 结果错误的问题 [#19175](https://github.com/pingcap/tidb/pull/19175)
+    - 修复 Duplicate Key 检测在悲观事务下失效的问题 [#19236](https://github.com/pingcap/tidb/pull/19236)
+    - 修复 `Apply` 算子和 `Union Scan` 算子执行导致结果错误的问题 [#19297](https://github.com/pingcap/tidb/pull/19297)
+    - 修复某些缓存的执行计划在事务中执行结果错误的问题 [#19274](https://github.com/pingcap/tidb/pull/19274)
 
 + TiKV
 
-    - Change the GC failure log from `error` to the `warning` level [#8444](https://github.com/tikv/tikv/pull/8444)
+    - 将 GC 的失败日志从 Error 级别改成 Warning 级别 [#8444](https://github.com/tikv/tikv/pull/8444)
 
 + Tools
 
     + TiDB Lightning
 
-        - Fix the issue that the `--log-file` argument does not take effect [#345](https://github.com/pingcap/tidb-lightning/pull/345)
-        - Fix the syntax error on empty binary/hex literals when using TiDB-backend [#357](https://github.com/pingcap/tidb-lightning/pull/357)
-        - Fix the unexpected `switch-mode` call when using TiDB-backend [#368](https://github.com/pingcap/tidb-lightning/pull/368)
+        - 修复命令行参数 `--log-file` 无法生效的问题 [#345](https://github.com/pingcap/tidb-lightning/pull/345)
+        - 修复 TiDB-backend 遇到空的 binary/hex 报语法错误的问题 [#357](https://github.com/pingcap/tidb-lightning/pull/357)
+        - 修复使用 TiDB backend 时非预期的 `switch-mode` 调用 [#368](https://github.com/pingcap/tidb-lightning/pull/368)

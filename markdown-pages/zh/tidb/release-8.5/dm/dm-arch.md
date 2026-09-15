@@ -1,60 +1,48 @@
 ---
-title: Data Migration Architecture
-summary: "Data Migration (DM) architecture consists of three components: DM-master, DM-worker, and dmctl. DM-master manages data migration tasks, DM-worker executes specific tasks, and dmctl is a command line tool for cluster control. High availability is achieved through multiple DM-master nodes and automatic task scheduling. Full export and import tasks do not support high availability due to limitations in MySQL and DM-worker."
+title: Data Migration 架构
+summary: Data Migration 架构包括三个组件：DM-master，DM-worker 和 dmctl。DM-master 负责管理和调度数据迁移任务的各项操作。DM-worker 执行具体的数据迁移任务。dmctl 是用来控制 DM 集群的命令行工具。 DM 集群的拓扑信息、数据迁移任务的运行状态和管理统一入口都由 DM-master 负责。DM-worker 负责持久化保存 binlog 数据、保存数据迁移子任务的配置信息和监控数据迁移子任务的运行状态。dmctl 用来创建、更新或删除数据迁移任务、查看数据迁移任务状态、处理数据迁移任务错误和校验数据迁移任务配置的正确性。 Data Migration 高可用机制可以进一步探索。
 ---
 
-# Data Migration Architecture
+# Data Migration 架构
 
-This document introduces the architecture of Data Migration (DM).
+DM 主要包括三个组件：DM-master，DM-worker 和 dmctl。
 
-DM consists of three components: DM-master, DM-worker, and dmctl.
+![Data Migration architecture](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-architecture-2.0.png)
 
-![Data Migration architecture](https://docs-download.pingcap.com/media/images/docs/dm/dm-architecture-2.0.png)
-
-## Architecture components
+## 架构组件
 
 ### DM-master
 
-DM-master manages and schedules the operations of data migration tasks.
+DM-master 负责管理和调度数据迁移任务的各项操作。
 
-- Storing the topology information of the DM cluster
-- Monitoring the running state of DM-worker processes
-- Monitoring the running state of data migration tasks
-- Providing a unified portal for the management of data migration tasks
-- Coordinating the DDL migration of sharded tables in each instance under the sharding scenario
+- 保存 DM 集群的拓扑信息
+- 监控 DM-worker 进程的运行状态
+- 监控数据迁移任务的运行状态
+- 提供数据迁移任务管理的统一入口
+- 协调分库分表场景下各个实例分表的 DDL 迁移
 
 ### DM-worker
 
-DM-worker executes specific data migration tasks.
+DM-worker 负责执行具体的数据迁移任务。
 
-- Persisting the binlog data to the local storage
-- Storing the configuration information of the data migration subtasks
-- Orchestrating the operation of the data migration subtasks
-- Monitoring the running state of the data migration subtasks
+- 将 binlog 数据持久化保存在本地
+- 保存数据迁移子任务的配置信息
+- 编排数据迁移子任务的运行
+- 监控数据迁移子任务的运行状态
 
-For more details of DM-worker, see [DM-worker Introduction](/dm/dm-worker-intro.md).
+有关于 DM-worker 的更多介绍，详见 [DM-worker 简介](/dm/dm-worker-intro.md)。
 
 ### dmctl
 
-dmctl is a command line tool used to control the DM cluster.
+dmctl 是用来控制 DM 集群的命令行工具。
 
-- Creating, updating, or dropping data migration tasks
-- Checking the state of data migration tasks
-- Handling errors of data migration tasks
-- Verifying the configuration correctness of data migration tasks
+- 创建、更新或删除数据迁移任务
+- 查看数据迁移任务状态
+- 处理数据迁移任务错误
+- 校验数据迁移任务配置的正确性
 
-## Architecture features
+有关于 dmctl 的使用介绍，详见 [dmctl 使用](/dm/dmctl-introduction.md)。
 
-### High availability
+## 探索更多
 
-When you deploy multiple DM-master nodes, all DM-master nodes use the embedded etcd to form a cluster. The DM-master cluster is used to store metadata such as cluster node information and task configuration. The leader node elected through etcd is used to provide services such as cluster management and data migration task management. Therefore, if the number of available DM-master nodes exceeds half of the deployed nodes, the DM cluster can normally provide services.
-
-When the number of deployed DM-worker nodes exceeds the number of upstream MySQL/MariaDB nodes, the extra DM-worker nodes are idle by default. If a DM-worker node goes offline or is isolated from the DM-master leader, DM-master automatically schedules data migration tasks of the original DM-worker node to other idle DM-worker nodes. (If a DM-worker node is isolated, it automatically stops the data migration tasks on it); if there are no available idle DM-worker nodes, the data migration tasks of the original DM-worker are temporarily hung until one DM-worker node becomes idle, and then the tasks are automatically resumed.
-
-> **Note:**
->
-> When the data migration task is in the process of full export or import, the migration task does not support high availability. Here are the main reasons:
->
-> - For the full export, MySQL does not support exporting from a specific snapshot point yet. This means that after the data migration task is rescheduled or restarted, the export cannot resume from the previous interruption point.
->
-> - For the full import, DM-worker does not support reading exported full data across the nodes yet. This means that after the data migration task is scheduled to a new DM-worker node, you cannot read the exported full data on the original DM-worker node before the scheduling happens.
+- [Data Migration 高可用机制](/dm/dm-high-availability.md)

@@ -1,63 +1,65 @@
 ---
 title: TiDB 2.1 RC5 Release Notes
-summary: TiDB 2.1 RC5 was released on November 12, 2018, with improvements in stability, SQL optimizer, statistics, and execution engine. Fixes include issues with IndexReader, IndexScan Prepared statement, Union statement, and JSON data conversion. Server improvements include log readability, table data retrieval, and environment variable additions. PD fixes issues related to Region key reading, `regions/check` API, PD restart join, and event loss. TiKV improves error messages, adds panic mark file, downgrades grpcio, and adds an upper limit to the `kv_scan` interface.
+summary: TiDB 2.1 RC5 版本发布，对系统稳定性、优化器、统计信息和执行引擎做了很多改进。包括修复了多个问题，提升了性能，增加了环境变量设置功能。PD 修复了多个问题，TiKV 优化了报错信息和接口限制。
+aliases: ['/zh/tidb/dev/release-2.1-rc.5/','/zh/tidb/v2.1/release-2.1-rc.5','/docs-cn/dev/releases/release-2.1-rc.5/','/docs-cn/dev/releases/21rc5/','/zh/tidb/v5.4/release-2.1-rc.5','/zh/tidb/v6.1/release-2.1-rc.5','/zh/tidb/v6.5/release-2.1-rc.5','/zh/tidb/v7.1/release-2.1-rc.5','/zh/tidb/v7.5/release-2.1-rc.5','/zh/tidb/v8.1/release-2.1-rc.5']
 ---
 
 <!-- markdownlint-disable MD032 -->
 
 # TiDB 2.1 RC5 Release Notes
 
-On November 12, 2018, TiDB 2.1 RC5 is released. Compared with TiDB 2.1 RC4, this release has great improvement in stability, SQL optimizer, statistics information, and execution engine.
+2018 年 11 月 12 日，TiDB 发布 2.1 RC5 版。相比 2.1 RC4 版本，该版本对系统稳定性、优化器、统计信息以及执行引擎做了很多改进。
 
 ## TiDB
 
-+ SQL Optimizer
-    - Fix the issue that `IndexReader` reads the wrong handle in some cases [#8132](https://github.com/pingcap/tidb/pull/8132)
-    - Fix the issue occurred while the `IndexScan Prepared` statement uses `Plan Cache` [#8055](https://github.com/pingcap/tidb/pull/8055)
-    - Fix the issue that the result of the `Union` statement is unstable [#8165](https://github.com/pingcap/tidb/pull/8165)
-+ SQL Execution Engine
-    - Improve the performance of TiDB on inserting or updating wide tables [#8024](https://github.com/pingcap/tidb/pull/8024)
-    - Support the unsigned `int` flag in the `Truncate` built-in function [#8068](https://github.com/pingcap/tidb/pull/8068)
-    - Fix the error occurred while converting JSON data to the decimal type [#8109](https://github.com/pingcap/tidb/pull/8109)
-    - Fix the error occurred when you `Update` the float type [#8170](https://github.com/pingcap/tidb/pull/8170)
-+ Statistics
-    - Fix the incorrect statistics issue during point queries in some cases [#8035](https://github.com/pingcap/tidb/pull/8035)
-    - Fix the selectivity estimation of statistics for primary key in some cases [#8149](https://github.com/pingcap/tidb/pull/8149)
-    - Fix the issue that the statistics of deleted tables are not cleared up for a long period of time [#8182](https://github.com/pingcap/tidb/pull/8182)
++ SQL 优化器
+    - 修复 `IndexReader` 在某些情况下读取的 handle 不正确的问题 [#8132](https://github.com/pingcap/tidb/pull/8132)
+    - 修复 `IndexScan Prepared` 语句在使用 `Plan Cache` 的时候的问题 [#8055](https://github.com/pingcap/tidb/pull/8055)
+    - 修复 `Union` 语句结果不稳定的问题 [#8165](https://github.com/pingcap/tidb/pull/8165)
++ 执行器
+    - 提升 TiDB 插入和更新宽表的性能 [#8024](https://github.com/pingcap/tidb/pull/8024)
+    - 内建函数 `Truncate` 支持 unsigned `int` 参数 [#8068](https://github.com/pingcap/tidb/pull/8068)
+    - 修复转换 JSON 数据到 decimal 类型出错的问题 [#8109](https://github.com/pingcap/tidb/pull/8109)
+    - 修复 float 类型在 `Update` 时出错的问题 [#8170](https://github.com/pingcap/tidb/pull/8170)
++ 统计信息
+    - 修复点查在某些情况下，统计信息出现错误的问题 [#8035](https://github.com/pingcap/tidb/pull/8035)
+    - 修复统计信息某些情况下在 primary key 的选择率的问题 [#8149](https://github.com/pingcap/tidb/pull/8149)
+    - 修复被删除的表的统计信息长时间没有清理的问题 [#8182](https://github.com/pingcap/tidb/pull/8182)
 + Server
-    + Improve the readability of logs and make logs better
+    + 提升日志的可读性，完善日志信息
         - [#8063](https://github.com/pingcap/tidb/pull/8063)
         - [#8053](https://github.com/pingcap/tidb/pull/8053)
         - [#8224](https://github.com/pingcap/tidb/pull/8224)
-    - Fix the error occurred when obtaining the table data of `infoschema.profiling` [#8096](https://github.com/pingcap/tidb/pull/8096)
-    - Replace the unix socket with the pumps client to write binlogs [#8098](https://github.com/pingcap/tidb/pull/8098)
-    - Add the threshold value for the `tidb_slow_log_threshold` environment variable, which dynamically sets the slow log [#8094](https://github.com/pingcap/tidb/pull/8094)
-    - Add the original length of a SQL statement truncated while the `tidb_query_log_max_len` environment variable dynamically sets logs [#8200](https://github.com/pingcap/tidb/pull/8200)
-    - Add the `tidb_opt_write_row_id` environment variable to control whether to allow writing `_tidb_rowid` [#8218](https://github.com/pingcap/tidb/pull/8218)
-    - Add an upper bound to the `Scan` command of ticlient, to avoid overbound scan [#8081](https://github.com/pingcap/tidb/pull/8081), [#8247](https://github.com/pingcap/tidb/pull/8247)
+    - 修复获取 `infoschema.profiling` 表数据出错的问题 [#8096](https://github.com/pingcap/tidb/pull/8096)
+    - 替换 unix socket，使用 pumps client 来写 binlog [#8098](https://github.com/pingcap/tidb/pull/8098)
+    - 增加环境变量 `tidb_slow_log_threshold` 动态设置 slow log 的阈值 [#8094](https://github.com/pingcap/tidb/pull/8094)
+    - 增加环境变量 `tidb_query_log_max_len` 动态设置日志中被截断的原始 SQL 语句的长度 [#8200](https://github.com/pingcap/tidb/pull/8200)
+    - 增加环境变量 `tidb_opt_write_row_id` 来控制是否允许写入 `_tidb_rowid` [#8218](https://github.com/pingcap/tidb/pull/8218)
+    - ticlient `Scan` 命令增加边界，解决数据扫出边界的问题 [#8081](https://github.com/pingcap/tidb/pull/8081)，[#8247](https://github.com/pingcap/tidb/pull/8247)
 + DDL
-    - Fix the issue that executing DDL statements in transactions encounters an error in some cases [#8056](https://github.com/pingcap/tidb/pull/8056)
-    - Fix the issue that executing `truncate table` in partition tables does not take effect [#8103](https://github.com/pingcap/tidb/pull/8103)
-    - Fix the issue that the DDL operation does not roll back correctly after being cancelled in some cases [#8057](https://github.com/pingcap/tidb/pull/8057)
-    - Add the `admin show next_row_id` command to return the next available row ID [#8268](https://github.com/pingcap/tidb/pull/8268)
+    - 修复在事务中某些情况下执行 DDL 语句出错的问题 [#8056](https://github.com/pingcap/tidb/pull/8056)
+    - 修复 partition 分区表执行 `truncate table` 没有生效的问题 [#8103](https://github.com/pingcap/tidb/pull/8103)
+    - 修复某些情况下 DDL 操作在被 cancel 之后没有正确回滚的问题 [#8057](https://github.com/pingcap/tidb/pull/8057)
+    - 增加命令 `admin show next_row_id`，返回下一个可用的行 ID [#8268](https://github.com/pingcap/tidb/pull/8268)
 
 ## PD
 
-+ Fix the issues related to `pd-ctl` reading the Region key
++ 修复 `pd-ctl` 读取 Region key 的相关问题
     - [#1298](https://github.com/pingcap/pd/pull/1298)
     - [#1299](https://github.com/pingcap/pd/pull/1299)
     - [#1308](https://github.com/pingcap/pd/pull/1308)
-+ Fix the issue that the `regions/check` API returns the wrong result [#1311](https://github.com/pingcap/pd/pull/1311)
-+ Fix the issue that PD cannot restart join after a PD join failure [#1279](https://github.com/pingcap/pd/pull/1279)
-+ Fix the issue that `watch leader` might lose events in some cases [#1317](https://github.com/pingcap/pd/pull/1317)
+
+- 修复 `regions/check` API 输出错误的问题 [#1311](https://github.com/pingcap/pd/pull/1311)
+- 修复 PD join 失败后无法重新 join 的问题 [#1279](https://github.com/pingcap/pd/pull/1279)
+- 修复某些情况下 watch leader 会丢失事件的问题 [#1317](https://github.com/pingcap/pd/pull/1317)
 
 ## TiKV
 
-+ Improve the error message of `WriteConflict` [#3750](https://github.com/tikv/tikv/pull/3750)
-+ Add the panic mark file [#3746](https://github.com/tikv/tikv/pull/3746)
-+ Downgrade grpcio to avoid the segment fault issue caused by the new version of gRPC [#3650](https://github.com/tikv/tikv/pull/3650)
-+ Add an upper limit to the `kv_scan` interface [#3749](https://github.com/tikv/tikv/pull/3749)
+- 优化 `WriteConflict` 报错信息 [#3750](https://github.com/tikv/tikv/pull/3750)
+- 增加 panic 标记文件 [#3746](https://github.com/tikv/tikv/pull/3746)
+- 降级 grpcio，避免新版本 gRPC 导致的 segment fault 问题 [#3650](https://github.com/tikv/tikv/pull/3650)
+- 增加 `kv_scan` 接口扫描上界的限制 [#3749](https://github.com/tikv/tikv/pull/3749)
 
 ## Tools
 
-- Support the TiDB-Binlog cluster, which is not compatible with the older version of binlog [#8093](https://github.com/pingcap/tidb/pull/8093), [documentation](https://docs-archive.pingcap.com/tidb/v2.1/tidb-binlog-overview)
+- TiDB 支持 TiDB Binlog cluster，不兼容旧版本 TiDB Binlog [#8093](https://github.com/pingcap/tidb/pull/8093)，[使用文档](https://docs-archive.pingcap.com/zh/tidb/v2.1/tidb-binlog-overview)

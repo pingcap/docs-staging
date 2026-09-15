@@ -1,49 +1,50 @@
 ---
 title: TiDB 3.1.1 Release Notes
-summary: TiDB 3.1.1 was released on April 30, 2020. New features include table option for `auto_rand_base` and `Feature ID` comment. Bug fixes include isolation read setting, partition selection syntax, and wrong results from nested queries. TiFlash also received bug fixes and improvements in data reading and storage path modification. Backup & Restore (BR) fixed issues related to table restoration and data insertion.
+summary: TiDB 3.1.1 发布，新增了 auto_rand_base 表选项和 Feature ID 注释。TiFlash 优化了读写负载相关图表和 chunk encode decimal 数据的流程。修复了隔离读设置不生效、hash 分区表上的分区选择语法报错、update sql 中包含 view 仍然报错等问题。TiFlash 修复了非 normal 状态时读取数据错误、表名映射方式支持 recover table/flashback table、数据存储路径问题、读模型优化和特殊字符导致无法启动的问题。BR 修复了恢复带有 auto_random 属性的表后插入数据触发 duplicate entry 错误的问题。
+aliases: ['/zh/tidb/dev/release-3.1.1/','/zh/tidb/v3.1/release-3.1.1','/docs-cn/dev/releases/release-3.1.1/','/docs-cn/dev/releases/3.1.1/','/zh/tidb/v5.4/release-3.1.1','/zh/tidb/v6.1/release-3.1.1','/zh/tidb/v6.5/release-3.1.1','/zh/tidb/v7.1/release-3.1.1','/zh/tidb/v7.5/release-3.1.1','/zh/tidb/v8.1/release-3.1.1']
 ---
 
 # TiDB 3.1.1 Release Notes
 
-Release date: April 30, 2020
+发版日期：2020 年 4 月 30 日
 
-TiDB version: 3.1.1
+TiDB 版本：3.1.1
 
-TiDB Ansible version: 3.1.1
+TiDB Ansible 版本：3.1.1
 
-## New Features
-
-+ TiDB
-
-    - Add the table option for `auto_rand_base` [#16812](https://github.com/pingcap/tidb/pull/16812)
-    - Add the `Feature ID` comment: In the special comments of SQL statements, only the registered statement fragment can be parsed by the parser; otherwise, the statement is ignored [#16155](https://github.com/pingcap/tidb/pull/16155)
-
-+ TiFlash
-
-    - Cache the `handle` and `version` columns to reduce the disk I/O for a single read request
-    - Add in Grafana the graphics related to the read and write workloads of DeltaTree engine
-    - Optimize the decimal data encoding in the `Chunk` codec
-    - Reduce the number of open file descriptors when TiFlash is in low workload
-
-## Bug Fixes
+## 新功能
 
 + TiDB
 
-    - Fix the issue that the isolation read setting at the instance level does not take effect, and that the isolation read setting is incorrectly retained after TiDB is upgraded [#16482](https://github.com/pingcap/tidb/pull/16482) [#16802](https://github.com/pingcap/tidb/pull/16802)
-    - Fix the partition selection syntax on the hash partitioned table so that an error is not reported for syntaxes such as `partition (P0)` [#16076](https://github.com/pingcap/tidb/pull/16076)
-    - Fix the issue that when an `UPDATE` SQL statement only queries from a view but does not update the view, the update statement still reports an error [#16789](https://github.com/pingcap/tidb/pull/16789)
-    - Fix the issue of wrong results caused by removing the `not not` from the nested query [#16423](https://github.com/pingcap/tidb/pull/16423)
+    - 添加 `auto_rand_base` 的 table option [#16812](https://github.com/pingcap/tidb/pull/16812)
+    - 添加 `Feature ID` 注释：在 SQL 语句的特殊注释中，只有被注册了语句片段才能被 parser 正常解析，否则将被忽略 [#16155](https://github.com/pingcap/tidb/pull/16155)
 
 + TiFlash
 
-    - Fix the issue that an error occurs when reading data from a Region that is in the abnormal state
-    - Modify the mapping of table names in TiFlash to correctly support `recover table`/`flashback table`
-    - Modify the storage path to fix the potential data loss issue that occurs when renaming a table
-    - Modify the read mode in the online update scenario to improve the read performance
-    - Fix the issue that TiFlash fails to start normally after upgrade if the database/table name contains special characters
+    - 缓存 `handle` 列和 `version` 列减小单次读请求的磁盘 I/O
+    - Grafana 添加 DeltaTree 引擎读写负载相关图表
+    - 优化 TiFlash chunk encode decimal 数据的流程
+    - TiFlash 低负载时，减少打开的文件描述符数量
+
+## Bug 修复
+
++ TiDB
+
+    - 修复实例级别的隔离读设置不生效的问题，以及 TiDB 升级后隔离读设置被不正确保留的问题 [#16482](https://github.com/pingcap/tidb/pull/16482) [#16802](https://github.com/pingcap/tidb/pull/16802)
+    - 修复 hash 分区表上面的分区选择语法，现在 `partition(P0)` 这样的语法不会报错 [#16076](https://github.com/pingcap/tidb/pull/16076)
+    - 修复若 update sql 中包含 view，但不会对 view 进行 update，update 语句仍然报错的问题[#16789](https://github.com/pingcap/tidb/pull/16789)
+    - 修复对查询最内层的 `not not` 消除而造成结果错误的问题 [#16423](https://github.com/pingcap/tidb/pull/16423)
+
++ TiFlash
+
+    - 修复当 Region 处于非 normal 状态时读取产生的数据错误
+    - 修复 TiFlash 中表名的映射方式以正确支持 `recover table`/`flashback table`
+    - 修复数据存储路径以解决 `rename table` 时潜在的数据丢失问题 
+    - 修复在线更新时的读模型以优化读性能
+    - 修复 database/table name 含特殊字符，升级后无法正常启动的问题
 
 + Tools
 
     - Backup & Restore (BR)
 
-        * Fix the issue that after BR restores a table with the `auto_random` attribute, inserting data might trigger the duplicate entry error [#241](https://github.com/pingcap/br/issues/241)
+        * 修复 BR 恢复带有 auto_random 属性的表之后，插入数据有一定概率触发duplicate entry 错误的问题 [#241](https://github.com/pingcap/br/issues/241)

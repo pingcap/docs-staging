@@ -1,70 +1,68 @@
 ---
-title: How to Run TPC-C Test on TiDB
-summary: This document describes how to test TiDB using TPC-C, an online transaction processing benchmark. It specifies the initial state of the database, provides commands for loading data, running the test, and cleaning up test data. The test measures the maximum qualified throughput using tpmC (transactions per minute).
+title: 如何对 TiDB 进行 TPC-C 测试
+summary: 本文介绍了如何对 TiDB 进行 TPC-C 测试。TPC-C 是一个对 OLTP 系统进行测试的规范，使用商品销售模型对系统进行测试，包含五类事务：NewOrder、Payment、OrderStatus、Delivery、StockLevel。测试使用 tpmC 值衡量系统最大有效吞吐量，以 NewOrder Transaction 为准。使用 go-tpc 进行测试实现，通过 TiUP 命令下载测试程序。测试包括数据导入、运行测试和清理测试数据。
 ---
 
-# How to Run TPC-C Test on TiDB
+# 如何对 TiDB 进行 TPC-C 测试
 
-This document describes how to test TiDB using [TPC-C](http://www.tpc.org/tpcc/).
+本文介绍如何对 TiDB 进行 [TPC-C](http://www.tpc.org/tpcc/) 测试。
 
-TPC-C is an online transaction processing (OLTP) benchmark. It tests the OLTP system by using a commodity sales model that involves the following five transactions of different types:
+TPC-C 是一个对 OLTP（联机交易处理）系统进行测试的规范，使用一个商品销售模型对 OLTP 系统进行测试，其中包含五类事务：
 
-* NewOrder
-* Payment
-* OrderStatus
-* Delivery
-* StockLevel
+* NewOrder – 新订单的生成
+* Payment – 订单付款
+* OrderStatus – 最近订单查询
+* Delivery – 配送
+* StockLevel – 库存缺货状态分析
 
-## Prepare
+在测试开始前，TPC-C Benchmark 规定了数据库的初始状态，也就是数据库中数据生成的规则，其中 ITEM 表中固定包含 10 万种商品，仓库的数量可进行调整，假设 WAREHOUSE 表中有 W 条记录，那么：
 
-Before testing, TPC-C Benchmark specifies the initial state of the database, which is the rule for data generation in the database. The `ITEM` table contains a fixed number of 100,000 items, while the number of warehouses can be adjusted. If there are W records in the `WAREHOUSE` table, then:
+* STOCK 表中应有 W \* 10 万条记录（每个仓库对应 10 万种商品的库存数据）
+* DISTRICT 表中应有 W \* 10 条记录（每个仓库为 10 个地区提供服务）
+* CUSTOMER 表中应有 W \* 10 \* 3000 条记录（每个地区有 3000 个客户）
+* HISTORY 表中应有 W \* 10 \* 3000 条记录（每个客户一条交易历史）
+* ORDER 表中应有 W \* 10 \* 3000 条记录（每个地区 3000 个订单），并且最后生成的 900 个订单被添加到 NEW-ORDER 表中，每个订单随机生成 5 ~ 15 条 ORDER-LINE 记录。
 
-* The `STOCK` table has W \* 100,000 records (Each warehouse corresponds to the stock data of 100,000 items)
-* The `DISTRICT` table has W \* 10 records (Each warehouse provides services to 10 districts)
-* The `CUSTOMER` table has W \* 10 \* 3,000 records (Each district has 3,000 customers)
-* The `HISTORY` table has W \* 10 \* 3,000 records (Each customer has one transaction history)
-* The `ORDER` table has W \* 10 \* 3,000 records (Each district has 3,000 orders and the last 900 orders generated are added to the `NEW-ORDER` table. Each order randomly generates 5 ~ 15 ORDER-LINE records.)
+我们将以 1000 WAREHOUSE 为例进行测试。
 
-In this document, the testing uses 1,000 warehouses as an example to test TiDB.
+TPC-C 使用 tpmC 值 (Transactions per Minute) 来衡量系统最大有效吞吐量 (MQTh, Max Qualified Throughput)，其中 Transactions 以 NewOrder Transaction 为准，即最终衡量单位为每分钟处理的新订单数。
 
-TPC-C uses tpmC (transactions per minute) to measure the maximum qualified throughput (MQTh, Max Qualified Throughput). The transactions are the NewOrder transactions and the final unit of measure is the number of new orders processed per minute.
-
-The test in this document is implemented based on [go-tpc](https://github.com/pingcap/go-tpc). You can download the test program using [TiUP](/tiup/tiup-overview.md) commands.
+本文使用 [go-tpc](https://github.com/pingcap/go-tpc) 作为 TPC-C 测试实现，可以通过 [TiUP](/tiup/tiup-overview.md) 命令下载测试程序：
 
 
 ```shell
 tiup install bench
 ```
 
-For detailed usage of the TiUP Bench component, see [TiUP Bench](/tiup/tiup-bench.md).
+关于 TiUP Bench 组件的详细用法可参考 [TiUP Bench](/tiup/tiup-bench.md)。
 
-Assume that you have deployed a TiDB cluster with two TiDB servers located at 172.16.5.140 and 172.16.5.141, and both servers are listening on port 4000. You can run a TPC-C test with the following steps.
+假设已部署 TiDB 集群，其中 TiDB 节点部署在 172.16.5.140、 172.16.5.141 实例上，端口都为 4000，可按如下步骤进行 TPC-C 测试。
 
-## Load data
+## 导入数据
 
-**Loading data is usually the most time-consuming and problematic stage of the entire TPC-C test.** This section provides the following command to load data.
+**导入数据通常是整个 TPC-C 测试中最耗时，也是最容易出问题的阶段。**
 
-Execute the following TiUP command in Shell:
+在 shell 中运行 TiUP 命令：
 
 
 ```shell
 tiup bench tpcc -H 172.16.5.140,172.16.5.141 -P 4000 -D tpcc --warehouses 1000 --threads 20 prepare
 ```
 
-Based on different machine configurations, this loading process might take a few hours. If the cluster size is small, you can use a smaller `WAREHOUSE` value for the test.
+基于不同的机器配置，这个过程可能会持续几个小时。如果是小型集群，可以使用较小的 WAREHOUSE 值进行测试。
 
-After the data is loaded, you can execute the `tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 4 check` command to validate the data correctness.
+数据导入完成后，可以通过命令 `tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 4 check` 验证数据正确性。
 
-## Run the test
+## 运行测试
 
-Execute the following command to run the test:
+运行测试的命令是：
 
 
 ```shell
 tiup bench tpcc -H 172.16.5.140,172.16.5.141 -P 4000 -D tpcc --warehouses 1000 --threads 100 --time 10m run
 ```
 
-During the test, test results are continuously printed on the console:
+运行过程中控制台上会持续打印测试结果：
 
 ```text
 [Current] NEW_ORDER - Takes(s): 4.6, Count: 5, TPM: 65.5, Sum(ms): 4604, Avg(ms): 920, 90th(ms): 1500, 99th(ms): 1500, 99.9th(ms): 1500
@@ -74,7 +72,7 @@ During the test, test results are continuously printed on the console:
 ...
 ```
 
-After the test is finished, the test summary results are printed:
+运行结束后，会打印测试统计结果：
 
 ```text
 [Summary] DELIVERY - Takes(s): 455.2, Count: 32, TPM: 4.2, Sum(ms): 44376, Avg(ms): 1386, 90th(ms): 2000, 99th(ms): 4000, 99.9th(ms): 4000
@@ -85,11 +83,9 @@ After the test is finished, the test summary results are printed:
 [Summary] STOCK_LEVEL - Takes(s): 487.6, Count: 41, TPM: 5.0, Sum(ms): 9318, Avg(ms): 227, 90th(ms): 512, 99th(ms): 1000, 99.9th(ms): 1000
 ```
 
-After the test is finished, you can execute the `tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 4 check` command to validate the data correctness.
+测试完成之后，也可以运行 `tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 4 check` 进行数据正确性验证。
 
-## Clean up test data
-
-Execute the following command to clean up the test data:
+## 清理测试数据
 
 
 ```shell

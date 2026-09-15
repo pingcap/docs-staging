@@ -1,29 +1,28 @@
 ---
-title: Best Practices for Local Reads in Three-Data-Center Deployments
-summary: TiDB's three data center deployment model can cause increased access latency due to cross-center data reads. To mitigate this, the Stale Read feature allows for local historical data access, reducing latency at the expense of real-time data availability. When using Stale Read in geo-distributed scenarios, TiDB accesses local replicas to avoid cross-center network latency. This is achieved by configuring the `zone` label and setting `tidb_replica_read` to `closest-replicas`. For more information on performing Stale Read, refer to the documentation.
+title: 在三数据中心下就近读取数据
+summary: 了解通过 Stale Read 功能在三数据中心下就近读取数据，减少跨数据中心请求。
+aliases: ['/zh/tidb/stable/three-dc-local-read/','/zh/tidb/dev/three-dc-local-read/']
 ---
 
-# Best Practices for Local Reads in Three-Data-Center Deployments
+# 在三数据中心下就近读取数据
 
-In the model of three data centers, a Region has three replicas which are isolated in each data center. However, due to the requirement of strongly consistent read, TiDB must access the Leader replica of the corresponding data for every query. If the query is generated in a data center different from that of the Leader replica, TiDB needs to read data from another data center, thus causing the access latency to increase.
+在三数据中心模式下，Region 的三个副本都会隔离在各个数据中心里。然而在强一致读的要求下，TiDB 的每一个查询都需要访问对应数据的 Leader 副本，而查询的来源可能和 Leader 所在的数据中心不一致，这就会引起跨数据中心的数据访问，从而造成访问的延迟上升。本文主要介绍使用 [Stale Read](/stale-read.md) 功能，以牺牲数据实时性的方式，避免跨数据中心的访问，从而降低访问的延迟。
 
-This document describes how to use the [Stale Read](/stale-read.md) feature to avoid cross-center access and reduce the access latency at the expense of real-time data availability.
+## 部署三数据中心的 TiDB 集群
 
-## Deploy a TiDB cluster of three data centers
+部署三数据中心的方法，参考[同城多数据中心部署 TiDB](/multi-data-centers-in-one-city-deployment.md)。
 
-For the three-data-center deployment method, refer to [Multiple Data Centers in One City Deployment](/multi-data-centers-in-one-city-deployment.md).
-
-Note that if both the TiKV and TiDB nodes have the configuration item `labels` configured, the TiKV and TiDB nodes in the same data center must have the same value for the `zone` label. For example, if a TiKV node and a TiDB node are both in the data center `dc-1`, then the two nodes need to be configured with the following label:
+请注意，如果 TiKV 和 TiDB 都有 `labels` 配置项，在给 TiKV 和 TiDB 配置标签时，同一个数据中心下的 TiKV 和 TiDB 应该配置相同的 `zone` 标签。假设 TiKV 和 TiDB 都在 `dc-1` 数据中心下，那么两者都需要配置如下标签：
 
 ```
 [labels]
 zone=dc-1
 ```
 
-## Perform local read using Stale Read
+## 使用 Stale Read 就近读取数据
 
-[Stale Read](/stale-read.md) is a mechanism that TiDB provides for the users to read historical data. Using this mechanism, you can read the corresponding historical data of a specific point in time or within a specified time range, and thus save the latency brought by data replication between storage nodes. When using Stale Read in some scenarios of geo-distributed deployment, TiDB accesses the replica in the current data center to read the corresponding data at the expense of some real-time performance, which avoids network latency brought by cross-center connection and reduces the access latency for the entire query process.
+[Stale Read](/stale-read.md) 为用户提供了一种读取历史数据的一种机制。使用 Stale Read 功能，你能从指定时间点或时间范围内读取对应的历史数据，从而避免数据同步带来延迟。在部分跨数据中心部署的场景中使用 Stale Read 功能，通过牺牲一定的实时性，TiDB 可就近访问对应数据所在当前中心的副本，避免跨数据中心的网络延迟，降低整体查询的访问延迟。
 
-When TiDB receives a Stale Read query, if the `zone` label of that TiDB node is configured, and [`tidb_replica_read`](/system-variables.md#tidb_replica_read-new-in-v40) is set to `closest-replicas`, then TiDB sends the request to the TiKV node with the same `zone` label where the corresponding data replica resides.
+当 TiDB 收到 Stale Read 查询时，假如对应的 TiDB 配置了 `zone` 标签，而且 [`tidb_replica_read`](/system-variables.md#tidb_replica_read-从-v40-版本开始引入) 为 `closest-replicas`，就会将请求发送到对应数据副本所在 TiKV 拥有相同的 `zone` 标签的节点上。
 
-For how to perform Stale Read, see [Perform Stale Read using the `AS OF TIMESTAMP` clause](/as-of-timestamp.md).
+如何使用 Stale Read 查询，参考[使用 AS OF TIMESTAMP 语法读取历史数据](/as-of-timestamp.md)。

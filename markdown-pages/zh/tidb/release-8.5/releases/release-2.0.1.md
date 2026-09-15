@@ -1,49 +1,50 @@
 ---
-title: TiDB 2.0.1 Release Notes
-summary: TiDB 2.0.1 was released on May 16, 2018, with improvements in MySQL compatibility and system stability. Updates include real-time progress for 'Add Index', a new session variable for automatic statistics update, bug fixes, compatibility improvements, and behavior changes. PD added a new scheduler, optimized region balancing, and fixed various issues. TiKV fixed issues related to reading, thread calls, raftstore blocking, and split causing dirty read. Overall, the release focuses on enhancing performance, stability, and compatibility.
+title: TiDB 2.0.1 release notes
+summary: TiDB 2.0.1 版本对 MySQL 兼容性和系统稳定性做出了改进。TiDB 新增了实时更新 `Add Index` 进度到 DDL 任务信息中的功能，添加了 Session 变量 `tidb_auto_analyze_ratio` 控制统计信息自动更新阈值的功能。修复了事务提交失败时可能未清理所有残留状态的问题，以及其他 Bug 和兼容性问题。PD 新增了 `Scatter Range` 调度和 learner 相关的 metrics，修复了多个问题。TiKV 修复了多个问题，优化了慢查询的日志，减少了 `thread_yield` 的调用次数。
+aliases: ['/zh/tidb/dev/release-2.0.1/','/zh/tidb/v2.0/release-2.0.1','/docs-cn/dev/releases/release-2.0.1/','/docs-cn/dev/releases/201/','/zh/tidb/v5.4/release-2.0.1','/zh/tidb/v6.1/release-2.0.1','/zh/tidb/v6.5/release-2.0.1','/zh/tidb/v7.1/release-2.0.1','/zh/tidb/v7.5/release-2.0.1','/zh/tidb/v8.1/release-2.0.1']
 ---
-
+<!-- markdownlint-disable MD001 -->
 # TiDB 2.0.1 Release Notes
 
-On May 16, 2018, TiDB 2.0.1 is released. Compared with TiDB 2.0.0 (GA), this release has great improvement in MySQL compatibility and system stability.
+2018 年 5 月 16 日，TiDB 发布 2.0.1 版。该版本在 2.0.0 (GA) 版的基础上，对 MySQL 兼容性、系统稳定性做出了改进。
 
 ## TiDB
 
-- Update the progress of `Add Index` to the DDL job information in real time
-- Add the `tidb_auto_analyze_ratio` session variable to control the threshold value of automatic statistics update
-- Fix an issue that not all residual states are cleaned up when the transaction commit fails
-- Fix a bug about adding indexes in some conditions
-- Fix the correctness related issue when DDL modifies surface operations in some concurrent scenarios
-- Fix a bug that the result of `LIMIT` is incorrect in some conditions
-- Fix a capitalization issue of the `ADMIN CHECK INDEX` statement to make its index name case insensitive
-- Fix a compatibility issue of the `UNION` statement
-- Fix a compatibility issue when inserting data of `TIME` type
-- Fix a goroutine leak issue caused by `copIteratorTaskSender` in some conditions
-- Add an option for TiDB to control the behaviour of Binlog failure
-- Refactor the `Coprocessor` slow log to distinguish between the scenario of tasks with long processing time and long waiting time
-- Log nothing when meeting MySQL protocol handshake error, to avoid too many logs caused by the load balancer Keep Alive mechanism
-- Refine the "Out of range value for column" error message
-- Fix a bug when there is a subquery in an `Update` statement
-- Change the behaviour of handling `SIGTERM`, and do not wait for all queries to terminate anymore
+- 实时更新 `Add Index` 的进度到 DDL 任务信息中
+- 添加 Session 变量 `tidb_auto_analyze_ratio` 控制统计信息自动更新阈值
+- 修复当事务提交失败时可能未清理所有的残留状态的问题
+- 修复加索引在部分情况下的 Bug
+- 修复 DDL 修改表面操作在某些并发场景下的正确性问题
+- 修复某些情况下 `LIMIT` 结果不正确的问题
+- 修复 `ADMIN CHECK INDEX` 语句索引名字区分大小写问题
+- 修复 `UNION` 语句的兼容性问题
+- 修复插入 `TIME` 类型数据的兼容性问题
+- 修复某些情况下 `copIteratorTaskSender` 导致的 goroutine 泄漏问题
+- 增加一个选项，用于设置 TiDB 在写 Binlog 失败的情况下的行为
+- 优化 Coprocessor 慢请求日志格式，区分处理时间长与排队时间长的任务
+- MySQL 协议握手阶段发生错误不打印日志，避免 KeepAlive 造成大量日志
+- 优化 `Out of range value for column` 的错误信息
+- 修复 `Update` 语句中遇到子查询导致结果错误的问题
+- 调整 TiDB 进程处理 `SIGTERM` 的行为，不等待正在执行的 Query 完成
 
 ## PD
 
-- Add the `Scatter Range` scheduler to balance Regions with the specified key range
-- Optimize the scheduling of Merge Region to prevent the newly split Region from being merged
-- Add Learner related metrics
-- Fix the issue that the scheduler is mistakenly deleted after restart
-- Fix the error that occurs when parsing the configuration file
-- Fix the issue that the etcd leader and the PD leader are not replicated
-- Fix the issue that Learner still appears after it is closed
-- Fix the issue that Regions fail to load because the packet size is too large
+- 添加 `Scatter Range` 调度，调度指定 Key Range 包含的 Region
+- 优化 `Merge Region` 调度，使新分裂不久的 Region 不能被合并
+- 添加 learner 相关的 metrics
+- 修复重启误删 scheduler 的问题
+- 修复解析配置文件出错问题
+- 修复 etcd leader 和 PD leader 不同步的问题
+- 修复关闭 learner 情况下还有 learner 出现的问题
+- 修复读取包过大造成 load Regions 失败的问题
 
 ## TiKV
 
-- Fix the issue that `SELECT FOR UPDATE` prevents others from reading
-- Optimize the slow query log
-- Reduce the number of `thread_yield` calls
-- Fix the bug that raftstore is accidentally blocked when generating the snapshot
-- Fix the issue that Learner cannot be successfully elected in special conditions
-- Fix the issue that split might cause dirty read in extreme conditions
-- Correct the default value of the read thread pool configuration
-- Speed up Delete Range
+- 修复 `SELECT FOR UPDATE` 阻止其他人读的问题
+- 优化慢查询的日志
+- 减少 `thread_yield` 的调用次数
+- 修复生成 snapshot 会意外阻塞 raftstore 的 bug
+- 修复特殊情况下开启 learner 无法选举成功的问题
+- 修复极端情况下分裂可能导致的脏读问题
+- 修正读线程池的配置默认值
+- 修正删大数据表会影响写性能的问题

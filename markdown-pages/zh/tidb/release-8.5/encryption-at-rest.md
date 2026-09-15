@@ -1,74 +1,72 @@
 ---
-title: Encryption at Rest
-summary: Learn how to enable encryption at rest to protect sensitive data.
+title: 静态加密
+summary: 了解如何启用静态加密功能保护敏感数据。
 ---
 
-# Encryption at Rest
+# 静态加密
 
-> **Note:**
+> **注意：**
 >
-> If your cluster is deployed on AWS and uses the EBS storage, it is recommended to use the EBS encryption. See [AWS documentation - EBS Encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html). You are using the non-EBS storage on AWS such as the local NVMe storage, it is recommended to use encryption at rest introduced in this document.
+> 如果集群部署在 AWS 上并在使用 EBS (Elastic Block Store) 存储数据，建议使用 EBS 加密，详细信息请参考 [AWS 文档 - EBS 加密](https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/EBSEncryption.html)。如果集群部署在 AWS 上，但未使用 EBS 存储（例如使用本地 NVMe 存储），则建议使用本文中介绍的静态加密方式。
 
-Encryption at rest means that data is encrypted when it is stored. For databases, this feature is also referred to as TDE (transparent data encryption). This is opposed to encryption in flight (TLS) or encryption in use (rarely used). Different things could be doing encryption at rest (such as SSD drive, file system, and cloud vendor), but by having TiKV do the encryption before storage this helps ensure that attackers must authenticate with the database to gain access to data. For example, when an attacker gains access to the physical machine, data cannot be accessed by copying files on disk.
+静态加密 (encryption at rest) 即在存储数据时进行数据加密。对于数据库，静态加密功能也叫透明数据加密 (TDE)，区别于传输数据加密 (TLS) 或使用数据加密（很少使用）。SSD 驱动器、文件系统、云供应商等都可进行静态加密。但区别于这些加密方式，若 TiKV 在存储数据前就进行数据加密，攻击者则必须通过数据库的身份验证才能访问数据。例如，即使攻击者获得物理机的访问权限时，也无法通过复制磁盘上的文件来访问数据。
 
-## Encryption support in different TiDB components
+## 各 TiDB 组件支持的加密方式
 
-In a TiDB cluster, different components use different encryption methods. This section introduces the encryption supports in different TiDB components such as TiKV, TiFlash, PD, and Backup & Restore (BR).
+在一个 TiDB 集群中，不同的组件使用不同的加密方式。本节介绍 TiKV、 TiFlash、PD 和 Backup & Restore (BR) 等不同 TiDB 组件支持的加密方式。
 
-When a TiDB cluster is deployed, the majority of user data is stored on TiKV and TiFlash nodes. Some metadata is stored on PD nodes (for example, secondary index keys used as TiKV Region boundaries). To get the full benefits of encryption at rest, you need to enable encryption for all components. Backups, log files, and data transmitted over the network should also be considered when you implement encryption.
+部署好一个 TiDB 集群后，大部分用户数据会存储在 TiKV 和 TiFlash 节点上。此外，一些元数据会存储在 PD 节点上，例如用作为 TiKV Region 边界的二级索引密钥。为了能够充分发挥静态加密的优势，所有组件都需要启用加密功能。此外，进行加密时，也需要对备份、日志文件和通过网络传输的数据进行加密。
 
 ### TiKV
 
-TiKV supports encryption at rest. This feature allows TiKV to transparently encrypt data files using [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) or [SM4](https://en.wikipedia.org/wiki/SM4_(cipher)) in [CTR](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation) mode. To enable encryption at rest, an encryption key must be provided by the user and this key is called master key. TiKV automatically rotates data keys that it used to encrypt actual data files. Manually rotating the master key can be done occasionally. Note that encryption at rest only encrypts data at rest (namely, on disk) and not while data is transferred over network. It is advised to use TLS together with encryption at rest.
+TiKV 支持静态加密，即在 [CTR](https://zh.wikipedia.org/wiki/分组密码工作模式) 模式下使用 [AES](https://zh.wikipedia.org/wiki/高级加密标准) 或 [SM4](https://zh.wikipedia.org/wiki/SM4) 对数据文件进行透明加密。要启用静态加密，用户需提供一个加密密钥，即主密钥。TiKV 自动轮换 (rotate) 用于加密实际数据文件的密钥，主密钥则可以由用户手动轮换。请注意，静态加密仅加密静态数据（即磁盘上的数据），而不加密网络传输中的数据。建议 TLS 与静态加密一起使用。
 
-You can use Key Management Service (KMS) for both cloud and self-hosted deployments or supply the plaintext master key in a file.
+可以选择将 KMS (Key Management Service) 用于云上部署或本地部署，也可以指定将密钥以明文形式存储在文件中。
 
-TiKV currently does not exclude encryption keys and user data from core dumps. It is advised to disable core dumps for the TiKV process when using encryption at rest. This is not currently handled by TiKV itself.
+TiKV 当前不从核心转储 (core dumps) 中排除加密密钥和用户数据。建议在使用静态加密时禁用 TiKV 进程的核心转储，该功能目前无法由 TiKV 独立处理。
 
-TiKV tracks encrypted data files using the absolute path of the files. As a result, once encryption is turned on for a TiKV node, the user should not change data file paths configuration such as `storage.data-dir`, `raftstore.raftdb-path`, `rocksdb.wal-dir` and `raftdb.wal-dir`.
+TiKV 使用文件的绝对路径来跟踪已加密的数据文件。一旦 TiKV 节点开启了加密功能，用户就不应更改数据文件的路径配置，例如 `storage.data-dir`，`raftstore.raftdb-path`，`rocksdb.wal-dir` 和 `raftdb.wal-dir`。
 
-SM4 encryption is only supported in v6.3.0 and later versions of TiKV. TiKV versions earlier than v6.3.0 only support AES encryption. SM4 encryption affects performance. In the worst-case scenario, it might cause a ​50% to 80% throughput degradation. However, a sufficiently large [`storage.block-cache`](/tikv-configuration-file.md#storageblock-cache) can significantly mitigate this impact, reducing the throughput degradation to around 10%.
+SM4 加密只在 v6.3.0 及之后版本的 TiKV 上支持。v6.3.0 之前的 TiKV 仅支持 AES 加密。SM4 加密会对性能造成影响：最严重的情况下，会对吞吐造成 50% 到 80% 的回退；[`storage.block-cache`](/tikv-configuration-file.md#storageblock-cache) 足够大会显著降低加密对吞吐的影响，可将吞吐的回退降至 10% 左右。
 
 ### TiFlash
 
-TiFlash supports encryption at rest. Data keys are generated by TiFlash. All files (including data files, schema files, and temporary files) written into TiFlash (including TiFlash Proxy) are encrypted using the current data key. The encryption algorithms, the encryption configuration (in the [`tiflash-learner.toml` file](/tiflash/tiflash-configuration.md#configure-the-tiflashtoml-file) supported by TiFlash), and the meanings of monitoring metrics are consistent with those of TiKV.
+TiFlash 支持静态加密。数据密钥由 TiFlash 生成。TiFlash（包括 TiFlash Proxy）写入的所有文件，包括数据文件、Schema 文件、临时文件等，均由当前数据密钥加密。TiFlash 支持的加密算法、加密配置方法（配置项在 [`tiflash-learner.toml`](/tiflash/tiflash-configuration.md#配置文件-tiflash-learnertoml) 中）和监控项含义等均与 TiKV 一致。
 
-If you have deployed TiFlash with Grafana, you can check the **TiFlash-Proxy-Details** -> **Encryption** panel.
+如果 TiFlash 中部署了 Grafana 组件，可以查看 **TiFlash-Proxy-Details** -> **Encryption**。
 
-SM4 encryption is only supported in v6.4.0 and later versions of TiFlash. TiFlash versions earlier than v6.4.0 only support AES encryption.
+SM4 加密只在 v6.4.0 及之后版本的 TiFlash 上支持。v6.4.0 之前的 TiFlash 仅支持 AES 加密。
 
 ### PD
 
-Encryption-at-rest for PD is an experimental feature, which is configured in the same way as in TiKV.
+PD 的静态加密为实验特性，其配置方式与 TiKV 相同。
 
-### Backups with BR
+### BR 备份
 
-BR supports S3 server-side encryption (SSE) when backing up data to S3. A customer-owned AWS KMS key can also be used together with S3 server-side encryption. See [BR S3 server-side encryption](/encryption-at-rest.md#br-s3-server-side-encryption) for details.
+BR 支持对备份到 S3 的数据进行 S3 服务端加密 (SSE)。BR S3 服务端加密也支持使用用户自行创建的 AWS KMS 密钥进行加密，详细信息请参考 [BR S3 服务端加密](/encryption-at-rest.md#br-s3-服务端加密)。
 
-### Logging
+### 日志
 
-TiKV, TiDB, and PD info logs might contain user data for debugging purposes. The info log and this data in it are not encrypted. It is recommended to enable [log redaction](/log-redaction.md).
+TiKV，TiDB 和 PD 信息日志中可能包含用于调试的用户数据。信息日志不会被加密，建议开启[日志脱敏](/log-redaction.md)功能。
 
-## TiKV encryption at rest
+## TiKV 静态加密
 
-### Overview
+TiKV 当前支持的加密算法包括 AES128-CTR、AES192-CTR、AES256-CTR 和 SM4-CTR（仅 v6.3.0 及之后版本）。TiKV 使用信封加密 (envelop encryption)，所以启用加密后，TiKV 使用以下两种类型的密钥：
 
-TiKV currently supports encrypting data using AES128, AES192, AES256, or SM4 (only in v6.3.0 and later versions), in CTR mode. TiKV uses envelope encryption. As a result, two types of keys are used in TiKV when encryption is enabled.
+* 主密钥 (master key)：主密钥由用户提供，用于加密 TiKV 生成的数据密钥。用户在 TiKV 外部进行主密钥的管理。
+* 数据密钥 (data key)：数据密钥由 TiKV 生成，是实际用于加密的密钥。
 
-* Master key. The master key is provided by user and is used to encrypt the data keys TiKV generates. Management of master key is external to TiKV.
-* Data key. The data key is generated by TiKV and is the key actually used to encrypt data.
+多个 TiKV 实例可共用一个主密钥。在生产环境中，推荐通过 KMS 提供主密钥。目前 TiKV 支持 [AWS](https://docs.aws.amazon.com/zh_cn/kms/index.html)、[Google Cloud](https://cloud.google.com/security/products/security-key-management?hl=zh-CN) 和 [Azure](https://learn.microsoft.com/zh-cn/azure/key-vault/) 平台的 KMS 加密。要开启 KMS 加密，首先通过 KMS 创建用户主密钥 (CMK)，然后在配置文件中将 CMK 密钥的 ID 提供给 TiKV。如果 TiKV 无法访问 KMS CMK，TiKV 就无法启动或重新启动。
 
-The same master key can be shared by multiple instances of TiKV. The recommended way to provide a master key in production is via KMS. Currently, TiKV supports KMS encryption on [AWS](https://docs.aws.amazon.com/kms/index.html), [Google Cloud](https://cloud.google.com/security/products/security-key-management?hl=en), and [Azure](https://learn.microsoft.com/en-us/azure/key-vault/). To enable KMS encryption, you need to create a customer master key (CMK) through KMS, and then provide the CMK key ID to TiKV using the configuration file. If TiKV fails to get access to the KMS CMK, it will fail to start or restart.
+用户也可以通过文件形式提供主密钥。该文件须包含一个用十六进制字符串编码的 256 位（32 字节）密钥，并以换行符结尾（即 `\n`），且不包含其他任何内容。将密钥存储在磁盘上会泄漏密钥，因此密钥文件仅适合存储在 RAM 内存的 `tempfs` 中。
 
-Alternatively, if using custom key is desired, supplying the master key via file is also supported. The file must contain a 256 bits (or 32 bytes) key encoded as hex string, end with a newline (namely, `\n`), and contain nothing else. Persisting the key on disk, however, leaks the key, so the key file is only suitable to be stored on the `tempfs` in RAM.
+数据密钥由 TiKV 传递给底层存储引擎（即 RocksDB）。RocksDB 写入的所有文件，包括 SST 文件，WAL 文件和 MANIFEST 文件，均由当前数据密钥加密。TiKV 使用的其他临时文件（可能包括用户数据）也由相同的数据密钥加密。默认情况下，TiKV 每周自动轮换数据密钥，但是该时间段是可配置的。密钥轮换时，TiKV 不会重写全部现有文件来替换密钥，但如果集群的写入量恒定，则 RocksDB compaction 会将使用最新的数据密钥对数据重新加密。TiKV 跟踪密钥和加密方法，并使用密钥信息对读取的内容进行解密。
 
-Data keys are passed to the underlying storage engine (namely, RocksDB). All files written by RocksDB, including SST files, WAL files, and the MANIFEST file, are encrypted by the current data key. Other temporary files used by TiKV that may include user data are also encrypted using the same data key. Data keys are automatically rotated by TiKV every week by default, but the period is configurable. On key rotation, TiKV does not rewrite all existing files to replace the key, but RocksDB compaction are expected to rewrite old data into new data files, with the most recent data key, if the cluster gets constant write workload. TiKV keeps track of the key and encryption method used to encrypt each of the files and use the information to decrypt the content on reads.
+无论用户配置了哪种数据加密方法，数据密钥都使用 AES256-GCM 算法进行加密，以方便对主密钥进行验证。所以当使用文件而不是 KMS 方式指定主密钥时，主密钥必须为 256 位（32 字节）。
 
-Regardless of data encryption method, data keys are encrypted using AES256 in GCM mode for additional authentication. This required the master key to be 256 bits (32 bytes), when passing from file instead of KMS.
+### 配置加密
 
-### Configure encryption
-
-To enable encryption, you can add the encryption section in the configuration files of TiKV and PD:
+要启用加密，你可以在 TiKV 和 PD 的配置文件中添加加密部分：
 
 ```
 [security.encryption]
@@ -76,48 +74,48 @@ data-encryption-method = "aes128-ctr"
 data-key-rotation-period = "168h" # 7 days
 ```
 
-- `data-encryption-method` specifies the encryption algorithm. The possible values are `"aes128-ctr"`, `"aes192-ctr"`, `"aes256-ctr"`, `"sm4-ctr"` (only for v6.3.0 and later versions), and `"plaintext"`. The default value is `"plaintext"`, which means that encryption is disabled by default.
+- `data-encryption-method` 用于指定加密算法，可选值为 `"aes128-ctr"`、`"aes192-ctr"`、`"aes256-ctr"`、`"sm4-ctr"`（仅 v6.3.0 及之后版本）、`"plaintext"`。默认值为 `"plaintext"`，即默认不开启加密功能。
 
-    - For a new TiKV cluster or an existing TiKV cluster, only data written after encryption has been enabled is guaranteed to be encrypted.
-    - To disable encryption after it is enabled, remove `data-encryption-method` from the configuration file or set its value to `"plaintext"`, and then restart TiKV.
-    - To change the encryption algorithm, replace the value of `data-encryption-method` with a supported encryption algorithm, and then restart TiKV. After the replacement, as new data is written in, the encryption files generated by the previous encryption algorithm are gradually rewritten to files generated by the new encryption algorithm.
+    - 对于新 TiKV 集群或现有 TiKV 集群，只有启用加密功能后写入的数据才保证被加密。
+    - 开启加密功能后，如需禁用加密，请在配置文件中删除 `data-encryption-method`，或将该参数值设置为 `"plaintext"`，然后重启 TiKV。
+    - 若要替换加密算法，请将 `data-encryption-method` 替换成已支持的加密算法，然后重启 TiKV。替换加密算法后，旧加密算法生成的加密文件会随着新数据的写入逐渐被重写成新加密算法所生成的加密文件。
 
-- `data-key-rotation-period` specifies how often TiKV rotates keys.
+- `data-key-rotation-period` 用于指定 TiKV 轮换密钥的频率。
 
-If encryption is enabled (that is, the value of `data-encryption-method` is not `"plaintext"`), you must specify a master key in either of the following ways:
+如果启用了加密（即 `data-encryption-method` 的值不是 `"plaintext"`），则必须指定主密钥。你可以通过以下方式之一来指定主密钥：
 
-- [Specify a master key via KMS](#specify-a-master-key-via-kms)
-- [Specify a master key via a file](#specify-a-master-key-via-a-file)
+- [通过 KMS 指定主密钥](#通过-kms-指定主密钥)
+- [通过文件指定主密钥](#通过文件指定主密钥)
 
-#### Specify a master key via KMS
+#### 通过 KMS 指定主密钥
 
-TiKV supports KMS encryption for three platforms: AWS, Google Cloud, and Azure. Depending on the platform where your service is deployed, you can choose one of them to configure KMS encryption.
+TiKV 支持 AWS、Google Cloud 和 Azure 这三个平台的 KMS 加密。你可以根据服务部署的平台，选择其中之一配置 KMS 加密。
 
 <SimpleTab>
 
 <div label="AWS KMS">
 
-**Step 1. Create a master key**
+**第 1 步：创建主密钥**
 
-To create a key on AWS, take the following steps:
+在 AWS 上创建一个密钥，请进行以下操作：
 
-1. Go to the [AWS KMS](https://console.aws.amazon.com/kms) on the AWS console.
-2. Make sure that you have selected the correct region on the top right corner of your console.
-3. Click **Create key** and select **Symmetric** as the key type.
-4. Set an alias for the key.
+1. 进入 AWS 控制台的 [AWS KMS](https://console.aws.amazon.com/kms)。
+2. 确保在控制台的右上角选择正确的区域。
+3. 点击**创建密钥**，选择**对称** (Symmetric) 作为密钥类型。
+4. 为钥匙设置一个别名。
 
-You can also perform the operations using the AWS CLI:
+你也可以使用 AWS CLI 执行该操作：
 
 ```shell
 aws --region us-west-2 kms create-key
 aws --region us-west-2 kms create-alias --alias-name "alias/tidb-tde" --target-key-id 0987dcba-09fe-87dc-65ba-ab0987654321
 ```
 
-The `--target-key-id` to enter in the second command is in the output of the first command.
+需要在第二条命令中输入的 `--target-key-id` 是第一条命令的结果。
 
-**Step 2. Configure the master key**
+**第 2 步：配置主密钥**
 
-To specify the master key using AWS KMS, add the `[security.encryption.master-key]` configuration after the `[security.encryption]` section in the TiKV configuration file:
+要使用 AWS KMS 方式指定主密钥，请在 TiKV 的配置文件中 `[security.encryption]` 部分之后添加 `[security.encryption.master-key]` 配置：
 
 ```
 [security.encryption.master-key]
@@ -127,38 +125,38 @@ region = "us-west-2"
 endpoint = "https://kms.us-west-2.amazonaws.com"
 ```
 
-The `key-id` specifies the key ID for the KMS CMK. The `region` is the AWS region name for the KMS CMK. The `endpoint` is optional and you do not need to specify it normally unless you are using an AWS KMS-compatible service from a non-AWS vendor or need to use a [VPC endpoint for KMS](https://docs.aws.amazon.com/kms/latest/developerguide/kms-vpc-endpoint.html).
+`key-id` 指定 KMS CMK 的密钥 ID。`region` 为 KMS CMK 的 AWS 区域名。`endpoint` 通常无需指定，除非你在使用非 AWS 提供的 AWS KMS 兼容服务或需要使用 [KMS VPC endpoint](https://docs.aws.amazon.com/kms/latest/developerguide/kms-vpc-endpoint.html)。
 
-You can also use [multi-Region keys](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html) in AWS. For this, you need to set up a primary key in a specific region and add replica keys in the regions you require.
+你也可以使用 AWS [多区域键](https://docs.aws.amazon.com/zh_cn/kms/latest/developerguide/multi-region-keys-overview.html)。为此，你需要在一个特定的区域设置一个主键，并在需要的区域中添加副本密钥。
 
 </div>
 <div label="Google Cloud KMS">
 
-**Step 1. Create a master key**
+**第 1 步：创建主密钥**
 
-To create a key on Google Cloud, take the following steps:
+要在 Google Cloud 平台上创建一个密钥，请进行以下操作：
 
-1. Go to the [Key Management](https://console.cloud.google.com/security/kms/keyrings) page in the Google Cloud console.
-2. Click **Create key ring**. Enter a name for the key ring, select a location of the key ring, and then click **Create**. Note that the location of the key ring needs to cover the region where the TiDB cluster is deployed.
-3. Select the key ring you created in the previous step, and then click **Create Key** on the key ring details page.
-4. Enter a name for the key, set the key information as follows, and then click **Create**.
+1. 进入 Google Cloud 控制台的[密钥管理](https://console.cloud.google.com/security/kms/keyrings)。
+2. 点击**创建密钥环**。输入密钥环的名称，选择密钥环的位置，然后点击**创建**。注意密钥环的位置需要覆盖 TiDB 集群部署的区域。
+3. 选择上一步创建的密钥环，在密钥环详情页面点击**创建密钥**。
+4. 输入密钥的名称，设置密钥的信息如下，然后点击**创建**。
 
-    - **Protection level**: **Software** or **HSM**
-    - **Key Material**: **Generated key**
-    - **Purpose**: **Symmetric encrypt/decrypt**
+    - **保护级别**：**软件**或 **HSM**
+    - **密钥材料**：**生成的密钥**
+    - **用途**：**Symmetric encrypt/decrypt**
 
-You can also perform this operation using the gcloud CLI:
+你也可以使用 gcloud CLI 执行该操作：
 
 ```shell
 gcloud kms keyrings create "key-ring-name" --location "global"
 gcloud kms keys create "key-name" --keyring "key-ring-name" --location "global" --purpose "encryption" --rotation-period "30d"
 ```
 
-Make sure to replace the values of `"key-ring-name"`, `"key-name"`, `"global"`, and `"30d"` in the preceding command with the names and configurations corresponding to your actual key.
+请将上述命令中的 `"key-ring-name"`、`"key-name"`、`"global"`、`"30d"` 字段的值替换为实际密钥对应的名称和配置。
 
-**Step 2. Configure the master key**
+**第 2 步：配置主密钥**
 
-To specify the master key using Google Cloud KMS, add the `[security.encryption.master-key]` configuration after the `[security.encryption]` section:
+要使用 Google Cloud KMS 方式指定主密钥，请在 `[security.encryption]` 部分之后添加 `[security.encryption.master-key]` 配置：
 
 ```
 [security.encryption.master-key]
@@ -170,19 +168,35 @@ vendor = "gcp"
 credential-file-path = "/path/to/credential.json"
 ```
 
-- `key-id` specifies the key ID of the KMS CMK.
-- `credential-file-path` specifies the path of the authentication credentials file, which currently supports two types of credentials: Service Account and Authentication User. If the TiKV environment is already configured with [application default credentials](https://cloud.google.com/docs/authentication/application-default-credentials), there is no need to configure `credential-file-path`.
+- `key-id` 指定 KMS CMK 的密钥 ID。
+- 当 `vendor = "gcp"` 时，`credential-file-path` 指向验证凭据配置文件的路径，目前支持 Service Account 和 Authentication User 这两种凭据。如果 TiKV 的运行环境已配置[应用默认凭据](https://cloud.google.com/docs/authentication/application-default-credentials?hl=zh-cn)，则无需配置 `credential-file-path`。
+
+如果你需要在 Google Cloud KMS 场景下使用 Workload Identity Federation (WIF)，请改用 `gcp_v2`：
+
+```toml
+[security.encryption.master-key]
+type = "kms"
+key-id = "projects/project-name/locations/global/keyRings/key-ring-name/cryptoKeys/key-name"
+vendor = "gcp_v2"
+
+[security.encryption.master-key.gcp]
+credential-file-path = "/path/to/external-account.json"
+```
+
+- 当 `vendor = "gcp_v2"` 时，显式凭据只支持 Service Account 和 `external_account` 两种类型。
+- 如果你使用的是 ADC 生成的 `authorized_user` JSON，不能把该 JSON 直接配置为 `credential-file-path`。此时应省略 `credential-file-path`，让 TiKV 在运行环境中通过[应用默认凭据](https://cloud.google.com/docs/authentication/application-default-credentials?hl=zh-cn)获取认证信息。
+- 旧的 `vendor = "gcp"` 不支持把 `external_account` 作为显式凭据使用，因此无法通过该方式使用 WIF。
 
 </div>
 <div label="Azure KMS">
 
-**Step 1. Create a master key**
+**第 1 步：创建主密钥**
 
-To create a key on Azure, refer to the instructions in [Set and retrieve a key from Azure Key Vault using the Azure portal](https://learn.microsoft.com/en-us/azure/key-vault/keys/quick-create-portal).
+在 Azure 平台创建密钥，请参考文档[使用 Azure 门户在 Azure Key Vault 中设置和检索密钥](https://learn.microsoft.com/zh-cn/azure/key-vault/keys/quick-create-portal)。
 
-**Step 2. Configure the master key**
+**第 2 步：配置主密钥**
 
-To specify the master key using Azure KMS, add the `[security.encryption.master-key]` configuration after the `[security.encryption]` section in the TiKV configuration file:
+要使用 Azure KMS 方式指定主密钥，请在 TiKV 的配置文件中 `[security.encryption]` 部分之后添加 `[security.encryption.master-key]` 配置：
 
 ```
 [security.encryption.master-key]
@@ -198,21 +212,21 @@ client-id = 'client_id'
 keyvault-url = 'keyvault_url'
 hsm-name = 'hsm_name'
 hsm-url = 'hsm_url'
-# The following four fields are optional, used to set client authentication credentials. You can configure them according to the requirements of your scenario.
+# 如下 4 个参数为可选字段，用于设置 client 认证的凭证，请根据实际的使用场景进行设置
 client_certificate = ""
 client_certificate_path = ""
 client_certificate_password = ""
 client_secret = ""
 ```
 
-Except `vendor`, you need to modify the values of other fields in the preceding configuration to the corresponding configuration of the actual key.
+请将上述配置中除 `vendor` 之外的其他字段值修改为密钥实际的对应配置。
 
 </div>
 </SimpleTab>
 
-#### Specify a master key via a file
+#### 通过文件指定主密钥
 
-To specify a master key that's stored in a file, the master key configuration would look like the following:
+若要使用文件方式指定主密钥，主密钥配置应如下所示：
 
 ```
 [security.encryption.master-key]
@@ -220,19 +234,19 @@ type = "file"
 path = "/path/to/key/file"
 ```
 
-Here `path` is the path to the key file. The file must contain a 256 bits (or 32 bytes) key encoded as hex string, end with a newline (`\n`) and contain nothing else. Example of the file content:
+以上示例中，`path` 为密钥文件的路径。该文件须包含一个 256 位（32 字节）的十六进制字符串，并以换行符结尾（即 `\n`），且不包含其他任何内容。密钥文件示例如下：
 
 ```
 3b5896b5be691006e0f71c3040a29495ddcad20b14aff61806940ebd780d3c62
 ```
 
-### Rotate the master key
+### 轮换主密钥
 
-To rotate master key, you have to specify both of the new master key and old master key in the configuration, and restart TiKV. Use `security.encryption.master-key` to specify the new master key, and use `security.encryption.previous-master-key` to specify the old master key. The configuration format for `security.encryption.previous-master-key` is the same as `encryption.master-key`. On restart TiKV must access both of the old and new master key, but once TiKV is up and running, TiKV will only need access to the new key. It is okay to leave the `encryption.previous-master-key` configuration in the configuration file from that on. Even on restart, TiKV only tries to use the old key if it fails to decrypt existing data using the new master key.
+要轮换主密钥，你必须在配置中同时指定新的主密钥和旧的主密钥，然后重启 TiKV。用 `security.encryption.master-key` 指定新的主密钥，用 `security.encryption.previous-master-key` 指定旧的主密钥。`security.encryption.previous-master-key` 配置的格式与 `encryption.master-key` 相同。重启时，TiKV 必须能同时访问旧主密钥和新主密钥，但一旦 TiKV 启动并运行，就只需访问新密钥。此后，可以将 `encryption.previous-master-key` 项保留在配置文件中。即使重启时，TiKV 也只会在无法使用新的主密钥解密现有数据时尝试使用旧密钥。
 
-Currently online master key rotation is not supported, so you need to restart TiKV. It is advised to do a rolling restart to a running TiKV cluster serving online query.
+TiKV 当前不支持在线轮换主密钥，因此你需要重启 TiKV 进行主密钥轮换。建议对运行中的、提供在线查询的 TiKV 集群进行滚动重启。
 
-Here is an example configuration for rotating the KMS CMK:
+轮换 AWS KMS CMK 的配置示例如下：
 
 ```
 [security.encryption.master-key]
@@ -246,51 +260,49 @@ key-id = "0987dcba-09fe-87dc-65ba-ab0987654321"
 region = "us-west-2"
 ```
 
-### Monitoring and debugging
+### 监控和调试
 
-To monitor encryption at rest, if you deploy TiKV with Grafana, you can look at the **Encryption** panel in the **TiKV-Details** dashboard. There are a few metrics to look for:
+要监控静态加密（如果 TiKV 中部署了 Grafana 组件），可以查看 **TiKV-Details** -> **Encryption** 面板中的监控项：
 
-* Encryption initialized: 1 if encryption is initialized during TiKV startup, 0 otherwise. In case of master key rotation, after encryption is initialized, TiKV do not need access to the previous master key.
-* Encryption data keys: number of existing data keys. The number is bumped by 1 after each time data key rotation happened. Use this metrics to monitor if data key rotation works as expected.
-* Encrypted files: number of encrypted data files currently exists. Compare this number to existing data files in the data directory to estimate portion of data being encrypted, when turning on encryption for a previously unencrypted cluster.
-* Encryption meta file size: size of the encryption meta data files.
-* Read/Write encryption meta duration: the extra overhead to operate on metadata for encryption.
+* Encryption initialized：如果在 TiKV 启动期间初始化了加密，则为 `1`，否则为 `0`。进行主密钥轮换时可通过该监控项确认主密钥轮换是否已完成。
+* Encryption data keys：现有数据密钥的数量。每次轮换数据密钥后，该数字都会增加 `1`。通过此监控指标可以监测数据密钥是否按预期轮换。
+* Encrypted files：当前的加密数据文件数量。为先前未加密的集群启用加密时，将此数量与数据目录中的当前数据文件进行比较，可通过此监控指标估计已经被加密的数据量。
+* Encryption meta file size：加密元数据文件的大小。
+* Read/Write encryption meta duration：对用于加密的元数据进行操作带来的额外开销。
 
-For debugging, the `tikv-ctl` command can be used to dump encryption metadata such as encryption method and data key id used to encryption the file, as well as list of data keys. Since the operation can expose sensitive data, it is not recommended to use in production. Please refer to [TiKV Control](/tikv-control.md#dump-encryption-metadata) document.
+在调试方面，可使用 `tikv-ctl` 命令查看加密元数据（例如使用的加密方法和数据密钥列表）。该操作可能会暴露密钥，因此不推荐在生产环境中使用。详情参阅 [TiKV Control](/tikv-control.md#打印加密元数据)。
 
-### Compatibility between TiKV versions
+### TiKV 版本间兼容性
 
-To reduce the overhead caused by I/O and mutex contention when TiKV manages the encryption metadata, an optimization is introduced in TiKV v4.0.9 and controlled by `security.encryption.enable-file-dictionary-log` in the TiKV configuration file. This configuration parameter takes effect only on TiKV v4.0.9 or later versions.
+为了减少 TiKV 管理加密元数据造成的 I/O 操作和互斥锁竞争引发的开销，TiKV v4.0.9 对此进行了优化。此优化可以通过 TiKV 配置文件中的 `security.encryption.enable-file-dictionary-log` 参数启用或关闭。此配置参数仅在 TiKV v4.0.9 或更高版本中生效。
 
-When it is enabled (by default), the data format of encryption metadata is unrecognizable by TiKV v4.0.8 or earlier versions. For example, assume that you use TiKV v4.0.9 or later with encryption at rest and the default `enable-file-dictionary-log` configuration. If you downgrade your cluster to TiKV v4.0.8 or earlier, TiKV will fail to start, with an error in the info log similar to the following one:
+该配置项默认开启，此时 TiKV v4.0.8 或更早期的版本无法识别加密元数据的数据格式。例如，假设你正在使用 TiKV v4.0.9 或更高版本，开启了静态加密和默认开启了 `enable-file-dictionary-log` 配置。如果将集群降级到 TiKV v4.0.8 或更早版本，TiKV 将无法启动，并且信息日志中会有类似如下的报错：
 
 ```
 [2020/12/07 07:26:31.106 +08:00] [ERROR] [mod.rs:110] ["encryption: failed to load file dictionary."]
 [2020/12/07 07:26:33.598 +08:00] [FATAL] [lib.rs:483] ["called `Result::unwrap()` on an `Err` value: Other(\"[components/encryption/src/encrypted_file/header.rs:18]: unknown version 2\")"]
 ```
 
-To avoid the error above, you can first set `security.encryption.enable-file-dictionary-log` to `false` and start TiKV with v4.0.9 or later. Once TiKV starts successfully, the data format of encryption metadata is downgraded to the version recognizable to earlier TiKV versions. At this point, you can then downgrade your TiKV cluster to an earlier version.
+为了避免上面所示错误，你可以首先将 `security.encryption.enable-file-dictionary-log` 设置为 `false`，然后启动 TiKV v4.0.9 或更高版本。TiKV 成功启动后，加密元数据的数据格式将降级为 TiKV 早期版本可以识别的格式。此时，你可再将 TiKV 集群降级到较早的版本。
 
-## TiFlash encryption at rest
+## TiFlash 静态加密
 
-### Overview
+TiFlash 当前支持的加密算法与 TiKV 一致，包括 AES128-CTR、AES192-CTR、AES256-CTR 和 SM4-CTR（仅 v6.4.0 及之后版本）。TiFlash 同样使用信封加密 (envelop encryption)，所以启用加密后，TiFlash 使用以下两种类型的密钥：
 
-The encryption algorithm currently supported by TiFlash is consistent with that supported by TiKV, including AES128, AES192, AES256, and SM4 (only in v6.4.0 and later versions), in CTR mode. TiFlash also uses envelope encryption. Therefore, two types of keys are used in TiFlash when encryption is enabled.
+* 主密钥 (master key)：主密钥由用户提供，用于加密 TiFlash 生成的数据密钥。用户在 TiFlash 外部进行主密钥的管理。
+* 数据密钥 (data key)：数据密钥由 TiFlash 生成，是实际用于加密的密钥。
 
-* Master key. The master key is provided by user and is used to encrypt the data keys TiFlash generates. Management of master key is external to TiFlash.
-* Data key. The data key is generated by TiFlash and is the key actually used to encrypt data.
+多个 TiFlash 实例可共用一个主密钥，并且也可以和 TiKV 共用一个主密钥。在生产环境中，推荐通过 AWS KMS 提供主密钥。另外，你也可以通过文件形式提供主密钥。具体的主密钥生成方式和格式均与 TiKV 相同。
 
-The same master key can be shared by multiple instances of TiFlash, and can also be shared among TiFlash and TiKV. The recommended way to provide a master key in production is via AWS KMS. Alternatively, if using custom key is desired, supplying the master key via file is also supported. The specific method to generate master key and the format of the master key are the same as TiKV.
+TiFlash 使用数据密钥加密所有落盘的数据文件，包括数据文件、Schema 文件和计算过程中产生的临时数据文件等。默认情况下，TiFlash 每周自动轮换数据密钥，该轮换周期也可根据需要自定义配置。密钥轮换时，TiFlash 不会重写全部现有文件来替换密钥，但如果集群的写入量恒定，则后台 compaction 任务将会用最新的数据密钥对数据重新加密。TiFlash 跟踪密钥和加密方法，并使用密钥信息对读取的内容进行解密。
 
-TiFlash uses the current data key to encrypt all data placed on the disk, including data files, Schema files, and temporary data files generated during calculations. Data keys are automatically rotated by TiFlash every week by default, and the period is configurable. On key rotation, TiFlash does not rewrite all existing files to replace the key, but background compaction tasks are expected to rewrite old data into new data files, with the most recent data key, if the cluster gets constant write workload. TiFlash keeps track of the key and encryption method used to encrypt each of the files and use the information to decrypt the content on reads.
+### 创建密钥
 
-### Key creation
+如需在 AWS 上创建一个密钥，请参考 TiKV 密钥的创建方式。
 
-To create a key on AWS, refer to the steps to create a key for TiKV.
+### 配置加密
 
-### Configure encryption
-
-To enable encryption, you can add the encryption section in the `tiflash-learner.toml` configuration file:
+启用加密的配置，可以在 `tiflash-learner.toml` 文件中添加以下内容：
 
 ```
 [security.encryption]
@@ -298,7 +310,7 @@ data-encryption-method = "aes128-ctr"
 data-key-rotation-period = "168h" # 7 days
 ```
 
-Alternatively, add the following contents in the TiUP cluster template:
+或者，在 TiUP 集群模板文件中添加以下内容：
 
 ```
 server_configs:
@@ -307,9 +319,11 @@ server_configs:
     security.encryption.data-key-rotation-period: "168h" # 7 days
 ```
 
-Possible values for `data-encryption-method` are "aes128-ctr", "aes192-ctr", "aes256-ctr", "sm4-ctr" (only in v6.4.0 and later versions) and "plaintext". The default value is "plaintext", which means encryption is not turned on. `data-key-rotation-period` defines how often TiFlash rotates the data key. Encryption can be turned on for a fresh TiFlash cluster, or an existing TiFlash cluster, though only data written after encryption is enabled is guaranteed to be encrypted. To disable encryption, remove `data-encryption-method` in the configuration file, or reset it to "plaintext", and restart TiFlash. To change encryption method, update `data-encryption-method` in the configuration file and restart TiFlash. To change the encryption algorithm, replace `data-encryption-method` with a supported encryption algorithm and then restart TiFlash. After the replacement, as new data is written in, the encryption file generated by the previous encryption algorithm is gradually rewritten to a file generated by the new encryption algorithm.
+`data-encryption-method` 的可选值为 `"aes128-ctr"`、`"aes192-ctr"`、`"aes256-ctr"`、`"sm4-ctr"` (仅 v6.4.0 及之后版本) 和 `"plaintext"`。默认值为 `"plaintext"`，即默认不开启加密功能。`data-key-rotation-period` 指定 TiFlash 轮换密钥的频率。可以为新 TiFlash 集群或现有 TiFlash 集群开启加密，但只有启用后写入的数据才保证被加密。要禁用加密，请在配置文件中删除 `data-encryption-method`，或将该参数值为 `"plaintext"`，然后重启 TiFlash。若要替换加密算法，则将 `data-encryption-method` 替换成已支持的加密算法，然后重启 TiFlash。替换加密算法后，旧加密算法生成的加密文件会随着新数据的写入逐渐被重写成新加密算法所生成的加密文件。
 
-The master key has to be specified if encryption is enabled (that is,`data-encryption-method` is not "plaintext"). To specify an AWS KMS CMK as the master key, add the `encryption.master-key` section after the `encryption` section in the `tiflash-learner.toml` configuration file:
+如果启用了加密（即 `data-encryption-method` 的值不是 `"plaintext"`），则必须指定主密钥。要使用 AWS KMS 方式指定为主密钥，配置方式如下：
+
+在 `tiflash-learner.toml` 配置文件的 `[security.encryption]` 部分之后添加 `[security.encryption.master-key]`：
 
 ```
 [security.encryption.master-key]
@@ -319,7 +333,7 @@ region = "us-west-2"
 endpoint = "https://kms.us-west-2.amazonaws.com"
 ```
 
-Alternatively, add the following contents in the TiUP cluster template:
+或者，在 TiUP 集群模板文件中添加以下内容：
 
 ```
 server_configs:
@@ -330,9 +344,9 @@ server_configs:
     security.encryption.master-key.endpoint: "https://kms.us-west-2.amazonaws.com"
 ```
 
-The meanings of the preceding configuration items are the same as those of TiKV.
+上述配置项的含义与 TiKV 均相同。
 
-To specify a master key that is stored in a file, add the following configuration in the `tiflash-learner.toml` configuration file:
+若要使用文件方式指定主密钥，可以在 `tiflash-learner.toml` 配置文件中添加以下内容：
 
 ```
 [security.encryption.master-key]
@@ -340,7 +354,7 @@ type = "file"
 path = "/path/to/key/file"
 ```
 
-Alternatively, add the following contents in the TiUP cluster template:
+或者，在 TiUP 集群模板文件中添加以下内容：
 
 ```
 server_configs:
@@ -349,13 +363,13 @@ server_configs:
     security.encryption.master-key.path: "/path/to/key/file"
 ```
 
-The meanings of the preceding configuration items and the content format of the key file are the same as those of TiKV.
+上述配置项的含义以及密钥文件的内容格式与 TiKV 均相同。
 
-### Rotate the master key
+### 轮换主密钥
 
-To rotate the master key of TiFlash, follow the steps to rotate the master key of TiKV. Currently, TiFlash does not support online master key rotation, either. Therefore, you need to restart TiFlash to make the rotation effective. It is recommended to do a rolling restart to a running TiFlash cluster serving online query.
+TiFlash 轮换主秘钥的方法与 TiKV 相同。TiFlash 当前也不支持在线轮换主密钥，因此你需要重启 TiFlash 进行主密钥轮换。建议对运行中的、提供在线查询的 TiFlash 集群进行滚动重启。
 
-To rotate the KMS CMK, add the following contents in the `tiflash-learner.toml` configuration file:
+要轮换 KMS CMK，可以在 `tiflash-learner.toml` 配置文件中添加以下内容：
 
 ```
 [security.encryption.master-key]
@@ -369,7 +383,7 @@ key-id = "0987dcba-09fe-87dc-65ba-ab0987654321"
 region = "us-west-2"
 ```
 
-Alternatively, add the following contents in the TiUP cluster template:
+或者，在 TiUP 集群模板文件中添加以下内容：
 
 ```
 server_configs:
@@ -382,104 +396,104 @@ server_configs:
     security.encryption.previous-master-key.region: "us-west-2"
 ```
 
-### Monitoring and debugging
+### 监控和调试
 
-To monitor encryption at rest, if you deploy TiFlash with Grafana, you can look at the **Encryption** panel in the **TiFlash-Proxy-Details** dashboard. The meaning of monitoring items is the same as that of TiKV.
+要监控静态加密（如果 TiFlash 中部署了 Grafana 组件），可以查看 **TiFlash-Proxy-Details** -> **Encryption** 面板中的监控项，其中监控项的含义与 TiKV 相同。
 
-For debugging, since TiFlash reuses TiKV's logic for managing encrypted metadata, the `tikv-ctl` command can be used to dump encryption metadata such as encryption method and data key ID used to encryption the file, as well as list of data keys. This operation can expose sensitive data and is therefore not recommended in production. Refer to [TiKV Control](/tikv-control.md#dump-encryption-metadata) for more details.
+在调试方面，由于 TiFlash 复用了 TiKV 管理加密元数据的逻辑，因此也可使用 `tikv-ctl` 命令查看加密元数据（例如使用的加密方法和数据密钥列表）。该操作可能会暴露密钥，因此不推荐在生产环境中使用。详情参阅 [TiKV Control](/tikv-control.md#打印加密元数据)。
 
-### Compatibility between TiKV versions
+### TiFlash 版本间兼容性
 
-TiFlash also optimizes encrypted metadata operations in v4.0.9, and its compatibility requirements are the same as those of TiKV. For details, see [Compatibility between TiKV versions](#compatibility-between-tikv-versions).
+TiFlash 在 v4.0.9 同样对加密元数据操作进行了优化，其兼容性要求与 TiKV 相同，详情参考 [TiKV 版本间兼容性](#tikv-版本间兼容性)。
 
-## BR S3 server-side encryption
+## BR S3 服务端加密
 
-To enable S3 server-side encryption when backup to S3 using BR, pass `--s3.sse` argument and set value to "aws:kms". S3 will use its own KMS key for encryption. Example:
+使用 BR 备份数据到 S3 时，若要启用 S3 服务端加密，需要传递 `--s3.sse` 参数并将参数值设置为 `aws:kms`。S3 将使用自己的 KMS 密钥进行加密。示例如下：
 
 ```
 tiup br backup full --pd <pd-address> --storage "s3://<bucket>/<prefix>" --s3.sse aws:kms
 ```
 
-To use a custom AWS KMS CMK that you created and owned, pass `--s3.sse-kms-key-id` in addition. In this case, both the BR process and all the TiKV nodes in the cluster would need access to the KMS CMK (for example, via AWS IAM), and the KMS CMK needs to be in the same AWS region as the S3 bucket used to store the backup. It is advised to grant access to the KMS CMK to BR process and TiKV nodes via AWS IAM. Refer to AWS documentation for usage of [IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html). For example:
+若要使用用户创建和拥有的自定义 AWS KMS CMK，需另外传递 `--s3.sse-kms-key-id` 参数。此时，BR 进程和集群中的所有 TiKV 节点都需访问该 KMS CMK（例如，通过 AWS IAM），并且该 KMS CMK 必须与存储备份的 S3 bucket 位于同一 AWS 区域。建议通过 AWS IAM 向 BR 进程和 TiKV 节点授予对 KMS CMK 的访问权限。参见 AWS 文档中的 [IAM](https://docs.aws.amazon.com/zh_cn/IAM/latest/UserGuide/introduction.html)。示例如下：
 
 ```
 tiup br backup full --pd <pd-address> --storage "s3://<bucket>/<prefix>" --s3.sse aws:kms --s3.sse-kms-key-id 0987dcba-09fe-87dc-65ba-ab0987654321
 ```
 
-When restoring the backup, both `--s3.sse` and `--s3.sse-kms-key-id` should NOT be used. S3 will figure out encryption settings by itself. The BR process and TiKV nodes in the cluster to restore the backup to would also need access to the KMS CMK, or the restore will fail. Example:
+恢复备份时，不需要也不可指定 `--s3.sse` 和 `--s3.sse-kms-key-id` 参数。S3 将自动相应进行解密。用于恢复备份数据的 BR 进程和集群中的 TiKV 节点也需要访问 KMS CMK，否则恢复将失败。示例如下：
 
 ```
 tiup br restore full --pd <pd-address> --storage "s3://<bucket>/<prefix>"
 ```
 
-## BR Azure Blob Storage server-side encryption
+## BR Azure Blob Storage 服务端加密
 
-When backing up data to Azure Blob Storage using BR, you can specify either an encryption scope or an encryption key for server-side encryption.
+使用 BR 备份数据到 Azure Blob Storage 时，可以选择使用加密范围 (Encryption Scope) 或加密密钥 (Encryption Key) 进行数据的服务端加密。
 
-### Method 1: use an encryption scope
+### 方法一：使用加密范围
 
-To specify an encryption scope for the backup data, you can use one of the following two ways:
+你可以通过以下两种方式为备份数据指定加密范围：
 
-- Include the `--azblob.encryption-scope` option in the `backup` command and set it to the scope name:
+- 在 `backup` 命令中添加 `--azblob.encryption-scope` 参数，并设置为加密范围名：
 
     ```shell
     tiup br backup full --pd <pd-address> --storage "azure://<bucket>/<prefix>" --azblob.encryption-scope scope1
     ```
 
-- Include `encryption-scope` in the URI and set it to the scope name:
+- 在 URI 中添加 `encryption-scope`，并设置为加密范围名：
 
     ```shell
     tiup br backup full --pd <pd-address> --storage "azure://<bucket>/<prefix>?encryption-scope=scope1"
     ```
 
-For more information, see the Azure documentation: [Upload a blob with an encryption scope](https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-scope-manage?tabs=powershell#upload-a-blob-with-an-encryption-scope).
+更多信息请参考 Azure 文档中的[上传具有加密范围的 blob](https://learn.microsoft.com/zh-cn/azure/storage/blobs/encryption-scope-manage?tabs=powershell#upload-a-blob-with-an-encryption-scope)。
 
-When restoring the backup, you do not need to specify the encryption scope. Azure Blob Storage automatically decrypts the data. For example:
+在恢复备份时，不需要指定加密范围，Azure Blob Storage 将自动进行解密。示例如下：
 
 ```shell
 tiup br restore full --pd <pd-address> --storage "azure://<bucket>/<prefix>"
 ```
 
-### Method 2: use an encryption key
+### 方法二：使用加密密钥
 
-To specify an encryption key for the backup data, you can use one of the following three ways:
+你可以通过以下三种方式为备份数据指定加密密钥：
 
-- Include the `--azblob.encryption-key` option in the `backup` command and set it to an AES256 encryption key:
+- 在 `backup` 命令中添加 `--azblob.encryption-key` 参数，并设置为 AES256 加密密钥：
 
     ```shell
     tiup br backup full --pd <pd-address> --storage "azure://<bucket>/<prefix>" --azblob.encryption-key <aes256-key>
     ```
 
-- Include `encryption-key` in the URI and set it to an AES256 encryption key. If the key contains URI reserved characters such as `&` and `%`, you need to percent-encode it first:
+- 在 URI 中添加 `encryption-key`，并设置为 AES256 加密密钥。如果密钥包含 URI 保留字符，例如 `&`、`%` 等，需要先进行百分号编码：
 
     ```shell
     tiup br backup full --pd <pd-address> --storage "azure://<bucket>/<prefix>?encryption-key=<aes256-key>"
     ```
 
-- Set the `AZURE_ENCRYPTION_KEY` environment variable to an AES256 encryption key. Before running, make sure that you remember the encryption key in the environment variable to avoid forgetting it.
+- 在 BR 的环境变量中添加 `AZURE_ENCRYPTION_KEY`，并设置为 AES256 加密密钥。在运行前，请确保环境变量中的加密密钥是已知的，避免忘记密钥。
 
     ```shell
     export AZURE_ENCRYPTION_KEY=<aes256-key>
     tiup br backup full --pd <pd-address> --storage "azure://<bucket>/<prefix>"
     ```
 
-For more information, see the Azure documentation: [Provide an encryption key on a request to Blob storage](https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-customer-provided-keys).
+更多信息请参考 Azure 文档中的[在对 Blob 存储的请求中提供加密密钥](https://learn.microsoft.com/zh-cn/azure/storage/blobs/encryption-customer-provided-keys)。
 
-When restoring the backup, you need to specify the encryption key. For example:
+在恢复备份时，需要指定加密密钥。示例如下：
 
-- Include the `--azblob.encryption-key` option in the `restore` command:
+- 在 `restore` 命令中传递 `--azblob.encryption-key` 参数：
 
     ```shell
     tiup br restore full --pd <pd-address> --storage "azure://<bucket>/<prefix>" --azblob.encryption-key <aes256-key>
     ```
 
-- Include `encryption-key` in the URI:
+- 在 URI 中添加 `encryption-key`：
 
     ```shell
     tiup br restore full --pd <pd-address> --storage "azure://<bucket>/<prefix>?encryption-key=<aes256-key>"
     ```
 
-- Set the `AZURE_ENCRYPTION_KEY` environment variable:
+- 在 BR 的环境变量中添加 `AZURE_ENCRYPTION_KEY`：
 
     ```shell
     export AZURE_ENCRYPTION_KEY=<aes256-key>

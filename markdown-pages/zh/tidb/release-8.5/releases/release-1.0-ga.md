@@ -1,52 +1,60 @@
 ---
 title: TiDB 1.0 release notes
-summary: TiDB 1.0 is released with a focus on MySQL compatibility, SQL optimization, stability, and performance. It includes enhancements to the SQL query optimizer, internal data format optimization, and support for various operators. PD now supports read flow based balancing and setting store weight. TiKV has improved coprocessor support and performance, and added a Debug API. Special thanks to enterprises, open source software, and individual contributors for their support.
+summary: TiDB 1.0 版本发布，对 MySQL 兼容性、SQL 优化器、系统稳定性、性能做了大量工作。TiDB 优化了 SQL 查询优化器、内部数据格式、MySQL 兼容性，并支持 `NO_SQL_CACHE` 语法。PD 支持基于读流量的热点调度和设置 Store 权重。TiKV 支持更多下推函数和手动触发数据 Compact。TiSpark Beta 版本支持可配置框架和 ThriftSever/JDBC 和 Spark SQL 脚本入口。感谢参与项目的企业和团队，以及提供出色开源软件/服务的组织/个人。
+aliases: ['/zh/tidb/dev/release-1.0-ga/','/zh/tidb/v1.0/release-1.0-ga','/docs-cn/dev/releases/release-1.0-ga/','/docs-cn/dev/releases/ga/','/zh/tidb/v5.4/release-1.0-ga','/zh/tidb/v6.1/release-1.0-ga','/zh/tidb/v6.5/release-1.0-ga','/zh/tidb/v7.1/release-1.0-ga','/zh/tidb/v7.5/release-1.0-ga','/zh/tidb/v8.1/release-1.0-ga']
 ---
 
 # TiDB 1.0 Release Notes
 
-On October 16, 2017, TiDB 1.0 is now released! This release is focused on MySQL compatibility, SQL optimization, stability, and performance.
+2017 年 10 月 16 日，TiDB 发布 GA 版 (TiDB 1.0)。该版本对 MySQL 兼容性、SQL 优化器、系统稳定性、性能做了大量的工作。
 
 ## TiDB
 
-- The SQL query optimizer:
-    - Adjust the cost model
-    - Analyze pushdown
-    - Function signature pushdown
-- Optimize the internal data format to reduce the interim data size
-- Enhance the MySQL compatibility
-- Support the `NO_SQL_CACHE` syntax and limit the cache usage in the storage engine
-- Refactor the Hash Aggregator operator to reduce the memory usage
-- Support the Stream Aggregator operator
++ SQL 查询优化器
+    - 调整代价模型
+    - Analyze 下推
+    - 函数签名下推
+
++ 优化内部数据格式，减小中间结果大小
++ 提升 MySQL 兼容性
++ 支持 `NO_SQL_CACHE` 语法，控制存储引擎对缓存的使用
++ 重构 Hash Aggregator 算子，降低内存使用
++ 支持 Stream Aggregator 算子
 
 ## PD
 
-- Support read flow based balancing
-- Support setting the Store weight and weight based balancing
++ 支持基于读流量的热点调度
++ 支持设置 Store 权重，以及基于权重的调度
 
 ## TiKV
 
-- Coprocessor now supports more pushdown functions
-- Support pushing down the sampling operation
-- Support manually triggering data compact to collect space quickly
-- Improve the performance and stability
-- Add a Debug API for debugging
-- TiSpark Beta Release:
-- Support configuration framework
-- Support ThriftSever/JDBC and Spark SQL
++ Coprocessor 支持更多下推函数
++ 支持取样操作下推
++ 支持手动触发数据 Compact，用于快速回收空间
++ 提升性能和稳定性
++ 增加 Debug API，方便调试
 
-## Acknowledgement
+## TiSpark Beta Release
 
-### Special thanks to the following enterprises and teams
++ 支持可配置框架
++ 支持 ThriftSever/JDBC 和 Spark SQL 脚本入口
+
+## 源码地址
+
+[源码地址](https://github.com/pingcap/tidb)
+
+## 鸣谢
+
+### 特别感谢参与项目的企业和团队
 
 - Archon
 - Mobike
-- Samsung Electronics
 - SpeedyCloud
-- Tencent Cloud
 - UCloud
+- 腾讯云
+- 韩国三星研究院
 
-### Thanks to the open source software and services from the following organizations and individuals
+### 感谢以下组织/个人提供出色的开源软件/服务
 
 - Asta Xie
 - CNCF
@@ -64,7 +72,7 @@ On October 16, 2017, TiDB 1.0 is now released! This release is focused on MySQL 
 - RocksDB Team
 - Rust Team
 
-### Thanks to the individual contributors
+### 感谢社区个人贡献者 TiDB Contributor
 
 - 8cbx
 - Akihiro Suda
@@ -109,6 +117,7 @@ On October 16, 2017, TiDB 1.0 is now released! This release is focused on MySQL 
 - Fiisio
 - follitude
 - Fred Wang
+- follitude
 - fud
 - fudali
 - gaoyangxiaozhu
@@ -119,7 +128,6 @@ On October 16, 2017, TiDB 1.0 is now released! This release is focused on MySQL 
 - Guilherme Hübner Franco
 - Haibin Xie
 - Han Fei
-- hawkingrei
 - Hiroaki Nakamura
 - hiwjd
 - Hongyuan Wang
@@ -186,7 +194,6 @@ On October 16, 2017, TiDB 1.0 is now released! This release is focused on MySQL 
 - qgxiaozhan
 - qhsong
 - Qiannan
-- qiukeren
 - qiuyesuifeng
 - queenypingcap
 - qupeng
@@ -225,7 +232,6 @@ On October 16, 2017, TiDB 1.0 is now released! This release is focused on MySQL 
 - v01dstar
 - Van
 - WangXiangUSTC
-- wangyanjun
 - wangyisong1996
 - weekface
 - wegel
@@ -253,10 +259,10 @@ On October 16, 2017, TiDB 1.0 is now released! This release is focused on MySQL 
 - Zhang Yuning
 - zhangjinpeng1987
 - ZHAO Yijun
-- Zhe-xuan Yang
 - ZhengQian
 - ZhengQianFang
 - zhengwanbo
+- Zhe-xuan Yang
 - ZhiFeng Hu
 - Zhiyuan Zheng
 - Zhou Tao
@@ -264,6 +270,9 @@ On October 16, 2017, TiDB 1.0 is now released! This release is focused on MySQL 
 - zhouningnan
 - Ziyi Yan
 - zs634134578
-- zxylvlp
 - zyguan
 - zz-jason
+- qiukeren
+- hawkingrei
+- wangyanjun
+- zxylvlp

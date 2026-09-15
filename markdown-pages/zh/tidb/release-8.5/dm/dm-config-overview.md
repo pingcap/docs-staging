@@ -1,34 +1,34 @@
 ---
-title: Data Migration Configuration File Overview
-summary: This document gives an overview of Data Migration configuration files.
+title: DM 配置简介
+summary: 本文简要介绍了 DM（数据迁移）的配置文件和数据迁移任务的配置。配置文件包括 dm-master.toml、dm-worker.toml 和 source.yaml，分别用于配置 DM-master 进程、DM-worker 进程和上游数据库 MySQL/MariaDB。创建数据迁移任务的具体步骤包括使用 dmctl 加载数据源配置、参考数据任务配置向导创建 your_task.yaml 文件，以及使用 dmctl 创建数据迁移任务。关键概念包括 source-id、DM-master ID 和 DM-worker ID，分别用于唯一确定 MySQL 或 MariaDB 实例、DM-master 和 DM-worker。
 ---
 
-# Data Migration Configuration File Overview
+# DM 配置简介
 
-This document gives an overview of configuration files of DM (Data Migration).
+本文档简要介绍 DM (Data Migration) 的配置文件和数据迁移任务的配置。
 
-## DM process configuration files
+## 配置文件
 
-- `dm-master.toml`: The configuration file of running the DM-master process, including the topology information and the logs of the DM-master. For more details, refer to [DM-master Configuration File](/dm/dm-master-configuration-file.md).
-- `dm-worker.toml`: The configuration file of running the DM-worker process, including the topology information and the logs of the DM-worker. For more details, refer to [DM-worker Configuration File](/dm/dm-worker-configuration-file.md).
-- `source.yaml`: The configuration of the upstream database such as MySQL and MariaDB. For more details, refer to [Upstream Database Configuration File](/dm/dm-source-configuration-file.md).
+- `dm-master.toml`：DM-master 进程的配置文件，包括 DM-master 的拓扑信息、日志等各项配置。配置说明详见 [DM-master 配置文件介绍](/dm/dm-master-configuration-file.md)。
+- `dm-worker.toml`：DM-worker 进程的配置文件，包括 DM-worker 的拓扑信息、日志等各项配置。配置说明详见 [DM-worker 配置文件介绍](/dm/dm-worker-configuration-file.md)。
+- `source.yaml`：上游数据库 MySQL/MariaDB 相关配置。配置说明详见[上游数据库配置文件介绍](/dm/dm-source-configuration-file.md)。
 
-## DM migration task configuration
+## 迁移任务配置
 
-### Data migration task creation
+### 创建数据迁移任务
 
-You can take the following steps to create a data migration task:
+具体步骤如下：
 
-1. [Load the data source configuration into the DM cluster using dmctl](/dm/dm-manage-source.md#operate-data-source).
-2. Refer to the description in the [Task Configuration Guide](/dm/dm-task-configuration-guide.md) and create the configuration file `your_task.yaml`.
-3. [Create the data migration task using dmctl](/dm/dm-create-task.md).
+1. [使用 dmctl 将数据源配置加载到 DM 集群](/dm/dm-manage-source.md#数据源操作)；
+2. 参考[数据任务配置向导](/dm/dm-task-configuration-guide.md)来创建 `your_task.yaml`；
+3. [使用 dmctl 创建数据迁移任务](/dm/dm-create-task.md)。
 
-### Important concepts
+### 关键概念
 
-This section shows description of some important concepts.
+DM 配置的关键概念如下：
 
-| Concept  | Description  | Configuration File  |
-| :------ | :--------- | :------------- |
-| `source-id`  | Uniquely represents a MySQL or MariaDB instance, or a migration group with the primary-secondary structure. The maximum length of `source-id` is 32. | `source_id` of `source.yaml`;<br/> `source-id` of `task.yaml` |
-| DM-master ID | Uniquely represents a DM-master (by the `master-addr` parameter of `dm-master.toml`) | `master-addr` of `dm-master.toml` |
-| DM-worker ID | Uniquely represents a DM-worker (by the `worker-addr` parameter of `dm-worker.toml`) | `worker-addr` of `dm-worker.toml` |
+| 概念         | 解释          | 配置文件        |
+| :------------ | :------------ | :------------------ |
+| source-id  | 唯一确定一个 MySQL 或 MariaDB 实例，或者一个具有主从结构的复制组，字符串长度不大于 32 | `source.yaml` 的 `source-id`；<br/> `task.yaml` 的 `source-id` |
+| DM-master ID | 唯一确定一个 DM-master（取值于 `dm-master.toml` 的 `master-addr` 参数） | `dm-master.toml` 的 `master-addr` |
+| DM-worker ID | 唯一确定一个 DM-worker（取值于 `dm-worker.toml` 的 `worker-addr` 参数） | `dm-worker.toml` 的 `worker-addr` |

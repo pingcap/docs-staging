@@ -1,142 +1,142 @@
 ---
-title: Migrate and Upgrade a TiDB Cluster
-summary: Learn how to migrate and upgrade a TiDB cluster using BR for full backup and restore, along with TiCDC for incremental data replication.
+title: 迁移升级 TiDB 集群
+summary: 本文介绍如何使用 BR 全量备份恢复与 TiCDC 增量数据同步实现 TiDB 集群的迁移升级。
 ---
 
-# Migrate and Upgrade a TiDB Cluster
+# 迁移升级 TiDB 集群
 
-This document describes how to migrate and upgrade a TiDB cluster (also known as a blue-green upgrade) using [BR](/br/backup-and-restore-overview.md) for full backup and restore, along with [TiCDC](/ticdc/ticdc-overview.md) for incremental data replication. This solution uses dual-cluster redundancy and incremental replication to enable smooth traffic switchover and fast rollback, providing a reliable and low-risk upgrade path for critical systems. It is recommended to regularly upgrade the database version to continuously benefit from performance improvements and new features, helping you maintain a secure and efficient database system. The key advantages of this solution include:
+本文介绍如何使用 [BR](/br/backup-and-restore-overview.md) 全量备份恢复与 [TiCDC](/ticdc/ticdc-overview.md) 增量数据同步实现 TiDB 集群的迁移升级（又称蓝绿升级）。该方案通过双集群冗余架构与增量同步技术，确保业务流量平滑切换并支持快速回退，为关键业务系统提供高可靠、低风险的升级路径。建议定期升级数据库版本，以持续获得性能优化与新特性，构建安全高效的数据库体系。该方案具体优势如下：
 
-- **Controllable risk**: supports rollback to the original cluster within minutes, ensuring business continuity.
-- **Data integrity**: uses a multi-stage verification mechanism to prevent data loss.
-- **Minimal business impact**: requires only a brief maintenance window for the final switchover.
+- **风险可控**：支持分钟级回退至旧版本集群，确保业务连续性。
+- **数据完整**：采用多阶段验证机制，确保数据零丢失。
+- **业务影响小**：仅需一次短暂停机窗口即可完成最终切换。
 
-The core workflow for migration and upgrade is as follows:
+迁移升级的核心流程如下：
 
-1. **Pre-check risks**: verify cluster status and solution feasibility.
-2. **Prepare the new cluster**: create a new cluster from a full backup of the old cluster and upgrade it to the target version.
-3. **Replicate incremental data**: establish a forward data replication channel using TiCDC.
-4. **Switch and verify**: perform multi-dimensional verification, switch business traffic to the new cluster, and set up a TiCDC reverse replication channel.
-5. **Observe status**: maintain the reverse replication channel. After the observation period, clean up the environment.
+1. **风险预检**：检查集群状态与方案适用性。
+2. **准备新集群**：基于旧集群的全量备份创建新集群，并升级至目标版本。
+3. **增量同步**：通过 TiCDC 建立正向数据同步通道。
+4. **切换验证**：完成多维度验证后，将业务流量切换至新集群，并建立 TiCDC 回退通道。
+5. **观察状态**：维持回退通道。观察期结束后清理环境。
 
-**Rollback plan**: if the new cluster encounters issues during the migration and upgrade process, you can switch business traffic back to the original cluster at any time.
+**回退计划**：在迁移升级过程中，如果新集群出现故障，可随时将业务流量切换回旧集群。
 
-The following sections describe the standardized process and general steps for migrating and upgrading a TiDB cluster. The example commands are based on a TiDB Self-Managed environment.
+迁移升级 TiDB 集群的标准化流程和通用操作步骤如下，相关命令以 TiDB Self-Managed 环境为例。
 
-## Step 1: Evaluate solution feasibility
+## 步骤一：评估方案可行性
 
-Before migrating and upgrading, evaluate the compatibility of relevant components and check cluster health status.
+在开始迁移升级前，需评估相关组件的适用性，并检查集群的健康状态。
 
-- Check the TiDB cluster version: this solution applies to TiDB v6.5.0 or later versions.
+- 检查 TiDB 集群的版本：此迁移升级方案适用于 v6.5.0 及以上版本的 TiDB 集群。
 
-- Verify TiCDC compatibility:
+- 检查 TiCDC 适用性：
 
-    - **Table schema requirements**: ensure that tables to be replicated contain valid indexes. For more information, see [TiCDC valid index](/ticdc/ticdc-overview.md#valid-index).
-    - **Feature limitations**: TiCDC does not support Sequence or TiFlash DDL replication. For more information, see [TiCDC unsupported scenarios](/ticdc/ticdc-overview.md#unsupported-scenarios).
-    - **Best practices**: avoid executing DDL operations on the upstream cluster of TiCDC during switchover.
+    - **表结构要求**：确保待同步的表包含有效索引，详见 [TiCDC 有效索引](/ticdc/ticdc-overview.md#有效索引)。
+    - **功能限制**：TiCDC 暂不支持 Sequence、TiFlash DDL 同步等，详见 [TiCDC 暂不支持的场景](/ticdc/ticdc-overview.md#暂不支持的场景)。
+    - **最佳实践**：在切换过程中，应尽量避免在 TiCDC 的上游集群执行 DDL 操作。
 
-- Verify BR compatibility:
+- 检查 BR 适用性：
 
-    - Review the compatibility matrix of BR full backup. For more information, see [BR version compatibility matrix](/br/backup-and-restore-overview.md#br-version-compatibility-matrix-between-tidb-v650-and-v850).
-    - Check the known limitations of BR backup and restore. For more information, see [BR usage restrictions](/br/backup-and-restore-overview.md#restrictions).
+    - 查看 BR 全量备份的兼容性说明，详见 [BR 版本兼容性矩阵](/br/backup-and-restore-overview.md#tidb-v650-版本到-v850-之间的-br-版本兼容性矩阵)。
+    - 检查 BR 备份与恢复功能的已知限制，详见 [BR 使用限制](/br/backup-and-restore-overview.md#使用限制)。
 
-- Check the health status of the cluster, such as [Region](/glossary.md#regionpeerraft-group) health and node resource utilization.
+- 检查集群健康状态，例如 [Region](/glossary.md#regionpeerraft-group) 的健康状态、节点资源利用率等。
 
-## Step 2: Prepare the new cluster
+## 步骤二：准备新集群
 
-### 1. Adjust the GC lifetime of the old cluster
+### 1. 调整旧集群的 GC lifetime
 
-To ensure data replication stability, adjust the system variable [`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50) to a value that covers the total duration of the following operations and intervals: BR backup, BR restore, cluster upgrade, and TiCDC Changefeed replication setup. Otherwise, the replication task might enter an unrecoverable `failed` state, requiring a restart of the entire migration and upgrade process from a new full backup.
+为确保数据同步链路的稳定性，必须调整系统变量 [`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-从-v50-版本开始引入) 的值，以确保其足以覆盖以下操作及其间隔的总时长：BR 备份、恢复、升级集群版本和创建 TiCDC Changefeed 同步链路。否则，同步任务将进入不可恢复的 `failed` 状态。此时整个迁移升级的步骤，需要重新开始一个新的全量备份开始执行。
 
-The following example sets `tidb_gc_life_time` to `60h`:
+以下示例将 `tidb_gc_life_time` 调整为 `60h`：
 
 ```sql
--- Check the current GC lifetime setting.
+-- 查看当前 GC lifetime 设置
 SHOW VARIABLES LIKE '%tidb_gc_life_time%';
--- Set GC lifetime.
+-- 设置 GC lifetime
 SET GLOBAL tidb_gc_life_time=60h;
 ```
 
-> **Note:**
+> **注意：**
 >
-> Increasing `tidb_gc_life_time` increases storage usage for [MVCC](/glossary.md#multi-version-concurrency-control-mvcc) data and might affect query performance. For more information, see [GC Overview](/garbage-collection-overview.md). Adjust the GC duration based on estimated operation time while considering storage and performance impacts.
+> 调高 `tidb_gc_life_time` 会增加 [MVCC](/glossary.md#multi-version-concurrency-control-mvcc) 版本数据占用的存储空间，并可能影响查询性能。详见 [GC 机制简介](/garbage-collection-overview.md)。建议综合考虑存储和性能影响，根据预计的操作总时长合理设置 GC 时长。
 
-### 2. Migrate full data to the new cluster
+### 2. 迁移全量数据到新集群
 
-When migrating full data to the new cluster, note the following:
+迁移全量数据到新集群时，需注意以下事项：
 
-- **Version compatibility**: the BR version used for backup and restore must match the major version of the old cluster.
-- **Performance impact**: BR backup consumes system resources. To minimize business impact, perform backups during off-peak hours.
-- **Time estimation**: under optimal hardware conditions (no disk I/O or network bandwidth bottlenecks), estimated times are:
+- **版本匹配**：执行备份与恢复时，BR 组件的版本需与旧集群的大版本保持一致。
+- **性能影响**：BR 备份会占用系统资源，建议在业务低峰期执行备份操作，以减少对业务的影响。
+- **时间预估**：在无硬件资源瓶颈（磁盘 IO、网络带宽等）的情况下，可以参考以下时间：
 
-    - Backup speed: backing up 1 TiB of data per TiKV node with 8 threads takes approximately 1 hour.
-    - Restore speed: restoring 1 TiB of data per TiKV node takes approximately 20 minutes.
+    - 备份速度：单个 TiKV 节点数据量为 1 TiB，使用 8 个线程备份大约需 1 小时。
+    - 恢复速度：单个 TiKV 节点数据量为 1 TiB，平均恢复时间大约为 20 分钟。
 
-- **Configuration consistency**: ensure that the [`new_collations_enabled_on_first_bootstrap`](/tidb-configuration-file.md#new_collations_enabled_on_first_bootstrap) configuration is identical between the old and new clusters. Otherwise, BR restore will fail.
-- **System table restore**: Use the `--with-sys-table` option during BR restore to recover system table data.
+- **配置一致性**：确保新旧集群的 [`new_collations_enabled_on_first_bootstrap`](/tidb-configuration-file.md#new_collations_enabled_on_first_bootstrap) 配置项相同，否则 BR 恢复会失败。
+- **系统表恢复**：执行 BR 恢复时，需使用 `--with-sys-table` 选项，以恢复部分系统表数据。
 
-To migrate full data to the new cluster, take the following steps:
+迁移全量数据到新集群的具体操作步骤如下：
 
-1. Perform a full backup on the old cluster:
+1. 对旧集群执行 BR 全量备份：
 
     ```shell
     tiup br:${cluster_version} backup full --pd ${pd_host}:${pd_port} -s ${backup_location}
     ```
 
-2. Record the TSO of the old cluster for later TiCDC Changefeed creation:
+2. 记录旧集群的 TSO，用于后续创建 TiCDC Changefeed：
 
     ```shell
     tiup br:${cluster_version} validate decode --field="end-version" \
     --storage "s3://xxx?access-key=${access-key}&secret-access-key=${secret-access-key}" | tail -n1
     ```
 
-3. Deploy the new cluster:
+3. 部署新集群：
 
     ```shell
     tiup cluster deploy ${new_cluster_name} ${cluster_version} tidb-cluster.yaml
     ```
 
-4. Restore the full backup to the new cluster:
+4. 将全量备份恢复到新集群：
 
     ```shell
     tiup br:${cluster_version} restore full --pd ${pd_host}:${pd_port} -s ${backup_location} --with-sys-table
     ```
 
-### 3. Upgrade the new cluster to the target version
+### 3. 升级新集群至目标版本
 
-To save time, you can perform an offline upgrade using the following commands. For more upgrade methods, see [Upgrade TiDB Using TiUP](/upgrade-tidb-using-tiup.md).
+为节省时间，可执行以下命令进行停机升级。关于更多 TiDB 升级方式，参考[使用 TiUP 升级 TiDB](/upgrade-tidb-using-tiup.md)。
 
 ```shell
-tiup cluster stop <new_cluster_name>      # Stop the cluster
-tiup cluster upgrade <new_cluster_name> <v_target_version> --offline  # Perform offline upgrade
-tiup cluster start <new_cluster_name>     # Start the cluster
+tiup cluster stop <new_cluster_name>      # 暂停集群
+tiup cluster upgrade <new_cluster_name> <v_target_version> --offline  # 停机升级
+tiup cluster start <new_cluster_name>     # 启动集群
 ```
 
-To maintain business continuity, you need to replicate essential configurations from the old cluster to the new cluster, such as configuration items and system variables.
+此外，还需同步旧集群必要的关键配置至新集群，例如系统配置项和系统变量等，以确保业务运行一致性。
 
-## Step 3: Replicate incremental data
+## 步骤三：同步增量数据
 
-### 1. Establish a forward data replication channel
+### 1. 建立正向数据同步通道
 
-At this stage, the old cluster remains at its original version, while the new cluster has been upgraded to the target version. In this step, you need to establish a forward data replication channel from the old cluster to the new cluster.
+现在，旧集群为原始版本，新集群已升级至目标版本。接下来，需要建立从旧集群到新集群的正向数据同步通道。
 
-> **Note:**
+> **注意：**
 >
-> The TiCDC component version must match the major version of the old cluster.
+> TiCDC 组件的版本需与旧集群的大版本保持一致。
 
-- Create a Changefeed task and set the incremental replication starting point (`${tso}`) to the exact backup TSO recorded in [Step 2](#step-2-prepare-the-new-cluster) to prevent data loss:
+- 创建 Changefeed 同步任务，其中增量同步起始点 `${tso}` 为[步骤二](#步骤二准备新集群)中记录的备份的准确时间戳 TSO，以避免数据丢失：
 
     ```shell
     tiup ctl:${cluster_version} cdc changefeed create --server http://${cdc_host}:${cdc_port} --sink-uri="mysql://${username}:${password}@${tidb_endpoint}:${port}" --config config.toml --start-ts ${tso}
     ```
 
-- Check the replication task status and confirm that `tso` or `checkpoint` is continuously advancing:
+- 检查同步任务状态，确认 `tso` 或 `checkpoint` 是否在持续推进：
 
     ```shell
     tiup ctl:${cluster_version} cdc changefeed list --server http://${cdc_host}:${cdc_port}
     ```
 
-    The output is as follows:
+    输出示例如下：
 
     ```shell
     [{
@@ -150,131 +150,131 @@ At this stage, the old cluster remains at its original version, while the new cl
     }]
     ```
 
-During incremental data replication, continuously monitor the replication channel status and adjust settings if needed:
+在同步增量数据期间，需要持续监控数据同步通道的运行状态，并进行必要调整：
 
-- Latency metrics: ensure that `Changefeed checkpoint lag` remains within an acceptable range, such as within 5 minutes.
-- Throughput health: ensure that `Sink flush rows/s` consistently exceeds the business write rate.
-- Errors and alerts: regularly check TiCDC logs and alert information.
-- (Optional) Test data replication: update test data and verify that Changefeed correctly replicates it to the new cluster.
-- (Optional) Adjust the TiCDC configuration item [`gc-ttl`](/ticdc/ticdc-server-config.md#gc-ttl) (defaults to 24 hours).
+- 延迟指标：`Changefeed checkpoint lag` 应保持在较小范围内，例如 5 分钟内。
+- 吞吐健康：`Sink flush rows/s` 应持续高于业务写入速率。
+- 异常告警：定期检查 TiCDC 节点日志与告警信息。
+- （可选）测试数据同步：更新一些测试数据，验证 Changefeed 是否能将其同步到新集群。
+- （可选）调整 TiCDC 的配置项 [`gc-ttl`](/ticdc/ticdc-server-config.md#gc-ttl)（默认值为 24 小时）。
 
-    If a replication task is unavailable or interrupted and cannot be resolved in time, `gc-ttl` ensures that data needed by TiCDC is retained in TiKV without being cleaned by garbage collection (GC). If this duration is exceeded, the replication task enters a `failed` state and cannot recover. In this case, PD's GC safe point continues advancing, requiring a new backup to restart the process.
+    当同步任务不可用或因某种原因中断，且无法及时解决时，`gc-ttl` 配置可确保 TiCDC 需要消耗的数据保留在 TiKV 中而不被集群 GC 清理。超过此时间后，同步任务将进入 `failed` 状态且无法恢复，而 PD 对应的服务 GC 安全点会继续推进，这种情况下需要重新开始新的备份。
 
-    Increasing the value of `gc-ttl` accumulates more MVCC data, similar to increasing `tidb_gc_life_time`. It is recommended to set it to a reasonably long but appropriate value.
+    增加 `gc-ttl` 配置的值会累积更多 MVCC 数据，影响与调大 `tidb_gc_life_time` 相同，因此建议设置为合理的足够长的值。
 
-### 2. Verify data consistency
+### 2. 检查数据是否一致
 
-After data replication is complete, verify data consistency between the old and new clusters using the following methods:
+数据同步完成后，需要验证新旧集群数据是否一致。可使用以下方法：
 
-- Use the [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) tool:
+- 使用 [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) 工具：
 
     ```shell
     ./sync_diff_inspector --config=./config.toml
     ```
 
-- Use the snapshot configuration of [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) with the [Syncpoint](/ticdc/ticdc-upstream-downstream-check.md) feature of TiCDC to verify data consistency without stopping Changefeed replication. For more information, see [Upstream and Downstream Clusters Data Validation and Snapshot Read](/ticdc/ticdc-upstream-downstream-check.md).
+- 使用 [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) 的 snapshot 配置结合 TiCDC 的 [Syncpoint](/ticdc/ticdc-upstream-downstream-check.md) 功能，在不停止 Changefeed 同步任务的情况下，对新旧集群数据进行一致性验证。详见 [TiDB 主从集群数据校验和快照读](/ticdc/ticdc-upstream-downstream-check.md)。
 
-- Perform manual validation of business data, such as comparing table row counts.
+- 通过业务数据层面的手工校验方式确认数据一致性，例如对比表的行数是否一致。
 
-### 3. Finalize the environment setup
+### 3. 检查环境就绪状态
 
-This migration procedure restores some system table data using the BR `--with-sys-table` option. For tables that are not included in the scope, you need to manually restore. Common items to check and supplement include:
+本文使用 BR `--with-sys-table` 选项恢复部分系统表数据。对于不在恢复范围的内容，需要手动补齐。常见需要检查和补齐的内容包括：
 
-- User privileges: compare the `mysql.user` table.
-- Configuration settings: ensure that configuration items and system variables are consistent.
-- Auto-increment columns: clear auto-increment ID caches in the new cluster.
-- Statistics: collect statistics manually or enable automatic collection in the new cluster.
+- 权限体系：对比 `mysql.user` 表。
+- 配置：包括各节点的参数配置和系统变量。
+- 自增列：在新集群上清除自增 ID 的缓存。
+- 统计信息：新集群可使用手动或自动收集方式。
 
-Additionally, you can scale out the new cluster to handle expected workloads and migrate operational tasks, such as alert subscriptions, scheduled statistics collection scripts, and data backup scripts.
+此外，还可对新集群进行扩容，以满足预计的业务负载，并迁移周边运维任务，如告警订阅、定时统计信息收集脚本和数据备份脚本等。
 
-## Step 4: Switch business traffic and rollback
+## 步骤四：切换业务流量及回退
 
-### 1. Prepare for the switchover
+### 1. 切换前准备
 
-- Confirm replication status:
+- 确认同步状态：
 
-    - Monitor the latency of TiCDC Changefeed replication.
-    - Ensure that the incremental replication throughput is greater than or equal to the peak business write rate.
+    - 监控 TiCDC Changefeed 的同步延迟。
+    - 确保增量同步的吞吐量大于或等于业务写入峰值。
 
-- Perform multi-dimensional validation, such as:
+- 执行多维度验证，例如：
 
-    - Ensure that all data validation steps are complete and perform any necessary additional checks.
-    - Conduct sanity or integration tests on the application in the new cluster.
+    - 确保所有数据和内容验证步骤均已完成，并补充必要的检查项。
+    - 在新集群上对应用程序进行合理性测试或集成测试。
 
-### 2. Execute the switchover
+### 2. 执行切换
 
-1. Stop application services to prevent the old cluster from handling business traffic. To further restrict access, you can use one of the following methods:
+1. 停止应用服务，确保旧集群不再承载业务流量。此外，可以通过以下方式进一步确保集群不会被访问：
 
-    - Lock user accounts in the old cluster:
+    - 锁定旧集群的用户账户：
 
         ```sql
         ALTER USER ACCOUNT LOCK;
         ```
 
-    - Set the old cluster to read-only mode. It is recommended to restart TiDB nodes in the old cluster to clear active business sessions and prevent connections that have not entered read-only mode:
+    - 将旧集群设为只读模式。建议重启旧集群的 TiDB 节点，以清理业务会话连接，防止未进入只读状态的连接：
 
         ```sql
         SET GLOBAL tidb_super_read_only=ON;
         ```
 
-2. Ensure TiCDC catches up:
+2. 确认 TiCDC 追平：
 
-    - After setting the old cluster to read-only mode, retrieve the current `up-tso`:
+    - 在旧集群进入只读模式后，获取旧集群当前的 `up-tso`：
 
         ```sql
-        SELECT tidb_current_ts();
+        BEGIN; SELECT TIDB_CURRENT_TSO(); ROLLBACK;
         ```
 
-    - Monitor the Changefeed `checkpointTs` to confirm it has surpassed `up-tso`, indicating that TiCDC has completed data replication.
+    - 观察 Changefeed `checkpointTs`，确保其大于 `up-tso`，即 TiCDC 已完成数据同步。
 
-3. Verify data consistency between the new and old clusters:
+3. 确保新旧集群数据一致：
 
-    - After TiCDC catches up, obtain the `down-tso` from the new cluster.
-    - Use the [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) tool to compare data consistency between the new and old clusters at `up-tso` and `down-tso`.
+    - 在 TiCDC 追平后，获取新集群的 `down-tso`。
+    - 使用 [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) 工具对比新旧集群在 `up-tso` 和 `down-tso` 时刻的数据一致性。
 
-4. Pause the forward Changefeed replication task:
+4. 暂停 Changefeed 正向同步任务：
 
     ```shell
     tiup ctl:${cluster_version} cdc changefeed pause --server http://${cdc_host}:${cdc_port} -c <changefeedid>
     ```
 
-5. Restart the TiDB nodes in the new cluster to clear the auto-increment ID cache.
+5. 重启新集群的 TiDB 节点，以清除自增 ID 的缓存。
 
-6. Check the operational status of the new cluster using the following methods:
+6. 检查新集群运行状态，可以通过以下方式确认：
 
-    - Verify that the TiDB version matches the target version:
+    - 检查 TiDB 版本信息是否与目标版本一致：
 
         ```shell
         tiup cluster display <cluster-name>
         ```
 
-    - Log into the database and confirm component versions:
+    - 登录数据库，检查各组件版本是否符合预期：
 
         ```sql
         SELECT * FROM INFORMATION_SCHEMA.CLUSTER_INFO;
         ```
 
-    - Use Grafana to monitor service status: navigate to [**Overview > Services Port Status**](/grafana-overview-dashboard.md) and confirm that all services are in the **Up** state.
+    - 通过 Grafana 监控服务状态：查看 [**Overview 面板 > Services Port Status**](/grafana-overview-dashboard.md#services-port-status)，确保所有服务均为 **Up** 状态。
 
-7. Set up reverse replication from the new cluster to the old cluster.
+7. 建立从新集群到旧集群的逆向数据同步通道。
 
-    1. Unlock user accounts in the old cluster and restore read-write mode:
+    1. 解锁旧集群的用户账户，并恢复其读写模式：
 
         ```sql
         ALTER USER ACCOUNT UNLOCK;
         SET GLOBAL tidb_super_read_only=OFF;
         ```
 
-    2. Record the current TSO of the new cluster:
+    2. 记录新集群当前的 TSO：
 
         ```sql
-        SELECT tidb_current_ts();
+        BEGIN; SELECT TIDB_CURRENT_TSO(); ROLLBACK;
         ```
 
-    3. Configure the reverse replication link and ensure the Changefeed task is running properly:
+    3. 配置逆向数据同步链路，并确认 Changefeed 任务正常：
 
-        - Because business operations are stopped at this stage, you can use the current TSO.
-        - Ensure that `sink-uri` is set to the address of the old cluster to avoid loopback writing risks.
+        - 由于此时业务已停止，可使用当前 TSO。
+        - 确保 `sink-uri` 设置为旧集群的地址，以避免回环写入风险。
 
         ```shell
         tiup ctl:${cluster_version} cdc changefeed create --server http://${cdc_host}:${cdc_port} --sink-uri="mysql://${username}:${password}@${tidb_endpoint}:${port}" --config config.toml --start-ts ${tso}
@@ -282,46 +282,46 @@ Additionally, you can scale out the new cluster to handle expected workloads and
         tiup ctl:${cluster_version} cdc changefeed list --server http://${cdc_host}:${cdc_port}
         ```
 
-8. Redirect business traffic to the new cluster.
+8. 切换业务流量到新集群。
 
-9. Monitor the load and operational status of the new cluster using the following Grafana panels:
+9. 检查新集群的负载及运行状态是否正常，可以通过以下 Grafana 面板进行监控：
 
-    - [**TiDB Dashboard > Query Summary**](/grafana-tidb-dashboard.md#query-summary): check the Duration, QPS, and Failed Query OPM metrics.
-    - [**TiDB Dashboard > Server**](/grafana-tidb-dashboard.md#server): monitor the **Connection Count** metric to ensure even distribution of connections across nodes.
+    - [**TiDB Dashboard** > **Query Summary**](/grafana-tidb-dashboard.md#query-summary)：检查 Duration、QPS、Failed Query OPM 监控项是否正常。
+    - [**TiDB Dashboard** > **Server**](/grafana-tidb-dashboard.md#server)：检查 Connection Count 监控项，查看各节点之间的连接数是否均匀。
 
-At this point, business traffic has successfully switched to the new cluster, and the TiCDC reverse replication channel is established.
+此时，业务流量已成功切换至新集群，并建立了 TiCDC 逆向同步通道。
 
-### 3. Execute emergency rollback
+### 3. 应急回滚
 
-The rollback plan is as follows:
+回退方案：
 
-- Check data consistency between the new and old clusters regularly to ensure the reverse replication link is operating properly.
-- Monitor the system for a specified period, such as one week. If issues occur, switch back to the old cluster.
-- After the observation period, remove the reverse replication link and delete the old cluster.
+- 定期检查新旧集群的数据一致性，确保逆向同步链路正常运行。
+- 观察一段时间，例如一周，如发现问题，可随时切换回旧集群。
+- 观察期结束后，关闭 TiCDC 逆向同步链路，并下线旧集群。
 
-The following introduces the usage scenario and steps for an emergency rollback, which redirects traffic back to the old cluster:
+应急回滚：流量切回旧集群
 
-- Usage scenario: execute the rollback plan if critical issues cannot be resolved.
-- Steps:
+- 适用场景：当业务在短时间内无法解决关键问题时，需要考虑是否实施回退方案。
+- 操作步骤：
 
-    1. Stop business access to the new cluster.
-    2. Reauthorize business accounts and restore read-write access to the old cluster.
-    3. Check the reverse replication link, confirm TiCDC has caught up, and verify data consistency between the new and old clusters.
-    4. Redirect business traffic back to the old cluster.
+    1. 停止对新集群的业务访问。
+    2. 重新授权业务账户，恢复对旧集群的读写权限。
+    3. 检查逆向同步链路，确认 TiCDC 追平，并确保新旧集群数据一致。
+    4. 切换业务流量回旧集群。
 
-## Step 5: Clean up
+## 步骤五：结束与清理
 
-After monitoring the new cluster for a period and confirming stable business operations, you can remove the TiCDC reverse replication and delete the old cluster.
+经过一段时间的观察，确认业务在新集群上稳定运行后，可下线 TiCDC 逆向同步链路并删除旧集群：
 
-- Remove the TiCDC reverse replication:
+- 下线 TiCDC 逆向同步链路：
 
     ```shell
     tiup ctl:${cluster_version} cdc changefeed remove --server http://${cdc_host}:${cdc_port} -c <changefeedid>
     ```
 
-- Delete the old cluster. If you choose to retain it, restore `tidb_gc_life_time` to its original value:
+- 删除旧集群。如果不删除，请确保将 `tidb_gc_life_time` 恢复为原始值：
 
     ```sql
-    -- Restore to the original value before modification.
+    -- 恢复为变更前的值
     SET GLOBAL tidb_gc_life_time=10m;
     ```

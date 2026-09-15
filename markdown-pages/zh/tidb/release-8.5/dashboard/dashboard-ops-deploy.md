@@ -1,139 +1,132 @@
 ---
-title: Deploy TiDB Dashboard
-summary: TiDB Dashboard is built into PD for v4.0 or higher. No additional deployment is needed. It can also be deployed independently on Kubernetes. When multiple PD instances are deployed, only one serves the Dashboard. Use `tiup cluster display` to check the serving instance. You can disable and re-enable the Dashboard using `tiup ctl`.
+title: 部署 TiDB Dashboard
+summary: TiDB Dashboard 是内置于 TiDB 4.0 或更高版本的 PD 组件中的界面，无需额外部署。对于 TiDB v6.5.0 及 TiDB Operator v1.4.0 之后的版本，在 Kubernetes 上支持将 TiDB Dashboard 作为独立的 Pod 部署。部署标准 TiDB 集群的文档可参考快速试用 TiDB 集群、生产环境部署和 Kubernetes 环境部署。当集群中部署了多个 PD 实例时，仅有一个 PD 实例会提供 TiDB Dashboard 服务。可通过 TiUP 查看实际运行 TiDB Dashboard 服务的 PD 实例，并切换其他 PD 实例提供 TiDB Dashboard 服务。也可以禁用和重新启用 TiDB Dashboard。
 ---
 
-# Deploy TiDB Dashboard
+# 部署 TiDB Dashboard
 
-The TiDB Dashboard UI is built into the PD component for v4.0 or higher versions, and no additional deployment is required. Simply deploy a standard TiDB cluster, and TiDB Dashboard will be there.
+TiDB Dashboard 界面内置于 TiDB 4.0 或更高版本的 PD 组件中，无需额外部署。只需部署标准 TiDB 集群，TiDB Dashboard 就会原生集成。
 
-> **Note:**
+> **注意：**
 >
-> TiDB v6.5.0 (and later) and TiDB Operator v1.4.0 (and later) support deploying TiDB Dashboard as an independent Pod on Kubernetes. For details, see [Deploy TiDB Dashboard independently in TiDB Operator](https://docs.pingcap.com/tidb-in-kubernetes/dev/get-started#deploy-tidb-dashboard-independently).
+> TiDB v6.5.0 且 TiDB Operator v1.4.0 之后，在 Kubernetes 上支持将 TiDB Dashboard 作为独立的 Pod 部署。具体信息，参考 [TiDB Operator 部署独立的 TiDB Dashboard](https://docs.pingcap.com/zh/tidb-in-kubernetes/v1.6/get-started#部署独立的-tidb-dashboard)。
 
-See the following documents to learn how to deploy a standard TiDB cluster:
+请参阅下列文档了解如何部署标准 TiDB 集群：
 
-+ [Quick Start with TiDB Self-Managed](/quick-start-with-tidb.md)
-+ [Deploy TiDB in Production Environment](/production-deployment-using-tiup.md)
-+ [Kubernetes environment deployment](https://docs.pingcap.com/tidb-in-kubernetes/stable/access-dashboard)
+- [快速试用 TiDB 集群](/quick-start-with-tidb.md)
+- [生产环境部署](/production-deployment-using-tiup.md)
+- [Kubernetes 环境部署](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/access-dashboard/)
 
-> **Note:**
+> **注意：**
 >
-> You cannot deploy TiDB Dashboard in a TiDB cluster earlier than v4.0.
+> TiDB Dashboard 目前不能在低于 4.0 版本的集群中部署或使用。
 
-## Deployment with multiple PD instances
+## 多 PD 实例部署
 
-When multiple PD instances are deployed in the cluster, only one of these instances serves the TiDB Dashboard.
+当集群中部署了多个 PD 实例时，其中仅有一个 PD 实例会固定地提供 TiDB Dashboard 服务。
 
-When PD instances are running for the first time, they automatically negotiate with each other to choose one instance to serve the TiDB Dashboard. TiDB Dashboard will not run on other PD instances. The TiDB Dashboard service will always be provided by the chosen PD instance no matter PD instances are restarted or new PD instances are joined. However, there will be a re-negotiation when the PD instance that serves TiDB Dashboard is removed from the cluster (scaled-in). The negotiation process does not need user intervention.
+各个 PD 首次运行时会自动协商出其中某一个实例提供 TiDB Dashboard 服务。协商完毕后，无论重启或扩容，都会固定在这个实例上运行 TiDB Dashboard 服务，除非该实例被手动缩容。其他 PD 实例不会运行 TiDB Dashboard 服务。这个协商过程无需用户介入，会自动完成。
 
-When you access a PD instance that does not serve TiDB Dashboard, the browser will be redirected automatically to guide you to access the PD instance that serves the TiDB Dashboard, so that you can access the service normally. This process is illustrated in the image below.
+当用户访问不提供 TiDB Dashboard 服务的 PD 实例时，浏览器将会收到重定向指令，自动引导用户重新访问提供了 TiDB Dashboard 服务的 PD 实例，从而能正常使用。流程如下图所示。
 
-![Process Schematic](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-ops-multiple-pd.png)
+![流程示意](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-ops-multiple-pd.png)
 
-> **Note:**
+> **注意：**
 >
-> The PD instance that serves TiDB Dashboard might not be a PD leader.
+> 提供 TiDB Dashboard 服务的 PD 实例不一定与 PD leader 一致。
 
-### Check the PD instance that actually serves TiDB Dashboard
+### 查询实际运行 TiDB Dashboard 服务的 PD 实例
 
-For a running cluster deployed using TiUP, you can use the `tiup cluster display` command to see which PD instance serves TiDB Dashboard. Replace `CLUSTER_NAME` with the cluster name.
-
+使用 TiUP 部署时，对于已启动的集群，可通过 `tiup cluster display` 命令查看哪个 PD 节点提供了 TiDB Dashboard 服务（将 `CLUSTER_NAME` 替换为集群名称）：
 
 ```bash
 tiup cluster display CLUSTER_NAME --dashboard
 ```
 
-A sample output is as follows:
+输出样例如下：
 
-```bash
+```
 http://192.168.0.123:2379/dashboard/
 ```
 
-> **Note:**
+> **注意：**
 >
-> This feature is available only in the later version of the `tiup cluster` deployment tool (v1.0.3 or later).
+> 该功能在 TiUP Cluster v1.0.3 或更高版本部署工具中提供。
 >
 > <details>
-> <summary>Upgrade TiUP Cluster</summary>
+> <summary>升级 TiUP Cluster 步骤</summary>
 >
-> ```bash
+> ```shell
 > tiup update --self
 > tiup update cluster --force
 > ```
 >
 > </details>
 
-### Switch to another PD instance to serve TiDB Dashboard
+### 切换其他 PD 实例提供 TiDB Dashboard 服务
 
-For a running cluster deployed using TiUP, you can use the `tiup ctl:v<CLUSTER_VERSION> pd` command to change the PD instance that serves TiDB Dashboard, or re-specify a PD instance to serve TiDB Dashboard when it is disabled:
-
+使用 TiUP 部署时，对于已启动的集群，可使用 `tiup ctl:v<CLUSTER_VERSION> pd` 命令切换其他 PD 实例运行 TiDB Dashboard，或在禁用 TiDB Dashboard 的情况下重新指定一个 PD 实例运行 TiDB Dashboard：
 
 ```bash
 tiup ctl:v<CLUSTER_VERSION> pd -u http://127.0.0.1:2379 config set dashboard-address http://9.9.9.9:2379
 ```
 
-In the command above:
+其中：
 
-- Replace `127.0.0.1:2379` with the IP and port of any PD instance.
-- Replace `9.9.9.9:2379` with the IP and port of the new PD instance that you desire to run the TiDB Dashboard service.
+- 将 `127.0.0.1:2379` 替换为任意 PD 实例的 IP 和端口
+- 将 `9.9.9.9:2379` 替换为想运行 TiDB Dashboard 服务的新 PD 实例的 IP 和端口
 
-You can use the `tiup cluster display` command to see whether the modification is taking effect (replace `CLUSTER_NAME` with the cluster name):
-
+修改完毕后，可使用 `tiup cluster display` 命令确认修改是否生效（将 `CLUSTER_NAME` 替换为集群名称）：
 
 ```bash
 tiup cluster display CLUSTER_NAME --dashboard
 ```
 
-> **Warning:**
+> **警告：**
 >
-> If you change the instance to run TiDB Dashboard, the local data stored in the previous TiDB Dashboard instance will be lost, including the Key Visualize history and search history.
+> 切换 TiDB Dashboard 将会丢失之前 TiDB Dashboard 实例所存储的本地数据，包括流量可视化历史、历史搜索记录等。
 
-## Disable TiDB Dashboard
+## 禁用 TiDB Dashboard
 
-For a running cluster deployed using TiUP, use the `tiup ctl:v<CLUSTER_VERSION> pd` command to disable TiDB Dashboard on all PD instances (replace `127.0.0.1:2379` with the IP and port of any PD instance):
-
+使用 TiUP 部署时，对于已启动的集群，可使用 `tiup ctl:v<CLUSTER_VERSION> pd` 命令在所有 PD 实例上禁用 TiDB Dashboard（将 `127.0.0.1:2379` 替换为任意 PD 实例的 IP 和端口）：
 
 ```bash
 tiup ctl:v<CLUSTER_VERSION> pd -u http://127.0.0.1:2379 config set dashboard-address none
 ```
 
-After disabling TiDB Dashboard, checking which PD instance provides the TiDB Dashboard service will fail:
+禁用 TiDB Dashboard 后，查询哪个 PD 实例提供 TiDB Dashboard 服务将会失败：
 
 ```
 Error: TiDB Dashboard is disabled
 ```
 
-Visiting the TiDB Dashboard address of any PD instance via the browser will also fail:
+浏览器访问任意 PD 实例的 TiDB Dashboard 地址也将提示失败：
 
 ```
 Dashboard is not started.
 ```
 
-## Re-enable TiDB Dashboard
+## 重新启用 TiDB Dashboard
 
-For a running cluster deployed using TiUP, use the `tiup ctl:v<CLUSTER_VERSION> pd` command to request PD to renegotiate an instance to run TiDB Dashboard (replace `127.0.0.1:2379` with the IP and port of any PD instance):
-
+使用 TiUP 部署时，对于已启动的集群，可使用 `tiup ctl:v<CLUSTER_VERSION> pd` 命令，要求 PD 重新协商出某一个实例运行 TiDB Dashboard（将 `127.0.0.1:2379` 替换为任意 PD 实例的 IP 和端口）：
 
 ```bash
 tiup ctl:v<CLUSTER_VERSION> pd -u http://127.0.0.1:2379 config set dashboard-address auto
 ```
 
-After executing the command above, you can use the `tiup cluster display` command to view the TiDB Dashboard instance address automatically negotiated by PD (replace `CLUSTER_NAME` with the cluster name):
-
+修改完毕后，使用 `tiup cluster display` 命令查看 PD 自动协商出的 TiDB Dashboard 实例地址（将 `CLUSTER_NAME` 替换为集群名称）：
 
 ```bash
 tiup cluster display CLUSTER_NAME --dashboard
 ```
 
-You can also re-enable TiDB Dashboard by manually specifying the PD instance that serves TiDB Dashboard. See [Switch to another PD instance to serve TiDB Dashboard](#switch-to-another-pd-instance-to-serve-tidb-dashboard).
+还可以通过手动指定哪个 PD 实例运行 TiDB Dashboard 服务的方式重新启用 TiDB Dashboard，具体操作参见上文[切换其他 PD 实例提供 TiDB Dashboard 服务](#切换其他-pd-实例提供-tidb-dashboard-服务)。
 
-> **Warning:**
+> **警告：**
 >
-> If the newly enabled TiDB Dashboard instance is different with the previous instance that served the TiDB Dashboard, the local data stored in the previous TiDB Dashboard instance will be lost, including Key Visualize history and search history.
+> 若新启用的 TiDB Dashboard 实例与禁用前的实例不一致，将会丢失之前 TiDB Dashboard 实例所存储的本地数据，包括流量可视化历史、历史搜索记录等。
 
-## What's next
+## 下一步
 
-- To learn how to access and log into the TiDB Dashboard UI, see [Access TiDB Dashboard](/dashboard/dashboard-access.md).
-
-- To learn how to enhance the security of TiDB Dashboard, such as configuring a firewall, see [Secure TiDB Dashboard](/dashboard/dashboard-ops-security.md).
+- 参阅[访问 TiDB Dashboard](/dashboard/dashboard-access.md) 章节了解如何访问及登录集群上的 TiDB Dashboard 界面。
+- 参阅[提高 TiDB Dashboard 安全性](/dashboard/dashboard-ops-security.md)章节了解如何增强 TiDB Dashboard 的安全性，如配置防火墙等。

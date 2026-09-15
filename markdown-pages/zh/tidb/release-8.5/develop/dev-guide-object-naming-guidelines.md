@@ -1,60 +1,47 @@
 ---
-title: Object Naming Convention
-summary: 了解 TiDB 中的对象命名规范。
+title: 对象命名规范
+summary: 介绍 TiDB 中的对象命名规范。
+aliases: ['/zh/tidb/dev/object-naming-guidelines','/zh/tidb/stable/dev-guide-object-naming-guidelines/','/zh/tidb/dev/dev-guide-object-naming-guidelines/','/zh/tidbcloud/dev-guide-object-naming-guidelines/']
 ---
 
-# Object Naming Convention
+# 对象命名规范
 
-本文档介绍了数据库对象的命名规则，包括数据库、表、索引和用户。
+用于规范数据库对象的命名，如数据库（DATABASE）、表（TABLE）、索引（INDEX）、用户（USER）等的命名约定。
 
-## General rules
+## 原则
 
-- 建议使用有意义的英文单词，单词之间用下划线分隔。
-- 名称中只使用字母、数字和下划线。
-- 避免使用 TiDB 的保留字，例如 `group` 和 `order`，作为列名。
-- 建议所有数据库对象均使用小写字母。
+- 命名建议使用具有意义的英文词汇，词汇中间以下划线分隔。
+- 命名只能使用英文字母、数字、下划线。
+- 避免用 TiDB 的保留字如：group，order 等作为单个字段名。
+- 建议所有数据库对象使用小写字母。
 
-## Database naming convention
+## 数据库命名规范
 
-建议根据业务、产品或其他指标区分数据库名称，数据库名长度不超过 20 个字符。例如，可以将临时库命名为 `tmp_crm`，测试库命名为 `test_crm`。
+建议按照业务、产品线或者其它指标进行区分，一般不要超过 20 个字符。如：临时库 (tmp_crm)、测试库 (test_crm)。
 
-## Table naming convention
+## 表命名规范
 
-- 对于同一业务或模块的表，使用相同的前缀，并尽可能使表名具有自解释性。
-- 单词之间用下划线分隔。建议表名不超过 32 个字符。
-- 建议为表的用途添加注释，以便更好理解。例如：
-    - 临时表：`tmp_t_crm_relation_0425`
-    - 备份表：`bak_t_crm_relation_20170425`
-    - 业务操作的临时表：`tmp_st_{business code}_{creator abbreviation}_{date}`
-    - 账户期间的记录表：`t_crm_ec_record_YYYY{MM}{dd}`
-- 对不同业务模块的表创建单独的数据库，并相应添加注释。
+- 同一业务或者模块的表尽可能使用相同的前缀，表名称尽可能表达含义。
+- 多个单词以下划线分隔，不推荐超过 32 个字符。
+- 建议对表的用途进行注释说明，以便于统一认识。如：
+    - 临时表（tmp_t_crm_relation_0425）
+    - 备份表（bak_t_crm_relation_20170425）
+    - 业务运营临时统计表（`tmp_st_{business code}_{creator abbreviation}_{date}`）
+    - 账期归档表（`t_crm_ec_record_YYYY{MM}{dd}`）
+- 不同业务模块的表单独建立 DATABASE，并增加相应注释。
 
-## Column naming convention
+## 字段命名规范
 
-- 列名应反映列的实际含义或其缩写。
-- 建议在具有相同含义的表之间使用相同的列名。
-- 建议为列添加注释，并为枚举类型指定命名值，例如 "0: offline, 1: online"。
-- 建议将布尔类型的列命名为 `is_{description}`。例如，表示会员是否启用的列可以命名为 `is_enabled`。
-- 不建议列名超过 30 个字符，列数应少于 60 个。
-- 避免使用 TiDB 的保留字作为列名，例如 `order`、`from` 和 `desc`。要检查某个关键词是否为保留字，请参见 [TiDB keywords](/keywords.md)。
+- 字段命名需要表示其实际含义的英文单词或简写。
+- 建议各表之间相同意义的字段应同名。
+- 字段也尽量添加注释，枚举型需指明主要值的含义，如”0 - 离线，1 - 在线”。
+- 布尔值列命名为 `is_{description}`。如 member 表上表示为 enabled 的会员的列命名为 is_enabled。
+- 字段名不建议超过 30 个字符，字段个数不建议大于 60。
+- 尽量避免使用保留字，如 order、from、desc 等，请参考附录部分的官方保留字。
 
-## Index naming convention
+## 索引命名规范
 
-- 主键索引：`pk_{table_name_abbreviation}_{field_name_abbreviation}`
-- 唯一索引：`uk_{table_name_abbreviation}_{field_name_abbreviation}`
-- 普通索引：`idx_{table_name_abbreviation}_{field_name_abbreviation}`
-- 多词列名：使用有意义的缩写
-
-## Need help?
-
-<CustomContent platform="tidb">
-
-Ask the community on [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) or [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs), or [submit a support ticket](/support.md).
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-Ask the community on [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) or [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs), or [submit a support ticket](https://tidb.support.pingcap.com/).
-
-</CustomContent>
+- 主键索引：`pk_{表名称简写}_{字段名简写}`
+- 唯一索引：`uk_{表名称简写}_{字段名简写}`
+- 普通索引：`idx_{表名称简写}_{字段名简写}`
+- 多单词组成的 column_name，取尽可能代表意义的缩写。

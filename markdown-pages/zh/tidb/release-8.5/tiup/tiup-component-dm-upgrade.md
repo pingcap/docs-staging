@@ -1,35 +1,35 @@
 ---
 title: tiup dm upgrade
-summary: The `tiup dm upgrade` command upgrades a specified cluster to a specific version. It requires the cluster name and target version as parameters. The `--offline` option allows for offline upgrades, and the `-h, --help` option prints help information. The output is a log of the service upgrade process.
+summary: tiup dm upgrade 命令用于将指定集群升级到特定版本。语法为 tiup dm upgrade <cluster-name> <version> [flags]。cluster-name 为要操作的集群名字，version 为要升级到的目标版本。选项 --offline 声明当前集群处于离线状态，-h, --help 输出帮助信息。升级服务的日志可查看。
 ---
 
 # tiup dm upgrade
 
-The `tiup dm upgrade` command is used to upgrade a specified cluster to a specific version.
+命令 `tiup dm upgrade` 用于将指定集群升级到特定版本。
 
-## Syntax
+## 语法
 
 ```shell
 tiup dm upgrade <cluster-name> <version> [flags]
 ```
 
-- `<cluster-name>` is the name of the cluster to be operated on. If you forget the cluster name, you can check it using the [`tiup dm list`](/tiup/tiup-component-dm-list.md) command.
-- `<version>` is the target version to be upgraded to, such as `8.5.8`. Currently, only upgrading to a later version is allowed, and upgrading to an earlier version is not allowed, which means the downgrade is not allowed. Upgrading to a nightly version is not allowed either.
+- `<cluster-name>` 为要操作的集群名字，如果忘记集群名字可查看[集群列表](/tiup/tiup-component-dm-list.md)。
+- `<version>` 为要升级到的目标版本，例如 `v8.5.8`。目前仅允许升级到比当前集群更高的版本，不允许升级到比当前集群更低的版本，即不允许降级。同时也不允许升级成 nightly 版本。
 
-## Options
+## 选项
 
 ### --offline
 
-- Declares that the current cluster is offline. When this option is specified, TiUP DM only replaces the binary files of the cluster components in place without restarting the service.
+声明当前集群处于离线状态。指定该选项时，TiUP DM 仅原地替换集群组件的二进制文件，不重启服务。
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-Log of the service upgrade process.
+升级服务的日志。
 
-[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)
+[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)

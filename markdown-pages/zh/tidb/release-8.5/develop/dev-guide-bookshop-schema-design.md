@@ -1,61 +1,45 @@
 ---
-title: Bookshop 示例应用
-summary: Bookshop 是一个在线书店应用，供你购买和评价书籍。你可以通过 TiUP 或 TiDB Cloud 导入表结构和数据。方法 1 使用 TiUP 快速生成并导入示例数据，方法 2 从 Amazon S3 导入数据到 TiDB Cloud。数据库表包括 books、authors、users、ratings、book_authors 和 orders。数据库初始化脚本 `dbinit.sql` 创建了 Bookshop 应用的表结构。
+title: Bookshop 应用
+summary: Bookshop 应用设计、数据导入、连接数据库等操作。
+aliases: ['/zh/tidb/dev/bookshop-schema-design','/zh/tidb/stable/dev-guide-bookshop-schema-design/','/zh/tidb/dev/dev-guide-bookshop-schema-design/','/zh/tidbcloud/dev-guide-bookshop-schema-design/']
 ---
 
-# Bookshop 示例应用
+# Bookshop 应用
 
-Bookshop 是一个虚拟的在线书店应用，你可以在其中购买各种类别的书籍并对已阅读的书籍进行评分。
+Bookshop 是一个虚拟的在线书店应用，你可以在 Bookshop 当中便捷地购买到各种类别的书，也可以对你看过的书进行点评。
 
-为了让你在应用开发指南中的阅读更加顺畅，我们基于 [表结构](#description-of-the-tables) 和数据，提供了示例的 SQL 语句。本文件重点介绍导入表结构和数据的方法以及表结构的定义。
+为了方便你阅读应用开发指南中的内容，我们将以 Bookshop 应用的[数据表结构](#数据表详解)和数据为基础来编写示例 SQL。本章节将为你介绍如何导入该应用的表结构和数据，以及其数据表结构的定义。
 
 ## 导入表结构和数据
 
-<CustomContent platform="tidb">
+选择以下一种方式导入 Bookshop 应用的表结构和数据：
 
-你可以通过 [TiUP](#method-1-via-tiup-demo) 或 [TiDB Cloud 的导入功能](#method-2-via-tidb-cloud-import) 导入 Bookshop 的表结构和数据。
+- [本地部署的 TiDB：通过 `tiup demo` 命令行](#本地部署的-tidb通过-tiup-demo-命令行)
+- [TiDB Cloud：通过 Import 功能](#tidb-cloud通过-import-功能)
 
-</CustomContent>
+### 本地部署的 TiDB：通过 `tiup demo` 命令行
 
-<CustomContent platform="tidb-cloud">
-
-对于 TiDB Cloud，你可以跳过 [Method 1: Via `tiup demo`](#method-1-via-tiup-demo)，直接通过 [TiDB Cloud 的导入功能](#method-2-via-tidb-cloud-import) 导入表结构。
-
-</CustomContent>
-
-### Method 1: Via `tiup demo`
-
-<CustomContent platform="tidb">
-
-如果你的 TiDB 集群是使用 [TiUP](/tiup/tiup-reference.md#tiup-reference) 部署的，或者你可以连接到你的 TiDB 服务器，你可以通过运行以下命令，快速生成并导入 Bookshop 应用的示例数据：
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-如果你的 TiDB 集群是使用 [TiUP](https://docs.pingcap.com/tidb/stable/tiup-reference) 部署的，或者你可以连接到你的 TiDB 服务器，你可以通过运行以下命令，快速生成并导入 Bookshop 应用的示例数据：
-
-</CustomContent>
+如果你的 TiDB Self-Managed 集群使用 [TiUP](/tiup/tiup-reference.md#tiup-命令概览) 部署或者你可以直接连接到你的 TiDB 服务器，你可以通过如下命令快速生成并导入 Bookshop 应用的示例数据：
 
 ```shell
 tiup demo bookshop prepare
 ```
 
-默认情况下，此命令会让你的应用连接到地址 `127.0.0.1` 的端口 `4000`，允许你以 `root` 用户无密码登录，并在名为 `bookshop` 的数据库中创建 [表结构](#description-of-the-tables)。
+该命令默认会连接到 `127.0.0.1` 地址上的 `4000` 端口，使用 `root` 用户名进行无密码登录，默认在名为 `bookshop` 的数据库中创建[表结构](#数据表详解)。
 
 #### 配置连接信息
 
-下表列出了连接参数，你可以根据你的环境修改其默认设置。
+你可以通过如下参数修改默认的连接信息：
 
-| 参数           | 缩写 | 默认值             | 描述                     |
-| -------------- | ---- | ------------------ | ------------------------ |
-| `--password`   | `-p` | 无                 | 数据库用户密码           |
-| `--host`       | `-H` | `127.0.0.1`        | 数据库地址               |
-| `--port`       | `-P` | `4000`             | 数据库端口               |
-| `--db`         | `-D` | `bookshop`         | 数据库名称               |
-| `--user`       | `-U` | `root`             | 数据库用户               |
+| 参数         | 简写 | 默认值      | 解释           |
+| ------------ | ---- | ----------- | -------------- |
+| `--host`     | `-H` | `127.0.0.1` | 数据库地址     |
+| `--port`     | `-P` | `4000`      | 数据库端口     |
+| `--user`     | `-U` | `root`      | 数据库用户     |
+| `--password` | `-p` | 无          | 数据库用户密码 |
+| `--db`       | `-D` | `bookshop`  | 数据库名称     |
 
-例如，如果你想连接到 TiDB Cloud 上的数据库，可以这样指定连接信息：
+例如，你想要连接到 TiDB Cloud 上的数据库，你可以如下命令指定连接信息进行连接：
 
 ```shell
 tiup demo bookshop prepare -U <username> -H <endpoint> -P 4000 -p <password>
@@ -63,68 +47,56 @@ tiup demo bookshop prepare -U <username> -H <endpoint> -P 4000 -p <password>
 
 #### 设置数据量
 
-你可以通过配置以下参数，指定每个数据库表要生成的数据量：
+另外，你还可以通过如下参数指定各个数据库表生成的数据量：
 
-| 参数           | 默认值       | 描述                                              |
-| -------------- | ------------ | ------------------------------------------------- |
-| `--users`     | `10000`      | `users` 表中要生成的行数                          |
-| `--authors`   | `20000`      | `authors` 表中要生成的行数                        |
-| `--books`     | `20000`      | `books` 表中要生成的行数                          |
-| `--orders`    | `300000`     | `orders` 表中要生成的行数                         |
-| `--ratings`   | `300000`     | `ratings` 表中要生成的行数                        |
+| 参数        | 默认值   | 解释                              |
+| ----------- | -------- | --------------------------------- |
+| `--users`   | `10000`  | 指定在 `users` 表生成的数据行数   |
+| `--authors` | `20000`  | 指定在 `authors` 表生成的数据行数 |
+| `--books`   | `20000`  | 指定在 `books` 表生成的数据行数   |
+| `--orders`  | `300000` | 指定在 `orders` 表生成的数据行数  |
+| `--ratings` | `300000` | 指定在 `ratings` 表生成的数据行数 |
 
-例如，执行以下命令将生成：
-
-- 200,000 行用户信息（通过 `--users` 参数）
-- 500,000 行书籍信息（通过 `--books` 参数）
-- 100,000 行作者信息（通过 `--authors` 参数）
-- 1,000,000 行评分记录（通过 `--ratings` 参数）
-- 1,000,000 行订单记录（通过 `--orders` 参数）
+例如，以下命令通过 `--users` 参数指定生成 20 万行用户信息，通过 `--books` 参数指定生成 50 万行书籍的基本信息，通过 `--authors` 参数指定生成 10 万的作者信息，通过 `--ratings` 参数指定生成 100 万的评分记录，通过 `--orders` 参数指定生成 100 万的订单记录。
 
 ```shell
 tiup demo bookshop prepare --users=200000 --books=500000 --authors=100000 --ratings=1000000 --orders=1000000 --drop-tables
 ```
 
-你可以通过 `--drop-tables` 参数删除原有的表结构。更多参数说明，可以运行 `tiup demo bookshop --help` 获取。
+通过 `--drop-tables` 参数你可以删除原有的表结构，更多的参数说明你可以通过命令 `tiup demo bookshop --help` 进行了解。
 
-### Method 2: Via TiDB Cloud 导入
+### TiDB Cloud：通过 Import 功能
 
-1. 打开目标集群的 **Import** 页面。
+1. 打开目标 TiDB Cloud 资源的 **Import** 页面。
 
-    1. 登录 [TiDB Cloud 控制台](https://tidbcloud.com/) ，进入你的项目的 [**Clusters**](https://tidbcloud.com/console/clusters) 页面。
+    1. 登录 [TiDB Cloud](https://tidbcloud.com/)，导航至 [**My TiDB**](https://tidbcloud.com/tidbs) 页面。
 
         > **Tip:**
         >
-        > 如果你有多个项目，可以点击左下角的 <MDSvgIcon name="icon-left-projects" /> ，切换到其他项目。
+        > 如果你在多个 TiDB Cloud 组织中，可以使用左上角的复选框先切换到你的目标组织。
 
-    2. 点击目标集群的名称，进入其概览页面，然后在左侧导航栏点击 **Import**。
+    2. 点击目标资源的名称，进入资源的 **Overview** 页面，然后在左侧导航栏中点击 **Import**。
 
-2. 选择 **Import data from Cloud Storage**，然后点击 **Amazon S3**。
+2. 选择 **Import data from Cloud Storage**，然后点击 **Amazon S3**.
 
 3. 在 **Import Data from Amazon S3** 页面，配置以下源数据信息：
 
-    - **Import File Count**：对于 {{{ .starter }} }，选择 **Multiple files**。此字段在 TiDB Cloud Dedicated 中不可用。
-    - **Included Schema Files**：选择 **Yes**。
-    - **Data Format**：选择 **SQL**。
-    - **Folder URI**：输入 `s3://developer.pingcap.com/bookshop/`。
-    - **Bucket Access**：选择 **AWS Role ARN**。
-    - **Role ARN**：输入 `arn:aws:iam::494090988690:role/s3-tidb-cloud-developer-access`。
+    - **Import File Count**：对于 TiDB Cloud Starter，选择 **Multiple files**。TiDB Cloud Dedicated 中没有该字段。
+    - **Included Schema Files**：选择 **Yes**
+    - **Data Format**：选择 **SQL**
+    - **Folder URI**：输入 `s3://developer.pingcap.com/bookshop/`
+    - **Bucket Access**：选择 **AWS Role ARN**
+    - **Role ARN**：输入 `arn:aws:iam::494090988690:role/s3-tidb-cloud-developer-access`
 
-    在此示例中，提前生成了以下数据：
+    在这个示例数据当中，预先生成了 20 万的用户信息、50 万条书籍信息、10 万条作者信息、100 万条评分记录以及 100 万条订单信息。
 
-    - 200,000 行用户信息
-    - 500,000 行书籍信息
-    - 100,000 行作者信息
-    - 1,000,000 行评分记录
-    - 1,000,000 行订单记录
+4. 点击 **Connect** > **Start Import** 开始导入数据，等待 TiDB Cloud 完成数据导入。
 
-4. 点击 **Connect** > **Start Import** 开始导入流程，等待 TiDB Cloud 完成导入。
+你可以通过 [TiDB Cloud Migration Overview](https://docs.pingcap.com/tidbcloud/tidb-cloud-migration-overview) 文档获取更多有关 TiDB Cloud 数据导入和迁移的信息。
 
-关于如何导入或迁移数据到 TiDB Cloud 的更多信息，请参见 [TiDB Cloud Migration Overview](https://docs.pingcap.com/tidbcloud/tidb-cloud-migration-overview)。
+### 查看数据导入情况
 
-### 查看数据导入状态
-
-导入完成后，你可以执行以下 SQL 语句，查看每个表的数据量信息：
+导入完成后，你可以通过下面的 SQL 语句查看各个表的数据量信息：
 
 ```sql
 SELECT
@@ -138,7 +110,7 @@ FROM
 WHERE table_schema LIKE 'bookshop';
 ```
 
-结果如下：
+运行结果为：
 
 ```
 +-----------------------+----------------+-----------+------------+---------+
@@ -151,82 +123,83 @@ WHERE table_schema LIKE 'bookshop';
 | bookshop.users        |         195348 | 0.0048G   | 0.0021G    | 0.0069G |
 | bookshop.books        |        1000000 | 0.0546G   | 0.0000G    | 0.0546G |
 +-----------------------+----------------+-----------+------------+---------+
+6 rows in set (0.03 sec)
 ```
 
-## 表结构说明
+## 数据表详解
 
-本节详细介绍 Bookshop 应用的数据库表。
+以下将详细介绍 Bookshop 应用程序的数据库表结构：
 
 ### `books` 表
 
-存储书籍的基本信息。
+该表用于存储书籍的基本信息。
 
-| 字段名       | 类型          | 描述                     |
-|--------------|---------------|--------------------------|
-| id           | bigint        | 书籍的唯一 ID            |
-| title        | varchar(100)  | 书名                     |
-| type         | enum          | 书籍类型（例如，杂志、动画、教学辅助） |
-| stock        | bigint        | 库存                     |
-| price        | decimal(15,2) | 价格                     |
-| published_at | datetime      | 出版日期                 |
+| 字段名        | 类型          | 含义                                  |
+|--------------|---------------|---------------------------------------|
+| id           | bigint    | 书籍的唯一标识                        |
+| title        | varchar(100)  | 书籍名称                              |
+| type         | enum          | 书籍类型（如：杂志、动漫、教辅等）    |
+| stock        | bigint    | 库存                                  |
+| price        | decimal(15,2) | 价格                                  |
+| published_at | datetime      | 出版时间                              |
 
 ### `authors` 表
 
-存储作者的基本信息。
+该表用于存储作者的基本信息。
 
-| 字段名     | 类型          | 描述                     |
-|------------|---------------|--------------------------|
-| id         | bigint        | 作者的唯一 ID            |
-| name       | varchar(100)  | 作者姓名                 |
-| gender     | tinyint       | 性别（0：女，1：男，NULL：未知） |
-| birth_year | smallint      | 出生年份                 |
-| death_year | smallint      | 去世年份                 |
+| 字段名      | 类型         | 含义                                |
+|------------|--------------|-------------------------------------|
+| id         | bigint   | 作者的唯一标识                       |
+| name       | varchar(100) | 姓名                                |
+| gender     | tinyint   | 生理性别 (0: 女, 1: 男，NULL: 未知)   |
+| birth_year | smallint  | 生年                                |
+| death_year | smallint  | 卒年                                |
 
 ### `users` 表
 
-存储 Bookshop 用户信息。
+该表用于存储使用 Bookshop 应用程序的用户。
 
-| 字段名     | 类型          | 描述                     |
-|------------|---------------|--------------------------|
-| id         | bigint        | 用户的唯一 ID            |
-| balance    | decimal(15,2) | 账户余额                 |
-| nickname   | varchar(100)  | 昵称                     |
+| 字段名    | 类型          | 含义            |
+|----------|---------------|----------------|
+| id       | bigint    | 用户的唯一标识   |
+| balance  | decimal(15,2) | 余额           |
+| nickname | varchar(100)  | 昵称           |
 
 ### `ratings` 表
 
-存储用户对书籍的评分记录。
+该表用于存储用户对书籍的评分记录。
 
-| 字段名     | 类型     | 描述                                              |
-|------------|----------|--------------------------------------------------|
-| book_id    | bigint   | 书籍的唯一 ID（关联 [books](#books-table)）   |
-| user_id    | bigint   | 用户的唯一标识（关联 [users](#users-table)）  |
-| score      | tinyint  | 用户评分（1-5）                                   |
-| rated_at   | datetime | 评分时间                                          |
+| 字段名    | 类型     | 含义                                        |
+|----------|----------|---------------------------------------------|
+| book_id  | bigint   | 书籍的唯一标识（关联至 [books](#books-表)）     |
+| user_id  | bigint   | 用户的唯一标识（关联至 [users](#users-表)）    |
+| score    | tinyint  | 用户评分 (1-5)                              |
+| rated_at | datetime | 评分时间                                    |
 
 ### `book_authors` 表
 
-作者可能会写多本书，一本书也可能由多位作者合作。本表存储书籍与作者的对应关系。
+一个作者可能会编写多本书，一本书可能需要多个作者同时编写，该表用于存储书籍与作者之间的对应关系。
 
-| 字段名     | 类型       | 描述                                              |
-|------------|------------|--------------------------------------------------|
-| book_id    | bigint     | 书籍的唯一 ID（关联 [books](#books-table)）   |
-| author_id  | bigint     | 作者的唯一 ID（关联 [authors](#authors-table)） |
+| 字段名     | 类型       | 含义                                        |
+|-----------|------------|--------------------------------------------|
+| book_id   | bigint | 书籍的唯一标识（关联至 [books](#books-表)）     |
+| author_id | bigint | 作者的唯一标识（关联至 [authors](#authors-表)） |
 
 ### `orders` 表
 
-存储用户的购买信息。
+该表用于存储用户购买书籍的订单信息。
 
-| 字段名     | 类型       | 描述                                              |
-|------------|------------|--------------------------------------------------|
-| id         | bigint     | 订单的唯一 ID                                    |
-| book_id    | bigint     | 书籍的唯一 ID（关联 [books](#books-table)）   |
-| user_id    | bigint     | 用户的唯一标识（关联 [users](#users-table)）  |
-| quantity   | tinyint    | 购买数量                                         |
-| ordered_at | datetime   | 购买时间                                         |
+| 字段名      | 类型       | 含义                                        |
+|------------|------------|--------------------------------------------|
+| id         | bigint | 订单的唯一标识                               |
+| book_id    | bigint | 书籍的唯一标识（关联至 [books](#books-表)）    |
+| user_id    | bigint | 用户唯一标识（关联至 [users](#users-表)）      |
+| quantity   | tinyint | 购买数量                                    |
+| ordered_at | datetime   | 购买时间                                    |
 
-## 数据库初始化脚本 `dbinit.sql`
+## 数据库初始化 `dbinit.sql` 脚本
 
-如果你想手动创建 Bookshop 应用的数据库表结构，可以运行以下 SQL 语句：
+如果你希望手动创建 Bookshop 应用的数据库表结构，你可以运行以下 SQL 语句：
 
 ```sql
 CREATE DATABASE IF NOT EXISTS `bookshop`;
@@ -289,17 +262,3 @@ CREATE TABLE `bookshop`.`orders` (
   KEY `orders_book_id_idx` (`book_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
 ```
-
-## 需要帮助？
-
-<CustomContent platform="tidb">
-
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](/support.md)。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
-
-</CustomContent>

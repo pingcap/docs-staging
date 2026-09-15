@@ -1,36 +1,36 @@
 ---
-title: Customize a Secret Key for DM Encryption and Decryption
-summary: Learn how to customize a secret key to encrypt and decrypt passwords used in the DM（Data Migration）data source and migration task configurations.
+title: DM 自定义加解密 key
+summary: 介绍如何自定义密钥，用于加密和解密 DM（Data Migration）数据源和迁移任务配置中的密码。
 ---
 
-# Customize a Secret Key for DM Encryption and Decryption
+# DM 自定义加解密 key
 
-Before v8.0.0, [DM](/dm/dm-overview.md) uses a [fixed AES-256 secret key](https://github.com/pingcap/tiflow/blob/1252979421fc83ffa2a1548d981e505f7fc0b909/dm/pkg/encrypt/encrypt.go#L27) to encrypt and decrypt passwords in the data source and migration task configurations. However, using a fixed secret key might pose security risks, especially in environments where security is crucial. To enhance security, starting from v8.0.0, DM removes the fixed secret key and enables you to customize a secret key.
+在 v8.0.0 之前，[DM](/dm/dm-overview.md) 使用了一个[固定的 AES-256 密钥](https://github.com/pingcap/tiflow/blob/1252979421fc83ffa2a1548d981e505f7fc0b909/dm/pkg/encrypt/encrypt.go#L27)来加密和解密数据源和迁移任务配置中的密码，但固定秘钥可能产生安全风险，特别是在对安全性要求较高的环境中。为了提高安全性，从 v8.0.0 开始，DM 移除了固定密钥，并支持设置自定义密钥。
 
-## Usage
+## 使用方式
 
-1. Create a custom key file, which must contain a 64-character hexadecimal AES-256 secret key. One way to generate this key is by calculating SHA256 checksum of random data, such as `head -n 256 /dev/urandom | sha256sum`.
-2. In the DM-master [command-line flags](/dm/dm-command-line-flags.md) or [configuration file](/dm/dm-master-configuration-file.md), specify `secret-key-path` as the path of your custom key file.
+1. 创建一个自定义的密钥文件，文件内容必须为长度为 64 个字符的十六进制的 AES-256 密钥。一种生成该秘钥的方式是对随机内容计算 SHA256 校验和，比如 `head -n 256 /dev/urandom | sha256sum`。
+2. 在 DM-master [启动参数](/dm/dm-command-line-flags.md)或[配置文件](/dm/dm-master-configuration-file.md)中，设置 `secret-key-path` 为你自定义的密钥文件的路径。
 
-## Upgrade from a version earlier than v8.0.0
+## 从低于 v8.0.0 的版本升级
 
-Because DM no longer uses the fixed secret key starting from v8.0.0, pay attention to the following when upgrading DM from versions earlier than v8.0.0:
+从 v8.0.0 开始，DM 不再使用固定密钥，因此从低于 v8.0.0 的版本升级时需要注意：
 
-- If plaintext passwords are used in both [data source configurations](/dm/dm-source-configuration-file.md) and [migration task configurations](/dm/task-configuration-file-full.md), no additional steps are required for the upgrade.
-- If encrypted passwords are used in [data source configurations](/dm/dm-source-configuration-file.md) and [migration task configurations](/dm/task-configuration-file-full.md) or if you want to use encrypted passwords in the future, you need to do the following:
-    1. Add the `secret-key-path` parameter to the [DM-master configuration file](/dm/dm-master-configuration-file.md) and specify it as the path of your custom key file. The file must contain a 64-character hexadecimal AES-256 key. If the [fixed AES-256 secret key](https://github.com/pingcap/tiflow/blob/1252979421fc83ffa2a1548d981e505f7fc0b909/dm/pkg/encrypt/encrypt.go#L27) was used for encryption before upgrading, you can copy this secret key to your key file. Make sure all DM-master nodes use the same secret key configuration.
-    2. Perform a rolling upgrade of DM-master first, followed by a rolling upgrade of DM-worker. For more information, see [Rolling upgrade](/dm/maintain-dm-using-tiup.md#rolling-upgrade).
+- 如果[数据源配置](/dm/dm-source-configuration-file.md)和[迁移任务配置](/dm/task-configuration-file-full.md)里使用的都是明文密码，则升级不需要做额外处理。
+- 如果[数据源配置](/dm/dm-source-configuration-file.md)和[迁移任务配置](/dm/task-configuration-file-full.md)里使用了加密密码，或者后续希望使用加密密码，则需进行以下操作：
+    1. 在 [DM-master 配置文件](/dm/dm-master-configuration-file.md)中，增加 `secret-key-path` 参数，将其设置为你自定义的密钥文件的路径。该文件内容须为长度为 64 个字符的十六进制的 AES-256 密钥。如果升级前使用了[固定的 AES-256 密钥](https://github.com/pingcap/tiflow/blob/1252979421fc83ffa2a1548d981e505f7fc0b909/dm/pkg/encrypt/encrypt.go#L27)进行加密，可拷贝该秘钥到你的秘钥文件中。请确保所有 DM-master 节点使用相同的密钥配置。
+    2. 先滚动升级 DM-master，然后滚动升级 DM-worker，具体参考[滚动升级](/dm/maintain-dm-using-tiup.md#滚动升级)。
 
-## Update the secret key for encryption and decryption
+## 更新加解密 key
 
-To update the secret key used for encryption and decryption, take the following steps:
+如需更新用于加密和解密的密钥，请按照以下顺序进行：
 
-1. Update `secret-key-path` in the [DM-master configuration file](/dm/dm-master-configuration-file.md).
+1. 更新 [DM-master 配置文件](/dm/dm-master-configuration-file.md)中的 `secret-key-path`。
 
-    > **Note:**
+    > **注意：**
     >
-    > - Make sure all DM-master nodes are updated to the same secret key configuration.
-    > - During the secret key update, do not create new [data source configuration files](/dm/dm-source-configuration-file.md) or [migration task configuration files](/dm/task-configuration-file-full.md).
+    > - 请确保所有 DM-master 节点更新为相同的密钥配置。
+    > - 在密钥更新期间，请不要创建新的[数据源配置文件](/dm/dm-source-configuration-file.md)和[迁移任务配置文件](/dm/task-configuration-file-full.md)。
 
-2. Perform a rolling restart of DM-master.
-3. Use the passwords encrypted with `tiup dmctl encrypt` (dmctl version >= v8.0.0) when you create new [data source configuration files](/dm/dm-source-configuration-file.md) and [migration task configuration files](/dm/task-configuration-file-full.md).
+2. 滚动重启 DM-master。
+3. 使用 `tiup dmctl encrypt`（dmctl 版本需 >= v8.0.0）加密的密码用于创建[数据源配置文件](/dm/dm-source-configuration-file.md)和[迁移任务配置文件](/dm/task-configuration-file-full.md)。

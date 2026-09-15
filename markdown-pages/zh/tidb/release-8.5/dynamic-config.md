@@ -1,25 +1,17 @@
 ---
-title: Modify Configuration Dynamically
-summary: Learn how to dynamically modify the cluster configuration.
+title: 在线修改集群配置
+summary: 介绍在线修改集群配置的功能。
 ---
 
-# Modify Configuration Dynamically
+# 在线修改集群配置
 
-This document describes how to dynamically modify the cluster configuration.
+在线配置变更主要是通过利用 SQL 对包括 TiDB、TiKV 以及 PD 在内的各组件的配置进行在线更新。用户可以通过在线配置变更对各组件进行性能调优而无需重启集群组件。但目前在线修改 TiDB 实例配置的方式和修改其他组件 (TiKV, PD) 的有所不同。
 
-You can dynamically update the configuration of components (including TiDB, TiKV, and PD) using SQL statements, without restarting the cluster components. Currently, the method of changing TiDB instance configuration is different from that of changing configuration of other components (such as TiKV and PD).
+## 常用操作
 
-> **Note:**
->
-> This feature is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/). For TiDB Cloud, you need to contact [TiDB Cloud Support](https://docs.pingcap.com/tidbcloud/tidb-cloud-support) to modify the configurations.
+### 查看实例配置
 
-## Common Operations
-
-This section describes the common operations of dynamically modifying configuration.
-
-### View instance configuration
-
-To view the configuration of all instances in the cluster, use the `show config` statement. The result is as follows:
+可以通过 SQL 语句 `show config` 来直接查看集群所有实例的配置信息，结果如下：
 
 
 ```sql
@@ -41,7 +33,7 @@ show config;
 ...
 ```
 
-You can filter the result by fields. For example:
+还可以根据对应的字段进行过滤，如：
 
 
 ```sql
@@ -51,44 +43,44 @@ show config where name like '%log%'
 show config where type='tikv' and name='log.level'
 ```
 
-### Modify TiKV configuration dynamically
+### 在线修改 TiKV 配置
 
-> **Note:**
+> **注意：**
 >
-> - After dynamically changing TiKV configuration items, the TiKV configuration file is automatically updated. However, you also need to modify the corresponding configuration items by executing `tiup edit-config`; otherwise, operations such as `upgrade` and `reload` will overwrite your changes. For details of modifying configuration items, refer to [Modify configuration using TiUP](/maintain-tidb-using-tiup.md#modify-the-configuration).
-> - After executing `tiup edit-config`, you do not need to execute `tiup reload`.
+> 在线修改 TiKV 配置项后，同时会自动修改 TiKV 的配置文件。但还需要使用 `tiup edit-config` 命令来修改对应的配置项，否则 `upgrade` 和 `reload` 等运维操作会将在线修改配置后的结果覆盖。修改配置的操作请参考：[使用 TiUP 修改配置](/maintain-tidb-using-tiup.md#修改配置参数)。执行 `tiup edit-config` 后不需要执行 `tiup reload` 操作。
 
-When using the `set config` statement, you can modify the configuration of a single instance or of all instances according to the instance address or the component type.
+执行 SQL 语句 `set config`，可以结合实例地址或组件类型来修改单个实例配置或全部实例配置，如：
 
-- Modify the configuration of all TiKV instances:
+修改全部 TiKV 实例配置：
 
-> **Note:**
+> **注意：**
 >
-> It is recommended to wrap variable names in backticks.
+> 建议使用反引号包裹变量名称。
 
 
 ```sql
-set config tikv `split.qps-threshold`=1000;
+set config tikv `split.qps-threshold`=1000
 ```
 
-- Modify the configuration of a single TiKV instance:
+修改单个 TiKV 实例配置：
 
-    
-    ```sql
-    set config "127.0.0.1:20180" `split.qps-threshold`=1000;
-    ```
 
-If the modification is successful, `Query OK` is returned:
+```sql
+set config "127.0.0.1:20180" `split.qps-threshold`=1000
+```
+
+设置成功会返回 `Query OK`：
+
 
 ```sql
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-If an error occurs during the batch modification, a warning is returned:
+在批量修改时如果有错误发生，会以 warning 的形式返回：
 
 
 ```sql
-set config tikv `log-level`='warn';
+set config tikv `log-level`='warn'; -- This command fails because `log-level` is incorrect. Use `log.level` instead.
 ```
 
 ```sql
@@ -109,240 +101,239 @@ show warnings;
 1 row in set (0.00 sec)
 ```
 
-The batch modification does not guarantee atomicity. The modification might succeed on some instances, while failing on others. If you modify the configuration of the entire TiKV cluster using `set tikv key=val`, your modification might fail on some instances. You can use `show warnings` to check the result.
+批量修改配置不保证原子性，可能出现某些实例成功，而某些失败的情况。如使用 `set tikv key=val` 命令修改整个 TiKV 集群配置时，可能有部分实例失败，请执行 `show warnings` 进行查看。
 
-If some modifications fail, you need to re-execute the corresponding statement or modify each failed instance. If some TiKV instances cannot be accessed due to network issues or machine failure, modify these instances after they are recovered.
+如遇到部分修改失败的情况，需要重新执行对应的修改语句，或通过修改单个实例的方式完成修改。如果因网络或者机器故障等原因无法访问到的 TiKV，需要等到恢复后再次进行修改。
 
-If a configuration item is successfully modified, the result is persisted in the configuration file, which will prevail in the subsequent operations. The names of some configuration items might conflict with TiDB reserved words, such as `limit` and `key`. For these configuration items, use backtick `` ` `` to enclose them. For example, `` `raftstore.raft-log-gc-size-limit` ``.
+针对 TiKV 可在线修改的配置项，如果成功修改后，修改的结果会被持久化到配置文件中，后续以配置文件中的配置为准。某些配置项名称可能和 TiDB 预留关键字冲突，如 `limit`、`key` 等，对于此类配置项，需要用反引号 ``` ` ``` 包裹起来，如 ``` `raftstore.raft-log-gc-size-limit` ```。
 
-The following TiKV configuration items can be modified dynamically:
+支持的配置项列表如下：
 
-| Configuration item | Description |
-| :--- | :--- |
-| log.level | The log level. |
-| `raftstore.raft-max-inflight-msgs` | The number of Raft logs to be confirmed. If this number is exceeded, the Raft state machine slows down log sending. |
-| `raftstore.raft-log-gc-tick-interval` | The time interval at which the polling task of deleting Raft logs is scheduled |
-| `raftstore.raft-log-gc-threshold` | The soft limit on the maximum allowable number of residual Raft logs |
-| `raftstore.raft-log-gc-count-limit` | The hard limit on the allowable number of residual Raft logs |
-| `raftstore.raft-log-gc-size-limit` | The hard limit on the allowable size of residual Raft logs |
-| `raftstore.raft-max-size-per-msg` | The soft limit on the size of a single message packet that is allowed to be generated |
-| `raftstore.raft-entry-max-size` | The hard limit on the maximum size of a single Raft log |
-| `raftstore.raft-entry-cache-life-time` | The maximum remaining time allowed for the log cache in memory |
-| `raftstore.max-apply-unpersisted-log-limit` | The maximum number of committed but not persisted Raft logs that can be applied |
-| `raftstore.split-region-check-tick-interval` | The time interval at which to check whether the Region split is needed |
-| `raftstore.region-split-check-diff` | The maximum value by which the Region data is allowed to exceed before Region split |
-| `raftstore.region-compact-check-interval` | The time interval at which to check whether it is necessary to manually trigger RocksDB compaction |
-| `raftstore.region-compact-check-step` | The number of Regions checked at one time for each round of manual compaction |
-| `raftstore.region-compact-min-tombstones` | The number of tombstones required to trigger RocksDB compaction |
-| `raftstore.region-compact-tombstones-percent` | The proportion of tombstone required to trigger RocksDB compaction |
-| `raftstore.pd-heartbeat-tick-interval` | The time interval at which a Region's heartbeat to PD is triggered |
-| `raftstore.pd-store-heartbeat-tick-interval` | The time interval at which a store's heartbeat to PD is triggered |
-| `raftstore.snap-mgr-gc-tick-interval` | The time interval at which the recycle of expired snapshot files is triggered |
-| `raftstore.snap-gc-timeout` | The longest time for which a snapshot file is saved |
-| `raftstore.lock-cf-compact-interval` | The time interval at which TiKV triggers a manual compaction for the Lock Column Family |
-| `raftstore.lock-cf-compact-bytes-threshold` | The size at which TiKV triggers a manual compaction for the Lock Column Family |
-| `raftstore.messages-per-tick` | The maximum number of messages processed per batch |
-| `raftstore.max-peer-down-duration` | The longest inactive duration allowed for a peer |
-| `raftstore.max-leader-missing-duration` | The longest duration allowed for a peer to be without a leader. If this value is exceeded, the peer verifies with PD whether it has been deleted. |
-| `raftstore.abnormal-leader-missing-duration` | The normal duration allowed for a peer to be without a leader. If this value is exceeded, the peer is seen as abnormal and marked in metrics and logs. |
-| `raftstore.peer-stale-state-check-interval` | The time interval to check whether a peer is without a leader |
-| `raftstore.consistency-check-interval` | The time interval to check consistency (**NOT** recommended because it is not compatible with the garbage collection in TiDB) |
-| `raftstore.raft-store-max-leader-lease` | The longest trusted period of a Raft leader |
-| `raftstore.merge-check-tick-interval` | The time interval for merge check |
-| `raftstore.cleanup-import-sst-interval` | The time interval to check expired SST files |
-| `raftstore.local-read-batch-size` | The maximum number of read requests processed in one batch |
-| `raftstore.apply-yield-write-size` | The maximum number of bytes that the Apply thread can write for one FSM (Finite-state Machine) in each round |
-| `raftstore.hibernate-timeout` | The shortest wait duration before entering hibernation upon start. Within this duration, TiKV does not hibernate (not released). |
-| `raftstore.apply-pool-size` | The number of threads in the pool that flushes data to the disk, which is the size of the Apply thread pool |
-| `raftstore.store-pool-size` | The number of threads in the pool that processes Raft, which is the size of the Raftstore thread pool |
-| `raftstore.apply-max-batch-size` | Raft state machines process data write requests in batches by the BatchSystem. This configuration item specifies the maximum number of Raft state machines that can execute the requests in one batch. |
-| `raftstore.store-max-batch-size` | Raft state machines process requests for flushing logs into the disk in batches by the BatchSystem. This configuration item specifies the maximum number of Raft state machines that can process the requests in one batch. |
-| `raftstore.store-io-pool-size` | The number of threads that process Raft I/O tasks, which is also the size of the StoreWriter thread pool (**DO NOT** modify this value from a non-zero value to 0 or from 0 to a non-zero value) |
-| `raftstore.periodic-full-compact-start-max-cpu` | The CPU usage threshold at which TiKV performs periodic full compaction if full compaction is enabled |
-| `readpool.unified.max-thread-count` | The maximum number of threads in the thread pool that uniformly processes read requests, which is the size of the UnifyReadPool thread pool |
-| `readpool.unified.max-tasks-per-worker` | The maximum number of tasks allowed for a single thread in the unified read pool. `Server Is Busy` error is returned when the value is exceeded. |
-| `readpool.unified.auto-adjust-pool-size` | Determines whether to automatically adjust the UnifyReadPool thread pool size |
-| `resource-control.priority-ctl-strategy` | Configures the flow control strategy of low-priority tasks. |
-| `coprocessor.split-region-on-table` | Enables to split Region by table |
-| `coprocessor.batch-split-limit` | The threshold of Region split in batches |
-| `coprocessor.region-max-size` | The maximum size of a Region |
-| `coprocessor.region-split-size` | The size of the newly split Region |
-| `coprocessor.region-max-keys` | The maximum number of keys allowed in a Region |
-| `coprocessor.region-split-keys` | The number of keys in the newly split Region |
-| `pessimistic-txn.wait-for-lock-timeout` | The longest duration that a pessimistic transaction waits for the lock |
-| `pessimistic-txn.wake-up-delay-duration` | The duration after which a pessimistic transaction is woken up |
-| `pessimistic-txn.pipelined` | Determines whether to enable the pipelined pessimistic locking process |
-| `pessimistic-txn.in-memory` | Determines whether to enable the in-memory pessimistic lock |
-| `pessimistic-txn.in-memory-peer-size-limit`               | Controls the memory usage limit for in-memory pessimistic locks in a Region                                                                                                                                                                                  |
-| `pessimistic-txn.in-memory-instance-size-limit`           | Controls the memory usage limit for in-memory pessimistic locks in a TiKV instance                                                                                                                                                                           |
-| `quota.foreground-cpu-time` | The soft limit on the CPU resources used by TiKV foreground to process read and write requests |
-| `quota.foreground-write-bandwidth` | The soft limit on the bandwidth with which foreground transactions write data |
-| `quota.foreground-read-bandwidth` | The soft limit on the bandwidth with which foreground transactions and the Coprocessor read data |
-| `quota.background-cpu-time` | The soft limit on the CPU resources used by TiKV background to process read and write requests |
-| `quota.background-write-bandwidth` | The soft limit on the bandwidth with which background transactions write data |
-| `quota.background-read-bandwidth` | The soft limit on the bandwidth with which background transactions and the Coprocessor read data |
-| `quota.enable-auto-tune` | Whether to enable the auto-tuning of quota. If this configuration item is enabled, TiKV dynamically adjusts the quota for the background requests based on the load of TiKV instances.  |
-| `quota.max-delay-duration` | The maximum time that a single read or write request is forced to wait before it is processed in the foreground |
-| `gc.ratio-threshold` | The threshold at which Region GC is skipped (the number of GC versions/the number of keys) |
-| `gc.batch-keys` | The number of keys processed in one batch |
-| `gc.max-write-bytes-per-sec` | The maximum bytes that can be written into RocksDB per second |
-| `gc.enable-compaction-filter` | Whether to enable compaction filter |
-| `gc.compaction-filter-skip-version-check` | Whether to skip the cluster version check of compaction filter (not released) |
-| `{db-name}.max-total-wal-size` | The maximum size of total WAL |
-| `{db-name}.max-background-jobs` | The number of background threads in RocksDB |
-| `{db-name}.max-background-flushes` | The maximum number of flush threads in RocksDB |
-| `{db-name}.max-open-files` | The total number of files that RocksDB can open |
-| `{db-name}.compaction-readahead-size` | The size of `readahead` during compaction |
-| `{db-name}.bytes-per-sync` | The rate at which OS incrementally synchronizes files to disk while these files are being written asynchronously |
-| `{db-name}.wal-bytes-per-sync` | The rate at which OS incrementally synchronizes WAL files to disk while the WAL files are being written |
-| `{db-name}.writable-file-max-buffer-size` | The maximum buffer size used in WritableFileWrite |
-| `{db-name}.{cf-name}.block-cache-size` | The cache size of a block |
-| `{db-name}.{cf-name}.write-buffer-size` | The size of a memtable |
-| `{db-name}.{cf-name}.max-write-buffer-number` | The maximum number of memtables |
-| `{db-name}.{cf-name}.max-bytes-for-level-base` | The maximum number of bytes at base level (L1) |
-| `{db-name}.{cf-name}.target-file-size-base` | The size of the target file at base level |
-| `{db-name}.{cf-name}.level0-file-num-compaction-trigger` | The maximum number of files at L0 that trigger compaction |
-| `{db-name}.{cf-name}.level0-slowdown-writes-trigger` | The maximum number of files at L0 that trigger write stall |
-| `{db-name}.{cf-name}.level0-stop-writes-trigger` | The maximum number of files at L0 that completely block write |
-| `{db-name}.{cf-name}.max-compaction-bytes` | The maximum number of bytes written into disk per compaction |
-| `{db-name}.{cf-name}.max-bytes-for-level-multiplier` | The default amplification multiple for each layer |
-| `{db-name}.{cf-name}.disable-auto-compactions` | Enables or disables automatic compaction |
-| `{db-name}.{cf-name}.soft-pending-compaction-bytes-limit` | The soft limit on the pending compaction bytes |
-| `{db-name}.{cf-name}.hard-pending-compaction-bytes-limit` | The hard limit on the pending compaction bytes |
-| `{db-name}.{cf-name}.titan.blob-run-mode` | The mode of processing blob files |
-| `{db-name}.{cf-name}.titan.min-blob-size` | The threshold at which data is stored in Titan. Data is stored in a Titan blob file when its value reaches this threshold. |
-| `{db-name}.{cf-name}.titan.blob-file-compression` | The compression algorithm used by Titan blob files |
-| `{db-name}.{cf-name}.titan.discardable-ratio` | The threshold of garbage data ratio in Titan data files for GC. When the ratio of useless data in a blob file exceeds the threshold, Titan GC is triggered. |
-| `server.grpc-memory-pool-quota` | Limits the memory size that can be used by gRPC |
-| `server.max-grpc-send-msg-len` | Sets the maximum length of a gRPC message that can be sent |
-| `server.snap-io-max-bytes-per-sec` | Sets the maximum allowable disk bandwidth when processing snapshots |
-| `server.concurrent-send-snap-limit` | Sets the maximum number of snapshots sent at the same time |
-| `server.concurrent-recv-snap-limit` | Sets the maximum number of snapshots received at the same time |
-| `server.raft-msg-max-batch-size` | Sets the maximum number of Raft messages that are contained in a single gRPC message |
-| `server.simplify-metrics`        | Controls whether to simplify the sampling monitoring metrics                   |
-| `storage.block-cache.capacity` | The size of shared block cache (supported since v4.0.3) |
-| storage.flow-control.enable | Determines whether to enable the flow control mechanism |
-| storage.flow-control.memtables-threshold | The maximum number of kvDB memtables that trigger flow control |
-| storage.flow-control.l0-files-threshold | The maximum number of kvDB L0 files that trigger flow control |
-| storage.flow-control.soft-pending-compaction-bytes-limit | The threshold of kvDB pending compaction bytes that triggers flow control mechanism to reject some write requests |
-| storage.flow-control.hard-pending-compaction-bytes-limit | The threshold of kvDB pending compaction bytes that triggers flow control mechanism to reject all write requests |
-| `storage.scheduler-worker-pool-size` | The number of threads in the Scheduler thread pool |
-| `import.num-threads` | The number of threads to process restore or import RPC requests (dynamic modification is supported starting from v8.1.2) |
-| `backup.num-threads` | The number of backup threads (supported since v4.0.3) |
-| `split.qps-threshold` | The threshold to execute `load-base-split` on a Region. If the QPS of read requests for a Region exceeds `qps-threshold` for 10 consecutive seconds, this Region should be split.|
-| `split.byte-threshold` | The threshold to execute `load-base-split` on a Region. If the traffic of read requests for a Region exceeds the `byte-threshold` for 10 consecutive seconds, this Region should be split. |
-| `split.region-cpu-overload-threshold-ratio` | The threshold to execute `load-base-split` on a Region. If the CPU usage in the Unified Read Pool for a Region exceeds the `region-cpu-overload-threshold-ratio` for 10 consecutive seconds, this Region should be split. (supported since v6.2.0) |
-| `split.split-balance-score` | The parameter of `load-base-split`, which ensures the load of the two split Regions is as balanced as possible. The smaller the value is, the more balanced the load is. But setting it too small might cause split failure. |
-| `split.split-contained-score` | The parameter of `load-base-split`. The smaller the value, the fewer cross-Region visits after Region split. |
-| `cdc.min-ts-interval` | The time interval at which Resolved TS is forwarded  |
-| `cdc.old-value-cache-memory-quota` | The upper limit of memory occupied by the TiCDC Old Value entries |
-| `cdc.sink-memory-quota` | The upper limit of memory occupied by TiCDC data change events |
-| `cdc.incremental-scan-speed-limit` | The upper limit on the speed of incremental scanning for historical data |
-| `cdc.incremental-scan-concurrency` | The maximum number of concurrent incremental scanning tasks for historical data |
+| 配置项 | 简介 |
+| --- | --- |
+| log.level | 日志等级 |
+| raftstore.raft-max-inflight-msgs | 待确认的日志个数，如果超过这个数量，Raft 状态机会减缓发送日志的速度 |
+| raftstore.raft-log-gc-tick-interval | 删除 Raft 日志的轮询任务调度间隔时间 |
+| raftstore.raft-log-gc-threshold | 允许残余的 Raft 日志个数，软限制 |
+| raftstore.raft-log-gc-count-limit | 允许残余的 Raft 日志个数，硬限制 |
+| raftstore.raft-log-gc-size-limit | 允许残余的 Raft 日志大小，硬限制 |
+| raftstore.raft-max-size-per-msg | 允许生成的单个消息包的大小，软限制 |
+| raftstore.raft-entry-max-size | 单个 Raft 日志最大大小，硬限制 |
+| raftstore.raft-entry-cache-life-time | 内存中日志 cache 允许的最长残留时间 |
+| raftstore.max-apply-unpersisted-log-limit | 允许 apply 已 commit 但尚未持久化的 Raft 日志的最大数量 |
+| raftstore.split-region-check-tick-interval | 检查 Region 是否需要分裂的时间间隔 |
+| raftstore.region-split-check-diff | 允许 Region 数据超过指定大小的最大值 |
+| raftstore.pd-heartbeat-tick-interval | 触发 Region 对 PD 心跳的时间间隔 |
+| raftstore.pd-store-heartbeat-tick-interval | 触发 store 对 PD 心跳的时间间隔 |
+| raftstore.snap-mgr-gc-tick-interval | 触发回收过期 snapshot 文件的时间间隔 |
+| raftstore.snap-gc-timeout | snapshot 文件的最长保存时间 |
+| raftstore.lock-cf-compact-interval | 触发对 lock CF compact 检查的时间间隔 |
+| raftstore.lock-cf-compact-bytes-threshold | 触发对 lock CF 进行 compact 的大小 |
+| raftstore.messages-per-tick | 每轮处理的消息最大个数 |
+| raftstore.max-peer-down-duration | 副本允许的最长未响应时间 |
+| raftstore.max-leader-missing-duration | 允许副本处于无主状态的最长时间，超过将会向 PD 校验自己是否已经被删除 |
+| raftstore.abnormal-leader-missing-duration | 允许副本处于无主状态的时间，超过将视为异常，标记在 metrics 和日志中 |
+| raftstore.peer-stale-state-check-interval | 触发检验副本是否处于无主状态的时间间隔 |
+| raftstore.consistency-check-interval | 触发一致性检查的时间间隔（不建议使用该配置项，因为与 TiDB GC 操作不兼容）|
+| raftstore.raft-store-max-leader-lease | Region 主可信任期的最长时间 |
+| raftstore.merge-check-tick-interval | 触发 Merge 完成检查的时间间隔 |
+| raftstore.cleanup-import-sst-interval | 触发检查过期 SST 文件的时间间隔 |
+| raftstore.local-read-batch-size | 一轮处理读请求的最大个数 |
+| raftstore.apply-yield-write-size | Apply 线程每一轮处理单个状态机写入的最大数据量 |
+| raftstore.hibernate-timeout | 启动后进入静默状态前需要等待的最短时间，在该时间段内不会进入静默状态（未 release）|
+| raftstore.apply-pool-size | 处理把数据落盘至磁盘的线程池中线程的数量，即 Apply 线程池大小 |
+| raftstore.store-pool-size | 处理 Raft 的线程池中线程的数量，即 Raftstore 线程池的大小 |
+| raftstore.apply-max-batch-size | Raft 状态机由 BatchSystem 批量执行数据写入请求，该配置项指定每批可执行请求的最多 Raft 状态机个数。 |
+| raftstore.store-max-batch-size |  Raft 状态机由 BatchSystem 批量执行把日志落盘至磁盘的请求，该配置项指定每批可执行请求的最多 Raft 状态机个数。 |
+| raftstore.store-io-pool-size | 处理 Raft I/O 任务的线程池中线程的数量，即 StoreWriter 线程池的大小（不支持将该配置项由非零值调整为 0，或者从 0 调整为非零值）|
+| raftstore.periodic-full-compact-start-max-cpu | 控制 TiKV 执行周期性全量数据整理时的 CPU 使用率阈值 |
+| readpool.unified.max-thread-count | 统一处理读请求的线程池最多的线程数量，即 UnifyReadPool 线程池大小 |
+| readpool.unified.max-tasks-per-worker | 统一处理读请求的线程池中单个线程允许积压的最大任务数量，超出后会返回 Server Is Busy。 |
+| readpool.unified.auto-adjust-pool-size | 是否开启自适应调整 UnifyReadPool 的大小 |
+| resource-control.priority-ctl-strategy | 配置低优先级任务的流量管控策略。 |
+| coprocessor.split-region-on-table | 开启按 table 分裂 Region 的开关 |
+| coprocessor.batch-split-limit | 批量分裂 Region 的阈值 |
+| coprocessor.region-max-size | Region 容量空间的最大值 |
+| coprocessor.region-split-size | 分裂后新 Region 的大小 |
+| coprocessor.region-max-keys | Region 最多允许的 key 的个数 |
+| coprocessor.region-split-keys | 分裂后新 Region 的 key 的个数 |
+| pessimistic-txn.wait-for-lock-timeout | 悲观事务遇到锁后的最长等待时间 |
+| pessimistic-txn.wake-up-delay-duration | 悲观事务被重新唤醒的时间 |
+| pessimistic-txn.pipelined | 是否开启流水线式加悲观锁流程 |
+| pessimistic-txn.in-memory | 是否开启内存悲观锁功能 |
+| pessimistic-txn.in-memory-peer-size-limit | 控制单个 Region 内存悲观锁的内存使用上限 |
+| pessimistic-txn.in-memory-instance-size-limit | 控制单个 TiKV 实例内存悲观锁的内存使用上限 |
+| quota.foreground-cpu-time | 限制处理 TiKV 前台读写请求所使用的 CPU 资源使用量，软限制 |
+| quota.foreground-write-bandwidth | 限制前台事务写入的带宽，软限制 |
+| quota.foreground-read-bandwidth | 限制前台事务读取数据和 Coprocessor 读取数据的带宽，软限制 |
+| quota.background-cpu-time | 限制处理 TiKV 后台读写请求所使用的 CPU 资源使用量，软限制 |
+| quota.background-write-bandwidth | 限制后台事务写入的带宽，软限制 |
+| quota.background-read-bandwidth | 限制后台事务读取数据和 Coprocessor 读取数据的带宽，软限制 |
+| quota.enable-auto-tune | 是否支持 quota 动态调整。如果打开该配置项，TiKV 会根据 TiKV 实例的负载情况动态调整对后台请求的限制 quota |
+| quota.max-delay-duration | 单次读写请求被强制等待的最大时间 |
+| gc.ratio-threshold | 跳过 Region GC 的阈值（GC 版本个数/key 个数）|
+| gc.batch-keys | 一轮处理 key 的个数 |
+| gc.max-write-bytes-per-sec | 一秒可写入 RocksDB 的最大字节数 |
+| gc.enable-compaction-filter | 是否使用 compaction filter |
+| gc.compaction-filter-skip-version-check | 是否跳过 compaction filter 的集群版本检查（未 release）|
+| gc.auto-compaction.check-interval | TiKV 检查是否需要触发自动 RocksDB compaction 的时间间隔 |
+| gc.auto-compaction.tombstone-num-threshold | 触发 TiKV 自动 (RocksDB) compaction 需要的 RocksDB tombstone 个数 |
+| gc.auto-compaction.tombstone-percent-threshold | 触发 TiKV 自动 (RocksDB) compaction 需要的 RocksDB tombstone 所占比例 |
+| gc.auto-compaction.redundant-rows-threshold | 触发 TiKV 自动 (RocksDB) compaction 需要的冗余的 MVCC 数据行数 |
+| gc.auto-compaction.redundant-rows-percent-threshold | 触发 TiKV 自动 (RocksDB) compaction 需要的冗余的 MVCC 数据行数所占比例 |
+| gc.auto-compaction.bottommost-level-force | 控制是否强制对 RocksDB 最底层文件进行 compaction |
+| {db-name}.max-total-wal-size | WAL 总大小限制 |
+| {db-name}.max-background-jobs | RocksDB 后台线程个数 |
+| {db-name}.max-background-flushes | RocksDB flush 线程个数 |
+| {db-name}.max-open-files | RocksDB 可以打开的文件总数 |
+| {db-name}.compaction-readahead-size | Compaction 时候 readahead 的大小 |
+| {db-name}.bytes-per-sync | 异步同步的限速速率 |
+| {db-name}.wal-bytes-per-sync | WAL 同步的限速速率 |
+| {db-name}.writable-file-max-buffer-size | WritableFileWrite 所使用的最大的 buffer 大小 |
+| {db-name}.{cf-name}.block-cache-size | block cache size 大小 |
+| {db-name}.{cf-name}.write-buffer-size | memtable 大小 |
+| {db-name}.{cf-name}.max-write-buffer-number | 最大 memtable 个数 |
+| {db-name}.{cf-name}.max-bytes-for-level-base | base level (L1) 最大字节数 |
+| {db-name}.{cf-name}.target-file-size-base | base level 的目标文件大小 |
+| {db-name}.{cf-name}.level0-file-num-compaction-trigger | 触发 compaction 的 L0 文件最大个数 |
+| {db-name}.{cf-name}.level0-slowdown-writes-trigger | 触发 write stall 的 L0 文件最大个数 |
+| {db-name}.{cf-name}.level0-stop-writes-trigger | 完全阻停写入的 L0 文件最大个数 |
+| {db-name}.{cf-name}.max-compaction-bytes | 一次 compaction 最大写入字节数 |
+| {db-name}.{cf-name}.max-bytes-for-level-multiplier | 每一层的默认放大倍数 |
+| {db-name}.{cf-name}.disable-auto-compactions | 自动 compaction 的开关 |
+| {db-name}.{cf-name}.soft-pending-compaction-bytes-limit | pending compaction bytes 的软限制 |
+| {db-name}.{cf-name}.hard-pending-compaction-bytes-limit | pending compaction bytes 的硬限制 |
+| {db-name}.{cf-name}.titan.blob-run-mode | 处理 blob 文件的模式 |
+| {db-name}.{cf-name}.titan.min-blob-size | 数据存储在 Titan 的阈值，当数据的 value 达到该阈值时将存储在 Titan 的 Blob 文件中 |
+| {db-name}.{cf-name}.titan.blob-file-compression | Titan 的 Blob 文件所使用的压缩算法 |
+| {db-name}.{cf-name}.titan.discardable-ratio | Titan 数据文件 GC 的垃圾数据比例阈值，当一个 Blob 文件中无用数据的比例超过该阈值时将会触发 Titan GC |
+| server.grpc-memory-pool-quota | gRPC 可使用的内存大小限制 |
+| server.max-grpc-send-msg-len | gRPC 可发送的最大消息长度 |
+| server.raft-msg-max-batch-size | 单个 gRPC 消息可包含的最大 Raft 消息个数 |
+| server.simplify-metrics | 精简监控采样数据的开关 |
+| server.snap-io-max-bytes-per-sec | 处理 snapshot 时最大允许使用的磁盘带宽 |
+| server.concurrent-send-snap-limit | 同时发送 snapshot 的最大个数 |
+| server.concurrent-recv-snap-limit | 同时接受 snapshot 的最大个数 |
+| storage.block-cache.capacity | 共享 block cache 的大小（自 v4.0.3 起支持） |
+| storage.flow-control.enable | 是否开启流量控制机制 |
+| storage.flow-control.memtables-threshold | 触发流量控制的 KvDB memtable 数量阈值 |
+| storage.flow-control.l0-files-threshold | 触发流量控制的 KvDB L0 文件数量阈值 |
+| storage.flow-control.soft-pending-compaction-bytes-limit | 触发流控机制开始拒绝部分写入请求的 KvDB pending compaction bytes 阈值 |
+| storage.flow-control.hard-pending-compaction-bytes-limit | 触发流控机制拒绝所有新写入请求的 KvDB pending compaction bytes 阈值 |
+| storage.scheduler-worker-pool-size | Scheduler 线程池中线程的数量 |
+| import.num-threads | 处理恢复或导入 RPC 请求的线程数量（自 v8.1.2 起支持在线修改） |
+| backup.num-threads | backup 线程的数量（自 v4.0.3 起支持） |
+| split.qps-threshold | 对 Region 执行 load-base-split 的阈值。如果连续 10s 内，某个 Region 的读请求的 QPS 超过 qps-threshold，则尝试切分该 Region |
+| split.byte-threshold | 对 Region 执行 load-base-split 的阈值。如果连续 10s 内，某个 Region 的读请求的流量超过 byte-threshold，则尝试切分该 Region |
+| split.region-cpu-overload-threshold-ratio | 对 Region 执行 load-base-split 的阈值。如果连续 10s 内，某个 Region 的 Unified Read Pool CPU 使用时间占比超过了 region-cpu-overload-threshold-ratio，则尝试切分该 Region（自 v6.2.0 起支持）|
+| split.split-balance-score | load-base-split 的控制参数，确保 Region 切分后左右访问尽量均匀，数值越小越均匀，但也可能导致无法切分 |
+| split.split-contained-score | load-base-split 的控制参数，数值越小，Region 切分后跨 Region 的访问越少 |
+| cdc.min-ts-interval | 定期推进 Resolved TS 的时间间隔 |
+| cdc.old-value-cache-memory-quota | 缓存在内存中的 TiCDC Old Value 的条目占用内存的上限 |
+| cdc.sink-memory-quota| 缓存在内存中的 TiCDC 数据变更事件占用内存的上限 |
+| cdc.incremental-scan-speed-limit| 增量扫描历史数据的速度上限 |
+| cdc.incremental-scan-concurrency | 增量扫描历史数据任务的最大并发执行个数 |
+上述前缀为 `{db-name}` 或 `{db-name}.{cf-name}` 的是 RocksDB 相关的配置项。`db-name` 的取值可为 `rocksdb` 或 `raftdb`。
 
-In the table above, parameters with the `{db-name}` or `{db-name}.{cf-name}` prefix are configurations related to RocksDB. The optional values of `db-name` are `rocksdb` and `raftdb`.
+- 当 `db-name` 为 `rocksdb` 时，`cf-name` 的可取值有：`defaultcf`、`writecf`、`lockcf`、`raftcf`；
+- 当 `db-name` 为 `raftdb` 时，`cf-name` 的可取值有：`defaultcf`。
 
-- When `db-name` is `rocksdb`, the optional values of `cf-name` are `defaultcf`, `writecf`, `lockcf`, and `raftcf`.
-- When `db-name` is `raftdb`, the value of `cf-name` can be `defaultcf`.
+具体配置项的意义可参考 [TiKV 配置文件描述](/tikv-configuration-file.md)
 
-For detailed parameter description, refer to [TiKV Configuration File](/tikv-configuration-file.md).
+### 在线修改 PD 配置
 
-### Modify PD configuration dynamically
-
-Currently, PD does not support the separate configuration for each instance. All PD instances share the same configuration.
-
-You can modify the PD configurations using the following statement:
+PD 暂不支持单个实例拥有独立配置。所有实例共享一份配置，可以通过下列方式修改 PD 的配置项：
 
 
 ```sql
-set config pd `log.level`='info';
+set config pd `log.level`='info'
 ```
 
-If the modification is successful, `Query OK` is returned:
+设置成功会返回 `Query OK`：
 
 ```sql
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-If a configuration item is successfully modified, the result is persisted in etcd instead of in the configuration file; the configuration in etcd will prevail in the subsequent operations. The names of some configuration items might conflict with TiDB reserved words. For these configuration items, use backtick `` ` `` to enclose them. For example, `` `schedule.leader-schedule-limit` ``.
+针对 PD 可在线修改的配置项，成功修改后则会持久化到 etcd 中，不会对配置文件进行持久化，后续以 etcd 中的配置为准。同上，若和 TiDB 预留关键字冲突，需要用反引号 ``` ` ``` 包裹此类配置项，例如 ``` `schedule.leader-schedule-limit` ```。
 
-The following PD configuration items can be modified dynamically:
+支持配置项列表如下：
 
-| Configuration item | Description |
-| :--- | :--- |
-| `log.level` | The log level |
-| `cluster-version` | The cluster version |
-| `schedule.max-merge-region-size` | Controls the size limit of `Region Merge` (in MiB) |
-| `schedule.max-merge-region-keys` | Specifies the maximum numbers of the `Region Merge` keys |
-| `schedule.patrol-region-interval` | Determines the frequency at which the checker inspects the health state of a Region |
-| `schedule.split-merge-interval` | Determines the time interval of performing split and merge operations on the same Region |
-| `schedule.max-snapshot-count` | Determines the maximum number of snapshots that a single store can send or receive at the same time |
-| `schedule.max-pending-peer-count` | Determines the maximum number of pending peers in a single store |
-| `schedule.max-store-down-time` | The downtime after which PD judges that the disconnected store cannot be recovered |
-| `schedule.max-store-preparing-time` | Controls the maximum waiting time for the store to go online |
-| `schedule.leader-schedule-policy` | Determines the policy of Leader scheduling |
-| `schedule.leader-schedule-limit` | The number of Leader scheduling tasks performed at the same time |
-| `schedule.region-schedule-limit` | The number of Region scheduling tasks performed at the same time |
-| `schedule.replica-schedule-limit` | The number of Replica scheduling tasks performed at the same time |
-| `schedule.merge-schedule-limit` | The number of the `Region Merge` scheduling tasks performed at the same time |
-| `schedule.hot-region-schedule-limit` | The number of hot Region scheduling tasks performed at the same time |
-| `schedule.hot-region-cache-hits-threshold` | Determines the threshold at which a Region is considered a hot spot |
-| `schedule.high-space-ratio` | The threshold ratio below which the capacity of the store is sufficient |
-| `schedule.low-space-ratio` | The threshold ratio above which the capacity of the store is insufficient |
-| `schedule.tolerant-size-ratio` | Controls the `balance` buffer size|
-| `schedule.enable-remove-down-replica` | Determines whether to enable the feature that automatically removes `DownReplica` |
-| `schedule.enable-replace-offline-replica` | Determines whether to enable the feature that migrates `OfflineReplica` |
-| `schedule.enable-make-up-replica` | Determines whether to enable the feature that automatically supplements replicas |
-| `schedule.enable-remove-extra-replica` | Determines whether to enable the feature that removes extra replicas |
-| `schedule.enable-location-replacement` | Determines whether to enable isolation level check |
-| `schedule.enable-cross-table-merge` | Determines whether to enable cross-table merge |
-| `schedule.enable-one-way-merge` | Enables one-way merge, which only allows merging with the next adjacent Region |
-| `schedule.region-score-formula-version` | Controls the version of the Region score formula |
-| `schedule.scheduler-max-waiting-operator` | Controls the number of waiting operators in each scheduler |
-| `schedule.enable-debug-metrics` | Enables the metrics for debugging |
-| `schedule.enable-heartbeat-concurrent-runner` | Enables asynchronous concurrent processing for Region heartbeats |
-| `schedule.enable-heartbeat-breakdown-metrics` | Enables breakdown metrics for Region heartbeats to measure the time consumed in each stage of Region heartbeat processing |
-| `schedule.enable-joint-consensus` | Controls whether to use Joint Consensus for replica scheduling |
-| `schedule.hot-regions-write-interval` | The time interval at which PD stores hot Region information |
-| `schedule.hot-regions-reserved-days` | Specifies how many days the hot Region information is retained |
-| `schedule.max-movable-hot-peer-size` | Controls the maximum Region size that can be scheduled for hot Region scheduling. |
-| `schedule.store-limit-version` | Controls the version of [store limit](/configure-store-limit.md) |
-| `schedule.patrol-region-worker-count` | Controls the number of concurrent operators created by the checker when inspecting the health state of a Region |
-| `replication.max-replicas` | Sets the maximum number of replicas |
-| `replication.location-labels` | The topology information of a TiKV cluster |
-| `replication.enable-placement-rules` | Enables Placement Rules |
-| `replication.strictly-match-label` | Enables the label check |
-| `replication.isolation-level` | The minimum topological isolation level of a TiKV cluster |
-| `pd-server.use-region-storage` | Enables independent Region storage |
-| `pd-server.max-gap-reset-ts` | Sets the maximum interval of resetting timestamp (BR) |
-| `pd-server.key-type` | Sets the cluster key type |
-| `pd-server.metric-storage` | Sets the storage address of the cluster metrics |
-| `pd-server.dashboard-address` | Sets the dashboard address |
-| `pd-server.flow-round-by-digit` | Specifies the number of lowest digits to round for the Region flow information |
-| `pd-server.min-resolved-ts-persistence-interval` | Determines the interval at which the minimum resolved timestamp is persistent to the PD |
-| `pd-server.server-memory-limit` | The memory limit ratio for a PD instance |
-| `pd-server.server-memory-limit-gc-trigger` | The threshold ratio at which PD tries to trigger GC |
-| `pd-server.enable-gogc-tuner` | Controls whether to enable the GOGC Tuner |
-| `pd-server.gc-tuner-threshold` | The maximum memory threshold ratio for tuning GOGC |
-| `replication-mode.replication-mode` | Sets the backup mode |
-| `replication-mode.dr-auto-sync.label-key` | Distinguishes different AZs and needs to match Placement Rules |
-| `replication-mode.dr-auto-sync.primary` | The primary AZ |
-| `replication-mode.dr-auto-sync.dr` | The disaster recovery (DR) AZ |
-| `replication-mode.dr-auto-sync.primary-replicas` | The number of Voter replicas in the primary AZ |
-| `replication-mode.dr-auto-sync.dr-replicas` | The number of Voter replicas in the disaster recovery (DR) AZ |
-| `replication-mode.dr-auto-sync.wait-store-timeout` | The waiting time for switching to asynchronous replication mode when network isolation or failure occurs |
-| `replication-mode.dr-auto-sync.wait-recover-timeout` | The waiting time for switching back to the `sync-recover` status after the network recovers |
-| `replication-mode.dr-auto-sync.pause-region-split` | Controls whether to pause Region split operations in the `async_wait` and `async` statuses |
+| 配置项 | 简介 |
+| --- | --- |
+| log.level| 日志级别 |
+| cluster-version | 集群的版本 |
+| schedule.max-merge-region-size |  控制 Region Merge 的 size 上限（单位是 MiB） |
+| schedule.max-merge-region-keys | 控制 Region Merge 的 key 数量上限 |
+| schedule.patrol-region-interval | 控制 checker 检查 Region 健康状态的运行频率 |
+| schedule.split-merge-interval | 控制对同一个 Region 做 split 和 merge 操作的间隔 |
+| schedule.max-snapshot-count | 控制单个 store 最多同时接收或发送的 snapshot 数量 |
+| schedule.max-pending-peer-count | 控制单个 store 的 pending peer 上限 |
+| schedule.max-store-down-time | PD 认为失联 store 无法恢复的时间 |
+| schedule.max-store-preparing-time | 控制 store 上线阶段的最长等待时间 |
+| schedule.leader-schedule-policy | 用于控制 leader 调度的策略 |
+| schedule.leader-schedule-limit | 可以控制同时进行 leader 调度的任务个数 |
+| schedule.region-schedule-limit | 可以控制同时进行 Region 调度的任务个数 |
+| schedule.replica-schedule-limit | 可以控制同时进行 replica 调度的任务个数 |
+| schedule.merge-schedule-limit | 控制同时进行的 Region Merge 调度的任务 |
+| schedule.hot-region-schedule-limit | 可以控制同时进行的热点调度的任务个数 |
+| schedule.hot-region-cache-hits-threshold | 用于设置 Region 被视为热点的阈值 |
+| schedule.high-space-ratio | 用于设置 store 空间充裕的阈值 |
+| schedule.low-space-ratio | 用于设置 store 空间不足的阈值 |
+| schedule.tolerant-size-ratio | 控制 balance 缓冲区大小 |
+| schedule.enable-remove-down-replica | 用于开启自动删除 DownReplica 的特性 |
+| schedule.enable-replace-offline-replica | 用于开启迁移 OfflineReplica 的特性 |
+| schedule.enable-make-up-replica | 用于开启补充副本的特性 |
+| schedule.enable-remove-extra-replica | 用于开启删除多余副本的特性 |
+| schedule.enable-location-replacement | 用于开启隔离级别检查 |
+| schedule.enable-cross-table-merge | 用于开启跨表 Merge |
+| schedule.enable-one-way-merge | 用于开启单向 Merge（只允许和下一个相邻的 Region Merge） |
+| schedule.region-score-formula-version | 用于设置 Region 算分公式的版本 |
+| schedule.scheduler-max-waiting-operator | 用于控制每个调度器同时存在的 operator 的个数 |
+| schedule.enable-debug-metrics | 用于开启 debug 的 metrics |
+| schedule.enable-heartbeat-concurrent-runner | 用于开启 Region 心跳异步并发处理功能 |
+| schedule.enable-heartbeat-breakdown-metrics | 用于开启 Region 心跳指标拆分，用于统计 Region 心跳处理各阶段所消耗的时间 |
+| schedule.enable-joint-consensus | 用于开启 Joint Consensus 进行副本调度 |
+| schedule.hot-regions-write-interval | 设置 PD 存储 Hot Region 信息时间间隔 |
+| schedule.hot-regions-reserved-days | 设置 PD 保留的 Hot Region 信息的最长时间 |
+| schedule.max-movable-hot-peer-size | 设置热点调度可以调度的最大 Region size |
+| schedule.store-limit-version | 设置 [store limit](/configure-store-limit.md) 工作模式 |
+| schedule.patrol-region-worker-count | 控制 checker 检查 Region 健康状态时，创建 operator 的并发数 |
+| replication.max-replicas | 用于设置副本的数量 |
+| replication.location-labels | 用于设置 TiKV 集群的拓扑信息 |
+| replication.enable-placement-rules | 开启 Placement Rules |
+| replication.strictly-match-label | 开启 label 检查 |
+| replication.isolation-level | 设置 TiKV 集群的最小强制拓扑隔离级别 |
+| pd-server.use-region-storage | 开启独立的 Region 存储 |
+| pd-server.max-gap-reset-ts | 用于设置最大的重置 timestamp 的间隔（BR）|
+| pd-server.key-type| 用于设置集群 key 的类型 |
+| pd-server.metric-storage | 用于设置集群 metrics 的存储地址 |
+| pd-server.dashboard-address | 用于设置 dashboard 的地址 |
+| pd-server.flow-round-by-digit | 指定 PD 对 Region 流量信息的末尾数字进行四舍五入的位数 |
+| pd-server.min-resolved-ts-persistence-interval | 设置 PD leader 对集群中 Resolved TS 最小值进行持久化的间隔时间 |
+| pd-server.server-memory-limit | PD 实例的内存限制比例 |
+| pd-server.server-memory-limit-gc-trigger | PD 尝试触发 GC 的阈值比例 |
+| pd-server.enable-gogc-tuner | 是否开启 GOGC Tuner |
+| pd-server.gc-tuner-threshold | GOGC Tuner 自动调节的最大内存阈值比例 |
+| replication-mode.replication-mode | 备份的模式 |
+| replication-mode.dr-auto-sync.label-key | 用于区分不同的 AZ，需要和 Placement Rules 相匹配 |
+| replication-mode.dr-auto-sync.primary | 主 AZ |
+| replication-mode.dr-auto-sync.dr | 从 AZ |
+| replication-mode.dr-auto-sync.primary-replicas  | 主 AZ 上 Voter 副本的数量 |
+| replication-mode.dr-auto-sync.dr-replicas | 从 AZ 上 Voter 副本的数量 |
+| replication-mode.dr-auto-sync.wait-store-timeout | 当出现网络隔离或者故障时，切换到异步复制模式的等待时间 |
+| replication-mode.dr-auto-sync.wait-recover-timeout | 当网络恢复后，切换回 `sync-recover` 状态的等待时间 |
+| replication-mode.dr-auto-sync.pause-region-split | 用于控制在 `async_wait` 和 `async` 状态下是否暂停 Region 的 split 操作 |
 
-For detailed parameter description, refer to [PD Configuration File](/pd-configuration-file.md).
+具体配置项意义可参考 [PD 配置文件描述](/pd-configuration-file.md)。
 
-### Modify TiDB configuration dynamically
+### 在线修改 TiDB 配置
 
-Currently, the method of changing TiDB configuration is different from that of changing TiKV and PD configurations. You can modify TiDB configuration by using [system variables](/system-variables.md).
+在线修改 TiDB 配置的方式和 TiKV/PD 有所不同，你可以通过修改[系统变量](/system-variables.md)来实现。
 
-The following example shows how to dynamically modify `slow-threshold` by using the `tidb_slow_log_threshold` variable.
+下面例子展示了如何通过变量 `tidb_slow_log_threshold` 在线修改配置项 `slow-threshold`。
 
-The default value of `slow-threshold` is 300 ms. You can set it to 200 ms by using `tidb_slow_log_threshold`.
+`slow-threshold` 默认值是 300 毫秒，可以通过设置系统变量 `tidb_slow_log_threshold` 将其修改为 200 毫秒：
 
 
 ```sql
@@ -367,25 +358,25 @@ select @@tidb_slow_log_threshold;
 1 row in set (0.00 sec)
 ```
 
-The following TiDB configuration items can be modified dynamically:
+支持在线修改的配置项和相应的 TiDB 系统变量如下：
 
-| Configuration item | SQL variable | Description |
+| 配置项 | 对应变量 | 简介 |
 | --- | --- | --- |
-| `instance.tidb_enable_slow_log` | `tidb_enable_slow_log` | Controls whether to enable slow log |
-| `instance.tidb_slow_log_threshold` | `tidb_slow_log_threshold` | Specifies the threshold of slow log |
-| `instance.tidb_expensive_query_time_threshold` | `tidb_expensive_query_time_threshold` | Specifies the threshold of an expensive query |
-| `instance.tidb_enable_collect_execution_info` | `tidb_enable_collect_execution_info` | Controls whether to record the execution information of operators |
-| `instance.tidb_record_plan_in_slow_log` | `tidb_record_plan_in_slow_log` | Controls whether to record execution plans in the slow log |
-| `instance.tidb_force_priority` | `tidb_force_priority` | Specifies the priority of statements that are submitted from this TiDB instance |
-| `instance.max_connections` | `max_connections` | Specifies the maximum number of concurrent connections permitted for this TiDB instance |
-| `instance.tidb_enable_ddl` | `tidb_enable_ddl` | Controls whether this TiDB instance can become a DDL owner |
-| `pessimistic-txn.constraint-check-in-place-pessimistic` | `tidb_constraint_check_in_place_pessimistic` | Controls whether to defer the unique constraint check of a unique index to the next time when this index requires a lock or to the time when the transaction is committed |
+| instance.tidb_enable_slow_log | tidb_enable_slow_log | 慢日志的开关 |
+| instance.tidb_slow_log_threshold | tidb_slow_log_threshold | 慢日志阈值 |
+| instance.tidb_expensive_query_time_threshold  | tidb_expensive_query_time_threshold | expensive 查询阈值 |
+| instance.tidb_enable_collect_execution_info | tidb_enable_collect_execution_info | 控制是否记录各个算子的执行信息 |
+| instance.tidb_record_plan_in_slow_log | tidb_record_plan_in_slow_log | 控制是否在慢日志中记录执行计划 |
+| instance.tidb_force_priority | tidb_force_priority | 该 TiDB 实例的语句优先级 |
+| instance.max_connections | max_connections | 该 TiDB 实例同时允许的最大客户端连接数 |
+| instance.tidb_enable_ddl | tidb_enable_ddl | 控制该 TiDB 实例是否可以成为 DDL owner |
+| pessimistic-txn.constraint-check-in-place-pessimistic | tidb_constraint_check_in_place_pessimistic | 控制悲观事务中唯一约束检查是否会被推迟到下一次对该唯一索引加锁时或事务提交时才进行 |
 
-### Modify TiFlash configuration dynamically
+### 在线修改 TiFlash 配置
 
-Currently, you can modify the TiFlash configuration `max_threads` by using the system variable [`tidb_max_tiflash_threads`](/system-variables.md#tidb_max_tiflash_threads-new-in-v610), which specifies the maximum concurrency for TiFlash to execute a request.
+目前，你可以通过修改系统变量 [`tidb_max_tiflash_threads`](/system-variables.md#tidb_max_tiflash_threads-从-v610-版本开始引入) 来在线修改 TiFlash 配置项 `max_threads`。`tidb_max_tiflash_threads` 表示 TiFlash 中 request 执行的最大并发度。
 
-The default value of `tidb_max_tiflash_threads` is `-1`, indicating that this system variable is invalid and depends on the setting of the TiFlash configuration file. You can set `max_threads` to 10 by using `tidb_max_tiflash_threads`:
+`tidb_max_tiflash_threads` 默认值是 `-1`，表示此系统变量无效，由 TiFlash 的配置文件决定 max_threads。你可以通过设置系统变量 `tidb_max_tiflash_threads` 将其修改为 10：
 
 
 ```sql

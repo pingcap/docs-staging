@@ -1,11 +1,11 @@
 ---
 title: TABLES
-summary: 学习 `TABLES` information_schema 表。
+summary: 了解 information_schema 表 `TABLES`。
 ---
 
 # TABLES
 
-`TABLES` 表提供了关于数据库中表的信息：
+`TABLES` 表提供了数据库里关于表的信息。
 
 
 ```sql
@@ -74,8 +74,8 @@ SELECT * FROM tables WHERE table_schema='mysql' AND table_name='user'\G
                CHECK_TIME: NULL
           TABLE_COLLATION: utf8mb4_bin
                  CHECKSUM: NULL
-           CREATE_OPTIONS:
-            TABLE_COMMENT:
+           CREATE_OPTIONS: 
+            TABLE_COMMENT: 
             TIDB_TABLE_ID: 5
 TIDB_ROW_ID_SHARDING_INFO: NULL
              TIDB_PK_TYPE: CLUSTERED
@@ -85,7 +85,7 @@ TIDB_PLACEMENT_POLICY_NAME: NULL
 1 row in set (0.00 sec)
 ```
 
-下列语句等价：
+下列语句是等价的：
 
 ```sql
 SELECT table_name FROM INFORMATION_SCHEMA.TABLES
@@ -97,40 +97,40 @@ SHOW TABLES
   [LIKE 'wild']
 ```
 
-`TABLES` 表中各列的说明如下：
+`TABLES` 表各列字段含义如下：
 
-* `TABLE_CATALOG`：表所属 catalog 的名称。该值始终为 `def`。
-* `TABLE_SCHEMA`：表所属 schema 的名称。
-* `TABLE_NAME`：表名。
+* `TABLE_CATALOG`：表所属的目录的名称。该值始终为 `def`。
+* `TABLE_SCHEMA`：表所属数据库的名称。
+* `TABLE_NAME`：表的名称。
 * `TABLE_TYPE`：表的类型。
-* `ENGINE`：存储引擎的类型。当前值为 `InnoDB`。
-* `VERSION`：版本。默认值为 `10`。
-* `ROW_FORMAT`：行格式。当前值为 `Compact`。
-* `TABLE_ROWS`：统计信息中的表行数。
-* `AVG_ROW_LENGTH`：表的平均行长度。`AVG_ROW_LENGTH` = `DATA_LENGTH` / `TABLE_ROWS`。
-* `DATA_LENGTH`：数据长度。`DATA_LENGTH` = `TABLE_ROWS` × 元组中各列存储长度之和。不计入 TiKV 副本。
-* `MAX_DATA_LENGTH`：最大数据长度。当前值为 `0`，表示数据长度没有上限。
-* `INDEX_LENGTH`：索引长度。`INDEX_LENGTH` = `TABLE_ROWS` × 索引元组中各列长度之和。不计入 TiKV 副本。
-* `DATA_FREE`：数据碎片。当前值为 `0`。
-* `AUTO_INCREMENT`：自增主键当前步长。
-* `CREATE_TIME`：表的创建时间。
-* `UPDATE_TIME`：表的修改（如：修改行）时间。
-* `CHECK_TIME`：表的检查时间。
-* `TABLE_COLLATION`：表中字符串的排序规则。
+* `ENGINE`：存储引擎类型。该值暂为 ‘InnoDB’。
+* `VERSION`：版本，默认值为 10。
+* `ROW_FORMAT`：行格式。该值暂为 ‘Compact’。
+* `TABLE_ROWS`：统计信息中该表所存的行数。
+* `AVG_ROW_LENGTH`：该表中所存数据的平均行长度。平均行长度 = DATA_LENGTH / 统计信息中的行数。
+* `DATA_LENGTH`：数据长度。数据长度 = 统计信息中的行数 × 元组各列存储长度和，这里尚未考虑 TiKV 的副本数。
+* `MAX_DATA_LENGTH`：最大数据长度。该值暂为 0，表示没有最大数据长度的限制。
+* `INDEX_LENGTH`：索引长度。索引长度 = 统计信息中的行数 × 索引元组各列长度和，这里尚未考虑 TiKV 的副本数。
+* `DATA_FREE`：空间碎片。该值暂为 0。
+* `AUTO_INCREMENT`：该表中自增主键自动增量的当前值。
+* `CREATE_TIME`：该表的创建时间。
+* `UPDATE_TIME`：该表的更新时间。
+* `CHECK_TIME`：该表的检查时间。
+* `TABLE_COLLATION`：该表的字符校验编码集。
 * `CHECKSUM`：校验和。
 * `CREATE_OPTIONS`：创建选项。
-* `TABLE_COMMENT`：表的注释和说明。
+* `TABLE_COMMENT`：表的注释、备注。
 
-表中的大部分信息与 MySQL 相同。以下列为 TiDB 新增定义：
+表中的大部分列都和 MySQL 相同，除了以下列是 TiDB 新增的：
 
-* `TIDB_TABLE_ID`：表示表的内部 ID。该 ID 在 TiDB 集群中唯一。
-* `TIDB_ROW_ID_SHARDING_INFO`：表示表的分片（动词或动名词）类型。可能的取值如下：
-    - `"NOT_SHARDED"`：该表未分片（动词或动名词）。
-    - `"NOT_SHARDED(PK_IS_HANDLE)"`：定义了整数型主键作为 row id 的表未分片（动词或动名词）。
-    - `"PK_AUTO_RANDOM_BITS={bit_number}"`：定义了整数型主键作为 row id 且主键带有 `AUTO_RANDOM` 属性的表已分片（动词或动名词）。
-    - `"SHARD_BITS={bit_number}"`：通过 `SHARD_ROW_ID_BITS={bit_number}` 进行分片（动词或动名词）的表。
-    - `NULL`：系统表或视图，无法分片（动词或动名词）。
-* `TIDB_PK_TYPE`：表的主键类型。可能的取值包括 `CLUSTERED`（聚簇主键）和 `NONCLUSTERED`（非聚簇主键）。
-* `TIDB_PLACEMENT_POLICY_NAME`：应用于该表的 placement policy 名称。
+* `TIDB_TABLE_ID`：标识表的内部 ID，该 ID 在一个 TiDB 集群内部唯一。
+* `TIDB_ROW_ID_SHARDING_INFO`：标识表的 Sharding 类型，可能的值为：
+    - `"NOT_SHARDED"`：表未被 Shard。
+    - `"NOT_SHARDED(PK_IS_HANDLE)"`：一个定义了整型主键的表未被 Shard。
+    - `"PK_AUTO_RANDOM_BITS={bit_number}"`：一个定义了整型主键的表由于定义了 `AUTO_RANDOM` 而被 Shard。
+    - `"SHARD_BITS={bit_number}"`：表使用 `SHARD_ROW_ID_BITS={bit_number}` 进行了 Shard。
+    - `NULL`：表属于系统表或 View，无法被 Shard。
+* `TIDB_PK_TYPE`：表的主键类型，可能的值包括 `CLUSTERED`（聚簇主键）和 `NONCLUSTERED`（非聚簇主键）。
+* `TIDB_PLACEMENT_POLICY_NAME`：应用于该表的放置策略 (placement policy) 名称。
 * `TIDB_TABLE_MODE`：表的模式，例如 `Normal`、`Import` 或 `Restore`。
-* `TIDB_AFFINITY`：表的 affinity 级别。非分区表为 `table`，分区表为 `partition`，未启用 affinity 时为 `NULL`。
+* `TIDB_AFFINITY`：表的亲和性等级，非分区表为 `table`，分区表为 `partition`，未开启亲和性时为 `NULL`。

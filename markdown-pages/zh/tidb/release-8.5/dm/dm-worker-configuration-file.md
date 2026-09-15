@@ -1,18 +1,17 @@
 ---
-title: DM-worker Configuration File
-summary: Learn the configuration file of DM-worker.
+title: DM-worker 配置文件介绍
+summary: 本文介绍了 DM-worker 的配置文件，包括配置文件示例和配置项说明。配置文件示例包括了 worker 的名称、日志配置、worker 的地址等内容。配置项说明包括了全局配置中的各个配置项的说明，如 name、log-level、log-file 等。同时还介绍了一些新增的配置项，如 relay-keepalive-ttl 和 relay-dir。SSL 相关的配置项也有详细说明。
 ---
 
-# DM-worker Configuration File
+# DM-worker 配置文件介绍
 
-This document introduces the configuration of DM worker, including a configuration file template and a description of each configuration parameter in this file.
+本文介绍 DM-worker 的配置文件，包括配置文件示例与配置项说明。
 
-## Configuration file template
-
-The following is a configuration file template of the DM-worker:
+## 配置文件示例
 
 ```toml
 # Worker Configuration.
+
 name = "worker1"
 
 # Log configuration.
@@ -25,73 +24,73 @@ advertise-addr = "127.0.0.1:8262"
 join = "http://127.0.0.1:8261,http://127.0.0.1:8361,http://127.0.0.1:8461"
 
 keepalive-ttl = 60
-relay-keepalive-ttl = 1800 # New in DM v2.0.2.
-# relay-dir = "relay_log" # New in 5.4.0. When you use a relative path, check the deployment and start method of DM-worker to determine the full path.
+relay-keepalive-ttl = 1800 # 版本 2.0.2 新增
+# relay-dir = "relay_log" # 版本 5.4.0 新增。使用相对路径时注意结合部署、启动方式确认路径位置。
 
 ssl-ca = "/path/to/ca.pem"
 ssl-cert = "/path/to/cert.pem"
 ssl-key = "/path/to/key.pem"
-cert-allowed-cn = ["dm"]
+cert-allowed-cn = ["dm"] 
 ```
 
-## Configuration parameters
+## 配置项说明
 
-### Global
+### Global 配置
 
 #### `name`
 
-- The name of the DM-worker.
+- 标识一个 DM-worker。
 
 #### `log-level`
 
-- Specifies a log level.
-- Default value: `info`
-- Value options: `debug`, `info`, `warn`, `error`, `fatal`
+- 日志级别。
+- 默认值：`info`
+- 可选值：`debug`、`info`、`warn`、`error`、`fatal`
 
 #### `log-file`
 
-- Specifies the log file directory. If this parameter is not specified, the logs are printed onto the standard output.
+- 日志文件。如果不配置，日志会输出到标准输出中。
 
 #### `worker-addr`
 
-- Specifies the address of DM-worker which provides services. You can omit the IP address and specify the port number only, such as `":8262"`.
+- DM-worker 服务的地址，可以省略 IP 信息，例如：`":8262"`。
 
 #### `advertise-addr`
 
-- Specifies the address that DM-worker advertises to the outside world.
+- DM-worker 向外界宣告的地址。
 
 #### `join`
 
-- Corresponds to one or more [`master-addr`s](/dm/dm-master-configuration-file.md#global-configuration) in the DM-master configuration file.
+- 对应一个或多个 DM-master 配置中的 [`master-addr`](/dm/dm-master-configuration-file.md#global-配置)。
 
 #### `keepalive-ttl`
 
-- The keepalive time (in seconds) of a DM-worker node to the DM-master node if the upstream data source of the DM-worker node does not enable the relay log.
-- Default value: `60`
-- Unit: seconds
+- 当绑定的上游数据源没有启用 relay log 时，DM-worker 向 DM-master 保持存活的周期。
+- 默认值：`60`
+- 单位：秒
 
-#### `relay-keepalive-ttl` <span class="version-mark">New in DM v2.0.2</span>
+#### `relay-keepalive-ttl` <span class="version-mark">从 v2.0.2 版本开始引入</span>
 
-- The keepalive time (in seconds) of a DM-worker node to the DM-master node if the upstream data source of the DM-worker node enables the relay log.
-- Default value: `1800`
-- Unit: seconds
+- 当绑定的上游数据源启用 relay log 时，DM-worker 向 DM-master 保持存活的周期。
+- 默认值：`1800`
+- 单位：秒
 
-#### `relay-dir` <span class="version-mark">New in v5.4.0</span>
+#### `relay-dir` <span class="version-mark">从 v5.4.0 版本开始引入</span>
 
-- When relay log is enabled in the bound upstream data source, DM-worker stores the relay log in this directory. This parameter takes precedence over the configuration of the upstream data source.
+- 当绑定的上游数据源启用 relay log 时，DM-worker 将 relay log 保存在该路径下。该配置优先级比上游数据源配置更高。
 
 #### `ssl-ca`
 
-- The path of the file that contains list of trusted SSL CAs for DM-worker to connect with other components.
+- DM-worker 组件用于与其它组件连接的 SSL CA 证书所在的路径。
 
 #### `ssl-cert`
 
-- The path of the file that contains X509 certificate in PEM format for DM-worker to connect with other components.
+- DM-worker 组件用于与其它组件连接的 PEM 格式的 X509 证书所在的路径。
 
 #### `ssl-key`
 
-- The path of the file that contains X509 key in PEM format for DM-worker to connect with other components.
+- DM-worker 组件用于与其它组件连接的 PEM 格式的 X509 密钥所在的路径。
 
 #### `cert-allowed-cn`
 
-- Common Name list.
+- 证书检查 Common Name 列表。

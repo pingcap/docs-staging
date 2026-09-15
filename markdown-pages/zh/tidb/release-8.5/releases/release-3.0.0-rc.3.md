@@ -1,122 +1,123 @@
 ---
 title: TiDB 3.0.0-rc.3 Release Notes
-summary: TiDB 3.0.0-rc.3 was released on June 21, 2019, with improvements in stability, usability, features, SQL optimizer, statistics, and execution engine. Fixes and new features were added to TiDB, PD, TiKV, and TiDB Ansible. Notable improvements include automatic loading statistics, manual splitting of table and index regions, and support for pessimistic transactions in TiKV.
+summary: TiDB 3.0.0-rc.3 发布，对系统稳定性、易用性、功能、优化器、统计信息和执行引擎做了很多改进。包括 SQL 优化器、执行引擎、Server、DDL、PD、TiKV、Transaction、tikv-ctl、Misc 等方面的修复和新增功能。TiDB Ansible 新增预测集群最大 QPS 的监控项。
+aliases: ['/zh/tidb/dev/release-3.0.0-rc.3/','/zh/tidb/v3.0/release-3.0.0-rc.3','/docs-cn/dev/releases/release-3.0.0-rc.3/','/docs-cn/dev/releases/3.0.0-rc.3/','/zh/tidb/v5.4/release-3.0.0-rc.3','/zh/tidb/v6.1/release-3.0.0-rc.3','/zh/tidb/v6.5/release-3.0.0-rc.3','/zh/tidb/v7.1/release-3.0.0-rc.3','/zh/tidb/v7.5/release-3.0.0-rc.3','/zh/tidb/v8.1/release-3.0.0-rc.3']
 ---
 
 # TiDB 3.0.0-rc.3 Release Notes
 
-Release date: June 21, 2019
+发版日期：2019 年 6 月 21 日
 
-TiDB version: 3.0.0-rc.3
+TiDB 版本：3.0.0-rc.3
 
-TiDB Ansible version: 3.0.0-rc.3
+TiDB Ansible 版本：3.0.0-rc.3
 
 ## Overview
 
-On June 21, 2019, TiDB 3.0.0-rc.3 is released. The corresponding TiDB Ansible version is 3.0.0-rc.3. Compared with TiDB 3.0.0-rc.2, this release has greatly improved the stability, usability, features, the SQL optimizer, statistics, and the execution engine.
+2019 年 6 月 21 日，TiDB 发布 3.0.0-rc.3 版本，对应的 TiDB Ansible 版本为 3.0.0-rc.3。相比 3.0.0-rc.2 版本，该版本对系统稳定性、易用性、功能、优化器、统计信息以及执行引擎做了很多改进。
 
 ## TiDB
 
-+ SQL Optimizer
-    - Remove the feature of collecting virtual generated column statistics [#10629](https://github.com/pingcap/tidb/pull/10629)
-    - Fix the issue that the primary key constant overflows during point queries [#10699](https://github.com/pingcap/tidb/pull/10699)
-    - Fix the issue that using uninitialized information in `fast analyze` causes panic [#10691](https://github.com/pingcap/tidb/pull/10691)
-    - Fix the issue that executing the `create view` statement using `prepare` causes panic because of wrong column information [#10713](https://github.com/pingcap/tidb/pull/10713)
-    - Fix the issue that the column information is not cloned when handling window functions [#10720](https://github.com/pingcap/tidb/pull/10720)
-    - Fix the wrong estimation for the selectivity rate of the inner table selection in index join [#10854](https://github.com/pingcap/tidb/pull/10854)
-    - Support automatic loading statistics when the `stats-lease` variable value is 0 [#10811](https://github.com/pingcap/tidb/pull/10811)
++ SQL 优化器
+    - 删除收集虚拟生成列的统计信息功能 [#10629](https://github.com/pingcap/tidb/pull/10629)
+    - 修复点查时主键常量溢出的问题 [#10699](https://github.com/pingcap/tidb/pull/10699)
+    - 修复 `fast analyze` 因使用未初始化的信息导致 panic [#10691](https://github.com/pingcap/tidb/pull/10691)
+    - 修复 prepare `create view` 语句执行过程中因列信息错误导致执行失败的问题 [#10713](https://github.com/pingcap/tidb/pull/10713)
+    - 修复在处理 window function 时列信息未拷贝的问题 [#10720](https://github.com/pingcap/tidb/pull/10720)
+    - 修复 index join 中内表过滤条件在某些情况下的选择率估计错误的问题 [#10854](https://github.com/pingcap/tidb/pull/10854)
+    - 新增变量 `stats-lease` 值为 0 时系统自动加载统计数据功能 [#10811](https://github.com/pingcap/tidb/pull/10811)
 
-+ Execution Engine
-    - Fix the issue that resources are not correctly released when calling the `Close` function in `StreamAggExec` [#10636](https://github.com/pingcap/tidb/pull/10636)
-    - Fix the issue that the order of `table_option` and `partition_options` is incorrect in the result of executing the `show create table` statement for partitioned tables [#10689](https://github.com/pingcap/tidb/pull/10689)
-    - Improve the performance of `admin show ddl jobs` by supporting scanning data in reverse order [#10687](https://github.com/pingcap/tidb/pull/10687)
-    - Fix the issue that the result of the `show grants` statement in RBAC is incompatible with that of MySQL when this statement has the `current_user` field [#10684](https://github.com/pingcap/tidb/pull/10684)
-    - Fix the issue that UUIDs might generate duplicate values on multiple nodes [#10712](https://github.com/pingcap/tidb/pull/10712)
-    - Fix the issue that the `show view` privilege is not considered in `explain` [#10635](https://github.com/pingcap/tidb/pull/10635)
-    - Add the `split table region` statement to manually split the table Region to alleviate the hotspot issue [#10765](https://github.com/pingcap/tidb/pull/10765)
-    - Add the `split index region` statement to manually split the index Region to alleviate the hotspot issue [#10764](https://github.com/pingcap/tidb/pull/10764)
-    - Fix the incorrect execution issue when you execute multiple statements such as `create user`, `grant`, or `revoke` consecutively [#10737](https://github.com/pingcap/tidb/pull/10737)
-    - Add a blocklist to prohibit pushing down expressions to Coprocessor [#10791](https://github.com/pingcap/tidb/pull/10791)
-    - Add the feature of printing the `expensive query` log when a query exceeds the memory configuration limit [#10849](https://github.com/pingcap/tidb/pull/10849)
-    - Add the `bind-info-lease` configuration item to control the update time of the modified binding execution plan [#10727](https://github.com/pingcap/tidb/pull/10727)
-    - Fix the OOM issue in high concurrent scenarios caused by the failure to quickly release Coprocessor resources, resulted from the `execdetails.ExecDetails` pointer [#10832](https://github.com/pingcap/tidb/pull/10832)
-    - Fix the panic issue caused by the `kill` statement in some cases [#10876](https://github.com/pingcap/tidb/pull/10876)
++ 执行引擎
+    - 修复在 `StreamAggExec` 调用 `Close` 函数资源未正确释放问题 [#10636](https://github.com/pingcap/tidb/pull/10636)
+    - 修复对分区表执行 `show create table` 结果中 `table_option` 与 `partition_options` 顺序不正确问题 [#10689](https://github.com/pingcap/tidb/pull/10689)
+    - 通过支持逆序扫数据提升 `admin show ddl jobs` 的性能 [#10687](https://github.com/pingcap/tidb/pull/10687)
+    - 修复 RBAC 中对 `show grants` 语句带 `current_user` 字段时结果与 MySQL 不兼容的问题 [#10684](https://github.com/pingcap/tidb/pull/10684)
+    - 修复 UUID 在多节点上可能生成重复值的问题 [#10712](https://github.com/pingcap/tidb/pull/10712)
+    - 修复 `explain` 没考虑 `show view` 权限的问题 [#10635](https://github.com/pingcap/tidb/pull/10635)
+    - 新增 `split table region` 语句，手动分裂表的 Region，缓解热点问题 [#10765](https://github.com/pingcap/tidb/pull/10765)
+    - 新增 `split index region` 语句，手动分裂索引的 region 缓解热点问题 [#10764](https://github.com/pingcap/tidb/pull/10764)
+    - 修复连续执行多个 `create user`、`grant` 或 `revoke` 等类似语句执行不正确的问题 [#10737](https://github.com/pingcap/tidb/pull/10737)
+    - 新增黑名单禁止下推表达式到 coprocessor 功能 [#10791](https://github.com/pingcap/tidb/pull/10791)
+    - 新增查询超出内存配置限制时打印 `expensive query` 日志的功能 [#10849](https://github.com/pingcap/tidb/pull/10849)
+    - 新增 `bind-info-lease` 配置项控制修改绑定执行计划的更新时间 [#10727](https://github.com/pingcap/tidb/pull/10727)
+    - 修复因持有 `execdetails.ExecDetails` 指针时 Coprocessor 的资源无法快速释放导致的在大并发场景下 OOM 的问题 [#10832](https://github.com/pingcap/tidb/pull/10832)
+    - 修复某些情况下 `kill` 语句导致的 panic 问题 [#10876](https://github.com/pingcap/tidb/pull/10876)
 
 + Server
-    - Fix the issue that goroutine might leak when repairing GC [#10683](https://github.com/pingcap/tidb/pull/10683)
-    - Support displaying the `host` information in slow queries [#10693](https://github.com/pingcap/tidb/pull/10693)
-    - Support reusing idle links that interact with TiKV [#10632](https://github.com/pingcap/tidb/pull/10632)
-    - Fix the support for enabling the `skip-grant-table` option in RBAC [#10738](https://github.com/pingcap/tidb/pull/10738)
-    - Fix the issue that `pessimistic-txn` configuration goes invalid [#10825](https://github.com/pingcap/tidb/pull/10825)
-    - Fix the issue that the actively canceled ticlient requests are still retried [#10850](https://github.com/pingcap/tidb/pull/10850)
-    - Improve performance in the case where pessimistic transactions conflict with optimistic transactions [#10881](https://github.com/pingcap/tidb/pull/10881)
+    - 修复 GC 时可能发生的 goroutine 泄露问题 [#10683](https://github.com/pingcap/tidb/pull/10683)
+    - 支持 slow query 里面显示 `host` 信息 [#10693](https://github.com/pingcap/tidb/pull/10693)
+    - 支持循环利用与 TiKV 交互的空闲链接 [#10632](https://github.com/pingcap/tidb/pull/10632)
+    - 修复 RBAC 对开启 `skip-grant-table` 选项的支持问题 [#10738](https://github.com/pingcap/tidb/pull/10738)
+    - 修复 `pessimistic-txn` 配置失效的问题 [#10825](https://github.com/pingcap/tidb/pull/10825)
+    - 修复主动取消的 ticlient 请求还会被重试的问题 [#10850](https://github.com/pingcap/tidb/pull/10850)
+    - 提高在悲观事务和乐观事务冲突情况下的性能 [#10881](https://github.com/pingcap/tidb/pull/10881)
 
 + DDL
-    - Fix the issue that modifying charset using `alter table` causes the `blob` type change [#10698](https://github.com/pingcap/tidb/pull/10698)
-    - Add a feature to use `SHARD_ROW_ID_BITS` to scatter row IDs when the column contains an `AUTO_INCREMENT` attribute to alleviate the hotspot issue [#10794](https://github.com/pingcap/tidb/pull/10794)
-    - Prohibit adding stored generated columns by using the `alter table` statement [#10808](https://github.com/pingcap/tidb/pull/10808)
-    - Optimize the invalid survival time of DDL metadata to shorten the period during which the DDL operation is slower after cluster upgrade [#10795](https://github.com/pingcap/tidb/pull/10795)
+    - 修复在使用 `alter table` 修改 charset 时导致 `blob` 类型改变的问题 [#10698](https://github.com/pingcap/tidb/pull/10698)
+    - 新增列属性包含 `AUTO_INCREMENT` 时利用 `SHARD_ROW_ID_BITS` 打散行 ID 功能，缓解热点问题 [#10794](https://github.com/pingcap/tidb/pull/10794)
+    - 禁止通过 `alter table` 添加存储的生成列 [#10808](https://github.com/pingcap/tidb/pull/10808)
+    - 优化无效 DDL 元信息存活时间，使集群升级后一段时间 DDL 操作比较慢的情况变短 [#10795](https://github.com/pingcap/tidb/pull/10795)
 
 ## PD
 
-- Add the `enable-two-way-merge` configuration item to allow only one-way merging [#1583](https://github.com/pingcap/pd/pull/1583)
-- Add scheduling operations for `AddLightLearner` and `AddLightPeer` to make Region Scatter scheduling unrestricted by the limit mechanism [#1563](https://github.com/pingcap/pd/pull/1563)
-- Fix the issue of insufficient reliability because the data might only have one replica replication when the system is started [#1581](https://github.com/pingcap/pd/pull/1581)
-- Optimize configuration check logic to avoid configuration item errors [#1585](https://github.com/pingcap/pd/pull/1585)
-- Adjust the definition of the `store-balance-rate` configuration to the upper limit of the number of balance operators generated per minute [#1591](https://github.com/pingcap/pd/pull/1591)
-- Fix the issue that the store might have been unable to generate scheduled operations [#1590](https://github.com/pingcap/pd/pull/1590)
+- 新增 `enable-two-way-merge` 配置项，控制合并时仅允许单向合并 [#1583](https://github.com/pingcap/pd/pull/1583)
+- 新增 `AddLightLearner` 和 `AddLightPeer` 的调度操作，Region Scatter 调度不受 limit 机制限 [#1563](https://github.com/pingcap/pd/pull/1563)
+- 修复系统启动时因数据可能只进行一副本复制而导致可靠性不足的问题 [#1581](https://github.com/pingcap/pd/pull/1581)
+- 优化配置检查逻辑，防止配置项错误 [#1585](https://github.com/pingcap/pd/pull/1585)
+- 调整 `store-balance-rate` 配置的定义为每分钟产生 balance operator 数量的上限 [#1591](https://github.com/pingcap/pd/pull/1591)
+- 修复 store 可能一直无法产生调度操作的问题 [#1590](https://github.com/pingcap/pd/pull/1590)
 
 ## TiKV
 
 + Engine
-    - Fix the issue that incomplete snapshots are generated in the system caused by the iterator not checking the status [#4936](https://github.com/tikv/tikv/pull/4936)
-    - Fix the data loss issue caused by a delay of flushing data to the disk when receiving snapshots after a power failure in abnormal conditions [#4850](https://github.com/tikv/tikv/pull/4850)
+    - 修复因迭代器未检查状态导致系统生成残缺 snapshot 的问题 [#4936](https://github.com/tikv/tikv/pull/4936)
+    - 修复在机器异常掉电时由于接收 snapshot 未及时将数据刷新到磁盘导致丢数据的问题 [#4937](https://github.com/tikv/tikv/pull/4937)
 
 + Server
-    - Add a feature to check the validity of the `block-size` configuration [#4928](https://github.com/tikv/tikv/pull/4928)
-    - Add `READ_INDEX`-related monitoring metrics [#4830](https://github.com/tikv/tikv/pull/4830)
-    - Add GC worker-related monitoring metrics [#4922](https://github.com/tikv/tikv/pull/4922)
+    - 新增检查 `block-size` 配置的有效性功能 [#4928](https://github.com/tikv/tikv/pull/4928)
+    - 新增 read index 相关监控项 [#4830](https://github.com/tikv/tikv/pull/4830)
+    - 新增 GC worker 相关监控项 [#4922](https://github.com/tikv/tikv/pull/4922)
 
 + Raftstore
-    - Fix the issue that the cache of the local reader is not cleared correctly [#4778](https://github.com/tikv/tikv/pull/4778)
-    - Fix the issue that the request delay might be increased when transferring the leader and changing `conf` [#4734](https://github.com/tikv/tikv/pull/4734)
-    - Fix the issue that a stale command is wrongly reported [#4682](https://github.com/tikv/tikv/pull/4682)
-    - Fix the issue that the command might be pending for a long time [#4810](https://github.com/tikv/tikv/pull/4810)
-    - Fix the issue that files are damaged after a power failure, which is caused by a delay of synchronizing the snapshot file to the disk [#4807](https://github.com/tikv/tikv/pull/4807), [#4850](https://github.com/tikv/tikv/pull/4850)
+    - 修复 local reader 的 cache 没有正确清理的问题 [#4778](https://github.com/tikv/tikv/pull/4778)
+    - 修复进行 transfer leader 和 conf change 时可能导致请求延迟增加的问题 [#4734](https://github.com/tikv/tikv/pull/4734)
+    - 修复误报 stale command 的问题 [#4682](https://github.com/tikv/tikv/pull/4682)
+    - 修复 command 可能一直 pending 的问题 [#4810](https://github.com/tikv/tikv/pull/4810)
+    - 修复 snapshot 文件未及时落盘而导致掉电后文件损坏的问题 [#4807](https://github.com/tikv/tikv/pull/4807)，[#4850](https://github.com/tikv/tikv/pull/4850)
 
 + Coprocessor
-    - Support Top-N in vector calculation [#4827](https://github.com/tikv/tikv/pull/4827)
-    - Support `Stream` aggregation in vector calculation [#4786](https://github.com/tikv/tikv/pull/4786)
-    - Support the `AVG` aggregate function in vector calculation [#4777](https://github.com/tikv/tikv/pull/4777)
-    - Support the `First` aggregate function in vector calculation [#4771](https://github.com/tikv/tikv/pull/4771)
-    - Support the `SUM` aggregate function in vector calculation [#4797](https://github.com/tikv/tikv/pull/4797)
-    - Support the `MAX`/`MIN` aggregate function in vector calculation [#4837](https://github.com/tikv/tikv/pull/4837)
-    - Support the `Like` expression in vector calculation [#4747](https://github.com/tikv/tikv/pull/4747)
-    - Support the `MultiplyDecimal` expression in vector calculation [#4849](https://github.com/tikv/tikv/pull/4849 )
-    - Support the `BitAnd`/`BitOr`/`BitXor` expression in vector calculation [#4724](https://github.com/tikv/tikv/pull/4724)
-    - Support the `UnaryNot` expression in vector calculation [#4808](https://github.com/tikv/tikv/pull/4808)
+    - 向量计算支持 Top-N [#4827](https://github.com/tikv/tikv/pull/4827)
+    - 向量计算支持 Stream 聚合 [#4786](https://github.com/tikv/tikv/pull/4786)
+    - 向量计算中支持 AVG 聚合函 [#4777](https://github.com/tikv/tikv/pull/4777)
+    - 向量计算中支持 First 聚合函数 [#4771](https://github.com/tikv/tikv/pull/4771)
+    - 向量计算中支持 SUM 聚合函数 [#4797](https://github.com/tikv/tikv/pull/4797)
+    - 向量计算中支持 MAX/MIN 聚合函数 [#4837](https://github.com/tikv/tikv/pull/4837)
+    - 向量计算中支持 Like 表达式 [#4747](https://github.com/tikv/tikv/pull/4747)
+    - 向量计算中支持 MultiplyDecimal 表达式 [#4849](https://github.com/tikv/tikv/pull/4849 )
+    - 向量计算中支持 BitAnd/BitOr/BitXor 表达式 [#4724](https://github.com/tikv/tikv/pull/4724)
+    - 向量计算中支持 UnaryNot 表达式 [#4808](https://github.com/tikv/tikv/pull/4808)
 
 + Transaction
-    - Fix the issue that an error occurs caused by non-pessimistic locking conflicts in pessimistic transactions [#4801](https://github.com/tikv/tikv/pull/4801), [#4883](https://github.com/tikv/tikv/pull/4883)
-    - Reduce unnecessary calculation for optimistic transactions after enabling pessimistic transactions to improve the performance [#4813](https://github.com/tikv/tikv/pull/4813)
-    - Add a feature of single statement rollback to ensure that the whole transaction does not need a rollback operation in a deadlock situation [#4848](https://github.com/tikv/tikv/pull/4848)
-    - Add pessimistic transaction-related monitoring items [#4852](https://github.com/tikv/tikv/pull/4852)
-    - Support using the `ResolveLockLite` command to resolve lightweight locks to improve the performance when severe conflicts exist [#4882](https://github.com/tikv/tikv/pull/4882)
+    - 修复悲观事务中非悲观锁冲突导致出错的问题 [#4801](https://github.com/tikv/tikv/pull/4801)，[#4883](https://github.com/tikv/tikv/pull/4883)
+    - 减少在开启悲观事务后乐观事务的无用计算，提高性能 [#4813](https://github.com/tikv/tikv/pull/4813)
+    - 新增单语句 rollback，保证在当前语句发生死锁时不需要 rollback 整个事务 [#4848](https://github.com/tikv/tikv/pull/4848)
+    - 新增悲观事务相关监控项 [#4852](https://github.com/tikv/tikv/pull/4852)
+    - 支持 `ResolveLockLite` 命令用于轻量级清锁以优化在冲突严重时的性能 [#4882](https://github.com/tikv/tikv/pull/4882)
 
 + tikv-ctl
-    - Add the `bad-regions` command to support checking more abnormal conditions [#4862](https://github.com/tikv/tikv/pull/4862)
-    - Add a feature of forcibly executing the `tombstone` command [#4862](https://github.com/tikv/tikv/pull/4862)
+    - 新增 `bad-regions` 命令支持检测更多的异常情况 [#4862](https://github.com/tikv/tikv/pull/4862)
+    - `tombstone` 命令新增强制执行功能 [#4862](https://github.com/tikv/tikv/pull/4862)
 
 + Misc
-    - Add the `dist_release` compiling command [#4841](https://github.com/tikv/tikv/pull/4841)
+    - 新增 `dist_release` 编译命令 [#4841](https://github.com/tikv/tikv/pull/4841)
 
 ## Tools
 
 + TiDB Binlog
-    - Fix the wrong offset issue caused by Pump not checking the returned value when it fails to write data [#640](https://github.com/pingcap/tidb-binlog/pull/640)
-    - Add the `advertise-addr` configuration in Drainer to support the bridge mode in the container environment [#634](https://github.com/pingcap/tidb-binlog/pull/634)
-    - Add the `GetMvccByEncodeKey` function in Pump to speed up querying the transaction status [#632](https://github.com/pingcap/tidb-binlog/pull/632)
+    - 修复 Pump 因写入失败时未检查返回值导致偏移量错误的问题 [#640](https://github.com/pingcap/tidb-binlog/pull/640)
+    - Drainer 新增 `advertise-addr` 配置，支持容器环境中使用桥接模式 [#634](https://github.com/pingcap/tidb-binlog/pull/634)
+    - Pump 新增 `GetMvccByEncodeKey` 函数，加快事务状态查询 [#632](https://github.com/pingcap/tidb-binlog/pull/632)
 
 ## TiDB Ansible
 
-- Add a monitoring item to predict the maximum QPS value of the cluster ("hide" by default) [#f5cfa4d](https://github.com/pingcap/tidb-ansible/commit/f5cfa4d903bbcd77e01eddc8d31eabb6e6157f73)
+- 新增预测集群最大 QPS 的监控项（默认隐藏）[#f5cfa4d](https://github.com/pingcap/tidb-ansible/commit/f5cfa4d903bbcd77e01eddc8d31eabb6e6157f73)

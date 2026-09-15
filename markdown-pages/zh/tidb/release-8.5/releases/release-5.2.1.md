@@ -1,20 +1,21 @@
 ---
 title: TiDB 5.2.1 Release Notes
-summary: TiDB 5.2.1 was released on September 9, 2021. Bug fixes include resolving an error in TiDB caused by a wrong execution plan and fixing the issue of unavailable TiKV caused by Raftstore deadlock when migrating Regions.
+summary: TiDB 5.2.1 发布日期为 2021 年 9 月 9 日。此版本修复了 TiDB 在分区中下推聚合算子时的执行计划和执行报错问题。同时，TiKV 修复了 Region 迁移时出现的死锁导致 TiKV 不可用的问题。用户可通过关闭调度并重启出问题的 TiKV 来临时应对。
+aliases: ['/zh/tidb/dev/release-5.2.1/','/zh/tidb/v5.2/release-5.2.1','/zh/tidb/v5.4/release-5.2.1','/zh/tidb/v6.1/release-5.2.1','/zh/tidb/v6.5/release-5.2.1','/zh/tidb/v7.1/release-5.2.1','/zh/tidb/v7.5/release-5.2.1','/zh/tidb/v8.1/release-5.2.1']
 ---
 
 # TiDB 5.2.1 Release Notes
 
-Release date: September 9, 2021
+发版日期：2021 年 9 月 9 日
 
-TiDB version: 5.2.1
+TiDB 版本：5.2.1
 
-## Bug fixes
+## Bug 修复
 
 + TiDB
 
-    - Fix an error that occurs during execution caused by the wrong execution plan. The wrong execution plan is caused by the shallow copy of schema columns when pushing down the aggregation operators on partitioned tables. [#27797](https://github.com/pingcap/tidb/issues/27797) [#26554](https://github.com/pingcap/tidb/issues/26554)
+    - 修复在分区中下推聚合算子时，因浅拷贝 schema 列导致执行计划出错，进而导致执行时报错的问题 [#27797](https://github.com/pingcap/tidb/issues/27797) [#26554](https://github.com/pingcap/tidb/issues/26554)
 
 + TiKV
 
-    - Fix the issue of unavailable TiKV caused by Raftstore deadlock when migrating Regions. The workaround is to disable the scheduling and restart the unavailable TiKV. [#10909](https://github.com/tikv/tikv/issues/10909)
+    - 修复 Region 迁移时 Raftstore 模块出现死锁导致 TiKV 不可用的问题。用户可通过关闭调度并重启出问题的 TiKV 来临时应对。[#10909](https://github.com/tikv/tikv/issues/10909)

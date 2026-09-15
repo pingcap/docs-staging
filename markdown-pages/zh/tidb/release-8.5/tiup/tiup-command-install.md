@@ -1,28 +1,28 @@
 ---
 title: tiup install
-summary: The tiup install command is used to download and decompress component packages from the mirror repository for later use. If the component does not exist in the repository, it tries to download it and then runs it automatically. The syntax is "tiup install <component1>[:version] [component2...N] [flags]". There are no options, and the output includes download information or error messages if the component or version does not exist.
+summary: tiup install 命令用于从镜像仓库下载指定版本的组件包，并在本地解压。当需要运行不存在于镜像仓库中的组件时，会尝试下载并自动运行，若不存在会报错。语法为 tiup install <component1>[version] [component2...N] [flags]。输出包括组件的下载信息，若组件不存在则报错"The component "%s" not found"，若版本不存在则报错"version %s not supported by component %s"。
 ---
 
 # tiup install
 
-The `tiup install` command is used for component installation. It downloads the component package of a specified version from the mirror repository and decompresses it in the local TiUP data directory for later use. In addition, when TiUP needs to run a component that does not exist in the mirror repository, it tries to download the component first and then runs it automatically. If the component does not exist in the repository, an error is reported.
+命令 `tiup install` 用于组件安装，它会从镜像仓库中下载指定版本的组件包，并在本地的 TiUP 数据目录中解压，以便后续使用。另外，当 TiUP 需要运行一个镜像仓库中不存在的组件时，会尝试先下载该组件，再自动运行，若仓库中不存在会报错。
 
-## Syntax
+## 语法
 
 ```shell
 tiup install <component1>[:version] [component2...N] [flags]
 ```
 
-`<component1>` and `<component2>` represent component names, and `[version]` represents an optional version number. If `version` is not added, the latest stable version of the specified component is installed. `[component2...N]` means that you can specify multiple components or multiple versions of the same component at the same time.
+`<component1>` 和 `<component2>` 代表组件名字，`[version]` 代表一个可选的版本号，若不加 `version`，则安装指定组件的最新稳定版本。`[component2...N]` 表示可同时指定多个组件或同一个组件的多个版本。
 
-## Option
+## 选项
 
-None
+无
 
-## Output
+## 输出
 
-- Normally outputs the download information of the component.
-- If the component does not exist, the `The component "%s" not found` error is reported.
-- If the version does not exist, the `version %s not supported by component %s` error is reported.
+- 正常情况下输出组件的下载信息
+- 若组件不存在则报错 `The component "%s" not found`
+- 若版本不存在则报错 `version %s not supported by component %s`
 
-[<< Back to the previous page - TiUP Reference command list](/tiup/tiup-reference.md#command-list)
+[<< 返回上一页 - TiUP 命令清单](/tiup/tiup-reference.md#命令清单)

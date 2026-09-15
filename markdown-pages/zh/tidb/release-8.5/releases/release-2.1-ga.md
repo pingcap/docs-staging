@@ -1,274 +1,188 @@
 ---
 title: TiDB 2.1 GA Release Notes
-summary: TiDB 2.1 GA was released on November 30, 2018, with significant improvements in stability, performance, compatibility, and usability. The release includes optimizations in SQL optimizer, SQL executor, statistics, expressions, server, DDL, compatibility, Placement Driver (PD), TiKV, and tools. It also introduces TiDB Lightning for fast full data import. However, TiDB 2.1 does not support downgrading to v2.0.x or earlier due to the adoption of the new storage engine. Additionally, parallel DDL is enabled in TiDB 2.1, so clusters with TiDB version earlier than 2.0.1 cannot upgrade to 2.1 using rolling update. If upgrading from TiDB 2.0.6 or earlier to TiDB 2.1, ongoing DDL operations may slow down the upgrading process.
+summary: TiDB 2.1 GA 版本发布，对系统稳定性、性能、兼容性、易用性做了大量改进。包括 SQL 优化器、SQL 执行引擎、统计信息、表达式、Server、DDL、兼容性等方面的优化。PD (Placement Driver) 进行了可用性优化、调度器优化、API 及运维工具优化、监控和性能优化。TiKV 进行了 Coprocessor、Transaction、Raftstore、存储引擎和 tikv-ctl 方面的优化。同时支持全量数据快速导入工具 TiDB Lightning。升级兼容性说明包括存储引擎更新不支持回退至 2.0.x 或更旧版本，以及升级前需要确认集群中是否存在正在运行中的 DDL 操作。
+aliases: ['/zh/tidb/dev/release-2.1-ga/','/zh/tidb/v2.1/release-2.1-ga','/docs-cn/dev/releases/release-2.1-ga/','/docs-cn/dev/releases/2.1ga/','/zh/tidb/v5.4/release-2.1-ga','/zh/tidb/v6.1/release-2.1-ga','/zh/tidb/v6.5/release-2.1-ga','/zh/tidb/v7.1/release-2.1-ga','/zh/tidb/v7.5/release-2.1-ga','/zh/tidb/v8.1/release-2.1-ga']
 ---
 
 # TiDB 2.1 GA Release Notes
 
-On November 30, 2018, TiDB 2.1 GA is released. See the following updates in this release. Compared with TiDB 2.0, this release has great improvements in stability, performance, compatibility, and usability.
+2018 年 11 月 30 日，TiDB 发布 2.1 GA 版。相比 2.0 版本，该版本对系统稳定性、性能、兼容性、易用性做了大量改进。
 
 ## TiDB
 
-+ SQL Optimizer
++ SQL 优化器
 
-    - Optimize the selection range of `Index Join` to improve the execution performance
+    - 优化 `Index Join` 选择范围，提升执行性能
+    - 优化 `Index Join` 外表选择，使用估算的行数较少的表作为外表
+    - 扩大 Join Hint `TIDB_SMJ` 的作用范围，在没有合适索引可用的情况下也可使用 Merge Join
+    - 加强 Join Hint `TIDB_INLJ` 的能力，可以指定 Join 中的内表
+    - 优化关联子查询，包括下推 Filter 和扩大索引选择范围，部分查询的效率有数量级的提升
+    - 支持在 `UPDATE` 和 `DELETE` 语句中使用 Index Hint 和 Join Hint
+    - 支持更多函数下推：`ABS`/`CEIL`/`FLOOR`/`IS TRUE`/`IS FALSE`
+    - 优化内建函数 `IF` 和 `IFNULL` 的常量折叠算法
+    - 优化 `EXPLAIN` 语句输出格式，使用层级结构表示算子之间的上下游关系
 
-    - Optimize the selection of outer table for `Index Join` and use the table with smaller estimated value of Row Count the as the outer table
++ SQL 执行引擎
 
-    - Optimize Join Hint `TIDB_SMJ` so that Merge Join can be used even without proper index available
+    - 重构所有聚合函数，提升 `Stream` 和 `Hash` 聚合算子的执行效率
+    - 实现并行 `Hash Aggregate` 算子，部分场景下有 350% 的性能提升
+    - 实现并行 `Project` 算子，部分场景有 74% 的性能提升
+    - 并发地读取 `Hash Join` 的 `Inner` 表和 `Outer` 表的数据，提升执行性能
+    - 优化 `REPLACE INTO` 语句的执行速度，性能提升 10x
+    - 优化时间类型的内存占用，时间类型数据的内存使用降低为原来的一半
+    - 优化点查的查询性能，Sysbench 点查效率提升 60%
+    - TiDB 插入和更新宽表，性能提升接近 20 倍
+    - 支持在配置文件中设置单个查询的内存使用上限
+    - 优化 `Hash Join` 的执行过程，当 Join 类型为 `Inner Join` 或者 `Semi Join` 时，如果内表为空，不再读取外表数据，快速返回结果
+    - 支持 `EXPLAIN ANALYZE` 语句，用于查看 Query 执行过程中各个算子的运行时间，返回结果行数等运行时统计信息
 
-    - Optimize Join Hint `TIDB_INLJ` to specify the Inner table to Join
++ 统计信息
 
-    - Optimize correlated subquery, push down Filter, and extend the index selection range, to improve the efficiency of some queries by orders of magnitude
+    - 支持只在一天中的某个时间段开启统计信息自动 ANALYZE 的功能
+    - 支持根据查询的反馈自动更新表的统计信息
+    - 支持通过 `ANALYZE TABLE WITH BUCKETS` 语句配置直方图中桶的个数
+    - 优化等值查询和范围查询混合的情况下使用直方图估算 Row Count 的算法
 
-    - Support using Index Hint and Join Hint in the `UPDATE` and `DELETE` statement
++ 表达式
 
-    - Support pushing down more functions: `ABS`/`CEIL`/`FLOOR`/`IS TRUE`/`IS FALSE`
-
-    - Optimize the constant folding algorithm for the `IF` and `IFNULL` built-in functions
-
-    - Optimize the output of the `EXPLAIN` statement and use hierarchy structure to show the relationship between operators
-
-+ SQL executor
-
-    - Refactor all the aggregation functions and improve execution efficiency of the `Stream` and `Hash` aggregation operators
-
-    - Implement the parallel `Hash Aggregate` operators and improve the computing performance by 350% in some scenarios
-
-    - Implement the parallel `Project` operators and improve the performance by 74% in some scenarios
-
-    - Read the data of the Inner table and Outer table of `Hash Join` concurrently to improve the execution performance
-
-    - Optimize the execution speed of the `REPLACE INTO` statement and increase the performance nearly by 10 times
-
-    - Optimize the memory usage of the time data type and decrease the memory usage of the time data type by fifty percent
-
-    - Optimize the point select performance and improve the point select efficiency result of Sysbench by 60%
-
-    - Improve the performance of TiDB on inserting or updating wide tables by 20 times
-
-    - Support configuring the memory upper limit of a single statement in the configuration file
-
-    - Optimize the execution of Hash Join, if the Join type is Inner Join or Semi Join and the inner table is empty, return the result without reading data from the outer table
-
-    - Support using the [`EXPLAIN ANALYZE` statement](/sql-statements/sql-statement-explain-analyze.md) to check the runtime statistics including the execution time and the number of returned rows of each operator
-
-+ Statistics
-
-    - Support enabling auto ANALYZE statistics only during certain period of the day
-
-    - Support updating the table statistics automatically according to the feedback of the queries
-
-    - Support configuring the number of buckets in the histogram using the `ANALYZE TABLE WITH BUCKETS` statement
-
-    - Optimize the Row Count estimation algorithm using histogram for mixed queries of equality query and range queries
-
-+ Expressions
-
-    + Support following built-in function:
+    + 支持内建函数：
 
         - `json_contains`
-
         - `json_contains_path`
-
         - `encode/decode`
 
 + Server
 
-    - Support queuing the locally conflicted transactions within tidb-server instance to optimize the performance of conflicted transactions
-
-    - Support Server Side Cursor
-
-    + Add the [HTTP API](https://github.com/pingcap/tidb/blob/release-2.1/docs/tidb_http_api.md)
-
-        - Scatter the distribution of table Regions in the TiKV cluster
-
-        - Control whether to open the `general log`
-
-        - Support modifying the log level online
-
-        - Check the TiDB cluster information
-
-    - [Add the `auto_analyze_ratio` system variables to control the ratio of Analyze](/faq/sql-faq.md#whats-the-trigger-strategy-for-auto-analyze-in-tidb)
-
-    - [Add the `tidb_retry_limit` system variable to control the automatic retry times of transactions](/system-variables.md#tidb_retry_limit)
-
-    - [Add the `tidb_disable_txn_auto_retry` system variable to control whether the transaction retries automatically](/system-variables.md#tidb_disable_txn_auto_retry)
-
-    - [Support using`admin show slow` statement to obtain the slow queries](/identify-slow-queries.md#admin-show-slow-command)
-
-    - [Add the `tidb_slow_log_threshold` environment variable to set the threshold of slow log automatically](/system-variables.md#tidb_slow_log_threshold)
-
-    - [Add the `tidb_query_log_max_len` environment variable to set the length of the SQL statement to be truncated in the log dynamically](/system-variables.md#tidb_query_log_max_len)
+    - 支持在单个 tidb-server 实例内部对冲突事务排队，优化事务间冲突频繁的场景下的性能
+    - 支持 Server Side Cursor
+    - 新增 HTTP 管理接口
+    - 打散 table 的 Regions 在 TiKV 集群中的分布
+    - 控制是否打开 `general log`
+    - 在线修改日志级别
+    - 查询 TiDB 集群信息
+    - 添加 `auto_analyze_ratio` 系统变量控制自动 Analyze 的阈值
+    - 添加 `tidb_retry_limit` 系统变量控制事务自动重试的次数
+    - 添加 `tidb_disable_txn_auto_retry` 系统变量控制事务是否自动重试
+    - 支持使用 `admin show slow` 语句来获取慢查询语句
+    - 增加环境变量 `tidb_slow_log_threshold` 动态设置 slow log 的阈值
+    - 增加环境变量 `tidb_query_log_max_len` 动态设置日志中被截断的原始 SQL 语句的长度
 
 + DDL
 
-    - Support the parallel execution of the Add index statement and other statements to avoid the time consuming Add index operation blocking other operations
+    - 支持 Add Index 语句与其他 DDL 语句并行执行，避免耗时的 Add Index 操作阻塞其他操作
+    - 优化 `Add Index` 的速度，在某些场景下速度大幅提升
+    - 支持 `select tidb_is_ddl_owner()` 语句，方便判断 TiDB 是否为 `DDL Owner`
+    - 支持 `ALTER TABLE FORCE` 语法
+    - 支持 `ALTER TABLE RENAME KEY TO` 语法
+    - `Admin Show DDL Jobs` 输出结果中添加表名、库名等信息
+    - 支持使用 `ddl/owner/resign` HTTP 接口释放 DDL Owner 并开启新一轮 DDL Owner 选举
 
-    - Optimize the execution speed of `ADD INDEX` and improve it greatly in some scenarios
++ 兼容性
 
-    - Support the `select tidb_is_ddl_owner()` statement to facilitate deciding whether TiDB is `DDL Owner`
+    - 支持更多 MySQL 语法
+    - `BIT` 聚合函数支持 `ALL` 参数
+    - 支持 `SHOW PRIVILEGES` 语句
+    - 支持 `LOAD DATA` 语句的 `CHARACTER SET` 语法
+    - 支持 `CREATE USER` 语句的 `IDENTIFIED WITH` 语法
+    - 支持 `LOAD DATA IGNORE LINES` 语句
+    - `Show ProcessList` 语句返回更准确信息
 
-    - Support the `ALTER TABLE FORCE` syntax
+## PD (Placement Driver)
 
-    - Support the `ALTER TABLE RENAME KEY TO` syntax
++ 可用性优化
 
-    - Add the table name and database name in the output information of `admin show ddl jobs`
+    - 引入 TiKV 版本控制机制，支持集群滚动兼容升级
+    - PD 节点间开启 `Raft PreVote`，避免网络隔离后恢复时产生的重新选举
+    - 开启 `raft learner` 功能，降低调度时出现宕机导致数据不可用的风险
+    - TSO 分配不再受系统时间回退影响
+    - 支持 `Region merge` 功能，减少元数据带来的开销
 
-    - [Support using the `ddl/owner/resign` HTTP interface to release the DDL owner and start electing a new DDL owner](https://github.com/pingcap/tidb/blob/release-2.1/docs/tidb_http_api.md)
++ 调度器优化
 
-+ Compatibility
+    - 优化 Down Store 的处理流程，加快发生宕机后补副本的速度
+    - 优化热点调度器，在流量统计信息抖动时适应性更好
+    - 优化 Coordinator 的启动，减少重启 PD 时带来的不必要调度
+    - 优化 Balance Scheduler 频繁调度小 Region 的问题
+    - 优化 Region merge，调度时考虑 Region 中数据的行数
+    - 新增一些控制调度策略的开关
+    - 完善调度模拟器，添加调度场景模拟
 
-    - Support more MySQL syntaxes
++ API 及运维工具
 
-    - Make the `BIT` aggregate function support the `ALL` parameter
+    - 新增 `GetPrevRegion` 接口，用于支持 TiDB reverse scan 功能
+    - 新增 `BatchSplitRegion` 接口，用于支持 TiKV 快速 Region 分裂
+    - 新增 `GCSafePoint` 接口，用于支持 TiDB 并发分布式 GC
+    - 新增 `GetAllStores` 接口，用于支持 TiDB 并发分布式 GC
+    + pd-ctl 新增：
 
-    - Support the `SHOW PRIVILEGES` statement
+        - 使用统计信息进行 Region split
+        - 调用 `jq` 来格式化 JSON 输出
+        - 查询指定 store 的 Region 信息
+        - 查询按 version 排序的 topN 的 Region 列表
+        - 查询按 size 排序的 topN 的 Region 列表
+        - 更精确的 TSO 解码
 
-    - Support the `CHARACTER SET` syntax in the `LOAD DATA` statement
+    - pd-recover 不再需要提供 max-replica 参数
 
-    - Support the `IDENTIFIED WITH` syntax in the `CREATE USER` statement
++ 监控
 
-    - Support the `LOAD DATA IGNORE LINES` statement
+    - 增加 `Filter` 相关的监控
+    - 新增 etcd Raft 状态机相关监控
 
-    - The `Show ProcessList` statement returns more accurate information
++ 性能优化
 
-## Placement Driver (PD)
-
-+ Optimize availability
-
-    - Introduce the version control mechanism and support rolling update of the cluster compatibly
-
-    - [Enable `Raft PreVote`](https://github.com/pingcap/pd/blob/5c7b18cf3af91098f07cf46df0b59fbf8c7c5462/conf/config.toml#L22) among PD nodes to avoid leader reelection when network recovers after network isolation
-
-    - Enable `raft learner` by default to lower the risk of unavailable data caused by machine failure during scheduling
-
-    - TSO allocation is no longer affected by the system clock going backwards
-
-    - Support the `Region merge` feature to reduce the overhead brought by metadata
-
-+ Optimize the scheduler
-
-    - Optimize the processing of Down Store to speed up making up replicas
-
-    - Optimize the hotspot scheduler to improve its adaptability when traffic statistics information jitters
-
-    - Optimize the start of Coordinator to reduce the unnecessary scheduling caused by restarting PD
-
-    - Optimize the issue that Balance Scheduler schedules small Regions frequently
-
-    - Optimize Region merge to consider the number of rows within the Region
-
-    - [Add more commands to control the scheduling policy](/pd-control.md#config-show--set-option-value--placement-rules)
-
-    - Improve [PD simulator](https://github.com/pingcap/pd/tree/release-2.1/tools/pd-simulator) to simulate the scheduling scenarios
-
-+ API and operation tools
-
-    - Add the [`GetPrevRegion` interface](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L40) to support the `TiDB reverse scan` feature
-
-    - Add the [`BatchSplitRegion` interface](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L54) to speed up TiKV Region splitting
-
-    - Add the [`GCSafePoint` interface](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L64-L66) to support distributed GC in TiDB
-
-    - Add the [`GetAllStores` interface](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L32), to support distributed GC in TiDB
-
-    + pd-ctl supports:
-        - [using statistics for Region split](/pd-control.md#operator-check--show--add--remove)
-
-        - [calling `jq` to format the JSON output](/pd-control.md#jq-formatted-json-output-usage)
-
-        - [checking the Region information of the specified store](/pd-control.md#region-store-store_id)
-
-        - [checking topN Region list sorted by versions](/pd-control.md#region-topconfver-limit)
-
-        - [checking topN Region list sorted by size](/pd-control.md#region-topsize-limit)
-
-        - [more precise TSO encoding](/pd-control.md#tso)
-
-    - [pd-recover](/pd-recover.md) doesn't need to provide the `max-replica` parameter
-
-+ Metrics
-
-    - Add related metrics for `Filter`
-
-    - Add metrics about etcd Raft state machine
-
-+ Performance
-
-    - Optimize the performance of Region heartbeat to reduce the memory overhead brought by heartbeats
-
-    - Optimize the Region tree performance
-
-    - Optimize the performance of computing hotspot statistics
+    - 优化处理 Region heartbeat 的性能，减少 heartbeat 带来的内存开销
+    - 优化 Region tree 性能
+    - 优化计算热点统计的性能问题
 
 ## TiKV
 
 + Coprocessor
 
-    - Add more built-in functions
-
-    - [Add Coprocessor `ReadPool` to improve the concurrency in processing the requests](https://github.com/tikv/rfcs/blob/master/text/0010-read-pool.md)
-
-    - Fix the time function parsing issue and the time zone related issues
-
-    - Optimize the memory usage for pushdown aggregation computing
+    - 新增支持大量内建函数
+    - 新增 Coprocessor ReadPool，提高请求处理并发度
+    - 修复时间函数解析以及时区相关问题
+    - 优化下推聚合计算的内存使用
 
 + Transaction
 
-    - Optimize the read logic and memory usage of MVCC to improve the performance of the scan operation and the performance of full table scan is 1 time better than that in TiDB 2.0
-
-    - Fold the continuous Rollback records to ensure the read performance
-
-    - [Add the `UnsafeDestroyRange` API to support to collecting space for the dropping table/index](https://github.com/tikv/rfcs/blob/master/text/0002-unsafe-destroy-range.md)
-
-    - Separate the GC module to reduce the impact on write
-
-    - Add the `upper bound` support in the `kv_scan` command
+    - 优化 MVCC 读取逻辑以及内存使用效率，提高扫描操作的性能，Count 全表性能比 2.0 版本提升 1 倍
+    - 折叠 MVCC 中连续的 Rollback 记录，保证记录的读取性能
+    - 新增 `UnsafeDestroyRange` API 用于在 drop table/index 的情况下快速回收空间
+    - GC 模块独立出来，减少对正常写入的影响
+    - kv_scan 命令支持设置 upper bound
 
 + Raftstore
 
-    - Improve the snapshot writing process to avoid RocksDB stall
+    - 优化 snapshot 文件写入流程避免导致 RocksDB stall
+    - 增加 LocalReader 线程专门处理读请求，降低读请求的延迟
+    - 支持 `BatchSplit` 避免大量写入导致产生特别大的 Region
+    - 支持按照统计信息进行 Region Split，减少 IO 开销
+    - 支持按照 Key 的数量进行 Region Split，提高索引扫描的并发度
+    - 优化部分 Raft 消息处理流程，避免 Region Split 带来不必要的延迟
+    - 启用 `PreVote` 功能，减少网络隔离对服务的影响
 
-    - [Add the `LocalReader` thread to process read requests and reduce the delay for read requests](https://github.com/tikv/rfcs/pull/17)
++ 存储引擎
 
-    - [Support `BatchSplit` to avoid large Region brought by large amounts of write](https://github.com/tikv/rfcs/pull/6)
-
-    - Support `Region Split` according to statistics to reduce the I/O overhead
-
-    - Support `Region Split` according to the number of keys to improve the concurrency of index scan
-
-    - Improve the Raft message process to avoid unnecessary delay brought by `Region Split`
-
-    - Enable the `PreVote` feature by default to reduce the impact of network isolation on services
-
-+ Storage Engine
-
-    - Fix the `CompactFiles`bug in RocksDB and reduce the impact on importing data using Lightning
-
-    - Upgrade RocksDB to v5.15 to fix the possible issue of snapshot file corruption
-
-    - Improve `IngestExternalFile` to avoid the issue that flush could block write
+    - 修复 RocksDB `CompactFiles` 的 bug，可能影响 Lightning 导入的数据
+    - 升级 RocksDB 到 v5.15，解决 snapshot 文件可能会被写坏的问题
+    - 优化 `IngestExternalFile`，避免 flush 卡住写入的问题
 
 + tikv-ctl
 
-    - [Add the `ldb` command to diagnose RocksDB related issues](https://tikv.org/docs/3.0/reference/tools/tikv-ctl/#ldb-command)
-
-    - The `compact` command supports specifying whether to compact data in the bottommost level
+    - 新增 ldb 命令，方便排查 RocksDB 相关问题
+    - compact 命令支持指定是否 compact bottommost 层的数据
 
 ## Tools
 
-- Fast full import of large amounts of data: [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)
+- 全量数据快速导入工具 TiDB Lightning
+- 支持新版本 TiDB Binlog
 
-- Support new [TiDB Binlog](https://docs-archive.pingcap.com/tidb/v2.1/tidb-binlog-overview)
+## 升级兼容性说明
 
-## Upgrade caveat
++ 由于新版本存储引擎更新，不支持在升级后回退至 2.0.x 或更旧版本
++ 从 2.0.6 之前的版本升级到 2.1 之前，最好确认集群中是否存在正在运行中的 DDL 操作，特别是耗时的 Add Index 操作，等 DDL 操作完成后再执行升级操作
++ 因为 2.1 版本启用了并行 DDL，对于早于 2.0.1 版本的集群，无法滚动升级到 2.1，可以选择下面两种方案：
 
-- TiDB 2.1 does not support downgrading to v2.0.x or earlier due to the adoption of the new storage engine
-
-+ Parallel DDL is enabled in TiDB 2.1, so the clusters with TiDB version earlier than 2.0.1 cannot upgrade to 2.1 using rolling update. You can choose either of the following two options:
-
-    - Stop the cluster and upgrade to 2.1 directly
-    - Roll update to 2.0.1 or later 2.0.x versions, and then roll update to the 2.1 version
-
-- If you upgrade from TiDB 2.0.6 or earlier to TiDB 2.1, check if there is any ongoing DDL operation, especially the time consuming `Add Index` operation, because the DDL operations slow down the upgrading process. If there is ongoing DDL operation, wait for the DDL operation finishes and then roll update.
+    - 停机升级，直接从早于 2.0.1 的 TiDB 版本升级到 2.1
+    - 先滚动升级到 2.0.1 或者之后的 2.0.x 版本，再滚动升级到 2.1 版本

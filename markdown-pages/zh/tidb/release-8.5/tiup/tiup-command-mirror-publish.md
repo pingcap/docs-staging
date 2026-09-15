@@ -1,86 +1,76 @@
 ---
 title: tiup mirror publish
-summary: The `tiup mirror publish` command is used to publish new components or versions. Only component owners with access can publish.
+summary: tiup mirror publish 命令用于发布新组件或已有组件的新版本。只有有权限的组件管理员才可以发布组件。命令语法为 tiup mirror publish <comp-name> <version> <tarball> <entry> [flags]。其中各参数含义为组件名、版本号、tarball 包路径、组件可执行文件位置。命令还包含选项 -k, --key, --arch, --os, --desc, --hide。成功时无输出，无权限时会有相应错误提示。
 ---
 
 # tiup mirror publish
 
-The command `tiup mirror publish` is used to publish a new component or a new version of an existing component. Only component owner that has the access to the target component can publish it. To add a new component owner, see the usage of the [`grant` command](/tiup/tiup-command-mirror-grant.md).
+命令 `tiup mirror publish` 用于发布新组件，或已有组件的新版本。只有有权限的组件管理员才可以发布组件。引入组件管理员的方式可参考 [grant 命令](/tiup/tiup-command-mirror-grant.md)。
 
-## Syntax
+## 语法
 
 ```shell
 tiup mirror publish <comp-name> <version> <tarball> <entry> [flags]
 ```
 
-The meaning of each parameter is as follows:
+各个参数解释如下：
 
-- `<comp-name>`: The name of the components, such as `tidb`. It is recommended to use a string that matches the regular expression `^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$`.
-- `<version>`: The version of the component to be published. The version number needs to follow the requirements of [Semantic Versioning](https://semver.org/).
-- `<tarball>`: The local directory of the `.tar.gz` package. You need to put dependencies and the executable file of the component in this package. TiUP uploads this package to the mirror.
-- `<entry>`: The location of the component's executable file in `<tarball>`.
+- `<comp-name>`：组件名，如 `tidb`，建议使用符合正则 `^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$` 的字符串
+- `<version>`：当前正在发布的版本，版本号需要符合 [Semantic Versioning](https://semver.org/)
+- `<tarball>`：`.tar.gz` 包的本地路径，需要将组件的可执行文件及依赖放在该包中，由 TiUP 上传到镜像
+- `<entry>`：组件的可执行文件在 `<tarball>` 中的位置
 
-## Options
+## 选项
 
-### -k, --key
+### -k, --key（string，默认 ${TIUP_HOME}/keys/private.json）
 
-- Specifies the component owner's private key. The client uses the private key to sign `{component}.json` files.
-- Data type: `STRING`
-- Default: "${TIUP_HOME}/keys/private.json"
+组件管理员的私钥，客户端需要使用该私钥对组件信息 (`{component}.json`) 进行签名。
 
-### --arch
+### --arch（string，默认 ${GOARCH}）
 
-- Specifies the platform on which the binary files in `<tarball>` can run. For a single `<tarball>` package, you can only choose the platform from the following options:
+该 `<tarlball>` 中的二进制文件运行的平台，一个 `<tarball>` 只能选以下三个平台之一：
 
-    - `amd64`: Indicates that the files run on AMD64 machines.
-    - `arm64`: Indicates that the files run on ARM64 machines.
-    - `any`: Indicates that the files, such as scripts, run on both AMD64 and ARM64 machines.
+- `amd64`：表示在 amd64 架构的机器上运行
+- `arm64`：表示在 arm64 架构的机器上运行
+- `any`：表示可以在以上两种架构的机器上运行（比如脚本）
 
-- Data type: `STRING`
-- Default: "${GOARCH}"
-
-> **Note:**
+> **注意：**
 >
-> If `--arch` is set to `any`, then `--os` must be set to `any` as well.
+> 若 `--arch` 指定为 `any`，则 `--os` 也必须指定为 `any`。
 
-### --os
+### --os（string，默认 ${GOOS}）
 
-- Specifies the operating system on which the binary files in `<tarball>` can run. For a single `<tarball>` package, you can only choose the operating system from the following options:
+该 `<tarlball>` 中的二进制文件运行的操作系统，一个 `<tarball>` 只能选以下三个操作系统之一：
 
-    - `linux`: Indicates that the files run on the Linux operating system.
-    - `darwin`: Indicates that the files run on the Darwin operating system.
-    - `any`: Indicates that the files, such as scripts, run on both the Linux and Darwin operating systems.
+- `linux`：表示在 Linux 操作系统上运行
+- `darwin`：表示在 Darwin 操作系统上运行
+- `any`：表示可以在以上两种操作系统上运行（比如脚本）
 
-- Data type: `STRING`
-- Default: "${GOOS}"
-
-> **Note:**
+> **注意：**
 >
-> If `--os` is set to `any`, then `--arch` must be set to `any` as well.
+> 若 `--os` 指定为 `any`，则 `--arch` 也必须指定为 `any`。
 
-### --desc
+### --desc（string，默认为空）
 
-- Specifies the description of the component.
-- Data type: `String`
-- Default: NULL
+该组件的描述信息。
 
 ### --hide
 
-- Specifies whether the component is hidden. If it is a hidden component, it can be seen in the result list of `tiup list -all`, but not in that of `tiup list`.
-- Data type: `STRING`
-- Default: NULL
+- 是否为隐藏组件。若为隐藏组件，则不在 `tiup list` 的列表中显示，但在 `tiup list --all` 的列表中会显示。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-### --standalone
+<!-- ### --standalone
 
-- Controls whether the component can run standalone. This option is currently **NOT available**.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 该组件是否可独立运行。该参数目前尚未启用。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。-->
 
-## Outputs
+## 输出
 
-- If the command is executed successfully, there is no output.
-- If the component owner is not authorized to modify the target component:
-    - If the mirror is a remote mirror, TiUP reports the error `Error: The server refused, make sure you have access to this component`.
-    - If the mirror is a local mirror, TiUP reports the error `Error: the signature is not correct`.
+- 若成功：无输出
+- 若该组件管理员无权修改目标组件：
+    - 若使用远程镜像：`Error: The server refused, make sure you have access to this component`
+    - 若使用本地镜像：`Error: the signature is not correct`
 
-[<< Back to the previous page - TiUP Mirror command list](/tiup/tiup-command-mirror.md#command-list)
+[<< 返回上一页 - TiUP Mirror 命令清单](/tiup/tiup-command-mirror.md#命令清单)

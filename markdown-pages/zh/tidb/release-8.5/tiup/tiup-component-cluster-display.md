@@ -1,104 +1,100 @@
 ---
 title: tiup cluster display
-summary: tiup cluster display command efficiently shows the operation status of each component in the cluster. It provides options to display dashboard information, node status, CPU and memory usage, and more. The output includes cluster name, version, SSH client type, dashboard address, and a table with node details. Node service status can be Up, Down, Tombstone, Pending Offline, or Unknown.
+summary: tiup cluster display 命令用于查看集群中每个组件的运行状态。可以通过指定选项来展示特定信息，如节点的 CPU 和内存使用情况，节点的 uptime 信息等。输出包括集群名称、版本、SSH 客户端类型、Dashboard 地址以及节点的 ID、角色、主机 IP、端口号、操作系统和机器架构、服务状态、数据目录和部署目录。节点服务状态包括在线、离线、已缩容下线、下线中和未知。详细状态含义可参考相关文档。
 ---
 
 # tiup cluster display
 
-If you want to see the operation status of each component in the cluster, it is obviously inefficient to log in to each machine one by one. Therefore, tiup-cluster provides the `tiup cluster display` command to efficiently complete this task.
+如果想查看集群中每个组件的运行状态，逐一登录到各个机器上查看显然很低效。因此，tiup-cluster 提供了 `tiup cluster display` 命令来高效完成这件工作。
 
-## Syntax
+## 语法
 
 ```shell
 tiup cluster display <cluster-name> [flags]
 ```
 
-`<cluster-name>`: the name of the cluster to operate on. If you forget the cluster name, you can check it with the [cluster list](/tiup/tiup-component-cluster-list.md) command.
+`<cluster-name>` 为要操作的集群名字，如果忘记集群名字可通过[集群列表](/tiup/tiup-component-cluster-list.md)查看。
 
-## Options
+## 选项
 
 ### --dashboard
 
-- By default, all node information of the entire cluster is displayed. With the `--dashboard` option, only dashboard information is displayed.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 默认情况会展示整个集群的所有节点信息，加上该选项后仅展示 dashboard 的信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-### -N, --node
+### -N, --node（strings，默认为 []，表示所有节点）
 
-- Specifies the node to display. If this option is not specified, all nodes are displayed. The value of this option is a comma-separated list of node IDs. If you are not sure about the ID of a node, you can skip this option in the command to show the IDs and status of all nodes in the output.
-- Data type: `STRINGS`
-- If this option is not specified in the command, all nodes are checked by default.
+指定要查询的节点，不指定则表示所有节点。该选项的值为以逗号分割的节点 ID 列表，如果不确定要查询节点的 ID，不指定此选项，输出会显示所有节点的 ID 和状态信息。
 
-> **Note:**
+> **注意：**
 >
-> If the `-R, --role` option is specified at the same time, only the service nodes that match both the specifications of `-N, --node` and `-R, --role` are checked.
+> 若同时指定了 `-R, --role`，那么将查询它们的交集中的服务状态。
 
-### -R, --role
+### -R, --role（strings，默认为 []，表示所有角色）
 
-- Specifies the role to display. If it is not specified, all roles are displayed. The value of this option is a comma-separated list of node roles. If you are not sure about the role deployed on a node, you can skip this option in the command to show the roles and status of all nodes in the output.
-- Data type: `STRINGS`
-- If this option is not specified in the command, all roles are displayed by default.
+指定要查询的角色，不指定则表示所有角色。该选项的值为以逗号分割的节点角色列表，如果不确定要查询节点的角色，不指定此选项，输出会显示所有节点的角色和状态信息。
 
-> **Note:**
+> **注意：**
 >
-> If the `-N, --node` option is specified at the same time, only the service nodes that match both the specifications of `-N, --node` and `-R, --role` are displayed.
+> 若同时指定了 `-N, --node`，那么将查询它们的交集中的服务状态。
 
 ### --process
 
-- Displays the CPU and memory usage information of the node when this option is enabled. This option is disabled by default.
-- Data type: `BOOLEAN`
-- Default value: `false`
-- To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 加上该选项后会增加展示节点的 CPU 和内存的使用信息，默认情况下不展示。
+- 数据类型：`BOOLEAN`
+- 默认值：`false`
+- 在命令中添加该选项，并传入 `true` 或不传值，均可开启此功能。
 
 ### --uptime
 
-- Displays the `uptime` information of the node when this option is enabled. This option is disabled by default.
-- Data type: `BOOLEAN`
-- Default value: `false`
-- To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 加上该选项后会增加展示节点的 `uptime` 信息，默认情况下不展示。
+- 数据类型：`BOOLEAN`
+- 默认值：`false`
+- 在命令中添加该选项，并传入 `true` 或不传值，均可开启此功能。
 
 ### --status-timeout
 
-- Specifies the timeout period for obtaining the node status information.
-- Data type: `INT`
-- Default value: `10`, in the unit of second.
+- 获取节点状态信息的超时时间。
+- 数据类型：`INT`
+- 默认值：`10`，单位为 `s`。
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Outputs
+## 输出
 
-- The cluster name
-- The cluster version
-- SSH Client Type
-- Dashboard address
-- The table with the following fields:
-    - ID: the node ID, composed of `IP:PORT`
-    - Role: the service role deployed on this node (such as TiDB, TiKV)
-    - Host: the IP of the machine corresponding to the node
-    - Ports: the port number occupied by the service
-    - OS/Arch: the operating system and the machine architecture of this node
-    - Status: the current status of the node service
-    - Data Dir: the data directory of the service. `-` means no data directory.
-    - Deploy Dir: the deployment directory of the service
+- 集群名称
+- 集群版本
+- SSH 客户端类型
+- Dashboard 地址
+- 含有以下字段的表格：
+    - ID：节点 ID，由 `IP:PORT` 构成
+    - Role：该节点部署的服务角色（如 TiDB、 TiKV 等）
+    - Host：该节点对应的机器 IP
+    - Ports：服务占用的端口号
+    - OS/Arch：该节点的操作系统和机器架构
+    - Status：该节点服务当前的状态
+    - Data Dir：服务的数据目录，`-` 表示没有数据目录
+    - Deploy Dir：服务的部署目录
 
-### Node service status
+### 节点服务的状态 (Status)
 
-A node service can run in one of the following statuses:
+节点服务可能处于如下任一状态：
 
-- Up: The node service is running normally.
-- Down or Unreachable: The node service is not running or a network problem exists on the corresponding host.
-- Tombstone: The data on the node service has been completely migrated out and the scaling-in is complete. This status exists only on TiKV or TiFlash.
-- Pending Offline: The data on the node service is being migrated out and the scaling-in is in process. This status exists only on TiKV or TiFlash.
-- Unknown: The running status of the node service is unknown.
+- 在线 (Up)：节点服务正常运行。
+- 离线 (Down) 或无法访问 (Unreachable)：节点服务未启动或对应主机存在网络问题。
+- 已缩容下线 (Tombstone)：节点服务上的数据已被完整迁出并缩容完毕。仅 TiKV 或 TiFlash 存在该状态。
+- 下线中 (Pending Offline)：节点服务上的数据正在被迁出并缩容。仅 TiKV 或 TiFlash 存在该状态。
+- 未知 (Unknown)：未知的节点服务运行状态。
 
-> **Note:**
+> **注意：**
 >
-> `Pending Offline` in TiUP, `Offline` returned by PD API, and `Leaving` in TiDB Dashboard indicate the same status.
+> TiUP 显示的 `Pending Offline`、PD API 返回的 `Offline` 以及 TiDB Dashboard 显示的 `Leaving` 这三个状态的含义相同。
 
-Node service status derives from the PD scheduling information. For more details, see [Information collection](/tidb-scheduling.md#information-collection).
+节点服务状态来自于 PD 的调度信息。更详细的描述请参考 [TiDB 数据库的调度 -- 信息收集](/tidb-scheduling.md#信息收集)。
 
-[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)
+[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)

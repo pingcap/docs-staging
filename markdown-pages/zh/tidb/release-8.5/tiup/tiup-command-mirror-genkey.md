@@ -1,56 +1,56 @@
 ---
 title: tiup mirror genkey
-summary: TiUP mirror genkey is a command used to generate a private key for TiUP. It has options to specify the name of the key and to show the corresponding public key. The command also allows saving the public key information as a file. It is important not to transmit private keys over the Internet.
+summary: TiUP 镜像命令 genkey 用于生成私钥。管理员有 root.json、index.json、snapshot.json 和 timestamp.json 的修改权限。组件管理员有相关组件的修改权限。普通用户可以下载并使用组件。私钥名默认为 private，可以显示对应的公钥。可以将公钥信息储存为文件。输出包括私钥已存在或已写入，以及公钥内容。
 ---
 
 # tiup mirror genkey
 
-TiUP [mirror](/tiup/tiup-mirror-reference.md), according its definition, has three roles of users:
+在 TiUP [镜像](/tiup/tiup-mirror-reference.md)的定义中，有三类角色：
 
-- Mirror administrators: They have the permission to modify `root.json`, `index.json`, `snapshot.json`, and `timestamp.json`.
-- Component owners: They have the permission to modify the corresponding component.
-- Normal users: They can download and use the components.
+- 镜像管理员：拥有 `root.json`、`index.json`、`snapshot.json` 以及 `timestamp.json` 的修改权限
+- 组件管理员：拥有相关组件的修改权限
+- 普通用户：可以下载并使用组件
 
- Because TiUP requires the signature of the corresponding owner/administrator to modify a file, owners/administrators must have his or her own private key. The command `tiup mirror genkey` is used to generate a private key.
+由于修改文件需要相关的管理员进行签名，因此管理员必须拥有自己的私钥。命令 `tiup mirror genkey` 就是用于生成私钥的。
 
-> **Warning:**
+> **警告：**
 >
-> **DO NOT** transmit private keys over the Internet.
+> 请勿通过网络传输私钥。
 
-## Syntax
+## 语法
 
 ```shell
 tiup mirror genkey [flags]
 ```
 
-## Options
+## 选项
 
 ### -n, --name
 
-- Specifies the name of the key, which also determines the name of the final generated file. The path of the generated private key file is `${TIUP_HOME}/keys/{name}.json`. `TIUP_HOME` refers to the home directory of TiUP, which is `$HOME/.tiup` by default. `name` refers to the private key name that `-n/--name` specifies.
-- Data type: `STRING`
-- Default: "private"
+- 密钥的名字，该名字决定最终生成的文件名。生成的私钥文件路径为：`${TIUP_HOME}/keys/{name}.json`，其中 `TIUP_HOME` 为 TiUP 的 Home 目录，默认路径为 `$HOME/.tiup`，`name` 为 `-n/--name` 指定的密钥名字。
+- 数据类型：`STRING`
+- 如果不指定该选项，密钥名默认为 `private`。
 
 ### -p, --public
 
-- Shows the corresponding public key of the private key specified in the option `-n/--name`.
-- TiUP does not create a new private key when `-p/--public` is specified. If the private key specified in `-n/--name` does not exist, TiUP returns an error.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 显示当前私钥对应的公钥，当前私钥名字由 `-n/--name` 选项指定。
+- 当指定了 `-p/--public` 时，不会创建新的私钥。若 `-n/--name` 指定的私钥不存在，则报错。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### --save
 
-- Saves the information of the public key as a file in the current directory. The file name is `{hash-prefix}-public.json`. `hash-prefix` is the first 16 bits of the key ID.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 将公钥信息储存为文件放置于当前目录，文件名称为 `{hash-prefix}-public.json`，其中 `hash-prefix` 为该密钥 ID 的前 16 位。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Outputs
+## 输出
 
-- If `-p/--public` is not specified:
-    - If the private key specified in `-n/--name` exists: TiUP outputs `Key already exists, skipped`.
-    - If the private key specified in `-n/--name` does not exist: TiUP outputs `private key have been write to ${TIUP_HOME}/keys/{name}.json`.
-- If `-p/--public` is specified:
-    - If the private key specified in `-n/--name` does not exist: TiUP reports the error `Error: open ${TIUP_HOME}/keys/{name}.json: no such file or directory`.
-    - If the private key specified in `-n/--name` exists: TiUP outputs the content of the corresponding public key.
+- 若未指定 `-p/--public`：
+    - 若指定的密钥已存在：`Key already exists, skipped`
+    - 若指定的密钥不存在：`private key have been write to ${TIUP_HOME}/keys/{name}.json`
+- 若指定 `-p/--public`：
+    - 若指定的密钥不存在：`Error: open ${TIUP_HOME}/keys/{name}.json: no such file or directory`
+    - 若指定的密钥存在：输出该密钥对应的公钥内容
 
-[<< Back to the previous page - TiUP Mirror command list](/tiup/tiup-command-mirror.md#command-list)
+[<< 返回上一页 - TiUP Mirror 命令清单](/tiup/tiup-command-mirror.md#命令清单)

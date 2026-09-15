@@ -1,79 +1,79 @@
 ---
-title: Understanding Stale Read and safe-ts in TiKV
-summary: Introduce the principles of Stale Read and safe-ts in TiKV and provide troubleshooting tips and examples for diagnosing common issues related to Stale Read.
+title: 理解 TiKV 中的 Stale Read 和 safe-ts
+summary: TiKV 中的 Stale Read 依赖于 safe-ts，保证读取历史数据版本的安全性。safe-ts 由每个 Region 中的 peer 维护，resolved-ts 则由 Region leader 维护。诊断 Stale Read 问题可通过 Grafana、tikv-ctl 和日志。常见原因包括事务提交时间过长、事务存在时间过长以及 CheckLeader 信息推送延迟。处理慢事务提交可通过识别锁所属的事务和检查应用程序逻辑。处理长事务可通过识别事务、检查应用程序逻辑和处理慢查询。解决 CheckLeader 问题可通过检查网络和监控面板指标。
 ---
 
-# Understanding Stale Read and safe-ts in TiKV
+# 理解 TiKV 中的 Stale Read 和 safe-ts
 
-In this guide, you can learn about Stale Read and safe-ts in TiKV and how to diagnose common issues related to Stale Read.
+在本文档中，你可以了解 TiKV 中 Stale Read 和 safe-ts 的原理以及如何诊断与 Stale Read 相关的常见问题。
 
-## Overview of Stale Read and safe-ts
+## Stale Read 和 safe-ts 概述
 
-[Stale Read](/stale-read.md)  is a mechanism that TiDB applies to read historical versions of data stored in TiDB. In TiKV, Stale Read relies on [safe-ts](/#what-is-safe-ts). If a read request on a Region peer has a timestamp (ts) that is less than or equal to the Region's safe-ts, TiDB can safely read the data from the peer. TiKV implements this safety guarantee by ensuring that safe-ts is always less than or equal to [resolved-ts](#what-is-resolved-ts).
+[Stale Read](/stale-read.md) 是一种读取历史数据版本的机制，读取 TiDB 中存储的历史数据版本。在 TiKV 中，Stale Read 依赖 [safe-ts](#什么是-safe-ts)。如果一个 Region peer 上的读请求的时间戳 (timestamp, ts) 小于等于 Region 的 safe-ts，TiDB 可以安全地从 peer 上读取数据。TiKV 通过保证 safe-ts 总是小于等于 [resolved-ts](#什么是-resolved-ts) 来保证这种安全性。
 
-## Understand safe-ts and resolved-ts
+## 理解 safe-ts 和 resolved-ts
 
-This section explains the concepts and maintenance of safe-ts and resolved-ts.
+本章节介绍 safe-ts 和 resolved-ts 的概念和维护方式。
 
-### What is safe-ts?
+### 什么是 safe-ts？
 
-The safe-ts is a timestamp that each peer in a Region maintains. It ensures that all transactions with a timestamp less than this value have been applied locally, which enables local Stale Read.
+safe-ts 是一个由 Region 中的每个 peer 维护的时间戳，它保证所有时间戳小于等于 safe-ts 的事务已经被 peer apply，从而实现本地 Stale Read。
 
-### What is resolved-ts?
+### 什么是 resolved-ts？
 
-The resolved-ts is a timestamp that guarantees all transactions with a timestamp less than this value have been applied by the leader. Unlike safe-ts, which is a peer concept, resolved-ts is only maintained by the Region leader. Followers might have a smaller apply index than the leader, so resolved-ts cannot be directly treated as safe-ts in followers.
+resolved-ts 是一个时间戳，它保证所有时间戳小于该值的事务已经被 leader apply。与 safe-ts 不同，resolved-ts 只由 Region leader 维护。Follower 可能有一个比 leader 更小的 apply index，因此 resolved-ts 不能直接被当作 safe-ts。
 
-### The maintenance of safe-ts
+### safe-ts 的维护
 
-The `RegionReadProgress` module maintains safe-ts. The Region leader maintains resolved-ts and periodically sends its resolved-ts, the minimum required apply index (which validates this resolved-ts), and the Region itself to the `RegionReadProgerss` modules of all replicas via the CheckLeader RPC.
+`RegionReadProgress` 模块维护 safe-ts。Region leader 维护 resolved-ts，并定期通过 CheckLeader RPC 将 resolved-ts、最小的（使 resolved-ts 生效的）apply index和 Region 本身发送给所有副本的 `RegionReadProgerss` 模块。
 
-When a peer applies data, it updates the apply index and checks if any pending resolved-ts can become the new safe-ts.
+当一个 peer apply 数据时，它会更新 apply index，并检查是否有 pending resolved-ts 可以成为新的 safe-ts。
 
-### The maintenance of resolved-ts
+### resolved-ts 的维护
 
-The Region leader uses a resolver to manage resolved-ts. This resolver tracks locks in the LOCK CF (Column Family) by receiving change logs when Raft applies. When initialized, the resolver scans the entire Region to track locks.
+Region leader 使用一个 resolver 来管理 resolved-ts。该 resolver 通过接收 Raft apply 时的变更日志来跟踪 LOCK CF (Column Family) 中的锁。当初始化时，resolver 会扫描整个 Region 来跟踪锁。
 
-## Diagnose Stale Read issues
+## 诊断 Stale Read 问题
 
-This section introduces how to diagnose Stale Read issues using Grafana, `tikv-ctl`, and logs.
+本章节介绍如何使用 Grafana、`tikv-ctl` 和日志诊断 Stale Read 问题。
 
-### Identify issues
+### 识别问题
 
-In the [Grafana > TiDB dashboard > **KV Request** dashboard](/grafana-tidb-dashboard.md#kv-request), the following panels show the hit rate, OPS, and traffic of Stale Read:
+在 [Grafana > TiDB dashboard > **KV Request** 监控面板](/grafana-tidb-dashboard.md#kv-request)中，以下面板显示了 Stale Read 的命中率、OPS 和流量：
 
-![Stale Read Hit/Miss OPS](https://docs-download.pingcap.com/media/images/docs/stale-read/metrics-hit-miss.png)
+![Stale Read Hit/Miss OPS](https://docs-download.pingcap.com/media/images/docs-cn/stale-read/metrics-hit-miss.png)
 
-![Stale Read Req OPS](https://docs-download.pingcap.com/media/images/docs/stale-read/metrics-ops.png)
+![Stale Read Req OPS](https://docs-download.pingcap.com/media/images/docs-cn/stale-read/metrics-ops.png)
 
-![Stale Read Req Traffic](https://docs-download.pingcap.com/media/images/docs/stale-read/traffic.png)
+![Stale Read Req Traffic](https://docs-download.pingcap.com/media/images/docs-cn/stale-read/traffic.png)
 
-For more information about the preceding metrics, see [TiDB monitoring metrics](/grafana-tidb-dashboard.md#kv-request).
+关于上述监控项的更多信息，参考 [TiDB 监控指标](/grafana-tidb-dashboard.md#kv-request)。
 
-When Stale Read issues occur, you might notice changes in the preceding metrics. The most direct indicator is a WARN log from TiDB, which reports `DataIsNotReady` with a Region ID and the `safe-ts` it encounters.
+当 Stale Read 问题发生时，你可能会注意到上述监控项的变化。最直接的指标是 TiDB 的 WARN 日志，它会报告 `DataIsNotReady` 和 Region ID，以及它遇到的 `safe-ts`。
 
-### Common causes
+### 常见原因
 
-The most common causes that can impact the effectiveness of Stale Read are as follows:
+下面是影响 Stale Read 有效性的常见原因：
 
-- Transactions that take long time to commit.
-- Transactions live too long before they commit.
-- Delays in pushing the information of CheckLeader from the leader to the follower.
+- 事务提交时间过长。
+- 事务在提交前存在太长时间。
+- 从 leader 到 follower 推送 CheckLeader 信息的延迟。
 
-### Use Grafana to diagnose
+### 使用 Grafana 诊断
 
-In the [**TiKV-Details** > **Resolved-TS** dashboard](/grafana-tikv-dashboard.md#resolved-ts), you can identify the Region with the smallest resolved-ts and safe-ts for each TiKV. If these timestamps are significantly behind real-time, you need to check the details of these Regions using `tikv-ctl`.
+在 [**TiKV-Details** > **Resolved-TS** 监控面板](/grafana-tikv-dashboard.md#resolved-ts)中，你可以识别每个 TiKV 上 resolved-ts 和 safe-ts 最小的 Region。如果这些时间戳明显落后于实时时间，你需要使用 `tikv-ctl` 检查这些 Region 的详细信息。
 
-### Use `tikv-ctl` to diagnose
+### 使用 `tikv-ctl` 诊断
 
-`tikv-ctl` provides up-to-date details of the resolver and `RegionReadProgress`. For more details, see [Get the state of a Region's `RegionReadProgress`](/tikv-control.md#get-the-state-of-a-regions-regionreadprogress).
+`tikv-ctl` 提供了 resolver 和 `RegionReadProgress` 的最新详细信息。更多信息，参考[获取 Region 的 `RegionReadProgress` 状态](/tikv-control.md#获取一个-region-的-regionreadprogress-状态)。
 
-The following is an example:
+下面是一个使用示例：
 
 ```bash
 ./tikv-ctl --host 127.0.0.1:20160 get-region-read-progress -r 14 --log --min-start-ts 0
 ```
 
-The output is as follows:
+输出结果如下：
 
 ```log
 Region read progress:
@@ -94,25 +94,25 @@ Resolver:
     stopped: false,
 ```
 
-The preceding output helps you determine:
+上面的输出结果可以帮助你判断：
 
-- Whether locks are blocking resolved-ts.
-- Whether the apply index is too small to update safe-ts.
-- Whether the leader is sending a sufficiently updated resolved-ts when a follower peer exists.
+- 锁是否阻塞了 resolved-ts。
+- apply index 是否太小而无法更新 safe-ts。
+- 当存在 follower peer 时，leader 是否发送了更新的 resolved-ts。
 
-### Use logs to diagnose
+### 使用日志诊断
 
-Every 10 seconds, TiKV checks the following metrics:
+TiKV 每 10 秒检查以下监控项：
 
-- The Region leader whose resolved-ts is the minimal
-- The Region follower whose safe-ts is the minimal
-- The Region follower whose resolved-ts is the minimal
+- resolved-ts 最小的 Region leader
+- resolved-ts 最小的 Region follower
+- safe-ts 最小的 Region follower
 
-If any of these timestamps is abnormally small, TiKV prints a log.
+如果这些时间戳中的任何一个异常地小，TiKV 就会打印日志。
 
-These logs are especially useful when you want to diagnose a historical problem that is no longer present.
+当你想要诊断一个已经不存在的历史问题时，这些日志尤其有用。
 
-The following shows an example of the logs:
+下面是日志的示例：
 
 ```log
 [2023/08/29 16:48:18.118 +08:00] [INFO] [endpoint.rs:505] ["the max gap of leader resolved-ts is large"] [last_resolve_attempt="Some(LastAttempt { success: false, ts: TimeStamp(443888082736381953), reason: \"lock\", lock: Some(7480000000000000625F728000000002512B5C) })"] [duration_to_last_update_safe_ts=10648ms] [min_memory_lock=None] [txn_num=0] [lock_num=0] [min_lock=None] [safe_ts=443888117326544897] [gap=110705ms] [region_id=291]
@@ -122,65 +122,65 @@ The following shows an example of the logs:
 [2023/08/29 16:48:18.118 +08:00] [INFO] [endpoint.rs:547] ["the max gap of follower resolved-ts is large; it's the same region that has the min safe-ts"]
 ```
 
-## Troubleshooting tips
+## 诊断建议
 
-### Handle slow transaction commit
+### 处理慢事务提交
 
-A transaction that takes a long time to commit is often a large transaction. The prewrite phase of this slow transaction leaves some locks, but it takes too long before the commit phase clean the locks. To troubleshoot this issue, you can try to identify the transaction to which the locks belong and try to pinpoint the reason they exist, such as using logs.
+提交时间长的事务通常是大事务。这个慢事务的 prewrite 阶段会留下一些锁，但是在 commit 阶段清理掉锁之前需要很长时间。为了解决这个问题，你可以尝试识别锁所属的事务，并找出它们存在的原因，例如使用日志。
 
-The following list some actions you can take:
+下面是一些你可以采取的措施：
 
-- Specify the `--log` option in the `tikv-ctl` command and check TiKV logs to find the specific locks with their start_ts.
-- Search the start_ts in both TiDB and TiKV logs to identify issues with the transaction.
+- 在 `tikv-ctl` 命令中指定 `--log` 选项，并在 TiKV 日志中通过 start_ts 查找相应的锁。
+- 在 TiDB 和 TiKV 日志中搜索 start_ts，以识别事务的问题。
 
-    If a query takes over 60 seconds, an `expensive_query` log is printed with the SQL statement. You can use the start_ts value to match the log. The following is an example:
+    如果一个查询花费超过 60 秒，就会打印一个带有 SQL 语句的 `expensive_query` 日志。你可以使用 start_ts 值匹配日志。下面是一个示例：
 
     ```log
     [2023/07/17 19:32:09.403 +08:00] [WARN] [expensivequery.go:145] [expensive_query] [cost_time=60.025022732s] [cop_time=0.00346666s] [process_time=8.358409508s] [wait_time=0.013582596s] [request_count=278] [total_keys=9943616] [process_keys=9943360] [num_cop_tasks=278] [process_avg_time=0.030066221s] [process_p90_time=0.045296042s] [process_max_time=0.052828934s] [process_max_addr=192.168.31.244:20160] [wait_avg_time=0.000048858s] [wait_p90_time=0.00006057s] [wait_max_time=0.00040991s] [wait_max_addr=192.168.31.244:20160] [stats=t:442916666913587201] [conn=2826881778407440457] [user=root] [database=test] [table_ids="[100]"] [**txn_start_ts**=442916790435840001] [mem_max="2514229289 Bytes (2.34 GB)"] [sql="update t set b = b + 1"]
     ```
 
-- Use the [`CLUSTER_TIDB_TRX`](/information-schema/information-schema-tidb-trx.md#cluster_tidb_trx) table to find active transactions if you cannot get enough information about the locks from logs.
-- Execute [`SHOW PROCESSLIST`](/sql-statements/sql-statement-show-processlist.md) to view the current sessions connected to the same TiDB server and their time spent on the current statement. But it does not show start_ts.
+- 如果你无法从日志中获取关于锁的足够信息，可以使用 [`CLUSTER_TIDB_TRX`](/information-schema/information-schema-tidb-trx.md#cluster_tidb_trx) 表查找活跃的事务。
+- 执行 [`SHOW PROCESSLIST`](/sql-statements/sql-statement-show-processlist.md) 查看当前连接到同一个 TiDB 服务器的会话及其在当前语句上花费的时间。但是它不会显示 start_ts。
 
-If the locks exist due to ongoing large transactions, consider modifying your application logic as these locks can hinder the progress of resolve-ts.
+如果锁是由于正在进行的大事务而存在的，考虑修改你的应用程序逻辑，因为这些锁会阻碍 resolve-ts 的进度。
 
-If the locks do not belong to any ongoing transactions, it might be due to a coordinator (TiDB) crashing after it prewrites the locks. In this case, TiDB will automatically resolve the locks. No action is required unless the problem persists.
+如果锁不属于任何正在进行的事务，可能是由于协调器 (TiDB) 在预写锁之后崩溃。在这种情况下，TiDB 会自动解决锁。除非问题持续存在，否则不需要采取任何措施。
 
-### Handle long-lived transactions
+### 处理长事务
 
-Transactions that remain active for a long time could possibly block the advance of resolved-ts, even if they eventually commit quickly. This is because it is the start-ts of these long-lived transactions that are used to calculate the resolved-ts.
+长时间保持活跃的事务，即使最终提交了，也可能会阻塞 resolved-ts 的进度。这是因为这些长期存在的事务的 start-ts 用于计算 resolved-ts。
 
-To address this issue:
+要解决这个问题，你可以：
 
-- Identify the Transaction: Begin by pinpointing the transaction associated with the locks. It is crucial to understand the reason behind their existence. Leveraging logs can be particularly helpful.
+- 识别事务：首先识别与锁相关的事务，了解它们存在的原因。你可以使用日志帮助识别。
 
-- Examine Application Logic: If the prolonged transaction duration is a result of your application's logic, consider revising it to prevent such occurrences.
+- 检查应用程序逻辑：如果长时间的事务持续时间是由于应用程序逻辑导致的，考虑修改应用程序以防止这种情况发生。
 
-- Address Slow Queries: If the transaction's duration is extended due to slow queries, prioritize resolving these queries to alleviate the issue.
+- 处理慢查询：如果事务的持续时间由于慢查询而延长，优先解决这些查询以缓解问题。
 
-### Address CheckLeader issues
+### 解决 CheckLeader 问题
 
-To address CheckLeader issues, you can check the network and the **Check Leader Duration** metric in [**TiKV-Details** > **Resolved-TS** dashboard](/grafana-tikv-dashboard.md#resolved-ts).
+为了解决 CheckLeader 问题，你可以检查网络和 [**TiKV-Details** > **Resolved-TS** 监控面板](/grafana-tikv-dashboard.md#resolved-ts)中的 **Check Leader Duration** 指标。
 
-## Example
+## 示例
 
-If you observe an increasing miss rate of **Stale Read OPS** as follows:
+如果你观察到 **Stale Read OPS** 的 miss rate 增加，如下所示：
 
-![Example: Stale Read OPS](https://docs-download.pingcap.com/media/images/docs/stale-read/example-ops.png)
+![Example: Stale Read OPS](https://docs-download.pingcap.com/media/images/docs-cn/stale-read/example-ops.png)
 
-You can first check the **Max Resolved TS gap** and **Min Resolved TS Region** metrics in the [**TiKV-Details** > **Resolved-TS** dashboard](/grafana-tikv-dashboard.md#resolved-ts):
+首先，你可以检查 [**TiKV-Details** > **Resolved-TS** 监控面板](/grafana-tikv-dashboard.md#resolved-ts)中的 **Max Resolved TS gap** 和 **Min Resolved TS Region** 指标：
 
-![Example: Max Resolved TS gap](https://docs-download.pingcap.com/media/images/docs/stale-read/example-ts-gap.png)
+![Example: Max Resolved TS gap](https://docs-download.pingcap.com/media/images/docs-cn/stale-read/example-ts-gap.png)
 
-From the preceding metrics, you can find that Region `3121` and some other Regions have not updated their resolved-ts in time.
+从上述指标中，你可以发现 Region `3121` 和其他一些 Region 没有及时更新 resolved-ts。
 
-To get more details about the state of Region `3121`, you can run the following command:
+为了获取 Region `3121` 的更多详细信息，你可以执行以下命令：
 
 ```bash
 ./tikv-ctl --host 127.0.0.1:20160 get-region-read-progress -r 3121 --log
 ```
 
-The output is as follows:
+输出结果如下：
 
 ```log
 Region read progress:
@@ -204,15 +204,15 @@ Resolver:
     stopped: false,
 ```
 
-A notable observation here is that the `applied_index` equals to the `tracked index` in resolver. Therefore, the resolver appears to be the root of this issue. You can also see that there is 1 transaction that leaves 480000 locks in this Region, which might be the cause.
+值得注意的是，`applied_index` 等于 resolver 中的 `tracked index`，均为 `2477`。因此，resolver 可能是这个问题的根源。你还可以看到，有 1 个事务在这个 Region 中留下了 480000 个锁，这可能是问题的原因。
 
-To get the exact transaction and the keys of some of the locks, you can check TiKV logs and grep `locks with`. The output is as follows:
+为了获取确切的事务和一些锁的 keys，你可以检查 TiKV 日志并搜索 `locks with`。输出结果如下：
 
 ```log
 [2023/07/17 21:16:44.257 +08:00] [INFO] [resolver.rs:213] ["locks with the minimum start_ts in resolver"] [keys="[74800000000000006A5F7280000000000405F6, ... , 74800000000000006A5F72800000000000EFF6, 74800000000000006A5F7280000000000721D9, 74800000000000006A5F72800000000002F691]"] [start_ts=442918429687808001] [region_id=3121]
 ```
 
-From the TiKV log, you can get the start_ts of the transaction, that is `442918429687808001`. To get more information about the statement and transaction, you can grep this timestamp in TiDB logs. The output is as follows:
+从 TiKV 日志中，你可以获取事务的 start_ts，即 `442918429687808001`。为了获取关于语句和事务的更多信息，你可以在 TiDB 日志中搜索这个时间戳。找到结果如下：
 
 ```log
 [2023/07/17 21:16:18.287 +08:00] [INFO] [2pc.go:685] ["[BIG_TXN]"] [session=2826881778407440457] ["key sample"=74800000000000006a5f728000000000000000] [size=319967171] [keys=10000000] [puts=10000000] [dels=0] [locks=0] [checks=0] [txnStartTS=442918429687808001]
@@ -220,7 +220,7 @@ From the TiKV log, you can get the start_ts of the transaction, that is `4429184
 [2023/07/17 21:16:22.703 +08:00] [WARN] [expensivequery.go:145] [expensive_query] [cost_time=60.047172498s] [cop_time=0.004575113s] [process_time=15.356963423s] [wait_time=0.017093811s] [request_count=397] [total_keys=20000398] [process_keys=10000000] [num_cop_tasks=397] [process_avg_time=0.038682527s] [process_p90_time=0.082608262s] [process_max_time=0.116321331s] [process_max_addr=192.168.31.244:20160] [wait_avg_time=0.000043057s] [wait_p90_time=0.00004007s] [wait_max_time=0.00075014s] [wait_max_addr=192.168.31.244:20160] [stats=t:442918428521267201] [conn=2826881778407440457] [user=root] [database=test] [table_ids="[106]"] [txn_start_ts=442918429687808001] [mem_max="2513773983 Bytes (2.34 GB)"] [sql="update t set b = b + 1"]
 ```
 
-Then, you can basically locate the statement that caused the problem. To further check it, you can execute the [`SHOW PROCESSLIST`](/sql-statements/sql-statement-show-processlist.md) statement. The output is as follows:
+接着，你可以基本定位导致问题的语句。为了进一步检查，你可以执行 [`SHOW PROCESSLIST`](/sql-statements/sql-statement-show-processlist.md) 语句。输出结果如下：
 
 ```sql
 +---------------------+------+---------------------+--------+---------+------+------------+---------------------------+
@@ -232,6 +232,6 @@ Then, you can basically locate the statement that caused the problem. To further
 +---------------------+------+---------------------+--------+---------+------+------------+---------------------------+
 ```
 
-The output shows that someone is executing an unexpected `UPDATE` statement (`update t set b = b + 1`), which results in a large transaction and hinders Stale Read.
+输出结果显示，有程序正在执行一个意外的 `UPDATE` 语句 (`update t set b = b + 1`)，这导致了一个大事务并阻塞了 Stale Read。
 
-To resolve this issue, you can stop the application that is running this `UPDATE` statement.
+你可以停止执行这个 `UPDATE` 语句的应用程序来解决这个问题。

@@ -1,44 +1,44 @@
 ---
-title: Two Availability Zones in One Region Deployment
-summary: Learn the deployment solution of two availability zones in one region.
+title: 单区域双 AZ 部署 TiDB
+summary: 了解单个区域两个可用区自适应同步模式部署方式。
 ---
 
-# Two Availability Zones in One Region Deployment
+# 单区域双 AZ 部署 TiDB
 
-This document introduces the deployment mode of two availability zones (AZs) in one region, including the architecture, configuration, how to enable this deployment mode, and how to use replicas in this mode.
+本文介绍单区域双可用区 (Availability Zone, AZ) 的部署模式，包括方案架构、示例配置、副本方法及启用该模式的方法。
 
-The term "region" in this document refers to a geographic area, while the capitalized "Region" refers to a basic unit of data storage in TiKV. "AZ" refers to an isolated location within a region, and each region has multiple AZs. The solution described in this document also applies to the scenario where multiple data centers are located in a single city.
+本文中的区域指的是地理隔离的不同位置，AZ 指的是区域内部划分的相互独立的资源集合，本文所描述的方案同样适用于同一城市两个数据中心（同城双中心）的场景。
 
-## Introduction
+## 简介
 
-TiDB usually adopts the multi-AZ deployment solution to ensure high availability and disaster recovery capability. The multi-AZ deployment solution includes multiple deployment modes, such as multiple AZs in one region and multiple AZs in two regions. This document introduces the deployment mode of two AZs in one region. Deployed in this mode, TiDB can also meet the requirements of high availability and disaster recovery, with a lower cost. This deployment solution adopts Data Replication Auto Synchronous mode, or the DR Auto-Sync mode.
+TiDB 通常采用多 AZ 部署方案保证集群高可用和容灾能力。多 AZ 部署方案包括单区域多 AZ 部署模式、双区域多 AZ 部署模式等多种部署模式。本文介绍单区域双 AZ 部署方案，即在同一区域部署两个 AZ，成本更低，同样能满足高可用和容灾要求。该部署方案采用自适应同步模式，即 Data Replication Auto Synchronous，简称 DR Auto-Sync。
 
-Under the mode of two AZs in one region, the two AZs are less than 50 kilometers apart. They are usually located in the same region or in two adjacent regions. The network latency between the two AZs is lower than 1.5 milliseconds and the bandwidth is higher than 10 Gbps.
+单区域双 AZ 部署方案下，两个 AZ 通常位于同一个城市或两个相邻城市（例如北京和廊坊），相距 50 km 以内，AZ 间的网络连接延迟小于 1.5 ms，带宽大于 10 Gbps。
 
-## Deployment architecture
+## 部署架构
 
-This section takes the example of a region where two availability zones AZ1 and AZ2 are located respectively in the east and west. AZ1 is the primary AZ and AZ2 is the disaster recovery (DR) AZ.
+本文以某市为例，市里有两个 AZ，AZ1 和 AZ2，AZ1 为主用区域，AZ2 为从属区域，分别位于城东和城西。
 
-The architecture of the cluster deployment is as follows:
+下图为集群部署架构图，具体如下：
 
-- The cluster has six replicas: three Voter replicas in AZ1, and two Voter replicas along with one Learner replica in AZ2. For the TiKV component, each rack has a proper label.
-- The Raft protocol is adopted to ensure consistency and high availability of data, which is transparent to users.
+- 集群采用推荐的 6 副本模式，其中 AZ1 中放 3 个 Voter，AZ2 中放 2 个 Follower 副本和 1 个 Learner 副本。TiKV 按机房的实际情况打上合适的 Label。
+- 副本间通过 Raft 协议保证数据的一致性和高可用，对用户完全透明。
 
-![2-AZ-in-1-region architecture](https://docs-download.pingcap.com/media/images/docs/two-dc-replication-1.png)
+![单区域双 AZ 集群架构图](https://docs-download.pingcap.com/media/images/docs-cn/two-dc-replication-1.png)
 
-This deployment solution defines three statuses to control and identify the replication status of the cluster, which restricts the replication mode of TiKV. The replication mode of the cluster can automatically and adaptively switch between the three statuses. For details, see the [Status switch](#status-switch) section.
+该部署方案定义了三种状态来控制和标示集群的同步状态，该状态约束了 TiKV 的同步方式。集群的复制模式可以自动在三种状态之间自适应切换。要了解切换过程，请参考[状态转换](#状态转换)。
 
-- **sync**: Synchronous replication mode. In this mode, at least one replica in the disaster recovery AZ synchronizes with the primary AZ. The Raft algorithm ensures that each log is replicated to the DR based on the label.
-- **async**: Asynchronous replication mode. In this mode, the disaster recovery AZ is not fully synchronized with the primary AZ. The Raft algorithm follows the majority protocol to replicate logs.
-- **sync-recover**: Synchronous recovery mode. In this mode, the disaster recovery AZ is not fully synchronized with the primary AZ. Raft gradually switches to the label replication mode and then reports the label information to PD.
+- **sync**：同步复制模式，此时从 AZ (DR) 至少有一个副本与主 AZ (PRIMARY) 进行同步，Raft 算法保证每条日志按 Label 同步复制到 DR。
+- **async**：异步复制模式，此时不保证 DR 与 PRIMARY 完全同步，Raft 算法使用经典的 majority 方式复制日志。
+- **sync-recover**：恢复同步，此时不保证 DR 与 PRIMARY 完全同步，Raft 逐步切换成 Label 复制，切换成功后汇报给 PD。
 
-## Configuration
+## 配置
 
-### Example
+### 示例
 
-The following `tiup topology.yaml` example file is a typical topology configuration for the two availability zones in one region deployment mode:
+以下 `tiup topology.yaml` 示例拓扑文件为单区域双 AZ 典型的拓扑配置：
 
-```yaml
+```
 # # Global variables are applied to all deployments and used as the default value of
 # # the deployments if a specific deployment value is missing.
 global:
@@ -48,7 +48,7 @@ global:
   data_dir: "/data/tidb_cluster/tidb-data"
 server_configs:
   pd:
-    replication.location-labels: ["az","rack","host"]
+    replication.location-labels:  ["az","rack","host"]
 pd_servers:
   - host: 10.63.10.10
     name: "pd-10"
@@ -87,9 +87,9 @@ alertmanager_servers:
   - host: 10.63.10.60
 ```
 
-### Placement Rules
+### Placement Rules 规划
 
-To deploy a cluster based on the planned topology, you need to use [Placement Rules](/configure-placement-rules.md) to determine the locations of the cluster replicas. Taking the deployment of four replicas (two Voter replicas are at the primary AZ, one Voter replica, and one Learner replica are at the disaster recovery AZ) as an example, you can use the Placement Rules to configure the replicas as follows:
+为了按照规划的集群拓扑进行部署，你需要使用 [Placement Rules](/configure-placement-rules.md) 来规划集群副本的放置位置。以 6 副本（3 个 Voter 副本在主 AZ，2 个 Follower 副本和 1 个 Learner 副本在从 AZ）的部署方式为例，可使用 Placement Rules 进行如下副本配置：
 
 ```
 cat rule.json
@@ -170,7 +170,7 @@ cat rule.json
 ]
 ```
 
-To use the configurations in `rule.json`, run the following command to back up the existing configuration to the `default.json` file and overwrite the existing configuration with `rule.json`:
+如果需要使用 `rule.json` 中的配置，你可以使用以下命令把原有的配置备份到 `default.json` 文件，再使用 `rule.json` 中的配置覆盖原有配置：
 
 
 ```bash
@@ -178,7 +178,7 @@ pd-ctl config placement-rules rule-bundle load --out="default.json"
 pd-ctl config placement-rules rule-bundle save --in="rule.json"
 ```
 
-If you need to roll back to the previous configuration, you can restore the backup file `default.json` or write the following JSON file manually and overwrite the current configuration with this JSON file:
+如果需要回退配置，你可以还原备份的 `default.json` 文件或者手动编写如下的 json 文件并将其覆盖到现有的配置文件中：
 
 ```
 cat default.json
@@ -201,11 +201,11 @@ cat default.json
 ]
 ```
 
-### Enable the DR Auto-Sync mode
+### 启用自适应同步模式
 
-The replication mode is controlled by PD. You can configure the replication mode in the PD configuration file using one of the following methods:
+副本的复制模式由 PD 节点控制。如果要使用 DR Auto-sync 自适应同步模式，需要按照以下任一方法修改 PD 的配置。
 
-- Method 1: Configure the PD configuration file, and then deploy a cluster.
++ 方法一：先配置 PD 的配置文件，然后部署集群。
 
     
     ```toml
@@ -219,10 +219,10 @@ The replication mode is controlled by PD. You can configure the replication mode
     dr-replicas = 2
     wait-store-timeout = "1m"
     wait-recover-timeout = "0s"
-    pause-region-split = false  
+    pause-region-split = false
     ```
 
-- Method 2: If you have deployed a cluster, use pd-ctl commands to modify the configurations of PD.
++ 方法二：如果已经部署了集群，则使用 pd-ctl 命令修改 PD 的配置。
 
     
     ```shell
@@ -234,17 +234,17 @@ The replication mode is controlled by PD. You can configure the replication mode
     config set replication-mode dr-auto-sync dr-replicas 2
     ```
 
-Descriptions of configuration items:
+配置项说明：
 
-+ `replication-mode` is the replication mode to be enabled. In the preceding example, it is set to `dr-auto-sync`. By default, the majority protocol is used.
-+ `label-key` is used to distinguish different AZs and needs to match Placement Rules. In this example, the primary AZ is "east" and the disaster recovery AZ is "west".
-+ `primary-replicas` is the number of Voter replicas in the primary AZ.
-+ `dr-replicas` is the number of Voter replicas in the disaster recovery (DR) AZ.
-+ `wait-store-timeout` is the waiting time for switching to asynchronous replication mode when network isolation or failure occurs. If the time of network failure exceeds the waiting time, asynchronous replication mode is enabled. The default waiting time is 60 seconds.
-+ `wait-recover-timeout` is the waiting time for switching back to the `sync-recover` status after the network recovers. The default value is 0 seconds.
-+ `pause-region-split` controls whether to pause Region split operations in the `async_wait` and `async` statuses. Pausing Region split can prevent temporary partial data loss in the DR AZ when synchronizing data in the `sync-recover` status. The default value is `false`.
++ `replication-mode` 为待启用的复制模式，以上示例中设置为 `dr-auto-sync`。默认使用 majority 算法。
++ `label-key` 用于区分不同的 AZ，需要和 Placement Rules 相匹配。其中主 AZ 为 "east"，从 AZ 为 "west"。
++ `primary-replicas` 是主 AZ 上 Voter 副本的数量。
++ `dr-replicas` 是从 AZ 上 Voter 副本的数量。
++ `wait-store-timeout` 是当出现网络隔离或者故障时，切换到异步复制模式的等待时间。如果超过这个时间还没恢复，则自动切换到异步复制模式。默认时间为 60 秒。
++ `wait-recover-timeout` 是当网络恢复后，切换回 `sync-recover` 状态的等待时间。默认为 0 秒。
++ `pause-region-split` 用于控制在 `async_wait` 和 `async` 状态下是否暂停 Region 的 split 操作。暂停 Region split 可以防止在 `sync-recover` 状态同步数据时从属 AZ 出现短暂的部分数据缺失。默认为 `false`。
 
-To check the current replication status of the cluster, use the following API:
+如果需要检查当前集群的复制状态，可以通过以下 API 获取：
 
 
 ```bash
@@ -262,32 +262,32 @@ curl http://pd_ip:pd_port/pd/api/v1/replication_mode/status
 }
 ```
 
-#### Status switch
+#### 状态转换
 
-The replication mode of a cluster can automatically and adaptively switch between three statuses:
+简单来讲，集群的复制模式可以自动在三种状态之间自适应的切换：
 
-- When the cluster is normal, the synchronous replication mode is enabled to maximize the data integrity of the disaster recovery AZ.
-- When the network connection between the two AZs fails or the disaster recovery AZ breaks down, after a pre-set protective interval, the cluster enables the asynchronous replication mode to ensure the availability of the application.
-- When the network reconnects or the disaster recovery AZ recovers, the TiKV node joins the cluster again and gradually replicates the data. Finally, the cluster switches to the synchronous replication mode.
+- 当集群一切正常时，会进入同步复制模式来最大化地保障灾备 AZ 的数据完整性。
+- 当 AZ 网络断连或灾备 AZ 发生整体故障时，在经过一段提前设置好的保护窗口之后，集群会进入异步复制状态，来保障业务的可用性。
+- 当 AZ 网络重连或灾备 AZ 整体恢复之后，灾备 AZ 的 TiKV 节点会重新加入到集群，逐步同步数据并最终转为同步复制模式。
 
-The details for the status switch are as follows:
+状态转换的细节过程如下：
 
-1. **Initialization**: At the initialization stage, the cluster is in the synchronous replication mode. PD sends the status information to TiKV, and all TiKV nodes strictly follow the synchronous replication mode to work.
+1. **初始化**：集群在初次启动时处于 sync（同步复制）模式，PD 会下发信息给 TiKV，所有 TiKV 节点会严格按照 sync 模式的要求进行工作。
 
-2. **Switch from sync to async**: PD regularly checks the heartbeat information of TiKV to judge whether the TiKV node fails or is disconnected. If the number of failed nodes exceeds the number of replicas of the primary AZ (`primary-replicas`) and the disaster recovery AZ (`dr-replicas`), the synchronous replication mode can no longer serve the data replication and it is necessary to switch the status. When the failure or disconnect time exceeds the time set by `wait-store-timeout`, PD switches the status of the cluster to the async mode. Then PD sends the status of async to all TiKV nodes, and the replication mode for TiKV switches from two-availability-zone replication to the native Raft majority.
+2. **同步切异步**：PD 通过定时检查 TiKV 的心跳信息来判断 TiKV 是否宕机或断连。如果宕机数超过 Primary 和 DR 各自副本的数量 `primary-replicas` 和 `dr-replicas`，意味着无法完成同步复制，需要切换状态。当宕机时间超过了 `wait-store-timeout` 设定的时间，PD 将集群状态切换成 async（异步复制）模式。然后 PD 再将 async 状态下发到所有 TiKV 节点，TiKV 的复制模式由双 AZ 同步方式转为原生的 Raft 大多数落实方式 (majority)。
 
-3. **Switch from async to sync**: PD regularly checks the heartbeat information of TiKV to judge whether the TiKV node is reconnected. If the number of failed nodes is less than the number of replicas of the primary AZ (`primary-replicas`) and the disaster recovery AZ (`dr-replicas`), the synchronous replication mode can be enabled again. PD first switches the status of the cluster to sync-recover and sends the status information to all TiKV nodes. All Regions of TiKV gradually switch to the two-availability-zone synchronous replication mode and then report the heartbeat information to PD. PD records the status of TiKV Regions and calculates the recovery progress. When all TiKV Regions finish the switching, PD switches the replication mode to sync.
+3. **异步切同步**：PD 通过定时检查 TiKV 的心跳信息来判断 TiKV 是否恢复连接，如果宕机数小于 Primary 和 DR 各自副本的数量，意味着可以切回同步。PD 会将集群复制状态先切换至 sync-recover，再将该状态下发给所有 TiKV 节点。TiKV 的所有 Region 逐步切换成双 AZ 同步复制模式，切换成功后通过心跳将状态同步信息给 PD。PD 记录 TiKV 上 Region 的状态并统计恢复进度。当 TiKV 的所有 Region 都完成了同步复制模式的切换，PD 将集群复制状态切换为 sync。
 
-### Disaster recovery
+### 灾难恢复
 
-This section introduces the disaster recovery solution of the two AZs in one region deployment.
+本节介绍单区域双 AZ 部署提供的容灾恢复方案。
 
-When a disaster occurs to a cluster in the synchronous replication mode, you can perform data recovery with `RPO = 0`:
+当处于同步复制状态的集群发生了灾难，可进行 `RPO = 0` 的数据恢复：
 
-- If the primary AZ fails and most of the Voter replicas are lost, but complete data exists in the disaster recovery AZ, the lost data can be recovered from the disaster recovery AZ. At this time, manual intervention is required with professional tools. You can [get support](/support.md) from PingCAP or the community for a recovery solution.
+- 如果主 AZ 发生故障，丢失了大多数 Voter 副本，但是从 AZ 有完整的数据，可在从 AZ 恢复数据。此时需要人工介入，通过专业工具恢复。如需获取支持，请[联系我们](/support.md)。
 
-- If the disaster recovery AZ fails and a few Voter replicas are lost, the cluster automatically switches to the asynchronous replication mode.
+- 如果从 AZ 发生故障，丢失了少数 Voter 副本，能自动切换成 async 异步复制模式。
 
-When a disaster occurs to a cluster that is not in the synchronous replication mode and you cannot perform data recovery with `RPO = 0`:
+当不处于同步复制状态的集群发生了灾难，不能保证满足 `RPO = 0` 进行数据恢复：
 
-- If most of the Voter replicas are lost, manual intervention is required with professional tools. You can [get support](/support.md) from PingCAP or the community for a recovery solution.
+- 如果丢失了大多数 Voter 副本，需要人工介入，通过专业工具恢复（恢复方式请联系 TiDB 团队）。

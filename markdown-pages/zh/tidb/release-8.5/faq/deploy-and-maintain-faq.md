@@ -1,90 +1,95 @@
 ---
-title: TiDB Deployment FAQs
-summary: Learn about the FAQs related to TiDB deployment.
+title: TiDB 安装部署常见问题
+summary: 介绍 TiDB 集群安装部署的常见问题、原因及解决方法。
 ---
 
-# TiDB Deployment FAQs
+# TiDB 安装部署常见问题
 
-This document summarizes the FAQs related to TiDB deployment.
+本文介绍 TiDB 集群安装部署的常见问题、原因及解决方法。
 
-## Software and hardware requirements
+## 软硬件要求 FAQ
 
-### What operating systems does TiDB support?
+### TiDB 支持哪些操作系统？
 
-For the TiDB-supported operating systems, see [Software and Hardware Recommendations](/hardware-and-software-requirements.md).
+关于 TiDB 支持的操作系统，参见[操作系统及平台要求](/hardware-and-software-requirements.md#操作系统及平台要求)。
 
-### What is the recommended hardware configuration for a TiDB cluster in the development, test, or production environment?
+### TiDB 对开发、测试、生产环境的服务器硬件配置有什么要求？
 
-You can deploy and run TiDB on the 64-bit generic hardware server platform in the Intel x86-64 architecture or on the hardware server platform in the ARM architecture. For the requirements and recommendations about server hardware configuration for development, test, and production environments, see [Software and Hardware Recommendations - Server requirements](/hardware-and-software-requirements.md#server-requirements).
+TiDB 支持部署和运行在 Intel x86-64 架构的 64 位通用硬件服务器平台。对于开发、测试、生产环境的服务器硬件配置，参见[服务器配置要求](/hardware-and-software-requirements.md#服务器配置要求)。
 
-### What's the purposes of 2 network cards of 10 gigabit?
+### 两块网卡的目的是？万兆的目的是？
 
-As a distributed cluster, TiDB has a high demand on time, especially for PD, because PD needs to distribute unique timestamps. If the time in the PD servers is not consistent, it takes longer waiting time when switching the PD server. The bond of two network cards guarantees the stability of data transmission, and 10 gigabit guarantees the transmission speed. Gigabit network cards are prone to meet bottlenecks, therefore it is strongly recommended to use 10 gigabit network cards.
+作为一个分布式集群，TiDB 对时间的要求还是比较高的，尤其是 PD 需要分发唯一的时间戳，如果 PD 时间不统一，如果有 PD 切换，将会等待更长的时间。两块网卡可以做 bond，保证数据传输的稳定，万兆可以保证数据传输的速度，千兆网卡容易出现瓶颈，我们强烈建议使用万兆网卡。
 
-### Is it feasible if we don't use RAID for SSD?
+### SSD 不做 RAID 是否可行？
 
-If the resources are adequate, it is recommended to use RAID 10 for SSD. If the resources are inadequate, it is acceptable not to use RAID for SSD.
+资源可接受的话，我们建议做 RAID 10，如果资源有限，也可以不做 RAID。
 
-### What's the recommended configuration of TiDB components?
+### TiDB 集群各个组件的配置推荐？
 
-- TiDB has a high requirement on CPU and memory.
-- PD stores the cluster metadata and has frequent Read and Write requests. It demands a high I/O disk. A disk of low performance will affect the performance of the whole cluster. It is recommended to use SSD disks. In addition, a larger number of Regions has a higher requirement on CPU and memory.
-- TiKV has a high requirement on CPU, memory and disk. It is required to use SSD.
+- TiDB 需要 CPU 和内存比较好的机器，参考官网配置要求；
+- PD 里面存了集群元信息，会有频繁的读写请求，对磁盘 I/O 要求相对比较高，磁盘太差会影响整个集群性能，推荐 SSD 磁盘，空间不用太大。另外集群 Region 数量越多对 CPU、内存的要求越高；
+- TiKV 对 CPU、内存、磁盘要求都比较高，一定要用 SSD 磁盘。
 
-For details, see [Software and Hardware Recommendations](/hardware-and-software-requirements.md).
+详情可参考 [TiDB 软硬件环境需求](/hardware-and-software-requirements.md)。
 
-## Installation and deployment
+## 安装部署 FAQ
 
-For the production environment, it is recommended to use [TiUP](/tiup/tiup-overview.md) to deploy your TiDB cluster. See [Deploy a TiDB Cluster Using TiUP](/production-deployment-using-tiup.md).
+如果用于生产环境，推荐[使用 TiUP 部署](/production-deployment-using-tiup.md) TiDB 集群。
 
-### Why the modified `toml` configuration for TiKV/PD does not take effect?
+### 为什么修改了 TiKV/PD 的 toml 配置文件，却没有生效？
 
-You need to set the `--config` parameter in TiKV/PD to make the `toml` configuration effective. TiKV/PD does not read the configuration by default. Currently, this issue only occurs when deploying using Binary. For TiKV, edit the configuration and restart the service. For PD, the configuration file is only read when PD is started for the first time, after which you can modify the configuration using pd-ctl. For details, see [PD Control User Guide](/pd-control.md).
+这种情况一般是因为没有使用 `--config` 参数来指定配置文件（目前只会出现在 binary 部署的场景），TiKV/PD 会按默认值来设置。如果要使用配置文件，请设置 TiKV/PD 的 `--config` 参数。对于 TiKV 组件，修改配置后重启服务即可；对于 PD 组件，只会在第一次启动时读取配置文件，之后可以使用 pd-ctl 的方式来修改配置，详情可参考 [PD 配置参数](/command-line-flags-for-pd-configuration.md)。
 
-### Should I deploy the TiDB monitoring framework (Prometheus + Grafana) on a standalone machine or on multiple machines? What is the recommended CPU and memory?
+### TiDB 监控框架 Prometheus + Grafana 监控机器建议单独还是多台部署？
 
-The monitoring machine is recommended to use standalone deployment. It is recommended to use an 8 core CPU with 16 GB+ memory and a 500 GB+ hard disk.
+监控机建议单独部署。建议 CPU 8 core，内存 16 GB 以上，硬盘 500 GB 以上。
 
-### Why the monitor cannot display all metrics?
+### 有一部分监控信息显示不出来？
 
-Check the time difference between the machine time of the monitor and the time within the cluster. If it is large, you can correct the time and the monitor will display all the metrics.
+查看访问监控的机器时间跟集群内机器的时间差，如果比较大，更正时间后即可显示正常。
 
-### How to separately record the slow query log in TiDB? How to locate the slow query SQL statement?
+### 如何单独记录 TiDB 中的慢查询日志，如何定位慢查询 SQL？
 
-1. The slow query definition for TiDB is in the TiDB configuration file. The `tidb_slow_log_threshold: 300` parameter is used to configure the threshold value of the slow query (unit: millisecond).
+1. TiDB 中，对慢查询的定义在 TiDB 的配置文件中。`tidb_slow_log_threshold: 300`，这个参数是配置慢查询记录阈值的，单位是 ms。
 
-2. If a slow query occurs, you can locate the `tidb-server` instance where the slow query is and the slow query time point using Grafana and find the SQL statement information recorded in the log on the corresponding node.
+2. 如果出现了慢查询，可以从 Grafana 监控定位到出现慢查询的 tidb-server 以及时间点，然后在对应节点查找日志中记录的 SQL 信息。
 
-3. In addition to the log, you can also view the slow query using the `ADMIN SHOW SLOW` command. For details, see [`ADMIN SHOW SLOW` command](/identify-slow-queries.md#admin-show-slow-command).
+3. 除了日志，还可以通过 `ADMIN SHOW SLOW` 命令查看，详情可参考 [`ADMIN SHOW SLOW` 命令](/identify-slow-queries.md#admin-show-slow-命令)。
 
-### How to add the `label` configuration if `label` of TiKV was not configured when I deployed the TiDB cluster for the first time?
+### 首次部署 TiDB 集群时，没有配置 tikv 的 Label 信息，在后续如何添加配置 Label？
 
-The configuration of TiDB `label` is related to the cluster deployment architecture. It is important and is the basis for PD to execute global management and scheduling. If you did not configure `label` when deploying the cluster previously, you should adjust the deployment structure by manually adding the `location-labels` information using the PD management tool `pd-ctl`, for example, `config set location-labels "zone,rack,host"` (you should configure it based on the practical `label` level name).
+TiDB 的 Label 设置是与集群的部署架构相关的，是集群部署中的重要内容，是 PD 进行全局管理和调度的依据。如果集群在初期部署过程中没有设置 Label，需要在后期对部署结构进行调整，就需要手动通过 PD 的管理工具 pd-ctl 来添加 location-labels 信息，例如：`config set location-labels "zone,rack,host"`（根据实际的 label 层级名字配置）。
 
-For the usage of `pd-ctl`, see [PD Control User Guide](/pd-control.md).
+pd-ctl 的使用参考 [PD Control 使用说明](/pd-control.md)。
 
-### Why does the `dd` command for the disk test use the `oflag=direct` option?
+### 为什么测试磁盘的 dd 命令用 `oflag=direct` 这个选项？
 
-The Direct mode wraps the Write request into the I/O command and sends this command to the disk to bypass the file system cache and directly test the real I/O Read/Write performance of the disk.
+Direct 模式就是把写入请求直接封装成 I/O 指令发到磁盘，这样是为了绕开文件系统的缓存，可以直接测试磁盘的真实的 I/O 读写能力。
 
-### How to use the `fio` command to test the disk performance of the TiKV instance?
+### 如何用 fio 命令测试 TiKV 实例的磁盘性能？
 
-- Random Read test:
+以下示例使用 `ioengine=psync`（即同步 I/O），因此 `iodepth` 通常固定为 `1`，并发主要由 `numjobs` 控制。建议使用 `direct=1` 以绕过文件系统缓存。
 
-    
+- 随机读测试：
+
     ```bash
-    ./fio -ioengine=psync -bs=32k -fdatasync=1 -thread -rw=randread -size=10G -filename=fio_randread_test.txt -name='fio randread test' -iodepth=4 -runtime=60 -numjobs=4 -group_reporting --output-format=json --output=fio_randread_result.json
+    ./fio -ioengine=psync -bs=32k -direct=1 -thread -rw=randread -time_based -size=10G -filename=fio_randread_test.txt -name='fio randread test' -iodepth=1 -runtime=60 -numjobs=4 -group_reporting --output-format=json --output=fio_randread_result.json
     ```
 
-- The mix test of sequential Write and random Read:
+- 顺序写和随机读混合测试：
 
-    
     ```bash
-    ./fio -ioengine=psync -bs=32k -fdatasync=1 -thread -rw=randrw -percentage_random=100,0 -size=10G -filename=fio_randread_write_test.txt -name='fio mixed randread and sequential write test' -iodepth=4 -runtime=60 -numjobs=4 -group_reporting --output-format=json --output=fio_randread_write_test.json
+    ./fio -ioengine=psync -bs=32k -direct=1 -thread -rw=randrw -percentage_random=100,0 -time_based -size=10G -filename=fio_randread_write_test.txt -name='fio mixed randread and sequential write test' -iodepth=1 -runtime=60 -numjobs=4 -group_reporting --output-format=json --output=fio_randread_write_test.json
     ```
 
-## What public cloud vendors are currently supported by TiDB?
+## TiDB 支持在公有云上部署吗？
 
-TiDB supports deployment on [Google Cloud GKE](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-on-gcp-gke), [AWS EKS](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-on-aws-eks), and [Alibaba Cloud ACK](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-on-alibaba-cloud).
+TiDB 支持在以下云上部署：
 
-In addition, TiDB is currently available on JD Cloud and UCloud.
+- [Google Cloud GKE](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/deploy-on-gcp-gke/)
+- [AWS EKS](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/deploy-on-aws-eks/)
+- [Azure AKS](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/deploy-on-azure-aks/)
+- [阿里云 ACK](https://docs.pingcap.com/zh/tidb-in-kubernetes/v1.5/deploy-on-alibaba-cloud/)
+
+此外，TiDB 云上部署也已在京东云、UCloud 上线。

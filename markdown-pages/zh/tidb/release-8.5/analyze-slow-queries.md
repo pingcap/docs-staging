@@ -1,65 +1,63 @@
 ---
-title: Analyze Slow Queries
-summary: Learn how to locate and analyze slow queries.
+title: 分析慢查询
+summary: 学习如何定位和分析慢查询。
 ---
 
-# Analyze Slow Queries
+# 分析慢查询
 
-To address the issue of slow queries, you need to take the following two steps:
+处理慢查询分为两步：
 
-1. Among many queries, identify which type of queries are slow.
-2. Analyze why this type of queries are slow.
+1. 从大量查询中定位出哪一类查询比较慢
+2. 分析这类慢查询的原因
 
-You can easily perform step 1 using the [slow query log](/dashboard/dashboard-slow-query.md) and the [statement summary table](/statement-summary-tables.md) features. It is recommended to use [TiDB Dashboard](/dashboard/dashboard-intro.md), which integrates the two features and directly displays the slow queries in your browser.
+第一步可以通过[慢日志](/identify-slow-queries.md)、[statement-summary](/statement-summary-tables.md) 方便地定位，推荐直接使用 [TiDB Dashboard](/dashboard/dashboard-overview.md)，它整合了这两个功能，且能方便直观地在浏览器中展示出来。本文聚焦第二步。
 
-This document focuses on how to perform step 2 - analyze why this type of queries are slow.
+首先将慢查询归因成两大类：
 
-Generally, slow queries have the following major causes:
+- 优化器问题：如选错索引，选错 Join 类型或顺序。
+- 系统性问题：将非优化器问题都归结于此类。如：某个 TiKV 实例忙导致处理请求慢，Region 信息过期导致查询变慢。
 
-- Optimizer issues, such as wrong index selected, wrong join type or sequence selected.
-- System issues. All issues not caused by the optimizer are system issues. For example, a busy TiKV instance processes requests slowly; outdated Region information causes slow queries.
+实际中，优化器问题可能造成系统性问题。例如对于某类查询，优化器应使用索引，但却使用了全表扫。这可能导致这类 SQL 消耗大量资源，造成某些 KV 实例 CPU 飚高等问题。表现上看就是一个系统性问题，但本质是优化器问题。
 
-In actual situations, optimizer issues might cause system issues. For example, for a certain type of queries, the optimizer uses a full table scan instead of the index. As a result, the SQL queries consume many resources, which causes the CPU usage of some TiKV instances to soar. This seems like a system issue, but in essence, it is an optimizer issue.
+分析优化器问题需要有判断执行计划是否合理的能力，而系统性问题的定位相对简单，因此面对慢查询推荐的分析过程如下：
 
-To identify system issues is relatively simple. To analyze optimizer issues, you need to determine whether the execution plan is reasonable or not. Therefore, it is recommended to analyze slow queries by following these procedures:
+1. 定位查询瓶颈：即查询过程中耗时多的部分
+2. 分析系统性问题：根据瓶颈点，结合当时的监控/日志等信息，分析可能的原因
+3. 分析优化器问题：分析是否有更好的执行计划
 
-1. Identify the performance bottleneck of the query, that is, the time-consuming part of the query process.
-2. Analyze the system issues: analyze the possible causes according to the query bottleneck and the monitoring/log information of that time.
-3. Analyze the optimizer issues: analyze whether there is a better execution plan.
+接下来会分别介绍上面几点。
 
-The procedures above are explained in the following sections.
+## 定位查询瓶颈
 
-## Identify the performance bottleneck of the query
+定位查询瓶颈需要对查询过程有一个大致理解，TiDB 处理查询过程的关键阶段都在 [performance-map](https://docs-download.pingcap.com/media/images/docs-cn/performance-map.png) 图中了。
 
-First, you need to have a general understanding of the query process. The key stages of the query execution process in TiDB are illustrated in [TiDB performance map](https://docs-download.pingcap.com/media/images/docs/performance-map.png).
+查询的耗时信息可以从下面几种方式获得：
 
-You can get the duration information using the following methods:
+- [慢日志](/identify-slow-queries.md)（推荐直接在 [TiDB Dashboard](/dashboard/dashboard-overview.md) 中查看）
+- [`explain analyze` 语句](/sql-statements/sql-statement-explain-analyze.md)
 
-- [Slow log](/identify-slow-queries.md). It is recommended to view the slow log in [TiDB Dashboard](/dashboard/dashboard-overview.md).
-- [`EXPLAIN ANALYZE` statement](/sql-statements/sql-statement-explain-analyze.md).
+他们的侧重点不同：
 
-The methods above are different in the following aspects:
+- 慢日志记录了 SQL 从解析到返回，几乎所有阶段的耗时，较为全面（在 TiDB Dashboard 中可以直观地查询和分析慢日志）；
+- `explain analyze` 可以拿到 SQL 实际执行中每个执行算子的耗时，对执行耗时有更细分的统计；
 
-- The slow log records the duration of almost all stages of a SQL execution, from parsing to returning results, and is relatively comprehensive (you can query and analyze the slow log in TiDB Dashboard in an intuitive way).
-- By executing `EXPLAIN ANALYZE`, you can learn the time consumption of each operator in an actual SQL execution. The results have more detailed statistics of the execution duration.
+总的来说，利用慢日志和 `explain analyze` 可以比较准确地定位查询的瓶颈点，帮助你判断这条 SQL 慢在哪个模块 (TiDB/TiKV)，慢在哪个阶段，下面会有一些例子。
 
-In summary, the slow log and `EXPLAIN ANALYZE` statements help you determine the SQL query is slow in which component (TiDB or TiKV) at which stage of the execution. Therefore, you can accurately identify the performance bottleneck of the query.
+另外在 4.0.3 之后，慢日志中的 `Plan` 字段也会包含 SQL 的执行信息，也就是 `explain analyze` 的结果，这样一来 SQL 的所有耗时信息都可以在慢日志中找到。
 
-In addition, since v4.0.3, the `Plan` field in the slow log also includes the SQL execution information, which is the result of `EXPLAIN ANALYZE`. So you can find all information of SQL duration in the slow log.
+## 分析系统性问题
 
-## Analyze system issues
+对于系统性问题，我们根据执行阶段，分成三个大类：
 
-System issues can be divided into the following types according to different execution stages of a SQL statement:
+1. TiKV 处理慢：如 coprocessor 处理数据慢
+2. TiDB 执行慢：主要指执行阶段，如某个 Join 算子处理数据慢
+3. 其他关键阶段慢：如取时间戳慢
 
-1. TiKV is slow in data processing. For example, the TiKV coprocessor processes data slowly.
-2. TiDB is slow in execution. For example, a `Join` operator processes data slowly.
-3. Other key stages are slow. For example, getting the timestamp takes a long time.
+拿到一个慢查询，我们应该先根据已有信息判断大致是哪个大类，再具体分析。
 
-For each slow query, first determine to which type the query belongs, and then analyze it in detail.
+### TiKV 处理慢
 
-### TiKV is slow in data processing
-
-If TiKV is slow in data processing, you can easily identify it in the result of `EXPLAIN ANALYZE`. In the following example, `StreamAgg_8` and `TableFullScan_15`, two `tikv-task`s (as indicated by `cop[tikv]` in the `task` column), take `170ms` to execute. After subtracting `170ms`, the execution time of TiDB operators account for a very small proportion of the total execution time. This indicates that the bottleneck is in TiKV.
+如果是 TiKV 处理慢，可以很明显的通过 `explain analyze` 中看出来。例如下面这个例子，可以看到 `StreamAgg_8` 和 `TableFullScan_15` 这两个 `tikv-task` （在 `task` 列可以看出这两个任务类型是 `cop[tikv]`）花费了 `170ms`，而 TiDB 部分的算子耗时，减去这 `170ms` 后，耗时占比非常小，说明瓶颈在 TiKV。
 
 ```sql
 +----------------------------+---------+---------+-----------+---------------+------------------------------------------------------------------------------+---------------------------------+-----------+------+
@@ -72,9 +70,9 @@ If TiKV is slow in data processing, you can easily identify it in the result of 
 +----------------------------+---------+---------+-----------+---------------+------------------------------------------------------------------------------+---------------------------------+-----------+------
 ```
 
-In addition, the `Cop_process` and `Cop_wait` fields in the slow log can also help your analysis. In the following example, the total duration of the query is around `180.85ms`, and the largest `coptask` takes `171ms`. This indicates that the bottleneck of this query is on the TiKV side.
+另外在慢日志中，`Cop_process` 和 `Cop_wait` 字段也可以帮助判断，如下面这个例子，查询整个耗时是 180.85ms 左右，而最大的那个 `coptask` 就消耗了 `171ms`，可以说明对这个查询而言，瓶颈在 TiKV 侧。
 
-For the description of each field in the slow log, see [fields description](/identify-slow-queries.md#fields-description).
+慢日志中的各个字段的说明可以参考慢查询日志中的[字段含义说明](/identify-slow-queries.md#字段含义说明)
 
 ```log
 # Query_time: 0.18085
@@ -84,25 +82,25 @@ For the description of each field in the slow log, see [fields description](/ide
 # Cop_wait: Avg_time: 1ms P90_time: 1ms Max_time: 1ms Max_Addr: 10.6.131.78
 ```
 
-After identifying that TiKV is the bottleneck, you can find out the cause as described in the following sections.
+根据上述方式判断是 TiKV 慢后，可以依次排查 TiKV 慢的原因。
 
-#### TiKV instance is busy
+#### TiKV 实例忙
 
-During the execution of a SQL statement, TiDB might fetch data from multiple TiKV instances. If one TiKV instance responds slowly, the overall SQL execution speed is slowed down.
+一条 SQL 可能会去从多个 TiKV 上拿数据，如果某个 TiKV 响应慢，可能拖慢整个 SQL 的处理速度。
 
-The `Cop_wait` field in the slow log can help you determine this cause.
+慢日志中的 `Cop_wait` 可以帮忙判断这个问题：
 
 ```log
 # Cop_wait: Avg_time: 1ms P90_time: 2ms Max_time: 110ms Max_Addr: 10.6.131.78
 ```
 
-The log above shows that a `cop-task` sent to the `10.6.131.78` instance waits `110ms` before being executed. It indicates that this instance is busy. You can check the CPU monitoring of that time to confirm the cause.
+如上图，发给 `10.6.131.78` 的一个 `cop-task` 等待了 110ms 才被执行，可以判断是当时该实例忙，此时可以打开当时的 CPU 监控辅助判断。
 
-#### Obsolete MVCC versions and excessive keys
+#### 过期 MVCC 版本和 key 过多
 
-If too many obsolete MVCC versions exist on TiKV, or if the retention time of historical MVCC data for GC is long, excessive MVCC versions can accumulate. Handling these unnecessary MVCC versions can affect scan performance.
+如果 TiKV 上过期 MVCC 版本过多，或 GC 历史版本数据的保留时间长，导致累积了过多 MVCC。处理这些不必要的 MVCC 版本会影响扫描速度。
 
-Check `Total_keys` and `Processed_keys`. If they are greatly different, the TiKV instance has too many keys of the older versions.
+这可以通过 `Total_keys` 和 `Processed_keys` 判断，如果两者相差较大，则说明旧版本的 key 太多：
 
 ```
 ...
@@ -110,13 +108,13 @@ Check `Total_keys` and `Processed_keys`. If they are greatly different, the TiKV
 ...
 ```
 
-TiDB v8.5.0 introduces the TiKV MVCC in-memory engine (IME) feature, which can accelerate such slow queries. For more information, see [TiKV MVCC In-Memory Engine](/tikv-in-memory-engine.md).
+TiDB v8.5.0 引入了内存引擎功能，可以加速这类慢查询。详见 [TiKV MVCC 内存引擎](/tikv-in-memory-engine.md)。
 
-### Other key stages are slow
+### 其他关键阶段慢
 
-#### Slow in getting timestamps
+#### 取 TS 慢
 
-You can compare `Wait_TS` and `Query_time` in the slow log. The timestamps are prefetched, so generally `Wait_TS` should be low.
+可以对比慢日志中的 `Wait_TS` 和 `Query_time`，因为 TS 有预取操作，通常来说 `Wait_TS` 应该很低。
 
 ```
 # Query_time: 0.0300000
@@ -124,18 +122,18 @@ You can compare `Wait_TS` and `Query_time` in the slow log. The timestamps are p
 # Wait_TS: 0.02500000
 ```
 
-#### Outdated Region information
+#### Region 信息过期
 
-Region information on the TiDB side might be outdated. In this situation, TiKV might return the `regionMiss` error. Then TiDB gets the Region information from PD again, which is reflected in the `Cop_backoff` information. Both the failed times and the total duration are recorded.
+TiDB 侧 Region 信息可能过期，此时 TiKV 可能返回 `regionMiss` 的错误，然后 TiDB 会从 PD 去重新获取 Region 信息，这些信息会被反应在 `Cop_backoff` 信息内，失败的次数和总耗时都会被记录下来。
 
 ```
 # Cop_backoff_regionMiss_total_times: 200 Cop_backoff_regionMiss_total_time: 0.2 Cop_backoff_regionMiss_max_time: 0.2 Cop_backoff_regionMiss_max_addr: 127.0.0.1 Cop_backoff_regionMiss_avg_time: 0.2 Cop_backoff_regionMiss_p90_time: 0.2
 # Cop_backoff_rpcPD_total_times: 200 Cop_backoff_rpcPD_total_time: 0.2 Cop_backoff_rpcPD_max_time: 0.2 Cop_backoff_rpcPD_max_addr: 127.0.0.1 Cop_backoff_rpcPD_avg_time: 0.2 Cop_backoff_rpcPD_p90_time: 0.2
 ```
 
-#### Subqueries are executed in advance
+#### 子查询被提前执行
 
-For statements with non-correlated subqueries, the subquery part might be executed in advance. For example, in `select * from t1 where a = (select max(a) from t2)`, the `select max(a) from t2` part might be executed in advance in the optimization stage. The result of `EXPLAIN ANALYZE` does not show the duration of this type of subqueries.
+对于带有非关联子查询的语句，子查询部分可能被提前执行，如：`select * from t1 where a = (select max(a) from t2)`，`select max(a) from t2` 部分可能在优化阶段被提前执行。这种查询用 `explain analyze` 看不到对应的耗时，如下：
 
 ```sql
 mysql> explain analyze select count(*) from t where a=(select max(t1.a) from t t1, t t2 where t1.a=t2.a);
@@ -151,7 +149,7 @@ mysql> explain analyze select count(*) from t where a=(select max(t1.a) from t t
 5 rows in set (7.77 sec)
 ```
 
-But you can identify this type of subquery execution in the slow log:
+不过可以从慢日志中排查这种情况：
 
 ```
 # Query_time: 7.770634843
@@ -159,17 +157,17 @@ But you can identify this type of subquery execution in the slow log:
 # Rewrite_time: 7.765673663 Preproc_subqueries: 1 Preproc_subqueries_time: 7.765231874
 ```
 
-From log record above, you can see that a subquery is executed in advance and takes `7.76s`.
+可以看到有 1 个子查询被提前执行，花费了 `7.76s`。
 
-### TiDB is slow in execution
+### TiDB 执行慢
 
-Assume that the execution plan in TiDB is correct but the execution is slow. To solve this type of issue, you can adjust parameters or use the hint according to the result of `EXPLAIN ANALYZE` for the SQL statement.
+这里我们假设 TiDB 的执行计划正确（不正确的情况在[分析优化器问题](#分析优化器问题)这一节中说明），但是执行上很慢；
 
-If the execution plan is incorrect, see the [Analyze optimizer issues](#analyze-optimizer-issues) section.
+解决这类问题主要靠调整参数或利用 hint，并结合 `explain analyze` 对 SQL 进行调整。
 
-#### Low concurrency
+#### 并发太低
 
-If the bottleneck is in the operator with concurrency, speed up the execution by adjusting the concurrency. For example:
+如果发现瓶颈在有并发的算子上，可以通过调整并发度来尝试提速，如下面的执行计划中：
 
 ```sql
 mysql> explain analyze select sum(t1.a) from t t1, t t2 where t1.a=t2.a;
@@ -189,13 +187,13 @@ mysql> explain analyze select sum(t1.a) from t t1, t t2 where t1.a=t2.a;
 9 rows in set (9.67 sec)
 ```
 
-As shown above, `HashJoin_14` and `Projection_24` consume much of the execution time. Consider increasing their concurrency using SQL variables to speed up execution.
+发现耗时主要在 `HashJoin_14` 和 `Projection_24`，可以酌情通过 SQL 变量来提高他们的并发度进行提速。
 
-All system variables are documented in [system-variables](/system-variables.md). To increase the concurrency of `HashJoin_14`, you can modify the `tidb_hash_join_concurrency` system variable.
+[system-variables](/system-variables.md) 中有所有的系统变量，如想提高 `HashJoin_14` 的并发度，则可以修改变量 `tidb_hash_join_concurrency`。
 
-#### Data is spilled to disk
+#### 产生了落盘
 
-Another cause of slow execution is disk spill that occurs during execution if the memory limit is reached. You can find out this cause in the execution plan and the slow log:
+执行慢的另一个原因是执行过程中，因为到达内存限制，产生了落盘，这点在执行计划和慢日志中都能看到：
 
 ```sql
 +-------------------------+-----------+---------+-----------+---------------+------------------------------+----------------------+-----------------------+----------------+
@@ -213,11 +211,11 @@ Another cause of slow execution is disk spill that occurs during execution if th
 ...
 ```
 
-#### Join operations with Cartesian product
+#### 做了笛卡尔积的 Join
 
-Join operations with Cartesian product generate data volume as large as `left child row count * right child row count`. This is inefficient and should be avoided.
+做笛卡尔积的 Join 会产生 `左边孩子行数 * 右边孩子行数` 这么多数据，效率较低，应该尽量避免；
 
-This type of join operations is marked `CARTESIAN` in the execution plan. For example:
+目前对于产生笛卡尔积的 Join 会在执行计划中显示的标明 `CARTESIAN`，如下：
 
 ```sql
 mysql> explain select * from t t1, t t2 where t1.a>t2.a;
@@ -234,24 +232,24 @@ mysql> explain select * from t t1, t t2 where t1.a>t2.a;
 +------------------------------+-------------+-----------+---------------+---------------------------------------------------------+
 ```
 
-## Analyze optimizer issues
+## 分析优化器问题
 
-To analyze optimizer issues, you need to determine whether the execution plan is reasonable or not. You need to have some understanding of the optimization process and each operator.
+分析优化问题需要有判断执行计划是否合理的能力，这需要对优化过程和各算子有一定了解。
 
-For the following examples, assume that the table schema is `create table t (id int, a int, b int, c int, primary key(id), key(a), key(b, c))`.
+下面是一组例子，假设表结构为 `create table t (id int, a int, b int, c int, primary key(id), key(a), key(b, c))`：
 
-1. `select * from t`: There is no filter condition and a full table scan is performed. So the `TableFullScan` operator is used to read data.
-2. `select a from t where a=2`: There is a filter condition and only the index columns are read, so the `IndexReader` operator is used to read data.
-3. `select * from t where a=2`: There is a filter condition for `a` but the `a` index cannot fully cover the data to be read, so the `IndexLookup` operator is used.
-4. `select b from t where c=3`: Without the prefix condition, the multi-column index cannot be used. So the `IndexFullScan` is used.
+1. `select * from t`：没有过滤条件，会扫全表，所以会用 `TableFullScan` 算子读取数据；
+2. `select a from t where a=2`：有过滤条件且只读索引列，所以会用 `IndexReader` 算子读取数据；
+3. `select * from t where a=2`：在 `a` 有过滤条件，但索引 `a` 不能完全覆盖需要读取的内容，因此会采用 `IndexLookup`；
+4. `select b from t where c=3`：多列索引没有前缀条件就用不上，所以会用 `IndexFullScan`；
 5. ...
 
-The examples above are operators used for data reads. For more operators, see [Understand TiDB Execution Plan](/explain-overview.md).
+上面举例了数据读入相关的算子，在[理解 TiDB 执行计划](/explain-overview.md)中描述了更多算子的情况。
 
-In addition, reading [SQL Tuning Overview](/sql-tuning-overview.md) helps you better understand the TiDB optimizer and determine whether the execution plan is reasonable or not.
+另外阅读 [SQL 性能调优](/sql-tuning-overview.md)整个小节能增加你对 TiDB 优化器的了解，帮助判断执行计划是否合理。
 
-Most optimizer issues are explained in [SQL Tuning Overview](/sql-tuning-overview.md). For the solutions, see the following documents:
+由于大多数优化器问题在 [SQL 性能调优](/sql-tuning-overview.md)已经有解释，这里就直接列举出来跳转过去：
 
-1. [Wrong Index Solution](/wrong-index-solution.md)
-2. [Wrong join order](/join-reorder.md)
-3. [Expressions are not pushed down](/blocklist-control-plan.md)
+1. [索引选择错误](/wrong-index-solution.md)
+2. [Join 顺序错误](/join-reorder.md)
+3. [表达式未下推](/blocklist-control-plan.md)

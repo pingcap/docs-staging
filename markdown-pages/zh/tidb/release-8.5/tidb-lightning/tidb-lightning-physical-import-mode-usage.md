@@ -1,153 +1,147 @@
 ---
-title: Use Physical Import Mode
-summary: Learn how to use the physical import mode in TiDB Lightning.
+title: 使用物理导入模式
+summary: 了解如何使用 TiDB Lightning 的物理导入模式。
 ---
 
-# Use Physical Import Mode
+# 使用物理导入模式
 
-This document introduces how to use the [physical import mode](/tidb-lightning/tidb-lightning-physical-import-mode.md) in TiDB Lightning, including writing the configuration file, tuning performance, and configuring disk quota.
+本文档介绍如何编写[物理导入模式](/tidb-lightning/tidb-lightning-physical-import-mode.md)的配置文件，如何进行性能调优、使用磁盘资源配额等内容。
 
-There are limitations on the physical import mode. Before using the physical import mode, make sure to read [Limitations](/tidb-lightning/tidb-lightning-physical-import-mode.md#limitations).
+使用物理导入模式有一些限制，使用前请务必阅读[必要条件及限制](/tidb-lightning/tidb-lightning-physical-import-mode.md#必要条件及限制)。
 
-## Configure and use the physical import mode
+## 配置及使用
 
-You can use the following configuration file to execute data import using the physical import mode:
+可以通过以下配置文件使用物理导入模式执行数据导入：
 
 ```toml
 [lightning]
-# log
+# 日志
 level = "info"
 file = "tidb-lightning.log"
 max-size = 128 # MB
 max-days = 28
 max-backups = 14
 
-# Checks the cluster minimum requirements before start.
+# 启动之前检查集群是否满足最低需求。
 check-requirements = true
 
 [mydumper]
-# The local data source directory or the URI of the external storage. For more information about the URI of the external storage, see https://docs.pingcap.com/tidb/v6.6/backup-and-restore-storages#uri-format.
+# 本地源数据目录或外部存储 URI。关于外部存储 URI 详情可参考 https://docs.pingcap.com/zh/tidb/stable/backup-and-restore-storages/#uri-格式。
 data-source-dir = "/data/my_database"
 
 [conflict]
-# Starting from v7.3.0, a new version of strategy is introduced to handle conflicting data. The default value is "". Starting from v8.0.0, TiDB Lightning optimizes the conflict strategy for both physical and logical import modes.
-# - "": TiDB Lightning does not detect or handle conflicting data. If the source file contains conflicting primary or unique key records, the subsequent step reports an error.
-# - "error": when detecting conflicting primary or unique key records in the imported data, TiDB Lightning terminates the import and reports an error.
-# - "replace": when encountering conflicting primary or unique key records, TiDB Lightning retains the latest data and overwrites the old data.
-#              The conflicting data are recorded in the `lightning_task_info.conflict_view` view of the target TiDB cluster.
-#              In the `lightning_task_info.conflict_view` view, if the `is_precheck_conflict` field for a row is `0`, it means that the conflicting data recorded in that row is detected by postprocess conflict detection; if the `is_precheck_conflict` field for a row is `1`, it means that conflicting data recorded in that row is detected by pre-import conflict detection.
-#              You can manually insert the correct records into the target table based on your application requirements. Note that the target TiKV must be v5.2.0 or later versions.
+# 从 v7.3.0 开始引入的新版冲突数据处理策略。默认值为 ""。从 v8.0.0 开始，TiDB Lightning 优化了物理导入模式和逻辑导入模式的冲突策略。
+# - ""：不进行冲突数据检测和处理。如果源文件存在主键或唯一键冲突的记录，后续步骤会报错
+# - "error"：检测到导入的数据存在主键或唯一键冲突的数据时，终止导入并报错
+# - "replace"：遇到主键或唯一键冲突的数据时，保留最新的数据，覆盖旧的数据。
+#              冲突数据将被记录到目标 TiDB 集群中的 `lightning_task_info.conflict_view` 视图中。
+#              在 `lightning_task_info.conflict_view` 视图中，如果某行的 `is_precheck_conflict` 字段为 `0`，表示该行记录的冲突数据是通过后置冲突检测发现的；如果某行的 `is_precheck_conflict` 字段为 `1`，表示该行记录的冲突数据是通过前置冲突检测发现的。
+#              你可以根据业务需求选择正确的记录重新手动写入到目标表中。注意，该方法要求目标 TiKV 的版本为 v5.2.0 或更新版本。
 strategy = ""
-# Controls whether to enable pre-import conflict detection, which checks conflicts in data before importing it to TiDB. The default value is false, indicating that TiDB Lightning only checks conflicts after the import. If you set it to true, TiDB Lightning checks conflicts both before and after the import. This parameter can be used only in the physical import mode. In scenarios where the number of conflict records is greater than 1,000,000, it is recommended to set `precheck-conflict-before-import = true` for better performance in conflict detection. In other scenarios, it is recommended to disable it.
+# 控制是否开启前置冲突检测，即导入数据到 TiDB 前，先检查所需导入的数据是否存在冲突。该参数默认值为 false，表示仅开启后置冲突检测。取值为 true 时，表示同时开启前置冲突检测和后置冲突检测。冲突记录数量高于 1,000,000 的场景建议配置 `precheck-conflict-before-import = true`，可以提升冲突检测的性能，反之建议关闭。
 # precheck-conflict-before-import = false
 # threshold = 10000
-# Starting from v8.1.0, there is no need to configure `max-record-rows` manually, because TiDB Lightning automatically assigns the value of `max-record-rows` with the value of `threshold`, regardless of the user input. `max-record-rows` will be deprecated in a future release.
+# 从 v8.1.0 开始，TiDB Lightning 会自动将 `max-record-rows` 的值设置为 `threshold` 的值，并忽略用户输入，因此无需再单独配置 `max-record-rows`。`max-record-rows` 将在未来版本中废弃。
 # max-record-rows = 10000
 
 [tikv-importer]
-# Import mode. "local" means using the physical import mode.
+# 导入模式配置，设为 local 即使用物理导入模式
 backend = "local"
 
-# The `duplicate-resolution` parameter is deprecated starting from v8.0.0 and will be removed in a future release. For more information, see <https://docs.pingcap.com/tidb/stable/tidb-lightning-physical-import-mode-usage#the-old-version-of-conflict-detection-deprecated-in-v800>.
-# If you set `duplicate-resolution = 'none'` and do not set `conflict.strategy`, TiDB Lightning will automatically assign `""` to `conflict.strategy`. 
-# If you set `duplicate-resolution = 'remove'` and do not set `conflict.strategy`, TiDB Lightning will automatically assign "replace" to `conflict.strategy` and enable the new version of conflict detection. 
-# The method to resolve the conflicting data.
+# 冲突数据处理方式
+# `duplicate-resolution` 参数从 v8.0.0 开始已被废弃，并将在未来版本中被移除。详情参考 <https://docs.pingcap.com/zh/tidb/stable/tidb-lightning-physical-import-mode-usage#旧版冲突检测从-v800-开始已被废弃>。
+# 如果 `duplicate-resolution` 设置为 'none' 且 `conflict.strategy` 未设置，TiDB Lightning 会自动将 `conflict.strategy` 赋值为 ""。
+# 如果 `duplicate-resolution` 设置为 'remove' 且 `conflict.strategy` 未设置，TiDB Lightning 会自动将 `conflict.strategy` 赋值为 "replace" 开启新版冲突检测。
 duplicate-resolution = 'none'
 
-# The directory of local KV sorting.
+# 本地进行 KV 排序的路径。
 sorted-kv-dir = "./some-dir"
 
-# Limits the bandwidth in which TiDB Lightning writes data into each TiKV
-# node in the physical import mode. 0 by default, which means no limit.
+# 限制 TiDB Lightning 向每个 TiKV 节点写入的带宽大小，默认为 0，表示不限制。
 # store-write-bwlimit = "128MiB"
 
-# Specifies whether Physical Import Mode adds indexes via SQL. The default value is `false`, which means that TiDB Lightning will encode both row data and index data into KV pairs and import them into TiKV together. This mechanism is consistent with that of the historical versions. If you set it to `true`, it means that TiDB Lightning adds indexes via SQL after importing the row data.
-# The benefit of adding indexes via SQL is that you can separately import data and import indexes, and import data more quickly. After the data is imported, even if the indexes fail to be added, it does not affect the consistency of the imported data.
+# 物理导入模式是否通过 SQL 方式添加索引。默认为 `false`，表示 TiDB Lightning 会将行数据以及索引数据都编码成 KV pairs 后一同导入 TiKV，实现机制和历史版本保持一致。如果设置为 `true`，即 TiDB Lightning 会导完数据后，再使用 add index 的 SQL 来添加索引。
+# 通过 SQL 方式添加索引的优点是将导入数据与导入索引分开，可以快速导入数据，即使导入数据后，索引添加失败，也不会影响数据的一致性。
 # add-index-by-sql = false
 
 [tidb]
-# The information of the target cluster. The address of any tidb-server from the cluster.
+# 目标集群的信息。tidb-server 的地址，填一个即可。
 host = "172.16.31.1"
 port = 4000
 user = "root"
-# Configure the password to connect to TiDB. Either plaintext or Base64 encoded.
+# 设置连接 TiDB 的密码，可为明文或 Base64 编码。
 password = ""
-# Required. Table schema information is fetched from TiDB via this status-port.
+# 必须配置。表结构信息从 TiDB 的“status-port”获取。
 status-port = 10080
-# Required. The address of any pd-server from the cluster. Starting from v7.6.0, TiDB supports setting multiple PD addresses.
+# 必须配置。pd-server 的地址。从 v7.6.0 开始支持设置多个地址。
 pd-addr = "172.16.31.4:2379,56.78.90.12:3456"
-# tidb-lightning imports the TiDB library, and generates some logs.
-# Set the log level of the TiDB library.
+# tidb-lightning 引用了 TiDB 库，并生成产生一些日志。
+# 设置 TiDB 库的日志等级。
 log-level = "error"
 
 [post-restore]
-# Specifies whether to perform `ADMIN CHECKSUM TABLE <table>` for each table to verify data integrity after importing.
-# The following options are available:
-# - "required" (default): Perform admin checksum after importing. If checksum fails, TiDB Lightning will exit with failure.
-# - "optional": Perform admin checksum. If checksum fails, TiDB Lightning will report a WARN log but ignore any error.
-# - "off": Do not perform checksum after importing.
-# Note that since v4.0.8, the default value has changed from "true" to "required".
+# 配置是否在导入完成后对每一个表执行 `ADMIN CHECKSUM TABLE <table>` 操作来验证数据的完整性。
+# 可选的配置项：
+# - "required"（默认）。在导入完成后执行 CHECKSUM 检查，如果 CHECKSUM 检查失败，则会报错退出。
+# - "optional"。在导入完成后执行 CHECKSUM 检查，如果报错，会输出一条 WARN 日志并忽略错误。
+# - "off"。导入结束后不执行 CHECKSUM 检查。
+# 默认值为 "required"。从 v4.0.8 开始，checksum 的默认值由此前的 "true" 改为 "required"。
 #
-# Note:
-# 1. Checksum failure usually means import exception (data loss or data inconsistency), so it is recommended to always enable Checksum.
-# 2. For backward compatibility, bool values "true" and "false" are also allowed for this field.
-# "true" is equivalent to "required" and "false" is equivalent to "off".
+# 注意：
+# 1. Checksum 对比失败通常表示导入异常（数据丢失或数据不一致），因此建议总是开启 Checksum。
+# 2. 考虑到与旧版本的兼容性，依然可以在本配置项设置 `true` 和 `false` 两个布尔值，其效果与 `required` 和 `off` 相同。
 checksum = "required"
-
-# Specifies whether to perform `ANALYZE TABLE <table>` for each table after checksum is done.
-# Options available for this field are the same as `checksum`. However, the default value for this field is "optional".
+# 配置是否在 CHECKSUM 结束后对所有表逐个执行 `ANALYZE TABLE <table>` 操作。
+# 此配置的可选配置项与 `checksum` 相同，但默认值为 "optional"。
 analyze = "optional"
 ```
 
-For the complete configuration file, refer to [the configuration file and command line parameters](/tidb-lightning/tidb-lightning-configuration.md).
+Lightning 的完整配置文件可参考[完整配置及命令行参数](/tidb-lightning/tidb-lightning-configuration.md)。
 
-## Conflict detection
+## 冲突数据检测
 
-Conflicting data refers to two or more records with the same primary key or unique key column data. When the data source contains conflicting data and conflict detection feature is not turned on, the actual number of rows in the table is different from the total number of rows returned by the query using unique index.
+冲突数据是指两条或两条以上记录中存在主键或唯一键列数据重复。当数据源中的记录存在冲突数据，如果没有启用冲突数据检测功能，将导致该表的实际总行数与使用唯一索引查询的总行数不一致。
 
-There are two versions for conflict detection:
+冲突数据检测采用新版冲突检测 (`conflict`) 模式。旧版冲突检测 (`tikv-importer.duplicate-resolution`) 模式从 v8.0.0 开始已被废弃。`tikv-importer.duplicate-resolution` 参数将在未来版本中被移除。
 
-- The new version of conflict detection, controlled by the `conflict` configuration item.
-- The old version of conflict detection (deprecated in v8.0.0 and will be removed in a future release), controlled by the `tikv-importer.duplicate-resolution` configuration item.
+### 新版冲突检测
 
-### The new version of conflict detection
+具体配置及含义如下：
 
-The meanings of configuration values are as follows:
+| 配置 | 冲突时默认行为                                        | 类比 SQL 语句 |
+|:---|:-----------------------------------------------|:---|
+| `"replace"` | 保留最新的数据，覆盖旧的数据 | `REPLACE INTO ...` |
+| `"error"` | 终止导入并报错                                        | `INSERT INTO ...` |
+| `""` | 不进行冲突检查和处理，但如果存在有主键和唯一键冲突的数据，会在后续步骤 checksum 时报错          | 无 |
 
-| Strategy | Default behavior of conflicting data | The corresponding SQL statement |
-| :-- | :-- | :-- |
-| `"replace"` | Retaining the latest data and overwriting the old data | `REPLACE INTO ...` |
-| `"error"` | Terminating the import and reporting an error. | `INSERT INTO ...` |
-| `""` | TiDB Lightning does not detect or handle conflicting data. If data with primary and unique key conflicts exists, the subsequent checksum step reports an error. |  None   |
-
-> **Note:**
+> **注意：**
 >
-> The conflict detection result in the physical import mode might differ from SQL-based import due to internal implementation and limitation of TiDB Lightning.
+> 由于 TiDB Lightning 内部并发处理以及实现限制，物理导入模式下的冲突检测效果不会与 SQL 语句完全一致。
 
-When the strategy is `"error"` and conflicting data is detected, TiDB Lightning reports an error and exits the import. When the strategy is `"replace"`, conflicting data is treated as [conflict errors](/tidb-lightning/tidb-lightning-error-resolution.md#conflict-errors). If the [`conflict.threshold`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task) value is greater than `0`, TiDB Lightning tolerates the specified number of conflict errors. The default value is `9223372036854775807`, which means that almost all errors are tolerant. For more information, see [error resolution](/tidb-lightning/tidb-lightning-error-resolution.md).
+配置为 `"error"` 时，遇到冲突数据时，TiDB Lightning 会报错并退出。配置为 `"replace"` 时，冲突数据被视作[冲突错误 (Conflict error)](/tidb-lightning/tidb-lightning-error-resolution.md#冲突错误-conflict-error)。配置了大于 `0` 的 [`conflict.threshold`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-任务配置) 后，TiDB Lightning 可以容忍一定数目的冲突错误，默认值为 `9223372036854775807`，意味着几乎能容忍全部错误。详见[可容忍错误](/tidb-lightning/tidb-lightning-error-resolution.md)功能介绍。
 
-The new version of conflict detection has the following limitations:
+新版冲突检测具有如下的限制：
 
-- Before importing, TiDB Lightning prechecks potential conflicting data by reading all data and encoding it. During the detection process, TiDB Lightning uses `tikv-importer.sorted-kv-dir` to store temporary files. After the detection is complete, TiDB Lightning retains the results for import phase. This introduces additional overhead for time consumption, disk space usage, and API requests to read the data.
-- The new version of conflict detection only works in a single node, and does not apply to parallel imports and scenarios where the `disk-quota` parameter is enabled.
+- 在导入之前，前置冲突检测会先读取全部数据并编码，以检测潜在的冲突数据。检测过程中会使用 `tikv-importer.sorted-kv-dir` 存储临时文件。检测完成后，会保留检查结果至导入阶段以供读取。因此，这将带来额外的耗时、磁盘空间占用以及数据读取 API 请求开销。
+- 新版冲突检测只能在单节点完成，不适用于并行导入以及开启了 `disk-quota` 参数的场景。
 
-The new version of conflict detection controls whether to enable pre-import conflict detection via the `precheck-conflict-before-import` parameter. In cases where the original data contains a lot of conflicting data, the total time consumed by conflict detection before and after the import is less than that of the old version. Therefore, it is recommended to enable pre-import conflict detection in scenarios where the ratio of conflict records is greater than or equal to 1% and the local disk space is sufficient.
+新版冲突检测通过 `precheck-conflict-before-import` 配置项控制是否开启前置冲突检测。在原数据冲突数据较多的情况下，前置和后置冲突检测的总耗时相比旧版更少。因此，建议在已知数据的冲突数据比例大于或等于 1%、且本地磁盘空间充足的单节点导入任务中开启前置冲突检测。
 
-### The old version of conflict detection (deprecated in v8.0.0)
+### 旧版冲突检测（从 v8.0.0 开始已被废弃）
 
-Starting from v8.0.0, the old version of conflict detection (`tikv-importer.duplicate-resolution`) is deprecated. The `tikv-importer.duplicate-resolution` parameter will be removed in a future release. If `tikv-importer.duplicate-resolution` is `remove` and `conflict.strategy` is not configured, TiDB Lightning automatically enables the new version of conflict detection by assigning the value of `conflict.strategy` to `"replace"`. Note that `tikv-importer.duplicate-resolution` and `conflict.strategy` cannot be configured at the same time, as it will result in an error.
+从 v8.0.0 起，旧版冲突检测 (`tikv-importer.duplicate-resolution`) 已被废弃。`tikv-importer.duplicate-resolution` 参数将在未来版本中被移除。如果 `tikv-importer.duplicate-resolution` 为 `remove` 且 `conflict.strategy` 未设置，TiDB Lightning 会自动将 `conflict.strategy` 赋值为 `"replace"` 开启新版冲突检测。需要注意 `tikv-importer.duplicate-resolution` 不能与 `conflict.strategy` 同时配置，否则将报错。
 
-- For versions between v7.3.0 and v7.6.0, TiDB Lightning enables the old version of conflict detection when `tikv-importer.duplicate-resolution` is not an empty string.
-- For v7.2.0 and earlier versions, TiDB Lightning only supports the old version of conflict detection.
+- 在 v7.3.0 到 v7.6.0 之间的版本中，当配置 `tikv-importer.duplicate-resolution` 不为空时，TiDB Lightning 会开启旧版冲突检测。
+- 在 v7.2.0 及之前的版本中，TiDB Lightning 仅支持旧版冲突检测。
 
-In the old version of conflict detection, TiDB Lightning offers two strategies:
+旧版冲突数据检测支持两种策略：
 
-- `remove` (recommended): records and removes all conflicting records from the target table to ensure a consistent state in the target TiDB.
-- `none`: does not detect duplicate records. `none` has the best performance in the two strategies, but might lead to inconsistent data in the target TiDB.
+- `remove`：推荐方式。记录并删除所有的冲突记录，以确保目的 TiDB 中的数据状态保持一致。
+- `none`：关闭冲突数据检测。该模式是两种模式中性能最佳的，但是可能会导致目的 TiDB 中出现数据不一致的情况。
 
-Before v5.3, TiDB Lightning does not support conflict detection. If there is conflicting data, the import process fails at the checksum step. When conflict detection is enabled, if there is conflicting data, TiDB Lightning skips the checksum step (because it always fails).
+在 v5.3 之前，TiDB Lightning 不具备冲突数据检测特性，若存在冲突数据将导致导入过程最后的 Checksum 环节失败。开启冲突检测特性的情况下，只要检测到冲突数据，TiDB Lightning 都会跳过最后的 Checksum 环节（因为必定失败）。
 
-Suppose an `order_line` table has the following schema:
+假设一张表 `order_line` 的表结构如下：
 
 ```sql
 CREATE TABLE IF NOT EXISTS `order_line` (
@@ -165,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `order_line` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 ```
 
-If Lightning detects conflicting data during the import, you can query the `lightning_task_info.conflict_error_v3` table as follows:
+若在导入过程中检测到冲突数据，则可以查询 `lightning_task_info.conflict_error_v3` 表得到以下内容：
 
 ```sql
 mysql> select table_name,index_name,key_data,row_data from conflict_error_v3 limit 10;
@@ -184,119 +178,112 @@ mysql> select table_name,index_name,key_data,row_data from conflict_error_v3 lim
 | `tpcc`.`order_line` | PRIMARY    | 49931676 | (2678, 10, 10, 1, 44644, 10, NULL, 5, 8463.76, "TWKJBt5iJA4eF7FIVxnugNmz")  |
 +---------------------+------------+----------------------------------------------------------------------------------------+
 10 rows in set (0.14 sec)
+
 ```
 
-You can manually identify the records that need to be retained and insert these records into the table.
+根据上述信息人工甄别需要保留的重复数据，手动插回原表即可。
 
-## Scope of pausing scheduling during import
+## 导入时暂停 PD 调度的范围
 
-Starting from v6.2.0, TiDB Lightning implements a mechanism to limit the impact of data import on online applications. With the new mechanism, TiDB Lightning does not pause the global scheduling, but only pauses scheduling for the Region that stores the target table data. This significantly reduces the impact of the import on online applications.
+自 TiDB Lightning v6.2.0 版本起，TiDB Lightning 提供机制控制导入数据过程对在线业务的影响。TiDB Lightning 不会暂停全局的调度，而是只暂停目标表数据范围所在 region 的调度，降低了对在线业务的影响。
 
-Starting from v7.1.0, you can control the scope of pausing scheduling by using the TiDB Lightning parameter [`pause-pd-scheduler-scope`](/tidb-lightning/tidb-lightning-configuration.md). The default value is `"table"`, which means that the scheduling is paused only for the Region that stores the target table data. When there is no business traffic in the cluster, it is recommended to set this parameter to `"global"` to avoid interference from other scheduling during the import.
+自 TiDB v7.1.0 版本起，你可以通过 TiDB Lightning 的参数 [`pause-pd-scheduler-scope`](/tidb-lightning/tidb-lightning-configuration.md) 来控制暂停调度的范围。默认为 `"table"`，即只暂停目标表数据所在 Region 的调度。当集群没有业务流量时，建议设置为 `"global"` 以减少来自调度器对导入的干扰。
 
-<Note>
+> **注意：**
+>
+> TiDB Lightning 不支持导入数据到已有业务写入的数据表。
+>
+> TiDB 集群版本需大于等于 v6.1.0，更低的版本 TiDB Lightning 会保持原有行为，暂停全局调度，数据导入期间会给在线业务带来严重影响。
 
-TiDB Lightning does not support importing data into a table that already contains data.
-
-The TiDB cluster must be v6.1.0 or later versions. For earlier versions, TiDB Lightning keeps the old behavior, which pauses scheduling globally and severely impacts the online application during the import.
-
-</Note>
-
-By default, TiDB Lightning pauses the cluster scheduling for the minimum range possible. However, under the default configuration, the cluster performance still might be affected by fast import. To avoid this, you can configure the following options to control the import speed and other factors that might impact the cluster performance:
+TiDB Lightning 默认情况下会在最小范围内暂停集群调度，无需额外配置。但默认配置下，TiDB 集群仍然会因为数据导入太快，使在线业务的性能受到影响，所以你需要额外配置几个选项来控制导入速度和其他可能影响集群性能的因素：
 
 ```toml
 [tikv-importer]
-# Limits the bandwidth in which TiDB Lightning writes data into each TiKV node in the physical import mode.
+# 限制 TiDB Lightning 向每个 TiKV 节点写入的带宽大小。
 store-write-bwlimit = "128MiB"
 
 [tidb]
-# Use smaller concurrency to reduce the impact of Checksum and Analyze on the transaction latency.
+# 使用更小的并发以降低计算 checksum 和执行 analyze 对事务延迟的影响。
 distsql-scan-concurrency = 3
 ```
 
-You can measure the impact of data import on TPCC results by simulating the online application using TPCC and importing data into a TiDB cluster using TiDB Lightning. The test result is as follows:
+在测试中用 TPCC 测试模拟在线业务，同时用 TiDB Lightning 向 TiDB 集群导入数据，测试导入数据对 TPCC 测试结果的影响。测试结果如下：
 
-| Concurrency | TPM | P99 | P90 | AVG |
+| 线程数 | TPM | P99 | P90 | AVG |
 | ----- | --- | --- | --- | --- |
 | 1     | 20%~30% | 60%~80% | 30%~50% | 30%~40% |
 | 8     | 15%~25% | 70%~80% | 35%~45% | 20%~35% |
 | 16    | 20%~25% | 55%~85% | 35%~40% | 20%~30% |
-| 64    | No significant impact |
-| 256   | No significant impact |
+| 64    | 无显著影响 |
+| 256   | 无显著影响 |
 
-The percentage in the preceding table indicates the impact of data import on TPCC results.
+表格中的百分比含义为 TiDB Lightning 导入对 TPCC 结果的影响大小。对于 TPM，数值表示 TPM 下降的百分比；对于延迟 P99、P90、AVG，数值表示延迟上升的百分比。
 
-* For the TPM column, the number indicates the percentage of TPM decrease.
-* For the P99, P90, and AVG columns, the number indicates the percentage of latency increase.
+测试结果表明，TPCC 并发越小，TiDB Lightning 导入对 TPCC 结果影响越大。当 TPCC 并发达到 64 或以上时，TiDB Lightning 导入对 TPCC 结果无显著影响。
 
-The test results show that the smaller the concurrency, the larger the impact of data import on TPCC results. When the concurrency is 64 or more, the impact of data import on TPCC results is negligible.
+因此，如果你的 TiDB 生产集群上有延迟敏感型业务，并且并发较小，**强烈建议**不要使用 TiDB Lightning 导入数据到该集群，否则会给在线业务带来较大影响。
 
-Therefore, if your TiDB cluster has a latency-sensitive application and a low concurrency, it is strongly recommended **not** to use TiDB Lightning to import data into the cluster. This will cause a significant impact on the online application.
+## 性能调优
 
-## Performance tuning
+**提高 Lightning 物理导入模式导入性能最直接有效的方法：**
 
-**The most direct and effective ways to improve import performance of the physical import mode are as follows:**
+- **升级 Lightning 所在节点的硬件，尤其重要的是 CPU 和 sorted-key-dir 所在存储设备的性能。**
+- **使用[并行导入](/tidb-lightning/tidb-lightning-distributed-import.md)特性实现水平扩展。**
 
-- **Upgrade the hardware of the node where Lightning is deployed, especially the CPU and the storage device of `sorted-key-dir`.**
-- **Use the [parallel import](/tidb-lightning/tidb-lightning-distributed-import.md) feature to achieve horizontal scaling.**
+当然，Lightning 也提供了部分并发相关配置以影响物理导入模式的导入性能。但是从长期实践的经验总结来看，以下四个配置项一般保持默认值即可，调整其数值并不会带来显著的性能提升，可作为了解内容阅读。
 
-TiDB Lightning provides some concurrency-related configurations to affect import performance in the physical import mode. However, from long-term experience, it is recommended to keep the following four configuration items in the default value. Adjusting the four configuration items does not bring significant performance boost.
-
-```
+```toml
 [lightning]
-# The maximum concurrency of engine files.
-# Each table is split into one "index engine" to store indices, and multiple
-# "data engines" to store row data. These settings control the maximum
-# concurrent number for each type of engines.
-# The two settings controls the maximum concurrency of the two engine files.
+# 引擎文件的最大并行数。
+# 每张表被切分成一个用于存储索引的“索引引擎”和若干存储行数据的“数据引擎”。
+# 这两项设置控制两种引擎文件的最大并发数。
 index-concurrency = 2
 table-concurrency = 6
 
-# The concurrency of data. The default value is the number of logical CPUs.
-region-concurrency =
+# 数据的并发数。默认与逻辑 CPU 的数量相同。
+# region-concurrency =
 
-# The maximum concurrency of I/O. When the concurrency is too high, the disk
-# cache may be frequently refreshed, causing the cache miss and read speed
-# to slow down. For different storage mediums, this parameter may need to be
-# adjusted to achieve the best performance.
+# I/O 最大并发数。I/O 并发量太高时，会因硬盘内部缓存频繁被刷新
+# 而增加 I/O 等待时间，导致缓存未命中和读取速度降低。
+# 对于不同的存储介质，此参数可能需要调整以达到最佳效率。
 io-concurrency = 5
 ```
 
-During the import, each table is split into one "index engine" to store indices, and multiple "data engines" to store row data.
+导入时，每张表被切分成一个用于存储索引的“索引引擎”和若干存储行数据的“数据引擎”，`index-concurrency`用于调整"索引引擎"的并发度。
 
-`index-concurrency` controls the maximum concurrency of the index engine. When you adjust `index-concurrency`, make sure that `index-concurrency * the number of source files of each table > region-concurrency` to ensure that the CPU is fully utilized. The ratio is usually between 1.5 ~ 2. Do not set `index-concurrency` too high and not lower than 2 (default). Too high `index-concurrency` causes too many pipelines to be built, which causes the index-engine import stage to pile up.
+在调整 `index-concurrency` 时，需要注意 `index-concurrency * 每个表对应的源文件数量 > region-concurrency` 以确保 cpu 被充分利用，一般比例大概在 1.5 ~ 2 左右为优。`index-concurrency` 不应该设置的过大，但不低于 2 (默认)，过大会导致太多导入的 pipeline 变差，大量 index-engine 的 import 阶段堆积。
 
-The same goes for `table-concurrency`. Make sure that `table-concurrency * the number of source files of each table > region-concurrency` to ensure that the CPU is fully utilized. A recommended value is around `region-concurrency * 4 / the number of source files of each table` and not lower than 4.
+`table-concurrency` 同理，需要确保`table-concurrency * 每个表对应的源文件数量 > region-concurrency` 以确保 cpu 被充分利用。 推荐值为`region-concurrency * 4 / 每个表对应的源文件数量` 左右，最少设置为 4.
 
-If the table is large, Lightning will split the table into multiple batches of 100 GiB. The concurrency is controlled by `table-concurrency`.
+如果表非常大，Lightning 会按照 100 GiB 的大小将表分割成多个批次处理，并发度由 `table-concurrency` 控制。
 
-`index-concurrency` and `table-concurrency` has little effect on the import speed. You can leave them in the default value.
+上述两个参数对导入速度影响不大，使用默认值即可。
 
-`io-concurrency` controls the concurrency of file read. The default value is 5. At any given time, only 5 handles are performing read operations. Because the file read speed is usually not a bottleneck, you can leave this configuration in the default value.
+`io-concurrency` 用于控制文件读取并发度，默认值为 5。可以认为在某个时刻只有 5 个句柄在执行读操作。由于文件读取速度一般不会是瓶颈，所以使用默认值即可。
 
-After the file data is read, Lightning needs to do some post-processing, such as encoding and sorting the data locally. The concurrency of these operations is controlled by `region-concurrency`. The default value is the number of CPU cores. You can leave this configuration in the default value. It is recommended to deploy Lightning on a separate server from other components. If you must deploy Lightning together with other components, you need to lower the value of `region-concurrency` according to the load.
+读取文件数据后，lightning 还需要做后续处理，例如将数据在本地进行编码和排序。此类操作的并发度由 `region-concurrency` 配置控制。`region-concurrency` 的默认值为 CPU 核数，通常无需调整，建议不要将 Lightning 与其它组件部署在同一主机，如果客观条件限制必须混合部署，则需要根据实际负载调低 `region-concurrency`。
 
-The [`num-threads`](/tikv-configuration-file.md#num-threads) configuration of TiKV can also affect the performance. For new clusters, it is recommended to set `num-threads` to the number of CPU cores.
+此外，TiKV 的 [num-threads](/tikv-configuration-file.md#num-threads) 配置也可能影响性能，新集群建议设置为 CPU 核数。
 
-## Configure disk quota <span class="version-mark">New in v6.2.0</span>
+## 磁盘资源配额 <span class="version-mark">从 v6.2.0 版本开始引入</span>
 
-When you import data in the physical import mode, TiDB Lightning creates a large number of temporary files on the local disk to encode, sort, and split the original data. When the local disk space is insufficient, TiDB Lightning reports an error and exits because of write failure.
+TiDB Lightning 在使用物理模式导入数据时，会在本地磁盘创建大量的临时文件，用来对原始数据进行编码、排序、分割。当用户本地磁盘空间不足时，TiDB Lightning 会由于写入文件失败而报错退出。
 
-To avoid this situation, you can configure disk quota for TiDB Lightning. When the size of the temporary files exceeds the disk quota, TiDB Lightning pauses the process of reading the source data and writing temporary files. TiDB Lightning prioritizes writing the sorted key-value pairs to TiKV. After deleting the local temporary files, TiDB Lightning continues the import process.
+为了减少这种情况的发生，你可以为 TiDB Lightning 配置磁盘配额 (disk quota)。当磁盘配额不足时，TiDB Lightning 会暂停读取源数据以及写入临时文件的过程，优先将已经完成排序的 key-value 写入到 TiKV，TiDB Lightning 删除本地临时文件后，再继续导入过程。
 
-To enable disk quota, add the following configuration to your configuration file:
+为 TiDB Lightning 开启磁盘配额，你需要在配置文件中加入配置项：
 
 ```toml
 [tikv-importer]
-# MaxInt64 by default, which is 9223372036854775807 bytes.
+# 默认为 MaxInt64，即 9223372036854775807 字节
 disk-quota = "10GB"
 backend = "local"
 
 [cron]
-# The interval of checking disk quota. 60 seconds by default.
+# 检查磁盘配额的时间间隔，默认为 60 秒。
 check-disk-quota = "30s"
 ```
 
-`disk-quota` limits the storage space used by TiDB Lightning. The default value is MaxInt64, which is 9223372036854775807 bytes. This value is much larger than the disk space you might need for the import, so leaving it as the default value is equivalent to not setting the disk quota.
+`disk-quota` 配置项可以设置磁盘配额，默认为 MaxInt64，即 9223372036854775807 字节，这个值远远大于实际情况中可能需要的磁盘空间，相当于没开启。
 
-`check-disk-quota` is the interval of checking disk quota. The default value is 60 seconds. When TiDB Lightning checks the disk quota, it acquires an exclusive lock for the relevant data, which blocks all the import threads. Therefore, if TiDB Lightning checks the disk quota before every write, it significantly slows down the write efficiency (as slow as a single-thread write). To achieve efficient write, disk quota is not checked before every write; instead, TiDB Lightning pauses all the import threads and checks the disk quota every `check-disk-quota` interval. That is, if the value of `check-disk-quota` is set to a large value, the disk space used by TiDB Lightning might exceed the disk quota you set, which leaves the disk quota ineffective. Therefore, it is recommended to set the value of `check-disk-quota` to a small value. The specific value of this item is determined by the environment in which TiDB Lightning is running. In different environments, TiDB Lightning writes temporary files at different speeds. Theoretically, the faster the speed, the smaller the value of `check-disk-quota` should be.
+`check-disk-quota` 配置项是检查磁盘配额的时间间隔，默认为 60 秒。由于检查临时文件使用空间的过程需要加锁，会使所有的导入线程都暂停，如果在每次写入之前都检查一次磁盘空间的使用情况，则会大大降低写入文件的效率（相当于单线程写入）。为了维持高效的写入，磁盘配额不会在每次写入之前检查，而是每隔一段时间暂停所有线程的写入并检查当前磁盘空间的使用情况。也就是说，当 `check-disk-quota` 配置项设置为一个非常大的值时，磁盘的使用空间有可能会大大超出磁盘配额，这样的情况下，磁盘配额功能可以说是不生效的。因此，`check-disk-quota` 的值建议不要设置太大，而具体设置多少则需要由 TiDB Lightning 具体运行的环境决定，因为不同的环境下，TiDB Lightning 写入临时文件的速度是不一样的。理论上来说，写入临时文件的速度越快，`check-disk-quota` 需要设置得越小。

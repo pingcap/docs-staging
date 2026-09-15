@@ -1,33 +1,33 @@
 ---
 title: 信息函数
-summary: 了解信息函数。
+summary: TiDB 支持 MySQL 8.0 中提供的大部分信息函数。
 ---
 
 # 信息函数
 
-TiDB 支持大部分 [information functions](https://dev.mysql.com/doc/refman/8.0/en/information-functions.html) 在 MySQL 8.0 中提供的功能。
+TiDB 支持使用 MySQL 8.0 中提供的大部分[信息函数](https://dev.mysql.com/doc/refman/8.0/en/information-functions.html)。
 
-## TiDB 支持的 MySQL 函数
+## TiDB 支持的 MySQL 信息函数
 
-| 名称 | 描述 |
-|:-----|:------------|
-| [`BENCHMARK()`](#benchmark) | 在循环中执行表达式 |
-| [`CONNECTION_ID()`](#connection_id) | 返回连接的 ID（线程 ID） |
-| [`CURRENT_ROLE()`](#current_role) | 返回当前连接使用的角色 |
-| [`CURRENT_USER()``, `CURRENT_USER`](#current_user) | 返回已验证的用户名和主机名 |
-| [`DATABASE()`](#database) | 返回当前会话使用的默认（当前）数据库名 |
-| [`FOUND_ROWS()`](#found_rows) | 对于带有 `LIMIT` 子句的 `SELECT`，如果没有 `LIMIT`，返回结果集中的行数 |
-| [`LAST_INSERT_ID()`](#last_insert_id) | 返回最后一次 `INSERT` 操作中 `AUTOINCREMENT` 列的值 |
+| 函数名 | 功能描述                                 |
+| ------ | ---------------------------------------- |
+| [`BENCHMARK()`](#benchmark) | 循环执行一个表达式 |
+| [`CONNECTION_ID()`](#connection_id) | 返回当前连接的连接 ID（线程 ID）  |
+| [`CURRENT_ROLE()`](#current_role) | 返回当前连接的角色 |
+| [`CURRENT_USER()`, `CURRENT_USER`](#current_user) | 返回当前用户的用户名和主机名 |
+| [`DATABASE()`](#database) | 返回默认（当前）的数据库  |
+| [`FOUND_ROWS()`](#found_rows) | 该函数对于一个包含 `LIMIT` 的 `SELECT` 查询语句，返回在不包含 `LIMIT` 的情况下的记录数 |
+| [`LAST_INSERT_ID()`](#last_insert_id) | 返回上一条 `INSERT` 语句中自增列的值  |
 | [`ROW_COUNT()`](#row_count) | 影响的行数 |
-| [`SCHEMA()`](#schema) | `DATABASE()` 的同义词 |
-| [`SESSION_USER()`](#session_user) | `USER()` 的同义词 |
-| [`SYSTEM_USER()`](#system_user) | `USER()` 的同义词 |
-| [`USER()`](#user) | 返回客户端提供的用户名和主机名 |
-| [`VERSION()`](#version) | 返回表示 MySQL 服务器版本的字符串 |
+| [`SCHEMA()`](#schema) | 与 `DATABASE()` 同义  |
+| [`SESSION_USER()`](#session_user) | 与 `USER()` 同义   |
+| [`SYSTEM_USER()`](#system_user) | 与 `USER()` 同义   |
+| [`USER()`](#user) | 返回客户端提供的用户名和主机名    |
+| [`VERSION()`](#version) | 返回当前 MySQL 服务器的版本信息   |
 
 ### BENCHMARK()
 
-`BENCHMARK()` 函数执行给定的表达式指定次数。
+`BENCHMARK()` 函数可以按照指定的次数重复执行给定的表达式。
 
 语法：
 
@@ -55,21 +55,9 @@ SELECT BENCHMARK(5, SLEEP(2));
 
 ### CONNECTION_ID()
 
-<CustomContent platform="tidb">
+`CONNECTION_ID()` 函数返回连接的 ID。根据 TiDB 的 [`enable-32bits-connection-id`](/tidb-configuration-file.md#enable-32bits-connection-id-从-v730-版本开始引入) 配置项的值不同，该函数将返回一个 32 位或 64 位的连接 ID。
 
-`CONNECTION_ID()` 函数返回连接的 ID。根据 TiDB 的 [`enable-32bits-connection-id`](/tidb-configuration-file.md#enable-32bits-connection-id-new-in-v730) 配置项的值，该函数返回 32 位或 64 位的连接 ID。
-
-如果启用 [`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-new-in-v610)，可以使用连接 ID 来终止跨多个 TiDB 实例的查询。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-`CONNECTION_ID()` 函数返回连接的 ID。根据 TiDB 的 [`enable-32bits-connection-id`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#enable-32bits-connection-id-new-in-v730) 配置项的值，该函数返回 32 位或 64 位的连接 ID。
-
-如果启用 [`enable-global-kill`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#enable-global-kill-new-in-v610)，可以使用连接 ID 来终止跨多个 TiDB 实例的查询。
-
-</CustomContent>
+如果启用了 [`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-从-v610-版本开始引入)，连接的 ID 可用于在同一集群的多个 TiDB 实例中终止查询。
 
 ```sql
 SELECT CONNECTION_ID();
@@ -86,17 +74,7 @@ SELECT CONNECTION_ID();
 
 ### CURRENT_ROLE()
 
-<CustomContent platform="tidb">
-
-`CURRENT_ROLE()` 函数返回当前会话的 [role](/role-based-access-control.md)。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-`CURRENT_ROLE()` 函数返回当前会话的 [role](https://docs.pingcap.com/tidb/stable/role-based-access-control)。
-
-</CustomContent>
+`CURRENT_ROLE()` 函数返回当前会话的当前[角色](/role-based-access-control.md)。
 
 ```sql
 SELECT CURRENT_ROLE();
@@ -113,7 +91,7 @@ SELECT CURRENT_ROLE();
 
 ### CURRENT_USER()
 
-`CURRENT_USER()` 函数返回当前会话使用的账户。
+`CURRENT_USER()` 函数返回当前会话中使用的账户。
 
 ```sql
 SELECT CURRENT_USER();
@@ -130,7 +108,7 @@ SELECT CURRENT_USER();
 
 ### DATABASE()
 
-`DATABASE()` 函数返回当前会话使用的数据库架构。
+`DATABASE()` 函数返回当前会话正在使用的数据库名。
 
 ```sql
 SELECT DATABASE();
@@ -147,7 +125,7 @@ SELECT DATABASE();
 
 ### FOUND_ROWS()
 
-`FOUND_ROWS()` 函数返回上一次执行的 `SELECT` 语句的结果集中的行数。
+`FOUND_ROWS()` 函数返回上一条执行的 `SELECT` 语句的结果集中的行数。
 
 ```sql
 SELECT 1 UNION ALL SELECT 2;
@@ -176,13 +154,13 @@ SELECT FOUND_ROWS();
 1 row in set (0.00 sec)
 ```
 
-> **Note:**
+> **注意：**
 >
-> `SQL_CALC_FOUND_ROWS` 查询修饰符，用于在不考虑 `LIMIT` 子句的情况下计算结果集中的总行数，仅在 [`tidb_enable_noop_functions`](/system-variables.md#tidb_enable_noop_functions-new-in-v40) 被启用时才被接受。该查询修饰符从 MySQL 8.0.17 开始已被弃用，建议使用 `COUNT(*)`。
+> `SQL_CALC_FOUND_ROWS` 查询修饰符用于计算在没有 `LIMIT` 子句的情况下结果集中的总行数，只有在启用了 [`tidb_enable_noop_functions`](/system-variables.md#tidb_enable_noop_functions-从-v40-版本开始引入) 时才能使用。从 MySQL 8.0.17 开始，该查询修饰符已废弃。建议使用 `COUNT(*)` 代替。
 
 ### LAST_INSERT_ID()
 
-`LAST_INSERT_ID()` 函数返回包含 [`AUTO_INCREMENT`](/auto-increment.md) 或 [`AUTO_RANDOM`](/auto-random.md) 列的表中最后一次插入的行的 ID。
+`LAST_INSERT_ID()` 函数返回包含 [`AUTO_INCREMENT`](/auto-increment.md) 或 [`AUTO_RANDOM`](/auto-random.md) 列的表中最后插入行的 ID。
 
 ```sql
 CREATE TABLE t1(id SERIAL);
@@ -212,13 +190,13 @@ TABLE t1;
 2 rows in set (0.00 sec)
 ```
 
-> **Note**
+> **注意**
 >
-> - 在 TiDB 中，[`AUTO_ID_CACHE`](/auto-increment.md#auto_id_cache) 可能导致结果与 MySQL 返回的不同。这种差异源于 TiDB 在每个节点缓存 ID，可能导致 ID 不按顺序或出现空隙。如果对你的应用程序来说，严格的 ID 顺序很重要，可以启用 [MySQL 兼容模式](/auto-increment.md#mysql-compatibility-mode)。
+> - 在 TiDB 中，[`AUTO_ID_CACHE`](/auto-increment.md#auto_id_cache) 可能会导致该函数的返回结果与 MySQL 不同。这是因为 TiDB 在每个节点上都会各自缓存 ID，这可能导致分配的 ID 出现无序或间隔。如果你的应用程序依赖于严格的 ID 顺序，可以启用[兼容 MySQL 的自增列模式](/auto-increment.md#兼容-mysql-的自增列模式)。
 >
-> - 在前述示例中，ID 增加了 2，而 MySQL 在相同场景下会生成递增 1 的 ID。更多兼容性信息，请参见 [Auto-increment ID](/mysql-compatibility.md#auto-increment-id)。
+> - 在以上示例中，ID 是以 2 递增的，而 MySQL 在相同场景中生成的 ID 是以 1 递增的。关于兼容性的更多信息，请参见[自增 ID](/mysql-compatibility.md#自增-id)。
 
-`LAST_INSERT_ID(expr)` 函数可以接受一个表达式作为参数，将其存储为下一次调用 `LAST_INSERT_ID()` 时返回的值。你可以用它作为生成序列的 MySQL 兼容方法。注意，TiDB 也支持正确的 [sequence functions](/functions-and-operators/sequence-functions.md)。
+`LAST_INSERT_ID(expr)` 函数可以接受一个表达式作为参数，并将该值存储以供下一次调用 `LAST_INSERT_ID()` 时使用。你可以使用该函数生成序列，与 MySQL 保持兼容。注意 TiDB 也支持标准的[序列函数](/functions-and-operators/sequence-functions.md)。
 
 ### ROW_COUNT()
 
@@ -243,19 +221,19 @@ SELECT ROW_COUNT();
 
 ### SCHEMA()
 
-`SCHEMA()` 函数是 [`DATABASE()`](#database) 的同义词。
+`SCHEMA()` 函数与 [`DATABASE()`](#database) 同义。
 
 ### SESSION_USER()
 
-`SESSION_USER()` 函数是 [`USER()`](#user) 的同义词。
+`SESSION_USER()` 函数与 [`USER()`](#user) 同义。
 
 ### SYSTEM_USER()
 
-`SYSTEM_USER()` 函数是 [`USER()`](#user) 的同义词。
+`SYSTEM_USER()` 函数与 [`USER()`](#user) 同义。
 
 ### USER()
 
-`USER()` 函数返回当前连接的用户。可能与 `CURRENT_USER()` 的输出略有不同，因为 `USER()` 显示实际的 IP 地址，而不是通配符。
+`USER()` 函数返回当前连接的用户。该函数的输出可能与 `CURRENT_USER()` 的输出略有不同，因为 `USER()` 显示的是实际 IP 地址，而不是通配符。
 
 ```sql
 SELECT USER(), CURRENT_USER();
@@ -272,7 +250,7 @@ SELECT USER(), CURRENT_USER();
 
 ### VERSION()
 
-`VERSION()` 函数返回 TiDB 版本，格式与 MySQL 兼容。若想获得更详细的结果，可以使用 [`TIDB_VERSION()`](/functions-and-operators/tidb-functions.md#tidb_version)。
+`VERSION()` 函数以与 MySQL 兼容的格式返回 TiDB 版本。如需获取更详细的版本信息，可以使用 [`TIDB_VERSION()`](/functions-and-operators/tidb-functions.md#tidb_version) 函数。
 
 ```sql
 SELECT VERSION();
@@ -299,23 +277,19 @@ Store: tikv
 1 row in set (0.00 sec)
 ```
 
-上述示例来自 TiDB v7.5.1，标识为 MySQL 8.0.11。
+以上示例来自 TiDB v7.5.1，它会将自身标识为 MySQL 8.0.11。
 
-<CustomContent platform="tidb">
+如需更改该函数返回的版本，可以修改 [`server-version`](/tidb-configuration-file.md#server-version) 配置项。
 
-如果你想修改返回的版本，可以调整 [`server-version`](/tidb-configuration-file.md#server-version) 配置项。
+## TiDB 特有的信息函数
 
-</CustomContent>
+下列函数为 TiDB 中特有的信息函数，MySQL 中无对应的函数。
 
-## TiDB 特有函数
+| 函数名 | 功能描述                                 |
+| ------ | ---------------------------------------- |
+| [`CURRENT_RESOURCE_GROUP()`](/functions-and-operators/tidb-functions.md#current_resource_group) | 返回当前连接的资源组名 |
 
-以下函数仅支持 TiDB，没有对应的 MySQL 等价函数。
-
-| 名称 | 描述 |
-|:-----|:------------|
-| [`CURRENT_RESOURCE_GROUP()`](/functions-and-operators/tidb-functions.md#current_resource_group)  | 返回当前会话绑定的资源组名称 |
-
-## 不支持的函数
+## TiDB 不支持的信息函数
 
 * `CHARSET()`
 * `COERCIBILITY()`

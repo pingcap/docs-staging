@@ -1,48 +1,48 @@
 ---
-title: Troubleshoot TiProxy
-summary: Learn some common problems, causes, and solutions for TiProxy.
+title: TiProxy 常见问题
+summary: 介绍 TiProxy 的常见问题、原因及解决办法。
 ---
 
-# Troubleshoot TiProxy
+# TiProxy 常见问题
 
-This document describes some common problems, causes, and solutions for TiProxy.
+本文介绍了一些 TiProxy 常见问题、原因及解决办法。
 
-## Cannot connect to TiProxy
+## TiProxy 连接不上
 
-You can troubleshoot the issue by following these steps:
+可以通过以下步骤依次排查：
 
-1. Check if the [connector version](/tiproxy/tiproxy-overview.md#supported-connectors) is supported. If the connector is not in the list, check if the connector supports [authentication plugins](https://dev.mysql.com/doc/refman/8.0/en/pluggable-authentication.html).
-2. If the client reports `No available TiDB instances, please make sure TiDB is available`, check if there is a TiDB server and if the SQL port and HTTP status port of the TiDB server can be connected normally.
-3. If the client reports `Require TLS enabled on TiProxy when require-backend-tls=true`, check if TiProxy is correctly configured with TLS certificates.
-4. If the client reports `Verify TiDB capability failed, please upgrade TiDB`, check if the TiDB server version is v6.5.0 or later.
-5. If the client reports `TiProxy fails to connect to TiDB, please make sure TiDB is available`, check if the TiProxy node can connect to the TiDB server.
-6. If the client reports `Require TLS enabled on TiDB when require-backend-tls=true`, check if TiDB is correctly configured with TLS certificates.
-7. If the client reports `TiProxy fails to connect to TiDB, please make sure TiDB proxy-protocol is set correctly`, check if [`proxy.proxy-protocol`](/tiproxy/tiproxy-configuration.md#proxy-protocol) is enabled on TiProxy and [`proxy-protocol`](/tidb-configuration-file.md#proxy-protocol) is not enabled on the TiDB server.
-8. Check if TiProxy is configured with [`max-connections`](/tiproxy/tiproxy-configuration.md#max-connections) and if the number of connections on TiProxy exceeds the maximum connection limit.
-9. Check the TiProxy log for error messages.
+1. 检查[连接器版本](/tiproxy/tiproxy-overview.md#tiproxy-支持的连接器)是否支持。如果连接器不在列表中，请查看连接器是否支持[认证插件](https://dev.mysql.com/doc/refman/8.0/en/pluggable-authentication.html)。
+2. 如果客户端报错 `No available TiDB instances, please make sure TiDB is available`，请检查是否有 TiDB server，且 TiDB server 的 SQL 端口和 HTTP 状态端口是否都可以正常连接。
+3. 如果客户端报错 `Require TLS enabled on TiProxy when require-backend-tls=true`，请检查 TiProxy 是否正确配置了 TLS 证书。
+4. 如果客户端报错 `Verify TiDB capability failed, please upgrade TiDB`，请检查 TiDB server 版本是否为 v6.5.0 及以上版本。
+5. 如果客户端报错 `TiProxy fails to connect to TiDB, please make sure TiDB is available`，请检查 TiProxy 的节点是否能连接到 TiDB server。
+6. 如果客户端报错 `Require TLS enabled on TiDB when require-backend-tls=true`，请检查 TiDB 是否配正确配置了 TLS 证书。
+7. 如果客户端报错 `TiProxy fails to connect to TiDB, please make sure TiDB proxy-protocol is set correctly`，请检查是否 TiProxy 开启了 [proxy.proxy-protocol](/tiproxy/tiproxy-configuration.md#proxy-protocol) 而 TiDB server 没有开启[proxy-protocol](/tidb-configuration-file.md#proxy-protocol)。
+8. 检查 TiProxy 是否配置了 [`max-connections`](/tiproxy/tiproxy-configuration.md#max-connections) 且 TiProxy 上的连接数超过了最大连接数限制。
+9. 检查 TiProxy 日志，查看错误信息。
 
-## TiProxy does not migrate connections
+## TiProxy 没有迁移连接
 
-You can troubleshoot the issue by following these steps:
+可以通过以下步骤依次排查：
 
-1. Whether the [TiProxy limitations](/tiproxy/tiproxy-overview.md#limitations) are not met. You can further confirm this by checking the TiProxy log.
-2. Whether [`security.session-token-signing-cert`](/tidb-configuration-file.md#session-token-signing-cert-new-in-v640), [`security.session-token-signing-key`](/tidb-configuration-file.md#session-token-signing-key-new-in-v640), and [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50) are correctly configured on TiDB.
+1. 是否没有满足 [TiProxy 的使用限制](/tiproxy/tiproxy-overview.md#使用限制)。可以结合 TiProxy 日志进一步确认。
+2. 是否正确配置了 TiDB 的 [`security.session-token-signing-cert`](/tidb-configuration-file.md#session-token-signing-cert-从-v640-版本开始引入)，[`security.session-token-signing-key`](/tidb-configuration-file.md#session-token-signing-key-从-v640-版本开始引入)，和 [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-从-v50-版本开始引入)。
 
-## Unbalanced CPU usage on TiDB server
+## TiDB server 的 CPU 使用率不均
 
-You can troubleshoot the issue by following these steps:
+可以通过以下步骤依次排查：
 
-1. Check if there is a significant difference in CPU usage among TiDB servers. TiProxy does not guarantee identical CPU usage across TiDB servers. It only performs [load balancing](/tiproxy/tiproxy-load-balance.md) when the CPU usage difference is large enough to affect query latency.
-2. If the connection count of a TiDB server gradually drops to zero, it might be affected by other load balancing policies. You can check the [`Session Migration Reasons`](/tiproxy/tiproxy-grafana.md#balance) metric in Grafana to see if there are migrations based on other policies.
-3. Check if the TiProxy configuration item [`policy`](/tiproxy/tiproxy-configuration.md#policy) is set to `location`. If location-based prioritization is enabled, TiProxy does not balance CPU usage across different locations.
-4. Check the version of TiProxy. Only v1.1.0 and later versions support CPU-based load balancing. Earlier versions use a load balancing policy based on minimum connection count.
-5. If none of the preceding situations apply, the connection migration might have failed. To troubleshoot further, see [TiProxy does not migrate connections](#tiproxy-does-not-migrate-connections).
+1. 检查 TiDB server 之间的 CPU 使用率差异是否较大。TiProxy 并不保证所有 TiDB server 的 CPU 使用率接近，只有当 CPU 使用率差异较大影响查询延迟时才会进行[负载均衡](/tiproxy/tiproxy-load-balance.md)。
+2. 如果有 TiDB server 的连接数逐渐降为 0，可能是受到了其他负载均衡策略的影响，你可以通过查看 Grafana 中的 [`Session Migration Reasons`](/tiproxy/tiproxy-grafana.md#balance) 检查是否有基于其他策略的迁移。
+3. 检查 TiProxy 配置项 [`policy`](/tiproxy/tiproxy-configuration.md#policy) 的值是否为 `location`。采用地理位置优先的策略后，TiProxy 将不保证不同地理位置的 TiProxy 之间的 CPU 使用率均衡。
+4. 检查 TiProxy 的版本，仅 v1.1.0 及以上版本支持[基于 CPU 的负载均衡](/tiproxy/tiproxy-load-balance.md#基于-cpu-的负载均衡)，较低版本基于最少连接数的策略负载均衡。
+5. 如果以上情况均不符合，可能是迁移连接失败，请根据 [TiProxy 没有迁移连接](#tiproxy-没有迁移连接)排查。
 
-## Latency is significantly increased
+## 延迟明显升高
 
-You can troubleshoot the issue by following these steps:
+可以通过以下步骤依次排查：
 
-1. Check the latency on TiProxy through Grafana. If the latency on TiProxy is not high, it means that the client load is high or the network latency between the client and TiProxy is high.
-2. Check the latency on the TiDB server through Grafana. If the latency on the TiDB server is high, follow the steps in [Latency increases significantly](/tidb-troubleshooting-map.md#2-latency-increases-significantly) to troubleshoot.
-3. Check the [network duration between TiProxy and TiDB server](/tiproxy/tiproxy-grafana.md#backend) through Grafana.
-4. Check the CPU usage on TiProxy. If the CPU usage is over 90%, you need to scale out TiProxy.
+1. 通过 Grafana 监控指标检查 TiProxy 上显示的延迟。如果 TiProxy 上显示的延迟不高，则是客户端负载高或客户端与 TiProxy 之间的网络延迟高。
+2. 通过 Grafana 监控指标检查 TiDB server 上显示的延迟。如果 TiDB server 上显示的延迟高，则通过 TiDB 的[延迟明显升高](/tidb-troubleshooting-map.md#2-延迟明显升高)的步骤排查。
+3. 通过 Grafana 监控指标检查 [TiProxy 与 TiDB server 之间网络通信时间](/tiproxy/tiproxy-grafana.md#backend)。
+4. 检查 TiProxy 的 CPU 使用率。如果 CPU 使用率超过 90%，则需要扩容 TiProxy。

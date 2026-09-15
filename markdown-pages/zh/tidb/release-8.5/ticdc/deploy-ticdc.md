@@ -1,25 +1,25 @@
 ---
-title: Deploy and Maintain TiCDC
-summary: Learn the hardware and software recommendations for deploying and running TiCDC, and how to deploy and maintain it.
+title: TiCDC 安装部署与集群运维
+summary: 了解 TiCDC 软硬件环境要求以及如何安装部署和运维 TiCDC 集群。
 ---
 
-# Deploy and Maintain TiCDC
+# TiCDC 安装部署与集群运维
 
-This document describes how to deploy and maintain a TiCDC cluster, including the hardware and software recommendations. You can either deploy TiCDC along with a new TiDB cluster or add the TiCDC component to an existing TiDB cluster.
+本文档介绍部署 TiCDC 集群的软硬件环境要求，如何安装部署 TiCDC 集群，以及如何对 TiCDC 集群进行运维操作。你可以选择在安装 TiDB 集群的同时部署 TiCDC，也可以对原有 TiDB 集群新增 TiCDC 组件。
 
-## Software and hardware recommendations
+## 软件和硬件环境推荐配置
 
-In production environments, the recommendations of hardware for TiCDC are as follows:
+在生产环境中，TiCDC 硬件配置推荐如下：
 
-| CPU | Memory | Disk | Network | Number of TiCDC cluster instances (minimum requirements for production environment) |
-| :--- | :--- | :--- | :--- | :--- |
-| 16 core+ | 64 GB+ | 500 GB+ SSD | 10 Gigabit network card (2 preferred） | 2 |
+| CPU | 内存 | 硬盘               | 网络 | TiCDC 集群实例数量（生产环境最低要求） |
+| --- | --- |------------------| --- | --- |
+| 16 核+ | 64 GB+ | 500 GB+ SSD 类型硬盘 | 万兆网卡（2 块最佳） | 2 |
 
-For more information, see [Software and Hardware Recommendations](/hardware-and-software-requirements.md).
+软件配置推荐及更多信息，参见 [TiDB 软件和硬件环境需求](/hardware-and-software-requirements.md)。
 
-## Deploy a new TiDB cluster that includes TiCDC using TiUP
+## 使用 TiUP 部署包含 TiCDC 组件的全新 TiDB 集群
 
-When you deploy a new TiDB cluster using TiUP, you can also deploy TiCDC at the same time. You only need to add the `cdc_servers` section in the configuration file that TiUP uses to start the TiDB cluster. The following is an example:
+在使用 TiUP 部署全新 TiDB 集群时，支持同时部署 TiCDC 组件。你需要在 TiUP 启动 TiDB 集群时的配置文件中加入 TiCDC 相关的部分，以下是一个示例：
 
 ```shell
 cdc_servers:
@@ -31,21 +31,21 @@ cdc_servers:
     data_dir: "/cdc-data"
 ```
 
-More references:
+更多参考：
 
-- For detailed operations, see [Edit the initialization configuration file](/production-deployment-using-tiup.md#step-3-initialize-the-cluster-topology-file).
-- For detailed configurable fields, see [Configure `cdc_servers` using TiUP](/tiup/tiup-cluster-topology-reference.md#cdc_servers).
-- For detailed steps to deploy a TiDB cluster, see [Deploy a TiDB Cluster Using TiUP](/production-deployment-using-tiup.md).
+- 详细配置参数，请参考[编辑初始化配置文件](/production-deployment-using-tiup.md#第-3-步初始化集群拓扑文件)。
+- 具体可配置字段，请参考[通过 TiUP 配置 `cdc_servers`](/tiup/tiup-cluster-topology-reference.md#cdc_servers)。
+- 部署集群的具体步骤，请参考[使用 TiUP 部署 TiDB 集群](/production-deployment-using-tiup.md)。
 
-> **Note:**
+> **注意：**
 >
-> Before installing TiCDC, ensure that you have [manually configured the SSH mutual trust and sudo without password](/check-before-deployment.md#manually-configure-the-ssh-mutual-trust-and-sudo-without-password) between the TiUP control machine and the TiCDC host.
+> 在安装之前，请确认 TiUP 中控机与 TiCDC 目标主机的 [SSH 互信及 sudo 免密](/check-before-deployment.md#手动配置-ssh-互信及-sudo-免密码)已经完成配置。
 
-## Add or scale out TiCDC to an existing TiDB cluster using TiUP
+## 使用 TiUP 在原有 TiDB 集群上新增或扩容 TiCDC 组件
 
-The method of scaling out a TiCDC cluster is similar to that of deploying one. It is recommended to use TiUP to perform the scale-out.
+扩容的方式与部署 TiCDC 集群的方式类似，推荐使用 TiUP 工具完成。
 
-1. Create a `scale-out.yml` file to add the TiCDC node information. The following is an example:
+1. 编写一个名为 `scale-out.yml` 的配置文件，包含需要扩容的节点的配置信息。下面是一个示例：
 
     ```shell
     cdc_servers:
@@ -60,27 +60,27 @@ The method of scaling out a TiCDC cluster is similar to that of deploying one. I
         data_dir: /tidb-data/cdc-8300
     ```
 
-2. Run the scale-out command on the TiUP control machine:
+2. 在 TiUP 中控机上执行类似下面的命令进行扩容：
 
     ```shell
     tiup cluster scale-out <cluster-name> scale-out.yml
     ```
 
-For more use cases, see [Scale out a TiCDC cluster](/scale-tidb-using-tiup.md#scale-out-a-ticdc-cluster).
+更多用例说明，请参考[扩容 TiCDC 节点](/scale-tidb-using-tiup.md#扩容-ticdc-节点)。
 
-## Delete or scale in TiCDC from an existing TiDB cluster using TiUP
+## 使用 TiUP 在原有 TiDB 集群上移除或缩容 TiCDC 组件
 
-It is recommended that you use TiUP to scale in TiCDC nodes. The following is the scale-in command:
+推荐使用 TiUP 完成对 TiCDC 集群节点的缩容。使用类似下面的命令完成缩容:
 
 ```shell
 tiup cluster scale-in <cluster-name> --node 10.0.1.4:8300
 ```
 
-For more use cases, see [Scale in a TiCDC cluster](/scale-tidb-using-tiup.md#scale-in-a-ticdc-cluster).
+更多用例说明，请参考[缩容 TiCDC 节点](/scale-tidb-using-tiup.md#缩容-ticdc-节点)。
 
-## Upgrade TiCDC using TiUP
+## 使用 TiUP 升级 TiCDC 集群
 
-You can upgrade TiDB clusters using TiUP, during which TiCDC is upgraded as well. After you execute the upgrade command, TiUP automatically upgrades the TiCDC component. The following is an example:
+TiUP 支持升级 TiDB 集群，包括 TiCDC 组件。执行升级指令时，TiUP 会自动升级 TiCDC 组件，无需额外操作。操作示例如下：
 
 ```shell
 tiup update --self && \
@@ -88,33 +88,33 @@ tiup update --all && \
 tiup cluster upgrade <cluster-name> <version> --transfer-timeout 600
 ```
 
-> **Note:**
+> **注意：**
 >
-> In the preceding command, you need to replace `<cluster-name>` and `<version>` with the actual cluster name and cluster version. For example, the version can be 8.5.8.
+> 命令中的 `<cluster-name>` 需要替换为集群名字，`<version>` 需要替换为目标版本号，例如 v8.5.8。
 
-### Upgrade cautions
+### 升级的注意事项
 
-When you upgrade a TiCDC cluster, you need to pay attention to the following:
+升级 TiCDC 集群时，需要注意以下事项：
 
-- TiCDC v4.0.2 reconfigured `changefeed`. For details, see [Configuration file compatibility notes](/ticdc/ticdc-compatibility.md#cli-and-configuration-file-compatibility).
-- If you encounter any problem during the upgrade, you can refer to [upgrade FAQs](/upgrade-tidb-using-tiup.md#faq) for solutions.
-- Since v6.3.0, TiCDC supports rolling upgrade. During the upgrade, the replication latency is stable and does not fluctuate significantly. Rolling upgrade takes effect automatically if the following conditions are met:
+- TiCDC v4.0.2 对 `changefeed` 的配置做了调整，请参阅[配置文件兼容注意事项](/ticdc/ticdc-compatibility.md#命令行参数和配置文件兼容性)。
+- 升级期间遇到的问题及其解决办法，请参阅[使用 TiUP 升级 TiDB](/upgrade-tidb-using-tiup.md#4-升级-faq)。
+- TiCDC 自 v6.3.0 起支持滚动升级，小版本之间可以直接滚动升级（v8.5.0 -> v8.5.3 属于小版本，v8.1.x -> v8.5.x 属于大版本）。不推荐 TiCDC 老架构在跨大版本的升级过程中运行 Changefeed，建议暂停 Changefeed 再做 TiCDC 老架构的升级。TiCDC 新架构支持在滚动升级的过程中运行 Changefeed。更多说明请参考 [TiCDC 历史版本滚动升级兼容性说明](/ticdc/ticdc-compatibility.md#历史版本升级的兼容性说明)。满足以下条件将自动启用滚动升级：
 
-- TiCDC is v6.3.0 or later.
-    - TiUP is v1.11.3 or later.
-    - At least two TiCDC instances are running in the cluster.
+    - TiCDC 版本大于等于 v6.3.0。
+    - TiUP 版本大于等于 v1.11.3。
+    - 集群中至少有两个正在运行的 TiCDC 实例。
 
-## Modify TiCDC cluster configurations using TiUP
+## 使用 TiUP 变更 TiCDC 集群配置
 
-This section describes how to use the [`tiup cluster edit-config`](/tiup/tiup-component-cluster-edit-config.md) command to modify the configurations of TiCDC. In the following example, it is assumed that you need to change the default value of `gc-ttl` from `86400` to `172800` (48 hours).
+本节介绍如何使用 TiUP 的 [`tiup cluster edit-config`](/tiup/tiup-component-cluster-edit-config.md) 命令来修改 TiCDC 的配置。在以下例子中，假设需要把 TiCDC 的 `gc-ttl` 从默认值 `86400` 修改为 `172800`，即 48 小时。
 
-1. Run the `tiup cluster edit-config` command. Replace `<cluster-name>` with the actual cluster name:
+1. 执行 `tiup cluster edit-config` 命令，注意将 `<cluster-name>` 替换成实际的集群名：
 
     ```shell
     tiup cluster edit-config <cluster-name>
     ```
 
-2. In the vi editor, modify the `cdc` [`server-configs`](/tiup/tiup-cluster-topology-reference.md#server_configs):
+2. 在 vi 编辑器页面，修改 [`server-configs`](/tiup/tiup-cluster-topology-reference.md#server_configs) 下的 `cdc` 配置：
 
     ```shell
     server_configs:
@@ -127,25 +127,25 @@ This section describes how to use the [`tiup cluster edit-config`](/tiup/tiup-co
         gc-ttl: 172800
     ```
 
-    In the preceding command, `gc-ttl` is set to 48 hours.
+    以上把 TiCDC 的 `gc-ttl` 的值设置为 48 小时。
 
-3. Run the `tiup cluster reload -R cdc` command to reload the configuration.
+3. 执行 `tiup cluster reload <cluster-name> -R cdc` 命令重新加载配置。
 
-## Stop and start TiCDC using TiUP
+## 使用 TiUP 终止和启动 TiCDC 节点
 
-You can use TiUP to easily stop and start TiCDC nodes. The commands are as follows:
+使用 TiUP 可以方便地终止和启动 TiCDC 节点，命令如下：
 
-- Stop TiCDC: `tiup cluster stop -R cdc`
-- Start TiCDC: `tiup cluster start -R cdc`
-- Restart TiCDC: `tiup cluster restart -R cdc`
+- 终止 TiCDC 节点：`tiup cluster stop <cluster-name> -R cdc`
+- 启动 TiCDC 节点：`tiup cluster start <cluster-name> -R cdc`
+- 重启 TiCDC 节点：`tiup cluster restart <cluster-name> -R cdc`
 
-## Enable TLS for TiCDC
+## 使用加密传输 (TLS) 功能
 
-See [Enable TLS Between TiDB Components](/enable-tls-between-components.md).
+请参阅[为 TiDB 组件间通信开启加密传输](/enable-tls-between-components.md)。
 
-## View TiCDC status using the command-line tool
+## 使用 TiCDC 命令行工具来查看集群状态
 
-Run the following command to view the TiCDC cluster status. Note that you need to replace `v<CLUSTER_VERSION>` with the TiCDC cluster version, such as `8.5.8`:
+执行以下命令来查看 TiCDC 集群运行状态，注意需要将 `v<CLUSTER_VERSION>` 替换为 TiCDC 集群版本，例如 `v8.5.8`：
 
 ```shell
 tiup cdc:v<CLUSTER_VERSION> cli capture list --server=http://10.0.10.25:8300
@@ -168,7 +168,7 @@ tiup cdc:v<CLUSTER_VERSION> cli capture list --server=http://10.0.10.25:8300
 ]
 ```
 
-- `id`: Indicates the ID of the service process.
-- `is-owner`: Indicates whether the service process is the owner node.
-- `address`: Indicates the address via which the service process provides interface to the outside.
-- `cluster-id`: Indicates the ID of the TiCDC cluster. The default value is `default`.
+- `id`：表示服务进程的 ID。
+- `is-owner`：表示该服务进程是否为 owner 节点。
+- `address`：该服务进程对外提供接口的地址。
+- `cluster-id`：该 TiCDC 的集群 ID，默认值为 `default`。

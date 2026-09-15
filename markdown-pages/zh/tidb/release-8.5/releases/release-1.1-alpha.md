@@ -1,52 +1,53 @@
 ---
 title: TiDB 1.1 Alpha Release Notes
-summary: TiDB 1.1 Alpha, released on January 19, 2018, brings significant improvements in MySQL compatibility, SQL optimization, stability, and performance. Key updates include enhanced SQL parser, query optimizer, and executor, as well as server support for the PROXY protocol. PD now offers more APIs, TLS support, and improved scheduling, while TiKV introduces Raft learner support, TLS, and performance optimizations. Additionally, it enhances data recovery tools and improves flow control mechanisms.
+summary: TiDB 1.1 Alpha 版本发布，对 MySQL 兼容性、SQL 优化器、系统稳定性、性能做了大量工作。包括 SQL parser 兼容更多语法，SQL 查询优化器优化统计信息、代价估算，使用 `Count-Min Sketch` 更精确地估算点查的代价，SQL 执行器重构执行器算子，优化 `INSERT IGNORE` 语句性能，下推更多类型和函数，支持更多 `SQL_MODE`，优化 `Load Data` 性能，支持对物理算子内存使用进行统计。PD 增加更多 API，支持 TLS，调度适应不同的 Region size，修复调度 bug。TiKV 支持 Raft learner，优化 Raft Snapshot，支持 TLS，优化 RocksDB 配置，优化 Coprocessor 性能，增加 Failpoint 和稳定性测试 case，解决 PD 和 TiKV 重连问题，增强数据恢复工具功能，Region 支持按 table 分裂，支持 `Delete Range` 功能，支持设置 snapshot 导致的 I/O 上限，完善流控机制。
+aliases: ['/zh/tidb/dev/release-1.1-alpha/','/zh/tidb/v1.1/release-1.1-alpha','/docs-cn/dev/releases/release-1.1-alpha/','/docs-cn/dev/releases/11alpha/','/zh/tidb/v5.4/release-1.1-alpha','/zh/tidb/v6.1/release-1.1-alpha','/zh/tidb/v6.5/release-1.1-alpha','/zh/tidb/v7.1/release-1.1-alpha','/zh/tidb/v7.5/release-1.1-alpha','/zh/tidb/v8.1/release-1.1-alpha']
 ---
 
 # TiDB 1.1 Alpha Release Notes
 
-On January 19, 2018, TiDB 1.1 Alpha is released. This release has great improvement in MySQL compatibility, SQL optimization, stability, and performance.
+2018 年 1 月 19 日，TiDB 发布 1.1 Alpha 版。该版本对 MySQL 兼容性、SQL 优化器、系统稳定性、性能做了大量的工作。
 
 ## TiDB
 
 - SQL parser
-    - Support more syntax
-- SQL query optimizer
-    - Use more compact structure to reduce statistics info memory usage
-    - Speed up loading statistics info when starting tidb-server
-    - Provide more accurate query cost evaluation
-    - Use `Count-Min Sketch` to estimate the cost of queries using unique index more accurately
-    - Support more complex conditions to make full use of index
-- SQL executor
-    - Refactor all executor operators using Chunk architecture, improve the execution performance of analytical statements and reduce memory usage
-    - Optimize performance of the `INSERT IGNORE` statement
-    - Push down more types and functions to TiKV
-    - Support more `SQL_MODE`
-    - Optimize the `Load Data` performance to increase the speed by 10 times
-    - Optimize the `Use Database` performance
-    - Support statistics on the memory usage of physical operators
+    - 兼容更多语法
+- SQL 查询优化器
+    - 统计信息减小内存占用
+    - 优化统计信息启动时载入的时间
+    - 更精确的代价估算
+    - 使用 `Count-Min Sketch` 更精确地估算点查的代价
+    - 支持更复杂的条件，更充分使用索引
+- SQL 执行器
+    - 使用 Chunk 结构重构所有执行器算子，提升分析型语句执行性能，减少内存占用
+    - 优化 `INSERT IGNORE` 语句性能
+    - 下推更多的类型和函数
+    - 支持更多的 `SQL_MODE`
+    - 优化 `Load Data` 性能，速度提升 10 倍
+    - 优化 `Use Database` 性能
+    - 支持对物理算子内存使用进行统计
 - Server
-    - Support the PROXY protocol
+    - 支持 PROXY protocol
 
 ## PD
 
-- Add more APIs
-- Support TLS
-- Add more cases for scheduling Simulator
-- Schedule to adapt to different Region sizes
-- Fix some bugs about scheduling
+- 增加更多的 API
+- 支持 TLS
+- 给 Simulator 增加更多的 case
+- 调度适应不同的 Region size
+- Fix 了一些调度的 bug
 
 ## TiKV
 
-- Support Raft learner
-- Optimize Raft Snapshot and reduce the I/O overhead
-- Support TLS
-- Optimize the RocksDB configuration to improve performance
-- Optimize `count (*)` and query performance of unique index in Coprocessor
-- Add more failpoints and stability test cases
-- Solve the reconnection issue between PD and TiKV
-- Enhance the features of the data recovery tool `tikv-ctl`
-- Support splitting according to table in Region
-- Support the `Delete Range` feature
-- Support setting the I/O limit caused by snapshot
-- Improve the flow control mechanism
+- 支持 Raft learner
+- 优化 Raft Snapshot，减少 I/O 开销
+- 支持 TLS
+- 优化 RocksDB 配置，提升性能
+- 优化 Coprocessor `count (*)` 和点查 unique index 的性能
+- 增加更多的 Failpoint 以及稳定性测试 case
+- 解决 PD 和 TiKV 之间重连的问题
+- 增强数据恢复工具 `tikv-ctl` 的功能
+- Region 支持按 table 进行分裂
+- 支持 `Delete Range` 功能
+- 支持设置 snapshot 导致的 I/O 上限
+- 完善流控机制

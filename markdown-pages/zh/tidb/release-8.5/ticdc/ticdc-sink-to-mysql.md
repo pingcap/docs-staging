@@ -1,15 +1,15 @@
 ---
-title: Replicate Data to MySQL-compatible Databases
-summary: Learn how to replicate data to TiDB or MySQL using TiCDC.
+title: 同步数据到 MySQL 兼容数据库
+summary: 了解如何使用 TiCDC 将数据同步到 TiDB 或 MySQL
 ---
 
-# Replicate Data to MySQL-compatible Databases
+# 同步数据到 MySQL 兼容数据库
 
-This document describes how to replicate incremental data to the downstream TiDB database or other MySQL-compatible databases using TiCDC. It also introduces how to use the eventually consistent replication feature in disaster scenarios.
+本文介绍如何使用 TiCDC 创建一个将增量数据复制到下游 TiDB 数据库，或其他兼容 MySQL 协议数据库的 Changefeed。同时介绍了如何使用 TiCDC 灾难场景的最终一致性复制功能。
 
-## Create a replication task
+## 创建同步任务，复制增量数据到 MySQL 兼容数据库
 
-Create a replication task by running the following command:
+使用以下命令来创建同步任务：
 
 ```shell
 cdc cli changefeed create \
@@ -24,87 +24,93 @@ ID: simple-replication-task
 Info: {"sink-uri":"mysql://root:123456@127.0.0.1:3306/","opts":{},"create-time":"2023-11-28T22:04:08.103600025+08:00","start-ts":415241823337054209,"target-ts":0,"admin-job-type":0,"sort-engine":"unified","sort-dir":".","config":{"case-sensitive":false,"filter":{"rules":["*.*"],"ignore-txn-start-ts":null,"ddl-allow-list":null},"mounter":{"worker-num":16},"sink":{"dispatchers":null},"scheduler":{"type":"table-number","polling-time":-1}},"state":"normal","history":null,"error":null}
 ```
 
-- `--server`: The address of any TiCDC server in the TiCDC cluster.
-- `--changefeed-id`: The ID of the replication task. The format must match the `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$` regular expression. If this ID is not specified, TiCDC automatically generates a UUID (the version 4 format) as the ID.
-- `--sink-uri`: The downstream address of the replication task. For details, see [Configure sink URI with `mysql`/`tidb`](#configure-sink-uri-for-mysql-or-tidb).
-- `--start-ts`: Specifies the starting TSO of the changefeed. From this TSO, the TiCDC cluster starts pulling data. The default value is the current time.
-- `--target-ts`: Specifies the ending TSO of the changefeed. To this TSO, the TiCDC cluster stops pulling data. The default value is empty, which means that TiCDC does not automatically stop pulling data.
-- `--config`: Specifies the changefeed configuration file. For details, see [TiCDC Changefeed Configuration Parameters](/ticdc/ticdc-changefeed-config.md).
+- `--server`：TiCDC 集群中任意一个 TiCDC 服务器的地址。
+- `--changefeed-id`：同步任务的 ID，格式需要符合正则表达式 `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`。如果不指定该 ID，TiCDC 会自动生成一个 UUID（version 4 格式）作为 ID。
+- `--sink-uri`：同步任务下游的地址，详见 [Sink URI 配置 `mysql`/`tidb`](#sink-uri-配置-mysqltidb)。
+- `--start-ts`：指定 changefeed 的开始 TSO。TiCDC 集群将从这个 TSO 开始拉取数据。默认为当前时间。
+- `--target-ts`：指定 changefeed 的目标 TSO。TiCDC 集群拉取数据直到这个 TSO 停止。默认为空，即 TiCDC 不会自动停止。
+- `--config`：指定 changefeed 配置文件，详见：[TiCDC Changefeed 配置参数](/ticdc/ticdc-changefeed-config.md)。
 
-> **Note:**
+> **注意：**
 >
-> - TiCDC only replicates incremental data. To initialize full data, use Dumpling/TiDB Lightning or BR.
-> - After the full data is initialized, you need to specify the `start-ts` as the TSO when the upstream backup is performed. For example, the `pos` value in the metadata file under the Dumpling directory, or the `backupTS` value in the log output after BR completes the backup.
+> TiCDC 工具只负责复制增量数据，需要使用 Dumpling/TiDB Lightning 工具或者 BR 工具进行全量数据的初始化。
+> 经过全量数据的初始化后，需要将 `start-ts` 指定为上游备份时的 TSO。例如：Dumpling 目录下 metadata 文件中的 pos 值，或者 BR 备份完成后输出日志中的 `backupTS`。
 
-## Configure sink URI for MySQL or TiDB
+## Sink URI 配置 `mysql`/`tidb`
 
-Sink URI is used to specify the connection information of the TiCDC target system. The format is as follows:
+Sink URI 用于指定 TiCDC 目标系统的连接信息，遵循以下格式：
 
 ```
 [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
 ```
 
-> **Note:**
+> **注意：**
 >
-> `/path` is not used for the MySQL sink.
+> `/path` 不适用于 MySQL sink。
 
-Sample configuration for MySQL:
+一个通用的配置样例如下所示：
 
 ```shell
 --sink-uri="mysql://root:12345678@127.0.0.1:3306"
 ```
 
-The following are descriptions of sink URI parameters and parameter values that can be configured for MySQL or TiDB:
+URI 中可配置的参数如下：
 
-| Parameter/Parameter value    | Description                                             |
+| 参数         | 描述                                             |
 | :------------ | :------------------------------------------------ |
-| `root`        | The username of the downstream database. To replicate data to TiDB or other MySQL-compatible databases, make sure that the downstream database user has [certain permissions](#permissions-required-for-the-downstream-database-user).                             |
-| `12345678`       | The password of the downstream database (can be encoded using Base64).                                      |
-| `127.0.0.1`    | The IP address of the downstream database.                               |
-| `3306`         | The port for the downstream database.                                 |
-| `worker-count` | The number of SQL statements that can be concurrently executed to the downstream (optional, the default value is `16`, and the maximum value is `1024`). |
-| `cache-prep-stmts` | Controls whether to use prepared statements when executing SQL in the downstream and enable prepared statement cache on the client side (optional, `true` by default). |
-| `max-txn-row` | The batch size of SQL statements executed to the downstream (optional, the default value is `256`, and the maximum value is `2048`). |
-| `max-multi-update-row` | The batch size of `UPDATE ROWS` SQL statements executed to the downstream when batch write (`batch-dml-enable`) is enabled, always less than `max-txn-row` (optional, the default value is `40`, and the maximum value is `256`). |
-| `max-multi-update-row-size` | The size limit of `UPDATE ROWS` SQL statements executed to the downstream when batch write (`batch-dml-enable`) is enabled. If the size exceeds this limit, each row is executed as a separate SQL statement (optional, the default value is `1024`, and the maximum value is `8192`). |
-| `ssl-ca` | The path of the CA certificate file needed to connect to the downstream MySQL instance (optional).  |
-| `ssl-cert` | The path of the certificate file needed to connect to the downstream MySQL instance (optional). |
-| `ssl-key` | The path of the certificate key file needed to connect to the downstream MySQL instance (optional). |
-| `time-zone` | The time zone used when connecting to the downstream MySQL instance, which is effective since v4.0.8. This is an optional parameter. If this parameter is not specified, the time zone of TiCDC service processes is used. If this parameter is set to an empty value, such as `time-zone=""`, no time zone is specified when TiCDC connects to the downstream MySQL instance and the default time zone of the downstream is used. |
-| `transaction-atomicity`  |  The atomicity level of a transaction. This is an optional parameter, with the default value of `none`. When the value is `table`, TiCDC ensures the atomicity of a single-table transaction. When the value is `none`, TiCDC splits the single-table transaction.  |
-| `batch-dml-enable` | Enables the batch write (batch-dml) feature (optional, the default value is `true`). |
-| `read-timeout` | The go-sql-driver parameter, [I/O read timeout](https://pkg.go.dev/github.com/go-sql-driver/mysql#readme-readtimeout) (optional, the default value is `2m`). |
-| `write-timeout` | The go-sql-driver parameter, [I/O write timeout](https://pkg.go.dev/github.com/go-sql-driver/mysql#readme-writetimeout) (optional, the default value is `2m`). |
-| `timeout` | The go-sql-driver parameter, [timeout for establishing connections](https://pkg.go.dev/github.com/go-sql-driver/mysql#readme-timeout), also known as dial timeout (optional, the default value is `2m`). |
-| `tidb-txn-mode` | Specifies the [`tidb_txn_mode`](/system-variables.md#tidb_txn_mode) environment variable (optional, the default value is `optimistic`). |
-| `safe-mode` | Specifies how TiCDC handles `INSERT` and `UPDATE` statements when replicating data to the downstream. When it is `true`, TiCDC converts all upstream `INSERT` statements to `REPLACE INTO` statements, and all `UPDATE` statements to `DELETE` + `REPLACE INTO` statements. Before v6.1.3, the default value of this parameter is `true`. Starting from v6.1.3, the default value is changed to `false`. When TiCDC starts, it obtains a current timestamp `ThresholdTs`. For `INSERT` and `UPDATE` statements with `CommitTs` less than `ThresholdTs`, TiCDC converts them to `REPLACE INTO` statements and `DELETE` + `REPLACE INTO` statements respectively. For `INSERT` and `UPDATE` statements with `CommitTs` greater than or equal to `ThresholdTs`, `INSERT` statements are directly replicated to the downstream, while the behavior of `UPDATE` statements follows the [TiCDC Behavior in Splitting UPDATE Events](/ticdc/ticdc-split-update-behavior.md). |
+| `root`        | 下游数据库的用户名。当同步数据到 TiDB 或其它兼容 MySQL 的数据库时，下游数据库的用户需要具备[一定的权限](#下游数据库用户所需的权限)。                             |
+| `12345678`     | 下游数据库密码（可采用 Base64 进行编码）。                                   |
+| `127.0.0.1`    | 下游数据库的 IP。                                |
+| `3306`         | 下游数据库的连接端口。                                 |
+| `worker-count` | 向下游执行 SQL 语句的并发度（可选，默认值为 `16`，最大值为 `1024`）。       |
+| `cache-prep-stmts` | 向下游执行 SQL 时是否使用 prepared statement 并且开启客户端的 prepared statement 缓存（可选，默认值为 `true`）。 |
+| `multi-stmt-enable` | 向下游执行的 SQL 语句是否支持通过分号分隔多个 SQL 语句（可选，默认值为 `true`）。如果设置为 `false`，则每个 SQL 语句都作为独立的事务执行。如果设置为 `true`，`cache-prep-stmts` 不会生效。 |
+| `max-txn-row`  | 向下游执行 SQL 语句的 batch 大小（可选，默认值为 `256`，最大值为 `2048`）。 |
+| `max-multi-update-row`  | 开启批量写入时，向下游执行 `UPDATE ROWS` SQL 语句的 batch 大小，总是小于 `max-txn-row`（可选，默认值为 `40`，最大值为 `256`）。|
+| `max-multi-update-row-size` | 开启批量写入特性时 (`batch-dml-enable`)，此参数用于控制向下游执行 `UPDATE ROWS` SQL 语句的批量处理大小（单位：字节）。若单行数据平均大小超过该阈值，则每行数据会作为独立的 SQL 执行（可选，默认值为 `1024`，最大值为 `8192`）。|
+| `ssl-ca`       | 连接下游 MySQL 实例所需的 CA 证书文件路径（可选）。 |
+| `ssl-cert`     | 连接下游 MySQL 实例所需的证书文件路径（可选）。 |
+| `ssl-key`      | 连接下游 MySQL 实例所需的证书密钥文件路径（可选）。 |
+| `time-zone`    | 连接下游 MySQL 和 TiDB 实例时使用的时区名称（即下游连接会话的 `time_zone`），从 v4.0.8 开始生效。（可选。如果不指定该参数，使用 TiCDC 服务进程的时区；如果指定该参数但使用空值，例如：`time-zone=""`，则表示连接时不指定会话时区，使用下游默认时区）。 |
+| `transaction-atomicity`      | 指定事务的原子性级别（可选，默认值为 `none`）。当该值为 `table` 时 TiCDC 保证单表事务的原子性，当该值为 `none` 时 TiCDC 会拆分单表事务。 |
+| `batch-dml-enable` | 开启 batch-dml 批量写入特性（可选，默认值为 `true`）。|
+| `read-timeout` | go-sql-driver 参数，[I/O 读取超时](https://pkg.go.dev/github.com/go-sql-driver/mysql#readme-readtimeout)（可选，默认值为 `2m`）。|
+| `write-timeout` | go-sql-driver 参数，[I/O 写入超时](https://pkg.go.dev/github.com/go-sql-driver/mysql#readme-writetimeout)（可选，默认值为 `2m`）。|
+| `timeout` | go-sql-driver 参数，[建立连接的超时时间](https://pkg.go.dev/github.com/go-sql-driver/mysql#readme-timeout)，即拨号超时（可选，默认值为 `2m`）。|
+| `tidb-txn-mode` | 设置环境变量 [`tidb_txn_mode`](/system-variables.md#tidb_txn_mode)（可选，默认值为 `optimistic`）。 |
+| `safe-mode` | 指定向下游同步数据时 `INSERT` 和 `UPDATE` 语句的处理方式。当设置为 `true` 时，TiCDC 会将上游所有的 `INSERT` 语句转换为 `REPLACE INTO` 语句，所有的 `UPDATE` 语句转换为 `DELETE` + `REPLACE INTO` 语句。在 v6.1.3 版本之前，该参数的默认值为 `true`。从 v6.1.3 版本开始，该参数的默认值调整为 `false`，TiCDC 在启动时会获取一个当前时间戳 `ThresholdTs`：<ul><li>对于 `CommitTs` 小于 `ThresholdTs` 的 `INSERT` 语句和 `UPDATE` 语句，TiCDC 会分别将其转换为 `REPLACE INTO` 语句和 `DELETE` + `REPLACE INTO` 语句。</li><li>对于 `CommitTs` 大于等于 `ThresholdTs` 的 `INSERT` 语句和 `UPDATE` 语句，`INSERT` 语句将直接同步到下游，`UPDATE` 语句的具体行为则参考 [TiCDC 拆分 UPDATE 事件行为说明](/ticdc/ticdc-split-update-behavior.md)。</li></ul> |
 
-To encode the database password in the sink URI using Base64, use the following command:
+> **注意：**
+>
+> - `time-zone` 仅对 `mysql` 和 `tidb` 类型的 sink 生效。TiCDC 在建立与下游的连接后，会设置该会话的 `time_zone`，用于下游在执行 DDL 和 DML 时解析 `TIMESTAMP` 等受时区影响的时间值。`DATETIME`、`DATE` 和 `TIME` 数据类型不受时区设置影响。
+> - 为避免因时区设置不一致导致数据不一致，建议显式设置 `time-zone`，并确保其值与 TiCDC Server 的 `--tz` 参数以及下游数据库的时区保持一致。
+
+若需要对 Sink URI 中的数据库密码使用 Base64 进行编码，可以参考如下命令：
 
 ```shell
-echo -n '12345678' | base64   # '12345678' is the password to be encoded.
+echo -n '12345678' | base64   # 假设待编码的密码为 12345678
 ```
 
-The encoded password is as follows:
+编码后的密码如下：
 
 ```shell
 MTIzNDU2Nzg=
 ```
 
-> **Note:**
+> **注意：**
 >
-> When the sink URI parameters contain special characters such as `! * ' ( ) ; : @ & = + $ , / ? % # [ ]`, you need to escape the special characters, for example, in [URI Encoder](https://www.urlencoder.org/).
-> 
-> For example, if the username for connecting to the downstream database is `R&D (2)` and the certificate file path is `/data1/R&D (2).pem`, you need to escape these parameters as follows:
-> 
+> 当 Sink URI 的参数中包含特殊字符时，如 `! * ' ( ) ; : @ & = + $ , / ? % # [ ]`，需要对 URI 特殊字符进行转义处理。你可以使用 [URI Encoder](https://www.urlencoder.org/) 工具对 URI 进行转义。
+>
+> 例如，如果连接到下游数据库的用户名为 `R&D (2)`、并要指定证书文件路径为 `/data1/R&D (2).pem` 时，需要对这些参数进行如下转义：
+>
 > ```shell
 > --sink-uri="mysql://R%26D%20%282%29:MTIzNDU2Nzg%3D@127.0.0.1:3306/?ssl-cert=/data1/R%26D%20%282%29.pem"
 > #                    ^~~ ^~~^~~ ^~~            ^~~                                  ^~~ ^~~^~~ ^~~
 > ```
 
-## Permissions required for the downstream database user
+## 下游数据库用户所需的权限
 
-To replicate data to TiDB or other MySQL-compatible databases, the downstream database user needs the following permissions:
+当同步数据到 TiDB 或其它兼容 MySQL 的数据库时，下游数据库的用户需要以下权限：
 
 - `Select`
 - `Index`
@@ -112,60 +118,61 @@ To replicate data to TiDB or other MySQL-compatible databases, the downstream da
 - `Update`
 - `Delete`
 - `Create`
+- `References`
 - `Drop`
 - `Alter`
 - `Create View`
 
-To replicate [`RECOVER TABLE`](/sql-statements/sql-statement-recover-table.md) to the downstream TiDB, the downstream database user also needs the `Super` permission.
+如果要同步 [`RECOVER TABLE`](/sql-statements/sql-statement-recover-table.md) 到下游 TiDB，下游数据库的用户还需要有 `Super` 权限。
 
-If the downstream TiDB cluster has [read-only mode](/system-variables.md#tidb_restricted_read_only-new-in-v520) enabled, the downstream database user also needs the `RESTRICTED_REPLICA_WRITER_ADMIN` permission.
+如果下游 TiDB 集群开启了[只读模式](/system-variables.md#tidb_restricted_read_only-从-v520-版本开始引入)，下游数据库的用户还需要有 `RESTRICTED_REPLICA_WRITER_ADMIN` 权限。
 
-## Eventually consistent replication in disaster scenarios
+## 灾难场景的最终一致性复制
 
-Starting from v6.1.1, this feature becomes GA. Starting from v5.3.0, TiCDC supports backing up incremental data from an upstream TiDB cluster to an object storage or an NFS of the downstream cluster. When the upstream cluster encounters a disaster and becomes unavailable, TiCDC can restore the downstream data to the recent eventually consistent state. This is the eventually consistent replication capability provided by TiCDC. With this capability, you can switch applications to the downstream cluster quickly, avoiding long-time downtime and improving service continuity.
+TiCDC 的最终一致性复制功能使用 redo log 来确保上游灾难场景中的数据一致性。从 v6.1.1 版本开始，该功能 GA。从 v5.3.0 开始，TiCDC 支持将上游 TiDB 的增量数据备份到下游集群的对象存储或 NFS 文件系统。当上游集群出现了灾难，完全无法使用时，TiCDC 可以将下游集群恢复到最近的一致状态，即提供灾备场景的最终一致性复制能力，确保应用可以快速切换到下游集群，避免数据库长时间不可用，提高业务连续性。
 
-Currently, TiCDC can replicate incremental data from a TiDB cluster to another TiDB cluster or a MySQL-compatible database system (including Aurora, MySQL, and MariaDB). In case the upstream cluster crashes, TiCDC can restore data in the downstream cluster within 5 minutes, given the conditions that TiCDC replicates data normally before the crash, and the replication lag is small. It allows data loss of 10s at most, that is, RTO <= 5 min, and P95 RPO <= 10s.
+目前，TiCDC 支持将 TiDB 集群的增量数据复制到 TiDB 或兼容 MySQL 的数据库系统（包括 Aurora、MySQL 和 MariaDB）。如果 TiCDC 在上游发生灾难前正常运行，且上游 TiDB 集群没有出现数据复制延迟大幅度增加的情况，灾难发生后，下游集群可以在 5 分钟之内恢复集群，并且最多丢失出现问题前 10 秒钟的数据，即 RTO <= 5 min，P95 RPO <= 10s。
 
-TiCDC replication lag increases in the following scenarios:
+当上游 TiDB 集群出现以下情况时，会导致 TiCDC 延迟上升，进而影响 RPO：
 
-- The TPS increases significantly in a short time.
-- Large or long transactions occur in the upstream.
-- The TiKV or TiCDC cluster in the upstream is reloaded or upgraded.
-- Time-consuming DDL statements, such as `add index`, are executed in the upstream.
-- The PD is configured with aggressive scheduling strategies, resulting in frequent transfer of Region leaders, or frequent Region merge or Region split.
+- TPS 短时间内大幅度上升
+- 上游出现大事务或者长事务
+- Reload 或 Upgrade 上游 TiKV 集群或 TiCDC 集群
+- 执行耗时很长的 DDL 语句，例如：add index
+- 使用过于激进的 PD 调度策略，导致频繁 region leader 迁移或 region merge/split
 
-> **Note:**
+> **注意：**
 >
-> Starting from v6.1.1, the eventually consistent replication feature of TiCDC supports Amazon S3-compatible object storage. Starting from v6.1.4, this feature supports GCS- and Azure-compatible object storage.
+> TiCDC 最终一致性功能从 v6.1.1 开始支持兼容 Amazon S3 协议的对象存储，从 v6.1.4 开始支持兼容 GCS 和 Azure 协议的对象存储。
 
-### Prerequisites
+### 使用前提
 
-- Prepare a highly available object storage or NFS for storing TiCDC's real-time incremental data backup files. These files can be accessed in case of a disaster in the upstream.
-- Enable this feature for changefeeds that need to have eventual consistency in disaster scenarios. To enable it, you can add the following configuration to the changefeed configuration file.
+- 准备高可用的对象存储或 NFS 系统，用于存储 TiCDC 的实时增量数据备份文件，在上游发生灾难情况下，该文件存储可以访问。
+- TiCDC 对需要具备灾难场景最终一致性的 changefeed 开启该功能，开启方式是在 changefeed 配置文件中增加以下配置：
 
 ```toml
 [consistent]
-# Consistency level. Options include:
-# - none: the default value. In a non-disaster scenario, eventual consistency is only guaranteed if and only if finished-ts is specified.
-# - eventual: Uses redo log to guarantee eventual consistency in case of the primary cluster disasters.
+# 一致性级别，选项有：
+# - none： 默认值，非灾难场景，只有在任务指定 finished-ts 情况下保证最终一致性。
+# - eventual： 使用 redo log，提供上游灾难情况下的最终一致性。
 level = "eventual"
 
-# Individual redo log file size, in MiB. By default, it's 64. It is recommended to be no more than 128.
+# 单个 redo log 文件大小，单位 MiB，默认值 64，建议该值不超过 128。
 max-log-size = 64
 
-# The interval for flushing or uploading redo logs to Amazon S3, in milliseconds. It is recommended that this configuration be equal to or greater than 2000.
+# 刷新或上传 redo log 至 S3 的间隔，单位毫秒，建议该参数 >= 2000。
 flush-interval = 2000
 
-# The path under which redo log backup is stored. The scheme can be nfs (NFS directory), or Amazon S3, GCS, and Azure (uploaded to object storage).
+# redo log 备份文件的地址，支持的 scheme 包括 nfs（NFS 目录）和 Amazon S3、GCS 和 Azure（上传至对象存储）。
 storage = "$SCHEME://logbucket/test-changefeed?endpoint=http://$ENDPOINT/"
 ```
 
-### Disaster recovery
+### 灾难恢复
 
-When a disaster happens in the primary cluster, you need to recover manually in the secondary cluster by running the `cdc redo` command. The recovery process is as follows.
+当上游发生灾难后，需要通过 `cdc redo` 命令在下游手动恢复。恢复流程如下：
 
-1. Ensure that all the TiCDC processes have exited. This is to prevent the primary cluster from resuming service during data recovery and prevent TiCDC from restarting data synchronization.
-2. Use cdc binary for data recovery. Run the following command:
+1. 确保 TiCDC 进程已经退出，防止在数据恢复过程中上游恢复服务，TiCDC 重新开始同步数据。
+2. 使用 cdc binary 进行数据恢复，具体命令如下：
 
 ```shell
 cdc redo apply --tmp-dir="/tmp/cdc/redo/apply" \
@@ -173,8 +180,8 @@ cdc redo apply --tmp-dir="/tmp/cdc/redo/apply" \
     --sink-uri="mysql://normal:123456@10.0.10.55:3306/"
 ```
 
-In this command:
+以上命令中：
 
-- `tmp-dir`: Specifies the temporary directory for downloading TiCDC incremental data backup files.
-- `storage`: Specifies the address for storing the TiCDC incremental data backup files, either a URI of object storage or an NFS directory.
-- `sink-uri`: Specifies the secondary cluster address to restore the data to. Scheme can only be `mysql`.
+- `tmp-dir`：指定用于下载 TiCDC 增量数据备份文件的临时目录。
+- `storage`：指定存储 TiCDC 增量数据备份文件的地址，为对象存储 URI 或者 NFS 目录。
+- `sink-uri`：数据恢复的目标地址。scheme 仅支持 `mysql`。

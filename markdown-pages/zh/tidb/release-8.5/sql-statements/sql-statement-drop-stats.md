@@ -1,13 +1,13 @@
 ---
 title: DROP STATS
-summary: 关于 TiDB 数据库中 DROP STATS 的使用概述。
+summary: TiDB 数据库中 DROP STATS 的使用概况。
 ---
 
 # DROP STATS
 
-`DROP STATS` 语句用于删除所选数据库中指定表的统计信息。
+`DROP STATS` 语句用于从当前所选定的数据库中删除选定表的统计信息。
 
-## 语法简介
+## 语法图
 
 ```ebnf+diagram
 DropStatsStmt ::=
@@ -17,9 +17,9 @@ TableName ::=
     Identifier ('.' Identifier)?
 ```
 
-## 用法
+## 使用
 
-以下语句会删除 `TableName` 的所有统计信息。如果指定的是分区表，则此语句会删除该表所有分区的统计信息以及 [在动态修剪模式下生成的全局统计信息](/statistics.md#collect-statistics-of-partitioned-tables-in-dynamic-pruning-mode)。
+以下语句用于删除 `TableName` 的所有统计信息。如果指定了分区表，则此语句还会删除该表中所有分区的统计信息以及[动态裁剪模式下的分区表统计信息](/statistics.md#收集动态裁剪模式下的分区表统计信息)。
 
 ```sql
 DROP STATS TableName
@@ -29,7 +29,7 @@ DROP STATS TableName
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-以下语句只会删除 `PartitionNameList` 中指定分区的统计信息。
+以下语句只删除 `PartitionNameList` 中指定分区的统计信息：
 
 ```sql
 DROP STATS TableName PARTITION PartitionNameList;
@@ -39,7 +39,7 @@ DROP STATS TableName PARTITION PartitionNameList;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-以下语句只会删除在动态修剪模式下为指定表生成的全局统计信息。
+以下语句只删除指定表在动态裁剪模式下生成的全局统计信息：
 
 ```sql
 DROP STATS TableName GLOBAL;
@@ -80,7 +80,7 @@ DROP STATS t;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-`DROP STATS` 会删除表的 TopN 和直方图桶等统计信息，但不会从 `STATS_META` 中删除该表的记录。因此，执行 `DROP STATS` 后，`SHOW STATS_META` 仍会返回该表的 `Modify_count` 和 `Row_count` 信息。
+`DROP STATS` 会删除表的 TopN、直方图桶（bucket）等统计信息，但不会删除 `STATS_META` 中该表的记录。因此，执行 `DROP STATS` 后，`SHOW STATS_META` 仍会返回该表的 `Modify_count` 和 `Row_count` 信息。
 
 ```sql
 SHOW STATS_META WHERE db_name='test' and table_name='t';
@@ -97,8 +97,8 @@ SHOW STATS_META WHERE db_name='test' and table_name='t';
 
 ## MySQL 兼容性
 
-此语句是 TiDB 对 MySQL 语法的扩展。
+该语句是 TiDB 对 MySQL 语法的扩展。
 
-## 相关链接
+## 另请参阅
 
-* [Introduction to Statistics](/statistics.md)
+* [常规统计信息](/statistics.md)

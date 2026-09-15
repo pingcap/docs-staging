@@ -1,15 +1,11 @@
 ---
 title: INSPECTION_RULES
-summary: Learn the `INSPECTION_RULES` information_schema table.
+summary: 了解 information_schema 表 `INSPECTION_RULES`。
 ---
 
 # INSPECTION_RULES
 
-The `INSPECTION_RULES` table provides information about which diagnostic tests are run in an inspection result. See [inspection result](/information-schema/information-schema-inspection-result.md) for example usage.
-
-> **Note:**
->
-> This table is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
+`INSPECTION_RULES` 表提供在检查结果中运行哪些诊断测试的信息，示例用法参见[`inspection-result` 表](/information-schema/information-schema-inspection-result.md)。
 
 
 ```sql
@@ -17,7 +13,7 @@ USE information_schema;
 DESC inspection_rules;
 ```
 
-```
+```sql
 +---------+--------------+------+------+---------+-------+
 | Field   | Type         | Null | Key  | Default | Extra |
 +---------+--------------+------+------+---------+-------+
@@ -33,7 +29,7 @@ DESC inspection_rules;
 SELECT * FROM inspection_rules;
 ```
 
-```
+```sql
 +-----------------+------------+---------+
 | NAME            | TYPE       | COMMENT |
 +-----------------+------------+---------+

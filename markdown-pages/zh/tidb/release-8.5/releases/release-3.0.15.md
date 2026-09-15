@@ -1,47 +1,48 @@
 ---
 title: TiDB 3.0.15 Release Notes
-summary: TiDB 3.0.15 was released on June 5, 2020. New features include support for admin recover index and admin check index statements on partitioned tables, as well as optimization of memory allocation mechanism. Bug fixes address issues such as incorrect results in PointGet and inconsistent results between TiDB and MySQL when XOR operates on a floating-point number. TiKV fixes issues related to memory defragmentation and gRPC disconnection.
+summary: TiDB 3.0.15 发布，新增禁止分区表查询使用 plan cache 功能、支持 admin recover index、admin check index 语句、优化统计信息 CMSketch 的内存分配机制等功能。PD 新增按照 Leader 个数调度的策略。修复了多处 Bug，包括 Hash 聚合函数中的深拷贝方式、点查整数溢出处理逻辑、CHAR() 函数查询条件处理逻辑等问题。TiKV 修复了长时间运行后碎片整理不再有效、系统意外重启后删除 snapshot 文件导致系统 panic、消息包过大导致 gRPC 连接断开的问题。
+aliases: ['/zh/tidb/dev/release-3.0.15/','/zh/tidb/v3.0/release-3.0.15','/docs-cn/dev/releases/release-3.0.15/','/zh/tidb/v5.4/release-3.0.15','/zh/tidb/v6.1/release-3.0.15','/zh/tidb/v6.5/release-3.0.15','/zh/tidb/v7.1/release-3.0.15','/zh/tidb/v7.5/release-3.0.15','/zh/tidb/v8.1/release-3.0.15']
 ---
 
 # TiDB 3.0.15 Release Notes
 
-Release date: June 5, 2020
+发版日期：2020 年 6 月 5 日
 
-TiDB version: 3.0.15
+TiDB 版本：3.0.15
 
-## New Features
+## 新功能
 
 + TiDB
 
-    - Forbid the query in partitioned tables to use the plan cache feature [#16759](https://github.com/pingcap/tidb/pull/16759)
-    - Support the `admin recover index` and `admin check index` statements on partitioned tables [#17315](https://github.com/pingcap/tidb/pull/17315) [#17390](https://github.com/pingcap/tidb/pull/17390)
-    - Support partition pruning of the `in` condition for Range partitioned tables [#17318](https://github.com/pingcap/tidb/pull/17318)
-    - Optimize the output of `SHOW CREATE TABLE`, and add quotation marks to the partition name [#16315](https://github.com/pingcap/tidb/pull/16315)
-    - Support the `ORDER BY` clause in the `GROUP_CONCAT` function [#16988](https://github.com/pingcap/tidb/pull/16988)
-    - Optimize the memory allocation mechanism of `CMSketch` statistics to reduce the impact of garbage collection (GC) on performance [#17543](https://github.com/pingcap/tidb/pull/17543)
+    - 禁止分区表上的查询使用 plan cache 功能 [#16759](https://github.com/pingcap/tidb/pull/16759)
+    - 分区表支持 `admin recover index`、`admin check index` 语句 [#17315](https://github.com/pingcap/tidb/pull/17315) [#17390](https://github.com/pingcap/tidb/pull/17390)
+    - Range 类型分区表支持按 `in` 查询条件进行分区裁剪 [#17318](https://github.com/pingcap/tidb/pull/17318)
+    - 优化 `SHOW CREATE TABLE` 的输出结果，在分区名称上添加了引号 [#16315](https://github.com/pingcap/tidb/pull/16315)
+    - `GROUP_CONCAT` 支持 `ORDER BY` 子句 [#16988](https://github.com/pingcap/tidb/pull/16988)
+    - 优化统计信息 `CMSketch` 的内存分配机制，减少垃圾回收导致的性能影响 [#17543](https://github.com/pingcap/tidb/pull/17543)
 
 + PD
 
-    - Add a policy in which PD performs scheduling in terms of the number of Leaders [#2479](https://github.com/pingcap/pd/pull/2479)
+    - 新增按照 Leader 个数调度的策略 [#2479](https://github.com/pingcap/pd/pull/2479)
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
 
-    - Use deep copy to copy the `enum` and `set` type data in the `Hash` aggregate function; fix an issue of correctness [#16890](https://github.com/pingcap/tidb/pull/16890)
-    - Fix the issue that `PointGet` returns incorrect results because of the wrong processing logic of integer overflow [#16753](https://github.com/pingcap/tidb/pull/16753)
-    - Fix the issue of incorrect results caused by incorrect processing logic when the `CHAR()` function is used in the query predicate [#16557](https://github.com/pingcap/tidb/pull/16557)
-    - Fix the issue of inconsistent results in the storage layer and calculation layer of the `IsTrue` and `IsFalse` functions [#16627](https://github.com/pingcap/tidb/pull/16627)
-    - Fix the incorrect `NotNull` flags in some expressions, such as `case when` [#16993](https://github.com/pingcap/tidb/pull/16993)
-    - Fix the issue that the optimizer cannot find a physical plan for `TableDual` in some scenarios [#17014](https://github.com/pingcap/tidb/pull/17014)
-    - Fix the issue that the syntax for partition selection does not take effect correctly in the Hash partitioned table [#17051](https://github.com/pingcap/tidb/pull/17051)
-    - Fix the inconsistent results between TiDB and MySQL when XOR operates on a floating-point number [#16976](https://github.com/pingcap/tidb/pull/16976)
-    - Fix the error that occurs when executing DDL statement in the prepared manner [#17415](https://github.com/pingcap/tidb/pull/17415)
-    - Fix the incorrect processing logic of computing the batch size in the ID allocator [#17548](https://github.com/pingcap/tidb/pull/17548)
-    - Fix the issue that the `MAX_EXEC_TIME` SQL hint does not take effect when the time exceeds the expensive threshold [#17534](https://github.com/pingcap/tidb/pull/17534)
+    - Hash 聚合函数中，采用深拷贝的方式拷贝 `enum` 和 `set` 类型数据，且修复一处正确性问题 [#16890](https://github.com/pingcap/tidb/pull/16890)
+    - 修复点查因整数溢出处理逻辑不正确导致输出结果不正确的问题 [#16753](https://github.com/pingcap/tidb/pull/16753)
+    - 修复 `CHAR()` 函数作为查询的谓词条件时因处理逻辑不正确导致输出的结果不正确的问题 [#16557](https://github.com/pingcap/tidb/pull/16557)
+    - 修复 `IsTrue` 和 `IsFalse` 函数存储层和计算层计算结果不一致的问题[#16627](https://github.com/pingcap/tidb/pull/16627)
+    - 修复部分表达式（例如 `case when`）中，`Not Null` 标记设置不正确的问题 [#16993](https://github.com/pingcap/tidb/pull/16993)
+    - 修复部分场景中优化器无法为 `TableDual` 找到物理计划的问题 [#17014](https://github.com/pingcap/tidb/pull/17014)
+    - 修复 Hash 分区表中分区选择的语法没有正确生效的问题 [#17051](https://github.com/pingcap/tidb/pull/17051)
+    - 修复 `XOR` 作用于浮点数时，结果与 MySQL 不一致的问题 [#16976](https://github.com/pingcap/tidb/pull/16976)
+    - 修复 prepare 方式执行 DDL 语句出错的问题 [#17415](https://github.com/pingcap/tidb/pull/17415)
+    - 修复 ID 分配器中计算 Batch 大小的逻辑处理不正确的问题 [#17548](https://github.com/pingcap/tidb/pull/17548)
+    - 修复 `MAX_EXEC_TIME` 的 SQL Hint 在超过 expensive 阈值后不生效的问题 [#17534](https://github.com/pingcap/tidb/pull/17534)
 
 + TiKV
 
-    - Fix the issue that memory defragmentation is not effective after running for a long time [#7790](https://github.com/tikv/tikv/pull/7790)
-    - Fix the panic issue caused by incorrectly removing snapshot files after TiKV is restarted accidentally [#7925](https://github.com/tikv/tikv/pull/7925)
-    - Fix the gRPC disconnection caused by too large message packages [#7822](https://github.com/tikv/tikv/pull/7822)
+    - 修复长时间运行后由于处理逻辑不正确导致碎片整理不再有效的问题 [#7790](https://github.com/tikv/tikv/pull/7790)
+    - 修复系统意外重启后错误地删除 snapshot 文件导致系统 panic 的问题 [#7925](https://github.com/tikv/tikv/pull/7925)
+    - 修复因消息包过大导致 gRPC 连接断开的问题 [#7822](https://github.com/tikv/tikv/pull/7822)

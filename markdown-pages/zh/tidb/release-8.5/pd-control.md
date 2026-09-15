@@ -1,120 +1,123 @@
 ---
-title: PD Control User Guide
-summary: Use PD Control to obtain the state information of a cluster and tune a cluster.
+title: PD Control 使用说明
+summary: PD Control 是 PD 的命令行工具，用于获取集群状态信息和调整集群。
 ---
 
-# PD Control User Guide
+# PD Control 使用说明
 
-As a command line tool of PD, PD Control obtains the state information of the cluster and tunes the cluster.
+PD Control 是 PD 的命令行工具，用于获取集群状态信息和调整集群。
 
-## Install PD Control
+## 安装方式
 
-> **Note:**
+> **注意：**
 >
-> It is recommended that the version of the Control tool you use is consistent with the version of the cluster.
+> 建议使用的 Control 工具版本与集群版本保持一致。
 
-### Use TiUP command
+### 使用 TiUP
 
-To use PD Control, execute the `tiup ctl:v<CLUSTER_VERSION> pd -u http://<pd_ip>:<pd_port> [-i]` command.
+可直接通过 `tiup ctl:v<CLUSTER_VERSION> pd -u http://<pd_ip>:<pd_port> [-i]` 使用。
 
-### Download the installation package
+### 下载安装包
 
-To obtain `pd-ctl` of the latest version, download the TiDB server installation package. `pd-ctl` is included in the `ctl-{version}-linux-{arch}.tar.gz` package.
+如需下载最新版本的 `pd-ctl`，直接下载 TiDB 安装包即可。`pd-ctl` 位于 TiDB 安装包的 `ctl-{version}-linux-{arch}.tar.gz` 包中。
 
-| Installation package                                                                    | OS | Architecture | SHA256 checksum                                                    |
+| 安装包                                                                    | 操作系统 | 架构  | SHA256 校验和                                                    |
 | :------------------------------------------------------------------------ | :------- | :---- | :--------------------------------------------------------------- |
-| `https://download.pingcap.org/tidb-community-server-{version}-linux-amd64.tar.gz` (pd-ctl) | Linux | amd64 | `https://download.pingcap.org/tidb-community-server-{version}-linux-amd64.tar.gz.sha256` |
-| `https://download.pingcap.org/tidb-community-server-{version}-linux-arm64.tar.gz` (pd-ctl) | Linux | arm64 | `https://download.pingcap.org/tidb-community-server-{version}-linux-arm64.tar.gz.sha256` |
+| `https://download.pingcap.com/tidb-community-server-{version}-linux-amd64.tar.gz` (pd-ctl) | Linux    | amd64 | `https://download.pingcap.com/tidb-community-server-{version}-linux-amd64.tar.gz.sha256` |
+| `https://download.pingcap.com/tidb-community-server-{version}-linux-arm64.tar.gz` (pd-ctl) | Linux | arm64 | `https://download.pingcap.com/tidb-community-server-{version}-linux-arm64.tar.gz.sha256` |
 
-> **Note:**
+> **注意：**
 >
-> `{version}` in the link indicates the version number of TiDB. For example, the download link for `8.5.8` in the `amd64` architecture is `https://download.pingcap.org/tidb-community-server-8.5.8-linux-amd64.tar.gz`.
+> 下载链接中的 `{version}` 为 TiDB 的版本号。例如，amd64 架构的 `v8.5.8` 版本的下载链接为 `https://download.pingcap.com/tidb-community-server-v8.5.8-linux-amd64.tar.gz`。
 
-### Compile from source code
+### 源码编译
 
-1. [Go](https://golang.org/) 1.23 or later is required because the Go modules are used.
-2. In the root directory of the [PD project](https://github.com/pingcap/pd), use the `make` or `make pd-ctl` command to compile and generate `bin/pd-ctl`.
+1. [Go](https://golang.org/) 1.25 或以上版本
+2. 在 PD 项目根目录使用 `make` 或者 `make pd-ctl` 命令进行编译，生成 bin/pd-ctl
 
-## Usage
+## 简单例子
 
-Single-command mode:
+单命令模式：
 
 ```bash
 tiup ctl:v<CLUSTER_VERSION> pd store -u http://127.0.0.1:2379
 ```
 
-Interactive mode:
+交互模式：
 
 ```bash
 tiup ctl:v<CLUSTER_VERSION> pd -i -u http://127.0.0.1:2379
 ```
 
-Use environment variables:
+使用环境变量：
 
 ```bash
-export PD_ADDR=http://127.0.0.1:2379
+export PD_ADDR=http://127.0.0.1:2379 &&
 tiup ctl:v<CLUSTER_VERSION> pd
 ```
 
-Use TLS to encrypt:
+使用 TLS 加密：
 
 ```bash
 tiup ctl:v<CLUSTER_VERSION> pd -u https://127.0.0.1:2379 --cacert="path/to/ca" --cert="path/to/cert" --key="path/to/key"
 ```
 
-## Command line flags
+## 命令行参数 (flags)
 
 ### `--cacert`
 
-+ Specifies the path to the certificate file of the trusted CA in PEM format
-+ Default: ""
+- 指定 PEM 格式的受信任 CA 证书的文件路径
+- 默认值：""
 
 ### `--cert`
 
-+ Specifies the path to the certificate of SSL in PEM format
-+ Default: ""
+- 指定 PEM 格式的 SSL 证书的文件路径
+- 默认值：""
 
 ### `--detach` / `-d`
 
-+ Uses the single command line mode (not entering readline)
-+ Default: true
++ 使用单命令行模式（不进入 readline）
++ 默认值：true
 
 ### `--help` / `-h`
 
-+ Outputs the help information
-+ Default: false
++ 输出帮助信息
++ 默认值：false
 
-### `--interact` / `-i`
+### `--interact`/`-i`
 
-+ Uses the interactive mode (entering readline)
-+ Default: false
++ 使用交互模式（进入 readline）
++ 默认值：false
 
 ### `--key`
 
-+ Specifies the path to the certificate key file of SSL in PEM format, which is the private key of the certificate specified by `--cert`
-+ Default: ""
+- 指定 PEM 格式的 SSL 证书密钥文件路径，即 `--cert` 所指定的证书的私钥
+- 默认值：""
 
-### `--pd` / `-u`
+### `--pd`/`-u`
 
-+ Specifies the PD address
-+ Default address: `http://127.0.0.1:2379`
-+ Environment variable: `PD_ADDR`
++ 指定 PD 的地址
++ 默认地址：`http://127.0.0.1:2379`
++ 环境变量：`PD_ADDR`
 
-### `--version` / `-V`
+### `--version`/`-V`
 
-+ Prints the version information and exit
-+ Default: false
+- 打印版本信息并退出
+- 默认值：false
 
-## Command
+## 命令 (command)
 
-### `cluster`
+### cluster
 
-Use this command to view the basic information of the cluster.
+用于显示集群基本信息。
 
-Usage:
+示例：
 
 ```bash
->> cluster                                     // To show the cluster information
+cluster
+```
+
+```
 {
   "id": 6493707687106161130,
   "max_peer_count": 3
@@ -123,12 +126,15 @@ Usage:
 
 ### `config [show | set <option> <value> | placement-rules]`
 
-Use this command to view or modify the configuration information.
+用于显示或调整配置信息。示例如下。
 
-Usage:
+显示 scheduling 的相关 config 信息：
 
 ```bash
->> config show                                // Display the config information of the scheduling
+config show
+```
+
+```
 {
   "replication": {
     "enable-placement-rules": "true",
@@ -160,189 +166,250 @@ Usage:
     "tolerant-size-ratio": 0
   }
 }
->> config show all                            // Display all config information
->> config show replication                    // Display the config information of replication
+```
+
+显示所有的 config 信息：
+
+```bash
+config show all
+```
+
+显示 replication 的相关 config 信息：
+
+```bash
+config show replication
+```
+
+```
 {
   "max-replicas": 3,
-  "location-labels": "",
   "isolation-level": "",
+  "location-labels": "",
   "strictly-match-label": "false",
   "enable-placement-rules": "true"
 }
-
->> config show cluster-version                // Display the current version of the cluster, which is the current minimum version of TiKV nodes in the cluster and does not correspond to the binary version.
-"8.5.1"
 ```
 
-- `max-snapshot-count` controls the maximum number of snapshots that a single store receives or sends out at the same time. The scheduler is restricted by this configuration to avoid taking up normal application resources. When you need to improve the speed of adding replicas or balancing, increase this value.
+显示目前集群版本，是目前集群 TiKV 节点的最低版本，并不对应 binary 的版本：
+
+```bash
+config show cluster-version
+```
+
+```
+"8.5.8"
+```
+
+- `max-snapshot-count` 控制单个 store 最多同时接收或发送的 snapshot 数量，调度受制于这个配置来防止抢占正常业务的资源。当需要加快补副本或 balance 速度时可以调大这个值。
+
+    设置最大 snapshot 为 `64`：
 
     ```bash
-    config set max-snapshot-count 64  // Set the maximum number of snapshots to 64
+    config set max-snapshot-count 64
     ```
 
-- `max-pending-peer-count` controls the maximum number of pending peers in a single store. The scheduler is restricted by this configuration to avoid producing a large number of Regions without the latest log in some nodes. When you need to improve the speed of adding replicas or balancing, increase this value. Setting it to 0 indicates no limit.
+- `max-pending-peer-count` 控制单个 store 的 pending peer 上限，调度受制于这个配置来防止在部分节点产生大量日志落后的 Region。需要加快补副本或 balance 速度可以适当调大这个值，设置为 0 则表示不限制。
+
+    设置最大 pending peer 数量为 `64`：
 
     ```bash
-    config set max-pending-peer-count 64  // Set the maximum number of pending peers to 64
+    config set max-pending-peer-count 64
     ```
 
-- `max-merge-region-size` controls the upper limit on the size of Region Merge (the unit is MiB). When `regionSize` exceeds the specified value, PD does not merge it with the adjacent Region. Setting it to 0 indicates disabling Region Merge.
+- `max-merge-region-size` 控制 Region Merge 的 size 上限（单位是 MiB）。当 Region Size 大于指定值时 PD 不会将其与相邻的 Region 合并。设置为 `0` 表示不开启 Region Merge 功能。
+
+    设置 Region Merge 的 size 上限为 16 MiB：
 
     ```bash
-    config set max-merge-region-size 16 // Set the upper limit on the size of Region Merge to 16 MiB
+    config set max-merge-region-size 16
     ```
 
-- `max-merge-region-keys` controls the upper limit on the key count of Region Merge. When `regionKeyCount` exceeds the specified value, PD does not merge it with the adjacent Region.
+- `max-merge-region-keys` 控制 Region Merge 的 keyCount 上限。当 Region KeyCount 大于指定值时 PD 不会将其与相邻的 Region 合并。
+
+    设置 Region Merge 的 keyCount 上限为 `50000`：
 
     ```bash
-    config set max-merge-region-keys 50000 // Set the upper limit on keyCount to 50000
+    config set max-merge-region-keys 50000
     ```
 
-- `split-merge-interval` controls the interval between the `split` and `merge` operations on a same Region. This means the newly split Region won't be merged within a period of time.
+- `split-merge-interval` 控制对同一个 Region 做 `split` 和 `merge` 操作的间隔，即对于新 `split` 的 Region 一段时间内不会被 `merge`。
+
+    设置 `split` 和 `merge` 的间隔为 `24h`（1 天）：
 
     ```bash
-    config set split-merge-interval 24h  // Set the interval between `split` and `merge` to one day
+    config set split-merge-interval 24h
     ```
 
-- `enable-one-way-merge` controls whether PD only allows a Region to merge with the next Region. When you set it to `false`, PD allows a Region to merge with the adjacent two Regions.
+- `enable-one-way-merge` 用于控制是否只允许和相邻的后一个 Region 进行合并。当设置为 `false` 时，PD 允许与相邻的前后 Region 进行合并。
+
+    设置只允许和相邻的后一个 Region 合并：
 
     ```bash
-    config set enable-one-way-merge true  // Enables one-way merging.
+    config set enable-one-way-merge true
     ```
 
-- `enable-cross-table-merge` is used to enable the merging of cross-table Regions. When you set it to `false`, PD does not merge the Regions from different tables. This option only works when key type is "table".
+- `enable-cross-table-merge` 用于开启跨表 Region 的合并。当设置为 `false` 时，PD 不会合并不同表的 Region。该选项只在键类型为 "table" 时生效。
+
+    设置允许跨表合并：
 
     ```bash
-    config set enable-cross-table-merge true  // Enable cross table merge.
+    config set enable-cross-table-merge true
     ```
 
-- `key-type` specifies the key encoding type used for the cluster. The supported options are ["table", "raw", "txn"], and the default value is "table".
-    - If no TiDB instance exists in the cluster, `key-type` will be "raw" or "txn", and PD is allowed to merge Regions across tables regardless of the `enable-cross-table-merge` setting.
-    - If any TiDB instance exists in the cluster, `key-type` should be "table". Whether PD can merge Regions across tables is determined by `enable-cross-table-merge`. If `key-type` is "raw", placement rules do not work.
+- `key-type` 用于指定集群的键编码类型。支持的类型有 `["table", "raw", "txn"]`，默认值为 "table"。
+
+    - 如果集群中不存在 TiDB 实例，`key-type` 的值为 "raw" 或 "txn"。此时，无论 `enable-cross-table-merge` 设置为何，PD 均可以跨表合并 Region。
+    - 如果集群中存在 TiDB 实例，`key-type` 的值应当为 "table"。此时，`enable-cross-table-merge` 的设置决定了 PD 是否能跨表合并 Region。如果 `key-type` 的值为 "raw"，placement rules 不生效。
+
+    启用跨表合并：
 
     ```bash
-    config set key-type raw  // Enable cross table merge.
+    config set key-type raw
     ```
 
-- `region-score-formula-version` controls the version of the Region score formula. The value options are `v1` and `v2`. The version 2 of the formula helps to reduce redundant balance Region scheduling in some scenarios, such as taking TiKV nodes online or offline.
+- `region-score-formula-version` 用于设置 Region 算分公式的版本，支持的值有 `["v1", "v2"]`。v2 版本公式有助于减少上下线等场景下冗余的 balance Region 调度。
+
+    开启 v2 版本 Region 算分公式：
 
     ```bash
     config set region-score-formula-version v2
     ```
 
-- `patrol-region-interval` controls the execution frequency that the checker inspects the health status of Regions. A shorter interval indicates a higher execution frequency. Generally, you do not need to adjust it.
+- `patrol-region-interval` 控制 checker 检查 Region 健康状态的运行频率，越短则运行越快，通常状况不需要调整。
+
+    设置 checker 的运行频率为 10 毫秒：
 
     ```bash
-    config set patrol-region-interval 10ms // Set the execution frequency of the checker to 10ms
+    config set patrol-region-interval 10ms
     ```
 
-- `patrol-region-worker-count` controls the number of concurrent [operators](/glossary.md#operator) created by the checker when inspecting the health state of a Region. Normally, you do not need to adjust this configuration. Setting this configuration item to a value greater than 1 enables concurrent checks. Currently, this feature is experimental, and it is not recommended that you use it in the production environment.
+- `patrol-region-worker-count` 控制 checker 检查 Region 健康状态时，创建 [operator](/glossary.md#operator) 的并发数。通常情况下，无需调整此配置项。将该配置项设置为大于 1 将启用并发检查。目前该功能为实验特性，不建议在生产环境中使用。
+
+    设置 checker 的并发数为 `2`：
 
     ```bash
-    config set patrol-region-worker-count 2 // Set the checker concurrency to 2
+    config set patrol-region-worker-count 2
     ```
 
-- `max-store-down-time` controls the time that PD decides the disconnected store cannot be restored if exceeded. If PD does not receive heartbeats from a store within the specified period of time, PD adds replicas in other nodes.
+- `max-store-down-time` 为 PD 认为失联 store 无法恢复的时间，当超过指定的时间没有收到 store 的心跳后，PD 会在其他节点补充副本。
+
+    设置 store 心跳丢失 `30` 分钟开始补副本：
 
     ```bash
-    config set max-store-down-time 30m  // Set the time within which PD receives no heartbeats and after which PD starts to add replicas to 30 minutes
+    config set max-store-down-time 30m
     ```
 
-- `max-store-preparing-time` controls the maximum waiting time for the store to go online. During the online stage of a store, PD can query the online progress of the store. When the specified time is exceeded, PD assumes that the store has been online and cannot query the online progress of the store again. But this does not prevent Regions from transferring to the new online store. In most scenarios, you do not need to adjust this parameter.
+- `max-store-preparing-time` 控制 store 上线阶段的最长等待时间。在 store 的上线阶段，PD 可以查询该 store 的上线进度。当超过该配置项指定的时间后，PD 会认为该 store 已完成上线，无法再次查询这个 store 的上线进度，但是不影响 Region 向这个新上线 store 的迁移。通常用户无需修改该配置项。
 
-    The following command specifies that the maximum waiting time for the store to go online is 4 hours.
+    设置 store 上线阶段最多等待 `4` 小时：
 
     ```bash
     config set max-store-preparing-time 4h
     ```
 
-- `leader-schedule-limit` controls the number of tasks scheduling the leader at the same time. This value affects the speed of leader balance. A larger value means a higher speed and setting the value to 0 closes the scheduling. Usually the leader scheduling has a small load, and you can increase the value in need.
+- 通过调整 `leader-schedule-limit` 可以控制同时进行 leader 调度的任务个数。这个值主要影响 *leader balance* 的速度，值越大调度得越快，设置为 0 则关闭调度。Leader 调度的开销较小，需要的时候可以适当调大。
+
+    最多同时进行 `4` 个 leader 调度：
 
     ```bash
-    config set leader-schedule-limit 4         // 4 tasks of leader scheduling at the same time at most
+    config set leader-schedule-limit 4
     ```
 
-- `region-schedule-limit` controls the number of tasks of scheduling Regions at the same time. This value avoids too many Region balance operators being created. The default value is `2048` which is enough for all sizes of clusters, and setting the value to `0` closes the scheduling. Usually, the Region scheduling speed is limited by `store-limit`, but it is recommended that you do not customize this value unless you know exactly what you are doing.
+- 通过调整 `region-schedule-limit` 可以控制同时进行 Region 调度的任务个数。这个值可以避免创建过多的 Region balance operator。默认值为 `2048`，对所有大小的集群都足够。设置为 `0` 则关闭调度。Region 调度的速度通常受到 `store-limit` 的限制，但除非你熟悉该设置，否则不推荐自定义该参数。
+
+    最多同时进行 `2` 个 Region 调度：
 
     ```bash
-    config set region-schedule-limit 2         // 2 tasks of Region scheduling at the same time at most
+    config set region-schedule-limit 2
     ```
 
-- `replica-schedule-limit` controls the number of tasks scheduling the replica at the same time. This value affects the scheduling speed when the node is down or removed. A larger value means a higher speed and setting the value to 0 closes the scheduling. Usually the replica scheduling has a large load, so do not set a too large value. Note that this configuration item is usually kept at the default value. If you want to change the value, you need to try a few values to see which one works best according to the real situation.
+- 通过调整 `replica-schedule-limit` 可以控制同时进行 replica 调度的任务个数。这个值主要影响节点挂掉或者下线的时候进行调度的速度，值越大调度得越快，设置为 0 则关闭调度。Replica 调度的开销较大，所以这个值不宜调得太大。注意：该参数通常保持为默认值。如需调整，需要根据实际情况反复尝试设置该值大小。
+
+    最多同时进行 `4` 个 replica 调度：
 
     ```bash
-    config set replica-schedule-limit 4        // 4 tasks of replica scheduling at the same time at most
+    config set replica-schedule-limit 4
     ```
 
-- `merge-schedule-limit` controls the number of Region Merge scheduling tasks. Setting the value to 0 closes Region Merge. Usually the Merge scheduling has a large load, so do not set a too large value. Note that this configuration item is usually kept at the default value. If you want to change the value, you need to try a few values to see which one works best according to the real situation.
+- `merge-schedule-limit` 控制同时进行的 Region Merge 调度的任务，设置为 0 则关闭 Region Merge。Merge 调度的开销较大，所以这个值不宜调得过大。注意：该参数通常保持为默认值。如需调整，需要根据实际情况反复尝试设置该值大小。
+
+    最多同时进行 `16` 个 merge 调度：
 
     ```bash
-    config set merge-schedule-limit 16       // 16 tasks of Merge scheduling at the same time at most
+    config set merge-schedule-limit 16
     ```
 
-- `hot-region-schedule-limit` controls the hot Region scheduling tasks that are running at the same time. Setting its value to `0` means disabling the scheduling. It is not recommended to set a too large value. Otherwise, it might affect the system performance. Note that this configuration item is usually kept at the default value. If you want to change the value, you need to try a few values to see which one works best according to the real situation.
+- `hot-region-schedule-limit` 控制同时进行的 Hot Region 调度的任务，设置为 0 则关闭调度。这个值不宜调得过大，否则可能对系统性能造成影响。注意：该参数通常保持为默认值。如需调整，需要根据实际情况反复尝试设置该值大小。
+
+    最多同时进行 `4` 个 Hot Region 调度：
 
     ```bash
-    config set hot-region-schedule-limit 4       // 4 tasks of hot Region scheduling at the same time at most
+    config set hot-region-schedule-limit 4
     ```
 
-- `hot-region-cache-hits-threshold` is used to set the number of minutes required to identify a hot Region. PD can participate in the hotspot scheduling only after the Region is in the hotspot state for more than this number of minutes.
+- `hot-region-cache-hits-threshold` 用于设置识别热点 Region 所需的分钟数，只有 Region 处于热点状态持续时间超过该分钟数后，才能参与热点调度。
 
-- `tolerant-size-ratio` controls the size of the balance buffer area. When the score difference between the leader or Region of the two stores is less than specified multiple times of the Region size, it is considered in balance by PD.
+- `tolerant-size-ratio` 控制 balance 缓冲区大小。当两个 store 的 leader 或 Region 的得分差距小于指定倍数的 Region size 时，PD 会认为此时 balance 达到均衡状态。
+
+    设置缓冲区为约 `20` 倍平均 RegionSize：
 
     ```bash
-    config set tolerant-size-ratio 20        // Set the size of the buffer area to about 20 times of the average Region Size
+    config set tolerant-size-ratio 20
     ```
 
-- `low-space-ratio` controls the threshold value that is considered as insufficient store space. When the ratio of the space occupied by the node exceeds the specified value, PD tries to avoid migrating data to the corresponding node as much as possible. At the same time, PD mainly schedules the remaining space to avoid using up the disk space of the corresponding node.
+- `low-space-ratio` 用于设置 store 空间不足的阈值。当节点的空间占用比例超过指定值时，PD 会尽可能避免往对应节点迁移数据，同时主要针对剩余空间大小进行调度，避免对应节点磁盘空间被耗尽。
+
+    设置空间不足阈值为 `0.9`：
 
     ```bash
-    config set low-space-ratio 0.9              // Set the threshold value of insufficient space to 0.9
+    config set low-space-ratio 0.9
     ```
 
-- `high-space-ratio` controls the threshold value that is considered as sufficient store space. This configuration takes effect only when `region-score-formula-version` is set to `v1`. When the ratio of the space occupied by the node is less than the specified value, PD ignores the remaining space and mainly schedules the actual data volume.
+- `high-space-ratio` 用于设置 store 空间充裕的阈值，此配置仅的在 `region-score-formula-version = v1` 时生效。当节点的空间占用比例小于指定值时，PD 调度时会忽略剩余空间这个指标，主要针对实际数据量进行均衡。
+
+    设置空间充裕阈值为 `0.5`：
 
     ```bash
-    config set high-space-ratio 0.5             // Set the threshold value of sufficient space to 0.5
+    config set high-space-ratio 0.5
     ```
 
-- `cluster-version` is the version of the cluster, which is used to enable or disable some features and to deal with the compatibility issues. By default, it is the minimum version of all normally running TiKV nodes in the cluster. You can set it manually only when you need to roll it back to an earlier version.
+- `cluster-version` 集群的版本，用于控制某些 Feature 是否开启，处理兼容性问题。通常是集群正常运行的所有 TiKV 节点中的最低版本，需要回滚到更低的版本时才进行手动设置。
+
+    设置 cluster version 为 8.5.8：
 
     ```bash
-    config set cluster-version 8.5.1              // Set the version of the cluster to 8.5.1
+    config set cluster-version 8.5.8
     ```
 
-- `replication-mode` controls the replication mode of Regions in the dual data center scenario. See [Enable the DR Auto-Sync mode](/two-data-centers-in-one-city-deployment.md#enable-the-dr-auto-sync-mode) for details.
+- `leader-schedule-policy` 用于选择 Leader 的调度策略，可以选择按照 `size` 或者 `count` 来进行调度。
 
-- `leader-schedule-policy` is used to select the scheduling strategy for the leader. You can schedule the leader according to `size` or `count`.
+- `scheduler-max-waiting-operator` 用于控制每个调度器同时存在的 operator 的个数。
 
-- `scheduler-max-waiting-operator` is used to control the number of waiting operators in each scheduler.
+- `enable-remove-down-replica` 用于开启自动删除 DownReplica 的特性。当设置为 false 时，PD 不会自动清理宕机状态的副本。
 
-- `enable-remove-down-replica` is used to enable the feature of automatically deleting DownReplica. When you set it to `false`, PD does not automatically clean up the downtime replicas.
+- `enable-replace-offline-replica` 用于开启迁移 OfflineReplica 的特性。当设置为 false 时，PD 不会迁移下线状态的副本。
 
-- `enable-replace-offline-replica` is used to enable the feature of migrating OfflineReplica. When you set it to `false`, PD does not migrate the offline replicas.
+- `enable-make-up-replica` 用于开启补充副本的特性。当设置为 false 时，PD 不会为副本数不足的 Region 补充副本。
 
-- `enable-make-up-replica` is used to enable the feature of making up replicas. When you set it to `false`, PD does not add replicas for Regions without sufficient replicas.
+- `enable-remove-extra-replica` 用于开启删除多余副本的特性。当设置为 false 时，PD 不会为副本数过多的 Region 删除多余副本。
 
-- `enable-remove-extra-replica` is used to enable the feature of removing extra replicas. When you set it to `false`, PD does not remove extra replicas for Regions with redundant replicas.
+- `enable-location-replacement` 用于开启隔离级别检查。当设置为 false 时，PD 不会通过调度来提升 Region 副本的隔离级别。
 
-- `enable-location-replacement` is used to enable the isolation level checking. When you set it to `false`, PD does not increase the isolation level of a Region replica through scheduling.
+- `enable-debug-metrics` 用于开启 debug 的 metrics。当设置为 true 时，PD 会开启一些 metrics，比如 `balance-tolerant-size` 等。
 
-- `enable-debug-metrics` is used to enable the metrics for debugging. When you set it to `true`, PD enables some metrics such as `balance-tolerant-size`.
+- `enable-placement-rules` 用于开启 placement rules，在 v5.0 及以上的版本默认开启。
 
-- `enable-placement-rules` is used to enable placement rules, which is enabled by default in v5.0 and later versions.
+- `store-limit-mode` 用于控制 store 限速机制的模式。主要有两种模式：`auto` 和 `manual`。`auto` 模式下会根据 load 自动进行平衡调整（弃用）。
 
-- `store-limit-mode` is used to control the mode of limiting the store speed. The optional modes are `auto` and `manual`. In `auto` mode, the stores are automatically balanced according to the load (deprecated).
-
-- `store-limit-version` controls the version of the store limit formula. In v1 mode, you can manually modify the `store limit` to limit the scheduling speed of a single TiKV. In v2 mode, you do not need to manually set the `store limit` value, as PD dynamically adjusts it based on the capability of TiKV snapshots. For more details, refer to [Principles of store limit v2](/configure-store-limit.md#principles-of-store-limit-v2).
+- `store-limit-version` 用于设置 `store limit` 限制模式，目前提供两种方式：`v1` 和 `v2`。默认值为 `v1`。在 `v1` 模式下，你可以手动修改 `store limit` 以限制单个 TiKV 调度速度。在 `v2` 模式下，你无需关注 `store limit` 值，PD 将根据 TiKV Snapshot 执行情况动态调整 TiKV 调度速度。详情请参考 [Store Limit v2 原理](/configure-store-limit.md#store-limit-v2-原理)。
 
     ```bash
-    config set store-limit-version v2       // using store limit v2
+    config set store-limit-version v2       // 使用 Store Limit v2
     ```
 
-- PD rounds the lowest digits of the flow number, which reduces the update of statistics caused by the changes of the Region flow information. This configuration item is used to specify the number of lowest digits to round for the Region flow information. For example, the flow `100512` will be rounded to `101000` because the default value is `3`. This configuration replaces `trace-region-flow`.
+- PD 会对流量信息的末尾数字进行四舍五入处理，减少 Region 流量信息变化引起的统计信息更新。该配置项用于指定对 Region 流量信息的末尾进行四舍五入的位数。例如流量 `100512` 会归约到 `101000`。默认值为 `3`。该配置替换了 `trace-region-flow`。
 
-- For example, set the value of `flow-round-by-digit` to `4`:
+    示例：将 `flow-round-by-digit` 的值设为 `4`：
 
     ```bash
     config set flow-round-by-digit 4
@@ -350,17 +417,17 @@ Usage:
 
 ### `config [show | set service-middleware <option> [<key> <value> | <label> <qps|concurrency> <value>]]`
 
-`service-middleware` is a configuration module in PD, mainly used to manage and control middleware functions of PD services, such as audit logging, request rate limiting, and concurrency limiting. Starting from v8.5.0, you can modify the following configurations of `service-middleware` using `pd-ctl`:
+`service-middleware` 是 PD 中的一个配置模块，主要用于管理和控制 PD 服务的中间件功能，如审计日志、请求速率限制和并发限制等。从 v8.5.0 起，PD 支持通过 `pd-ctl` 修改 `service-middleware` 的以下配置：
 
-- `audit`: controls whether to enable audit logging for HTTP requests processed by PD (enabled by default). When enabled, `service-middleware` logs information about HTTP requests in PD logs.
-- `rate-limit`: limits the maximum rate and concurrency of HTTP API requests processed by PD.
-- `grpc-rate-limit`: limits the maximum rate and concurrency of gRPC API requests processed by PD.
+- `audit`：控制是否开启 PD 处理 HTTP 请求的审计日志（默认开启）。开启时，`service-middleware` 会在 PD 日志中记录 HTTP 请求的相关信息。
+- `rate-limit`：用于限制 PD 处理 HTTP API 请求的最大速率和最大并发。
+- `grpc-rate-limit`：用于限制 PD 处理 gRPC API 请求的最大速率和最大并发。
 
-> **Note:**
+> **注意：**
 >
-> To avoid the impact of request rate limiting and concurrency limiting on PD performance, it is not recommended to modify configurations in `service-middleware`.
+> 为了避免请求速率限制和并发限制对 PD 性能的影响，不建议修改 `service-middleware` 中的配置。
 
-Display the configuration information of `service-middleware`:
+显示 `service-middleware` 的相关 config 信息：
 
 ```bash
 config show service-middleware
@@ -382,31 +449,31 @@ config show service-middleware
 }
 ```
 
-`service-middleware audit` enables or disables the audit logging function for HTTP requests. For example, to disable this function, run the following command:
+`service-middleware audit` 用于开启或关闭 HTTP 请求的日志审计功能。以关闭该功能为例：
 
 ```bash
 config set service-middleware audit enable-audit false
 ```
 
-`service-middleware grpc-rate-limit` controls the maximum rate and concurrency of the following gRPC API requests:
+`service-middleware grpc-rate-limit` 用于控制以下 gRPC API 请求的最大速率和并发度：
 
-- `GetRegion`: get information about a specified Region
-- `GetStore`: get information about a specified store
-- `GetMembers`: get information about PD cluster members
+- `GetRegion`：获取指定 Region 的信息
+- `GetStore`：获取指定 Store 的信息
+- `GetMembers`：获取 PD 集群成员的信息
 
-To control the maximum rate of gRPC API requests, such as `GetRegion` API requests, run the following command:
+控制某个 gRPC API 请求的最大速率，以 `GetRegion` API 请求为例：
 
 ```bash
 config set service-middleware grpc-rate-limit GetRegion qps 100
 ```
 
-To control the maximum concurrency of gRPC API requests, such as `GetRegion` API requests, run the following command:
+控制某个 gRPC API 请求的最大并发度，以 `GetRegion` API 请求为例：
 
 ```bash
 config set service-middleware grpc-rate-limit GetRegion concurrency 10
 ```
 
-View the modified configuration:
+查看修改后的配置：
 
 ```bash
 config show service-middleware
@@ -426,7 +493,7 @@ config show service-middleware
     "grpc-limiter-config": {
       "GetRegion": {
         "QPS": 100,
-        "QPSBurst": 100, // Automatically adjusted based on QPS, for display only
+        "QPSBurst": 100, // 根据 QPS 设置自动调整，仅作展示
         "ConcurrencyLimit": 10
       }
     }
@@ -434,31 +501,31 @@ config show service-middleware
 }
 ```
 
-Reset the preceding settings:
+重置上述设置：
 
 ```bash
 config set service-middleware grpc-rate-limit GetRegion qps 0
 config set service-middleware grpc-rate-limit GetRegion concurrency 0
 ```
 
-`service-middleware rate-limit` controls the maximum rate and concurrency of the following HTTP API requests:
+`service-middleware rate-limit` 用于控制以下 HTTP API 请求的最大速率和并发度：
 
-- `GetRegion`: get information about a specified Region
-- `GetStore`: get information about a specified store
+- `GetRegion`：获取指定 Region 的信息
+- `GetStore`：获取指定 Store 的信息
 
-To control the maximum rate of HTTP API requests, such as `GetRegion` API requests, run the following command:
+控制某个 HTTP API 请求的最大速率，以 `GetRegion` API 请求为例：
 
 ```bash
 config set service-middleware rate-limit GetRegion qps 100
 ```
 
-To control the maximum concurrency of HTTP API requests, such as `GetRegion` API requests, run the following command:
+控制某个 HTTP API 请求的最大并发度，以 `GetRegion` API 请求为例：
 
 ```bash
 config set service-middleware rate-limit GetRegion concurrency 10
 ```
 
-Reset the preceding settings:
+重置上述设置：
 
 ```bash
 config set service-middleware rate-limit GetRegion qps 0
@@ -467,16 +534,19 @@ config set service-middleware rate-limit GetRegion concurrency 0
 
 ### `config placement-rules [disable | enable | load | save | show | rule-group]`
 
-For the usage of `config placement-rules [disable | enable | load | save | show | rule-group]`, see [Configure placement rules](/configure-placement-rules.md#configure-rules).
+关于 `config placement-rules` 的具体用法，参考 [Placement Rules 使用文档](/configure-placement-rules.md#配置规则操作步骤)。
 
-### `health`
+### health
 
-Use this command to view the health information of the cluster.
+用于显示集群健康信息。示例如下。
 
-Usage:
+显示健康信息：
 
 ```bash
->> health                                // Display the health information
+health
+```
+
+```
 [
   {
     "name": "pd",
@@ -491,17 +561,41 @@ Usage:
 ]
 ```
 
-### `hot [read | write | store|  history <start_time> <end_time> [<key> <value>]]`
+### `hot [read | write | store| history <start_time> <end_time> [<key> <value>]]`
 
-Use this command to view the hot spot information of the cluster.
+用于显示集群热点信息。示例如下。
 
-Usage:
+显示读热点信息：
 
 ```bash
->> hot read                                // Display hot spot for the read operation
->> hot write                               // Display hot spot for the write operation
->> hot store                               // Display hot spot for all the read and write operations
->> hot history 1629294000000 1631980800000 // Display history hot spot for the specified period (milliseconds). 1629294000000 is the start time and 1631980800000 is the end time.
+hot read
+```
+
+显示写热点信息：
+
+```bash
+hot write
+```
+
+显示所有 store 的读写信息：
+
+```bash
+hot store
+```
+
+显示历史读写热点信息:
+
+```
+hot history startTime endTime [ <name> <value> ]
+```
+
+例如查询时间 `1629294000000` 到 `1631980800000` （毫秒）之间的历史热点 Region 信息:
+
+```
+hot history 1629294000000 1631980800000
+```
+
+```
 {
   "history_hot_region": [
     {
@@ -514,27 +608,7 @@ Usage:
       "hot_region_type": "read",
       "hot_degree": 152,
       "flow_bytes": 0,
-      "key_rate": 0,
-      "query_rate": 305,
-      "start_key": "7480000000000000FF5300000000000000F8",
-      "end_key": "7480000000000000FF5600000000000000F8"
-    },
-    ...
-  ]
-}
->> hot history 1629294000000 1631980800000 hot_region_type read region_id 1,2,3 store_id 1,2,3 peer_id 1,2,3 is_leader true is_learner true // Display history hotspot for the specified period with more conditions
-{
-  "history_hot_region": [
-    {
-      "update_time": 1630864801948,
-      "region_id": 103,
-      "peer_id": 1369002,
-      "store_id": 3,
-      "is_leader": true,
-      "is_learner": false,
-      "hot_region_type": "read",
-      "hot_degree": 152,
-      "flow_bytes": 0,
+      "flow_cpu": 32,
       "key_rate": 0,
       "query_rate": 305,
       "start_key": "7480000000000000FF5300000000000000F8",
@@ -545,53 +619,133 @@ Usage:
 }
 ```
 
+对于参数的值为数组的请用 `x, y, ...` 的形式进行参数值的设置，所有支持的参数如下所示:
+
+```
+hot history 1629294000000 1631980800000 hot_region_type read region_id 1,2,3 store_id 1,2,3 peer_id 1,2,3 is_leader true is_learner true
+```
+
+```
+{
+  "history_hot_region": [
+    {
+      "update_time": 1630864801948,
+      "region_id": 103,
+      "peer_id": 1369002,
+      "store_id": 3,
+      "is_leader": true,
+      "is_learner": false,
+      "hot_region_type": "read",
+      "hot_degree": 152,
+      "flow_bytes": 0,
+      "flow_cpu": 32,
+      "key_rate": 0,
+      "query_rate": 305,
+      "start_key": "7480000000000000FF5300000000000000F8",
+      "end_key": "7480000000000000FF5600000000000000F8"
+    },
+    ...
+  ]
+}
+```
+
+从 v8.5.7 开始，`hot read` 和 `hot history` 命令的输出中会显示 `flow_cpu` 字段，`hot store` 命令的输出中会显示 `cpu-read-rate` 字段。这些字段展示了读 CPU 使用情况，用于基于 CPU 使用情况的读热点调度。
+
 ### `label [store <name> <value>]`
 
-Use this command to view the label information of the cluster.
+用于显示集群标签信息。示例如下。
 
-Usage:
+显示所有 label：
 
 ```bash
->> label                                // Display all labels
->> label store zone cn                  // Display all stores including the "zone":"cn" label
+label
+```
+
+显示所有包含 label 为 "zone":"cn" 的 store：
+
+```bash
+label store zone cn
 ```
 
 ### `member [delete | leader_priority | leader [show | resign | transfer <member_name>]]`
 
-> **Note:**
+> **注意：**
 >
-> **DO NOT** use the `member delete` command to remove PD nodes in a production environment. To remove a PD node, see [Scale in a TiDB/PD/TiKV cluster](/scale-tidb-using-tiup.md#scale-in-a-tidbpdtikv-cluster) and [Manually Scale TiDB on Kubernetes](https://docs.pingcap.com/tidb-in-kubernetes/stable/scale-a-tidb-cluster/).
+> 不要使用 `member delete` 命令在生产环境中缩容 PD 节点。如需缩容 PD 节点，请参考[使用 TiUP 扩容缩容 TiDB 集群](/scale-tidb-using-tiup.md)和[手动扩缩容 Kubernetes 上的 TiDB 集群](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/scale-a-tidb-cluster/)。
 
-Use this command to view the PD members, remove a specified member, or configure the priority of leader.
+用于显示 PD 成员信息，删除指定成员，设置成员的 leader 优先级。示例如下。
 
-Usage:
+显示所有成员的信息：
 
 ```bash
->> member                               // Display the information of all members
+member
+```
+
+```
 {
   "header": {......},
   "members": [......],
   "leader": {......},
   "etcd_leader": {......},
 }
->> member delete name pd2               // Delete "pd2"
+```
+
+下线 `pd2`：
+
+```bash
+member delete name pd2
+```
+
+```
 Success!
->> member delete id 1319539429105371180 // Delete a node using ID
+```
+
+使用 ID 下线节点：
+
+```bash
+member delete id 1319539429105371180
+```
+
+```
 Success!
->> member leader show                   // Display the leader information
+```
+
+显示 leader 的信息：
+
+```bash
+member leader show
+```
+
+```
 {
   "name": "pd",
   "member_id": 13155432540099656863,
   "peer_urls": [......],
   "client_urls": [......]
 }
->> member leader resign // Move leader away from the current member
-......
->> member leader transfer pd3 // Migrate leader to a specified member
+```
+
+将 leader 从当前成员移走：
+
+```bash
+member leader resign
+```
+
+```
 ......
 ```
 
-Specify the priority of PD leader:
+将 leader 迁移至指定成员：
+
+```bash
+member leader transfer pd3
+```
+
+```
+......
+```
+
+指定 PD leader 的优先级：
 
 ```bash
 member leader_priority  pd-1 4
@@ -601,61 +755,74 @@ member leader_priority  pd-4 1
 member leader_priority  pd-5 0
 ```
 
-> **Note:**
+> **注意：**
 >
-> In all available PD nodes, the node with the highest priority number becomes the leader.
+> 在可用的 PD 节点中，优先级数值最大的节点会直接当选 leader。
 
 ### `operator [check | show | add | remove]`
 
-Use this command to view and control the scheduling operation.
+用于显示和控制调度操作。
 
-Usage:
+示例：
 
 ```bash
->> operator show                                        // Display all operators
->> operator show admin                                  // Display all admin operators
->> operator show leader                                 // Display all leader operators
->> operator show region                                 // Display all Region operators
->> operator add add-peer 1 2                            // Add a replica of Region 1 on store 2
->> operator add add-learner 1 2                         // Add a learner replica of Region 1 on store 2
->> operator add remove-peer 1 2                         // Remove a replica of Region 1 on store 2
->> operator add transfer-leader 1 2                     // Schedule the leader of Region 1 to store 2
->> operator add transfer-region 1 2 3 4                 // Schedule Region 1 to stores 2,3,4
->> operator add transfer-peer 1 2 3                     // Schedule the replica of Region 1 on store 2 to store 3
->> operator add merge-region 1 2                        // Merge Region 1 with Region 2
->> operator add split-region 1 --policy=approximate     // Split Region 1 into two Regions in halves, based on approximately estimated value
->> operator add split-region 1 --policy=scan            // Split Region 1 into two Regions in halves, based on accurate scan value
->> operator remove 1                                    // Remove the scheduling operation of Region 1
->> operator check 1                                     // Check the status of the operators related to Region 1
+>> operator show                                        // 显示所有的 operators
+>> operator show admin                                  // 显示所有的 admin operators
+>> operator show leader                                 // 显示所有的 leader operators
+>> operator show region                                 // 显示所有的 Region operators
+>> operator add add-peer 1 2                            // 在 store 2 上新增 Region 1 的一个副本
+>> operator add add-learner 1 2                         // 在 store 2 上新增 Region 1 的一个 learner 副本
+>> operator add remove-peer 1 2                         // 移除 store 2 上的 Region 1 的一个副本
+>> operator add transfer-leader 1 2                     // 把 Region 1 的 leader 调度到 store 2
+>> operator add transfer-region 1 2 3 4                 // 把 Region 1 调度到 store 2,3,4
+>> operator add transfer-peer 1 2 3                     // 把 Region 1 在 store 2 上的副本调度到 store 3
+>> operator add merge-region 1 2                        // 将 Region 1 与 Region 2 合并
+>> operator add split-region 1 --policy=approximate     // 将 Region 1 对半拆分成两个 Region，基于粗略估计值
+>> operator add split-region 1 --policy=scan            // 将 Region 1 对半拆分成两个 Region，基于精确扫描值
+>> operator remove 1                                    // 把 Region 1 的调度操作删掉
+>> operator check 1                                     // 查看 Region 1 相关 operator 的状态
 ```
 
-The splitting of Regions starts from the position as close as possible to the middle. You can locate this position using two strategies, namely "scan" and "approximate". The difference between them is that the former determines the middle key by scanning the Region, and the latter obtains the approximate position by checking the statistics recorded in the SST file. Generally, the former is more accurate, while the latter consumes less I/O and can be completed faster.
+其中，Region 的分裂都是尽可能地从靠近中间的位置开始。对这个位置的选择支持两种策略，即 scan 和 approximate。它们之间的区别是，前者通过扫描这个 Region 的方式来确定中间的 key，而后者是通过查看 SST 文件中记录的统计信息，来得到近似的位置。一般来说，前者更加精确，而后者消耗更少的 I/O，可以更快地完成。
 
 ### `ping`
 
-Use this command to view the time that `ping` PD takes.
+用于显示`ping` PD 所需要花费的时间
 
-Usage:
+示例：
 
 ```bash
->> ping
+ping
+```
+
+```
 time: 43.12698ms
 ```
 
 ### `region <region_id> [--jq="<query string>"]`
 
-Use this command to view the Region information. For a jq formatted output, see [jq-formatted-json-output-usage](#jq-formatted-json-output-usage).
+用于显示 Region 信息。使用 jq 格式化输出请参考 [jq 格式化 json 输出示例](#jq-格式化-json-输出示例)。示例如下。
 
-Usage:
+显示所有 Region 信息：
 
 ```bash
->> region                               //　Display the information of all Regions
+region
+```
+
+```
 {
   "count": 1,
   "regions": [......]
 }
+```
 
->> region 2                             // Display the information of the Region with the ID of 2
+显示 Region ID 为 2 的信息：
+
+```bash
+region 2
+```
+
+```
 {
   "id": 2,
   "start_key": "7480000000000000FF1D00000000000000F8",
@@ -685,12 +852,12 @@ Usage:
 
 ### `region key [--format=raw|encode|hex] <key>`
 
-Use this command to query the Region that a specific key resides in. It supports the raw, encoding, and hex formats. And you need to use single quotes around the key when it is in the encoding format.
+用于查询某个 key 位于哪一个 Region 上，支持 raw、encoding 和 hex 格式。使用 encoding 格式时，key 需要使用单引号。
 
-Hex format usage (default):
+Hex 格式（默认）示例：
 
 ```bash
->> region key 7480000000000000FF1300000000000000F8
+region key 7480000000000000FF1300000000000000F8
 {
   "region": {
     "id": 2,
@@ -699,10 +866,13 @@ Hex format usage (default):
 }
 ```
 
-Raw format usage:
+Raw 格式示例：
 
 ```bash
->> region key --format=raw abc
+region key --format=raw abc
+```
+
+```
 {
   "region": {
     "id": 2,
@@ -711,10 +881,13 @@ Raw format usage:
 }
 ```
 
-Encoding format usage:
+Encoding 格式示例：
 
 ```bash
->> region key --format=encode 't\200\000\000\000\000\000\000\377\035_r\200\000\000\000\000\377\017U\320\000\000\000\000\000\372'
+region key --format=encode 't\200\000\000\000\000\000\000\377\035_r\200\000\000\000\000\377\017U\320\000\000\000\000\000\372'
+```
+
+```
 {
   "region": {
     "id": 2,
@@ -725,12 +898,15 @@ Encoding format usage:
 
 ### `region scan`
 
-Use this command to get all Regions.
+用于获取所有 Region。
 
-Usage:
+示例：
 
 ```bash
->> region scan
+region scan
+```
+
+```
 {
   "count": 20,
   "regions": [......],
@@ -739,12 +915,15 @@ Usage:
 
 ### `region sibling <region_id>`
 
-Use this command to check the adjacent Regions of a specific Region.
+用于查询某个 Region 相邻的 Region。
 
-Usage:
+示例：
 
 ```bash
->> region sibling 2
+region sibling 2
+```
+
+```
 {
   "count": 2,
   "regions": [......],
@@ -753,32 +932,54 @@ Usage:
 
 ### `region keys [--format=raw|encode|hex] <start_key> <end_key> <limit>`
 
-Use this command to query all Regions in a given range `[startkey, endkey)`. Ranges without `endKey`s are supported.
+用于查询某个 key 范围内的所有 Region。支持不带 `endKey` 的范围。`limit` 的默认值是 `16`，设为 `-1` 则表示无数量限制。示例如下：
 
-The `limit` parameter limits the number of keys. The default value of `limit` is `16`, and the value of `-1` means unlimited keys.
-
-Usage:
+显示从 a 开始的所有 Region 信息，数量上限为 `16`：
 
 ```bash
->> region keys --format=raw a         // Display all Regions that start from the key a with a default limit count of 16
+region keys --format=raw a
+```
+
+```
 {
   "count": 16,
   "regions": [......],
 }
+```
 
->> region keys --format=raw a z      // Display all Regions in the range [a, z) with a default limit count of 16
+显示 [a, z) 范围内的所有 Region 信息，数量上限为 `16`：
+
+```bash
+region keys --format=raw a z
+```
+
+```
 {
   "count": 16,
   "regions": [......],
 }
+```
 
->> region keys --format=raw a z -1   // Display all Regions in the range [a, z) without a limit count
+显示 [a, z) 范围内的所有 Region 信息，无数量上限：
+
+```bash
+region keys --format=raw a z -1
+```
+
+```
 {
   "count": ...,
   "regions": [......],
 }
+```
 
->> region keys --format=raw a "" 20   // Display all Regions that start from the key a with a limit count of 20
+显示从 a 开始的所有 Region 信息，数量上限为 `20`：
+
+```bash
+region keys --format=raw a "" 20
+```
+
+```
 {
   "count": 20,
   "regions": [......],
@@ -787,12 +988,15 @@ Usage:
 
 ### `region store <store_id>`
 
-Use this command to list all Regions of a specific store.
+用于查询某个 store 上面所有的 Region。
 
-Usage:
+示例：
 
 ```bash
->> region store 2
+region store 2
+```
+
+```
 {
   "count": 10,
   "regions": [......],
@@ -801,12 +1005,15 @@ Usage:
 
 ### `region topread [limit]`
 
-Use this command to list Regions with top read flow. The default value of the limit is `16`.
+用于查询读流量最大的 Region。limit 的默认值是 `16`。
 
-Usage:
+示例：
 
 ```bash
->> region topread
+region topread
+```
+
+```
 {
   "count": 16,
   "regions": [......],
@@ -815,12 +1022,15 @@ Usage:
 
 ### `region topwrite [limit]`
 
-Use this command to list Regions with top write flow. The default value of the limit is `16`.
+用于查询写流量最大的 Region。limit 的默认值是 `16`。
 
-Usage:
+示例：
 
 ```bash
->> region topwrite
+region topwrite
+```
+
+```
 {
   "count": 16,
   "regions": [......],
@@ -829,12 +1039,15 @@ Usage:
 
 ### `region topconfver [limit]`
 
-Use this command to list Regions with top conf version. The default value of the limit is `16`.
+用于查询 conf version 最大的 Region。limit 的默认值是 `16`。
 
-Usage:
+示例：
 
 ```bash
->> region topconfver
+region topconfver
+```
+
+```
 {
   "count": 16,
   "regions": [......],
@@ -843,12 +1056,15 @@ Usage:
 
 ### `region topversion [limit]`
 
-Use this command to list Regions with top version. The default value of the limit is `16`.
+用于查询 version 最大的 Region。limit 的默认值是 `16`。
 
-Usage:
+示例：
 
 ```bash
->> region topversion
+region topversion
+```
+
+```
 {
   "count": 16,
   "regions": [......],
@@ -857,34 +1073,39 @@ Usage:
 
 ### `region topsize [limit]`
 
-Use this command to list Regions with top approximate size. The default value of the limit is `16`.
+用于查询 approximate size 最大的 Region。limit 的默认值是 `16`。
 
-Usage:
+示例：
 
 ```bash
->> region topsize
+region topsize
+```
+
+```
 {
   "count": 16,
   "regions": [......],
 }
-
 ```
 
 ### `region check [miss-peer | extra-peer | down-peer | pending-peer | offline-peer | empty-region | hist-size | hist-keys] [--jq="<query string>"]`
 
-Use this command to check the Regions in abnormal conditions. For a jq formatted output, see [jq formatted JSON output usage](#jq-formatted-json-output-usage).
+用于查询处于异常状态的 Region，使用 jq 格式化输出请参考 [jq 格式化 JSON 输出示例](#jq-格式化-json-输出示例)。
 
-Description of various types:
+各类型的意义如下：
 
-- miss-peer: the Region without enough replicas
-- extra-peer: the Region with extra replicas
-- down-peer: the Region in which some replicas are Down
-- pending-peer: the Region in which some replicas are Pending
+- miss-peer：缺副本的 Region
+- extra-peer：多副本的 Region
+- down-peer：有副本状态为 Down 的 Region
+- pending-peer：有副本状态为 Pending 的 Region
 
-Usage:
+示例：
 
 ```bash
->> region check miss-peer
+region check miss-peer
+```
+
+```
 {
   "count": 2,
   "regions": [......],
@@ -893,7 +1114,7 @@ Usage:
 
 ### `resource-manager [command]`
 
-#### View the controller configuration of Resource Control
+#### 查看资源管控 (Resource Control) 的 controller 配置
 
 ```bash
 resource-manager config controller show
@@ -902,8 +1123,8 @@ resource-manager config controller show
 ```bash
 {
     "degraded-mode-wait-duration": "0s",
-    "ltb-max-wait-duration": "30s",
-    "request-unit": {                    # Configurations of RU. Do not modify.
+    "ltb-max-wait-duration": "30s", 
+    "request-unit": {          # RU 的配置，请勿修改
         "read-base-cost": 0.125,
         "read-per-batch-base-cost": 0.5,
         "read-cost-per-byte": 0.0000152587890625,
@@ -916,12 +1137,12 @@ resource-manager config controller show
 }
 ```
 
-- `ltb-max-wait-duration`: the maximum waiting time of Local Token Bucket (LTB). The default value is `30s`, and the value range is `[0, 24h]`. If the estimated [Request Unit (RU)](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru) consumption of the SQL request exceeds the current accumulated RU of LTB, the request needs to wait for a certain period of time. If the estimated waiting time exceeds this maximum value, an error message [`ERROR 8252 (HY000) : Exceeded resource group quota limitation`](/error-codes.md) is returned to the application in advance. Increasing this value can reduce the occurrence of encountering `ERROR 8252` in cases of sudden concurrency increase, large transactions, and large queries.
-- `enable-controller-trace-log`: control whether to enable the controller diagnostic log.
+- `ltb-max-wait-duration`：本地令牌桶 (Local Token Bucket, LTB) 的最大等待时间。默认值为 `30s`，取值范围为 `[0, 24h]`。如果 SQL 请求预估消耗的 [Request Unit (RU)](/tidb-resource-control-ru-groups.md#什么是-request-unit-ru) 超过了当前 LTB 积累的 RU，则需要等待一定时间。如果预估等待时间超过了此最大等待时间，则会提前向应用返回错误 [`ERROR 8252 (HY000) : Exceeded resource group quota limitation`](/error-codes.md)。增大该值可以减少某些突发并发增加、大事务和大查询的情况下容易报错 `ERROR 8252` 的问题。
+- `enable-controller-trace-log`：controller 诊断日志开关。
 
-#### Modify the controller configuration of Resource Control
+#### 修改 Resource Control 的 controller 配置
 
-To modify the `ltb-max-wait-duration` configuration, use the following command:
+修改 `ltb-max-wait-duration` 的方法如下：
 
 ```bash
 pd-ctl resource-manager config controller set ltb-max-wait-duration 30m
@@ -929,81 +1150,119 @@ pd-ctl resource-manager config controller set ltb-max-wait-duration 30m
 
 ### `scheduler [show | add | remove | pause | resume | config | describe]`
 
-Use this command to view and control the scheduling policy.
+用于显示和控制调度策略。
 
-Usage:
+示例：
 
 ```bash
->> scheduler show                                          // Display all created schedulers
->> scheduler add grant-leader-scheduler 1                  // Schedule all the leaders of the Regions on store 1 to store 1
->> scheduler add evict-leader-scheduler 1                  // Move all the Region leaders on store 1 out
->> scheduler config evict-leader-scheduler                 // Display the stores in which the scheduler is located since v4.0.0
->> scheduler config evict-leader-scheduler add-store 2     // Add leader eviction scheduling for store 2
->> scheduler config evict-leader-scheduler delete-store 2  // Remove leader eviction scheduling for store 2
->> scheduler add evict-slow-store-scheduler                // When there is one and only one slow store, evict all Region leaders of that store
->> scheduler remove grant-leader-scheduler-1               // Remove the corresponding scheduler, and `-1` corresponds to the store ID
->> scheduler pause balance-region-scheduler 10             // Pause the balance-region scheduler for 10 seconds
->> scheduler pause all 10                                  // Pause all schedulers for 10 seconds
->> scheduler resume balance-region-scheduler               // Continue to run the balance-region scheduler
->> scheduler resume all                                    // Continue to run all schedulers
->> scheduler config balance-hot-region-scheduler           // Display the configuration of the balance-hot-region scheduler
->> scheduler describe balance-region-scheduler             // Display the running state and related diagnostic information of the balance-region scheduler
+>> scheduler show                                         // 显示所有已经创建的 schedulers
+>> scheduler add grant-leader-scheduler 1                 // 把 store 1 上的所有 Region 的 leader 调度到 store 1
+>> scheduler add evict-leader-scheduler 1                 // 把 store 1 上的所有 Region 的 leader 从 store 1 调度出去
+>> scheduler config evict-leader-scheduler                // v4.0.0 起，展示该调度器具体在哪些 store 上
+>> scheduler config evict-leader-scheduler add-store 2    // 为 store 2 添加 leader 驱逐调度
+>> scheduler config evict-leader-scheduler delete-store 2 // 为 store 2 移除 leader 驱逐调度
+>> scheduler add evict-slow-store-scheduler               // 自动检测磁盘或网络慢节点，并在满足条件时将该 store 上的所有 Region leader 驱逐出去
+>> scheduler remove grant-leader-scheduler-1              // 把对应的调度器删掉，`-1` 对应 store ID
+>> scheduler pause balance-region-scheduler 10            // 暂停运行 balance-region 调度器 10 秒
+>> scheduler pause all 10                                 // 暂停运行所有的调度器 10 秒
+>> scheduler resume balance-region-scheduler              // 继续运行 balance-region 调度器
+>> scheduler resume all                                   // 继续运行所有的调度器
+>> scheduler config balance-hot-region-scheduler          // 显示 balance-hot-region 调度器的配置
+>> scheduler describe balance-region-scheduler            // 显示 balance-region 的运行状态和相应的诊断信息
 ```
 
 ### `scheduler describe balance-region-scheduler`
 
-Use this command to view the running state and related diagnostic information of the `balance-region-scheduler`.
+用于查看 `balance-region-scheduler` 的运行状态和相应的诊断信息。
 
-Since TiDB v6.3.0, PD provides the running state and brief diagnostic information for `balance-region-scheduler` and `balance-leader-scheduler`. Other schedulers and checkers are not supported yet. To enable this feature, you can modify the [`enable-diagnostic`](/pd-configuration-file.md#enable-diagnostic-new-in-v630) configuration item using `pd-ctl`.
+从 TiDB v6.3.0 起，PD 为 `balance-region-scheduler` 和 `balance-leader-scheduler` 提供了运行状态和简要诊断信息的功能，其余 scheduler 和 checker 暂未支持。你可以通过 `pd-ctl` 修改 [`enable-diagnostic`](/pd-configuration-file.md#enable-diagnostic-从-v630-版本开始引入) 配置项开启该功能。
 
-The state of the scheduler can be one of the following:
+调度器运行状态有以下几种类型：
 
-- `disabled`: the scheduler is unavailable or removed.
-- `paused`: the scheduler is paused.
-- `scheduling`: the scheduler is generating scheduling operators.
-- `pending`: the scheduler cannot generate scheduling operators. For a scheduler in the `pending` state, brief diagnostic information is returned. The brief information describes the state of stores and explains why these stores cannot be selected for scheduling.
-- `normal`: there is no need to generate scheduling operators.
+- `disabled`：表示当前调度器不可用或被移除。
+- `paused`：表示当前调度器暂停工作。
+- `scheduling`：表示当前调度器正在生成调度。
+- `pending`：表示当前调度器无法产生调度。`pending` 状态的调度器，会返回一个概览信息，来帮助用户诊断。概览信息包含了 store 的一些状态信息，解释了它们为什么不能被选中进行调度。
+- `normal`：表示当前调度器无需进行调度。
+
+### `scheduler config evict-slow-store-scheduler`
+
+`evict-slow-store-scheduler` 用于在 TiKV 节点出现磁盘 I/O 或网络抖动时，限制 PD 向异常节点调度 Leader，并在必要时主动驱逐 Leader，以降低慢节点对集群的影响。
+
+#### 磁盘慢节点
+
+从 v6.2.0 开始，TiKV 会在 store 心跳中向 PD 上报 `SlowScore`，该分值基于磁盘 I/O 情况计算得出。分值范围为 1～100，数值越大表示该节点越可能存在磁盘性能异常。
+
+对于磁盘慢节点，TiKV 侧的探测以及 PD 侧基于 `evict-slow-store-scheduler` 的调度处理默认开启，无需额外配置。
+
+#### 网络慢节点
+
+从 v8.5.5 起，TiKV 支持在 store 心跳中上报 `NetworkSlowScore`，该分值基于网络探测结果计算得出，用于识别网络抖动导致的慢节点。分值范围为 1～100，数值越大表示网络异常的可能性越高。
+
+- TiKV 对网络慢节点的探测默认开启，默认探测频率为 `100ms`。如需修改探测频率，请将 TiKV 配置项 [`raftstore.inspect-network-interval`](/tikv-configuration-file.md#inspect-network-interval-从-v855-版本开始引入) 设置为合理的数值。数值越小，探测频率越高，有助于更快发现网络抖动，但也会消耗更多网络与 CPU 资源。
+
+- PD 对网络慢节点的调度默认关闭。如需开启，请在 PD 侧进行以下配置：
+
+    ```bash
+    scheduler config evict-slow-store-scheduler set enable-network-slow-store true
+    ```
+
+#### 恢复时间控制
+
+你可以通过 `recovery-duration` 参数控制慢节点在被判定为恢复正常前需要保持稳定状态的时间。
+
+示例如下：
+
+```bash
+>> scheduler config evict-slow-store-scheduler
+{
+  "recovery-duration": "1800"  // 30 分钟
+}
+>> scheduler config evict-slow-store-scheduler set recovery-duration 600
+```
 
 ### `scheduler config balance-leader-scheduler`
 
-Use this command to view and control the `balance-leader-scheduler` policy.
+用于查看和控制 `balance-leader-scheduler` 策略。
 
-Since TiDB v6.0.0, PD introduces the `Batch` parameter for `balance-leader-scheduler` to control the speed at which the balance-leader processes tasks. To use this parameter, you can modify the `balance-leader batch` configuration item using pd-ctl.
+从 TiDB v6.0.0 起，PD 为 `balance-leader-scheduler` 引入了 `Batch` 参数，用于控制 balance-leader 执行任务的速度。你可以通过 pd-ctl 修改 `balance-leader batch` 配置项设置该功能。
 
-Before v6.0.0, PD does not have this configuration item, which means `balance-leader batch=1`. In v6.0.0 or later versions, the default value of `balance-leader batch` is `4`. To set this configuration item to a value greater than `4`, you need to set a greater value for [`scheduler-max-waiting-operator`](#config-show--set-option-value--placement-rules) (whose default value is `5`) at the same time. You can get the expected acceleration effect only after modifying both configuration items.
+在 v6.0.0 前，PD 不带有该配置（即 `balance-leader batch=1`）。在 v6.0.0 或更高版本中，`balance-leader batch` 的默认值为 `4`。如果你想为该配置项设置大于 `4` 的值，你需要同时调大 [`scheduler-max-waiting-operator`](#config-show--set-option-value--placement-rules)（默认值 `5`）。同时调大两个配置项后，你才能体验预期的加速效果。
 
 ```bash
-scheduler config balance-leader-scheduler set batch 3 // Set the size of the operator that the balance-leader scheduler can execute in a batch to 3
+scheduler config balance-leader-scheduler set batch 3  // 将 balance-leader 调度器可以批量执行的算子大小设置为 3
 ```
 
-#### `scheduler config balance-hot-region-scheduler`
+### `scheduler config balance-hot-region-scheduler`
 
-Use this command to view and control the `balance-hot-region-scheduler` policy.
+用于查看和控制 `balance-hot-region-scheduler` 策略。
 
-Usage:
+示例：
 
 ```bash
->> scheduler config balance-hot-region-scheduler  // Display all configuration of the balance-hot-region scheduler
+scheduler config balance-hot-region-scheduler  // 显示 balance-hot-region 调度器的所有配置
 {
   "min-hot-byte-rate": 100,
   "min-hot-key-rate": 10,
   "min-hot-query-rate": 10,
+  "min-hot-cpu-rate": 10,
   "max-zombie-rounds": 3,
   "max-peer-number": 1000,
   "byte-rate-rank-step-ratio": 0.05,
   "key-rate-rank-step-ratio": 0.05,
   "query-rate-rank-step-ratio": 0.05,
+  "cpu-rate-rank-step-ratio": 0.05,
   "count-rank-step-ratio": 0.01,
   "great-dec-ratio": 0.95,
   "minor-dec-ratio": 0.99,
   "src-tolerance-ratio": 1.05,
   "dst-tolerance-ratio": 1.05,
   "read-priorities": [
-    "query",
+    "cpu",
     "byte"
   ],
   "write-leader-priorities": [
-    "key",
+    "query",
     "byte"
   ],
   "write-peer-priorities": [
@@ -1016,78 +1275,87 @@ Usage:
 }
 ```
 
-- `min-hot-byte-rate` means the smallest number of bytes to be counted, which is usually 100.
+- `min-hot-byte-rate` 指计数的最小字节数，通常为 100。
 
     ```bash
     scheduler config balance-hot-region-scheduler set min-hot-byte-rate 100
     ```
 
-- `min-hot-key-rate` means the smallest number of keys to be counted, which is usually 10.
+- `min-hot-key-rate` 指计数的最小 key 数，通常为 10。
 
     ```bash
     scheduler config balance-hot-region-scheduler set min-hot-key-rate 10
     ```
 
-- `min-hot-query-rate` means the smallest number of queries to be counted, which is usually 10.
+- `min-hot-query-rate` 指计数的最小 query 数，通常为 10。
 
     ```bash
     scheduler config balance-hot-region-scheduler set min-hot-query-rate 10
     ```
 
-- `max-zombie-rounds` means the maximum number of heartbeats with which an operator can be considered as the pending influence. If you set it to a larger value, more operators might be included in the pending influence. Usually, you do not need to adjust its value. Pending influence refers to the operator influence that is generated during scheduling but still has an effect.
+- `min-hot-cpu-rate` 指读请求被计入热点统计的最小 CPU 使用量。该值的单位为单个 CPU 核的百分比，默认值为 `10`，即单个 CPU 核的 10%。
+
+    ```bash
+    scheduler config balance-hot-region-scheduler set min-hot-cpu-rate 10
+    ```
+
+- `max-zombie-rounds` 指一个 operator 可被纳入 pending influence 所允许的最大心跳次数。如果将它设置为更大的值，更多的 operator 可能会被纳入 pending influence。通常用户不需要修改这个值。pending influence 指的是在调度中产生的、但仍生效的影响。
 
     ```bash
     scheduler config balance-hot-region-scheduler set max-zombie-rounds 3
     ```
 
-- `max-peer-number` means the maximum number of peers to be solved, which prevents the scheduler from being too slow.
+- `max-peer-number` 指最多要被解决的 peer 数量。这个配置可避免调度器处理速度过慢。
 
     ```bash
     scheduler config balance-hot-region-scheduler set max-peer-number 1000
     ```
 
-- `byte-rate-rank-step-ratio`, `key-rate-rank-step-ratio`, `query-rate-rank-step-ratio`, and `count-rank-step-ratio` respectively mean the step ranks of byte, key, query, and count. The rank-step-ratio decides the step when the rank is calculated. `great-dec-ratio` and `minor-dec-ratio` are used to determine the `dec` rank. Usually, you do not need to modify these items.
+- `byte-rate-rank-step-ratio`、`key-rate-rank-step-ratio`、`query-rate-rank-step-ratio`、`cpu-rate-rank-step-ratio` 和 `count-rank-step-ratio` 分别表示 byte、key、query、CPU 和 count 的 step ranks。rank-step-ratio 决定了计算 rank 时的 step 值。PD 使用 `great-dec-ratio` 和 `minor-dec-ratio` 来确定 `dec` 的 rank。通常用户不需要修改这些配置项。
 
     ```bash
     scheduler config balance-hot-region-scheduler set byte-rate-rank-step-ratio 0.05
     ```
 
-- `src-tolerance-ratio` and `dst-tolerance-ratio` are configuration items for the expectation scheduler. The smaller the `tolerance-ratio`, the easier it is for scheduling. When redundant scheduling occurs, you can appropriately increase this value.
+- `src-tolerance-ratio` 和 `dst-tolerance-ratio` 是期望调度器的配置项。`tolerance-ratio` 的值越小，调度就越容易。当出现冗余调度时，你可以适当调大这个值。
 
     ```bash
     scheduler config balance-hot-region-scheduler set src-tolerance-ratio 1.1
     ```
 
-- `read-priorities`, `write-leader-priorities`, and `write-peer-priorities` control which dimension the scheduler prioritizes for hot Region scheduling. Two dimensions are supported for configuration.
+- `read-priorities`、`write-leader-priorities` 和 `write-peer-priorities` 用于控制调度器优先从哪些维度进行热点均衡，支持配置两个维度。
 
-    - `read-priorities` and `write-leader-priorities` control which dimensions the scheduler prioritizes for scheduling hot Regions of the read and write-leader types. The dimension options are `query`, `byte`, and `key`.
-    - `write-peer-priorities` controls which dimensions the scheduler prioritizes for scheduling hot Regions of the write-peer type. The dimension options are `byte` and `key`.
+    - `read-priorities` 用于控制调度器在处理 read 类型的热点时优先均衡的维度，可选的维度有 `cpu`、`query`、`byte` 和 `key`。
+    - `write-leader-priorities` 用于控制调度器在处理 write-leader 类型的热点时优先均衡的维度，可选的维度有 `query`、`byte` 和 `key`。
+    - `write-peer-priorities` 用于控制调度器在处理 write-peer 类型的热点时优先均衡的维度，支持配置 `byte` 和 `key` 维度。
 
-    > **Note:**
+    > **注意：**
     >
-    > If a cluster component is earlier than v5.2, the configuration of `query` dimension does not take effect. If some components are upgraded to v5.2 or later, the `byte` and `key` dimensions still by default have the priority for hot Region scheduling. After all components of the cluster are upgraded to v5.2 or later, such a configuration still takes effect for compatibility. You can view the real-time configuration using the `pd-ctl` command. Usually, you do not need to modify these configurations.
+    > 若集群中存在版本低于 v5.2 的组件，`query` 维度的配置不生效。当将部分组件升级到 v5.2 或更高版本后，调度器仍默认优先从 `byte` 和 `key` 维度进行热点均衡。当将集群中的所有组件全部升级到 v5.2 或更高版本后，调度器也会继续保持这样的兼容配置。
+    >
+    > 从 v8.5.7 开始，TiKV 会上报用于热点 Region 调度的读 CPU 使用量。对于支持读 CPU 上报的集群，默认的 `read-priorities` 值为 `cpu,byte`。对于不支持读 CPU 上报的集群，PD 会自动回退到 `query,byte`；如果集群也不支持 `query` 维度，则回退到 `byte,key`。可通过 `pd-ctl` 查看实时配置。通常用户不需要修改这些配置项。
 
     ```bash
-    scheduler config balance-hot-region-scheduler set read-priorities query,byte
+    scheduler config balance-hot-region-scheduler set read-priorities cpu,byte
     ```
 
-- `strict-picking-store` controls the search space of hot Region scheduling. Usually, it is enabled. This configuration item only affects the behavior when `rank-formula-version` is `v1`. When it is enabled, hot Region scheduling ensures hot Region balance on the two configured dimensions. When it is disabled, hot Region scheduling only ensures the balance on the dimension with the first priority, which might reduce balance on other dimensions. Usually, you do not need to modify this configuration.
+- `strict-picking-store` 是控制热点调度搜索空间的开关，通常为打开。该配置项仅影响 `rank-formula-version` 为 `v1` 时的行为。当打开时，热点调度的目标是保证所配置的两个维度的热点均衡。当关闭后，热点调度只保证处于第一优先级的维度的热点均衡表现更好，但可能会导致其他维度的热点不再那么均衡。通常用户不需要修改这个配置项。
 
     ```bash
     scheduler config balance-hot-region-scheduler set strict-picking-store true
     ```
 
-- `rank-formula-version` controls which scheduler algorithm version is used in hot Region scheduling. Value options are `v1` and `v2`. The default value is `v2`.
+- `rank-formula-version` 适用于热点调度，其用来确定调度策略的算法版本，支持的值有 `["v1", "v2"]`。目前该配置的默认值为 `v2`。
 
-    - The `v1` algorithm is the scheduler strategy used in TiDB v6.3.0 and earlier versions. This algorithm mainly focuses on reducing load difference between stores and avoids introducing side effects in the other dimension.
-    - The `v2` algorithm is an experimental scheduler strategy introduced in TiDB v6.3.0 and is in General Availability (GA) in TiDB v6.4.0. This algorithm mainly focuses on improving the rate of the equitability between stores and factors in few side effects. Compared with the `v1` algorithm with `strict-picking-store` being `true`, the `v2` algorithm pays more attention to the priority equalization of the first dimension. Compared with the `v1` algorithm with `strict-picking-store` being `false`, the `v2` algorithm considers the balance of the second dimension.
-    - The `v1` algorithm with `strict-picking-store` being `true` is conservative and scheduling can only be generated when there is a store with a high load in both dimensions. In certain scenarios, it might be impossible to continue balancing due to dimensional conflicts. To achieve better balancing in the first dimension, it is necessary to set the `strict-picking-store` to `false`. The `v2` algorithm can achieve better balancing in both dimensions and reduce invalid scheduling.
+    - `v1` 版本为 v6.3.0 之前的策略，主要关注调度是否降低了不同 Store 之间的负载差值，以及是否在另一维度引入副作用。
+    - `v2` 版本是 v6.3.0 引入的实验特性算法，在 v6.4.0 正式发布，主要关注 Store 之间均衡度的提升率，同时降低了对副作用的关注度。对比 `strict-picking-store` 为 `true` 的 `v1` 算法，`v2` 版本更注重优先均衡第一维度。对比 `strict-picking-store` 为 `false` 的 `v1` 算法，`v2` 版本兼顾了第二维度的均衡。
+    - `strict-picking-store` 为 `true` 的 `v1` 版本算法较为保守，只有当存在两个维度的负载都偏高的 Store 时才能产生调度。在特定场景下有可能因为维度冲突导致无法继续均衡，需要将 `strict-picking-store` 改为 `false` 才能在第一维度取得更好的均衡效果。`v2` 版本算法则可以在两个维度都取得更好的均衡效果，并减少无效调度。
 
-  ```bash
-  scheduler config balance-hot-region-scheduler set rank-formula-version v2
-  ```
+    ```bash
+    scheduler config balance-hot-region-scheduler set rank-formula-version v2
+    ```
 
-- `enable-for-tiflash` controls whether hot Region scheduling takes effect for TiFlash instances. Usually, it is enabled. When it is disabled, the hot Region scheduling between TiFlash instances is not performed.
+- `enable-for-tiflash` 是控制热点调度是否对 TiFlash 生效的开关。通常为打开，关闭后将不会产生 TiFlash 实例之间的热点调度。
 
     ```bash
     scheduler config balance-hot-region-scheduler set enable-for-tiflash true
@@ -1095,31 +1363,31 @@ Usage:
 
 ### `scheduler config evict-leader-scheduler`
 
-Use this command to view and manage the configuration of the `evict-leader-scheduler`.
+用于查看和管理 `evict-leader-scheduler` 的配置。
 
-- When an `evict-leader-scheduler` already exists, use the `add-store` subcommand to add leader eviction scheduling for the specified store:
+- 在已有 `evict-leader-scheduler` 时，使用 `add-store` 子命令，为指定的 store 添加 leader 驱逐调度：
 
     ```bash
-    scheduler config evict-leader-scheduler add-store 2       // Add leader eviction scheduling for store 2
+    scheduler config evict-leader-scheduler add-store 2       // 为 store 2 添加 leader 驱逐调度
     ```
 
-- When an `evict-leader-scheduler` already exists, use the `delete-store` subcommand to remove leader eviction scheduling for the specified store:
+- 在已有 `evict-leader-scheduler` 时，使用 `delete-store` 子命令，移除指定 store 的 leader 驱逐调度：
 
     ```bash
-    scheduler config evict-leader-scheduler delete-store 2    // Remove leader eviction scheduling for store 2
+    scheduler config evict-leader-scheduler delete-store 2    // 为 store 2 移除 leader 驱逐调度
     ```
 
-    If all store configurations of an `evict-leader-scheduler` are removed, the scheduler itself is automatically removed.
+    当一个 `evict-leader-scheduler` 的所有 store 配置都被移除后，该调度器也会自动被移除。
 
-- When an `evict-leader-scheduler` already exists, use the `set batch` subcommand to modify the `batch` value. `batch` controls the number of Operators generated during a single scheduling process. The default value is `3`, and the range is `[1, 10]`. The larger the `batch` value, the faster the scheduling speed.
+- 在已有 `evict-leader-scheduler` 时，使用 `set batch` 子命令修改 `batch` 值。其中，`batch` 用于调整单次调度过程中生成的 Operator 数量，默认值为 `3`，取值范围为 `[1, 10]`。`batch` 值越大，调度速度越快。
 
     ```bash
-    scheduler config evict-leader-scheduler set batch 10 // Set the batch value to 10
+    scheduler config evict-leader-scheduler set batch 10 // 设置 batch 值为 10
     ```
 
 ### `service-gc-safepoint`
 
-Use this command to query the current GC safepoint and service GC safepoint. The output is as follows:
+用于查询当前的 GC safepoint 与 service GC safepoint，输出结果示例如下：
 
 ```bash
 {
@@ -1136,11 +1404,11 @@ Use this command to query the current GC safepoint and service GC safepoint. The
 
 ### `store [delete | cancel-delete | label | weight | remove-tombstone | limit ] <store_id> [--jq="<query string>"]`
 
-For a jq formatted output, see [jq-formatted-json-output-usage](#jq-formatted-json-output-usage).
+使用 jq 格式化输出请参考 [jq 格式化 json 输出示例](#jq-格式化-json-输出示例)。
 
-#### Get a store
+#### 查询 store
 
-To display the information of all stores, run the following command:
+显示所有 store 信息：
 
 ```bash
 store
@@ -1153,7 +1421,7 @@ store
 }
 ```
 
-To get the store with ID of 1, run the following command:
+获取 ID 为 1 的 store：
 
 ```bash
 store 1
@@ -1163,98 +1431,98 @@ store 1
 ......
 ```
 
-#### Delete a store
+#### 下线 store
 
-To delete the store with ID of 1, run the following command:
+下线 ID 为 1 的 store：
 
 ```bash
 store delete 1
 ```
 
-To cancel deleting `Offline` state stores which are deleted using `store delete`, run the `store cancel-delete` command. After canceling, the store changes from `Offline` to `Up`. Note that the `store cancel-delete` command cannot change a `Tombstone` state store to the `Up` state.
+执行 `store cancel-delete` 命令，你可以撤销已使用 `store delete` 下线并处于 `Offline` 状态的 store。撤销后，该 store 会从 `Offline` 状态变为 `Up` 状态。注意，`store cancel-delete` 命令无法使 `Tombstone` 状态的 store 变回 `Up` 状态。
 
-To cancel deleting the store with ID of 1, run the following command:
+撤销通过 `store delete` 下线 ID 为 1 的 store：
 
 ```bash
 store cancel-delete 1
 ```
 
-To delete all stores in `Tombstone` state, run the following command:
+删除所有 Tombstone 状态的 store：
 
 ```bash
 store remove-tombstone
 ```
 
-> **Note:**
+> **注意：**
 >
-> If the PD leader changes during store deletion, you need to modify the store limit manually using the [`store limit`](#configure-store-scheduling-speed) command.
+> 若下线过程中切换了 PD leader，需要使用 `store limit` 命令修改 [store 调度限速](#设置-store-调度限速)。
 
-#### Manage store labels
+#### 管理 store label
 
-To manage the labels of a store, run the `store label` command.
+`store label` 命令用于管理 store label。
 
-- To set a label with the key being `"zone"` and value being `"cn"` to the store with ID of 1, run the following command:
+- 为 ID 为 1 的 store 设置键为 `"zone"`、值为 `"cn"` 的 label：
 
     ```bash
     store label 1 zone=cn
     ```
 
-- To update the label of a store, for example, changing the value of the key `"zone"` from `"cn"` to `"us"` for the store with ID of 1, run the following command:
+- 更新 ID 为 1 的 store 的 label：
 
     ```bash
     store label 1 zone=us
     ```
 
-- To rewrite all labels of a store with ID of 1, use the `--rewrite` option. Note that this option overwrites all existing labels:
+- 通过 `--rewrite` 选项重写 ID 为 1 的 store 的所有 label，之前的 label 会被覆盖：
 
     ```bash
     store label 1 region=us-est-1 disk=ssd --rewrite
     ```
 
-- To delete the `"disk"` label for the store with ID 1, use the `--delete` option:
+- 删除 ID 为 1 的 store 的键为 `"disk"` 的 label ：
 
     ```bash
     store label 1 disk --delete
     ```
 
-> **Note:**
+> **注意：**
 >
-> - The label of a store is updated by a merge strategy. After a TiKV process is restarted, the store labels in its configuration file will be merged with the store labels stored by PD, and the merged result will be persisted. During the merging process, if there are duplicate store labels between the PD side and the TiKV configuration file, the TiKV store label configuration will overwrite the PD label. For example, if the store label for store 1 is set to `"zone=cn"` through `store label 1 zone=cn`, but TiKV’s configuration file has `zone = "us"`, after TiKV restarts, the `"zone"` will be updated to `"us"`.
-> - To manage labels of a store using TiUP, you can run the `store label <id> --force` command to empty the labels stored in PD before restarting the cluster.
+> - store 的 label 更新采用合并策略。TiKV 进程重启后，其配置文件中的 store label 将会与 PD 自身存储的 store label 进行合并，并持久化合并后的结果。在合并过程中，如果 PD 侧的 store label 与 TiKV 配置文件有重复项，TiKV 配置将覆盖 PD 侧的标签。例如，如果通过 `store label 1 zone=cn` 将 store 1 的 `"zone"` 设置为 `"cn"`，但 TiKV 配置文件中已设置 `zone = "us"`，则在 TiKV 重启后，`"zone"` 将被更新为 `"us"`。
+> - 如果希望使用 TiUP 统一管理 store label，你可以在集群重启前，使用 PD Control 的 `store label <id> --force` 命令将 PD 存储的 store label 清空。
 
-#### Configure store weight
+#### 设置 store weight
 
-To set the leader weight to `5` and Region weight to `10` for the store with ID of 1, run the following command:
+将 ID 为 1 的 store 的 leader weight 设为 5，Region weight 设为 `10`：
 
 ```bash
 store weight 1 5 10
 ```
 
-#### Configure store scheduling speed
+#### 设置 store 调度限速
 
-You can set the scheduling speed of stores by using `store limit`. For more details about the principles and usage of `store limit`, see [`store limit`](/configure-store-limit.md).
+通过 `store-limit`，你可以设置 store 的调度速度。关于 `store limit` 的原理和使用方法，请参考 [`store limit`](/configure-store-limit.md)。
 
 ```bash
->> store limit                         // Show the speed limit of adding-peer operations and the limit of removing-peer operations per minute in all stores
->> store limit add-peer                // Show the speed limit of adding-peer operations per minute in all stores
->> store limit remove-peer             // Show the limit of removing-peer operations per minute in all stores
->> store limit all 5                   // Set the limit of adding-peer operations to 5 and the limit of removing-peer operations to 5 per minute for all stores
->> store limit 1 5                     // Set the limit of adding-peer operations to 5 and the limit of removing-peer operations to 5 per minute for store 1
->> store limit all 5 add-peer          // Set the limit of adding-peer operations to 5 per minute for all stores
->> store limit 1 5 add-peer            // Set the limit of adding-peer operations to 5 per minute for store 1
->> store limit 1 5 remove-peer         // Set the limit of removing-peer operations to 5 per minute for store 1
->> store limit all 5 remove-peer       // Set the limit of removing-peer operations to 5 per minute for all stores
+>> store limit                                  // 显示所有 store 添加和删除 peer 的速度上限
+>> store limit add-peer                         // 显示所有 store 添加 peer 的速度上限
+>> store limit remove-peer                      // 显示所有 store 删除 peer 的速度上限
+>> store limit all 5                            // 设置所有 store 添加和删除 peer 的速度上限为每分钟 5 个
+>> store limit 1 5                              // 设置 store 1 添加和删除 peer 的速度上限为每分钟 5 个
+>> store limit all 5 add-peer                   // 设置所有 store 添加 peer 的速度上限为每分钟 5 个
+>> store limit 1 5 add-peer                     // 设置 store 1 添加 peer 的速度上限为每分钟 5 个
+>> store limit 1 5 remove-peer                  // 设置 store 1 删除 peer 的速度上限为每分钟 5 个
+>> store limit all 5 remove-peer                // 设置所有 store 删除 peer 的速度上限为每分钟 5 个
+>> store limit all engine tikv 5 remove-peer    // 从 v8.5.5 起，支持设置所有 TiKV store 删除 peer 的速度上限，该示例将所有 TiKV store 删除 peer 的速度上限设置为每分钟 5 个
+>> store limit all engine tiflash 5 remove-peer // 从 v8.5.5 起，支持设置所有 TiFlash store 删除 peer 的速度上限，该示例将所有 TiFlash store 删除 peer 的速度上限设置为每分钟 5 个
 ```
 
-> **Note:**
+> **注意：**
 >
-> You can use `pd-ctl` to check the state (`Up`, `Disconnect`, `Offline`, `Down`, or `Tombstone`) of a TiKV store. For the relationship between each state, see [Relationship between each state of a TiKV store](/tidb-scheduling.md#information-collection).
+> 使用 `pd-ctl` 可以查看 TiKV 节点的状态信息，即 `Up`、`Disconnect`、`Offline`、`Down`、或 `Tombstone`。如需查看各个状态之间的关系，请参考 [TiKV Store 状态之间的关系](/tidb-scheduling.md#信息收集)。
 
 ### `log [fatal | error | warn | info | debug]`
 
-Use this command to set the log level of the PD leader.
-
-Usage:
+用于设置 PD leader 的日志级别。
 
 ```bash
 log warn
@@ -1262,26 +1530,29 @@ log warn
 
 ### `tso`
 
-Use this command to parse the physical and logical time of TSO.
+用于解析 TSO 到物理时间和逻辑时间。示例如下。
 
-Usage:
+解析 TSO：
 
 ```bash
->> tso 395181938313123110        // Parse TSO
+tso 395181938313123110
+```
+
+```
 system:  2017-10-09 05:50:59 +0800 CST
 logic:  120102
 ```
 
 ### `unsafe remove-failed-stores [store-ids | show]`
 
-> **Warning:**
+> **警告：**
 >
-> - This feature is a lossy recovery, so TiKV cannot guarantee data integrity and data indexes integrity after using the feature.
-> - It is recommended to perform the feature-related operations with the support from the TiDB team. If any misoperation is performed, it might be hard to recover the cluster.
+> - 此功能为有损恢复，无法保证数据和数据索引完整性。
+> - 建议在 TiDB 团队支持下进行相关操作，操作不当可能导致集群难以恢复。
 
-Use this command to perform lossy recovery operations when permanently damaged replicas cause data to be unavailable. See the following example. The details are described in [Online Unsafe Recovery](/online-unsafe-recovery.md)
+用于在多数副本永久损坏造成数据不可用时进行有损恢复。示例如下。详见 [Online Unsafe Recovery](/online-unsafe-recovery.md)。
 
-Execute Online Unsafe Recovery to remove permanently damaged stores:
+执行 Online Unsafe Recovery，移除永久损坏的节点 (Store):
 
 ```bash
 unsafe remove-failed-stores 101,102,103
@@ -1291,7 +1562,7 @@ unsafe remove-failed-stores 101,102,103
 Success!
 ```
 
-Show the current or historical state of Online Unsafe Recovery:
+显示正在运行的 Online Unsafe Recovery 的当前状态或历史状态。
 
 ```bash
 unsafe remove-failed-stores show
@@ -1305,27 +1576,33 @@ unsafe remove-failed-stores show
 ]
 ```
 
-## Jq formatted JSON output usage
+## jq 格式化 JSON 输出示例
 
-### Simplify the output of `store`
+### 简化 `store` 的输出
 
 ```bash
->> store --jq=".stores[].store | {id, address, state_name}"
+store --jq=".stores[].store | {id, address, state_name}"
+```
+
+```
 {"id":1,"address":"127.0.0.1:20161","state_name":"Up"}
 {"id":30,"address":"127.0.0.1:20162","state_name":"Up"}
 ...
 ```
 
-### Query the remaining space of the node
+### 查询节点剩余空间
 
 ```bash
->> store --jq=".stores[] | {id: .store.id, available: .status.available}"
+store --jq=".stores[] | {id: .store.id, available: .status.available}"
+```
+
+```
 {"id":1,"available":"10 GiB"}
 {"id":30,"available":"10 GiB"}
 ...
 ```
 
-### Query all nodes whose status is not `Up`
+### 查询状态不为 Up 的所有节点
 
 ```bash
 store --jq='.stores[].store | select(.state_name!="Up") | {id, address, state_name}'
@@ -1337,8 +1614,7 @@ store --jq='.stores[].store | select(.state_name!="Up") | {id, address, state_na
 ...
 ```
 
-### Query all TiFlash nodes
-
+### 查询所有的 TiFlash 节点
 
 ```bash
 store --jq='.stores[].store | select(.labels | length>0 and contains([{"key":"engine","value":"tiflash"}])) | {id, address, state_name}'
@@ -1350,69 +1626,90 @@ store --jq='.stores[].store | select(.labels | length>0 and contains([{"key":"en
 ...
 ```
 
-### Query the distribution status of the Region replicas
+### 查询 Region 副本的分布情况
 
 ```bash
->> region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id]}"
+region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id]}"
+```
+
+```
 {"id":2,"peer_stores":[1,30,31]}
 {"id":4,"peer_stores":[1,31,34]}
 ...
 ```
 
-### Filter Regions according to the number of replicas
+### 根据副本数过滤 Region
 
-For example, to filter out all Regions whose number of replicas is not 3:
+例如副本数不为 3 的所有 Region：
 
 ```bash
->> region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id] | select(length != 3)}"
+region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id] | select(length != 3)}"
+```
+
+```
 {"id":12,"peer_stores":[30,32]}
 {"id":2,"peer_stores":[1,30,31,32]}
 ```
 
-### Filter Regions according to the store ID of replicas
+### 根据副本 store ID 过滤 Region
 
-For example, to filter out all Regions that have a replica on store30:
+例如在 store30 上有副本的所有 Region：
 
 ```bash
->> region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id] | select(any(.==30))}"
+region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id] | select(any(.==30))}"
+```
+
+```
 {"id":6,"peer_stores":[1,30,31]}
 {"id":22,"peer_stores":[1,30,32]}
 ...
 ```
 
-You can also find out all Regions that have a replica on store30 or store31 in the same way:
+还可以像这样找出在 store30 或 store31 上有副本的所有 Region：
 
 ```bash
->> region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id] | select(any(.==(30,31)))}"
+region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id] | select(any(.==(30,31)))}"
+```
+
+```
 {"id":16,"peer_stores":[1,30,34]}
 {"id":28,"peer_stores":[1,30,32]}
 {"id":12,"peer_stores":[30,32]}
 ...
 ```
 
-### Look for relevant Regions when restoring data
+### 恢复数据时寻找相关 Region
 
-For example, when `[store1, store30, store31]` is unavailable at its downtime, you can find all Regions whose Down replicas are more than normal replicas:
+例如当 `[store1, store30, store31]` 宕机时不可用时，我们可以通过查找所有 Down 副本数量大于正常副本数量的所有 Region：
 
 ```bash
->> region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id] | select(length as $total | map(if .==(1,30,31) then . else empty end) | length>=$total-length) }"
+region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id] | select(length as $total | map(if .==(1,30,31) then . else empty end) | length>=$total-length) }"
+```
+
+```
 {"id":2,"peer_stores":[1,30,31,32]}
 {"id":12,"peer_stores":[30,32]}
 {"id":14,"peer_stores":[1,30,32]}
 ...
 ```
 
-Or when `[store1, store30, store31]` fails to start, you can find Regions where the data can be manually removed safely on store1. In this way, you can filter out all Regions that have a replica on store1 but don't have other DownPeers:
+或者在 `[store1, store30, store31]` 无法启动时，找出 `store1` 上可以安全手动移除数据的 Region。我们可以这样过滤出所有在 `store1` 上有副本并且没有其他 DownPeer 的 Region：
 
 ```bash
->> region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id] | select(length>1 and any(.==1) and all(.!=(30,31)))}"
+region --jq=".regions[] | {id: .id, peer_stores: [.peers[].store_id] | select(length>1 and any(.==1) and all(.!=(30,31)))}"
+```
+
+```
 {"id":24,"peer_stores":[1,32,33]}
 ```
 
-When `[store30, store31]` is down, find out all Regions that can be safely processed by creating the `remove-peer` Operator, that is, Regions with one and only DownPeer:
+在 `[store30, store31]` 宕机时，找出能安全地通过创建 `remove-peer` Operator 进行处理的所有 Region，即有且仅有一个 DownPeer 的 Region：
 
 ```bash
->> region --jq=".regions[] | {id: .id, remove_peer: [.peers[].store_id] | select(length>1) | map(if .==(30,31) then . else empty end) | select(length==1)}"
+region --jq=".regions[] | {id: .id, remove_peer: [.peers[].store_id] | select(length>1) | map(if .==(30,31) then . else empty end) | select(length==1)}"
+```
+
+```
 {"id":12,"remove_peer":[30]}
 {"id":4,"remove_peer":[31]}
 {"id":22,"remove_peer":[30]}

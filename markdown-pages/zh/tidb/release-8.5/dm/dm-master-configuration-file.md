@@ -1,15 +1,15 @@
 ---
-title: DM-master Configuration File
-summary: Learn the configuration file of DM-master.
+title: DM-master 配置文件介绍
+summary: 本文介绍了 DM-master 的配置文件，包括示例配置和配置项说明。示例配置包括日志配置、DM-master 监听地址、集群配置等。配置项说明包括全局配置，如标识 DM-master、日志级别、日志文件、地址等。另外还包括 SSL 证书路径、证书检查 Common Name 列表和加解密密钥路径等内容。
 ---
 
-# DM-master Configuration File
+# DM-master 配置文件介绍
 
-This document introduces the configuration of DM-master, including a configuration file template and a description of each configuration parameter in this file.
+本文介绍 DM-master 的配置文件，包括配置文件示例与配置项说明。
 
-## Configuration file template
+## 配置文件示例
 
-The following is a configuration file template of DM-master.
+DM-master 的示例配置文件如下所示：
 
 ```toml
 name = "dm-master"
@@ -38,66 +38,64 @@ cert-allowed-cn = ["dm"]
 secret-key-path = "/path/to/secret/key"
 ```
 
-## Configuration parameters
+## 配置项说明
 
-This section introduces the configuration parameters of DM-master.
-
-### Global configuration
+### Global 配置
 
 #### `name`
 
-- The name of the DM-master.
+- 标识一个 DM-master。
 
 #### `log-level`
 
-- Specifies a log level.
-- Default value: `info`
-- Value options: `debug`, `info`, `warn`, `error`, `fatal`
+- 日志级别。
+- 默认值：`info`
+- 可选值：`debug`、`info`、`warn`、`error`、`fatal`
 
 #### `log-file`
 
-- Specifies the log file directory. If the parameter is not specified, the logs are printed onto the standard output.
+- 日志文件。如果不配置，日志会输出到标准输出中。
 
 #### `master-addr`
 
-- Specifies the address of DM-master which provides services. You can omit the IP address and specify the port number only, such as `":8261"`.
+- DM-master 服务的地址，可以省略 IP 信息，例如：`":8261"`。
 
 #### `advertise-addr`
 
-- Specifies the address that DM-master advertises to the outside world.
+- DM-master 向外界宣告的地址。
 
 #### `peer-urls`
 
-- Specifies the peer URL of the DM-master node.
+- DM-master 节点的对等 URL。
 
 #### `advertise-peer-urls`
 
-- Specifies the peer URL that DM-master advertises to the outside world. The value of `advertise-peer-urls` is by default the same as that of [`peer-urls`](#peer-urls).
+- DM-master 向外界宣告的对等 URL。默认为 [`peer-urls`](#peer-urls) 的值。
 
 #### `initial-cluster`
 
-- The value of `initial-cluster` is the combination of the [`advertise-peer-urls`](#advertise-peer-urls) value of all DM-master nodes in the initial cluster.
+- 初始集群中所有 DM-master 的 [`advertise-peer-urls`](#advertise-peer-urls) 的值。
 
 #### `join`
 
-- The value of `join` is the combination of the [`advertise-peer-urls`](#advertise-peer-urls) value of the existing DM-master nodes in the cluster. If the DM-master node is newly added, replace `initial-cluster` with `join`.
+- 集群里已有的 DM-master 的 [`advertise-peer-urls`](#advertise-peer-urls) 的值。如果是新加入的 DM-master 节点，使用 `join` 替代 `initial-cluster`。
 
 #### `ssl-ca`
 
-- The path of the file that contains list of trusted SSL CAs for DM-master to connect with other components.
+- DM-master 组件用于与其它组件连接的 SSL CA 证书所在的路径。
 
 #### `ssl-cert`
 
-- The path of the file that contains X509 certificate in PEM format for DM-master to connect with other components.
+- DM-master 组件用于与其它组件连接的 PEM 格式的 X509 证书所在的路径。
 
 #### `ssl-key`
 
-- The path of the file that contains X509 key in PEM format for DM-master to connect with other components.
+- DM-master 组件用于与其它组件连接的 PEM 格式的 X509 密钥所在的路径。
 
 #### `cert-allowed-cn`
 
-- Common Name list.
+- 证书检查 Common Name 列表。
 
 #### `secret-key-path`
 
-- The file path of the secret key, which is used to encrypt and decrypt upstream and downstream passwords. The file must contain a 64-character hexadecimal AES-256 secret key. One way to generate this key is by calculating SHA256 checksum of random data, such as `head -n 256 /dev/urandom | sha256sum`. For more information, see [Customize a secret key for DM encryption and decryption](/dm/dm-customized-secret-key.md).
+- 用来加解密上下游密码的密钥所在的路径，该文件内容必须是长度为 64 个字符的十六进制的 AES-256 密钥。一种生成该秘钥的方式是对随机内容计算 SHA256 校验和，比如 `head -n 256 /dev/urandom | sha256sum`。更多信息，请参考 [DM 自定义加解密 key](/dm/dm-customized-secret-key.md)。

@@ -1,95 +1,122 @@
 ---
-title: Best Practices for Tuning TiKV Performance with Massive Regions
-summary: TiKV performance tuning involves reducing the number of Regions and messages, increasing Raftstore concurrency, enabling Hibernate Region and Region Merge, adjusting Raft base tick interval, increasing TiKV instances, and adjusting Region size. Other issues include slow PD leader switching and outdated PD routing information.
+title: 海量 Region 集群调优最佳实践
+summary: 了解海量 Region 导致性能问题的原因和优化方法。
+aliases: ['/docs-cn/dev/best-practices/massive-regions-best-practices/','/docs-cn/dev/reference/best-practices/massive-regions/','/zh/tidb/stable/massive-regions-best-practices/','/zh/tidb/dev/massive-regions-best-practices/']
 ---
 
-# Best Practices for Tuning TiKV Performance with Massive Regions
+# 海量 Region 集群调优最佳实践
 
-In TiDB, data is split into Regions, each storing data for a specific key range. These Regions are distributed among multiple TiKV instances. As data is written into a cluster, millions of Regions might be created. Too many Regions on a single TiKV instance can bring a heavy burden to the cluster and affect its performance.
+在 TiDB 的架构中，所有数据以一定 key range 被切分成若干 Region 分布在多个 TiKV 实例上。随着数据的写入，一个集群中会产生上百万个 Region。单个 TiKV 实例上产生过多的 Region 会给集群带来较大的负担，影响整个集群的性能表现。
 
-This document introduces the workflow of Raftstore (a core module of TiKV), explains why a massive amount of Regions affect the performance, and offers methods for tuning TiKV performance.
+本文将介绍 TiKV 核心模块 Raftstore 的工作流程，海量 Region 导致性能问题的原因，以及优化性能的方法。
 
-## Raftstore workflow
+## Raftstore 的工作流程
 
-A TiKV instance has multiple Regions on it. The Raftstore module drives the Raft state machine to process Region messages. These messages include processing read or write requests on Regions, persisting or replicating Raft logs, and processing Raft heartbeats. However, an increasing number of Regions can affect performance of the whole cluster. To understand this, it is necessary to learn the workflow of Raftstore shown as follows:
+一个 TiKV 实例上有多个 Region。Region 消息是通过 Raftstore 模块驱动 Raft 状态机来处理的。这些消息包括 Region 上读写请求的处理、Raft log 的持久化和复制、Raft 的心跳处理等。但是，Region 数量增多会影响整个集群的性能。为了解释这一点，需要先了解 TiKV 的核心模块 Raftstore 的工作流程。
 
-![Raftstore Workflow](https://docs-download.pingcap.com/media/images/docs/best-practices/raft-process.png)
+![图 1 Raftstore 处理流程示意图](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/raft-process.png)
 
-> **Note:**
+> **注意：**
 >
-> This diagram only illustrates the workflow of Raftstore and does not represent the actual code structure.
+> 该图仅为示意，不代表代码层面的实际结构。
 
-From the above diagram, you can see that requests from the TiDB servers, after passing through the gRPC and storage modules, become read and write messages of KV (key-value), and are sent to the corresponding Regions. These messages are not immediately processed but are temporarily stored. Raftstore polls to check whether each Region has messages to process. If a Region has messages to process, Raftstore drives the Raft state machine of this Region to process these messages and perform subsequent operations according to the state changes of these messages. For example, when write requests come in, the Raft state machine stores logs into disk and sends logs to other Region replicas; when the heartbeat interval is reached, the Raft state machine sends heartbeat information to other Region replicas.
+上图是 Raftstore 处理流程的示意图。如图所示，从 TiDB 发来的请求会通过 gRPC 和 storage 模块变成最终的 KV 读写消息，并被发往相应的 Region，而这些消息并不会被立即处理而是被暂存下来。Raftstore 会轮询检查每个 Region 是否有需要处理的消息。如果 Region 有需要处理的消息，那么 Raftstore 会驱动 Raft 状态机去处理这些消息，并根据这些消息所产生的状态变更去进行后续操作。例如，在有写请求时，Raft 状态机需要将日志落盘并且将日志发送给其他 Region 副本；在达到心跳间隔时，Raft 状态机需要将心跳信息发送给其他 Region 副本。
 
-## Performance problem
+## 性能问题
 
-From the Raftstore workflow diagram, messages in each Region are processed one by one. When a large number of Regions exist, it takes Raftstore some time to process the heartbeats of these Regions, which can cause some delay. As a result, some read and write requests are not processed in time. If read and write pressure is high, the CPU usage of the Raftstore thread might easily become the bottleneck, which further increases the delay and affects the performance.
+从 Raftstore 处理流程示意图可以看出，需要依次处理各个 Region 的消息。那么在 Region 数量较多的情况下，Raftstore 需要花费一些时间去处理大量 Region 的心跳，从而带来一些延迟，导致某些读写请求得不到及时处理。如果读写压力较大，Raftstore 线程的 CPU 使用率容易达到瓶颈，导致延迟进一步增加，进而影响性能表现。
 
-Generally, if the CPU usage of the loaded Raftstore reaches 85% or higher, Raftstore goes into a busy state and becomes the bottleneck. At the same time, `propose wait duration` can be as high as hundreds of milliseconds.
+通常在有负载的情况下，如果 Raftstore 的 CPU 使用率达到了 85% 以上，即可视为达到繁忙状态且成为了瓶颈，同时 `propose wait duration` 可能会高达百毫秒级别。
 
-> **Note:**
+> **注意：**
 >
-> + For the CPU usage of Raftstore as mentioned above, Raftstore is single-threaded. If Raftstore is multi-threaded, you can increase the CPU usage threshold (85%) proportionally.
-> + Because I/O operations exist in the Raftstore thread, CPU usage cannot reach 100%.
+> + Raftstore 的 CPU 使用率是指单线程的情况。如果是多线程 Raftstore，可等比例放大使用率。
+> + 由于 Raftstore 线程中有 I/O 操作，所以 CPU 使用率不可能达到 100%。
 
-### Performance monitoring
+### 性能监控
 
-You can check the following monitoring metrics in Grafana's **TiKV Dashboard**:
+可在 Grafana 的 TiKV 面板下查看相关的监控 metrics：
 
-+ `Raft store CPU` in the **Thread-CPU** panel
++ Thread-CPU 下的 `Raft store CPU`
 
-    Reference value: lower than `raftstore.store-pool-size * 85%`.
+    参考值：低于 `raftstore.store-pool-size * 85%`。
 
-    ![Check Raftstore CPU](https://docs-download.pingcap.com/media/images/docs/best-practices/raft-store-cpu.png)
+    ![图 2 查看 Raftstore CPU](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/raft-store-cpu.png)
 
-+ `Propose wait duration` in the **Raft Propose** panel
++ Raft Propose 下的 `Propose wait duration`
 
-    `Propose wait duration` is the delay between the time a request is sent to Raftstore and the time Raftstore actually starts processing the request. Long delay means that Raftstore is busy, or that processing the append log is time-consuming, making Raftstore unable to process the request in time.
+    `Propose wait duration` 是从发送请求给 Raftstore，到 Raftstore 真正开始处理请求之间的延迟时间。如果该延迟时间较长，说明 Raftstore 比较繁忙或者处理 append log 比较耗时导致 Raftstore 不能及时处理请求。
 
-    Reference value: lower than 50~100 ms according to the cluster size
+    参考值：低于 50-100ms。
 
-    ![Check Propose wait duration](https://docs-download.pingcap.com/media/images/docs/best-practices/propose-wait-duration.png)
+    ![图 3 查看 Propose wait duration](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/propose-wait-duration.png)
 
-+ `Commit log duration` in the **Raft IO** panel
++ Raft IO 下的 `Commit log duration`
 
-    `Commit log duration` is the time Raftstore takes to commit Raft logs to the majority of members in the respective Region. The possible reasons for a high value of this metric with significant fluctuations include the following:
+    `Commit log duration` 是 Raftstore 将 Raft 日志提交到相应 Region 的多数成员所花费的时间。如果该指标的值较高且波动较大，可能的原因有：
 
-    - The workload on Raftstore is heavy.
-    - The append log operation is slow.
-    - Raft logs cannot be committed timely due to network congestion.
+    - Raftstore 的负载较高
+    - append log 较慢
+    - Raft 日志由于网络阻塞无法及时提交
 
-  Reference value: lower than 200-500 ms.
+  参考值：低于 200-500ms。
 
-    ![Check Commit log duration](https://docs-download.pingcap.com/media/images/docs/best-practices/commit-log-duration.png)
+    ![图 4 查看 Commit log duration](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/commit-log-duration.png)
 
-## Performance tuning methods
+## 性能优化方法
 
-After finding out the cause of a performance problem, try to solve it from the following two aspects:
+找到性能问题的根源后，可从以下两个方向来解决性能问题：
 
-+ Reduce the number of Regions on a single TiKV instance
-+ Reduce the number of messages for a single Region
++ 减少单个 TiKV 实例的 Region 数
++ 减少单个 Region 的消息数
 
-### Method 1: Increase Raftstore concurrency
+### 方法一：增加 TiKV 实例
 
-Raftstore has been upgraded to a multi-threaded module since TiDB v3.0, which greatly reduces the possibility that a Raftstore thread becomes the bottleneck.
+如果 I/O 资源和 CPU 资源都比较充足，可在单台机器上部署多个 TiKV 实例，以减少单个 TiKV 实例上的 Region 个数；或者增加 TiKV 集群的机器数。
 
-By default, `raftstore.store-pool-size` is configured to `2` in TiKV. If a bottleneck occurs in Raftstore, you can properly increase the value of this configuration item according to the actual situation. But to avoid introducing unnecessary thread switching overhead, it is recommended that you do not set this value too high.
+### 方法二：调整 `raft-base-tick-interval`
 
-### Method 2: Enable Hibernate Region
+除了减少 Region 个数外，还可以通过减少 Region 单位时间内的消息数量来减小 Raftstore 的压力。例如，在 TiKV 配置中适当调大 `raft-base-tick-interval`：
 
-In the actual situation, read and write requests are not evenly distributed on every Region. Instead, they are concentrated on a few Regions. Then you can minimize the number of messages between the Raft leader and the followers for the temporarily idle Regions, which is the feature of Hibernate Region. In this feature, Raftstore doesn't send tick messages to the Raft state machines of idle Regions if not necessary. Then these Raft state machines will not be triggered to generate heartbeat messages, which can greatly reduce the workload of Raftstore.
 
-Hibernate Region is enabled by default in [TiKV master](https://github.com/tikv/tikv/tree/master). You can configure this feature according to your needs. For details, refer to [Configure Hibernate Region](/tikv-configuration-file.md).
+```
+[raftstore]
+raft-base-tick-interval = "2s"
+```
 
-### Method 3: Enable `Region Merge`
+`raft-base-tick-interval` 是 Raftstore 驱动每个 Region 的 Raft 状态机的时间间隔，也就是每隔该时长就需要向 Raft 状态机发送一个 tick 消息。增加该时间间隔，可以有效减少 Raftstore 的消息数量。
 
-> **Note:**
+需要注意的是，该 tick 消息的间隔也决定了 `election timeout` 和 `heartbeat` 的间隔。示例如下：
+
+
+```
+raft-election-timeout = raft-base-tick-interval * raft-election-timeout-ticks
+raft-heartbeat-interval = raft-base-tick-interval * raft-heartbeat-ticks
+```
+
+如果 Region Follower 在 `raft-election-timeout` 间隔内未收到来自 Leader 的心跳，就会判断 Leader 出现故障而发起新的选举。`raft-heartbeat-interval` 是 Leader 向 Follower 发送心跳的间隔，因此调大 `raft-base-tick-interval` 可以减少单位时间内 Raft 发送的网络消息，但也会让 Raft 检测到 Leader 故障的时间更长。
+
+### 方法三：提高 Raftstore 并发数
+
+从 v3.0 版本起，Raftstore 已经扩展为多线程，极大降低了 Raftstore 线程成为瓶颈的可能性。
+
+TiKV 默认将 `raftstore.store-pool-size` 配置为 `2`。如果 Raftstore 出现瓶颈，可以根据实际情况适当调高该参数值，但不建议设置过高以免引入不必要的线程切换开销。
+
+### 方法四：开启 Hibernate Region 功能
+
+在实际情况中，读写请求并不会均匀分布到每个 Region 上，而是集中在少数的 Region 上。那么可以尽量减少暂时空闲的 Region 的消息数量，这也就是 Hibernate Region 的功能。无必要时可不进行 `raft-base-tick`，即不驱动空闲 Region 的 Raft 状态机，那么就不会触发这些 Region 的 Raft 产生心跳信息，极大地减小了 Raftstore 的工作负担。
+
+Hibernate Region 在 [TiKV master](https://github.com/tikv/tikv/tree/master) 分支上默认开启。可根据实际情况和需求来配置此功能的开启和关闭，请参阅[配置 Hibernate Region](/tikv-configuration-file.md#hibernate-regions)。
+
+### 方法五：开启 `Region Merge`
+
+> **注意：**
 >
-> `Region Merge` is enabled by default since TiDB v3.0.
+> 从 TiDB v3.0 开始，`Region Merge` 默认开启。
 
-You can also reduce the number of Regions by enabling `Region Merge`. Contrary to `Region Split`, `Region Merge` is the process of merging adjacent small Regions through scheduling. After dropping data or executing the `Drop Table` or `Truncate Table` statement, you can merge small Regions or even empty Regions to reduce resource consumption.
+开启 `Region Merge` 也能减少 Region 的个数。与 `Region Split` 相反，`Region Merge` 是通过调度把相邻的小 Region 合并的过程。在集群中删除数据或者执行 `Drop Table`/`Truncate Table` 语句后，可以将小 Region 甚至空 Region 进行合并以减少资源的消耗。
 
-Enable `Region Merge` by configuring the following parameters:
+通过 pd-ctl 设置以下参数即可开启 `Region Merge`：
 
 
 ```
@@ -98,80 +125,48 @@ config set max-merge-region-keys 540000
 config set merge-schedule-limit 8
 ```
 
-Refer to [Region Merge](https://tikv.org/docs/4.0/tasks/configure/region-merge/) and the following three configuration parameters in the [PD configuration file](/pd-configuration-file.md#schedule) for more details:
+详情请参考[如何配置 Region Merge（英文）](https://tikv.org/docs/4.0/tasks/configure/region-merge/) 和 [PD 配置文件描述](/pd-configuration-file.md#schedule)。
 
-- [`max-merge-region-size`](/pd-configuration-file.md#max-merge-region-size)
-- [`max-merge-region-keys`](/pd-configuration-file.md#max-merge-region-keys)
-- [`merge-schedule-limit`](/pd-configuration-file.md#merge-schedule-limit)
+同时，默认配置的 `Region Merge` 的参数设置较为保守，可以根据需求参考 [PD 调度策略最佳实践](/best-practices/pd-scheduling-best-practices.md#region-merge-速度慢)中提供的方法加快 `Region Merge` 过程的速度。
 
-The default configuration of the `Region Merge` parameters is rather conservative. You can speed up the `Region Merge` process by referring to the method provided in [PD Scheduling Best Practices](/best-practices/pd-scheduling-best-practices.md#region-merge-is-slow).
+### 方法六：调整 Region 大小
 
-### Method 4: Increase the number of TiKV instances
+Region 的默认大小为 256 MiB，将其调大可以减少 Region 个数，详情参见 [Region 性能调优](/tune-region-performance.md)。
 
-If I/O resources and CPU resources are sufficient, you can deploy multiple TiKV instances on a single machine to reduce the number of Regions on a single TiKV instance; or you can increase the number of machines in the TiKV cluster.
-
-### Method 5: Adjust `raft-base-tick-interval`
-
-In addition to reducing the number of Regions, you can also reduce pressure on Raftstore by reducing the number of messages for each Region within a unit of time. For example, you can properly increase the value of the `raft-base-tick-interval` configuration item:
-
-
-```
-[raftstore]
-raft-base-tick-interval = "2s"
-```
-
-In the above configuration, `raft-base-tick-interval` is the time interval at which Raftstore drives the Raft state machine of each Region, which means at this time interval, Raftstore sends a tick message to the Raft state machine. Increasing this interval can effectively reduce the number of messages from Raftstore.
-
-Note that this interval between tick messages also determines the intervals between `election timeout` and `heartbeat`. See the following example:
-
-
-```
-raft-election-timeout = raft-base-tick-interval * raft-election-timeout-ticks
-raft-heartbeat-interval = raft-base-tick-interval * raft-heartbeat-ticks
-```
-
-If Region followers have not received the heartbeat from the leader within the `raft-election-timeout` interval, these followers determine that the leader has failed and start a new election. `raft-heartbeat-interval` is the interval at which a leader sends a heartbeat to followers. Therefore, increasing the value of `raft-base-tick-interval` can reduce the number of network messages sent from Raft state machines but also makes it longer for Raft state machines to detect the leader failure.
-
-### Method 6: Adjust Region size
-
-The default size of a Region is 256 MiB, and you can reduce the number of Regions by setting Regions to a larger size. For more information, see [Tune Region Performance](/tune-region-performance.md).
-
-> **Note:**
+> **注意：**
 >
-> Starting from v8.4.0, the default Region size is increased from 96 MiB to 256 MiB. If you have not modified the Region size manually, when you upgrade a TiKV cluster to v8.4.0 or later,  the TiKV cluster's default Region size will automatically be updated to 256 MiB.
+> 从 v8.4.0 开始，Region 的默认值从 96 MiB 调整为 256 MiB。如果你并未手动调整过 Region 大小，将 TiKV 集群从 v8.4.0 之前升级至 v8.4.0 或更高的版本后，集群 Region 的默认值将自动更新为 256 MiB。
 
-> **Note:**
+> **注意：**
 >
-> Customized Region size is an experimental feature before TiDB v6.5.0. If you need to resize the Region size, it is recommended that you upgrade to v6.5.0 or a later version.
+> 自定义 Region 大小在 TiDB v6.5.0 之前为实验特性。如需调整 Region 大小，建议升级至 v6.5.0 或更高版本。
 
-### Method 7: Increase the maximum number of connections for Raft communication
+### 方法七：提高 Raft 通信的的最大连接数
 
-By default, the maximum number of connections used for Raft communication between TiKV nodes is 1. Increasing this number can help alleviate blockage issues caused by heavy communication workloads of a large number of Regions. For detailed instructions, see [`grpc-raft-conn-num`](/tikv-configuration-file.md#grpc-raft-conn-num).
+TiKV 节点间用于 Raft 通信的最大连接数可以通过 [`server.grpc-raft-conn-num`](/tikv-configuration-file.md#grpc-raft-conn-num) 配置项调整，将其值调大可以减少因为海量 Region 通信量过大而导致的阻塞情况。
 
-> **Note:**
+> **注意：**
 >
-> To reduce unnecessary thread switching overhead and mitigate potential negative impacts from batch processing, it is recommended to set the number within the range of `[1, 4]`.
+> 为了减少不必要的线程切换开销，并避免批量处理效果不佳的影响，该连接数的建议范围为 `[1, 4]`。
 
-## Other problems and solutions
+## 其他问题和解决方案
 
-This section describes some other problems and solutions.
+### 切换 PD Leader 的速度慢
 
-### Switching PD Leader is slow
+PD 需要将 Region Meta 信息持久化在 etcd 上，以保证切换 PD Leader 节点后 PD 能快速继续提供 Region 路由服务。随着 Region 数量的增加，etcd 出现性能问题，使得 PD 在切换 Leader 时从 etcd 获取 Region Meta 信息的速度较慢。在百万 Region 量级时，从 etcd 获取信息的时间可能需要十几秒甚至几十秒。
 
-PD needs to persist Region Meta information on etcd to ensure that PD can quickly resume to provide Region routing services after switching the PD Leader node. As the number of Regions increases, the performance problem of etcd appears, making it slower for PD to get Region Meta information from etcd when PD is switching the Leader. With millions of Regions, it might take more than ten seconds or even tens of seconds to get the meta information from etcd.
+因此从 v3.0 版本起，PD 默认开启配置项 `use-region-storage`，将 Region Meta 信息存在本地的 LevelDB 中，并通过其他机制同步 PD 节点间的信息。
 
-To address this problem, `use-region-storage` is enabled by default in PD since TiDB v3.0. With this feature enabled, PD stores Region Meta information on local LevelDB and synchronizes the information among PD nodes through other mechanisms.
+### PD 路由信息更新不及时
 
-### PD routing information is not updated in time
+在 TiKV 中，pd-worker 模块将 Region Meta 信息定期上报给 PD，在 TiKV 重启或者切换 Region Leader 时需要通过统计信息重新计算 Region 的 `approximate size/keys`。因此在 Region 数量较多的情况下，pd-worker 单线程可能成为瓶颈，造成任务得不到及时处理而堆积起来。因此 PD 不能及时获取某些 Region Meta 信息以致路由信息更新不及时。该问题不会影响实际的读写，但可能导致 PD 调度不准确以及 TiDB 更新 Region cache 时需要多几次 round-trip。
 
-In TiKV, pd-worker regularly reports Region Meta information to PD. When TiKV is restarted or switches the Region leader, PD needs to recalculate Region's `approximate size / keys` through statistics. Therefore, with a large number of Regions, the single-threaded pd-worker might become the bottleneck, causing tasks to be piled up and not processed in time. In this situation, PD cannot obtain certain Region Meta information in time so that the routing information is not updated in time. This problem does not affect the actual reads and writes, but might cause inaccurate PD scheduling and require several round trips when TiDB updates Region cache.
+可在 TiKV Grafana 面板中查看 Task 下的 Worker pending tasks 来确定 pd-worker 是否有任务堆积。通常来说，pending tasks 应该维持在一个比较低的值。
 
-You can check **Worker pending tasks** under **Task** in the **TiKV Grafana** panel to determine whether pd-worker has tasks piled up. Generally, `pending tasks` should be kept at a relatively low value.
+![图 4 查看 pd-worker](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/pd-worker-metrics.png)
 
-![Check pd-worker](https://docs-download.pingcap.com/media/images/docs/best-practices/pd-worker-metrics.png)
+老版本 TiDB (< v3.0.5) pd-worker 的效率有一些缺陷，如果碰到类似问题，建议升级至最新版本。
 
-pd-worker has been optimized for better performance since [v3.0.5](/releases/release-3.0.5.md#tikv). If you encounter a similar problem, it is recommended to upgrade to the latest version.
+### Prometheus 查询 metrics 的速度慢
 
-### Prometheus is slow to query metrics
-
-In a large-scale cluster, as the number of TiKV instances increases, Prometheus has greater pressure to query metrics, making it slower for Grafana to display these metrics. To ease this problem, metrics pre-calculation is configured since v3.0.
+在大规模集群中，随着 TiKV 实例数的增加，Prometheus 查询 metrics 时的计算压力较大，导致 Grafana 查看 metrics 的速度较慢。从 v3.0 版本起设置了一些 metrics 的预计算，让这个问题有所缓解。

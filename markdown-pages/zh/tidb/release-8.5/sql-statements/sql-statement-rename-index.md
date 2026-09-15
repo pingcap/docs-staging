@@ -1,13 +1,13 @@
 ---
-title: RENAME INDEX | TiDB SQL 语句参考
-summary: 关于在 TiDB 数据库中使用 RENAME INDEX 的概述。
+title: RENAME INDEX
+summary: TiDB 数据库中 RENAME INDEX 的使用概况。
 ---
 
 # RENAME INDEX
 
-语句 `ALTER TABLE .. RENAME INDEX` 用于将现有索引重命名为新名称。 在 TiDB 中，此操作是即时的，只需更改元数据。
+`ALTER TABLE .. RENAME INDEX` 语句用于对已有索引进行重命名。这在 TiDB 中是即时操作的，仅需更改元数据。
 
-## 概要
+## 语法图
 
 ```ebnf+diagram
 AlterTableStmt
@@ -19,11 +19,21 @@ RenameIndexSpec
 
 ## 示例
 
-```sql
-mysql> CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL, INDEX col1 (c1));
-Query OK, 0 rows affected (0.11 sec)
 
-mysql> SHOW CREATE TABLE t1\G
+```sql
+CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL, INDEX col1 (c1));
+```
+
+```
+Query OK, 0 rows affected (0.11 sec)
+```
+
+
+```sql
+SHOW CREATE TABLE t1;
+```
+
+```
 *************************** 1. row ***************************
        Table: t1
 Create Table: CREATE TABLE `t1` (
@@ -33,11 +43,23 @@ Create Table: CREATE TABLE `t1` (
   KEY `col1` (`c1`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
 1 row in set (0.00 sec)
+```
 
-mysql> ALTER TABLE t1 RENAME INDEX col1 TO c1;
+
+```sql
+ALTER TABLE t1 RENAME INDEX col1 TO c1;
+```
+
+```
 Query OK, 0 rows affected (0.09 sec)
+```
 
-mysql> SHOW CREATE TABLE t1\G
+
+```sql
+SHOW CREATE TABLE t1;
+```
+
+```
 *************************** 1. row ***************************
        Table: t1
 Create Table: CREATE TABLE `t1` (
@@ -51,9 +73,9 @@ Create Table: CREATE TABLE `t1` (
 
 ## MySQL 兼容性
 
-TiDB 中的 `RENAME INDEX` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`RENAME INDEX` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## 另请参阅
 
 * [SHOW CREATE TABLE](/sql-statements/sql-statement-show-create-table.md)
 * [CREATE INDEX](/sql-statements/sql-statement-create-index.md)

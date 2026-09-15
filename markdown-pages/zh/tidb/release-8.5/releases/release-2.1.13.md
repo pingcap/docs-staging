@@ -1,37 +1,39 @@
 ---
 title: TiDB 2.1.13 Release Notes
-summary: TiDB 2.1.13 was released on June 21, 2019. It includes features to scatter row IDs, optimize DDL metadata lifetime, fix OOM issue, update statistics, support Region presplit, improve MySQL compatibility, and fix estimation issues. TiKV fixes incomplete snapshots and adds a feature to check the validity of the block-size configuration. TiDB Binlog fixes wrong offset and adds advertise-addr configuration in Drainer.
+summary: TiDB 2.1.13 发布，新增了列属性包含 `AUTO_INCREMENT` 时利用 `SHARD_ROW_ID_BITS` 打散行 ID 功能，优化无效 DDL 元信息存活时间，修复了在大并发场景下 OOM 的问题，新增了 `update-stats` 配置项，新增了 3 个 TiDB 特有语法，修复了某些情况下 `KILL` 语句导致的 panic 问题，增强了 `ADD_DATE` 在某些情况下跟 MySQL 的兼容性，修复了 index join 中内表过滤条件在某些情况下的选择率估计错误的问题。TiKV 修复了因迭代器未检查状态导致系统生成残缺 snapshot 的问题，新增了检查 `block-size` 配置的有效性功能。TiDB Binlog 修复了 Pump 因写入失败时未检查返回值导致偏移量错误问题，Drainer 新增了 `advertise-addr` 配置，支持容器环境中使用桥接模式。
+aliases: ['/zh/tidb/dev/release-2.1.13/','/zh/tidb/v2.1/release-2.1.13','/docs-cn/dev/releases/release-2.1.13/','/docs-cn/dev/releases/2.1.13/','/zh/tidb/v5.4/release-2.1.13','/zh/tidb/v6.1/release-2.1.13','/zh/tidb/v6.5/release-2.1.13','/zh/tidb/v7.1/release-2.1.13','/zh/tidb/v7.5/release-2.1.13','/zh/tidb/v8.1/release-2.1.13']
 ---
 
 # TiDB 2.1.13 Release Notes
 
-Release date: June 21, 2019
+发版日期：2019 年 6 月 21 日
 
-TiDB version: 2.1.13
+TiDB 版本：2.1.13
 
-TiDB Ansible version: 2.1.13
+TiDB Ansible 版本：2.1.13
 
 ## TiDB
 
-- Add a feature to use `SHARD_ROW_ID_BITS` to scatter row IDs when the column contains an `AUTO_INCREMENT` attribute to relieve the hotspot issue [#10788](https://github.com/pingcap/tidb/pull/10788)
-- Optimize the lifetime of invalid DDL metadata to speed up recovering the normal execution of DDL operations after upgrading the TiDB cluster [#10789](https://github.com/pingcap/tidb/pull/10789)
-- Fix the OOM issue in high concurrent scenarios caused by the failure to quickly release Coprocessor resources, resulted from the `execdetails.ExecDetails` pointer [#10833](https://github.com/pingcap/tidb/pull/10833)
-- Add the `update-stats` configuration item to control whether to update statistics [#10772](https://github.com/pingcap/tidb/pull/10772)
-- Add the following TiDB-specific syntax to support Region presplit to solve the hotspot issue:
-- Add the `PRE_SPLIT_REGIONS` table option [#10863](https://github.com/pingcap/tidb/pull/10863)
-- Add the `SPLIT TABLE table_name INDEX index_name` syntax [#10865](https://github.com/pingcap/tidb/pull/10865)
-- Add the `SPLIT TABLE [table_name] BETWEEN (min_value...) AND (max_value...) REGIONS [region_num]` syntax [#10882](https://github.com/pingcap/tidb/pull/10882)
-- Fix the panic issue caused by the `KILL` syntax in some cases [#10879](https://github.com/pingcap/tidb/pull/10879)
-- Improve the compatibility with MySQL for `ADD_DATE` in some cases [#10718](https://github.com/pingcap/tidb/pull/10718)
-- Fix the wrong estimation for the selectivity rate of the inner table selection in index join [#10856](https://github.com/pingcap/tidb/pull/10856)
+- 新增列属性包含 `AUTO_INCREMENT` 时利用 `SHARD_ROW_ID_BITS` 打散行 ID 功能，缓解热点问题 [#10788](https://github.com/pingcap/tidb/pull/10788)
+- 优化无效 DDL 元信息存活时间，缩短集群升级后恢复 DDL 操作正常执行所需的时间 [#10789](https://github.com/pingcap/tidb/pull/10789)
+- 修复因持有 `execdetails.ExecDetails` 指针时 Coprocessor 的资源无法快速释放导致的在大并发场景下 OOM 的问题 [#10833](https://github.com/pingcap/tidb/pull/10833)
+- 新增 `update-stats`配置项，控制是否更新统计信息 [#10772](https://github.com/pingcap/tidb/pull/10772)
+- 新增 3 个 TiDB 特有语法，支持预先切分 Region，解决热点问题：
+    - 新增 Table Option `PRE_SPLIT_REGIONS` 选项 [#10863](https://github.com/pingcap/tidb/pull/10863)
+    - 新增 `SPLIT TABLE table_name INDEX index_name` 语法 [#10865](https://github.com/pingcap/tidb/pull/10865)
+    - 新增 `SPLIT TABLE [table_name] BETWEEN (min_value...) AND (max_value...) REGIONS [region_num]` 语法 [#10882](https://github.com/pingcap/tidb/pull/10882)
+- 修复某些情况下 `KILL` 语句导致的 panic 问题 [#10879](https://github.com/pingcap/tidb/pull/10879)
+- 增强 `ADD_DATE` 在某些情况下跟 MySQL 的兼容性 [#10718](https://github.com/pingcap/tidb/pull/10718)
+- 修复 index join 中内表过滤条件在某些情况下的选择率估计错误的问题 [#10856](https://github.com/pingcap/tidb/pull/10856)
 
 ## TiKV
 
-- Fix the issue that incomplete snapshots are generated in the system caused by the iterator not checking the status [#4940](https://github.com/tikv/tikv/pull/4940)
-- Add a feature to check the validity for the `block-size` configuration [#4930](https://github.com/tikv/tikv/pull/4930)
+- 修复因迭代器未检查状态导致系统生成残缺 snapshot 的问题 [#4940](https://github.com/tikv/tikv/pull/4940)
+- 新增检查 `block-size` 配置的有效性功能 [#4930](https://github.com/tikv/tikv/pull/4930)
 
 ## Tools
 
-- TiDB Binlog
-    - Fix the wrong offset issue caused by Pump not checking the returned value when it fails to write data [#640](https://github.com/pingcap/tidb-binlog/pull/640)
-    - Add the `advertise-addr` configuration in Drainer to support the bridge mode in the container environment [#634](https://github.com/pingcap/tidb-binlog/pull/634)
+TiDB Binlog
+
+- 修复 Pump 因写入失败时未检查返回值导致偏移量错误问题 [#640](https://github.com/pingcap/tidb-binlog/pull/640)
+- Drainer 新增 `advertise-addr` 配置，支持容器环境中使用桥接模式 [#634](https://github.com/pingcap/tidb-binlog/pull/634)

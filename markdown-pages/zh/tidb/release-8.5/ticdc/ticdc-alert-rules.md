@@ -1,171 +1,170 @@
 ---
-title: TiCDC Alert Rules
-summary: Learn about TiCDC alert rules and how to handle the alerts.
+title: TiCDC 集群监控报警规则
+summary: 了解 TiCDC 集群监控报警规则以及处理方法。
 ---
-# TiCDC Alert Rules
 
-This document describes the TiCDC alert rules and the corresponding solutions. In descending order, the severity levels are: **Critical**, **Warning**.
+# TiCDC 集群监控报警规则
 
-## Critical alerts
+本文介绍了 TiCDC 组件的报警项及相应的报警规则。根据严重级别，报警项按照严重程度由高到低依次为：重要级别 (Critical)、警告级别 (Warning)。
 
-This section introduces critical alerts and solutions.
+## 重要级别报警项
+
+对于重要级别的报警，需要密切关注异常指标。
 
 ### `cdc_checkpoint_high_delay`
 
-For critical alerts, you need to pay close attention to abnormal monitoring metrics.
-
-- Alert rule:
+* 报警规则：
 
     `ticdc_owner_checkpoint_ts_lag > 600`
 
-- Description:
+* 规则描述：
 
-    A replication task is delayed more than 10 minutes.
+    TiCDC 某个同步任务延迟超过 10 分钟。
 
-- Solution:
+* 处理方法：
 
-    See [TiCDC Handles Replication Interruption](/ticdc/troubleshoot-ticdc.md#how-do-i-handle-replication-interruptions).
+    参考 [TiCDC 同步任务出现中断](/ticdc/troubleshoot-ticdc.md#ticdc-同步任务出现中断)的处理方法。
 
 ### `cdc_resolvedts_high_delay`
 
-- Alert rule:
+* 报警规则：
 
     `ticdc_owner_resolved_ts_lag > 300`
 
-- Description:
+* 规则描述：
 
-     The Resolved TS of a replication task is delayed more than 5 minutes.
+    TiCDC 某个同步任务的 resolved ts 延迟超过 5 分钟。
 
-- Solution:
+* 处理方法：
 
-    See [TiCDC Handles Replication Interruption](/ticdc/troubleshoot-ticdc.md#how-do-i-handle-replication-interruptions).
+    该告警与同步任务中断类似，可参考 [TiCDC 同步任务出现中断](/ticdc/troubleshoot-ticdc.md#ticdc-同步任务出现中断)的处理方法。
 
 ### `ticdc_changefeed_failed`
 
-- Alert rule:
+* 报警规则：
 
     `(max_over_time(ticdc_owner_status[1m]) == 2) > 0`
 
-- Description:
+* 规则描述：
 
-    A replication task encounters an unrecoverable error and enters the failed state.
+    TiCDC 某个同步任务遇到无法自动恢复的错误，进入 failed 状态。
 
-- Solution:
+* 处理方法：
 
-    This alert is similar to replication interruption. See [TiCDC Handles Replication Interruption](/ticdc/troubleshoot-ticdc.md#how-do-i-handle-replication-interruptions).
+    该告警与同步任务中断类似，可参考 [TiCDC 同步任务出现中断](/ticdc/troubleshoot-ticdc.md#ticdc-同步任务出现中断)的处理方法。
 
-## Warning alerts
+## 警告级别报警项
 
-Warning alerts are a reminder for an issue or error.
+警告级别的报警是对某一问题或错误的提醒。
 
 ### `cdc_multiple_owners`
 
-- Alert rule:
+* 报警规则：
 
     `sum(rate(ticdc_owner_ownership_counter[30s])) >= 2`
 
-- Description:
+* 规则描述：
 
-    There are multiple owners in the TiCDC cluster.
+    TiCDC 集群有多个 owner。
 
-- Solution:
+* 处理方法：
 
-    Collect TiCDC logs to locate the root cause.
+    收集 TiCDC 日志，定位原因。
 
 ### `cdc_no_owner`
 
-- Alert rule:
+* 报警规则：
 
     `sum(rate(ticdc_owner_ownership_counter[240s])) < 0.5`
 
-- Description:
+* 规则描述：
+    
+    TiCDC 集群超过 10 分钟没有 owner。
 
-    There is no owner in the TiCDC cluster for more than 10 minutes.
+* 处理方法：
 
-- Solution:
-
-    Collect TiCDC logs to identify the root cause.
+    收集 TiCDC 日志，定位原因。
 
 ### `ticdc_changefeed_meet_error`
 
-- Alert rule:
+* 报警规则：
 
     `(max_over_time(ticdc_owner_status[1m]) == 1 or max_over_time(ticdc_owner_status[1m]) == 6) > 0`
 
-- Description:
+* 规则描述：
 
-    A replication task encounters an error.
+    TiCDC 某个同步任务遇到错误。
 
-- Solution:
+* 处理方法：
 
-    See [TiCDC Handles Replication Interruption](/ticdc/troubleshoot-ticdc.md#how-do-i-handle-replication-interruptions).
+    参考 [TiCDC 同步任务出现中断](/ticdc/troubleshoot-ticdc.md#ticdc-同步任务出现中断)的处理方法。
 
 ### `ticdc_processor_exit_with_error_count`
 
-- Alert rule:
+* 报警规则：
 
     `changes(ticdc_processor_exit_with_error_count[1m]) > 0`
 
-- Description:
+* 规则描述：
 
-    A replication task reports an error and exits.
+    TiCDC 某个同步任务报错退出。
 
-- Solution:
+* 处理方法：
 
-    See [TiCDC Handles Replication Interruption](/ticdc/troubleshoot-ticdc.md#how-do-i-handle-replication-interruptions).
+    参考 [TiCDC 同步任务出现中断](/ticdc/troubleshoot-ticdc.md#ticdc-同步任务出现中断)的处理方法。
 
 ### `tikv_cdc_min_resolved_ts_no_change_for_1m`
 
-- Alert rule:
+* 报警规则：
 
     `changes(tikv_cdc_min_resolved_ts[1m]) < 1 and ON (instance) tikv_cdc_region_resolve_status{status="resolved"} > 0 and ON (instance) tikv_cdc_captured_region_total > 0`
 
-- Description:
+* 规则描述：
 
-    The minimum Resolved TS 1 of TiKV CDC has not advanced for 1 minute.
+    TiKV CDC 模块最小的 resolved ts 1 分钟没推进。
 
-- Solution:
+* 处理方法：
 
-    Collect TiKV logs to locate the root cause.
+    收集 TiKV 日志，定位原因。
 
 ### `tikv_cdc_scan_duration_seconds_more_than_10min`
 
-- Alert rule:
+* 报警规则：
 
     `histogram_quantile(0.9, rate(tikv_cdc_scan_duration_seconds_bucket{}[1m])) > 600`
 
-- Description:
+* 规则描述：
 
-    The TiKV CDC module has scanned for incremental replication for more than 10 minutes.
+    TiKV CDC 模块的增量扫描耗时超过 10 分钟。
 
-- Solution:
+* 处理方法：
 
-    Collect TiCDC monitoring metrics and TiKV logs to locate the root cause.
+    收集 TiCDC 监控和 TiKV 日志，定位原因。
 
 ### `ticdc_sink_execution_error`
 
-- Alert rule:
+* 报警规则：
 
     `changes(ticdc_sink_execution_error[1m]) > 0`
 
-- Description:
+* 规则描述：
 
-    An error occurs when a replication task writes data to the downstream.
+    TiCDC 某一同步任务写下游时遇到错误。
 
-- Solution:
+* 处理方法：
 
-    There are many possible root causes. See [Troubleshoot TiCDC](/ticdc/troubleshoot-ticdc.md).
+    MySQL 报错的情况较多，参考 [TiCDC 故障处理](/ticdc/troubleshoot-ticdc.md)。
 
 ### `ticdc_memory_abnormal`
 
-- Alert rule:
+* 报警规则：
 
     `go_memstats_heap_alloc_bytes{job="ticdc"} > 1e+10`
 
-- Description:
+* 规则描述：
 
-    The TiCDC heap memory usage exceeds 10 GiB.
+    TiCDC 堆内存使用量超过 10 GiB。
 
-- Solution:
+* 处理方法：
 
-    Collect TiCDC logs to locate the root cause.
+    收集 TiCDC 日志，定位原因。

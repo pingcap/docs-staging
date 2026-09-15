@@ -1,18 +1,17 @@
 ---
-title: SHOW ENGINES | TiDB SQL 语句参考
-summary: 关于 TiDB 数据库中使用 SHOW ENGINES 的概述。
+title: SHOW ENGINES
+summary: TiDB 数据库中 SHOW ENGINES 的使用概况。
 ---
 
 # SHOW ENGINES
 
-此语句用于列出所有支持的存储引擎。其语法仅为与 MySQL 兼容而包含。
+`SHOW ENGINES` 语句用于列出所有支持的存储引擎，该语法仅提供 MySQL 兼容性。
 
-## 语法简介
+## 语法图
 
 ```ebnf+diagram
 ShowEnginesStmt ::=
     "SHOW" "ENGINES" ShowLikeOrWhere?
-
 ShowLikeOrWhere ::=
     "LIKE" SimpleExpr
 |   "WHERE" Expression
@@ -20,8 +19,12 @@ ShowLikeOrWhere ::=
 
 ## 示例
 
+
 ```sql
-mysql> SHOW ENGINES;
+SHOW ENGINES;
+```
+
+```
 +--------+---------+------------------------------------------------------------+--------------+------+------------+
 | Engine | Support | Comment                                                    | Transactions | XA   | Savepoints |
 +--------+---------+------------------------------------------------------------+--------------+------+------------+
@@ -32,4 +35,4 @@ mysql> SHOW ENGINES;
 
 ## MySQL 兼容性
 
-* 这个语句将始终只返回 InnoDB 作为支持的引擎。在内部，TiDB 通常会使用 [TiKV](/tikv-overview.md) 作为存储引擎。
+* `SHOW ENGINES` 语句始终只返回 InnoDB 作为其支持的引擎。但 TiDB 内部通常使用 [TiKV](/tikv-overview.md) 作为存储引擎。

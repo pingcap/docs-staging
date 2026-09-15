@@ -1,22 +1,22 @@
 ---
 title: TIFLASH_INDEXES
-summary: 了解 `INFORMATION_SCHEMA` 中的 `TIFLASH_INDEXES` 表。
+summary: 了解 INFORMATION_SCHEMA 表 `TIFLASH_INDEXES`。
 ---
 
 # TIFLASH_INDEXES
 
-> **Warning:**
+> **警告：**
 >
-> 当前，该表为实验性功能。不建议在生产环境中使用。该表的字段尚不稳定，未来 TiDB 版本中可能会发生变化。如果你发现了 bug，可以在 GitHub 上提交 [issue](https://github.com/pingcap/tidb/issues)。
+> 该表目前为实验特性，不建议在生产环境中使用。该表的字段目前尚未稳定，未来 TiDB 版本中可能发生变更。如果发现 bug，请在 GitHub 上提 [issue](https://github.com/pingcap/tidb/issues) 反馈。
 
-`TIFLASH_INDEXES` 表提供了关于 TiFlash 副本上索引构建的统计信息。
+`TIFLASH_INDEXES` 表提供有关 TiFlash 副本上索引构建的统计信息。
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC TIFLASH_INDEXES;
 ```
 
-输出如下：
+输出结果如下：
 
 ```sql
 +-------------------------+---------------+------+------+---------+-------+
@@ -39,19 +39,19 @@ DESC TIFLASH_INDEXES;
 +-------------------------+---------------+------+------+---------+-------+
 ```
 
-`TIFLASH_INDEXES` 表中的字段说明如下：
+`TIFLASH_INDEXES` 表中各列的字段含义如下：
 
-- `TIDB_DATABASE`：表所属的数据库名称。
-- `TIDB_TABLE`：表名。
-- `TABLE_ID`：表的内部 ID，在 TiDB 集群内唯一。
-- `COLUMN_NAME`：构建索引的列名。
-- `INDEX_NAME`：索引名称。
-- `COLUMN_ID`：构建索引的列的 ID。
+- `TIDB_DATABASE`：表所属的数据库的名称。
+- `TIDB_TABLE`：表的名称。
+- `TABLE_ID`：表的内部 ID，该 ID 在一个 TiDB 集群内部唯一。
+- `COLUMN_NAME`：索引所在的列名。
+- `INDEX_NAME`：索引的名称。
+- `COLUMN_ID`：索引所在的列 ID。
 - `INDEX_ID`：索引的 ID。
-- `INDEX_KIND`：索引类型。
+- `INDEX_KIND`：索引的类型。
 - `ROWS_STABLE_INDEXED`：TiFlash 副本中 Stable 层已完成索引构建的行数。
-- `ROWS_STABLE_NOT_INDEXED`：TiFlash 副本中 Stable 层未完成索引构建的行数。
+- `ROWS_STABLE_NOT_INDEXED`：TiFlash 副本中 Stable 层尚未构建索引的行数。
 - `ROWS_DELTA_INDEXED`：TiFlash 副本中 Delta 层已完成索引构建的行数。
-- `ROWS_DELTA_NOT_INDEXED`：TiFlash 副本中 Delta 层未完成索引构建的行数。
-- `ERROR_MESSAGE`：索引构建过程中遇到的不可恢复错误的详细信息。
+- `ROWS_DELTA_NOT_INDEXED`：TiFlash 副本中 Delta 层尚未构建索引的行数。
+- `ERROR_MESSAGE`：索引构建过程中出现的不可恢复错误的信息。
 - `TIFLASH_INSTANCE`：执行索引构建任务的 TiFlash 实例地址。

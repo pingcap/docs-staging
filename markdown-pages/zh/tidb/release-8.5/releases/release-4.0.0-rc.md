@@ -1,104 +1,105 @@
 ---
 title: TiDB 4.0 RC Release Notes
-summary: TiDB 4.0 RC released on April 8, 2020. It includes compatibility changes, bug fixes, new features, and tools. TiKV supports the `pipelined` feature in pessimistic transactions, improving TPC-C performance by 20%. TiDB adds case-insensitive collation and enhances the `RECOVER TABLE` syntax. TiKV now supports TLS in the HTTP port. PD supports getting default PD configuration information through the HTTP API. Bug fixes include issues with replication, subquery results, and DDL job internal retry. Tools like TiDB Lightning and TiCDC also have bug fixes and new features.
+summary: TiDB 4.0 RC 发布日期为 2020 年 4 月 8 日，版本为 4.0.0-rc，TiUP 版本为 0.0.3。该版本存在已知问题，建议使用最新版本 4.0.x。兼容性变化包括 TiDB、TiKV 和 Tools 的更新。重点修复了 TiDB 的 Bug，并新增了一些功能。TiKV 修复了启用 Follower Read 功能导致系统 Panic 的问题。Tools 中 TiDB Lightning 修复了字符转换错误导致数据错误的问题，TiCDC 新增了一些功能。
+aliases: ['/zh/tidb/dev/release-4.0.0-rc/','/zh/tidb/v4.0/release-4.0.0-rc','/docs-cn/dev/releases/release-4.0.0-rc/','/docs-cn/dev/releases/4.0.0-rc/','/zh/tidb/v5.4/release-4.0.0-rc','/zh/tidb/v6.1/release-4.0.0-rc','/zh/tidb/v6.5/release-4.0.0-rc','/zh/tidb/v7.1/release-4.0.0-rc','/zh/tidb/v7.5/release-4.0.0-rc','/zh/tidb/v8.1/release-4.0.0-rc']
 ---
 
 # TiDB 4.0 RC Release Notes
 
-Release date: April 8, 2020
+发版日期：2020 年 4 月 8 日
 
-TiDB version: 4.0.0-rc
+TiDB 版本：4.0.0-rc
 
-TiUP version: 0.0.3
+TiUP 版本：0.0.3
 
-> **Warning:**
+> **警告：**
 >
-> Some known issues are found in this version, and these issues are fixed in new versions. It is recommended that you use the latest 4.0.x version.
+> 该版本存在一些已知问题，已在新版本中修复，建议使用 4.0.x 的最新版本。
 
-## Compatibility Changes
+## 兼容性变化
 
 + TiDB
 
-    - Refuse to get started instead of returning an alert log when the tidb-server status port is occupied [#15177](https://github.com/pingcap/tidb/pull/15177)
+    - 当 tidb-server 状态端口被占用时由原来打印一条告警日志改成拒绝启动 [#15177](https://github.com/pingcap/tidb/pull/15177)
 
 + TiKV
 
-    - Support the `pipelined` feature in pessimistic transactions, which improves the TPC-C performance by 20%. The risk is that the transaction commit might fail because of lock failure during the execution [#6984](https://github.com/tikv/tikv/pull/6984)
-    - Enable the `unify-read-pool` configuration item in new clusters by default and use the previous setting of this item in old clusters [#7059](https://github.com/tikv/tikv/pull/7059)
+    - 悲观事务支持 pipelined 功能，TPC-C 性能提升 20%， 风险：pipelined 功能可能会在执行阶段加锁不成功导致事务提交失败 [#6984](https://github.com/tikv/tikv/pull/6984)
+    - 调整 unify-read-pool 配置项的方式，仅在新部署的集群时默认启用，旧集群保持原来的方式 [#7059](https://github.com/tikv/tikv/pull/7059)
 
 + Tools
 
     - TiDB Binlog
 
-        * Add the configuration item for verifying Common Name [#934](https://github.com/pingcap/tidb-binlog/pull/934)
+        * 新增验证 Common Name 配置项目的功能 [#934](https://github.com/pingcap/tidb-binlog/pull/934)
 
-## Important Bug Fixes
-
-+ TiDB
-
-    - Fix the issue that replication between the upstream and downstream might go wrong when the DDL job is executed using the `PREPARE` statement because of the incorrect job query in the internal records [#15435](https://github.com/pingcap/tidb/pull/15435)
-    - Fix the issue of incorrect subquery result in the `Read Committed` isolation level [#15471](https://github.com/pingcap/tidb/pull/15471)
-    - Fix the issue of incorrect results caused by the Inline Projection optimization [#15411](https://github.com/pingcap/tidb/pull/15411)
-    - Fix the issue that the SQL Hint `INL_MERGE_JOIN` is executed incorrectly in some cases [#15515](https://github.com/pingcap/tidb/pull/15515)
-    - Fix the issue that columns with the `AutoRandom` attribute are rebased when the negative number is explicitly written to these columns [#15397](https://github.com/pingcap/tidb/pull/15397)
-
-## New Features
+## 重点修复的 Bug
 
 + TiDB
 
-    - Add the case-insensitive collation so that users can enable `utf8mb4_general_ci` and `utf8_general_ci` in a new cluster [#33](https://github.com/pingcap/tidb/projects/33)
-    - Enhance the `RECOVER TABLE` syntax to support recovering truncated tables [#15398](https://github.com/pingcap/tidb/pull/15398)
-    - Refuse to get started instead of returning an alert log when the tidb-server status port is occupied [#15177](https://github.com/pingcap/tidb/pull/15177)
-    - Optimize the write performance of using a sequence as the default column values [#15216](https://github.com/pingcap/tidb/pull/15216)
-    - Add the `DDLJobs` system table to query the details of DDL jobs [#14837](https://github.com/pingcap/tidb/pull/14837)
-    - Optimize the `aggFuncSum` performance [#14887](https://github.com/pingcap/tidb/pull/14887)
-    - Optimize the output of `EXPLAIN` [#15507](https://github.com/pingcap/tidb/pull/15507)
+    - 修复 DDL 采用 `PREPARE` 语句执行时，由于内部记录的 job query 不正确，导致上下游同步可能出错的问题 [#15435](https://github.com/pingcap/tidb/pull/15435)
+    - 修复 Read Committed 隔离级别下，子查询的输出结果可能不正确的问题 [#15471](https://github.com/pingcap/tidb/pull/15471)
+    - 修复 Inline Projection 优化所导致的结果错误问题 [#15411](https://github.com/pingcap/tidb/pull/15411)
+    - 修复某些情况下 SQL Hint `INL_MERGE_JOIN` 未正确执行的问题 [#15515](https://github.com/pingcap/tidb/pull/15515)
+    - 修复向 `AutoRandom` 列显式写入负数时，`AutoRandom` 列会 Rebase 的问题 [#15397](https://github.com/pingcap/tidb/pull/15397)
+
+## 新功能
+
++ TiDB
+
+    - 新增大小写不敏感的排序规则，用户可在新集群上启用 `utf8mb4_general_ci` 和 `utf8_general_ci` [#33](https://github.com/pingcap/tidb/projects/33)
+    - 增强 `RECOVER TABLE` 语法，现在该语法支持恢复被 Truncate 的表 [#15398](https://github.com/pingcap/tidb/pull/15398)
+    - 当 tidb-server 状态端口被占用时由原来打印一条告警日志改成拒绝启动 [#15177](https://github.com/pingcap/tidb/pull/15177)
+    - 优化使用 Sequence 作为列的默认值时的写入性能 [#15216](https://github.com/pingcap/tidb/pull/15216)
+    - 新增 `DDLJobs` 系统表，用于查询 DDL 任务详细信息 [#14837](https://github.com/pingcap/tidb/pull/14837)
+    - 优化 `aggFuncSum` 的性能 [#14887](https://github.com/pingcap/tidb/pull/14887)
+    - 优化 `EXPLAIN` 的输出结果 [#15507](https://github.com/pingcap/tidb/pull/15507)
 
 + TiKV
 
-    - Support the `pipelined` feature in pessimistic transactions, which improves the TPC-C performance by 20%. The risk is that the transaction commit might fail because of lock failure during the execution [#6984](https://github.com/tikv/tikv/pull/6984)
-    - Support TLS in the HTTP port [#5393](https://github.com/tikv/tikv/pull/5393)
-    - Enable the `unify-read-pool` configuration item in new clusters by default and use the previous setting of this item in old clusters [#7059](https://github.com/tikv/tikv/pull/7059)
+    - 悲观事务支持 pipelined 功能，TPC-C 性能提升 20%，风险：pipelined 功能可能会在执行阶段加锁不成功导致事务提交失败 [#6984](https://github.com/tikv/tikv/pull/6984)
+    - HTTP 端口支持 TLS [#5393](https://github.com/tikv/tikv/pull/5393)
+    - 调整 unify-read-pool 配置项的方式，仅在新部署的集群时默认启用，旧集群保持原来的方式 [#7059](https://github.com/tikv/tikv/pull/7059)
 
 + PD
 
-    - Support getting the default PD configuration information through the HTTP API [#2258](https://github.com/pingcap/pd/pull/2258)
+    - 新增通过 HTTP 接口获取 PD 默认配置信息功能 [#2258](https://github.com/pingcap/pd/pull/2258)
 
 + Tools
 
     - TiDB Binlog
 
-        * Add the configuration item for verifying Common Name [#934](https://github.com/pingcap/tidb-binlog/pull/934)
+        * 新增验证 Common Name 配置项目的功能 [#934](https://github.com/pingcap/tidb-binlog/pull/934)
 
     - TiDB Lightning
 
-        * Optimize the performance of TiDB Lightning [#281](https://github.com/pingcap/tidb-lightning/pull/281) [#275](https://github.com/pingcap/tidb-lightning/pull/275)
+        * 优化 TiDB Lightning 的性能 [#281](https://github.com/pingcap/tidb-lightning/pull/281) [#275](https://github.com/pingcap/tidb-lightning/pull/275)
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
 
-    - Fix the issue that replication between the upstream and downstream might go wrong when the DDL job is executed using the `PREPARE` statement because of the incorrect job query in the internal records [#15435](https://github.com/pingcap/tidb/pull/15435)
-    - Fix the issue of incorrect subquery result in the `Read Committed` isolation level [#15471](https://github.com/pingcap/tidb/pull/15471)
-    - Fix the issue of possible wrong behavior when using `INSERT ... VALUES` to specify the `BIT(N)` data type [#15350](https://github.com/pingcap/tidb/pull/15350)
-    - Fix the issue that the DDL Job internal retry does not fully achieve the expected outcomes because the values of `ErrorCount` fail to be summed correctly [#15373](https://github.com/pingcap/tidb/pull/15373)
-    - Fix the issue that Garbage Collection might work abnormally when TiDB connects to TiFlash [#15505](https://github.com/pingcap/tidb/pull/15505)
-    - Fix the issue of incorrect result caused by the Inline Projection optimization [#15411](https://github.com/pingcap/tidb/pull/15411)
-    - Fix the issue that the SQL Hint `INL_MERGE_JOIN` is executed incorrectly in some cases [#15515](https://github.com/pingcap/tidb/pull/15515)
-    - Fix the issue that columns with the `AutoRandom` attribute are rebased when the negative number is explicitly written to these columns [#15397](https://github.com/pingcap/tidb/pull/15397)
+    - 修复 DDL 采用 `PREPARE` 语句执行时，由于内部记录的 job query 不正确，导致上下游同步可能出错的问题 [#15435](https://github.com/pingcap/tidb/pull/15435)
+    - 修复 Read Committed 隔离级别下，子查询的输出结果可能不正确的问题 [#15471](https://github.com/pingcap/tidb/pull/15471)
+    - 修复 `INSERT ... VALUES` 指定 `BIT(N)` 类型数据时可能报错的问题 [#15350](https://github.com/pingcap/tidb/pull/15350)
+    - 修复 DDL Job 内部重试时，`ErrorCount` 的值没有被正确累加导致未完全达到重试预期的问题 [#15373](https://github.com/pingcap/tidb/pull/15373)
+    - 修复 TiDB 连接 TiFlash 时，垃圾回收可能工作不正常的问题 [#15505](https://github.com/pingcap/tidb/pull/15505)
+    - 修复 Inline Projection 优化所导致的结果错误问题 [#15411](https://github.com/pingcap/tidb/pull/15411)
+    - 修复某些情况下 SQL Hint `INL_MERGE_JOIN` 未正确执行的问题 [#15515](https://github.com/pingcap/tidb/pull/15515)
+    - 修复向 AutoRandom 列显式写入负数时，AutoRandom 列会 Rebase 的问题 [#15397](https://github.com/pingcap/tidb/pull/15397)
 
 + TiKV
-    - Fix the possible panic caused by transferring the leader when the Follower Read feature is enabled [#7101](https://github.com/tikv/tikv/pull/7101)
+
+    - 修复启用 Follower Read 功能，由于 transfer leader 导致系统 Panic 的问题 [#7101](https://github.com/tikv/tikv/pull/7101)
 
 + Tools
 
     - TiDB Lightning
 
-        * Fix the issue of data error caused by the error of character conversion when the backend is TiDB [#283](https://github.com/pingcap/tidb-lightning/pull/283)
+        * 修复 backend 是 TiDB 时由于字符转换错误导致数据错误的问题 [#283](https://github.com/pingcap/tidb-lightning/pull/283)
 
     - TiCDC
-
-        * Fix the issue that an error is returned if the `test` schema does not exist in the downstream when MySQL sink is executing the DDL statement [#353](https://github.com/pingcap/tiflow/pull/353)
-        * Support the real-time interactive mode in CDC cli [#351](https://github.com/pingcap/tiflow/pull/351)
-        * Support checking whether the table in the upstream can be replicated during data replication [#368](https://github.com/pingcap/tiflow/pull/368)
-        * Support asynchronous write to Kafka [#344](https://github.com/pingcap/tiflow/pull/344)
+        * 修复 MySQL sink 执行 DDL 时，若下游没有 test 库系统报错的问题 [#353](https://github.com/pingcap/tiflow/pull/353)
+        * CDC cli 新增实时交互模式功能 [#351](https://github.com/pingcap/tiflow/pull/351)
+        * 同步数据时增加对上游表是否可同步的检查 [#368](https://github.com/pingcap/tiflow/pull/368)
+        * 新增异步写入 Kafka 的功能 [#344](https://github.com/pingcap/tiflow/pull/344)

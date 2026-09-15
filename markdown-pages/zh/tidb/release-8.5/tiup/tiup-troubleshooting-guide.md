@@ -1,56 +1,55 @@
 ---
-title: TiUP Troubleshooting Guide
-summary: Introduce the troubleshooting methods and solutions if you encounter issues when using TiUP.
+title: TiUP 故障排查
+summary: TiUP 故障排查包括命令故障排查和集群组件故障排查。命令故障包括强制刷新组件列表和版本信息，网络中断导致的下载问题，以及 checksum 错误。集群组件故障包括 SSH 私钥问题，升级中断和缺失组件文件的解决方法。可通过 Github Issues 或 AskTUG 求助。
 ---
 
-# TiUP Troubleshooting Guide
+# TiUP 故障排查
 
-This document introduces some common issues when you use TiUP and the troubleshooting methods. If this document does not include the issues you bump into, [file a new issue](https://github.com/pingcap/tiup/issues) in the Github TiUP repository.
+本文介绍 TiUP 使用过程中一些常见的故障及排查方式，如果本文不包含你目前遇到的问题，可以通过以下方式求助：
 
-## Troubleshoot TiUP commands
+1. [Github Issues](https://github.com/pingcap/tiup/issues) 新建一个 Issue。
+2. 在 [AskTUG](https://pingkai.cn/tidbcommunity/forum/) 提交你的问题。
 
-### Can't see the latest component list using `tiup list`
+## 1. TiUP 命令故障排查
 
-TiUP does not update the latest component list from the mirror server every time. You can forcibly refresh the component list by running `tiup list`.
+### 1.1 使用 `tiup list` 看不到最新的组件列表
 
-### Can't see the latest version information of a component using `tiup list <component>`
+TiUP 并不会每次都从镜像服务器更新最新的组件列表，可以通过 `tiup list` 来强制刷新组件列表。
 
-Same as the previous issue, the component version information is only obtained from the mirror server when there is no local cache. You can refresh the component list by running `tiup list <component>`.
+### 1.2 使用 `tiup list <component>` 看不到一个组件的最新版本信息
 
-### Component downloading process is interrupted
+同 1.1 一样，组件的版本信息只会在本地无缓存的情况下从镜像服务器获取，可以通过 `tiup list <component>` 刷新组件列表。
 
-Unstable network might result in an interrupted component downloading process. You can try to download the component again. If you cannot download it after trying multiple times, it might be caused by the CDN server and you can report the issue [here](https://github.com/pingcap/tiup/issues).
+### 1.3 下载组件的过程中中断
 
-### A checksum error occurs during component downloading process
+如果下载组件的过程中网络中断，可能是由于网络不稳定导致的，可以尝试重新下载，如果多次不能成功下载，请反馈到 [Github Issues](https://github.com/pingcap/tiup/issues)，可能是由于 CDN 服务器导致的。
 
-Because the CDN server has a short cache time, the new checksum file might not match the component package. Try to download again after 5 minutes. If the new checksum file still does not match the component package, report the issue [here](https://github.com/pingcap/tiup/issues).
+### 1.4 下载组件过程中出现 checksum 错误
 
-## Troubleshoot TiUP cluster component
+由于 CDN 会有短暂的缓存时间，导致新的 checksum 文件和组件包不匹配，建议过 5 分钟后重试，如果依然不匹配，请反馈到 [Github Issues](https://github.com/pingcap/tiup/issues)。
 
-### `unable to authenticate, attempted methods [none publickey]` is prompted during deployment
+## 2. TiUP Cluster 组件故障排查
 
-During deployment, component packages are uploaded to the remote host and the initialization is performed. This process requires connecting to the remote host. This error is caused by the failure to find the SSH private key to connect to the remote host. 
+### 2.1 部署过程中提示 `unable to authenticate, attempted methods [none publickey]`
 
-To solve this issue, confirm whether you have specified the private key by running `tiup cluster deploy -i identity_file`:
+由于部署时会向远程主机上传组件包，以及进行初始化，这个过程需要连接到远程主机，该错误是由于找不到连接到远程主机的 SSH 私钥导致的。请确认你是否通过 `tiup cluster deploy -i identity_file` 指定该私钥。
 
-- If the `-i` flag is not specified, it might be that TiUP does not automatically find the private key path. It is recommended to explicitly specify the private key path using `-i`.
-- If the `-i` flag is specified, it might be that TiUP cannot log in to the remote host using the specified private key. You can verify it by manually executing the `ssh -i identity_file user@remote` command.
-- If a password is used to log in to the remote host, make sure that you have specified the `-p` flag and entered the correct login password.
+1. 如果没有指定 `-i` 参数，可能是由于 TiUP 没有自动找到私钥路径，建议通过 `-i` 显式指定私钥路径。
+2. 如果指定了 `-i` 参数，可能是由于指定的私钥不能登录，可以通过手动执行 `ssh -i identity_file user@remote` 命令来验证。
+3. 如果是通过密码登录远程主机，请确保指定了 `-p` 参数，同时输入了正确的登录密码。
 
-### The process of upgrading the cluster using the TiUP cluster component is interrupted
+### 2.2 使用 TiUP Cluster 升级中断
 
-To avoid misuse cases, the TiUP cluster component does not support the upgrade of specified nodes, so after the upgrade fails, you need to perform the upgrade operations again, including idempotent operations during the upgrade process.
+为了避免用户误用，TiUP Cluster 不支持指定部分节点升级，所以升级失败之后，需要重新进行升级操作，包括升级过程中的幂等操作。
 
-The upgrade process can be divided into the following steps:
+升级操作会分为以下几步：
 
-1. Back up the old version of components on all nodes
-2. Distribute new components to remote
-3. Perform a rolling restart to all components
+1. 首先备份所有节点的老版本组件
+2. 分发新的组件到远程
+3. 滚动重启所有组件
 
-If the upgrade is interrupted during a rolling restart, instead of repeating the `tiup cluster upgrade` operation, you can use `tiup cluster restart -N <node1> -N <node2>` to restart the nodes that have not completed the restart.
+如果升级操作在滚动重启时中断，可以不用重复进行 `tiup cluster upgrade` 操作，而是通过 `tiup cluster restart -N <node1> -N <node2>` 来重启未完成重启的节点。如果同一组件的未重启节点数量比较多，也可以通过 `tiup cluster restart -R <component>` 来重启某一个类型的组件。
 
-If the number of un-restarted nodes of the same component is relatively large, you can also restart a certain type of component by running `tiup cluster restart -R <component>`.
+### 2.3 升级发现 `node_exporter-9100.service/blackbox_exporter-9115.service` 不存在
 
-### During the upgrade, you find that `node_exporter-9100.service/blackbox_exporter-9115.service` does not exist
-
-If you previously migrated your cluster from TiDB Ansible and the exporter was not deployed in TiDB Ansible, this situation might happen. To solve it, you can manually copy the missing files from other nodes to the new node for the time being. The TiUP team will complete the missing components during the migration process.
+这种情况可能是由于之前的集群是由 TiDB Ansible 迁移过来的，且之前 TiDB Ansible 未部署 exporter 导致的。要解决这种情况，可以暂时通过手动从其他节点复制缺少的文件到新的节点。后续我们会在迁移过程中补全缺失的组件。

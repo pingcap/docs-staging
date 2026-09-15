@@ -1,117 +1,119 @@
 ---
-title: Migrate from one TiDB cluster to another TiDB cluster
-summary: Learn how to migrate data from one TiDB cluster to another TiDB cluster.
+title: 从 TiDB 集群迁移数据至另一 TiDB 集群
+summary: 了解如何将数据从一个 TiDB 集群迁移至另一 TiDB 集群。
 ---
 
-# Migrate from One TiDB Cluster to Another TiDB Cluster
+# 从 TiDB 集群迁移数据至另一 TiDB 集群
 
-This document describes how to migrate data from one TiDB cluster to another TiDB cluster. This function applies to the following scenarios:
+本文档介绍如何将数据从一个 TiDB 集群迁移至另一 TiDB。在如下场景中，你可以将数据从一个 TiDB 集群迁移至另一个 TiDB 集群：
 
-- Split databases: You can split databases when a TiDB cluster is excessively large, or you want to avoid impact between services of a cluster.
-- Relocate databases: Physically relocate databases, such as changing the data center.
-- Migrate data to a TiDB cluster of a newer version: Migrate data to a TiDB cluster of a newer version to satisfy data security and accuracy requirements.
+- 拆库：原 TiDB 集群体量过大，或者为了避免原有的 TiDB 集群所承载的数个业务之间互相影响，将原 TiDB 集群中的部分表迁到另一个 TiDB 集群。
+- 迁库：是对数据库的物理位置进行迁移，比如更换数据中心。
+- 升级：在对数据正确性要求严苛的场景下，可以将数据迁移到一个更高版本的 TiDB 集群，确保数据安全。
 
-This document exemplifies the whole migration process and contains the following steps:
+本文将模拟整个迁移过程，具体包括以下四个步骤：
 
-1. Set up the environment.
+1. 搭建环境
+2. 迁移全量数据
+3. 迁移增量数据
+4. 平滑切换业务
 
-2. Migrate full data.
+## 第 1 步：搭建环境
 
-3. Migrate incremental data.
+1. 部署集群。
 
-4. Migrate services to the new TiDB cluster.
+    使用 TiUP Playground 快速部署上下游测试集群。更多部署信息，请参考 [TiUP 官方文档](/tiup/tiup-cluster.md)。
 
-## Step 1. Set up the environment
-
-1. Deploy TiDB clusters.
-
-    Deploy two TiDB clusters, one upstream and the other downstream by using TiUP Playground. For more information, refer to [Deploy and Maintain an Online TiDB Cluster Using TiUP](/tiup/tiup-cluster.md).
-
+    
     ```shell
-    # Create an upstream cluster
+    # 创建上游集群
     tiup --tag upstream playground --host 0.0.0.0 --db 1 --pd 1 --kv 1 --tiflash 0 --ticdc 1
-    # Create a downstream cluster
+    # 创建下游集群
     tiup --tag downstream playground --host 0.0.0.0 --db 1 --pd 1 --kv 1 --tiflash 0 --ticdc 1
-    # View cluster status
+    # 查看集群状态
     tiup status
     ```
 
-2. Initialize data.
+2. 初始化数据。
 
-    By default, test databases are created in the newly deployed clusters. Therefore, you can use [sysbench](https://github.com/akopytov/sysbench#linux) to generate test data and simulate data in real scenarios.
+    测试集群中默认创建了 test 数据库，因此可以使用 [sysbench](https://github.com/akopytov/sysbench#linux) 工具生成测试数据，用以模拟真实集群中的历史数据。
 
+    
     ```shell
     sysbench oltp_write_only --config-file=./tidb-config --tables=10 --table-size=10000 prepare
     ```
 
-    In this document, we use sysbench to run the `oltp_write_only` script. This script generates 10 tables in the test database, each with 10,000 rows. The tidb-config is as follows:
+    这里通过 sysbench 运行 oltp_write_only 脚本，其将在测试数据库中生成 10 张表，每张表包含 10000 行初始数据。tidb-config 的配置如下：
 
-    ```shell
-    mysql-host=172.16.6.122 # Replace the value with the IP address of your upstream cluster
+    ```yaml
+    mysql-host=172.16.6.122 # 这里需要替换为实际上游集群 ip
     mysql-port=4000
     mysql-user=root
     mysql-password=
-    db-driver=mysql         # Set database driver to MySQL
-    mysql-db=test           # Set the database as a test database
-    report-interval=10      # Set data collection period to 10s
-    threads=10              # Set the number of worker threads to 10
-    time=0                  # Set the time required for executing the script. O indicates time unlimited
-    rate=100                # Set average TPS to 100
+    db-driver=mysql         # 设置数据库驱动为 mysql
+    mysql-db=test           # 设置测试数据库为 test
+    report-interval=10      # 设置定期统计的时间间隔为 10 秒
+    threads=10              # 设置 worker 线程数量为 10
+    time=0                  # 设置脚本总执行时间，0 表示不限制
+    rate=100                # 设置平均事务速率 tps = 100
     ```
 
-3. Simulate service workload.
+3. 模拟业务负载。
 
-    In real scenarios, service data is continuously written to the upstream cluster. In this document, we use sysbench to simulate this workload. Specifically, run the following command to enable 10 workers to continuously write data to three tables, sbtest1, sbtest2, and sbtest3, with a total TPS not exceeding 100.
+    实际生产集群的数据迁移过程中，通常原集群还会写入新的业务数据，本文中可以通过 sysbench 工具模拟持续的写入负载，下面的命令会使用 10 个 worker 在数据库中的 sbtest1、sbtest2 和 sbtest3 三张表中持续写入数据，其总 tps 限制为 100。
 
+    
     ```shell
     sysbench oltp_write_only --config-file=./tidb-config --tables=3 run
     ```
 
-4. Prepare external storage.
+4. 准备外部存储。
 
-    In full data backup, both the upstream and downstream clusters need to access backup files. It is recommended that you use [External storage](/br/backup-and-restore-storages.md) to store backup files. In this document, Minio is used to simulate an S3-compatible storage service.
+    在全量数据备份中，上下游集群均需访问备份文件，因此推荐使用[备份存储](/br/backup-and-restore-storages.md)存储备份文件，本文中通过 Minio 模拟兼容 S3 的存储服务：
 
+    
     ```shell
     wget https://dl.min.io/server/minio/release/linux-amd64/minio
     chmod +x minio
-    # Configure access-key access-screct-id to access minio
-    export HOST_IP='172.16.6.122' # Replace the value with the IP address of your upstream cluster
+    # 配置访问 minio 的 access-key access-screct-id
+    export HOST_IP='172.16.6.122' # 替换为实际上游集群 ip
     export MINIO_ROOT_USER='minio'
     export MINIO_ROOT_PASSWORD='miniostorage'
-    # Create the database directory. backup is the bucket name.
+    # 创建数据目录,  其中 backup 为 bucket 的名称
     mkdir -p data/backup
-    # Start minio at port 6060
+    # 启动 minio, 暴露端口在 6060
     ./minio server ./data --address :6060 &
     ```
 
-    The preceding command starts a minio server on one node to simulate S3 services. Parameters in the command are configured as follows:
+    上述命令行启动了一个单节点的 minio server 模拟 S3 服务，其相关参数为：
 
-    - Endpoint: `http://${HOST_IP}:6060/`
-    - Access-key: `minio`
-    - Secret-access-key: `miniostorage`
-    - Bucket: `backup`
+    - Endpoint: <http://${HOST_IP}:6060/>
+    - Access-key: minio
+    - Secret-access-key: miniostorage
+    - Bucket: backup
 
-    The access link is as follows:
+    相应的访问链接为：
 
+    
     ```shell
     s3://backup?access-key=minio&secret-access-key=miniostorage&endpoint=http://${HOST_IP}:6060&force-path-style=true
     ```
 
-## Step 2. Migrate full data
+## 第 2 步：迁移全量数据
 
-After setting up the environment, you can use the backup and restore functions of [BR](https://github.com/pingcap/tidb/tree/release-8.5/br) to migrate full data. BR can be started in [three ways](/br/br-use-overview.md#deploy-and-use-br). In this document, we use the SQL statements, `BACKUP` and `RESTORE`.
+搭建好测试环境后，可以使用 [BR](https://github.com/pingcap/tidb/tree/release-8.5/br) 工具的备份和恢复功能迁移全量数据。BR 工具有多种[使用方式](/br/br-use-overview.md#部署和使用-br)，本文中使用 SQL 语句 [`BACKUP`](/sql-statements/sql-statement-backup.md) 和 [`RESTORE`](/sql-statements/sql-statement-restore.md) 进行备份恢复。
 
-> **Note:**
+> **注意：**
 >
-> - `BACKUP` and `RESTORE` SQL statements are experimental. It is not recommended that you use them in the production environment. They might be changed or removed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
-> - In production clusters, performing a backup with GC disabled might affect cluster performance. It is recommended that you back up data in off-peak hours, and set `RATE_LIMIT` to a proper value to avoid performance degradation.
-> - If the versions of the upstream and downstream clusters are different, you should check [BR compatibility](/br/backup-and-restore-overview.md#before-you-use). In this document, we assume that the upstream and downstream clusters are the same version.
+> - `BACKUP` 和 `RESTORE` 语句目前为实验特性，不建议在生产环境中使用。该功能可能会在未事先通知的情况下发生变化或删除。如果发现 bug，请在 GitHub 上提 [issue](https://github.com/pingcap/tidb/issues) 反馈。
+> - 在生产集群中，关闭 GC 机制和备份操作会一定程度上降低集群的读性能，建议在业务低峰期进行备份，并设置合适的 `RATE_LIMIT` 限制备份操作对线上业务的影响。
+> - 上下游集群版本不一致时，应检查 BR 工具的[兼容性](/br/backup-and-restore-overview.md#使用须知)。本文假设上下游集群版本相同。
 
-1. Disable GC.
+1. 关闭 GC。
 
-    To ensure that newly written data is not deleted during incremental migration, you should disable GC for the upstream cluster before backup. In this way, history data is not deleted.
+    为了保证增量迁移过程中新写入的数据不丢失，在开始备份之前，需要关闭上游集群的垃圾回收 (GC) 机制，以确保系统不再清理历史数据。
 
-    Run the following command to disable GC:
+    执行如下命令关闭 GC：
 
     ```sql
     MySQL [test]> SET GLOBAL tidb_gc_enable=FALSE;
@@ -121,14 +123,14 @@ After setting up the environment, you can use the backup and restore functions o
     Query OK, 0 rows affected (0.01 sec)
     ```
 
-    To verify that the change takes effect, query the value of `tidb_gc_enable`:
+    查询 `tidb_gc_enable` 的取值，判断 GC 是否已关闭：
 
     ```sql
     MySQL [test]> SELECT @@global.tidb_gc_enable;
     ```
 
     ```
-    +-------------------------+:
+    +-------------------------+：
     | @@global.tidb_gc_enable |
     +-------------------------+
     |                       0 |
@@ -136,13 +138,13 @@ After setting up the environment, you can use the backup and restore functions o
     1 row in set (0.00 sec)
     ```
 
-    > **Note:**
+    > **注意：**
     >
-    > TiCDC `gc-ttl` is 24 hours by default. If the backup and restore takes a long time, the default `gc-ttl` might not be sufficient, which could cause the subsequent [incremental replication task](#step-3-migrate-incremental-data) to fail. To avoid this situation, adjust the `gc-ttl` value according to your specific needs when starting the TiCDC server. For more information, see [What is `gc-ttl` in TiCDC](/ticdc/ticdc-faq.md#what-is-gc-ttl-in-ticdc).
+    > TiCDC 的 `gc-ttl` 默认为 24 小时。如果备份恢复耗时过长，默认的 `gc-ttl` 可能无法满足需求，从而导致后续的[增量同步任务](#第-3-步迁移增量数据)运行失败。为了避免这种情况，请在启动 TiCDC server 时根据实际需求调整 `gc-ttl` 的值。更多信息，请参考 [TiCDC 的 `gc-ttl` 是什么](/ticdc/ticdc-faq.md#ticdc-的-gc-ttl-是什么)。
 
-2. Back up data.
+2. 备份数据。
 
-    Run the `BACKUP` statement in the upstream cluster to back up data:
+    在上游集群中执行 BACKUP 语句备份数据：
 
     ```sql
     MySQL [(none)]> BACKUP DATABASE * TO 's3://backup?access-key=minio&secret-access-key=miniostorage&endpoint=http://${HOST_IP}:6060&force-path-style=true' RATE_LIMIT = 120 MB/SECOND;
@@ -157,11 +159,11 @@ After setting up the environment, you can use the backup and restore functions o
     1 row in set (2.11 sec)
     ```
 
-    After the `BACKUP` command is executed, TiDB returns metadata about the backup data. Pay attention to `BackupTS`, because data generated before it is backed up. In this document, we use `BackupTS` as **the end of data check** and **the start of incremental migration scanning by TiCDC**.
+    备份语句提交成功后，TiDB 会返回关于备份数据的元信息，这里需要重点关注 BackupTS，它意味着该时间点之前数据会被备份，后边的教程中，本文将使用 BackupTS 作为**数据校验截止时间**和 **TiCDC 增量扫描的开始时间**。
 
-3. Restore data.
+3. 恢复数据。
 
-    Run the `RESTORE` command in the downstream cluster to restore data:
+    在下游集群中执行 RESTORE 语句恢复数据：
 
     ```sql
     mysql> RESTORE DATABASE * FROM 's3://backup?access-key=minio&secret-access-key=miniostorage&endpoint=http://${HOST_IP}:6060&force-path-style=true';
@@ -176,69 +178,68 @@ After setting up the environment, you can use the backup and restore functions o
     1 row in set (41.85 sec)
     ```
 
-4. (Optional) Validate data.
+4. （可选）校验数据。
 
-    You can use [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) to check data consistency between upstream and downstream at a certain time. The preceding `BACKUP` output shows that the upstream cluster finishes backup at 431434047157698561. The preceding `RESTORE` output shows that the downstream finishes restoration at 431434141450371074.
+    通过 [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) 工具，可以验证上下游数据在某个时间点的一致性。从上述备份和恢复命令的输出可以看到，上游集群备份的时间点为 431434047157698561，下游集群完成数据恢复的时间点为 431434141450371074。
 
     ```shell
     sync_diff_inspector -C ./config.yaml
     ```
 
-    For details about how to configure the sync-diff-inspector, see [Configuration file description](/sync-diff-inspector/sync-diff-inspector-overview.md#configuration-file-description). In this document, the configuration is as follows:
+    关于 sync-diff-inspector 的配置方法，请参考[配置文件说明](/sync-diff-inspector/sync-diff-inspector-overview.md#配置文件说明)，在本文中，相应的配置如下：
 
-    ```shell
+    ```toml
     # Diff Configuration.
     ######################### Datasource config #########################
     [data-sources]
     [data-sources.upstream]
-        host = "172.16.6.122" # Replace the value with the IP address of your upstream cluster
-        port = 4000
-        user = "root"
-        password = ""
-        snapshot = "431434047157698561" # Set snapshot to the actual backup time (BackupTS in the "Back up data" section in [Step 2. Migrate full data](#step-2-migrate-full-data))
+            host = "172.16.6.122" # 需要替换为实际上游集群 ip
+            port = 4000
+            user = "root"
+            password = ""
+            snapshot = "431434047157698561" # 配置为实际的备份时间点（参见「备份」小节的 BackupTS）
     [data-sources.downstream]
-        host = "172.16.6.125" # Replace the value with the IP address of your downstream cluster
-        port = 4000
-        user = "root"
-        password = ""
+            host = "172.16.6.125" # 需要替换为实际下游集群 ip
+            port = 4000
+            user = "root"
+            password = ""
 
     ######################### Task config #########################
     [task]
-        output-dir = "./output"
-        source-instances = ["upstream"]
-        target-instance = "downstream"
-        target-check-tables = ["*.*"]
+            output-dir = "./output"
+            source-instances = ["upstream"]
+            target-instance = "downstream"
+            target-check-tables = ["*.*"]
     ```
 
-## Step 3. Migrate incremental data
+## 第 3 步：迁移增量数据
 
-1. Deploy TiCDC.
+1. 部署 TiCDC。
 
-    After finishing full data migration, deploy and configure a TiCDC to replicate incremental data. In production environments, deploy TiCDC as instructed in [Deploy TiCDC](/ticdc/deploy-ticdc.md). In this document, a TiCDC node has been started upon the creation of the test clusters. Therefore, you can skip the step of deploying TiCDC and proceed with changefeed configuration.
+    完成全量数据迁移后，就可以部署并配置 TiCDC 集群同步增量数据，实际生产集群中请参考 [TiCDC 部署](/ticdc/deploy-ticdc.md)。本文在创建测试集群时，已经启动了一个 TiCDC 节点，因此可以直接进行 changefeed 的配置。
 
-2. Create a changefeed.
+2. 创建同步任务。
 
-    In the upstream cluster, run the following command to create a changefeed from the upstream to the downstream clusters:
+    在上游集群中，执行以下命令创建从上游到下游集群的同步链路：
 
-    
     ```shell
     tiup cdc cli changefeed create --server=http://172.16.6.122:8300 --sink-uri="mysql://root:@172.16.6.125:4000" --changefeed-id="upstream-to-downstream" --start-ts="431434047157698561"
     ```
 
-    In this command, the parameters are as follows:
+    以上命令中：
 
-    - `--server`: IP address of any node in the TiCDC cluster
-    - `--sink-uri`: URI of the downstream cluster
-    - `--changefeed-id`: changefeed ID, must be in the format of a regular expression, ^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$
-    - `--start-ts`: start timestamp of the changefeed, must be the backup time (or BackupTS in the "Back up data" section in [Step 2. Migrate full data](#step-2-migrate-full-data))
+    - `--server`：TiCDC 集群中任意一个节点的地址
+    - `--sink-uri`：同步任务下游的地址
+    - `--changefeed-id`：同步任务的 ID，格式需要符合正则表达式 ^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$
+    - `--start-ts`：TiCDC 同步的起点，需要设置为实际的备份时间点，也就是[第 2 步：迁移全量数据](/migrate-from-tidb-to-mysql.md#第-2-步迁移全量数据)中 “备份数据” 提到的 BackupTS
 
-    For more information about the changefeed configurations, see [Task configuration file](/ticdc/ticdc-changefeed-config.md).
+    更多关于 changefeed 的配置，请参考 [TiCDC Changefeed 配置参数](/ticdc/ticdc-changefeed-config.md)。
 
-3. Enable GC.
+3. 重新开启 GC。
 
-    In incremental migration using TiCDC, GC only removes history data that is replicated. Therefore, after creating a changefeed, you need to run the following command to enable GC. For details, see [What is the complete behavior of TiCDC garbage collection (GC) safepoint?](/ticdc/ticdc-faq.md#what-is-the-complete-behavior-of-ticdc-garbage-collection-gc-safepoint).
+    TiCDC 可以保证 GC 只回收已经同步的历史数据。因此，创建完从上游到下游集群的 changefeed 之后，就可以执行如下命令恢复集群的垃圾回收功能。详情请参考 [TiCDC GC safepoint 的完整行为](/ticdc/ticdc-faq.md#ticdc-gc-safepoint-的完整行为是什么)。
 
-    To enable GC, run the following command:
+   执行如下命令打开 GC：
 
     ```sql
     MySQL [test]> SET GLOBAL tidb_gc_enable=TRUE;
@@ -248,7 +249,7 @@ After setting up the environment, you can use the backup and restore functions o
     Query OK, 0 rows affected (0.01 sec)
     ```
 
-    To verify that the change takes effect, query the value of `tidb_gc_enable`:
+    查询 `tidb_gc_enable` 的取值，判断 GC 是否已开启：
 
     ```sql
     MySQL [test]> SELECT @@global.tidb_gc_enable;
@@ -263,17 +264,17 @@ After setting up the environment, you can use the backup and restore functions o
     1 row in set (0.00 sec)
     ```
 
-## Step 4. Migrate services to the new TiDB cluster
+## 第 4 步：平滑切换业务
 
-After creating a changefeed, data written to the upstream cluster is replicated to the downstream cluster with low latency. You can migrate read traffic to the downstream cluster gradually. Observe for a period. If the downstream cluster is stable, you can migrate write traffic to the downstream cluster by performing the following steps:
+通过 TiCDC 创建上下游的同步链路后，原集群的写入数据会以非常低的延迟同步到新集群，此时可以逐步将读流量迁移到新集群了。观察一段时间，如果新集群表现稳定，就可以将写流量接入新集群，步骤如下：
 
-1. Stop write services in the upstream cluster. Make sure that all upstream data are replicated to downstream before stopping the changefeed.
+1. 停止上游集群的写业务。确认上游数据已全部同步到下游后，停止上游到下游集群的 changefeed。
 
     ```shell
-    # Stop the changefeed from the upstream cluster to the downstream cluster
+    # 停止旧集群到新集群的 changefeed
     tiup cdc cli changefeed pause -c "upstream-to-downstream" --server=http://172.16.6.122:8300
 
-    # View the changefeed status
+    # 查看 changefeed 状态
     tiup cdc cli changefeed list
     ```
 
@@ -282,19 +283,19 @@ After creating a changefeed, data written to the upstream cluster is replicated 
       {
         "id": "upstream-to-downstream",
         "summary": {
-        "state": "stopped",  # Ensure that the status is stopped
+        "state": "stopped",  # 需要确认这里的状态为 stopped
         "tso": 431747241184329729,
-        "checkpoint": "2022-03-11 15:50:20.387", # This time must be later than the time of stopping writing
+        "checkpoint": "2022-03-11 15:50:20.387", # 确认这里的时间晚于停写的时间
         "error": null
         }
       }
     ]
     ```
 
-2. Create a changefeed from downstream to upstream. You can leave `start-ts` unspecified so as to use the default setting, because the upstream and downstream data are consistent and there is no new data written to the cluster.
+2. 创建下游到上游集群的 changefeed。由于此时上下游数据是一致的，且没有新数据写入，因此可以不指定 start-ts，默认为当前时间：
 
     ```shell
     tiup cdc cli changefeed create --server=http://172.16.6.125:8300 --sink-uri="mysql://root:@172.16.6.122:4000" --changefeed-id="downstream -to-upstream"
     ```
 
-3. After migrating writing services to the downstream cluster, observe for a period. If the downstream cluster is stable, you can discard the upstream cluster.
+3. 将写业务迁移到下游集群，观察一段时间后，等新集群表现稳定，便可以弃用原集群。

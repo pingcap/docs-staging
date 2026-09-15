@@ -1,15 +1,15 @@
 ---
-title: Identify Slow Queries
-summary: Use the slow query log to identify problematic SQL statements.
+title: 慢查询日志
+summary: TiDB 会将执行时间超过 300 毫秒的语句输出到慢查询日志中，用于帮助用户定位慢查询语句。可以通过修改系统变量来启用或禁用慢查询日志。日志示例包括执行时间、用户信息、执行计划等字段。用户可通过查询 SLOW_QUERY 表来查询慢查询日志中的内容。还可以使用 pt-query-digest 工具分析 TiDB 慢日志。ADMIN SHOW SLOW 命令可以显示最近的慢查询记录或最慢的查询记录。
 ---
 
-# Identify Slow Queries
+# 慢查询日志
 
-To help users identify slow queries, analyze and improve the performance of SQL execution, TiDB outputs the statements whose execution time exceeds [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold) (The default value is 300 milliseconds) to [slow-query-file](/tidb-configuration-file.md#slow-query-file) (The default value is "tidb-slow.log").
+TiDB 会将执行时间超过 [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold)（默认值为 300 毫秒）的语句输出到 [slow-query-file](/tidb-configuration-file.md#slow-query-file)（默认值为 "tidb-slow.log"）日志文件中，用于帮助用户定位慢查询语句，分析和解决 SQL 执行的性能问题。
 
-TiDB enables the slow query log by default. You can enable or disable the feature by modifying the system variable [`tidb_enable_slow_log`](/system-variables.md#tidb_enable_slow_log).
+TiDB 默认启用慢查询日志，可以修改系统变量 [`tidb_enable_slow_log`](/system-variables.md#tidb_enable_slow_log) 来启用或禁用它。
 
-## Usage example
+## 日志示例
 
 ```sql
 # Time: 2019-08-14T09:26:59.487776265+08:00
@@ -44,135 +44,276 @@ use test;
 insert into t select * from t;
 ```
 
-## Fields description
+## 字段含义说明
 
-> **Note:**
+> **注意：**
 >
-> The unit of all the following time fields in the slow query log is **"second"**.
+> 慢查询日志中所有时间相关字段的单位都是 **“秒”**
 
-Slow query basics:
+Slow Query 基础信息：
 
-* `Time`: The print time of log.
-* `Query_time`: The execution time of a statement.
-* `Parse_time`: The parsing time for the statement.
-* `Compile_time`: The duration of the query optimization.
-* `Optimize_time`: The time consumed for optimizing the execution plan.
-* `Wait_TS`: The waiting time of the statement to get transaction timestamps.
-* `Query`: A SQL statement. `Query` is not printed in the slow log, but the corresponding field is called `Query` after the slow log is mapped to the memory table.
-* `Digest`: The fingerprint of the SQL statement.
-* `Txn_start_ts`: The start timestamp and the unique ID of a transaction. You can use this value to search for the transaction-related logs.
-* `Is_internal`: Whether a SQL statement is TiDB internal. `true` indicates that a SQL statement is executed internally in TiDB and `false` indicates that a SQL statement is executed by the user.
-* `Index_names`: The index names used by the statement.
-* `Stats`: The health state, internal version, total row count, modified row count, and load state of statistics that are used during this query. `pseudo` indicates that the statistics information is unhealthy. If the optimizer attempts to use some statistics that are not fully loaded, the internal state is also printed. For example, the meaning of `t1:439478225786634241[105000;5000][col1:allEvicted][idx1:allEvicted]` can be understood as follows:
-    - `t1`: statistics on table `t1` are used during query optimization.
-    - `439478225786634241`: the internal version.
-    - `105000`: the total row count in the statistics.
-    - `5000`: the number of rows modified since the last statistics collection.
-    - `col1:allEvicted`: statistics on the column `col1` are not fully loaded.
-    - `idx1:allEvicted`: statistics on the index `idx1` are not fully loaded.
-* `Succ`: Whether a statement is executed successfully.
-* `Backoff_time`: The waiting time before retry when a statement encounters errors that require a retry. The common errors as such include: `lock occurs`, `Region split`, and `tikv server is busy`.
-* `Plan`: The execution plan of a statement. Execute the `SELECT tidb_decode_plan('xxx...')` statement to parse the specific execution plan.
-* `Binary_plan`: The execution plan of a binary-encoded statement. Execute the [`SELECT tidb_decode_binary_plan('xxx...')`](/functions-and-operators/tidb-functions.md#tidb_decode_binary_plan) statement to parse the specific execution plan. The `Plan` and `Binary_plan` fields carry the same information. However, the format of execution plans parsed from the two fields are different.
-* `Prepared`: Whether this statement is a `Prepare` or `Execute` request or not.
-* `Plan_from_cache`: Whether this statement hits the execution plan cache.
-* `Plan_from_binding`: Whether this statement uses the bound execution plans.
-* `Has_more_results`: Whether this statement has more results to be fetched by users.
-* `Rewrite_time`: The time consumed for rewriting the query of this statement.
-* `Preproc_subqueries`: The number of subqueries (in the statement) that are executed in advance. For example, the `where id in (select if from t)` subquery might be executed in advance.
-* `Preproc_subqueries_time`: The time consumed for executing the subquery of this statement in advance.
-* `Exec_retry_count`: The retry times of this statement. This field is usually for pessimistic transactions in which the statement is retried when the lock is failed.
-* `Exec_retry_time`: The execution retry duration of this statement. For example, if a statement has been executed three times in total (failed for the first two times), `Exec_retry_time` means the total duration of the first two executions. The duration of the last execution is `Query_time` minus `Exec_retry_time`.
-* `KV_total`: The time spent on all the RPC requests on TiKV or TiFlash by this statement.
-* `PD_total`: The time spent on all the RPC requests on PD by this statement.
-* `Backoff_total`: The time spent on all the backoff during the execution of this statement.
-* `Write_sql_response_total`: The time consumed for sending the results back to the client by this statement.
-* `Result_rows`: The row count of the query results.
-* `IsExplicitTxn`: Whether this statement is in an explicit transaction. If the value is `false`, the transaction is `autocommit=1` and the statement is automatically committed after execution.
-* `Warnings`: The JSON-formatted warnings that are generated during the execution of this statement. These warnings are generally consistent with the output of the [`SHOW WARNINGS`](/sql-statements/sql-statement-show-warnings.md) statement, but might include extra warnings that provide more diagnostic information. These extra warnings are marked as `IsExtra: true`.
+* `Time`：表示日志打印时间。
+* `Query_time`：表示执行这个语句花费的时间。
+* `Parse_time`：表示这个语句在语法解析阶段花费的时间。
+* `Compile_time`：表示这个语句在查询优化阶段花费的时间。
+* `Optimize_time`：表示这个语句在优化查询计划阶段花费的时间。
+* `Wait_TS`：表示这个语句在等待获取事务 TS 阶段花费的时间。
+* `Query`：表示 SQL 语句。慢日志里面不会打印 `Query`，但映射到内存表后，对应的字段叫 `Query`。
+* `Digest`：表示 SQL 语句的指纹。
+* `Txn_start_ts`：表示事务的开始时间戳，也是事务的唯一 ID，可以用这个值在 TiDB 日志中查找事务相关的其他日志。
+* `Is_internal`：表示是否为 TiDB 内部的 SQL 语句。`true` 表示 TiDB 系统内部执行的 SQL 语句，`false` 表示用户执行的 SQL 语句。
+* `Index_names`：表示这个语句执行用到的索引。
+* `Stats`：表示这个语句使用到的统计信息的健康状态、内部版本号、总行数、修改行数以及加载状态。`pseudo` 状态表示统计信息不健康。如果有尝试使用但没有完全加载的统计信息，会在之后输出其内部状态。例如，`t1:439478225786634241[105000;5000][col1:allEvicted][idx1:allEvicted]` 的含义如下：
+    - `t1`：本次查询优化过程中使用了 `t1` 表上的统计信息
+    - `439478225786634241`：其内部版本号
+    - `105000`：统计信息中维护的总行数
+    - `5000`：自上次收集统计信息以来记录的修改的行数
+    - `col1:allEvicted`：`col1` 列对应的统计信息没有完全加载
+    - `idx1:allEvicted`：`idx1` 索引对应的统计信息没有完全加载
+* `Succ`：表示语句是否执行成功。
+* `Backoff_time`：表示语句遇到需要重试的错误时在重试前等待的时间。常见的需要重试的错误有以下几种：遇到了 lock、Region 分裂、`tikv server is busy`。
+* `Plan`：表示语句的执行计划，用 `select tidb_decode_plan('xxx...')` SQL 语句可以解析出具体的执行计划。
+* `Binary_plan`：表示以二进制格式编码后的语句的执行计划，用 [`SELECT tidb_decode_binary_plan('xxx...')`](/functions-and-operators/tidb-functions.md#tidb_decode_binary_plan) SQL 语句可以解析出具体的执行计划。传递的信息和 `Plan` 字段基本相同，但是解析出的执行计划的格式会和 `Plan` 字段不同。
+* `Prepared`：表示这个语句是否是 `Prepare` 或 `Execute` 的请求。
+* `Plan_from_cache`：表示这个语句是否命中了执行计划缓存。
+* `Plan_from_binding`：表示这个语句是否用的绑定的执行计划。
+* `Has_more_results`：表示这个语句的查询结果是否还有更多的数据待用户发起 `fetch` 命令获取。
+* `Rewrite_time`：表示这个语句在查询改写阶段花费的时间。
+* `Preproc_subqueries`：表示这个语句中被提前执行的子查询个数，如 `where id in (select if from t)` 这个子查询就可能被提前执行。
+* `Preproc_subqueries_time`：表示这个语句中被提前执行的子查询耗时。
+* `Exec_retry_count`：表示这个语句执行的重试次数。一般出现在悲观事务中，上锁失败时重试执行该语句。
+* `Exec_retry_time`：表示这个语句的重试执行时间。例如某个查询一共执行了三次（前两次失败），则 `Exec_retry_time` 表示前两次的执行时间之和，`Query_time` 减去 `Exec_retry_time` 则为最后一次执行时间。
+* `KV_total`：表示这个语句在 TiKV/TiFlash 上所有 RPC 请求花费的时间。
+* `PD_total`：表示这个语句在 PD 上所有 RPC 请求花费的时间。
+* `Backoff_total`：表示这个语句在执行过程中所有 backoff 花费的时间。
+* `Write_sql_response_total`：表示这个语句把结果发送回客户端花费的时间。
+* `Result_rows`：表示这个语句查询结果的行数。
+* `Warnings`：表示这个语句执行过程中产生的警告，采用 JSON 格式。通常和 [`SHOW WARNINGS`](/sql-statements/sql-statement-show-warnings.md) 语句的输出结果一致，但是可能会包含 [`SHOW WARNINGS`](/sql-statements/sql-statement-show-warnings.md) 中没有的警告，因而可以提供更多诊断信息。这类警告将被标记为 `IsExtra: true`。
+* `IsExplicitTxn`：表示这个语句是否在一个明确声明的事务中。如果是 `false`，表示这个语句的事务是 `autocommit=1`，即语句执行完成后就自动提交的事务。
 
-The following fields are related to transaction execution:
+和事务执行相关的字段：
 
-* `Prewrite_time`: The duration of the first phase (prewrite) of the two-phase transaction commit.
-* `Commit_time`: The duration of the second phase (commit) of the two-phase transaction commit.
-* `Get_commit_ts_time`: The time spent on getting `commit_ts` during the second phase (commit) of the two-phase transaction commit.
-* `Local_latch_wait_time`: The time that TiDB spends on waiting for the lock before the second phase (commit) of the two-phase transaction commit.
-* `Write_keys`: The count of keys that the transaction writes to the Write CF in TiKV.
-* `Write_size`: The total size of the keys or values to be written when the transaction commits.
-* `Prewrite_region`: The number of TiKV Regions involved in the first phase (prewrite) of the two-phase transaction commit. Each Region triggers a remote procedure call.
-* `Wait_prewrite_binlog_time`: The time used to write binlogs when a transaction is committed. Starting from v8.4.0, TiDB Binlog is removed, and this field has no value.
-* `Resolve_lock_time`: The time to resolve or wait for the lock to be expired after a lock is encountered during a transaction commit.
+* `Prewrite_time`：表示事务两阶段提交中第一阶段（prewrite 阶段）的耗时。
+* `Commit_time`：表示事务两阶段提交中第二阶段（commit 阶段）的耗时。
+* `Get_commit_ts_time`：表示事务两阶段提交中第二阶段（commit 阶段）获取 commit 时间戳的耗时。
+* `Local_latch_wait_time`：表示事务两阶段提交中第二阶段（commit 阶段）发起前在 TiDB 侧等锁的耗时。
+* `Write_keys`：表示该事务向 TiKV 的 Write CF 写入 Key 的数量。
+* `Write_size`：表示事务提交时写 key 或 value 的总大小。
+* `Prewrite_region`：表示事务两阶段提交中第一阶段（prewrite 阶段）涉及的 TiKV Region 数量。每个 Region 会触发一次远程过程调用。
+* `Wait_prewrite_binlog_time`：表示事务提交时用于写 binlog 的时间。从 v8.4.0 开始，TiDB Binlog 已移除，不再有相关时间。
+* `Resolve_lock_time`：表示事务提交时遇到锁后，清理锁或者等待锁过期的时间。
 
-Memory usage fields:
+和内存使用相关的字段：
 
-* `Mem_max`: The maximum memory space used during the execution period of a SQL statement (the unit is byte).
+* `Mem_max`：表示执行期间 TiDB 使用的最大内存空间，单位为 byte。
 
-Hard disk fields:
+和硬盘使用相关的字段：
 
-* `Disk_max`: The maximum disk space used during the execution period of a SQL statement (the unit is byte).
+* `Disk_max`：表示执行期间 TiDB 使用的最大硬盘空间，单位为 byte。
 
-User fields:
+和 SQL 执行的用户相关的字段：
 
-* `User`: The name of the user who executes this statement.
-* `Host`: The host name of this statement.
-* `Conn_ID`: The Connection ID (session ID). For example, you can use the keyword `con:3` to search for the log whose session ID is `3`.
-* `DB`: The current database.
+* `User`：表示执行语句的用户名。
+* `Host`：表示执行语句的用户地址。
+* `Conn_ID`：表示用户的链接 ID，可以用类似 `con:3` 的关键字在 TiDB 日志中查找该链接相关的其他日志。
+* `DB`：表示执行语句时使用的 database。
 
-TiKV Coprocessor Task fields:
+和 TiKV Coprocessor Task 相关的字段：
 
-* `Request_count`: The number of Coprocessor requests that a statement sends.
-* `Total_keys`: The number of keys that Coprocessor has scanned.
-* `Process_time`: The total processing time of a SQL statement in TiKV. Because data is sent to TiKV concurrently, this value might exceed `Query_time`.
-* `Wait_time`: The total waiting time of a statement in TiKV. Because the Coprocessor of TiKV runs a limited number of threads, requests might queue up when all threads of Coprocessor are working. When a request in the queue takes a long time to process, the waiting time of the subsequent requests increases.
-* `Process_keys`: The number of keys that Coprocessor has processed. Compared with `total_keys`, `processed_keys` does not include the old versions of MVCC. A great difference between `processed_keys` and `total_keys` indicates that many old versions exist.
-* `Num_cop_tasks`: The number of Coprocessor tasks sent by this statement.
-* `Cop_proc_avg`: The average execution time of cop-tasks, including some waiting time that cannot be counted, such as the mutex in RocksDB.
-* `Cop_proc_p90`: The P90 execution time of cop-tasks.
-* `Cop_proc_max`: The maximum execution time of cop-tasks.
-* `Cop_proc_addr`: The address of the cop-task with the longest execution time.
-* `Cop_wait_avg`: The average waiting time of cop-tasks, including the time of request queueing and getting snapshots.
-* `Cop_wait_p90`: The P90 waiting time of cop-tasks.
-* `Cop_wait_max`: The maximum waiting time of cop-tasks.
-* `Cop_wait_addr`: The address of the cop-task whose waiting time is the longest.
-* `Rocksdb_delete_skipped_count`: The number of deleted (tombstone) keys that RocksDB encounters when scanning data.
-* `Rocksdb_key_skipped_count`: The number of all keys that RocksDB encounters when scanning data.
-* `Rocksdb_block_cache_hit_count`: The number of times RocksDB reads data from the block cache.
-* `Rocksdb_block_read_count`: The number of times RocksDB reads data from the file system.
-* `Rocksdb_block_read_byte`: The amount of data RocksDB reads from the file system.
-* `Rocksdb_block_read_time`: The time RocksDB takes to read data from the file system.
-* `Cop_backoff_{backoff-type}_total_times`: The total times of backoff caused by an error.
-* `Cop_backoff_{backoff-type}_total_time`: The total time of backoff caused by an error.
-* `Cop_backoff_{backoff-type}_max_time`: The longest time of backoff caused by an error.
-* `Cop_backoff_{backoff-type}_max_addr`: The address of the cop-task that has the longest backoff time caused by an error.
-* `Cop_backoff_{backoff-type}_avg_time`: The average time of backoff caused by an error.
-* `Cop_backoff_{backoff-type}_p90_time`: The P90 percentile backoff time caused by an error.
+* `Request_count`：表示这个语句发送的 Coprocessor 请求的数量。
+* `Total_keys`：表示 Coprocessor 扫过的 key 的数量。
+* `Process_time`：执行 SQL 在 TiKV 的处理时间之和，因为数据会并行的发到 TiKV 执行，这个值可能会超过 `Query_time`。
+* `Wait_time`：表示这个语句在 TiKV 的等待时间之和，因为 TiKV 的 Coprocessor 线程数是有限的，当所有的 Coprocessor 线程都在工作的时候，请求会排队；当队列中有某些请求耗时很长的时候，后面的请求的等待时间都会增加。
+* `Process_keys`：表示 Coprocessor 处理的 key 的数量。相比 total_keys，processed_keys 不包含 MVCC 的旧版本。如果 processed_keys 和 total_keys 相差很大，说明旧版本比较多。
+* `Num_cop_tasks`：表示这个语句发送的 Coprocessor 请求的数量。
+* `Cop_proc_avg`：cop-task 的平均执行时间，包括一些无法统计的等待时间，如 RocksDB 内的 mutex。
+* `Cop_proc_p90`：cop-task 的 P90 分位执行时间。
+* `Cop_proc_max`：cop-task 的最大执行时间。
+* `Cop_proc_addr`：执行时间最长的 cop-task 所在地址。
+* `Cop_wait_avg`：cop-task 的平均等待时间，包括请求排队和获取 snapshot 时间。
+* `Cop_wait_p90`：cop-task 的 P90 分位等待时间。
+* `Cop_wait_max`：cop-task 的最大等待时间。
+* `Cop_wait_addr`：等待时间最长的 cop-task 所在地址。
+* `Rocksdb_delete_skipped_count`：RocksDB 扫数据时遇到的已删除 (tombstone) Key 数量。
+* `Rocksdb_key_skipped_count`：RocksDB 扫数据时所有遇到的 Key 数量。
+* `Rocksdb_block_cache_hit_count`：RocksDB 从 Block Cache 缓存中读数据的次数。
+* `Rocksdb_block_read_count`：RocksDB 从文件系统中读数据的次数。
+* `Rocksdb_block_read_byte`：RocksDB 从文件系统中读数据的数据量。
+* `Rocksdb_block_read_time`：RocksDB 从文件系统中读数据的时间。
+* `Cop_backoff_{backoff-type}_total_times`：因某种错误造成的 backoff 总次数。
+* `Cop_backoff_{backoff-type}_total_time`：因某种错误造成的 backoff 总时间。
+* `Cop_backoff_{backoff-type}_max_time`：因某种错误造成的最大 backoff 时间。
+* `Cop_backoff_{backoff-type}_max_addr`：因某种错误造成的最大 backoff 时间的 cop-task 地址。
+* `Cop_backoff_{backoff-type}_avg_time`：因某种错误造成的平均 backoff 时间。
+* `Cop_backoff_{backoff-type}_p90_time`：因某种错误造成的 P90 分位 backoff 时间。
 
-`backoff-type` generally includes the following types:
+`backoff-type` 一般有以下几种：
 
-* `tikvRPC`: The backoff caused by failing to send RPC requests to TiKV.
-* `tiflashRPC`: The backoff caused by failing to send RPC requests to TiFlash.
-* `pdRPC`: The backoff caused by failing to send RPC requests to PD.
-* `txnLock`: The backoff caused by lock conflicts.
-* `regionMiss`: The backoff caused by that processing requests fails when the TiDB Region cache information is outdated after Regions are split or merged.
-* `regionScheduling`: The backoff caused by that TiDB cannot process requests when Regions are being scheduled and the Leader is not selected.
-* `tikvServerBusy`: The backoff caused by that the TiKV load is too high to handle new requests.
-* `tiflashServerBusy`: The backoff caused by that the TiFlash load is too high to handle new requests.
-* `tikvDiskFull`: The backoff caused by that the TiKV disk is full.
-* `txnLockFast`: The backoff caused by that locks are encountered during data reads.
+* `tikvRPC`：给 TiKV 发送 RPC 请求失败而产生的 backoff。
+* `tiflashRPC`：给 TiFlash 发送 RPC 请求失败而产生的 backoff。
+* `pdRPC`：给 PD 发送 RPC 请求失败而产生的 backoff。
+* `txnLock`：遇到锁冲突后产生的 backoff。
+* `regionMiss`：Region 发生分裂或者合并后，TiDB 的 Region 缓存信息过期导致请求失败而产生的 backoff。
+* `regionScheduling`：Region 还在调度中，尚未选出 Leader 导致无法处理请求而产生的 backoff。
+* `tikvServerBusy`：因为 TiKV 负载太高无法处理新请求而产生的 backoff。
+* `tiflashServerBusy`：因为 TiFlash 负载太高无法处理新请求而产生的 backoff。
+* `tikvDiskFull`：因为 TiKV 的磁盘满了而产生的 backoff。
+* `txnLockFast`：因为读数据时遇到了锁而产生的 backoff。
 
-Fields related to Resource Control:
+和资源管控相关的字段：
 
-* `Resource_group`: the resource group that the statement is bound to.
-* `Request_unit_read`: the total read RUs consumed by the statement.
-* `Request_unit_write`: the total write RUs consumed by the statement.
-* `Time_queued_by_rc`: the total time that the statement waits for available resources.
+* `Resource_group`：语句执行所绑定的资源组。
+* `Request_unit_read`：执行语句消耗的总读 RU。
+* `Request_unit_write`：执行语句消耗的总写 RU。
+* `Time_queued_by_rc`：执行语句过程中等待可用资源的总耗时。
 
-## Related system variables
+和存储引擎相关的字段：
 
-* [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold): Sets the threshold for the slow log. The SQL statement whose execution time exceeds this threshold is recorded in the slow log. The default value is 300 (ms).
-* [`tidb_query_log_max_len`](/system-variables.md#tidb_query_log_max_len): Sets the maximum length of the SQL statement recorded in the slow log. The default value is 4096 (byte).
-* [tidb_redact_log](/system-variables.md#tidb_redact_log): Determines whether to desensitize user data using `?` in the SQL statement recorded in the slow log. The default value is `0`, which means to disable the feature.
-* [`tidb_enable_collect_execution_info`](/system-variables.md#tidb_enable_collect_execution_info): Determines whether to record the physical execution information of each operator in the execution plan. The default value is `1`. This feature impacts the performance by approximately 3%. After enabling this feature, you can view the `Plan` information as follows:
+- `Storage_from_kv`：从 v8.5.5 开始引入，表示该语句是否从 TiKV 读取数据。
+- `Storage_from_mpp`：从 v8.5.5 开始引入，表示该语句是否从 TiFlash 读取数据。
+
+## `tidb_slow_log_rules` 使用方法
+
+[`tidb_slow_log_rules`](/system-variables.md#tidb_slow_log_rules-从-v856-版本开始引入) 用于定义慢查询日志的触发规则，支持多维度指标组合条件。适合用于慢日志的“定向采样”和“问题复现”，可按具体指标组合条件筛选目标语句。
+
+慢查询日志的触发行为取决于 `tidb_slow_log_rules` 的配置情况：
+
+- 如果未设置 `tidb_slow_log_rules`，慢查询日志触发仍依赖 [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold)（单位：毫秒）。
+- 如果已设置 `tidb_slow_log_rules`，配置的规则优先生效，[`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold) 将被忽略。
+
+如需了解各字段的具体含义、诊断价值和背景信息，请参见[字段含义说明](#字段含义说明)。
+
+### 统一规则语法与类型约束
+
+- 规则容量与分隔：`SESSION` 和 `GLOBAL` 各最多支持 10 条规则，同一会话最多可生效 20 条，规则之间用 `;` 分隔。
+- 条件格式：格式为 `字段名:值`，单条规则内的多个条件用 `,` 分隔。
+- 字段与作用域：字段名大小写不敏感（需保留下划线等字符）。`SESSION` 规则不支持 `Conn_ID`，仅 `GLOBAL` 支持 `Conn_ID`。
+- 匹配语义：
+    - 数值字段按 `>=` 匹配，字符串和布尔字段按等值匹配（`=`）。
+    - `DB` 与 `Resource_group` 匹配时不区分大小写。
+    - 不支持显式操作符（如 `>`, `<`, `!=`）。
+
+类型约束如下：
+
+- 数值类型（`int64`、`uint64`、`float64`）统一要求 `>= 0`，负值会解析报错。
+    - `int64`：上限 `2^63-1`。
+    - `uint64`：上限 `2^64-1`。
+    - `float64`：常规上限约 `1.79e308`。当前按 Go `ParseFloat` 解析，`NaN`/`Inf` 虽可被解析，但可能导致规则恒真或恒假，不建议使用。
+- `bool`：支持 `true`/`false`、`1`/`0`、`t`/`f`（大小写不敏感）。
+- `string`：当前不支持包含分隔符 `,`（条件分隔符）或 `;`（规则分隔符），即使使用引号（单引号或双引号）也不支持。不支持转义。
+- 重复字段：如果在单条规则内多次设置同一字段，以最后一次出现的值为准。
+
+### 支持的字段列表
+
+字段的详细解释、诊断含义和背景信息参见 [`identify-slow-queries` 的字段含义说明](/identify-slow-queries.md#字段含义说明)。
+
+除非另有说明，下表中的字段默认遵循上文[统一规则语法与类型约束](#统一规则语法与类型约束)中的通用匹配与类型规则。该表仅列出当前支持的字段名、类型、单位以及少量规则的特殊说明，不重复说明字段语义。
+
+| 字段名                                 | 类型     | 单位   | 备注                           |
+| -------------------------------------- | -------- | ------ | ------------------------------ |
+| `Conn_ID`                             | `uint`   | 计数   | 仅 GLOBAL 规则支持             |
+| `Session_alias`                       | `string` | 无     | -                              |
+| `DB`                                  | `string` | 无     | 匹配时不区分大小写             |
+| `Exec_retry_count`                    | `uint`   | 计数   | -                              |
+| `Query_time`                          | `float`  | 秒     | -                              |
+| `Parse_time`                          | `float`  | 秒     | -                              |
+| `Compile_time`                        | `float`  | 秒     | -                              |
+| `Rewrite_time`                        | `float`  | 秒     | -                              |
+| `Optimize_time`                       | `float`  | 秒     | -                              |
+| `Wait_TS`                             | `float`  | 秒     | -                              |
+| `Is_internal`                         | `bool`   | 无     | -                              |
+| `Digest`                              | `string` | 无     | -                              |
+| `Plan_digest`                         | `string` | 无     | -                              |
+| `Num_cop_tasks`                       | `int`    | 计数   | -                              |
+| `Mem_max`                             | `int`    | bytes  | -                              |
+| `Disk_max`                            | `int`    | bytes  | -                              |
+| `Write_sql_response_total`            | `float`  | 秒     | -                              |
+| `Succ`                                | `bool`   | 无     | -                              |
+| `Resource_group`                      | `string` | 无     | 匹配时不区分大小写               |
+| `KV_total`                            | `float`  | 秒     | -                              |
+| `PD_total`                            | `float`  | 秒     | -                              |
+| `Unpacked_bytes_sent_tikv_total`      | `int`    | bytes  | -                              |
+| `Unpacked_bytes_received_tikv_total`  | `int`    | bytes  | -                              |
+| `Unpacked_bytes_sent_tikv_cross_zone` | `int`    | bytes  | -                              |
+| `Unpacked_bytes_received_tikv_cross_zone`    | `int` | bytes  | -                          |
+| `Unpacked_bytes_sent_tiflash_total`          | `int` | bytes  | -                          |
+| `Unpacked_bytes_received_tiflash_total`      | `int` | bytes  | -                          |
+| `Unpacked_bytes_sent_tiflash_cross_zone`     | `int` | bytes  | -                          |
+| `Unpacked_bytes_received_tiflash_cross_zone` | `int` | bytes  | -                          |
+| `Process_time`                        | `float`  | 秒     | -                              |
+| `Backoff_time`                        | `float`  | 秒     | -                              |
+| `Total_keys`                          | `uint`   | 计数   | -                              |
+| `Process_keys`                        | `uint`   | 计数   | -                              |
+| `cop_mvcc_read_amplification`         | `float`  | ratio  | ratio 值 (Total_keys / Process_keys) |
+| `Prewrite_time`                       | `float`  | 秒     | -                              |
+| `Commit_time`                         | `float`  | 秒     | -                              |
+| `Write_keys`                          | `uint`   | 计数   | -                              |
+| `Write_size`                          | `uint`   | bytes  | -                              |
+| `Prewrite_region`                     | `uint`   | 计数   | -                              |
+
+### 生效行为与匹配顺序
+
+- 规则更新行为：每次执行 `SET [SESSION|GLOBAL] tidb_slow_log_rules = '...'` 都会覆盖对应作用域原有规则，不会追加。
+- 规则清空行为：`SET [SESSION|GLOBAL] tidb_slow_log_rules = ''` 会清空对应作用域规则。
+- 在当前会话存在可生效的 `tidb_slow_log_rules`（如 SESSION 规则、GLOBAL 的当前 `Conn_ID` 规则，或未指定 `Conn_ID` 的全局规则）时，慢查询日志输出由规则匹配结果决定，`tidb_slow_log_threshold` 不再参与判断。
+- 在当前会话没有任何可适用规则时，例如 SESSION 和 GLOBAL 都为空，或仅配置了与当前 `Conn_ID` 不匹配的 GLOBAL 规则，慢查询日志触发仍依赖 `tidb_slow_log_threshold`（注意其单位为毫秒）。
+- 如果希望规则中仍使用 SQL 执行时间作为输出慢日志的条件，可在规则中使用 `Query_time`（注意其单位为秒）并设置阈值。
+- 规则匹配逻辑如下：
+    - 多条规则之间采用 `OR` 关系，单条规则内多个字段条件采用 `AND` 关系。
+    - SESSION 作用域规则优先匹配，若未匹配，再按顺序匹配 GLOBAL 的 `Conn_ID` 定向规则和未指定 `Conn_ID` 的全局通用规则。
+- `SHOW VARIABLES LIKE 'tidb_slow_log_rules'` 与 `SELECT @@SESSION.tidb_slow_log_rules` 返回 SESSION 规则文本（未设置时为空字符串），`SELECT @@GLOBAL.tidb_slow_log_rules` 返回 GLOBAL 规则文本。
+
+### 使用示例
+
+- 标准格式（SESSION 作用域）：
+
+    ```sql
+    SET SESSION tidb_slow_log_rules = 'Query_time: 0.5, Is_internal: false';
+    ```
+
+- 错误格式（SESSION 作用域不支持 `Conn_ID`）：
+
+    ```sql
+    SET SESSION tidb_slow_log_rules = 'Conn_ID: 12, Query_time: 0.5, Is_internal: false';
+    ```
+
+- 全局规则（适用于所有连接）：
+
+    ```sql
+    SET GLOBAL tidb_slow_log_rules = 'Query_time: 0.5, Is_internal: false';
+    ```
+
+- 指定特定连接的全局规则（分别适用于 `Conn_ID:11` 和 `Conn_ID:12` 的两个连接）：
+
+    ```sql
+    SET GLOBAL tidb_slow_log_rules = 'Conn_ID: 11, Query_time: 0.5, Is_internal: false; Conn_ID: 12, Query_time: 0.6, Process_time: 0.3, DB: db1';
+    ```
+
+### 使用建议
+
+- `tidb_slow_log_rules` 用于替换单一阈值方式，支持多维度指标组合条件，以实现更灵活和精细化的慢查询日志控制。
+
+- 在资源充足的测试环境（1 个 TiDB 节点，16 核 CPU、48 GiB 内存；3 个 TiKV 节点，每个 16 核 CPU、48 GiB 内存）中，多次 sysbench 测试结果表明：当多维慢查询日志规则在 30 分钟内生成数百万条慢查询日志时，对性能影响较小；但当日志量达到千万级时，TPS 会明显下降，延迟也会显著增加。因此在业务负载较高，或 CPU、内存资源接近瓶颈的情况下，应谨慎配置 `tidb_slow_log_rules`，避免因规则过宽导致日志洪泛。若需要限制日志输出速率，可通过 [`tidb_slow_log_max_per_sec`](/system-variables.md#tidb_slow_log_max_per_sec-从-v856-版本开始引入) 进行限速，以降低对业务性能的影响。
+
+## 相关系统变量
+
+* [`tidb_slow_log_rules`](/system-variables.md#tidb_slow_log_rules-从-v856-版本开始引入)：请参见 [`tidb_slow_log_rules` 使用建议](#tidb_slow_log_rules-使用方法)。
+
+* [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold)：用于设置慢查询日志的阈值，执行时间超过阈值的 SQL 语句将被记录到慢查询日志中。默认值是 `300ms`（单位：毫秒）。
+    > **注意：**
+    >
+    > `tidb_slow_log_rules` 中 `Query_time`、`Process_time` 等时间类字段单位为秒（可带小数），而 [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold) 的单位为毫秒。
+
+* [`tidb_slow_log_max_per_sec`](/system-variables.md#tidb_slow_log_max_per_sec-从-v856-版本开始引入)：用于设置每秒打印慢查询日志数量的上限，默认值为 `0`。
+    * 当值为 `0` 时，表示不限制每秒打印的慢查询日志数量。
+    * 当值大于 `0` 时，TiDB 每秒最多打印指定数量的慢查询日志，超过部分将被丢弃，不会写入慢查询日志文件。
+    * 建议在启用了 `tidb_slow_log_rules` 后配置该变量，以防止基于规则的慢查询日志触发过于频繁。
+
+* [`tidb_query_log_max_len`](/system-variables.md#tidb_query_log_max_len)：设置慢查询日志记录 SQL 语句的最大长度。默认值是 4096 byte。
+
+* [`tidb_redact_log`](/system-variables.md#tidb_redact_log)：设置慢查询日志记录 SQL 时，是否将用户数据脱敏用 `?` 代替。默认值是 `0`，即关闭该功能。
+
+* [`tidb_enable_collect_execution_info`](/system-variables.md#tidb_enable_collect_execution_info)：设置是否记录执行计划中各个算子的物理执行信息，默认值是 `1`。开启该功能会导致性能降低约 3%。开启后查看 `Plan` 的示例如下：
 
     ```sql
     > select tidb_decode_plan('jAOIMAk1XzE3CTAJMQlmdW5jczpjb3VudChDb2x1bW4jNyktPkMJC/BMNQkxCXRpbWU6MTAuOTMxNTA1bXMsIGxvb3BzOjIJMzcyIEJ5dGVzCU4vQQoxCTMyXzE4CTAJMQlpbmRleDpTdHJlYW1BZ2dfOQkxCXQRSAwyNzY4LkgALCwgcnBjIG51bTogMQkMEXMQODg0MzUFK0hwcm9jIGtleXM6MjUwMDcJMjA2HXsIMgk1BWM2zwAAMRnIADcVyAAxHcEQNQlOL0EBBPBbCjMJMTNfMTYJMQkzMTI4MS44NTc4MTk5MDUyMTcJdGFibGU6dCwgaW5kZXg6aWR4KGEpLCByYW5nZTpbLWluZiw1MDAwMCksIGtlZXAgb3JkZXI6ZmFsc2UJMjUBrgnQVnsA');
@@ -187,89 +328,89 @@ Fields related to Resource Control:
     +------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
     ```
 
-If you are conducting a performance test, you can disable the feature of automatically collecting the execution information of operators:
+在性能测试中可以关闭自动收集算子的执行信息：
 
 
 ```sql
 set @@tidb_enable_collect_execution_info=0;
 ```
 
-The returned result of the `Plan` field has roughly the same format with that of `EXPLAIN` or `EXPLAIN ANALYZE`. For more details of the execution plan, see [`EXPLAIN`](/sql-statements/sql-statement-explain.md) or [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md).
+`Plan` 字段显示的格式和 [`EXPLAIN`](/sql-statements/sql-statement-explain.md) 或者 [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md) 大致一致。可以查看 [`EXPLAIN`](/sql-statements/sql-statement-explain.md) 或者 [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md) 文档了解更多关于执行计划的信息。
 
-For more information, see [TiDB specific variables and syntax](/system-variables.md).
+更多详细信息，可以参见 [TiDB 专用系统变量和语法](/system-variables.md)。
 
-## Memory mapping in slow log
+## 慢日志内存映射表
 
-You can query the content of the slow query log by querying the `INFORMATION_SCHEMA.SLOW_QUERY` table. Each column name in the table corresponds to one field name in the slow log. For table structure, see the introduction to the `SLOW_QUERY` table in [Information Schema](/information-schema/information-schema-slow-query.md).
+用户可通过查询 `INFORMATION_SCHEMA.SLOW_QUERY` 表来查询慢查询日志中的内容，表中列名和慢日志中字段名一一对应，表结构可查看 [`SLOW_QUERY` 表](/information-schema/information-schema-slow-query.md)中的介绍。
 
-> **Note:**
+> **注意：**
 >
-> Every time you query the `SLOW_QUERY` table, TiDB reads and parses the current slow query log.
+> 每次查询 `SLOW_QUERY` 表时，TiDB 都会去读取和解析一次当前的慢查询日志。
 
-For TiDB 4.0, `SLOW_QUERY` supports querying the slow log of any period of time, including the rotated slow log file. You need to specify the `TIME` range to locate the slow log files that need to be parsed. If you don't specify the `TIME` range, TiDB only parses the current slow log file. For example:
+TiDB 4.0 中，`SLOW_QUERY` 已经支持查询任意时间段的慢日志，即支持查询已经被 rotate 的慢日志文件的数据。用户查询时只需要指定 `TIME` 时间范围即可定位需要解析的慢日志文件。如果查询不指定时间范围，则仍然只解析当前的慢日志文件，示例如下：
 
-* If you don't specify the time range, TiDB only parses the slow query data that TiDB is writing to the slow log file:
+不指定时间范围时，只会解析当前 TiDB 正在写入的慢日志文件的慢查询数据：
 
-    
-    ```sql
-    select count(*),
-          min(time),
-          max(time)
-    from slow_query;
-    ```
 
-    ```
-    +----------+----------------------------+----------------------------+
-    | count(*) | min(time)                  | max(time)                  |
-    +----------+----------------------------+----------------------------+
-    | 122492   | 2020-03-11 23:35:20.908574 | 2020-03-25 19:16:38.229035 |
-    +----------+----------------------------+----------------------------+
-    ```
+```sql
+select count(*),
+       min(time),
+       max(time)
+from slow_query;
+```
 
-* If you specify the time range, for example, from `2020-03-10 00:00:00` to `2020-03-11 00:00:00`, TiDB first locates the slow log files of the specified time range, and then parses the slow query information:
+```
++----------+----------------------------+----------------------------+
+| count(*) | min(time)                  | max(time)                  |
++----------+----------------------------+----------------------------+
+| 122492   | 2020-03-11 23:35:20.908574 | 2020-03-25 19:16:38.229035 |
++----------+----------------------------+----------------------------+
+```
 
-    
-    ```sql
-    select count(*),
-          min(time),
-          max(time)
-    from slow_query
-    where time > '2020-03-10 00:00:00'
-      and time < '2020-03-11 00:00:00';
-    ```
+指定查询 `2020-03-10 00:00:00` 到 `2020-03-11 00:00:00` 时间范围后，会定位指定时间范围内的慢日志文件后解析慢查询数据：
 
-    ```
-    +----------+----------------------------+----------------------------+
-    | count(*) | min(time)                  | max(time)                  |
-    +----------+----------------------------+----------------------------+
-    | 2618049  | 2020-03-10 00:00:00.427138 | 2020-03-10 23:00:22.716728 |
-    +----------+----------------------------+----------------------------+
-    ```
 
-> **Note:**
+```sql
+select count(*),
+       min(time),
+       max(time)
+from slow_query
+where time > '2020-03-10 00:00:00'
+  and time < '2020-03-11 00:00:00';
+```
+
+```
++----------+----------------------------+----------------------------+
+| count(*) | min(time)                  | max(time)                  |
++----------+----------------------------+----------------------------+
+| 2618049  | 2020-03-10 00:00:00.427138 | 2020-03-10 23:00:22.716728 |
++----------+----------------------------+----------------------------+
+```
+
+> **注意：**
 >
-> If the slow log files of the specified time range are removed, or there is no slow query, the query returns NULL.
+> 如果指定时间范围内的慢日志文件被删除，或者并没有慢查询，则查询结果会返回空。
 
-TiDB 4.0 adds the [`CLUSTER_SLOW_QUERY`](/information-schema/information-schema-slow-query.md#cluster_slow_query-table) system table to query the slow query information of all TiDB nodes. The table schema of the `CLUSTER_SLOW_QUERY` table differs from that of the `SLOW_QUERY` table in that an `INSTANCE` column is added to `CLUSTER_SLOW_QUERY`. The `INSTANCE` column represents the TiDB node address of the row information on the slow query. You can use `CLUSTER_SLOW_QUERY` the way you do with [`SLOW_QUERY`](/information-schema/information-schema-slow-query.md).
+TiDB 4.0 中新增了 [`CLUSTER_SLOW_QUERY`](/information-schema/information-schema-slow-query.md#cluster_slow_query-table) 系统表，用来查询所有 TiDB 节点的慢查询信息，表结构在 `SLOW_QUERY` 的基础上多增加了 `INSTANCE` 列，表示该行慢查询信息来自的 TiDB 节点地址。使用方式和 [`SLOW_QUERY`](/information-schema/information-schema-slow-query.md) 系统表一样。
 
-When you query the `CLUSTER_SLOW_QUERY` table, TiDB pushes the computation and the judgment down to other nodes, instead of retrieving all slow query information from other nodes and executing the operations on one TiDB node.
+关于查询 `CLUSTER_SLOW_QUERY` 表，TiDB 会把相关的计算和判断下推到其他节点执行，而不是把其他节点的慢查询数据都取回来在一台 TiDB 上执行。
 
-## `SLOW_QUERY` / `CLUSTER_SLOW_QUERY` usage examples
+## 查询 `SLOW_QUERY`/`CLUSTER_SLOW_QUERY` 示例
 
-### Top-N slow queries
+### 搜索 Top N 的慢查询
 
-Query the Top 2 slow queries of users. `Is_internal=false` means excluding slow queries inside TiDB and only querying slow queries of users.
+查询 Top 2 的用户慢查询。`is_internal=false` 表示排除 TiDB 内部的慢查询，只看用户的慢查询：
 
 
 ```sql
 select query_time, query
 from information_schema.slow_query
-where is_internal = false
+where is_internal = false  -- 排除 TiDB 内部的慢查询 SQL
 order by query_time desc
 limit 2;
 ```
 
-Output example:
+输出样例：
 
 ```
 +--------------+------------------------------------------------------------------+
@@ -280,21 +421,21 @@ Output example:
 +--------------+------------------------------------------------------------------+
 ```
 
-### Query the Top-N slow queries of the `test` user
+### 搜索某个用户的 Top N 慢查询
 
-In the following example, the slow queries executed by the `test` user are queried, and the first two results are displayed in reverse order of execution time.
+下面例子中搜索 test 用户执行的慢查询 SQL，且按执行消耗时间逆序排序显式前 2 条：
 
 
 ```sql
 select query_time, query, user
 from information_schema.slow_query
-where is_internal = false
-  and user = "test"
+where is_internal = false  -- 排除 TiDB 内部的慢查询 SQL
+  and user = "test"        -- 查找的用户名
 order by query_time desc
 limit 2;
 ```
 
-Output example:
+输出样例：
 
 ```
 +-------------+------------------------------------------------------------------+----------------+
@@ -304,52 +445,52 @@ Output example:
 +-------------+------------------------------------------------------------------+----------------+
 ```
 
-### Query similar slow queries with the same SQL fingerprints
+### 根据 SQL 指纹搜索同类慢查询
 
-After querying the Top-N SQL statements, continue to query similar slow queries using the same fingerprints.
+在得到 Top N 的慢查询 SQL 后，可通过 SQL 指纹继续搜索同类慢查询 SQL。
 
-1. Acquire Top-N slow queries and the corresponding SQL fingerprints.
+先获取 Top N 的慢查询和对应的 SQL 指纹：
 
-    
-    ```sql
-    select query_time, query, digest
-    from information_schema.slow_query
-    where is_internal = false
-    order by query_time desc
-    limit 1;
-    ```
 
-    Output example:
+```sql
+select query_time, query, digest
+from information_schema.slow_query
+where is_internal = false
+order by query_time desc
+limit 1;
+```
 
-    ```
-    +-------------+-----------------------------+------------------------------------------------------------------+
-    | query_time  | query                       | digest                                                           |
-    +-------------+-----------------------------+------------------------------------------------------------------+
-    | 0.302558006 | select * from t1 where a=1; | 4751cb6008fda383e22dacb601fde85425dc8f8cf669338d55d944bafb46a6fa |
-    +-------------+-----------------------------+------------------------------------------------------------------+
-    ```
+输出样例：
 
-2. Query similar slow queries with the fingerprints.
+```
++-------------+-----------------------------+------------------------------------------------------------------+
+| query_time  | query                       | digest                                                           |
++-------------+-----------------------------+------------------------------------------------------------------+
+| 0.302558006 | select * from t1 where a=1; | 4751cb6008fda383e22dacb601fde85425dc8f8cf669338d55d944bafb46a6fa |
++-------------+-----------------------------+------------------------------------------------------------------+
+```
 
-    
-    ```sql
-    select query, query_time
-    from information_schema.slow_query
-    where digest = "4751cb6008fda383e22dacb601fde85425dc8f8cf669338d55d944bafb46a6fa";
-    ```
+再根据 SQL 指纹搜索同类慢查询：
 
-    Output example:
 
-    ```
-    +-----------------------------+-------------+
-    | query                       | query_time  |
-    +-----------------------------+-------------+
-    | select * from t1 where a=1; | 0.302558006 |
-    | select * from t1 where a=2; | 0.401313532 |
-    +-----------------------------+-------------+
-    ```
+```sql
+select query, query_time
+from information_schema.slow_query
+where digest = "4751cb6008fda383e22dacb601fde85425dc8f8cf669338d55d944bafb46a6fa";
+```
 
-## Query slow queries with pseudo `stats`
+输出样例：
+
+```
++-----------------------------+-------------+
+| query                       | query_time  |
++-----------------------------+-------------+
+| select * from t1 where a=1; | 0.302558006 |
+| select * from t1 where a=2; | 0.401313532 |
++-----------------------------+-------------+
+```
+
+### 搜索统计信息为 pseudo 的慢查询 SQL 语句
 
 
 ```sql
@@ -359,7 +500,7 @@ where is_internal = false
   and stats like '%pseudo%';
 ```
 
-Output example:
+输出样例：
 
 ```
 +-----------------------------+-------------+---------------------------------+
@@ -373,9 +514,9 @@ Output example:
 +-----------------------------+-------------+---------------------------------+
 ```
 
-### Query slow queries whose execution plan is changed
+### 查询执行计划发生变化的慢查询
 
-When the execution plan of SQL statements of the same category is changed, the execution slows down, because the statistics is outdated, or the statistics is not accurate enough to reflect the real data distribution. You can use the following SQL statement to query SQL statements with different execution plans.
+由于统计信息过时，或者统计信息因为误差无法精确反映数据的真实分布情况时，可能导致同类型 SQL 的执行计划发生改变导致执行变慢，可以用以下 SQL 查询哪些 SQL 具有不同的执行计划：
 
 
 ```sql
@@ -388,7 +529,7 @@ having count > 1
 limit 3\G
 ```
 
-Output example:
+输出样例：
 
 ```
 ***************************[ 1. row ]***************************
@@ -405,7 +546,7 @@ digest     | db705c89ca2dfc1d39d10e0f30f285cbbadec7e24da4f15af461b148d8ffb020
 min(query) | SELECT DISTINCT c FROM sbtest11 WHERE id BETWEEN ? AND ? ORDER BY c [arguments: (303359, 303458)];
 ```
 
-Then you can query the different plans using the SQL fingerprint in the query result above:
+然后可以用查询结果中的 SQL 指纹进一步查询不同的 plan
 
 
 ```sql
@@ -416,7 +557,7 @@ where digest='17b4518fde82e32021877878bec2bb309619d384fca944106fcaf9c93b536e94'
 group by plan_digest\G
 ```
 
-Output example:
+输出样例：
 
 ```
 *************************** 1. row ***************************
@@ -433,14 +574,14 @@ plan_digest: 6afbbd21f60ca6c6fdf3d3cd94f7c7a49dd93c00fcf8774646da492e50e204ee
               └─TableScan_11    cop     1.2440069558121831      table:sbtest25, range:[472745,472844], keep order:false
 ```
 
-### Query the number of slow queries for each TiDB node in a cluster
+### 查询集群各个 TIDB 节点的慢查询数量
 
 
 ```sql
 select instance, count(*) from information_schema.cluster_slow_query where time >= "2020-03-06 00:00:00" and time < now() group by instance;
 ```
 
-Output example:
+输出样例：
 
 ```
 +---------------+----------+
@@ -451,9 +592,9 @@ Output example:
 +---------------+----------+
 ```
 
-### Query slow logs occurring only in abnormal time period
+### 查询仅出现在异常时间段的慢日志
 
-If you find problems such as decreased QPS or increased latency for the time period from `2020-03-10 13:24:00` to `2020-03-10 13:27:00`, the reason might be that a large query crops up. Run the following SQL statement to query slow logs that occur only in abnormal time period. The time range from `2020-03-10 13:20:00` to `2020-03-10 13:23:00` refers to the normal time period.
+假如发现 `2020-03-10 13:24:00` ~ `2020-03-10 13:27:00` 的 QPS 降低或者延迟上升等问题，可能是由于突然出现大查询导致的，可以用下面 SQL 查询仅出现在异常时间段的慢日志，其中 `2020-03-10 13:20:00` ~ `2020-03-10 13:23:00` 为正常时间段。
 
 
 ```sql
@@ -484,7 +625,7 @@ WHERE t1.digest NOT IN
 ORDER BY  t1.sum_query_time DESC limit 10\G
 ```
 
-Output example:
+输出样例：
 
 ```
 ***************************[ 1. row ]***************************
@@ -503,31 +644,31 @@ min(prev_stmt)     |
 digest             | 24bd6d8a9b238086c9b8c3d240ad4ef32f79ce94cf5a468c0b8fe1eb5f8d03df
 ```
 
-### Parse other TiDB slow log files
+## 解析其他的 TiDB 慢日志文件
 
-TiDB uses the session variable `tidb_slow_query_file` to control the files to be read and parsed when querying `INFORMATION_SCHEMA.SLOW_QUERY`. You can query the content of other slow query log files by modifying the value of the session variable.
+TiDB 通过 session 变量 `tidb_slow_query_file` 控制查询 `INFORMATION_SCHEMA.SLOW_QUERY` 时要读取和解析的文件，可通过修改改 session 变量的值来查询其他慢查询日志文件的内容：
 
 
 ```sql
 set tidb_slow_query_file = "/path-to-log/tidb-slow.log"
 ```
 
-### Parse TiDB slow logs with `pt-query-digest`
+## 用 `pt-query-digest` 工具分析 TiDB 慢日志
 
-Use `pt-query-digest` to parse TiDB slow logs.
+可以用 `pt-query-digest` 工具分析 TiDB 慢日志。
 
-> **Note:**
+> **注意：**
 >
-> It is recommended to use `pt-query-digest` 3.0.13 or later versions.
+> 建议使用 pt-query-digest 3.0.13 及以上版本。
 
-For example:
+示例如下：
 
 
 ```shell
 pt-query-digest --report tidb-slow.log
 ```
 
-Output example:
+输出样例：
 
 ```
 # 320ms user time, 20ms system time, 27.00M rss, 221.32M vsz
@@ -553,54 +694,56 @@ Output example:
 .
 ```
 
-## Identify problematic SQL statements
+### 定位问题语句的方法
 
-Not all of the `SLOW_QUERY` statements are problematic. Only those whose `process_time` is very large increase the pressure on the entire cluster.
+并不是所有 SLOW_QUERY 的语句都是有问题的。会造成集群整体压力增大的，是那些 process_time 很大的语句。wait_time 很大，但 process_time 很小的语句通常不是问题语句，是因为被问题语句阻塞，在执行队列等待造成的响应时间过长。
 
-The statements whose `wait_time` is very large and `process_time` is very small are usually not problematic. This is because the statement is blocked by real problematic statements and it has to wait in the execution queue, which leads to a much longer response time.
+## `ADMIN SHOW SLOW` 命令
 
-### `ADMIN SHOW SLOW` command
-
-In addition to the TiDB log file, you can identify slow queries by running the `ADMIN SHOW SLOW` command:
+除了获取 TiDB 日志，还有一种定位慢查询的方式是通过 `ADMIN SHOW SLOW` SQL 命令：
 
 
 ```sql
-ADMIN SHOW SLOW recent N
-ADMIN SHOW SLOW TOP [internal | all] N
+ADMIN SHOW SLOW recent N;
 ```
-
-`recent N` shows the recent N slow query records, for example:
 
 
 ```sql
-ADMIN SHOW SLOW recent 10
+ADMIN SHOW SLOW TOP [internal | all] N;
 ```
 
-`top N` shows the slowest N query records recently (within a few days). If the `internal` option is provided, the returned results would be the inner SQL executed by the system; If the `all` option is provided, the returned results would be the user's SQL combined with inner SQL; Otherwise, this command would only return the slow query records from the user's SQL.
+`recent N` 会显示最近的 N 条慢查询记录，例如：
 
 
 ```sql
-ADMIN SHOW SLOW top 3
-ADMIN SHOW SLOW top internal 3
-ADMIN SHOW SLOW top all 5
+ADMIN SHOW SLOW recent 10;
 ```
 
-TiDB stores only a limited number of slow query records because of the limited memory. If the value of `N` in the query command is greater than the records count, the number of returned records is smaller than `N`.
+`top N` 则显示最近一段时间（大约几天）内，最慢的查询记录。如果指定 `internal` 选项，则返回查询系统内部 SQL 的慢查询记录；如果指定 `all` 选项，返回系统内部和用户 SQL 汇总以后的慢查询记录；默认只返回用户 SQL 中的慢查询记录。
 
-The following table shows output details:
 
-| Column name | Description |
+```sql
+ADMIN SHOW SLOW TOP 3;
+ADMIN SHOW SLOW TOP internal 3;
+ADMIN SHOW SLOW TOP all 5;
+```
+
+由于内存限制，保留的慢查询记录的条数是有限的。当命令查询的 `N` 大于记录条数时，返回的结果记录条数会小于 `N`。
+
+输出内容详细说明，如下：
+
+| 列名 | 描述 |
 |:------|:---- |
-| start | The starting time of the SQL execution |
-| duration | The duration of the SQL execution |
-| details | The details of the SQL execution |
-| succ | Whether the SQL statement is executed successfully. `1` means success and `0` means failure. |
-| conn_id | The connection ID for the session |
-| transaction_ts | The `start ts` of the transaction |
-| user | The user name for the execution of the statement |
-| db | The database involved when the statement is executed |
-| table_ids | The ID of the table involved when the SQL statement is executed |
-| index_ids | The ID of the index involved when the SQL statement is executed |
-| internal | This is a TiDB internal SQL statement |
-| digest | The fingerprint of the SQL statement |
-| sql | The SQL statement that is being executed or has been executed |
+| start | SQL 语句执行开始时间 |
+| duration | SQL 语句执行持续时间 |
+| details | 执行语句的详细信息 |
+| succ | SQL 语句执行是否成功，1：成功，0：失败 |
+| conn_id | session 连接 ID |
+| transaction_ts | 事务的 start ts |
+| user | 执行该语句的用户名 |
+| db | 执行该 SQL 涉及到 database |
+| table_ids | 执行该 SQL 涉及到表的 ID |
+| index_ids | 执行该 SQL 涉及到索引 ID |
+| internal | 表示为 TiDB 内部的 SQL 语句 |
+| digest | 表示 SQL 语句的指纹 |
+| sql | 执行的 SQL 语句 |

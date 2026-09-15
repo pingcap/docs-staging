@@ -1,72 +1,69 @@
 ---
-title: Troubleshoot TiCDC
-summary: Learn how to troubleshoot issues you might encounter when you use TiCDC.
+title: TiCDC 故障处理
+summary: 了解如何解决使用 TiCDC 时经常遇到的问题。
 ---
 
-# Troubleshoot TiCDC
+# TiCDC 故障处理
 
-This document introduces the common errors you might encounter when using TiCDC, and the corresponding maintenance and troubleshooting methods.
+本文档总结了使用 TiCDC 过程中常见的运行故障及解决方案。
 
-> **Note:**
+> **注意：**
 >
-> In this document, the server address specified in `cdc cli` commands is `server=http://127.0.0.1:8300`. When you use the command, replace the address with your actual TiCDC Server address.
+> 本文档 `cdc cli` 命令中指定 TiCDC Server 地址为 `--server=http://127.0.0.1:8300`，在使用时需根据实际地址进行替换。
 
-## TiCDC replication interruptions
+## TiCDC 同步任务出现中断
 
-### How do I know whether a TiCDC replication task is interrupted?
+### 如何判断 TiCDC 同步任务出现中断？
 
-- Check the `changefeed checkpoint` monitoring metric of the replication task (choose the right `changefeed id`) in the Grafana dashboard. If the metric value stays unchanged, or the `checkpoint lag` metric keeps increasing, the replication task might be interrupted.
-- Check the `exit error count` monitoring metric. If the metric value is greater than `0`, an error has occurred in the replication task.
-- Execute `cdc cli changefeed list` and `cdc cli changefeed query` to check the status of the replication task. `stopped` means the task has stopped, and the `error` item provides the detailed error message. After the error occurs, you can search `error on running processor` in the TiCDC server log to see the error stack for troubleshooting.
-- In some extreme cases, the TiCDC service is restarted. You can search the `FATAL` level log in the TiCDC server log for troubleshooting.
+- 通过 Grafana 检查同步任务的 `changefeed checkpoint` 监控项。注意选择正确的 `changefeed id`。如果该值不发生变化或者查看 `checkpoint lag` 是否不断增大，可能同步任务出现中断。
+- 通过 Grafana 检查 `exit error count` 监控项，该监控项大于 0 代表同步任务出现错误。
+- 通过 `cdc cli changefeed list` 和 `cdc cli changefeed query` 命令查看同步任务的状态信息。任务状态为 `stopped` 代表同步中断，`error` 项会包含具体的错误信息。任务出错后可以在 TiCDC server 日志中搜索 `error on running processor` 查看错误堆栈，帮助进一步排查问题。
+- 部分极端异常情况下 TiCDC 出现服务重启，可以在 TiCDC server 日志中搜索 `FATAL` 级别的日志排查问题。
 
-### How do I know whether the replication task is stopped manually?
+### 如何查看 TiCDC 同步任务是否被人为终止？
 
-You can know whether the replication task is stopped manually by executing `cdc cli`. For example:
-
+可以使用 `cdc cli` 查询同步任务是否被人为终止。例如：
 
 ```shell
 cdc cli changefeed query --server=http://127.0.0.1:8300 --changefeed-id 28c43ffc-2316-4f4f-a70b-d1a7c59ba79f
 ```
 
-In the output of the above command, `admin-job-type` shows the state of this replication task. For more information about each state and its meaning, see [Changefeed states](/ticdc/ticdc-changefeed-overview.md#changefeed-state-transfer).
+上述命令的输出中 `state` 标志这个同步任务的状态，状态的值和含义参考 [TiCDC 同步任务状态](/ticdc/ticdc-changefeed-overview.md#changefeed-状态流转)。
 
-### How do I handle replication interruptions?
+### 如何处理 TiCDC 同步任务的中断？
 
-A replication task might be interrupted in the following known scenarios:
+目前已知可能发生的同步中断包括以下场景：
 
-- The downstream continues to be abnormal, and TiCDC still fails after many retries.
+- 下游持续异常，TiCDC 多次重试后仍然失败。
 
-    - In this scenario, TiCDC saves the task information. Because TiCDC has set the service GC safepoint in PD, the data after the task checkpoint is not cleaned by TiKV GC within the valid period of `gc-ttl`.
+    - 该场景下 TiCDC 会保存任务信息，由于 TiCDC 已经在 PD 中设置的 service GC safepoint，在 `gc-ttl` 的有效期内，同步任务 checkpoint 之后的数据不会被 TiKV GC 清理掉。
+    - 处理方法：在下游恢复正常后，通过 `cdc cli changefeed resume` 恢复同步任务。
 
-    - Handling method: You can resume the replication task by executing `cdc cli changefeed resume` after the downstream is back to normal.
+- 因下游存在不兼容的 SQL 语句，导致同步不能继续。
 
-- Replication cannot continue because of incompatible SQL statement(s) in the downstream.
+    - 该场景下 TiCDC 会保存任务信息，由于 TiCDC 已经在 PD 中设置的 service GC safepoint，在 `gc-ttl` 的有效期内，同步任务 checkpoint 之后的数据不会被 TiKV GC 清理掉。
+    - 处理方法：
+        1. 先通过 `cdc cli changefeed query` 查询同步任务状态信息，记录 `checkpoint-ts` 值。
+        2. 使用新的任务配置文件，增加 `ignore-txn-start-ts` 参数跳过指定 `start-ts` 对应的事务。
+        3. 通过 `cdc cli changefeed pause -c <changefeed-id>` 暂停同步任务。
+        4. 通过 `cdc cli changefeed update -c <changefeed-id> --config <config-file-path>` 指定新的任务配置文件。
+        5. 通过 `cdc cli changefeed resume -c <changefeed-id>` 恢复同步任务。
 
-    - In this scenario, TiCDC saves the task information. Because TiCDC has set the service GC safepoint in PD, the data after the task checkpoint is not cleaned by TiKV GC within the valid period of `gc-ttl`.
-    - Handling procedures:
-        1. Query the status information of the replication task using the `cdc cli changefeed query` command and record the value of `checkpoint-ts`.
-        2. Use the new task configuration file and add the `ignore-txn-start-ts` parameter to skip the transaction corresponding to the specified `start-ts`.
-        3. Pause the replication task by executing `cdc cli changefeed pause -c <changefeed-id>`.
-        4. Specify the new task configuration file by executing `cdc cli changefeed update -c <changefeed-id> --config <config-file-path>`.
-        5. Resume the replication task by executing `cdc cli changefeed resume -c <changefeed-id>`.
+### 同步任务中断，尝试再次启动后 TiCDC 发生 OOM，应该如何处理？
 
-### What should I do to handle the OOM that occurs after TiCDC is restarted after a task interruption?
+升级 TiDB 集群和 TiCDC 集群到最新版本。该 OOM 问题在 **v4.0.14 及之后的 v4.0 版本，v5.0.2 及之后的 v5.0 版本，更新的版本**上已得到缓解。
 
-- Update your TiDB cluster and TiCDC cluster to the latest versions. The OOM problem has already been resolved in **v4.0.14 and later v4.0 versions, v5.0.2 and later v5.0 versions, and the latest versions**.
+## 如何处理 TiCDC 创建同步任务或同步到 MySQL 时遇到 `Error 1298: Unknown or incorrect time zone: 'UTC'` 错误？
 
-## How do I handle the `Error 1298: Unknown or incorrect time zone: 'UTC'` error when creating the replication task or replicating data to MySQL?
-
-This error is returned when the downstream MySQL does not load the time zone. You can load the time zone by running [`mysql_tzinfo_to_sql`](https://dev.mysql.com/doc/refman/8.0/en/mysql-tzinfo-to-sql.html). After loading the time zone, you can create tasks and replicate data normally.
-
+这是因为下游 MySQL 没有加载时区，可以通过 [mysql_tzinfo_to_sql](https://dev.mysql.com/doc/refman/8.0/en/mysql-tzinfo-to-sql.html) 命令加载时区，加载后就可以正常创建任务或同步任务。
 
 ```shell
 mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql -p
 ```
 
-If the output of the command above is similar to the following one, the import is successful:
+显示类似于下面的输出则表示导入已经成功：
 
-```
+```shell
 Enter password:
 Warning: Unable to load '/usr/share/zoneinfo/iso3166.tab' as time zone. Skipping it.
 Warning: Unable to load '/usr/share/zoneinfo/leap-seconds.list' as time zone. Skipping it.
@@ -74,77 +71,75 @@ Warning: Unable to load '/usr/share/zoneinfo/zone.tab' as time zone. Skipping it
 Warning: Unable to load '/usr/share/zoneinfo/zone1970.tab' as time zone. Skipping it.
 ```
 
-If the downstream is a special MySQL environment (a public cloud RDS or some MySQL derivative versions) and importing the time zone using the preceding method fails, you can use the default time zone of the downstream by setting `time-zone` to an empty value, such as `time-zone=""`.
+如果下游是特殊的 MySQL 环境（某种公有云 RDS 或某些 MySQL 衍生版本等），使用上述方式导入时区失败，则可以通过在 Sink URI 中设置 `time-zone` 为空值来使用下游默认时区，例如：`time-zone=""`。注意该参数仅对 `mysql` 和 `tidb` 类型的 sink 生效。
 
-When using time zones in TiCDC, it is recommended to explicitly specify the time zone, such as `time-zone="Asia/Shanghai"`. Also, make sure that the `tz` specified in TiCDC server configurations and the `time-zone` specified in Sink URI are consistent with the time zone configuration of the downstream database. This prevents data inconsistency caused by inconsistent time zones.
+在使用 MySQL 和 TiDB sink 时，建议显式指定时区，例如：`time-zone="Asia/Shanghai"`。同时，请确保 TiCDC Server 的 `tz` 时区配置、Sink URI 中的 `time-zone` 时区配置和下游数据库的时区配置保持一致。这样可以避免因时区不一致导致数据不一致的问题。
 
-## How do I handle the incompatibility issue of configuration files caused by TiCDC upgrade?
+## 如何处理升级 TiCDC 后配置文件不兼容的问题？
 
-Refer to [Notes for compatibility](/ticdc/ticdc-compatibility.md).
+请参阅[配置文件兼容注意事项](/ticdc/ticdc-compatibility.md#命令行参数和配置文件兼容性)。
 
-## The `start-ts` timestamp of the TiCDC task is quite different from the current time. During the execution of this task, replication is interrupted and an error `[CDC:ErrBufferReachLimit]` occurs. What should I do?
+## TiCDC 启动任务的 start-ts 时间戳与当前时间差距较大，任务执行过程中同步中断，出现错误 `[CDC:ErrBufferReachLimit]`，怎么办？
 
-Since v4.0.9, you can try to enable the unified sorter feature in your replication task, or use the BR tool for an incremental backup and restore, and then start the TiCDC replication task from a new time.
+自 v4.0.9 起可以尝试开启 unified sorter 特性进行同步；或者使用 BR 工具进行一次增量备份和恢复，然后从新的时间点开启 TiCDC 同步任务。TiCDC 将会在后续版本中对该问题进行优化。
 
-## When the downstream of a changefeed is a database similar to MySQL and TiCDC executes a time-consuming DDL statement, all other changefeeds are blocked. What should I do?
+## 当 changefeed 的下游为类 MySQL 数据库时，TiCDC 执行了一个耗时较长的 DDL 语句，阻塞了所有其他 changefeed，应该怎样处理？
 
-1. Pause the execution of the changefeed that contains the time-consuming DDL statement. Then you can see that other changefeeds are no longer blocked.
-2. Search for the `apply job` field in the TiCDC log and confirm the `start-ts` of the time-consuming DDL statement.
-3. Manually execute the DDL statement in the downstream. After the execution finishes, go on performing the following operations.
-4. Modify the changefeed configuration and add the above `start-ts` to the `ignore-txn-start-ts` configuration item.
-5. Resume the paused changefeed.
+1. 首先暂停执行耗时较长的 DDL 的 changefeed。此时可以观察到，这个 changefeed 暂停后，其他的 changefeed 不再阻塞了。
+2. 在 TiCDC log 中搜寻 `apply job` 字段，确认耗时较长的 DDL 的 `start-ts`。
+3. 手动在下游执行该 DDL 语句，执行完毕后进行下面的操作。
+4. 修改 changefeed 配置，将上述 `start-ts` 添加到 `ignore-txn-start-ts` 配置项中。
+5. 恢复被暂停的 changefeed。
 
-## The `[tikv:9006]GC life time is shorter than transaction duration, transaction starts at xx, GC safe point is yy` error is reported when I use TiCDC to create a changefeed. What should I do?
+## 使用 TiCDC 创建 changefeed 时报错 `[tikv:9006]GC life time is shorter than transaction duration, transaction starts at xx, GC safe point is yy`，该如何处理？
 
-You need to run the `pd-ctl service-gc-safepoint --pd <pd-addrs>` command to query the current GC safepoint and service GC safepoint. If the GC safepoint is smaller than the `start-ts` of the TiCDC replication task (changefeed), you can directly add the `--disable-gc-check` option to the `cdc cli create changefeed` command to create a changefeed.
+执行 `pd-ctl service-gc-safepoint --pd <pd-addrs>` 命令查询当前的 GC safepoint 与 service GC safepoint。如果 GC safepoint 小于 TiCDC changefeed 同步任务的开始时间戳 `start-ts`，可以直接在 `cdc cli create changefeed` 命令后加上 `--disable-gc-check` 参数创建 changefeed。
 
-If the result of `pd-ctl service-gc-safepoint --pd <pd-addrs>` does not have `gc_worker service_id`:
+如果 `pd-ctl service-gc-safepoint --pd <pd-addrs>` 的结果中没有 `gc_worker service_id`：
 
-- If your PD version is v4.0.8 or earlier, refer to [PD issue #3128](https://github.com/tikv/pd/issues/3128) for details.
-- If your PD is upgraded from v4.0.8 or an earlier version to a later version, refer to [PD issue #3366](https://github.com/tikv/pd/issues/3366) for details.
+- 如果 PD 的版本 <= v4.0.8，详见 [PD issue #3128](https://github.com/tikv/pd/issues/3128)。
+- 如果 PD 是由 v4.0.8 或更低版本滚动升级到新版，详见 [PD issue #3366](https://github.com/tikv/pd/issues/3366)。
+- 对于其他情况，请将上述命令执行结果反馈到 [AskTUG 论坛](https://pingkai.cn/tidbcommunity/forum/tags/ticdc)。
 
-## When I use TiCDC to replicate messages to Kafka, Kafka returns the `Message was too large` error. Why?
+## 使用 TiCDC 同步消息到 Kafka 时 Kafka 报错 `Message was too large`，该如何处理？
 
-For TiCDC v4.0.8 or earlier versions, you cannot effectively control the size of the message output to Kafka only by configuring the `max-message-bytes` setting for Kafka in the Sink URI. To control the message size, you also need to increase the limit on the bytes of messages to be received by Kafka. To add such a limit, add the following configuration to the Kafka server configuration.
+仅在 Sink URI 中为 Kafka 配置 `max-message-bytes` 参数不能有效控制输出到 Kafka 的消息大小，需要在 Kafka server 配置中加入如下配置以增加 Kafka 接收消息的字节数限制。
 
 ```
-# The maximum byte number of a message that the broker receives
+# broker 能接收消息的最大字节数
 message.max.bytes=2147483648
-# The maximum byte number of a message that the broker copies
+# broker 可复制的消息的最大字节数
 replica.fetch.max.bytes=2147483648
-# The maximum message byte number that the consumer side reads
+# 消费者端的可读取的最大消息字节数
 fetch.message.max.bytes=2147483648
 ```
 
-## How can I find out whether a DDL statement fails to execute in downstream during TiCDC replication? How to resume the replication?
+## TiCDC 同步时，在下游执行 DDL 语句失败会有什么表现，如何恢复？
 
-If a DDL statement fails to execute, the replication task (changefeed) automatically stops. The checkpoint-ts is the DDL statement's finish-ts. If you want TiCDC to retry executing this statement in the downstream, use `cdc cli changefeed resume` to resume the replication task. For example:
-
+如果某条 DDL 语句执行失败，同步任务 (changefeed) 会自动停止，checkpoint-ts 断点时间戳为该条出错 DDL 语句的结束时间戳 (finish-ts)。如果希望让 TiCDC 在下游重试执行这条 DDL 语句，可以使用 `cdc cli changefeed resume` 恢复同步任务。例如：
 
 ```shell
 cdc cli changefeed resume -c test-cf --server=http://127.0.0.1:8300
 ```
 
-If you want to skip this DDL statement that goes wrong, set the start-ts of the changefeed to the checkpoint-ts (the timestamp at which the DDL statement goes wrong) plus one, and then run the `cdc cli changefeed create` command to create a new changefeed task. For example, if the checkpoint-ts at which the DDL statement goes wrong is `415241823337054209`, run the following commands to skip this DDL statement:
+如果希望跳过这条出错的 DDL 语句，可以通过配置 `ignore-txn-start-ts` 参数跳过指定的 `start-ts` 对应的事务。例如：
 
-To skip this DDL statement that goes wrong, you can configure the `ignore-txn-start-ts` parameter to skip the transactions corresponding to the specified `start-ts`. For example:
+1. 首先在 TiCDC 日志中搜寻 `apply job` 字段，确认耗时较长的 DDL 操作的 `start-ts`。
+2. 修改 changefeed 配置，将上述 `start-ts` 添加到 `ignore-txn-start-ts` 配置项中。
+3. 恢复被暂停的 changefeed。
 
-1. Search the TiCDC log for the `apply job` field, and identify the `start-ts` of the DDLs that are taking a long time.
-2. Modify the changefeed configuration. Add the above `start-ts` to the `ignore-txn-start-ts` configuration item.
-3. Resume the suspended changefeed.
-
-> **Note:**
->
-> Although setting the changefeed `start-ts` to the value of `checkpoint-ts` (at the time of the error) plus one and then recreating the task can skip the DDL statement, it can also cause TiCDC to lose the DML data change at the time of `checkpointTs+1`. Therefore, this operation is strictly prohibited in production environments.
+> **注意：**
+> 
+> 虽然将 changefeed 的 `start-ts` 设为报错时的 `checkpoint-ts` 值加上 1，然后重建任务也可以跳过该 DDL 语句，但同时会导致 TiCDC 丢失 `checkpointTs+1` 时刻对应的 DML 数据变更。严禁在生产环境执行这样的操作。
 
 ```shell
 cdc cli changefeed remove --server=http://127.0.0.1:8300 --changefeed-id simple-replication-task
 cdc cli changefeed create --server=http://127.0.0.1:8300 --sink-uri="mysql://root:123456@127.0.0.1:3306/" --changefeed-id="simple-replication-task" --sort-engine="unified" --start-ts 415241823337054210
 ```
 
-## The `Kafka: client has run out of available brokers to talk to: EOF` error is reported when I use TiCDC to replicate messages to Kafka. What should I do?
+## 使用 TiCDC 同步消息到 Kafka 时报错 `kafka: client has run out of available brokers to talk to: EOF`，该如何处理？
 
-This error is typically caused by the connection failure between TiCDC and the Kafka cluster. To troubleshoot, you can check the Kafka logs and network status. One possible reason is that you did not specify the correct `kafka-version` parameter when creating the replication task, causing the Kafka client inside TiCDC to use the wrong Kafka API version when accessing the Kafka server. You can fix this issue by specifying the correct `kafka-version` parameter in the [`--sink-uri`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka) configuration. For example:
+该问题通常是由于 TiCDC 与 Kafka 集群连接失败导致。你可以通过检查 Kafka 的日志以及网络状况来排查。一个常见的原因是在创建同步任务时没有指定正确的 `kafka-version` 参数，导致 TiCDC 内部的 Kafka client 在访问 Kafka server 时使用了错误的 Kafka API 版本。你可以通过配置 [`--sink-uri`](/ticdc/ticdc-sink-to-kafka.md#sink-uri-配置-kafka) 指定正确的 `kafka-version` 参数来修复。例如：
 
 ```shell
 cdc cli changefeed create --server=http://127.0.0.1:8300 --sink-uri "kafka://127.0.0.1:9092/test?topic=test&protocol=open-protocol&kafka-version=2.4.0" 

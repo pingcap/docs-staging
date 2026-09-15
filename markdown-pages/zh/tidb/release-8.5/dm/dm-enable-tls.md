@@ -1,35 +1,35 @@
 ---
-title: Enable TLS for DM Connections
-summary: Learn how to enable TLS for DM connections.
+title: 为 DM 的连接开启加密传输
+summary: 了解如何为 DM 的连接开启加密传输。
 ---
 
-# Enable TLS for DM Connections
+# 为 DM 的连接开启加密传输
 
-This document describes how to enable encrypted data transmission for DM connections, including connections between the DM-master, DM-worker, and dmctl components, and connections between DM and the upstream or downstream database.
+本文介绍如何为 DM 的连接开启加密传输，包括 DM-master，DM-worker，dmctl 组件之间的连接以及 DM 组件与上下游数据库之间的连接。
 
-## Enable encrypted data transmission between DM-master, DM-worker, and dmctl
+## 为 DM-master，DM-worker，dmctl 组件之间的连接开启加密传输
 
-This section introduces how to enable encrypted data transmission between DM-master, DM-worker, and dmctl.
+本节介绍如何为 DM-master，DM-worker，dmctl 组件之间的连接开启加密传输。
 
-### Configure and enable encrypted data transmission
+### 配置开启加密传输
 
-1. Prepare certificates.
+1. 准备证书。
 
-    It is recommended to prepare a server certificate for DM-master and DM-worker separately. Make sure that the two components can authenticate each other. You can choose to share one client certificate for dmctl.
+    推荐为 DM-master、DM-worker 分别准备一个 Server 证书，并保证可以相互验证，而 dmctl 工具则可选择共用 Client 证书。
 
-    To generate self-signed certificates, you can use `openssl`, `cfssl` and other tools based on `openssl`, such as `easy-rsa`.
+    有多种工具可以生成自签名证书，如 `openssl`，`cfssl` 及 `easy-rsa` 等基于 `openssl` 的工具。
 
-    If you choose `openssl`, you can refer to [generating self-signed certificates](/dm/dm-generate-self-signed-certificates.md).
+    这里提供一个使用 `openssl` 生成证书的示例：[生成自签名证书](/dm/dm-generate-self-signed-certificates.md)。
 
-2. Configure certificates.
+2. 配置证书。
 
-    > **Note:**
+    > **注意：**
     >
-    > You can configure DM-master, DM-worker, and dmctl to use the same set of certificates.
+    > DM-master、DM-worker 与 dmctl 三个组件可使用同一套证书。
 
     - DM-master
 
-        Configure in the configuration file or command-line arguments:
+        在 DM-master 配置文件或命令行参数中设置：
 
         ```toml
         ssl-ca = "/path/to/ca.pem"
@@ -39,7 +39,7 @@ This section introduces how to enable encrypted data transmission between DM-mas
 
     - DM-worker
 
-        Configure in the configuration file or command-line arguments:
+        在 DM-worker 配置文件或命令行参数中设置：
 
         ```toml
         ssl-ca = "/path/to/ca.pem"
@@ -48,73 +48,73 @@ This section introduces how to enable encrypted data transmission between DM-mas
         ```
 
     - dmctl
-
-        After enabling encrypted transmission in a DM cluster, if you need to connect to the cluster using dmctl, specify the client certificate. For example:
+    
+        若 DM 集群各个组件间开启加密传输后，在使用 dmctl 工具连接集群时，需要指定 Client 证书，示例如下：
 
         
         ```bash
         ./dmctl --master-addr=127.0.0.1:8261 --ssl-ca /path/to/ca.pem --ssl-cert /path/to/client-cert.pem --ssl-key /path/to/client-key.pem
         ```
 
-### Verify component caller's identity
+### 认证组件调用者身份
 
-The Common Name is used for caller verification. In general, the callee needs to verify the caller's identity, in addition to verifying the key, the certificates, and the CA provided by the caller. For example, DM-worker can only be accessed by DM-master, and other visitors are blocked even though they have legitimate certificates.
+通常被调用者除了校验调用者提供的密钥、证书和 CA 有效性外，还需要校验调用者身份以防止拥有有效证书的非法访问者进行访问（例如：DM-worker 只能被 DM-master 访问，需阻止拥有合法证书但非 DM-master 的其他访问者访问 DM-worker）。
 
-To verify component caller's identity, you need to mark the certificate user identity using `Common Name` (CN) when generating the certificate, and to check the caller's identity by configuring the `Common Name` list for the callee.
+如希望进行组件调用者身份认证，需要在生成证书时通过 `Common Name` (CN) 标识证书使用者身份，并在被调用者配置检查证书 `Common Name` 列表时检查调用者身份。
 
 - DM-master
 
-    Configure in the configuration file or command-line arguments:
+    在 `config` 文件或命令行参数中设置：
 
     ```toml
-    cert-allowed-cn = ["dm"]
+    cert-allowed-cn = ["dm"] 
     ```
 
 - DM-worker
 
-    Configure in the configuration file or command-line arguments:
+    在 `config` 文件或命令行参数中设置：
 
     ```toml
-    cert-allowed-cn = ["dm"]
+    cert-allowed-cn = ["dm"] 
     ```
 
-### Reload certificates
+### 证书重加载
 
-To reload the certificates and the keys, DM-master, DM-worker, and dmctl reread the current certificates and the key files each time a new connection is created.
+DM-master、DM-worker 和 dmctl 都会在每次新建相互通讯的连接时重新读取当前的证书和密钥文件内容，实现证书和密钥的重加载。
 
-When the files specified by `ssl-ca`, `ssl-cert` or `ssl-key` are updated, restart DM components to reload the certificates and the key files and reconnect with each other.
+当 `ssl-ca`、`ssl-cert` 或 `ssl-key` 的文件内容更新后，可通过重启 DM 组件使其重新加载证书与密钥内容并重新建立连接。
 
-## Enable encrypted data transmission between DM components and the upstream or downstream database
+## DM 组件与上下游数据库之间的连接开启加密传输
 
-This section introduces how to enable encrypted data transmission between DM components and the upstream or downstream database.
+本节介绍如何为 DM 组件与上下游数据库之间的连接开启加密传输。
 
-### Enable encrypted data transmission for upstream database
+### 为上游数据库连接开启加密传输
 
-1. Configure the upstream database, enable the encryption support, and set the server certificate. For detailed operations, see [Using encrypted connections](https://dev.mysql.com/doc/refman/8.0/en/using-encrypted-connections.html).
+1. 配置上游数据库，启用加密连接支持并设置 Server 证书，具体可参考 [Using encrypted connections](https://dev.mysql.com/doc/refman/8.0/en/using-encrypted-connections.html)
 
-2. Set the MySQL client certificate in the source configuration file:
+2. 在 source 配置文件中设置 MySQL Client 证书：
 
-    > **Note:**
+    > **注意：**
     >
-    > Make sure that all DM-master and DM-worker components can read the certificates and the key files via specified paths.
+    > 请确保所有 DM-master 与 DM-worker 组件能通过指定路径读取到证书与密钥文件的内容。
 
     ```yaml
     from:
         security:
             ssl-ca: "/path/to/mysql-ca.pem"
-            ssl-cert: "/path/to/mysql-cert.pem"
-            ssl-key: "/path/to/mysql-key.pem"
+            ssl-cert: "/path/to/mysql-client-cert.pem"
+            ssl-key: "/path/to/mysql-client-key.pem"
     ```
 
-### Enable encrypted data transmission for downstream TiDB
+### 为下游 TiDB 连接开启加密传输
 
-1. Configure the downstream TiDB to use encrypted connections. For detailed operations, refer to [Configure TiDB server to use secure connections](/enable-tls-between-clients-and-servers.md#configure-tidb-server-to-use-secure-connections).
+1. 配置下游 TiDB 启用加密连接支持，具体可参考[配置 TiDB 启用加密连接支持](/enable-tls-between-clients-and-servers.md#配置-tidb-服务端启用安全连接)
 
-2. Set the TiDB client certificate in the task configuration file:
+2. 在 task 配置文件中设置 TiDB Client 证书：
 
-    > **Note:**
+    > **注意：**
     >
-    > Make sure that all DM-master and DM-worker components can read the certificates and the key files via specified paths.
+    > 请确保所有 DM-master 与 DM-worker 组件能通过指定路径读取到证书与密钥文件的内容。
 
     ```yaml
     target-database:

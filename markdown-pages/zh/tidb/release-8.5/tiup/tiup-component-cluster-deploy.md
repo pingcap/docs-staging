@@ -1,70 +1,65 @@
 ---
 title: tiup cluster deploy
-summary: The tiup cluster deploy command is used to deploy a new cluster with specified options such as cluster name, version, and topology file. Additional options include user, identity file, password, ignore config check, skip labels, skip create user, and help. The output is the deployment log.
+summary: tiup cluster deploy 命令用于部署全新集群。语法为 tiup cluster deploy <cluster-name> <version> <topology.yaml> [flags]。选项包括 -u, -i, -p, --ignore-config-check, --no-labels, --skip-create-user, -h。输出为部署日志。
 ---
 
 # tiup cluster deploy
 
-The `tiup cluster deploy` command is used to deploy a new cluster.
+命令 `tiup cluster deploy` 用于部署一个全新的集群。
 
-## Syntax
+## 语法
 
 ```shell
 tiup cluster deploy <cluster-name> <version> <topology.yaml> [flags]
 ```
 
-- `<cluster-name>`: the name of the new cluster, which cannot be the same as the existing cluster names.
-- `<version>`: the version number of the TiDB cluster to deploy, such as `8.5.8`.
-- `<topology.yaml>`: the prepared [topology file](/tiup/tiup-cluster-topology-reference.md).
+- `<cluster-name>` 表示新集群的名字，不能和现有集群同名
+- `<version>` 为要部署的 TiDB 集群版本号，如 `v8.5.8`
+- `<topology.yaml>` 为事先编写好的[拓扑文件](/tiup/tiup-cluster-topology-reference.md)
 
-## Options
+## 选项
 
-### -u, --user
+### -u, --user（string，默认为当前执行命令的用户）
 
-- Specifies the user name used to connect to the target machine. This user must have the secret-free sudo root permission on the target machine.
-- Data type: `STRING`
-- Default: the current user who executes the command.
+指定连接目标机器的用户名，该用户在目标机器上需要有免密 sudo root 的权限。
 
-### -i, --identity_file
+### -i, --identity_file（string，默认 ~/.ssh/id_rsa）
 
-- Specifies the key file used to connect to the target machine.
-- Data type: `STRING`
-- If this option is not specified in the command, the `~/.ssh/id_rsa` file is used to connect to the target machine by default.
+指定连接目标机器的密钥文件。
 
 ### -p, --password
 
-- Specifies the password used to connect to the target machine. Do not use this option with `-i/--identity_file` at the same time.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 在连接目标机器时使用密码登录，不可和 `-i/--identity_file` 同时使用。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### --ignore-config-check
 
-- This option is used to skip the configuration check. After the binary files of components are deployed, the configurations of TiDB, TiKV, and PD components are checked using `<binary> --config-check <config-file>`. `<binary>` is the path of the deployed binary file. `<config-file>` is the configuration file generated based on the user configuration.
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
-- Default: false
+- 在组件二进制文件部署之后，TiUP 会对 TiDB，TiKV 和 PD 组件执行配置检查，检查方式为 `<binary> --config-check <config-file>`，其中 `<binary>` 为部署的二进制文件的路径，`<config-file>` 为根据用户配置生成的配置文件。如果想要跳过该项检查，可以使用该选项。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### --no-labels
 
-- This option is used to skip the label check.
-- When two or more TiKV nodes are deployed on the same physical machine, a risk exists: PD cannot learn the cluster topology, so PD might schedule multiple replicas of a Region to different TiKV nodes on one physical machine, which makes this physical machine a single point. To avoid this risk, you can use labels to tell PD not to schedule the same Region to the same machine. See [Schedule Replicas by Topology Labels](/schedule-replicas-by-topology-labels.md) for label configuration.
-- For the test environment, this risk might matter and you can use `--no-labels` to skip the check.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 当两个或多个 TiKV 部署到同一台机器时，会存在一个风险：由于 PD 无法感知集群的拓扑结构，可能将一个 Region 的多个副本调度到一台物理机上的不同 TiKV，这样这台物理机就成为了单点。为了避免这种情况，用户可以通过 label 来告诉 PD 不要将相同的 Region 调度到同一台机器上（配置方式参考[通过拓扑 label 进行副本调度](/schedule-replicas-by-topology-labels.md)）。
+- 但是对于测试环境，可能并不在意是否将一个 Region 的副本调度到了同一台机器上，这个时候可以使用 `--no-labels` 来绕过检查。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### --skip-create-user
 
-- During the cluster deployment, tiup-cluster checks whether the specified user name in the topology file exists or not. If not, it creates one. To skip this check, you can use the `--skip-create-user` option.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 在部署集群时，tiup-cluster 会先检查拓扑文件中指定的用户名是否存在，如果不存在就会创建一个。指定 `--skip-create-user` 选项后不再检查用户是否存在，直接跳过创建步骤。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### -h, --help
 
-- Prints help information.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-The deployment log.
+部署日志。
 
-[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)
+[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)

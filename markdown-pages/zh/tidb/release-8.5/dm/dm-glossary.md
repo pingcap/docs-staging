@@ -1,138 +1,148 @@
 ---
-title: TiDB Data Migration Glossary
-summary: Learn the terms used in TiDB Data Migration.
+title: TiDB Data Migration 术语表
+summary: 学习 TiDB Data Migration 相关术语
 ---
 
-# TiDB Data Migration Glossary
+# TiDB Data Migration 术语表
 
-This document lists the terms used in the logs, monitoring, configurations, and documentation of TiDB Data Migration (DM).
+本文档介绍 TiDB Data Migration (TiDB DM) 相关术语。
 
-For TiDB-related terms and definitions, see [TiDB glossary](/glossary.md).
+关于 TiDB 相关的术语和定义，请参考 [TiDB 术语表](/glossary.md)。
 
 ## B
 
 ### Binlog
 
-In TiDB DM, binlogs refer to the binary log files generated in the TiDB database. It has the same indications as that in MySQL or MariaDB. Refer to [MySQL Binary Log](https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_replication.html) and [MariaDB Binary Log](https://mariadb.com/kb/en/library/binary-log/) for details.
+在 TiDB DM 中，Binlog 通常指 MySQL/MariaDB 生成的 binary log 文件，具体请参考 [MySQL Binary Log](https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_replication.html) 与 [MariaDB Binary Log](https://mariadb.com/docs/server/server-management/server-monitoring-logs/binary-log)。
 
 ### Binlog event
 
-Binlog events are information about data modification made to a MySQL or MariaDB server instance. These binlog events are stored in the binlog files. Refer to [MySQL Binlog Event](https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_replication_binlog_event.html) and [MariaDB Binlog Event](https://mariadb.com/kb/en/library/1-binlog-events/) for details.
+MySQL/MariaDB 生成的 Binlog 文件中的数据变更信息，具体请参考 [MySQL Binlog Event](https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_replication_binlog_event.html) 与 [MariaDB Binlog Event](https://mariadb.com/docs/server/reference/clientserver-protocol/replication-protocol/1-binlog-events)。
 
 ### Binlog event filter
 
-[Binlog event filter](/dm/dm-binlog-event-filter.md) is a more fine-grained filtering feature than the block and allow lists filtering rule. Refer to [binlog event filter](/dm/dm-binlog-event-filter.md) for details.
+比 Block & allow table list 更加细粒度的过滤功能，具体可参考 [Binlog Event Filter](/dm/dm-binlog-event-filter.md)。
 
 ### Binlog position
 
-The binlog position is the offset information of a binlog event in a binlog file. Refer to [MySQL `SHOW BINLOG EVENTS`](https://dev.mysql.com/doc/refman/8.0/en/show-binlog-events.html) and [MariaDB `SHOW BINLOG EVENTS`](https://mariadb.com/kb/en/library/show-binlog-events/) for details.
+特定 Binlog event 在 Binlog 文件中的位置偏移信息，具体请参考 [MySQL `SHOW BINLOG EVENTS`](https://dev.mysql.com/doc/refman/8.0/en/show-binlog-events.html) 与 [MariaDB `SHOW BINLOG EVENTS`](https://mariadb.com/docs/server/reference/sql-statements/administrative-sql-statements/show/show-binlog-events)。
 
-### Binlog replication processing unit/sync unit
+### Binlog replication 处理单元/ sync 处理单元
 
-Binlog replication processing unit is the processing unit used in DM-worker to read upstream binlogs or local relay logs, and to migrate these logs to the downstream. Each subtask corresponds to a binlog replication processing unit. In the current documentation, the binlog replication processing unit is also referred to as the sync processing unit.
+DM-worker 内部用于读取上游 Binlog 或本地 Relay log 并迁移到下游的处理单元，每个 Subtask 对应一个 Binlog replication 处理单元。在当前文档中，有时也称作 Sync 处理单元。
 
 ### Block & allow table list
 
-Block & allow table list is the feature that filters or only migrates all operations of some databases or some tables. Refer to [block & allow table lists](/dm/dm-block-allow-table-lists.md) for details. This feature is similar to [MySQL Replication Filtering](https://dev.mysql.com/doc/refman/8.0/en/replication-rules.html) and [MariaDB Replication Filters](https://mariadb.com/kb/en/replication-filters/).
+针对上游数据库实例表的黑白名单过滤功能，具体可参考 [Block & Allow Table Lists](/dm/dm-block-allow-table-lists.md)。该功能与 [MySQL Replication Filtering](https://dev.mysql.com/doc/refman/8.0/en/replication-rules.html) 及 [MariaDB Replication Filters](https://mariadb.com/docs/server/ha-and-performance/standard-replication/replication-filters) 类似。
+
+### Bound
+
+DM worker 与 source 的绑定关系，即一个 DM worker 在同一时间仅能处理一个 source 的迁移任务。当 DM worker 开始接收某个 source 的 binlog 后，该 DM worker 将不能再处理其他 source 的迁移任务。
 
 ## C
 
 ### Checkpoint
 
-A checkpoint indicates the position from which a full data import or an incremental replication task is paused and resumed, or is stopped and restarted.
+TiDB DM 在全量导入与增量复制过程中的断点信息，用于在重新启动或恢复任务时从之前已经处理过的位置继续执行。
 
-- In a full import task, a checkpoint corresponds to the offset and other information of the successfully imported data in a file that is being imported. A checkpoint is updated synchronously with the data import task.
-- In an incremental replication, a checkpoint corresponds to the [binlog position](#binlog-position) and other information of a [binlog event](#binlog-event) that is successfully parsed and migrated to the downstream. A checkpoint is updated after the DDL operation is successfully migrated or 30 seconds after the last update.
+- 对于全量导入，Checkpoint 信息对应于每个数据文件已经被成功导入的数据对应的文件内偏移量等信息，其在每个导入数据的事务中迁移更新；
+- 对于增量复制，Checkpoint 信息对应于已经成功解析并导入到下游的 [Binlog event](#binlog-event) 对应的 [Binlog position](#binlog-position) 等信息，其在 DDL 导入成功后或距上次更新时间超过 30 秒等条件下更新。
 
-In addition, the `relay.meta` information corresponding to a [relay processing unit](#relay-processing-unit) works similarly to a checkpoint. A relay processing unit pulls the [binlog event](#binlog-event) from the upstream and writes this event to the [relay log](#relay-log), and writes the [binlog position](#binlog-position) or the GTID information corresponding to this event to `relay.meta`.
+另外，[Relay 处理单元](#relay-处理单元)对应的 `relay.meta` 内记录的信息也相当于 Checkpoint，其对应于 Relay 处理单元已经成功从上游拉取并写入到 [Relay log](#relay-log) 的 [Binlog event](#binlog-event) 对应的 [Binlog position](#binlog-position) 或 [GTID](#gtid) 信息。
 
 ## D
 
-### Dump processing unit/dump unit
+### Dump 处理单元
 
-The dump processing unit is the processing unit used in DM-worker to export all data from the upstream. Each subtask corresponds to a dump processing unit.
+DM-worker 内部用于从上游导出全量数据的处理单元，每个 Subtask 对应一个 Dump 处理单元。
+
+## F
+
+### 复制/增量复制
+
+使用 TiDB Data Migration 工具将上游数据库的**增量数据**复制到下游数据库的过程。
+
+本用户手册中，在明确提到是“增量”的情况下，将使用“复制”或“增量复制”进行文档描述。
 
 ## G
 
 ### GTID
 
-The GTID is the global transaction ID of MySQL or MariaDB. With this feature enabled, the GTID information is recorded in the binlog files. Multiple GTIDs form a GTID set. Refer to [MySQL GTID Format and Storage](https://dev.mysql.com/doc/refman/8.0/en/replication-gtids-concepts.html) and [MariaDB Global Transaction ID](https://mariadb.com/kb/en/library/gtid/) for details.
+MySQL/MariaDB 的全局事务 ID，当启用该功能后会在 Binlog 文件中记录 GTID 相关信息，多个 GTID 即组成为 GTID Set，具体请参考 [MySQL GTID Format and Storage](https://dev.mysql.com/doc/refman/8.0/en/replication-gtids-concepts.html) 与 [MariaDB Global Transaction ID](https://mariadb.com/docs/server/ha-and-performance/standard-replication/gtid)。
 
 ## L
 
-### Load processing unit/load unit
+### Load 处理单元
 
-The load processing unit is the processing unit used in DM-worker to import the fully exported data to the downstream. Each subtask corresponds to a load processing unit. In the current documentation, the load processing unit is also referred to as the import processing unit.
+DM-worker 内部用于将全量导出数据导入到下游的处理单元，每个 Subtask 对应一个 Load 处理单元。在当前文档中，有时也称作 Import 处理单元。
 
-## M
+## Q
 
-### Migrate/migration
+### 迁移/全量迁移
 
-The process of using the TiDB Data Migration tool to copy the **full data** of the upstream database to the downstream database.
+使用 TiDB Data Migration 工具将上游数据库的**全量数据**迁移到下游数据库的过程。
 
-In the case of clearly mentioning "full", not explicitly mentioning "full or incremental", and clearly mentioning "full + incremental", use migrate/migration instead of replicate/replication.
+本用户手册中，在明确提到是“全量”的情况下，将使用“迁移”或“全量迁移”进行文档描述；在明确提到是“全量+增量”的情况下，也将统一使用“迁移”进行文档描述。
 
 ## R
 
 ### Relay log
 
-The relay log refers to the binlog files that DM-worker pulls from the upstream MySQL or MariaDB, and stores in the local disk. The format of the relay log is the standard binlog file, which can be parsed by tools such as [mysqlbinlog](https://dev.mysql.com/doc/refman/8.0/en/mysqlbinlog.html) of a compatible version. Its role is similar to [MySQL Relay Log](https://dev.mysql.com/doc/refman/8.0/en/replica-logs-relaylog.html) and [MariaDB Relay Log](https://mariadb.com/kb/en/library/relay-log/).
+DM-worker 从上游 MySQL/MariaDB 拉取 Binlog 后存储在本地的文件，当前其格式为标准的 Binlog 格式，可使用版本兼容的 [mysqlbinlog](https://dev.mysql.com/doc/refman/8.0/en/mysqlbinlog.html) 等工具进行解析。其作用与 [MySQL Relay Log](https://dev.mysql.com/doc/refman/8.0/en/replica-logs-relaylog.html) 及 [MariaDB Relay Log](https://mariadb.com/docs/server/server-management/server-monitoring-logs/binary-log/relay-log) 相近。
 
-For more details such as the relay log's directory structure, initial migration rules, and data purge in TiDB DM, see [TiDB DM relay log](/dm/relay-log.md).
+有关 TiDB DM 内 Relay log 的目录结构、初始迁移规则、数据清理等内容，可参考 [TiDB DM Relay Log](/dm/relay-log.md)。
 
-### Relay processing unit
+### Relay 处理单元
 
-The relay processing unit is the processing unit used in DM-worker to pull binlog files from the upstream and write data into relay logs. Each DM-worker instance has only one relay processing unit.
-
-### Replicate/replication
-
-The process of using the TiDB Data Migration tool to copy the **incremental data** of the upstream database to the downstream database.
-
-In the case of clearly mentioning "incremental", use replicate/replication instead of migrate/migration.
+DM-worker 内部用于从上游拉取 Binlog 并写入数据到 Relay log 的处理单元，每个 DM-worker 实例内部仅存在一个该处理单元。
 
 ## S
 
 ### Safe mode
 
-Safe mode is the mode in which DML statements can be imported more than once when the primary key or unique index exists in the table schema. In this mode, some statements from the upstream are migrated to the downstream only after they are re-written. The `INSERT` statement is re-written as `REPLACE`; the `UPDATE` statement is re-written as `DELETE` and `REPLACE`.
+指增量复制过程中，用于支持在表结构中存在主键或唯一索引的条件下可重复导入 DML 的模式。该模式的主要特点是：将来自上游的 `INSERT` 改写为 `REPLACE`，将 `UPDATE` 改写为 `DELETE` 与 `REPLACE` 后再向下游执行。
 
-This mode is enabled in any of the following situations:
+该模式会在满足如下任一条件时启用：
 
-- The safe mode remains enabled when the `safe-mode` parameter in the task configuration file is set to `true`.
-- In shard merge scenarios, the safe mode remains enabled before DDL statements are replicated in all sharded tables.
-- If the argument `--consistency none` is configured for the dump processing unit of a full migration task, it cannot be determined whether the binlog changes at the beginning of the export affect the exported data or not. Therefore, the safe mode remains enabled for the incremental replication of these binlog changes.
-- If the task is paused by error and then resumed, the operations on some data might be executed twice.
+- 任务配置文件中设置 `safe-mode: true` 时会始终启用
+- 合库合表模式下，DDL 尚未在所有分表完成同步时保持启用
+- 在全量迁移任务中的 dump 处理单元配置 `--consistency none` 后，不能确定导出开始时的 binlog 变动是否影响了导出数据。Safe mode 会在增量复制这部分 binlog 时保持启用
+- 任务出错停止并恢复后，对有些数据的操作可能会被执行两次时保持启用
 
 ### Shard DDL
 
-The shard DDL is the DDL statement that is executed on the upstream sharded tables. It needs to be coordinated and migrated by TiDB DM in the process of merging the sharded tables. In the current documentation, the shard DDL is also referred to as the sharding DDL.
+指合库合表迁移过程中，在上游各分表 (shard) 上执行的需要 TiDB DM 进行协调迁移的 DDL。在当前文档中，有时也称作 Sharding DDL。
 
 ### Shard DDL lock
 
-The shard DDL lock is the lock mechanism that coordinates the migration of shard DDL. Refer to [the implementation principles of merging and migrating data from sharded tables in the pessimistic mode](/dm/feature-shard-merge-pessimistic.md#principles) for details. In the current documentation, the shard DDL lock is also referred to as the sharding DDL lock.
+用于协调 Shard DDL 迁移的锁机制，具体原理可查看[悲观模式下分库分表合并迁移实现原理](/dm/feature-shard-merge-pessimistic.md#实现原理)。在当前文档中，有时也称作 Sharding DDL lock。
 
 ### Shard group
 
-A shard group is all the upstream sharded tables to be merged and migrated to the same table in the downstream. Two-level shard groups are used for implementation of TiDB DM. Refer to [the implementation principles of merging and migrating data from sharded tables in the pessimistic mode](/dm/feature-shard-merge-pessimistic.md#principles) for details. In the current documentation, the shard group is also referred to as the sharding group.
+指合库合表迁移过程中，需要合并迁移到下游同一张表的所有上游分表 (shard)，TiDB DM 内部具体实现时使用了两级抽象的 Shard group，具体可查看[悲观模式下分库分表合并迁移实现原理](/dm/feature-shard-merge-pessimistic.md#实现原理)。在当前文档中，有时也称作 Sharding group。
+
+### Source
+
+上游数据库源实例，例如一个 MySQL 实例。
 
 ### Subtask
 
-The subtask is a part of a data migration task that is running on each DM-worker instance. In different task configurations, a single data migration task might have one subtask or multiple subtasks.
+数据迁移子任务，即数据迁移任务运行在单个 DM-worker 实例上的部分。根据任务配置的不同，单个数据迁移任务可能只有一个子任务，也可能有多个子任务。
 
 ### Subtask status
 
-The subtask status is the status of a data migration subtask. The current status options include `New`, `Running`, `Paused`, `Stopped`, and `Finished`. Refer to [subtask status](/dm/dm-query-status.md#subtask-status) for more details about the status of a data migration task or subtask.
+数据迁移子任务所处的状态，目前包括 `New`、`Running`、`Paused`、`Stopped` 及 `Finished` 5 种状态。有关数据迁移任务、子任务状态的更多信息可参考[任务状态](/dm/dm-query-status.md#任务状态)。
 
 ## T
 
 ### Table routing
 
-The table routing feature enables DM to migrate a certain table of the upstream MySQL or MariaDB instance to the specified table in the downstream, which can be used to merge and migrate sharded tables. Refer to [table routing](/dm/dm-table-routing.md) for details.
+用于支持将上游 MySQL/MariaDB 实例的某些表迁移到下游指定表的路由功能，可以用于分库分表的合并迁移，具体可参考 [Table routing](/dm/dm-table-routing.md)。
 
 ### Task
 
-The data migration task, which is started after you successfully execute a `start-task` command. In different task configurations, a single migration task can run on a single DM-worker instance or on multiple DM-worker instances at the same time.
+数据迁移任务，执行 `start-task` 命令成功后即启动一个数据迁移任务。根据任务配置的不同，单个数据迁移任务既可能只在单个 DM-worker 实例上运行，也可能同时在多个 DM-worker 实例上运行。
 
 ### Task status
 
-The task status refers to the status of a data migration task. The task status depends on the statuses of all its subtasks. Refer to [subtask status](/dm/dm-query-status.md#subtask-status) for details.
+数据迁移子任务所处的状态，由 [Subtask status](#subtask-status) 整合而来，具体信息可查看[任务状态](/dm/dm-query-status.md#任务状态)。

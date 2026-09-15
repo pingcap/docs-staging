@@ -1,61 +1,51 @@
 ---
-title: Schema Object Names
-summary: 了解 TiDB SQL 语句中的 schema object names。
+title: Schema 对象名
+summary: 本文介绍 TiDB SQL 语句中的模式对象名。
 ---
 
-# Schema Object Names
+# Schema 对象名
 
 <!-- markdownlint-disable MD038 -->
 
-本文介绍 TiDB SQL 语句中的 schema object names。
+本文介绍 TiDB SQL 语句中的模式对象名。
 
-schema object names 用于命名 TiDB 中的所有 schema 对象，包括 database、table、index、column 和 alias。你可以在 SQL 语句中使用标识符对这些对象进行引用。
+模式对象名用于命名 TiDB 中所有的模式对象，包括 database、table、index、column、alias 等等。在 SQL 语句中，可以通过标识符 (identifier) 来引用这些对象。
 
-你可以使用反引号将标识符括起来。例如，`SELECT * FROM t` 也可以写成 `` SELECT * FROM `t` ``。但如果标识符包含一个或多个特殊字符或是保留关键字，则必须用反引号括起来以引用它所代表的 schema 对象。
+标识符可以被反引号包裹，即 `SELECT * FROM t` 也可以写成 `` SELECT * FROM `t` ``。但如果标识符中存在至少一个特殊符号，或者它是一个保留关键字，那就必须使用反引号包裹来引用它所代表的模式对象。
+
 
 ```sql
 SELECT * FROM `table` WHERE `table`.id = 20;
 ```
 
-如果在 SQL MODE 中设置了 `ANSI_QUOTES`，TiDB 会将用双引号 `"` 包含的字符串识别为标识符。
+如果 SQL MODE 中设置了 `ANSI_QUOTES`，那么 TiDB 会将被双引号 `"` 包裹的字符串识别为 identifier。
 
 ```sql
-CREATE TABLE "test" (a varchar(10));
-```
-
-```sql
+MySQL [test]> CREATE TABLE "test" (a varchar(10));
 ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your TiDB version for the right syntax to use line 1 column 19 near ""test" (a varchar(10))" 
-```
 
-```sql
-SET SESSION sql_mode='ANSI_QUOTES';
-```
-
-```sql
+MySQL [test]> SET SESSION sql_mode='ANSI_QUOTES';
 Query OK, 0 rows affected (0.000 sec)
-```
 
-```sql
-CREATE TABLE "test" (a varchar(10));
-```
-
-```sql
+MySQL [test]> CREATE TABLE "test" (a varchar(10));
 Query OK, 0 rows affected (0.012 sec)
 ```
 
-如果你想在引用的标识符中使用反引号字符，可以将反引号重复写两次。例如，创建一个表 a`b：
+如果要在被引用的标识符中使用反引号这个字符，则需要重复两次反引号，例如创建一个表 a`b：
+
 
 ```sql
 CREATE TABLE `a``b` (a int);
 ```
 
-在 `SELECT` 语句中，你可以使用标识符或字符串来指定别名：
+在 select 语句中，alias 部分可以用标识符或者字符串：
+
 
 ```sql
 SELECT 1 AS `identifier`, 2 AS 'string';
 ```
 
-```sql
+```
 +------------+--------+
 | identifier | string |
 +------------+--------+
@@ -64,34 +54,36 @@ SELECT 1 AS `identifier`, 2 AS 'string';
 1 row in set (0.00 sec)
 ```
 
-更多信息请参见 [MySQL Schema Object Names](https://dev.mysql.com/doc/refman/8.0/en/identifiers.html)。
+更多细节，请参考 [MySQL 文档](https://dev.mysql.com/doc/refman/8.0/en/identifiers.html)。
 
-## Identifier qualifiers
+## Identifier Qualifiers
 
-对象名称可以是未限定的或限定的。例如，以下语句创建了一个没有限定名的表：
+Object Names（对象名字）有时可以被限定或者省略。例如在创建表的时候可以省略数据库限定名：
+
 
 ```sql
 CREATE TABLE t (i int);
 ```
 
-如果你没有使用 `USE` 语句或连接参数配置数据库，则会显示 `ERROR 1046 (3D000): No database selected` 错误。此时，你可以指定数据库限定名：
+如果之前没有使用 `USE` 或者连接参数来设定数据库，会报 `ERROR 1046 (3D000): No database selected` 错误。此时可以指定数据库限定名：
+
 
 ```sql
 CREATE TABLE test.t (i int);
 ```
 
-在 `.` 两边可以存在空白字符。`table_name.col_name` 和 `table_name . col_name` 是等价的。
+`.` 的左右两端可以出现空格，`table_name.col_name` 等于 `table_name . col_name`。
 
-要引用此标识符，请使用：
+如果要引用这个模式对象，那么请使用：
 
-```sql
+```
 `table_name`.`col_name`
 ```
 
 而不是：
 
-```sql
+```
 `table_name.col_name`
 ```
 
-更多信息请参见 [MySQL Identifier Qualifiers](https://dev.mysql.com/doc/refman/8.0/en/identifier-qualifiers.html)。
+更多细节，请参考 [MySQL 文档](https://dev.mysql.com/doc/refman/8.0/en/identifier-qualifiers.html)。

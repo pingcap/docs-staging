@@ -1,47 +1,47 @@
 ---
 title: tiup list
-summary: The `tiup list` command is used to get the list of available components of a mirror. It has options like `--all`, `--installed`, and `--verbose` to display all components, installed components, and component versions respectively. The output includes component information and version information based on the specified component.
+summary: tiup list 命令用于查询镜像中可用的组件列表。可选的组件名称。若指定，则列出该组件的所有版本；若不指定，则列出所有组件列表。--all 显示所有组件。默认只显示非隐藏组件。--installed 只显示已经安装的组件或版本。--verbose 在组件列表中显示已安装的版本列表。若未指定组件名，输出组件名、组件管理员、组件描述构成的组件信息列表。若指定组件名，输出版本、是否已安装、发布时间、支持的平台构成的版本信息列表。
 ---
 
 # tiup list
 
-The command `tiup list` is used to get the list of available components of a mirror.
+命令 `tiup list` 用于查询镜像中可用的组件列表。
 
-## Syntax
+## 语法
 
 ```shell
 tiup list [component] [flags]
 ```
 
-`[component]` is an optional parameter used to specify a certain component. If `[component]` is set, TiUP lists all versions of the specified component; if not, TiUP lists all components.
+`[component]` 是可选的组件名称。若指定，则列出该组件的所有版本；若不指定，则列出所有组件列表。
 
-## Options
+## 选项
 
 ### --all
 
-- Displays all components. By default, TiUP does not show hidden components.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 显示所有组件。默认只显示非隐藏组件。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### --installed
 
-- Only displays components and versions that have been installed.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 只显示已经安装的组件或版本。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### --verbose
 
-- Displays installed component versions in the components list.
-- Data type: `BOOLEAN`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 在组件列表中显示已安装的版本列表。默认组件列表不显示当前已安装的版本。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Outputs
+## 输出
 
-- If `[component]` is not set:
-    - If `--verbose` is specified: TiUP outputs a component information list consisting of `Name` (component name), `Installed` (installed versions), `Owner` (component owner), and `Description` (component description).
-    - If `--verbose` is not specified: TiUP outputs a component information list consisting of `Name` (component name), `Owner` (component owner), and `Description` (component description).
-- If `[component]` is set:
-    - If the specified component exists: TiUP outputs a version information list of the specified component, consisting of `Version` (version number), `Installed` (installation status), `Release` (release date), and `Platforms` (supported platforms).
-    - If the specified component does not exist: TiUP reports the error `failed to fetch component: unknown component`.
+- 若未指定 `[component]`
+    - 若指定 --verbose：输出 `组件名 (Name)`、`已安装版本 (Installed)`、`组件管理员 (Owner)`、`组件描述 (Description)` 构成的组件信息列表
+    - 若不指定 --verbose：输出 `组件名 (Name)`、`组件管理员 (Owner)`、`组件描述 (Description)` 构成的组件信息列表
+- 若指定 `[component]`
+    - 若 `[component]` 存在：输出 `版本 (Version)`、`是否已安装 (Installed)`、`发布时间 (Release)`、`支持的平台 (Platforms)` 构成的版本信息列表
+    - 若 `[component]` 不存在：报错 `failed to fetch component: unknown component`
 
-[<< Back to the previous page - TiUP Reference command list](/tiup/tiup-reference.md#command-list)
+[<< 返回上一页 - TiUP 命令清单](/tiup/tiup-reference.md#命令清单)

@@ -1,22 +1,20 @@
 ---
-title: GROUP BY Modifiers
-summary: 学习如何使用 TiDB 的 GROUP BY 修饰符。
+title: GROUP BY 修饰符
+summary: 了解如何使用 TiDB GROUP BY 修饰符。
 ---
 
 # GROUP BY 修饰符
 
-从 v7.4.0 版本开始，TiDB 的 `GROUP BY` 子句支持 `WITH ROLLUP` 修饰符。
+自 v7.4.0 起，TiDB 的 `GROUP BY` 子句支持 `WITH ROLLUP` 修饰符。
 
-在 `GROUP BY` 子句中，你可以指定一个或多个列作为分组列表，并在列表后面添加 `WITH ROLLUP` 修饰符。然后，TiDB 将基于分组列表中的列进行多维降序分组，并在输出中为每个分组提供汇总结果。
+你可以在 `GROUP BY` 子句中指定一个或多个列，形成一个分组列表，然后添加 `WITH ROLLUP` 修饰符。TiDB 将会按照分组列表中的列进行多维度的递减分组，并在输出中为你提供各个分组数据的汇总结果。
 
-- 分组方法：
+- 分组方式：
+    - 第一个分组维度为分组表列表中的所有列。
+    - 后面的维度将从分组列表的最右侧（尾端）开始，每次递减一个元素，形成新的分组。
+- 聚合汇总：在每个维度上，查询都会执行聚合操作，然后将该维度的计算结果与前面所有维度的结果进行汇总。这意味着你可以看到不同维度的聚合数据，从详细到总体。
 
-    - 第一个分组维度包括所有在分组列表中的列。
-    - 后续的分组维度从分组列表的右端开始，每次排除一个列，形成新的分组。
-
-- 聚合汇总：对于每个维度，查询执行聚合操作，然后将该维度的结果与之前所有维度的结果进行汇总。这意味着你可以获得不同维度的聚合数据，从详细到整体。
-
-采用这种分组方法，如果分组列表中有 `N` 个列，TiDB 会在 `N+1` 个分组上进行结果的聚合。
+按照这种分组方式，当分组列表中有 N 个列时，查询的计算结果将会在 N+1 个分组上进行聚合后输出。
 
 例如：
 
@@ -24,37 +22,27 @@ summary: 学习如何使用 TiDB 的 GROUP BY 修饰符。
 SELECT count(1) FROM t GROUP BY a,b,c WITH ROLLUP;
 ```
 
-在这个例子中，TiDB 会在 4 个分组（即 `{a, b, c}`、`{a, b}`、`{a}` 和 `{}`）上对 `count(1)` 的计算结果进行聚合，并输出每个分组的汇总结果。
+在此示例中，count(1) 的计算结果将分别在 {a,b,c}、{a,b}、{a}、{} 一共 4 个分组上进行聚合，然后输出各分组的汇总数据。
 
-> **Note:**
+> **注意：**
 >
-> 目前，TiDB 不支持 Cube 语法。
+> TiDB 暂不支持 Cube 语法。
 
 ## 使用场景
 
-对多列数据进行聚合和汇总，常用于 OLAP（联机分析处理）场景。通过使用 `WITH ROLLUP` 修饰符，你可以获得额外的行，显示来自其他高层维度的超级汇总信息。在此基础上，可以进行更高级的数据分析和报表生成。
+多列数据的聚合汇总输出一般常用于 OLAP（Online Analytical Processing）场景。通过使用 `WITH ROLLUP` 修饰符，你可以在聚合结果中得到额外的行，以展示不同维度的汇总信息，从而实现高级的数据分析和报表生成。
 
-## 前提条件
+## 准备条件
 
-<CustomContent platform="tidb">
+在 v8.3.0 之前版本中，TiDB 仅支持在 [TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)下为 `WITH ROLLUP` 语法生成有效的执行计划。因此你的 TiDB 集群需要包含 TiFlash 节点，并且对目标分析表进行了正确的 TiFlash 副本的配置。更多信息，请参考[扩容 TiFlash 节点](/scale-tidb-using-tiup.md#扩容-tiflash-节点)。
 
-在 v8.3.0 版本之前，TiDB 仅支持在 [TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)下生成 `WITH ROLLUP` 语法的有效执行计划。因此，你的 TiDB 集群需要包含 TiFlash 节点，并且目标表必须配置正确的 TiFlash 副本。更多信息请参见 [扩展 TiFlash 集群](/scale-tidb-using-tiup.md#scale-out-a-tiflash-cluster)。
+从 v8.3.0 开始，上述限制已被移除。无论 TiDB 集群是否包含 TiFlash 节点，TiDB 都支持为 `WITH ROLLUP` 语法生成有效的执行计划。
 
-</CustomContent>
+你可以通过执行计划中 `Expand` 算子的 `task` 属性判断执行 `Expand` 算子的是 TiDB 还是 TiFlash。更多信息，请参考[如何阅读 ROLLUP 的执行计划](#如何阅读-rollup-的执行计划)。
 
-<CustomContent platform="tidb-cloud">
+## 使用示例
 
-在 v8.3.0 版本之前，TiDB 仅支持在 [TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)下生成 `WITH ROLLUP` 语法的有效执行计划。因此，你的 TiDB 集群需要包含 TiFlash 节点，并且目标表必须配置正确的 TiFlash 副本。更多信息请参见 [更改节点数](/tidb-cloud/scale-tidb-cluster.md#change-node-number)。
-
-</CustomContent>
-
-从 v8.3.0 版本开始，以上限制被移除。无论你的 TiDB 集群是否包含 TiFlash 节点，TiDB 都支持生成 `WITH ROLLUP` 语法的有效执行计划。
-
-要判断 `Expand` 操作符由 TiDB 还是 TiFlash 执行，可以检查执行计划中 `Expand` 操作符的 `task` 属性。更多信息请参见 [如何解读 ROLLUP 执行计划](#how-to-interpret-the-rollup-execution-plan)。
-
-## 示例
-
-假设你有一个名为 `bank` 的利润表，包含 `year`、`month`、`day` 和 `profit` 列。
+假如有一张名为 `bank` 的银行利润表，包含年（`year`）、月（`month`）、日（`day`）和利润（`profit`）列。
 
 ```sql
 CREATE TABLE bank
@@ -65,12 +53,12 @@ CREATE TABLE bank
     profit  DECIMAL(13, 7)
 );
 
-ALTER TABLE bank SET TIFLASH REPLICA 1; -- 为表添加 TiFlash 副本以支持 TiFlash MPP 模式。
+ALTER TABLE bank SET TIFLASH REPLICA 1; -- 在 TiFlash MPP 模式下，为该表添加一个 TiFlash 副本
 
 INSERT INTO bank VALUES(2000, "Jan", 1, 10.3),(2001, "Feb", 2, 22.4),(2000,"Mar", 3, 31.6)
 ```
 
-要获取每年银行的利润，可以使用如下简单的 `GROUP BY` 子句：
+如需查看银行每年的利润，可以用一个简单的 `GROUP BY` 的子句来实现：
 
 ```sql
 SELECT year, SUM(profit) AS profit FROM bank GROUP BY year;
@@ -83,7 +71,7 @@ SELECT year, SUM(profit) AS profit FROM bank GROUP BY year;
 2 rows in set (0.15 sec)
 ```
 
-除了年度利润外，银行报告通常还需要包括所有年份的总利润或按月划分的详细利润，以便进行更细致的利润分析。在 v7.4.0 之前，你需要在多个查询中使用不同的 `GROUP BY` 子句，并通过 UNION 连接结果以获得汇总。自 v7.4.0 起，你可以在单个查询中通过在 `GROUP BY` 后添加 `WITH ROLLUP` 来实现。
+对于银行报表来说，除了每年的利润之外，通常还需要计算所有年份的总利润或每个月的总利润，以进行更高层次或更详细的利润分析。在 v7.4.0 之前的版本中，你需要在多个查询中使用不同的 `GROUP BY` 子句，并将结果使用 UNION 连接，才能得到聚合汇总的结果。从 v7.4.0 起，你可以直接在单个查询的 `GROUP BY` 子句中添加 `WITH ROLLUP` 修饰符，即可得到所需的结果：
 
 ```sql
 SELECT year, month, SUM(profit) AS profit from bank GROUP BY year, month WITH ROLLUP ORDER BY year desc, month desc;
@@ -100,20 +88,20 @@ SELECT year, month, SUM(profit) AS profit from bank GROUP BY year, month WITH RO
 6 rows in set (0.025 sec)
 ```
 
-上述结果包含不同维度的聚合数据：按年和月、按年、以及整体。在结果中，没有 `NULL` 的行表示该行的 `profit` 是通过同时按年和月分组计算得出。`month` 列中的 `NULL` 表示该行的 `profit` 是按年汇总的所有月份的结果，而 `year` 列中的 `NULL` 表示所有年份的总和。
+以上结果包含了按照年份和月份、按照年份、以及整体所有维度的聚合数据。其中，未出现 `NULL` 值的行表示该行 `profit` 是同时按照年份和月份分组计算的结果，`month` 列的 `NULL` 值表示该行 `profit` 是按照该年份的所有月份聚合计算的结果，`year` 列的 `NULL` 值表示该行 `profit` 是按照所有年份聚合计算的结果。
 
 具体来说：
 
-- 第一行的 `profit` 来自 2 维分组 `{year, month}`，代表细粒度 `{2000, "Jan"}` 组的聚合结果。
-- 第二行的 `profit` 来自 1 维分组 `{year}`，代表中间层 `{2001}` 组的聚合结果。
-- 最后一行的 `profit` 来自 0 维分组 `{}`，代表整体的聚合结果。
+* 第一行的 `profit` 值来自 2 维分组 {year, month}，为 {2000, “Jan”} 的细粒度分组的聚合结果。
+* 第二行的 `profit` 值来自 1 维分组 {year}，为 {2001} 的中层粒度分组下的聚合结果。
+* 最后一行的 `profit` 值来自 0 维分组 {}，即整体的聚合结果。
 
-在 `WITH ROLLUP` 结果中，`NULL` 值是在应用聚合操作之前生成的。因此，你可以在 `SELECT`、`HAVING` 和 `ORDER BY` 子句中使用 `NULL` 来进一步筛选聚合结果。
+`WITH ROLLUP` 结果中的  `NULL` 值是在应用 Aggregate 算子之前生成的，因此你可以将 `NULL` 值应用于 `SELECT`、`HAVING`、`ORDER BY` 子句中，进一步过滤聚合结果。
 
-例如，可以在 `HAVING` 子句中使用 `NULL` 来只筛选出 2 维分组的结果：
+例如，你可以在 `HAVING` 子句中通过 `NULL` 过滤并只看 2 维度分组下的聚合结果输出。
 
 ```sql
-SELECT year, month, SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP HAVING year IS NOT null AND month IS NOT null;
+SELECT year, month, SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP HAVING year IS NOT null AND month IS NOT null; 
 +------+-------+--------------------+
 | year | month | profit             |
 +------+-------+--------------------+
@@ -124,9 +112,9 @@ SELECT year, month, SUM(profit) AS profit FROM bank GROUP BY year, month WITH RO
 3 rows in set (0.02 sec)
 ```
 
-注意，如果 `GROUP BY` 列表中的某个列本身包含原生 `NULL` 值，`WITH ROLLUP` 的聚合结果可能会误导查询结果。为解决此问题，可以使用 `GROUPING()` 函数区分原生 `NULL` 和由 `WITH ROLLUP` 生成的 `NULL`。该函数接受一个分组表达式作为参数，返回 `0` 或 `1`，以指示当前结果中该表达式是否被聚合。`1` 表示已聚合，`0` 表示未聚合。
+需要注意的是，如果 `GROUP BY` 分组列表中的某列包含原生的 `NULL` 值，`WITH ROLLUP` 的分组聚合可能会对查询结果产生误导。为了解决这个问题，你可以使用 `GROUPING ()` 函数区分原生的 `NULL` 值和 `WITH ROLLUP` 生成的 `NULL` 值。该函数接受分组表达式作为参数，并输出 `0` 或 `1`，表示该分组表达式是否在当前结果中被聚合。`1` 表示被聚合，`0` 表示没有。
 
-以下示例演示如何使用 `GROUPING()` 函数：
+以下是如何使用 `GROUPING ()` 函数的示例：
 
 ```sql
 SELECT year, month, SUM(profit) AS profit, grouping(year) as grp_year, grouping(month) as grp_month FROM bank GROUP BY year, month WITH ROLLUP ORDER BY year DESC, month DESC;
@@ -143,9 +131,9 @@ SELECT year, month, SUM(profit) AS profit, grouping(year) as grp_year, grouping(
 6 rows in set (0.028 sec)
 ```
 
-从输出中可以直接通过 `grp_year` 和 `grp_month` 来理解每行的聚合维度，避免原生 `NULL` 值的干扰。
+在此输出中，你可以直接通过 `grp_year` 和 `grp_month` 的结果来判断该聚合结果行所在的聚合维度，以防止分组表达式 `year` 和 `month` 原生的 `NULL` 值的干扰。
 
-`GROUPING()` 函数最多接受 64 个分组表达式作为参数。在多参数输出中，每个参数会生成 `0` 或 `1`，这些参数共同组成一个 64 位的 `UNSIGNED LONGLONG`，每一位对应一个参数的值。可以用以下公式计算每个参数对应的位位置：
+`GROUPING()` 函数最多可以接受 64 个分组表达式作为参数。在多参数的输出中，每个参数都可以生成一个 `0` 或 `1` 的结果，多个参数综合组成每一个比特位是 `0` 或 `1` 总体是 64 位的 `UNSIGNED LONGLONG`。各个参数在比特数位中的位置可以通过以下公式计算：
 
 ```go
 GROUPING(day, month, year):
@@ -154,7 +142,7 @@ GROUPING(day, month, year):
 + result for GROUPING(day) << 2
 ```
 
-通过在 `GROUPING()` 中使用多个参数，可以高效地筛选任何高维度的聚合结果。例如，可以快速筛选每年及所有年份的聚合结果，使用 `GROUPING(year, month)`：
+在 `GROUPING()` 的函数中使用组合参数可以快速过滤出任何高维度的聚合结果。例如，你可以通过 `GROUPING(year, month)` 快速过滤出每年以及所有年份的聚合结果：
 
 ```sql
 SELECT year, month, SUM(profit) AS profit, grouping(year) as grp_year, grouping(month) as grp_month FROM bank GROUP BY year, month WITH ROLLUP HAVING GROUPING(year, month) <> 0 ORDER BY year DESC, month DESC;
@@ -168,13 +156,13 @@ SELECT year, month, SUM(profit) AS profit, grouping(year) as grp_year, grouping(
 3 rows in set (0.023 sec)
 ```
 
-## 如何解读 ROLLUP 执行计划
+## 如何阅读 ROLLUP 的执行计划
 
-多维数据聚合使用 `Expand` 操作符复制数据，以满足多维分组的需求。每次数据复制对应一个特定维度的分组。在 MPP 模式下，`Expand` 操作符可以促进数据洗牌，快速在多个节点之间重组和计算大量数据，充分利用每个节点的计算能力。在没有 TiFlash 节点的 TiDB 集群中，由于 `Expand` 只在单个 TiDB 节点上执行，随着维度分组（`grouping set`）的增加，数据冗余也会增加。
+多维度数据聚合使用了 `Expand` 算子来复制数据以满足多维度分组的需求，每个复制的数据副本都对应一个特定维度的分组。在 MPP 模式下，`Expand` 算子能够利用数据 shuffle 快速地在多个节点之间重新组织和计算大量的数据，充分利用每个节点的计算能力。在不包含 TiFlash 节点的 TiDB 集群中，`Expand` 算子因为只在 TiDB 单节点上执行，数据冗余会随着维度分组 (`grouping set`) 数量的增加而增加。
 
-`Expand` 操作符的实现类似于 `Projection` 操作符，不同之处在于 `Expand` 是多层次的 `Projection`，包含多层投影表达式。对于每一行原始数据，`Projection` 只生成一行结果，而 `Expand` 会生成多行（行数等于投影表达式的层数）。
+`Expand` 算子的实现类似 `Projection` 算子，但区别在于 `Expand` 是多层级的 `Projection`，具有多层级投影运算表达式。对于每行原始数据行，`Projection` 算子只会生成一行结果输出，而 `Expand` 算子会生成多行结果（行数等于多层级投影运算表达式的层数）。
 
-以下示例展示了没有 TiFlash 节点的 TiDB 集群中的执行计划，其中 `Expand` 操作符的 `task` 为 `root`，表示在 TiDB 中执行：
+以下为不包含 TiFlash 节点的 TiDB 集群的执行计划示例，其中 `Expand` 算子的 `task` 为 `root`，表示 `Expand` 算子在 TiDB 中执行：
 
 ```sql
 EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP;
@@ -191,7 +179,7 @@ EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 6 rows in set (0.00 sec)
 ```
 
-以下示例展示了在 TiFlash MPP 模式下的执行计划，其中 `Expand` 操作符的 `task` 为 `mpp[tiflash]`，表示在 TiFlash 中执行：
+以下为 TiFlash MPP 模式下的执行计划示例，其中 `Expand` 算子的 `task` 为 `mpp[tiflash]`，表示 `Expand` 算子在 TiFlash 中执行：
 
 ```sql
 EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS profit FROM bank GROUP BY year, month WITH ROLLUP;
@@ -212,13 +200,13 @@ EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 10 rows in set (0.05 sec)
 ```
 
-在此执行计划示例中，你可以在 `Expand_20` 行的 `operator info` 列中看到 `Expand` 操作符的多层表达式。它由 2 维表达式组成，你可以在该行末尾看到 `schema: [test.bank.profit, Column#6, Column#7, gid]`，这是 `Expand` 操作符的 schema 信息。
+在这个示例执行计划中，你可以在 `Expand_20` 这行的 `operator info` 列查看 `Expand` 算子的层级表达式，其由 2 维表达式组成，行末有 `Expand` 算子的 Schema 信息 `schema: [test.bank.profit,Column#6,Column#7,gid]`。
 
-在 `Expand` 操作符的 schema 信息中，`GID` 被作为额外的列生成。其值由 `Expand` 操作符根据不同维度的分组逻辑计算得出，反映了当前数据副本与 `grouping set` 之间的关系。在大多数情况下，`Expand` 使用位与操作（Bit-And），可以表示 63 种分组项的组合，对应 64 个分组维度。在此模式下，TiDB 根据当前数据副本是否包含所需维度的分组表达式，生成 `GID` 值，并以列的顺序填充一个 64 位的 `UINT64`。
+在 `Expand` 算子的 schema 信息中，`GID` 会作为额外的生成列来输出，其值是由 `Expand` 算子根据不同维度的分组逻辑计算得出，反映了当前数据副本和维度分组的关系。最常见的情况是使用位掩码运算, 它可以表示 63 种分组项的 ROLLUP 组合，对应 64 种维度的分组。在这种模式下，`GID` 值的生成根据当前数据副本复制时所需维度分组中是否有分组表达式，按照要进行分组的列，顺序填充一个 64 位的 UINT64 的值。
 
-在前述示例中，分组列表的列顺序为 `[year, month]`，由 ROLLUP 语法生成的维度组为 `{year, month}`、`{year}` 和 `{}`。对于 `{year, month}` 维度组，`year` 和 `month` 都是必需列，因此 TiDB 会将它们对应的位位置填充为 1 和 1，形成十进制为 3 的 `UINT64`（二进制为 `11...0`）。因此，投影表达式为 `[test.bank.profit, Column#6, Column#7, 3->gid]`（其中 `column#6` 对应 `year`，`column#7` 对应 `month`）。
+例如，这里分组列表中列的顺序是 [year, month]，而 ROLLUP 语法生成的维度分组集合为：{year, month}, {year}, {}。对于维度分组 {year, month} 来说，`year` 和 `month` 都是当前维度分组所需的列，对应填充比特位 1 和 1，组成 UINT64 为 11...0 即 3，因此投影表达式为 `[test.bank.profit, Column#6, Column#7, 3->gid]`。（`column#6` 对应 `year`，`column#7` 对应 `month`）
 
-以下是原始数据的一行示例：
+以原始数据中的下面这行为例：
 
 ```sql
 +------+-------+------+------------+
@@ -228,16 +216,18 @@ EXPLAIN SELECT year, month, grouping(year), grouping(month), SUM(profit) AS prof
 +------+-------+------+------------+
 ```
 
-经过 `Expand` 操作符后，可以得到以下三行结果：
+经过 `Expand` 算子之后，可以得到以下三行结果：
 
 ```sql
++------------+------+-------+-----+ 
+| profit     | year | month | gid | 
 +------------+------+-------+-----+
-| profit     | year | month | gid |
-+------------+------+-------+-----+
-| 10.3000000 | 2000 | Jan   |  3  |
-| 10.3000000 | 2000 | NULL  |  1  |
-| 10.3000000 | NULL | NULL  |  0  |
+| 10.3000000 | 2000 | Jan   |  3  | 
++------------+------+-------+-----+ 
+| 10.3000000 | 2000 | NULL  |  1  | 
++------------+------+-------+-----+ 
+| 10.3000000 | NULL | NULL  |  0  | 
 +------------+------+-------+-----+
 ```
 
-注意，查询中的 `SELECT` 子句使用了 `GROUPING` 函数。当在 `SELECT`、`HAVING` 或 `ORDER BY` 子句中使用 `GROUPING` 时，TiDB 会在逻辑优化阶段对其进行重写，将 `GROUPING` 函数与 `GROUP BY` 项之间的关系转换为与维度分组（也称为 `grouping set`）相关的 `GID`，并将此 `GID` 作为元数据填充到新的 `GROUPING` 函数中。
+需要注意的是，该查询的 `SELECT` 子句中使用了 `GROUPING` 函数。当在 `SELECT`、`HAVING`、`ORDER BY` 子句中使用 `GROUPING` 函数时，TiDB 会在逻辑优化阶段对其进行改写，将 `GROUPING` 函数与分组项（`GROUP BY` items）之间的关系，转化为与维度分组计算逻辑有关的 `GID`，并将此 `GID` 以 metadata 形式填充到新的 `GROUPING` 函数当中。

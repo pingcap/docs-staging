@@ -1,52 +1,48 @@
 ---
 title: tiup cluster destroy
-summary: The tiup cluster destroy command stops the cluster and deletes log, deployment, and data directories for each service. It also deletes parent directories created by tiup-cluster. Options include --force to ignore errors, --retain-node-data to specify nodes to retain data, --retain-role-data to specify roles to retain data, and -h or --help to print help information. The output is the execution log of the tiup-cluster.
+summary: tiup cluster destroy 命令用于销毁集群，包括停止集群、删除服务的日志目录、部署目录和数据目录。选项包括 --force（忽略错误）、--retain-node-data（指定保留数据的节点）、--retain-role-data（指定保留数据的角色）、-h（输出帮助信息）。执行日志将作为输出。
 ---
 
 # tiup cluster destroy
 
-After an application goes offline, if you want to release the machines occupied by the cluster for use by other applications, you need to clean up the data on the cluster and the deployed binary files. To destroy the cluster, the `tiup cluster destroy` command performs the following operations:
+当业务下线之后，如果想将集群占有的机器释放出来让给其他业务使用，需要清理掉集群上的数据以及部署的二进制文件。`tiup cluster destroy` 命令会执行以下操作销毁集群：
 
-- Stops the cluster.
-- For each service, delete its log directory, deployment directory, and data directory.
-- If the parent directory of the data directory or deployment directory of each service is created by tiup-cluster, also delete the parent directory.
+- 停止集群
+- 对于每个服务，删除其日志目录，部署目录，数据目录
+- 如果各个服务的数据目录/部署目录的父目录是由 tiup-cluster 创建的，也一并删除
 
-## Syntax
+## 语法
 
 ```shell
 tiup cluster destroy <cluster-name> [flags]
 ```
 
-`<cluster-name>`: the name of the cluster to destroy.
+`<cluster-name>` 为要销毁的集群名字。
 
-## Options
+## 选项
 
 ### --force
 
-- In some cases, some nodes in the cluster have been down, making it impossible to connect to the node through SSH for operation. At this time, you can use the `--force` option to ignore these errors.
-- Data type: `Boolean`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 在某些情况下，有可能集群中的某些节点已经宕机，导致无法通过 SSH 连接到节点进行操作，这个时候可以通过 `--force` 选项忽略这些错误。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-### --retain-node-data
+### --retain-node-data（StringArray，默认为空）
 
-- Specifies the nodes that need to retain data. If you need to specify more than one node, use this option multiple times: `--retain-node-data <node-A> --retain-node-data <node-B>`.
-- Data type: `StringArray`
-- Default: empty
+指定需要保留数据的节点，如需指定多个，重复使用多次该选项：`--retain-node-data <node-A> --retain-node-data <node-B>`。
 
-### --retain-role-data
+### --retain-role-data（StringArray，默认为空）
 
-- Specifies the role that needs to retain data. If you need to specify more than one role, use this option multiple times: `--retain-role-data <role-A> --retain-role-data <role-B>`.
-- Data type: `StringArray`
-- Default: empty
+指定需要保留数据的角色，如需指定多个，重复使用多次该选项：`--retain-role-data <role-A> --retain-role-data <role-B>`。
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `Boolean`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-The execution log of the tiup-cluster.
+tiup-cluster 的执行日志。
 
-[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)
+[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)

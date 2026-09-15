@@ -1,182 +1,185 @@
 ---
-title: TiDB Memory Control
-summary: Learn how to configure the memory quota of a query and avoid OOM (out of memory).
+title: TiDB 内存控制文档
+summary: TiDB 内存控制文档介绍了如何追踪和控制 SQL 查询过程中的内存使用情况，以及配置内存使用阈值和 tidb-server 实例的内存使用阈值。还介绍了使用 INFORMATION_SCHEMA 系统表查看内存使用情况，以及降低写入事务内存使用的方法。另外还介绍了流量控制和数据落盘的内存控制策略，以及通过设置环境变量 GOMEMLIMIT 缓解 OOM 问题。
 ---
 
-# TiDB Memory Control
+# TiDB 内存控制文档
 
-Currently, TiDB can track the memory quota of a single SQL query and take actions to prevent OOM (out of memory) or troubleshoot OOM when the memory usage exceeds a specific threshold value. The system variable [`tidb_mem_oom_action`](/system-variables.md#tidb_mem_oom_action-new-in-v610) specifies the action to take when a query reaches the memory limit:
+目前 TiDB 已经能够做到追踪单条 SQL 查询过程中的内存使用情况，当内存使用超过一定阈值后也能采取一些操作来预防 OOM 或者排查 OOM 原因。你可以使用系统变量 [`tidb_mem_oom_action`](/system-variables.md#tidb_mem_oom_action-从-v610-版本开始引入) 来控制查询超过内存限制后所采取的操作：
 
-- A value of `LOG` means that queries will continue to execute when the [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) limit is reached, but TiDB will print an entry to the log.
-- A value of `CANCEL` means TiDB stops executing the SQL query immediately after the [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) limit is reached, and returns an error to the client. The error information clearly shows the memory usage of each physical execution operator that consumes memory in the SQL execution process.
+- 如果变量值为 `LOG`，那么当一条 SQL 的内存使用超过一定阈值（由 session 变量 `tidb_mem_quota_query` 控制）后，这条 SQL 会继续执行，但 TiDB 会在 log 文件中打印一条 LOG。
+- 如果变量值为 `CANCEL`，那么当一条 SQL 的内存使用超过一定阈值后，TiDB 会立即中断这条 SQL 的执行，并给客户端返回一个错误，错误信息中会详细写明在这条 SQL 执行过程中占用内存的各个物理执行算子的内存使用情况。
 
-## Configure the memory quota of a query
+## 如何配置一条 SQL 执行过程中的内存使用阈值
 
-The system variable [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) sets the limit for a query in bytes. Some usage examples:
+使用系统变量 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 来配置一条 SQL 执行过程中的内存使用阈值，单位为字节。例如：
+
+配置整条 SQL 的内存使用阈值为 8GB：
 
 
 ```sql
--- Set the threshold value of memory quota for a single SQL query to 8GB:
 SET tidb_mem_quota_query = 8 << 30;
 ```
 
+配置整条 SQL 的内存使用阈值为 8MB：
+
 
 ```sql
--- Set the threshold value of memory quota for a single SQL query to 8MB:
 SET tidb_mem_quota_query = 8 << 20;
 ```
 
+配置整条 SQL 的内存使用阈值为 8KB：
+
 
 ```sql
--- Set the threshold value of memory quota for a single SQL query to 8KB:
 SET tidb_mem_quota_query = 8 << 10;
 ```
 
-## Configure the memory usage threshold of a tidb-server instance
+## 如何配置 tidb-server 实例使用内存的阈值
 
-Since v6.5.0, you can use the system variable [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-new-in-v640) to set the threshold for the memory usage of a tidb-server instance.
+自 v6.5.0 版本起，可以通过系统变量 [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-从-v640-版本开始引入) 设置 tidb-server 实例的内存使用阈值。
 
-For example, set the total memory usage of a tidb-server instance to 32 GB:
+例如，配置 tidb-server 实例的内存使用总量，将其设置成为 32 GB：
+
 
 ```sql
 SET GLOBAL tidb_server_memory_limit = "32GB";
 ```
 
-After you set this variable, when the memory usage of a tidb-server instance reaches 32 GB, TiDB will terminate the SQL operation with the largest memory usage among all running SQL operations in order, until the memory usage of the instance drops below 32 GB. The forcibly terminated SQL operation will return the `Out Of Memory Quota!` error to the client.
+设置该变量后，当 tidb-server 实例的内存用量达到 32 GB 时，TiDB 会依次终止正在执行的 SQL 操作中内存用量最大的 SQL 操作，直至 tidb-server 实例内存使用下降到 32 GB 以下。被强制终止的 SQL 操作会向客户端返回报错信息 `Out Of Memory Quota!`。
 
-Currently, the memory limit set by `tidb_server_memory_limit` **DOES NOT** terminate the following SQL operations:
+当前 `tidb_server_memory_limit` 所设的内存限制**不终止**以下 SQL 操作：
 
-- DDL operations
-- SQL operations that contain window functions and common table expressions
+- DDL 操作
+- 包含窗口函数和公共表表达式的 SQL 操作
 
-> **Warning:**
+> **警告：**
 >
-> + During the startup process, TiDB does not guarantee that the [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-new-in-v640) limit is enforced. If the free memory of the operating system is insufficient, TiDB might still encounter OOM. You need to ensure that the TiDB instance has enough available memory.
-> + In the process of memory control, the total memory usage of TiDB might slightly exceed the limit set by `tidb_server_memory_limit`.
-> + Since v6.5.0, the configuration item `server-memory-quota` is deprecated. To ensure compatibility, after you upgrade your cluster to v6.5.0 or a later version, `tidb_server_memory_limit` will inherit the value of `server-memory-quota`. If you have not configured `server-memory-quota` before the upgrade, the default value of `tidb_server_memory_limit` is used, which is `80%`.
+> + TiDB 在启动过程中不保证 [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-从-v640-版本开始引入) 限制生效。如果操作系统的空闲内存不足，TiDB 仍有可能出现 OOM。你需要确保 TiDB 实例有足够的可用内存。
+> + 在内存控制过程中，TiDB 的整体内存使用量可能会略微超过 `tidb_server_memory_limit` 的限制。
+> + `server-memory-quota` 配置项自 v6.5.0 起被废弃。为了保证兼容性，在升级到 v6.5.0 或更高版本的集群后，`tidb_server_memory_limit` 会继承配置项 `server-memory-quota` 的值。如果集群在升级至 v6.5.0 或更高版本前没有配置 `server-memory-quota`，`tidb_server_memory_limit` 会使用默认值，即 `80%`。
 
-When the memory usage of a tidb-server instance reaches a certain proportion of the total memory (the proportion is controlled by the system variable [`tidb_server_memory_limit_gc_trigger`](/system-variables.md#tidb_server_memory_limit_gc_trigger-new-in-v640)), tidb-server will try to trigger a Golang GC to relieve memory stress. To avoid frequent GCs that cause performance issues due to the instance memory fluctuating around the threshold, this GC method will trigger GC at most once every minute.
+在 tidb-server 实例内存用量到达总内存的一定比例时（比例由系统变量 [`tidb_server_memory_limit_gc_trigger`](/system-variables.md#tidb_server_memory_limit_gc_trigger-从-v640-版本开始引入) 控制）, tidb-server 会尝试主动触发一次 Golang GC 以缓解内存压力。为了避免实例内存在阈值上下范围不断波动导致频繁 GC 进而带来的性能问题，该 GC 方式 1 分钟最多只会触发 1 次。
 
-> **Note:**
+> **注意：**
 >
-> In a hybrid deployment scenario, `tidb_server_memory_limit` is the memory usage threshold for a single tidb-server instance, instead of the total memory threshold for the whole physical machine.
+> 在混合部署的情况下，`tidb_server_memory_limit` 为单个 tidb-server 实例的内存使用阈值，而不是整个物理机的总内存阈值。
 
-## View the memory usage of the current tidb-server instance using the INFORMATION_SCHEMA system table
+## 使用 INFORMATION_SCHEMA 系统表查看当前 tidb-server 的内存用量
 
-To view the memory usage of the current instance or cluster, you can query the system table [`INFORMATION_SCHEMA.(CLUSTER_)MEMORY_USAGE`](/information-schema/information-schema-memory-usage.md).
+要查看当前实例或集群的内存使用情况，你可以查询系统表 [`INFORMATION_SCHEMA.(CLUSTER_)MEMORY_USAGE`](/information-schema/information-schema-memory-usage.md)。
 
-To view the memory-related operations and execution basis of the current instance or cluster, you can query the system table [`INFORMATION_SCHEMA.(CLUSTER_)MEMORY_USAGE_OPS_HISTORY`](/information-schema/information-schema-memory-usage-ops-history.md). For each instance, this table retains the latest 50 records.
+要查看本实例或集群中内存相关的操作和执行依据，可以查询系统表 [`INFORMATION_SCHEMA.(CLUSTER_)MEMORY_USAGE_OPS_HISTORY`](/information-schema/information-schema-memory-usage-ops-history.md)。对于每个实例，该表保留最近 50 条记录。
 
-## Trigger the alarm of excessive memory usage
+## tidb-server 内存占用过高时的报警
 
-When the memory usage of a tidb-server instance exceeds its memory threshold (70% of its total memory by default) and any of the following conditions is met, TiDB records the related status files and prints an alarm log.
+当 tidb-server 实例的内存使用量超过内存阈值（默认为总内存量的 70%）且满足以下任一条件时，TiDB 将记录相关状态文件，并打印报警日志。
 
-- It is the first time the memory usage exceeds the memory threshold.
-- The memory usage exceeds the memory threshold and it has been more than 60 seconds since the last alarm.
-- The memory usage exceeds the memory threshold and `(Current memory usage - Memory usage at the last alarm) / Total memory > 10%`.
+- 第一次内存使用量超过内存阈值。
+- 内存使用量超过内存阈值，且距离上一次报警超过 60 秒。
+- 内存使用量超过内存阈值，且 `(本次内存使用量 - 上次报警时内存使用量) / 总内存量 > 10%`。
 
-You can control the memory threshold that triggers the alarm by modifying the memory usage ratio via the system variable [`tidb_memory_usage_alarm_ratio`](/system-variables.md#tidb_memory_usage_alarm_ratio).
+你可以通过系统变量 [`tidb_memory_usage_alarm_ratio`](/system-variables.md#tidb_memory_usage_alarm_ratio) 修改触发该报警的内存使用比率，从而控制内存报警的阈值。
 
-When the alarm of excessive memory usage is triggered, TiDB takes the following actions:
+当触发 tidb-server 内存占用过高的报警时，TiDB 的报警行为如下：
 
-- TiDB records the following information in the directory where the TiDB log file [`filename`](/tidb-configuration-file.md#filename) is located.
+- TiDB 将以下信息记录到 TiDB 日志文件 [`filename`](/tidb-configuration-file.md#filename) 所在目录中。
 
-    - The information about the top 10 SQL statements with the highest memory usage and the top 10 SQL statements with the longest running time among all SQL statements currently being executed
-    - The goroutine stack information
-    - The usage status of heap memory
+    - 当前正在执行的所有 SQL 语句中内存使用最高的 10 条语句和运行时间最长的 10 条语句的相关信息
+    - goroutine 栈信息
+    - 堆内存使用状态
 
-- TiDB prints an alarm log containing the keyword `tidb-server has the risk of OOM` and the values of the following memory-related system variables.
+- TiDB 将输出一条包含关键字 `tidb-server has the risk of OOM` 以及以下内存相关系统变量的日志。
 
-    - [`tidb_mem_oom_action`](/system-variables.md#tidb_mem_oom_action-new-in-v610)
+    - [`tidb_mem_oom_action`](/system-variables.md#tidb_mem_oom_action-从-v610-版本开始引入)
     - [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query)
-    - [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-new-in-v640)
-    - [`tidb_analyze_version`](/system-variables.md#tidb_analyze_version-new-in-v510)
+    - [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-从-v640-版本开始引入)
+    - [`tidb_analyze_version`](/system-variables.md#tidb_analyze_version-从-v510-版本开始引入)
     - [`tidb_enable_rate_limit_action`](/system-variables.md#tidb_enable_rate_limit_action)
 
-To avoid accumulating too many status files for alarms, TiDB only retains the status files generated during the recent five alarms by default. You can adjust this number by configuring the system variable [`tidb_memory_usage_alarm_keep_record_num`](/system-variables.md#tidb_memory_usage_alarm_keep_record_num-new-in-v640).
+为避免报警时产生的状态文件累积过多，目前 TiDB 默认只保留最近 5 次报警时所生成的状态文件。你可以通过配置系统变量 [`tidb_memory_usage_alarm_keep_record_num`](/system-variables.md#tidb_memory_usage_alarm_keep_record_num-从-v640-版本开始引入) 调整该次数。
 
-The following example constructs a memory-intensive SQL statement that triggers the alarm:
+下例通过构造一个占用大量内存的 SQL 语句触发报警，对该报警功能进行演示：
 
-1. Set `tidb_memory_usage_alarm_ratio` to `0.85`:
+1. 配置报警比例为 `0.85`：
 
     
     ```sql
     SET GLOBAL tidb_memory_usage_alarm_ratio = 0.85;
     ```
 
-2. Execute `CREATE TABLE t(a int);` and insert 1000 rows of data.
+2. 创建单表 `CREATE TABLE t(a int);` 并插入 1000 行数据。
 
-3. Execute `select * from t t1 join t t2 join t t3 order by t1.a`. This SQL statement outputs one billion records, which consumes a large amount of memory and therefore triggers the alarm.
+3. 执行 `select * from t t1 join t t2 join t t3 order by t1.a`。该 SQL 语句会输出 1000000000 条记录，占用巨大的内存，进而触发报警。
 
-4. Check the `tidb.log` file which records the total system memory, current system memory usage, memory usage of the tidb-server instance, and the directory of status files.
+4. 检查 `tidb.log` 文件，其中会记录系统总内存、系统当前内存使用量、tidb-server 实例的内存使用量以及状态文件所在目录。
 
     ```
     [2022/10/11 16:39:02.281 +08:00] [WARN] [memoryusagealarm.go:212] ["tidb-server has the risk of OOM because of memory usage exceeds alarm ratio. Running SQLs and heap profile will be recorded in record path"] ["is tidb_server_memory_limit set"=false] ["system memory total"=33682427904] ["system memory usage"=22120655360] ["tidb-server memory usage"=21468556992] [memory-usage-alarm-ratio=0.85] ["record path"=/tiup/deploy/tidb-4000/log/oom_record]
     ```
 
-    The fields of the example log file above are described as follows:
+    以上 Log 字段的含义如下：
 
-    * `is tidb_server_memory_limit set` indicates whether [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-new-in-v640) is set.
-    * `system memory total` indicates the total memory of the current system.
-    * `system memory usage` indicates the current system memory usage.
-    * `tidb-server memory usage` indicates the memory usage of the tidb-server instance.
-    * `memory-usage-alarm-ratio` indicates the value of the system variable [`tidb_memory_usage_alarm_ratio`](/system-variables.md#tidb_memory_usage_alarm_ratio).
-    * `record path` indicates the directory of status files.
+    * `is tidb_server_memory_limit set`：表示系统变量 [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-从-v640-版本开始引入) 是否被设置
+    * `system memory total`：表示当前系统的总内存
+    * `system memory usage`：表示当前系统的内存使用量
+    * `tidb-server memory usage`：表示 tidb-server 实例的内存使用量
+    * `memory-usage-alarm-ratio`：表示系统变量 [`tidb_memory_usage_alarm_ratio`](/system-variables.md#tidb_memory_usage_alarm_ratio) 的值
+    * `record path`：表示状态文件存放的目录
 
-5. By checking the directory of status files (In the preceding example, the directory is `/tiup/deploy/tidb-4000/log/oom_record`), you can see a record directory with the corresponding timestamp (for example, `record2022-10-09T17:18:38+08:00`). The record directory includes three files: `goroutinue`, `heap`, and `running_sql`. These three files are suffixed with the time when status files are logged. They respectively record goroutine stack information, the usage status of heap memory, and the running SQL information when the alarm is triggered. For the content in `running_sql`, refer to [`expensive-queries`](/identify-expensive-queries.md).
+5. 通过访问状态文件所在目录（该示例中的目录为 `/tiup/deploy/tidb-4000/log/oom_record`），可以看到标记了记录时间的 record 目录（例：`record2022-10-09T17:18:38+08:00`），其中包括 `goroutinue`、`heap`、`running_sql` 3 个文件，文件以记录状态文件的时间为后缀。这 3 个文件分别用来记录报警时的 goroutine 栈信息，堆内存使用状态，及正在运行的 SQL 信息。其中 `running_sql` 文件内容请参考 [`expensive-queries`](/identify-expensive-queries.md)。
 
-## Reduce the memory usage for write transactions in tidb-server
+## 如何降低 tidb-server 写入事务的内存使用
 
-The transaction model used by TiDB requires that all write operations of transactions are first cached in memory before being committed. When TiDB writes large transactions, memory usage might increase and become a bottleneck. To reduce or avoid high memory usage by large transactions under various constraints, you can adjust the [`tidb_dml_type`](/system-variables.md#tidb_dml_type-new-in-v800) system variable to `"bulk"` or use [Non-transactional DML statements](/non-transactional-dml.md).
+TiDB 采用的事务模型要求，所有待提交的事务写入操作需先在内存中进行缓存。在写入大的事务时，内存使用可能会增加并成为瓶颈。为了减少或避免大事务使用大量内存，你可以在满足各项限制条件的前提下通过调整 [`tidb_dml_type`](/system-variables.md#tidb_dml_type-从-v800-版本开始引入) 为 `"bulk"` 或使用[非事务 DML 语句](/non-transactional-dml.md)的方式来实现。
 
-## Other memory control behaviors of tidb-server
+## tidb-server 其它内存控制策略
 
-### Flow control
+### 流量控制
 
-- TiDB supports dynamic memory control for the operator that reads data. By default, this operator uses the maximum number of threads that [`tidb_distsql_scan_concurrency`](/system-variables.md#tidb_distsql_scan_concurrency) allows to read data. When the memory usage of a single SQL execution exceeds [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) each time, the operator that reads data stops one thread.
+- TiDB 支持对读数据算子的动态内存控制功能。读数据的算子默认启用 [`tidb_distsql_scan_concurrency`](/system-variables.md#tidb_distsql_scan_concurrency) 所允许的最大线程数来读取数据。当单条 SQL 语句的内存使用每超过 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 一次，读数据的算子就会停止一个线程。
+- 流控行为由参数 [`tidb_enable_rate_limit_action`](/system-variables.md#tidb_enable_rate_limit_action) 控制。
+- 当流控被触发时，会在日志中打印一条包含关键字 `memory exceeds quota, destroy one token now` 的日志。
 
-- This flow control behavior is controlled by the system variable [`tidb_enable_rate_limit_action`](/system-variables.md#tidb_enable_rate_limit_action).
-- When the flow control behavior is triggered, TiDB outputs a log containing the keywords `memory exceeds quota, destroy one token now`.
+### 数据落盘
 
-### Disk spill
+TiDB 支持对执行算子的数据落盘功能。当 SQL 的内存使用超过 Memory Quota 时，tidb-server 可以通过落盘执行算子的中间数据，缓解内存压力。支持落盘的算子有：Sort、MergeJoin、HashJoin、HashAgg。
 
-TiDB supports disk spill for execution operators. When the memory usage of a SQL execution exceeds the memory quota, tidb-server can spill the intermediate data of execution operators to the disk to relieve memory pressure. Operators supporting disk spill include Sort, MergeJoin, HashJoin, and HashAgg.
+- 落盘行为由参数 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query)、[`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom)、[`tmp-storage-path`](/tidb-configuration-file.md#tmp-storage-path)、[`tmp-storage-quota`](/tidb-configuration-file.md#tmp-storage-quota) 共同控制。
+- 当落盘被触发时，TiDB 会在日志中打印一条包含关键字 `memory exceeds quota, spill to disk now` 或 `memory exceeds quota, set aggregate mode to spill-mode` 的日志。
+- Sort、MergeJoin、HashJoin 落盘是从 v4.0.0 版本开始引入的，非并行 HashAgg 的落盘是从 v5.2.0 版本开始引入的，并行 HashAgg 的落盘在 v8.0.0 版本以实验特性引入，在 v8.2.0 版本成为正式功能 (GA)。TopN 的落盘从 v8.3.0 版本开始引入。
+- 你可以通过系统变量 [`tidb_enable_parallel_hashagg_spill`](/system-variables.md#tidb_enable_parallel_hashagg_spill-从-v800-版本开始引入) 控制是否启用支持落盘的并行 HashAgg 算法。该变量将在未来版本中废弃。
+- 当包含 Sort、MergeJoin、HashJoin、HashAgg 或 TopN 的 SQL 语句引起内存 OOM 时，TiDB 默认会触发落盘。
 
-- The disk spill behavior is jointly controlled by the following parameters: [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query), [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom), [`tmp-storage-path`](/tidb-configuration-file.md#tmp-storage-path), and [`tmp-storage-quota`](/tidb-configuration-file.md#tmp-storage-quota).
-- When the disk spill is triggered, TiDB outputs a log containing the keywords `memory exceeds quota, spill to disk now` or `memory exceeds quota, set aggregate mode to spill-mode`.
-- Disk spill for the Sort, MergeJoin, and HashJoin operators is introduced in v4.0.0. Disk spill for the non-parallel algorithm of the HashAgg operator is introduced in v5.2.0. Disk spill for the parallel algorithm of the HashAgg operator is introduced in v8.0.0 as an experimental feature and becomes generally available (GA) in v8.2.0. Disk spill for the TopN operator is introduced in v8.3.0.
-- You can control whether to enable the parallel HashAgg algorithm that supports disk spill using the [`tidb_enable_parallel_hashagg_spill`](/system-variables.md#tidb_enable_parallel_hashagg_spill-new-in-v800) system variable. This variable will be deprecated in a future release.
-- When the SQL executions containing Sort, MergeJoin, HashJoin, HashAgg, or TopN cause OOM, TiDB triggers disk spill by default. 
-
-> **Note:**
+> **注意：**
 >
-> The disk spill for HashAgg does not support SQL executions containing the `DISTINCT` aggregate function. When a SQL execution containing a `DISTINCT` aggregate function uses too much memory, the disk spill does not apply.
+> + HashAgg 落盘功能目前不支持 distinct 聚合函数。使用 distinct 函数且内存占用过大时，无法进行落盘。
 
-The following example uses a memory-consuming SQL statement to demonstrate the disk spill feature for HashAgg:
+本示例通过构造一个占用大量内存的 SQL 语句，对 HashAgg 落盘功能进行演示：
 
-1. Configure the memory quota of a SQL statement to 1GB (1 GB by default):
+1. 将 SQL 语句的 Memory Quota 配置为 1GB（默认 1GB）：
 
     
     ```sql
     SET tidb_mem_quota_query = 1 << 30;
     ```
 
-2. Create a single table `CREATE TABLE t(a int);` and insert 256 rows of different data.
+2. 创建单表 `CREATE TABLE t(a int);` 并插入 256 行不同的数据。
 
-3. Execute the following SQL statement:
+3. 尝试执行以下 SQL 语句：
 
     
     ```sql
     [tidb]> explain analyze select /*+ HASH_AGG() */ count(*) from t t1 join t t2 join t t3 group by t1.a, t2.a, t3.a;
     ```
 
-    Because executing this SQL statement occupies too much memory, the following "Out of Memory Quota" error message is returned:
+    该 SQL 语句占用大量内存，返回 Out of Memory Quota 错误。
 
     ```sql
     ERROR 1105 (HY000): Out Of Memory Quota![conn_id=3]
     ```
 
-4. Execute the same SQL statement. You can find that this time, the statement is successfully executed and no error message is returned. From the following detailed execution plan, you can see that HashAgg has used 600 MB of hard disk space.
+4. 执行相同的 SQL 语句，不再返回错误，可以执行成功。从详细的执行计划可以看出，HashAgg 使用了 600MB 的硬盘空间。
 
     
     ```sql
@@ -200,22 +203,22 @@ The following example uses a memory-consuming SQL statement to demonstrate the d
     9 rows in set (1 min 37.428 sec)
     ```
 
-## Others
+## 其它
 
-### Mitigate OOM issues by configuring `GOMEMLIMIT`
+### 设置环境变量 `GOMEMLIMIT` 缓解 OOM 问题
 
-GO 1.19 introduces an environment variable [`GOMEMLIMIT`](https://pkg.go.dev/runtime@go1.19#hdr-Environment_Variables) to set the memory limit that triggers GC.
+Golang 自 Go 1.19 版本开始引入 [`GOMEMLIMIT`](https://pkg.go.dev/runtime@go1.19#hdr-Environment_Variables) 环境变量，该变量用来设置触发 Go GC 的内存上限。
 
-For v6.1.3 <= TiDB < v6.5.0, you can mitigate a typical category of OOM issues by manually setting `GOMEMLIMIT`. The typical category of OOM issues is: before OOM occurs, the estimated memory in use on Grafana occupies only half of the entire memory (TiDB-Runtime > Memory Usage > estimate-inuse), as shown in the following figure:
+对于 v6.1.3 <= TiDB < v6.5.0 的版本，你可以通过手动设置 Go `GOMEMLIMIT` 环境变量的方式来缓解一类 OOM 问题。该类 OOM 问题具有一个典型特征：观察 Grafana 监控，OOM 前的时刻，TiDB-Runtime > Memory Usage 面板中 **estimate-inuse** 立柱部分在整个立柱中仅仅占一半。如下图所示：
 
-![normal OOM case example](https://docs-download.pingcap.com/media/images/docs/configure-memory-usage-oom-example.png)
+![normal OOM case example](https://docs-download.pingcap.com/media/images/docs-cn/configure-memory-usage-oom-example.png)
 
-To verify the performance of `GOMEMLIMIT`, a test is performed to compare the specific memory usage with and without `GOMEMLIMIT` configuration.
+为了验证 `GOMEMLIMIT` 在该类场景下的效果，以下通过一个对比实验进行说明：
 
-- In TiDB v6.1.2, the TiDB server encounters OOM (system memory: about 48 GiB) after the simulated workload runs for several minutes:
+- 在 TiDB v6.1.2 下，模拟负载在持续运行几分钟后，TiDB server 会发生 OOM（系统内存约 48 GiB）：
 
-    ![v6.1.2 workload oom](https://docs-download.pingcap.com/media/images/docs/configure-memory-usage-612-oom.png)
+    ![v6.1.2 workload oom](https://docs-download.pingcap.com/media/images/docs-cn/configure-memory-usage-612-oom.png)
 
-- In TiDB v6.1.3, `GOMEMLIMIT` is set to 40000 MiB. It is found that the simulated workload runs stably for a long time, OOM does not occur in the TiDB server, and the maximum memory usage of the process is stable at around 40.8 GiB:
+- 在 TiDB v6.1.3 下，设置 `GOMEMLIMIT` 为 40000 MiB，模拟负载长期稳定运行、TiDB server 未发生 OOM 且进程最高内存用量稳定在 40.8 GiB 左右：
 
-    ![v6.1.3 workload no oom with GOMEMLIMIT](https://docs-download.pingcap.com/media/images/docs/configure-memory-usage-613-no-oom.png)
+    ![v6.1.3 workload no oom with GOMEMLIMIT](https://docs-download.pingcap.com/media/images/docs-cn/configure-memory-usage-613-no-oom.png)

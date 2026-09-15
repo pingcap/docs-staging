@@ -1,22 +1,22 @@
 ---
-title: Filter DML Events Using SQL Expressions
-summary: Learn how to filter DML events using SQL expressions.
+title: 如何通过 SQL 表达式过滤 DML
+summary: 介绍如何通过 SQL 表达式过滤 DML 事件
 ---
 
-# Filter DML Events Using SQL Expressions
+# 如何通过 SQL 表达式过滤 DML
 
-This document introduces how to filter binlog events using SQL expressions when you use DM to perform continuous incremental data replication. For the detailed replication instruction, refer to the following documents:
+本文档介绍使用 DM 持续增量数据同步时，如何更加精细的过滤 binlog 事件。具体迁移操作可参考已有数据迁移场景：
 
-- [Migrate Small Datasets from MySQL to TiDB](/migrate-small-mysql-to-tidb.md)
-- [Migrate Large Datasets from MySQL to TiDB](/migrate-large-mysql-to-tidb.md)
-- [Migrate and Merge MySQL Shards of Small Datasets to TiDB](/migrate-small-mysql-shards-to-tidb.md)
-- [Migrate and Merge MySQL Shards of Large Datasets to TiDB](/migrate-large-mysql-shards-to-tidb.md)
+- [从小数据量 MySQL 迁移数据到 TiDB](/migrate-small-mysql-to-tidb.md)
+- [从大数据量 MySQL 迁移数据到 TiDB](/migrate-large-mysql-to-tidb.md)
+- [从小数据量分库分表 MySQL 合并迁移数据到 TiDB](/migrate-small-mysql-shards-to-tidb.md)
+- [从大数据量分库分表 MySQL 合并迁移数据到 TiDB](/migrate-large-mysql-shards-to-tidb.md)
 
-When performing incremental data replication, you can use the [Binlog Event Filter](/filter-binlog-event.md) to filter certain types of binlog events. For example, you can choose not to replicate `DELETE` events to the downstream for the purposes like archiving and auditing. However, the Binlog Event Filter cannot determine whether to filter the `DELETE` event of a row that requires finer granularity.
+在进行增量数据迁移时，可以通过[如何过滤 binlog 事件](/filter-binlog-event.md)功能过滤某些类型的 binlog event，例如不向下游迁移 `DELETE` 事件以达到归档、审计等目的。但是 binlog event filter 无法以更细粒度判断某一行的 `DELETE` 事件是否要被过滤。
 
-To address the issue, since v2.0.5, DM supports using `binlog value filter` in incremental data replication to filter data. Among the DM-supported and `ROW`-formatted binlog, the binlog events carry values of all columns, and you can configure SQL expressions based on these values. If the expression calculates a row change as `TRUE`, DM does not replicate this row change to the downstream.
+为了解决上述问题，从 v2.0.5 起，DM 支持在增量数据同步阶段使用`binlog value filter`过滤迁移数据。DM 支持的 `ROW` 格式的 binlog 中，binlog event 带有所有列的值。你可以基于这些值配置 SQL 表达式。如果该表达式对于某条行变更的计算结果是 `TRUE`，DM 就不会向下游迁移该条行变更。
 
-Similar to [Binlog Event Filter](/filter-binlog-event.md), you need to configure `binlog value filter` in the task configuration file. For details, see the following configuration example. For the advanced task configuration and the description, refer to [DM advanced task configuration file](/dm/task-configuration-file-full.md#task-configuration-file-template-advanced).
+与[如何过滤 binlog 事件](/filter-binlog-event.md)类似，表达式过滤需要在数据迁移任务配置文件里配置，详见下面配置样例。完整的配置及意义，可以参考 [DM 完整配置文件示例](/dm/task-configuration-file-full.md#完整配置文件示例)：
 
 ```yaml
 name: test
@@ -33,48 +33,50 @@ expression-filter:
     insert-value-expr: "c % 2 = 0"
 ```
 
-In the above configuration example, the `even_c` rule is configured and referenced by the data source `mysql-replica-01`. According to this rule, for the `tb1` table in the `expr_filter` schema, when an even number is inserted into the `c` column (`c % 2 = 0`), this `insert` statement is not replicated to the downstream. The following example shows the effect of this rule.
+上面的示例配置了 `even_c` 规则，并让 source ID 为 `mysql-replica-01` 的数据源引用了该规则。`even_c` 规则的含义是：对于 `expr_filter` 库下的 `tbl` 表，当插入的 `c` 的值为偶数 (`c % 2 = 0`) 时，不将这条插入语句迁移到下游。下面展示该规则的使用效果。
 
-Incrementally insert the following data in the upstream data source:
+在上游数据源增量插入以下数据：
 
 ```sql
 INSERT INTO tbl(id, c) VALUES (1, 1), (2, 2), (3, 3), (4, 4);
 ```
 
-Then query the `tb1` table on downstream. You can see that only the rows with odd numbers on `c` are replicated.
+随后在下游查询 `tbl` 表，可见只有 `c` 的值为单数的行迁移到了下游：
 
-```sql
+```
 MySQL [test]> select * from tbl;
+
 +------+------+
 | id   | c    |
 +------+------+
 |    1 |    1 |
 |    3 |    3 |
 +------+------+
+
 2 rows in set (0.001 sec)
 ```
 
-## Configuration parameters and description
+## 配置参数及规则说明
 
-- `schema`: The name of the upstream schema to match. Wildcard matching or regular matching is not supported.
-- `table`: The name of the upstream table to match. Wildcard matching or regular matching is not supported.
-- `insert-value-expr`: Configures an expression that takes effect on values carried by the `INSERT` type binlog events (WRITE_ROWS_EVENT). You cannot use this expression together with `update-old-value-expr`, `update-new-value-expr` or `delete-value-expr` in the same configuration item.
-- `update-old-value-expr`: Configures an expression that takes effect on the old values carried by the `UPDATE` type binlog events (UPDATE_ROWS_EVENT). You cannot use this expression together with `insert-value-expr` or `delete-value-expr` in the same configuration item.
-- `update-new-value-expr`: Configures an expression that takes effect on the new values carried by the `UPDATE` type binlog events (UPDATE_ROWS_EVENT). You cannot use this expression together with `insert-value-expr` or `delete-value-expr` in the same configuration item.
-- `delete-value-expr`: Configures an expression that takes effect on values carried by the `DELETE` type binlog events (DELETE_ROWS_EVENT). You cannot use this expression together with `insert-value-expr`, `update-old-value-expr` or `update-new-value-expr`.
+- `schema`：要匹配的上游数据库库名，不支持通配符匹配或正则匹配。
+- `table`: 要匹配的上游表名，不支持通配符匹配或正则匹配。
+- `insert-value-expr`：配置一个表达式，对 INSERT 类型的 binlog event (WRITE_ROWS_EVENT) 带有的值生效。不能与 `update-old-value-expr`、`update-new-value-expr`、`delete-value-expr` 出现在一个配置项中。
+- `update-old-value-expr`：配置一个表达式，对 UPDATE 类型的 binlog event (UPDATE_ROWS_EVENT) 更新对应的旧值生效。不能与 `insert-value-expr`、`delete-value-expr` 出现在一个配置项中。
+- `update-new-value-expr`：配置一个表达式，对 UPDATE 类型的 binlog event (UPDATE_ROWS_EVENT) 更新对应的新值生效。不能与 `insert-value-expr`、`delete-value-expr` 出现在一个配置项中。
+- `delete-value-expr`：配置一个表达式，对 DELETE 类型的 binlog event (DELETE_ROWS_EVENT) 带有的值生效。不能与 `insert-value-expr`、`update-old-value-expr`、`update-new-value-expr` 出现在一个配置项中。
 
-> **Note:**
+> **注意：**
 >
-> - You can configure `update-old-value-expr` and `update-new-value-expr` together.
-> - When `update-old-value-expr` and `update-new-value-expr` are configured together, the rows whose "update + old values" meet `update-old-value-expr` **and** whose "update + new values" meet `update-new-value-expr` are filtered.
-> - When one of `update-old-value-expr` and `update-new-value-expr` is configured, the configured expression determines whether to filter the **entire row change**, which means that the deletion of old values and the insertion of new values are filtered as a whole.
+> - `update-old-value-expr` 可以与 `update-new-value-expr` 同时配置。
+> - 当二者同时配置时，会将“更新+旧值“满足`update-old-value-expr` **且**”更新+新值“满足 `update-new-value-expr` 的行过滤掉。
+> - 当只配置一者时，配置的这条表达式会决定是否过滤**整个行变更**，即旧值的删除和新值的插入会作为一个整体被过滤掉。
 
-You can use the SQL expression on one column or on multiple columns. You can also use the SQL functions supported by TiDB, such as `c % 2 = 0`, `a*a + b*b = c*c`, and `ts > NOW()`.
+SQL 表达式可以涉及一列或多列，也可使用 TiDB 支持的 SQL 函数，例如 `c % 2 = 0`、`a*a + b*b = c*c`、`ts > NOW()`。
 
-The `TIMESTAMP` default time zone is the time zone specified in the task configuration file. The default value is the time zone of the downstream. You can explicitly specify the time zone in a way like `c_timestamp = '2021-01-01 12:34:56.5678+08:00'`.
+TIMESTAMP 类型的默认时区是任务配置文件中指定的时区，默认值是下游时区。可以使用 `c_timestamp = '2021-01-01 12:34:56.5678+08:00'` 的方式显式指定时区。
 
-You can configure multiple filtering rules under the `expression-filter` configuration item. The upstream data source references the required rule in `expression-filters` to make it effective. When multiple rules are used, if **any** one of the rules are matched, the entire row change is filtered.
+配置项 `expression-filter` 下可以定义多条过滤规则，上游数据源在其 `expression-filters` 配置项中引用需要的规则使其生效。当有多条规则生效时，匹配到**任意一条**规则即会导致某个行变更被过滤。
 
-> **Note:**
+> **注意：**
 >
-> Configuring too many expression filtering rules increases the calculation overhead of DM and slows down the data replication.
+> 为某张表设置过多的表达式过滤会增加 DM 的计算开销，可能导致数据迁移速度变慢。

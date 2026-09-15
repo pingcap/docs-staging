@@ -1,13 +1,13 @@
 ---
-title: CREATE DATABASE | TiDB SQL 语句参考
-summary: 关于在 TiDB 中使用 CREATE DATABASE 的概述。
+title: CREATE DATABASE
+summary: TiDB 数据库中 CREATE DATABASE 的使用概况。
 ---
 
 # CREATE DATABASE
 
-此语句用于在 TiDB 中创建一个新的数据库。MySQL 中的“数据库”术语与 SQL 标准中的 schema 最为接近。
+`CREATE DATABASE` 语句用于在 TiDB 上创建新数据库。按照 SQL 标准，“数据库”一词在 MySQL 术语中最接近 “schema”。
 
-## 概要
+## 语法图
 
 ```ebnf+diagram
 CreateDatabaseStmt ::=
@@ -34,9 +34,10 @@ PlacementPolicyOption ::=
 |   "PLACEMENT" "POLICY" (EqOpt | "SET") "DEFAULT"
 ```
 
-## 语法
+## 语法说明
 
-`CREATE DATABASE` 语句用于创建数据库，并指定数据库的默认属性，例如默认字符集和排序规则。`CREATE SCHEMA` 是 `CREATE DATABASE` 的同义词。
+`CREATE DATABASE` 用于创建数据库，并可以指定数据库的默认属性（如数据库默认字符集、排序规则）。`CREATE SCHEMA` 跟 `CREATE DATABASE` 操作效果一样。
+
 
 ```sql
 CREATE {DATABASE | SCHEMA} [IF NOT EXISTS] db_name
@@ -47,22 +48,45 @@ create_specification:
   | [DEFAULT] COLLATE [=] collation_name
 ```
 
-如果你创建的数据库已存在且未指定 `IF NOT EXISTS`，则会显示错误。
+当创建已存在的数据库且不指定使用 `IF NOT EXISTS` 时会报错。
 
-`create_specification` 选项用于指定数据库中的具体 `CHARACTER SET` 和 `COLLATE`。目前，TiDB 仅支持部分字符集和排序规则。详情请参见 [字符集和排序规则支持](/character-set-and-collation.md)。
+`create_specification` 选项用于指定数据库具体的 `CHARACTER SET` 和 `COLLATE`。目前 TiDB 只支持部分的字符集和排序规则，请参照[字符集支持](/character-set-and-collation.md)。
 
 ## 示例
 
+
 ```sql
-mysql> CREATE DATABASE mynewdatabase;
+CREATE DATABASE mynewdatabase;
+```
+
+```
 Query OK, 0 rows affected (0.09 sec)
+```
 
-mysql> USE mynewdatabase;
+
+```sql
+USE mynewdatabase;
+```
+
+```
 Database changed
-mysql> CREATE TABLE t1 (a int);
-Query OK, 0 rows affected (0.11 sec)
+```
 
-mysql> SHOW TABLES;
+
+```sql
+CREATE TABLE t1 (a int);
+```
+
+```
+Query OK, 0 rows affected (0.11 sec)
+```
+
+
+```sql
+SHOW TABLES;
+```
+
+```
 +-------------------------+
 | Tables_in_mynewdatabase |
 +-------------------------+
@@ -73,9 +97,9 @@ mysql> SHOW TABLES;
 
 ## MySQL 兼容性
 
-TiDB 中的 `CREATE DATABASE` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`CREATE DATABASE` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## 另请参阅
 
 * [USE](/sql-statements/sql-statement-use.md)
 * [ALTER DATABASE](/sql-statements/sql-statement-alter-database.md)

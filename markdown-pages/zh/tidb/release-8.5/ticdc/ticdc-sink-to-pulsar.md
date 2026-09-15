@@ -1,15 +1,15 @@
 ---
-title: Replicate Data to Pulsar
-summary: Learn how to replicate data to Pulsar using TiCDC.
+title: 同步数据到 Pulsar
+summary: 了解如何使用 TiCDC 将数据同步到 Pulsar。
 ---
 
-# Replicate Data to Pulsar
+# 同步数据到 Pulsar
 
-This document describes how to create a changefeed that replicates incremental data to Pulsar using TiCDC.
+本文介绍如何使用 TiCDC 创建一个将增量数据复制到 Pulsar 的 Changefeed。
 
-## Create a replication task to replicate incremental data to Pulsar
+## 创建同步任务，复制增量数据到 Pulsar
 
-Create a replication task by running the following command:
+使用以下命令来创建同步任务：
 
 ```shell
 cdc cli changefeed create \
@@ -23,94 +23,93 @@ cdc cli changefeed create \
 
 Create changefeed successfully!
 ID: simple-replication-task
-Info: {"upstream_id":7277814241002263370,"namespace":"default","id":"simple-replication-task","sink_uri":"pulsar://127.0.0.1:6650/consumer-test?protocol=canal-json","create_time":"2026-08-27T14:42:32.000904+08:00","start_ts":444203257406423044,"config":{"memory_quota":1073741824,"case_sensitive":false,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":false,"bdr_mode":false,"sync_point_interval":600000000000,"sync_point_retention":86400000000000,"filter":{"rules":["pulsar_test.*"]},"mounter":{"worker_num":16},"sink":{"protocol":"canal-json","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false,"binary_encoding_method":"base64"},"dispatchers":[{"matcher":["pulsar_test.*"],"partition":"","topic":"test_{schema}_{table}"}],"encoder_concurrency":16,"terminator":"\r\n","date_separator":"day","enable_partition_separator":true,"only_output_updated_columns":false,"delete_only_output_handle_key_columns":false,"pulsar_config":{"connection-timeout":30,"operation-timeout":30,"batching-max-messages":1000,"batching-max-publish-delay":10,"send-timeout":30},"advance_timeout":150},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"use_file_backend":false},"scheduler":{"enable_table_across_nodes":false,"region_threshold":100000,"write_key_threshold":0},"integrity":{"integrity_check_level":"none","corruption_handle_level":"warn"}},"state":"normal","creator_version":"8.5.8","resolved_ts":444203257406423044,"checkpoint_ts":444203257406423044,"checkpoint_time":"2026-08-27 14:42:31.410"}
+Info: {"upstream_id":7277814241002263370,"namespace":"default","id":"simple-replication-task","sink_uri":"pulsar://127.0.0.1:6650/consumer-test?protocol=canal-json","create_time":"2026-08-27T18:42:32.000904+08:00","start_ts":444203257406423044,"config":{"memory_quota":1073741824,"case_sensitive":false,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":false,"bdr_mode":false,"sync_point_interval":600000000000,"sync_point_retention":86400000000000,"filter":{"rules":["pulsar_test.*"]},"mounter":{"worker_num":16},"sink":{"protocol":"canal-json","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false,"binary_encoding_method":"base64"},"dispatchers":[{"matcher":["pulsar_test.*"],"partition":"","topic":"test_{schema}_{table}"}],"encoder_concurrency":16,"terminator":"\r\n","date_separator":"day","enable_partition_separator":true,"only_output_updated_columns":false,"delete_only_output_handle_key_columns":false,"pulsar_config":{"connection-timeout":30,"operation-timeout":30,"batching-max-messages":1000,"batching-max-publish-delay":10,"send-timeout":30},"advance_timeout":150},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"use_file_backend":false},"scheduler":{"enable_table_across_nodes":false,"region_threshold":100000,"write_key_threshold":0},"integrity":{"integrity_check_level":"none","corruption_handle_level":"warn"}},"state":"normal","creator_version":"v8.5.8","resolved_ts":444203257406423044,"checkpoint_ts":444203257406423044,"checkpoint_time":"2026-08-27 14:42:31.410"}
 ```
 
-The meaning of each parameter is as follows:
+各参数的含义如下：
 
-- `--server`: the address of a TiCDC server in the TiCDC cluster.
-- `--changefeed-id`: the ID of the replication task. The format must match the regular expression `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`. If the ID is not specified, TiCDC automatically generates a UUID (in the version 4 format) as the ID.
-- `--sink-uri`: the downstream address of the replication task. See [Use Sink URI to configure Pulsar](#sink-uri).
-- `--start-ts`: the start TSO of the changefeed. The TiCDC cluster starts pulling data from this TSO. The default value is the current time.
-- `--target-ts`: the target TSO of the changefeed. The TiCDC cluster stops pulling data at this TSO. It is empty by default, which means that TiCDC does not automatically stop pulling data.
-- `--config`: the changefeed configuration file. See [TiCDC changefeed configuration parameters](/ticdc/ticdc-changefeed-config.md).
+- `--server`：TiCDC 集群中任意一个 TiCDC 服务器的地址。
+- `--changefeed-id`：同步任务的 ID，格式需要符合正则表达式 `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`。如果不指定该 ID，TiCDC 会自动生成一个 UUID（version 4 格式）作为 ID。
+- `--sink-uri`：同步任务下游的地址，详见：[使用 Sink URI 配置 Pulsar](#sink-uri)。
+- `--start-ts`：指定 changefeed 的开始 TSO。TiCDC 集群将从这个 TSO 开始拉取数据。默认为当前时间。
+- `--target-ts`：指定 changefeed 的目标 TSO。TiCDC 集群拉取数据直到这个 TSO 停止。默认为空，即 TiCDC 不会自动停止。
+- `--config`：指定 changefeed 配置文件，详见：[TiCDC Changefeed 配置参数](/ticdc/ticdc-changefeed-config.md)。
 
-## Use Sink URI and changefeed config to configure Pulsar
+## 使用 Sink URI 和 Changefeed config 配置 Pulsar
 
-You can use Sink URI to specify the connection information for the TiCDC target system, and use changefeed config to configure parameters related to Pulsar.
+Sink URI 用于指定 TiCDC 目标系统的连接信息，Changefeed config 用来配置 Pulsar 相关的参数。
 
 ### Sink URI
 
-A Sink URI follows the following format:
+Sink URI 遵循以下格式：
 
 ```shell
 [scheme]://[userinfo@][host]:[port][/path]?[query_parameters]
 ```
 
-Configuration example 1:
+配置示例 1：
 
 ```shell
 --sink-uri="pulsar://127.0.0.1:6650/persistent://abc/def/yktest?protocol=canal-json"
 ```
 
-Configuration example 2:
+配置示例 2：
 
 ```shell
 --sink-uri="pulsar://127.0.0.1:6650/yktest?protocol=canal-json"
 ```
 
-The configurable parameters in a URI are as follows:
+URI 中可配置的的参数如下：
 
-| Parameter           | Description                                                   |
+| 参数               | 描述                                                         |
 | :------------------ | :------------------------------------------------------------ |
-| `pulsar`             | The scheme for the downstream Pulsar. The value can be `pulsar`, `pulsar+ssl`, `pulsar+http`, or `pulsar+https`, in which `pulsar+http` and `pulsar+https` are supported starting from v8.2.0.                        |
-| `127.0.0.1`          | The IP address by which the downstream Pulsar provides service.             |
-| `6650`               | The connection port for the downstream Pulsar.                              |
-| `persistent://abc/def/yktest`   |  As shown in the preceding configuration example 1, this parameter is used to specify the tenant, namespace, and topic of Pulsar.   |
-| `yktest`    | As shown in the preceding configuration example 2, if the topic you want to specify is in the default namespace `default` of the default tenant `public` in Pulsar, you can configure the URI with just the topic name, for example, `yktest`. This is equivalent to specifying the topic as `persistent://public/default/yktest`. |
+| `pulsar` | 下游 Pulsar 的连接协议，支持 `pulsar`、`pulsar+ssl`、`pulsar+http` 和 `pulsar+https` 四种协议，其中 `pulsar+http` 和 `pulsar+https` 从 v8.2.0 开始支持。|
+| `127.0.0.1`          | 下游 Pulsar 对外提供服务的 IP。                                 |
+| `6650`               | 下游 Pulsar 的连接端口。                                          |
+| `persistent://abc/def/yktest`   |  参考上面的示例 1，该参数用于指定 Pulsar 的租户、命名空间、topic。                                      |
+| `yktest`    | 参考上面的示例 2，如果你想要指定的 topic 在 Pulsar 的默认租户 `public` 下的默认命名空间 `default` 中，你可以在 URI 中只配置 topic 名，例如 `yktest`。该写法相当于指定 topic 为 `persistent://public/default/yktest`。 |
 
-### Changefeed config parameters
+### Changefeed config 参数
 
-The following are examples of changefeed config parameters:
+以下为 Changefeed config 参数示例：
 
 ```toml
 [sink]
-# `dispatchers` is used to specify matching rules.
-# Note: When the downstream MQ is Pulsar, if the routing rule for `partition` is not specified as any of `ts`, `index-value`, `table`, or `default`, each Pulsar message will be routed using the string you set as the key.
-# For example, if you specify the routing rule for a matcher as the string `code`, then all Pulsar messages that match that matcher will be routed with `code` as the key.
+# `dispatchers` 用于指定 matcher 匹配规则
+# 注意：当下游 MQ 为 Pulsar 时，如果 `partition` 的路由规则未被指定为 `ts`、`index-value`、`table`、或 `default` 中的任意一种，将会使用你设置的字符串作为每一条 Pulsar message 的 key 进行路由。例如，如果你指定的路由规则为字符串 `code`，那么符合该 matcher 的所有 Pulsar message 都将会以 `code` 作为 key 进行路由。
 # dispatchers = [
-#    {matcher = ['test1.*', 'test2.*'], topic = "Topic expression 1", partition = "ts" },
-#    {matcher = ['test3.*', 'test4.*'], topic = "Topic expression 2", partition = "index-value" },
-#    {matcher = ['test1.*', 'test5.*'], topic = "Topic expression 3", partition = "table"},
+#    {matcher = ['test1.*', 'test2.*'], topic = "Topic 表达式 1", partition = "ts" },
+#    {matcher = ['test3.*', 'test4.*'], topic = "Topic 表达式 2", partition = "index-value" },
+#    {matcher = ['test1.*', 'test5.*'], topic = "Topic 表达式 3", partition = "table"},
 #    {matcher = ['test6.*'], partition = "default"},
 #    {matcher = ['test7.*'], partition = "test123"}
 # ]
 
-# `protocol` is used to specify the protocol format for encoding messages.
-# When the downstream is Pulsar, the protocol can only be canal-json.
+# `protocol` 用于指定编码消息时使用的格式协议。
+# 当下游类型是 Pulsar 时，仅支持 canal-json 协议
 # protocol = "canal-json"
 
-# The following parameters only take effect when the downstream is Pulsar.
+# 以下参数仅在下游为 Pulsar 时生效。
 [sink.pulsar-config]
-# Authentication on the Pulsar server is done using a token. Specify the value of the token.
+# 使用 token 进行 Pulsar 服务端的认证，此处为 token 的值。
 authentication-token = "xxxxxxxxxxxxx"
-# When you use a token for Pulsar server authentication, specify the path to the file where the token is located.
+# 指定使用 token 进行 Pulsar 服务端的认证，此处为 token 所在文件的路径。
 token-from-file="/data/pulsar/token-file.txt"
-# Pulsar uses the basic account and password to authenticate the identity. Specify the account.
+# Pulsar 使用 basic 账号密码验证身份。
 basic-user-name="root"
-# Pulsar uses the basic account and password to authenticate the identity. Specify the password.
+# Pulsar 使用 basic 账号密码验证身份，此处为密码。
 basic-password="password"
-# The certificate path on the client, which is required when Pulsar enables the mTLS authentication.
+# Pulsar 启用 mTLS 认证时，客户端的证书路径。
 auth-tls-certificate-path="/data/pulsar/certificate"
-# The private key path on the client, which is required when Pulsar enables the mTLS authentication.
+# Pulsar 启用 mTLS 认证时，客户端的私钥路径。
 auth-tls-private-key-path="/data/pulsar/certificate.key"
-# The path to the trusted certificate file of the Pulsar TLS authentication, which is required when Pulsar enables the mTLS authentication or TLS encrypted transmission.
+# Pulsar TLS 可信证书文件路径，在 Pulsar 启用 mTLS 认证或者 TLS 加密传输时，需要指定该参数。
 tls-trust-certs-file-path="/data/pulsar/tls-trust-certs-file"
-# The path to the encrypted private key on the client, which is required when Pulsar enables TLS encrypted transmission.
+# Pulsar 启用 TLS 加密传输时，客户端的加密私钥路径。
 tls-key-file-path="/data/pulsar/tls-key-file"
-# The path to the encrypted certificate file on the client, which is required when Pulsar enables TLS encrypted transmission.
+# Pulsar 启用 TLS 加密传输时，客户端的加密证书文件路径。
 tls-certificate-file="/data/pulsar/tls-certificate-file"
-# Pulsar oauth2 issuer-url. For more information, see the Pulsar website: https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication
+# Pulsar oauth2 issuer-url 更多详细配置请看 Pulsar 官方介绍：https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#tls-encryption-and-authentication
 oauth2.oauth2-issuer-url="https://xxxx.auth0.com"
 # Pulsar oauth2 audience
 oauth2.oauth2-audience="https://xxxx.auth0.com/api/v2/"
@@ -120,45 +119,45 @@ oauth2.oauth2-private-key="/data/pulsar/privateKey"
 oauth2.oauth2-client-id="0Xx...Yyxeny"
 # Pulsar oauth2 oauth2-scope
 oauth2.oauth2-scope="xxxx"
-# The number of cached Pulsar producers in TiCDC. The value is 10240 by default. Each Pulsar producer corresponds to one topic. If the number of topics you need to replicate is larger than the default value, you need to increase the number.
+# TiCDC 中缓存 Pulsar Producer 的个数，默认上限为 10240 个。每个 Pulsar Producer 对应一个 topic，如果你需要同步的 topic 数量大于默认值，则需要调大该数量。
 pulsar-producer-cache-size=10240
-# Pulsar data compression method. No compression is used by default. Optional values are "lz4", "zlib", and "zstd".
+# Pulsar 数据压缩方式，默认不压缩，可选值为 "lz4"、"zlib"、"zstd"
 compression-type=""
-# The timeout for the Pulsar client to establish a TCP connection with the server. The value is 5 seconds by default.
+# Pulsar 客户端与服务端建立 TCP 连接的超时时间，默认 5 秒。
 connection-timeout=5
-# The timeout for Pulsar clients to initiate operations such as creating and subscribing to a topic. The value is 30 seconds by default.
+# Pulsar 客户端发起创建、订阅等操作的超时时间，默认为 30 秒。
 operation-timeout=30
-# The maximum number of messages in a single batch for a Pulsar producer to send. The value is 1000 by default.
+# Pulsar producer 发送消息时的单个 batch 内的消息数量上限，默认值为 1000。
 batching-max-messages=1000
-# The interval at which Pulsar producer messages are saved for batching. The value is 10 milliseconds by default.
+# Pulsar producer 消息攒批的时间间隔，默认 10 毫秒。
 batching-max-publish-delay=10
-# The timeout for a Pulsar producer to send a message. The value is 30 seconds by default.
+# Pulsar producer 发送消息的超时时间，默认 30 秒。
 send-timeout=30
 ```
 
-### Best practice
+### 最佳实践
 
-* You need to specify the `protocol` parameter when creating a changefeed. Currently, only the `canal-json` protocol is supported for replicating data to Pulsar.
-* The `pulsar-producer-cache-size` parameter indicates the number of producers cached in the Pulsar client. Because each producer in Pulsar can only correspond to one topic, TiCDC adopts the LRU method to cache producers, and the default limit is 10240. If the number of topics you need to replicate is larger than the default value, you need to increase the number.
+* 你需要在创建 Changefeed 的时候设置 `protocol` 参数。目前同步数据到 Pulsar 仅支持使用 `canal-json` 协议。
+* `pulsar-producer-cache-size` 参数表示 Pulsar 客户端中缓存 Producer 的数量，因为 Pulsar 的每个 Producer 只能对应一个 topic，TiCDC 采用 LRU 方式缓存 Producer，默认限制为 10240 个。如果你需要同步的 topic 数量大于默认值，则需要调大该数量。
 
-### TLS encrypted transmission
+### TLS 加密传输
 
-Starting from v7.5.1 and v8.0.0, TiCDC supports TLS encrypted transmission for Pulsar. The configuration example is as follows:
+TiCDC 从 v7.5.1 和 v8.0.0 开始支持 Pulsar 的 TLS 加密传输，配置样例如下所示：
 
-Sink URI:
+Sink URI：
 
 ```shell
 --sink-uri="pulsar+ssl://127.0.0.1:6651/persistent://public/default/yktest?protocol=canal-json"
 ```
 
-Configuration:
+config 参数：
 
 ```toml
 [sink.pulsar-config]
 tls-trust-certs-file-path="/data/pulsar/tls-trust-certs-file"
 ```
 
-If the `tlsRequireTrustedClientCertOnConnect=true` parameter is configured for your Pulsar server, you also need to configure the `tls-key-file-path` and `tls-certificate-file` parameters in the changefeed configuration file. For example:
+如果你的 Pulsar 服务端设置了 `tlsRequireTrustedClientCertOnConnect=true` 参数，那么你需要同时在 changefeed 的配置文件中设置 `tls-key-file-path` 和 `tls-certificate-file` 参数。如下所示：
 
 ```toml
 [sink.pulsar-config]
@@ -167,19 +166,19 @@ tls-certificate-file="/data/pulsar/tls-certificate-file"
 tls-key-file-path="/data/pulsar/tls-key-file"
 ```
 
-### TiCDC authentication and authorization for Pulsar
+### TiCDC 使用 Pulsar 的认证与授权
 
-The following is a sample configuration when you use token authentication with Pulsar:
+使用 Pulsar 的 token 认证时配置样例如下所示：
 
 - Token
 
-    Sink URI: 
+    Sink URI：
 
     ```shell
     --sink-uri="pulsar://127.0.0.1:6650/persistent://public/default/yktest?protocol=canal-json"
     ```
 
-    Config parameter: 
+    config 参数：
 
     ```shell
     [sink.pulsar-config]
@@ -188,55 +187,55 @@ The following is a sample configuration when you use token authentication with P
 
 - Token from file
 
-    Sink URI: 
+    Sink URI：
 
     ```shell
     --sink-uri="pulsar://127.0.0.1:6650/persistent://public/default/yktest?protocol=canal-json"
     ```
 
-    Config parameter: 
+    config 参数：
 
     ```toml
     [sink.pulsar-config]
-    # Pulsar uses tokens for authentication on the Pulsar server. Specify the path to the token file, which will be read from the TiCDC server.
+    # Pulsar 使用 token 进行 Pulsar 服务端的认证，但这里配置的是 token 文件的路径，会从 TiCDC Server 所在机器上读取。
     token-from-file="/data/pulsar/token-file.txt"
     ```
 
-- mTLS authentication
+- mTLS 认证
 
-    Sink URI: 
+    Sink URI：
 
     ```shell
     --sink-uri="pulsar+ssl://127.0.0.1:6651/persistent://public/default/yktest?protocol=canal-json"
     ```
 
-    Config parameters: 
+    config 参数：
 
     ```toml
     [sink.pulsar-config]
-    # Certificate path of the Pulsar mTLS authentication
+    # Pulsar mTLS 认证证书路径
     auth-tls-certificate-path="/data/pulsar/certificate"
-    # Private key path of the Pulsar mTLS authentication
+    # Pulsar mTLS 认证私钥路径
     auth-tls-private-key-path="/data/pulsar/certificate.key"
-    # Path to the trusted certificate file of the Pulsar mTLS authentication
+    # Pulsar mTLS 可信证书文件路径
     tls-trust-certs-file-path="/data/pulsar/tls-trust-certs-file"
     ```
 
-- OAuth2 authentication
+- OAuth2 认证
 
-    Starting from v7.5.1 and v8.0.0, TiCDC supports the OAuth2 authentication for Pulsar.
+    TiCDC 从 v7.5.1 和 v8.0.0 开始支持 Pulsar 的 OAuth2 认证，配置样例如下所示：
 
-    Sink URI: 
+    Sink URI：
 
     ```shell
     --sink-uri="pulsar://127.0.0.1:6650/persistent://public/default/yktest?protocol=canal-json"
     ```
 
-    Config parameters: 
+    config 参数：
 
     ```toml
     [sink.pulsar-config]
-    # Pulsar oauth2 issuer-url. For more information, see the Pulsar website: https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#oauth2-authentication
+    # Pulsar oauth2 issuer-url 更多详细配置请参见 Pulsar 官方介绍：https://pulsar.apache.org/docs/2.10.x/client-libraries-go/#oauth2-authentication
     oauth2.oauth2-issuer-url="https://xxxx.auth0.com"
     # Pulsar oauth2 audience
     oauth2.oauth2-audience="https://xxxx.auth0.com/api/v2/"
@@ -248,85 +247,85 @@ The following is a sample configuration when you use token authentication with P
     oauth2.oauth2-scope="xxxx"
     ```
 
-## Customize the dispatching rules for topics and partitions in Pulsar Sink
+## 自定义 Pulsar Sink 的 Topic 和 Partition 的分发规则
 
-### Matching rules for Matcher
+### Matcher 匹配规则
 
-Take the `dispatchers` configuration item in the following sample configuration file as an example:
+以如下示例配置文件中的 `dispatchers` 配置项为例：
 
 ```toml
 [sink]
 dispatchers = [
-  {matcher = ['test1.*', 'test2.*'], topic = "Topic expression 1", partition = "ts" },
-  {matcher = ['test3.*', 'test4.*'], topic = "Topic expression 2", partition = "index-value" },
-  {matcher = ['test1.*', 'test5.*'], topic = "Topic expression 3", partition = "table"},
+  {matcher = ['test1.*', 'test2.*'], topic = "Topic 表达式 1", partition = "ts" },
+  {matcher = ['test3.*', 'test4.*'], topic = "Topic 表达式 2", partition = "index-value" },
+  {matcher = ['test1.*', 'test5.*'], topic = "Topic 表达式 3", partition = "table"},
   {matcher = ['test6.*'], partition = "default"},
   {matcher = ['test7.*'], partition = "test123"}
 ]
 ```
 
-- The tables that match a matcher rule are dispatched according to the policy specified by the corresponding topic expression. For example, the table `test3.aa` is dispatched according to `Topic expression 2`, and the table `test5.aa` is dispatched according to `Topic expression 3`.
-- For a table that matches more than one matcher rule, it is dispatched according to the first matching topic expression. For example, the table `test1.aa` is dispatched according to `Topic expression 1`.
-- For tables that do not match any matcher, the corresponding data change events are sent to the default topic specified in `-sink-uri`. For example, the table `test10.aa` is sent to the default topic.
-- For tables that match the matcher rule but do not have a topic dispatcher specified, the corresponding data changes are sent to the default topic specified in `-sink-uri`. For example, the table `test6.abc` is sent to the default topic.
+- 对于匹配了 matcher 规则的表，按照对应的 topic 表达式指定的策略进行分发。例如，表 `test3.aa` 会按照 `Topic 表达式 2` 分发，表 `test5.aa` 会按照 `Topic 表达式 3` 分发。
+- 对于匹配了多个 matcher 规则的表，以靠前的 matcher 对应的 topic 表达式为准。例如，表 `test1.aa` 会按照 `Topic 表达式 1` 分发。
+- 对于没有匹配任何 matcher 的表，将对应的数据变更事件发送到 `--sink-uri` 中指定的默认 topic 中。例如，表 `test10.aa` 会发送到默认 topic。
+- 对于匹配了 matcher 规则但是没有指定 topic 分发器的表，将对应的数据变更发送到 `--sink-uri` 中指定的默认 topic 中。例如，表 `test6.abc` 会发送到默认 topic。
 
-### Topic dispatcher
+### Topic 分发器
 
-You can use `topic = "xxx"` to specify a topic dispatcher and use topic expressions to implement flexible topic dispatching policies. It is recommended that the total number of topics be less than 1000.
+Topic 分发器用 `topic = "xxx"` 来指定，并使用 topic 表达式来实现灵活的 topic 分发策略。topic 的总数建议小于 1000。
 
-The format of a topic expression is `[tenant_and_namespace][prefix]{schema}[middle][{table}][suffix]`. The following are the meanings of each part:
+Topic 表达式的基本规则为 `[tenant_and_namespace][prefix]{schema}[middle][{table}][suffix]`，详细解释如下：
 
-- `tenant_and_namespace`：Optional. Represents the tenant and namespace of the topic, such as `persistent://abc/def/`. If not configured, it means that the topic is in the default namespace `default` under the default tenant `public` of Pulsar.
-- `prefix`: Optional. Represents the prefix of the topic name.
-- `{schema}`: Optional. Represents the database name.
-- `middle`: Optional. Represents the separator between a database name and a table name.
-- `{table}`: Optional. Represents the table name.
-- `suffix`: Optional. Represents the suffix of the topic name.
+- `tenant_and_namespace`：可选项，代表 Topic 所在的租户和命名空间，比如 `persistent://abc/def/`。如果不配置，则代表 Topic 在 Pulsar 的默认租户 `public` 下的默认命名空间 `default` 中。
+- `prefix`：可选项，代表 Topic Name 的前缀。
+- `{schema}`：可选项，用于匹配库名。
+- `middle`：可选项，代表库表名之间的分隔符。
+- `{table}`：可选项，用于匹配表名。
+- `suffix`：可选项，代表 Topic Name 的后缀。
 
-`prefix`, `middle`, and `suffix` only support uppercase and lowercase letters (`a-z`, `A-Z`), numbers (`0-9`), dots (`.`), underscores (`_`), and hyphens (`-`). `{schema}` and `{table}` must be lowercase. Placeholders such as `{Schema}` and `{TABLE}` that contain uppercase letters are invalid.
+其中 `prefix`、`middle` 以及 `suffix` 仅允许出现大小写字母（`a-z`、`A-Z`）、数字（`0-9`）、点号（`.`）、下划线（`_`）和中划线（`-`）。`{schema}`、`{table}` 均为小写，诸如 `{Schema}` 以及 `{TABLE}` 等包含大写字母的占位符是无效的。
 
-The following are some examples:
+下面是一些示例：
 
 - `matcher = ['test1.table1', 'test2.table2'], topic = "hello_{schema}_{table}"`
-    - Data change events corresponding to the table `test1.table1` are despatched to a topic named `hello_test1_table1`.
-    - Data change events corresponding to the table `test2.table2` are despatched to a topic named `hello_test2_table2`.
+    - 对于表 `test1.table1` 对应的数据变更事件，发送到名为 `hello_test1_table1` 的 topic 中。
+    - 对于表 `test2.table2` 对应的数据变更事件，发送到名为 `hello_test2_table2` 的 topic 中。
 
 - `matcher = ['test3.*', 'test4.*'], topic = "hello_{schema}_world"`
-    - Data change events for all tables under `test3` are despatched to a topic named `hello_test3_world`.
-    - Data change events for all tables under `test4` are despatched to a topic named `hello_test4_world`.
+    - 对于 `test3` 下的所有表对应的数据变更事件，发送到名为 `hello_test3_world` 的 topic 中。
+    - 对于 `test4` 下的所有表对应的数据变更事件，发送到名为 `hello_test4_world` 的 topic 中。
 
 - `matcher = ['*.*'], topic = "{schema}_{table}"`
-    - For all tables that TiCDC listens on, they are despatched to separate topics according to the `databaseName_tableName` rule. For example, for the table `test.account`, TiCDC despatches its data change log to a topic named `test_account`.
+    - 对于 TiCDC 监听的所有表，按照“库名_表名”的规则分别分发到独立的 topic 中。例如，对于 `test.account` 表，TiCDC 会将其数据变更日志分发到名为 `test_account` 的 topic 中。
 
-### Dispatch DDL events
+### DDL 事件的分发
 
-#### Database-level DDL events
+#### 库级别 DDL
 
-DDL statements such as `CREATE DATABASE` and `DROP DATABASE` that are not related to a specific table are called database-level DDL statements. Events corresponding to database-level DDL statements are dispatched to the default topic specified in `--sink-uri`.
+诸如 `CREATE DATABASE` 和 `DROP DATABASE` 等和某一张具体的表无关的 DDL，称为库级别 DDL。对于库级别 DDL 对应的事件，被发送到 `--sink-uri` 中指定的默认 topic 中。
 
-#### Table-level DDL events
+#### 表级别 DDL
 
-DDL statements such as `ALTER TABLE` and `CREATE TABLE` that are related to a specific table are called table-level DDL statements. Events corresponding to table-level DDL statements are dispatched to an appropriate topic according to the configuration of `dispatchers`.
+诸如 `ALTER TABLE`、`CREATE TABLE` 这类和某一张具体的表相关的 DDL，称之为表级别 DDL。对于表级别 DDL 对应的事件，按照 `dispatchers` 的配置，被发送到相应的 topic 中。
 
-For example, for a `dispatchers` configuration like `matcher = ['test.*'], topic = {schema}_{table}`, the DDL events are despatched as follows:
+例如，对于 `matcher = ['test.*'], topic = {schema}_{table}` 这样的 `dispatchers` 配置，DDL 事件分发情况如下：
 
-- If a DDL event only involves a single table, the DDL event is dispatched to the appropriate topic as it is. For example, for the DDL event `DROP TABLE test.table1`, the event is dispatched to the topic named `test_table1`.
+- 若 DDL 事件中涉及单张表，则将 DDL 事件原样发送到相应的 topic 中。例如，对于 DDL 事件 `DROP TABLE test.table1`，该事件会被发送到名为 `test_table1` 的 topic 中。
 
-- If a DDL event involves more than one table (`RENAME TABLE`, `DROP TABLE`, and `DROP VIEW` might all involve more than one table), the single DDL event is split into multiple ones and dispatched to appropriate topics. For example, for the DDL event `RENAME TABLE test.table1 TO test.table10, test.table2 TO test.table20`, the processing is as follows:
+- 若 DDL 事件中涉及多张表（`RENAME TABLE`、`DROP TABLE`、`DROP VIEW` 都可能涉及多张表），则将单个 DDL 事件拆分为多个发送到相应的 topic 中。例如，对于 DDL 事件 `RENAME TABLE test.table1 TO test.table10, test.table2 TO test.table20`，处理如下：
 
-    - Dispatch the DDL event for `RENAME TABLE test.table1 TO test.table10` to a topic named `test_table1`.
-    - Dispatch the DDL event for `RENAME TABLE test.table2 TO test.table20` to a topic named `test_table2`.
+    - 将 `RENAME TABLE test.table1 TO test.table10` 的 DDL 事件发送到名为 `test_table1` 的 topic 中，
+    - 将 `RENAME TABLE test.table2 TO test.table20` 的 DDL 事件发送到名为 `test.table2` 的 topic 中。
 
-### Partition dispatcher
+### Partition 分发器
 
-Currently, TiCDC only supports consumers to consume messages using the exclusive subscription model, that is, each consumer can consume messages from all partitions in a topic.
+目前 TiCDC 仅支持消费者使用 Exclusive 的订阅模式对消息进行消费，即每个消费者将会消费一个 topic 中所有 Partition 中的消息。
 
-You can specify a partition dispatcher with `partition = "xxx"`. The following partition dispatches are supported: `default`, `ts`, `index-value`, and `table`. If you fill in any other string, TiCDC will pass that string as the `key` of the message in the messages sent to the Pulsar server.
+Partition 分发器用 `partition = "xxx"` 来指定，支持 `default`、`ts`、`index-value`、`table` 四种 Partition 分发器。但如果你填入其他字段，则会在发送给 Pulsar Server 的消息中将该字段透传给 Message 的 `key`。
 
-The dispatching rules are as follows:
+具体分发规则如下：
 
-- `default`: By default, events are dispatched by the schema name and table name, which is the same as when `table` is specified.
-- `ts`: Use commitTs of row changes to perform hash calculation and dispatch events.
-- `index-value`: Use the value of the table primary key or unique index to perform hash calculation and dispatch events.
-- `table`: Use the schema name and table name to perform hash calculation and dispatch events.
-- Other self-defined string: The self-defined string is used directly as the key for the Pulsar message, and the Pulsar producer uses this key value for dispatching.
+- `default`：默认按照 schema 名和 table 名进行 event 分发，和指定 `table` 时相同。
+- `ts`：以行变更的 commitTs 做 Hash 计算并进行 event 分发。
+- `index-value`：以表的主键或者唯一索引的值做 Hash 计算并进行 event 分发。
+- `table`：以表的 schema 名和 table 名做 Hash 计算并进行 event 分发。
+- 其他：将会直接把该值作为 Pulsar message 的 key，Pulsar Producer 会使用该 key 值进行分发。

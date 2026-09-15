@@ -1,29 +1,33 @@
 ---
-title: SHOW [GLOBAL|SESSION] VARIABLES | TiDB SQL Statement Reference
-summary: An overview of the usage of SHOW [GLOBAL|SESSION] VARIABLES for the TiDB database.
+title: SHOW [GLOBAL|SESSION] VARIABLES
+summary: TiDB 数据库中 SHOW [GLOBAL|SESSION] VARIABLES 的使用概况。
 ---
 
 # SHOW [GLOBAL|SESSION] VARIABLES
 
-This statement shows a list of variables for the scope of either `GLOBAL` or `SESSION`. If no scope is specified, the default scope of `SESSION` will apply.
+`SHOW [GLOBAL|SESSION] VARIABLES` 语句用于显示 `GLOBAL` 或 `SESSION` 范围的变量列表。如果未指定范围，则应用默认范围 `SESSION`。
 
-## Synopsis
+## 语法图
 
 ```ebnf+diagram
 ShowVariablesStmt ::=
     "SHOW" ("GLOBAL" | "SESSION")? VARIABLES ShowLikeOrWhere?
-    
+
 ShowLikeOrWhere ::=
     "LIKE" SimpleExpr
 |   "WHERE" Expression
 ```
 
-## Examples
+## 示例
 
-以下示例演示了如何使用 `SHOW [GLOBAL|SESSION] VARIABLES` 语句显示名称或值匹配特定模式的变量。有关这些变量的详细说明，请参见 [System Variables](/system-variables.md)。
+以下示例展示了如何使用 `SHOW [GLOBAL|SESSION] VARIABLES` 语句查看变量名或变量值符合特定模式的变量。关于这些变量的详细说明，参见[系统变量和语法](/system-variables.md)。
+
 
 ```sql
-mysql> SHOW GLOBAL VARIABLES LIKE 'tidb_stmt_summary%';
+SHOW GLOBAL VARIABLES LIKE 'tidb_stmt_summary%';
+```
+
+```sql
 +-------------------------------------+---------------------+
 | Variable_name                       | Value               |
 +-------------------------------------+---------------------+
@@ -39,24 +43,40 @@ mysql> SHOW GLOBAL VARIABLES LIKE 'tidb_stmt_summary%';
 | tidb_stmt_summary_refresh_interval  | 1800                |
 +-------------------------------------+---------------------+
 10 rows in set (0.001 sec)
+```
 
-mysql> SHOW GLOBAL VARIABLES LIKE 'time_zone%';
+
+```sql
+SHOW GLOBAL VARIABLES LIKE 'time_zone%';
+```
+
+```sql
 +---------------+--------+
 | Variable_name | Value  |
 +---------------+--------+
 | time_zone     | SYSTEM |
 +---------------+--------+
 1 row in set (0.00 sec)
+```
 
-mysql> SHOW VARIABLES WHERE Variable_name="tidb_window_concurrency";
+```sql
+SHOW VARIABLES WHERE Variable_name="tidb_window_concurrency";
+```
+
+```sql
 +-------------------------+-------+
 | Variable_name           | Value |
 +-------------------------+-------+
 | tidb_window_concurrency | -1    |
 +-------------------------+-------+
 1 row in set (0.00 sec)
+```
 
-mysql> SHOW VARIABLES WHERE Value=300;
+```sql
+SHOW VARIABLES WHERE Value=300;
+```
+
+```sql
 +--------------------------------+-------+
 | Variable_name                  | Value |
 +--------------------------------+-------+
@@ -71,10 +91,10 @@ mysql> SHOW VARIABLES WHERE Value=300;
 7 rows in set (0.00 sec)
 ```
 
-## MySQL compatibility
+## MySQL 兼容性
 
-The `SHOW [GLOBAL|SESSION] VARIABLES` statement in TiDB is fully compatible with MySQL. If you find any compatibility differences, [report a bug](https://docs.pingcap.com/tidb/stable/support).
+`SHOW [GLOBAL|SESSION] VARIABLES` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## See also
+## 另请参阅
 
 * [`SET [GLOBAL|SESSION]`](/sql-statements/sql-statement-set-variable.md)

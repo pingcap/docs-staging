@@ -1,13 +1,13 @@
 ---
-title: DELETE | TiDB SQL 语句参考
-summary: 关于在 TiDB 数据库中使用 DELETE 的概述。
+title: DELETE
+summary: TiDB 数据库中 DELETE 的使用概况。
 ---
 
 # DELETE
 
 `DELETE` 语句用于从指定的表中删除行。
 
-## 概述
+## 语法图
 
 ```ebnf+diagram
 DeleteFromStmt ::=
@@ -16,15 +16,31 @@ DeleteFromStmt ::=
 
 ## 示例
 
-```sql
-mysql> CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
-Query OK, 0 rows affected (0.11 sec)
 
-mysql> INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
+```sql
+CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
+```
+
+```
+Query OK, 0 rows affected (0.11 sec)
+```
+
+
+```sql
+INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
+```
+
+```
 Query OK, 5 rows affected (0.03 sec)
 Records: 5  Duplicates: 0  Warnings: 0
+```
 
-mysql> SELECT * FROM t1;
+
+```sql
+SELECT * FROM t1;
+```
+
+```
 +----+----+
 | id | c1 |
 +----+----+
@@ -35,11 +51,23 @@ mysql> SELECT * FROM t1;
 |  5 |  5 |
 +----+----+
 5 rows in set (0.00 sec)
+```
 
-mysql> DELETE FROM t1 WHERE id = 4;
+
+```sql
+DELETE FROM t1 WHERE id = 4;
+```
+
+```
 Query OK, 1 row affected (0.02 sec)
+```
 
-mysql> SELECT * FROM t1;
+
+```sql
+SELECT * FROM t1;
+```
+
+```
 +----+----+
 | id | c1 |
 +----+----+
@@ -53,9 +81,9 @@ mysql> SELECT * FROM t1;
 
 ## MySQL 兼容性
 
-TiDB 中的 `DELETE` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`DELETE` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## 另请参阅
 
 * [INSERT](/sql-statements/sql-statement-insert.md)
 * [SELECT](/sql-statements/sql-statement-select.md)

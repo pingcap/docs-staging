@@ -1,116 +1,97 @@
 ---
-title: Enable TLS Between TiDB Components
-summary: Learn how to enable TLS authentication between TiDB components.
+title: 为 TiDB 组件间通信开启加密传输
+summary: 了解如何为 TiDB 集群内各组件间开启加密传输。
 ---
 
-# Enable TLS Between TiDB Components
+# 为 TiDB 组件间通信开启加密传输
 
-This document describes how to enable encrypted data transmission between components within a TiDB cluster. Once enabled, encrypted transmission is used between the following components:
+本部分介绍如何为 TiDB 集群内各组件间开启加密传输。一旦开启，以下组件间均将使用加密传输：
 
-- Communication between TiDB, TiKV, PD, and TiFlash
-- TiDB Control and TiDB; TiKV Control and TiKV; PD Control and PD
-- Internal communication within each TiDB, TiKV, PD, and TiFlash cluster
+- TiDB、TiKV、PD、TiFlash 之间的通讯
+- TiDB Control 与 TiDB，TiKV Control 与 TiKV，PD Control 与 PD
+- TiKV、PD、TiDB、TiFlash 各自集群内内部通讯
 
-Currently, it is not supported to only enable encrypted transmission of some specific components.
+目前暂不支持只开启其中部分组件的加密传输。
 
-## Configure and enable encrypted data transmission
+## 配置开启加密传输
 
-1. Prepare certificates.
+1. 准备证书。
 
-    It is recommended to prepare a server certificate for TiDB, TiKV, and PD separately. Make sure that these components can authenticate each other. The Control tools of TiDB, TiKV, and PD can choose to share one client certificate.
+    推荐为 TiDB、TiKV、PD 分别准备一个 Server 证书，并保证可以相互验证，而它们的 Control 工具则可选择共用 Client 证书。
 
-    You can use tools like `openssl`, `easy-rsa` and `cfssl` to generate self-signed certificates.
+    有多种工具可以生成自签名证书，如 `openssl`，`easy-rsa`，`cfssl`。
 
-    <CustomContent platform="tidb">
+    这里提供一个使用 `openssl` 生成证书的示例：[生成自签名证书](/generate-self-signed-certificates.md)。
 
-    If you choose `openssl`, you can refer to [generating self-signed certificates](/generate-self-signed-certificates.md).
-
-    </CustomContent>
-
-    <CustomContent platform="tidb-cloud">
-
-    If you choose `openssl`, you can refer to [generating self-signed certificates](https://docs.pingcap.com/tidb/stable/generate-self-signed-certificates).
-
-    </CustomContent>
-
-2. Configure certificates.
-
-    To enable mutual authentication among TiDB components, configure the certificates of TiDB, TiKV, and PD as follows.
+2. 配置证书。
 
     - TiDB
 
-        Configure in the configuration file or command-line arguments:
+        在 `config` 文件或命令行参数中设置：
 
         ```toml
         [security]
-        # Path of the file that contains list of trusted SSL CAs for connection with cluster components.
+        # Path of file that contains list of trusted SSL CAs for connection with cluster components.
         cluster-ssl-ca = "/path/to/ca.pem"
-        # Path of the file that contains X509 certificate in PEM format for connection with cluster components.
+        # Path of file that contains X509 certificate in PEM format for connection with cluster components.
         cluster-ssl-cert = "/path/to/tidb-server.pem"
-        # Path of the file that contains X509 key in PEM format for connection with cluster components.
+        # Path of file that contains X509 key in PEM format for connection with cluster components.
         cluster-ssl-key = "/path/to/tidb-server-key.pem"
         ```
 
     - TiKV
 
-        Configure in the configuration file or command-line arguments, and set the corresponding URL to `https`:
+        在 `config` 文件或命令行参数中设置，并设置相应的 URL 为 https：
 
         ```toml
         [security]
-        ## The path for certificates. An empty string means that secure connections are disabled.
-        # Path of the file that contains a list of trusted SSL CAs. If it is set, the following settings `cert_path` and `key_path` are also needed.
+        # set the path for certificates. Empty string means disabling secure connectoins.
         ca-path = "/path/to/ca.pem"
-        # Path of the file that contains X509 certificate in PEM format.
         cert-path = "/path/to/tikv-server.pem"
-        # Path of the file that contains X509 key in PEM format.
         key-path = "/path/to/tikv-server-key.pem"
         ```
 
     - PD
 
-        Configure in the configuration file or command-line arguments, and set the corresponding URL to `https`:
+        在 `config` 文件或命令行参数中设置，并设置相应的 URL 为 https：
 
         ```toml
         [security]
-        ## The path for certificates. An empty string means that secure connections are disabled.
-        # Path of the file that contains a list of trusted SSL CAs. If it is set, the following settings `cert_path` and `key_path` are also needed.
+        # Path of file that contains list of trusted SSL CAs. if set, following four settings shouldn't be empty
         cacert-path = "/path/to/ca.pem"
-        # Path of the file that contains X509 certificate in PEM format.
+        # Path of file that contains X509 certificate in PEM format.
         cert-path = "/path/to/pd-server.pem"
-        # Path of the file that contains X509 key in PEM format.
+        # Path of file that contains X509 key in PEM format.
         key-path = "/path/to/pd-server-key.pem"
         ```
 
-    - TiFlash (New in v4.0.5)
+    - TiFlash（从 v4.0.5 版本开始引入）
 
-        Configure in the `tiflash.toml` file:
+        在 `tiflash.toml` 文件中设置：
 
         ```toml
         [security]
-        ## The path for certificates. An empty string means that secure connections are disabled.
-        # Path of the file that contains a list of trusted SSL CAs. If it is set, the following settings `cert_path` and `key_path` are also needed.
+        # Path of file that contains list of trusted SSL CAs. if set, following four settings shouldn't be empty
         ca_path = "/path/to/ca.pem"
-        # Path of the file that contains X509 certificate in PEM format.
+        # Path of file that contains X509 certificate in PEM format.
         cert_path = "/path/to/tiflash-server.pem"
-        # Path of the file that contains X509 key in PEM format.
+        # Path of file that contains X509 key in PEM format.
         key_path = "/path/to/tiflash-server-key.pem"
         ```
 
-        Configure in the `tiflash-learner.toml` file:
+        在 `tiflash-learner.toml` 文件中设置，
 
         ```toml
         [security]
-        # Path of the file that contains a list of trusted SSL CAs. If it is set, the following settings `cert_path` and `key_path` are also needed.
+        # Sets the path for certificates. The empty string means that secure connections are disabled.
         ca-path = "/path/to/ca.pem"
-        # Path of the file that contains X509 certificate in PEM format.
         cert-path = "/path/to/tiflash-server.pem"
-        # Path of the file that contains X509 key in PEM format.
         key-path = "/path/to/tiflash-server-key.pem"
         ```
 
     - TiCDC
 
-        Configure in the configuration file:
+        在 `config` 文件中设置
 
         ```toml
         [security]
@@ -119,18 +100,18 @@ Currently, it is not supported to only enable encrypted transmission of some spe
         key-path = "/path/to/cdc-server-key.pem"
         ```
 
-        Alternatively, configure in the command-line arguments and set the corresponding URL to `https`:
+        或者在启动命令行中设置，并设置相应的 URL 为 `https`：
 
         
         ```bash
         cdc server --pd=https://127.0.0.1:2379 --log-file=ticdc.log --addr=0.0.0.0:8301 --advertise-addr=127.0.0.1:8301 --ca=/path/to/ca.pem --cert=/path/to/ticdc-cert.pem --key=/path/to/ticdc-key.pem
         ```
 
-        Now, encrypted transmission among TiDB components is enabled.
+    此时 TiDB 集群各个组件间已开启加密传输。
 
-    > **Note:**
+    > **注意：**
     >
-    > After enabling encrypted transmission in a TiDB cluster, if you need to connect to the cluster using tidb-ctl, tikv-ctl, or pd-ctl, specify the client certificate. For example:
+    > 若 TiDB 集群各个组件间开启加密传输后，在使用 tidb-ctl、tikv-ctl 或 pd-ctl 工具连接集群时，需要指定 client 证书，示例：
 
     
     ```bash
@@ -147,20 +128,20 @@ Currently, it is not supported to only enable encrypted transmission of some spe
     ./tikv-ctl --host="127.0.0.1:20160" --ca-path="/path/to/ca.pem" --cert-path="/path/to/client.pem" --key-path="/path/to/clinet-key.pem"
     ```
 
-### Verify component caller's identity
+## 认证组件调用者身份
 
-In general, the callee needs to verify the caller's identity using `Common Name`, in addition to verifying the key, the certificates, and the CA provided by the caller. For example, TiKV can only be accessed by TiDB, and other visitors are blocked even though they have legitimate certificates.
+通常被调用者除了校验调用者提供的密钥、证书和 CA 有效性外，还需要通过 `Common Name` 校验调用方身份以防止拥有有效证书的非法访问者进行访问（例如：TiKV 只能被 TiDB 访问，需阻止拥有合法证书但非 TiDB 的其他访问者访问 TiKV）。
 
-To verify the caller's identity for a component, you need to mark the certificate user identity using `Common Name` when generating the certificate, and check the caller's identity by configuring `cluster-verify-cn` (in TiDB) or `cert-allowed-cn` (in other components) for the callee.
+如希望对组件调用方进行身份认证，需要在生成证书时通过 `Common Name` 标识证书调用方身份，并在被调用者的配置文件中配置 `cluster-verify-cn` (TiDB 组件）或 `cert-allowed-cn`（其它组件）来检查调用方身份。
 
-> **Note:**
+> **注意：**
 >
-> - Starting from v8.4.0, the PD configuration item `cert-allowed-cn` supports multiple values. You can configure multiple `Common Name` in the `cluster-verify-cn` configuration item for TiDB and in the `cert-allowed-cn` configuration item for other components as needed. Note that TiUP uses a separate identifier when querying component status. For example, if the cluster name is `test`, TiUP uses `test-client` as the `Common Name`.
-> - For v8.3.0 and earlier versions, the PD configuration item `cert-allowed-cn` can only be set to a single value. Therefore, the `Common Name` of all authentication objects must be set to the same value. For related configuration examples, see [v8.3.0 documentation](https://docs.pingcap.com/tidb/v8.3/enable-tls-between-components).
+> - 从 v8.4.0 起，PD 的 `cert-allowed-cn` 配置项支持设置多个值。你可以根据需要在 TiDB 的 `cluster-verify-cn` 配置项以及其它组件的 `cert-allowed-cn` 配置项中设置多个 `Common Name`。需要额外注意的是，TiUP 在查询组件状态的时候会使用独立的标识，比如集群名是 `test`，它会使用 `test-client` 作为 `Common Name`。
+> - 对于 v8.3.0 及之前版本，PD 的 `cert-allowed-cn` 配置项只能设置一个值。因此，所有认证对象的 `Common Name` 必须设置成同一个值。相关配置示例可参见 [v8.3.0 文档](https://docs-archive.pingcap.com/zh/tidb/v8.3/enable-tls-between-components/)。
 
 - TiDB
 
-    Configure in the configuration file or command-line arguments:
+    在 `config` 文件或命令行参数中设置：
 
     ```toml
     [security]
@@ -169,7 +150,7 @@ To verify the caller's identity for a component, you need to mark the certificat
 
 - TiKV
 
-    Configure in the configuration file or command-line arguments:
+    在 `config` 文件或命令行参数中设置：
 
     ```toml
     [security]
@@ -178,39 +159,75 @@ To verify the caller's identity for a component, you need to mark the certificat
 
 - PD
 
-    Configure in the configuration file or command-line arguments:
+    在 `config` 文件或命令行参数中设置：
 
     ```toml
     [security]
     cert-allowed-cn = ["tidb", "pd", "tikv", "tiflash", "test-client", "prometheus"]
     ```
 
-- TiFlash (New in v4.0.5)
+- TiFlash（从 v4.0.5 版本开始引入）
 
-    Configure in the `tiflash.toml` file or command-line arguments:
+    在 `tiflash.toml` 文件中设置：
 
     ```toml
     [security]
     cert_allowed_cn = ["tidb", "tikv", "prometheus"]
     ```
 
-    Configure in the `tiflash-learner.toml` file:
+    在 `tiflash-learner.toml` 文件中设置：
 
     ```toml
     [security]
     cert-allowed-cn = ["tidb", "tikv", "tiflash", "prometheus"]
     ```
 
-## Reload certificates
+## 验证 TiDB 组件间的 TLS 配置
 
-- If your TiDB cluster is deployed in a local data center, to reload the certificates and keys, TiDB, PD, TiKV, TiFlash, TiCDC, and all kinds of clients reread the current certificates and key files each time a new connection is created, without restarting the TiDB cluster.
+在为 TiDB 组件间通信配置 TLS 后，可以使用以下命令验证 TLS 是否已成功启用。这些命令会输出每个组件的证书和 TLS 握手详细信息。
 
-- If your TiDB cluster is deployed on your own managed cloud, make sure that the issuance of TLS certificates is integrated with the certificate management service of the cloud provider. The TLS certificates of the TiDB, PD, TiKV, TiFlash, and TiCDC components can be automatically rotated without restarting the TiDB cluster.
+- TiDB
 
-## Certificate validity
+    ```sh
+    openssl s_client -connect <tidb_host>:10080 -cert /path/to/client.pem -key /path/to/client-key.pem -CAfile ./ca.crt < /dev/null
+    ```
 
-You can customize the validity period of TLS certificates for each component in a TiDB cluster. For example, when using OpenSSL to issue and generate TLS certificates, you can set the validity period via the **days** parameter. For more information, see [Generate self-signed certificates](/generate-self-signed-certificates.md).
+- PD
 
-## See also
+    ```sh
+    openssl s_client -connect <pd_host>:2379 -cert /path/to/client.pem -key /path/to/client-key.pem -CAfile ./ca.crt < /dev/null
+    ```
 
-- [Enable TLS Between TiDB Clients and Servers](/enable-tls-between-clients-and-servers.md)
+- TiKV
+
+    ```sh
+    openssl s_client -connect <tikv_host>:20160 -cert /path/to/client.pem -key /path/to/client-key.pem -CAfile ./ca.crt < /dev/null
+    ```
+
+- TiFlash (在 v4.0.5 版本引入)
+
+    ```sh
+    openssl s_client -connect <tiflash_host>:<tiflash_port> -cert /path/to/client.pem -key /path/to/client-key.pem -CAfile ./ca.crt < /dev/null
+    ```
+
+- TiProxy
+
+    ```sh
+    openssl s_client -connect <tiproxy_host>:3080 -cert /path/to/client.pem -key /path/to/client-key.pem -CAfile ./ca.crt < /dev/null
+    ```
+
+## 证书重新加载
+
+- 如果 TiDB 集群部署在本地的数据中心，TiDB、PD、TiKV、TiFlash、TiCDC 和各种 client 在每次新建相互通讯的连接时都会重新读取当前的证书和密钥文件内容，实现证书和密钥的重新加载，无需重启 TiDB 集群。
+
+- TiProxy 每小时会从磁盘重新加载一次证书。
+
+- 如果 TiDB 集群部署在自己管理的 Cloud，TLS 证书的签发需要与云服务商的证书管理服务集成，TiDB、PD、TiKV、TiFlash、TiCDC、TiProxy 组件的 TLS 证书支持自动轮换，无需重启 TiDB 集群。
+
+## 证书有效期
+
+你可以自定义 TiDB 集群中各组件 TLS 证书的有效期。例如，使用 OpenSSL 签发生成 TLS 证书时，可以通过 **days** 参数设置有效期，详见[生成自签名证书](/generate-self-signed-certificates.md)。
+
+## 另请参阅
+
+- [为 TiDB 客户端服务端间通信开启加密传输](/enable-tls-between-clients-and-servers.md)

@@ -1,43 +1,32 @@
 ---
-title: SQL 执行计划管理（SPM）
-summary: 了解 TiDB 中的 SQL 执行计划管理。
+title: 执行计划管理 (SPM)
+summary: 介绍 TiDB 的执行计划管理 (SQL Plan Management) 功能。
 ---
 
-# SQL 执行计划管理（SPM）
+# 执行计划管理 (SPM)
 
-SQL 执行计划管理（SQL Plan Management, SPM）是一组通过执行 SQL 绑定来手动干预 SQL 执行计划的功能。这些功能包括 SQL 绑定、基线捕获和基线演化。
+执行计划管理，又称 SPM (SQL Plan Management)，是通过执行计划绑定，对执行计划进行人为干预的一系列功能，包括执行计划绑定、自动捕获绑定、自动演进绑定等。
 
-## SQL 绑定
+## 执行计划绑定 (SQL Binding)
 
-SQL 绑定是 SPM 的基础。[优化器 Hint](/optimizer-hints.md) 文档介绍了如何通过 Hint 选择特定的执行计划。然而，有时你需要在不修改 SQL 语句的情况下干预执行计划的选择。通过 SQL 绑定，你可以在不修改 SQL 语句的情况下选择指定的执行计划。
-
-<CustomContent platform="tidb">
+执行计划绑定是 SPM 的基础。在[优化器 Hints](/optimizer-hints.md) 中介绍了可以通过 Hint 的方式选择指定的执行计划，但有时需要在不修改 SQL 语句的情况下干预执行计划的选择。执行计划绑定功能使得可以在不修改 SQL 语句的情况下选择指定的执行计划。
 
 > **注意：**
 >
-> 要使用 SQL 绑定，你需要拥有 `SUPER` 权限。如果 TiDB 提示权限不足，请参见 [权限管理](/privilege-management.md) 添加所需权限。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-> **注意：**
->
-> 要使用 SQL 绑定，你需要拥有 `SUPER` 权限。如果 TiDB 提示权限不足，请参见 [权限管理](https://docs.pingcap.com/tidb/stable/privilege-management) 添加所需权限。
-
-</CustomContent>
+> 要使用执行计划绑定，你需要拥有 `SUPER` 权限。如果在使用过程中系统提示权限不足，可参考[权限管理](/privilege-management.md)补充所需权限。
 
 ### 创建绑定
 
-你可以根据 SQL 语句或历史执行计划为 SQL 语句创建绑定。
+你可以根据 SQL 或者历史执行计划为指定的 SQL 语句创建绑定。
 
-#### 根据 SQL 语句创建绑定
+#### 根据 SQL 创建绑定
+
 
 ```sql
 CREATE [GLOBAL | SESSION] BINDING [FOR BindableStmt] USING BindableStmt;
 ```
 
-该语句可以在 GLOBAL 或 SESSION 级别绑定 SQL 执行计划。目前，TiDB 支持的可绑定 SQL 语句（BindableStmt）包括 `SELECT`、`DELETE`、`UPDATE` 以及带有 `SELECT` 子查询的 `INSERT` / `REPLACE`。以下是示例：
+该语句可以在 GLOBAL 或者 SESSION 作用域内为 SQL 绑定执行计划。目前，可创建执行计划绑定的 SQL 语句类型 (BindableStmt) 包括：`SELECT`、`DELETE`、`UPDATE` 和带有 `SELECT` 子查询的 `INSERT`/`REPLACE`。使用示例如下：
 
 ```sql
 CREATE GLOBAL BINDING USING SELECT /*+ use_index(orders, orders_book_id_idx) */ * FROM orders;
@@ -46,34 +35,35 @@ CREATE GLOBAL BINDING FOR SELECT * FROM orders USING SELECT /*+ use_index(orders
 
 > **注意：**
 >
-> 绑定的优先级高于手动添加的 Hint。因此，当你执行包含 Hint 的语句且存在对应绑定时，控制优化器行为的 Hint 不会生效。但其他类型的 Hint 仍然有效。
+> 绑定的优先级高于手工添加的 Hint，即在有绑定的时候执行带有 Hint 的语句时，该语句中控制优化器行为的 Hint 不会生效，但是其他类别的 Hint 仍然能够生效。
 
-具体来说，有两类语句由于语法冲突无法绑定执行计划，创建绑定时会报语法错误。示例如下：
+其中，有两类特定的语法由于语法冲突不能创建执行计划绑定，创建时会报语法错误，例如：
 
 ```sql
--- 第一类：通过 `JOIN` 关键字获取笛卡尔积且未使用 `USING` 关键字指定关联列的语句。
+-- 类型一：使用 `JOIN` 关键字但不通过 `USING` 关键字指定关联列的笛卡尔积
 CREATE GLOBAL BINDING for
     SELECT * FROM orders o1 JOIN orders o2
 USING
     SELECT * FROM orders o1 JOIN orders o2;
 
--- 第二类：包含 `USING` 关键字的 `DELETE` 语句。
+-- 类型二：包含了 `USING` 关键字的 `delete` 语句
 CREATE GLOBAL BINDING for
     DELETE FROM users USING users JOIN orders ON users.id = orders.user_id
 USING
     DELETE FROM users USING users JOIN orders ON users.id = orders.user_id;
 ```
 
-你可以通过等价语句规避语法冲突。例如，可以按如下方式重写上述语句：
+可以通过等价的 SQL 改写绕过这个语法冲突的问题。例如，上述两个例子可以改写为：
 
 ```sql
--- 第一类语句重写：删除 `JOIN` 关键字，改用逗号分隔。
+
+-- 类型一的改写：去掉 `JOIN` 关键字，用逗号代替
 CREATE GLOBAL BINDING for
     SELECT * FROM orders o1, orders o2
 USING
     SELECT * FROM orders o1, orders o2;
 
--- 第二类语句重写：从 `DELETE` 语句中移除 `USING` 关键字。
+-- 类型二的改写：去掉 `DELETE` 语句中的 `USING` 关键字
 CREATE GLOBAL BINDING for
     DELETE users FROM users JOIN orders ON users.id = orders.user_id
 USING
@@ -82,49 +72,49 @@ USING
 
 > **注意：**
 >
-> 当为带有 `SELECT` 子查询的 `INSERT` / `REPLACE` 语句创建执行计划绑定时，需要在 `SELECT` 子查询中指定要绑定的优化器 Hint，而不是在 `INSERT` / `REPLACE` 关键字后指定。否则，优化器 Hint 不会按预期生效。
+> 在对带 `SELECT` 子查询的 `INSERT`/`REPLACE` 语句创建执行计划绑定时，需要将想要绑定的优化器 Hints 指定在 `SELECT` 子查询中，而不是 `INSERT`/`REPLACE` 关键字后，不然优化器 Hints 不会生效。
 
-以下是两个示例：
+例如：
 
 ```sql
--- Hint 在以下语句中生效。
+-- Hint 能生效的用法
 CREATE GLOBAL BINDING for
     INSERT INTO orders SELECT * FROM pre_orders WHERE status = 'VALID' AND created <= (NOW() - INTERVAL 1 HOUR)
 USING
     INSERT INTO orders SELECT /*+ use_index(@sel_1 pre_orders, idx_created) */ * FROM pre_orders WHERE status = 'VALID' AND created <= (NOW() - INTERVAL 1 HOUR);
 
--- Hint 在以下语句中无法生效。
+-- Hint 不能生效的用法
 CREATE GLOBAL BINDING for
     INSERT INTO orders SELECT * FROM pre_orders WHERE status = 'VALID' AND created <= (NOW() - INTERVAL 1 HOUR)
 USING
     INSERT /*+ use_index(@sel_1 pre_orders, idx_created) */ INTO orders SELECT * FROM pre_orders WHERE status = 'VALID' AND created <= (NOW() - INTERVAL 1 HOUR);
 ```
 
-如果在创建执行计划绑定时未指定作用域，则默认作用域为 SESSION。TiDB 优化器会对绑定的 SQL 语句进行标准化处理，并存储在系统表中。在处理 SQL 查询时，如果标准化后的语句与系统表中的某个绑定 SQL 语句匹配，且系统变量 `tidb_use_plan_baselines` 设置为 `on`（默认值为 `on`），则 TiDB 会为该语句使用对应的优化器 Hint。如果存在多个可匹配的执行计划，优化器会选择代价最低的一个进行绑定。
+如果在创建执行计划绑定时不指定作用域，隐式作用域 SESSION 会被使用。TiDB 优化器会将被绑定的 SQL 进行“标准化”处理，然后存储到系统表中。在处理 SQL 查询时，只要“标准化”后的 SQL 和系统表中某个被绑定的 SQL 语句一致，并且系统变量 [`tidb_use_plan_baselines`](/system-variables.md#tidb_use_plan_baselines-从-v40-版本开始引入) 的值为 `on`（其默认值为 `on`），即可使用相应的优化器 Hint。如果存在多个可匹配的执行计划，优化器会从中选择代价最小的一个进行绑定。
 
-`标准化` 是指将 SQL 语句中的常量转换为变量参数，并对查询中引用的表显式指定数据库名，同时对 SQL 语句中的空格和换行进行规范化处理。示例如下：
+`标准化`：把 SQL 中的常量变成变量参数，对空格和换行符等做标准化处理，并对查询引用到的表显式指定数据库。例如：
 
 ```sql
 SELECT * FROM users WHERE balance >    100
--- 标准化后，上述语句如下：
+-- 以上语句标准化后如下：
 SELECT * FROM bookshop . users WHERE balance > ?
 ```
 
 > **注意：**
 >
-> 在标准化过程中，`IN` 谓词中的 `?` 会被标准化为 `...`。
+> 在进行标准化的时候，`IN` 表达式中的 `?` 会被标准化为 `...`。
 >
 > 例如：
 >
 > ```sql
 > SELECT * FROM books WHERE type IN ('Novel')
 > SELECT * FROM books WHERE type IN ('Novel','Life','Education')
-> -- 标准化后，上述语句如下：
+> -- 以上语句标准化后如下：
 > SELECT * FROM bookshop . books WHERE type IN ( ... )
 > SELECT * FROM bookshop . books WHERE type IN ( ... )
 > ```
 >
-> 标准化后，不同长度的 `IN` 谓词会被识别为同一条语句，因此只需为这些谓词创建一个绑定即可。
+> 不同长度的 `IN` 表达式被标准化后，会被识别为同一条语句，因此只需要创建一条绑定，对这些表达式同时生效。
 >
 > 例如：
 >
@@ -148,13 +138,13 @@ SELECT * FROM bookshop . users WHERE balance > ?
 > |                        1 |
 > +--------------------------+
 > ```
->
-> 在 v7.4.0 之前创建的 TiDB 集群中，绑定可能包含 `IN (?)`。升级到 v7.4.0 或更高版本后，这些绑定会被修改为 `IN (...)`。
->
+> 
+> 在 v7.4.0 之前版本的 TiDB 集群中创建的绑定可能会包含 `IN (?)`，在升级到 v7.4.0 或更高版本后，这些绑定会被统一修改为 `IN (...)`。
+> 
 > 例如：
 >
 > ```sql
-> -- 在 v7.3.0 上创建绑定
+> -- 在 v7.3.0 集群上创建绑定
 > mysql> CREATE GLOBAL BINDING FOR SELECT * FROM t WHERE a IN (1) USING SELECT /*+ use_index(t, idx_a) */ * FROM t WHERE a IN (1);
 > mysql> SHOW GLOBAL BINDINGS;
 > +-----------------------------------------------+------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
@@ -162,8 +152,8 @@ SELECT * FROM bookshop . users WHERE balance > ?
 > +-----------------------------------------------+------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
 > | select * from `test` . `t` where `a` in ( ? ) | SELECT /*+ use_index(`t` `idx_a`)*/ * FROM `test`.`t` WHERE `a` IN (1) | test       | enabled | 2024-09-03 15:39:02.695 | 2024-09-03 15:39:02.695 | utf8mb4 | utf8mb4_general_ci | manual | 8b9c4e6ab8fad5ba29b034311dcbfc8a8ce57dde2e2d5d5b65313b90ebcdebf7 |             |
 > +-----------------------------------------------+------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
->
-> -- 升级到 v7.4.0 或更高版本后
+> 
+> -- 升级到 v7.4.0 或更高的版本后
 > mysql> SHOW GLOBAL BINDINGS;
 > +-------------------------------------------------+------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
 > | Original_sql                                    | Bind_sql                                                               | Default_db | Status  | Create_time             | Update_time             | Charset | Collation          | Source | Sql_digest                                                       | Plan_digest |
@@ -172,75 +162,77 @@ SELECT * FROM bookshop . users WHERE balance > ?
 > +-------------------------------------------------+------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
 > ```
 
-当某条 SQL 语句在 GLOBAL 和 SESSION 作用域下都存在绑定执行计划时，优化器在遇到 SESSION 绑定时会忽略 GLOBAL 作用域下的绑定执行计划，因此 SESSION 作用域下的绑定会屏蔽 GLOBAL 作用域下的绑定。
+值得注意的是，如果一条 SQL 语句在 GLOBAL 和 SESSION 作用域内都有与之绑定的执行计划，因为优化器在遇到 SESSION 绑定时会忽略 GLOBAL 绑定的执行计划，该语句在 SESSION 作用域内绑定的执行计划会屏蔽掉语句在 GLOBAL 作用域内绑定的执行计划。
 
 例如：
 
 ```sql
--- 创建 GLOBAL 绑定，并在该绑定中指定使用 `sort merge join`。
+-- 创建一个 global binding，指定其使用 sort merge join
 CREATE GLOBAL BINDING for
     SELECT * FROM t1, t2 WHERE t1.id = t2.id
 USING
     SELECT /*+ merge_join(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
--- 该 SQL 语句的执行计划使用 GLOBAL 绑定中指定的 `sort merge join`。
+-- 从该 SQL 的执行计划中可以看到其使用了 global binding 中指定的 sort merge join
 explain SELECT * FROM t1, t2 WHERE t1.id = t2.id;
 
--- 创建另一个 SESSION 绑定，并在该绑定中指定使用 `hash join`。
+-- 创建另一个 session binding，指定其使用 hash join
 CREATE BINDING for
     SELECT * FROM t1, t2 WHERE t1.id = t2.id
 USING
     SELECT /*+ hash_join(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
--- 该语句的执行计划中，使用 SESSION 绑定中指定的 `hash join`，而不是 GLOBAL 绑定中指定的 `sort merge join`。
+-- 从该 SQL 的执行计划中可以看到其使用了 session binding 中指定的 hash join，而不是 global binding 中指定的 sort merge join
 explain SELECT * FROM t1, t2 WHERE t1.id = t2.id;
 ```
 
-当第一次执行 `SELECT` 语句时，优化器通过 GLOBAL 作用域下的绑定为语句添加 `sm_join(t1, t2)` Hint，`explain` 结果中的执行计划顶层节点为 MergeJoin。当第二次执行 `SELECT` 语句时，优化器使用 SESSION 作用域下的绑定而不是 GLOBAL 作用域下的绑定，为语句添加 `hash_join(t1, t2)` Hint，`explain` 结果中的执行计划顶层节点为 HashJoin。
+第一个 `SELECT` 语句在执行时优化器会通过 GLOBAL 作用域内的绑定为其加上 `sm_join(t1, t2)` hint，`explain` 出的执行计划中最上层的节点为 MergeJoin。而第二个 `SELECT` 语句在执行时优化器则会忽视 GLOBAL 作用域内的绑定而使用 SESSION 作用域内的绑定为该语句加上 `hash_join(t1, t2)` hint，`explain` 出的执行计划中最上层的节点为 HashJoin。
 
-每个标准化后的 SQL 语句同一时间只能有一个通过 `CREATE BINDING` 创建的绑定。当为同一标准化后的 SQL 语句创建多个绑定时，最后创建的绑定会被保留，之前所有的绑定（包括手动创建和演化的）都会被标记为已删除。但 session 绑定和 global 绑定可以共存，不受此逻辑影响。
+每个标准化的 SQL 只能同时有一个通过 `CREATE BINDING` 创建的绑定。对相同的标准化 SQL 创建多个绑定时，会保留最后一个创建的绑定，之前的所有绑定（创建的和演进出来的）都会被删除。但 session 绑定和 global 绑定仍然允许共存，不受这个逻辑影响。
 
-此外，创建绑定时，TiDB 要求 session 处于数据库上下文中，即客户端连接时已指定数据库或已执行 `use ${database}`。
+另外，创建绑定时，TiDB 要求 session 处于某个数据库上下文中，也就是执行过 `use ${database}` 或者客户端连接时指定了数据库。
 
-原始 SQL 语句和绑定语句在标准化和去除 Hint 后的文本必须一致，否则绑定会失败。示例如下：
+需要注意的是原始 SQL 和绑定 SQL 在参数化以及去掉 Hint 后文本必须相同，否则创建会失败，例如：
 
-- 该绑定可以成功创建，因为参数化和去除 Hint 后的文本一致：`SELECT * FROM test . t WHERE a > ?`
 
-    ```sql
-    CREATE BINDING FOR SELECT * FROM t WHERE a > 1 USING SELECT * FROM t use index  (idx) WHERE a > 2
-    ```
+```sql
+CREATE BINDING FOR SELECT * FROM t WHERE a > 1 USING SELECT * FROM t use index(idx) WHERE a > 2;
+```
 
-- 该绑定会失败，因为原始 SQL 语句处理后为 `SELECT * FROM test . t WHERE a > ?`，而绑定 SQL 语句处理后为 `SELECT * FROM test . t WHERE b > ?`。
+可以创建成功，因为原始 SQL 和绑定 SQL 在参数化以及去掉 Hint 后文本都是 `SELECT * FROM test . t WHERE a > ?`，而
 
-    ```sql
-    CREATE BINDING FOR SELECT * FROM t WHERE a > 1 USING SELECT * FROM t use index(idx) WHERE b > 2
-    ```
+
+```sql
+CREATE BINDING FOR SELECT * FROM t WHERE a > 1 USING SELECT * FROM t use index(idx) WHERE b > 2;
+```
+
+则不可以创建成功，因为原始 SQL 在经过处理后是 `SELECT * FROM test . t WHERE a > ?`，而绑定 SQL 在经过处理后是 `SELECT * FROM test . t WHERE b > ?`。
 
 > **注意：**
 >
-> 对于 `PREPARE` / `EXECUTE` 语句以及通过二进制协议执行的查询，需要为实际的查询语句创建执行计划绑定，而不是为 `PREPARE` / `EXECUTE` 语句创建绑定。
+> 对于 `PREPARE`/`EXECUTE` 语句组，或者用二进制协议执行的查询，创建执行计划绑定的对象应当是查询语句本身，而不是 `PREPARE`/`EXECUTE` 语句。
 
 #### 根据历史执行计划创建绑定
 
-如果你希望 SQL 语句的执行计划固定为历史执行计划，可以通过 Plan Digest 将该历史执行计划绑定到 SQL 语句上，这比根据 SQL 语句绑定更为便捷。此外，你还可以一次性为多条 SQL 语句绑定执行计划。更多细节和示例，参见 [`CREATE [GLOBAL|SESSION] BINDING`](/sql-statements/sql-statement-create-binding.md)。
+如需将 SQL 语句的执行计划固定为之前使用过的执行计划，可以使用 Plan Digest 为该 SQL 语句绑定一个历史的执行计划。相比于使用 SQL 创建绑定的方式，此方式更加简便，并且支持一次为多个语句绑定执行计划。详细说明和更多示例参见 [`CREATE [GLOBAL|SESSION] BINDING`](/sql-statements/sql-statement-create-binding.md)。
 
-使用该功能时，请注意以下事项：
+以下为根据历史执行计划创建绑定的注意事项：
 
-- 该功能会根据历史执行计划生成 Hint，并用生成的 Hint 进行绑定。由于历史执行计划存储在 [语句概要表](/statement-summary-tables.md) 中，使用该功能前需先开启 [`tidb_enable_stmt_summary`](/system-variables.md#tidb_enable_stmt_summary-new-in-v304) 系统变量。
-- 对于 TiFlash 查询、三表及以上的 Join 查询、包含子查询的查询，自动生成的 Hint 可能不完整，可能导致计划未被完全绑定。此类情况下，创建绑定时会有警告。
-- 如果历史执行计划对应的 SQL 语句中包含 Hint，则这些 Hint 会被添加到绑定中。例如，执行 `SELECT /*+ max_execution_time(1000) */ * FROM t` 后，使用其 Plan Digest 创建的绑定会包含 `max_execution_time(1000)`。
+- 该功能是根据历史的执行计划生成 hint 而实现的绑定，历史的执行计划来源是 [Statement Summary Tables](/statement-summary-tables.md)，因此在使用此功能之前需开启系统变量 [`tidb_enable_stmt_summary`](/system-variables.md#tidb_enable_stmt_summary-从-v304-版本开始引入)。
+- 对于包含子查询的查询、访问 TiFlash 的查询、3 张表或更多表进行 Join 的查询，自动生成的 hint 不够完备，可能导致无法完全固定住计划，对于这类情况在创建时会产生告警。
+- 原执行计划对应 SQL 语句中的 hint 也会被应用在创建的绑定中，如执行 `SELECT /*+ max_execution_time(1000) */ * FROM t` 后，使用其 Plan Digest 创建的绑定中会带上 `max_execution_time(1000)`。
 
-该绑定方式的 SQL 语句如下：
+使用方式：
 
 ```sql
 CREATE [GLOBAL | SESSION] BINDING FROM HISTORY USING PLAN DIGEST StringLiteralOrUserVariableList;
 ```
 
-上述语句通过 Plan Digest 将执行计划绑定到 SQL 语句。默认作用域为 SESSION。所创建绑定的适用 SQL 语句、优先级、作用域和生效条件与[根据 SQL 语句创建的绑定](#create-a-binding-according-to-a-sql-statement)一致。
+该语句使用 Plan Digest 为 SQL 语句绑定执行计划，在不指定作用域时默认作用域为 SESSION。所创建绑定的适用 SQL、优先级、作用域、生效条件等与[根据 SQL 创建绑定](#根据-sql-创建绑定)相同。
 
-使用该绑定方式时，需要先在 `statements_summary` 中获取目标历史执行计划对应的 Plan Digest，然后通过 Plan Digest 创建绑定。具体步骤如下：
+使用此绑定方式时，你需要先从 `statements_summary` 中找到需要绑定的执行计划对应的 Plan Digest，再通过 Plan Digest 创建绑定。具体步骤如下：
 
-1. 在 `statements_summary` 中获取目标执行计划对应的 Plan Digest。
+1. 从 `Statement Summary Tables` 的记录中查找执行计划对应的 Plan Digest。
 
     例如：
 
@@ -250,7 +242,7 @@ CREATE [GLOBAL | SESSION] BINDING FROM HISTORY USING PLAN DIGEST StringLiteralOr
     SELECT * FROM INFORMATION_SCHEMA.STATEMENTS_SUMMARY WHERE QUERY_SAMPLE_TEXT = 'SELECT /*+ IGNORE_INDEX(t, idx_a) */ * FROM t WHERE a = 1'\G
     ```
 
-    以下为 `statements_summary` 查询结果的部分示例：
+    以下为 `statements_summary` 部分查询结果：
 
     ```
     SUMMARY_BEGIN_TIME: 2022-12-01 19:00:00
@@ -265,15 +257,15 @@ CREATE [GLOBAL | SESSION] BINDING FROM HISTORY USING PLAN DIGEST StringLiteralOr
           BINARY_PLAN: 6QOYCuQDCg1UYWJsZVJlYWRlcl83Ev8BCgtTZWxlY3Rpb25fNhKOAQoPBSJQRnVsbFNjYW5fNSEBAAAAOA0/QSkAAQHwW4jDQDgCQAJKCwoJCgR0ZXN0EgF0Uh5rZWVwIG9yZGVyOmZhbHNlLCBzdGF0czpwc2V1ZG9qInRpa3ZfdGFzazp7dGltZTo1NjAuOMK1cywgbG9vcHM6MH1w////CQMEAXgJCBD///8BIQFzCDhVQw19BAAkBX0QUg9lcSgBfCAudC5hLCAxKWrmYQAYHOi0gc6hBB1hJAFAAVIQZGF0YTo9GgRaFAW4HDQuMDVtcywgCbYcMWKEAWNvcF8F2agge251bTogMSwgbWF4OiA1OTguNsK1cywgcHJvY19rZXlzOiAwLCBycGNfBSkAMgkMBVcQIDYwOS4pEPBDY29wcl9jYWNoZV9oaXRfcmF0aW86IDAuMDAsIGRpc3RzcWxfY29uY3VycmVuY3k6IDE1fXCwAXj///////////8BGAE=
     ```
 
-    在本例中，可以看到对应执行计划的 Plan Digest 为 `4e3159169cc63c14b139a4e7d72eae1759875c9a9581f94bb2079aae961189cb`。
+    可以看到执行计划对应的 Plan Digest 为 `4e3159169cc63c14b139a4e7d72eae1759875c9a9581f94bb2079aae961189cb`。
 
-2. 使用 Plan Digest 创建绑定：
+2. 使用 Plan Digest 创建绑定。
 
     ```sql
     CREATE BINDING FROM HISTORY USING PLAN DIGEST '4e3159169cc63c14b139a4e7d72eae1759875c9a9581f94bb2079aae961189cb';
     ```
 
-要验证创建的绑定是否生效，可以[查看绑定](#view-bindings)：
+创建完毕后可以[查看绑定](#查看绑定)，验证绑定是否生效。
 
 ```sql
 SHOW BINDINGS\G
@@ -306,99 +298,103 @@ SELECT @@LAST_PLAN_FROM_BINDING;
 1 row in set (0.00 sec)
 ```
 
-### 移除绑定
+### 删除绑定
 
-你可以根据 SQL 语句或 SQL Digest 移除绑定。
+你可以根据 SQL 语句或者 SQL Digest 删除绑定。
 
-#### 根据 SQL 语句移除绑定
+#### 根据 SQL 语句删除绑定
+
 
 ```sql
 DROP [GLOBAL | SESSION] BINDING FOR BindableStmt;
 ```
 
-该语句可以在 GLOBAL 或 SESSION 级别移除指定的执行计划绑定。默认作用域为 SESSION。
+该语句可以在 GLOBAL 或者 SESSION 作用域内删除指定的执行计划绑定，在不指定作用域时默认作用域为 SESSION。
 
-一般来说，SESSION 作用域下的绑定主要用于测试或特殊场景。若希望绑定在所有 TiDB 实例中生效，需要使用 GLOBAL 绑定。已创建的 SESSION 绑定会屏蔽对应的 GLOBAL 绑定，直到 SESSION 结束，即使在 SESSION 关闭前已删除 SESSION 绑定。在这种情况下，所有绑定都不生效，计划由优化器自行选择。
+一般来说，SESSION 作用域的绑定主要用于测试或在某些特殊情况下使用。若需要集群中所有的 TiDB 进程都生效，则需要使用 GLOBAL 作用域的绑定。SESSION 作用域对 GLOBAL 作用域绑定的屏蔽效果会持续到该 SESSION 结束。
 
-以下示例基于[创建绑定](#create-a-binding)中的例子，SESSION 绑定屏蔽了 GLOBAL 绑定：
+承接上面关于 SESSION 绑定屏蔽 GLOBAL 绑定的例子，继续执行：
 
 ```sql
--- 删除 SESSION 作用域下创建的绑定。
-drop session binding for SELECT * FROM t1, t2 WHERE t1.id = t2.id;
+-- 删除 session 中创建的 binding
+DROP session binding for SELECT * FROM t1, t2 WHERE t1.id = t2.id;
 
--- 再次查看 SQL 执行计划。
+-- 重新查看该 SQL 的执行计划
 explain SELECT * FROM t1,t2 WHERE t1.id = t2.id;
 ```
 
-在上述示例中，SESSION 作用域下被删除的绑定会屏蔽对应的 GLOBAL 作用域下的绑定。优化器不会为语句添加 `sm_join(t1, t2)` Hint，`explain` 结果中的执行计划顶层节点不会被该 Hint 固定为 MergeJoin，而是由优化器根据代价估算独立选择。
+在这里 SESSION 作用域内被删除掉的绑定会屏蔽 GLOBAL 作用域内相应的绑定，优化器不会为 `SELECT` 语句添加 `sm_join(t1, t2)` hint，`explain` 给出的执行计划中最上层节点并不被 hint 固定为 MergeJoin，而是由优化器经过代价估算后自主进行选择。
 
-#### 根据 SQL Digest 移除绑定
+#### 根据 SQL Digest 删除绑定
 
-除了根据 SQL 语句移除绑定外，你还可以根据 SQL Digest 移除绑定。更多细节和示例，参见 [`DROP [GLOBAL|SESSION] BINDING`](/sql-statements/sql-statement-drop-binding.md)。
+你既可以根据 SQL 语句删除对应的绑定，也可以根据 SQL Digest 删除绑定。详细说明和更多示例参见 [`DROP [GLOBAL|SESSION] BINDING`](/sql-statements/sql-statement-drop-binding.md)。
 
 ```sql
 DROP [GLOBAL | SESSION] BINDING FOR SQL DIGEST StringLiteralOrUserVariableList;
 ```
 
-该语句可以在 GLOBAL 或 SESSION 级别移除对应 SQL Digest 的执行计划绑定。默认作用域为 SESSION。你可以通过[查看绑定](#view-bindings)获取 SQL Digest。
+该语句用于在 GLOBAL 或者 SESSION 作用域内删除 SQL Digest 对应的的执行计划绑定，在不指定作用域时默认作用域为 SESSION。你可以通过[查看绑定](#查看绑定)语句获取 SQL Digest。
 
 > **注意：**
 >
-> 执行 `DROP GLOBAL BINDING` 会删除当前 tidb-server 实例缓存中的绑定，并将系统表中对应行的状态改为 'deleted'。该语句不会直接删除系统表中的记录，因为其他 tidb-server 实例需要读取 'deleted' 状态以删除其缓存中的对应绑定。对于这些系统表中状态为 'deleted' 的记录，每 100 个 `bind-info-lease`（默认值为 `3s`，共 `300s`）间隔，后台线程会触发回收和清理操作，清理 `update_time` 在 10 个 `bind-info-lease` 之前的绑定（以确保所有 tidb-server 实例都已读取 'deleted' 状态并更新缓存）。
+> 执行 `DROP GLOBAL BINDING` 会删除当前 tidb-server 实例缓存中的绑定，并将系统表中对应行的状态修改为 'deleted'。该语句不会直接删除系统表中的记录，因为其他 tidb-server 实例需要读取系统表中的 'deleted' 状态来删除其缓存中对应的绑定。对于这些系统表中状态为 'deleted' 的记录，后台线程每隔 100 个 `bind-info-lease`（默认值为 `3s`，合计 `300s`）会触发一次对 `update_time` 在 10 个 `bind-info-lease` 以前的绑定（确保所有 tidb-server 实例已经读取过这个 'deleted' 状态并更新完缓存）的回收清除操作。
 
-### 修改绑定状态
+### 变更绑定状态
 
-#### 根据 SQL 语句修改绑定状态
+#### 根据 SQL 语句变更绑定状态
+
 
 ```sql
 SET BINDING [ENABLED | DISABLED] FOR BindableStmt;
 ```
 
-你可以通过该语句修改绑定的状态。默认状态为 ENABLED。默认作用域为 GLOBAL，且不可修改。
+该语句可以在 GLOBAL 作用域内变更指定执行计划的绑定状态，默认作用域为 GLOBAL，该作用域不可更改。
 
-执行该语句时，只能将绑定状态从 `Disabled` 改为 `Enabled`，或从 `Enabled` 改为 `Disabled`。如果没有可供状态变更的绑定，会返回警告信息 `There are no bindings can be set the status. Please check the SQL text`。注意，处于 `Disabled` 状态的绑定不会被任何查询使用。
+使用时，只能将 `Disabled` 的绑定改为 `Enabled` 状态，或将 `Enabled` 的绑定改为 `Disabled` 状态。如果没有可以改变状态的绑定，则会输出一条内容为 `There are no bindings can be set the status. Please check the SQL text` 的警告。需要注意的是，当绑定被设置成 `Disabled` 状态时，查询语句不会使用该绑定。
 
-#### 根据 `sql_digest` 修改绑定状态
+#### 根据 `sql_digest` 变更绑定状态
 
-除了根据 SQL 语句修改绑定状态外，你还可以根据 `sql_digest` 修改绑定状态：
+除了可以根据 SQL 语句变更对应的绑定状态以外，也可以根据 `sql_digest` 变更绑定状态：
 
 ```sql
 SET BINDING [ENABLED | DISABLED] FOR SQL DIGEST 'sql_digest';
 ```
 
-通过 `sql_digest` 可变更的绑定状态及其效果与[根据 SQL 语句修改绑定状态](#change-binding-status-according-to-a-sql-statement)一致。如果没有可供状态变更的绑定，会返回警告信息 `can't find any binding for 'sql_digest'`。
+使用 `sql_digest` 所能变更的绑定状态和生效情况与[根据 SQL 语句变更绑定状态](#根据-sql-语句变更绑定状态)相同。如果没有可以改变状态的绑定，则会输出一条内容为 `can't find any binding for 'sql_digest'` 的警告。
 
 ### 查看绑定
 
+
 ```sql
-SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhere]
+SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhere];
 ```
 
-该语句按绑定更新时间从新到旧输出 GLOBAL 或 SESSION 级别的执行计划绑定。默认作用域为 SESSION。目前 `SHOW BINDINGS` 输出 11 列，如下所示：
+该语句会按照绑定更新时间由新到旧的顺序输出 GLOBAL 或者 SESSION 作用域内的执行计划绑定，在不指定作用域时默认作用域为 SESSION。目前 `SHOW BINDINGS` 会输出 11 列，具体如下：
 
-| 列名 | 说明 |
-| :-------- | :------------- |
-| original_sql  |  参数化后的原始 SQL 语句 |
-| bind_sql | 带有 Hint 的绑定 SQL 语句 |
-| default_db | 默认数据库 |
-| status | 状态，包括 `enabled`（自 v6.0 起替代 `using` 状态）、`disabled`、`deleted`、`invalid`、`rejected` 和 `pending verify`|
+| 列名 | 说明            |
+| -------- | ------------- |
+| original_sql  |  参数化后的原始 SQL |
+| bind_sql | 带 Hint 的绑定 SQL |
+| default_db | 默认数据库名 |
+| status | 状态，包括 enabled（可用，从 v6.0 开始取代之前版本的 using 状态）、disabled（不可用）、deleted（已删除）、 invalid（无效）、rejected（演进时被拒绝）和 pending verify（等待演进验证） |
 | create_time | 创建时间 |
 | update_time | 更新时间 |
 | charset | 字符集 |
 | collation | 排序规则 |
-| source | 绑定的创建方式，包括 `manual`（根据 SQL 语句创建）、`history`（根据历史执行计划创建）、`capture`（TiDB 自动捕获）、`evolve`（TiDB 自动演化） |
-| sql_digest | 标准化 SQL 语句的摘要 |
-| plan_digest | 执行计划的摘要 |
+| source | 创建方式，包括 manual（根据 SQL 创建绑定生成）、history（根据历史执行计划创建绑定生成）、capture（由 TiDB 自动创建生成）和 evolve （由 TiDB 自动演进生成） |
+| sql_digest | 归一化后的 SQL 的 digest |
+| plan_digest | 执行计划的 digest |
 
-### 绑定排查
+### 排查绑定
 
-你可以通过以下任一方式排查绑定：
+绑定的排查通常有两种方式：
 
-- 使用系统变量 [`last_plan_from_binding`](/system-variables.md#last_plan_from_binding-new-in-v40) 查看上次执行的语句所用的执行计划是否来自绑定。
+- 使用系统变量 [`last_plan_from_binding`](/system-variables.md#last_plan_from_binding-从-v40-版本开始引入) 显示上一条执行语句是否采用 binding 的执行计划。
 
-     
+    
     ```sql
-    -- 创建全局绑定
+    -- 创建一个 global binding
+
     CREATE GLOBAL BINDING for
         SELECT * FROM t
     USING
@@ -417,21 +413,21 @@ SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhere]
     1 row in set (0.00 sec)
     ```
 
-- 使用 `explain format = 'verbose'` 语句查看 SQL 语句的查询计划。如果 SQL 语句使用了绑定，可以通过 `show warnings` 查看该 SQL 语句使用了哪个绑定。
+- 使用 `explain format = 'verbose'` 语句查看 SQL 语句的查询计划。如果 SQL 语句使用了 binding，可以接着执行 `show warnings` 了解该 SQL 语句使用了哪一条 binding。
 
     ```sql
-    -- 创建全局绑定
+    -- 创建一个 global binding
 
     CREATE GLOBAL BINDING for
         SELECT * FROM t
     USING
         SELECT /*+ USE_INDEX(t, idx_a) */ * FROM t;
 
-    -- 使用 explain format = 'verbose' 查看 SQL 语句的执行计划
+    -- 使用 explain format = 'verbose' 语句查看 SQL 的执行计划
 
     explain format = 'verbose' SELECT * FROM t;
 
-    -- 通过 `show warnings` 查看查询中使用的绑定。
+    -- 通过执行 `show warnings` 了解该 SQL 语句使用了哪一条 binding
 
     show warnings;
     ```
@@ -446,11 +442,12 @@ SHOW [GLOBAL | SESSION] BINDINGS [ShowLikeOrWhere]
 
     ```
 
-### 绑定缓存
+### 对绑定进行缓存
 
-每个 TiDB 实例都有一个最近最少使用（LRU）的绑定缓存。缓存容量由系统变量 [`tidb_mem_quota_binding_cache`](/system-variables.md#tidb_mem_quota_binding_cache-new-in-v600) 控制。你可以查看 TiDB 实例中已缓存的绑定。
+每个 TiDB 实例都有一个 LRU (Least Recently Used) Cache 对绑定进行缓存，缓存的容量由系统变量 [`tidb_mem_quota_binding_cache`](/system-variables.md#tidb_mem_quota_binding_cache-从-v600-版本开始引入) 进行控制。缓存会影响绑定的使用和查看，因此你只能使用和查看存在于缓存中的绑定。
 
-要查看绑定的缓存状态，可执行 `SHOW binding_cache status` 语句。该语句默认作用域为 GLOBAL，且不可修改。该语句返回缓存中可用绑定数、系统中可用绑定总数、所有缓存绑定的内存使用量以及缓存的总内存。
+如需查看绑定的使用情况，可以执行 `SHOW binding_cache status` 语句。该语句无法指定作用域，默认作用域为 GLOBAL。该语句可查看缓存中可用绑定的数量、系统中所有可用绑定的数量、缓存中所有绑定的内存使用量及缓存的内存容量。
+
 
 ```sql
 
@@ -466,14 +463,14 @@ SHOW binding_cache status;
 1 row in set (0.00 sec)
 ```
 
-## 利用语句概要表获取需要绑定的查询
+## 利用 Statement Summary 表获取需要绑定的查询
 
-[语句概要](/statement-summary-tables.md) 记录了最近 SQL 的执行信息，如延迟、执行次数及对应的查询计划。你可以通过查询语句概要表获取合格的 `plan_digest`，然后[根据这些历史执行计划创建绑定](/sql-plan-management.md#create-a-binding-according-to-a-historical-execution-plan)。
+[Statement Summary](/statement-summary-tables.md) 的表中存放了近期的 SQL 相关的执行信息，如延迟、执行次数、对应计划等。你可以通过查询 Statement Summary 表得到符合条件查询的 `plan_digest`，然后[根据历史执行计划创建绑定](/sql-plan-management.md#根据历史执行计划创建绑定)。
 
-以下示例查询过去两周内执行次数超过 10 次、且存在多个执行计划但尚未绑定的 `SELECT` 语句。它按执行次数排序，并将前 100 条查询绑定到其最快的执行计划。
+以下示例查找过去两周执行次数超过 10 次、执行计划不稳定且未被绑定的 `SELECT` 语句，并按照执行次数排序，将执行次数前 100 的查询绑定到对应的查询延迟最低的计划上。
 
 ```sql
-WITH stmts AS (                                                -- 获取所有信息
+WITH stmts AS (                                                -- Gets all information
   SELECT * FROM INFORMATION_SCHEMA.CLUSTER_STATEMENTS_SUMMARY
   UNION ALL
   SELECT * FROM INFORMATION_SCHEMA.CLUSTER_STATEMENTS_SUMMARY_HISTORY 
@@ -482,7 +479,7 @@ best_plans AS (
   SELECT plan_digest, `digest`, avg_latency, 
   CONCAT('create global binding from history using plan digest "', plan_digest, '"') as binding_stmt 
   FROM stmts t1
-  WHERE avg_latency = (SELECT min(avg_latency) FROM stmts t2   -- 查询延迟最低的计划
+  WHERE avg_latency = (SELECT min(avg_latency) FROM stmts t2   -- The plan with the lowest query latency
                        WHERE t2.`digest` = t1.`digest`)
 )
 
@@ -491,17 +488,17 @@ SELECT any_value(digest_text) as query,
        plan_hint, binding_stmt
 FROM stmts, best_plans
 WHERE stmts.`digest` = best_plans.`digest`
-  AND summary_begin_time > DATE_SUB(NOW(), interval 14 day)    -- 过去两周内执行过
-  AND stmt_type = 'Select'                                     -- 只考虑 select 语句
-  AND schema_name NOT IN ('INFORMATION_SCHEMA', 'mysql')       -- 非内部查询
-  AND plan_in_binding = 0                                      -- 尚未绑定
+  AND summary_begin_time > DATE_SUB(NOW(), interval 14 day)    -- Executed in the past 2 weeks
+  AND stmt_type = 'Select'                                     -- Only consider select statements
+  AND schema_name NOT IN ('INFORMATION_SCHEMA', 'mysql')       -- Not an internal query
+  AND plan_in_binding = 0                                      -- No binding yet
 GROUP BY stmts.`digest`
-  HAVING COUNT(DISTINCT(stmts.plan_digest)) > 1                -- 该查询不稳定，存在多个计划
-         AND SUM(exec_count) > 10                              -- 高频，执行次数超过 10 次
-ORDER BY SUM(exec_count) DESC LIMIT 100;                       -- 前 100 条高频查询
+  HAVING COUNT(DISTINCT(stmts.plan_digest)) > 1                -- This query is unstable. It has more than 1 plan.
+         AND SUM(exec_count) > 10                              -- High-frequency, and has been executed more than 10 times.
+ORDER BY SUM(exec_count) DESC LIMIT 100;                       -- Top 100 high-frequency queries.
 ```
 
-通过设置一定的过滤条件获取符合要求的查询后，可以直接执行对应 `binding_stmt` 列中的语句来创建绑定。
+通过一些过滤条件得到满足条件的查询，然后直接运行 `binding_stmt` 列对应的语句即可创建相应的绑定。
 
 ```
 +---------------------------------------------+------------+-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
@@ -512,44 +509,44 @@ ORDER BY SUM(exec_count) DESC LIMIT 100;                       -- 前 100 条高
 +---------------------------------------------+------------+-----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
 ```
 
-## 跨库绑定
+## 跨数据库绑定执行计划 (Cross-DB Binding)
 
-自 v7.6.0 起，你可以在 TiDB 中通过在绑定创建语法中使用通配符 `*` 表示数据库名，从而创建跨库绑定。在创建跨库绑定前，需要先开启 [`tidb_opt_enable_fuzzy_binding`](/system-variables.md#tidb_opt_enable_fuzzy_binding-new-in-v760) 系统变量。
+在创建绑定的 SQL 语句中，TiDB 支持使用通配符 `*` 表示数据库，实现跨数据库绑定。该功能自 v7.6.0 开始引入。要使用跨数据库绑定，首先需要开启 [`tidb_opt_enable_fuzzy_binding`](/system-variables.md#tidb_opt_enable_fuzzy_binding-从-v760-版本开始引入) 系统变量。
 
-你可以使用跨库绑定简化在数据按类别分库存储、各数据库对象定义一致且执行类似应用逻辑的场景下固定执行计划的流程。以下是一些常见用例：
+当数据按数据库 (schema/db) 分类存储，同时各数据库具有相同的对象定义并且运行相似的业务逻辑时，跨数据库执行计划绑定能显著简化执行计划的固定过程。以下是一些常见的使用场景：
 
-* 在 TiDB 上运行 SaaS 或 PaaS 服务时，每个租户的数据分别存储在不同数据库中，便于数据维护和管理
-* 在单实例中做过分库分表，迁移到 TiDB 后保留原有库表结构，即原实例中的数据按库分类存储
+* 用户在 TiDB 上运行 SaaS 或 PaaS 类服务，每个租户的数据存储于独立的数据库中，以便数据维护和管理。 
+* 用户在单一实例中进行分库操作，并在迁移到 TiDB 后保留了原有的数据库结构，即将原实例中的数据按数据库分类存储。 
 
-在这些场景下，跨库绑定可以有效缓解因用户数据和负载分布不均、变化快而导致的 SQL 性能问题。SaaS 服务商可以利用跨库绑定将大数据量应用验证过的执行计划固定下来，避免小数据量应用快速增长带来的潜在性能问题。
+在这些场景中，跨数据库绑定能有效缓解由于用户数据和负载的不均衡及其快速变化所引发的 SQL 性能问题。SaaS 服务商可以通过跨数据库绑定，固定大数据量用户业务已验证的执行计划，从而避免因小数据量用户业务快速增长引起的潜在性能问题。
 
-创建跨库绑定时，只需在创建绑定时用 `*` 表示数据库名。例如：
+使用跨数据库绑定，只需要在创建绑定的 SQL 语句中将数据库名用 `*` 表示，例如：
 
 ```sql
-CREATE GLOBAL BINDING USING SELECT /*+ use_index(t, idx_a) */ * FROM t; -- 创建 GLOBAL 作用域标准绑定
-CREATE GLOBAL BINDING USING SELECT /*+ use_index(t, idx_a) */ * FROM *.t; -- 创建 GLOBAL 作用域跨库绑定
+CREATE GLOBAL BINDING USING SELECT /*+ use_index(t, idx_a) */ * FROM t; -- 创建 GLOBAL 作用域的普通绑定
+CREATE GLOBAL BINDING USING SELECT /*+ use_index(t, idx_a) */ * FROM *.t; -- 创建 GLOBAL 作用域的跨数据库绑定
 SHOW GLOBAL BINDINGS;
 ```
 
-输出如下：
+输出结果示例如下：
 
 ```sql
-+----------------------------+---------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+-----------------+--------+------------------------------------------------------------------+-------------+
-| Original_sql               | Bind_sql                                          | Default_db | Status  | Create_time             | Update_time             | Charset | Collation       | Source | Sql_digest                                                       | Plan_digest |
-+----------------------------+---------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+-----------------+--------+------------------------------------------------------------------+-------------+
++----------------------------+---------------------------------------------------+------------+---------+-------------------------+-------------------------+--------------+-----------------+--------+------------------------------------------------------------------+-------------+
+| Original_sql               | Bind_sql                                              | Default_db | Status  | Create_time             | Update_time             | Charset | Collation       | Source | Sql_digest                                                       | Plan_digest |
++----------------------------+---------------------------------------------------+------------+---------+-------------------------+-------------------------+--------------+-----------------+--------+------------------------------------------------------------------+-------------+
 | select * from `test` . `t` | SELECT /*+ use_index(`t` `idx_a`)*/ * FROM `test`.`t` | test       | enabled | 2023-12-29 14:19:01.332 | 2023-12-29 14:19:01.332 | utf8    | utf8_general_ci | manual | 8b193b00413fdb910d39073e0d494c96ebf24d1e30b131ecdd553883d0e29b42 |             |
 | select * from `*` . `t`    | SELECT /*+ use_index(`t` `idx_a`)*/ * FROM `*`.`t`    |            | enabled | 2023-12-29 14:19:02.232 | 2023-12-29 14:19:02.232 | utf8    | utf8_general_ci | manual | 8b193b00413fdb910d39073e0d494c96ebf24d1e30b131ecdd553883d0e29b42 |             |
-+----------------------------+---------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+-----------------+--------+------------------------------------------------------------------+-------------+
++----------------------------+---------------------------------------------------+------------+---------+-------------------------+-------------------------+--------------+-----------------+--------+------------------------------------------------------------------+-------------+
 ```
 
-在 `SHOW GLOBAL BINDINGS` 输出中，跨库绑定的 `Default_db` 字段值为空，`Original_sql` 和 `Bind_sql` 字段中的数据库名用 `*` 表示。该绑定适用于所有数据库下的 `select * from t` 查询，而不仅限于某个特定数据库。
+在 `SHOW GLOBAL BINDINGS` 的输出结果中，跨数据库绑定的 `Default_db` 为空，且 `Original_sql` 和 `Bind_sql` 字段中的数据库名通过 `*` 表示。这条绑定会对所有 `select * from t` 查询生效，而不限于特定数据库。
 
-对于同一查询，跨库绑定和标准绑定可以共存。TiDB 的绑定匹配顺序为：SESSION 作用域标准绑定 > SESSION 作用域跨库绑定 > GLOBAL 作用域标准绑定 > GLOBAL 作用域跨库绑定。
+对于相同的查询，跨数据绑定与普通绑定可以同时存在，TiDB 匹配的优先级从高到低依次为：SESSION 级别的普通绑定 > SESSION 级别的跨数据库绑定 > GLOBAL 级别的普通绑定 > GLOBAL 级别的跨数据库绑定。
 
-除创建语法外，跨库绑定的删除和状态变更语法与标准绑定一致。以下为详细用法示例。
+除了创建绑定的 SQL 语句不同，跨数据库绑定的删除和状态变更语句与普通绑定相同。下面是一个详细的使用示例。
 
 1. 创建数据库 `db1` 和 `db2`，并在每个数据库中创建两张表：
-
+  
     ```sql
     CREATE DATABASE db1;
     CREATE TABLE db1.t1 (a INT, KEY(a));
@@ -559,19 +556,19 @@ SHOW GLOBAL BINDINGS;
     CREATE TABLE db2.t2 (a INT, KEY(a));
     ```
 
-2. 开启跨库绑定功能：
+2. 开启跨数据库绑定功能：
 
     ```sql
     SET tidb_opt_enable_fuzzy_binding=1;
     ```
 
-3. 创建跨库绑定：
+3. 创建跨数据库绑定：
 
     ```sql
     CREATE GLOBAL BINDING USING SELECT /*+ use_index(t1, idx_a), use_index(t2, idx_a) */ * FROM *.t1, *.t2;
     ```
 
-4. 执行查询并验证绑定是否生效：
+4. 执行查询并查看是否使用了绑定：
 
     ```sql
     SELECT * FROM db1.t1, db1.t2;
@@ -612,14 +609,14 @@ SHOW GLOBAL BINDINGS;
 
     ```sql
     SHOW GLOBAL BINDINGS;
-    +----------------------------------------------+------------------------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
-    | Original_sql                                 | Bind_sql                                                                                 | Default_db | Status  | Create_time             | Update_time             | Charset | Collation          | Source | Sql_digest                                                       | Plan_digest |
-    +----------------------------------------------+------------------------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
+    +----------------------------------------------+------------------------------------------------------------------------------------------+------------+-----------------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
+    | Original_sql                                 | Bind_sql                                                                                         | Default_db | Status  | Create_time             | Update_time             | Charset | Collation          | Source | Sql_digest                                                       | Plan_digest |
+    +----------------------------------------------+------------------------------------------------------------------------------------------+------------+-----------------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
     | select * from ( `*` . `t1` ) join `*` . `t2` | SELECT /*+ use_index(`t1` `idx_a`) use_index(`t2` `idx_a`)*/ * FROM (`*` . `t1`) JOIN `*` . `t2` |            | enabled | 2023-12-29 14:22:28.144 | 2023-12-29 14:22:28.144 | utf8    | utf8_general_ci    | manual | ea8720583e80644b58877663eafb3579700e5f918a748be222c5b741a696daf4 |             |
-    +----------------------------------------------+------------------------------------------------------------------------------------------+------------+---------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
+    +----------------------------------------------+------------------------------------------------------------------------------------------+------------+-----------------+-------------------------+-------------------------+---------+--------------------+--------+------------------------------------------------------------------+-------------+
     ```
 
-6. 删除跨库绑定：
+6. 删除绑定：
 
     ```sql
     DROP GLOBAL BINDING FOR SQL DIGEST 'ea8720583e80644b58877663eafb3579700e5f918a748be222c5b741a696daf4';
@@ -627,119 +624,120 @@ SHOW GLOBAL BINDINGS;
     Empty set (0.00 sec)
     ```
 
-## 基线捕获
+## 自动捕获绑定 (Baseline Capturing)
 
-用于[防止升级时执行计划回退](#prevent-regression-of-execution-plans-during-an-upgrade)的场景，该功能会捕获满足捕获条件的查询，并为这些查询创建绑定。
+自动绑定会对符合捕获条件的查询进行捕获，为符合条件的查询生成相应的绑定。通常用于[升级时的计划回退防护](#升级时的计划回退防护)。
 
-计划基线指的是优化器可用于执行某条 SQL 语句的一组可接受的计划。通常，只有在确认某个计划性能良好后，TiDB 才会将其加入计划基线。计划在此处指包含优化器重现执行计划所需的所有计划相关细节（如 SQL 计划标识、Hint 集、绑定值和优化器环境）。
+Plan Baseline 是一组被允许用于 SQL 语句优化器的可接受计划。在典型的应用场景中，TiDB 仅在验证计划性能良好后才将其添加到 Baseline 中。这些计划包含优化器重新生成执行计划所需的所有信息（例如，SQL 计划标识符、提示集、绑定值、优化器环境）。 
 
-### 开启捕获
+### 使用方式
 
-要开启基线捕获，将 `tidb_capture_plan_baselines` 设置为 `on`。默认值为 `off`。
-
-> **注意：**
->
-> 自动绑定创建功能依赖于 [语句概要](/statement-summary-tables.md)，因此在使用自动绑定前请确保已开启语句概要。
-
-开启自动绑定创建后，每隔一个 `bind-info-lease`（默认值为 `3s`），会遍历语句概要中的历史 SQL 语句，并为出现次数不少于两次的 SQL 语句自动创建绑定。对于这些 SQL 语句，TiDB 会自动绑定语句概要中记录的执行计划。
-
-但 TiDB 不会自动捕获以下类型 SQL 语句的绑定：
-
-- `EXPLAIN` 和 `EXPLAIN ANALYZE` 语句。
-- TiDB 内部执行的 SQL 语句，如自动加载统计信息时的 `SELECT` 查询。
-- 已包含 `Enabled` 或 `Disabled` 绑定的语句。
-- 被捕获条件过滤掉的语句。
+通过将 `tidb_capture_plan_baselines` 的值设置为 `on`（其默认值为 `off`）可以打开自动捕获绑定功能。
 
 > **注意：**
 >
-> 目前，绑定会为查询语句生成一组 Hint 以固定某个执行计划。这样，对于同一查询，执行计划不会发生变化。对于大多数 OLTP 查询（包括使用同一索引或 Join 算法（如 HashJoin 和 IndexJoin）的查询），TiDB 能保证绑定前后计划一致。但由于 Hint 的局限性，对于某些复杂查询（如三表及以上的 Join、MPP 查询、复杂 OLAP 查询），TiDB 不能保证计划一致性。
+> 自动绑定功能依赖于 [Statement Summary](/statement-summary-tables.md)，因此在使用自动绑定之前需打开 Statement Summary 开关。
 
-对于 `PREPARE` / `EXECUTE` 语句以及通过二进制协议执行的查询，TiDB 会自动为实际的查询语句捕获绑定，而不是为 `PREPARE` / `EXECUTE` 语句捕获绑定。
+开启自动绑定功能后，每隔 `bind-info-lease`（默认值为 `3s`）会遍历一次 Statement Summary 中的历史 SQL 语句，并为至少出现两次的 SQL 语句自动捕获绑定。绑定的执行计划为 Statement Summary 中记录执行这条语句时使用的执行计划。
+
+对于以下几种 SQL 语句，TiDB 不会自动捕获绑定：
+
+- EXPLAIN 和 EXPLAIN ANALYZE 语句；
+- TiDB 内部执行的 SQL 语句，比如统计信息自动加载使用的 SELECT 查询；
+- 存在 `Enabled` 或 `Disabled` 状态绑定的语句；
+- 满足捕获绑定黑名单过滤条件的语句。
 
 > **注意：**
 >
-> 由于 TiDB 内部有部分嵌入式 SQL 语句用于保证某些功能的正确性，基线捕获默认会自动屏蔽这些 SQL 语句。
+> 当前，绑定通过生成一组 Hints 来固定查询语句生成的执行计划，从而确保执行计划不发生变化。对于大多数 OLTP 查询，TiDB 能够保证计划前后一致，如使用相同的索引、相同的 Join 方式（如 HashJoin、IndexJoin）等。但是，受限于当前 Hints 的完善程度，对于一些较为复杂的查询，如两个表以上的 Join 和复杂的 OLAP、MPP 类查询，TiDB 无法保证计划在绑定前后完全一致。
 
-### 过滤绑定
+对于 `PREPARE`/`EXECUTE` 语句组，或通过二进制协议执行的查询，TiDB 会为真正的查询（而不是 `PREPARE`/`EXECUTE` 语句）自动捕获绑定。
 
-该功能允许你配置黑名单，过滤掉不希望捕获绑定的查询。黑名单有三种维度：表名、频率和用户名。
+> **注意：**
+>
+> 由于 TiDB 存在一些内嵌 SQL 保证一些功能的正确性，所以自动捕获绑定时会默认屏蔽内嵌 SQL。
 
-#### 用法
+### 过滤捕获绑定
 
-将过滤条件插入系统表 `mysql.capture_plan_baselines_blacklist`，过滤条件会立即在整个集群生效。
+使用本功能，你可以设置黑名单，将满足黑名单规则的查询排除在捕获范围之外。黑名单支持的过滤维度包括表名、频率和用户名。
+
+#### 使用方式
+
+将过滤规则插入到系统表 `mysql.capture_plan_baselines_blacklist` 中，该过滤规则即刻起会在整个集群范围内生效。
+
 
 ```sql
--- 按表名过滤
+-- 按照表名进行过滤
 INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('table', 'test.t');
 
--- 通过通配符按库名和表名过滤
+-- 通过通配符来实现按照数据库名和表名进行过滤
 INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('table', 'test.table_*');
 INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('table', 'db_*.table_*');
 
--- 按频率过滤
+-- 按照执行频率进行过滤
 INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('frequency', '2');
 
--- 按用户名过滤
+-- 按照用户名进行过滤
 INSERT INTO mysql.capture_plan_baselines_blacklist(filter_type, filter_value) VALUES('user', 'user1');
 ```
 
-| **维度名称** | **说明**                                                     | 备注                                                     |
+| **维度名称** | **说明**                                                     | 注意事项                                                     |
 | :----------- | :----------------------------------------------------------- | ------------------------------------------------------------ |
-| table        | 按表名过滤。每条过滤规则格式为 `db.table`。支持的过滤语法包括[普通表名](/table-filter.md#plain-table-names)和[通配符](/table-filter.md#wildcards)。 | 不区分大小写。若表名包含非法字符，日志会返回警告信息 `[sql-bind] failed to load mysql.capture_plan_baselines_blacklist`。 |
-| frequency    | 按频率过滤。默认情况下，执行次数大于 1 的 SQL 语句会被捕获。你可以设置较高的频率，仅捕获高频语句。 | 频率小于 1 的值视为无效，日志会返回警告信息 `[sql-bind] frequency threshold is less than 1, ignore it`。若插入多条频率过滤规则，以最大频率为准。 |
-| user         | 按用户名过滤。被黑名单用户执行的语句不会被捕获。                           | 若多用户执行同一语句，且用户名均在黑名单中，则该语句不会被捕获。 |
+| table        | 按照表名进行过滤，每个过滤规则均采用 `db.table` 形式，支持通配符。详细规则可以参考[直接使用表名](/table-filter.md#直接使用表名)和[使用通配符](/table-filter.md#使用通配符)。 | 字母大小写不敏感，如果包含非法内容，日志会输出 `[sql-bind] failed to load mysql.capture_plan_baselines_blacklist` 警告。 |
+| frequency    | 按照频率进行过滤，默认捕获执行超过一次的语句。可以设置较大值来捕获执行频繁的语句。 | 插入的值小于 1 会被认为是非法值，同时，日志会输出 `[sql-bind] frequency threshold is less than 1, ignore it` 警告。如果插入了多条频率过滤规则，频率最大的值会被用作过滤条件。 |
+| user         | 按照用户名进行过滤，黑名单用户名执行的语句不会被捕获。                           | 如果多个用户执行同一条语句，只有当他们的用户名都在黑名单的时候，该语句才不会被捕获。 |
 
 > **注意：**
 >
-> - 修改黑名单需要 super 权限。
+> - 修改黑名单需要数据库的 super privilege 权限。
 >
-> - 若黑名单中包含无效过滤条件，TiDB 会在日志中返回警告信息 `[sql-bind] unknown capture filter type, ignore it`。
+> - 如果黑名单包含了非法的过滤内容时，TiDB 会在日志中输出 `[sql-bind] unknown capture filter type, ignore it` 进行提示。
 
-### 防止升级时执行计划回退
+### 升级时的计划回退防护
 
- 在升级 TiDB 集群前，你可以通过基线捕获防止执行计划回退，操作步骤如下：
+当需要升级 TiDB 集群时，你可以利用自动捕获绑定对潜在的计划回退风险进行一定程度的防护，具体流程为：
 
-1. 开启基线捕获并持续运行。
+1. 升级前打开自动捕获。
 
     > **注意：**
     >
-    > 测试数据显示，基线捕获长期运行对集群负载性能影响较小。建议尽量长时间开启基线捕获，以便捕获重要计划（出现两次及以上）。
+    > 经测试，长期打开自动捕获对集群负载的性能影响很小。尽量长期打开自动捕获，以确保重要的查询（出现过两次及以上）都能被捕获到。
 
-2. 升级 TiDB 集群。升级后，TiDB 会使用已捕获的绑定保证执行计划一致性。
+2. 进行 TiDB 集群的升级。在升级完成后，这些通过捕获的绑定会发挥作用，确保在升级后，查询的计划不会改变。
+3. 升级完成后，根据情况手动删除绑定。
 
-3. 升级后按需删除绑定。
+    - 通过[`SHOW GLOBAL BINDINGS`](#查看绑定)语句检查绑定来源：
 
-    - 通过 [`SHOW GLOBAL BINDINGS`](#view-bindings) 语句查看绑定来源。
+        根据输出中的 `Source` 字段对绑定的来源进行区分，确认是通过捕获 (`capture`) 生成还是通过手动创建 (`manual`) 生成。
 
-        在输出结果中，通过 `Source` 字段判断绑定是自动捕获（`capture`）还是手动创建（`manual`）。
-
-    - 判断是否保留捕获的绑定：
+    - 确定 `capture` 的绑定是否需要保留：
 
         ```
-        -- 查看绑定启用时的执行计划
+        -- 查看绑定生效时的计划
         SET @@SESSION.TIDB_USE_PLAN_BASELINES = true;
         EXPLAIN FORMAT='VERBOSE' SELECT * FROM t1 WHERE ...;
 
-        -- 查看绑定禁用时的执行计划
+        -- 查看绑定不生效时的计划
         SET @@SESSION.TIDB_USE_PLAN_BASELINES = false;
         EXPLAIN FORMAT='VERBOSE' SELECT * FROM t1 WHERE ...;
         ```
 
-        - 若执行计划一致，可安全删除绑定。
+        - 如果屏蔽绑定前后，查询得到的计划一致，则可以安全删除此绑定。
 
-        - 若执行计划不一致，需要排查原因（如检查统计信息）。此时需保留绑定以保证计划一致性。
+        - 如果计划不一样，则可能需要对此计划变化的原因进行排查，如检查统计信息等操作。在这种情况下需要保留此绑定，确保计划不发生变化。
 
-## 基线演化
+## 自动演进绑定 (Baseline Evolution)
 
-基线演化是 TiDB v4.0 引入的 SPM 重要特性。
+自动演进绑定，在 TiDB 4.0 版本引入，是执行计划管理的重要功能之一。
 
-随着数据的更新，原先绑定的执行计划可能不再最优。基线演化功能可以自动优化已绑定的执行计划。
+由于某些数据变更后，原先绑定的执行计划可能是一个不优的计划。为了解决该问题，引入自动演进绑定功能来自动优化已经绑定的执行计划。
 
-此外，基线演化在一定程度上也能避免因统计信息变化导致的执行计划抖动。
+另外自动演进绑定还可以一定程度上避免统计信息改动后，对执行计划带来的抖动。
 
-### 用法
+### 使用方式
 
-使用以下语句开启自动绑定演化：
+通过以下语句可以开启自动演进绑定功能：
+
 
 ```sql
 SET GLOBAL tidb_evolve_plan_baselines = ON;
@@ -747,107 +745,97 @@ SET GLOBAL tidb_evolve_plan_baselines = ON;
 
 `tidb_evolve_plan_baselines` 的默认值为 `off`。
 
-<CustomContent platform="tidb">
-
 > **警告：**
 >
-> + 基线演化为实验特性，可能存在未知风险。**不建议**在生产环境中使用。
-> + 该变量会被强制设置为 `off`，直到基线演化功能正式 GA。如果你尝试开启该功能，会返回错误。如果你已在生产环境中使用该功能，请尽快关闭。如发现绑定状态异常，请联系 [PingCAP 支持](/support.md) 或社区。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-> **警告：**
+> - 自动演进功能目前为实验特性，存在未知风险，不建议在生产环境中使用。
 >
-> + 基线演化为实验特性，可能存在未知风险。**不建议**在生产环境中使用。
-> + 该变量会被强制设置为 `off`，直到基线演化功能正式 GA。如果你尝试开启该功能，会返回错误。如果你已在生产环境中使用该功能，请尽快关闭。如发现绑定状态异常，请联系 [TiDB Cloud 支持](/tidb-cloud/tidb-cloud-support.md)。
+> - 此变量开关已强制关闭，直到自动演进成为正式功能 GA (Generally Available)。如果你尝试打开开关，会产生报错。如果你已经在生产环境中使用了此功能，请尽快将它禁用。如发现 binding 状态不如预期，请从 PingCAP 官方或 TiDB 社区[获取支持](/support.md)。
 
-</CustomContent>
+在打开自动演进功能后，如果优化器选出的最优执行计划不在之前绑定的执行计划之中，会将其记录为待验证的执行计划。每隔 `bind-info-lease`（默认值为 `3s`），会选出一个待验证的执行计划，将其和已经绑定的执行计划中代价最小的比较实际运行时间。如果待验证的运行时间更优的话（目前判断标准是运行时间小于等于已绑定执行计划运行时间的 2/3），会将其标记为可使用的绑定。以下示例描述上述过程。
 
-开启自动绑定演化功能后，如果优化器选择的最优执行计划不在绑定执行计划中，优化器会将该计划标记为待验证的执行计划。每隔一个 `bind-info-lease`（默认值为 `3s`），会选择一个待验证的执行计划，与绑定执行计划中代价最小的计划进行实际执行时间的对比。如果待验证计划的执行时间更短（当前判定标准为执行时间不超过绑定计划的 2/3），则将该计划标记为可用绑定。以下示例描述了上述过程。
+假如有表 `t` 定义如下：
 
-假设表 `t` 定义如下：
 
 ```sql
 CREATE TABLE t(a INT, b INT, KEY(a), KEY(b));
 ```
 
-对表 `t` 执行如下查询：
+在表 `t` 上进行如下查询：
+
 
 ```sql
 SELECT * FROM t WHERE a < 100 AND b < 100;
 ```
 
-在上述表中，满足 `a < 100` 条件的行很少。但由于某些原因，优化器错误地选择了全表扫描而不是使用索引 `a` 的最优执行计划。你可以先用以下语句创建绑定：
+表上满足条件 `a < 100` 的行很少。但由于某些原因，优化器没能选中使用索引 `a` 这个最优执行计划，而是误选了速度慢的全表扫，那么用户首先可以通过如下语句创建一个绑定：
+
 
 ```sql
 CREATE GLOBAL BINDING for SELECT * FROM t WHERE a < 100 AND b < 100 USING SELECT * FROM t use index(a) WHERE a < 100 AND b < 100;
 ```
 
-再次执行上述查询时，优化器会选择索引 `a`（受上述绑定影响），以减少查询时间。
+当以上查询语句再次执行时，优化器会在刚创建绑定的干预下选择使用索引 `a`，进而降低查询时间。
 
-假设随着对表 `t` 的插入和删除操作，满足 `a < 100` 条件的行数逐渐增多，而满足 `b < 100` 条件的行数逐渐减少。此时，绑定下使用索引 `a` 可能已不是最优计划。
+假如随着在表中进行插入和修改，表中满足条件 `a < 100` 的行变得越来越多，而满足条件 `b < 100` 的行变得越来越少，这时再在绑定的干预下使用索引 `a` 可能就不是最优了。
 
-基线演化可以解决此类问题。当优化器识别到表数据发生变化时，会为该查询生成使用索引 `b` 的执行计划。但由于当前计划已存在绑定，该查询计划不会被采用和执行，而是被存储在后台演化列表中。在演化过程中，如果该计划被验证为执行时间明显短于当前使用索引 `a` 的执行计划，则会将索引 `b` 加入可用绑定列表。此后再次执行该查询时，优化器会优先生成使用索引 `b` 的执行计划，并确认该计划在绑定列表中，然后采用并执行该计划，以适应数据变化后的查询性能。
+绑定的演进可以解决这类问题。当优化器感知到表数据变化后，会对这条查询生成使用索引 `b` 的执行计划。但由于绑定的存在，这个执行计划不会被采纳和执行，不过它会被存在后台的演进列表里。在演进过程中，如果它被验证为执行时间明显低于使用索引 `a` 的执行时间（即当前绑定的执行计划），那么索引 `b` 会被加入到可用的绑定列表中。在此之后，当这条查询再次被执行时，优化器首先生成使用索引 `b` 的执行计划，并确认它在绑定列表中，所以会采纳它并执行，进而可以在数据变化后降低这条查询的执行时间。
 
-为减少自动演化对集群的影响，可进行如下配置：
-
-- 通过设置 `tidb_evolve_plan_task_max_time` 限制每个执行计划的最大执行时间，默认值为 `600s`。实际验证过程中，最大执行时间也会被限制为不超过被验证计划的两倍。
-- 通过设置 `tidb_evolve_plan_task_start_time`（默认 `00:00 +0000`）和 `tidb_evolve_plan_task_end_time`（默认 `23:59 +0000`）限制演化的时间窗口。
+为了减少自动演进对集群的影响，可以通过设置 `tidb_evolve_plan_task_max_time` 来限制每个执行计划运行的最长时间，其默认值为 `600s`。实际在验证执行计划时，计划的最长运行时间还会被限制为不超过已验证执行计划的运行时间的两倍；通过 `tidb_evolve_plan_task_start_time` 和 `tidb_evolve_plan_task_end_time` 可以限制运行演进任务的时间窗口，默认值分别为 `00:00 +0000` 和 `23:59 +0000`。
 
 ### 注意事项
 
-由于基线演化会自动创建新绑定，当查询环境发生变化时，自动创建的绑定可能存在多种行为选择。请注意以下事项：
+由于自动演进绑定会自动地创建新的绑定，当查询的环境发生变动时，自动创建的绑定可能会有多种行为的选择。这里列出一些注意事项：
 
-+ 基线演化仅对至少有一个全局绑定的标准化后的 SQL 语句进行演化。
++ 自动演进只会对存在至少一个 global 绑定的标准化 SQL 进行演进。
 
-+ 由于创建新绑定会删除之前所有绑定（针对同一标准化后的 SQL 语句），手动创建新绑定后，自动演化的绑定会被删除。
++ 由于创建新的绑定会删除之前所有绑定（对于一条标准化 SQL），自动演进的绑定也会在手动重新创建绑定后被删除。
 
-+ 演化过程中会保留所有与计算过程相关的 Hint，包括：
++ 所有和计算过程相关的 hint，在演进时都会被保留。计算过程相关的 hint 有如下几种：
 
     | Hint | 说明            |
     | :-------- | :------------- |
-    | `memory_quota` | 查询可用的最大内存 |
-    | `use_toja` | 优化器是否将子查询转换为 Join |
-    | `use_cascades` | 是否使用 cascades 优化器 |
-    | `no_index_merge` | 优化器是否将 Index Merge 作为表读取选项 |
-    | `read_consistent_replica` | 读取表时是否强制启用 Follower Read |
-    | `max_execution_time` | 查询的最长持续时间 |
+    | memory_quota |  查询过程最多可以使用多少内存 |
+    | use_toja | 优化器是否考虑把子查询转化为 join |
+    | use_cascades | 是否使用 cascades 优化器 |
+    | no_index_merge | 优化器是否考虑将 index merge 作为一个读表选项 |
+    | read_consistent_replica | 是否强制读表时使用 follower read |
+    | max_execution_time | 查询过程最多消耗多少时间 |
 
-+ `read_from_storage` 是一个特殊 Hint，用于指定读取表时是从 TiKV 还是 TiFlash 读取数据。由于 TiDB 提供隔离读，当隔离条件变化时，该 Hint 对演化计划影响较大。因此，若初始绑定中存在该 Hint，TiDB 会忽略其所有演化绑定。
++ `read_from_storage` 是一个非常特别的 hint，因为它指定了读表时选择从 TiKV 读还是从 TiFlash 读。由于 TiDB 提供隔离读的功能，当隔离条件变化时，这个 hint 对演进出来的执行计划影响很大，所以当最初创建的绑定中存在这个 hint，TiDB 会无视其所有演进的绑定。
 
-## 升级检查清单
+## 升级检查 (Upgrade Checklist)
 
-在集群升级过程中，SQL 执行计划管理（SPM）可能导致兼容性问题，进而导致升级失败。为确保升级顺利，你需要在升级前检查以下内容：
+执行计划管理功能 (SPM) 在版本升级过程中可能会出现一些兼容性问题导致升级失败，你需要在版本升级前做一些检查，确保版本顺利升级。
 
-* 从 v5.2.0 之前的版本（即 v4.0、v5.0、v5.1）升级到当前版本时，需确保升级前已禁用 `tidb_evolve_plan_baselines`。禁用方法如下：
+* 当你尝试从 v5.2 以前的版本（即 v4.0、v5.0、v5.1）升级到当前版本，需要注意在升级前检查自动演进的开关 `tidb_evolve_plan_baselines` 是否已经关闭。如果尚未关闭，则需要将其关闭后再进行升级。具体操作如下所示：
 
     
     ```sql
-    -- 检查旧版本中 `tidb_evolve_plan_baselines` 是否已禁用
+    -- 在待升级的版本上检查自动演进的开关 `tidb_evolve_plan_baselines` 是否关闭。
 
     SELECT @@global.tidb_evolve_plan_baselines;
 
-    -- 若 `tidb_evolve_plan_baselines` 仍为启用状态，则需禁用
+    -- 如果演进的开关 `tidb_evolve_plan_baselines` 尚未关闭，则需要将其关闭。
 
-    SET GLOBAL tidb_evolve_plan_baselines = OFF;
+    set global tidb_evolve_plan_baselines = off;
     ```
 
-* 从 v4.0 升级到当前版本前，需要检查所有可用 SQL 绑定对应的查询在新版本中的语法是否正确。如有语法错误，需删除对应 SQL 绑定。操作步骤如下：
+* 当你尝试从 v4.0 版本升级到当前版本，需要注意在升级前检查所有可用绑定对应的查询语句在新版本中是否存在语法错误。如果存在语法错误，则需要删除对应的绑定。
+
+    具体操作如下所示：
 
     
     ```sql
-    -- 检查待升级版本中所有可用 SQL 绑定对应的查询
+    -- 在待升级的版本上检查现有可用绑定对应的查询语句。
 
     SELECT bind_sql FROM mysql.bind_info WHERE status = 'using';
 
-    -- 在新版本测试环境中验证上述 SQL 查询的结果
+    -- 将上一条查询得到的结果，在新版本的测试环境中进行验证。
 
     bind_sql_0;
     bind_sql_1;
     ...
 
-    -- 若出现语法错误（ERROR 1064 (42000): You have an error in your SQL syntax），则需删除对应绑定。
-    -- 若出现其他错误（如找不到表），说明语法兼容，无需其他操作。
+    -- 如果报错信息是语法错误（ERROR 1064 (42000): You have an error in your SQL syntax），则需要删除对应的绑定。
+    -- 如果是其他错误，如未找到表，则表示语法兼容，不需要进行额外的处理。
     ```

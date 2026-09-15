@@ -1,56 +1,57 @@
 ---
 title: TiDB 3.0.11 Release Notes
-summary: TiDB 3.0.11 was released on March 4, 2020. It includes compatibility changes, new features, bug fixes, and updates for TiDB, TiDB Binlog, TiDB Lightning, TiKV, and TiDB Ansible. Some known issues are fixed in new versions, so it is recommended to use the latest 3.0.x version.
+summary: TiDB 3.0.11 发布，包含兼容性变化、新功能和 Bug 修复。新增配置项 `max-index-length` 控制索引最大长度，显示分区表的分区元信息，以及 TiDB 集群之间数据双向复制功能。Bug 修复包括查询结果不正确、Goroutine 泄露等问题。TiKV 也进行了日志输出优化和问题修复。TiDB Ansible 修复了失效文档链接和未定义变量问题。
+aliases: ['/zh/tidb/dev/release-3.0.11/','/zh/tidb/v3.0/release-3.0.11','/docs-cn/dev/releases/release-3.0.11/','/docs-cn/dev/releases/3.0.11/','/zh/tidb/v5.4/release-3.0.11','/zh/tidb/v6.1/release-3.0.11','/zh/tidb/v6.5/release-3.0.11','/zh/tidb/v7.1/release-3.0.11','/zh/tidb/v7.5/release-3.0.11','/zh/tidb/v8.1/release-3.0.11']
 ---
 
 # TiDB 3.0.11 Release Notes
 
-Release date: March 4, 2020
+发版日期：2020 年 3 月 4 日
 
-TiDB version: 3.0.11
+TiDB 版本：3.0.11
 
-TiDB Ansible version: 3.0.11
+TiDB Ansible 版本：3.0.11
 
-> **Warning:**
+> **警告：**
 >
-> Some known issues are found in this version, and these issues are fixed in new versions. It is recommended that you use the latest 3.0.x version.
+> 该版本存在一些已知问题，已在新版本中修复，建议使用 3.0.x 的最新版本。
 
-## Compatibility Changes
-
-* TiDB
-    + Add the `max-index-length` configuration item to control the maximum index length, which is compatible with the behavior of TiDB versions before 3.0.7 or of MySQL [#15057](https://github.com/pingcap/tidb/pull/15057)
-
-## New Features
+## 兼容性变化
 
 * TiDB
-    + Support showing the meta information of partitioned tables in the `information_schema.PARTITIONS` table [#14849](https://github.com/pingcap/tidb/pull/14849)
+    + 新增 `max-index-length` 配置项，用于控制索引支持的最大长度，用户可自由选择兼容 v3.0.7 之前版本或者兼容 MySQL [#15057](https://github.com/pingcap/tidb/pull/15057)
+
+## 新功能
+
+* TiDB
+    + 新增在 `information_schema`.`PARTITIONS` 表中显示分区表的分区元信息的功能 [#14849](https://github.com/pingcap/tidb/pull/14849)
 
 * TiDB Binlog
-    + Support the bidirectional data replication between TiDB clusters [#884](https://github.com/pingcap/tidb-binlog/pull/884) [#909](https://github.com/pingcap/tidb-binlog/pull/909)
+    + 新增 TiDB 集群之间数据双向复制功能 [#884](https://github.com/pingcap/tidb-binlog/pull/884) [#909](https://github.com/pingcap/tidb-binlog/pull/909)
 
 * TiDB Lightning
-    + Support the TLS configuration [#44](https://github.com/tikv/importer/pull/44) [#270](https://github.com/pingcap/tidb-lightning/pull/270)
+    + 新增配置 TLS 功能 [#44](https://github.com/tikv/importer/pull/44) [#270](https://github.com/pingcap/tidb-lightning/pull/270)
 
 * TiDB Ansible
-    + Modify the logic of `create_users.yml` so that users of the control machine do not have to be consistent with `ansible_user` [#1184](https://github.com/pingcap/tidb-ansible/pull/1184)
+    + 优化 `create_user.yml` 的逻辑，中控机使用的用户不必和 `ansible_user` 一致 [#1184](https://github.com/pingcap/tidb-ansible/pull/1184)
 
-## Bug Fixes
+## Bug 修复
 
 * TiDB
-    + Fix the issue of Goroutine leaks when retrying an optimistic transaction because queries using `Union` are not marked read-only [#15076](https://github.com/pingcap/tidb/pull/15076)
-    + Fix the issue that `SHOW TABLE STATUS` fails to correctly output the table status at the snapshot time because the value of the `tidb_snapshot` parameter is not correctly used when executing the `SET SESSION tidb_snapshot = 'xxx';` statement [#14391](https://github.com/pingcap/tidb/pull/14391)
-    + Fix the incorrect result caused by a SQL statement that contains `Sort Merge Join` and `ORDER BY DESC` at the same time [#14664](https://github.com/pingcap/tidb/pull/14664)
-    + Fix the panic of TiDB server when creating partition tables using the unsupported expression. The error information `This partition function is not allowed` is returned after fixing this panic. [#14769](https://github.com/pingcap/tidb/pull/14769)
-    + Fix the incorrect result occurred when executing the `select max() from subquery` statement with the subquery containing `Union` [#14944](https://github.com/pingcap/tidb/pull/14944)
-    + Fix the issue that an error message is returned when executing the `SHOW BINDINGS` statement after executing `DROP BINDING` that drops the execution binding [#14865](https://github.com/pingcap/tidb/pull/14865)
-    + Fix the issue that the connection is broken because the maximum length of an alias in a query is 256 characters in the MySQL protocol, but TiDB does not [cut the alias](https://dev.mysql.com/doc/refman/8.0/en/identifier-length.html) in the query results according to this protocol [#14940](https://github.com/pingcap/tidb/pull/14940)
-    + Fix the incorrect query result that might occur when using the string type in `DIV`. For instance, now you can correctly execute the `select 1 / '2007' div 1` statement [#14098](https://github.com/pingcap/tidb/pull/14098)
+    + 修复由于涉及 `Union` 的查询没有标记为只读，在乐观事务开启重试时会导致 Goroutine 泄露的问题 [#15076](https://github.com/pingcap/tidb/pull/15076)
+    + 修复执行 `SET SESSION tidb_snapshot = 'xxx';` 语句后，由于执行时未正确使用 `tidb_snapshot` 变量的值，导致 `SHOW TABLE STATUS` 未正确输出快照时刻表状态的问题 [#14391](https://github.com/pingcap/tidb/pull/14391)
+    + 修复 `Sort Merge Join` 与 `ORDER BY DESC` 在同一条 SQL 语句中时，输出结果不正确的问题 [#14664](https://github.com/pingcap/tidb/pull/14664)
+    + 修复创建分区表时，由于使用不支持的表达式，导致 TiDB server panic 的问题，修复后返回 `This partition function is not allowed` 错误信息 [#14769](https://github.com/pingcap/tidb/pull/14769)
+    + 修复执行 `select max() from subquery` 语句且 Subquery 包含 `Union` 的子查询时，输出结果不正确的问题 [#14944](https://github.com/pingcap/tidb/pull/14944)
+    + 修复执行 `DROP BINDING` 语句解除执行计划绑定后，执行 `SHOW BINDINGS` 语句系统返回错误信息的问题 [#14865](https://github.com/pingcap/tidb/pull/14865)
+    + 修复查询语句中别名长度大于 256 时，由于在查询结果中未按照 MySQL 协议对[别名截断](https://dev.mysql.com/doc/refman/8.0/en/identifier-length.html)，导致连接被断开的问题 [#14940](https://github.com/pingcap/tidb/pull/14940)
+    + 修复字符串类型被用作 `DIV` 中时，查询结果可能不正确的问题，例如：`select 1 / '2007' div 1` 现在可以被正确地执行 [#14098](https://github.com/pingcap/tidb/pull/14098)
 
 * TiKV
-    + Optimize the log output by removing unnecessary logs [#6657](https://github.com/tikv/tikv/pull/6657)
-    + Fix the panic that might occur when the peer is removed under high loads [#6704](https://github.com/tikv/tikv/pull/6704)
-    + Fix the issue that Hibernate Regions are not waken up in some cases [#6732](https://github.com/tikv/tikv/pull/6732) [#6738](https://github.com/tikv/tikv/pull/6738)
+    + 优化日志输出，删除部分不必要的日志 [#6657](https://github.com/tikv/tikv/pull/6657)
+    + 修复 peer 在高负载情况下若被删除可能导致 panic 的问题 [#6704](https://github.com/tikv/tikv/pull/6704)
+    + 修复 Hibernate Region 在某些特殊条件下未被正确唤醒的问题 [#6732](https://github.com/tikv/tikv/pull/6732) [#6738](https://github.com/tikv/tikv/pull/6738)
 
 * TiDB Ansible
-    + Update outdated document links in `tidb-ansible` [#1169](https://github.com/pingcap/tidb-ansible/pull/1169)
-    + Fix the issue that undefined variables might occur in the `wait for region replication complete` task [#1173](https://github.com/pingcap/tidb-ansible/pull/1173)
+    + 修复 `tidb-ansible` 中失效、过期的文档链接 [#1169](https://github.com/pingcap/tidb-ansible/pull/1169)
+    + 修复 `wait for region replication complete` task 可能出现未定义变量的问题 [#1173](https://github.com/pingcap/tidb-ansible/pull/1173)

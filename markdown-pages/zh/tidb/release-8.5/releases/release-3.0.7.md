@@ -1,26 +1,27 @@
 ---
 title: TiDB 3.0.7 Release Notes
-summary: TiDB 3.0.7 was released on December 4, 2019. It includes fixes for issues related to lock TTL, timezone parsing, result accuracy, data precision, and statistics accuracy. TiKV also received updates to improve deadlock detection and fix a memory leak issue.
+summary: TiDB 3.0.7 发布，修复了多个问题，包括本地时间落后导致锁的 TTL 过大、解析日期时时区不正确、整型数据转换精度丢失等问题。TiKV 也修复了死锁检测和内存泄漏问题。
+aliases: ['/zh/tidb/dev/release-3.0.7/','/zh/tidb/v3.0/release-3.0.7','/docs-cn/dev/releases/release-3.0.7/','/docs-cn/dev/releases/3.0.7/','/zh/tidb/v5.4/release-3.0.7','/zh/tidb/v6.1/release-3.0.7','/zh/tidb/v6.5/release-3.0.7','/zh/tidb/v7.1/release-3.0.7','/zh/tidb/v7.5/release-3.0.7','/zh/tidb/v8.1/release-3.0.7']
 ---
 
 # TiDB 3.0.7 Release Notes
 
-Release date: December 4, 2019
+发版日期：2019 年 12 月 4 日
 
-TiDB version: 3.0.7
+TiDB 版本：3.0.7
 
-TiDB Ansible version: 3.0.7
+TiDB Ansible 版本：3.0.7
 
 ## TiDB
 
-- Fix the issue that the lock TTL's value is too large because the TiDB server's local time is behind PD's timestamp [#13868](https://github.com/pingcap/tidb/pull/13868)
-- Fix the issue that the timezone is incorrect after parsing the date from strings using `gotime.Local` [#13793](https://github.com/pingcap/tidb/pull/13793)
-- Fix the issue that the result might be incorrect because the `binSearch` function does not return an error in the implementation of `builtinIntervalRealSig` [#13767](https://github.com/pingcap/tidb/pull/13767)
-- Fix the issue that data is incorrect because the precision is lost when an integer is converted to an unsigned floating point or decimal type [#13755](https://github.com/pingcap/tidb/pull/13755)
-- Fix the issue that the result is incorrect because the `not null` flag is not properly reset when the `USING` clause is used in Natural Outer Join and Outer Join [#13739](https://github.com/pingcap/tidb/pull/13739)
-- Fix the issue that the statistics are not accurate because a data race occurs when statistics are updated [#13687](https://github.com/pingcap/tidb/pull/13687)
+- 修复 TiDB server 本地时间落后于 TSO 时间时，可能造成锁的 TTL 过大的问题 [#13868](https://github.com/pingcap/tidb/pull/13868)
+- 修复从字符串解析日期时，由于使用本地时区 (`gotime.Local`) 而导致解析结果的时区不正确的问题 [#13793](https://github.com/pingcap/tidb/pull/13793)
+- 修复 `builtinIntervalRealSig` 的实现中，`binSearch` 方法不会返回 error，导致最终结果可能不正确的问题 [#13767](https://github.com/pingcap/tidb/pull/13767)
+- 修复整型数据被转换为无符号浮点/Decimal 类型时，精度可能丢失造成数据错误的问题 [#13755](https://github.com/pingcap/tidb/pull/13755)
+- 修复 Natural Outer Join 和 Outer Join 使用 `USING` 语法时，`not null` 标记没有被重置导致结果错误的问题 [#13739](https://github.com/pingcap/tidb/pull/13739)
+- 修复更新统计信息时可能存在数据竞争，导致统计信息不准确的问题 [#13687](https://github.com/pingcap/tidb/pull/13687)
 
 ## TiKV
 
-- Make the deadlock detector only observe valid Regions to make sure the deadlock manager is in a valid Region [#6110](https://github.com/tikv/tikv/pull/6110)
-- Fix a potential memory leak issue [#6128](https://github.com/tikv/tikv/pull/6128)
+- 判断死锁检测服务的第一个 Region 时，加上 Region 合法检测，防止信息不完整的 Region 导致误判 [#6110](https://github.com/tikv/tikv/pull/6110)
+- 修复潜在的内存泄漏问题 [#6128](https://github.com/tikv/tikv/pull/6128)

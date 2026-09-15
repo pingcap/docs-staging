@@ -1,36 +1,37 @@
 ---
-title: TiDB 2.0.7 Release Notes
-summary: TiDB 2.0.7 was released on September 7, 2018, with improvements in system compatibility and stability. New features include the addition of the `PROCESSLIST` table in `information_schema`. Bug fixes address issues with index usage, join output, and query conditions. TiKV now opens the `dynamic-level-bytes` parameter by default to reduce space amplification, and updates approximate size and keys count after region merging.
+title: TiDB 2.0.7 release notes
+summary: TiDB 2.0.7 版本在系统兼容性和稳定性方面有改进。TiDB 新增了在 `information_schema` 中添加 `PROCESSLIST` 表的功能。还对语句执行细节进行了改进，并在 `SLOW QUERY` 日志中输出更多信息。修复了多个 bug，包括 `PRIMARY KEY` 为整数的表无法使用 `USE INDEX(PRIMARY)` 的问题，以及 `Merge Join` 和 `Index Join` 在 inner row 为 `NULL` 时输出多余结果的问题。TiKV 方面，空集群默认打开 `dynamic-level-bytes` 参数减少空间放大，并在 Region merge 之后更新 Region 的 `approximate size` 和 keys。
+aliases: ['/zh/tidb/dev/release-2.0.7/','/zh/tidb/v2.0/release-2.0.7','/docs-cn/dev/releases/release-2.0.7/','/docs-cn/dev/releases/207/','/zh/tidb/v5.4/release-2.0.7','/zh/tidb/v6.1/release-2.0.7','/zh/tidb/v6.5/release-2.0.7','/zh/tidb/v7.1/release-2.0.7','/zh/tidb/v7.5/release-2.0.7','/zh/tidb/v8.1/release-2.0.7']
 ---
 
 # TiDB 2.0.7 Release Notes
 
-On September 7, 2018, TiDB 2.0.7 is released. Compared with TiDB 2.0.6, this release has great improvement in system compatibility and stability.
+2018 年 9 月 7 日，TiDB 发布 2.0.7 版。该版本在 2.0.6 版的基础上，对系统兼容性、稳定性做出了改进。
 
 ## TiDB
 
 - New Feature
-    - Add the `PROCESSLIST` table in `information_schema` [#7286](https://github.com/pingcap/tidb/pull/7286)
-- Improvement
-    - Collect more details about SQL statement execution and output the information in the `SLOW QUERY` log [#7364](https://github.com/pingcap/tidb/pull/7364)
-    - Drop the partition information in `SHOW CREATE TABLE` [#7388](https://github.com/pingcap/tidb/pull/7388)
-    - Improve the execution efficiency of the `ANALYZE` statement by setting it to the RC isolation level and low priority [#7500](https://github.com/pingcap/tidb/pull/7500)
-    - Speed up adding a unique index [#7562](https://github.com/pingcap/tidb/pull/7562)
-    - Add an option of controlling the DDL concurrency [#7563](https://github.com/pingcap/tidb/pull/7563)
+    - 在 `information_schema` 里添加 `PROCESSLIST` 表 [#7286](https://github.com/pingcap/tidb/pull/7286)
+- Improvements
+    - 收集更多语句执行细节，并输出在 `SLOW QUERY` 日志里 [#7364](https://github.com/pingcap/tidb/pull/7364)
+    - `SHOW CREATE TABLE` 不再输出分区信息 [#7388](https://github.com/pingcap/tidb/pull/7388)
+    - 通过设置 RC 隔离级别和低优先级优化 `ANALYZE` 语句执行效率 [#7500](https://github.com/pingcap/tidb/pull/7500)
+    - 加速 `ADD UNIQUE INDEX` [#7562](https://github.com/pingcap/tidb/pull/7562)
+    - 增加控制 DDL 并发度的选项 [#7563](https://github.com/pingcap/tidb/pull/7563)
 - Bug Fixes
-    - Fix the issue that `USE INDEX(PRIMARY)` cannot be used in a table whose primary key is an integer [#7298](https://github.com/pingcap/tidb/pull/7298)
-    - Fix the issue that `Merge Join` and `Index Join` output incorrect results when the inner row is `NULL` [#7301](https://github.com/pingcap/tidb/pull/7301)
-    - Fix the issue that `Join` outputs an incorrect result when the chunk size is set too small [#7315](https://github.com/pingcap/tidb/pull/7315)
-    - Fix the panic issue caused by a statement of creating a table involving `range column` [#7379](https://github.com/pingcap/tidb/pull/7379)
-    - Fix the issue that `admin check table` mistakenly reports an error of a time-type column [#7457](https://github.com/pingcap/tidb/pull/7457)
-    - Fix the issue that the data with a default value `current_timestamp` cannot be queried using the `=` condition [#7467](https://github.com/pingcap/tidb/pull/7467)
-    - Fix the issue that the zero-length parameter inserted by using the `ComStmtSendLongData` command is mistakenly parsed to NULL [#7508](https://github.com/pingcap/tidb/pull/7508)
-    - Fix the issue that `auto analyze` is repeatedly executed in specific scenarios [#7556](https://github.com/pingcap/tidb/pull/7556)
-    - Fix the issue that the parser cannot parse a single line comment ended with a newline character [#7635](https://github.com/pingcap/tidb/pull/7635)
+    - 修复 `PRIMARY KEY` 为整数的表，无法使用 `USE INDEX(PRIMARY)` 的问题 [#7298](https://github.com/pingcap/tidb/pull/7298)
+    - 修复 `Merge Join` 和 `Index Join` 在 inner row 为 `NULL` 时输出多余结果的问题 [#7301](https://github.com/pingcap/tidb/pull/7301)
+    - 修复 chunk size 设置过小时，`Join` 输出多余结果的问题 [#7315](https://github.com/pingcap/tidb/pull/7315)
+    - 修复建表语句中包含 `range column` 语法导致 panic 的问题 [#7379](https://github.com/pingcap/tidb/pull/7379)
+    - 修复 `admin check table` 对时间类型的列误报的问题 [#7457](https://github.com/pingcap/tidb/pull/7457)
+    - 修复以默认值 `current_timestamp` 插入的数据无法用 `=` 条件查询到的问题 [#7467](https://github.com/pingcap/tidb/pull/7467)
+    - 修复以 `ComStmtSendLongData` 命令插入空字符串参数被误解析为 `NULL` 的问题 [#7508](https://github.com/pingcap/tidb/pull/7508)
+    - 修复特定场景下 `auto analyze` 不断重复执行的问题 [#7556](https://github.com/pingcap/tidb/pull/7556)
+    - 修复 parser 无法解析以换行符结尾的单行注释的问题 [#7635](https://github.com/pingcap/tidb/pull/7635)
 
 ## TiKV
 
 - Improvement
-    - Open the `dynamic-level-bytes` parameter in an empty cluster by default, to reduce space amplification
+    - 空集群默认打开 `dynamic-level-bytes` 参数减少空间放大
 - Bug Fix
-    - Update `approximate size` and `approximate keys count` of a Region after Region merging
+    - 在 Region merge 之后更新 Region 的 `approximate size` 和 keys

@@ -1,34 +1,34 @@
 ---
-title: TiUP Terminology and Concepts
-summary: Explain the terms and concepts of TiUP.
+title: TiUP 术语及核心概念
+summary: TiUP 是一个用于下载、更新、卸载组件的程序，通过各种组件来扩展其功能。组件是可以运行的程序或脚本，通过 tiup <component> 命令来运行。TiUP 组件可以从镜像仓库下载，用户可以通过设置 TIUP_MIRRORS 环境变量来自定义镜像仓库。
 ---
 
-# TiUP Terminology and Concepts
+# TiUP 术语及核心概念
 
-This document explains important terms and concepts of TiUP.
+本文主要说明 TiUP 的重要术语和核心概念。
 
-## TiUP components
+## TiUP 组件
 
-The TiUP program contains only a few commands for downloading, updating, and uninstalling components. TiUP expands its functions with various components. A **component** is a program or script that can be run. When running a component through `tiup <component>`, TiUP adds a set of environment variables, creates the data directory for the program, and then runs the program.
+TiUP 程序只包含少数几个命令，用来下载、更新、卸载组件。TiUP 通过各种组件来扩展其功能。**组件**是一个可以运行的程序或脚本，通过 `tiup <component>` 运行组件时，TiUP 会添加一组环境变量，并为该程序创建好对应的数据目录，然后运行该程序。
 
-By running the `tiup <component>` command, you can run a component supported by TiUP. The running logic is:
+通过运行 `tiup <component>` 命令，你可以运行支持的 TiUP 组件，其中运行的逻辑为：
 
-+ If you specify a version of a component through `tiup <component>[:version]`:
+1. 如果用户通过 `tiup <component>[:version]` 运行指定某个组件的特定版本：
 
-    - If the component does not have any version installed locally, TiUP downloads the latest stable version from the mirror server.
-    - If the component has one or more versions installed locally, but there is no version specified by you, TiUP downloads the specified version from the mirror server.
-    - If the specified version of the component is installed locally, TiUP sets the environment variable to run the installed version.
+    - 组件在本地未安装任何版本，则从镜像服务器下载最新稳定版本
+    - 组件在本地安装有其他版本，但是没有用户指定的版本，则从镜像服务器下载用户指定版本
+    - 如果本地已经安装指定版本，则设置环境变量来运行已经安装的版本
 
-+ If you run a component through `tiup <component>` and specify no version:
+2. 如果用户通过 `tiup <component>` 运行某个组件，且未指定任何版本：
 
-    - If the component does not have any version installed locally, TiUP downloads the latest stable version from the mirror server.
-    - If one or more versions have been installed locally, TiUP sets the environment variable to run the latest installed version.
+    - 组件在本地未安装任何版本，则从镜像服务器下载最新稳定版本
+    - 如果本地已经安装部分版本，则设置环境变量来运行已经安装的版本中的最新版本
 
-## TiUP mirrors
+## TiUP 镜像仓库
 
-All components of TiUP are downloaded from the TiUP mirrors. TiUP mirrors contain the TAR package of each component and the corresponding meta information (version, entry startup file, checksum). TiUP uses PingCAP's official mirrors by default. You can customize the mirror source through the `TIUP_MIRRORS` environment variable.
+TiUP 的所有组件都从镜像仓库 (mirrors) 下载，镜像仓库包含各个组件的 TAR 包以及对应的元信息（版本、入口启动文件、校验和）。TiUP 默认使用 PingCAP 官方的镜像仓库。用户可以通过 `TIUP_MIRRORS` 环境变量自定义镜像仓库。
 
-TiUP mirrors can be a local file directory or an online HTTP server:
+镜像仓库可以是本地文件目录或在线 HTTP 服务器：
 
-+ `TIUP_MIRRORS=/path/to/local tiup list`
-+ `TIUP_MIRRORS=https://private-mirrors.example.com tiup list`
+1. `TIUP_MIRRORS=/path/to/local tiup list`
+2. `TIUP_MIRRORS=https://private-mirrors.example.com tiup list`

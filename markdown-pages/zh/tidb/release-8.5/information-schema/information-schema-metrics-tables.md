@@ -1,22 +1,18 @@
 ---
 title: METRICS_TABLES
-summary: Learn the `METRICS_TABLES` system table.
+summary: 了解 TiDB 系统表 `METRICS_TABLES`。
 ---
 
 # METRICS_TABLES
 
-The `METRICS_TABLES` table provides the PromQL (Prometheus Query Language) definition for each of the views in the [`METRICS_SCHEMA`](/metrics-schema.md) database.
-
-> **Note:**
->
-> This table is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
+`METRICS_TABLES` 表为 [`METRICS_SCHEMA`](/metrics-schema.md) 数据库中的每个视图提供 PromQL（Prometheus 查询语言）定义。
 
 ```sql
 USE INFORMATION_SCHEMA;
 DESC METRICS_TABLES;
 ```
 
-The output is as follows:
+输出结果如下：
 
 ```sql
 +------------+--------------+------+------+---------+-------+
@@ -30,19 +26,19 @@ The output is as follows:
 +------------+--------------+------+------+---------+-------+
 ```
 
-Field description:
+表 `METRICS_TABLES` 的字段解释：
 
-* `TABLE_NAME`: Corresponds to the table name in `METRICS_SCHEMA`.
-* `PROMQL`: The working principle of the monitoring table is to map SQL statements to `PromQL` and convert Prometheus results into SQL query results. This field is the expression template of `PromQL`. When you query the data of the monitoring table, the query conditions are used to rewrite the variables in this template to generate the final query expression.
-* `LABELS`: The label for the monitoring item. Each label corresponds to a column in the monitoring table. If the SQL statement contains the filter of the corresponding column, the corresponding `PromQL` changes accordingly.
-* `QUANTILE`: The percentile. For monitoring data of the histogram type, a default percentile is specified. If the value of this field is `0`, it means that the monitoring item corresponding to the monitoring table is not a histogram.
-* `COMMENT`: The comment about the monitoring table.
+* `TABLE_NAME`：对应于 `METRICS_SCHEMA` 中的表名。
+* `PROMQL`：监控表的主要原理是将 SQL 映射成 PromQL，并将 Prometheus 结果转换成 SQL 查询结果。这个字段是 PromQL 的表达式模板，查询监控表数据时使用查询条件改写模板中的变量，生成最终的查询表达式。
+* `LABELS`：监控定义的 label，每一个 label 对应监控表中的一列。SQL 中如果包含对应列的过滤，对应的 PromQL 也会改变。
+* `QUANTILE`：百分位。对于直方图类型的监控数据，指定一个默认百分位。如果值为 `0`，表示该监控表对应的监控不是直方图。
+* `COMMENT`：对这个监控表的注释。
 
 ```sql
-SELECT * FROM metrics_tables LIMIT 5\G
+SELECT * FROM METRICS_TABLES LIMIT 5\G
 ```
 
-The output is as follows:
+输出结果如下：
 
 ```sql
 *************************** 1. row ***************************

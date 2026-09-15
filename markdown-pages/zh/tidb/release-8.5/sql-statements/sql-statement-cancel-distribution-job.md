@@ -1,17 +1,13 @@
 ---
 title: CANCEL DISTRIBUTION JOB
-summary: TiDB 中 CANCEL DISTRIBUTION JOB 的用法概述。
+summary: TiDB 数据库中 CANCEL DISTRIBUTION JOB 的使用情况。
 ---
 
-# CANCEL DISTRIBUTION JOB <span class="version-mark">New in v8.5.4</span>
+# CANCEL DISTRIBUTION JOB <span class="version-mark">从 v8.5.4 开始引入</span>
 
-`CANCEL DISTRIBUTION JOB` 语句用于取消通过 [`DISTRIBUTE TABLE`](/sql-statements/sql-statement-distribute-table.md) 语句在 TiDB 中创建的 Region 调度任务。
+`CANCEL DISTRIBUTION JOB` 语句用于取消 TiDB 中通过 [`DISTRIBUTE TABLE`](/sql-statements/sql-statement-distribute-table.md) 语句创建的 Region 调度任务。
 
-> **Note:**
->
-> 该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
-
-## 语法
+## 语法图
 
 ```ebnf+diagram
 CancelDistributionJobsStmt ::=
@@ -20,13 +16,13 @@ CancelDistributionJobsStmt ::=
 
 ## 示例
 
-以下示例取消 ID 为 `1` 的分布式任务：
+下面示例取消 ID 为 1 的导入任务：
 
 ```sql
 CANCEL DISTRIBUTION JOB 1;
 ```
 
-输出如下：
+输出结果如下：
 
 ```
 Query OK, 0 rows affected (0.01 sec)
@@ -36,7 +32,7 @@ Query OK, 0 rows affected (0.01 sec)
 
 该语句是 TiDB 对 MySQL 语法的扩展。
 
-## 参考
+## 另请参阅
 
 * [`DISTRIBUTE TABLE`](/sql-statements/sql-statement-distribute-table.md)
 * [`SHOW DISTRIBUTION JOBS`](/sql-statements/sql-statement-show-distribution-jobs.md)

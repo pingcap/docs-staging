@@ -1,20 +1,28 @@
 ---
-title: TiDB Release Timeline
-summary: Learn about the TiDB release timeline.
+title: TiDB 版本发布时间线
+summary: 了解 TiDB 的版本发布时间线。
+aliases: ['/zh/tidb/dev/release-timeline/','/zh/tidb/v5.4/release-timeline','/zh/tidb/v6.1/release-timeline','/zh/tidb/v6.5/release-timeline','/zh/tidb/v7.1/release-timeline','/zh/tidb/v7.5/release-timeline','/zh/tidb/v8.1/release-timeline']
 ---
 
-# TiDB Release Timeline
+# TiDB 版本发布时间线
 
 <EmailSubscriptionWrapper />
 
-This document lists all released TiDB versions in reverse chronological order.
+本文列出了所有已发布的 TiDB 版本，按发布时间倒序呈现。
 
-To learn about the support timelines for Long-Term Support (LTS) versions of TiDB, see the [TiDB Release Support Policy](https://pingcap.com/tidb-release-support-policy/).
+关于 TiDB 长期支持版本 (Long-Term Support, LTS) 的支持时间表，请参阅 [TiDB 版本周期支持策略](https://pingkai.cn/tidb-release-support-policy)。
 
-| Version | Release Date |
+| 版本 | 发布日期 |
 | :--- | :--- |
+| [8.5.8](/releases/release-8.5.8.md) | 2026-08-27 |
+| [8.5.7](/releases/release-8.5.7.md) | 2026-07-09 |
+| [8.5.6](/releases/release-8.5.6.md) | 2026-04-14 |
+| [8.5.5](/releases/release-8.5.5.md) | 2026-01-15 |
+| [8.5.4](/releases/release-8.5.4.md) | 2025-11-27 |
+| [7.5.7](/releases/release-7.5.7.md) | 2025-09-04 |
+| [8.5.3](/releases/release-8.5.3.md) | 2025-08-14 |
 | [8.5.2](/releases/release-8.5.2.md) | 2025-06-12 |
-| [7.5.6](/releases/release-7.5.6.md) | 2025-03-14 |
+| [7.5.6](/releases/release-7.5.6.md)  | 2025-03-14 |
 | [6.5.12](/releases/release-6.5.12.md) | 2025-02-27 |
 | [8.5.1](/releases/release-8.5.1.md) | 2025-01-17 |
 | [7.5.5](/releases/release-7.5.5.md) | 2024-12-31 |
@@ -149,8 +157,8 @@ To learn about the support timelines for Long-Term Support (LTS) versions of TiD
 | [3.0.3](/releases/release-3.0.3.md) | 2019-08-29 |
 | [2.1.16](/releases/release-2.1.16.md) | 2019-08-15 |
 | [3.0.2](/releases/release-3.0.2.md) | 2019-08-07 |
-| [2.1.15](/releases/release-2.1.15.md) | 2019-07-18 |
 | [3.0.1](/releases/release-3.0.1.md) | 2019-07-16 |
+| [2.1.15](/releases/release-2.1.15.md) | 2019-07-16 |
 | [2.1.14](/releases/release-2.1.14.md) | 2019-07-04 |
 | [3.0.0](/releases/release-3.0-ga.md) | 2019-06-28 |
 | [3.0.0-rc.3](/releases/release-3.0.0-rc.3.md) | 2019-06-21 |
@@ -195,15 +203,15 @@ To learn about the support timelines for Long-Term Support (LTS) versions of TiD
 | [2.0.0-rc.3](/releases/release-2.0-rc.3.md) | 2018-03-23 |
 | [2.0.0-rc.1](/releases/release-2.0-rc.1.md) | 2018-03-09 |
 | [1.1.0-beta](/releases/release-1.1-beta.md) | 2018-02-24 |
-| [1.0.8](/releases/release-1.0.8.md) | 2018-02-11 |
-| [1.0.7](/releases/release-1.0.7.md) | 2018-01-22 |
+| [1.0.8](https://docs.pingcap.com/tidb/stable/release-1.0.8) | 2018-02-11 |
+| [1.0.7](https://docs.pingcap.com/tidb/stable/release-1.0.7) | 2018-01-22 |
 | [1.1.0-alpha](/releases/release-1.1-alpha.md) | 2018-01-19 |
-| [1.0.6](/releases/release-1.0.6.md) | 2018-01-08 |
-| [1.0.5](/releases/release-1.0.5.md) | 2017-12-26 |
-| [1.0.4](/releases/release-1.0.4.md) | 2017-12-11 |
-| [1.0.3](/releases/release-1.0.3.md) | 2017-11-28 |
-| [1.0.2](/releases/release-1.0.2.md) | 2017-11-13 |
-| [1.0.1](/releases/release-1.0.1.md) | 2017-11-01 |
+| [1.0.6](https://docs.pingcap.com/tidb/stable/release-1.0.6) | 2018-01-08 |
+| [1.0.5](https://docs.pingcap.com/tidb/stable/release-1.0.5) | 2017-12-26 |
+| [1.0.4](https://docs.pingcap.com/tidb/stable/release-1.0.4) | 2017-12-11 |
+| [1.0.3](https://docs.pingcap.com/tidb/stable/release-1.0.3) | 2017-11-28 |
+| [1.0.2](https://docs.pingcap.com/tidb/stable/release-1.0.2) | 2017-11-13 |
+| [1.0.1](https://docs.pingcap.com/tidb/stable/release-1.0.1) | 2017-11-01 |
 | [1.0.0](/releases/release-1.0-ga.md) | 2017-10-16 |
 | [Pre-GA](/releases/release-pre-ga.md) | 2017-08-30 |
 | [rc4](/releases/release-rc.4.md) | 2017-08-04 |

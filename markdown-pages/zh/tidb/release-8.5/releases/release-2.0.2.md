@@ -1,30 +1,31 @@
 ---
-title: TiDB 2.0.2 Release Notes
-summary: TiDB 2.0.2 was released on May 21, 2018, with improvements in system stability. The release includes fixes for Decimal division expression, support for `USE INDEX` syntax in `Delete` statement, and timeout mechanism for writing Binlog in TiDB. PD now filters disconnected nodes in balance leader scheduler, modifies transfer leader operator timeout, and fixes scheduling issues. TiKV fixes Raft log printing, supports configuring gRPC parameters, leader election timeout range, and resolves snapshot intermediate file deletion issue.
+title: TiDB 2.0.2 release notes
+summary: TiDB 2.0.2 版本发布，改进了系统稳定性。TiDB 修复了 Decimal 除法内置函数下推的问题，支持 `Delete` 语句中使用 `USE INDEX` 的语法，禁止在带有 `Auto-Increment` 的列中使用 `shard_row_id_bits` 特性，并增加了写入 Binlog 的超时机制。PD 使 balance leader scheduler 过滤失连节点，更改 transfer leader operator 的超时时间为 10 秒，修复 label scheduler 在集群 Regions 不健康状态下不调度的问题，修复 evict leader scheduler 调度不当的问题。TiKV 修复了 Raft 日志没有打出来的问题，支持配置更多 gRPC 相关参数，支持配置选举超时的取值范围，修复过期 learner 没有删掉的问题，修复 snapshot 中间文件被误删的问题。
+aliases: ['/zh/tidb/dev/release-2.0.2/','/zh/tidb/v2.0/release-2.0.2','/docs-cn/dev/releases/release-2.0.2/','/docs-cn/dev/releases/202/','/zh/tidb/v5.4/release-2.0.2','/zh/tidb/v6.1/release-2.0.2','/zh/tidb/v6.5/release-2.0.2','/zh/tidb/v7.1/release-2.0.2','/zh/tidb/v7.5/release-2.0.2','/zh/tidb/v8.1/release-2.0.2']
 ---
 
 # TiDB 2.0.2 Release Notes
 
-On May 21, 2018, TiDB 2.0.2 is released. Compared with TiDB 2.0.1, this release has great improvement in system stability.
+2018 年 5 月 21 日，TiDB 发布 2.0.2 版。该版本在 2.0.1 版的基础上，对系统稳定性做出了改进。
 
 ## TiDB
 
-- Fix the issue of pushing down the Decimal division expression
-- Support using the `USE INDEX` syntax in the `Delete` statement
-- Forbid using the `shard_row_id_bits` feature in columns with `Auto-Increment`
-- Add the timeout mechanism for writing Binlog
+- 修复 Decimal 除法内置函数下推的问题
+- 支持 `Delete` 语句中使用 `USE INDEX` 的语法
+- 禁止在带有 `Auto-Increment` 的列中使用 `shard_row_id_bits` 特性
+- 增加写入 Binlog 的超时机制
 
 ## PD
 
-- Make the balance leader scheduler filter the disconnected nodes
-- Modify the timeout of the transfer leader operator to 10s
-- Fix the issue that the label scheduler does not schedule when the cluster Regions are in an unhealthy state
-- Fix the improper scheduling issue of `evict leader scheduler`
+- 使 balance leader scheduler 过滤失连节点
+- 更改 transfer leader operator 的超时时间为 10 秒
+- 修复 label scheduler 在集群 Regions 不健康状态下不调度的问题
+- 修复 evict leader scheduler 调度不当的问题
 
 ## TiKV
 
-- Fix the issue that the Raft log is not printed
-- Support configuring more gRPC related parameters
-- Support configuring the timeout range of leader election
-- Fix the issue that the obsolete learner is not deleted
-- Fix the issue that the snapshot intermediate file is mistakenly deleted
+- 修复 Raft 日志没有打出来的问题
+- 支持配置更多 gRPC 相关参数
+- 支持配置选举超时的取值范围
+- 修复过期 learner 没有删掉的问题
+- 修复 snapshot 中间文件被误删的问题

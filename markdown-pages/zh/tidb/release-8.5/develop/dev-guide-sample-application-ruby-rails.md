@@ -1,53 +1,44 @@
 ---
 title: 使用 Rails 框架和 ActiveRecord ORM 连接 TiDB
-summary: 学习如何使用 Rails 框架连接 TiDB。本教程提供了可在 Rails 框架下通过 ActiveRecord ORM 操作 TiDB 的 Ruby 示例代码片段。
+summary: 本文描述了 TiDB 和 Rails 框架的连接步骤，并给出了使用 Rails 框架和 ActiveRecord ORM 连接 TiDB 的简单示例代码片段。
+aliases: ['/zh/tidb/stable/dev-guide-sample-application-ruby-rails/','/zh/tidb/dev/dev-guide-sample-application-ruby-rails/','/zh/tidbcloud/dev-guide-sample-application-ruby-rails/']
 ---
 
 # 使用 Rails 框架和 ActiveRecord ORM 连接 TiDB
 
-TiDB 是一个兼容 MySQL 的数据库，[Rails](https://github.com/rails/rails) 是一个流行的 Ruby Web 应用框架，[ActiveRecord ORM](https://github.com/rails/rails/tree/main/activerecord) 是 Rails 中的对象关系映射组件。
+TiDB 是一个兼容 MySQL 的数据库，[Rails](https://github.com/rails/rails) 是用 Ruby 编写的流行的 Web 框架，而 [ActiveRecord ORM](https://github.com/rails/rails/tree/main/activerecord) 是 Rails 中的对象关系映工具。
 
-在本教程中，你可以学习如何使用 TiDB 和 Rails 完成以下任务：
+本文档将展示如何使用 TiDB 和 Rails 来完成以下任务：
 
-- 搭建你的开发环境
-- 使用 Rails 连接到你的 TiDB 集群
-- 构建并运行你的应用程序。你还可以在 [示例代码片段](#sample-code-snippets) 中找到基于 ActiveRecord ORM 的基本 CRUD 操作示例。
+- 设置你的环境。
+- 使用 Rails 连接 TiDB。
+- 构建并运行你的应用程序。你也可以参考[示例代码片段](#示例代码片段)，完成基本的 CRUD 操作。
 
-> **Note:**
+> **注意：**
 >
-> 本教程适用于 TiDB Cloud Starter、TiDB Cloud Essential、TiDB Cloud Dedicated 以及自建 TiDB 集群。
+> 本文档适用于 TiDB Cloud Starter、TiDB Cloud Essential、TiDB Cloud Premium、TiDB Cloud Dedicated 以及本地部署的 TiDB。
 
-## 前置条件
+## 前置需求
 
-完成本教程，你需要：
+为了能够顺利完成本文中的操作，你需要提前：
 
-- 在本地安装 [Ruby](https://www.ruby-lang.org/en/)，版本 >= 3.0
-- 在本地安装 [Bundler](https://bundler.io/)
-- 在本地安装 [Git](https://git-scm.com/downloads)
-- 已有一个正在运行的 TiDB 集群
+- 在你的机器上安装 [Ruby](https://www.ruby-lang.org/en/) 3.0 或以上版本。
+- 在你的机器上安装 [Bundler](https://bundler.io/)。
+- 在你的机器上安装 [Git](https://git-scm.com/downloads)。
+- 准备一个 TiDB 集群。
 
-**如果你还没有 TiDB 集群，可以按如下方式创建：**
+如果你还没有 TiDB 集群，可以按照以下方式创建：
 
-<CustomContent platform="tidb">
+- （推荐方式）[创建 TiDB Cloud Starter 实例](/develop/dev-guide-build-cluster-in-cloud.md)。
+- [部署本地测试 TiDB Self-Managed 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署正式 TiDB Self-Managed 集群](/production-deployment-using-tiup.md)。
 
-- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建属于你自己的 TiDB Cloud 集群。
-- 参考 [部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
+## 运行示例应用程序并连接到 TiDB
 
-</CustomContent>
-<CustomContent platform="tidb-cloud">
+本小节演示如何运行示例应用程序的代码，并连接到 TiDB。
 
-- （推荐）参考 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建属于你自己的 TiDB Cloud 集群。
-- 参考 [部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
+### 第 1 步：克隆示例代码仓库到本地
 
-</CustomContent>
-
-## 运行示例应用连接 TiDB
-
-本节演示如何运行示例应用代码并连接到 TiDB。
-
-### 第 1 步：克隆示例应用仓库
-
-在终端窗口中运行以下命令，克隆示例代码仓库：
+在你的终端窗口中运行以下命令，将示例代码仓库克隆到本地：
 
 ```shell
 git clone https://github.com/tidb-samples/tidb-ruby-rails-quickstart.git
@@ -56,16 +47,16 @@ cd tidb-ruby-rails-quickstart
 
 ### 第 2 步：安装依赖
 
-运行以下命令安装示例应用所需的依赖包（包括 `mysql2` 和 `dotenv`）：
+运行以下命令，安装示例代码所需要的依赖（包括 `mysql2` 和 `dotenv` 依赖包）：
 
 ```shell
 bundle install
 ```
 
 <details>
-<summary><b>为已有项目安装依赖</b></summary>
+<summary><b>为现有项目安装依赖</b></summary>
 
-对于你的已有项目，运行以下命令安装依赖包：
+对于你的现有项目，运行以下命令以安装这些包：
 
 ```shell
 bundle add mysql2 dotenv
@@ -75,102 +66,138 @@ bundle add mysql2 dotenv
 
 ### 第 3 步：配置连接信息
 
-根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
+根据不同的 TiDB 部署方式，使用不同的方法连接到 TiDB。
 
 <SimpleTab>
-<div label="TiDB Cloud Starter or Essential">
+<div label="TiDB Cloud Starter 或 Essential">
 
-1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页。
+1. 在 TiDB Cloud 的 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，点击你的目标 TiDB Cloud Starter 或 Essential 实例的名称，进入实例的 **Overview** 页面。
 
-2. 点击右上角的 **Connect**，弹出连接对话框。
+2. 点击右上角的 **Connect** 按钮，将会弹出连接对话框。
 
-3. 在连接对话框中，从 **Connect With** 下拉列表选择 `Rails`，**Connection Type** 保持默认的 `Public`。
+3. 在连接对话框中，从 **Connect With** 下拉列表中选择 `Rails`，并保持 **Connection Type** 的默认设置为 `Public`。
 
-4. 如果你还未设置密码，点击 **Generate Password** 生成随机密码。
+4. 如果你还没有设置密码，点击 **Generate Password** 生成一个随机密码。
 
-5. 运行以下命令，复制 `.env.example` 并重命名为 `.env`：
+5. 运行以下命令复制 `.env.example` 并将其重命名为 `.env`：
 
     ```shell
     cp .env.example .env
     ```
 
-6. 编辑 `.env` 文件，按如下格式设置 `DATABASE_URL` 环境变量，并将连接对话框中的连接字符串复制为变量值。
+6. 编辑 `.env` 文件，按照以下方式设置 `DATABASE_URL` 环境变量，并将占位符 `{}` 替换为连接对话框中相应的连接参数：
 
     ```dotenv
-    DATABASE_URL='mysql2://{user}:{password}@{host}:{port}/{database_name}?ssl_mode=verify_identity'
+    DATABASE_URL=mysql2://{user}:{password}@{host}:{port}/{database_name}?ssl_mode=verify_identity
     ```
 
-   > **Note**
+   > **注意**
    >
-   > 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，使用公共连接地址时，**必须** 通过 `ssl_mode=verify_identity` 参数启用 TLS 连接。
+   > 对于 TiDB Cloud Starter 和 TiDB Cloud Essential，当使用 Public Endpoint 时，必须使用 `ssl_mode=verify_identity` 查询参数启用 TLS 连接。
 
 7. 保存 `.env` 文件。
 
 </div>
-<div label="TiDB Cloud Dedicated">
+<div label="TiDB Cloud Premium">
 
-1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页。
+1. 在 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，点击你目标 TiDB Cloud Premium 实例的名字，进入实例的 **Overview** 页面。
 
-2. 点击右上角的 **Connect**，弹出连接对话框。
+2. 在左侧导航栏中，点击 **Settings** > **Networking**。
 
-3. 在连接对话框中，从 **Connection Type** 下拉列表选择 **Public**，然后点击 **CA cert** 下载 CA 证书。
+3. 在 **Networking** 页面，点击 **Public Endpoint** 的 **Enable**，然后点击 **Add IP Address**。
 
-    如果你还未配置 IP 访问列表，点击 **Configure IP Access List**，或参考 [Configure an IP Access List](https://docs.pingcap.com/tidbcloud/configure-ip-access-list) 进行配置后再首次连接。
+    确保你的客户端 IP 地址已添加到访问列表中。
 
-    除了 **Public** 连接类型，TiDB Cloud Dedicated 还支持 **Private Endpoint** 和 **VPC Peering** 连接类型。更多信息请参考 [Connect to Your TiDB Cloud Dedicated Cluster](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+4. 在左侧导航栏中，点击 **Overview** 返回实例概览页面。
 
-4. 运行以下命令，复制 `.env.example` 并重命名为 `.env`：
+5. 点击右上角的 **Connect** 按钮，将会弹出连接对话框。
+
+6. 在连接对话框中，从 **Connection Type** 下拉列表中选择 **Public**。
+
+    - 如果提示 Public Endpoint 正在开启，请等待该过程完成。
+    - 如果你尚未设置密码，请在对话框中点击 **Set Root Password**。
+    - 如果需要验证服务器证书或连接失败且需要 CA 证书，请点击 **CA cert** 下载证书。
+    - 除 **Public** 连接类型外，TiDB Cloud Premium 还支持 **Private Endpoint** 连接。详情请参阅[通过 AWS PrivateLink 连接到 TiDB Cloud Premium](https://docs.pingcap.com/tidbcloud/connect-to-premium-via-aws-private-endpoint/?plan=premium)。
+
+7. 运行以下命令，将 `.env.example` 复制并重命名为 `.env`：
 
     ```shell
     cp .env.example .env
     ```
 
-5. 编辑 `.env` 文件，按如下格式设置 `DATABASE_URL` 环境变量，将连接对话框中的连接字符串复制为变量值，并将 `sslca` 参数设置为刚才下载的 CA 证书文件路径：
+8. 编辑 `.env` 文件，按照如下格式设置 `DATABASE_URL` 环境变量，将占位符 `{}` 替换为从连接对话框中复制的参数值：
 
     ```dotenv
-    DATABASE_URL='mysql2://{user}:{password}@{host}:{port}/{database}?ssl_mode=verify_identity&sslca=/path/to/ca.pem'
+    DATABASE_URL='mysql2://{user}:{password}@{host}:{port}/{database_name}'
     ```
 
-   > **Note**
+9. 保存 `.env` 文件。
+
+</div>
+<div label="TiDB Cloud Dedicated">
+
+1. 在 TiDB Cloud 的 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，点击你的目标 TiDB Cloud Dedicated 集群的名称，进入集群的 **Overview** 页面。
+
+2. 点击右上角的 **Connect** 按钮，将会弹出连接对话框。
+
+3. 在连接对话框中，从 **Connection Type** 下拉列表中选择 **Public**，并点击 **CA cert** 下载 CA 文件。
+
+    如果你尚未配置 IP 访问列表，请在首次连接前点击 **Configure IP Access List** 或按照[配置 IP 访问列表（英文）](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
+
+    除 **Public** 连接类型外，TiDB Cloud Dedicated 还支持 **Private Endpoint** 和 **VPC Peering** 连接类型。详情请参阅[连接 TiDB Cloud Dedicated 集群（英文）](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
+
+4. 运行以下命令复制 `.env.example` 并将其重命名为 `.env`：
+
+    ```shell
+    cp .env.example .env
+    ```
+
+5. 编辑 `.env` 文件，按照以下方式设置 `DATABASE_URL` 环境变量，将占位符 `{}` 替换为连接对话框中相应的连接参数，并将 `sslca` 查询参数设置为从连接对话框下载的 CA 证书的文件路径：
+
+    ```dotenv
+    DATABASE_URL=mysql2://{user}:{password}@{host}:{port}/{database}?ssl_mode=verify_identity&sslca=/path/to/ca.pem
+    ```
+
+   > **注意**
    >
-   > 推荐在使用公共连接地址连接 TiDB Cloud Dedicated 时启用 TLS 连接。
+   > 当使用 Public Endpoint 连接到 TiDB Cloud Dedicated 集群时，建议启用 TLS 连接。
    >
-   > 启用 TLS 连接时，请将 `ssl_mode` 参数值设置为 `verify_identity`，`sslca` 参数值设置为从连接对话框下载的 CA 证书文件路径。
+   > 要启用 TLS 连接，请将 `ssl_mode` 查询参数的值修改为 `verify_identity`，并将 `sslca` 的值设置为从连接对话框下载的 CA 证书的文件路径。
 
 6. 保存 `.env` 文件。
 
 </div>
-<div label="TiDB 自建集群">
+<div label="本地部署的 TiDB">
 
-1. 运行以下命令，复制 `.env.example` 并重命名为 `.env`：
+1. 运行以下命令复制 `.env.example` 并将其重命名为 `.env`：
 
     ```shell
     cp .env.example .env
     ```
 
-2. 编辑 `.env` 文件，按如下格式设置 `DATABASE_URL` 环境变量，并将 `{user}`、`{password}`、`{host}`、`{port}`、`{database}` 替换为你自己的 TiDB 连接信息：
+2. 编辑 `.env` 文件，按照以下方式设置 `DATABASE_URL` 环境变量，并将 `{user}`、`{password}`、`{host}`、`{port}` 和 `{database}` 替换为你自己的 TiDB 连接信息：
 
     ```dotenv
-    DATABASE_URL='mysql2://{user}:{password}@{host}:{port}/{database}'
+    DATABASE_URL=mysql2://{user}:{password}@{host}:{port}/{database}
     ```
 
-   如果你在本地运行 TiDB，默认主机地址为 `127.0.0.1`，密码为空。
+   如果你在本地运行 TiDB，那么默认的主机地址是 `127.0.0.1`，密码为空。
 
 3. 保存 `.env` 文件。
 
 </div>
 </SimpleTab>
 
-### 第 4 步：运行代码并检查结果
+### 第 4 步：运行代码并查看结果
 
-1. 创建数据库和数据表：
+1. 创建数据库和表：
 
     ```shell
     bundle exec rails db:create
     bundle exec rails db:migrate
     ```
 
-2. 初始化示例数据：
+2. 填充示例数据：
 
     ```shell
     bundle exec rails db:seed
@@ -182,10 +209,10 @@ bundle add mysql2 dotenv
     bundle exec rails runner ./quickstart.rb
     ```
 
-如果连接成功，控制台会输出 TiDB 集群的版本信息，如下所示：
+如果连接成功，你的终端将会输出 TiDB 版本信息：
 
 ```
-🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.3)
+🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.8)
 ⏳ Loading sample game data...
 ✅ Loaded sample game data.
 
@@ -197,13 +224,13 @@ bundle add mysql2 dotenv
 
 ## 示例代码片段
 
-你可以参考以下示例代码片段，完成你自己的应用开发。
+你可参考以下关键代码片段，完成自己的应用开发。
 
-完整示例代码及运行方法请参考 [tidb-samples/tidb-ruby-rails-quickstart](https://github.com/tidb-samples/tidb-ruby-rails-quickstart) 仓库。
+完整代码及其运行方式，见代码仓库 [tidb-samples/tidb-ruby-rails-quickstart](https://github.com/tidb-samples/tidb-ruby-rails-quickstart)。
 
-### 通过连接参数连接 TiDB
+### 连接到 TiDB
 
-以下 `config/database.yml` 文件中的代码，通过环境变量配置参数，建立与 TiDB 的连接：
+`config/database.yml` 中的以下代码使用 `DATABASE_URL` 系统变量的配置连接到 TiDB：
 
 ```yml
 default: &default
@@ -223,77 +250,69 @@ production:
   <<: *default
 ```
 
-> **Note**
+> **注意**
 >
-> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential)，使用公共连接地址时，**必须** 在 `DATABASE_URL` 中通过设置 `ssl_mode=verify_identity` 启用 TLS 连接，但**不需要**通过 `DATABASE_URL` 指定 SSL CA 证书，因为 mysql2 gem 会按特定顺序自动查找本地已存在的 CA 证书文件。
+> 对于 TiDB Cloud Starter，当使用 Public Endpoint 时，**必须**通过在 `DATABASE_URL` 中设置 `ssl_mode` 查询参数为 `verify_identity` 来启用 TLS 连接，但是你**不需要**通过 `DATABASE_URL` 指定 SSL CA 证书，因为 mysql2 gem 会按照特定的顺序搜索现有的 CA 证书，直到找到相应的文件。
 
 ### 插入数据
 
-以下语句创建一个包含两个字段的 Player，并返回新建的 `Player` 对象：
+以下查询创建了一个具有两个字段的 Player，并返回创建的 `Player` 对象：
 
 ```ruby
 new_player = Player.create!(coins: 100, goods: 100)
 ```
 
-更多信息请参考 [插入数据](/develop/dev-guide-insert-data.md)。
+更多信息，请参考[插入数据](/develop/dev-guide-insert-data.md)。
 
 ### 查询数据
 
-以下语句根据 ID 查询指定玩家的记录：
+以下通过 ID 查询返回特定 `Player` 的记录：
 
 ```ruby
 player = Player.find_by(id: new_player.id)
 ```
 
-更多信息请参考 [查询数据](/develop/dev-guide-get-data-from-single-table.md)。
+更多信息，请参考[查询数据](/develop/dev-guide-get-data-from-single-table.md)。
 
 ### 更新数据
 
-以下语句更新一个 `Player` 对象：
+以下查询更新特定 `Player` 对象：
 
 ```ruby
 player.update(coins: 50, goods: 50)
 ```
 
-更多信息请参考 [更新数据](/develop/dev-guide-update-data.md)。
+更多信息，请参考[更新数据](/develop/dev-guide-update-data.md)。
 
 ### 删除数据
 
-以下语句删除一个 `Player` 对象：
+以下查询删除特定 `Player` 对象：
 
 ```ruby
 player.destroy
 ```
 
-更多信息请参考 [删除数据](/develop/dev-guide-delete-data.md)。
+更多信息，请参考[删除数据](/develop/dev-guide-delete-data.md)。
 
 ## 最佳实践
 
-默认情况下，ActiveRecord ORM 通过 mysql2 gem 连接 TiDB 时，会按如下顺序查找本地已存在的 CA 证书文件，直到找到为止：
+默认情况下，mysql2 gem 可以按照特定的顺序搜索现有的 CA 证书，直到找到相应的文件。
 
-1. /etc/ssl/certs/ca-certificates.crt # Debian / Ubuntu / Gentoo / Arch / Slackware
-2. /etc/pki/tls/certs/ca-bundle.crt # RedHat / Fedora / CentOS / Mageia / Vercel / Netlify
-3. /etc/ssl/ca-bundle.pem # OpenSUSE
-4. /etc/ssl/cert.pem # MacOS / Alpine (docker 容器)
+1. 对于 Debian、Ubuntu、Gentoo、Arch 或 Slackware，证书的默认存储路径为 `/etc/ssl/certs/ca-certificates.crt`。
+2. 对于 RedHat、Fedora、CentOS、Mageia、Vercel 或 Netlify，证书的默认存储路径为 `/etc/pki/tls/certs/ca-bundle.crt`。
+3. 对于 OpenSUSE，证书的默认存储路径为 `/etc/ssl/ca-bundle.pem`。
+4. 对于 macOS 或 Alpine（docker 容器），证书的默认存储路径为 `/etc/ssl/cert.pem`。
 
-虽然可以手动指定 CA 证书路径，但在多环境部署场景下，不同机器和环境的 CA 证书存放路径可能不同，这种方式会带来较大不便。因此，推荐将 `sslca` 设置为 `nil`，以便在不同环境下灵活部署和使用。
+尽管可以手动指定 CA 证书路径，但在多环境部署场景中这可能会引起不必要的麻烦，因为不同的机器和环境可能存储 CA 证书的位置不同。因此，建议将 `sslca` 设置为 `nil`，方便在不同环境中灵活且方便地部署。
 
-## 后续步骤
+## 下一步
 
-- 通过 [ActiveRecord 官方文档](https://guides.rubyonrails.org/active_record_basics.html) 学习更多 ActiveRecord ORM 的用法。
-- 通过 [开发者指南](/develop/dev-guide-overview.md) 各章节，学习 TiDB 应用开发最佳实践，例如：[插入数据](/develop/dev-guide-insert-data.md)、[更新数据](/develop/dev-guide-update-data.md)、[删除数据](/develop/dev-guide-delete-data.md)、[查询数据](/develop/dev-guide-get-data-from-single-table.md)、[事务](/develop/dev-guide-transaction-overview.md) 以及 [SQL 性能优化](/develop/dev-guide-optimize-sql-overview.md)。
-- 通过专业的 [TiDB 开发者课程](https://www.pingcap.com/education/)，并在通过考试后获得 [TiDB 认证](https://www.pingcap.com/education/certification/)。
+- 从 [ActiveRecord 文档](https://guides.rubyonrails.org/active_record_basics.html)中了解更多关于 ActiveRecord ORM 的用法。
+- 你可以继续阅读开发者文档的其它章节来获取更多 TiDB 应用开发的最佳实践。例如：[插入数据](/develop/dev-guide-insert-data.md)，[更新数据](/develop/dev-guide-update-data.md)，[删除数据](/develop/dev-guide-delete-data.md)，[单表读取](/develop/dev-guide-get-data-from-single-table.md)，[事务](/develop/dev-guide-transaction-overview.md)，[SQL 性能优化](/develop/dev-guide-optimize-sql-overview.md)等。
+- 如果你更倾向于参与课程进行学习，我们也提供专业的 [TiDB 开发者课程](https://pingkai.cn/learn)支持，并在考试后提供相应的[资格认证](https://learn.pingkai.cn/learner/certification-center)。
 
 ## 需要帮助？
 
-<CustomContent platform="tidb">
-
-欢迎在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或 [提交支持工单](/support.md)。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-欢迎在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
-
-</CustomContent>
+- 在 [AskTUG 论坛](https://pingkai.cn/tidbcommunity/forum/?utm_source=docs-cn-dev-guide) 上提问
+- [提交 TiDB Cloud 工单](https://tidb.support.pingcap.com/servicedesk/customer/portals)
+- [提交 TiDB 工单](/support.md)

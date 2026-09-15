@@ -1,24 +1,24 @@
 ---
-title: TiCDC Behavior in Splitting UPDATE Events
-summary: Introduce the behavior changes about whether TiCDC splits `UPDATE` events, including the reasons and the impact of these changes.
+title: TiCDC 拆分 UPDATE 事件行为说明
+summary: 介绍 TiCDC changefeed 拆分 UPDATE 事件的行为变更，说明变更原因以及影响范围。
 ---
 
-# TiCDC Behavior in Splitting UPDATE Events
+# TiCDC 拆分 UPDATE 事件行为说明
 
-## Split `UPDATE` events for MySQL sinks
+## MySQL Sink 拆分 `UPDATE` 事件行为说明
 
-Starting from v6.5.10, v7.1.6, v7.5.2, v8.1.1, and v8.2.0, when using the MySQL sink, any TiCDC node that receives a request for replicating a table will fetch the current timestamp `thresholdTS` from PD before starting the replication to the downstream. Based on the value of this timestamp, TiCDC decides whether to split `UPDATE` events:
+从 v6.5.10、v7.1.6、v7.5.2、v8.1.1、v8.2.0 开始，当使用 MySQL Sink 时，TiCDC 的任意节点每次收到某张表的同步任务请求并开始向下游同步数据之前，会从 PD 获取当前的时间戳 `thresholdTS`，并根据时间戳的值决定是否拆分对应表的 `UPDATE` 事件：
 
-- For transactions containing one or multiple `UPDATE` changes, if the transaction `commitTS` is less than `thresholdTS`, TiCDC splits the `UPDATE` event into a `DELETE` event and an `INSERT` event before writing them to the Sorter module.
-- For `UPDATE` events with the transaction `commitTS` greater than or equal to `thresholdTS`, TiCDC does not split them. For more information, see GitHub issue [#10918](https://github.com/pingcap/tiflow/issues/10918).
+- 对于含有单条或多条 `UPDATE` 变更的事务，如果该事务的 `commitTS` 小于 `thresholdTS`，在写入 Sorter 模块之前 TiCDC 会将每条 `UPDATE` 事件拆分为 `DELETE` 和 `INSERT` 两条事件。
+- 对于事务的 `commitTS` 大于或等于 `thresholdTS` 的 `UPDATE` 事件，TiCDC 不会对其进行拆分。详情见 GitHub issue [#10918](https://github.com/pingcap/tiflow/issues/10918)。
 
-> **Note:**
+> **注意：**
 >
-> In v8.1.0, when using MySQL Sink, TiCDC also decides whether to split `UPDATE` events based on the value of `thresholdTS`, but `thresholdTS` is obtained differently. Specifically, in v8.1.0, `thresholdTS` is the current timestamp fetched from PD at TiCDC startup, but this way might cause data inconsistency issues in multi-node scenarios. For more information, see GitHub issue [#11219](https://github.com/pingcap/tiflow/issues/11219).
+> 在 v8.1.0 中，当使用 MySQL Sink 时，TiCDC 同样会根据 `thresholdTS` 决定是否拆分 `UPDATE` 事件，但是 `thresholdTS` 的获取方式不同。具体来说，在 v8.1.0 中，`thresholdTS` 是 TiCDC 在启动时从 PD 获取的当前时间戳。这种方式在多节点场景下可能会造成数据不一致问题，详情见 GitHub issue [#11219](https://github.com/pingcap/tiflow/issues/11219)。
 
-This behavior change (that is, deciding whether to split `UPDATE` events based on `thresholdTS`) addresses the issue of downstream data inconsistencies caused by the potentially incorrect order of `UPDATE` events received by TiCDC, which can lead to an incorrect order of split `DELETE` and `INSERT` events.
+该行为变更（即根据 `thresholdTS` 决定是否拆分 `UPDATE` 事件）解决了由于 TiCDC 接收到的 `UPDATE` 事件顺序可能不正确，导致拆分后的 `DELETE` 和 `INSERT` 事件顺序也可能不正确，从而引发下游数据不一致的问题。
 
-Take the following SQL statements as an example:
+以如下 SQL 为例：
 
 ```sql
 CREATE TABLE t (a INT PRIMARY KEY, b INT);
@@ -31,16 +31,16 @@ UPDATE t SET a = 2 WHERE a = 1;
 COMMIT;
 ```
 
-In this example, the two `UPDATE` statements within the transaction have a sequential dependency on execution. The primary key `a` is changed from `2` to `3`, and then the primary key `a` is changed from `1` to `2`. After this transaction is executed, the records in the upstream database are `(2, 1)` and `(3, 2)`.
+在该示例中，事务内的两条 `UPDATE` 语句的执行顺序有先后依赖关系，即先将主键 `a` 从 `2` 变更为 `3`，再将主键 `a` 从 `1` 变更为 `2`。执行完该事务后，上游数据库内的记录为 `(2, 1)` 和 `(3, 2)`。
 
-However, the order of `UPDATE` events received by TiCDC might differ from the actual execution order of the upstream transaction. For example:
+但 TiCDC 内部收到的 `UPDATE` 事件顺序可能与上游事务内部实际的执行顺序不同，例如：
 
 ```sql
 UPDATE t SET a = 2 WHERE a = 1;
 UPDATE t SET a = 3 WHERE a = 2;
 ```
 
-- Before this behavior change, TiCDC writes these `UPDATE` events to the Sorter module and then splits them into `DELETE` and `INSERT` events. After the split, the actual execution order of these events in the downstream is as follows:
+- 在引入该行为变更之前，TiCDC 会将这些 `UPDATE` 事件写入 Sorter 模块之后再将其拆分为 `DELETE` 和 `INSERT` 事件。拆分后下游实际执行的事件顺序如下：
 
     ```sql
     BEGIN;
@@ -51,9 +51,9 @@ UPDATE t SET a = 3 WHERE a = 2;
     COMMIT;
     ```
 
-    After the downstream executes the transaction, the records in the database are `(3, 2)`, which are different from the records in the upstream database (`(2, 1)` and `(3, 2)`), indicating a data inconsistency issue.
+    下游执行完该事务后，数据库内的记录为 `(3, 2)`，与上游数据库的记录（即 `(2, 1)` 和 `(3, 2)`）不同，即发生了数据不一致问题。
 
-- After this behavior change, if the transaction `commitTS` is less than the `thresholdTS` fetched from PD when TiCDC starts replicating the corresponding table to the downstream, TiCDC splits these `UPDATE` events into `DELETE` and `INSERT` events before writing them to the Sorter module. After the sorting by the Sorter module, the actual execution order of these events in the downstream is as follows:
+- 在引入该行为变更之后，如果该事务的 `commitTS` 小于对应表开始向下游同步数据时 TiCDC 获取的 `thresholdTS`，TiCDC 会在这些 `UPDATE` 事件写入 Sorter 模块之前将其拆分为 `DELETE` 和 `INSERT` 事件，经过 Sorter 排序后下游实际执行的事件顺序如下：
 
     ```sql
     BEGIN;
@@ -64,21 +64,21 @@ UPDATE t SET a = 3 WHERE a = 2;
     COMMIT;
     ```
 
-    After the downstream executes the transaction, the records in the downstream database are the same as those in the upstream database, which are `(2, 1)` and `(3, 2)`, ensuring data consistency.
+    下游执行完该事务后，下游数据库内的记录和上游数据库一样，都为 `(2, 1)` 和 `(3, 2)`，保证了数据一致性。
 
-As you can see from the preceding example, splitting the `UPDATE` event into `DELETE` and `INSERT` events before writing them to the Sorter module ensures that all `DELETE` events are executed before `INSERT` events after the split, thereby maintaining data consistency regardless of the order of `UPDATE` events received by TiCDC.
+从该示例中可以看到，在写入 Sorter 模块之前将 `UPDATE` 事件拆分为 `DELETE` 和 `INSERT` 事件，可以保证拆分后所有的 `DELETE` 事件都在 `INSERT` 事件之前执行，这样无论 TiCDC 收到的 `UPDATE` 事件顺序，均可以保证数据一致性。
 
-> **Note:**
+> **注意：**
 >
-> After this behavior change, when using the MySQL sink, TiCDC does not split the `UPDATE` event in most cases. Consequently, there might be primary key or unique key conflicts during changefeed runtime, causing the changefeed to restart automatically. After the restart, TiCDC will split the conflicting `UPDATE` events into `DELETE` and `INSERT` events before writing them to the Sorter module. This ensures that all events within the same transaction are correctly ordered, with all `DELETE` events preceding `INSERT` events, thus correctly completing data replication.
+> 该行为变更后，在使用 MySQL Sink 时，TiCDC 在大部分情况下都不会拆分 `UPDATE` 事件，因此 changefeed 在运行时可能会出现主键或唯一键冲突的问题。该问题会导致 changefeed 自动重启，重启后发生冲突的 `UPDATE` 事件会被拆分为 `DELETE` 和 `INSERT` 事件并写入 Sorter 模块中，此时可以确保同一事务内所有事件按照 `DELETE` 事件在 `INSERT` 事件之前的顺序进行排序，从而正确完成数据同步。
 
-## Split primary or unique key `UPDATE` events for non-MySQL sinks
+## 非 MySQL Sink 拆分主键或唯一键 `UPDATE` 事件
 
-### Transactions containing a single `UPDATE` change
+### 含有单条 `UPDATE` 变更的事务拆分
 
-Starting from v6.5.3, v7.1.1, and v7.2.0, when using a non-MySQL sink, for transactions that only contain a single update change, if the primary key or non-null unique index value is modified in an `UPDATE` event, TiCDC splits this event into `DELETE` and `INSERT` events. For more information, see GitHub issue [#9086](https://github.com/pingcap/tiflow/issues/9086).
+从 v6.5.3、v7.1.1 和 v7.2.0 开始，使用非 MySQL Sink 时，对于仅包含一条 `UPDATE` 变更的事务，如果 `UPDATE` 事件的主键或者非空唯一索引的列值发生改变，TiCDC 会将该条事件拆分为 `DELETE` 和 `INSERT` 两条事件。详情见 GitHub issue [#9086](https://github.com/pingcap/tiflow/issues/9086)。
 
-This change primarily addresses the issue that TiCDC only outputs the new value without the old value by default when using the CSV and AVRO protocols. Due to this issue, when the primary key or non-null unique index value changes, the consumer can only receive the new value, making it impossible to process the value before the change (for example, delete the old value). Take the following SQL as an example:
+该变更主要为了解决在使用 CSV 和 AVRO 协议时，TiCDC 在默认配置下仅输出新值而不输出旧值的问题。因此，当主键或者非空唯一索引的列值发生改变时，消费者只能接收到变化后的新值，无法得到旧值，导致无法处理变更前的值（例如删除旧值）。以如下 SQL 为例：
 
 ```sql
 CREATE TABLE t (a INT PRIMARY KEY, b INT);
@@ -86,15 +86,15 @@ INSERT INTO t VALUES (1, 1);
 UPDATE t SET a = 2 WHERE a = 1;
 ```
 
-In this example, the primary key `a` is updated from `1` to `2`. If the `UPDATE` event is not split, the consumer can only obtain the new value `a = 2` and cannot obtain the old value `a = 1` when using the CSV and AVRO protocols. This might cause the downstream consumer to only insert the new value `2` without deleting the old value `1`.
+在上述示例中，主键 `a` 的值从 `1` 修改为 `2`。如果不将该 `UPDATE` 事件进行拆分，在使用 CSV 和 AVRO 协议时，消费者仅能看到新值 `a = 2`，而无法得到旧值 `a = 1`。这可能导致下游消费者只插入了新值 `2`，而没有删除旧值 `1`。
 
-### Transactions containing multiple `UPDATE` changes
+### 含有多条 `UPDATE` 变更的事务拆分
 
-Starting from v6.5.4, v7.1.2, and v7.4.0, for transactions containing multiple changes, if the primary key or non-null unique index value is modified in the `UPDATE` event, TiCDC splits the event into `DELETE` and `INSERT` events and ensures that all events follow the sequence of `DELETE` events preceding `INSERT` events. For more information, see GitHub issue [#9430](https://github.com/pingcap/tiflow/issues/9430).
+从 v6.5.4、v7.1.2 和 v7.4.0 开始，对于一个含有多条变更的事务，如果 `UPDATE` 事件的主键或者非空唯一索引的列值发生改变，TiCDC 会将该其拆分为 `DELETE` 和 `INSERT` 两条事件，并确保所有事件按照 `DELETE` 事件在 `INSERT` 事件之前的顺序进行排序。详情见 GitHub issue [#9430](https://github.com/pingcap/tiflow/issues/9430)。
 
-This change primarily addresses the potential issue of primary key or unique key conflicts that consumers might encounter when writing data changes from the Kafka sink or other sinks to a relational database or performing a similar operation. This issue is caused by the potentially incorrect order of `UPDATE` events received by TiCDC.
+该变更主要为了解决当使用 Kafka Sink 或其他 Sink 时，由于 TiCDC 接收到的 `UPDATE` 事件顺序可能不正确，消费者将数据变更写入关系型数据库或进行类似操作，可能遇到主键或唯一键冲突的问题。
 
-Take the following SQL as an example:
+以如下 SQL 为例：
 
 ```sql
 CREATE TABLE t (a INT PRIMARY KEY, b INT);
@@ -108,52 +108,48 @@ UPDATE t SET a = 2 WHERE a = 3;
 COMMIT;
 ```
 
-In this example, by executing three SQL statements to swap the primary keys of two rows, TiCDC only receives two update change events, that is, changing the primary key `a` from `1` to `2` and changing the primary key `a` from `2` to `1`. If consumers directly write these two `UPDATE` events to the downstream, a primary key conflict will occur, leading to changefeed errors.
+在上述示例中，通过执行三条 SQL 语句对两行数据的主键进行交换，但 TiCDC 只会接收到两条 `UPDATE` 变更事件，即将主键 `a` 从 `1` 变更为 `2`，将主键 `a` 从 `2` 变更为 `1`，如果消费者直接将这两条 `UPDATE` 事件写入下游，会出现主键冲突的问题，导致 changefeed 报错。
 
-Therefore, TiCDC splits these two events into four events, that is, deleting records `(1, 1)` and `(2, 2)` and writing records `(2, 1)` and `(1, 2)`.
+因此，TiCDC 会将这两条事件拆分为四条事件，即删除记录 `(1, 1)` 和 `(2, 2)` 以及写入记录 `(2, 1)` 和 `(1, 2)`。
 
-### Control whether to split primary or unique key `UPDATE` events
+### 控制是否拆分主键或唯一键 `UPDATE` 事件
 
-Starting from v6.5.10, v7.1.6, v7.5.3, and v8.1.1, when using a non-MySQL sink, TiCDC supports controlling whether to split primary or unique key `UPDATE` events via the `output-raw-change-event` parameter, as described in the GitHub issue [#11211]( https://github.com/pingcap/tiflow/issues/11211). The specific behavior of this parameter is as follows:
+从 v6.5.10、v7.1.6、v7.5.3 和 v8.1.1 开始，使用非 MySQL Sink 时，TiCDC 支持通过 `output-raw-change-event` 参数控制是否拆分主键或唯一键 `UPDATE` 事件，详情见 GitHub issue [#11211](https://github.com/pingcap/tiflow/issues/11211)。这个参数的具体行为是：
 
-- When you set `output-raw-change-event = false`, if the primary key or non-null unique index value is modified in an `UPDATE` event, TiCDC splits the event into `DELETE` and `INSERT` events and ensures that all events follow the sequence of `DELETE` events preceding `INSERT` events.
-- When you set `output-raw-change-event = true`, TiCDC does not split `UPDATE` events, and the consumer side is responsible for dealing with the problems described in [Split primary or unique key `UPDATE` events for non-MySQL sinks](/ticdc/ticdc-split-update-behavior.md#split-primary-or-unique-key-update-events-for-non-mysql-sinks). Otherwise there might be a risk of data inconsistency. Note that when the primary key of a table is a clustered index, updates to the primary key are still split into `DELETE` and `INSERT` events in TiDB, and such behavior is not affected by the `output-raw-change-event` parameter.
+- 当 `output-raw-change-event = false` 时，如果 `UPDATE` 事件的主键或者非空唯一索引的列值发生改变，TiCDC 会将该其拆分为 `DELETE` 和 `INSERT` 两条事件，并确保所有事件按照 `DELETE` 事件在 `INSERT` 事件之前的顺序进行排序。
+- 当 `output-raw-change-event = true` 时，TiCDC 不拆分 `UPDATE` 事件，消费侧需负责处理[非 MySQL Sink 拆分主键或唯一键 `UPDATE` 事件](/ticdc/ticdc-split-update-behavior.md#非-mysql-sink-拆分主键或唯一键-update-事件)中说明的问题，否则可能出现数据不一致的风险。注意，当表的主键为聚簇索引时，对主键的更新会在 TiDB 中拆分为 `DELETE` 和 `INSERT` 两个事件，该行为不受 `output-raw-change-event` 参数的影响。
 
-> **Note**
->
-> In the following tables, UK/PK stands for primary key or unique key.
+#### Release 6.5 的兼容性
 
-#### Release 6.5 compatibility
-
-| Version | Protocol | Split UK/PK `UPDATE` events | Not split UK/PK `UPDATE` events  | Comments |
+| 版本 | 协议 | 拆分主键或唯一键 `UPDATE` 事件 | 不拆分主键或唯一键 `UPDATE` 事件 | 备注 |
 | -- | -- | -- | -- | -- |
-| <= v6.5.2 | ALL | ✗ | ✓ |  |
-| v6.5.3 / v6.5.4 | Canal/Open | ✗ | ✓ |  |
-| v6.5.3 | CSV/Avro | ✗ | ✗ | Split but does not sort. See [#9086](https://github.com/pingcap/tiflow/issues/9658) |
-| v6.5.4 | Canal/Open | ✗ | ✗ | Only split and sort transactions that contain multiple changes |
-| v6.5.5 ～ v6.5.9 | ALL | ✓ | ✗ |
-| \>= v6.5.10 | ALL | ✓ (Default value: `output-raw-change-event = false`) | ✓ (Optional: `output-raw-change-event = true`) | |
+| <= v6.5.2 | 所有协议 | ✗ | ✓ |  |
+| v6.5.3、v6.5.4 | Canal/Open | ✗ | ✓ |  |
+| v6.5.3 | CSV/Avro | ✗ | ✗ | 拆分但是不排序, 详见 [#9086](https://github.com/pingcap/tiflow/issues/9658) |
+| v6.5.4 | Canal/Open | ✗ | ✗ | 只拆分并排序包含多条变更的事务 |
+| v6.5.5 ～ v6.5.9 | 所有协议 | ✓ | ✗ | |
+| \>= v6.5.10 | 所有协议 | ✓ (默认值：`output-raw-change-event = false`) | ✓ (可选配置项：`output-raw-change-event = true`) | |
 
-#### Release 7.1 compatibility
+#### Release 7.1 的兼容性
 
-| Version | Protocol | Split UK/PK `UPDATE` events | Not split UK/PK `UPDATE` events  | Comments |
+| 版本 | 协议 | 拆分主键或唯一键 `UPDATE` 事件 | 不拆分主键或唯一键 `UPDATE` 事件 | 备注 |
 | -- | -- | -- | -- | -- |
-| v7.1.0 | ALL | ✗ | ✓ |  |
-| v7.1.1 | Canal/Open | ✗ | ✓ |  |
-| v7.1.1 | CSV/Avro | ✗ | ✗ | Split but does not sort. See [#9086](https://github.com/pingcap/tiflow/issues/9658) |
-| v7.1.2  ~ v7.1.5 | ALL | ✓ | ✗ |  |
-| \>= v7.1.6 | ALL | ✓ (Default value: `output-raw-change-event = false`) | ✓ (Optional: `output-raw-change-event = true`)  | |
+| v7.1.0 | 所有协议 | ✗ | ✓ |  |
+| v7.1.1 | Canal/Open | ✗ | ✓ |  |
+| v7.1.1 | CSV/Avro | ✗ | ✗ | 拆分但是不排序, 详见 [#9086](https://github.com/pingcap/tiflow/issues/9658) |
+| v7.1.2  ~ v7.1.5 | 所有协议 | ✓ | ✗ |  |
+| \>= v7.1.6 | 所有协议 | ✓ (默认值：`output-raw-change-event = false`) | ✓ (可选配置项：`output-raw-change-event = true`) | |
 
-#### Release 7.5 compatibility
+#### Release 7.5 的兼容性
 
-| Version | Protocol | Split UK/PK `UPDATE` events | Not split UK/PK `UPDATE` events  | Comments |
+| 版本 | 协议 | 拆分主键或唯一键 `UPDATE` 事件 | 不拆分主键或唯一键 `UPDATE` 事件 | 备注 |
 | -- | -- | -- | -- | -- |
-| <= v7.5.2 | ALL | ✓ | ✗ |
-| \>= v7.5.3 | ALL | ✓ (Default value:`output-raw-change-event = false`) | ✓  (Optional: `output-raw-change-event = true`) | |
+| <= v7.5.2 | 所有协议 | ✓ | ✗ | |
+| \>= v7.5.3 | 所有协议 | ✓  (默认值：`output-raw-change-event = false`) | ✓ (可选配置项：`output-raw-change-event = true`) | |
 
-#### Release 8.1 compatibility
+#### Release 8.1 的兼容性
 
-| Version | Protocol | Split UK/PK `UPDATE` events | Not split UK/PK `UPDATE` events  | Comments |
+| 版本 | 协议 | 拆分主键或唯一键 `UPDATE` 事件 | 不拆分主键或唯一键 `UPDATE` 事件 | 备注 |
 | -- | -- | -- | -- | -- |
-| v8.1.0 | ALL | ✓ | ✗ |
-| \>= v8.1.1 | ALL | ✓ (Default value:`output-raw-change-event = false`) | ✓  (Optional: `output-raw-change-event = true`) | |
+| v8.1.0 | 所有协议 | ✓ | ✗ | |
+| \>= v8.1.1 | 所有协议 | ✓ (默认值：`output-raw-change-event = false`) | ✓ (可选配置项：`output-raw-change-event = true`) | |

@@ -1,149 +1,154 @@
 ---
 title: tiup cluster upgrade
-summary: The tiup cluster upgrade command is used to upgrade a specified cluster to a specific version. It requires the cluster name and target version as input. Options include --force to ignore errors and start the cluster, --transfer-timeout to set maximum wait time for node migration, --ignore-config-check to skip configuration check, and --offline to replace binary files without restarting the cluster. The output is the log of the upgrading progress.
+summary: tiup cluster upgrade 命令用于将指定集群升级到特定版本。命令语法为 tiup cluster upgrade <cluster-name> <version> [flags]。可使用 --force 选项忽略升级过程的错误，强制替换二进制文件并启动集群。还可通过设置 --transfer-timeout 设置最长等待时间，超时后会跳过等待直接升级服务。其他选项包括 --ignore-config-check、--ignore-version-check、--offline 等。升级服务的日志将会输出。
 ---
 
 # tiup cluster upgrade
 
-The `tiup cluster upgrade` command is used to upgrade the specified cluster to a specific version.
+命令 `tiup cluster upgrade` 用于将指定集群升级到特定版本。
 
-## Syntax
+## 语法
 
 ```shell
 tiup cluster upgrade <cluster-name> <version> [flags]
 ```
 
-- `<cluster-name>`: the cluster name to operate on. If you forget the cluster name, you can check it with the [cluster list](/tiup/tiup-component-cluster-list.md) command.
-- `<version>`: the target version to upgrade to, such as `8.5.8`. Currently, it is only allowed to upgrade to a version higher than the current cluster, that is, no downgrade is allowed. It is also not allowed to upgrade to the nightly version.
+- `<cluster-name>` 为要操作的集群名字，如果忘记集群名字可通过[集群列表](/tiup/tiup-component-cluster-list.md)查看。
+- `<version>` 为要升级到的目标版本，例如 `v8.5.8`。目前仅允许升级到比当前集群更高的版本，不允许升级到比当前集群更低的版本，即不允许降级。同时也不允许升级成 nightly 版本。
 
-## Options
+## 选项
 
 ### --force
 
-- To upgrade the cluster, you need to ensure that the cluster is currently started. In some cases, you might want to upgrade when the cluster is not started. At this time, you can use `--force` to ignore the error during the upgrade, forcibly replace the binary file and start the cluster.
-- Data type: `BOOLEAN`
-- Default: false
+- 升级集群需要保证集群目前是启动的，在某些情况下，可能希望在集群未启动的状态下升级，这时候可以使用 `--force` 忽略升级过程的错误，强制替换二进制文件并启动集群。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-> **Note:**
+> **注意：**
 >
-> Forcing an upgrade of the cluster that is providing services might result in service unavailability. Unstarted clusters are started automatically after a successful upgrade.
+> 对正在提供服务的集群强制升级可能导致集群服务不可用。对于未启动的集群，升级成功后会自动启动集群。
 
-### --transfer-timeout
+### --transfer-timeout（uint，默认 600）
 
-- When upgrading PD or TiKV, the leader of the upgraded node is migrated to other nodes first. The migration process takes some time, and you can set the maximum wait time (in seconds) by the `-transfer-timeout` option. After the timeout, the wait is skipped and the service is upgraded directly.
-- Data type: `uint`
-- Default: 600
+在升级 PD 或 TiKV 时，会先将被升级节点的 leader 迁移到其他节点，迁移过程会需要一定时间，可以通过设置 `--transfer-timeout` 设置最长等待时间（单位为秒），超时之后会跳过等待直接升级服务。
 
-> **Note:**
+> **注意：**
 >
-> If the wait is skipped and the service is upgraded directly, the service performance might jitter.
+> 若出现跳过等待直接升级的情况，服务性能可能会出现抖动。
 
 ### --ignore-config-check
 
-- After the binary is updated, a configuration check is performed on the TiDB, TiKV and PD components using `<binary> --config-check <config-file>`. `<binary>` is the path to the newly deployed binary and `<config-file>` is the configuration file generated based on the user configuration. To skip this check, you can use the `--ignore-config-check` option.
-- Data type: `BOOLEAN`
-- Default: false
+- 在二进制文件更新之后，TiUP 会对 TiDB，TiKV 和 PD 组件执行配置检查，检查方式为 `<binary> --config-check <config-file>`，其中 `<binary>` 为新部署的二进制文件的路径，`<config-file>` 为根据用户配置生成的配置文件。如果想要跳过该项检查，可以使用该选项。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### --ignore-version-check
 
-- Before upgrading, TiUP checks whether the target version is greater than or equal to the current version. To skip this check, you can use the `--ignore-version-check` option.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 在升级前，TiUP 会检查目标版本是否大于等于当前版本。如果想要跳过该项检查，可以使用该选项。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### --offline
 
-- Declares that the current cluster is not running. When this option is specified, TiUP does not evict the service leader to another node or restart the service, but only replaces the binary files of the cluster components.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 声明当前集群处于停止状态。指定该选项时，TiUP Cluster 仅原地替换集群组件的二进制文件，不执行迁移 Leader 以及重启服务等操作。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### --pd-version
 
-- Specifies the version of PD. If this option is set, the version of PD will no longer be consistent with the cluster version.
-- Data type: `STRINGS`
-- If this option is not set, the version of PD remains consistent with the cluster version.
+- 指定 PD 的版本。指定后，PD 的版本将不再与集群版本保持一致。
+- 数据类型：`STRINGS`
+- 不指定该选项时，PD 的版本与集群版本保持一致。
 
 ### --tikv-version
 
-- Specifies the version of TiKV. If this option is set, the version of TiKV will no longer be consistent with the cluster version.
-- Data type: `STRINGS`
-- If this option is not set, the version of TiKV remains consistent with the cluster version.
+- 指定 TiKV 的版本。指定后，TiKV 的版本将不再与集群版本保持一致。
+- 数据类型：`STRINGS`
+- 不指定该选项时，TiKV 的版本与集群版本保持一致。
 
 ### --tikv-cdc-version
 
-- Specifies the version of TiKV CDC. If this option is set, the version of TiKV CDC will no longer be consistent with the cluster version.
-- Data type: `STRINGS`
-- If this option is not set, the version of TiKV CDC remains consistent with the cluster version.
+- 指定 TiKV CDC 的版本。指定后，TiKV CDC 的版本将不再与集群版本保持一致。
+- 数据类型：`STRINGS`
+- 不指定该选项时，TiKV CDC 的版本与集群版本保持一致。
 
 ### --tiflash-version
 
-- Specifies the version of TiFlash. If this option is set, the version of TiFlash will no longer be consistent with the cluster version.
-- Data type: `STRINGS`
-- If this option is not set, the version of TiFlash remains consistent with the cluster version.
+- 指定 TiFlash 的版本。指定后，TiFlash 的版本将不再与集群版本保持一致。
+- 数据类型：`STRINGS`
+- 不指定该选项时，TiFlash 的版本与集群版本保持一致。
 
 ### --cdc-version
 
-- Specifies the version of TiCDC. If this option is set, the version of TiCDC will no longer be consistent with the cluster version.
-- Data type: `STRINGS`
-- If this option is not set, the version of TiCDC remains consistent with the cluster version.
+- 指定 TiCDC 的版本。指定后，TiCDC 的版本将不再与集群版本保持一致。
+- 数据类型：`STRINGS`
+- 不指定该选项时，TiCDC 的版本与集群版本保持一致。
 
 ### --tiproxy-version
 
-- Specifies the version of TiProxy. If this option is set, the version of TiProxy will no longer be consistent with the cluster version.
-- Data type: `STRINGS`
-- If this option is not set, the version of TiProxy remains consistent with the cluster version.
+- 指定 TiProxy 的版本。指定后，TiProxy 的版本将不再与集群版本保持一致。
+- 数据类型：`STRINGS`
+- 不指定该选项时，TiProxy 的版本与集群版本保持一致。
 
 ### --tidb-dashboard-version
 
-- Specifies the version of TiDB Dashboard. If this option is set, the version of TiDB Dashboard will no longer be consistent with the cluster version.
-- Data type: `STRINGS`
-- If this option is not set, the version of TiDB Dashboard remains consistent with the cluster version.
+- 指定 TiDB Dashboard 的版本。指定后，TiDB Dashboard 的版本将不再与集群版本保持一致。
+- 数据类型：`STRINGS`
+- 不指定该选项时，TiDB Dashboard 的版本与集群版本保持一致。
 
 ### --alertmanager-version
 
-- Specifies the version of alert manager. If this option is set, the version of alert manager will no longer be consistent with the cluster version.
-- Data type: `STRINGS`
-- If this option is not set, the version of alert manager remains consistent with the cluster version.
+- 指定 alert manager 的版本。指定后，alert manager 的版本将不再与集群版本保持一致。
+- 数据类型：`STRINGS`
+- 不指定该选项时，alert manager 的版本与集群版本保持一致。
 
 ### --blackbox-exporter-version
 
-- Specifies the version of Blackbox Exporter. If this option is set, the version of Blackbox Exporter will no longer be consistent with the cluster version.
-- Data type: `STRINGS`
-- If this option is not set, the version of Blackbox Exporter remains consistent with the cluster version.
+- 指定 Blackbox Exporter 的版本。指定后，Blackbox Exporter 的版本将不再与集群版本保持一致。
+- 数据类型：`STRINGS`
+- 不指定该选项时，Blackbox Exporter 的版本与集群版本保持一致。
 
 ### --node-exporter-version
 
-- Specifies the version of Node Exporter. If this option is set, the version of Node Exporter will no longer be consistent with the cluster version.
-- Data type: `STRINGS`
-- If this option is not set, the version of Node Exporter remains consistent with the cluster version.
+- 指定 Node Exporter 的版本。指定后，Node Exporter 的版本将不再与集群版本保持一致。
+- 数据类型：`STRINGS`
+- 不指定该选项时，Node Exporter 的版本与集群版本保持一致。
+
+### --restart-timeout
+
+- 指定滚动升级之间的间隔，即在升级组件后等待一段时间。
+- 数据类型: `STRINGS`。支持所有 [`golang time.ParseDuration`](https://pkg.go.dev/time#ParseDuration) 能够解析的数据类型。
+- 默认值：`0`
+- 不指定该选项时，升级组件后不会等待。
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### ---pre-upgrade-script
 
-> **Warning:**
+> **警告：**
 >
-> This option is experimental and is not recommended for production deployments.
+> 该选项目前为实验特性，不建议在生产环境中使用。
 
-- Runs a script before the upgrade.
-- Data type: `STRINGS`
-- This option specifies the path of a script to be run on the node that is to be upgraded.
+- 在升级前运行该脚本。
+- 数据类型：`STRINGS`
+- 该选项指定节点在升级前要运行的脚本的路径。
 
 ### ---post-upgrade-script
 
-> **Warning:**
+> **警告：**
 >
-> This option is experimental and is not recommended for production deployments.
+> 该选项目前为实验特性，不建议在生产环境中使用。
 
-- Runs a script after the upgrade.
-- Data type: `STRINGS`
-- This option specifies the path of a script to be run after the upgrade of a node. This script will be executed on the upgraded node itself.
+- 在升级后运行该脚本。
+- 数据类型：`STRINGS`
+- 该选项指定节点在升级后要运行的脚本的路径。该脚本只会在已完成升级的节点上运行。
 
-## Output
+## 输出
 
-The log of the upgrading progress.
+升级服务的日志。
 
-[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)
+[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)

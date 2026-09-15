@@ -1,8 +1,8 @@
 ---
-title: DESC | TiDB SQL Statement Reference
-summary: 关于在 TiDB 数据库中使用 `DESC` 的概述。
+title: DESC
+summary: TiDB 数据库中 DESC 的使用概况。
 ---
 
 # DESC
 
-此语句是 [`EXPLAIN`](/sql-statements/sql-statement-explain.md) 的别名。它是为了与 MySQL 兼容而包含的。
+`DESC` 语句是 [`EXPLAIN`](/sql-statements/sql-statement-explain.md) 的别名。包含该语句提供了 MySQL 兼容性。
